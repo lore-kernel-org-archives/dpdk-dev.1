@@ -2,76 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B63CD4F3C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 08:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B09CD4F52
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 08:27:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2586402D9;
-	Mon, 18 May 2026 10:16:47 +0200 (CEST)
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com
- [209.85.219.46]) by mails.dpdk.org (Postfix) with ESMTP id 2A77D40265
- for <dev@dpdk.org>; Mon, 18 May 2026 10:16:47 +0200 (CEST)
-Received: by mail-qv1-f46.google.com with SMTP id
- 6a1803df08f44-8b8e98fd885so30117056d6.0
- for <dev@dpdk.org>; Mon, 18 May 2026 01:16:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779092206; cv=none;
- d=google.com; s=arc-20240605;
- b=IvS2q49mrKeC/3ngBwTwgpzy9HFw3SBYHOnxLAfNjBd46+NYBMxr38sH5P6Wxc1Ylr
- CsBqJ+tfwg6wV0I+ULD3D6PdxqDxEQ1BPo5x/PqvNowFrW6n88GqkNxfjwnwGEbf0rNg
- jfOrd74gp43K5TXcz6ZoRqn8DIpKu+ebAqPwh8nUKjr8zwNrsVzilu3/GsLm7hV0KS7S
- vWt9xkRA5oRpu/Yg8lEJY3tL1rB/AJWHbUrzNwJl4GaUAAW/GEhCf/Sp0g4LfCxafyzJ
- GKpeSGY1+LZjp+VNKfECgygeQLNj0Tcmd/pAJMoRFhfqaYsY0SvLJN6uVQ5XEM0j0iVh
- vY1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version;
- bh=Er+slCuEivIQJDZCMkAZGHFMFdubvVPkn+XIxhwpHkY=;
- fh=hZYrAb1rHrd9aeHhIvxXvuqXAp1ZHQhbVN9JJutjVQE=;
- b=UT+aO2ukGdyIG/hWRvMDhWj4CZ1qBPBAyOshncAFgXAULI0GFkrt1TfkH7m1geahKS
- 8eVVia3nf/2AThZXuWX2+TlMvxCbLYpgdJ8Y81bE3ukqVxP6PJUsXUvR028Rg5T7HcSb
- +yWXrkE04flyQciMKQ6Dj5aaDDePZ7n5ZrhN4EF7T8AT+yTVgIzvtVX3szBgB4xj1LdU
- IUaXsWMPOKjuDR+/jUt3fjuykAkR1No3BrBUsoGxksnft3ihfAGFWyImHHXqGJ2AtKco
- 9Jin/PkHsryTJAd+ifESl6hgJi6ruIZK8ykuJYOBc5lJX+DHMCdSQGn0F8dNx0qxjB/C
- fiIA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779092206; x=1779697006;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=Er+slCuEivIQJDZCMkAZGHFMFdubvVPkn+XIxhwpHkY=;
- b=ls21H5RlQtMq7klLyvK1SScB6AbB19oyyN3fQnwwch4e4ktBYXAr5JRCz741TNaT6+
- IgRg9wBkU1DPsHMnRhmK0xSzTDCAeCg3Z+APGf6Co/+BgO3BROjd1lFeCEMKLTXBFglC
- 09OVgvyOiFTUjpyHN8wL/GVHofVLtdpuyW4CpnJCRjzec3AGDsUDxyRZXNQZI5oWI0iU
- xAmsZ1lk8CqYfYGLO+o7FjaygDXXEvaDjC6SYROEJ/Et3FJe5jYyZdrt5E8L9PUPREh0
- d5Tcl1iLT3F/Hz9qXehrvJ92mWOxYI5nxnhmPOTln4OQZvKvLzCMxTh9FOg8LN8WW+Z1
- nC/Q==
-X-Gm-Message-State: AOJu0YyF7gdRZ1xHUiFlb3zBBo86HhGpT/mxrQomwbDQ+TiWmZg/PM9B
- 91zIfE3CLqbiGOUMKgXlrndkAPGfE3cICtL7tjCvmqYn4nnfa1GpJVISY5RMy5t3P4SYgvNE9T4
- cnfYS27LLhQyNyfuF4G8dR2htr338Kew=
-X-Gm-Gg: Acq92OGQ4mg47nfICvGlBPyOVIr0GUq00t9AVvh6V+6bArnQ2zGg3F4SVuZlRnAS33I
- ySe4Gyy6GN9jyHZU6frR30OV8wGdtYewGoIDnQ5c6COC9TQKl7/ZkzWc6qhq+0jhmHYGiipMF3m
- Lo2kt3aWfLKr3SWXdtWiOehxMcK7omsxltUXLfkp3O3Czsmp8d129MBZL6WmQW3NJ1M1WOz8ZoA
- C0JzCJfLnjPt1ForPpNLlwP43r6Gttlz1mBI379zMqbUIno7NtrAzh85OzR7GVdSbPzofWZaU+i
- QSgG2Q5NSlqnZU+5w7s0f/QrdrK6WFhKA9LAoDvBBfqGfUso
-X-Received: by 2002:a05:6214:4b04:b0:8be:3da0:bba7 with SMTP id
- 6a1803df08f44-8ca0f671f23mr255386986d6.16.1779092206380; Mon, 18 May 2026
- 01:16:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D66B5402D9;
+	Mon, 18 May 2026 10:27:15 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 1ABA640265
+ for <dev@dpdk.org>; Mon, 18 May 2026 10:27:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1779092834;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=UC5mk1LW7xqdPTYjS4YaN2J3ggUNkObyM6iLv8NyAy8=;
+ b=gviG5OxXRBYdpAZ9IGQklEf4rXmD9VPM/ovl3tABUvqCGihVif5LageUNiIQFkSLiRP06m
+ f1erxc2yInwhMMT0O8tnG95WYP3pPDS2ED6vH8BfeXe8O5FkLwzJOUwWnvScxayyZ4GTdv
+ eOcMLEyUrAG+BacIP6gVXqHMHrP6zME=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-328-JGcKacviNhi5ByfPR4pCXg-1; Mon,
+ 18 May 2026 04:27:10 -0400
+X-MC-Unique: JGcKacviNhi5ByfPR4pCXg-1
+X-Mimecast-MFC-AGG-ID: JGcKacviNhi5ByfPR4pCXg_1779092830
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id AD6CC18005B3; Mon, 18 May 2026 08:27:09 +0000 (UTC)
+Received: from ringo.home (unknown [10.44.34.17])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 6B9B919432BB; Mon, 18 May 2026 08:27:08 +0000 (UTC)
+From: Robin Jarry <rjarry@redhat.com>
+To: dev@dpdk.org,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH dpdk v5] net/tap: use offsets provided by rte_net_get_ptype
+Date: Mon, 18 May 2026 10:27:00 +0200
+Message-ID: <20260518082659.13036-2-rjarry@redhat.com>
+In-Reply-To: <20260422133615.680318-2-rjarry@redhat.com>
+References: <20260422133615.680318-2-rjarry@redhat.com>
 MIME-Version: 1.0
-References: <20260513203725.1905-1-shofiqtest@gmail.com>
- <20260513203725.1905-2-shofiqtest@gmail.com>
-In-Reply-To: <20260513203725.1905-2-shofiqtest@gmail.com>
-From: Maxime Leroy <maxime@leroys.fr>
-Date: Mon, 18 May 2026 10:16:34 +0200
-X-Gm-Features: AVHnY4KaGR1u7lo6lYCJ7oscR78i0vXDfdt4Wpx8A60ZhAydSTiRErD-7OJNOlY
-Message-ID: <CAHHRULUAgX8ha7+v3oSH2yv7ihq8ojbXuGFn5k51hP=B4ie9_g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] bus/fslmc: fix ignored return value in
- fslmc_bus_unplug
-To: Md Shofiqul Islam <shofiqtest@gmail.com>
-Cc: dev@dpdk.org, hemant.agrawal@nxp.com, sachin.saxena@oss.nxp.com, 
- g.singh@nxp.com, stable@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: RC70eynoV5Krn3H2cc1oDaT4h43Y2mjQnPXQvygevY4_1779092830
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,58 +66,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Shofiqul,
+Instead of guessing what are the proper header lengths, pass
+a rte_net_hdr_lens struct to rte_net_get_ptype and use it to get the
+proper header lengths/offsets in tap_verify_csum.
 
-On Sat, May 16, 2026 at 11:20=E2=80=AFAM Md Shofiqul Islam <shofiqtest@gmai=
-l.com> wrote:
->
-> fslmc_bus_unplug() called drv->remove() and discarded the return value,
-> unconditionally clearing driver references and reporting success even
-> when the remove callback signalled failure.  As a result, callers had
-> no way to detect or react to removal errors.
->
-> Capture the return value and propagate it to the caller.  Only clear
-> the driver references and log successful unplug when the callback
-> returns zero.
->
-> Fixes: b5721f271cbf ("bus/fslmc: support DPNI hotplug")
-> Bugzilla ID: 1914
-> Cc: hemant.agrawal@nxp.com
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Md Shofiqul Islam <shofiqtest@gmail.com>
-> ---
->  drivers/bus/fslmc/fslmc_bus.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.=
-c
-> index cf881b3eec..9cfd8b10ba 100644
-> --- a/drivers/bus/fslmc/fslmc_bus.c
-> +++ b/drivers/bus/fslmc/fslmc_bus.c
-> @@ -620,7 +620,9 @@ fslmc_bus_unplug(struct rte_device *rte_dev)
->         struct rte_dpaa2_driver *drv =3D dev->driver;
->
->         if (drv && drv->remove) {
-> -               drv->remove(dev);
-> +               int ret =3D drv->remove(dev);
-> +               if (ret)
+This allows supporting stacked VLAN/QinQ tags and IPv6 extensions.
 
-We log when the function successfully unplugs the driver, but there is
-no log for error. Adding one could help here.
+Signed-off-by: Robin Jarry <rjarry@redhat.com>
+---
 
-> +                       return ret;
+Notes:
+    v5:
+    
+    * Fixed invalid L4 checksum verification when there are IPv6 extension headers.
+    
+    v4:
+    
+    * Fixed stale comments.
+    
+    v3:
+    
+    * Fixed double count for ipv6 extension headers.
+    
+    v2:
+    
+    * Restored packet length checks in IPv4/IPv6 before checking L4
+      checksums.
+    * Moved struct rte_net_hdr_lens variable next to rte_net_get_ptype call
+      and initialize it to 0 instead of calling memset().
 
-Could you please declare ret at the top of the function to match the
-existing style in this file (fslmc_bus_plug() just above, plus
-scan_one_fslmc_device, rte_fslmc_parse, rte_fslmc_scan,
-rte_fslmc_close all declare int ret in the local-variable block) ?
+ drivers/net/tap/rte_eth_tap.c | 41 +++++++++++++----------------------
+ 1 file changed, 15 insertions(+), 26 deletions(-)
 
->                 dev->driver =3D NULL;
->                 dev->device.driver =3D NULL;
->                 DPAA2_BUS_INFO("%s Un-Plugged",  dev->device.name);
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index a5d460a0b3cb..3b8e19afb7af 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -327,52 +327,41 @@ tun_alloc(struct pmd_internals *pmd, int is_keepalive, int persistent)
+ }
+ 
+ static void
+-tap_verify_csum(struct rte_mbuf *mbuf)
++tap_verify_csum(struct rte_mbuf *mbuf, const struct rte_net_hdr_lens *hlen)
+ {
+-	uint32_t l2 = mbuf->packet_type & RTE_PTYPE_L2_MASK;
+ 	uint32_t l3 = mbuf->packet_type & RTE_PTYPE_L3_MASK;
+ 	uint32_t l4 = mbuf->packet_type & RTE_PTYPE_L4_MASK;
+-	unsigned int l2_len = sizeof(struct rte_ether_hdr);
+-	unsigned int l3_len;
++	uint32_t l4_off = hlen->l2_len + hlen->l3_len;
+ 	uint16_t cksum = 0;
+ 	void *l3_hdr;
+ 	void *l4_hdr;
+-	struct rte_udp_hdr *udp_hdr;
+ 
+-	if (l2 == RTE_PTYPE_L2_ETHER_VLAN)
+-		l2_len += 4;
+-	else if (l2 == RTE_PTYPE_L2_ETHER_QINQ)
+-		l2_len += 8;
+ 	/* Don't verify checksum for packets with discontinuous L2 header */
+-	if (unlikely(l2_len + sizeof(struct rte_ipv4_hdr) >
+-		     rte_pktmbuf_data_len(mbuf)))
++	if (unlikely(l4_off > rte_pktmbuf_data_len(mbuf)))
+ 		return;
+-	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len);
++
++	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, hlen->l2_len);
+ 	if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
+ 		struct rte_ipv4_hdr *iph = l3_hdr;
+ 
+-		l3_len = rte_ipv4_hdr_len(iph);
+-		if (unlikely(l2_len + l3_len > rte_pktmbuf_data_len(mbuf)))
+-			return;
+ 		/* check that the total length reported by header is not
+ 		 * greater than the total received size
+ 		 */
+-		if (l2_len + rte_be_to_cpu_16(iph->total_length) >
++		if (hlen->l2_len + rte_be_to_cpu_16(iph->total_length) >
+ 				rte_pktmbuf_data_len(mbuf))
+ 			return;
+ 
+-		cksum = ~rte_raw_cksum(iph, l3_len);
++		cksum = ~rte_raw_cksum(iph, hlen->l3_len);
+ 		mbuf->ol_flags |= cksum ?
+ 			RTE_MBUF_F_RX_IP_CKSUM_BAD :
+ 			RTE_MBUF_F_RX_IP_CKSUM_GOOD;
+ 	} else if (l3 == RTE_PTYPE_L3_IPV6) {
+ 		struct rte_ipv6_hdr *iph = l3_hdr;
+ 
+-		l3_len = sizeof(struct rte_ipv6_hdr);
+ 		/* check that the total length reported by header is not
+ 		 * greater than the total received size
+ 		 */
+-		if (l2_len + l3_len + rte_be_to_cpu_16(iph->payload_len) >
++		if (hlen->l2_len + sizeof(*iph) + rte_be_to_cpu_16(iph->payload_len) >
+ 				rte_pktmbuf_data_len(mbuf))
+ 			return;
+ 	} else {
+@@ -386,20 +375,19 @@ tap_verify_csum(struct rte_mbuf *mbuf)
+ 
+ 	if (l4 == RTE_PTYPE_L4_UDP || l4 == RTE_PTYPE_L4_TCP) {
+ 		int cksum_ok;
+-		const unsigned int l4_min_len = (l4 == RTE_PTYPE_L4_UDP)
+-			? sizeof(struct rte_udp_hdr) : sizeof(struct rte_tcp_hdr);
+ 
+ 		/* Don't verify checksum if L4 header is truncated */
+-		if (l2_len + l3_len + l4_min_len > rte_pktmbuf_data_len(mbuf))
++		if (l4_off + hlen->l4_len > rte_pktmbuf_data_len(mbuf))
+ 			return;
+ 
+-		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len + l3_len);
+ 		/* Don't verify checksum for multi-segment packets. */
+ 		if (mbuf->nb_segs > 1)
+ 			return;
++
++		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l4_off);
+ 		if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
+ 			if (l4 == RTE_PTYPE_L4_UDP) {
+-				udp_hdr = (struct rte_udp_hdr *)l4_hdr;
++				struct rte_udp_hdr *udp_hdr = l4_hdr;
+ 				if (udp_hdr->dgram_cksum == 0) {
+ 					/*
+ 					 * For IPv4, a zero UDP checksum
+@@ -561,10 +549,11 @@ pmd_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 			continue;
+ 		}
+ 
+-		mbuf->packet_type = rte_net_get_ptype(mbuf, NULL,
++		struct rte_net_hdr_lens hlen = {0};
++		mbuf->packet_type = rte_net_get_ptype(mbuf, &hlen,
+ 						      RTE_PTYPE_ALL_MASK);
+ 		if (rxq->rxmode->offloads & RTE_ETH_RX_OFFLOAD_CHECKSUM)
+-			tap_verify_csum(mbuf);
++			tap_verify_csum(mbuf, &hlen);
+ 
+ 		/* account for the receive frame */
+ 		bufs[num_rx++] = mbuf;
+-- 
+2.54.0
 
-
-Regards,
-
-Maxime
