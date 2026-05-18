@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE3DCD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 00:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC84CD4F3D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 02:22:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9136540264;
-	Mon, 18 May 2026 02:02:38 +0200 (CEST)
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
- by mails.dpdk.org (Postfix) with ESMTP id CD31740261
- for <dev@dpdk.org>; Mon, 18 May 2026 02:02:37 +0200 (CEST)
-Received: by mail-dl1-f41.google.com with SMTP id
- a92af1059eb24-132d1b2519eso5342462c88.0
- for <dev@dpdk.org>; Sun, 17 May 2026 17:02:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C3B29402A7;
+	Mon, 18 May 2026 04:22:26 +0200 (CEST)
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
+ [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id 6441940264
+ for <dev@dpdk.org>; Mon, 18 May 2026 04:22:25 +0200 (CEST)
+Received: by mail-dy1-f179.google.com with SMTP id
+ 5a478bee46e88-2f36da5c8fbso1397324eec.0
+ for <dev@dpdk.org>; Sun, 17 May 2026 19:22:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779062557;
- x=1779667357; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779070944;
+ x=1779675744; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=jKKYifzxvANVbKfcmas+aMF875jDbFM/+NVRHHzQ1kc=;
- b=WdgCOsNkjGv7uUm05ZMs/pNTiElWTCZIH5xJWRu67n6rra3E+RXH3wXF20fv8ez+un
- ZVAL31itdf9NAGIeU16KMjyk1LtxZ59jbHKB2XqabuBIcFFrQYLXCtsNm4YfH7uaUIe/
- YQKsloPlkNFAGxvSybL42MIz7yjkg9eM1jpE4dI43jxowIiFsjSQFcxa34R00jnOp/fE
- +WN9aOK5/S11zICu25KBaYwhdtCB2QETnKzcBrRtszgc+lJfFyKIW3PtFPwh+/KQGyjO
- 5NUZPeCuXU1TvnymZLSXk9H/l9hiTUwm1xy2Mkl2oug2h4HOamjSayF0lFL+SIeRGz2y
- U5gw==
+ bh=8ii7ga4ehCwqsMZqex1mdVh6edtRc9nLCtnwaRri720=;
+ b=oGhS40A0AaZBLmmjaqh8GPnU8MlBkB3hhJiR7pDga+lIbtga8DgLDMfmxhpFbeiP4N
+ Va42/+G378Khdm1WeVnQP5+0B0Fj32yQm3HVaG2X0UQx5+gDZkTrscMXloU0GHP/V5g6
+ S5VvDpTXVXY/zb1acE3W6D2dnHSsvDGatalKZNAdbN4mwJ4/YsEO3FD8aGCpexCG6Zn5
+ 3jphZzXWLn9AEzN4pBq9wK4wips92zohR2WnUHjlsIS06ixMDRgNpYxmPEgle6mmqDFM
+ Pr96S3puBeM1saCc5Z8jQ3euj1J0XKrEUqMNWZVXnMwp4gEDPFVU7KRPlvu3PLY4s/NI
+ iufg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779062557; x=1779667357;
+ d=1e100.net; s=20251104; t=1779070944; x=1779675744;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=jKKYifzxvANVbKfcmas+aMF875jDbFM/+NVRHHzQ1kc=;
- b=hoAcrU9063EwkxhtJmWbTXOHijiyFUozK7SOA0G4OKNBewvn1E/HJLqi5TJQ8J8hit
- secsBk5OffwAX7iGn6BLygdKLhCz6/ZpihLmjl/MW20gE4y7U7nOrto0sJXYTv/Y30f4
- HgO35f5zRjvSvKRxegtq5qoUcFgFjPMU1aCX5fYa1BRuRiwsmQ+AXglG7v6WVEuK/BPr
- c6WkRz+UY3UpUP2EyNvZhwCbuXkVm3gIyoVAuG72GysoGmTcPIM4kZOtef/U41uTWHBC
- O2/PbMDbFzBzhpVXSeDLhUFYQqrNpaI50ASTFPfRy3ucsZbDN0XbTXmbA8Gf3+THadkw
- 2r2A==
-X-Gm-Message-State: AOJu0YyUr+qZqrLaSRlpHNpvL1cYbhLXIa2gDbvuceoBa2b0bKmXsBka
- rtB/HC3DXMkIUkn9YPhknKnqmBpB4kfs99K1P9omfym5NxEdtRJxs52SXIdK5rabbQ/82end7e+
- ys19WEBM=
-X-Gm-Gg: Acq92OFSfNeLEvzdsZrJYOzuJbYEktCmr/XvB5++z3/GJ4l33IsCqm5S3m1xc1vIPX3
- eN8e0jqDOzib1lecWTYcCafAe7i2xGqe4ssPwDABQOnSkfPsb8wd8O1dj5Bkv7XfWw3zXHVeO5o
- x+CBq66aplPdpvtRJjpKHcBpEhAJKfYZrB186Kejw5Keu1+mvhyaGnwzJGAmtu7dre5Bwp6fh2J
- e2WhI3ItvIwkzC6ZvS36BQTCxz+7yWiPvBrdJwPqJnHkcUWNWAI8tagcPl3mlluRRl9UTbE0OxO
- cyABa9jzDn8k5D5iVE7UnemAtakkhXH70c/EAl3HSSn6Op/uTfUDKDskVHwtrNZAUv4p2iJJO8e
- ceuX6DwIR9IjUS8TSB6RzA9rbOW/kpLOWHm+Vhk6DkgZ9RPxJqJjTcguTU/y//ERK2JuC7Z8ohy
- WzEJxxuRBCiF0AdcvdunepR55zCA0m8WSNCfI=
-X-Received: by 2002:a05:7022:6988:b0:12a:b39a:339f with SMTP id
- a92af1059eb24-1350473a96amr5435825c88.21.1779062556517; 
- Sun, 17 May 2026 17:02:36 -0700 (PDT)
+ bh=8ii7ga4ehCwqsMZqex1mdVh6edtRc9nLCtnwaRri720=;
+ b=JcgekpXl7bmKxXQGBq6llmhkczqTgkbNZ2IVUHaBJ3jfrg7oGvbenO3wbhzdHfST/k
+ AvtJGIxJkQ3w0LwNyKFKRUTsobZNTM9h2kSrb1SzPR5kgM7cy1pBBmZEIj9+9gZzWTmK
+ yA+VgDogG9OoTNA8ePjUUp3CadlrJ4W4iFp0Bslu51yX5JwVhhbTbILomEyFFDC/m9az
+ LAlS06pdbXDewOzXb2Wb8QIoery2VuOvyATApVFZpcu+wUpyTpiH21Ah2L6+fROUfl9K
+ sHXwoyxd1/HNka/+UI1rETCdHz4DMLddLyWqxRd0F3dEWLkLfg/nSXZVVBbyqJ0TKutp
+ YN4w==
+X-Gm-Message-State: AOJu0YyCiUy1BnrOQAeZxlLDlMHqB+Sbzn9JlFPZFU8YqXVjpT/6cxT+
+ 2/30Xk8lHp9hyQYaFwBsMj+pPmWYBNWHXsi7+EMOzBYffl6WEFiIkRuD/kGJzKCMurj7EMkb1h7
+ EDnp8AaA=
+X-Gm-Gg: Acq92OHAsIT7cYHXoGZePzmXclJVC53CFawF/aAGqnGyUjAuEHw59fK8Ii5ErlC5624
+ gqhrmCCp1hROLsxIvVMTVK2AfBgkB/OtnUnqoNIl+6Pvz5HvoT7luoxN0xe8hS7Tgxbw1B+R00I
+ LkgAzJX3MsSjjKJsXUP+/HWGZdT9owty1d7xv+QTPSQyIhWTUD1wuEqmK1dHjaQ7+1xurtoPqQZ
+ bemXClQaxwCtkjT1SJ8IyjjjrO5vCDo4l0CwYefRrXuQWsdRiz0EEumtutaDP/2vvk17YtkR+3d
+ hPuoJyLgRXbaT7zQeiIXLswW0YA9TMJJY4AYx+LRb6H3G9y+zIE/TRtH27ayNzJzthhwVqqePtR
+ WZDacv+kcU+EIdQT7r00t1hvHiL6z8ji1hb/i4iiTvJMY/CAuyACncXj96Ow8nEDMg6D79Psxdg
+ S93mClqFNSxLwkgj2SJkqzICu8zKgLuWInzQc=
+X-Received: by 2002:a05:7301:4184:b0:2fc:9d97:d59a with SMTP id
+ 5a478bee46e88-303986ad3c0mr5757070eec.32.1779070944107; 
+ Sun, 17 May 2026 19:22:24 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-134cc33aac9sm14138352c88.14.2026.05.17.17.02.35
+ 5a478bee46e88-302978afdd3sm12995294eec.29.2026.05.17.19.22.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 17 May 2026 17:02:36 -0700 (PDT)
-Date: Sun, 17 May 2026 17:02:33 -0700
+ Sun, 17 May 2026 19:22:23 -0700 (PDT)
+Date: Sun, 17 May 2026 19:22:11 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: liujie5@linkdatatechnology.com
+To: Junlong Wang <wang.junlong1@zte.com.cn>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v15 00/11] net/sxe2: fix logic errors and address feedback
-Message-ID: <20260517170233.66915942@phoenix.local>
-In-Reply-To: <20260516074618.2343883-1-liujie5@linkdatatechnology.com>
-References: <20260516025540.2092621-12-liujie5@linkdatatechnology.com>
- <20260516074618.2343883-1-liujie5@linkdatatechnology.com>
+Subject: Re: [PATCH v3 3/3] net/zxdh: optimize Tx xmit pkts performance
+Message-ID: <20260517192211.139e1a92@phoenix.local>
+In-Reply-To: <20260509062930.3254766-4-wang.junlong1@zte.com.cn>
+References: <20260423011820.2426203-1-wang.junlong1@zte.com.cn>
+ <20260509062930.3254766-1-wang.junlong1@zte.com.cn>
+ <20260509062930.3254766-4-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,160 +82,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 16 May 2026 15:46:07 +0800
-liujie5@linkdatatechnology.com wrote:
+On Sat,  9 May 2026 14:29:29 +0800
+Junlong Wang <wang.junlong1@zte.com.cn> wrote:
 
-> From: Jie Liu <liujie5@linkdatatechnology.com>
->=20
-> This patch set addresses the feedback received on the v10 submission
-> for the sxe2 PMD. The primary focus is on fixing vector path selection,
-> ensuring memory safety during mbuf initialization, and cleaning up
-> redundant logic in the configuration functions.
+> Add simple Tx xmit functions (zxdh_xmit_pkts_simple)
+> for single-segment packet xmit.
+> 
+> Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
+> ---
 
-
-Driver is in much better shape now.
-AI is still finding a few things.
-
-Review of [PATCH v15 00/11] sxe2 PMD
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Overall comments
-----------------
-
-Most of the issues called out in the v13 review have been
-addressed in v15:
-
-  - Inverted "if (!ret)" error checks in sxe2_dev_pci_map_init()
-    are now "if (ret)".
-  - Non-ASCII characters in sxe2_net_map_addr_info_pf[] removed.
-  - rte_ticketlock_t around blocking ioctl() replaced with
-    pthread_mutex_t.
-  - Driver-private u8/s8/u16/... typedefs, __le*/__be* aliases,
-    sxe2_errno.h, STATIC macro, and the reinvented
-    LIST_FOR_EACH_ENTRY / COMPILER_BARRIER / sxe2_*_lock /
-    udelay/mdelay/msleep / __iomem / IS_ERR helpers are gone.
-  - "MTU update =3D Y" claim in the features matrix dropped;
-    "Free Tx mbuf on demand =3D Y" is now backed by the new
-    .tx_done_cleanup callback added in patch 11.
-  - Redundant queue_idx bounds checks at the top of
-    rx_queue_setup / tx_queue_setup removed.
-  - "reseted" log-message typo fixed.
-
-What remains:
+Some AI review feedback.
 
 
-Patch 11/11: net/sxe2: implement Tx done cleanup
-------------------------------------------------
+PATCH v3 3/3] net/zxdh: optimize Tx xmit pkts performance
 
-Error: NULL pointer dereference of tx_queue parameter.
-sxe2_tx_done_cleanup() dereferences txq before checking it for
-NULL:
+Error: NULL pointer dereference in pkt_padding()
 
-  int32_t sxe2_tx_done_cleanup(void *tx_queue, uint32_t free_cnt)
-  {
-          struct sxe2_tx_queue *txq =3D (struct sxe2_tx_queue *)tx_queue;
-          struct sxe2_adapter *adapter =3D txq->vsi->adapter;  /* segfault =
-if txq =3D=3D NULL */
-          int32_t ret;
+hdr = (struct zxdh_net_hdr_dl *)rte_pktmbuf_prepend(cookie, hdr_len);
+rte_memcpy(hdr, net_hdr_dl, hdr_len);
 
-          if (txq =3D=3D NULL) {                                  /* too la=
-te */
-                  ret =3D 0;
-                  goto l_end;
-          }
-          ...
+rte_pktmbuf_prepend() returns NULL when headroom is insufficient. The existing zxdh_xmit_pkts_packed() path guards its push fast-path with txm->data_off >= ZXDH_DL_NET_HDR_SIZE and falls back to the indirect path when that fails. The simple Tx path has no such guard; any mbuf submitted with headroom < hw->dl_net_hdr_len will crash here.
 
-The NULL check must run before any field access:
+Add a NULL check, or screen mbufs with insufficient headroom in zxdh_xmit_pkts_simple() before calling submit_to_backend_simple().
 
-          struct sxe2_tx_queue *txq =3D tx_queue;
-          struct sxe2_adapter *adapter;
+Error: out-of-bounds read in zxdh_xmit_pkts_simple() stats loop
 
-          if (txq =3D=3D NULL)
-                  return 0;
-          adapter =3D txq->vsi->adapter;
-          ...
+if ((vq->vq_avail_idx + nb_pkts) >= vq->vq_nentries) {
+    nb_tx = vq->vq_nentries - vq->vq_avail_idx;
+    nb_tx_left = nb_pkts - nb_tx;
+    submit_to_backend_simple(vq, tx_pkts, nb_tx);
+    ...
+    tx_pkts += nb_tx;
+}
+if (nb_tx_left) {
+    submit_to_backend_simple(vq, tx_pkts, nb_tx_left);
+    ...
+}
 
+zxdh_queue_notify(vq);
+txvq->stats.packets += nb_pkts;
+for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++)
+    zxdh_update_packet_stats(&txvq->stats, tx_pkts[nb_tx]);
 
-Patch 03/10 -> 09/10: vector mode probe gated on RTE_PROC_PRIMARY
------------------------------------------------------------------
+When the ring wraps within a burst, tx_pkts is advanced past the first chunk. The stats loop then walks nb_pkts entries from the advanced pointer, reading past the end of the caller's mbuf array. The first chunk's per-packet stats are also skipped.
 
-Warning: sxe2_rx_mode_func_set() runs the vector capability probe
-only in the primary process:
-
-          if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY) {
-                  ret =3D sxe2_rx_vec_support_check(dev, &vec_flags);
-                  ...
-          }
-
-but sxe2_dev_init() calls sxe2_rx_mode_func_set(dev) and
-sxe2_tx_mode_func_set(dev) from the secondary-process branch as
-well.  In a secondary, the vector probe is skipped, rx_mode_flags
-stays 0, and dev->rx_pkt_burst lands on
-sxe2_rx_pkts_scattered{,_split}.  Since dev->rx_pkt_burst is
-per-rte_eth_dev and re-written by whichever process attaches
-last, the effective Rx burst mode depends on attach ordering.
-The same pattern was flagged in v13 and is unchanged in v15.
-
-Either run the same probe in secondaries, or share the primary's
-decision through rte_eth_dev_data so secondaries inherit it.
-
-
-Patch 03/10: common/sxe2: add sxe2 basic structures
----------------------------------------------------
-
-Warning: macro identifier BITS_TO_uint32_t in sxe2_osal.h.  This
-is the visible result of a wholesale "u32 -> uint32_t" rename
-applied to identifier text without manual review.  The macro is
-unused in the rest of the driver (the only mentions are the
-definition itself and a later rename of the right-hand side),
-so the cleanest fix is to delete it.  If a "bits to 32-bit-word
-count" macro is wanted later, name it BITS_TO_U32 or use
-RTE_DIM/RTE_ALIGN_MUL_CEIL idioms.
-
-
-Patch 09/11: drivers: add data path for Rx and Tx
--------------------------------------------------
-
-Info: in sxe2_tx_pkts() the exit chain remains
-
-  l_exit_logic:
-        if (tx_num =3D=3D 0)
-                goto l_end;
-        goto l_end_of_tx;
-  l_end_of_tx:
-        SXE2_PCI_REG_WRITE_WC(...);
-
-The unconditional "goto l_end_of_tx;" immediately before the
-"l_end_of_tx:" label is dead =E2=80=94 fall through.  The same pattern
-appears in sxe2_rx_mode_func_set() at the end:
-
-          dev->rx_pkt_burst =3D sxe2_rx_pkts_scattered;
-          goto l_end;
-  l_end:
-          PMD_LOG_DEBUG(...);
-
-Both can simply be deleted.
-
-
-Series hygiene
---------------
-
-Info: several identifiers are introduced with typos in one patch
-and corrected in a later patch within the same series:
-
-  - sxe2_commoin_inited (patch 03) -> sxe2_common_inited (patch 05)
-  - sxe2_drv_dev_handshark (patch 03) -> sxe2_drv_dev_handshke
-    (patch 04).  The renamed form is still a typo (missing 'a'
-    between 'h' and 'k').  Log strings around it were corrected
-    to "handshake" in patch 05; the function name was not.
-  - Dead "if (ret !=3D 0)" after two void-returning
-    sxe2_{rx,tx}_mode_func_set() calls is added in patch 08 and
-    removed again in patch 09.
-
-Each commit needs to be independently correct so that "git
-bisect" lands on meaningful states.  Renaming an exported
-internal symbol (RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_handshke))
-mid-series also churns the auto-generated version map.  Please
-collapse these into the patches that introduce the names, and
-fix sxe2_drv_dev_handshke -> sxe2_drv_dev_handshake.
+Use a separate cursor for the submit calls and iterate the stats loop over the original tx_pkts, or accumulate per-packet stats inside each submit step.
