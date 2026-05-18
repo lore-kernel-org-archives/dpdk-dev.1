@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 487D6CD4F3C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 02:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AAFCD4F3C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 03:00:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54A20402A7;
-	Mon, 18 May 2026 04:45:46 +0200 (CEST)
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
- [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id 8962040264
- for <dev@dpdk.org>; Mon, 18 May 2026 04:45:45 +0200 (CEST)
-Received: by mail-dy1-f171.google.com with SMTP id
- 5a478bee46e88-2ee990e8597so5305347eec.1
- for <dev@dpdk.org>; Sun, 17 May 2026 19:45:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id ACA12402A7;
+	Mon, 18 May 2026 04:59:59 +0200 (CEST)
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com
+ [74.125.82.175]) by mails.dpdk.org (Postfix) with ESMTP id 9274240264
+ for <dev@dpdk.org>; Mon, 18 May 2026 04:59:58 +0200 (CEST)
+Received: by mail-dy1-f175.google.com with SMTP id
+ 5a478bee46e88-2f3c623322bso6397211eec.0
+ for <dev@dpdk.org>; Sun, 17 May 2026 19:59:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779072344;
- x=1779677144; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779073197;
+ x=1779677997; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=QGRwGnhCXnPUx2UpH1GwGIHgxGPN3w5hanDOJ9Kp5Gk=;
- b=j0e/7gtqUs6/tx3J/LfJgftdpiFpxETtVqUPhaHxTbkXgduw+YdriNg7Bh2KftiQ2F
- ld01WS7ogxudQX6k58eVogPH5xMYkXweZstpc906UQdzTt12ZDhqeLUQDx9BXnxV3N/w
- B6K144Ffp3K5C0tio782FEDhzesqnCzVdn5OTHcJo9n1JkZXOhGZnF8QEYdVUhysHpHZ
- 8T0/3ZHMQX1I+IDaNuWDsdz1V0G2a/Qc6HDrZim3DKJVAf81+2DSnEEP3KeJJX7daZ2b
- eWbAqj6dt/tTd4hVCyr5SN/ZT1dZsJCx6N25kjf7y3an78xcDESGPxEY0nR208cCEMt+
- TOPA==
+ bh=3u8VBS9RIoQy5KJhne2JPOGgvZL9K9qrhOlg1a66x7E=;
+ b=WzglRTs30Lx5K9p/m7NqOOSA8thGIeBUAQOvDV8r5sn3a93cdwh2U39GtxR5VQ/+c4
+ qgUmk6z8r0+eedWiz6UdemusfvaY2o4l2KWA5znuoaU9BUhUckGI3PuD2M/yfJ0lJgLa
+ nOvjtlXaWhEmO3+TEpOqCPDyAwL7OTEpHbkWiFEhSJhpKZYi9KkDcuQAIMqSZ1ePzfIF
+ OJF40r5iiJYEEZT56t+3RJO0AiA7vm6iCrbw4i2rD0ynSOPUuGiE8gSjzPpg4kmVEGDQ
+ 0Vaqz40Ol/NhAASNp2aUzoWAzNJS+84qHVMpNj6RXDGuTNWkI317okuvBnzddwCrh+iP
+ jvsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779072344; x=1779677144;
+ d=1e100.net; s=20251104; t=1779073197; x=1779677997;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=QGRwGnhCXnPUx2UpH1GwGIHgxGPN3w5hanDOJ9Kp5Gk=;
- b=cz1YrABCy3qqLkBj0/jPT4FdjqJvktRplAuQ00vE63yVTcE6NwJimxZC6pKspmYGb+
- f3pbyideiZEcUezNlrBHe7r3hFvjCdNzhfFWj1Zi358QtjsOtruVBz5RUU/HTiTP6IR3
- xYTxt5ZPHnLieINj9UAat/oDUSZ2r9RCTV9P95nRuR7bN4oWnthGvkMq6I0VaoRXXy+3
- grTn9tdM5uCg5TFFu+DAQcTcWZEmHxn1XL0TKRQXkPhPVQYT2cOvD8RDUtuqmop42AgD
- 83WUgf5CpZDIiEJo6Irj8IloQCjtZfUZJTTdEIuZFV/Rb5sktNJXVJLZ0BkaFr2ntq6R
- yAFQ==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/HQPnD49TsXvYnWuc2B05Ey9d865Y2lFQRDT7FG98WbdoVx0poGSmlpipMI5lVkk8rlnQ=@dpdk.org
-X-Gm-Message-State: AOJu0Ywb59+YRsIhyt6XwzNiIHeMZ3k/Ic0BZH2m9zTBL8Z0yBQjIVo2
- 9FTBvLfNgyetNaHF3y4sHDRIdrVz8NsDDn9sq50iybehoWxgMyWX4Jv53bbRouAa9bM=
-X-Gm-Gg: Acq92OEoKbXUzJ8rhsNSZK6xbPnc8iejvFAl9de7RgHKdaWnpMwdXzbfDDJbz/q57sf
- P1JS2I1wmNRK0BHsO8GmgRUN8szKL9BQu/VksrrIOb2MeMpM0FOH2Ot+EiPWPQvewHbbmODCHTz
- El8AeMZOQewYgWHC6EeRXC2Ex4HYE1XbUDZhfHhKVjROoBXza53bKV8eayWCOZn+ny/ZVXSR/e9
- i19WzFyJnkb+rffBadzrKlzuWArorzoLFZLudiCytWic0Wj4BojgxUHtG8yDD71PxCbB+NN7Has
- phX3ER9ysdJJezyI6co1y3ShxuscVPQalM2lFSlbItfnJNB0SOGlBCLYqc1hRVx37kdp057XDbb
- S3f8nJkhsd2/KlRi7tpL9pCjXVQd4fZ/JIxZ/cafS3KZTz7EDxGGnshIFO4JI5K7Jb3Y0jkpfXQ
- Mzq8D6bcbTyEcg4LbHda4DsBhCU3QtNv8KKShpgxi8RDfrZQ==
-X-Received: by 2002:a05:7300:a907:b0:2f0:c8b5:3dc7 with SMTP id
- 5a478bee46e88-30398680c36mr5975544eec.22.1779072344398; 
- Sun, 17 May 2026 19:45:44 -0700 (PDT)
+ bh=3u8VBS9RIoQy5KJhne2JPOGgvZL9K9qrhOlg1a66x7E=;
+ b=eA57M6PuoRrdkizZeIfPkMTfuDiVk9TcWAcAx/lZnrgibQGYkP5vqyzoxIUwHt5JNl
+ rvkYy2cKWm0mxgel2LdLgaBN1BMfXjUeUE/Sm01UmgENzF+snfryaI4Eue21kyrn6hwM
+ KZsMa50Abl4u/viablbEZLqGt73BtVWFK5/jt6Kvdw5h5ilPonCmoAmbXCGHEEOT6aO3
+ UIZ+RFdEvLRgyECK96wks/kNaKtCbVq8BygtIRhNFlZkfMv0W7/+/i3ySneaSosDDuiu
+ GrJB4nk4iapPw9QdtPe06S6F20xolHfRB1vh6QfMaGYVWiX6U9FQYyIRak7R2k4HMi/C
+ NH+g==
+X-Gm-Message-State: AOJu0YyAjFk6bBb2lcbFPEq4TDhtBZjEPq1qTtsu0XTpk7MJXzvQbPg+
+ V6X4DRF/IbQH5nnw5LymYAshZMBYJFLcfs9BOSFC+i0dwMnXmOZTkLrWMXswc0FddDM=
+X-Gm-Gg: Acq92OEp+LrruV5IvmUw3jylMTuaIvkL4VEMTpbjRQgpxy9nqDjwd5bGFSH7RXrEbN6
+ WqN2rkRmdzfwR4WKPhkn2FKrlOSJ6CIVMMeyKPr5ZYrKc8kCqiZv11P7k8gryJmmifc1V2WE/lm
+ +fwNDWHAom7mRP8IOan1qHl3vQ6SHv8/gCTRHjX67tjVy9kZz2nRFjaHaqOVdA7pOXrkohDz2Bf
+ rwhV19UwZPGjAmmEXtjqiY1DOx5hi516woOU+B50w5mK46rok9wWDRH6Z1ATCIOPrKFHFcgJpu7
+ uMImxzqJyB/0idHMUb5Pguuonm65tUZhiSYHA65Fc/y6zR/RhtI1wtJVTEbZym07uH0nI9Ws+rn
+ dBpzSEnCSRx2ye/3Lj6JHoNV3y9pcUbiplkAaAQzxmLxBeZ5LI/77NW57gL3eDhoLROV25awRLL
+ W0DC1ajCU5iGABWW1tXBDvPDlXEfnrO4H/8HVPTOnk1yS3rA==
+X-Received: by 2002:a05:7300:570e:b0:2c8:6361:ab2e with SMTP id
+ 5a478bee46e88-303982ac579mr6621562eec.8.1779073197305; 
+ Sun, 17 May 2026 19:59:57 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30293e2e3c0sm16006844eec.3.2026.05.17.19.45.43
+ 5a478bee46e88-30293e2e6a9sm12690686eec.2.2026.05.17.19.59.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 17 May 2026 19:45:44 -0700 (PDT)
-Date: Sun, 17 May 2026 19:45:41 -0700
+ Sun, 17 May 2026 19:59:57 -0700 (PDT)
+Date: Sun, 17 May 2026 19:59:54 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Denis Lyulin <lyulin.2003@mail.ru>
-Cc: Ori Kam <orika@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, Ferruh Yigit
- <ferruh.yigit@amd.com>, Michael Baum <michaelba@nvidia.com>, dev@dpdk.org,
- stable@dpdk.org, adrien.mazarguil@6wind.com
-Subject: Re: [PATCH] ethdev: fix pointer check in GENEVE and RAW flow copy
-Message-ID: <20260517194541.577dbba0@phoenix.local>
-In-Reply-To: <20260507112012.119140-1-lyulin.2003@mail.ru>
-References: <20260507112012.119140-1-lyulin.2003@mail.ru>
+To: Long Li <longli@microsoft.com>
+Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>
+Subject: Re: [PATCH v3 0/7] net/netvsc: fix VF hotplug and service reset
+ handling
+Message-ID: <20260517195954.12865a1d@phoenix.local>
+In-Reply-To: <20260515192843.552762-1-longli@microsoft.com>
+References: <20260506020529.281654-1-longli@microsoft.com>
+ <20260515192843.552762-1-longli@microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,91 +81,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  7 May 2026 14:20:11 +0300
-Denis Lyulin <lyulin.2003@mail.ru> wrote:
+On Fri, 15 May 2026 12:28:34 -0700
+Long Li <longli@microsoft.com> wrote:
 
-> When rte_flow_conv_item_spec() is called from rte_flow_conv_pattern(),
-> the spec, last and mask pointers are checked separately. If the API
-> is used incorrectly, the spec pointer may be NULL while last and mask
-> may be valid pointers.
+> This series fixes several issues in the netvsc PMD's VF hot-plug retry
+> logic and adds support for MANA service reset (suspend/resume) recovery.
 > 
-> In rte_flow_conv_item_spec() for GENVE_OPT and RAW item types the spec
-> pointer is used even if the function is called to copy last or mask.
-> It may cause a NULL pointer (spec) dereference.
+> Patches 1-5 fix the VF hot-add retry path to handle Azure-specific
+> timing issues: slow MANA driver probe (>100s), udev interface renames,
+> asynchronous mana_ib registration, and multi-NIC staggered VF
+> appearance.
 > 
-> This commit adds extra check of item->spec and if it is NULL, does not
-> copy further data relying on it
+> Patch 6 fixes per-queue stats forwarding from VF to netvsc.
 > 
-> Fixes: 841a0445442d ("ethdev: fix GENEVE option item conversion")
-> Cc: michaelba@nvidia.com
-> Cc: adrien.mazarguil@6wind.com
-> Cc: stable@dpdk.org
+> Patch 7 adds recovery event handling for MANA service resets, where
+> the kernel suspends/resumes the VF without PCI remove.
 > 
-> Signed-off-by: Denis Lyulin <lyulin.2003@mail.ru>
-> ---
+> v3:
+> - Patch 1: wrapped rte_eal_alarm_set lines to fix checkpatch
+>   line-length warning
+> - Patch 4: changed "retry loop exiting" log from NOTICE to DEBUG
+>   to avoid noise on every successful VF re-attach
+> - Patch 6: removed dead -ENOTSUP fallback to rte_eth_stats_get,
+>   replaced with direct -ENOTSUP return; documented caller contract
+>   for zeroed buffers
+> - Patch 7: deferred all recovery callbacks via rte_eal_alarm_set
+>   consistent with INTR_RMV pattern; dropped unlocked vf_attached
+>   guard in recovery_failed; cancel new alarms in hn_vf_close
+> 
+> v2:
+> - Patch 1: added comment explaining why indefinite retry is safe
+> - Patch 2: changed SIOCGIFHWADDR retry log to DEBUG
+> - Patch 3: restored ERR log for non-ENODEV/EEXIST failures
+> - Patch 4: changed per-iteration logs from NOTICE to DEBUG;
+>   used RTE_ETHER_ADDR_PRT_FMT macros
+> - Patch 5: fixed commit message (limit 120 not 30); changed
+>   mac_retry log to DEBUG; explicit NULL comparisons
+> - Patch 6: added comment for direct dev_ops call; added -ENOTSUP
+>   fallback
+> - Patch 7: added dev_started check in recovery_success; added
+>   vf_attached guard in recovery_failed
+> 
+> Long Li (7):
+>   net/netvsc: retry VF hotplug indefinitely until PCI device disappears
+>   net/netvsc: retry on SIOCGIFHWADDR failure during VF hotplug
+>   net/netvsc: retry full probe when IB device not ready during hotplug
+>   net/netvsc: add debug logging for VF hotplug retry
+>   net/netvsc: retry when no matching MAC found in net directory
+>   net/netvsc: forward per-queue stats from VF device
+>   net/netvsc: handle VF recovery events for service reset
+> 
+>  drivers/net/netvsc/hn_ethdev.c | 142 +++++++++++++++++++++----
+>  drivers/net/netvsc/hn_var.h    |   1 +
+>  drivers/net/netvsc/hn_vf.c     | 182 ++++++++++++++++++++++++++++++++-
+>  3 files changed, 302 insertions(+), 23 deletions(-)
+> 
 
-AI spotted a couple issues here, please address.
-
-Warnings
-========
-
-* lib/ethdev/rte_flow.c: RAW case guard is overly broad and regresses
-  the LAST-without-spec path.
-
-  The new wrapper `if (spec.raw && last.raw) { ... } else { tmp = 0; }`
-  is too coarse. The original code only dereferences spec.raw on the
-  SPEC and MASK paths:
-
-    if (type == RTE_FLOW_CONV_ITEM_SPEC ||                  // uses spec, mask
-        (type == RTE_FLOW_CONV_ITEM_MASK &&                 // uses spec, last, mask
-         ((spec.raw->length & mask.raw->length) >=
-          (last.raw->length & mask.raw->length))))
-            tmp = spec.raw->length & mask.raw->length;
-    else
-            tmp = last.raw->length & mask.raw->length;      // uses last, mask only
-
-  For type == RTE_FLOW_CONV_ITEM_LAST the else branch is taken and
-  spec.raw is never touched. With the patch, when an item has
-  item->last set but item->spec == NULL, the wrapper short-circuits
-  to tmp = 0 and the `last` pattern is silently dropped (dst.raw->
-  pattern stays NULL after the struct-initializer memcpy). The
-  original code copied it correctly.
-
-  rte_flow_conv_pattern() calls this function with type=LAST whenever
-  src->last is non-NULL, regardless of src->spec, so this path is
-  reachable through the public conv API.
-
-  Note also that mask.raw is guaranteed non-NULL by the
-  `item->mask ? item->mask : &rte_flow_item_raw_mask` fallback two
-  lines above, so it does not need to participate in the guard.
-
-  A more surgical guard preserves the LAST behaviour, e.g.:
-
-    if (type == RTE_FLOW_CONV_ITEM_SPEC && spec.raw)
-            tmp = spec.raw->length & mask.raw->length;
-    else if (type == RTE_FLOW_CONV_ITEM_MASK && spec.raw && last.raw &&
-             ((spec.raw->length & mask.raw->length) >=
-              (last.raw->length & mask.raw->length)))
-            tmp = spec.raw->length & mask.raw->length;
-    else if (last.raw)
-            tmp = last.raw->length & mask.raw->length;
-    else
-            tmp = 0;
-
-Info
-====
-
-* The commit message attributes the bug only to calls from
-  rte_flow_conv_pattern(), but the more directly reachable path is
-  rte_flow_conv() with RTE_FLOW_CONV_OP_ITEM_MASK (rte_flow.c around
-  line 1144), which validates only item->mask and leaves item->spec
-  potentially NULL before invoking rte_flow_conv_item_spec() with
-  type=MASK. Worth mentioning so reviewers can locate the trigger.
-
-* The GENEVE_OPT hunk uses spec.geneve_opt->option_len to size the
-  copy of src.geneve_opt->data, even when src is the mask (type=MASK)
-  or the last (type=LAST). This pre-existing assumption (that
-  spec.option_len describes the layout for all three) is preserved by
-  the patch and is out of scope here, but worth a sanity check that
-  the spec.option_len fallback to 0 (no copy) is the desired
-  behaviour when only a mask is supplied via OP_ITEM_MASK.
+Applied to next-net
