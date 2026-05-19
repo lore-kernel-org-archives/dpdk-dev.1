@@ -2,71 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62097CD4F4A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 22:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0ABCD4F3C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 03:01:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A4674021E;
-	Tue, 19 May 2026 00:26:42 +0200 (CEST)
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
- [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id 04EBD40041
- for <dev@dpdk.org>; Tue, 19 May 2026 00:26:41 +0200 (CEST)
-Received: by mail-dy1-f171.google.com with SMTP id
- 5a478bee46e88-2bdcf5970cdso1808156eec.0
- for <dev@dpdk.org>; Mon, 18 May 2026 15:26:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779143200;
- x=1779748000; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ABvMCDA+HCC00Cdfzxs02tDwZFXbUN3Q3ODtt1o3fjE=;
- b=ypN42k4eUmtXensQKciNZSFr2FQ8yycnrvXzrPhZlt1e8XZxNB/L32jJbH4FjPjNNF
- oSmEHIGQFXzdfpcIRQWYlzaTE6F5iqZ11lYuRdhjwXlLDQ7qBsmjJSMpzHuCJaiMR9GQ
- T/EwlFEti8Qf3Xl2Vw3nzJyhjKc0rKxSzCH1GC81BA5IB1BIqf2HXvB3iCn3PylXSqN2
- OK3VojHfCicecVm+jkv75sTrD68SIcX5Ckx2kxVwnX5PewCVyXQOWteltnI+8DzChaaL
- vSOuzO03ox1++BDFY7MuJp/jXMmgHqpxVuy3T3ofKBJ6GneVu4ePgX3UWDDgW5v99jjR
- biSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779143200; x=1779748000;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=ABvMCDA+HCC00Cdfzxs02tDwZFXbUN3Q3ODtt1o3fjE=;
- b=W7UI7M0rXmsSnATRvDAOB1pS1fyqLejxMx6VDlOcE6J01KuZPgUCPuUiS9DGM2BJZA
- EDEFcY9F7Y1VxCluFqtcJm161QAGwTlJ+OmLEPEvPWx1cObpOChjdPfh5wpVamQge1BN
- /EAkReNxEy4pZwAzNlZI/12sRbGUz2ZFbfCcYwA92a07110WtiI2bFj/IPzo4vvZktvR
- Ub2jv6IKtqnzJYhgd+KvW1RgGmteoEhr63lkhb4YDDOnUYtvYWWGcVyGV3EeQ0OI6Qay
- /BUVOzf2L6FdQQOfqr1wEI0Q/axt8gThJNPabo3BUSF4lOAwcWTNlDLi54cuQ1ZAWkA6
- Xumg==
-X-Gm-Message-State: AOJu0Yx70sPH83fEcYAiIBz5maK5QeI3Fgr0ABW3dHSpXJGWJvneCpET
- 9G89x0PdSLQYereBirLAuen0KWuJpQyjJKHIUQIDE8glAasJqsGXdJRnnxOwwPFgND4=
-X-Gm-Gg: Acq92OE0Hhsx4HpNgMr+A74DZNCmT3ubaO9qHcpIIP/VgkpU0dQuygHpgxbtwattpJh
- CgZ7ZvBG9UWuTDK839/3lXTYON3rrjQaiaR0f8693MlOJurO7LkH4bfctxI8NLpAl8epN+owzwB
- b7E6SeO7++ySdlXLFFLbDc5GUwG6vaIVXYiVhxsu5WJ5U/2okkP+lf9oL5NGxuu9p853l55SY1g
- 5OaCfXkfNS/cJKD1DHucDxWMJXUlASzdid9ggVEMWFGRjHdb+EZMCAd2vGK9iMwo+NBwDOSuQTk
- QsTywDTsMWIFX/Bf7xkFlIQF0SSkUnH2LUSvLLCK58zJm3ZKHqeeM+zD0d8lff/zEYgDM0de3FO
- uu/lZub5G+PZtRPQruepc8NXS0SbfbJ84owSwrcJlIZWlXNjWQDCVan/xqZdWvWbFIc0cG8OGJN
- vvNTUtfZlDvfuIoYPiLMTgksvMKqQ/yeHF/Ak=
-X-Received: by 2002:a05:7300:e12a:b0:2be:ca4:e114 with SMTP id
- 5a478bee46e88-30397981629mr5855097eec.9.1779143199952; 
- Mon, 18 May 2026 15:26:39 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30296dcc458sm18094726eec.18.2026.05.18.15.26.39
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 May 2026 15:26:39 -0700 (PDT)
-Date: Mon, 18 May 2026 15:26:35 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH dpdk v6] net/tap: use offsets provided by rte_net_get_ptype
-Message-ID: <20260518152635.7f95aa18@phoenix.local>
-In-Reply-To: <20260518205448.142884-2-rjarry@redhat.com>
-References: <20260422133615.680318-2-rjarry@redhat.com>
- <20260518205448.142884-2-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DD9B64060C;
+	Tue, 19 May 2026 05:01:41 +0200 (CEST)
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+ by mails.dpdk.org (Postfix) with ESMTP id E15744021E
+ for <dev@dpdk.org>; Tue, 19 May 2026 05:01:39 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-05 (Coremail) with SMTP id zQCowABH2w6R0gtq2P+2EA--.12035S3;
+ Tue, 19 May 2026 11:01:37 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v17 01/11] mailmap: add Jie Liu
+Date: Tue, 19 May 2026 11:01:22 +0800
+Message-ID: <20260519030132.3780057-2-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260519030132.3780057-1-liujie5@linkdatatechnology.com>
+References: <20260518091405.3295896-12-liujie5@linkdatatechnology.com>
+ <20260519030132.3780057-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: zQCowABH2w6R0gtq2P+2EA--.12035S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrJryDZw4UCw1DZrWfJFW8WFg_yoWxWrX_Ka
+ 4rGr4kuws5Jw1fZrWvvFsxJ3WYvw10kw4Fkwn8KFyfZr15Gw1Ikryvkrs0gF4UXw48WFWf
+ CFn3JFsYya9xWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUIcSsGvfJTRUUUbSxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+ 6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
+ 0Ec7CjxVAFwI0_Jrv_JF4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
+ wVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwA2z4
+ x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JVW8Jr1le2I2
+ 62IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcV
+ AFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG
+ 0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xxMxAIw28Icx
+ kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+ xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42
+ IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY
+ 6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+ CY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUO89NUUUUU
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,16 +58,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 18 May 2026 22:54:49 +0200
-Robin Jarry <rjarry@redhat.com> wrote:
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-> Instead of guessing what are the proper header lengths, pass
-> a rte_net_hdr_lens struct to rte_net_get_ptype and use it to get the
-> proper header lengths/offsets in tap_verify_csum.
-> 
-> This allows supporting stacked VLAN/QinQ tags.
-> 
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
-> ---
+Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+---
+ .mailmap | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied to next-net
+diff --git a/.mailmap b/.mailmap
+index 895412e568..d2c4485636 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -739,6 +739,7 @@ Jiawen Wu <jiawenwu@trustnetic.com>
+ Jiayu Hu <hujiayu.hu@foxmail.com> <jiayu.hu@intel.com>
+ Jie Hai <haijie1@huawei.com>
+ Jie Liu <jie2.liu@hxt-semitech.com>
++Jie Liu <liujie5@linkdatatechnology.com>
+ Jie Pan <panjie5@jd.com>
+ Jie Wang <jie1x.wang@intel.com>
+ Jie Zhou <jizh@linux.microsoft.com> <jizh@microsoft.com>
+-- 
+2.47.3
+
