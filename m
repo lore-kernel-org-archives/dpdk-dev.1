@@ -2,64 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17805CD4851
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 04:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C1ECD4F3C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 04:44:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A6DD40613;
-	Tue, 19 May 2026 06:44:34 +0200 (CEST)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com
- [209.85.221.46]) by mails.dpdk.org (Postfix) with ESMTP id 8AE2540613
- for <dev@dpdk.org>; Tue, 19 May 2026 06:44:33 +0200 (CEST)
-Received: by mail-wr1-f46.google.com with SMTP id
- ffacd0b85a97d-44a044cb827so2137489f8f.0
- for <dev@dpdk.org>; Mon, 18 May 2026 21:44:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 410CE4060C;
+	Tue, 19 May 2026 06:44:45 +0200 (CEST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
+ [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id 9952140296
+ for <dev@dpdk.org>; Tue, 19 May 2026 06:44:44 +0200 (CEST)
+Received: by mail-wr1-f41.google.com with SMTP id
+ ffacd0b85a97d-45d96d21e82so1737027f8f.0
+ for <dev@dpdk.org>; Mon, 18 May 2026 21:44:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1779165873; x=1779770673; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1779165884; x=1779770684; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=jn5u+5Hds540tkazZNHbNDSJw1nwLNtkjEiysndB/2Y=;
- b=jwlZpm+g4bSs2PwrSg0+MSlT+D3o6oQifuHrmRDuenNi/CSOY6RjMMFYCCiVznRdlk
- sXYBrzOE8hzpGPFg4fKDyk8XbIvsT5XvCV+jhyNDVHFHS8qXX/IMtqS+wlbpt2mkqvrU
- NKUpwf3sZM+bZoPvmTPRWMPOzI3CUVnuYGyeJtJkpGYDwltJMPE24ydh8AcmKaHKh5qn
- /jp7vEvfZcbvQ97r+2hrANHGPlkozas9aQL6pxiuVaxwG/SHP0eHKi2U+3S44xMt2IN9
- Y5/f81bPU0yS5UdtY1NPzUndV0HveKexxxpyHpiGSjPBbL5nRZzJOW+7OLhi/ju85psv
- O8fQ==
+ bh=zjPODLZZjKSH0jJ+Gu+rURcWdKv8JqVCKlk7QakaoWw=;
+ b=hp9/LxqaNFl2rjREB3Fb9nKJceCsMTc0EvTLV9BIOmfMA7F0I2ytHEX6iK3BYLeLcx
+ mCOt927YVXS9A7z2ZFKVhLHOLqLYcnw8n+3LHNzf+W2TFGHCFSb/ODgz8ot+ZVYpTSb1
+ 5BrIcJ73bvzl++587GThM8/jG6CFNcGMxxxlgY5aSlOfW7YNa7m7A2B6z1IjAPxPGEow
+ NRkAFg3jCVJR6ZiloSRp/htUOlHftlklS1QA0a/5Xt7d/j0hcSGsWzm8QskazBjOyv60
+ UGQ+QVUYhFmtExTSJPq01uX/PjKeKxbpB3NDoK/J1lPgAWUbTVgMZrBoQsa7OimI6qDz
+ EVWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779165873; x=1779770673;
+ d=1e100.net; s=20251104; t=1779165884; x=1779770684;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=jn5u+5Hds540tkazZNHbNDSJw1nwLNtkjEiysndB/2Y=;
- b=FMBGtcsXgWojvwNWcRdXt7h0Ho12vUPloo9MDrnCGmSI/X3dFMustdUNeFlltTwaXv
- 3WWvGvHIUjLi0DW7wWXimtNAE9Hyz1cMQASOFKqj10C+QfrGmMevESKD3udB8tqGmTnL
- JfnoPg5MUrtlvaGMLDEAxsP8IGm/XoiCbTWowNIpRMBK/qeXtXEOAz5OwfkDE1z2K0BM
- MMRWG6AbkwcWI8Rcv+C0aFDL45myDvW2wt6SVPzS1cqYZ/hMbUmIxTwiVonVitt8I/la
- LbH8PrR/MmSwB0OfoNv9T3RV3cQIqT9qCXQR9g1WTlUuEPc8Tt1xab27BsUQFiJ4WtuR
- wXig==
-X-Gm-Message-State: AOJu0YwjLw/CBWpw5ZkqxGtwOiHGSqSZFmSbjTesMvQ9FvKCFCqoG6QG
- Cywa2yso8aJHJDIPK/Y5f5MhsS22L5KwA0jqMdQg8dYW316pcHK4Q08QoxPAkHu0
-X-Gm-Gg: Acq92OGwSi1yhmgpsdD7xSKchpuvhCfnGQyQ+EuVt1gv7rZsjbFRylXufO3V28xqevl
- EeAj4qmHm7ohuXobIOQ6lXP18eEw6hsQloLN/NiEnh+FXQ2txCfrgYIp9sitF5p6910n/Piq0I+
- 7SjI9ee0iIwqgrkBORcVE3O+g6c4KCBXrHgCOf7pTdj3KAbOeVanjQISa9RXABLzAqOx4xc3FpH
- pL94E4ATmRd8hxgl/X3yS+3mSh7g6N5tBAgVIBxRHAChMNj3+6rEJSX8QADF6UTVHBlu/l25f0Z
- tPI6rYVcYuuO7GQf7ocTA6l1hyB9Fc3bq1WwWQCEmYS2QC/f342XmUuXhcGcXgSLCL4g9y0Z7dn
- 2rYRWGpybIfXffYn3fRHCNz11fLJAY3UZ73AUA+xxl/GSdZ9JJasLKKWrcEAR3yg53R5mF8K5sC
- KiOkon+eXLKR8qKpzQ9nUln9zcsuZvevDatFGvtyBVnQXSnSdc/zKQwcG2
-X-Received: by 2002:a5d:5c84:0:b0:43c:f90b:5668 with SMTP id
- ffacd0b85a97d-45e5c5beb17mr27701106f8f.23.1779165872905; 
- Mon, 18 May 2026 21:44:32 -0700 (PDT)
+ bh=zjPODLZZjKSH0jJ+Gu+rURcWdKv8JqVCKlk7QakaoWw=;
+ b=JdUyZr0ouc3LmvsowSYQ/lVKbrfbQ205aBxHLjwDRm0gJwY3D1GGJGRDvUL4TJKVAd
+ bJviQRA3KoH9gsQhdWsdREUmG4ozG7aui98BXHso/hmDvCm2zT9K6BIKXiaCNSOnwZO7
+ 7IoWzX8LLbGqDNEwH3TpdSS73VdbsBaKj0R9+twiWIaqK6XTaQ5YRa89GGQLD/sIMcAQ
+ 5GrCq/lrfW0AwckqPbLhIDvYSxtvZ69ILUDnex4BMQN2sCDbyzgpUEGdTSYeX8M224MA
+ c0WRRPACl2hmHq+sT56cw9IL9wBIPyrkCLWoanxxOeDJAgZlRN9VdjzZMxPdwMrHgmGk
+ OCpg==
+X-Gm-Message-State: AOJu0YwJkZ4dLtJ7ugVkEmFwteK+UFUqDtFlLBB//BevMrZzA4+qTrHO
+ JGEyG9bH6GwGeJdKJmLXIxWZjmIsyfmbPIDOx0neUCVKt2SlTMQKmX7P+N00NmeG
+X-Gm-Gg: Acq92OESyEF5/aapIA6pfxo8qqjNMPXOB66T7sHHAjN8rdn4dmy9iubEF/e4FbyJm7q
+ 99BaYxSP58Ny6QAy7vyQ+KkdX3hTjASYHDn7wGEMULoXQ9lgztom8VUiVF9fRY+ccVSDXs6l37o
+ V5IsQab8CbrGdyrOZDaBkJP5Rvypr3Z4M9PRezL2StpkByx9LMQZnxzeqwhrRMEgqSvGDYHDLYD
+ 7F+VZY6HeBGC1cu9E59U5XA1vCv04dQHAECI8RBcHFlm0yQrAgKdPuGJINr5+PkmNLPZdjMAS1r
+ SyQ7u5URJENCZfqB4wlbiI1NXYJlmUBzFLr6oMkLhgHPND89q3UPKyg863IoM2hFWCQ0gnbfogq
+ JhuPSG304lFDpLxZMQZlSOwD2i0QvG9+g0EEKsmUzvsNm71vkHI7WpH6q46s9qlgOmClbtr7LqG
+ thkUYou1gYZR3lsOoh32EMXLXm6ghkvL14y2sle+QsUDAYzA==
+X-Received: by 2002:a05:6000:400f:b0:43d:c95c:4259 with SMTP id
+ ffacd0b85a97d-45e5c5dd488mr27430517f8f.30.1779165884120; 
+ Mon, 18 May 2026 21:44:44 -0700 (PDT)
 Received: from happy ([185.229.111.129]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-45da15a5653sm42842861f8f.35.2026.05.18.21.44.30
+ ffacd0b85a97d-45da15a5653sm42842861f8f.35.2026.05.18.21.44.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 May 2026 21:44:32 -0700 (PDT)
+ Mon, 18 May 2026 21:44:43 -0700 (PDT)
 From: Denis Sergeev <denserg.edu@gmail.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com, ajit.khaparde@broadcom.com,
- Denis Sergeev <denserg.edu@gmail.com>, stable@dpdk.org
-Subject: [PATCH 1/2] net/bnxt/tf_core: fix ignored return of EM delete
-Date: Tue, 19 May 2026 07:43:43 +0300
-Message-ID: <20260519044344.9544-2-denserg.edu@gmail.com>
+ Denis Sergeev <denserg.edu@gmail.com>
+Subject: [PATCH 2/2] mailmap: add Denis Sergeev
+Date: Tue, 19 May 2026 07:43:44 +0300
+Message-ID: <20260519044344.9544-3-denserg.edu@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260519044344.9544-1-denserg.edu@gmail.com>
 References: <20260519044344.9544-1-denserg.edu@gmail.com>
@@ -78,43 +78,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The return value of tfc_em_delete_raw() in tfc_em_delete() was
-silently discarded: rc was unconditionally overwritten by the
-subsequent tfc_cpm_get_cmm_inst() call without any error check.
-
-If tfc_em_delete_raw() fails, the HW EM entry is not removed but
-the function continues to free the corresponding SW pool entry,
-creating a HW/SW state inconsistency that can lead to stale flow
-matches or incorrect pool slot reuse.
-
-Add an error check after the call and return -EINVAL on failure.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 80317ff6adfd ("net/bnxt/tf_core: support Thor2")
-Cc: stable@dpdk.org
+Add my name and email mapping to .mailmap
 
 Signed-off-by: Denis Sergeev <denserg.edu@gmail.com>
 ---
- drivers/net/bnxt/tf_core/v3/tfc_em.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ .mailmap | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_em.c b/drivers/net/bnxt/tf_core/v3/tfc_em.c
-index 3fe4dbe3fe..4c126dc2f4 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_em.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_em.c
-@@ -661,6 +661,11 @@ int tfc_em_delete(struct tfc *tfcp, struct tfc_em_delete_parms *parms)
- 			       &db_offset
- #endif
- 			       );
-+	if (rc != 0) {
-+		PMD_DRV_LOG_LINE(ERR, "tfc_em_delete_raw() failed: %s",
-+				 strerror(-rc));
-+		return -EINVAL;
-+	}
- 
- 	record_offset = REMOVE_POOL_FROM_OFFSET(pi.lkup_pool_sz_exp,
- 						record_offset);
+diff --git a/.mailmap b/.mailmap
+index 4d26d9c286..3d0fc8c7da 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -373,6 +373,7 @@ Deirdre O'Connor <deirdre.o.connor@intel.com>
+ Dekel Peled <dekelp@nvidia.com> <dekelp@mellanox.com>
+ Dengdui Huang <huangdengdui@huawei.com>
+ Denis Pryazhennikov <denis.pryazhennikov@arknetworks.am>
++Denis Sergeev <denserg.edu@gmail.com>
+ Dennis Marinus <dmarinus@amazon.com>
+ Derek Chickles <derek.chickles@caviumnetworks.com>
+ Des O Dea <des.j.o.dea@intel.com>
 -- 
 2.50.1
 
