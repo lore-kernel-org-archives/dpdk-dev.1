@@ -2,144 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A96CD4F57
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 11:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3667CD4F57
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 11:06:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3FA89402C8;
-	Tue, 19 May 2026 13:03:38 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 877CF40296;
- Tue, 19 May 2026 13:03:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0AAD740296;
+	Tue, 19 May 2026 13:06:47 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 8045D4025E
+ for <dev@dpdk.org>; Tue, 19 May 2026 13:06:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779188615; x=1810724615;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=VaiFFpXSJCKZAIH9X98AlUryp922UDlTEUsXrOQ8N1Q=;
- b=X5PkX7awpGgDzK6V9t2WJFEhpbTIMRE6/NScG1b5hhueIggsXIEbEJFt
- KzahYQYNSkPPtCxanFWodMOzfvrWpzVoIeBamY44WmDh4W52t+BRaHUVb
- eq/Nkp+tpyA/hiDBjf0BdrXMSVW5Hibk0meKv8pQzl3pOhtQsh/8Zrnl3
- I4TPm9sUhs5ZJcOK0Pq+JtDBDTvlVZX4/cQ6YC06OC2x0b/FevvKpqEQ9
- yg+YlFfniJAr1/AVUsa2P3wryjl+15kZ7bciRaVHiCcOxEA94gbhTxq0D
- +SqouGftFnsT6gpK/k+xAHHHa+s25bFFPjmu2FwjRNoNLyUL4mD6FqyVk Q==;
-X-CSE-ConnectionGUID: xEFavBynR8CQgSCIgFoOxw==
-X-CSE-MsgGUID: +8/V6/OrRymn7P1duwI0pg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11790"; a="82627807"
-X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="82627807"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 May 2026 04:03:34 -0700
-X-CSE-ConnectionGUID: bqy4odGNSsG+jeHhRLW4aA==
-X-CSE-MsgGUID: SgqItQ+yT8mIq9pk/nWvHg==
+ t=1779188806; x=1810724806;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=632TXx9O6+cozazKjM3Aim64vAv/yMY/hPVeEyH82wc=;
+ b=Obs1xp4j3G0ZGHd7nCYUyHx3r9Xj+fidstb8EQ6EfmBnVgblVBY5W+Ud
+ hd5uUwASW0QxzgSMd0CKsCfvLwSjloAc6ZG2x+wIHYpJrOIbYS+3rN5yi
+ EQVsfBOdtqkBO3RMIW5wxZnkhzIYSDpL2Lgp62urngFevjD+Zgm06uzFy
+ rvpUcqeQor8XyB57RtyFjz4xYI7NRcr78OJw7hGUOTh7tqL69fFu1nn11
+ n32Bl4BHQSkly+gsT7TnTIt7e2qO2swqON11AIHjrEcK3I0rmLAH90iDg
+ 5ydDsRCNS/e9VlAWphiJnv8TiZ/4vVx42FeUKUUh+asEtY9JMWtxgfew9 Q==;
+X-CSE-ConnectionGUID: Y+ejBP9cSxmAn5IC1tAiKQ==
+X-CSE-MsgGUID: 4AjR2KTYSBiNgm6Wbtk8sA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11790"; a="102737567"
+X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="102737567"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 May 2026 04:06:45 -0700
+X-CSE-ConnectionGUID: XBGngLzEQbixoBlFm8pqxA==
+X-CSE-MsgGUID: qFHzq8swQw2J90XAza3MFw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="233359588"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 May 2026 04:03:34 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 19 May 2026 04:03:34 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 19 May 2026 04:03:34 -0700
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.32) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 19 May 2026 04:03:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aXbMnOCIf64cg1SfC8B+3sb8DiQn2dCUIV1S6Z8EHbrrYML1pdvJjABKcRy5m7P/WydYwy18UDEUAxX84P+pf5AxUqxBrOHMG726I7k/6EB24DgKFyJC86c8m/jMaa2jUW37zOTQmAOa2vYWbI+gSB4XgpCr6DdQAo2fhpLsOfA38wjxxeB/51NdUiTc3UzYbHEA+Ds1WHvXsShVBfGY6zuIfABsuFQhTNhuNcT/TxjEvGGsZhKB63yUMZX07I1Jlfi/0kKrhb4EGnbYvmE4YiCgSPMmcw/7VbxOY2lKSeltsZms1G2HDD/d9i1YNYpnYaR0+yTJczXz7NGFY9OimQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NC+oJFgoz1LkEM8F1LkxtiBAiGQIvBmXNljRyQZJWC8=;
- b=eTQX6q8nmaVVt3T8JoYJ1JrH862Ywgcvl4pvWx6vXt2j4gJ8GbbV44HdrZUUxz/OwlcOMT7O72XOXLjv+wFzbPBb/cgeqAjozexULAxFqK03uL1CsqxAT2z+8fQxXCcY2ZFgobTfvNM60jiCP+Ne/PAxLdE6smjHDXjpJu5NXLBC0odhQFsSYQAJQe0lROcBihg/R1Rtvp4noFaB5PAFi3BpRX/LDlVuITRYTZfjtG98g1B1rcKrOs2fewHDj1OsvUsOWBEG/7Y+dHdCFX5jgMJyWDC7GM6gbKU9waQJjN3QmdUSccGrwEXpSy3ZOFTCgcqLE1xCr7oxNckVD7TO1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by IA3PR11MB9256.namprd11.prod.outlook.com (2603:10b6:208:57f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.14; Tue, 19 May
- 2026 11:03:31 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0025.023; Tue, 19 May 2026
- 11:03:31 +0000
-Date: Tue, 19 May 2026 12:03:25 +0100
+X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="237121427"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by fmviesa008.fm.intel.com with ESMTP; 19 May 2026 04:06:43 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: Thomas Monjalon <thomas@monjalon.net>
-CC: <dev@dpdk.org>, Stephen Hemminger <stephen@networkplumber.org>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, Robin Jarry
- <rjarry@redhat.com>, <stable@dpdk.org>
-Subject: Re: [PATCH v3 1/3] spinlock: remove volatile qualifier
-Message-ID: <agxDfVCC-xfCwcCG@bricha3-mobl1.ger.corp.intel.com>
-References: <20260504083714.2904729-1-thomas@monjalon.net>
- <20260519103640.3986710-1-thomas@monjalon.net>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260519103640.3986710-1-thomas@monjalon.net>
-X-ClientProxiedBy: DU2PR04CA0053.eurprd04.prod.outlook.com
- (2603:10a6:10:234::28) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v3] net/intel: optimize for fast-free hint
+Date: Tue, 19 May 2026 12:06:37 +0100
+Message-ID: <20260519110637.964965-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260123112032.2174361-1-bruce.richardson@intel.com>
+References: <20260123112032.2174361-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA3PR11MB9256:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d9e064a-f8d4-4038-0441-08deb5964343
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|1800799024|22082099003|18002099003|56012099003|11063799006|4143699003;
-X-Microsoft-Antispam-Message-Info: iM6sVqcxVKV5JWSZI+j0SZPgoNoriWqWRkmiLuHmoAJMjIK+oXsrakd6YZODAc7j/VLdv5/XhH6pi5KIGMIxS7z3p6ywIu74I1aCod1nsw6M9AYKyfTTtiFfpb0LI2wY/zq68Vfc91lkxaY5Yn0xj/P3V8TAr4wFcZRAchPhhVgitYFPdp9bQ3mMhtWLnoKqt0T0vZahBEMKzkqnionbk5/NoVH4KeRdCDr5FpWg7G0+GWIfIG6oO21TpOKeU18MR1Vy4wMUXHl6oahWNElXlCqB8fjAV5j5i22ckKt2Wganjg8+SiqGYtI03FdHeX6uIIGjnU6x7rSa5yxLwvIPBIX61UwPMHRs0BsmjACSssHtxRh0R02cAUxXV4DEQ81PY+N3nuaqOWUb5k2qBIguHBWzqxQe360ukLVHmkI0kQJyV2kgYbyBtwTMoyjZjJJhggcIQBYe984cwbe2SPHTVcfSVzajJgKW1sW9RkpMHapWK7NpxJEXHCd8y9FoACR5EOgVU3d3hLU5/CVglOgroPSOVFCpLtC8Mq58fcsWq6+Id++MEjhnjfIZ9CyRnfs60CxuD7UstZPbgDgEsm2djY8z4qsagippUcHSscXTLDtrURY/fdgmjKxPfkX/sB+ZDTSrtQfztoLoelZpob5lX0YRiI2EHvdqVnLRTpTj05r8QvTXo0CxCcyukQr8fFPX
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(22082099003)(18002099003)(56012099003)(11063799006)(4143699003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EjkfJEZPgevzDysnGp00QcFVFE7nzX1MddrHWFJjnoYV1T05t63nzEhKhMVE?=
- =?us-ascii?Q?YFeBDDZuJ3c0jllSS6gIdZtzPuV/+s0nV88cKzZwSwOxdwa2seq+c4LNYlJs?=
- =?us-ascii?Q?r9lSIeRm0fEeJwH4s5MMpDzvZA4G+qj9imczD8cUKmHSCxS00lMsQ/Bbd3QP?=
- =?us-ascii?Q?eKymIVEb+qaM3gO+vJAYBUgl/J69Tf5GNJGE3JGGtgOLZ/w8deTmgcP/l+lW?=
- =?us-ascii?Q?gduR1+Ib4R3j4lur4EIRjL1L4CZylDZnP6/4gWXunrHHSbu145AOMG5GzFya?=
- =?us-ascii?Q?wwMCQYLywwpOl4sl9KzwA+U5IaHvmLorcI/NjcqqhQZFu6dcTaG37KV2otd3?=
- =?us-ascii?Q?SQ0EBoHoyVfCKWqXTgFKBnNUJ7dsuKVxn/GgIK4KPfWDX4yIz3PbNzg83tnK?=
- =?us-ascii?Q?OX2rRBhVewhAw4uDTycYzlukR8vdfms0f3Fwh5/ntDW9RwyTgdpTm193QjFX?=
- =?us-ascii?Q?C1MfuU1k3zRElziURvrmgf8vpgsz9/yVHiJ4O7036XOyWgzgRe84ZAFGvW+E?=
- =?us-ascii?Q?q0agkMDSwpSOpup4V8KkoPZTTuVsIsSdrcKa5m3exS3OfqkK4exPa8iucto2?=
- =?us-ascii?Q?6LyIAgQiybOBLT5eIPGVTI8wKewODmgRDgBjMcV050EaOdi/vEaFL1hEwxz5?=
- =?us-ascii?Q?IoD3pGIfOJSfCvILmivMMeQ6fHfgAIey3HDLsi2OVzK9hqcJb37i8S+yzme6?=
- =?us-ascii?Q?QYS8pi/E1zQbSBWgERYNLoa/2+tpS1f5+YhYQpqQ+LpQ3UXAqmc66OtX6u/O?=
- =?us-ascii?Q?yjW37gbypVoWdNV1WgN95x5RuCkMJMC4DTit16dvb5xqtqBsv51tDyuoQCDv?=
- =?us-ascii?Q?ql3XINuhuqAvD3DjRMlEKRqu54UqFgcp8F+rQ89+LLSSKC92hLD2RdYpS+An?=
- =?us-ascii?Q?B6eT75H1VhIURnIpl3haxy8/dlc9aa0XoclQjDHVkprBOGGphivJlEVaM3Mn?=
- =?us-ascii?Q?dRWzMnmBOKrKnColor6nLPHX+aLU3zaU9JOZUFV2Uhr2PkLrr5u7CUkujTUe?=
- =?us-ascii?Q?qGx4XqCNMF3MsTuPI6JUk8knWKu3+4IpjF8vT3nGBTPqAw5jVHZqMwCK2U6g?=
- =?us-ascii?Q?8JohEq/Aar+HqWVC9kdld0qKLzWkd+Y/wTNkolUA8UYqMSrjuPT5FTaHyvrl?=
- =?us-ascii?Q?wn6mfI0qDYq0uCuKMzTzl8UoowWErFbwaPvOPDMG4dWEQeijfEmcJUOYI/zz?=
- =?us-ascii?Q?ja7a5QDywhgE+Ks+Ns9KGbqyno7li48HE6k3dz5R2dQU9rK5El9iK3E54fme?=
- =?us-ascii?Q?LQnNTD6C8WbRpGFG0ej9rHhPCf//mU3tsfGsQ4gxqpU4662Kf1uR/R8eKbVa?=
- =?us-ascii?Q?oB12BxFO1Gm6rUdBuUYuAHz5mdBvugRWEm1tR3YsNHQ+VDoF/g+FgPBYp7Xm?=
- =?us-ascii?Q?g0TAk60ZRFX34zDNOhe9idvpZ0hjdNw5ePjDp9msnPzUXboGG/P/ID6EngAi?=
- =?us-ascii?Q?m21OvHgRw1Hic4PBzGj4hjss4Dy/VNocyhDTBM1AfqVFFlXmBNlkelcPKSde?=
- =?us-ascii?Q?7znQJr2uYCno+49Y6yDpaEiHx0aatkuTQ1k4QYFZWcFg7H2tzbywfK0cVAT0?=
- =?us-ascii?Q?K+57DywvuHMsgSBMsTIUV1c8LP53oSWJ6ov5Ol/O+DL4JqNgQY2e1FdB6yHA?=
- =?us-ascii?Q?qpNaeDbqYC6kxvx2J0iDb+wPfjsD2PU5aSuWGAL3MEXqVR9Lp3Ta39JTClqv?=
- =?us-ascii?Q?ZuTNjgBIPkQDdprzyHwrxnVH/zbAJ1Zw9QKH3t3D9heace9Dxlxl5qL/bToL?=
- =?us-ascii?Q?R0kwtY4cjUJfsn+kOLbtwiK42cGkaKY=3D?=
-X-Exchange-RoutingPolicyChecked: k/QMZ6/Abg9wJpgVzZNQmn4l6k286yqmBHPqCW8S/CmK89mRonyaHofI3mFTwWS8bGHZgdw42FDnqsV9zNKdgP4ahLWx/NkeKpoRgbSMnAC3D8myGUw5u+b2DOm71b56WySOUhMBihkLwIk/L13DlB+h0uswsKhuc0ogEVF9GOf0m/O1wnBXSXkXgiq6ffhS0rp4mh7tEcSsq9uez/9X9L2pd7bc7pkIm8xp6d2R4zrrKZ2r5VsVtIqKh0EoD5ziNa6p8fm7iuoVb/VMtRloXuShMxR+yKxR52/D97Kal9x7b3OByBQNJFmGUw233anbbVn6oh6ONUdvXxJd3qBgAQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d9e064a-f8d4-4038-0441-08deb5964343
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2026 11:03:31.3374 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Bd77+9lLh+5ij3UeRNysVm2ExuQpL4NN/ez24+UYPKWku5QPV/HAG/UesWCzckMCsiUXRPUNSnjL+mFnRGJvOaSYk8XsonRX9XDZB+MH2VQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9256
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -153,38 +60,239 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, May 19, 2026 at 12:34:14PM +0200, Thomas Monjalon wrote:
-> When compiling with C++20 standard requirement (default in GCC 16),
-> the increment and decrement of volatile variables are rejected:
-> 
-> rte_spinlock.h:241:14: error:
-> 	'++' expression of 'volatile'-qualified type is deprecated
-> rte_spinlock.h:252:21: error:
-> 	'--' expression of 'volatile'-qualified type is deprecated
-> rte_spinlock.h:278:14: error:
-> 	'++' expression of 'volatile'-qualified type is deprecated
-> 
-> The count field of rte_spinlock_recursive_t
-> does not need the volatile qualifier
-> because it is only accessed by the thread holding the lock,
-> which already provides the necessary memory ordering.
-> 
-> The user field can be accessed outside of the lock,
-> so it must handled as a C11 atomic variable.
-> The name is also changed from user to owner.
-> It will break if an application is accessing this field directly,
-> which should never happen.
-> 
-> Fixes: af75078fece3 ("first public release")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> ---
-> v1: drop volatile keyword
-> v2: make user an atomic variable
-> v3: rename user as owner
-> ---
->  lib/eal/include/generic/rte_spinlock.h | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
-> 
-Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
+When the fast-free hint is provided to the driver we know that the mbufs
+have refcnt of 1 and are from the same mempool. Therefore, we can
+optimize a bit for this case by:
+
+* resetting the necessary mbuf fields, ie. nb_seg and next pointer when
+  we are accessing the mbuf on writing the descriptor.
+* on cleanup of buffers after transmit, we can just write those buffers
+  straight to the mempool without accessing them.
+* when doing buffer cleanup, we can follow the model of the vector
+  driver where we cleanup in fixed bursts which don't wrap, and where we
+  track the mbufs between tx_tail and last_cleaned as invalid, so we
+  don't need to set them to NULL. [We only set to NULL valid mbuf slots
+  where we have a context descriptor or segment not backed by an mbuf]
+
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+v3:
+* used mbuf_raw_free_bulk rather than mempool function directly
+* check for fast_free via mp pointer rather than flags
+* remove unnecessary prefetches
+
+V2: Fix issues with original submission:
+* missed check for NULL mbufs
+* fixed issue with freeing directly from sw_ring in scalar path which
+  doesn't work as thats not a flag array of pointers
+* fixed missing null assignment in case of large segments for TSO
+---
+ drivers/net/intel/common/tx.h        | 21 ++++--
+ drivers/net/intel/common/tx_scalar.h | 99 +++++++++++++++++++++-------
+ 2 files changed, 92 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 23a8c39cf2..5fe71aed12 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -329,13 +329,22 @@ ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
+ 		return;
+ 
+ 	if (!txq->use_vec_entry) {
+-		/* Regular scalar path uses sw_ring with ci_tx_entry */
+-		for (uint16_t i = 0; i < txq->nb_tx_desc; i++) {
+-			if (txq->sw_ring[i].mbuf != NULL) {
+-				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
+-				txq->sw_ring[i].mbuf = NULL;
+-			}
++		/* Free mbufs from (last_desc_cleaned + 1) to (tx_tail - 1). */
++		const uint16_t start = (txq->last_desc_cleaned + 1) % txq->nb_tx_desc;
++		const uint16_t nb_desc = txq->nb_tx_desc;
++		const uint16_t end = txq->tx_tail;
++
++		uint16_t i = start;
++		if (end < i) {
++			for (; i < nb_desc; i++)
++				if (txq->sw_ring[i].mbuf != NULL)
++					rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
++			i = 0;
+ 		}
++		for (; i < end; i++)
++			if (txq->sw_ring[i].mbuf != NULL)
++				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
++		memset(txq->sw_ring, 0, sizeof(txq->sw_ring[0]) * nb_desc);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
+index 9fcd2e4733..d27df34dfa 100644
+--- a/drivers/net/intel/common/tx_scalar.h
++++ b/drivers/net/intel/common/tx_scalar.h
+@@ -197,16 +197,64 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
+ 	const uint16_t rs_idx = (last_desc_cleaned == nb_tx_desc - 1) ?
+ 			0 :
+ 			(last_desc_cleaned + 1) >> txq->log2_rs_thresh;
+-	uint16_t desc_to_clean_to = (rs_idx << txq->log2_rs_thresh) + (txq->tx_rs_thresh - 1);
++	const uint16_t dd_idx = txq->rs_last_id[rs_idx];
++	const uint16_t first_to_clean = rs_idx << txq->log2_rs_thresh;
+ 
+-	/* Check if descriptor is done  */
+-	if ((txd[txq->rs_last_id[rs_idx]].cmd_type_offset_bsz &
+-			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
+-				rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
++	/* Check if descriptor is done - all drivers use 0xF as done value in bits 3:0 */
++	if ((txd[dd_idx].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
++			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
++		/* Descriptor not yet processed by hardware */
+ 		return -1;
+ 
++	/* DD bit is set, descriptors are done. Now free the mbufs. */
++	/* Note: nb_tx_desc is guaranteed to be a multiple of tx_rs_thresh,
++	 * validated during queue setup. This means cleanup never wraps around
++	 * the ring within a single burst (e.g., ring=256, rs_thresh=32 gives
++	 * bursts of 0-31, 32-63, ..., 224-255).
++	 */
++	const uint16_t nb_to_clean = txq->tx_rs_thresh;
++	struct ci_tx_entry *sw_ring = txq->sw_ring;
++
++	/* fast_free_mp is NULL only when the fast free is disabled*/
++	if (txq->fast_free_mp != NULL) {
++		/* FAST_FREE path: mbufs are already reset, just return to pool */
++		struct rte_mbuf *free[CI_TX_MAX_FREE_BUF_SZ];
++		uint16_t nb_free = 0;
++
++		/* Get cached mempool pointer, or cache it on first use */
++		struct rte_mempool *mp =
++			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
++			txq->fast_free_mp :
++			(txq->fast_free_mp = sw_ring[dd_idx].mbuf->pool);
++
++		/* Pack non-NULL mbufs in-place at start of sw_ring range.
++		 * No modulo needed in loop since we're guaranteed not to wrap.
++		 */
++		for (uint16_t i = 0; i < nb_to_clean; i++) {
++			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
++			if (m == NULL)
++				continue;
++			free[nb_free++] = m;
++			if (unlikely(nb_free == CI_TX_MAX_FREE_BUF_SZ)) {
++				rte_mbuf_raw_free_bulk(mp, free, nb_free);
++				nb_free = 0;
++			}
++		}
++
++		/* Bulk return to mempool using packed sw_ring entries directly */
++		if (nb_free > 0)
++			rte_mbuf_raw_free_bulk(mp, free, nb_free);
++	} else {
++		/* Non-FAST_FREE path: use free_seg for refcount checks and freeing */
++		for (uint16_t i = 0; i < nb_to_clean; i++) {
++			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
++			if (m != NULL)
++				rte_pktmbuf_free_seg(m);
++		}
++	}
++
+ 	/* Update the txq to reflect the last descriptor that was cleaned */
+-	txq->last_desc_cleaned = desc_to_clean_to;
++	txq->last_desc_cleaned = first_to_clean + txq->tx_rs_thresh - 1;
+ 	txq->nb_tx_free += txq->tx_rs_thresh;
+ 
+ 	return 0;
+@@ -450,8 +498,6 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			txd = &ci_tx_ring[tx_id];
+ 			tx_id = txe->next_id;
+ 
+-			if (txe->mbuf)
+-				rte_pktmbuf_free_seg(txe->mbuf);
+ 			txe->mbuf = tx_pkt;
+ 			/* Setup TX Descriptor */
+ 			td_cmd |= CI_TX_DESC_CMD_EOP;
+@@ -471,11 +517,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			uint64_t *ctx_txd = RTE_CAST_PTR(uint64_t *, &ci_tx_ring[tx_id]);
+ 
+ 			txn = &sw_ring[txe->next_id];
+-			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
+-			if (txe->mbuf) {
+-				rte_pktmbuf_free_seg(txe->mbuf);
+-				txe->mbuf = NULL;
+-			}
++			txe->mbuf = NULL;
+ 
+ 			write_txd(ctx_txd, cd_qw0, cd_qw1);
+ 
+@@ -488,11 +530,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			uint64_t *ipsec_txd = RTE_CAST_PTR(uint64_t *, &ci_tx_ring[tx_id]);
+ 
+ 			txn = &sw_ring[txe->next_id];
+-			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
+-			if (txe->mbuf) {
+-				rte_pktmbuf_free_seg(txe->mbuf);
+-				txe->mbuf = NULL;
+-			}
++			txe->mbuf = NULL;
+ 
+ 			ipsec_txd[0] = ipsec_qw0;
+ 			ipsec_txd[1] = ipsec_qw1;
+@@ -507,10 +545,22 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			txd = &ci_tx_ring[tx_id];
+ 			txn = &sw_ring[txe->next_id];
+ 
+-			if (txe->mbuf)
+-				rte_pktmbuf_free_seg(txe->mbuf);
+ 			txe->mbuf = m_seg;
+ 
++			/* For FAST_FREE: reset mbuf fields while we have it in cache.
++			 * [Fast free is indicated by txq->fast_free_mp being non-NULL.]
++			 * FAST_FREE guarantees refcnt=1 and direct mbufs, so we only
++			 * need to reset nb_segs and next pointer as per rte_pktmbuf_prefree_seg.
++			 * Save next pointer before resetting since we need it for loop iteration.
++			 */
++			struct rte_mbuf *next_seg = m_seg->next;
++			if (txq->fast_free_mp != NULL) {
++				if (m_seg->nb_segs != 1)
++					m_seg->nb_segs = 1;
++				if (next_seg != NULL)
++					m_seg->next = NULL;
++			}
++
+ 			/* Setup TX Descriptor */
+ 			/* Calculate segment length, using IPsec callback if provided */
+ 			if (ipsec_ops != NULL)
+@@ -528,18 +578,23 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 					((uint64_t)CI_MAX_DATA_PER_TXD << CI_TXD_QW1_TX_BUF_SZ_S) |
+ 					((uint64_t)td_tag << CI_TXD_QW1_L2TAG1_S);
+ 				write_txd(txd, buf_dma_addr, cmd_type_offset_bsz);
++				/* txe for this slot has already been written (e.g. above outside
++				 * loop), so we write the extra NULL mbuf pointer for this
++				 * descriptor after we increment txe below.
++				 */
+ 
+ 				buf_dma_addr += CI_MAX_DATA_PER_TXD;
+ 				slen -= CI_MAX_DATA_PER_TXD;
+ 
+ 				tx_id = txe->next_id;
+ 				txe = txn;
++				txe->mbuf = NULL;
+ 				txd = &ci_tx_ring[tx_id];
+ 				txn = &sw_ring[txe->next_id];
+ 			}
+ 
+ 			/* fill the last descriptor with End of Packet (EOP) bit */
+-			if (m_seg->next == NULL)
++			if (next_seg == NULL)
+ 				td_cmd |= CI_TX_DESC_CMD_EOP;
+ 
+ 			const uint64_t cmd_type_offset_bsz = CI_TX_DESC_DTYPE_DATA |
+@@ -551,7 +606,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 
+ 			tx_id = txe->next_id;
+ 			txe = txn;
+-			m_seg = m_seg->next;
++			m_seg = next_seg;
+ 		} while (m_seg);
+ end_pkt:
+ 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
+-- 
+2.53.0
+
