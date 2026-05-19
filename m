@@ -2,55 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32175CD5BA4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 13:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F24CD4F3C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 13:50:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C44F40650;
-	Tue, 19 May 2026 15:42:34 +0200 (CEST)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
- by mails.dpdk.org (Postfix) with ESMTP id 555FF4025E;
- Tue, 19 May 2026 15:42:31 +0200 (CEST)
-X-UUID: 928240e0538811f1aa26b74ffac11d73-20260519
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.12, REQID:eb67e3a4-8553-4a30-801f-e7c4cd57abfd, IP:10,
- URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
- :release,TS:10
-X-CID-INFO: VERSION:1.3.12, REQID:eb67e3a4-8553-4a30-801f-e7c4cd57abfd, IP:10,
- UR
- L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
- elease,TS:10
-X-CID-META: VersionHash:e7bac3a, CLOUDID:1460456b33029621a2607576877ce041,
- BulkI
- D:260519214228S27U87YK,BulkQuantity:0,Recheck:0,SF:17|19|38|64|66|78|80|81
- |82|83|101|102|127|841|865|898,TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:0,F
- ile:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO
- ,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 928240e0538811f1aa26b74ffac11d73-20260519
-X-User: jinzhiguang@kylinos.cn
-Received: from [198.18.0.1] [(123.149.0.81)] by mailgw.kylinos.cn
- (envelope-from <jinzhiguang@kylinos.cn>)
- (Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
- with ESMTP id 2043530029; Tue, 19 May 2026 21:42:26 +0800
-Message-ID: <bf587f4a-45ab-42ed-ac5d-5af972d3dab3@kylinos.cn>
-Date: Tue, 19 May 2026 21:42:24 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ring: fix zero-copy burst API documentation
-To: Thomas Monjalon <thomas@monjalon.net>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Dharmik Thakkar <dharmikjayesh.thakkar@arm.com>,
+	by mails.dpdk.org (Postfix) with ESMTP id 929E940296;
+	Tue, 19 May 2026 15:50:52 +0200 (CEST)
+Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
+ by mails.dpdk.org (Postfix) with ESMTP id C53954025E
+ for <dev@dpdk.org>; Tue, 19 May 2026 15:50:50 +0200 (CEST)
+Received: by mail-dl1-f43.google.com with SMTP id
+ a92af1059eb24-134ac81c445so12468196c88.1
+ for <dev@dpdk.org>; Tue, 19 May 2026 06:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779198650;
+ x=1779803450; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=WDPnIgmrq0z6vGtsACF3FMSwx4pYgC5LQFGHmYMztL4=;
+ b=MpXo8s0GdsG8sFRen65C3HGDxVMk5O+6tDWyMey4Fz8NT1iWbtfZrviEC5lE5zNZ3g
+ +4ZF0XhzWbf0zSJsnzqowGQZN/1JthWExitWVqwtbfonK0MgpzIgWNA2Lr20NqztFjcB
+ l04KJGTfvJUeMZhg3uthuxyin0+I7V9ptRc7mO4v/CKYFGWqmMp30P0/a8rZDKIv2uy0
+ qJHJy563J8VE54dJZlILx38T8IbuArabdcX3zulmMMIONJAyr1vR/ucu9PZtWZKWnbub
+ KD1IQLXFpMQp+GhwSCgEiJ9LwNB+bdOoVg3Q472nYzBJhblw/k7lw2Lvr1db/20hVeYf
+ KsHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1779198650; x=1779803450;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=WDPnIgmrq0z6vGtsACF3FMSwx4pYgC5LQFGHmYMztL4=;
+ b=qxzM3hNaXg2YtK3QXG+MRi0Ev14rzexTvliIycyRHeYOAE9JrkGNWTuuRvJF+/w1Dw
+ yGO+D8Ywwoy/gpFz/W6szlR7SVRG+4b2tYcgFkE0wWApydahgJr6Kh5VwtR2/Gth76mX
+ 499PNVPzZQAZLCTAQn475UsBWZPWLDXJ4f7uMHUHpbtFg4eN2VFNv6Ubjkszxu2pCQYa
+ JmTY/6ssNa1NFjlc5a5kb6ZiP9lBchZqNpk1z0j01Q/qh73w+tO1dkwwKlXCIZ3zYHXQ
+ sV0fiTPaZGVuHH9R85h4kIOu0BIyHhwKXg/E5aVs96RUW/hEflOraKuF1zz1Dbo7Eunt
+ gmTA==
+X-Gm-Message-State: AOJu0YxS/xuzCCW583Lh/MKaQpzXQelC7ZMNBu6U+ul5qK4uYxy+hxAp
+ F+BZxCbam8Gp7IauNnu9SeIGqRtawM7yTHjUT8GBLYx5qoSxymfTSbQnUaSRdAhYRi0d1rkDdY8
+ cCm8C
+X-Gm-Gg: Acq92OE+G1BWJCD5Cnc5CEScxAEeKxUwUdOTgIZnPV7xenH6qfUFEt5l0ZZwgvJvRlV
+ b+7SAf+sGVzIZ0kPK9N8QS+9/J88KniG5ixzv7AiKU2nRZDzNAALlxHGTCibOFM2e9QWYENK4yv
+ fEd/rxz0bXsROugckBbW8wLytDMnzYglSjT0hU0swltjJsF1Bfk7zshMWpO2P1qrQNuKQB6uAx0
+ Msx1qG1C9evAwew1NATNcnhKX/TlXxCj3I54CJGs8Wk3xPOjQLYMWwHS0a9jNO74IOmmygr8qV3
+ a/oTlUtSYBvHuNvCOOWm8j0Ryf+ZfKbVLiU02xYfrsjG9B+QrzSJYGREX+n5Azr9epHy+lVDnsu
+ xdQt1NjAbGrSWGCE765ZhPLqFX2Ne4sdfEEuHQ/aF0JXSuqIDse3fhAvQVt3cz1hktGGbgjgUtW
+ LJUEk2iDZ0lkeUq3nLTW2PVa+o0EWBzV7x
+X-Received: by 2002:a05:7022:6727:b0:132:5d42:55bc with SMTP id
+ a92af1059eb24-1350451fd8fmr8775796c88.18.1779198649570; 
+ Tue, 19 May 2026 06:50:49 -0700 (PDT)
+Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-134cbcb93f3sm24222675c88.3.2026.05.19.06.50.48
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 19 May 2026 06:50:49 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Jack Bond-Preston <jack.bond-preston@foss.arm.com>,
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>, Gavin Hu <gahu@nvidia.com>,
  Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-Cc: dev@dpdk.org, stable@dpdk.org
-References: <20260519131846.1089-1-jinzhiguang@kylinos.cn>
-From: jinzhiguang <jinzhiguang@kylinos.cn>
-In-Reply-To: <20260519131846.1089-1-jinzhiguang@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2] eal: silence -Wconstant-logical-operand in
+ RTE_IS_POWER_OF_2
+Date: Tue, 19 May 2026 06:49:01 -0700
+Message-ID: <20260519135046.367128-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260518163401.580696-1-stephen@networkplumber.org>
+References: <20260518163401.580696-1-stephen@networkplumber.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,74 +84,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Newer GCC warns when a non-boolean constant is an operand of &&, which
+trips whenever RTE_IS_POWER_OF_2 is used in a static_assert with a
+power-of-two literal. Make the zero check explicit.
 
-Please ignore this patch. It was sent with incorrect threading.
-> These are burst APIs relying on RTE_RING_QUEUE_VARIABLE behavior, they
-> operate on a best-effort basis and return the actual number of
-> objects processed (between 0 and n).
->
-> Update description to match implementation.
->
-> Fixes: 47bec9a5ca9f ("ring: add zero copy API")
->
-> Signed-off-by: jinzhiguang <jinzhiguang@kylinos.cn>
-> ---
-> Cc: honnappa.nagarahalli@arm.com
-> Cc: stable@dpdk.org
-> ---
->   .mailmap                    | 1 +
->   lib/ring/rte_ring_peek_zc.h | 8 ++++----
->   2 files changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/.mailmap b/.mailmap
-> index 4d26d9c286..a4f91f2131 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -756,6 +756,7 @@ Jing Chen <jing.d.chen@intel.com>
->   Jingguo Fu <jingguox.fu@intel.com>
->   Jingjing Wu <jingjing.wu@intel.com>
->   Jingzhao Ni <jingzhao.ni@arm.com>
-> +jinzhiguang <jinzhiguang@kylinos.cn>
->   Jiri Slaby <jslaby@suse.cz>
->   Job Abraham <job.abraham@intel.com>
->   Jochen Behrens <jochen.behrens@broadcom.com> <jbehrens@vmware.com>
-> diff --git a/lib/ring/rte_ring_peek_zc.h b/lib/ring/rte_ring_peek_zc.h
-> index 3254fe0481..43d6a53075 100644
-> --- a/lib/ring/rte_ring_peek_zc.h
-> +++ b/lib/ring/rte_ring_peek_zc.h
-> @@ -235,7 +235,7 @@ rte_ring_enqueue_zc_bulk_start(struct rte_ring *r, unsigned int n,
->    *   If non-NULL, returns the amount of space in the ring after the
->    *   reservation operation has finished.
->    * @return
-> - *   The number of objects that can be enqueued, either 0 or n
-> + *   The actual number of objects that can be enqueued.
->    */
->   static __rte_always_inline unsigned int
->   rte_ring_enqueue_zc_burst_elem_start(struct rte_ring *r, unsigned int esize,
-> @@ -265,7 +265,7 @@ rte_ring_enqueue_zc_burst_elem_start(struct rte_ring *r, unsigned int esize,
->    *   If non-NULL, returns the amount of space in the ring after the
->    *   reservation operation has finished.
->    * @return
-> - *   The number of objects that can be enqueued, either 0 or n.
-> + *   The actual number of objects that can be enqueued.
->    */
->   static __rte_always_inline unsigned int
->   rte_ring_enqueue_zc_burst_start(struct rte_ring *r, unsigned int n,
-> @@ -442,7 +442,7 @@ rte_ring_dequeue_zc_bulk_start(struct rte_ring *r, unsigned int n,
->    *   If non-NULL, returns the number of remaining ring entries after the
->    *   dequeue has finished.
->    * @return
-> - *   The number of objects that can be dequeued, either 0 or n.
-> + *   The actual number of objects that can be dequeued.
->    */
->   static __rte_always_inline unsigned int
->   rte_ring_dequeue_zc_burst_elem_start(struct rte_ring *r, unsigned int esize,
-> @@ -471,7 +471,7 @@ rte_ring_dequeue_zc_burst_elem_start(struct rte_ring *r, unsigned int esize,
->    *   If non-NULL, returns the number of remaining ring entries after the
->    *   dequeue has finished.
->    * @return
-> - *   The number of objects that can be dequeued, either 0 or n.
-> + *   The actual number of objects that can be dequeued.
->    */
->   static __rte_always_inline unsigned int
->   rte_ring_dequeue_zc_burst_start(struct rte_ring *r, unsigned int n,
+Fixes: 7c872b96983a ("hash: validate hash bucket entries while compiling")
+Cc: stable@dpdk.org
+
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
+---
+v2 - use suggestion to make both sides comparisons
+
+Note: AI incorrectly complains about multiple evaluations in this macro
+      but that has always been the case, and has to be macro
+      for use with static assert.
+
+ lib/eal/include/rte_bitops.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/eal/include/rte_bitops.h b/lib/eal/include/rte_bitops.h
+index aa6ac73abb..b170447714 100644
+--- a/lib/eal/include/rte_bitops.h
++++ b/lib/eal/include/rte_bitops.h
+@@ -1299,7 +1299,7 @@ rte_fls_u64(uint64_t x)
+ /**
+  * Macro to return 1 if n is a power of 2, 0 otherwise
+  */
+-#define RTE_IS_POWER_OF_2(n) ((n) && !(((n) - 1) & (n)))
++#define RTE_IS_POWER_OF_2(n) ((n) != 0 && (((n) - 1) & (n)) == 0)
+ 
+ /**
+  * Returns true if n is a power of 2
+-- 
+2.53.0
+
