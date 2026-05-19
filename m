@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB90CD4F5B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 16:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741A9CD4F5B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 16:09:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A4C94067C;
-	Tue, 19 May 2026 18:08:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3C9B5406B4;
+	Tue, 19 May 2026 18:08:47 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 727D140665
- for <dev@dpdk.org>; Tue, 19 May 2026 18:08:42 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 27DB440665
+ for <dev@dpdk.org>; Tue, 19 May 2026 18:08:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779206922; x=1810742922;
+ t=1779206923; x=1810742923;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=76sI3o2vFkfMHQ5JYur3Oo9oV3lZsfNsgOSB7PcT6dk=;
- b=clmm9rHwvtvohesyJIqPqQ32wsUUX9LUJ7jFrKizrxbJHZkgsm7Chh2K
- YlvkeYhDJFa9Ea0x9FV2dakQImTbllrfod38CIepx8msZmYfDhdKGqREE
- Bve3sRnV+V5Fgz3KDBeg2j3X0B2ib9MsZp0VUvY8ig8g446ciGr48X3dL
- HCM80kdqW4C6ijpBrjjMoSMYr6zCznW7MywGjO7Nq5Jbh84HjaZUzOx1a
- r8GcnBZ6J9Glz1pAZV76XNxtnKx4ovH793lthNtkdr2ZLBuGgwaNwaTKf
- pT/H/N7hYovXT7pjLjW2vyr5Dlwe2Bb7vHc+5eeF4Nw9GZQq596JWRaDW g==;
-X-CSE-ConnectionGUID: 5adTkbt6Ss+HXUs/kzkC5Q==
-X-CSE-MsgGUID: Y7ccTxmyR4WKMrFu4sLpqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11791"; a="80070061"
-X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="80070061"
+ bh=6jm+zVy12tq5UFU6ZL27J4sXkWmoZpfgxMHMC2vZBH4=;
+ b=UIbMxth3S/jqDByV/6evw0tscJ8a2fJ3ihejZ8L9rjaTduinccKc+uf8
+ /FAs1XoOBNHDFPpXVOkCm7tDx3pW5Skyr6oYsLDPOqv5z+rjCepXlG/ld
+ 3b4LRw7bVvNGzibK8NE+MASbqF3cTKF5HJl1S1cYC6xEjKFoxV9H62kld
+ JAKqTDM0B4ndC2DkvYJsU4Z0U1appJHZL8XjmbuSBUu3b1i7jGzirsv64
+ lxJe6Rxa/A1N39R14gp2y4Igie+LsidHMtJcT2Nap6smlZF3RqRDvtY9f
+ kkNYtAW9079eedvMwkUdPRyVSf6dZAjivrJHfbpfBFVoMN4AO8dYo86B6 w==;
+X-CSE-ConnectionGUID: 7bd7QAUBTrqkUapuOCg5MQ==
+X-CSE-MsgGUID: g0g6TBI2QZitBJbCQhIVRw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11791"; a="80070064"
+X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="80070064"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 May 2026 09:08:41 -0700
-X-CSE-ConnectionGUID: rx0wNDEiTgiNHVxCDrlxxw==
-X-CSE-MsgGUID: Pvk+WyTeS5Ocl9mKctT+rg==
+ 19 May 2026 09:08:42 -0700
+X-CSE-ConnectionGUID: GfwOVfzvSNuRGoRAD9TQKw==
+X-CSE-MsgGUID: o4JIQHJjS+SsUQAkR8lyCg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="244784786"
+X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="244784791"
 Received: from silpixa00401874.ir.intel.com (HELO
  silpixa00401874.ger.corp.intel.com) ([10.20.224.247])
- by orviesa005.jf.intel.com with ESMTP; 19 May 2026 09:08:40 -0700
+ by orviesa005.jf.intel.com with ESMTP; 19 May 2026 09:08:41 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC PATCH 5/8] net/e1000: replace use of DPDK-specific memcpy
- function
-Date: Tue, 19 May 2026 16:06:02 +0000
-Message-ID: <20260519160823.1004973-6-bruce.richardson@intel.com>
+Subject: [RFC PATCH 6/8] net/idpf: replace use of DPDK-specific memcpy function
+Date: Tue, 19 May 2026 16:06:03 +0000
+Message-ID: <20260519160823.1004973-7-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260519160823.1004973-1-bruce.richardson@intel.com>
 References: <20260519160823.1004973-1-bruce.richardson@intel.com>
@@ -67,106 +66,226 @@ place of the DPDK-specific rte_memcpy version.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/e1000/em_rxtx.c  | 1 -
- drivers/net/intel/e1000/igb_flow.c | 8 ++++----
- drivers/net/intel/e1000/igb_pf.c   | 5 ++---
- drivers/net/intel/e1000/igb_rxtx.c | 1 -
- 4 files changed, 6 insertions(+), 9 deletions(-)
+ drivers/net/intel/idpf/base/idpf_osdep.h      |  5 ++---
+ drivers/net/intel/idpf/idpf_common_device.c   |  2 +-
+ drivers/net/intel/idpf/idpf_common_virtchnl.c | 20 +++++++++----------
+ drivers/net/intel/idpf/idpf_ethdev.c          | 10 +++++-----
+ drivers/net/intel/idpf/idpf_rxtx.c            |  8 ++++----
+ 5 files changed, 22 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/em_rxtx.c b/drivers/net/intel/e1000/em_rxtx.c
-index 54971fe285..5879013a1d 100644
---- a/drivers/net/intel/e1000/em_rxtx.c
-+++ b/drivers/net/intel/e1000/em_rxtx.c
-@@ -20,7 +20,6 @@
- #include <rte_pci.h>
- #include <bus_pci_driver.h>
- #include <rte_memory.h>
--#include <rte_memcpy.h>
- #include <rte_memzone.h>
- #include <rte_launch.h>
- #include <rte_eal.h>
-diff --git a/drivers/net/intel/e1000/igb_flow.c b/drivers/net/intel/e1000/igb_flow.c
-index ea9b290e1c..ca76bf5ae4 100644
---- a/drivers/net/intel/e1000/igb_flow.c
-+++ b/drivers/net/intel/e1000/igb_flow.c
-@@ -1484,7 +1484,7 @@ igb_flow_create(struct rte_eth_dev *dev,
- 				goto out;
- 			}
+diff --git a/drivers/net/intel/idpf/base/idpf_osdep.h b/drivers/net/intel/idpf/base/idpf_osdep.h
+index 47b95d0da6..67bc33f2e6 100644
+--- a/drivers/net/intel/idpf/base/idpf_osdep.h
++++ b/drivers/net/intel/idpf/base/idpf_osdep.h
+@@ -14,7 +14,6 @@
+ #include <stdbool.h>
  
--			rte_memcpy(&ntuple_filter_ptr->filter_info,
-+			memcpy(&ntuple_filter_ptr->filter_info,
- 				&ntuple_filter,
- 				sizeof(struct rte_eth_ntuple_filter));
- 			TAILQ_INSERT_TAIL(&igb_filter_ntuple_list,
-@@ -1511,7 +1511,7 @@ igb_flow_create(struct rte_eth_dev *dev,
- 				goto out;
- 			}
- 
--			rte_memcpy(&ethertype_filter_ptr->filter_info,
-+			memcpy(&ethertype_filter_ptr->filter_info,
- 				&ethertype_filter,
- 				sizeof(struct rte_eth_ethertype_filter));
- 			TAILQ_INSERT_TAIL(&igb_filter_ethertype_list,
-@@ -1536,7 +1536,7 @@ igb_flow_create(struct rte_eth_dev *dev,
- 				goto out;
- 			}
- 
--			rte_memcpy(&syn_filter_ptr->filter_info,
-+			memcpy(&syn_filter_ptr->filter_info,
- 				&syn_filter,
- 				sizeof(struct rte_eth_syn_filter));
- 			TAILQ_INSERT_TAIL(&igb_filter_syn_list,
-@@ -1562,7 +1562,7 @@ igb_flow_create(struct rte_eth_dev *dev,
- 				goto out;
- 			}
- 
--			rte_memcpy(&flex_filter_ptr->filter_info,
-+			memcpy(&flex_filter_ptr->filter_info,
- 				&flex_filter,
- 				sizeof(struct igb_flex_filter));
- 			TAILQ_INSERT_TAIL(&igb_filter_flex_list,
-diff --git a/drivers/net/intel/e1000/igb_pf.c b/drivers/net/intel/e1000/igb_pf.c
-index c7588ea57e..a3327e0bf0 100644
---- a/drivers/net/intel/e1000/igb_pf.c
-+++ b/drivers/net/intel/e1000/igb_pf.c
-@@ -17,7 +17,6 @@
- #include <rte_eal.h>
- #include <rte_ether.h>
- #include <ethdev_driver.h>
+ #include <rte_common.h>
 -#include <rte_memcpy.h>
  #include <rte_malloc.h>
- #include <rte_random.h>
+ #include <rte_memzone.h>
+ #include <rte_byteorder.h>
+@@ -199,8 +198,8 @@ struct __rte_packed_begin idpf_virt_mem {
+ #define idpf_free(h, m)		rte_free(m)
  
-@@ -290,7 +289,7 @@ igb_vf_reset(struct rte_eth_dev *dev, uint16_t vf, uint32_t *msgbuf)
+ #define idpf_memset(a, b, c, d)	memset((a), (b), (c))
+-#define idpf_memcpy(a, b, c, d)	rte_memcpy((a), (b), (c))
+-#define idpf_memdup(a, b, c, d)	rte_memcpy(idpf_malloc(a, c), b, c)
++#define idpf_memcpy(a, b, c, d)	memcpy((a), (b), (c))
++#define idpf_memdup(a, b, c, d)	memcpy(idpf_malloc(a, c), b, c)
  
- 	/* reply to reset with ack and vf mac address */
- 	msgbuf[0] = E1000_VF_RESET | E1000_VT_MSGTYPE_ACK;
--	rte_memcpy(new_mac, vf_mac, RTE_ETHER_ADDR_LEN);
-+	memcpy(new_mac, vf_mac, RTE_ETHER_ADDR_LEN);
- 	e1000_write_mbx(hw, msgbuf, 3, vf);
+ #define CPU_TO_BE16(o) rte_cpu_to_be_16(o)
+ #define CPU_TO_BE32(o) rte_cpu_to_be_32(o)
+diff --git a/drivers/net/intel/idpf/idpf_common_device.c b/drivers/net/intel/idpf/idpf_common_device.c
+index 24ee00db23..f27a911977 100644
+--- a/drivers/net/intel/idpf/idpf_common_device.c
++++ b/drivers/net/intel/idpf/idpf_common_device.c
+@@ -496,7 +496,7 @@ idpf_vport_init(struct idpf_vport *vport,
+ 	vport->num_rx_q = vport_info->num_rx_q;
+ 	vport->num_rx_bufq = vport_info->num_rx_bufq;
+ 	vport->max_mtu = vport_info->max_mtu;
+-	rte_memcpy(vport->default_mac_addr,
++	memcpy(vport->default_mac_addr,
+ 		   vport_info->default_mac_addr, ETH_ALEN);
+ 	vport->rss_algorithm = vport_info->rss_algorithm;
+ 	vport->rss_key_size = RTE_MIN(IDPF_RSS_KEY_LEN,
+diff --git a/drivers/net/intel/idpf/idpf_common_virtchnl.c b/drivers/net/intel/idpf/idpf_common_virtchnl.c
+index f8c487c537..4befd5fc83 100644
+--- a/drivers/net/intel/idpf/idpf_common_virtchnl.c
++++ b/drivers/net/intel/idpf/idpf_common_virtchnl.c
+@@ -141,7 +141,7 @@ idpf_read_msg_from_cp(struct idpf_adapter *adapter, uint16_t buf_len,
+ 		return result;
+ 	}
+ 
+-	rte_memcpy(buf, ctlq_msg.ctx.indirect.payload->va, buf_len);
++	memcpy(buf, ctlq_msg.ctx.indirect.payload->va, buf_len);
+ 
+ 	opcode = rte_le_to_cpu_32(ctlq_msg.cookie.mbx.chnl_opcode);
+ 	adapter->cmd_retval = rte_le_to_cpu_32(ctlq_msg.cookie.mbx.chnl_retval);
+@@ -323,7 +323,7 @@ idpf_vc_caps_get(struct idpf_adapter *adapter)
+ 		return err;
+ 	}
+ 
+-	rte_memcpy(&adapter->caps, args.out_buffer, sizeof(struct virtchnl2_get_capabilities));
++	memcpy(&adapter->caps, args.out_buffer, sizeof(struct virtchnl2_get_capabilities));
  
  	return 0;
-@@ -308,7 +307,7 @@ igb_vf_set_mac_addr(struct rte_eth_dev *dev, uint32_t vf, uint32_t *msgbuf)
+ }
+@@ -361,7 +361,7 @@ idpf_vc_vport_create(struct idpf_vport *vport,
+ 		return err;
+ 	}
  
- 	if (rte_is_unicast_ether_addr((struct rte_ether_addr *)new_mac)) {
- 		if (!rte_is_zero_ether_addr((struct rte_ether_addr *)new_mac))
--			rte_memcpy(vfinfo[vf].vf_mac_addresses, new_mac,
-+			memcpy(vfinfo[vf].vf_mac_addresses, new_mac,
- 				sizeof(vfinfo[vf].vf_mac_addresses));
- 		hw->mac.ops.rar_set(hw, new_mac, rar_entry);
- 		rah = E1000_READ_REG(hw, E1000_RAH(rar_entry));
-diff --git a/drivers/net/intel/e1000/igb_rxtx.c b/drivers/net/intel/e1000/igb_rxtx.c
-index 14b2858817..4fda5d57a0 100644
---- a/drivers/net/intel/e1000/igb_rxtx.c
-+++ b/drivers/net/intel/e1000/igb_rxtx.c
-@@ -19,7 +19,6 @@
- #include <rte_debug.h>
- #include <rte_pci.h>
- #include <rte_memory.h>
--#include <rte_memcpy.h>
- #include <rte_memzone.h>
- #include <rte_launch.h>
- #include <rte_eal.h>
+-	rte_memcpy(&(vport->vport_info.info), args.out_buffer, IDPF_DFLT_MBX_BUF_SIZE);
++	memcpy(&(vport->vport_info.info), args.out_buffer, IDPF_DFLT_MBX_BUF_SIZE);
+ 	return 0;
+ }
+ 
+@@ -419,7 +419,7 @@ idpf_vc_queue_grps_add(struct idpf_vport *vport,
+ 		return err;
+ 	}
+ 
+-	rte_memcpy(p2p_queue_grps_out, args.out_buffer, IDPF_DFLT_MBX_BUF_SIZE);
++	memcpy(p2p_queue_grps_out, args.out_buffer, IDPF_DFLT_MBX_BUF_SIZE);
+ 	return 0;
+ }
+ 
+@@ -475,7 +475,7 @@ idpf_vc_rss_key_set(struct idpf_vport *vport)
+ 
+ 	rss_key->vport_id = vport->vport_id;
+ 	rss_key->key_len = vport->rss_key_size;
+-	rte_memcpy(rss_key->key, vport->rss_key,
++	memcpy(rss_key->key, vport->rss_key,
+ 		   sizeof(rss_key->key[0]) * vport->rss_key_size);
+ 
+ 	memset(&args, 0, sizeof(args));
+@@ -528,7 +528,7 @@ int idpf_vc_rss_key_get(struct idpf_vport *vport)
+ 				return -ENOMEM;
+ 			}
+ 		}
+-		rte_memcpy(vport->rss_key, rss_key_ret->key, vport->rss_key_size);
++		memcpy(vport->rss_key, rss_key_ret->key, vport->rss_key_size);
+ 	} else {
+ 		DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_GET_RSS_KEY");
+ 	}
+@@ -553,7 +553,7 @@ idpf_vc_rss_lut_set(struct idpf_vport *vport)
+ 
+ 	rss_lut->vport_id = vport->vport_id;
+ 	rss_lut->lut_entries = vport->rss_lut_size;
+-	rte_memcpy(rss_lut->lut, vport->rss_lut,
++	memcpy(rss_lut->lut, vport->rss_lut,
+ 		   sizeof(rss_lut->lut[0]) * vport->rss_lut_size);
+ 
+ 	memset(&args, 0, sizeof(args));
+@@ -605,7 +605,7 @@ idpf_vc_rss_lut_get(struct idpf_vport *vport)
+ 				return -ENOMEM;
+ 			}
+ 		}
+-		rte_memcpy(vport->rss_lut, rss_lut_ret->lut, rss_lut_ret->lut_entries);
++		memcpy(vport->rss_lut, rss_lut_ret->lut, rss_lut_ret->lut_entries);
+ 		vport->rss_lut_size = rss_lut_ret->lut_entries;
+ 	} else {
+ 		DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_GET_RSS_LUT");
+@@ -742,7 +742,7 @@ idpf_vc_vectors_alloc(struct idpf_vport *vport, uint16_t num_vectors)
+ 	if (err != 0)
+ 		DRV_LOG(ERR, "Failed to execute command VIRTCHNL2_OP_ALLOC_VECTORS");
+ 
+-	rte_memcpy(vport->recv_vectors, args.out_buffer, len);
++	memcpy(vport->recv_vectors, args.out_buffer, len);
+ 	rte_free(alloc_vec);
+ 	return err;
+ }
+@@ -1007,7 +1007,7 @@ idpf_vc_ptype_info_query(struct idpf_adapter *adapter,
+ 	if (err != 0)
+ 		DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_GET_PTYPE_INFO");
+ 
+-	rte_memcpy(recv_ptype_info, args.out_buffer, IDPF_DFLT_MBX_BUF_SIZE);
++	memcpy(recv_ptype_info, args.out_buffer, IDPF_DFLT_MBX_BUF_SIZE);
+ 	return err;
+ }
+ 
+diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
+index 5e57a45775..6b3016ba77 100644
+--- a/drivers/net/intel/idpf/idpf_ethdev.c
++++ b/drivers/net/intel/idpf/idpf_ethdev.c
+@@ -439,7 +439,7 @@ idpf_init_rss(struct idpf_vport *vport)
+ 			     vport->rss_key_size);
+ 		return -EINVAL;
+ 	} else {
+-		rte_memcpy(vport->rss_key, rss_conf->rss_key,
++		memcpy(vport->rss_key, rss_conf->rss_key,
+ 			   vport->rss_key_size);
+ 	}
+ 
+@@ -558,7 +558,7 @@ idpf_rss_hash_update(struct rte_eth_dev *dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	rte_memcpy(vport->rss_key, rss_conf->rss_key,
++	memcpy(vport->rss_key, rss_conf->rss_key,
+ 		   vport->rss_key_size);
+ 	ret = idpf_vc_rss_key_set(vport);
+ 	if (ret != 0) {
+@@ -631,7 +631,7 @@ idpf_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 	if (rss_conf->rss_key_len > vport->rss_key_size)
+ 		rss_conf->rss_key_len = vport->rss_key_size;
+ 
+-	rte_memcpy(rss_conf->rss_key, vport->rss_key, rss_conf->rss_key_len);
++	memcpy(rss_conf->rss_key, vport->rss_key, rss_conf->rss_key_len);
+ 
+ 	return 0;
+ }
+@@ -1363,7 +1363,7 @@ idpf_handle_virtchnl_msg(struct idpf_adapter_ext *adapter_ex)
+ 			return;
+ 		}
+ 
+-		rte_memcpy(adapter->mbx_resp, ctlq_msg.ctx.indirect.payload->va,
++		memcpy(adapter->mbx_resp, ctlq_msg.ctx.indirect.payload->va,
+ 			   IDPF_DFLT_MBX_BUF_SIZE);
+ 
+ 		mbx_op = rte_le_to_cpu_16(ctlq_msg.opcode);
+@@ -1477,7 +1477,7 @@ idpf_adapter_ext_init(struct rte_pci_device *pci_dev, struct idpf_adapter_ext *a
+ 
+ 	strncpy(adapter->name, pci_dev->device.name, PCI_PRI_STR_SIZE);
+ 
+-	rte_memcpy(&base->caps, &req_caps, sizeof(struct virtchnl2_get_capabilities));
++	memcpy(&base->caps, &req_caps, sizeof(struct virtchnl2_get_capabilities));
+ 
+ 	ret = idpf_adapter_init(base);
+ 	if (ret != 0) {
+diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
+index b316c77b62..07f3df4a80 100644
+--- a/drivers/net/intel/idpf/idpf_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_rxtx.c
+@@ -74,7 +74,7 @@ idpf_dma_zone_reserve(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		else
+ 			ring_size = RTE_ALIGN(len * sizeof(struct ci_tx_desc),
+ 					      IDPF_DMA_MEM_ALIGN);
+-		rte_memcpy(ring_name, "idpf Tx ring", sizeof("idpf Tx ring"));
++		memcpy(ring_name, "idpf Tx ring", sizeof("idpf Tx ring"));
+ 		break;
+ 	case VIRTCHNL2_QUEUE_TYPE_RX:
+ 		if (splitq)
+@@ -83,17 +83,17 @@ idpf_dma_zone_reserve(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		else
+ 			ring_size = RTE_ALIGN(len * sizeof(struct virtchnl2_singleq_rx_buf_desc),
+ 					      IDPF_DMA_MEM_ALIGN);
+-		rte_memcpy(ring_name, "idpf Rx ring", sizeof("idpf Rx ring"));
++		memcpy(ring_name, "idpf Rx ring", sizeof("idpf Rx ring"));
+ 		break;
+ 	case VIRTCHNL2_QUEUE_TYPE_TX_COMPLETION:
+ 		ring_size = RTE_ALIGN(len * sizeof(struct idpf_splitq_tx_compl_desc),
+ 				      IDPF_DMA_MEM_ALIGN);
+-		rte_memcpy(ring_name, "idpf Tx compl ring", sizeof("idpf Tx compl ring"));
++		memcpy(ring_name, "idpf Tx compl ring", sizeof("idpf Tx compl ring"));
+ 		break;
+ 	case VIRTCHNL2_QUEUE_TYPE_RX_BUFFER:
+ 		ring_size = RTE_ALIGN(len * sizeof(struct virtchnl2_splitq_rx_buf_desc),
+ 				      IDPF_DMA_MEM_ALIGN);
+-		rte_memcpy(ring_name, "idpf Rx buf ring", sizeof("idpf Rx buf ring"));
++		memcpy(ring_name, "idpf Rx buf ring", sizeof("idpf Rx buf ring"));
+ 		break;
+ 	default:
+ 		PMD_INIT_LOG(ERR, "Invalid queue type");
 -- 
 2.51.0
 
