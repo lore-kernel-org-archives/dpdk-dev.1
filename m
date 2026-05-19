@@ -2,75 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEDDCD4F54
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 07:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D877CD4F57
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 09:17:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C04040296;
-	Tue, 19 May 2026 09:12:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 73E49402F2;
+	Tue, 19 May 2026 11:17:51 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id D38494021E
- for <dev@dpdk.org>; Tue, 19 May 2026 09:12:03 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 3AA9240296
+ for <dev@dpdk.org>; Tue, 19 May 2026 11:17:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1779174723;
+ s=mimecast20190719; t=1779182269;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=MnbsjB5oG8CFuFW5vg4aZ9+bc3/z6wxV0CPncCDLV/I=;
- b=PqSqoWCy1C+0U0lZLq15gG6SWhVTz12/dyzCYLD0CLDeOTG7ODFnw/QS5RFjseusaaG+50
- WEoveTqEfvScrfXeG5yXMyk2+2BkuPdWaTzjHX8j1g3JHt8cF4ADP5Z4vd6GVgD2yirhBh
- jhk1zl3pZBjZ/+qDQwGt/IaTHXIw1dU=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=BUB3pRJIYW7i2cu5/MQDl9ZFZqI8hADxzQVYBhLK0O8=;
+ b=hGF93u7dyfAe4AJHLS0hoFBzlfmWqQCBhl6NV+eoNQs16fV0sncR6+h7dDiMKWxm2ER3D0
+ xXkOoKK8miiKbBxu9jta4ZStwdEkUBfKwcwTtYe1NPDfT3GFLSwNF2hPFvvAObyvtvDBwZ
+ 1dcM5igZ799ect9936Bq6C0jSQftyoA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-92-uh65DxKYNZOb7ceZRsrvTA-1; Tue, 19 May 2026 03:11:59 -0400
-X-MC-Unique: uh65DxKYNZOb7ceZRsrvTA-1
-X-Mimecast-MFC-AGG-ID: uh65DxKYNZOb7ceZRsrvTA_1779174718
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-5a40505f715so1826769e87.3
- for <dev@dpdk.org>; Tue, 19 May 2026 00:11:59 -0700 (PDT)
+ us-mta-171-p87F3NfaP_Cukwyf4Cbagg-1; Tue, 19 May 2026 05:17:47 -0400
+X-MC-Unique: p87F3NfaP_Cukwyf4Cbagg-1
+X-Mimecast-MFC-AGG-ID: p87F3NfaP_Cukwyf4Cbagg_1779182267
+Received: by mail-wm1-f72.google.com with SMTP id
+ 5b1f17b1804b1-48fdacf2616so15967855e9.3
+ for <dev@dpdk.org>; Tue, 19 May 2026 02:17:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779174718; x=1779779518;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=MnbsjB5oG8CFuFW5vg4aZ9+bc3/z6wxV0CPncCDLV/I=;
- b=V74/9qa5KCmdO1VJ/BbyePaWHV3Dm8HfoWMdDl+Zx12Zy08oEbV+z3efcAFdPMgiRe
- +FDwz4iQ9Ykoc3sA1UqZXTRhjBCgCp2es8BStMPV/jKreHMFU0XsibN8yH/R8cQrn6iG
- 8zY1lRIo1KQyG+bnYxmY9UPvIBicV/vvlojIgm0c5HmG9cJFOvuYCjgMbY+MqrDp+KUV
- RflPPDDW9NRMkxjXfBMhA2YCaaq6FmMt3P/a2gTK8mC+T3hArarNs0MDqlVWp/91kq9H
- Ba3nXDZ7nP2qk7ZQ3KcHKM5AvK6la/dbyBcKq4Bej/qvda8+3C5attIYi42sI8wq2WFf
- 99IA==
-X-Gm-Message-State: AOJu0Yzra3XRqPdW4Fply98ny41lVmO3cbfxNa5oXPlgKICx+uIpkh5d
- ELTqXVVckfQLjyz76cbZby98obIyaYsYPz2t6XVBZKjA/isXOqOVy62GY5MklSKM0lJNV9FYCUm
- 5I3uuII6qvvMgl8ZtfwbqEychBdoIoI4iXwsAZ/nGDG5qXBlgv1LFHsMoeSD5Zf5/p8ttiipepf
- PGeH9YPGR1OiiJrbXV640=
-X-Gm-Gg: Acq92OEj2DlZqg2QtJkjxByEzy1kzhW2J+qA5u9YIChYgrWKyNeja0+Sm/7uw7WqYWW
- /p82OjMIhOvxHfFpKoS7HoglWAO3A3WgomrvRCZ5vSnY/YOkbpuOEuz+OgBYFwiaxLLrWJCD4Jq
- My5hcx30waMNksAUtrQ8aA5f34inhtUAWQmJHqwZiZ5POTNri7uzB2lI2NwOmnGZb3Imh/VGOYP
- 5qdPksRrOozpC0EMnawt19YxrRnzI3RuvB22xzirutZo0JCPDg+ETOPL+cS9fd/S0/9yw==
-X-Received: by 2002:a05:6512:b9d:b0:5a8:e5f6:ad15 with SMTP id
- 2adb3069b0e04-5aa0e74727cmr5035592e87.39.1779174718022; 
- Tue, 19 May 2026 00:11:58 -0700 (PDT)
-X-Received: by 2002:a05:6512:b9d:b0:5a8:e5f6:ad15 with SMTP id
- 2adb3069b0e04-5aa0e74727cmr5035580e87.39.1779174717470; Tue, 19 May 2026
- 00:11:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <CH3PR14MB63465CDF386C7768B0B65621BF032@CH3PR14MB6346.namprd14.prod.outlook.com>
-In-Reply-To: <CH3PR14MB63465CDF386C7768B0B65621BF032@CH3PR14MB6346.namprd14.prod.outlook.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 19 May 2026 09:11:45 +0200
-X-Gm-Features: AVHnY4JxBYfpyGwAhpjNMBYw2XsnearvaZAcTCObQ_PvHvxgoPWh6DE80ynxEfU
-Message-ID: <CAJFAV8xaZcteWBtkF+Na6F1ye33GFqW7+k0KnKoCVtQ7h4Z-EQ@mail.gmail.com>
-Subject: Re: Bad gateawy on DPDK kernel mods git URL
-To: Noah Bloom <nbloom@nrao.edu>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Ali Alnubani <alialnu@nvidia.com>
+ d=1e100.net; s=20251104; t=1779182266; x=1779787066;
+ h=in-reply-to:references:user-agent:to:from:cc:subject:message-id
+ :date:content-transfer-encoding:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=OXJmFNb+cp0XiPbH+0Vry5ZBJ3qvGeR/IbbOAlNaBJg=;
+ b=OwyZea+n3EjW9Ie2gXdFgdZMzLwWHP5KK9t/6noruhbkErC2qpW2mmEuOiATrB8ow3
+ wCXRXM/VHhHCSHwmaKkNrQx2fxRIlojWEvLw+OblxrKSzQPuJpQf8rQGGTKQuyGZFkI+
+ zZugvp7CP6fZzraVgHlfhVW0XDm7pOVcfreYuw7hErYYtfKLOhXW6WcdDlqaAV7v3K6i
+ e8yYwURircqRFW+NGJxLBCrS8G7qdXFk8JyoqAgKfSQO7BN6PHYtm9ii7ZmNQuEUQlZT
+ gy+zOFiydO1dAGG6ugpygrhJlOui2B6EYEt7l4+Mgj0g/q+Cx+hiI3iHSGKVEk8blW+2
+ ZdHg==
+X-Gm-Message-State: AOJu0YzLdlsbTQUsN7loqZ/mnAQ/YFx9JPSDX4Nq44SZMTM/zlUXoy/Y
+ CGXPiW2n9gHFqOhoTOKkW3q+MwJ6xj1slf+Kz8gaVPvmqzelwm1IIaM9jfSA6RkEVk6EmyTpkie
+ eZ4qng9av5SAHFfnB1NVhhFU6gWAsyaWp+0RwFp14Hrfr
+X-Gm-Gg: Acq92OFJ+KwRGDrE/UeUAV32K9Dp0bfNT9s9e8UG+VJJWQ254fqQwI0fBkkKekbhVdp
+ I62spi1jFaW7UCo2bEL7UWgTMtsMypG3qjFPXoMrkNY4+RLcb4/deFE/1ERaROLiQkAXs3lrcnK
+ g1NetNwH5ZJ9BZXnv34OaGFdWCHwzBfCzaRUAtD8aM2ojGOJyJN/emmcuxEvvfTvCII0p1iPtEI
+ 89mzLwMutJtlLjLgmV+AvV+SEAkgx+8vwYJuPeh4bIsM7A257/97wI03XjWVqALJUSkXFxcea1J
+ 9WIbo099H1yA8gUY6WOmATh2WtzJ5/gywb+of82kgN7af2eL0u3N+azjjxXrR9vBtBTWcWh7vYr
+ X11GiTg/6RKTJCWMGgTg5BhjwTBgDIp1AQuEY0/1TJOKEZIqsjSICaju6Ec+Q18If8N6gKhuAxG
+ Z32mY=
+X-Received: by 2002:a05:600c:c494:b0:48e:706b:53e8 with SMTP id
+ 5b1f17b1804b1-48fe60ecd88mr271623005e9.11.1779182266603; 
+ Tue, 19 May 2026 02:17:46 -0700 (PDT)
+X-Received: by 2002:a05:600c:c494:b0:48e:706b:53e8 with SMTP id
+ 5b1f17b1804b1-48fe60ecd88mr271622565e9.11.1779182266139; 
+ Tue, 19 May 2026 02:17:46 -0700 (PDT)
+Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
+ [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-48fe53804aesm296281205e9.15.2026.05.19.02.17.44
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Tue, 19 May 2026 02:17:45 -0700 (PDT)
+Mime-Version: 1.0
+Date: Tue, 19 May 2026 11:17:44 +0200
+Message-Id: <DIMJH4P7RJRX.3PUWC7L1KC4I8@redhat.com>
+Subject: Re: [PATCH v2 1/2] spinlock: remove volatile qualifier
+Cc: <dev@dpdk.org>, "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <stable@dpdk.org>
+From: "Robin Jarry" <rjarry@redhat.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>, "Thomas Monjalon"
+ <thomas@monjalon.net>
+User-Agent: aerc/0.21.0-151-g204ee0bf378b
+References: <20260504083714.2904729-1-thomas@monjalon.net>
+ <20260518150819.3332628-1-thomas@monjalon.net>
+ <DILWG1XCA7NV.33OR3FAYCVVI0@redhat.com>
+ <kagkiNyiQQ67llvhX0AB8g@monjalon.net>
+ <agswGt0gN-edMzjZ@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <agswGt0gN-edMzjZ@bricha3-mobl1.ger.corp.intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: lEphEpucBZwD-7EPajoQEw6-mG15rtAA9j0ndD5c5SY_1779174718
+X-Mimecast-MFC-PROC-ID: jGjpnZsjdNhxc_lj4JqgTNMqKaXQ_jYbsyNaHd0bPXo_1779182267
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,30 +98,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Noah,
-
-On Tue, 19 May 2026 at 09:07, Noah Bloom <nbloom@nrao.edu> wrote:
+Bruce Richardson, May 18, 2026 at 17:28:
+> On Mon, May 18, 2026 at 05:25:43PM +0200, Thomas Monjalon wrote:
+>> 18/05/2026 17:14, Robin Jarry:
+>> > Hey Thomas,
+>> >=20
+>> > Thomas Monjalon, May 18, 2026 at 17:07:
 >
-> I've been running a third-party script that installs DPDK kernel modules =
-from the DPDK.org git repository and it has recently started failing with a=
- 502/Bad Gateway error.  This was previously working as recently as May 14 =
-(4 days ago) but has been happening since at least May 16 (2 days ago).  Is=
- this expected?
+> <snip>
 >
-> Here is the specific error:
->
-> $ git clone http://dpdk.org/git/dpdk-kmods
-> Cloning into 'dpdk-kmods'...
-> fatal: unable to access 'http://dpdk.org/git/dpdk-kmods/': The requested =
-URL returned error: 502
+>>=20
+>> [...]
+>> > > @@ -246,10 +246,9 @@ static inline void rte_spinlock_recursive_unloc=
+k(rte_spinlock_recursive_t *slr)
+>> > >  =09__rte_no_thread_safety_analysis
+>> > >  {
+>> > >  =09if (--(slr->count) =3D=3D 0) {
+>> >=20
+>> > This code is completely broken. Any thread can unlock without any chec=
+k.
+>>=20
+>> Maybe, but I don't intend to fix recursive unlock in this patch.
+>> The subject is "remove volatile qualifier" (and unblock GCC 16).
+>>=20
+> As with regular mutexes, threads should not go around unlocking when not
+> holding the lock. Therefore, I think this is fine. [With regular spinlock=
+s
+> we can't check since we don't track threads, therefore I think we just ne=
+ed
+> to assume a well-behaved app.]
 
-Thanks for reporting.
+Ok, fair enough :)
 
-The issue was global to dpdk git repos, not only the dpdk-kmods repo.
-I had reported the errors to Ali, and this issue should be fixed since
-yesterday afternoon (CET).
+As Stephen suggested, maybe we could add some assertions?
 
-
---=20
-David Marchand
+ static inline void rte_spinlock_recursive_unlock(rte_spinlock_recursive_t =
+*slr)
+        __rte_no_thread_safety_analysis
+ {
++       RTE_ASSERT(rte_atomic_load_explicit(&slr->user, rte_memory_order_re=
+laxed) =3D=3D rte_gettid());
++       RTE_ASSERT(slr->count > 0);
++
 
