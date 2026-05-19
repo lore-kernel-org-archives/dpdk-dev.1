@@ -2,55 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9A5CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 06:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62236CD4F5B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 07:06:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E549C40296;
-	Tue, 19 May 2026 08:57:11 +0200 (CEST)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
- by mails.dpdk.org (Postfix) with ESMTP id BD90A4021E
- for <dev@dpdk.org>; Tue, 19 May 2026 08:57:09 +0200 (CEST)
-X-QQ-mid: Yeas7t1779173821t115t36075
-Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
- [115.196.16.37])
-X-QQ-SSF: 0000000000000000000000000000000
-From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 15632586834143366184
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>
- <20260518075422.4d1adf2f@phoenix.local>
-In-Reply-To: <20260518075422.4d1adf2f@phoenix.local>
-Subject: RE: [PATCH v4 00/20] Wangxun Fixes
-Date: Tue, 19 May 2026 14:56:59 +0800
-Message-ID: <006501dce75c$b0b01710$12104530$@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7C03940296;
+	Tue, 19 May 2026 09:06:39 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id C8D604021E;
+ Tue, 19 May 2026 09:06:38 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gKQgr2VYLzHnGjc;
+ Tue, 19 May 2026 15:06:16 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id 99FDD40570;
+ Tue, 19 May 2026 15:06:37 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 19 May 2026 08:06:36 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Tue, 19 May 2026 08:06:36 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>,
+ "dev@dpdk.org" <dev@dpdk.org>
+CC: "techboard@dpdk.org" <techboard@dpdk.org>, "mattias.ronnblom@ericsson.com"
+ <mattias.ronnblom@ericsson.com>
+Subject: RE: Memory management BoF summary (DPDK Summit 2026)
+Thread-Topic: Memory management BoF summary (DPDK Summit 2026)
+Thread-Index: AdzmoVFwN4xj0n6ARyCQahjMRW9t3wAbJqnA
+Date: Tue, 19 May 2026 07:06:36 +0000
+Message-ID: <f6a160e5cdf8477ea32c649a4dd7547c@huawei.com>
+References: <98CBD80474FA8B44BF855DF32C47DC35F6587B@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6587B@smartserver.smartshare.dk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.151.15]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="----=_NextPart_000_0066_01DCE79F.BED5EF20"
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAkVeIxS1SILpQA==
-Content-Language: zh-cn
-X-MS-TNEF-Correlator: 00000000ED7A7DC852FF08438ECCC3C27ED7187F0700C3B68E10F77511CEB4CD00AA00BBB6E600000000000D0000D0A3F95AF43F1D458BD704A2B671A3BD000000000CFD0000
-X-QQ-SENDSIZE: 520
-Feedback-ID: Yeas:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NHGFjaVOIMm2Cp0M3ZrlfpF+F9w3Wa/eXNmiTC/hGd5guFpLywvBpCE/
- d+9LARLmS4srVTGjWQFGxaxeEJyTITtqwRq7uSQ38m3zmDbVJShIsF6qMuMIQ5FOXtlexuX
- 4dc7KF/hFBG3kJuQVtXrvsUVjamFyT9QkV2yY5Z/wHQHkGrFtWIkfSm3OGX3Uz3iRG0aGRc
- adoZIpDMSp9jGBlallIoKHf6e1y/j5FsBeK3AW3rn+uT8laZaxOIIOg5dyz2+0HdUveHJEk
- elUnbYHQ++FoXFgVLDNsHfR4YA7B3c1//iwWsSdqU1tvq2YCgr9BXSWdfIVqp4X48E9PX5i
- klPbjRHTHr7DCrUQJv+bUUpN5d1XzhW/eWIx04j+/bhy9+AftpMzV7OKMgYQmTCV0Fc5UDj
- L1tjadj4Fv4Ol3Ljykt8OxjbL6lgxyycHC4MRXO6mt69cpmFDzfqUx9EDK2WirIkobAVkC8
- VqzMBX+Qe8U+u2qaC9NXsZxC1JxKJ/xROP3zFG35YMkc2pNzHYJl3TvU6RD5dwwbr0e9Dlc
- kGkpzKV7CYrmaLJva4ZwEH38Lm1hUX4KSyZqQ/iA4N6AZ1kHURPkC1wlDhyEIk+BDmTiJ2/
- /BsLPrksCxvhaKgdiS60P5/bAt8VVvZbGT/tEMKF8YhnpRKV4JWhDrFdADh5WOh9UUf9fZb
- 2FSGPteDxwLI2/ihVh1KA1T3pbVkPX7Z72MXkTEKR3Apahr9wDY7ly60mu7A4ibmjZBzksD
- Ew77OH+Zauga0azyAC2uvgVJb2Zb8iRISgb+zpQkVR2b8QDq3hpW90lEQGKWtmn4aDd2DAl
- nO7Y+KffNVl6v/W+YIRqvwOyKRQevUpMWH9iiRU4LkugeQ2k2KuuX+cY06zB0wlMNw9hNpZ
- RkBkMmTCdArS8By4qCAxw4Li2yZNNP3YDbrvRoxOksgagRxvqcA7JvTp6Ax8T1lAfscicwD
- rgJXrbSZXZZR2K3FsoiVlPbRO12WyM8hFE8fEXuh5o5k0M4UdgVo6RZ+4eQB0aD7rvLrOf4
- klFGg+1AdhomXo0d+W
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
-X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,101 +57,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a multipart message in MIME format.
-
-------=_NextPart_000_0066_01DCE79F.BED5EF20
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 
 
+> There are two ways of allocating/freeing memory objects in DPDK:
+> 1.	From the memory heap, i.e. rte_malloc() etc.
+> 2.	From a memory pool, i.e. rte_mempool_get() etc.
+>=20
+> The current memory heap in DPDK has two issues:
+> -	It is too slow to be used in the fast path.
+> -	There may be contention between control threads and
+> 	EAL threads for the same spinlocks in the heap.
+>=20
+> The memory pools in the DPDK has multiple issues:
+> -	It is designed for fixed size objects,
+> 	so individual mempools must be allocated for each type of object.
+> 	(In theory, mempools could be allocated per object size,
+> 	and shared across modules.
+> 	But that would require coordination across modules, including
+> 	the total number of objects required by these modules,
+> 	the choice of underlying mempool driver,
+> 	and the optimal mempool cache size.)
+> -	The number of objects in each mempool is fixed,
+> 	so applications have to size their mempools to worst case usage.
+> -	The memory for the objects in a mempool is pre-allocated.
+> In summary, mempools consume significantly more memory than effectively
+> being used.
+>=20
+> We discussed the need for a new memory heap system,
+> and converged on the following features:
+> -	Providing functions to allocate and free memory objects of varying
+> 	size, like the rte_malloc library, but usable in the fast path.
+> -	Perhaps also a need for bulk alloc/free functions,
+> 	like the rte_mempool library.
+> -	Building on top of memzones.
+> -	No dependency on the current DPDK heap, so it can cleanly replace it.
+> 	This is a stretch requirement.
+> -	NUMA aware.
+> -	Using slabs for various block sizes like in the Linux Kernel,
+> 	possibly with object size 2^N.
+> -	Using per-lcore caches to reduce contention,
+> 	resembling the mempool per-lcore caches.
+>=20
+> Mattias R=F6nnblom has implemented a prototype with the above properties,
+> and this was a good starting point for the discussion.
+>=20
+> Discussion:
+> -	It does not seem to be a requirement to be able to free the memory
+> 	used by the heap back to the memzones.
+> -	It is possible having header-less objects.
+> 	However, if the headers are relatively small compared to the size of
+> 	the objects themselves, having a header may offer some benefits.
+> -	The mempool library has implementation details optimizing for
+> 	spreading usage across memory channels, cache alignment, etc..
+> 	Such performance optimization details might need consideration.
+> -	There is a lower limit to how small objects will be allocated.
+> 	E.g. objects smaller than the size of a pointer is unlikely.
+> -	It is acceptable to return an object larger than the size requested,
+> 	e.g. returning an object of 16 bytes when 12 bytes were requested.
+> -	Preventing false sharing of allocated objects between CPU caches
+> 	may not be necessary, but must be considered.
+> -	Optimally, the new heap should replace the existing heap.
+> 	As seen with the timer wheel library previously proposed, replacing
+> 	core libraries in DPDK is difficult, so adding the new heap library
+> 	in parallel with the existing heap, i.e. with separate APIs, might be
+> 	a path of less resistance.
+> 	It will then be an application choice to use this new memory heap.
+> 	And long term, it can replace the existing heap, if appropriate.
+>=20
+> Mbuf discussion:
+> -	As a stretch goal, mbufs should be dynamically allocated from
+> 	the new heap, instead of being pre-allocated in mempools.
+> -	This might be achievable either
+> 	-	by replacing the mempool library with a wrapper to the heap, or
+> 	-	by providing a new mempool driver using the heap, as an
+> 		alternative to the existing ring and stack mempool drivers.
+> -	In this context, it is important to note that mbuf objects have some
+> 	pre-initialized fields when held in their respective mempools.
+> 	If allocating an mbuf directly from the heap, these fields must
+> 	somehow be initialized.
+> 	We did not discuss solutions for this, but noted that using the new
+> 	heap for mbufs should be considered in the design choices.
+>=20
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Monday, May 18, 2026 10:54 PM
-> To: Zaiyu Wang <zaiyuwang@trustnetic.com>; Zaiyu Wang
-> <zaiyuwang@trustnetic.com>
-> Cc: dev@dpdk.org; dev@dpdk.org
-> Subject: Re: [PATCH v4 00/20] Wangxun Fixes
-> 
-> On Mon, 11 May 2026 18:35:42 +0800
-> Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
-> 
-> > This series fixes several issues found on Wangxun Emerald, Sapphire
-> > and Amber-lite NICs, with a focus on link-related problems.
-> > ---
-> 
-> Since these are fixes, they mostly standalone.
-> If you want I can cherrypick the ones that review cleanly; and you can
-then
-> address the ones that have review feedback.
-> 
-Hi Stephen,
-Thank you so much for the detailed review and the very helpful feedback.
-Regarding your suggestion to cherry-pick the clean patches - if it's not too
-much trouble for you, that would be a great help.
-Our company is currently evaluating AI-based tools. Next time I submit
-patches, I might be able to run them through our AI review first. That
-should help catch issues like these earlier and hopefully reduce your review
-burden.
+Thanks Morten and Mattias, good summary and interesting discussion.
+I also agree that DPDK will benefit from mem-allocator, that=20
+probably will be not as fast as mempool, but will provide more flexibility
+and will not require up-front memory pre-allocation:
+still fixed size objects in the pool, slab-like mechanics underneath, abili=
+ty to grow/shrink on demand.
+Internally we have the lib that satisfies some of the functional requiremen=
+ts above.
+If time permits, ant there is an interest from the community, will also try=
+ to send an RFC for it,
+might be it will help to blend few things together.
+Konstantin  =20
 
-------=_NextPart_000_0066_01DCE79F.BED5EF20
-Content-Type: application/ms-tnef;
-	name="winmail.dat"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
-	filename="winmail.dat"
-
-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
-rTthZCWQBhBwIaBpGUAXOWgAcDxQQSPCLWxpYw6wB7BJQ3MlkAPwdHZoPsA8AWMpQDxiP3BuvGst
-GUALYA6wPFBwA2DzAmAiAHMuOWggaSRXC4D+Yz+gQEAHkD+gCsA/oDrD3yWQRLEl0ARgIqBsJdAi
-oBc+0QdAAiBlQndJZiAeeQhgOHAAcAVASSBjRwOREWAEkHJ5cA3ga19EojxhB5FAQEGgIBlAdvsI
-kAfgY0IwAHBGUCoQPtIfR+JIkkSxC5AehWFkZL8ZQAQRSYwRcDtASlZmCeCcZGIA0C4gMoxIaSFm
-PiweFDoAAHBJYEfic2//RgAb8EBQAhAFwEmCAQABkP8DEEHBSmU+0kmCO0El0CGwcGxwZnUDIE8N
-MGBn3wsRIjFH0gXAO8BnICAioNppPHF0UjBI1C1JN0rTj0HgQaBI0QQhJzk3O5DXR8A/gFoRMgQg
-bjigV/H/UjUpIAhgQiFSk0fhRaJKMf8jUFVAPFAj0EBhCcFOElUB3UJ1T1chKdEKsG4l0A9Rv0Cw
-SQAk4UZRLcAHQHVBoPFWwkFJLU9AEaBUQVtg/mxCYAexDtEpkAeASGE7wH5iIiAFQFmVJZBIcCIg
-Z35oBUBdolwiWAEpMEwDbf9EoVvxZEA8YFchYUBOhz4AzyKgYiBRgQVAc2hdU1Tyb0iBWbE7lj9w
-a0SWSvBy7z9wE6E+0mfwcAEQVUBGUd8ZQRvwP6BXA0plYghwAQAKbkJ1fW2QAAAAAwANNP0/rQ4D
-AA80/T+tDgIBFDQBAAAAEAAAAOkv63WWUESGg7h95SKqSUgCAeJlAQAAABQAAADYEgX57kToSp7f
-LthgKFklAAQZMQIB42UBAAAAFQAAABTYEgX57kToSp7fLthgKFklAAQZMQAAAAIBfwABAAAAjQAA
-ADAwMDAwMDAwRUQ3QTdEQzg1MkZGMDg0MzhFQ0NDM0MyN0VENzE4N0YwNzAwQzNCNjhFMTBGNzc1
-MTFDRUI0Q0QwMEFBMDBCQkI2RTYwMDAwMDAwMDAwMEQwMDAwRDBBM0Y5NUFGNDNGMUQ0NThCRDcw
-NEEyQjY3MUEzQkQwMDAwMDAwMDBDRkQwMDAwAAAAAAMABhBoWcnhAwAHEIcDAAADABAQAQAAAAMA
-ERABAAAAHgAIEAEAAABlAAAALS0tLS1PUklHSU5BTE1FU1NBR0UtLS0tLUZST006U1RFUEhFTkhF
-TU1JTkdFUjxTVEVQSEVOQE5FVFdPUktQTFVNQkVST1JHU0VOVDpNT05EQVksTUFZMTgsMjAyNjEw
-OjU0UAAAAAAWow==
-
-------=_NextPart_000_0066_01DCE79F.BED5EF20--
 
