@@ -2,64 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C87CD5BA4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 13:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 761ABCD5BA4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 13:32:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 298E140296;
-	Tue, 19 May 2026 15:19:17 +0200 (CEST)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
- by mails.dpdk.org (Postfix) with ESMTP id 76F6E4025E;
- Tue, 19 May 2026 15:19:13 +0200 (CEST)
-X-UUID: 5113c4a6538511f1aa26b74ffac11d73-20260519
-X-CTIC-Tags: HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME,
- HR_CTE_8B
- HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
- HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
- HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
- HR_TO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
- DN_TRUSTED, SRC_TRUSTED, SA_TRUSTED, SA_EXISTED, SN_TRUSTED
- SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_GOOD_SPF
- CIE_UNKNOWN, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_GOOD
- ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.12, REQID:9657a29b-a02d-4a5a-880f-0a05fa665745, IP:10,
- URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
- N:release,TS:5
-X-CID-INFO: VERSION:1.3.12, REQID:9657a29b-a02d-4a5a-880f-0a05fa665745, IP:10,
- UR
- L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
- release,TS:5
-X-CID-META: VersionHash:e7bac3a, CLOUDID:2c99040fe66847f8772c2e068dc4af62,
- BulkI
- D:260519211910FOC8KFVF,BulkQuantity:0,Recheck:0,SF:17|19|38|66|78|101|102|
- 127|865|898,TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk
- :nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,
- BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 5113c4a6538511f1aa26b74ffac11d73-20260519
-X-User: jinzhiguang@kylinos.cn
-Received: from jinzig.localdomain [(123.149.0.81)] by mailgw.kylinos.cn
- (envelope-from <jinzhiguang@kylinos.cn>)
- (Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
- with ESMTP id 297399724; Tue, 19 May 2026 21:19:08 +0800
-From: jinzhiguang <jinzhiguang@kylinos.cn>
-To: Thomas Monjalon <thomas@monjalon.net>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Dharmik Thakkar <dharmikjayesh.thakkar@arm.com>,
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-Cc: dev@dpdk.org,
-	jinzhiguang <jinzhiguang@kylinos.cn>,
-	stable@dpdk.org
-Subject: [PATCH v2] ring: fix zero-copy burst API documentation
-Date: Tue, 19 May 2026 21:18:45 +0800
-Message-ID: <20260519131846.1089-1-jinzhiguang@kylinos.cn>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id 4E67E40296;
+	Tue, 19 May 2026 15:32:07 +0200 (CEST)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
+ [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id BAB4A40296
+ for <dev@dpdk.org>; Tue, 19 May 2026 15:32:05 +0200 (CEST)
+Received: by mail-dy1-f180.google.com with SMTP id
+ 5a478bee46e88-2ef2a1cc06dso4003149eec.0
+ for <dev@dpdk.org>; Tue, 19 May 2026 06:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779197525;
+ x=1779802325; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=pfVPhOT3ck5UNjqiYz0dVZnGHJxJs1Jz2E20CYoOvQc=;
+ b=jKzHZOAC3k1Syarw56t3MM6CwQ0k/wej6C0sLFmVKIjmgQEyqKDKFMmpcB48FpTC5U
+ Vj6M7lT229ADFrfkN3rULe6JFi/nkBQ10d8p2IBnzOW2MA1ySTmHKYbOc9HP4dKFmDVE
+ jaZfmPv3dAB2IOzL4rH7HosSVywWS1tPE998ZwBDLrfaGT9rmxhXIxM8HZf69k+Q27gg
+ w2U5KHGuAFm4Uwu596gmCp6vKHpm8b1MZ+a78d78NdQ29xqMErpr78b41H6g6TaFnlbX
+ ftqyMU5O922j6mX8NZijY1SdFCXdjnbdaJX4Nye1kqwEFdstZZ4GxRIMBfQgfj30ZAYy
+ RXAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1779197525; x=1779802325;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=pfVPhOT3ck5UNjqiYz0dVZnGHJxJs1Jz2E20CYoOvQc=;
+ b=eQ6+1STDoMuIkhTnuzu6yM2hdhqOpQA04FnfeFng0UYDALvFuXm2/+p97q4rJLBVqG
+ vikDhVZvZPxtCZ2mQypAQMN+jnR40VNB4scx1pqvXbuOvkvjFgRx6BCOFVDxnNMNbqF7
+ MvcEXAKRwRQaq2L0asv5zjLUTpiKrQPh7InHSGbPvzvMCEOVG8u2+woT3FRwAyXg5CqI
+ 051JZmpHQ8BZfIHsm8dBHOAlfY2uiM0bOwSfKb/UkaPsnqWceHKLQO50uW0YK6c5JapU
+ 48u0fPD192tK0SyDHyEO8Vvr3Ru949K5DNwc8l4JXuvLcOGGo8JYr0GpfZU20MesTGJU
+ e8AQ==
+X-Gm-Message-State: AOJu0YxhPci3dv2+N4K9EOlUKBCVm9WPUxTuhLgVr5H18Ghi8ecge0To
+ fvl+4J2apdy5/ZTUpjv7dacY9J/lbkUGlKU+weTSbL6DPFdxSGorTJqF0Ysdz1/wJhs=
+X-Gm-Gg: Acq92OHhSXrvFIzUgyICkFHG71L162ajbjQrM93SHIj/ZTSV6JWnBTMw3uny8UqeWQ9
+ VortDHaFdG+Y30WLMxVtD9BOeJEsxFFFiMsoYgbbTM9Wht5i9xuCQ3hz0XM1TrlkG6U0NOEjOrj
+ d9FoDrtY6LsqH62lpcOBsvFy5GKzunPfF0j5OuqJWClwIMJ+yj1mgZw4XrBZoYMCBJ92v9aQA/6
+ HEnei1598zPQkXyDj5tDlDmLOYA4UdkXH75ndIGeeJ6EY0Q6PZ4FMzHqLIsr4VPE7I6VozeFxNf
+ rZZ5fNIJt7Akii+mF72BwkTODXfzyRE3OXSQE545w+FZdGt8GknR1ldTm06VY0sODQv08Kq4YhL
+ RBh+G32tcgZCnDeGR/0axGaWOBD5pHWgkcD2YKc7O2wVsbCnLWgLyjja7i0GYbol7L75x5Bh3fN
+ B23MCGybqRTcO8RWKp/jydbI9xqdd0MKS4Wp8=
+X-Received: by 2002:a05:7301:4001:b0:2dd:6937:79b8 with SMTP id
+ 5a478bee46e88-3039812b459mr9055421eec.5.1779197524553; 
+ Tue, 19 May 2026 06:32:04 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-30293e2e3c0sm20667861eec.3.2026.05.19.06.32.03
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 19 May 2026 06:32:04 -0700 (PDT)
+Date: Tue, 19 May 2026 06:32:00 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>, Bruce
+ Richardson <bruce.richardson@intel.com>, Robin Jarry <rjarry@redhat.com>,
+ stable@dpdk.org
+Subject: Re: [PATCH v3 1/3] spinlock: remove volatile qualifier
+Message-ID: <20260519063200.66dabed6@phoenix.local>
+In-Reply-To: <20260519103640.3986710-1-thomas@monjalon.net>
+References: <20260504083714.2904729-1-thomas@monjalon.net>
+ <20260519103640.3986710-1-thomas@monjalon.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,75 +82,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-These are burst APIs relying on RTE_RING_QUEUE_VARIABLE behavior, they
-operate on a best-effort basis and return the actual number of
-objects processed (between 0 and n).
+On Tue, 19 May 2026 12:34:14 +0200
+Thomas Monjalon <thomas@monjalon.net> wrote:
 
-Update description to match implementation.
+> When compiling with C++20 standard requirement (default in GCC 16),
+> the increment and decrement of volatile variables are rejected:
+> 
+> rte_spinlock.h:241:14: error:
+> 	'++' expression of 'volatile'-qualified type is deprecated
+> rte_spinlock.h:252:21: error:
+> 	'--' expression of 'volatile'-qualified type is deprecated
+> rte_spinlock.h:278:14: error:
+> 	'++' expression of 'volatile'-qualified type is deprecated
+> 
+> The count field of rte_spinlock_recursive_t
+> does not need the volatile qualifier
+> because it is only accessed by the thread holding the lock,
+> which already provides the necessary memory ordering.
+> 
+> The user field can be accessed outside of the lock,
+> so it must handled as a C11 atomic variable.
+> The name is also changed from user to owner.
+> It will break if an application is accessing this field directly,
+> which should never happen.
+> 
+> Fixes: af75078fece3 ("first public release")
+> Cc: stable@dpdk.org
+> 
+> Signed
 
-Fixes: 47bec9a5ca9f ("ring: add zero copy API")
-
-Signed-off-by: jinzhiguang <jinzhiguang@kylinos.cn>
----
-Cc: honnappa.nagarahalli@arm.com
-Cc: stable@dpdk.org
----
- .mailmap                    | 1 +
- lib/ring/rte_ring_peek_zc.h | 8 ++++----
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 4d26d9c286..a4f91f2131 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -756,6 +756,7 @@ Jing Chen <jing.d.chen@intel.com>
- Jingguo Fu <jingguox.fu@intel.com>
- Jingjing Wu <jingjing.wu@intel.com>
- Jingzhao Ni <jingzhao.ni@arm.com>
-+jinzhiguang <jinzhiguang@kylinos.cn>
- Jiri Slaby <jslaby@suse.cz>
- Job Abraham <job.abraham@intel.com>
- Jochen Behrens <jochen.behrens@broadcom.com> <jbehrens@vmware.com>
-diff --git a/lib/ring/rte_ring_peek_zc.h b/lib/ring/rte_ring_peek_zc.h
-index 3254fe0481..43d6a53075 100644
---- a/lib/ring/rte_ring_peek_zc.h
-+++ b/lib/ring/rte_ring_peek_zc.h
-@@ -235,7 +235,7 @@ rte_ring_enqueue_zc_bulk_start(struct rte_ring *r, unsigned int n,
-  *   If non-NULL, returns the amount of space in the ring after the
-  *   reservation operation has finished.
-  * @return
-- *   The number of objects that can be enqueued, either 0 or n
-+ *   The actual number of objects that can be enqueued.
-  */
- static __rte_always_inline unsigned int
- rte_ring_enqueue_zc_burst_elem_start(struct rte_ring *r, unsigned int esize,
-@@ -265,7 +265,7 @@ rte_ring_enqueue_zc_burst_elem_start(struct rte_ring *r, unsigned int esize,
-  *   If non-NULL, returns the amount of space in the ring after the
-  *   reservation operation has finished.
-  * @return
-- *   The number of objects that can be enqueued, either 0 or n.
-+ *   The actual number of objects that can be enqueued.
-  */
- static __rte_always_inline unsigned int
- rte_ring_enqueue_zc_burst_start(struct rte_ring *r, unsigned int n,
-@@ -442,7 +442,7 @@ rte_ring_dequeue_zc_bulk_start(struct rte_ring *r, unsigned int n,
-  *   If non-NULL, returns the number of remaining ring entries after the
-  *   dequeue has finished.
-  * @return
-- *   The number of objects that can be dequeued, either 0 or n.
-+ *   The actual number of objects that can be dequeued.
-  */
- static __rte_always_inline unsigned int
- rte_ring_dequeue_zc_burst_elem_start(struct rte_ring *r, unsigned int esize,
-@@ -471,7 +471,7 @@ rte_ring_dequeue_zc_burst_elem_start(struct rte_ring *r, unsigned int esize,
-  *   If non-NULL, returns the number of remaining ring entries after the
-  *   dequeue has finished.
-  * @return
-- *   The number of objects that can be dequeued, either 0 or n.
-+ *   The actual number of objects that can be dequeued.
-  */
- static __rte_always_inline unsigned int
- rte_ring_dequeue_zc_burst_start(struct rte_ring *r, unsigned int n,
--- 
-2.53.0
-
+Series-acked-by: Stephen Hemminger <stephen@networkplumber.org>
