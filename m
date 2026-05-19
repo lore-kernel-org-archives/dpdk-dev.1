@@ -2,75 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76560CD4F5B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 15:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2964CD4F5B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 16:08:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7440A4065F;
-	Tue, 19 May 2026 17:44:10 +0200 (CEST)
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
- [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id 1EC1640664
- for <dev@dpdk.org>; Tue, 19 May 2026 17:44:08 +0200 (CEST)
-Received: by mail-dy1-f170.google.com with SMTP id
- 5a478bee46e88-303f2fb7225so1839923eec.1
- for <dev@dpdk.org>; Tue, 19 May 2026 08:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779205447;
- x=1779810247; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=7Nr8AawJhPOIxnQ3r4XmWapDhgZLtX/NlKPL76uHA3s=;
- b=dscWHgN9EHBlDZ/kw4RBbAvazDR68MGihp2J9abABEAL6lCucfHdBZE2Y6iYypSzqE
- jzj0g3PVPbo9oSTUsXGX3sJg70m9Q/E6pui2RtXHwoGaArguJY2qN/YGZGkO1FwXBh5j
- jv6x/nUu4F29XByUK+vXcJJxMX+5jsUmKKnB4xuma7adOG1MV7s28KA+cDJQoGbVYdXT
- sSqzjuWhHLzklEJfFuOn0S0g1hr0q4V6epkTTCrvujz49zZEufrY5IcJMvv51FpuXXsm
- fniUQmGssodwhGPMQuWVXKW726IBoR1mO1lsxSilTyYEt141TmhbK5EqA5YimlltTso3
- dz5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779205447; x=1779810247;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=7Nr8AawJhPOIxnQ3r4XmWapDhgZLtX/NlKPL76uHA3s=;
- b=RdfjQ2Q8k7bDR5APEcgrB4GL9ColOvhTrVXoWbTb+tKJWWSNb6SeTqO/4+s61p3RgP
- e7OhozTwJBHX2N8e498jg6EAWPs4qEBxA0gwCP0eIIpNugnjpsz9DHx2jpsev3+I/tT4
- B+h+5tJdnBbUF4xI9Ozk8lP3wHIObEf18J0zIeqMqkkOpbQE0PIN1SeV4QpO3yc3lqxI
- j83cu386gvn2+vdCX0I4/AzK2ULGEeFkgudE8pzVWGAUKiWWHDjsIHOiAfUQJ+koz9f8
- dxDTVlZcF1mYayunUwX1zl2jVkvVsSehZgmRwmrgRbbW3wq3B3zh8f6aW/mxdqntJpeh
- Kn3A==
-X-Forwarded-Encrypted: i=1;
- AFNElJ+3qeidDpIUL/6F+uecvHyXwsHkxtnQaiix+abS+t628IpuZtT4nbOVpbSLtNj8mvhrKL8=@dpdk.org
-X-Gm-Message-State: AOJu0Yxx8dBcuk3ZLjR+E6Ru1S2rNxKQoq2ABs1uvGNIoF1oyijj45Zb
- FF2/MZwoFwXR5022VazR4t3uli7atCDJswVMdYSnwajwV6p8tUCDwiw16X6AbM8UY+s=
-X-Gm-Gg: Acq92OFmqyTDp9+JJ8tBLhJmEu/wMTglBeiwGL2CC4ld5e6O3HGOnCwCwfSFfshTSgf
- BVJmmOoITvsRHb0IPC6IYTfkJY9BQHJnR12gPve1eruljmdb19T8ZfqSqhXu9bErHxUr0oCIHaQ
- Q87HR0RKyIzm+Qpd5qsa4avwzjniai6O2OpolaFZIxzdo1/a2vMtDMk91wiPvoug3/AMtKq+eOE
- sRfRGI5g0wdtBtgKL+5G/jRVbA6M5Ijjcjy7n0nw15oYhYQKRWCKfeFy9cnWEl/QcCIjwdg9cub
- SjSAOvtoZHlMDkV+K5S4B+Z9Gb9SEQSVPuOdC+gFLHiY/PRpgOc06GyRKrZj7ZPHNprKjaZDkYp
- 833+eGoujV83TWCoaRYW7rEQOQ33MxSxoPaosNlTQPAHgY12L/MPMDOH8LBZyOELSUBJ7P9lz0D
- lIFGMFgczzkkzrDpAyuWGJOC9fT6su76jLcso=
-X-Received: by 2002:a05:7301:6884:b0:2ea:5057:a2f9 with SMTP id
- 5a478bee46e88-3039867f58bmr8227850eec.16.1779205447231; 
- Tue, 19 May 2026 08:44:07 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30293e2e686sm19536595eec.5.2026.05.19.08.44.06
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 19 May 2026 08:44:06 -0700 (PDT)
-Date: Tue, 19 May 2026 07:40:16 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Denis Lyulin <lyulin.2003@mail.ru>
-Cc: Ori Kam <orika@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, Michael Baum
- <michaelba@nvidia.com>, Ferruh Yigit <ferruh.yigit@amd.com>, dev@dpdk.org,
- stable@dpdk.org, adrien.mazarguil@6wind.com
-Subject: Re: [PATCH v2] ethdev: fix pointer check in GENEVE and RAW flow copy
-Message-ID: <20260519074002.37890cf0@phoenix.local>
-In-Reply-To: <20260519072335.16601-1-lyulin.2003@mail.ru>
-References: <20260519072335.16601-1-lyulin.2003@mail.ru>
+	by mails.dpdk.org (Postfix) with ESMTP id B5F2D40296;
+	Tue, 19 May 2026 18:08:38 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 1D3CF40276
+ for <dev@dpdk.org>; Tue, 19 May 2026 18:08:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1779206917; x=1810742917;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=I3l1d53NGEt53cEHPOmm/PtzxUB6GdrrBwf7X/e3suI=;
+ b=VTEITD0Xqxrg9jpZrxAEPQO7bn383wOEuyjEm8/hg4tOP6Mf3PxopbV7
+ iGw4UQlKo5VVhlZYlD31AEUZed6GMu2PRHCV9dUiHhwty3NJizRJWmU/t
+ cvAWDoXBRCUxiK8PVibFvmIA7MTFJmlje3Jb3N0LJ6xYecgeVDXNygTs3
+ gR/c04uxxlX4otIeoA0U0prHmKkSHHC1PCspcCN/AKtmppB58hLAyZWEw
+ FpXxA2tEdk0IEW9j41+HofKa7xiBKoaFmBvQY7EOQwUgdQluuIJKq0Da8
+ fLQOl046PfjPYjiPX9EVMExOA232xTbXoQU8Fn9qO4tG0QPbv+wSlw82m w==;
+X-CSE-ConnectionGUID: oVuVX2GESfiuy6TB62DFHQ==
+X-CSE-MsgGUID: Rg1Ux1sCTQ+PP9PH0vXwbw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11791"; a="80070039"
+X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="80070039"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 May 2026 09:08:36 -0700
+X-CSE-ConnectionGUID: k+0xd0GyTry029TN+raGxQ==
+X-CSE-MsgGUID: Rvm2jMXwR6q4zlXjs/MmFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; d="scan'208";a="244784760"
+Received: from silpixa00401874.ir.intel.com (HELO
+ silpixa00401874.ger.corp.intel.com) ([10.20.224.247])
+ by orviesa005.jf.intel.com with ESMTP; 19 May 2026 09:08:35 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC PATCH 0/8] remove use of rte_memcpy from net/intel
+Date: Tue, 19 May 2026 16:05:57 +0000
+Message-ID: <20260519160823.1004973-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,32 +57,73 @@ List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
-Message-ID: <20260519144016.iIxNz_Ggj9mBzmHX7PSokxQJy8NSGiGLscWBaqfF0Go@z>
 
-On Tue, 19 May 2026 10:23:35 +0300
-Denis Lyulin <lyulin.2003@mail.ru> wrote:
+This RFC proposed to replace all instances of rte_memcpy in Intel
+(and former-Intel) net drivers with just regular memcpy. This is
+done on the basis that the memcpy use is not datapath, but is used
+for flow configuration, virt-channel (to firmware or PF) messaging
+and other control path functions.
 
-> When rte_flow_conv_item_spec() is called from rte_flow_conv_pattern(),
-> the spec, last and mask pointers are checked separately. If the API
-> is used incorrectly, the spec pointer may be NULL while last and mask
-> may be valid pointers. Also call of rte_flow_conv() with
-> RTE_FLOW_CONV_OP_ITEM_MASK and item->spec == NULL may lead to the
-> same problem.
-> 
-> In rte_flow_conv_item_spec() for GENVE_OPT and RAW item types the spec
-> pointer is used even if the function is called to copy last or mask.
-> It may cause a NULL pointer (spec) dereference.
-> 
-> This commit adds extra check of item->spec and if it is NULL, does not
-> copy further data relying on it
-> 
-> Fixes: 841a0445442d ("ethdev: fix GENEVE option item conversion")
-> Cc: michaelba@nvidia.com
-> Cc: adrien.mazarguil@6wind.com
-> Cc: stephen@networkplumber.org
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Denis Lyulin <lyulin.2003@mail.ru>
-> ---
+Bruce Richardson (8):
+  net/ice: replace use of DPDK-specific memcpy function
+  net/iavf: replace use of DPDK-specific memcpy function
+  net/i40e: replace use of DPDK-specific memcpy function
+  net/ixgbe: replace use of DPDK-specific memcpy function
+  net/e1000: replace use of DPDK-specific memcpy function
+  net/idpf: replace use of DPDK-specific memcpy function
+  net/cpfl: replace use of DPDK-specific memcpy function
+  net/ipn3ke: replace use of DPDK-specific memcpy function
 
-Applied to next-net
+ drivers/net/intel/cpfl/cpfl_ethdev.c          |  4 +-
+ drivers/net/intel/cpfl/cpfl_vchnl.c           |  6 +-
+ drivers/net/intel/e1000/em_rxtx.c             |  1 -
+ drivers/net/intel/e1000/igb_flow.c            |  8 +--
+ drivers/net/intel/e1000/igb_pf.c              |  5 +-
+ drivers/net/intel/e1000/igb_rxtx.c            |  1 -
+ drivers/net/intel/i40e/base/i40e_osdep.h      |  3 +-
+ drivers/net/intel/i40e/i40e_ethdev.c          | 57 +++++++++----------
+ drivers/net/intel/i40e/i40e_fdir.c            | 18 +++---
+ drivers/net/intel/i40e/i40e_flow.c            | 26 ++++-----
+ drivers/net/intel/i40e/i40e_pf.c              |  3 +-
+ drivers/net/intel/i40e/i40e_tm.c              |  6 +-
+ drivers/net/intel/i40e/rte_pmd_i40e.c         | 20 +++----
+ drivers/net/intel/iavf/base/iavf_osdep.h      |  3 +-
+ drivers/net/intel/iavf/iavf_ethdev.c          | 12 ++--
+ drivers/net/intel/iavf/iavf_fdir.c            | 46 +++++++--------
+ drivers/net/intel/iavf/iavf_fsub.c            | 26 ++++-----
+ drivers/net/intel/iavf/iavf_generic_flow.c    |  4 +-
+ drivers/net/intel/iavf/iavf_hash.c            |  4 +-
+ drivers/net/intel/iavf/iavf_tm.c              |  6 +-
+ drivers/net/intel/iavf/iavf_vchnl.c           | 14 ++---
+ drivers/net/intel/ice/base/ice_osdep.h        |  5 +-
+ drivers/net/intel/ice/ice_dcf.c               | 14 ++---
+ drivers/net/intel/ice/ice_dcf_ethdev.c        | 10 ++--
+ drivers/net/intel/ice/ice_dcf_parent.c        |  2 +-
+ drivers/net/intel/ice/ice_dcf_sched.c         |  6 +-
+ drivers/net/intel/ice/ice_diagnose.c          |  4 +-
+ drivers/net/intel/ice/ice_ethdev.c            | 12 ++--
+ drivers/net/intel/ice/ice_fdir_filter.c       | 36 ++++++------
+ drivers/net/intel/ice/ice_generic_flow.c      |  4 +-
+ drivers/net/intel/ice/ice_hash.c              |  2 +-
+ drivers/net/intel/ice/ice_tm.c                |  2 +-
+ drivers/net/intel/idpf/base/idpf_osdep.h      |  5 +-
+ drivers/net/intel/idpf/idpf_common_device.c   |  2 +-
+ drivers/net/intel/idpf/idpf_common_virtchnl.c | 20 +++----
+ drivers/net/intel/idpf/idpf_ethdev.c          | 10 ++--
+ drivers/net/intel/idpf/idpf_rxtx.c            |  8 +--
+ drivers/net/intel/ipn3ke/ipn3ke_ethdev.h      |  1 -
+ drivers/net/intel/ipn3ke/ipn3ke_flow.c        | 26 ++++-----
+ drivers/net/intel/ipn3ke/ipn3ke_representor.c |  8 +--
+ drivers/net/intel/ipn3ke/ipn3ke_tm.c          |  6 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  4 +-
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          |  6 +-
+ drivers/net/intel/ixgbe/ixgbe_flow.c          | 32 +++++------
+ drivers/net/intel/ixgbe/ixgbe_ipsec.c         |  4 +-
+ drivers/net/intel/ixgbe/ixgbe_pf.c            |  5 +-
+ drivers/net/intel/ixgbe/ixgbe_tm.c            |  6 +-
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.c       |  2 +-
+ 48 files changed, 252 insertions(+), 263 deletions(-)
+
+-- 
+2.51.0
+
