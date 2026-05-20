@@ -2,33 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D525BCD4F54
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 12:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE84ACD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 12:49:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EEE8A4029D;
-	Wed, 20 May 2026 14:49:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E3C434066C;
+	Wed, 20 May 2026 14:49:54 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id BD09940144
- for <dev@dpdk.org>; Wed, 20 May 2026 14:49:45 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gLBDw1LNBzJ46Bp
- for <dev@dpdk.org>; Wed, 20 May 2026 20:49:04 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id AD53440144
+ for <dev@dpdk.org>; Wed, 20 May 2026 14:49:52 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gLBF42B8rzJ46Bp;
+ Wed, 20 May 2026 20:49:12 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 5F9D940584
- for <dev@dpdk.org>; Wed, 20 May 2026 20:49:44 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 7E71440569;
+ Wed, 20 May 2026 20:49:52 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 20 May 2026 14:49:44 +0200
+ 15.2.1544.11; Wed, 20 May 2026 14:49:52 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: 
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v4 00/11] bpf: introduce extensible load API
-Date: Wed, 20 May 2026 13:49:09 +0100
-Message-ID: <20260520124922.42445-1-marat.khalili@huawei.com>
+Subject: [PATCH v4 01/11] bpf: make logging prefixes more consistent
+Date: Wed, 20 May 2026 13:49:10 +0100
+Message-ID: <20260520124922.42445-2-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260518084912.57006-1-marat.khalili@huawei.com>
+In-Reply-To: <20260520124922.42445-1-marat.khalili@huawei.com>
 References: <20260518084912.57006-1-marat.khalili@huawei.com>
+ <20260520124922.42445-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -48,214 +50,233 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset introduces an extensible load API for the BPF library in
-DPDK, addressing current limitations regarding ABI stability and feature
-constraints.
+Logging in lib/bpf is inconsistent: some places use `%s()`, other just
+`%s` for `__func__`.
 
-Currently, `rte_bpf_load` relies on a fixed `struct rte_bpf_prm`, which
-makes it difficult to add new loading options or parameters without
-breaking the ABI.
+Introduce new macro for logging prefixed with function name and use it
+everywhere function name without arguments is prefixed to the log line.
 
-To resolve these issues, this series introduces `rte_bpf_load_ex` taking
-`struct rte_bpf_prm_ex`. The new parameter structure includes a `sz`
-field for backward compatibility, allowing future extensions.
-
-Taking advantage of the new extensible API, this patchset also adds
-several new features:
-* Support for loading and executing BPF programs with up to 5 arguments.
-* Support for loading classic BPF (cBPF) directly.
-* Support for loading ELF files directly from memory buffers.
-* New API functions (`rte_bpf_eth_rx_install` and `rte_bpf_eth_tx_install`)
-  to install an already loaded BPF program as a port callback, decoupling
-  the loading phase from the installation phase.
-
-
-v4:
-* Restored missing NULL checks in wrapper functions `rte_bpf_load` and
-  `rte_bpf_elf_load`.
-* Fixed the burst execution functions (`rte_bpf_exec_burst*`) to return
-  `0` and set `rte_errno = EINVAL` on failure, preventing `-EINVAL`
-  being reinterpreted as a large `uint32_t` value. Initialized `rc`
-  properly in scalar execution wrappers for this case.
-* Swapped the Doxygen comments in `rte_bpf_ethdev.h` for RX and TX functions.
-* Added diagnostic dump on failure path in `test_bpf_filter`.
-* Fixed memory leak of the BPF handle in `bpf_rx_test` upon install failure.
-* Added tests for NULL parameter rejection, mismatched execution arguments,
-  unsupported execution flags, and the libpcap-less `rte_bpf_convert` stub.
-
-v3:
-* Appended Acked-by tags to all individual commits to align with
-  patchwork requirements.
-
-v2:
-* Fixed a potential segmentation fault in `exec_vm_burst_ex` by deferring
-  the dereference of `ctx[i].arg` until it is confirmed that `nb_prog_arg > 0`.
-* Clarified documentation and code comments for `RTE_BPF_EXEC_FLAG_JIT`
-  requirements and fast-path expectations.
-
-
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
-To the AI reviewer:
-Thank you for the review. Several of your points were very helpful and
-have been addressed in v2 (e.g. the potential null pointer dereference
-in `exec_vm_burst_ex`, and documenting the `RTE_BPF_EXEC_FLAG_JIT`
-expectations). The remaining points were investigated but do not require
-code changes for the following reasons:
+ lib/bpf/bpf_convert.c   | 18 +++++++++---------
+ lib/bpf/bpf_impl.h      |  3 +++
+ lib/bpf/bpf_jit_arm64.c |  4 ++--
+ lib/bpf/bpf_load.c      |  2 +-
+ lib/bpf/bpf_load_elf.c  |  2 +-
+ lib/bpf/bpf_stub.c      |  6 ++----
+ lib/bpf/bpf_validate.c  | 25 ++++++++++++-------------
+ 7 files changed, 30 insertions(+), 30 deletions(-)
 
-> Can the macro [RTE_BPF_LOG_FUNC_LINE] be enhanced for type safety?
-> Does string literal concatenation support logging format modifiers
-> consistently across all call sites?
-`RTE_LOG_LINE` uses compiler attributes (`__attribute__((format(printf,
-...)))`) to strictly enforce format type safety. Furthermore, standard C
-preprocessors inherently support string literal concatenation prior to
-format checking, ensuring it works safely across all macro invocations.
-
-> Does `bpf_load()` always set `rte_errno` to `ENOMEM` when returning
-> `NULL`, or could it mask other errors by hardcoding `-ENOMEM`?
-By design, the internal `bpf_load()` function only returns `NULL` when
-its internal memory allocation (`mmap`) fails. Returning `-ENOMEM`
-perfectly accurately reflects the nature of this failure.
-
-> Can the loop go out of bounds? When `opts_sz` is larger than
-> `type_sz`, does this code read beyond the allocated memory region
-> pointed to by `opts`?
-The bounds are established by the application-supplied `opts_sz`.
-Standard C semantics dictate that if a caller declares a size larger
-than the actual allocated memory, it generates undefined behavior on
-their end. `opts_valid` iterates exactly within the declared limits.
-
-> Does the `memcpy()` handle the case where `app_prm->sz` is larger than
-> `sizeof(load->prm)` correctly? Can partial copies lead to inconsistent
-> state if the struct has pointer members?
-The call to `opts_valid()` happens prior to `memcpy()` and guarantees
-that any extra trailing space is definitively filled with zeroes. This
-implies the application relies entirely on default functionality for the
-newer unknown fields, making a truncated partial copy completely sound.
-
-> Can `elf_end()` be called with `NULL` safely? Does it cause undefined
-> behavior if `load->elf` is `NULL`?
-`elf_end()` in `libelf` is explicitly defined to handle `NULL` pointers
-as a safe no-op.
-
-> Can this logic handle uninitialized or out-of-range `prog_arg->type`
-> values? Does `RTE_BPF_ARG_PTR_MBUF` have a specific numeric value that
-> should be validated before use?
-The function utilizes strict positive equality checks against valid enum
-values (`RTE_BPF_ARG_RAW`, `RTE_BPF_ARG_PTR`, `RTE_BPF_ARG_PTR_MBUF`).
-Invalid or uninitialized types simply fall through and cleanly return
-`false`.
-
-> Does the `malloc` check for integer overflow in the size calculation
-> `nb_ins * sizeof(load->ins[0])`?
-`bpf_convert_filter()` acts as a strict gatekeeper and enforces an upper
-bound limit (`BPF_MAXINSNS` = 4096) on instruction count. This extremely
-small ceiling makes an arithmetic overflow in `malloc` mathematically
-impossible.
-
-> Does `bpf_eth_elf_install()` acquire any additional locks? Can this
-> lead to a deadlock?
-No secondary lock acquisitions exist inside `bpf_eth_elf_install()`. It
-executes standard initialization logic and callback registrations
-without touching threading constructs, ensuring a deadlock-free flow.
-
-> Are we standardizing on this specific format ["%s(): "]?
-Yes, we are standardizing on this specific formatting for BPF logs.
-
-> Does this properly handle the error string in all cases?
-Yes, `err` is a statically assigned string literal in this context, so
-passing it to `%s` is perfectly safe.
-
-> Does this code dereference app_prm->sz before checking if app_prm is
-> NULL?
-The code relies on standard C short-circuit evaluation
-(`app_prm == NULL || !opts_valid(...)`), which guarantees safety.
-
-> When app_prm->sz is smaller than sizeof(load->prm), does this code
-> leave portions of load->prm uninitialized?
-No. `load` is zero-initialized upon declaration (`struct __rte_bpf_load
-load = { .elf_fd = -1 };`), meaning any tail space is already securely
-zeroed.
-
-> If the user-supplied paths are invalid, does this check prevent
-> filesystem attacks like path traversal?
-In DPDK, path validation and access control are strictly the caller's
-responsibility.
-
-> Does this code risk out-of-bounds access if the union or array layout
-> changes?
-Structural changes to ABI types like `ctx` are major ABI breaks, which
-DPDK explicitly manages across releases.
-
-> Does bpf_convert_filter modify nb_ins even on failure? Is checking ret
-> sufficient?
-The code explicitly checks if `ret < 0` and immediately bails out,
-safely ignoring the state of `nb_ins` on error.
-
-> Does this code leak load->ins if called twice without cleanup between
-> invocations?
-No. `load` is stack-allocated internally for a single `rte_bpf_load_ex`
-invocation and never reused.
-
-> When bpf_eth_elf_install returns an error, does this code still
-> transfer ownership of the bpf pointer?
-On error, ownership is not transferred. The caller retains
-responsibility to call `rte_bpf_destroy()`.
-
-> Does elf_memory() actually guarantee not to modify its input buffer?
-Yes, `elf_memory` treats the buffer as read-only memory unless explicit
-`ELF_C_WRITE` operations are executed, which DPDK does not do here.
-
-> Is the graceful rejection of NULL parameters by the load APIs covered
-> by tests?
-We have now added `test_bpf_load_null` to verify that `rte_bpf_load`,
-`rte_bpf_elf_load`, and `rte_bpf_load_ex` return `NULL` and set
-`rte_errno = EINVAL` when called with a `NULL` parameter.
-
-> Does the test suite verify that mismatched arguments or invalid flags
-> are correctly rejected during execution?
-Yes, we have introduced tests in v4 to explicitly verify that
-`rte_bpf_exec_burst` and `rte_bpf_exec_burst_ex` return `0` and set
-`rte_errno = EINVAL` under these invalid conditions.
-
-> Is the libpcap-less stub for rte_bpf_convert tested to ensure it
-> doesn't crash?
-A test has been added to ensure the stub safely returns `NULL` and
-doesn't crash, regardless of the exact error code it might return.
-
-
-Marat Khalili (11):
-  bpf: make logging prefixes more consistent
-  bpf: introduce extensible load API
-  bpf: support up to 5 arguments
-  bpf: add cBPF origin to rte_bpf_load_ex
-  bpf: support rte_bpf_prm_ex with port callbacks
-  bpf: support loading ELF files from memory
-  test/bpf: test loading cBPF directly
-  test/bpf: test loading ELF file from memory
-  doc: add release notes for new extensible BPF API
-  doc: add load API to BPF programmer's guide
-  test/bpf: add tests for error handling contracts
-
- app/test/test_bpf.c                    | 455 +++++++++++++++++--------
- doc/guides/prog_guide/bpf_lib.rst      |  75 +++-
- doc/guides/rel_notes/release_26_07.rst |  20 ++
- lib/bpf/bpf.c                          |  32 +-
- lib/bpf/bpf_convert.c                  |  99 +++++-
- lib/bpf/bpf_exec.c                     | 134 +++++++-
- lib/bpf/bpf_impl.h                     |  53 ++-
- lib/bpf/bpf_jit_arm64.c                |  18 +-
- lib/bpf/bpf_jit_x86.c                  |  10 +-
- lib/bpf/bpf_load.c                     | 213 ++++++++++--
- lib/bpf/bpf_load_elf.c                 | 189 ++++++----
- lib/bpf/bpf_pkt.c                      |  65 +++-
- lib/bpf/bpf_stub.c                     |  46 ---
- lib/bpf/bpf_validate.c                 |  94 +++--
- lib/bpf/meson.build                    |  15 +-
- lib/bpf/rte_bpf.h                      | 199 ++++++++++-
- lib/bpf/rte_bpf_ethdev.h               |  54 +++
- 17 files changed, 1400 insertions(+), 371 deletions(-)
- delete mode 100644 lib/bpf/bpf_stub.c
-
+diff --git a/lib/bpf/bpf_convert.c b/lib/bpf/bpf_convert.c
+index 86e703299d05..953ca80670c4 100644
+--- a/lib/bpf/bpf_convert.c
++++ b/lib/bpf/bpf_convert.c
+@@ -247,8 +247,8 @@ static int bpf_convert_filter(const struct bpf_insn *prog, size_t len,
+ 	uint8_t bpf_src;
+ 
+ 	if (len > BPF_MAXINSNS) {
+-		RTE_BPF_LOG_LINE(ERR, "%s: cBPF program too long (%zu insns)",
+-			    __func__, len);
++		RTE_BPF_LOG_FUNC_LINE(ERR, "cBPF program too long (%zu insns)",
++			    len);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -483,8 +483,8 @@ static int bpf_convert_filter(const struct bpf_insn *prog, size_t len,
+ 
+ 			/* Unknown instruction. */
+ 		default:
+-			RTE_BPF_LOG_LINE(ERR, "%s: Unknown instruction!: %#x",
+-				    __func__, fp->code);
++			RTE_BPF_LOG_FUNC_LINE(ERR, "Unknown instruction!: %#x",
++				    fp->code);
+ 			goto err;
+ 		}
+ 
+@@ -528,7 +528,7 @@ rte_bpf_convert(const struct bpf_program *prog)
+ 	int ret;
+ 
+ 	if (prog == NULL) {
+-		RTE_BPF_LOG_LINE(ERR, "%s: NULL program", __func__);
++		RTE_BPF_LOG_FUNC_LINE(ERR, "NULL program");
+ 		rte_errno = EINVAL;
+ 		return NULL;
+ 	}
+@@ -536,13 +536,13 @@ rte_bpf_convert(const struct bpf_program *prog)
+ 	/* 1st pass: calculate the eBPF program length */
+ 	ret = bpf_convert_filter(prog->bf_insns, prog->bf_len, NULL, &ebpf_len);
+ 	if (ret < 0) {
+-		RTE_BPF_LOG_LINE(ERR, "%s: cannot get eBPF length", __func__);
++		RTE_BPF_LOG_FUNC_LINE(ERR, "cannot get eBPF length");
+ 		rte_errno = -ret;
+ 		return NULL;
+ 	}
+ 
+-	RTE_BPF_LOG_LINE(DEBUG, "%s: prog len cBPF=%u -> eBPF=%u",
+-		    __func__, prog->bf_len, ebpf_len);
++	RTE_BPF_LOG_FUNC_LINE(DEBUG, "prog len cBPF=%u -> eBPF=%u",
++		    prog->bf_len, ebpf_len);
+ 
+ 	prm = rte_zmalloc("bpf_filter",
+ 			  sizeof(*prm) + ebpf_len * sizeof(*ebpf), 0);
+@@ -557,7 +557,7 @@ rte_bpf_convert(const struct bpf_program *prog)
+ 	/* 2nd pass: remap cBPF to eBPF instructions  */
+ 	ret = bpf_convert_filter(prog->bf_insns, prog->bf_len, ebpf, &ebpf_len);
+ 	if (ret < 0) {
+-		RTE_BPF_LOG_LINE(ERR, "%s: cannot convert cBPF to eBPF", __func__);
++		RTE_BPF_LOG_FUNC_LINE(ERR, "cannot convert cBPF to eBPF");
+ 		rte_free(prm);
+ 		rte_errno = -ret;
+ 		return NULL;
+diff --git a/lib/bpf/bpf_impl.h b/lib/bpf/bpf_impl.h
+index f5fa22098489..fb5ec3c4d65f 100644
+--- a/lib/bpf/bpf_impl.h
++++ b/lib/bpf/bpf_impl.h
+@@ -32,6 +32,9 @@ extern int rte_bpf_logtype;
+ #define RTE_BPF_LOG_LINE(lvl, ...) \
+ 	RTE_LOG_LINE(lvl, BPF, __VA_ARGS__)
+ 
++#define RTE_BPF_LOG_FUNC_LINE(lvl, fmt, ...) \
++	RTE_LOG_LINE(lvl, BPF, "%s(): " fmt, __func__, ##__VA_ARGS__)
++
+ static inline size_t
+ bpf_size(uint32_t bpf_op_sz)
+ {
+diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
+index a04ef33a9c88..4bbb97da1b89 100644
+--- a/lib/bpf/bpf_jit_arm64.c
++++ b/lib/bpf/bpf_jit_arm64.c
+@@ -98,8 +98,8 @@ check_invalid_args(struct a64_jit_ctx *ctx, uint32_t limit)
+ 
+ 	for (idx = 0; idx < limit; idx++) {
+ 		if (rte_le_to_cpu_32(ctx->ins[idx]) == A64_INVALID_OP_CODE) {
+-			RTE_BPF_LOG_LINE(ERR,
+-				"%s: invalid opcode at %u;", __func__, idx);
++			RTE_BPF_LOG_FUNC_LINE(ERR,
++				"invalid opcode at %u;", idx);
+ 			return -EINVAL;
+ 		}
+ 	}
+diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
+index 6983c026af0e..b8a0426fe2ed 100644
+--- a/lib/bpf/bpf_load.c
++++ b/lib/bpf/bpf_load.c
+@@ -100,7 +100,7 @@ rte_bpf_load(const struct rte_bpf_prm *prm)
+ 
+ 	if (rc != 0) {
+ 		rte_errno = -rc;
+-		RTE_BPF_LOG_LINE(ERR, "%s: %d-th xsym is invalid", __func__, i);
++		RTE_BPF_LOG_FUNC_LINE(ERR, "%d-th xsym is invalid", i);
+ 		return NULL;
+ 	}
+ 
+diff --git a/lib/bpf/bpf_load_elf.c b/lib/bpf/bpf_load_elf.c
+index 1d30ba17e25d..2390823cbf30 100644
+--- a/lib/bpf/bpf_load_elf.c
++++ b/lib/bpf/bpf_load_elf.c
+@@ -122,7 +122,7 @@ check_elf_header(const Elf64_Ehdr *eh)
+ 		err = "unexpected machine type";
+ 
+ 	if (err != NULL) {
+-		RTE_BPF_LOG_LINE(ERR, "%s(): %s", __func__, err);
++		RTE_BPF_LOG_FUNC_LINE(ERR, "%s", err);
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/lib/bpf/bpf_stub.c b/lib/bpf/bpf_stub.c
+index dea0d703ca27..e06e820d8327 100644
+--- a/lib/bpf/bpf_stub.c
++++ b/lib/bpf/bpf_stub.c
+@@ -21,8 +21,7 @@ rte_bpf_elf_load(const struct rte_bpf_prm *prm, const char *fname,
+ 		return NULL;
+ 	}
+ 
+-	RTE_BPF_LOG_LINE(ERR, "%s() is not supported, rebuild with libelf installed",
+-		__func__);
++	RTE_BPF_LOG_FUNC_LINE(ERR, "not supported, rebuild with libelf installed");
+ 	rte_errno = ENOTSUP;
+ 	return NULL;
+ }
+@@ -38,8 +37,7 @@ rte_bpf_convert(const struct bpf_program *prog)
+ 		return NULL;
+ 	}
+ 
+-	RTE_BPF_LOG_LINE(ERR, "%s() is not supported, rebuild with libpcap installed",
+-		__func__);
++	RTE_BPF_LOG_FUNC_LINE(ERR, "not supported, rebuild with libpcap installed");
+ 	rte_errno = ENOTSUP;
+ 	return NULL;
+ }
+diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
+index e8dbec282779..a7f4f576c9d6 100644
+--- a/lib/bpf/bpf_validate.c
++++ b/lib/bpf/bpf_validate.c
+@@ -1838,16 +1838,16 @@ add_edge(struct bpf_verifier *bvf, struct inst_node *node, uint32_t nidx)
+ 	uint32_t ne;
+ 
+ 	if (nidx >= bvf->prm->nb_ins) {
+-		RTE_BPF_LOG_LINE(ERR,
+-			"%s: program boundary violation at pc: %u, next pc: %u",
+-			__func__, get_node_idx(bvf, node), nidx);
++		RTE_BPF_LOG_FUNC_LINE(ERR,
++			"program boundary violation at pc: %u, next pc: %u",
++			get_node_idx(bvf, node), nidx);
+ 		return -EINVAL;
+ 	}
+ 
+ 	ne = node->nb_edge;
+ 	if (ne >= RTE_DIM(node->edge_dest)) {
+-		RTE_BPF_LOG_LINE(ERR, "%s: internal error at pc: %u",
+-			__func__, get_node_idx(bvf, node));
++		RTE_BPF_LOG_FUNC_LINE(ERR, "internal error at pc: %u",
++			get_node_idx(bvf, node));
+ 		return -EINVAL;
+ 	}
+ 
+@@ -2005,8 +2005,7 @@ validate(struct bpf_verifier *bvf)
+ 
+ 		err = check_syntax(ins);
+ 		if (err != 0) {
+-			RTE_BPF_LOG_LINE(ERR, "%s: %s at pc: %u",
+-				__func__, err, i);
++			RTE_BPF_LOG_FUNC_LINE(ERR, "%s at pc: %u", err, i);
+ 			rc |= -EINVAL;
+ 		}
+ 
+@@ -2230,9 +2229,9 @@ save_cur_eval_state(struct bpf_verifier *bvf, struct inst_node *node)
+ 	/* get new eval_state for this node */
+ 	st = pull_eval_state(&bvf->evst_sr_pool);
+ 	if (st == NULL) {
+-		RTE_BPF_LOG_LINE(ERR,
+-			"%s: internal error (out of space) at pc: %u",
+-			__func__, get_node_idx(bvf, node));
++		RTE_BPF_LOG_FUNC_LINE(ERR,
++			"internal error (out of space) at pc: %u",
++			get_node_idx(bvf, node));
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -2462,8 +2461,8 @@ evaluate(struct bpf_verifier *bvf)
+ 				err = ins_chk[op].eval(bvf, ins + idx);
+ 				stats.nb_eval++;
+ 				if (err != NULL) {
+-					RTE_BPF_LOG_LINE(ERR, "%s: %s at pc: %u",
+-						__func__, err, idx);
++					RTE_BPF_LOG_FUNC_LINE(ERR,
++						"%s at pc: %u", err, idx);
+ 					rc = -EINVAL;
+ 				}
+ 			}
+@@ -2533,7 +2532,7 @@ __rte_bpf_validate(struct rte_bpf *bpf)
+ 			bpf->prm.prog_arg.type != RTE_BPF_ARG_PTR &&
+ 			(sizeof(uint64_t) != sizeof(uintptr_t) ||
+ 			bpf->prm.prog_arg.type != RTE_BPF_ARG_PTR_MBUF)) {
+-		RTE_BPF_LOG_LINE(ERR, "%s: unsupported argument type", __func__);
++		RTE_BPF_LOG_FUNC_LINE(ERR, "unsupported argument type");
+ 		return -ENOTSUP;
+ 	}
+ 
 -- 
 2.43.0
 
