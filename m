@@ -2,52 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D161CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 09:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D77BCD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 09:38:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61B514065F;
-	Wed, 20 May 2026 11:29:56 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id A96BC40609
- for <dev@dpdk.org>; Wed, 20 May 2026 11:29:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779269395; x=1810805395;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=xQpDLBMnO3PJRmxm3QMYUexkb9gA8Rh3sOEVI8L3pZ8=;
- b=Juou5jizEzflnlwrr6dWO0TQXPSP7/bpq2XjTwfwkQLjD+INoNCo44Do
- /qVCqiul+b2tKP/7qccGR8BfHFTCEC6s2wZF9ehXpChwTvg745FdR1sC8
- Eb2Ib4j+eFxBufB+0eVdd2zEm162+BR+h85G9t975Zq4561NZUlMfQyqK
- 2pEG8/vVwelzzYKgmpCX3Czw1UY5RAktU/rt+1aePNgSabGoFnx2vdzMe
- dOkOoJCqfk4cTfmJ3pgOXNl2sy3Ik5vhgnWsBHAVIpulQvZxg7+a/YLE1
- eWETwIdNKO0tpy4jU7zop5WczSRQ67Ay2InUw2KIKAYojDkw6TXofd9nc A==;
-X-CSE-ConnectionGUID: 78kZJZYJQFu/CwOnjy0StA==
-X-CSE-MsgGUID: rAdDbnROSRyXoB4gu5GyRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11791"; a="80013705"
-X-IronPort-AV: E=Sophos;i="6.23,244,1770624000"; d="scan'208";a="80013705"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 May 2026 02:29:54 -0700
-X-CSE-ConnectionGUID: tVDshMZWSR6iNqk8lMmkjA==
-X-CSE-MsgGUID: z+1Rcno9R6egfl3Puxphgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,244,1770624000"; d="scan'208";a="245088191"
-Received: from fenlix-mobl.ccr.corp.intel.com ([10.239.252.5])
- by orviesa005.jf.intel.com with ESMTP; 20 May 2026 02:29:53 -0700
-From: Soumyadeep Hore <soumyadeep.hore@intel.com>
-To: bruce.richardson@intel.com, manoj.kumar.subbarao@intel.com,
- aman.deep.singh@intel.com, dev@dpdk.org
-Subject: [PATCH v2 2/2] doc: update recommended matching versions for cpfl and
- idpf
-Date: Wed, 20 May 2026 18:03:06 -0400
-Message-ID: <20260520220306.85273-3-soumyadeep.hore@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20260520220306.85273-1-soumyadeep.hore@intel.com>
-References: <20260509015408.29188-3-soumyadeep.hore@intel.com>
- <20260520220306.85273-1-soumyadeep.hore@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 561FE402EB;
+	Wed, 20 May 2026 11:38:12 +0200 (CEST)
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com
+ [113.46.200.224])
+ by mails.dpdk.org (Postfix) with ESMTP id 9197440276
+ for <dev@dpdk.org>; Wed, 20 May 2026 11:38:11 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=hJwhlt/I7gUpIhNjg7MUD7xhAJ8bLd0loryR+tOjp1Q=;
+ b=GjjTdZQKiOxjxut4DSxDkQxYs0j45UM1s4aRb0UcV+UwtR7LuY0LpQUFNZOeo976yPqQJDRWB
+ YM5UmtY0961VotliIDelemPMoq9PTIdHDGk+0tkirKlHeKPMACoAZ6l6MRsXY/FeSkPZWaLCtMp
+ POIl3EqenuLwK9WWlJ8HC1M=
+Received: from mail.maildlp.com (unknown [172.19.163.163])
+ by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4gL5qn1z89z1cyPF;
+ Wed, 20 May 2026 17:30:29 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 6896E4056E;
+ Wed, 20 May 2026 17:38:09 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 20 May 2026 17:38:08 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>, <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <andrew.rybchenko@oktetlabs.ru>,
+ <bruce.richardson@intel.com>, <mb@smartsharesystems.com>
+Subject: [PATCH v2 0/2] Add list names telemetry endpoint
+Date: Wed, 20 May 2026 17:38:02 +0800
+Message-ID: <20260520093804.29102-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20260520035641.50555-1-fengchengwen@huawei.com>
+References: <20260520035641.50555-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,77 +55,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update the recommended MEV-ts release version corresponding to DPDK
-release in the cpfl and idpf drivers documentation.
+Currently, the /dmadev/list and /ethdev/list telemetry endpoints return
+only integer IDs, making it hard to identify devices. This series add
+list_names telemetry endpoint which output both IDs and its device's
+name.
 
-Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
 ---
- doc/guides/nics/cpfl.rst | 21 ++++++++-------------
- doc/guides/nics/idpf.rst | 19 ++++++++-----------
- 2 files changed, 16 insertions(+), 24 deletions(-)
+v2: Add new telemetry endpoint according Bruce's advise.
 
-diff --git a/doc/guides/nics/cpfl.rst b/doc/guides/nics/cpfl.rst
-index bc42c524ea..377397e621 100644
---- a/doc/guides/nics/cpfl.rst
-+++ b/doc/guides/nics/cpfl.rst
-@@ -28,19 +28,14 @@ It is highly recommended to upgrade the MEV-ts release
- to avoid compatibility issues with the cpfl PMD.
- Here is the suggested matching list which has been tested and verified.
- 
--   +------------+------------------+
--   |     DPDK   |  MEV-ts release  |
--   +============+==================+
--   |    23.07   |      0.9.1       |
--   +------------+------------------+
--   |    23.11   |       1.0        |
--   +------------+------------------+
--   |    24.07   |       1.4        |
--   +------------+------------------+
--   |    24.11   |       1.6        |
--   +------------+------------------+
--   |    25.07   |       2.0        |
--   +------------+------------------+
-+=====  ==============
-+DPDK   MEV-ts release
-+=====  ==============
-+26.07       2.2
-+25.11       2.0
-+24.11       1.6
-+23.11       1.0
-+=====  ==============
- 
- 
- Configuration
-diff --git a/doc/guides/nics/idpf.rst b/doc/guides/nics/idpf.rst
-index c7c76190c8..cc89d22cf0 100644
---- a/doc/guides/nics/idpf.rst
-+++ b/doc/guides/nics/idpf.rst
-@@ -26,17 +26,14 @@ It is highly recommended to upgrade the idpf kernel driver, MEV-ts release
- to avoid compatibility issues with the idpf PMD.
- Here is the suggested matching list which has been tested and verified.
- 
--   +------------+---------------+------------------+
--   |    DPDK    | Kernel Driver |  MEV-ts release  |
--   +============+===============+==================+
--   |    23.07   |    0.0.710    |      0.9.1       |
--   +------------+---------------+------------------+
--   |    23.11   |    0.0.720    |       1.0        |
--   +------------+---------------+------------------+
--   |    24.11   |    0.0.754    |       1.6        |
--   +------------+---------------+------------------+
--   |    25.07   |    0.0.772    |       2.0        |
--   +------------+---------------+------------------+
-+=====  =============  ==============
-+DPDK   Kernel Driver  MEV-ts release
-+=====  =============  ==============
-+26.07     0.0.780           2.2
-+25.11     0.0.772           2.0
-+24.11     0.0.754           1.6
-+23.11     0.0.720           1.0
-+=====  =============  ==============
- 
- 
- Configuration
+Chengwen Feng (2):
+  dmadev: add telemetry endpoint for list names
+  ethdev: add telemetry endpoint for list names
+
+ lib/dmadev/rte_dmadev.c           | 23 +++++++++++++++++++++++
+ lib/ethdev/rte_ethdev_telemetry.c | 21 +++++++++++++++++++++
+ 2 files changed, 44 insertions(+)
+
 -- 
-2.47.1
+2.17.1
 
