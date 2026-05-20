@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE31CD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 03:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E99CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 03:57:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA72A4042F;
-	Wed, 20 May 2026 05:56:53 +0200 (CEST)
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
- [113.46.200.219])
- by mails.dpdk.org (Postfix) with ESMTP id 8697C402DA
+	by mails.dpdk.org (Postfix) with ESMTP id DDB1340672;
+	Wed, 20 May 2026 05:56:54 +0200 (CEST)
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
+ [113.46.200.217])
+ by mails.dpdk.org (Postfix) with ESMTP id 54559402B0
  for <dev@dpdk.org>; Wed, 20 May 2026 05:56:50 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=kWiDVs3xfKWbwqi4EIAUoeCyp85dwGPPT1u9LvWhoxA=;
- b=taVmD4HkAeDSdL602Pzx8Gxc3fl140Vx5piCwxxBeKI9sdJFgQAhC0CuQxJn3tiGUdlihf9iG
- GBAg1BOH6CoNZTXF4LOzG4oIWNcJye4778J6Z0fFjSMKNuJHVy2egBcdoMLmgBpRgOqiQ8DjQL2
- QZvYX1KLVw1MQqftfDpVpTA=
+ bh=v0295xqsEtMtiNH+q3OGxigiLhoHQ55nsjWgUTy0EPk=;
+ b=tVfgVGhFKPLSGUIc6oFyilG/rA1zJ757qRETv/S9pobDjsUJ0PrfmDwds/A9v/CYexQ7tugm9
+ 0aD3wgddwlLWXmH35naTUGhxA+umrN482sQyCnQYGVfpGQKV8q8zi2rujJouxFVsuTf3LtG6peI
+ LBSzVDrxwX4QmoF1/aJwNeI=
 Received: from mail.maildlp.com (unknown [172.19.162.144])
- by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4gKyFr2wf7z1prLg;
- Wed, 20 May 2026 11:49:04 +0800 (CST)
+ by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4gKyG23JpqzcbSY;
+ Wed, 20 May 2026 11:49:14 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 251554056E;
+ by mail.maildlp.com (Postfix) with ESMTPS id 0213240538;
  Wed, 20 May 2026 11:56:48 +0800 (CST)
 Received: from localhost.localdomain (10.50.163.32) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
@@ -30,12 +30,10 @@ Received: from localhost.localdomain (10.50.163.32) by
 From: Chengwen Feng <fengchengwen@huawei.com>
 To: <thomas@monjalon.net>, <stephen@networkplumber.org>
 CC: <dev@dpdk.org>
-Subject: [PATCH 1/2] dmadev: include device name in telemetry list output
-Date: Wed, 20 May 2026 11:56:40 +0800
-Message-ID: <20260520035641.50555-2-fengchengwen@huawei.com>
+Subject: [PATCH 0/2] enhance telemetry list endpoint with device name
+Date: Wed, 20 May 2026 11:56:39 +0800
+Message-ID: <20260520035641.50555-1-fengchengwen@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20260520035641.50555-1-fengchengwen@huawei.com>
-References: <20260520035641.50555-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.50.163.32]
@@ -54,68 +52,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The /dmadev/list telemetry endpoint currently returns only device IDs
-as integers. Enhance it to return strings in "ID    NAME" format so
-users can identify devices by name directly from the telemetry output.
+Currently, the /dmadev/list and /ethdev/list telemetry endpoints return
+only integer IDs, making it hard to identify devices. This series changes
+both to output strings in "ID    NAME" format for better usability.
 
-Original:
-  {
-    "/dmadev/list": [
-      0,
-      1
-    ]
-  }
+Chengwen Feng (2):
+  dmadev: include device name in telemetry list output
+  ethdev: include device name in telemetry list output
 
-After this commit:
-  {
-    "/dmadev/list": [
-      "0    hisi_sec2-0-dma0",
-      "1    hisi_sec2-0-dma1"
-    ]
-  }
+ lib/dmadev/rte_dmadev.c           | 17 ++++++++++++-----
+ lib/ethdev/rte_ethdev_telemetry.c | 12 +++++++++---
+ 2 files changed, 21 insertions(+), 8 deletions(-)
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- lib/dmadev/rte_dmadev.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
-
-diff --git a/lib/dmadev/rte_dmadev.c b/lib/dmadev/rte_dmadev.c
-index b75b4f9bd1..084e06a3da 100644
---- a/lib/dmadev/rte_dmadev.c
-+++ b/lib/dmadev/rte_dmadev.c
-@@ -1147,12 +1147,19 @@ dmadev_handle_dev_list(const char *cmd __rte_unused,
- 		const char *params __rte_unused,
- 		struct rte_tel_data *d)
- {
-+	char id_name[RTE_TEL_MAX_STRING_LEN];
-+	struct rte_dma_dev *dev;
- 	int dev_id;
- 
--	rte_tel_data_start_array(d, RTE_TEL_INT_VAL);
--	for (dev_id = 0; dev_id < dma_devices_max; dev_id++)
--		if (rte_dma_is_valid(dev_id))
--			rte_tel_data_add_array_int(d, dev_id);
-+	rte_tel_data_start_array(d, RTE_TEL_STRING_VAL);
-+	for (dev_id = 0; dev_id < dma_devices_max; dev_id++) {
-+		if (!rte_dma_is_valid(dev_id))
-+			continue;
-+		dev = &rte_dma_devices[dev_id];
-+		memset(id_name, 0, sizeof(id_name));
-+		sprintf(id_name, "%d    %s", dev_id, dev->data->dev_name);
-+		rte_tel_data_add_array_string(d, id_name);
-+	}
- 
- 	return 0;
- }
-@@ -1308,7 +1315,7 @@ dmadev_handle_dev_dump(const char *cmd __rte_unused,
- RTE_INIT(dmadev_init_telemetry)
- {
- 	rte_telemetry_register_cmd("/dmadev/list", dmadev_handle_dev_list,
--			"Returns list of available dmadev devices by IDs. No parameters.");
-+			"Returns list of available dmadev devices by ID-NAMEs. No parameters.");
- 	rte_telemetry_register_cmd("/dmadev/info", dmadev_handle_dev_info,
- 			"Returns information for a dmadev. Parameters: int dev_id");
- 	rte_telemetry_register_cmd("/dmadev/stats", dmadev_handle_dev_stats,
 -- 
 2.17.1
-
