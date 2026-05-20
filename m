@@ -2,72 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEDFCD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 17:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3692CD5BA4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 17:08:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D46DA4042F;
-	Wed, 20 May 2026 19:07:44 +0200 (CEST)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com
- [209.85.128.181])
- by mails.dpdk.org (Postfix) with ESMTP id F031B400EF
- for <dev@dpdk.org>; Wed, 20 May 2026 19:07:42 +0200 (CEST)
-Received: by mail-yw1-f181.google.com with SMTP id
- 00721157ae682-7cfc382d896so17291837b3.3
- for <dev@dpdk.org>; Wed, 20 May 2026 10:07:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EB3554066C;
+	Wed, 20 May 2026 19:08:18 +0200 (CEST)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com
+ [209.85.128.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 3571E400EF
+ for <dev@dpdk.org>; Wed, 20 May 2026 19:08:16 +0200 (CEST)
+Received: by mail-yw1-f171.google.com with SMTP id
+ 00721157ae682-7bd6f65c781so41932937b3.1
+ for <dev@dpdk.org>; Wed, 20 May 2026 10:08:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779296862;
- x=1779901662; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779296895;
+ x=1779901695; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=zMxhDWxbMs01OYNeVfx9EdLJRs/I4aD59xafYm6/WRY=;
- b=oZsS3CkmN9ECendjU03LA/VhQNm+eGyp9/X8SK+u5FdrYzabpZXtIdoTlZ3hc3G3sN
- jPdezZ3FUHN/rpBXf5SqZJl80/da2E8/KgWMYowPP5ohzhsMqx+04N+QO743GUGIqiCr
- Poo1b2U6VLuRaS3H0JsgASU8vefC47oEJSbDWFNIZFGAXDh3kdfDecZzjO0469Tx6mXP
- UIKWXL09e3tLp2yBe/pSE8l5nsh0YUbNKUoYzrjVr5SY6B0T9W8pSygmBMxOgsDqKXW2
- j5UCVEfKjVtuSd2Mcs1zuW5ELZdoHzLY5Nmp+H2JpwIdK4sduEUWPxZRysT7j0EOfWDo
- 9Hwg==
+ bh=RYPT2GQEnsacgCQX6c7wwF9kFmghN2e6dJUeXgmHSt0=;
+ b=mdV9xRQPDrV1s0NXnghnW7FWlNNlENxRAP3/tR+N/bJwx4sb/qlp6/Glbpipm6zqkK
+ yhuMp9SHe5fx9kzrRVTThBaTFMfvhfiXpT0UE8PGdBVrEykrP7mxOYGFOFmoLuKjCcX7
+ 4IimY5jBMxMdA1b47Sk0QJouUDitU6Vkj6+L+ztdEd7uZ9S/PgeGHsYQMkAdaXPDxFyL
+ PRfA/hpEgPg+OCFh84nn9RBFkTIuqW3JVDEDtwoBCevvmY5D3ZLFsTOo05EfcBDx/zHb
+ 8Y21d3H2KRZirxj27Zv1AbLsUi9XXeII0zOJQtHnGvCeRl4hQCQxn7QCubyft6SANZo+
+ OMmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779296862; x=1779901662;
+ d=1e100.net; s=20251104; t=1779296895; x=1779901695;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=zMxhDWxbMs01OYNeVfx9EdLJRs/I4aD59xafYm6/WRY=;
- b=pxNV738iLOalvk1g5dSO2aL00tx5vdv22C4tzA2At+hfdORtmfQEnYTbORDC03pq9D
- hnr6Rj5nCMRNHfGfrI8PL81IG0J2sl01AYlVRBB7nDcCRkyU25OVL7iUyCxwMBrBQuy8
- TgwefzyQRlya3rOg9VjnivFVYF4NJi8THZ9tDP5Y00+S2bS5VjF5/M8PDN8NIrnVdWX9
- oojEFzZ+j7Fkn0AQzfiHZ7jF0NIAuuCpt5omZlX/QJsgJb4qbVzGB6XUpWWPhL/zh756
- YqhYsVm+nrBaBRkM3tBAzeqXD+CY9NlLxOJym0N12Vg/aD3RSIi9TJFa9niCa5I5Gneu
- LFjg==
-X-Gm-Message-State: AOJu0YyTHlp1BMAA221VF8UzXvBYcSuMFvwCpiaDGgnoDkGdWkysBnHH
- PtkZvAin+HKRyN1LIIoos3CSxjgWPqVYLiiWPAMzeNtQ09GPE02z3lyTaPoZBua6Ln8=
-X-Gm-Gg: Acq92OHN0b1zNsX5ZNc0EYJR5/2kxIzv5oNzz3nfywOWO1u+379wy0il3kWO/7nehKa
- qnFRbIppygksy0UpBtb3uBcPvFjD6OkkpC0/umr8oV2C25Lcd8BdINs/m2fs9k8XZ8lWeyNNc/Y
- 7Ke9Dj+FPoVqCIqj64scvjzNjEu7UW1J9YXvFm75O3ARDLxjRcE2bcHpmTDTtYnOiUXFNd05spd
- y6kCsFhA8GDMuW3rJVoSEHvFxwm/r1f+tEpVbd3277LQW5NgO3y/VbM6DsI3Zi8C6HuFMAd8Uui
- Jv2zzhoxGcoVX3AWv8hnP6qhOKI/TJicFl3CcA8MwSMFNMuZyH0P5td9VzCvf+kbm7aTbtTyBTY
- e2HMKnpwoBT0JmdkLBf8tEJsah0I4vf0y9F2k0l6WdNLPan3FkQrNjQIRIJ2Bg60cTfPgTFIBxJ
- Mvd4mkq6UNtRq4Wejlda+dFtZipXTVNs0krOuhboJFMTTeuwPnVvIHD1zhEAFYL/ZiI1jm6p34z
- RU=
-X-Received: by 2002:a53:c04c:0:20b0:65d:b6dd:69f3 with SMTP id
- 956f58d0204a3-65e227f6c40mr20082168d50.36.1779296862120; 
- Wed, 20 May 2026 10:07:42 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=RYPT2GQEnsacgCQX6c7wwF9kFmghN2e6dJUeXgmHSt0=;
+ b=JBFNBeEthQrQ+NgVkkuV3TTTdYwZXJbc29CGluUx1+NT3LVkrx6ZvfHKKRpB8SBm2O
+ ZC110m52mRXtab19Bmz0z7RYcLTA163y5UCr5WvUYYu37ymGHuKZyDkYCbYtQHL4Ivje
+ UHdYlzJTTqGuy40Uob5M2OM13igU6sFSSVU+lPuAWNs6rrvlfLx8277b4zHg/VQHadmg
+ oGFEoVFaBGE1GukRHjzTf591yu/tnwISggPYaTXZZfcG9Xcaoq/U1N93J3wgbhP6XB3I
+ AMgetm0mgurFrJ0Gta1dSJoGE0NUxhRYJTSGAbrg7QSIYaADtTEerOPH5Iqb55aJHuiA
+ DTUA==
+X-Gm-Message-State: AOJu0YwhgZA5UucXabekAL4fY9o4+fcHAe188qkB+DOf2J8Jf5ol5Vh6
+ R2kZX4pslluaj3FzN9pcEauuR/UGdj5af/TBhesrT7KY3IeyZPaxlIbUzUa637BoIr9AyN5cdjw
+ 7LanmCI0=
+X-Gm-Gg: Acq92OEScv9tPk3t4X5dMsQETG3RbTpHem3h9omuGh8MdEanUdbSkzP9x8yvuP2UMAW
+ 8+xTAMt6jpT91pFcg9fNI0Mana45Mm1N5mTJfCRjzn/7DUtkNpRU1JCnuFFhzHWk3EaBCHeVX0E
+ 2r+kCnjKFxKiJpIg9Gg3EZtfVyP5cYHDDFKuTBODfrdT67GZaXkTlp3jKDqD4mrl3APrj20CDUB
+ xyCpkdzs1xYBBIGp3BtOFapPmm+gg4jGDixhDc9qHs/cfp/id/XEvcS68D+431XThCaDH5D1yzC
+ OKU93XadKyLcJNHgH0LBOaD4G1Yh2bCgr1EMEYQgUauu956SVX8YvS2M4rgpB5/B+vsiic0Vnt3
+ c9Kg8BPnuWsWWg9qEWEAKXn5YdQR5mh46Mj3PXm0m0mprnsJdDCgIIgtyzgFWQGLsWfy9gE0vlI
+ JqWSM0KSPmVE8Ufb+4ryejDszWekvwbe87VLkdd3sPglQ/JzlxmVLYEA1UZZLQHLpYBDxBkjMa
+X-Received: by 2002:a05:690c:4884:b0:7bd:69b8:f2ec with SMTP id
+ 00721157ae682-7d1c49a0968mr3804007b3.15.1779296895379; 
+ Wed, 20 May 2026 10:08:15 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 956f58d0204a3-65e0dbd101asm9477962d50.19.2026.05.20.10.07.41
+ 00721157ae682-7cc99abe9bcsm56278247b3.22.2026.05.20.10.08.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 20 May 2026 10:07:41 -0700 (PDT)
-Date: Wed, 20 May 2026 10:07:38 -0700
+ Wed, 20 May 2026 10:08:15 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Michal Sieron <michal.sieron@nokia.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] linux/mem: atomically prefault hugepages in alloc_seg
-Message-ID: <20260520100738.7042b965@phoenix.local>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Michal Sieron <michal.sieron@nokia.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] eal: fix data race in hugepage prefault
+Date: Wed, 20 May 2026 10:08:10 -0700
+Message-ID: <20260520170812.759638-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260520125756.530808-1-michal.sieron@nokia.com>
 References: <20260520125756.530808-1-michal.sieron@nokia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,20 +86,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 20 May 2026 14:57:56 +0200
-Michal Sieron <michal.sieron@nokia.com> wrote:
+The prefault step in alloc_seg() reads a value from the hugepage and
+writes it back unchanged to force the kernel to commit the backing
+page. The read and write were not atomic, which races with concurrent
+access to the same physical page from a secondary process attaching
+to the hugetlbfs-backed mapping during rte_eal_init().
 
-> In rare cases, when a secondary process calls rte_eal_init() it can
-> cause a data race during page prefaulting in alloc_seg().
-> 
-> An atomic compare-exchange in a loop should eliminate the data race.
-> 
-> Signed-off-by: Michal Sieron <michal.sieron@nokia.com>
-> ---
+Replace the non-atomic load+store with a single atomic fetch-or of
+zero. This touches the page with an atomic read-modify-write without
+changing its contents, eliminating the race while preserving the
+original intent of forcing a write fault.
 
-AI had good suggestion when reviewing this.
-Your version is still racy (on the read side).
+Fixes: 0f1631be24bd ("mem: fix page fault trigger")
+Cc: stable@dpdk.org
 
-A simple non-racy, and no loop version would be:
+Reported-by: Michal Sieron <michal.sieron@nokia.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ .mailmap                     | 1 +
+ lib/eal/linux/eal_memalloc.c | 7 ++++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-	rte_atomic_fetch_or_explicit((int *)addr, 0, rte_memory_order_relaxed);
+diff --git a/.mailmap b/.mailmap
+index 4d26d9c286..07c49eb32f 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1086,6 +1086,7 @@ Michal Mazurek <maz@semihalf.com>
+ Michal Michalik <michal.michalik@intel.com>
+ Michal Nowak <michal2.nowak@intel.com>
+ Michal Schmidt <mschmidt@redhat.com>
++Michal Sieron <michal.sieron@nokia.com>
+ Michal Swiatkowski <michal.swiatkowski@intel.com>
+ Michal Wilczynski <michal.wilczynski@intel.com>
+ Michał Mirosław <michal.miroslaw@atendesoftware.pl> <mirq-linux@rere.qmqm.pl>
+diff --git a/lib/eal/linux/eal_memalloc.c b/lib/eal/linux/eal_memalloc.c
+index a39bc31c7b..e73a0c11a6 100644
+--- a/lib/eal/linux/eal_memalloc.c
++++ b/lib/eal/linux/eal_memalloc.c
+@@ -25,6 +25,7 @@
+ #include <linux/falloc.h>
+ #include <linux/mman.h> /* for hugetlb-related mmap flags */
+ 
++#include <rte_atomic.h>
+ #include <rte_common.h>
+ #include <rte_log.h>
+ #include <rte_eal.h>
+@@ -597,10 +598,10 @@ alloc_seg(struct rte_memseg *ms, void *addr, int socket_id,
+ 
+ 	/* we need to trigger a write to the page to enforce page fault and
+ 	 * ensure that page is accessible to us, but we can't overwrite value
+-	 * that is already there, so read the old value, and write itback.
+-	 * kernel populates the page with zeroes initially.
++	 * that is already there.
++	 * Use an atomic OR with zero to touch the page without changing its contents.
+ 	 */
+-	*(volatile int *)addr = *(volatile int *)addr;
++	(void)rte_atomic_fetch_or_explicit((int *)addr, 0, rte_memory_order_relaxed);
+ 
+ 	iova = rte_mem_virt2iova(addr);
+ 	if (iova == RTE_BAD_PHYS_ADDR) {
+-- 
+2.53.0
+
