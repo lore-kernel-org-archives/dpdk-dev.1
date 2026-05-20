@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 781B0CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 02:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1398ECD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 02:18:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7D63940669;
-	Wed, 20 May 2026 04:18:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7189340673;
+	Wed, 20 May 2026 04:18:26 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 63C1B402F0
- for <dev@dpdk.org>; Wed, 20 May 2026 04:18:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6027D402EA
+ for <dev@dpdk.org>; Wed, 20 May 2026 04:18:19 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAA3zRDnGQ1qhsnVEA--.10188S4;
- Wed, 20 May 2026 10:18:17 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAA3zRDnGQ1qhsnVEA--.10188S8;
+ Wed, 20 May 2026 10:18:18 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v19 02/11] doc: add sxe2 guide and release notes
-Date: Wed, 20 May 2026 10:18:00 +0800
-Message-ID: <20260520021809.4019054-3-liujie5@linkdatatechnology.com>
+Subject: [PATCH v19 06/11] drivers: support PCI BAR mapping
+Date: Wed, 20 May 2026 10:18:04 +0800
+Message-ID: <20260520021809.4019054-7-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260520021809.4019054-1-liujie5@linkdatatechnology.com>
 References: <20260519144810.3951202-12-liujie5@linkdatatechnology.com>
  <20260520021809.4019054-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAA3zRDnGQ1qhsnVEA--.10188S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF18AF1ktrWktr4fXw1fZwb_yoWrWF43pa
- n3uFWakrnxJw1xXwnxta18Ar45Ca1vyay5Crn2q34rXFn8Cr18Zr4UKryxt3srJr93Za4f
- XF4Yqry7CF1UW3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUBS14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
- x26xkF7I0E14v26r1I6r4UM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
- Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1l84
- ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1l
- e2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI
- 8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwAC
- jcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xxMxAIw2
- 8IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
- x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrw
- CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI
- 42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z2
- 80aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUeKsjUUUUU
+X-CM-TRANSID: zQCowAA3zRDnGQ1qhsnVEA--.10188S8
+X-Coremail-Antispam: 1UD129KBjvAXoW3ZF4UAF1DKryxJw4xGrWktFb_yoW8Xw1rKo
+ WxW3y7Xw1fWw1I93y8Xr1kJFy7Zw40gws8Ja1Ivryq9wsxKa45tryDtrnxXa1DWan5KFyj
+ 9w1IvrZ7GFy3Ja1Un29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UjIYCTnIWjp_UUUYM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
+ j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
+ Ia0xkI8VCY1x0267AKxVW8JVW5JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+ 84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
+ 4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_
+ Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x
+ IIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_
+ Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0w
+ CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
+ 6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64
+ vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+ Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0x
+ vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUwqXdUUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -60,119 +60,487 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add a new guide for SXE2 PMD in the nics directory.
-The guide contains driver capabilities, prerequisites,
-and compilation/usage instructions.
+Implement PCI BAR (Base Address Register) mapping and unmapping
+logic to enable MMIO (Memory Mapped I/O) access to hardware
+registers.
 
-Update the release notes to announce the addition of the
-sxe2 network driver.
+The driver retrieves the BAR0 virtual address from the PCI resource
+during the probing phase. This mapping is used for subsequent
+register-level operations. Proper cleanup is implemented in the
+device close path.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- doc/guides/nics/features/sxe2.ini      | 23 +++++++++++++++++
- doc/guides/nics/index.rst              |  1 +
- doc/guides/nics/sxe2.rst               | 34 ++++++++++++++++++++++++++
- doc/guides/rel_notes/release_26_07.rst |  4 +++
- 4 files changed, 62 insertions(+)
- create mode 100644 doc/guides/nics/features/sxe2.ini
- create mode 100644 doc/guides/nics/sxe2.rst
+ drivers/common/sxe2/sxe2_ioctl_chnl.c |  34 +++
+ drivers/net/sxe2/sxe2_ethdev.c        | 326 +++++++++++++++++++++++++-
+ drivers/net/sxe2/sxe2_ethdev.h        |  18 ++
+ 3 files changed, 375 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
-new file mode 100644
-index 0000000000..09ba2f558c
---- /dev/null
-+++ b/doc/guides/nics/features/sxe2.ini
-@@ -0,0 +1,23 @@
-+;
-+; Supported features of the 'sxe2' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+; A feature with "P" indicates only be supported when non-vector path
-+; is selected.
-+;
-+[Features]
-+Fast mbuf free       = P
-+Free Tx mbuf on demand = Y
-+Burst mode info      = Y
-+Queue start/stop     = Y
-+Buffer split on Rx   = P
-+Scattered Rx         = Y
-+CRC offload          = Y
-+L3 checksum offload  = Y
-+L4 checksum offload  = Y
-+Rx descriptor status = Y
-+Tx descriptor status = Y
-+Linux                = Y
-+x86-32               = Y
-+x86-64               = Y
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index cb818284fe..e20be478f8 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -68,6 +68,7 @@ Network Interface Controller Drivers
-     rnp
-     sfc_efx
-     softnic
-+    sxe2
-     tap
-     thunderx
-     txgbe
-diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
-new file mode 100644
-index 0000000000..7fcf9c085b
---- /dev/null
-+++ b/doc/guides/nics/sxe2.rst
-@@ -0,0 +1,34 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+
-+SXE2 Poll Mode Driver
-+======================
-+
-+The sxe2 PMD (**librte_net_sxe2**) provides poll mode driver support for
-+10/25/50/100 Gbps Network Adapters.
-+The embedded switch, Physical Functions (PF),
-+and SR-IOV Virtual Functions (VF) are supported.
-+
-+Implementation details
-+----------------------
-+
-+The sxe2 PMD is designed to operate alongside the sxe2 kernel network driver.
-+For management and control operations, the PMD communicates with the kernel
-+driver via ioctl interfaces. These commands are processed by the kernel
-+driver and subsequently dispatched to the hardware firmware for execution.
-+
-+For security and robustness, the driver's data path is optimized to operate
-+using virtual addresses (IOVA as VA mode). However, to ensure full
-+compatibility in system environments where an IOMMU is absent or disabled,
-+the driver also provides an explicit path to support physical addressing
-+(IOVA as PA mode).
-+
-+The hardware is capable of handling the corresponding IOVA addresses (either
-+VA or PA) directly, as provided by the DPDK memory subsystem. This ensures
-+that DPDK applications can only access memory segments explicitly allocated
-+to the current process, preventing unauthorized access to random physical
-+memory.
-+
-+This capability allows the PMD to coexist with kernel network interfaces
-+which remain functional, although they stop receiving unicast packets as
-+long as they share the same MAC address.
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index f012d47a4b..fa0f0f5cca 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -64,6 +64,10 @@ New Features
-   * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
+diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+index 36de2b91d8..eb1c4cabc7 100644
+--- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
++++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+@@ -159,6 +159,40 @@ sxe2_drv_dev_handshake(struct sxe2_common_device *cdev)
+ 	return ret;
+ }
  
- 
-+* **Added Linkdata sxe2 ethernet driver.**
++RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_mmap)
++void
++*sxe2_drv_dev_mmap(struct sxe2_common_device *cdev, uint8_t bar_idx, uint64_t len, uint64_t offset)
++{
++	int32_t cmd_fd = 0;
++	void *virt = NULL;
 +
-+  Added network driver for the Linkdata Network Adapters.
++	if (cdev->config.kernel_reset) {
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
++		goto l_err;
++	}
 +
- Removed Items
- -------------
++	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
++	if (cmd_fd < 0) {
++		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
++		goto l_err;
++	}
++
++	PMD_LOG_DEBUG(COM, "fd=%d, bar idx=%d, len=0x%zx, src=0x%"PRIx64", offset=0x%"PRIx64"",
++		bar_idx, cmd_fd, len, offset, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
++
++	virt = mmap(NULL, len, PROT_READ | PROT_WRITE,
++		MAP_SHARED, cmd_fd, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
++	if (virt == MAP_FAILED) {
++		PMD_LOG_ERR(COM, "Failed mmap, cmd_fd=%d, len=0x%zx, offset=0x%"PRIx64", err:%s",
++			cmd_fd, len, offset, strerror(errno));
++		goto l_err;
++	}
++
++	return virt;
++l_err:
++	return NULL;
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_munmap)
+ int32_t
+ sxe2_drv_dev_munmap(struct sxe2_common_device *cdev, void *virt, uint64_t len)
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index f0bdda38a7..204add9c98 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -54,6 +54,27 @@ static const struct rte_pci_id pci_id_sxe2_tbl[] = {
+ 	{ .vendor_id = 0, },
+ };
  
++static struct sxe2_pci_map_addr_info sxe2_net_map_addr_info_pf[SXE2_PCI_MAP_RES_MAX_COUNT] = {
++	[SXE2_PCI_MAP_RES_INVALID] = {.addr_base = 0,
++				      .bar_idx = 0,
++				      .reg_width = 0},
++	[SXE2_PCI_MAP_RES_DOORBELL_TX] = {.addr_base = SXE2_TXQ_LEGACY_DBLL(0),
++				      .bar_idx = 0,
++				      .reg_width = 4},
++	[SXE2_PCI_MAP_RES_DOORBELL_RX_TAIL] = {.addr_base = SXE2_RXQ_TAIL(0),
++				      .bar_idx = 0,
++				      .reg_width = 4},
++	[SXE2_PCI_MAP_RES_IRQ_DYN] = {.addr_base = SXE2_VF_DYN_CTL(0),
++				      .bar_idx = 0,
++				      .reg_width = 4},
++	[SXE2_PCI_MAP_RES_IRQ_ITR] = {.addr_base = SXE2_VF_INT_ITR(0, 0),
++				      .bar_idx = 0,
++				      .reg_width = 4},
++	[SXE2_PCI_MAP_RES_IRQ_MSIX] = {.addr_base = SXE2_BAR4_MSIX_CTL(0),
++				      .bar_idx = 4,
++				      .reg_width = 10},
++};
++
+ static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
+ {
+ 	int32_t ret = 0;
+@@ -151,6 +172,7 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
+ 	(void)sxe2_dev_stop(dev);
+ 
+ 	sxe2_vsi_uninit(dev);
++	sxe2_dev_pci_map_uinit(dev);
+ 
+ 	return 0;
+ }
+@@ -287,6 +309,31 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 	.dev_infos_get              = sxe2_dev_infos_get,
+ };
+ 
++struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type)
++{
++	struct sxe2_pci_map_context *map_ctxt = &adapter->map_ctxt;
++	struct sxe2_pci_map_bar_info *bar_info = NULL;
++	uint8_t bar_idx = SXE2_PCI_MAP_BAR_INVALID;
++	uint8_t i;
++
++	bar_idx = map_ctxt->addr_info[res_type].bar_idx;
++	if (bar_idx == SXE2_PCI_MAP_BAR_INVALID) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Invalid bar index with resource type %d", res_type);
++		goto l_end;
++	}
++
++	for (i = 0; i < map_ctxt->bar_cnt; i++) {
++		if (bar_idx == map_ctxt->bar_info[i].bar_idx) {
++			bar_info = &map_ctxt->bar_info[i];
++			break;
++		}
++	}
++
++l_end:
++	return bar_info;
++}
++
+ static void sxe2_drv_dev_caps_set(struct sxe2_adapter *adapter,
+ 			struct sxe2_drv_dev_caps_resp *dev_caps)
+ {
+@@ -354,6 +401,69 @@ static int32_t sxe2_dev_caps_get(struct sxe2_adapter *adapter)
+ 	return ret;
+ }
+ 
++int32_t sxe2_dev_pci_seg_map(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type, uint64_t org_len, uint64_t org_offset)
++{
++	struct sxe2_pci_map_bar_info *bar_info = NULL;
++	struct sxe2_pci_map_segment_info *seg_info = NULL;
++	void *map_addr = NULL;
++	int32_t ret = 0;
++	size_t page_size = 0;
++	size_t aligned_len = 0;
++	size_t page_inner_offset = 0;
++	off_t aligned_offset = 0;
++	uint8_t i = 0;
++
++	if (org_len == 0) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Invalid length, ori_len = 0");
++		ret = -EFAULT;
++		goto l_end;
++	}
++
++	bar_info = sxe2_dev_get_bar_info(adapter, res_type);
++	if (!bar_info) {
++		PMD_LOG_ERR(INIT, "Failed to get bar info, res_type=[%d]", res_type);
++		ret = -EFAULT;
++		goto l_end;
++	}
++	seg_info = bar_info->seg_info;
++
++	page_size = rte_mem_page_size();
++
++	aligned_offset = RTE_ALIGN_FLOOR(org_offset, page_size);
++	page_inner_offset = org_offset - aligned_offset;
++	aligned_len = RTE_ALIGN(page_inner_offset + org_len, page_size);
++
++	map_addr = sxe2_drv_dev_mmap(adapter->cdev, bar_info->bar_idx,
++				     aligned_len, aligned_offset);
++	if (!map_addr) {
++		PMD_LOG_ERR(INIT, "Failed to mmap BAR space, type=%d, len=%" PRIu64
++			    ", offset=%" PRIu64 ", page_size=%zu",
++			    res_type, org_len, org_offset, page_size);
++		ret = -EFAULT;
++		goto l_end;
++	}
++
++	for (i = 0; i < bar_info->map_cnt; i++) {
++		if (seg_info[i].type != SXE2_PCI_MAP_RES_INVALID)
++			continue;
++		seg_info[i].type = res_type;
++		seg_info[i].addr = map_addr;
++		seg_info[i].page_inner_offset = page_inner_offset;
++		seg_info[i].len = aligned_len;
++		break;
++	}
++	if (i == bar_info->map_cnt) {
++		PMD_LOG_ERR(INIT, "No memory to save resource, res_type=%d", res_type);
++		ret = -ENOMEM;
++		sxe2_drv_dev_munmap(adapter->cdev, map_addr, aligned_len);
++		goto l_end;
++	}
++
++l_end:
++	return ret;
++}
++
+ static int32_t sxe2_hw_init(struct rte_eth_dev *dev)
+ {
+ 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
+@@ -368,6 +478,55 @@ static int32_t sxe2_hw_init(struct rte_eth_dev *dev)
+ 	return ret;
+ }
+ 
++int32_t sxe2_dev_pci_res_seg_map(struct sxe2_adapter *adapter, uint32_t res_type,
++				 uint32_t item_cnt, uint32_t item_base)
++{
++	struct sxe2_pci_map_addr_info *addr_info = NULL;
++	int32_t ret = 0;
++
++	addr_info = &adapter->map_ctxt.addr_info[res_type];
++	if (!addr_info || addr_info->bar_idx == SXE2_PCI_MAP_BAR_INVALID) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Invalid bar index with resource type %d", res_type);
++		ret = -EFAULT;
++		goto l_end;
++	}
++
++	ret = sxe2_dev_pci_seg_map(adapter, res_type, item_cnt * addr_info->reg_width,
++			addr_info->addr_base + item_base * addr_info->reg_width);
++	if (ret != 0) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to map resource, res_type=%d", res_type);
++		goto l_end;
++	}
++l_end:
++	return ret;
++}
++
++void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type)
++{
++	struct sxe2_pci_map_bar_info *bar_info = NULL;
++	struct sxe2_pci_map_segment_info *seg_info = NULL;
++	uint32_t i = 0;
++
++	bar_info = sxe2_dev_get_bar_info(adapter, res_type);
++	if (bar_info == NULL) {
++		PMD_DEV_LOG_WARN(adapter, INIT, "Failed to get bar info, res_type=[%d]", res_type);
++		goto l_end;
++	}
++	seg_info = bar_info->seg_info;
++
++	for (i = 0; i < bar_info->map_cnt; i++) {
++		if (res_type == seg_info[i].type) {
++			(void)sxe2_drv_dev_munmap(adapter->cdev, seg_info[i].addr,
++						  seg_info[i].len);
++			memset(&seg_info[i], 0, sizeof(struct sxe2_pci_map_segment_info));
++			break;
++		}
++	}
++
++l_end:
++	return;
++}
++
+ static int32_t sxe2_dev_info_init(struct rte_eth_dev *dev)
+ {
+ 	struct sxe2_adapter *adapter =
+@@ -408,6 +567,157 @@ static int32_t sxe2_dev_info_init(struct rte_eth_dev *dev)
+ 	return ret;
+ }
+ 
++int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter  = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct rte_pci_device *pci_dev = RTE_DEV_TO_PCI(dev->device);
++	struct sxe2_pci_map_context *map_ctxt = &adapter->map_ctxt;
++	struct sxe2_pci_map_bar_info *bar_info = NULL;
++	struct sxe2_pci_map_segment_info *seg_info = NULL;
++	uint16_t txq_cnt = adapter->q_ctxt.qp_cnt_assign;
++	uint16_t txq_base = adapter->q_ctxt.base_idx_in_pf;
++	uint16_t rxq_cnt = adapter->q_ctxt.qp_cnt_assign;
++	uint16_t irq_cnt = adapter->irq_ctxt.max_cnt_hw;
++	uint16_t irq_base = adapter->irq_ctxt.base_idx_in_func;
++	uint16_t rxq_base = adapter->q_ctxt.base_idx_in_pf;
++	int32_t ret = 0;
++
++	PMD_INIT_FUNC_TRACE();
++
++	adapter->dev_info.dev_data = dev->data;
++
++	if (!pci_dev->mem_resource[0].phys_addr) {
++		PMD_LOG_ERR(INIT, "Physical address not scanned");
++		ret = -ENXIO;
++		goto l_end;
++	}
++
++	map_ctxt->bar_cnt = 2;
++
++	bar_info = rte_zmalloc(NULL, sizeof(*bar_info) * map_ctxt->bar_cnt, 0);
++	if (!bar_info) {
++		PMD_LOG_ERR(INIT, "Failed to alloc bar_info");
++		ret = -ENOMEM;
++		goto l_end;
++	}
++	bar_info[0].bar_idx = 0;
++	bar_info[0].map_cnt = SXE2_PCI_MAP_RES_MAX_COUNT;
++	seg_info = rte_zmalloc(NULL, sizeof(*seg_info) * bar_info[0].map_cnt, 0);
++	if (!seg_info) {
++		PMD_LOG_ERR(INIT, "Failed to alloc seg_info");
++		ret = -ENOMEM;
++		goto l_free_bar;
++	}
++
++	bar_info[0].seg_info = seg_info;
++
++	bar_info[1].bar_idx = 4;
++	bar_info[1].map_cnt = SXE2_PCI_MAP_RES_MAX_COUNT;
++	seg_info = rte_zmalloc(NULL, sizeof(*seg_info) * bar_info[1].map_cnt, 0);
++	if (!seg_info) {
++		PMD_LOG_ERR(INIT, "Failed to alloc seg_info");
++		ret = -ENOMEM;
++		goto l_free_seg0;
++	}
++
++	bar_info[1].seg_info = seg_info;
++	map_ctxt->bar_info = bar_info;
++
++	map_ctxt->addr_info = sxe2_net_map_addr_info_pf;
++
++	ret = sxe2_dev_pci_res_seg_map(adapter, SXE2_PCI_MAP_RES_DOORBELL_TX,
++				       txq_cnt, txq_base);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to map txq doorbell addr, ret=%d", ret);
++		goto l_free_seg1;
++	}
++
++	ret = sxe2_dev_pci_res_seg_map(adapter, SXE2_PCI_MAP_RES_DOORBELL_RX_TAIL,
++				       rxq_cnt, rxq_base);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to map rxq tail doorbell addr, ret=%d", ret);
++		goto l_free_txq;
++	}
++
++	ret = sxe2_dev_pci_res_seg_map(adapter, SXE2_PCI_MAP_RES_IRQ_DYN,
++				       irq_cnt, irq_base);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to map irq dyn addr, ret=%d", ret);
++		goto l_free_rxq_tail;
++	}
++
++	ret = sxe2_dev_pci_res_seg_map(adapter, SXE2_PCI_MAP_RES_IRQ_ITR,
++				       irq_cnt, irq_base);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to map irq itr addr, ret=%d", ret);
++		goto l_free_irq_dyn;
++	}
++
++	ret = sxe2_dev_pci_res_seg_map(adapter, SXE2_PCI_MAP_RES_IRQ_MSIX,
++				       irq_cnt, irq_base);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to map irq msix addr, ret=%d", ret);
++		goto l_free_irq_itr;
++	}
++	goto l_end;
++
++l_free_irq_itr:
++	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_ITR);
++l_free_irq_dyn:
++	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_DYN);
++l_free_rxq_tail:
++	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_DOORBELL_RX_TAIL);
++l_free_txq:
++	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_DOORBELL_TX);
++l_free_seg1:
++	if (bar_info[1].seg_info) {
++		rte_free(bar_info[1].seg_info);
++		bar_info[1].seg_info = NULL;
++	}
++l_free_seg0:
++	if (bar_info[0].seg_info) {
++		rte_free(bar_info[0].seg_info);
++		bar_info[0].seg_info = NULL;
++	}
++l_free_bar:
++	if (bar_info) {
++		rte_free(bar_info);
++		bar_info = NULL;
++	}
++l_end:
++	return ret;
++}
++
++void sxe2_dev_pci_map_uinit(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter  = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_pci_map_context *map_ctxt = &adapter->map_ctxt;
++	struct sxe2_pci_map_bar_info *bar_info = NULL;
++	uint8_t i = 0;
++
++	PMD_INIT_FUNC_TRACE();
++
++	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_DOORBELL_RX_TAIL);
++	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_DOORBELL_TX);
++	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_DYN);
++	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_ITR);
++	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_MSIX);
++
++	if (map_ctxt != NULL && map_ctxt->bar_info != NULL) {
++		for (i = 0; i < map_ctxt->bar_cnt; i++) {
++			bar_info = &map_ctxt->bar_info[i];
++			if (bar_info != NULL && bar_info->seg_info != NULL) {
++				rte_free(bar_info->seg_info);
++				bar_info->seg_info = NULL;
++			}
++		}
++		rte_free(map_ctxt->bar_info);
++		map_ctxt->bar_info = NULL;
++	}
++
++	adapter->dev_info.dev_data = NULL;
++}
++
+ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ 			     struct sxe2_dev_kvargs_info *kvargs __rte_unused)
+ {
+@@ -426,6 +736,12 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ 		goto l_end;
+ 	}
+ 
++	ret = sxe2_dev_pci_map_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to pci addr map, ret=[%d]", ret);
++		goto l_end;
++	}
++
+ 	ret = sxe2_vsi_init(dev);
+ 	if (ret) {
+ 		PMD_LOG_ERR(INIT, "create main vsi failed, ret=%d", ret);
+@@ -548,8 +864,10 @@ static int32_t sxe2_parse_eth_devargs(struct rte_device *dev,
+ 	memset(eth_da, 0, sizeof(*eth_da));
+ 
+ 	if (dev->devargs->cls_str) {
+-		ret = rte_eth_devargs_parse(dev->devargs->cls_str, eth_da, 1);
+-		if (ret != 0) {
++		ret = rte_eth_devargs_parse(dev->devargs->cls_str,
++					    eth_da,
++					    1);
++		if (ret) {
+ 			PMD_LOG_ERR(INIT, "Failed to parse device arguments: %s",
+ 				dev->devargs->cls_str);
+ 			return -rte_errno;
+@@ -557,7 +875,9 @@ static int32_t sxe2_parse_eth_devargs(struct rte_device *dev,
+ 	}
+ 
+ 	if (eth_da->type == RTE_ETH_REPRESENTOR_NONE && dev->devargs->args) {
+-		ret = rte_eth_devargs_parse(dev->devargs->args, eth_da, 1);
++		ret = rte_eth_devargs_parse(dev->devargs->args,
++					    eth_da,
++					    1);
+ 		if (ret) {
+ 			PMD_LOG_ERR(INIT, "Failed to parse device arguments: %s",
+ 				dev->devargs->args);
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index c4634685e6..843e652616 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -290,4 +290,22 @@ struct sxe2_adapter {
+ #define SXE2_DEV_PRIVATE_TO_ADAPTER(dev) \
+ 	((struct sxe2_adapter *)(dev)->data->dev_private)
+ 
++#define SXE2_DEV_TO_PCI(eth_dev) \
++		RTE_DEV_TO_PCI((eth_dev)->device)
++
++struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type);
++
++int32_t sxe2_dev_pci_seg_map(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type, uint64_t org_len, uint64_t org_offset);
++
++int32_t sxe2_dev_pci_res_seg_map(struct sxe2_adapter *adapter, uint32_t res_type,
++		uint32_t item_cnt, uint32_t item_base);
++
++void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
++
++int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
++
++void sxe2_dev_pci_map_uinit(struct rte_eth_dev *dev);
++
+ #endif /* __SXE2_ETHDEV_H__ */
 -- 
 2.47.3
 
