@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A394CD5BA4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 16:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEDFCD4F3D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 17:07:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EBABE4042F;
-	Wed, 20 May 2026 18:47:45 +0200 (CEST)
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com
- [74.125.224.50]) by mails.dpdk.org (Postfix) with ESMTP id D1B95400EF
- for <dev@dpdk.org>; Wed, 20 May 2026 18:47:44 +0200 (CEST)
-Received: by mail-yx1-f50.google.com with SMTP id
- 956f58d0204a3-651c7ddf514so4793581d50.1
- for <dev@dpdk.org>; Wed, 20 May 2026 09:47:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D46DA4042F;
+	Wed, 20 May 2026 19:07:44 +0200 (CEST)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com
+ [209.85.128.181])
+ by mails.dpdk.org (Postfix) with ESMTP id F031B400EF
+ for <dev@dpdk.org>; Wed, 20 May 2026 19:07:42 +0200 (CEST)
+Received: by mail-yw1-f181.google.com with SMTP id
+ 00721157ae682-7cfc382d896so17291837b3.3
+ for <dev@dpdk.org>; Wed, 20 May 2026 10:07:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779295664;
- x=1779900464; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779296862;
+ x=1779901662; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=aRVAnkxsxoWKPiplylt4TnHc4VAamx72gj30V8BnZW4=;
- b=t9leK6fcMHUPEErXoy2Gb44xAp5rFgpWtEcTD8QOTU02BnQT0dfcBPbllCcYii3E+M
- UDtAT5hfdPBNu0ZVlTO4wQ9uJlb3hPpX8zArLhcp6U1fLkEO2Vuizr7V0SGGslFgl9MU
- xiv7fN6TwuZGBS2VSYZZDV+p8B+YXUTjNid1qslYGE7C+KpJWq8bWm+YaEjLWaeL9uTC
- Wf9G010kXkm1YhddGm9jtleyFSPWQwSxwunOu2TGDkaILpm1Qj0M8IbNARbz1mSI7njW
- L5HzV4YdYzBnQc4rCypfsiwugqmwmbYgZAg9aN9fXqxS98aiTsF2fmZMmI/Sd+AObvrS
- nLqw==
+ bh=zMxhDWxbMs01OYNeVfx9EdLJRs/I4aD59xafYm6/WRY=;
+ b=oZsS3CkmN9ECendjU03LA/VhQNm+eGyp9/X8SK+u5FdrYzabpZXtIdoTlZ3hc3G3sN
+ jPdezZ3FUHN/rpBXf5SqZJl80/da2E8/KgWMYowPP5ohzhsMqx+04N+QO743GUGIqiCr
+ Poo1b2U6VLuRaS3H0JsgASU8vefC47oEJSbDWFNIZFGAXDh3kdfDecZzjO0469Tx6mXP
+ UIKWXL09e3tLp2yBe/pSE8l5nsh0YUbNKUoYzrjVr5SY6B0T9W8pSygmBMxOgsDqKXW2
+ j5UCVEfKjVtuSd2Mcs1zuW5ELZdoHzLY5Nmp+H2JpwIdK4sduEUWPxZRysT7j0EOfWDo
+ 9Hwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779295664; x=1779900464;
+ d=1e100.net; s=20251104; t=1779296862; x=1779901662;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=aRVAnkxsxoWKPiplylt4TnHc4VAamx72gj30V8BnZW4=;
- b=F2xtJTJaUH/g+fqQh68QqcLCTSU6k6OYAdGNyD/mMiuw0xDEb99BOc4ikWbjYz409j
- pPbT6UKR89x0jM3tKXR142MP74BsREB9F+hqKP4r+UPOUMNjle/e9MGTJlNyE4JqzSye
- /hqcsrOM7SdAEMvkim9JMot4FEO1UFsIvAdvwh97OAZm3bRPSgB6kOfnW2X8ovAiMJo3
- RDx3KeVCNhlSWdgpGNL085A0HhMo2LnsFrYJJWTTbRAOIlUjhoXCTjJ9OPZ+2rc6cfgE
- 6J6qZhRPnxm2R80K9AB5JxchKbxIfTWhUpHijD/airaATA4XB7++DhaQdgyjZ0uCLho9
- VhQg==
-X-Gm-Message-State: AOJu0YyR13IabXi1ChXyKkTFsQpkQ+rRUujuuVbTX/RlUx/AEHOWWiN4
- jR28xtZ/5uvT21nVWwI+ZR53JIbkPz4yaZCjVVGlmMW4v1l7agLcvhrwyezCkw4BiwE=
-X-Gm-Gg: Acq92OEAwhqWKd7FVyegZxD68VsdbHLEZ7bkCoQFXm2OGfH+yogavfO+LgosesyrAc0
- muJBEWRuq3FV1sG1uyX/hoyicEvihEPTF3mIYzA4d3RJzhnkVufB629Ol5pHrEWdKG+M63X6Ayd
- AjcetoS73vHI8MjM4Dv5lHaHjUTTZcUOPUrcpGmUGCNYwyyj7NlXC0u6PATIrl9l7CMQY9D/zQZ
- WDbRwPri5u4MkajzNvLHrsg0L+PUOyWy44mAocnWICzs2nsUqQAxVe5hrJ/8Tpdz0tH8Hatjn8Y
- hQsB2gjVYwhjTy9UHjDf4j/coJPLrVBFNhENN9t7QNDKgF0CMlcNsWeFNihj3r4Rr2cDSu2PSvZ
- 4WMCU7ghn9tSWB1qlyhwi6bJL9vl89tI2krytorYTaDQCALh/vdB6stDhuhwrQsKnLJj+8yKIH0
- fDpUdo9K58fzjbxy3DXax683zwKu0ptCDOx6YvzTXbMOVA2TyiqkivEmHauGbDt+zd
-X-Received: by 2002:a05:690e:151b:b0:652:fc9b:4a1b with SMTP id
- 956f58d0204a3-65e227be43cmr21773326d50.40.1779295663809; 
- Wed, 20 May 2026 09:47:43 -0700 (PDT)
+ bh=zMxhDWxbMs01OYNeVfx9EdLJRs/I4aD59xafYm6/WRY=;
+ b=pxNV738iLOalvk1g5dSO2aL00tx5vdv22C4tzA2At+hfdORtmfQEnYTbORDC03pq9D
+ hnr6Rj5nCMRNHfGfrI8PL81IG0J2sl01AYlVRBB7nDcCRkyU25OVL7iUyCxwMBrBQuy8
+ TgwefzyQRlya3rOg9VjnivFVYF4NJi8THZ9tDP5Y00+S2bS5VjF5/M8PDN8NIrnVdWX9
+ oojEFzZ+j7Fkn0AQzfiHZ7jF0NIAuuCpt5omZlX/QJsgJb4qbVzGB6XUpWWPhL/zh756
+ YqhYsVm+nrBaBRkM3tBAzeqXD+CY9NlLxOJym0N12Vg/aD3RSIi9TJFa9niCa5I5Gneu
+ LFjg==
+X-Gm-Message-State: AOJu0YyTHlp1BMAA221VF8UzXvBYcSuMFvwCpiaDGgnoDkGdWkysBnHH
+ PtkZvAin+HKRyN1LIIoos3CSxjgWPqVYLiiWPAMzeNtQ09GPE02z3lyTaPoZBua6Ln8=
+X-Gm-Gg: Acq92OHN0b1zNsX5ZNc0EYJR5/2kxIzv5oNzz3nfywOWO1u+379wy0il3kWO/7nehKa
+ qnFRbIppygksy0UpBtb3uBcPvFjD6OkkpC0/umr8oV2C25Lcd8BdINs/m2fs9k8XZ8lWeyNNc/Y
+ 7Ke9Dj+FPoVqCIqj64scvjzNjEu7UW1J9YXvFm75O3ARDLxjRcE2bcHpmTDTtYnOiUXFNd05spd
+ y6kCsFhA8GDMuW3rJVoSEHvFxwm/r1f+tEpVbd3277LQW5NgO3y/VbM6DsI3Zi8C6HuFMAd8Uui
+ Jv2zzhoxGcoVX3AWv8hnP6qhOKI/TJicFl3CcA8MwSMFNMuZyH0P5td9VzCvf+kbm7aTbtTyBTY
+ e2HMKnpwoBT0JmdkLBf8tEJsah0I4vf0y9F2k0l6WdNLPan3FkQrNjQIRIJ2Bg60cTfPgTFIBxJ
+ Mvd4mkq6UNtRq4Wejlda+dFtZipXTVNs0krOuhboJFMTTeuwPnVvIHD1zhEAFYL/ZiI1jm6p34z
+ RU=
+X-Received: by 2002:a53:c04c:0:20b0:65d:b6dd:69f3 with SMTP id
+ 956f58d0204a3-65e227f6c40mr20082168d50.36.1779296862120; 
+ Wed, 20 May 2026 10:07:42 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 956f58d0204a3-65e0d89b130sm9586106d50.5.2026.05.20.09.47.43
+ 956f58d0204a3-65e0dbd101asm9477962d50.19.2026.05.20.10.07.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 20 May 2026 09:47:43 -0700 (PDT)
-Date: Wed, 20 May 2026 09:47:40 -0700
+ Wed, 20 May 2026 10:07:41 -0700 (PDT)
+Date: Wed, 20 May 2026 10:07:38 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Michal Sieron <michal.sieron@nokia.com>
 Cc: dev@dpdk.org
 Subject: Re: [PATCH] linux/mem: atomically prefault hugepages in alloc_seg
-Message-ID: <20260520094740.209a4a94@phoenix.local>
+Message-ID: <20260520100738.7042b965@phoenix.local>
 In-Reply-To: <20260520125756.530808-1-michal.sieron@nokia.com>
 References: <20260520125756.530808-1-michal.sieron@nokia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,49 +86,15 @@ Michal Sieron <michal.sieron@nokia.com> wrote:
 
 > In rare cases, when a secondary process calls rte_eal_init() it can
 > cause a data race during page prefaulting in alloc_seg().
->=20
+> 
 > An atomic compare-exchange in a loop should eliminate the data race.
->=20
+> 
 > Signed-off-by: Michal Sieron <michal.sieron@nokia.com>
 > ---
 
-Build fails. Fix and resubmit.
-Looks like you did this against older version of DPDK before stdatomic.
+AI had good suggestion when reviewing this.
+Your version is still racy (on the read side).
 
-FAILED: [code=3D1] lib/librte_eal.a.p/eal_linux_eal_memalloc.c.o=20
-ccache clang -Ilib/librte_eal.a.p -Ilib -I../lib -Ilib/eal/common -I../lib/=
-eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include -I../lib/eal/inc=
-lude -Ilib/eal/linux/include -I../lib/eal/linux/include -Ilib/eal/x86/inclu=
-de -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal -I../lib/eal -Ilib/=
-kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metrics -I../lib/metric=
-s -Ilib/telemetry -I../lib/telemetry -Ilib/argparse -I../lib/argparse -Xcla=
-ng -fcolor-diagnostics -fsanitize=3Dundefined -pipe -D_FILE_OFFSET_BITS=3D6=
-4 -Wall -Winvalid-pch -Wextra -Werror -std=3Dc11 -include rte_config.h -Wvl=
-a -Wcast-qual -Wcomma -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-se=
-curity -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wold-s=
-tyle-definition -Wpointer-arith -Wshadow -Wsign-compare -Wstrict-prototypes=
- -Wundef -Wwrite-strings -Wno-missing-field-initializers -D_GNU_SOURCE -fPI=
-C -march=3Dcorei7 -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API '-DAB=
-I_VERSION=3D"26.2"' -DRTE_EAL_PTHREAD_ATTR_SETAFFINITY_NP -DRTE_LOG_DEFAULT=
-_LOGTYPE=3Dlib.eal -DRTE_ANNOTATE_LOCKS -Wthread-safety -MD -MQ lib/librte_=
-eal.a.p/eal_linux_eal_memalloc.c.o -MF lib/librte_eal.a.p/eal_linux_eal_mem=
-alloc.c.o.d -o lib/librte_eal.a.p/eal_linux_eal_memalloc.c.o -c ../lib/eal/=
-linux/eal_memalloc.c
-../lib/eal/linux/eal_memalloc.c:605:10: error: implicit declaration of func=
-tion 'rte_atomic_compare_exchange_strong' is invalid in C99 [-Werror,-Wimpl=
-icit-function-declaration]
-        while (!rte_atomic_compare_exchange_strong((volatile int *)addr, &s=
-napshot, snapshot))
-                ^
-../lib/eal/linux/eal_memalloc.c:605:10: note: did you mean '__atomic_compar=
-e_exchange_n'?
-../lib/eal/include/generic/rte_rwlock.h:189:6: note: '__atomic_compare_exch=
-ange_n' declared here
-            rte_atomic_compare_exchange_weak_explicit(&rwl->cnt, &x, x + RT=
-E_RWLOCK_WRITE,
-            ^
-../lib/eal/include/rte_stdatomic.h:151:2: note: expanded from macro 'rte_at=
-omic_compare_exchange_weak_explicit'
-        __atomic_compare_exchange_n(ptr, expected, desired, 1, \
-        ^
-1 error generated.
+A simple non-racy, and no loop version would be:
+
+	rte_atomic_fetch_or_explicit((int *)addr, 0, rte_memory_order_relaxed);
