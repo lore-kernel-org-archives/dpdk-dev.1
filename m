@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DDECD4F3C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 12:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A863ECD5BA4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 12:50:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0320D40678;
-	Wed, 20 May 2026 14:49:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 47F2040679;
+	Wed, 20 May 2026 14:49:58 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 964FD40144
- for <dev@dpdk.org>; Wed, 20 May 2026 14:49:53 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gLBF51llyzJ46Zb;
- Wed, 20 May 2026 20:49:13 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 2504940662
+ for <dev@dpdk.org>; Wed, 20 May 2026 14:49:54 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gLBFQ0KLpzHnGgn
+ for <dev@dpdk.org>; Wed, 20 May 2026 20:49:30 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 6DC6A40584;
- Wed, 20 May 2026 20:49:53 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id C898D40569
+ for <dev@dpdk.org>; Wed, 20 May 2026 20:49:53 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1544.11; Wed, 20 May 2026 14:49:53 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v4 03/11] bpf: support up to 5 arguments
-Date: Wed, 20 May 2026 13:49:12 +0100
-Message-ID: <20260520124922.42445-4-marat.khalili@huawei.com>
+Subject: [PATCH v4 04/11] bpf: add cBPF origin to rte_bpf_load_ex
+Date: Wed, 20 May 2026 13:49:13 +0100
+Message-ID: <20260520124922.42445-5-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260520124922.42445-1-marat.khalili@huawei.com>
 References: <20260518084912.57006-1-marat.khalili@huawei.com>
@@ -50,541 +49,299 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When using rte_bpf_load_ex allow up to 5 arguments for a BPF program.
-Particularly useful for call-backs and other internal functions.
+Add cBPF origin to rte_bpf_load_ex to allow loading PCAP filters and
+other cBPF code through the unified interface.
+
+Note that for the no-libpcap stub of rte_bpf_convert, the behavior when
+called with a NULL program has changed from setting rte_errno to EINVAL
+to setting it to ENOTSUP. Since both cases return NULL, callers relying
+on pointer checking are unaffected.
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/bpf/bpf.c           |  32 ++++++++++-
- lib/bpf/bpf_exec.c      | 124 +++++++++++++++++++++++++++++++++++++++-
- lib/bpf/bpf_impl.h      |   2 +-
- lib/bpf/bpf_jit_arm64.c |   2 +-
- lib/bpf/bpf_jit_x86.c   |   2 +-
- lib/bpf/bpf_load.c      |   6 +-
- lib/bpf/bpf_validate.c  |  45 +++++++++++----
- lib/bpf/rte_bpf.h       | 121 +++++++++++++++++++++++++++++++++++++--
- 8 files changed, 310 insertions(+), 24 deletions(-)
+ lib/bpf/bpf_convert.c | 81 +++++++++++++++++++++++++++++++++++++++++--
+ lib/bpf/bpf_impl.h    | 11 ++++++
+ lib/bpf/bpf_load.c    | 12 ++++++-
+ lib/bpf/bpf_stub.c    | 27 ---------------
+ lib/bpf/meson.build   | 11 +++---
+ lib/bpf/rte_bpf.h     |  8 ++++-
+ 6 files changed, 113 insertions(+), 37 deletions(-)
+ delete mode 100644 lib/bpf/bpf_stub.c
 
-diff --git a/lib/bpf/bpf.c b/lib/bpf/bpf.c
-index 5239b3e11e0e..67dededd9ae8 100644
---- a/lib/bpf/bpf.c
-+++ b/lib/bpf/bpf.c
-@@ -16,8 +16,8 @@ void
- rte_bpf_destroy(struct rte_bpf *bpf)
- {
- 	if (bpf != NULL) {
--		if (bpf->jit.func != NULL)
--			munmap(bpf->jit.func, bpf->jit.sz);
-+		if (bpf->jit.raw != NULL)
-+			munmap(bpf->jit.raw, bpf->jit.sz);
- 		munmap(bpf, bpf->sz);
- 	}
- }
-@@ -29,7 +29,33 @@ rte_bpf_get_jit(const struct rte_bpf *bpf, struct rte_bpf_jit *jit)
- 	if (bpf == NULL || jit == NULL)
- 		return -EINVAL;
+diff --git a/lib/bpf/bpf_convert.c b/lib/bpf/bpf_convert.c
+index 953ca80670c4..e8074b13d037 100644
+--- a/lib/bpf/bpf_convert.c
++++ b/lib/bpf/bpf_convert.c
+@@ -9,6 +9,12 @@
+  * Copyright (c) 2011 - 2014 PLUMgrid, http://plumgrid.com
+  */
  
--	jit[0] = bpf->jit;
-+	if (bpf->prm.nb_prog_arg != 1) {
-+		RTE_BPF_LOG_LINE(ERR,
-+			"this program takes %d arguments, use rte_bpf_get_jit_ex",
-+			bpf->prm.nb_prog_arg);
++#include "bpf_impl.h"
++#include <eal_export.h>
++#include <rte_errno.h>
++
++#ifdef RTE_HAS_LIBPCAP
++
+ #include <assert.h>
+ #include <errno.h>
+ #include <stdbool.h>
+@@ -17,17 +23,14 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <eal_export.h>
+ #include <rte_common.h>
+ #include <rte_bpf.h>
+ #include <rte_log.h>
+ #include <rte_malloc.h>
+-#include <rte_errno.h>
+ 
+ #include <pcap/pcap.h>
+ #include <pcap/bpf.h>
+ 
+-#include "bpf_impl.h"
+ #include "bpf_def.h"
+ 
+ #ifndef BPF_MAXINSNS
+@@ -572,3 +575,75 @@ rte_bpf_convert(const struct bpf_program *prog)
+ 
+ 	return prm;
+ }
++
++void
++__rte_bpf_convert_cleanup(struct __rte_bpf_load *load)
++{
++	free(load->ins);
++}
++
++int
++__rte_bpf_convert(struct __rte_bpf_load *load)
++{
++	struct rte_bpf_prm_ex *const prm = &load->prm;
++	uint32_t nb_ins = 0;
++	int ret;
++
++	RTE_ASSERT(prm->origin == RTE_BPF_ORIGIN_CBPF);
++
++	if (prm->cbpf.ins == NULL || prm->cbpf.nb_ins == 0)
 +		return -EINVAL;
++
++	/* 1st pass: calculate the eBPF program length */
++	ret = bpf_convert_filter(prm->cbpf.ins, prm->cbpf.nb_ins, NULL, &nb_ins);
++	if (ret < 0) {
++		RTE_BPF_LOG_FUNC_LINE(ERR, "cannot get eBPF length");
++		return ret;
 +	}
 +
-+	*jit = (struct rte_bpf_jit) {
-+		.func = bpf->jit.raw,
-+		.sz = bpf->jit.sz,
-+	};
++	RTE_ASSERT(load->ins == NULL);
++	load->ins = malloc(nb_ins * sizeof(load->ins[0]));
++	if (load->ins == NULL)
++		return -ENOMEM;
++
++	/* 2nd pass: remap cBPF to eBPF instructions  */
++	ret = bpf_convert_filter(prm->cbpf.ins, prm->cbpf.nb_ins, load->ins, &nb_ins);
++	if (ret < 0) {
++		RTE_BPF_LOG_FUNC_LINE(ERR, "cannot convert cBPF to eBPF");
++		return ret;
++	}
++
++	prm->origin = RTE_BPF_ORIGIN_RAW;
++	prm->raw.ins = load->ins;
++	prm->raw.nb_ins = nb_ins;
++
 +	return 0;
 +}
 +
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_get_jit_ex, 26.11)
++#else /* RTE_HAS_LIBPCAP */
++
++RTE_EXPORT_SYMBOL(rte_bpf_convert)
++struct rte_bpf_prm *
++rte_bpf_convert(const struct bpf_program *prog)
++{
++	RTE_SET_USED(prog);
++	RTE_BPF_LOG_FUNC_LINE(ERR, "not supported, rebuild with libpcap installed");
++	rte_errno = ENOTSUP;
++	return NULL;
++}
++
++void
++__rte_bpf_convert_cleanup(struct __rte_bpf_load *load)
++{
++	RTE_ASSERT(load->ins == NULL);
++}
++
 +int
-+rte_bpf_get_jit_ex(const struct rte_bpf *bpf, struct rte_bpf_jit_ex *jit)
++__rte_bpf_convert(struct __rte_bpf_load *load)
 +{
-+	if (bpf == NULL || jit == NULL)
-+		return -EINVAL;
-+
-+	if (bpf->jit.raw == NULL) {
-+		RTE_BPF_LOG_LINE(ERR, "no JIT-compiled version");
-+		return -ENOENT;
-+	}
-+
-+	*jit = bpf->jit;
- 	return 0;
- }
- 
-diff --git a/lib/bpf/bpf_exec.c b/lib/bpf/bpf_exec.c
-index e4668ba10b64..20f8d0fa29de 100644
---- a/lib/bpf/bpf_exec.c
-+++ b/lib/bpf/bpf_exec.c
-@@ -10,6 +10,7 @@
- #include <rte_log.h>
- #include <rte_debug.h>
- #include <rte_byteorder.h>
-+#include <rte_errno.h>
- 
- #include "bpf_impl.h"
- 
-@@ -502,6 +503,12 @@ rte_bpf_exec_burst(const struct rte_bpf *bpf, void *ctx[], uint64_t rc[],
- 	uint64_t reg[EBPF_REG_NUM];
- 	uint64_t stack[MAX_BPF_STACK_SIZE / sizeof(uint64_t)];
- 
-+	if (bpf->prm.nb_prog_arg != 1) {
-+		/* Use rte_bpf_exec_burst_ex with this program. */
-+		rte_errno = EINVAL;
-+		return 0;
-+	}
-+
- 	for (i = 0; i != num; i++) {
- 
- 		reg[EBPF_REG_1] = (uintptr_t)ctx[i];
-@@ -513,12 +520,127 @@ rte_bpf_exec_burst(const struct rte_bpf *bpf, void *ctx[], uint64_t rc[],
- 	return i;
- }
- 
-+static uint32_t
-+exec_vm_burst_ex(const struct rte_bpf *bpf, const struct rte_bpf_prog_ctx *ctx,
-+	uint64_t rc[], uint32_t num)
-+{
-+	uint32_t i;
-+	uint64_t reg[EBPF_REG_NUM];
-+	uint64_t stack[MAX_BPF_STACK_SIZE / sizeof(uint64_t)];
-+
-+	for (i = 0; i != num; i++) {
-+
-+		switch (bpf->prm.nb_prog_arg) {
-+		case 5:
-+			reg[EBPF_REG_5] = ctx[i].arg[4].u64;
-+			/* FALLTHROUGH */
-+		case 4:
-+			reg[EBPF_REG_4] = ctx[i].arg[3].u64;
-+			/* FALLTHROUGH */
-+		case 3:
-+			reg[EBPF_REG_3] = ctx[i].arg[2].u64;
-+			/* FALLTHROUGH */
-+		case 2:
-+			reg[EBPF_REG_2] = ctx[i].arg[1].u64;
-+			/* FALLTHROUGH */
-+		case 1:
-+			reg[EBPF_REG_1] = ctx[i].arg[0].u64;
-+			/* FALLTHROUGH */
-+		case 0:
-+			break;
-+		}
-+
-+		reg[EBPF_REG_10] = (uintptr_t)(stack + RTE_DIM(stack));
-+
-+		rc[i] = bpf_exec(bpf, reg);
-+	}
-+
-+	return i;
++	RTE_SET_USED(load);
++	RTE_BPF_LOG_FUNC_LINE(ERR, "not supported, rebuild with libpcap installed");
++	return -ENOTSUP;
 +}
 +
-+static uint32_t
-+exec_jit_burst_ex(const struct rte_bpf *bpf, const struct rte_bpf_prog_ctx *ctx,
-+	uint64_t rc[], uint32_t num)
-+{
-+	uint32_t i = 0;
-+	const struct rte_bpf_jit_ex jit = bpf->jit;
-+
-+	/*
-+	 * Fast path: assumes application pre-validated RTE_BPF_EXEC_FLAG_JIT
-+	 * and successful JIT generation. No explicit NULL checks here.
-+	 */
-+	switch (bpf->prm.nb_prog_arg) {
-+	case 0:
-+		for (i = 0; i != num; i++)
-+			rc[i] = jit.func0();
-+		break;
-+	case 1:
-+		for (i = 0; i != num; i++) {
-+			const union rte_bpf_func_arg *const arg = ctx[i].arg;
-+			rc[i] = jit.func1(arg[0]);
-+		}
-+		break;
-+	case 2:
-+		for (i = 0; i != num; i++) {
-+			const union rte_bpf_func_arg *const arg = ctx[i].arg;
-+			rc[i] = jit.func2(arg[0], arg[1]);
-+		}
-+		break;
-+	case 3:
-+		for (i = 0; i != num; i++) {
-+			const union rte_bpf_func_arg *const arg = ctx[i].arg;
-+			rc[i] = jit.func3(arg[0], arg[1], arg[2]);
-+		}
-+		break;
-+	case 4:
-+		for (i = 0; i != num; i++) {
-+			const union rte_bpf_func_arg *const arg = ctx[i].arg;
-+			rc[i] = jit.func4(arg[0], arg[1], arg[2], arg[3]);
-+		}
-+		break;
-+	case 5:
-+		for (i = 0; i != num; i++) {
-+			const union rte_bpf_func_arg *const arg = ctx[i].arg;
-+			rc[i] = jit.func5(arg[0], arg[1], arg[2], arg[3], arg[4]);
-+		}
-+		break;
-+	}
-+
-+	return i;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_exec_burst_ex, 26.11)
-+uint32_t
-+rte_bpf_exec_burst_ex(const struct rte_bpf *bpf, const struct rte_bpf_prog_ctx *ctx,
-+	uint64_t rc[], uint32_t num, uint64_t flags)
-+{
-+	if ((flags & ~RTE_BPF_EXEC_FLAG_MASK) != 0) {
-+		rte_errno = EINVAL;
-+		return 0;
-+	}
-+
-+	return (flags & RTE_BPF_EXEC_FLAG_JIT) != 0 ?
-+		exec_jit_burst_ex(bpf, ctx, rc, num) :
-+		exec_vm_burst_ex(bpf, ctx, rc, num);
-+}
-+
- RTE_EXPORT_SYMBOL(rte_bpf_exec)
- uint64_t
- rte_bpf_exec(const struct rte_bpf *bpf, void *ctx)
- {
--	uint64_t rc;
-+	uint64_t rc = UINT64_MAX;
- 
- 	rte_bpf_exec_burst(bpf, &ctx, &rc, 1);
- 	return rc;
- }
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_exec_ex, 26.11)
-+uint64_t
-+rte_bpf_exec_ex(const struct rte_bpf *bpf, const struct rte_bpf_prog_ctx *ctx,
-+		uint64_t flags)
-+{
-+	uint64_t rc = UINT64_MAX;
-+
-+	rte_bpf_exec_burst_ex(bpf, ctx, &rc, 1, flags);
-+	return rc;
-+}
++#endif /* RTE_HAS_LIBPCAP */
 diff --git a/lib/bpf/bpf_impl.h b/lib/bpf/bpf_impl.h
-index 1cee109bc98a..4a98b3373067 100644
+index 4a98b3373067..92d03583d977 100644
 --- a/lib/bpf/bpf_impl.h
 +++ b/lib/bpf/bpf_impl.h
-@@ -12,7 +12,7 @@
- 
- struct rte_bpf {
+@@ -21,6 +21,9 @@ struct rte_bpf {
+ struct __rte_bpf_load {
  	struct rte_bpf_prm_ex prm;
--	struct rte_bpf_jit jit;
-+	struct rte_bpf_jit_ex jit;
- 	size_t sz;
- 	uint32_t stack_sz;
- };
-diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
-index 9e5e142c13ba..ba7ae4d680c5 100644
---- a/lib/bpf/bpf_jit_arm64.c
-+++ b/lib/bpf/bpf_jit_arm64.c
-@@ -1471,7 +1471,7 @@ __rte_bpf_jit_arm64(struct rte_bpf *bpf)
- 	/* Flush the icache */
- 	__builtin___clear_cache((char *)ctx.ins, (char *)(ctx.ins + ctx.idx));
  
--	bpf->jit.func = (void *)ctx.ins;
-+	bpf->jit.raw = ctx.ins;
- 	bpf->jit.sz = size;
++	/* Conversion from cBPF. */
++	struct ebpf_insn *ins;
++
+ 	/* Loading ELF and applying relocations. */
+ 	int elf_fd;  /* ELF fd, must be negative (not zero) by default. */
+ 	void *elf;  /* Using void to avoid dependency on libelf. */
+@@ -34,6 +37,14 @@ struct __rte_bpf_load {
+  * to avoid potential name conflict with other libraries.
+  */
  
- 	goto finish;
-diff --git a/lib/bpf/bpf_jit_x86.c b/lib/bpf/bpf_jit_x86.c
-index 6f4235d43499..54eb279643b9 100644
---- a/lib/bpf/bpf_jit_x86.c
-+++ b/lib/bpf/bpf_jit_x86.c
-@@ -1568,7 +1568,7 @@ __rte_bpf_jit_x86(struct rte_bpf *bpf)
- 	if (rc != 0)
- 		munmap(st.ins, st.sz);
- 	else {
--		bpf->jit.func = (void *)st.ins;
-+		bpf->jit.raw = st.ins;
- 		bpf->jit.sz = st.sz;
- 	}
- 
++/* Free temporary resources created by converting from cBPF to eBPF. */
++void
++__rte_bpf_convert_cleanup(struct __rte_bpf_load *load);
++
++/* Convert program from cBPF to eBPF. */
++int
++__rte_bpf_convert(struct __rte_bpf_load *load);
++
+ /* Free temporary resources created by opening ELF. */
+ void
+ __rte_bpf_load_elf_cleanup(struct __rte_bpf_load *load);
 diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
-index 2d9e503d1f7e..f63093b9bc09 100644
+index f63093b9bc09..e3265e97ff7f 100644
 --- a/lib/bpf/bpf_load.c
 +++ b/lib/bpf/bpf_load.c
-@@ -149,7 +149,8 @@ rte_bpf_load(const struct rte_bpf_prm *prm)
- 			.raw.nb_ins = prm->nb_ins,
- 			.xsym = prm->xsym,
- 			.nb_xsym = prm->nb_xsym,
--			.prog_arg = prm->prog_arg,
-+			.prog_arg[0] = prm->prog_arg,
-+			.nb_prog_arg = 1,
- 		});
- }
- 
-@@ -170,7 +171,8 @@ rte_bpf_elf_load(const struct rte_bpf_prm *prm, const char *fname,
- 			.elf_file.section = sname,
- 			.xsym = prm->xsym,
- 			.nb_xsym = prm->nb_xsym,
--			.prog_arg = prm->prog_arg,
-+			.prog_arg[0] = prm->prog_arg,
-+			.nb_prog_arg = 1,
- 		});
- }
- 
-diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-index 5bfc59296d05..bf8a4abb5a5a 100644
---- a/lib/bpf/bpf_validate.c
-+++ b/lib/bpf/bpf_validate.c
-@@ -2425,10 +2425,14 @@ evaluate(struct bpf_verifier *bvf)
- 		.s = {.min = MAX_BPF_STACK_SIZE, .max = MAX_BPF_STACK_SIZE},
- 	};
- 
--	bvf->evst->rv[EBPF_REG_1].v = bvf->prm->prog_arg;
--	bvf->evst->rv[EBPF_REG_1].mask = UINT64_MAX;
--	if (bvf->prm->prog_arg.type == RTE_BPF_ARG_RAW)
--		eval_max_bound(bvf->evst->rv + EBPF_REG_1, UINT64_MAX);
-+	for (uint32_t pai = 0; pai != bvf->prm->nb_prog_arg; ++pai) {
-+		struct bpf_reg_val *reg = &bvf->evst->rv[EBPF_REG_1 + pai];
-+
-+		reg->v = bvf->prm->prog_arg[pai];
-+		reg->mask = UINT64_MAX;
-+		if (reg->v.type == RTE_BPF_ARG_RAW)
-+			eval_max_bound(reg, UINT64_MAX);
-+	}
- 
- 	bvf->evst->rv[EBPF_REG_10] = rvfp;
- 
-@@ -2521,21 +2525,42 @@ evaluate(struct bpf_verifier *bvf)
+@@ -240,6 +240,9 @@ load_try(struct __rte_bpf_load *load, const struct rte_bpf_prm_ex *app_prm)
+ 	switch (load->prm.origin) {
+ 	case RTE_BPF_ORIGIN_RAW:
+ 		break;
++	case RTE_BPF_ORIGIN_CBPF:
++		rc = rc < 0 ? rc : __rte_bpf_convert(load);
++		break;
+ 	case RTE_BPF_ORIGIN_ELF_FILE:
+ 		rc = rc < 0 ? rc : __rte_bpf_load_elf_file(load);
+ 		rc = rc < 0 ? rc : __rte_bpf_load_elf_code(load);
+@@ -254,6 +257,13 @@ load_try(struct __rte_bpf_load *load, const struct rte_bpf_prm_ex *app_prm)
  	return rc;
  }
  
-+static bool
-+prog_arg_is_valid(const struct rte_bpf_arg *prog_arg)
++static void
++load_cleanup(struct __rte_bpf_load *load)
 +{
-+	/* check input argument type, don't allow mbuf ptr on 32-bit */
-+	if (prog_arg->type != RTE_BPF_ARG_RAW &&
-+			prog_arg->type != RTE_BPF_ARG_PTR &&
-+			(sizeof(uint64_t) != sizeof(uintptr_t) ||
-+			prog_arg->type != RTE_BPF_ARG_PTR_MBUF)) {
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "unsupported argument type");
-+		return false;
-+	}
-+
-+	return true;
++	__rte_bpf_convert_cleanup(load);
++	__rte_bpf_load_elf_cleanup(load);
 +}
 +
- int
- __rte_bpf_validate(const struct rte_bpf_prm_ex *prm, uint32_t *stack_sz)
- {
- 	int32_t rc;
- 	struct bpf_verifier bvf;
+ RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_load_ex, 26.11)
+ struct rte_bpf *
+ rte_bpf_load_ex(const struct rte_bpf_prm_ex *prm)
+@@ -262,7 +272,7 @@ rte_bpf_load_ex(const struct rte_bpf_prm_ex *prm)
  
--	/* check input argument type, don't allow mbuf ptr on 32-bit */
--	if (prm->prog_arg.type != RTE_BPF_ARG_RAW &&
--			prm->prog_arg.type != RTE_BPF_ARG_PTR &&
--			(sizeof(uint64_t) != sizeof(uintptr_t) ||
--			prm->prog_arg.type != RTE_BPF_ARG_PTR_MBUF)) {
--		RTE_BPF_LOG_FUNC_LINE(ERR, "unsupported argument type");
-+	if (prm->nb_prog_arg > EBPF_FUNC_MAX_ARGS) {
-+		RTE_BPF_LOG_FUNC_LINE(ERR,
-+			"support up to %u arguments, found %u",
-+			EBPF_FUNC_MAX_ARGS, prm->nb_prog_arg);
- 		return -ENOTSUP;
- 	}
+ 	const int rc = load_try(&load, prm);
  
-+	for (uint32_t pai = 0; pai != prm->nb_prog_arg; ++pai)
-+		if (!prog_arg_is_valid(&prm->prog_arg[pai])) {
-+			RTE_BPF_LOG_FUNC_LINE(ERR,
-+				"unsupported argument %d (r%d) type",
-+				pai, EBPF_REG_1 + pai);
-+			return -ENOTSUP;
-+		}
-+
- 	memset(&bvf, 0, sizeof(bvf));
- 	bvf.prm = prm;
- 	bvf.in = calloc(prm->raw.nb_ins, sizeof(bvf.in[0]));
+-	__rte_bpf_load_elf_cleanup(&load);
++	load_cleanup(&load);
+ 
+ 	RTE_ASSERT((rc < 0) == (load.bpf == NULL));
+ 
+diff --git a/lib/bpf/bpf_stub.c b/lib/bpf/bpf_stub.c
+deleted file mode 100644
+index 4c329832c264..000000000000
+--- a/lib/bpf/bpf_stub.c
++++ /dev/null
+@@ -1,27 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2018-2021 Intel Corporation
+- */
+-
+-#include "bpf_impl.h"
+-#include <eal_export.h>
+-#include <rte_errno.h>
+-
+-/**
+- * Contains stubs for unimplemented public API functions
+- */
+-
+-#ifndef RTE_HAS_LIBPCAP
+-RTE_EXPORT_SYMBOL(rte_bpf_convert)
+-struct rte_bpf_prm *
+-rte_bpf_convert(const struct bpf_program *prog)
+-{
+-	if (prog == NULL) {
+-		rte_errno = EINVAL;
+-		return NULL;
+-	}
+-
+-	RTE_BPF_LOG_FUNC_LINE(ERR, "not supported, rebuild with libpcap installed");
+-	rte_errno = ENOTSUP;
+-	return NULL;
+-}
+-#endif
+diff --git a/lib/bpf/meson.build b/lib/bpf/meson.build
+index 4901b6ee1463..7e8a300e3f87 100644
+--- a/lib/bpf/meson.build
++++ b/lib/bpf/meson.build
+@@ -15,14 +15,16 @@ if arch_subdir == 'x86' and dpdk_conf.get('RTE_ARCH_32')
+     subdir_done()
+ endif
+ 
+-sources = files('bpf.c',
++sources = files(
++        'bpf.c',
++        'bpf_convert.c',
+         'bpf_dump.c',
+         'bpf_exec.c',
+         'bpf_load.c',
+         'bpf_load_elf.c',
+         'bpf_pkt.c',
+-        'bpf_stub.c',
+-        'bpf_validate.c')
++        'bpf_validate.c',
++)
+ 
+ if arch_subdir == 'x86' and dpdk_conf.get('RTE_ARCH_64')
+     sources += files('bpf_jit_x86.c')
+@@ -45,8 +47,7 @@ else
+ endif
+ 
+ if dpdk_conf.has('RTE_HAS_LIBPCAP')
+-    sources += files('bpf_convert.c')
+     ext_deps += pcap_dep
+ else
+-    warning('libpcap is missing, rte_bpf_convert API will be disabled')
++    warning('libpcap is missing, cBPF API will be disabled')
+ endif
 diff --git a/lib/bpf/rte_bpf.h b/lib/bpf/rte_bpf.h
-index bf58a418191e..0e7eaa3c18eb 100644
+index 0e7eaa3c18eb..da2bdea7e0a8 100644
 --- a/lib/bpf/rte_bpf.h
 +++ b/lib/bpf/rte_bpf.h
-@@ -25,6 +25,11 @@
- extern "C" {
- #endif
- 
-+#define RTE_BPF_EXEC_FLAG_JIT	RTE_BIT64(0)	/**< use JIT-compiled version */
-+
-+/** Mask with all supported `RTE_BPF_EXEC_FLAG_*` flags set. */
-+#define RTE_BPF_EXEC_FLAG_MASK  RTE_BPF_EXEC_FLAG_JIT
-+
- /**
-  * Possible types for function/BPF program arguments.
+@@ -95,10 +95,12 @@ struct rte_bpf_xsym {
   */
-@@ -122,7 +127,8 @@ struct rte_bpf_prm_ex {
- 	/**< array of external symbols that eBPF code is allowed to reference */
- 	uint32_t nb_xsym;  /**< number of elements in xsym */
- 
--	struct rte_bpf_arg prog_arg;  /**< input arg description */
-+	struct rte_bpf_arg prog_arg[EBPF_FUNC_MAX_ARGS];  /**< program arguments */
-+	uint32_t nb_prog_arg;  /**< program argument count */
+ enum rte_bpf_origin {
+ 	RTE_BPF_ORIGIN_RAW,		/**< code loaded from raw array */
+-	RTE_BPF_ORIGIN_RESERVED,	/**< reserved for cBPF */
++	RTE_BPF_ORIGIN_CBPF,		/**< code converted from cbpf */
+ 	RTE_BPF_ORIGIN_ELF_FILE,	/**< code loaded from elf_file */
  };
  
- /**
-@@ -138,13 +144,49 @@ struct rte_bpf_prm {
- };
- 
- /**
-- * Information about compiled into native ISA eBPF code.
-+ * Information about compiled into native ISA eBPF code accepting 1 argument.
-  */
- struct rte_bpf_jit {
- 	uint64_t (*func)(void *); /**< JIT-ed native code */
- 	size_t sz;                /**< size of JIT-ed code */
- };
- 
-+union rte_bpf_func_arg {
-+	uint64_t u64;
-+	void *ptr;
-+};
++struct bpf_insn;
 +
-+typedef uint64_t (*rte_bpf_jit_func0_t)(void);
-+typedef uint64_t (*rte_bpf_jit_func1_t)(union rte_bpf_func_arg);
-+typedef uint64_t (*rte_bpf_jit_func2_t)(union rte_bpf_func_arg, union rte_bpf_func_arg);
-+typedef uint64_t (*rte_bpf_jit_func3_t)(union rte_bpf_func_arg, union rte_bpf_func_arg,
-+	union rte_bpf_func_arg);
-+typedef uint64_t (*rte_bpf_jit_func4_t)(union rte_bpf_func_arg, union rte_bpf_func_arg,
-+	union rte_bpf_func_arg, union rte_bpf_func_arg);
-+typedef uint64_t (*rte_bpf_jit_func5_t)(union rte_bpf_func_arg, union rte_bpf_func_arg,
-+	union rte_bpf_func_arg, union rte_bpf_func_arg, union rte_bpf_func_arg);
-+
-+/**
-+ * JIT-ed native code, member depends on number of program arguments.
-+ */
-+struct rte_bpf_jit_ex {
-+	union {
-+		void *raw;
-+		rte_bpf_jit_func0_t func0;  /* nullary function */
-+		rte_bpf_jit_func1_t func1;  /* unary function */
-+		rte_bpf_jit_func2_t func2;  /* binary function */
-+		rte_bpf_jit_func3_t func3;  /* ternary function */
-+		rte_bpf_jit_func4_t func4;  /* quaternary function */
-+		rte_bpf_jit_func5_t func5;  /* quinary function */
-+	};
-+	size_t sz;
-+};
-+
-+/* Tuple of eBPF program arguments. */
-+struct rte_bpf_prog_ctx {
-+	union rte_bpf_func_arg arg[EBPF_FUNC_MAX_ARGS];
-+};
-+
- struct rte_bpf;
- 
  /**
-@@ -224,7 +266,7 @@ rte_bpf_elf_load(const struct rte_bpf_prm *prm, const char *fname,
- 	__rte_malloc __rte_dealloc(rte_bpf_destroy, 1);
- 
- /**
-- * Execute given BPF bytecode.
-+ * Execute given BPF bytecode accepting 1 argument.
+  * Input parameters for loading eBPF code, extensible version.
   *
-  * @param bpf
-  *   handle for the BPF code to execute.
-@@ -237,7 +279,29 @@ uint64_t
- rte_bpf_exec(const struct rte_bpf *bpf, void *ctx);
- 
- /**
-- * Execute given BPF bytecode over a set of input contexts.
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Execute given BPF bytecode accepting any number of arguments.
-+ *
-+ * @param bpf
-+ *   handle for the BPF code to execute.
-+ * @param ctx
-+ *   program arguments tuple.
-+ * @param flags
-+ *   bitwise OR of `RTE_BPF_EXEC_FLAG_*` values controlling execution.
-+ *   Flag RTE_BPF_EXEC_FLAG_JIT requires presence of JIT version (can be checked
-+ *   with rte_bpf_get_jit_ex).
-+ * @return
-+ *   BPF execution return value.
-+ */
-+__rte_experimental
-+uint64_t
-+rte_bpf_exec_ex(const struct rte_bpf *bpf, const struct rte_bpf_prog_ctx *ctx,
-+		uint64_t flags);
-+
-+/**
-+ * Execute given BPF bytecode accepting 1 argument over a set of input contexts.
-  *
-  * @param bpf
-  *   handle for the BPF code to execute.
-@@ -255,7 +319,35 @@ rte_bpf_exec_burst(const struct rte_bpf *bpf, void *ctx[], uint64_t rc[],
- 		uint32_t num);
- 
- /**
-- * Provide information about natively compiled code for given BPF handle.
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Execute given BPF program accepting any number of arguments over a set of
-+ * input contexts.
-+ *
-+ * @param bpf
-+ *   handle for the BPF code to execute.
-+ * @param ctx
-+ *   pointer to array of program argument tuples, can be NULL for nullary programs.
-+ * @param rc
-+ *   array of return values (one per input).
-+ * @param num
-+ *   number executions, number of elements in arrays ctx and rc[].
-+ * @param flags
-+ *   bitwise OR of `RTE_BPF_EXEC_FLAG_*` values controlling execution.
-+ *   Flag RTE_BPF_EXEC_FLAG_JIT requires presence of JIT version (can be checked
-+ *   with rte_bpf_get_jit_ex).
-+ * @return
-+ *   number of successfully processed inputs.
-+ */
-+__rte_experimental
-+uint32_t
-+rte_bpf_exec_burst_ex(const struct rte_bpf *bpf, const struct rte_bpf_prog_ctx *ctx,
-+		uint64_t rc[], uint32_t num, uint64_t flags);
-+
-+/**
-+ * Provide information about natively compiled code for given BPF program
-+ * accepting 1 argument.
-  *
-  * @param bpf
-  *   handle for the BPF code.
-@@ -268,6 +360,25 @@ rte_bpf_exec_burst(const struct rte_bpf *bpf, void *ctx[], uint64_t rc[],
- int
- rte_bpf_get_jit(const struct rte_bpf *bpf, struct rte_bpf_jit *jit);
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Get function JIT-compiled from the BPF program.
-+ *
-+ * @param bpf
-+ *   handle for the BPF code.
-+ * @param jit
-+ *   pointer to the struct rte_bpf_jit_ex.
-+ * @return
-+ *   - -EINVAL if the parameters are invalid.
-+ *   - -ENOENT if there is no JIT-compiled version.
-+ *   - Zero if operation completed successfully.
-+ */
-+__rte_experimental
-+int
-+rte_bpf_get_jit_ex(const struct rte_bpf *bpf, struct rte_bpf_jit_ex *jit);
-+
- /**
-  * Dump epf instructions to a file.
-  *
+@@ -117,6 +119,10 @@ struct rte_bpf_prm_ex {
+ 			const struct ebpf_insn *ins;  /**< eBPF instructions */
+ 			uint32_t nb_ins;  /**< number of instructions in ins */
+ 		} raw;
++		struct {
++			const struct bpf_insn *ins;  /**< cBPF instructions */
++			uint32_t nb_ins;  /**< number of instructions in ins */
++		} cbpf;
+ 		struct {
+ 			const char *path;  /**< path to the ELF file */
+ 			const char *section;  /**< ELF section with the code */
 -- 
 2.43.0
 
