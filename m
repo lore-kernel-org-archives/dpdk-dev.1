@@ -2,43 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E99CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 03:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D0ECD4F5E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 May 2026 05:40:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DDB1340672;
-	Wed, 20 May 2026 05:56:54 +0200 (CEST)
-Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
- [113.46.200.217])
- by mails.dpdk.org (Postfix) with ESMTP id 54559402B0
- for <dev@dpdk.org>; Wed, 20 May 2026 05:56:50 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=v0295xqsEtMtiNH+q3OGxigiLhoHQ55nsjWgUTy0EPk=;
- b=tVfgVGhFKPLSGUIc6oFyilG/rA1zJ757qRETv/S9pobDjsUJ0PrfmDwds/A9v/CYexQ7tugm9
- 0aD3wgddwlLWXmH35naTUGhxA+umrN482sQyCnQYGVfpGQKV8q8zi2rujJouxFVsuTf3LtG6peI
- LBSzVDrxwX4QmoF1/aJwNeI=
-Received: from mail.maildlp.com (unknown [172.19.162.144])
- by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4gKyG23JpqzcbSY;
- Wed, 20 May 2026 11:49:14 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 0213240538;
- Wed, 20 May 2026 11:56:48 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 20 May 2026 11:56:47 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <stephen@networkplumber.org>
-CC: <dev@dpdk.org>
-Subject: [PATCH 0/2] enhance telemetry list endpoint with device name
-Date: Wed, 20 May 2026 11:56:39 +0800
-Message-ID: <20260520035641.50555-1-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
+	by mails.dpdk.org (Postfix) with ESMTP id 59FF640276;
+	Wed, 20 May 2026 07:40:07 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 880CF4025E
+ for <dev@dpdk.org>; Wed, 20 May 2026 07:40:06 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 74781210AB;
+ Wed, 20 May 2026 07:40:05 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH 0/2] enhance telemetry list endpoint with device name
+Date: Wed, 20 May 2026 07:40:02 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65885@smartserver.smartshare.dk>
+In-Reply-To: <20260520035641.50555-1-fengchengwen@huawei.com>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH 0/2] enhance telemetry list endpoint with device name
+Thread-Index: AdzoDLz+F0pQwG3oRwSvm+DGcU8sxQADh1hQ
+References: <20260520035641.50555-1-fengchengwen@huawei.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Chengwen Feng" <fengchengwen@huawei.com>, <thomas@monjalon.net>,
+ <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,17 +47,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the /dmadev/list and /ethdev/list telemetry endpoints return
-only integer IDs, making it hard to identify devices. This series changes
-both to output strings in "ID    NAME" format for better usability.
+> From: Chengwen Feng [mailto:fengchengwen@huawei.com]
+> Sent: Wednesday, 20 May 2026 05.57
+>=20
+> Currently, the /dmadev/list and /ethdev/list telemetry endpoints =
+return
+> only integer IDs, making it hard to identify devices. This series
+> changes
+> both to output strings in "ID    NAME" format for better usability.
 
-Chengwen Feng (2):
-  dmadev: include device name in telemetry list output
-  ethdev: include device name in telemetry list output
+For machine reading of the JSON output, it would be better returning an =
+object with an integer and a string field, {ID, "NAME"}.
 
- lib/dmadev/rte_dmadev.c           | 17 ++++++++++++-----
- lib/ethdev/rte_ethdev_telemetry.c | 12 +++++++++---
- 2 files changed, 21 insertions(+), 8 deletions(-)
-
--- 
-2.17.1
