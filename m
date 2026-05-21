@@ -2,61 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B01CD5BAC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 19:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A92CD5BAB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 22:42:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92325402A2;
-	Thu, 21 May 2026 21:48:56 +0200 (CEST)
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
- by mails.dpdk.org (Postfix) with ESMTP id 262A6400D5
- for <dev@dpdk.org>; Thu, 21 May 2026 21:48:55 +0200 (CEST)
-Received: by mail-dl1-f52.google.com with SMTP id
- a92af1059eb24-134fe980658so8404818c88.1
- for <dev@dpdk.org>; Thu, 21 May 2026 12:48:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D9AC540287;
+	Fri, 22 May 2026 00:42:20 +0200 (CEST)
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
+ [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 90839400D5
+ for <dev@dpdk.org>; Fri, 22 May 2026 00:42:19 +0200 (CEST)
+Received: by mail-dy1-f182.google.com with SMTP id
+ 5a478bee46e88-2f03d6cf77bso6786487eec.0
+ for <dev@dpdk.org>; Thu, 21 May 2026 15:42:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779392934;
- x=1779997734; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779403338;
+ x=1780008138; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=lACepZBTUC5lE6f1JOR7v4YtSb74afCvC5/Y3dVH6bs=;
- b=AJKjEtiBZAqEuvdnWrUB2tACJjkNb9IEdJdeNuSQKMEz3yLrNx5n2MS8ZzQq7EMLGO
- jfQmUP7ge+lNDsjcFX1N+jqf9szVMK7yOYnOCH6+0HSGDmiKGEY0Gqmct1EiEQS9zJIQ
- 6sFfIqOx3x/OOkIHLTElEB/a886w2XauGFovNtFIPfIFGwH8KsiW4H08nRb6TGMs7uDb
- FyHpQBCDTt2QGM+d6qR5y9EUDaNk3bWsXZVV37PwyAKLQrbInAGfJk31KMqJgZGsNSdA
- RH0q/uov4sK6mfCfC501G8lMRh+RCUFU+koUiKEOPONTd59GJ/oXLe5J6hCPpQktyP2w
- XnTw==
+ bh=SeGWt/Pce3BSGfByeyK7KJm5WxShkLpgdbMLEF5P6+0=;
+ b=xXFunNTEudHC3IJHKvqXhI1m5trpfM31GOCljy0ZvqN12l9k1+fuWnz9A0sKt3+vNF
+ 4HcuQVto70Zd20PWXxmNJWbS5xri0L5iKqGYdk1AFZFby9xJpl03KOpXzFZ+JoKX25wY
+ +peG3NG1MiYfMce153QFTRPE4IRdBHk2cvjVrsla80303FF5jpYgPC/oW3CwdgsGA6S6
+ dh1/7y9/Q/egntyyduFoq3SAil3Wi5U2XzHtddr9KD151AiOKqG7gOSn8pngGPIgoK1A
+ RCyiuQjJxHo1YikhaIMy/KQcTdcfiJLcW+G8lheWeSv1P9bTzdQPYYvucbePuqmWCZ9n
+ +UjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779392934; x=1779997734;
+ d=1e100.net; s=20251104; t=1779403338; x=1780008138;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=lACepZBTUC5lE6f1JOR7v4YtSb74afCvC5/Y3dVH6bs=;
- b=oGst8UTEj+tlCmhDWEcYwRPmsXzbvdhg6DPYOcyyxSSbow7gjwecbOK1KUO7Nx4aEL
- vamBAze/dab1iwXqx+0EYsgzdaceaRvQDJG1OeTV4/q2LWsxAzlNb+b8DCRj7JeoxndF
- C8d/5f5Bi6tsX5i7cmfmiu0bazvPVoHzpuIlIKA4IbTi0n7qnerjVBIgXEmMizp2xsCR
- CSBFrNJi3+q4F01jjxEgMtzt7OmTD0UobJFWLpW+TkLcpjLMENwehyZMKcXK0jcgr6nL
- 3x623fPTd/69de93Ezl5+9R4JxX5iVwYsbyRwP8WYyO7hsaPDyBNb6nfor49NE049+s3
- pJeg==
-X-Gm-Message-State: AOJu0YxuSX/EgzX9OQB4G+ZmZ0dMDFs4tiQiwJjnHz9JFoqbnMV0hBt/
- fESsbFW55yZieQ96+NNFn7GAxyh/CyGArdZyFk7Zf2WCGQVeHIxmgSuEXmZdCg1Gapg=
-X-Gm-Gg: Acq92OGmONBYlJQKZROFzVEesngXkXtlnVdAaOKFH9vaa51xb0aGRVVHc9Sc4WTsc7K
- B7qlvJ7s1ozJrl/UOKtjn6fPxz7X76yWdeN6jThNZuUYQpcy6/RH5ziCECTCDn33/y6AFViyftz
- viM9CQe6CL/Q0XamKdAwHnJiy4ATDy93dXGto2vMJWHiLU1hae0glIrkUoQqGOz5MrmpweNQm36
- uOzQGQN/NpGvQliY2A6NUcaz+YU8YLRpAtOqfnDGbfVhx49a1f1JtB4ocYId9N/X2m+j3L+P6QJ
- P5rwtiH4W+cNQYJ5dUp3hwN/K6MGjv7bNChocwDBopX+MvO5F48FuLLdroMVUB8a2rm1T3Rw3t5
- 95zQjXivw4PHFYK2TdduosPY/8TSYe9y12BibXM+IwPG5h0716Gbg8RuP+IMVGH2wDpXJE+A3hh
- 39DrDTBbpU+7WfNvMyhnzCLx28iqpXdPYIhGLppt6rP9Nl+bdSQhfaitq9PnzJL6kr4+zGpEPj8
- SFkOe1BP+3pdQ==
-X-Received: by 2002:a05:7023:b8b:b0:135:262f:f6d5 with SMTP id
- a92af1059eb24-1365fc62225mr214014c88.40.1779392933698; 
- Thu, 21 May 2026 12:48:53 -0700 (PDT)
+ bh=SeGWt/Pce3BSGfByeyK7KJm5WxShkLpgdbMLEF5P6+0=;
+ b=LYMgNVIqzVyZryDV4Rt4vRrPGsTwDNvnF6gD7uNknJ/wpcV+WzpHLj/O5RwCIbU+vx
+ 4ysWEYCFZVxTW+P5yNqJPhSQ5XwHYTMIlktxbWyvkW/jklsXhl1WeZfoOdLxvaYcLSEw
+ porCyg7MoO/Q9cu7JknfcASk7C2/0Y6vW0zHYnimuQvRhB7xSgyVEOY9zoF6sL+xrdjD
+ lu2asEBjhviyrmp+rEWE82JeUO6ofQ76LEx6f8JT1rGVBRmaHetlYgth++M1s/Zr3zjo
+ 8u0kAqCXuYfthr7ehLn4h+sNJAwz5LPETpSLfhR4+uSPTiX7leVvGjzI5b5RnYTtpgIg
+ jP5g==
+X-Gm-Message-State: AOJu0YwCjXEKxCqXFoGvMid+2b84Wx9Hd2baBD0U9bXgzl0/vGFMlAhL
+ yVvnpadlgLFkHZQ5f9DCyDjj9N3v0U8rrqIB/ycb5fodGZII4/ChWmozWGFbzb01sYM=
+X-Gm-Gg: Acq92OHoBpruzBgfTv9OHTwBmKSlXZX6yWSZreCL3Fi0G9NqMUumkhD+93RcQk5DLiU
+ J+3DvqjTHRbwDomleLf5DMdK8+f/orTB7t/n/4LZOEqhP6U2d/84K/9vbVKM6xEP0xJ87FewjG6
+ ngnGTqskTKkcv/DhsQ4U1wOwfMxOjZkIU0GLaRUsRmok9Jod4Zs1ICnwjprP47XXtCDteAxvarK
+ blRCwPpkdKwXICfQXnOxqkbPEk84rD+c7i7Eji6gLwn8aRMFYkPNrM1SqnciGGLBPwynAQC3a9J
+ TrL6CitTLxol3UrhAXgTmHbrgxa7w/mDalPJvNZ61fJEwJrJOAM5EYARxij/A1nXlM9ntjxwNzF
+ MLV7kPGCzZbyKDAYf4pMz3A3CVaO+F+U4vsfLtxvYGT9rS175AafUPywWaWqK3N65VRpOEmmnoJ
+ QCGv2x601qQVC7LbRH0/4cc4OuVUwn4C6cO6yU3ldLU/i/dqc46ev47/QoTAJrAL/n
+X-Received: by 2002:a05:7300:cac8:b0:2f3:5266:fdfc with SMTP id
+ 5a478bee46e88-3044924e434mr624230eec.33.1779403338174; 
+ Thu, 21 May 2026 15:42:18 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13662755b25sm59542c88.9.2026.05.21.12.48.52
+ 5a478bee46e88-3044b70555bsm348533eec.12.2026.05.21.15.42.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 21 May 2026 12:48:53 -0700 (PDT)
-Date: Thu, 21 May 2026 12:48:48 -0700
+ Thu, 21 May 2026 15:42:17 -0700 (PDT)
+Date: Thu, 21 May 2026 15:42:14 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
 Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, Konstantin
@@ -67,7 +66,7 @@ Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, Konstantin
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>, Konstantin Ananyev
  <konstantin.ananyev@huawei.com>
 Subject: Re: [PATCH v11] eal/x86: optimize memcpy of small sizes
-Message-ID: <20260521124848.62b69a7e@phoenix.local>
+Message-ID: <20260521154214.1c171a74@phoenix.local>
 In-Reply-To: <20260521185631.116046-1-mb@smartsharesystems.com>
 References: <20251120114554.950287-1-mb@smartsharesystems.com>
  <20260521185631.116046-1-mb@smartsharesystems.com>
@@ -133,120 +132,403 @@ Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 > Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 > ---
 
-Used this as test case for comparing AI reviews.
+Here is the full wordy all providers reviews.
+Mostly this is test to make sure script works.
 
-Anthropic saw:
+$ ./devtools/ai/compare-patch-reviews.sh ~/Downloads/v11-eal-x86-optimize-m=
+emcpy-of-small-sizes.patch=20
+Reviewing patch: v11-eal-x86-optimize-memcpy-of-small-sizes.patch
+Providers: anthropic,openai,xai,google
+Format: text
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+>>> Running review with: anthropic
+
+=3D=3D=3D Patch Review: v11-eal-x86-optimize-memcpy-of-small-sizes.patch (v=
+ia Claude) =3D=3D=3D
+Review date: 2026-05-21
+
+# Review of v11-eal-x86-optimize-memcpy-of-small-sizes.patch
+
+## Correctness Issues
+
+### Errors
+
+**Use-after-free pattern in overlapping copy optimization (lines 672-673, 6=
+84, 704, 707)**
+
+The pattern `(uint8_t *)dst - 16 + n` performs pointer arithmetic that, whe=
+n `n < 16`, results in accessing memory before the `dst` pointer. This is u=
+sed in an optimization technique (two overlapping stores) that is correct w=
+hen `n >=3D 16`, but the code paths in question guarantee `n` is in specifi=
+c ranges where this is safe. However, the readability is poor and the inten=
+t is not obvious from the code.
+
+**Confidence: 80%** - This pattern is widely used in memcpy implementations=
+ and appears intentional, but deserves a comment explaining the technique t=
+o avoid confusion in future reviews.
+
+---
 
 ## Warnings
 
-### 1. Missing rte_mov48() test coverage
+**Missing documentation for new function rte_mov48() (line 130)**
 
-**Issue:** The patch adds a new `rte_mov48()` function but does not mention=
- adding tests for it.
+The patch adds `rte_mov48()` but does not mention it in the commit message'=
+s "Also, the missing implementation of rte_mov48() was added." The implemen=
+tation itself is correct, but there's no context about why it was missing o=
+r whether it's used elsewhere in DPDK.
 
-**Why it matters:** New utility functions should have test coverage to veri=
-fy correctness, especially for low-level copy operations that could silentl=
-y corrupt data if implemented incorrectly.
+**Suggestion:** Verify that `rte_mov48()` is actually used somewhere, or do=
+cument why it's being added speculatively.
 
-**Suggested fix:** Add a test case in `app/test/test_memcpy.c` (or equivale=
-nt) that verifies `rte_mov48()` copies 48 bytes correctly and preserves dat=
-a beyond the copy range.
+---
 
-### 2. Documentation comment inconsistency
+**Inconsistent handling of compile-time constant size (lines 682-683)**
 
-**Issue:** The main `rte_memcpy()` function description comment was removed=
- (lines 37-39 of original), but the opening documentation text about overla=
-pping locations remains inconsistent across helper functions.
+The code checks `__rte_constant(n) && n =3D=3D 16` to avoid a "harmless dup=
+licate copy" but does not apply this optimization consistently. For example:
+- Line 682: avoids duplicate for `n =3D=3D 16`
+- Line 690: avoids duplicate for `n =3D=3D 32`
+- Line 693: avoids duplicate for `n =3D=3D 64`
 
-The original stated:
+But in the 33-64 byte range (lines 695-707), there's no similar optimizatio=
+n. This is not a bug, but the inconsistency in optimization strategy could =
+be noted.
+
+**Suggestion:** Add a comment explaining the rationale for when this optimi=
+zation matters vs when the "harmless duplicate" is acceptable.
+
+---
+
+**Potential alignment assumption in AVX path (line 699)**
+
+The AVX path at line 699 uses two overlapping `rte_mov32()` calls for sizes=
+ 33-64 bytes:
 ```c
-/**
- * Copy bytes from one location to another. The locations must not overlap.
- *
- * @note This is implemented as a macro, so it's address should not be taken
- * and care is needed as parameter expressions may be evaluated multiple ti=
-mes.
+rte_mov32((uint8_t *)dst, (const uint8_t *)src);
+rte_mov32((uint8_t *)dst - 32 + n, (const uint8_t *)src - 32 + n);
 ```
 
-The new version removes the `@note` about macro implementation (which is co=
-rrect since it's now a function), but does not update the main function com=
-ment to include the same `@param` / `@return` documentation that other memo=
-ry functions have.
+For `n =3D 33`, the second call accesses `dst + 1` and `src + 1`, which may=
+ be misaligned for the 32-byte `__m256i` operations. However, `_mm256_loadu=
+_si256()` and `_mm256_storeu_si256()` are documented as supporting unaligne=
+d access, so this is safe.
 
-**Suggested fix:** Add complete Doxygen documentation to `rte_memcpy()`:
+**Confidence: 90%** - Not a bug, but worth noting that the AVX path relies =
+on unaligned load/store support.
+
+---
+
+## Style and Process Issues
+
+### Warnings
+
+**Unconventional comment style in rte_mov15_or_less() (lines 67-72)**
+
+The multi-line comment explaining the rationale for the `rte_uint*_alias` s=
+tructures does not follow the standard DPDK comment block format with the `=
+*` on each line. However, this may be intentional for a technical explanati=
+on.
+
+---
+
+**Return value inconsistency (lines 682, 690-691, 693, 707-708)**
+
+The function returns `dst` in some branches but the original `ret` pointer =
+in others:
+- Lines 682, 690, 707: return `dst`
+- Line 714: return from `rte_memcpy_aligned_more_than_64(dst, src, n)` whic=
+h returns `ret =3D dst`
+- Line 716: return from `rte_memcpy_generic_more_than_64(dst, src, n)` whic=
+h returns `ret =3D dst`
+
+Both `ret` and `dst` point to the same location, so this is harmless, but u=
+sing `dst` consistently would be clearer. The patch description states "Poi=
+nter to the destination data" is returned, and both satisfy this.
+
+**Confidence: 95%** - Not an error, but inconsistent style within the same =
+function.
+
+---
+
+## Documentation Issues
+
+### Warnings
+
+**Missing documentation update for removed warning suppression (lines remov=
+ed at top)**
+
+The patch removes:
 ```c
-/**
- * Copy bytes from one location to another. The locations must not overlap.
- *
- * @param dst
- *   Pointer to the destination of the data.
- * @param src
- *   Pointer to the source data.
- * @param n
- *   Number of bytes to copy.
- * @return
- *   Pointer to the destination data.
- */
+#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >=3D 100000)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
 ```
 
-xAI (Grok) saw:
-**Error**
+The commit message explains this is because the problematic drivers were up=
+dated, with a `Depends-on: series-38174`. However, there's no comment in th=
+e code explaining why the suppression was removed or a note in `doc/guides/=
+rel_notes/` documenting this change.
 
-- `rte_mov48()` implementation casts away `__rte_restrict` qualifiers (line=
-s 137-140 and 143-147). =20
-  Casting a restrict-qualified pointer to a non-restrict pointer is undefin=
-ed behavior under the C standard and can break compiler alias analysis. =20
-  Fix: either make the callees (`rte_mov32`/`rte_mov16`) accept the restric=
-t qualifiers, or use a local non-restrict pointer only inside `rte_mov48` a=
-fter proper validation.
+**Suggestion:** Add a release note entry documenting the removal of the war=
+ning suppression and the dependency on the driver updates.
 
-**Error**
+---
 
-- Multiple functions (`rte_mov16`, `rte_mov32`, `rte_mov48`, `rte_mov64`, `=
-rte_mov128`, `rte_mov256`, `rte_mov128blocks`, `rte_mov512blocks`, `rte_mem=
-cpy_generic_more_than_64`, etc.) now take `uint8_t *__rte_restrict` paramet=
-ers, but their callers inside the same file (e.g., the new `rte_memcpy` imp=
-lementation and the various block-copy macros) pass `uint8_t *` without the=
- restrict qualifier. =20
-  This creates implicit non-restrict paths that defeat the purpose of addin=
-g `__rte_restrict` and may trigger compiler warnings or incorrect optimizat=
-ions. =20
-  Recommended fix: either propagate `__rte_restrict` consistently through a=
-ll internal call sites or keep internal helpers non-restrict and only expos=
-e restrict at the public `rte_memcpy` boundary.
+## Summary
 
-**Warning**
+**Priority findings:**
 
-- `rte_memcpy_generic_more_than_64` and `rte_memcpy_aligned_more_than_64` a=
-re now the only implementations for >64-byte copies, but the old `rte_memcp=
-y_generic` and `rte_memcpy_aligned` names have been removed. =20
-  Any external code (or test) that took the address of the old functions wi=
-ll break. =20
-  The patch should either keep the old names as aliases or document the rem=
-oval in release notes.
+1. **(Info)** The overlapping copy optimization `dst - 16 + n` is correct b=
+ut deserves a comment explaining the technique.
+2. **(Warning)** Missing documentation for why `rte_mov48()` was added.
+3. **(Warning)** Missing release notes entry for removal of stringop-overfl=
+ow warning suppression.
+4. **(Info)** Return value uses both `dst` and `ret` inconsistently (harmle=
+ss but could be unified).
 
-**Warning**
+**Overall assessment:** The patch appears functionally correct. The main co=
+ncerns are documentation completeness (missing context for `rte_mov48()`, m=
+issing release notes for warning removal) and code clarity (overlapping cop=
+y pattern could use explanatory comments). No blocking correctness issues w=
+ere identified.
+(anthropic: review reported errors)
 
-- The new `rte_memcpy` implementation for 17=E2=80=9364 bytes contains a co=
-mpile-time constant check (`if (__rte_constant(n) && n =3D=3D 64)`) followe=
-d by a fallback path that still executes `rte_mov16` three times for SSE wh=
-en `n > 48`. =20
-  This path is correct but duplicates logic that already exists in `rte_mov=
-48`. =20
-  Consider calling `rte_mov48` for the AVX case and a single `rte_mov48` + =
-tail for SSE to reduce code duplication.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-**Info**
+>>> Running review with: openai
+
+=3D=3D=3D Patch Review: v11-eal-x86-optimize-memcpy-of-small-sizes.patch (v=
+ia ChatGPT) =3D=3D=3D
+Review date: 2026-05-21
+
+**DPDK Patch Review: v11-eal-x86-optimize-memcpy-of-small-sizes.patch**
+
+---
+
+### Errors
+
+None found.
+
+- The patch does not introduce resource leaks, use-after-free, race conditi=
+ons, or missing synchronization.
+- There are no buffer overflows or out-of-bounds accesses in the memcpy rou=
+tines; all copy size calculations and code paths for small copies (<64 byte=
+s) are explicit and conservative.
+- No uninitialized or stale variable use detected.
+- All error paths are clean (these are computational functions; return valu=
+es are always valid).
+
+---
+
+### Warnings
+
+1. **Potential inconsistent comment phrasing regarding overlap requirements=
+.**
+
+   - Some Doxygen comments use "locations should not overlap" while others =
+now correctly say "locations must not overlap".
+   - While this isn't a correctness bug, consistent strong wording clarifie=
+s requirement for users.
+
+   **Suggested fix:** Standardize all relevant Doxygen comments to use "loc=
+ations must not overlap."
+
+   ```c
+   /**
+    * Copy bytes from one location to another,
+    * locations must not overlap.
+    */
+   ```
+
+2. **Redundant Doxygen param alignment in function headers.**
+
+   - Some parameter descriptions ("Pointer to the destination of the data"/=
+"Pointer to the destination data") remain a bit unclear or inconsistent. If=
+ updating comments, consider making param descriptions exact and explicit.
+
+   **Suggested fix:** For each `@param` clarify if it's the destination or =
+source pointer. For `rte_memcpy`, `"Pointer to the destination."` and `"Poi=
+nter to the source."` suffice.
+
+---
+
+### Info
+
+- Use of `__rte_restrict` is correct and improves optimization; matches DPD=
+K style for pointer restrict qualifiers.
+- Removal of `#pragma GCC diagnostic ignored "-Wstringop-overflow"` is corr=
+ect because the problematic drivers now use standard `memcpy()`.
+- All new `rte_mov*` functions properly use `static __rte_always_inline` an=
+d restrict-qualified pointers.
+- Macro duplication is avoided by consolidation, in line with maintainabili=
+ty guidelines.
+- No forbidden tokens, banned constructs, or use of deprecated APIs/macros =
+were added.
+- No symbol namespace pollution or missing `rte_`/`RTE_` prefix issues pres=
+ent.
+- Coding style is maintained in indentation, tabs use, and function/variabl=
+e names.
+- No API, public header, or C11 atomic/volatile/race issues are present.
+- No documentation or API tag requirements are triggered (no public API cha=
+nge).
+- Patch is self-contained and does not require changes to release notes or =
+test infrastructure.
+- No RST or external documentation is involved in this patch.
+
+---
+
+### Summary
+
+**No correctness/blocking issues found.**
+Minor documentation consistency updates suggested for comment clarity, but =
+these do not affect correctness.
+
+**This patch is in good shape and complies with DPDK coding and architectur=
+al guidelines.**
+(openai: review reported errors)
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+>>> Running review with: xai
+
+=3D=3D=3D Patch Review: v11-eal-x86-optimize-memcpy-of-small-sizes.patch (v=
+ia Grok) =3D=3D=3D
+Review date: 2026-05-21
+
+**Review of patch: v11-eal-x86-optimize-memcpy-of-small-sizes.patch**
+
+### Errors
+
+**1. Missing `__rte_restrict` in rte_mov48() implementation (consistency / =
+correctness risk)** =20
+The new `rte_mov48()` function is declared with `__rte_restrict`, but the i=
+mplementation casts away the restrict qualifier when calling `rte_mov32()` =
+and `rte_mov16()`:
+
+```c
+rte_mov32((uint8_t *)dst, (const uint8_t *)src);
+rte_mov16((uint8_t *)dst + 32, (const uint8_t *)src + 32);
+```
+
+**Suggested fix**: Keep the restrict-qualified parameters in the implementa=
+tion or cast only after documenting the aliasing contract. This is a minor =
+style inconsistency but worth fixing for uniformity.
+
+**2. Potential sign-extension issue on 64-bit offset calculations (left-shi=
+ft of narrow type)** =20
+In `rte_mov15_or_less()`, the expression `(n & 8)` is `size_t` (ok), but th=
+e subsequent pointer arithmetic:
+
+```c
+*(uint64_t *)((uint8_t *)dst + n - 8) =3D *(const uint64_t *)((const uint8_=
+t *)src + n - 8);
+```
+
+relies on implicit promotion. While currently safe, the pattern of adding a=
+ `uint8_t`/`size_t` value to a pointer after a narrow mask (`n & 7`) could =
+trigger Coverity SIGN_EXTENSION warnings on some toolchains. Consider an ex=
+plicit cast:
+
+```c
+uint8_t *d =3D (uint8_t *)dst + (size_t)(n - 8);
+```
+
+**3. Use of `__rte_constant` inside hot path without documented behavior** =
+=20
+The code repeatedly uses `__rte_constant(n)` to optimize compile-time known=
+ sizes. This is a DPDK internal macro. While acceptable for performance-cri=
+tical code, it should be documented (or at least noted) that the optimizati=
+on only triggers for constant `n`. No correctness bug, but worth a comment.
+
+### Warnings
+
+**1. Duplicate function definitions for AVX/SSE variants** =20
+The patch introduces three nearly identical `rte_memcpy_generic_more_than_6=
+4()` and `rte_memcpy_aligned_more_than_64()` functions (one per vector size=
+). This increases maintenance burden and instruction cache pressure. Consid=
+er factoring the common >64-byte logic into a single helper.
+
+**2. Hard-coded cast chains in rte_mov48()** =20
+The SSE implementation of `rte_mov48()` uses explicit `(uint8_t *)` casts o=
+n restrict-qualified pointers. While functionally correct, it reduces reada=
+bility. A cleaner pattern would be:
+
+```c
+rte_mov16(dst + 0, src + 0);
+rte_mov16(dst + 16, src + 16);
+rte_mov16(dst + 32, src + 32);
+```
+
+**3. Inconsistent use of `return dst` vs `return ret`** =20
+In the new `rte_memcpy()` implementation the fast path returns `dst`, while=
+ the old `rte_memcpy_generic()` returned the saved `ret`. Although `dst` an=
+d `ret` are identical, using `ret` consistently would avoid any future dive=
+rgence.
+
+**4. Missing Doxygen for new rte_mov48()** =20
+The new function has a Doxygen comment, but the description is minimal. Con=
+sider adding a brief note that it is an internal helper (or mark it `__rte_=
+internal` if it should not be public).
+
+### Info
 
 - The removal of the `#pragma GCC diagnostic` block for `-Wstringop-overflo=
-w` is correct per the patch description (drivers were updated). No further =
-action needed.
+w` is correct and aligns with the series that removed `rte_memcpy` usage fr=
+om drivers.
+- Adding `__rte_restrict` to `rte_memcpy()` and helper functions is a good =
+improvement and matches modern DPDK style.
+- Performance claims in the commit message are outside the scope of this re=
+view (they are not code).
 
-**Info**
+### Summary
 
-- All other style, API-tag, and documentation requirements appear satisfied=
-. No additional correctness bugs (leaks, use-after-free, races, or forbidde=
-n tokens) were identified.
+No critical correctness bugs (use-after-free, leaks, races, or missing erro=
+r checks) were identified. The main issues are minor style/consistency item=
+s around restrict qualifiers, pointer arithmetic, and code duplication. The=
+ patch is otherwise clean and follows DPDK coding guidelines for the x86 EA=
+L memcpy implementation.
+(xai: review reported errors)
 
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
+>>> Running review with: google
+
+=3D=3D=3D Patch Review: v11-eal-x86-optimize-memcpy-of-small-sizes.patch (v=
+ia Gemini) =3D=3D=3D
+Review date: 2026-05-21
+
+The following is a review of the patch against DPDK coding standards and gu=
+idelines.
+
+### Warnings
+
+**Implicit integer comparison in rte_memcpy.**
+DPDK coding style requires explicit comparison against 0 for integer types,=
+ rather than using truthiness/logical negation.
+```c
+/* Current implementation */
+if (!(((uintptr_t)dst | (uintptr_t)src) & ALIGNMENT_MASK))
+
+/* Suggested fix */
+if ((((uintptr_t)dst | (uintptr_t)src) & ALIGNMENT_MASK) =3D=3D 0)
+```
+
+### Info
+
+**Use of bitwise logic in rte_mov15_or_less.**
+While this patch only adds `__rte_restrict` to the signature, the existing
+(google: review reported warnings)
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Review comparison complete.
+Summary across 4 provider(s): clean=3D0 warnings=3D1 errors=3D3 failed=3D0
 
