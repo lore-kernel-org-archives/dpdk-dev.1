@@ -2,80 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39EE8CD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 13:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AD4CD5BAC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 13:38:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CEFE402B0;
-	Thu, 21 May 2026 15:38:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 421AC4042E;
+	Thu, 21 May 2026 15:38:55 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 24EE44025E
- for <dev@dpdk.org>; Thu, 21 May 2026 15:38:16 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B93D9402B0
+ for <dev@dpdk.org>; Thu, 21 May 2026 15:38:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1779370695;
+ s=mimecast20190719; t=1779370733;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=TzDeUUEaj11S5zGjgIuDiFvCTnaJQTECRQM0JNt/5/g=;
- b=diDjt+YT4vt6AZVtqXU8dUQOqU6R3QsmiGEQQ4oxhYWLXC3zNUnQozoINz7/Jrp5DeToro
- 0w9Tt8obR33/OIa0zaQDpbcjkKIIevP5VyaXDERtSr6kMfTzt2/O4pCJA/NmSSksQ3qJPi
- knSNOvLT8fPzylyLucdZ8bKWGbMtXyY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=Wmf5xTHnQzEYvggrRQvSIF9cMi9sbGfB3L0DyvA1ZbM=;
+ b=NlnSIEmsey0ApAZLOEIrBMrc3NaqjpIZudE2VXkqEVbJCynDjJTc0ckujEAOchHu4eP4gV
+ bdWuqcOXoig0FVzMUBOKqGTrrER9xwnfZaxCxmc4w1JzjyDDGKlTjdSvEenz0O+ZQBWdbY
+ 3K7tJOx/112DEMlihSgVr5x4hCqZtaA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-GMfXeoBBNnWxuBlodNug1g-1; Thu, 21 May 2026 09:38:13 -0400
-X-MC-Unique: GMfXeoBBNnWxuBlodNug1g-1
-X-Mimecast-MFC-AGG-ID: GMfXeoBBNnWxuBlodNug1g_1779370692
-Received: by mail-wr1-f69.google.com with SMTP id
- ffacd0b85a97d-45e78dd7baaso4752405f8f.0
- for <dev@dpdk.org>; Thu, 21 May 2026 06:38:13 -0700 (PDT)
+ us-mta-563-6f5ymIAgPYO06ourQIagOg-1; Thu, 21 May 2026 09:38:45 -0400
+X-MC-Unique: 6f5ymIAgPYO06ourQIagOg-1
+X-Mimecast-MFC-AGG-ID: 6f5ymIAgPYO06ourQIagOg_1779370725
+Received: by mail-wm1-f69.google.com with SMTP id
+ 5b1f17b1804b1-48fe3e73da6so29697925e9.2
+ for <dev@dpdk.org>; Thu, 21 May 2026 06:38:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779370692; x=1779975492;
+ d=1e100.net; s=20251104; t=1779370724; x=1779975524;
  h=content-transfer-encoding:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=TzDeUUEaj11S5zGjgIuDiFvCTnaJQTECRQM0JNt/5/g=;
- b=ar5h50/EDfOM8UOqOyTM18Y1ed/MwZnSOTVg4Z2RBSZj/kZAWuBQNeYMMnlazrdBzd
- pv19TK3n3/1iuCrV1KEbtUj90eHFnUFfomlJU4pQ+pB/SY7PrrORaI9Sy6By8BZEzLYf
- bzzVFPFAc1x7KRPMT7JyTOHSK2uD6eWUkDkalMB9w6wOhw8gGWQ/TGuQtI2Vo8pGWr/r
- 4v7/N1hSvo0lAWAUbLXSQ96cXfW00O0EK1V207TAtesmR8xdcYs6OgRtrm+RuCVj4GIO
- DyOE8bZglga2GtBNmsDy82lOJ4lOvsoohgkYPcrw2xQ3ZKqjRZ6kAZ61IPZ8GDMXwhxH
- kXkA==
-X-Gm-Message-State: AOJu0Yw8PEVBSvAknwhhUOvZ+2NuIIMQQ/C67Q7aj8uZ+f2mnGBNU+by
- JXhAlf+2/kX7rg+JFMRgW4Glmhnmk+46nkrq2Ptp5ZDgfI46NgWumSupooLu/Y7gKabrP/pN5yy
- LKhp5jUb2ycNm95fbWoDccsgKTs3dBRR0SpT4Hhcz2tHj
-X-Gm-Gg: Acq92OFmDOtRbj5j4wWLHxVOEyR8AFa3q1e2o1/6K65i8pwjLBniasV1Q91cgRyuh52
- OgE+x2oPvELKHTQEFUFSPsmx+AgDdeSdbCEJmPUBUtrjyJ/xsaW+UCc11Q6HuP61WVKHpDiDtIo
- HOPf9aB6Xv0hPE0dGR6U/rE/Sm6T0TArbU4M3f5+Ri7Aulces8IkraaCbuU10ULCy41hZutrqlw
- Bpo1YURcfMXioibcag0ty3t8FU3mgI6zNdWz2nZK9Yqzjo+4o7NXcJXB6Q02AVxEMafQg/IdK/A
- Lx8Zm95OPdbgscELMpDSiugdVD3bAQ+PSkmD5spvmIm9C/TzKxaBhANUTceCfE6CSmnlFW/HQDn
- ZRsACs6X8zbR4DnWs+OOiAw==
-X-Received: by 2002:a05:600c:42cc:b0:486:fa35:aef2 with SMTP id
- 5b1f17b1804b1-4903604ce1bmr30449745e9.4.1779370692484; 
- Thu, 21 May 2026 06:38:12 -0700 (PDT)
-X-Received: by 2002:a05:600c:42cc:b0:486:fa35:aef2 with SMTP id
- 5b1f17b1804b1-4903604ce1bmr30449435e9.4.1779370692012; 
- Thu, 21 May 2026 06:38:12 -0700 (PDT)
+ bh=Wmf5xTHnQzEYvggrRQvSIF9cMi9sbGfB3L0DyvA1ZbM=;
+ b=UnQlnYg0tst6fVuL1e9zicGVdh+0vx1lRjyZTRubhK1kFEz0M6IF+eu2uBQl9WqXEz
+ Kg/AiVXD6riLsZmCJQkwqt9kgU0SJRF+KcekIlQ1jCs82ZrIX70ZdAwJ0K1dJS7otYuy
+ kfveTKauHP+YqVvglH6IWjnbl7tKPpmDSNBcRZ/u5YGxPoHMusrN4puy76fEUCiUV2kZ
+ AStqUtcJdEwt8zEMFjT8FNc0jGvcZXdFvmGjAS1ItOrEPe7sr2F9S8yAXqy8rpjZhaFR
+ pZgCbbseAPD64ukJmZJ5snMJEj1F13UV1GjLvVQszwlP1jnzRoTFp4qYXc9CCL0dqP6g
+ C04A==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ9MeRWX/ZV2rvbUMQd1XgRfd31P7TrgB41+U2K59AHPdZWz6y9oc23LtHgbYCHlWmb/5BI=@dpdk.org
+X-Gm-Message-State: AOJu0YxeOLNFbCWHuE/EZpJrbQifreuR0pYr6b/l+rzuFDFW4Vu5WIuC
+ UutIbYTrOALcv5lINRkmF9hthlYVpYlTlD40q0DORbJuUzNX7v9XuzmGkDPqP3mzIPuIVOaBzM9
+ JqCVbYUs0SygT8SH6Dj4+84ybb80wFZzMiWda7wl7U8fs
+X-Gm-Gg: Acq92OGdCxXMJw9VDlluz+YTwJzEE+iCOxwCuBc3kL5RvYGsyM3X+52puxvT5HnWG3X
+ +QoZCpqKR6sLy3HDEqJQoGVlQlrAmn1b2ma13qIqsoqcFd2LFPQmv1259kSHbIR9fOAsCwtBqGj
+ 09HWBmwaAQd2BXW/noY0BHiH3DMYkgkP9Rcuak2wJDuncmZMWGeqz28ac9y0E4fMXK+TmA49f/O
+ keqEW/8DsqrzfAXGWk4AQj16UlHxeFtOQGy5XJoddgobUDF94lvge4U7fAKoFXUmLQoU2kUKv1d
+ AVcmbNRO96nz2+LRopM+5xAW6HripDs02E8DsesqtHtW9/GqAQv5x1j6jWZgDuZIsfIoShQSRNj
+ I2snzVaCAlMi1c+5xigykCg==
+X-Received: by 2002:a05:600c:848d:b0:48a:93d2:60d2 with SMTP id
+ 5b1f17b1804b1-49035fb92c1mr45120945e9.0.1779370724519; 
+ Thu, 21 May 2026 06:38:44 -0700 (PDT)
+X-Received: by 2002:a05:600c:848d:b0:48a:93d2:60d2 with SMTP id
+ 5b1f17b1804b1-49035fb92c1mr45120605e9.0.1779370724111; 
+ Thu, 21 May 2026 06:38:44 -0700 (PDT)
 Received: from [192.168.0.65] ([78.16.129.88])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-49033d3515asm75449185e9.1.2026.05.21.06.38.09
+ 5b1f17b1804b1-49035c595e6sm28703735e9.1.2026.05.21.06.38.42
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 21 May 2026 06:38:10 -0700 (PDT)
-Message-ID: <37a1af72-6118-47c8-86e3-4d1b0de4f056@redhat.com>
-Date: Thu, 21 May 2026 14:38:10 +0100
+ Thu, 21 May 2026 06:38:43 -0700 (PDT)
+Message-ID: <0fc8a941-58ed-4901-8310-44c3a8d4b049@redhat.com>
+Date: Thu, 21 May 2026 14:38:43 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH dpdk v5 2/5] net: support multiple stacked VLAN tags
-To: David Marchand <david.marchand@redhat.com>, Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org
+To: Robin Jarry <rjarry@redhat.com>, dev@dpdk.org
+Cc: David Marchand <david.marchand@redhat.com>
 References: <20260422102814.645299-2-rjarry@redhat.com>
  <20260518132712.70913-8-rjarry@redhat.com>
  <20260518132712.70913-10-rjarry@redhat.com>
- <CAJFAV8xdkhcmY53VRJf3qbsVsYB-hM3DaxMxr=GS5MNvb1MPGA@mail.gmail.com>
- <DINGHEW3M9WT.3F4XUUTLNKEL3@redhat.com>
- <CAJFAV8yTyFoWYCNhzcJUBM=DdTDz4qQaN7-=m9_HGQeTc3P0eg@mail.gmail.com>
 From: Kevin Traynor <ktraynor@redhat.com>
 Autocrypt: addr=ktraynor@redhat.com; keydata=
  xsFNBF2J2awBEADUEPNhgNI+nJNgiTAUcw4YIgVXEoHlsNPyyzG1BEXkWXALy0Y3fNTiw6+r
@@ -120,9 +119,9 @@ Autocrypt: addr=ktraynor@redhat.com; keydata=
  yWzMcVrcGJDQLC9JLKEpoyUF6gdTKaiDL2Vao4+XRIA3Y57b6MO35a3HuzAv7+i5Z0mnDEJO
  XxXqTOmKYpMIGexzM/PtuA0712sT1abG9tAJ17ao/B7cqMW5IkKkalemFbWfI2unns4Papvo
  tk9igVqyp6EJDU98z5TJioCVojwK2laDaoIjTJk9YYv3iwCsqPd5feU=
-In-Reply-To: <CAJFAV8yTyFoWYCNhzcJUBM=DdTDz4qQaN7-=m9_HGQeTc3P0eg@mail.gmail.com>
+In-Reply-To: <20260518132712.70913-10-rjarry@redhat.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: xXKJIZourxHUCswLQzi3SeMDrZ8JTzh0Bu3oWc2P00A_1779370692
+X-Mimecast-MFC-PROC-ID: 2dujfkX5eDw10AlSqKJG8T4UItbRpW28XbyO4BSRbEU_1779370725
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
@@ -140,36 +139,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 5/20/26 1:42 PM, David Marchand wrote:
-> On Wed, 20 May 2026 at 13:09, Robin Jarry <rjarry@redhat.com> wrote:
->>>> -       } else if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
->>>> -               const struct rte_vlan_hdr *vh;
->>>> -               struct rte_vlan_hdr vh_copy;
->>>> +               if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN))
->>>> +                       pkt_type = RTE_PTYPE_L2_ETHER_VLAN;
->>>> +               else
->>>> +                       pkt_type = RTE_PTYPE_L2_ETHER_QINQ;
->>>> +
->>>> +               do {
->>>> +                       vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
->>>> +                       if (unlikely(vh == NULL))
->>>> +                               return pkt_type;
->>>
->>> Kevin noted that it is weird to report back some packet type when the
->>> packet is malformed.
->>> Maybe return RTE_PTYPE_UNKNOWN here so that the application is forced
->>> to validate the packet? (it should already be doing it, in any
->>> case..).
->>
->> If we do this, we need to fix it in the entire function. There are
->> several other places where the "current" value of pkt_type is returned
->> on error.
+On 5/18/26 2:27 PM, Robin Jarry wrote:
+> The VLAN and QinQ code paths in rte_net_get_ptype handle at most two
+> tags with duplicated logic. Replace them with a single loop that
+> consumes all consecutive VLAN/QinQ headers regardless of depth.
 > 
-> There is this point and the code has been behaving like this for
-> years, so some applications may have been relying on this behavior.
-> I don't mind leaving as is.
+> Bugzilla ID: 1941
+> Suggested-by: David Marchand <david.marchand@redhat.com>
+> Signed-off-by: Robin Jarry <rjarry@redhat.com>
+> ---
+>  lib/net/rte_net.c | 35 ++++++++++++++++-------------------
+>  1 file changed, 16 insertions(+), 19 deletions(-)
 > 
-> 
+> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
+> index c70b57fdc0f8..d3cded961fb5 100644
+> --- a/lib/net/rte_net.c
+> +++ b/lib/net/rte_net.c
+> @@ -349,29 +349,26 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+>  	if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4))
+>  		goto l3; /* fast path if packet is IPv4 */
+>  
+> -	if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN)) {
+> +	if ((proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN)) ||
+> +		(proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ))) {
+>  		const struct rte_vlan_hdr *vh;
+>  		struct rte_vlan_hdr vh_copy;
+>  
+> -		pkt_type = RTE_PTYPE_L2_ETHER_VLAN;
+> -		vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
+> -		if (unlikely(vh == NULL))
+> -			return pkt_type;
+> -		off += sizeof(*vh);
+> -		hdr_lens->l2_len += sizeof(*vh);
+> -		proto = vh->eth_proto;
+> -	} else if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
+> -		const struct rte_vlan_hdr *vh;
+> -		struct rte_vlan_hdr vh_copy;
+> +		if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN))
+> +			pkt_type = RTE_PTYPE_L2_ETHER_VLAN;
+> +		else
+> +			pkt_type = RTE_PTYPE_L2_ETHER_QINQ;
+> +
+> +		do {
+> +			vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
+> +			if (unlikely(vh == NULL))
+> +				return pkt_type;
+> +			off += sizeof(*vh);
+> +			hdr_lens->l2_len += sizeof(*vh);
+> +			proto = vh->eth_proto;
+> +		} while (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
+> +			proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ));
+>  
+> -		pkt_type = RTE_PTYPE_L2_ETHER_QINQ;
+> -		vh = rte_pktmbuf_read(m, off + sizeof(*vh), sizeof(*vh),
+> -			&vh_copy);
+> -		if (unlikely(vh == NULL))
+> -			return pkt_type;
+> -		off += 2 * sizeof(*vh);
+> -		hdr_lens->l2_len += 2 * sizeof(*vh);
+> -		proto = vh->eth_proto;
+>  	} else if ((proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLS)) ||
+>  		(proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLSM))) {
 
-I can agree with Hyrum's law :-) https://xkcd.com/1172/
+David's code snipped earlier in the thread suggested that this should be
+change from an 'else if' to an 'if'. It seems to make sense to have it
+as an 'if', not sure if it was deliberate to remove. Though it might not
+be really part of this patch.
+
+-       } else if ((proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLS)) ||
++       if ((proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLS)) ||
+                (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLSM))) {
+                unsigned int i;
+
+
+>  		unsigned int i;
 
