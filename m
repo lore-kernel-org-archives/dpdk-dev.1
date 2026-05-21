@@ -2,69 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15675CD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 04:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D06ACD4F3D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 04:20:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2457A40290;
-	Thu, 21 May 2026 06:07:13 +0200 (CEST)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com
- [209.85.128.170])
- by mails.dpdk.org (Postfix) with ESMTP id 443914028D
- for <dev@dpdk.org>; Thu, 21 May 2026 06:07:12 +0200 (CEST)
-Received: by mail-yw1-f170.google.com with SMTP id
- 00721157ae682-7c2fa14795aso42880357b3.1
- for <dev@dpdk.org>; Wed, 20 May 2026 21:07:12 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 43AB64028D;
+	Thu, 21 May 2026 06:20:48 +0200 (CEST)
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
+ [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 41A8C4028D
+ for <dev@dpdk.org>; Thu, 21 May 2026 06:20:47 +0200 (CEST)
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-303f2fb7225so3908240eec.1
+ for <dev@dpdk.org>; Wed, 20 May 2026 21:20:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779336431;
- x=1779941231; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779337246;
+ x=1779942046; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=j1w5lH5zd/LFKdyM95Xkwu5i/kDNH1ax5WszuUQzGrY=;
- b=kVQQm3wC/gwKZgWqYigxj4pm39mjKruvGGkYHPFCiKNtFwOH6j0L3adLFlmwltLbhA
- p4BiioAv/vnSxoVWj9hDRqDXPMFh8zShHl2ohLSQQ5BRzOMnyLZ9/8cEg98kxJgcANR9
- 6DEE2jcf2OgBKtICN81RY2r2JHJxV041t0KfU+yozP32EvEIyjqrS0p3RAaJhxiNEZVL
- kooJgue433YY0/UIhXeLzkzpYMg5497DyuLUZvC+nTBiOoTPX2r1E8bBTA6xhdtpc2uc
- 48gjOxVWXc7ZZ0KZU9i+kHt+ZdF7gKkClW+DW7GYiovDItwSUkffxXBu9smerWm1qYDG
- gqww==
+ bh=WZLF2IbqPN6BYlJzROfUGNukh2E2KMc881DCiFHYp0E=;
+ b=o8ow37m4idIydQF50Q7zPQlJtXKU21PeZcuR1OFBg3NAOgT3mWwuDiRjWA6taIV/yW
+ DWAlTqQBGXMKNzHIviBdRxg5mk7/LPs68TZdewMTVJUZny6Lv3NJ3biUJHyl4pJbbcau
+ t/Ahh6hl0N7Dgh3ZGmLyLpFsttLhwFiLu4WNl+rycX4KEeUAdO6cJoVv/bHqPbg2+SC5
+ JVJzTfYeXBD5y7acSHEdNCBdTbkMZa6xbbVuolNnYpoVdBwg4vbi8anQ6o+2da/pkizz
+ /zE1qDgb28tk1MFmIMm7KyEeANxtPxXKvFvRAAmBs61Lb7H3kxtzNP7WP/9eTAQEfrJx
+ HWMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779336431; x=1779941231;
+ d=1e100.net; s=20251104; t=1779337246; x=1779942046;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=j1w5lH5zd/LFKdyM95Xkwu5i/kDNH1ax5WszuUQzGrY=;
- b=IlvCpvIKAGQ8oebJhLZlY9n7/UXYdLpGrM/4/Xosk7bq0Pv52b/NasUZYicrLwU02f
- jT7vDSZvyq9waKYSP1e5ujA4f5F6Knfog/qw762HQ+NxhiGt2nKjUFpo9uRV59TMTeFr
- eZqhr3e4x+Ys7MdNf0SBE3Sj3mzf2Gm3b3RjIGaR0frOSLtbbOB9IspB2N/pPEgaOBHh
- 2GOdcoZ2SBxK0CJlJ1vLSiTPHZKfhxiFymw88Bv6bEN7daoD5aCDpTvZhGUNgsM8aoJ6
- em1esYbpn3ahu86P+Xse4eWeeEi9e1OkEILA2Mjm0BAmDqqcep7ecgq2r1mDfk8/lo49
- 1+qQ==
-X-Gm-Message-State: AOJu0YynCbPhg7gQ7dFaVPUxwnUtW1LnqNo1pGzI+M0NkpDLGv8LOjxG
- FfirdswV94l81DLrJIojXduqQ+3t7+44ee3PTylE8o94o7zhwaMlmVjnR6tlQMkxtM9ni2KzIov
- q7/Ka
-X-Gm-Gg: Acq92OFlzLTNbptkYMzu/UPpvYZbQVPVAGkuCe7lkOG8au0vOqItuGeMOE5UHUtIGrr
- dmTNt7HIc5/Sf4q+IJpBYo4KnE/079sogoCvIHzjI9eitaFezUE6Hbpk36rs69Ys7sDzqUSa+Vw
- rY6sgncfWtprz216nN0v0Uzflgr71gm3AD/PNEn64+ulmYW7r+naqlzdJLB+hWLMFUSsFG7eDVY
- lzYMERBN0iIgcbu0jp1/Wl+ljg+hBPHOj5J/biPnD+w/DCz+T6VT4JIx+vgTsy9fVoolxxCKNAp
- pKJetIAej3padsZryDYA2ICNuqm2iy+hiK8DLQhOmH/DIHn9k5BfGHrmyO21oTR8J0MiQOkNAvE
- YBqmsU7zWDl9SymlX9q8WnOsVWkbxLRfe0gTFN3D5gr3KiiOaY/7NXYasIH+sMz6VE3GnET/1xV
- JhdrzXWRVlQmGg3nSBIkEXuBLkArUmUDaQZgbQ48nfN8UumZ1IL6XCwGlDFOHf1g==
-X-Received: by 2002:a05:690c:4987:b0:7a0:4a34:16d6 with SMTP id
- 00721157ae682-7d20cf2b227mr13450837b3.44.1779336431286; 
- Wed, 20 May 2026 21:07:11 -0700 (PDT)
+ bh=WZLF2IbqPN6BYlJzROfUGNukh2E2KMc881DCiFHYp0E=;
+ b=kdZwic7gFTddCyK0g3w4EpHhrpQbblbMmnNyJIEmKsryMRmoTHp8/KTvoTMJjQLqN0
+ orLsLIGFMcrE4L8KaG/xEgvJrbcvAm/BjqqHBng3YKyrvwLRclisGtaCeywe8v+KaUXh
+ 8C/J/bnoLlQa1cypApbsjjPKpkopiWP4/D8jrPIGG7Sgxg/saEKpeHyKfL5Vtrth2R0n
+ yDLCSuCS3men6zMf3+nNaDatKMSGeOqt8N7c4Y7NBrx+2cPiZPvMLitATP7ZcSjDUB6C
+ w/LLCC+rRgXTliaqQFy2TSgv8YPsH301LAa7jwXUOppb9S0n9VvTShuo1XYQNTBFqPCY
+ nkNw==
+X-Gm-Message-State: AOJu0YxdYFcfNDlACJmiRwxgJJt3usZWJgKcoGJ86NfNJRdpwHFfGJGa
+ RczltUNszRG62D+I99SrZniojMOWa3L6Tl/nzNajGi6liTpAppOlQkYkzs+KfhA0b1eeBVJYRig
+ jEHnY
+X-Gm-Gg: Acq92OEdQncjL4vWa9wBxUQyDRVdjpiYuqKGkRRwzmxD49vwWypUl13eQNwmmXAZky/
+ Kua01KuHEOd7exbVAIdFaAheLbxVvpf6osUpGmb6WwsPMsfNaPK4LNvT5pAVggXvLAetKtVz9EU
+ HCFzPan1MArKrezdtiG+darmkTx0gEirWYviWRqODSyu5vs557XxCieYdEV2zeaY5Us62JkA8cx
+ T63t7ClZ2XudYaJCgUgzHvTQPVe+29eQu2AuQaKv7dBchLQ09ktz2L1GGotf9c0gTkIAGl62Th5
+ pGCYFBijvP7wC/R4CR1172C5WXXrdcVtGeNknQpchgat4oVUyNhJ9tOGx7ALUj8LpaBLzgT+Wco
+ oysKR6AxGR8W9nCo0zG74xcTIGwBrBqsF4IyyeN7+Enb62CZqizVj0sazbScpJUiphkNwVP2U31
+ wauxqs5tAl0vxZROwbx0WjR5H8bDh2Os6XGHkQK3ah7Of5uD2U1p4hUbSnmRSPC6hejy3Og2dH
+X-Received: by 2002:a05:693c:8312:b0:2ed:935:aa33 with SMTP id
+ 5a478bee46e88-3042f4770d7mr476989eec.5.1779337245972; 
+ Wed, 20 May 2026 21:20:45 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 00721157ae682-7cc9d18dcddsm61518587b3.49.2026.05.20.21.07.09
+ 5a478bee46e88-30293e2e686sm24347748eec.5.2026.05.20.21.20.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 20 May 2026 21:07:10 -0700 (PDT)
+ Wed, 20 May 2026 21:20:45 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Shai Brandes <shaibran@amazon.com>, Evgeny Schemeilin <evgenys@amazon.com>,
- Ron Beider <rbeider@amazon.com>, Amit Bernstein <amitbern@amazon.com>,
- Wajeeh Atrash <atrwajee@amazon.com>
-Subject: [PATCH] net/ena: use C11 atomic operations in platform header
-Date: Wed, 20 May 2026 21:07:07 -0700
-Message-ID: <20260521040707.1553463-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC 0/7] prepare deprecation of rte_atomicNN_*() family
+Date: Wed, 20 May 2026 21:17:00 -0700
+Message-ID: <20260521042043.1590536-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -81,51 +77,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Convert the legacy rte_atomic32_t and rte_atomic32_{inc,dec,set,read}
-macros to C11 stdatomic equivalents. This clears another user of the
-rte_atomicNN_*() family ahead of its deprecation.
+The goal is to land every deprecation currently listed in the release
+notes by the 26.11 ABI bump. Working back from there: any function to
+be removed in 26.11 needs to be marked __rte_deprecated by 26.07, and
+all in-tree users converted off it before the marker patch goes in so
+CI stays clean.
 
-Memory ordering is kept at seq_cst, matching the implicit ordering of
-the legacy API. The ena_com access patterns can be audited and orderings
-tightened in a follow-up.
+This series is the preparatory work for the rte_atomicNN_*() family
+under that plan. It does not yet add the __rte_deprecated marker;
+that's a separate follow-up once the remaining in-tree users are
+converted. Other items on the deprecation list (VXLAN_GPE,
+pipeline/table/port legacy API, the MAX enum fix, regexdev, pdump,
+TM locks) will follow as their own series on the same timeline.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/ena/base/ena_plat_dpdk.h | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Patch 3 is the load-bearing change: the last lib/ caller of
+rte_atomic32_cmpset() is converted, clearing the way.
 
-diff --git a/drivers/net/ena/base/ena_plat_dpdk.h b/drivers/net/ena/base/ena_plat_dpdk.h
-index c84420de22..83b354d9da 100644
---- a/drivers/net/ena/base/ena_plat_dpdk.h
-+++ b/drivers/net/ena/base/ena_plat_dpdk.h
-@@ -40,7 +40,7 @@ typedef uint64_t dma_addr_t;
- #endif
- 
- #define ENA_PRIu64 PRIu64
--#define ena_atomic32_t rte_atomic32_t
-+typedef RTE_ATOMIC(int32_t) ena_atomic32_t;
- #define ena_mem_handle_t const struct rte_memzone *
- 
- #define SZ_256 (256U)
-@@ -267,10 +267,14 @@ ena_mem_alloc_coherent(struct rte_eth_dev_data *data, size_t size,
- #define ENA_REG_READ32(bus, reg)					       \
- 	__extension__ ({ (void)(bus); rte_read32_relaxed((reg)); })
- 
--#define ATOMIC32_INC(i32_ptr) rte_atomic32_inc(i32_ptr)
--#define ATOMIC32_DEC(i32_ptr) rte_atomic32_dec(i32_ptr)
--#define ATOMIC32_SET(i32_ptr, val) rte_atomic32_set(i32_ptr, val)
--#define ATOMIC32_READ(i32_ptr) rte_atomic32_read(i32_ptr)
-+#define ATOMIC32_INC(i32_ptr)							\
-+	rte_atomic_fetch_add_explicit((i32_ptr), 1, rte_memory_order_seq_cst)
-+#define ATOMIC32_DEC(i32_ptr)							\
-+	rte_atomic_fetch_sub_explicit((i32_ptr), 1, rte_memory_order_seq_cst)
-+#define ATOMIC32_SET(i32_ptr, val)						\
-+	rte_atomic_store_explicit((i32_ptr), (val), rte_memory_order_seq_cst)
-+#define ATOMIC32_READ(i32_ptr)							\
-+	rte_atomic_load_explicit((i32_ptr), rte_memory_order_seq_cst)
- 
- #define msleep(x) rte_delay_us(x * 1000)
- #define udelay(x) rte_delay_us(x)
+Patch 7 drops RTE_FORCE_INTRINSICS entirely. With the option always on,
+the asm implementations of atomics, spinlock and byteorder become dead
+code. ~900 lines deleted; the patch most worth review attention.
+This makes it easier to flag the rte_atomicNN as deprecated
+since they are all in one place.
+
+Patch 2 retires the rte_smp_*mb deprecation notice (open since 2021)
+by reimplementing those APIs as wrappers over rte_atomic_thread_fence,
+preserving the API for readability. Patches 5 and 6 convert and clean
+up two driver users (bonding, nbl).
+
+Patch 4 is a preparatory workaround for a pre-existing GCC bitfield
+-Wmaybe-uninitialized false positive in net/zxdh, surfaced by the
+improved compiler visibility after patch 7. Placed ahead of patch 7
+to keep every commit bisectable.
+
+Follow on patches will mechanically convert drivers.
+If driver writer fixes it themselves; all the beter.
+
+Stephen Hemminger (7):
+  doc: update versions in deprecation file
+  eal: reimplement rte_smp_*mb with rte_atomic_thread_fence
+  ring: use C11 atomic operations for MP/SP head/tail
+  net/zxdh: work around GCC bitfield uninit false positive
+  net/bonding: use stdatomic
+  net/nbl: remove unused rte_atomic16 field
+  config: use RTE_FORCE_INTRINSICS on all platforms
+
+ config/arm/meson.build                        |   1 -
+ config/loongarch/meson.build                  |   1 -
+ config/meson.build                            |   3 -
+ config/riscv/meson.build                      |   1 -
+ doc/guides/rel_notes/deprecation.rst          |  12 +-
+ doc/guides/rel_notes/release_26_07.rst        |   5 +
+ drivers/net/bonding/eth_bond_8023ad_private.h |   4 +-
+ drivers/net/bonding/rte_eth_bond_8023ad.c     |  18 +-
+ drivers/net/nbl/nbl_hw/nbl_resource.h         |   1 -
+ drivers/net/zxdh/zxdh_msg.c                   |   4 +-
+ lib/eal/arm/include/rte_atomic_32.h           |   9 -
+ lib/eal/arm/include/rte_atomic_64.h           |   9 -
+ lib/eal/arm/include/rte_byteorder.h           |   3 -
+ lib/eal/arm/include/rte_spinlock.h            |   3 -
+ lib/eal/include/generic/rte_atomic.h          | 164 ++++----------
+ lib/eal/include/generic/rte_byteorder.h       |   2 -
+ lib/eal/include/generic/rte_spinlock.h        |  10 -
+ lib/eal/loongarch/include/rte_atomic.h        |   9 -
+ lib/eal/loongarch/include/rte_spinlock.h      |   3 -
+ lib/eal/ppc/include/rte_atomic.h              | 179 ---------------
+ lib/eal/ppc/include/rte_byteorder.h           |  13 --
+ lib/eal/ppc/include/rte_spinlock.h            |  26 ---
+ lib/eal/riscv/include/rte_atomic.h            |   9 -
+ lib/eal/riscv/include/rte_spinlock.h          |   3 -
+ lib/eal/x86/include/rte_atomic.h              | 205 +-----------------
+ lib/eal/x86/include/rte_atomic_32.h           | 188 ----------------
+ lib/eal/x86/include/rte_atomic_64.h           | 157 --------------
+ lib/eal/x86/include/rte_byteorder.h           |  49 -----
+ lib/eal/x86/include/rte_spinlock.h            |  49 -----
+ lib/ring/rte_ring_generic_pvt.h               |  64 ++++--
+ 30 files changed, 118 insertions(+), 1086 deletions(-)
+
 -- 
 2.53.0
 
