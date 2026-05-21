@@ -2,76 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2791BCD5BAC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 14:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A50CD5BAC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 15:16:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 34651402A2;
-	Thu, 21 May 2026 16:54:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EB69E402A2;
+	Thu, 21 May 2026 17:16:18 +0200 (CEST)
 Received: from fhigh-a3-smtp.messagingengine.com
  (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id 8B1E7400D5
- for <dev@dpdk.org>; Thu, 21 May 2026 16:54:16 +0200 (CEST)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 109D21400053;
- Thu, 21 May 2026 10:54:16 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-07.internal (MEProxy); Thu, 21 May 2026 10:54:16 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 2CF96400D5
+ for <dev@dpdk.org>; Thu, 21 May 2026 17:16:18 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id BDBF8140002A;
+ Thu, 21 May 2026 11:16:17 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Thu, 21 May 2026 11:16:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1779375256;
- x=1779461656; bh=RKSm+VXl6JFNYMYQGKjxKpOFa1pWqE2mLhRekhkzIFc=; b=
- lm2pRpcHPeQk0wodOwwrj1vgGonQAnSmQ+Ge6jLLZzCSYXeF83OuWUtE5DYJhM4a
- C1IionX65an0oOpI+OTgj6H21fdqV7PyjHhRtrnhGZ50f3vUnda9YnaNeMfTTaRu
- Qhf+om2spzAVURprBTwyW0k04vwpAIby22iawKMCRyQTaQwO4Wv2gYPWywW81c0q
- vMUYfRFS4Fi/MxUc17qXIzR+5R72wuhVj2CBFs3lZ4tcUVGcHVr+BXXhU2zSdfR0
- aydeqB03BIRuVdVnl1jiasb/YKNQHkhts5QNGkz1CRjkQpmG+btOJkXTnH/NuIZ5
- 1sU74OX8T7PeO9XwzTTSGQ==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1779376577;
+ x=1779462977; bh=O53uOqGaezycXDoPhX1UV7Ny9qEo2UtgWT16GyBv0h0=; b=
+ s4IlnIx4J5mDubPGscQCyzYFA2jXjCCNgIh86YxAJI5HWls5OzCxxKMyMWlO9xE9
+ GR8MADPALqWavk+2zEO740ltBtfcOlrOca465P+usMnyauS32PPFqLali565OCCY
+ EUJijYxmYS0cFIkkUNB8fbZdl3XS8coMcSN72DslT4u2/ULh7dCIsCTqfb8Ofx2Q
+ abZ+1eVrtHJUwmH9xMXQINOVPw5QI2IxF3q4sX2C8vpUj5bRLMzB9OA+aClrxWWQ
+ +8AP5r/hf5g3EcTlVwiBlICLmlhoQXa5CGBAXtsi5oQZtDdiu2QoUlwDsWdGChJe
+ i4D0QcpYXY7KA9jczSoFzw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779375256; x=
- 1779461656; bh=RKSm+VXl6JFNYMYQGKjxKpOFa1pWqE2mLhRekhkzIFc=; b=d
- TJvVzj2fX0kQDaqzyY7BSRyXwTaNDPeXqSv4nk6Kb+HbzqXyyRy5sbum8bZU84Jv
- skTwPqQubmAlqvE1uH+MLefc9bwUNYmchrnv2KT0jtbo/kfb+hy9SU2sOKsc7aNY
- +LZH5CuvPY1VmnE/YzK68PaVbYGzJSCNbnw7MnPvtccNYGNlLwm+3qkhO3QQExIz
- G/C4qUllxtwodRQOd1OsdNK6eEyQ5yv0v0w0VnXCdG0m/XeFHgxTO/nLcNKEvpjj
- VN7+tIe/8F/9L2Uy2IT/E6QrErwRSZhbX+h8vH6rVq22mcb1lWZNCmIzTX9zawNn
- GjNliGZyBei+4xtHc8xHw==
-X-ME-Sender: <xms:lxwPamUWN7SfovDPIE7LNROsDaFWgxTBbv7nXm2dhSd1XTi7NaAZVw>
- <xme:lxwPan1QroN46BkJJpd5L5SkGw85uLsrIreEv5hsypXSrvnypFMfHcS-wwFkO11wg
- vxcjBiLxAUJ9MwZMDLftwu0HGnJWPS6BPRaLHGwmOw11M-KQmIULQ>
-X-ME-Received: <xmr:lxwPasEyWB-vh42qRDf5ajJvLG6IvIJC4PSCLPBP2HezAQbKDCHr8F27xognmaGMBMw104U9SY-QX5iHFQSQk99xUg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeejkedtucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779376577; x=
+ 1779462977; bh=O53uOqGaezycXDoPhX1UV7Ny9qEo2UtgWT16GyBv0h0=; b=o
+ MjVYZG5bMn+K9uARTRP5xqWaB9KJd2CFWEqjxCFpwANHr/MWiBjSrjif51OuShDg
+ /1URKFrY6E6R20V3+gX4gU61/9wdWYBOBdw04uuCtRYXrdORf+jY3EvdgocDGClh
+ WQgjG188Wr4HYQ+3MB0dhLSinON9Qno9W0Jha5iN2eJ+q/Gc3xDs4y0hOhsz6QJI
+ QV064RwM1lS0Hr9LXVNeaOMMtAd0jVtIZ5jemBmkuIjEFVmBRQ/2Zp+2v28aPQpY
+ KCEUXy48dai2/UiWLGaQOyzqwgnAZvKH5V0y6QKDTO2OcAvLkaf7+yZcU5pwh2me
+ Opt5LYFQRNl9qr1ApXg+A==
+X-ME-Sender: <xms:wCEPat6KAWtrMdWhFL9CeM3ANgtH1WzNzt5XD8DM4pNpwLlq3Tig4g>
+ <xme:wCEPavN_qxhdiLSaaeQeMJS8W1almxkUO4_6064VcKOfBUOB0NV8aaZKjo_DJz8nP
+ -Tg8llqyXeXycYJviyjHW_DPxUeQH7BSjU6orB0WbCjVNLH5MzW7w>
+X-ME-Received: <xmr:wCEPajl_kh9y33cDRsN4VEaiHtXWCGUgo29Zl4b063uGdmx3zi4UdxBEbtZo4f8rjUyxGsmHBRwB6nz9W5StxltJ-Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeejkeegucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
- hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:lxwPalj4W_LTJZfYIx34OuSe9aGB8conU7AGVNeZDk1DjPI0CimTfw>
- <xmx:lxwPan8WQjsukFEHP1BzkTGdHUGfZ0oNeZ1BmeSKwcC2vpqsrL1_JA>
- <xmx:lxwPasorNGRkqZVjkUtJyiW57UjDL5DX9Gw8hEljFjbIouy4SiMZ9Q>
- <xmx:lxwPam8MXrE70ixXFbw5QHQBhH7qrxeRy8YZX2Ot16uebGk0JtGzmw>
- <xmx:mBwPagQF0xv5Cou0XDs1m-MYs-Jl7WheAtmPAUkO8mIWUTyliU47ccn3>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhujhhivgehsehlihhnkhgurghtrg
+ htvggthhhnohhlohhghidrtghomhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfiho
+ rhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:wCEPauRYC3iEyySYQcYNdoQwcsMeR1Rn6Qeo-k4IzeanTKzV3F1mlA>
+ <xmx:wCEPanC5Xy1wN0PknoOABkFNVebAnYe7ax7OgZrf4vIJGaniMD5H1g>
+ <xmx:wCEPalQYZ04HlQwWMkn9i14CxadQrt6aHWVjwBwIDbF98o-PJT_RkA>
+ <xmx:wCEPalpPkrFrXOaIbQ46ekJWlCtYOHWVb92Ckbyh2MXV3zPIi4MBMA>
+ <xmx:wSEPainbnB5z4tRBt2ocKTnXKYBQ-uvD8YhJc2TkrznK4p8N9qS-Ruv3>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 May 2026 10:54:15 -0400 (EDT)
+ 21 May 2026 11:16:15 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v6 3/3] test: add test for af_packet
-Date: Thu, 21 May 2026 16:54:14 +0200
-Message-ID: <7d4P4SdzSECmXjb8mYjlMA@monjalon.net>
-In-Reply-To: <20260429182055.398105-4-stephen@networkplumber.org>
-References: <20260413230018.515837-1-stephen@networkplumber.org>
- <20260429182055.398105-1-stephen@networkplumber.org>
- <20260429182055.398105-4-stephen@networkplumber.org>
+To: Jie Liu <liujie5@linkdatatechnology.com>
+Cc: stephen@networkplumber.org, dev@dpdk.org
+Subject: Re: [PATCH v19 00/11]net/sxe2: fix logic errors and address feedback
+Date: Thu, 21 May 2026 17:16:13 +0200
+Message-ID: <9XBXAO5XSSSHFRFv8zy4yQ@monjalon.net>
+In-Reply-To: <20260520021809.4019054-1-liujie5@linkdatatechnology.com>
+References: <20260519144810.3951202-12-liujie5@linkdatatechnology.com>
+ <20260520021809.4019054-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,23 +88,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-29/04/2026 20:19, Stephen Hemminger:
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <inttypes.h>
-> +#include <linux/if.h>
-> +#include <linux/if_tun.h>
-> +#include <linux/sockios.h>
-> +#include <pthread.h>
-> +#include <stdbool.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +#include <sys/ioctl.h>
-> +#include <sys/socket.h>
+Hello,
 
-There is a compilation failure for ppc about sockaddr.
-It seems sys/socket.h must be included before linux/if.h.
-I'll do the change while pulling.
+20/05/2026 04:17, liujie5@linkdatatechnology.com:
+>   common/sxe2: add sxe2 basic structures
 
+Are you planning to add a crypto or compress driver?
+This is usually the reason to have a common library.
+If you don't intend to share some code between different driver,
+then you should not have a common library.
 
 
