@@ -2,50 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B23CD4F5E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 10:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C76CD5BA4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 10:54:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45C9F402B0;
-	Thu, 21 May 2026 12:15:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 0B87E40290
- for <dev@dpdk.org>; Thu, 21 May 2026 12:15:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779358519; x=1810894519;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=vX/xtD3SONNL0q0ApLKzDGDWeQovRSzzQCHqrNU/DUE=;
- b=lNLuUVWgU1bL9WJnFvzi0EvxHxXXFP/L0jyCsW2qkgohgxQgsWYESkdX
- /Wrh0T5EmlY24913VntML8PZjsEP7jWxSnbFgYGWHyuSyKfhZVjtT7koX
- gQ1Bah2rTa5nMah3XL9OPmY6l+7tRsgOiu4JyRr9+EgSs1gDOJGgsxViH
- 9pVAsfDLDB99m1EgEbbN558ht62YyTbNLaTuN5tR/JxzPRwLAM4mY0nbX
- 0976DWt5rkBwIWxXP94QLZdC+guYckD2zvoGd14hoswNSwrKUkSvQ/Riz
- qvdTjJMulaJys9osVEBi9O0KwbL5X8IXvC5CdgpNQHAXu+HTMNiCTwirg g==;
-X-CSE-ConnectionGUID: i0hxwK9ASl+vrFzpUxg0Qw==
-X-CSE-MsgGUID: bCMc6y7aS02mdQb1Ej4l5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11792"; a="67799486"
-X-IronPort-AV: E=Sophos;i="6.23,246,1770624000"; d="scan'208";a="67799486"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 May 2026 03:15:17 -0700
-X-CSE-ConnectionGUID: +rV98vyzQh6icy2EoWuZ/w==
-X-CSE-MsgGUID: 3qQ9GUrJSLSjrPkzCJZPgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,246,1770624000"; d="scan'208";a="245517925"
-Received: from npg-npf-wlpr-srv19.iind.intel.com ([10.190.212.201])
- by fmviesa005.fm.intel.com with ESMTP; 21 May 2026 03:15:16 -0700
-From: Megha Ajmera <megha.ajmera@intel.com>
-To: bruce.richardson@intel.com, cristian.dumitrescu@intel.com,
- praveen.shetty@intel.com, dev@dpdk.org
-Subject: [PATCH v2] app/test-pmd: add generic PROG action parser support
-Date: Thu, 21 May 2026 15:43:54 +0530
-Message-Id: <20260521101354.726240-1-megha.ajmera@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260521055612.508916-1-megha.ajmera@intel.com>
-References: <20260521055612.508916-1-megha.ajmera@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3F798402B0;
+	Thu, 21 May 2026 12:54:41 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id AD17540290
+ for <dev@dpdk.org>; Thu, 21 May 2026 12:54:39 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 6E04920416;
+ Thu, 21 May 2026 12:54:39 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: [TEST PATCH v9] eal/x86: optimize memcpy of small sizes
+Date: Thu, 21 May 2026 12:54:36 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6588C@smartserver.smartshare.dk>
+In-Reply-To: <20260429103548.220354-1-mb@smartsharesystems.com>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [TEST PATCH v9] eal/x86: optimize memcpy of small sizes
+Thread-Index: AdzXw/PmeX/YfpvgTCWiMb+z5esAQgRS17uA
+References: <20251120114554.950287-1-mb@smartsharesystems.com>
+ <20260429103548.220354-1-mb@smartsharesystems.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>
+Cc: "Bruce Richardson" <bruce.richardson@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,676 +47,336 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add parser support for a generic PROG flow action in testpmd.
-
-The update adds CLI tokens and parsing logic for program name and
-argument tuples (name, size, value), enabling programmable action
-configuration through the flow command interface.
-
-Example flow rule:
-  flow create 0 ingress pattern eth / end actions prog name my_prog
-  argument name arg0 size 4 value 10 / end
-
-Signed-off-by: Megha Ajmera <megha.ajmera@intel.com>
-Signed-off-by: Praveen Shetty <praveen.shetty@intel.com>
----
-v2:
-* Fixed compilation warning.
-
- app/test-pmd/cmdline_flow.c | 584 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 581 insertions(+), 3 deletions(-)
-
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index ebc036b14b..daf1de7146 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -714,6 +714,13 @@ enum index {
- 	ACTION_SET_META,
- 	ACTION_SET_META_DATA,
- 	ACTION_SET_META_MASK,
-+	/* ACTION PROG */
-+	ACTION_PROG,
-+	ACTION_PROG_NAME,
-+	ACTION_PROG_ARGUMENT,
-+	ACTION_PROG_ARGUMENT_NAME,
-+	ACTION_PROG_ARGUMENT_SIZE,
-+	ACTION_PROG_ARGUMENT_VALUE,
- 	ACTION_SET_IPV4_DSCP,
- 	ACTION_SET_IPV4_DSCP_VALUE,
- 	ACTION_SET_IPV6_DSCP,
-@@ -981,6 +988,24 @@ struct action_sample_data {
- 	struct rte_flow_action_sample conf;
- 	uint32_t idx;
- };
-+
-+#define ACTION_PROG_MAX_ARGS 32
-+#define ACTION_PROG_NAME_LEN_MAX 64
-+#define ACTION_PROG_ARG_NAME_LEN_MAX 16
-+
-+struct action_prog_argument_data {
-+	char name[ACTION_PROG_ARG_NAME_LEN_MAX];
-+	uint32_t length;
-+	uint32_t size;
-+	uint64_t value;
-+};
-+
-+struct action_prog_data {
-+	char name[ACTION_PROG_NAME_LEN_MAX];
-+	uint32_t args_num;
-+	uint32_t length;
-+	struct action_prog_argument_data args[ACTION_PROG_MAX_ARGS];
-+};
- /** Storage for struct rte_flow_action_sample. */
- struct raw_sample_conf {
- 	struct rte_flow_action data[ACTION_SAMPLE_ACTIONS_NUM];
-@@ -2310,6 +2335,7 @@ static const enum index next_action[] = {
- 	ACTION_RAW_DECAP,
- 	ACTION_SET_TAG,
- 	ACTION_SET_META,
-+	ACTION_PROG,
- 	ACTION_SET_IPV4_DSCP,
- 	ACTION_SET_IPV6_DSCP,
- 	ACTION_AGE,
-@@ -2565,6 +2591,23 @@ static const enum index action_set_meta[] = {
- 	ZERO,
- };
- 
-+/** ACTION PROG */
-+static const enum index next_action_prog[] = {
-+	ACTION_PROG_NAME,
-+	ACTION_PROG_ARGUMENT,
-+	ACTION_NEXT,
-+	ZERO,
-+};
-+
-+static const enum index next_prog_arg[] = {
-+	ACTION_PROG_ARGUMENT_NAME,
-+	ACTION_PROG_ARGUMENT_SIZE,
-+	ACTION_PROG_ARGUMENT_VALUE,
-+	ACTION_PROG_ARGUMENT,
-+	ACTION_NEXT,
-+	ZERO,
-+};
-+
- static const enum index action_set_ipv4_dscp[] = {
- 	ACTION_SET_IPV4_DSCP_VALUE,
- 	ACTION_NEXT,
-@@ -2803,6 +2846,27 @@ static int parse_vc_action_set_meta(struct context *ctx,
- 				    const struct token *token, const char *str,
- 				    unsigned int len, void *buf,
- 					unsigned int size);
-+static int parse_vc_action_prog(struct context *ctx, const struct token *token,
-+				const char *str, unsigned int len, void *buf,
-+				unsigned int size);
-+static int parse_vc_action_prog_argument(struct context *ctx, const struct token *token,
-+				 const char *str, unsigned int len,
-+				 void *buf, unsigned int size);
-+static int parse_vc_action_prog_argument_name(struct context *ctx,
-+				      const struct token *token,
-+				      const char *str, unsigned int len,
-+				      void *buf, unsigned int size);
-+static int parse_vc_action_prog_argument_size(struct context *ctx,
-+				      const struct token *token,
-+				      const char *str, unsigned int len,
-+				      void *buf, unsigned int size);
-+static int parse_vc_action_prog_argument_value(struct context *ctx,
-+				       const struct token *token,
-+				       const char *str, unsigned int len,
-+				       void *buf, unsigned int size);
-+static void free_action_prog_converted(struct rte_flow_action *actions,
-+				      const uint32_t *converted_idx,
-+				      uint32_t converted_idx_num);
- static int parse_vc_action_sample(struct context *ctx,
- 				    const struct token *token, const char *str,
- 				    unsigned int len, void *buf,
-@@ -7816,6 +7880,48 @@ static const struct token token_list[] = {
- 			     (struct rte_flow_action_set_meta, mask)),
- 		.call = parse_vc_conf,
- 	},
-+	[ACTION_PROG] = {
-+		.name = "prog",
-+		.help = "Program action: action prog name <name> [argument ...]",
-+		.priv = PRIV_ACTION(PROG,
-+				sizeof(struct action_prog_data)),
-+		.next = NEXT(next_action_prog),
-+		.call = parse_vc_action_prog,
-+	},
-+	[ACTION_PROG_NAME] = {
-+		.name = "name",
-+		.help = "Action name",
-+		.next = NEXT(next_action_prog, NEXT_ENTRY(COMMON_STRING)),
-+		.args = ARGS(ARGS_ENTRY_ARB(0, 0),
-+			    ARGS_ENTRY(struct action_prog_data, length),
-+			    ARGS_ENTRY_ARB(0,
-+				    ACTION_PROG_NAME_LEN_MAX)),
-+		.call = parse_vc_conf,
-+	},
-+	[ACTION_PROG_ARGUMENT] = {
-+		.name = "argument",
-+		.help = "Keyword: argument",
-+		.next = NEXT(next_prog_arg),
-+		.call = parse_vc_action_prog_argument,
-+	},
-+	[ACTION_PROG_ARGUMENT_NAME] = {
-+		.name = "name",
-+		.help = "Argument Name",
-+		.next = NEXT(next_prog_arg, NEXT_ENTRY(COMMON_STRING)),
-+		.call = parse_vc_action_prog_argument_name,
-+	},
-+	[ACTION_PROG_ARGUMENT_SIZE] = {
-+		.name = "size",
-+		.help = "Argument size (bytes)",
-+		.next = NEXT(next_prog_arg, NEXT_ENTRY(COMMON_UNSIGNED)),
-+		.call = parse_vc_action_prog_argument_size,
-+	},
-+	[ACTION_PROG_ARGUMENT_VALUE] = {
-+		.name = "value",
-+		.help = "Argument value",
-+		.next = NEXT(next_prog_arg, NEXT_ENTRY(COMMON_UNSIGNED)),
-+		.call = parse_vc_action_prog_argument_value,
-+	},
- 	[ACTION_SET_IPV4_DSCP] = {
- 		.name = "set_ipv4_dscp",
- 		.help = "set DSCP value",
-@@ -10415,6 +10521,449 @@ parse_vc_action_set_meta(struct context *ctx, const struct token *token,
- 	return len;
- }
- 
-+/** Parse PROG action */
-+static int
-+parse_vc_action_prog(struct context *ctx, const struct token *token,
-+			const char *str, unsigned int len, void *buf,
-+			unsigned int size)
-+{
-+	struct buffer *out = buf;
-+	struct action_prog_data *prog_data;
-+	int ret;
-+
-+	ret = parse_vc(ctx, token, str, len, buf, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Nothing else to do if there is no buffer. */
-+	if (!out)
-+		return ret;
-+
-+	if (!out->args.vc.actions_n)
-+		return -1;
-+
-+	/* Point to selected object. */
-+	ctx->object = out->args.vc.data;
-+	ctx->objmask = NULL;
-+
-+	prog_data = ctx->object;
-+	prog_data->args_num = 0;
-+
-+	return ret;
-+}
-+
-+/** Called when args keyword is encountered */
-+static int
-+parse_vc_action_prog_argument(struct context *ctx, const struct token *token,
-+				 const char *str, unsigned int len,
-+				 void *buf, unsigned int size)
-+{
-+	struct buffer *out = buf;
-+	struct action_prog_data *prog_data;
-+
-+	RTE_SET_USED(token);
-+	RTE_SET_USED(str);
-+	RTE_SET_USED(size);
-+
-+	/* Token name must match. */
-+	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
-+		return -1;
-+
-+	/* Nothing else to do if there is no buffer. */
-+	if (!out)
-+		return len;
-+
-+	if (!out->args.vc.actions_n)
-+		return len;
-+
-+	/* Point to selected object. */
-+	ctx->object = out->args.vc.data;
-+	ctx->objmask = NULL;
-+
-+	prog_data = ctx->object;
-+	if (prog_data->args_num >= ACTION_PROG_MAX_ARGS)
-+		return -1;
-+	prog_data->args_num++;
-+
-+	return len;
-+}
-+
-+static int __prog_argument_name_args_push(struct context *ctx, const struct token *token,
-+					  const char *str, unsigned int len, void *buf,
-+					  unsigned int size, uint32_t arg_ind)
-+{
-+	static struct arg arg_addr[ACTION_PROG_MAX_ARGS];
-+	static struct arg arg_len[ACTION_PROG_MAX_ARGS];
-+	static struct arg arg_data[ACTION_PROG_MAX_ARGS];
-+	/* Calculate the base size based on the actual structure size */
-+	uint32_t prog_data_base_size = offsetof(struct action_prog_data, args);
-+
-+	RTE_SET_USED(token);
-+	RTE_SET_USED(str);
-+	RTE_SET_USED(len);
-+	RTE_SET_USED(buf);
-+	RTE_SET_USED(size);
-+
-+	arg_addr[arg_ind].offset = prog_data_base_size +
-+		offsetof(struct action_prog_argument_data, name) +
-+		(arg_ind * sizeof(struct action_prog_argument_data));
-+	arg_addr[arg_ind].size = 0;
-+
-+	if (push_args(ctx, &arg_addr[arg_ind]))
-+		return -1;
-+	arg_len[arg_ind].offset = prog_data_base_size +
-+			  offsetof(struct action_prog_argument_data, length) +
-+			  (arg_ind * sizeof(struct action_prog_argument_data));
-+	arg_len[arg_ind].size = sizeof(((struct action_prog_argument_data *)0)->length);
-+
-+	if (push_args(ctx, &arg_len[arg_ind]))
-+		return -1;
-+	arg_data[arg_ind].offset = prog_data_base_size +
-+			   offsetof(struct action_prog_argument_data, name) +
-+			   (arg_ind * sizeof(struct action_prog_argument_data));
-+	arg_data[arg_ind].size =
-+		sizeof(((struct action_prog_argument_data *)0)->name);
-+
-+	if (push_args(ctx, &arg_data[arg_ind]))
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static int __prog_argument_size_args_push(struct context *ctx, const struct token *token,
-+					  const char *str, unsigned int len, void *buf,
-+					  unsigned int size, uint32_t arg_ind)
-+{
-+	static struct arg arg[ACTION_PROG_MAX_ARGS];
-+	uint32_t prog_data_base_size = offsetof(struct action_prog_data, args);
-+
-+	RTE_SET_USED(token);
-+	RTE_SET_USED(str);
-+	RTE_SET_USED(len);
-+	RTE_SET_USED(buf);
-+	RTE_SET_USED(size);
-+
-+	arg[arg_ind].offset = prog_data_base_size +
-+		      offsetof(struct action_prog_argument_data, size) +
-+		      (arg_ind * sizeof(struct action_prog_argument_data));
-+	arg[arg_ind].size = sizeof(((struct action_prog_argument_data *)0)->size);
-+
-+	if (push_args(ctx, &arg[arg_ind]))
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static int __prog_argument_value_args_push(struct context *ctx, const struct token *token,
-+					   const char *str, unsigned int len, void *buf,
-+					   unsigned int size, uint32_t arg_ind)
-+{
-+	static struct arg arg[ACTION_PROG_MAX_ARGS];
-+	uint32_t prog_data_base_size = offsetof(struct action_prog_data, args);
-+
-+	RTE_SET_USED(token);
-+	RTE_SET_USED(str);
-+	RTE_SET_USED(len);
-+	RTE_SET_USED(buf);
-+	RTE_SET_USED(size);
-+
-+	arg[arg_ind].offset = prog_data_base_size +
-+		      offsetof(struct action_prog_argument_data, value) +
-+		      (arg_ind * sizeof(struct action_prog_argument_data));
-+	arg[arg_ind].size = sizeof(((struct action_prog_argument_data *)0)->value);
-+
-+	if (push_args(ctx, &arg[arg_ind]))
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static int
-+parse_vc_action_prog_argument_name(struct context *ctx,
-+				      const struct token *token,
-+				      const char *str, unsigned int len,
-+				      void *buf, unsigned int size)
-+{
-+	struct buffer *out = buf;
-+	struct action_prog_data *prog_data;
-+	uint32_t arg_ind;
-+	uint32_t max_arg_ind = (ACTION_PROG_MAX_ARGS - 1);
-+	int ret;
-+
-+	ret = parse_vc_conf(ctx, token, str, len, buf, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Nothing else to do if there is no buffer. */
-+	if (!out)
-+		goto error_push;
-+
-+	if (!ctx->object)
-+		goto error_push;
-+
-+	prog_data = ctx->object;
-+	if (prog_data->args_num == 0)
-+		goto error_push;
-+	arg_ind = prog_data->args_num - 1;
-+	if (__prog_argument_name_args_push(ctx, token, str, len, buf, size,
-+					      arg_ind) < 0)
-+		return -1;
-+
-+	return ret;
-+
-+error_push:
-+	return __prog_argument_name_args_push(ctx, token, str, len, buf, size,
-+					    max_arg_ind);
-+}
-+
-+static int
-+parse_vc_action_prog_argument_size(struct context *ctx,
-+				      const struct token *token,
-+				      const char *str, unsigned int len,
-+				      void *buf, unsigned int size)
-+{
-+	struct buffer *out = buf;
-+	struct action_prog_data *prog_data;
-+	uint32_t arg_ind;
-+	uint32_t max_arg_ind = (ACTION_PROG_MAX_ARGS - 1);
-+	int ret;
-+
-+	ret = parse_vc_conf(ctx, token, str, len, buf, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Nothing else to do if there is no buffer. */
-+	if (!out)
-+		goto error_push;
-+
-+	if (!ctx->object)
-+		goto error_push;
-+
-+	ctx->object = out->args.vc.data;
-+	ctx->objmask = NULL;
-+	prog_data = ctx->object;
-+	if (prog_data->args_num == 0)
-+		goto error_push;
-+	arg_ind = prog_data->args_num - 1;
-+	if (__prog_argument_size_args_push(ctx, token, str, len, buf, size,
-+					      arg_ind) < 0)
-+		return -1;
-+
-+	return ret;
-+
-+error_push:
-+	return __prog_argument_size_args_push(ctx, token, str, len, buf, size,
-+					    max_arg_ind);
-+}
-+
-+static int
-+parse_vc_action_prog_argument_value(struct context *ctx,
-+				       const struct token *token,
-+				       const char *str, unsigned int len,
-+				       void *buf, unsigned int size)
-+{
-+	struct buffer *out = buf;
-+	struct action_prog_data *prog_data;
-+	uint32_t arg_ind;
-+	uint32_t max_arg_ind = (ACTION_PROG_MAX_ARGS - 1);
-+	int ret;
-+
-+	RTE_SET_USED(size);
-+
-+	ret = parse_vc_conf(ctx, token, str, len, buf, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Nothing else to do if there is no buffer. */
-+	if (!out)
-+		goto error_push;
-+
-+	if (!ctx->object)
-+		goto error_push;
-+
-+	ctx->object = out->args.vc.data;
-+	ctx->objmask = NULL;
-+	prog_data = ctx->object;
-+	if (prog_data->args_num == 0)
-+		goto error_push;
-+	arg_ind = prog_data->args_num - 1;
-+	if (__prog_argument_value_args_push(ctx, token, str, len, buf, size,
-+					       arg_ind) < 0)
-+		return -1;
-+
-+	return ret;
-+
-+error_push:
-+	return __prog_argument_value_args_push(ctx, token, str, len, buf, size,
-+					     max_arg_ind);
-+}
-+
-+/**
-+ * Convert action_prog_data to rte_flow_action_prog.
-+ * Converts PROG actions from action_prog_data format to rte_flow_action_prog format.
-+ *
-+ * @param actions     The flow actions array
-+ * @param action_count Optional count of actions. If 0, will count until END action
-+ * @return            0 on success, negative value on failure
-+ */
-+static int
-+convert_action_prog_to_rte_flow(struct rte_flow_action *actions,
-+				uint32_t prog_action_count,
-+				uint32_t *converted_idx,
-+				uint32_t converted_idx_cap,
-+				uint32_t *converted_idx_num)
-+{
-+	uint32_t i = 0;
-+	uint32_t j;
-+	uint32_t k;
-+	const struct action_prog_data *prog_data;
-+	struct rte_flow_action_prog *prog;
-+	struct rte_flow_action_prog_argument *args;
-+	uint8_t *value;
-+	bool arg_error;
-+	int ret = 0;
-+
-+	if (converted_idx_num)
-+		*converted_idx_num = 0;
-+
-+	/* If action_count is 0, count the actions until END action */
-+	if (prog_action_count == 0) {
-+		while (actions[i].type != RTE_FLOW_ACTION_TYPE_END)
-+			i++;
-+		prog_action_count = i + 1; /* Include END action */
-+		i = 0; /* Reset counter for the processing loop */
-+	}
-+
-+	/* Process all actions */
-+	for (i = 0; i < prog_action_count; i++) {
-+		if (actions[i].type == RTE_FLOW_ACTION_TYPE_PROG) {
-+			prog_data = (const struct action_prog_data *)actions[i].conf;
-+			if (!prog_data) {
-+				fprintf(stderr, "Prog action found but no data provided\n");
-+				ret = -EINVAL;
-+				continue;
-+			}
-+
-+			prog = calloc(1, sizeof(struct rte_flow_action_prog));
-+			if (!prog) {
-+				fprintf(stderr, "Failed to allocate memory for prog action\n");
-+				ret = -ENOMEM;
-+				continue;
-+			}
-+
-+			prog->name = strdup(prog_data->name);
-+			if (!prog->name) {
-+				fprintf(stderr, "Failed to allocate memory for prog name\n");
-+				free(prog);
-+				ret = -ENOMEM;
-+				continue;
-+			}
-+
-+			prog->args_num = prog_data->args_num;
-+
-+			if (prog->args_num > 0) {
-+				args = calloc(prog->args_num,
-+					      sizeof(struct rte_flow_action_prog_argument));
-+				if (!args) {
-+					fprintf(stderr,
-+						"Failed to allocate memory for prog arguments\n");
-+					free((void *)(uintptr_t)prog->name);
-+					free(prog);
-+					ret = -ENOMEM;
-+					continue;
-+				}
-+
-+				arg_error = false;
-+				for (j = 0; j < prog->args_num; j++) {
-+					args[j].name = strdup(prog_data->args[j].name);
-+					if (!args[j].name) {
-+						fprintf(stderr,
-+							"Failed to allocate memory for argument name\n");
-+						ret = -ENOMEM;
-+						arg_error = true;
-+						break;
-+					}
-+
-+					args[j].size = prog_data->args[j].size;
-+					if (args[j].size == 0)
-+						continue;
-+					if (args[j].size > sizeof(prog_data->args[j].value)) {
-+						free((void *)(uintptr_t)args[j].name);
-+						arg_error = true;
-+						ret = -EINVAL;
-+						break;
-+					}
-+
-+					value = malloc(args[j].size);
-+					if (!value) {
-+						fprintf(stderr,
-+							"Failed to allocate memory for argument value\n");
-+						free((void *)(uintptr_t)args[j].name);
-+						ret = -ENOMEM;
-+						arg_error = true;
-+						break;
-+					}
-+
-+					memcpy(value,
-+					       &prog_data->args[j].value,
-+					       args[j].size);
-+					args[j].value = value;
-+				}
-+
-+				if (arg_error) {
-+					/* Free all allocated resources */
-+					for (k = 0; k < j; k++) {
-+						free((void *)(uintptr_t)args[k].name);
-+						free((void *)(uintptr_t)args[k].value);
-+					}
-+					free(args);
-+					free((void *)(uintptr_t)prog->name);
-+					free(prog);
-+					continue;
-+				}
-+
-+				prog->args = args;
-+			}
-+
-+			actions[i].conf = prog;
-+			if (converted_idx && converted_idx_num &&
-+			    *converted_idx_num < converted_idx_cap)
-+				converted_idx[(*converted_idx_num)++] = i;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static void
-+free_action_prog_converted(struct rte_flow_action *actions,
-+			   const uint32_t *converted_idx,
-+			   uint32_t converted_idx_num)
-+{
-+	uint32_t i;
-+
-+	for (i = 0; i < converted_idx_num; i++) {
-+		uint32_t idx = converted_idx[i];
-+		struct rte_flow_action_prog *prog;
-+		uint32_t j;
-+
-+		if (actions[idx].type != RTE_FLOW_ACTION_TYPE_PROG)
-+			continue;
-+
-+		prog = (struct rte_flow_action_prog *)(uintptr_t)actions[idx].conf;
-+		if (!prog)
-+			continue;
-+
-+		for (j = 0; j < prog->args_num; j++) {
-+			free((void *)(uintptr_t)prog->args[j].name);
-+			free((void *)(uintptr_t)prog->args[j].value);
-+		}
-+		free((void *)(uintptr_t)prog->args);
-+		free((void *)(uintptr_t)prog->name);
-+		free(prog);
-+	}
-+}
-+
- static int
- parse_vc_action_sample(struct context *ctx, const struct token *token,
- 			 const char *str, unsigned int len, void *buf,
-@@ -13380,6 +13929,8 @@ indirect_action_list_conf_get(uint32_t conf_id)
- static void
- cmd_flow_parsed(const struct buffer *in)
- {
-+	int ret;
-+
- 	switch (in->command) {
- 	case INFO:
- 		port_flow_get_info(in->port);
-@@ -13561,9 +14112,36 @@ cmd_flow_parsed(const struct buffer *in)
- 				   &in->args.vc.tunnel_ops);
- 		break;
- 	case CREATE:
--		port_flow_create(in->port, &in->args.vc.attr,
--				 in->args.vc.pattern, in->args.vc.actions,
--				 &in->args.vc.tunnel_ops, in->args.vc.user_id);
-+		{
-+			uint32_t *converted_idx;
-+			uint32_t converted_idx_num = 0;
-+
-+			converted_idx = calloc(in->args.vc.actions_n,
-+					       sizeof(*converted_idx));
-+			if (!converted_idx) {
-+				fprintf(stderr,
-+					"Warning: Failed to allocate conversion index list\n");
-+				break;
-+			}
-+
-+			/* Convert from action_prog_data to rte_flow_action_prog. */
-+			ret = convert_action_prog_to_rte_flow(in->args.vc.actions,
-+						      0,
-+						      converted_idx,
-+						      in->args.vc.actions_n,
-+						      &converted_idx_num);
-+			if (ret < 0)
-+				fprintf(stderr,
-+					"Warning: Failed to convert program action data: %s\n",
-+					strerror(-ret));
-+			port_flow_create(in->port, &in->args.vc.attr,
-+					 in->args.vc.pattern, in->args.vc.actions,
-+					 &in->args.vc.tunnel_ops, in->args.vc.user_id);
-+			free_action_prog_converted(in->args.vc.actions,
-+						   converted_idx,
-+						   converted_idx_num);
-+			free(converted_idx);
-+		}
- 		break;
- 	case DESTROY:
- 		port_flow_destroy(in->port, in->args.destroy.rule_n,
--- 
-2.34.1
-
+VEVTVDogV2VyZSB0aGUgSW50ZWwgZHJpdmVycyB0aGUgb25seSBvbmVzIHRyaWdnZXJpbmcgdGhl
+IHdhcm5pbmdzIHdpdGggbWluZ3cgaW4gR2l0aHViPw0KDQpEZXBlbmRzLW9uOiBzZXJpZXMtMzgx
+NzQgKCJyZW1vdmUgdXNlIG9mIHJ0ZV9tZW1jcHkgZnJvbSBuZXQvaW50ZWwiKQ0KDQpWZW5saWcg
+aGlsc2VuIC8gS2luZCByZWdhcmRzLA0KLU1vcnRlbiBCcsO4cnVwDQoNCg0KVGhlIGltcGxlbWVu
+dGF0aW9uIGZvciBjb3B5aW5nIHVwIHRvIDY0IGJ5dGVzIGRvZXMgbm90IGRlcGVuZCBvbiBhZGRy
+ZXNzDQphbGlnbm1lbnQgd2l0aCB0aGUgc2l6ZSBvZiB0aGUgQ1BVJ3MgdmVjdG9yIHJlZ2lzdGVy
+cy4gTm9uZXRoZWxlc3MsIHRoZQ0KZXhhY3Qgc2FtZSBjb2RlIGZvciBjb3B5aW5nIHVwIHRvIDY0
+IGJ5dGVzIHdhcyBwcmVzZW50IGluIGJvdGggdGhlIGFsaWduZWQNCmNvcHkgZnVuY3Rpb24gYW5k
+IGFsbCB0aGUgQ1BVIHZlY3RvciByZWdpc3RlciBzaXplIHNwZWNpZmljIHZhcmlhbnRzIG9mDQp0
+aGUgdW5hbGlnbmVkIGNvcHkgZnVuY3Rpb25zLg0KV2l0aCB0aGlzIHBhdGNoLCB0aGUgaW1wbGVt
+ZW50YXRpb24gZm9yIGNvcHlpbmcgdXAgdG8gNjQgYnl0ZXMgd2FzDQpjb25zb2xpZGF0ZWQgaW50
+byBvbmUgaW5zdGFuY2UsIGxvY2F0ZWQgaW4gdGhlIGNvbW1vbiBjb3B5IGZ1bmN0aW9uLA0KYmVm
+b3JlIGNoZWNraW5nIGFsaWdubWVudCByZXF1aXJlbWVudHMuDQpUaGlzIHByb3ZpZGVzIHRocmVl
+IGJlbmVmaXRzOg0KMS4gTm8gY29weS1wYXN0ZSBpbiB0aGUgc291cmNlIGNvZGUuDQoyLiBBIHBl
+cmZvcm1hbmNlIGdhaW4gZm9yIGNvcHlpbmcgdXAgdG8gNjQgYnl0ZXMsIGJlY2F1c2UgdGhlDQph
+ZGRyZXNzIGFsaWdubWVudCBjaGVjayBpcyBhdm9pZGVkIGluIHRoaXMgY2FzZS4NCjMuIFJlZHVj
+ZWQgaW5zdHJ1Y3Rpb24gbWVtb3J5IGZvb3RwcmludCwgYmVjYXVzZSB0aGUgY29tcGlsZXIgb25s
+eQ0KZ2VuZXJhdGVzIG9uZSBpbnN0YW5jZSBvZiB0aGUgZnVuY3Rpb24gZm9yIGNvcHlpbmcgdXAg
+dG8gNjQgYnl0ZXMsIGluc3RlYWQNCm9mIHR3byBpbnN0YW5jZXMgKG9uZSBpbiB0aGUgdW5hbGln
+bmVkIGNvcHkgZnVuY3Rpb24sIGFuZCBvbmUgaW4gdGhlDQphbGlnbmVkIGNvcHkgZnVuY3Rpb24p
+Lg0KDQpGdXJ0aGVybW9yZSwgX19ydGVfcmVzdHJpY3Qgd2FzIGFkZGVkIHRvIHNvdXJjZSBhbmQg
+ZGVzdGluYXRpb24gYWRkcmVzc2VzLg0KDQpBbmQgZmluYWxseSwgdGhlIG1pc3NpbmcgaW1wbGVt
+ZW50YXRpb24gb2YgcnRlX21vdjQ4KCkgd2FzIGFkZGVkLg0KDQpSZWdhcmRpbmcgcGVyZm9ybWFu
+Y2UuLi4NClRoZSBtZW1jcHkgcGVyZm9ybWFuY2UgdGVzdCAoY2FjaGUtdG8tY2FjaGUgY29weSkg
+c2hvd3M6DQpDb3B5aW5nIHVwIHRvIDE1IGJ5dGVzIHRha2VzIGNhLiA0LjUgY3ljbGVzLCB2ZXJz
+dXMgY2EuIDYuNSBjeWNsZXMgYmVmb3JlLg0KQ29weWluZyA4IGJ5dGVzIHRha2VzIDQgY3ljbGVz
+LCB2ZXJzdXMgNyBjeWNsZXMgYmVmb3JlLg0KQ29weWluZyAxNiBieXRlcyB0YWtlcyAyIGN5Y2xl
+cywgdmVyc3VzIDQgY3ljbGVzIGJlZm9yZS4NCkNvcHlpbmcgNjQgYnl0ZXMgdGFrZXMgNCBjeWNs
+ZXMsIHZlcnN1cyA3IGN5Y2xlcyBiZWZvcmUuDQoNClNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4
+cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQpBY2tlZC1ieTogQnJ1Y2UgUmljaGFyZHNv
+biA8YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20+DQpBY2tlZC1ieTogS29uc3RhbnRpbiBBbmFu
+eWV2IDxrb25zdGFudGluLmFuYW55ZXZAaHVhd2VpLmNvbT4NCi0tLQ0Kdjk6DQoqIFJlbW92ZWQg
+bmV3IGZ1bmN0aW9ucyBydGVfbW92MTZfdG9fMzIoKSBhbmQgcnRlX21vdjMyX3RvXzY0KCksIGFu
+ZCBtb3ZlZA0KICB0aGVpciBpbXBsZW1lbnRhdGlvbnMgaW50byBydGVfbWVtY3B5KCkgaW5zdGVh
+ZC4NCiAgVGhlcmUgaXMgbm8gbmVlZCBmb3Igc3VjaCBwdWJsaWMgZnVuY3Rpb25zLCBhbmQgaGF2
+aW5nIHRoZW0gc2VwYXJhdGUgZGlkDQogIG5vdCBpbXByb3ZlIHNvdXJjZSBjb2RlIHJlYWRhYmls
+aXR5Lg0KKiBLZXB0IGFja3MgZnJvbSBCcnVjZSBhbmQgS29uc3RhbnRpbiAoYm90aCBnaXZlbiB0
+byB2NykuDQp2ODoNCiogUmV2ZXJ0ZWQgdGhlIGZpcnN0IGJyYW5jaCBmcm9tIHNpemUgPD0gMTYg
+YmFjayB0byBzaXplIDwgMTYsIHJlc3RvcmVkDQogIHRoZSBvcmlnaW5hbCBydGVfbW92MTVfb3Jf
+bGVzcygpIGZ1bmN0aW9uLCBhbmQgcmVtb3ZlZCB0aGUgbmV3DQogIHJ0ZV9tb3YxNl9vcl9sZXNz
+KCkgZnVuY3Rpb24uDQogIFdoZW4gcnRlX21lbWNweSgpIGlzIHVzZWQgZm9yIGNvcHlpbmcgYW4g
+YXJyYXkgb2YgcG9pbnRlcnMsIGFuZCB0aGUNCiAgbnVtYmVyIG9mIHBvaW50ZXJzIHRvIGNvcHkg
+aXMgbG93IChzaXplIDw9IDY0IGJ5dGVzKSwgaXQgaXMgbW9yZSBsaWtlbHkNCiAgdGhhdCB0aGUg
+bnVtYmVyIG9mIHBvaW50ZXJzIHRvIGNvcHkgaXMgMSB0aGFuIDIuDQogIFRoZSBydGVfbW92MTVf
+b3JfbGVzcygpIGltcGxlbWVudGF0aW9uIGhhbmRsZXMgY29weWluZyA4IGJ5dGVzIG1vcmUNCiAg
+ZWZmaWNpZW50bHkgdGhhbiB0aGUgcnRlX21vdjE2X29yX2xlc3MoKSBpbXBsZW1lbnRhdGlvbiwg
+d2hpY2ggY29waWVkDQogIHRoZSA4LWJ5dGUgcG9pbnRlciB0d2ljZS4NCiAgQWxzbyBub3RlIHRo
+YXQgd2l0aCBydGVfbW92MTVfb3JfbGVzcygpLCB0aGUgY29tcGlsZXIgY2FuIG9wdGltaXplIGF3
+YXkNCiAgdGhlIGJyYW5jaGVzIGhhbmRsaW5nIG4gJiAxLCBuICYgMiBhbmQgbiAmIDQgd2hlbiBp
+dCBpcyBrbm93biBhdCBjb21waWxlDQogIHRpbWUgdGhhdCAoOC1ieXRlKSBwb2ludGVycyBhcmUg
+YmVpbmcgY29waWVkLiAoRm9yIDMyLWJpdCBhcmNoaXRlY3R1cmUsDQogIHRoZSBuICYgNCB3aWxs
+IG5vdCBiZSBvcHRpbWl6ZWQgYXdheSB3aGVuIGNvcHlpbmcgcG9pbnRlcnMuKQ0KICBUaGlzIHJl
+dmVyc2lvbiBhbHNvIG1ha2VzIHRoZSBwYXRjaCBsZXNzIHJldm9sdXRpb25hcnkgYW5kIG1vcmUN
+CiAgaW5jcmVtZW50YWwuDQoqIFJlbW92ZWQgYSBsb3Qgb2YgY29kZSBmb3IgaGFuZGxpbmcgY29t
+cGlsZSB0aW1lIGtub3duIHNpemVzLiAoQnJ1Y2UpDQogIFRoZSBydGVfbWVtY3B5KCkgZnVuY3Rp
+b24gc2hvdWxkIG5vdCBiZSB1c2VkIGZvciBzbWFsbCBjb3BpZXMgd2l0aA0KICBjb21waWxlIHRp
+bWUga25vd24gc2l6ZXMsIHNvIGhhbmRsaW5nIGl0IGlzIGNvbnNpZGVyZWQgc3VwZXJmbHVvdXMu
+DQogIFJlbW92aW5nIGl0IGltcHJvdmVzIHNvdXJjZSBjb2RlIHJlYWRhYmlsaXR5LiBBbmQgcmVk
+dWNlcyB0aGUgc2l6ZSBvZg0KICB0aGUgcGF0Y2guDQoqIEtlcHQgYWNrcyBmcm9tIEJydWNlIGFu
+ZCBLb25zdGFudGluIChib3RoIGdpdmVuIHRvIHY3KS4NCnY3Og0KKiBVcGRhdGVkIHBhdGNoIGRl
+c2NyaXB0aW9uLiBNYWlubHkgdG8gY2xhcmlmeSB0aGF0IHRoZSBjaGFuZ2VzIHJlbGF0ZWQgdG8N
+CiAgY29weWluZyB1cCB0byA2NCBieXRlcyBzaW1wbHkgcmVwbGFjZXMgbXVsdGlwbGUgaW5zdGFu
+Y2VzIG9mIGNvcHktcGFzdGVkDQogIGNvZGUgd2l0aCBvbmUgY29tbW9uIGluc3RhbmNlLg0KKiBG
+aXhlZCBjb3B5IG9mIGNvbXBpbGUgdGltZSBrbm93biAxNiBieXRlcyBpbiBydGVfbW92MTdfdG9f
+MzIoKS4gKFZpcGluKQ0KKiBSZWJhc2VkLg0KdjY6DQoqIFdlbnQgYmFjayB0byB1c2luZyBydGVf
+dWludE5fYWxpYXMgc3RydWN0dXJlcyBmb3IgY29weWluZyBpbnN0ZWFkIG9mDQogIHVzaW5nIG1l
+bWNweSgpLiBUaGV5IHdlcmUgdGhlcmUgZm9yIGEgcmVhc29uLg0KICAoSW5zcGlyZWQgYnkgdGhl
+IGRpc2N1c3Npb24gYWJvdXQgb3B0aW1pemluZyB0aGUgY2hlY2tzdW0gZnVuY3Rpb24uKQ0KKiBS
+ZW1vdmVkIG5vdGUgYWJvdXQgY29weWluZyB1bmluaXRpYWxpemVkIGRhdGEuDQoqIEFkZGVkIF9f
+cnRlX3Jlc3RyaWN0IHRvIHNvdXJjZSBhbmQgZGVzdGluYXRpb24gYWRkcmVzc2VzLg0KICBVcGRh
+dGVkIGZ1bmN0aW9uIGRlc2NyaXB0aW9ucyBmcm9tICJzaG91bGQiIHRvICJtdXN0IiBub3Qgb3Zl
+cmxhcC4NCiogQ2hhbmdlZCBydGVfbW92NDgoKSBBVlggaW1wbGVtZW50YXRpb24gdG8gY29weSAz
+MisxNiBieXRlcyBpbnN0ZWFkIG9mDQogIGNvcHlpbmcgMzIgKyAzMiBvdmVybGFwcGluZyBieXRl
+cy4gKEtvbnN0YW50aW4pDQoqIElnbm9yaW5nICItV3N0cmluZ29wLW92ZXJmbG93IiBpcyBub3Qg
+bmVlZGVkLCBzbyBpdCB3YXMgcmVtb3ZlZC4NCnY1Og0KKiBSZXZlcnRlZCB2NDogUmVwbGFjZSBT
+U0UyIF9tbV9sb2FkdV9zaTEyOCgpIHdpdGggU1NFMyBfbW1fbGRkcXVfc2kxMjgoKS4NCiAgSXQg
+d2FzIHNsb3dlci4NCiogSW1wcm92ZWQgc29tZSBjb21tZW50cy4gKEtvbnN0YW50aW4gQW5hbnll
+dikNCiogTW92ZWQgdGhlIHNpemUgcmFuZ2UgMTcuLjMyIGluc2lkZSB0aGUgc2l6ZSA8PSA2NCBi
+cmFuY2gsIHNvIHdoZW4NCiAgYnVpbGRpbmcgZm9yIFNTRSwgdGhlIGdlbmVyYXRlZCBjb2RlIGNh
+biBzdGFydCBjb3B5aW5nIHRoZSBmaXJzdA0KICAxNiBieXRlcyBiZWZvcmUgY29tcGFyaW5nIGlm
+IHRoZSBzaXplIGlzIGdyZWF0ZXIgdGhhbiAzMiBvciBub3QuDQoqIEp1c3QgcmVxdWlyZSBSVEVf
+TUVNQ1BZX0FWWCBmb3IgdXNpbmcgcnRlX21vdjMyKCkgaW4gcnRlX21vdjMzX3RvXzY0KCkuDQp2
+NDoNCiogUmVwbGFjZSBTU0UyIF9tbV9sb2FkdV9zaTEyOCgpIHdpdGggU1NFMyBfbW1fbGRkcXVf
+c2kxMjgoKS4NCnYzOg0KKiBGaXhlZCB0eXBvIGluIGNvbW1lbnQuDQp2MjoNCiogVXBkYXRlZCBw
+YXRjaCB0aXRsZSB0byByZWZsZWN0IHRoYXQgdGhlIHBlcmZvcm1hbmNlIGlzIGltcHJvdmVkLg0K
+KiBVc2UgdGhlIGRlc2lnbiBwYXR0ZXJuIG9mIHR3byBvdmVybGFwcGluZyBzdG9yZXMgZm9yIHNt
+YWxsIGNvcGllcyB0b28uDQoqIEV4cGFuZGVkIGZpcnN0IGJyYW5jaCBmcm9tIHNpemUgPCAxNiB0
+byBzaXplIDw9IDE2Lg0KKiBIYW5kbGUgbW9yZSBjb21waWxlIHRpbWUgY29uc3RhbnQgY29weSBz
+aXplcy4NCi0tLQ0KIGxpYi9lYWwveDg2L2luY2x1ZGUvcnRlX21lbWNweS5oIHwgMjUwICsrKysr
+KysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgMTAyIGluc2VydGlv
+bnMoKyksIDE0OCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2xpYi9lYWwveDg2L2luY2x1
+ZGUvcnRlX21lbWNweS5oIGIvbGliL2VhbC94ODYvaW5jbHVkZS9ydGVfbWVtY3B5LmgNCmluZGV4
+IDQ2ZDM0YjgwODEuLjhlZDhjNTUwMTAgMTAwNjQ0DQotLS0gYS9saWIvZWFsL3g4Ni9pbmNsdWRl
+L3J0ZV9tZW1jcHkuaA0KKysrIGIvbGliL2VhbC94ODYvaW5jbHVkZS9ydGVfbWVtY3B5LmgNCkBA
+IC0yMiwxMSArMjIsNiBAQA0KIGV4dGVybiAiQyIgew0KICNlbmRpZg0KIA0KLSNpZiBkZWZpbmVk
+KFJURV9UT09MQ0hBSU5fR0NDKSAmJiAoR0NDX1ZFUlNJT04gPj0gMTAwMDAwKQ0KLSNwcmFnbWEg
+R0NDIGRpYWdub3N0aWMgcHVzaA0KLSNwcmFnbWEgR0NDIGRpYWdub3N0aWMgaWdub3JlZCAiLVdz
+dHJpbmdvcC1vdmVyZmxvdyINCi0jZW5kaWYNCi0NCiAvKg0KICAqIEdDQyBvbGRlciB0aGFuIHZl
+cnNpb24gMTEgZG9lc24ndCBjb21waWxlIEFWWCBwcm9wZXJseSwgc28gdXNlIFNTRSBpbnN0ZWFk
+Lg0KICAqIFRoZXJlIGFyZSBubyBwcm9ibGVtcyB3aXRoIEFWWDIuDQpAQCAtNDAsOSArMzUsNiBA
+QCBleHRlcm4gIkMiIHsNCiAvKioNCiAgKiBDb3B5IGJ5dGVzIGZyb20gb25lIGxvY2F0aW9uIHRv
+IGFub3RoZXIuIFRoZSBsb2NhdGlvbnMgbXVzdCBub3Qgb3ZlcmxhcC4NCiAgKg0KLSAqIEBub3Rl
+IFRoaXMgaXMgaW1wbGVtZW50ZWQgYXMgYSBtYWNybywgc28gaXQncyBhZGRyZXNzIHNob3VsZCBu
+b3QgYmUgdGFrZW4NCi0gKiBhbmQgY2FyZSBpcyBuZWVkZWQgYXMgcGFyYW1ldGVyIGV4cHJlc3Np
+b25zIG1heSBiZSBldmFsdWF0ZWQgbXVsdGlwbGUgdGltZXMuDQotICoNCiAgKiBAcGFyYW0gZHN0
+DQogICogICBQb2ludGVyIHRvIHRoZSBkZXN0aW5hdGlvbiBvZiB0aGUgZGF0YS4NCiAgKiBAcGFy
+YW0gc3JjDQpAQCAtNTMsMTUgKzQ1LDE1IEBAIGV4dGVybiAiQyIgew0KICAqICAgUG9pbnRlciB0
+byB0aGUgZGVzdGluYXRpb24gZGF0YS4NCiAgKi8NCiBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGlu
+ZSB2b2lkICoNCi1ydGVfbWVtY3B5KHZvaWQgKmRzdCwgY29uc3Qgdm9pZCAqc3JjLCBzaXplX3Qg
+bik7DQorcnRlX21lbWNweSh2b2lkICpfX3J0ZV9yZXN0cmljdCBkc3QsIGNvbnN0IHZvaWQgKl9f
+cnRlX3Jlc3RyaWN0IHNyYywgc2l6ZV90IG4pOw0KIA0KIC8qKg0KICAqIENvcHkgYnl0ZXMgZnJv
+bSBvbmUgbG9jYXRpb24gdG8gYW5vdGhlciwNCi0gKiBsb2NhdGlvbnMgc2hvdWxkIG5vdCBvdmVy
+bGFwLg0KKyAqIGxvY2F0aW9ucyBtdXN0IG5vdCBvdmVybGFwLg0KICAqIFVzZSB3aXRoIG4gPD0g
+MTUuDQogICovDQogc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgdm9pZCAqDQotcnRlX21vdjE1
+X29yX2xlc3Modm9pZCAqZHN0LCBjb25zdCB2b2lkICpzcmMsIHNpemVfdCBuKQ0KK3J0ZV9tb3Yx
+NV9vcl9sZXNzKHZvaWQgKl9fcnRlX3Jlc3RyaWN0IGRzdCwgY29uc3Qgdm9pZCAqX19ydGVfcmVz
+dHJpY3Qgc3JjLCBzaXplX3QgbikNCiB7DQogCS8qKg0KIAkgKiBVc2UgdGhlIGZvbGxvd2luZyBz
+dHJ1Y3RzIHRvIGF2b2lkIHZpb2xhdGluZyBDIHN0YW5kYXJkDQpAQCAtMTAzLDEwICs5NSwxMCBA
+QCBydGVfbW92MTVfb3JfbGVzcyh2b2lkICpkc3QsIGNvbnN0IHZvaWQgKnNyYywgc2l6ZV90IG4p
+DQogDQogLyoqDQogICogQ29weSAxNiBieXRlcyBmcm9tIG9uZSBsb2NhdGlvbiB0byBhbm90aGVy
+LA0KLSAqIGxvY2F0aW9ucyBzaG91bGQgbm90IG92ZXJsYXAuDQorICogbG9jYXRpb25zIG11c3Qg
+bm90IG92ZXJsYXAuDQogICovDQogc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgdm9pZA0KLXJ0
+ZV9tb3YxNih1aW50OF90ICpkc3QsIGNvbnN0IHVpbnQ4X3QgKnNyYykNCitydGVfbW92MTYodWlu
+dDhfdCAqX19ydGVfcmVzdHJpY3QgZHN0LCBjb25zdCB1aW50OF90ICpfX3J0ZV9yZXN0cmljdCBz
+cmMpDQogew0KIAlfX20xMjhpIHhtbTA7DQogDQpAQCAtMTE2LDEwICsxMDgsMTAgQEAgcnRlX21v
+djE2KHVpbnQ4X3QgKmRzdCwgY29uc3QgdWludDhfdCAqc3JjKQ0KIA0KIC8qKg0KICAqIENvcHkg
+MzIgYnl0ZXMgZnJvbSBvbmUgbG9jYXRpb24gdG8gYW5vdGhlciwNCi0gKiBsb2NhdGlvbnMgc2hv
+dWxkIG5vdCBvdmVybGFwLg0KKyAqIGxvY2F0aW9ucyBtdXN0IG5vdCBvdmVybGFwLg0KICAqLw0K
+IHN0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHZvaWQNCi1ydGVfbW92MzIodWludDhfdCAqZHN0
+LCBjb25zdCB1aW50OF90ICpzcmMpDQorcnRlX21vdjMyKHVpbnQ4X3QgKl9fcnRlX3Jlc3RyaWN0
+IGRzdCwgY29uc3QgdWludDhfdCAqX19ydGVfcmVzdHJpY3Qgc3JjKQ0KIHsNCiAjaWYgZGVmaW5l
+ZCBSVEVfTUVNQ1BZX0FWWA0KIAlfX20yNTZpIHltbTA7DQpAQCAtMTMyLDEyICsxMjQsMjkgQEAg
+cnRlX21vdjMyKHVpbnQ4X3QgKmRzdCwgY29uc3QgdWludDhfdCAqc3JjKQ0KICNlbmRpZg0KIH0N
+CiANCisvKioNCisgKiBDb3B5IDQ4IGJ5dGVzIGZyb20gb25lIGxvY2F0aW9uIHRvIGFub3RoZXIs
+DQorICogbG9jYXRpb25zIG11c3Qgbm90IG92ZXJsYXAuDQorICovDQorc3RhdGljIF9fcnRlX2Fs
+d2F5c19pbmxpbmUgdm9pZA0KK3J0ZV9tb3Y0OCh1aW50OF90ICpfX3J0ZV9yZXN0cmljdCBkc3Qs
+IGNvbnN0IHVpbnQ4X3QgKl9fcnRlX3Jlc3RyaWN0IHNyYykNCit7DQorI2lmIGRlZmluZWQgUlRF
+X01FTUNQWV9BVlgNCisJcnRlX21vdjMyKCh1aW50OF90ICopZHN0LCAoY29uc3QgdWludDhfdCAq
+KXNyYyk7DQorCXJ0ZV9tb3YxNigodWludDhfdCAqKWRzdCArIDMyLCAoY29uc3QgdWludDhfdCAq
+KXNyYyArIDMyKTsNCisjZWxzZSAvKiBTU0UgaW1wbGVtZW50YXRpb24gKi8NCisJcnRlX21vdjE2
+KCh1aW50OF90ICopZHN0ICsgMCAqIDE2LCAoY29uc3QgdWludDhfdCAqKXNyYyArIDAgKiAxNik7
+DQorCXJ0ZV9tb3YxNigodWludDhfdCAqKWRzdCArIDEgKiAxNiwgKGNvbnN0IHVpbnQ4X3QgKilz
+cmMgKyAxICogMTYpOw0KKwlydGVfbW92MTYoKHVpbnQ4X3QgKilkc3QgKyAyICogMTYsIChjb25z
+dCB1aW50OF90ICopc3JjICsgMiAqIDE2KTsNCisjZW5kaWYNCit9DQorDQogLyoqDQogICogQ29w
+eSA2NCBieXRlcyBmcm9tIG9uZSBsb2NhdGlvbiB0byBhbm90aGVyLA0KLSAqIGxvY2F0aW9ucyBz
+aG91bGQgbm90IG92ZXJsYXAuDQorICogbG9jYXRpb25zIG11c3Qgbm90IG92ZXJsYXAuDQogICov
+DQogc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgdm9pZA0KLXJ0ZV9tb3Y2NCh1aW50OF90ICpk
+c3QsIGNvbnN0IHVpbnQ4X3QgKnNyYykNCitydGVfbW92NjQodWludDhfdCAqX19ydGVfcmVzdHJp
+Y3QgZHN0LCBjb25zdCB1aW50OF90ICpfX3J0ZV9yZXN0cmljdCBzcmMpDQogew0KICNpZiBkZWZp
+bmVkIF9fQVZYNTEyRl9fICYmIGRlZmluZWQgUlRFX01FTUNQWV9BVlg1MTINCiAJX19tNTEyaSB6
+bW0wOw0KQEAgLTE1MiwxMCArMTYxLDEwIEBAIHJ0ZV9tb3Y2NCh1aW50OF90ICpkc3QsIGNvbnN0
+IHVpbnQ4X3QgKnNyYykNCiANCiAvKioNCiAgKiBDb3B5IDEyOCBieXRlcyBmcm9tIG9uZSBsb2Nh
+dGlvbiB0byBhbm90aGVyLA0KLSAqIGxvY2F0aW9ucyBzaG91bGQgbm90IG92ZXJsYXAuDQorICog
+bG9jYXRpb25zIG11c3Qgbm90IG92ZXJsYXAuDQogICovDQogc3RhdGljIF9fcnRlX2Fsd2F5c19p
+bmxpbmUgdm9pZA0KLXJ0ZV9tb3YxMjgodWludDhfdCAqZHN0LCBjb25zdCB1aW50OF90ICpzcmMp
+DQorcnRlX21vdjEyOCh1aW50OF90ICpfX3J0ZV9yZXN0cmljdCBkc3QsIGNvbnN0IHVpbnQ4X3Qg
+Kl9fcnRlX3Jlc3RyaWN0IHNyYykNCiB7DQogCXJ0ZV9tb3Y2NChkc3QgKyAwICogNjQsIHNyYyAr
+IDAgKiA2NCk7DQogCXJ0ZV9tb3Y2NChkc3QgKyAxICogNjQsIHNyYyArIDEgKiA2NCk7DQpAQCAt
+MTYzLDEwICsxNzIsMTAgQEAgcnRlX21vdjEyOCh1aW50OF90ICpkc3QsIGNvbnN0IHVpbnQ4X3Qg
+KnNyYykNCiANCiAvKioNCiAgKiBDb3B5IDI1NiBieXRlcyBmcm9tIG9uZSBsb2NhdGlvbiB0byBh
+bm90aGVyLA0KLSAqIGxvY2F0aW9ucyBzaG91bGQgbm90IG92ZXJsYXAuDQorICogbG9jYXRpb25z
+IG11c3Qgbm90IG92ZXJsYXAuDQogICovDQogc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgdm9p
+ZA0KLXJ0ZV9tb3YyNTYodWludDhfdCAqZHN0LCBjb25zdCB1aW50OF90ICpzcmMpDQorcnRlX21v
+djI1Nih1aW50OF90ICpfX3J0ZV9yZXN0cmljdCBkc3QsIGNvbnN0IHVpbnQ4X3QgKl9fcnRlX3Jl
+c3RyaWN0IHNyYykNCiB7DQogCXJ0ZV9tb3YxMjgoZHN0ICsgMCAqIDEyOCwgc3JjICsgMCAqIDEy
+OCk7DQogCXJ0ZV9tb3YxMjgoZHN0ICsgMSAqIDEyOCwgc3JjICsgMSAqIDEyOCk7DQpAQCAtMTgy
+LDEwICsxOTEsMTAgQEAgcnRlX21vdjI1Nih1aW50OF90ICpkc3QsIGNvbnN0IHVpbnQ4X3QgKnNy
+YykNCiANCiAvKioNCiAgKiBDb3B5IDEyOC1ieXRlIGJsb2NrcyBmcm9tIG9uZSBsb2NhdGlvbiB0
+byBhbm90aGVyLA0KLSAqIGxvY2F0aW9ucyBzaG91bGQgbm90IG92ZXJsYXAuDQorICogbG9jYXRp
+b25zIG11c3Qgbm90IG92ZXJsYXAuDQogICovDQogc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUg
+dm9pZA0KLXJ0ZV9tb3YxMjhibG9ja3ModWludDhfdCAqZHN0LCBjb25zdCB1aW50OF90ICpzcmMs
+IHNpemVfdCBuKQ0KK3J0ZV9tb3YxMjhibG9ja3ModWludDhfdCAqX19ydGVfcmVzdHJpY3QgZHN0
+LCBjb25zdCB1aW50OF90ICpfX3J0ZV9yZXN0cmljdCBzcmMsIHNpemVfdCBuKQ0KIHsNCiAJX19t
+NTEyaSB6bW0wLCB6bW0xOw0KIA0KQEAgLTIwMiwxMCArMjExLDEwIEBAIHJ0ZV9tb3YxMjhibG9j
+a3ModWludDhfdCAqZHN0LCBjb25zdCB1aW50OF90ICpzcmMsIHNpemVfdCBuKQ0KIA0KIC8qKg0K
+ICAqIENvcHkgNTEyLWJ5dGUgYmxvY2tzIGZyb20gb25lIGxvY2F0aW9uIHRvIGFub3RoZXIsDQot
+ICogbG9jYXRpb25zIHNob3VsZCBub3Qgb3ZlcmxhcC4NCisgKiBsb2NhdGlvbnMgbXVzdCBub3Qg
+b3ZlcmxhcC4NCiAgKi8NCiBzdGF0aWMgaW5saW5lIHZvaWQNCi1ydGVfbW92NTEyYmxvY2tzKHVp
+bnQ4X3QgKmRzdCwgY29uc3QgdWludDhfdCAqc3JjLCBzaXplX3QgbikNCitydGVfbW92NTEyYmxv
+Y2tzKHVpbnQ4X3QgKl9fcnRlX3Jlc3RyaWN0IGRzdCwgY29uc3QgdWludDhfdCAqX19ydGVfcmVz
+dHJpY3Qgc3JjLCBzaXplX3QgbikNCiB7DQogCV9fbTUxMmkgem1tMCwgem1tMSwgem1tMiwgem1t
+Mywgem1tNCwgem1tNSwgem1tNiwgem1tNzsNCiANCkBAIC0yMzIsNDUgKzI0MSwyMiBAQCBydGVf
+bW92NTEyYmxvY2tzKHVpbnQ4X3QgKmRzdCwgY29uc3QgdWludDhfdCAqc3JjLCBzaXplX3QgbikN
+CiAJfQ0KIH0NCiANCisvKioNCisgKiBDb3B5IGJ5dGVzIGZyb20gb25lIGxvY2F0aW9uIHRvIGFu
+b3RoZXIsDQorICogbG9jYXRpb25zIG11c3Qgbm90IG92ZXJsYXAuDQorICogVXNlIHdpdGggbiA+
+IDY0Lg0KKyAqLw0KIHN0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHZvaWQgKg0KLXJ0ZV9tZW1j
+cHlfZ2VuZXJpYyh2b2lkICpkc3QsIGNvbnN0IHZvaWQgKnNyYywgc2l6ZV90IG4pDQorcnRlX21l
+bWNweV9nZW5lcmljX21vcmVfdGhhbl82NCh2b2lkICpfX3J0ZV9yZXN0cmljdCBkc3QsIGNvbnN0
+IHZvaWQgKl9fcnRlX3Jlc3RyaWN0IHNyYywNCisJCXNpemVfdCBuKQ0KIHsNCiAJdm9pZCAqcmV0
+ID0gZHN0Ow0KIAlzaXplX3QgZHN0b2ZzczsNCiAJc2l6ZV90IGJpdHM7DQogDQotCS8qKg0KLQkg
+KiBDb3B5IGxlc3MgdGhhbiAxNiBieXRlcw0KLQkgKi8NCi0JaWYgKG4gPCAxNikgew0KLQkJcmV0
+dXJuIHJ0ZV9tb3YxNV9vcl9sZXNzKGRzdCwgc3JjLCBuKTsNCi0JfQ0KLQ0KIAkvKioNCiAJICog
+RmFzdCB3YXkgd2hlbiBjb3B5IHNpemUgZG9lc24ndCBleGNlZWQgNTEyIGJ5dGVzDQogCSAqLw0K
+LQlpZiAoX19ydGVfY29uc3RhbnQobikgJiYgbiA9PSAzMikgew0KLQkJcnRlX21vdjMyKCh1aW50
+OF90ICopZHN0LCAoY29uc3QgdWludDhfdCAqKXNyYyk7DQotCQlyZXR1cm4gcmV0Ow0KLQl9DQot
+CWlmIChuIDw9IDMyKSB7DQotCQlydGVfbW92MTYoKHVpbnQ4X3QgKilkc3QsIChjb25zdCB1aW50
+OF90ICopc3JjKTsNCi0JCWlmIChfX3J0ZV9jb25zdGFudChuKSAmJiBuID09IDE2KQ0KLQkJCXJl
+dHVybiByZXQ7IC8qIGF2b2lkIChoYXJtbGVzcykgZHVwbGljYXRlIGNvcHkgKi8NCi0JCXJ0ZV9t
+b3YxNigodWludDhfdCAqKWRzdCAtIDE2ICsgbiwNCi0JCQkJICAoY29uc3QgdWludDhfdCAqKXNy
+YyAtIDE2ICsgbik7DQotCQlyZXR1cm4gcmV0Ow0KLQl9DQotCWlmIChfX3J0ZV9jb25zdGFudChu
+KSAmJiBuID09IDY0KSB7DQotCQlydGVfbW92NjQoKHVpbnQ4X3QgKilkc3QsIChjb25zdCB1aW50
+OF90ICopc3JjKTsNCi0JCXJldHVybiByZXQ7DQotCX0NCi0JaWYgKG4gPD0gNjQpIHsNCi0JCXJ0
+ZV9tb3YzMigodWludDhfdCAqKWRzdCwgKGNvbnN0IHVpbnQ4X3QgKilzcmMpOw0KLQkJcnRlX21v
+djMyKCh1aW50OF90ICopZHN0IC0gMzIgKyBuLA0KLQkJCQkgIChjb25zdCB1aW50OF90ICopc3Jj
+IC0gMzIgKyBuKTsNCi0JCXJldHVybiByZXQ7DQotCX0NCiAJaWYgKG4gPD0gNTEyKSB7DQogCQlp
+ZiAobiA+PSAyNTYpIHsNCiAJCQluIC09IDI1NjsNCkBAIC0zNTEsMTAgKzMzNywxMCBAQCBydGVf
+bWVtY3B5X2dlbmVyaWModm9pZCAqZHN0LCBjb25zdCB2b2lkICpzcmMsIHNpemVfdCBuKQ0KIA0K
+IC8qKg0KICAqIENvcHkgMTI4LWJ5dGUgYmxvY2tzIGZyb20gb25lIGxvY2F0aW9uIHRvIGFub3Ro
+ZXIsDQotICogbG9jYXRpb25zIHNob3VsZCBub3Qgb3ZlcmxhcC4NCisgKiBsb2NhdGlvbnMgbXVz
+dCBub3Qgb3ZlcmxhcC4NCiAgKi8NCiBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB2b2lkDQot
+cnRlX21vdjEyOGJsb2Nrcyh1aW50OF90ICpkc3QsIGNvbnN0IHVpbnQ4X3QgKnNyYywgc2l6ZV90
+IG4pDQorcnRlX21vdjEyOGJsb2Nrcyh1aW50OF90ICpfX3J0ZV9yZXN0cmljdCBkc3QsIGNvbnN0
+IHVpbnQ4X3QgKl9fcnRlX3Jlc3RyaWN0IHNyYywgc2l6ZV90IG4pDQogew0KIAlfX20yNTZpIHlt
+bTAsIHltbTEsIHltbTIsIHltbTM7DQogDQpAQCAtMzgxLDQxICszNjcsMjIgQEAgcnRlX21vdjEy
+OGJsb2Nrcyh1aW50OF90ICpkc3QsIGNvbnN0IHVpbnQ4X3QgKnNyYywgc2l6ZV90IG4pDQogCX0N
+CiB9DQogDQorLyoqDQorICogQ29weSBieXRlcyBmcm9tIG9uZSBsb2NhdGlvbiB0byBhbm90aGVy
+LA0KKyAqIGxvY2F0aW9ucyBtdXN0IG5vdCBvdmVybGFwLg0KKyAqIFVzZSB3aXRoIG4gPiA2NC4N
+CisgKi8NCiBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB2b2lkICoNCi1ydGVfbWVtY3B5X2dl
+bmVyaWModm9pZCAqZHN0LCBjb25zdCB2b2lkICpzcmMsIHNpemVfdCBuKQ0KK3J0ZV9tZW1jcHlf
+Z2VuZXJpY19tb3JlX3RoYW5fNjQodm9pZCAqX19ydGVfcmVzdHJpY3QgZHN0LCBjb25zdCB2b2lk
+ICpfX3J0ZV9yZXN0cmljdCBzcmMsDQorCQlzaXplX3QgbikNCiB7DQogCXZvaWQgKnJldCA9IGRz
+dDsNCiAJc2l6ZV90IGRzdG9mc3M7DQogCXNpemVfdCBiaXRzOw0KIA0KLQkvKioNCi0JICogQ29w
+eSBsZXNzIHRoYW4gMTYgYnl0ZXMNCi0JICovDQotCWlmIChuIDwgMTYpIHsNCi0JCXJldHVybiBy
+dGVfbW92MTVfb3JfbGVzcyhkc3QsIHNyYywgbik7DQotCX0NCi0NCiAJLyoqDQogCSAqIEZhc3Qg
+d2F5IHdoZW4gY29weSBzaXplIGRvZXNuJ3QgZXhjZWVkIDI1NiBieXRlcw0KIAkgKi8NCi0JaWYg
+KF9fcnRlX2NvbnN0YW50KG4pICYmIG4gPT0gMzIpIHsNCi0JCXJ0ZV9tb3YzMigodWludDhfdCAq
+KWRzdCwgKGNvbnN0IHVpbnQ4X3QgKilzcmMpOw0KLQkJcmV0dXJuIHJldDsNCi0JfQ0KLQlpZiAo
+biA8PSAzMikgew0KLQkJcnRlX21vdjE2KCh1aW50OF90ICopZHN0LCAoY29uc3QgdWludDhfdCAq
+KXNyYyk7DQotCQlpZiAoX19ydGVfY29uc3RhbnQobikgJiYgbiA9PSAxNikNCi0JCQlyZXR1cm4g
+cmV0OyAvKiBhdm9pZCAoaGFybWxlc3MpIGR1cGxpY2F0ZSBjb3B5ICovDQotCQlydGVfbW92MTYo
+KHVpbnQ4X3QgKilkc3QgLSAxNiArIG4sDQotCQkJCShjb25zdCB1aW50OF90ICopc3JjIC0gMTYg
+KyBuKTsNCi0JCXJldHVybiByZXQ7DQotCX0NCi0JaWYgKG4gPD0gNjQpIHsNCi0JCXJ0ZV9tb3Yz
+MigodWludDhfdCAqKWRzdCwgKGNvbnN0IHVpbnQ4X3QgKilzcmMpOw0KLQkJcnRlX21vdjMyKCh1
+aW50OF90ICopZHN0IC0gMzIgKyBuLA0KLQkJCQkoY29uc3QgdWludDhfdCAqKXNyYyAtIDMyICsg
+bik7DQotCQlyZXR1cm4gcmV0Ow0KLQl9DQogCWlmIChuIDw9IDI1Nikgew0KIAkJaWYgKG4gPj0g
+MTI4KSB7DQogCQkJbiAtPSAxMjg7DQpAQCAtNDgyLDcgKzQ0OSw3IEBAIHJ0ZV9tZW1jcHlfZ2Vu
+ZXJpYyh2b2lkICpkc3QsIGNvbnN0IHZvaWQgKnNyYywgc2l6ZV90IG4pDQogLyoqDQogICogTWFj
+cm8gZm9yIGNvcHlpbmcgdW5hbGlnbmVkIGJsb2NrIGZyb20gb25lIGxvY2F0aW9uIHRvIGFub3Ro
+ZXIgd2l0aCBjb25zdGFudCBsb2FkIG9mZnNldCwNCiAgKiA0NyBieXRlcyBsZWZ0b3ZlciBtYXhp
+bXVtLA0KLSAqIGxvY2F0aW9ucyBzaG91bGQgbm90IG92ZXJsYXAuDQorICogbG9jYXRpb25zIG11
+c3Qgbm90IG92ZXJsYXAuDQogICogUmVxdWlyZW1lbnRzOg0KICAqIC0gU3RvcmUgaXMgYWxpZ25l
+ZA0KICAqIC0gTG9hZCBvZmZzZXQgaXMgPG9mZnNldD4sIHdoaWNoIG11c3QgYmUgaW1tZWRpYXRl
+IHZhbHVlIHdpdGhpbiBbMSwgMTVdDQpAQCAtNTQyLDcgKzUwOSw3IEBAIHJ0ZV9tZW1jcHlfZ2Vu
+ZXJpYyh2b2lkICpkc3QsIGNvbnN0IHZvaWQgKnNyYywgc2l6ZV90IG4pDQogLyoqDQogICogTWFj
+cm8gZm9yIGNvcHlpbmcgdW5hbGlnbmVkIGJsb2NrIGZyb20gb25lIGxvY2F0aW9uIHRvIGFub3Ro
+ZXIsDQogICogNDcgYnl0ZXMgbGVmdG92ZXIgbWF4aW11bSwNCi0gKiBsb2NhdGlvbnMgc2hvdWxk
+IG5vdCBvdmVybGFwLg0KKyAqIGxvY2F0aW9ucyBtdXN0IG5vdCBvdmVybGFwLg0KICAqIFVzZSBz
+d2l0Y2ggaGVyZSBiZWNhdXNlIHRoZSBhbGlnbmluZyBpbnN0cnVjdGlvbiByZXF1aXJlcyBpbW1l
+ZGlhdGUgdmFsdWUgZm9yIHNoaWZ0IGNvdW50Lg0KICAqIFJlcXVpcmVtZW50czoNCiAgKiAtIFN0
+b3JlIGlzIGFsaWduZWQNCkBAIC01NzMsMzggKzU0MCwyMyBAQCBydGVfbWVtY3B5X2dlbmVyaWMo
+dm9pZCAqZHN0LCBjb25zdCB2b2lkICpzcmMsIHNpemVfdCBuKQ0KICAgICB9ICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcDQog
+fQ0KIA0KKy8qKg0KKyAqIENvcHkgYnl0ZXMgZnJvbSBvbmUgbG9jYXRpb24gdG8gYW5vdGhlciwN
+CisgKiBsb2NhdGlvbnMgbXVzdCBub3Qgb3ZlcmxhcC4NCisgKiBVc2Ugd2l0aCBuID4gNjQuDQor
+ICovDQogc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgdm9pZCAqDQotcnRlX21lbWNweV9nZW5l
+cmljKHZvaWQgKmRzdCwgY29uc3Qgdm9pZCAqc3JjLCBzaXplX3QgbikNCitydGVfbWVtY3B5X2dl
+bmVyaWNfbW9yZV90aGFuXzY0KHZvaWQgKl9fcnRlX3Jlc3RyaWN0IGRzdCwgY29uc3Qgdm9pZCAq
+X19ydGVfcmVzdHJpY3Qgc3JjLA0KKwkJc2l6ZV90IG4pDQogew0KIAlfX20xMjhpIHhtbTAsIHht
+bTEsIHhtbTIsIHhtbTMsIHhtbTQsIHhtbTUsIHhtbTYsIHhtbTcsIHhtbTg7DQogCXZvaWQgKnJl
+dCA9IGRzdDsNCiAJc2l6ZV90IGRzdG9mc3M7DQogCXNpemVfdCBzcmNvZnM7DQogDQotCS8qKg0K
+LQkgKiBDb3B5IGxlc3MgdGhhbiAxNiBieXRlcw0KLQkgKi8NCi0JaWYgKG4gPCAxNikgew0KLQkJ
+cmV0dXJuIHJ0ZV9tb3YxNV9vcl9sZXNzKGRzdCwgc3JjLCBuKTsNCi0JfQ0KLQ0KIAkvKioNCiAJ
+ICogRmFzdCB3YXkgd2hlbiBjb3B5IHNpemUgZG9lc24ndCBleGNlZWQgNTEyIGJ5dGVzDQogCSAq
+Lw0KLQlpZiAobiA8PSAzMikgew0KLQkJcnRlX21vdjE2KCh1aW50OF90ICopZHN0LCAoY29uc3Qg
+dWludDhfdCAqKXNyYyk7DQotCQlpZiAoX19ydGVfY29uc3RhbnQobikgJiYgbiA9PSAxNikNCi0J
+CQlyZXR1cm4gcmV0OyAvKiBhdm9pZCAoaGFybWxlc3MpIGR1cGxpY2F0ZSBjb3B5ICovDQotCQly
+dGVfbW92MTYoKHVpbnQ4X3QgKilkc3QgLSAxNiArIG4sIChjb25zdCB1aW50OF90ICopc3JjIC0g
+MTYgKyBuKTsNCi0JCXJldHVybiByZXQ7DQotCX0NCi0JaWYgKG4gPD0gNjQpIHsNCi0JCXJ0ZV9t
+b3YzMigodWludDhfdCAqKWRzdCwgKGNvbnN0IHVpbnQ4X3QgKilzcmMpOw0KLQkJaWYgKG4gPiA0
+OCkNCi0JCQlydGVfbW92MTYoKHVpbnQ4X3QgKilkc3QgKyAzMiwgKGNvbnN0IHVpbnQ4X3QgKilz
+cmMgKyAzMik7DQotCQlydGVfbW92MTYoKHVpbnQ4X3QgKilkc3QgLSAxNiArIG4sIChjb25zdCB1
+aW50OF90ICopc3JjIC0gMTYgKyBuKTsNCi0JCXJldHVybiByZXQ7DQotCX0NCiAJaWYgKG4gPD0g
+MTI4KSB7DQogCQlnb3RvIENPUFlfQkxPQ0tfMTI4X0JBQ0sxNTsNCiAJfQ0KQEAgLTY5Niw0NCAr
+NjQ4LDE3IEBAIHJ0ZV9tZW1jcHlfZ2VuZXJpYyh2b2lkICpkc3QsIGNvbnN0IHZvaWQgKnNyYywg
+c2l6ZV90IG4pDQogDQogI2VuZGlmIC8qIF9fQVZYNTEyRl9fICovDQogDQorLyoqDQorICogQ29w
+eSBieXRlcyBmcm9tIG9uZSB2ZWN0b3IgcmVnaXN0ZXIgc2l6ZSBhbGlnbmVkIGxvY2F0aW9uIHRv
+IGFub3RoZXIsDQorICogbG9jYXRpb25zIG11c3Qgbm90IG92ZXJsYXAuDQorICogVXNlIHdpdGgg
+biA+IDY0Lg0KKyAqLw0KIHN0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHZvaWQgKg0KLXJ0ZV9t
+ZW1jcHlfYWxpZ25lZCh2b2lkICpkc3QsIGNvbnN0IHZvaWQgKnNyYywgc2l6ZV90IG4pDQorcnRl
+X21lbWNweV9hbGlnbmVkX21vcmVfdGhhbl82NCh2b2lkICpfX3J0ZV9yZXN0cmljdCBkc3QsIGNv
+bnN0IHZvaWQgKl9fcnRlX3Jlc3RyaWN0IHNyYywNCisJCXNpemVfdCBuKQ0KIHsNCiAJdm9pZCAq
+cmV0ID0gZHN0Ow0KIA0KLQkvKiBDb3B5IHNpemUgPCAxNiBieXRlcyAqLw0KLQlpZiAobiA8IDE2
+KSB7DQotCQlyZXR1cm4gcnRlX21vdjE1X29yX2xlc3MoZHN0LCBzcmMsIG4pOw0KLQl9DQotDQot
+CS8qIENvcHkgMTYgPD0gc2l6ZSA8PSAzMiBieXRlcyAqLw0KLQlpZiAoX19ydGVfY29uc3RhbnQo
+bikgJiYgbiA9PSAzMikgew0KLQkJcnRlX21vdjMyKCh1aW50OF90ICopZHN0LCAoY29uc3QgdWlu
+dDhfdCAqKXNyYyk7DQotCQlyZXR1cm4gcmV0Ow0KLQl9DQotCWlmIChuIDw9IDMyKSB7DQotCQly
+dGVfbW92MTYoKHVpbnQ4X3QgKilkc3QsIChjb25zdCB1aW50OF90ICopc3JjKTsNCi0JCWlmIChf
+X3J0ZV9jb25zdGFudChuKSAmJiBuID09IDE2KQ0KLQkJCXJldHVybiByZXQ7IC8qIGF2b2lkICho
+YXJtbGVzcykgZHVwbGljYXRlIGNvcHkgKi8NCi0JCXJ0ZV9tb3YxNigodWludDhfdCAqKWRzdCAt
+IDE2ICsgbiwNCi0JCQkJKGNvbnN0IHVpbnQ4X3QgKilzcmMgLSAxNiArIG4pOw0KLQ0KLQkJcmV0
+dXJuIHJldDsNCi0JfQ0KLQ0KLQkvKiBDb3B5IDMyIDwgc2l6ZSA8PSA2NCBieXRlcyAqLw0KLQlp
+ZiAoX19ydGVfY29uc3RhbnQobikgJiYgbiA9PSA2NCkgew0KLQkJcnRlX21vdjY0KCh1aW50OF90
+ICopZHN0LCAoY29uc3QgdWludDhfdCAqKXNyYyk7DQotCQlyZXR1cm4gcmV0Ow0KLQl9DQotCWlm
+IChuIDw9IDY0KSB7DQotCQlydGVfbW92MzIoKHVpbnQ4X3QgKilkc3QsIChjb25zdCB1aW50OF90
+ICopc3JjKTsNCi0JCXJ0ZV9tb3YzMigodWludDhfdCAqKWRzdCAtIDMyICsgbiwNCi0JCQkJKGNv
+bnN0IHVpbnQ4X3QgKilzcmMgLSAzMiArIG4pOw0KLQ0KLQkJcmV0dXJuIHJldDsNCi0JfQ0KLQ0K
+IAkvKiBDb3B5IDY0IGJ5dGVzIGJsb2NrcyAqLw0KIAlmb3IgKDsgbiA+IDY0OyBuIC09IDY0KSB7
+DQogCQlydGVfbW92NjQoKHVpbnQ4X3QgKilkc3QsIChjb25zdCB1aW50OF90ICopc3JjKTsNCkBA
+IC03NDksMjAgKzY3NCw0OSBAQCBydGVfbWVtY3B5X2FsaWduZWQodm9pZCAqZHN0LCBjb25zdCB2
+b2lkICpzcmMsIHNpemVfdCBuKQ0KIH0NCiANCiBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB2
+b2lkICoNCi1ydGVfbWVtY3B5KHZvaWQgKmRzdCwgY29uc3Qgdm9pZCAqc3JjLCBzaXplX3QgbikN
+CitydGVfbWVtY3B5KHZvaWQgKl9fcnRlX3Jlc3RyaWN0IGRzdCwgY29uc3Qgdm9pZCAqX19ydGVf
+cmVzdHJpY3Qgc3JjLCBzaXplX3QgbikNCiB7DQorCS8qIEZhc3Qgd2F5IHdoZW4gY29weSBzaXpl
+IGRvZXNuJ3QgZXhjZWVkIDY0IGJ5dGVzLiAqLw0KKwlpZiAobiA8IDE2KQ0KKwkJcmV0dXJuIHJ0
+ZV9tb3YxNV9vcl9sZXNzKGRzdCwgc3JjLCBuKTsNCisJaWYgKG4gPD0gMzIpIHsNCisJCWlmIChf
+X3J0ZV9jb25zdGFudChuKSAmJiBuID09IDMyKSB7DQorCQkJcnRlX21vdjMyKCh1aW50OF90ICop
+ZHN0LCAoY29uc3QgdWludDhfdCAqKXNyYyk7DQorCQkJcmV0dXJuIGRzdDsNCisJCX0NCisJCXJ0
+ZV9tb3YxNigodWludDhfdCAqKWRzdCwgKGNvbnN0IHVpbnQ4X3QgKilzcmMpOw0KKwkJaWYgKF9f
+cnRlX2NvbnN0YW50KG4pICYmIG4gPT0gMTYpDQorCQkJcmV0dXJuIGRzdDsgLyogYXZvaWQgKGhh
+cm1sZXNzKSBkdXBsaWNhdGUgY29weSAqLw0KKwkJcnRlX21vdjE2KCh1aW50OF90ICopZHN0IC0g
+MTYgKyBuLCAoY29uc3QgdWludDhfdCAqKXNyYyAtIDE2ICsgbik7DQorCQlyZXR1cm4gZHN0Ow0K
+Kwl9DQorCWlmIChuIDw9IDY0KSB7DQorCQlpZiAoX19ydGVfY29uc3RhbnQobikgJiYgbiA9PSA2
+NCkgew0KKwkJCXJ0ZV9tb3Y2NCgodWludDhfdCAqKWRzdCwgKGNvbnN0IHVpbnQ4X3QgKilzcmMp
+Ow0KKwkJCXJldHVybiBkc3Q7DQorCQl9DQorI2lmIGRlZmluZWQgUlRFX01FTUNQWV9BVlgNCisJ
+CXJ0ZV9tb3YzMigodWludDhfdCAqKWRzdCwgKGNvbnN0IHVpbnQ4X3QgKilzcmMpOw0KKwkJcnRl
+X21vdjMyKCh1aW50OF90ICopZHN0IC0gMzIgKyBuLCAoY29uc3QgdWludDhfdCAqKXNyYyAtIDMy
+ICsgbik7DQorI2Vsc2UgLyogU1NFIGltcGxlbWVudGF0aW9uICovDQorCQlydGVfbW92MTYoKHVp
+bnQ4X3QgKilkc3QgKyAwICogMTYsIChjb25zdCB1aW50OF90ICopc3JjICsgMCAqIDE2KTsNCisJ
+CXJ0ZV9tb3YxNigodWludDhfdCAqKWRzdCArIDEgKiAxNiwgKGNvbnN0IHVpbnQ4X3QgKilzcmMg
+KyAxICogMTYpOw0KKwkJaWYgKG4gPiA0OCkNCisJCQlydGVfbW92MTYoKHVpbnQ4X3QgKilkc3Qg
+KyAyICogMTYsIChjb25zdCB1aW50OF90ICopc3JjICsgMiAqIDE2KTsNCisJCXJ0ZV9tb3YxNigo
+dWludDhfdCAqKWRzdCAtIDE2ICsgbiwgKGNvbnN0IHVpbnQ4X3QgKilzcmMgLSAxNiArIG4pOw0K
+KyNlbmRpZg0KKwkJcmV0dXJuIGRzdDsNCisJfQ0KKw0KKwkvKiBJbXBsZW1lbnRhdGlvbiBmb3Ig
+c2l6ZSA+IDY0IGJ5dGVzIGRlcGVuZHMgb24gYWxpZ25tZW50IHdpdGggdmVjdG9yIHJlZ2lzdGVy
+IHNpemUuICovDQogCWlmICghKCgodWludHB0cl90KWRzdCB8ICh1aW50cHRyX3Qpc3JjKSAmIEFM
+SUdOTUVOVF9NQVNLKSkNCi0JCXJldHVybiBydGVfbWVtY3B5X2FsaWduZWQoZHN0LCBzcmMsIG4p
+Ow0KKwkJcmV0dXJuIHJ0ZV9tZW1jcHlfYWxpZ25lZF9tb3JlX3RoYW5fNjQoZHN0LCBzcmMsIG4p
+Ow0KIAllbHNlDQotCQlyZXR1cm4gcnRlX21lbWNweV9nZW5lcmljKGRzdCwgc3JjLCBuKTsNCisJ
+CXJldHVybiBydGVfbWVtY3B5X2dlbmVyaWNfbW9yZV90aGFuXzY0KGRzdCwgc3JjLCBuKTsNCiB9
+DQogDQogI3VuZGVmIEFMSUdOTUVOVF9NQVNLDQogDQotI2lmIGRlZmluZWQoUlRFX1RPT0xDSEFJ
+Tl9HQ0MpICYmIChHQ0NfVkVSU0lPTiA+PSAxMDAwMDApDQotI3ByYWdtYSBHQ0MgZGlhZ25vc3Rp
+YyBwb3ANCi0jZW5kaWYNCi0NCiAjaWZkZWYgX19jcGx1c3BsdXMNCiB9DQogI2VuZGlmDQotLSAN
+CjIuNDMuMA0KDQo=
