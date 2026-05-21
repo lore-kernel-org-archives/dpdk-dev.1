@@ -2,40 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55089CD5BAC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 15:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61ED7CD5BAC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 16:10:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7570E402A2;
-	Thu, 21 May 2026 17:57:31 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id AF194400D5
- for <dev@dpdk.org>; Thu, 21 May 2026 17:57:30 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FD0B168F;
- Thu, 21 May 2026 08:57:24 -0700 (PDT)
-Received: from [10.122.53.155] (unknown [10.122.53.155])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B56C3F632;
- Thu, 21 May 2026 08:57:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
- t=1779379049; bh=HT//OKwxocpZARrrrY99WJ5YpYO71G1r2PbNa8Lb59c=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=ZZRO//zMNRzVW/cJ8O2IdqE1W8+85rKM8qB3d6D7+nTq1UWZSIYwM0Ta/80wlwmky
- V1m/Qw+MYTp7GDaPY7dHoyc0iscw++e5OmQIRT/Q6fh0KjzDYIx7lxVjC4k1FkWuO8
- Y+0aJyvzoghPLywKvxnglKLc+HWsoR6uS3dQqD84=
-Content-Type: multipart/alternative;
- boundary="------------UE866PA3vK8hAGzqxB8WDIVw"
-Message-ID: <ec0a1ea7-c7f7-451b-945a-c5d5a87f5799@arm.com>
-Date: Thu, 21 May 2026 10:57:29 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 66C8F402A2;
+	Thu, 21 May 2026 18:10:40 +0200 (CEST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com
+ [209.85.208.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 2CA7D400D5
+ for <dev@dpdk.org>; Thu, 21 May 2026 18:10:39 +0200 (CEST)
+Received: by mail-lj1-f171.google.com with SMTP id
+ 38308e7fff4ca-39380e79936so67432041fa.2
+ for <dev@dpdk.org>; Thu, 21 May 2026 09:10:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779379838; cv=none;
+ d=google.com; s=arc-20240605;
+ b=eE5/Uu8YVP4h5/SHhDop9KvT2N0W0XWy+vy0u2Hv9iPAS2SqkdqqYI2WT4fuLmN7Xi
+ 7SuWC5PRzJPJbKutFDPbM89KSb9LJLr3LKqvjYZYVQ1mobzTGIa7LBQ8Kq/+qamSDzIq
+ Swbq6bB2/z4wVeOUYrLL5/RwdowapqNCUQdcNlYi6mDzGvBQDvcrsJgMcp5PaA9gazET
+ Nxwtjgl/fn0hx4b/60aC55dPQeKSeW+Pgp4x+Vm5eMz9UESXylnMnCaOob3/Bx+8RZgH
+ WGSZ3G2SHTCnypRiyQSntuCQyTdV21RaNYsiSV2/qwSJ/+4aXR9OKWOvWuaUAJuFBYlL
+ 7Ryg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=M1JkfUHvyDMjmPU4KWYMqikqiKDtKaCwTmP9beDxvWI=;
+ fh=VvfBHRpTVt89uO9rsd/36jcKvgFnz7OnodiBN0jlx60=;
+ b=WgywcdQLf3NleEm3kUJImTlBNoy4KG3qoF8uYmMJK7GIErEAiJ0r+s5DqLiUTlIly+
+ rrgbJdvfDhFLXX5hod4TAV+s79fhcWyuEa3pBQttG1oNrPGKvpyWB3dPqG8GZnVraca/
+ ukG3AWZ7mmAAOKib+2daq0eBto3AC1THNciN6drAvxco8fHcLCy+4PkT1Eyl8Zke4rUw
+ ob9rzZkfxuQ7Ks4gTIRGybUPuQQUDzAL8X6U4I+xc9A4lPl6UG0QNSop0PiqOJ4t9z0d
+ Eq9bLprlZwlidNeeSb22h+hTbuN/JPRUBmSiEYwsH+U24/nkHkpcRVyUS2dKQFcclRcU
+ A3ug==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20251104; t=1779379838; x=1779984638; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=M1JkfUHvyDMjmPU4KWYMqikqiKDtKaCwTmP9beDxvWI=;
+ b=KdiI4uE+GzPz/l8IXuU4QJUmlgLTCf/LAo4ODi1uEdbCC1JNRKGqMIGMrq8+SDRWK0
+ 6mA6hpZHyfACP1z9la1WRZdkH4IsaEYvn1sH1q3lU8yxz7ayIE2dHqtAquc3ydUUdIi9
+ gVYYuY8WkafiUdZlV1RKN4CtFMW8vJePb2bi1ZyhsM0tIZY6lRu699owhs6A7Oc+F9OP
+ 5HahnpXZ5xyct5k4yzQQ6eV5zXs/oazxQg3GF/BahUjr92wq+LM2sSCn1cQM+J4Q8ezD
+ 1tUJGCxZeOzGcAJrJ0vWhytJjv/p3PeDz803cZQoA3baLrUV9hZEa+0pop3Bkf0YP2di
+ /AAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1779379838; x=1779984638;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=M1JkfUHvyDMjmPU4KWYMqikqiKDtKaCwTmP9beDxvWI=;
+ b=ZMeD3yTBfGCQMDaWezMMCMov4Chz91GDf1i3CuMWPPUesHbJ9Es1NCrP5qHv2LBt+1
+ 70cOhMYVJ9hqb0Q+jNj1sjntiIEs3en44pJ4qRCN+qagMWRd4dp5Rre9OEFYSj7Phj2w
+ 9cuSMVOuxgWWLzSNtFXLZ7iC6sl3fALKQIB1B+y4ZOuvqJv649thq1q00iobWlcjENYu
+ N5XxD6XDylXz0xOrOJpMpgcG86Dv1CUuTn3cqqSPFhRKCEUvi9xCVdNe6HcJtfShPjA1
+ XucjIKHjyokPD9mmtSNmEgTPgINCMpkA2Zwuc0HKzivzXD1mLkeU/rwryGF2JZNAQky7
+ JM1g==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ/zC3NdkXv14J0r6MwseLL4RVUzdatTCwV8ucxtPfxRy12noJzPP974oHrQee02zt81X3s=@dpdk.org
+X-Gm-Message-State: AOJu0YzB5B552dx+fFK7MSvivHeta4/D7z8QVyYTr7Xmnl9qQqKXfGS+
+ CkPcbQCoo9qr7rtJqaj9CnXUMPqjCSsNXacVUxyusJKNgU8yfUVJfWaDqgwf4dYDJAwisn1+wOJ
+ F+U5REVhv4f732XQva2q7o2JBqwDHouQtaiW7VGvb
+X-Gm-Gg: Acq92OEXuLR0H4TMJ2OeIIDnh9j6ShiDYSFX+ZtJbt7hTBL7yZBWRy7O5+ryuGSgMAj
+ JK4kJXa+t3iewdX+Z9VSZ3cDGaGAdrmn+D+34k5Wznxtx1gkwBrWgLNpwwy2LPTRtnHwHSCztIo
+ k1cZ+zSBXKJr50B74tJRUnjb7B/ddT5udgEGKohwnTunwbmcd8naLNiJLWyeIwGCdGAACfPDLHV
+ WehRdQiSCeqW+7A78V4Wix7MdMnRqnbK/4KaxjlBLn1/xMgGXsxEdNFzgKtYg1Yy1Uk8ZH8dH9y
+ FkF7JaDKE6jjSxREuA==
+X-Received: by 2002:a05:651c:1468:b0:394:e5e:f12b with SMTP id
+ 38308e7fff4ca-395ca61e8d0mr14387661fa.17.1779379838023; Thu, 21 May 2026
+ 09:10:38 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 3/7] ring: use C11 atomic operations for MP/SP head/tail
-To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-References: <20260521042043.1590536-1-stephen@networkplumber.org>
- <20260521042043.1590536-4-stephen@networkplumber.org>
-Content-Language: en-US
-From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-In-Reply-To: <20260521042043.1590536-4-stephen@networkplumber.org>
+References: <20260511224354.872997-1-blasko@google.com>
+ <20260515231936.3296603-1-blasko@google.com>
+ <20260517161545.2b33289a@phoenix.local>
+ <CANULgnJv8LyoLZhGfn7gPxo-=2Z3ZSD8jCv9jAf9bCu4RZCaiQ@mail.gmail.com>
+In-Reply-To: <CANULgnJv8LyoLZhGfn7gPxo-=2Z3ZSD8jCv9jAf9bCu4RZCaiQ@mail.gmail.com>
+From: Joshua Washington <joshwash@google.com>
+Date: Thu, 21 May 2026 09:10:25 -0700
+X-Gm-Features: AVHnY4KtmLlHk_phCcbvzbNKSpNR3K7khJsKzEbheBzElMeNfDvS5UjkDvZLFOY
+Message-ID: <CALuQH+VHHMLV=T=GfzuqUznjsD7g6pUWuBCV++ZEXELyQNC2Dg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] net/gve: add hardware timestamping support
+To: Mark Blasko <blasko@google.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,325 +100,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a multi-part message in MIME format.
---------------UE866PA3vK8hAGzqxB8WDIVw
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Already looks good. I have one minor suggestion.
-
-In |rte_ring_c11_pvt.h| (and in the MCS lock code as well), we introduced
-a comment style that annotates load-acquire and store-release
-operations as |An| and |Rm|, respectively. Each |An| comment refers to the
-corresponding |Rm| it synchronizes with, and vice versa, while also 
-describing
-the intent of the pairing.
-
-
---wathsala
-
-On 5/20/26 23:17, Stephen Hemminger wrote:
-> Last caller of rte_atomic32_cmpset() in lib/, blocking deprecation
-> of the rte_atomicNN_*() family.
+On Mon, May 18, 2026 at 11:44=E2=80=AFAM Mark Blasko <blasko@google.com> wr=
+ote:
 >
-> Replace cmpset with rte_atomic_compare_exchange_weak_explicit(),
-> and convert head/tail loads/stores from implicit seq_cst to explicit
-> acquire/release. Matches the HTS/RTS pattern.
+> On Sun, May 17, 2026 at 4:15=E2=80=AFPM Stephen Hemminger
+> <stephen@networkplumber.org> wrote:
+> >
+> > Warning: (unchanged from v1) gve_read_clock and the periodic
+> > gve_read_nic_clock alarm callback both issue
+> > GVE_ADMINQ_REPORT_NIC_TIMESTAMP into the single shared DMA buffer
+> > priv->nic_ts_report, then read it after gve_adminq_execute_cmd
+> > has released adminq_lock. If gve_read_clock is preempted between
+> > gve_adminq_report_nic_timestamp returning and the be64_to_cpu
+> > read, the alarm callback can memset() and reissue its own
+> > command, so the user thread will read either zero or another
+> > command's response. The simplest fix is for gve_read_clock to
+> > return the cached priv->last_read_nic_timestamp instead of
+> > issuing a fresh adminq command - the 250ms periodic sync keeps
+> > it fresh enough for .read_clock semantics. Once the dev_op
+> > registration is restored this race becomes reachable.
 >
-> Acquire-load of d->head orders the subsequent load of s->tail (was
-> rte_smp_rmb()). Acquire-load of s->tail pairs with the release-store
-> of the counterpart tail in __rte_ring_update_tail(), which subsumes
-> the previous wmb/rmb barriers.
->
-> Weak CAS avoids arm64's hidden inner retry; the outer do-while already
-> loops. CAS orderings relaxed: no data published by the reservation.
->
-> The now-unused 'enqueue' parameter of __rte_ring_update_tail() is
-> removed; both call sites updated.
->
-> Signed-off-by: Stephen Hemminger<stephen@networkplumber.org>
-> ---
->   lib/ring/rte_ring_generic_pvt.h | 64 +++++++++++++++++++++++----------
->   1 file changed, 45 insertions(+), 19 deletions(-)
->
-> diff --git a/lib/ring/rte_ring_generic_pvt.h b/lib/ring/rte_ring_generic_pvt.h
-> index affd2d5ba7..9497f6737b 100644
-> --- a/lib/ring/rte_ring_generic_pvt.h
-> +++ b/lib/ring/rte_ring_generic_pvt.h
-> @@ -23,21 +23,25 @@
->    */
->   static __rte_always_inline void
->   __rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
-> -		uint32_t new_val, uint32_t single, uint32_t enqueue)
-> +		uint32_t new_val, uint32_t single,
-> +		uint32_t enqueue __rte_unused)
->   {
-> -	if (enqueue)
-> -		rte_smp_wmb();
-> -	else
-> -		rte_smp_rmb();
->   	/*
->   	 * If there are other enqueues/dequeues in progress that preceded us,
->   	 * we need to wait for them to complete
->   	 */
->   	if (!single)
-> -		rte_wait_until_equal_32((volatile uint32_t *)(uintptr_t)&ht->tail, old_val,
-> -			rte_memory_order_relaxed);
-> +		rte_wait_until_equal_32((volatile uint32_t *)(uintptr_t)&ht->tail,
-> +			old_val, rte_memory_order_relaxed);
->   
-> -	ht->tail = new_val;
-> +	/*
-> +	 * Release ordering on the tail store ensures that the slot reads
-> +	 * (dequeue) or writes (enqueue) performed by this thread are visible
-> +	 * to the other side before the new tail value is observed.
-> +	 * Pairs with the acquire load of the counterpart's tail in
-> +	 * __rte_ring_headtail_move_head().
-> +	 */
-> +	rte_atomic_store_explicit(&ht->tail, new_val, rte_memory_order_release);
->   }
->   
->   /**
-> @@ -76,25 +80,35 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
->   {
->   	unsigned int max = n;
->   	int success;
-> +	uint32_t tail;
->   
->   	do {
->   		/* Reset n to the initial burst count */
->   		n = max;
->   
-> -		*old_head = d->head;
-> +		/*
-> +		 * Acquire load: orders this load before the load of s->tail
-> +		 * below (replaces rte_smp_rmb() in the previous version) and
-> +		 * re-establishes ordering after a failed CAS on retry.
-> +		 */
-> +		*old_head = rte_atomic_load_explicit(&d->head,
-> +				rte_memory_order_acquire);
->   
-> -		/* add rmb barrier to avoid load/load reorder in weak
-> -		 * memory model. It is noop on x86
-> +		/*
-> +		 * Acquire load on the counterpart's tail pairs with the
-> +		 * release store in __rte_ring_update_tail() on the other
-> +		 * side, ensuring slot operations performed there are visible
-> +		 * before the caller accesses the reserved slots.
->   		 */
-> -		rte_smp_rmb();
-> +		tail = rte_atomic_load_explicit(&s->tail, rte_memory_order_acquire);
->   
->   		/*
->   		 *  The subtraction is done between two unsigned 32bits value
->   		 * (the result is always modulo 32 bits even if we have
-> -		 * *old_head > s->tail). So 'entries' is always between 0
-> +		 * *old_head > tail). So 'entries' is always between 0
->   		 * and capacity (which is < size).
->   		 */
-> -		*entries = (capacity + s->tail - *old_head);
-> +		*entries = (capacity + tail - *old_head);
->   
->   		/* check that we have enough room in ring */
->   		if (unlikely(n > *entries))
-> @@ -106,12 +120,24 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
->   
->   		*new_head = *old_head + n;
->   		if (is_st) {
-> -			d->head = *new_head;
-> +			rte_atomic_store_explicit(&d->head, *new_head, rte_memory_order_relaxed);
->   			success = 1;
-> -		} else
-> -			success = rte_atomic32_cmpset(
-> -					(uint32_t *)(uintptr_t)&d->head,
-> -					*old_head, *new_head);
-> +		} else {
-> +			/*
-> +			 * Weak CAS: the outer do-while handles spurious
-> +			 * failures, so we avoid the strong variant's
-> +			 * internal retry (which on arm64 wraps the LL/SC
-> +			 * pair in a hidden inner loop).
-> +			 *
-> +			 * Relaxed on both success and failure: this CAS
-> +			 * does not publish data. Slot data visibility is
-> +			 * provided by the acquire loads above and the
-> +			 * release store of tail in __rte_ring_update_tail().
-> +			 */
-> +			success = rte_atomic_compare_exchange_weak_explicit(
-> +				&d->head, old_head, *new_head,
-> +				rte_memory_order_relaxed, rte_memory_order_relaxed);
-> +		}
->   	} while (unlikely(success == 0));
->   	return n;
->   }
---------------UE866PA3vK8hAGzqxB8WDIVw
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+> I want to make sure I fully understand the API contract here. Is the
+> fact that .read_clock does not require a fresh device read documented
+> in the DPDK specification, or is this based on typical application
+> use cases? If the latter, what are those typical use cases?
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body>
-    <p data-start="0" data-end="48">Already looks good. I have one minor
-      suggestion.</p>
-    <p data-start="50" data-end="366" data-is-last-node=""
-      data-is-only-node="">In <code data-start="53" data-end="73">rte_ring_c11_pvt.h</code>
-      (and in the MCS lock code as well), we introduced<br>
-      a comment style that annotates load-acquire and store-release<br>
-      operations as <code data-start="200" data-end="204">An</code> and
-      <code data-start="209" data-end="213">Rm</code>, respectively.
-      Each <code data-start="234" data-end="238">An</code> comment
-      refers to the<br>
-      corresponding <code data-start="275" data-end="279">Rm</code> it
-      synchronizes with, and vice versa, while also describing<br>
-      the intent of the pairing.</p>
-    <p><br>
-      --wathsala<br>
-      <br>
-    </p>
-    <div class="moz-cite-prefix">On 5/20/26 23:17, Stephen Hemminger
-      wrote:<br>
-    </div>
-    <blockquote type="cite"
-      cite="mid:20260521042043.1590536-4-stephen@networkplumber.org">
-      <pre wrap="" class="moz-quote-pre">Last caller of rte_atomic32_cmpset() in lib/, blocking deprecation
-of the rte_atomicNN_*() family.
+Looking at the documentation for the user-exposed rte_eth_read_clock()
+API, it seems that this API is intended to be quite accurate on a
+read, or at least more accurate than 250ms of granularity would allow.
+This is the example given in the documentation:
 
-Replace cmpset with rte_atomic_compare_exchange_weak_explicit(),
-and convert head/tail loads/stores from implicit seq_cst to explicit
-acquire/release. Matches the HTS/RTS pattern.
+> * E.g, a simple heuristic to derivate the frequency would be:
+> * uint64_t start, end;
+> * rte_eth_read_clock(port, start);
+> * rte_delay_ms(100);
+> * rte_eth_read_clock(port, end);
+> * double freq =3D (end - start) * 10;
+> *
+> * Compute a common reference with:
+> * uint64_t base_time_sec =3D current_time();
+> * uint64_t base_clock;
+> * rte_eth_read_clock(port, base_clock);
+> *
+> * Then, convert the raw mbuf timestamp with:
+> * base_time_sec + (double)(*timestamp_dynfield(mbuf) - base_clock) / freq=
+;
 
-Acquire-load of d-&gt;head orders the subsequent load of s-&gt;tail (was
-rte_smp_rmb()). Acquire-load of s-&gt;tail pairs with the release-store
-of the counterpart tail in __rte_ring_update_tail(), which subsumes
-the previous wmb/rmb barriers.
+read_clock() having 250ms granularity would completely nullify this
+use case, as it is entirely possible for both clock reads to hold the
+same value. And even if they _didn't_ hold the same value, they would
+end up being 250ms-worth of NIC cycles apart, instead of a more
+accurate representation of the delta over that period of time -- not
+very useful.
 
-Weak CAS avoids arm64's hidden inner retry; the outer do-while already
-loops. CAS orderings relaxed: no data published by the reservation.
+--=20
 
-The now-unused 'enqueue' parameter of __rte_ring_update_tail() is
-removed; both call sites updated.
-
-Signed-off-by: Stephen Hemminger <a class="moz-txt-link-rfc2396E" href="mailto:stephen@networkplumber.org">&lt;stephen@networkplumber.org&gt;</a>
----
- lib/ring/rte_ring_generic_pvt.h | 64 +++++++++++++++++++++++----------
- 1 file changed, 45 insertions(+), 19 deletions(-)
-
-diff --git a/lib/ring/rte_ring_generic_pvt.h b/lib/ring/rte_ring_generic_pvt.h
-index affd2d5ba7..9497f6737b 100644
---- a/lib/ring/rte_ring_generic_pvt.h
-+++ b/lib/ring/rte_ring_generic_pvt.h
-@@ -23,21 +23,25 @@
-  */
- static __rte_always_inline void
- __rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
--		uint32_t new_val, uint32_t single, uint32_t enqueue)
-+		uint32_t new_val, uint32_t single,
-+		uint32_t enqueue __rte_unused)
- {
--	if (enqueue)
--		rte_smp_wmb();
--	else
--		rte_smp_rmb();
- 	/*
- 	 * If there are other enqueues/dequeues in progress that preceded us,
- 	 * we need to wait for them to complete
- 	 */
- 	if (!single)
--		rte_wait_until_equal_32((volatile uint32_t *)(uintptr_t)&amp;ht-&gt;tail, old_val,
--			rte_memory_order_relaxed);
-+		rte_wait_until_equal_32((volatile uint32_t *)(uintptr_t)&amp;ht-&gt;tail,
-+			old_val, rte_memory_order_relaxed);
- 
--	ht-&gt;tail = new_val;
-+	/*
-+	 * Release ordering on the tail store ensures that the slot reads
-+	 * (dequeue) or writes (enqueue) performed by this thread are visible
-+	 * to the other side before the new tail value is observed.
-+	 * Pairs with the acquire load of the counterpart's tail in
-+	 * __rte_ring_headtail_move_head().
-+	 */
-+	rte_atomic_store_explicit(&amp;ht-&gt;tail, new_val, rte_memory_order_release);
- }
- 
- /**
-@@ -76,25 +80,35 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
- {
- 	unsigned int max = n;
- 	int success;
-+	uint32_t tail;
- 
- 	do {
- 		/* Reset n to the initial burst count */
- 		n = max;
- 
--		*old_head = d-&gt;head;
-+		/*
-+		 * Acquire load: orders this load before the load of s-&gt;tail
-+		 * below (replaces rte_smp_rmb() in the previous version) and
-+		 * re-establishes ordering after a failed CAS on retry.
-+		 */
-+		*old_head = rte_atomic_load_explicit(&amp;d-&gt;head,
-+				rte_memory_order_acquire);
- 
--		/* add rmb barrier to avoid load/load reorder in weak
--		 * memory model. It is noop on x86
-+		/*
-+		 * Acquire load on the counterpart's tail pairs with the
-+		 * release store in __rte_ring_update_tail() on the other
-+		 * side, ensuring slot operations performed there are visible
-+		 * before the caller accesses the reserved slots.
- 		 */
--		rte_smp_rmb();
-+		tail = rte_atomic_load_explicit(&amp;s-&gt;tail, rte_memory_order_acquire);
- 
- 		/*
- 		 *  The subtraction is done between two unsigned 32bits value
- 		 * (the result is always modulo 32 bits even if we have
--		 * *old_head &gt; s-&gt;tail). So 'entries' is always between 0
-+		 * *old_head &gt; tail). So 'entries' is always between 0
- 		 * and capacity (which is &lt; size).
- 		 */
--		*entries = (capacity + s-&gt;tail - *old_head);
-+		*entries = (capacity + tail - *old_head);
- 
- 		/* check that we have enough room in ring */
- 		if (unlikely(n &gt; *entries))
-@@ -106,12 +120,24 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
- 
- 		*new_head = *old_head + n;
- 		if (is_st) {
--			d-&gt;head = *new_head;
-+			rte_atomic_store_explicit(&amp;d-&gt;head, *new_head, rte_memory_order_relaxed);
- 			success = 1;
--		} else
--			success = rte_atomic32_cmpset(
--					(uint32_t *)(uintptr_t)&amp;d-&gt;head,
--					*old_head, *new_head);
-+		} else {
-+			/*
-+			 * Weak CAS: the outer do-while handles spurious
-+			 * failures, so we avoid the strong variant's
-+			 * internal retry (which on arm64 wraps the LL/SC
-+			 * pair in a hidden inner loop).
-+			 *
-+			 * Relaxed on both success and failure: this CAS
-+			 * does not publish data. Slot data visibility is
-+			 * provided by the acquire loads above and the
-+			 * release store of tail in __rte_ring_update_tail().
-+			 */
-+			success = rte_atomic_compare_exchange_weak_explicit(
-+				&amp;d-&gt;head, old_head, *new_head,
-+				rte_memory_order_relaxed, rte_memory_order_relaxed);
-+		}
- 	} while (unlikely(success == 0));
- 	return n;
- }
-</pre>
-    </blockquote>
-  </body>
-</html>
-
---------------UE866PA3vK8hAGzqxB8WDIVw--
+Joshua Washington
