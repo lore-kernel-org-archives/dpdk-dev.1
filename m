@@ -2,91 +2,103 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61ED7CD5BAC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 16:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE84CD5BAC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 16:25:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 66C8F402A2;
-	Thu, 21 May 2026 18:10:40 +0200 (CEST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com
- [209.85.208.171])
- by mails.dpdk.org (Postfix) with ESMTP id 2CA7D400D5
- for <dev@dpdk.org>; Thu, 21 May 2026 18:10:39 +0200 (CEST)
-Received: by mail-lj1-f171.google.com with SMTP id
- 38308e7fff4ca-39380e79936so67432041fa.2
- for <dev@dpdk.org>; Thu, 21 May 2026 09:10:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779379838; cv=none;
- d=google.com; s=arc-20240605;
- b=eE5/Uu8YVP4h5/SHhDop9KvT2N0W0XWy+vy0u2Hv9iPAS2SqkdqqYI2WT4fuLmN7Xi
- 7SuWC5PRzJPJbKutFDPbM89KSb9LJLr3LKqvjYZYVQ1mobzTGIa7LBQ8Kq/+qamSDzIq
- Swbq6bB2/z4wVeOUYrLL5/RwdowapqNCUQdcNlYi6mDzGvBQDvcrsJgMcp5PaA9gazET
- Nxwtjgl/fn0hx4b/60aC55dPQeKSeW+Pgp4x+Vm5eMz9UESXylnMnCaOob3/Bx+8RZgH
- WGSZ3G2SHTCnypRiyQSntuCQyTdV21RaNYsiSV2/qwSJ/+4aXR9OKWOvWuaUAJuFBYlL
- 7Ryg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=M1JkfUHvyDMjmPU4KWYMqikqiKDtKaCwTmP9beDxvWI=;
- fh=VvfBHRpTVt89uO9rsd/36jcKvgFnz7OnodiBN0jlx60=;
- b=WgywcdQLf3NleEm3kUJImTlBNoy4KG3qoF8uYmMJK7GIErEAiJ0r+s5DqLiUTlIly+
- rrgbJdvfDhFLXX5hod4TAV+s79fhcWyuEa3pBQttG1oNrPGKvpyWB3dPqG8GZnVraca/
- ukG3AWZ7mmAAOKib+2daq0eBto3AC1THNciN6drAvxco8fHcLCy+4PkT1Eyl8Zke4rUw
- ob9rzZkfxuQ7Ks4gTIRGybUPuQQUDzAL8X6U4I+xc9A4lPl6UG0QNSop0PiqOJ4t9z0d
- Eq9bLprlZwlidNeeSb22h+hTbuN/JPRUBmSiEYwsH+U24/nkHkpcRVyUS2dKQFcclRcU
- A3ug==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1779379838; x=1779984638; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=M1JkfUHvyDMjmPU4KWYMqikqiKDtKaCwTmP9beDxvWI=;
- b=KdiI4uE+GzPz/l8IXuU4QJUmlgLTCf/LAo4ODi1uEdbCC1JNRKGqMIGMrq8+SDRWK0
- 6mA6hpZHyfACP1z9la1WRZdkH4IsaEYvn1sH1q3lU8yxz7ayIE2dHqtAquc3ydUUdIi9
- gVYYuY8WkafiUdZlV1RKN4CtFMW8vJePb2bi1ZyhsM0tIZY6lRu699owhs6A7Oc+F9OP
- 5HahnpXZ5xyct5k4yzQQ6eV5zXs/oazxQg3GF/BahUjr92wq+LM2sSCn1cQM+J4Q8ezD
- 1tUJGCxZeOzGcAJrJ0vWhytJjv/p3PeDz803cZQoA3baLrUV9hZEa+0pop3Bkf0YP2di
- /AAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779379838; x=1779984638;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=M1JkfUHvyDMjmPU4KWYMqikqiKDtKaCwTmP9beDxvWI=;
- b=ZMeD3yTBfGCQMDaWezMMCMov4Chz91GDf1i3CuMWPPUesHbJ9Es1NCrP5qHv2LBt+1
- 70cOhMYVJ9hqb0Q+jNj1sjntiIEs3en44pJ4qRCN+qagMWRd4dp5Rre9OEFYSj7Phj2w
- 9cuSMVOuxgWWLzSNtFXLZ7iC6sl3fALKQIB1B+y4ZOuvqJv649thq1q00iobWlcjENYu
- N5XxD6XDylXz0xOrOJpMpgcG86Dv1CUuTn3cqqSPFhRKCEUvi9xCVdNe6HcJtfShPjA1
- XucjIKHjyokPD9mmtSNmEgTPgINCMpkA2Zwuc0HKzivzXD1mLkeU/rwryGF2JZNAQky7
- JM1g==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/zC3NdkXv14J0r6MwseLL4RVUzdatTCwV8ucxtPfxRy12noJzPP974oHrQee02zt81X3s=@dpdk.org
-X-Gm-Message-State: AOJu0YzB5B552dx+fFK7MSvivHeta4/D7z8QVyYTr7Xmnl9qQqKXfGS+
- CkPcbQCoo9qr7rtJqaj9CnXUMPqjCSsNXacVUxyusJKNgU8yfUVJfWaDqgwf4dYDJAwisn1+wOJ
- F+U5REVhv4f732XQva2q7o2JBqwDHouQtaiW7VGvb
-X-Gm-Gg: Acq92OEXuLR0H4TMJ2OeIIDnh9j6ShiDYSFX+ZtJbt7hTBL7yZBWRy7O5+ryuGSgMAj
- JK4kJXa+t3iewdX+Z9VSZ3cDGaGAdrmn+D+34k5Wznxtx1gkwBrWgLNpwwy2LPTRtnHwHSCztIo
- k1cZ+zSBXKJr50B74tJRUnjb7B/ddT5udgEGKohwnTunwbmcd8naLNiJLWyeIwGCdGAACfPDLHV
- WehRdQiSCeqW+7A78V4Wix7MdMnRqnbK/4KaxjlBLn1/xMgGXsxEdNFzgKtYg1Yy1Uk8ZH8dH9y
- FkF7JaDKE6jjSxREuA==
-X-Received: by 2002:a05:651c:1468:b0:394:e5e:f12b with SMTP id
- 38308e7fff4ca-395ca61e8d0mr14387661fa.17.1779379838023; Thu, 21 May 2026
- 09:10:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B9E234060A;
+	Thu, 21 May 2026 18:25:26 +0200 (CEST)
+Received: from DM5PR21CU001.outbound.protection.outlook.com
+ (mail-centralusazon11011043.outbound.protection.outlook.com [52.101.62.43])
+ by mails.dpdk.org (Postfix) with ESMTP id 69702400D5;
+ Thu, 21 May 2026 18:25:25 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PKtqxdvVacI41vQs/WgPCe2lOgkQgQDFjnIzb5FVhHCRSRP0h4xWHxgPeov0aJ1Yc4AQHwia7241Hz8r8Mr/GQh6IvjErHYkYgNYxPNYtu0IMDjURsDUaQv31wU1h8jaeNziud4DW+mznkt1WaqbS6Df5rE+m60KFzlWk1v/zsOIXRntL8xZ+Z0PlGoe/+au3+RTTqPPJzLK9dfNolaYyPZEPxF3pbNaSOeytRIPHZa1V4NE8yCQXjofNs9LDo7aIs8g6kONS1VeeMJB8PLwF9xe9s5V9xjogZthJJCGrRf88VfqFbQbMDo3T0PozfX/tLv4yXh7MyGwg6RjUOTIxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7t3PsU5ryI52vkrKgIneIfVfqPKkxT1Bu6vwa6vngno=;
+ b=WXUDmalDUKXxM+RuIqf/s6SmUKnvaaCmDTYZKIBOUgS1GpzEBYWD4gXYzk3bRYGdwVRzR5aieEvOKoFPPr2xs4/WxiVOYoVvSjfJpAC4YDJKKpRyzq3jZJUZuHjxcUeoDsVMv0AyzdGAIblggrcVxRpNXKI17eOZp51joOoPlYkiuzqMdYAxCUOe3y7zf6Z317E/8QL5Fs+cjX/N8uVUyBbuBcr6qJTnOoewqUvPOqXwrlsFccNKyztlI2sNgzIWIiVMNGFUAKX9spd0pCj4TgbThBOvqL69xbwsHWGRXyzttCfe3eRswFXyeKd7NbwOGHrARve6wZHiVpBjgnSVhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=syseleven.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7t3PsU5ryI52vkrKgIneIfVfqPKkxT1Bu6vwa6vngno=;
+ b=FsMeoEt1NgiD78XogDQdxbYEwclvBWLOUC2/YpyNBfPsdkmpd7dpmacuFTigQENIeHKg2azCMO9FE1nLmqLjo2+XjODhy/rIP8dSbYz+7+76Vhg5zNkA5uhWpoc6sAnMn2DSn19QUA+pkZS9C++DCY6JS4+pucBOLmiBMtG6KhVa51KZ815xAvorjLcmMz1nsqPvgVSRraBg2QVckaxyvu8ZEwu6wLBUSilRXNB1T7R/nLVvIbObsDwSVsauS9p06tOPaEEyeNuAH7eNVBS8CI3DKbAXuSrBSaYTL05UDB+EbeWU7bScSCHVfKUcWWJy4EtChhuQkR4wcPBkTUqmag==
+Received: from DSZP220CA0003.NAMP220.PROD.OUTLOOK.COM (2603:10b6:5:280::13) by
+ MN0PR12MB6152.namprd12.prod.outlook.com (2603:10b6:208:3c4::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.17; Thu, 21 May
+ 2026 16:25:11 +0000
+Received: from SN1PEPF0002BA51.namprd03.prod.outlook.com
+ (2603:10b6:5:280:cafe::75) by DSZP220CA0003.outlook.office365.com
+ (2603:10b6:5:280::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.48.17 via Frontend Transport; Thu, 21
+ May 2026 16:25:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SN1PEPF0002BA51.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.71.7 via Frontend Transport; Thu, 21 May 2026 16:25:10 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 21 May
+ 2026 09:24:49 -0700
+Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 21 May
+ 2026 09:23:39 -0700
+Date: Thu, 21 May 2026 18:23:38 +0200
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
+CC: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Michael Baum
+ <michaelba@nvidia.com>, <dev@dpdk.org>, Michael Pfeiffer
+ <m.pfeiffer@syseleven.de>, <stable@dpdk.org>
+Subject: Re: [PATCH] net/mlx5: remove nonsensical flow action class_id checks
+Message-ID: <wblirxtiggfysi2qk2ppsrbuvgp5ufweevhxjpnykgbdingxv5@pdl4r5olppg7>
+References: <20260520132533.159996-1-a.schollmeyer@syseleven.de>
 MIME-Version: 1.0
-References: <20260511224354.872997-1-blasko@google.com>
- <20260515231936.3296603-1-blasko@google.com>
- <20260517161545.2b33289a@phoenix.local>
- <CANULgnJv8LyoLZhGfn7gPxo-=2Z3ZSD8jCv9jAf9bCu4RZCaiQ@mail.gmail.com>
-In-Reply-To: <CANULgnJv8LyoLZhGfn7gPxo-=2Z3ZSD8jCv9jAf9bCu4RZCaiQ@mail.gmail.com>
-From: Joshua Washington <joshwash@google.com>
-Date: Thu, 21 May 2026 09:10:25 -0700
-X-Gm-Features: AVHnY4KtmLlHk_phCcbvzbNKSpNR3K7khJsKzEbheBzElMeNfDvS5UjkDvZLFOY
-Message-ID: <CALuQH+VHHMLV=T=GfzuqUznjsD7g6pUWuBCV++ZEXELyQNC2Dg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] net/gve: add hardware timestamping support
-To: Mark Blasko <blasko@google.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260520132533.159996-1-a.schollmeyer@syseleven.de>
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA51:EE_|MN0PR12MB6152:EE_
+X-MS-Office365-Filtering-Correlation-Id: 392ef2bd-50f3-4d32-4a8f-08deb755873b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700016|82310400026|376014|1800799024|5023799004|11063799006|6133799003|18002099003|22082099003|56012099003;
+X-Microsoft-Antispam-Message-Info: LiUCTsGS3UZpsraKeoPZNPwuuBStwrEOZ9NeNUeEDv1COQKOqZhrVGsDRjBD5SPalh0coEEfhH7BHozz+rcuzoGvZm2+IefADDiXm5qcC+FdJsuR2tGVNSDswod4NyBKMNOVjSKUPR8i5p/HffLwISr/D5a+9C5cfgrHLlzk/aUOuGCfRaOyNNhikVrCtBgBQQ35rNzFjJsM0ri4joDdcwS+0DJh1+vhTcVQH2cNamvIbSEVOA27Yq3jknqpaYRz5pXbUW0a7+6K1/mwHQfFKhyssz+7PhDJ8alEnJNne11VijfhSTK+jQ49tAMOzLH7fKmRpIwukC0rkbr5KppGcDaAbbGotVuSYGu4NT5F1WYQfNZyZ/uCy+vBfywu8roLBWtLyBHoAr0xsYa4wqupzH+AKplJd531UpkFOmyqqSSCI2LVFjIP+KdzrT8O6uHY7ZNuc7g+Byb6TCgp4edLrUclHZCuzGyfSe5rA4LfKSsVPFTBMI7L9cyX2aqKIm9v6WMaOS7gbLWU7FOmj6ZZ6CF+LvA365Qr1SY6D2Cyb+nc8oMjA8DRi+JqZ2rUY+MIFiTNo2tscUk1T9hz1vFUj2vbNKaE5Ilie+BOpPGUwcgXUKESdrMWIbHMuc5B1TiSyNoIWdzsmmvmWUL0T90HkqquPx0qXXfKaIGAPwEBpeYa1BFBQkys1otRrr/JXIeI+AaNS5s23zQ+5iApsZoKaPGlX4IOiM5xU9cqSfDDGog=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700016)(82310400026)(376014)(1800799024)(5023799004)(11063799006)(6133799003)(18002099003)(22082099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: x12Vxg1AWhVl46ZLv9Zzs3gsATVFBnX+xkV4+LsEGdt18g8Wv0iS6YaEcwfvvpSfpPmQqC6JxgAcMa2WMzNfDRhSXgGEEhqj92dgwKaIxsLd1iwhdg0YP+V+mJR6MXeGFO24WcPhHuTjb7RixCK6SFL3GkxNjFUnSNKM9XcLC5IeBQudKq0RIafhNJ9lhBapdOAk/0ihIOWGE0cYBe2mOnohPlno7dzaer+P9iRFXXv5FuRo2ckFoR9SOlssngzel9d8IMvyMz35h0k/rmRVMuvWkQHVeUP1Qg1uEdCLLFWn2nxxV9Z3uOSgx/LiLj9cOwermx+q7qRFh3/V9tXC8gIkYpgsvAs8r5+haiAQEx6quupWMV5ud2R/goCVkbVArda6XVnZ8GlOpJTIjZ7Rc0FLLbytdxGO3DLZHu9ZYcxCq6ruBzxRDwoa4bMYcgHF
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2026 16:25:10.1282 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 392ef2bd-50f3-4d32-4a8f-08deb755873b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SN1PEPF0002BA51.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6152
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -100,59 +112,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, May 18, 2026 at 11:44=E2=80=AFAM Mark Blasko <blasko@google.com> wr=
-ote:
->
-> On Sun, May 17, 2026 at 4:15=E2=80=AFPM Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
-> >
-> > Warning: (unchanged from v1) gve_read_clock and the periodic
-> > gve_read_nic_clock alarm callback both issue
-> > GVE_ADMINQ_REPORT_NIC_TIMESTAMP into the single shared DMA buffer
-> > priv->nic_ts_report, then read it after gve_adminq_execute_cmd
-> > has released adminq_lock. If gve_read_clock is preempted between
-> > gve_adminq_report_nic_timestamp returning and the be64_to_cpu
-> > read, the alarm callback can memset() and reissue its own
-> > command, so the user thread will read either zero or another
-> > command's response. The simplest fix is for gve_read_clock to
-> > return the cached priv->last_read_nic_timestamp instead of
-> > issuing a fresh adminq command - the 250ms periodic sync keeps
-> > it fresh enough for .read_clock semantics. Once the dev_op
-> > registration is restored this race becomes reachable.
->
-> I want to make sure I fully understand the API contract here. Is the
-> fact that .read_clock does not require a fresh device read documented
-> in the DPDK specification, or is this based on typical application
-> use cases? If the latter, what are those typical use cases?
+On Wed, May 20, 2026 at 03:25:32PM +0200, Adrian Schollmeyer wrote:
+> From: Michael Pfeiffer <m.pfeiffer@syseleven.de>
+> 
+> For a MODIFY_FIELD action, flow_hw_validate_action_modify_field() is
+> invoked and enforces class_id == 0 in the action's source and
+> destination, if the modified field is none of
+> RTE_FLOW_FIELD_GENEVE_OPT_*, as the value is used solely for GENEVE
+> fields.
+> 
+> However, this check is flawed due to the way rte_flow_field_data is
+> initialized. As it consists of unions and anonymous structs as members,
+> empty initialization of this struct or initializing just the tag_index
+> only guarantees initialization of the first union member, while the
+> remaining member's default initialization behavior is unspecified.
+> Therefore, depending on the compiler type, version and configuration,
+> the remaining members may either be default-initialized as well or
+> contain bytes from uninitialized memory. This causes the check to fail
+> depending on how the struct is initialized wherever it is used.
+> 
+> For example, rte_flow_configure() sometimes fails on mlx5 under these
+> circumstances with an error "destination class id is not supported"
+> during creation of representor tagging rules, as these internally use
+> MODIFY_FIELD actions in the following call stack:
+> 
+>   1. rte_flow_configure
+>   2. mlx5_flow_port_configure
+>   3. flow_hw_configure
+>   4. __flow_hw_configure
+>   5. flow_hw_setup_tx_repr_tagging
+>   6. flow_hw_create_tx_repr_tag_jump_acts_tmpl
+>      --> various rte_flow_action_modify_field are initialized here, but
+>          class_id remains uninitialized
+>   7. __flow_hw_actions_template_create
+>   8. mlx5_flow_hw_actions_validate
+>   9. flow_hw_validate_action_modify_field
+>      --> invoked with class_id containing uninitialized bytes and
+>          non-GENEVE field type
+> 
+> Remove the two checks for class_id in the non-GENEVE case, as this field
+> is unused for these actions and avoids additional implicit dependencies
+> on the correct ordering of union members.
+> 
+> Fixes: 1caa89ec1891 ("net/mlx5: support GENEVE options modification")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Michael Pfeiffer <m.pfeiffer@syseleven.de>
+> Signed-off-by: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
 
-Looking at the documentation for the user-exposed rte_eth_read_clock()
-API, it seems that this API is intended to be quite accurate on a
-read, or at least more accurate than 250ms of granularity would allow.
-This is the example given in the documentation:
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 
-> * E.g, a simple heuristic to derivate the frequency would be:
-> * uint64_t start, end;
-> * rte_eth_read_clock(port, start);
-> * rte_delay_ms(100);
-> * rte_eth_read_clock(port, end);
-> * double freq =3D (end - start) * 10;
-> *
-> * Compute a common reference with:
-> * uint64_t base_time_sec =3D current_time();
-> * uint64_t base_clock;
-> * rte_eth_read_clock(port, base_clock);
-> *
-> * Then, convert the raw mbuf timestamp with:
-> * base_time_sec + (double)(*timestamp_dynfield(mbuf) - base_clock) / freq=
-;
+Thank you for the contribution.
 
-read_clock() having 250ms granularity would completely nullify this
-use case, as it is entirely possible for both clock reads to hold the
-same value. And even if they _didn't_ hold the same value, they would
-end up being 250ms-worth of NIC cycles apart, instead of a more
-accurate representation of the delta over that period of time -- not
-very useful.
-
---=20
-
-Joshua Washington
+Best regards,
+Dariusz Sosnowski
