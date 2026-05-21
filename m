@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7DBCD5BAF
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 22:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F82CD5BAF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 22:46:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3F9774066F;
-	Fri, 22 May 2026 00:46:04 +0200 (CEST)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id 65B324065D
- for <dev@dpdk.org>; Fri, 22 May 2026 00:46:00 +0200 (CEST)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-132d1b2519eso14442175c88.0
- for <dev@dpdk.org>; Thu, 21 May 2026 15:46:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2174040684;
+	Fri, 22 May 2026 00:46:05 +0200 (CEST)
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+ by mails.dpdk.org (Postfix) with ESMTP id 5EAEC40670
+ for <dev@dpdk.org>; Fri, 22 May 2026 00:46:01 +0200 (CEST)
+Received: by mail-dl1-f48.google.com with SMTP id
+ a92af1059eb24-1353c2f35cfso19611906c88.1
+ for <dev@dpdk.org>; Thu, 21 May 2026 15:46:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779403559;
- x=1780008359; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779403560;
+ x=1780008360; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=rVduYH+Rn4lWre0b5NXulqAIaAff+oWNGK3UJ6yzans=;
- b=OwBY+CRfc1tNlo6WkcphQpFPgQjJ5sNIlpuYZurvuuaZyslHultxp6AgR/veqrErg8
- 732NLQqx1y1zhBwnbMgO/NoyFE66KLun33rSDJsIClzKsDJ5eiQtOmpKMkwtrL9ZYNUA
- VUzw6kfItNxWx+FXvJbqAhLQd5AWotF8M2d53MrKw11dxyCpB3Ansdo1RZlKb4tJgNUI
- crMie8vkj+qDF7LIGdfn+hxy91W891/Q8FLeYdGhLi7dO7e5sNnV0dTcr7kuYxtCr5GX
- PtddXstUuMVDYmHZBFetCymE1nCtyBs5Z8sAgRQUZz6CR1VVZ79oAbptkxcUDagW2oVA
- ar7g==
+ bh=4HPpSFYLHst7GG8DHSmqmykwTOdxpGYVRDd1U8lGpQY=;
+ b=uc50InMdXhwNn/MVrEzQyk2RAFQ2xuQYCvW4/A0WhhWF/TbvN3/DWkaQovMPxOePYD
+ CUe3p2KQDfpg6x37ze+5jUVoLyW+7ZQU5xGFuzkTnPiw5tpWqYZAoQ5r85mGAHDCo5bM
+ ONmCFETJQOmHZJG4Dd2Slj0WIRpVrRIq20CmYlbE9ZvgysmtGeDVq/tCmKbfGCnbO2om
+ ZQU+lY81WHj4IivplfuRA/9ERs6DNYX81Cw5dnwDFE+IrPAgu0JFDdc8PES7vuzmxalc
+ iMLE+lWa64I3pC1oTOb0hpf+KhzMFTijh3HTmdE2PMzDt8WSHWiNrAyTKxxl+v/E8Fmk
+ Ixgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779403559; x=1780008359;
+ d=1e100.net; s=20251104; t=1779403560; x=1780008360;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=rVduYH+Rn4lWre0b5NXulqAIaAff+oWNGK3UJ6yzans=;
- b=qTOK0YKi90xFXkL8Se74HY5u61YY1eTPra8aA2UV5s8h81A6DVBX4Q903LkRNBgRM1
- 0FLvUCeCO5adWh1lBG0qGDpztcb/ldBFQn6jMlZmOmaCtI3kWvX1twMOO0CJLRK4Alpz
- oq79lp8IFC6JV7XgoIqrBQRmuLYYyE/AoWj0XxG1dEVBqqD5lrUR2X3syiiHDWuEBV35
- 7061Qwwy3lOV36uoXtorICUBmOUoJNpaHGTQUjtVHl0hwkndruvXkOGfuYG/74cpBeMw
- MS20cLEMGRZBEy0nTLKTAosp3JMBbV8V/W3xjfFmZu1+BcoaUOa06/QZlKv+HTD54hnV
- hbEg==
-X-Gm-Message-State: AOJu0Yx8sttxIEGBnrFj+erpcebaXPCc64lFBHOt3V/YY30GD+xA2ByI
- 4uYoKUjxq9/AxPdEDr4Df85mZkhCJc6Qt7Ze2xdztBEsl0PWfdy1C5fudgRNezcHWAxlqPVXn+k
- EVfAG
-X-Gm-Gg: Acq92OGCX7MWTOSWbQ9nCH8+mL9hpRlr7DlVehsTF/iWiE5W25p6Lef56gMvBQK/8+O
- XQ2/jnYC2GlC6Rf8XBuz4APVYGnmsUOE8sMs5ho5nDT1TKFnV1ghiQgW2qRTt3OXCI8EJy90EvA
- 5ES2S66nWYlwdwCbzGyHGSWHgNI1rVVEX86B2ApncvsTPW4iRfzEGZwnf5UkEVUg7veIiemGM3R
- qFxYTa1YPc4qwyXBcJcejyvj/YT8sxh3nWoVHIK4sWFSz57TZnKk2/122JONk+0bSQeY5ihWzhI
- 4dtU8XQ6kzXtz+RytRN1R5HsmnYqErzB/6WdXvqAYZeIL7t7pIfEPHThmXRVMKiJltVFBvwZpT3
- 79y94i8A/MlP2A2ZHMPSi4lhBhpbOqMTaGBBbLhg9L47bWuZeX9S3U67a1EIqxDRWGvu5ydb98q
- FvmFTdEmDnMcgakNB5a0DV5VuqvhcLmsz2DFNPqUzyqB5DG9pBy6kwp6kqDUdsQgN2Kc0Hoang
-X-Received: by 2002:a05:7022:609c:b0:135:d749:5761 with SMTP id
- a92af1059eb24-1365f8117a4mr524912c88.8.1779403559400; 
- Thu, 21 May 2026 15:45:59 -0700 (PDT)
+ bh=4HPpSFYLHst7GG8DHSmqmykwTOdxpGYVRDd1U8lGpQY=;
+ b=JvjgcZ2NPFsdwRd3UR+TxJhXFYcu+/QLlslb1fTKE3v1beXl45FztC3mVx1pUqkkon
+ L4qLRMAKnKi9DIKT2NzsBLQ3tkxaX18tuMD44QzwAE9VOnCgESwNKtVPW4zGuOV84aMC
+ olFimJRfENqmZA4rFMVo+mQdcZgqgEijpkfZwRKtHSEST8OEx0VGAeQ9KM77QEg0j6Qr
+ Mou9XLRaWci556B5Sd5Gv8FCcSLw+O3yDPmpOCSQSf17Xa5g0q2564ZVHpG5hlmPQQyf
+ VoD5yiVjjkrHUjdRKRrRhDUxKhl0D6vfkBYkTCtidBKf+VfOPCTBde9H+1oTBew7WPgX
+ yDEw==
+X-Gm-Message-State: AOJu0Yyp+QyfGDTjbStrXOTNGd8/OWEPujrQmM3p3MRLYExzp0Sxcnag
+ uRiIbajcR1USyiFJy+eMNa6NBspJQ/hOMnQkSfMN0CyfT9W8NYb7KjdCuz1ItkuKM1BmnwMXv8H
+ 7jtna
+X-Gm-Gg: Acq92OEM78idjXQXP+V6Z8KsB1axrhu8ncoPXSByqSFMISM+3Jk92BT2xpqm4GadSaS
+ s9z7hNaf7o8Tl7pv5vPlzRKbb8RnBDtzYJ8JHonpLXPZcXw6J9KlMDoMV5DpWe+oqJqPyXotCRs
+ 7Z5h5Dl0AFSdalsrO9Rzx+PuXygs4OYYu1R2mnW7SRkDSv0qg53iwvCp/96B6TqlEu4ewDOjRnA
+ uo9EvOGzRtjxzE2uytGjizUC66fui7NR2BuWqY54x2anF9hMiRlfZFlUQ5cqy2N6a3xwQpypRo1
+ FIAVtVleuYtCZBw8Kom7MyQdRtj9YoLw2Dkf+XJxunHvoqDncqM0XiQEWSws/1CNTfzluNJLl5r
+ rlPenUckROBEdl4wP3bJ0FXIcSiqxhqP34xvOf4JaHRBwKWXVmlYy/a96vrdSlfeU9RIAzo4iHp
+ FxloNJf+KgFPueq/w8fWIR2TrNGpADXnPjVUx4IwJgOGgWg/bu7oBKHaGHMN2wHmNac0u0OAER
+X-Received: by 2002:a05:7022:252a:b0:136:602b:80ac with SMTP id
+ a92af1059eb24-136602b8140mr488080c88.27.1779403560447; 
+ Thu, 21 May 2026 15:46:00 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-136621d3ae9sm496044c88.5.2026.05.21.15.45.58
+ a92af1059eb24-136621d3ae9sm496044c88.5.2026.05.21.15.45.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 21 May 2026 15:45:58 -0700 (PDT)
+ Thu, 21 May 2026 15:46:00 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Aaron Conole <aconole@redhat.com>
-Subject: [PATCH v15 6/7] doc: add AI-assisted patch review to contributing
- guide
-Date: Thu, 21 May 2026 15:44:38 -0700
-Message-ID: <20260521224550.927338-7-stephen@networkplumber.org>
+ Aaron Conole <aconole@redhat.com>, Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH v15 7/7] MAINTAINERS: add section for AI review tools
+Date: Thu, 21 May 2026 15:44:39 -0700
+Message-ID: <20260521224550.927338-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260521224550.927338-1-stephen@networkplumber.org>
 References: <20260126184205.104629-1-stephen@networkplumber.org>
@@ -83,112 +82,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a new section to the contributing guide describing the
-analyze-patch.py script which uses AI providers to review patches
-against DPDK coding standards before submission to the mailing list.
-
-The new section covers basic usage, provider selection, patch series
-handling, LTS release review, and output format options. A note
-clarifies that AI review supplements but does not replace human
-review.
-
-Also add a reference to the script in the new driver guide's
-test tools checklist.
+Add maintainer entries for the AI-assisted code review tooling:
+AGENTS.md, analyze-patch.py, compare-reviews.sh, and
+review-doc.py.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Aaron Conole <aconole@redhat.com>
 ---
- doc/guides/contributing/new_driver.rst |  2 +
- doc/guides/contributing/patches.rst    | 59 ++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+ MAINTAINERS                            | 6 ++++++
+ doc/guides/rel_notes/release_26_07.rst | 5 +++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/doc/guides/contributing/new_driver.rst b/doc/guides/contributing/new_driver.rst
-index 555e875329..6c0d356cfd 100644
---- a/doc/guides/contributing/new_driver.rst
-+++ b/doc/guides/contributing/new_driver.rst
-@@ -210,3 +210,5 @@ Be sure to run the following test tools per patch in a patch series:
- * `check-doc-vs-code.sh`
- * `check-spdx-tag.sh`
- * Build documentation and validate how output looks
-+* Optionally run ``analyze-patch.py`` for AI-assisted review
-+  (see :ref:`ai_assisted_review` in the Contributing Guide)
-diff --git a/doc/guides/contributing/patches.rst b/doc/guides/contributing/patches.rst
-index 5f554d47e6..52001570c6 100644
---- a/doc/guides/contributing/patches.rst
-+++ b/doc/guides/contributing/patches.rst
-@@ -183,6 +183,10 @@ Make your planned changes in the cloned ``dpdk`` repo. Here are some guidelines
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b390446ed3..61a8a9ee68 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -109,6 +109,12 @@ F: license/
+ F: .editorconfig
+ F: .mailmap
  
- * Code and related documentation must be updated atomically in the same patch.
++AI review tools
++M: Stephen Hemminger <stephen@networkplumber.org>
++M: Aaron Conole <aconole@redhat.com>
++F: AGENTS.md
++F: devtools/ai/
++
+ Linux kernel uAPI headers
+ M: Maxime Coquelin <maxime.coquelin@redhat.com>
+ F: devtools/linux-uapi.sh
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index f012d47a4b..32fb5a4c55 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -63,6 +63,11 @@ New Features
+     ``rte_eal_init`` and the application is responsible for probing each device,
+   * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
  
-+* Consider running the :ref:`AI-assisted review <ai_assisted_review>` tool
-+  before submitting to catch common issues early.
-+  This is encouraged but not required.
++* **Added scripts and prompts for AI review.**
 +
- Once the changes have been made you should commit them to your local repo.
++  Added AGENTS.md file for AI review and supporting scripts to analyze
++  patches and review documentation.
++
  
- For small changes, that do not require specific explanations, it is better to keep things together in the
-@@ -503,6 +507,61 @@ Additionally, when contributing to the DTS tool, patches should also be checked
- the ``dts-check-format.sh`` script in the ``devtools`` directory of the DPDK repo.
- To run the script, extra :ref:`Python dependencies <dts_deps>` are needed.
- 
-+
-+.. _ai_assisted_review:
-+
-+AI-Assisted Patch Review
-+------------------------
-+
-+Contributors may optionally use the ``analyze-patch.py`` script
-+to get an AI-assisted review of patches before submitting them to the mailing list.
-+The script checks patches against the DPDK coding standards and contribution
-+guidelines documented in ``AGENTS.md``.
-+
-+The script supports multiple AI providers (Anthropic Claude, OpenAI ChatGPT,
-+xAI Grok, Google Gemini).  An API key for the chosen provider must be set
-+in the corresponding environment variable (see ``--list-providers``).
-+
-+Basic usage::
-+
-+   # Review a single patch (default provider: Anthropic Claude)
-+   devtools/ai/analyze-patch.py my-patch.patch
-+
-+   # Use a different provider
-+   devtools/ai/analyze-patch.py -p openai my-patch.patch
-+
-+   # Review for an LTS branch (enables stricter rules)
-+   devtools/ai/analyze-patch.py -r 24.11 my-patch.patch
-+
-+   # List available providers and their API key variables
-+   devtools/ai/analyze-patch.py --list-providers
-+
-+For a patch series in an mbox file, the ``--split-patches`` option reviews
-+each patch individually::
-+
-+   devtools/ai/analyze-patch.py --split-patches series.mbox
-+
-+   # Review only a range of patches
-+   devtools/ai/analyze-patch.py --split-patches --patch-range 1-5 series.mbox
-+
-+When reviewing for a Long Term Stable (LTS) release, use the ``-r`` option
-+with the target version.  Any DPDK release with minor version ``.11``
-+(e.g., 23.11, 24.11) is automatically recognized as LTS,
-+and the script will enforce stricter rules: bug fixes only, no new features or APIs.
-+
-+Output can be formatted as plain text (default), Markdown, HTML, or JSON::
-+
-+   devtools/ai/analyze-patch.py -f markdown -o review.md my-patch.patch
-+
-+The review guidelines in ``AGENTS.md`` focus on correctness bug detection
-+and other DPDK-specific requirements. Commit message formatting and
-+SPDX/copyright compliance are checked by ``checkpatches.sh`` and are
-+not duplicated in the AI review.
-+
-+.. note::
-+
-+   Always verify AI suggestions before acting on them.
-+
- .. _contrib_check_compilation:
- 
- Checking Compilation
+ Removed Items
+ -------------
 -- 
 2.53.0
 
