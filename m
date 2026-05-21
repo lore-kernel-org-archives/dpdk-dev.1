@@ -2,53 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BE5CD5BA4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 12:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21346CD5BA4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 12:40:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 160F6402B0;
-	Thu, 21 May 2026 14:24:42 +0200 (CEST)
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
- [113.46.200.222])
- by mails.dpdk.org (Postfix) with ESMTP id 5D6CF40290
- for <dev@dpdk.org>; Thu, 21 May 2026 14:24:40 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=m5RdRouOFJACOM3OFdU0sNMJSFAUZuE9jF0qJKYNdew=;
- b=4R0HEX7yr9PFBfFCKFxD2Je6PFc/LypdP75of63ASqdNXB9ogmEQ3FqDl22qXFRjCD92lkZAA
- yLCA7x0vpKmYxZOy4XTcR4N4lh2OlxVJ2Q+lOokwurMCgM/REQESlkMoq4k/6WJquBoF7IuJ9mM
- 4zmJB0CgMRLEs+lAVSbmQPI=
-Received: from mail.maildlp.com (unknown [172.19.163.15])
- by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4gLnTM2TfrzLlSL;
- Thu, 21 May 2026 20:16:55 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 02FD240571;
- Thu, 21 May 2026 20:24:37 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 21 May 2026 20:24:36 +0800
-Message-ID: <cd4f1bcd-3d66-4ffe-91d7-7ac1fdfe8c2e@huawei.com>
-Date: Thu, 21 May 2026 20:24:35 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id C74C3402B0;
+	Thu, 21 May 2026 14:40:52 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id C702540290
+ for <dev@dpdk.org>; Thu, 21 May 2026 14:40:51 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 9695420416;
+ Thu, 21 May 2026 14:40:51 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ethdev: add telemetry endpoint for list names
-To: Bruce Richardson <bruce.richardson@intel.com>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-CC: <thomas@monjalon.net>, <stephen@networkplumber.org>, <dev@dpdk.org>,
- <andrew.rybchenko@oktetlabs.ru>
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v2 2/2] ethdev: add telemetry endpoint for list names
+Date: Thu, 21 May 2026 14:40:47 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6588F@smartserver.smartshare.dk>
+In-Reply-To: <cd4f1bcd-3d66-4ffe-91d7-7ac1fdfe8c2e@huawei.com>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2 2/2] ethdev: add telemetry endpoint for list names
+Thread-Index: AdzpHM40JUTa+B44STqOyzV+AjXj3QAAQAuw
 References: <20260520035641.50555-1-fengchengwen@huawei.com>
  <20260520093804.29102-1-fengchengwen@huawei.com>
  <20260520093804.29102-3-fengchengwen@huawei.com>
  <98CBD80474FA8B44BF855DF32C47DC35F65887@smartserver.smartshare.dk>
  <ag3ME5EBdDSAhaW8@bricha3-mobl1.ger.corp.intel.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <ag3ME5EBdDSAhaW8@bricha3-mobl1.ger.corp.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+ <cd4f1bcd-3d66-4ffe-91d7-7ac1fdfe8c2e@huawei.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "fengchengwen" <fengchengwen@huawei.com>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <thomas@monjalon.net>, <stephen@networkplumber.org>, <dev@dpdk.org>,
+ <andrew.rybchenko@oktetlabs.ru>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,122 +53,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thanks for the feedback.
-
-I intend to keep the current dict format. This concise ID-name mapping is quite
-helpful and easy to read especially when there are massive ports, which is exactly
-the main purpose why I submitted this patch.
-
-In my opinion, adopting OData-style query would require architecture-level
-refactoring of telemetry framework, which is way too heavy for this simple requirement.
-For complex query demands, we can implement them by extending the upper-layer Python
-telemetry script instead.
-
-So I suggest we keep this simple form here.
-
-Thanks.
-
-On 5/20/2026 10:58 PM, Bruce Richardson wrote:
-> On Wed, May 20, 2026 at 03:29:36PM +0200, Morten Brørup wrote:
->>> From: Chengwen Feng [mailto:fengchengwen@huawei.com]
->>> Sent: Wednesday, 20 May 2026 11.38
->>>
->>> Add /ethdev/list_names telemetry endpoint which returns a dictionary
->>> keyed by port ID with device name as the value, so users can
->>> identify ports by name directly from the telemetry output.
->>>
->>> Original /ethdev/list output:
->>>   {"/ethdev/list": [0, 1]}
->>>
->>> New /ethdev/list_names output:
->>>   {"/ethdev/list_names": {"0": "0000:7d:00.0",
->>>   "1": "0000:7d:00.1"}}
->>>
->>
->> <rant>
->>
->> Unfortunately, the telemetry protocol in DPDK is not using a common design, but takes parameters specific to each path.
->> It should have used OData or something similar, to standardize listing, filtering, etc.
->> Then we could have queried this like:
->> /ethdev/info?$select=port_id,name
-> 
-> If you are up for implementing something like that, it should be possible
-> to have syntax like the above work alongside our existing syntax too.
-> The current telemetry scheme was set up with the overarching objective
-> being simplicity.
-> 
->> And return something like:
->> [
->> 	{
->> 		"port_id": 0,
->> 		"name": "0000:7d:00.0"
->> 	},
->> 	{
->> 		"port_id": 1,
->> 		"name": "0000:7d:00.1"
->> 	}
->> ]
->> or:
->> [
->> 	{
->> 		0,
->> 		"0000:7d:00.0"
->> 	},
->> 	{
->> 		1,
->> 		"0000:7d:00.1"
->> 	}
->> ]
->>
->> But now we are stuck with what we have.
->>
->> </rant>
->>
->> So /etdev/list_names is OK.
->>
->> I'm not really familiar with the DPDK telemetry, so I wonder if indexed arrays are normally returned as an object, like in this patch?
->>
->> I would have expected a list function (such as list_names) to return an array.
->> Either a simple list:
->> {
->> 	"/ethdev/list_names":
->> 	[
->> 		"0000:7d:00.0",
->> 		"0000:7d:00.1"
->> 	]
->> }
->>
-> 
-> I think it would prefer this, but it does get a bit harder to read with a
-> long list.
-> 
->> Or a list of objects:
->> {
->> 	"/ethdev/list_names":
->> 	[
->> 		{
->> 			"port_id": 0,
->> 			"name": "0000:7d:00.0"
->> 		},
->> 		{
->> 			"port_id": 1,
->> 			"name": "0000:7d:00.1"
->> 		}
->> 	]
->> }
->>
-> 
-> Agree that this also would be slightly better.
-> 
-> However, a *completely* different approach would be to instead solve this
-> issue by adding additional functionality to the interactive telemetry
-> script itself. After all, the data for the list of names of ethdevs is
-> already available from the telemetry endpoints already present in DPDK. All
-> we need to do is to extend the python script to have "virtual endpoints" if
-> you will, which do the necessary queries in the background and then present
-> the data to the user. I think that would be a cleaner approach to things
-> like this, rather than always adding more C code.
-> 
-> /Bruce
-> 
-
+PiBGcm9tOiBmZW5nY2hlbmd3ZW4gW21haWx0bzpmZW5nY2hlbmd3ZW5AaHVhd2VpLmNvbV0NCj4g
+U2VudDogVGh1cnNkYXksIDIxIE1heSAyMDI2IDE0LjI1DQo+IA0KPiBUaGFua3MgZm9yIHRoZSBm
+ZWVkYmFjay4NCj4gDQo+IEkgaW50ZW5kIHRvIGtlZXAgdGhlIGN1cnJlbnQgZGljdCBmb3JtYXQu
+IFRoaXMgY29uY2lzZSBJRC1uYW1lIG1hcHBpbmcNCj4gaXMgcXVpdGUNCj4gaGVscGZ1bCBhbmQg
+ZWFzeSB0byByZWFkIGVzcGVjaWFsbHkgd2hlbiB0aGVyZSBhcmUgbWFzc2l2ZSBwb3J0cywgd2hp
+Y2gNCj4gaXMgZXhhY3RseQ0KPiB0aGUgbWFpbiBwdXJwb3NlIHdoeSBJIHN1Ym1pdHRlZCB0aGlz
+IHBhdGNoLg0KPiANCj4gSW4gbXkgb3BpbmlvbiwgYWRvcHRpbmcgT0RhdGEtc3R5bGUgcXVlcnkg
+d291bGQgcmVxdWlyZSBhcmNoaXRlY3R1cmUtDQo+IGxldmVsDQo+IHJlZmFjdG9yaW5nIG9mIHRl
+bGVtZXRyeSBmcmFtZXdvcmssIHdoaWNoIGlzIHdheSB0b28gaGVhdnkgZm9yIHRoaXMNCj4gc2lt
+cGxlIHJlcXVpcmVtZW50Lg0KDQpBZ3JlZS4NClJlZmFjdG9yaW5nIHRoZSB0ZWxlbWV0cnkgZnJh
+bWV3b3JrIGlzIGRpZmZlcmVudCB0YXNrLCBub3QgcmVsYXRlZCB0byB0aGlzIHBhdGNoLg0KDQo+
+IEZvciBjb21wbGV4IHF1ZXJ5IGRlbWFuZHMsIHdlIGNhbiBpbXBsZW1lbnQgdGhlbSBieSBleHRl
+bmRpbmcgdGhlDQo+IHVwcGVyLWxheWVyIFB5dGhvbg0KPiB0ZWxlbWV0cnkgc2NyaXB0IGluc3Rl
+YWQuDQo+IA0KPiBTbyBJIHN1Z2dlc3Qgd2Uga2VlcCB0aGlzIHNpbXBsZSBmb3JtIGhlcmUuDQoN
+CklmIGl0IGlzIGdlbmVyYWxseSBhY2NlcHRhYmxlIGZvciBEUERLIHRlbGVtZXRyeSB0aGF0IGEg
+cmVxdWVzdCBmb3IgYSBsaXN0IGRvZXMgbm90IHJldHVybiBhIGxpc3QgdHlwZSwgYnV0IHJldHVy
+bnMgYW4gb2JqZWN0IHR5cGUgd2l0aCAiaW5kZXgiOiAidmFsdWUiIGZpZWxkcyBpbnN0ZWFkLCB0
+aGVuDQpTZXJpZXMtYWNrZWQtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVt
+cy5jb20+DQoNCj4gDQo+IFRoYW5rcy4NCj4gDQo+IE9uIDUvMjAvMjAyNiAxMDo1OCBQTSwgQnJ1
+Y2UgUmljaGFyZHNvbiB3cm90ZToNCj4gPiBPbiBXZWQsIE1heSAyMCwgMjAyNiBhdCAwMzoyOToz
+NlBNICswMjAwLCBNb3J0ZW4gQnLDuHJ1cCB3cm90ZToNCj4gPj4+IEZyb206IENoZW5nd2VuIEZl
+bmcgW21haWx0bzpmZW5nY2hlbmd3ZW5AaHVhd2VpLmNvbV0NCj4gPj4+IFNlbnQ6IFdlZG5lc2Rh
+eSwgMjAgTWF5IDIwMjYgMTEuMzgNCj4gPj4+DQo+ID4+PiBBZGQgL2V0aGRldi9saXN0X25hbWVz
+IHRlbGVtZXRyeSBlbmRwb2ludCB3aGljaCByZXR1cm5zIGENCj4gZGljdGlvbmFyeQ0KPiA+Pj4g
+a2V5ZWQgYnkgcG9ydCBJRCB3aXRoIGRldmljZSBuYW1lIGFzIHRoZSB2YWx1ZSwgc28gdXNlcnMg
+Y2FuDQo+ID4+PiBpZGVudGlmeSBwb3J0cyBieSBuYW1lIGRpcmVjdGx5IGZyb20gdGhlIHRlbGVt
+ZXRyeSBvdXRwdXQuDQo+ID4+Pg0KPiA+Pj4gT3JpZ2luYWwgL2V0aGRldi9saXN0IG91dHB1dDoN
+Cj4gPj4+ICAgeyIvZXRoZGV2L2xpc3QiOiBbMCwgMV19DQo+ID4+Pg0KPiA+Pj4gTmV3IC9ldGhk
+ZXYvbGlzdF9uYW1lcyBvdXRwdXQ6DQo+ID4+PiAgIHsiL2V0aGRldi9saXN0X25hbWVzIjogeyIw
+IjogIjAwMDA6N2Q6MDAuMCIsDQo+ID4+PiAgICIxIjogIjAwMDA6N2Q6MDAuMSJ9fQ0KPiA+Pj4N
+Cj4gPj4NCj4gPj4gPHJhbnQ+DQo+ID4+DQo+ID4+IFVuZm9ydHVuYXRlbHksIHRoZSB0ZWxlbWV0
+cnkgcHJvdG9jb2wgaW4gRFBESyBpcyBub3QgdXNpbmcgYSBjb21tb24NCj4gZGVzaWduLCBidXQg
+dGFrZXMgcGFyYW1ldGVycyBzcGVjaWZpYyB0byBlYWNoIHBhdGguDQo+ID4+IEl0IHNob3VsZCBo
+YXZlIHVzZWQgT0RhdGEgb3Igc29tZXRoaW5nIHNpbWlsYXIsIHRvIHN0YW5kYXJkaXplDQo+IGxp
+c3RpbmcsIGZpbHRlcmluZywgZXRjLg0KPiA+PiBUaGVuIHdlIGNvdWxkIGhhdmUgcXVlcmllZCB0
+aGlzIGxpa2U6DQo+ID4+IC9ldGhkZXYvaW5mbz8kc2VsZWN0PXBvcnRfaWQsbmFtZQ0KPiA+DQo+
+ID4gSWYgeW91IGFyZSB1cCBmb3IgaW1wbGVtZW50aW5nIHNvbWV0aGluZyBsaWtlIHRoYXQsIGl0
+IHNob3VsZCBiZQ0KPiBwb3NzaWJsZQ0KPiA+IHRvIGhhdmUgc3ludGF4IGxpa2UgdGhlIGFib3Zl
+IHdvcmsgYWxvbmdzaWRlIG91ciBleGlzdGluZyBzeW50YXggdG9vLg0KPiA+IFRoZSBjdXJyZW50
+IHRlbGVtZXRyeSBzY2hlbWUgd2FzIHNldCB1cCB3aXRoIHRoZSBvdmVyYXJjaGluZw0KPiBvYmpl
+Y3RpdmUNCj4gPiBiZWluZyBzaW1wbGljaXR5Lg0KPiA+DQo+ID4+IEFuZCByZXR1cm4gc29tZXRo
+aW5nIGxpa2U6DQo+ID4+IFsNCj4gPj4gCXsNCj4gPj4gCQkicG9ydF9pZCI6IDAsDQo+ID4+IAkJ
+Im5hbWUiOiAiMDAwMDo3ZDowMC4wIg0KPiA+PiAJfSwNCj4gPj4gCXsNCj4gPj4gCQkicG9ydF9p
+ZCI6IDEsDQo+ID4+IAkJIm5hbWUiOiAiMDAwMDo3ZDowMC4xIg0KPiA+PiAJfQ0KPiA+PiBdDQo+
+ID4+IG9yOg0KPiA+PiBbDQo+ID4+IAl7DQo+ID4+IAkJMCwNCj4gPj4gCQkiMDAwMDo3ZDowMC4w
+Ig0KPiA+PiAJfSwNCj4gPj4gCXsNCj4gPj4gCQkxLA0KPiA+PiAJCSIwMDAwOjdkOjAwLjEiDQo+
+ID4+IAl9DQo+ID4+IF0NCj4gPj4NCj4gPj4gQnV0IG5vdyB3ZSBhcmUgc3R1Y2sgd2l0aCB3aGF0
+IHdlIGhhdmUuDQo+ID4+DQo+ID4+IDwvcmFudD4NCj4gPj4NCj4gPj4gU28gL2V0ZGV2L2xpc3Rf
+bmFtZXMgaXMgT0suDQo+ID4+DQo+ID4+IEknbSBub3QgcmVhbGx5IGZhbWlsaWFyIHdpdGggdGhl
+IERQREsgdGVsZW1ldHJ5LCBzbyBJIHdvbmRlciBpZg0KPiBpbmRleGVkIGFycmF5cyBhcmUgbm9y
+bWFsbHkgcmV0dXJuZWQgYXMgYW4gb2JqZWN0LCBsaWtlIGluIHRoaXMgcGF0Y2g/DQo+ID4+DQo+
+ID4+IEkgd291bGQgaGF2ZSBleHBlY3RlZCBhIGxpc3QgZnVuY3Rpb24gKHN1Y2ggYXMgbGlzdF9u
+YW1lcykgdG8gcmV0dXJuDQo+IGFuIGFycmF5Lg0KPiA+PiBFaXRoZXIgYSBzaW1wbGUgbGlzdDoN
+Cj4gPj4gew0KPiA+PiAJIi9ldGhkZXYvbGlzdF9uYW1lcyI6DQo+ID4+IAlbDQo+ID4+IAkJIjAw
+MDA6N2Q6MDAuMCIsDQo+ID4+IAkJIjAwMDA6N2Q6MDAuMSINCj4gPj4gCV0NCj4gPj4gfQ0KPiA+
+Pg0KPiA+DQo+ID4gSSB0aGluayBpdCB3b3VsZCBwcmVmZXIgdGhpcywgYnV0IGl0IGRvZXMgZ2V0
+IGEgYml0IGhhcmRlciB0byByZWFkDQo+IHdpdGggYQ0KPiA+IGxvbmcgbGlzdC4NCj4gPg0KPiA+
+PiBPciBhIGxpc3Qgb2Ygb2JqZWN0czoNCj4gPj4gew0KPiA+PiAJIi9ldGhkZXYvbGlzdF9uYW1l
+cyI6DQo+ID4+IAlbDQo+ID4+IAkJew0KPiA+PiAJCQkicG9ydF9pZCI6IDAsDQo+ID4+IAkJCSJu
+YW1lIjogIjAwMDA6N2Q6MDAuMCINCj4gPj4gCQl9LA0KPiA+PiAJCXsNCj4gPj4gCQkJInBvcnRf
+aWQiOiAxLA0KPiA+PiAJCQkibmFtZSI6ICIwMDAwOjdkOjAwLjEiDQo+ID4+IAkJfQ0KPiA+PiAJ
+XQ0KPiA+PiB9DQo+ID4+DQo+ID4NCj4gPiBBZ3JlZSB0aGF0IHRoaXMgYWxzbyB3b3VsZCBiZSBz
+bGlnaHRseSBiZXR0ZXIuDQo+ID4NCj4gPiBIb3dldmVyLCBhICpjb21wbGV0ZWx5KiBkaWZmZXJl
+bnQgYXBwcm9hY2ggd291bGQgYmUgdG8gaW5zdGVhZCBzb2x2ZQ0KPiB0aGlzDQo+ID4gaXNzdWUg
+YnkgYWRkaW5nIGFkZGl0aW9uYWwgZnVuY3Rpb25hbGl0eSB0byB0aGUgaW50ZXJhY3RpdmUgdGVs
+ZW1ldHJ5DQo+ID4gc2NyaXB0IGl0c2VsZi4gQWZ0ZXIgYWxsLCB0aGUgZGF0YSBmb3IgdGhlIGxp
+c3Qgb2YgbmFtZXMgb2YgZXRoZGV2cw0KPiBpcw0KPiA+IGFscmVhZHkgYXZhaWxhYmxlIGZyb20g
+dGhlIHRlbGVtZXRyeSBlbmRwb2ludHMgYWxyZWFkeSBwcmVzZW50IGluDQo+IERQREsuIEFsbA0K
+PiA+IHdlIG5lZWQgdG8gZG8gaXMgdG8gZXh0ZW5kIHRoZSBweXRob24gc2NyaXB0IHRvIGhhdmUg
+InZpcnR1YWwNCj4gZW5kcG9pbnRzIiBpZg0KPiA+IHlvdSB3aWxsLCB3aGljaCBkbyB0aGUgbmVj
+ZXNzYXJ5IHF1ZXJpZXMgaW4gdGhlIGJhY2tncm91bmQgYW5kIHRoZW4NCj4gcHJlc2VudA0KPiA+
+IHRoZSBkYXRhIHRvIHRoZSB1c2VyLiBJIHRoaW5rIHRoYXQgd291bGQgYmUgYSBjbGVhbmVyIGFw
+cHJvYWNoIHRvDQo+IHRoaW5ncw0KPiA+IGxpa2UgdGhpcywgcmF0aGVyIHRoYW4gYWx3YXlzIGFk
+ZGluZyBtb3JlIEMgY29kZS4NCj4gPg0KPiA+IC9CcnVjZQ0KPiA+DQoNCg==
