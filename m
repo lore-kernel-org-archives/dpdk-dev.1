@@ -2,75 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0448DCD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 14:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2791BCD5BAC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 14:54:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0592D402A2;
-	Thu, 21 May 2026 16:52:01 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id DC694400D5
- for <dev@dpdk.org>; Thu, 21 May 2026 16:51:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1779375119;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=RfRwmst/w0uW5hC/PUV13wLNgodInCsYTTySCCHsSGg=;
- b=WnuQ+iRhHLCdTuPixgtvpzMjgBpQ3Xh2IKgzrmExBeZDwd6MNzXZLCPq9bVSk6gIit5zBM
- /UtYJe+XI0bOqMp7PBBis1sc6YwI2Fm0SQue5ap0BYQZrO7/Ob/QLRNbNrbRbVTzS9MVDJ
- mZQn/7WH7CscLpcGBaM9/hvUisF3qc0=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-360-Nbl4i9c7OdGqp-g-rNviLw-1; Thu, 21 May 2026 10:51:57 -0400
-X-MC-Unique: Nbl4i9c7OdGqp-g-rNviLw-1
-X-Mimecast-MFC-AGG-ID: Nbl4i9c7OdGqp-g-rNviLw_1779375116
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-3942da9e8deso23234031fa.0
- for <dev@dpdk.org>; Thu, 21 May 2026 07:51:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779375116; x=1779979916;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=RfRwmst/w0uW5hC/PUV13wLNgodInCsYTTySCCHsSGg=;
- b=f3fyYejovX9YZ2IrIIKQKip14LC/4X/GKp8QlUQ8TAstrLjrmSpPvHTrWymEzg5C42
- bpZy1/Hj+sn5zPsoAXKVODkL28Qxv9Os2s1uiIlNRoyYIY7tfl+YYRk+UgYkr/pH9WZh
- hwWop7u+uSQBF7bk/TAqY52RFCW2iNlg/af+jN0hoaCDDvL+wSPyu3vvpHJveQ1Hj/TP
- /whXkT6ctrq2kzCI1PXC993belNsXxEf514Opl6b7NDeArv16TlJlrRs3+VpVl5h9aAm
- MNG4lvNmmIpdQQnRPtx9Gd4ePcRvJ/Y4s2YfWmpDmZteabPhqVEC+Ah29lmcMr1koQmL
- 2n6w==
-X-Gm-Message-State: AOJu0Yzs9etcxBFTzD3T7ePe6vX9kYf0ENR4qn5Nc0BQ12NHo1DfMzoZ
- ORaa/90IfF+Z2VyGZS3Xk0JCuKej/CkulLdZyUFokzluMdYrZl+xxVX6KuPnnvZDUOPjyg1ZWJi
- ZWlXCurd4kGaIZtvKyQXhzymCLM3DP1UmoOMNbqK+TF+DIcZPiwY5z2OU9Fh+SN6zQWpkHGl1Dd
- s4vwdCDveS2VGi66TWPoU=
-X-Gm-Gg: Acq92OFwYrsM7r8umQvDe95DyUIikq4v73r/o4z0cx0igzWdUjVHjbfL8v4j9mV33/U
- l6VNyIHX/mtjjq5qu6d8h2JYDqvrxLjv5tgejWGvF+JczWxtrIXq4GE692LiqSlYx/9Z9eFAWN/
- B7ElSNV6Tn294jFqca411C6hLgjs5t8u/EXmjwC2ZM4tjzd97ZADYs/rj3ATTQBHAcA49Vy6GAx
- I5yJyxcxryn9qG+rlmwoD+dTvOF5wBXsizDAwZkeVHGlKngmcGHlWTJbNgO1OJLijrkuA==
-X-Received: by 2002:a05:651c:41d6:b0:393:cb61:17e9 with SMTP id
- 38308e7fff4ca-395ca5d1a5dmr15357181fa.17.1779375116378; 
- Thu, 21 May 2026 07:51:56 -0700 (PDT)
-X-Received: by 2002:a05:651c:41d6:b0:393:cb61:17e9 with SMTP id
- 38308e7fff4ca-395ca5d1a5dmr15356961fa.17.1779375115862; Thu, 21 May 2026
- 07:51:55 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 34651402A2;
+	Thu, 21 May 2026 16:54:18 +0200 (CEST)
+Received: from fhigh-a3-smtp.messagingengine.com
+ (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 8B1E7400D5
+ for <dev@dpdk.org>; Thu, 21 May 2026 16:54:16 +0200 (CEST)
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 109D21400053;
+ Thu, 21 May 2026 10:54:16 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-07.internal (MEProxy); Thu, 21 May 2026 10:54:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1779375256;
+ x=1779461656; bh=RKSm+VXl6JFNYMYQGKjxKpOFa1pWqE2mLhRekhkzIFc=; b=
+ lm2pRpcHPeQk0wodOwwrj1vgGonQAnSmQ+Ge6jLLZzCSYXeF83OuWUtE5DYJhM4a
+ C1IionX65an0oOpI+OTgj6H21fdqV7PyjHhRtrnhGZ50f3vUnda9YnaNeMfTTaRu
+ Qhf+om2spzAVURprBTwyW0k04vwpAIby22iawKMCRyQTaQwO4Wv2gYPWywW81c0q
+ vMUYfRFS4Fi/MxUc17qXIzR+5R72wuhVj2CBFs3lZ4tcUVGcHVr+BXXhU2zSdfR0
+ aydeqB03BIRuVdVnl1jiasb/YKNQHkhts5QNGkz1CRjkQpmG+btOJkXTnH/NuIZ5
+ 1sU74OX8T7PeO9XwzTTSGQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779375256; x=
+ 1779461656; bh=RKSm+VXl6JFNYMYQGKjxKpOFa1pWqE2mLhRekhkzIFc=; b=d
+ TJvVzj2fX0kQDaqzyY7BSRyXwTaNDPeXqSv4nk6Kb+HbzqXyyRy5sbum8bZU84Jv
+ skTwPqQubmAlqvE1uH+MLefc9bwUNYmchrnv2KT0jtbo/kfb+hy9SU2sOKsc7aNY
+ +LZH5CuvPY1VmnE/YzK68PaVbYGzJSCNbnw7MnPvtccNYGNlLwm+3qkhO3QQExIz
+ G/C4qUllxtwodRQOd1OsdNK6eEyQ5yv0v0w0VnXCdG0m/XeFHgxTO/nLcNKEvpjj
+ VN7+tIe/8F/9L2Uy2IT/E6QrErwRSZhbX+h8vH6rVq22mcb1lWZNCmIzTX9zawNn
+ GjNliGZyBei+4xtHc8xHw==
+X-ME-Sender: <xms:lxwPamUWN7SfovDPIE7LNROsDaFWgxTBbv7nXm2dhSd1XTi7NaAZVw>
+ <xme:lxwPan1QroN46BkJJpd5L5SkGw85uLsrIreEv5hsypXSrvnypFMfHcS-wwFkO11wg
+ vxcjBiLxAUJ9MwZMDLftwu0HGnJWPS6BPRaLHGwmOw11M-KQmIULQ>
+X-ME-Received: <xmr:lxwPasEyWB-vh42qRDf5ajJvLG6IvIJC4PSCLPBP2HezAQbKDCHr8F27xognmaGMBMw104U9SY-QX5iHFQSQk99xUg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeejkedtucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
+ hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:lxwPalj4W_LTJZfYIx34OuSe9aGB8conU7AGVNeZDk1DjPI0CimTfw>
+ <xmx:lxwPan8WQjsukFEHP1BzkTGdHUGfZ0oNeZ1BmeSKwcC2vpqsrL1_JA>
+ <xmx:lxwPasorNGRkqZVjkUtJyiW57UjDL5DX9Gw8hEljFjbIouy4SiMZ9Q>
+ <xmx:lxwPam8MXrE70ixXFbw5QHQBhH7qrxeRy8YZX2Ot16uebGk0JtGzmw>
+ <xmx:mBwPagQF0xv5Cou0XDs1m-MYs-Jl7WheAtmPAUkO8mIWUTyliU47ccn3>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 May 2026 10:54:15 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v6 3/3] test: add test for af_packet
+Date: Thu, 21 May 2026 16:54:14 +0200
+Message-ID: <7d4P4SdzSECmXjb8mYjlMA@monjalon.net>
+In-Reply-To: <20260429182055.398105-4-stephen@networkplumber.org>
+References: <20260413230018.515837-1-stephen@networkplumber.org>
+ <20260429182055.398105-1-stephen@networkplumber.org>
+ <20260429182055.398105-4-stephen@networkplumber.org>
 MIME-Version: 1.0
-References: <20260513235518.408895-1-andremue@linux.microsoft.com>
-In-Reply-To: <20260513235518.408895-1-andremue@linux.microsoft.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 21 May 2026 16:51:43 +0200
-X-Gm-Features: AVHnY4Kd8lYLnLZboqz9qhgtgOiOwjI7p8cNAONaeG5HpcxNQYPOf0wehKwKMVg
-Message-ID: <CAJFAV8yhmQ8hEpMmUWW77kAyuJXb-Ru6z1kBnHLSBhcZ_LfEhg@mail.gmail.com>
-Subject: Re: [PATCH] Windows: fix core count on NUMA with more than 64 cores
- per node
-To: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, Gena Tertychnyi <genter@microsoft.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cm5sw5Dp8PVfD4IekNoazSctrPOGPQkSifA7r0s1Ryw_1779375116
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,31 +88,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+29/04/2026 20:19, Stephen Hemminger:
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <inttypes.h>
+> +#include <linux/if.h>
+> +#include <linux/if_tun.h>
+> +#include <linux/sockios.h>
+> +#include <pthread.h>
+> +#include <stdbool.h>
+> +#include <stdio.h>
+> +#include <string.h>
+> +#include <sys/ioctl.h>
+> +#include <sys/socket.h>
 
-On Thu, 14 May 2026 at 01:56, Andre Muezerie
-<andremue@linux.microsoft.com> wrote:
->
-> From: Gena Tertychnyi <genter@microsoft.com>
->
-> Fix specific to Windows NUMA machines with more than 64 cores per node
-> (e.g. 2 NUMAs with 128 cores each):
->
-> - NumaNode.GroupMasks[] array is used instead of NumaNode.GroupMask.
-> - RelationAll is used instead of RelationNumaNode when calling
-> GetLogicalProcessorInformationEx because RelationAll returns the full
-> multi-group NUMA affinity as RelationNumaNode returns only the NUMA
-> node's primary group.
-
-Probably worth a Fixes: tag.
-
->
-> Signed-off-by: Gena Tertychnyi <genter@microsoft.com>
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-
-Dmitry, any objection?
+There is a compilation failure for ppc about sockaddr.
+It seems sys/socket.h must be included before linux/if.h.
+I'll do the change while pulling.
 
 
--- 
-David Marchand
 
