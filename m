@@ -2,77 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2783CD343F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 07:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A902ACD4F5E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 May 2026 08:03:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E096E40290;
-	Thu, 21 May 2026 09:46:20 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 55CB44028D
- for <dev@dpdk.org>; Thu, 21 May 2026 09:46:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1779349578;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=e6rosQgJbTEMn3nbtU+NU2Q9stTmE6FqGY3vHaxPxrQ=;
- b=Gaj0W3eqag8nKyrXixRNQ2+idwsPuPfwDqZYFsGqFV7ltmXvbeaKdmwLReIgZIXmjhDDty
- VaayhWbBRPOii2zU0aK8a5bNM0BLlEkTXbM/PMk/08ahdrrAZ/qMTRc6Nvg9tuwqSGJ/qU
- qL67U4HffUsM3KxJeHrpzfYgb9wUUIQ=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-683-3KQGxO9YPa6jlbOzxxpQcg-1; Thu, 21 May 2026 03:46:17 -0400
-X-MC-Unique: 3KQGxO9YPa6jlbOzxxpQcg-1
-X-Mimecast-MFC-AGG-ID: 3KQGxO9YPa6jlbOzxxpQcg_1779349575
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5a8eb090b8eso4321212e87.0
- for <dev@dpdk.org>; Thu, 21 May 2026 00:46:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779349575; x=1779954375;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=e6rosQgJbTEMn3nbtU+NU2Q9stTmE6FqGY3vHaxPxrQ=;
- b=cVohYcscewL3NjiOmbZDoPdv1BxSFtA+jfqMPRcSKA8KbkeFmYyIQUwZFprmEwIKAc
- Y81S9idx64huIVlBtAd5ijHk+aJJ0c0lT3jmpGb0zfxYpuOeut5uT4XmrfBM0T2dZrA/
- lKa31jTCCLkOGvlfCZenWD2gZfIfUtNz4stHgIEIQDLS+j9kIYC4jEBZFRqHTLOV5OAS
- hrbMSQruS+OJlBxmXt5rkR21K+x4F6ZqmtYYgHKOl/N30q26TwxL2mu1sCPPgGLWxCXJ
- F9V3G46F1Fy/3BEUGrlTjto/+0IbnWSJVW+Lm7elxtK+KWkaTdOOu+7+t9+ljVUBU9m4
- rlpg==
-X-Gm-Message-State: AOJu0YyLVUazlqfHR54poumu+WWTlTGsnj0WG3uh/N4TnC6r2l+LylBb
- xWw/N8p7UbeXuxMnWxSxwofyQ/kz0FYr7Ed/4Y5G39E3yzk+ke2Fo1NsaZH8apEJ+kUMPnb575V
- b9jQML4PIcsGjURK4vMGE4u92ONNhqXaUZCfTk0pCt719KiXK5PunbIdfhYcmA1ot8GD8JXXTYW
- BAAt+jryAkIQ3l084/Gf0=
-X-Gm-Gg: Acq92OFA7QJq/Z5HX5vQ/KKvwaUpqxNHCJMjoNOFN2IJLEcw9q+qzfZFX1RWCVpGXuO
- yVWApbQYsD0tFIqWmgbENbBwNouM88nla9S9AgQRVqaW37mFW/N2rTGud8YNm8i4n2x1aF6UikZ
- R+8dwf424U3bugGC0eBvI/EVJiiQLTdUL94dHG0XY8fG2OKM/6XnSKfeg4Wzzw6DKcOfKwv6f0n
- sIbl5O9UXkgtZAkugBU4KyQ2qn89NLPJfZZObNttYq6+xxT2skA9+UcLeXtcZVpP8e3Sg==
-X-Received: by 2002:ac2:43c8:0:b0:5a8:6cab:4866 with SMTP id
- 2adb3069b0e04-5aa2ba97011mr423365e87.41.1779349575439; 
- Thu, 21 May 2026 00:46:15 -0700 (PDT)
-X-Received: by 2002:ac2:43c8:0:b0:5a8:6cab:4866 with SMTP id
- 2adb3069b0e04-5aa2ba97011mr423353e87.41.1779349574891; Thu, 21 May 2026
- 00:46:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8BD9040290;
+	Thu, 21 May 2026 10:03:39 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id B16F94028D
+ for <dev@dpdk.org>; Thu, 21 May 2026 10:03:37 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id A5D4F4B21B; Thu, 21 May 2026 10:03:37 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/ethdev Bug 1948] bnxt: bnxt_hwrm_send_message timeout
+Date: Thu, 21 May 2026 08:03:37 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 26.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: oleksandrn@interfacemasters.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1948-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-References: <20260429114503.932575-1-david.marchand@redhat.com>
- <20260506155201.2709810-1-david.marchand@redhat.com>
- <20260506155201.2709810-20-david.marchand@redhat.com>
- <ag3tWZn0f4jIfVWo@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <ag3tWZn0f4jIfVWo@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 21 May 2026 09:46:03 +0200
-X-Gm-Features: AVHnY4IEH4SfOTTq9yg_kbItU5pzyIdx9qPN225x8au6R7BYNzLvxsVHRNk26-c
-Message-ID: <CAJFAV8wNDO9cvcc+wL8kW0QVX5ZKWt1_8+Lug07jB+1RdBWDLA@mail.gmail.com>
-Subject: Re: [PATCH v2 19/23] dma/idxd: remove specific bus type
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, stephen@networkplumber.org, 
- Kevin Laatz <kevin.laatz@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: TnaF997GTCTl0N9ABoJxUnVIDCH6yb1BG5purPtSeCc_1779349575
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,31 +54,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 20 May 2026 at 19:20, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Wed, May 06, 2026 at 05:51:51PM +0200, David Marchand wrote:
-> > There is nothing that requires a specific bus type.
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
->
-> This patch exposes an underlying issue with the DSA driver. When applied,
-> attempting to probe the workqueues gives the output:
->
-> "EAL: Device wq0.0 is already probed"
->
-> For each device. This is because the device is not zeroed in the scan
-> function, leaving a non-NULL driver pointer. See inline below.
+http://bugs.dpdk.org/show_bug.cgi?id=3D1948
 
-Thanks for testing!
+            Bug ID: 1948
+           Summary: bnxt: bnxt_hwrm_send_message timeout
+           Product: DPDK
+           Version: 26.03
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: oleksandrn@interfacemasters.com
+  Target Milestone: ---
 
-I think this issue surfaces with patch 15 "bus: implement probe in
-EAL", where the dsa bus starts using the generic helper that checks
-for rte_dev_is_probed.
-But well, nothing is broken atm, no need for you to send a separate fix.
-I'll add this fix in the v3.
+Randomly, on rte_eth_dev_configure, see this error, it seems like after tha=
+t,
+traffic doesn't work on this port anymore(or at least returned counters are=
+ 0)
+Happens somewhat rarely, like 1 out of 10. The problem is that dev_configure
+doesn't return failure, so not sure if there is a way to detect this
+automatically; maybe rte_eth_link_get can be used.
+
+I also see that there is a similar old Bug 1214
+
+BNXT: bnxt_hwrm_send_message(): Error(timeout) sending msg 0x002a, seq_id 5=
+98
+BNXT: bnxt_get_hwrm_link_config(): Get link config failed with rc -110
+BNXT: bnxt_hwrm_send_message(): Error(timeout) sending msg 0x002a, seq_id 6=
+21
+BNXT: bnxt_get_hwrm_link_config(): Get link config failed with rc -110
 
 
--- 
-David Marchand
+Part Number                         : BCM957608-P2100GQF20
+Chip Number                         : BCM57608
+Chip Name                           : THOR2
+Description                         : Broadcom BCM57608 2x100G PCIe Ethernet
+NIC
+Firmware Name                       : PRIMATE_FW
+Firmware Version                    : 237.1.148.0
+RoCE Firmware Version               : 237.1.148.0
+HWRM Interface Spec                 : 1.10.3
+Kong mailbox channel                : Not Applicable
+Active Package Version              : 237.1.148.0
+Package Version on NVM              : 237.1.148.0
+Active NVM config version           : 236.0.2
 
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
