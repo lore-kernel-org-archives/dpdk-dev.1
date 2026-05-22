@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063F7CD5BB0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 22 May 2026 14:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7C1CD5BB0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 22 May 2026 14:59:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3E4B4068E;
-	Fri, 22 May 2026 16:59:10 +0200 (CEST)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
- [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id CB58740674
- for <dev@dpdk.org>; Fri, 22 May 2026 16:59:08 +0200 (CEST)
-Received: by mail-wr1-f50.google.com with SMTP id
- ffacd0b85a97d-44a044cb827so5572559f8f.0
- for <dev@dpdk.org>; Fri, 22 May 2026 07:59:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 944F440695;
+	Fri, 22 May 2026 16:59:11 +0200 (CEST)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id B2E5140693
+ for <dev@dpdk.org>; Fri, 22 May 2026 16:59:10 +0200 (CEST)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-4893940bb5eso41861625e9.3
+ for <dev@dpdk.org>; Fri, 22 May 2026 07:59:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1779461948; x=1780066748; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1779461950; x=1780066750; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EKVBZFil5ZhOzgKOmalNyXZnEUAQkbzqihirZz/2DcI=;
- b=sD0Pig9JoDm2s6/31hE8Ltqu7K/o5JQY9NqIaL9vbNDOd6NqPfLFGv0Rc4lE8YZ5Kp
- WXCC59gKOysTGoEolwArX/W2ASYzkd9JWSgQvMXetJr97kfShx+B+WEgiR3GIvGC+JTy
- JoCDaoabQNajq6aagAfODbjnVKgYf/qjlcMR1Jv8+q+KpgdPnj6pF6vWMAeLwBONfpOG
- u2OqearmKNQgy7dv2sNYNGsLYimWmJQ5xcWOBeZJ0mG2Xr4TylWycYv5Lhc938tKxLDW
- HhUI4/lZctKczCjr9iSYENKkIinIyswmmfnoL1/nBLnL3tKZj7NEiddMbp/UwPwBR66w
- S6IA==
+ bh=w9Hlm3kdB1OSTr+Fa2VrRl3ieLnsYNvG8o9yXYVgY8Y=;
+ b=SuQh5d4K1kGMM1ClSJOlnPQqrdfO2FbBRuSqqqaKYtBBELlQOrF7ReMFVHasSNjj9w
+ j+21F1RmUhmCkwy2fGpufQBVJmETp2g1eYGvoWyQCK/xAa3YvDtjGYjpb87mkiHUfxqo
+ 0X6/NIunl9fKC44XkEneqe7k+14Z/TPkf9KIOaoQJNT1xPN6HWvQB9vIRfZPhXirieg/
+ ZU+oynDmbu/ctsJrwxlNAjXLvLAGPcB6OlQI0DV0mX0cO/TJ5J9WF9bgCXweIAxyfvGu
+ 2CFA08qhYFGjoY/IILPeIayCAYKnhT2LgWRvLqzi5XfcKA6Y68BmNLgyq8c8wJTwq8PT
+ x+Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779461948; x=1780066748;
+ d=1e100.net; s=20251104; t=1779461950; x=1780066750;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=EKVBZFil5ZhOzgKOmalNyXZnEUAQkbzqihirZz/2DcI=;
- b=jlKPsjcEphnJl1jIb1P1kwH4zOtqL9KZrV5iY+T31oWlbViw/ZVmQ8Khy+x89USFb7
- HGgrppgx1wn+C1MqrffEgQJNJl9g8yKijUwBrNyE+z7H+jK/sP+F/exL6H9m4y9VE908
- 5H/2vWIFh2pYVZ3vO9S82DQk5qjJIIvCPkogIlQn2nvZZM27FwuhtdMIvC7C5M1lIILm
- xFPihqrcWmO9ybqSPNTksfv7w7JZCw4d5CpxGtIiXC1EUF64w7fMTDQVVKeEpymjnSIA
- /eYzyJCs9Bwej4r9MlHRoXEPCPKtOtTrBEToIqbz6IgFtbFfV2hfEChOsTPCSr9dk0rm
- FB9w==
-X-Gm-Message-State: AOJu0YzpnT8wippLwGFmk7e8kpL8i3kjhf9HzxXRsVyhNEXqD/05sYCS
- 0Or4YDRKB/eeNkp0lfAY14+JwlVJ6hIwfRUwH8xQyjsjDXZXeB0TjMFw+PtzIaT8
-X-Gm-Gg: Acq92OGQrnwm9rW7nirRMtysjj+wiggA6VnMeHCdW4ETgBgbKfg/A432gueSXxbcvjs
- lPJATxQPRjXdvEsM9djWkKyussIhMxbQKFMjzB0Yhe1ORLcRXmrGvEDe6xiDKZ/3YxP/Eqr96lW
- bDXD1vhqYRGM2NxHnWmY0gOVesXWysWJGvS1TQafo+w3B8iZEFNQ6GZ5igo8i6DyvOOQ1X/5lBZ
- gIBLM+WXMRjH2z447r0b4xJM4umKfvbmjXIkrayG/+9JYNm3e/3jwW/PxCfaDbTL1ZoCb5lYVyZ
- QhGh+KxKypg0edYkSt5T/UBEGCGWgEQNQTyM7Hvc6hswNRB+n6Cm2yoz6mKaq8LVaHMi8VVNeUF
- IgF3/2TZk60l1rGAJ0c3SjEJ3rxQWqgPZaQky6PIbnOOMjQJCOCkBiSihtoI/Q/DuHk/EwGomzd
- p1WEKC6PtBQm60RCnt1CbafECn9UqlTRwqBPzeSV+7CdvsXT3gW7OLcqVYW/DUI8/+0g==
-X-Received: by 2002:a05:600c:4ecc:b0:485:4388:3492 with SMTP id
- 5b1f17b1804b1-490424b25abmr54758435e9.11.1779461948000; 
- Fri, 22 May 2026 07:59:08 -0700 (PDT)
+ bh=w9Hlm3kdB1OSTr+Fa2VrRl3ieLnsYNvG8o9yXYVgY8Y=;
+ b=CHqeKrX+/9jJaVBD9CeZME6wvUbX20BrTsyykQk/NVsVGdsEEpBupOF0AdNg5nEY7g
+ BWTtXWXDmgzN7DXVVOpnTFg4gODh0dhPF4VqQdfqazFkxdI6OMHHAep/bhW8DbXiY14c
+ B3UPDgZZEwHkmdUQfagMC8e6G8GFB+XiC4cbUi+2oTst/Kj7CD/O6XZzptotPNeLMO3K
+ hfl5i+iXP6SZUnA/L/i+DvwzF1E8LN6IM3OnfbZFPVuVwksF7EnFHiuzkykyHK9H9C9x
+ iHlxHrssB81H9vj8q0hemvsCdeb0gAsJDXKoaspZBLs4G37gNPgdT+l/GetpXy0pBGHi
+ xPQA==
+X-Gm-Message-State: AOJu0YzgkkhzsV+CQAXOGl/lhADzg38fUi0prS+G9AG7zTYSTAoug03p
+ nnDOfavqh4d3Q0HK+grquuJlKcxC9S9HDG2jNtoSAhW9Jnis45Gu55Ax
+X-Gm-Gg: Acq92OEoXPfO+HabNyL7T+JXnEgwAWzEyIQnJpS/qXhao8lUOTFUxY3gECV9kSppvyk
+ vmH68ga2UMS4Py6JcOPtM9X/KfuUxNsNEmLj9/zNQL6a59JQgXYleB0e/XitEZG63SxSz8e0ohe
+ vloeLoG/6XX4w2qlhiGCalldpLWMv0K0BqYfsI0HELcmE9hWP5VC+zURnKzY4zqhtGp/ODIfIqu
+ xcvYoNErgCE7Kg3GFDNEhF5ssx6Yk0tgcIyMIfuNh5GjsB1DHbZHnIcwnyr7EfWwf0Q0/L2U8S+
+ 5gDq1jKL+fFi3K0yL4I0xTk5qbDJKqfpEXxOMkIy+pfhHkcfKLiA990ozfWaKwb4G6kiLAsHzGD
+ hHD+APkHl004ek5AiAZh6gZBp0itTBStGsNF5fUS+2rffVXFyT6CLpgywHG+HLgn8pW0FAJWD5a
+ XXZQMY/7IrU5UqQDqZvryICH4wm1roJ3Fro2jWCn9NqjFM6K1w819JvmvB8QZu4DBevw==
+X-Received: by 2002:a05:600c:3b27:b0:490:3b87:be0f with SMTP id
+ 5b1f17b1804b1-490428d750fmr54986535e9.23.1779461950182; 
+ Fri, 22 May 2026 07:59:10 -0700 (PDT)
 Received: from localhost.localdomain (free-mobile.vlq16.iliad.fr.
  [213.36.7.11]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-49049ab1d82sm3114875e9.0.2026.05.22.07.59.06
+ 5b1f17b1804b1-4904561a33dsm49325775e9.11.2026.05.22.07.59.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 22 May 2026 07:59:06 -0700 (PDT)
+ Fri, 22 May 2026 07:59:09 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 Cc: dev@dpdk.org,
 	stable@dpdk.org,
 	Maxime Leroy <maxime@leroys.fr>
-Subject: [PATCH v1 3/5] test/fib6: extended drift test cases
-Date: Fri, 22 May 2026 16:58:52 +0200
-Message-ID: <20260522145855.1748406-4-maxime@leroys.fr>
+Subject: [PATCH v1 4/5] rib: track valid descendant count per node
+Date: Fri, 22 May 2026 16:58:53 +0200
+Message-ID: <20260522145855.1748406-5-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260522145855.1748406-1-maxime@leroys.fr>
 References: <cover.1778146229.git.maxime@leroys.fr>
@@ -82,328 +82,352 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Four additional test cases exercise scenarios touched by the
-multi-level supernet counting:
+Add a uint32_t field to struct rte_rib6_node that counts valid prefixes
+in the node's subtree (excluding self). Maintained incrementally on
+insert (when a node becomes valid) and remove (when a node becomes
+invalid), in O(tree depth) per operation.
 
-  - test_drift_compression: parent + compressed child, DEL parent
-    forces decompression, re-ADD ancestor re-compresses.
+The field fits in the padding before ext[]; the node size and ext[]
+offset are unchanged. uint32_t is required because a single subtree
+may hold more than 65535 BGP routes.
 
-  - test_drift_multilevel: /28 + /48 + /96 chain with mixed
-    compressed and non-compressed links, then DEL of the middle
-    prefix.
-
-  - test_drift_stress: pseudo-random ADD/DEL sequence checking that
-    no operation returns -ENOSPC under a leaked rsvd_tbl8s.
-
-  - test_drift_tight_pool: pool sized to exactly the legitimate
-    envelope, re-ADD after decompression must succeed.
+Expose an __rte_internal helper rte_rib6_count_empty_supernets()
+via a new private header lib/rib/rib6_internal.h that descends the
+tree once and reports how many byte boundaries below a given prefix
+have no valid descendant. lib/fib uses this to maintain tbl8
+reservation accounting in a single tree walk instead of one
+rte_rib6_get_nxt() call per byte boundary.
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- app/test/test_fib6.c | 269 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 265 insertions(+), 4 deletions(-)
+ app/test/test_rib6.c    | 92 +++++++++++++++++++++++++++++++++++++++++
+ lib/rib/rib6_internal.h | 37 +++++++++++++++++
+ lib/rib/rte_rib6.c      | 80 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 209 insertions(+)
+ create mode 100644 lib/rib/rib6_internal.h
 
-diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
-index c4283f3f2d..ad68645428 100644
---- a/app/test/test_fib6.c
-+++ b/app/test/test_fib6.c
-@@ -26,6 +26,10 @@ static int32_t test_lookup(void);
- static int32_t test_invalid_rcu(void);
- static int32_t test_fib_rcu_sync_rw(void);
- static int32_t test_drift(void);
-+static int32_t test_drift_compression(void);
-+static int32_t test_drift_multilevel(void);
-+static int32_t test_drift_stress(void);
-+static int32_t test_drift_tight_pool(void);
+diff --git a/app/test/test_rib6.c b/app/test/test_rib6.c
+index 0295a9640c..a1a6ab17f4 100644
+--- a/app/test/test_rib6.c
++++ b/app/test/test_rib6.c
+@@ -8,6 +8,7 @@
+ #include <stdlib.h>
+ #include <rte_ip6.h>
+ #include <rte_rib6.h>
++#include <rib6_internal.h>
  
- #define MAX_ROUTES	(1 << 16)
- /** Maximum number of tbl8 for 2-byte entries */
-@@ -601,10 +605,9 @@ test_fib_rcu_sync_rw(void)
- }
+ #include "test.h"
  
- /*
-- * Reproducer for the rsvd_tbl8s drift bug. depth_diff used to maintain
-- * rsvd_tbl8s is computed from the current RIB state, so it is not
-- * invariant between the ADD of a prefix and its later DEL when a
-- * covering parent prefix is removed in between.
-+ * Reproducer for the rsvd_tbl8s drift bug. The tbl8 reservation
-+ * accounting must remain balanced even when a covering parent prefix
-+ * is removed between an ADD and its later matching DEL.
-  *
-  * Layout: one /28 parent (fcde::/28) and three /48 siblings under it
-  * (fcde:0:6000::/48, fcde:1:6000::/48, fcde:2:6000::/48). The second
-@@ -672,6 +675,260 @@ test_drift(void)
+@@ -20,6 +21,7 @@ static int32_t test_insert_invalid(void);
+ static int32_t test_get_fn(void);
+ static int32_t test_basic(void);
+ static int32_t test_tree_traversal(void);
++static int32_t test_empty_supernets(void);
+ 
+ #define MAX_DEPTH 128
+ #define MAX_RULES (1 << 22)
+@@ -322,6 +324,95 @@ test_tree_traversal(void)
  	return TEST_SUCCESS;
  }
  
 +/*
-+ * Exercise compression (same nh as parent), forced decompression on
-+ * DEL parent, then re-compression after re-adding the same ancestor.
-+ * The tbl8 reservation accounting must remain balanced even though
-+ * the child is physically decompressed/recompressed in the dataplane.
-+ *
-+ * Layout: parent fcde::/28 and child fcde:0:6000::/48, both nh=1.
-+ *
-+ *   ADD /28 (no ancestor)                    rsvd_tbl8s += 1
-+ *   ADD /48 (compressed under /28)           rsvd_tbl8s += 2
-+ *   DEL /28 (decompresses /48)               rsvd unchanged (/48 keeps)
-+ *   re-ADD /28 (re-compresses /48)           rsvd unchanged
-+ *   DEL /48                                  rsvd_tbl8s -= 2
-+ *   DEL /28                                  rsvd_tbl8s -= 1
++ * Exercise rte_rib6_count_empty_supernets() which depends on the
++ * valid_descendants counter maintained on insert/remove.
 + */
-+static int32_t
-+test_drift_compression(void)
++int32_t
++test_empty_supernets(void)
 +{
-+	struct rte_fib6_conf config = { 0 };
-+	struct rte_fib6 *fib;
-+	struct rte_ipv6_addr parent = RTE_IPV6(0xfcde, 0, 0, 0, 0, 0, 0, 0);
-+	struct rte_ipv6_addr child = RTE_IPV6(0xfcde, 0, 0x6000, 0, 0, 0, 0, 0);
-+	int ret;
++	struct rte_rib6 *rib = NULL;
++	struct rte_rib6_conf config;
++	struct rte_ipv6_addr ip = RTE_IPV6(0xfcde, 0, 0, 0, 0, 0, 0, 0);
++	struct rte_ipv6_addr sibling = RTE_IPV6(0xfcde, 0, 0, 0, 0, 0, 0, 1);
++	uint8_t cnt;
 +
-+	config.max_routes = 1024;
-+	config.rib_ext_sz = 0;
-+	config.default_nh = 0;
-+	config.type = RTE_FIB6_TRIE;
-+	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
-+	config.trie.num_tbl8 = 256;
++	config.max_nodes = 64;
++	config.ext_sz = 0;
 +
-+	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
++	rib = rte_rib6_create(__func__, SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(rib != NULL, "Failed to create RIB\n");
 +
-+	/* Compressed: child shares the parent's nh, modify_dp is skipped */
-+	ret = rte_fib6_add(fib, &parent, 28, 1);
-+	RTE_TEST_ASSERT(ret == 0, "ADD /28 failed\n");
-+	ret = rte_fib6_add(fib, &child, 48, 1);
-+	RTE_TEST_ASSERT(ret == 0, "ADD /48 (compressed) failed\n");
++	/* depth <= 24: no byte boundaries above to inspect. */
++	cnt = rte_rib6_count_empty_supernets(rib, &ip, 24);
++	RTE_TEST_ASSERT(cnt == 0, "depth 24 must return 0, got %u\n", cnt);
 +
-+	/* DEL parent forces decompression: child must be materialized */
-+	ret = rte_fib6_delete(fib, &parent, 28);
-+	RTE_TEST_ASSERT(ret == 0, "DEL /28 (decompression) failed\n");
++	/* Empty RIB, /128 query: 13 byte boundaries (24..120) all empty. */
++	cnt = rte_rib6_count_empty_supernets(rib, &ip, 128);
++	RTE_TEST_ASSERT(cnt == 13, "empty RIB /128 must return 13, got %u\n", cnt);
 +
-+	/* Re-add parent with same nh: child becomes compressed again */
-+	ret = rte_fib6_add(fib, &parent, 28, 1);
-+	RTE_TEST_ASSERT(ret == 0, "Re-ADD /28 failed\n");
-+
-+	ret = rte_fib6_delete(fib, &child, 48);
-+	RTE_TEST_ASSERT(ret == 0, "DEL /48 failed\n");
-+	ret = rte_fib6_delete(fib, &parent, 28);
-+	RTE_TEST_ASSERT(ret == 0, "DEL /28 final failed\n");
-+
-+	rte_fib6_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Three-level nesting with compressed and non-compressed paths, then
-+ * DEL of the middle prefix. The byte-boundary supernet accounting
-+ * must remain balanced through the chain.
-+ *
-+ * Layout: grand fcde::/28 nh=1, mid fcde:0:6000::/48 nh=1 (compressed
-+ * under grand), leaf fcde:0:6000::4000::/96 nh=2 (not compressed).
-+ *
-+ *   ADD /28 (no ancestor)                    rsvd_tbl8s += 1
-+ *   ADD /48 (compressed under /28)           rsvd_tbl8s += 2
-+ *   ADD /96 (not compressed under /48)       rsvd_tbl8s += 6
-+ *   DEL /48 (leaf /96 still covers 32, 40)   rsvd_tbl8s -= 0
-+ *   DEL /28 (only level 24 was solely /28's) rsvd_tbl8s -= 0
-+ *   DEL /96 (last route gone, all freed)     rsvd_tbl8s -= 9
-+ *
-+ * Boundaries get refunded only on the DEL that makes them empty;
-+ * intermediate DELs that leave a covering descendant are refund-free.
-+ */
-+static int32_t
-+test_drift_multilevel(void)
-+{
-+	struct rte_fib6_conf config = { 0 };
-+	struct rte_fib6 *fib;
-+	struct rte_ipv6_addr grand = RTE_IPV6(0xfcde, 0, 0, 0, 0, 0, 0, 0);
-+	struct rte_ipv6_addr mid =   RTE_IPV6(0xfcde, 0, 0x6000, 0, 0, 0, 0, 0);
-+	struct rte_ipv6_addr leaf =  RTE_IPV6(0xfcde, 0, 0x6000, 0, 0, 0x4000, 0, 0);
-+	int ret;
-+
-+	config.max_routes = 1024;
-+	config.rib_ext_sz = 0;
-+	config.default_nh = 0;
-+	config.type = RTE_FIB6_TRIE;
-+	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
-+	config.trie.num_tbl8 = 256;
-+
-+	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
-+
-+	ret = rte_fib6_add(fib, &grand, 28, 1);
-+	RTE_TEST_ASSERT(ret == 0, "ADD /28 failed\n");
-+	ret = rte_fib6_add(fib, &mid, 48, 1);  /* compressed under /28 */
-+	RTE_TEST_ASSERT(ret == 0, "ADD /48 failed\n");
-+	ret = rte_fib6_add(fib, &leaf, 96, 2); /* non-compressed under /48 */
-+	RTE_TEST_ASSERT(ret == 0, "ADD /96 failed\n");
-+
-+	/* DEL the middle prefix: byte-boundary accounting must stay
-+	 * coherent so the subsequent operations succeed.
++	/* Insert a /32 ancestor: level 24 now has a descendant, levels
++	 * 32..120 still empty -> 12.
 +	 */
-+	ret = rte_fib6_delete(fib, &mid, 48);
-+	RTE_TEST_ASSERT(ret == 0, "DEL /48 failed\n");
++	RTE_TEST_ASSERT(rte_rib6_insert(rib, &ip, 32) != NULL,
++		"Failed to insert /32\n");
++	cnt = rte_rib6_count_empty_supernets(rib, &ip, 128);
++	RTE_TEST_ASSERT(cnt == 12, "after /32 ADD: expected 12, got %u\n", cnt);
 +
-+	ret = rte_fib6_delete(fib, &grand, 28);
-+	RTE_TEST_ASSERT(ret == 0, "DEL /28 failed\n");
-+	ret = rte_fib6_delete(fib, &leaf, 96);
-+	RTE_TEST_ASSERT(ret == 0, "DEL /96 failed\n");
-+
-+	rte_fib6_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Pseudo-random ADD/DEL sequence over 8 prefixes with varying depths
-+ * and next-hops. A hand-rolled LCG (not rte_rand) makes the sequence
-+ * reproducible across runs and DPDK versions. After all prefixes are
-+ * removed, a final ADD/DEL pair must succeed - it would fail under a
-+ * leaked rsvd_tbl8s.
-+ *
-+ * depths[1] and depths[6] both use /36 on purpose: ips[1] and ips[6]
-+ * are distinct prefixes, so this exercises two parallel /36 ADD/DEL
-+ * paths that share byte boundaries 24 and 32.
-+ */
-+static int32_t
-+test_drift_stress(void)
-+{
-+	uint8_t depths[8] = { 28, 36, 40, 48, 64, 80, 36, 128 };
-+	struct rte_fib6_conf config = { 0 };
-+	struct rte_ipv6_addr ips[8] = {
-+		RTE_IPV6(0xfcde, 0, 0, 0, 0, 0, 0, 0),
-+		RTE_IPV6(0xfcde, 0x1, 0, 0, 0, 0, 0, 0),
-+		RTE_IPV6(0xfcde, 0x2, 0, 0, 0, 0, 0, 0),
-+		RTE_IPV6(0xfcde, 0x2, 0x4000, 0, 0, 0, 0, 0),
-+		RTE_IPV6(0xfcde, 0x2, 0x4000, 0x1000, 0, 0, 0, 0),
-+		RTE_IPV6(0xfcde, 0x2, 0x4000, 0x1000, 0x1, 0, 0, 0),
-+		RTE_IPV6(0xfcde, 0x3, 0, 0, 0, 0, 0, 0),
-+		RTE_IPV6(0xfcde, 0x3, 0, 0, 0, 0, 0, 0x1),
-+	};
-+	uint8_t live[8] = { 0 };
-+	struct rte_fib6 *fib;
-+	uint32_t seed = 0x4242;
-+	unsigned int i, idx;
-+	int ret;
-+
-+	config.max_routes = 64;
-+	config.rib_ext_sz = 0;
-+	config.default_nh = 0;
-+	config.type = RTE_FIB6_TRIE;
-+	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
-+	config.trie.num_tbl8 = 256;
-+
-+	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
-+
-+	for (i = 0; i < 2000; i++) {
-+		seed = seed * 1103515245u + 12345u;
-+		idx = (seed >> 8) & 7;
-+		if (live[idx]) {
-+			ret = rte_fib6_delete(fib, &ips[idx], depths[idx]);
-+			RTE_TEST_ASSERT(ret == 0,
-+				"DEL idx %u (depth /%u) failed (ret=%d)\n",
-+				idx, depths[idx], ret);
-+			live[idx] = 0;
-+		} else {
-+			uint64_t nh = ((seed >> 16) & 0xff) + 1;
-+			ret = rte_fib6_add(fib, &ips[idx], depths[idx], nh);
-+			RTE_TEST_ASSERT(ret == 0,
-+				"ADD idx %u (depth /%u nh=%" PRIu64 ") failed (ret=%d)\n",
-+				idx, depths[idx], nh, ret);
-+			live[idx] = 1;
-+		}
-+	}
-+
-+	/* Drain everything */
-+	for (i = 0; i < RTE_DIM(live); i++) {
-+		if (live[i]) {
-+			ret = rte_fib6_delete(fib, &ips[i], depths[i]);
-+			RTE_TEST_ASSERT(ret == 0,
-+				"final drain DEL idx %u failed (ret=%d)\n",
-+				i, ret);
-+		}
-+	}
-+
-+	/* If rsvd_tbl8s had leaked, this fresh ADD would fail */
-+	ret = rte_fib6_add(fib, &ips[0], depths[0], 0xff);
-+	RTE_TEST_ASSERT(ret == 0,
-+		"post-drain ADD failed (rsvd leaked?) (ret=%d)\n", ret);
-+	ret = rte_fib6_delete(fib, &ips[0], depths[0]);
-+	RTE_TEST_ASSERT(ret == 0, "post-drain DEL failed\n");
-+
-+	rte_fib6_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
-+/* Tight-pool re-compression scenario. Pool sized to exactly the
-+ * highest legitimate envelope: an ADD that becomes a closer ancestor
-+ * of an existing descendant must succeed because the byte-boundary
-+ * supernet accounting reports the same envelope post-operation.
-+ *
-+ *   num_tbl8 = 3
-+ *   ADD /28 nh=1            rsvd = 1
-+ *   ADD /48 nh=1 (compr.)   rsvd = 3 (/48 reserves 2 new boundaries)
-+ *   DEL /28                 rsvd unchanged (/48 still holds them)
-+ *   RE-ADD /28 nh=1         rsvd unchanged (already reserved)
-+ *                           (pre-fix: pre-check rejects)
-+ */
-+static int32_t
-+test_drift_tight_pool(void)
-+{
-+	struct rte_fib6_conf config = { 0 };
-+	struct rte_fib6 *fib;
-+	struct rte_ipv6_addr parent = RTE_IPV6(0xfcde, 0, 0, 0, 0, 0, 0, 0);
-+	struct rte_ipv6_addr child = RTE_IPV6(0xfcde, 0, 0x6000, 0, 0, 0, 0, 0);
-+	int ret;
-+
-+	config.max_routes = 16;
-+	config.rib_ext_sz = 0;
-+	config.default_nh = 0;
-+	config.type = RTE_FIB6_TRIE;
-+	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
-+	config.trie.num_tbl8 = 3;
-+
-+	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
-+
-+	ret = rte_fib6_add(fib, &parent, 28, 1);
-+	RTE_TEST_ASSERT(ret == 0, "ADD /28 failed (ret=%d)\n", ret);
-+	ret = rte_fib6_add(fib, &child, 48, 1);
-+	RTE_TEST_ASSERT(ret == 0, "ADD /48 failed (ret=%d)\n", ret);
-+	ret = rte_fib6_delete(fib, &parent, 28);
-+	RTE_TEST_ASSERT(ret == 0, "DEL /28 failed (ret=%d)\n", ret);
-+
-+	/* Re-add /28: byte boundary 24 is already occupied by the /48,
-+	 * so the re-added /28 introduces no new reservation. The
-+	 * envelope stays at 3 and still fits the pool of 3.
++	/* Insert a /48 below: levels 24, 32 and 40 see /48 as descendant,
++	 * 48..120 empty -> 10.
 +	 */
-+	ret = rte_fib6_add(fib, &parent, 28, 1);
-+	RTE_TEST_ASSERT(ret == 0,
-+		"Re-ADD /28 spuriously failed (ret=%d)\n", ret);
++	RTE_TEST_ASSERT(rte_rib6_insert(rib, &ip, 48) != NULL,
++		"Failed to insert /48\n");
++	cnt = rte_rib6_count_empty_supernets(rib, &ip, 128);
++	RTE_TEST_ASSERT(cnt == 10, "after /48 ADD: expected 10, got %u\n", cnt);
 +
-+	ret = rte_fib6_delete(fib, &child, 48);
-+	RTE_TEST_ASSERT(ret == 0, "DEL /48 failed (ret=%d)\n", ret);
-+	ret = rte_fib6_delete(fib, &parent, 28);
-+	RTE_TEST_ASSERT(ret == 0, "Final DEL /28 failed (ret=%d)\n", ret);
++	/* Insert a sibling /128 that shares a long common prefix with ip
++	 * but differs in the last bits. This forces creation of a
++	 * common_node and exercises the inherited valid_descendants of
++	 * that synthesized intermediate.
++	 */
++	RTE_TEST_ASSERT(rte_rib6_insert(rib, &sibling, 128) != NULL,
++		"Failed to insert sibling /128\n");
++	/* sibling shares prefix with ip down to bit 127; for the query on
++	 * ip/128, all byte boundaries 24..120 have descendants (the /32,
++	 * /48 and the sibling /128 chain) -> 0 empty levels.
++	 */
++	cnt = rte_rib6_count_empty_supernets(rib, &ip, 128);
++	RTE_TEST_ASSERT(cnt == 0, "fully populated chain: expected 0, got %u\n",
++		cnt);
 +
-+	rte_fib6_free(fib);
++	/* Remove the /32 ancestor: /48 and /128 sibling still cover all
++	 * byte boundaries 24..120 -> still 0 empty levels.
++	 */
++	rte_rib6_remove(rib, &ip, 32);
++	cnt = rte_rib6_count_empty_supernets(rib, &ip, 128);
++	RTE_TEST_ASSERT(cnt == 0,
++		"after /32 DEL still covered: expected 0, got %u\n", cnt);
++
++	/* Remove the /48: only the /128 sibling remains. For an ip/128
++	 * query, levels 24..120 each see the sibling as descendant, so
++	 * count is still 0.
++	 */
++	rte_rib6_remove(rib, &ip, 48);
++	cnt = rte_rib6_count_empty_supernets(rib, &ip, 128);
++	RTE_TEST_ASSERT(cnt == 0,
++		"after /48 DEL still covered: expected 0, got %u\n", cnt);
++
++	/* Remove the sibling /128: RIB now empty again. */
++	rte_rib6_remove(rib, &sibling, 128);
++	cnt = rte_rib6_count_empty_supernets(rib, &ip, 128);
++	RTE_TEST_ASSERT(cnt == 13,
++		"after final DEL: expected 13, got %u\n", cnt);
++
++	/* Invalid input: NULL rib. */
++	cnt = rte_rib6_count_empty_supernets(NULL, &ip, 128);
++	RTE_TEST_ASSERT(cnt == 0, "NULL rib must return 0, got %u\n", cnt);
++
++	rte_rib6_free(rib);
 +	return TEST_SUCCESS;
 +}
 +
- static struct unit_test_suite fib6_fast_tests = {
- 	.suite_name = "fib6 autotest",
+ static struct unit_test_suite rib6_tests = {
+ 	.suite_name = "rib6 autotest",
  	.setup = NULL,
-@@ -685,6 +942,10 @@ static struct unit_test_suite fib6_fast_tests = {
- 	TEST_CASE(test_invalid_rcu),
- 	TEST_CASE(test_fib_rcu_sync_rw),
- 	TEST_CASE(test_drift),
-+	TEST_CASE(test_drift_compression),
-+	TEST_CASE(test_drift_multilevel),
-+	TEST_CASE(test_drift_stress),
-+	TEST_CASE(test_drift_tight_pool),
- 	TEST_CASES_END()
+@@ -333,6 +424,7 @@ static struct unit_test_suite rib6_tests = {
+ 		TEST_CASE(test_get_fn),
+ 		TEST_CASE(test_basic),
+ 		TEST_CASE(test_tree_traversal),
++		TEST_CASE(test_empty_supernets),
+ 		TEST_CASES_END()
  	}
  };
+diff --git a/lib/rib/rib6_internal.h b/lib/rib/rib6_internal.h
+new file mode 100644
+index 0000000000..8246626de9
+--- /dev/null
++++ b/lib/rib/rib6_internal.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Maxime Leroy, Free Mobile
++ */
++
++#ifndef _RIB6_INTERNAL_H_
++#define _RIB6_INTERNAL_H_
++
++#include <stdint.h>
++
++#include <rte_compat.h>
++#include <rte_ip6.h>
++
++struct rte_rib6;
++
++/**
++ * @internal
++ * Count byte boundaries L in {24, 32, 40, ..., RTE_ALIGN_CEIL(depth, 8) - 8}
++ * for which the supernet of ip at level L has no valid descendant with
++ * depth > L. Used by lib/fib to maintain tbl8 reservation accounting in
++ * a single descent of the binary tree.
++ *
++ * @param rib
++ *  RIB object handle
++ * @param ip
++ *  IPv6 prefix address
++ * @param depth
++ *  prefix length
++ * @return
++ *  number of empty byte boundaries (0 if all levels have descendants
++ *  or depth <= 24)
++ */
++__rte_internal
++uint8_t
++rte_rib6_count_empty_supernets(struct rte_rib6 *rib,
++	const struct rte_ipv6_addr *ip, uint8_t depth);
++
++#endif /* _RIB6_INTERNAL_H_ */
+diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
+index ec8ff68e87..ae8aba6563 100644
+--- a/lib/rib/rte_rib6.c
++++ b/lib/rib/rte_rib6.c
+@@ -18,6 +18,7 @@
+ 
+ #include <rte_rib6.h>
+ 
++#include "rib6_internal.h"
+ #include "rib_log.h"
+ 
+ #define RTE_RIB_VALID_NODE	1
+@@ -36,6 +37,7 @@ struct rte_rib6_node {
+ 	struct rte_rib6_node	*parent;
+ 	uint64_t		nh;
+ 	struct rte_ipv6_addr	ip;
++	uint32_t		valid_descendants;
+ 	uint8_t			depth;
+ 	uint8_t			flag;
+ 	uint64_t ext[];
+@@ -104,10 +106,35 @@ node_alloc(struct rte_rib6 *rib)
+ 	ret = rte_mempool_get(rib->node_pool, (void *)&ent);
+ 	if (unlikely(ret != 0))
+ 		return NULL;
++	ent->valid_descendants = 0;
+ 	++rib->cur_nodes;
+ 	return ent;
+ }
+ 
++/* Increment valid_descendants along the parent chain when node becomes valid. */
++static inline void
++inc_valid_descendants(struct rte_rib6_node *node)
++{
++	struct rte_rib6_node *p = node->parent;
++
++	while (p != NULL) {
++		p->valid_descendants++;
++		p = p->parent;
++	}
++}
++
++/* Decrement valid_descendants along the parent chain when node becomes invalid. */
++static inline void
++dec_valid_descendants(struct rte_rib6_node *node)
++{
++	struct rte_rib6_node *p = node->parent;
++
++	while (p != NULL) {
++		p->valid_descendants--;
++		p = p->parent;
++	}
++}
++
+ static void
+ node_free(struct rte_rib6 *rib, struct rte_rib6_node *ent)
+ {
+@@ -250,6 +277,7 @@ rte_rib6_remove(struct rte_rib6 *rib,
+ 
+ 	--rib->cur_routes;
+ 	cur->flag &= ~RTE_RIB_VALID_NODE;
++	dec_valid_descendants(cur);
+ 	while (!is_valid_node(cur)) {
+ 		if ((cur->left != NULL) && (cur->right != NULL))
+ 			return;
+@@ -320,6 +348,7 @@ rte_rib6_insert(struct rte_rib6 *rib,
+ 			*tmp = new_node;
+ 			new_node->parent = prev;
+ 			++rib->cur_routes;
++			inc_valid_descendants(new_node);
+ 			return *tmp;
+ 		}
+ 		/*
+@@ -332,6 +361,7 @@ rte_rib6_insert(struct rte_rib6 *rib,
+ 			node_free(rib, new_node);
+ 			(*tmp)->flag |= RTE_RIB_VALID_NODE;
+ 			++rib->cur_routes;
++			inc_valid_descendants(*tmp);
+ 			return *tmp;
+ 		}
+ 
+@@ -371,6 +401,9 @@ rte_rib6_insert(struct rte_rib6 *rib,
+ 			new_node->left = *tmp;
+ 		new_node->parent = (*tmp)->parent;
+ 		(*tmp)->parent = new_node;
++		/* new_node inherits *tmp's subtree */
++		new_node->valid_descendants = (is_valid_node(*tmp) ? 1 : 0) +
++			(*tmp)->valid_descendants;
+ 		*tmp = new_node;
+ 	} else {
+ 		/* create intermediate node */
+@@ -386,6 +419,11 @@ rte_rib6_insert(struct rte_rib6 *rib,
+ 		common_node->parent = (*tmp)->parent;
+ 		new_node->parent = common_node;
+ 		(*tmp)->parent = common_node;
++		/* common_node inherits *tmp's subtree (new_node will be
++		 * counted by inc_valid_descendants below).
++		 */
++		common_node->valid_descendants = (is_valid_node(*tmp) ? 1 : 0) +
++			(*tmp)->valid_descendants;
+ 		if (get_dir(&(*tmp)->ip, common_depth) == 1) {
+ 			common_node->left = new_node;
+ 			common_node->right = *tmp;
+@@ -396,6 +434,7 @@ rte_rib6_insert(struct rte_rib6 *rib,
+ 		*tmp = common_node;
+ 	}
+ 	++rib->cur_routes;
++	inc_valid_descendants(new_node);
+ 	return new_node;
+ }
+ 
+@@ -606,3 +645,44 @@ rte_rib6_free(struct rte_rib6 *rib)
+ 	rte_free(rib);
+ 	rte_free(te);
+ }
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_rib6_count_empty_supernets)
++uint8_t
++rte_rib6_count_empty_supernets(struct rte_rib6 *rib,
++	const struct rte_ipv6_addr *ip, uint8_t depth)
++{
++	uint8_t top = RTE_ALIGN_CEIL(depth, 8);
++	struct rte_rib6_node *cur;
++	bool has_descendant;
++	uint8_t level;
++
++	if (unlikely(rib == NULL || ip == NULL || depth > RTE_IPV6_MAX_DEPTH))
++		return 0;
++	if (depth <= 24)
++		return 0;
++
++	cur = rib->tree;
++
++	/* Single descent through the binary tree, checking each byte
++	 * boundary on the way. NULL at level L propagates upward, so we
++	 * stop at the first empty supernet and tally the remaining levels.
++	 */
++	for (level = 24; level < top; level += 8) {
++		while (cur != NULL && cur->depth < level)
++			cur = get_nxt_node(cur, ip);
++
++		if (cur == NULL || !rte_ipv6_addr_eq_prefix(&cur->ip, ip, level))
++			return (top - level) >> 3;
++
++		if (cur->depth > level)
++			has_descendant = is_valid_node(cur) ||
++				cur->valid_descendants > 0;
++		else
++			has_descendant = cur->valid_descendants > 0;
++
++		if (!has_descendant)
++			return (top - level) >> 3;
++	}
++	return 0;
++}
++
 -- 
 2.43.0
 
