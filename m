@@ -2,52 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092CFCD4F5B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 22 May 2026 04:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29632CD4F5B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 22 May 2026 05:00:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52B0A40696;
-	Fri, 22 May 2026 06:11:27 +0200 (CEST)
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
- [113.46.200.226])
- by mails.dpdk.org (Postfix) with ESMTP id 7E25640650
- for <dev@dpdk.org>; Fri, 22 May 2026 06:11:17 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=rrQJN0xIDcTq4++Geq7d7BMxjU1ulW+87Jr7fp8Ld3k=;
- b=XmzSNPt8TrBtUOryCLL9vtxRDh31zmsWQSC10fhs2ChNWhswiM59S8iC55AXvQ8xij2Aqf3s4
- tpqFH72HP3nYAnd30p3n9itzs3hmL4ZzNVheR85xTcYP2La6Xxlh6dkky/1O5lS1s27+zSDsfj8
- B3shOATmCQLLwAyO9mpZ4qY=
-Received: from mail.maildlp.com (unknown [172.19.162.92])
- by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gMBTb3w1czKm4p;
- Fri, 22 May 2026 12:03:31 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
- by mail.maildlp.com (Postfix) with ESMTPS id 7960A40565;
- Fri, 22 May 2026 12:11:16 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 22 May 2026 12:11:16 +0800
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Fri, 22 May 2026 12:11:15 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
- <fengchengwen@huawei.com>, <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, 
- <lihuisong@huawei.com>
-Subject: [PATCH v3 10/10] power: add lcore ID check for PMD mgmt
-Date: Fri, 22 May 2026 12:11:10 +0800
-Message-ID: <20260522041110.2023062-11-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20260522041110.2023062-1-lihuisong@huawei.com>
-References: <20260522041110.2023062-1-lihuisong@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 12DBB402A2;
+	Fri, 22 May 2026 07:00:39 +0200 (CEST)
+Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
+ by mails.dpdk.org (Postfix) with ESMTP id 159944029F
+ for <dev@dpdk.org>; Fri, 22 May 2026 07:00:36 +0200 (CEST)
+Received: by mail-dl1-f45.google.com with SMTP id
+ a92af1059eb24-1309f4ee97fso7889156c88.1
+ for <dev@dpdk.org>; Thu, 21 May 2026 22:00:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779426036;
+ x=1780030836; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=VTcF4GJX4ij2Tkzo5rFIjPHzlroZHl4Zshi6SQhxt5Y=;
+ b=BFTturaEpxdGht6MbIRjcGXnraEwn/OohguTOoKdr3xd+hNkU9Tvkz/BMB2rljGaXi
+ ZXLQ3bk4+58PatiCrkoOrHnorqLQy9zbsyrD2PAAB7JtO9T4wn7mzZsi4fi/AK2qgbEF
+ WjERbmzTFVvJUrxvO06EE/pctI/rmHUATbtS12U55EwpOBiAkbJzFsxMecBQGYEtNVSI
+ b1lRdkZXHThlmDAZH+liUu8ldMnGVI/et3ln0yYZH1NYLme6FuqeH4I8x26C7WMY/zsC
+ ZqTHUNygmVbCLV6OJqaV+TRDleBvDkXavfkKPF9XSJiC7oedwIj87TmD5NKv2C2Sl0C6
+ geGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1779426036; x=1780030836;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=VTcF4GJX4ij2Tkzo5rFIjPHzlroZHl4Zshi6SQhxt5Y=;
+ b=fn8u1gsAdMNuGAbtWKUtKPvLCQJaSHwd95OSxG4jLzIAI8H22QSyjorD+gTsXckZ2X
+ OriIUn/3FAsSS8PEqE5fp44IEHoBnKgiasI+nja2qLGxZJ4cV8lxLDpb5FFof3t1Djc4
+ UMwiy6a0OG58URc77jASFpLhxW3XjlcGquZgAeXmRtc9V2uWgK9IytDOnVJAcJw5aQWD
+ EfkaMzON+Q3x+b9KaybqkH/yMII5qyWs1/0w3rCyQH0VO8JcFiMFlQ6We5TQmw+Fia3X
+ J6hmhjIgyGZ2OHjnGjF4hVIP+j/1ihT51/2W9FyByn6K4L5pWq5ouPf1sl3okk0G8zGI
+ rKRw==
+X-Gm-Message-State: AOJu0YwzSIb7aeSquDgtN0BhKf0uSt2eGKP8WQrj9MxVrMykI0yFa8QE
+ wCs3ipcCkibSk9MTKzOGWgJna7omA2Ifi2c0L16+uAKMl9Tz8u+ZhkJy5DavSp3Pkn7ieyACCoJ
+ XO6eO
+X-Gm-Gg: Acq92OHDFf/ySOhi9TfwGWzIy79FlL+u9qno423hsirt4z1TBN9Wmjjyt7S0jrUxag0
+ Np26Df/GOugbr0xUa//5bJBVFOBfPD8n/YID+2iUW22L7Da5D7UO/+hkX2xADMhcTJlKb9WKyxc
+ m/mBAb+rX0ulxpid40ue6xjjR2OSTzTxlkrqJjmqcP7J0f2x5XjI2W9D8daE5TEBRBCcetL2UVo
+ uWQGCaBbmi2gBoS4B67xnykw9Q4uCuWPPpzPIIm+S+osvKh9iPFsLKF/wIOPLVikujuMaVVMmr2
+ sx9E3RKEs9X4NQXwjsggJGalkrU5yz9OpldW8c+4J3yGRkhRIgr9WZmmbqSs1I2MVsafeIEzaZi
+ YYemaXw6N2FJ69yExARJG/tkRKNK8lxK4c4lLwMbwL5SxAUJJaT0aVbIq6F01bjmD7DIKsjVvl2
+ TByjHh4NgwT4ck3ZfFlvWDbiF+/vdnhrIMb5T9F8RKkb1OaaJwb7AanCT38Qml1w==
+X-Received: by 2002:a05:7022:ec8c:b0:12a:72af:83d2 with SMTP id
+ a92af1059eb24-1365f718082mr770847c88.14.1779426035680; 
+ Thu, 21 May 2026 22:00:35 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-1366a40187fsm535429c88.5.2026.05.21.22.00.34
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 21 May 2026 22:00:35 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>
+Subject: [PATCH] net/txgbe: fix AML mailbox lock acquisition
+Date: Thu, 21 May 2026 22:00:32 -0700
+Message-ID: <20260522050032.1354427-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn100009.china.huawei.com (7.202.194.112)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,85 +78,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The pmd_mgmt lib is mainly used together with the data plane of ethdev
-PMD. The core in data plane is ROLE_RTE. So use rte_lcore_is_enabled
-to verify it.
+The try-lock spin loop in txgbe_host_interface_command_aml() has
+the condition inverted. rte_atomic32_test_and_set returns non-zero
+on successful acquisition (0 -> 1), zero when the lock was already
+held. Walk through the two cases:
 
-Fixes: 426511683762 ("power: add get/set min/max scaling frequencies API")
+  swfw_busy was 0 (free): test_and_set returns 1, sets to 1, loop
+  body runs and sleeps 1ms. Next iteration finds 1, returns 0, loop
+  exits. Lock held, after an unnecessary 1ms sleep.
+
+  swfw_busy was 1 (busy): test_and_set returns 0, loop exits
+  immediately. The caller proceeds without holding the lock,
+  racing with the in-flight host interface command.
+
+Invert the condition so the loop spins while the lock remains held
+and exits only when acquisition succeeds, matching the intent of
+the surrounding timeout machinery.
+
+Fixes: 6a139ade82e7 ("net/txgbe: add new SW-FW mailbox interface")
 Cc: stable@dpdk.org
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/power/rte_power_pmd_mgmt.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/net/txgbe/base/txgbe_mng.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/power/rte_power_pmd_mgmt.c b/lib/power/rte_power_pmd_mgmt.c
-index a4d53aac2a..a5fc1c3a94 100644
---- a/lib/power/rte_power_pmd_mgmt.c
-+++ b/lib/power/rte_power_pmd_mgmt.c
-@@ -511,7 +511,8 @@ rte_power_ethdev_pmgmt_queue_enable(unsigned int lcore_id, uint16_t port_id,
- 
- 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -EINVAL);
- 
--	if (queue_id >= RTE_MAX_QUEUES_PER_PORT || lcore_id >= RTE_MAX_LCORE) {
-+	if (queue_id >= RTE_MAX_QUEUES_PER_PORT ||
-+	    !rte_lcore_is_enabled(lcore_id)) {
- 		ret = -EINVAL;
- 		goto end;
- 	}
-@@ -627,7 +628,7 @@ rte_power_ethdev_pmgmt_queue_disable(unsigned int lcore_id,
- 
- 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -EINVAL);
- 
--	if (lcore_id >= RTE_MAX_LCORE || queue_id >= RTE_MAX_QUEUES_PER_PORT)
-+	if (!rte_lcore_is_enabled(lcore_id) || queue_id >= RTE_MAX_QUEUES_PER_PORT)
- 		return -EINVAL;
- 
- 	/* check if the queue is stopped */
-@@ -729,8 +730,8 @@ RTE_EXPORT_SYMBOL(rte_power_pmd_mgmt_set_scaling_freq_min)
- int
- rte_power_pmd_mgmt_set_scaling_freq_min(unsigned int lcore, unsigned int min)
- {
--	if (lcore >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID: %u", lcore);
-+	if (!rte_lcore_is_enabled(lcore)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore);
- 		return -EINVAL;
+diff --git a/drivers/net/txgbe/base/txgbe_mng.c b/drivers/net/txgbe/base/txgbe_mng.c
+index a1974820b6..dcd8f58a68 100644
+--- a/drivers/net/txgbe/base/txgbe_mng.c
++++ b/drivers/net/txgbe/base/txgbe_mng.c
+@@ -185,7 +185,7 @@ txgbe_host_interface_command_aml(struct txgbe_hw *hw, u32 *buffer,
  	}
  
-@@ -747,8 +748,8 @@ RTE_EXPORT_SYMBOL(rte_power_pmd_mgmt_set_scaling_freq_max)
- int
- rte_power_pmd_mgmt_set_scaling_freq_max(unsigned int lcore, unsigned int max)
- {
--	if (lcore >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID: %u", lcore);
-+	if (!rte_lcore_is_enabled(lcore)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore);
- 		return -EINVAL;
- 	}
- 
-@@ -769,8 +770,8 @@ RTE_EXPORT_SYMBOL(rte_power_pmd_mgmt_get_scaling_freq_min)
- int
- rte_power_pmd_mgmt_get_scaling_freq_min(unsigned int lcore)
- {
--	if (lcore >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID: %u", lcore);
-+	if (!rte_lcore_is_enabled(lcore)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore);
- 		return -EINVAL;
- 	}
- 
-@@ -784,8 +785,8 @@ RTE_EXPORT_SYMBOL(rte_power_pmd_mgmt_get_scaling_freq_max)
- int
- rte_power_pmd_mgmt_get_scaling_freq_max(unsigned int lcore)
- {
--	if (lcore >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID: %u", lcore);
-+	if (!rte_lcore_is_enabled(lcore)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore);
- 		return -EINVAL;
- 	}
- 
+ 	/* try to get lock */
+-	while (rte_atomic32_test_and_set(&hw->swfw_busy)) {
++	while (rte_atomic32_test_and_set(&hw->swfw_busy) == 0) {
+ 		timeout--;
+ 		if (!timeout)
+ 			return TXGBE_ERR_TIMEOUT;
 -- 
-2.33.0
+2.53.0
 
