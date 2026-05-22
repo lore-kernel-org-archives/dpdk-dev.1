@@ -2,73 +2,140 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D039BCD5BB3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 22 May 2026 14:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21386CD5BB3
+	for <dpdk-dev@archiver.kernel.org>; Fri, 22 May 2026 14:49:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D66B44029F;
-	Fri, 22 May 2026 16:45:45 +0200 (CEST)
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
- by mails.dpdk.org (Postfix) with ESMTP id 6F51C4003C
- for <dev@dpdk.org>; Fri, 22 May 2026 16:45:44 +0200 (CEST)
-Received: by mail-dl1-f42.google.com with SMTP id
- a92af1059eb24-135e88b8e55so1098021c88.0
- for <dev@dpdk.org>; Fri, 22 May 2026 07:45:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779461143;
- x=1780065943; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=+1EYhWc/9IMPKnJ+dlI/YORFVeVToFnq3tnl1YsB8Ds=;
- b=hzyh2hRRt/YB8wzAVXy1GY1pU5XpDhTJZ9mo6v9L5BFaZPYey/egC/bWG1jJFTiYgv
- Pdf4Q6zpSUetfyqm2sNqTa9eGWzkGIL5VKCHOQxgI7/MzrWggdcsCeNLOpkof/dYWyyk
- fYQrzGmYgMP/ga9YwDepXTHiC1YDW2avy9veqVbmWf1ccDfnqlEwLyL5mpuL7sUmwUDA
- kdwmSkj+W8Mf5cVesUTh+qL6Ox9ol9lGUDg2Ul96A4RiiaF42CjsQPH2lxDZOxsYAWXM
- cYeGcI1UOoMjrXeSos1ElEM0yY7sKWLeHmi8jhuNPnOf47N/5e/ottMMNjKne01kbBLK
- oy4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779461143; x=1780065943;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=+1EYhWc/9IMPKnJ+dlI/YORFVeVToFnq3tnl1YsB8Ds=;
- b=h1dQy5cYDtegEWMPvNtDrMYn+2QEtfIz0HGf6dyQVAOHmyc67mFLdsdFpvpxLZe5kK
- qoO6RnWAxYc53YPUiperi46DkT85O5/n8EOkmrf0zZiv8d1HorD7vCvdWYgRvs0DwPTj
- lytGDkdHtn0wloBH5+aPAGsY6uMEXrOS9wGuCU9O7vJFYCqV4K5nupAVDX1G9Bwk1IH4
- C5U6h9wX9yEmxT0PTKsjJX7W3ppxjbM/ROTFxm+aAhqj057aXwOMvTLziRKYODz3Fm+p
- MQC2MaUzFgYXvomH2xXPLhND1MtI3M2nv2GNKUy4x9Cqnzk/I82OFEwABZ+dUnbiZPIS
- uz3A==
-X-Gm-Message-State: AOJu0Yz3upDtgt/xDeDG3s7bLEuNYh6G5lzZAWxhGHNzj5XSBKz6TPt4
- X+W0rSTVTDDha959ACi2C+fZijk/ABMNny9yPN6XoJl+cXKBIyJir7XnjUoZ3uvzyJE=
-X-Gm-Gg: Acq92OGfkV0mJWAn1Sq8/YI/d3tP4aerwZdoGE/xoFzsRwi7fhC1HIpARpvMsUFH3w9
- S1uGiQ9s9VAesTV+myiy4RHb5MULpztjinouNLGv+ojTnvvtfGfv5o4rq6UdPapU7n9Qf39FIFs
- T+rH6ti5MGXfxwBBXX/ka39Yh5H1HW3dDQvIxWTjv6uwrF41C1BjkAEzv7rse3aIAYmVy/NJ8i1
- wxGeKieQthNYBQ4D5MAHWXR8xB9qAUWlDQUwGTh4O2XnlXDUX1DXd9FMKzyTjQVgShkPCIKFkWp
- PlqBnkTQsAixEwHS14FWUg+MSdW8XhEaa11KDRjHQV3pcajzVOAUgit5HfX/0uuzOtBHdWqnJrO
- EseW+6JIioXS05C9qNv87k2oROI1WtfnqyemNttEVWS4nQZ1MjeCIyjDvSleBZrYZfvbPnTuZjU
- 2gHaEDhLJjVx6Nl6l19we4pnvI8tviN6HDIKyDZPjkcuy36FcfsqxElufGcTJgA+JUph0mdoyCC
- 9Y=
-X-Received: by 2002:a05:7022:1605:b0:132:1e01:8737 with SMTP id
- a92af1059eb24-1365fb403b8mr1505903c88.26.1779461143252; 
- Fri, 22 May 2026 07:45:43 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1366a40187fsm1284516c88.5.2026.05.22.07.45.42
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 22 May 2026 07:45:42 -0700 (PDT)
-Date: Fri, 22 May 2026 07:45:40 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [RFC v2 00/11] prepare deprecation of rte_atomicNN_*() family
-Message-ID: <20260522074540.35029d69@phoenix.local>
-In-Reply-To: <ahBl1GytfB3f17hV@bricha3-mobl1.ger.corp.intel.com>
-References: <20260521042043.1590536-1-stephen@networkplumber.org>
- <20260521180706.678377-1-stephen@networkplumber.org>
- <ahBl1GytfB3f17hV@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1BC744029F;
+	Fri, 22 May 2026 16:49:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 09CB04003C
+ for <dev@dpdk.org>; Fri, 22 May 2026 16:49:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1779461361; x=1810997361;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=xxYF1oxrQ+KQ6cQFgFo1+Rt6SAij+yTb9MUFwGrmJGA=;
+ b=dQQ8OU/lAMRvgYPTwve60AZurPVVGmLAEG8wED8ndv6i6sA5guW+KbSn
+ PynWYgfmKUwx4C9aCBoE7OX7fml1bitIzdCN5QmEwy08dI65aR7Ts2y1M
+ HTFZzFAjmw4PZKSWBEZaeJ3f6aMgo9Xq+xEXE+eBXtYgXJpCgnW8gwSn+
+ loXx6vKjBTJ31tbCO7SKtxcT+cE9mCz7yX2a78r1YIgriOmNDW002wyRh
+ KQ/PlpIwTC52SeWq7FCosL8GaXXyWerUIW9osV+IOr63F7xGSeVaUTvdT
+ Fffw2KB7AuvAGbgDEuPQRVAhCLIF6dkspqH65IMClMd1kpP5CqP/JbN/a g==;
+X-CSE-ConnectionGUID: nopbbGL9TeGQRF9C40wHWA==
+X-CSE-MsgGUID: WWMc0LQbQ1yXQqt+zcfmGw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11794"; a="80511956"
+X-IronPort-AV: E=Sophos;i="6.24,162,1774335600"; d="scan'208";a="80511956"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 May 2026 07:49:20 -0700
+X-CSE-ConnectionGUID: 1BgjSOkFQvOaVkOLlKW6/g==
+X-CSE-MsgGUID: I1mhirUFRkSd9g6EP08Xag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,162,1774335600"; d="scan'208";a="245913998"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 May 2026 07:49:20 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Fri, 22 May 2026 07:49:19 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Fri, 22 May 2026 07:49:19 -0700
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.26) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Fri, 22 May 2026 07:49:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mmhIE201AGjs50eqf9WW5t5lgprdRQk/hrslQ5opHbf+x+sP5Z6M2vQcpQ1pUKl0MMEvQ4mWgC37EwCfkCA2e0uWCq7B8ZLnjCKp4etnARtzLGa54gvVKkr75B+zhhRiRwIafras9xnHtm8Ru+sXSOPDAY/DtE4xqYOFa3J4kuUzcEWhmdyUAIOe4cfGZkD6vA0molA3UOHl7QRy83uj0p2oZ/tj7nM+2wIi7L53jzBZDtxT3yfQT80QnF3F59LdUZ+nRpIC7b3Lelhmzl9gpVYvteOe2pjVSvjVhPMZz9KVNuR+cUjyISsbAo0RcwoXI5YAyswLSgGq0SSH6FOInQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PGYWPxI0wCqp2YGc0DG/5TOdYdNhZh2gS38PnpH5DP4=;
+ b=gLW8DjKWsOooOgIYpqCDVkjt5wvvPcmMihzvmiUEA/9X9qMHRFuC+5hf3BqaLoi4VuLRajWCiIegsThiRWgb8EOuT+JSsS2XCX7vS2Qj6f6AZINRA6VMz7RkxrD0zEY9zYMHL/QrjmkrkN/mf+RzSXBRkdQDLFa9kB1GAsxGYx1MbBqSXh1+fY93wXkAYGBvsZFGzLDKvgF5azHS39usF8Yp1UmSYQTCTR8ZvTiK03sw4BqP+8z0C7CXfu2Qv9Ptcer0EyRCWLdyaN9AbucsKT7u11SnVQvGptjW1PHvn+sHFp2lfisjdNM/ZQ5I1ClCmYzNQfvhIonB1d5JmuI/Og==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by MW6PR11MB8437.namprd11.prod.outlook.com (2603:10b6:303:249::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.22; Fri, 22 May
+ 2026 14:49:15 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0048.016; Fri, 22 May 2026
+ 14:49:15 +0000
+Date: Fri, 22 May 2026 15:49:10 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Arin Kharkar <arinkharkar@gmail.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH] FIX: excessive logging in I40E driver
+Message-ID: <ahBs5sVdRubjqpO5@bricha3-mobl1.ger.corp.intel.com>
+References: <20260512234227.218761-1-arinkharkar@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260512234227.218761-1-arinkharkar@gmail.com>
+X-ClientProxiedBy: DB3PR08CA0016.eurprd08.prod.outlook.com (2603:10a6:8::29)
+ To DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|MW6PR11MB8437:EE_
+X-MS-Office365-Filtering-Correlation-Id: c30afe7a-fc22-4e16-9e1f-08deb8114b44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|366016|1800799024|11063799006|22082099003|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info: Ocsuwzgq4sYAtKYviwvAv5jZo4CK2+rJPDjNbHSSvdPX8rciQwAEI3M1We0C1m5gwDLr1Y686+zqz3vqcndj2RGEDvueKUHY2qIYNUxyAhJJBIuuEbCJIW98TfxXFlFCQMYQGgmppEoO8VAzLc7nR89HyJYyzhA2PeGkjpaxEJaGvm2jpcqm6ZXem0ifFBq459vQxee9tTATKcA4W1dBprq7tZHmwWG4H2BqXRonMKhDjrjRY93lxrRMiV+L96vsWLk8VRJ/i1+olwUbnd1dReoK02nEDaVCGF4SpYzaR+bXy4vSFNXZM0I/ANaykj4G46X/CGqKBLwXnuPinRF7jhfre/grqWKwDr35KP9xnqFumPNeKpTV2oA8DvxpOHtYl2uaw8k4zC01HNas8vdowvNUfNb2YeqYkckovOdTeD2k3Bzf8it4plxoxjf2wsOOWHGwyTMgn9Cya7muHN7vT2ehmORLYRLDkRu7iRs9UxZ/U1f07Am9OgWWHJmdZHdR6VkqV8CM4vbfDpKFPE01y0+4K/hUoxadxgXqLTFt4kePwyCCzM2X1a7RBqfK6qozyRNdsSNmUCq5kg7ECWGJsva7UUzR/WUptNtle0y9LX1p8dz2omYgCdprI4v3R1TiXH68hGiZxemP6jrznV65Ix6JKeCBXmBkX2hrN/pETW+rXsMkOZThlp7cm6mZg7er
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(11063799006)(22082099003)(56012099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RhfjGA5BGXjo3dcN6q/eylK3ogCSRz2AIROYqzAU4Y/xeas6aZxOHcymeGPE?=
+ =?us-ascii?Q?/6+cCWEqItCW5CUDGCOUWm4T+g8irN7jxA04VHRIBE8soQxmH1y5n9QKj35P?=
+ =?us-ascii?Q?m3HuJj3Jc/XLGBfeuQouvLJR7AgjSvRLGdBfqiFmNRyMs0yBpbnX31lN4oNU?=
+ =?us-ascii?Q?l2xlz0E4uht3sgoVYMxs4wqlJcuqMrGyXNFrclrlaQLm/GyTuT5VPSU+vcNJ?=
+ =?us-ascii?Q?0zLu94sTmpn9b/342x/QOcdAxpTx84l3m/jrwWQ34ZRaNh8+OhPij1bjsM6v?=
+ =?us-ascii?Q?LqJ6TRe7N0LIK3jL1zA9iVCKTUrAtgT/F9+lTkLpEG8kYSUaSgewXf4nSASr?=
+ =?us-ascii?Q?/ZSatdwIgn+Tf13C2Hhyy2bSoayHqAZ8zkvJnfwYoNjR/AJyfcDULceZmsl6?=
+ =?us-ascii?Q?zEOadW3qTDDjopDz0+HQbCcNfU2Mq33NJkFXpJ8HKe9j5Lj5PAYap1lhBhAw?=
+ =?us-ascii?Q?A2HUonoKZOxfSzOwfzYwOgtCBJDEdvIzpZlp91SULbSyRv4Q3CWUnufS8i+H?=
+ =?us-ascii?Q?HuWz58MCbj+LWslW7ObtSoybo+ZcK9s1+WiQvG9aUVQAK9tK07QASNqBwv/c?=
+ =?us-ascii?Q?4oH5ovWbOw5JJ1rNGb3cLRj+ohTwLtperpKFye5dMFOdlfOYPk0svG1uxuVZ?=
+ =?us-ascii?Q?1Wr6RWD/0C48lkBDMxKwqei7sFPOZlWgvBEtZFYTm+t0z5MIYr8KEnae2aN2?=
+ =?us-ascii?Q?CcNpQa2IAaZfbE2CEkBD2Tr/et03lGmWZTkdZL5PnjaDEOSEmJ/QjU87bPBu?=
+ =?us-ascii?Q?8+6R+kXUQPlCtRp3s81s3QO5VMY+YBtcAigbLNHwPCDLvYDUfbj/Ga6FDZCv?=
+ =?us-ascii?Q?9GgUMZ3XSCROIgGlD51hXIR4Zq5o1yCijaqXUuoUAhZUZegw3LKfQBSz9vlX?=
+ =?us-ascii?Q?ahfCXkHFJvp82IVwJgTFtl9emNxsL35ClYho7OXhjn25DlzCJhrN8azujmR5?=
+ =?us-ascii?Q?i0RNhG4MKyCrzG7Doj1pZL20wSrtvFMzW5mJaNCR3dBRtPKi1aOQ5jm/Pw2j?=
+ =?us-ascii?Q?5vkPg+Hdba3YOX2S6MhKJsxtbj+rBITub9DHJXehnGSii/H3oCjuRu+DjHFO?=
+ =?us-ascii?Q?S18iUduqfKUdA32E4ipRcG/LkCNXi0IsoF0NERY/SCGJs0oek4z4940WbWsA?=
+ =?us-ascii?Q?7qHWD6vaGZoHQblYalB7z4oBywnM+HCq9ENPEv4P3u1FafD/u747Dw8zrVCs?=
+ =?us-ascii?Q?vk4sfrRtH9+wtbq0M0EUNWNsrJHlwq8kwjSmdeduct/zledgmGXSguUxas7P?=
+ =?us-ascii?Q?8IofDIKtNl/OkKUxkI1MsAqZFuCnOfaQPwpqnzYyS+Cw9UZzBWNZaXqkS8Al?=
+ =?us-ascii?Q?2yXFZmXKICbIyejZBrZqtUAQdC84cAVsxsMq8xuhEbl4gAW+rx6BeaEkF34/?=
+ =?us-ascii?Q?PQHo3WPEZywX+UW7fdcdrCkYrVe3AXOYjft6aQDQW9sRjEkc8R4whU9DBUp4?=
+ =?us-ascii?Q?oiyS6qqX37uHkO+I+h59bK9nSzyrPcoqs0jH713gT2nEWMCl23wWwupewEP0?=
+ =?us-ascii?Q?uCHiB3wjuEC+jf6q0RB+QvZgRip1JiCgYh8MErxzZeaFf5/PD/9JE4Xb3I6b?=
+ =?us-ascii?Q?s6sVY5VHoGK7zUQkSr4PkNy2TB6QQ2VFPwivtKVWt65igot8NcQQDMKWdy8i?=
+ =?us-ascii?Q?rew+Pxcrl7TfXFgkDMuvlGuf7IkfQKt+bLPzuLTHASWjSWawtXxs0yHL2FkE?=
+ =?us-ascii?Q?IzHdWY2d/CJ6zXx7CoQmlySpK2ANXoFaxzIGAJy2JWIjfCIPzoFSOmkBeKPF?=
+ =?us-ascii?Q?j5cewTMH05wXKp6iXd6BnMRrFQwT/Ws=3D?=
+X-Exchange-RoutingPolicyChecked: atOS/J7raJR6JevAuAIGoekIsLFailS/XYHwlwfkLsLEJTxOJUy5K8tBefKJkPW38vo9siYxo5/ZpFJqXKoJx9lY2njL9eQuTtgfl6hKXUukVU4Gpp/D+EM0UpNq6slS4PcD8bQN/keCWGDuL50/TdwJCUfr/LtrueIOFSVtRQYu0KTSqpBchU7Q+14ketCrxR0EjIdOsVoaONAjVBmnnmxrepUfX2lzLXZk5FLxzIeJC498zSnhzRY3BBsZ3B4FOPFGRyIUxwdPpkF3AmeRsLNbzmwCVIH+YVwERmN6sNKOiBPDZv0orV2kTbcgLg0MEZ6XzogTyB16h79kPnGo7w==
+X-MS-Exchange-CrossTenant-Network-Message-Id: c30afe7a-fc22-4e16-9e1f-08deb8114b44
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2026 14:49:15.3296 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: H6wlsyl0IIiFSsZw8hRMBkwmA5G1eAeI/Lof4rn5hXYWxmQ30zoMOvVO3BtqjXvcVqCRuzJkXAKKubwRxCtm5uiYvYioGc+OVUneAJ46sDk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR11MB8437
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,36 +149,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 22 May 2026 15:19:00 +0100
-Bruce Richardson <bruce.richardson@intel.com> wrote:
-
-> >   
-> I decided to test this patchset with the ring_perf_autotest (using only two
-> cores on same socket) to see how performance may be affected on x86 with
-> this change. On an initial once-off test to compare performance
-> with/without this patchset for MP/MC cases, it looks like smaller enq/deq
-> burst e.g. 8/32 are slower after this set, while larger bursts e.g. 128/256
-> are slightly faster.
+On Tue, May 12, 2026 at 04:42:27PM -0700, Arin Kharkar wrote:
+> Resolved bug #1936 by changing the log level in i40e_set_tx_function from NOTICE to DEBUG
+> ---
+>  drivers/net/intel/i40e/i40e_rxtx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I then ran two more tests with the patches applied and again without, and
-> got AI to analyse the set of 6 results to come up with more meaningful
-> conclusions after a little bit more numeric analysis. Below is some of the
-> summary.
-> 
-> While not necessarily a deal-breaker, the regressions seen are cause for
-> pause. We probably want to benchmark on a few other x86 (both Intel and
-> AMD) systems to see if this is a consistent picture.
-> 
-> /Bruce
+> diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+> index c5ac75e0f0..bc48303a25 100644
+> --- a/drivers/net/intel/i40e/i40e_rxtx.c
+> +++ b/drivers/net/intel/i40e/i40e_rxtx.c
+> @@ -3124,7 +3124,7 @@ i40e_set_tx_function(struct rte_eth_dev *dev)
+>  					 i40e_tx_path_infos[ad->tx_func_type].pkt_burst;
+>  	dev->tx_pkt_prepare = i40e_tx_path_infos[ad->tx_func_type].pkt_prep;
+>  
+> -	PMD_DRV_LOG(NOTICE, "Using %s (port %d).",
+> +	PMD_DRV_LOG(DEBUG, "Using %s (port %d).",
+>  		i40e_tx_path_infos[ad->tx_func_type].info, dev->data->port_id);
+>  
+>  	if (ad->tx_func_type == I40E_TX_SCALAR_SIMPLE ||
 
-Could you see if problem is the use of intrinsics on x86 or the
-changes to rte_ring_pvt?
+Hi, thanks for the fix. 
 
-I am not convinced that deprecation of these function is hard requirement.
-This patchset is more of a what-if experiment.
-The other alternative is remove the deprecation notice and just leave
-well enough alone.
+Unfortunately, with the recent changes in the drivers to use a different
+path selection mechanism, this patch is no longer relevant, I believe. The
+log messages for path selection in the driver on "next-net-intel" tree are
+now all at DEBUG level.
 
-But some of the places actually benefit from the change over because
-the are using flags as lock and using other memory orders should
-be faster on Arm.
+Marking as not-applicable in patchwork.
+
+Thanks,
+/Bruce
