@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C38CD5BB1
-	for <dpdk-dev@archiver.kernel.org>; Sat, 23 May 2026 20:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF2FCD5BB1
+	for <dpdk-dev@archiver.kernel.org>; Sat, 23 May 2026 20:00:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3734940DD8;
-	Sat, 23 May 2026 21:59:05 +0200 (CEST)
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
- [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 3CCC2406BB
- for <dev@dpdk.org>; Sat, 23 May 2026 21:58:59 +0200 (CEST)
-Received: by mail-dy1-f182.google.com with SMTP id
- 5a478bee46e88-2f30a4601bbso8585384eec.1
- for <dev@dpdk.org>; Sat, 23 May 2026 12:58:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 31A5240DDC;
+	Sat, 23 May 2026 21:59:06 +0200 (CEST)
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
+ [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id 8DC0440B9C
+ for <dev@dpdk.org>; Sat, 23 May 2026 21:59:00 +0200 (CEST)
+Received: by mail-dy1-f170.google.com with SMTP id
+ 5a478bee46e88-304545e6c7fso1893494eec.0
+ for <dev@dpdk.org>; Sat, 23 May 2026 12:59:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779566338;
- x=1780171138; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779566340;
+ x=1780171140; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=dgOfGdIrUWElVZ8RERrHIa5tu6DvybwadqOzpvd1HHM=;
- b=gWdYOQlOEXy0bStJnYXx/aFEqhCjfOaM/4kKvxtQqqAHz+r7RFcq16JcmjW9lXDee2
- OTkU61Gp8ajMwGY46rpcze8xignUB3hEPB+1CBYHrjGp38PgmYEpuYQ/N9b39ol4T66V
- j7E0TQDNGpfzptt/ylGCTrVUiwoG91dxfZV07ELaqnivB4TzyYKWQSwljrJikvTeWTkc
- O6UC/5vyKpAiB0ZbLVYm0xul1KVfXeTb+snrkutuQg1xymN2pYQwPUXkNP3+GkPsIxnN
- lAFbZnd2hjhjcw6C8rlEIfmFPAOi15bR1Qb4Xr/jKGbrsmARqeFnJWioyu7ms1uEQAkP
- wxxw==
+ bh=ytQYTIOBfQm49WCEl9crr3zXsomhLW4LmR/UlxIUP0A=;
+ b=P7v8GCKE/4qiMuTAziu50g8OUBwlokovGMJ+GvtMFtS5inI22PYjA5GaNl/OMCLvQz
+ /u/qcrTz3urHbOVyjLrRj5lP+LKG8TJnhNSqogRiWfOl91mLdrOkmXS1nnB/VIXkK6Zq
+ fUFs6XWV9KPcMoQacSxfBoam8WqHjcPtns6tSTrSoPaJKJqQ8Bem/ugoc8tffkJ78vBv
+ lZ787BVuHcki3T6pRwNUAA2YFYEiJvmBZOHH3ZSK05UsU0hvx6kCN6L1yYXrKV4N9DPF
+ fQHch1JDH7osGI9VAyWzwZm5fDSPHuvTqvkSV29SDPtn8Oc2Kq0Z1IROareEDDH5CHzE
+ G/bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779566338; x=1780171138;
+ d=1e100.net; s=20251104; t=1779566340; x=1780171140;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=dgOfGdIrUWElVZ8RERrHIa5tu6DvybwadqOzpvd1HHM=;
- b=N/7sK+PoFv5olp2Pq5WTB/GkIbNsSIH3SUT2IvfWoofwobG2QhacIcJajOHghyi949
- rh+bL2rzWcrj2UAN8vwBPh/W7YV0PuqbPljQeRdcKm/Ar4EkdvoB3W5oLA5QSvqhIN5v
- 7sdXGvXhIWiWCwkDFe6oolsm4couxmXac9p165KM7bDb1vi8gvW1PsPPA2hebW1sY4a0
- ZgKzqzItYT+AJZfD4K+fDJBbN8BK2THVW+5TGM+tqdnz71ej6trTRBs2MQoWXwQQxHvU
- 1OpJ1XfzlFvmLngaWUQA40DZfTjeoI6KpPo5mjtOq+KPnL3zU5HqY5bAwgeh2rGrjJg7
- 6oNQ==
-X-Gm-Message-State: AOJu0YzVN0bylyOlOsLBJtcOpv2mR5PnSWlangQNys4MzpjU3NLPECyp
- 5zUhHLos1T4SiR57vw3sfie3+HOVLWYkaAjLOSH3EskG69KBEjgOA76FHpVb5CBTFOEwvSt/jm1
- scH1l
-X-Gm-Gg: Acq92OHQKowlSlfd1TJxNWoaZxF++Quc0uN034fKRaCyJ6R6q22C4rDgOhteXJ/H6Gp
- WqVsoTPsjZbzEAiX8OVDefsjXPqhLHjhb0y+WmDl+iIZNAxhseNK5MZrarq5THktiBA+8LPxHub
- n4zPKrt2Dj2rTrVapvmjwHHm6vAK1dc8VTXgMKFkv8RJH94EvKbp0lLSfHnCqUKNujU8ssWvDbs
- jCvR/Zsl6j0G5z10CTNrshoagnj2pGPvMgDctu/zNOYjOgsPQrWJ6QhA8YqpI+j73+f2OCV/q6K
- ZfkkSmeG5Ns/+eR3O0al5cpCiJYIZaCNEAfDEIP/wbEVNX9A1grmTWSi/gmeHiE2x4Px4QlzfRM
- /j+JLyOZm4UI6Tui22da7n13jwPK0HpEDQTfvqGo+hJlgXd5KC8LGNa7yhCupRj0zgnKUmgukI7
- zMQbc18C4bRcOgv2AH5no/iepqYSFKBBCXkQDtbh23nDYbsDbJlJZsoqeB7WOTGlM9orHyTk+J
-X-Received: by 2002:a05:693c:63d1:b0:2f3:986d:2d01 with SMTP id
- 5a478bee46e88-304490543damr2320644eec.19.1779566338281; 
- Sat, 23 May 2026 12:58:58 -0700 (PDT)
+ bh=ytQYTIOBfQm49WCEl9crr3zXsomhLW4LmR/UlxIUP0A=;
+ b=p/JF+6SD8574J5sDhZttMoetbqJBB6WxlfOIg8eVoYuMgLvjnYnBzH4HVicFSfh8uu
+ xGQMPI5iU9dNXivRgIfyMwKgBV6wHyxwEsiTMnKk5TKnzyk7ij585u7ygD+NeeMr6DRF
+ lPAGmme51Otb8HUWAtJYMQ3yCphb5X/fXm+kmQZLSS52zfe1+tXgvhSW60NDUdfDQikt
+ dFbLdgKvAj3yfK7zNClSYU70okyQIVZgEDNEU2SDPT2AOJHLhDfAfEVyQgH8RdkpeX0C
+ eoX0ga5Qc9Y0PhjmDPdTmiRzCZUhz8GqNxOdZqAM3FlMXF3B+hceKB7E4slrM4fdMAwi
+ VgxQ==
+X-Gm-Message-State: AOJu0YznTJ2jR/XHsI6FzhgHg1eXvhzG0o3mVwjWqDFUnLofFmw0g5Aj
+ KIvM5O37t6A+1EHnK/la9zBVnZMGRP/1m49iQ215mFRpgk+e1uh/p20EEFvNFyJ0QLGHCfyjpZZ
+ rKsir
+X-Gm-Gg: Acq92OFPUsMtx3+TWr6Khi8vzpJ0Cu6QOMVEzwUcI2dBOdmUMnjMscdewn6xT7f/FpC
+ QuIQAEw3/NPC6FYDQmGLVKvNxtU9JiFdkO/lEHU8TYSAa32aED3/vCqP/6exbqg8wPQiyqQ7dlf
+ oA6Va2oTZIi0qam5zH+Xy3acM65nTfSnvdyP9TCxfT/u08l+IXXlJzKsCPRhT153xaLe+vyFYE1
+ HKUWgP/Oe6uAfZyD/PDGqTrbtXIv304otrCS7U8Ht5DW4tH9B3dljsXRMa0+9y6U6TT+FVJUcVh
+ mSYrEfcR3Pw55mZEjcx5RMHC7p+S92ZHIIUAvVUAqaLdcsBm1MDjUTW9frJOWcXCVyFgHAXakq1
+ 7ggLwZe6kjz25LjyWKHWkOKjsc4qjBUwLJ2nd1IvwFZwhSLMP9nbL/VVPt7/m2obwGD7DUwx5Oy
+ bLoGQBiEMBk7PiDsx7GjE/l8vUpjtiWCJ27K47G2x6ala0YQQQR2ujeqe23+dy6w==
+X-Received: by 2002:a05:7301:9bc6:b0:2f4:3a9c:819c with SMTP id
+ 5a478bee46e88-304490b7e55mr4478781eec.25.1779566339555; 
+ Sat, 23 May 2026 12:58:59 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30452255234sm4838428eec.20.2026.05.23.12.58.57
+ 5a478bee46e88-30452255234sm4838428eec.20.2026.05.23.12.58.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 23 May 2026 12:58:57 -0700 (PDT)
+ Sat, 23 May 2026 12:58:59 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 16/27] event/sw: convert from rte_atomic32 to stdatomic
-Date: Sat, 23 May 2026 12:56:30 -0700
-Message-ID: <20260523195839.454952-17-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
+Subject: [PATCH v3 17/27] bus/vmbus: convert from rte_atomic to stdatomic
+Date: Sat, 23 May 2026 12:56:31 -0700
+Message-ID: <20260523195839.454952-18-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260523195839.454952-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -81,118 +82,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use stdatomic to keep track of inflights.
+Replace deprecated rte_atomic32 operations in the vmbus ring buffer
+producer with stdatomic equivalents, and replace the smp_wmb + CAS-spin
+publish with rte_wait_until_equal_32 + release-store.
+
+The two-cursor design is preserved: tbr->windex is the driver-private
+reservation cursor that lets producers reserve slots concurrently
+without a lock; vbr->windex is the host-visible commit cursor, updated
+in reservation order so the host never observes windex pointing past
+unwritten data. This is the lockless analogue of the spinlock-around-
+single-cursor pattern used by the Linux (drivers/hv/ring_buffer.c
+hv_ringbuffer_write) and FreeBSD (sys/dev/hyperv/vmbus/vmbus_br.c
+vmbus_txbr_write) implementations of the same host contract.
+
+The memory ordering mirrors __rte_ring_headtail_move_head and
+__rte_ring_update_tail in lib/ring/rte_ring_c11_pvt.h: relaxed wait
+for the previous producer's commit, release-store to publish. The
+rte_smp_wmb before the publish is folded into the release ordering
+on the store itself.
+
+The host-shared vbr->windex remains volatile uint32_t in the packed
+bufring struct; the atomic qualifier is added via cast at the access
+site. The (uintptr_t) launder on the store-side cast suppresses a
+spurious misaligned-atomic warning from the packed-struct attribute
+(windex is 4-byte aligned in practice, at offset 0 of a page-aligned
+struct).
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/event/sw/sw_evdev.c        |  8 +++++---
- drivers/event/sw/sw_evdev.h        |  4 ++--
- drivers/event/sw/sw_evdev_worker.c | 16 +++++++++++-----
- 3 files changed, 18 insertions(+), 10 deletions(-)
+ drivers/bus/vmbus/private.h       |  2 +-
+ drivers/bus/vmbus/vmbus_bufring.c | 39 +++++++++++++++++--------------
+ 2 files changed, 23 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/event/sw/sw_evdev.c b/drivers/event/sw/sw_evdev.c
-index 3ad82e94ac..a2f760a98d 100644
---- a/drivers/event/sw/sw_evdev.c
-+++ b/drivers/event/sw/sw_evdev.c
-@@ -153,7 +153,9 @@ sw_port_setup(struct rte_eventdev *dev, uint8_t port_id,
- 		 * the sum to no leak credits
- 		 */
- 		int possible_inflights = p->inflight_credits + p->inflights;
--		rte_atomic32_sub(&sw->inflights, possible_inflights);
-+		rte_atomic_fetch_sub_explicit(&sw->inflights,
-+					      possible_inflights,
-+					      rte_memory_order_release);
- 	}
+diff --git a/drivers/bus/vmbus/private.h b/drivers/bus/vmbus/private.h
+index 8ac6119ef2..42c4e81ac0 100644
+--- a/drivers/bus/vmbus/private.h
++++ b/drivers/bus/vmbus/private.h
+@@ -41,7 +41,7 @@ extern int vmbus_logtype_bus;
+ struct vmbus_br {
+ 	struct vmbus_bufring *vbr;
+ 	uint32_t	dsize;
+-	uint32_t	windex; /* next available location */
++	RTE_ATOMIC(uint32_t) windex; /* next available location */
+ };
  
- 	*p = (struct sw_port){0}; /* zero entire structure */
-@@ -512,7 +514,7 @@ sw_dev_configure(const struct rte_eventdev *dev)
- 	sw->qid_count = conf->nb_event_queues;
- 	sw->port_count = conf->nb_event_ports;
- 	sw->nb_events_limit = conf->nb_events_limit;
--	rte_atomic32_set(&sw->inflights, 0);
-+	sw->inflights = 0;
- 
- 	/* Number of chunks sized for worst-case spread of events across IQs */
- 	num_chunks = ((SW_INFLIGHT_EVENTS_TOTAL/SW_EVS_PER_Q_CHUNK)+1) +
-@@ -633,7 +635,7 @@ sw_dump(struct rte_eventdev *dev, FILE *f)
- 	fprintf(f, "\tsched cq/qid call: %"PRIu64"\n", sw->sched_cq_qid_called);
- 	fprintf(f, "\tsched no IQ enq: %"PRIu64"\n", sw->sched_no_iq_enqueues);
- 	fprintf(f, "\tsched no CQ enq: %"PRIu64"\n", sw->sched_no_cq_enqueues);
--	uint32_t inflights = rte_atomic32_read(&sw->inflights);
-+	uint32_t inflights = rte_atomic_load_explicit(&sw->inflights, rte_memory_order_relaxed);
- 	uint32_t credits = sw->nb_events_limit - inflights;
- 	fprintf(f, "\tinflight %d, credits: %d\n", inflights, credits);
- 
-diff --git a/drivers/event/sw/sw_evdev.h b/drivers/event/sw/sw_evdev.h
-index c159be21be..5e49b08030 100644
---- a/drivers/event/sw/sw_evdev.h
-+++ b/drivers/event/sw/sw_evdev.h
-@@ -8,7 +8,7 @@
- #include "sw_evdev_log.h"
- #include <rte_eventdev.h>
- #include <eventdev_pmd_vdev.h>
+ #define UIO_NAME_MAX 64
+diff --git a/drivers/bus/vmbus/vmbus_bufring.c b/drivers/bus/vmbus/vmbus_bufring.c
+index fcb97287dc..624fe8b6c5 100644
+--- a/drivers/bus/vmbus/vmbus_bufring.c
++++ b/drivers/bus/vmbus/vmbus_bufring.c
+@@ -15,7 +15,7 @@
+ #include <rte_tailq.h>
+ #include <rte_log.h>
+ #include <rte_malloc.h>
 -#include <rte_atomic.h>
 +#include <rte_stdatomic.h>
+ #include <rte_memory.h>
+ #include <rte_pause.h>
+ #include <rte_bus_vmbus.h>
+@@ -114,6 +114,7 @@ vmbus_txbr_write(struct vmbus_br *tbr, const struct iovec iov[], int iovlen,
+ 	uint32_t ring_size = tbr->dsize;
+ 	uint32_t old_windex, next_windex, windex, total;
+ 	uint64_t save_windex;
++	bool success;
+ 	int i;
  
- #define SW_DEFAULT_CREDIT_QUANTA 32
- #define SW_DEFAULT_SCHED_QUANTA 128
-@@ -233,7 +233,7 @@ struct sw_evdev {
- 	/* Contains all ports - load balanced and directed */
- 	alignas(RTE_CACHE_LINE_SIZE) struct sw_port ports[SW_PORTS_MAX];
+ 	total = 0;
+@@ -121,17 +122,13 @@ vmbus_txbr_write(struct vmbus_br *tbr, const struct iovec iov[], int iovlen,
+ 		total += iov[i].iov_len;
+ 	total += sizeof(save_windex);
  
--	alignas(RTE_CACHE_LINE_SIZE) rte_atomic32_t inflights;
-+	alignas(RTE_CACHE_LINE_SIZE) RTE_ATOMIC(uint32_t) inflights;
++	/* Get current free location */
++	old_windex = rte_atomic_load_explicit(&tbr->windex,
++					      rte_memory_order_relaxed);
++
+ 	/* Reserve space in ring */
+ 	do {
+-		uint32_t avail;
+-
+-		/* Get current free location */
+-		old_windex = tbr->windex;
+-
+-		/* Prevent compiler reordering this with calculation */
+-		rte_compiler_barrier();
+-
+-		avail = vmbus_br_availwrite(tbr, old_windex);
++		uint32_t avail = vmbus_br_availwrite(tbr, old_windex);
  
- 	/*
- 	 * max events in this instance. Cached here for performance.
-diff --git a/drivers/event/sw/sw_evdev_worker.c b/drivers/event/sw/sw_evdev_worker.c
-index 4215726513..0755def367 100644
---- a/drivers/event/sw/sw_evdev_worker.c
-+++ b/drivers/event/sw/sw_evdev_worker.c
-@@ -56,7 +56,7 @@ sw_event_enqueue_burst(void *port, const struct rte_event ev[], uint16_t num)
- 	uint8_t new_ops[PORT_ENQUEUE_MAX_BURST_SIZE];
- 	struct sw_port *p = port;
- 	struct sw_evdev *sw = (void *)p->sw;
--	uint32_t sw_inflights = rte_atomic32_read(&sw->inflights);
-+	uint32_t sw_inflights = rte_atomic_load_explicit(&sw->inflights, rte_memory_order_relaxed);
- 	uint32_t credit_update_quanta = sw->credit_update_quanta;
- 	int new = 0;
+ 		/* If not enough space in ring, then tell caller. */
+ 		if (avail <= total)
+@@ -139,8 +136,13 @@ vmbus_txbr_write(struct vmbus_br *tbr, const struct iovec iov[], int iovlen,
  
-@@ -74,8 +74,10 @@ sw_event_enqueue_burst(void *port, const struct rte_event ev[], uint16_t num)
- 		if (sw_inflights + credit_update_quanta > sw->nb_events_limit)
- 			return 0;
+ 		next_windex = vmbus_br_idxinc(old_windex, total, ring_size);
  
--		rte_atomic32_add(&sw->inflights, credit_update_quanta);
--		p->inflight_credits += (credit_update_quanta);
-+		rte_atomic_fetch_add_explicit(&sw->inflights,
-+					      credit_update_quanta,
-+					      rte_memory_order_acquire);
-+		p->inflight_credits += credit_update_quanta;
+-		/* Atomic update of next write_index for other threads */
+-	} while (!rte_atomic32_cmpset(&tbr->windex, old_windex, next_windex));
++		/* Atomic update of next write_index for other threads
++		 * Can use weak since easy to recompute and retry.
++		 */
++		success = rte_atomic_compare_exchange_weak_explicit(
++				&tbr->windex, &old_windex, next_windex,
++				rte_memory_order_acquire, rte_memory_order_relaxed);
++	} while (unlikely(!success));
  
- 		/* If there are fewer inflight credits than new events, limit
- 		 * the number of enqueued events.
-@@ -124,7 +126,9 @@ sw_event_enqueue_burst(void *port, const struct rte_event ev[], uint16_t num)
+ 	/* Space from old..new is now reserved */
+ 	windex = old_windex;
+@@ -157,12 +159,15 @@ vmbus_txbr_write(struct vmbus_br *tbr, const struct iovec iov[], int iovlen,
+ 	/* The region reserved should match region used */
+ 	RTE_ASSERT(windex == next_windex);
  
- 	/* Replenish credits if enough releases are performed */
- 	if (p->inflight_credits >= credit_update_quanta * 2) {
--		rte_atomic32_sub(&sw->inflights, credit_update_quanta);
-+		rte_atomic_fetch_sub_explicit(&sw->inflights,
-+					      credit_update_quanta,
-+					      rte_memory_order_release);
- 		p->inflight_credits -= credit_update_quanta;
- 	}
+-	/* Ensure that data is available before updating host index */
+-	rte_smp_wmb();
++	/* Wait for previous producer to publish their windex update */
++	rte_wait_until_equal_32(&vbr->windex, old_windex, rte_memory_order_relaxed);
  
-@@ -150,7 +154,9 @@ sw_event_dequeue_burst(void *port, struct rte_event *ev, uint16_t num,
+-	/* Checkin for our reservation. wait for our turn to update host */
+-	while (!rte_atomic32_cmpset(&vbr->windex, old_windex, next_windex))
+-		rte_pause();
++	/* Publish our windex update; prior data writes ordered via release.
++	 * windex is 4-byte aligned in practice (struct is page-aligned, windex
++	 * at offset 0); cast launders the packed-struct alignment-1 attribute.
++	 */
++	rte_atomic_store_explicit((volatile __rte_atomic uint32_t *)(uintptr_t)&vbr->windex,
++				  next_windex, rte_memory_order_release);
  
- 		/* Replenish credits if enough releases are performed */
- 		if (p->inflight_credits >= credit_update_quanta * 2) {
--			rte_atomic32_sub(&sw->inflights, credit_update_quanta);
-+			rte_atomic_fetch_sub_explicit(&sw->inflights,
-+						      credit_update_quanta,
-+						      rte_memory_order_release);
- 			p->inflight_credits -= credit_update_quanta;
- 		}
- 	}
+ 	/* If host had read all data before this, then need to signal */
+ 	*need_sig |= vmbus_txbr_need_signal(vbr, old_windex);
 -- 
 2.53.0
 
