@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82A4CD5BB8
-	for <dpdk-dev@archiver.kernel.org>; Sat, 23 May 2026 19:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA50CD5BB8
+	for <dpdk-dev@archiver.kernel.org>; Sat, 23 May 2026 19:56:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E300B40664;
-	Sat, 23 May 2026 21:56:15 +0200 (CEST)
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
- [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id ED630402D9
- for <dev@dpdk.org>; Sat, 23 May 2026 21:56:11 +0200 (CEST)
-Received: by mail-dy1-f177.google.com with SMTP id
- 5a478bee46e88-2f7020a928eso12249663eec.1
- for <dev@dpdk.org>; Sat, 23 May 2026 12:56:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6334A40670;
+	Sat, 23 May 2026 21:56:17 +0200 (CEST)
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
+ [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id B5840402DF
+ for <dev@dpdk.org>; Sat, 23 May 2026 21:56:12 +0200 (CEST)
+Received: by mail-dy1-f170.google.com with SMTP id
+ 5a478bee46e88-2f30a4601bbso8583833eec.1
+ for <dev@dpdk.org>; Sat, 23 May 2026 12:56:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779566171;
- x=1780170971; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779566172;
+ x=1780170972; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qonbr/na+JlOn7zIBQWdNxb5li45kG0DqrVYjlxjLJU=;
- b=kjKBUtdAUsR3vlrSiBZQ6AKviSJVN08z1owfLfypw+yTKu3rpTZK+ooSAnz4ATABSj
- U0zzm9DhPuSE+pI9bIt28jx5YqI7c0bQle+OUECSuMf4IslQDMBkhNiI03bRsVDI8IJ6
- Lo633/+9Mc+mq+jV3CROgAyuMiPXscrP3JFeNLHyuHHBmmCJVV1tqmZFNycdLqLxqaW7
- x3JIEnPZy3P+PbuECf7JUPbZvHgkGzVAWfwZfmvcwOT3ziVEauCw3gHh4CkPilhmseVV
- hYGWu7kiU10ufXjV1UPcLsSEzjGm7eM4TvCVLR0063zC4ujRywyytWiCiMMbPu6A64v+
- gyLg==
+ bh=l28ofkRJlxkvRH8FsGwDhU3UycbwfeVDOFSGQjuE/8Y=;
+ b=Ks8kd6ZDbrJhA5EI3jJOqwsOP4UBlPTYcbZOs+Ew0KxGFbuE8sESLm307eV3N9rN4d
+ BYFQQoih1+Va71jAMfBwNSB9nnLfgwgOD2MVT55ISPnEPWxUUFbjQFOfYYbDUp9xfvMU
+ y6zFxmusczbf42mque1GJwJg+mgCZqdNjJetFOWK2Jsor3QwHRkYPrFOwyk1L3qD3B2K
+ O3309cxOlaYrilWH2K6fN26SAiL12BzLwODkRKvt83oaTVvUGHjtRdtwSOev4HkawQKF
+ +6KDmMfO98WeszYgol/8FBgD+IS+QHVvo7YsyiWqYhBF85jdtQUeQ4K/jwxAur4T4nzG
+ 1ASg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779566171; x=1780170971;
+ d=1e100.net; s=20251104; t=1779566172; x=1780170972;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=qonbr/na+JlOn7zIBQWdNxb5li45kG0DqrVYjlxjLJU=;
- b=iQExQpxE4PrGulnIMfxVMXS8rtK8XTDlmpfKmB+i/reWM89coWh6u/9T2tu+36yUwu
- By3LV4kTQr0m3OaQnzNKk8Ks1xFQJoNsczeKMwYPefs1dVbKR1R2V4KclP8LVXwJw5Je
- V1dwPFmKX68P4v5dBrWuZBv3Lm52KKRmMnV9XVfcjh1KlL6mbX0eE6NDzAC0/mBXceQQ
- V85iLkFMiMPVjiJUTdrNIw737aswqROYJ2aQbw52SGlxsei1pyU4B0HjGUjcdHyDfZNg
- nqxSeY46D7tJx7eCKbJi6N1bCveelG+OjrKE04Ldj89bioqBkudPGtkNlPdHu2hnrWc1
- OoAQ==
-X-Gm-Message-State: AOJu0YycCxk4138jTY8tYF6F361AdPsPkE1x+FIILxy0S0Q5gVCSQ6gv
- IuqCro7NT1RtGiPE8ET7dhHRDvFc/s8zZ8uAeelmTIOpkgYwD0c8x0wYfwv3pVCF8y49aPQEAAQ
- CbA8d
-X-Gm-Gg: Acq92OEU11Bi9JXxBcnVifh2v/e4WhVhoVCYlID8Szr3XAez4PXVNtehRhAnKt84WcP
- 9dyq5AGX2aN7aBPZ4YrwGQlLT4YYpe0WJ1QMQfJi9rUblhma54OvTaL4r4v9B7qHDDc5dztqchC
- /9J57bkllOu0S0Kt1rTxg4VhZpT2qufSupobqvDgX4ViXuFzb/1iizlfpJdabmHx0ZZZQf4kvo/
- nxv/SAQIxo0re7QpLh0jrF+PZcXmftwH/KE9ONJuv7yEon0Ohk+O126m34zGNGxMtS84M9fIgW2
- u/ymJd/ul6MlFfhx1Sq+/S5kn8BG9L0cHlxEMfzpBwcWw5yXKj9XI3Fbv4BME212YpXn2LhJRGY
- YZ98qBVgmdVtjyuAU0qfFnjt+NRboK4C8l0nW4Nj7UQjck1NRiyXNl5apaNVV2+ZRROxiMGqMk2
- 6Y2fcpGJOFSIrI23PAfMD2VU3lTedHwO88+skLNxGERuZXaQO0983S0bpkysyYog==
-X-Received: by 2002:a05:7300:fd11:b0:2da:1a81:588 with SMTP id
- 5a478bee46e88-3044909065fmr3719003eec.14.1779566170950; 
- Sat, 23 May 2026 12:56:10 -0700 (PDT)
+ bh=l28ofkRJlxkvRH8FsGwDhU3UycbwfeVDOFSGQjuE/8Y=;
+ b=F1pCGkqQDFOIDG4vIfA2nNCQuTW0XJqPDU1cAob6+HfdATlqb28J1zSI4L/YUjNODC
+ A5kMOJ6TPlFgKX0QT5wSEoUC0d1btDO3Bnp3ko3QdXokmX7zqfB/GycmL3oTe8jORFUR
+ 0jHgHNMugrJGh2Nz9y/J1yI7JtOAqZhQKDutWnjGwMqDiFz522IXHq28Ic6ttTgcNbUc
+ e6LwgbQYeL7RYnNs9IVmwnDJFnW/GNG0rm+h7gDfhnOqOw6+bV9UFwpMMIicIXyAQDj8
+ NrMaiknznSWpUJM7uYcze9or629v9Xad0tuFOKnhRHr23F6cHnujdCMNdO56rFRayQaQ
+ p2sg==
+X-Gm-Message-State: AOJu0Yys0nKGbTNkUNsd8rjMNiTR79LTQYSj4Y2an2hUc1JFU4SDwUt9
+ jG1dPxeRj0C9F7Ozv8J7xjCumZNk59o5rtsBfXYQSyn9vX9WFLuh4hO4Ff23EFThqz/2WeaBiHu
+ +Mg/1
+X-Gm-Gg: Acq92OGQHRfI/RxKWdEn1f1PNCmu9P59+tA4FpBss64kKuwVdk6LUEILsLossDwWR5D
+ ujX7OA3kZsF6oFI1fZmNRpy46QYpzjYLdv6eDOfvE8oVom4qM/gZXz+iUGLMdx+f7oeVimOtRR3
+ N27gm2NbuDl0Dn15++tYURvuY1AuHFjoxoM9H4IuD5Vsx4kj0y8Eh1LnChbNniqbq1INbgWSl4h
+ 6TUdUAlSDaMeegc67vdoZoEF5Kyg8nmzXw0bPlzhFGBL6C0iz9hysE0BOEcmXfzWipPxoyoWL6Q
+ un57aHMTaYvGfD9gsBkLmbg4VlGqyRzv2MNBkfesLw1mWUR0q0i+h7ysvns0+sBx39M4/XYaEiw
+ fEVm/lpc0IlVT7diqNweuzG1Qs56zaZIcekP5gztly0p65SY2TT2skKCBYG8jujL8yd/h+aEJ9A
+ agxeCB/OwSSNixacvre7Tw6lXoUHx75aBhzbNf/iuMIlbSsu/tZaTVgin1ZlveuA==
+X-Received: by 2002:a05:7300:7fa6:b0:2ed:e14:7f54 with SMTP id
+ 5a478bee46e88-304490f655emr4144837eec.30.1779566171745; 
+ Sat, 23 May 2026 12:56:11 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30451f3feadsm5257271eec.13.2026.05.23.12.56.10
+ 5a478bee46e88-30451f3feadsm5257271eec.13.2026.05.23.12.56.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 23 May 2026 12:56:10 -0700 (PDT)
+ Sat, 23 May 2026 12:56:11 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 04/27] bpf: replace atomic op macro with typed helpers
-Date: Sat, 23 May 2026 12:16:06 -0700
-Message-ID: <20260523195604.441947-5-stephen@networkplumber.org>
+Subject: [PATCH v3 05/27] net/bonding: use stdatomic
+Date: Sat, 23 May 2026 12:16:07 -0700
+Message-ID: <20260523195604.441947-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260523195604.441947-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -81,144 +81,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The BPF_ST_ATOMIC_REG macro token-pasted the legacy rte_atomicNN_*()
-API names. It also stacked three casts on the destination pointer
-and reached a 'return 0' out of the macro into the caller's control
-flow.
-
-Replace it with two small static-inline helpers, bpf_atomic32() and
-bpf_atomic64(), that dispatch on ins->imm internally and use the C11
-atomic intrinsics directly. The destination is cast once, to a
-properly __rte_atomic-qualified pointer. The helpers return a status
-and the dispatch loop owns the early exit.
-
-Use memory order seq_cst to preserve the previous behavior of
-rte_atomicNN_add() / rte_atomicNN_exchange() and matches
-the Linux kernel BPF interpreter for these opcodes.
+The old rte_atomic16 and rte_atomic64 functions are deprecated.
+Replace with rte_stdatomic for managing warning and timer flags.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/bpf/bpf_exec.c | 91 ++++++++++++++++++++++++++++++++++------------
- 1 file changed, 67 insertions(+), 24 deletions(-)
+ drivers/net/bonding/eth_bond_8023ad_private.h |  6 ++--
+ drivers/net/bonding/rte_eth_bond_8023ad.c     | 35 ++++++++-----------
+ 2 files changed, 17 insertions(+), 24 deletions(-)
 
-diff --git a/lib/bpf/bpf_exec.c b/lib/bpf/bpf_exec.c
-index 18013753b1..b8116db191 100644
---- a/lib/bpf/bpf_exec.c
-+++ b/lib/bpf/bpf_exec.c
-@@ -64,28 +64,6 @@
- 	(*(type *)(uintptr_t)((reg)[(ins)->dst_reg] + (ins)->off) = \
- 		(type)(reg)[(ins)->src_reg])
+diff --git a/drivers/net/bonding/eth_bond_8023ad_private.h b/drivers/net/bonding/eth_bond_8023ad_private.h
+index ab7d15f81a..dd3cf3ed26 100644
+--- a/drivers/net/bonding/eth_bond_8023ad_private.h
++++ b/drivers/net/bonding/eth_bond_8023ad_private.h
+@@ -9,7 +9,7 @@
  
--#define BPF_ST_ATOMIC_REG(reg, ins, tp)	do { \
--	switch (ins->imm) { \
--	case BPF_ATOMIC_ADD: \
--		rte_atomic##tp##_add((rte_atomic##tp##_t *) \
--			(uintptr_t)((reg)[(ins)->dst_reg] + (ins)->off), \
--			(reg)[(ins)->src_reg]); \
--		break; \
--	case BPF_ATOMIC_XCHG: \
--		(reg)[(ins)->src_reg] = rte_atomic##tp##_exchange((uint##tp##_t *) \
--			(uintptr_t)((reg)[(ins)->dst_reg] + (ins)->off), \
--			(reg)[(ins)->src_reg]); \
--		break; \
--	default: \
--		/* this should be caught by validator and never reach here */ \
--		RTE_BPF_LOG_LINE(ERR, \
--			"%s(%p): unsupported atomic operation at pc: %#zx;", \
--			__func__, bpf, \
--			(uintptr_t)(ins) - (uintptr_t)(bpf)->prm.ins); \
--		return 0; \
--	} \
--} while (0)
+ #include <rte_ether.h>
+ #include <rte_byteorder.h>
+-#include <rte_atomic.h>
++#include <rte_stdatomic.h>
+ #include <rte_flow.h>
+ 
+ #include "rte_eth_bond_8023ad.h"
+@@ -140,10 +140,10 @@ struct port {
+ 	/** Timer which is also used as mutex. If is 0 (not running) RX marker
+ 	 * packet might be responded. Otherwise shall be dropped. It is zeroed in
+ 	 * mode 4 callback function after expire. */
+-	volatile uint64_t rx_marker_timer;
++	RTE_ATOMIC(uint64_t) rx_marker_timer;
+ 
+ 	uint64_t warning_timer;
+-	volatile uint16_t warnings_to_show;
++	RTE_ATOMIC(uint16_t) warnings_to_show;
+ 
+ 	/** Memory pool used to allocate slow queues */
+ 	struct rte_mempool *slow_pool;
+diff --git a/drivers/net/bonding/rte_eth_bond_8023ad.c b/drivers/net/bonding/rte_eth_bond_8023ad.c
+index ba88f6d261..cc7e4af2b9 100644
+--- a/drivers/net/bonding/rte_eth_bond_8023ad.c
++++ b/drivers/net/bonding/rte_eth_bond_8023ad.c
+@@ -171,27 +171,17 @@ timer_is_running(uint64_t *timer)
+ static void
+ set_warning_flags(struct port *port, uint16_t flags)
+ {
+-	int retval;
+-	uint16_t old;
+-	uint16_t new_flag = 0;
 -
- /* BPF_LD | BPF_ABS/BPF_IND */
+-	do {
+-		old = port->warnings_to_show;
+-		new_flag = old | flags;
+-		retval = rte_atomic16_cmpset(&port->warnings_to_show, old, new_flag);
+-	} while (unlikely(retval == 0));
++	rte_atomic_fetch_or_explicit(&port->warnings_to_show, flags, rte_memory_order_relaxed);
+ }
  
- #define	NOP(x)	(x)
-@@ -105,6 +83,69 @@
- 	reg[EBPF_REG_0] = op(p[0]); \
- } while (0)
+ static void
+ show_warnings(uint16_t member_id)
+ {
+ 	struct port *port = &bond_mode_8023ad_ports[member_id];
+-	uint8_t warnings;
+-
+-	do {
+-		warnings = port->warnings_to_show;
+-	} while (rte_atomic16_cmpset(&port->warnings_to_show, warnings, 0) == 0);
++	uint16_t warnings;
  
-+/*
-+ * Atomic ops on the BPF target memory.
-+ *
-+ * BPF atomic instructions encode the destination as base register +
-+ * signed offset, with the value to combine taken from src_reg.
-+ *
-+ * Memory order: seq_cst preserves the previous behavior of
-+ * rte_atomicNN_add() / rte_atomicNN_exchange() and matches what the
-+ * Linux kernel BPF interpreter does for these opcodes.
-+ *
-+ * Returns 0 on unsupported sub-op (validator should have rejected it),
-+ * 1 otherwise.
-+ */
-+static inline int
-+bpf_atomic32(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM],
-+	     const struct ebpf_insn *ins)
-+{
-+	/* need to casts to make bpf memory suitable for C11 atomic */
-+	uint32_t __rte_atomic *dst
-+		= (uint32_t __rte_atomic *)(uintptr_t)(reg[ins->dst_reg] + ins->off);
-+	uint32_t val = (uint32_t)reg[ins->src_reg];
-+
-+	switch (ins->imm) {
-+	case BPF_ATOMIC_ADD:
-+		rte_atomic_fetch_add_explicit(dst, val, rte_memory_order_seq_cst);
-+		return 1;
-+	case BPF_ATOMIC_XCHG:
-+		reg[ins->src_reg] = rte_atomic_exchange_explicit(dst, val,
-+								 rte_memory_order_seq_cst);
-+		return 1;
-+	default:
-+		RTE_BPF_LOG_LINE(ERR,
-+			"%s(%p): unsupported atomic operation at pc: %#zx;",
-+			__func__, bpf,
-+			(uintptr_t)ins - (uintptr_t)bpf->prm.ins);
-+		return 0;
-+	}
-+}
-+
-+static inline int
-+bpf_atomic64(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM],
-+	const struct ebpf_insn *ins)
-+{
-+	uint64_t __rte_atomic *dst
-+		= (uint64_t __rte_atomic *)(uintptr_t) (reg[ins->dst_reg] + ins->off);
-+	uint64_t val = reg[ins->src_reg];
-+
-+	switch (ins->imm) {
-+	case BPF_ATOMIC_ADD:
-+		rte_atomic_fetch_add_explicit(dst, val,	rte_memory_order_seq_cst);
-+		return 1;
-+	case BPF_ATOMIC_XCHG:
-+		reg[ins->src_reg] = rte_atomic_exchange_explicit(dst, val,
-+								 rte_memory_order_seq_cst);
-+		return 1;
-+	default:
-+		RTE_BPF_LOG_LINE(ERR,
-+			"%s(%p): unsupported atomic operation at pc: %#zx;",
-+			__func__, bpf,
-+			(uintptr_t)ins - (uintptr_t)bpf->prm.ins);
-+		return 0;
-+	}
-+}
++	warnings = rte_atomic_exchange_explicit(&port->warnings_to_show, 0,
++						rte_memory_order_relaxed);
+ 	if (!warnings)
+ 		return;
  
- static inline void
- bpf_alu_be(uint64_t reg[EBPF_REG_NUM], const struct ebpf_insn *ins)
-@@ -392,10 +433,12 @@ bpf_exec(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM])
- 			break;
- 		/* atomic instructions */
- 		case (BPF_STX | EBPF_ATOMIC | BPF_W):
--			BPF_ST_ATOMIC_REG(reg, ins, 32);
-+			if (bpf_atomic32(bpf, reg, ins) == 0)
-+				return 0;
- 			break;
- 		case (BPF_STX | EBPF_ATOMIC | EBPF_DW):
--			BPF_ST_ATOMIC_REG(reg, ins, 64);
-+			if (bpf_atomic64(bpf, reg, ins) == 0)
-+				return 0;
- 			break;
- 		/* jump instructions */
- 		case (BPF_JMP | BPF_JA):
+@@ -1337,7 +1327,6 @@ bond_mode_8023ad_handle_slow_pkt(struct bond_dev_private *internals,
+ 	struct port *port = &bond_mode_8023ad_ports[member_id];
+ 	struct marker_header *m_hdr;
+ 	uint64_t marker_timer, old_marker_timer;
+-	int retval;
+ 	uint8_t wrn, subtype;
+ 	/* If packet is a marker, we send response now by reusing given packet
+ 	 * and update only source MAC, destination MAC is multicast so don't
+@@ -1354,17 +1343,19 @@ bond_mode_8023ad_handle_slow_pkt(struct bond_dev_private *internals,
+ 		}
+ 
+ 		/* Setup marker timer. Do it in loop in case concurrent access. */
++		old_marker_timer = rte_atomic_load_explicit(&port->rx_marker_timer,
++							    rte_memory_order_relaxed);
+ 		do {
+-			old_marker_timer = port->rx_marker_timer;
+ 			if (!timer_is_expired(&old_marker_timer)) {
+ 				wrn = WRN_RX_MARKER_TO_FAST;
+ 				goto free_out;
+ 			}
+ 
+ 			timer_set(&marker_timer, mode4->rx_marker_timeout);
+-			retval = rte_atomic64_cmpset(&port->rx_marker_timer,
+-				old_marker_timer, marker_timer);
+-		} while (unlikely(retval == 0));
++
++		} while (!rte_atomic_compare_exchange_weak_explicit(&port->rx_marker_timer,
++					&old_marker_timer, marker_timer,
++					rte_memory_order_seq_cst, rte_memory_order_relaxed));
+ 
+ 		m_hdr->marker.tlv_type_marker = MARKER_TLV_TYPE_RESP;
+ 		rte_eth_macaddr_get(member_id, &m_hdr->eth_hdr.src_addr);
+@@ -1372,7 +1363,8 @@ bond_mode_8023ad_handle_slow_pkt(struct bond_dev_private *internals,
+ 		if (internals->mode4.dedicated_queues.enabled == 0) {
+ 			if (rte_ring_enqueue(port->tx_ring, pkt) != 0) {
+ 				/* reset timer */
+-				port->rx_marker_timer = 0;
++				rte_atomic_store_explicit(&port->rx_marker_timer, 0,
++							  rte_memory_order_release);
+ 				wrn = WRN_TX_QUEUE_FULL;
+ 				goto free_out;
+ 			}
+@@ -1386,7 +1378,8 @@ bond_mode_8023ad_handle_slow_pkt(struct bond_dev_private *internals,
+ 					&pkt, tx_count);
+ 			if (tx_count != 1) {
+ 				/* reset timer */
+-				port->rx_marker_timer = 0;
++				rte_atomic_store_explicit(&port->rx_marker_timer, 0,
++							  rte_memory_order_release);
+ 				wrn = WRN_TX_QUEUE_FULL;
+ 				goto free_out;
+ 			}
 -- 
 2.53.0
 
