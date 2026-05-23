@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D3CCD5BB1
-	for <dpdk-dev@archiver.kernel.org>; Sat, 23 May 2026 20:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E35F0CD5BB8
+	for <dpdk-dev@archiver.kernel.org>; Sat, 23 May 2026 20:06:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CC3F4042F;
-	Sat, 23 May 2026 22:06:00 +0200 (CEST)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com
- [209.85.160.176])
- by mails.dpdk.org (Postfix) with ESMTP id 77823402D4
- for <dev@dpdk.org>; Sat, 23 May 2026 22:05:58 +0200 (CEST)
-Received: by mail-qt1-f176.google.com with SMTP id
- d75a77b69052e-5148cbdea08so70835911cf.2
- for <dev@dpdk.org>; Sat, 23 May 2026 13:05:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 295984066C;
+	Sat, 23 May 2026 22:06:04 +0200 (CEST)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com
+ [209.85.167.177])
+ by mails.dpdk.org (Postfix) with ESMTP id DDF8D402A2
+ for <dev@dpdk.org>; Sat, 23 May 2026 22:06:02 +0200 (CEST)
+Received: by mail-oi1-f177.google.com with SMTP id
+ 5614622812f47-464bba3a9easo5351070b6e.0
+ for <dev@dpdk.org>; Sat, 23 May 2026 13:06:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779566758;
- x=1780171558; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779566762;
+ x=1780171562; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KXBF0Xxlrz43whu4eZFSCadmrWC48zvBqylfwrOAnBM=;
- b=zWpk3PuCxI/IPGh+DKFz3v5CDWZrMpGJGodOCIvYBXHu6XsHpgbD8osXSgLWMmbnAl
- m1So1sfjHSscdTul7T4YjEUCY0i2d/aTv29SiOYkO+CcDsWW+jQpVVoNI5SDMbBVDZ6h
- Nu05XU3jZmyspbXSrD2gpL+gPHR94VzN7h0TpvBaXNiDbmkOhhXKOohA9+qydndlbfvP
- MYiVRBpgqCRBKDfFFxsNyjfh4fWESVQm8YWZzcedY8tsaFBLZscrtSZIeIeIz4v9L/mt
- UyMR/njBr5Pk9aOlJYQB/bT242hydTDiox47k5xON4IaEBGC0T/raYmYNVg/klVJ6b96
- dAkA==
+ bh=WW0+Y/b0yuU+7sTDh0ZxVsDIKC2rRrTjl7mblLmCB6A=;
+ b=uU+9TKiT8wC7m+ab4quc05tnGPh6FFUSINVt3UsCLT08ut1UQvGXtC8mUJ4fS1Su/G
+ ufNxxAcUB3jrr8fGj2BWwoB8Kk/X1ouxIP4uRkRnOIlI/x5LHV3237N12EeHPPps5boD
+ 49EK4/6XJHXlhDhSxF+ZOt85ok8EUVkd238K3MKbAPvxYGyWmAJ3ihdjvuPaZAn/g4oC
+ BDAgebjECSubOyL9us4AConRg0B1NcRQehdA3C3yPQmvQJ4swtp87q+xRUQ8rExwOjH/
+ tmrg8erpzWuznJaDcllPWc7se4GWTIRUOFmUvsFoAcZcVpvpFn1Re49wk6a9nNmSX8Yo
+ nCow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779566758; x=1780171558;
+ d=1e100.net; s=20251104; t=1779566762; x=1780171562;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KXBF0Xxlrz43whu4eZFSCadmrWC48zvBqylfwrOAnBM=;
- b=r+I9ry3yVQ4BXRxwjFaOjmleEBag751g/HdDIqhNExoP+UsRVXAeCazTq2v7KBIwme
- kok26WOuEvQR6dWYjonJK//v2bMgm/Pt3hz2MDAWqvvymx9hb5ZpABazso1E3jevMK5r
- I89Ug9CzbzG1MLIrgvoIrZmfp9byQ9SiK94CHaDKzbyo0rAcMGl2AWcej6jQvaLpJ8V8
- /5notLjODSfpIy7OpXowt+O1G/Ww9qPqdK+qgG81TW4Mie4UQsroPnJXEWvbtgdoP2bY
- yg4BW7mE3rW4T1REPeamB2WeQ27Hhdu4XX6dAcQDBYnRXaHzkZsUVq2NqOGKBc6pW0Sg
- zhfw==
-X-Gm-Message-State: AOJu0YzaZl7pVZcmgDIYUcguJKBw1CZtJVIwmY6nHGn97NF8Q7+76EsW
- TTV0VD5xyxjqIO6sFeMtN+GD9VFqU//UVOUCq3UgITOmDEjB+eFgiF7xmsrcI9mTXH1quXlCTNl
- C18/t
-X-Gm-Gg: Acq92OGFS+ZjwYYkLAQ4Ez56FHBVSf5/bJyN9psOIIDMHyx/EJv3lokyF1/zJ+PKN9x
- CAB+wiltZBEr8woGhwAdVc1q4IKc+NOUZyQ6/Dx6rH+RJQjAIlgmNCWxVy/0MdXDCSGaIb0B1Kv
- 3txB9ettMBDT+LYvLWtT0bCj1UMxz4oGB9k4wFsg+uJUBp2MzEJdpXF/KL5ziiJu+UbCArNPeNi
- iyOvr73lY1yOb3AGziCBGyvFDqkqu1py5akyK7bFgLfWLK1+rXR/cIwZy4GvfizGntj8DoiWyAD
- XOEV4iSkC5C8idxt79Dr8eTXJXupA8zUBjhpFlLu0FxxiRnyThA94QLNYD3ddzYFf9R9tRY3Rfv
- gnkcduONMIHIbFtAt7FOIfLczHzZvCTu2oYtqE4sizVemOSitvqff1UZHT7WikEc3bSi1yKMjnM
- zORHaOnK0sG3KiPzp7SecI1wqlK8imJ4ydkRn6yxag5NqvEYBr1BdLnub51Barlg==
-X-Received: by 2002:a05:7301:168b:b0:2be:833c:149d with SMTP id
- 5a478bee46e88-304491e11fcmr3675195eec.28.1779566345499; 
- Sat, 23 May 2026 12:59:05 -0700 (PDT)
+ bh=WW0+Y/b0yuU+7sTDh0ZxVsDIKC2rRrTjl7mblLmCB6A=;
+ b=nXcdFIGw4+Jel/g8dTFNkm/D0jBVIp5AjslbWuoXrgtW4FOQvwua7tcxYPtgYqyzQ0
+ N8hToN5HCqWkzyqE7UUwX6HpBdgo50uYy7llMm32ac18sYQ9Uo9TOl8BkiD96mXh72IA
+ gL3VriDUqQ33x+Xn5VNhwJXm4lkLZrMQvF72enKHvryp/mXBcU8s56d0d60jc6i7E7mQ
+ VRcsGXid+6lJYILyCPXo+idAEy0N0syd6Z7flCx6hA6wWsX6iG/4III8F8jQlKdq18YA
+ PVPGpcraTz5oNhfYynWyfZPTmWTmVHE1b2haWU0Kwc45+goowV3mu4MU+coouOfNe7jR
+ iAYQ==
+X-Gm-Message-State: AOJu0YxnpmhsHdxbh40Xp7OlDrfracYzPPmxA4lJNeIbAuxFKx5Ge+z5
+ HOSMALMx2MzM51MRyVa1NKDd38kMqKBm9/yv0iLIuQ5Uij0rdvf79ylv5O4dqQrZKsyC6AY9tKo
+ c7vUj
+X-Gm-Gg: Acq92OG8AI5qGiZ3sc+C0mqrAphRTOGxiVCrdRMxHxP4IrUmjTSAZGpb+1ORINQ4SmT
+ mbPfDqtqp5GrbCwei6Tfln4RBl8O+mnH2dEjbkv7ih5Zs5qR6l5j0JFXZvTQbkqVuTPNCp+TugQ
+ f7szUy8r8oe11lK3XUFuBqN0GOPi8mzlYA9e9kHUCuGn4E3Tpi1eEPjKr0fx+viEhwNrmD4/a2W
+ IpdQhUVZcjcR7FOq+IUyNNRlgIClTrY4lCeVCD8YyXU88JHx3qxklN1YkRQFAACTn4IgXk7Nrq5
+ xWy3qSQ/UcHQJQaKtpm5fQUziFz8lPRnBUvdbhywVQXMqoD1xqV+c5O5xQ4CkvcMed7f5U8Iyed
+ asG+ZSTE9pBzDlzl/Gb+KipzQVTQZRPKJ80K6DpQpk3jtDdAEn5u1EBR5GGt8MPPcwCLBRZ4aHk
+ 4GYTrj/RjiQGW5IR7LBuaEu/IogodYGM8ndJ4pYy6vOfxiSoarZ94MVIeCnCdpSw==
+X-Received: by 2002:a05:7301:6588:b0:2d3:2983:c87c with SMTP id
+ 5a478bee46e88-3044904e0a8mr4386955eec.1.1779566342460; 
+ Sat, 23 May 2026 12:59:02 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30452255234sm4838428eec.20.2026.05.23.12.59.04
+ 5a478bee46e88-30452255234sm4838428eec.20.2026.05.23.12.59.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 23 May 2026 12:59:05 -0700 (PDT)
+ Sat, 23 May 2026 12:59:02 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH v3 23/27] net/txgbe: replace rte_atomic32 with stdatomic
-Date: Sat, 23 May 2026 12:56:37 -0700
-Message-ID: <20260523195839.454952-24-stephen@networkplumber.org>
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [PATCH v3 20/27] bus/fslmc: replace rte_atomic32 with stdatomic
+Date: Sat, 23 May 2026 12:56:34 -0700
+Message-ID: <20260523195839.454952-21-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260523195839.454952-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -83,67 +84,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The swfw_busy flag guarding the AML SW-FW mailbox is a one-bit lock,
-so convert it to RTE_ATOMIC(bool) and replace the legacy
-test-and-set / clear pair with explicit acquire-release:
-
-  rte_atomic32_test_and_set ->
-      rte_atomic_exchange_explicit(.., true, acquire)
-  rte_atomic32_clear        ->
-      rte_atomic_store_explicit(.., false, release)
-
-Acquire on the take pairs with release on the drop, so accesses
-inside the critical section are synchronized between successive
-holders. Default zero-initialization of struct txgbe_hw still
-gives swfw_busy = false, so no init site needs updating.
-
-Note: the code for the AML spinlock had a bug because
-old rte_atomic32_test_set return value was not what the code
-expected. This patch fixes that. A seperate patch for stable
-has been sent upstream. (Drop this note from commit message
-when rebasing after the fix is merged).
+The atomic wrappers here are easily converted to stdatomic.
+Drop any unused macros.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/txgbe/base/txgbe_mng.c  | 4 ++--
- drivers/net/txgbe/base/txgbe_type.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/bus/fslmc/qbman/include/compat.h | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_mng.c b/drivers/net/txgbe/base/txgbe_mng.c
-index a1974820b6..c58e1d6589 100644
---- a/drivers/net/txgbe/base/txgbe_mng.c
-+++ b/drivers/net/txgbe/base/txgbe_mng.c
-@@ -185,7 +185,7 @@ txgbe_host_interface_command_aml(struct txgbe_hw *hw, u32 *buffer,
- 	}
+diff --git a/drivers/bus/fslmc/qbman/include/compat.h b/drivers/bus/fslmc/qbman/include/compat.h
+index 5a57bd8ed1..9c87f0b639 100644
+--- a/drivers/bus/fslmc/qbman/include/compat.h
++++ b/drivers/bus/fslmc/qbman/include/compat.h
+@@ -81,18 +81,13 @@ do { \
  
- 	/* try to get lock */
--	while (rte_atomic32_test_and_set(&hw->swfw_busy)) {
-+	while (rte_atomic_exchange_explicit(&hw->swfw_busy, true, rte_memory_order_acquire)) {
- 		timeout--;
- 		if (!timeout)
- 			return TXGBE_ERR_TIMEOUT;
-@@ -266,7 +266,7 @@ txgbe_host_interface_command_aml(struct txgbe_hw *hw, u32 *buffer,
- 	/* index++, index replace txgbe_hic_hdr.checksum */
- 	hw->swfw_index = resp->index == TXGBE_HIC_HDR_INDEX_MAX ?
- 					0 : resp->index + 1;
--	rte_atomic32_clear(&hw->swfw_busy);
-+	rte_atomic_store_explicit(&hw->swfw_busy, false, rte_memory_order_release);
+ #define dma_wmb()		rte_io_wmb()
  
- 	return err;
- }
-diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index ede780321f..d3c82d51a4 100644
---- a/drivers/net/txgbe/base/txgbe_type.h
-+++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -880,7 +880,7 @@ struct txgbe_hw {
- 	rte_spinlock_t phy_lock;
- 	/*amlite: new SW-FW mbox */
- 	u8 swfw_index;
--	rte_atomic32_t swfw_busy;
-+	RTE_ATOMIC(bool) swfw_busy;
- 	u32 fec_mode;
- 	u32 cur_fec_link;
- };
+-#define atomic_t                rte_atomic32_t
+-#define atomic_read(v)          rte_atomic32_read(v)
+-#define atomic_set(v, i)        rte_atomic32_set(v, i)
+-
+-#define atomic_inc(v)           rte_atomic32_add(v, 1)
+-#define atomic_dec(v)           rte_atomic32_sub(v, 1)
+-
+-#define atomic_inc_and_test(v)  rte_atomic32_inc_and_test(v)
+-#define atomic_dec_and_test(v)  rte_atomic32_dec_and_test(v)
+-
+-#define atomic_inc_return(v)    rte_atomic32_add_return(v, 1)
+-#define atomic_dec_return(v)    rte_atomic32_sub_return(v, 1)
+-#define atomic_sub_and_test(i, v) (rte_atomic32_sub_return(v, i) == 0)
++typedef RTE_ATOMIC(uint32_t) atomic_t;
++
++#define atomic_read(v)          rte_atomic_load_explicit((v), rte_memory_order_relaxed)
++#define atomic_set(v, i)        rte_atomic_store_explicit((v), (i), rte_memory_order_relaxed)
++#define atomic_inc(v)           ((void)rte_atomic_fetch_add_explicit((v), 1, rte_memory_order_seq_cst))
++#define atomic_dec(v)           ((void)rte_atomic_fetch_sub_explicit((v), 1, rte_memory_order_seq_cst))
++#define atomic_inc_and_test(v)  (rte_atomic_fetch_add_explicit((v), 1, rte_memory_order_seq_cst) == -1)
++#define atomic_dec_and_test(v)  (rte_atomic_fetch_sub_explicit((v), 1, rte_memory_order_seq_cst) == 1)
+ 
+ #endif /* HEADER_COMPAT_H */
 -- 
 2.53.0
 
