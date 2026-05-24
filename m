@@ -2,73 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE01CD5BB1
-	for <dpdk-dev@archiver.kernel.org>; Sat, 23 May 2026 20:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31177CD5BAB
+	for <dpdk-dev@archiver.kernel.org>; Sun, 24 May 2026 09:33:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37C28402D4;
-	Sat, 23 May 2026 22:06:48 +0200 (CEST)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
- [209.85.216.51]) by mails.dpdk.org (Postfix) with ESMTP id 2A76E402A2
- for <dev@dpdk.org>; Sat, 23 May 2026 22:06:47 +0200 (CEST)
-Received: by mail-pj1-f51.google.com with SMTP id
- 98e67ed59e1d1-3665a90bcd3so9202432a91.1
- for <dev@dpdk.org>; Sat, 23 May 2026 13:06:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779566806;
- x=1780171606; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=QNUY6t5JrkqHM+hrcejEwEr3mqF78kdD25AyR8jVpCE=;
- b=hFmEgaxgFlLzA3mkmGfCT5pUyg/Kl9lLFGMJACWv4gdF4KrmlqIDL8EY7n/JuMQ3os
- zV1UOn4tChK3hSVeld+JwkgJb6OiHSD6AX0eB/Fq2gYJsn3439ZxzXLLwSiFeIP2puNI
- 4yPzOJwQ05gr2N41GAufT+Ecq00Ozl02Y7MIyP/ni4PpPsnUGonQrlsAR7FqAfunk+Al
- peazpWmoM9sxgaY6QxMlAIkymE1uj6NdT6XgRHNw5ofzgGyksGdXlOjSbPCyg9AwFQDq
- chNiCNNMtRfneVFOtyUNqpQaiCy7UVSFuJFqU5QxjRt+ugfiD+lqCLygF8YzNlsOxPFv
- 4usw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779566806; x=1780171606;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=QNUY6t5JrkqHM+hrcejEwEr3mqF78kdD25AyR8jVpCE=;
- b=E6YCZn2T/VQaAgDAp/tMSgSsIUrlcdhnom1aO/L+KWKEbGiRc5gz0e9Xa/mL0t+Hui
- F7F2D9kZe4VFQAlxFkVFDvqzGjGFccjz/JFXXZsb7Fk1TImIQI7OkbkbDCygDa3V+9Gk
- tKeUcBxtA24H81NrFiBI0RBeI8ZU0eCHWcFBR1xkfMrpG6Ts94uH4pistVXEh898xIBT
- 6+82ebqRpB3u7UX5MYl04hw0a+4vlp/jSKIlf0rSl8m0rDSnaMW6r3byHbsl2xtvx6Bc
- GhwfUOlrZezZ6YXUdbuVlE1N3T4tPDolB23LR5hBtomAi6LSYxjkBoFyibL+5g+jBsDm
- kDSg==
-X-Gm-Message-State: AOJu0YyTREIKYL3CUhK+jzFQ2pwqvQ37cbF09MOpu5T9UrAMyp4n02oZ
- xEiMy/qdGOWFviJnMYCu07aaUzb1OtDTHZyPVC898j3Klg2c6OGQnpkZs7pjAdBKDtvbbejhP4c
- Q0BAp
-X-Gm-Gg: Acq92OHzLujgShn2n6ozG1FnA+n3tXJKsRqZA7cNGl0lPqZnG9Ed/3rLbWFugzoEZFx
- NUFjR5AJ8Bin/B03BfziiFJqJ9UeuOBfJADsTCaHWhIaTgm3TgzSazzX5adNJhX39UsHAyc7mK8
- DIdcQT+BNdmkraljVHfOycods269/p1WDMSZenleo0Yph3Oriq66yt/9s1ovAwZ7ltXi+CZaTps
- ECytWgh9+zH7ramL/9FfXnmgHSR14rn9KTlrMkGP1rjlkZSdJdhA9x0N7gExyPfeBHQy/lcRf7+
- IfmxVEcmfNH6BD/Wc5JFIr+bhFY+0hFFeYVSDlZZStkDWoWvhv5q8FRgr93ICc6N1RHN4THffun
- U0cSiKiGfO12SgYCStwJ7S3TfC0dHlPnv0PHxBkZFFTSbVpiP11qss3HgSjZp8PYvbwjrbqhxlo
- Z9rq3Uted/lSMcJae4leVutWneGz6md2kn716l8uxVXwm64t8wXp/zBnUzMmcYZw==
-X-Received: by 2002:a05:7301:6008:b0:2dd:2d70:8aba with SMTP id
- 5a478bee46e88-3044904df4emr3927191eec.4.1779566348479; 
- Sat, 23 May 2026 12:59:08 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30452255234sm4838428eec.20.2026.05.23.12.59.07
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 23 May 2026 12:59:08 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 26/27] test/atomic: suppress deprecation warnings for
- legacy APIs
-Date: Sat, 23 May 2026 12:56:40 -0700
-Message-ID: <20260523195839.454952-27-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260523195839.454952-1-stephen@networkplumber.org>
-References: <20260521042043.1590536-1-stephen@networkplumber.org>
- <20260523195839.454952-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 0CE04402E0;
+	Sun, 24 May 2026 11:33:09 +0200 (CEST)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTP id CF4A040041
+ for <dev@dpdk.org>; Sun, 24 May 2026 11:33:07 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-03 (Coremail) with SMTP id rQCowABXd97QxRJq+04kEg--.9115S2;
+ Sun, 24 May 2026 17:33:04 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v1 00/23] add net/sxe2 support for flow control
+Date: Sun, 24 May 2026 17:32:36 +0800
+Message-ID: <20260524093259.397506-1-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: rQCowABXd97QxRJq+04kEg--.9115S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Aryfur48GF1xKF4xXw1fJFb_yoWxKFWDpF
+ 48ZryrZF13JFW3Gw4fJa1fZFyYg3WxJryjkrWa9a4fXFykAFyUCrs0gFy5CwnFyr13JF1F
+ vrZIyr1UGa1rAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkI14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+ 6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r1j6r
+ 4UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+ jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+ 1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF
+ 04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
+ 18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
+ r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
+ 1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
+ x4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjRVbDUUUUU==
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,46 +54,152 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_atomicNN_* APIs are now marked __rte_deprecated.
-Wrap the whole file with __rte_diagnostic_push / pop and a
-GCC pragma -Wdeprecated-declarations.
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-In future, when the APIs are removed this test collapses to just the
-128-bit compare-and-swap case and the suppression goes with it.
+v1:
+-- add support for flow control
+-- add support for flow control status interrupt notification
+-- add support for ipsec inline protocol offload
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_atomic.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Jie Liu (23):
+  net/sxe2: support AVX512 vectorized path for Rx and Tx
+  net/sxe2: add AVX2 vector data path for Rx and Tx
+  drivers: add supported packet types get callback
+  net/sxe2: support L2 filtering and MAC config
+  drivers: support RSS feature
+  net/sxe2: support TM hierarchy and shaping
+  net/sxe2: support IPsec inline protocol offload
+  net/sxe2: support statistics and multi-process
+  drivers: interrupt handling
+  net/sxe2: add NEON vec Rx/Tx burst functions
+  net/sxe2: add support for VF representors
+  net/sxe2: add support for custom UDP tunnel ports
+  net/sxe2: support firmware version reading
+  net/sxe2: implement get monitor address
+  common/sxe2: add shared SFP module definitions
+  net/sxe2: support SFP module info and EEPROM access
+  net/sxe2: implement private dump info
+  net/sxe2: add mbuf validation in Tx debug mode
+  net/sxe2: add testpmd commands for private features
+  net/sxe2: add private devargs parsing
+  net/sxe2: support flow control status interrupt notification
+  net/sxe2: update sxe2 feature matrix docs
+  common/sxe2: add memseg walk callback
 
-diff --git a/app/test/test_atomic.c b/app/test/test_atomic.c
-index 2a4531b833..f32a1aeff4 100644
---- a/app/test/test_atomic.c
-+++ b/app/test/test_atomic.c
-@@ -100,6 +100,15 @@
-  *   - At the end of the test, the number of corrupted tokens must be 0.
-  */
- 
-+/*
-+ * The rte_atomicNN_* APIs exercised below are deprecated in favour of C11 atomics.
-+ * Suppress the deprecation warnings for the whole file;
-+ * when the APIs are removed this test collapses to the 128-bit
-+ * compare-and-swap case and the suppression goes with it.
-+ */
-+__rte_diagnostic_push
-+_Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
-+
- #define NUM_ATOMIC_TYPES 3
- 
- #define N_BASE 1000000u
-@@ -645,4 +654,7 @@ test_atomic(void)
- 	return 0;
- }
- REGISTER_FAST_TEST(atomic_autotest, NOHUGE_SKIP, ASAN_OK, test_atomic);
-+
-+__rte_diagnostic_pop
-+
- #endif /* RTE_TOOLCHAIN_MSVC */
+ doc/guides/nics/features/sxe2.ini          |   66 +
+ drivers/common/sxe2/sxe2_common.c          |  156 ++
+ drivers/common/sxe2/sxe2_common.h          |    4 +
+ drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      |  179 +-
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
+ drivers/common/sxe2/sxe2_msg.h             |  117 ++
+ drivers/common/sxe2/sxe2_ptype.h           | 1793 ++++++++++++++++++
+ drivers/net/sxe2/meson.build               |   56 +-
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 1588 +++++++++++++++-
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
+ drivers/net/sxe2/sxe2_drv_cmd.h            |  439 ++++-
+ drivers/net/sxe2/sxe2_dump.c               |  304 +++
+ drivers/net/sxe2/sxe2_dump.h               |   12 +
+ drivers/net/sxe2/sxe2_ethdev.c             | 1526 ++++++++++++++-
+ drivers/net/sxe2/sxe2_ethdev.h             |  113 +-
+ drivers/net/sxe2/sxe2_ethdev_repr.c        |  610 ++++++
+ drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
+ drivers/net/sxe2/sxe2_filter.c             |  897 +++++++++
+ drivers/net/sxe2/sxe2_filter.h             |  100 +
+ drivers/net/sxe2/sxe2_flow.c               | 1391 ++++++++++++++
+ drivers/net/sxe2/sxe2_flow.h               |   30 +
+ drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
+ drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
+ drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
+ drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
+ drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 ++++++++++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
+ drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
+ drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
+ drivers/net/sxe2/sxe2_irq.c                | 1024 +++++++++++
+ drivers/net/sxe2/sxe2_irq.h                |   25 +
+ drivers/net/sxe2/sxe2_mac.c                |  535 ++++++
+ drivers/net/sxe2/sxe2_mac.h                |   84 +
+ drivers/net/sxe2/sxe2_mp.c                 |  413 +++++
+ drivers/net/sxe2/sxe2_mp.h                 |   73 +
+ drivers/net/sxe2/sxe2_queue.c              |   17 +-
+ drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
+ drivers/net/sxe2/sxe2_rss.h                |   81 +
+ drivers/net/sxe2/sxe2_rx.c                 |   38 +
+ drivers/net/sxe2/sxe2_rx.h                 |    2 +
+ drivers/net/sxe2/sxe2_security.c           |  335 ++++
+ drivers/net/sxe2/sxe2_security.h           |   77 +
+ drivers/net/sxe2/sxe2_stats.c              |  591 ++++++
+ drivers/net/sxe2/sxe2_stats.h              |   39 +
+ drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
+ drivers/net/sxe2/sxe2_switchdev.h          |   33 +
+ drivers/net/sxe2/sxe2_testpmd.c            |  733 ++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.c        |  969 ++++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.h        |  142 ++
+ drivers/net/sxe2/sxe2_tm.c                 | 1169 ++++++++++++
+ drivers/net/sxe2/sxe2_tm.h                 |   78 +
+ drivers/net/sxe2/sxe2_tx.c                 |    7 +
+ drivers/net/sxe2/sxe2_txrx.c               |  174 +-
+ drivers/net/sxe2/sxe2_txrx.h               |    4 +
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
+ drivers/net/sxe2/sxe2_txrx_poll.c          |  243 ++-
+ drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
+ drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
+ drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  777 ++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  897 +++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_common.h    |    1 -
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  707 +++++++
+ drivers/net/sxe2/sxe2_vsi.c                |  146 ++
+ drivers/net/sxe2/sxe2_vsi.h                |   12 +-
+ drivers/net/sxe2/sxe2vf_regs.h             |   82 +
+ 68 files changed, 26531 insertions(+), 81 deletions(-)
+ create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
+ create mode 100644 drivers/common/sxe2/sxe2_msg.h
+ create mode 100644 drivers/common/sxe2/sxe2_ptype.h
+ create mode 100644 drivers/net/sxe2/sxe2_dump.c
+ create mode 100644 drivers/net/sxe2/sxe2_dump.h
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
+ create mode 100644 drivers/net/sxe2/sxe2_filter.c
+ create mode 100644 drivers/net/sxe2/sxe2_filter.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
+ create mode 100644 drivers/net/sxe2/sxe2_irq.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.h
+ create mode 100644 drivers/net/sxe2/sxe2_mp.c
+ create mode 100644 drivers/net/sxe2/sxe2_mp.h
+ create mode 100644 drivers/net/sxe2/sxe2_rss.c
+ create mode 100644 drivers/net/sxe2/sxe2_rss.h
+ create mode 100644 drivers/net/sxe2/sxe2_security.c
+ create mode 100644 drivers/net/sxe2/sxe2_security.h
+ create mode 100644 drivers/net/sxe2/sxe2_stats.c
+ create mode 100644 drivers/net/sxe2/sxe2_stats.h
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.h
+ create mode 100644 drivers/net/sxe2/sxe2_tm.c
+ create mode 100644 drivers/net/sxe2/sxe2_tm.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
+ create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
+
 -- 
-2.53.0
+2.47.3
 
