@@ -2,43 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31177CD5BAB
-	for <dpdk-dev@archiver.kernel.org>; Sun, 24 May 2026 09:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76941CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Sun, 24 May 2026 09:33:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CE04402E0;
-	Sun, 24 May 2026 11:33:09 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D8B340658;
+	Sun, 24 May 2026 11:33:10 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id CF4A040041
+ by mails.dpdk.org (Postfix) with ESMTP id D403640265
  for <dev@dpdk.org>; Sun, 24 May 2026 11:33:07 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowABXd97QxRJq+04kEg--.9115S2;
- Sun, 24 May 2026 17:33:04 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowABXd97QxRJq+04kEg--.9115S4;
+ Sun, 24 May 2026 17:33:05 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v1 00/23] add net/sxe2 support for flow control
-Date: Sun, 24 May 2026 17:32:36 +0800
-Message-ID: <20260524093259.397506-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v1 02/23] net/sxe2: add AVX2 vector data path for Rx and Tx
+Date: Sun, 24 May 2026 17:32:38 +0800
+Message-ID: <20260524093259.397506-3-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260524093259.397506-1-liujie5@linkdatatechnology.com>
+References: <20260524093259.397506-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowABXd97QxRJq+04kEg--.9115S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Aryfur48GF1xKF4xXw1fJFb_yoWxKFWDpF
- 48ZryrZF13JFW3Gw4fJa1fZFyYg3WxJryjkrWa9a4fXFykAFyUCrs0gFy5CwnFyr13JF1F
- vrZIyr1UGa1rAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkI14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
- 6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r1j6r
- 4UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
- jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
- 1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF
- 04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
- 18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
- r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
- 1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
- x4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjRVbDUUUUU==
+X-CM-TRANSID: rQCowABXd97QxRJq+04kEg--.9115S4
+X-Coremail-Antispam: 1UD129KBjvAXoWfXr47XrWfWry3GF1rJr17GFg_yoW5Kr4fAo
+ Wxur13Xr4kXr1kZ395Ww18ZFy8tw4S934UAayS9F4fXa1UAFy5ZasFk3W3AF17Xr1FgF4q
+ ga4xJa9IyrZ3JrZrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UjIYCTnIWjp_UUUYA7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+ j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r15M28IrcIa0x
+ kI8VCY1x0267AKxVWUCVW8JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84AC
+ jcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4UM2
+ 8EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r1j6r4UM2AI
+ xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
+ vE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
+ r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF04k20x
+ vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
+ 3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIx
+ AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAI
+ cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
+ IEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjiID7UUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -56,150 +59,951 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-v1:
--- add support for flow control
--- add support for flow control status interrupt notification
--- add support for ipsec inline protocol offload
+Added AVX256 vectorized versions of Rx and Tx data path functions to
+improve packet processing performance.
 
-Jie Liu (23):
-  net/sxe2: support AVX512 vectorized path for Rx and Tx
-  net/sxe2: add AVX2 vector data path for Rx and Tx
-  drivers: add supported packet types get callback
-  net/sxe2: support L2 filtering and MAC config
-  drivers: support RSS feature
-  net/sxe2: support TM hierarchy and shaping
-  net/sxe2: support IPsec inline protocol offload
-  net/sxe2: support statistics and multi-process
-  drivers: interrupt handling
-  net/sxe2: add NEON vec Rx/Tx burst functions
-  net/sxe2: add support for VF representors
-  net/sxe2: add support for custom UDP tunnel ports
-  net/sxe2: support firmware version reading
-  net/sxe2: implement get monitor address
-  common/sxe2: add shared SFP module definitions
-  net/sxe2: support SFP module info and EEPROM access
-  net/sxe2: implement private dump info
-  net/sxe2: add mbuf validation in Tx debug mode
-  net/sxe2: add testpmd commands for private features
-  net/sxe2: add private devargs parsing
-  net/sxe2: support flow control status interrupt notification
-  net/sxe2: update sxe2 feature matrix docs
-  common/sxe2: add memseg walk callback
+The vector path uses AVX2 SIMD instructions to process multiple
+descriptors per loop, significantly reducing the per-packet overhead.
 
- doc/guides/nics/features/sxe2.ini          |   66 +
- drivers/common/sxe2/sxe2_common.c          |  156 ++
- drivers/common/sxe2/sxe2_common.h          |    4 +
- drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
- drivers/common/sxe2/sxe2_ioctl_chnl.c      |  179 +-
- drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
- drivers/common/sxe2/sxe2_msg.h             |  117 ++
- drivers/common/sxe2/sxe2_ptype.h           | 1793 ++++++++++++++++++
- drivers/net/sxe2/meson.build               |   56 +-
- drivers/net/sxe2/sxe2_cmd_chnl.c           | 1588 +++++++++++++++-
- drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
- drivers/net/sxe2/sxe2_drv_cmd.h            |  439 ++++-
- drivers/net/sxe2/sxe2_dump.c               |  304 +++
- drivers/net/sxe2/sxe2_dump.h               |   12 +
- drivers/net/sxe2/sxe2_ethdev.c             | 1526 ++++++++++++++-
- drivers/net/sxe2/sxe2_ethdev.h             |  113 +-
- drivers/net/sxe2/sxe2_ethdev_repr.c        |  610 ++++++
- drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
- drivers/net/sxe2/sxe2_filter.c             |  897 +++++++++
- drivers/net/sxe2/sxe2_filter.h             |  100 +
- drivers/net/sxe2/sxe2_flow.c               | 1391 ++++++++++++++
- drivers/net/sxe2/sxe2_flow.h               |   30 +
- drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
- drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
- drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
- drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
- drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
- drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 ++++++++++++++++++++
- drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
- drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
- drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
- drivers/net/sxe2/sxe2_irq.c                | 1024 +++++++++++
- drivers/net/sxe2/sxe2_irq.h                |   25 +
- drivers/net/sxe2/sxe2_mac.c                |  535 ++++++
- drivers/net/sxe2/sxe2_mac.h                |   84 +
- drivers/net/sxe2/sxe2_mp.c                 |  413 +++++
- drivers/net/sxe2/sxe2_mp.h                 |   73 +
- drivers/net/sxe2/sxe2_queue.c              |   17 +-
- drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
- drivers/net/sxe2/sxe2_rss.h                |   81 +
- drivers/net/sxe2/sxe2_rx.c                 |   38 +
- drivers/net/sxe2/sxe2_rx.h                 |    2 +
- drivers/net/sxe2/sxe2_security.c           |  335 ++++
- drivers/net/sxe2/sxe2_security.h           |   77 +
- drivers/net/sxe2/sxe2_stats.c              |  591 ++++++
- drivers/net/sxe2/sxe2_stats.h              |   39 +
- drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
- drivers/net/sxe2/sxe2_switchdev.h          |   33 +
- drivers/net/sxe2/sxe2_testpmd.c            |  733 ++++++++
- drivers/net/sxe2/sxe2_testpmd_lib.c        |  969 ++++++++++
- drivers/net/sxe2/sxe2_testpmd_lib.h        |  142 ++
- drivers/net/sxe2/sxe2_tm.c                 | 1169 ++++++++++++
- drivers/net/sxe2/sxe2_tm.h                 |   78 +
- drivers/net/sxe2/sxe2_tx.c                 |    7 +
- drivers/net/sxe2/sxe2_txrx.c               |  174 +-
- drivers/net/sxe2/sxe2_txrx.h               |    4 +
- drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
- drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
- drivers/net/sxe2/sxe2_txrx_poll.c          |  243 ++-
- drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
- drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
- drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  777 ++++++++
- drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  897 +++++++++
- drivers/net/sxe2/sxe2_txrx_vec_common.h    |    1 -
- drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  707 +++++++
- drivers/net/sxe2/sxe2_vsi.c                |  146 ++
- drivers/net/sxe2/sxe2_vsi.h                |   12 +-
- drivers/net/sxe2/sxe2vf_regs.h             |   82 +
- 68 files changed, 26531 insertions(+), 81 deletions(-)
- create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
- create mode 100644 drivers/common/sxe2/sxe2_msg.h
- create mode 100644 drivers/common/sxe2/sxe2_ptype.h
- create mode 100644 drivers/net/sxe2/sxe2_dump.c
- create mode 100644 drivers/net/sxe2/sxe2_dump.h
- create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
- create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
- create mode 100644 drivers/net/sxe2/sxe2_filter.c
- create mode 100644 drivers/net/sxe2/sxe2_filter.h
- create mode 100644 drivers/net/sxe2/sxe2_flow.c
- create mode 100644 drivers/net/sxe2/sxe2_flow.h
- create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
- create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
- create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
- create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
- create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
- create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
- create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
- create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
- create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
- create mode 100644 drivers/net/sxe2/sxe2_irq.c
- create mode 100644 drivers/net/sxe2/sxe2_mac.c
- create mode 100644 drivers/net/sxe2/sxe2_mac.h
- create mode 100644 drivers/net/sxe2/sxe2_mp.c
- create mode 100644 drivers/net/sxe2/sxe2_mp.h
- create mode 100644 drivers/net/sxe2/sxe2_rss.c
- create mode 100644 drivers/net/sxe2/sxe2_rss.h
- create mode 100644 drivers/net/sxe2/sxe2_security.c
- create mode 100644 drivers/net/sxe2/sxe2_security.h
- create mode 100644 drivers/net/sxe2/sxe2_stats.c
- create mode 100644 drivers/net/sxe2/sxe2_stats.h
- create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
- create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
- create mode 100644 drivers/net/sxe2/sxe2_testpmd.c
- create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.c
- create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.h
- create mode 100644 drivers/net/sxe2/sxe2_tm.c
- create mode 100644 drivers/net/sxe2/sxe2_tm.h
- create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
- create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+
+net/sxe2: support AVX512 vectorized path for Rx and Tx
+---
+ drivers/net/sxe2/meson.build          |   9 +
+ drivers/net/sxe2/sxe2_txrx.c          |  38 +-
+ drivers/net/sxe2/sxe2_txrx_vec.h      |  12 +-
+ drivers/net/sxe2/sxe2_txrx_vec_avx2.c | 777 ++++++++++++++++++++++++++
+ 4 files changed, 831 insertions(+), 5 deletions(-)
  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
- create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
- create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
- create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
 
+diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
+index 30f2c7d816..98dd8bcec7 100644
+--- a/drivers/net/sxe2/meson.build
++++ b/drivers/net/sxe2/meson.build
+@@ -39,6 +39,15 @@ if arch_subdir == 'x86'
+                         c_args: avx512_args)
+                 objs += sxe2_avx512_lib.extract_objects('sxe2_txrx_vec_avx512.c')
+         endif
++        sxe2_avx2_lib = static_library('sxe2_avx2_lib',
++                'sxe2_txrx_vec_avx2.c',
++                dependencies: [static_rte_ethdev,
++                        static_rte_kvargs, static_rte_hash,
++                        static_rte_security, static_rte_cryptodev,
++                        static_rte_bus_pci],
++                include_directories: includes,
++                c_args: [cflags, '-mavx2'])
++        objs += sxe2_avx2_lib.extract_objects('sxe2_txrx_vec_avx2.c')
+ endif
+ 
+ sources += files(
+diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
+index ee70a2a431..dcfaf7278d 100644
+--- a/drivers/net/sxe2/sxe2_txrx.c
++++ b/drivers/net/sxe2/sxe2_txrx.c
+@@ -168,8 +168,14 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
+ 				PMD_LOG_INFO(TX, "AVX512 is not supported in build env.");
+ #endif
+ 			}
+-			if ((tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) == 0)
+-				tx_mode_flags |= SXE2_TX_MODE_VEC_SSE;
++			if (((tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) == 0) &&
++			    ((rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1) ||
++			    (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1)) &&
++			    (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256))
++				tx_mode_flags |= SXE2_TX_MODE_VEC_AVX2;
++
++			if ((0 == (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK)))
++				tx_mode_flags |=  SXE2_TX_MODE_VEC_SSE;
+ #endif
+ 			if (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) {
+ 				ret = sxe2_tx_queues_vec_prepare(dev);
+@@ -207,6 +213,13 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
+ 				dev->tx_pkt_burst = sxe2_tx_pkts_vec_avx512_simple;
+ 			}
+ #endif
++		} else if (tx_mode_flags & SXE2_TX_MODE_VEC_AVX2) {
++			if (tx_mode_flags & SXE2_TX_MODE_VEC_OFFLOAD) {
++				dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
++				dev->tx_pkt_burst = sxe2_tx_pkts_vec_avx2;
++			} else {
++				dev->tx_pkt_burst = sxe2_tx_pkts_vec_avx2_simple;
++			}
+ 		} else {
+ 			if (tx_mode_flags & SXE2_TX_MODE_VEC_OFFLOAD) {
+ 				dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
+@@ -241,6 +254,10 @@ static const struct {
+ 	{ sxe2_tx_pkts_vec_avx512_simple,
+ 	      "Vector AVX512 Simple" },
+ #endif
++	{ sxe2_tx_pkts_vec_avx2,
++	      "Vector AVX2" },
++	{ sxe2_tx_pkts_vec_avx2_simple,
++	      "Vector AVX2 Simple" },
+ 	{ sxe2_tx_pkts_vec_sse,
+ 	      "Vector SSE" },
+ 	{ sxe2_tx_pkts_vec_sse_simple,
+@@ -340,7 +357,13 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
+ 				PMD_LOG_INFO(RX, "AVX512 support detected but not enabled");
+ #endif
+ 			}
+-			if ((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0 &&
++			if (((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0) &&
++				((rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1) ||
++				(rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1)) &&
++				(rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256))
++				rx_mode_flags |= SXE2_RX_MODE_VEC_AVX2;
++
++			if (((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0) &&
+ 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
+ 				rx_mode_flags |= SXE2_RX_MODE_VEC_SSE;
+ #endif
+@@ -364,6 +387,11 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
+ 			else
+ 				dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_avx512;
+ #endif
++		} else if (rx_mode_flags & SXE2_RX_MODE_VEC_AVX2) {
++			if (rx_mode_flags & SXE2_RX_MODE_VEC_OFFLOAD)
++				dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_avx2_offload;
++			else
++				dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_avx2;
+ 		} else {
+ 			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_sse_offload;
+ 		}
+@@ -391,6 +419,10 @@ static const struct {
+ 	{ sxe2_rx_pkts_scattered_vec_avx512_offload,
+ 	      "Offload Vector AVX512 Scattered" },
+ #endif
++	{ sxe2_rx_pkts_scattered_vec_avx2,
++	      "Vector AVX2 Scattered" },
++	{ sxe2_rx_pkts_scattered_vec_avx2_offload,
++	      "Offload Vector AVX2 Scattered" },
+ 	{ sxe2_rx_pkts_scattered_vec_sse_offload,
+ 	      "Vector SSE Scattered" },
+ #endif
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec.h b/drivers/net/sxe2/sxe2_txrx_vec.h
+index 62a5b1f3f5..d7a0ce6ca5 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec.h
++++ b/drivers/net/sxe2/sxe2_txrx_vec.h
+@@ -10,19 +10,21 @@
+ #define SXE2_RX_MODE_VEC_SIMPLE    RTE_BIT32(0)
+ #define SXE2_RX_MODE_VEC_OFFLOAD   RTE_BIT32(1)
+ #define SXE2_RX_MODE_VEC_SSE       RTE_BIT32(2)
++#define SXE2_RX_MODE_VEC_AVX2      RTE_BIT32(3)
+ #define SXE2_RX_MODE_VEC_AVX512    RTE_BIT32(4)
+ #define SXE2_RX_MODE_BATCH_ALLOC   RTE_BIT32(10)
+ #define SXE2_RX_MODE_VEC_SET_MASK	(SXE2_RX_MODE_VEC_SIMPLE | \
+ 			SXE2_RX_MODE_VEC_OFFLOAD | SXE2_RX_MODE_VEC_SSE | \
+-			SXE2_RX_MODE_VEC_AVX512)
++			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512)
+ #define SXE2_TX_MODE_VEC_SIMPLE   RTE_BIT32(0)
+ #define SXE2_TX_MODE_VEC_OFFLOAD  RTE_BIT32(1)
+ #define SXE2_TX_MODE_VEC_SSE      RTE_BIT32(2)
++#define SXE2_TX_MODE_VEC_AVX2     RTE_BIT32(3)
+ #define SXE2_TX_MODE_VEC_AVX512   RTE_BIT32(4)
+ #define SXE2_TX_MODE_SIMPLE_BATCH RTE_BIT32(10)
+ #define SXE2_TX_MODE_VEC_SET_MASK	(SXE2_TX_MODE_VEC_SIMPLE | \
+ 			SXE2_TX_MODE_VEC_OFFLOAD | SXE2_TX_MODE_VEC_SSE | \
+-			SXE2_TX_MODE_VEC_AVX512)
++			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512)
+ #define SXE2_TX_VEC_NO_SUPPORT_OFFLOAD (		  \
+ 			RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		  \
+ 			RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	  \
+@@ -67,6 +69,12 @@ uint16_t sxe2_rx_pkts_scattered_vec_avx512(void *rx_queue,
+ 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ uint16_t sxe2_rx_pkts_scattered_vec_avx512_offload(void *rx_queue,
+ 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
++uint16_t sxe2_tx_pkts_vec_avx2_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
++uint16_t sxe2_tx_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
++uint16_t sxe2_rx_pkts_scattered_vec_avx2(void *rx_queue,
++		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
++uint16_t sxe2_rx_pkts_scattered_vec_avx2_offload(void *rx_queue,
++		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ #endif
+ int32_t __rte_cold sxe2_tx_vec_support_check(struct rte_eth_dev *dev, uint32_t *vec_flags);
+ int32_t __rte_cold sxe2_tx_queues_vec_prepare(struct rte_eth_dev *dev);
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec_avx2.c b/drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+new file mode 100644
+index 0000000000..5d57ebf9e2
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+@@ -0,0 +1,777 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#include <rte_vect.h>
++
++#include "sxe2_ethdev.h"
++#include "sxe2_common_log.h"
++#include "sxe2_queue.h"
++#include "sxe2_txrx_vec.h"
++#include "sxe2_txrx_vec_common.h"
++#include "sxe2_vsi.h"
++
++static __rte_always_inline void
++sxe2_tx_desc_fill_one_avx2(volatile union sxe2_tx_data_desc *desc, struct rte_mbuf *pkt,
++			   uint64_t desc_cmd, bool with_offloads)
++{
++	__m128i data_desc;
++	uint64_t desc_qw1;
++	uint32_t desc_offset;
++
++	desc_qw1 = (SXE2_TX_DESC_DTYPE_DATA |
++		   ((uint64_t)desc_cmd) << SXE2_TX_DATA_DESC_CMD_SHIFT |
++		   ((uint64_t)pkt->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
++
++	desc_offset = SXE2_TX_DATA_DESC_MACLEN_VAL(pkt->l2_len);
++	desc_qw1 |= ((uint64_t)desc_offset) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
++	if (with_offloads)
++		sxe2_tx_desc_fill_offloads(pkt, &desc_qw1);
++
++	data_desc = _mm_set_epi64x(desc_qw1, rte_pktmbuf_iova(pkt));
++	_mm_store_si128(RTE_CAST_PTR(__m128i *, desc), data_desc);
++}
++
++static __rte_always_inline void
++sxe2_tx_desc_fill_avx2(volatile union sxe2_tx_data_desc *desc, struct rte_mbuf **pkts,
++		       uint16_t pkts_num, uint64_t desc_cmd, bool with_offloads)
++{
++	__m256i desc_group0;
++	__m256i desc_group1;
++	uint64_t desc0_qw1;
++	uint64_t desc1_qw1;
++	uint64_t desc2_qw1;
++	uint64_t desc3_qw1;
++
++	const uint64_t desc_qw1_com = (SXE2_TX_DESC_DTYPE_DATA |
++					((uint64_t)desc_cmd) << SXE2_TX_DATA_DESC_CMD_SHIFT);
++	uint32_t desc_offset[4] = {0};
++
++	if (((uint64_t)desc & 0x1F) != 0 && pkts_num != 0) {
++		sxe2_tx_desc_fill_one_avx2(desc, *pkts, desc_cmd, with_offloads);
++		pkts_num--;
++		desc++;
++		pkts++;
++	}
++
++	while (pkts_num > 3) {
++		desc3_qw1 = (desc_qw1_com |
++					((uint64_t)pkts[3]->data_len)
++					<< SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
++
++		desc_offset[3] = SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[3]->l2_len);
++		desc3_qw1 |= ((uint64_t)desc_offset[3]) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
++		if (with_offloads)
++			sxe2_tx_desc_fill_offloads(pkts[3], &desc3_qw1);
++
++		desc2_qw1 = (desc_qw1_com |
++					((uint64_t)pkts[2]->data_len)
++					<< SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
++		desc_offset[2] = SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[2]->l2_len);
++		desc2_qw1 |= ((uint64_t)desc_offset[2]) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
++		if (with_offloads)
++			sxe2_tx_desc_fill_offloads(pkts[2], &desc2_qw1);
++
++		desc1_qw1 = (desc_qw1_com |
++					((uint64_t)pkts[1]->data_len)
++					<< SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
++		desc_offset[1] = SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[1]->l2_len);
++		desc1_qw1 |= ((uint64_t)desc_offset[1]) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
++		if (with_offloads)
++			sxe2_tx_desc_fill_offloads(pkts[1], &desc1_qw1);
++
++		desc0_qw1 = (desc_qw1_com |
++					((uint64_t)pkts[0]->data_len)
++					<< SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
++		desc_offset[0] = SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[0]->l2_len);
++		desc0_qw1 |= ((uint64_t)desc_offset[0]) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
++		if (with_offloads)
++			sxe2_tx_desc_fill_offloads(pkts[0], &desc0_qw1);
++
++		desc_group1 = _mm256_set_epi64x(desc3_qw1, rte_pktmbuf_iova(pkts[3]),
++					desc2_qw1, rte_pktmbuf_iova(pkts[2]));
++
++		desc_group0 = _mm256_set_epi64x(desc1_qw1, rte_pktmbuf_iova(pkts[1]),
++					desc0_qw1, rte_pktmbuf_iova(pkts[0]));
++
++		_mm256_store_si256(RTE_CAST_PTR(__m256i *, desc + 2), desc_group1);
++		_mm256_store_si256(RTE_CAST_PTR(__m256i *, desc), desc_group0);
++
++		pkts_num -= 4;
++		desc     += 4;
++		pkts     += 4;
++	}
++
++	while (pkts_num) {
++		sxe2_tx_desc_fill_one_avx2(desc, *pkts, desc_cmd, with_offloads);
++		pkts_num--;
++		desc++;
++		pkts++;
++	}
++}
++
++static __rte_always_inline uint16_t
++sxe2_tx_pkts_vec_avx2_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
++			    uint16_t nb_pkts, bool with_offloads)
++{
++	volatile union sxe2_tx_data_desc *desc;
++	struct sxe2_tx_buffer *buffer;
++	uint16_t next_use;
++	uint16_t res_num;
++	uint16_t tx_num;
++
++	if (txq->desc_free_num < txq->free_thresh)
++		(void)sxe2_tx_bufs_free_vec(txq);
++
++	nb_pkts = RTE_MIN(txq->desc_free_num, nb_pkts);
++	if (unlikely(nb_pkts == 0)) {
++		PMD_LOG_DEBUG(TX, "Tx pkts avx2 batch: may not enough free desc, "
++				"free_desc=%u, need_tx_pkts=%u",
++				txq->desc_free_num, nb_pkts);
++		goto l_end;
++	}
++	tx_num = nb_pkts;
++
++	next_use = txq->next_use;
++	desc     = &txq->desc_ring[next_use];
++	buffer   = &txq->buffer_ring[next_use];
++
++	txq->desc_free_num -= nb_pkts;
++
++	res_num = txq->ring_depth - txq->next_use;
++
++	if (tx_num >= res_num) {
++		sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, res_num);
++
++		sxe2_tx_desc_fill_avx2(desc, tx_pkts, res_num,
++				SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++		tx_pkts += (res_num - 1);
++		desc    += (res_num - 1);
++
++		sxe2_tx_desc_fill_one_avx2(desc, *tx_pkts++,
++				(SXE2_TX_DATA_DESC_CMD_EOP | SXE2_TX_DATA_DESC_CMD_RS),
++				with_offloads);
++
++		tx_num -= res_num;
++
++		next_use     = 0;
++		txq->next_rs = txq->rs_thresh - 1;
++		desc         = &txq->desc_ring[next_use];
++		buffer       = &txq->buffer_ring[next_use];
++	}
++
++	sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, tx_num);
++
++	sxe2_tx_desc_fill_avx2(desc, tx_pkts, tx_num,
++			SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++
++	next_use += tx_num;
++	if (next_use > txq->next_rs) {
++		txq->desc_ring[txq->next_rs].read.type_cmd_off_bsz_l2t |=
++			rte_cpu_to_le_64(SXE2_TX_DATA_DESC_CMD_RS_MASK);
++
++		txq->next_rs += txq->rs_thresh;
++	}
++	txq->next_use = next_use;
++	SXE2_PCI_REG_WRITE_WC(txq->tdt_reg_addr, next_use);
++	PMD_LOG_DEBUG(TX, "port_id=%u queue_id=%u next_use=%u send_pkts=%u",
++			txq->port_id, txq->queue_id, next_use, nb_pkts);
++l_end:
++	return nb_pkts;
++}
++
++static __rte_always_inline uint16_t
++sxe2_tx_pkts_vec_avx2_common(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
++			     uint16_t nb_pkts, bool with_offloads)
++{
++	uint16_t tx_done_num = 0;
++	uint16_t tx_once_num;
++	uint16_t tx_need_num;
++
++	while (nb_pkts) {
++		tx_need_num = RTE_MIN(nb_pkts, txq->rs_thresh);
++		tx_once_num = sxe2_tx_pkts_vec_avx2_batch(txq,
++					tx_pkts + tx_done_num, tx_need_num, with_offloads);
++
++		nb_pkts     -= tx_once_num;
++		tx_done_num += tx_once_num;
++
++		if (tx_once_num < tx_need_num)
++			break;
++	}
++	return tx_done_num;
++}
++
++uint16_t sxe2_tx_pkts_vec_avx2_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	return sxe2_tx_pkts_vec_avx2_common(tx_queue, tx_pkts, nb_pkts, false);
++}
++
++uint16_t sxe2_tx_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	return sxe2_tx_pkts_vec_avx2_common(tx_queue, tx_pkts, nb_pkts, true);
++}
++
++static inline void sxe2_rx_queue_rearm_avx2(struct sxe2_rx_queue *rxq)
++{
++	volatile union sxe2_rx_desc *desc;
++	struct rte_mbuf **buffer;
++	struct rte_mbuf *mbuf0, *mbuf1;
++	__m128i dma_addr0, dma_addr1;
++	__m128i virt_addr0, virt_addr1;
++	__m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM, RTE_PKTMBUF_HEADROOM);
++	int32_t ret;
++	uint16_t i;
++	uint16_t new_tail;
++
++	buffer = &rxq->buffer_ring[rxq->realloc_start];
++	desc   = &rxq->desc_ring[rxq->realloc_start];
++
++	ret = rte_mempool_get_bulk(rxq->mb_pool, (void *)buffer, SXE2_RX_REARM_THRESH_VEC);
++	if (ret != 0) {
++		if ((rxq->realloc_num + SXE2_RX_REARM_THRESH_VEC) >= rxq->ring_depth) {
++			dma_addr0 = _mm_setzero_si128();
++			for (i = 0; i < SXE2_RX_NUM_PER_LOOP_AVX; ++i) {
++				buffer[i] = &rxq->fake_mbuf;
++				_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc[i].read), dma_addr0);
++			}
++		}
++
++		rxq->vsi->adapter->dev_info.dev_data->rx_mbuf_alloc_failed +=
++				SXE2_RX_REARM_THRESH_VEC;
++		goto l_end;
++	}
++
++	for (i = 0; i < SXE2_RX_REARM_THRESH_VEC; i += 2, buffer += 2) {
++		mbuf0 = buffer[0];
++		mbuf1 = buffer[1];
++#if RTE_IOVA_IN_MBUF
++
++		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
++				 offsetof(struct rte_mbuf, buf_addr) + 8);
++#endif
++		virt_addr0 = _mm_loadu_si128((__m128i *)&mbuf0->buf_addr);
++		virt_addr1 = _mm_loadu_si128((__m128i *)&mbuf1->buf_addr);
++
++#if RTE_IOVA_IN_MBUF
++
++		dma_addr0 = _mm_unpackhi_epi64(virt_addr0, virt_addr0);
++		dma_addr1 = _mm_unpackhi_epi64(virt_addr1, virt_addr1);
++#else
++
++		dma_addr0 = _mm_unpacklo_epi64(virt_addr0, virt_addr0);
++		dma_addr1 = _mm_unpacklo_epi64(virt_addr1, virt_addr1);
++#endif
++
++		dma_addr0 = _mm_add_epi64(dma_addr0, hdr_room);
++		dma_addr1 = _mm_add_epi64(dma_addr1, hdr_room);
++
++		_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc++->read), dma_addr0);
++		_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc++->read), dma_addr1);
++	}
++
++	rxq->realloc_start += SXE2_RX_REARM_THRESH_VEC;
++	if (rxq->realloc_start >= rxq->ring_depth)
++		rxq->realloc_start = 0;
++	rxq->realloc_num -= SXE2_RX_REARM_THRESH_VEC;
++
++	new_tail = (rxq->realloc_start == 0) ?
++		(rxq->ring_depth - 1) : (rxq->realloc_start - 1);
++	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, new_tail);
++l_end:
++}
++
++static __rte_always_inline uint16_t
++sxe2_rx_pkts_common_vec_avx2(struct sxe2_rx_queue *rxq,
++			     struct rte_mbuf **rx_pkts, uint16_t nb_pkts, uint8_t *split_rxe_flags,
++			     uint8_t *umbcast_flags, bool do_offload)
++{
++	const uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
++	const __m256i mbuf_init   = _mm256_set_epi64x(0, 0, 0, rxq->mbuf_init_value);
++	struct rte_mbuf **buffer;
++	volatile union sxe2_rx_desc *desc;
++	__m256i mbufs6_7, mbufs4_5, mbufs2_3, mbufs0_1;
++	uint32_t bit_num;
++	uint16_t done_num;
++	uint16_t i = 0;
++	uint16_t j = 0;
++
++	buffer   = &rxq->buffer_ring[rxq->processing_idx];
++	desc     = &rxq->desc_ring[rxq->processing_idx];
++	done_num = 0;
++
++	rte_prefetch0(desc);
++
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, SXE2_RX_NUM_PER_LOOP_AVX);
++
++	if (rxq->realloc_num > SXE2_RX_REARM_THRESH_VEC)
++		sxe2_rx_queue_rearm_avx2(rxq);
++
++	if (0 == (rte_le_to_cpu_64(desc->wb.status_err_ptype_len) &
++				SXE2_RX_DESC_STATUS_DD_MASK))
++		goto l_end;
++
++	const __m256i crc_adjust =
++		_mm256_set_epi16(0, 0, 0, -rxq->crc_len,
++				 0, -rxq->crc_len, 0,
++				 0, 0, 0, 0,
++				 -rxq->crc_len, 0, -rxq->crc_len, 0, 0);
++
++	const __m256i dd_mask = _mm256_set1_epi32(1);
++	const __m256i rvp_shuf_mask =
++		_mm256_set_epi8(7, 6, 5, 4,
++				3, 2, 13, 12,
++				0xFF, 0xFF, 13, 12,
++				0xFF, 0xFF, 0xFF, 0xFF,
++				7, 6, 5, 4,
++				3, 2, 13, 12,
++				0xFF, 0xFF, 13, 12,
++				0xFF, 0xFF, 0xFF, 0xFF);
++
++	const __m128i eop_shuf_mask =
++		_mm_set_epi8(0xFF, 0xFF, 0xFF, 0xFF,
++			     0xFF, 0xFF, 0xFF, 0xFF,
++			     8, 0, 10, 2,
++			     12, 4, 14, 6);
++
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, pkt_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 4);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, data_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 8);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, vlan_tci) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 10);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, hash) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 12);
++
++	for (i = 0; i < nb_pkts; i += SXE2_RX_NUM_PER_LOOP_AVX,
++				desc += SXE2_RX_NUM_PER_LOOP_AVX) {
++		_mm256_storeu_si256((void *)&rx_pkts[i],
++					_mm256_loadu_si256((void *)&buffer[i]));
++#ifdef RTE_ARCH_X86_64
++		_mm256_storeu_si256((void *)&rx_pkts[i + 4],
++					_mm256_loadu_si256((void *)&buffer[i + 4]));
++#endif
++
++		const __m128i desc7 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 7));
++		rte_compiler_barrier();
++		const __m128i desc6 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 6));
++		rte_compiler_barrier();
++		const __m128i desc5 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 5));
++		rte_compiler_barrier();
++		const __m128i desc4 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 4));
++		rte_compiler_barrier();
++		const __m128i desc3 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 3));
++		rte_compiler_barrier();
++		const __m128i desc2 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 2));
++		rte_compiler_barrier();
++		const __m128i desc1 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 1));
++		rte_compiler_barrier();
++		const __m128i desc0 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 0));
++
++		const __m256i descs6_7 =
++			_mm256_inserti128_si256(_mm256_castsi128_si256(desc6), desc7, 1);
++		const __m256i descs4_5 =
++			_mm256_inserti128_si256(_mm256_castsi128_si256(desc4), desc5, 1);
++		const __m256i descs2_3 =
++			_mm256_inserti128_si256(_mm256_castsi128_si256(desc2), desc3, 1);
++		const __m256i descs0_1 =
++			_mm256_inserti128_si256(_mm256_castsi128_si256(desc0), desc1, 1);
++
++		if (split_rxe_flags) {
++			for (j = 0; j < SXE2_RX_NUM_PER_LOOP_AVX; j++)
++				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
++		}
++
++		mbufs6_7 = _mm256_shuffle_epi8(descs6_7, rvp_shuf_mask);
++		mbufs4_5 = _mm256_shuffle_epi8(descs4_5, rvp_shuf_mask);
++
++		mbufs6_7 = _mm256_add_epi16(mbufs6_7, crc_adjust);
++		mbufs4_5 = _mm256_add_epi16(mbufs4_5, crc_adjust);
++
++		const __m256i ptype_mask = _mm256_set1_epi32(SXE2_RX_DESC_PTYPE_MASK);
++
++		const __m256i staterrs4_7 = _mm256_unpackhi_epi32(descs6_7, descs4_5);
++
++		__m256i ptypes4_7 = _mm256_and_si256(staterrs4_7, ptype_mask);
++
++		const uint16_t ptype7 = _mm256_extract_epi16(ptypes4_7, 9);
++		const uint16_t ptype6 = _mm256_extract_epi16(ptypes4_7, 1);
++		const uint16_t ptype5 = _mm256_extract_epi16(ptypes4_7, 11);
++		const uint16_t ptype4 = _mm256_extract_epi16(ptypes4_7, 3);
++
++		mbufs6_7 = _mm256_insert_epi32(mbufs6_7, ptype_tbl[ptype7], 4);
++		mbufs6_7 = _mm256_insert_epi32(mbufs6_7, ptype_tbl[ptype6], 0);
++		mbufs4_5 = _mm256_insert_epi32(mbufs4_5, ptype_tbl[ptype5], 4);
++		mbufs4_5 = _mm256_insert_epi32(mbufs4_5, ptype_tbl[ptype4], 0);
++
++		mbufs2_3 = _mm256_shuffle_epi8(descs2_3, rvp_shuf_mask);
++		mbufs0_1 = _mm256_shuffle_epi8(descs0_1, rvp_shuf_mask);
++
++		mbufs2_3 = _mm256_add_epi16(mbufs2_3, crc_adjust);
++		mbufs0_1 = _mm256_add_epi16(mbufs0_1, crc_adjust);
++
++		const __m256i staterrs0_3 = _mm256_unpackhi_epi32(descs2_3, descs0_1);
++
++		__m256i ptypes0_3 = _mm256_and_si256(staterrs0_3, ptype_mask);
++
++		const uint16_t ptype3 = _mm256_extract_epi16(ptypes0_3, 9);
++		const uint16_t ptype2 = _mm256_extract_epi16(ptypes0_3, 1);
++		const uint16_t ptype1 = _mm256_extract_epi16(ptypes0_3, 11);
++		const uint16_t ptype0 = _mm256_extract_epi16(ptypes0_3, 3);
++
++		mbufs2_3 = _mm256_insert_epi32(mbufs2_3, ptype_tbl[ptype3], 4);
++		mbufs2_3 = _mm256_insert_epi32(mbufs2_3, ptype_tbl[ptype2], 0);
++		mbufs0_1 = _mm256_insert_epi32(mbufs0_1, ptype_tbl[ptype1], 4);
++		mbufs0_1 = _mm256_insert_epi32(mbufs0_1, ptype_tbl[ptype0], 0);
++
++		__m256i staterrs0_7 = _mm256_unpacklo_epi64(staterrs4_7, staterrs0_3);
++
++		__m256i stu_len0_7 = _mm256_unpackhi_epi64(staterrs4_7, staterrs0_3);
++		__m256i mbuf_flags = _mm256_setzero_si256();
++
++		if (do_offload) {
++			const __m256i desc_flags_mask = _mm256_set1_epi32(0x00001C04);
++			const __m256i desc_flags_rss_mask = _mm256_set1_epi32(0x20000000);
++			const __m256i vlan_flags =
++				_mm256_set_epi8
++				(0, 0, 0, 0, 0, 0, 0, 0,
++				 0, 0, 0,
++				 RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++				 0, 0, 0, 0,
++				 0, 0, 0, 0, 0, 0, 0, 0,
++				 0, 0, 0,
++				 RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++				 0, 0, 0, 0);
++
++			const __m256i rss_flags =
++				_mm256_set_epi8
++				(0, 0, 0, 0, 0, 0, 0, 0,
++				 0, 0, 0, RTE_MBUF_F_RX_RSS_HASH, 0, 0, 0, 0,
++				 0, 0, 0, 0, 0, 0, 0, 0,
++				 0, 0, 0, RTE_MBUF_F_RX_RSS_HASH, 0, 0, 0, 0);
++
++			const __m256i cksum_flags =
++				_mm256_set_epi8
++				(0, 0, 0, 0, 0, 0, 0, 0,
++				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++					RTE_MBUF_F_RX_L4_CKSUM_BAD |
++					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++					RTE_MBUF_F_RX_L4_CKSUM_BAD |
++					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++					RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++					RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++				 ((RTE_MBUF_F_RX_L4_CKSUM_BAD |
++					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++				 ((RTE_MBUF_F_RX_L4_CKSUM_BAD |
++					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++				 ((RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++				 ((RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++
++				 0, 0, 0, 0, 0, 0, 0, 0,
++				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++					RTE_MBUF_F_RX_L4_CKSUM_BAD |
++					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++					RTE_MBUF_F_RX_L4_CKSUM_BAD |
++					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++					RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++					RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++				 ((RTE_MBUF_F_RX_L4_CKSUM_BAD |
++					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++				 ((RTE_MBUF_F_RX_L4_CKSUM_BAD |
++					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++				 ((RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++				 ((RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1));
++
++			const __m256i cksum_mask =
++				_mm256_set1_epi32
++				(RTE_MBUF_F_RX_IP_CKSUM_MASK |
++				RTE_MBUF_F_RX_L4_CKSUM_MASK |
++				RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK |
++				RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD);
++			const __m256i vlan_mask =
++				_mm256_set1_epi32
++				(RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED);
++
++			__m256i tmp_flags;
++			__m256i descs_flags = _mm256_and_si256(staterrs0_7, desc_flags_mask);
++			stu_len0_7 = _mm256_and_si256(stu_len0_7, desc_flags_rss_mask);
++
++			tmp_flags = _mm256_shuffle_epi8(vlan_flags, descs_flags);
++			mbuf_flags = _mm256_and_si256(tmp_flags, vlan_mask);
++
++			descs_flags = _mm256_srli_epi32(descs_flags, 10);
++			tmp_flags = _mm256_shuffle_epi8(cksum_flags, descs_flags);
++			tmp_flags = _mm256_slli_epi32(tmp_flags, 1);
++			tmp_flags = _mm256_and_si256(tmp_flags, cksum_mask);
++			mbuf_flags = _mm256_or_si256(mbuf_flags, tmp_flags);
++
++			descs_flags = _mm256_srli_epi32(stu_len0_7, 27);
++			tmp_flags = _mm256_shuffle_epi8(rss_flags, descs_flags);
++			mbuf_flags = _mm256_or_si256(mbuf_flags, tmp_flags);
++
++#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
++
++			if (rxq->fnav_enable) {
++				__m256i fnav_vld0_3, fnav_vld4_7;
++				__m256i fnav_vld0_7;
++				__m256i v_zeros, v_ffff, v_u32_one;
++				const __m256i fdir_flags =
++					_mm256_set1_epi32
++					(RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID);
++				fnav_vld0_3 = _mm256_unpacklo_epi32(descs2_3, descs0_1);
++				fnav_vld4_7 = _mm256_unpacklo_epi32(descs6_7, descs4_5);
++
++				fnav_vld0_7 = _mm256_unpacklo_epi64(fnav_vld4_7, fnav_vld0_3);
++
++				fnav_vld0_7 = _mm256_slli_epi32(fnav_vld0_7, 26);
++				fnav_vld0_7 = _mm256_srli_epi32(fnav_vld0_7, 31);
++
++				v_zeros = _mm256_setzero_si256();
++				v_ffff = _mm256_cmpeq_epi32(v_zeros, v_zeros);
++				v_u32_one = _mm256_srli_epi32(v_ffff, 31);
++
++				tmp_flags = _mm256_cmpeq_epi32(fnav_vld0_7, v_u32_one);
++
++				tmp_flags = _mm256_and_si256(tmp_flags, fdir_flags);
++
++				mbuf_flags = _mm256_or_si256(mbuf_flags, tmp_flags);
++
++				rx_pkts[i + 0]->hash.fdir.hi = desc[0].wb.fd_filter_id;
++				rx_pkts[i + 1]->hash.fdir.hi = desc[1].wb.fd_filter_id;
++				rx_pkts[i + 2]->hash.fdir.hi = desc[2].wb.fd_filter_id;
++				rx_pkts[i + 3]->hash.fdir.hi = desc[3].wb.fd_filter_id;
++				rx_pkts[i + 4]->hash.fdir.hi = desc[4].wb.fd_filter_id;
++				rx_pkts[i + 5]->hash.fdir.hi = desc[5].wb.fd_filter_id;
++				rx_pkts[i + 6]->hash.fdir.hi = desc[6].wb.fd_filter_id;
++				rx_pkts[i + 7]->hash.fdir.hi = desc[7].wb.fd_filter_id;
++			}
++#endif
++		}
++
++		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, ol_flags) !=
++				 offsetof(struct rte_mbuf, rearm_data) + 8);
++		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, rx_descriptor_fields1) !=
++				 offsetof(struct rte_mbuf, rearm_data) + 16);
++		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, rearm_data) !=
++				 RTE_ALIGN(offsetof(struct rte_mbuf, rearm_data), 16));
++
++		__m256i rearm_arr[8];
++
++		rearm_arr[6] = _mm256_blend_epi32(mbuf_init, _mm256_slli_si256(mbuf_flags, 8), 4);
++		rearm_arr[4] = _mm256_blend_epi32(mbuf_init, _mm256_slli_si256(mbuf_flags, 4), 4);
++		rearm_arr[2] = _mm256_blend_epi32(mbuf_init, mbuf_flags, 4);
++		rearm_arr[0] = _mm256_blend_epi32(mbuf_init, _mm256_srli_si256(mbuf_flags, 4), 4);
++
++		rearm_arr[6] = _mm256_permute2f128_si256(rearm_arr[6], mbufs6_7, 0x20);
++		rearm_arr[4] = _mm256_permute2f128_si256(rearm_arr[4], mbufs4_5, 0x20);
++		rearm_arr[2] = _mm256_permute2f128_si256(rearm_arr[2], mbufs2_3, 0x20);
++		rearm_arr[0] = _mm256_permute2f128_si256(rearm_arr[0], mbufs0_1, 0x20);
++
++		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 6]->rearm_data, rearm_arr[6]);
++		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 4]->rearm_data, rearm_arr[4]);
++		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 2]->rearm_data, rearm_arr[2]);
++		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 0]->rearm_data, rearm_arr[0]);
++
++		const __m256i tmp_mbuf_flags =
++			_mm256_castsi128_si256(_mm256_extracti128_si256(mbuf_flags, 1));
++
++		rearm_arr[7] =
++			_mm256_blend_epi32(mbuf_init, _mm256_slli_si256(tmp_mbuf_flags, 8), 4);
++		rearm_arr[5] =
++			_mm256_blend_epi32(mbuf_init, _mm256_slli_si256(tmp_mbuf_flags, 4), 4);
++		rearm_arr[3] =
++			_mm256_blend_epi32(mbuf_init, tmp_mbuf_flags, 4);
++		rearm_arr[1] =
++			_mm256_blend_epi32(mbuf_init, _mm256_srli_si256(tmp_mbuf_flags, 4), 4);
++
++		rearm_arr[7] = _mm256_blend_epi32(rearm_arr[7], mbufs6_7, 0XF0);
++		rearm_arr[5] = _mm256_blend_epi32(rearm_arr[5], mbufs4_5, 0XF0);
++		rearm_arr[3] = _mm256_blend_epi32(rearm_arr[3], mbufs2_3, 0XF0);
++		rearm_arr[1] = _mm256_blend_epi32(rearm_arr[1], mbufs0_1, 0XF0);
++
++		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 7]->rearm_data, rearm_arr[7]);
++		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 5]->rearm_data, rearm_arr[5]);
++		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 3]->rearm_data, rearm_arr[3]);
++		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 1]->rearm_data, rearm_arr[1]);
++
++		if (umbcast_flags != NULL) {
++			const __m256i umbcast_mask =
++					_mm256_set1_epi32(SXE2_RX_DESC_STATUS_UMBCAST_MASK);
++			__m256i umbcast_bits_256 = _mm256_and_si256(staterrs0_7,
++								    umbcast_mask);
++
++			umbcast_bits_256 = _mm256_srli_epi32(umbcast_bits_256, 24);
++
++			__m128i umbcast_bits_128 = _mm_packs_epi32
++							(_mm256_castsi256_si128(umbcast_bits_256),
++							 _mm256_extractf128_si256
++								(umbcast_bits_256, 1));
++
++			umbcast_bits_128 = _mm_shuffle_epi8(umbcast_bits_128, eop_shuf_mask);
++
++			*(uint64_t *)umbcast_flags = _mm_cvtsi128_si64(umbcast_bits_128);
++			umbcast_flags += SXE2_RX_NUM_PER_LOOP_AVX;
++		}
++
++		if (split_rxe_flags != NULL) {
++			const __m256i eop_rxe_mask = _mm256_set1_epi32
++							(SXE2_RX_DESC_STATUS_EOP_MASK |
++							 SXE2_RX_DESC_ERROR_RXE_MASK |
++							 SXE2_RX_DESC_ERROR_OVERSIZE_MASK);
++
++			const __m128i eop_mask_128 = _mm_set1_epi16(SXE2_RX_DESC_STATUS_EOP_MASK);
++			const __m128i rxe_mask_128 = _mm_set1_epi16(SXE2_RX_DESC_ERROR_RXE_MASK |
++					SXE2_RX_DESC_ERROR_OVERSIZE_MASK);
++
++			const __m256i tmp_stats = _mm256_and_si256(staterrs0_7, eop_rxe_mask);
++
++			const __m128i eop_rxe_bits = _mm_packs_epi32
++							(_mm256_castsi256_si128(tmp_stats),
++							 _mm256_extractf128_si256(tmp_stats, 1));
++
++			__m128i not_eop_bits = _mm_andnot_si128(eop_rxe_bits, eop_mask_128);
++
++			not_eop_bits = _mm_or_si128
++					(not_eop_bits,
++					 _mm_srli_epi16
++					(_mm_and_si128(eop_rxe_bits, rxe_mask_128),
++					7));
++
++			not_eop_bits = _mm_shuffle_epi8(not_eop_bits, eop_shuf_mask);
++
++			*(uint64_t *)split_rxe_flags = _mm_cvtsi128_si64(not_eop_bits);
++			split_rxe_flags += SXE2_RX_NUM_PER_LOOP_AVX;
++		}
++
++		staterrs0_7 = _mm256_and_si256(staterrs0_7, dd_mask);
++
++		staterrs0_7 = _mm256_packs_epi32(staterrs0_7, _mm256_setzero_si256());
++		bit_num = rte_popcount64
++				(_mm_cvtsi128_si64(_mm256_extracti128_si256(staterrs0_7, 1)));
++		bit_num += rte_popcount64
++				(_mm_cvtsi128_si64(_mm256_castsi256_si128(staterrs0_7)));
++
++		done_num += bit_num;
++
++		if (bit_num != SXE2_RX_NUM_PER_LOOP_AVX)
++			break;
++	}
++
++	rxq->processing_idx += done_num;
++	rxq->processing_idx &= (rxq->ring_depth - 1);
++	if ((1 == (rxq->processing_idx & 1)) && done_num > 1) {
++		rxq->processing_idx--;
++		done_num--;
++	}
++	rxq->realloc_num     += done_num;
++
++l_end:
++	PMD_LOG_DEBUG(RX, "port_id=%u queue_id=%u last_id=%u recv_pkts=%d",
++		rxq->port_id, rxq->queue_id, rxq->processing_idx, done_num);
++	return done_num;
++}
++
++static __rte_always_inline uint16_t
++sxe2_rx_pkts_scattered_batch_vec_avx2(struct sxe2_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++		uint16_t nb_pkts, bool do_offload)
++{
++	const uint64_t *split_rxe_flags64;
++	uint8_t split_rxe_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
++	uint8_t umbcast_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
++	uint16_t rx_done_num;
++	uint16_t rx_pkt_done_num;
++
++	rx_pkt_done_num = 0;
++
++	if (rxq->vsi->adapter->devargs.sw_stats_en) {
++		rx_done_num = sxe2_rx_pkts_common_vec_avx2(rxq, rx_pkts, nb_pkts,
++				split_rxe_flags, umbcast_flags, do_offload);
++	} else {
++		rx_done_num = sxe2_rx_pkts_common_vec_avx2(rxq, rx_pkts, nb_pkts,
++				split_rxe_flags, NULL, do_offload);
++	}
++	if (rx_done_num == 0)
++		goto l_end;
++
++	if (!rxq->vsi->adapter->devargs.sw_stats_en) {
++		split_rxe_flags64 = (uint64_t *)split_rxe_flags;
++
++		if (rxq->pkt_first_seg == NULL &&
++				split_rxe_flags64[0] == 0 && split_rxe_flags64[1] == 0 &&
++				split_rxe_flags64[2] == 0 && split_rxe_flags64[3] == 0) {
++			rx_pkt_done_num = rx_done_num;
++			goto l_end;
++		}
++
++		if (rxq->pkt_first_seg == NULL) {
++			while (rx_pkt_done_num < rx_done_num &&
++					split_rxe_flags[rx_pkt_done_num] == 0)
++				rx_pkt_done_num++;
++
++			if (rx_pkt_done_num == rx_done_num)
++				goto l_end;
++
++			rxq->pkt_first_seg = rx_pkts[rx_pkt_done_num];
++		}
++	}
++
++	rx_pkt_done_num += sxe2_rx_pkts_refactor(rxq, &rx_pkts[rx_pkt_done_num],
++			rx_done_num - rx_pkt_done_num, &split_rxe_flags[rx_pkt_done_num],
++			&umbcast_flags[rx_pkt_done_num]);
++
++l_end:
++	return rx_pkt_done_num;
++}
++
++static __rte_always_inline uint16_t
++sxe2_rx_pkts_scattered_common_vec_avx2(struct sxe2_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++		uint16_t nb_pkts, bool do_offload)
++{
++	uint16_t done_num = 0;
++	uint16_t once_num;
++
++	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM) {
++		once_num =
++		sxe2_rx_pkts_scattered_batch_vec_avx2(rxq,
++						      rx_pkts + done_num,
++						      SXE2_RX_PKTS_BURST_BATCH_NUM,
++						      do_offload);
++		done_num += once_num;
++		nb_pkts -= once_num;
++		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM)
++			goto l_end;
++	}
++
++	done_num += sxe2_rx_pkts_scattered_batch_vec_avx2(rxq,
++			rx_pkts + done_num, nb_pkts, do_offload);
++l_end:
++	return done_num;
++}
++
++uint16_t sxe2_rx_pkts_scattered_vec_avx2(void *rx_queue,
++		struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	return sxe2_rx_pkts_scattered_common_vec_avx2(rx_queue,
++			rx_pkts, nb_pkts, false);
++}
++
++uint16_t sxe2_rx_pkts_scattered_vec_avx2_offload(void *rx_queue,
++		struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	return sxe2_rx_pkts_scattered_common_vec_avx2(rx_queue,
++			rx_pkts, nb_pkts, true);
++}
 -- 
 2.47.3
 
