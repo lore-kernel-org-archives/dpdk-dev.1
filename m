@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099B2CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Sun, 24 May 2026 09:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B321CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Sun, 24 May 2026 09:34:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7709A4067D;
-	Sun, 24 May 2026 11:33:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 84B8440693;
+	Sun, 24 May 2026 11:33:19 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 19245402EE
- for <dev@dpdk.org>; Sun, 24 May 2026 11:33:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9A6EB4042F
+ for <dev@dpdk.org>; Sun, 24 May 2026 11:33:09 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowABXd97QxRJq+04kEg--.9115S7;
- Sun, 24 May 2026 17:33:05 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowABXd97QxRJq+04kEg--.9115S12;
+ Sun, 24 May 2026 17:33:07 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v1 05/23] drivers: support RSS feature
-Date: Sun, 24 May 2026 17:32:41 +0800
-Message-ID: <20260524093259.397506-6-liujie5@linkdatatechnology.com>
+Subject: [PATCH v1 10/23] net/sxe2: add NEON vec Rx/Tx burst functions
+Date: Sun, 24 May 2026 17:32:46 +0800
+Message-ID: <20260524093259.397506-11-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260524093259.397506-1-liujie5@linkdatatechnology.com>
 References: <20260524093259.397506-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowABXd97QxRJq+04kEg--.9115S7
-X-Coremail-Antispam: 1UD129KBjvAXoWfKw4fGF47WFy5ZF17JFWDJwb_yoWxCr48uo
- WfWr12q3Wjya42yw45Zr1kXa4jqw47ZF4xJan3uFs8Can2v34UKr13Ja4rAF4UWrsIvr1j
- gwn3Zay8trsrAFW8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: rQCowABXd97QxRJq+04kEg--.9115S12
+X-Coremail-Antispam: 1UD129KBjvAXoWfuF43XF1fGFWDArWDCw18uFg_yoW5Cr4rXo
+ Wxur4fJr47Jr18Zws8ur1xZFyUtw4UZ34UCayF9F9xu3WkCFn0ka43t3WayFy7Gr4ftFs0
+ ga4Iyas3trZ3XrWxn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
  AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
- Ia0xkI8VCY1x0267AKxVW8JVW5JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
- 84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
- 4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
+ Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+ 84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
+ 4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
  JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
  IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
  M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l42
  xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
  GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI4
- 8JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
- MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
- 8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU1PfHUUUUU
+ 8JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+ MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I
+ 8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYGYpUUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -59,2053 +59,889 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add support for Receive Side Scaling (RSS) to distribute incoming
-traffic across multiple receive queues.
+- Implement sxe2_recv_pkts_vec_neon for bulk packet receiving.
+- Implement sxe2_xmit_pkts_vec_neon for bulk packet transmission.
+- Added logic to select the vectorized path based on runtime config
+  and CPU flags (RTE_ARCH_ARM64).
 
-- Implement rss_hash_update and rss_hash_conf_get.
-- Implement reta_update and reta_query.
-- Support RSS hash configuration for IPv4, IPv6, TCP and UDP.
-- Default hash key is initialized during port start.
+Vectorized path improves throughput for small packets by processing
+multiple descriptors simultaneously using SIMD instructions.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/common/sxe2/sxe2_flow_public.h | 633 +++++++++++++++++++++++++
- drivers/net/sxe2/meson.build           |   1 +
- drivers/net/sxe2/sxe2_cmd_chnl.c       | 173 +++++++
- drivers/net/sxe2/sxe2_cmd_chnl.h       |  16 +
- drivers/net/sxe2/sxe2_drv_cmd.h        |  29 ++
- drivers/net/sxe2/sxe2_ethdev.c         |  37 ++
- drivers/net/sxe2/sxe2_ethdev.h         |   8 +
- drivers/net/sxe2/sxe2_flow_define.h    | 143 ++++++
- drivers/net/sxe2/sxe2_queue.c          |  11 +
- drivers/net/sxe2/sxe2_rss.c            | 584 +++++++++++++++++++++++
- drivers/net/sxe2/sxe2_rss.h            |  81 ++++
- drivers/net/sxe2/sxe2_txrx.h           |   4 +
- drivers/net/sxe2/sxe2_txrx_poll.c      |  85 +++-
- 13 files changed, 1804 insertions(+), 1 deletion(-)
- create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
- create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
- create mode 100644 drivers/net/sxe2/sxe2_rss.c
- create mode 100644 drivers/net/sxe2/sxe2_rss.h
+ drivers/net/sxe2/meson.build            |   2 +
+ drivers/net/sxe2/sxe2_txrx.c            |  36 ++
+ drivers/net/sxe2/sxe2_txrx_vec.h        |  16 +-
+ drivers/net/sxe2/sxe2_txrx_vec_common.h |   1 -
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c   | 707 ++++++++++++++++++++++++
+ 5 files changed, 759 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
 
-diff --git a/drivers/common/sxe2/sxe2_flow_public.h b/drivers/common/sxe2/sxe2_flow_public.h
-new file mode 100644
-index 0000000000..32ab2a9713
---- /dev/null
-+++ b/drivers/common/sxe2/sxe2_flow_public.h
-@@ -0,0 +1,633 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_FLOW_PUBLIC_H__
-+#define __SXE2_FLOW_PUBLIC_H__
-+#include "sxe2_osal.h"
-+
-+enum sxe2_flow_type {
-+	SXE2_FLOW_TYPE_NONE                               = 0,
-+	SXE2_FLOW_MAC_PAY                                 = 1,
-+	SXE2_FLOW_MAC_IPV4_FRAG_PAY                       = 22,
-+	SXE2_FLOW_MAC_IPV4_PAY                            = 23,
-+	SXE2_FLOW_MAC_IPV4_UDP_PAY                        = 24,
-+	SXE2_FLOW_MAC_IPV4_TCP_PAY                        = 26,
-+	SXE2_FLOW_MAC_IPV4_SCTP_PAY                       = 27,
-+	SXE2_FLOW_MAC_IPV4_IPV4_FRAG_PAY                  = 29,
-+	SXE2_FLOW_MAC_IPV4_IPV4_PAY                       = 30,
-+	SXE2_FLOW_MAC_IPV4_IPV4_UDP_PAY                   = 31,
-+	SXE2_FLOW_MAC_IPV4_IPV4_TCP_PAY                   = 33,
-+	SXE2_FLOW_MAC_IPV4_IPV4_SCTP_PAY                  = 34,
-+	SXE2_FLOW_MAC_IPV4_IPV6_FRAG_PAY                  = 36,
-+	SXE2_FLOW_MAC_IPV4_IPV6_PAY                       = 37,
-+	SXE2_FLOW_MAC_IPV4_IPV6_UDP_PAY                   = 38,
-+	SXE2_FLOW_MAC_IPV4_IPV6_TCP_PAY                   = 40,
-+	SXE2_FLOW_MAC_IPV4_IPV6_SCTP_PAY                  = 41,
-+	SXE2_FLOW_MAC_IPV4_GRE_PAY                        = 43,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_FRAG_PAY              = 44,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_PAY                   = 45,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_UDP_PAY               = 46,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_TCP_PAY               = 48,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_SCTP_PAY              = 49,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_FRAG_PAY              = 51,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_PAY                   = 52,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_UDP_PAY               = 53,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_TCP_PAY               = 55,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_SCTP_PAY              = 56,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_PAY                    = 58,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_FRAG_PAY          = 59,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_PAY               = 60,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_UDP_PAY           = 61,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_TCP_PAY           = 63,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_SCTP_PAY          = 64,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_FRAG_PAY          = 66,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_PAY               = 67,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_UDP_PAY           = 68,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_TCP_PAY           = 70,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_SCTP_PAY          = 71,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_PAY               = 73,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_FRAG_PAY     = 74,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_PAY          = 75,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_UDP_PAY      = 76,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_TCP_PAY      = 78,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_SCTP_PAY     = 79,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_FRAG_PAY     = 81,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_PAY          = 82,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_UDP_PAY      = 83,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_TCP_PAY      = 85,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_SCTP_PAY     = 86,
-+	SXE2_FLOW_MAC_IPV6_FRAG_PAY                       = 88,
-+	SXE2_FLOW_MAC_IPV6_PAY                            = 89,
-+	SXE2_FLOW_MAC_IPV6_UDP_PAY                        = 90,
-+	SXE2_FLOW_MAC_IPV6_TCP_PAY                        = 92,
-+	SXE2_FLOW_MAC_IPV6_SCTP_PAY                       = 93,
-+	SXE2_FLOW_MAC_IPV6_IPV4_FRAG_PAY                  = 95,
-+	SXE2_FLOW_MAC_IPV6_IPV4_PAY                       = 96,
-+	SXE2_FLOW_MAC_IPV6_IPV4_UDP_PAY                   = 97,
-+	SXE2_FLOW_MAC_IPV6_IPV4_TCP_PAY                   = 99,
-+	SXE2_FLOW_MAC_IPV6_IPV4_SCTP_PAY                  = 100,
-+	SXE2_FLOW_MAC_IPV6_IPV6_FRAG_PAY                  = 102,
-+	SXE2_FLOW_MAC_IPV6_IPV6_PAY                       = 103,
-+	SXE2_FLOW_MAC_IPV6_IPV6_UDP_PAY                   = 104,
-+	SXE2_FLOW_MAC_IPV6_IPV6_TCP_PAY                   = 106,
-+	SXE2_FLOW_MAC_IPV6_IPV6_SCTP_PAY                  = 107,
-+	SXE2_FLOW_MAC_IPV6_GRE_PAY                        = 109,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_FRAG_PAY              = 110,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_PAY                   = 111,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_UDP_PAY               = 112,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_TCP_PAY               = 114,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_SCTP_PAY              = 115,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_FRAG_PAY              = 117,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_PAY                   = 118,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_UDP_PAY               = 119,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_TCP_PAY               = 121,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_SCTP_PAY              = 122,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_PAY                    = 124,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_FRAG_PAY          = 125,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_PAY               = 126,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_UDP_PAY           = 127,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_TCP_PAY           = 129,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_SCTP_PAY          = 130,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_FRAG_PAY          = 132,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_PAY               = 133,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_UDP_PAY           = 134,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_TCP_PAY           = 136,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_SCTP_PAY          = 137,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_PAY               = 139,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_FRAG_PAY     = 140,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_PAY          = 141,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_UDP_PAY      = 142,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_TCP_PAY      = 144,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_SCTP_PAY     = 145,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_FRAG_PAY     = 147,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_PAY          = 148,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_UDP_PAY      = 149,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_TCP_PAY      = 151,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_SCTP_PAY     = 152,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_PAY                   = 329,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_PAY                   = 330,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_FRAG_PAY         = 331,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_PAY              = 332,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_UDP_PAY          = 333,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_TCP_PAY          = 334,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_SCTP_PAY         = 335,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_FRAG_PAY         = 336,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_PAY              = 337,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_UDP_PAY          = 338,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_TCP_PAY          = 339,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_SCTP_PAY         = 340,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_FRAG_PAY         = 341,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_PAY              = 342,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_UDP_PAY          = 343,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_TCP_PAY          = 344,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_SCTP_PAY         = 345,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_FRAG_PAY         = 346,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_PAY              = 347,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_UDP_PAY          = 348,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_TCP_PAY          = 349,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_SCTP_PAY         = 350,
-+	SXE2_FLOW_MAC_IPV6_MAC_PAY                        = 820,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_FRAG_PAY              = 821,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_PAY                   = 822,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_UDP_PAY               = 823,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_TCP_PAY               = 824,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_SCTP_PAY              = 825,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_FRAG_PAY              = 827,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_PAY                   = 828,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_UDP_PAY               = 829,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_TCP_PAY               = 830,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_SCTP_PAY              = 831,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_PAY                   = 835,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_FRAG_PAY         = 836,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_PAY              = 837,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_UDP_PAY          = 838,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_TCP_PAY          = 839,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_SCTP_PAY         = 840,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_FRAG_PAY         = 842,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_PAY              = 843,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_UDP_PAY          = 844,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_TCP_PAY          = 845,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_SCTP_PAY         = 846,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_PAY                  = 878,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_FRAG_PAY        = 877,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_PAY             = 876,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_UDP_PAY         = 879,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_TCP_PAY         = 880,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_SCTP_PAY        = 875,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_FRAG_PAY        = 871,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_PAY             = 870,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_UDP_PAY         = 872,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_TCP_PAY         = 873,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_SCTP_PAY        = 869,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_PAY                  = 891,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_FRAG_PAY        = 890,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_PAY             = 889,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_UDP_PAY         = 892,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_TCP_PAY         = 893,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_SCTP_PAY        = 888,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_FRAG_PAY        = 884,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_PAY             = 883,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_UDP_PAY         = 885,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_TCP_PAY         = 886,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_SCTP_PAY        = 882,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_PAY                    = 904,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_FRAG_PAY          = 903,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_PAY               = 902,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_UDP_PAY           = 905,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_TCP_PAY           = 906,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_SCTP_PAY          = 901,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_FRAG_PAY          = 897,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_PAY               = 896,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_UDP_PAY           = 898,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_TCP_PAY           = 899,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_SCTP_PAY          = 895,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_PAY                    = 917,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_FRAG_PAY          = 916,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_PAY               = 915,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_UDP_PAY           = 918,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_TCP_PAY           = 919,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_SCTP_PAY          = 914,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_FRAG_PAY          = 910,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_PAY               = 909,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_UDP_PAY           = 911,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_TCP_PAY           = 912,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_SCTP_PAY          = 908,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_PAY         = 930,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_FRAG_PAY = 929,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_PAY    = 928,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_UDP_PAY = 931,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_TCP_PAY = 932,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_SCTP_PAY = 927,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_FRAG_PAY = 923,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_PAY    = 922,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_UDP_PAY = 924,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_TCP_PAY = 925,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_SCTP_PAY = 921,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_PAY         = 943,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_FRAG_PAY = 942,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_PAY    = 941,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_UDP_PAY = 944,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_TCP_PAY = 945,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_SCTP_PAY = 940,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_FRAG_PAY = 936,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_PAY    = 935,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_UDP_PAY = 937,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_TCP_PAY = 938,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_SCTP_PAY = 934,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_PAY           = 956,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_FRAG_PAY = 955,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_PAY      = 954,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_UDP_PAY  = 957,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_TCP_PAY  = 958,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_SCTP_PAY = 953,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_FRAG_PAY = 949,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_PAY      = 948,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_UDP_PAY  = 950,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_TCP_PAY  = 951,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_SCTP_PAY = 947,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_PAY           = 969,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_FRAG_PAY = 968,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_PAY      = 967,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_UDP_PAY  = 970,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_TCP_PAY  = 971,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_SCTP_PAY = 966,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_FRAG_PAY = 962,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_PAY      = 961,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_UDP_PAY  = 963,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_TCP_PAY  = 964,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_SCTP_PAY = 960,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_PAY              = 982,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_FRAG_PAY    = 981,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_PAY         = 980,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_UDP_PAY     = 983,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_TCP_PAY     = 984,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_SCTP_PAY    = 979,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_FRAG_PAY    = 975,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_PAY         = 974,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_UDP_PAY     = 976,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_TCP_PAY     = 977,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_SCTP_PAY    = 973,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_PAY              = 995,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_FRAG_PAY    = 994,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_PAY         = 993,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_UDP_PAY     = 996,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_TCP_PAY     = 997,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_SCTP_PAY    = 992,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_FRAG_PAY    = 988,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_PAY         = 987,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_UDP_PAY     = 989,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_TCP_PAY     = 990,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_SCTP_PAY    = 986,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_PAY                = 1008,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_FRAG_PAY      = 1007,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_PAY           = 1006,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_UDP_PAY       = 1009,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_TCP_PAY       = 1010,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_SCTP_PAY      = 1005,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_FRAG_PAY      = 1001,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_PAY           = 1000,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_UDP_PAY       = 1002,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_TCP_PAY       = 1003,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_SCTP_PAY      = 999,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_PAY                = 1021,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_FRAG_PAY      = 1020,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_PAY           = 1019,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_UDP_PAY       = 1022,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_TCP_PAY       = 1023,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_SCTP_PAY      = 1018,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_FRAG_PAY      = 1014,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_PAY           = 1013,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_UDP_PAY       = 1015,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_TCP_PAY       = 1016,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_SCTP_PAY      = 1012,
-+	SXE2_FLOW_TYPE_MAX                                = 2048,
-+};
-+
-+enum sxe2_rss_cfg_hdr_type {
-+	SXE2_RSS_OUTER_HEADERS,
-+	SXE2_RSS_INNER_HEADERS,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_GRE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_GRE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_UDP_GRE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_UDP_GRE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_UDP_VXLAN,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_UDP_VXLAN,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_UDP_GENEVE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_UDP_GENEVE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_UDP_GTPU,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_UDP_GTPU,
-+	SXE2_RSS_ANY_HEADERS
-+};
-+
-+enum sxe2_flow_hdr {
-+	SXE2_FLOW_HDR_ETH = 0,
-+	SXE2_FLOW_HDR_VLAN,
-+	SXE2_FLOW_HDR_QINQ,
-+	SXE2_FLOW_HDR_IPV4,
-+	SXE2_FLOW_HDR_IPV6,
-+	SXE2_FLOW_HDR_ICMP = 5,
-+	SXE2_FLOW_HDR_TCP,
-+	SXE2_FLOW_HDR_UDP,
-+	SXE2_FLOW_HDR_SCTP,
-+	SXE2_FLOW_HDR_GRE,
-+	SXE2_FLOW_HDR_VXLAN = 10,
-+	SXE2_FLOW_HDR_GENEVE,
-+	SXE2_FLOW_HDR_GTPU,
-+
-+	SXE2_FLOW_HDR_IPV_FRAG,
-+
-+	SXE2_FLOW_HDR_IPV_OTHER,
-+
-+	SXE2_FLOW_HDR_ETH_NON_IP = 15,
-+	SXE2_FLOW_HDR_MAX = 128,
-+};
-+
-+enum sxe2_flow_fld_id {
-+	SXE2_FLOW_FLD_ID_ETH_DA = 0,
-+	SXE2_FLOW_FLD_ID_ETH_SA,
-+	SXE2_FLOW_FLD_ID_S_TCI,
-+	SXE2_FLOW_FLD_ID_C_TCI,
-+	SXE2_FLOW_FLD_ID_S_TPID,
-+	SXE2_FLOW_FLD_ID_C_TPID = 5,
-+	SXE2_FLOW_FLD_ID_S_VID,
-+	SXE2_FLOW_FLD_ID_C_VID,
-+	SXE2_FLOW_FLD_ID_ETH_TYPE,
-+
-+	SXE2_FLOW_FLD_ID_IPV4_TOS,
-+	SXE2_FLOW_FLD_ID_IPV6_DSCP = 10,
-+	SXE2_FLOW_FLD_ID_IPV4_TTL,
-+	SXE2_FLOW_FLD_ID_IPV4_PROT,
-+	SXE2_FLOW_FLD_ID_IPV6_TTL,
-+	SXE2_FLOW_FLD_ID_IPV6_PROT,
-+	SXE2_FLOW_FLD_ID_IPV4_SA = 15,
-+	SXE2_FLOW_FLD_ID_IPV4_DA,
-+	SXE2_FLOW_FLD_ID_IPV6_SA,
-+	SXE2_FLOW_FLD_ID_IPV6_DA,
-+	SXE2_FLOW_FLD_ID_IPV4_CHKSUM,
-+	SXE2_FLOW_FLD_ID_IPV4_ID = 20,
-+	SXE2_FLOW_FLD_ID_IPV6_ID,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE32_SA,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE32_DA,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE48_SA,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE48_DA = 25,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE64_SA,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE64_DA,
-+
-+	SXE2_FLOW_FLD_ID_TCP_SRC_PORT,
-+	SXE2_FLOW_FLD_ID_TCP_DST_PORT,
-+	SXE2_FLOW_FLD_ID_UDP_SRC_PORT = 30,
-+	SXE2_FLOW_FLD_ID_UDP_DST_PORT,
-+	SXE2_FLOW_FLD_ID_SCTP_SRC_PORT,
-+	SXE2_FLOW_FLD_ID_SCTP_DST_PORT,
-+	SXE2_FLOW_FLD_ID_TCP_FLAGS,
-+	SXE2_FLOW_FLD_ID_TCP_CHKSUM = 35,
-+	SXE2_FLOW_FLD_ID_UDP_CHKSUM,
-+	SXE2_FLOW_FLD_ID_SCTP_CHKSUM,
-+
-+	SXE2_FLOW_FLD_ID_VXLAN_VNI,
-+
-+	SXE2_FLOW_FLD_ID_GENEVE_VNI,
-+
-+	SXE2_FLOW_FLD_ID_GTPU_TEID = 40,
-+
-+	SXE2_FLOW_FLD_ID_NVGRE_TNI,
-+
-+	SXE2_FLOW_FLD_ID_MAX = 128,
-+};
-+
-+struct sxe2_ether_hdr {
-+	uint8_t dst_addr[SXE2_ETH_ALEN];
-+	uint8_t src_addr[SXE2_ETH_ALEN];
-+	uint16_t  ether_type;
-+};
-+
-+struct sxe2_vlan_hdr {
-+	uint16_t  type;
-+	uint16_t  vlan;
-+};
-+
-+struct sxe2_ipv4_hdr {
-+	uint8_t ver_ihl;
-+	uint8_t tos;
-+	uint16_t  tot_len;
-+	uint16_t  id;
-+	uint16_t  frag_off;
-+	uint8_t ttl;
-+	uint8_t protocol;
-+	uint16_t  check;
-+	uint32_t saddr;
-+	uint32_t daddr;
-+};
-+#define SXE2_IPV6_ADDR_LENGTH        (16)
-+#define SXE2_IPV6_TC_SHIFT (20)
-+#define SXE2_IPV6_TC_MASK  (0xFF)
-+
-+struct sxe2_ipv6_hdr {
-+	uint32_t pri_ver_flow;
-+	uint16_t  payload_len;
-+	uint8_t nexthdr;
-+	uint8_t hop_limit;
-+	union {
-+		uint8_t saddr[16];
-+		uint16_t	saddr16[8];
-+		uint32_t	saddr32[4];
-+	};
-+	union {
-+		uint8_t daddr[16];
-+		uint16_t	daddr16[8];
-+		uint32_t	daddr32[4];
-+	};
-+};
-+
-+struct sxe2_tcp_hdr {
-+	uint16_t  source;
-+	uint16_t  dest;
-+	uint32_t seq;
-+	uint32_t ack_seq;
-+	uint16_t  flag;
-+	uint16_t  window;
-+	uint16_t  check;
-+	uint16_t  urg_ptr;
-+};
-+
-+struct sxe2_udp_hdr {
-+	uint16_t  source;
-+	uint16_t  dest;
-+	uint16_t  len;
-+	uint16_t  check;
-+};
-+
-+struct sxe2_sctp_hdr {
-+	uint16_t src_port;
-+	uint16_t dst_port;
-+};
-+
-+struct sxe2_nvgre_hdr {
-+	uint16_t flags;
-+	uint16_t protocol;
-+	uint32_t tni;
-+};
-+struct sxe2_geneve_hdr {
-+	uint16_t flags;
-+	uint16_t protocol;
-+	uint32_t vni;
-+};
-+struct sxe2_gtpu_hdr {
-+	uint8_t flag;
-+	uint8_t msg_type;
-+	uint16_t msg_len;
-+	uint32_t teid;
-+};
-+struct sxe2_vxlan_hdr {
-+	uint8_t flag;
-+	uint8_t resvd0;
-+	uint8_t resvd1;
-+	uint8_t protocol;
-+	uint32_t vni;
-+};
-+
-+enum sxe2_flow_act_type {
-+	SXE2_FLOW_ACTION_DROP = 0,
-+	SXE2_FLOW_ACTION_TC_REDIRECT,
-+	SXE2_FLOW_ACTION_TO_VSI,
-+	SXE2_FLOW_ACTION_TO_VSI_LIST,
-+	SXE2_FLOW_ACTION_PASSTHRU,
-+	SXE2_FLOW_ACTION_QUEUE,
-+	SXE2_FLOW_ACTION_Q_REGION,
-+	SXE2_FLOW_ACTION_MARK,
-+	SXE2_FLOW_ACTION_COUNT,
-+	SXE2_FLOW_ACTION_RSS,
-+	SXE2_FLOW_ACTION_MAX = 32,
-+};
-+
-+enum sxe2_rss_hash_key_func {
-+	SXE2_RSS_HASH_FUNC_TOEPLITZ     = 0,
-+	SXE2_RSS_HASH_FUNC_SYM_TOEPLITZ = 1,
-+	SXE2_RSS_HASH_FUNC_XOR          = 2,
-+	SXE2_RSS_HASH_FUNC_JEKINS       = 3
-+};
-+
-+struct sxe2_flow_action_rss {
-+	DECLARE_BITMAP(hdr_out, SXE2_FLOW_HDR_MAX);
-+	DECLARE_BITMAP(hdr_in, SXE2_FLOW_HDR_MAX);
-+	DECLARE_BITMAP(fld, SXE2_FLOW_FLD_ID_MAX);
-+	uint8_t is_inner;
-+	uint8_t func;
-+	uint8_t hdr_type;
-+};
-+
-+struct sxe2_flow_action_queue {
-+	uint16_t vsi_index;
-+	uint16_t q_index;
-+};
-+
-+struct sxe2_flow_action_queue_region {
-+	uint16_t vsi_index;
-+	uint16_t q_index;
-+	uint8_t region;
-+};
-+
-+struct sxe2_flow_action_passthru {
-+	uint16_t vsi_index;
-+};
-+
-+struct sxe2_flow_action_mark {
-+	uint32_t mark_id;
-+};
-+
-+#define SXE2_VSI_MAX (2048)
-+struct sxe2_flow_action_vsi {
-+	uint16_t vsi_index;
-+};
-+
-+struct sxe2_flow_action_vsi_list {
-+	DECLARE_BITMAP(vsi_list_map, SXE2_VSI_MAX);
-+	uint16_t vsi_cnt;
-+};
-+
-+enum sxe2_fnav_stat_ctrl_type {
-+	SXE2_FNAV_STAT_ENA_NONE = 0,
-+	SXE2_FNAV_STAT_ENA_PKTS,
-+	SXE2_FNAV_STAT_ENA_BYTES,
-+	SXE2_FNAV_STAT_ENA_ALL,
-+};
-+
-+struct sxe2_flow_action_count {
-+	uint32_t user_id;
-+	uint32_t driver_id;
-+	uint32_t stat_index;
-+	uint32_t stat_ctrl;
-+};
-+
-+enum sxe2_flow_engine_type {
-+	SXE2_FLOW_ENGINE_ACL,
-+	SXE2_FLOW_ENGINE_SWITCH,
-+	SXE2_FLOW_ENGINE_FNAV,
-+	SXE2_FLOW_ENGINE_RSS,
-+	SXE2_FLOW_ENGINE_MAX,
-+};
-+
-+struct sxe2_flow_item {
-+	struct sxe2_ether_hdr eth;
-+	struct sxe2_vlan_hdr vlan;
-+	struct sxe2_vlan_hdr qinq;
-+	struct sxe2_ipv4_hdr ipv4;
-+	struct sxe2_ipv6_hdr ipv6;
-+	struct sxe2_udp_hdr udp;
-+	struct sxe2_tcp_hdr tcp;
-+	struct sxe2_sctp_hdr sctp;
-+	struct sxe2_gtpu_hdr gtpu;
-+	struct sxe2_vxlan_hdr vxlan;
-+	struct sxe2_nvgre_hdr nvgre;
-+	struct sxe2_geneve_hdr geneve;
-+};
-+
-+enum sxe2_flow_sw_direct_type {
-+	SXE2_FLOW_SW_DIRECT_TX,
-+	SXE2_FLOW_SW_DIRECT_RX,
-+	SXE2_FLOW_SW_DIRECT_MAX,
-+};
-+enum sxe2_flow_sw_pattern_type {
-+	SXE2_FLOW_SW_PATTERN_ONLY,
-+	SXE2_FLOW_SW_PATTERN_LAST,
-+	SXE2_FLOW_SW_PATTERN_FIRST,
-+	SXE2_FLOW_SW_PATTERN_MAX,
-+};
-+
-+enum sxe2_flow_tunnel_type {
-+	SXE2_FLOW_TUNNEL_TYPE_NONE,
-+	SXE2_FLOW_TUNNEL_TYPE_PARENT,
-+	SXE2_FLOW_TUNNEL_TYPE_VXLAN,
-+	SXE2_FLOW_TUNNEL_TYPE_GTPU,
-+	SXE2_FLOW_TUNNEL_TYPE_GENEVE,
-+	SXE2_FLOW_TUNNEL_TYPE_GRE,
-+	SXE2_FLOW_TUNNEL_TYPE_IPIP,
-+};
-+
-+struct sxe2_flow_meta {
-+	uint8_t switch_pattern_dup_allow;
-+	uint8_t switch_src_direct;
-+	uint16_t flow_src_vsi;
-+	uint16_t flow_rule_vsi;
-+	uint32_t flow_prio;
-+	uint16_t flow_type;
-+	uint8_t tunnel_type;
-+	uint8_t rsv;
-+};
-+
-+struct sxe2_flow_pattern {
-+	DECLARE_BITMAP(hdrs, SXE2_FLOW_HDR_MAX);
-+	DECLARE_BITMAP(map_spec, SXE2_FLOW_FLD_ID_MAX);
-+	DECLARE_BITMAP(map_mask, SXE2_FLOW_FLD_ID_MAX);
-+	struct sxe2_flow_item item_spec;
-+	struct sxe2_flow_item item_mask;
-+	uint64_t rss_type_allow;
-+};
-+
-+struct sxe2_flow_action {
-+	DECLARE_BITMAP(act_types, SXE2_FLOW_ACTION_MAX);
-+	struct sxe2_flow_action_rss rss;
-+	struct sxe2_flow_action_queue queue;
-+	struct sxe2_flow_action_queue_region q_region;
-+	struct sxe2_flow_action_passthru passthru;
-+	struct sxe2_flow_action_vsi vsi;
-+	struct sxe2_flow_action_vsi_list vsi_list;
-+	struct sxe2_flow_action_mark mark;
-+	struct sxe2_flow_action_count count;
-+};
-+#endif /* __SXE2_FLOW_PUBLIC_H__ */
 diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index 8ff74e5233..dfd31bfc97 100644
+index c73e13bbad..0658b2ee3a 100644
 --- a/drivers/net/sxe2/meson.build
 +++ b/drivers/net/sxe2/meson.build
-@@ -62,6 +62,7 @@ sources += files(
-         'sxe2_txrx_vec.c',
-         'sxe2_mac.c',
-         'sxe2_filter.c',
-+        'sxe2_rss.c',
- )
+@@ -48,6 +48,8 @@ if arch_subdir == 'x86'
+                 include_directories: includes,
+                 c_args: [cflags, '-mavx2'])
+         objs += sxe2_avx2_lib.extract_objects('sxe2_txrx_vec_avx2.c')
++elif arch_subdir == 'arm'
++        sources += files('sxe2_txrx_vec_neon.c')
+ endif
  
- allow_internal_get_api = true
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index 1fa9ad718e..b997e7b044 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -541,3 +541,176 @@ int32_t sxe2_drv_vlan_filter_switch(struct sxe2_adapter *adapter, bool on)
+ sources += files(
+diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
+index dcfaf7278d..2eb8365457 100644
+--- a/drivers/net/sxe2/sxe2_txrx.c
++++ b/drivers/net/sxe2/sxe2_txrx.c
+@@ -176,6 +176,10 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
  
- 	return ret;
- }
-+
-+int32_t sxe2_drv_rss_key_set(struct sxe2_adapter *adapter, uint8_t *key, uint16_t key_size)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_key_req *req = NULL;
-+	int32_t ret = 0;
-+	uint16_t buf_size = sizeof(*req) + key_size;
-+
-+	req = rte_zmalloc("drv_cmd_rss_key", buf_size, 0);
-+	if (!req) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to alloc rss key");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+
-+	req->vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req->key_size = rte_cpu_to_le_16(key_size);
-+	rte_memcpy(req->key, key, key_size);
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_KEY_SET,
-+		req, buf_size, NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd set rss key, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	if (req) {
-+		rte_free(req);
-+		req = NULL;
-+	}
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_rss_lut_set(struct sxe2_adapter *adapter, uint8_t *lut, uint16_t lut_size)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_lut_req *req = NULL;
-+	int32_t ret = 0;
-+	uint16_t buf_size = sizeof(struct sxe2_rss_lut_req) + lut_size;
-+
-+	req = rte_zmalloc("drv_cmd_rss_lut", buf_size, 0);
-+	if (!req) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to alloc rss lut");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+
-+	req->vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req->lut_size = rte_cpu_to_le_16(lut_size);
-+	rte_memcpy(req->lut, lut, lut_size);
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_LUT_SET,
-+		req, buf_size, NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd set rss lut, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	if (req) {
-+		rte_free(req);
-+		req = NULL;
-+	}
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_rss_hash_ctrl_func(struct sxe2_adapter *adapter, enum sxe2_rss_hash_key_func func)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_func_req req = {0};
-+	int32_t ret = 0;
-+
-+	req.vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req.func = func;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_FUNC_SET,
-+		&req, sizeof(req), NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd set rss func, ret=%d", ret);
-+	return ret;
-+}
-+
-+static void sxe2_drv_flow_bitmap_fill(uint32_t *bitmap, uint16_t *list)
-+{
-+	uint16_t index = 0;
-+	uint16_t i = 0;
-+	uint16_t map_size = sizeof(*bitmap) * SXE2_BITS_PER_BYTE;
-+
-+	while (list[i] != SXE2_FLOW_END) {
-+		index = list[i] / map_size;
-+		bitmap[index] |= (1UL << (list[i] % map_size));
-+		i++;
-+	}
-+}
-+
-+int32_t sxe2_drv_rss_hf_add(struct sxe2_adapter *adapter,
-+			struct sxe2_rss_hf_config *rss_conf)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_hf_req req = {0};
-+	int32_t ret = 0;
-+
-+	req.vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req.symm = rss_conf->symm;
-+	req.hdr_type = rte_cpu_to_le_32(SXE2_RSS_OUTER_HEADERS);
-+	sxe2_drv_flow_bitmap_fill(req.headers, rss_conf->hdrs);
-+	sxe2_drv_flow_bitmap_fill(req.hash_flds, rss_conf->flds);
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_HF_ADD,
-+		&req, sizeof(req), NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd add rss hf, ret=%d", ret);
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_rss_hf_del(struct sxe2_adapter *adapter,
-+				struct sxe2_rss_hf_config *rss_conf)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_hf_req req = {0};
-+	int32_t ret = 0;
-+
-+	req.vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req.symm = rss_conf->symm;
-+	req.hdr_type = rte_cpu_to_le_32(SXE2_RSS_OUTER_HEADERS);
-+	sxe2_drv_flow_bitmap_fill(req.headers, rss_conf->hdrs);
-+	sxe2_drv_flow_bitmap_fill(req.hash_flds, rss_conf->flds);
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_HF_DEL,
-+		&req, sizeof(req), NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd del rss hf, ret=%d", ret);
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_rss_hf_clear(struct sxe2_adapter *adapter)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	int32_t ret = 0;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_HF_CLEAR,
-+		NULL, 0, NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd clear rss hf, ret=%d", ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_ptp_gettime(struct sxe2_adapter *adapter, struct sxe2_rx_queue *rxq)
-+{
-+	(void)adapter;
-+	(void)rxq;
-+	return 0;
-+}
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index fb01c41aad..3274db6551 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -53,4 +53,20 @@ int32_t sxe2_drv_vlan_insert_strip_cfg(struct sxe2_adapter *adapter);
- 
- int32_t sxe2_drv_vlan_filter_switch(struct sxe2_adapter *adapter, bool on);
- 
-+int32_t sxe2_drv_rss_key_set(struct sxe2_adapter *adapter, uint8_t *key, uint16_t key_size);
-+
-+int32_t sxe2_drv_rss_lut_set(struct sxe2_adapter *adapter, uint8_t *lut, uint16_t lut_size);
-+
-+int32_t sxe2_drv_rss_hash_ctrl_func(struct sxe2_adapter *adapter, enum sxe2_rss_hash_key_func func);
-+
-+int32_t sxe2_drv_rss_hf_add(struct sxe2_adapter *adapter,
-+			struct sxe2_rss_hf_config *rss_conf);
-+
-+int32_t sxe2_drv_rss_hf_del(struct sxe2_adapter *adapter,
-+				struct sxe2_rss_hf_config *rss_conf);
-+
-+int32_t sxe2_drv_rss_hf_clear(struct sxe2_adapter *adapter);
-+
-+int32_t sxe2_drv_ptp_gettime(struct sxe2_adapter *adapter, struct sxe2_rx_queue *rxq);
-+
- #endif /* __SXE2_CMD_CHNL_H__ */
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index c9d7cc719b..ced5a4b1a0 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -6,6 +6,7 @@
- #define __SXE2_DRV_CMD_H__
- 
- #include "sxe2_osal.h"
-+#include "sxe2_flow_public.h"
- 
- #define SXE2_DRV_CMD_MODULE_S        (16)
- #define SXE2_MK_DRV_CMD(module, cmd) (((module) << SXE2_DRV_CMD_MODULE_S) | ((cmd) & 0xFFFF))
-@@ -320,6 +321,34 @@ struct sxe2_vlan_filter_switch_req {
- 	uint8_t rsv;
+ 			if ((0 == (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK)))
+ 				tx_mode_flags |=  SXE2_TX_MODE_VEC_SSE;
++#elif defined(RTE_ARCH_ARM64)
++			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1) {
++				tx_mode_flags |= (vec_flags | SXE2_TX_MODE_VEC_NEON);
++			}
+ #endif
+ 			if (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) {
+ 				ret = sxe2_tx_queues_vec_prepare(dev);
+@@ -228,6 +232,13 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
+ 				dev->tx_pkt_burst = sxe2_tx_pkts_vec_sse_simple;
+ 			}
+ 		}
++#elif defined(RTE_ARCH_ARM64)
++		if (adapter->tx_mode_flags & SXE2_TX_MODE_VEC_NEON) {
++			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
++			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon;
++		} else {
++			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon_simple;
++		}
+ 	} else {
+ #endif
+ 		if (tx_mode_flags & SXE2_TX_MODE_SIMPLE_BATCH) {
+@@ -263,6 +274,12 @@ static const struct {
+ 	{ sxe2_tx_pkts_vec_sse_simple,
+ 	      "Vector SSE Simple" },
+ #endif
++#ifdef RTE_ARCH_ARM64
++	{ sxe2_tx_pkts_vec_neon,
++	  "Vector NEON" },
++	{ sxe2_tx_pkts_vec_neon_simple,
++	  "Vector NEON Simple" },
++#endif
  };
  
-+struct sxe2_rss_key_req {
-+	__le16 vsi_id;
-+	__le16 key_size;
-+	uint8_t key[];
-+};
+ int32_t sxe2_tx_burst_mode_get(struct rte_eth_dev *dev,
+@@ -366,6 +383,11 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
+ 			if (((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0) &&
+ 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
+ 				rx_mode_flags |= SXE2_RX_MODE_VEC_SSE;
 +
-+struct sxe2_rss_lut_req {
-+	__le16 vsi_id;
-+	__le16 lut_size;
-+	uint8_t lut[];
-+};
-+
-+struct sxe2_rss_func_req {
-+	__le16 vsi_id;
-+	uint8_t func;
-+	uint8_t rsv[1];
-+};
-+
-+struct sxe2_rss_hf_req {
-+	__le16 vsi_id;
-+	uint8_t rsv[2];
-+	uint32_t headers[BITS_TO_U32(SXE2_FLOW_HDR_MAX)];
-+	uint32_t hash_flds[BITS_TO_U32(SXE2_FLOW_FLD_ID_MAX)];
-+	uint32_t hdr_type;
-+	uint8_t symm;
-+	uint8_t rsv1[3];
-+};
-+
- enum sxe2_drv_cmd_module {
- 	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
- 	SXE2_DRV_CMD_MODULE_DEV = 1,
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 9b117f097e..d48841b8e4 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -125,6 +125,11 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 
- 	.vlan_filter_set            = sxe2_dev_vlan_filter_set,
- 	.vlan_offload_set           = sxe2_dev_vlan_offload_set,
-+
-+	.reta_update                = sxe2_dev_rss_reta_update,
-+	.reta_query                 = sxe2_dev_rss_reta_query,
-+	.rss_hash_update            = sxe2_dev_rss_hash_update,
-+	.rss_hash_conf_get          = sxe2_dev_rss_hash_conf_get,
- };
- 
- static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-@@ -141,6 +146,12 @@ static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
- 		goto end;
++#elif defined(RTE_ARCH_ARM64)
++			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1) {
++				rx_mode_flags |= (vec_flags | SXE2_RX_MODE_VEC_NEON);
++			}
+ #endif
+ 			if ((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) != 0) {
+ 				ret = sxe2_rx_queues_vec_prepare(dev);
+@@ -397,6 +419,14 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
+ 		}
+ 		return;
  	}
- 
-+	ret = sxe2_rss_init(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to init rss, ret=%d", ret);
-+		goto end;
++#elif defined(RTE_ARCH_ARM64)
++	if (rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) {
++		if (rx_mode_flags & SXE2_RX_MODE_VEC_OFFLOAD)
++			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_neon_offload;
++		else
++			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_neon;
++		goto l_end;
 +	}
-+
- end:
- 	return ret;
- }
-@@ -281,6 +292,22 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
- 		RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |
- 		RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO;
- 
-+
-+	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_PTP)
-+		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
-+
-+	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_RSS) {
-+		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
-+		dev_info->flow_type_rss_offloads  |= SXE2_RSS_HF_SUPPORT_ALL;
-+		dev_info->reta_size = adapter->rss_ctxt.rss_lut_size;
-+		dev_info->hash_key_size = adapter->rss_ctxt.rss_key_size;
-+		dev_info->rss_algo_capa =
-+			RTE_ETH_HASH_ALGO_TO_CAPA(RTE_ETH_HASH_FUNCTION_DEFAULT) |
-+			RTE_ETH_HASH_ALGO_TO_CAPA(RTE_ETH_HASH_FUNCTION_TOEPLITZ) |
-+			RTE_ETH_HASH_ALGO_TO_CAPA(RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ) |
-+			RTE_ETH_HASH_ALGO_TO_CAPA(RTE_ETH_HASH_FUNCTION_SIMPLE_XOR);
-+	}
-+
- 	dev_info->default_rxconf = (struct rte_eth_rxconf) {
- 		.rx_thresh = {
- 			.pthresh = SXE2_DEFAULT_RX_PTHRESH,
-@@ -563,6 +590,8 @@ static int32_t sxe2_func_caps_get(struct sxe2_adapter *adapter)
- 
- 	sxe2_sw_queue_ctx_hw_cap_set(adapter, &dev_caps.queue_caps);
- 
-+	sxe2_sw_rss_ctx_hw_cap_set(adapter, &dev_caps.rss_hash_caps);
-+
- 	sxe2_sw_vsi_ctx_hw_cap_set(adapter, &dev_caps.vsi_caps);
- 
- l_end:
-@@ -950,8 +979,15 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
- 		goto init_eth_err;
- 	}
- 
-+	ret = sxe2_rss_disable(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to disable rss, ret=%d", ret);
-+		goto init_rss_err;
-+	}
-+
- 	goto l_end;
- 
-+init_rss_err:
- init_eth_err:
- init_dev_info_err:
- 	sxe2_vsi_uninit(dev);
-@@ -965,6 +1001,7 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
- {
- 	(void)sxe2_dev_stop(dev);
- 	(void)sxe2_queues_release(dev);
-+	(void)sxe2_rss_disable(dev);
- 	sxe2_vsi_uninit(dev);
- 	sxe2_dev_pci_map_uinit(dev);
- 	sxe2_eth_uinit(dev);
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index cc8a84c0a0..556a11cc77 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -13,6 +13,7 @@
- 
- #include "sxe2_common.h"
- #include "sxe2_vsi.h"
-+#include "sxe2_rss.h"
- #include "sxe2_irq.h"
- #include "sxe2_queue.h"
- #include "sxe2_mac.h"
-@@ -120,6 +121,11 @@ enum {
- 	SXE2_FLAGS_NBITS
+ #endif
+ 	if (sxe2_rx_offload_en_check(dev, RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT))
+ 		dev->rx_pkt_burst = sxe2_rx_pkts_scattered_split;
+@@ -426,6 +456,12 @@ static const struct {
+ 	{ sxe2_rx_pkts_scattered_vec_sse_offload,
+ 	      "Vector SSE Scattered" },
+ #endif
++#ifdef RTE_ARCH_ARM64
++	{ sxe2_rx_pkts_scattered_vec_neon,
++	  "Vector NEON Scattered" },
++	{ sxe2_rx_pkts_scattered_vec_neon_offload,
++	  "Offload Vector NEON Scattered" },
++#endif
  };
  
-+struct sxe2_ptp_context {
-+	uint64_t mbuf_rx_ts_flag;
-+	int32_t mbuf_rx_ts_offset;
-+};
+ int32_t sxe2_rx_burst_mode_get(struct rte_eth_dev *dev,
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec.h b/drivers/net/sxe2/sxe2_txrx_vec.h
+index d7a0ce6ca5..02b1743e3e 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec.h
++++ b/drivers/net/sxe2/sxe2_txrx_vec.h
+@@ -12,19 +12,23 @@
+ #define SXE2_RX_MODE_VEC_SSE       RTE_BIT32(2)
+ #define SXE2_RX_MODE_VEC_AVX2      RTE_BIT32(3)
+ #define SXE2_RX_MODE_VEC_AVX512    RTE_BIT32(4)
++#define SXE2_RX_MODE_VEC_NEON      RTE_BIT32(5)
+ #define SXE2_RX_MODE_BATCH_ALLOC   RTE_BIT32(10)
+ #define SXE2_RX_MODE_VEC_SET_MASK	(SXE2_RX_MODE_VEC_SIMPLE | \
+ 			SXE2_RX_MODE_VEC_OFFLOAD | SXE2_RX_MODE_VEC_SSE | \
+-			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512)
++			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512 | \
++			SXE2_RX_MODE_VEC_NEON)
+ #define SXE2_TX_MODE_VEC_SIMPLE   RTE_BIT32(0)
+ #define SXE2_TX_MODE_VEC_OFFLOAD  RTE_BIT32(1)
+ #define SXE2_TX_MODE_VEC_SSE      RTE_BIT32(2)
+ #define SXE2_TX_MODE_VEC_AVX2     RTE_BIT32(3)
+ #define SXE2_TX_MODE_VEC_AVX512   RTE_BIT32(4)
++#define SXE2_TX_MODE_VEC_NEON     RTE_BIT32(5)
+ #define SXE2_TX_MODE_SIMPLE_BATCH RTE_BIT32(10)
+ #define SXE2_TX_MODE_VEC_SET_MASK	(SXE2_TX_MODE_VEC_SIMPLE | \
+ 			SXE2_TX_MODE_VEC_OFFLOAD | SXE2_TX_MODE_VEC_SSE | \
+-			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512)
++			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512 | \
++			SXE2_TX_MODE_VEC_NEON)
+ #define SXE2_TX_VEC_NO_SUPPORT_OFFLOAD (		  \
+ 			RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		  \
+ 			RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	  \
+@@ -75,6 +79,14 @@ uint16_t sxe2_rx_pkts_scattered_vec_avx2(void *rx_queue,
+ 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ uint16_t sxe2_rx_pkts_scattered_vec_avx2_offload(void *rx_queue,
+ 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
 +
- struct sxe2_devargs {
- 	uint8_t flow_dup_pattern_mode;
- 	uint8_t func_flow_direct_en;
-@@ -298,7 +304,9 @@ struct sxe2_adapter {
- 	struct sxe2_queue_context     q_ctxt;
- 	struct sxe2_vsi_context       vsi_ctxt;
- 	struct sxe2_filter_context    filter_ctxt;
-+	struct sxe2_rss_context       rss_ctxt;
- 	struct sxe2_link_context      link_ctxt;
-+	struct sxe2_ptp_context       ptp_ctxt;
- 	struct sxe2_devargs           devargs;
- 	struct sxe2_switchdev_info    switchdev_info;
- 	bool                          rule_started;
-diff --git a/drivers/net/sxe2/sxe2_flow_define.h b/drivers/net/sxe2/sxe2_flow_define.h
++#elif defined(RTE_ARCH_ARM64)
++uint16_t sxe2_rx_pkts_scattered_vec_neon(void *rx_queue, struct rte_mbuf **rx_pkts,
++					 uint16_t nb_pkts);
++uint16_t sxe2_rx_pkts_scattered_vec_neon_offload(void *rx_queue, struct rte_mbuf **rx_pkts,
++						 uint16_t nb_pkts);
++uint16_t sxe2_tx_pkts_vec_neon_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
++uint16_t sxe2_tx_pkts_vec_neon(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ #endif
+ int32_t __rte_cold sxe2_tx_vec_support_check(struct rte_eth_dev *dev, uint32_t *vec_flags);
+ int32_t __rte_cold sxe2_tx_queues_vec_prepare(struct rte_eth_dev *dev);
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec_common.h b/drivers/net/sxe2/sxe2_txrx_vec_common.h
+index 138b748f4a..8fce2bb7cc 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec_common.h
++++ b/drivers/net/sxe2/sxe2_txrx_vec_common.h
+@@ -4,7 +4,6 @@
+ 
+ #ifndef __SXE2_TXRX_VEC_COMMON_H__
+ #define __SXE2_TXRX_VEC_COMMON_H__
+-#include <rte_atomic.h>
+ #ifdef PCLINT
+ #include "avx_stub.h"
+ #endif
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec_neon.c b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
 new file mode 100644
-index 0000000000..d2f6000efa
+index 0000000000..e50a0b21bf
 --- /dev/null
-+++ b/drivers/net/sxe2/sxe2_flow_define.h
-@@ -0,0 +1,143 @@
++++ b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
+@@ -0,0 +1,707 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
 + */
 +
-+#ifndef __SXE2_FLOW_DEFINE_H__
-+#define __SXE2_FLOW_DEFINE_H__
-+#include <rte_tailq.h>
-+#include <rte_eal.h>
-+#include <rte_flow_driver.h>
++#ifdef RTE_ARCH_ARM64
++#include <arm_neon.h>
++#include <rte_vect.h>
 +
-+#include "sxe2_osal.h"
-+#include "sxe2_flow_public.h"
-+
-+#define SXE2_FLOW_ETH_TYPE_MIN        (1500)
-+
-+enum sxe2_expansion {
-+	SXE2_EXPANSION_ERROR = 0,
-+	SXE2_EXPANSION_OUTER_ETH,
-+	SXE2_EXPANSION_OUTER_VLAN,
-+	SXE2_EXPANSION_OUTER_QINQ,
-+	SXE2_EXPANSION_OUTER_IPV4,
-+	SXE2_EXPANSION_OUTER_IPV4_FRAG_EXT,
-+	SXE2_EXPANSION_OUTER_IPV6,
-+	SXE2_EXPANSION_OUTER_IPV6_FRAG_EXT,
-+	SXE2_EXPANSION_OUTER_UDP,
-+	SXE2_EXPANSION_OUTER_TCP,
-+	SXE2_EXPANSION_OUTER_SCTP,
-+
-+	SXE2_EXPANSION_VXLAN,
-+	SXE2_EXPANSION_VXLAN_GPE,
-+	SXE2_EXPANSION_GRE,
-+	SXE2_EXPANSION_NVGRE,
-+	SXE2_EXPANSION_GENEVE,
-+	SXE2_EXPANSION_GTPU,
-+	SXE2_EXPANSION_IPIP,
-+	SXE2_EXPANSION_OUTER_END,
-+
-+	SXE2_EXPANSION_ETH,
-+	SXE2_EXPANSION_VLAN,
-+	SXE2_EXPANSION_IPV4,
-+	SXE2_EXPANSION_IPV4_FRAG_EXT,
-+	SXE2_EXPANSION_IPV6,
-+	SXE2_EXPANSION_IPV6_FRAG_EXT,
-+	SXE2_EXPANSION_UDP,
-+	SXE2_EXPANSION_TCP,
-+	SXE2_EXPANSION_SCTP,
-+
-+	SXE2_EXPANSION_END,
-+	SXE2_EXPANSION_MAX,
-+};
-+
-+enum sxe2_flow_udp_tunnel_protocol {
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN,
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN_GPE,
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GENEVE,
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GTP_U,
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_NVGRE,
-+	SXE2_FLOW_UDP_TUNNEL_MAX,
-+};
-+
-+enum {
-+	SXE2_FLOW_ETH_TYPE_IPV4 = 0x0800,
-+	SXE2_FLOW_ETH_TYPE_IPV6 = 0x86DD,
-+	SXE2_FLOW_IP_PROTOCOL_GRE = 0x2F,
-+	SXE2_FLOW_IP_PROTOCOL_IPV4 = 0x04,
-+	SXE2_FLOW_IP_PROTOCOL_IPV6 = 0x29,
-+	SXE2_FLOW_IP_PROTOCOL_ETH = 0x3B,
-+	SXE2_FLOW_IP_PROTOCOL_UDP = 0x11,
-+	SXE2_FLOW_IP_PROTOCOL_TCP = 0x06,
-+	SXE2_FLOW_IP_PROTOCOL_SCTP = 0x84,
-+};
-+
-+union sxe2_flow_item_raw {
-+	struct sxe2_flow_item item;
-+	uint8_t raw[sizeof(struct sxe2_flow_item)];
-+};
-+
-+struct sxe2_flow {
-+	TAILQ_ENTRY(sxe2_flow) next;
-+	enum sxe2_flow_engine_type engine_type;
-+	struct sxe2_flow_pattern pattern_outer;
-+	struct sxe2_flow_pattern pattern_inner;
-+	uint8_t has_mask;
-+	uint8_t has_spec;
-+	uint8_t has_hdr;
-+	struct sxe2_flow_meta meta;
-+	struct sxe2_flow_action action;
-+	uint32_t flow_id;
-+	int32_t create_err;
-+	DECLARE_BITMAP(flow_type, SXE2_EXPANSION_MAX);
-+};
-+
-+TAILQ_HEAD(sxe2_flow_list_t, sxe2_flow);
-+
-+struct rte_flow {
-+	TAILQ_ENTRY(rte_flow) next;
-+	struct sxe2_flow_list_t sxe2_flow_list;
-+};
-+TAILQ_HEAD(rte_flow_list_t, rte_flow);
-+
-+struct sxe2_fnav_cid_mgr {
-+	TAILQ_ENTRY(sxe2_fnav_cid_mgr) next;
-+	uint16_t stat_index;
-+	uint32_t user_id;
-+	uint32_t driver_id;
-+	uint32_t count_type;
-+	uint64_t hits;
-+	uint64_t bytes;
-+};
-+TAILQ_HEAD(sxe2_fnav_cid_mgr_list_t, sxe2_fnav_cid_mgr);
-+
-+struct sxe2_fnav_count_resource {
-+	uint32_t count_type;
-+	uint32_t global_index;
-+	struct sxe2_fnav_cid_mgr_list_t fnav_cid_mgr_list;
-+};
-+
-+struct sxe2_flow_context {
-+	struct rte_flow_list_t rte_flow_list;
-+	rte_spinlock_t flow_list_lock;
-+	struct sxe2_fnav_count_resource hw_res;
-+	uint32_t fnav_inited;
-+};
-+#define SXE2_INVALID_RSS_ATTR	\
-+			(RTE_ETH_RSS_L3_PRE40 | RTE_ETH_RSS_L3_PRE56 | RTE_ETH_RSS_L3_PRE96)
-+#define SXE2_VALID_RSS_IPV4_L4	 \
-+			(RTE_ETH_RSS_NONFRAG_IPV4_UDP | RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
-+			 RTE_ETH_RSS_NONFRAG_IPV4_SCTP)
-+
-+#define SXE2_VALID_RSS_IPV6_L4	\
-+			(RTE_ETH_RSS_NONFRAG_IPV6_UDP | RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
-+			 RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
-+#define SXE2_VALID_RSS_IPV4	\
-+			(RTE_ETH_RSS_IPV4 | RTE_ETH_RSS_FRAG_IPV4  | \
-+			 RTE_ETH_RSS_NONFRAG_IPV4_OTHER | SXE2_VALID_RSS_IPV4_L4)
-+#define SXE2_VALID_RSS_IPV6	\
-+			(RTE_ETH_RSS_IPV6 | RTE_ETH_RSS_FRAG_IPV6 | \
-+			 RTE_ETH_RSS_NONFRAG_IPV6_OTHER | SXE2_VALID_RSS_IPV6_L4)
-+
-+#define SXE2_VALID_RSS_L3	(SXE2_VALID_RSS_IPV4 | SXE2_VALID_RSS_IPV6)
-+#define SXE2_VALID_RSS_L4	(SXE2_VALID_RSS_IPV4_L4 | SXE2_VALID_RSS_IPV6_L4)
-+
-+#endif /* __SXE2_FLOW_DEFINE_H__ */
-diff --git a/drivers/net/sxe2/sxe2_queue.c b/drivers/net/sxe2/sxe2_queue.c
-index 1786d6ea4f..220cab6fce 100644
---- a/drivers/net/sxe2/sxe2_queue.c
-+++ b/drivers/net/sxe2/sxe2_queue.c
-@@ -17,6 +17,7 @@ void sxe2_sw_queue_ctx_hw_cap_set(struct sxe2_adapter *adapter,
- 
- int32_t sxe2_queues_init(struct rte_eth_dev *dev)
- {
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
- 	int32_t ret = 0;
- 	uint16_t buf_size;
- 	uint16_t frame_size;
-@@ -36,6 +37,16 @@ int32_t sxe2_queues_init(struct rte_eth_dev *dev)
- 			dev->data->scattered_rx = 1;
- 	}
- 
-+	adapter->ptp_ctxt.mbuf_rx_ts_offset = -1;
-+	adapter->ptp_ctxt.mbuf_rx_ts_flag = 0;
-+	if (dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
-+		ret = rte_mbuf_dyn_rx_timestamp_register
-+			(&adapter->ptp_ctxt.mbuf_rx_ts_offset,
-+			 (uint64_t *)&adapter->ptp_ctxt.mbuf_rx_ts_flag);
-+		if (ret)
-+			PMD_LOG_ERR(INIT, "Failed to enable timestamp offloads, ret=%d", ret);
-+	}
-+
- 	return ret;
- }
- 
-diff --git a/drivers/net/sxe2/sxe2_rss.c b/drivers/net/sxe2/sxe2_rss.c
-new file mode 100644
-index 0000000000..1d56613043
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_rss.c
-@@ -0,0 +1,584 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#include "sxe2_rss.h"
++#include "sxe2_txrx_vec_common.h"
++#include "sxe2_txrx_vec.h"
 +#include "sxe2_common_log.h"
-+#include "sxe2_ethdev.h"
-+#include "sxe2_cmd_chnl.h"
 +
-+void sxe2_sw_rss_ctx_hw_cap_set(struct sxe2_adapter *adapter,
-+		struct sxe2_drv_rss_hash_caps *rss_caps)
++#define PKTLEN_SHIFT     10
++#define SXE2_UINT16_BIT (CHAR_BIT * sizeof(uint16_t))
++
++static __rte_always_inline void
++sxe2_tx_desc_fill_one_neon(volatile union sxe2_tx_data_desc *desc,
++			struct rte_mbuf *pkt, uint64_t desc_cmd, bool with_offloads)
 +{
-+	adapter->rss_ctxt.rss_key_size = rss_caps->hash_key_size;
-+	adapter->rss_ctxt.rss_lut_size = rss_caps->lut_key_size;
++	uint64_t desc_qw1;
++	uint32_t desc_offset;
++
++	desc_qw1 = (SXE2_TX_DESC_DTYPE_DATA |
++				((uint64_t)desc_cmd) << SXE2_TX_DATA_DESC_CMD_SHIFT |
++				((uint64_t)pkt->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
++
++	desc_offset = SXE2_TX_DATA_DESC_MACLEN_VAL(pkt->l2_len);
++	desc_qw1 |= ((uint64_t)desc_offset) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
++	if (with_offloads)
++		sxe2_tx_desc_fill_offloads(pkt, &desc_qw1);
++
++	uint64x2_t data_desc = { rte_pktmbuf_iova(pkt), desc_qw1 };
++
++	vst1q_u64((uint64_t *)desc, data_desc);
 +}
 +
-+int32_t sxe2_rss_hash_key_init(struct rte_eth_dev *dev)
++static __rte_always_inline uint16_t
++sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
++			uint16_t nb_pkts, bool with_offloads)
 +{
-+	struct rte_eth_rss_conf *rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+	uint16_t i = 0;
-+
-+	if (rss_ctxt->rss_key == NULL) {
-+		rss_ctxt->rss_key = (uint8_t *)rte_zmalloc("rss_key", rss_ctxt->rss_key_size, 0);
-+		if (rss_ctxt->rss_key == NULL) {
-+			PMD_LOG_ERR(INIT, "Failed to allocate rss key");
-+			ret = -ENOMEM;
-+			goto l_end;
-+		}
-+	}
-+
-+	if (!rss_conf->rss_key) {
-+		for (i = 0; i < rss_ctxt->rss_key_size; i++)
-+			rss_ctxt->rss_key[i] = (uint8_t)rte_rand();
-+	} else {
-+		rte_memcpy(rss_ctxt->rss_key, rss_conf->rss_key,
-+			   RTE_MIN(rss_conf->rss_key_len, rss_ctxt->rss_key_size));
-+	}
-+
-+	ret = sxe2_drv_rss_key_set(adapter, rss_ctxt->rss_key,
-+				   rss_ctxt->rss_key_size);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rss key, ret:%d", ret);
-+		rte_free(rss_ctxt->rss_key);
-+		rss_ctxt->rss_key = NULL;
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+void sxe2_rss_hash_key_uninit(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+
-+	if (rss_ctxt->rss_key) {
-+		rte_free(rss_ctxt->rss_key);
-+		rss_ctxt->rss_key = NULL;
-+	}
-+}
-+
-+int32_t sxe2_rss_lut_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
++	volatile union sxe2_tx_data_desc *desc;
++	struct sxe2_tx_buffer *buffer;
++	uint16_t next_use;
++	uint16_t res_num;
++	uint16_t tx_num;
 +	uint16_t i;
 +
-+	if (rss_ctxt->rss_lut == NULL) {
-+		rss_ctxt->rss_lut = (uint8_t *)rte_zmalloc("rss_lut", rss_ctxt->rss_lut_size, 0);
-+		if (rss_ctxt->rss_lut == NULL) {
-+			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to allocate rss lut");
-+			ret = -ENOMEM;
-+			goto l_end;
++	if (txq->desc_free_num < txq->free_thresh)
++		(void)sxe2_tx_bufs_free_vec(txq);
++
++	nb_pkts = RTE_MIN(txq->desc_free_num, nb_pkts);
++	if (unlikely(nb_pkts == 0)) {
++		PMD_LOG_TX_DEBUG("Tx pkts neon batch: may not enough free desc, "
++				"free_desc=%u, need_tx_pkts=%u",
++				txq->desc_free_num, nb_pkts);
++		goto l_end;
++	}
++	tx_num = nb_pkts;
++
++	next_use = txq->next_use;
++	desc     = &txq->desc_ring[next_use];
++	buffer   = &txq->buffer_ring[next_use];
++
++	txq->desc_free_num -= nb_pkts;
++
++	res_num = txq->ring_depth - txq->next_use;
++
++	if (tx_num >= res_num) {
++		sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, res_num);
++
++		for (i = 0; i < res_num - 1; ++i, ++tx_pkts, ++desc) {
++			sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++					SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
 +		}
++
++		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts++,
++					(SXE2_TX_DATA_DESC_CMD_EOP | SXE2_TX_DATA_DESC_CMD_RS),
++					with_offloads);
++
++		tx_num -= res_num;
++
++		next_use     = 0;
++		txq->next_rs = txq->rs_thresh - 1;
++		desc         = &txq->desc_ring[next_use];
++		buffer       = &txq->buffer_ring[next_use];
 +	}
 +
-+	for (i = 0; i < rss_ctxt->rss_lut_size; i++)
-+		rss_ctxt->rss_lut[i] = (uint8_t)(i % dev->data->nb_rx_queues);
++	sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, tx_num);
 +
-+	ret = sxe2_drv_rss_lut_set(adapter, rss_ctxt->rss_lut, rss_ctxt->rss_lut_size);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rss lut, ret:%d", ret);
-+		rte_free(rss_ctxt->rss_lut);
-+		rss_ctxt->rss_lut = NULL;
-+		goto l_end;
++	for (i = 0; i < tx_num; ++i, ++tx_pkts, ++desc) {
++		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++				SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
 +	}
++
++	next_use += tx_num;
++	if (next_use > txq->next_rs) {
++		txq->desc_ring[txq->next_rs].read.type_cmd_off_bsz_l2t |=
++			rte_cpu_to_le_64(SXE2_TX_DATA_DESC_CMD_RS_MASK);
++
++		txq->next_rs += txq->rs_thresh;
++	}
++	txq->next_use = next_use;
++
++	SXE2_PCI_REG_WRITE_WC(txq->tdt_reg_addr, txq->next_use);
 +
 +l_end:
-+	return ret;
++	return nb_pkts;
 +}
 +
-+void sxe2_rss_lut_uninit(struct rte_eth_dev *dev)
++static __rte_always_inline uint16_t
++sxe2_tx_pkts_vec_neon_common(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
++			uint16_t nb_pkts, bool with_offloads)
 +{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
++	uint16_t tx_done_num = 0;
++	uint16_t tx_once_num;
++	uint16_t tx_need_num;
 +
-+	if (rss_ctxt->rss_lut) {
-+		rte_free(rss_ctxt->rss_lut);
-+		rss_ctxt->rss_lut = NULL;
-+	}
-+}
++	while (nb_pkts) {
++		tx_need_num = RTE_MIN(nb_pkts, txq->rs_thresh);
++		tx_once_num = sxe2_tx_pkts_vec_neon_batch(txq,
++					tx_pkts + tx_done_num,
++					tx_need_num, with_offloads);
 +
-+static struct sxe2_rss_hf_config sxe2_rss_default_hf_config[] = {
-+	{
-+		.rss_hf = RTE_ETH_RSS_L2_PAYLOAD,
-+		.hdrs = {SXE2_FLOW_HDR_ETH,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_ETH_TYPE,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_IPV4,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_IPV6,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_FRAG_IPV4,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_IPV_FRAG,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_FRAG_IPV6,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_IPV_FRAG,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV4_OTHER,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_IPV_OTHER,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV6_OTHER,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_IPV_OTHER,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV4_UDP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_UDP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_FLD_ID_UDP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_UDP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV6_UDP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_UDP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_FLD_ID_UDP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_UDP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV4_TCP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_TCP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_FLD_ID_TCP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_TCP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV6_TCP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_TCP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_FLD_ID_TCP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_TCP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV4_SCTP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_SCTP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_FLD_ID_SCTP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_SCTP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV6_SCTP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_SCTP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_FLD_ID_SCTP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_SCTP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+};
++		nb_pkts     -= tx_once_num;
++		tx_done_num += tx_once_num;
 +
-+int32_t sxe2_rss_hf_type_set(struct rte_eth_dev *dev, uint64_t rss_hf)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+	uint32_t i;
-+	uint8_t symm = 0;
-+
-+	if (0 == (rss_hf & SXE2_RSS_HF_SUPPORT_ALL) && rss_hf != 0) {
-+		PMD_DEV_LOG_ERR(adapter, DRV,
-+			"Failed to set unsupported rss_hf:0x%016" PRIx64,
-+			rss_hf);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < RTE_DIM(sxe2_rss_default_hf_config); i++) {
-+		if (rss_ctxt->rss_hf & sxe2_rss_default_hf_config[i].rss_hf) {
-+			sxe2_rss_default_hf_config[i].symm = rss_ctxt->symm;
-+			ret = sxe2_drv_rss_hf_del(adapter, &sxe2_rss_default_hf_config[i]);
-+			if (ret) {
-+				PMD_DEV_LOG_ERR(adapter, INIT,
-+					"Failed to del rss hf cfg[%d], ret:%d", i, ret);
-+				goto l_end;
-+			}
-+		}
-+	}
-+
-+	if (rss_ctxt->hash_func == RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ)
-+		symm = 1;
-+
-+	for (i = 0; i < RTE_DIM(sxe2_rss_default_hf_config); i++) {
-+		if (rss_hf & sxe2_rss_default_hf_config[i].rss_hf) {
-+			sxe2_rss_default_hf_config[i].symm = symm;
-+			ret = sxe2_drv_rss_hf_add(adapter, &sxe2_rss_default_hf_config[i]);
-+			if (ret) {
-+				PMD_DEV_LOG_ERR(adapter, INIT,
-+					"Failed to add rss hf cfg[%d], ret:%d", i, ret);
-+				goto l_end;
-+			}
-+		}
-+	}
-+
-+	rss_ctxt->rss_hf = rss_hf & SXE2_RSS_HF_SUPPORT_ALL;
-+	rss_ctxt->symm = symm;
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_rss_hash_function_set(struct rte_eth_dev *dev, enum rte_eth_hash_function func)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	enum sxe2_rss_hash_key_func hash_func = SXE2_RSS_HASH_FUNC_SYM_TOEPLITZ;
-+	int32_t ret = 0;
-+
-+	switch (func) {
-+	case RTE_ETH_HASH_FUNCTION_DEFAULT:
-+	case RTE_ETH_HASH_FUNCTION_TOEPLITZ:
-+	case RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ:
-+		hash_func = SXE2_RSS_HASH_FUNC_SYM_TOEPLITZ;
-+		break;
-+	case RTE_ETH_HASH_FUNCTION_SIMPLE_XOR:
-+		hash_func = SXE2_RSS_HASH_FUNC_XOR;
-+		break;
-+	default:
-+		PMD_DEV_LOG_ERR(adapter, DRV, "RSS hash function[%d] not support.", func);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_drv_rss_hash_ctrl_func(adapter, hash_func);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rss hash function, ret=[%d]", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_rss_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct rte_eth_rss_conf *rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
-+	enum rte_eth_hash_function rss_func = RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ;
-+	int32_t ret = 0;
-+
-+	adapter->rss_ctxt.inited = false;
-+
-+	if (dev->data->nb_rx_queues <= 1) {
-+		PMD_DEV_LOG_DEBUG(adapter, INIT, "No need to init rss, rx queues %d.",
-+				dev->data->nb_rx_queues);
-+		goto l_end;
-+	}
-+
-+	if ((adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_RSS) == 0) {
-+		PMD_DEV_LOG_WARN(adapter, INIT, "RSS not supported");
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_rss_hash_key_init(dev);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to init rss key");
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_rss_lut_init(dev);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to init rss lut");
-+		goto l_err_key;
-+	}
-+
-+	rss_func = rss_conf->algorithm;
-+	ret = sxe2_rss_hash_function_set(dev, rss_func);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to init rss hash function");
-+		goto l_err_lut;
-+	}
-+	ret = sxe2_rss_hf_type_set(dev, rss_conf->rss_hf);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rss hf type");
-+		goto l_err_lut;
-+	}
-+	adapter->rss_ctxt.inited = true;
-+	goto l_end;
-+
-+l_err_lut:
-+	sxe2_rss_lut_uninit(dev);
-+l_err_key:
-+	sxe2_rss_hash_key_uninit(dev);
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_rss_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if ((adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_RSS) == 0)
-+		goto l_end;
-+
-+	ret = sxe2_drv_rss_hf_clear(adapter);
-+	if (ret)
-+		PMD_LOG_ERR(INIT, "Failed to clear rss hf");
-+
-+	sxe2_rss_hash_key_uninit(dev);
-+
-+	sxe2_rss_lut_uninit(dev);
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_dev_rss_reta_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_reta_entry64 *reta_conf,
-+		uint16_t reta_size)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	uint8_t *lut_tmp = NULL;
-+	int32_t ret = 0;
-+	uint16_t i;
-+	uint16_t shift;
-+	uint16_t idx;
-+
-+	if (!adapter->rss_ctxt.inited) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "RSS not inited.");
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
-+
-+	if (reta_size != rss_ctxt->rss_lut_size) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "The size of hash lookup table configured "
-+				"(%d) doesn't match the number of hardware can "
-+			"support (%d)", reta_size, rss_ctxt->rss_lut_size);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	lut_tmp = rte_zmalloc("rss_lut_temp", reta_size, 0);
-+	if (!lut_tmp) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "No memory can be allocated");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+	rte_memcpy(lut_tmp, rss_ctxt->rss_lut, reta_size);
-+
-+	for (i = 0; i < reta_size; i++) {
-+		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-+		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-+		if (reta_conf[idx].mask & (1ULL << shift))
-+			lut_tmp[i] = reta_conf[idx].reta[shift];
-+	}
-+
-+	ret = sxe2_drv_rss_lut_set(adapter, lut_tmp, reta_size);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss lut");
-+		goto l_end;
-+	}
-+
-+	rte_memcpy(rss_ctxt->rss_lut, lut_tmp, reta_size);
-+
-+l_end:
-+	if (lut_tmp)
-+		rte_free(lut_tmp);
-+	return ret;
-+}
-+
-+int32_t sxe2_dev_rss_reta_query(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_reta_entry64 *reta_conf,
-+		uint16_t reta_size)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+	uint16_t i;
-+	uint16_t shift;
-+	uint16_t idx;
-+
-+	if (!adapter->rss_ctxt.inited) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "RSS not inited.");
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
-+
-+	if (reta_size != rss_ctxt->rss_lut_size) {
-+		PMD_LOG_ERR(INIT, "The size of hash lookup table configured "
-+			"(%d) doesn't match the number of hardware can "
-+			"support (%d)", reta_size, rss_ctxt->rss_lut_size);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < reta_size; i++) {
-+		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-+		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-+		if (reta_conf[idx].mask & (1ULL << shift))
-+			reta_conf[idx].reta[shift] = rss_ctxt->rss_lut[i];
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_rss_hash_key_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+	uint16_t i;
-+
-+	if (rss_conf->rss_key_len == 0 || rss_conf->rss_key == NULL)
-+		goto l_end;
-+
-+	if (rss_conf->rss_key_len != rss_ctxt->rss_key_size) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "The size of hash key configured "
-+			"(%d) doesn't match the size of hardware can "
-+			"support (%d)", rss_conf->rss_key_len,
-+			rss_ctxt->rss_key_size);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < rss_conf->rss_key_len; i++) {
-+		if (rss_conf->rss_key[i] != rss_ctxt->rss_key[i])
++		if (tx_once_num < tx_need_num)
 +			break;
 +	}
-+	if (i == rss_conf->rss_key_len)
-+		goto l_end;
 +
-+	ret = sxe2_drv_rss_key_set(adapter, rss_conf->rss_key,
-+				   rss_conf->rss_key_len);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss key");
-+		goto l_end;
-+	}
++	PMD_LOG_TX_DEBUG("Tx pkts neon: port_id=%u, queue_id=%u, "
++			"nb_pkts=%u, tx_done_num=%u with_offloads=%u",
++			txq->port_id, txq->idx_in_pf, nb_pkts, tx_done_num, with_offloads);
 +
-+	rte_memcpy(rss_ctxt->rss_key, rss_conf->rss_key, rss_conf->rss_key_len);
-+l_end:
-+	return ret;
++	SXE2_TX_STATS_CNT(txq, tx_pkts_num, tx_done_num);
++	return tx_done_num;
 +}
 +
-+int32_t sxe2_dev_rss_hash_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf)
++uint16_t sxe2_tx_pkts_vec_neon_simple(void *tx_queue,
++			struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = -1;
-+
-+	if (!adapter->rss_ctxt.inited) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "RSS not inited.");
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_rss_hash_key_update(dev, rss_conf);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss hash key");
-+		goto l_end;
-+	}
-+
-+	if (rss_conf->algorithm != rss_ctxt->hash_func) {
-+		ret = sxe2_rss_hash_function_set(dev, rss_conf->algorithm);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss hash function");
-+			goto l_end;
-+		}
-+		rss_ctxt->hash_func = rss_conf->algorithm;
-+	}
-+
-+	if ((rss_conf->rss_hf & SXE2_RSS_HF_SUPPORT_ALL)
-+			!= rss_ctxt->rss_hf) {
-+		ret = sxe2_rss_hf_type_set(dev, rss_conf->rss_hf);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss hf type");
-+			goto l_end;
-+		}
-+	}
-+	ret = 0;
-+l_end:
-+	return ret;
++	return sxe2_tx_pkts_vec_neon_common((struct sxe2_tx_queue *)tx_queue,
++				tx_pkts, nb_pkts, false);
 +}
 +
-+int32_t sxe2_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf)
++uint16_t sxe2_tx_pkts_vec_neon(void *tx_queue,
++			struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+
-+	if (adapter->rss_ctxt.inited == 0) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "RSS not inited.");
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
-+
-+	if (rss_conf->rss_key) {
-+		rss_conf->rss_key_len = rss_ctxt->rss_key_size;
-+		rte_memcpy(rss_conf->rss_key, rss_ctxt->rss_key, rss_ctxt->rss_key_size);
-+	}
-+	rss_conf->rss_hf = rss_ctxt->rss_hf;
-+	rss_conf->algorithm = rss_ctxt->hash_func;
-+l_end:
-+	return ret;
++	return sxe2_tx_pkts_vec_neon_common((struct sxe2_tx_queue *)tx_queue,
++				tx_pkts, nb_pkts, true);
 +}
-diff --git a/drivers/net/sxe2/sxe2_rss.h b/drivers/net/sxe2/sxe2_rss.h
-new file mode 100644
-index 0000000000..2a454ac1b3
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_rss.h
-@@ -0,0 +1,81 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
 +
-+#ifndef __SXE2_RSS_H__
-+#define __SXE2_RSS_H__
-+#include <ethdev_driver.h>
-+#include "sxe2_osal.h"
-+#include "sxe2_drv_cmd.h"
-+#include "sxe2_flow_define.h"
++static __rte_always_inline void
++sxe2_rx_desc_ptype_fill_neon(uint16x8_t staterr, struct rte_mbuf **__rte_restrict rx_pkts,
++		const uint32_t *__rte_restrict ptype_tbl)
++{
++	uint16x8_t ptype_mask = {
++		0, 0x3FFULL,
++		0, 0x3FFULL,
++		0, 0x3FFULL,
++		0, 0x3FFULL,
++	};
++	uint16x8_t ptype_all;
 +
-+#define SXE2_FLOW_END (0xFFFF)
++	ptype_all = vandq_u16(staterr, ptype_mask);
 +
-+struct sxe2_rss_context {
-+	enum rte_eth_hash_function hash_func;
-+	uint16_t rss_key_size;
-+	uint16_t rss_lut_size;
-+	uint8_t  *rss_key;
-+	uint8_t  *rss_lut;
-+	uint64_t rss_hf;
-+	uint8_t symm;
-+	bool inited;
-+};
++	rx_pkts[3]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 3)];
++	rx_pkts[2]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 7)];
++	rx_pkts[1]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 1)];
++	rx_pkts[0]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 5)];
++}
 +
-+struct sxe2_rss_hf_config {
-+	uint64_t rss_hf;
-+	uint16_t hdrs[SXE2_FLOW_HDR_MAX];
-+	uint16_t flds[SXE2_FLOW_FLD_ID_MAX];
-+	uint8_t symm;
-+};
++static __rte_always_inline uint32x4_t
++sxe2_rx_desc_fnav_flags_neon(uint64x2_t descs_arr[4])
++{
++	uint32x4_t descs_tmp1, descs_tmp2;
++	uint32x4_t descs_fnav_vld;
++	uint32x4_t v_zeros, v_ffff, v_u32_one;
++	uint32x4_t m_flags;
 +
-+#define SXE2_RSS_HF_SUPPORT_ALL ( \
-+	RTE_ETH_RSS_IPV4 | \
-+	RTE_ETH_RSS_FRAG_IPV4 | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_SCTP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_OTHER | \
-+	RTE_ETH_RSS_IPV6 | \
-+	RTE_ETH_RSS_FRAG_IPV6 | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_SCTP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_OTHER | \
-+	RTE_ETH_RSS_L2_PAYLOAD)
++	const uint32x4_t fdir_flags = vdupq_n_u32(RTE_MBUF_F_RX_FDIR |
++						RTE_MBUF_F_RX_FDIR_ID);
 +
-+struct sxe2_adapter;
++	{
++		uint32x4_t d0 = vreinterpretq_u32_u64(descs_arr[0]);
++		uint32x4_t d1 = vreinterpretq_u32_u64(descs_arr[1]);
++		uint32x4_t d2 = vreinterpretq_u32_u64(descs_arr[2]);
++		uint32x4_t d3 = vreinterpretq_u32_u64(descs_arr[3]);
 +
-+void sxe2_sw_rss_ctx_hw_cap_set(struct sxe2_adapter *adapter,
-+		struct sxe2_drv_rss_hash_caps *rss_caps);
++		descs_tmp1 = vzip1q_u32(d1, d
 +
-+int32_t sxe2_rss_hash_key_init(struct rte_eth_dev *dev);
++static __rte_always_inline void
++sxe2_rx_desc_offloads_para_fill_neon(struct sxe2_rx_queue *rxq,
++			volatile union sxe2_rx_desc *desc,
++			uint64x2_t descs[4], struct rte_mbuf **rx_pkts)
++{
++	uint32x4_t desc_lo, desc_hi, flags, tmp_flags;
++	const uint64x2_t mbuf_init = {rxq->mbuf_init_value, 0};
++	uint64x2_t rearm0, rearm1, rearm2, rearm3;
 +
-+void sxe2_rss_hash_key_uninit(struct rte_eth_dev *dev);
++	const uint32x4_t desc_msk = {
++		0x00001C04, 0x00001C04, 0x00001C04, 0x00001C04};
 +
-+int32_t sxe2_rss_lut_init(struct rte_eth_dev *dev);
++	const uint32x4_t rss_msk = {
++		0x20000000, 0x20000000, 0x20000000, 0x20000000};
 +
-+void sxe2_rss_lut_uninit(struct rte_eth_dev *dev);
++	const uint32x4_t vlan_msk = {
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED
++	};
++	const uint8x16_t vlan_flags = {
++		0, 0, 0, 0,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED, 0, 0, 0,
++		0, 0, 0, 0,
++		0, 0, 0, 0
++	};
 +
-+int32_t sxe2_rss_init(struct rte_eth_dev *dev);
++	const uint8x16_t rss_flags = {
++		0, 0, 0, 0,
++		RTE_MBUF_F_RX_RSS_HASH, 0, 0, 0,
++		0, 0, 0, 0,
++		0, 0, 0, 0
++	};
 +
-+int32_t sxe2_rss_hash_function_set(struct rte_eth_dev *dev, enum rte_eth_hash_function func);
++	const uint32x4_t cksum_mask = {
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++	};
 +
-+int32_t sxe2_rss_hf_type_set(struct rte_eth_dev *dev, uint64_t rss_hf);
++	const uint8x16_t cksum_flags = {
++		((RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		((RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++			RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++			RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++			RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++			RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		0, 0, 0, 0, 0, 0, 0, 0
++	};
 +
-+int32_t sxe2_rss_disable(struct rte_eth_dev *dev);
++	{
++		uint32x4_t d0 = vreinterpretq_u32_u64(descs[0]);
++		uint32x4_t d1 = vreinterpretq_u32_u64(descs[1]);
++		uint32x4_t d2 = vreinterpretq_u32_u64(descs[2]);
++		uint32x4_t d3 = vreinterpretq_u32_u64(descs[3]);
++		uint64x2_t f64, t64;
 +
-+int32_t sxe2_dev_rss_reta_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_reta_entry64 *reta_conf,
-+		uint16_t reta_size);
++		flags = vzip2q_u32(d1, d0);
++		tmp_flags = vzip2q_u32(d3, d2);
++		f64 = vreinterpretq_u64_u32(flags);
++		t64 = vreinterpretq_u64_u32(tmp_flags);
++		desc_lo = vreinterpretq_u32_u64(vcombine_u64(vget_low_u64(f64),
++							     vget_low_u64(t64)));
++		desc_hi = vreinterpretq_u32_u64(vcombine_u64(vget_high_u64(f64),
++							     vget_high_u64(t64)));
++	}
 +
-+int32_t sxe2_dev_rss_reta_query(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_reta_entry64 *reta_conf,
-+		uint16_t reta_size);
++	desc_lo = vandq_u32(desc_lo, desc_msk);
++	desc_hi = vandq_u32(desc_hi, rss_msk);
 +
-+int32_t sxe2_dev_rss_hash_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf);
++	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(vlan_flags,
++						vreinterpretq_u8_u32(desc_lo)));
++	flags = vandq_u32(tmp_flags, vlan_msk);
 +
-+int32_t sxe2_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf);
-+#endif /* __SXE2_RSS_H__ */
-diff --git a/drivers/net/sxe2/sxe2_txrx.h b/drivers/net/sxe2/sxe2_txrx.h
-index 6d3d7455c2..a642a077bf 100644
---- a/drivers/net/sxe2/sxe2_txrx.h
-+++ b/drivers/net/sxe2/sxe2_txrx.h
-@@ -20,4 +20,8 @@ int32_t sxe2_tx_burst_mode_get(struct rte_eth_dev *dev,
- 			__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
- int32_t sxe2_rx_burst_mode_get(struct rte_eth_dev *dev,
- 			__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
++	desc_lo = vshrq_n_u32(desc_lo, 10);
++	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(cksum_flags,
++					 vreinterpretq_u8_u32(desc_lo)));
++	tmp_flags = vshlq_n_u32(tmp_flags, 1);
++	tmp_flags = vandq_u32(tmp_flags, cksum_mask);
++	flags = vorrq_u32(flags, tmp_flags);
++
++	desc_hi = vshrq_n_u32(desc_hi, 27);
++	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(rss_flags,
++					 vreinterpretq_u8_u32(desc_hi)));
++	flags = vorrq_u32(flags, tmp_flags);
++
 +#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+int32_t sxe2_rx_update_ptp_time(struct sxe2_rx_queue *rxq);
++	if (rxq->fnav_enable) {
++		uint32x4_t tmp_fnav_flags = sxe2_rx_desc_fnav_flags_neon(descs);
++		flags = vorrq_u32(flags, tmp_fnav_flags);
++
++		rx_pkts[0]->hash.fdir.hi = desc[0].wb.fd_filter_id;
++		rx_pkts[1]->hash.fdir.hi = desc[1].wb.fd_filter_id;
++		rx_pkts[2]->hash.fdir.hi = desc[2].wb.fd_filter_id;
++		rx_pkts[3]->hash.fdir.hi = desc[3].wb.fd_filter_id;
++	}
 +#endif
 +
- #endif /* __SXE2_TXRX_H__ */
-diff --git a/drivers/net/sxe2/sxe2_txrx_poll.c b/drivers/net/sxe2/sxe2_txrx_poll.c
-index 21d5c38725..3c6fe37404 100644
---- a/drivers/net/sxe2/sxe2_txrx_poll.c
-+++ b/drivers/net/sxe2/sxe2_txrx_poll.c
-@@ -17,6 +17,7 @@
- #include "sxe2_queue.h"
- #include "sxe2_ethdev.h"
- #include "sxe2_common_log.h"
-+#include "sxe2_cmd_chnl.h"
- 
- static __rte_always_inline int32_t
- sxe2_tx_bufs_free(struct sxe2_tx_queue *txq)
-@@ -282,6 +283,30 @@ sxe2_tx_desc_checksum_fill(uint64_t offloads, uint32_t *desc_cmd, uint32_t *desc
- 	return;
- }
- 
-+static __rte_always_inline void sxe2_desc_tso_fill(struct rte_mbuf *tx_pkt,
-+						   uint64_t *desc_type_cmd_tso_mss,
-+						   union sxe2_tx_offload_info ol_info)
-+{
-+	uint32_t hdr_len;
-+	uint32_t tso_len;
++	rearm0 = vsetq_lane_u64(vgetq_lane_u32(flags, 0), mbuf_init, 1);
++	rearm1 = vsetq_lane_u64(vgetq_lane_u32(flags, 1), mbuf_init, 1);
++	rearm2 = vsetq_lane_u64(vgetq_lane_u32(flags, 2), mbuf_init, 1);
++	rearm3 = vsetq_lane_u64(vgetq_lane_u32(flags, 3), mbuf_init, 1);
 +
-+	if (!ol_info.l4_len) {
-+		PMD_LOG_DEBUG(TX, "TSO ERROR: L4 length is 0");
++	vst1q_u64((uint64_t *)&rx_pkts[0]->rearm_data, rearm0);
++	vst1q_u64((uint64_t *)&rx_pkts[1]->rearm_data, rearm1);
++	vst1q_u64((uint64_t *)&rx_pkts[2]->rearm_data, rearm2);
++	vst1q_u64((uint64_t *)&rx_pkts[3]->rearm_data, rearm3);
++}
++
++static inline void sxe2_rx_queue_rearm_neon(struct sxe2_rx_queue *rxq)
++{
++	volatile union sxe2_rx_desc *desc;
++	struct rte_mbuf **buffer;
++	struct rte_mbuf *mbuf0, *mbuf1;
++	uint64x2_t dma_addr0, dma_addr1;
++	uint64x2_t zero = vdupq_n_u64(0);
++	uint64x2_t virt_addr0, virt_addr1;
++	uint64x2_t hdr_room = vdupq_n_u64(RTE_PKTMBUF_HEADROOM);
++	int32_t ret;
++	uint16_t i;
++	uint16_t new_tail;
++
++	buffer = &rxq->buffer_ring[rxq->realloc_start];
++	desc = &rxq->desc_ring[rxq->realloc_start];
++
++	ret = rte_mempool_get_bulk(rxq->mb_pool, (void *)buffer,
++			SXE2_RX_REARM_THRESH_VEC);
++	if (ret != 0) {
++		PMD_LOG_RX_INFO("Rx mbuf vec alloc failed port_id=%u "
++				"queue_id=%u", rxq->port_id,
++				rxq->idx_in_pf);
++
++		if ((rxq->realloc_num + SXE2_RX_REARM_THRESH_VEC) >= rxq->ring_depth) {
++			for (i = 0; i < SXE2_RX_NUM_PER_LOOP_NEON; ++i) {
++				buffer[i] = &rxq->fake_mbuf;
++				vst1q_u64((uint64_t *)&desc[i].read, zero);
++			}
++		}
++
++		rxq->vsi->adapter->dev_info.dev_data->rx_mbuf_alloc_failed +=
++				SXE2_RX_REARM_THRESH_VEC;
 +		goto l_end;
 +	}
-+	hdr_len = ol_info.l2_len + ol_info.l3_len + ol_info.l4_len;
-+	if (tx_pkt->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
-+		hdr_len += ol_info.outer_l2_len + ol_info.outer_l3_len;
 +
-+	tso_len = tx_pkt->pkt_len - hdr_len;
-+	*desc_type_cmd_tso_mss |=
-+			((uint64_t)SXE2_TX_CTXT_DESC_CMD_TSO << SXE2_TX_CTXT_DESC_CMD_SHIFT) |
-+			((uint64_t)tso_len << SXE2_TX_CTXT_DESC_TSO_LEN_SHIFT) |
-+			((uint64_t)tx_pkt->tso_segsz << SXE2_TX_CTXT_DESC_MSS_SHIFT);
++	for (i = 0; i < SXE2_RX_REARM_THRESH_VEC; i += 2, buffer += 2) {
++		mbuf0 = buffer[0];
++		mbuf1 = buffer[1];
++#if RTE_IOVA_IN_MBUF
++		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
++				 offsetof(struct rte_mbuf, buf_addr) + 8);
++#endif
++		virt_addr0 = vld1q_u64((uint64_t *)&mbuf0->buf_addr);
++		virt_addr1 = vld1q_u64((uint64_t *)&mbuf1->buf_addr);
++
++#if RTE_IOVA_IN_MBUF
++		dma_addr0 = vdupq_n_u64((uint64_t)vget_high_u64(virt_addr0));
++		dma_addr1 = vdupq_n_u64((uint64_t)vget_high_u64(virt_addr1));
++#else
++		dma_addr0 = vdupq_n_u64((uint64_t)vget_low_u64(virt_addr0));
++		dma_addr1 = vdupq_n_u64((uint64_t)vget_low_u64(virt_addr1));
++#endif
++		dma_addr0 = vaddq_u64(dma_addr0, hdr_room);
++		dma_addr1 = vaddq_u64(dma_addr1, hdr_room);
++
++		vst1q_u64((uint64_t *)&desc++->read, dma_addr0);
++		vst1q_u64((uint64_t *)&desc++->read, dma_addr1);
++	}
++
++	rxq->realloc_start += SXE2_RX_REARM_THRESH_VEC;
++	if (rxq->realloc_start >= rxq->ring_depth)
++		rxq->realloc_start = 0;
++	rxq->realloc_num -= SXE2_RX_REARM_THRESH_VEC;
++
++	new_tail = (rxq->realloc_start == 0) ?
++		(rxq->ring_depth - 1) : (rxq->realloc_start - 1);
++
++	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, new_tail);
++
 +l_end:
 +	return;
 +}
 +
- static __rte_always_inline uint64_t
- sxe2_tx_data_desc_build_cobt(uint32_t cmd, uint32_t offset, uint16_t buf_size, uint16_t l2tag)
- {
-@@ -395,6 +420,11 @@ uint16_t sxe2_tx_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkt
- 				rte_pktmbuf_free_seg(buffer->mbuf);
- 				buffer->mbuf = NULL;
- 			}
-+			if (offloads & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
-+				sxe2_desc_tso_fill(tx_pkt,
-+					&desc_type_cmd_tso_mss, ol_info);
-+			else if (offloads & RTE_MBUF_F_TX_IEEE1588_TMST)
-+				desc_type_cmd_tso_mss |= SXE2_TX_CTXT_DESC_CMD_TSYN_MASK;
- 
- 			if (offloads & RTE_MBUF_F_TX_QINQ) {
- 				desc_l2tag2 = tx_pkt->vlan_tci_outer;
-@@ -707,6 +737,57 @@ sxe2_rx_desc_filter_para_fill(struct sxe2_rx_queue *rxq __rte_unused,
- #endif
- }
- 
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+int32_t sxe2_rx_update_ptp_time(struct sxe2_rx_queue *rxq)
++static __rte_always_inline uint16_t
++sxe2_rx_pkts_common_vec_neon(struct sxe2_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++		uint16_t nb_pkts, uint8_t *split_rxe_flags, uint8_t *umbcast_flags,
++		bool do_offload)
 +{
-+	struct sxe2_adapter *adapter;
-+	uint64_t cur_time_ms;
-+	int32_t ret = 0;
-+	cur_time_ms = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
++	volatile union sxe2_rx_desc *desc;
++	struct rte_mbuf **buffer;
++	uint32_t i;
++	uint16_t done_num = 0;
++	const uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
 +
-+	if (likely((cur_time_ms - rxq->update_time) < SXE2_RX_PKTS_TS_TIMEOUT_VAL))
++	uint8x16_t rvp_shuf_mask = {
++		0xFF, 0xFF, 0xFF, 0xFF,
++		12, 13, 0xFF, 0xFF,
++		12, 13,
++		2, 3,
++		4, 5, 6, 7
++	};
++
++	uint16x8_t crc_adjust = {
++		0, 0,
++		rxq->crc_len,
++		0, rxq->crc_len,
++		0, 0, 0
++	};
++
++	desc = &rxq->desc_ring[rxq->processing_idx];
++	rte_prefetch0(desc);
++
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, SXE2_RX_NUM_PER_LOOP_NEON);
++
++	if (rxq->realloc_num > SXE2_RX_REARM_THRESH_VEC)
++		sxe2_rx_queue_rearm_neon(rxq);
++
++	if ((rte_le_to_cpu_64(desc->wb.status_err_ptype_len) &
++			SXE2_RX_DESC_STATUS_DD_MASK) == 0) {
 +		goto l_end;
-+	rxq->update_time = cur_time_ms;
-+	adapter = rxq->vsi->adapter;
-+	rxq->ts_need_update = true;
-+	ret = sxe2_drv_ptp_gettime(adapter, rxq);
-+	if (rxq->desc_ts < rxq->ts_low)
-+		rxq->ts_need_update = false;
-+
-+	PMD_LOG_INFO(RX, "rxq update time ret=%d, cur time=%" PRIu64 ", rxqh=%" PRIu64 ", rxql=%d",
-+		     ret, cur_time_ms, rxq->ts_high, rxq->ts_low);
-+l_end:
-+	return ret;
-+}
-+
-+static inline void sxe2_rx_desc_ptp_para_fill(struct sxe2_rx_queue *rxq,
-+					      struct rte_mbuf *mbuf,
-+					      union sxe2_rx_desc *desc)
-+{
-+	struct sxe2_adapter *adapter = rxq->vsi->adapter;
-+	uint64_t ts_ns;
-+
-+	if (adapter->ptp_ctxt.mbuf_rx_ts_flag != 0 &&
-+	    (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) &&
-+	    SXE2_RX_DESC_RXDID_VAL_GET(desc->wb.rxdid_src) == SXE2_RX_DESC_RXDID_1588) {
-+		rxq->desc_ts = rte_le_to_cpu_32(desc->wb_ts.ts_h);
-+		(void)sxe2_rx_update_ptp_time(rxq);
-+		if (rxq->ts_need_update && rxq->desc_ts < rxq->ts_low)
-+			rxq->ts_high += 1;
-+
-+		rxq->ts_need_update = true;
-+		rxq->ts_low = rxq->desc_ts;
-+		rxq->update_time = rte_get_timer_cycles() /
-+			(rte_get_timer_hz() / 1000);
-+		ts_ns = rxq->ts_high * NSEC_PER_SEC + rxq->ts_low;
-+		*RTE_MBUF_DYNFIELD(mbuf, adapter->ptp_ctxt.mbuf_rx_ts_offset, uint64_t *) = ts_ns;
-+		mbuf->ol_flags |= adapter->ptp_ctxt.mbuf_rx_ts_flag;
-+		PMD_LOG_INFO(RX, "receive ptp pkt,ts_s=%" PRIu64 ", ts_ns=%d", rxq->ts_high,
-+			     rxq->ts_low);
 +	}
++
++	buffer = &rxq->buffer_ring[rxq->processing_idx];
++	for (i = 0; i < nb_pkts; i += SXE2_RX_NUM_PER_LOOP_NEON,
++				desc += SXE2_RX_NUM_PER_LOOP_NEON) {
++		uint64x2_t descs[SXE2_RX_NUM_PER_LOOP_NEON];
++		uint8x16_t pkt_mb1, pkt_mb2, pkt_mb3, pkt_mb4;
++		uint64x2_t mbp1, mbp2;
++		uint16x8_t staterr;
++		uint16x8_t tmp;
++		uint16_t bit_num;
++
++		descs[3] = vld1q_u64((uint64_t *)(desc + 3));
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		descs[2] = vld1q_u64((uint64_t *)(desc + 2));
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		descs[1] = vld1q_u64((uint64_t *)(desc + 1));
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		descs[0] = vld1q_u64((uint64_t *)(desc));
++
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++
++		descs[3] = vld1q_lane_u64((uint64_t *)(desc + 3), descs[3], 0);
++		descs[2] = vld1q_lane_u64((uint64_t *)(desc + 2), descs[2], 0);
++		descs[1] = vld1q_lane_u64((uint64_t *)(desc + 1), descs[1], 0);
++		descs[0] = vld1q_lane_u64((uint64_t *)(desc), descs[0], 0);
++
++		mbp1 = vld1q_u64((uint64_t *)&buffer[i]);
++		mbp2 = vld1q_u64((uint64_t *)&buffer[i + 2]);
++
++		vst1q_u64((uint64_t *)&rx_pkts[i], mbp1);
++		vst1q_u64((uint64_t *)&rx_pkts[i + 2], mbp2);
++
++		if (split_rxe_flags) {
++			rte_mbuf_prefetch_part2(rx_pkts[i]);
++			rte_mbuf_prefetch_part2(rx_pkts[i + 1]);
++			rte_mbuf_prefetch_part2(rx_pkts[i + 2]);
++			rte_mbuf_prefetch_part2(rx_pkts[i + 3]);
++		}
++
++		pkt_mb4 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[3]), rvp_shuf_mask);
++		pkt_mb3 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[2]), rvp_shuf_mask);
++		pkt_mb2 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[1]), rvp_shuf_mask);
++		pkt_mb1 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[0]), rvp_shuf_mask);
++
++		if (do_offload) {
++			sxe2_rx_desc_offloads_para_fill_neon(rxq, desc, descs, &rx_pkts[i]);
++		} else {
++			const uint64x2_t mbuf_init = {
++				rxq->mbuf_init_value,
++				0,
++			};
++
++			vst1q_u64((uint64_t *)&rx_pkts[i]->rearm_data, mbuf_init);
++			vst1q_u64((uint64_t *)&rx_pkts[i + 1]->rearm_data, mbuf_init);
++			vst1q_u64((uint64_t *)&rx_pkts[i + 2]->rearm_data, mbuf_init);
++			vst1q_u64((uint64_t *)&rx_pkts[i + 3]->rearm_data, mbuf_init);
++		}
++
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb4), crc_adjust);
++		pkt_mb4 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb3), crc_adjust);
++		pkt_mb3 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb2), crc_adjust);
++		pkt_mb2 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb1), crc_adjust);
++		pkt_mb1 = vreinterpretq_u8_u16(tmp);
++
++		vst1q_u8((void *)&rx_pkts[i + 3]->rx_descriptor_fields1,
++				pkt_mb4);
++		vst1q_u8((void *)&rx_pkts[i + 2]->rx_descriptor_fields1,
++				pkt_mb3);
++		vst1q_u8((void *)&rx_pkts[i + 1]->rx_descriptor_fields1,
++				pkt_mb2);
++		vst1q_u8((void *)&rx_pkts[i]->rx_descriptor_fields1,
++				pkt_mb1);
++
++		if (likely(i + SXE2_RX_NUM_PER_LOOP_NEON < nb_pkts))
++			rte_prefetch_non_temporal(desc + SXE2_RX_NUM_PER_LOOP_NEON);
++
++		{
++			uint32x4_t d0 = vreinterpretq_u32_u64(descs[0]);
++			uint32x4_t d1 = vreinterpretq_u32_u64(descs[1]);
++			uint32x4_t d2 = vreinterpretq_u32_u64(descs[2]);
++			uint32x4_t d3 = vreinterpretq_u32_u64(descs[3]);
++			uint32x4_t sterr_tmp1 = vzip2q_u32(d1, d0);
++			uint32x4_t sterr_tmp2 = vzip2q_u32(d3, d2);
++			uint32x4_t sterr_u32 = vzip1q_u32(sterr_tmp1, sterr_tmp2);
++
++			staterr = vreinterpretq_u16_u32(sterr_u32);
++		}
++
++		sxe2_rx_desc_ptype_fill_neon(staterr, &rx_pkts[i], ptype_tbl);
++
++		if (umbcast_flags != NULL) {
++			uint32x4_t umbcast_mask = {
++				SXE2_RX_DESC_STATUS_UMBCAST_MASK, SXE2_RX_DESC_STATUS_UMBCAST_MASK,
++				SXE2_RX_DESC_STATUS_UMBCAST_MASK, SXE2_RX_DESC_STATUS_UMBCAST_MASK,
++			};
++
++			uint8x16_t umbcast_shuf_mask = {
++				0x0B, 0x03, 0x0F, 0x07,
++				0xFF, 0xFF, 0xFF, 0xFF,
++				0xFF, 0xFF, 0xFF, 0xFF,
++				0xFF, 0xFF, 0xFF, 0xFF,
++			};
++			uint8x16_t umbcast_bits =
++				vreinterpretq_u8_u32(vandq_u32(vreinterpretq_u32_u16(staterr),
++							       umbcast_mask));
++
++			umbcast_bits = vqtbl1q_u8(umbcast_bits, umbcast_shuf_mask);
++			vst1q_lane_u32((uint32_t *)umbcast_flags,
++					vreinterpretq_u32_u8(umbcast_bits), 0);
++			umbcast_flags += SXE2_RX_NUM_PER_LOOP_NEON;
++		}
++
++		if (split_rxe_flags) {
++			uint8x16_t eop_shuf_mask = {
++					0x08, 0x00, 0x0C, 0x04,
++					0xFF, 0xFF, 0xFF, 0xFF,
++					0xFF, 0xFF, 0xFF, 0xFF,
++					0xFF, 0xFF, 0xFF, 0xFF};
++			uint8x16_t eop_bits;
++			uint32x4_t rxe_mask = {
++				0x2080, 0x2080, 0x2080, 0x2080
++			};
++			uint32x4_t rxe_bits;
++			uint32x4_t eop_mask;
++
++			eop_mask = vshlq_n_u32(vdupq_n_u32(1), SXE2_RX_DESC_STATUS_EOP_SHIFT);
++			eop_bits = vandq_u8(vmvnq_u8(vreinterpretq_u8_u16(staterr)),
++					vreinterpretq_u8_u32(eop_mask));
++
++			rxe_bits = vandq_u32(vreinterpretq_u32_u16(staterr), rxe_mask);
++			rxe_bits = vshrq_n_u32(rxe_bits, 7);
++
++			eop_bits = vorrq_u8(eop_bits, vreinterpretq_u8_u32(rxe_bits));
++
++			eop_bits = vqtbl1q_u8(eop_bits, eop_shuf_mask);
++
++			vst1q_lane_u32((uint32_t *)split_rxe_flags,
++				       vreinterpretq_u32_u8(eop_bits), 0);
++			split_rxe_flags += SXE2_RX_NUM_PER_LOOP_NEON;
++
++#ifdef RTE_IOVA_IN_MBUF
++			rx_pkts[i]->next = NULL;
++			rx_pkts[i + 1]->next = NULL;
++			rx_pkts[i + 2]->next = NULL;
++			rx_pkts[i + 3]->next = NULL;
++#endif
++		}
++
++		{
++			uint32x4_t dd_mask = vdupq_n_u32(1);
++			uint32x4_t sterr_dd = vandq_u32(vreinterpretq_u32_u16(staterr), dd_mask);
++			uint16x4_t packed_lo = vmovn_u32(sterr_dd);
++			uint64_t dd64 = vget_lane_u64(vreinterpret_u64_u16(packed_lo), 0);
++
++			bit_num = (uint16_t)rte_popcount64(dd64);
++		}
++		done_num += bit_num;
++		if (likely(bit_num != SXE2_RX_NUM_PER_LOOP_NEON))
++			break;
++	}
++
++	rxq->processing_idx += done_num;
++	rxq->processing_idx &= (rxq->ring_depth - 1);
++	rxq->realloc_num    += done_num;
++
++l_end:
++	return done_num;
++}
++
++static __rte_always_inline uint16_t
++sxe2_rx_pkts_scattered_batch_vec_neon(struct sxe2_rx_queue *rxq,
++		struct rte_mbuf **rx_pkts, uint16_t nb_pkts, bool do_offload)
++{
++	const uint64_t *split_flags64;
++	uint8_t split_rxe_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
++	uint8_t umbcast_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
++	uint16_t rx_done_num;
++	uint16_t rx_pkt_done_num;
++
++	rx_pkt_done_num = 0;
++
++	if (rxq->vsi->adapter->devargs.sw_stats_en) {
++		rx_done_num = sxe2_rx_pkts_common_vec_neon((struct sxe2_rx_queue *)rxq,
++					rx_pkts, nb_pkts, split_rxe_flags, umbcast_flags,
++					do_offload);
++	} else {
++		rx_done_num = sxe2_rx_pkts_common_vec_neon((struct sxe2_rx_queue *)rxq,
++					rx_pkts, nb_pkts, split_rxe_flags, NULL,
++					do_offload);
++	}
++
++	if (rx_done_num == 0)
++		goto l_end;
++
++	if (!rxq->vsi->adapter->devargs.sw_stats_en) {
++		split_flags64 = (uint64_t *)split_rxe_flags;
++
++		if (rxq->pkt_first_seg == NULL &&
++				split_flags64[0] == 0 && split_flags64[1] == 0 &&
++				split_flags64[2] == 0 && split_flags64[3] == 0) {
++			rx_pkt_done_num = rx_done_num;
++			goto l_end;
++		}
++
++		if (rxq->pkt_first_seg == NULL) {
++			while (rx_pkt_done_num < rx_done_num &&
++					split_rxe_flags[rx_pkt_done_num] == 0) {
++				rx_pkt_done_num++;
++			}
++
++			if (rx_pkt_done_num == rx_done_num)
++				goto l_end;
++
++			rxq->pkt_first_seg = rx_pkts[rx_pkt_done_num];
++		}
++	}
++
++	rx_pkt_done_num += sxe2_rx_pkts_refactor(rxq, &rx_pkts[rx_pkt_done_num],
++			rx_done_num - rx_pkt_done_num, &split_rxe_flags[rx_pkt_done_num],
++			&umbcast_flags[rx_pkt_done_num]);
++
++l_end:
++	return rx_pkt_done_num;
++}
++
++uint16_t sxe2_rx_pkts_scattered_vec_neon_offload(void *rx_queue,
++			struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	uint16_t done_num = 0;
++	uint16_t once_num;
++
++	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM_VEC) {
++		once_num = sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++								 rx_pkts + done_num,
++								 SXE2_RX_PKTS_BURST_BATCH_NUM_VEC,
++								 true);
++
++		done_num += once_num;
++		nb_pkts  -= once_num;
++
++		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM_VEC)
++			goto l_end;
++	}
++
++	done_num += sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++							  rx_pkts + done_num,
++							  nb_pkts,
++							  true);
++l_end:
++	SXE2_RX_STATS_CNT(rx_queue, rx_pkts_num, done_num);
++	return done_num;
++}
++
++uint16_t sxe2_rx_pkts_scattered_vec_neon(void *rx_queue,
++			struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	uint16_t done_num = 0;
++	uint16_t once_num;
++
++	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM_VEC) {
++		once_num = sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++								 rx_pkts + done_num,
++								 SXE2_RX_PKTS_BURST_BATCH_NUM_VEC,
++								 false);
++
++		done_num += once_num;
++		nb_pkts  -= once_num;
++
++		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM_VEC)
++			goto l_end;
++	}
++
++	done_num += sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++							  rx_pkts + done_num,
++							  nb_pkts,
++							  false);
++l_end:
++	SXE2_RX_STATS_CNT(rx_queue, rx_pkts_num, done_num);
++	return done_num;
 +}
 +#endif
-+
- static __rte_always_inline void
- sxe2_rx_mbuf_common_fields_fill(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf,
- 		union sxe2_rx_desc *rxd)
-@@ -718,10 +799,12 @@ sxe2_rx_mbuf_common_fields_fill(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf
- 
- 	mbuf->ol_flags = 0;
- 	mbuf->packet_type = ptype_tbl[SXE2_RX_DESC_PTYPE_VAL_GET(qword1)];
--
- 	pkt_flags = sxe2_rx_desc_error_para(rxq, rxd);
- 	sxe2_rx_desc_vlan_para_fill(mbuf, rxd);
- 	sxe2_rx_desc_filter_para_fill(rxq, mbuf, rxd);
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+	sxe2_rx_desc_ptp_para_fill(rxq, mbuf, rxd);
-+#endif
- 
- 	mbuf->ol_flags |= pkt_flags;
- }
 -- 
 2.47.3
 
