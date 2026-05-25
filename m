@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3683CD5BB1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 14:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB712CD5BC9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 14:07:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0EB1340612;
+	by mails.dpdk.org (Postfix) with ESMTP id D3DAA4065A;
 	Mon, 25 May 2026 16:07:02 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 50587402F0
+ by mails.dpdk.org (Postfix) with ESMTP id D7DC8402AC
  for <dev@dpdk.org>; Mon, 25 May 2026 16:07:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779718020; x=1811254020;
+ t=1779718021; x=1811254021;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=+GfNBtQX5rHgwl4jjoy4Lkz+f8hh39EsuL7HQE0iroo=;
- b=nSaBFYCpvBDp+RTPhIUkBZGDb2hML3fplUntQTSgu4PeoP1LJDezmBJD
- p9Uj5UiCQ3fDlCfcv0PpZ35FXkwDOsOtL2/vQOyMjmgD3pFFNg4ZpGZHp
- PH2usQc65cziYjlRcPYYQNOlo90m8g4Phr/h1joM41GPaM2Wxd+kwP7L3
- Do6ZXMc4O84gwFDdJsPU+0CLihvUh5izJZvRSEQLpcwy83pRffrQvVR0T
- /iByV/3eykk2k25I26dBlZTXVQwN2m3pzFvHiS/maa/gDCe1HtEGUuM7l
- UFwHk54hbFmIJBhIQ5Uk5sVLgNy9xjlau1eEmggvqCE6WdzHvywaLCsCY w==;
-X-CSE-ConnectionGUID: c1MgidfMRAa/Sa90dEln+Q==
-X-CSE-MsgGUID: S6eNOUD2Qp2F0X6OFbSbQw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11797"; a="84392486"
-X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="84392486"
+ bh=9r4iT2I9DXxNtbki9p9jt+9sPnzsKI2VGJZ9azRcfHs=;
+ b=ems8O/I0YPST7eijPnxVSYKLmHUgWQDkAd3XCUNvyvQHN3car5vsTJa2
+ m3krUgbiq9sfi9kbGszgWr+NqHO9TkgF2mX1b1FLnvAodSKIB2GbSu42Y
+ M9iGWAeKlIPW+kZWnjyeCyNtYx+TA0GpoRIMSVm+xNrxT9j9jDpQ4tim8
+ PHIUUuFOUwgDY4lEv3fUJ+WIdxCSLGo/j7Iwovj8F9nlWEHSUG4gYQsHc
+ uUv0irPgh6jg4UumeNeS3xn0a6HWIoz7nFwfNSMlrQpnjsBJIs4l1hm1r
+ MbGyGd3z2fspats6wZ0jk04rW1OtIeBeGw1qqBR74jOboS5E0e6Zgw42R g==;
+X-CSE-ConnectionGUID: ETL9YXlTTxa26h4otmwluQ==
+X-CSE-MsgGUID: Ov4C094CSeKNiSxI94rGWA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11797"; a="84392488"
+X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="84392488"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  25 May 2026 07:07:00 -0700
-X-CSE-ConnectionGUID: qtiq87tmQXaLmYJt1Us0SA==
-X-CSE-MsgGUID: vUxUy/lyRDiMq6wRe49hEw==
+X-CSE-ConnectionGUID: 0JxEV0WpR9+kle/1/RQ/xA==
+X-CSE-MsgGUID: sa+Lj+XlRD6ngI5U575lpQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="246692307"
+X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="246692313"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa005.fm.intel.com with ESMTP; 25 May 2026 07:06:55 -0700
+ by fmviesa005.fm.intel.com with ESMTP; 25 May 2026 07:06:57 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v5 03/27] net/intel/common: add common flow action parsing
-Date: Mon, 25 May 2026 15:06:22 +0100
-Message-ID: <00d686796ef0440ca63220d468ed3d15ccf4894a.1779717943.git.anatoly.burakov@intel.com>
+Subject: [PATCH v5 04/27] net/intel/common: add common flow attr validation
+Date: Mon, 25 May 2026 15:06:23 +0100
+Message-ID: <d75e9a02b40ccfe8fd2e00977ee99e9be95ca9ad.1779717944.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1779717943.git.anatoly.burakov@intel.com>
  <cover.1779717943.git.anatoly.burakov@intel.com>
@@ -60,362 +60,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, each driver has their own code for action parsing, which results
-in a lot of duplication and subtle mismatches in behavior between drivers.
+There are a lot of commonalities between what kinds of flow attr each Intel
+driver supports. Add a helper function that will validate attr based on
+common requirements and (optional) parameter checks.
 
-Add common infrastructure, based on the following assumptions:
-
-- All drivers support at most 4 actions at once, but usually less
-- Not every action is supported by all drivers
-- We can check a few common things to filter out obviously wrong actions
-- Driver performs semantic checks on all valid actions
-
-So, the intention is to reject everything we can reasonably reject at the
-outset without knowing anything about the drivers, parametrize what is
-trivial to parametrize, and leave the rest for the driver to implement.
-
-While we're at it, also add logging infrastructure for Intel common code,
-using the new component name defines that are automatically passed to each
-DPDK driver as it is being built.
+Things we check for:
+- Rejecting NULL attr (obviously)
+- Default to ingress flows
+- Transfer, group, priority, and egress are not allowed unless requested
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/common/flow_check.h | 278 ++++++++++++++++++++++++++
- drivers/net/intel/common/log.h        |  40 ++++
- 2 files changed, 318 insertions(+)
- create mode 100644 drivers/net/intel/common/flow_check.h
- create mode 100644 drivers/net/intel/common/log.h
+ drivers/net/intel/common/flow_check.h | 69 +++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
 diff --git a/drivers/net/intel/common/flow_check.h b/drivers/net/intel/common/flow_check.h
-new file mode 100644
-index 0000000000..74fb28ae3d
---- /dev/null
+index 74fb28ae3d..0572028664 100644
+--- a/drivers/net/intel/common/flow_check.h
 +++ b/drivers/net/intel/common/flow_check.h
-@@ -0,0 +1,278 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Intel Corporation
-+ */
-+
-+#ifndef _COMMON_INTEL_FLOW_CHECK_H_
-+#define _COMMON_INTEL_FLOW_CHECK_H_
-+
-+#include <bus_pci_driver.h>
-+#include <ethdev_driver.h>
-+
-+#include "log.h"
-+
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+/*
-+ * Common attr and action validation code for Intel drivers.
-+ */
-+
+@@ -54,6 +54,7 @@ ci_flow_action_type_in_list(const enum rte_flow_action_type type,
+ /* Forward declarations */
+ struct ci_flow_actions;
+ struct ci_flow_actions_check_param;
++struct ci_flow_attr_check_param;
+ 
+ static inline const char *
+ ci_flow_action_type_to_str(enum rte_flow_action_type type)
+@@ -271,6 +272,74 @@ ci_flow_check_actions(const struct rte_flow_action *actions,
+ 	return parsed_actions->count == 0 ? -EINVAL : 0;
+ }
+ 
 +/**
-+ * Maximum number of actions that can be stored in a parsed action list.
++ * Parameter structure for attr check.
 + */
-+#define CI_FLOW_PARSED_ACTIONS_MAX 4
-+
-+/* Actions that are reasonably expected to have a conf structure */
-+static const enum rte_flow_action_type need_conf[] = {
-+	RTE_FLOW_ACTION_TYPE_QUEUE,
-+	RTE_FLOW_ACTION_TYPE_RSS,
-+	RTE_FLOW_ACTION_TYPE_VF,
-+	RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR,
-+	RTE_FLOW_ACTION_TYPE_COUNT,
-+	RTE_FLOW_ACTION_TYPE_MARK,
-+	RTE_FLOW_ACTION_TYPE_SECURITY,
-+	RTE_FLOW_ACTION_TYPE_END
++struct ci_flow_attr_check_param {
++	bool allow_priority; /**< True if priority attribute is allowed. */
++	bool allow_transfer; /**< True if transfer attribute is allowed. */
++	bool allow_group;    /**< True if group attribute is allowed. */
++	bool expect_egress;  /**< True if egress attribute is expected. */
 +};
 +
 +/**
-+ * Is action type in this list of action types?
-+ */
-+static inline bool
-+ci_flow_action_type_in_list(const enum rte_flow_action_type type,
-+		const enum rte_flow_action_type list[])
-+{
-+	size_t i = 0;
-+	while (list[i] != RTE_FLOW_ACTION_TYPE_END) {
-+		if (type == list[i])
-+			return true;
-+		i++;
-+	}
-+	return false;
-+}
-+
-+/* Forward declarations */
-+struct ci_flow_actions;
-+struct ci_flow_actions_check_param;
-+
-+static inline const char *
-+ci_flow_action_type_to_str(enum rte_flow_action_type type)
-+{
-+	const char *name = NULL;
-+	int ret;
-+
-+	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ACTION_NAME_PTR,
-+			&name, sizeof(name), (const void *)(uintptr_t)type, NULL);
-+	if (ret < 0 || name == NULL)
-+		return "UNKNOWN";
-+
-+	return name;
-+}
-+
-+/**
-+ * Driver-specific action list validation callback.
++ * Validate rte_flow_attr structure against specified constraints.
 + *
-+ * Performs driver-specific validation of action parameter list.
-+ * Called after all actions have been parsed and added to the list,
-+ * allowing validation based on the complete action set.
-+ *
-+ * @param actions
-+ *   The complete list of parsed actions (for context-dependent validation).
-+ * @param driver_ctx
-+ *   Opaque driver context (e.g., adapter/queue configuration).
-+ * @param error
-+ *   Pointer to rte_flow_error for reporting failures.
-+ * @return
-+ *   0 on success, negative errno on failure.
-+ */
-+typedef int (*ci_flow_actions_check_fn)(const struct ci_flow_actions *actions,
-+		const struct ci_flow_actions_check_param *param,
-+		struct rte_flow_error *error);
-+
-+/**
-+ * List of actions that we know we've validated.
-+ */
-+struct ci_flow_actions {
-+	/* Number of actions in the list. */
-+	uint8_t count;
-+	/* Parsed actions array. */
-+	struct rte_flow_action const *actions[CI_FLOW_PARSED_ACTIONS_MAX];
-+};
-+
-+/**
-+ * Parameters for action list validation. Any element can be NULL/0 as checks are only performed
-+ * against constraints specified.
-+ */
-+struct ci_flow_actions_check_param {
-+	/**
-+	 * Driver-specific context pointer (e.g., adapter/queue configuration). Can be NULL.
-+	 */
-+	void *driver_ctx;
-+	/**
-+	 * Driver-specific action list validation callback. Can be NULL.
-+	 */
-+	ci_flow_actions_check_fn check;
-+	/**
-+	 * Allowed action types for this parse parameter. Must be terminated with
-+	 * RTE_FLOW_ACTION_TYPE_END. Can be NULL.
-+	 */
-+	const enum rte_flow_action_type *allowed_types;
-+	size_t max_actions;                 /**< Maximum number of actions allowed. */
-+	bool rss_queues_contig;             /**< If true, RSS queues must be contiguous. */
-+};
-+
-+static inline int
-+__flow_action_check_rss(const struct rte_flow_action_rss *rss,
-+		const struct ci_flow_actions_check_param *param,
-+		struct rte_flow_error *error)
-+{
-+	uint32_t qnum, q;
-+
-+	qnum = rss->queue_num;
-+
-+	/* either we have both queues and queue number, or we have neither */
-+	if ((qnum == 0) != (rss->queue == NULL)) {
-+		return rte_flow_error_set(error, EINVAL,
-+			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
-+			"If queue number is specified, queue array must also be specified");
-+	}
-+	/* check if queues are monotonic */
-+	for (q = 1; q < qnum; q++) {
-+		if (rss->queue[q] < rss->queue[q - 1]) {
-+			return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
-+				"RSS queues must be in ascending order");
-+		}
-+		/* if user has requested contiguousness, check that as well */
-+		if (param == NULL || !param->rss_queues_contig)
-+			continue;
-+		if (rss->queue[q] != rss->queue[0] + q) {
-+			return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
-+				"RSS queues must be contiguous");
-+		}
-+	}
-+	/* if user has requested to check for queue contiguousness, do it */
-+	if (param != NULL && param->rss_queues_contig) {
-+	}
-+
-+	/* either we have both key and key length, or we have neither */
-+	if ((rss->key_len == 0) != (rss->key == NULL)) {
-+		return rte_flow_error_set(error, EINVAL,
-+			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
-+			"If RSS key is specified, key length must also be specified");
-+	}
-+	return 0;
-+}
-+
-+static inline int
-+__flow_action_check_generic(const struct rte_flow_action *action,
-+		const struct ci_flow_actions_check_param *param,
-+		struct rte_flow_error *error)
-+{
-+	/* is this action in our allowed list? */
-+	if (param != NULL && param->allowed_types != NULL &&
-+			!ci_flow_action_type_in_list(action->type, param->allowed_types)) {
-+		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
-+				action, "Unsupported action");
-+	}
-+	/* do we need to validate presence of conf? */
-+	if (ci_flow_action_type_in_list(action->type, need_conf)) {
-+		if (action->conf == NULL) {
-+			return rte_flow_error_set(error, EINVAL,
-+						  RTE_FLOW_ERROR_TYPE_ACTION_CONF, action,
-+						  "Action requires configuration");
-+		}
-+	}
-+
-+	/* type-specific validation */
-+	switch (action->type) {
-+	case RTE_FLOW_ACTION_TYPE_RSS:
-+	{
-+		const struct rte_flow_action_rss *rss =
-+				(const struct rte_flow_action_rss *)action->conf;
-+		int ret;
-+
-+		ret = __flow_action_check_rss(rss, param, error);
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	}
-+	default:
-+		/* no specific validation */
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * Validate and parse a list of rte_flow_action into a parsed action list.
-+ *
-+ * @param actions pointer to array of rte_flow_action, terminated by RTE_FLOW_ACTION_TYPE_END
-+ * @param param pointer to ci_flow_actions_check_param structure (can be NULL)
-+ * @param parsed_actions pointer to ci_flow_actions structure to store parsed actions
-+ * @param error pointer to rte_flow_error structure for error reporting
++ * @param attr Pointer to rte_flow_attr structure to validate.
++ * @param attr_param Pointer to ci_flow_attr_check_param structure specifying constraints.
++ * @param error Pointer to rte_flow_error structure for error reporting.
 + *
 + * @return 0 on success, negative errno on failure.
 + */
 +static inline int
-+ci_flow_check_actions(const struct rte_flow_action *actions,
-+	const struct ci_flow_actions_check_param *param,
-+	struct ci_flow_actions *parsed_actions,
-+	struct rte_flow_error *error)
++ci_flow_check_attr(const struct rte_flow_attr *attr,
++		const struct ci_flow_attr_check_param *attr_param,
++		struct rte_flow_error *error)
 +{
-+	size_t i = 0;
-+	int ret;
-+
-+	if (actions == NULL) {
-+		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
-+				NULL, "Missing actions");
++	if (attr == NULL) {
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ATTR, attr,
++					  "NULL attribute");
 +	}
 +
-+	/* reset the list */
-+	*parsed_actions = (struct ci_flow_actions){0};
-+
-+	while (actions[i].type != RTE_FLOW_ACTION_TYPE_END) {
-+		const struct rte_flow_action *action = &actions[i++];
-+
-+		/* skip VOID actions */
-+		if (action->type == RTE_FLOW_ACTION_TYPE_VOID)
-+			continue;
-+
-+		/* generic validation for actions - this will check against param as well */
-+		ret = __flow_action_check_generic(action, param, error);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* add action to the list */
-+		if (parsed_actions->count >= RTE_DIM(parsed_actions->actions)) {
-+			return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
-+							action, "Too many actions");
-+		}
-+		/* user may have specified a maximum number of actions */
-+		if (param != NULL && param->max_actions != 0 &&
-+		    parsed_actions->count >= param->max_actions) {
-+			return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
-+							action, "Too many actions");
-+		}
-+		CI_DRV_LOG(DEBUG, "Parsed action %u: type=%s", parsed_actions->count,
-+			   ci_flow_action_type_to_str(action->type));
-+		parsed_actions->actions[parsed_actions->count++] = action;
++	/* Direction must be either ingress or egress */
++	if (attr->ingress == attr->egress) {
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ATTR, attr,
++					  "Either ingress or egress must be set");
 +	}
 +
-+	/* now, call into user validation if specified */
-+	if (param != NULL && param->check != NULL) {
-+		ret = param->check(parsed_actions, param, error);
-+		if (ret < 0)
-+			return ret;
++	/* Expect ingress by default */
++	if (attr->egress && (attr_param == NULL || !attr_param->expect_egress)) {
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ATTR_EGRESS, attr,
++					  "Egress not supported");
 +	}
-+	/* if we didn't parse anything, valid action list is empty */
-+	return parsed_actions->count == 0 ? -EINVAL : 0;
++
++	/* May not be supported */
++	if (attr->transfer && (attr_param == NULL || !attr_param->allow_transfer)) {
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ATTR_TRANSFER, attr,
++					  "Transfer not supported");
++	}
++
++	/* May not be supported */
++	if (attr->group && (attr_param == NULL || !attr_param->allow_group)) {
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ATTR_GROUP, attr,
++					  "Group not supported");
++	}
++
++	/* May not be supported */
++	if (attr->priority && (attr_param == NULL || !attr_param->allow_priority)) {
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY, attr,
++					  "Priority not supported");
++	}
++
++	return 0;
 +}
 +
-+#ifdef __cplusplus
-+}
-+#endif
-+
-+#endif /* _COMMON_INTEL_FLOW_CHECK_H_ */
-diff --git a/drivers/net/intel/common/log.h b/drivers/net/intel/common/log.h
-new file mode 100644
-index 0000000000..d99e4d1a37
---- /dev/null
-+++ b/drivers/net/intel/common/log.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Intel Corporation
-+ */
-+
-+#ifndef _COMMON_INTEL_LOG_H_
-+#define _COMMON_INTEL_LOG_H_
-+
-+#include <rte_log.h>
-+
-+/*
-+ * Common logging for shared Intel driver code.
-+ *
-+ * This header must only be included from driver translation units, where the
-+ * build system has already defined RTE_COMPONENT_NAME (e.g. "iavf"). It uses
-+ * that token to reference the per-driver logtype variable that every Intel
-+ * driver registers (e.g. iavf_logtype_driver), so no additional setup is
-+ * needed beyond what each driver already provides.
-+ *
-+ * Usage: CI_DRV_LOG(DEBUG, "format %s", arg);
-+ */
-+
-+#ifndef RTE_COMPONENT_NAME
-+/* CI_DRV_LOG is a no-op when included outside a driver build context. */
-+#define CI_DRV_LOG(level, fmt, ...) do { } while (0)
-+#else /* RTE_COMPONENT_NAME */
-+
-+/* Resolves to the per-driver logtype variable, e.g. iavf_logtype_driver. */
-+#define CI_DRV_LOGTYPE RTE_CONCAT(RTE_COMPONENT_NAME, _logtype_driver)
-+
-+/* Forward-declare the logtype so shared headers need not include driver headers. */
-+extern int CI_DRV_LOGTYPE;
-+
-+#define CI_DRV_LOG(level, fmt, ...) \
-+	rte_log(RTE_LOG_##level, CI_DRV_LOGTYPE, \
-+		"PMD_INTEL_COMMON: %s(): " fmt "\n", \
-+		__func__, ##__VA_ARGS__)
-+
-+#endif /* RTE_COMPONENT_NAME */
-+
-+#endif /* _COMMON_INTEL_LOG_H_ */
+ #ifdef __cplusplus
+ }
+ #endif
 -- 
 2.47.3
 
