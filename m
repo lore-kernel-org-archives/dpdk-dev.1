@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F493CD5BC9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 14:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F18CD5BB1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 14:08:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3577E402F2;
-	Mon, 25 May 2026 16:07:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F61040B91;
+	Mon, 25 May 2026 16:07:19 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 636B84066F
- for <dev@dpdk.org>; Mon, 25 May 2026 16:07:13 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E9FA840A84
+ for <dev@dpdk.org>; Mon, 25 May 2026 16:07:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779718033; x=1811254033;
+ t=1779718035; x=1811254035;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=6maOZQwPGhXKK+gRSj7po3fsoOM3ygJQMNgMYi/cDgM=;
- b=Iaue3APdQ0ffSiybyBbU46qywMmEzcOs7myXwWxb4sZwdNUVlGAOqPEL
- 7Zb5u7dhc4cOeP2f6EmtQj0eix+AW139YSQzqwUGOWkFoDs2HKxTiidnI
- TCtqQ0sY7PxT33/FYisSH9KajKr7lC3+NXaxtSBkdAtOgLVazM7R1+lWr
- ueJqkd0py5PenMD4cW8awYOpqnOc8gMia44/CQXj9xjkoEgBF1rweMDCk
- DbKNb4+8CeVK9syrfB1sE/qvU/v0jVC0ziv2wh6/xWgm9hfhp7c7pVPBr
- yWUpd32iEjklyT2v0CrM2T171bevslykOXaP1FMsrQClAQIr5CiopnTLC A==;
-X-CSE-ConnectionGUID: 1rYSZfGHTJ20TMAVRn3GyA==
-X-CSE-MsgGUID: sVQAtCWZTayXvS3XQpiybw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11797"; a="84392516"
-X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="84392516"
+ bh=zCXQkSqOtFml/Uc1Xwu019PhxTjR+bGbzOD9GwcTBgE=;
+ b=PsETbNHpz9proZgYd+RkbBfRWHFLLoxBiKo+UloPzyf6LwdqYW9Gghd3
+ ViydSYASnH/GcdkkvvoO9OEoZ47zZo5sKdm/7ylCR5h+qeoKXplId+G3I
+ XKlDF3jxE76+O/krRKKPmD3WDCabuy/p6ynGp31I3r163YI320lJoWi7H
+ 776OG4b1eAzOQ3zD3Db6M/u9Z58PvRglTqVddGx0sqRBuHI5jFb/+ubL1
+ 4nmvXvM1P5Oftttn+Ifd8k1rR8GLplbdlTBFhuYPabRgP4qF09yNfKVw/
+ q/xapXRJvWC552MkDXuRcSL/k1YgOeOOlG1O4Bloi3meNboUnuw+bxE5Y w==;
+X-CSE-ConnectionGUID: OUOoeEoBTAOwyQVnM/1pEQ==
+X-CSE-MsgGUID: v0kEiWhOQnm+e6DO1ejSUQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11797"; a="84392519"
+X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="84392519"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 May 2026 07:07:13 -0700
-X-CSE-ConnectionGUID: 3XqdpXwiRP6Vod2MwHmWug==
-X-CSE-MsgGUID: pG2g53HsRzGDBQNmh7GRAw==
+ 25 May 2026 07:07:14 -0700
+X-CSE-ConnectionGUID: 9egf+bQPQK639U8xwpqETA==
+X-CSE-MsgGUID: NRVlUYeRRuOMGifuQvE0vw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="246692383"
+X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="246692386"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa005.fm.intel.com with ESMTP; 25 May 2026 07:07:12 -0700
+ by fmviesa005.fm.intel.com with ESMTP; 25 May 2026 07:07:13 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v5 16/27] net/i40e: use common action checks for tunnel
-Date: Mon, 25 May 2026 15:06:35 +0100
-Message-ID: <34a59a51794b275683972cdeda233ea1e845352d.1779717944.git.anatoly.burakov@intel.com>
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v5 17/27] net/iavf: use common flow attribute checks
+Date: Mon, 25 May 2026 15:06:36 +0100
+Message-ID: <96613d57d6144a0cf96ee884ffb7c7bffd905b68.1779717944.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1779717943.git.anatoly.burakov@intel.com>
  <cover.1779717943.git.anatoly.burakov@intel.com>
@@ -60,148 +60,333 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the common flow action checking parsing infrastructure for checking
-flow actions for flow director tunnel filter. As a result, more stringent
-checks are performed against parametersm specifically the following:
-
-- reject NULL conf for VF action (instead of attempt at NULL dereference)
-- second action was expected to be QUEUE but if it wasn't it was ignored
+Replace custom attr checks with a call to common checks. Flow subscription
+engine supports priority but other engines don't, so we move the attribute
+checks into the engines.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_flow.c | 104 +++++++++++++----------------
- 1 file changed, 48 insertions(+), 56 deletions(-)
+ drivers/net/intel/iavf/iavf_fdir.c         |  8 ++-
+ drivers/net/intel/iavf/iavf_fsub.c         | 20 ++++++-
+ drivers/net/intel/iavf/iavf_generic_flow.c | 67 +++-------------------
+ drivers/net/intel/iavf/iavf_generic_flow.h |  2 +-
+ drivers/net/intel/iavf/iavf_hash.c         | 10 ++--
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c |  8 ++-
+ 6 files changed, 43 insertions(+), 72 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
-index 1ca70ff71c..1051c99fba 100644
---- a/drivers/net/intel/i40e/i40e_flow.c
-+++ b/drivers/net/intel/i40e/i40e_flow.c
-@@ -1107,15 +1107,6 @@ static struct i40e_valid_pattern i40e_supported_patterns[] = {
- 	{ pattern_fdir_ipv6_sctp, i40e_flow_parse_l4_cloud_filter },
- };
+diff --git a/drivers/net/intel/iavf/iavf_fdir.c b/drivers/net/intel/iavf/iavf_fdir.c
+index 91485ad360..91efc986d8 100644
+--- a/drivers/net/intel/iavf/iavf_fdir.c
++++ b/drivers/net/intel/iavf/iavf_fdir.c
+@@ -17,6 +17,7 @@
  
--#define NEXT_ITEM_OF_ACTION(act, actions, index)                        \
--	do {                                                            \
--		act = actions + index;                                  \
--		while (act->type == RTE_FLOW_ACTION_TYPE_VOID) {        \
--			index++;                                        \
--			act = actions + index;                          \
--		}                                                       \
--	} while (0)
+ #include "iavf.h"
+ #include "iavf_generic_flow.h"
++#include "../common/flow_check.h"
+ #include "virtchnl.h"
+ #include "iavf_rxtx.h"
+ 
+@@ -1594,7 +1595,7 @@ iavf_fdir_parse(struct iavf_adapter *ad,
+ 		uint32_t array_len,
+ 		const struct rte_flow_item pattern[],
+ 		const struct rte_flow_action actions[],
+-		uint32_t priority,
++		const struct rte_flow_attr *attr,
+ 		void **meta,
+ 		struct rte_flow_error *error)
+ {
+@@ -1605,8 +1606,9 @@ iavf_fdir_parse(struct iavf_adapter *ad,
+ 
+ 	memset(filter, 0, sizeof(*filter));
+ 
+-	if (priority >= 1)
+-		return -rte_errno;
++	ret = ci_flow_check_attr(attr, NULL, error);
++	if (ret)
++		return ret;
+ 
+ 	item = iavf_search_pattern_match_item(pattern, array, array_len, error);
+ 	if (!item)
+diff --git a/drivers/net/intel/iavf/iavf_fsub.c b/drivers/net/intel/iavf/iavf_fsub.c
+index 8275c4b6c0..65172467b5 100644
+--- a/drivers/net/intel/iavf/iavf_fsub.c
++++ b/drivers/net/intel/iavf/iavf_fsub.c
+@@ -20,6 +20,7 @@
+ #include <rte_flow.h>
+ #include <iavf.h>
+ #include "iavf_generic_flow.h"
++#include "../common/flow_check.h"
+ 
+ #define MAX_QGRP_NUM_TYPE      7
+ #define IAVF_IPV6_ADDR_LENGTH  16
+@@ -650,12 +651,15 @@ iavf_fsub_parse(struct iavf_adapter *ad,
+ 		uint32_t array_len,
+ 		const struct rte_flow_item pattern[],
+ 		const struct rte_flow_action actions[],
+-		uint32_t priority,
++		const struct rte_flow_attr *attr,
+ 		void **meta,
+ 		struct rte_flow_error *error)
+ {
+ 	struct iavf_fsub_conf *filter;
+ 	struct iavf_pattern_match_item *pattern_match_item = NULL;
++	struct ci_flow_attr_check_param attr_param = {
++		.allow_priority = true,
++	};
+ 	int ret = 0;
+ 
+ 	filter = rte_zmalloc(NULL, sizeof(*filter), 0);
+@@ -666,6 +670,18 @@ iavf_fsub_parse(struct iavf_adapter *ad,
+ 		return -ENOMEM;
+ 	}
+ 
++	ret = ci_flow_check_attr(attr, &attr_param, error);
++	if (ret)
++		goto error;
++
++	if (attr->priority > 1) {
++		rte_flow_error_set(error, EINVAL,
++				   RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
++				   attr, "Only support priority 0 and 1.");
++		ret = -rte_errno;
++		goto error;
++	}
++
+ 	/* search flow subscribe pattern */
+ 	pattern_match_item = iavf_search_pattern_match_item(pattern, array,
+ 							    array_len, error);
+@@ -687,7 +703,7 @@ iavf_fsub_parse(struct iavf_adapter *ad,
+ 		goto error;
+ 
+ 	/* parse flow subscribe pattern action */
+-	ret = iavf_fsub_parse_action((void *)ad, actions, priority,
++	ret = iavf_fsub_parse_action((void *)ad, actions, attr->priority,
+ 				     error, filter);
+ 
+ error:
+diff --git a/drivers/net/intel/iavf/iavf_generic_flow.c b/drivers/net/intel/iavf/iavf_generic_flow.c
+index b4a3991689..371ad1b356 100644
+--- a/drivers/net/intel/iavf/iavf_generic_flow.c
++++ b/drivers/net/intel/iavf/iavf_generic_flow.c
+@@ -1791,7 +1791,7 @@ enum rte_flow_item_type iavf_pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_tcp[] = {
+ typedef struct iavf_flow_engine * (*parse_engine_t)(struct iavf_adapter *ad,
+ 		struct rte_flow *flow,
+ 		struct iavf_parser_list *parser_list,
+-		uint32_t priority,
++		const struct rte_flow_attr *attr,
+ 		const struct rte_flow_item pattern[],
+ 		const struct rte_flow_action actions[],
+ 		struct rte_flow_error *error);
+@@ -1945,45 +1945,6 @@ iavf_unregister_parser(struct iavf_flow_parser *parser,
+ 	}
+ }
+ 
+-static int
+-iavf_flow_valid_attr(const struct rte_flow_attr *attr,
+-		     struct rte_flow_error *error)
+-{
+-	/* Must be input direction */
+-	if (!attr->ingress) {
+-		rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ATTR_INGRESS,
+-				attr, "Only support ingress.");
+-		return -rte_errno;
+-	}
+-
+-	/* Not supported */
+-	if (attr->egress) {
+-		rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ATTR_EGRESS,
+-				attr, "Not support egress.");
+-		return -rte_errno;
+-	}
+-
+-	/* support priority for flow subscribe */
+-	if (attr->priority > 1) {
+-		rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
+-				attr, "Only support priority 0 and 1.");
+-		return -rte_errno;
+-	}
+-
+-	/* Not supported */
+-	if (attr->group) {
+-		rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ATTR_GROUP,
+-				attr, "Not support group.");
+-		return -rte_errno;
+-	}
+-
+-	return 0;
+-}
 -
  /* Find the first VOID or non-VOID item pointer */
  static const struct rte_flow_item *
- i40e_find_first_item(const struct rte_flow_item *item, bool is_void)
-@@ -2629,61 +2620,62 @@ i40e_flow_parse_tunnel_action(struct rte_eth_dev *dev,
- 			      struct i40e_tunnel_filter_conf *filter)
- {
- 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
--	const struct rte_flow_action *act;
- 	const struct rte_flow_action_queue *act_q;
--	const struct rte_flow_action_vf *act_vf;
--	uint32_t index = 0;
-+	struct ci_flow_actions parsed_actions = {0};
-+	struct ci_flow_actions_check_param ac_param = {
-+		.allowed_types = (enum rte_flow_action_type[]) {
-+			RTE_FLOW_ACTION_TYPE_QUEUE,
-+			RTE_FLOW_ACTION_TYPE_PF,
-+			RTE_FLOW_ACTION_TYPE_VF,
-+			RTE_FLOW_ACTION_TYPE_END
-+		},
-+		.max_actions = 2,
-+	};
-+	const struct rte_flow_action *first, *second;
-+	int ret;
+ iavf_find_first_item(const struct rte_flow_item *item, bool is_void)
+@@ -2112,7 +2073,7 @@ static struct iavf_flow_engine *
+ iavf_parse_engine_create(struct iavf_adapter *ad,
+ 		struct rte_flow *flow,
+ 		struct iavf_parser_list *parser_list,
+-		uint32_t priority,
++		const struct rte_flow_attr *attr,
+ 		const struct rte_flow_item pattern[],
+ 		const struct rte_flow_action actions[],
+ 		struct rte_flow_error *error)
+@@ -2126,7 +2087,7 @@ iavf_parse_engine_create(struct iavf_adapter *ad,
+ 		if (parser_node->parser->parse_pattern_action(ad,
+ 				parser_node->parser->array,
+ 				parser_node->parser->array_len,
+-				pattern, actions, priority, &meta, error) < 0)
++				pattern, actions, attr, &meta, error) < 0)
+ 			continue;
  
--	/* Check if the first non-void action is PF or VF. */
--	NEXT_ITEM_OF_ACTION(act, actions, index);
--	if (act->type != RTE_FLOW_ACTION_TYPE_PF &&
--	    act->type != RTE_FLOW_ACTION_TYPE_VF) {
--		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
--				   act, "Not supported action.");
+ 		engine = parser_node->parser->engine;
+@@ -2142,7 +2103,7 @@ static struct iavf_flow_engine *
+ iavf_parse_engine_validate(struct iavf_adapter *ad,
+ 		struct rte_flow *flow,
+ 		struct iavf_parser_list *parser_list,
+-		uint32_t priority,
++		const struct rte_flow_attr *attr,
+ 		const struct rte_flow_item pattern[],
+ 		const struct rte_flow_action actions[],
+ 		struct rte_flow_error *error)
+@@ -2156,7 +2117,7 @@ iavf_parse_engine_validate(struct iavf_adapter *ad,
+ 		if (parser_node->parser->parse_pattern_action(ad,
+ 				parser_node->parser->array,
+ 				parser_node->parser->array_len,
+-				pattern, actions, priority, &meta, error) < 0)
++				pattern, actions, attr, &meta, error) < 0)
+ 			continue;
+ 
+ 		engine = parser_node->parser->engine;
+@@ -2188,7 +2149,6 @@ iavf_flow_process_filter(struct rte_eth_dev *dev,
+ 		parse_engine_t iavf_parse_engine,
+ 		struct rte_flow_error *error)
+ {
+-	int ret = IAVF_ERR_CONFIG;
+ 	struct iavf_adapter *ad =
+ 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(ad);
+@@ -2206,29 +2166,18 @@ iavf_flow_process_filter(struct rte_eth_dev *dev,
+ 		return -rte_errno;
+ 	}
+ 
+-	if (!attr) {
+-		rte_flow_error_set(error, EINVAL,
+-				   RTE_FLOW_ERROR_TYPE_ATTR,
+-				   NULL, "NULL attribute.");
 -		return -rte_errno;
 -	}
-+	ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
+-
+-	ret = iavf_flow_valid_attr(attr, error);
+-	if (ret)
+-		return ret;
+-
+ 	*engine = iavf_parse_engine(ad, flow, &vf->rss_parser_list,
+-				    attr->priority, pattern, actions, error);
++				    attr, pattern, actions, error);
+ 	if (*engine)
+ 		return 0;
+ 
+ 	*engine = iavf_parse_engine(ad, flow, &vf->dist_parser_list,
+-				    attr->priority, pattern, actions, error);
++				    attr, pattern, actions, error);
+ 	if (*engine)
+ 		return 0;
+ 
+ 	*engine = iavf_parse_engine(ad, flow, &vf->ipsec_crypto_parser_list,
+-				    attr->priority, pattern, actions, error);
++				    attr, pattern, actions, error);
+ 	if (*engine)
+ 		return 0;
+ 
+diff --git a/drivers/net/intel/iavf/iavf_generic_flow.h b/drivers/net/intel/iavf/iavf_generic_flow.h
+index 1b87c486d5..6665d68818 100644
+--- a/drivers/net/intel/iavf/iavf_generic_flow.h
++++ b/drivers/net/intel/iavf/iavf_generic_flow.h
+@@ -471,7 +471,7 @@ typedef int (*parse_pattern_action_t)(struct iavf_adapter *ad,
+ 		uint32_t array_len,
+ 		const struct rte_flow_item pattern[],
+ 		const struct rte_flow_action actions[],
+-		uint32_t priority,
++		const struct rte_flow_attr *attr,
+ 		void **meta,
+ 		struct rte_flow_error *error);
+ 
+diff --git a/drivers/net/intel/iavf/iavf_hash.c b/drivers/net/intel/iavf/iavf_hash.c
+index 1617cb1066..1615ba5ce9 100644
+--- a/drivers/net/intel/iavf/iavf_hash.c
++++ b/drivers/net/intel/iavf/iavf_hash.c
+@@ -22,6 +22,7 @@
+ #include "iavf_log.h"
+ #include "iavf.h"
+ #include "iavf_generic_flow.h"
++#include "../common/flow_check.h"
+ 
+ #define IAVF_PHINT_NONE				0
+ #define IAVF_PHINT_GTPU				BIT_ULL(0)
+@@ -86,7 +87,7 @@ iavf_hash_parse_pattern_action(struct iavf_adapter *ad,
+ 			       uint32_t array_len,
+ 			       const struct rte_flow_item pattern[],
+ 			       const struct rte_flow_action actions[],
+-			       uint32_t priority,
++			       const struct rte_flow_attr *attr,
+ 			       void **meta,
+ 			       struct rte_flow_error *error);
+ 
+@@ -1521,7 +1522,7 @@ iavf_hash_parse_pattern_action(__rte_unused struct iavf_adapter *ad,
+ 			       uint32_t array_len,
+ 			       const struct rte_flow_item pattern[],
+ 			       const struct rte_flow_action actions[],
+-			       uint32_t priority,
++			       const struct rte_flow_attr *attr,
+ 			       void **meta,
+ 			       struct rte_flow_error *error)
+ {
+@@ -1530,8 +1531,9 @@ iavf_hash_parse_pattern_action(__rte_unused struct iavf_adapter *ad,
+ 	uint64_t phint = IAVF_PHINT_NONE;
+ 	int ret = 0;
+ 
+-	if (priority >= 1)
+-		return -rte_errno;
++	ret = ci_flow_check_attr(attr, NULL, error);
 +	if (ret)
 +		return ret;
-+	first = parsed_actions.actions[0];
-+	/* can be NULL */
-+	second = parsed_actions.actions[1];
  
--	if (act->type == RTE_FLOW_ACTION_TYPE_VF) {
--		act_vf = act->conf;
--		filter->vf_id = act_vf->id;
-+	/* first action must be PF or VF */
-+	if (first->type == RTE_FLOW_ACTION_TYPE_VF) {
-+		const struct rte_flow_action_vf *vf = first->conf;
-+		if (vf->id >= pf->vf_num) {
-+			rte_flow_error_set(error, EINVAL,
-+					RTE_FLOW_ERROR_TYPE_ACTION, first,
-+					"Invalid VF ID for tunnel filter");
-+			return -rte_errno;
-+		}
-+		filter->vf_id = vf->id;
- 		filter->is_to_vf = 1;
--		if (filter->vf_id >= pf->vf_num) {
--			rte_flow_error_set(error, EINVAL,
--				   RTE_FLOW_ERROR_TYPE_ACTION,
--				   act, "Invalid VF ID for tunnel filter");
--			return -rte_errno;
--		}
-+	} else if (first->type != RTE_FLOW_ACTION_TYPE_PF) {
-+		return rte_flow_error_set(error, EINVAL,
-+					  RTE_FLOW_ERROR_TYPE_ACTION, first,
-+					  "Unsupported action");
- 	}
+ 	rss_meta_ptr = rte_zmalloc(NULL, sizeof(*rss_meta_ptr), 0);
+ 	if (!rss_meta_ptr) {
+diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+index 75da9f6413..be9e297486 100644
+--- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
++++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+@@ -14,6 +14,7 @@
+ #include "iavf_rxtx.h"
+ #include "iavf_log.h"
+ #include "iavf_generic_flow.h"
++#include "../common/flow_check.h"
  
--	/* Check if the next non-void item is QUEUE */
--	index++;
--	NEXT_ITEM_OF_ACTION(act, actions, index);
--	if (act->type == RTE_FLOW_ACTION_TYPE_QUEUE) {
--		act_q = act->conf;
--		filter->queue_id = act_q->index;
--		if ((!filter->is_to_vf) &&
--		    (filter->queue_id >= pf->dev_data->nb_rx_queues)) {
--			rte_flow_error_set(error, EINVAL,
--				   RTE_FLOW_ERROR_TYPE_ACTION,
--				   act, "Invalid queue ID for tunnel filter");
--			return -rte_errno;
--		} else if (filter->is_to_vf &&
--			   (filter->queue_id >= pf->vf_nb_qps)) {
--			rte_flow_error_set(error, EINVAL,
--				   RTE_FLOW_ERROR_TYPE_ACTION,
--				   act, "Invalid queue ID for tunnel filter");
--			return -rte_errno;
--		}
--	}
-+	/* check if second action is QUEUE */
-+	if (second == NULL)
-+		return 0;
+ #include "iavf_ipsec_crypto.h"
+ #include "iavf_ipsec_crypto_capabilities.h"
+@@ -1953,15 +1954,16 @@ iavf_ipsec_flow_parse(struct iavf_adapter *ad,
+ 		      uint32_t array_len,
+ 		      const struct rte_flow_item pattern[],
+ 		      const struct rte_flow_action actions[],
+-		      uint32_t priority,
++		      const struct rte_flow_attr *attr,
+ 		      void **meta,
+ 		      struct rte_flow_error *error)
+ {
+ 	struct iavf_pattern_match_item *item = NULL;
+ 	int ret = -1;
  
--	/* Check if the next non-void item is END */
--	index++;
--	NEXT_ITEM_OF_ACTION(act, actions, index);
--	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
--		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
--				   act, "Not supported action.");
+-	if (priority >= 1)
 -		return -rte_errno;
-+	act_q = second->conf;
-+	/* check queue ID for PF flow */
-+	if (!filter->is_to_vf && act_q->index >= pf->dev_data->nb_rx_queues) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION_CONF, act_q,
-+				"Invalid queue ID for tunnel filter");
-+	}
-+	/* check queue ID for VF flow */
-+	if (filter->is_to_vf && act_q->index >= pf->vf_nb_qps) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION_CONF, act_q,
-+				"Invalid queue ID for tunnel filter");
- 	}
-+	filter->queue_id = act_q->index;
++	ret = ci_flow_check_attr(attr, NULL, error);
++	if (ret)
++		return ret;
  
- 	return 0;
- }
+ 	item = iavf_search_pattern_match_item(pattern, array, array_len, error);
+ 	if (item && item->meta) {
 -- 
 2.47.3
 
