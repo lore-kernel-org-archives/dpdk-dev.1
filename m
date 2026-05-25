@@ -2,42 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16F1CD5BC9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 15:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76050CD5BB1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 17:13:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9D3340276;
-	Mon, 25 May 2026 17:47:37 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 8B60840144
- for <dev@dpdk.org>; Mon, 25 May 2026 17:47:36 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 6A30E20A2F;
- Mon, 25 May 2026 17:47:36 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 76E9240276;
+	Mon, 25 May 2026 19:13:48 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id A1B0E40144
+ for <dev@dpdk.org>; Mon, 25 May 2026 19:13:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1779729226; x=1811265226;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=X4ItPUSBwpxUsQEH4z5MIv4sX2zyDMWv6sFzOLVadU0=;
+ b=SOQkPuH/OBuTjIDHcqpMSPs3t7EtPy6dg4mCjerwTgDfc8YZMUAvK+i0
+ C12eXmY1VmDhL/17KxxsDWozQmtUS/8SYybs/C8pMQI8McZ/zO3h25O5h
+ gvOEmYXefAKATIn/jvbpaDiBrCM6/+XaWK0BYrniSnI/2G+hAwsEVdxxG
+ bIvWtxbpyUK2FiysTtyKHEkwMseI/1Qv3ITifdqUV9pFV5xXpyGHwWIsg
+ TyWepppuFh3e8hehbEF7ixaUSRwK5HE6VIUbvKrx/45bSirLaKuivjkOb
+ oBtb1CnI1fmH6HBluG4w5Fs6eG+v8sA4Vh40PIdgeSuFEotSw6bVeARrL A==;
+X-CSE-ConnectionGUID: KOJ1OoXtR++9h2xokkSIyw==
+X-CSE-MsgGUID: ULl6DwfDTA2uaiCybDRz6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11797"; a="80607452"
+X-IronPort-AV: E=Sophos;i="6.24,168,1774335600"; d="scan'208";a="80607452"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 May 2026 10:13:45 -0700
+X-CSE-ConnectionGUID: 3PR4F93kRfqpBG5mTgoIzg==
+X-CSE-MsgGUID: /tGOMwcNT1agvY8Q1rSEyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,168,1774335600"; d="scan'208";a="241506535"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa008.jf.intel.com with ESMTP; 25 May 2026 10:13:45 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH 0/2] implement missing APIs on FreeBSD
+Date: Mon, 25 May 2026 18:13:38 +0100
+Message-ID: <20260525171340.1701509-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v3 03/27] ring: use compare-and-swap wrapper
-Date: Mon, 25 May 2026 17:47:34 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65897@smartserver.smartshare.dk>
-In-Reply-To: <20260525083509.00cf76a1@phoenix.local>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v3 03/27] ring: use compare-and-swap wrapper
-Thread-Index: AdzsXBi5qrtIgbaDRSKZ4irxZpH7pQAAWPhg
-References: <20260521042043.1590536-1-stephen@networkplumber.org>
- <20260523195604.441947-1-stephen@networkplumber.org>
- <20260523195604.441947-4-stephen@networkplumber.org>
- <b827bdd2f5994f24b9806e5cbae82cd3@huawei.com>
- <20260525083509.00cf76a1@phoenix.local>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
-Cc: <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,41 +57,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> Sent: Monday, 25 May 2026 17.35
->=20
-> On Mon, 25 May 2026 07:41:13 +0000
-> Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
->=20
-> > Hi Stephen,
-> >
-> > > The rte_atomic32_cmpset is deprecated. Initial attempts at
-> > > changing this with direct conversion to
-> > > rte_atomic_compare_exchange_weak_explicit()
-> > > regressed MP/MC contended performance on x86 by 10-30%,
-> > > because the C11 builtin's failure-writeback semantic forces
-> > > GCC to emit extra instructions on the CAS critical path.
-> > >
-> > > Add an internal __rte_ring_compare_and_swap() wrapper that calls
-> > > __sync_bool_compare_and_swap() directly, which keeps the original
-> > > instruction sequence. Add equivalent function for MSVC.
-> >
-> > In fact, in rte_ring we do have 2 implementations of the same core
-> functions:
-> > lib/ring/rte_ring_c11_pvt.h  - uses C11 atomics
-> > lib/ring/rte_ring_generic_pvt.h - uses legacy instructions (smp_mb,
-> extra),
-> > If we going remove these legacy instructions anyway (or
-> reimplementing them using C11 atomics),
-> > then there is probably no point to keep rte_ring_generic_pvt.h.
-> > Konstantin
->=20
-> Have been deep diving into why C11 atomics give 20-30% performance
-> drop versus atomic32 version. So far it comes down to GCC optimizer
-> not doing as well with C11 versus assembly. The C11 form with the
-> excessive use of always_inline consumes more registers.
+The APIs for converting a virtual address to an IOVA or a physical
+address were implemented only as stubs on FreeBSD, but unfortunately
+they are used by drivers such as "igc", part of e1000, causing the
+drivers to fail on BSD. A workaround would be to change the use of these
+functions with the rte_malloc equivalents (e.g. rte_malloc_virt2iova) -
+which do work on FreeBSD - but a better solution is just to replace the
+stubs with proper implementations in FreeBSD-specific EAL flags.
 
-Just an idea:
-Perhaps adding "const" and/or "restrict" to relevant parameters will =
-give the optimizer the information it needs?
+Bruce Richardson (2):
+  eal/freebsd: fix memseg addresses in IOVA_AS_VA mode
+  eal/freebsd: implement virtual to IOVA translation fn
+
+ app/test/test_memory.c       | 67 ++++++++++++++++++++++++++++++++++++
+ lib/eal/freebsd/eal_memory.c | 27 +++++++++++----
+ 2 files changed, 88 insertions(+), 6 deletions(-)
+
+--
+2.53.0
 
