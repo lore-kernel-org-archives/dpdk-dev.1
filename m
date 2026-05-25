@@ -2,65 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5B3CD5BB1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 14:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7A0CD5BB1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 15:35:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E93AC40276;
-	Mon, 25 May 2026 16:31:43 +0200 (CEST)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 7D8FC40144
- for <dev@dpdk.org>; Mon, 25 May 2026 16:31:42 +0200 (CEST)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-2ee990e8597so23480913eec.1
- for <dev@dpdk.org>; Mon, 25 May 2026 07:31:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1458A40276;
+	Mon, 25 May 2026 17:35:15 +0200 (CEST)
+Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com
+ [74.125.82.178]) by mails.dpdk.org (Postfix) with ESMTP id CD54940144
+ for <dev@dpdk.org>; Mon, 25 May 2026 17:35:13 +0200 (CEST)
+Received: by mail-dy1-f178.google.com with SMTP id
+ 5a478bee46e88-30455f77e0eso5659652eec.0
+ for <dev@dpdk.org>; Mon, 25 May 2026 08:35:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779719501;
- x=1780324301; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779723312;
+ x=1780328112; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ukbpJnWbMEshLm+ExzSgSsOOhA+lMIZ6kiFz/RROD5I=;
- b=b/blJMcm7+TVSCBTYB8eKRHGQCKIPEGu8GSr0Ignu62HsV39iDTsxXlRp3XK+wHNS7
- 1UAGOMrW6YW3vUB3n7P0qxsQYyj2jDOYx0NochfqTA49vZXeVY0F7+RPQ5YUMKvGLa31
- uuEprdvw/HncH/cD9spWUuV4/AcRDYD/rCEEPrZluA/aO6EhgkukJ+MhAk5aXyWs0hBN
- nDnMzEdjqH09KhU7T8JZU31wqzpWTgcIIkCrUNEhOqqCRSo4+V2u1OF4zvpw7uAZC94/
- 9JykTBd1FrYKF7YvatUfg9VqMtL+02A6Hm9tLUP4JDLmN6cqRH8WH9/WyibTlHQ7YyoC
- rSfA==
+ bh=cK9vemiHCbyN5F25cS1rChQ7cwe2hhJ3RMpHyF7AnGU=;
+ b=Woc6hcao+ov6QkynKsMErKKn1RCKQGw3YDjxfXpvOg8bBQMkyZT/oePu/u1bdgobDW
+ /7vAZSt8D5rbCIkjtn6Vrff6ys4FqX4e86arV3nklnDqkdWPtzuOeN/DvjMCxKm8Q+rU
+ FpF+JJE8oD0+KIiJfGIIc2e29M7CV0o4/GHf0UkD3GZY///3Ut+GLMdhLx0LxQc+kaGz
+ a25qVFCEFlMOJLyPLkl8czGgtypGmwDt4qB3cT7ehA+cX4yPScaczyQdUBQMUdp1KKpx
+ lD6U9QJKln9V13EL5KUSWGe+AuZrfVE0Q7WhDLWHRRChCh0IVYU7LBAHbfPi0UThJSPJ
+ /r2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779719501; x=1780324301;
+ d=1e100.net; s=20251104; t=1779723312; x=1780328112;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ukbpJnWbMEshLm+ExzSgSsOOhA+lMIZ6kiFz/RROD5I=;
- b=KhQb8T7imG0gKBvJApkSSeCsfDJ0FkP3JEgh7oq/+Fu4Hz8WGL3DJyeuzEOZ4LZEJz
- +h5DyKlIhNnzBlNQa2SHHEobL2jB0HKix8HQfqegqkmubZCR+x0XGcwQWdoRrSamfeM6
- IuPQ/aeSbw4N1EtRtygFxsQbXD6JNsPEZJlBns/fzltUOxg+gZh1TLLRRTb6EqasNoIL
- b4NiNvObZSKJJJK7K/B3iTVoVTodOs7pE07bEYDJ63voPwh5qMfBW4nPJDQkvRiVk1Y3
- 5Fen6JeZeIUN2xpMzAaG9nqzyESo+kQTgo7pE8C0J1EsZIO9Kl8yLikXHSQO3N2YdfMH
- qTEg==
-X-Gm-Message-State: AOJu0YwZescq+4EOGT40b4WVYyW8OVnWZAhK733A756sTf3bn28Xv2VG
- bDBNcif7UOFVrS7cIrptmFKVOysroUDfH9DFt4wPABlQH/E1uDMhrlJShBhl2SSVUPU=
-X-Gm-Gg: Acq92OHXJYRrqPnbNHmlxmFxqydwjPHw+JeKnUtWc8a5OyNvn5lxc5bR+xVD9U0aEYA
- l2FJNz0mUF8YSCXMyOAPS0mkG3DHwJnuvP11uwcw/713S1Lc5AwAFA4Ityu2WqHlpKgG7L6dGwS
- 2GE/gOlzD7CSYr7bVl5CgQeSyUJ5hPMXDTzTLI1t7qdwA5OE/ypEw8fdzXN4hHaki7ZOhJCSsyM
- 4cKBS0FERqtli6G1nGjQ2CL0qmjruINSS4/1W54xrHS91XomtnJ7Yj601q7ac9gP5Gr/vql7cl0
- DAyWRV1rd4wHhZND8wbMtdT9MvFA+mjvB3BgTOguMIsJZ2XNofrGPXKEgCCRX37jlUU44KOTKsA
- wp2WPYx5A0wjoN3uu3F/TZ4FGKNJesvXGXCN8Nx6Gv9p5QKyhFRcmL36TkXWABkBk8Lcf0CsfAD
- S182gnf+ZMWyXwmLNWGCIVY5HkyumtVljTDj3Y9NbDE1/JgJfK/eRYl5Edw5D9/L0S
-X-Received: by 2002:a05:7300:ad2d:b0:2f6:9cb5:6c27 with SMTP id
- 5a478bee46e88-30449102080mr6509231eec.21.1779719501448; 
- Mon, 25 May 2026 07:31:41 -0700 (PDT)
+ bh=cK9vemiHCbyN5F25cS1rChQ7cwe2hhJ3RMpHyF7AnGU=;
+ b=UeXsqfWFLOByeI0xNrhOxRsNd00m+K4zz9UMUjJU6LhATAOFMVffqX4OT5hh+LtcB4
+ nG1XyjAtFznXthrdo5Kf8eSJDwLa07+rFgZY96fImmJX7kDd2fjeEQmzPpm0HvaABvcK
+ N4hIQ4x22o63Sl7lxyJB70YpQkU6e4zlePpU8zYCzWsXCaXb/4JEopflMi2Gz9xXMLv1
+ 4lnUxb4AkhbJHnDn3yO0dEV4TwvWKoVjAbMGcRM5XBk59xO1NhWLPWCCUxrWISiZdLtD
+ QiSiX6qwccO2e27SueltN4MuNWq3j9pHD2UhDNSpoHCt57BsaiWTpFS8UQ5ph2iKAH09
+ PyAA==
+X-Gm-Message-State: AOJu0Ywtc1g68+EnCKnY+g8fKmjmKYcOwepOSObvm1c4hDdx7CC0ZjsO
+ NZwhUFrlaFyIjC4GN8LR+qg+k+KeYvK6goppD90Soi/OUjwEBssligSKOuzuBwbwkhM=
+X-Gm-Gg: Acq92OHguFrtm1PZIH57+Jey+mTxZMXPBiZOr+lNNnKbJcGyprdCsk+cVagfl+OQ1em
+ v4ESxMZf98HHHexaFFOk50lCj2Nepncu1PNB6xeYCC/GAFB7WDpz1bQxcCDeCk2bTParWY/kYVg
+ +WwTrnBkLoRh2NWpu9bJD9NKac2BoLWhvI7/2L5l7By4JnQiqY1aVa5uxYms8UnmAN/Eh60X2Hh
+ TbGEgZX1Ds/idyuHIPTYXHkCEqmL+kT8WztE5ay5NQIqCDV8zUW4bM15KyuLgrcyJ30fh603Cy9
+ gaAaJpGmlf/kU2cqRwWme3992WAD0D3qBkOkdjwuYqhAZQ1gVv6WVNmPywQbt+zIEuKvYs11gJm
+ cf8W1N+IpWqB3JnHGzvPspH1QKOqHAnSzN6ao28EUD7g53OG+YEakCPsgcwRvhhg1ONLq9A63KK
+ 3+BxufhIvkeLa4Nrby+pyVALVQyKjYyqNoxIWtM7QZBm51WN/CPQ/+Zb1ncaEXLg6a
+X-Received: by 2002:a05:7301:578b:b0:2e5:5bf4:8869 with SMTP id
+ 5a478bee46e88-3044914a18dmr6813149eec.21.1779723312550; 
+ Mon, 25 May 2026 08:35:12 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3045245d6aesm7539471eec.26.2026.05.25.07.31.40
+ 5a478bee46e88-304522314a4sm7862704eec.18.2026.05.25.08.35.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 25 May 2026 07:31:41 -0700 (PDT)
-Date: Mon, 25 May 2026 07:31:38 -0700
+ Mon, 25 May 2026 08:35:12 -0700 (PDT)
+Date: Mon, 25 May 2026 08:35:09 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 Cc: "dev@dpdk.org" <dev@dpdk.org>
 Subject: Re: [PATCH v3 03/27] ring: use compare-and-swap wrapper
-Message-ID: <20260525073138.7b92de69@phoenix.local>
+Message-ID: <20260525083509.00cf76a1@phoenix.local>
 In-Reply-To: <b827bdd2f5994f24b9806e5cbae82cd3@huawei.com>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
  <20260523195604.441947-1-stephen@networkplumber.org>
@@ -85,6 +85,19 @@ Errors-To: dev-bounces@dpdk.org
 On Mon, 25 May 2026 07:41:13 +0000
 Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
 
+> Hi Stephen,
+> 
+> > The rte_atomic32_cmpset is deprecated. Initial attempts at
+> > changing this with direct conversion to
+> > rte_atomic_compare_exchange_weak_explicit()
+> > regressed MP/MC contended performance on x86 by 10-30%,
+> > because the C11 builtin's failure-writeback semantic forces
+> > GCC to emit extra instructions on the CAS critical path.
+> > 
+> > Add an internal __rte_ring_compare_and_swap() wrapper that calls
+> > __sync_bool_compare_and_swap() directly, which keeps the original
+> > instruction sequence. Add equivalent function for MSVC.  
+> 
 > In fact, in rte_ring we do have 2 implementations of the same core functions:
 > lib/ring/rte_ring_c11_pvt.h  - uses C11 atomics
 > lib/ring/rte_ring_generic_pvt.h - uses legacy instructions (smp_mb, extra), 
@@ -92,4 +105,7 @@ Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
 > then there is probably no point to keep rte_ring_generic_pvt.h.
 > Konstantin
 
-Good point will try heading that way.
+Have been deep diving into why C11 atomics give 20-30% performance
+drop versus atomic32 version. So far it comes down to GCC optimizer
+not doing as well with C11 versus assembly. The C11 form with the
+excessive use of always_inline consumes more registers.
