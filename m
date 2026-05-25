@@ -2,48 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B57FACD5BB1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 10:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF78CD5BC9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 14:06:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AE5E6402AC;
-	Mon, 25 May 2026 12:49:06 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id EF3B740276
- for <dev@dpdk.org>; Mon, 25 May 2026 12:49:04 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gPCKV3yjjzHnH51;
- Mon, 25 May 2026 18:48:30 +0800 (CST)
-Received: from frapema100001.china.huawei.com (unknown [7.182.19.23])
- by mail.maildlp.com (Postfix) with ESMTPS id 1439C40584;
- Mon, 25 May 2026 18:49:04 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema100001.china.huawei.com (7.182.19.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Mon, 25 May 2026 12:49:03 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Mon, 25 May 2026 12:49:03 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: RE: [PATCH v3 04/27] bpf: replace atomic op macro with typed helpers
-Thread-Topic: [PATCH v3 04/27] bpf: replace atomic op macro with typed helpers
-Thread-Index: AQHc6u6T9VysyFc6LUCgnB0sUZnLubYeb7mw
-Date: Mon, 25 May 2026 10:49:03 +0000
-Message-ID: <ccd0bf4fba71446fb020349c40984c7c@huawei.com>
-References: <20260521042043.1590536-1-stephen@networkplumber.org>
- <20260523195839.454952-1-stephen@networkplumber.org>
- <20260523195839.454952-5-stephen@networkplumber.org>
-In-Reply-To: <20260523195839.454952-5-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.16]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 2C2C4402D0;
+	Mon, 25 May 2026 16:06:56 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 5EFDA40276
+ for <dev@dpdk.org>; Mon, 25 May 2026 16:06:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1779718014; x=1811254014;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=POCiXBWRx0knoRJtWzVlLx5PQTkba1h5mX5pF0mapgo=;
+ b=b5mT1MFsjpDm3IZOPEAvvfKKXSLhUYYwMlQlQton5cYjrhT1uDP0B8ig
+ niwGPwdbJVm/83DIxwTi1t7Jwzwqr8PHvZjzBkPY/DgZ9vXnDLQLt9o2M
+ DhHkUbJOAoqGhL9T1ZFJRKkKu74mUKpXEKU1Y0XATH3e35T/1sQcc3FY/
+ xjxJzkcnSut1srkjEO3SZ57/5GOzjke5z7zy7PRWdAfxQuHFwM4ExPw58
+ ex91y4pUp+Wl3HBRNABKvc2Jv4jKen60YJDx49V6+4Ukpk/dR9FvheJaU
+ cS13WpVP8mv2BBAPAfk3jU7zCQ6QeU/FIgc0sDl6oURvybsDi412i1Cfo g==;
+X-CSE-ConnectionGUID: OtH8RbGMRiSC0hOz8w2LuQ==
+X-CSE-MsgGUID: 7Ms85pZNTs6oTkTm5JwsRw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11797"; a="84392471"
+X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="84392471"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 May 2026 07:06:53 -0700
+X-CSE-ConnectionGUID: SpfBuCyGSkCo/kN18SPV1w==
+X-CSE-MsgGUID: yC55oQC+TwmibGX3i5geyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; d="scan'208";a="246692286"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa005.fm.intel.com with ESMTP; 25 May 2026 07:06:52 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v5 00/27] Add common flow attr/action parsing infrastructure
+ to Intel PMD's
+Date: Mon, 25 May 2026 15:06:19 +0100
+Message-ID: <cover.1779717943.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1770819433.git.anatoly.burakov@intel.com>
+References: <cover.1770819433.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,129 +59,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-I absolutely welcome getting rid of macros in this file, but may I request
-splitting the rte_atomicNN deprecation and the file refactoring into separa=
-te
-commits? I am not convinced refactoring was necessary for the deprecation h=
-ere,
-one-line change to `rte_atomic_fetch_add_explicit((type __rte_atomic *)...)=
-` or
-like would probably do the job.
+This patchset introduces common flow attr/action checking infrastructure to
+some Intel PMD's (IXGBE, I40E, IAVF, and ICE). The aim is to reduce code
+duplication, simplify implementation of new parsers/verification of existing
+ones, and make action/attr handling more consistent across drivers.
 
-If refactor, other examples should also be considered, although we of cours=
-e
-can do it macro by macro. But in any case we should follow some standard
-template to reduce number of ways we do stuff in this file if possible.
+v5:
+- Add missing patch for component/class name compile time constant
+- Fixed missing RSS queue contiguousness checks
 
-Regardless of the process, please see some stylistic comments below.
-(Technically, the code looks fine.)
+v4:
+- First few commits were integrated as part of a different patchset
+- Added more logging to common infrastructure
+- RSS validation now allows discontiguous queue lists by default
+- Fixed some checks being too stringent and failing common validation
 
+v3:
+- Rebase on latest next-net-intel
+- Added 4 new commits that have to do with not using `rte_eth_dev` in rte_flow
+- Converted the remaining commits to use adapter structures everywhere
+- Minor fixes in how return values are handled
+- Fixed incorrect check in i40e RSS validation
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Saturday 23 May 2026 20:56
-> To: dev@dpdk.org
-> Cc: Stephen Hemminger <stephen@networkplumber.org>; Konstantin Ananyev <k=
-onstantin.ananyev@huawei.com>;
-> Marat Khalili <marat.khalili@huawei.com>
-> Subject: [PATCH v3 04/27] bpf: replace atomic op macro with typed helpers
->=20
-> The BPF_ST_ATOMIC_REG macro token-pasted the legacy rte_atomicNN_*()
-> API names. It also stacked three casts on the destination pointer
-> and reached a 'return 0' out of the macro into the caller's control
-> flow.
->=20
-> Replace it with two small static-inline helpers, bpf_atomic32() and
-> bpf_atomic64(), that dispatch on ins->imm internally and use the C11
-> atomic intrinsics directly. The destination is cast once, to a
-> properly __rte_atomic-qualified pointer. [...]
+v2:
+- Rebase on latest main
+- Now depends on series 37585 [1]
 
-nit: Not sure number of casts is a relevant metric, but I don't see any
-improvement anyway, probably not worth talking about it.
+[1] https://patches.dpdk.org/project/dpdk/list/?series=37585
 
-// snip
+Anatoly Burakov (21):
+  eal/common: add token concatenation macro
+  net/intel/common: add common flow action parsing
+  net/intel/common: add common flow attr validation
+  net/ixgbe: use common checks in ethertype filter
+  net/ixgbe: use common checks in syn filter
+  net/ixgbe: use common checks in L2 tunnel filter
+  net/ixgbe: use common checks in ntuple filter
+  net/ixgbe: use common checks in security filter
+  net/ixgbe: use common checks in FDIR filters
+  net/ixgbe: use common checks in RSS filter
+  net/i40e: use common flow attribute checks
+  net/i40e: refactor RSS flow parameter checks
+  net/i40e: use common action checks for ethertype
+  net/i40e: use common action checks for FDIR
+  net/i40e: use common action checks for tunnel
+  net/iavf: use common flow attribute checks
+  net/iavf: use common action checks for IPsec
+  net/iavf: use common action checks for hash
+  net/iavf: use common action checks for FDIR
+  net/iavf: use common action checks for fsub
+  net/iavf: use common action checks for flow query
 
-> @@ -105,6 +83,69 @@
->  	reg[EBPF_REG_0] =3D op(p[0]); \
->  } while (0)
->=20
-> +/*
-> + * Atomic ops on the BPF target memory.
-> + *
-> + * BPF atomic instructions encode the destination as base register +
-> + * signed offset, with the value to combine taken from src_reg.
+Bruce Richardson (1):
+  build: add build defines for component name and class
 
-nit: This applies to any eBPF instruction. And the part that is unusual abo=
-ut
-them that they can modify the source register is not mentioned.
+Vladimir Medvedkin (5):
+  net/ice: use common flow attribute checks
+  net/ice: use common action checks for hash
+  net/ice: use common action checks for FDIR
+  net/ice: use common action checks for switch
+  net/ice: use common action checks for ACL
 
-> + *
-> + * Memory order: seq_cst preserves the previous behavior of
-> + * rte_atomicNN_add() / rte_atomicNN_exchange() and matches what the
-> + * Linux kernel BPF interpreter does for these opcodes.
+ drivers/meson.build                        |    2 +
+ drivers/net/intel/common/flow_check.h      |  347 ++++++
+ drivers/net/intel/common/log.h             |   40 +
+ drivers/net/intel/i40e/i40e_ethdev.h       |    1 -
+ drivers/net/intel/i40e/i40e_flow.c         |  433 +++-----
+ drivers/net/intel/i40e/i40e_hash.c         |  438 +++++---
+ drivers/net/intel/i40e/i40e_hash.h         |    2 +-
+ drivers/net/intel/iavf/iavf_fdir.c         |  368 +++---
+ drivers/net/intel/iavf/iavf_fsub.c         |  262 ++---
+ drivers/net/intel/iavf/iavf_generic_flow.c |  107 +-
+ drivers/net/intel/iavf/iavf_generic_flow.h |    2 +-
+ drivers/net/intel/iavf/iavf_hash.c         |  153 +--
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c |   43 +-
+ drivers/net/intel/ice/ice_acl_filter.c     |  146 ++-
+ drivers/net/intel/ice/ice_fdir_filter.c    |  384 ++++---
+ drivers/net/intel/ice/ice_generic_flow.c   |   59 +-
+ drivers/net/intel/ice/ice_generic_flow.h   |    2 +-
+ drivers/net/intel/ice/ice_hash.c           |  189 ++--
+ drivers/net/intel/ice/ice_switch_filter.c  |  389 +++----
+ drivers/net/intel/ixgbe/ixgbe_flow.c       | 1166 +++++++-------------
+ lib/eal/include/rte_common.h               |    4 +
+ lib/meson.build                            |    2 +
+ 22 files changed, 2271 insertions(+), 2268 deletions(-)
+ create mode 100644 drivers/net/intel/common/flow_check.h
+ create mode 100644 drivers/net/intel/common/log.h
 
-Not sure we should refer to the macros we are removing from the code in the
-comment, this information belongs to the commit message.
+-- 
+2.47.3
 
-> + *
-> + * Returns 0 on unsupported sub-op (validator should have rejected it),
-> + * 1 otherwise.
-
-This is an unusual convention, we typically use negative value for errors, =
-or
-booleans in some cases.
-
-To clarify, the original `return 0` was specifying return value from the
-program, not an error code. For historical reasons in rare cases when the V=
-M
-cannot continue the program returns zero (maybe we should reconsider it).
-
-> + */
-> +static inline int
-> +bpf_atomic32(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM],
-> +	     const struct ebpf_insn *ins)
-> +{
-> +	/* need to casts to make bpf memory suitable for C11 atomic */
-
-Typo in "need to casts"? (Also not sure what we warn about here.)
-
-> +	uint32_t __rte_atomic *dst
-> +		=3D (uint32_t __rte_atomic *)(uintptr_t)(reg[ins->dst_reg] + ins->off)=
-;
-
-nit: Is it `uint32_t __rte_atomic *` or `RTE_ATOMIC(uint32_t) *`? I honestl=
-y
-don't know why we have both, but the latter seems more popular in the codeb=
-ase.
-
-> +	uint32_t val =3D (uint32_t)reg[ins->src_reg];
-> +
-> +	switch (ins->imm) {
-> +	case BPF_ATOMIC_ADD:
-> +		rte_atomic_fetch_add_explicit(dst, val, rte_memory_order_seq_cst);
-> +		return 1;
-> +	case BPF_ATOMIC_XCHG:
-> +		reg[ins->src_reg] =3D rte_atomic_exchange_explicit(dst, val,
-> +								 rte_memory_order_seq_cst);
-
-nit: This is not a typical style of indentation for this file.
-
-> +		return 1;
-> +	default:
-> +		RTE_BPF_LOG_LINE(ERR,
-> +			"%s(%p): unsupported atomic operation at pc: %#zx;",
-> +			__func__, bpf,
-> +			(uintptr_t)ins - (uintptr_t)bpf->prm.ins);
-> +		return 0;
-
-This was an optional defensive programming. Since other functions like
-`bpf_alu_be` do not have any default label we can arguably just remove it h=
-ere
-and return void (also not accept bpf argument). With the macro it all was a=
-t
-least transparent to the caller.
-
-> +	}
-> +}
-
-// snip the rest
