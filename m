@@ -2,146 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F61CD5BC8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 09:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD01CD5BD0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 10:37:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1EFFE402E1;
-	Tue, 26 May 2026 11:50:51 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 2E19B402D7
- for <dev@dpdk.org>; Tue, 26 May 2026 11:50:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779789050; x=1811325050;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=vuqAPPTOt7PzS390WXlL5I47u/esQPrnozredxuCQAo=;
- b=KZqPFNYIDUpYP6NYtRdTmt7YuhFFF2sJGghZrcTGooofXWuoCeQbgFic
- Kg9qTXEL7dhuhzqGtBS3dxqZPdeSQr3SlxBBeSSyYSx+yv2nZUEFemCZw
- bgb7SycNszxwpqfvm8800GwVgg5l3J0lDYKGJnWgqyw6H0AhcZ+hS5UBU
- gcqaB8e8mYJiDGOb5NYsOda5H6dWWY6iZ3/jcIHx1EIWHsFqwxtWks5j/
- /+zvNfUTH7copy2yw+cGyOUemn1mqNlChdQVOK7IOG6rN3wVfXeUTsyxK
- LiCu8DKVi+Ez2AXWFyNXMd7iKPNsENsRv7b6hhqHcJ72LVYM0r7RDrNSc Q==;
-X-CSE-ConnectionGUID: 82ZBnVJiSdasVLOtNcBrnw==
-X-CSE-MsgGUID: WGEJzN7pTReswzGTWz+UQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11797"; a="91287718"
-X-IronPort-AV: E=Sophos;i="6.24,169,1774335600"; d="scan'208";a="91287718"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 May 2026 02:50:49 -0700
-X-CSE-ConnectionGUID: UOS4ezfMRMeoi0lOo4wGvw==
-X-CSE-MsgGUID: lM3/6VlvT6C+xvx1pJx0ow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,169,1774335600"; d="scan'208";a="246961007"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 May 2026 02:50:49 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 26 May 2026 02:50:48 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 26 May 2026 02:50:48 -0700
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.11) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 26 May 2026 02:50:48 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dv8T4ZvvtA+VmKXeJkEUd5o/n3LVHwXQZZYOUIX3LIVrUGukp+f550dZg0fTAOsZQDTllBX74cNveOb4U8wel2yAlhN9huM9fwYQcR6K8mDRIxUI5KJJwwg4UrTJh832oEQBKtoQlKsycjaU3+l8o/FGfNwGP9TN9zjzwtGS35TVOxzbvbTPf4t/fpJrMzbbpJCVi2fjRVbZD4gGryEtqa8A70XIpbS/ltgjWx0tvfIxiN240WXOG3jldeHM5M7/MlYYawscvgrLCh6x42e5BXHIDFcPlkp7qyHCqZDJFJcJJw9TUtqSTSRUmFJddftCaXsN5Wl/HZEtyfinPbp84g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J3EdwQOVOStX8zC8RxSNNoH3DBoE3bAFi/DrVBl9MgA=;
- b=hCUGEes3qnS5vh4duRQxLOmrw9arLXeXxp2gzzLsCdaNVSBu90epvthQke82QttqrkBQvmjY7BSHsuG9tvvyADkep7OKniuPv64sJ94XuVPD6stlumDpqZaBzc+8fKcotXLX2552bPF0DEU4B29jKsfszM1K04wSBGMbNBSA+WyLX1aUhR9/cpt6TSSSddAfV/7giuCev30JGuM3rMTd3PdekdPq2rSq9mhVOYl0FpZKPoryi5t4H7WcYOEhbcuAFbqRxYR9MfMJvOm/h5KYEPE3T5CsnjBIAoWvsWn04SCmvRJP2YeDcvEPe4XSY+OG7RFWB5ql/eMNNqUdCui4CA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH8PR11MB8063.namprd11.prod.outlook.com (2603:10b6:510:252::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.20; Tue, 26 May
- 2026 09:50:40 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0071.010; Tue, 26 May 2026
- 09:50:40 +0000
-Date: Tue, 26 May 2026 10:50:35 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
- "Kevin Laatz" <kevin.laatz@intel.com>
-Subject: Re: [PATCH v3 04/25] dma/idxd: clear device at scan
-Message-ID: <ahVs6zrNSyLSKNLZ@bricha3-mobl1.ger.corp.intel.com>
-References: <20260429114503.932575-1-david.marchand@redhat.com>
- <20260526084212.3145685-1-david.marchand@redhat.com>
- <20260526084212.3145685-5-david.marchand@redhat.com>
- <ahVq9dJrOK04Ujwd@bricha3-mobl1.ger.corp.intel.com>
- <CAJFAV8zC=LUR8r4s7q5o9W2KaAa3PjKD8+qoAUsV70Ddqvgp1A@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAJFAV8zC=LUR8r4s7q5o9W2KaAa3PjKD8+qoAUsV70Ddqvgp1A@mail.gmail.com>
-X-ClientProxiedBy: DUZPR01CA0278.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b9::23) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 566F0402D7;
+	Tue, 26 May 2026 12:37:09 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id EB756402AC
+ for <dev@dpdk.org>; Tue, 26 May 2026 12:37:07 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B2D8320A2F;
+ Tue, 26 May 2026 12:37:07 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH8PR11MB8063:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06752825-0b3d-41a0-1f30-08debb0c3ef7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|56012099003|11063799006|4143699003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: SbhCBJeQmXHsySwzxfq+7GfXG60dWbBnveQ82hLX3f7hvJxSY/WIAijgQeaQ71ZFnwxf3eCWaa3gZ9qXtWs83cz/VTR3UnMpnhFsljv18u/QCSnUwEEXQPenGK9Ywa8zL5fJiWIuc5YnhQsBmEz9TxIhWS2o3OoR8OedRiHLQJDBroQ7CnA+bxsIf8IEj8C7w4X3/rsgeQD1h7w2iTwMqkn7HdlB/pprhGBSf3UAMvojo7EBg51cMtPqZVU8HwAt/YS5Tic/CH/Isaew/GpJO4nrKSxqvJ9iCZv7PcIzLMmGKz7ZAPabbMj980D9g6h70VP4gEofRH0bbHBDe4pjdtddzx4aJLh6HSAXEwoaMSxnCTFO/3LNx6bcirEkWe3olooaLffBa2Qenzy52JyLVYKIep+M3drVXvDQVbm2IMpSDCJlSXPLSm0rBv8QXR03FuoYIP+EkVibMZFHcZ4JOdw9cB5yMTQ6yDJQipR3/0hB7zSCHbcQ2zQd7BYu3a2ULqsdVMJ3TwQIWJ+AcpE9nzC8X7hPbWgzi1K4vk1JP7TP7T+rPk+QR+r4Gzjo7AEgmohvW8MBUEkHs9+AM31uCSY4wpUvhiQpZWpKjfVfqtfNrp+IDTSO+EVlZ5Pwse2ykbcthXg1yCxKFajCqTCb21ha+oW5HKJapo2WJ0uElCJtotDkQWfexDQ2Rv6FUoum
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(56012099003)(11063799006)(4143699003)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ixPG4EP/OAUAOocZjZsnCEq7yw4b2kqTG65UZ5x3IS52Kkes4R/8gY4CcW9s?=
- =?us-ascii?Q?v9gFbh9GT2qgpSY1VJy+eDdBPzCwrktJ029GonGnQelkJjjZ5RBvAGkhYUxP?=
- =?us-ascii?Q?XdGluE9oQ43IuJUFepToSUD2yLVA/q9TKoEFlOYuVoDcGXHduLumgdIVmERr?=
- =?us-ascii?Q?BqCmJpkJYFgMJtdV4xtTdFB4scKoV03vJZjjck/05sAncVKFeAXSj80FTUFB?=
- =?us-ascii?Q?QXhtyryr2xyEonKH0ulAnvNnYJFxDj9uGoC9sZ3eZcA8ftQWPkvzV8/BxIAG?=
- =?us-ascii?Q?DJjah7KQOJL/BYCbBOtN0EYjG8u/gUSNG/FxXjQ+kdVz/kx+irTxogVVf3ZX?=
- =?us-ascii?Q?Hb6sSyVrbzepFORkD9e/339q2Gmkaex2TRKx46Xuy7dMI2FW5vVIKVWpAFEj?=
- =?us-ascii?Q?mScaWDNfFP/PCkUg9O1tVX767bkci7fip5D/e2nfSdEW2tbuwZjr0MElRbpn?=
- =?us-ascii?Q?Icgqj136Csfxtqh2SmrbwMimWyISUeGsqvuVhQh5Z6nDRwvTeFW85WH9/lqz?=
- =?us-ascii?Q?0PLIeFID2jujiLb/bNNZFLbp5FWDG7EVEqwcjIRXvAqAF/6uKV/vqheMSqRS?=
- =?us-ascii?Q?Nav4bHJVmju/D3dLCgg8jwCew/FMuLuXj5aaG2Gtsn0Mr/nudcF28NJ79QCv?=
- =?us-ascii?Q?ZFMofesD+Au4WaZU8LAmtQISnCcUpLf29dJiQ7xwUu0YTv3x2PPD1LcIIKJT?=
- =?us-ascii?Q?lq5AgOY0kmKYc3rk5lnqaxsGmzf+X3QkBNibiAgTrFUCvpVMz+mttMkDmyYF?=
- =?us-ascii?Q?33d8PDtJvJEnp/WRTRLwg7QyWA4gum3AbBMtyuaBWwYVVCL/YcF8tFNKTstV?=
- =?us-ascii?Q?9mnH5NiVIAVjOcvNQEzvR7z8Qjp1nMab91hUzeW74YlscaOpOR4s+u0cPjPU?=
- =?us-ascii?Q?bajkH53AlAFDmh97YdpdRieyLhIiLa73y4Cu/0Ohyi61r1hZvVXbJp4BPSm0?=
- =?us-ascii?Q?PkxrSQH1dx+MvBD+sZImwB+HkC49xNIDw+ROH/5wQpmI0Th1x88WJe6CF/0J?=
- =?us-ascii?Q?GJcBeJ2pWWDZU0wWOT+SXDJAmDPfl+a312/mg09Mmvs7uMoMg4lYcwpOPL17?=
- =?us-ascii?Q?bz971WH77/t60KHRCSWXtn9QU3+1ZgHYJ5CQABgBu+CQDfNwOnIpMYgCpRUQ?=
- =?us-ascii?Q?8eBa7DDFqfNQY5MYactBNEgmKEx8Dnu1WBJRY92+R2tM3BG1XNq6s6ImeGl7?=
- =?us-ascii?Q?l2zkxONEgaYxiKIAQ6/8wnas70LyM9WCBy9j5grJIq3in2lhNlgf+HrYHcfv?=
- =?us-ascii?Q?/KLTDXAIqJPrAfuU5xFUP+iHSSQKy7XwaHFfy6PXwSbFweR2b4Lh4y5dmWhx?=
- =?us-ascii?Q?AuWBJe6yUXMZxkhZ/CsGjr91j0QfaoOtniMp84pj2ctGTzwCSD0i24eq7wmm?=
- =?us-ascii?Q?vQCeiQU6VzFRDtltX0a+PXhPg78piZ2eJNIYa54O36+6Ti61T+RUoI+mdIvP?=
- =?us-ascii?Q?2S/vp1gFQa/Eq6UDMbX+vUNKCtpN/NBcvHqLjEUIz0mdN+T9LK/JRsD6Uqjk?=
- =?us-ascii?Q?/voq2JRiYNSefLBRj9kqBGIkdBuHnS1BFLpk/Bj2KWvN00uiJRJ1ucCm1pFN?=
- =?us-ascii?Q?1bxSre55AW/lIEiPWcsmbi4alQCf5UYFrG3hKY4ZdUjhOpQsWPMKCyAV+gRi?=
- =?us-ascii?Q?yUfqfW2rL9Vxgp18FzESA//3enl3FHPB5/IuQupWAIv5LopwK4slcAVuxynm?=
- =?us-ascii?Q?OR/dkyMLaENFHfw8ehVxAzIoCVe2cDpWbx4ZSncOpcd8b8Gq+PUDg195H1CP?=
- =?us-ascii?Q?s0xb4abM2Bd2PSTonHdwoKfaAFhdW1A=3D?=
-X-Exchange-RoutingPolicyChecked: GjBanyAnywUBW/e94CRng7BTNRq2wIXkpxM3u0UOS5S5zfLnsw4CI7ue9fHmU2nkHvbMzmwDUF7Q9eRW9NZU1ZTm5uwX/eqlH+hTCOROfrYOlKMXTbZaUMXk7KGNux5+rQRQm+hiaiE8jxHBnusWxc70zB7/nJX3lradcJXlU/Nu+B1DVPSkeSgJP6VEE9N/6aRciPPcHlNixmMI/Qwf/Km2U/riHASwnJwV53Qn1WdEk22kfQ15goj8QlsRpoVb7l/40b2ZH/4mb1EmlqMZDOka+Oef3s115NtJhwjjAfiuTiNtcl/rhybVhKLF7EH6ZdF0Ulo+w4weOt7h78HReQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06752825-0b3d-41a0-1f30-08debb0c3ef7
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2026 09:50:40.8503 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dNd6BeHV/sGSK29WB5AXhMRyyWmzqK9bHe8fENy31Q+q73Z265OqTcXEbJ5Lr7On6A7RUFWJLIedrXRVoNhs4Y+2c62rUKJWJRjpW6D3z2o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8063
-X-OriginatorOrg: intel.com
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v5] mempool: improve cache behaviour and performance
+Date: Tue, 26 May 2026 12:37:04 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6589D@smartserver.smartshare.dk>
+In-Reply-To: <ahVqYpVXMn59Tl2d@bricha3-mobl1.ger.corp.intel.com>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v5] mempool: improve cache behaviour and performance
+Thread-Index: Adzs86HXJvpiiJkpQY+O50DCJxToAgAAiuJA
+References: <20260408141315.904381-1-mb@smartsharesystems.com>
+ <20260419095526.39526-1-mb@smartsharesystems.com>
+ <ahCAPT1LEn_Rc7Pk@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6589A@smartserver.smartshare.dk>
+ <ahVqYpVXMn59Tl2d@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Jingjing Wu" <jingjing.wu@intel.com>,
+ "Praveen Shetty" <praveen.shetty@intel.com>,
+ "Hemant Agrawal" <hemant.agrawal@nxp.com>,
+ "Sachin Saxena" <sachin.saxena@oss.nxp.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -155,38 +54,520 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, May 26, 2026 at 11:48:46AM +0200, David Marchand wrote:
-> On Tue, 26 May 2026 at 11:42, Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Tuesday, 26 May 2026 11.40
+>=20
+> On Tue, May 26, 2026 at 10:41:44AM +0200, Morten Br=F8rup wrote:
+> > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> > > Sent: Friday, 22 May 2026 18.12
+> > >
+> > > On Sun, Apr 19, 2026 at 09:55:26AM +0000, Morten Br=F8rup wrote:
+> > > > This patch refactors the mempool cache to eliminate some
+> unexpected
+> > > > behaviour and reduce the mempool cache miss rate.
+> > > >
+> > >
+> > > Agree in principle with most of these changes. As we dicussed at
+> the
+> > > DPDK
+> > > summit conference, only issue I really have is with the threshold
+> > > limits
+> > > here - allocating and freeing only half the cache at a time seems
+> > > overly
+> > > conservative. Thinking about use-cases:
+> > >
+> > > 1 for apps where alloc + free (generally Rx+Tx) is on the same
+> core(s),
+> > >   then we should run (almost) entirely out of cache.
 > >
-> > On Tue, May 26, 2026 at 10:41:44AM +0200, David Marchand wrote:
-> > > Currently, the device object is only manipulated by the dma/idxd bus
-> > > callbacks and EAL is not looking too much into this object.
-> > >
-> > > However, in the next refactoring, EAL will expect a clean object, like
-> > > when checking that the device has been already probed
-> > > (iow dev->driver != NULL).
-> > >
-> > > Request a 0'd object when allocating.
-> > >
-> > > Reported-by: Bruce Richardson <bruce.richardson@intel.com>
-> > > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > > ---
-> > >  drivers/dma/idxd/idxd_bus.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
+> > I strongly disagree about any goal to run the cache low.
+> > The primary goal is to minimize the cache miss (refill and =
+replenish)
+> rate.
 > >
-> > Out of interest, did you (or Claude :-) ) run a scan over the other bus
-> > drivers to see if any others are similarly not properly zeroed on init?
-> 
-> I did check, the "legacy" way.
-> 
-> All other are calling calloc(), or rte_zmalloc_*, or manually clearing.
-> I hesitated at changing the malloc+memset pattern to calloc, but I
-> left it for later.
-> The series is big enough.
-> 
-Great, thanks for confirming. I also agree with your choice to not bother
-changing the patterns for this set.
+> > > 2 for apps where we have alloc and free on different cores, then =
+we
+> > > have
+> > >   some caches always being filled and others always being emptied
+> >
+> > Agree.
+> >
+> > >
+> > > For case #1, we only need worry about the thresholds for the odd
+> case
+> > > where we have a burst that causes us to overflow our cache (and we
+> > > can't increase our cache size to cope and avoid that).
+> > > Otherwise the thresholds don't matter.
+> >
+> > It seems like you assume the application only does something like
+> this:
+> > Rx -> Rewrite -> Tx
+> >
+> > In that case, the per-lcore cache only needs capacity for one burst,
+> yes.
+> > With my patch, the cache can be rightsized by requesting a cache =
+size
+> of 2 * burst size.
+> > (Then the fill level will be either size/2 or empty, i.e. one burst
+> or zero.
+> > This also happens to meet your suggested goal about low fill level,
+> which I disagree with.)
+> >
+> > However, I don't think that is a realistic use case.
+> > Many apps do something like this:
+> >
+> >      |-> Rewrite ->|
+> > Rx ->|             |-> Tx
+> >      |-> Hold      |
+> >          Release ->|
+> >
+>=20
+> I agree, that's why our cache size needs to be bigger than our burst
+> size.
+>=20
+> > They often hold back packets before they are transmitted.
+> > For a simple router, when the destination IP address is not in the
+> neighbor table, packets to that IP address are queued until ARP/ND has
+> been resolved, and then they are dequeued and transmitted.
+> > Or apps performing shaping or pacing, where packets are held back in
+> queues, and dequeued at the appropriate time.
+> > For such apps, the waves are much bigger (than the simple Rx-
+> >Rewrite->Tx use case).
+> >
+> > With a random enqueue/dequeue pattern, replenishing/draining the
+> cache to size/2 minimizes the probability of reaching one of its edges
+> (empty or full), triggering a "cache miss" (refill/replenish).
+> >
+> > > However, for case #2, the thresholds are constantly involved as
+> > > we
+> > > always are going to backing store. In this case, we really want to
+> have
+> > > the
+> > > allocs *always* fill the cache completely, and the frees =
+completely
+> > > empty
+> > > the cache.
+> >
+> > Agree.
+> >
+> > >
+> > > Because of this, while we want to avoid cases where we fill the
+> cache
+> > > completely only to have a further free causing it to be flushed,
+> > > because of
+> > > case #2 we cannot be overly conservative in how much we =
+free/empty.
+> > > Ideally, we want to fill to full less a single burst, and empty
+> leaving
+> > > only a single burst in the cache. Unfortunately, we don't know =
+what
+> > > those
+> > > burst limits are, so we have to try and guess the best behaviour
+> from
+> > > everything else.
+> >
+> > I agree about not wanting to be overly conservative.
+> > But in the use cases I have described for #1, I don't think a target
+> fill level of size/2 is overly conservative.
+> >
+> > I also acknowledge that this patch doubles the mempool cache miss
+> rate for #2.
+> > E.g. with a cache size of 512 and burst size of 64, the per-burst
+> miss rate will be 64 / (1/2 * 512) =3D 1/4, compared to 64 / 512 =3D =
+1/8
+> with a full replenish/drain algorithm.
+> >
+> > In theory, we could make it build time configurable to optimize
+> mempools for #2.
+> > But mempools are also used for other objects than mbufs, so that
+> would have unwanted side effects for non-mbuf mempools.
+> >
+> > If we went for an algorithm targeting replenish/drain at 25 % from
+> the edges, the per-burst miss rate for #2 would be: 64 / (3/4 * 512) =
+=3D
+> 1/6.
+> >
+> > How about addressing #2 in the release notes:
+> > We describe that the cache refill/drain algorithm has been changed =
+to
+> only refill/drain to 50 % of the cache size, so pipelined applications
+> performing Rx (mempool get) and Tx (mempool put) on separate cores
+> should configure their mbuf pools with double the cache size of what
+> they previously were to achieve similar performance.
+> >
+> > >
+> > > All that said, commits with specific suggestions inline.
+> > >
+> > > /Bruce
+> > >
+> > > <snip>
+> > >
+> > > > diff --git a/lib/mempool/rte_mempool.h
+> b/lib/mempool/rte_mempool.h
+> > > > index 2e54fc4466..432c43ab15 100644
+> > > > --- a/lib/mempool/rte_mempool.h
+> > > > +++ b/lib/mempool/rte_mempool.h
+> > > > @@ -89,7 +89,7 @@ struct __rte_cache_aligned
+> rte_mempool_debug_stats
+> > > {
+> > > >   */
+> > > >  struct __rte_cache_aligned rte_mempool_cache {
+> > > >  	uint32_t size;	      /**< Size of the cache */
+> > > > -	uint32_t flushthresh; /**< Threshold before we flush excess
+> > > elements */
+> > > > +	uint32_t flushthresh; /**< Obsolete; for API/ABI
+> compatibility
+> > > purposes only */
+> > > >  	uint32_t len;	      /**< Current cache count */
+> > > >  #ifdef RTE_LIBRTE_MEMPOOL_STATS
+> > > >  	uint32_t unused;
+> > > > @@ -107,8 +107,10 @@ struct __rte_cache_aligned =
+rte_mempool_cache
+> {
+> > > >  	/**
+> > > >  	 * Cache objects
+> > > >  	 *
+> > > > -	 * Cache is allocated to this size to allow it to overflow
+> in
+> > > certain
+> > > > -	 * cases to avoid needless emptying of cache.
+> > > > +	 * Note:
+> > > > +	 * Cache is allocated at double size for API/ABI
+> compatibility
+> > > purposes only.
+> > > > +	 * When reducing its size at an API/ABI breaking release,
+> > > > +	 * remember to add a cache guard after it.
+> > > >  	 */
+> > > >  	alignas(RTE_CACHE_LINE_SIZE) void
+> > > *objs[RTE_MEMPOOL_CACHE_MAX_SIZE * 2];
+> > > >  };
+> > > > @@ -1046,12 +1048,17 @@ rte_mempool_free(struct rte_mempool =
+*mp);
+> > > >   * @param cache_size
+> > > >   *   If cache_size is non-zero, the rte_mempool library will =
+try
+> to
+> > > >   *   limit the accesses to the common lockless pool, by
+> maintaining
+> > > a
+> > > > - *   per-lcore object cache. This argument must be lower or
+> equal to
+> > > > - *   RTE_MEMPOOL_CACHE_MAX_SIZE and n / 1.5.
+> > > > + *   per-lcore object cache. This argument must be an even
+> number,
+> > > > + *   lower or equal to RTE_MEMPOOL_CACHE_MAX_SIZE and n.
+> > > >   *   The access to the per-lcore table is of course
+> > > >   *   faster than the multi-producer/consumer pool. The cache =
+can
+> be
+> > > >   *   disabled if the cache_size argument is set to 0; it can be
+> > > useful to
+> > > >   *   avoid losing objects in cache.
+> > > > + *   Note:
+> > > > + *   Mempool put/get requests of more than cache_size / 2
+> objects
+> > > may be
+> > > > + *   partially or fully served directly by the multi-
+> > > producer/consumer
+> > > > + *   pool, to avoid the overhead of copying the objects twice
+> > > (instead of
+> > > > + *   once) when using the cache as a bounce buffer.
+> > > >   * @param private_data_size
+> > > >   *   The size of the private data appended after the mempool
+> > > >   *   structure. This is useful for storing some private data
+> after
+> > > the
+> > > > @@ -1390,24 +1397,32 @@ rte_mempool_do_generic_put(struct
+> rte_mempool
+> > > *mp, void * const *obj_table,
+> > > >  	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
+> > > >  	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
+> > > >
+> > > > -	__rte_assume(cache->flushthresh <=3D
+> RTE_MEMPOOL_CACHE_MAX_SIZE *
+> > > 2);
+> > > > -	__rte_assume(cache->len <=3D RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
+> > > > -	__rte_assume(cache->len <=3D cache->flushthresh);
+> > > > -	if (likely(cache->len + n <=3D cache->flushthresh)) {
+> > > > +	__rte_assume(cache->size <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
+> > > > +	__rte_assume(cache->size / 2 <=3D RTE_MEMPOOL_CACHE_MAX_SIZE
+> / 2);
+> > > > +	__rte_assume(cache->len <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
+> > > > +	__rte_assume(cache->len <=3D cache->size);
+> > > > +	if (likely(cache->len + n <=3D cache->size)) {
+> > > >  		/* Sufficient room in the cache for the objects. */
+> > > >  		cache_objs =3D &cache->objs[cache->len];
+> > > >  		cache->len +=3D n;
+> > > > -	} else if (n <=3D cache->flushthresh) {
+> > > > +	} else if (n <=3D cache->size / 2) {
+> > > >  		/*
+> > > > -		 * The cache is big enough for the objects, but - as
+> > > detected by
+> > > > -		 * the comparison above - has insufficient room for
+> them.
+> > > > -		 * Flush the cache to make room for the objects.
+> > > > +		 * The number of objects is within the cache bounce
+> buffer
+> > > limit,
+> > > > +		 * but - as detected by the comparison above - the
+> cache
+> > > has
+> > > > +		 * insufficient room for them.
+> > > > +		 * Flush the cache to the backend to make room for
+> the
+> > > objects;
+> > > > +		 * flush (size / 2) objects from the bottom of the
+> cache,
+> > > where
+> > > > +		 * objects are less hot, and move down the remaining
+> > > objects, which
+> > > > +		 * are more hot, from the upper half of the cache.
+> > > >  		 */
+> > > > -		cache_objs =3D &cache->objs[0];
+> > > > -		rte_mempool_ops_enqueue_bulk(mp, cache_objs, cache-
+> >len);
+> > > > -		cache->len =3D n;
+> > > > +		__rte_assume(cache->len > cache->size / 2);
+> > > > +		rte_mempool_ops_enqueue_bulk(mp, &cache->objs[0],
+> cache-
+> > > >size / 2);
+> > > > +		rte_memcpy(&cache->objs[0], &cache->objs[cache->size
+> / 2],
+> > > > +				sizeof(void *) * (cache->len - cache-
+> >size /
+> > > 2));
+> > > > +		cache_objs =3D &cache->objs[cache->len - cache->size /
+> 2];
+> > > > +		cache->len =3D cache->len - cache->size / 2 + n;
+> > >
+> > > The flushing of only half the cache I'm not so certain about. I
+> agree
+> > > that
+> > > we want to not flush to empty, but I also think that we want to do
+> more
+> > > than a half-flush, especially since we do an enqueue to the cache
+> > > immediately afterwards. Consider the case where we have a cache
+> size of
+> > > 128, and we do an enqueue of 32, with the cache currently full. In
+> that
+> > > case we only flush 64, reducing the cache to 64, but then
+> immediately
+> > > bringing it back up to 96.
+> >
+> > I thought in depth about whether the flush/replenish sizes should
+> consider the request size or not. (E.g. if I should replenish size/2 =
+or
+> size/2+request.)
+> > I decided for not considering the request size, for two reasons:
+> > a) It roughly doesn't matter, especially when considering a sequence
+> of random get/put requests.
+> > b) The size of the backend transactions become fixed, which has
+> performance benefits: With my patch, they are always size/2, so if the
+> cache size is 2^N, the backend transactions are 2^N and CPU cache
+> aligned.
+> >
+> > > For cases where we have pipelines with all
+> > > alloc
+> > > on one core and all free on another, this half-flush would be
+> > > inefficient.
+> > >
+> > > Instead, I would look to have a lower target threshold post-flush,
+> and
+> > > I
+> > > would suggest 25% - taking into account the newly freed buffers.
+> >
+> > It's not good for #1.
+> > I agree that it is better for #2. But I don't think #2 is the likely
+> use case.
+> >
+> > After our discussion at the summit, I did start working a patch
+> targeting fill levels at 25% from the cache edges, but I don't think
+> it's better; so I'd rather stick with a target fill level of 50%.
+> >
+> > > For example:
+> > >
+> > > 	/* if n > our target of 1/4 full, flush everything,
+> > > 	 * else flush so that we end up with 1/4 full after n added.
+> > > 	 */
+> > > 	flush_count =3D n > cache->size/4 ? cache->len :
+> > > 			(cache->len + n) - cache->size/4;
+> > >
+> > >
+> > > >  	} else {
+> > > > -		/* The request itself is too big for the cache. */
+> > > > +		/* The request itself is too big. */
+> > > >  		goto driver_enqueue_stats_incremented;
+> > >
+> > > I think original comment is better. The request itself is not too
+> big
+> > > for
+> > > the whole mempool, just for the cache.
+> >
+> > Ack.
+> >
+> > >
+> > > >  	}
+> > > >
+> > > > @@ -1524,7 +1539,7 @@ rte_mempool_do_generic_get(struct
+> rte_mempool
+> > > *mp, void **obj_table,
+> > > >  	/* The cache is a stack, so copy will be in reverse order.
+> */
+> > > >  	cache_objs =3D &cache->objs[cache->len];
+> > > >
+> > > > -	__rte_assume(cache->len <=3D RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
+> > > > +	__rte_assume(cache->len <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
+> > > >  	if (likely(n <=3D cache->len)) {
+> > > >  		/* The entire request can be satisfied from the
+> cache. */
+> > > >  		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk,
+> 1);
+> > > > @@ -1548,13 +1563,13 @@ rte_mempool_do_generic_get(struct
+> rte_mempool
+> > > *mp, void **obj_table,
+> > > >  	for (index =3D 0; index < len; index++)
+> > > >  		*obj_table++ =3D *--cache_objs;
+> > > >
+> > > > -	/* Dequeue below would overflow mem allocated for cache? */
+> > > > -	if (unlikely(remaining > RTE_MEMPOOL_CACHE_MAX_SIZE))
+> > > > +	/* Dequeue below would exceed the cache bounce buffer
+> limit? */
+> > > > +	__rte_assume(cache->size / 2 <=3D RTE_MEMPOOL_CACHE_MAX_SIZE
+> / 2);
+> > > > +	if (unlikely(remaining > cache->size / 2))
+> > > >  		goto driver_dequeue;
+> > > >
+> > > > -	/* Fill the cache from the backend; fetch size + remaining
+> > > objects. */
+> > > > -	ret =3D rte_mempool_ops_dequeue_bulk(mp, cache->objs,
+> > > > -			cache->size + remaining);
+> > > > +	/* Fill the cache from the backend; fetch (size / 2)
+> objects. */
+> > > > +	ret =3D rte_mempool_ops_dequeue_bulk(mp, cache->objs, cache-
+> >size /
+> > > 2);
+> > >
+> > > Again, the cache->size / 2 doesn't seem right here. We at most
+> half-
+> > > fill
+> > > the cache and then take some objects from that, meaning that have
+> just
+> > > done
+> > > a re-fill of cache but end the function with it less than half
+> full.
+> > > Since
+> > > we take from this value, I'd suggest just filling the cache
+> completely.
+> >
+> > The issues at the edges of the cache are symmetrical.
+> > If we replenish the cache to full, and the next transaction is a =
+put,
+> the cache needs to be drained.
+> > That's why I replenish to size/2.
+> >
+>=20
+> Not necessarily. After you fill the cache here (to 50%) you then take
+> elements from it. If we filled to 100%, then we'd only hit a flush if
+> we
+> freed back more elements than we just allocated. Now, that's =
+reasonably
+> likely which is why I'm ok to not filling to 100%. However, doing a
+> refill
+> as part of the op, and then leaving the cache less than half full =
+after
+> the
+> op finishes is just wasteful IMHO!
 
-/Bruce
+I'm targeting half full, and disregard if it is pre-op or post-op.
+This makes the backend transactions cache aligned in both addressing and =
+size, which opens an opportunity to performance optimize the mempool =
+drivers for this.
+
+>=20
+> One other point. The obvious worst case scenario we want to avoid is
+> constant fill/empty/fill/empty sequences. However, so long as we have
+> an
+> asymmetry in how we do fills and empty thresholds, a repeating =
+sequence
+> should never occur, and even pairs of fill/empty should be very rare.
+> Consider the case, for example, where we fill to 100% but only drain =
+to
+> 25%. For this, we can ignore scenario #2, since we should have pretty
+> good
+> cache usage. For scenario #1, of allocs/frees on a single core,
+> randomly
+> interleaved, our worst case is:
+> 1) alloc with cache empty, in which case we fill to 100%, then take =
+the
+> alloc
+> 2) have a free of a burst greater than that which we just allocated,
+> causing an immediate flush again.
+>=20
+> That's pretty poor behaviour, but the thing is that after the flush we
+> now
+> have mempool at 25% + freed burst - so expected between 25-50% of =
+cache
+> utilization. That's the sweet spot we want to target - after each
+> operation, the mempool cache should ideally be at 50%. Whether the =
+next
+> op
+> is an alloc or a free, our cache can handle it, and likely a couple of
+> each
+> in sequence. Therefore, our possible fill/empty combinations are =
+likely
+> to
+> be rare occurances.
+>=20
+> [In all this, I am making the assumption that burst size is well less
+> than
+> cache size. Also, similar logic would be applicable for the inverse
+> scenario, e.g. flush to empty (and fill burst) and fill to 75%]
+
+I'm not so sure about this assumption.
+With a cache size of 512 and a bursts of 64, the cache only holds 8 =
+bursts.
+50% is 4 bursts, and 25% is only 2 bursts.
+
+Using a replenish/drain level in the middle requires 5 bursts in either =
+direction to pass the edge (and trigger replenish/flush).=20
+Using a replenish/drain level 25% from the edge requires only 3 bursts =
+in the wrong direction to pass the edge (and trigger replenish/flush). =
+Much higher probability with random get/put.
+
+>=20
+> Now, all said, I tend to agree that we want to leave space for a =
+decent
+> size burst after a fill. That is why I think that filling to 75% is
+> reasonable. After an alloc that triggers a fill, I don't want the =
+cache
+> less than 50% full, but not completely full so there is room for a =
+free
+> without a flush, and similarly for a free that triggers a flush, the
+> cache
+> should not be empty, but also should not be more than half full.
+>=20
+> One suggestion - we could always add a simple tunable that specifies
+> the
+> margin, or reserved entries for alloc and free. We can then guide in
+> the
+> docs that the value should be e.g. "zero for apps where alloc and free
+> take
+> place on different cores. 20%-50% of cache is recommended where alloc
+> and
+> free take place on the same core"
+
+Yes, a simple tunable is a really good idea.
+
+At this point, I think we should optimize for use case #1, and go for =
+the 50% fill level.
+Then we can add a tunable to optimize for use case #2 later. I will try =
+to come up with a draft for such a follow-up patch within the next few =
+days.
+
+The 50% fill level in this patch is not as bad for use case #2 (roughly =
+doubling the burst miss rate from 1/8 to 1/4), compared to how bad the =
+original algorithm is for use case #1 (very high miss probability - only =
+two ops in the wrong direction - after drain/replenish).
+
+-Morten
+
