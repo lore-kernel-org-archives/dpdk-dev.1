@@ -2,79 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F473CD5BB4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 07:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C36CD5BB4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 08:14:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 58CC340280;
-	Tue, 26 May 2026 09:31:33 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 374A940279
- for <dev@dpdk.org>; Tue, 26 May 2026 09:31:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1779780691;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=plU8BSCrKS1Gmya7S5xgNtQUzlqB54/rK74wS+zSBiM=;
- b=azod1n01dp90RAlvCoiUMX0NTVb5g3/a6+eUiNI4zVHDmnDOplPomKVejluZORlPvXqKqQ
- baGk3EnQ4rwohQxpCRvUSqok3dN4sZ1+uMcLeJy7DeUZh02V+i0wBD1BBY6N/O0huX0FZk
- 9LcKwANOsKMY0wpFe1/JvT3XQNan2/0=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-113-AzjZC67KPaa7zJ5V0OQGuQ-1; Tue, 26 May 2026 03:31:29 -0400
-X-MC-Unique: AzjZC67KPaa7zJ5V0OQGuQ-1
-X-Mimecast-MFC-AGG-ID: AzjZC67KPaa7zJ5V0OQGuQ_1779780688
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-395246cabc4so42498311fa.3
- for <dev@dpdk.org>; Tue, 26 May 2026 00:31:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779780688; x=1780385488;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=plU8BSCrKS1Gmya7S5xgNtQUzlqB54/rK74wS+zSBiM=;
- b=bTG0onO5UXvumbcgWIj86qfcxt/Ri4YXTy8NOVDeI+e3e9qL1jhy98MxGh5+/6KBrJ
- luClDmmO7J4ZgAXK4cdUE8w0yaRXNZ0BWHXR9DQHhSsrBPa9zJnUjqskiVvrWJ4CFB3U
- aDDMHLtyWdJq15g3j/ZRil7OijESsreaaAtohc1fXwF5gxoozjBKrmUz6MTuKujKMTiD
- +kVg9MV2Whd3S7HqdZ4j1b/PynmtgXlaqGXrJix950nkgcIy/K1wVPF+OFRbKB/a0Hfc
- 6sa8DCR+4LRph9z6QTaiaRXi9Ndt2Kxg3O6Pr60Ai3LMH22qwJEUKGdFv2UeCiOwnEs2
- dfjQ==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/y9FGXunr1yQw548LEUU8+C9YPJyfJ8xYqen3F9Ya5C/A8wcYlfjIK0Fk/VRJycVLPLjQ=@dpdk.org
-X-Gm-Message-State: AOJu0Yyd3pSGavFU6WCj/9lc8ThC1EuGTAkgjUiyM+v4TjO3Tepoo5PZ
- l4Sc++a73C2MUU41iz3NXl7dfBVGV3cmOWBvjt/afOsp3NqPF6FgZH5XiqCWsa0fb5wsS8y9E3V
- V0pMz7VQtHKXwX2W23973BbURLASmaJFDLCnt9nEOmJ40AJ7US7iB0H1bFo5IQ3Dh64DN2xJw4Y
- LLe+J8dJ2B7NcFXgxMaRg=
-X-Gm-Gg: Acq92OG6oqj0uEk+5koMucpQWLEYY23nm/Eti+8iZKDUfq0MWeva4HVo2aAW5A/JqLf
- ITdvUyjbhC01xZY7Cxi8OBP2Lg1Rty/3LxqJKCd0qRHIAhHl1Yin2dN+S5kEm2ozQFpLyMo/eAH
- ZRmT2meuOn6nMlpNROFf9hCZL4u413Fkqo0fUTzzikI7Y2U7a5vhmn+4DgQeedBE4txdWmiCpyo
- VgJdLWOcSo7YMohOxgHtD7uvccQJUbTp0rMlWwldEIyvgz/rq0KP4pLfcSDzXUH6k1gkQ==
-X-Received: by 2002:a2e:8e95:0:b0:38c:63df:82a6 with SMTP id
- 38308e7fff4ca-395d8d64e6cmr40136461fa.29.1779780687927; 
- Tue, 26 May 2026 00:31:27 -0700 (PDT)
-X-Received: by 2002:a2e:8e95:0:b0:38c:63df:82a6 with SMTP id
- 38308e7fff4ca-395d8d64e6cmr40136341fa.29.1779780687403; Tue, 26 May 2026
- 00:31:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F29E40280;
+	Tue, 26 May 2026 10:14:00 +0200 (CEST)
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
+ [113.46.200.221])
+ by mails.dpdk.org (Postfix) with ESMTP id 4A83E40279
+ for <dev@dpdk.org>; Tue, 26 May 2026 10:13:59 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=vusJ5xPhEGy/CvBWDW3pmqZsNBYZGu+i678SGu4VE6Y=;
+ b=iRqUTAcE36ltUcPz5Yzrh45tHzrvnkq9N10EbOd9rKJsmYcBMz+PRPABckqfUT+jU61ndP2OG
+ NAMeC61C6LO9UqYtYql0l8PHC5GWbn05n9UttCmxJoCs/0ZI/O0IzEu4kfLYD9v7yCWP/iVT/bG
+ wkbj+h7ABZhBFgOIZy0XvHY=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4gPlgm3jrqzRhXP;
+ Tue, 26 May 2026 16:06:12 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+ by mail.maildlp.com (Postfix) with ESMTPS id 2F5984056E;
+ Tue, 26 May 2026 16:13:57 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 26 May 2026 16:13:57 +0800
+Received: from localhost.localdomain (10.90.31.46) by
+ kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 26 May 2026 16:13:56 +0800
+From: Huisong Li <lihuisong@huawei.com>
+To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
+ <fengchengwen@huawei.com>, <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, 
+ <lihuisong@huawei.com>
+Subject: [PATCH v2 1/5] examples/l3fwd-power: fix uncore deinit for non-legacy
+Date: Tue, 26 May 2026 16:11:34 +0800
+Message-ID: <20260526081138.1434947-2-lihuisong@huawei.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20260526081138.1434947-1-lihuisong@huawei.com>
+References: <20260526081138.1434947-1-lihuisong@huawei.com>
 MIME-Version: 1.0
-References: <20260302110206.49670-1-fengchengwen@huawei.com>
- <20260302110206.49670-2-fengchengwen@huawei.com>
- <CAJFAV8wbj3oKRoF-0+jr1ceWMgVDZT-a9Rd5Ptdx9=N+1_WA7w@mail.gmail.com>
- <c0f24426-19b2-42bf-9432-a1c58ac19c66@huawei.com>
-In-Reply-To: <c0f24426-19b2-42bf-9432-a1c58ac19c66@huawei.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 26 May 2026 09:31:15 +0200
-X-Gm-Features: AVHnY4L0bU9g-bv-Z8kXoZt5trnrGg5jv7ZTHvD7pTuSTciqeQVDbNFJ-GWxRDo
-Message-ID: <CAJFAV8x6Akk1N8jsvcyBVvHKkQ_dDP=Ky6JoM-tab=awwkbohg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] bus/uacce: support driver forward compatibility
-To: fengchengwen <fengchengwen@huawei.com>
-Cc: thomas@monjalon.net, dev@dpdk.org, qianweili@huawei.com, 
- liuyonglong@huawei.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: qtSPp0XLVWZNtkSApcBEcwQapbUWZvX0vrMKea_aVyY_1779780688
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.90.31.46]
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,45 +61,131 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+Uncore resources were not being deinitialized in non-legacy modes (such
+as pmd-mgmt), causing the uncore frequency not to return to its original
+value after the application exited.
 
-On Fri, 22 May 2026 at 03:05, fengchengwen <fengchengwen@huawei.com> wrote:
-> >>  {
-> >> +       bool forward_compat = !!(dr->drv_flags & RTE_UACCE_DRV_FORWARD_COMPATIBILITY_DEV);
-> >> +       uint32_t api_ver = uacce_calc_api_ver(dev->api, NULL);
-> >
-> > This conversion from a string to integer could be placed in the scanning step.
-> > Why place it here?
->
-> I think it's OK to place in the scanning step.
-> Should I submit a commit to fix this?
+The root cause is that uncore initialization can be performed for all
+modes, whereas the deinitialization logic is incorrectly restricted
+to legacy mode only. So do the deinitialization of uncore on all app
+modes.
 
-Let me handle it.
-I'll post a new revision of the series with a fix soon.
+Fixes: 10db2a5b8724 ("examples/l3fwd-power: add options for uncore frequency")
+Cc: stable@dpdk.org
 
+Signed-off-by: Huisong Li <lihuisong@huawei.com>
+---
+ examples/l3fwd-power/main.c | 66 ++++++++++++++++++++-----------------
+ 1 file changed, 35 insertions(+), 31 deletions(-)
 
-> > The dev->api_ver has no in-tree user.
-> > This field was (silently?) dropped by my best AI friend in the bus
-> > refactoring series I posted.
-> > https://patchwork.dpdk.org/project/dpdk/patch/20260506155201.2709810-12-david.marchand@redhat.com/
-> >
-> > Please advise if I can drop this field (it is just the integer value
-> > extracted from dev->api afaiu), or if it should be moved to the
-> > scanning step.
->
-> Please keep this field.
-> This field mainly used for driver to know which api-version the device support, so driver could do
-> bug-fix for specific device by judging this field.
-
-I am not a fan of leaving unused stuff, for a potential future case
-where it could (maybe) be needed.
-This is your bus and drivers, and the change is simple enough, so ok,
-no strong objection from me.
-
-Thanks for the reply (and sorry for not replying sooner, I was out for
-some days).
-
-
+diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
+index 02ec17d799..1122aeb930 100644
+--- a/examples/l3fwd-power/main.c
++++ b/examples/l3fwd-power/main.c
+@@ -2271,28 +2271,31 @@ init_power_library(void)
+ 	unsigned int lcore_id;
+ 	int ret = 0;
+ 
+-	RTE_LCORE_FOREACH(lcore_id) {
+-		/* init power management library */
+-		ret = rte_power_init(lcore_id);
+-		if (ret) {
+-			RTE_LOG(ERR, L3FWD_POWER,
+-				"Library initialization failed on core %u\n",
+-				lcore_id);
+-			return ret;
+-		}
+-		/* we're not supporting the VM channel mode */
+-		env = rte_power_get_env();
+-		if (env != PM_ENV_ACPI_CPUFREQ &&
+-				env != PM_ENV_PSTATE_CPUFREQ &&
+-				env != PM_ENV_AMD_PSTATE_CPUFREQ &&
+-				env != PM_ENV_CPPC_CPUFREQ) {
+-			RTE_LOG(ERR, L3FWD_POWER,
+-				"Only ACPI and PSTATE mode are supported\n");
+-			return -1;
++	/* only legacy mode relies on the initialization of cpufreq library */
++	if (app_mode == APP_MODE_LEGACY) {
++		RTE_LCORE_FOREACH(lcore_id) {
++			/* init power management library */
++			ret = rte_power_init(lcore_id);
++			if (ret) {
++				RTE_LOG(ERR, L3FWD_POWER,
++					"Library initialization failed on core %u\n",
++					lcore_id);
++				return ret;
++			}
++			/* we're not supporting the VM channel mode */
++			env = rte_power_get_env();
++			if (env != PM_ENV_ACPI_CPUFREQ &&
++					env != PM_ENV_PSTATE_CPUFREQ &&
++					env != PM_ENV_AMD_PSTATE_CPUFREQ &&
++					env != PM_ENV_CPPC_CPUFREQ) {
++				RTE_LOG(ERR, L3FWD_POWER,
++					"Only ACPI and PSTATE mode are supported\n");
++				return -1;
++			}
+ 		}
+ 	}
+ 
+-	if (cpu_resume_latency != -1) {
++	if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
+ 		RTE_LCORE_FOREACH(lcore_id) {
+ 			/* Back old CPU resume latency. */
+ 			ret = rte_power_qos_get_cpu_resume_latency(lcore_id);
+@@ -2329,14 +2332,16 @@ deinit_power_library(void)
+ 	unsigned int lcore_id, max_pkg, max_die, die, pkg;
+ 	int ret = 0;
+ 
+-	RTE_LCORE_FOREACH(lcore_id) {
+-		/* deinit power management library */
+-		ret = rte_power_exit(lcore_id);
+-		if (ret) {
+-			RTE_LOG(ERR, L3FWD_POWER,
+-				"Library deinitialization failed on core %u\n",
+-				lcore_id);
+-			return ret;
++	if (app_mode == APP_MODE_LEGACY) {
++		RTE_LCORE_FOREACH(lcore_id) {
++			/* deinit power management library */
++			ret = rte_power_exit(lcore_id);
++			if (ret) {
++				RTE_LOG(ERR, L3FWD_POWER,
++					"Library deinitialization failed on core %u\n",
++					lcore_id);
++				return ret;
++			}
+ 		}
+ 	}
+ 
+@@ -2360,7 +2365,7 @@ deinit_power_library(void)
+ 		}
+ 	}
+ 
+-	if (cpu_resume_latency != -1) {
++	if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
+ 		RTE_LCORE_FOREACH(lcore_id) {
+ 			/* Restore the original value. */
+ 			rte_power_qos_set_cpu_resume_latency(lcore_id,
+@@ -2602,8 +2607,7 @@ main(int argc, char **argv)
+ 	RTE_LOG(INFO, L3FWD_POWER, "Selected operation mode: %s\n",
+ 			mode_to_str(app_mode));
+ 
+-	/* only legacy mode relies on power library */
+-	if ((app_mode == APP_MODE_LEGACY) && init_power_library())
++	if (init_power_library())
+ 		rte_exit(EXIT_FAILURE, "init_power_library failed\n");
+ 
+ 	if (update_lcore_params() < 0)
+@@ -2975,7 +2979,7 @@ main(int argc, char **argv)
+ 		rte_eth_dev_close(portid);
+ 	}
+ 
+-	if ((app_mode == APP_MODE_LEGACY) && deinit_power_library())
++	if (deinit_power_library())
+ 		rte_exit(EXIT_FAILURE, "deinit_power_library failed\n");
+ 
+ 	if (rte_eal_cleanup() < 0)
 -- 
-David Marchand
+2.33.0
 
