@@ -2,43 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C871CD5BC8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 08:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031CFCD5BC8
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 08:42:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 419D440280;
-	Tue, 26 May 2026 10:41:47 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 0E90440279
- for <dev@dpdk.org>; Tue, 26 May 2026 10:41:46 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E497F20A2F;
- Tue, 26 May 2026 10:41:44 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 48D0340395;
+	Tue, 26 May 2026 10:42:23 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 201DB40279
+ for <dev@dpdk.org>; Tue, 26 May 2026 10:42:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1779784941;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=6X7E1xXvHkIm6Bu8l989n0OE77zfr1BBWDDYF4NTkO4=;
+ b=HKLxmvDpfQZk3ngF/tRHBRTgKH/iWe15dLmH2ooHqUXJm8awEmDonKdl4204h62hv7RRO9
+ 5vSuNopt0CLnaRfDZMlicVx3d3qR2jueDP/jte649qWa6nwc6FfUo3TcCK/DMow3tagOyR
+ uGCZx7o2NQg40XBjAXEBKVUgP7ykfLw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-XrBLc9_yNeekSy0a7D3kLw-1; Tue,
+ 26 May 2026 04:42:18 -0400
+X-MC-Unique: XrBLc9_yNeekSy0a7D3kLw-1
+X-Mimecast-MFC-AGG-ID: XrBLc9_yNeekSy0a7D3kLw_1779784937
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C365218002E0; Tue, 26 May 2026 08:42:16 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.49.40])
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 05520300019F; Tue, 26 May 2026 08:42:14 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, stephen@networkplumber.org, bruce.richardson@intel.com
+Subject: [PATCH v3 00/25] Consolidate bus driver infrastructure
+Date: Tue, 26 May 2026 10:41:40 +0200
+Message-ID: <20260526084212.3145685-1-david.marchand@redhat.com>
+In-Reply-To: <20260429114503.932575-1-david.marchand@redhat.com>
+References: <20260429114503.932575-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v5] mempool: improve cache behaviour and performance
-Date: Tue, 26 May 2026 10:41:44 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6589A@smartserver.smartshare.dk>
-In-Reply-To: <ahCAPT1LEn_Rc7Pk@bricha3-mobl1.ger.corp.intel.com>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5] mempool: improve cache behaviour and performance
-Thread-Index: AdzqBboxmUL8wbsbQKSFYpT47OAWLAC1T1Sw
-References: <20260408141315.904381-1-mb@smartsharesystems.com>
- <20260419095526.39526-1-mb@smartsharesystems.com>
- <ahCAPT1LEn_Rc7Pk@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>, "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
- "Jingjing Wu" <jingjing.wu@intel.com>,
- "Praveen Shetty" <praveen.shetty@intel.com>,
- "Hemant Agrawal" <hemant.agrawal@nxp.com>,
- "Sachin Saxena" <sachin.saxena@oss.nxp.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 46dNG0MRZRWSqne9MBbtleYuiD6__QeIWMqerKYY0Q0_1779784937
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,373 +66,282 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Friday, 22 May 2026 18.12
->=20
-> On Sun, Apr 19, 2026 at 09:55:26AM +0000, Morten Br=F8rup wrote:
-> > This patch refactors the mempool cache to eliminate some unexpected
-> > behaviour and reduce the mempool cache miss rate.
-> >
->=20
-> Agree in principle with most of these changes. As we dicussed at the
-> DPDK
-> summit conference, only issue I really have is with the threshold
-> limits
-> here - allocating and freeing only half the cache at a time seems
-> overly
-> conservative. Thinking about use-cases:
->=20
-> 1 for apps where alloc + free (generally Rx+Tx) is on the same =
-core(s),
->   then we should run (almost) entirely out of cache.
+This is a continuation of the work I started on the bus infrastructure,
+but this time, a lot of the changes were done by a AI "friend".
+It is still an unfinished topic as the current series focuses on probing
+only. The detaching/cleanup aspect is postponed to another release/time.
 
-I strongly disagree about any goal to run the cache low.
-The primary goal is to minimize the cache miss (refill and replenish) =
-rate.
+My AI "friend" really *sucked* at git and at separating unrelated changes,
+so it required quite a lot of massage/polishing afterwards.
+But it seems good enough now for upstream submission.
 
-> 2 for apps where we have alloc and free on different cores, then we
-> have
->   some caches always being filled and others always being emptied
+I would like to see this series merged in 26.07, so that we have enough
+time to stabilize it before the next LTS.
+And seeing how it affects drivers, it is probably better to merge it
+the sooner possible (so Thomas does not have to solve too many conflicts
+when pulling next-* subtrees after, especially wrt the last patch).
 
-Agree.
 
->=20
-> For case #1, we only need worry about the thresholds for the odd case
-> where we have a burst that causes us to overflow our cache (and we
-> can't increase our cache size to cope and avoid that).=20
-> Otherwise the thresholds don't matter.
+This series refactors the DPDK bus infrastructure to consolidate common
+operations and reduce code duplication across all bus drivers.
+Currently, each bus implements its own specific device/driver lists,
+probe logic, and lookup functions.
+This series moves these common patterns into the EAL bus layer,
+providing generic helpers that all buses can use.
 
-It seems like you assume the application only does something like this:
-Rx -> Rewrite -> Tx
+The refactoring removes approximately 1,400 lines of duplicated code across
+the codebase while maintaining full functional equivalence.
 
-In that case, the per-lcore cache only needs capacity for one burst, =
-yes.
-With my patch, the cache can be rightsized by requesting a cache size of =
-2 * burst size.
-(Then the fill level will be either size/2 or empty, i.e. one burst or =
-zero.
-This also happens to meet your suggested goal about low fill level, =
-which I disagree with.)
+Key changes:
+- Factorize device and driver lists into struct rte_bus
+- Implement generic probe, device/driver lookup, and iteration helpers in EAL
+- Introduce conversion macros (RTE_BUS_DEVICE, RTE_BUS_DRIVER, RTE_CLASS_TO_BUS_DEVICE)
+  to safely convert between generic and bus-specific types
+- Remove bus-specific device/driver types from most driver code
+- Move probe logic from individual buses to rte_bus_generic_probe()
+- Separate NXP-specific metadata from generic bus structures
 
-However, I don't think that is a realistic use case.
-Many apps do something like this:
+Benefits:
+- Significant code reduction (~1,400 lines removed)
+- Consistent behavior across all bus types
+- Simplified bus driver implementation
+- Easier maintenance and future enhancements
 
-     |-> Rewrite ->|
-Rx ->|             |-> Tx
-     |-> Hold      |
-         Release ->|
+The series is structured as a progressive refactoring:
+- Remove redundant checks and helpers (patches 1-5)
+- Add conversion macros and factorize lists (patches 6-8)
+- Consolidate device/driver lookup and iteration (patches 9-11)
+- Refactor probe logic (patches 12-15)
+- Remove bus-specific types from drivers (patches 16-23)
 
-They often hold back packets before they are transmitted.
-For a simple router, when the destination IP address is not in the =
-neighbor table, packets to that IP address are queued until ARP/ND has =
-been resolved, and then they are dequeued and transmitted.
-Or apps performing shaping or pacing, where packets are held back in =
-queues, and dequeued at the appropriate time.
-For such apps, the waves are much bigger (than the simple =
-Rx->Rewrite->Tx use case).
+Note on ABI:
+This series breaks the ABI for drivers (changes to rte_pci_device,
+rte_pci_driver, and similar structures for other buses). However, the DPDK
+ABI policy does not provide guarantees for driver-level interfaces.
 
-With a random enqueue/dequeue pattern, replenishing/draining the cache =
-to size/2 minimizes the probability of reaching one of its edges (empty =
-or full), triggering a "cache miss" (refill/replenish).
 
-> However, for case #2, the thresholds are constantly involved as
-> we
-> always are going to backing store. In this case, we really want to =
-have
-> the
-> allocs *always* fill the cache completely, and the frees completely
-> empty
-> the cache.
+-- 
+David Marchand
 
-Agree.
+Changes since v2:
+- fixed dma/idxd probing as reported by Bruce,
+- moved api_ver setting (from match to scan) in bus/uacce,
+- fixed transient bug in the vdev code (in the middle of the series).
+  tl;dr the high level difference for bus/vdev between v2 and v3 == 0,
+- fixed doxygen,
+- enhanced API description,
 
->=20
-> Because of this, while we want to avoid cases where we fill the cache
-> completely only to have a further free causing it to be flushed,
-> because of
-> case #2 we cannot be overly conservative in how much we free/empty.
-> Ideally, we want to fill to full less a single burst, and empty =
-leaving
-> only a single burst in the cache. Unfortunately, we don't know what
-> those
-> burst limits are, so we have to try and guess the best behaviour from
-> everything else.
+Changes since v1:
+- fix typo in Windows code for net/mlx5,
 
-I agree about not wanting to be overly conservative.
-But in the use cases I have described for #1, I don't think a target =
-fill level of size/2 is overly conservative.
 
-I also acknowledge that this patch doubles the mempool cache miss rate =
-for #2.
-E.g. with a cache size of 512 and burst size of 64, the per-burst miss =
-rate will be 64 / (1/2 * 512) =3D 1/4, compared to 64 / 512 =3D 1/8 with =
-a full replenish/drain algorithm.
+David Marchand (25):
+  bus/ifpga: remove unused AFU lookup helper
+  bus/uacce: set API version during scan
+  crypto/octeontx: remove check on driver in remove
+  dma/idxd: clear device at scan
+  bus: remove device and driver checks in DMA map/unmap
+  drivers/bus: remove device and driver checks in unplug
+  drivers/bus: remove device and driver checks in plug
+  bus: add bus conversion macros
+  bus: factorize driver list
+  bus: factorize device list
+  bus: consolidate device lookup
+  bus: consolidate device iteration
+  bus: factorize driver lookup
+  bus: refactor device probe
+  bus: support multiple probe
+  drivers/bus: initialize NXP bus specifics in scan
+  bus: implement probe in EAL
+  bus: factorize driver reference
+  drivers: rely on generic driver
+  drivers/bus: remove bus-specific driver references
+  dma/idxd: remove specific bus type
+  drivers/bus: separate specific bus metadata for NXP drivers
+  drivers/bus: remove specific bus types
+  eventdev: rename dev field to device
+  bus: add class device conversion macro
 
-In theory, we could make it build time configurable to optimize mempools =
-for #2.
-But mempools are also used for other objects than mbufs, so that would =
-have unwanted side effects for non-mbuf mempools.
+ app/test/test_vdev.c                          |   6 +-
+ drivers/baseband/acc/rte_acc100_pmd.c         |   4 +-
+ drivers/baseband/acc/rte_vrb_pmd.c            |   2 +-
+ .../fpga_5gnr_fec/rte_fpga_5gnr_fec.c         |   4 +-
+ drivers/baseband/fpga_lte_fec/fpga_lte_fec.c  |   2 +-
+ drivers/bus/auxiliary/auxiliary_common.c      | 256 +++-----------
+ drivers/bus/auxiliary/auxiliary_params.c      |  65 ----
+ drivers/bus/auxiliary/bus_auxiliary_driver.h  |  17 +-
+ drivers/bus/auxiliary/linux/auxiliary.c       |  11 +-
+ drivers/bus/auxiliary/meson.build             |   5 +-
+ drivers/bus/auxiliary/private.h               |  45 +--
+ drivers/bus/cdx/bus_cdx_driver.h              |  17 -
+ drivers/bus/cdx/cdx.c                         | 259 +++-----------
+ drivers/bus/cdx/private.h                     |   9 -
+ drivers/bus/dpaa/bus_dpaa_driver.h            |  10 +-
+ drivers/bus/dpaa/dpaa_bus.c                   | 317 ++++++-----------
+ drivers/bus/fslmc/bus_fslmc_driver.h          |   7 +-
+ drivers/bus/fslmc/fslmc_bus.c                 | 330 ++++++-----------
+ drivers/bus/fslmc/fslmc_vfio.c                |  55 ++-
+ drivers/bus/fslmc/portal/dpaa2_hw_dprc.c      |   4 +-
+ drivers/bus/fslmc/private.h                   |  15 +-
+ drivers/bus/ifpga/bus_ifpga_driver.h          |  32 +-
+ drivers/bus/ifpga/ifpga_bus.c                 | 188 ++--------
+ drivers/bus/pci/bsd/pci.c                     |  14 +-
+ drivers/bus/pci/bus_pci_driver.h              |  15 +-
+ drivers/bus/pci/linux/pci.c                   |  11 +-
+ drivers/bus/pci/linux/pci_uio.c               |   6 +-
+ drivers/bus/pci/pci_common.c                  | 331 +++++-------------
+ drivers/bus/pci/pci_params.c                  |   9 +-
+ drivers/bus/pci/private.h                     |  64 +---
+ drivers/bus/pci/windows/pci.c                 |  11 +-
+ drivers/bus/platform/bus_platform_driver.h    |  14 -
+ drivers/bus/platform/meson.build              |   5 +-
+ drivers/bus/platform/platform.c               | 191 +++-------
+ drivers/bus/platform/platform_params.c        |  72 ----
+ drivers/bus/platform/private.h                |  25 --
+ drivers/bus/uacce/bus_uacce_driver.h          |  14 -
+ drivers/bus/uacce/uacce.c                     | 286 ++++-----------
+ drivers/bus/vdev/bus_vdev_driver.h            |  15 +-
+ drivers/bus/vdev/meson.build                  |   5 +-
+ drivers/bus/vdev/vdev.c                       | 211 +++++------
+ drivers/bus/vdev/vdev_logs.h                  |  16 -
+ drivers/bus/vdev/vdev_params.c                |  64 ----
+ drivers/bus/vdev/vdev_private.h               |  28 --
+ drivers/bus/vmbus/bus_vmbus_driver.h          |   3 -
+ drivers/bus/vmbus/linux/vmbus_bus.c           |  11 +-
+ drivers/bus/vmbus/private.h                   |  23 +-
+ drivers/bus/vmbus/vmbus_common.c              | 190 +++-------
+ drivers/common/mlx5/linux/mlx5_common_os.c    |   5 +-
+ drivers/common/mlx5/mlx5_common.c             |   2 +-
+ drivers/common/mlx5/mlx5_common_pci.c         |   2 +-
+ drivers/common/mlx5/windows/mlx5_common_os.c  |   2 +-
+ drivers/common/qat/qat_qp.c                   |   4 +-
+ drivers/common/zsda/zsda_qp.c                 |   4 +-
+ drivers/compress/octeontx/otx_zip.c           |   2 +-
+ drivers/crypto/cnxk/cnxk_cryptodev_ops.c      |   2 +-
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |   3 +-
+ drivers/crypto/octeontx/otx_cryptodev.c       |   3 -
+ drivers/crypto/octeontx/otx_cryptodev_ops.c   |   4 +-
+ drivers/dma/idxd/idxd_bus.c                   | 116 ++----
+ drivers/event/cnxk/cn10k_eventdev.c           |   8 +-
+ drivers/event/cnxk/cn20k_eventdev.c           |   8 +-
+ drivers/event/cnxk/cn9k_eventdev.c            |   6 +-
+ drivers/event/cnxk/cnxk_eventdev.c            |   2 +-
+ drivers/event/dlb2/pf/dlb2_pf.c               |   2 +-
+ drivers/event/skeleton/skeleton_eventdev.c    |   2 +-
+ drivers/net/ark/ark_ethdev.c                  |   2 +-
+ drivers/net/atlantic/atl_ethdev.c             |  12 +-
+ drivers/net/avp/avp_ethdev.c                  |  22 +-
+ drivers/net/axgbe/axgbe_ethdev.c              |   4 +-
+ drivers/net/bnx2x/bnx2x_ethdev.c              |   2 +-
+ drivers/net/bnxt/bnxt_ethdev.c                |  12 +-
+ drivers/net/bnxt/tf_ulp/bnxt_ulp.c            |   4 +-
+ drivers/net/bonding/rte_eth_bond_args.c       |   4 +-
+ drivers/net/cnxk/cnxk_ethdev.c                |   2 +-
+ drivers/net/cnxk/cnxk_ethdev_ops.c            |   2 +-
+ drivers/net/cxgbe/cxgbe_ethdev.c              |   4 +-
+ drivers/net/cxgbe/cxgbevf_ethdev.c            |   4 +-
+ drivers/net/dpaa/dpaa_ethdev.c                |  17 +-
+ drivers/net/dpaa2/dpaa2_ethdev.c              |   8 +-
+ drivers/net/dpaa2/dpaa2_recycle.c             |   8 +-
+ drivers/net/ena/ena_ethdev.c                  |  10 +-
+ drivers/net/enetc/enetc4_ethdev.c             |   4 +-
+ drivers/net/enetc/enetc4_vf.c                 |   4 +-
+ drivers/net/enetc/enetc_ethdev.c              |   2 +-
+ drivers/net/enic/enic_ethdev.c                |   4 +-
+ drivers/net/enic/enic_fm_flow.c               |   6 +-
+ drivers/net/enic/enic_vf_representor.c        |   2 +-
+ drivers/net/gve/gve_ethdev.c                  |   2 +-
+ drivers/net/hinic/hinic_pmd_ethdev.c          |   8 +-
+ drivers/net/hinic3/base/hinic3_hwdev.c        |   7 +-
+ drivers/net/hinic3/hinic3_ethdev.c            |  16 +-
+ drivers/net/hns3/hns3_cmd.c                   |   2 +-
+ drivers/net/hns3/hns3_common.c                |   8 +-
+ drivers/net/hns3/hns3_ethdev.c                |   6 +-
+ drivers/net/hns3/hns3_ethdev_vf.c             |   6 +-
+ drivers/net/hns3/hns3_rxtx.c                  |   4 +-
+ drivers/net/intel/cpfl/cpfl_ethdev.c          |   4 +-
+ drivers/net/intel/cpfl/cpfl_ethdev.h          |   2 +-
+ drivers/net/intel/e1000/em_ethdev.c           |  12 +-
+ drivers/net/intel/e1000/em_rxtx.c             |   2 +-
+ drivers/net/intel/e1000/igb_ethdev.c          |  30 +-
+ drivers/net/intel/e1000/igb_pf.c              |   2 +-
+ drivers/net/intel/e1000/igc_ethdev.c          |  22 +-
+ drivers/net/intel/fm10k/fm10k_ethdev.c        |  16 +-
+ drivers/net/intel/i40e/i40e_ethdev.c          |  28 +-
+ drivers/net/intel/i40e/i40e_ethdev.h          |   2 +-
+ drivers/net/intel/iavf/iavf_ethdev.c          |   8 +-
+ drivers/net/intel/ice/ice_dcf.c               |   6 +-
+ drivers/net/intel/ice/ice_ethdev.c            |   6 +-
+ drivers/net/intel/ice/ice_ethdev.h            |   2 +-
+ drivers/net/intel/idpf/idpf_ethdev.h          |   2 +-
+ drivers/net/intel/ipn3ke/ipn3ke_ethdev.h      |  13 -
+ drivers/net/intel/ipn3ke/ipn3ke_representor.c |   6 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  40 +--
+ drivers/net/intel/ixgbe/ixgbe_flow.c          |   4 +-
+ drivers/net/intel/ixgbe/ixgbe_pf.c            |   2 +-
+ drivers/net/intel/ixgbe/ixgbe_tm.c            |   2 +-
+ .../net/intel/ixgbe/ixgbe_vf_representor.c    |   2 +-
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.c       |  20 +-
+ drivers/net/mlx5/linux/mlx5_os.c              |   9 +-
+ drivers/net/mlx5/windows/mlx5_os.c            |   4 +-
+ drivers/net/nbl/nbl_core.c                    |   2 +-
+ drivers/net/nbl/nbl_dev/nbl_dev.c             |   6 +-
+ drivers/net/netvsc/hn_ethdev.c                |   3 +-
+ drivers/net/nfp/nfp_ethdev.c                  |   8 +-
+ drivers/net/nfp/nfp_ethdev_vf.c               |   6 +-
+ drivers/net/nfp/nfp_net_common.c              |   8 +-
+ drivers/net/ngbe/ngbe_ethdev.c                |  20 +-
+ drivers/net/ngbe/ngbe_ethdev_vf.c             |  16 +-
+ drivers/net/ngbe/ngbe_pf.c                    |   2 +-
+ drivers/net/ntnic/ntnic_ethdev.c              |   8 +-
+ drivers/net/octeon_ep/otx_ep_ethdev.c         |   2 +-
+ drivers/net/octeon_ep/otx_ep_mbox.c           |   6 +-
+ drivers/net/qede/qede_ethdev.c                |   6 +-
+ drivers/net/r8169/r8169_ethdev.c              |   6 +-
+ drivers/net/rnp/rnp_ethdev.c                  |   6 +-
+ drivers/net/sfc/sfc.c                         |   4 +-
+ drivers/net/sfc/sfc_ethdev.c                  |   2 +-
+ drivers/net/sfc/sfc_intr.c                    |  10 +-
+ drivers/net/sfc/sfc_rx.c                      |   3 +-
+ drivers/net/sfc/sfc_sriov.c                   |   2 +-
+ drivers/net/sfc/sfc_tx.c                      |   3 +-
+ drivers/net/thunderx/nicvf_ethdev.c           |   4 +-
+ drivers/net/txgbe/txgbe_ethdev.c              |  26 +-
+ drivers/net/txgbe/txgbe_ethdev_vf.c           |  16 +-
+ drivers/net/txgbe/txgbe_flow.c                |   4 +-
+ drivers/net/txgbe/txgbe_pf.c                  |   2 +-
+ drivers/net/txgbe/txgbe_tm.c                  |   2 +-
+ drivers/net/vdev_netvsc/vdev_netvsc.c         |   2 +-
+ drivers/net/virtio/virtio_pci_ethdev.c        |  11 +-
+ drivers/net/vmxnet3/vmxnet3_ethdev.c          |   4 +-
+ drivers/net/xsc/xsc_ethdev.c                  |   2 +-
+ drivers/net/zxdh/zxdh_ethdev.c                |   8 +-
+ drivers/raw/cnxk_bphy/cnxk_bphy.c             |   2 +-
+ drivers/raw/cnxk_bphy/cnxk_bphy_cgx.c         |   2 +-
+ drivers/raw/cnxk_rvu_lf/cnxk_rvu_lf.c         |   2 +-
+ drivers/raw/ifpga/afu_pmd_core.c              |   2 +-
+ drivers/raw/ifpga/afu_pmd_n3000.c             |   4 +-
+ drivers/raw/ifpga/ifpga_rawdev.c              |   4 +-
+ drivers/raw/ntb/ntb.c                         |   2 +-
+ lib/eal/common/eal_common_bus.c               | 186 +++++++++-
+ lib/eal/common/eal_common_dev.c               |  45 ++-
+ lib/eal/common/hotplug_mp.c                   |   4 +-
+ lib/eal/include/bus_driver.h                  | 307 +++++++++++++++-
+ lib/eal/include/dev_driver.h                  |   1 +
+ lib/eal/linux/eal_dev.c                       |   3 +-
+ lib/ethdev/ethdev_pci.h                       |   7 +-
+ lib/ethdev/rte_ethdev.c                       |   2 +-
+ lib/eventdev/eventdev_pmd.h                   |   2 +-
+ lib/eventdev/eventdev_pmd_pci.h               |   4 +-
+ lib/eventdev/eventdev_pmd_vdev.h              |   2 +-
+ lib/eventdev/rte_eventdev.c                   |  14 +-
+ 173 files changed, 1681 insertions(+), 3039 deletions(-)
+ delete mode 100644 drivers/bus/auxiliary/auxiliary_params.c
+ delete mode 100644 drivers/bus/platform/platform_params.c
+ delete mode 100644 drivers/bus/vdev/vdev_logs.h
+ delete mode 100644 drivers/bus/vdev/vdev_params.c
+ delete mode 100644 drivers/bus/vdev/vdev_private.h
 
-If we went for an algorithm targeting replenish/drain at 25 % from the =
-edges, the per-burst miss rate for #2 would be: 64 / (3/4 * 512) =3D =
-1/6.
+-- 
+2.53.0
 
-How about addressing #2 in the release notes:
-We describe that the cache refill/drain algorithm has been changed to =
-only refill/drain to 50 % of the cache size, so pipelined applications =
-performing Rx (mempool get) and Tx (mempool put) on separate cores =
-should configure their mbuf pools with double the cache size of what =
-they previously were to achieve similar performance.
-
->=20
-> All that said, commits with specific suggestions inline.
->=20
-> /Bruce
->=20
-> <snip>
->=20
-> > diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-> > index 2e54fc4466..432c43ab15 100644
-> > --- a/lib/mempool/rte_mempool.h
-> > +++ b/lib/mempool/rte_mempool.h
-> > @@ -89,7 +89,7 @@ struct __rte_cache_aligned rte_mempool_debug_stats
-> {
-> >   */
-> >  struct __rte_cache_aligned rte_mempool_cache {
-> >  	uint32_t size;	      /**< Size of the cache */
-> > -	uint32_t flushthresh; /**< Threshold before we flush excess
-> elements */
-> > +	uint32_t flushthresh; /**< Obsolete; for API/ABI compatibility
-> purposes only */
-> >  	uint32_t len;	      /**< Current cache count */
-> >  #ifdef RTE_LIBRTE_MEMPOOL_STATS
-> >  	uint32_t unused;
-> > @@ -107,8 +107,10 @@ struct __rte_cache_aligned rte_mempool_cache {
-> >  	/**
-> >  	 * Cache objects
-> >  	 *
-> > -	 * Cache is allocated to this size to allow it to overflow in
-> certain
-> > -	 * cases to avoid needless emptying of cache.
-> > +	 * Note:
-> > +	 * Cache is allocated at double size for API/ABI compatibility
-> purposes only.
-> > +	 * When reducing its size at an API/ABI breaking release,
-> > +	 * remember to add a cache guard after it.
-> >  	 */
-> >  	alignas(RTE_CACHE_LINE_SIZE) void
-> *objs[RTE_MEMPOOL_CACHE_MAX_SIZE * 2];
-> >  };
-> > @@ -1046,12 +1048,17 @@ rte_mempool_free(struct rte_mempool *mp);
-> >   * @param cache_size
-> >   *   If cache_size is non-zero, the rte_mempool library will try to
-> >   *   limit the accesses to the common lockless pool, by maintaining
-> a
-> > - *   per-lcore object cache. This argument must be lower or equal =
-to
-> > - *   RTE_MEMPOOL_CACHE_MAX_SIZE and n / 1.5.
-> > + *   per-lcore object cache. This argument must be an even number,
-> > + *   lower or equal to RTE_MEMPOOL_CACHE_MAX_SIZE and n.
-> >   *   The access to the per-lcore table is of course
-> >   *   faster than the multi-producer/consumer pool. The cache can be
-> >   *   disabled if the cache_size argument is set to 0; it can be
-> useful to
-> >   *   avoid losing objects in cache.
-> > + *   Note:
-> > + *   Mempool put/get requests of more than cache_size / 2 objects
-> may be
-> > + *   partially or fully served directly by the multi-
-> producer/consumer
-> > + *   pool, to avoid the overhead of copying the objects twice
-> (instead of
-> > + *   once) when using the cache as a bounce buffer.
-> >   * @param private_data_size
-> >   *   The size of the private data appended after the mempool
-> >   *   structure. This is useful for storing some private data after
-> the
-> > @@ -1390,24 +1397,32 @@ rte_mempool_do_generic_put(struct =
-rte_mempool
-> *mp, void * const *obj_table,
-> >  	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
-> >  	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
-> >
-> > -	__rte_assume(cache->flushthresh <=3D RTE_MEMPOOL_CACHE_MAX_SIZE *
-> 2);
-> > -	__rte_assume(cache->len <=3D RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
-> > -	__rte_assume(cache->len <=3D cache->flushthresh);
-> > -	if (likely(cache->len + n <=3D cache->flushthresh)) {
-> > +	__rte_assume(cache->size <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
-> > +	__rte_assume(cache->size / 2 <=3D RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-> > +	__rte_assume(cache->len <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
-> > +	__rte_assume(cache->len <=3D cache->size);
-> > +	if (likely(cache->len + n <=3D cache->size)) {
-> >  		/* Sufficient room in the cache for the objects. */
-> >  		cache_objs =3D &cache->objs[cache->len];
-> >  		cache->len +=3D n;
-> > -	} else if (n <=3D cache->flushthresh) {
-> > +	} else if (n <=3D cache->size / 2) {
-> >  		/*
-> > -		 * The cache is big enough for the objects, but - as
-> detected by
-> > -		 * the comparison above - has insufficient room for them.
-> > -		 * Flush the cache to make room for the objects.
-> > +		 * The number of objects is within the cache bounce buffer
-> limit,
-> > +		 * but - as detected by the comparison above - the cache
-> has
-> > +		 * insufficient room for them.
-> > +		 * Flush the cache to the backend to make room for the
-> objects;
-> > +		 * flush (size / 2) objects from the bottom of the cache,
-> where
-> > +		 * objects are less hot, and move down the remaining
-> objects, which
-> > +		 * are more hot, from the upper half of the cache.
-> >  		 */
-> > -		cache_objs =3D &cache->objs[0];
-> > -		rte_mempool_ops_enqueue_bulk(mp, cache_objs, cache->len);
-> > -		cache->len =3D n;
-> > +		__rte_assume(cache->len > cache->size / 2);
-> > +		rte_mempool_ops_enqueue_bulk(mp, &cache->objs[0], cache-
-> >size / 2);
-> > +		rte_memcpy(&cache->objs[0], &cache->objs[cache->size / 2],
-> > +				sizeof(void *) * (cache->len - cache->size /
-> 2));
-> > +		cache_objs =3D &cache->objs[cache->len - cache->size / 2];
-> > +		cache->len =3D cache->len - cache->size / 2 + n;
->=20
-> The flushing of only half the cache I'm not so certain about. I agree
-> that
-> we want to not flush to empty, but I also think that we want to do =
-more
-> than a half-flush, especially since we do an enqueue to the cache
-> immediately afterwards. Consider the case where we have a cache size =
-of
-> 128, and we do an enqueue of 32, with the cache currently full. In =
-that
-> case we only flush 64, reducing the cache to 64, but then immediately
-> bringing it back up to 96.
-
-I thought in depth about whether the flush/replenish sizes should =
-consider the request size or not. (E.g. if I should replenish size/2 or =
-size/2+request.)
-I decided for not considering the request size, for two reasons:
-a) It roughly doesn't matter, especially when considering a sequence of =
-random get/put requests.
-b) The size of the backend transactions become fixed, which has =
-performance benefits: With my patch, they are always size/2, so if the =
-cache size is 2^N, the backend transactions are 2^N and CPU cache =
-aligned.
-
-> For cases where we have pipelines with all
-> alloc
-> on one core and all free on another, this half-flush would be
-> inefficient.
->=20
-> Instead, I would look to have a lower target threshold post-flush, and
-> I
-> would suggest 25% - taking into account the newly freed buffers.
-
-It's not good for #1.
-I agree that it is better for #2. But I don't think #2 is the likely use =
-case.
-
-After our discussion at the summit, I did start working a patch =
-targeting fill levels at 25% from the cache edges, but I don't think =
-it's better; so I'd rather stick with a target fill level of 50%.
-
-> For example:
->=20
-> 	/* if n > our target of 1/4 full, flush everything,
-> 	 * else flush so that we end up with 1/4 full after n added.
-> 	 */
-> 	flush_count =3D n > cache->size/4 ? cache->len :
-> 			(cache->len + n) - cache->size/4;
->=20
->=20
-> >  	} else {
-> > -		/* The request itself is too big for the cache. */
-> > +		/* The request itself is too big. */
-> >  		goto driver_enqueue_stats_incremented;
->=20
-> I think original comment is better. The request itself is not too big
-> for
-> the whole mempool, just for the cache.
-
-Ack.
-
->=20
-> >  	}
-> >
-> > @@ -1524,7 +1539,7 @@ rte_mempool_do_generic_get(struct rte_mempool
-> *mp, void **obj_table,
-> >  	/* The cache is a stack, so copy will be in reverse order. */
-> >  	cache_objs =3D &cache->objs[cache->len];
-> >
-> > -	__rte_assume(cache->len <=3D RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
-> > +	__rte_assume(cache->len <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
-> >  	if (likely(n <=3D cache->len)) {
-> >  		/* The entire request can be satisfied from the cache. */
-> >  		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
-> > @@ -1548,13 +1563,13 @@ rte_mempool_do_generic_get(struct =
-rte_mempool
-> *mp, void **obj_table,
-> >  	for (index =3D 0; index < len; index++)
-> >  		*obj_table++ =3D *--cache_objs;
-> >
-> > -	/* Dequeue below would overflow mem allocated for cache? */
-> > -	if (unlikely(remaining > RTE_MEMPOOL_CACHE_MAX_SIZE))
-> > +	/* Dequeue below would exceed the cache bounce buffer limit? */
-> > +	__rte_assume(cache->size / 2 <=3D RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-> > +	if (unlikely(remaining > cache->size / 2))
-> >  		goto driver_dequeue;
-> >
-> > -	/* Fill the cache from the backend; fetch size + remaining
-> objects. */
-> > -	ret =3D rte_mempool_ops_dequeue_bulk(mp, cache->objs,
-> > -			cache->size + remaining);
-> > +	/* Fill the cache from the backend; fetch (size / 2) objects. */
-> > +	ret =3D rte_mempool_ops_dequeue_bulk(mp, cache->objs, cache->size =
-/
-> 2);
->=20
-> Again, the cache->size / 2 doesn't seem right here. We at most half-
-> fill
-> the cache and then take some objects from that, meaning that have just
-> done
-> a re-fill of cache but end the function with it less than half full.
-> Since
-> we take from this value, I'd suggest just filling the cache =
-completely.
-
-The issues at the edges of the cache are symmetrical.
-If we replenish the cache to full, and the next transaction is a put, =
-the cache needs to be drained.
-That's why I replenish to size/2.
-
->=20
-> >  	if (unlikely(ret < 0)) {
-> >  		/*
-> >  		 * We are buffer constrained, and not able to fetch all
-> that.
-> > @@ -1568,10 +1583,11 @@ rte_mempool_do_generic_get(struct =
-rte_mempool
-> *mp, void **obj_table,
-> >  	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
-> >  	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
-> >
-> > -	__rte_assume(cache->size <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
-> > -	__rte_assume(remaining <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
-> > -	cache_objs =3D &cache->objs[cache->size + remaining];
-> > -	cache->len =3D cache->size;
-> > +	__rte_assume(cache->size / 2 <=3D RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-> > +	__rte_assume(remaining <=3D RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-> > +	__rte_assume(remaining <=3D cache->size / 2);
-> > +	cache_objs =3D &cache->objs[cache->size / 2];
-> > +	cache->len =3D cache->size / 2 - remaining;
-> >  	for (index =3D 0; index < remaining; index++)
-> >  		*obj_table++ =3D *--cache_objs;
-> >
-> > --
-> > 2.43.0
-> >
