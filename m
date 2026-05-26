@@ -2,71 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3315CD5BC8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 13:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D58ADCD5BC8
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 13:59:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A03B402AC;
-	Tue, 26 May 2026 15:29:50 +0200 (CEST)
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
- [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id 3650B40290
- for <dev@dpdk.org>; Tue, 26 May 2026 15:29:49 +0200 (CEST)
-Received: by mail-dy1-f170.google.com with SMTP id
- 5a478bee46e88-2ee990e8597so25390947eec.1
- for <dev@dpdk.org>; Tue, 26 May 2026 06:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779802188;
- x=1780406988; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=IkFps+kKqLujfIi0Si+qEyHvkq0dwnDnOXsUZVybbBM=;
- b=TXN4cyKdnlOsYKgMKzxzVhozGLTfVgNftnFtIC9S0EjRRZ7GsSqGCRYzmdGNM+DcWq
- SxUSkoTzvFuGc9QHziSbQll2yceyKRNLLXlwJfD00tnbHwI/NFQUCmbkihPBV1ZusbQz
- hPPNuc9GbuKuT8EEy8v/sxPw2Gi/OGo6CbmyEvAGS4+Ky4aPsUOAo+FeYu3gNbe/HV8t
- KwjFJa+JU7mhkSlT2QFRyY9Rw15kEkhh6ekjiUNg/1x2lpFGo+9LKzHWwLtMoA3NTJIx
- 7qaLBLV2awuTSYDK/hw+V07rEnLHG8wvVDulBT5uEZPlDVF7rWu9H/XmmjlHwd64sOQk
- 3kcw==
+	by mails.dpdk.org (Postfix) with ESMTP id 915DC402AC;
+	Tue, 26 May 2026 15:59:56 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id D57E440290
+ for <dev@dpdk.org>; Tue, 26 May 2026 15:59:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1779803994;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=EY9iVdMTVrZA1pCialuDOVjZwqRit1ibDgyMPRddua0=;
+ b=d9vVveZD/IFmF+mkfycgGBG3xxftHDu9EsZBzU67NPm1vedlQVUyDTDULECpGyRPK2xxsA
+ y2BuwGdBcHs/suTS1LHDxgVXJRESUBulPeBhqNVbft3RADkKEKE6SKyw6cNuiLvLN76Y85
+ aHm75QgkwZcHflYQk2AjDiILHV9OXq8=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-147-n51pZoyQPLCssLsqbIFpCg-1; Tue, 26 May 2026 09:59:51 -0400
+X-MC-Unique: n51pZoyQPLCssLsqbIFpCg-1
+X-Mimecast-MFC-AGG-ID: n51pZoyQPLCssLsqbIFpCg_1779803990
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-39389bc702eso48111421fa.2
+ for <dev@dpdk.org>; Tue, 26 May 2026 06:59:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779802188; x=1780406988;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=IkFps+kKqLujfIi0Si+qEyHvkq0dwnDnOXsUZVybbBM=;
- b=RFndfv8t7qh8htVNi4drkXM8g4dgcQve3dD5oX38geDaipT3c+LU4bDyoLw6O4CLJu
- czUK5/vba81VJRyN+2HM4r0Rk7hJexf2mjRXugP3JjzE5i/Hl7ImjIgzRACip/xSFs5+
- MKJ2/PO4OJXR9eCG6JskjCOhc45dwK6dubLZVnERa/2kYzmYF+p8cgLWg87XxWJE+bRi
- cL3By+g0HC82giwBYj9aUrEW25OR9cwxoeyJfgnC+0aUjpmxILaMVTDxLI6fY+lEor3s
- c1CDrhwOt/JJOdLIP05KFA6UrqUVfv7YajCAdCA0Gj/wcdRhyvsGx4bc26NslJZIKOf0
- b7MQ==
-X-Gm-Message-State: AOJu0Yzf0v0tJrMw0vJfp2oIRxOlPm82EIUkyoWFMRB9jQtsbyq+YzXy
- HAcg0W7aMJQ1rVPBR4WSIdU2NRQKLx9STfQsytGA18sAktGTrPKJNE0CDI+RD6NuX6br2PjRYHX
- +lc9C
-X-Gm-Gg: Acq92OG7YjvCDsYYVcnNMpPvmQ9s0P1HtaRStzlduNBDEtWUsVs0FZbFH//lNy6bnEL
- ASkqYOCmsz3edhnD3qdFd3A/ZdAjpku76RdHxJ9L2KZfmvETlatH/QROyrrV9AwQKWhLjlsrEZT
- HWc2axblJAzANRVbcjhCFBRjD/RO6AIhIMaMGOoIrSDqnwgKjzhv3VDeE/iG11LxDEIH7kEHl/K
- 0lvdsHwgtb5P0rcqoTeqQ3xfMI8QF1rn4SB2lIEXcnhPj3ySRK+eR1OrPZ64uaDxvFLw/isB8/4
- 7nhi402WPw7B15sGqX1ngMn/j+eoTvahc4gv7Mh1CWgpFIIqNgOXzbfQCxPIO6SBIG+JtWmtdf/
- u6qfkz7/Gwk/bTMuF+y8b+0ekf231IifKG+YhMRoNqSd2fUqNqn5OWgAlOkP8V7E2k9cSU69Wd9
- oj1guXAtgFR47QZzrPqvyVgNwyYQJ8skkuGdCX19ISyBfqieHImU5IUwzmi4lsE1fa
-X-Received: by 2002:a05:7300:8b2c:b0:304:886b:b07a with SMTP id
- 5a478bee46e88-304886bba7bmr3985766eec.14.1779802187961; 
- Tue, 26 May 2026 06:29:47 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3045245d6aesm9854415eec.26.2026.05.26.06.29.47
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 26 May 2026 06:29:47 -0700 (PDT)
-Date: Tue, 26 May 2026 06:29:45 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: liujie5@linkdatatechnology.com
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 00/23] add net/sxe2 support for flow control
-Message-ID: <20260526062945.6f473fca@phoenix.local>
-In-Reply-To: <20260524093259.397506-1-liujie5@linkdatatechnology.com>
-References: <20260524093259.397506-1-liujie5@linkdatatechnology.com>
+ d=1e100.net; s=20251104; t=1779803989; x=1780408789;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=EY9iVdMTVrZA1pCialuDOVjZwqRit1ibDgyMPRddua0=;
+ b=X+DD+Isv4UPd0PZ6n1GeNCI+8ooDBnLUsEpqoi190GgyG27cuGxZtr5uvVBoRIfkfv
+ 1i3+OBrNRN9ymXPsWoAdqo8Yih/7frMtoUondf/QrAyckgBj19Q8a6OplXyjYUSd0p0E
+ Is4XxwAdfjcnGQTO8e8rzi3zAZAK4LRxlGKUDCGFqsXZtznw2sj+T2RNjOeBzvNgrFiv
+ tC1QwycmkLuMD68fpLj3D95weH6HX/7qLC8DOB/We/Q5h2oJvhmsj75QmOxTjxZIZZG6
+ +zgBpmwRZLvIBQm3Len1OUl7QRdkBvchTVNxi4d7d1b1djkCNOS4l2kXr26GdKs5V3wz
+ aKAg==
+X-Gm-Message-State: AOJu0YxonjAGM50R/sqiBPd0SEnMmv+5OpzZCviKCPZlfTtJRMjsyMKb
+ I2AZuc0J6k540KHJGLV6wLH+ZiCuGn0Obi86evuhA6fqyfdvdyNn6yNrfI7FOtOr839MxdMdMH4
+ QdZiiO3psM+XkseYjp688qpD2abD815n4LP+27Xdv4vhUrALxsT7FwcpL1KwLLtbTkoulDCPbSr
+ lo9T72bnyActmEQquPatvb3ifgULc=
+X-Gm-Gg: Acq92OH5n1nMSau7ygvFCUZzAgLoAVZgK4hTTfm7ajk8U5ldpKffsUEk6BhdVzjMxZG
+ Wxc/5eXCUnAON2uts9rwrrEqWj3yhqMqIuLtM2XctQ4ZUV8G21xW4eW9NiBWp4hhhHOWVZ7Nnai
+ WfV7KyRypwijqDsbv6+/WeyIDKndbQXY//GH0Hkib3T5XVVjCJ1FVbkAqn+XXe3yW9eY9rq0nNj
+ kIV0+XqZVTTcre4q99BEFdKfZJ1SPUKqG3KFYjooNr1mCgfkDpXPrL85stYP1rqFuwU3uXaDIIV
+ BpFM
+X-Received: by 2002:a2e:980c:0:b0:38e:d3ec:4f91 with SMTP id
+ 38308e7fff4ca-395d8c931f0mr42302531fa.8.1779803989474; 
+ Tue, 26 May 2026 06:59:49 -0700 (PDT)
+X-Received: by 2002:a2e:980c:0:b0:38e:d3ec:4f91 with SMTP id
+ 38308e7fff4ca-395d8c931f0mr42302411fa.8.1779803988923; Tue, 26 May 2026
+ 06:59:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260429114503.932575-1-david.marchand@redhat.com>
+ <20260526084212.3145685-1-david.marchand@redhat.com>
+ <CAJFAV8wAt1hyHrL0N1AxQ1kBjKoQNtuo89m_H7LHZJmtGea_gQ@mail.gmail.com>
+In-Reply-To: <CAJFAV8wAt1hyHrL0N1AxQ1kBjKoQNtuo89m_H7LHZJmtGea_gQ@mail.gmail.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 26 May 2026 15:59:37 +0200
+X-Gm-Features: AVHnY4IqnJsUoynFPGlNMD9DwkY9bv6yffLcPDU8wIhjkgN4838rSlHRBTSnVos
+Message-ID: <CAJFAV8ztAtqY6-tDCYyFGOzf4=nnAhS-HsZpfwenVkwg=5sPig@mail.gmail.com>
+Subject: Re: [PATCH v3 00/25] Consolidate bus driver infrastructure
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, stephen@networkplumber.org, 
+ bruce.richardson@intel.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: kyzytoWvEPUc2dRXBY3E8QRygHDADywpXDUXq6mPrqo_1779803990
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,401 +86,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 24 May 2026 17:32:36 +0800
-liujie5@linkdatatechnology.com wrote:
+On Tue, 26 May 2026 at 11:03, David Marchand <david.marchand@redhat.com> wrote:
+>
+> On Tue, 26 May 2026 at 10:42, David Marchand <david.marchand@redhat.com> wrote:
+> >
+> > This is a continuation of the work I started on the bus infrastructure,
+> > but this time, a lot of the changes were done by a AI "friend".
+> > It is still an unfinished topic as the current series focuses on probing
+> > only. The detaching/cleanup aspect is postponed to another release/time.
+> >
+> > My AI "friend" really *sucked* at git and at separating unrelated changes,
+> > so it required quite a lot of massage/polishing afterwards.
+> > But it seems good enough now for upstream submission.
+> >
+> > I would like to see this series merged in 26.07, so that we have enough
+> > time to stabilize it before the next LTS.
+> > And seeing how it affects drivers, it is probably better to merge it
+> > the sooner possible (so Thomas does not have to solve too many conflicts
+> > when pulling next-* subtrees after, especially wrt the last patch).
+> >
+> >
+> > This series refactors the DPDK bus infrastructure to consolidate common
+> > operations and reduce code duplication across all bus drivers.
+> > Currently, each bus implements its own specific device/driver lists,
+> > probe logic, and lookup functions.
+> > This series moves these common patterns into the EAL bus layer,
+> > providing generic helpers that all buses can use.
+> >
+> > The refactoring removes approximately 1,400 lines of duplicated code across
+> > the codebase while maintaining full functional equivalence.
+> >
+> > Key changes:
+> > - Factorize device and driver lists into struct rte_bus
+> > - Implement generic probe, device/driver lookup, and iteration helpers in EAL
+> > - Introduce conversion macros (RTE_BUS_DEVICE, RTE_BUS_DRIVER, RTE_CLASS_TO_BUS_DEVICE)
+> >   to safely convert between generic and bus-specific types
+> > - Remove bus-specific device/driver types from most driver code
+> > - Move probe logic from individual buses to rte_bus_generic_probe()
+> > - Separate NXP-specific metadata from generic bus structures
+> >
+> > Benefits:
+> > - Significant code reduction (~1,400 lines removed)
+> > - Consistent behavior across all bus types
+> > - Simplified bus driver implementation
+> > - Easier maintenance and future enhancements
+> >
+> > The series is structured as a progressive refactoring:
+> > - Remove redundant checks and helpers (patches 1-5)
+> > - Add conversion macros and factorize lists (patches 6-8)
+> > - Consolidate device/driver lookup and iteration (patches 9-11)
+> > - Refactor probe logic (patches 12-15)
+> > - Remove bus-specific types from drivers (patches 16-23)
+> >
+> > Note on ABI:
+> > This series breaks the ABI for drivers (changes to rte_pci_device,
+> > rte_pci_driver, and similar structures for other buses). However, the DPDK
+> > ABI policy does not provide guarantees for driver-level interfaces.
+> >
+> >
+> > --
+> > David Marchand
+> >
+> > Changes since v2:
+> > - fixed dma/idxd probing as reported by Bruce,
+> > - moved api_ver setting (from match to scan) in bus/uacce,
+> > - fixed transient bug in the vdev code (in the middle of the series).
+> >   tl;dr the high level difference for bus/vdev between v2 and v3 == 0,
+> > - fixed doxygen,
+> > - enhanced API description,
+>
+> There was some hiccup from Red Hat SMTP when sending the series..
+> hopefully my resending of the second half of the patches is good
+> enough.
+> At least, patchwork looks happy.
+
+The sxe drivers got merged and pulled in main, so I'll prepare a v4
+and send it probably tomorrow.
+Comments still welcome.
+
+
+-- 
+David Marchand
 
-> From: Jie Liu <liujie5@linkdatatechnology.com>
-> 
-> v1:
-> -- add support for flow control
-> -- add support for flow control status interrupt notification
-> -- add support for ipsec inline protocol offload
-> 
-> Jie Liu (23):
->   net/sxe2: support AVX512 vectorized path for Rx and Tx
->   net/sxe2: add AVX2 vector data path for Rx and Tx
->   drivers: add supported packet types get callback
->   net/sxe2: support L2 filtering and MAC config
->   drivers: support RSS feature
->   net/sxe2: support TM hierarchy and shaping
->   net/sxe2: support IPsec inline protocol offload
->   net/sxe2: support statistics and multi-process
->   drivers: interrupt handling
->   net/sxe2: add NEON vec Rx/Tx burst functions
->   net/sxe2: add support for VF representors
->   net/sxe2: add support for custom UDP tunnel ports
->   net/sxe2: support firmware version reading
->   net/sxe2: implement get monitor address
->   common/sxe2: add shared SFP module definitions
->   net/sxe2: support SFP module info and EEPROM access
->   net/sxe2: implement private dump info
->   net/sxe2: add mbuf validation in Tx debug mode
->   net/sxe2: add testpmd commands for private features
->   net/sxe2: add private devargs parsing
->   net/sxe2: support flow control status interrupt notification
->   net/sxe2: update sxe2 feature matrix docs
->   common/sxe2: add memseg walk callback
-> 
->  doc/guides/nics/features/sxe2.ini          |   66 +
->  drivers/common/sxe2/sxe2_common.c          |  156 ++
->  drivers/common/sxe2/sxe2_common.h          |    4 +
->  drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
->  drivers/common/sxe2/sxe2_ioctl_chnl.c      |  179 +-
->  drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
->  drivers/common/sxe2/sxe2_msg.h             |  117 ++
->  drivers/common/sxe2/sxe2_ptype.h           | 1793 ++++++++++++++++++
->  drivers/net/sxe2/meson.build               |   56 +-
->  drivers/net/sxe2/sxe2_cmd_chnl.c           | 1588 +++++++++++++++-
->  drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
->  drivers/net/sxe2/sxe2_drv_cmd.h            |  439 ++++-
->  drivers/net/sxe2/sxe2_dump.c               |  304 +++
->  drivers/net/sxe2/sxe2_dump.h               |   12 +
->  drivers/net/sxe2/sxe2_ethdev.c             | 1526 ++++++++++++++-
->  drivers/net/sxe2/sxe2_ethdev.h             |  113 +-
->  drivers/net/sxe2/sxe2_ethdev_repr.c        |  610 ++++++
->  drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
->  drivers/net/sxe2/sxe2_filter.c             |  897 +++++++++
->  drivers/net/sxe2/sxe2_filter.h             |  100 +
->  drivers/net/sxe2/sxe2_flow.c               | 1391 ++++++++++++++
->  drivers/net/sxe2/sxe2_flow.h               |   30 +
->  drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
->  drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
->  drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
->  drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
->  drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
->  drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 ++++++++++++++++++++
->  drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
->  drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
->  drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
->  drivers/net/sxe2/sxe2_irq.c                | 1024 +++++++++++
->  drivers/net/sxe2/sxe2_irq.h                |   25 +
->  drivers/net/sxe2/sxe2_mac.c                |  535 ++++++
->  drivers/net/sxe2/sxe2_mac.h                |   84 +
->  drivers/net/sxe2/sxe2_mp.c                 |  413 +++++
->  drivers/net/sxe2/sxe2_mp.h                 |   73 +
->  drivers/net/sxe2/sxe2_queue.c              |   17 +-
->  drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
->  drivers/net/sxe2/sxe2_rss.h                |   81 +
->  drivers/net/sxe2/sxe2_rx.c                 |   38 +
->  drivers/net/sxe2/sxe2_rx.h                 |    2 +
->  drivers/net/sxe2/sxe2_security.c           |  335 ++++
->  drivers/net/sxe2/sxe2_security.h           |   77 +
->  drivers/net/sxe2/sxe2_stats.c              |  591 ++++++
->  drivers/net/sxe2/sxe2_stats.h              |   39 +
->  drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
->  drivers/net/sxe2/sxe2_switchdev.h          |   33 +
->  drivers/net/sxe2/sxe2_testpmd.c            |  733 ++++++++
->  drivers/net/sxe2/sxe2_testpmd_lib.c        |  969 ++++++++++
->  drivers/net/sxe2/sxe2_testpmd_lib.h        |  142 ++
->  drivers/net/sxe2/sxe2_tm.c                 | 1169 ++++++++++++
->  drivers/net/sxe2/sxe2_tm.h                 |   78 +
->  drivers/net/sxe2/sxe2_tx.c                 |    7 +
->  drivers/net/sxe2/sxe2_txrx.c               |  174 +-
->  drivers/net/sxe2/sxe2_txrx.h               |    4 +
->  drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
->  drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
->  drivers/net/sxe2/sxe2_txrx_poll.c          |  243 ++-
->  drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
->  drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
->  drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  777 ++++++++
->  drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  897 +++++++++
->  drivers/net/sxe2/sxe2_txrx_vec_common.h    |    1 -
->  drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  707 +++++++
->  drivers/net/sxe2/sxe2_vsi.c                |  146 ++
->  drivers/net/sxe2/sxe2_vsi.h                |   12 +-
->  drivers/net/sxe2/sxe2vf_regs.h             |   82 +
->  68 files changed, 26531 insertions(+), 81 deletions(-)
->  create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
->  create mode 100644 drivers/common/sxe2/sxe2_msg.h
->  create mode 100644 drivers/common/sxe2/sxe2_ptype.h
->  create mode 100644 drivers/net/sxe2/sxe2_dump.c
->  create mode 100644 drivers/net/sxe2/sxe2_dump.h
->  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
->  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
->  create mode 100644 drivers/net/sxe2/sxe2_filter.c
->  create mode 100644 drivers/net/sxe2/sxe2_filter.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
->  create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
->  create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
->  create mode 100644 drivers/net/sxe2/sxe2_irq.c
->  create mode 100644 drivers/net/sxe2/sxe2_mac.c
->  create mode 100644 drivers/net/sxe2/sxe2_mac.h
->  create mode 100644 drivers/net/sxe2/sxe2_mp.c
->  create mode 100644 drivers/net/sxe2/sxe2_mp.h
->  create mode 100644 drivers/net/sxe2/sxe2_rss.c
->  create mode 100644 drivers/net/sxe2/sxe2_rss.h
->  create mode 100644 drivers/net/sxe2/sxe2_security.c
->  create mode 100644 drivers/net/sxe2/sxe2_security.h
->  create mode 100644 drivers/net/sxe2/sxe2_stats.c
->  create mode 100644 drivers/net/sxe2/sxe2_stats.h
->  create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
->  create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
->  create mode 100644 drivers/net/sxe2/sxe2_testpmd.c
->  create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.c
->  create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.h
->  create mode 100644 drivers/net/sxe2/sxe2_tm.c
->  create mode 100644 drivers/net/sxe2/sxe2_tm.h
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
->  create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
-> 
-
-Lots of AI review feedback issues (see below).
-
-One other thing which I have recently started looking at is use of __rte_always_inline.
-Since much of DPDK has just used __rte_always_inline without justification,
-the resulting code is usually slower! Therefore in any new submission,
-any use of always inline requires actual benchmark data that it helps.
-There are a few case like when there it can help, but very few.
-Review of "[PATCH v1 00/23] net/sxe2: PMD updates" series
-20 of 23 patches are in the bundle (01-20); 21-23 are missing.
-
-Note: the series targets main, not an LTS branch.
-
-
-Patch 01/23 (net/sxe2: support AVX512 vectorized path for Rx and Tx)
-====================================================================
-
-Error: sxe2_tx_mode_func_set() now contains two back-to-back
-       'if (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK)' blocks. The first
-       sets dev->tx_pkt_burst to sxe2_tx_pkts_vec_sse/sse_simple; the
-       second immediately overwrites those assignments (and sets
-       tx_pkt_prepare = NULL before the inner if/else decides what to
-       set). The first block is dead. Either it was meant to be deleted
-       when the AVX512-aware block was added, or the new code should
-       have replaced rather than duplicated the old one.
-
-Error: After this patch the first if-block above is no longer wrapped
-       in #ifdef RTE_ARCH_X86 (the original '-#ifdef RTE_ARCH_X86' line
-       was removed). On non-x86 builds the references to
-       sxe2_tx_pkts_vec_sse / sxe2_tx_pkts_vec_sse_simple are
-       undefined and the file will not compile.
-
-Error: In sxe2_tx_queue_mbufs_release_vec(), the new non-AVX512 'else'
-       branch has 'buffer = txq->buffer_ring;' written twice in a row:
-
-           +               buffer = txq->buffer_ring;
-           +               buffer = txq->buffer_ring;
-
-       This is a dead store and indicates careless editing.
-
-Warning: In the same function, after the new
-         #ifdef CC_AVX512_SUPPORT / else / #endif block, the original
-         trailing 'for (; i < txq->next_use; ++i) { ... }' loop is still
-         there. By the time control reaches it, the inner branches have
-         already advanced i to txq->next_use, so the loop never runs.
-         This is dead code; remove it.
-
-Warning: In sxe2_tx_bufs_free_vec_avx512(), the 'normal' path
-         (sxe2_txrx_vec_avx512.c around the rs_thresh loop) is
-         misindented and has mismatched braces visually:
-
-            } else {
-                rte_mempool_put_bulk(mbuf_free_arr[0]->pool, ...);
-
-           mbuf_free_arr[0] = mbuf;        /* wrong indent */
-           free_num = 1;
-       }
-       }
-
-         The code is syntactically correct but unreadable. Reindent.
-
-Info: 'tx_mode_flags |=  SXE2_TX_MODE_VEC_SSE;' (double space) and the
-      Yoda '(0 == (tx_mode_flags & ...))' style are inconsistent with
-      the rest of the function which uses 'x == 0'.
-
-
-Patch 02/23 (net/sxe2: add AVX2 vector data path for Rx and Tx)
-===============================================================
-
-Warning: The commit message body ends with
-
-            Signed-off-by: ...
-            net/sxe2: support AVX512 vectorized path for Rx and Tx
-
-         The trailing line looks like a stray subject from patch 01
-         pasted in. Remove it.
-
-Warning: The new AVX2 meson block adds '-mavx2' to c_args without
-         gating on cc.has_argument('-mavx2') or __AVX2__. The AVX512
-         block above it checks both compiler and CPU support. Apply
-         the same pattern to AVX2 for consistency.
-
-Note: this patch does not delete the duplicate-block / non-x86 bugs
-      introduced in patch 01; it extends them with an AVX2 branch in
-      the second block while the first SSE-only block is still
-      executing first and being overwritten.
-
-
-Patch 03/23 (drivers: add supported packet types get callback)
-==============================================================
-
-Error: drivers/net/sxe2/sxe2_ethdev.c new
-       sxe2_buffer_split_supported_hdr_ptypes_get() declares its
-       'size_t *no_of_elements' parameter as __rte_unused and never
-       writes to it. The ethdev caller
-       (rte_eth_buffer_split_get_supported_hdr_ptypes in
-       lib/ethdev/rte_ethdev.c) reads no_of_elements after the
-       callback returns and uses it as a loop bound. The caller's
-       no_of_elements is an uninitialized stack variable, so this
-       will iterate a garbage number of times and walk past the
-       ptypes[] array. Set *no_of_elements = RTE_DIM(ptypes); before
-       returning.
-
-Error: drivers/common/sxe2/sxe2_ptype.h opens with
-
-           #ifndef _SXE2_PTYPE_H_
-           #define _SXE2_PTYPE_H_
-
-       and ends with
-
-           #endif /* _RTE_PTYPE_TUNNEL_GRENAT_H_ */
-
-       The closing comment is from a different header. Compilation
-       isn't affected but it makes the file look generated/copied.
-       Fix the comment.
-
-Warning: The file is a 1793-line static inline function
-         (sxe2_init_ptype_list) plus a smaller static inline in a
-         header installed under drivers/common/sxe2/. Every TU that
-         includes it gets its own copy of the array and code. Move the
-         body to a .c file and expose only a prototype.
-
-Warning: sxe2_mtu_set() in sxe2_mac.c declares 'uint16_t mtu
-         __rte_unused' and does nothing with the value. It only checks
-         dev_started and returns 0. It does not configure hardware,
-         does not validate against scatter Rx state, and does not
-         re-select Rx/Tx burst functions. ethdev will write
-         dev->data->mtu = mtu on return, so the driver silently accepts
-         any value the caller passes that passes ethdev's range check.
-         If this is a stub, mark it with a TODO; if not, finish it.
-
-Info: sxe2_mac.h begins with a blank line before the SPDX comment.
-
-
-Patch 04/23 (net/sxe2: support L2 filtering and MAC config)
-===========================================================
-
-No findings.
-
-
-Patch 05/23 (drivers: support RSS feature)
-==========================================
-
-Info: '(uint8_t)rte_rand()' in sxe2_rss_hash_key_init throws away
-      56 bits of entropy per byte. Use rte_rand() once per 8 key bytes
-      or memcpy a uint64_t. Not a correctness bug.
-
-
-Patch 06/23 (net/sxe2: support TM hierarchy and shaping)
-========================================================
-
-Error: Nine occurrences in sxe2_tm.c return positive ENOTSUP instead
-       of negative -ENOTSUP:
-
-           ret = ENOTSUP;
-           goto l_end;
-
-       Surrounding code uses -EINVAL and -ENOMEM (negative), so this
-       is inconsistent and wrong. A positive return is treated as
-       success by callers that check 'if (ret)'/'if (ret < 0)'.
-       Change all nine to '-ENOTSUP'.
-
-
-Patch 07/23 (net/sxe2: support IPsec inline protocol offload)
-=============================================================
-
-Info: sxe2_ipsec_id_alloc() does a linear bitmap scan for every SA
-      allocation. For max_tx_sa/max_rx_sa in the thousands this is
-      slow but functionally correct. Consider rte_bitmap_scan or a
-      free-list.
-
-Info: '0XFFFF' uppercase X is unusual; rest of the tree uses '0xFFFF'.
-
-
-Patch 08/23 (net/sxe2: support statistics and multi-process)
-============================================================
-
-Info: 'send_reply = false;' assigns false (bool) to an int32_t. Either
-      change the type of send_reply to bool or use 0/1.
-
-
-Patch 09/23 (drivers: interrupt handling)
-=========================================
-
-Warning: sxe2_event_intr_post() uses
-         rte_malloc(NULL, sizeof(struct sxe2_event_element), 0) for a
-         per-event control structure. This consumes hugepage memory
-         for an object that does not need DMA, is not shared with
-         secondary processes, and is freed on the same thread.
-         Use plain malloc().
-
-Warning: The 'write(handler->fd[1], &notify_byte, 1)' return is
-         masked with RTE_SET_USED(nw). On EAGAIN/EINTR/short write the
-         element is queued but never delivered, and the consumer side
-         is never woken. Either loop on EINTR/EAGAIN or check the
-         return and unqueue/free the element on failure.
-
-
-Patch 10/23 (net/sxe2: add NEON vec Rx/Tx burst functions)
-==========================================================
-
-Not reviewed in detail this round.
-
-
-Patch 11/23 (net/sxe2: add support for VF representors)
-=======================================================
-
-Error: sxe2_flow_check_rss_action_attr() declares
-       'int32_t ret = ENOTSUP;' (positive). It is then overwritten in
-       every reachable path (-EINVAL in the default case, 0 at the
-       end), so the initial value is a dead store - but the bigger
-       problem is the function returns 0 after calling
-       rte_flow_error_set() for rss->level > 2, rss->key_len != 0, or
-       rss->queue_num != 0. The errors are reported via the error
-       object but ret is not set to -EINVAL/-ENOTSUP, so the caller
-       sees success. Each of those if-branches should set ret to a
-       negative errno and goto l_end (or return immediately).
-
-       Additionally, rte_flow_error_set() is called with positive
-       ENOTSUP as the error code. rte_flow API expects negative errno
-       (-rte_errno style). Use -ENOTSUP.
-
-       (Same dead-store pattern around 'ret = ENOTSUP;' exists at
-       least once more in this patch - audit all occurrences.)
-
-
-Patches 12-20
-=============
-
-Not reviewed in detail this round.
-
-
-General observations across the series
-======================================
-
-- Several patches mix positive and negative errno returns; this is a
-  recurring class of bug. Search the whole series for
-  'ret = E[A-Z]' (no minus) and audit each hit.
-
-- Multiple files use 'rte_malloc' for per-call control structures
-  that do not need hugepage memory.  Use malloc() unless the buffer
-  is for DMA, shared between primary/secondary, or NUMA-pinned.
-
-- A few places use 'rte_zmalloc' (no _socket variant) for what looks
-  like queue-related state.  Where the buffer is touched by the data
-  path or by secondary processes, use rte_zmalloc_socket().
-
-- The Signed-off-by chain in some patches has stray lines after the
-  s-o-b (see patch 02). Re-run 'git format-patch' or hand-edit.
