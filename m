@@ -2,70 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3671CD5BD5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 23:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7416CCD5BDE
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 23:25:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 99CFF4027D;
-	Wed, 27 May 2026 01:25:47 +0200 (CEST)
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
- [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id 996FE4021F
- for <dev@dpdk.org>; Wed, 27 May 2026 01:25:46 +0200 (CEST)
-Received: by mail-dy1-f172.google.com with SMTP id
- 5a478bee46e88-3045c195251so4410697eec.1
- for <dev@dpdk.org>; Tue, 26 May 2026 16:25:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 86E6D40608;
+	Wed, 27 May 2026 01:25:49 +0200 (CEST)
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
+ [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id DEA0D40285
+ for <dev@dpdk.org>; Wed, 27 May 2026 01:25:47 +0200 (CEST)
+Received: by mail-dy1-f169.google.com with SMTP id
+ 5a478bee46e88-3025d725a05so25471391eec.1
+ for <dev@dpdk.org>; Tue, 26 May 2026 16:25:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779837945;
- x=1780442745; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779837947;
+ x=1780442747; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+FtIrqOhhhfRSbVUqvWAxiNBuXXXnDy/etyBnGyZ+4Q=;
- b=b/5DZJrTAElxtuxeVqy7eK8V+Cjq5vwb6VIewT1ByjZWrAAl4NzXztt72nq8lyygv+
- JnpLyfBDzXP17UUMjLFzh8fTECMYKF/TFrBuvhoWUdnFx5auwF0a1PCqxKjm0c/EIcfg
- qQyJ1CFlm01wpEswZ5TalrYI1CJOVUyGMXx95+6Yz2N8naFamD2Y+fc7XCulvoUOCYMC
- H/K/FKZJemS1eI393XOyr9sHuEajtnM4MTfMZxSnHOQ77iOMlWe6aLV9YN9OA4+temPU
- hs2AxbcUQM4Zduw1DBSuJbJOkut4s72s8R1MHVa887m6DQhvdXwx3HxQesKfx6aUdrpa
- gXug==
+ bh=5661LA/IAAm9r1pPtGy+XyGXck7b7GlHwqmos+m5jls=;
+ b=xdOifZB7noHWyVHaZ4gQjRfRVFvRp93dJSHcY7qtk7Ix6y4ZYuC+QNbOAUHm0Y+1WG
+ OOnS1gK7nP9e3rl8ogMa7zzyyF471jJNpJpXNVZMLjspEqY+O6J43CCIZJpYXfquOLXU
+ lEZqEaPjKi/yb77oEOqZe6XPw+IZkYpD4i6oTshr5y5Bhj8HuqDoGdEAYeCeOlplW8f6
+ sTKcGE6ibBLaaOOqGxbYMVUgTzNntoFaa2XH+ClpeD+uq/8SvdQoLvFOTJbMPoD6ggCx
+ /+Vtdm2zh1qWn+b9LwLln3SgLh73xEkotWsYQvKgAUOMB1b6AcMWzgBXM1id03miBHmm
+ yz7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779837945; x=1780442745;
+ d=1e100.net; s=20251104; t=1779837947; x=1780442747;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+FtIrqOhhhfRSbVUqvWAxiNBuXXXnDy/etyBnGyZ+4Q=;
- b=TSO8kOkd+ZH/Zij0LpEiQyNiscsT+llT8wFDTsKs/40+VyCmzOK33xaK5DNlm5lycy
- I8xw/uVCIoPL0FK82imebYYFAbf0lwBKlT7BnuZROMGetPwEkSE6zv/WzeMVDo00gtnb
- hF6TE1Kw3LZFSd74hupKgZ9vTk6UwaCN0sWhsnVmjgsMbRLOgeYZ+j3KWR6XA3e02n00
- eTVZm6dr0uqm3967dGFKk0lNuvTDp+YGJuwaOo6DTP1kZqW8O4lfvLSBkNPxERxEsyDP
- GA3Tf9JrfpNUCSp50rf0APiMZU4YO9miEy+nmtT7VDkw2MoyF9yUaNUJymSZ9Ql+i5AU
- I7lw==
-X-Gm-Message-State: AOJu0YxZB5I+bagHfn75xw0PGcSUQsovLy21PNneJU/UgKJH0etWCc35
- HYAfnYH+RlhChakVJqJBAEG0r4oG0PU2bYZZtS6SOT17mocaqtvfz34W/vaW39TnKwOEGzxhJD8
- uy7Vn
-X-Gm-Gg: Acq92OFTBty6pL3YmNBYtFHEU0YdmgJeQmhv+i8BvAr27Y1XZmwarg/POSjUoKw6fu5
- 666wAjm0pdrGuJ+SajcO8CHhghXMLubs8itgo/lU/u8nUSCaRB7q4/gk1n+AY5g4MITA73OK8l4
- zy2VhovyT/4CwBEfmuijaSNnFKPllmgJYYfRkyakoOK1Pje2cQDhMh4VeAym6H6Lj0Kyj7YQV+l
- DAeoRb7IIw0hcM1ybepm2Lkl+OlWoF0xIHj6QkMKu/YK+fQv8HLFXopBAZE3JyxUUZwsYNybkAh
- i0IkVqwThy93xuE2ZMkvqWprSUJ93joXigJ457BjyOpbfju8BGCa4NbS0MaGFFgIliYv7ncEG01
- Lc9MZdlZU1VtnRwkaKKr5L5q/sr6X0ifmkZOzr1RkwFoLizVYGvRN6gwtKl6mmtsT8WPIK/1Dk6
- 3Bn1GkoDrsY/DrIQ7N56rEvUYR++qx18CyWhLYWZfgtuZkg+rrd0ClMzAxmUpcsuDpuc/fY8Nrz
- WbcPfgybcs=
-X-Received: by 2002:a05:693c:8303:b0:304:8364:e95c with SMTP id
- 5a478bee46e88-3048364fb4cmr2923171eec.15.1779837945214; 
- Tue, 26 May 2026 16:25:45 -0700 (PDT)
+ bh=5661LA/IAAm9r1pPtGy+XyGXck7b7GlHwqmos+m5jls=;
+ b=JcirriqMNfjDiXmiEw8VQRPMMoDFje2S9OkiAXwt06JKPjz65VmRokZ7VW57HFYz3T
+ oGmFMbxoXpsf7umksmb7kMu7UjRAb2jFNT4RlHki1mdREhSx55rTmyClymjjWpagF+kL
+ 4pBB0UsRyKaNHBPl4wTkiz4VexpI3aiX4Bh8H5agsM045dkLLystDE0ofpgzHXeSZv+u
+ 5lc4/WYUFiQOxAtKsteK2mWBWOg5RLK+zF0wOxcEh7d2Uoa8MBodINNM8mZZoKcllROh
+ vz/1zZQW0KhI/j7JjhCTNmjEYtguKFyrZWN7BtHwsGtMFoU/YzWqj6bsAIlJEiwZmjpF
+ Wh3g==
+X-Gm-Message-State: AOJu0YwZyzu5wOQL+OoNo40/46FPBHkLIzivpK/qYnJX5YAYQj/hFVAM
+ 32dh1zhSTkbxj9zlQODevm5sWiRncwNNpHuxp9HCyRK3NhVRctB+o7Cw3t4riHb9KzVa/Khm8I0
+ 10O/R
+X-Gm-Gg: Acq92OGOgBoUCU/CJT8nV7FtCCGmKmy/E/YSH5mWiUItp0FfprWm9Sajh4kwAg+nqDE
+ o/QsoFiYzci1v7yl6L1rBqYD96r976M0icLZS/ukrn6v3i9t8oWy4Y577hcXSi2ZmEmoKwQow8B
+ XFQAyVmJ8oabIUS30BCnv25FfykzlpyDOwaq4tr4N0GMwPb2A97Cbrh5c+BMD4wpYwUg1Gk8eih
+ om1bmzOcEQnxLZkn8Upa4pFW91ehSlW1ufM9/7tygGNSgfHzIsnxPrCWgxXCQQMh7vIRhi/pHUw
+ pQulkBeA6cseic3eIXlxR+bi6uY+8DNa6Wmvc+l1ziEvtutcnQv7WjfhgNXcO1YmS2Z6BSMuyCH
+ E9QIQmEV3hYkIpWxoLdT4s8fz+KMZEvtnJLobFjbfo3YyVC8IR9wvWUh/eX2Duw4CVswhIYYFz3
+ ky9SrNVkmsVh1lQuhOmkSrC7GnADKjEwTCfoneWUVyS8xeDcul/5RJaPnNfjsDmvNg+AvJ2Kp7
+X-Received: by 2002:a05:693c:68cc:b0:304:641b:12fd with SMTP id
+ 5a478bee46e88-304641b14d2mr4966470eec.27.1779837946605; 
+ Tue, 26 May 2026 16:25:46 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30452230f1bsm11296132eec.14.2026.05.26.16.25.44
+ 5a478bee46e88-30452230f1bsm11296132eec.14.2026.05.26.16.25.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 26 May 2026 16:25:44 -0700 (PDT)
+ Tue, 26 May 2026 16:25:46 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 00/27] deprecate rte_atomicNN family
-Date: Tue, 26 May 2026 16:23:50 -0700
-Message-ID: <20260526232542.620966-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Bibo Mao <maobibo@loongson.cn>, David Christensen <drc@linux.ibm.com>,
+ Sun Yuechi <sunyuechi@iscas.ac.cn>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v4 01/27] eal: use intrinsics for rte_atomic on all platforms
+Date: Tue, 26 May 2026 16:23:51 -0700
+Message-ID: <20260526232542.620966-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260521042043.1590536-1-stephen@networkplumber.org>
+In-Reply-To: <20260526232542.620966-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
+ <20260526232542.620966-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,173 +86,1242 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_atomicNN_* family was flagged for deprecation in 2021 by
-commit 3ec965b6de12 ("doc: update atomic operation deprecation")
-but enforcement never landed and in-tree usage continued to grow.
-This series finishes converting every remaining in-tree caller to
-the C11-style rte_atomic_*_explicit() / RTE_ATOMIC() API, then
-marks the legacy functions __rte_deprecated so future in-tree and
-out-of-tree uses are caught at compile time.
+Next step is to deprecate the rte_atomicNN_*() family. Rather than
+maintaining both the inline asm and intrinsic fallbacks, drop the
+asm paths and use intrinsics everywhere.
 
-Performance: ran the DPDK perf-tests suite (mempool, hash, stack,
-ring, distributor, rcu_qsbr, etc.) on the full series; only
-lib/ring showed a regression, addressed by the wrapper in patch 03.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/eal/arm/include/rte_atomic_32.h    |   4 -
+ lib/eal/arm/include/rte_atomic_64.h    |   4 -
+ lib/eal/include/generic/rte_atomic.h   |  76 +---------
+ lib/eal/loongarch/include/rte_atomic.h |   4 -
+ lib/eal/ppc/include/rte_atomic.h       | 173 -----------------------
+ lib/eal/riscv/include/rte_atomic.h     |   4 -
+ lib/eal/x86/include/rte_atomic.h       | 172 ----------------------
+ lib/eal/x86/include/rte_atomic_32.h    | 188 -------------------------
+ lib/eal/x86/include/rte_atomic_64.h    | 157 ---------------------
+ 9 files changed, 6 insertions(+), 776 deletions(-)
 
-Patch organisation
-==================
-
-  01-02  EAL: drop the inline-asm fallback paths now that intrinsics
-         work on all platforms; reimplement rte_smp_*mb on top of
-         rte_atomic_thread_fence.
-
-  03-04  lib/ring and lib/bpf -- the last legacy callers in lib/.
-
-  05-25  Drivers and selftests, one patch per directory.
-
-  26     Suppress deprecation warnings in app/test/test_atomic.c,
-         which exercises the legacy API until it goes away.
-
-  27     Mark rte_atomicNN_* with __rte_deprecated and drop the
-         corresponding checkpatch grep; new uses are now caught
-         at compile time.
-
-Changes since v3
-================
-
-  - lib/ring: keep the existing C11 element-access code; the
-    earlier rewrite regressed ring_perf 20-30% on x86 with GCC's
-    handling of atomic_compare_exchange_weak_explicit().  v4
-    keeps the original structure and adds a wrapper for the one
-    performance-sensitive CAS.
-
-  - lib/bpf: keep the BPF_ST_ATOMIC_REG macro structure rather
-    than open-coding the converted callers; the macro body is
-    rewritten to use stdatomic.
-
-  - Compilation fixes across the driver conversions caught
-    during review (CAS expected-value types, format-string
-    specifiers, dpaax HWDEBUG path).
-
-Targeting 26.11 rather than the next release.  The driver
-conversions touch many maintainers' code and several are likely
-to need cycles of review/respin; a longer review window avoids
-rushing contested orderings into an earlier release.
-
-Feedback wanted
-===============
-
-  - vmbus producer commit-order pattern (patch 17)
-  - the ring CAS GCC bug workaround might be needed on other
-    similar uses of ring buffers in vmbus and netvsc.
-  - Dekker-style seq_cst handshake in net/vhost (patch 24),
-    which also closes a pre-existing ordering hole on
-    weakly-ordered ISAs
-  - netvsc rndis_pending claim/timeout/clear cmpxchg orderings
-    (patch 15)
-
-Stephen Hemminger (27):
-  eal: use intrinsics for rte_atomic on all platforms
-  eal: reimplement rte_smp_*mb with rte_atomic_thread_fence
-  ring: unify memory model on C11, remove atomic32
-  bpf: use C11 atomics in BPF_ST_ATOMIC_REG
-  net/bonding: use stdatomic
-  net/nbl: remove unused rte_atomic16 field
-  net/ena: replace use of rte_atomicNN
-  net/failsafe: convert to stdatomic
-  net/enic: do not use deprecated rte_atomic64
-  net/pfe: use ethdev linkstatus helpers
-  net/sfc: replace rte_atomic with stdatomic
-  crypto/ccp: replace use of rte_atomic64 with stdatomic
-  bus/dpaa: replace rte_atomic16 with stdatomic
-  drivers: replace rte_atomic16 with stdatomic
-  net/netvsc: replace rte_atomic32 with stdatomic
-  event/sw: convert from rte_atomic32 to stdatomic
-  bus/vmbus: convert from rte_atomic to stdatomic
-  common/dpaax: use stdatomic instead of rte_atomic
-  net/bnx2x: convert from rte_atomic32 to stdatomic
-  bus/fslmc: replace rte_atomic32 with stdatomic
-  drivers/event: replace rte_atomic32 in selftests
-  net/hinic: replace rte_atomic32 with stdatomic
-  net/txgbe: replace rte_atomic32 with stdatomic
-  net/vhost: use stdatomic instead of rte_atomic32
-  vdpa/ifc: replace rte_atomic32 with stdatomic
-  test/atomic: suppress deprecation warnings for legacy APIs
-  eal: mark rte_atomicNN as deprecated
-
- app/test/test_atomic.c                        |  12 +
- devtools/checkpatches.sh                      |  16 -
- doc/guides/rel_notes/deprecation.rst          |  12 +-
- doc/guides/rel_notes/release_26_07.rst        |   4 +
- drivers/bus/dpaa/base/qbman/qman.c            |   9 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c      |  10 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dpci.c      |  10 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  12 +-
- drivers/bus/fslmc/portal/dpaa2_hw_pvt.h       |   8 +-
- drivers/bus/fslmc/qbman/include/compat.h      |  21 +-
- drivers/bus/vmbus/private.h                   |   2 +-
- drivers/bus/vmbus/vmbus_bufring.c             |  39 ++-
- drivers/common/dpaax/compat.h                 |  21 +-
- drivers/crypto/ccp/ccp_crypto.c               |  11 +-
- drivers/crypto/ccp/ccp_crypto.h               |   2 +-
- drivers/crypto/ccp/ccp_dev.c                  |  10 +-
- drivers/crypto/ccp/ccp_dev.h                  |   4 +-
- drivers/event/dpaa2/dpaa2_eventdev_selftest.c |  26 +-
- drivers/event/dpaa2/dpaa2_hw_dpcon.c          |  11 +-
- drivers/event/octeontx/ssovf_evdev_selftest.c |  61 ++--
- drivers/event/sw/sw_evdev.c                   |   8 +-
- drivers/event/sw/sw_evdev.h                   |   4 +-
- drivers/event/sw/sw_evdev_worker.c            |  16 +-
- drivers/net/bnx2x/bnx2x.c                     |   6 +-
- drivers/net/bnx2x/bnx2x.h                     |   2 +-
- drivers/net/bnx2x/ecore_sp.c                  |   6 +-
- drivers/net/bonding/eth_bond_8023ad_private.h |   6 +-
- drivers/net/bonding/rte_eth_bond_8023ad.c     |  35 +-
- drivers/net/ena/base/ena_plat_dpdk.h          |  14 +-
- drivers/net/ena/ena_ethdev.c                  |  21 +-
- drivers/net/ena/ena_ethdev.h                  |   7 +-
- drivers/net/enic/enic.h                       |   6 +-
- drivers/net/enic/enic_compat.h                |   1 -
- drivers/net/enic/enic_main.c                  |  17 +-
- drivers/net/enic/enic_rxtx.c                  |  14 +-
- drivers/net/enic/enic_rxtx_vec_avx2.c         |   4 +-
- drivers/net/failsafe/failsafe_ops.c           |  12 +-
- drivers/net/failsafe/failsafe_private.h       |  29 +-
- drivers/net/failsafe/failsafe_rxtx.c          |   2 +-
- drivers/net/hinic/base/hinic_compat.h         |   2 +-
- drivers/net/hinic/base/hinic_pmd_hwdev.c      |  24 +-
- drivers/net/hinic/base/hinic_pmd_hwdev.h      |   4 +-
- drivers/net/nbl/nbl_hw/nbl_resource.h         |   1 -
- drivers/net/netvsc/hn_rndis.c                 |  28 +-
- drivers/net/netvsc/hn_rxtx.c                  |  12 +-
- drivers/net/netvsc/hn_var.h                   |   6 +-
- drivers/net/pfe/pfe_ethdev.c                  |  32 +-
- drivers/net/sfc/sfc.c                         |   9 +-
- drivers/net/sfc/sfc.h                         |   4 +-
- drivers/net/sfc/sfc_port.c                    |   7 +-
- drivers/net/sfc/sfc_stats.h                   |   2 +-
- drivers/net/txgbe/base/txgbe_mng.c            |   4 +-
- drivers/net/txgbe/base/txgbe_type.h           |   2 +-
- drivers/net/vhost/rte_eth_vhost.c             | 103 +++---
- drivers/vdpa/ifc/ifcvf_vdpa.c                 |  37 +--
- lib/bpf/bpf_exec.c                            |  13 +-
- lib/eal/arm/include/rte_atomic_32.h           |  10 -
- lib/eal/arm/include/rte_atomic_64.h           |  10 -
- lib/eal/include/generic/rte_atomic.h          | 306 +++++-------------
- lib/eal/include/rte_common.h                  |   2 +
- lib/eal/loongarch/include/rte_atomic.h        |  10 -
- lib/eal/ppc/include/rte_atomic.h              | 179 ----------
- lib/eal/riscv/include/rte_atomic.h            |  10 -
- lib/eal/x86/include/rte_atomic.h              | 205 +-----------
- lib/eal/x86/include/rte_atomic_32.h           | 188 -----------
- lib/eal/x86/include/rte_atomic_64.h           | 157 ---------
- lib/ring/meson.build                          |   2 +-
- lib/ring/rte_ring_c11_pvt.h                   |  75 ++---
- lib/ring/rte_ring_elem_pvt.h                  | 125 ++++++-
- ..._ring_generic_pvt.h => rte_ring_x86_pvt.h} |  61 +---
- lib/ring/soring.c                             |  15 +-
- 71 files changed, 667 insertions(+), 1489 deletions(-)
- rename lib/ring/{rte_ring_generic_pvt.h => rte_ring_x86_pvt.h} (60%)
-
+diff --git a/lib/eal/arm/include/rte_atomic_32.h b/lib/eal/arm/include/rte_atomic_32.h
+index 0b9a0dfa30..696a539fef 100644
+--- a/lib/eal/arm/include/rte_atomic_32.h
++++ b/lib/eal/arm/include/rte_atomic_32.h
+@@ -5,10 +5,6 @@
+ #ifndef _RTE_ATOMIC_ARM32_H_
+ #define _RTE_ATOMIC_ARM32_H_
+ 
+-#ifndef RTE_FORCE_INTRINSICS
+-#  error Platform must be built with RTE_FORCE_INTRINSICS
+-#endif
+-
+ #include "generic/rte_atomic.h"
+ 
+ #ifdef __cplusplus
+diff --git a/lib/eal/arm/include/rte_atomic_64.h b/lib/eal/arm/include/rte_atomic_64.h
+index 181bb60929..9f790238df 100644
+--- a/lib/eal/arm/include/rte_atomic_64.h
++++ b/lib/eal/arm/include/rte_atomic_64.h
+@@ -6,10 +6,6 @@
+ #ifndef _RTE_ATOMIC_ARM64_H_
+ #define _RTE_ATOMIC_ARM64_H_
+ 
+-#ifndef RTE_FORCE_INTRINSICS
+-#  error Platform must be built with RTE_FORCE_INTRINSICS
+-#endif
+-
+ #include "generic/rte_atomic.h"
+ #include <rte_branch_prediction.h>
+ #include <rte_debug.h>
+diff --git a/lib/eal/include/generic/rte_atomic.h b/lib/eal/include/generic/rte_atomic.h
+index 0a4f3f8528..292e52fade 100644
+--- a/lib/eal/include/generic/rte_atomic.h
++++ b/lib/eal/include/generic/rte_atomic.h
+@@ -187,13 +187,11 @@ static inline void rte_atomic_thread_fence(rte_memory_order memorder);
+ static inline int
+ rte_atomic16_cmpset(volatile uint16_t *dst, uint16_t exp, uint16_t src);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int
+ rte_atomic16_cmpset(volatile uint16_t *dst, uint16_t exp, uint16_t src)
+ {
+ 	return __sync_bool_compare_and_swap(dst, exp, src);
+ }
+-#endif
+ 
+ /**
+  * Atomic exchange.
+@@ -211,15 +209,11 @@ rte_atomic16_cmpset(volatile uint16_t *dst, uint16_t exp, uint16_t src)
+  *   The original value at that location
+  */
+ static inline uint16_t
+-rte_atomic16_exchange(volatile uint16_t *dst, uint16_t val);
+-
+-#ifdef RTE_FORCE_INTRINSICS
+-static inline uint16_t
+ rte_atomic16_exchange(volatile uint16_t *dst, uint16_t val)
+ {
+-	return rte_atomic_exchange_explicit(dst, val, rte_memory_order_seq_cst);
++	return rte_atomic_exchange_explicit((volatile __rte_atomic uint16_t *)dst,
++		val, rte_memory_order_seq_cst);
+ }
+-#endif
+ 
+ /**
+  * The atomic counter structure.
+@@ -312,13 +306,11 @@ rte_atomic16_sub(rte_atomic16_t *v, int16_t dec)
+ static inline void
+ rte_atomic16_inc(rte_atomic16_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic16_inc(rte_atomic16_t *v)
+ {
+ 	rte_atomic16_add(v, 1);
+ }
+-#endif
+ 
+ /**
+  * Atomically decrement a counter by one.
+@@ -329,13 +321,11 @@ rte_atomic16_inc(rte_atomic16_t *v)
+ static inline void
+ rte_atomic16_dec(rte_atomic16_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic16_dec(rte_atomic16_t *v)
+ {
+ 	rte_atomic16_sub(v, 1);
+ }
+-#endif
+ 
+ /**
+  * Atomically add a 16-bit value to a counter and return the result.
+@@ -391,13 +381,11 @@ rte_atomic16_sub_return(rte_atomic16_t *v, int16_t dec)
+  */
+ static inline int rte_atomic16_inc_and_test(rte_atomic16_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int rte_atomic16_inc_and_test(rte_atomic16_t *v)
+ {
+ 	return rte_atomic_fetch_add_explicit((volatile __rte_atomic int16_t *)&v->cnt, 1,
+ 		rte_memory_order_seq_cst) + 1 == 0;
+ }
+-#endif
+ 
+ /**
+  * Atomically decrement a 16-bit counter by one and test.
+@@ -412,13 +400,11 @@ static inline int rte_atomic16_inc_and_test(rte_atomic16_t *v)
+  */
+ static inline int rte_atomic16_dec_and_test(rte_atomic16_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int rte_atomic16_dec_and_test(rte_atomic16_t *v)
+ {
+ 	return rte_atomic_fetch_sub_explicit((volatile __rte_atomic int16_t *)&v->cnt, 1,
+ 		rte_memory_order_seq_cst) - 1 == 0;
+ }
+-#endif
+ 
+ /**
+  * Atomically test and set a 16-bit atomic counter.
+@@ -433,12 +419,10 @@ static inline int rte_atomic16_dec_and_test(rte_atomic16_t *v)
+  */
+ static inline int rte_atomic16_test_and_set(rte_atomic16_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int rte_atomic16_test_and_set(rte_atomic16_t *v)
+ {
+ 	return rte_atomic16_cmpset((volatile uint16_t *)&v->cnt, 0, 1);
+ }
+-#endif
+ 
+ /**
+  * Atomically set a 16-bit counter to 0.
+@@ -472,13 +456,11 @@ static inline void rte_atomic16_clear(rte_atomic16_t *v)
+ static inline int
+ rte_atomic32_cmpset(volatile uint32_t *dst, uint32_t exp, uint32_t src);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int
+ rte_atomic32_cmpset(volatile uint32_t *dst, uint32_t exp, uint32_t src)
+ {
+ 	return __sync_bool_compare_and_swap(dst, exp, src);
+ }
+-#endif
+ 
+ /**
+  * Atomic exchange.
+@@ -496,15 +478,11 @@ rte_atomic32_cmpset(volatile uint32_t *dst, uint32_t exp, uint32_t src)
+  *   The original value at that location
+  */
+ static inline uint32_t
+-rte_atomic32_exchange(volatile uint32_t *dst, uint32_t val);
+-
+-#ifdef RTE_FORCE_INTRINSICS
+-static inline uint32_t
+ rte_atomic32_exchange(volatile uint32_t *dst, uint32_t val)
+ {
+-	return rte_atomic_exchange_explicit(dst, val, rte_memory_order_seq_cst);
++	return rte_atomic_exchange_explicit((volatile __rte_atomic uint32_t *)dst,
++					    val, rte_memory_order_seq_cst);
+ }
+-#endif
+ 
+ /**
+  * The atomic counter structure.
+@@ -597,13 +575,11 @@ rte_atomic32_sub(rte_atomic32_t *v, int32_t dec)
+ static inline void
+ rte_atomic32_inc(rte_atomic32_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic32_inc(rte_atomic32_t *v)
+ {
+ 	rte_atomic32_add(v, 1);
+ }
+-#endif
+ 
+ /**
+  * Atomically decrement a counter by one.
+@@ -614,13 +590,11 @@ rte_atomic32_inc(rte_atomic32_t *v)
+ static inline void
+ rte_atomic32_dec(rte_atomic32_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic32_dec(rte_atomic32_t *v)
+ {
+ 	rte_atomic32_sub(v,1);
+ }
+-#endif
+ 
+ /**
+  * Atomically add a 32-bit value to a counter and return the result.
+@@ -676,13 +650,11 @@ rte_atomic32_sub_return(rte_atomic32_t *v, int32_t dec)
+  */
+ static inline int rte_atomic32_inc_and_test(rte_atomic32_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int rte_atomic32_inc_and_test(rte_atomic32_t *v)
+ {
+ 	return rte_atomic_fetch_add_explicit((volatile __rte_atomic int32_t *)&v->cnt, 1,
+ 		rte_memory_order_seq_cst) + 1 == 0;
+ }
+-#endif
+ 
+ /**
+  * Atomically decrement a 32-bit counter by one and test.
+@@ -697,13 +669,11 @@ static inline int rte_atomic32_inc_and_test(rte_atomic32_t *v)
+  */
+ static inline int rte_atomic32_dec_and_test(rte_atomic32_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int rte_atomic32_dec_and_test(rte_atomic32_t *v)
+ {
+ 	return rte_atomic_fetch_sub_explicit((volatile __rte_atomic int32_t *)&v->cnt, 1,
+ 		rte_memory_order_seq_cst) - 1 == 0;
+ }
+-#endif
+ 
+ /**
+  * Atomically test and set a 32-bit atomic counter.
+@@ -718,12 +688,10 @@ static inline int rte_atomic32_dec_and_test(rte_atomic32_t *v)
+  */
+ static inline int rte_atomic32_test_and_set(rte_atomic32_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int rte_atomic32_test_and_set(rte_atomic32_t *v)
+ {
+ 	return rte_atomic32_cmpset((volatile uint32_t *)&v->cnt, 0, 1);
+ }
+-#endif
+ 
+ /**
+  * Atomically set a 32-bit counter to 0.
+@@ -756,13 +724,11 @@ static inline void rte_atomic32_clear(rte_atomic32_t *v)
+ static inline int
+ rte_atomic64_cmpset(volatile uint64_t *dst, uint64_t exp, uint64_t src);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int
+ rte_atomic64_cmpset(volatile uint64_t *dst, uint64_t exp, uint64_t src)
+ {
+ 	return __sync_bool_compare_and_swap(dst, exp, src);
+ }
+-#endif
+ 
+ /**
+  * Atomic exchange.
+@@ -780,15 +746,11 @@ rte_atomic64_cmpset(volatile uint64_t *dst, uint64_t exp, uint64_t src)
+  *   The original value at that location
+  */
+ static inline uint64_t
+-rte_atomic64_exchange(volatile uint64_t *dst, uint64_t val);
+-
+-#ifdef RTE_FORCE_INTRINSICS
+-static inline uint64_t
+ rte_atomic64_exchange(volatile uint64_t *dst, uint64_t val)
+ {
+-	return rte_atomic_exchange_explicit(dst, val, rte_memory_order_seq_cst);
++	return rte_atomic_exchange_explicit((volatile __rte_atomic uint64_t *)dst,
++					    val, rte_memory_order_seq_cst);
+ }
+-#endif
+ 
+ /**
+  * The atomic counter structure.
+@@ -811,7 +773,6 @@ typedef struct {
+ static inline void
+ rte_atomic64_init(rte_atomic64_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic64_init(rte_atomic64_t *v)
+ {
+@@ -828,7 +789,6 @@ rte_atomic64_init(rte_atomic64_t *v)
+ 	}
+ #endif
+ }
+-#endif
+ 
+ /**
+  * Atomically read a 64-bit counter.
+@@ -841,7 +801,6 @@ rte_atomic64_init(rte_atomic64_t *v)
+ static inline int64_t
+ rte_atomic64_read(rte_atomic64_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int64_t
+ rte_atomic64_read(rte_atomic64_t *v)
+ {
+@@ -860,7 +819,6 @@ rte_atomic64_read(rte_atomic64_t *v)
+ 	return tmp;
+ #endif
+ }
+-#endif
+ 
+ /**
+  * Atomically set a 64-bit counter.
+@@ -873,7 +831,6 @@ rte_atomic64_read(rte_atomic64_t *v)
+ static inline void
+ rte_atomic64_set(rte_atomic64_t *v, int64_t new_value);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic64_set(rte_atomic64_t *v, int64_t new_value)
+ {
+@@ -890,7 +847,6 @@ rte_atomic64_set(rte_atomic64_t *v, int64_t new_value)
+ 	}
+ #endif
+ }
+-#endif
+ 
+ /**
+  * Atomically add a 64-bit value to a counter.
+@@ -903,14 +859,12 @@ rte_atomic64_set(rte_atomic64_t *v, int64_t new_value)
+ static inline void
+ rte_atomic64_add(rte_atomic64_t *v, int64_t inc);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic64_add(rte_atomic64_t *v, int64_t inc)
+ {
+ 	rte_atomic_fetch_add_explicit((volatile __rte_atomic int64_t *)&v->cnt, inc,
+ 		rte_memory_order_seq_cst);
+ }
+-#endif
+ 
+ /**
+  * Atomically subtract a 64-bit value from a counter.
+@@ -923,14 +877,12 @@ rte_atomic64_add(rte_atomic64_t *v, int64_t inc)
+ static inline void
+ rte_atomic64_sub(rte_atomic64_t *v, int64_t dec);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic64_sub(rte_atomic64_t *v, int64_t dec)
+ {
+ 	rte_atomic_fetch_sub_explicit((volatile __rte_atomic int64_t *)&v->cnt, dec,
+ 		rte_memory_order_seq_cst);
+ }
+-#endif
+ 
+ /**
+  * Atomically increment a 64-bit counter by one and test.
+@@ -941,13 +893,11 @@ rte_atomic64_sub(rte_atomic64_t *v, int64_t dec)
+ static inline void
+ rte_atomic64_inc(rte_atomic64_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic64_inc(rte_atomic64_t *v)
+ {
+ 	rte_atomic64_add(v, 1);
+ }
+-#endif
+ 
+ /**
+  * Atomically decrement a 64-bit counter by one and test.
+@@ -958,13 +908,11 @@ rte_atomic64_inc(rte_atomic64_t *v)
+ static inline void
+ rte_atomic64_dec(rte_atomic64_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void
+ rte_atomic64_dec(rte_atomic64_t *v)
+ {
+ 	rte_atomic64_sub(v, 1);
+ }
+-#endif
+ 
+ /**
+  * Add a 64-bit value to an atomic counter and return the result.
+@@ -982,14 +930,12 @@ rte_atomic64_dec(rte_atomic64_t *v)
+ static inline int64_t
+ rte_atomic64_add_return(rte_atomic64_t *v, int64_t inc);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int64_t
+ rte_atomic64_add_return(rte_atomic64_t *v, int64_t inc)
+ {
+ 	return rte_atomic_fetch_add_explicit((volatile __rte_atomic int64_t *)&v->cnt, inc,
+ 		rte_memory_order_seq_cst) + inc;
+ }
+-#endif
+ 
+ /**
+  * Subtract a 64-bit value from an atomic counter and return the result.
+@@ -1007,14 +953,12 @@ rte_atomic64_add_return(rte_atomic64_t *v, int64_t inc)
+ static inline int64_t
+ rte_atomic64_sub_return(rte_atomic64_t *v, int64_t dec);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int64_t
+ rte_atomic64_sub_return(rte_atomic64_t *v, int64_t dec)
+ {
+ 	return rte_atomic_fetch_sub_explicit((volatile __rte_atomic int64_t *)&v->cnt, dec,
+ 		rte_memory_order_seq_cst) - dec;
+ }
+-#endif
+ 
+ /**
+  * Atomically increment a 64-bit counter by one and test.
+@@ -1029,12 +973,10 @@ rte_atomic64_sub_return(rte_atomic64_t *v, int64_t dec)
+  */
+ static inline int rte_atomic64_inc_and_test(rte_atomic64_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int rte_atomic64_inc_and_test(rte_atomic64_t *v)
+ {
+ 	return rte_atomic64_add_return(v, 1) == 0;
+ }
+-#endif
+ 
+ /**
+  * Atomically decrement a 64-bit counter by one and test.
+@@ -1049,12 +991,10 @@ static inline int rte_atomic64_inc_and_test(rte_atomic64_t *v)
+  */
+ static inline int rte_atomic64_dec_and_test(rte_atomic64_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int rte_atomic64_dec_and_test(rte_atomic64_t *v)
+ {
+ 	return rte_atomic64_sub_return(v, 1) == 0;
+ }
+-#endif
+ 
+ /**
+  * Atomically test and set a 64-bit atomic counter.
+@@ -1069,12 +1009,10 @@ static inline int rte_atomic64_dec_and_test(rte_atomic64_t *v)
+  */
+ static inline int rte_atomic64_test_and_set(rte_atomic64_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline int rte_atomic64_test_and_set(rte_atomic64_t *v)
+ {
+ 	return rte_atomic64_cmpset((volatile uint64_t *)&v->cnt, 0, 1);
+ }
+-#endif
+ 
+ /**
+  * Atomically set a 64-bit counter to 0.
+@@ -1084,12 +1022,10 @@ static inline int rte_atomic64_test_and_set(rte_atomic64_t *v)
+  */
+ static inline void rte_atomic64_clear(rte_atomic64_t *v);
+ 
+-#ifdef RTE_FORCE_INTRINSICS
+ static inline void rte_atomic64_clear(rte_atomic64_t *v)
+ {
+ 	rte_atomic64_set(v, 0);
+ }
+-#endif
+ 
+ #endif
+ 
+diff --git a/lib/eal/loongarch/include/rte_atomic.h b/lib/eal/loongarch/include/rte_atomic.h
+index c8066a4612..785a452c9e 100644
+--- a/lib/eal/loongarch/include/rte_atomic.h
++++ b/lib/eal/loongarch/include/rte_atomic.h
+@@ -5,10 +5,6 @@
+ #ifndef RTE_ATOMIC_LOONGARCH_H
+ #define RTE_ATOMIC_LOONGARCH_H
+ 
+-#ifndef RTE_FORCE_INTRINSICS
+-#  error Platform must be built with RTE_FORCE_INTRINSICS
+-#endif
+-
+ #include <rte_common.h>
+ #include "generic/rte_atomic.h"
+ 
+diff --git a/lib/eal/ppc/include/rte_atomic.h b/lib/eal/ppc/include/rte_atomic.h
+index 10acc238f9..64f4c3d670 100644
+--- a/lib/eal/ppc/include/rte_atomic.h
++++ b/lib/eal/ppc/include/rte_atomic.h
+@@ -43,179 +43,6 @@ rte_atomic_thread_fence(rte_memory_order memorder)
+ }
+ 
+ /*------------------------- 16 bit atomic operations -------------------------*/
+-#ifndef RTE_FORCE_INTRINSICS
+-static inline int
+-rte_atomic16_cmpset(volatile uint16_t *dst, uint16_t exp, uint16_t src)
+-{
+-	return rte_atomic_compare_exchange_strong_explicit(dst, &exp, src, rte_memory_order_acquire,
+-		rte_memory_order_acquire) ? 1 : 0;
+-}
+-
+-static inline int rte_atomic16_test_and_set(rte_atomic16_t *v)
+-{
+-	return rte_atomic16_cmpset((volatile uint16_t *)&v->cnt, 0, 1);
+-}
+-
+-static inline void
+-rte_atomic16_inc(rte_atomic16_t *v)
+-{
+-	rte_atomic_fetch_add_explicit(&v->cnt, 1, rte_memory_order_acquire);
+-}
+-
+-static inline void
+-rte_atomic16_dec(rte_atomic16_t *v)
+-{
+-	rte_atomic_fetch_sub_explicit(&v->cnt, 1, rte_memory_order_acquire);
+-}
+-
+-static inline int rte_atomic16_inc_and_test(rte_atomic16_t *v)
+-{
+-	return rte_atomic_fetch_add_explicit(&v->cnt, 1, rte_memory_order_acquire) + 1 == 0;
+-}
+-
+-static inline int rte_atomic16_dec_and_test(rte_atomic16_t *v)
+-{
+-	return rte_atomic_fetch_sub_explicit(&v->cnt, 1, rte_memory_order_acquire) - 1 == 0;
+-}
+-
+-static inline uint16_t
+-rte_atomic16_exchange(volatile uint16_t *dst, uint16_t val)
+-{
+-	return __atomic_exchange_2(dst, val, rte_memory_order_seq_cst);
+-}
+-
+-/*------------------------- 32 bit atomic operations -------------------------*/
+-
+-static inline int
+-rte_atomic32_cmpset(volatile uint32_t *dst, uint32_t exp, uint32_t src)
+-{
+-	return rte_atomic_compare_exchange_strong_explicit(dst, &exp, src, rte_memory_order_acquire,
+-		rte_memory_order_acquire) ? 1 : 0;
+-}
+-
+-static inline int rte_atomic32_test_and_set(rte_atomic32_t *v)
+-{
+-	return rte_atomic32_cmpset((volatile uint32_t *)&v->cnt, 0, 1);
+-}
+-
+-static inline void
+-rte_atomic32_inc(rte_atomic32_t *v)
+-{
+-	rte_atomic_fetch_add_explicit(&v->cnt, 1, rte_memory_order_acquire);
+-}
+-
+-static inline void
+-rte_atomic32_dec(rte_atomic32_t *v)
+-{
+-	rte_atomic_fetch_sub_explicit(&v->cnt, 1, rte_memory_order_acquire);
+-}
+-
+-static inline int rte_atomic32_inc_and_test(rte_atomic32_t *v)
+-{
+-	return rte_atomic_fetch_add_explicit(&v->cnt, 1, rte_memory_order_acquire) + 1 == 0;
+-}
+-
+-static inline int rte_atomic32_dec_and_test(rte_atomic32_t *v)
+-{
+-	return rte_atomic_fetch_sub_explicit(&v->cnt, 1, rte_memory_order_acquire) - 1 == 0;
+-}
+-
+-static inline uint32_t
+-rte_atomic32_exchange(volatile uint32_t *dst, uint32_t val)
+-{
+-	return __atomic_exchange_4(dst, val, rte_memory_order_seq_cst);
+-}
+-
+-/*------------------------- 64 bit atomic operations -------------------------*/
+-
+-static inline int
+-rte_atomic64_cmpset(volatile uint64_t *dst, uint64_t exp, uint64_t src)
+-{
+-	return rte_atomic_compare_exchange_strong_explicit(dst, &exp, src, rte_memory_order_acquire,
+-		rte_memory_order_acquire) ? 1 : 0;
+-}
+-
+-static inline void
+-rte_atomic64_init(rte_atomic64_t *v)
+-{
+-	v->cnt = 0;
+-}
+-
+-static inline int64_t
+-rte_atomic64_read(rte_atomic64_t *v)
+-{
+-	return v->cnt;
+-}
+-
+-static inline void
+-rte_atomic64_set(rte_atomic64_t *v, int64_t new_value)
+-{
+-	v->cnt = new_value;
+-}
+-
+-static inline void
+-rte_atomic64_add(rte_atomic64_t *v, int64_t inc)
+-{
+-	rte_atomic_fetch_add_explicit(&v->cnt, inc, rte_memory_order_acquire);
+-}
+-
+-static inline void
+-rte_atomic64_sub(rte_atomic64_t *v, int64_t dec)
+-{
+-	rte_atomic_fetch_sub_explicit(&v->cnt, dec, rte_memory_order_acquire);
+-}
+-
+-static inline void
+-rte_atomic64_inc(rte_atomic64_t *v)
+-{
+-	rte_atomic_fetch_add_explicit(&v->cnt, 1, rte_memory_order_acquire);
+-}
+-
+-static inline void
+-rte_atomic64_dec(rte_atomic64_t *v)
+-{
+-	rte_atomic_fetch_sub_explicit(&v->cnt, 1, rte_memory_order_acquire);
+-}
+-
+-static inline int64_t
+-rte_atomic64_add_return(rte_atomic64_t *v, int64_t inc)
+-{
+-	return rte_atomic_fetch_add_explicit(&v->cnt, inc, rte_memory_order_acquire) + inc;
+-}
+-
+-static inline int64_t
+-rte_atomic64_sub_return(rte_atomic64_t *v, int64_t dec)
+-{
+-	return rte_atomic_fetch_sub_explicit(&v->cnt, dec, rte_memory_order_acquire) - dec;
+-}
+-
+-static inline int rte_atomic64_inc_and_test(rte_atomic64_t *v)
+-{
+-	return rte_atomic_fetch_add_explicit(&v->cnt, 1, rte_memory_order_acquire) + 1 == 0;
+-}
+-
+-static inline int rte_atomic64_dec_and_test(rte_atomic64_t *v)
+-{
+-	return rte_atomic_fetch_sub_explicit(&v->cnt, 1, rte_memory_order_acquire) - 1 == 0;
+-}
+-
+-static inline int rte_atomic64_test_and_set(rte_atomic64_t *v)
+-{
+-	return rte_atomic64_cmpset((volatile uint64_t *)&v->cnt, 0, 1);
+-}
+-
+-static inline void rte_atomic64_clear(rte_atomic64_t *v)
+-{
+-	v->cnt = 0;
+-}
+-
+-static inline uint64_t
+-rte_atomic64_exchange(volatile uint64_t *dst, uint64_t val)
+-{
+-	return __atomic_exchange_8(dst, val, rte_memory_order_seq_cst);
+-}
+-
+-#endif
+ 
+ #ifdef __cplusplus
+ }
+diff --git a/lib/eal/riscv/include/rte_atomic.h b/lib/eal/riscv/include/rte_atomic.h
+index 66346ad474..061b175f33 100644
+--- a/lib/eal/riscv/include/rte_atomic.h
++++ b/lib/eal/riscv/include/rte_atomic.h
+@@ -8,10 +8,6 @@
+ #ifndef RTE_ATOMIC_RISCV_H
+ #define RTE_ATOMIC_RISCV_H
+ 
+-#ifndef RTE_FORCE_INTRINSICS
+-#  error Platform must be built with RTE_FORCE_INTRINSICS
+-#endif
+-
+ #include <stdint.h>
+ #include <rte_common.h>
+ #include <rte_config.h>
+diff --git a/lib/eal/x86/include/rte_atomic.h b/lib/eal/x86/include/rte_atomic.h
+index e071e4234e..4f05302c9f 100644
+--- a/lib/eal/x86/include/rte_atomic.h
++++ b/lib/eal/x86/include/rte_atomic.h
+@@ -111,178 +111,6 @@ rte_atomic_thread_fence(rte_memory_order memorder)
+ extern "C" {
+ #endif
+ 
+-#ifndef RTE_FORCE_INTRINSICS
+-static inline int
+-rte_atomic16_cmpset(volatile uint16_t *dst, uint16_t exp, uint16_t src)
+-{
+-	uint8_t res;
+-
+-	asm volatile(
+-			MPLOCKED
+-			"cmpxchgw %[src], %[dst];"
+-			"sete %[res];"
+-			: [res] "=a" (res),     /* output */
+-			  [dst] "=m" (*dst)
+-			: [src] "r" (src),      /* input */
+-			  "a" (exp),
+-			  "m" (*dst)
+-			: "memory");            /* no-clobber list */
+-	return res;
+-}
+-
+-static inline uint16_t
+-rte_atomic16_exchange(volatile uint16_t *dst, uint16_t val)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"xchgw %0, %1;"
+-			: "=r" (val), "=m" (*dst)
+-			: "0" (val),  "m" (*dst)
+-			: "memory");         /* no-clobber list */
+-	return val;
+-}
+-
+-static inline int rte_atomic16_test_and_set(rte_atomic16_t *v)
+-{
+-	return rte_atomic16_cmpset((volatile uint16_t *)&v->cnt, 0, 1);
+-}
+-
+-static inline void
+-rte_atomic16_inc(rte_atomic16_t *v)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"incw %[cnt]"
+-			: [cnt] "=m" (v->cnt)   /* output */
+-			: "m" (v->cnt)          /* input */
+-			);
+-}
+-
+-static inline void
+-rte_atomic16_dec(rte_atomic16_t *v)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"decw %[cnt]"
+-			: [cnt] "=m" (v->cnt)   /* output */
+-			: "m" (v->cnt)          /* input */
+-			);
+-}
+-
+-static inline int rte_atomic16_inc_and_test(rte_atomic16_t *v)
+-{
+-	uint8_t ret;
+-
+-	asm volatile(
+-			MPLOCKED
+-			"incw %[cnt] ; "
+-			"sete %[ret]"
+-			: [cnt] "+m" (v->cnt),  /* output */
+-			  [ret] "=qm" (ret)
+-			);
+-	return ret != 0;
+-}
+-
+-static inline int rte_atomic16_dec_and_test(rte_atomic16_t *v)
+-{
+-	uint8_t ret;
+-
+-	asm volatile(MPLOCKED
+-			"decw %[cnt] ; "
+-			"sete %[ret]"
+-			: [cnt] "+m" (v->cnt),  /* output */
+-			  [ret] "=qm" (ret)
+-			);
+-	return ret != 0;
+-}
+-
+-/*------------------------- 32 bit atomic operations -------------------------*/
+-
+-static inline int
+-rte_atomic32_cmpset(volatile uint32_t *dst, uint32_t exp, uint32_t src)
+-{
+-	uint8_t res;
+-
+-	asm volatile(
+-			MPLOCKED
+-			"cmpxchgl %[src], %[dst];"
+-			"sete %[res];"
+-			: [res] "=a" (res),     /* output */
+-			  [dst] "=m" (*dst)
+-			: [src] "r" (src),      /* input */
+-			  "a" (exp),
+-			  "m" (*dst)
+-			: "memory");            /* no-clobber list */
+-	return res;
+-}
+-
+-static inline uint32_t
+-rte_atomic32_exchange(volatile uint32_t *dst, uint32_t val)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"xchgl %0, %1;"
+-			: "=r" (val), "=m" (*dst)
+-			: "0" (val),  "m" (*dst)
+-			: "memory");         /* no-clobber list */
+-	return val;
+-}
+-
+-static inline int rte_atomic32_test_and_set(rte_atomic32_t *v)
+-{
+-	return rte_atomic32_cmpset((volatile uint32_t *)&v->cnt, 0, 1);
+-}
+-
+-static inline void
+-rte_atomic32_inc(rte_atomic32_t *v)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"incl %[cnt]"
+-			: [cnt] "=m" (v->cnt)   /* output */
+-			: "m" (v->cnt)          /* input */
+-			);
+-}
+-
+-static inline void
+-rte_atomic32_dec(rte_atomic32_t *v)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"decl %[cnt]"
+-			: [cnt] "=m" (v->cnt)   /* output */
+-			: "m" (v->cnt)          /* input */
+-			);
+-}
+-
+-static inline int rte_atomic32_inc_and_test(rte_atomic32_t *v)
+-{
+-	uint8_t ret;
+-
+-	asm volatile(
+-			MPLOCKED
+-			"incl %[cnt] ; "
+-			"sete %[ret]"
+-			: [cnt] "+m" (v->cnt),  /* output */
+-			  [ret] "=qm" (ret)
+-			);
+-	return ret != 0;
+-}
+-
+-static inline int rte_atomic32_dec_and_test(rte_atomic32_t *v)
+-{
+-	uint8_t ret;
+-
+-	asm volatile(MPLOCKED
+-			"decl %[cnt] ; "
+-			"sete %[ret]"
+-			: [cnt] "+m" (v->cnt),  /* output */
+-			  [ret] "=qm" (ret)
+-			);
+-	return ret != 0;
+-}
+-
+-#endif /* !RTE_FORCE_INTRINSICS */
+ 
+ #ifdef __cplusplus
+ }
+diff --git a/lib/eal/x86/include/rte_atomic_32.h b/lib/eal/x86/include/rte_atomic_32.h
+index 0f25863aa5..37d139f30d 100644
+--- a/lib/eal/x86/include/rte_atomic_32.h
++++ b/lib/eal/x86/include/rte_atomic_32.h
+@@ -20,193 +20,5 @@
+ 
+ /*------------------------- 64 bit atomic operations -------------------------*/
+ 
+-#ifndef RTE_FORCE_INTRINSICS
+-static inline int
+-rte_atomic64_cmpset(volatile uint64_t *dst, uint64_t exp, uint64_t src)
+-{
+-	uint8_t res;
+-	union {
+-		struct {
+-			uint32_t l32;
+-			uint32_t h32;
+-		};
+-		uint64_t u64;
+-	} _exp, _src;
+-
+-	_exp.u64 = exp;
+-	_src.u64 = src;
+-
+-#ifndef __PIC__
+-    asm volatile (
+-            MPLOCKED
+-            "cmpxchg8b (%[dst]);"
+-            "setz %[res];"
+-            : [res] "=a" (res)      /* result in eax */
+-            : [dst] "S" (dst),      /* esi */
+-             "b" (_src.l32),       /* ebx */
+-             "c" (_src.h32),       /* ecx */
+-             "a" (_exp.l32),       /* eax */
+-             "d" (_exp.h32)        /* edx */
+-			: "memory" );           /* no-clobber list */
+-#else
+-	asm volatile (
+-            "xchgl %%ebx, %%edi;\n"
+-			MPLOCKED
+-			"cmpxchg8b (%[dst]);"
+-			"setz %[res];"
+-            "xchgl %%ebx, %%edi;\n"
+-			: [res] "=a" (res)      /* result in eax */
+-			: [dst] "S" (dst),      /* esi */
+-			  "D" (_src.l32),       /* ebx */
+-			  "c" (_src.h32),       /* ecx */
+-			  "a" (_exp.l32),       /* eax */
+-			  "d" (_exp.h32)        /* edx */
+-			: "memory" );           /* no-clobber list */
+-#endif
+-
+-	return res;
+-}
+-
+-static inline uint64_t
+-rte_atomic64_exchange(volatile uint64_t *dest, uint64_t val)
+-{
+-	uint64_t old;
+-
+-	do {
+-		old = *dest;
+-	} while (rte_atomic64_cmpset(dest, old, val) == 0);
+-
+-	return old;
+-}
+-
+-static inline void
+-rte_atomic64_init(rte_atomic64_t *v)
+-{
+-	int success = 0;
+-	uint64_t tmp;
+-
+-	while (success == 0) {
+-		tmp = v->cnt;
+-		success = rte_atomic64_cmpset((volatile uint64_t *)&v->cnt,
+-		                              tmp, 0);
+-	}
+-}
+-
+-static inline int64_t
+-rte_atomic64_read(rte_atomic64_t *v)
+-{
+-	int success = 0;
+-	uint64_t tmp;
+-
+-	while (success == 0) {
+-		tmp = v->cnt;
+-		/* replace the value by itself */
+-		success = rte_atomic64_cmpset((volatile uint64_t *)&v->cnt,
+-		                              tmp, tmp);
+-	}
+-	return tmp;
+-}
+-
+-static inline void
+-rte_atomic64_set(rte_atomic64_t *v, int64_t new_value)
+-{
+-	int success = 0;
+-	uint64_t tmp;
+-
+-	while (success == 0) {
+-		tmp = v->cnt;
+-		success = rte_atomic64_cmpset((volatile uint64_t *)&v->cnt,
+-		                              tmp, new_value);
+-	}
+-}
+-
+-static inline void
+-rte_atomic64_add(rte_atomic64_t *v, int64_t inc)
+-{
+-	int success = 0;
+-	uint64_t tmp;
+-
+-	while (success == 0) {
+-		tmp = v->cnt;
+-		success = rte_atomic64_cmpset((volatile uint64_t *)&v->cnt,
+-		                              tmp, tmp + inc);
+-	}
+-}
+-
+-static inline void
+-rte_atomic64_sub(rte_atomic64_t *v, int64_t dec)
+-{
+-	int success = 0;
+-	uint64_t tmp;
+-
+-	while (success == 0) {
+-		tmp = v->cnt;
+-		success = rte_atomic64_cmpset((volatile uint64_t *)&v->cnt,
+-		                              tmp, tmp - dec);
+-	}
+-}
+-
+-static inline void
+-rte_atomic64_inc(rte_atomic64_t *v)
+-{
+-	rte_atomic64_add(v, 1);
+-}
+-
+-static inline void
+-rte_atomic64_dec(rte_atomic64_t *v)
+-{
+-	rte_atomic64_sub(v, 1);
+-}
+-
+-static inline int64_t
+-rte_atomic64_add_return(rte_atomic64_t *v, int64_t inc)
+-{
+-	int success = 0;
+-	uint64_t tmp;
+-
+-	while (success == 0) {
+-		tmp = v->cnt;
+-		success = rte_atomic64_cmpset((volatile uint64_t *)&v->cnt,
+-		                              tmp, tmp + inc);
+-	}
+-
+-	return tmp + inc;
+-}
+-
+-static inline int64_t
+-rte_atomic64_sub_return(rte_atomic64_t *v, int64_t dec)
+-{
+-	int success = 0;
+-	uint64_t tmp;
+-
+-	while (success == 0) {
+-		tmp = v->cnt;
+-		success = rte_atomic64_cmpset((volatile uint64_t *)&v->cnt,
+-		                              tmp, tmp - dec);
+-	}
+-
+-	return tmp - dec;
+-}
+-
+-static inline int rte_atomic64_inc_and_test(rte_atomic64_t *v)
+-{
+-	return rte_atomic64_add_return(v, 1) == 0;
+-}
+-
+-static inline int rte_atomic64_dec_and_test(rte_atomic64_t *v)
+-{
+-	return rte_atomic64_sub_return(v, 1) == 0;
+-}
+-
+-static inline int rte_atomic64_test_and_set(rte_atomic64_t *v)
+-{
+-	return rte_atomic64_cmpset((volatile uint64_t *)&v->cnt, 0, 1);
+-}
+-
+-static inline void rte_atomic64_clear(rte_atomic64_t *v)
+-{
+-	rte_atomic64_set(v, 0);
+-}
+-#endif
+ 
+ #endif /* _RTE_ATOMIC_I686_H_ */
+diff --git a/lib/eal/x86/include/rte_atomic_64.h b/lib/eal/x86/include/rte_atomic_64.h
+index 0a7a2131e0..1cd12695a2 100644
+--- a/lib/eal/x86/include/rte_atomic_64.h
++++ b/lib/eal/x86/include/rte_atomic_64.h
+@@ -22,163 +22,6 @@
+ 
+ /*------------------------- 64 bit atomic operations -------------------------*/
+ 
+-#ifndef RTE_FORCE_INTRINSICS
+-static inline int
+-rte_atomic64_cmpset(volatile uint64_t *dst, uint64_t exp, uint64_t src)
+-{
+-	uint8_t res;
+-
+-
+-	asm volatile(
+-			MPLOCKED
+-			"cmpxchgq %[src], %[dst];"
+-			"sete %[res];"
+-			: [res] "=a" (res),     /* output */
+-			  [dst] "=m" (*dst)
+-			: [src] "r" (src),      /* input */
+-			  "a" (exp),
+-			  "m" (*dst)
+-			: "memory");            /* no-clobber list */
+-
+-	return res;
+-}
+-
+-static inline uint64_t
+-rte_atomic64_exchange(volatile uint64_t *dst, uint64_t val)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"xchgq %0, %1;"
+-			: "=r" (val), "=m" (*dst)
+-			: "0" (val),  "m" (*dst)
+-			: "memory");         /* no-clobber list */
+-	return val;
+-}
+-
+-static inline void
+-rte_atomic64_init(rte_atomic64_t *v)
+-{
+-	v->cnt = 0;
+-}
+-
+-static inline int64_t
+-rte_atomic64_read(rte_atomic64_t *v)
+-{
+-	return v->cnt;
+-}
+-
+-static inline void
+-rte_atomic64_set(rte_atomic64_t *v, int64_t new_value)
+-{
+-	v->cnt = new_value;
+-}
+-
+-static inline void
+-rte_atomic64_add(rte_atomic64_t *v, int64_t inc)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"addq %[inc], %[cnt]"
+-			: [cnt] "=m" (v->cnt)   /* output */
+-			: [inc] "ir" (inc),     /* input */
+-			  "m" (v->cnt)
+-			);
+-}
+-
+-static inline void
+-rte_atomic64_sub(rte_atomic64_t *v, int64_t dec)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"subq %[dec], %[cnt]"
+-			: [cnt] "=m" (v->cnt)   /* output */
+-			: [dec] "ir" (dec),     /* input */
+-			  "m" (v->cnt)
+-			);
+-}
+-
+-static inline void
+-rte_atomic64_inc(rte_atomic64_t *v)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"incq %[cnt]"
+-			: [cnt] "=m" (v->cnt)   /* output */
+-			: "m" (v->cnt)          /* input */
+-			);
+-}
+-
+-static inline void
+-rte_atomic64_dec(rte_atomic64_t *v)
+-{
+-	asm volatile(
+-			MPLOCKED
+-			"decq %[cnt]"
+-			: [cnt] "=m" (v->cnt)   /* output */
+-			: "m" (v->cnt)          /* input */
+-			);
+-}
+-
+-static inline int64_t
+-rte_atomic64_add_return(rte_atomic64_t *v, int64_t inc)
+-{
+-	int64_t prev = inc;
+-
+-	asm volatile(
+-			MPLOCKED
+-			"xaddq %[prev], %[cnt]"
+-			: [prev] "+r" (prev),   /* output */
+-			  [cnt] "=m" (v->cnt)
+-			: "m" (v->cnt)          /* input */
+-			);
+-	return prev + inc;
+-}
+-
+-static inline int64_t
+-rte_atomic64_sub_return(rte_atomic64_t *v, int64_t dec)
+-{
+-	return rte_atomic64_add_return(v, -dec);
+-}
+-
+-static inline int rte_atomic64_inc_and_test(rte_atomic64_t *v)
+-{
+-	uint8_t ret;
+-
+-	asm volatile(
+-			MPLOCKED
+-			"incq %[cnt] ; "
+-			"sete %[ret]"
+-			: [cnt] "+m" (v->cnt), /* output */
+-			  [ret] "=qm" (ret)
+-			);
+-
+-	return ret != 0;
+-}
+-
+-static inline int rte_atomic64_dec_and_test(rte_atomic64_t *v)
+-{
+-	uint8_t ret;
+-
+-	asm volatile(
+-			MPLOCKED
+-			"decq %[cnt] ; "
+-			"sete %[ret]"
+-			: [cnt] "+m" (v->cnt),  /* output */
+-			  [ret] "=qm" (ret)
+-			);
+-	return ret != 0;
+-}
+-
+-static inline int rte_atomic64_test_and_set(rte_atomic64_t *v)
+-{
+-	return rte_atomic64_cmpset((volatile uint64_t *)&v->cnt, 0, 1);
+-}
+-
+-static inline void rte_atomic64_clear(rte_atomic64_t *v)
+-{
+-	v->cnt = 0;
+-}
+-#endif
+ 
+ /*------------------------ 128 bit atomic operations -------------------------*/
+ 
 -- 
 2.53.0
 
