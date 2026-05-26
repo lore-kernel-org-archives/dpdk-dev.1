@@ -2,44 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCD6CD5BB4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 08:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B984ECD5BB4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 08:14:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6F7FF4060A;
-	Tue, 26 May 2026 10:14:01 +0200 (CEST)
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
- [113.46.200.226])
- by mails.dpdk.org (Postfix) with ESMTP id A578140280
- for <dev@dpdk.org>; Tue, 26 May 2026 10:13:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 84C1140395;
+	Tue, 26 May 2026 10:14:05 +0200 (CEST)
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
+ [113.46.200.219])
+ by mails.dpdk.org (Postfix) with ESMTP id 021C04065A
+ for <dev@dpdk.org>; Tue, 26 May 2026 10:14:02 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=PxDu1W/fRkP8R4b9fDjNOz3S6D5oPFcInBg3I5lgFaE=;
- b=L7/hx7t4cK9f2wDgb5U5GTfDfZC4eGilWUfzShMO2YXrFTs0GHPT02QLAjinhZYL9Yf7fwMkn
- WraOYeW6RGab2QS6NFfcD6SvFrfF8MENGtB/t0QlYvgcQhP2XFoCbu+KX6vEhJcsRsTOk8NsdMp
- Lfl1pGlSzvpsLUQabtp2GI0=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
- by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gPlgg0DNkzKm4N;
- Tue, 26 May 2026 16:06:07 +0800 (CST)
+ bh=qwF6kvJRFONaozQMKkareYI8/uJ/0LxV6G8HLI48qUY=;
+ b=M8QcCRhREklSLNH+xFq//eDHvrKRC7oS+bSFKXwqzWQ6aDr2tX71LuTkjbwyiKQSj14v7Ab3g
+ FS4qCaBPS3885aqVqlJU0DErgSSG2kYp5fYAh1CW0yoy9oRQVStP0TnyeLtHwb/MC4BiEZyrOuV
+ wuKyMq/UDAvGYHto3tNiqv8=
+Received: from mail.maildlp.com (unknown [172.19.162.197])
+ by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4gPlgm1dKPz1prLc;
+ Tue, 26 May 2026 16:06:12 +0800 (CST)
 Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
- by mail.maildlp.com (Postfix) with ESMTPS id 826F640572;
- Tue, 26 May 2026 16:13:54 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id BC08A40577;
+ Tue, 26 May 2026 16:13:59 +0800 (CST)
 Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
  dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 26 May 2026 16:13:54 +0800
+ 15.2.1544.11; Tue, 26 May 2026 16:13:59 +0800
 Received: from localhost.localdomain (10.90.31.46) by
  kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 26 May 2026 16:13:53 +0800
+ 15.2.1544.36; Tue, 26 May 2026 16:13:59 +0800
 From: Huisong Li <lihuisong@huawei.com>
 To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
  <fengchengwen@huawei.com>, <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, 
  <lihuisong@huawei.com>
-Subject: [PATCH v2 0/5] uncore power improvements and auto-detection
-Date: Tue, 26 May 2026 16:11:33 +0800
-Message-ID: <20260526081138.1434947-1-lihuisong@huawei.com>
+Subject: [PATCH v2 2/5] examples/l3fwd-power: enable power QoS for all modes
+Date: Tue, 26 May 2026 16:11:35 +0800
+Message-ID: <20260526081138.1434947-3-lihuisong@huawei.com>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20260526081138.1434947-1-lihuisong@huawei.com>
+References: <20260526081138.1434947-1-lihuisong@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -59,38 +61,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series improves the uncore power management in l3fwd-power
-and adds automatic detection of uncore drivers in the power library.
+Power QoS feature doesn't depend on app mode, here open it for all.
 
-- Fix uncore deinitialization for non-legacy modes
-- Enable power QoS for all modes (not just legacy)
-- Fix uncore help text and log messages
-- Relocate uncore initialization from arg parsing to init_power_library()
-- Support automatic probing of multiple uncore drivers in AUTO_DETECT
-
+Signed-off-by: Huisong Li <lihuisong@huawei.com>
 ---
- v2:
- - Remove the patch which add global uncore init and deinit interface.
- - Remove the last patch in l3fwd-power about these new interface.
-   Will send them after this series.
- - v1 link:
-   https://inbox.dpdk.org/dev/20260512023513.460169-1-lihuisong@huawei.com/
+ examples/l3fwd-power/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
----
-
-Huisong Li (5):
-  examples/l3fwd-power: fix uncore deinit for non-legacy
-  examples/l3fwd-power: enable power QoS for all modes
-  examples/l3fwd-power: fix uncore help and log info
-  examples/l3fwd-power: relocate uncore initialization
-  power: support automatic detection of uncore driver
-
- doc/guides/rel_notes/release_26_07.rst        |   6 +
- .../sample_app_ug/l3_forward_power_man.rst    |   2 +-
- examples/l3fwd-power/main.c                   | 256 +++++++++---------
- lib/power/rte_power_uncore.c                  |  46 +++-
- 4 files changed, 178 insertions(+), 132 deletions(-)
-
+diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
+index 1122aeb930..ba2be5bf32 100644
+--- a/examples/l3fwd-power/main.c
++++ b/examples/l3fwd-power/main.c
+@@ -2295,7 +2295,7 @@ init_power_library(void)
+ 		}
+ 	}
+ 
+-	if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
++	if (cpu_resume_latency != -1) {
+ 		RTE_LCORE_FOREACH(lcore_id) {
+ 			/* Back old CPU resume latency. */
+ 			ret = rte_power_qos_get_cpu_resume_latency(lcore_id);
+@@ -2365,7 +2365,7 @@ deinit_power_library(void)
+ 		}
+ 	}
+ 
+-	if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
++	if (cpu_resume_latency != -1) {
+ 		RTE_LCORE_FOREACH(lcore_id) {
+ 			/* Restore the original value. */
+ 			rte_power_qos_set_cpu_resume_latency(lcore_id,
 -- 
 2.33.0
 
