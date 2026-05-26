@@ -2,73 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FB2CD5BD5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 23:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02C5CD5BD5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 23:26:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E102F4065E;
-	Wed, 27 May 2026 01:25:51 +0200 (CEST)
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
- [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id 2591140608
- for <dev@dpdk.org>; Wed, 27 May 2026 01:25:49 +0200 (CEST)
-Received: by mail-dy1-f172.google.com with SMTP id
- 5a478bee46e88-304997cdb21so3021466eec.0
- for <dev@dpdk.org>; Tue, 26 May 2026 16:25:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D84A840659;
+	Wed, 27 May 2026 01:25:52 +0200 (CEST)
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
+ [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id 301E840649
+ for <dev@dpdk.org>; Wed, 27 May 2026 01:25:50 +0200 (CEST)
+Received: by mail-dy1-f170.google.com with SMTP id
+ 5a478bee46e88-2f0d3e07e30so36365184eec.0
+ for <dev@dpdk.org>; Tue, 26 May 2026 16:25:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779837948;
- x=1780442748; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779837949;
+ x=1780442749; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fvMMG1bNJNd3PjPn1urn6kj3UmPGYhIm8gC3JrAFmw8=;
- b=xApfhvqtxqRBdWgID2fU6auR76nXSwlYRLYh98HF2B0RNDwBa95X6fhKjq8iuWA59p
- CZDlGyyFb67dheqLoj7pUg3wMuBhZNmLl+piB56agYnMukXPPKeXEFeLGkJZ7/qNle4S
- qzqsj39DHib7IZsQEiDvsR2UOKLjY6wCCB4aq++qy7qzQmlrrQTlhOg713wI5GhFj0wo
- 1BMb6If/dNtPlF2LVOSA3USdmiaR0CPaxIHiQ/prURHfdjqEfNb0VaXR6aFfFZctJIiE
- 5F0he8p7af+hQbHJEY2S/nuiF2RiyEBTfhdALIY2a20LFDrgWh3K0ER/RrvMV4YteT0d
- WLLQ==
+ bh=4XLlNurtI/Ouc3Jmtf8aMHpY8DnXHdHcNFbBmwXotYg=;
+ b=VlEq0rGdGPqTXrDlxe5VsPW5ea6eQhf300tLzRimniAMrhXyxtTZogiGCKRK/GP0L+
+ t0GJTy/5HO1nFrhwVc8RlREGzlRqdHm0/QNh9OPQ97HLdpnpwAkggus8eT/U78VEJF95
+ +OaPIX8UVVy8GmT+wV0nCgc8Q56gQCHk8DKZEBczDeJeLwXgEXBvOaZnQOYIecpU8HIq
+ 35KLVdsKZWl1Sg4yIz0VNmHgqAXhevMgH1nPTnV/K7wIAkG5Wo9fXhIY9RC1z25N3fc/
+ tLlfKUh5IQfc3OXs2wC7E3Rl5/D62ZQhBmpuGhjQW0SIdhMhyw1A8njjh0BwMHZukJkR
+ qWGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779837948; x=1780442748;
+ d=1e100.net; s=20251104; t=1779837949; x=1780442749;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fvMMG1bNJNd3PjPn1urn6kj3UmPGYhIm8gC3JrAFmw8=;
- b=LAhQU/CUi3wZSPjANR+/x9UOWfxa4qRkoEOUQITjtEIImU0t+GAyhJqBvTFIxydwWd
- kRSwaX8tHz1QjKgRxp9uT5z4Ob1ClLODKPyYdSg+kelToZUy5Kq3mcn3+wEI0QjiTAIl
- 8E1rhItkZsB7GO0ioYdnEFHePo9ds9Buo3pyH9fhXid4BJycmn5K2dEqAAR6nhRJABrV
- byMRnZOqwHe12y7YzgDM7L/OA7R6GncSIZPyURZRVB0pWrbpao2sZUIrdeGRmITL7Lwv
- fHddzyUFYBFmJC3aOKAnN4VjlYUuRpxYjMsYy78Y3EiMfV6NXj1IHxzO+W74UgsyEhF0
- Z8jQ==
-X-Gm-Message-State: AOJu0YxI11m/SixvDITuE7htSGW/H3m7mdK8xvVIFANPWy+TAw4olkzZ
- AfQ7uTDAktluLx1UH0aFSiwD/4tzaf7Y6EUAjz2Wg6DEgp9ORt8vn7SliQTsaFvEVIdWrzgRjKj
- +DQyP
-X-Gm-Gg: Acq92OFmsbImwffknmY3qTuQJ7UqU7Vi0OGaQ4pLKaewgnm0LAPb5ZOmjDHoEH32wtJ
- PRIJCTMSfW42QOdXezdAi+9Gq7nzNE+e/f+eRH7rWdYvoFQRVwBt5l6JqNVllACoah9iE0RFxM+
- qHaT8URXJKKYA+KBs2skpkYLI1U4bFGj9XM9kpEMkXu6hSW/MuUO+akCOXaC9OYPzPsK+4Qz62e
- B32jvMwhyznooltPsz6YpZV2dw14dnr/CVxQPyoL2dRcWFBYl7TkiJgw5wj2D81mVZdD0UCVNK0
- HoHS9k+kNaqYcgPKNcGH9lehj1Io0ueSdwUvKzlkp6yiwvSI4ge4fic6fkSQbJWHstpNaVDPefo
- FwsLzNmSbgpc6JEGWBLzOD83hQTYvXHgDmm2c0J0RS0QjyYH0ycSo2A3dmu9sT20c52KtpejmLs
- IV6Y+QCHjtAVvAgmRrhJtpqY5JuEgdHR+e10GBBVDf8EEvnPj/AVcvdxsANHSzZ1kj7zkE1nIc
-X-Received: by 2002:a05:7301:129b:b0:2f2:5c68:5074 with SMTP id
- 5a478bee46e88-3044909063cmr8359303eec.13.1779837948049; 
- Tue, 26 May 2026 16:25:48 -0700 (PDT)
+ bh=4XLlNurtI/Ouc3Jmtf8aMHpY8DnXHdHcNFbBmwXotYg=;
+ b=ns9XxiDnpr/CANo2FHosrnJtKkLDZtO62iCHrGhaObspkWWKLYnz3qPaJZRVzEG2H4
+ SSD+wBoXedmi9ktwRTGlUQ7Mo0q6PxGuiTPzdd8UUHmmXlM8viuibC5ce0JI3Rocqe0W
+ S6Q0jlMRXZaqrwvSQkH44SvKZzFIqDu3XwjLVFOe2z6i5JmaVBrmSU4xYbzWGkHkMduJ
+ 4pr+rsWM1s0HEGCzlueVCyZFL6T4as30wwiK21SJ+5bMPybnntdRif3gSbLRe0ZJajQ8
+ RZQ32F/W+/4aVxht7CMFCW6h99m+u4vTNHyJV0mrjMly6jbQdXC71nJYk8NBzSzwfucp
+ lVWA==
+X-Gm-Message-State: AOJu0YxtrGkaVSGflpM2ePy/w7oqDAhzkXNz8ROSEqMyS2MSZ5EgA/Ud
+ 0CScA0fNniFM4XU0UJTYn8GkG9k9vTHnNleColrIPHHPaMNjEsUtDf378O5gIH+edKEfe6Gbq9Q
+ Qcqig
+X-Gm-Gg: Acq92OHNZ0p4TKoOPulrIvK4FFHrDHQZwysFhaNkw4elkvMI2XOQwR1Mn7534a4458F
+ b7IbLN+/PvETFLS2d425GnVsuAyf1jF/8yRCF4pi4T3erixN51btD82deHde6HQhXjQW09LVgYW
+ tBPgRkr/soh2tA02AzVLUtFyNU9INZe307gcJRY58VlOW0gCXuXTwVYTqaj01cBVnx7StZh91/X
+ S5wLhM0Cui1vCtYLI77/xQN342u2esRFJSNm/7P4eKB4nFKjZMBY0/ig0IUicqR287bMiUUt+TB
+ Puu6UWB1yYmNwtA2c7mphX4X2hmn2PN6vP4lT7afcAcaD+Hd1/DxpucL5t8Imzy4MLG/YTnVeAv
+ wEOt5/O0uQJ2Onwz4Ua1tt/NlLZx1wEWKPOEhEiTJ9qd5s1tbtqhIxu8NKRXhXV7kk8rWjgd28g
+ tRm0q+ekAGHjtILLSlIiAkqDCVXA3724BpMTeANplkmPFZlpIsTvgXrOsyPSV0Kw==
+X-Received: by 2002:a05:693c:2285:b0:2f1:6252:f8ef with SMTP id
+ 5a478bee46e88-30448fbf20cmr10533692eec.1.1779837949147; 
+ Tue, 26 May 2026 16:25:49 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30452230f1bsm11296132eec.14.2026.05.26.16.25.46
+ 5a478bee46e88-30452230f1bsm11296132eec.14.2026.05.26.16.25.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 26 May 2026 16:25:47 -0700 (PDT)
+ Tue, 26 May 2026 16:25:48 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Bibo Mao <maobibo@loongson.cn>, David Christensen <drc@linux.ibm.com>,
- Sun Yuechi <sunyuechi@iscas.ac.cn>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v4 02/27] eal: reimplement rte_smp_*mb with
- rte_atomic_thread_fence
-Date: Tue, 26 May 2026 16:23:52 -0700
-Message-ID: <20260526232542.620966-3-stephen@networkplumber.org>
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: [PATCH v4 03/27] ring: unify memory model on C11, remove atomic32
+Date: Tue, 26 May 2026 16:23:53 -0700
+Message-ID: <20260526232542.620966-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260526232542.620966-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -88,560 +83,480 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_smp_mb(), rte_smp_wmb() and rte_smp_rmb() functions were
-flagged as deprecated by commit 3ec965b6de12 ("doc: update atomic
-operation deprecation") in 2021 but nothing came of it.
+Remove the RTE_USE_C11_MEM_MODEL build switch; C11 atomics are now
+the default for all platforms. Unifies __rte_ring_update_tail into
+the C11 form (atomic_store_release replaces the older rte_smp_wmb +
+plain store on the generic path) and renames rte_ring_generic_pvt.h
+to rte_ring_x86_pvt.h to reflect its new scope.
 
-Reimplement them as inline wrappers over rte_atomic_thread_fence()
-and drop the deprecation notice.
-The API is preserved; only the implementation changes.
+Also splits the head-move helper into separate ST and MT variants,
+removing the runtime is_st branch from the MT retry loop.
+This gets small boost and scopes the following exception
+more tightly.
 
-The wrapper provides stronger guarantees than previous code
-because there is no C11 equivalent to old rte_smp_qmb().
-Generated code is unchanged on x86; on arm64,
-release/acquire emit dmb ish instead of dmb ishst/ishld;
-the difference is below measurement noise.
-
-Drop restrictions on rte_smp_XX in checkpatch since they are
-no longer on deprecation cycle.
+Exception: on x86 with GCC, atomic_compare_exchange on the head CAS
+regresses MP/MC contended throughput by ~20% existing hand-written
+cmpxchg. As a workaround, GCC-on-x86 builds use the older
+__sync_bool_compare_and_swap builtin, which generates equivalent
+code to the original asm. Can be reverted if/when GCC gets
+fixed; similar issue was observed in Linux kernel.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- devtools/checkpatches.sh               |   8 --
- doc/guides/rel_notes/deprecation.rst   |   8 --
- lib/eal/arm/include/rte_atomic_32.h    |   6 --
- lib/eal/arm/include/rte_atomic_64.h    |   6 --
- lib/eal/include/generic/rte_atomic.h   | 130 +++++--------------------
- lib/eal/loongarch/include/rte_atomic.h |   6 --
- lib/eal/ppc/include/rte_atomic.h       |   6 --
- lib/eal/riscv/include/rte_atomic.h     |   6 --
- lib/eal/x86/include/rte_atomic.h       |  33 +++----
- 9 files changed, 37 insertions(+), 172 deletions(-)
+ lib/ring/meson.build                          |   2 +-
+ lib/ring/rte_ring_c11_pvt.h                   |  75 +++--------
+ lib/ring/rte_ring_elem_pvt.h                  | 125 ++++++++++++++++--
+ ..._ring_generic_pvt.h => rte_ring_x86_pvt.h} |  61 ++-------
+ lib/ring/soring.c                             |  15 ++-
+ 5 files changed, 158 insertions(+), 120 deletions(-)
+ rename lib/ring/{rte_ring_generic_pvt.h => rte_ring_x86_pvt.h} (60%)
 
-diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
-index f5dd77443f..81bb0fe4e8 100755
---- a/devtools/checkpatches.sh
-+++ b/devtools/checkpatches.sh
-@@ -121,14 +121,6 @@ check_forbidden_additions() { # <patch>
- 		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
- 		"$1" || res=1
- 
--	# refrain from new additions of rte_smp_[r/w]mb()
--	awk -v FOLDERS="lib drivers app examples" \
--		-v EXPRESSIONS="rte_smp_(r|w)?mb\\\(" \
--		-v RET_ON_FAIL=1 \
--		-v MESSAGE='Using rte_smp_[r/w]mb' \
--		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
--		"$1" || res=1
--
- 	# refrain from using compiler __sync_xxx builtins
- 	awk -v FOLDERS="lib drivers app examples" \
- 		-v EXPRESSIONS="__sync_.*\\\(" \
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 35c9b4e06c..2190419f79 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -47,14 +47,6 @@ Deprecation Notices
-   operations must be used for patches that need to be merged in 20.08 onwards.
-   This change will not introduce any performance degradation.
- 
--* rte_smp_*mb: These APIs provide full barrier functionality. However, many
--  use cases do not require full barriers. To support such use cases, DPDK has
--  adopted atomic operations from
--  https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html. These
--  operations and a new wrapper ``rte_atomic_thread_fence`` instead of
--  ``__atomic_thread_fence`` must be used for patches that need to be merged in
--  20.08 onwards. This change will not introduce any performance degradation.
--
- * lib: will fix extending some enum/define breaking the ABI. There are multiple
-   samples in DPDK that enum/define terminated with a ``.*MAX.*`` value which is
-   used by iterators, and arrays holding these values are sized with this
-diff --git a/lib/eal/arm/include/rte_atomic_32.h b/lib/eal/arm/include/rte_atomic_32.h
-index 696a539fef..4115271091 100644
---- a/lib/eal/arm/include/rte_atomic_32.h
-+++ b/lib/eal/arm/include/rte_atomic_32.h
-@@ -17,12 +17,6 @@ extern "C" {
- 
- #define	rte_rmb() __sync_synchronize()
- 
--#define rte_smp_mb() rte_mb()
--
--#define rte_smp_wmb() rte_wmb()
--
--#define rte_smp_rmb() rte_rmb()
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/arm/include/rte_atomic_64.h b/lib/eal/arm/include/rte_atomic_64.h
-index 9f790238df..604e777bcd 100644
---- a/lib/eal/arm/include/rte_atomic_64.h
-+++ b/lib/eal/arm/include/rte_atomic_64.h
-@@ -20,12 +20,6 @@ extern "C" {
- 
- #define rte_rmb() asm volatile("dmb oshld" : : : "memory")
- 
--#define rte_smp_mb() asm volatile("dmb ish" : : : "memory")
--
--#define rte_smp_wmb() asm volatile("dmb ishst" : : : "memory")
--
--#define rte_smp_rmb() asm volatile("dmb ishld" : : : "memory")
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/include/generic/rte_atomic.h b/lib/eal/include/generic/rte_atomic.h
-index 292e52fade..1b04b43cbb 100644
---- a/lib/eal/include/generic/rte_atomic.h
-+++ b/lib/eal/include/generic/rte_atomic.h
-@@ -59,55 +59,25 @@ static inline void rte_rmb(void);
-  *
-  * Guarantees that the LOAD and STORE operations that precede the
-  * rte_smp_mb() call are globally visible across the lcores
-- * before the LOAD and STORE operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_acq_rel) should be used instead.
-+ * before the LOAD and STORE operations that follow it.
-  */
- static inline void rte_smp_mb(void);
- 
- /**
-  * Write memory barrier between lcores
-  *
-- * Guarantees that the STORE operations that precede the
-- * rte_smp_wmb() call are globally visible across the lcores
-- * before the STORE operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_release) should be used instead.
-- *  The fence also guarantees LOAD operations that precede the call
-- *  are globally visible across the lcores before the STORE operations
-- *  that follows it.
-+ * Guarantees that the LOAD and STORE operations that precede the
-+ * rte_smp_wmb() call are globally visible across the lcores before
-+ * any STORE operations that follow it.
-  */
- static inline void rte_smp_wmb(void);
- 
- /**
-  * Read memory barrier between lcores
-  *
-- * Guarantees that the LOAD operations that precede the
-- * rte_smp_rmb() call are globally visible across the lcores
-- * before the LOAD operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_acquire) should be used instead.
-- *  The fence also guarantees LOAD operations that precede the call
-- *  are globally visible across the lcores before the STORE operations
-- *  that follows it.
-+ * Guarantees that any LOAD operations that precede the rte_smp_rmb()
-+ * call complete before LOAD and STORE operations that follow it
-+ * become globally visible.
-  */
- static inline void rte_smp_rmb(void);
- ///@}
-@@ -164,6 +134,24 @@ static inline void rte_io_rmb(void);
-  */
- static inline void rte_atomic_thread_fence(rte_memory_order memorder);
- 
-+static __rte_always_inline void
-+rte_smp_mb(void)
-+{
-+	rte_atomic_thread_fence(rte_memory_order_seq_cst);
-+}
-+
-+static __rte_always_inline void
-+rte_smp_wmb(void)
-+{
-+	rte_atomic_thread_fence(rte_memory_order_release);
-+}
-+
-+static __rte_always_inline void
-+rte_smp_rmb(void)
-+{
-+	rte_atomic_thread_fence(rte_memory_order_acquire);
-+}
-+
- /*------------------------- 16 bit atomic operations -------------------------*/
- 
- #ifndef RTE_TOOLCHAIN_MSVC
-@@ -184,9 +172,6 @@ static inline void rte_atomic_thread_fence(rte_memory_order memorder);
-  * @return
-  *   Non-zero on success; 0 on failure.
-  */
--static inline int
--rte_atomic16_cmpset(volatile uint16_t *dst, uint16_t exp, uint16_t src);
--
- static inline int
- rte_atomic16_cmpset(volatile uint16_t *dst, uint16_t exp, uint16_t src)
- {
-@@ -303,9 +288,6 @@ rte_atomic16_sub(rte_atomic16_t *v, int16_t dec)
-  * @param v
-  *   A pointer to the atomic counter.
-  */
--static inline void
--rte_atomic16_inc(rte_atomic16_t *v);
--
- static inline void
- rte_atomic16_inc(rte_atomic16_t *v)
- {
-@@ -318,9 +300,6 @@ rte_atomic16_inc(rte_atomic16_t *v)
-  * @param v
-  *   A pointer to the atomic counter.
-  */
--static inline void
--rte_atomic16_dec(rte_atomic16_t *v);
--
- static inline void
- rte_atomic16_dec(rte_atomic16_t *v)
- {
-@@ -379,8 +358,6 @@ rte_atomic16_sub_return(rte_atomic16_t *v, int16_t dec)
-  * @return
-  *   True if the result after the increment operation is 0; false otherwise.
-  */
--static inline int rte_atomic16_inc_and_test(rte_atomic16_t *v);
--
- static inline int rte_atomic16_inc_and_test(rte_atomic16_t *v)
- {
- 	return rte_atomic_fetch_add_explicit((volatile __rte_atomic int16_t *)&v->cnt, 1,
-@@ -398,8 +375,6 @@ static inline int rte_atomic16_inc_and_test(rte_atomic16_t *v)
-  * @return
-  *   True if the result after the decrement operation is 0; false otherwise.
-  */
--static inline int rte_atomic16_dec_and_test(rte_atomic16_t *v);
--
- static inline int rte_atomic16_dec_and_test(rte_atomic16_t *v)
- {
- 	return rte_atomic_fetch_sub_explicit((volatile __rte_atomic int16_t *)&v->cnt, 1,
-@@ -417,8 +392,6 @@ static inline int rte_atomic16_dec_and_test(rte_atomic16_t *v)
-  * @return
-  *   0 if failed; else 1, success.
-  */
--static inline int rte_atomic16_test_and_set(rte_atomic16_t *v);
--
- static inline int rte_atomic16_test_and_set(rte_atomic16_t *v)
- {
- 	return rte_atomic16_cmpset((volatile uint16_t *)&v->cnt, 0, 1);
-@@ -453,9 +426,6 @@ static inline void rte_atomic16_clear(rte_atomic16_t *v)
-  * @return
-  *   Non-zero on success; 0 on failure.
-  */
--static inline int
--rte_atomic32_cmpset(volatile uint32_t *dst, uint32_t exp, uint32_t src);
--
- static inline int
- rte_atomic32_cmpset(volatile uint32_t *dst, uint32_t exp, uint32_t src)
- {
-@@ -572,9 +542,6 @@ rte_atomic32_sub(rte_atomic32_t *v, int32_t dec)
-  * @param v
-  *   A pointer to the atomic counter.
-  */
--static inline void
--rte_atomic32_inc(rte_atomic32_t *v);
--
- static inline void
- rte_atomic32_inc(rte_atomic32_t *v)
- {
-@@ -587,9 +554,6 @@ rte_atomic32_inc(rte_atomic32_t *v)
-  * @param v
-  *   A pointer to the atomic counter.
-  */
--static inline void
--rte_atomic32_dec(rte_atomic32_t *v);
--
- static inline void
- rte_atomic32_dec(rte_atomic32_t *v)
- {
-@@ -648,8 +612,6 @@ rte_atomic32_sub_return(rte_atomic32_t *v, int32_t dec)
-  * @return
-  *   True if the result after the increment operation is 0; false otherwise.
-  */
--static inline int rte_atomic32_inc_and_test(rte_atomic32_t *v);
--
- static inline int rte_atomic32_inc_and_test(rte_atomic32_t *v)
- {
- 	return rte_atomic_fetch_add_explicit((volatile __rte_atomic int32_t *)&v->cnt, 1,
-@@ -667,8 +629,6 @@ static inline int rte_atomic32_inc_and_test(rte_atomic32_t *v)
-  * @return
-  *   True if the result after the decrement operation is 0; false otherwise.
-  */
--static inline int rte_atomic32_dec_and_test(rte_atomic32_t *v);
--
- static inline int rte_atomic32_dec_and_test(rte_atomic32_t *v)
- {
- 	return rte_atomic_fetch_sub_explicit((volatile __rte_atomic int32_t *)&v->cnt, 1,
-@@ -686,8 +646,6 @@ static inline int rte_atomic32_dec_and_test(rte_atomic32_t *v)
-  * @return
-  *   0 if failed; else 1, success.
-  */
--static inline int rte_atomic32_test_and_set(rte_atomic32_t *v);
--
- static inline int rte_atomic32_test_and_set(rte_atomic32_t *v)
- {
- 	return rte_atomic32_cmpset((volatile uint32_t *)&v->cnt, 0, 1);
-@@ -721,9 +679,6 @@ static inline void rte_atomic32_clear(rte_atomic32_t *v)
-  * @return
-  *   Non-zero on success; 0 on failure.
-  */
--static inline int
--rte_atomic64_cmpset(volatile uint64_t *dst, uint64_t exp, uint64_t src);
--
- static inline int
- rte_atomic64_cmpset(volatile uint64_t *dst, uint64_t exp, uint64_t src)
- {
-@@ -770,9 +725,6 @@ typedef struct {
-  * @param v
-  *   A pointer to the atomic counter.
-  */
--static inline void
--rte_atomic64_init(rte_atomic64_t *v);
--
- static inline void
- rte_atomic64_init(rte_atomic64_t *v)
- {
-@@ -798,9 +750,6 @@ rte_atomic64_init(rte_atomic64_t *v)
-  * @return
-  *   The value of the counter.
-  */
--static inline int64_t
--rte_atomic64_read(rte_atomic64_t *v);
--
- static inline int64_t
- rte_atomic64_read(rte_atomic64_t *v)
- {
-@@ -828,9 +777,6 @@ rte_atomic64_read(rte_atomic64_t *v)
-  * @param new_value
-  *   The new value of the counter.
-  */
--static inline void
--rte_atomic64_set(rte_atomic64_t *v, int64_t new_value);
--
- static inline void
- rte_atomic64_set(rte_atomic64_t *v, int64_t new_value)
- {
-@@ -856,9 +802,6 @@ rte_atomic64_set(rte_atomic64_t *v, int64_t new_value)
-  * @param inc
-  *   The value to be added to the counter.
-  */
--static inline void
--rte_atomic64_add(rte_atomic64_t *v, int64_t inc);
--
- static inline void
- rte_atomic64_add(rte_atomic64_t *v, int64_t inc)
- {
-@@ -874,9 +817,6 @@ rte_atomic64_add(rte_atomic64_t *v, int64_t inc)
-  * @param dec
-  *   The value to be subtracted from the counter.
-  */
--static inline void
--rte_atomic64_sub(rte_atomic64_t *v, int64_t dec);
--
- static inline void
- rte_atomic64_sub(rte_atomic64_t *v, int64_t dec)
- {
-@@ -890,9 +830,6 @@ rte_atomic64_sub(rte_atomic64_t *v, int64_t dec)
-  * @param v
-  *   A pointer to the atomic counter.
-  */
--static inline void
--rte_atomic64_inc(rte_atomic64_t *v);
--
- static inline void
- rte_atomic64_inc(rte_atomic64_t *v)
- {
-@@ -905,9 +842,6 @@ rte_atomic64_inc(rte_atomic64_t *v)
-  * @param v
-  *   A pointer to the atomic counter.
-  */
--static inline void
--rte_atomic64_dec(rte_atomic64_t *v);
--
- static inline void
- rte_atomic64_dec(rte_atomic64_t *v)
- {
-@@ -927,9 +861,6 @@ rte_atomic64_dec(rte_atomic64_t *v)
-  * @return
-  *   The value of v after the addition.
-  */
--static inline int64_t
--rte_atomic64_add_return(rte_atomic64_t *v, int64_t inc);
--
- static inline int64_t
- rte_atomic64_add_return(rte_atomic64_t *v, int64_t inc)
- {
-@@ -950,9 +881,6 @@ rte_atomic64_add_return(rte_atomic64_t *v, int64_t inc)
-  * @return
-  *   The value of v after the subtraction.
-  */
--static inline int64_t
--rte_atomic64_sub_return(rte_atomic64_t *v, int64_t dec);
--
- static inline int64_t
- rte_atomic64_sub_return(rte_atomic64_t *v, int64_t dec)
- {
-@@ -971,8 +899,6 @@ rte_atomic64_sub_return(rte_atomic64_t *v, int64_t dec)
-  * @return
-  *   True if the result after the addition is 0; false otherwise.
-  */
--static inline int rte_atomic64_inc_and_test(rte_atomic64_t *v);
--
- static inline int rte_atomic64_inc_and_test(rte_atomic64_t *v)
- {
- 	return rte_atomic64_add_return(v, 1) == 0;
-@@ -989,8 +915,6 @@ static inline int rte_atomic64_inc_and_test(rte_atomic64_t *v)
-  * @return
-  *   True if the result after subtraction is 0; false otherwise.
-  */
--static inline int rte_atomic64_dec_and_test(rte_atomic64_t *v);
--
- static inline int rte_atomic64_dec_and_test(rte_atomic64_t *v)
- {
- 	return rte_atomic64_sub_return(v, 1) == 0;
-@@ -1007,8 +931,6 @@ static inline int rte_atomic64_dec_and_test(rte_atomic64_t *v)
-  * @return
-  *   0 if failed; else 1, success.
-  */
--static inline int rte_atomic64_test_and_set(rte_atomic64_t *v);
--
- static inline int rte_atomic64_test_and_set(rte_atomic64_t *v)
- {
- 	return rte_atomic64_cmpset((volatile uint64_t *)&v->cnt, 0, 1);
-@@ -1020,8 +942,6 @@ static inline int rte_atomic64_test_and_set(rte_atomic64_t *v)
-  * @param v
-  *   A pointer to the atomic counter.
-  */
--static inline void rte_atomic64_clear(rte_atomic64_t *v);
--
- static inline void rte_atomic64_clear(rte_atomic64_t *v)
- {
- 	rte_atomic64_set(v, 0);
-diff --git a/lib/eal/loongarch/include/rte_atomic.h b/lib/eal/loongarch/include/rte_atomic.h
-index 785a452c9e..a789e3ab4d 100644
---- a/lib/eal/loongarch/include/rte_atomic.h
-+++ b/lib/eal/loongarch/include/rte_atomic.h
-@@ -18,12 +18,6 @@ extern "C" {
- 
- #define rte_rmb()	rte_mb()
- 
--#define rte_smp_mb()	rte_mb()
--
--#define rte_smp_wmb()	rte_mb()
--
--#define rte_smp_rmb()	rte_mb()
--
- #define rte_io_mb()	rte_mb()
- 
- #define rte_io_wmb()	rte_mb()
-diff --git a/lib/eal/ppc/include/rte_atomic.h b/lib/eal/ppc/include/rte_atomic.h
-index 64f4c3d670..0e64db2a35 100644
---- a/lib/eal/ppc/include/rte_atomic.h
-+++ b/lib/eal/ppc/include/rte_atomic.h
-@@ -24,12 +24,6 @@ extern "C" {
- 
- #define	rte_rmb() asm volatile("sync" : : : "memory")
- 
--#define rte_smp_mb() rte_mb()
--
--#define rte_smp_wmb() rte_wmb()
--
--#define rte_smp_rmb() rte_rmb()
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/riscv/include/rte_atomic.h b/lib/eal/riscv/include/rte_atomic.h
-index 061b175f33..04c40e4e9b 100644
---- a/lib/eal/riscv/include/rte_atomic.h
-+++ b/lib/eal/riscv/include/rte_atomic.h
-@@ -23,12 +23,6 @@ extern "C" {
- 
- #define rte_rmb()	asm volatile("fence r, r" : : : "memory")
- 
--#define rte_smp_mb()	rte_mb()
--
--#define rte_smp_wmb()	rte_wmb()
--
--#define rte_smp_rmb()	rte_rmb()
--
- #define rte_io_mb()	asm volatile("fence iorw, iorw" : : : "memory")
- 
- #define rte_io_wmb()	asm volatile("fence orw, ow" : : : "memory")
-diff --git a/lib/eal/x86/include/rte_atomic.h b/lib/eal/x86/include/rte_atomic.h
-index 4f05302c9f..f4d39ce4fe 100644
---- a/lib/eal/x86/include/rte_atomic.h
-+++ b/lib/eal/x86/include/rte_atomic.h
-@@ -23,10 +23,6 @@
- 
- #define	rte_rmb() _mm_lfence()
- 
--#define rte_smp_wmb() rte_compiler_barrier()
--
--#define rte_smp_rmb() rte_compiler_barrier()
--
- #ifdef __cplusplus
- extern "C" {
- #endif
-@@ -63,20 +59,6 @@ extern "C" {
-  * So below we use that technique for rte_smp_mb() implementation.
+diff --git a/lib/ring/meson.build b/lib/ring/meson.build
+index 21f2c12989..b178c963b8 100644
+--- a/lib/ring/meson.build
++++ b/lib/ring/meson.build
+@@ -9,7 +9,7 @@ indirect_headers += files (
+         'rte_ring_elem.h',
+         'rte_ring_elem_pvt.h',
+         'rte_ring_c11_pvt.h',
+-        'rte_ring_generic_pvt.h',
++        'rte_ring_x86_pvt.h',
+         'rte_ring_hts.h',
+         'rte_ring_hts_elem_pvt.h',
+         'rte_ring_peek.h',
+diff --git a/lib/ring/rte_ring_c11_pvt.h b/lib/ring/rte_ring_c11_pvt.h
+index 07b6efc416..3efe011f08 100644
+--- a/lib/ring/rte_ring_c11_pvt.h
++++ b/lib/ring/rte_ring_c11_pvt.h
+@@ -15,35 +15,10 @@
+  * @file rte_ring_c11_pvt.h
+  * It is not recommended to include this file directly,
+  * include <rte_ring.h> instead.
+- * Contains internal helper functions for MP/SP and MC/SC ring modes.
++ * Contains internal helper functions for MP and MC ring modes.
+  * For more information please refer to <rte_ring.h>.
   */
  
+-/**
+- * @internal This function updates tail values.
+- */
 -static __rte_always_inline void
--rte_smp_mb(void)
+-__rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
+-		uint32_t new_val, uint32_t single, uint32_t enqueue)
 -{
--#ifdef RTE_TOOLCHAIN_MSVC
--	_mm_mfence();
--#else
--#ifdef RTE_ARCH_I686
--	asm volatile("lock addl $0, -128(%%esp); " ::: "memory");
--#else
--	asm volatile("lock addl $0, -128(%%rsp); " ::: "memory");
--#endif
--#endif
+-	RTE_SET_USED(enqueue);
+-
+-	/*
+-	 * If there are other enqueues/dequeues in progress that preceded us,
+-	 * we need to wait for them to complete
+-	 */
+-	if (!single)
+-		rte_wait_until_equal_32((uint32_t *)(uintptr_t)&ht->tail, old_val,
+-			rte_memory_order_relaxed);
+-
+-	/*
+-	 * R0: Establishes a synchronizing edge with load-acquire of tail at A1.
+-	 * Ensures that memory effects by this thread on ring elements array
+-	 * is observed by a different thread of the other type.
+-	 */
+-	rte_atomic_store_explicit(&ht->tail, new_val, rte_memory_order_release);
 -}
 -
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_compiler_barrier()
-@@ -93,10 +75,19 @@ rte_smp_mb(void)
- static __rte_always_inline void
- rte_atomic_thread_fence(rte_memory_order memorder)
+ /**
+  * @internal This is a helper function that moves the producer/consumer head
+  *
+@@ -72,14 +47,11 @@ __rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
+  *   If behavior == RTE_RING_QUEUE_FIXED, this will be 0 or n only
+  */
+ static __rte_always_inline unsigned int
+-__rte_ring_headtail_move_head(struct rte_ring_headtail *d,
++__rte_ring_headtail_move_head_mt(struct rte_ring_headtail *d,
+ 		const struct rte_ring_headtail *s, uint32_t capacity,
+-		unsigned int is_st, unsigned int n,
+-		enum rte_ring_queue_behavior behavior,
++		unsigned int n,	enum rte_ring_queue_behavior behavior,
+ 		uint32_t *old_head, uint32_t *new_head, uint32_t *entries)
  {
--	if (memorder == rte_memory_order_seq_cst)
--		rte_smp_mb();
--	else
-+	if (memorder == rte_memory_order_seq_cst) {
-+#ifdef RTE_TOOLCHAIN_MSVC
-+		_mm_mfence();
-+#else
-+#ifdef RTE_ARCH_I686
-+		asm volatile("lock addl $0, -128(%%esp); " ::: "memory");
-+#else
-+		asm volatile("lock addl $0, -128(%%rsp); " ::: "memory");
-+#endif
-+#endif
-+	} else {
- 		__rte_atomic_thread_fence(memorder);
-+	}
+-	uint32_t stail;
+-	int success;
+ 	unsigned int max = n;
+ 
+ 	/*
+@@ -89,8 +61,7 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
+ 	 * d->head.
+ 	 * If not, an unsafe partial order may ensue.
+ 	 */
+-	*old_head = rte_atomic_load_explicit(&d->head,
+-			rte_memory_order_acquire);
++	*old_head = rte_atomic_load_explicit(&d->head, rte_memory_order_acquire);
+ 	do {
+ 		/* Reset n to the initial burst count */
+ 		n = max;
+@@ -101,15 +72,14 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
+ 		 * ring elements array is observed by the time
+ 		 * this thread observes its tail update.
+ 		 */
+-		stail = rte_atomic_load_explicit(&s->tail,
+-					rte_memory_order_acquire);
++		uint32_t stail = rte_atomic_load_explicit(&s->tail, rte_memory_order_acquire);
+ 
+ 		/* The subtraction is done between two unsigned 32bits value
+ 		 * (the result is always modulo 32 bits even if we have
+ 		 * *old_head > s->tail). So 'entries' is always between 0
+ 		 * and capacity (which is < size).
+ 		 */
+-		*entries = (capacity + stail - *old_head);
++		*entries = capacity + stail - *old_head;
+ 
+ 		/* check that we have enough room in ring */
+ 		if (unlikely(n > *entries))
+@@ -120,25 +90,20 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
+ 			return 0;
+ 
+ 		*new_head = *old_head + n;
+-		if (is_st) {
+-			d->head = *new_head;
+-			success = 1;
+-		} else
+-			/* on failure, *old_head is updated */
+-			/*
+-			 * R1/A2.
+-			 * R1: Establishes a synchronizing edge with A0 of a
+-			 * different thread.
+-			 * A2: Establishes a synchronizing edge with R1 of a
+-			 * different thread to observe same value for stail
+-			 * observed by that thread on CAS failure (to retry
+-			 * with an updated *old_head).
+-			 */
+-			success = rte_atomic_compare_exchange_strong_explicit(
+-					&d->head, old_head, *new_head,
+-					rte_memory_order_release,
+-					rte_memory_order_acquire);
+-	} while (unlikely(success == 0));
++
++		/* on failure, *old_head is updated */
++		/*
++		 * R1/A2.
++		 * R1: Establishes a synchronizing edge with A0 of a
++		 * different thread.
++		 * A2: Establishes a synchronizing edge with R1 of a
++		 * different thread to observe same value for stail
++		 * observed by that thread on CAS failure (to retry
++		 * with an updated *old_head).
++		 */
++	} while (unlikely(!rte_atomic_compare_exchange_strong_explicit(
++				  &d->head, old_head, *new_head,
++				  rte_memory_order_release, rte_memory_order_acquire)));
+ 	return n;
  }
  
- #ifdef __cplusplus
+diff --git a/lib/ring/rte_ring_elem_pvt.h b/lib/ring/rte_ring_elem_pvt.h
+index 6eafae121f..9d1da12a92 100644
+--- a/lib/ring/rte_ring_elem_pvt.h
++++ b/lib/ring/rte_ring_elem_pvt.h
+@@ -299,17 +299,108 @@ __rte_ring_dequeue_elems(struct rte_ring *r, uint32_t cons_head,
+ 			cons_head & r->mask, esize, num);
+ }
+ 
+-/* Between load and load. there might be cpu reorder in weak model
+- * (powerpc/arm).
+- * There are 2 choices for the users
+- * 1.use rmb() memory barrier
+- * 2.use one-direction load_acquire/store_release barrier
+- * It depends on performance test results.
++/**
++ * @internal This function updates tail values.
+  */
+-#ifdef RTE_USE_C11_MEM_MODEL
+-#include "rte_ring_c11_pvt.h"
++static __rte_always_inline void
++__rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
++		uint32_t new_val, uint32_t single, uint32_t enqueue)
++{
++	RTE_SET_USED(enqueue);
++
++	/*
++	 * If there are other enqueues/dequeues in progress that preceded us,
++	 * we need to wait for them to complete
++	 */
++	if (!single)
++		rte_wait_until_equal_32((uint32_t *)(uintptr_t)&ht->tail, old_val,
++			rte_memory_order_relaxed);
++
++	/*
++	 * R0: Establishes a synchronizing edge with load-acquire of tail at A1.
++	 * Ensures that memory effects by this thread on ring elements array
++	 * is observed by a different thread of the other type.
++	 */
++	rte_atomic_store_explicit(&ht->tail, new_val, rte_memory_order_release);
++}
++
++/**
++ * @internal This is a helper function that moves the producer/consumer head
++ *
++ *
++ * This optimized version for single threaded case.
++ *
++ * @param d
++ *   A pointer to the headtail structure with head value to be moved
++ * @param s
++ *   A pointer to the counter-part headtail structure. Note that this
++ *   function only reads tail value from it
++ * @param capacity
++ *   Either ring capacity value (for producer), or zero (for consumer)
++ * @param n
++ *   The number of elements we want to move head value on
++ * @param behavior
++ *   RTE_RING_QUEUE_FIXED:    Move on a fixed number of items
++ *   RTE_RING_QUEUE_VARIABLE: Move on as many items as possible
++ * @param old_head
++ *   Returns head value as it was before the move
++ * @param new_head
++ *   Returns the new head value
++ * @param entries
++ *   Returns the number of ring entries available BEFORE head was moved
++ * @return
++ *   Actual number of objects the head was moved on
++ *   If behavior == RTE_RING_QUEUE_FIXED, this will be 0 or n only
++ */
++static __rte_always_inline unsigned int
++__rte_ring_headtail_move_head_st(struct rte_ring_headtail *d,
++		const struct rte_ring_headtail *s, uint32_t capacity,
++		unsigned int n, enum rte_ring_queue_behavior behavior,
++		uint32_t *old_head, uint32_t *new_head, uint32_t *entries)
++{
++	uint32_t stail;
++
++	/*
++	 * A0: Establishes a synchronizing edge with R1.
++	 * Ensure that this thread observes same values
++	 * to stail observed by the thread that updated
++	 * d->head.
++	 * If not, an unsafe partial order may ensue.
++	 */
++	*old_head = rte_atomic_load_explicit(&d->head, rte_memory_order_acquire);
++
++	/*
++	 * A1: Establishes a synchronizing edge with R0.
++	 * Ensures that other thread's memory effects on
++	 * ring elements array is observed by the time
++	 * this thread observes its tail update.
++	 */
++	stail = rte_atomic_load_explicit(&s->tail, rte_memory_order_acquire);
++
++	/* The subtraction is done between two unsigned 32bits value
++	 * (the result is always modulo 32 bits even if we have
++	 * *old_head > s->tail). So 'entries' is always between 0
++	 * and capacity (which is < size).
++	 */
++	*entries = capacity + stail - *old_head;
++
++	/* check that we have enough room in ring */
++	if (unlikely(n > *entries))
++		n = (behavior == RTE_RING_QUEUE_FIXED) ? 0 : *entries;
++
++	if (n > 0) {
++		*new_head = *old_head + n;
++		d->head = *new_head;
++	}
++
++	return n;
++}
++
++/* There are two choices because GCC optimizer does poorly on atomic_compare_exchange */
++#if defined(RTE_TOOLCHAIN_GCC) && defined(RTE_ARCH_X86)
++#include "rte_ring_x86_pvt.h"
+ #else
+-#include "rte_ring_generic_pvt.h"
++#include "rte_ring_c11_pvt.h"
+ #endif
+ 
+ /**
+@@ -341,8 +432,12 @@ __rte_ring_move_prod_head(struct rte_ring *r, unsigned int is_sp,
+ 		uint32_t *old_head, uint32_t *new_head,
+ 		uint32_t *free_entries)
+ {
+-	return __rte_ring_headtail_move_head(&r->prod, &r->cons, r->capacity,
+-			is_sp, n, behavior, old_head, new_head, free_entries);
++	if (is_sp)
++		return __rte_ring_headtail_move_head_st(&r->prod, &r->cons, r->capacity,
++				n, behavior, old_head, new_head, free_entries);
++	else
++		return __rte_ring_headtail_move_head_mt(&r->prod, &r->cons, r->capacity,
++				n, behavior, old_head, new_head, free_entries);
+ }
+ 
+ /**
+@@ -374,8 +469,12 @@ __rte_ring_move_cons_head(struct rte_ring *r, unsigned int is_sc,
+ 		uint32_t *old_head, uint32_t *new_head,
+ 		uint32_t *entries)
+ {
+-	return __rte_ring_headtail_move_head(&r->cons, &r->prod, 0,
+-			is_sc, n, behavior, old_head, new_head, entries);
++	if (is_sc)
++		return __rte_ring_headtail_move_head_st(&r->cons, &r->prod, 0,
++				n, behavior, old_head, new_head, entries);
++	else
++		return __rte_ring_headtail_move_head_mt(&r->cons, &r->prod, 0,
++				n, behavior, old_head, new_head, entries);
+ }
+ 
+ /**
+diff --git a/lib/ring/rte_ring_generic_pvt.h b/lib/ring/rte_ring_x86_pvt.h
+similarity index 60%
+rename from lib/ring/rte_ring_generic_pvt.h
+rename to lib/ring/rte_ring_x86_pvt.h
+index affd2d5ba7..c8de108bbd 100644
+--- a/lib/ring/rte_ring_generic_pvt.h
++++ b/lib/ring/rte_ring_x86_pvt.h
+@@ -7,39 +7,19 @@
+  * Used as BSD-3 Licensed with permission from Kip Macy.
+  */
+ 
+-#ifndef _RTE_RING_GENERIC_PVT_H_
+-#define _RTE_RING_GENERIC_PVT_H_
++#ifndef _RTE_RING_X86_PVT_H_
++#define _RTE_RING_X86_PVT_H_
+ 
+ /**
+- * @file rte_ring_generic_pvt.h
++ * @file rte_ring_x86_pvt.h
+  * It is not recommended to include this file directly,
+  * include <rte_ring.h> instead.
+- * Contains internal helper functions for MP/SP and MC/SC ring modes.
+- * For more information please refer to <rte_ring.h>.
++ *
++ * Contains internal helper functions for MP and MC ring modes.
++ * It is GCC specific to workaround poor optimizer handling of C11 atomic
++ * compare_exchange.
+  */
+ 
+-/**
+- * @internal This function updates tail values.
+- */
+-static __rte_always_inline void
+-__rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
+-		uint32_t new_val, uint32_t single, uint32_t enqueue)
+-{
+-	if (enqueue)
+-		rte_smp_wmb();
+-	else
+-		rte_smp_rmb();
+-	/*
+-	 * If there are other enqueues/dequeues in progress that preceded us,
+-	 * we need to wait for them to complete
+-	 */
+-	if (!single)
+-		rte_wait_until_equal_32((volatile uint32_t *)(uintptr_t)&ht->tail, old_val,
+-			rte_memory_order_relaxed);
+-
+-	ht->tail = new_val;
+-}
+-
+ /**
+  * @internal This is a helper function that moves the producer/consumer head
+  *
+@@ -50,8 +30,6 @@ __rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
+  *   function only reads tail value from it
+  * @param capacity
+  *   Either ring capacity value (for producer), or zero (for consumer)
+- * @param is_st
+- *   Indicates whether multi-thread safe path is needed or not
+  * @param n
+  *   The number of elements we want to move head value on
+  * @param behavior
+@@ -68,14 +46,13 @@ __rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
+  *   If behavior == RTE_RING_QUEUE_FIXED, this will be 0 or n only
+  */
+ static __rte_always_inline unsigned int
+-__rte_ring_headtail_move_head(struct rte_ring_headtail *d,
++__rte_ring_headtail_move_head_mt(struct rte_ring_headtail *d,
+ 		const struct rte_ring_headtail *s, uint32_t capacity,
+-		unsigned int is_st, unsigned int n,
++		unsigned int n,
+ 		enum rte_ring_queue_behavior behavior,
+ 		uint32_t *old_head, uint32_t *new_head, uint32_t *entries)
+ {
+ 	unsigned int max = n;
+-	int success;
+ 
+ 	do {
+ 		/* Reset n to the initial burst count */
+@@ -83,18 +60,13 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
+ 
+ 		*old_head = d->head;
+ 
+-		/* add rmb barrier to avoid load/load reorder in weak
+-		 * memory model. It is noop on x86
+-		 */
+-		rte_smp_rmb();
+-
+ 		/*
+ 		 *  The subtraction is done between two unsigned 32bits value
+ 		 * (the result is always modulo 32 bits even if we have
+ 		 * *old_head > s->tail). So 'entries' is always between 0
+ 		 * and capacity (which is < size).
+ 		 */
+-		*entries = (capacity + s->tail - *old_head);
++		*entries = capacity + s->tail - *old_head;
+ 
+ 		/* check that we have enough room in ring */
+ 		if (unlikely(n > *entries))
+@@ -105,15 +77,10 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
+ 			return 0;
+ 
+ 		*new_head = *old_head + n;
+-		if (is_st) {
+-			d->head = *new_head;
+-			success = 1;
+-		} else
+-			success = rte_atomic32_cmpset(
+-					(uint32_t *)(uintptr_t)&d->head,
+-					*old_head, *new_head);
+-	} while (unlikely(success == 0));
++	} while (unlikely(!__sync_bool_compare_and_swap(
++				  (uint32_t *)(uintptr_t)&d->head,
++				  *old_head, *new_head)));
+ 	return n;
+ }
+ 
+-#endif /* _RTE_RING_GENERIC_PVT_H_ */
++#endif /* _RTE_RING_X86_PVT_H_ */
+diff --git a/lib/ring/soring.c b/lib/ring/soring.c
+index 3b90521bdb..0e8bbc03c1 100644
+--- a/lib/ring/soring.c
++++ b/lib/ring/soring.c
+@@ -135,9 +135,12 @@ __rte_soring_move_prod_head(struct rte_soring *r, uint32_t num,
+ 
+ 	switch (st) {
+ 	case RTE_RING_SYNC_ST:
++		n = __rte_ring_headtail_move_head_st(&r->prod.ht, &r->cons.ht,
++				r->capacity, num, behavior, head, next, free);
++		break;
+ 	case RTE_RING_SYNC_MT:
+-		n = __rte_ring_headtail_move_head(&r->prod.ht, &r->cons.ht,
+-			r->capacity, st, num, behavior, head, next, free);
++		n = __rte_ring_headtail_move_head_mt(&r->prod.ht, &r->cons.ht,
++				r->capacity, num, behavior, head, next, free);
+ 		break;
+ 	case RTE_RING_SYNC_MT_RTS:
+ 		n = __rte_ring_rts_move_head(&r->prod.rts, &r->cons.ht,
+@@ -168,9 +171,13 @@ __rte_soring_move_cons_head(struct rte_soring *r, uint32_t stage, uint32_t num,
+ 
+ 	switch (st) {
+ 	case RTE_RING_SYNC_ST:
++		n = __rte_ring_headtail_move_head_st(&r->cons.ht,
++			&r->stage[stage].ht, 0, num, behavior,
++			head, next, avail);
++		break;
+ 	case RTE_RING_SYNC_MT:
+-		n = __rte_ring_headtail_move_head(&r->cons.ht,
+-			&r->stage[stage].ht, 0, st, num, behavior,
++		n = __rte_ring_headtail_move_head_mt(&r->cons.ht,
++			&r->stage[stage].ht, 0, num, behavior,
+ 			head, next, avail);
+ 		break;
+ 	case RTE_RING_SYNC_MT_RTS:
 -- 
 2.53.0
 
