@@ -2,144 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C585CCD5BC8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 15:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D46BCD5BC8
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 16:00:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B70D5402AC;
-	Tue, 26 May 2026 17:47:42 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 58F1340290
- for <dev@dpdk.org>; Tue, 26 May 2026 17:47:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779810461; x=1811346461;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=zW+A8uIgZ3KmU4khVc+jufKJ4sCls1GuH+jfUlGUe6k=;
- b=SzWJG0YXMP/NYtEPPTa7XjpC6iIQ9VB/EYtOAvIZiAs1ATIZ2W5qgY7s
- ZhmqAkkrLcYyl6CCUBt4R9mJAL6/eVz6xOIasJXYprt2jT1cKnEvd8orq
- oBDQa1yi9izaINDcMzI/Z+vadqjjYQVNUTULOAaxZyQQ6+7e1pnueH1dB
- nTvNjanVs1fonIAHmBinb8w2kneOQ/B1ZVlwVhVrV7fnRbn1SzRee1VH0
- l8OdNoEzc/tfpDTIHgcelJkOOUWqKTDCE2GfFq5R9J/DurThhlcNvJBnN
- PlYOfeAP+TJozKKwN2D7HBGfTLy/UbPNMPHxNt3BXfrciw4SUXh5B6bw3 Q==;
-X-CSE-ConnectionGUID: tQ3kjYgaSEuoiO6AYDuB5Q==
-X-CSE-MsgGUID: +GAYqhdzQtGV3O56xXeIsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11797"; a="80354060"
-X-IronPort-AV: E=Sophos;i="6.24,170,1774335600"; d="scan'208,217";a="80354060"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 May 2026 08:47:40 -0700
-X-CSE-ConnectionGUID: zdx2Hi9vT6qQXytAWWo08A==
-X-CSE-MsgGUID: llW2V+SZQ2eL94Q34UT8VQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,170,1774335600"; 
- d="scan'208,217";a="243787129"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 May 2026 08:47:39 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 26 May 2026 08:47:38 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 26 May 2026 08:47:38 -0700
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.32)
- by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 26 May 2026 08:47:36 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GqNVKkCw6CuIV03OtjO9nFBNqVAkMNENlljXMpqOfnEKIO4qu+as9xtt7FHD7TgXHy7NK+ZJpSBopnUTDtOQvXsqnQ7ry5ymgpzaZi0bYgNjdlJO1QV9V6S0j2qLbvJjUBD7Xks0vLUmTHQfOgKRsLlpNv3bRjlYQPviPI3VYaGGxqxBPmYV6eQDE8iiU+7R5mfO3CUZ7JGxfEP1kqRes0YzCd+h/8kl3C3+X7lwwnzVowybFKcxOhL6KxVc1h7aK4p1KgaUcrM2Zouzp3zhVeybuN1aQm6h+qJv6TxO6rxKKq43+WpM26HQ3zC/GsoDBP6vAI7I5VKG6WfkBaZ96w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B92qsivLSqkgP3hJL7YfYhbjUCWdVScRbdd6dkwNgp4=;
- b=hfDq1sVFMAZ4+vkF0Nhb7qPZToytuzDtkkZwQ0aoWT5ZBDb3l3Y9+LhLI0oen6r9oqLvRgSAEySWzI5bRF3lSA3+i7gR50hULM+s8FViD9Nb8lwLkuIgqXy3Eb4C8/odvhXR1cC+S0Xrq+alxE3+X3+5GVAW+FwRXXWt5Qk/PwXGgKLBjEZOCZAUfzLI0QPzObm0828GXNfZw6jTlB2wuyIDeGoeV670qh0cZYdPasqds7MM3uUp80L/vevhE3J/JwegEPCmL31raXqSZ1IuYP0kFIligT64Lz4egnBGL7NJ4isILoRrDItJh5iEBgDHiv18IlCgDl5ndpyJa2TnMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY5PR11MB6318.namprd11.prod.outlook.com (2603:10b6:930:3e::5)
- by SA0PR11MB7157.namprd11.prod.outlook.com (2603:10b6:806:24b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.20; Tue, 26 May
- 2026 15:47:33 +0000
-Received: from CY5PR11MB6318.namprd11.prod.outlook.com
- ([fe80::f4a9:9b9e:f0ee:84e]) by CY5PR11MB6318.namprd11.prod.outlook.com
- ([fe80::f4a9:9b9e:f0ee:84e%6]) with mapi id 15.21.0071.011; Tue, 26 May 2026
- 15:47:33 +0000
-From: "Mcnamara, John" <john.mcnamara@intel.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-CC: Thomas Monjalon <thomas@monjalon.net>, David Marchand
- <david.marchand@redhat.com>
-Subject: DPDK Release Status Meeting 2026-05-26
-Thread-Topic: DPDK Release Status Meeting 2026-05-26
-Thread-Index: AQHc7SbOPITeawl0PEWSJsXr1vc73w==
-Date: Tue, 26 May 2026 15:47:33 +0000
-Message-ID: <CY5PR11MB6318F4CC1826A7264EA92309FC0B2@CY5PR11MB6318.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
+	by mails.dpdk.org (Postfix) with ESMTP id 31898402AC;
+	Tue, 26 May 2026 18:00:56 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 094E740290
+ for <dev@dpdk.org>; Tue, 26 May 2026 18:00:55 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B735A20A2F;
+ Tue, 26 May 2026 18:00:54 +0200 (CEST)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v6] mempool: improve cache behaviour and performance
+Date: Tue, 26 May 2026 18:00:51 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6589E@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260526140000.175092-1-mb@smartsharesystems.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR11MB6318:EE_|SA0PR11MB7157:EE_
-x-ms-office365-filtering-correlation-id: fca084f6-0c60-4547-86b3-08debb3e1a6b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|8096899003|18002099003|56012099003|38070700021|11063799006|5023799004;
-x-microsoft-antispam-message-info: Ecytb8KAOS+QC0p3XrjUSdF2I+WzSBfmqHE9QUjb7NNQCecFyUuOhWFA2j0glSEOSHX6ZcJG+TBKfMGzDD4J1THGZ+0C4ZH0pzwV/Bjud+Y2xl4NE9m+ns2JB2lFWKJapKzrSbh/qZ+b0wn1Q0hn3s+bX0kAO0YRc2mbtrQ7uR6YPw+4rriAQGVxs+Y1mEiaQT7dCL+LTWiHC26YLx3IbpOdpUMheCZwjbUbNswzDRh78j+E6fPPA1fNUzKbAyVFgYcJh1azMKf3p5aPjC1Xem2PwP8kIpFF+joYEktfpgfSWCmDf+dDzgFfu5Jho0UKiBun03GzGJJElsJYjIfiIEBMDqAzEaufwlHrM45YBL4czbzzngamB9Xl3yPvoqS2UmwMuCYlAEtuLULJctBj3VDV/l32KFYwjtUnyIMTVnEkScL1BSOXLz41MSMLzOphAUZfA3dn2bQDqoBGhsjeDbU7nq5ACjHPmOSY0EojbtLJTIwjczrnl9t6KQHoZma7ZPCrzD6x3ZtKKbjq9oslQbpNkgdXRAb1qkptitMbwPWztW4ZbCM2Al8ZC3pqcjZTk/QCXj3UY+tCgfo4orI0IFCq89BNQimkL1yGgLV6ZeL11pd6xPI8W68T9tCHTMT0Vz3rAf3xsY7vdtOPWz2kONkQ5PYEHGYgjNUIA2wgZ16REwFO+/NS/vz8WzspCXkKDqrwsI01HNJUJrkTs64TLw==
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY5PR11MB6318.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(8096899003)(18002099003)(56012099003)(38070700021)(11063799006)(5023799004);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?nwqnASliuUE6FRRMuFr5DWL+iFOYH+S8Ch2qbwLeA9JhGLtIaitDGuti95?=
- =?iso-8859-1?Q?8/u7PIH/b+i+EZYrMbxNyTksaPem5buWFUf/hQ9fyDP7DmK/Z0xT9Hl+dz?=
- =?iso-8859-1?Q?bi6q4sSSou17mmdtMxFKHIiptB2tKsx6S/PJ1ZuwgHcvbbFMyMOA9hcuVq?=
- =?iso-8859-1?Q?5L5ZOQAD+B3yTxEaUOeILKUh61GSJ2EXYtnCTl/vDxPAzXy0IhyiUbKn6c?=
- =?iso-8859-1?Q?E+Ptcfdi522cVul2qcEejWhA1hv0EkTL/7ADODS07oiorU1V4VzaWcAe8f?=
- =?iso-8859-1?Q?a2Ci2QkyA8dXqmdMGxD51xsry+pc5mCDHbrXsC6PBZZMaYKDhY4NuQ0ANC?=
- =?iso-8859-1?Q?w2+1szc9m8shIGz+pge1HkkXwayZhvp4i/8uhqiup6KkEmHcQa9JSyYaDx?=
- =?iso-8859-1?Q?EUk0/7NdzY6qdmNVPsyuiORtCcLbfTruq6Eq9YLoq3ajc/jFE82Vw7ypYO?=
- =?iso-8859-1?Q?UBS/Nr1kh1LgK3FSdr2+LX5xw2boUijlw1Z874xUrtDe2cR3DEGen4Fext?=
- =?iso-8859-1?Q?2VurHT5EdJ1oDCDoSxN+zsylFRfS3QHhWe2jER1ic2kSEqBHQpQJIFrFNy?=
- =?iso-8859-1?Q?t7PsyzZSWsufEUwk36Se8eCdSP3f0mNX1/qEECRQTKGmiNP1NurF7VIdoJ?=
- =?iso-8859-1?Q?AOUB/15SjmMi90JJPpbJ5t0U+ewNe7Xs/VPiZsVwFGJ3eVL5Qv60rf3iZr?=
- =?iso-8859-1?Q?AzY8fvoFIlTozQ26Fwe7k+TARInvEAwBnWbYCVxneb51UT+qblPgjWl1m2?=
- =?iso-8859-1?Q?LKZMQ5yUZFlxQCyM9OQIPlv+FTfwGMbc/QxGucVNpecNCmpxaA8jMUzweZ?=
- =?iso-8859-1?Q?D6PiL1YuyWPmX7F5hviAPiE3JXeq+sEj79EZaGPgogic1GSyAoTU3WfQtm?=
- =?iso-8859-1?Q?1QcdYTDWzwFBw5OY+rNwhWjr8opIs+PB/VsuabQIt+QbhQAxH0NbI8+jTU?=
- =?iso-8859-1?Q?QGAcFwogMtGnZtvNAV0Stxp+t2IQSyuI515TyiVo18DpNuSSj1ZTEIL4u4?=
- =?iso-8859-1?Q?t10X8yghr11TCwEiqKAxuvNGr6vY3GdTmToDQNQpe+8bLYdlWSpWF09OTQ?=
- =?iso-8859-1?Q?YHy/btcL57ej8SodYZfOlTRdPVMjDmQEhjpwVTdlwInSHCSrG/oSXjf93R?=
- =?iso-8859-1?Q?juRHlgj9WthnWpCW94BHOgJNX9zBWaBPLvACpXdaiEeyLwC//Qp4zfaDuE?=
- =?iso-8859-1?Q?/NdrH6/TqX5PhVB3QJkSIAAJizevb3w/a+Z8b97n8+l2WkSSt26OnENbTi?=
- =?iso-8859-1?Q?untr8ypqbwgnVcBXtAMAPS55bAMxdO9/hFgkWJofY+zqWnYt2dUgLH5eNB?=
- =?iso-8859-1?Q?nSK15gr21rrlsu9P3PZS782XCt0sGTLrmW47M9aWIwKcI4W2z/Rqa7P9Vc?=
- =?iso-8859-1?Q?wzZM/pqlK6woL74yxEa5DO3Y7shWh2whpBrnYwZwaI/zrFvwO3qQLIKE58?=
- =?iso-8859-1?Q?8nf52wKYpTuTmTzs6q/6CTuAWoS96b/Fz0no1oKidJiYOaJWSrQyhH5234?=
- =?iso-8859-1?Q?GQUDyMMsJe5ASdy1ulTBP+WXaZH1M8aFb4vhNVFWw0Ji/qHamLpfXPnZpp?=
- =?iso-8859-1?Q?QzMV1psF3ze7cgYBCjw7668kbIdC9tkvRUt1mBa4/wu1wlO8SKO4o7Vsrh?=
- =?iso-8859-1?Q?uOAj3a2BljmI+UtB6eOgv/gFCV402j8WhbBO04IuUOYR+pQD6f+RiYoaM4?=
- =?iso-8859-1?Q?L/2WlxiP7gMvpjQ/b0Drn4WOIWpeCDAAhAEL/2eTOZWMhAIw59eBoGHmnQ?=
- =?iso-8859-1?Q?l/Uy/JmeYm1m18r8Z0rz41zQ/Paf+K3x6zSwDZ7wp763Xd?=
-Content-Type: multipart/alternative;
- boundary="_000_CY5PR11MB6318F4CC1826A7264EA92309FC0B2CY5PR11MB6318namp_"
-MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: giWZaxc6RtgbbP6kDYCM+4XHFuWAC2UVCQ5ZpHXWcJMiANb185YeBUInt+HuP8OP3x2ljC6L612jKV/e7r4yXvGFumMyG2DyaXftGMZ2jzXd23pxJe+HU+1KSBnoW8S2QSPJShAPqsuwkhCl66RHGMGVOV32oJjOQpw+dbqHhOd1Uuc/haasVE511rySSXFqbUDSPWEYYDtGbAGoavkdA3NRlTFYXQGcHulmyhkoIjuYFX3HN2Vo24cMa8s2e/QMEM/cJeEbBHVlXfntD+Dt/5iLm9U+658XTLR+l1Rcxh1jizVuzQasYGOgDTT2y8dUiI0laJ5ECOhQMcrjsMZbAg==
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6318.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fca084f6-0c60-4547-86b3-08debb3e1a6b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2026 15:47:33.8605 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Vt9rhoOJHUGBAA0UmKnkPZUQmllQ61tLNQpyraoUOhkC0qw5GUQKXKDPW8qgRkI7sQfZoffaOvo2baeWgyVvrQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB7157
-X-OriginatorOrg: intel.com
+Thread-Topic: [PATCH v6] mempool: improve cache behaviour and performance
+Thread-Index: AdztF/UFMF9S+DI1SnKDPxzbMsQRVgAEICpQ
+References: <20260408141315.904381-1-mb@smartsharesystems.com>
+ <20260526140000.175092-1-mb@smartsharesystems.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>, "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Jingjing Wu" <jingjing.wu@intel.com>,
+ "Praveen Shetty" <praveen.shetty@intel.com>,
+ "Hemant Agrawal" <hemant.agrawal@nxp.com>,
+ "Sachin Saxena" <sachin.saxena@oss.nxp.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -153,602 +51,293 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_CY5PR11MB6318F4CC1826A7264EA92309FC0B2CY5PR11MB6318namp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-Release status meeting minutes 2026-05-26
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Agenda:
-- Release Dates
-- Subtrees
-- Roadmaps
-- LTS
-- Defects
-- Opens
-
-Participants:
-- ARM [No]
-- Broadcom
-- Debian [No]
-- Intel
-- Marvell
-- Nvidia
-- Red Hat [No]
-- Stephen Hemminger
-
-Release Dates
--------------
-
-The following are the proposed working dates for 27.03:
-
-| Date            | Milestone        | Description                     |
-|-----------------|------------------|---------------------------------|
-| 30 April 2026   | RFC/v1 patches   | Proposal deadline               |
-| 04 June 2026    | 26.07-rc1        | API freeze                      |
-| 25 June 2026    | 26.07-rc2        | PMD features freeze             |
-| 02 July 2026    | 26.07-rc3        | Builtin apps features freeze    |
-| 9 July 2026     | 26.07-rc4        | Documentation ready             |
-| 16 July 2026    | 26.07.0          | Release                         |
-
-
-See https://core.dpdk.org/roadmap/
-
-
-Subtrees
---------
-
-- next-net
-  - 69 patches pending for merge.
-  - 12 patches in review/waiting.
-
-- next-net-intel
-  - 100 patches in queue.
-  - 12 patches in backlog + large patch for rte_flow rework.
-
-- next-net-mlx
-  - No update.
-
-- next-broadcom
-  - Nothing pushed yet.
-  - ~20 patches in backlog.
-
-- next-net-mvl
-  - No update.
-
-- next-eventdev
-  - No update.
-
-- next-baseband
-  - No update.
-
-- next-virtio
-  - Series for ASID under review.
-
-- next-crypto
-  - Nothing pushed yet.
-  - ~10 patches in backlog.
-
-- next-dts
-  - No update.
-
-- main
-  - New version of BUS drivers refactoring series.
-  - Looking at EAL patches. Large patchset on atomic deprecations.
-  - Merging going on for RC1.
-  - RC1 deadline 4 June 2026
-
-
-Other
------
-  - None.
-
-LTS
----
-
-See also: https://core.dpdk.org/roadmap/#stable
-
-LTS versions ongoing/released:
-
-- 25.11.1 - Released + regression fix on 25.11.2.
-- 24.11.5 - Released + regression fix on 24.11.6.
-- 23.11.7 - Released.
-
-Older releases:
-- 20.11.10 - Will only be updated with CVE and critical fixes.
-- 19.11.14 - Will only be updated with CVE and critical fixes.
-
-- Distros
-  - Debian 13 contains DPDK v24.11
-  - Ubuntu 25.04 contains DPDK v24.11
-  - Ubuntu 24.04 LTS contains DPDK v23.11
-  - RHEL 9 contains DPDK 24.11
-
-Defects
--------
-
-- Bugzilla links, 'Bugs',  added for hosted projects
-  - https://www.dpdk.org/hosted-projects/
-
-
-
-DPDK Release Status Meetings
-----------------------------
-
-The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
-the
-status of the main tree and sub-trees, and for project managers to track
-progress or milestone dates.
-
-The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
-.jit.si/DPDK
-
-You don't need an invite to join the meeting but if you want a calendar rem=
-inder just
-send an email to "John McNamara <john.mcnamara@intel.com>" for the invite.
-
-
-
---_000_CY5PR11MB6318F4CC1826A7264EA92309FC0B2CY5PR11MB6318namp_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-Release status meeting minutes 2026-05-26</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-Agenda:</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Release Dates</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Subtrees</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Roadmaps</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- LTS</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Defects</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Opens</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-Participants:</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- ARM [No]</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Broadcom</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Debian [No]</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Intel</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Marvell</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Nvidia</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Red Hat [No]</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Stephen Hemminger</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-Release Dates</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
--------------</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-The following are the proposed working dates for 27.03:</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-| Date &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Milestone &nbsp; &nbsp; &=
-nbsp; &nbsp;| Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =
-&nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-|-----------------|------------------|---------------------------------|</d=
-iv>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-| 30 April 2026 &nbsp; | RFC/v1 patches &nbsp; | Proposal deadline &nbsp; &=
-nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-| 04 June 2026 &nbsp; &nbsp;| 26.07-rc1 &nbsp; &nbsp; &nbsp; &nbsp;| API fr=
-eeze &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =
-&nbsp;|</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-| 25 June 2026 &nbsp; &nbsp;| 26.07-rc2 &nbsp; &nbsp; &nbsp; &nbsp;| PMD fe=
-atures freeze &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-| 02 July 2026 &nbsp; &nbsp;| 26.07-rc3 &nbsp; &nbsp; &nbsp; &nbsp;| Builti=
-n apps features freeze &nbsp; &nbsp;|</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-| 9 July 2026 &nbsp; &nbsp; | 26.07-rc4 &nbsp; &nbsp; &nbsp; &nbsp;| Docume=
-ntation ready &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-| 16 July 2026 &nbsp; &nbsp;| 26.07.0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| R=
-elease &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp=
-; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-See https://core.dpdk.org/roadmap/</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-Subtrees</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
---------</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 69 patches pending for merge.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 12 patches in review/waiting.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net-intel</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 100 patches in queue.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 12 patches in backlog + large patch for rte_flow rework.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net-mlx</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-broadcom</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Nothing pushed yet.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - ~20 patches in backlog.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net-mvl</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-eventdev</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-baseband</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-virtio</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Series for ASID under review.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-crypto</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Nothing pushed yet.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - ~10 patches in backlog.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-dts</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- main</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - New version of BUS drivers refactoring series.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Looking at EAL patches. Large patchset on atomic deprecations.</di=
-v>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Merging going on for RC1.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - RC1 deadline 4 June 2026</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-Other</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
------</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - None.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-LTS</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
----</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-See also: https://core.dpdk.org/roadmap/#stable</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-LTS versions ongoing/released:</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- 25.11.1 - Released + regression fix on 25.11.2.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- 24.11.5 - Released + regression fix on 24.11.6.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- 23.11.7 - Released.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-Older releases:</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- 20.11.10 - Will only be updated with CVE and critical fixes.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- 19.11.14 - Will only be updated with CVE and critical fixes.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Distros</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Debian 13 contains DPDK v24.11</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Ubuntu 25.04 contains DPDK v24.11</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Ubuntu 24.04 LTS contains DPDK v23.11</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - RHEL 9 contains DPDK 24.11</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-Defects</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
--------</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-- Bugzilla links, 'Bugs', &nbsp;added for hosted projects</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - https://www.dpdk.org/hosted-projects/</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-DPDK Release Status Meetings</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-----------------------------</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
-the</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-status of the main tree and sub-trees, and for project managers to track</d=
-iv>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-progress or milestone dates.</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
-.jit.si/DPDK</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-You don't need an invite to join the meeting but if you want a calendar rem=
-inder just</div>
-<div class=3D"elementToProof" style=3D"font-family: Consolas, Courier, mono=
-space; font-size: 11pt; color: rgb(0, 0, 0);">
-send an email to &quot;John McNamara &lt;john.mcnamara@intel.com&gt;&quot; =
-for the invite.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-</body>
-</html>
-
---_000_CY5PR11MB6318F4CC1826A7264EA92309FC0B2CY5PR11MB6318namp_--
+PiBGcm9tOiBNb3J0ZW4gQnLDuHJ1cCBbbWFpbHRvOm1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbV0N
+Cj4gU2VudDogVHVlc2RheSwgMjYgTWF5IDIwMjYgMTYuMDANCj4gDQo+IFRoaXMgcGF0Y2ggcmVm
+YWN0b3JzIHRoZSBtZW1wb29sIGNhY2hlIHRvIGVsaW1pbmF0ZSBzb21lIHVuZXhwZWN0ZWQNCj4g
+YmVoYXZpb3VyIGFuZCByZWR1Y2UgdGhlIG1lbXBvb2wgY2FjaGUgbWlzcyByYXRlLg0KPiANCj4g
+MS4NCj4gVGhlIGFjdHVhbCBjYWNoZSBzaXplIHdhcyAxLjUgdGltZXMgdGhlIGNhY2hlIHNpemUg
+c3BlY2lmaWVkIGF0IHJ1bi0NCj4gdGltZQ0KPiBtZW1wb29sIGNyZWF0aW9uLg0KPiBUaGlzIHdh
+cyBvYnZpb3VzbHkgbm90IGV4cGVjdGVkIGJ5IGFwcGxpY2F0aW9uIGRldmVsb3BlcnMuDQo+IA0K
+PiAyLg0KPiBJbiBnZXQgb3BlcmF0aW9ucywgdGhlIGNoZWNrIGZvciB3aGVuIHRvIHVzZSB0aGUg
+Y2FjaGUgYXMgYm91bmNlIGJ1ZmZlcg0KPiBkaWQgbm90IHJlc3BlY3QgdGhlIHJ1bi10aW1lIGNv
+bmZpZ3VyZWQgY2FjaGUgc2l6ZSwNCj4gYnV0IGNvbXBhcmVkIHRvIHRoZSBidWlsZCB0aW1lIG1h
+eGltdW0gcG9zc2libGUgY2FjaGUgc2l6ZQ0KPiAoUlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJWkUs
+IGRlZmF1bHQgNTEyKS4NCj4gRS5nLiB3aXRoIGEgY29uZmlndXJlZCBjYWNoZSBzaXplIG9mIDMy
+IG9iamVjdHMsIGdldHRpbmcgMjU2IG9iamVjdHMNCj4gd291bGQgZmlyc3QgZmV0Y2ggMzIgKyAy
+NTYgPSAyODggb2JqZWN0cyBpbnRvIHRoZSBjYWNoZSwNCj4gYW5kIHRoZW4gbW92ZSB0aGUgMjU2
+IG9iamVjdHMgZnJvbSB0aGUgY2FjaGUgdG8gdGhlIGRlc3RpbmF0aW9uIG1lbW9yeSwNCj4gaW5z
+dGVhZCBvZiBmZXRjaGluZyB0aGUgMjU2IG9iamVjdHMgZGlyZWN0bHkgdG8gdGhlIGRlc3RpbmF0
+aW9uIG1lbW9yeS4NCj4gVGhpcyBoYWQgYSBwZXJmb3JtYW5jZSBjb3N0Lg0KPiBIb3dldmVyLCB0
+aGlzIGlzIHVubGlrZWx5IHRvIG9jY3VyIGluIHJlYWwgYXBwbGljYXRpb25zLCBzbyBpdCBpcyBu
+b3QNCj4gaW1wb3J0YW50IGluIGl0c2VsZi4NCj4gDQo+IDMuDQo+IFdoZW4gcHV0dGluZyBvYmpl
+Y3RzIGludG8gYSBtZW1wb29sLCBhbmQgdGhlIG1lbXBvb2wgY2FjaGUgZGlkIG5vdCBoYXZlDQo+
+IGZyZWUgc3BhY2UgZm9yIHNvIG1hbnkgb2JqZWN0cywNCj4gdGhlIGNhY2hlIHdhcyBmbHVzaGVk
+IGNvbXBsZXRlbHksIGFuZCB0aGUgbmV3IG9iamVjdHMgd2VyZSB0aGVuIHB1dA0KPiBpbnRvDQo+
+IHRoZSBjYWNoZS4NCj4gSS5lLiB0aGUgY2FjaGUgZHJhaW4gbGV2ZWwgd2FzIHplcm8uDQo+IFRo
+aXMgKGNvbXBsZXRlIGNhY2hlIGZsdXNoKSBtZWFudCB0aGF0IGEgc3Vic2VxdWVudCBnZXQgb3Bl
+cmF0aW9uICh3aXRoDQo+IHRoZSBzYW1lIG51bWJlciBvZiBvYmplY3RzKSBjb21wbGV0ZWx5IGVt
+cHRpZWQgdGhlIGNhY2hlLA0KPiBzbyBhbm90aGVyIHN1YnNlcXVlbnQgZ2V0IG9wZXJhdGlvbiBy
+ZXF1aXJlZCByZXBsZW5pc2hpbmcgdGhlIGNhY2hlLg0KPiANCj4gU2ltaWxhcmx5LA0KPiBXaGVu
+IGdldHRpbmcgb2JqZWN0cyBmcm9tIGEgbWVtcG9vbCwgYW5kIHRoZSBtZW1wb29sIGNhY2hlIGRp
+ZCBub3QgaG9sZA0KPiBzbw0KPiBtYW55IG9iamVjdHMsDQo+IHRoZSBjYWNoZSB3YXMgcmVwbGVu
+aXNoZWQgdG8gY2FjaGUtPnNpemUgKyByZW1haW5pbmcgb2JqZWN0cywNCj4gYW5kIHRoZW4gKHRo
+ZSByZW1haW5pbmcgcGFydCBvZikgdGhlIHJlcXVlc3RlZCBvYmplY3RzIHdlcmUgZmV0Y2hlZCB2
+aWENCj4gdGhlIGNhY2hlLA0KPiB3aGljaCBsZWZ0IHRoZSBjYWNoZSBmaWxsZWQgKHRvIGNhY2hl
+LT5zaXplKSBhdCBjb21wbGV0aW9uLg0KPiBJLmUuIHRoZSBjYWNoZSByZWZpbGwgbGV2ZWwgd2Fz
+IGNhY2hlLT5zaXplIChwbHVzIHNvbWUsIGRlcGVuZGluZyBvbg0KPiByZXF1ZXN0IHNpemUpLg0K
+PiANCj4gKDEpIHdhcyBpbXByb3ZlZCBieSBnZW5lcmFsbHkgY29tcGFyaW5nIHRvIGNhY2hlLT5z
+aXplIGluc3RlYWQgb2YNCj4gY2FjaGUtPmZsdXNodGhyZXNoLCB3aGVuIGNvbnNpZGVyaW5nIHRo
+ZSBjYXBhY2l0eSBvZiB0aGUgY2FjaGUuDQo+IFRoZSBjYWNoZS0+Zmx1c2h0aHJlc2ggZmllbGQg
+aXMga2VwdCBmb3IgQVBJL0FCSSBjb21wYXRpYmlsaXR5DQo+IHB1cnBvc2VzLA0KPiBhbmQgaW5p
+dGlhbGl6ZWQgdG8gY2FjaGUtPnNpemUgaW5zdGVhZCBvZiBjYWNoZS0+c2l6ZSAqIDEuNS4NCj4g
+DQo+ICgyKSB3YXMgaW1wcm92ZWQgYnkgZ2VuZXJhbGx5IGNvbXBhcmluZyB0byBjYWNoZS0+c2l6
+ZSAvIDIgaW5zdGVhZCBvZg0KPiBSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRSwgd2hlbiBjaGVj
+a2luZyB0aGUgYm91bmNlIGJ1ZmZlciBsaW1pdC4NCj4gDQo+ICgzKSB3YXMgaW1wcm92ZWQgYnkg
+Zmx1c2hpbmcgYW5kIHJlcGxlbmlzaGluZyB0aGUgY2FjaGUgYnkgaGFsZiBpdHMNCj4gc2l6ZSwN
+Cj4gc28gYSBmbHVzaC9yZWZpbGwgY2FuIGJlIGZvbGxvd2VkIHJhbmRvbWx5IGJ5IGdldCBvciBw
+dXQgcmVxdWVzdHMuDQo+IFRoaXMgYWxzbyByZWR1Y2VkIHRoZSBudW1iZXIgb2Ygb2JqZWN0cyBp
+biBlYWNoIGZsdXNoL3JlZmlsbCBvcGVyYXRpb24uDQo+IA0KPiBBcyBhIGNvbnNlcXVlbmNlIG9m
+IHRoZXNlIGNoYW5nZXMsIHRoZSBzaXplIG9mIHRoZSBhcnJheSBob2xkaW5nIHRoZQ0KPiBvYmpl
+Y3RzIGluIHRoZSBjYWNoZSAoY2FjaGUtPm9ianNbXSkgbm8gbG9uZ2VyIG5lZWRzIHRvIGJlDQo+
+IDIgKiBSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRSwgYW5kIGNhbiBiZSByZWR1Y2VkIHRvDQo+
+IFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFIGF0IGFuIEFQSS9BQkkgYnJlYWtpbmcgcmVsZWFz
+ZS4NCj4gDQo+IFBlcmZvcm1hbmNlIGRhdGE6DQo+IFdpdGggYSByZWFsIFdBTiBPcHRpbWl6YXRp
+b24gYXBwbGljYXRpb24sIHdoZXJlIHRoZSBudW1iZXIgb2YgYWxsb2NhdGVkDQo+IHBhY2tldHMg
+dmFyaWVzIChhcyB0aGV5IGFyZSBoZWxkIGluIGUuZy4gc2hhcGVyIHF1ZXVlcyksIHRoZSBtZW1w
+b29sDQo+IGNhY2hlIG1pc3MgcmF0ZSBkcm9wcGVkIGZyb20gY2EuIDEvMjAgb2JqZWN0cyB0byBj
+YS4gMS80OCBvYmplY3RzLg0KPiBUaGlzIHdhcyBkZXBsb3llZCBpbiBwcm9kdWN0aW9uIGF0IGFu
+IElTUCwgYW5kIHVzaW5nIGFuIGVmZmVjdGl2ZSBjYWNoZQ0KPiBzaXplIG9mIDM4NCBvYmplY3Rz
+Lg0KPiANCj4gQnVnemlsbGEgSUQ6IDEwMjcNCj4gRml4ZXM6IGVhNWRkMjc0NGI5MCAoIm1lbXBv
+b2w6IGNhY2hlIG9wdGltaXNhdGlvbnMiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLDuHJ1
+cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KDQpGb3Jnb3QgY2FycnlpbmcgYW4gQWNrIG92
+ZXIgZnJvbSB2NToNCkFja2VkLWJ5OiBBbmRyZXcgUnliY2hlbmtvIDxhbmRyZXcucnliY2hlbmtv
+QG9rdGV0bGFicy5ydT4NCg0KPiAtLS0NCj4gRGVwZW5kcy1vbjogcGF0Y2gtMTYzMTgxICgibmV0
+L2ludGVsOiBkbyBub3QgYnlwYXNzIG1idWYgbGliIGZvciBtYnVmDQo+IGZhc3QtZnJlZSIpDQoN
+ClRoaXMgZGVwZW5kZW5jeSBzZWVtcyB0byBjYXVzZSBDSSBhcHBseSBmYWlsdXJlcy4NClRoZSBk
+ZXBlbmRlbmN5IGlzIGJhc2VkIG9uIGFuIG9sZGVyIHNuYXBzaG90IG9mIG1haW4sDQphbmQgdGhp
+cyBwYXRjaCBpcyBiYXNlZCBvbiBhIG5ldyBzbmFwc2hvdCBvZiBtYWluLg0KDQo+IC0tLQ0KPiB2
+NjoNCj4gKiBNb3ZlZCBkcml2ZXIgY2hhbmdlcyBvdXQgYXMgc2VwYXJhdGUgcGF0Y2hlcywgZm9y
+IGVhc2llciByZXZpZXcuDQo+IChCcnVjZSkNCj4gICBUZXN0cyB1c2luZyB0aGUgSW50ZWwgaWRw
+ZiBQTUQgaW4gQVZYNTEyIG1vZGUgbWF5IGZhaWwgd2l0aCB0aGlzDQo+IHBhdGNoLg0KPiAqIFJl
+dmVydGVkIGEgc21hbGwgY29kZSBjb21tZW50IGNoYW5nZS4gVGhlIG9yaWdpbmFsIHdhcyBiZXR0
+ZXIuDQo+IChCcnVjZSkNCj4gKiBSZXZlcnRlZCBydGVfbWVtcG9vbF9jcmVhdGUoKSBkZXNjcmlw
+dGlvbiByZXF1aXJpbmcgdGhlIGNhY2hlX3NpemUgdG8NCj4gYmUNCj4gICBhbiBldmVuIG51bWJl
+ci4gVGhlcmUgaXMgbm8gc3VjaCByZXF1aXJlbWVudC4NCj4gdjU6DQo+ICogRmx1c2ggdGhlIGNh
+Y2hlIGZyb20gdGhlIGJvdHRvbSwgd2hlcmUgb2JqZWN0cyBhcmUgY29sZGVyLCBhbmQgbW92ZQ0K
+PiBkb3duDQo+ICAgdGhlIHJlbWFpbmluZyBvYmplY3RzLCB3aGljaCBhcmUgaG90dGVyLg0KPiAq
+IEluIHRoZSBJbnRlbCBpZHBmIFBNRCwgbW92ZSB1cCB0aGUgaG90IG9iamVjdHMgaW4gdGhlIGNh
+Y2hlIGFuZA0KPiByZWZpbGwNCj4gICB3aXRoIGNvbGQgb2JqZWN0cyBhdCB0aGUgYm90dG9tLg0K
+PiB2NDoNCj4gKiBBZGRlZCBCdWd6aWxsYSBJRC4NCj4gKiBBZGRlZCBGaXhlcyB0YWcuIEZvciBy
+ZWZlcmVuY2Ugb25seS4NCj4gKiBNb3ZlZCBmYXN0LWZyZWUgcmVsYXRlZCB1cGRhdGUgb2YgSW50
+ZWwgY29tbW9uIGRyaXZlciBvdXQgYXMgYQ0KPiBzZXBhcmF0ZQ0KPiAgIHBhdGNoLCBhbmQgZGVw
+ZW5kIG9uIHRoYXQgcGF0Y2guDQo+ICogT21pdHRlZCB1bnJlbGF0ZWQgY2hhbmdlcyB0byB0aGUg
+SW50ZWwgaWRwZiBBVlg1MTIgZHJpdmVyLA0KPiBzcGVjaWZpY2FsbHkNCj4gICBmaXhpbmcgYW4g
+aW5kZW50YXRpb24gYW5kIGFkZGluZyBtYnVmIGluc3RydW1lbnRhdGlvbi4NCj4gKiBPbWl0dGVk
+IHVucmVsYXRlZCBjaGFuZ2VzIHRvIHRoZSBtZW1wb29sIGxpYnJhcnksIHNwZWNpZmljYWxseSBh
+ZGRpbmcNCj4gICBfX3J0ZV9yZXN0cmljdCBhbmQgY2hhbmdpbmcgYSBjb3VwbGUgb2YgY29tbWVu
+dHMgdG8gcHJvcGVyIHNlbnRlbmNlcy4NCj4gKiBQbGVhc2UgY2hlY2twYXRjaGVzIGJ5IHN3YXBw
+aW5nIG9wZXJhdG9ycyBpbiBhIGNvdXBsZSBvZiBjb21wYXJpc29ucy4NCj4gdjM6DQo+ICogRml4
+ZWQgbXkgY29weS1wYXN0ZSBidWcgaW4gaWRwZl9zcGxpdHFfcmVhcm0oKS4NCj4gdjI6DQo+ICog
+Rml4ZWQgaXNzdWUgZm91bmQgYnkgYWJpZGlmZjoNCj4gICBSZXZlcnRlZCBjYWNoZSBvYmplY3Rz
+IGFycmF5IHNpemUgcmVkdWN0aW9uLiBBZGRlZCBhIG5vdGUgaW5zdGVhZC4NCj4gKiBBZGRlZCBt
+aXNzaW5nIG1idWYgaW5zdHJ1bWVudGF0aW9uIHRvIHRoZSBJbnRlbCBpZHBmIEFWWDUxMiBkcml2
+ZXIuDQo+ICogVXBkYXRlZCBpZHBmX3NwbGl0cV9yZWFybSgpIGxpa2UgaWRwZl9zaW5nbGVxX3Jl
+YXJtKCkuDQo+ICogQWRkZWQgYSBmZXcgbW9yZSBfX3J0ZV9hc3N1bWUoKS4gKEluc3BpcmVkIGJ5
+IEFJIHJldmlldykNCj4gKiBVcGRhdGVkIE5YUCBkcGFhIGFuZCBkcGFhMiBtZW1wb29sIGRyaXZl
+cnMgdG8gbm90IHNldCBtZW1wb29sIGNhY2hlDQo+ICAgZmx1c2ggdGhyZXNob2xkLg0KPiAqIEFk
+ZGVkIHJlbGVhc2Ugbm90ZXMuDQo+ICogQWRkZWQgZGVwcmVjYXRpb24gbm90ZXMuDQo+IC0tLQ0K
+PiAgZG9jL2d1aWRlcy9yZWxfbm90ZXMvZGVwcmVjYXRpb24ucnN0ICAgfCAgNyArKysNCj4gIGRv
+Yy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMDcucnN0IHwgMTEgKysrKysNCj4gIGxpYi9t
+ZW1wb29sL3J0ZV9tZW1wb29sLmMgICAgICAgICAgICAgIHwgMTQgKy0tLS0tDQo+ICBsaWIvbWVt
+cG9vbC9ydGVfbWVtcG9vbC5oICAgICAgICAgICAgICB8IDY2ICsrKysrKysrKysrKysrKystLS0t
+LS0tLS0tDQo+ICA0IGZpbGVzIGNoYW5nZWQsIDYxIGluc2VydGlvbnMoKyksIDM3IGRlbGV0aW9u
+cygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RvYy9ndWlkZXMvcmVsX25vdGVzL2RlcHJlY2F0aW9u
+LnJzdA0KPiBiL2RvYy9ndWlkZXMvcmVsX25vdGVzL2RlcHJlY2F0aW9uLnJzdA0KPiBpbmRleCAz
+NWM5YjRlMDZjLi40MDc2MGZmZmJiIDEwMDY0NA0KPiAtLS0gYS9kb2MvZ3VpZGVzL3JlbF9ub3Rl
+cy9kZXByZWNhdGlvbi5yc3QNCj4gKysrIGIvZG9jL2d1aWRlcy9yZWxfbm90ZXMvZGVwcmVjYXRp
+b24ucnN0DQo+IEBAIC0xNTQsMyArMTU0LDEwIEBAIERlcHJlY2F0aW9uIE5vdGljZXMNCj4gICog
+YnVzL3ZtYnVzOiBTdGFydGluZyBEUERLIDI1LjExLCBhbGwgdGhlIHZtYnVzIEFQSSBkZWZpbmVk
+IGluDQo+ICAgIGBgZHJpdmVycy9idXMvdm1idXMvcnRlX2J1c192bWJ1cy5oYGAgd2lsbCBiZWNv
+bWUgaW50ZXJuYWwgdG8gRFBESy4NCj4gICAgVGhvc2UgQVBJIGZ1bmN0aW9ucyBhcmUgdXNlZCBp
+bnRlcm5hbGx5IGJ5IERQREsgY29yZSBhbmQgbmV0dnNjIFBNRC4NCj4gKw0KPiArKiBtZW1wb29s
+OiBUaGUgYGBmbHVzaHRocmVzaGBgIGZpZWxkIGluIGBgc3RydWN0IHJ0ZV9tZW1wb29sX2NhY2hl
+YGANCj4gKyAgaXMgb2Jzb2xldGUsIGFuZCB3aWxsIGJlIHJlbW92ZWQgaW4gRFBESyAyNi4xMS4N
+Cj4gKw0KPiArKiBtZW1wb29sOiBUaGUgb2JqZWN0IGFycmF5IGluIGBgc3RydWN0IHJ0ZV9tZW1w
+b29sX2NhY2hlYGAgaXMNCj4gb3ZlcnNpemUgYnkNCj4gKyAgZmFjdG9yIHR3bywgYW5kIHdpbGwg
+YmUgcmVkdWNlZCB0byBgYFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFYGAgaW4NCj4gKyAgRFBE
+SyAyNi4xMS4NCj4gZGlmZiAtLWdpdCBhL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZf
+MDcucnN0DQo+IGIvZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8yNl8wNy5yc3QNCj4gaW5k
+ZXggNmY0M2Q5YjYxYy4uM2Y3OTNmNTA0YSAxMDA2NDQNCj4gLS0tIGEvZG9jL2d1aWRlcy9yZWxf
+bm90ZXMvcmVsZWFzZV8yNl8wNy5yc3QNCj4gKysrIGIvZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVs
+ZWFzZV8yNl8wNy5yc3QNCj4gQEAgLTYzLDYgKzYzLDE3IEBAIE5ldyBGZWF0dXJlcw0KPiAgICAg
+IGBgcnRlX2VhbF9pbml0YGAgYW5kIHRoZSBhcHBsaWNhdGlvbiBpcyByZXNwb25zaWJsZSBmb3Ig
+cHJvYmluZw0KPiBlYWNoIGRldmljZSwNCj4gICAgKiBgYC0tYXV0by1wcm9iaW5nYGAgZW5hYmxl
+cyB0aGUgaW5pdGlhbCBidXMgcHJvYmluZywgd2hpY2ggaXMgdGhlDQo+IGN1cnJlbnQgZGVmYXVs
+dCBiZWhhdmlvci4NCj4gDQo+ICsqICoqQ2hhbmdlZCBlZmZlY3RpdmUgc2l6ZSBvZiBtZW1wb29s
+IGNhY2hlLioqDQo+ICsNCj4gKyAgKiBUaGUgZWZmZWN0aXZlIHNpemUgb2YgYSBtZW1wb29sIGNh
+Y2hlIHdhcyBjaGFuZ2VkIHRvIG1hdGNoIHRoZQ0KPiBzcGVjaWZpZWQgc2l6ZSBhdCBtZW1wb29s
+IGNyZWF0aW9uOyB0aGUgZWZmZWN0aXZlIHNpemUgd2FzIHByZXZpb3VzbHkNCj4gNTAgJSBsYXJn
+ZXIgdGhhbiByZXF1ZXN0ZWQuDQo+ICsgICogVGhlIGBgZmx1c2h0aHJlc2hgYCBmaWVsZCBvZiB0
+aGUgYGBzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGVgYA0KPiBiZWNhbWUgb2Jzb2xldGUsIGJ1dCB3
+YXMga2VwdCBmb3IgQVBJL0FCSSBjb21wYXRpYmlsaXR5IHB1cnBvc2VzLg0KPiArICAqIFRoZSBl
+ZmZlY3RpdmUgc2l6ZSBvZiB0aGUgYGBvYmpzYGAgYXJyYXkgaW4gdGhlIGBgc3RydWN0DQo+IHJ0
+ZV9tZW1wb29sX2NhY2hlYGAgd2FzIHJlZHVjZWQgdG8gYGBSVEVfTUVNUE9PTF9DQUNIRV9NQVhf
+U0laRWBgLCBidXQNCj4gaXRzIHNpemUgd2FzIGtlcHQgZm9yIEFQSS9BQkkgY29tcGF0aWJpbGl0
+eSBwdXJwb3Nlcy4NCj4gKw0KPiArKiAqKkltcHJvdmVkIG1lbXBvb2wgY2FjaGUgZmx1c2gvcmVm
+aWxsIGFsZ29yaXRobS4qKg0KPiArDQo+ICsgIFRoZSBtZW1wb29sIGNhY2hlIGZsdXNoL3JlZmls
+bCBhbGdvcml0aG0gd2FzIGltcHJvdmVkLCB0byByZWR1Y2UgdGhlDQo+IG1lbXBvb2wgY2FjaGUg
+bWlzcyByYXRlIGZvciBtb3N0IGFwcGxpY2F0aW9uIHR5cGVzLg0KPiArICBBcHBsaWNhdGlvbnMg
+d2hlcmUgZWFjaCBsY29yZSBvbmx5IHB1dHMgb3IgZ2V0cyB0byBhIG1lbXBvb2wsIGUuZy4NCj4g
+cGlwZWxpbmVkIGFwcGxpY2F0aW9ucyB3aGVyZSBldGhkZXYgUnggYW5kIFR4IHJ1biBvbiBzZXBh
+cmF0ZSBsY29yZXMsDQo+IHNob3VsZCBhZGFwdCB0byB0aGUgbmV3IGFsZ29yaXRobSBieSBkb3Vi
+bGluZyB0aGVpciBjb25maWd1cmVkIG1lbXBvb2wNCj4gY2FjaGUgc2l6ZSwgdG8gYXZvaWQgZG91
+YmxpbmcgdGhlaXIgbWVtcG9vbCBjYWNoZSBtaXNzIHJhdGUuDQo+ICsNCj4gICogKipVcGRhdGVk
+IFBDQVAgZXRoZXJuZXQgZHJpdmVyLioqDQo+IA0KPiAgICAqIEFkZGVkIHN1cHBvcnQgZm9yIFZM
+QU4gaW5zZXJ0aW9uIGFuZCBzdHJpcHBpbmcuDQo+IGRpZmYgLS1naXQgYS9saWIvbWVtcG9vbC9y
+dGVfbWVtcG9vbC5jIGIvbGliL21lbXBvb2wvcnRlX21lbXBvb2wuYw0KPiBpbmRleCAzMDQyZDk0
+YzE0Li44MDViNTJjYzU4IDEwMDY0NA0KPiAtLS0gYS9saWIvbWVtcG9vbC9ydGVfbWVtcG9vbC5j
+DQo+ICsrKyBiL2xpYi9tZW1wb29sL3J0ZV9tZW1wb29sLmMNCj4gQEAgLTUyLDExICs1Miw2IEBA
+IHN0YXRpYyB2b2lkDQo+ICBtZW1wb29sX2V2ZW50X2NhbGxiYWNrX2ludm9rZShlbnVtIHJ0ZV9t
+ZW1wb29sX2V2ZW50IGV2ZW50LA0KPiAgCQkJICAgICAgc3RydWN0IHJ0ZV9tZW1wb29sICptcCk7
+DQo+IA0KPiAtLyogTm90ZTogYXZvaWQgdXNpbmcgZmxvYXRpbmcgcG9pbnQgc2luY2UgdGhhdCBj
+b21waWxlcg0KPiAtICogbWF5IG5vdCB0aGluayB0aGF0IGlzIGNvbnN0YW50Lg0KPiAtICovDQo+
+IC0jZGVmaW5lIENBTENfQ0FDSEVfRkxVU0hUSFJFU0goYykgKCgoYykgKiAzKSAvIDIpDQo+IC0N
+Cj4gICNpZiBkZWZpbmVkKFJURV9BUkNIX1g4NikNCj4gIC8qDQo+ICAgKiByZXR1cm4gdGhlIGdy
+ZWF0ZXN0IGNvbW1vbiBkaXZpc29yIGJldHdlZW4gYSBhbmQgYiAoZmFzdCBhbGdvcml0aG0pDQo+
+IEBAIC03NTcsMTMgKzc1Miw4IEBAIHJ0ZV9tZW1wb29sX2ZyZWUoc3RydWN0IHJ0ZV9tZW1wb29s
+ICptcCkNCj4gIHN0YXRpYyB2b2lkDQo+ICBtZW1wb29sX2NhY2hlX2luaXQoc3RydWN0IHJ0ZV9t
+ZW1wb29sX2NhY2hlICpjYWNoZSwgdWludDMyX3Qgc2l6ZSkNCj4gIHsNCj4gLQkvKiBDaGVjayB0
+aGF0IGNhY2hlIGhhdmUgZW5vdWdoIHNwYWNlIGZvciBmbHVzaCB0aHJlc2hvbGQgKi8NCj4gLQ0K
+PiAJUlRFX0JVSUxEX0JVR19PTihDQUxDX0NBQ0hFX0ZMVVNIVEhSRVNIKFJURV9NRU1QT09MX0NB
+Q0hFX01BWF9TSVoNCj4gRSkgPg0KPiAtCQkJIFJURV9TSVpFT0ZfRklFTEQoc3RydWN0IHJ0ZV9t
+ZW1wb29sX2NhY2hlLCBvYmpzKSAvDQo+IC0JCQkgUlRFX1NJWkVPRl9GSUVMRChzdHJ1Y3QgcnRl
+X21lbXBvb2xfY2FjaGUsDQo+IG9ianNbMF0pKTsNCj4gLQ0KPiAgCWNhY2hlLT5zaXplID0gc2l6
+ZTsNCj4gLQljYWNoZS0+Zmx1c2h0aHJlc2ggPSBDQUxDX0NBQ0hFX0ZMVVNIVEhSRVNIKHNpemUp
+Ow0KPiArCWNhY2hlLT5mbHVzaHRocmVzaCA9IHNpemU7IC8qIE9ic29sZXRlOyBmb3IgQVBJL0FC
+SSBjb21wYXRpYmlsaXR5DQo+IHB1cnBvc2VzIG9ubHkgKi8NCj4gIAljYWNoZS0+bGVuID0gMDsN
+Cj4gIH0NCj4gDQo+IEBAIC04NTAsNyArODQwLDcgQEAgcnRlX21lbXBvb2xfY3JlYXRlX2VtcHR5
+KGNvbnN0IGNoYXIgKm5hbWUsIHVuc2lnbmVkDQo+IG4sIHVuc2lnbmVkIGVsdF9zaXplLA0KPiAN
+Cj4gIAkvKiBhc2tlZCBjYWNoZSB0b28gYmlnICovDQo+ICAJaWYgKGNhY2hlX3NpemUgPiBSVEVf
+TUVNUE9PTF9DQUNIRV9NQVhfU0laRSB8fA0KPiAtCSAgICBDQUxDX0NBQ0hFX0ZMVVNIVEhSRVNI
+KGNhY2hlX3NpemUpID4gbikgew0KPiArCSAgICBjYWNoZV9zaXplID4gbikgew0KPiAgCQlydGVf
+ZXJybm8gPSBFSU5WQUw7DQo+ICAJCXJldHVybiBOVUxMOw0KPiAgCX0NCj4gZGlmZiAtLWdpdCBh
+L2xpYi9tZW1wb29sL3J0ZV9tZW1wb29sLmggYi9saWIvbWVtcG9vbC9ydGVfbWVtcG9vbC5oDQo+
+IGluZGV4IDJlNTRmYzQ0NjYuLmNkMGYyMjliNTkgMTAwNjQ0DQo+IC0tLSBhL2xpYi9tZW1wb29s
+L3J0ZV9tZW1wb29sLmgNCj4gKysrIGIvbGliL21lbXBvb2wvcnRlX21lbXBvb2wuaA0KPiBAQCAt
+ODksNyArODksNyBAQCBzdHJ1Y3QgX19ydGVfY2FjaGVfYWxpZ25lZCBydGVfbWVtcG9vbF9kZWJ1
+Z19zdGF0cyB7DQo+ICAgKi8NCj4gIHN0cnVjdCBfX3J0ZV9jYWNoZV9hbGlnbmVkIHJ0ZV9tZW1w
+b29sX2NhY2hlIHsNCj4gIAl1aW50MzJfdCBzaXplOwkgICAgICAvKio8IFNpemUgb2YgdGhlIGNh
+Y2hlICovDQo+IC0JdWludDMyX3QgZmx1c2h0aHJlc2g7IC8qKjwgVGhyZXNob2xkIGJlZm9yZSB3
+ZSBmbHVzaCBleGNlc3MNCj4gZWxlbWVudHMgKi8NCj4gKwl1aW50MzJfdCBmbHVzaHRocmVzaDsg
+LyoqPCBPYnNvbGV0ZTsgZm9yIEFQSS9BQkkgY29tcGF0aWJpbGl0eQ0KPiBwdXJwb3NlcyBvbmx5
+ICovDQo+ICAJdWludDMyX3QgbGVuOwkgICAgICAvKio8IEN1cnJlbnQgY2FjaGUgY291bnQgKi8N
+Cj4gICNpZmRlZiBSVEVfTElCUlRFX01FTVBPT0xfU1RBVFMNCj4gIAl1aW50MzJfdCB1bnVzZWQ7
+DQo+IEBAIC0xMDcsOCArMTA3LDEwIEBAIHN0cnVjdCBfX3J0ZV9jYWNoZV9hbGlnbmVkIHJ0ZV9t
+ZW1wb29sX2NhY2hlIHsNCj4gIAkvKioNCj4gIAkgKiBDYWNoZSBvYmplY3RzDQo+ICAJICoNCj4g
+LQkgKiBDYWNoZSBpcyBhbGxvY2F0ZWQgdG8gdGhpcyBzaXplIHRvIGFsbG93IGl0IHRvIG92ZXJm
+bG93IGluDQo+IGNlcnRhaW4NCj4gLQkgKiBjYXNlcyB0byBhdm9pZCBuZWVkbGVzcyBlbXB0eWlu
+ZyBvZiBjYWNoZS4NCj4gKwkgKiBOb3RlOg0KPiArCSAqIENhY2hlIGlzIGFsbG9jYXRlZCBhdCBk
+b3VibGUgc2l6ZSBmb3IgQVBJL0FCSSBjb21wYXRpYmlsaXR5DQo+IHB1cnBvc2VzIG9ubHkuDQo+
+ICsJICogV2hlbiByZWR1Y2luZyBpdHMgc2l6ZSBhdCBhbiBBUEkvQUJJIGJyZWFraW5nIHJlbGVh
+c2UsDQo+ICsJICogcmVtZW1iZXIgdG8gYWRkIGEgY2FjaGUgZ3VhcmQgYWZ0ZXIgaXQuDQo+ICAJ
+ICovDQo+ICAJYWxpZ25hcyhSVEVfQ0FDSEVfTElORV9TSVpFKSB2b2lkDQo+ICpvYmpzW1JURV9N
+RU1QT09MX0NBQ0hFX01BWF9TSVpFICogMl07DQo+ICB9Ow0KPiBAQCAtMTA0NywxMSArMTA0OSwx
+NiBAQCBydGVfbWVtcG9vbF9mcmVlKHN0cnVjdCBydGVfbWVtcG9vbCAqbXApOw0KPiAgICogICBJ
+ZiBjYWNoZV9zaXplIGlzIG5vbi16ZXJvLCB0aGUgcnRlX21lbXBvb2wgbGlicmFyeSB3aWxsIHRy
+eSB0bw0KPiAgICogICBsaW1pdCB0aGUgYWNjZXNzZXMgdG8gdGhlIGNvbW1vbiBsb2NrbGVzcyBw
+b29sLCBieSBtYWludGFpbmluZyBhDQo+ICAgKiAgIHBlci1sY29yZSBvYmplY3QgY2FjaGUuIFRo
+aXMgYXJndW1lbnQgbXVzdCBiZSBsb3dlciBvciBlcXVhbCB0bw0KPiAtICogICBSVEVfTUVNUE9P
+TF9DQUNIRV9NQVhfU0laRSBhbmQgbiAvIDEuNS4NCj4gKyAqICAgUlRFX01FTVBPT0xfQ0FDSEVf
+TUFYX1NJWkUgYW5kIG4uDQo+ICAgKiAgIFRoZSBhY2Nlc3MgdG8gdGhlIHBlci1sY29yZSB0YWJs
+ZSBpcyBvZiBjb3Vyc2UNCj4gICAqICAgZmFzdGVyIHRoYW4gdGhlIG11bHRpLXByb2R1Y2VyL2Nv
+bnN1bWVyIHBvb2wuIFRoZSBjYWNoZSBjYW4gYmUNCj4gICAqICAgZGlzYWJsZWQgaWYgdGhlIGNh
+Y2hlX3NpemUgYXJndW1lbnQgaXMgc2V0IHRvIDA7IGl0IGNhbiBiZSB1c2VmdWwNCj4gdG8NCj4g
+ICAqICAgYXZvaWQgbG9zaW5nIG9iamVjdHMgaW4gY2FjaGUuDQo+ICsgKiAgIE5vdGU6DQo+ICsg
+KiAgIE1lbXBvb2wgcHV0L2dldCByZXF1ZXN0cyBvZiBtb3JlIHRoYW4gY2FjaGVfc2l6ZSAvIDIg
+b2JqZWN0cyBtYXkNCj4gYmUNCj4gKyAqICAgcGFydGlhbGx5IG9yIGZ1bGx5IHNlcnZlZCBkaXJl
+Y3RseSBieSB0aGUgbXVsdGktcHJvZHVjZXIvY29uc3VtZXINCj4gKyAqICAgcG9vbCwgdG8gYXZv
+aWQgdGhlIG92ZXJoZWFkIG9mIGNvcHlpbmcgdGhlIG9iamVjdHMgdHdpY2UgKGluc3RlYWQNCj4g
+b2YNCj4gKyAqICAgb25jZSkgd2hlbiB1c2luZyB0aGUgY2FjaGUgYXMgYSBib3VuY2UgYnVmZmVy
+Lg0KPiAgICogQHBhcmFtIHByaXZhdGVfZGF0YV9zaXplDQo+ICAgKiAgIFRoZSBzaXplIG9mIHRo
+ZSBwcml2YXRlIGRhdGEgYXBwZW5kZWQgYWZ0ZXIgdGhlIG1lbXBvb2wNCj4gICAqICAgc3RydWN0
+dXJlLiBUaGlzIGlzIHVzZWZ1bCBmb3Igc3RvcmluZyBzb21lIHByaXZhdGUgZGF0YSBhZnRlciB0
+aGUNCj4gQEAgLTEzOTAsMjIgKzEzOTcsMzAgQEAgcnRlX21lbXBvb2xfZG9fZ2VuZXJpY19wdXQo
+c3RydWN0IHJ0ZV9tZW1wb29sDQo+ICptcCwgdm9pZCAqIGNvbnN0ICpvYmpfdGFibGUsDQo+ICAJ
+UlRFX01FTVBPT0xfQ0FDSEVfU1RBVF9BREQoY2FjaGUsIHB1dF9idWxrLCAxKTsNCj4gIAlSVEVf
+TUVNUE9PTF9DQUNIRV9TVEFUX0FERChjYWNoZSwgcHV0X29ianMsIG4pOw0KPiANCj4gLQlfX3J0
+ZV9hc3N1bWUoY2FjaGUtPmZsdXNodGhyZXNoIDw9IFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpF
+ICoNCj4gMik7DQo+IC0JX19ydGVfYXNzdW1lKGNhY2hlLT5sZW4gPD0gUlRFX01FTVBPT0xfQ0FD
+SEVfTUFYX1NJWkUgKiAyKTsNCj4gLQlfX3J0ZV9hc3N1bWUoY2FjaGUtPmxlbiA8PSBjYWNoZS0+
+Zmx1c2h0aHJlc2gpOw0KPiAtCWlmIChsaWtlbHkoY2FjaGUtPmxlbiArIG4gPD0gY2FjaGUtPmZs
+dXNodGhyZXNoKSkgew0KPiArCV9fcnRlX2Fzc3VtZShjYWNoZS0+c2l6ZSA8PSBSVEVfTUVNUE9P
+TF9DQUNIRV9NQVhfU0laRSk7DQo+ICsJX19ydGVfYXNzdW1lKGNhY2hlLT5zaXplIC8gMiA8PSBS
+VEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRSAvIDIpOw0KPiArCV9fcnRlX2Fzc3VtZShjYWNoZS0+
+bGVuIDw9IFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFKTsNCj4gKwlfX3J0ZV9hc3N1bWUoY2Fj
+aGUtPmxlbiA8PSBjYWNoZS0+c2l6ZSk7DQo+ICsJaWYgKGxpa2VseShjYWNoZS0+bGVuICsgbiA8
+PSBjYWNoZS0+c2l6ZSkpIHsNCj4gIAkJLyogU3VmZmljaWVudCByb29tIGluIHRoZSBjYWNoZSBm
+b3IgdGhlIG9iamVjdHMuICovDQo+ICAJCWNhY2hlX29ianMgPSAmY2FjaGUtPm9ianNbY2FjaGUt
+Pmxlbl07DQo+ICAJCWNhY2hlLT5sZW4gKz0gbjsNCj4gLQl9IGVsc2UgaWYgKG4gPD0gY2FjaGUt
+PmZsdXNodGhyZXNoKSB7DQo+ICsJfSBlbHNlIGlmIChuIDw9IGNhY2hlLT5zaXplIC8gMikgew0K
+PiAgCQkvKg0KPiAtCQkgKiBUaGUgY2FjaGUgaXMgYmlnIGVub3VnaCBmb3IgdGhlIG9iamVjdHMs
+IGJ1dCAtIGFzDQo+IGRldGVjdGVkIGJ5DQo+IC0JCSAqIHRoZSBjb21wYXJpc29uIGFib3ZlIC0g
+aGFzIGluc3VmZmljaWVudCByb29tIGZvciB0aGVtLg0KPiAtCQkgKiBGbHVzaCB0aGUgY2FjaGUg
+dG8gbWFrZSByb29tIGZvciB0aGUgb2JqZWN0cy4NCj4gKwkJICogVGhlIG51bWJlciBvZiBvYmpl
+Y3RzIGlzIHdpdGhpbiB0aGUgY2FjaGUgYm91bmNlIGJ1ZmZlcg0KPiBsaW1pdCwNCj4gKwkJICog
+YnV0IC0gYXMgZGV0ZWN0ZWQgYnkgdGhlIGNvbXBhcmlzb24gYWJvdmUgLSB0aGUgY2FjaGUNCj4g
+aGFzDQo+ICsJCSAqIGluc3VmZmljaWVudCByb29tIGZvciB0aGVtLg0KPiArCQkgKiBGbHVzaCB0
+aGUgY2FjaGUgdG8gdGhlIGJhY2tlbmQgdG8gbWFrZSByb29tIGZvciB0aGUNCj4gb2JqZWN0czsN
+Cj4gKwkJICogZmx1c2ggKHNpemUgLyAyKSBvYmplY3RzIGZyb20gdGhlIGJvdHRvbSBvZiB0aGUg
+Y2FjaGUsDQo+IHdoZXJlDQo+ICsJCSAqIG9iamVjdHMgYXJlIGxlc3MgaG90LCBhbmQgbW92ZSBk
+b3duIHRoZSByZW1haW5pbmcNCj4gb2JqZWN0cywgd2hpY2gNCj4gKwkJICogYXJlIG1vcmUgaG90
+LCBmcm9tIHRoZSB1cHBlciBoYWxmIG9mIHRoZSBjYWNoZS4NCj4gIAkJICovDQo+IC0JCWNhY2hl
+X29ianMgPSAmY2FjaGUtPm9ianNbMF07DQo+IC0JCXJ0ZV9tZW1wb29sX29wc19lbnF1ZXVlX2J1
+bGsobXAsIGNhY2hlX29ianMsIGNhY2hlLT5sZW4pOw0KPiAtCQljYWNoZS0+bGVuID0gbjsNCj4g
+KwkJX19ydGVfYXNzdW1lKGNhY2hlLT5sZW4gPiBjYWNoZS0+c2l6ZSAvIDIpOw0KPiArCQlydGVf
+bWVtcG9vbF9vcHNfZW5xdWV1ZV9idWxrKG1wLCAmY2FjaGUtPm9ianNbMF0sIGNhY2hlLQ0KPiA+
+c2l6ZSAvIDIpOw0KPiArCQlydGVfbWVtY3B5KCZjYWNoZS0+b2Jqc1swXSwgJmNhY2hlLT5vYmpz
+W2NhY2hlLT5zaXplIC8gMl0sDQo+ICsJCQkJc2l6ZW9mKHZvaWQgKikgKiAoY2FjaGUtPmxlbiAt
+IGNhY2hlLT5zaXplIC8NCj4gMikpOw0KPiArCQljYWNoZV9vYmpzID0gJmNhY2hlLT5vYmpzW2Nh
+Y2hlLT5sZW4gLSBjYWNoZS0+c2l6ZSAvIDJdOw0KPiArCQljYWNoZS0+bGVuID0gY2FjaGUtPmxl
+biAtIGNhY2hlLT5zaXplIC8gMiArIG47DQo+ICAJfSBlbHNlIHsNCj4gIAkJLyogVGhlIHJlcXVl
+c3QgaXRzZWxmIGlzIHRvbyBiaWcgZm9yIHRoZSBjYWNoZS4gKi8NCj4gIAkJZ290byBkcml2ZXJf
+ZW5xdWV1ZV9zdGF0c19pbmNyZW1lbnRlZDsNCj4gQEAgLTE1MjQsNyArMTUzOSw3IEBAIHJ0ZV9t
+ZW1wb29sX2RvX2dlbmVyaWNfZ2V0KHN0cnVjdCBydGVfbWVtcG9vbA0KPiAqbXAsIHZvaWQgKipv
+YmpfdGFibGUsDQo+ICAJLyogVGhlIGNhY2hlIGlzIGEgc3RhY2ssIHNvIGNvcHkgd2lsbCBiZSBp
+biByZXZlcnNlIG9yZGVyLiAqLw0KPiAgCWNhY2hlX29ianMgPSAmY2FjaGUtPm9ianNbY2FjaGUt
+Pmxlbl07DQo+IA0KPiAtCV9fcnRlX2Fzc3VtZShjYWNoZS0+bGVuIDw9IFJURV9NRU1QT09MX0NB
+Q0hFX01BWF9TSVpFICogMik7DQo+ICsJX19ydGVfYXNzdW1lKGNhY2hlLT5sZW4gPD0gUlRFX01F
+TVBPT0xfQ0FDSEVfTUFYX1NJWkUpOw0KPiAgCWlmIChsaWtlbHkobiA8PSBjYWNoZS0+bGVuKSkg
+ew0KPiAgCQkvKiBUaGUgZW50aXJlIHJlcXVlc3QgY2FuIGJlIHNhdGlzZmllZCBmcm9tIHRoZSBj
+YWNoZS4gKi8NCj4gIAkJUlRFX01FTVBPT0xfQ0FDSEVfU1RBVF9BREQoY2FjaGUsIGdldF9zdWNj
+ZXNzX2J1bGssIDEpOw0KPiBAQCAtMTU0OCwxMyArMTU2MywxMyBAQCBydGVfbWVtcG9vbF9kb19n
+ZW5lcmljX2dldChzdHJ1Y3QgcnRlX21lbXBvb2wNCj4gKm1wLCB2b2lkICoqb2JqX3RhYmxlLA0K
+PiAgCWZvciAoaW5kZXggPSAwOyBpbmRleCA8IGxlbjsgaW5kZXgrKykNCj4gIAkJKm9ial90YWJs
+ZSsrID0gKi0tY2FjaGVfb2JqczsNCj4gDQo+IC0JLyogRGVxdWV1ZSBiZWxvdyB3b3VsZCBvdmVy
+ZmxvdyBtZW0gYWxsb2NhdGVkIGZvciBjYWNoZT8gKi8NCj4gLQlpZiAodW5saWtlbHkocmVtYWlu
+aW5nID4gUlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJWkUpKQ0KPiArCS8qIERlcXVldWUgYmVsb3cg
+d291bGQgZXhjZWVkIHRoZSBjYWNoZSBib3VuY2UgYnVmZmVyIGxpbWl0PyAqLw0KPiArCV9fcnRl
+X2Fzc3VtZShjYWNoZS0+c2l6ZSAvIDIgPD0gUlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJWkUgLyAy
+KTsNCj4gKwlpZiAodW5saWtlbHkocmVtYWluaW5nID4gY2FjaGUtPnNpemUgLyAyKSkNCj4gIAkJ
+Z290byBkcml2ZXJfZGVxdWV1ZTsNCj4gDQo+IC0JLyogRmlsbCB0aGUgY2FjaGUgZnJvbSB0aGUg
+YmFja2VuZDsgZmV0Y2ggc2l6ZSArIHJlbWFpbmluZw0KPiBvYmplY3RzLiAqLw0KPiAtCXJldCA9
+IHJ0ZV9tZW1wb29sX29wc19kZXF1ZXVlX2J1bGsobXAsIGNhY2hlLT5vYmpzLA0KPiAtCQkJY2Fj
+aGUtPnNpemUgKyByZW1haW5pbmcpOw0KPiArCS8qIEZpbGwgdGhlIGNhY2hlIGZyb20gdGhlIGJh
+Y2tlbmQ7IGZldGNoIChzaXplIC8gMikgb2JqZWN0cy4gKi8NCj4gKwlyZXQgPSBydGVfbWVtcG9v
+bF9vcHNfZGVxdWV1ZV9idWxrKG1wLCBjYWNoZS0+b2JqcywgY2FjaGUtPnNpemUgLw0KPiAyKTsN
+Cj4gIAlpZiAodW5saWtlbHkocmV0IDwgMCkpIHsNCj4gIAkJLyoNCj4gIAkJICogV2UgYXJlIGJ1
+ZmZlciBjb25zdHJhaW5lZCwgYW5kIG5vdCBhYmxlIHRvIGZldGNoIGFsbA0KPiB0aGF0Lg0KPiBA
+QCAtMTU2OCwxMCArMTU4MywxMSBAQCBydGVfbWVtcG9vbF9kb19nZW5lcmljX2dldChzdHJ1Y3Qg
+cnRlX21lbXBvb2wNCj4gKm1wLCB2b2lkICoqb2JqX3RhYmxlLA0KPiAgCVJURV9NRU1QT09MX0NB
+Q0hFX1NUQVRfQUREKGNhY2hlLCBnZXRfc3VjY2Vzc19idWxrLCAxKTsNCj4gIAlSVEVfTUVNUE9P
+TF9DQUNIRV9TVEFUX0FERChjYWNoZSwgZ2V0X3N1Y2Nlc3Nfb2Jqcywgbik7DQo+IA0KPiAtCV9f
+cnRlX2Fzc3VtZShjYWNoZS0+c2l6ZSA8PSBSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRSk7DQo+
+IC0JX19ydGVfYXNzdW1lKHJlbWFpbmluZyA8PSBSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRSk7
+DQo+IC0JY2FjaGVfb2JqcyA9ICZjYWNoZS0+b2Jqc1tjYWNoZS0+c2l6ZSArIHJlbWFpbmluZ107
+DQo+IC0JY2FjaGUtPmxlbiA9IGNhY2hlLT5zaXplOw0KPiArCV9fcnRlX2Fzc3VtZShjYWNoZS0+
+c2l6ZSAvIDIgPD0gUlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJWkUgLyAyKTsNCj4gKwlfX3J0ZV9h
+c3N1bWUocmVtYWluaW5nIDw9IFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFIC8gMik7DQo+ICsJ
+X19ydGVfYXNzdW1lKHJlbWFpbmluZyA8PSBjYWNoZS0+c2l6ZSAvIDIpOw0KPiArCWNhY2hlX29i
+anMgPSAmY2FjaGUtPm9ianNbY2FjaGUtPnNpemUgLyAyXTsNCj4gKwljYWNoZS0+bGVuID0gY2Fj
+aGUtPnNpemUgLyAyIC0gcmVtYWluaW5nOw0KPiAgCWZvciAoaW5kZXggPSAwOyBpbmRleCA8IHJl
+bWFpbmluZzsgaW5kZXgrKykNCj4gIAkJKm9ial90YWJsZSsrID0gKi0tY2FjaGVfb2JqczsNCj4g
+DQo+IC0tDQo+IDIuNDMuMA0KDQo=
