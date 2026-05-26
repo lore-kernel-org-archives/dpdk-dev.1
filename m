@@ -2,77 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C288CD5BC9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 May 2026 22:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A98CD5BCF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 May 2026 03:31:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 340F540279;
-	Tue, 26 May 2026 00:18:30 +0200 (CEST)
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
- [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 0065040144
- for <dev@dpdk.org>; Tue, 26 May 2026 00:18:28 +0200 (CEST)
-Received: by mail-dy1-f182.google.com with SMTP id
- 5a478bee46e88-2f0ad52830cso12643747eec.1
- for <dev@dpdk.org>; Mon, 25 May 2026 15:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779747508;
- x=1780352308; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=k0pLvWIuXg2V+W+EEKnwlvGgAHXQkr0H9r/lJsZQ4PY=;
- b=xGYtT5h/hzf6CRKK3vj6+UAq6wQVrLpzpTpdQuKzcjFj4O5Jsu/a9T4fkYlK0Wl9mz
- A/AXEvPDDtMdzQBJUIwjfQqNrbDdWi5ObWlX0PXoe7qknZ72cZ1trOVdORfTllo72i/y
- a+2IbWn502TCNhnXg/NhuA5y3kB2qpqTgFjmRLbZlYkBwHce6Oz1y+kpz6ARwRxTj05j
- yCu5wdcn0J+m96cvz9kr8Pi5t8Jh5+n49TaC3Lf8wrV0JIn8C2Xiav2DzQfQrlmuowi+
- HHq02ruNNEhVeVSGD3fiv+HpajSA52HsTFA+ax6trUUY8TWLfueIHPSsTHRRrEESBssa
- iLLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779747508; x=1780352308;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=k0pLvWIuXg2V+W+EEKnwlvGgAHXQkr0H9r/lJsZQ4PY=;
- b=mzohWAUOlgKPgVTTOJ6YwixG7YaH/0T0d2x1Xr83DZuTNNZ+H+KvlvBXR8Ce8q16Pu
- iLvZw8aB2LkZOcn8kxUFMo3dP5dLBOmnntbtQi7DayXfZlXMKKPy6PI64KYba+QoEkvg
- JKDe/17M/SMm1tYkXm8R2xrNlJaexR6P3eS2S1arASxQl+mfKoayBvMIx2GLspb2OEUB
- otfDqPrcXCq/k0IsVnHvlpDSMZs8KH2HX467oShwTEE471Obgb6nbEwf7/AMnn4MnlQ/
- DX6LnhjSMngcjKAnLy3xNzDyL7GS37i9ZBDm4GXtXt7jh00NFPMzZ4fstly5ebqRArPb
- hcgg==
-X-Gm-Message-State: AOJu0YyfoNsu0yjBAnCXg8181sFlGq/UehwrmWLEhw63/ZsGoJLVlnLy
- ArPf5bohgiqNaqJBbk5Y13Eh/RgN+/lgPBzKpc91IPxgQtXKsN64iKyTzF7NJy9mmio=
-X-Gm-Gg: Acq92OEj/HRxkvypXeWh5vDfZYP8SPqDwaawjna0kzlr4xEElFVPArHmo3IQscaPBjk
- wBoWaz3EEkoIDTlmq9uk7v9M+h1BXsIItEXLYd6YSSyogMbwnE3h2SIMPJ5b+wmbKiDjJI5L+ic
- U7nxLxfY2mOnO4OopdYKWkFZoZ3adUByc7uEOpy8MuT+iIkHpcIU8bh4J0ypItaUVkt+Hp7l0RK
- RbIpy029fkfYW7v08S5qSMjdUPnv97HnIsEGDablEXeipCKc3KIerv9dIXlTWa3QyNqzbl83vKc
- Lkj1VWUVhaTHkgaQPXx4ftYXAkpd1YAJB7I1fgNMnHsf55kX/VDpYdwxSu+E42ipOFnXV4r0FNG
- wX8bfHyEDJcKyaTPaORsJpr+PkW0Q/UkdOta3Wxwq3MDS32FQMlhWv1/5b0xUyeDaumDuS1Ej8H
- kISnZmRdpYwynjekQvOelVQ9QiqjUf3FzS6toh+9FkVclSKjc+sn9UO7vGIynJ4yn9J7QNb3Jgm
- yc=
-X-Received: by 2002:a05:693c:2c0c:b0:2f3:c3d4:382f with SMTP id
- 5a478bee46e88-30449092145mr7609960eec.8.1779747507704; 
- Mon, 25 May 2026 15:18:27 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-304522314a4sm8642436eec.18.2026.05.25.15.18.26
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 25 May 2026 15:18:27 -0700 (PDT)
-Date: Mon, 25 May 2026 15:18:24 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mattias =?UTF-8?B?UsO2bm5ibG9t?= <hofors@lysator.liu.se>
-Cc: dev@dpdk.org, Morten =?UTF-8?B?QnLDuHJ1cA==?=
- <mb@smartsharesystems.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, Mattias =?UTF-8?B?UsO2bm5ibG9t?=
- <mattias.ronnblom@ericsson.com>, Yogaraj Baskaravel
- <yogaraj.baskaravel@ericsson.com>
-Subject: Re: [RFC 0/3] lib/fastmem: fast small-object allocator
-Message-ID: <20260525151824.6a32e829@phoenix.local>
-In-Reply-To: <af3a4738-df30-43c4-b3d9-5ec1912a307a@lysator.liu.se>
-References: <20260525103642.55255-1-hofors@lysator.liu.se>
- <20260525073029.235b4d40@phoenix.local>
- <af3a4738-df30-43c4-b3d9-5ec1912a307a@lysator.liu.se>
+	by mails.dpdk.org (Postfix) with ESMTP id 3CA7B402AC;
+	Tue, 26 May 2026 05:31:03 +0200 (CEST)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTP id AE57940279
+ for <dev@dpdk.org>; Tue, 26 May 2026 05:31:01 +0200 (CEST)
+Received: from [192.168.50.151] (unknown [119.114.152.168])
+ by APP-03 (Coremail) with SMTP id rQCowABHZ97yExVq2+9jEg--.900S3;
+ Tue, 26 May 2026 11:30:59 +0800 (CST)
+Message-ID: <88299ee4-723d-4bbf-86ce-3f0023fbf82e@iscas.ac.cn>
+Date: Tue, 26 May 2026 11:30:58 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] eal/riscv: implement prefetch using __builtin_prefetch
+To: shiwei dang <1138222970gg@gmail.com>
+Cc: dev@dpdk.org, stanislaw.kardach@gmail.com, stephen@networkplumber.org,
+ david.marchand@redhat.com
+References: <20260310133524.28087-1-1138222970gg@gmail.com>
+ <cac6e40a-6efd-4097-9b7a-90c559279879@iscas.ac.cn>
+ <CAF-WEyHKBEwYW_E6UvjKwEL7LQO4pfFS7qtv-3gjz1B7c5cNYQ@mail.gmail.com>
+Content-Language: en-US
+From: sunyuechi <sunyuechi@iscas.ac.cn>
+In-Reply-To: <CAF-WEyHKBEwYW_E6UvjKwEL7LQO4pfFS7qtv-3gjz1B7c5cNYQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: rQCowABHZ97yExVq2+9jEg--.900S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+ VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYY7k0a2IF6F4UM7kC6x804xWl14x267AK
+ xVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+ A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj
+ 6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr
+ 1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv
+ 0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z2
+ 80aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI
+ 7VAKI48JMxAqzxv26xkF7I0En4kS14v26r126r1DMxC20s026xCaFVCjc4AY6r1j6r4UMI
+ 8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
+ xVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI
+ 8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280
+ aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyT
+ uYvjxU2_HUDUUUU
+X-Originating-IP: [119.114.152.168]
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAUTAmoU456wiAAAsj
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,33 +59,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 25 May 2026 21:39:20 +0200
-Mattias R=C3=B6nnblom <hofors@lysator.liu.se> wrote:
+On 3/29/26 12:38 AM, shiwei dang wrote:
 
-> On 5/25/26 16:30, Stephen Hemminger wrote:
-> > On Mon, 25 May 2026 12:36:39 +0200
-> > Mattias R=C3=B6nnblom <hofors@lysator.liu.se> wrote:
-> >  =20
-> >> This RFC introduces fastmem, a general-purpose small-object allocator
-> >> for DPDK. It is intended to replace per-type mempools with a single
-> >> allocator that handles arbitrary sizes, grows on demand, and matches
-> >> mempool-level performance on the hot path. =20
-> >=20
-> > Makes sense, what a simple wrapper inline to allow full replacement
-> > testing/performance A/B comparison? =20
->=20
-> Do you mean a mempool or a heap wrapper? Or both?
->=20
-> I haven't looked into what options there are with mempools. A mempool=20
-> driver should be possible, but then I guess one might attempt a=20
-> whole-sale mempool-compatible API as well.
+> Hi ,
+>
+> Thanks for the review. I'll address both points (real name in 
+> Signed-off-by and test results) together in v2 once I have access to 
+> physical RISC-V hardware.
+>
+> Best regards, Dang Shiwei
+>
+>
 
-My thinking is a yet another allocator in DPDK is just another source
-of confusion and bugs. BUT if it can consolidate and fully replace
-one or more existing allocators then it would be great improvement.
+Hi,
 
-Mempools are fast, but fixed and space inefficient.
-Rte_malloc is slow, but flexible.
+Gentle ping — any update on v2?
 
-Also, need to make whatever is added play well with static
-and dynamic checkers.
