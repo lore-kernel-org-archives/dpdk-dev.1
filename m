@@ -2,55 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9C2CD5BD0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A72BCD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:51:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C86AF40663;
-	Wed, 27 May 2026 13:45:20 +0200 (CEST)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTP id 87DE740663
- for <dev@dpdk.org>; Wed, 27 May 2026 13:45:18 +0200 (CEST)
-X-QQ-mid: Yeas9t1779882313t441t49043
-Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
- [122.231.28.113])
-X-QQ-SSF: 0000000000000000000000000000000
-From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 5999459029939401772
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-13-zaiyuwang@trustnetic.com>
- <20260517164936.1c83977e@phoenix.local>
-In-Reply-To: <20260517164936.1c83977e@phoenix.local>
-Subject: RE: [PATCH v4 12/20] net/txgbe: fix link stability for 25G NIC
-Date: Wed, 27 May 2026 19:45:11 +0800
-Message-ID: <00c401dcedce$47007350$d50159f0$@trustnetic.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 509254028A;
+	Wed, 27 May 2026 13:51:14 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 50C9940285
+ for <dev@dpdk.org>; Wed, 27 May 2026 13:51:13 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gQSbw2z7dzJ468l;
+ Wed, 27 May 2026 19:50:20 +0800 (CST)
+Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
+ by mail.maildlp.com (Postfix) with ESMTPS id 0E4A040569;
+ Wed, 27 May 2026 19:51:12 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Wed, 27 May 2026 12:51:11 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Wed, 27 May 2026 12:51:11 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: "Ajmera, Megha" <megha.ajmera@intel.com>, Stephen Hemminger
+ <stephen@networkplumber.org>
+CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Dumitrescu, Cristian"
+ <cristian.dumitrescu@intel.com>, "Shetty, Praveen"
+ <praveen.shetty@intel.com>, "Singh, Aman Deep" <aman.deep.singh@intel.com>,
+ "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH v2] app/test-pmd: add generic PROG action parser support
+Thread-Topic: [PATCH v2] app/test-pmd: add generic PROG action parser support
+Thread-Index: AQHc6QrGN/buU1ph30u0sJvA1Wd0s7YgpxUAgADqPQCAADnO4A==
+Date: Wed, 27 May 2026 11:51:11 +0000
+Message-ID: <03ab65f8b69a4018aad7afcc88f337e1@huawei.com>
+References: <20260521055612.508916-1-megha.ajmera@intel.com>
+ <20260521101354.726240-1-megha.ajmera@intel.com>
+ <20260526122218.1c29d917@phoenix.local>
+ <MW4PR11MB5892D90B2AF860214FB57F4D97082@MW4PR11MB5892.namprd11.prod.outlook.com>
+In-Reply-To: <MW4PR11MB5892D90B2AF860214FB57F4D97082@MW4PR11MB5892.namprd11.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.220]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAb2dEB4B9dmQTLVJ8hFg
-Content-Language: zh-cn
-X-QQ-SENDSIZE: 520
-Feedback-ID: Yeas:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: Ndw/mc8X39ObqNipA715+BAiZRi+IpUgFFfp/RhLdF1fCYBGvauzss/V
- ek1PnFEuOO44dKgNUBora9KqYTqf1C0sqAapC3x0uE3BdDIE2SMmT1kaBQUOUcd7KbCf4tR
- i1YGtFo3ujhX1DtRz0oE3G5zFnf6xZxCnRNbrA43mjuv2Hf/j6wqsgj1bZiX4I8h+l8IykG
- 3QnPOjwP4oOtYxa5QXUoOo6/RMDCTym1jzr0CZXYLjs5pKw9yIPI+UnZEMsh+y7eVlEad26
- lv5p8TGRHNOM9HLpg3FizbGNUQ6YZ9HUeOC4ZfnFtjksApERGv8yE6Td+lqlpx4Co4PIKz/
- T/Cb1ZtWyBTl11dGU0uS65uAVB1cDOJDLN80mZ1+/k9ktcKzgBzLhlc8tsO9yflH85lr23z
- 2jIGTy1kG2Tp2kOJcfQcwm50Cs2e7iyU1yW8T67jSC9o4nVpd23U22/gL1mgNtaD8tc/iop
- YF4QPJCSOZnqautKtI8v0M7EtUFTBw1G4hgC2F3czFA2q1xXsMr5okh2k3yCw7rrSh+/kus
- HQAVjDnmvJZlumhOw2787BvR3n3uUhlTj8e7cxeVmDTd3tyLkBdbSnnw566V2RZNdoowkIZ
- aq+tof1MwBvfm8YapH/ULjGFNG2ocZJrpHpEvdmLeWlo/FMvMisk7/72dVdQ8yFGxgoK+hY
- RGr2Oq5KPVCwtOCNy3ylndDQ+fkpaULqJiIsAh4Hq0w14q7/ZpYr2hK1tFFB3ZruaP4Efid
- RLbB5Tc5roZcvzl+zTgUFJWvNrKylLZdmrKVVkdroeIbHjYwJSg6pQ/roEoeBFl7xD6psOV
- pbv/t5JxRXOnoUjLIJiqSlIv/WxKNXDwj+ZqSHgjIcKYa38txCNUDgw8TjCmRgwloiCcPJO
- ikp9hoWB6Oto8fDC4ghyK/TG57epRmuBclk3miaPG1jA0O+Bv1lsfYzCh7H9OA3b0hJq97e
- oPbjIGDCZ/zfupqYkk6/oueywX/lu2kAuQ8NC1eTgmNq108SYfU1MAnKTJpMwJGGeUGkM8f
- p32NYN12ZaQn95ruZh8pblxbAlKzE=
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,68 +61,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> ## Errors
+
+> >
+> > This looks like a third attempt to parse text into rte_flow.
+> > Not sure how this fits in and why it would be useful?
 >=20
-> ### 1. Use-after-free potential in txgbe_e56_rxs_calib_adapt_seq =
-(CORRECTNESS)
-No code change.
-The return value of txgbe_e56_rxs_osc_init_for_temp_track_range is only =
-used for debugging; the hardware can still continue the subsequent =
-configuration flow even after a timeout. Therefore, we use status |=3D =
-to record the error for logging but do not abort the sequence.
+> Thanks for the feedback.
+> I wanted to clarify the intent of this patch. The backend support for the=
+ PROG
+> action already exists in the PMD. This patch is focused on adding the
+> corresponding frontend (testpmd) parser support so that users can configu=
+re
+> and exercise this functionality via CLI.
+> The motivation here is to enable configuration of programmable actions th=
+at are
+> already supported in the backend but cannot currently be invoked through
+> testpmd. With this addition, new actions that are exposed through PROG ca=
+n be
+> configured using the flow command interface.
 
-> ### 2. Resource leak: lock not released on error path (CORRECTNESS)
-No code change.
-The spinlock is correctly released on all paths, including the =
-TXGBE_ERR_PHY_INIT_NOT_DONE branch. No change is needed.
-
-> ### 3. Missing error propagation to caller (CORRECTNESS)
-Fixed. The function now returns TXGBE_ERR_TIMEOUT when the link fails to =
-come up.
-
-> ### 4. Double error return value overwrite (CORRECTNESS)
-Fixed by removing the break statements and letting the timeout errors =
-return immediately.
-
-> ### 5. Error code dropped without propagation (CORRECTNESS)
-No code change.
-A failed temperature read does not affect the subsequent configuration =
-flow; stopping the process would be too aggressive. The function =
-intentionally continues, and the error is only for debug purposes.
-
-> ### 6. Integer overflow in bit shift (CORRECTNESS)
-Fixed
-
-> ### 7. Missing bounds check on array size calculation (CORRECTNESS)
-Fixed by introducing the RXS_READ_COUNT macro to keep the array size, =
-loop bound, and median calculation always consistent.
-
-> ## Warnings
->=20
-> ### 1. Variables declared but may be read before initialization =
-(STYLE)
-Adjusted the declaration of need_reset to the function scope for =
-improved readability.
-
-> ### 2. Missing documentation for complex algorithm (STYLE)
-Acknowledged. Adding a high=E2=80=91level comment for the complex =
-calibration procedure is planned
-
-> ### 3. Magic numbers without named constants (STYLE)
-No code change.
-These values come directly from the hardware vendor and are located in =
-the base/ layer, which we prefer not to modify without an official =
-update. We will keep them as=E2=80=91is.
-
-
-> ## Info
->=20
-> ### 1. Deep nesting in calibration sequence
-Considering that this is the hardware configuration code located in =
-base/, for now we will not make change to it.
-
-> ### 2. Possible candidate for helper function
-Considering that this is the hardware configuration code located in =
-base/, for now we will not make change to it.=20
-=20
-
+For my own curiosity: how user can define his own PROG action?
+Is it supposed to be programmed and uplodaded to the NIC by some external t=
+ool (P4 compiler)?
+Or does it refer to the set of some predefined functions that given firmwar=
+e supports?
+Or ... ?
+Sorry for probably naive questions, but I found is nearly zero information =
+inside DPDK docs about
+how PROG action supposed to work.
+Thanks
+Konstantin
