@@ -2,149 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48FACD5BDE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 09:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CE0CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 09:22:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D7B8040285;
-	Wed, 27 May 2026 11:20:52 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id DF6844026C
- for <dev@dpdk.org>; Wed, 27 May 2026 11:20:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779873651; x=1811409651;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=+7mXWIsY0ksfPO+/6MDA/I/QKwmSMns+6bD3sDihIq0=;
- b=XPmUqwrUbvdld06npTJTO5Uf3/v/WvbsrtGtxlAFnizxmRsABlu1zNBp
- TEFx5Yh9DmGDqeH2mS9vTl5bM689jOlu++B/1O7tpomMEugywbmwVVnPt
- 20TtIdNckQAnWO2VqUAl1sKhgJ04x0cT5j3fQ23Ou9uBHk5suWjKNTd20
- 04Cewjat+9vFf/cOftIpNuz/aoOzdsBBJmakD1wxhmd7IZKF5CwxCKASV
- mW3P8CcVvdxPJAYvDSNglBfv3c8WbK6g4e24DEyFn2xxs6mqTll1en+RK
- RGISya1xsJSv764tfVPOnZkWo6lej+tdOBzpyaevWVd+tJfUYg68uhFm8 g==;
-X-CSE-ConnectionGUID: yVLMO8qvS+Silc9qRVZjCw==
-X-CSE-MsgGUID: 4gG8T3zYQoGF5r5SiFhGjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11798"; a="80730901"
-X-IronPort-AV: E=Sophos;i="6.24,171,1774335600"; d="scan'208";a="80730901"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2026 02:20:49 -0700
-X-CSE-ConnectionGUID: 6UjZJaT4SpyPAprsFGu3Fw==
-X-CSE-MsgGUID: I56kXMU/R/aylKgbJICRSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,171,1774335600"; d="scan'208";a="246447676"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2026 02:20:50 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 27 May 2026 02:20:49 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 27 May 2026 02:20:49 -0700
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.31) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 27 May 2026 02:20:48 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xRBTpGdf87OgDRwybO/3XI6lbBWueoGpWooc/W19ppDtOWSjvWcywQBu3xtb9wIZK0aCT/lFNvJ4LZNcq4Rdt94T2slJ73GZQaX0rDRSCLWVhvKS1pXYcjuFgiBL4vOIGaYC6ZsHXGoi2FNKy6zH1HX8uAc764TWvCzSJAeUq2xjhWpbnDW6VI34uh+w18fXetRFaxrM2TCWMzeBJfezsLUvf+WJFD6uKSRqXDuU1oP9P7hADc3n8R7HhzizJA8V8/LZHIolEpcIGll6nT5JIE/PKhVOPbrbFlYK99VCRRnyeqHvxk8aPzrnEX7T+qTgfnbfe4RqhPoiTZDq27Uclw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+7mXWIsY0ksfPO+/6MDA/I/QKwmSMns+6bD3sDihIq0=;
- b=vi1kHAHNdU4Wjgjne7Pkb3DC/fhz0IzpaMKlxm97iCV9kEUzHupv18B4HLEKCMtMjG6VQlY0KCGnkme1tq9x2b/le+7b30ucadNWJTq8+oGm61bv0YF9dUPntIhIdjSa2jVZJPcT59T+5YSWjhWn7an+tMVMzWAqhRVtlJgzaXa3NCxBjiUi7WHFXwxRDUBWnxi29raJnmdTf6L5JwRyX7bB73rvMoCggRZASU7i8iPE1WpnxmWBMzoAZfO+CeP+F/pV14iv/iz/FdMQrC/nQmNrwkY3WpKBZKY2BhorEVO7QGU1wdKL2XFMhYIP78OKCunMUtPmg6exH6wjUAR9oA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MW4PR11MB5892.namprd11.prod.outlook.com (2603:10b6:303:16a::16)
- by IA0PR11MB8398.namprd11.prod.outlook.com (2603:10b6:208:487::11)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.20; Wed, 27 May
- 2026 09:20:41 +0000
-Received: from MW4PR11MB5892.namprd11.prod.outlook.com
- ([fe80::d917:88c1:d478:1857]) by MW4PR11MB5892.namprd11.prod.outlook.com
- ([fe80::d917:88c1:d478:1857%7]) with mapi id 15.21.0071.011; Wed, 27 May 2026
- 09:20:40 +0000
-From: "Ajmera, Megha" <megha.ajmera@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Dumitrescu, Cristian"
- <cristian.dumitrescu@intel.com>, "Shetty, Praveen"
- <praveen.shetty@intel.com>, "Singh, Aman Deep" <aman.deep.singh@intel.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v2] app/test-pmd: add generic PROG action parser support
-Thread-Topic: [PATCH v2] app/test-pmd: add generic PROG action parser support
-Thread-Index: AQHc7UUE7t08lSBRb06Wxz6MeEO5F7YhmRSQ
-Date: Wed, 27 May 2026 09:20:40 +0000
-Message-ID: <MW4PR11MB5892D90B2AF860214FB57F4D97082@MW4PR11MB5892.namprd11.prod.outlook.com>
-References: <20260521055612.508916-1-megha.ajmera@intel.com>
- <20260521101354.726240-1-megha.ajmera@intel.com>
- <20260526122218.1c29d917@phoenix.local>
-In-Reply-To: <20260526122218.1c29d917@phoenix.local>
-Accept-Language: en-US
-Content-Language: en-US
+	by mails.dpdk.org (Postfix) with ESMTP id D456840285;
+	Wed, 27 May 2026 11:22:04 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id B93DC4026C
+ for <dev@dpdk.org>; Wed, 27 May 2026 11:22:03 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 932EA208E7;
+ Wed, 27 May 2026 11:22:03 +0200 (CEST)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v5] mempool: improve cache behaviour and performance
+Date: Wed, 27 May 2026 11:22:01 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F658A0@smartserver.smartshare.dk>
+In-Reply-To: <ahavyHwTzyPPDkQ4@bricha3-mobl1.ger.corp.intel.com>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW4PR11MB5892:EE_|IA0PR11MB8398:EE_
-x-ms-office365-filtering-correlation-id: bf2da05b-1950-4f51-3a49-08debbd1388e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|18002099003|22082099003|4143699003|5023799004|6133799003|11063799006|38070700021|56012099006;
-x-microsoft-antispam-message-info: 6Oi/DmEbzWpJy+dKlELljZYbwKqEbM9LNh2moftOlcDMZvatx/L0O2Ei1gbOHxKGLNMnCoOJ5greBCqUw+CWhg/pclolu68AIe0Prn3XNj1BK3ethdvspZw4Ngsd0Hy+9M0IDQqOFpEUocahEkTCh5vmaM7Yed+OipBU2UwS1znBvaU1XqL4HPyL9xS/AuE/ElHS2gIkyY0JaJgXm7wvgbfL3Elcv+po+5lFKFFk2t8JG5X35NbtUyuJDl+S96gJHeotc5LTLFoBYazh716wcsY3hT2IwqsxXzPsvSUd7sMkp/QT8GqSLkoGAULvA16GnelKU8ZczD6j6YUJ7azSFaUM8rtzxTqS1InwRAyxpng7QOJ8+792WRE2DavOFmUGwi/FINg0Pr/gbiG24I98Ogflkknt7W/nrWt7mpPy9RI3SFd0az2d/iUDWzl/jAMEVWUWMRzss5h3I/f+Sj3Niacflf8SnZCHF6nJjp8T6tBmAF24JGj11RiydHtiRupR+RUUpCeVr0jN2cm8Ereu6ry1a2++CGn8meSvEAY4oMHNwrIcx+rHCnkNBcXxf+wf/k3s3mil7/EDjwCs807n3OsFr5nJuoIrrOnigMcN7RWUMmqMO4J3+xMVTzL2RqG3Nh6rbAySLSf3scUHaGxCdSVRG7yEoblPyFsMRr7yH1L7IZVI/7UJsPOJtZGSKP4rkEc+BEALSo+kSw/fB1cM5M+iLCNKSI9a1gsklRY26eAh3RdhosXLYbzlHP9FZFBe
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MW4PR11MB5892.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(18002099003)(22082099003)(4143699003)(5023799004)(6133799003)(11063799006)(38070700021)(56012099006);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?UPgPoVaJBKRdu3inQu2WyabbmEmjt2eJYOMhcxUjxV8o7FMM2wK3mR13KFUQ?=
- =?us-ascii?Q?QPUhfExFLCkpp+4XMKjTbj/zAHLcT92HCRtHl7xGt7xgGj9vJeVGQcAMkk20?=
- =?us-ascii?Q?cuNzQYfpVBer2jNswNM/lGhVRvuWhgDEr0T/og1OE337powwn9q2Q0n32Tfx?=
- =?us-ascii?Q?uKSloGUldRRnLZFFizfBqS7NoTgbmZcwzH588JPK+I/XUiDr938XBH0IMRVW?=
- =?us-ascii?Q?dEhGJ1p9a6AOkPB5plDw6A4IE2Gyf7fNDZt6HQbAxCm14hECDG1i4LyKoDD4?=
- =?us-ascii?Q?ZGGgEvZww93XVh6TK2REn8qSwtNmWMz4SOKg/gNzGlguaBA3f8FZoHLAa4CQ?=
- =?us-ascii?Q?xjvicxQJQwf+BxRTc7KW0Usf5HYsbygaefrb5oDpn3yW+4Wrdf/qR/PTMM1k?=
- =?us-ascii?Q?zHw9WMifX9eEzY0J6GOXuV5fJeOB9moPB+NRl2lGfRh39sAI2R/3u3iCQ+3E?=
- =?us-ascii?Q?0Cf85+e39COHfz6HJLc/WBAE4s8mr9W+rwSr9J6Sh0Cj1O6ZXqOxI9X8S0k+?=
- =?us-ascii?Q?/Au4puQFPGBmyxCQfIw4gRyNTstA2v4xRlb3kYKUUQHE3zeXW8p6ww1N8gIL?=
- =?us-ascii?Q?qneMQWEo9FM3vNXDY9sZLmoowej7SIkzVK+2/yNvz/gZIMTot/6HpoCVkHmk?=
- =?us-ascii?Q?LUtvAwBrmCJw/HGRmn/fWYjuYXn5wjmISa9YrYBW3J3AfppKLIUA1ddYjFEf?=
- =?us-ascii?Q?3dqJ/N1Xgki7PrlvulDVF34bEYVwULpEZkZMFvT1Dh0yiaS6fea9cdt1tVht?=
- =?us-ascii?Q?GEBnjLOJIRY/+62Z+t8N0NBb3CgdD737UoqFyaGMimExkm2tuYPRsFDKcjUd?=
- =?us-ascii?Q?ezgphzm3rO1bkNEy2Ak+AbJkhum5BwmeoVrRcaNPMu/cYrvrUcd+eXmMXXBG?=
- =?us-ascii?Q?eDB9wtsn+s0+bUQ/+HHfKbRUTkdp7WQbd0tdUocuejIFHD7PrrLllQN4WSkF?=
- =?us-ascii?Q?ZfST9aTiRthC8l6dSXuBgxFFvURDpODnR41W4FjL3T9rJqoTQc4LZpOglVnX?=
- =?us-ascii?Q?PjqpgWeVEV3R2CtfTukt8WroA9zh4jFol22/PmDru44CBfFZSnvtOE0XhiKu?=
- =?us-ascii?Q?WkTzwnQlttUqi9bwRlJLD9C9alZmXpOTZCzUAq/HKevl5KHMBiWHwkO/WZ5D?=
- =?us-ascii?Q?SblfQN1H960GZTl/HEbQ87x6BEH/BW7vI4R0gX2rWGZs1OhWAHxa5t69Vw06?=
- =?us-ascii?Q?13eXX/DECF4QvirelpOfw/gvSC4BfjP7ko1f2yVFUmlxSs2gLOPl7D8QOWnx?=
- =?us-ascii?Q?9Lm6Yi0VzIUbKg1dW9GO5dXKslPDa4/exXCr4b5SbzWgGiR5wBg+a15jaUEy?=
- =?us-ascii?Q?8sU4bKXYV3e4qUHsQdrQ3NYgS+DzCWmkfjW9l1JByN3pYip2/tOCMDr3BGjN?=
- =?us-ascii?Q?MnyVF6I4Tb8v/jMVtkacJWB+iukxkERPwCMImCQOJNF6zFDjagUJ/Nb5sTbq?=
- =?us-ascii?Q?e8D+aTOPr/mz4fREyVOTLW+d0KngqpkHltn4/nSZrTTvVTjrPKa0aXbOHhyk?=
- =?us-ascii?Q?viQ9Ebb1LO1/Wbl5qpWXwWam8ckH3XDrF7/m+6jlKuBNosajbMblylPRhb6f?=
- =?us-ascii?Q?n/R+Ab0zzQzZl7JuUvjTNTmzENN5oR2ps+0kOyc/qnOzGS2EpLCQ3aa/Mw29?=
- =?us-ascii?Q?8ao/MFOAuNiJhFx3pDn4Vtc5NS569d47gouU4YFsrgQ3lkKcIO6W46UMVdJQ?=
- =?us-ascii?Q?aPhn8pZoz0nL0iVnH9EGGb0GzA1UjDR+40WYUyXRCiusP47MGn3OfvmuwDbP?=
- =?us-ascii?Q?JZxeuNeTGg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: Q2AhAceV+I/+oiWPLm2Atrc4n/mPU9oxgabk4/ObOJXCa52xCt6C/+TrRG+G/zz9qyGCIa53ZIjexyzOrTW3KZLaLZcAbyO5azG7dDKLPhA+N7FL/lKVkjroWp3vvH1frWjmwnFM5frOk8hjSTSzQ89+vcNKu+ECUKMEp1t9XEFTDs15sQkTXizVe94CArPbHRGR2ABXJ1ifOP60Jcf54LuEglJQdw9hJ9H95G+KTSXQj/JlgbIr587moEF/2IRdJWAEW/jhL4UphRXJyRwkoj7PcYy7XM9Wl0Bb/HNbKWQMOfH9eq5eDLDazPBqYOPEURmGjGPzlX/3Fy6zcOA/OQ==
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB5892.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf2da05b-1950-4f51-3a49-08debbd1388e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2026 09:20:40.4482 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oKe0wQ2HT5wpSWcG9FLEuMjpWVCfAJgOd2erV9KoEXd+BXMX056ATNj0uA0J7y3AquoxnPbDEy8ZYPZ1tHhAUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8398
-X-OriginatorOrg: intel.com
+Thread-Topic: [PATCH v5] mempool: improve cache behaviour and performance
+Thread-Index: AdzttZUDUlh7r5ICRgm251MJ41wYYQAAxi3g
+References: <20260408141315.904381-1-mb@smartsharesystems.com>
+ <20260419095526.39526-1-mb@smartsharesystems.com>
+ <ahCAPT1LEn_Rc7Pk@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6589A@smartserver.smartshare.dk>
+ <ahVqYpVXMn59Tl2d@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6589D@smartserver.smartshare.dk>
+ <98CBD80474FA8B44BF855DF32C47DC35F6589F@smartserver.smartshare.dk>
+ <ahavyHwTzyPPDkQ4@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Jingjing Wu" <jingjing.wu@intel.com>,
+ "Praveen Shetty" <praveen.shetty@intel.com>,
+ "Hemant Agrawal" <hemant.agrawal@nxp.com>,
+ "Sachin Saxena" <sachin.saxena@oss.nxp.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -158,19 +57,206 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Wednesday, 27 May 2026 10.48
 >=20
-> This looks like a third attempt to parse text into rte_flow.
-> Not sure how this fits in and why it would be useful?
+> On Tue, May 26, 2026 at 07:45:24PM +0200, Morten Br=F8rup wrote:
+> > > From: Morten Br=F8rup [mailto:mb@smartsharesystems.com]
+> > > Sent: Tuesday, 26 May 2026 12.37
+> > >
+> > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> > > > Sent: Tuesday, 26 May 2026 11.40
+> > > >
+> >
+> > [...]
+> >
+> > > > [In all this, I am making the assumption that burst size is well
+> less
+> > > > than
+> > > > cache size. Also, similar logic would be applicable for the
+> inverse
+> > > > scenario, e.g. flush to empty (and fill burst) and fill to 75%]
+> > >
+> > > I'm not so sure about this assumption.
+> > > With a cache size of 512 and a bursts of 64, the cache only holds =
+8
+> > > bursts.
+> > > 50% is 4 bursts, and 25% is only 2 bursts.
+> > >
+> > > Using a replenish/drain level in the middle requires 5 bursts in
+> either
+> > > direction to pass the edge (and trigger replenish/flush).
+> > > Using a replenish/drain level 25% from the edge requires only 3
+> bursts
+> > > in the wrong direction to pass the edge (and trigger
+> replenish/flush).
+> > > Much higher probability with random get/put.
+> > >
+> > > >
+> > > > Now, all said, I tend to agree that we want to leave space for a
+> > > decent
+> > > > size burst after a fill. That is why I think that filling to 75%
+> is
+> > > > reasonable. After an alloc that triggers a fill, I don't want =
+the
+> > > cache
+> > > > less than 50% full, but not completely full so there is room for
+> a
+> > > free
+> > > > without a flush, and similarly for a free that triggers a flush,
+> the
+> > > > cache
+> > > > should not be empty, but also should not be more than half full.
+> > > >
+> > > > One suggestion - we could always add a simple tunable that
+> specifies
+> > > > the
+> > > > margin, or reserved entries for alloc and free. We can then =
+guide
+> in
+> > > > the
+> > > > docs that the value should be e.g. "zero for apps where alloc =
+and
+> > > free
+> > > > take
+> > > > place on different cores. 20%-50% of cache is recommended where
+> alloc
+> > > > and
+> > > > free take place on the same core"
+> > >
+> > > Yes, a simple tunable is a really good idea.
+> > >
+> > > At this point, I think we should optimize for use case #1, and go
+> for
+> > > the 50% fill level.
+> > > Then we can add a tunable to optimize for use case #2 later. I =
+will
+> try
+> > > to come up with a draft for such a follow-up patch within the next
+> few
+> > > days.
+> >
+> > Adding a tunable is not so simple...
+> > The choice of mempool cache algorithm (drain/replenish to 50% vs.
+> drain/replenish completely) should be passed via the "flags" parameter
+> in rte_mempool_create(), but rte_pktmbuf_pool_create() is missing the
+> "flags" parameter.
+> > We can add it at the next ABI breaking release.
+> > WDYT?
+> >
+> I don't want this just a binary flag with two settings, I think it
+> should be an actual numeric value.
 
-Thanks for the feedback.
-I wanted to clarify the intent of this patch. The backend support for the P=
-ROG action already exists in the PMD. This patch is focused on adding the c=
-orresponding frontend (testpmd) parser support so that users can configure =
-and exercise this functionality via CLI.
-The motivation here is to enable configuration of programmable actions that=
- are already supported in the backend but cannot currently be invoked throu=
-gh testpmd. With this addition, new actions that are exposed through PROG c=
-an be configured using the flow command interface.
+If it was plain and simple to support a numeric value, I'd do it.
+But the two algorithms differ too much.
+If needed, the flag can be used as an enum to support more algorithms in =
+the future.
 
-Regards,
-Megha
+My WIP (not even build tested), where you can see the different =
+algorithms steered by the cache->flags field, looks like this:
+
+static __rte_always_inline void
+rte_mempool_do_generic_put(struct rte_mempool *mp, void * const =
+*obj_table,
+			   unsigned int n, struct rte_mempool_cache *cache)
+{
+	void **cache_objs;
+
+	/* No cache provided? */
+	if (unlikely(cache =3D=3D NULL))
+		goto driver_enqueue;
+
+	/* Increment stats now, adding in mempool always succeeds. */
+	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
+	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
+
+	__rte_assume(cache->size <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
+	__rte_assume(cache->len <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
+	__rte_assume(cache->len <=3D cache->size);
+	if (likely(cache->len + n <=3D cache->size)) {
+		/* Sufficient room in the cache for the objects. */
+		cache_objs =3D &cache->objs[cache->len];
+		cache->len +=3D n;
+
+        /* Add the objects to the cache. */
+        rte_memcpy(cache_objs, obj_table, sizeof(void *) * n);
+
+        return;
+	}
+
+    /* Insufficient room in the cache for the objects. */
+
+    if (cache->flags & RTE_MEMPOOL_F_CACHE_ACCESS_ONE_WAY) {
+        /* The algorithm is optimized for put or get operations only. */
+        /* The request itself exceeds the cache bounce buffer limit? */
+        __rte_assume(cache->size <=3D RTE_MEMPOOL_CACHE_MAX_SIZE);
+        if (n > cache->size)
+            goto driver_enqueue_stats_incremented;
+
+        /* Fill the cache completely by adding the first part of the =
+objects. */
+        cache_objs =3D &cache->objs[cache->len];
+        rte_memcpy(cache_objs, obj_table, sizeof(void *) * (cache->size =
+- cache->len));
+        obj_table +=3D cache->size - cache->len;
+
+        /* Flush the entire cache to the backend. */
+        rte_mempool_ops_enqueue_bulk(mp, &cache->objs[0], cache->size);
+
+        /* Add the remaining objects to the cache. */
+        cache->len =3D n - (cache->size - cache->len);
+        rte_memcpy(&cache->objs[0], obj_table, sizeof(void *) * =
+cache->len);
+    } else {
+        /* The algorithm is optimized for a balanced mix of put and get =
+operations. */
+        /* The request itself exceeds the cache bounce buffer limit? */
+        __rte_assume(cache->size / 2 <=3D RTE_MEMPOOL_CACHE_MAX_SIZE / =
+2);
+        if (n > cache->size / 2)
+            goto driver_enqueue_stats_incremented;
+
+        /*
+         * Flush part of the cache to the backend to make room for the =
+objects;
+         * flush (size / 2) objects from the bottom of the cache, where
+         * objects are less hot, and move down the remaining objects, =
+which
+         * are more hot, from the upper half of the cache.
+         */
+        __rte_assume(cache->len > cache->size / 2);
+        rte_mempool_ops_enqueue_bulk(mp, &cache->objs[0], cache->size / =
+2);
+        rte_memcpy(&cache->objs[0], &cache->objs[cache->size / 2],
+                sizeof(void *) * (cache->len - cache->size / 2));
+        cache_objs =3D &cache->objs[cache->len - cache->size / 2];
+        cache->len =3D cache->len - cache->size / 2 + n;
+
+        /* Add the objects to the cache. */
+        rte_memcpy(cache_objs, obj_table, sizeof(void *) * n);
+    }
+
+    return;
+
+driver_enqueue:
+
+	/* increment stat now, adding in mempool always success */
+	RTE_MEMPOOL_STAT_ADD(mp, put_bulk, 1);
+	RTE_MEMPOOL_STAT_ADD(mp, put_objs, n);
+
+driver_enqueue_stats_incremented:
+
+	/* push objects to the backend */
+	rte_mempool_ops_enqueue_bulk(mp, obj_table, n);
+}
+
+
+
+> Can we not use function versioning to add the
+> new parameter to all functions needing it, without worrying about ABI
+> breakage.
+
+The public structures will also change, so I don't think so.
+
+>=20
+> /Bruce
