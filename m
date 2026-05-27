@@ -2,56 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E594DCD4F54
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3488CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:29:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C4A540650;
-	Wed, 27 May 2026 13:21:34 +0200 (CEST)
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
- by mails.dpdk.org (Postfix) with ESMTP id 00D314028A
- for <dev@dpdk.org>; Wed, 27 May 2026 13:21:31 +0200 (CEST)
-X-QQ-mid: Yeas9t1779880885t808t18771
-Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
- [122.231.28.113])
-X-QQ-SSF: 0000000000000000000000000000000
-From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 7455510100251041051
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-17-zaiyuwang@trustnetic.com>
- <20260517165225.6ba8b774@phoenix.local>
-In-Reply-To: <20260517165225.6ba8b774@phoenix.local>
-Subject: RE: [PATCH v4 16/20] net/txgbe: fix SFP module identification
-Date: Wed, 27 May 2026 19:21:24 +0800
-Message-ID: <00c201dcedca$f41e37b0$dc5aa710$@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F141940285;
+	Wed, 27 May 2026 13:29:50 +0200 (CEST)
+Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
+ by mails.dpdk.org (Postfix) with ESMTP id 2C2A34026C
+ for <dev@dpdk.org>; Wed, 27 May 2026 13:29:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lysator.liu.se;
+ s=2026; t=1779881389;
+ bh=C47qO+bsrbsz29XRsXUpG4SzWqDU9R/c5XEgx+UleGg=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=TwS0Rw/h5FiEUblZxEkJweTWP/d5+U6CIi5+R1/8MAg+1xgRqVk7A/FAjZzhjB+G6
+ i29Rmd1jL+nNJqNXbiaaH5w45H803aIF1thCxZzrbGxwE7ZLxnCvdGMLipnOF9n3QH
+ 0aEZVw1kTuwoKdBTdkxAFcilJMBlhYwLpR/6TTqu61tz794PxZb9cynFvGSgjwWagK
+ 8HlPVeDmzfNiaRs0lCvUtgmIfm7UhWVxvZHDxf1B2mT7SMgXRHDnT4GXGswKRaD9Wh
+ 6Rp8uDzADnYMTmcHbI4kPg696yeMbZOE/qTZOStU7nfbb4eJG/hFpm2HMJtFSBY9pv
+ VZyos+u7q7p9w==
+Received: from mail.lysator.liu.se (localhost [127.0.0.1])
+ by mail.lysator.liu.se (Postfix) with ESMTP id ADEBD1F02
+ for <dev@dpdk.org>; Wed, 27 May 2026 13:29:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lysator.liu.se;
+ s=2026; t=1779881389;
+ bh=C47qO+bsrbsz29XRsXUpG4SzWqDU9R/c5XEgx+UleGg=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=TwS0Rw/h5FiEUblZxEkJweTWP/d5+U6CIi5+R1/8MAg+1xgRqVk7A/FAjZzhjB+G6
+ i29Rmd1jL+nNJqNXbiaaH5w45H803aIF1thCxZzrbGxwE7ZLxnCvdGMLipnOF9n3QH
+ 0aEZVw1kTuwoKdBTdkxAFcilJMBlhYwLpR/6TTqu61tz794PxZb9cynFvGSgjwWagK
+ 8HlPVeDmzfNiaRs0lCvUtgmIfm7UhWVxvZHDxf1B2mT7SMgXRHDnT4GXGswKRaD9Wh
+ 6Rp8uDzADnYMTmcHbI4kPg696yeMbZOE/qTZOStU7nfbb4eJG/hFpm2HMJtFSBY9pv
+ VZyos+u7q7p9w==
+Received: by mail.lysator.liu.se (Postfix, from userid 1004)
+ id 9302B1DFA; Wed, 27 May 2026 13:29:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lysator.liu.se;
+ s=2026; t=1779881387;
+ bh=C47qO+bsrbsz29XRsXUpG4SzWqDU9R/c5XEgx+UleGg=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=BgIkD3eNDPvwAs1QQ0x3nebO32RVLKIZ0Y5w13ppUJy6oDrwq5QIHPqvgAvyyrGGq
+ 1iV6YsbCKuJmy7HplIJ8hPdFOmPbwKet5G/ZDidYvc+ztvqQJ0lM03MDrXa9vgOiGE
+ eEsSy99dH5wc4/oA9kOIC3APQabiUm04uOSHcMnrzLDIZZttg4IRaSwfaRCvtgfSHy
+ 58jwwokK6E3RopRnt6M0IZJbRQ7qFPfOkVeGB0+WHjq9H0E6i0sZAV7NBIVhcbouKm
+ jNXsoNsYH11Q7kpO6FuXNBFPCYFt35d10rBEIwFmfv5ZgnZg15ss61PDCRw6IpHkVM
+ ob+5gko2Fiv/g==
+Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
+ [62.63.215.114])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+ (No client certificate requested)
+ by mail.lysator.liu.se (Postfix) with ESMTPSA id 4C6C71E77;
+ Wed, 27 May 2026 13:29:47 +0200 (CEST)
+Message-ID: <4b9f4f80-3bbf-490d-b39e-c40930d653fd@lysator.liu.se>
+Date: Wed, 27 May 2026 13:29:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAV3T1uMCsX/db7U79aXg
-Content-Language: zh-cn
-X-QQ-SENDSIZE: 520
-Feedback-ID: Yeas:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OJVhEmJj02aqmhIIzu74IFcmvfgC5Y6E7LGUqa+ONZbNtWgUUXBb0b8X
- tQL1QDme3AOcBfmGRf0TAzWtbmGOeuSCE1SAb5DNzsmN3pe6DEeHIgzqh0P/EXtArgPoLNi
- khTI8s0qwiYdHwlY31y4TCplphniflyYUVHtJS30VDtah9wabjVrrNlgTG3XB4/xiPY6wV2
- i1mCQdqN6Mtv1zkL6KTGsC4ByqSDQ/V7RURod3c28OBqBh/XXTevIJpzLJlLIJkJq3FJRfb
- UPDasFOHi090DDw+5BKvqheS0dRGZR91ifLfREf/jmBtCYbhYQyLG8t9erOLGSsPzv3RHeN
- 4iEYcemXSMDPDGi9l0WARWAIu0fun9TGNiEy6/b4eAycu+TG81aKS9PWo7KMlHajr/48y5U
- ToDSsv8bUQFT1FGED5cDSpmHRbLOSIkc0biJZMOagaTr58ptLN7/Nibii6ab33zFaIptkAO
- BVsU/xEUNgrnoEUD12A4VLVz/AVH+Je3rtWDmCUp4jPtJ+qUCLU25Y/38RBTvp7VZthtv+t
- Bd5GSinqbUtmsLRPKodWRTt4XoU14ix18BAsB3EQGDAJHaN6mMjBXA62MV1U0CZPUgGPNLs
- aD1WJ+z0hhLo+KPl979y8e2jbCoscDRoofHEqmS5yG5u10i9rjNuAbO/EzW9YKZIXgJzxy/
- 649/NZcJIbzdfU5wp3O4EgTHzBBpDMP0AdufA2vQfr0Yt/jWcNEZQ0gj42Drq64bwQiO7Uo
- 9g/h/4FlIRTk5ut/lb6ZxlUeIsI32VEjs+7styQeF5T8T210XYbtI66SK+kIHRCIYLsHSdD
- z/Q0lLNboT5fepxvtNp+DcTRzbzOk2Vz3iCIOqTdsKeDtDZmp0aPKiK85/SwzpU/b3oQLos
- CMwNspcsc0x+kXlalzaVXvPToeyvuVuRemWG6quANLBF/IPKLJ33dwNwcGeA4HelrQzx+0v
- 07OKWWBByBILXqItRVhMJy+o+o5JY4qd6ySJwFcPxphUE3b7YVUUS8NNcoErkr5gXps7RLh
- zHvcrKXWtPAf/eNITlm5hfUlr9ne6j4+bwdc+QOupEx+BNhcWqb0X7D4rhAo7tdZpuwY4Tt
- Q==
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 2/3] lib: add fastmem library
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
+ Yogaraj Baskaravel <yogaraj.baskaravel@ericsson.com>
+References: <20260525103642.55255-4-hofors@lysator.liu.se>
+ <20260526085743.64396-1-hofors@lysator.liu.se>
+ <20260526085743.64396-3-hofors@lysator.liu.se>
+ <20260526062312.33f76fcc@phoenix.local>
+ <b3982582-3023-4f2c-9c62-10d4af20d4e2@lysator.liu.se>
+ <ahbE6KvlgzG_XkSY@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F658A1@smartserver.smartshare.dk>
+Content-Language: en-US
+From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F658A1@smartserver.smartshare.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,52 +89,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> ## Errors
->=20
-> ### 1. Resource leak in `txgbe_identify_sfp_module()` - multiple error =
-paths
-> missing unlock
-No code change
-The review is incorrect =E2=80=94 all error paths after acquiring the =
-lock do properly release it. There is no lock leak.
+On 5/27/26 13:17, Morten Brørup wrote:
+>> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+>> Sent: Wednesday, 27 May 2026 12.18
+>>
+>> On Wed, May 27, 2026 at 12:12:19PM +0200, Mattias Rönnblom wrote:
+>>> On 5/26/26 15:23, Stephen Hemminger wrote:
+>>>> On Tue, 26 May 2026 10:57:42 +0200
+>>>> Mattias Rönnblom <hofors@lysator.liu.se> wrote:
+>>>>
+>>>>> +__rte_experimental
+>>>>> +void *
+>>>>> +rte_fastmem_alloc(size_t size, size_t align, unsigned int flags)
+>>>>> +	__rte_alloc_size(1) __rte_alloc_align(2);
+>>>>
+>>>> Should also add attribute __rte_malloc which tells compiler
+>>>> that pointer returned cannot alias other memory
+>>>>
+>>>> And add __rte_dealloc(rte_fastmem_free, 1)
+>>>> which tells compiler that the returned pointer should only go
+>>>> back to fastmem (not free, rte_free, etc).
+>>>
+>>> Done. Only works for the single-object ops (not bulk) though.
+>>>
+>>> I've had a look at how to extend fastmem to support larger
+>> allocations
+>>> (without suggesting this is the way to go).
+>>>
+>>> Seems to me that implementation should be something like
+>>> a) slab allocator for small objects.
+>>> b) a cache-less per-socket page run allocator for mid-sized objects.
+>>> c) per-object memzones for large objects.
+> 
+> All allocations through the library should somehow build on memzones.
+> If an application wants "normal" memory, it can use libc free()/malloc().
+> 
 
-> ### 2. `txgbe_write_i2c_byte()` removes STOP condition - probable =
-hardware
-No code change
-This change was ported from our out=E2=80=91of=E2=80=91tree Linux kernel =
-driver. It was found that the previous write_i2c interface had problems, =
-which caused ethtool -m to read some 40G optical module information =
-incorrectly. Removing the intermediate STOP is intentional and fixes =
-that issue.
+All allocations come out of memzones. In the c) case, each object is a 
+memzone. There is a very limited number of memzones, so they can't be many.
 
-> ### 3. Removed validation logic without replacement - SFP vendor =
-checking
-No code change
-The old code was inherited from the Intel driver. The restriction has =
-been removed intentionally: the driver now supports all optical modules =
-that comply with the relevant standards, without limiting to a specific =
-vendor.
+>>>
+>>> If one would implement that, you would essentially have a plug-in
+>>> replacement for rte_malloc.h (maybe minus some debug and some more
+>> esoteric
+>>> DPDK heap features).
+>>>
+>>> Should fastmem be an outright replacement, or something that at least
+>>> initially lives alongside the regular heap, maybe with a run- or
+>>> compile-time option to make rte_malloc.h functions delegate to
+>> fastmem? This
+>>> is unclear to me at this point. I fear the more ambitious, cleaner
+>> and more
+>>> risky DPDK heap replacement path will go they way my attempts to
+>> replace
+>>> rte_memcpy or rte_timer went.
+>>>
+>>> I would agree with anyone saying that we should have only one heap-
+>> like API
+>>> for memory allocations. rte_malloc.h obviously needs to stay, for
+>> backward
+>>> compatibility reason, if nothing else. I would like to add bulk
+>> alloc/free,
+>>> and allow for smaller alignments than 64, since slabs can do that
+>>> efficiently (DPDK heap per-object header is 128 bytes!). One could
+>> either go
+>>> about that by extending rte_malloc.h or deprecating that API and
+>> starting
+>>> anew. In the latter case, one could do many more minor tweaks, like
+>> removing
+>>> the type pointers (only a nuance), remove the validate function,
+>> change and
+>>> extend the stats interface, etc.
+>>>
+>> +1 for replacing rte_malloc. For a replacement, I'd tend towards aiming
+>> for
+>> compatibilty over trying to fix too many little things at once. While
+>> changing a couple of things is ok, I'd rather not force applications to
+>> make too many updates to their code when moving from one DPDK version
+>> to
+>> another.
+>>
+>> /Bruce
+> 
+> +1 for taking the path that begins with starting anew.
+> The new heap library can be designed specifically for the fast path, based on years of DPDK experience with what the fast path really needs.
+> It will allow much broader experimentation along the way.
+> We can easily get rid of all slow path legacy stuff in rte_malloc, like the "type" parameter.
+> 
+> I think we all agree that replacing rte_malloc should be the end game.
+> But IMO, it very important that the properties of rte_malloc do not impose any limits on the new heap library.
+> 
+> Someday, when the new library has sufficiently matured, we can discuss how it can replace the rte_malloc library.
+> Maybe some parts of rte_malloc are not replaceable, and need to be deprecated and removed.
+> Maybe we all have switched to using the new heap, and nobody is using rte_malloc anymore, so it can simply be removed. ;-)
+> 
 
-> ## Warnings
->=20
-> ### 1. `txgbe_identify_qsfp_module()` GPIO config runs unconditionally
-No code change.
-The function txgbe_identify_qsfp_module is only called for the =
-Amber=E2=80=91Lite 40G NIC. Among the three NIC types supported by txgbe =
-(Sapphire 10G, Amber=E2=80=91Lite 25G, Amber=E2=80=91Lite 40G), only the =
-40G variant uses QSFP; the other two use SFP. Based on the aml40 =
-hardware design, we need to configure the GPIO before using I2C.
+It would be useful to have a run- or compile-time switch to use fastmem 
+instead of the regular DPDK heap. In such a case, having it as an 
+external library will complicate things during initialization, if you 
+want all allocations to end up in fastmem.
 
-> ### 2. Missing error propagation - `txgbe_read_i2c_sff8636()` page =
-select failure
-> ignored
-Fixed.
+Unfortunately, if a rte_malloc replacement, I think it belongs in the 
+EAL, just like today's heap. That doesn't mean it have to start in the EAL.
 
-> ### 3. Implicit comparison on pointer
-Fixed.
-=20
-> ### 5. Function pointer assignments removed but functions still =
-defined
-Already verified.
-=20
+> Suggestion regarding naming:
+> The prefix could be "rte_mem_" instead of "rte_fastmem_" - it is shorter, and most libraries are "fast".
+> And then it could live in /lib/memory instead of /lib/fastmem.
+> 
 
+mem is very generic, but point taken. Name should change, unclear to 
+what. Depends on the role it will serve.
