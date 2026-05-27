@@ -2,55 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03140CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DEFCD5BC9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:09:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6DD7040663;
-	Wed, 27 May 2026 13:07:18 +0200 (CEST)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id 11BFC4026C
- for <dev@dpdk.org>; Wed, 27 May 2026 13:07:16 +0200 (CEST)
-X-QQ-mid: Yeas10t1779880032t408t25950
+	by mails.dpdk.org (Postfix) with ESMTP id 8870740395;
+	Wed, 27 May 2026 13:09:24 +0200 (CEST)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTP id 5577C40285
+ for <dev@dpdk.org>; Wed, 27 May 2026 13:09:22 +0200 (CEST)
+X-QQ-mid: Yeas8t1779880156t685t09031
 Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
  [122.231.28.113])
 X-QQ-SSF: 0000000000000000000000000000000
 From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 3704356600210941654
+X-BIZMAIL-ID: 4281962099054637591
 To: "'Stephen Hemminger'" <stephen@networkplumber.org>
 Cc: <dev@dpdk.org>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-6-zaiyuwang@trustnetic.com>
- <20260517164018.7a58c68c@phoenix.local>
-In-Reply-To: <20260517164018.7a58c68c@phoenix.local>
-Subject: RE: [PATCH v4 05/20] net/txgbe: fix inaccuracy in Tx rate limiting
-Date: Wed, 27 May 2026 19:07:10 +0800
-Message-ID: <00bc01dcedc8$f772f2e0$e658d8a0$@trustnetic.com>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-5-zaiyuwang@trustnetic.com>
+ <20260517163901.744df0fc@phoenix.local>
+In-Reply-To: <20260517163901.744df0fc@phoenix.local>
+Subject: RE: [PATCH v4 04/20] net/ngbe: fix VF promiscuous and allmulticast
+Date: Wed, 27 May 2026 19:09:14 +0800
+Message-ID: <00bd01dcedc9$41899fa0$c49cdee0$@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="us-ascii"
+	charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAtJCOOEB6kodCbU4A8pQ
+Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAsqNvuAByXOzdbU5Q+uw
 Content-Language: zh-cn
 X-QQ-SENDSIZE: 520
 Feedback-ID: Yeas:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NNF5uPB+5DRWnyv+l3KWpulfH7g3YwaAr9P5XB+nLWrNcpaATixTwNmx
- tzb0fAiZ6LZ+J/TpfGKLBImYMMaMDySsSVsSYWnrtf08wDt/sr8GMwSyKPNZ+vyIyGo6kp9
- p/ygIjnU4UuosQJJoR6U9Mcp5qROK8ztMFigfNET80Ap0zX8WEq9G5HEGyBnzsfv2OAm4rK
- rcILE03zCiYlAQam1emiFQUb3+riV6QAl7nIdX86WSeBeuwb1z5n044IMz8uDxhIbgI1zum
- FxLoWzshEaZ58jIHhewgpZOVr07/g2K7QnKnpF0QZf5OKwaINVBqfD81rZSQtm248TBiYT6
- W8PG7OlBJfj8dzYM0pQnFCiKEL7hBQ1t9z7aMrZwYuAUvuQCbezp0zvF25+Vv2fUty1FDej
- 3sjsHePkv/PKOvlDhiReqhsnswQdxEzEexthbPuvEVvKfngBmWx7l++ce44NkHjOiLWD2sa
- kw1mBcQ/eKgAM/gdrU32+MophVNX/frWWmzpLIwW1mCvlZ0V3X+CSeAsRnYZcQyD2ndGRGj
- 7GyS/OfscWw/JqsfKoj/ITwJNO+IPcQoOSms5Kamrc8RVDAk5VavGmlNanNG0EFv0cIfTqE
- Q5TGdYMHrDS5FCWSTE5111Fx/eTJPZgu/4uyCq8GvNXFJd5spmXH8k9Lz1kJFc/wRyxdqc6
- FPfBv8LeQZ7Gv8+A/0lKnzWLeO+GCQ6SvVHT/nAv+IEp79Zi6pUNmnVYw9jIItSOOMTIMwe
- y61yTvxJOh4k0Fan04WRuDGoRtCP8/f5iIkQzCfcI+mjIx+aph6GUNNUpXCRghiUOUmR2oc
- NBm0jAWm2HWAEtObfCcFJ8am1/WZiigHsamQitRQQ5gTvBPmmLnoE/Oo38+5UcquF4Ga2fM
- PwO+S9ji7M2Gxktp73Kjc1lnMZLpn3hNfAzA24UnyQsTUh810dowqQc1drMR9mnOdG4I27L
- Ow4WFTZTxNHwNncdCjZhivwDvyC9O6hdYGj+KWwNxyJ4x5nNtRz5u9ax45bZvN/o5TXMzoq
- XdogoueNP2txgQJfIxTV1NldVh5QeWwkqKBQ0XMfyPHKXhBsxmHELhclnT3Tzp8xADlt0U3
- AWZLXNjfu4f
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
+X-QQ-XMAILINFO: MBKLumFSBSSxaN4WOTPLIYP3oNn6pzaPN2GTBVdg8aVDOP8vlbVwMp/R
+ Ec2yXzNGj+Z5/gRckr+AMG1DIWHBCpzyPT/p/QBC8Oo1rQ4uDs3bWUez2agHHJNOYAQlWcC
+ IIBk5rulBDYPmOggJ1HdS02enX5JRjzZVH89Goa57bwhWEJrlQD5T+svBFxRM3JlPW/lgz0
+ v6jDMf5AFL2sXBVsrPXVEtnJyDUa87LOan9XpaVna0AShNbM8JA2uYXfKNYLedPC9Z87Rzl
+ jT2ca6iKq3Macekn5SYkllz6SdPhwf+htAfz8CgK4NqlaSjmrjoY0MKVwFTkPEkmF38ohcl
+ blH2R60Hw7KmF9F+XeoKE5IdZ0JMXeWRYx6WJDoen7nipT+JdgY9kysBIuq4Y8gd0no/X+o
+ zuILwxlcnt2IgFBgEVMhl08oDgbS48rMhewC8L1kvlBirvi1OBefeyVUoqbiDIF2d3ySwMY
+ xHpJu+StZ4+06muLJmVu+3AhZGjp9zeSfBaBWyd9ETOLo/dWI3LJfui3ggDGRU8B/stYWm1
+ E4FAlxfzZdKsSZqWVH+bWPW2AI1KRA48uxnrZ3kro1RFuts6pLf/AGw/PCN/4ddZPF8Npyf
+ GNmJuucD/YCxVeYa6bQ7FmwoY0uQ7V/ZpWKHrvwaeV/eOB+5Z5XpKt+a/SJfUMBeNEs6k4e
+ fjUu5WUh5HAzYOCOkHeX+xkcRthgudgi9vJt9YjbiOyHFG8oq4SZv3zU7XNr+1BQ3lzysHK
+ EKIGwINLDkbrTOiTXMD7vXsrAqTPN4Vha6vRXabFJ1PyEZbSHCWWWqIP4w3YVQlX2pMGGy9
+ sqKeG4utiXTVI1Z4ZG49t9wfrfHSmDNgFw42LEzlCgl9hR6MdB0/qLHcCPa7EXugfBT31ch
+ r1hMoQeZhW2/Pfq4RS4ir9hqagVBsCBpQxuvaZf/+Tplils/GBnwyVYDPoHMfFzYqxLM76S
+ +it6LxM7ZVx7BOc8SgDi311q/efgGhUpeh8/6qAgRaJ7nsbnYUZxst7G52vhjN5iR3iRdNv
+ jM45zu9S6zNWnIRXNUvNAF0MQLR8QfzmZMKQNMkg==
+X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,85 +64,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> AI feedback on this one. Looks ok as is but worth looking at.
-Thank you for the review. Based on the feedback, I have made the following adjustments:
-> # DPDK Patch Review: net/txgbe: fix inaccuracy in Tx rate limiting
-> ### **Errors**
-> 
-> None found.
-> 
-> ### **Warnings**
-> 
-> **1. TDM_RL_ADJ write placement causes per-queue reconfiguration**
-No code change
-`txgbe_set_queue_rate_limit()` is directly exposed as the
-`eth_dev_ops.set_queue_rate_limit`  to upper-layer applications. We cannot expect
-applications to perform any additional setup before calling this interface, so the driver
-must reconfig.
-Writing the same value to this register multiple times is harmless. Therefore I prefer to
-keep the current approach.
 
-> **2. Magic number 21 lacks explanation**
-> 
-> The value 21 is documented in the commit message but not in the code. Future
-> maintainers will not see the breakdown (7B preamble + 1B SFD + 1B EFD + 12B
-> IPG).
-> 
-> **Suggested fix:** Add a comment or define:
-> 
-> ```c
-> /* Ethernet framing overhead: 7B preamble + 1B SFD + 1B EFD + 12B IPG */
-> #define TXGBE_TDM_RL_ADJ_OVERHEAD  21 wr32(hw, TXGBE_TDM_RL_ADJ,
-> TXGBE_TDM_RL_ADJ_OVERHEAD); ```
-> 
-I have added a macro `TXGBE_FRAME_OVERHEAD`.
 
-> **3. Missing release notes update**
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Monday, May 18, 2026 7:39 AM
+> To: Zaiyu Wang <zaiyuwang@trustnetic.com>; Zaiyu Wang
+> <zaiyuwang@trustnetic.com>
+> Cc: dev@dpdk.org; stable@dpdk.org; Jiawen Wu <jiawenwu@trustnetic.com>;
+> dev@dpdk.org; stable@dpdk.org; Jiawen Wu <jiawenwu@trustnetic.com>
+> Subject: Re: [PATCH v4 04/20] net/ngbe: fix VF promiscuous and allmulticast
 > 
-> This is a fix that changes hardware behavior and improves accuracy. Users may
-> observe different TX rates after upgrading. The change should be documented in
-> release notes to inform users of the accuracy improvement.
+> On Mon, 11 May 2026 18:35:46 +0800
+> Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 > 
-> **Suggested fix:** Add an entry to `doc/guides/rel_notes/release_26_11.rst` (or
-> current release):
+> > The configuration of allmulti and promiscuous modes conflicts
+> > together. For instance, if we enable promiscuous mode, then enable and
+> > disable allmulti, then the promiscuous mode is wrongly disabled.
+> >
+> > To resolve this, the following changes are made:
+> > - do nothing when we set/unset allmulti if promiscuous mode is on
+> > - restore the proper mode (none or allmulti) when we disable
+> >   promiscuous mode
+> >
+> > Fixes: 7744e90805b5 ("net/ngbe: add promiscuous and allmulticast ops
+> > for VF device")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+> > ---
 > 
-> ```rst
-> * **net/txgbe: Improved TX rate limiting accuracy for Amber-lite NIC.**
-> 
->   Fixed TX rate limiting accuracy for 64-byte packets from ~20% deviation
->   to within ~5% by correcting hardware framing overhead configuration.
-> ```
-> 
-> ### **Info**
-> 
-> **1. Consider validating tx_rate is non-zero**
-> 
-> The code computes `factor_int = link_speed / tx_rate`. If `tx_rate` is somehow zero
-> (due to caller error or invalid input), this would cause division by zero. The existing
-> code may have validation elsewhere, but defensive programming would check
-> this.
-> 
-> ```c
-> if (tx_rate == 0) {
->     PMD_DRV_LOG(ERR, "TX rate cannot be zero");
->     return -EINVAL;
-> }
-> ```
-No code change
-In this function, `tx_rate == 0` is a valid input meaning "remove rate limiting and
-restore unlimited mode". No additional check is needed.> 
-> **2. Variable scope: factor_fra could be declared at initialization**
-> 
-> The variable `factor_fra` is declared but not initialized, then assigned in both
-> branches of the conditional. C99 style would allow:
-> 
-> ```c
-> u32 factor_fra = (frac * 16384) / 10000; if (factor_fra >= 8192)
->     factor_fra = 0;
-> ```
-> 
-> This is stylistic only; the existing code is correct.
-> 
-No code change
-Just leave it as is.
+> Worth mentioning, but IMHO this is case of AI being overly pedantic.
+> Patch is OK as is.
+Thanks.
+ 
 
