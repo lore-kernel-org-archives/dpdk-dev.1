@@ -2,18 +2,18 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D895FCD5BD0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC918CD5BD5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:36:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EADBF40285;
-	Wed, 27 May 2026 13:36:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D565940659;
+	Wed, 27 May 2026 13:36:53 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id A099C4026C
+ by mails.dpdk.org (Postfix) with ESMTP id A937040285
  for <dev@dpdk.org>; Wed, 27 May 2026 13:36:51 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 74C4C208E7;
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7A42A20C5D;
  Wed, 27 May 2026 13:36:51 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
@@ -26,17 +26,18 @@ To: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@oss.nxp.com>
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v6] net/idpf: update for new mempool cache algorithm
-Date: Wed, 27 May 2026 11:36:42 +0000
-Message-ID: <20260527113644.222538-1-mb@smartsharesystems.com>
+Subject: [PATCH v6] mempool/dpaa2: update for new mempool cache algorithm
+Date: Wed, 27 May 2026 11:36:44 +0000
+Message-ID: <20260527113644.222538-3-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260408141315.904381-1-mb@smartsharesystems.com>
+In-Reply-To: <20260527113644.222538-1-mb@smartsharesystems.com>
 References: <20260408141315.904381-1-mb@smartsharesystems.com>
+ <20260527113644.222538-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 27 May 2026 11:36:50.0554 (UTC)
- FILETIME=[1BD8BDA0:01DCEDCD]
+X-OriginalArrivalTime: 27 May 2026 11:36:50.0929 (UTC)
+ FILETIME=[1C11F610:01DCEDCD]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,95 +51,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-As a consequence of the improved mempool cache algorithm, the PMD was
-updated regarding how much to backfill the mempool cache in the AVX512
-code path.
+As a consequence of the improved mempool cache algorithm, the mempool
+driver was updated to not modify the mempool cache's flushthresh field,
+which is now obsolete, and modifying it has no effect.
 
 Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
 Depends-on: patch-164427 ("mempool: improve cache behaviour and performance")
 ---
- .../net/intel/idpf/idpf_common_rxtx_avx512.c  | 52 +++++++++++++++----
- 1 file changed, 42 insertions(+), 10 deletions(-)
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-index 9af275cd9d..dd2263b8d7 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-@@ -148,15 +148,31 @@ idpf_singleq_rearm(struct idpf_rx_queue *rxq)
- 	/* Can this be satisfied from the cache? */
- 	if (cache->len < IDPF_RXQ_REARM_THRESH) {
- 		/* No. Backfill the cache first, and then fill from it */
--		uint32_t req = IDPF_RXQ_REARM_THRESH + (cache->size -
--							cache->len);
+diff --git a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
+index 02b6741853..ee001d8ce0 100644
+--- a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
++++ b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
+@@ -54,8 +54,6 @@ rte_hw_mbuf_create_pool(struct rte_mempool *mp)
+ 	struct dpaa2_bp_info *bp_info;
+ 	struct dpbp_attr dpbp_attr;
+ 	uint32_t bpid;
+-	unsigned int lcore_id;
+-	struct rte_mempool_cache *cache;
+ 	int ret;
  
--		/* How many do we require i.e. number to fill the cache + the request */
-+		/* Backfill would exceed the cache bounce buffer limit? */
-+		__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-+		if (unlikely(cache->size / 2 < IDPF_RXQ_REARM_THRESH)) {
-+			idpf_singleq_rearm_common(rxq);
-+			return;
-+		}
-+
-+		/*
-+		 * Backfill the cache from the backend;
-+		 * move up the hot objects in the cache to the top half of the cache,
-+		 * and fetch (size / 2) objects to the bottom of the cache.
-+		 */
-+		__rte_assume(cache->len < cache->size / 2);
-+		rte_memcpy(&cache->objs[cache->size / 2], &cache->objs[0],
-+				sizeof(void *) * cache->len);
- 		int ret = rte_mempool_ops_dequeue_bulk
--				(rxq->mp, &cache->objs[cache->len], req);
-+				(rxq->mp, &cache->objs[0], cache->size / 2);
- 		if (ret == 0) {
--			cache->len += req;
-+			cache->len += cache->size / 2;
- 		} else {
-+			/*
-+			 * No further action is required for roll back, as the objects moved
-+			 * in the cache were actually copied, and the cache remains intact.
-+			 */
- 			if (rxq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >=
- 			    rxq->nb_rx_desc) {
- 				__m128i dma_addr0;
-@@ -565,15 +581,31 @@ idpf_splitq_rearm(struct idpf_rx_queue *rx_bufq)
- 	/* Can this be satisfied from the cache? */
- 	if (cache->len < IDPF_RXQ_REARM_THRESH) {
- 		/* No. Backfill the cache first, and then fill from it */
--		uint32_t req = IDPF_RXQ_REARM_THRESH + (cache->size -
--							cache->len);
+ 	avail_dpbp = dpaa2_alloc_dpbp_dev();
+@@ -152,18 +150,6 @@ rte_hw_mbuf_create_pool(struct rte_mempool *mp)
+ 	DPAA2_MEMPOOL_DEBUG("BP List created for bpid =%d", dpbp_attr.bpid);
  
--		/* How many do we require i.e. number to fill the cache + the request */
-+		/* Backfill would exceed the cache bounce buffer limit? */
-+		__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-+		if (unlikely(cache->size / 2 < IDPF_RXQ_REARM_THRESH)) {
-+			idpf_splitq_rearm_common(rx_bufq);
-+			return;
-+		}
-+
-+		/*
-+		 * Backfill the cache from the backend;
-+		 * move up the hot objects in the cache to the top half of the cache,
-+		 * and fetch (size / 2) objects to the bottom of the cache.
-+		 */
-+		__rte_assume(cache->len < cache->size / 2);
-+		rte_memcpy(&cache->objs[cache->size / 2], &cache->objs[0],
-+				sizeof(void *) * cache->len);
- 		int ret = rte_mempool_ops_dequeue_bulk
--				(rx_bufq->mp, &cache->objs[cache->len], req);
-+				(rx_bufq->mp, &cache->objs[0], cache->size / 2);
- 		if (ret == 0) {
--			cache->len += req;
-+			cache->len += cache->size / 2;
- 		} else {
-+			/*
-+			 * No further action is required for roll back, as the objects moved
-+			 * in the cache were actually copied, and the cache remains intact.
-+			 */
- 			if (rx_bufq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >=
- 			    rx_bufq->nb_rx_desc) {
- 				__m128i dma_addr0;
+ 	h_bp_list = bp_list;
+-	/* Update per core mempool cache threshold to optimal value which is
+-	 * number of buffers that can be released to HW buffer pool in
+-	 * a single API call.
+-	 */
+-	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
+-		cache = &mp->local_cache[lcore_id];
+-		DPAA2_MEMPOOL_DEBUG("lCore %d: cache->flushthresh %d -> %d",
+-			lcore_id, cache->flushthresh,
+-			(uint32_t)(cache->size + DPAA2_MBUF_MAX_ACQ_REL));
+-		if (cache->flushthresh)
+-			cache->flushthresh = cache->size + DPAA2_MBUF_MAX_ACQ_REL;
+-	}
+ 
+ 	return 0;
+ err4:
 -- 
 2.43.0
 
