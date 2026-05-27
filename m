@@ -2,54 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DEFCD5BC9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8F8CD5BC9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:11:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8870740395;
-	Wed, 27 May 2026 13:09:24 +0200 (CEST)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTP id 5577C40285
- for <dev@dpdk.org>; Wed, 27 May 2026 13:09:22 +0200 (CEST)
-X-QQ-mid: Yeas8t1779880156t685t09031
+	by mails.dpdk.org (Postfix) with ESMTP id ADB494028A;
+	Wed, 27 May 2026 13:11:13 +0200 (CEST)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+ by mails.dpdk.org (Postfix) with ESMTP id E118B40285
+ for <dev@dpdk.org>; Wed, 27 May 2026 13:11:10 +0200 (CEST)
+X-QQ-mid: Yeas7t1779880263t813t41153
 Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
  [122.231.28.113])
 X-QQ-SSF: 0000000000000000000000000000000
 From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 4281962099054637591
+X-BIZMAIL-ID: 12350763214044050875
 To: "'Stephen Hemminger'" <stephen@networkplumber.org>
 Cc: <dev@dpdk.org>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-5-zaiyuwang@trustnetic.com>
- <20260517163901.744df0fc@phoenix.local>
-In-Reply-To: <20260517163901.744df0fc@phoenix.local>
-Subject: RE: [PATCH v4 04/20] net/ngbe: fix VF promiscuous and allmulticast
-Date: Wed, 27 May 2026 19:09:14 +0800
-Message-ID: <00bd01dcedc9$41899fa0$c49cdee0$@trustnetic.com>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-10-zaiyuwang@trustnetic.com>
+ <20260517164612.4d1c622b@phoenix.local>
+In-Reply-To: <20260517164612.4d1c622b@phoenix.local>
+Subject: RE: [PATCH v4 09/20] net/txgbe: fix link flow control config for
+ Sapphire
+Date: Wed, 27 May 2026 19:11:01 +0800
+Message-ID: <00be01dcedc9$816595c0$8430c140$@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="UTF-8"
+	charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAsqNvuAByXOzdbU5Q+uw
+Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAbJ1z9UBxJRMCLVCXeFQ
 Content-Language: zh-cn
 X-QQ-SENDSIZE: 520
 Feedback-ID: Yeas:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MBKLumFSBSSxaN4WOTPLIYP3oNn6pzaPN2GTBVdg8aVDOP8vlbVwMp/R
- Ec2yXzNGj+Z5/gRckr+AMG1DIWHBCpzyPT/p/QBC8Oo1rQ4uDs3bWUez2agHHJNOYAQlWcC
- IIBk5rulBDYPmOggJ1HdS02enX5JRjzZVH89Goa57bwhWEJrlQD5T+svBFxRM3JlPW/lgz0
- v6jDMf5AFL2sXBVsrPXVEtnJyDUa87LOan9XpaVna0AShNbM8JA2uYXfKNYLedPC9Z87Rzl
- jT2ca6iKq3Macekn5SYkllz6SdPhwf+htAfz8CgK4NqlaSjmrjoY0MKVwFTkPEkmF38ohcl
- blH2R60Hw7KmF9F+XeoKE5IdZ0JMXeWRYx6WJDoen7nipT+JdgY9kysBIuq4Y8gd0no/X+o
- zuILwxlcnt2IgFBgEVMhl08oDgbS48rMhewC8L1kvlBirvi1OBefeyVUoqbiDIF2d3ySwMY
- xHpJu+StZ4+06muLJmVu+3AhZGjp9zeSfBaBWyd9ETOLo/dWI3LJfui3ggDGRU8B/stYWm1
- E4FAlxfzZdKsSZqWVH+bWPW2AI1KRA48uxnrZ3kro1RFuts6pLf/AGw/PCN/4ddZPF8Npyf
- GNmJuucD/YCxVeYa6bQ7FmwoY0uQ7V/ZpWKHrvwaeV/eOB+5Z5XpKt+a/SJfUMBeNEs6k4e
- fjUu5WUh5HAzYOCOkHeX+xkcRthgudgi9vJt9YjbiOyHFG8oq4SZv3zU7XNr+1BQ3lzysHK
- EKIGwINLDkbrTOiTXMD7vXsrAqTPN4Vha6vRXabFJ1PyEZbSHCWWWqIP4w3YVQlX2pMGGy9
- sqKeG4utiXTVI1Z4ZG49t9wfrfHSmDNgFw42LEzlCgl9hR6MdB0/qLHcCPa7EXugfBT31ch
- r1hMoQeZhW2/Pfq4RS4ir9hqagVBsCBpQxuvaZf/+Tplils/GBnwyVYDPoHMfFzYqxLM76S
- +it6LxM7ZVx7BOc8SgDi311q/efgGhUpeh8/6qAgRaJ7nsbnYUZxst7G52vhjN5iR3iRdNv
- jM45zu9S6zNWnIRXNUvNAF0MQLR8QfzmZMKQNMkg==
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
+X-QQ-XMAILINFO: ORP1oqzHuvxWeiAxrYLIJhFXXhkebxhdeAvnYBWRRHa0PT1WIWGGjoaL
+ 5Si+vF15R5REtiX7KTGfMPDar/aagMrg0NVt9zv1Q3ROdpLPDs8O1jS1xsUSKlU3LVMDzdn
+ J6tCpIPEAg1wjSgKbv7s19EbM342/GZxWI6rS6yDFefkt2a1pEahOwrr7S7NEuZV0JFTnON
+ 2AJ3iejUDGxKlBbUU/iJtIiVkmiLHnPTQn7cSH/6AfOnujsFhkmNhPGpijbGMbbFUnWFDAJ
+ 1oTc7AR2fGpOJxU2tnCLiNvM1eWQoQvwi6KqwCYpWMLSkrN63E673j9jzf6gcdE0V/2Gs+D
+ +/NyXxKHytYAQQIJ2IM95z6YjLtJuaj/5L21FdnqJC1XBaFIfX3EHe1Pc39KLzHNu6fcG0Z
+ j1M9L6L4pyvYha74zXYkJMEGGl5pChTcEUwqER2JUMPvXCesiMW8ltyrLW0wk0hkGjofPHl
+ 6rozYcZsmrsdpbVhWZniomd8WcV2tNRHIC5VLF1o4+1Cj9n4hc4H9UlYbKOWi0EuTq+e0IC
+ 5p89MGaDrNhG6XKbwzF6XN4AmwgLmqM72cI87i3iSRRzB0878tAZgRdZJXxVnpZa11JbUQ/
+ /7Qkog+kEMSsYU20nXkplJUlcV5UE8Hs2N/TxF+cy7Jatz9kPxeJQTbXkA9X7FCk7jBK9VO
+ PfmW2Zd2cjeXM6fA+Ka7f8OPoI4CgWX2K1ViVCfHYQlHslxmtrB3Hy/iurR5G1cWE4wPSMr
+ eGsQ/kMvDHx31u2qFNESNvjEVwmTkxf2A8ciO3IYt8dBqZVlaw81Ssz07U4SifIQ5zaBO7V
+ I27R2glKFQVfwrAcO1tBwKOBsTtCfHJxhp0BqfooGnyB/2JBSKATq6UFZddxDW/69c8ZmLa
+ 6gvEC9gjvpWMp7uv+/l88WJhoXSrnL8oLR30SFAcT8TInerZeBq6wAkYFiS26bq3Iv2qbef
+ q5/lOxOsnNe4R80CBJleExkITuAkVfEEuQzTIEnQpOIDa43AmAvpRacmXVUGhbYoTHZ8Une
+ qwe77dYvCD473BEl8b
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -68,34 +69,43 @@ Errors-To: dev-bounces@dpdk.org
 
 > -----Original Message-----
 > From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Monday, May 18, 2026 7:39 AM
+> Sent: Monday, May 18, 2026 7:46 AM
 > To: Zaiyu Wang <zaiyuwang@trustnetic.com>; Zaiyu Wang
 > <zaiyuwang@trustnetic.com>
 > Cc: dev@dpdk.org; stable@dpdk.org; Jiawen Wu <jiawenwu@trustnetic.com>;
-> dev@dpdk.org; stable@dpdk.org; Jiawen Wu <jiawenwu@trustnetic.com>
-> Subject: Re: [PATCH v4 04/20] net/ngbe: fix VF promiscuous and allmulticast
+> Ferruh Yigit <ferruh.yigit@amd.com>; dev@dpdk.org; stable@dpdk.org; Jiawen
+> Wu <jiawenwu@trustnetic.com>; Ferruh Yigit <ferruh.yigit@amd.com>
+> Subject: Re: [PATCH v4 09/20] net/txgbe: fix link flow control config for Sapphire
 > 
-> On Mon, 11 May 2026 18:35:46 +0800
+> On Mon, 11 May 2026 18:35:51 +0800
 > Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 > 
-> > The configuration of allmulti and promiscuous modes conflicts
-> > together. For instance, if we enable promiscuous mode, then enable and
-> > disable allmulti, then the promiscuous mode is wrongly disabled.
+> > SP chips have a hardware bug preventing XON flow control support, so
+> > the driver disables it.
 > >
-> > To resolve this, the following changes are made:
-> > - do nothing when we set/unset allmulti if promiscuous mode is on
-> > - restore the proper mode (none or allmulti) when we disable
-> >   promiscuous mode
-> >
-> > Fixes: 7744e90805b5 ("net/ngbe: add promiscuous and allmulticast ops
-> > for VF device")
+> > Fixes: 69ce8c8a4ce3 ("net/txgbe: support flow control")
 > > Cc: stable@dpdk.org
 > >
 > > Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 > > ---
 > 
-> Worth mentioning, but IMHO this is case of AI being overly pedantic.
-> Patch is OK as is.
-Thanks.
+> Comment vs code mismatch
+> 
+> 
+> # Review of Patch 9/20: net/txgbe: fix link flow control config for Sapphire
+> 
+> ## Errors
+> 
+> None.
+> 
+> ## Warnings
+> 
+> ### W1: Conditional logic inverted (line 1042-1043)
+Fixed.
+
+ 
+> ### W2: Inconsistent capitalization in comment (line 1042)
+Fixed.
+
  
 
