@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CBFCD5BC9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 10:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6849ECD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 10:34:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D28EB40285;
-	Wed, 27 May 2026 12:33:26 +0200 (CEST)
-Received: from CH5PR02CU005.outbound.protection.outlook.com
- (mail-northcentralusazon11012011.outbound.protection.outlook.com
- [40.107.200.11]) by mails.dpdk.org (Postfix) with ESMTP id DF9444026C
- for <dev@dpdk.org>; Wed, 27 May 2026 12:33:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4F6E540285;
+	Wed, 27 May 2026 12:34:34 +0200 (CEST)
+Received: from CO1PR03CU002.outbound.protection.outlook.com
+ (mail-westus2azon11010004.outbound.protection.outlook.com [52.101.46.4])
+ by mails.dpdk.org (Postfix) with ESMTP id 96DDB4026C
+ for <dev@dpdk.org>; Wed, 27 May 2026 12:34:33 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gqpYExg8YGkVyOxtdtKPo27R3EGWqxW+IcQpKCt/E0CeNrd17qkVeTjjOo/j/F/saaGqwsKLTYQPl8QUm3erNIF9AdejIKBB38w+XAh1J8v2Ld+z5P/QvLfgpLH0x2FV4UG4ajsPNMcIrZ0EfBh+XfAH4h6GYITBNYIcWC+dTcEZsGPP3zzrrG7/x5SIeD0hvNRMyOV9aVASPOvlq4pRV4qzFjRk0oj//Hc/Jc/lh6qkiC7d9AgsEFR1St5X2cVZpHfi+v+mJHFguWd+/FBlm5sJebdCY88PQux2HrE2W829+C4vIuoS6cj2LeRjey4YqKwRwzL4qc4b5GdRT0Pafg==
+ b=fotEjYZxBufJshBuqaufZ8uqEvlNb/vcz+ZsMJ3xMPLNNE4V3100a4Cdf4MEugkItQ1ymXjT2ECpg30EPGsLZLuCY7Gquh7Fv0TZoFmUA0PNaiOz3Jzc642etQK7HHOLOzELpNr+ynzU8vIog8nkwL1ZJHxFmpzyV/VmHPwWFylccaWMJnerjxL7Vy50P0+AVxjjbTZAy7O7+/MHXKgQ1ZhYTxj36INR9ZUR2Jto83IylocytsY1uHj1UUSuQWmSnWDyNLoSgi8C2oBxqe+uNUduR6gn2hZHEBHiewURb5m+I8C2WvZMEwCy5eDn5HUtL2C2TjtSi/3gnNDRUeFoqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8XgX+GuP5eLnmwumMkwPJdwPPOCvVuv81Wn7iIPxQ/8=;
- b=Ff7FBCa7h7vZ0mRSHHyh1UFxOHsLzlHfc4qBvrTtNPlcEzeeTYVFi3RNtSkkdnrL/bN8aUvIQZbJ26XZekFWP+mV2jTLFUKEA41fosvBw1ceInvjSRMD/qRC/XnwnVkvY3rr198iKw/ksS49uYPvzfk7SiYs4/FInlrfnukdFOhclRWicFvxyrsSkp42zKvNnaRDylRwnbxFi6LL5xzfU9zzU36KOpwoZ1gi2V4DMZxn4olR+GkM0+sGKR0DvrzzCt8YrIowf74DI0y0munw+XSUXCNZ0SPMA2SQEI+e+FKW6E+wellQS0WTdtq6ZNkdgmHS6zVFGIPY0KVXW7ys1A==
+ bh=HVjDH7wpNOsC/bdfsKdA4nxOVeGN5V+x236XlCV1Vbo=;
+ b=bRFej3p+rOq/lkE26LM1bD2sGnTmgUWkXMi0nXR7cpL6ExhY+Z0c2rforvDlIzHI6go0db8uCj1oh1CIV9Mq1jhq1xVgwshbNuSji5HNBC2A+Lisf8VIDvlpLuD3H4gvRAJ3v6qs9eQPjQ1qjRaweC1Ufk9jlyu+hQywI5n+YRgDU9jRsvnJl42TtiOgeK3u3bX8mr+AaSijfP67kKPvhPas6GVvGVQc75xPbutrYnP9PGzwkeRK4TWq+vE5BejgUfplKZpoDrfpYMEVTHxjKNvpHALPi5VZIDt5YqWcwSfeny/s3dQ6q7fMf6TXW1j5T8f/2EcPTJl5QCVcnld7TQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=monjalon.net smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8XgX+GuP5eLnmwumMkwPJdwPPOCvVuv81Wn7iIPxQ/8=;
- b=qSCwjUiVKbxEsrSmR8mTv0vq7aoTzlmycJbv6+CuNBJH7nX2lDLshLzMwX88rlJCa8/5I0lPIDcNWcuhQGamBAfwwxF7taMaX4FSYB+cAGEO6LjrGOX1F1O9JcV1ZAZ+2WL47raRLpY0Tg2sdTWIudDQ64qiO05fxAmLVzpwcfQJHZhvKh0cP4I1htgB9iFq537sKn3AeBQBH54WX7o5rhRCZJIBX/1ymOmYc29dI/tKtdKhoknSQFlm+27ok8FUWF674CTfgTE1UDwYG/86gyRlQEPChKVA6Z2fYSsNPGHuKQJdQlKLVckRPrNzfU1JU6i8NNWflqGWciG3hJbD/g==
-Received: from BL1PR13CA0098.namprd13.prod.outlook.com (2603:10b6:208:2b9::13)
- by CY8PR12MB7684.namprd12.prod.outlook.com (2603:10b6:930:87::16)
- with Microsoft SMTP Server (version=TLS1_2,
+ bh=HVjDH7wpNOsC/bdfsKdA4nxOVeGN5V+x236XlCV1Vbo=;
+ b=jIBZiB9BfLkRABVnKNtGdpDPAkSISgb52sGKpNRSwvy/9QPIEnehkyj918BOjPTHIEHwDwjUZmLUHXnVMiQQGqnOPwYFHEbVeYjHjc6hub5xBZGRdLvXfUqIWYiS8143whC59FWn/bvh/7lTz3fme7VapYFEXQxxZupRtxGaq+dd6lOTiujVcFGNPMVc3wg8thRCJS7lCEgNsm7txhCb4RF750OV2csXpYN6VArPBz/m3xufrR3bQctmqAY20vnJV5d59h0Ja87F4Nf+QZal8R6gUU980JnsiMmWo7OvuJEI1g5xVD4SDIqYrIMJAlaUbhNVpicjVOWgoknIveeUnw==
+Received: from SJ0PR03CA0373.namprd03.prod.outlook.com (2603:10b6:a03:3a1::18)
+ by CH1PPF934D73F2C.namprd12.prod.outlook.com
+ (2603:10b6:61f:fc00::61a) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Wed, 27 May
- 2026 10:33:18 +0000
-Received: from BL6PEPF0001AB75.namprd02.prod.outlook.com
- (2603:10b6:208:2b9:cafe::31) by BL1PR13CA0098.outlook.office365.com
- (2603:10b6:208:2b9::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.92.3 via Frontend Transport; Wed, 27
- May 2026 10:33:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ 2026 10:34:28 +0000
+Received: from SJ1PEPF000023D0.namprd02.prod.outlook.com
+ (2603:10b6:a03:3a1:cafe::21) by SJ0PR03CA0373.outlook.office365.com
+ (2603:10b6:a03:3a1::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.13 via Frontend Transport; Wed, 27
+ May 2026 10:34:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB75.mail.protection.outlook.com (10.167.242.168) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ1PEPF000023D0.mail.protection.outlook.com (10.167.244.4) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.71.7 via Frontend Transport; Wed, 27 May 2026 10:33:18 +0000
+ 15.21.71.7 via Frontend Transport; Wed, 27 May 2026 10:34:28 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 27 May
- 2026 03:33:01 -0700
+ 2026 03:34:11 -0700
 Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 27 May
- 2026 03:33:00 -0700
+ 2026 03:34:10 -0700
 From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Ori Kam <orika@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>, "Andrew
- Rybchenko" <andrew.rybchenko@oktetlabs.ru>
+To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH] ethdev: promote flow metadata APIs to stable
-Date: Wed, 27 May 2026 12:32:46 +0200
-Message-ID: <20260527103246.633327-1-dsosnowski@nvidia.com>
+Subject: [PATCH] net/mlx5: promote private API to stable
+Date: Wed, 27 May 2026 12:33:57 +0200
+Message-ID: <20260527103357.633429-1-dsosnowski@nvidia.com>
 X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -72,30 +73,29 @@ X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB75:EE_|CY8PR12MB7684:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44f0068a-4943-4f0b-6414-08debbdb5e11
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D0:EE_|CH1PPF934D73F2C:EE_
+X-MS-Office365-Filtering-Correlation-Id: 03cb0548-e6f4-4a63-5102-08debbdb87fd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700016|376014|1800799024|56012099006|13003099007|6133799003|18002099003|11063799006;
-X-Microsoft-Antispam-Message-Info: +NDwXPP5VkwhKvzmpf9PTk0jxo+Da7pD1X8s2xzYcEuj0Xg78uE6i3NFl+9MeTCxXhRxH+EsgRsJh8DatFeRkEgkDMgtacu11cHo28xRBFbw1lVmQERE96+TLMoixc/A06Vpym4+R3WgXMRVW3VDpgrOiBCuHXlQqPYfOaqhEALwPgrxsgLSs3hc/iuzTApfYSSq0GOEv0DV4kEsoLOJs0bixwDEiXGVLC5u1kqkAxYirEKTjh6P6WCCpND+yZCWn8o8ucE/Gxt1rI+vkxkGWRP39W+llEvql+8osGmqC2GkcuE/0BUnVynoAmeNyxy3X0X9w0R3FMLlCwMi5fOeTc8AzrU5R3w0zt/rltQSMqdknL2pdbZSGYU1m1JVDjxT+v8ERVuUvQBosTlRq25sr1F9+T3zXOIWLzImGErsGwSqX6ODu+2ycCQUrG0DftVbkBNIYtiDLsAVch6ecIni/UKwRLhcrfbIouIEz0kreXJK6p3kIjpXthneiIqPOLrsxjGnu+MeUeXo4+FkbSxbjKFZ6XQ5VCM86VISOUhBHdnJf25x8kjLzl21D0opaHBQjOOYwPDhQxob848j9eCIv/Lvsp+fM1Hjv5PdaB2qKKgWcoJ0QUn+1CQvAscxy62nReNVSrYcujJckpD5xqJDPfT8CEKcs4i/vuq4mVJgs53Vd1enfwfZ0si0pdlxjgzkCmgrhErDWK8U7qdaA79ER+AA8RtUgzB4tVIqTS49a28=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(56012099006)(13003099007)(6133799003)(18002099003)(11063799006);
+ ARA:13230040|82310400026|36860700016|376014|1800799024|11063799006|56012099006|6133799003|18002099003|13003099007;
+X-Microsoft-Antispam-Message-Info: MKCtocdxqUjiglOOCeDVzpgXQ0Hc1UPxpQ3kEXxYgjJoZQFk/2jj6kWCVBLoA0xw5Sq6qN6cv4c/Qh6r7IDcL74kipKTcXCvxMBuC1L5XCz+NSMwWY8yuaWJMTnZGMfZmpWo3anpZpLGm74lCTEdK6x1cFk0kJt/g/WDBuLFMRodQwIollVTj64XSd0NrRBO8oTNwjBQBVgKolpErVEr90PFmubLdegrGNirG+hxle9gKZLKSDNMU67kkbLHxLCYT/CMvnpyVX/XuejGSyfGJOHk+pe3oNHe3jg1QjX+BoKubAMhbCaKwPvtJiU0gMcMo5NAoJ7jJ9aqaXchxK3MwfvfMjsxPwlQ1mhaLWaEFwRVUyolb5nqk7K/GdOY4JUfM2wfMiVytOpKy2i76cFABRky6oexOyIwGQg1YN774lZWBI5MMQQ/EPBj2BrMCXKw5Fq+R3BH/sMSeEox76GDzQzRATqlpEUTJtpvWtE8HEECy2XSBPL6mq9FlwXxm1GPOAlcCeCjjNnT8M1+VOEIQBZOeYJ/qWtt0ZAyvfMWSdxq/y8bem4809I7zHbAqlFnltVKMBXwGD/q8t4mbdIhO8Vxeds0Bggyr3nDfPK/x6GeNj4zGigjzQTvrl1JCm+/S6WYg4WYlyThSE893rMKOsit45jy2AFMBsPKs6uh05kgB2vdu+MxmT9fzovB9lMSIeYhTVJo45PoHU+OPmdZhFFrosmT/2dO23yBze7WbyQ=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(11063799006)(56012099006)(6133799003)(18002099003)(13003099007);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: ThbN6BQ9tHOvS+yQ2xQqlgyq+BWVf6tXPRrHkgOO3c1S2roLORwOrkWStgtLNE4CPrXzJn6/7CzVsmc/dV4QP76wz+/8NvzGJB2MM7fcaPYDprvp0CfEc77NL1xsY6Btknw1EQyF/4QYCvqKOGr1fbtqlJDr2K09QZ6XqcyMbnRVTz9DoyRUmmja6ebXLlRjvxAwdXsp97/qOUuBHQymCYBsH0TM3hn+TtQSHMyEJmbKCgSD+80E6oQQJz+TihRFBGXnuIsB0XHZJR+JiYnm9bl1sTNGN6pxUkprl2fYXEbimLybos72gZ4Tgv6YLKp32hYJhP2EBhetpnKH7Vat+Dfw1FKMzYuvw1TjlRI5GoBE3aOpdJsts5mxCJl/BJQt1JeIZkI+ZijDzeDzb5+6Xfy6lmgMJXlqoANmND854OrDqFnVB9g6GWyU5rcsTFc7
+X-MS-Exchange-AntiSpam-MessageData-0: ThWQR+N5NNuop5w0P2vEMuLxHWs/2G04W5yITuo/V0lyNUC8zOpXL5pL9zaOjSrYuwg2yrA+vC0EfaHJ35ZceJSgRWJphukZiLN4fS5gqjQKzA6JJQYCtLDEyiGE5UWpUoB+vVIojBRvYKeHazMGlvo9L8YNQNFcwCw9wUdAKGMUuE1vcJfJVd56XJ/JrKSemnCYBpuzBMtYgilzB2a82OxtCPM5mOg//zwodCxPvoJ1gU6Co/Wobj9ERL9VrGwozFPMFqYvfgq+JTySfXRov/fdjaKxnvATfNF25Xq9cAhff3r3PHPlzJmh5JVKLHMB4vjrZdbDybIa5iVEKavdU3rlVUBC14Ng2QZEWB45QQrOMXl0QAWdWDjd7RmSbNt9jMMU3+YI26wkw8fvNecXbecZWegDydLfS67oNhN9oyNEaAXkn8+4NsJnJcgO3M6Z
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 10:33:18.1786 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44f0068a-4943-4f0b-6414-08debbdb5e11
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 10:34:28.5640 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03cb0548-e6f4-4a63-5102-08debbdb87fd
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB75.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000023D0.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7684
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF934D73F2C
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -109,99 +109,125 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Following experimental symbols related to flow metadata
-were added in v19.11:
+Following experimental functions are exposed by mlx5 PMD
+since 25.11 release:
 
-- rte_flow_dynf_metadata_register
-- rte_flow_dynf_metadata_offs
-- rte_flow_dynf_metadata_mask
+- rte_pmd_mlx5_driver_event_cb_register
+- rte_pmd_mlx5_driver_event_cb_unregister
+- rte_pmd_mlx5_enable_steering
+- rte_pmd_mlx5_disable_steering
 
-Type of rte_flow_dynf_metadata_offs was changed from int to int32_t
-in v20.05 release.
-There were no changes to these symbols since then.
+First two are used to register callbacks for driver events
+(when Rx/Tx queues are created or destroyed).
+Other two are used to enable/disable flow steering in mlx5 PMD.
+No changes were made and no changes are planned to these symbols.
 
-This patch promotes these symbols and removes __rte_experimental
-from the following inline functions:
+These are currently used by NVIDIA DOCA SDK since version 3.3,
+which started depending on upstream DPDK releases [1].
+Purpose of their use is to:
 
-- rte_flow_dynf_metadata_avail
-- rte_flow_dynf_metadata_get
-- rte_flow_dynf_metadata_set
+- expose HW identifiers of Rx/Tx mlx5 queues managed by DPDK and
+- allow flow steering to happen outside of DPDK.
 
-All these symbols and functions will be used by netdev-doca
-backend in Open vSwitch [1].
+Also, some of these symbols will be used by netdev-doca backend
+in Open vSwitch [2].
+Whenever a DOCA netdev would be added/removed in Open vSwitch,
+it will have to disable/enable steering for mlx5 driver.
 Stabilizing these symbols is required by current OVS policy
-to remove the need for ALLOW_EXPERIMENTAL_API [2].
+to remove the need for ALLOW_EXPERIMENTAL_API [3].
 
-[1]: https://patchwork.ozlabs.org/project/openvswitch/list/?series=504726&state=%2A&archive=both
-[2]: https://mail.openvswitch.org/pipermail/ovs-dev/2026-May/432066.html
+This patch promotes aforementioned symbols to stable.
+
+[1]: https://docs.nvidia.com/doca/sdk/customer-affecting-changes/index.html
+[2]: https://patchwork.ozlabs.org/project/openvswitch/list/?series=504726&state=%2A&archive=both
+[3]: https://mail.openvswitch.org/pipermail/ovs-dev/2026-May/432066.html
 
 Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 ---
- lib/ethdev/rte_flow.c | 6 +++---
- lib/ethdev/rte_flow.h | 4 ----
- 2 files changed, 3 insertions(+), 7 deletions(-)
+ drivers/net/mlx5/mlx5_driver_event.c | 4 ++--
+ drivers/net/mlx5/mlx5_flow.c         | 4 ++--
+ drivers/net/mlx5/rte_pmd_mlx5.h      | 4 ----
+ 3 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
-index 7a51b667cf..ec0fe08355 100644
---- a/lib/ethdev/rte_flow.c
-+++ b/lib/ethdev/rte_flow.c
-@@ -23,11 +23,11 @@
- #define FLOW_LOG RTE_ETHDEV_LOG_LINE
- 
- /* Mbuf dynamic field name for metadata. */
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_flow_dynf_metadata_offs, 19.11)
-+RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_offs)
- int32_t rte_flow_dynf_metadata_offs = -1;
- 
- /* Mbuf dynamic field flag bit number for metadata. */
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_flow_dynf_metadata_mask, 19.11)
-+RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_mask)
- uint64_t rte_flow_dynf_metadata_mask;
- 
- /**
-@@ -281,7 +281,7 @@ static const struct rte_flow_desc_data rte_flow_desc_action[] = {
- 	MK_FLOW_ACTION(JUMP_TO_TABLE_INDEX, sizeof(struct rte_flow_action_jump_to_table_index)),
- };
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_flow_dynf_metadata_register, 19.11)
-+RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_register)
- int
- rte_flow_dynf_metadata_register(void)
- {
-diff --git a/lib/ethdev/rte_flow.h b/lib/ethdev/rte_flow.h
-index ba3bcc89a3..0c6d42c0d8 100644
---- a/lib/ethdev/rte_flow.h
-+++ b/lib/ethdev/rte_flow.h
-@@ -4253,14 +4253,12 @@ extern uint64_t rte_flow_dynf_metadata_mask;
- #define RTE_MBUF_DYNFLAG_RX_METADATA (rte_flow_dynf_metadata_mask)
- #define RTE_MBUF_DYNFLAG_TX_METADATA (rte_flow_dynf_metadata_mask)
- 
--__rte_experimental
- static inline uint32_t
- rte_flow_dynf_metadata_get(struct rte_mbuf *m)
- {
- 	return *RTE_FLOW_DYNF_METADATA(m);
+diff --git a/drivers/net/mlx5/mlx5_driver_event.c b/drivers/net/mlx5/mlx5_driver_event.c
+index 1dc8029ee5..89e49331c8 100644
+--- a/drivers/net/mlx5/mlx5_driver_event.c
++++ b/drivers/net/mlx5/mlx5_driver_event.c
+@@ -236,7 +236,7 @@ notify_existing_devices(rte_pmd_mlx5_driver_event_callback_t cb, void *opaque)
+ 		notify_existing_queues(port_id, cb, opaque);
  }
  
--__rte_experimental
- static inline void
- rte_flow_dynf_metadata_set(struct rte_mbuf *m, uint32_t v)
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_driver_event_cb_register, 25.11)
++RTE_EXPORT_SYMBOL(rte_pmd_mlx5_driver_event_cb_register)
+ int
+ rte_pmd_mlx5_driver_event_cb_register(rte_pmd_mlx5_driver_event_callback_t cb, void *opaque)
  {
-@@ -4590,7 +4588,6 @@ rte_flow_dev_dump(uint16_t port_id, struct rte_flow *flow,
-  * @return
-  *   True if registered, false otherwise.
-  */
--__rte_experimental
- static inline int
- rte_flow_dynf_metadata_avail(void)
+@@ -264,7 +264,7 @@ rte_pmd_mlx5_driver_event_cb_register(rte_pmd_mlx5_driver_event_callback_t cb, v
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_driver_event_cb_unregister, 25.11)
++RTE_EXPORT_SYMBOL(rte_pmd_mlx5_driver_event_cb_unregister)
+ int
+ rte_pmd_mlx5_driver_event_cb_unregister(rte_pmd_mlx5_driver_event_callback_t cb)
  {
-@@ -4607,7 +4604,6 @@ rte_flow_dynf_metadata_avail(void)
-  * @return
-  *   0 on success, a negative errno value otherwise and rte_errno is set.
+diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+index 915ea29a5a..a95dd9dc94 100644
+--- a/drivers/net/mlx5/mlx5_flow.c
++++ b/drivers/net/mlx5/mlx5_flow.c
+@@ -12506,7 +12506,7 @@ flow_disable_steering_run_on_related(struct rte_eth_dev *dev,
+ 	}
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_disable_steering, 25.11)
++RTE_EXPORT_SYMBOL(rte_pmd_mlx5_disable_steering)
+ void
+ rte_pmd_mlx5_disable_steering(void)
+ {
+@@ -12532,7 +12532,7 @@ rte_pmd_mlx5_disable_steering(void)
+ 	mlx5_steering_disabled = true;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_enable_steering, 25.11)
++RTE_EXPORT_SYMBOL(rte_pmd_mlx5_enable_steering)
+ int
+ rte_pmd_mlx5_enable_steering(void)
+ {
+diff --git a/drivers/net/mlx5/rte_pmd_mlx5.h b/drivers/net/mlx5/rte_pmd_mlx5.h
+index 7acfdae97d..8f355070e1 100644
+--- a/drivers/net/mlx5/rte_pmd_mlx5.h
++++ b/drivers/net/mlx5/rte_pmd_mlx5.h
+@@ -546,7 +546,6 @@ int rte_pmd_mlx5_external_sq_disable(uint16_t port_id, uint32_t sq_num);
+  *   - (-EEXIST) if @p cb was already registered.
+  *   - (-ENOMEM) if failed to allocate memory for callback entry.
   */
 -__rte_experimental
  int
- rte_flow_dynf_metadata_register(void);
+ rte_pmd_mlx5_driver_event_cb_register(rte_pmd_mlx5_driver_event_callback_t cb, void *opaque);
+ 
+@@ -567,7 +566,6 @@ rte_pmd_mlx5_driver_event_cb_register(rte_pmd_mlx5_driver_event_callback_t cb, v
+  *   - 0 if callback was successfully unregistered or if no such callback was registered.
+  *   - (-EINVAL) if @p cb is NULL.
+  */
+-__rte_experimental
+ int
+ rte_pmd_mlx5_driver_event_cb_unregister(rte_pmd_mlx5_driver_event_callback_t cb);
+ 
+@@ -605,7 +603,6 @@ rte_pmd_mlx5_driver_event_cb_unregister(rte_pmd_mlx5_driver_event_callback_t cb)
+  * with other functions from ethdev API used to configure any of the mlx5 ports.
+  * It is the responsibility of the application to enforce this.
+  */
+-__rte_experimental
+ void
+ rte_pmd_mlx5_disable_steering(void);
+ 
+@@ -623,7 +620,6 @@ rte_pmd_mlx5_disable_steering(void);
+  *   - 0 - Flow steering was successfully enabled or it flow steering was never disabled.
+  *   - (-EBUSY) - There are mlx5 ports probed and re-enabling steering cannot be done safely.
+  */
+-__rte_experimental
+ int
+ rte_pmd_mlx5_enable_steering(void);
  
 -- 
 2.47.3
