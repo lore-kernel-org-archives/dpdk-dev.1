@@ -2,52 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A72BCD4F54
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D487CD5BD0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 12:03:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 509254028A;
-	Wed, 27 May 2026 13:51:14 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 50C9940285
- for <dev@dpdk.org>; Wed, 27 May 2026 13:51:13 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gQSbw2z7dzJ468l;
- Wed, 27 May 2026 19:50:20 +0800 (CST)
-Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
- by mail.maildlp.com (Postfix) with ESMTPS id 0E4A040569;
- Wed, 27 May 2026 19:51:12 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 27 May 2026 12:51:11 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Wed, 27 May 2026 12:51:11 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: "Ajmera, Megha" <megha.ajmera@intel.com>, Stephen Hemminger
- <stephen@networkplumber.org>
-CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Dumitrescu, Cristian"
- <cristian.dumitrescu@intel.com>, "Shetty, Praveen"
- <praveen.shetty@intel.com>, "Singh, Aman Deep" <aman.deep.singh@intel.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v2] app/test-pmd: add generic PROG action parser support
-Thread-Topic: [PATCH v2] app/test-pmd: add generic PROG action parser support
-Thread-Index: AQHc6QrGN/buU1ph30u0sJvA1Wd0s7YgpxUAgADqPQCAADnO4A==
-Date: Wed, 27 May 2026 11:51:11 +0000
-Message-ID: <03ab65f8b69a4018aad7afcc88f337e1@huawei.com>
-References: <20260521055612.508916-1-megha.ajmera@intel.com>
- <20260521101354.726240-1-megha.ajmera@intel.com>
- <20260526122218.1c29d917@phoenix.local>
- <MW4PR11MB5892D90B2AF860214FB57F4D97082@MW4PR11MB5892.namprd11.prod.outlook.com>
-In-Reply-To: <MW4PR11MB5892D90B2AF860214FB57F4D97082@MW4PR11MB5892.namprd11.prod.outlook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
+	by mails.dpdk.org (Postfix) with ESMTP id 980B840285;
+	Wed, 27 May 2026 14:03:53 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id BAF684026C
+ for <dev@dpdk.org>; Wed, 27 May 2026 14:03:51 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 94E0B208E7;
+ Wed, 27 May 2026 14:03:51 +0200 (CEST)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [RFC v2 2/3] lib: add fastmem library
+Date: Wed, 27 May 2026 14:03:47 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F658A2@smartserver.smartshare.dk>
+In-Reply-To: <4b9f4f80-3bbf-490d-b39e-c40930d653fd@lysator.liu.se>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.220]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+Thread-Topic: [RFC v2 2/3] lib: add fastmem library
+Thread-Index: AdztzCKbrAMmJpjiRx+an74V3HfumgAAZ+Mw
+References: <20260525103642.55255-4-hofors@lysator.liu.se>
+ <20260526085743.64396-1-hofors@lysator.liu.se>
+ <20260526085743.64396-3-hofors@lysator.liu.se>
+ <20260526062312.33f76fcc@phoenix.local>
+ <b3982582-3023-4f2c-9c62-10d4af20d4e2@lysator.liu.se>
+ <ahbE6KvlgzG_XkSY@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F658A1@smartserver.smartshare.dk>
+ <4b9f4f80-3bbf-490d-b39e-c40930d653fd@lysator.liu.se>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: =?utf-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <hofors@lysator.liu.se>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ =?utf-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <mattias.ronnblom@ericsson.com>,
+ "Yogaraj Baskaravel" <yogaraj.baskaravel@ericsson.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,33 +57,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-> >
-> > This looks like a third attempt to parse text into rte_flow.
-> > Not sure how this fits in and why it would be useful?
->=20
-> Thanks for the feedback.
-> I wanted to clarify the intent of this patch. The backend support for the=
- PROG
-> action already exists in the PMD. This patch is focused on adding the
-> corresponding frontend (testpmd) parser support so that users can configu=
-re
-> and exercise this functionality via CLI.
-> The motivation here is to enable configuration of programmable actions th=
-at are
-> already supported in the backend but cannot currently be invoked through
-> testpmd. With this addition, new actions that are exposed through PROG ca=
-n be
-> configured using the flow command interface.
-
-For my own curiosity: how user can define his own PROG action?
-Is it supposed to be programmed and uplodaded to the NIC by some external t=
-ool (P4 compiler)?
-Or does it refer to the set of some predefined functions that given firmwar=
-e supports?
-Or ... ?
-Sorry for probably naive questions, but I found is nearly zero information =
-inside DPDK docs about
-how PROG action supposed to work.
-Thanks
-Konstantin
+PiBGcm9tOiBNYXR0aWFzIFLDtm5uYmxvbSBbbWFpbHRvOmhvZm9yc0BseXNhdG9yLmxpdS5zZV0N
+Cj4gU2VudDogV2VkbmVzZGF5LCAyNyBNYXkgMjAyNiAxMy4zMA0KPiANCj4gT24gNS8yNy8yNiAx
+MzoxNywgTW9ydGVuIEJyw7hydXAgd3JvdGU6DQo+ID4+IEZyb206IEJydWNlIFJpY2hhcmRzb24g
+W21haWx0bzpicnVjZS5yaWNoYXJkc29uQGludGVsLmNvbV0NCj4gPj4gU2VudDogV2VkbmVzZGF5
+LCAyNyBNYXkgMjAyNiAxMi4xOA0KPiA+Pg0KPiA+PiBPbiBXZWQsIE1heSAyNywgMjAyNiBhdCAx
+MjoxMjoxOVBNICswMjAwLCBNYXR0aWFzIFLDtm5uYmxvbSB3cm90ZToNCj4gPj4+IE9uIDUvMjYv
+MjYgMTU6MjMsIFN0ZXBoZW4gSGVtbWluZ2VyIHdyb3RlOg0KPiA+Pj4+IE9uIFR1ZSwgMjYgTWF5
+IDIwMjYgMTA6NTc6NDIgKzAyMDANCj4gPj4+PiBNYXR0aWFzIFLDtm5uYmxvbSA8aG9mb3JzQGx5
+c2F0b3IubGl1LnNlPiB3cm90ZToNCj4gPj4+Pg0KPiA+Pj4+PiArX19ydGVfZXhwZXJpbWVudGFs
+DQo+ID4+Pj4+ICt2b2lkICoNCj4gPj4+Pj4gK3J0ZV9mYXN0bWVtX2FsbG9jKHNpemVfdCBzaXpl
+LCBzaXplX3QgYWxpZ24sIHVuc2lnbmVkIGludCBmbGFncykNCj4gPj4+Pj4gKwlfX3J0ZV9hbGxv
+Y19zaXplKDEpIF9fcnRlX2FsbG9jX2FsaWduKDIpOw0KPiA+Pj4+DQo+ID4+Pj4gU2hvdWxkIGFs
+c28gYWRkIGF0dHJpYnV0ZSBfX3J0ZV9tYWxsb2Mgd2hpY2ggdGVsbHMgY29tcGlsZXINCj4gPj4+
+PiB0aGF0IHBvaW50ZXIgcmV0dXJuZWQgY2Fubm90IGFsaWFzIG90aGVyIG1lbW9yeQ0KPiA+Pj4+
+DQo+ID4+Pj4gQW5kIGFkZCBfX3J0ZV9kZWFsbG9jKHJ0ZV9mYXN0bWVtX2ZyZWUsIDEpDQo+ID4+
+Pj4gd2hpY2ggdGVsbHMgY29tcGlsZXIgdGhhdCB0aGUgcmV0dXJuZWQgcG9pbnRlciBzaG91bGQg
+b25seSBnbw0KPiA+Pj4+IGJhY2sgdG8gZmFzdG1lbSAobm90IGZyZWUsIHJ0ZV9mcmVlLCBldGMp
+Lg0KPiA+Pj4NCj4gPj4+IERvbmUuIE9ubHkgd29ya3MgZm9yIHRoZSBzaW5nbGUtb2JqZWN0IG9w
+cyAobm90IGJ1bGspIHRob3VnaC4NCj4gPj4+DQo+ID4+PiBJJ3ZlIGhhZCBhIGxvb2sgYXQgaG93
+IHRvIGV4dGVuZCBmYXN0bWVtIHRvIHN1cHBvcnQgbGFyZ2VyDQo+ID4+IGFsbG9jYXRpb25zDQo+
+ID4+PiAod2l0aG91dCBzdWdnZXN0aW5nIHRoaXMgaXMgdGhlIHdheSB0byBnbykuDQo+ID4+Pg0K
+PiA+Pj4gU2VlbXMgdG8gbWUgdGhhdCBpbXBsZW1lbnRhdGlvbiBzaG91bGQgYmUgc29tZXRoaW5n
+IGxpa2UNCj4gPj4+IGEpIHNsYWIgYWxsb2NhdG9yIGZvciBzbWFsbCBvYmplY3RzLg0KPiA+Pj4g
+YikgYSBjYWNoZS1sZXNzIHBlci1zb2NrZXQgcGFnZSBydW4gYWxsb2NhdG9yIGZvciBtaWQtc2l6
+ZWQNCj4gb2JqZWN0cy4NCj4gPj4+IGMpIHBlci1vYmplY3QgbWVtem9uZXMgZm9yIGxhcmdlIG9i
+amVjdHMuDQo+ID4NCj4gPiBBbGwgYWxsb2NhdGlvbnMgdGhyb3VnaCB0aGUgbGlicmFyeSBzaG91
+bGQgc29tZWhvdyBidWlsZCBvbiBtZW16b25lcy4NCj4gPiBJZiBhbiBhcHBsaWNhdGlvbiB3YW50
+cyAibm9ybWFsIiBtZW1vcnksIGl0IGNhbiB1c2UgbGliYw0KPiBmcmVlKCkvbWFsbG9jKCkuDQo+
+ID4NCj4gDQo+IEFsbCBhbGxvY2F0aW9ucyBjb21lIG91dCBvZiBtZW16b25lcy4gSW4gdGhlIGMp
+IGNhc2UsIGVhY2ggb2JqZWN0IGlzIGENCj4gbWVtem9uZS4gVGhlcmUgaXMgYSB2ZXJ5IGxpbWl0
+ZWQgbnVtYmVyIG9mIG1lbXpvbmVzLCBzbyB0aGV5IGNhbid0IGJlDQo+IG1hbnkuDQo+IA0KPiA+
+Pj4NCj4gPj4+IElmIG9uZSB3b3VsZCBpbXBsZW1lbnQgdGhhdCwgeW91IHdvdWxkIGVzc2VudGlh
+bGx5IGhhdmUgYSBwbHVnLWluDQo+ID4+PiByZXBsYWNlbWVudCBmb3IgcnRlX21hbGxvYy5oICht
+YXliZSBtaW51cyBzb21lIGRlYnVnIGFuZCBzb21lIG1vcmUNCj4gPj4gZXNvdGVyaWMNCj4gPj4+
+IERQREsgaGVhcCBmZWF0dXJlcykuDQo+ID4+Pg0KPiA+Pj4gU2hvdWxkIGZhc3RtZW0gYmUgYW4g
+b3V0cmlnaHQgcmVwbGFjZW1lbnQsIG9yIHNvbWV0aGluZyB0aGF0IGF0DQo+IGxlYXN0DQo+ID4+
+PiBpbml0aWFsbHkgbGl2ZXMgYWxvbmdzaWRlIHRoZSByZWd1bGFyIGhlYXAsIG1heWJlIHdpdGgg
+YSBydW4tIG9yDQo+ID4+PiBjb21waWxlLXRpbWUgb3B0aW9uIHRvIG1ha2UgcnRlX21hbGxvYy5o
+IGZ1bmN0aW9ucyBkZWxlZ2F0ZSB0bw0KPiA+PiBmYXN0bWVtPyBUaGlzDQo+ID4+PiBpcyB1bmNs
+ZWFyIHRvIG1lIGF0IHRoaXMgcG9pbnQuIEkgZmVhciB0aGUgbW9yZSBhbWJpdGlvdXMsIGNsZWFu
+ZXINCj4gPj4gYW5kIG1vcmUNCj4gPj4+IHJpc2t5IERQREsgaGVhcCByZXBsYWNlbWVudCBwYXRo
+IHdpbGwgZ28gdGhleSB3YXkgbXkgYXR0ZW1wdHMgdG8NCj4gPj4gcmVwbGFjZQ0KPiA+Pj4gcnRl
+X21lbWNweSBvciBydGVfdGltZXIgd2VudC4NCj4gPj4+DQo+ID4+PiBJIHdvdWxkIGFncmVlIHdp
+dGggYW55b25lIHNheWluZyB0aGF0IHdlIHNob3VsZCBoYXZlIG9ubHkgb25lIGhlYXAtDQo+ID4+
+IGxpa2UgQVBJDQo+ID4+PiBmb3IgbWVtb3J5IGFsbG9jYXRpb25zLiBydGVfbWFsbG9jLmggb2J2
+aW91c2x5IG5lZWRzIHRvIHN0YXksIGZvcg0KPiA+PiBiYWNrd2FyZA0KPiA+Pj4gY29tcGF0aWJp
+bGl0eSByZWFzb24sIGlmIG5vdGhpbmcgZWxzZS4gSSB3b3VsZCBsaWtlIHRvIGFkZCBidWxrDQo+
+ID4+IGFsbG9jL2ZyZWUsDQo+ID4+PiBhbmQgYWxsb3cgZm9yIHNtYWxsZXIgYWxpZ25tZW50cyB0
+aGFuIDY0LCBzaW5jZSBzbGFicyBjYW4gZG8gdGhhdA0KPiA+Pj4gZWZmaWNpZW50bHkgKERQREsg
+aGVhcCBwZXItb2JqZWN0IGhlYWRlciBpcyAxMjggYnl0ZXMhKS4gT25lIGNvdWxkDQo+ID4+IGVp
+dGhlciBnbw0KPiA+Pj4gYWJvdXQgdGhhdCBieSBleHRlbmRpbmcgcnRlX21hbGxvYy5oIG9yIGRl
+cHJlY2F0aW5nIHRoYXQgQVBJIGFuZA0KPiA+PiBzdGFydGluZw0KPiA+Pj4gYW5ldy4gSW4gdGhl
+IGxhdHRlciBjYXNlLCBvbmUgY291bGQgZG8gbWFueSBtb3JlIG1pbm9yIHR3ZWFrcywgbGlrZQ0K
+PiA+PiByZW1vdmluZw0KPiA+Pj4gdGhlIHR5cGUgcG9pbnRlcnMgKG9ubHkgYSBudWFuY2UpLCBy
+ZW1vdmUgdGhlIHZhbGlkYXRlIGZ1bmN0aW9uLA0KPiA+PiBjaGFuZ2UgYW5kDQo+ID4+PiBleHRl
+bmQgdGhlIHN0YXRzIGludGVyZmFjZSwgZXRjLg0KPiA+Pj4NCj4gPj4gKzEgZm9yIHJlcGxhY2lu
+ZyBydGVfbWFsbG9jLiBGb3IgYSByZXBsYWNlbWVudCwgSSdkIHRlbmQgdG93YXJkcw0KPiBhaW1p
+bmcNCj4gPj4gZm9yDQo+ID4+IGNvbXBhdGliaWx0eSBvdmVyIHRyeWluZyB0byBmaXggdG9vIG1h
+bnkgbGl0dGxlIHRoaW5ncyBhdCBvbmNlLg0KPiBXaGlsZQ0KPiA+PiBjaGFuZ2luZyBhIGNvdXBs
+ZSBvZiB0aGluZ3MgaXMgb2ssIEknZCByYXRoZXIgbm90IGZvcmNlIGFwcGxpY2F0aW9ucw0KPiB0
+bw0KPiA+PiBtYWtlIHRvbyBtYW55IHVwZGF0ZXMgdG8gdGhlaXIgY29kZSB3aGVuIG1vdmluZyBm
+cm9tIG9uZSBEUERLDQo+IHZlcnNpb24NCj4gPj4gdG8NCj4gPj4gYW5vdGhlci4NCj4gPj4NCj4g
+Pj4gL0JydWNlDQo+ID4NCj4gPiArMSBmb3IgdGFraW5nIHRoZSBwYXRoIHRoYXQgYmVnaW5zIHdp
+dGggc3RhcnRpbmcgYW5ldy4NCj4gPiBUaGUgbmV3IGhlYXAgbGlicmFyeSBjYW4gYmUgZGVzaWdu
+ZWQgc3BlY2lmaWNhbGx5IGZvciB0aGUgZmFzdCBwYXRoLA0KPiBiYXNlZCBvbiB5ZWFycyBvZiBE
+UERLIGV4cGVyaWVuY2Ugd2l0aCB3aGF0IHRoZSBmYXN0IHBhdGggcmVhbGx5IG5lZWRzLg0KPiA+
+IEl0IHdpbGwgYWxsb3cgbXVjaCBicm9hZGVyIGV4cGVyaW1lbnRhdGlvbiBhbG9uZyB0aGUgd2F5
+Lg0KPiA+IFdlIGNhbiBlYXNpbHkgZ2V0IHJpZCBvZiBhbGwgc2xvdyBwYXRoIGxlZ2FjeSBzdHVm
+ZiBpbiBydGVfbWFsbG9jLA0KPiBsaWtlIHRoZSAidHlwZSIgcGFyYW1ldGVyLg0KPiA+DQo+ID4g
+SSB0aGluayB3ZSBhbGwgYWdyZWUgdGhhdCByZXBsYWNpbmcgcnRlX21hbGxvYyBzaG91bGQgYmUg
+dGhlIGVuZA0KPiBnYW1lLg0KPiA+IEJ1dCBJTU8sIGl0IHZlcnkgaW1wb3J0YW50IHRoYXQgdGhl
+IHByb3BlcnRpZXMgb2YgcnRlX21hbGxvYyBkbyBub3QNCj4gaW1wb3NlIGFueSBsaW1pdHMgb24g
+dGhlIG5ldyBoZWFwIGxpYnJhcnkuDQo+ID4NCj4gPiBTb21lZGF5LCB3aGVuIHRoZSBuZXcgbGli
+cmFyeSBoYXMgc3VmZmljaWVudGx5IG1hdHVyZWQsIHdlIGNhbg0KPiBkaXNjdXNzIGhvdyBpdCBj
+YW4gcmVwbGFjZSB0aGUgcnRlX21hbGxvYyBsaWJyYXJ5Lg0KPiA+IE1heWJlIHNvbWUgcGFydHMg
+b2YgcnRlX21hbGxvYyBhcmUgbm90IHJlcGxhY2VhYmxlLCBhbmQgbmVlZCB0byBiZQ0KPiBkZXBy
+ZWNhdGVkIGFuZCByZW1vdmVkLg0KPiA+IE1heWJlIHdlIGFsbCBoYXZlIHN3aXRjaGVkIHRvIHVz
+aW5nIHRoZSBuZXcgaGVhcCwgYW5kIG5vYm9keSBpcyB1c2luZw0KPiBydGVfbWFsbG9jIGFueW1v
+cmUsIHNvIGl0IGNhbiBzaW1wbHkgYmUgcmVtb3ZlZC4gOy0pDQo+ID4NCj4gDQo+IEl0IHdvdWxk
+IGJlIHVzZWZ1bCB0byBoYXZlIGEgcnVuLSBvciBjb21waWxlLXRpbWUgc3dpdGNoIHRvIHVzZSBm
+YXN0bWVtDQo+IGluc3RlYWQgb2YgdGhlIHJlZ3VsYXIgRFBESyBoZWFwLiBJbiBzdWNoIGEgY2Fz
+ZSwgaGF2aW5nIGl0IGFzIGFuDQo+IGV4dGVybmFsIGxpYnJhcnkgd2lsbCBjb21wbGljYXRlIHRo
+aW5ncyBkdXJpbmcgaW5pdGlhbGl6YXRpb24sIGlmIHlvdQ0KPiB3YW50IGFsbCBhbGxvY2F0aW9u
+cyB0byBlbmQgdXAgaW4gZmFzdG1lbS4NCg0KSU1ITywgdGhlcmUgaXMgbm8gbmVlZCBmb3IgYSBy
+dW50aW1lIChvciBzdGFydHVwIHRpbWUpIHN3aXRjaDsgYSBidWlsZCB0aW1lIGNvbmZpZ3VyYXRp
+b24gb3B0aW9uIHN1ZmZpY2VzLg0KQW5kIGl0IGRvZXNuJ3QgbmVlZCB0byBiZSB0aGVyZSB1bnRp
+bCB3ZSByZWFjaCB0aGUgcG9pbnQgd2hlcmUgd2Ugc3RhcnQgbG9va2luZyBpbnRvIHJlcGxhY2lu
+ZyBydGVfbWFsbG9jIHdpdGggZmFzdG1lbS4NClB1dHRpbmcgaXQgaW4gdG9vIGVhcmx5IG1pZ2h0
+IGxlYWQgdXMgdG8gY29udmVyZ2luZyB0b28gZWFybHkgd2l0aCBydGVfbWFsbG9jLCByZWR1Y2lu
+ZyB0aGUgYWJpbGl0eSB0byBleHBlcmltZW50IGFuZCBmdXJ0aGVyIGltcHJvdmUgdGhlIGxpYnJh
+cnkuDQoNCj4gDQo+IFVuZm9ydHVuYXRlbHksIGlmIGEgcnRlX21hbGxvYyByZXBsYWNlbWVudCwg
+SSB0aGluayBpdCBiZWxvbmdzIGluIHRoZQ0KPiBFQUwsIGp1c3QgbGlrZSB0b2RheSdzIGhlYXAu
+IFRoYXQgZG9lc24ndCBtZWFuIGl0IGhhdmUgdG8gc3RhcnQgaW4gdGhlDQo+IEVBTC4NCg0KVGhl
+IEVBTCBpcyBibG9hdGVkLCBzbyBpdCB3b3VsZCBiZSBuaWNlIGlmIHJ0ZV9tYWxsb2MgY291bGQg
+c29tZWhvdyBiZSBtb3ZlZCBvdXQgb2YgdGhlIEVBTCwgcGVyaGFwcyBvbmx5IHBhcnRpYWxseS4N
+CklmIHRoYXQgaXMgaW1wb3NzaWJsZSwgdGhlbiB5ZXMsIGZhc3RtZW0gd291bGQgcHJvYmFibHkg
+aGF2ZSB0byBsaXZlIGluIHRoZSBFQUwgdG9vLg0KDQpHb29kIHBvaW50IHRoYXQgZmFzdG1lbSBk
+b2Vzbid0IGhhdmUgdG8gc3RhcnQgaW4gdGhlIEVBTC4NCkJ1dCBpZiBmdXJ0aGVyIGludmVzdGln
+YXRpb24gc2hvd3MgdGhhdCBydGVfbWFsbG9jIGlzIHRvbyBkZWVwbHkgaW50ZWdyYXRlZCB3aXRo
+IHRoZSBFQUwgdG8gYmUgbW92ZWQgb3V0LCBmYXN0bWVtIG1pZ2h0IGFzIHdlbGwgc3RhcnQgaXRz
+IGxpZmUgaW4gdGhlIEVBTCB0b28uDQpJdCBtaWdodCBzYXZlIHVzIGZyb20gc29tZSBoZWFkYWNo
+ZSBhdCB0aGUgcG9pbnQgaW4gdGltZSB3aGVyZSB3ZSBtb3ZlIGl0IGZyb20gYSBzZXBhcmF0ZSBs
+aWJyYXJ5IGludG8gdGhlIEVBTC4NCg0KDQo+IA0KPiA+IFN1Z2dlc3Rpb24gcmVnYXJkaW5nIG5h
+bWluZzoNCj4gPiBUaGUgcHJlZml4IGNvdWxkIGJlICJydGVfbWVtXyIgaW5zdGVhZCBvZiAicnRl
+X2Zhc3RtZW1fIiAtIGl0IGlzDQo+IHNob3J0ZXIsIGFuZCBtb3N0IGxpYnJhcmllcyBhcmUgImZh
+c3QiLg0KPiA+IEFuZCB0aGVuIGl0IGNvdWxkIGxpdmUgaW4gL2xpYi9tZW1vcnkgaW5zdGVhZCBv
+ZiAvbGliL2Zhc3RtZW0uDQo+ID4NCj4gDQo+IG1lbSBpcyB2ZXJ5IGdlbmVyaWMsIGJ1dCBwb2lu
+dCB0YWtlbi4gTmFtZSBzaG91bGQgY2hhbmdlLCB1bmNsZWFyIHRvDQo+IHdoYXQuIERlcGVuZHMg
+b24gdGhlIHJvbGUgaXQgd2lsbCBzZXJ2ZS4NCg==
