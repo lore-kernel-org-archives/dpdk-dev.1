@@ -2,55 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEDFCD4F54
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E594DCD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:21:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E93A34028A;
-	Wed, 27 May 2026 13:18:47 +0200 (CEST)
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
- by mails.dpdk.org (Postfix) with ESMTP id DAB2D40285
- for <dev@dpdk.org>; Wed, 27 May 2026 13:18:45 +0200 (CEST)
-X-QQ-mid: Yeas10t1779880720t258t10700
+	by mails.dpdk.org (Postfix) with ESMTP id 0C4A540650;
+	Wed, 27 May 2026 13:21:34 +0200 (CEST)
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+ by mails.dpdk.org (Postfix) with ESMTP id 00D314028A
+ for <dev@dpdk.org>; Wed, 27 May 2026 13:21:31 +0200 (CEST)
+X-QQ-mid: Yeas9t1779880885t808t18771
 Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
  [122.231.28.113])
 X-QQ-SSF: 0000000000000000000000000000000
 From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 10467982473189671668
+X-BIZMAIL-ID: 7455510100251041051
 To: "'Stephen Hemminger'" <stephen@networkplumber.org>
 Cc: <dev@dpdk.org>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-18-zaiyuwang@trustnetic.com>
- <20260517165307.6249117a@phoenix.local>
-In-Reply-To: <20260517165307.6249117a@phoenix.local>
-Subject: RE: [PATCH v4 17/20] net/txgbe: fix get module info operation
-Date: Wed, 27 May 2026 19:18:36 +0800
-Message-ID: <00c101dcedca$91701250$b45036f0$@trustnetic.com>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-17-zaiyuwang@trustnetic.com>
+ <20260517165225.6ba8b774@phoenix.local>
+In-Reply-To: <20260517165225.6ba8b774@phoenix.local>
+Subject: RE: [PATCH v4 16/20] net/txgbe: fix SFP module identification
+Date: Wed, 27 May 2026 19:21:24 +0800
+Message-ID: <00c201dcedca$f41e37b0$dc5aa710$@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAkvPEfoBCEGfZ7VBs9aA
+Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAV3T1uMCsX/db7U79aXg
 Content-Language: zh-cn
 X-QQ-SENDSIZE: 520
 Feedback-ID: Yeas:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NGHdgOcrWZQ9Y0hCfwRFCvhBYnymUhiAvYhU7vq4mkmTy5/YMbn36q5F
- ye8zy5CsKBxm58XBk6Ah/jQShgjY+rOBHa64L/vwFJJx9DdZpuYNE0HKntV49Z7NO+ZRv76
- dWBtErFIXoi3p4gmEL8WGAXsIyfb7N+5u6ClZvdxPAetwyOZgB8Nyj+xm9Ss/j1bEYCgoNj
- VjbbGYfzU6x5+HPafvInh6fkUeNoChAVnLX2Cnu2s2Y6jDakWJYPTJJHfGP1pd7sbjoI7Vl
- fn9I0jlmshCxaKpA3DuPq3/c7y1HQiWfTCDPtTlFuVahV9Ynt6W75v4QAV52UdznDIPJ8gj
- MN0zacNqmT7xhoYRVXF5b04vbRZflxSadrEcGI2tcxMs2DV23xgMnvewRAtEfa58J3x6sTK
- 6DKcU1kfh4ii2YgJTO3Oo54OKY8xQ7bZ4lR+IK4QrJanbEjCKlfMFo3uWE8jXRhT4LI5zbu
- BgRbsFKn65+gKqwbkpdkjB4FiEbIKy8TcApe4h4/5bTe5vjRRPplF5pPvZY6LDe82hbABxL
- fKfVIUekvgbDa6vTkzHfT5wnDuxG6BASgi99SRLnW8hw5xI2Hx7+SDKSf869hZNEsoZG6k0
- tZJRFxAyt8XjEZX16o4baRqW9VmwC8NPsgWaIRAWqLh1JcVCYiCCpbDTiXCMGK8Tzig6kvw
- crQQOAQY9/cwPhtW4DWZDxCBTE6HjbEtUZ6wiI+2fPsSP1zIy5GVcS6NG5p15z97k26c3ty
- /S/v9MeFTttR1m7HKC8wYWB+t5HAL+xV7bW/H6fpUKT69R/wJEZ00FPTx+ECx6qoMgHtelj
- vLvuGtKvok7tPZyAQGm+F/OSAHJK358X19/LWnWLN/p6tNLqy4NEzraulY8gfp96dohDaVi
- Wb22E8XWw2DyaYAjHSivJYyPeVninX9VPr9ldz02ATQfjZ9xnPDeKTRuX5vvUcZtkHh2wbX
- KA6YMicZhOUhhrRJBemSkVn4tWgU6DkOtSwv1DqZDqlaJCHmVUKCdYQjBtS6TtTnoBarI/O
- bizf7l4sMIrhzlhWFza8TDwK2miRsCqL7EKob1YTaXNZbQq+CiIb4qwkG4RfviucfNA0Sny
- A==
-X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
+X-QQ-XMAILINFO: OJVhEmJj02aqmhIIzu74IFcmvfgC5Y6E7LGUqa+ONZbNtWgUUXBb0b8X
+ tQL1QDme3AOcBfmGRf0TAzWtbmGOeuSCE1SAb5DNzsmN3pe6DEeHIgzqh0P/EXtArgPoLNi
+ khTI8s0qwiYdHwlY31y4TCplphniflyYUVHtJS30VDtah9wabjVrrNlgTG3XB4/xiPY6wV2
+ i1mCQdqN6Mtv1zkL6KTGsC4ByqSDQ/V7RURod3c28OBqBh/XXTevIJpzLJlLIJkJq3FJRfb
+ UPDasFOHi090DDw+5BKvqheS0dRGZR91ifLfREf/jmBtCYbhYQyLG8t9erOLGSsPzv3RHeN
+ 4iEYcemXSMDPDGi9l0WARWAIu0fun9TGNiEy6/b4eAycu+TG81aKS9PWo7KMlHajr/48y5U
+ ToDSsv8bUQFT1FGED5cDSpmHRbLOSIkc0biJZMOagaTr58ptLN7/Nibii6ab33zFaIptkAO
+ BVsU/xEUNgrnoEUD12A4VLVz/AVH+Je3rtWDmCUp4jPtJ+qUCLU25Y/38RBTvp7VZthtv+t
+ Bd5GSinqbUtmsLRPKodWRTt4XoU14ix18BAsB3EQGDAJHaN6mMjBXA62MV1U0CZPUgGPNLs
+ aD1WJ+z0hhLo+KPl979y8e2jbCoscDRoofHEqmS5yG5u10i9rjNuAbO/EzW9YKZIXgJzxy/
+ 649/NZcJIbzdfU5wp3O4EgTHzBBpDMP0AdufA2vQfr0Yt/jWcNEZQ0gj42Drq64bwQiO7Uo
+ 9g/h/4FlIRTk5ut/lb6ZxlUeIsI32VEjs+7styQeF5T8T210XYbtI66SK+kIHRCIYLsHSdD
+ z/Q0lLNboT5fepxvtNp+DcTRzbzOk2Vz3iCIOqTdsKeDtDZmp0aPKiK85/SwzpU/b3oQLos
+ CMwNspcsc0x+kXlalzaVXvPToeyvuVuRemWG6quANLBF/IPKLJ33dwNwcGeA4HelrQzx+0v
+ 07OKWWBByBILXqItRVhMJy+o+o5JY4qd6ySJwFcPxphUE3b7YVUUS8NNcoErkr5gXps7RLh
+ zHvcrKXWtPAf/eNITlm5hfUlr9ne6j4+bwdc+QOupEx+BNhcWqb0X7D4rhAo7tdZpuwY4Tt
+ Q==
+X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,36 +65,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> ## ERRORS
-> 
-> ### 1. Resource leak on error path after lock acquisition
-The AI review suggested moving the module presence checks inside the lock, which I believe
-is not necessary. The presence checks occur before acquiring the semaphore, so returning
-early cannot leak the lock. All error paths after lock acquisition do properly go through
-the ERROR_IO label and release the semaphore.
+> ## Errors
+>=20
+> ### 1. Resource leak in `txgbe_identify_sfp_module()` - multiple error =
+paths
+> missing unlock
+No code change
+The review is incorrect =E2=80=94 all error paths after acquiring the =
+lock do properly release it. There is no lock leak.
 
-I've changed the pre-lock error from -EIO to - EINVAL to better distinguish "module not
-present" from actual I/O failures.
+> ### 2. `txgbe_write_i2c_byte()` removes STOP condition - probable =
+hardware
+No code change
+This change was ported from our out=E2=80=91of=E2=80=91tree Linux kernel =
+driver. It was found that the previous write_i2c interface had problems, =
+which caused ethtool -m to read some 40G optical module information =
+incorrectly. Removing the intermediate STOP is intentional and fixes =
+that issue.
 
-> ---
-> 
-> ## WARNINGS
-> 
-> ### 1. Implicit comparison with zero
+> ### 3. Removed validation logic without replacement - SFP vendor =
+checking
+No code change
+The old code was inherited from the Intel driver. The restriction has =
+been removed intentionally: the driver now supports all optical modules =
+that comply with the relevant standards, without limiting to a specific =
+vendor.
+
+> ## Warnings
+>=20
+> ### 1. `txgbe_identify_qsfp_module()` GPIO config runs unconditionally
+No code change.
+The function txgbe_identify_qsfp_module is only called for the =
+Amber=E2=80=91Lite 40G NIC. Among the three NIC types supported by txgbe =
+(Sapphire 10G, Amber=E2=80=91Lite 25G, Amber=E2=80=91Lite 40G), only the =
+40G variant uses QSFP; the other two use SFP. Based on the aml40 =
+hardware design, we need to configure the GPIO before using I2C.
+
+> ### 2. Missing error propagation - `txgbe_read_i2c_sff8636()` page =
+select failure
+> ignored
 Fixed.
 
-> ### 2. Mixed type usage: `u8` vs `uint8_t`
+> ### 3. Implicit comparison on pointer
 Fixed.
- 
-> ### 3. Unnecessary variable initialization
-Fixed.
-
-> ## INFO
-> 
-> ### 2. Error message clarity
-> The error messages "I2C IO ERROR" and "SFF Module Type not recognized" are
-> informative. Consider whether these should include additional context (e.g., the
-> identifier value for unrecognized types) to aid debugging.
-Added identifier value in error message.
- 
+=20
+> ### 5. Function pointer assignments removed but functions still =
+defined
+Already verified.
+=20
 
