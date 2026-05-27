@@ -2,143 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA57CD5BD0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 13:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11F5CD5BD0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 13:25:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89CAC40285;
-	Wed, 27 May 2026 15:25:19 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 738B64026C
- for <dev@dpdk.org>; Wed, 27 May 2026 15:25:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779888317; x=1811424317;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=HYpsvBQwOfw2k5PxzBwBchzFHh1+H9flGLdW6tRxLdo=;
- b=VT+dfMDppMpNtMbJYDRvnsBNLcpZTBmnmhqjUg38T6GPK1fHlaY6uOA7
- aryDLp3upqA1+8HFTUVC/wiUdl1yAo4+QAUe2u4kqZ+R9ZLCVN9iYnrXw
- x/CWc0MtlGG+NV5A7co2xAkHCk1+YJbuT+Ohg0wd9SHPUiKa6OZuoU1EB
- AVQc8adYvGniUY6sv+P2kB5wWGjWcDf1jXpddohUYNCiAjUmxCkmugLMu
- iF8/WQZLsP8Vfhtvzb1y3cWlgShAbtWYph4j4YbZqyXsotJ6Jcwj6F2fU
- 0aDpfGibEY5SiyM8G/irT43zba8uEz684PIGn3RqP27JppFywuJRjGaxq A==;
-X-CSE-ConnectionGUID: 6LKZPQ6nRt2RUdjaxoKT1g==
-X-CSE-MsgGUID: aZZgMitiTUWVf7tYOKeY8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11799"; a="68241385"
-X-IronPort-AV: E=Sophos;i="6.24,171,1774335600"; d="scan'208";a="68241385"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2026 06:25:16 -0700
-X-CSE-ConnectionGUID: Ms54JSyqRLqMsD7fkrLvjg==
-X-CSE-MsgGUID: Ck1PMxBmQtqnlvDOpKY96w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,171,1774335600"; d="scan'208";a="235861357"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2026 06:25:17 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 27 May 2026 06:25:16 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 27 May 2026 06:25:16 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.32) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 27 May 2026 06:25:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aTl3x+NcX4q4Oh5XoBHfK/xrbOIgKjcfijV9hm74XsNrUxgL+CeUVuvraEQMJzKrj8mhvWc666GY5Vow9Wm633sM9gs8jHmRjla8ChbOt7xQTZ0IYt/dGidR1px4f5mPVVhd3hsDxWGnc1835yjBBNpNWwZiU93oIRJkA+OwypH9Fli8tDJuBjirUv2jl+qTLwSKk1ala5f29mwkoxjUQRCjwh3kZe2ufhCgkZhYg+el7EY+7I+fYlcmby56hQRWSXKypD1zX3KqV5M6gCQV0tuhkOO2eIE0O3JshE7ESInraRc5pQwkPVbmntf8LlV6HycLeZfmfmfyzVQ7ESNyDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7ozzSNjvM9gfuw5D0Oo0r4IQ5GJBO/gshNt5/Hb8f0U=;
- b=n/R3E/3IThDmRa2179bG9278oIJZE113O4WXnt1r61yKpEIXv2dC8YCPvtTcax95J6vJSDjdFS6BgkfPVly9ouVC9llaTAGP8MEb4TqvL9NYIj4an5PUCJVx2/WVgFnbZ0Q7yLj7/lTHvd8/JMHfmUCeb9+eLa+omRvAqOeAR+z0QdMLr1uUPBWPcwZj6S+8tNaIxFXTPteXWuZCvLSIBdpz1wyuEd3HfQ0WAW4nGXqWqighqFBwl0hu4y/nHxArzk3dZ67rJSmfhEPrvExqs5+ai2mIT7HTg4pz8ezvLlq/tr9g8eNEsGzwPAItA/HUx95DhLPpkVdxf53WXtWyTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by IA0PR11MB8379.namprd11.prod.outlook.com (2603:10b6:208:488::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.11; Wed, 27 May
- 2026 13:25:13 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0071.010; Wed, 27 May 2026
- 13:25:13 +0000
-Date: Wed, 27 May 2026 14:25:08 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v5 03/27] net/intel/common: add common flow action parsing
-Message-ID: <ahbwtDTZDcztR9zl@bricha3-mobl1.ger.corp.intel.com>
-References: <cover.1779717943.git.anatoly.burakov@intel.com>
- <cover.1779717943.git.anatoly.burakov@intel.com>
- <00d686796ef0440ca63220d468ed3d15ccf4894a.1779717943.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <00d686796ef0440ca63220d468ed3d15ccf4894a.1779717943.git.anatoly.burakov@intel.com>
-X-ClientProxiedBy: DU2PR04CA0358.eurprd04.prod.outlook.com
- (2603:10a6:10:2b4::31) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 6245640395;
+	Wed, 27 May 2026 15:25:23 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 1150540650
+ for <dev@dpdk.org>; Wed, 27 May 2026 15:25:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1779888321;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=V7lelAn1e/v0tD6rQGaXK+TmIcP3QbGqvz3n0sweLF8=;
+ b=Fd2W+qlcMs4e7a1AeZTPinuNu1WbChVBrf9uY0Tisj82fsdGxSRHeRqmphPbzUAJU+fDrd
+ 8jaMz0fkkVWz24cr//ZageyFNqG3MVxPdONEY1vXuoplW5rt+n26Sgs/Q3kZV8/CubIJ1u
+ ix2qiUFB4u74GI2tQj6OxQv0x7gVfok=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-160-KdSK3UWLPeuSO-lCOgokZg-1; Wed, 27 May 2026 09:25:18 -0400
+X-MC-Unique: KdSK3UWLPeuSO-lCOgokZg-1
+X-Mimecast-MFC-AGG-ID: KdSK3UWLPeuSO-lCOgokZg_1779888317
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-393a6ee3c75so52297531fa.3
+ for <dev@dpdk.org>; Wed, 27 May 2026 06:25:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1779888316; x=1780493116;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=V7lelAn1e/v0tD6rQGaXK+TmIcP3QbGqvz3n0sweLF8=;
+ b=ancEuFK8QAVoMjtqMB9Ajusp0U4VqePA29YuoxwEyGeVHfZiS9mVXl9Bs+jsJ2xA1r
+ NW8LZDPY88XHPUYMrRlvVwJ+fh6P92CQe4MVl7lsmalo0a3ov0QYOLRucfO/bMT+dFdk
+ +UY/L+HwnRxHVEyTBXZh4nQdyuaZs8ngPLGpSjTaM+hzwdy1NunLJiVvNXQHiMf6dIPW
+ AOgyTh7HmqKoWHruxz+InfnUXE6gg1ye87OCzE+p3tToDtdmHNWqfuLNeufiJ3jPiVz7
+ mnSWDY42K8+bhbwxOb3DQayqsbpR+iVArxu6zAXrWEmhIcThQ9i9TqZRO7Ea11aU0Y/T
+ F3kA==
+X-Gm-Message-State: AOJu0YwzYvArcbjhUlHsxiSDPzD1c/SGB5led1qij3CDgn5kO3WIP5rH
+ zqT1r1gWuq5cyKy9y3uWf3RSEIUF/G+nhJNS2NNxEACpGGeEvym5dqbJH6lSmoc6deHvQpb+N0F
+ AOQ0pJv4QKXy7N3RqGQCdKw7i9S7+qAuqyTPJ72Ha9Nuj+b0O7k9v3lkeD//4BemlMmV8rTvVgF
+ WvIFISYBL+fuggeueGJo8=
+X-Gm-Gg: Acq92OEXPBl0w7P9h4f1RGUOu40YaCJ4vpSKd9RJGEeXXXfc3NXEa6SlLeT9E1YIMuK
+ oV1bYvELsvMatL2dYRAfAwdi75DL7QA+Z6BLwsXsVKIhnFvA7nMoVr2SUGSJS7P3LLFPN8vwy15
+ rLPtn8UxQ+ewHoXT0eHVKcHFrW72ywAEJvR42r9leHp4Yqjz9WZvtaPO1K/P/BqnWFm/PE909pf
+ +30ZR3ffwnHG2ZmbNkba5i0BGj7SyJZs6ybAhNMRy++rcKAl3RthOy0OoLpnyH/cLAk2w==
+X-Received: by 2002:a05:651c:154e:b0:394:e5e:f12b with SMTP id
+ 38308e7fff4ca-395d8d3d99dmr74425051fa.17.1779888316499; 
+ Wed, 27 May 2026 06:25:16 -0700 (PDT)
+X-Received: by 2002:a05:651c:154e:b0:394:e5e:f12b with SMTP id
+ 38308e7fff4ca-395d8d3d99dmr74424901fa.17.1779888315917; Wed, 27 May 2026
+ 06:25:15 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA0PR11MB8379:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ef0e2e4-84ab-4a3c-bcda-08debbf361e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|11063799006|4143699003|18002099003|22082099003|56012099006;
-X-Microsoft-Antispam-Message-Info: rIUGHNbgIOKK3I0milCFGqgX0VePRacZcDzRRleDk3KHMDY2fWQxlkofS7EOxqyxy0I2MPF6alfDZTVoMXVKjmRCOlj4ixFSw8zaSfeGISjwNvGnXOlkU6PjDgEKOa+3oj4faVLymWsdKkIQmT9gXTsXh8WrUm6lSowuUVh649Q/a48bs4eVY3WPR1hrbfe6C1oD3ULr2Hta6nTwMUBSQ1Nvl98pt2oq9tUol109eKIw6ckr2GgWR2tgQTnOnRROBplECJVa/lQIMfhZSUZe3/QcNp4l1LKQekwd6Za5s8KD//gnpJbXv9FFUZp++y33jXBhGr74tGyDwlq2G46KP7G0WE2e+b+3sHNNT27iQZopiysuQTYEN94YvNc3xo/VHp/hqr5qCdnNemHcc81x3eY9kiIO8PWYsZ8xQPygiPCefiu+9F1ILiKMaQjL6C0V3ol4uib/QhZn8GedyXq0i2J4uAMnIij/7UI+LnoXHutMf+17jhgXzKiPAmjwR6B5BQQbK3XeA5yIJc4D8wVZgM1ZymH/wTTu85iLFELk24EpPijgDkO7g1sL8fRuV5R444e5hWbGACcLDGirhT4SAEEv0zP7nFa5kmiR5MZGxicKXKLWwqxRon936L3u+yzFBHg3HmffYP3FbouBq8VdOX+ZLQ9L7wtffqUkvjOxtz75pTr+qzZoPLkN3gTQoUGn
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(11063799006)(4143699003)(18002099003)(22082099003)(56012099006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IJQCei8QF/fsHP6b3/Kt9I3rJuwn8mHJzW549PnuJTIzDk9klRfphM0iYSZd?=
- =?us-ascii?Q?plHDWTeJF7t7P7+eqKj2WokzkypxmXDceLQngsEMTmXGMkeIv+s5v4jhFV90?=
- =?us-ascii?Q?hcJxCDA08N17K8pYPNHVgLFpTPR3AXMVZ+dIN6Eu30wnriy2BQNLuhPKcImT?=
- =?us-ascii?Q?SVNbbilz381rHvAqwtF7xbRUVfyHUaZguI3w5XZ1NidgZjwXyKE9t7S+orGN?=
- =?us-ascii?Q?lyjgljl0toReseRvg2rNRItVNs4MhllvZrbiPAL5ryho4rKGSUgwVhp6V6rl?=
- =?us-ascii?Q?VZZ5Lz+YLAsKO8QWNnhYXdvBFYEzwhfLlplTKTdy3CByXe8EijsnQ4hc65Ky?=
- =?us-ascii?Q?bNVyTbPJagg2u5yD66xfcsJMrWCIPCFUau+NLzcD/6FmMqaQxE83wpmY8Urs?=
- =?us-ascii?Q?QbQw+aZXyKu7F0AgGOez4S3iRvtNVJxb0BSii9A09qmOmeaaQzgJx9kpFM3j?=
- =?us-ascii?Q?zy9U1hONXmraR8im51T4qEDGLbwpipz9Y5PZvHu5fG1yG03HD1fZFfDZQpbt?=
- =?us-ascii?Q?5CuVxHf1vs29Zn2ks16AFCgnWlyVcxaM0xm/cuerFrXJnu2AC87I6UuWDWpU?=
- =?us-ascii?Q?yV+bGsohgLDRScpkYTcQENcw/qA3uY1IGZavAL/P2qjuY3epaEaskJqAE4mO?=
- =?us-ascii?Q?aeZb7cgONZ21w2Oesov0m6eNjxKO8utCa3qG+/fHEMgW56DUPW+mv1fewdJD?=
- =?us-ascii?Q?6tQQ4xNoU7QPaQ3Dka65Y/O29ijXcsgnInKBuVSKS4JQpB+jo2D5CIEIJbmo?=
- =?us-ascii?Q?B2BCPlnea7s2ouq/7pzNN0LMjerAzpzWHX+ee+VxWIHQKY4nhVzVc/Bt4/YN?=
- =?us-ascii?Q?zGnyUqi5ZyOKkKvCUHgi9WMaUKfj15hpF1nursZkVzKki6cOyCf6d/DU5rZr?=
- =?us-ascii?Q?gAN+gcSkO+6OXk2GYnULzn8hg6RFcEQCShu0zDRGpINBqZbj1AnCiGdGdG71?=
- =?us-ascii?Q?z8WgBE27gTHDStAmCnjQe2f0vjRsNwul+6iCbdfvxNji+v+O/TW3VkeI8FJP?=
- =?us-ascii?Q?Qwv2JROMfoLbUVlZFlRsjB8dSK3wHiXmDO+KY1i5bTkq5NyJcd69NhY883cp?=
- =?us-ascii?Q?Hqcp6E2Rc6GP322zZljqSaqbMbV7GHl1z9nK/nUoQT+EUq6CX0faZMDjRdgn?=
- =?us-ascii?Q?gPs8Niholin+ZV8q6H7VJQI1elom7E23E6e6SDZdqzIjhZFTtes41VOwVXmv?=
- =?us-ascii?Q?me72l8bUWBoWQ2M1NpMp6fgSbZ0xTiLex4kuAF+0NF6roQB4ESe7C/JopTYc?=
- =?us-ascii?Q?KT0VQTnHVe3xfVdZymHnh1Ay902b9B0G38n03f8dp+R1X5HYKqTnDYoReinq?=
- =?us-ascii?Q?AaYQRuD5kML6adqABkwR4UygUxQBmooPycb6+XhbxniWxDCVsqFf59M66wzV?=
- =?us-ascii?Q?ab8vUVtMpflvBEwimQOFKot1xXFh46i4OrDxzcElP99HbWo+OqIRTlRmG15c?=
- =?us-ascii?Q?dx9RlZPuu9B2unVmJViKxFAc8VpT/bCxfCKc4hnO+0hKebkvyx+wMXhMHNCo?=
- =?us-ascii?Q?TqsP3ib8EyTQHmfCexCJZYbiz/Y+d5NuucJNFx/aHWCk2B56KFad4DsOZe7m?=
- =?us-ascii?Q?s+rHuQYIyTpZZr339RLrYuGqnw/C1iuJew6QFcHuuF1ROWCQh581iuYzWKFg?=
- =?us-ascii?Q?9II6GJKk88FgwylTI8aqWIv2RG1/FH7+ZyYhuc8Fxs/mZTXFoD5Pk2VUfv1x?=
- =?us-ascii?Q?jF8pLbA1pxBT8h1KmaY/l+VAmdrNbXdou2SIIsQYs6acc6niD6YmAudElGiV?=
- =?us-ascii?Q?FMaM99qfELEtBWZ7A687Oi6VuakjWeE=3D?=
-X-Exchange-RoutingPolicyChecked: VUeOghsclablIzW4uP2qMyQoJFQXKGWoP1KJV+HJMTyaEzexAdSzcm0LruySWZGDTRDrpLqGZoyYbscYxqMdT6/fDRyP3zTw+cCiWANAjSkfV1VcYgKJo6l5di4Grlxjm+Ve6+4xeM3eGudIKmBMxw8DZzwycUADmrtsh0b6j/oNxFH2GQv0z6tTbv4Fq/B84fNH154AcEWoB8zDFWLWHADRTIpUv7oFeLJeKXTedS3x9R9N0h2viOaGPHxDsl0FMtGuqv8a+50rH3ocmSHPjLFPQfxo+Ue0TlqfZAVF3XfcaKJWamr37enMuIcsnPOS/Qd5Ygb0izAk+uHLRlMFJw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ef0e2e4-84ab-4a3c-bcda-08debbf361e7
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 13:25:13.0612 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eoc9jOOYmSFNWXmdNFDZdDwb1Uaq1CaqItWN2awjovJTUzu/1PD56mb0rSPTLNn1jQI4juqqHpwXBJzd03durK9dp+c43DfenmAx9X4pg14=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8379
-X-OriginatorOrg: intel.com
+References: <20260403091836.1073484-1-david.marchand@redhat.com>
+ <20260510170306.3406045-1-david.marchand@redhat.com>
+ <20260510170306.3406045-5-david.marchand@redhat.com>
+ <20260512164154.00d109c5@stephen-xps.local>
+In-Reply-To: <20260512164154.00d109c5@stephen-xps.local>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 27 May 2026 15:25:02 +0200
+X-Gm-Features: AVHnY4KPGygHHqSJbhKjmFNSd4-XLAp_tYefVtr_tQYQOlbpIVpryKEjlA6CRoQ
+Message-ID: <CAJFAV8woV=XmP6GyOBsvRW1taT+YzA7s3e0bMRYHr2g0D_YamQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] net/iavf: accept up to 32k unicast MAC addresses
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, rjarry@redhat.com, cfontain@redhat.com, 
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: gsNnUNQtGCPy7DuUi_eOlk_BrkIIIMWJ4u5vlS7V9o4_1779888317
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,67 +86,124 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, May 25, 2026 at 03:06:22PM +0100, Anatoly Burakov wrote:
-> Currently, each driver has their own code for action parsing, which results
-> in a lot of duplication and subtle mismatches in behavior between drivers.
-> 
-> Add common infrastructure, based on the following assumptions:
-> 
-> - All drivers support at most 4 actions at once, but usually less
-> - Not every action is supported by all drivers
-> - We can check a few common things to filter out obviously wrong actions
-> - Driver performs semantic checks on all valid actions
-> 
-> So, the intention is to reject everything we can reasonably reject at the
-> outset without knowing anything about the drivers, parametrize what is
-> trivial to parametrize, and leave the rest for the driver to implement.
-> 
-> While we're at it, also add logging infrastructure for Intel common code,
-> using the new component name defines that are automatically passed to each
-> DPDK driver as it is being built.
-> 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
-<snip>
+On Tue, 12 May 2026 at 16:42, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Sun, 10 May 2026 19:03:04 +0200
+> David Marchand <david.marchand@redhat.com> wrote:
+>
+> > E810 hardware provides 32k switch lookups.
+> > Thanks to this, it is possible to allow a lot more secondary mac
+> > addresses than what is possible today.
+> >
+> > In practice, the maximum number of macs available per port may be lower
+> > and depends on usage by other (trusted?) VFs on the same PF.
+> > There is no way to figure out this limit but to try adding a mac address
+> > and get an error from the PF driver.
+> >
+> > Mailbox exchanges are limited to IAVF_AQ_BUF_SZ, segment messages
+> > accordingly.
+> >
+> > Signed-off
+>
+> AI review feedback; nothing major but worth a look
 
-> +
-> +static inline int
-> +__flow_action_check_rss(const struct rte_flow_action_rss *rss,
-> +		const struct ci_flow_actions_check_param *param,
-> +		struct rte_flow_error *error)
-> +{
-> +	uint32_t qnum, q;
-> +
-> +	qnum = rss->queue_num;
-> +
-> +	/* either we have both queues and queue number, or we have neither */
-> +	if ((qnum == 0) != (rss->queue == NULL)) {
-> +		return rte_flow_error_set(error, EINVAL,
-> +			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
-> +			"If queue number is specified, queue array must also be specified");
-> +	}
-> +	/* check if queues are monotonic */
-> +	for (q = 1; q < qnum; q++) {
-> +		if (rss->queue[q] < rss->queue[q - 1]) {
-> +			return rte_flow_error_set(error, EINVAL,
-> +				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
-> +				"RSS queues must be in ascending order");
-> +		}
-> +		/* if user has requested contiguousness, check that as well */
-> +		if (param == NULL || !param->rss_queues_contig)
-> +			continue;
-> +		if (rss->queue[q] != rss->queue[0] + q) {
-> +			return rte_flow_error_set(error, EINVAL,
-> +				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
-> +				"RSS queues must be contiguous");
-> +		}
-> +	}
-> +	/* if user has requested to check for queue contiguousness, do it */
-> +	if (param != NULL && param->rss_queues_contig) {
-> +	}
-> +
+In the first revision, it was interesting, but now, that's a lot of noise.
 
-Empty block, and I don't see it filled in later patches. Is this for future
-use, or just an oversight? I see the check for contiguity done in the loop
-above.
+
+>
+> Series: ethdev: VMDq cleanup and iavf: 32k MACs / duplicate install fix
+> Tree: dpdk main (DPDK 26.07)
+>
+> Patch 2 - ethdev: skip VMDq pools unless configured
+>   Info
+>     Doxygen of rte_eth_dev_mac_addr_add() is not updated to describe the
+>     new constraint that pool must be 0 when VMDq is not configured. The
+>     function-level @param documentation and @return list should mention
+>     that -EINVAL is now returned when VMDq is disabled and pool != 0.
+
+ * @param pool
+ *   VMDq pool index to associate address with (if VMDq is enabled).
+If VMDq is
+ *   not enabled, this should be set to 0.
+
+It has been documented since the start that a 0 pool should be passed.
+
+I can update the return code EINVAL.
+
+>
+>     Subtle behavior change: when VMDq is not configured, mac_pool_sel[index]
+>     is no longer set to RTE_BIT64(0) on add. Before this patch every added
+>     MAC ended up with bit 0 set; afterwards the array stays at 0. This is
+>     consistent with the new restore path (which now uses the VMDq flag
+>     rather than walking pool_mask in the !vmdq case), but the change in
+>     observable state of dev->data->mac_pool_sel[] could surprise an out-of-
+>     tree consumer. Worth a sentence in the API change note.
+
+This is really internal stuff, only drivers would access this, and we
+don't care about such out of tree consumer.
+
+
+>
+> Patch 4 - net/iavf: accept up to 32k unicast MAC addresses
+>   Info
+>     Release notes wording: "secondary MAC addresses from 64 to 32k" is
+>     slightly imprecise. IAVF_NUM_MACADDR_MAX (64) was the total cap including
+>     the primary MAC; IAVF_UC_MACADDR_MAX (32768) is also a total cap
+>     including index 0. Either drop "secondary" or say "secondary MAC
+>     addresses from 63 to 32767".
+>
+>     iavf_add_del_uc_addr_bulk() returns an int but the only caller
+>     (iavf_add_del_all_mac_addr) discards it. The pre-existing function was
+>     already void so this is no regression, but having the helper return an
+>     error code that is unconditionally dropped is misleading. Either
+>     propagate the error to the caller (and make iavf_add_del_all_mac_addr
+>     return int) or make the helper void.
+>
+>     eth_dev_mac_restore() now iterates dev_info->max_mac_addrs which for
+>     iavf becomes 32768. With patch 5 applied this path is skipped via
+>     get_restore_flags, but any driver that increases max_mac_addrs into the
+>     thousands without setting RTE_ETH_RESTORE_MAC_ADDR off will pay a 32k
+>     rte_is_zero_ether_addr() scan on every dev_start. Not a bug here, but
+>     worth keeping in mind.
+>
+>     sizeof(struct virtchnl_ether_addr_list) already accounts for the
+>     embedded list[1] slot, so
+>        in_args_size = sizeof(struct virtchnl_ether_addr_list) +
+>                       sizeof(struct virtchnl_ether_addr) * list->num_elements
+>     overcounts by sizeof(struct virtchnl_ether_addr). This matches what
+>     iavf_add_del_eth_addr() already does, and the buffer is sized to hold
+>     it, so it's not a bug -- noting it for completeness.
+
+Those points do reflect the pre-existing implementations, but that's
+it, I won't fix all bugs in the world... for now.
+
+
+> Patch 5 - net/iavf: fix duplicate MAC addresses install
+>   Info
+>     Recovery edge case: if iavf_add_del_eth_addr() for the primary fails
+>     during the first iavf_dev_start(), mac_primary_set stays false. On a
+>     subsequent VF reset, iavf_dev_start() (called from iavf_handle_hw_reset)
+>     will re-attempt the primary add, and the new
+>     iavf_add_del_all_mac_addr() call right after will add the primary again
+>     via VIRTCHNL_ETHER_ADDR_PRIMARY. This re-introduces a single-MAC
+>     double-install in a narrow failure path. Could be avoided by skipping
+>     the primary in iavf_add_del_all_mac_addr() when mac_primary_set is
+>     already true, or by having iavf_dev_start() skip the primary add when
+>     in_reset_recovery is set.
+>
+>     No release notes entry. With Fixes: + Cc: stable this is acceptable as
+>     a bug fix, but the patch also introduces a new dev_op
+>     (get_restore_flags) for the driver and changes when MC addresses are
+>     re-pushed (only on VF reset, not on every dev_start). A one-line note
+>     in the iavf section of the release notes would help users tracking
+>     behaviour changes between stop/start cycles.
+
+Mac addresses are installed only once and restored on reset, that's all we need.
+IOW, this patch should have no visible impact on an application, and
+nothing to write about in the RN.
+
+
+-- 
+David Marchand
 
