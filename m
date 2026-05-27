@@ -2,63 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FF5CD5BDE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 07:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADF5CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 07:59:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 507C940676;
-	Wed, 27 May 2026 09:58:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 543C44067C;
+	Wed, 27 May 2026 09:59:03 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D4832406B4
- for <dev@dpdk.org>; Wed, 27 May 2026 09:58:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BB66940695
+ for <dev@dpdk.org>; Wed, 27 May 2026 09:59:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1779868737;
+ s=mimecast20190719; t=1779868741;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=nBLl2TAdWXkrqTl7sEoP1oJ4GYVTBOlE1fM9CPD5B+4=;
- b=M4VzyuLUvovWC/5cN8Km7kFRh1BMt5AATv0JgcL2nQ6mATLqLcZsSzi/ovOfLt29dXT4dg
- vI6glkfQslg9e1VMoZe7xVoMtNvV/aDMb1301wgEXs6e17TxbJm7FnRVBuiDouGoMyng7a
- sdwZle3/GU7i/KlDTMOMnxeViKi3RnE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=xD4FIW3KA1cBx6sm7N5T08hQ6TebdicCliUVnII9H+w=;
+ b=f7YDReFhBWD8S2QN7fDHzOtwP/Z3Kz3ZIxp+p1g6F8os3ZJQJJSbfUSAfhZfjwbU2mU/PB
+ xgsBatU7uFKcj3WnRASVSewXWk3mAYmWOZxGyBgUcwrwhX3tCtPCBxtJecnWmN8IKim9mw
+ JoQY8Js7b3rT3xpWm+Gwq0m9qIc/irs=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-227-wzNP_a-aNaCrU5v8cKdnSQ-1; Wed,
- 27 May 2026 03:58:53 -0400
-X-MC-Unique: wzNP_a-aNaCrU5v8cKdnSQ-1
-X-Mimecast-MFC-AGG-ID: wzNP_a-aNaCrU5v8cKdnSQ_1779868731
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-361-Uj9IMc98Mg2wOfAxHT1AnQ-1; Wed,
+ 27 May 2026 03:58:57 -0400
+X-MC-Unique: Uj9IMc98Mg2wOfAxHT1AnQ-1
+X-Mimecast-MFC-AGG-ID: Uj9IMc98Mg2wOfAxHT1AnQ_1779868736
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 89F5C18005B5; Wed, 27 May 2026 07:58:51 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 8259B195609F; Wed, 27 May 2026 07:58:56 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.49.40])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 1D11330001BB; Wed, 27 May 2026 07:58:46 +0000 (UTC)
+ by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 49C22404; Wed, 27 May 2026 07:58:53 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, stephen@networkplumber.org,
- bruce.richardson@intel.com, Parav Pandit <parav@nvidia.com>,
- Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
- Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@altera.com>,
- Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>,
- Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
- Wei Hu <weh@microsoft.com>
-Subject: [PATCH v4 15/25] bus: support multiple probe
-Date: Wed, 27 May 2026 09:56:39 +0200
-Message-ID: <20260527075654.3780732-16-david.marchand@redhat.com>
+ bruce.richardson@intel.com, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v4 16/25] drivers/bus: initialize NXP bus specifics in scan
+Date: Wed, 27 May 2026 09:56:40 +0200
+Message-ID: <20260527075654.3780732-17-david.marchand@redhat.com>
 In-Reply-To: <20260527075654.3780732-1-david.marchand@redhat.com>
 References: <20260429114503.932575-1-david.marchand@redhat.com>
  <20260527075654.3780732-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: QqI34lv6-b07hGaZf_32VXAi0AS-N2uCUKitGWOku3M_1779868731
+X-Mimecast-MFC-PROC-ID: nEIc3jfB3S1BGe_pINlz2Pg_bTTAhtjFE1iPyplTRzU_1779868736
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -75,208 +70,257 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add infrastructure to declare support for multiple probe attempts
-on the same device. This prepares for the introduction of
-generic probe_device operation.
+Move bus-specific initialization code from probe() to scan() operations
+for DPAA and FSLMC buses. This separates device discovery and bus setup
+(scan) from driver matching and probing (probe), preparing for a future
+generic probe() implementation in EAL.
 
-The PCI bus enables this feature to support drivers with
-RTE_PCI_DRV_PROBE_AGAIN flag.
+Both buses now have a clean separation:
+- scan(): discover devices + initialize bus
+- probe(): match drivers + call probe_device()
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/bus/auxiliary/auxiliary_common.c | 6 ------
- drivers/bus/cdx/cdx.c                    | 5 -----
- drivers/bus/dpaa/dpaa_bus.c              | 3 ---
- drivers/bus/fslmc/fslmc_bus.c            | 3 ---
- drivers/bus/ifpga/ifpga_bus.c            | 7 -------
- drivers/bus/pci/pci_common.c             | 1 +
- drivers/bus/platform/platform.c          | 3 ---
- drivers/bus/uacce/uacce.c                | 5 -----
- drivers/bus/vdev/vdev.c                  | 3 ---
- drivers/bus/vmbus/vmbus_common.c         | 6 ------
- lib/eal/common/eal_common_dev.c          | 3 +++
- lib/eal/include/bus_driver.h             | 1 +
- 12 files changed, 5 insertions(+), 41 deletions(-)
+ drivers/bus/dpaa/dpaa_bus.c   | 76 +++++++++++++++---------------
+ drivers/bus/fslmc/fslmc_bus.c | 88 +++++++++++++++++------------------
+ 2 files changed, 80 insertions(+), 84 deletions(-)
 
-diff --git a/drivers/bus/auxiliary/auxiliary_common.c b/drivers/bus/auxiliary/auxiliary_common.c
-index 7824c26f92..c210e303ce 100644
---- a/drivers/bus/auxiliary/auxiliary_common.c
-+++ b/drivers/bus/auxiliary/auxiliary_common.c
-@@ -94,12 +94,6 @@ auxiliary_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	if (aux_dev->device.numa_node < 0 && rte_socket_count() > 1)
- 		AUXILIARY_LOG(INFO, "Device %s is not NUMA-aware", aux_dev->name);
- 
--	if (rte_dev_is_probed(&aux_dev->device)) {
--		AUXILIARY_LOG(DEBUG, "Device %s is already probed on auxiliary bus",
--			aux_dev->device.name);
--		return -EEXIST;
--	}
--
- 	iova_mode = rte_eal_iova_mode();
- 	if ((aux_drv->drv_flags & RTE_AUXILIARY_DRV_NEED_IOVA_AS_VA) > 0 &&
- 	    iova_mode != RTE_IOVA_VA) {
-diff --git a/drivers/bus/cdx/cdx.c b/drivers/bus/cdx/cdx.c
-index c38eae325b..64fb0a8534 100644
---- a/drivers/bus/cdx/cdx.c
-+++ b/drivers/bus/cdx/cdx.c
-@@ -315,11 +315,6 @@ cdx_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	const char *dev_name = cdx_dev->name;
- 	int ret;
- 
--	if (rte_dev_is_probed(&cdx_dev->device)) {
--		CDX_BUS_INFO("Device %s is already probed", dev_name);
--		return -EEXIST;
--	}
--
- 	CDX_BUS_DEBUG("  probe device %s using driver: %s", dev_name,
- 		cdx_drv->driver.name);
- 
 diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 14cd64cc32..b0ed61ba39 100644
+index b0ed61ba39..43d71cefa4 100644
 --- a/drivers/bus/dpaa/dpaa_bus.c
 +++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -826,9 +826,6 @@ dpaa_bus_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	struct rte_dpaa_driver *dpaa_drv = RTE_BUS_DRIVER(drv, *dpaa_drv);
- 	int ret;
+@@ -569,40 +569,6 @@ dpaa_bus_dev_compare(const char *name1, const char *name2)
+ 	return strncmp(devname1, devname2, sizeof(devname1));
+ }
  
--	if (rte_dev_is_probed(&dpaa_dev->device))
+-#define DPAA_DEV_PATH1 "/sys/devices/platform/soc/soc:fsl,dpaa"
+-#define DPAA_DEV_PATH2 "/sys/devices/platform/fsl,dpaa"
+-
+-static int
+-rte_dpaa_bus_scan(void)
+-{
+-	int ret;
+-
+-	BUS_INIT_FUNC_TRACE();
+-
+-	if ((access(DPAA_DEV_PATH1, F_OK) != 0) &&
+-	    (access(DPAA_DEV_PATH2, F_OK) != 0)) {
+-		DPAA_BUS_LOG(DEBUG, "DPAA Bus not present. Skipping.");
+-		return 0;
+-	}
+-
+-	if (rte_dpaa_bus.detected)
 -		return 0;
 -
- 	if (rte_bus_device_is_ignored(&rte_dpaa_bus.bus, dpaa_dev->name))
+-	rte_dpaa_bus.detected = 1;
+-
+-	/* create the key, supplying a function that'll be invoked
+-	 * when a portal affined thread will be deleted.
+-	 */
+-	ret = pthread_key_create(&dpaa_portal_key, dpaa_portal_finish);
+-	if (ret) {
+-		DPAA_BUS_LOG(DEBUG, "Unable to create pthread key. (%d)", ret);
+-		dpaa_clean_device_list();
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+ /* register a dpaa bus based dpaa driver */
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa_driver_register)
+ void
+@@ -701,20 +667,43 @@ static int rte_dpaa_setup_intr(struct rte_intr_handle *intr_handle)
+ 	return 0;
+ }
+ 
++#define DPAA_DEV_PATH1 "/sys/devices/platform/soc/soc:fsl,dpaa"
++#define DPAA_DEV_PATH2 "/sys/devices/platform/fsl,dpaa"
++
+ static int
+-rte_dpaa_bus_probe(void)
++rte_dpaa_bus_scan(void)
+ {
+-	int ret = -1;
+ 	struct rte_dpaa_device *dev;
+ 	FILE *svr_file = NULL;
+ 	uint32_t svr_ver;
+ 	static int process_once;
+ 	char *penv;
++	int ret;
++
++	BUS_INIT_FUNC_TRACE();
++
++	if ((access(DPAA_DEV_PATH1, F_OK) != 0) &&
++	    (access(DPAA_DEV_PATH2, F_OK) != 0)) {
++		DPAA_BUS_LOG(DEBUG, "DPAA Bus not present. Skipping.");
++		return 0;
++	}
+ 
+-	/* If DPAA bus is not present nothing needs to be done */
+-	if (!rte_dpaa_bus.detected)
++	if (rte_dpaa_bus.detected)
  		return 0;
  
++	rte_dpaa_bus.detected = 1;
++
++	/* create the key, supplying a function that'll be invoked
++	 * when a portal affined thread will be deleted.
++	 */
++	ret = pthread_key_create(&dpaa_portal_key, dpaa_portal_finish);
++	if (ret) {
++		DPAA_BUS_LOG(DEBUG, "Unable to create pthread key. (%d)", ret);
++		dpaa_clean_device_list();
++		return ret;
++	}
++
++	/* SoC version detection and configuration */
+ 	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
+ 	if (svr_file) {
+ 		if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
+@@ -786,9 +775,19 @@ rte_dpaa_bus_probe(void)
+ 	/* And initialize the PA->VA translation table */
+ 	dpaax_iova_table_populate();
+ 
++	dpaa_bus_global_init = 1;
++	return 0;
++}
++
++static int
++rte_dpaa_bus_probe(void)
++{
++	struct rte_dpaa_device *dev;
++
+ 	/* For each registered driver, and device, call the driver->probe */
+ 	RTE_BUS_FOREACH_DEV(dev, &rte_dpaa_bus.bus) {
+ 		struct rte_driver *driver = NULL;
++		int ret;
+ 
+ next_driver:
+ 		driver = rte_bus_find_driver(&rte_dpaa_bus.bus, driver, &dev->device);
+@@ -801,7 +800,6 @@ rte_dpaa_bus_probe(void)
+ 		else if (ret > 0)
+ 			goto next_driver;
+ 	}
+-	dpaa_bus_global_init = 1;
+ 
+ 	return 0;
+ }
 diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index a975e464c1..e6db8f5100 100644
+index e6db8f5100..156f4e295f 100644
 --- a/drivers/bus/fslmc/fslmc_bus.c
 +++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -541,9 +541,6 @@ fslmc_bus_probe_device(struct rte_driver *driver, struct rte_device *rte_dev)
- 	struct rte_dpaa2_driver *drv = RTE_BUS_DRIVER(driver, *drv);
- 	int ret = 0;
+@@ -322,7 +322,6 @@ rte_fslmc_scan(void)
+ 		}
+ 		return 0;
+ 	}
+-	process_once = 1;
  
--	if (rte_dev_is_probed(&dev->device))
--		return 0;
--
- 	if (dev->device.devargs &&
- 	    dev->device.devargs->policy == RTE_DEV_BLOCKED) {
- 		DPAA2_BUS_DEBUG("%s Blocked, skipping",
-diff --git a/drivers/bus/ifpga/ifpga_bus.c b/drivers/bus/ifpga/ifpga_bus.c
-index 92ad3513e0..d3f3370bc5 100644
---- a/drivers/bus/ifpga/ifpga_bus.c
-+++ b/drivers/bus/ifpga/ifpga_bus.c
-@@ -274,13 +274,6 @@ ifpga_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	struct rte_afu_driver *afu_drv = RTE_BUS_DRIVER(drv, *afu_drv);
- 	int ret;
+ 	/* Now we only support single group per process.*/
+ 	group_name = getenv("DPRC");
+@@ -368,6 +367,48 @@ rte_fslmc_scan(void)
+ 	/* If debugging is enabled, device list is dumped to log output */
+ 	dump_device_list();
  
--	/* Check if a driver is already loaded */
--	if (rte_dev_is_probed(&afu_dev->device)) {
--		IFPGA_BUS_DEBUG("Device %s is already probed",
--				rte_ifpga_device_name(afu_dev));
--		return -EEXIST;
--	}
--
- 	/* reference driver structure */
- 	afu_dev->driver = afu_drv;
++	/* Bus initialization - only if devices were found */
++	if (!TAILQ_EMPTY(&rte_fslmc_bus.bus.device_list)) {
++		static const struct rte_mbuf_dynfield dpaa2_seqn_dynfield_desc = {
++			.name = DPAA2_SEQN_DYNFIELD_NAME,
++			.size = sizeof(dpaa2_seqn_t),
++			.align = alignof(dpaa2_seqn_t),
++		};
++
++		dpaa2_seqn_dynfield_offset =
++			rte_mbuf_dynfield_register(&dpaa2_seqn_dynfield_desc);
++		if (dpaa2_seqn_dynfield_offset < 0) {
++			DPAA2_BUS_ERR("Failed to register mbuf field for dpaa sequence number");
++			return 0;
++		}
++
++		ret = fslmc_vfio_setup_group();
++		if (ret) {
++			DPAA2_BUS_ERR("Unable to setup VFIO %d", ret);
++			return 0;
++		}
++
++		/* Map existing segments as well as, in case of hotpluggable memory,
++		 * install callback handler.
++		 */
++		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++			ret = fslmc_vfio_dmamap();
++			if (ret) {
++				DPAA2_BUS_ERR("Unable to DMA map existing VAs: (%d)", ret);
++				DPAA2_BUS_ERR("FSLMC VFIO Mapping failed");
++				return 0;
++			}
++		}
++
++		ret = fslmc_vfio_process_group();
++		if (ret) {
++			DPAA2_BUS_ERR("Unable to setup devices %d", ret);
++			return 0;
++		}
++	}
++
++	process_once = 1;
++
+ 	return 0;
  
-diff --git a/drivers/bus/pci/pci_common.c b/drivers/bus/pci/pci_common.c
-index b57320064e..02542a903a 100644
---- a/drivers/bus/pci/pci_common.c
-+++ b/drivers/bus/pci/pci_common.c
-@@ -823,6 +823,7 @@ rte_pci_pasid_set_state(const struct rte_pci_device *dev,
- 
- struct rte_pci_bus rte_pci_bus = {
- 	.bus = {
-+		.allow_multi_probe = true,
- 		.scan = rte_pci_scan,
- 		.probe = pci_probe,
- 		.cleanup = pci_cleanup,
-diff --git a/drivers/bus/platform/platform.c b/drivers/bus/platform/platform.c
-index 22979f31b3..3d04ba4d25 100644
---- a/drivers/bus/platform/platform.c
-+++ b/drivers/bus/platform/platform.c
-@@ -331,9 +331,6 @@ driver_call_probe(struct rte_platform_driver *pdrv, struct rte_platform_device *
+ scan_fail_cleanup:
+@@ -408,51 +449,8 @@ rte_fslmc_close(void)
+ static int
+ rte_fslmc_probe(void)
  {
- 	int ret;
- 
--	if (rte_dev_is_probed(&pdev->device))
--		return -EBUSY;
+-	int ret = 0;
 -
- 	if (pdrv->probe != NULL) {
- 		pdev->driver = pdrv;
- 		ret = pdrv->probe(pdev);
-diff --git a/drivers/bus/uacce/uacce.c b/drivers/bus/uacce/uacce.c
-index 2ef1a27635..b34c263295 100644
---- a/drivers/bus/uacce/uacce.c
-+++ b/drivers/bus/uacce/uacce.c
-@@ -359,11 +359,6 @@ uacce_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	const char *dev_name = uacce_dev->name;
- 	int ret;
- 
--	if (rte_dev_is_probed(&uacce_dev->device)) {
--		UACCE_BUS_INFO("device %s is already probed", dev_name);
--		return -EEXIST;
--	}
+ 	struct rte_dpaa2_device *dev;
 -
- 	UACCE_BUS_DEBUG("probe device %s using driver %s", dev_name, uacce_drv->driver.name);
- 
- 	ret = uacce_drv->probe(uacce_drv, uacce_dev);
-diff --git a/drivers/bus/vdev/vdev.c b/drivers/bus/vdev/vdev.c
-index e55be7fb2c..37820b9614 100644
---- a/drivers/bus/vdev/vdev.c
-+++ b/drivers/bus/vdev/vdev.c
-@@ -190,9 +190,6 @@ vdev_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	enum rte_iova_mode iova_mode;
- 	int ret;
- 
--	if (rte_dev_is_probed(&vdev_dev->device))
--		return -EEXIST;
+-	static const struct rte_mbuf_dynfield dpaa2_seqn_dynfield_desc = {
+-		.name = DPAA2_SEQN_DYNFIELD_NAME,
+-		.size = sizeof(dpaa2_seqn_t),
+-		.align = alignof(dpaa2_seqn_t),
+-	};
 -
- 	name = rte_vdev_device_name(vdev_dev);
- 	VDEV_LOG(DEBUG, "Search driver to probe device %s", name);
- 
-diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index ba923a2669..24b1c24f43 100644
---- a/drivers/bus/vmbus/vmbus_common.c
-+++ b/drivers/bus/vmbus/vmbus_common.c
-@@ -91,12 +91,6 @@ vmbus_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	char guid[RTE_UUID_STRLEN];
- 	int ret;
- 
--	/* Check if a driver is already loaded */
--	if (rte_dev_is_probed(&vmbus_dev->device)) {
--		VMBUS_LOG(DEBUG, "VMBUS driver already loaded");
+-	if (TAILQ_EMPTY(&rte_fslmc_bus.bus.device_list))
+-		return 0;
+-
+-	dpaa2_seqn_dynfield_offset =
+-		rte_mbuf_dynfield_register(&dpaa2_seqn_dynfield_desc);
+-	if (dpaa2_seqn_dynfield_offset < 0) {
+-		DPAA2_BUS_ERR("Failed to register mbuf field for dpaa sequence number");
 -		return 0;
 -	}
 -
- 	rte_uuid_unparse(vmbus_dev->device_id, guid, sizeof(guid));
- 	VMBUS_LOG(INFO, "VMBUS device %s on NUMA socket %i",
- 		  guid, vmbus_dev->device.numa_node);
-diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
-index a38c211e5d..9047a01c4a 100644
---- a/lib/eal/common/eal_common_dev.c
-+++ b/lib/eal/common/eal_common_dev.c
-@@ -225,6 +225,9 @@ local_dev_probe(const char *devargs, struct rte_device **new_dev)
- 	drv = rte_bus_find_driver(dev->bus, drv, dev);
- 	if (drv == NULL) {
- 		ret = -ENOTSUP;
-+	} else if (rte_dev_is_probed(dev) && !dev->bus->allow_multi_probe) {
-+		EAL_LOG(INFO, "Device %s is already probed", dev->name);
-+		ret = -EEXIST;
- 	} else {
- 		ret = dev->bus->probe_device(drv, dev);
- 		if (ret > 0)
-diff --git a/lib/eal/include/bus_driver.h b/lib/eal/include/bus_driver.h
-index 0db4473bcc..a2fd3bd82d 100644
---- a/lib/eal/include/bus_driver.h
-+++ b/lib/eal/include/bus_driver.h
-@@ -327,6 +327,7 @@ typedef void *(*rte_bus_dev_iterate_t)(const struct rte_bus *bus,
- struct rte_bus {
- 	RTE_TAILQ_ENTRY(rte_bus) next; /**< Next bus object in linked list */
- 	const char *name;            /**< Name of the bus */
-+	bool allow_multi_probe;      /**< Allow probing devices multiple times */
- 	rte_bus_scan_t scan;         /**< Scan for devices attached to bus */
- 	rte_bus_probe_t probe;       /**< Probe devices on bus */
- 	rte_bus_find_device_t find_device; /**< Find a device on the bus */
+-	ret = fslmc_vfio_setup_group();
+-	if (ret) {
+-		DPAA2_BUS_ERR("Unable to setup VFIO %d", ret);
+-		return 0;
+-	}
+-
+-	/* Map existing segments as well as, in case of hotpluggable memory,
+-	 * install callback handler.
+-	 */
+-	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+-		ret = fslmc_vfio_dmamap();
+-		if (ret) {
+-			DPAA2_BUS_ERR("Unable to DMA map existing VAs: (%d)",
+-				      ret);
+-			/* Not continuing ahead */
+-			DPAA2_BUS_ERR("FSLMC VFIO Mapping failed");
+-			return 0;
+-		}
+-	}
+-
+-	ret = fslmc_vfio_process_group();
+-	if (ret) {
+-		DPAA2_BUS_ERR("Unable to setup devices %d", ret);
+-		return 0;
+-	}
++	int ret;
+ 
+ 	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus.bus) {
+ 		struct rte_driver *driver = NULL;
 -- 
 2.53.0
 
