@@ -2,72 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5BBCD5BD0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 12:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6985DCD5BD5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 12:38:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBEDF40653;
-	Wed, 27 May 2026 14:15:31 +0200 (CEST)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
- [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 28EA44026C
- for <dev@dpdk.org>; Wed, 27 May 2026 12:35:57 +0200 (CEST)
-Received: by mail-wm1-f53.google.com with SMTP id
- 5b1f17b1804b1-4896c22fcbaso98781145e9.0
- for <dev@dpdk.org>; Wed, 27 May 2026 03:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1779878157; x=1780482957; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=9i7al6A1qsZhCpAA6mORKaqBsw/gKt7Vqcp4QXFSSgQ=;
- b=WnEgogelpe1cpuHm/uf17F0CYdxpayugQWIMgBKVLYBFHtviWD9ihkX45/olBCK/8J
- flhDeFx+Weq5xZVmkF7NG1EYWUFoiMtL4WuvDmmR1x1EFvX5y/y+GcARr7UtV3GzCLdg
- abILb+JGnIr/xW5vxrEdXMiCNmZnMtvc6D80uDoBCI1mAXz4sd9D8dqjavlTtr570rjc
- 0XX7deYawaQG3ddQhYBGlfYSfOK6UXiLajA6LPHbi7JiI7C8mKHqrWMWF8S2anQcD0NH
- 8L7KE3WfB8yTiHGlyHA4TXRSLm16BXS/qQQmOF8uh5z2piRl+pcPyvKZ+Yl8F20o+Pcq
- GQeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779878157; x=1780482957;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=9i7al6A1qsZhCpAA6mORKaqBsw/gKt7Vqcp4QXFSSgQ=;
- b=d1nvLjsV58iAvZRbfcJIxAcyFw0jTpmoZqmmM/PQiCWuEKRjXb61TpOhhz1Ly7A6RK
- 7AaRJIVtRl25K6+zhjdAt7w47sILVsPqX3gWZfth5Z61/1xQPITFZLwLEQf47+4pf5WF
- ZHc6v0cbVG2ihG7A0bEUh6J6JiGpfXUECNOQQWU8pv4QnAt2qgX5M9q+OXS14T+CieP/
- bnXUhExlGwMzTJu0O86mWdj52EF8j5ob6wtEESzTVeOFhNyhp5hu/WkmRxGyI21qNBmr
- Uge1ABofGKBtCvPXzvwBzTLAoKmQQ+yDJLb9OkEz1i3VORb3VPPXlpZWE7TKvTeW0kPE
- PgQg==
-X-Gm-Message-State: AOJu0YyOkX3fu0S+MLhO0h/T3ksdwCN/3ybW1XRUPxP54RnODwCfxlLE
- i0ipgziMbUva8xtC/+i/XlY25v3v50LGdduv0T1aMH3StSJDcZzvDcoiYBahDEKEb+k+GQdw
-X-Gm-Gg: Acq92OHfAaGcKGZAB+zq5b56zQheTIEaCEZbfrR0SBmzQAqc6f611uu/HCgZ5Jy2WpA
- 4Y1peDWjk2lkVSGy37Y8uPVZOWBwUzaVYSupfIF8XDSJneDKcpV69+5mlTtHac9DYL8DdUnHXr6
- PRZkwm8xIXHQ7Ct6lbhTFuOUU2d/HGzXFhuRg5nISWixpVmDWGVOq3kX56a96l2tsb29CsarGWu
- ARlsLNWBGAI9Dly/pOWvY6RBt/xfxGj5Ql6Lf9/c2V2Re4J4t4tGiJ6zy8jmuFjkx5LfAk/BAJH
- OZ2muEvZikSUTDp8XHvXF4SSLOeRURs/46XlYCYVcHdt/Pw2UjZvQpz4uyleggV/YrZsCFjS7PN
- J2wAHi7AzjIRIv4IPnFuogEfDtkHHhvhQ5QFeB1OTNWST+BIOHzl67AVx4btMYuG+UYEmnFJKgL
- mbmmW8dNqzGeHiY6JXKuzA5njcGbkQ3uhI9+VVFLpLttLvQa1ZsvQLLDDDipt40NN5OFNhHy8kd
- bM=
-X-Received: by 2002:a05:600c:4e4b:b0:48a:6fd4:d3d3 with SMTP id
- 5b1f17b1804b1-49069da61b8mr171422145e9.20.1779878156280; 
- Wed, 27 May 2026 03:35:56 -0700 (PDT)
-Received: from work.lan ([2a01:e0a:906:9aa0:3c7c:257:aa84:84c3])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-490454a0cd5sm481023135e9.10.2026.05.27.03.35.55
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 27 May 2026 03:35:55 -0700 (PDT)
-From: Maxime Peim <maxime.peim@gmail.com>
-To: dev@dpdk.org
-Cc: dsosnowski@nvidia.com, viacheslavo@nvidia.com, bingz@nvidia.com,
- orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com
-Subject: [PATCH v5] net/mlx5: prepend implicit items in sync flow creation path
-Date: Wed, 27 May 2026 12:35:31 +0200
-Message-ID: <20260527103531.1266488-1-maxime.peim@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260511150854.1398044-1-maxime.peim@gmail.com>
-References: <20260511150854.1398044-1-maxime.peim@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5B05640293;
+	Wed, 27 May 2026 14:38:51 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 20F244026C
+ for <dev@dpdk.org>; Wed, 27 May 2026 14:38:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1779885529; x=1811421529;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=u0S9bhq2pQ7ClU8Qbts5lgBD17Ji4oVGOc4f7itlKow=;
+ b=NDpsHQITO3RGkJVqzvIveEzFu2JJHD+u/ewrdmc0xfuowp0nbrd766uT
+ RrGnE88wfZ8/ElBdGAVDc+O2U22CzxWYeIGXHHHz42EQ8on4PtlA8THZ+
+ p05BpnZCWANhGC79LqfY1O+1cArCFkYTuKZFy/tnNm5u7ksvW5OnnAEhV
+ 4/1UkY4NhFtHGsI9vDl0hNSOUNDsSjG9yw144cFL5nw8fD6z/qzSPJfxm
+ tjlMR/LA0FS+ph5spG6xza2AJHOMxFWVsot27qECGcw+vSE0yZJJd9J7d
+ 8rHVciFeIQyhsg29FOvIIOmLSBfu/RXbWxOSS5tKb71Lg++XnBwKguKjc w==;
+X-CSE-ConnectionGUID: o2qLk45UQEuuOpwvZhALVg==
+X-CSE-MsgGUID: xLL6mtzgRMG27edhnve8yg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11799"; a="68236248"
+X-IronPort-AV: E=Sophos;i="6.24,171,1774335600"; d="scan'208";a="68236248"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 May 2026 05:38:48 -0700
+X-CSE-ConnectionGUID: ImculpvJTbaEkGOIr3/Nkg==
+X-CSE-MsgGUID: 1JbsfgWWQEOj5BSRhx8Gdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,171,1774335600"; d="scan'208";a="239224566"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 May 2026 05:38:48 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Wed, 27 May 2026 05:38:47 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Wed, 27 May 2026 05:38:47 -0700
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.44)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Wed, 27 May 2026 05:38:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ey7nTJifzglIC7KLHjpT4pS0XOAdDRW//KZt5HBbbL9m4pQ+OYMDJOHdblXhGadhoy0jAQ0Y6ecw8y1B4hsrfhiDMqx7hhrcESWgdlZ5hgUolLv/MEvjEqX/qkeG4fHvGJjFTQriUZX6o/ASAnQL4NmFwaqYwPK1YIagi+vT+Cuf8J5KeX24/QG44soEQR+yZia9dzuWbQEaWNixD+0hWepF/j4Bqm/nEmjiIZgrAiTS0Nh15qxHP08X2xM8LphkwynUncYB4zHfcI7yDOTU3kadNPVVQYU2/l623fJIKCxJ1doDAYqc+MQpI4zhyXZvKUpxxrDL2lTBCELhIDRuyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kITvuLYziNxm4F9OnSHjg3N7JS8TS/JQUKn/3iC9oiA=;
+ b=h4byKBeEzoBXnW2wvLfMtGrhDPrehg597ywpBTr3FywfjciNZrIqn4QmOZD+C0K75AMG3zzS5hYThx1ieVbnxq8a9urMWOSoM6MS3+s6sy0/SMxnYCbfo49PGmFsxthAHhz2P+rler9X0Oj2z6zB7JSNUgSe9BwlIuvs+D5Ol0VgIlOHz7NZd0UaR0ccm16bbMU+kQF1ibc/ITpDfMZfzSqP8232kJtuZB5hKyHAhXUuCMiuy9leePmPod4oLZxhriUS8Uens30PXHNTH2SKSfbtIX5CGGigwLg4rQgERnxMUjIG5/rEavgD2l2/3XrzNKYqCBVlHPb9BywP99mNNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by IA0PR11MB7955.namprd11.prod.outlook.com (2603:10b6:208:3dd::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Wed, 27 May
+ 2026 12:38:43 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0071.010; Wed, 27 May 2026
+ 12:38:43 +0000
+Date: Wed, 27 May 2026 13:38:38 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v5 02/27] eal/common: add token concatenation macro
+Message-ID: <ahblzseYrHLNZ_VL@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1779717943.git.anatoly.burakov@intel.com>
+ <cover.1779717943.git.anatoly.burakov@intel.com>
+ <57ed806b6c47aa9316bd5af3154535439d39cdf6.1779717943.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <57ed806b6c47aa9316bd5af3154535439d39cdf6.1779717943.git.anatoly.burakov@intel.com>
+X-ClientProxiedBy: DU7P189CA0017.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:10:552::31) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Wed, 27 May 2026 14:15:30 +0200
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA0PR11MB7955:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0ddd22d7-b39c-497b-b294-08debbece337
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|4143699003|11063799006|56012099006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: zWggoF5vUOptCfs7oUoMuJDWdYRvzPd3IwiJZDKrek83PJgm1yVrGi0p2b4kh0KklIDzg9xjTbTbaOEIScQTkr1OwyS6e4u/1JGEWL0hA5vCsMDuyl/6RltaBJ7yA+wSxVPpiQVObxYIC6VqftPs39RRQwFZnaXEBbmuXtptYg9CTMUSSP2bZW7soW74SYJpY7mWKng2fY3HQD4M+A9J10raIorb4lYAOrl7B/TxvVZ55RdUn2OAPtNA+lgPrcLvY4MPCd9/7/nxMuBewYCQaNjXAGnZa9QKqvWc/QidXgK/XzvgA/OiDaJSjDWRs0qMU2iWFBKuabLUfaMuCEgapRCQbYKCcR6AEA1b9iXrAHJ2AevTa/VPfqjb/+bKELnHusF9yZlQsnheCxGiw5WLwWGvPiGxdUyENBk/Lj95wPItCgcsEoG1EN+scl3tQVj2GdOujTpHsowxUVYi5Gc7Dy6N7y1mYW7n1Go9UnkiwnefI6DKEN/NHMm7i90amaMCFf0tTM2EHgwTWa/o2AhA3xAWOM2QSt41KpDeJO8xqXRQVc1OSvUmOvtXX7ERgDHElGbnleFyYd/P49B8EIjvJny+AkBmkJE3vHdr+Z1GjQXadWMmmfEvSSG2co/JjYyzPzqMv4cL4MYC9DhjRwYMA1MMuYvkDd70sV5/AyrbbhxyI5CSD8E/w+8XVcO2OVK1
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(4143699003)(11063799006)(56012099006)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5weYsl35Q9lrOZaNl/ugd5lsarNuSOc0daN1ldRSLuBZK1MM+3+soeDsTUkA?=
+ =?us-ascii?Q?tddsXezJheiLsu0uuEgHR/sLYlMbC6ZGwuTWtqHpvYU159aLcGQhRxFPgR4v?=
+ =?us-ascii?Q?fuDPXRhB7r/SFUOBrXwUoq1M09TJCgZEutPUmiRmFqjXL89tGGci1i7OeNc/?=
+ =?us-ascii?Q?dcMtXxKrjGgRLEw2lii8NDdiSeK5YBD7mBg1ZvWCSpkABJFwDNzRzITurIFD?=
+ =?us-ascii?Q?XNAqoDj/lD2bsi8B/vwV7DP+yGcafPMCIm/h5mdAU8qFJFgDMBsIdLnYGmDw?=
+ =?us-ascii?Q?SRFOfl2LZM8/J2b4naItHLZKiZ6etmpL/jeeu3PITg3tJ67GlTFUOMKFfUcj?=
+ =?us-ascii?Q?Uaw/yr8kc3NQzKgflOE7vs+NeJZvMmYNV2CxNFjcDXB++eZT+ZCsEscv6O9R?=
+ =?us-ascii?Q?8czmhcEpuErYOBT7QzTLVJfRjSvLPo5XHE2eBRaqSRhPEKD13mazVqnmjFoH?=
+ =?us-ascii?Q?u3ncDTrofJRzGlkNHuRVIwlIzycFT1b6ZOpRpse5wDkRzsNJ+9jo0LMQLADY?=
+ =?us-ascii?Q?aigw2vqBizHqjLG6rl6y074NpdOo/4oDWxwWeKWLRRV+hYXE2KiGWvff/oIC?=
+ =?us-ascii?Q?eX5IlA1jvlbMgZ1szjD/tHV189Lvj1C4+SR2X/ZkYMjj++g2oMJkiJVd1v5i?=
+ =?us-ascii?Q?rF8nmXjendjsKHVN7UJDh0rjOFj8tF/99T5WP8ZXc5z9f1Mzl4nFd6Xle0MB?=
+ =?us-ascii?Q?vqfWyPTBMneWeQoEsnTP1lK5XqLELoiXDizdGnYHkNe5QJ/YRPAEq7xHDb87?=
+ =?us-ascii?Q?1OETBkqVjTLkXSN3T5w39bZfp1IcuhorNHQyYbeWe6HJOrxTkriyqwwx37/X?=
+ =?us-ascii?Q?itVL0LCF9fFKbxsgrDUJJ8R00nrHgiXlW8pETqIw7ZYz+HTSTRklDMuFhzv4?=
+ =?us-ascii?Q?bFlRA9rEmvU2nqyggLhV7ii8cRIMzNpq1rkxOrI3vMk98NUZ02JqxrlQUrGJ?=
+ =?us-ascii?Q?KmgBVKrgPq9qwSnuS13LmYKtDsXwEziRE7qZwl466/fGCbrSsvV+oS8q+IU7?=
+ =?us-ascii?Q?et9JrG2yz0AoHlvevmwcL+c52Vjw4lTM76bBWqr1o9qPpImH1NGFWdcNUT9O?=
+ =?us-ascii?Q?GszH/2TmjDXTiW+Zz2GvUONiGt4t+PxCZhkSc6hG/CjFc9Cpspcf3kdb02BQ?=
+ =?us-ascii?Q?cqr8QWE34y5xqsDAIlFzDMs7cjTqkcX3if31e2gvsKSNP0yHrsAGXWAfFQXM?=
+ =?us-ascii?Q?hdehDcqozQ4YzzUvUJ1hIM1iPIIBtVZG4xy7J+oAaCWhDoMQEzfj7KaxyxZs?=
+ =?us-ascii?Q?GXUYWVZGD0T7o5Mi3e8yF1gMk5Vjs0TL+Y6U6ULBaf1+z/2rY4uoS0Rd8gIe?=
+ =?us-ascii?Q?oaOz1TDP8cWL9cv94CilV9yZrVyL1hoUvpdM59y/sWRtq7XWQdYIawPBUxHZ?=
+ =?us-ascii?Q?AkxPsZ/2qI0fnDvp1nAavKvB0KYOqyPrOG+3DMjulm64JiiscHpqMkIZuLED?=
+ =?us-ascii?Q?2x6QwYJMz/Wqt2WZ112i9egQ2uMxY2dKs7pmIKtoI9Ac1W3lTrxqyXymK8sK?=
+ =?us-ascii?Q?1vFWjJOQZ5FAbvN3BivAhLFp3FalgqzifMzvv4BDD+d370RCQhWYJYaFoJC2?=
+ =?us-ascii?Q?FiU9Cg61qFzpmAJTQvdc6JAjelIm6rIlUzVcv5qzTYm8TszikW/NVhOMXjVm?=
+ =?us-ascii?Q?3dkdCZtm2T8DrdVqodaHhGzxa1M/WTBuWrQ5I9RKsG5KGYfBan98hVEaE0Dt?=
+ =?us-ascii?Q?WAgowY4FgrVenaw12fqbFyRwo/hsOf63aR/b3+XjdG+b9bKv+3PGOxLE/Nzb?=
+ =?us-ascii?Q?Gml8Q6Yo5iE7WMROVxiGElLQDDfOikQ=3D?=
+X-Exchange-RoutingPolicyChecked: F3okUClFphgb78lvLxb5APowOJvLZ0B8ODP/k7wM2cquTKQNsb56hrvtPMEYA2S9BvadEkfzilqj3580OdPtCbNZrDd7OL3dvFnUeCuCOQxPR/SbTDdxCJHDCScveQCX7M6Q3EvOFtPnqyqhHDHJqofUZupUjQXYGIrdPFHDAtdRZ0Aou4Iyt90tduSH2D2umXMMkSo9PH9fc/6fXRq+XHPu+yXGQD3DbDqR+0bneMrhDavwLsRqGWTJCwb1aDSHzOH6E0ljGiT6VIw18dfGVQjHMI8KkZgkedtjqALUVMBp/iZT9zCot543jOG8GfEroxa3DtXUkniGboeTKYWuFA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ddd22d7-b39c-497b-b294-08debbece337
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 12:38:43.3540 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d0f0BErG4IC5edCD40VPIEpO8nae4NDsRudAqeZAbTx/GqR1WkjULa2TtgxPYT0pz+dmBOuvCkZotx9kvD3UryTypAYxt6uU7Blu3Y3resA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7955
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,460 +152,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In eSwitch mode, the async (template) flow creation path automatically
-prepends implicit match items to scope flow rules to the correct
-representor port:
-  - Ingress: REPRESENTED_PORT item matching dev->data->port_id
-  - Egress: REG_C_0 TAG item matching the port's tx tag value
+On Mon, May 25, 2026 at 03:06:21PM +0100, Anatoly Burakov wrote:
+> Add `RTE_CONCAT()` macro to enable token concatenation with proper macro
+> expansion.
+> 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-The sync path (flow_hw_list_create) was missing this logic, causing all
-flow rules created via the non-template API to match traffic from all
-ports rather than being scoped to the specific representor.
-
-Add the same implicit item prepending to flow_hw_list_create, right
-after pattern validation and before any branching (sample/RSS/single/
-prefix), mirroring the behavior of flow_hw_pattern_template_create
-and flow_hw_get_rule_items. The ingress case prepends
-REPRESENTED_PORT with the current port_id; the egress case prepends
-MLX5_RTE_FLOW_ITEM_TYPE_TAG with REG_C_0 value/mask (skipped when
-user provides an explicit SQ item).
-
-Also fix a pre-existing bug where 'return split' on metadata split
-failure returned a negative int cast to uintptr_t, which callers
-would treat as a valid flow handle instead of an error.
-
-Fixes: e38776c36c8a ("net/mlx5: introduce HWS for non-template flow API")
-Fixes: 821a6a5cc495 ("net/mlx5: add metadata split for compatibility")
-Signed-off-by: Maxime Peim <maxime.peim@gmail.com>
----
-v3:
-  - Factor the implicit-item prepend logic out of
-    flow_hw_pattern_template_create() into a new helper
-    flow_hw_adjust_pattern() and reuse it from flow_hw_list_create(),
-    instead of duplicating the prepend logic inline in the sync path.
-  - Zero-initialize item_flags in both callers. The validator is
-    read-modify-write on item_flags (reads MLX5_FLOW_LAYER_TUNNEL on
-    the first iteration), so leaving it uninitialized was UB.
-  - Call __flow_hw_pattern_validate() with nt_flow=true from the sync
-    path (was effectively nt_flow=false via the wrapper), restoring the
-    previous behavior that skips GENEVE_OPT TLV parser validation on
-    the non-template path.
-  - Document flow_hw_adjust_pattern(): the dual role of the nt_flow
-    parameter (template spec-left-zero vs. sync spec-filled + validator
-    flag), the three-way return, and the caller's ownership of
-    *copied_items across every exit path.
-  - Clarify the "omitting implicit REG_C_0 match" debug log now that
-    the helper runs on both the template and sync paths.
-  - Add Fixes: tags for the two original commits.
-
-v4:
-  - Fix items in case splitted metadata are not needed.
-
-v5:
-  - Make flow_hw_prepend_item() return a self-contained array. The
-    helper used to shallow-copy the prepended item, leaving its
-    .spec/.mask pointing at flow_hw_adjust_pattern()'s stack locals
-    (port_spec, tag_v, tag_m); once that frame returned, the
-    consumers in flow_hw_list_create() (sample / RSS / single create)
-    and the post-extraction template path dereferenced dangling
-    pointers. The prepended item is now deep-copied via
-    rte_flow_conv(RTE_FLOW_CONV_OP_ITEM, ...) into the tail of the
-    same mlx5_malloc() block, so the lifetime of every byte the
-    consumer can reach equals the lifetime of the returned array.
-    items[] continue to be shallow-copied (their spec/mask blobs are
-    application-owned and outlive the call). One alloc, one free; no
-    call-site or signature changes.
-  - Fix the &item_flags / &orig_item_nb argument order at both
-    flow_hw_adjust_pattern() call sites (introduced in v3 by the
-    helper extraction): the prior order silently stored the item
-    count into it->item_flags / the layer-flag arguments forwarded
-    into mlx5_nta_sample_flow_list_create / mlx5_flow_nta_handle_rss /
-    mlx5_flow_hw_create_flow, and stored the OR-accumulated layer
-    flags into it->orig_item_nb / per-rule item-count uses.
-
- drivers/net/mlx5/mlx5_flow_hw.c | 262 +++++++++++++++++++++++---------
- 1 file changed, 194 insertions(+), 68 deletions(-)
-
-diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index bca5b2769e..b8974577a3 100644
---- a/drivers/net/mlx5/mlx5_flow_hw.c
-+++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -8386,6 +8386,34 @@ flow_hw_actions_template_destroy(struct rte_eth_dev *dev,
- 	return 0;
- }
- 
-+/*
-+ * Build a new item array prefixed with @p new_item.
-+ *
-+ * Callers typically build @p new_item on their stack with .spec / .mask
-+ * pointing at other stack locals, so a shallow copy of @p new_item would
-+ * leave dangling pointers as soon as the caller's frame goes away.
-+ *
-+ * To make the returned array self-contained, deep-copy @p new_item (item
-+ * header + spec/mask/last payloads) into the tail of the same allocation
-+ * via rte_flow_conv(RTE_FLOW_CONV_OP_ITEM, ...). The remaining items[]
-+ * are still shallow-copied: they reference the application-owned spec/
-+ * mask blobs handed to rte_flow_create() / rte_flow_pattern_template_
-+ * create(), whose lifetime already covers the returned array's use.
-+ *
-+ * Layout of the single mlx5_malloc() block:
-+ *
-+ *   +--------------------------------------+ <- returned pointer
-+ *   |  rte_flow_item[nb_items + 1]         |   slot 0: copy of the deep-
-+ *   |                                      |             copied header below
-+ *   |                                      |   slots 1..nb_items: shallow
-+ *   |                                      |             copies of items[]
-+ *   +--------------------------------------+ <- new_item_buf
-+ *   |  rte_flow_item header (deep copy)    |   written by rte_flow_conv;
-+ *   |  + spec / mask / last payloads,      |   header.spec/.mask/.last point
-+ *   |  contiguous, self-referential        |   into the payloads right below
-+ *   +--------------------------------------+
-+ *
-+ */
- static struct rte_flow_item *
- flow_hw_prepend_item(const struct rte_flow_item *items,
- 		     const uint32_t nb_items,
-@@ -8393,11 +8421,24 @@ flow_hw_prepend_item(const struct rte_flow_item *items,
- 		     struct rte_flow_error *error)
- {
- 	struct rte_flow_item *copied_items;
--	size_t size;
-+	size_t header_size;
-+	size_t total_size;
-+	void *new_item_buf;
-+	int new_item_size;
-+	int rc;
- 
--	/* Allocate new array of items. */
--	size = sizeof(*copied_items) * (nb_items + 1);
--	copied_items = mlx5_malloc(MLX5_MEM_ZERO, size, 0, SOCKET_ID_ANY);
-+	/*
-+	 * Size the deep copy of the prepended item (header + payloads).
-+	 * On error, rte_flow_conv() already populates @p error.
-+	 */
-+	new_item_size = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM, NULL, 0, new_item, error);
-+	if (new_item_size < 0)
-+		return NULL;
-+
-+	header_size = sizeof(*copied_items) * (nb_items + 1);
-+	total_size = header_size + (size_t)new_item_size;
-+
-+	copied_items = mlx5_malloc(MLX5_MEM_ZERO, total_size, 0, SOCKET_ID_ANY);
- 	if (!copied_items) {
- 		rte_flow_error_set(error, ENOMEM,
- 				   RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
-@@ -8405,8 +8446,23 @@ flow_hw_prepend_item(const struct rte_flow_item *items,
- 				   "cannot allocate item template");
- 		return NULL;
- 	}
--	/* Put new item at the beginning and copy the rest. */
--	copied_items[0] = *new_item;
-+
-+	/* Deep-copy the prepended item into the tail region. */
-+	new_item_buf = (char *)copied_items + header_size;
-+	rc = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM, new_item_buf, (size_t)new_item_size, new_item,
-+			   error);
-+	if (rc < 0) {
-+		mlx5_free(copied_items);
-+		return NULL;
-+	}
-+
-+	/*
-+	 * Slot 0 is the prepended item header just written by rte_flow_conv,
-+	 * with .spec/.mask/.last already pointing inside the same buffer.
-+	 * The remaining items[] retain their (caller-owned, longer-lived)
-+	 * spec/mask pointers via shallow copy.
-+	 */
-+	copied_items[0] = *(const struct rte_flow_item *)new_item_buf;
- 	rte_memcpy(&copied_items[1], items, sizeof(*items) * nb_items);
- 	return copied_items;
- }
-@@ -9255,33 +9311,40 @@ pattern_template_validate(struct rte_eth_dev *dev,
- 	return -ret;
- }
- 
--/**
-- * Create flow item template.
-+/*
-+ * Validate the user-supplied items and, in eSwitch mode, prepend the implicit
-+ * scoping item so the rule/template is bound to the current representor port:
-+ *   - ingress -> RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT (dev->data->port_id)
-+ *   - egress  -> MLX5_RTE_FLOW_ITEM_TYPE_TAG on REG_C_0 (tx vport tag),
-+ *                skipped when the user already supplied an SQ item.
-  *
-- * @param[in] dev
-- *   Pointer to the rte_eth_dev structure.
-- * @param[in] attr
-- *   Pointer to the item template attributes.
-- * @param[in] items
-- *   The template item pattern.
-- * @param[out] error
-- *   Pointer to error structure.
-+ * @param nt_flow
-+ *   Selects between the two call paths that share this helper:
-+ *     false -> pattern template creation (async API). The prepended item's
-+ *              spec is left zeroed so mlx5dr matches any value; the live
-+ *              port_id / tx-tag value is substituted later by
-+ *              flow_hw_get_rule_items() at rule-create time.
-+ *     true  -> sync (non-template) flow creation. The prepended item's spec
-+ *              is filled immediately with the live values, and the flag is
-+ *              forwarded to __flow_hw_pattern_validate() so that validation
-+ *              paths gated on nt_flow (e.g. GENEVE_OPT TLV parser creation)
-+ *              take the non-template branch.
-  *
-- * @return
-- *  Item template pointer on success, NULL otherwise and rte_errno is set.
-+ * Return / ownership:
-+ *   - NULL on validation or allocation failure (error populated).
-+ *   - `items` unchanged when no prepending is required; *copied_items == NULL.
-+ *   - A newly-allocated array otherwise; also stored in *copied_items. The
-+ *     caller must mlx5_free(*copied_items) on every path (it is safe to call
-+ *     with NULL). Do not free the returned pointer directly.
-  */
--static struct rte_flow_pattern_template *
--flow_hw_pattern_template_create(struct rte_eth_dev *dev,
--			     const struct rte_flow_pattern_template_attr *attr,
--			     const struct rte_flow_item items[],
--			     bool external,
--			     struct rte_flow_error *error)
-+static const struct rte_flow_item *
-+flow_hw_adjust_pattern(struct rte_eth_dev *dev, const struct rte_flow_pattern_template_attr *attr,
-+		       bool nt_flow, const struct rte_flow_item *items, uint64_t *item_flags,
-+		       uint64_t *nb_items, struct rte_flow_item **copied_items,
-+		       struct rte_flow_error *error)
- {
- 	struct mlx5_priv *priv = dev->data->dev_private;
--	struct rte_flow_pattern_template *it;
--	struct rte_flow_item *copied_items = NULL;
--	const struct rte_flow_item *tmpl_items;
--	uint64_t orig_item_nb, item_flags = 0;
-+	struct rte_flow_item_ethdev port_spec = {.port_id = dev->data->port_id};
- 	struct rte_flow_item port = {
- 		.type = RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT,
- 		.mask = &rte_flow_item_ethdev_mask,
-@@ -9298,39 +9361,89 @@ flow_hw_pattern_template_create(struct rte_eth_dev *dev,
- 		.type = (enum rte_flow_item_type)MLX5_RTE_FLOW_ITEM_TYPE_TAG,
- 		.spec = &tag_v,
- 		.mask = &tag_m,
--		.last = NULL
-+		.last = NULL,
- 	};
--	int it_items_size;
--	unsigned int i = 0;
- 	int rc;
- 
-+	if (!copied_items || !item_flags || !nb_items)
-+		return NULL;
-+
-+	if (nt_flow) {
-+		port.spec = &port_spec;
-+		tag_v.data = flow_hw_tx_tag_regc_value(dev);
-+	}
-+
-+	/*
-+	 * item_flags must be zero-initialized: __flow_hw_pattern_validate()
-+	 * OR-accumulates bits into it and reads it (MLX5_FLOW_LAYER_TUNNEL)
-+	 * on the first iteration.
-+	 */
-+	*item_flags = 0;
-+
- 	/* Validate application items only */
--	rc = flow_hw_pattern_validate(dev, attr, items, &item_flags, error);
-+	rc = __flow_hw_pattern_validate(dev, attr, items, item_flags, nt_flow, error);
- 	if (rc < 0)
- 		return NULL;
--	orig_item_nb = rc;
--	if (priv->sh->config.dv_esw_en &&
--	    attr->ingress && !attr->egress && !attr->transfer) {
--		copied_items = flow_hw_prepend_item(items, orig_item_nb, &port, error);
--		if (!copied_items)
-+	*nb_items = rc;
-+
-+	if (priv->sh->config.dv_esw_en && attr->ingress && !attr->egress && !attr->transfer) {
-+		*copied_items = flow_hw_prepend_item(items, *nb_items, &port, error);
-+		if (!*copied_items)
- 			return NULL;
--		tmpl_items = copied_items;
--	} else if (priv->sh->config.dv_esw_en &&
--		   !attr->ingress && attr->egress && !attr->transfer) {
--		if (item_flags & MLX5_FLOW_ITEM_SQ) {
--			DRV_LOG(DEBUG, "Port %u omitting implicit REG_C_0 match for egress "
--				       "pattern template", dev->data->port_id);
--			tmpl_items = items;
--			goto setup_pattern_template;
-+		return *copied_items;
-+	} else if (priv->sh->config.dv_esw_en && !attr->ingress && attr->egress &&
-+		   !attr->transfer) {
-+		if (*item_flags & MLX5_FLOW_ITEM_SQ) {
-+			DRV_LOG(DEBUG,
-+				"Port %u: explicit SQ item present, omitting implicit "
-+				"REG_C_0 match for egress pattern",
-+				dev->data->port_id);
-+			return items;
- 		}
--		copied_items = flow_hw_prepend_item(items, orig_item_nb, &tag, error);
--		if (!copied_items)
-+		*copied_items = flow_hw_prepend_item(items, *nb_items, &tag, error);
-+		if (!*copied_items)
- 			return NULL;
--		tmpl_items = copied_items;
--	} else {
--		tmpl_items = items;
-+		return *copied_items;
- 	}
--setup_pattern_template:
-+	return items;
-+}
-+
-+/**
-+ * Create flow item template.
-+ *
-+ * @param[in] dev
-+ *   Pointer to the rte_eth_dev structure.
-+ * @param[in] attr
-+ *   Pointer to the item template attributes.
-+ * @param[in] items
-+ *   The template item pattern.
-+ * @param[out] error
-+ *   Pointer to error structure.
-+ *
-+ * @return
-+ *  Item template pointer on success, NULL otherwise and rte_errno is set.
-+ */
-+static struct rte_flow_pattern_template *
-+flow_hw_pattern_template_create(struct rte_eth_dev *dev,
-+			     const struct rte_flow_pattern_template_attr *attr,
-+			     const struct rte_flow_item items[],
-+			     bool external,
-+			     struct rte_flow_error *error)
-+{
-+	struct mlx5_priv *priv = dev->data->dev_private;
-+	struct rte_flow_pattern_template *it;
-+	struct rte_flow_item *copied_items = NULL;
-+	const struct rte_flow_item *tmpl_items;
-+	int it_items_size;
-+	uint64_t orig_item_nb, item_flags;
-+	unsigned int i = 0;
-+	int rc;
-+
-+	tmpl_items = flow_hw_adjust_pattern(dev, attr, false, items, &item_flags, &orig_item_nb,
-+					    &copied_items, error);
-+	if (!tmpl_items)
-+		return NULL;
-+
- 	it = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*it), 0, SOCKET_ID_ANY);
- 	if (!it) {
- 		rte_flow_error_set(error, ENOMEM,
-@@ -14272,7 +14385,6 @@ static uintptr_t flow_hw_list_create(struct rte_eth_dev *dev,
- 	struct rte_flow_hw *prfx_flow = NULL;
- 	const struct rte_flow_action *qrss = NULL;
- 	const struct rte_flow_action *mark = NULL;
--	uint64_t item_flags = 0;
- 	uint64_t action_flags = mlx5_flow_hw_action_flags_get(actions, &qrss, &mark,
- 							 &encap_idx, &actions_n, error);
- 	struct mlx5_flow_hw_split_resource resource = {
-@@ -14289,20 +14401,27 @@ static uintptr_t flow_hw_list_create(struct rte_eth_dev *dev,
- 		.egress = attr->egress,
- 		.transfer = attr->transfer,
- 	};
--
--	/* Validate application items only */
--	ret = __flow_hw_pattern_validate(dev, &pattern_template_attr, items,
--						&item_flags, true, error);
--	if (ret < 0)
--		return 0;
-+	struct rte_flow_item *copied_items = NULL;
-+	const struct rte_flow_item *prepend_items;
-+	uint64_t orig_item_nb, item_flags;
- 
- 	RTE_SET_USED(encap_idx);
- 	if (!error)
- 		error = &shadow_error;
-+
-+	prepend_items = flow_hw_adjust_pattern(dev, &pattern_template_attr, true, items,
-+					       &item_flags, &orig_item_nb, &copied_items, error);
-+	if (!prepend_items)
-+		return 0;
-+
- 	split = mlx5_flow_nta_split_metadata(dev, attr, actions, qrss, action_flags,
- 					     actions_n, external, &resource, error);
--	if (split < 0)
--		return split;
-+	if (split < 0) {
-+		mlx5_free(copied_items);
-+		return 0;
-+	} else if (!split) {
-+		resource.suffix.items = prepend_items;
-+	}
- 
- 	/* Update the metadata copy table - MLX5_FLOW_MREG_CP_TABLE_GROUP */
- 	if (((attr->ingress && attr->group != MLX5_FLOW_MREG_CP_TABLE_GROUP) ||
-@@ -14313,23 +14432,26 @@ static uintptr_t flow_hw_list_create(struct rte_eth_dev *dev,
- 			goto free;
- 	}
- 	if (action_flags & MLX5_FLOW_ACTION_SAMPLE) {
--		flow = mlx5_nta_sample_flow_list_create(dev, type, attr, items, actions,
-+		flow = mlx5_nta_sample_flow_list_create(dev, type, attr, prepend_items, actions,
- 							item_flags, action_flags, error);
--		if (flow != NULL)
-+		if (flow != NULL) {
-+			mlx5_free(copied_items);
- 			return (uintptr_t)flow;
-+		}
- 		goto free;
- 	}
- 	if (action_flags & MLX5_FLOW_ACTION_RSS) {
- 		const struct rte_flow_action_rss
- 			*rss_conf = mlx5_flow_nta_locate_rss(dev, actions, error);
--		flow = mlx5_flow_nta_handle_rss(dev, attr, items, actions, rss_conf,
--						item_flags, action_flags, external,
--						type, error);
-+		flow = mlx5_flow_nta_handle_rss(dev, attr, prepend_items, actions, rss_conf,
-+						item_flags, action_flags, external, type, error);
- 		if (flow) {
- 			flow->nt2hws->rix_mreg_copy = cpy_idx;
- 			cpy_idx = 0;
--			if (!split)
-+			if (!split) {
-+				mlx5_free(copied_items);
- 				return (uintptr_t)flow;
-+			}
- 			goto prefix_flow;
- 		}
- 		goto free;
-@@ -14343,12 +14465,14 @@ static uintptr_t flow_hw_list_create(struct rte_eth_dev *dev,
- 	if (flow) {
- 		flow->nt2hws->rix_mreg_copy = cpy_idx;
- 		cpy_idx = 0;
--		if (!split)
-+		if (!split) {
-+			mlx5_free(copied_items);
- 			return (uintptr_t)flow;
-+		}
- 		/* Fall Through to prefix flow creation. */
- 	}
- prefix_flow:
--	ret = mlx5_flow_hw_create_flow(dev, type, attr, items, resource.prefix.actions,
-+	ret = mlx5_flow_hw_create_flow(dev, type, attr, prepend_items, resource.prefix.actions,
- 				       item_flags, action_flags, external, &prfx_flow, error);
- 	if (ret)
- 		goto free;
-@@ -14357,6 +14481,7 @@ static uintptr_t flow_hw_list_create(struct rte_eth_dev *dev,
- 		flow->nt2hws->chaned_flow = 1;
- 		SLIST_INSERT_AFTER(prfx_flow, flow, nt2hws->next);
- 		mlx5_flow_nta_split_resource_free(dev, &resource);
-+		mlx5_free(copied_items);
- 		return (uintptr_t)prfx_flow;
- 	}
- free:
-@@ -14368,6 +14493,7 @@ static uintptr_t flow_hw_list_create(struct rte_eth_dev *dev,
- 		mlx5_flow_nta_del_copy_action(dev, cpy_idx);
- 	if (split > 0)
- 		mlx5_flow_nta_split_resource_free(dev, &resource);
-+	mlx5_free(copied_items);
- 	return 0;
- }
- 
--- 
-2.43.0
-
+>  lib/eal/include/rte_common.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+> index 0a356abae2..05e72e500e 100644
+> --- a/lib/eal/include/rte_common.h
+> +++ b/lib/eal/include/rte_common.h
+> @@ -918,6 +918,10 @@ __extension__ typedef uint64_t RTE_MARKER64[0];
+>  /** Take a macro value and get a string version of it */
+>  #define RTE_STR(x) _RTE_STR(x)
+>  
+> +/** Concatenate two tokens after expanding macros in both. */
+> +#define _RTE_CONCAT2(a, b) a ## b
+> +#define RTE_CONCAT(a, b) _RTE_CONCAT2(a, b)
+> +
+>  /**
+>   * ISO C helpers to modify format strings using variadic macros.
+>   * This is a replacement for the ", ## __VA_ARGS__" GNU extension.
+> -- 
+> 2.47.3
+> 
