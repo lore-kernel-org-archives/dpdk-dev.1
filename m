@@ -2,55 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 066CACD4F54
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9C2CD5BD0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 May 2026 11:45:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D31BA40285;
-	Wed, 27 May 2026 13:45:15 +0200 (CEST)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
- by mails.dpdk.org (Postfix) with ESMTP id B8FA34026C
- for <dev@dpdk.org>; Wed, 27 May 2026 13:45:11 +0200 (CEST)
-X-QQ-mid: Yeas1t1779882305t249t00678
+	by mails.dpdk.org (Postfix) with ESMTP id C86AF40663;
+	Wed, 27 May 2026 13:45:20 +0200 (CEST)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTP id 87DE740663
+ for <dev@dpdk.org>; Wed, 27 May 2026 13:45:18 +0200 (CEST)
+X-QQ-mid: Yeas9t1779882313t441t49043
 Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
  [122.231.28.113])
 X-QQ-SSF: 0000000000000000000000000000000
 From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 6589427953331909869
+X-BIZMAIL-ID: 5999459029939401772
 To: "'Stephen Hemminger'" <stephen@networkplumber.org>
 Cc: <dev@dpdk.org>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-15-zaiyuwang@trustnetic.com>
- <20260517165032.059933d3@phoenix.local>
-In-Reply-To: <20260517165032.059933d3@phoenix.local>
-Subject: RE: [PATCH v4 14/20] net/txgbe: fix link stability for Amber-Lite
- backplane mode
-Date: Wed, 27 May 2026 19:45:03 +0800
-Message-ID: <00c301dcedce$422b4490$c681cdb0$@trustnetic.com>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-1-zaiyuwang@trustnetic.com>	<20260511103604.19724-13-zaiyuwang@trustnetic.com>
+ <20260517164936.1c83977e@phoenix.local>
+In-Reply-To: <20260517164936.1c83977e@phoenix.local>
+Subject: RE: [PATCH v4 12/20] net/txgbe: fix link stability for 25G NIC
+Date: Wed, 27 May 2026 19:45:11 +0800
+Message-ID: <00c401dcedce$47007350$d50159f0$@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAegD/DgBb1cI4rVM1LHQ
+Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwG6Z/2aAb2dEB4B9dmQTLVJ8hFg
 Content-Language: zh-cn
 X-QQ-SENDSIZE: 520
 Feedback-ID: Yeas:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OJVlX7oey6I0Ng7XEow5gyiPVncPCm7NqqLWtGdoEZWRWiX0d0EcWpuc
- lzUH3uW8/tW9Omz+NdvP20sf/gGN95kEZ5RfB9jjqUTbsnnN/vT7M1GxWhzspkPwEvnpQQ0
- LLTBFcuHZxixHWNfSdCN8ube5AKeaH7y9X3VZ9gILbCRHzZ7nnWSs8ad921rnPTLznTH8TN
- fIuqrz27SseXlUnRov1qXdM6YmTA6XgRIkh/QUdiCTpdwDLvYNBQUpxduAJnXBs5+iXheid
- GLXp/+uEIT0B3HthvnqgT3z/3NGAZ39tG4FvGwumYz7yTemY/UIlSWVs+o/kTPWMeGpV+XW
- euyBkAyVdl/W79U5iaQJG1r41NLUS0NR5dywwFNjTsx/BZfVydWQmT2X6g0/2cL2wzQot60
- MJZaRHHd0fbLY4zCn10FL8EQigt6kqHZ+7uIk1+NUhoqssjKKfxrMW5MbE6noSPtqfRO+H4
- omnkEXFE+l2H5u7NAQB0/QUEyQtf/Dd/eg30Q+/2c2t9ZPgwc67nmCslCGG5vlGaQWi4SYB
- 4rC3oKFd5LgVaHySdWAZ3LM/LcQG8jW5y8aPQWb9ryrV16n8RzFobhtwePoJtZGrYzQhnZR
- 4IngeD3ftnGaEluplF7vlYOEYXOs6B5pudQMNonDVYO3sPoLClBq45OpLZR1TDthZgsD7Mb
- y+lrhD1z+tAjPZbQdFY6Eb6aUpEI4PtiVhcYQUZ4bvFfXCmNrzH1k5cp6pQEdtSyvw7AnLz
- N8bCDgZl0+cI4n8sb5SV9QVHkLUVGZP8OQpRXEqBrkFOBoTolrj+ctDGR6KBzZQr6L0twq3
- 1ZxyRgWyBfn2DJGcoGaSIOmc1iNR7+I90z/ximdyeFiPJ7zi0GbWNv/7l81elFEEvidRrrZ
- OGBSfUtxJsQnMHwCLGN1Cy+LZXj8tWUTeCDktVh+GtrFA8uGAMQ2X4rIhki743u3nqB3CIE
- rez3Mry4o6ZNozhjVRJxj+6s49+QBL40HNcm3q33Za0DMtISPae+uQvdk2NA9i2QqPAONpO
- PyN8U3Yshxq5048jWp96bOy9I9u5Y=
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+X-QQ-XMAILINFO: Ndw/mc8X39ObqNipA715+BAiZRi+IpUgFFfp/RhLdF1fCYBGvauzss/V
+ ek1PnFEuOO44dKgNUBora9KqYTqf1C0sqAapC3x0uE3BdDIE2SMmT1kaBQUOUcd7KbCf4tR
+ i1YGtFo3ujhX1DtRz0oE3G5zFnf6xZxCnRNbrA43mjuv2Hf/j6wqsgj1bZiX4I8h+l8IykG
+ 3QnPOjwP4oOtYxa5QXUoOo6/RMDCTym1jzr0CZXYLjs5pKw9yIPI+UnZEMsh+y7eVlEad26
+ lv5p8TGRHNOM9HLpg3FizbGNUQ6YZ9HUeOC4ZfnFtjksApERGv8yE6Td+lqlpx4Co4PIKz/
+ T/Cb1ZtWyBTl11dGU0uS65uAVB1cDOJDLN80mZ1+/k9ktcKzgBzLhlc8tsO9yflH85lr23z
+ 2jIGTy1kG2Tp2kOJcfQcwm50Cs2e7iyU1yW8T67jSC9o4nVpd23U22/gL1mgNtaD8tc/iop
+ YF4QPJCSOZnqautKtI8v0M7EtUFTBw1G4hgC2F3czFA2q1xXsMr5okh2k3yCw7rrSh+/kus
+ HQAVjDnmvJZlumhOw2787BvR3n3uUhlTj8e7cxeVmDTd3tyLkBdbSnnw566V2RZNdoowkIZ
+ aq+tof1MwBvfm8YapH/ULjGFNG2ocZJrpHpEvdmLeWlo/FMvMisk7/72dVdQ8yFGxgoK+hY
+ RGr2Oq5KPVCwtOCNy3ylndDQ+fkpaULqJiIsAh4Hq0w14q7/ZpYr2hK1tFFB3ZruaP4Efid
+ RLbB5Tc5roZcvzl+zTgUFJWvNrKylLZdmrKVVkdroeIbHjYwJSg6pQ/roEoeBFl7xD6psOV
+ pbv/t5JxRXOnoUjLIJiqSlIv/WxKNXDwj+ZqSHgjIcKYa38txCNUDgw8TjCmRgwloiCcPJO
+ ikp9hoWB6Oto8fDC4ghyK/TG57epRmuBclk3miaPG1jA0O+Bv1lsfYzCh7H9OA3b0hJq97e
+ oPbjIGDCZ/zfupqYkk6/oueywX/lu2kAuQ8NC1eTgmNq108SYfU1MAnKTJpMwJGGeUGkM8f
+ p32NYN12ZaQn95ruZh8pblxbAlKzE=
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,76 +64,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Lots of AI feedback here:
+> ## Errors
 >=20
->=20
-> # Review of DPDK Patch: net/txgbe: fix link stability for 40G NIC
->=20
-> ## Summary
-> This patch re-adds direct PHY configuration flow to the txgbe driver =
-to fix unstable link behavior on
-> 40G NICs. The previous firmware-based configuration approach was =
-causing link stability issues.
->=20
-> ## ERRORS
->=20
-> ### 1. Use-after-free risk in `txgbe_setup_phy_link_aml40`
-Fixed.
+> ### 1. Use-after-free potential in txgbe_e56_rxs_calib_adapt_seq =
+(CORRECTNESS)
+No code change.
+The return value of txgbe_e56_rxs_osc_init_for_temp_track_range is only =
+used for debugging; the hardware can still continue the subsequent =
+configuration flow even after a timeout. Therefore, we use status |=3D =
+to record the error for logging but do not abort the sequence.
 
-> ### 2. Missing error propagation in `txgbe_e56_rx_rd_second_code_40g`
-Fixed. This function has been changed to void type, as its configuration =
-flow does not produce any error return value under normal operation.
+> ### 2. Resource leak: lock not released on error path (CORRECTNESS)
+No code change.
+The spinlock is correctly released on all paths, including the =
+TXGBE_ERR_PHY_INIT_NOT_DONE branch. No change is needed.
 
-> ### 3. Missing bounds check before array access
+> ### 3. Missing error propagation to caller (CORRECTNESS)
+Fixed. The function now returns TXGBE_ERR_TIMEOUT when the link fails to =
+come up.
+
+> ### 4. Double error return value overwrite (CORRECTNESS)
+Fixed by removing the break statements and letting the timeout errors =
+return immediately.
+
+> ### 5. Error code dropped without propagation (CORRECTNESS)
+No code change.
+A failed temperature read does not affect the subsequent configuration =
+flow; stopping the process would be too aggressive. The function =
+intentionally continues, and the error is only for debug purposes.
+
+> ### 6. Integer overflow in bit shift (CORRECTNESS)
+Fixed
+
+> ### 7. Missing bounds check on array size calculation (CORRECTNESS)
 Fixed by introducing the RXS_READ_COUNT macro to keep the array size, =
 loop bound, and median calculation always consistent.
 
-> ### 4. Timeout return without cleanup in =
-`txgbe_e56_rxs_calib_adapt_seq_40G`
-Not a error.
-
-=20
-> ## WARNINGS
+> ## Warnings
 >=20
-> ### 1. Hardcoded timeout in multiple locations
-Added a comment at the definition of PHYINIT_TIMEOUT clarifying that it =
-is a loop iteration limit, not a fixed time unit. The actual timeout =
-duration depends on the usec_delay() or msleep() value used inside the =
-polling loop.=20
+> ### 1. Variables declared but may be read before initialization =
+(STYLE)
+Adjusted the declaration of need_reset to the function scope for =
+improved readability.
 
-> ### 2. Potentially unreachable code after loop
-Moved the comment before '}'.
+> ### 2. Missing documentation for complex algorithm (STYLE)
+Acknowledged. Adding a high=E2=80=91level comment for the complex =
+calibration procedure is planned
 
-> ### 4. Variable `bypass_ctle` hardcoded but declared as variable
-Fixed.
+> ### 3. Magic numbers without named constants (STYLE)
+No code change.
+These values come directly from the hardware vendor and are located in =
+the base/ layer, which we prefer not to modify without an official =
+update. We will keep them as=E2=80=91is.
 
-> ### 5. Missing validation of speed parameter in initialization =
-functions
-Fixed.
 
-
-=20
-> ## INFORMATIONAL
+> ## Info
 >=20
-> ### 1. Large function complexity
-> ### 2. Magic numbers without symbolic constants
-> ### 3. Duplicated initialization sequences The 40G initialization in =
-`txgbe_e56_cfg_40g`=20
-I prefer not to split the hardware configuration flow at this stage. The =
-current structure closely follows the hardware vendor's recommended =
-initialization sequence.
-Most magic numbers are directly from the hardware specification, we do =
-not change them at this stage.
-The hardware register requirements for different speeds are not fully =
-identical. Merging them would risk subtle bugs.
+> ### 1. Deep nesting in calibration sequence
+Considering that this is the hardware configuration code located in =
+base/, for now we will not make change to it.
 
-> ### 4. Temperature check frequency
-This was indeed an omission after moving PHY configuration from firmware =
-to the driver. Previously, temperature tracking was handled by firmware =
-together with hardware setup. We have now added a new patch that =
-implements periodic temperature tracking in the driver. The tracking =
-sequence is invoked every 100ms as recommended. This patch will be =
-submitted in the new version of this patchset.
-
+> ### 2. Possible candidate for helper function
+Considering that this is the hardware configuration code located in =
+base/, for now we will not make change to it.=20
 =20
 
