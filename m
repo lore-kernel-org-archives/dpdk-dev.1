@@ -2,77 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E068BCD5BD5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 18:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CA3CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 18:24:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EEF244021F;
-	Thu, 28 May 2026 20:19:20 +0200 (CEST)
-Received: from fhigh-a8-smtp.messagingengine.com
- (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
- by mails.dpdk.org (Postfix) with ESMTP id 3BE984003C
- for <dev@dpdk.org>; Thu, 28 May 2026 20:19:19 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id D29ED140010E;
- Thu, 28 May 2026 14:19:18 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Thu, 28 May 2026 14:19:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1779992358;
- x=1780078758; bh=NAeNz0UjeInXjj1mUpGubu2pt27PL4k9nzrmE06fDz8=; b=
- gFYAfoWs3i8GTRJbGWSNIBBPpHffDDjAbnuFjOYH5wpR5ss3DZrkSs8cyzgGX5q+
- WMAm2yk2TR6F91GUR5vEtK2fKnQ1FDTHB6W+6NyVqgjXrlqAXe/mlj/d1Wy5PVmR
- /0IdYnUVm9Hu9TPNNJhpV9CoDKI7ZQHLAY0E7NT63/BFDM8Grac3dvGCbPE21xDl
- 3vgFzvj+vgf2fKHxmpnoNQ9z9VnLwwwURqXyVf7zvKgTIwChoB4hnPJnUYi7bYJZ
- o3RkiprMylwn1zMIfDZfAkZgnmVNCTrqv/0Cx/aHMARHYwcr6K5oZxh57snQ3SFB
- TVTrAzkMJhkTLTEtW3kRVQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779992358; x=
- 1780078758; bh=NAeNz0UjeInXjj1mUpGubu2pt27PL4k9nzrmE06fDz8=; b=s
- h0mlILD07yfpC8g7Zc37gKoWV+r33ubfpvpn5XQJ6xWifL439AgmooKCMYOJUk9i
- 5xyRl+Vg6mukTSK6vg+ca0wJBCRfjCgomRBCReyaDkmvgBwEyoNgSXvlO5TtUMwm
- R/G3PdzNGnWvzum1Xf0WTikwCVHayWeUigByM/C8L8XNXyRLuGz6mWjmVPbv1Fak
- wDokiqKxEamKDoOhBGIs7Uz8t6CtzWc1SMVMWyTm67qLzp7eNEXT4Pt7eMxoF9/u
- s9Zx+N/JQLOTl6gwvcu8pEZly0lUja4930ugtRacaJf1m1X4cXlpEQpalQGJBkpp
- uhPTmfJEHaash7F6VRpTg==
-X-ME-Sender: <xms:JocYaqvxZojFAgHr3eZkd2HFlEBJBXx8WXYziCt70QcU9PtxblQpKQ>
- <xme:JocYarx0Q2YK7AaSEI51buT-N4ecVe9XOsqrSvx0k5mCZEJ1hcU-E6FsL7jtiK2Kq
- Qqvnkk_qusM-p0AeJu_ubwrUBQ5qvHC3-Up2_Cg32gOjbv-uRsv>
-X-ME-Received: <xmr:JocYaoil6Nmw6P3w7AecFHJY73kzqFjRkyYMEyDKR1XC0mAaQyOctL_4FrnjfBfgdynfvzazT-PoW0KtQxmO3aDb0w>
-X-ME-Proxy-Cause: dmFkZTGlCXNt8lvoYEQJwkI5hil6nuuZDUWQxfkYG1rqbcYy3D6I8U1hVetV3N0592ecOC
- /SJDg3bGysAoNqt9ThXJU3uUwoga2e8P1A8k25LUA4Yy3ZMg+4bUvcDrrKsuHNswlLx2AR
- ADxgxGQTk2Iz4XBgMDThcvuAn19Ylw841DG2NVfYj2DAI19mYlZ+sWBR+AKz4IPyK97Gd/
- sDnWe5kMpx946FFW01XuxsRAhyFS3O5Q6qtoUV/PYFaO3apNlxEFUpb9AxHAXpUNAYWL7+
- Ac0mcs8KhfAfCX2WYofzHvDIxdCfjk6X6JdfWHn0HXmLf3+/ca3zZ2tzz+SEPgUfT1Yta7
- i2KadYdXg75YeXIUHV2k7wUgqrwxbIi8WrwFNP9v6Pbow7ZgngHvL4WKKWy4aTIW+48/De
- LIbA1PHcVVB+vtbSqxe2SHQLeKwvfMCehU47bl2ReTN9GNxvB91S5nPnT1qbeucmPuZG0V
- ze1HPnWRC2oAhYMDVZCXmnMLcrEjWv8A1bzbJ35wmhVDrUj3RIH4v4usjNb52Vne1DRdw9
- qwTxztO2sQ49lERX6ifDASnItZEhDckUweOHzu5eQ8/uuaFZf2QwaFnZHAB/X+j8vo99RG
- 8gPPYlEfC1rStYvSzrZ3Vhem/x9uH2RfVGdLZ18+BDaQ7aG/sSIRKoBu0Maw
-X-ME-Proxy: <xmx:JocYanBKui7khBteiOojcIEfC0dIq8IQXvYfixfcrCvzs-dSWftaLg>
- <xmx:JocYattHuzdR4XXd3ZTVRDBsHmMzX3Im2_JAuw60rmtsNaaSzfp47Q>
- <xmx:JocYakajCk12BRVVu7TZRQr3LgY73Mhw9dYeS8EyzzmweE_m_Q5h3g>
- <xmx:JocYaoXmhn7QF_A4VA_T5meS2EbEsT8lFr57wNYgoIWT8gVoFjh-dQ>
- <xmx:JocYaoNtfOvNoL9u07e3tyJWfrK_C0mkLFuXD-UGTF4LneecV603VFKF>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 May 2026 14:19:17 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] doc: announce removal of flow director
-Date: Thu, 28 May 2026 20:19:15 +0200
-Message-ID: <ED4MTOXhQ4iCVj0Gg4IMwg@monjalon.net>
-In-Reply-To: <20260528170059.155964-1-stephen@networkplumber.org>
-References: <20260528170059.155964-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 8BA544021F;
+	Thu, 28 May 2026 20:24:46 +0200 (CEST)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
+ [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id C8F2C4003C
+ for <dev@dpdk.org>; Thu, 28 May 2026 20:24:45 +0200 (CEST)
+Received: by mail-dy1-f180.google.com with SMTP id
+ 5a478bee46e88-3045c195251so6885131eec.1
+ for <dev@dpdk.org>; Thu, 28 May 2026 11:24:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779992685;
+ x=1780597485; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=hGRBtl33f7o7W3gIkNt6leuIuFrzAsdz7dz8PPTwSsk=;
+ b=wO8v5oFZ8tc0ec0uxnUoVJocwpvzpYfQS3BkskRQC7s7193ewSFcvTiIINHpU7wpB9
+ TmNI2byZwOe4VNiqHS8i2ikyS5M914rorS4ryySuNWF9PE/u+EhkJgasGUyGNHMNX7XB
+ tJczMVouOOqfLnIKvCrQDzxSN644DpQJc54Mcl4vPLSnU4xM//lSszy/siWBbAN5kJbV
+ GfW7cTLKAFBYC8mZDFM0wUaKD57WechLFYOmbzJ0YhMi8rgKmwYTSLDYsLBxkcKOAvHK
+ xkP8uGc0/B4/9G4GXrNfywXQNbUXkYjs2C0QCt9p0zWgZCE6TywArhNXlKI8y33yg2Ad
+ 4drg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1779992685; x=1780597485;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=hGRBtl33f7o7W3gIkNt6leuIuFrzAsdz7dz8PPTwSsk=;
+ b=kZDM04qyDVFv+M8tnYnOHOoJyceqxQTwEDx6Um1AmjPDinGbD+Fl2aKmh3hKUoH0gn
+ nduR+j1cWINnLuIuJgKTnDnA57n7kzfq+mLcO+BH9BaNByHjdBL+f2zEk/QNbMni3phr
+ IrJY1tSPYGLnaxSp52utt4ai3PJytfnps+EK1x9Knb/kU/5iM4NgSWVsvcwaFBTLdWzz
+ ACSmQfHJzuFt6lx7fjmTycOm189hzQhANrQmbuegldtDEHXSLeW1MuggLPfNNvpCuNgD
+ YaxzOvME3r2PGhisnBwiCra7cvWXFiYiCnRCoNByWUCog7GsMWXhIUIYwOitrF0R3Cov
+ 8L4w==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ+GFbSzAvRnUB1YjFwHnp77Dtr8FdzPWtOcZw0AdaC6LJUR7SHzNsH2sMTAOlgf6zW6d4I=@dpdk.org
+X-Gm-Message-State: AOJu0Yybmg3VXc4mSdz9oFN/GB0J6wrBxhLKYruDsNGpFugnrKYvBLJb
+ 89LMNX/h2NsmpEILsrFIUs+1RKaiVnAwkNzS/8kHlTNCWXBCZcsUulySH50L5UZxveM=
+X-Gm-Gg: Acq92OFuqv66qZs8/Fjx+wCnTSGEUVdXeOpkWF2nSkgUYZPjqHkOwEvl7SnIORna+tY
+ EPZPLcya1/aFDRoSmaTYT5da0SD0MRzRM/0mCHA8YslsAFoqwNEPKfImbSmsrxnti3X/H9QFCg5
+ cfk2H1+Vd0lNofLrfTGlurQHxcRb8ODzGbM+994qfCrh0AKMSnnrl9I49yjaeuXwmlvnkwahALW
+ jl8a6LUU5M9wwEGDjdcGMQupqwk915W8scguF7D43+DZfdkIsiXg2TB8nbrcUIpNwj8k7n5uzAI
+ EpZEOaHTZZGUf6O8ikOW0x6N1W9cq549yGKNfOhqQaVPqvSpNbF8kkkp9IR8qxtTpNxpPmfzf17
+ tmj1ImVQQ4XRByvx4mv3aetCKty4tuXDUaji4ZA2NmbB+//Rl4oWxlPzNuWjp92WtRW/+lJU2Hf
+ ECRDGplwFRrebZR1D44gevY6bmPZoON9xH23uf8XIMQbmmPPqeDtMAzFm8RsEFV3StofEG1ASKH
+ AA=
+X-Received: by 2002:a05:7300:6d08:b0:2ce:25be:c8e8 with SMTP id
+ 5a478bee46e88-304e9139e95mr41280eec.17.1779992684450; 
+ Thu, 28 May 2026 11:24:44 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-304e94e54besm13974eec.4.2026.05.28.11.24.43
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 28 May 2026 11:24:44 -0700 (PDT)
+Date: Thu, 28 May 2026 11:24:40 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Wei Hu <weh@microsoft.com>
+Cc: Wei Hu <weh@linux.microsoft.com>, "dev@dpdk.org" <dev@dpdk.org>, Long Li
+ <longli@microsoft.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v3 0/2] net/mana: add device reset support
+Message-ID: <20260528112440.3f7e25cc@phoenix.local>
+In-Reply-To: <SE3P153MB18483B2B0A91A49747176C88BB092@SE3P153MB1848.APCP153.PROD.OUTLOOK.COM>
+References: <20260522065943.126703-1-weh@linux.microsoft.com>
+ <20260526123747.46871467@phoenix.local>
+ <SE3P153MB18483B2B0A91A49747176C88BB092@SE3P153MB1848.APCP153.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,24 +85,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-28/05/2026 19:00, Stephen Hemminger:
-> There are still leftover bits in ethdev related to flow director (fdir).
-> Will be removing these in 26.11 so give final notice.
+On Thu, 28 May 2026 07:30:03 +0000
+Wei Hu <weh@microsoft.com> wrote:
+
+> >    so they are invisible to rte_rcu_qsbr_check in the primary, and
+> >    the secondary MP handler (mana_mp_reset_enter) does not call
+> >    qsbr_check at all -- it just sets db_page = NULL and munmaps.
+> > 
+> >    The dev_state check at the top of secondary tx_burst is racy:
+> >    the page can be munmapped after the in-loop read of db_page but
+> >    before the doorbell write at the bottom.  The "All secondary
+> >    threads are quiescent" log line in mana_mp_reset_enter is not
+> >    true.
+> > 
+> >    The secondary needs a real reader-side primitive -- its own
+> >    qsbr with secondary lcore registration, or an rwlock the MP
+> >    handler takes before munmap.
+> >   
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
-> +* ethdev: The legacy filtering data structures in ``rte_eth_ctrl.h``,
-> +  including the flow director (FDIR) types (``rte_eth_fdir_*``, ``rte_fdir_*``)
-> +  and the ntuple/ethertype/SYN/tunnel/input-set filter types, are superseded
-> +  by the ``rte_flow`` API and will be removed in DPDK 26.11. The associated
-> +  driver-facing definitions in ``ethdev_driver.h`` (``RTE_ETH_FILTER_FDIR``,
-> +  ``struct rte_eth_fdir_conf``, ``enum rte_eth_fdir_pballoc_type``,
-> +  ``enum rte_fdir_status_mode``) will be removed at the same time.
-
-The problem is that some drivers rely on these structures for rte_flow.
-
-Note: this file is big, please keep it sorted by moving this
-close to other ethdev and flow deprecations.
+> Thanks for the v3 review, @Stephen. I will send out v4 to incorporate most
+> of the review comments except for this one. 
+> 
+> The review on this point is not correct. Here I am providing analysis from
+>  AI and my own test results to show why.
+> 
+> The concern is that "rte_rcu_qsbr_thread_register is only called
+> from mana_dev_configure, which the secondary never runs", so
+> secondary tids are unregistered and invisible to rte_rcu_qsbr_check.
 
 
-
+Thanks, I have become way to familiar with AI reaching false conclusions.
