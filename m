@@ -2,75 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0CFCD5BD5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 18:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E068BCD5BD5
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 18:19:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E9594021F;
-	Thu, 28 May 2026 20:09:09 +0200 (CEST)
-Received: from fout-a3-smtp.messagingengine.com
- (fout-a3-smtp.messagingengine.com [103.168.172.146])
- by mails.dpdk.org (Postfix) with ESMTP id 9FFE34003C
- for <dev@dpdk.org>; Thu, 28 May 2026 20:09:08 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id 1945CEC01D0;
- Thu, 28 May 2026 14:09:08 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Thu, 28 May 2026 14:09:08 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id EEF244021F;
+	Thu, 28 May 2026 20:19:20 +0200 (CEST)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 3BE984003C
+ for <dev@dpdk.org>; Thu, 28 May 2026 20:19:19 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id D29ED140010E;
+ Thu, 28 May 2026 14:19:18 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Thu, 28 May 2026 14:19:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1779991748;
- x=1780078148; bh=tkDKuAbJj/OpaTomCW622tJpy0Met22DdxrLGCuAXBU=; b=
- Fz94+aFwvBWMzdzS8zI0INbmeSD2PUso7b7zg6XzzCSZCbiIG1IozDvRoIYCa/8s
- rThQBgZmiQHkmrGdLrnLQbRBFJMU0seGjH82uNBqMk3sm616sIjbiDOYrHRtBNiw
- 3fiq9v9Cig/ahf0jqiDo2Fybe3IMw7Iy/corozq8R8s0Mkm1zsz++7Pz9fRCPyGu
- 8MhqU+47fDlwRvka+T4n6VZT39oDoTPvajHJQRmPMkbNnPXgQxNU3/oB02LjRLT1
- vW8pK92UTqAZ5KFXEFlkpYITvaW8+JOwuNVKSM1+y9JM/dOwOU2NST0iig2zuJGO
- gfW0xWfYVlBWl7Q6JZogxA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1779992358;
+ x=1780078758; bh=NAeNz0UjeInXjj1mUpGubu2pt27PL4k9nzrmE06fDz8=; b=
+ gFYAfoWs3i8GTRJbGWSNIBBPpHffDDjAbnuFjOYH5wpR5ss3DZrkSs8cyzgGX5q+
+ WMAm2yk2TR6F91GUR5vEtK2fKnQ1FDTHB6W+6NyVqgjXrlqAXe/mlj/d1Wy5PVmR
+ /0IdYnUVm9Hu9TPNNJhpV9CoDKI7ZQHLAY0E7NT63/BFDM8Grac3dvGCbPE21xDl
+ 3vgFzvj+vgf2fKHxmpnoNQ9z9VnLwwwURqXyVf7zvKgTIwChoB4hnPJnUYi7bYJZ
+ o3RkiprMylwn1zMIfDZfAkZgnmVNCTrqv/0Cx/aHMARHYwcr6K5oZxh57snQ3SFB
+ TVTrAzkMJhkTLTEtW3kRVQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779991748; x=
- 1780078148; bh=tkDKuAbJj/OpaTomCW622tJpy0Met22DdxrLGCuAXBU=; b=M
- okT3AG609doU6iHzf/UNeAb/79q0H16LejOBu0hR4y5M0wsa6Qg41bJS9Kh5Uxvl
- tAn21RadvUN7I0rCDF6JV7P2RxjwVU+Om72d2T762bS3PnUvvDciwKcqCkZTgBSP
- Oy0gUjCxEYvo+JZh7I7hmGbUd0ysUGijq5aifTQOJ2sAKBQZZw5Jvw+jZECgri9e
- ahx+C6Scp+JOzAWXUMdNgIWsCKJty8IRB9bu6Xv3N0BB4TwmiVM5MH6LtdVhFpw5
- M89bp6LE5pVxofx+nba70U8ia39b2iwXv9coE1AOe/Jwkw8Av/Jy+SxZ+E78Abs4
- b2g8fC1G+hjQrZ3ogKqaQ==
-X-ME-Sender: <xms:w4QYajsAubsBtoILCxIAkYGB4_kKZEtkajHMPxL6UlW8yPabs9BgQw>
- <xme:w4QYagwICUZ4oYN2DWqXnnORSUY81ec5nDhXE0G108aDmvKRXU39yiT85pNqvwbxV
- _ny55m2YgKoKPfTA5aizQ4Q19i0zoSHpBaA0XG9GUT9Xf7ScMda>
-X-ME-Received: <xmr:w4QYapg-ItE3vAJDdSXpQOaKcPxPLm7UcWI18AQ9xMfuAKyb7SmNjhNvyLxT0rMybQ-b5rEVpKAtpizavZ7SKYrYWQ>
-X-ME-Proxy-Cause: dmFkZTGiOPV2v0rPV4fP/C8/B44sg4lwzPotZKG4gdbhU+clNTLdQUv/SIP8Z2b42VrNfN
- Y+qASdoh992XW1qT2WzQ8Hpt81Ip7JHxUZ0BIlTmACHmD0YPi1z88+NH37T6dFxOaQjYTM
- eteuCQb2wX3bmIOZrQbCSt6hZMTv2PNr9Pd77YNmUCq/pophWPijwjFRNNz2Q9fsbQEPAW
- w5p961ajOZHWrZYWeQwWDAX6sSWWXKOjxN9vOVnatApBdubpViwAKYrJ+Be61YTZsDasZO
- nlMIG1blpL8ltLGVgbxAzX9Kkm1/rp6d18aWymon1Yk9Qy3K1KMogPAa2YDIxGuJfygMF6
- 62DFgO6WvLjn3HhcPAbQjf+APbUxhLZmTvHKIn5D++M80Ymb5C6g0QhvFFr54hdbYN64HR
- 7dqiMnWYk+1Pw1ORCHkAlz21aACkgVaJ89XniQUfZoL1aunnkn0ahEex/CTeg5On34NUBb
- XKpJpzMQ6uC7F2d3XS/5cebz1I/1Jm4/BPKmR3dfPFQnJhdpVSpjWHpS5Dm+WAVYhwvkQq
- zxNqq42Dg7em1eX2xLBSVrLva0tzRmzJzjgm8LOY1Fx+F+dEMyLMU50XK3+2dIrXDtDbeq
- yK/o7CIKV93Rao5LYmnPXMF25PFZagLUaQ+qmrw4+PpvIslYLYL0WVkbSJpA
-X-ME-Proxy: <xmx:w4QYakDWhCy65YIhxZbCeYwYh58QuQTf1QQmPk9h9635dm81dl5ZyA>
- <xmx:w4QYamuvVYQO0zTXlFlz0TAJ03eXsAFyrC_ENP0slf_i37HLoL_ICg>
- <xmx:w4QYapYblPyb-G41PNy_UvW4dP_DpBBR0q8pMAgzf12gWRNbJGGttg>
- <xmx:w4QYapUA5wcUkY72YN7d8waobD4wE06h5ZgUT-Iluax9HqLYnVAgjg>
- <xmx:xIQYapPEj80GjBspwEO5SLNWFhPG68XM3BbKwb9aavHJWJaQhC1Nz2jr>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779992358; x=
+ 1780078758; bh=NAeNz0UjeInXjj1mUpGubu2pt27PL4k9nzrmE06fDz8=; b=s
+ h0mlILD07yfpC8g7Zc37gKoWV+r33ubfpvpn5XQJ6xWifL439AgmooKCMYOJUk9i
+ 5xyRl+Vg6mukTSK6vg+ca0wJBCRfjCgomRBCReyaDkmvgBwEyoNgSXvlO5TtUMwm
+ R/G3PdzNGnWvzum1Xf0WTikwCVHayWeUigByM/C8L8XNXyRLuGz6mWjmVPbv1Fak
+ wDokiqKxEamKDoOhBGIs7Uz8t6CtzWc1SMVMWyTm67qLzp7eNEXT4Pt7eMxoF9/u
+ s9Zx+N/JQLOTl6gwvcu8pEZly0lUja4930ugtRacaJf1m1X4cXlpEQpalQGJBkpp
+ uhPTmfJEHaash7F6VRpTg==
+X-ME-Sender: <xms:JocYaqvxZojFAgHr3eZkd2HFlEBJBXx8WXYziCt70QcU9PtxblQpKQ>
+ <xme:JocYarx0Q2YK7AaSEI51buT-N4ecVe9XOsqrSvx0k5mCZEJ1hcU-E6FsL7jtiK2Kq
+ Qqvnkk_qusM-p0AeJu_ubwrUBQ5qvHC3-Up2_Cg32gOjbv-uRsv>
+X-ME-Received: <xmr:JocYaoil6Nmw6P3w7AecFHJY73kzqFjRkyYMEyDKR1XC0mAaQyOctL_4FrnjfBfgdynfvzazT-PoW0KtQxmO3aDb0w>
+X-ME-Proxy-Cause: dmFkZTGlCXNt8lvoYEQJwkI5hil6nuuZDUWQxfkYG1rqbcYy3D6I8U1hVetV3N0592ecOC
+ /SJDg3bGysAoNqt9ThXJU3uUwoga2e8P1A8k25LUA4Yy3ZMg+4bUvcDrrKsuHNswlLx2AR
+ ADxgxGQTk2Iz4XBgMDThcvuAn19Ylw841DG2NVfYj2DAI19mYlZ+sWBR+AKz4IPyK97Gd/
+ sDnWe5kMpx946FFW01XuxsRAhyFS3O5Q6qtoUV/PYFaO3apNlxEFUpb9AxHAXpUNAYWL7+
+ Ac0mcs8KhfAfCX2WYofzHvDIxdCfjk6X6JdfWHn0HXmLf3+/ca3zZ2tzz+SEPgUfT1Yta7
+ i2KadYdXg75YeXIUHV2k7wUgqrwxbIi8WrwFNP9v6Pbow7ZgngHvL4WKKWy4aTIW+48/De
+ LIbA1PHcVVB+vtbSqxe2SHQLeKwvfMCehU47bl2ReTN9GNxvB91S5nPnT1qbeucmPuZG0V
+ ze1HPnWRC2oAhYMDVZCXmnMLcrEjWv8A1bzbJ35wmhVDrUj3RIH4v4usjNb52Vne1DRdw9
+ qwTxztO2sQ49lERX6ifDASnItZEhDckUweOHzu5eQ8/uuaFZf2QwaFnZHAB/X+j8vo99RG
+ 8gPPYlEfC1rStYvSzrZ3Vhem/x9uH2RfVGdLZ18+BDaQ7aG/sSIRKoBu0Maw
+X-ME-Proxy: <xmx:JocYanBKui7khBteiOojcIEfC0dIq8IQXvYfixfcrCvzs-dSWftaLg>
+ <xmx:JocYattHuzdR4XXd3ZTVRDBsHmMzX3Im2_JAuw60rmtsNaaSzfp47Q>
+ <xmx:JocYakajCk12BRVVu7TZRQr3LgY73Mhw9dYeS8EyzzmweE_m_Q5h3g>
+ <xmx:JocYaoXmhn7QF_A4VA_T5meS2EbEsT8lFr57wNYgoIWT8gVoFjh-dQ>
+ <xmx:JocYaoNtfOvNoL9u07e3tyJWfrK_C0mkLFuXD-UGTF4LneecV603VFKF>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 May 2026 14:09:06 -0400 (EDT)
+ 28 May 2026 14:19:17 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v15 0/6] Add AI code review tools and AGENTS
-Date: Thu, 28 May 2026 20:09:04 +0200
-Message-ID: <73CXsChyTf-1C9EaTnoFLw@monjalon.net>
-In-Reply-To: <20260521224550.927338-1-stephen@networkplumber.org>
-References: <20260126184205.104629-1-stephen@networkplumber.org>
- <20260521224550.927338-1-stephen@networkplumber.org>
+Subject: Re: [PATCH] doc: announce removal of flow director
+Date: Thu, 28 May 2026 20:19:15 +0200
+Message-ID: <ED4MTOXhQ4iCVj0Gg4IMwg@monjalon.net>
+In-Reply-To: <20260528170059.155964-1-stephen@networkplumber.org>
+References: <20260528170059.155964-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,32 +86,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-22/05/2026 00:44, Stephen Hemminger:
-> Add guidelines and tooling for AI-assisted code review of DPDK
-> patches.
+28/05/2026 19:00, Stephen Hemminger:
+> There are still leftover bits in ethdev related to flow director (fdir).
+> Will be removing these in 26.11 so give final notice.
 > 
-> AGENTS.md provides a two-tier review framework: correctness bugs
-> (resource leaks, use-after-free, race conditions) are reported at
-> >=50% confidence; style issues require >80% with false positive
-> suppression. Mechanical checks handled by checkpatches.sh are
-> excluded to avoid redundant findings.
-> 
-> The analyze-patch.py and review-doc.py scripts support multiple AI
-> providers (Anthropic, OpenAI, xAI, Google) with mbox splitting,
-> prompt caching, direct SMTP sending, and token usage tracking with
-> optional cost estimation.
-> 
-> v15 - reflow AGENTS per doc guidelines
->     - reduce redundancy in AGENTS (i.e don't overlap other tools)
->     - move scripts to devtools/ai
->     - move common code from scripts to one file
->     - incorporate AI and human reviews
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+> +* ethdev: The legacy filtering data structures in ``rte_eth_ctrl.h``,
+> +  including the flow director (FDIR) types (``rte_eth_fdir_*``, ``rte_fdir_*``)
+> +  and the ntuple/ethertype/SYN/tunnel/input-set filter types, are superseded
+> +  by the ``rte_flow`` API and will be removed in DPDK 26.11. The associated
+> +  driver-facing definitions in ``ethdev_driver.h`` (``RTE_ETH_FILTER_FDIR``,
+> +  ``struct rte_eth_fdir_conf``, ``enum rte_eth_fdir_pballoc_type``,
+> +  ``enum rte_fdir_status_mode``) will be removed at the same time.
 
-Applied with minor adjustments, thanks.
+The problem is that some drivers rely on these structures for rte_flow.
 
-Note: as discussed together, I've renamed analyze-patch.py
-to review-patch.py for consistency.
+Note: this file is big, please keep it sorted by moving this
+close to other ethdev and flow deprecations.
 
-Let's see how the community use and improve this new tooling.
 
 
