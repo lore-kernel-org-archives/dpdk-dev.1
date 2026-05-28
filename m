@@ -2,73 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCEDCD5BD5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 21:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC025CD5BD5
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 21:38:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CBC8C4021F;
-	Thu, 28 May 2026 23:10:21 +0200 (CEST)
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
- [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id CFB414003C
- for <dev@dpdk.org>; Thu, 28 May 2026 23:10:20 +0200 (CEST)
-Received: by mail-dy1-f171.google.com with SMTP id
- 5a478bee46e88-304d8e3bb72so2460892eec.1
- for <dev@dpdk.org>; Thu, 28 May 2026 14:10:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F30CB4021F;
+	Thu, 28 May 2026 23:38:20 +0200 (CEST)
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com
+ [74.125.224.50]) by mails.dpdk.org (Postfix) with ESMTP id 58F264003C
+ for <dev@dpdk.org>; Thu, 28 May 2026 23:38:20 +0200 (CEST)
+Received: by mail-yx1-f50.google.com with SMTP id
+ 956f58d0204a3-6604df9ba4eso154458d50.0
+ for <dev@dpdk.org>; Thu, 28 May 2026 14:38:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780002620;
- x=1780607420; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Bc1fYQ9bkrZKY/U55OyMvWypdapmF7vjl/IfugEAIR8=;
- b=ti22J+xxRDYSiiPxUjDeA+Uv6GBj+QHXg4ZbgsvAsgpn6LzstGZS2sB7aEsceKgm3Q
- +yJ1JVEX8dFkIsjMMDYXaArHLt3U6NFu19pI2udhIItxd5P5bt7A3+dW4qdZcmdOaFPa
- sY5qiTfZd4CqzYTrlbtvH2VsOAxMmIQlQVCmKgjIFMmHw8wpHC1O3HX8GnBIdszmDnBL
- N7jUhb7tob345y0r7MW+Kdu1J6w8J3fHTudGapjjJbnyljUFaIBtpblkM1Mz68ntzzEA
- bR75FePwpo0bPtCjc/pZeocn4N3GeJBoZbpFsyVbZy7h/MQwhDCs3a17KQMxDKNfH/8C
- qr2A==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780004299;
+ x=1780609099; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=GhnFuJViJQRAhRchdPjzRhvDoNvD7cS/bt3t+ELwg2w=;
+ b=bfb+GUteNong/H/wBStOXsyr3dMjm94KMTHeDyy/XasaB3bviMv2L1FqFj33mmWJj0
+ 26lhAI9I3ELDOh4kpKNW9Ssb23P7WD8n8JdpGgPvoGXoek6SHCAPvtOlbjesUtG6Wy0g
+ 0ZKBkD4OGujohg9bPzwSLn4LXtZYni4nCmCtRfJKH3slPe9fgJpsK+xQJeBG07MkBrZB
+ zbGCKsz9lI6eysSpxmHwtb7VkuFq85DpRR37zBtANFm2PIsXIcJKsTYDlxDoFdiWf3aU
+ U8WG2lnTeMvnUQ03rtgFNJdtBWoGP/ZcEf1YAtNXuGW5sKbQXNkcQ5bU60RDSzTRiTbe
+ /0CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780002620; x=1780607420;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=Bc1fYQ9bkrZKY/U55OyMvWypdapmF7vjl/IfugEAIR8=;
- b=cx5sto7ftmu7zelhsuzcUa/O2GQzAEfVIl/MXdH5nJU7SKLAZReuAn4dta7DGNEU7e
- w1fjZI/MKtYhVTZt5vNyXIjlC0I3NTkeSa7plkvsLIY+aJAI33LzEy0vyu+G6dqmCXoj
- Y64lg5jOg8ymtEqi0o8tkA9Cpb4HwnUNZ5inLEtaHK3Vuyazj7Iet4anyROnMHCPWKfH
- URyxv9+1pxOPU4NZFYEKnmevXlNBmvMu8tYwUogyEYcQx0ftYbglw4bU/MkXbd9sQXCe
- xfmGR/faBX+6dWHXYWoG9QSykupz8RcJS57WFvxMyh+HadzcUZZOHc+5KPhY8QqAcpdT
- MslQ==
-X-Gm-Message-State: AOJu0YxBfIGr5ZC/7J1HzozFXXV8g0WXBRzTl6HG2DZGShfQFIvlW3/z
- yuKg0k2sR/4fqVfujZyDgkMsO5JrMecoDSvwjEXfVweBrnR4Rz4XG4w7RXwywQhsRK8=
-X-Gm-Gg: Acq92OFFhrJli7H6DwL69zJUNUT+evCb2ynFEH4C7/5jvM3onx1MEKxd0PWLbRewjQG
- FIp3MKbr/wwHnkNagbSKvzhov9FoXHPmsNr19jywMDbtUuzhAnv/l60jYmEg1Jr7Fg/PWNJeP9m
- 03uhPnGsdiDTkJ3j5dX9KrbRrW/ERUrW6dCj2YrRZEADYIibWIWlojJMIJF+wr20RxlfV6/vStG
- PQ2SxcZ+uFyY2lcukwdEwejsMOsFJZc7eo40SAJ+L+0dEkpxwhNjd6x6cvExDUUrYM0kVGwHXlc
- VA7/fa4qejk6WxY2uZ0y7Q1k/UJOkGdn/XdtrC/DyZHbqaT0iVsljd3Ionx+SuJ5aH+rD3euQVH
- ZJ6XvvPDjqMIb00qjtAD3ZiOfI1YIvJYvhHiEeYfY4XCeK0Z6wbl7+A0Na1CcHk8DgEdgeIMAgA
- yove1rPyh+1/JDXHHzDitk2gVzKusNI2CcV6I7+0AxfGMw/i4aIPBPVI5OJMjXFH37DGnFW443N
- 3I=
-X-Received: by 2002:a05:7300:cb11:b0:2de:c5ca:c1f3 with SMTP id
- 5a478bee46e88-304eb105720mr91143eec.4.1780002619717; 
- Thu, 28 May 2026 14:10:19 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1780004299; x=1780609099;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=GhnFuJViJQRAhRchdPjzRhvDoNvD7cS/bt3t+ELwg2w=;
+ b=pNKbhWv4LzBdd2L3AmzOoi8CGqFnYV/ucTBNlckNcodvFZmnKO2LLRJq1mHoStZecS
+ d3KR1jhrV1xtNVaFj0yhkZcjucCL/Uj14C1r9W+R/0pH0Ihe76hIJJkZB04tjqXL7vjg
+ zl/M/Ja/hSNrsXbxIeXFAV3j8zViyCbK0S6A5ihi3F0c49qKeXJ+R02akxR8R4xCDYPv
+ QhJtiWSY6ed7sfIA7X/cSxqJuhfHJIFKmyGfiwqg2xveJv5/+LSFmel19RSEea9ztGYe
+ j37c4UQNjpOuc3yvt9Q4qkIGonEiMMfX8Sd8rlmiuMfcf8Q7fLZUTgg3p2DWv8MOktPE
+ CXwA==
+X-Gm-Message-State: AOJu0YwVzQAls75ganlwwFdnxpj9OH/dqdZ5wyXyE9KY/ut79l8tgTjz
+ W+Ac2GgH2qBIEgm1yA05yvqeHwSIWaG//BSeVQGIcZpmWrYD5raeHIN7B9V5izSFjmSI8N1GdBM
+ 2I3Ix
+X-Gm-Gg: Acq92OHIsCzJ/jvGKIG+MjzcSFyChZjkNMzHeHnqYXCOq6OTBX5UtpCgDUJDuNaoud8
+ Jk2nvvo4j2HgCEyglZcbJbpIVEK8f2B+qhiP3gNfm8mbQy+pFUMHOfNWTmIhJiRo84rrtUzK+c1
+ qx2HHbkxUyAo1CIJpmn2jhf2Q6xO5I6xJ3SCqVFFfxITF1a/jy3UkzSbHHWMUNNsN702qyYEbRr
+ RC3Ie11Sbkho4LWKbVfqsFVBBiyZEBnqcJcaCZ9QIVI5yQv/1WeXRdxbiQpIuDsgvEGfeSr88EU
+ QCowqlIs/ckrsVATryNWvyXx8L6WrFaDK/nJGIzs47wYOPLn3ZFFX+wsbfJHBUu9otaFmjF1XJY
+ Q0FFBRi00tU69YBPfkDcyMuPRaFvbszrkJcSjoA87hb7CL+MjL4Vuh8ZaZJnfPLnlhCmicGO4jw
+ 95CdV6/zV5NmjQc2+hf9T57jArST7WMjk9s2NdCRbR9auW+cYln0sw25v9W1V2KV5okou5wBcX
+X-Received: by 2002:a05:690e:4809:b0:660:40e3:e869 with SMTP id
+ 956f58d0204a3-660515336b6mr46851d50.3.1780004299502; 
+ Thu, 28 May 2026 14:38:19 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-304e98c779dsm314431eec.17.2026.05.28.14.10.19
+ 956f58d0204a3-6604e12ea23sm208079d50.0.2026.05.28.14.38.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 28 May 2026 14:10:19 -0700 (PDT)
-Date: Thu, 28 May 2026 14:10:16 -0700
+ Thu, 28 May 2026 14:38:19 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Sudheendra Sampath <giveback4fun@gmail.com>
-Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>, Sivaprasad
- Tummala <sivaprasad.tummala@amd.com>
-Subject: Re: [PATCH] examples: Fix vm_power_manager scratch area to
- /run/dpdk/powermanager
-Message-ID: <20260528141016.5470472d@phoenix.local>
-In-Reply-To: <20260528190449.66254-1-giveback4fun@gmail.com>
-References: <20260528190449.66254-1-giveback4fun@gmail.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC 0/8] retire legacy flow director API
+Date: Thu, 28 May 2026 14:37:12 -0700
+Message-ID: <20260528213816.562910-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,43 +78,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 28 May 2026 19:04:48 +0000
-Sudheendra Sampath <giveback4fun@gmail.com> wrote:
+The flow director (fdir) configuration API in <rte_eth_ctrl.h> was
+superseded by rte_flow in 17.05 but never removed. This series
+finishes the job: 26.07 retires the user-facing surface and
+decouples driver internals from the public ABI; the 26.11
+deprecation notice covers the public ABI removal itself.
 
-> This patch for bug 1832 will do the following:
-> 1.  If /run/dpdk is not present, it will create it first with and
->     then create powermanager directory underneath it.
-> 2.  If /run/dpdk is present, it will verify it is actually a directory
->     before creating subdirectory, powermanager.
-> 
-> All directory permissions are 0700.
-> 
-> Signed-off-by: Sudheendra Sampath <giveback4fun@gmail.com>
-> ---
+User-visible changes in 26.07:
 
-Lots of issues with hardcoding the path here.
-Longer explanation from AI review.
+  - testpmd commands gone: `show port fdir`, `clear port fdir`,
+    `flow_director_filter`, `port config ... pctype mapping ...`,
+    and `port config ... hash_inset|fdir_inset|fdir_flx_inset ...`.
+    Use the `flow` command instead.
 
+  - Experimental functions gone:
+    rte_pmd_{i40e,ixgbe}_get_fdir_info() and
+    rte_pmd_{i40e,ixgbe}_get_fdir_stats(). Removed early to give
+    out-of-tree callers a build-time signal ahead of 26.11.
 
-Thanks for the patch. A few issues to address before this can be merged:
+  - <rte_pmd_i40e.h> filter configuration entry points are marked
+    __rte_deprecated. -Werror sources will need
+    -Wno-deprecated-declarations, or migration to rte_flow, before
+    26.11.
 
-Two correctness bugs in the new recovery block:
+Scheduled for 26.11 (announced in deprecation.rst):
 
-- After creating the directories, d is still NULL but the code falls through to readdir(d). The recovery path must call opendir() again (and return -1 if that also fails) before the readdir loop.
+  - Flow director types in <rte_eth_ctrl.h> and the driver-facing
+    definitions in <ethdev_driver.h>.
 
-- path_stat is only populated when stat() succeeds. The S_ISDIR(path_stat.st_mode) check runs on uninitialised memory when stat() returned an error and mkdir() was used. Restructure as if (stat(...) == 0) { check S_ISDIR } else { mkdir }.
+  - PMD-private filter API in <rte_pmd_i40e.h>.
 
-Other items:
+The ixgbe and txgbe patches at the tail privatize internals that
+still used the legacy types — mechanical rename, no behavior
+change, so the 26.11 struct removal can proceed without further
+per-driver coupling.
 
-- doc/guides/sample_app_ug/vm_power_management.rst still references /tmp/powermonitor/ in several places; code and docs need to change together.
+The mbuf-side fdir metadata (RTE_MBUF_F_RX_FDIR* flags and the
+hash.fdir field) is unaffected — it is used by the rte_flow MARK
+and FLAG actions, not part of the legacy filter API.
 
-- Hardcoding /run/dpdk does not follow the DPDK runtime-dir convention and breaks non-root usage. 
-  Please consider using rte_eal_get_runtime_dir() (or at least the same getuid() / RUNTIME_DIRECTORY logic as eal_create_runtime_dir()) instead.
+Stephen Hemminger (8):
+  app/testpmd: remove support for flow director
+  net/i40e: remove testpmd flow filter commands
+  net/i40e: deprecate legacy flow filter API
+  net/i40e: remove experimental FDIR API
+  net/ixgbe: remove experimental FDIR API
+  doc: announce legacy flow director deprecation
+  net/ixgbe: privatize legacy flow director types
+  net/txgbe: privatize legacy flow director types
 
-- Subject says "powermanager" but the path is "powermonitor".
+ app/test-pmd/cmdline.c                        |  21 +-
+ app/test-pmd/config.c                         | 163 -----
+ app/test-pmd/testpmd.h                        |   3 -
+ doc/guides/nics/i40e.rst                      |  70 +-
+ doc/guides/rel_notes/deprecation.rst          |  10 +
+ doc/guides/rel_notes/release_26_07.rst        |  14 +
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst   |  36 -
+ drivers/net/intel/i40e/i40e_ethdev.c          |   4 +-
+ drivers/net/intel/i40e/i40e_ethdev.h          |   4 -
+ drivers/net/intel/i40e/i40e_fdir.c            | 140 ----
+ drivers/net/intel/i40e/i40e_flow.c            |   3 +-
+ drivers/net/intel/i40e/i40e_testpmd.c         | 642 ------------------
+ drivers/net/intel/i40e/rte_pmd_i40e.c         |  34 -
+ drivers/net/intel/i40e/rte_pmd_i40e.h         | 113 ++-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  12 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        | 100 ++-
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          | 241 ++-----
+ drivers/net/intel/ixgbe/ixgbe_flow.c          |  28 +-
+ .../net/intel/ixgbe/ixgbe_rxtx_vec_common.c   |   4 +-
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.c       |  34 -
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.h       |  32 -
+ drivers/net/txgbe/txgbe_ethdev.c              |   6 +-
+ drivers/net/txgbe/txgbe_ethdev.h              | 101 ++-
+ drivers/net/txgbe/txgbe_fdir.c                |  78 +--
+ drivers/net/txgbe/txgbe_flow.c                |  24 +-
+ drivers/net/txgbe/txgbe_rxtx_vec_common.h     |   4 +-
+ 26 files changed, 448 insertions(+), 1473 deletions(-)
 
-- The two new RTE_LOG messages are missing trailing "\n".
+-- 
+2.53.0
 
-- Please add a proper Fixes: tag (12-char hash) for the commit that introduced /tmp/powermonitor.
-
-Stephen
