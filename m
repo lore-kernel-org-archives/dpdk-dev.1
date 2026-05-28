@@ -2,74 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 893C2CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 12:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA657CD6E44
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 12:48:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 391454065D;
-	Thu, 28 May 2026 14:48:15 +0200 (CEST)
-Received: from fhigh-a6-smtp.messagingengine.com
- (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
- by mails.dpdk.org (Postfix) with ESMTP id 3E64C4042F
- for <dev@dpdk.org>; Thu, 28 May 2026 14:48:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4232F40662;
+	Thu, 28 May 2026 14:48:17 +0200 (CEST)
+Received: from fout-a6-smtp.messagingengine.com
+ (fout-a6-smtp.messagingengine.com [103.168.172.149])
+ by mails.dpdk.org (Postfix) with ESMTP id DCAB440662
+ for <dev@dpdk.org>; Thu, 28 May 2026 14:48:15 +0200 (CEST)
 Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id B9BE81400048;
- Thu, 28 May 2026 08:48:12 -0400 (EDT)
+ by mailfout.phl.internal (Postfix) with ESMTP id 8356DEC00EB;
+ Thu, 28 May 2026 08:48:15 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Thu, 28 May 2026 08:48:12 -0400
+ by phl-compute-06.internal (MEProxy); Thu, 28 May 2026 08:48:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1779972492; x=
- 1780058892; bh=KNqAyCbm+udO/xzduLJ66RZ5TR3yYeRp/7ouA1hRcvE=; b=h
- sp7jIZ1VkBUTYjeyPdkkg7hziRawddj1g/QKsVAJSFu2sNwu/FPKu+iVM9SJFplB
- W2rY3UzaewCW9Ax/5ZkvAtYgdGsPc8i/RoLH2WWe2oExMHZPKn7lhuruKY6c5+QF
- sIWQV2HGRn7jSJ0SdDq0/40bop/vEu5uU1B43qqb0zM6LbujkDzSsDZvvhSHIs/H
- oqUTPhN8U3J1beYKWnyEg0lZt1u5df3fQ7CbnJOTKbKi9xgPG2G5pzTWn1h5JZIR
- sdWiPfDzjgPKc3hdMkjPQ2eOcFWZGxnb+x+owJxkCs8xoPBXZpAO5HabvFTtmqot
- YTDTC0wNGD9oRTdgsBGgg==
+ :reply-to:subject:subject:to:to; s=fm3; t=1779972495; x=
+ 1780058895; bh=AMIOLoSVj9nXqKWdQi/SDTOewxzGMrTIn2ydizdbKQw=; b=n
+ fL3ZRrxCWwv0SHwq/BpJfue6ggYwVItuZtWI3HuMth3iK7kUx3HKv3udIzVW0ybJ
+ nHrIcN6bnrWm8wKg5XTS9kA7WPegGE76sOc3wgk0GUbTOoM3ZFqqzTCNfKvq4DOg
+ NOZ/T+sJQhDHXJeqRrr7hxqdOPCxCV0weS+KIcnAxX6xpuKPFhs5Im6/cvuDvzqz
+ eMSOtHIxPl+3Mqa2x0W9GSUATZHu/x0uL5e301Zkcutw41QeBkFlFbvfltDdwYXJ
+ cr47DtJUzGTTbXypBbmYoWoL4Rt4lCA0NxOxo7v8bBc/kw/EM+0V2bKKaarE4wtr
+ HrQpAT/mF6y3ysZu2NbwQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1779972492; x=1780058892; bh=K
- NqAyCbm+udO/xzduLJ66RZ5TR3yYeRp/7ouA1hRcvE=; b=FW5v1ijKuxpFo9a0H
- D1OB/B2II3h6MRSK7KWuhtk/amUIXS/DVzE3wnIRG6EnpkJt9eXkzfAMb3VlxLsf
- Ku/KJJ2kWuL8L3CPMzqAw2ajVKMs2lW3O8lWgqa/pXpQ3VATLKkWHp/fCwKUdwaF
- am0Jl6F/NHo0F8RKvaH9WG4xoPl9yYfaHEmdsryr1ctpztSjK3Tz5H+YtTWajcmr
- fY5RRqih21jiqncHQR4+kThdOzJI9Z9JNAo8PxdZ8Y5ofBmeX8N6CV7Z4d0GfpjI
- fC36QVkq987dZnZ3lCKbkz/JcUBbF0Mvap9MwE9DWGaxAEizU89ax2B6zIVja+xs
- azFjQ==
-X-ME-Sender: <xms:jDkYaok0IAGtu3x5-lHBSWbSMnRCKg1qTefNqxmEn47z_i2IW1OYEg>
- <xme:jDkYan_1xrCbcgvzjU46f7hrpRXg1sxDBND7v1s_NbDzHB0gtslrqpc_A2W_cM-3D
- SYVl2NKmfrFbT9afFOxTAgWaZ_Kgu-okl54Bl8mgbFHhmFyu_uQfqk>
-X-ME-Received: <xmr:jDkYaumqLeYcdHE7TKysB4__c-tkWyu3Oc5DxV9ToQcx_1bQbGtLghnhZJ3Aqmk__fKVJgpBcNJ-Af5tUNAJfw5hPGXWIfk>
-X-ME-Proxy-Cause: dmFkZTEFn7AQHI48n9AODvJpJqUxdk72sZf0QLbOirQK2oyoi+UcGmNWDkA8MQxq/UNVpS
- kxC5Io4+kU3Fbdr2iWwXxCfnXp+UEUJi+bqAIR0An7WYiX1o8NsYAUQ+pI7oK7Eon+l6Qc
- 5smSvBkE8YwlgQX4htbges5IHO+VQGpWCeK47LL9uKaWZSkQ5SQ07Hb2BFZLFyK7uXMXjg
- a1gXgJJv4QvNCyHA6ug7ni4QQm0Rb3dKyMtJ29hsub5yqp48T7fXlGEH0ytXZYMruyvqZu
- mw8vrT/WMNUWiTcH4tjJGnAZ2M5JgoyGW1r2WTRcytlCKxhVBJsOOZMhAqWbv+aQjxKVN9
- RzEp31U4W6p+R3bEEti8HQjE+2ctbOlo6xes8zNhSJM1U0gkW6lFcJYkKdR279NrFbBto1
- 70WOL9ev0k62SGZuQ2PluC3TVHTJa2DweHPN07aRho92uSvAiuoB//u1VAd37ymG5v2Ora
- eCbw7BPHlkUmYadRnbaMZ37SBA0xOkGL3uu0eQTW3+uGvntbiEKb1FdBYJPA2poO3oT0W3
- czXjjEc8/t9jG60Rr1ZCKfO/nE7klMZxzDPK2wxfd9QwN9TIJ56/HPWhANiBiplVKKn6FK
- rY/vC3iWUuIlcAgDsYb1S1M+sm1PAbCUbHawDOKNLBG1UQjrELW115/IsrsA
-X-ME-Proxy: <xmx:jDkYas3b-QgSkM0RMgnSbveZjbQkEIFd65AvPIGBbjLLtEWC65XsjA>
- <xmx:jDkYahrSwiKEj8q3T2HYwHPTu7g4VRYD90w-ogl4hEns8vf92xAJJA>
- <xmx:jDkYahffzurxTbaTCI-6IYmo5TvkGr8nDkToxJ3FFjlPkmvHncwGkA>
- <xmx:jDkYaorc-B40txMT2hQpe3Ih35O1kDCsUGZDPymIznP8phMDbKTfBg>
- <xmx:jDkYapH8q7SoqXHut19Qdv2BiQWGwwDti76_midhL0hO755OYIdTWG-o>
+ :x-me-sender:x-sasl-enc; s=fm3; t=1779972495; x=1780058895; bh=A
+ MIOLoSVj9nXqKWdQi/SDTOewxzGMrTIn2ydizdbKQw=; b=Fz77ZG3C2adTWdCFC
+ tw7SaPEomXXwwDoSeHuaqWICQasxWxgYwFgOkWLS62qTem+RLIOMzFEmomMfxxj1
+ 0eiAf67EdEEcPLxf9HNKhXVa0vqJy4d+wPC2Kux3in839CfGd98ShDM/Ap00XNX7
+ jzGTgKarv9Qd1jmBm3G/iyU1PkyOtPCRgidLg/KkdQa9kfglP6G7ZDer5M3cXljy
+ FgdJecLk6Jz2hpn37IPqqLUs15s7NuVJIt5ESlqqTzfX57csNFkWlZT9BhTHtE5m
+ uiocwbPWR88OMoXX9n4SNV/v3ITjS6oGMqWY6KjW4BUYxFOzkHvIBjpLumUkfk9U
+ ae9ZQ==
+X-ME-Sender: <xms:jzkYaimOf3Zk4SqggSpnkEX9J1CnLcdi0SAwIOyzfaEkykGVloJs7Q>
+ <xme:jzkYal1bjIobTgTwk3PHhcCs35PaThmrvvwfu5mZ3MbEpoiZkKvugARPEOI09HB8i
+ qldNioiLaabUAoB3aRBt3iIHbfZN3tJC-G9SeZJgmm_tk3uoe7u0w>
+X-ME-Received: <xmr:jzkYai3FV3o3c-f9CGiJWhXR6-UtA2hiPz-wKv4vic00xPB4K4L49KiliGEzEvQtHc0Nhr6znzvDKqqg3xoy25E5gqyjyHc>
+X-ME-Proxy-Cause: dmFkZTGEI2QspuhGhOaj9hI04ApJLhnlrblkAfzs0n0v5Re6QemrmK0jNnRbJEhH+eN6Dx
+ A6nmbdHQ8MjINk4+kuXqY895czNLZrsrVSBJyEfzu2OKpR2bfvXnV4Cbo82wSyfUlE+JNe
+ uOgvcYGN1u4fStsbDw79EpWsHOIjcNFLPYmeJUYcFapqbbdRiF86JO/TisAup5w9bElfPy
+ DRRWXDbmS59fd+2+H0GLyh/lNGp0wDmzMAgV6WBuoinPmiytapuei90F9KGSdISi2X/69V
+ HbzzOHMFLi4+FHY3puRHn6wfahI9ZDjYzmINIei2AiuyJ2WtjK/Cm1wYZhPx4sFENSvnT1
+ KOGNIDESUQ9iaCIEorqQN613G0Dk24Jx4DS8he6YkzgawuqqKD041t1KFyR4Aqe4HmnNN3
+ evkds4vexDCLWQ4wvEE0KbZgDQ+8s/rPMinrdAu0vwed6C0ZKWm1GoAED9+/w3ETMcUtwJ
+ gIcWfNrW9/RAdqUzKXfTArS9+LZHadwdCFTXymRy2DczWdFLCfZOSvB25kxp2i3unFoXKw
+ rgBDhj7P3e7IvZzSAbmOOrunThBHoS2LiCqwua8Lg/4QX604DZEmyhya2CSaie+Sbh6VD4
+ nSo1XNpA6eecq6Xfwb/0l7RULR/E7xqfttw5fVsXn0Qk2iw7vbK6wghLNuSw
+X-ME-Proxy: <xmx:jzkYanpCtfDDNotgXA8epEAtZWbJLRtPPdzjn-fetVSH-ItzorIZEQ>
+ <xmx:jzkYaui-fPKZzcbbvvcsR0GE0OAXNS4k56KRjrJb2N4XHsPetvlChw>
+ <xmx:jzkYaj9uDo7rVYcfgHrPild3OCcS-32ag8chwcn6xR9uQFvCtBU95g>
+ <xmx:jzkYaqW6xTi0PUigYJDPCWHVoMhL9x_jFNsYwiOQbrq8dHIkfMyP7g>
+ <xmx:jzkYatI35jPGojZCHp2-dkJSoQTUF629Wk24w93ENT6Op-6QivR7wK8t>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 May 2026 08:48:11 -0400 (EDT)
+ 28 May 2026 08:48:14 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Gregory Etelson <getelson@nvidia.com>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v3 03/10] app/testpmd: support selective Rx
-Date: Thu, 28 May 2026 14:46:30 +0200
-Message-ID: <20260528124758.1984528-4-thomas@monjalon.net>
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [PATCH v3 04/10] common/mlx5: add null MR functions
+Date: Thu, 28 May 2026 14:46:31 +0200
+Message-ID: <20260528124758.1984528-5-thomas@monjalon.net>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260528124758.1984528-1-thomas@monjalon.net>
 References: <20260202160903.254621-1-getelson@nvidia.com>
@@ -91,177 +94,116 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Gregory Etelson <getelson@nvidia.com>
 
-Add support for selective Rx using existing rxoffs and rxpkts
-command line parameters.
+Add functions to allocate and free a null Memory Region (MR)
+using ibverbs on Linux.
 
-When both rxoffs and rxpkts are specified
-on PMDs supporting selective Rx, testpmd automatically:
-1. Inserts segments with NULL mempool
-   for gaps between configured segments to discard unwanted data.
-2. Adds a trailing segment with NULL mempool
-   to cover any remaining data up to the max packet length.
-
-Example usage to receive only Ethernet header and a segment at offset 128:
-
-  --rxoffs=0,128 --rxpkts=14,64
-
-This creates segments:
-- [0-13]: 14 bytes with mempool (received)
-- [14-127]: 114 bytes with NULL mempool (discarded)
-- [128-191]: 64 bytes with mempool (received)
-- [192-max]: remaining bytes with NULL mempool (discarded)
-
-Note: RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT is required for this feature
-and is checked at ethdev API level.
-This check is removed from testpmd to allow negative testing of the API.
+There is no implementation for DevX on Windows.
 
 Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
- app/test-pmd/testpmd.c                | 71 ++++++++++++++++++++++-----
- doc/guides/testpmd_app_ug/run_app.rst | 20 ++++++++
- 2 files changed, 80 insertions(+), 11 deletions(-)
+ drivers/common/mlx5/linux/mlx5_common_verbs.c | 35 +++++++++++++++++++
+ drivers/common/mlx5/mlx5_common_mr.h          |  9 +++++
+ drivers/common/mlx5/windows/mlx5_common_os.c  | 16 +++++++++
+ 3 files changed, 60 insertions(+)
 
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index a9b35f530a..d14341d3ff 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -2731,6 +2731,16 @@ port_is_started(portid_t port_id)
- 	return 1;
+diff --git a/drivers/common/mlx5/linux/mlx5_common_verbs.c b/drivers/common/mlx5/linux/mlx5_common_verbs.c
+index 2322d9d033..6d44e1f566 100644
+--- a/drivers/common/mlx5/linux/mlx5_common_verbs.c
++++ b/drivers/common/mlx5/linux/mlx5_common_verbs.c
+@@ -161,3 +161,38 @@ mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
+ 	*reg_mr_cb = mlx5_common_verbs_reg_mr;
+ 	*dereg_mr_cb = mlx5_common_verbs_dereg_mr;
  }
- 
-+static struct rte_eth_rxseg_split *
-+next_rx_seg(union rte_eth_rxseg *segs, uint16_t *idx)
++
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_alloc_null_mr)
++struct mlx5_pmd_mr *
++mlx5_os_alloc_null_mr(struct rte_device *dev, void *pd)
 +{
-+	if (*idx >= MAX_SEGS_BUFFER_SPLIT) {
-+		fprintf(stderr, "Too many segments (max %u)\n", MAX_SEGS_BUFFER_SPLIT);
++	struct ibv_mr *ibv_mr;
++	struct mlx5_pmd_mr *null_mr;
++
++	null_mr = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*null_mr), 0, dev->numa_node);
++	if (!null_mr)
++		return NULL;
++	ibv_mr = mlx5_glue->alloc_null_mr(pd);
++	if (!ibv_mr) {
++		mlx5_free(null_mr);
 +		return NULL;
 +	}
-+	return &segs[(*idx)++].split;
++	*null_mr = (struct mlx5_pmd_mr) {
++		.lkey = rte_cpu_to_be_32(ibv_mr->lkey),
++		.addr = ibv_mr->addr,
++		.len = ibv_mr->length,
++		.obj = (void *)ibv_mr,
++	};
++	return null_mr;
 +}
 +
- /* Configure the Rx with optional split. */
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_free_null_mr)
++void
++mlx5_os_free_null_mr(struct mlx5_pmd_mr *null_mr)
++{
++	if (!null_mr)
++		return;
++	if (null_mr->obj)
++		claim_zero(mlx5_glue->dereg_mr(null_mr->obj));
++	mlx5_free(null_mr);
++}
+diff --git a/drivers/common/mlx5/mlx5_common_mr.h b/drivers/common/mlx5/mlx5_common_mr.h
+index cf7c685e9b..00f3d832c3 100644
+--- a/drivers/common/mlx5/mlx5_common_mr.h
++++ b/drivers/common/mlx5/mlx5_common_mr.h
+@@ -21,6 +21,8 @@
+ #include "mlx5_common_mp.h"
+ #include "mlx5_common_defs.h"
+ 
++struct rte_device;
++
+ /* mlx5 PMD MR struct. */
+ struct mlx5_pmd_mr {
+ 	uint32_t	     lkey;
+@@ -258,6 +260,13 @@ __rte_internal
+ void
+ mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb);
+ 
++__rte_internal
++struct mlx5_pmd_mr *
++mlx5_os_alloc_null_mr(struct rte_device *dev, void *pd);
++__rte_internal
++void
++mlx5_os_free_null_mr(struct mlx5_pmd_mr *null_mr);
++
+ __rte_internal
  int
- rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
-@@ -2744,31 +2754,70 @@ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
- 	uint32_t prev_hdrs = 0;
- 	int ret;
+ mlx5_mr_mempool_register(struct mlx5_common_device *cdev,
+diff --git a/drivers/common/mlx5/windows/mlx5_common_os.c b/drivers/common/mlx5/windows/mlx5_common_os.c
+index 16fcc5f9fc..692517a9bf 100644
+--- a/drivers/common/mlx5/windows/mlx5_common_os.c
++++ b/drivers/common/mlx5/windows/mlx5_common_os.c
+@@ -454,6 +454,22 @@ mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
+ 	*dereg_mr_cb = mlx5_os_dereg_mr;
+ }
  
--	if ((rx_pkt_nb_segs > 1) &&
--	    (rx_conf->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
-+	if (rx_pkt_nb_segs > 1 || rx_pkt_nb_offs > 0) {
-+		struct rte_eth_dev_info dev_info;
-+		uint16_t seg_idx = 0;
-+		uint16_t next_offset = 0;
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_alloc_null_mr)
++struct mlx5_pmd_mr *
++mlx5_os_alloc_null_mr(struct rte_device *dev, void *pd)
++{
++	RTE_SET_USED(dev);
++	RTE_SET_USED(pd);
++	return NULL;
++}
 +
-+		ret = rte_eth_dev_info_get(port_id, &dev_info);
-+		if (ret != 0)
-+			return ret;
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_free_null_mr)
++void
++mlx5_os_free_null_mr(struct mlx5_pmd_mr *null_mr)
++{
++	RTE_SET_USED(null_mr);
++}
 +
- 		/* multi-segment configuration */
- 		for (i = 0; i < rx_pkt_nb_segs; i++) {
--			struct rte_eth_rxseg_split *rx_seg = &rx_useg[i].split;
--			/*
--			 * Use last valid pool for the segments with number
--			 * exceeding the pool index.
--			 */
-+			struct rte_eth_rxseg_split *rx_seg;
-+			uint16_t seg_offset;
-+
-+			if (i < rx_pkt_nb_offs)
-+				seg_offset = rx_pkt_seg_offsets[i];
-+			else
-+				seg_offset = rx_pkt_nb_offs > 0 ? next_offset : 0;
-+
-+			/* Insert selective Rx discard segment if there's a gap */
-+			if (seg_offset > next_offset) {
-+				rx_seg = next_rx_seg(rx_useg, &seg_idx);
-+				if (rx_seg == NULL)
-+					return -EINVAL;
-+				rx_seg->offset = next_offset;
-+				rx_seg->length = seg_offset - next_offset;
-+				rx_seg->mp = NULL;
-+				next_offset = seg_offset;
-+			}
-+
-+			rx_seg = next_rx_seg(rx_useg, &seg_idx);
-+			if (rx_seg == NULL)
-+				return -EINVAL;
- 			mp_n = (i >= mbuf_data_size_n) ? mbuf_data_size_n - 1 : i;
- 			mpx = mbuf_pool_find(socket_id, mp_n);
--			/* Handle zero as mbuf data buffer size. */
--			rx_seg->offset = i < rx_pkt_nb_offs ?
--					   rx_pkt_seg_offsets[i] : 0;
-+			rx_seg->offset = seg_offset;
- 			rx_seg->mp = mpx ? mpx : mp;
- 			if (rx_pkt_hdr_protos[i] != 0 && rx_pkt_seg_lengths[i] == 0) {
- 				rx_seg->proto_hdr = rx_pkt_hdr_protos[i] & ~prev_hdrs;
- 				prev_hdrs |= rx_seg->proto_hdr;
-+			} else if (rx_pkt_nb_offs > 0 && rx_pkt_seg_lengths[i] == 0) {
-+				/* Insert fake discard segment if explicitly requested */
-+				rx_seg->mp = NULL;
-+				rx_seg->length = 0;
- 			} else {
- 				rx_seg->length = rx_pkt_seg_lengths[i] ?
- 						rx_pkt_seg_lengths[i] :
- 						mbuf_data_size[mp_n];
- 			}
-+
-+			next_offset = seg_offset + rx_seg->length;
- 		}
--		rx_conf->rx_nseg = rx_pkt_nb_segs;
-+
-+		/* Add trailing selective Rx discard segment up to max packet length */
-+		if (rx_pkt_nb_offs > 0 && next_offset < dev_info.max_rx_pktlen) {
-+			struct rte_eth_rxseg_split *rx_seg = next_rx_seg(rx_useg, &seg_idx);
-+			if (rx_seg == NULL)
-+				return -EINVAL;
-+			rx_seg->offset = next_offset;
-+			rx_seg->length = dev_info.max_rx_pktlen - next_offset;
-+			rx_seg->mp = NULL;
-+		}
-+
-+		rx_conf->rx_nseg = seg_idx;
- 		rx_conf->rx_seg = rx_useg;
- 		rx_conf->rx_mempools = NULL;
- 		rx_conf->rx_nmempool = 0;
-diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
-index 1a4a4b6c12..b59991ed89 100644
---- a/doc/guides/testpmd_app_ug/run_app.rst
-+++ b/doc/guides/testpmd_app_ug/run_app.rst
-@@ -364,6 +364,11 @@ The command line options are:
-     feature is engaged. Affects only the queues configured
-     with split offloads (currently BUFFER_SPLIT is supported only).
- 
-+    When used with ``--rxpkts`` on PMDs supporting selective Rx,
-+    enables receiving only specific packet segments and discarding the rest.
-+    Gaps between configured segments and any trailing data up to the max packet length
-+    are automatically filled with NULL mempool segments (data is discarded).
-+
- *   ``--rxpkts=X[,Y]``
- 
-     Set the length of segments to scatter packets on receiving if split
-@@ -373,6 +378,21 @@ The command line options are:
-     command line parameter and the mbufs to receive will be allocated
-     sequentially from these extra memory pools.
- 
-+    Note: ``--rxoffs`` is required to enable selective Rx in testpmd.
-+    To receive only the first N bytes, use ``--rxoffs=0 --rxpkts=N``.
-+
-+    To receive only the Ethernet header (14 bytes at offset 0) and
-+    a 64-byte segment starting at offset 128, while discarding the rest::
-+
-+       --rxoffs=0,128 --rxpkts=14,64
-+
-+    This configuration will:
-+
-+    * Receive 14 bytes at offset 0 (Ethernet header)
-+    * Discard bytes 14-127 (inserted NULL mempool segment)
-+    * Receive 64 bytes at offset 128
-+    * Discard remaining bytes (inserted NULL mempool segment)
-+
- *   ``--txpkts=X[,Y]``
- 
-     Set TX segment sizes or total packet length. Valid for ``tx-only``
+ /*
+  * In Windows, no need to wrap the MR, no known issue for it in kernel.
+  * Use the regular function to create direct MR.
 -- 
 2.54.0
 
