@@ -2,73 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56EF5CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 18:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3AFCD5BD5
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 19:05:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5596C4021F;
-	Thu, 28 May 2026 20:29:23 +0200 (CEST)
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
- [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 95B7B4003C
- for <dev@dpdk.org>; Thu, 28 May 2026 20:29:22 +0200 (CEST)
-Received: by mail-dy1-f182.google.com with SMTP id
- 5a478bee46e88-3045c195251so6891208eec.1
- for <dev@dpdk.org>; Thu, 28 May 2026 11:29:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A94E94021F;
+	Thu, 28 May 2026 21:05:00 +0200 (CEST)
+Received: from mail-dy1-f195.google.com (mail-dy1-f195.google.com
+ [74.125.82.195]) by mails.dpdk.org (Postfix) with ESMTP id 792F14003C
+ for <dev@dpdk.org>; Thu, 28 May 2026 21:04:59 +0200 (CEST)
+Received: by mail-dy1-f195.google.com with SMTP id
+ 5a478bee46e88-303dbfbec77so15742858eec.0
+ for <dev@dpdk.org>; Thu, 28 May 2026 12:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779992962;
- x=1780597762; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=yeEJpzMMqkf/T/P8zsUoN6dsw0k+CkN5xU7KK0Q6Q5M=;
- b=esecnheDLB75S3x2c0C/Zd4KFwLd7u9IvVOXjJFn+aEeIOLautmEHcdn0Qm35K33vF
- CktI2s4NguHwqZsHCq6NLT03rFkeYXtssv3l1ibPQp7m2UuVSAVywFpb4epvBvuyqwn7
- x1Ps8wWiLXvO5UmU3/ebG69a9GzSyvaKrwiZ+8dPWNVXSUBL163rv5SgGWBXwLSKSjI4
- Tq18QPV9vhsjx0Co+6VHybmRopTZchqHA38YHnuf6OAIRtWo3ibQNfJBRu0Q2avClyOM
- ZQEE31m7ABaH5W606JYXUH2TQolUOWppqVjKvja8u/JJLkdAgCObWdV8TqDhuDnwT8c5
- iKkw==
+ d=gmail.com; s=20251104; t=1779995098; x=1780599898; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=hoLjUfiLkySWrsEfTSS92Q4gRZZcfod2bYoxIZ31P2E=;
+ b=qhi2zK433zadTyiwFNoaEiEYvuiC2ELSmhGoKdjnE2V9HDSpABaertTDvFB67CekRN
+ qhj89b8R4cU3hSRmjR/loJjSqxXhgLIiQFjaBLgVLJLaKec2qRQ3OxPrs6KJRDgXsUCu
+ CVzDBMzD2oDbPBYuIPgEbZ4+SnAzZjWJEbbDBEeDFZ1ETRvoh8lWG9Aw/Puu/6y16IXy
+ Oy3PAr/ve26cvqoQwLlgkHjya4NzhdnZZnbCeujyjzvcZCSlWzSU4ZL2wN2YU3jjM5Lo
+ lws4cMbbqqt3M6pSaL+h/9eaOD1nc6KcPlVs/2V7YMI7RiYpACZt5dc+E9zrbVEl2zow
+ PNlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779992962; x=1780597762;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=yeEJpzMMqkf/T/P8zsUoN6dsw0k+CkN5xU7KK0Q6Q5M=;
- b=sAt6A7IAkX5yvsxGhNBVJeY5lIY61JQ2Ae6w2wc3dNBUaJwEiQzWdRK8Y3DZj4OMPe
- /fNX0YOJmrYLDVUze8TofOitXCWeThEnEE90F5pNI2CN9aIrjXHF0qT04I/+Z8D9v6Eu
- tXfgRDirmNvP/+wokQD4++4Q80yprx3lpkto9c9gdkny9azCMBHEV5fh5lQUMhi15YFH
- TlHBIRB54Ig/lvt61Z0SvwinrbBs8/Kupl79iaoPFFyl53Qutk3I3s/ffbGhNSe+pRn3
- 6Vpwea3kuzUhCGqV47kvB8TiILyHgSbackf+Kl/W+9K691FL17E86htiv5CbF0/sxTZ1
- kEBA==
-X-Gm-Message-State: AOJu0YxynnnoNg0MjSsHXOq1imiaENDico8oQ66xJvhMq29hGK9o1kKm
- lKHYWjh2Tx750Ey50vDiZkOWtgHs/pyIFcQPCszelNnmuCPBCrfUfs/B9YrLV3ETbeG8GQKOxTq
- /WDZ6
-X-Gm-Gg: Acq92OEKeDE1CagwMDbN1O30DE4l9DpCF+amTEqibP52nDSsdIU0ZUTWMO2LaKN0wzO
- IT5HxVVW+W8JF6qWOt3TqGBjBCAELL9akal+18Eoc2PaXEn7ZzcBVyXQ+1D6J+UDUQv3RhLx114
- IJqmZGt0xA3jd5LasROA0dmfYGngDOEUb0QOHjo1GaYEEIJGerWULXQVI6g0rOWcp8v2Gd2KiPI
- x2LgAKubZJCgl3oecxcNspNPJdkOS78WUXCPjaVvazpkjV9a+z2Z8+oNhWPYZNPZG1i4fH4kkSH
- fUK8m5HbcTRQKYh8vjy89BTmpJaP+jZ1bFjo3cYxEw/wbCnHBQrxqWLtfJDf6b90/4AGQdGLsQ2
- 2QhfO3zfByzIpVqqMEmJsoWJzdOBqGWLRxFDZFV/woaB19auZ6fuoggI1e2KxJl+qTe8xIEvUZV
- HIHeI7dAD2SLJBByCrg7Z44IaaNj9yikQW1HjFnGafNr9MTpGDdzV1YoBDcN1V/1FWwzoIOUqMU
- PU=
-X-Received: by 2002:a05:7300:3708:b0:304:3c33:7ad6 with SMTP id
- 5a478bee46e88-304e8f8cb8amr76473eec.11.1779992961450; 
- Thu, 28 May 2026 11:29:21 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1779995098; x=1780599898;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=hoLjUfiLkySWrsEfTSS92Q4gRZZcfod2bYoxIZ31P2E=;
+ b=mTSSYHyklmMFPcdyNCzd0/aCJMZb1hWU0Bk4UQzB38JiNDxAb5VHWBg5bPuOW4Ls65
+ UNL4hR6wsXM3UuOOElF27ZerQ5RR7GKyJk1gj1fqqHE0aEoGwU5olScx7F4UYbnHSdf1
+ R/53lHBx9d9EWnKvaTsIJJwH2awL/Ndq6rD24gRk+v6zq2q6roWDDESe3J7cXPvWvgBN
+ DsjjbY2PQPNw27LMCLCDRqZcg0jXeJCvnbx+Ub6/W3Osha7/jeWbBluqBzL+/J2n4jVS
+ iYtLAXAYOqkvdMWXIn7+PM7THfdUPGGs+eM2unSFeU9U1wRB/mAyepa/kO/Cu46U2R0r
+ nh1Q==
+X-Gm-Message-State: AOJu0YyODyG4fGhzVL844Vn68vfJ0iJKg7iHAo4Ev1iEG6Jiuj+/bDS0
+ W2sSAa6Q0vSrT0luVJAeyiovzc8wr+/uj7U8Jt9SkwLBLo94i2ed8DjlK16qMK1M
+X-Gm-Gg: Acq92OFTtT3kVvJ5rBdXiYNAIOIU7YZnM0DuYxIOJVFHs1KDS3Yb75zjY+rE3GaXwS7
+ 4PhWiG3ImxyoOn0IP2jESBr5s0fciyb72Wc41pJyJftb78rTzJW5YFgJTzlUxnEjk7bu0dgeXFS
+ Cclb7FlfXRi2OCRgD/TwFKvWRUYfWgyh5/EbVeakAiDa1C3JdCqL5j5rmlE2cEM83KmFdq3ExDg
+ lQ5XegsctJRILHeGoOYk5lNOaT83uouiUN+YiOnW2xgJ7oZGt+8CtnbzHqjxLE5GmKfT0An8DoS
+ Eu4La2QK3BosGTrZZKCm5C0hfZrP4zolnqKy0y1f2kJxnTXJgXbyuXQUXDUoiptg4oZib8cFznU
+ Coaxzp9qKQmbGg9FceVDQDI9kYM02GaQhhxWyMQkt+wE4piMDc9NpALer75SKYHhOMRPepivTkB
+ 2oVlXOql0OTpUangIC6+H3Ecw+eoZEC70hR8O/Z+MQX/cmyOMqBslsJfNapNXZMIO+4VM7lESpK
+ b51yCJJEc/CoypM8srkIrYxxQ==
+X-Received: by 2002:a05:7301:6093:b0:2da:2ec2:64fe with SMTP id
+ 5a478bee46e88-304e8c49485mr143670eec.24.1779995098264; 
+ Thu, 28 May 2026 12:04:58 -0700 (PDT)
+Received: from dpdkvm1.. (c-24-5-101-44.hsd1.ca.comcast.net. [24.5.101.44])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-304e973c26esm19510eec.11.2026.05.28.11.29.20
+ 5a478bee46e88-304e98c51f7sm80702eec.18.2026.05.28.12.04.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 28 May 2026 11:29:21 -0700 (PDT)
-Date: Thu, 28 May 2026 11:29:18 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] doc: announce removal of flow director
-Message-ID: <20260528112918.427a5e45@phoenix.local>
-In-Reply-To: <ED4MTOXhQ4iCVj0Gg4IMwg@monjalon.net>
-References: <20260528170059.155964-1-stephen@networkplumber.org>
- <ED4MTOXhQ4iCVj0Gg4IMwg@monjalon.net>
+ Thu, 28 May 2026 12:04:58 -0700 (PDT)
+From: Sudheendra Sampath <giveback4fun@gmail.com>
+To: dev@dpdk.org
+Cc: Sudheendra Sampath <giveback4fun@gmail.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+Subject: [PATCH] examples: Fix vm_power_manager scratch area to
+ /run/dpdk/powermanager
+Date: Thu, 28 May 2026 19:04:48 +0000
+Message-ID: <20260528190449.66254-1-giveback4fun@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,33 +79,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 28 May 2026 20:19:15 +0200
-Thomas Monjalon <thomas@monjalon.net> wrote:
+This patch for bug 1832 will do the following:
+1.  If /run/dpdk is not present, it will create it first with and
+    then create powermanager directory underneath it.
+2.  If /run/dpdk is present, it will verify it is actually a directory
+    before creating subdirectory, powermanager.
 
-> 28/05/2026 19:00, Stephen Hemminger:
-> > There are still leftover bits in ethdev related to flow director (fdir).
-> > Will be removing these in 26.11 so give final notice.
-> > 
-> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> > ---
-> > +* ethdev: The legacy filtering data structures in ``rte_eth_ctrl.h``,
-> > +  including the flow director (FDIR) types (``rte_eth_fdir_*``, ``rte_fdir_*``)
-> > +  and the ntuple/ethertype/SYN/tunnel/input-set filter types, are superseded
-> > +  by the ``rte_flow`` API and will be removed in DPDK 26.11. The associated
-> > +  driver-facing definitions in ``ethdev_driver.h`` (``RTE_ETH_FILTER_FDIR``,
-> > +  ``struct rte_eth_fdir_conf``, ``enum rte_eth_fdir_pballoc_type``,
-> > +  ``enum rte_fdir_status_mode``) will be removed at the same time.  
-> 
-> The problem is that some drivers rely on these structures for rte_flow.
-> 
-> Note: this file is big, please keep it sorted by moving this
-> close to other ethdev and flow deprecations.
+All directory permissions are 0700.
 
-There are three cases of drivers using fdir:
- - simple ones which are just borrowing things like rte_filter_type
-   addressing these is trivial; mostly just keep rte_filter_type for now
- - Intel ones like i40e and ixgbe which still expose fdir api's.
-   Can deprecate the PMD API's and move the fdir structures into intel commonc code.
- - drivers where fdir was used in variable names but never really used the infrastructure.
+Signed-off-by: Sudheendra Sampath <giveback4fun@gmail.com>
+---
+ examples/vm_power_manager/channel_manager.c | 27 ++++++++++++++++++++-
+ examples/vm_power_manager/channel_manager.h |  2 +-
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
-Will have proposed patches in a few days.
+diff --git a/examples/vm_power_manager/channel_manager.c b/examples/vm_power_manager/channel_manager.c
+index b69449c61d..60d767ea98 100644
+--- a/examples/vm_power_manager/channel_manager.c
++++ b/examples/vm_power_manager/channel_manager.c
+@@ -420,8 +420,33 @@ add_all_channels(const char *vm_name)
+ 	if (d == NULL) {
+ 		RTE_LOG(ERR, CHANNEL_MANAGER, "Error opening directory '%s': %s\n",
+ 				CHANNEL_MGR_SOCKET_PATH, strerror(errno));
+-		return -1;
++
++		const char *run_dpdk = "/run/dpdk";
++		struct stat path_stat;
++		int ret;
++
++		if (stat(run_dpdk, &path_stat) != 0) {
++			ret = mkdir(run_dpdk, 0700);
++			if (ret < 0 && errno != EEXIST) {
++				RTE_LOG(ERR, CHANNEL_MANAGER, "Error creating '%s': %s",
++						run_dpdk, strerror(errno));
++				return -1;
++			}
++		}
++
++		/* Make sure /run/dpdk is a directory */
++		if (!S_ISDIR(path_stat.st_mode)) {
++			return -1;
++		}
++
++		ret = mkdir(CHANNEL_MGR_SOCKET_PATH, 0700);
++		if (ret < 0 && errno != EEXIST) {
++			RTE_LOG(ERR, CHANNEL_MANAGER, "Error creating '%s': %s",
++				CHANNEL_MGR_SOCKET_PATH, strerror(errno));
++			return -1;
++		}
+ 	}
++
+ 	while ((dir = readdir(d)) != NULL) {
+ 		if (!strncmp(dir->d_name, ".", 1) ||
+ 				!strncmp(dir->d_name, "..", 2))
+diff --git a/examples/vm_power_manager/channel_manager.h b/examples/vm_power_manager/channel_manager.h
+index 6f70539815..5fc93ae0be 100644
+--- a/examples/vm_power_manager/channel_manager.h
++++ b/examples/vm_power_manager/channel_manager.h
+@@ -22,7 +22,7 @@ extern "C" {
+ #define CHANNEL_MGR_DEFAULT_HV_PATH "qemu:///system"
+ 
+ /* File socket directory */
+-#define CHANNEL_MGR_SOCKET_PATH     "/tmp/powermonitor/"
++#define CHANNEL_MGR_SOCKET_PATH     "/run/dpdk/powermonitor/"
+ 
+ /* FIFO file name template */
+ #define CHANNEL_MGR_FIFO_PATTERN_NAME   "fifo"
+-- 
+2.43.0
+
