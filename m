@@ -2,47 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5A2CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 19:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE11CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 20:51:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D1914021F;
-	Thu, 28 May 2026 21:56:20 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 086EE4003C
- for <dev@dpdk.org>; Thu, 28 May 2026 21:56:19 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id D35B12098F;
- Thu, 28 May 2026 21:56:18 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 2FC244021F;
+	Thu, 28 May 2026 22:51:08 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 805364003C;
+ Thu, 28 May 2026 22:51:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1780001467; x=1811537467;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=8y/yclEqJfajUimQU0tjbbBg57NfMO1sJjbDEnOcYUM=;
+ b=RpC5Kts3azPstrxWIIn4yss13/Xy4u5KGy6jmpJXpmZK3C7f+SWYoBrU
+ h5YMHkGTAVSDWt/1h6duhyWk3diVD6GEnNHHsKnCR4SMdsPrDgdBkTPJ3
+ E30fQnb8UohBWAUcmINz6Yr5ndpTnQmiigci6DKjzQGHgJRbDNraH1KNh
+ AJ7ITtPAPRj8gSxpIUgWqc+4H6tKvSsGjpNFBW4XH2iQ571o0NToHl8Ni
+ Ffsy1IQml8PI2XgAjhBerD/x2NIObomjRP/LWGqmbV3DArESEKe9Q/38p
+ nHSgCn3Hxsg8lzEwv2akh8CqfQ5OZUn4pYhKVMD5KEtYMAeWHIVgLbhNT g==;
+X-CSE-ConnectionGUID: FZYdRfRcQ5yOsX0g/EGNjQ==
+X-CSE-MsgGUID: pJzez5g2QEaDVIPTCDvFgw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11800"; a="91162144"
+X-IronPort-AV: E=Sophos;i="6.24,174,1774335600"; d="scan'208";a="91162144"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 28 May 2026 13:51:05 -0700
+X-CSE-ConnectionGUID: sP3BtRU9Tz6W4C+dXziY6g==
+X-CSE-MsgGUID: id2jIZK+QE6CnKBlYw7zKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,174,1774335600"; d="scan'208";a="242502690"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by orviesa008.jf.intel.com with ESMTP; 28 May 2026 13:51:03 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
+ Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
+Subject: [PATCH] net/iavf: fix vectorization high ping latency
+Date: Thu, 28 May 2026 20:51:38 +0000
+Message-Id: <20260528205138.286743-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [RFC v3 2/3] lib: add fastmem library
-Date: Thu, 28 May 2026 21:56:17 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F658B3@smartserver.smartshare.dk>
-In-Reply-To: <DS0PR12MB6608CB2B4897A5CB91D2D1C482092@DS0PR12MB6608.namprd12.prod.outlook.com>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC v3 2/3] lib: add fastmem library
-Thread-Index: AQHc7f6g6z2rkNM78U2Gz4CwgnPilbYjJ/gAgABbP3CAAFQsUA==
-References: <20260526085743.64396-4-hofors@lysator.liu.se>
- <20260527173042.93867-1-hofors@lysator.liu.se>
- <20260527173042.93867-3-hofors@lysator.liu.se>
- <98CBD80474FA8B44BF855DF32C47DC35F658AD@smartserver.smartshare.dk>
- <DS0PR12MB6608CB2B4897A5CB91D2D1C482092@DS0PR12MB6608.namprd12.prod.outlook.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Varghese, Vipin" <Vipin.Varghese@amd.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>,
- =?utf-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <hofors@lysator.liu.se>,
- <dev@dpdk.org>
-Cc: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- =?utf-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <mattias.ronnblom@ericsson.com>,
- "Yogaraj Baskaravel" <yogaraj.baskaravel@ericsson.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,89 +58,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBWYXJnaGVzZSwgVmlwaW4gW21haWx0bzpWaXBpbi5WYXJnaGVzZUBhbWQuY29tXQ0K
-PiBTZW50OiBUaHVyc2RheSwgMjggTWF5IDIwMjYgMTYuNDUNCj4gDQo+IFB1YmxpYw0KPiANCj4g
-SGkgQE1vcnRlbiBCcsO4cnVwDQo+IA0KPiA8c25pcHBlZD4NCj4gDQo+ID4NCj4gPiA+ICsvKioN
-Cj4gPiA+ICsgKiBQcmUtcmVzZXJ2ZSBiYWNraW5nIG1lbW9yeS4NCj4gPiA+ICsgKg0KPiA+ID4g
-KyAqIEVuc3VyZXMgdGhhdCBhdCBsZWFzdCBAcCBzaXplIGJ5dGVzIG9mIG1lbXpvbmUtYmFja2Vk
-IG1lbW9yeQ0KPiBhcmUNCj4gPiA+ICsgKiBhdmFpbGFibGUgdG8gdGhlIGFsbG9jYXRvciBvbiBA
-cCBzb2NrZXRfaWQsIHJlc2VydmluZw0KPiBhZGRpdGlvbmFsDQo+ID4gPiArICogbWVtem9uZXMg
-ZnJvbSBFQUwgYXMgbmVlZGVkIHRvIHJlYWNoIHRoYXQgdG90YWwuIFN1YnNlcXVlbnQNCj4gPiA+
-ICsgKiBhbGxvY2F0aW9ucyBzZXJ2ZWQgZnJvbSB0aGUgcHJlLXJlc2VydmVkIG1lbW9yeSBkbyBu
-b3QgaW5jdXINCj4gPiA+ICsgKiBtZW16b25lLXJlc2VydmF0aW9uIGNvc3QuDQo+ID4gPiArICoN
-Cj4gPiA+ICsgKiBUaGUgcmVzZXJ2YXRpb24gaXMgY3VtdWxhdGl2ZTogcmVwZWF0ZWQgY2FsbHMg
-dG8NCj4gPiA+ICsgKiBydGVfZmFzdG1lbV9yZXNlcnZlKCkgd2l0aCB0aGUgc2FtZSBAcCBzb2Nr
-ZXRfaWQgZ3JvdyB0aGUNCj4gPiA+ICsgKiByZXNlcnZhdGlvbiBtb25vdG9uaWNhbGx5LiBSZXNl
-cnZlZCBtZW1vcnkgaXMgbmV2ZXIgcmV0dXJuZWQgdG8NCj4gPiA+ICsgKiB0aGUgc3lzdGVtIGR1
-cmluZyB0aGUgYWxsb2NhdG9yJ3MgbGlmZXRpbWUuDQo+ID4gPiArICoNCj4gPiA+ICsgKiBBIHR5
-cGljYWwgdXNlIGlzIHRvIGNhbGwgcnRlX2Zhc3RtZW1fcmVzZXJ2ZSgpIG9uY2UgYXQNCj4gPiA+
-ICsgKiBhcHBsaWNhdGlvbiBzdGFydHVwLCB3aXRoIGEgc2l6ZSBjaG9zZW4gdG8gY292ZXIgdGhl
-IGV4cGVjdGVkDQo+ID4gPiArICogc3RlYWR5LXN0YXRlIHdvcmtpbmcgc2V0LiBBbGxvY2F0aW9u
-cyBhbmQgZnJlZXMgZHVyaW5nDQo+ID4gPiArICogc3RlYWR5LXN0YXRlIG9wZXJhdGlvbiB0aGVu
-IGF2b2lkIG1lbXpvbmUgcmVzZXJ2YXRpb25zDQo+IGVudGlyZWx5Lg0KPiA+ID4gKyAqDQo+ID4g
-PiArICogQHBhcmFtIHNpemUNCj4gPiA+ICsgKiAgVGhlIG1pbmltdW0gYW1vdW50IG9mIGJhY2tp
-bmcgbWVtb3J5LCBpbiBieXRlcywgdG8gbWFrZQ0KPiA+ID4gKyAqICBhdmFpbGFibGUgb24gQHAg
-c29ja2V0X2lkLiBUaGUgYWxsb2NhdG9yIG1heSByZXNlcnZlIG1vcmUgdGhhbg0KPiA+ID4gKyAq
-ICB0aGUgcmVxdWVzdGVkIGFtb3VudCBkdWUgdG8gaW50ZXJuYWwgcm91bmRpbmcgKGUuZy4sIHRv
-DQo+IG1lbXpvbmUNCj4gPiA+ICsgKiAgb3IgYmxvY2sgZ3JhbnVsYXJpdHkpLg0KPiA+ID4gKyAq
-DQo+ID4gPiArICogQHBhcmFtIHNvY2tldF9pZA0KPiA+ID4gKyAqICBUaGUgTlVNQSBzb2NrZXQg
-b24gd2hpY2ggdG8gcmVzZXJ2ZSBtZW1vcnksIG9yIFNPQ0tFVF9JRF9BTlkNCj4gPiA+ICsgKiAg
-dG8gbGVhdmUgdGhlIGNob2ljZSB0byB0aGUgYWxsb2NhdG9yLiBXaXRoIFNPQ0tFVF9JRF9BTlks
-IHRoZQ0KPiA+ID4gKyAqICBhbGxvY2F0b3Igc3RhcnRzIG9uIHRoZSBjYWxsaW5nIGxjb3JlJ3Mg
-c29ja2V0IChvciB0aGUgZmlyc3QNCj4gPiA+ICsgKiAgY29uZmlndXJlZCBzb2NrZXQgaWYgdGhl
-IGNhbGxlciBpcyBub3QgYm91bmQgdG8gb25lKSBhbmQgZmFsbHMNCj4gPiA+ICsgKiAgYmFjayB0
-byBvdGhlciBzb2NrZXRzIGlmIHRoZSBwcmVmZXJyZWQgc29ja2V0IGNhbm5vdCBzYXRpc2Z5DQo+
-ID4gPiArICogIHRoZSByZXNlcnZhdGlvbi4NCj4gPiA+ICsgKg0KPiA+ID4gKyAqIEByZXR1cm4N
-Cj4gPiA+ICsgKiAgLSAwOiBTdWNjZXNzLg0KPiA+ID4gKyAqICAtIC1FTk9NRU06IEluc3VmZmlj
-aWVudCBodWdlLXBhZ2UgbWVtb3J5IHRvIHNhdGlzZnkgdGhlDQo+IHJlcXVlc3QuDQo+ID4gPiAr
-ICogIC0gLUVJTlZBTDogSW52YWxpZCBAcCBzb2NrZXRfaWQuDQo+ID4gPiArICovDQo+ID4gPiAr
-X19ydGVfZXhwZXJpbWVudGFsDQo+ID4gPiAraW50DQo+ID4gPiArcnRlX2Zhc3RtZW1fcmVzZXJ2
-ZShzaXplX3Qgc2l6ZSwgaW50IHNvY2tldF9pZCk7DQo+ID4NCj4gPiBAQnJ1Y2UsDQo+ID4gSSB2
-YWd1ZWx5IHJlY2FsbCB0aGF0IHdlIGRpc2N1c3NlZCBzb21ldGhpbmcgYWJvdXQgYnVzc2VzIGFu
-ZCBzb2NrZXRzDQo+IGEgbG9uZyB0aW1lDQo+ID4gYWdvLCBidXQgSSBjYW5ub3QgcmVtZW1iZXIg
-dGhlIGRldGFpbHMuDQo+ID4gSXMgc29ja2V0X2lkIHRoZSByaWdodCB0eXBlIChhbmQgcGFyYW1l
-dGVyIG5hbWUpIHRvIGlkZW50aWZ5IGEgbWVtb3J5DQo+IGJ1cz8NCj4gPg0KPiA+IEBWaXBpbiwN
-Cj4gPiBZb3UgaGF2ZSBiZWVuIHdvcmtpbmcgb24gdG9wb2xvZ3kgYXdhcmVuZXNzLiBTYW1lIHF1
-ZXN0aW9uIHRvIHlvdToNCj4gPiBJcyBzb2NrZXRfaWQgdGhlIHJpZ2h0IHR5cGUgKGFuZCBwYXJh
-bWV0ZXIgbmFtZSkgdG8gaWRlbnRpZnkgYSBtZW1vcnkNCj4gYnVzPw0KPiANCj4gU2hvcnQgYW5z
-d2VyOiBzb2NrZXRfaWQgaXMgbm8gbG9uZ2VyIGEgcHJlY2lzZSBvciBzdWZmaWNpZW50DQo+IGFi
-c3RyYWN0aW9uIHRvIHJlcHJlc2VudCBhIG1lbW9yeSBidXMuDQo+IEJhc2VkIG9uIHRoZSB0b3Bv
-bG9neSB3b3JrIHdpdGggbGliaHdsb2MsIHdl4oCZdmUgb2JzZXJ2ZWQgdGhlIGZvbGxvd2luZw0K
-PiBhY3Jvc3MgQW1wZXJlLCBJbnRlbCwgYW5kIEFNRCBwbGF0Zm9ybXM6DQo+IA0KPiBGZWF0dXJl
-cyBsaWtlIFNOQyAoU3ViLU5VTUEgQ2x1c3RlcmluZykgb24gSW50ZWwgYW5kIE5QUyAoTlVNQSBQ
-ZXINCj4gU29ja2V0KSBvbiBBTUQgY2hhbmdlIGhvdyBzb2NrZXRfaWQgbWFwcyB0byBoYXJkd2Fy
-ZS4NCj4gSW4gdGhlc2UgbW9kZXM6DQo+IA0KPiAxKSBBIHNpbmdsZSBwaHlzaWNhbCBzb2NrZXQg
-Y2FuIGV4cG9zZSBtdWx0aXBsZSBOVU1BIGRvbWFpbnMuDQo+IDIpVGhlc2UgTlVNQSBkb21haW5z
-IGFsaWduIG1vcmUgY2xvc2VseSB3aXRoIG1lbW9yeSBjb250cm9sbGVyDQo+IGdyb3VwaW5ncyAo
-aS5lLiwgbWVtb3J5IGJ1c2VzKSByYXRoZXIgdGhhbiB0aGUgZnVsbCBzb2NrZXQuDQo+IA0KPiAN
-Cj4gRGVwZW5kaW5nIG9uIHRoZSBhcmNoaXRlY3R1cmU6DQo+IGEpIE1lbW9yeSBjb250cm9sbGVy
-cyBtYXkgYmUgY29sbG9jYXRlZCB3aXRoIGNvbXB1dGUgY29yZXMgb3IgcGxhY2VkIG9uDQo+IHNl
-cGFyYXRlIHRpbGVzLg0KPiBiKSBBcyBhIHJlc3VsdCwgc29ja2V0X2lkIGNhbiByZXByZXNlbnQg
-ZGlmZmVyZW50IHNjb3BlcyAoZnVsbCBzb2NrZXQNCj4gdnMuIHN1Yi1zb2NrZXQgZG9tYWlucyks
-IG1ha2luZyBpdCBpbmNvbnNpc3RlbnQuDQo+IA0KPiANCj4gDQo+IEhlbmNlIHByYWN0aWNhbGx5
-OiBJbiBzb21lIGNvbmZpZ3VyYXRpb25zLCBzb2NrZXRfaWQg4omIIG1lbW9yeSBkb21haW4uDQo+
-IEluIG90aGVycywgaXQgaXMgY29hcnNlciB0aGFuIHRoZSBhY3R1YWwgbWVtb3J5IGJ1cyB0b3Bv
-bG9neS4NCj4gDQo+IFRvIGFkZHJlc3MgdGhpcyBhbWJpZ3VpdHksIGluIHRoZSB0b3BvbG9neSBw
-YXRjaGVzICh2NS92NiksIHdlIGFyZQ0KPiBtb3ZpbmcgdG93YXJkIGNsZWFyZXIgc2VwYXJhdGlv
-bjoNCj4gDQo+IGEuIENhY2hlIGRvbWFpbnMgKEwxL0wyL0wzL0w0KSBmb3IgY29tcHV0ZSBsb2Nh
-bGl0eQ0KPiBiLiBOVU1BIGRvbWFpbnMgKG1lbW9yeSArIElPKSBhcyB0aGUgdW5pdCBmb3IgYWxs
-b2NhdGlvbiBsb2NhbGl0eQ0KPiANCj4gVGhpcyBkaXJlY3Rpb24gYmV0dGVyIHJlZmxlY3RzIHJl
-YWwgaGFyZHdhcmUgYW5kIGF2b2lkcyBvdmVybG9hZGluZw0KPiBzb2NrZXRfaWQgd2l0aCBtdWx0
-aXBsZSBtZWFuaW5ncy4NCj4gDQo+IEhhcHB5IHRvIGFsaWduIHRoaXMgd2l0aCB0aGUgdG9wb2xv
-Z3kgbW9kZWwgd2XigJlyZSBpbnRyb2R1Y2luZyBzbyB0aGUNCj4gYWJzdHJhY3Rpb24gcmVtYWlu
-cyBjb25zaXN0ZW50IGdvaW5nIGZvcndhcmQuDQo+IFRoYW5rcywNCj4gVmlwaW4NCg0KVGhhbmsg
-eW91IGZvciB0aGUgcXVpY2sgYW5kIGRldGFpbGVkIHJlc3BvbnNlLCBWaXBpbiENCg0KSSBoYXZl
-bid0IGxvb2tlZCBkZWVwbHkgaW50byB0aGUgdjUvdjYgdG9wb2xvZ3kgcGF0Y2hlcyB5ZXQgKGl0
-J3Mgb24gbXkgVE9ETyBsaXN0KS4NCg0KVGhlIHJ0ZV9mYXN0bWVtIGxpYnJhcnkgYnVpbGRzIG9u
-IHRvcCBvZiB0aGUgcnRlX21lbXpvbmUgbGlicmFyeS4NCg0KU28sIGlmIHRoZSBydGVfbWVtem9u
-ZSBsaWJyYXJ5IGlzIHVwZGF0ZWQgdG8gcmVwbGFjZSB0aGUgbWVhbmluZyBvZiBpdHMgInNvY2tl
-dF9pZCIgcGFyYW1ldGVyIHdpdGggc29tZSBOVU1BIGRvbWFpbiBpZGVudGlmaWVyICh3ZSBiZXR0
-ZXIgcmVuYW1lIHRoZSAic29ja2V0X2lkIiB0byBhIG5ldyBuYW1lICJudW1hX2RvbWFpbl9pZCIp
-LCB0aGVuIHRoZSBydGVfZmFzdG1lbSBsaWJyYXJ5IGNvdWxkIHJlbWFpbiB1bmFmZmVjdGVkLCBh
-bmQgaXRzICJzb2NrZXRfaWQiIHBhcmFtZXRlciB3b3VsZCBiZSBwYXNzZWQgb24gZGlyZWN0bHkg
-dG8gdGhlIHJ0ZV9tZW16b25lIGxpYnJhcnkncyAibnVtYV9kb21haW5faWQiPw0KDQpUaGlzIGlz
-IG15IGNvbmNsdXNpb246IEF0IHRoaXMgcG9pbnQsIHByb3BlciBzdXBwb3J0IGZvciBhbGxvY2F0
-aW5nIG1lbW9yeSBpbiBzcGVjaWZpYyBOVU1BIGRvbWFpbnMgaXMgYW4gcnRlX21lbXpvbmUgbGli
-cmFyeSBpc3N1ZSwgYW5kIG5vdGhpbmcgdG8gd29ycnkgYWJvdXQgZm9yIHRoZSBydGVfZmFzdG1l
-bSBsaWJyYXJ5IC0gaXQgd2lsbCBiZSBhdXRvbWF0aWNhbGx5IHN1cHBvcnRlZCBpbiBydGVfZmFz
-dG1lbSB3aGVuIHN1cHBvcnRlZCBieSBydGVfbWVtem9uZS4NCg0KDQo=
+High ping latency is observed when icmp echo requests are
+sent from a VPP VF and icmp echo replies get delayed by
+~3 seconds which at times, also results in packet loss.
+
+With WB_ON_ITR, the descriptor writeback interval lives in
+the IAVF_VFINT_ITRN1 register. This register only resets
+during a VF reset, so it could be left with a stale or
+uninitialized value causing unreliable or high latency
+writeback like high ping latency with VPP VF.
+
+This patch fixes the issue by adding explicit reinitialization
+of the separate ITR index interval register (IAVF_VFINT_ITRN1)
+to a known 2us value and does not rely on the dynamic control
+register (IAVF_VFINT_DYN_CTLN1) for the same.
+Also, added a low interval value of 2us in IAVF_VFINT_DYN_CTLN1
+ITR index 0 ensuring prompt writeback in polling mode
+regardless of what the PF's adaptive algorithm has set in ITRN.
+
+Fixes: ead06572bd8f ("net/iavf: fix performance with writeback policy")
+Fixes: a08f9cb698c3 ("net/iavf: fix Rx queue interrupt setting")
+Cc: stable@dpdk.org
+
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+---
+ drivers/net/intel/iavf/iavf_ethdev.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index bdf650b822..971c10cefe 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -862,6 +862,16 @@ static int iavf_config_rx_queues_irqs(struct rte_eth_dev *dev,
+ 				       (0 << IAVF_VFINT_DYN_CTLN1_ITR_INDX_SHIFT) |
+ 				       IAVF_VFINT_DYN_CTLN1_WB_ON_ITR_MASK |
+ 				       (2UL << IAVF_VFINT_DYN_CTLN1_INTERVAL_SHIFT));
++			/* The interval value lives in the separate IAVF_VFINT_ITRN1
++			 * index register, which is only cleared on a VF reset
++			 * It is not implicitly re-initialized by the DYN_CTLN1 write
++			 * above, so if it was left dirty by a previous configuration,
++			 * program it explicitly here to the same 2us interval for
++			 * ITR index 0.
++			 */
++			IAVF_WRITE_REG(hw,
++				       IAVF_VFINT_ITRN1(0, vf->msix_base - 1),
++				       2UL);
+ 			/* debug - check for success! the return value
+ 			 * should be 2, offset is 0x2800
+ 			 */
+@@ -2078,9 +2088,16 @@ iavf_dev_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
+ 		return -EIO;
+ 	}
+ 
++	/* Set the ITR for index zero, to 2us to make sure that
++	 * sufficient time for aggregation to occur, but not to
++	 * increase the latency drastically.
++	 */
++
+ 	IAVF_WRITE_REG(hw,
+ 		      IAVF_VFINT_DYN_CTLN1(msix_intr - IAVF_RX_VEC_START),
+-		      IAVF_VFINT_DYN_CTLN1_WB_ON_ITR_MASK);
++		      (0 << IAVF_VFINT_DYN_CTLN1_ITR_INDX_SHIFT) |
++		      IAVF_VFINT_DYN_CTLN1_WB_ON_ITR_MASK |
++		      (2UL << IAVF_VFINT_DYN_CTLN1_INTERVAL_SHIFT));
+ 
+ 	IAVF_WRITE_FLUSH(hw);
+ 	return 0;
+-- 
+2.25.1
+
