@@ -2,68 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E23ECD6E45
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 17:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0CFCD5BD5
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 May 2026 18:09:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 483BE4021F;
-	Thu, 28 May 2026 19:01:06 +0200 (CEST)
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
- [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id 0BD214003C
- for <dev@dpdk.org>; Thu, 28 May 2026 19:01:04 +0200 (CEST)
-Received: by mail-dy1-f181.google.com with SMTP id
- 5a478bee46e88-3042a388168so4491818eec.1
- for <dev@dpdk.org>; Thu, 28 May 2026 10:01:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779987664;
- x=1780592464; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=p0qN3HmLQpwvAAv2aFUlaxdQtixAuPkTl+hD9j/wkFs=;
- b=xiF/Epptb0xyVMgkkpcUi0jlyOTVzvaLFfr4iprFXdGRShDPy2R0PmT3NXmAI2vl07
- i7e3UW83kiqqLXQlJIyEfNCxmcwcwQVvCNN66NEPvSXUJCIFzsPr2DnpFk2rUr5rNk6l
- kVMzO8M2H85BLWeArArY72/wprt4fAogAPjCphtT0H44/bHgeoSm1N6OnUyH0R3GyNwJ
- 2UiSgxdsLA1v1cYdHF6NwhNP+fY1OF/DdrRnUPEz8rk8wjlw//dfypa06wzA1xHl3efE
- oH6PGrbqmJollo0wvKuyP1GqAdMlkHiLxgWazsn0rKYW3H3DqjsJJr7G3fBvXJUz1rMf
- aq0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779987664; x=1780592464;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=p0qN3HmLQpwvAAv2aFUlaxdQtixAuPkTl+hD9j/wkFs=;
- b=No80nux0ikZwsHB+4vzpfrTGFZuh74tTJzC+wnE2QeIbsAuYftQqACLDLw2l5Yb6a6
- RHd2pXnAHRw15dfKwyEU1wvli3NQbUWelxX1Q+30Fc07mRcCiOkFShuQVt892HwGNio8
- K64R0Fy48LIU5TsRHYh0HzhzWPkO/78CmgUJADviHbl8a2xQgw/9HsmVGRvxb5ZQ7y2h
- YoqfNCQoA9EPPRZyVjhCQIp0jnCmhV2M5Kj6qvV9qiPc5DnPJVuzkYosjAaGCJXgCi5T
- dzIDoGb3fJcRUmlhelIWajeI7yQdd20nzGqyW7lXCob29pCWibRhKPk1vEw7IozV2VAs
- xDVw==
-X-Gm-Message-State: AOJu0YxYSAY92OxECBG3z62OJYf9B29XpUpHhHx6+qj4UJ+Kw5Kv8IH/
- xuQVQbqkqol0M9zz5wubNFghpzH+53SNveLpow6/CA1melD46mwnwIhXe23v4nUFM2H8XVs2c19
- Ux5sw
-X-Gm-Gg: Acq92OGWpm4hqlHYfAGDiB54nK+hKrjxdvW2RI0Fp8uNgPnUGdYsfctQ+tK8zYlDxdN
- 5BUIAt8T1TGbYfDsofgmRVyuqw7Es4cM4X9UAHwj4kEHQyp8exSbn5jHlVzFLpkTHm9C2Q+4qFh
- /x6W1fEFLh2YC0uIto4Fhxd39b/sLon/0ORJ1dgZSg5U6ITfbqepCMAb50fAxbknlx/KAD2X522
- j1NPobZqtQAXCba1dfODGBI95/9c8Mpjga88N4TW+jrqrcdaDrpyzEs77yMBnkxpvBxucUeqNO+
- aE0vgFCiVKtk/W3JjJEYqQfJ4tyk37TxZg90JNhCZzTXCSP3kdai5cavPGfq6yyWbliFgeXy4Zn
- dYgjAAnsvpdR+YCkFEXmTO5NL/XO5z+PmwegB/njMLhLvWqU3wYsxdAlisCvb4LWudLBxA1tNk/
- JBUBGwroCyatItM6rIE1yRccH41z0IB/UPdfBJSqFscvtGfvPAic3ruE6EmfX+8aAgyDKQWJan
-X-Received: by 2002:a05:693c:4004:b0:2da:13c6:f27b with SMTP id
- 5a478bee46e88-304dd2befabmr671449eec.5.1779987663394; 
- Thu, 28 May 2026 10:01:03 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30452230dddsm20460574eec.17.2026.05.28.10.01.02
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 28 May 2026 10:01:02 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH] doc: announce removal of flow director
-Date: Thu, 28 May 2026 10:00:58 -0700
-Message-ID: <20260528170059.155964-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id 3E9594021F;
+	Thu, 28 May 2026 20:09:09 +0200 (CEST)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTP id 9FFE34003C
+ for <dev@dpdk.org>; Thu, 28 May 2026 20:09:08 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id 1945CEC01D0;
+ Thu, 28 May 2026 14:09:08 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Thu, 28 May 2026 14:09:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1779991748;
+ x=1780078148; bh=tkDKuAbJj/OpaTomCW622tJpy0Met22DdxrLGCuAXBU=; b=
+ Fz94+aFwvBWMzdzS8zI0INbmeSD2PUso7b7zg6XzzCSZCbiIG1IozDvRoIYCa/8s
+ rThQBgZmiQHkmrGdLrnLQbRBFJMU0seGjH82uNBqMk3sm616sIjbiDOYrHRtBNiw
+ 3fiq9v9Cig/ahf0jqiDo2Fybe3IMw7Iy/corozq8R8s0Mkm1zsz++7Pz9fRCPyGu
+ 8MhqU+47fDlwRvka+T4n6VZT39oDoTPvajHJQRmPMkbNnPXgQxNU3/oB02LjRLT1
+ vW8pK92UTqAZ5KFXEFlkpYITvaW8+JOwuNVKSM1+y9JM/dOwOU2NST0iig2zuJGO
+ gfW0xWfYVlBWl7Q6JZogxA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779991748; x=
+ 1780078148; bh=tkDKuAbJj/OpaTomCW622tJpy0Met22DdxrLGCuAXBU=; b=M
+ okT3AG609doU6iHzf/UNeAb/79q0H16LejOBu0hR4y5M0wsa6Qg41bJS9Kh5Uxvl
+ tAn21RadvUN7I0rCDF6JV7P2RxjwVU+Om72d2T762bS3PnUvvDciwKcqCkZTgBSP
+ Oy0gUjCxEYvo+JZh7I7hmGbUd0ysUGijq5aifTQOJ2sAKBQZZw5Jvw+jZECgri9e
+ ahx+C6Scp+JOzAWXUMdNgIWsCKJty8IRB9bu6Xv3N0BB4TwmiVM5MH6LtdVhFpw5
+ M89bp6LE5pVxofx+nba70U8ia39b2iwXv9coE1AOe/Jwkw8Av/Jy+SxZ+E78Abs4
+ b2g8fC1G+hjQrZ3ogKqaQ==
+X-ME-Sender: <xms:w4QYajsAubsBtoILCxIAkYGB4_kKZEtkajHMPxL6UlW8yPabs9BgQw>
+ <xme:w4QYagwICUZ4oYN2DWqXnnORSUY81ec5nDhXE0G108aDmvKRXU39yiT85pNqvwbxV
+ _ny55m2YgKoKPfTA5aizQ4Q19i0zoSHpBaA0XG9GUT9Xf7ScMda>
+X-ME-Received: <xmr:w4QYapg-ItE3vAJDdSXpQOaKcPxPLm7UcWI18AQ9xMfuAKyb7SmNjhNvyLxT0rMybQ-b5rEVpKAtpizavZ7SKYrYWQ>
+X-ME-Proxy-Cause: dmFkZTGiOPV2v0rPV4fP/C8/B44sg4lwzPotZKG4gdbhU+clNTLdQUv/SIP8Z2b42VrNfN
+ Y+qASdoh992XW1qT2WzQ8Hpt81Ip7JHxUZ0BIlTmACHmD0YPi1z88+NH37T6dFxOaQjYTM
+ eteuCQb2wX3bmIOZrQbCSt6hZMTv2PNr9Pd77YNmUCq/pophWPijwjFRNNz2Q9fsbQEPAW
+ w5p961ajOZHWrZYWeQwWDAX6sSWWXKOjxN9vOVnatApBdubpViwAKYrJ+Be61YTZsDasZO
+ nlMIG1blpL8ltLGVgbxAzX9Kkm1/rp6d18aWymon1Yk9Qy3K1KMogPAa2YDIxGuJfygMF6
+ 62DFgO6WvLjn3HhcPAbQjf+APbUxhLZmTvHKIn5D++M80Ymb5C6g0QhvFFr54hdbYN64HR
+ 7dqiMnWYk+1Pw1ORCHkAlz21aACkgVaJ89XniQUfZoL1aunnkn0ahEex/CTeg5On34NUBb
+ XKpJpzMQ6uC7F2d3XS/5cebz1I/1Jm4/BPKmR3dfPFQnJhdpVSpjWHpS5Dm+WAVYhwvkQq
+ zxNqq42Dg7em1eX2xLBSVrLva0tzRmzJzjgm8LOY1Fx+F+dEMyLMU50XK3+2dIrXDtDbeq
+ yK/o7CIKV93Rao5LYmnPXMF25PFZagLUaQ+qmrw4+PpvIslYLYL0WVkbSJpA
+X-ME-Proxy: <xmx:w4QYakDWhCy65YIhxZbCeYwYh58QuQTf1QQmPk9h9635dm81dl5ZyA>
+ <xmx:w4QYamuvVYQO0zTXlFlz0TAJ03eXsAFyrC_ENP0slf_i37HLoL_ICg>
+ <xmx:w4QYapYblPyb-G41PNy_UvW4dP_DpBBR0q8pMAgzf12gWRNbJGGttg>
+ <xmx:w4QYapUA5wcUkY72YN7d8waobD4wE06h5ZgUT-Iluax9HqLYnVAgjg>
+ <xmx:xIQYapPEj80GjBspwEO5SLNWFhPG68XM3BbKwb9aavHJWJaQhC1Nz2jr>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 28 May 2026 14:09:06 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v15 0/6] Add AI code review tools and AGENTS
+Date: Thu, 28 May 2026 20:09:04 +0200
+Message-ID: <73CXsChyTf-1C9EaTnoFLw@monjalon.net>
+In-Reply-To: <20260521224550.927338-1-stephen@networkplumber.org>
+References: <20260126184205.104629-1-stephen@networkplumber.org>
+ <20260521224550.927338-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,30 +87,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There are still leftover bits in ethdev related to flow director (fdir).
-Will be removing these in 26.11 so give final notice.
+22/05/2026 00:44, Stephen Hemminger:
+> Add guidelines and tooling for AI-assisted code review of DPDK
+> patches.
+> 
+> AGENTS.md provides a two-tier review framework: correctness bugs
+> (resource leaks, use-after-free, race conditions) are reported at
+> >=50% confidence; style issues require >80% with false positive
+> suppression. Mechanical checks handled by checkpatches.sh are
+> excluded to avoid redundant findings.
+> 
+> The analyze-patch.py and review-doc.py scripts support multiple AI
+> providers (Anthropic, OpenAI, xAI, Google) with mbox splitting,
+> prompt caching, direct SMTP sending, and token usage tracking with
+> optional cost estimation.
+> 
+> v15 - reflow AGENTS per doc guidelines
+>     - reduce redundancy in AGENTS (i.e don't overlap other tools)
+>     - move scripts to devtools/ai
+>     - move common code from scripts to one file
+>     - incorporate AI and human reviews
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- doc/guides/rel_notes/deprecation.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Applied with minor adjustments, thanks.
 
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 17f90a6352..f9f1d97f78 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -158,3 +158,11 @@ Deprecation Notices
- * net/iavf: The dynamic mbuf field used to detect LLDP packets on the
-   transmit path in the iavf PMD will be removed in a future release.
-   After removal, only packet type-based detection will be supported.
-+
-+* ethdev: The legacy filtering data structures in ``rte_eth_ctrl.h``,
-+  including the flow director (FDIR) types (``rte_eth_fdir_*``, ``rte_fdir_*``)
-+  and the ntuple/ethertype/SYN/tunnel/input-set filter types, are superseded
-+  by the ``rte_flow`` API and will be removed in DPDK 26.11. The associated
-+  driver-facing definitions in ``ethdev_driver.h`` (``RTE_ETH_FILTER_FDIR``,
-+  ``struct rte_eth_fdir_conf``, ``enum rte_eth_fdir_pballoc_type``,
-+  ``enum rte_fdir_status_mode``) will be removed at the same time.
--- 
-2.53.0
+Note: as discussed together, I've renamed analyze-patch.py
+to review-patch.py for consistency.
+
+Let's see how the community use and improve this new tooling.
+
 
