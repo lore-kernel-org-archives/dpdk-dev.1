@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B42CD6E45
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 06:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD37CD6E49
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 06:53:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 15C7340280;
-	Fri, 29 May 2026 08:29:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2759140280;
+	Fri, 29 May 2026 08:53:49 +0200 (CEST)
 Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
- by mails.dpdk.org (Postfix) with ESMTP id 3904340264
- for <dev@dpdk.org>; Fri, 29 May 2026 08:29:09 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5B06040264
+ for <dev@dpdk.org>; Fri, 29 May 2026 08:53:47 +0200 (CEST)
 Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4gRYNM02Cjz8XrrZ
- for <dev@dpdk.org>; Fri, 29 May 2026 14:29:07 +0800 (CST)
-Received: from szxl2zmapp06.zte.com.cn ([10.1.32.108])
- by mse-fl2.zte.com.cn with SMTP id 64T6SxoX067546
- for <dev@dpdk.org>; Fri, 29 May 2026 14:28:59 +0800 (+08)
+ by mxhk.zte.com.cn (FangMail) with ESMTPS id 4gRYwn4z72z8XrrJ
+ for <dev@dpdk.org>; Fri, 29 May 2026 14:53:45 +0800 (CST)
+Received: from szxlzmapp04.zte.com.cn ([10.5.231.166])
+ by mse-fl2.zte.com.cn with SMTP id 64T6rWvF004625
+ for <dev@dpdk.org>; Fri, 29 May 2026 14:53:32 +0800 (+08)
  (envelope-from chen.wenqiang2@zte.com.cn)
 Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Fri, 29 May 2026 14:29:01 +0800
-X-Zmail-TransId: 3e816a193225001-17bd0
+ by smtp (Zmail) with SMTP; Fri, 29 May 2026 14:53:33 +0800
+X-Zmail-TransId: 3e816a1937e6001-19b02
 X-Zmail-LocalSMTP: 1
 X-Zmail-RealSender: chen.wenqiang2@zte.com.cn
 From: Wenqiang Chen <chen.wenqiang2@zte.com.cn>
 To: dev@dpdk.org
 Cc: ran.ming@zte.com.cn,
  =?UTF-8?q?=E9=99=88=E6=96=87=E5=BC=BA10327674?= <chen.wenqiang2@zte.com.cn>
-Subject: [PATCH] net/zxdh : update MAINTAINERS entry
-Date: Fri, 29 May 2026 13:55:46 +0800
-Message-ID: <20260529055546.81777-1-chen.wenqiang2@zte.com.cn>
+Subject: [PATCH] raw/gdtc : update MAINTAINERS entry
+Date: Fri, 29 May 2026 14:20:58 +0800
+Message-ID: <20260529062058.82782-1-chen.wenqiang2@zte.com.cn>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: multipart/mixed;
 	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 64T6SxoX067546
+X-MAIL: mse-fl2.zte.com.cn 64T6rWvF004625
 X-TLS: YES
 X-ENVELOPE-SENDER: chen.wenqiang2@zte.com.cn
-X-SOURCE-IP: 10.5.228.133 unknown Fri, 29 May 2026 14:29:07 +0800
+X-SOURCE-IP: 10.5.228.133 unknown Fri, 29 May 2026 14:53:45 +0800
 X-CLEAN: YES
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6A193232.001/4gRYNM02Cjz8XrrZ
+X-Fangmail-MID-QID: 6A1937F9.000/4gRYwn4z72z8XrrJ
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
