@@ -2,70 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEEBBCD4F54
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 781C4CD6E49
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:52:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1950B40262;
-	Fri, 29 May 2026 17:46:57 +0200 (CEST)
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com
- [74.125.82.176]) by mails.dpdk.org (Postfix) with ESMTP id 60DC5400D7
- for <dev@dpdk.org>; Fri, 29 May 2026 17:46:55 +0200 (CEST)
-Received: by mail-dy1-f176.google.com with SMTP id
- 5a478bee46e88-304d8e3bb72so828318eec.1
- for <dev@dpdk.org>; Fri, 29 May 2026 08:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780069614;
- x=1780674414; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=JVhoeaXK/cztBJnj0unTXX+jm5t5xCMgJ809DJDvBcA=;
- b=N3PEFiik0RBGAs9sAc6XDaKXYiwwqlAjLVHxx2NftlRrFHdaQYdjtWp1XaSvk0bEOJ
- 5uuYk6wYBqpEjSNtlTy91c2RmBmWG4MGj2jzmK45Q5/iNCUIhYsPaB9NGqh3sI6k/B9z
- tl62KBIbRzjc8pmlSosg27Ks+TisYr/Nnq39vpZ5OYim+Fa9MCAu8ynyAiXOGvwcMLo8
- wMmbjV+vBKs6xnMF6vNxzLU4uIYF9hnryTdZzzLXrhTHDcAOUCH6YV2cdjJoL49S+ZCs
- 96UIrPtbL7EgRvqV9lNzU2KDCTYQ0MwgXf9zFiBh4Hg+nTYy+BwTSLXX8bJA+P4zj0GO
- JodQ==
+	by mails.dpdk.org (Postfix) with ESMTP id 9682D40262;
+	Fri, 29 May 2026 17:52:15 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 64432400D7
+ for <dev@dpdk.org>; Fri, 29 May 2026 17:52:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1780069933;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=tJ/UYGSAhJoHD2OKag7MVcq1MA8u551Vc3k4EQe70GA=;
+ b=HJen8RZEndWQkALZNI6KmX2+OUPSq2OY2G5ZADK5U6/Nm4jI7f83ZhQs92aOlW9Z/t4DHc
+ mo7CPaARWUOyfhz/uVdwvb3kBCOwAlWRCz2pwsibLduRfXjq1bHw7EbUn8rIdjBaG9fQvX
+ P6R/wo/bp8EIH1Qi+5CPSM42dueUDyw=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-JI9gbcEjNB-WVg7vX74ovg-1; Fri, 29 May 2026 11:52:12 -0400
+X-MC-Unique: JI9gbcEjNB-WVg7vX74ovg-1
+X-Mimecast-MFC-AGG-ID: JI9gbcEjNB-WVg7vX74ovg_1780069931
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-39391b06ef8so74652521fa.2
+ for <dev@dpdk.org>; Fri, 29 May 2026 08:52:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780069614; x=1780674414;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20251104; t=1780069931; x=1780674731;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JVhoeaXK/cztBJnj0unTXX+jm5t5xCMgJ809DJDvBcA=;
- b=l9/MscuZQaVL0rSM6HGM6YVklK1BZnkKG09oviqBdYq+aBcol9relIsRRZMlNpC3zk
- Mak9SxTvGbWKNdOGQPa+OtYijieOK0MgpAUtX0x0+wDl5HfGgEYRc/uZiUcogGMVqWq4
- LdVxtVU6yCZMaPcYVT534jURth2cKWQOjYTsRJIZrCBWahw3IVaV3yQlbQMdQ+TKR7pc
- WxSM3qNTm7nx4BXlNTAgoGQg2lvUMWeY+5cn5+cS0sNXjcP0ZMYhirNvgqjsQKaXFl1u
- 1sJjhQgUvgRb1F7tkk8XmPV9wxKHJIvYmxm47dswN57ooj6t9anTIYB4Xczj5U/65kEm
- 1Dgg==
-X-Gm-Message-State: AOJu0Yz++2ym+lPhbik4QPY06gs7mMwa2vm3zVAR9v41hKNt0V3LIudZ
- WCUV468v7OcAWNWboAWVb/WgtZ2glKe/XF9Mmb/Sf6LuJPU6uaFnjcuJdoVuLMKw4qbh31cCfL2
- FW2Pb
-X-Gm-Gg: Acq92OEOmyhZW50ui8oX8YhYh95Ts/rXlEJv+2emZBPEixrlFxcAvjOA+U5pI5FJrjm
- NcK8sH4IavYhFMQ64ww3BHKq0Vb9B3u83v5M50MxLtK90a+cxhO9/BBvRyqNVqs8Y3ahV2b63wu
- N/KZwkTEOXq3ValeArI2xGj3p0pPJINgB8bV9pGxbZsXGU44psMwqqRkbeUvkaspvTY0aHb85ys
- D4BO+2dmNWnrvJpXH1dCEa+vD1koCO/dsiXg3Znrmdm5j4LBd9+oKxavwOddurOWGV3gnHCqK/m
- WN5d5s31Gf6/4TduaXCUovOM/iROPgU5GnwWoz2zmPfF1fCx5wYcRHEGUBwAYaow7P3/mNgxPUK
- EQljAPsI9MgsG6OqN3Wpj+CBBIUjMVHeruGyYndBdt/ePjZkO6GN3dnHm0ZGClk6b+vZHfvYJjl
- xSbVPZapCcRbQ2GFpuulpC+BTUAVPSdo+TnrtTEIf7i0jgdAL3omUMMM5O+sw4m73s9/1iKg7A
-X-Received: by 2002:a05:7301:1293:b0:304:d14b:b706 with SMTP id
- 5a478bee46e88-304fa751469mr145807eec.27.1780069614145; 
- Fri, 29 May 2026 08:46:54 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-304ed5a9d27sm1653143eec.25.2026.05.29.08.46.53
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 29 May 2026 08:46:53 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH] app/test: use memcpy in ipsec test
-Date: Fri, 29 May 2026 08:46:51 -0700
-Message-ID: <20260529154651.128372-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+ bh=tJ/UYGSAhJoHD2OKag7MVcq1MA8u551Vc3k4EQe70GA=;
+ b=g6oqeOR1OvWpd3w16Jvdu4u1h6HDlrE3c1UGf7de7AsW9nCsAi8uiiMiL9t3fFkq2j
+ ESRWoQXS8gI1RlcrE1Zes+WfA7f3PFbhrI6ELdnLnxS5G6Mmvsg37m2nF9KjW9Wo/Dr/
+ egkFB7uc6eVJ89b2x7HdzwlQkc6tiWKDVCeMqNuQWH9z3Bb/I/xcEY+X4rtszEBXGyGT
+ q6jW5dg8KhdsSC5HPxdO7OzDz3PhmDWJn28F00GN9T5mvjx2MQaMzn2rQ83A1vy+zyQo
+ XjFHi4/cU6i4iGxb6xOH0QEzEFHFJXQaKvy31hBgCRgwy36lqR0TP9cb8Z/6UZ7IVxPo
+ JxEg==
+X-Gm-Message-State: AOJu0Yz+JI+pR0VQTUw8E/O/WzHfK4Q+UJE44zrBkm5M6tNP7RUXhLPh
+ JDkd2H2ukTNLG35G51KwO4rda+bsKdQ4bvLboLYgsvWX5qWa/4PUk1iy6cSO8seVszRNB1eAVwd
+ zJM3Z6oBTrGOb9Q3VOLuItxzm52gIHDyRmcmsddWScc5g5O/GPxeBAwqLgv5BV09cad0jA2vWsB
+ kTVNtj1T3HvBLbJ6UYBjs=
+X-Gm-Gg: Acq92OF4aTSoJkTL5bfCBVB2eViWuXeHQLtQbQ5cmuuqAKG7iP+76JNzjdg0pAqQnFY
+ 5CMsC3nqaJKuRdjgOofAWi+ShBgkSzU4MZBhOI/tUZ6ow7P5HEUgmcfx43n+5Qk3Vab3d4VcDfS
+ Y8rvlYl3KdXK3f5PebxySWMb0v9agbdcVhtfzkS9hJrgSS3NV+vtB86gQcmPe11lh9PBs54ucZN
+ WvIOSdEpGifAmopeNi9tEbA8vEjYhb6kECjJlnh3h1bJP8u5T6bnPsu8l+YYH7DDTrmhuYAgu3g
+ pRYL
+X-Received: by 2002:a2e:8198:0:b0:393:8ba5:3d01 with SMTP id
+ 38308e7fff4ca-39664f95574mr357101fa.22.1780069930632; 
+ Fri, 29 May 2026 08:52:10 -0700 (PDT)
+X-Received: by 2002:a2e:8198:0:b0:393:8ba5:3d01 with SMTP id
+ 38308e7fff4ca-39664f95574mr357021fa.22.1780069930194; Fri, 29 May 2026
+ 08:52:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260429114503.932575-1-david.marchand@redhat.com>
+ <20260527075654.3780732-1-david.marchand@redhat.com>
+ <20260527075654.3780732-16-david.marchand@redhat.com>
+ <124390f4-6c99-4782-9161-545752784ee8@huawei.com>
+In-Reply-To: <124390f4-6c99-4782-9161-545752784ee8@huawei.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 29 May 2026 17:51:58 +0200
+X-Gm-Features: AVHnY4J0mC3quIIRBqSAek5bKbERjFH5j9tNV19A-LrhJGdOLNt7iIP_zGpdvqU
+Message-ID: <CAJFAV8zVY3n113vSL=X2juZSanbJYXpQsprALQMAhLq6GC9TTQ@mail.gmail.com>
+Subject: Re: [PATCH v4 15/25] bus: support multiple probe
+To: fengchengwen <fengchengwen@huawei.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, stephen@networkplumber.org, 
+ bruce.richardson@intel.com, Parav Pandit <parav@nvidia.com>, 
+ Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, 
+ Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, 
+ Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@altera.com>, 
+ Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, 
+ Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: JYZ4v7eCkNztgNq8sEQ03cjsGZuu6e9_vPe0YHgxcGc_1780069931
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,69 +93,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This test has tables of data that get copied with rte_memcpy.
-But when compiled without always inline the compiler gets confused
-by the inlining of rte_memcpy and thinks that it is possible for AVX
-code to reference past the input data.
+On Fri, 29 May 2026 at 09:27, fengchengwen <fengchengwen@huawei.com> wrote:
+>
+> Currently, the bus probe is still the specific impl which don't test allow_multi_probe flag.
+> And local_dev_probe only cover the plug device case.
 
-Workaround is to use memcpy() which is better for this test anyway
-since regular memcpy has more static checking from compiler and
-analyzers.
+Oh indeed, good catch.
+It is fixed later in the series, but I'll fix this patch in v5.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_ipsec.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Thanks!
 
-diff --git a/app/test/test_ipsec.c b/app/test/test_ipsec.c
-index 139c1e8dec..b5a430996d 100644
---- a/app/test/test_ipsec.c
-+++ b/app/test/test_ipsec.c
-@@ -10,7 +10,6 @@
- #include <rte_hexdump.h>
- #include <rte_mbuf.h>
- #include <rte_malloc.h>
--#include <rte_memcpy.h>
- #include <rte_cycles.h>
- #include <rte_bus_vdev.h>
- #include <rte_ip.h>
-@@ -559,7 +558,7 @@ setup_test_string(struct rte_mempool *mpool, const char *string,
- 			return NULL;
- 		}
- 		if (string != NULL)
--			rte_memcpy(dst, string, t_len);
-+			memcpy(dst, string, t_len);
- 		else
- 			memset(dst, 0, t_len);
- 	}
-@@ -604,22 +603,22 @@ setup_test_string_tunneled(struct rte_mempool *mpool, const char *string,
- 	/* copy outer IP and ESP header */
- 	ipv4_outer.total_length = rte_cpu_to_be_16(t_len);
- 	ipv4_outer.packet_id = rte_cpu_to_be_16(seq);
--	rte_memcpy(dst, &ipv4_outer, sizeof(ipv4_outer));
-+	memcpy(dst, &ipv4_outer, sizeof(ipv4_outer));
- 	dst += sizeof(ipv4_outer);
- 	m->l3_len = sizeof(ipv4_outer);
--	rte_memcpy(dst, &esph, sizeof(esph));
-+	memcpy(dst, &esph, sizeof(esph));
- 	dst += sizeof(esph);
- 
- 	if (string != NULL) {
- 		/* copy payload */
--		rte_memcpy(dst, string, len);
-+		memcpy(dst, string, len);
- 		dst += len;
- 		/* copy pad bytes */
--		rte_memcpy(dst, esp_pad_bytes, RTE_MIN(padlen,
-+		memcpy(dst, esp_pad_bytes, RTE_MIN(padlen,
- 			sizeof(esp_pad_bytes)));
- 		dst += padlen;
- 		/* copy ESP tail header */
--		rte_memcpy(dst, &espt, sizeof(espt));
-+		memcpy(dst, &espt, sizeof(espt));
- 	} else
- 		memset(dst, 0, t_len);
- 
 -- 
-2.53.0
+David Marchand
 
