@@ -2,44 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F2BCD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 11:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA6CCD6E4A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 11:53:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 025AE4021E;
-	Fri, 29 May 2026 13:43:07 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id CE641400D7
- for <dev@dpdk.org>; Fri, 29 May 2026 13:43:05 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id AF7DB2098F;
- Fri, 29 May 2026 13:43:04 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id BB8F94021E;
+	Fri, 29 May 2026 13:53:45 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A3D1C400D7
+ for <dev@dpdk.org>; Fri, 29 May 2026 13:53:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1780055624;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=WZgDBblsqOtHD8wHdV+9/hOIznyToMT9G+WnjguBQu8=;
+ b=NIF3SrHghyw17L+kRWzilxAu7Lf8MU+v30mZVOu4A2ngTxSccRf3N0YUe36v5jO54rPROw
+ rR90QKrBi1pcTKjL6avoDqeqZtCoMxfB5K9NuTlg399uOTkav/16mqigJe3taUYssMs2bR
+ 551Xz1LPJpDUtStjpcWGbb6NP/clyuw=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-252-vyogJYNPPcCgtKJl88PLQg-1; Fri, 29 May 2026 07:53:42 -0400
+X-MC-Unique: vyogJYNPPcCgtKJl88PLQg-1
+X-Mimecast-MFC-AGG-ID: vyogJYNPPcCgtKJl88PLQg_1780055621
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-38e9589b7c7so15109011fa.0
+ for <dev@dpdk.org>; Fri, 29 May 2026 04:53:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780055620; x=1780660420;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=WZgDBblsqOtHD8wHdV+9/hOIznyToMT9G+WnjguBQu8=;
+ b=ihWwWmG7zdaHlz8TX2HgIOoriaMHN7cctHbfrJey/kwJ8Z8EKM06o8IrxBEbUojhzq
+ MjHNDVFcKDAjD5S2Q68LMozjQfiOD5IC6qD7tVpvvfwv6ssbQBcR8j6FvSputx6OcHwJ
+ y1U50gQoFTZh0y72MeHFf6ZwALvLPGRtX+nuOnYohAohVI5C4qMNOqch0gNJQfue/b0g
+ k9miVFq4DBAsscHkLAwcZnmg15awE/HgmEluThC8VFkIB9/tZGVIqZJtfKRubiO/wV/g
+ 2Lm4jiRCCUBoMXmKlI/gWjuG1cQ/daWqpd0aGXLzP8POCMFcZ62qmMgLBGG7ywvJPpeo
+ npjQ==
+X-Gm-Message-State: AOJu0YyLV+AsF8cu0ErGi40c1VGsYbnrQOQ7CwYubStpg1hglBC9G/iJ
+ tPPTZ0bA/fUTGSWyNnfcEAAJHn5Ay6fNLmeh3j7WA/UVYKGaebGsVnd/D1Ra/JGtLNsc6TjKLEE
+ HL1gOe0f/+BKXHMZ0Q7SgjUbgT87LbBk9dquKTWv2enNf1jKaAK0VrNASGCCaZh6DitxMa1a5yo
+ Tnm/0z9/xREfnL5kIL+Hg=
+X-Gm-Gg: Acq92OGXw7W7UvH6SH1VC1+V7htTbmUh1sZHZTa7EyxdBBjBVYwysk2o1FJ2l8ZKhV+
+ BjYq3Ol8FDicQmE+eRlC//tYXP5q8/XeVSiHEGkJMJT6mbCbtM8zd9l2pKM7XAB5ME6hCUPnZmz
+ Zkf1bfTyhHPHnncFBTSL5KG3rX7vqT174r1Uht2KnYCq3jAjmL7i9PTCBFm/sDes1cQIkcshhRU
+ nxkT+EvYlFg1bqKR70oIbqJdj9dQFgSPT+RVAKoBF/LjtGh1mhPwziR8Jg8dvNeEf6V3vSQhub1
+ FUVT
+X-Received: by 2002:a05:651c:24c6:b0:393:f205:eb45 with SMTP id
+ 38308e7fff4ca-396539bf806mr4728961fa.24.1780055620526; 
+ Fri, 29 May 2026 04:53:40 -0700 (PDT)
+X-Received: by 2002:a05:651c:24c6:b0:393:f205:eb45 with SMTP id
+ 38308e7fff4ca-396539bf806mr4728831fa.24.1780055619978; Fri, 29 May 2026
+ 04:53:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v6] mempool: improve cache behaviour and performance
-Date: Fri, 29 May 2026 13:43:02 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F658B5@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <9b627380-0fc4-40b8-b927-c443a7bbba1b@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v6] mempool: improve cache behaviour and performance
-Thread-Index: AdzvSLPJ3wR+ZUS4Q5iPsii111ZdHgADHzig
-References: <20260408141315.904381-1-mb@smartsharesystems.com>
- <20260526140000.175092-1-mb@smartsharesystems.com>
- <9b627380-0fc4-40b8-b927-c443a7bbba1b@huawei.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "fengchengwen" <fengchengwen@huawei.com>, <dev@dpdk.org>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
- "Bruce Richardson" <bruce.richardson@intel.com>,
- "Jingjing Wu" <jingjing.wu@intel.com>,
- "Praveen Shetty" <praveen.shetty@intel.com>,
- "Hemant Agrawal" <hemant.agrawal@nxp.com>,
- "Sachin Saxena" <sachin.saxena@oss.nxp.com>
+References: <20260429114503.932575-1-david.marchand@redhat.com>
+ <20260527075654.3780732-1-david.marchand@redhat.com>
+ <8fe9d77c-9ade-4cbe-ac99-582f95531cb4@huawei.com>
+In-Reply-To: <8fe9d77c-9ade-4cbe-ac99-582f95531cb4@huawei.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 29 May 2026 13:53:27 +0200
+X-Gm-Features: AVHnY4I-WgkOxT_Wddhpmc-Z3OtFntSgiNOKsP_NtMCeADVN25r1X1uQQ-m2XBg
+Message-ID: <CAJFAV8xMupNZD_g4BzWLiiNredbHgpFXueUtUBr4aC4Zvom-Hg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/25] Consolidate bus driver infrastructure
+To: fengchengwen <fengchengwen@huawei.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, stephen@networkplumber.org, 
+ bruce.richardson@intel.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: TWC9E0ashzaKrEVbg5ON9G2eIiVAJa2qtQOPZ93mguc_1780055621
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,76 +86,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBmZW5nY2hlbmd3ZW4gW21haWx0bzpmZW5nY2hlbmd3ZW5AaHVhd2VpLmNvbV0NCj4g
-U2VudDogRnJpZGF5LCAyOSBNYXkgMjAyNiAxMC41NA0KPiANCj4gT24gNS8yNi8yMDI2IDEwOjAw
-IFBNLCBNb3J0ZW4gQnLDuHJ1cCB3cm90ZToNCj4gPiBUaGlzIHBhdGNoIHJlZmFjdG9ycyB0aGUg
-bWVtcG9vbCBjYWNoZSB0byBlbGltaW5hdGUgc29tZSB1bmV4cGVjdGVkDQo+ID4gYmVoYXZpb3Vy
-IGFuZCByZWR1Y2UgdGhlIG1lbXBvb2wgY2FjaGUgbWlzcyByYXRlLg0KPiA+DQo+ID4gMS4NCj4g
-PiBUaGUgYWN0dWFsIGNhY2hlIHNpemUgd2FzIDEuNSB0aW1lcyB0aGUgY2FjaGUgc2l6ZSBzcGVj
-aWZpZWQgYXQgcnVuLQ0KPiB0aW1lDQo+ID4gbWVtcG9vbCBjcmVhdGlvbi4NCj4gPiBUaGlzIHdh
-cyBvYnZpb3VzbHkgbm90IGV4cGVjdGVkIGJ5IGFwcGxpY2F0aW9uIGRldmVsb3BlcnMuDQo+ID4N
-Cj4gPiAyLg0KPiA+IEluIGdldCBvcGVyYXRpb25zLCB0aGUgY2hlY2sgZm9yIHdoZW4gdG8gdXNl
-IHRoZSBjYWNoZSBhcyBib3VuY2UNCj4gYnVmZmVyDQo+ID4gZGlkIG5vdCByZXNwZWN0IHRoZSBy
-dW4tdGltZSBjb25maWd1cmVkIGNhY2hlIHNpemUsDQo+ID4gYnV0IGNvbXBhcmVkIHRvIHRoZSBi
-dWlsZCB0aW1lIG1heGltdW0gcG9zc2libGUgY2FjaGUgc2l6ZQ0KPiA+IChSVEVfTUVNUE9PTF9D
-QUNIRV9NQVhfU0laRSwgZGVmYXVsdCA1MTIpLg0KPiA+IEUuZy4gd2l0aCBhIGNvbmZpZ3VyZWQg
-Y2FjaGUgc2l6ZSBvZiAzMiBvYmplY3RzLCBnZXR0aW5nIDI1NiBvYmplY3RzDQo+ID4gd291bGQg
-Zmlyc3QgZmV0Y2ggMzIgKyAyNTYgPSAyODggb2JqZWN0cyBpbnRvIHRoZSBjYWNoZSwNCj4gPiBh
-bmQgdGhlbiBtb3ZlIHRoZSAyNTYgb2JqZWN0cyBmcm9tIHRoZSBjYWNoZSB0byB0aGUgZGVzdGlu
-YXRpb24NCj4gbWVtb3J5LA0KPiA+IGluc3RlYWQgb2YgZmV0Y2hpbmcgdGhlIDI1NiBvYmplY3Rz
-IGRpcmVjdGx5IHRvIHRoZSBkZXN0aW5hdGlvbg0KPiBtZW1vcnkuDQo+ID4gVGhpcyBoYWQgYSBw
-ZXJmb3JtYW5jZSBjb3N0Lg0KPiA+IEhvd2V2ZXIsIHRoaXMgaXMgdW5saWtlbHkgdG8gb2NjdXIg
-aW4gcmVhbCBhcHBsaWNhdGlvbnMsIHNvIGl0IGlzIG5vdA0KPiA+IGltcG9ydGFudCBpbiBpdHNl
-bGYuDQo+ID4NCj4gPiAzLg0KPiA+IFdoZW4gcHV0dGluZyBvYmplY3RzIGludG8gYSBtZW1wb29s
-LCBhbmQgdGhlIG1lbXBvb2wgY2FjaGUgZGlkIG5vdA0KPiBoYXZlDQo+ID4gZnJlZSBzcGFjZSBm
-b3Igc28gbWFueSBvYmplY3RzLA0KPiA+IHRoZSBjYWNoZSB3YXMgZmx1c2hlZCBjb21wbGV0ZWx5
-LCBhbmQgdGhlIG5ldyBvYmplY3RzIHdlcmUgdGhlbiBwdXQNCj4gaW50bw0KPiA+IHRoZSBjYWNo
-ZS4NCj4gPiBJLmUuIHRoZSBjYWNoZSBkcmFpbiBsZXZlbCB3YXMgemVyby4NCj4gPiBUaGlzIChj
-b21wbGV0ZSBjYWNoZSBmbHVzaCkgbWVhbnQgdGhhdCBhIHN1YnNlcXVlbnQgZ2V0IG9wZXJhdGlv
-bg0KPiAod2l0aA0KPiA+IHRoZSBzYW1lIG51bWJlciBvZiBvYmplY3RzKSBjb21wbGV0ZWx5IGVt
-cHRpZWQgdGhlIGNhY2hlLA0KPiA+IHNvIGFub3RoZXIgc3Vic2VxdWVudCBnZXQgb3BlcmF0aW9u
-IHJlcXVpcmVkIHJlcGxlbmlzaGluZyB0aGUgY2FjaGUuDQo+ID4NCj4gPiBTaW1pbGFybHksDQo+
-ID4gV2hlbiBnZXR0aW5nIG9iamVjdHMgZnJvbSBhIG1lbXBvb2wsIGFuZCB0aGUgbWVtcG9vbCBj
-YWNoZSBkaWQgbm90DQo+IGhvbGQgc28NCj4gPiBtYW55IG9iamVjdHMsDQo+ID4gdGhlIGNhY2hl
-IHdhcyByZXBsZW5pc2hlZCB0byBjYWNoZS0+c2l6ZSArIHJlbWFpbmluZyBvYmplY3RzLA0KPiA+
-IGFuZCB0aGVuICh0aGUgcmVtYWluaW5nIHBhcnQgb2YpIHRoZSByZXF1ZXN0ZWQgb2JqZWN0cyB3
-ZXJlIGZldGNoZWQNCj4gdmlhDQo+ID4gdGhlIGNhY2hlLA0KPiA+IHdoaWNoIGxlZnQgdGhlIGNh
-Y2hlIGZpbGxlZCAodG8gY2FjaGUtPnNpemUpIGF0IGNvbXBsZXRpb24uDQo+ID4gSS5lLiB0aGUg
-Y2FjaGUgcmVmaWxsIGxldmVsIHdhcyBjYWNoZS0+c2l6ZSAocGx1cyBzb21lLCBkZXBlbmRpbmcg
-b24NCj4gPiByZXF1ZXN0IHNpemUpLg0KPiA+DQo+ID4gKDEpIHdhcyBpbXByb3ZlZCBieSBnZW5l
-cmFsbHkgY29tcGFyaW5nIHRvIGNhY2hlLT5zaXplIGluc3RlYWQgb2YNCj4gPiBjYWNoZS0+Zmx1
-c2h0aHJlc2gsIHdoZW4gY29uc2lkZXJpbmcgdGhlIGNhcGFjaXR5IG9mIHRoZSBjYWNoZS4NCj4g
-PiBUaGUgY2FjaGUtPmZsdXNodGhyZXNoIGZpZWxkIGlzIGtlcHQgZm9yIEFQSS9BQkkgY29tcGF0
-aWJpbGl0eQ0KPiBwdXJwb3NlcywNCj4gPiBhbmQgaW5pdGlhbGl6ZWQgdG8gY2FjaGUtPnNpemUg
-aW5zdGVhZCBvZiBjYWNoZS0+c2l6ZSAqIDEuNS4NCj4gPg0KPiA+ICgyKSB3YXMgaW1wcm92ZWQg
-YnkgZ2VuZXJhbGx5IGNvbXBhcmluZyB0byBjYWNoZS0+c2l6ZSAvIDIgaW5zdGVhZCBvZg0KPiA+
-IFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFLCB3aGVuIGNoZWNraW5nIHRoZSBib3VuY2UgYnVm
-ZmVyIGxpbWl0Lg0KPiA+DQo+ID4gKDMpIHdhcyBpbXByb3ZlZCBieSBmbHVzaGluZyBhbmQgcmVw
-bGVuaXNoaW5nIHRoZSBjYWNoZSBieSBoYWxmIGl0cw0KPiBzaXplLA0KPiA+IHNvIGEgZmx1c2gv
-cmVmaWxsIGNhbiBiZSBmb2xsb3dlZCByYW5kb21seSBieSBnZXQgb3IgcHV0IHJlcXVlc3RzLg0K
-PiA+IFRoaXMgYWxzbyByZWR1Y2VkIHRoZSBudW1iZXIgb2Ygb2JqZWN0cyBpbiBlYWNoIGZsdXNo
-L3JlZmlsbA0KPiBvcGVyYXRpb24uDQo+ID4NCj4gPiBBcyBhIGNvbnNlcXVlbmNlIG9mIHRoZXNl
-IGNoYW5nZXMsIHRoZSBzaXplIG9mIHRoZSBhcnJheSBob2xkaW5nIHRoZQ0KPiA+IG9iamVjdHMg
-aW4gdGhlIGNhY2hlIChjYWNoZS0+b2Jqc1tdKSBubyBsb25nZXIgbmVlZHMgdG8gYmUNCj4gPiAy
-ICogUlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJWkUsIGFuZCBjYW4gYmUgcmVkdWNlZCB0bw0KPiA+
-IFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFIGF0IGFuIEFQSS9BQkkgYnJlYWtpbmcgcmVsZWFz
-ZS4NCj4gPg0KPiA+IFBlcmZvcm1hbmNlIGRhdGE6DQo+ID4gV2l0aCBhIHJlYWwgV0FOIE9wdGlt
-aXphdGlvbiBhcHBsaWNhdGlvbiwgd2hlcmUgdGhlIG51bWJlciBvZg0KPiBhbGxvY2F0ZWQNCj4g
-PiBwYWNrZXRzIHZhcmllcyAoYXMgdGhleSBhcmUgaGVsZCBpbiBlLmcuIHNoYXBlciBxdWV1ZXMp
-LCB0aGUgbWVtcG9vbA0KPiA+IGNhY2hlIG1pc3MgcmF0ZSBkcm9wcGVkIGZyb20gY2EuIDEvMjAg
-b2JqZWN0cyB0byBjYS4gMS80OCBvYmplY3RzLg0KPiA+IFRoaXMgd2FzIGRlcGxveWVkIGluIHBy
-b2R1Y3Rpb24gYXQgYW4gSVNQLCBhbmQgdXNpbmcgYW4gZWZmZWN0aXZlDQo+IGNhY2hlDQo+ID4g
-c2l6ZSBvZiAzODQgb2JqZWN0cy4NCj4gDQo+IERvZXMgdGhlIGFwcGxpY2F0aW9uIHJ1biBhcyBh
-IFJUQyAocnVuLXRvLWNvbXBsZXRlKSBtb2RlPw0KDQpZZXMsIHRoZSBhcHBsaWNhdGlvbiBydW5z
-IGFzIFJUQyBtb2RlLg0KDQo+IEhvdyBhYm91dCBwaXBlbGluZSBtb2RlbCB3aGljaCBOSUMgcmVj
-diBwYWNrZXRzIGFuZCBlbnF1ZXVlIHJpbmcsDQo+IGFub3RoZXINCj4gd29yayB0aHJlYWQgZGVx
-dWV1ZSBwYWNrZXRzLCBwcm9jZXNzIHBhY2tldHMgYW5kIHRoZW4gZnJlZSBwYWNrZXRzDQo+IG1i
-dWY/DQo+IA0KDQpJZiBvbmUgdGhyZWFkIG9ubHkgcmVjZWl2ZXMgcGFja2V0cyAobWVtcG9vbCBn
-ZXQpIGFuZCBhbm90aGVyIHRocmVhZCBvbmx5IHRyYW5zbWl0cy9mcmVlcyAobWVtcG9vbCBwdXQp
-LCB0aGVpciBjYWNoZSBtaXNzIHJhdGUgcm91Z2hseSBkb3VibGVzLg0KQnV0IHRoZSBudW1iZXIg
-b2Ygb2JqZWN0cyBjb3BpZWQgdG8vZnJvbSB0aGUgYmFja2VuZCBwZXIgY2FjaGUgbWlzcyByb3Vn
-aGx5IGhhbHZlcyB0byBleGFjdGx5IHNpemUvMi4NCkFuZCB0aGUgYmFja2VuZCBjb3B5IG9wZXJh
-dGlvbnMgYmVjb21lIENQVSBjYWNoZSBhbGlnbmVkIChhc3N1bWluZyBhbGwgdHJhbnNhY3Rpb25z
-IHdpdGggdGhlIGJhY2tlbmQgZ28gdmlhIHRoZSBtZW1wb29sIGNhY2hlKS4NCg0KVGhlIHJlbGVh
-c2Ugbm90ZXMgbWVudGlvbiB0aGF0IHN1Y2ggcGlwZWxpbmVkIGFwcGxpY2F0aW9ucyBzaG91bGQg
-ZG91YmxlIHRoZWlyIGNvbmZpZ3VyZWQgbWVtcG9vbCBjYWNoZSBzaXplLg0KDQo=
+Hello Chengwen,
+
+On Fri, 29 May 2026 at 09:47, fengchengwen <fengchengwen@huawei.com> wrote:
+>
+> Hi David,
+>
+> First, this is a great refactoring, thank you very much.
+>
+> I have tested this patchset on the UACCE bus and it passes. Two issues were
+> found during testing and review:
+>
+> 1. Patch 25/25 fails to apply to the current main branch.
+
+Yes, I am aware: next-net-intel got pulled in main after my rebase for v4.
+
+
+> 2. Patch 15/25 (bus: support multiple probing) has issues with directly
+>    enabling multiple probing. I suggest merging this patch into Patch 17/25.
+
+I am not sure I understand the issue, but I will have a look asap and post a v5.
+
+
+> The UACCE bus part has passed testing. Please add my Acked-by tag to the
+> related commits.
+>
+
+Thanks a lot for your reviews and testing!
+
+
+-- 
+David Marchand
+
