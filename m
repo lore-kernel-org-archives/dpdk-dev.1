@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D110CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D4ACD4F54
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:36:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B8DA4066A;
-	Fri, 29 May 2026 17:36:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8ADB64066D;
+	Fri, 29 May 2026 17:36:42 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 9C927400D6
- for <dev@dpdk.org>; Fri, 29 May 2026 17:36:38 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 450064027D
+ for <dev@dpdk.org>; Fri, 29 May 2026 17:36:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1780068999; x=1811604999;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=EMe91xjzvkNpunV65eDAO7/ncxWEwKfZHQvM+Zbu+PI=;
- b=HYcjy2gMfr+DLV8nqtdqzps704TJwPta5Cs3MNrqxREYtINi0IKjjwds
- x5Di9zt8PLqIISNfR2YgvjkFXmLkkhJnalL53fT40Tvf+L6abDzUQdI7v
- 9T6p7/yVCI43xCU6jQHmkFcq0sJn5DgZhCBoBas/CK4FG5WFhnniknavT
- Pjmn1Q7rbZJCpKwqRai3Aj4ZZB5nfUZVOXYsPWSBaf1MYzGKXL385o7jQ
- DtfPgLAXAt7SFphAtk2Y/VS8VxqHy5+uhzVR/yWx+VtSHifjXajO4e8uK
- wmasIp1YmX/OxM8VVpC/WtVRsYBPXwr/gu4JOU1qYXVL7K7SCUINEqFcT g==;
-X-CSE-ConnectionGUID: Mplm+69MR7KQBke5Mjy1oQ==
-X-CSE-MsgGUID: ZwnY0ARqTYul/HjLg0RKoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="84549765"
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="84549765"
+ bh=Cu9WjkQGi51TXboBTirjDtavD9tjLsVD2WEiwjvEJB8=;
+ b=QXS3K8GUqqqfcLm/leM3Z3WCHKBs5DRQv8amBHFT5/gxDhbrVguY4unh
+ Qz1PNuVGUPZOgYui3yvn+oTP1rAVM18KSv1Or5CSzV02XZtB6r3sm/4Le
+ mUNGyBcD7R+zoM08VRgYxCc8DFifKFNcMdCeA/pf7JwHyboOMc8jGKhP8
+ 0Nrb0OlAyeZ6KoWiE68jER+gHiGzJQngZuf3aLhR08QJr4WPkD221PVr/
+ qFJF891TQwSal0oaUgZvDT/l5vocGNcerVHPiKa41NgkjgNOMyL6W1G0E
+ k/yILvB1RWvxI/NNdKgD2xnx1ZnLYxeCvSHeHaFIwI5MeETfV8ZrZYl6Y w==;
+X-CSE-ConnectionGUID: DvwGeDeCSCygC/ovZpv1oA==
+X-CSE-MsgGUID: 3+/c7e1kS+CKT4mY5CDK+g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="84549766"
+X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="84549766"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 May 2026 08:36:38 -0700
-X-CSE-ConnectionGUID: dpm8aVirRjOeCi8a6iCmyg==
-X-CSE-MsgGUID: 3MNYe86jScOaCjCAfUrDrQ==
+ 29 May 2026 08:36:39 -0700
+X-CSE-ConnectionGUID: 6BqAfxbJQo+g3+Y3se82+g==
+X-CSE-MsgGUID: 2cAHkrjfTfa04R37GahLJg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="281001197"
+X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="281001201"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa001.jf.intel.com with ESMTP; 29 May 2026 08:36:38 -0700
+ by orviesa001.jf.intel.com with ESMTP; 29 May 2026 08:36:39 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v6 01/27] build: add build defines for component name and class
-Date: Fri, 29 May 2026 16:36:03 +0100
-Message-ID: <98e5691ed76afe4a61d0dd1003f7ea9d9006ae67.1780068633.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 02/27] eal/common: add token concatenation macro
+Date: Fri, 29 May 2026 16:36:04 +0100
+Message-ID: <704cee7225126a5d50df80ddc166c9f7a05b832f.1780068633.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1780068633.git.anatoly.burakov@intel.com>
  <cover.1780068633.git.anatoly.burakov@intel.com>
@@ -59,44 +59,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Bruce Richardson <bruce.richardson@intel.com>
+Add `RTE_CONCAT()` macro to enable token concatenation with proper macro
+expansion.
 
-When building each component, pass in -D flags to define for it the
-component class and name. This allows any files which may be used
-multiple times to identify what component is including them.
-
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/meson.build | 2 ++
- lib/meson.build     | 2 ++
- 2 files changed, 4 insertions(+)
+ lib/eal/include/rte_common.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/meson.build b/drivers/meson.build
-index 6ae102e943..35f8447e06 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -263,6 +263,8 @@ foreach subpath:subdirs
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 0a356abae2..05e72e500e 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -918,6 +918,10 @@ __extension__ typedef uint64_t RTE_MARKER64[0];
+ /** Take a macro value and get a string version of it */
+ #define RTE_STR(x) _RTE_STR(x)
  
-         enabled_drivers += name
-         lib_name = '_'.join(['rte', class, name])
-+        cflags += '-DRTE_COMPONENT_CLASS=pmd_' + class
-+        cflags += '-DRTE_COMPONENT_NAME=' + name
-         cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=' + '.'.join([log_prefix, name])
-         if annotate_locks and cc.get_id() == 'clang'
-             cflags += '-DRTE_ANNOTATE_LOCKS'
-diff --git a/lib/meson.build b/lib/meson.build
-index 8f5cfd28a5..af5c160cb8 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -237,6 +237,8 @@ foreach l:libraries
-         cflags += '-DRTE_USE_FUNCTION_VERSIONING'
-     endif
-     cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=lib.' + l
-+    cflags += '-DRTE_COMPONENT_CLASS=lib'
-+    cflags += '-DRTE_COMPONENT_NAME=' + name
-     if annotate_locks and cc.get_id() == 'clang'
-         cflags += '-DRTE_ANNOTATE_LOCKS'
-         cflags += '-Wthread-safety'
++/** Concatenate two tokens after expanding macros in both. */
++#define _RTE_CONCAT2(a, b) a ## b
++#define RTE_CONCAT(a, b) _RTE_CONCAT2(a, b)
++
+ /**
+  * ISO C helpers to modify format strings using variadic macros.
+  * This is a replacement for the ", ## __VA_ARGS__" GNU extension.
 -- 
 2.47.3
 
