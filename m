@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F018CD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE64CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:38:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 65B6340B8F;
-	Fri, 29 May 2026 17:36:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D831F40B9E;
+	Fri, 29 May 2026 17:36:59 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 77C2F40A6E
- for <dev@dpdk.org>; Fri, 29 May 2026 17:36:53 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9A77440685
+ for <dev@dpdk.org>; Fri, 29 May 2026 17:36:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780069014; x=1811605014;
+ t=1780069015; x=1811605015;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=JHuc6Ao48txuad4LCqw250XYMb6zPIRixvAOZOhmExs=;
- b=SsVsN5YPfDXDfe43khchaPwGHPvnTDheUjehfMuyMJk+4btRaaBCTN3T
- 9dGtkSFbOF/HhXXgqXt81vN1tinsCmwxEqOVR4AbjWvNpRRkdL7sGHSqc
- tyo5y8jh+NZafDmVxD9JvUr/yoC1xhIH5WaUToX1sgIQOKpzOPtsTRkCR
- hFknhcw5TVXlWagY1dhiSafbbd7jXKpnc6igSs8Yr8BV+aMg+CI9kjC5u
- h+a9LATjAR04MmUdQ8mFx5RKMGUggNtQQBIcL7FBAnJYs7GSAcW3sf2i9
- 3X4s0xScqTRsvPZXvJTYhU8CLvpTy1F3x/241P5jOaRlEnpKJM6WEpRKE A==;
-X-CSE-ConnectionGUID: xpBzE9wGSvGxBavLgEpEvw==
-X-CSE-MsgGUID: 6YUOGMm1S6Ws0n0EycuejA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="84549797"
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="84549797"
+ bh=OpWXRBCkBbqGyrhDFNwlD6r2D0femJ1/7YSHtbMUlO8=;
+ b=L0Isx1z3IAOL/0Q2r8XIEf3rb1V9kUpHL8bN/FrRF7JNgJ+jZ30IBEgH
+ 26CLRE6r05EJWVwtSbKN4c1+jgtn/dtfXQUlpSrPhCKS27I9VIV8f1c0z
+ tBoNnW15zZAeg/o/VYXQmI+Vk8flFJTS8fgmngAgE65UEs2vst8AySGcw
+ cA/k2+HLh5JXJjf3hc928jPzL1W4iJfK8B32ySJiU4OrBv4u9DEhOypYg
+ fB56Wx12IXE60BovHBPUpumc1VbQWe2RbqghgFx6fO1msRmTUP8RmhCo7
+ 0A8XJxwqrOF77v983XzBEodvzXM0cT8kjCgHr38lHEp6UBdKqfon9wZyv Q==;
+X-CSE-ConnectionGUID: MOiXF04nQXO2CbMQUuWBhA==
+X-CSE-MsgGUID: SsXeajTESX6MMTLrf8k7ag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="84549799"
+X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="84549799"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 May 2026 08:36:53 -0700
-X-CSE-ConnectionGUID: WTAjdXl0QzWyzSz/lzeShg==
-X-CSE-MsgGUID: OLwwBU1/RHy5Fk3W6pJhxw==
+ 29 May 2026 08:36:54 -0700
+X-CSE-ConnectionGUID: K/QeWYbiRWGcc8du5eLPoA==
+X-CSE-MsgGUID: 3jbwHZeCQjWGDFRj1fGo1g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="281001259"
+X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="281001264"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa001.jf.intel.com with ESMTP; 29 May 2026 08:36:53 -0700
+ by orviesa001.jf.intel.com with ESMTP; 29 May 2026 08:36:54 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v6 14/27] net/i40e: use common action checks for ethertype
-Date: Fri, 29 May 2026 16:36:16 +0100
-Message-ID: <b3efee0b78515202ec16897649642d27a54f4cb7.1780068634.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 15/27] net/i40e: use common action checks for FDIR
+Date: Fri, 29 May 2026 16:36:17 +0100
+Message-ID: <85e92c1bbe2d50506fb3c3739f93687aa2ca2b83.1780068634.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1780068633.git.anatoly.burakov@intel.com>
  <cover.1780068633.git.anatoly.burakov@intel.com>
@@ -61,85 +61,192 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Use the common flow action checking parsing infrastructure for checking
-flow actions for ethertype filter.
+flow actions for flow director filter.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_flow.c | 56 +++++++++++++-----------------
- 1 file changed, 24 insertions(+), 32 deletions(-)
+ drivers/net/intel/i40e/i40e_flow.c | 139 ++++++++++++++++-------------
+ 1 file changed, 76 insertions(+), 63 deletions(-)
 
 diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
-index 9f1fb7bbc7..57d83479f1 100644
+index 57d83479f1..1ca70ff71c 100644
 --- a/drivers/net/intel/i40e/i40e_flow.c
 +++ b/drivers/net/intel/i40e/i40e_flow.c
-@@ -1448,43 +1448,35 @@ i40e_flow_parse_ethertype_action(struct rte_eth_dev *dev,
- 				 struct rte_flow_error *error,
- 				 struct rte_eth_ethertype_filter *filter)
+@@ -2486,28 +2486,49 @@ i40e_flow_parse_fdir_action(struct rte_eth_dev *dev,
+ 			    struct i40e_fdir_filter_conf *filter)
  {
--	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+ 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
 -	const struct rte_flow_action *act;
 -	const struct rte_flow_action_queue *act_q;
+-	const struct rte_flow_action_mark *mark_spec = NULL;
 -	uint32_t index = 0;
 +	struct ci_flow_actions parsed_actions = {0};
 +	struct ci_flow_actions_check_param ac_param = {
 +		.allowed_types = (enum rte_flow_action_type[]) {
 +			RTE_FLOW_ACTION_TYPE_QUEUE,
 +			RTE_FLOW_ACTION_TYPE_DROP,
-+			RTE_FLOW_ACTION_TYPE_END,
++			RTE_FLOW_ACTION_TYPE_PASSTHRU,
++			RTE_FLOW_ACTION_TYPE_MARK,
++			RTE_FLOW_ACTION_TYPE_FLAG,
++			RTE_FLOW_ACTION_TYPE_RSS,
++			RTE_FLOW_ACTION_TYPE_END
 +		},
-+		.max_actions = 1,
++		.max_actions = 2,
 +	};
-+	const struct rte_flow_action *action;
++	const struct rte_flow_action *first, *second;
 +	int ret;
  
--	/* Check if the first non-void action is QUEUE or DROP. */
+-	/* Check if the first non-void action is QUEUE or DROP or PASSTHRU. */
 -	NEXT_ITEM_OF_ACTION(act, actions, index);
--	if (act->type != RTE_FLOW_ACTION_TYPE_QUEUE &&
--	    act->type != RTE_FLOW_ACTION_TYPE_DROP) {
--		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
--				   act, "Not supported action.");
--		return -rte_errno;
--	}
+-	switch (act->type) {
 +	ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
 +	if (ret)
 +		return ret;
-+	action = parsed_actions.actions[0];
- 
--	if (act->type == RTE_FLOW_ACTION_TYPE_QUEUE) {
++	first = parsed_actions.actions[0];
++	/* can be NULL */
++	second = parsed_actions.actions[1];
++
++	switch (first->type) {
+ 	case RTE_FLOW_ACTION_TYPE_QUEUE:
 -		act_q = act->conf;
-+	if (action->type == RTE_FLOW_ACTION_TYPE_QUEUE) {
-+		const struct rte_flow_action_queue *act_q = action->conf;
-+		/* check queue index */
-+		if (act_q->index >= dev->data->nb_rx_queues) {
++	{
++		const struct rte_flow_action_queue *act_q = first->conf;
++		/* check against PF constraints */
++		if (!filter->input.flow_ext.is_vf && act_q->index >= pf->dev_data->nb_rx_queues) {
 +			return rte_flow_error_set(error, EINVAL,
-+					RTE_FLOW_ERROR_TYPE_ACTION, action,
-+					"Invalid queue index");
++					RTE_FLOW_ERROR_TYPE_ACTION, first,
++					"Invalid queue ID for FDIR");
 +		}
- 		filter->queue = act_q->index;
--		if (filter->queue >= pf->dev_data->nb_rx_queues) {
++		/* check against VF constraints */
++		if (filter->input.flow_ext.is_vf && act_q->index >= pf->vf_nb_qps) {
++			return rte_flow_error_set(error, EINVAL,
++					RTE_FLOW_ERROR_TYPE_ACTION, first,
++					"Invalid queue ID for FDIR");
++		}
+ 		filter->action.rx_queue = act_q->index;
+-		if ((!filter->input.flow_ext.is_vf &&
+-		     filter->action.rx_queue >= pf->dev_data->nb_rx_queues) ||
+-		    (filter->input.flow_ext.is_vf &&
+-		     filter->action.rx_queue >= pf->vf_nb_qps)) {
 -			rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ACTION,
--					   act, "Invalid queue ID for"
--					   " ethertype_filter.");
+-					   RTE_FLOW_ERROR_TYPE_ACTION, act,
+-					   "Invalid queue ID for FDIR.");
 -			return -rte_errno;
 -		}
--	} else {
-+	} else if (action->type == RTE_FLOW_ACTION_TYPE_DROP) {
- 		filter->flags |= RTE_ETHTYPE_FLAGS_DROP;
+ 		filter->action.behavior = I40E_FDIR_ACCEPT;
+ 		break;
++	}
+ 	case RTE_FLOW_ACTION_TYPE_DROP:
+ 		filter->action.behavior = I40E_FDIR_REJECT;
+ 		break;
+@@ -2515,69 +2536,61 @@ i40e_flow_parse_fdir_action(struct rte_eth_dev *dev,
+ 		filter->action.behavior = I40E_FDIR_PASSTHRU;
+ 		break;
+ 	case RTE_FLOW_ACTION_TYPE_MARK:
++	{
++		const struct rte_flow_action_mark *act_m = first->conf;
+ 		filter->action.behavior = I40E_FDIR_PASSTHRU;
+-		mark_spec = act->conf;
+ 		filter->action.report_status = I40E_FDIR_REPORT_ID;
+-		filter->soft_id = mark_spec->id;
+-	break;
++		filter->soft_id = act_m->id;
++		break;
++	}
+ 	default:
+-		rte_flow_error_set(error, EINVAL,
+-				   RTE_FLOW_ERROR_TYPE_ACTION, act,
+-				   "Invalid action.");
+-		return -rte_errno;
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, first,
++				"Invalid first action for FDIR");
  	}
+ 
+-	/* Check if the next non-void item is MARK or FLAG or END. */
+-	index++;
+-	NEXT_ITEM_OF_ACTION(act, actions, index);
+-	switch (act->type) {
++	/* do we have another? */
++	if (second == NULL)
++		return 0;
++
++	switch (second->type) {
+ 	case RTE_FLOW_ACTION_TYPE_MARK:
+-		if (mark_spec) {
+-			/* Double MARK actions requested */
+-			rte_flow_error_set(error, EINVAL,
+-			   RTE_FLOW_ERROR_TYPE_ACTION, act,
+-			   "Invalid action.");
+-			return -rte_errno;
++	{
++		const struct rte_flow_action_mark *act_m = second->conf;
++		/* only one mark action can be specified */
++		if (first->type == RTE_FLOW_ACTION_TYPE_MARK) {
++			return rte_flow_error_set(error, EINVAL,
++						  RTE_FLOW_ERROR_TYPE_ACTION, second,
++						  "Invalid second action for FDIR");
+ 		}
+-		mark_spec = act->conf;
+ 		filter->action.report_status = I40E_FDIR_REPORT_ID;
+-		filter->soft_id = mark_spec->id;
++		filter->soft_id = act_m->id;
+ 		break;
++	}
+ 	case RTE_FLOW_ACTION_TYPE_FLAG:
+-		if (mark_spec) {
+-			/* MARK + FLAG not supported */
+-			rte_flow_error_set(error, EINVAL,
+-					   RTE_FLOW_ERROR_TYPE_ACTION, act,
+-					   "Invalid action.");
+-			return -rte_errno;
++	{
++		/* mark + flag is unsupported */
++		if (first->type == RTE_FLOW_ACTION_TYPE_MARK) {
++			return rte_flow_error_set(error, EINVAL,
++					RTE_FLOW_ERROR_TYPE_ACTION, second,
++					"Invalid second action for FDIR");
+ 		}
+ 		filter->action.report_status = I40E_FDIR_NO_REPORT_STATUS;
+ 		break;
++	}
+ 	case RTE_FLOW_ACTION_TYPE_RSS:
+-		if (filter->action.behavior != I40E_FDIR_PASSTHRU) {
+-			/* RSS filter won't be next if FDIR did not pass thru */
+-			rte_flow_error_set(error, EINVAL,
+-					   RTE_FLOW_ERROR_TYPE_ACTION, act,
+-					   "Invalid action.");
+-			return -rte_errno;
++		/* RSS filter only can be after passthru or mark */
++		if (first->type != RTE_FLOW_ACTION_TYPE_PASSTHRU &&
++				first->type != RTE_FLOW_ACTION_TYPE_MARK) {
++			return rte_flow_error_set(error, EINVAL,
++					RTE_FLOW_ERROR_TYPE_ACTION, second,
++					"Invalid second action for FDIR");
+ 		}
+ 		break;
+-	case RTE_FLOW_ACTION_TYPE_END:
+-		return 0;
+ 	default:
+-		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
+-				   act, "Invalid action.");
+-		return -rte_errno;
+-	}
 -
 -	/* Check if the next non-void item is END */
 -	index++;
 -	NEXT_ITEM_OF_ACTION(act, actions, index);
 -	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
--		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
--				   act, "Not supported action.");
+-		rte_flow_error_set(error, EINVAL,
+-				   RTE_FLOW_ERROR_TYPE_ACTION,
+-				   act, "Invalid action.");
 -		return -rte_errno;
--	}
--
- 	return 0;
- }
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ACTION, second,
++					  "Invalid second action for FDIR");
+ 	}
  
+ 	return 0;
 -- 
 2.47.3
 
