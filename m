@@ -2,155 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468A6CD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BD2CD6E4A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:23:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6253440262;
-	Fri, 29 May 2026 17:10:28 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id B64F64021E
- for <dev@dpdk.org>; Fri, 29 May 2026 17:10:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780067428; x=1811603428;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=ScOgvFqnlthzFzKvl+DsqBaP0B/DOOHsLE4rFNdCxcw=;
- b=kZ2h5CFoND6C2T8E02XR01fwETlJ0uvZjAdsEj2rpJJiaV4S5QgkxE+C
- 7F5kwF+eqhib+JXt/D62hPJqbbLexlSpY2VuglI7jJfus8gN0nz7Ufi2w
- Y+5SFnptgiOWNWcWATPcb8+KLLaJy+Bylk6q3W2BOdZbAFpTK03gGkXT8
- SIm9hEgG3eViEnYWqVBsympNeHui4JzzQiIGhIR/lclzZ7PHfScD9h5jf
- YntHYYjVRexghETiJrsRDmaP/qU9YXT5Wdia6599nK7XvcPp4Dyq+ePgU
- xlPiEgrT3kPzyrjp4RjtvHfj7E1coOExE26kDoVvQLCe1dkmMzW5k02eL Q==;
-X-CSE-ConnectionGUID: /5OpIXbWR2u3TfsoYZ6HRA==
-X-CSE-MsgGUID: hmx1QBZrTgCe9qd/CXa6pQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="98337306"
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="98337306"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 May 2026 08:10:26 -0700
-X-CSE-ConnectionGUID: kqht4+PiTV200HKnzpR/nA==
-X-CSE-MsgGUID: st7PeO2jS063LQckQ3P8fg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="266501678"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 May 2026 08:10:25 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 29 May 2026 08:10:24 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Fri, 29 May 2026 08:10:24 -0700
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.53) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 29 May 2026 08:10:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F/v9jcBTCLvDGTyZ5mqqSWe7Eno5v8rVEr8ImTA0tx3f6d2Np12ma3alWGdLojNqkNbVoV7kusKRDOBsho5slAB+KCSjWxvBcjRleN99C3553Bl2iQI0BSQAAfvbSM5YbOcTsoT8E/UgOx4xYnNRiJqSnrqUsi2zS3kUlTzaAPB5v4mPXEi4qwQBVwUSIBmzBYTMqvvZdcpvTCqmIVJmsxVZMF7+ABJvPbPCTNC6TK38cNafOyqK8x7ubLXdFftou9SEbq2EmBJOl9DbKxnbuGmIJfmepLTVYGAdQO26nQtwbGAX2vSoOOud431KQA7wJLt7dz5aGkiYgwNaYjiScQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DO1o1Gtr81J0wLGgwhaQ+GvliVLYcxKy6J1+51kLW10=;
- b=s4h431pRSyCkU2MyqAcUHTRCeoQ+QksKU3/asiyPIgKvLcfJljs+628Tsr4NzYn7TGIoO3echUlH7BsnZ7yeqYkhbW0m3FPsgpStG2sLzzBzm3ZdLl/80dHZfqLU6nn7HveDkhLnj0+T8cb584B06MlmL/g2P8bKwe1yyobQmnrVCoOkl4Obxaua+AaPCtWp+STybzG4WuPKjAMlIcE/xbLpUm1+5y/o5ErOb3bQyRz08+Ilw0Zw0U7RDhU1vGezes/xX34fEEwhthTml+1bSs8SUFsYUYXlKiqDvuLgVn9GAueMXvDwa4MajuCdl/SZ5yY10/Vk+ZM2uJKvZxiAfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- IA4PR11MB9277.namprd11.prod.outlook.com (2603:10b6:208:55d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Fri, 29 May
- 2026 15:10:22 +0000
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::d2df:4650:72ad:47d4%3]) with mapi id 15.21.0071.014; Fri, 29 May 2026
- 15:10:22 +0000
-Message-ID: <6549b404-6c05-4abb-8978-f84d50511038@intel.com>
-Date: Fri, 29 May 2026 17:10:17 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/5] eal: fix async IPC resource leaks on partial
- failure
-To: Thomas Monjalon <thomas@monjalon.net>
-CC: <dev@dpdk.org>, Jianfeng Tan <jianfeng.tan@intel.com>
-References: <af8325076295d7f5400d6ff19451ea54828b63e9.1773936429.git.anatoly.burakov@intel.com>
- <3K0aB9xhSMWITv5e_T4_Ig@monjalon.net>
-Content-Language: en-US
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-In-Reply-To: <3K0aB9xhSMWITv5e_T4_Ig@monjalon.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DB3PR06CA0027.eurprd06.prod.outlook.com (2603:10a6:8:1::40)
- To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
+	by mails.dpdk.org (Postfix) with ESMTP id 47AD94021E;
+	Fri, 29 May 2026 17:23:33 +0200 (CEST)
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+ by mails.dpdk.org (Postfix) with ESMTP id 19A7E400D7
+ for <dev@dpdk.org>; Fri, 29 May 2026 17:23:32 +0200 (CEST)
+Received: by mail-dl1-f46.google.com with SMTP id
+ a92af1059eb24-132830d8281so2246613c88.1
+ for <dev@dpdk.org>; Fri, 29 May 2026 08:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780068211;
+ x=1780673011; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=jtCnmbHTvwvJ+1z+puwhWmzmgey+2uN8jmYzi/tdNu0=;
+ b=FBSEQEuJ1vPt2EQEM/VajYYBSQDBqUr1j9biNRouUjqSbxcOLF7fsMe8G0OabexIuC
+ hSAQd7k1O/mHoEX+HWYunYVQJ8wnnjGhaGVBce5PBki5qIK7FC1gumeCOrxjvwmzF0j5
+ n2ylneF9r01HArxCOde0f1fkiPAn/f0J3HtL/XsE9cYtZotjF6YgM5Zy5jdEL/eT5X/V
+ KQ5TdQ6F5xxbEU3QAK1qf4YZv/Is8nIlFQdxf4FZ+Ykt9OXz32vF8Fk1OzENR6MSbctr
+ L1sNVHowahtQNwMLDiCXR8evWsq+0NwKDcWE2UgSvR0u5qqA8jTkS1N+BnwhFHvhHYcl
+ 4GrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780068211; x=1780673011;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=jtCnmbHTvwvJ+1z+puwhWmzmgey+2uN8jmYzi/tdNu0=;
+ b=lInlkbMjViI6yjIbjCxZwQyKSOaFvemD8zJuEoT9b1g9wiizD0d3QVk2nQTodgyPv5
+ 9s7FpLepdV6fHwzsJ/wQut5kCQIOyQ+uXQBUr/kmJET1KtWxHnvStECciziRCUMGlzLG
+ BxtP78tzVLr1TIk2TFucIqtRQ16s+7slbMiL2z+iVVfFiFnACxL/cClGoWY6oy2FFMRc
+ VvfcajfkWDPFau/Z8HpSFy/UA7jOOT6QyZsm1b9wgGv+8FPSoGaAAD5HAGnkzv7GDozN
+ 5Zz2J/V+9aKzjZql47GJ+L5R3evz2/iCihovYNArqyBgsGr83r5rE9kBSXReGpYpbGMD
+ EZqg==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ8dKKuy/B9S9Y4jzhqyhLSNYOL0tnbAAdhkRpHRtACi+sL/AEJmVf8GxLuU6Pciyqdb2UY=@dpdk.org
+X-Gm-Message-State: AOJu0Yw/BORMuvVfDo1SO9QDCqbqpuJcnsunpwhY0CE1VyJCakkdRnDX
+ tp2CpLFQ1UAnPLga9GSYHWBD7nvQ3pF7/biwfn0bO8osxMOk64MtBltsIVbdFRQTQmE=
+X-Gm-Gg: Acq92OHCOHpD90w0PJsuoFh3dTCeuTf1lfmduZ654NbMXrPn8I20cQj2YkDbv5tlnfO
+ K/lqnD2/NhBlQA5Byi90U1wJPCDubRErhjWC53xKeDrzvqZCP55wG2TLfoB2DsfcHjefAK1gAIF
+ WH8uo9yXmroYcCVf8LSO3MoENyuH73LC/onIdEle1qeJFNLG4yB7BfmZ82s4Ila0RrBb4HMPlgJ
+ U6FgBXyrUIK/OqIk+GUE3bbqniFM/sa8AvrlX7UpxpSzHDKUUEzDsRtiYmEr2dw7JZNMmvelGET
+ ptQ6FI2V1tWi5hVwaTgFzwNLHrx9VgrrEsJzFQO2oKOH7ujfw0KcVxO0f8Tx2eYMbtVKT3998pI
+ pKBkcXEk5wMXThy/he89OcwitiqVI0usdy3Hk82BA+2EahMN4ao0N2QeiIeyfA8yku3c2iGpNSy
+ zxzBUuPca1PmMtffaD/WDzB/8EoSX8Rfm6mYF5BSoMPjzbNWhYZN0YaqpveebQ1ksqQOd/sWpoQ
+ L0=
+X-Received: by 2002:a05:7022:117:b0:12d:d972:b96e with SMTP id
+ a92af1059eb24-137d426270emr47582c88.20.1780068210751; 
+ Fri, 29 May 2026 08:23:30 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-137b3c69bdfsm1282160c88.9.2026.05.29.08.23.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 29 May 2026 08:23:30 -0700 (PDT)
+Date: Fri, 29 May 2026 08:23:24 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: Sudheendra Sampath <giveback4fun@gmail.com>, <dev@dpdk.org>, Anatoly
+ Burakov <anatoly.burakov@intel.com>, "Sivaprasad Tummala"
+ <sivaprasad.tummala@amd.com>
+Subject: Re: [PATCH] examples: Fix vm_power_manager scratch area to
+ /run/dpdk/powermanager
+Message-ID: <20260529082324.00a5f096@phoenix.local>
+In-Reply-To: <ahlH3peE5oTV3qEz@bricha3-mobl1.ger.corp.intel.com>
+References: <20260528190449.66254-1-giveback4fun@gmail.com>
+ <ahlH3peE5oTV3qEz@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|IA4PR11MB9277:EE_
-X-MS-Office365-Filtering-Correlation-Id: 522266b4-2b51-4ff9-2020-08debd946741
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|18002099003|22082099003|4143699003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info: X2XV64wzhXDVK59ZataAfytrbksAREgtg324s5/Tg+rK+IVsDuoc/VmezvzYQaohv6/XeHn1Md4JnNz8164fqC6tELFdwwHsofSojos8nJ2jQYNFrlBURj4J/9uTgFpWyrSiNrcvd7Jds6PommwdvHWVWmd0H9SJQtRdry41aeJ5rXabZHsbQUowu7xzJVuBGz6uEBg6lvYIEpRqAUGdyj8xyT9MeHe9ZIyR+4J8ZnBcoiCeRFZQzK28HZopyMOlrw+wT59wH3KPy55ncfJ0PBjwsy/8U7IwtoycO/uZS3NKtU8wIso++b+N6TlJqFXePCx6eWuCUwMpsUAwKWa/A9c/X+E8RkwwPyL38UOIBkjgjLXL1D6cJXsNQtf9ZnkszOzQAUp3gi9DHsIYpycojM834SJ18zxNzmME+O1jzBXWv1MLqoqxyG+dLc+EvGIWNx1Pgj9MIOr0RXtBpQIT9Aapnq8cWm0vdRuGE1St89bznGBkMNfaQH2JXPHxh8YbOWxVodFjJh+c5rPy1dAQn0JsQuA1cc9CBrg0Of2X2Wbk/nNBayORt3C/Z3ZQPHgLaXLcRu/RC6n1bCMMqPVuSARY9MUueyd2Al6wzhHDvDFDEpdHz9m0GYq9uOv0uLDk4RqwE7JADoV1l6nSiq+OZef6UaN8/D5T6AqFU3+6TbncChMg/sLH6v20KX+Qgy4p
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(18002099003)(22082099003)(4143699003)(56012099006)(11063799006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N1AzZGFkSStncUtqSTQvNDc4aEZNU3BxUFpmLzg0L2NEL3BURTF5THNXdDQy?=
- =?utf-8?B?VXhmRTVuUUJUZWtpRmVTcG0xM3kzc0h0ZXJoUjNaSm9iQnU1SjAycE9US3dU?=
- =?utf-8?B?cktBZXRabVY3cjNHbC9TcEVNOXNreFpUOGpFbERLU0FQMEtMOFRQN3VzZ1pE?=
- =?utf-8?B?bjdrekRQMU51cnd1RnBjZG1oVVVnalJSNERCRHVWb2RTcFVZMHJPWHVxY0JQ?=
- =?utf-8?B?ZnBqeXVJb0U3N0pUTXcwTk5UdkRpdHgzMkNIMHFNQzNxb29XTHVWemFpTnF6?=
- =?utf-8?B?Nm9vWFQxa3ZWblgvVmJrL2dQVzJWUFd3Y3ZoWTcvMzY3Z0Z5ZzFZZDY0eFFL?=
- =?utf-8?B?ak5xRXNjU0lsT0d3NmtpRXZ5dWVkekd0R21mSVpRNWtDSG1reU5sRWI4dGto?=
- =?utf-8?B?dHJjU1VKaW9valB6Rkp2TTdJaUNlNmpiRXd6NWFGWUJxc0JMamt0QTRnMjJo?=
- =?utf-8?B?ZjhVNW8vY2JTcENPdC9lNlJ4Y2VHNXpENDFVWTM2OFE3K2NNNVBkL3d0K0Mv?=
- =?utf-8?B?Z0tjalRoQ2VXcXBNNWZYREFINXVLUVpkRHp0VmlsbEtmdHpmUG9ocnBkWUlT?=
- =?utf-8?B?a0NhOTVWc0VEL09SVGZ4cUJGQzlCZFU1M1ZYTVJ3QjAzbDhNMHdBR3ZxOFBK?=
- =?utf-8?B?M2xtemc0dU9UUFU2Y1JDMVM4SWEzeDV4Mk1qUjR5TlgyeGZBN3VNZ0JvM3hO?=
- =?utf-8?B?VE5DNDI4YWl4VW1KRFlUMC9GRkpTZTlHbGtKeExxRWhNS0d4RGlVYWtyckc4?=
- =?utf-8?B?SzJNb0tjMVZvMlYveHhVc2NZYjRaN2ZFQlk1QWVadlVRSDJVSmJwSmlYdlBu?=
- =?utf-8?B?MHlEalI4cXIwSS9rTDNQTnlQcUY0RWhLcjFCbHUyYUIyZ0YrUldUcG50dVRP?=
- =?utf-8?B?a0Mzb0FXaEF6N1oreWxzNVBONFRJMVVEWmROVGlENkVCS1drTUN5U3dtbk9q?=
- =?utf-8?B?V0poaFNDZHViSDc2WU5pV2huRlhZN0ZSNFNpNzFLd2JULzRWcVBFV1lTbmpa?=
- =?utf-8?B?c2NTWXRLbGlTU0hIbFNKdDJzT1dTczVtNUQvR3YzMFdSRStMRWhGd0Y0cHZJ?=
- =?utf-8?B?VWYrUGU0eVBOamZ6TnRKTWFLOThmZkcyUkV3cTkrVzZ3NDNYTm95Mmpzc0pz?=
- =?utf-8?B?OVgwek9ZT1JMRjZyRmlleTMrTDg0b3B2ek43V0tXbmFIRWFUdko3NU1SdUJo?=
- =?utf-8?B?MUgvc2lmWndhWHAwY0tTUm5YR0Y4S0FIU2krbG9hV2RoaHhXVERKUm4veHRr?=
- =?utf-8?B?R3dLUDVxNnpFNDFabzk5Y2xsSE9EelpIbmE5c1BicDdaVGxjYjE3eWZwWGh4?=
- =?utf-8?B?UzI4Qkw5QzJYWURrL1NQTHdtSzdZNGhxbldEWmxONXVqVHNzY2Y1MFdoNzlC?=
- =?utf-8?B?VkxpUGovMVRRaVZjcCt2UzZGbllIU3JVTk4vWEN4eHRBVDE2aWRKeVRnL0RB?=
- =?utf-8?B?RDhTQmJ5L0h5RENFZWhIcVByNEF5VUwvTEVNV1h1a0Y2UTBGaW51UlhpR3Fo?=
- =?utf-8?B?V3BTeURrSmRxUGt6YTZvR0VObmpqcjRHbndmbTBUR0F0K0d6UEZYNGVnaXpz?=
- =?utf-8?B?R1FubVdjRjJTbjZrbE13cy80MTk2L0RlcFJrL0ZDSmtlMTkrcHVvYzAxWkZa?=
- =?utf-8?B?MFJrOHBFSnR5NkxvSnB3VXcrRDBZckd3ZTJLK0RXa3NoM2tRNC9aamZZYzkv?=
- =?utf-8?B?REdXeVNHQVBKWXJUY3IzREN1Q0lsVnIvU1pJQ2xEdlBCZHl5Ulp1Z0RBcTZj?=
- =?utf-8?B?aExzbTJINytUMTZyaytQTEJlSVkxeElPOGk1V1p5RlVjdm05VlFoV3RlWmhs?=
- =?utf-8?B?SmxIbE9vUTJjNVFDMGNWTHp2c1psL296Z3ZYVDlpZ3A4T2J4YzIxU0JIb2hL?=
- =?utf-8?B?bGZtZURWV3lkS3h3c3hiYURqTmhiVy9ESWpWUm1NVFd0UnRZLzd4NnlYaVh2?=
- =?utf-8?B?VTMxSitvNUhFTFhvTS9WZUs2d0dxUGhuZnAxSVRKcDByc0psc0RxdFJFbUFC?=
- =?utf-8?B?UU1jTXhZL1d0SXVBS1FCaFlVdW50VXF3bDQ4ZDdxYjdNVDN0dGx5VFJXT2Zi?=
- =?utf-8?B?akhrK0UvaE9jVGp0WmEydk5vbWhNcCt4NlIrODF1UjBvZlFmaitQOWNkaWdk?=
- =?utf-8?B?UzhUZHJXT3hqRmVVemc0M2ZXb2QyUjNTdFVyMmdFcHpzS0ZTRThGeVZaME5W?=
- =?utf-8?B?R1hJTk9rTkN3U2NkSUtSN1dzSGo1ODJsaHV0YWpzTzYwaFlBS1VGRU90NUdV?=
- =?utf-8?B?bVp1dStOK1JTcjFNSFNjTnFqVSsyem9nQlVrTk82SG0rVEVyemVVVkJkbUpD?=
- =?utf-8?B?Z25qaDVid1pjU1Z6MEc2QUcxK2hKRVoybTdHNGdLMlZISzEvRk5iWmlEb2RT?=
- =?utf-8?Q?Y6XUsVmvkOmYQGx8=3D?=
-X-Exchange-RoutingPolicyChecked: cPKFupYFH1f4hZuRhWZZp4qLEMbpJ2Q5XtrQFCttnvHj4KbSgteRVsruKve1H0CuH6ocp4CpRvKT4aStHjwk3F3M7u8YjvchgQApPJ0X899b6MI6k0LNRnkZoPfSxrVdnU5Fo+4RV0trZF68oetbReyNRd2+Sfo6HuEl973VtQRaa0nEtZyNryZeLpyhMKnT9GDtQmIC8YTDAfZvNpZ5/8JJ6O8NglhNfc9QhStRT3YPcSEQq1YJgic89EUdw2Y7GfnX3TG9H7DJFc2f3JuZ9209aLpQWBt4uc7gZ0CCsJGmFEBcDId7NKfSgbPImE2YZsy/lMN11YMxGIerRvflyQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 522266b4-2b51-4ff9-2020-08debd946741
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2026 15:10:22.0390 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QbJmwXW5VvQcCLxD0m6LX4AdOOtYxnxwe/e1qcTX5sS6sej6WdFD78VQ/qicsXnr9sEKIZNk8Qrm9G6AtKZZMvKboiagXuFCRjw1mTMWyP4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9277
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -164,61 +86,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 5/28/2026 4:24 PM, Thomas Monjalon wrote:
-> Hello Anatoly,
-> 
-> 19/03/2026 17:07, Anatoly Burakov:
->> Use a numeric request ID for alarm callback lookup so stale callbacks
->> from rolled-back requests become harmless no-ops.
-> 
-> It seems you forgot to convert 2 calls to rte_eal_alarm_set().
-> 
-> [...]
->>   struct pending_request {
->>   	TAILQ_ENTRY(pending_request) next;
->> +	unsigned long id;
-> [...]
->> +static struct pending_request *
->> +find_pending_request_by_id(unsigned long id)
->> +{
->> +	struct pending_request *r;
->> +
->> +	TAILQ_FOREACH(r, &pending_requests.requests, next) {
->> +		if (r->id == id)
->> +			return r;
->> +	}
->> +
->> +	return NULL;
->> +}
-> [...]
->>   async_reply_handle(void *arg)
->>   {
->>   	struct pending_request *req;
->> +	/* alarm arg carries the request ID packed into a void * via uintptr_t */
-> 
-> No, that's wrong.
-> The pointer passed in some rte_eal_alarm_set() from patch 2
-> is a struct pending_request.
-> 
->> +	unsigned long id = (uintptr_t)arg;
-> 
-> Either you get the id field from arg,
-> or you pass dummy->id to rte_eal_alarm_set().
+On Fri, 29 May 2026 09:01:34 +0100
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-The intent was to do the latter, good catch. Thanks!
+> On Thu, May 28, 2026 at 07:04:48PM +0000, Sudheendra Sampath wrote:
+> > This patch for bug 1832 will do the following:
+> > 1.  If /run/dpdk is not present, it will create it first with and
+> >     then create powermanager directory underneath it.
+> > 2.  If /run/dpdk is present, it will verify it is actually a directory
+> >     before creating subdirectory, powermanager.
+> >   
+> I would suggest using $XDG_RUNTIME_DIR for the directory path, rather than
+> hardcoding it by default. If XDG_RUNTIME_DIR is not set, then maybe
+> consider using /run/dpdk. However, rather than /run/dpdk, I'd suggest using
+> the normal runtime dir path on most distros as the default:
+> /run/user/<uid>.
+> 
+> /Bruce
 
-> 
->>   	pthread_mutex_lock(&pending_requests.lock);
->> -	req = async_reply_handle_thread_unsafe(arg);
->> +	req = find_pending_request_by_id(id);
->> +	if (req != NULL)
->> +		req = async_reply_handle_thread_unsafe(req);
->>   	pthread_mutex_unlock(&pending_requests.lock);
-> 
-> 
-> 
+The login in EAL is a little more detailed.
+The choice is from systemd conventions which follows filesystem hierarchy.
 
 
--- 
-Thanks,
-Anatoly
+int eal_create_runtime_dir(void)
+{
+	const char *directory;
+	char run_dir[PATH_MAX];
+	char tmp[PATH_MAX];
+	int ret;
+
+	/* from RuntimeDirectory= see systemd.exec */
+	directory = getenv("RUNTIME_DIRECTORY");
+	if (directory == NULL) {
+		/*
+		 * Used standard convention defined in
+		 * XDG Base Directory Specification and
+		 * Filesystem Hierarchy Standard.
+		 */
+		if (getuid() == 0)
+			directory = "/var/run";
+		else
+			directory = getenv("XDG_RUNTIME_DIR") ? : "/tmp";
+	}
+
+	/* create DPDK subdirectory under runtime dir */
+	ret = snprintf(tmp, sizeof(tmp), "%s/dpdk", directory);
+	if (ret < 0 || ret == sizeof(tmp)) {
+		EAL_LOG(ERR, "Error creating DPDK runtime path name");
+		return -1;
+	}
+
+	/* create prefix-specific subdirectory under DPDK runtime dir */
+	ret = snprintf(run_dir, sizeof(run_dir), "%s/%s",
+			tmp, eal_get_hugefile_prefix());
+	if (ret < 0 || ret == sizeof(run_dir)) {
+		EAL_LOG(ERR, "Error creating prefix-specific runtime path name");
+		return -1;
+	}
+
+	/* create the path if it doesn't exist. no "mkdir -p" here, so do it
+	 * step by step.
+	 */
+	ret = mkdir(tmp, 0700);
+	if (ret < 0 && errno != EEXIST) {
+		EAL_LOG(ERR, "Error creating '%s': %s",
+			tmp, strerror(errno));
+		return -1;
+	}
+
+	ret = mkdir(run_dir, 0700);
+	if (ret < 0 && errno != EEXIST) {
+		EAL_LOG(ERR, "Error creating '%s': %s",
+			run_dir, strerror(errno));
+		return -1;
+	}
