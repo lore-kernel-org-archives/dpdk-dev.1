@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB8ACD4F54
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5B7CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:37:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD23F4066C;
-	Fri, 29 May 2026 17:36:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EE44340698;
+	Fri, 29 May 2026 17:36:49 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id CA2884065A
- for <dev@dpdk.org>; Fri, 29 May 2026 17:36:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id EB80540668
+ for <dev@dpdk.org>; Fri, 29 May 2026 17:36:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780069004; x=1811605004;
+ t=1780069005; x=1811605005;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=Ewu+YNlL3jOgymdTCFLMVa4OvbFwqKdy32wRSYa6nEI=;
- b=TaRBfoqr2AUa18RlGTYEpH4Iv/7kce+mjRPVCQBSJlRRik9ITMTVJzj9
- sKHCvFxR2OjU+Mmd2fJPfpzexvnaLgZajjCSdF9KuuWwKJJO0VRyzhhzR
- pTTVgokdczMtOq6PnPnECiP5Whxe2AWMcRNTALQh2qHXRUR0IHRQ35fr6
- rGExteWPsUxdzyECq478SluEg71eE1uScB3P052xOcmHd0wD75eTbVYta
- t/eAVfsQvCBp4CaXB2mBcr9cHZ5biYkrQoKbN7sV7eUBNbbxUazGwapcC
- g3xC0XpHyKhNhlKR+MXl9RJsGgZU2lWgio9mSbvKEJtVFLKstxrNNaIAx A==;
-X-CSE-ConnectionGUID: g7kFjfImS+GA04iApMRAnQ==
-X-CSE-MsgGUID: ncF+22AzSAiCi9E4Qj5HTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="84549778"
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="84549778"
+ bh=/C4PuRZCbWKEwdGzgqtKAEu3sf9lskcc/IPMSPOvzWc=;
+ b=VLZfEJ3YkTAlSieONxaWekJQnCDRZSr/cE3tkvV4UG6y5OJhwSmAgp05
+ lAxk9VeozkzLzJUwjiWyeQwhK0XGSNUsFk5f3wzQ57VsJNKKUjvv9zody
+ QHkM4A+OpM9P8o0oIhXKNdjQ4S9Y1d7ax4gynEJZGG3axJNCi+q/AkQKd
+ gQhspceMuATNXKiHKzg4H+OjOCp59PUAlLOcVP3sHTlJOXRXzW1JYvVPD
+ l8yi/C3xn7Sro6hYu3maprYNXARqcz3BkUBL0qftJ0aqDQDb5GOO+/Yfl
+ yZJ6giZ7pJVKAUSWPZfw03+3oIBLb7oNfkX7TDaaGgdEHb4JZJRFS2c2F A==;
+X-CSE-ConnectionGUID: t0fjAxyBR7aUlFDJ9Z2eYA==
+X-CSE-MsgGUID: N79ogJu4S0+REhfReo06OA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="84549780"
+X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="84549780"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 May 2026 08:36:43 -0700
-X-CSE-ConnectionGUID: CcZZK7F6R2KSutT+KenasQ==
-X-CSE-MsgGUID: sB8xU9KvQ7WT31u762M0MA==
+ 29 May 2026 08:36:45 -0700
+X-CSE-ConnectionGUID: qqdH9PXgQGyAbZ7e7U4Wyg==
+X-CSE-MsgGUID: eUyDRkLPSe6LEE0XfYYgmg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="281001220"
+X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="281001223"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa001.jf.intel.com with ESMTP; 29 May 2026 08:36:43 -0700
+ by orviesa001.jf.intel.com with ESMTP; 29 May 2026 08:36:44 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v6 06/27] net/ixgbe: use common checks in syn filter
-Date: Fri, 29 May 2026 16:36:08 +0100
-Message-ID: <fb81ec97b1fefaa354cc7970b572db1228851dc8.1780068633.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 07/27] net/ixgbe: use common checks in L2 tunnel filter
+Date: Fri, 29 May 2026 16:36:09 +0100
+Message-ID: <b07247e0c4a037db717accd9ffcaa21e13e8adc6.1780068633.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1780068633.git.anatoly.burakov@intel.com>
  <cover.1780068633.git.anatoly.burakov@intel.com>
@@ -60,50 +60,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the common attr and action parsing infrastructure in syn filter. Some
-checks have been rearranged or become more stringent due to using common
-infrastructure. In particular, group attr was ignored previously but is
-now explicitly rejected.
+Use the common attr and action parsing infrastructure in L2 tunnel filter.
+Some checks have become more stringent as a result, in particular, group
+attribute is now explicitly rejected instead of being ignored.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_flow.c | 130 +++++++--------------------
- 1 file changed, 32 insertions(+), 98 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_flow.c | 149 +++++++++------------------
+ 1 file changed, 48 insertions(+), 101 deletions(-)
 
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 5816b35f55..fe4ef84dda 100644
+index fe4ef84dda..1d93717ce8 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -935,38 +935,13 @@ ixgbe_parse_ethertype_filter(struct rte_eth_dev *dev, const struct rte_flow_attr
-  * item->last should be NULL.
+@@ -136,6 +136,7 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
+ {
+ 	const struct rte_flow_action *action;
+ 	struct rte_eth_dev_data *dev_data = param->driver_ctx;
++	struct ixgbe_adapter *ad = IXGBE_DEV_PRIVATE_TO_ADAPTER(dev_data->dev_private);
+ 	size_t idx;
+ 
+ 	for (idx = 0; idx < actions->count; idx++) {
+@@ -153,6 +154,17 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
+ 			}
+ 			break;
+ 		}
++		case RTE_FLOW_ACTION_TYPE_VF:
++		{
++			const struct rte_flow_action_vf *vf = action->conf;
++			if (vf->id >= ad->max_vfs) {
++				return rte_flow_error_set(error, EINVAL,
++						RTE_FLOW_ERROR_TYPE_ACTION,
++						action,
++						"VF id out of range");
++			}
++			break;
++		}
+ 		default:
+ 			/* no specific validation */
+ 			break;
+@@ -882,12 +894,6 @@ ixgbe_parse_ethertype_filter(struct rte_eth_dev *dev, const struct rte_flow_attr
+ 	if (ret)
+ 		return ret;
+ 
+-	/* only one action is supported */
+-	if (parsed_actions.count > 1) {
+-		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
+-					  parsed_actions.actions[1],
+-					  "Only one action can be specified at a time");
+-	}
+ 	action = parsed_actions.actions[0];
+ 
+ 	ret = cons_parse_ethertype_filter(pattern, action, filter, error);
+@@ -1133,40 +1139,16 @@ ixgbe_parse_syn_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr
   */
  static int
--cons_parse_syn_filter(const struct rte_flow_attr *attr,
--				const struct rte_flow_item pattern[],
--				const struct rte_flow_action actions[],
--				struct rte_eth_syn_filter *filter,
--				struct rte_flow_error *error)
-+cons_parse_syn_filter(const struct rte_flow_attr *attr, const struct rte_flow_item pattern[],
-+		const struct rte_flow_action_queue *q_act, struct rte_eth_syn_filter *filter,
-+		struct rte_flow_error *error)
+ cons_parse_l2_tn_filter(struct rte_eth_dev *dev,
+-			const struct rte_flow_attr *attr,
+ 			const struct rte_flow_item pattern[],
+-			const struct rte_flow_action actions[],
++			const struct rte_flow_action *action,
+ 			struct ixgbe_l2_tunnel_conf *filter,
+ 			struct rte_flow_error *error)
  {
  	const struct rte_flow_item *item;
+ 	const struct rte_flow_item_e_tag *e_tag_spec;
+ 	const struct rte_flow_item_e_tag *e_tag_mask;
 -	const struct rte_flow_action *act;
- 	const struct rte_flow_item_tcp *tcp_spec;
- 	const struct rte_flow_item_tcp *tcp_mask;
--	const struct rte_flow_action_queue *act_q;
--
+-	const struct rte_flow_action_vf *act_vf;
+ 	struct ixgbe_adapter *ad = IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+ 
 -	if (!pattern) {
 -		rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM_NUM,
--				NULL, "NULL pattern.");
+-			RTE_FLOW_ERROR_TYPE_ITEM_NUM,
+-			NULL, "NULL pattern.");
 -		return -rte_errno;
 -	}
 -
 -	if (!actions) {
 -		rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ACTION_NUM,
--				NULL, "NULL action.");
+-				   RTE_FLOW_ERROR_TYPE_ACTION_NUM,
+-				   NULL, "NULL action.");
 -		return -rte_errno;
 -	}
 -
@@ -113,47 +150,18 @@ index 5816b35f55..fe4ef84dda 100644
 -				   NULL, "NULL attribute.");
 -		return -rte_errno;
 -	}
- 
- 
- 	/* the first not void item should be MAC or IPv4 or IPv6 or TCP */
-@@ -1074,63 +1049,7 @@ cons_parse_syn_filter(const struct rte_flow_attr *attr,
+-
+ 	/* The first not void item should be e-tag. */
+ 	item = next_no_void_pattern(pattern, NULL);
+ 	if (item->type != RTE_FLOW_ITEM_TYPE_E_TAG) {
+@@ -1224,71 +1206,13 @@ cons_parse_l2_tn_filter(struct rte_eth_dev *dev,
  		return -rte_errno;
  	}
  
--	/* check if the first not void action is QUEUE. */
--	act = next_no_void_action(actions, NULL);
--	if (act->type != RTE_FLOW_ACTION_TYPE_QUEUE) {
--		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
--		rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ACTION,
--				act, "Not supported action.");
--		return -rte_errno;
--	}
--
--	act_q = (const struct rte_flow_action_queue *)act->conf;
--	filter->queue = act_q->index;
--	if (filter->queue >= IXGBE_MAX_RX_QUEUE_NUM) {
--		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
--		rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ACTION,
--				act, "Not supported action.");
--		return -rte_errno;
--	}
--
--	/* check if the next not void item is END */
--	act = next_no_void_action(actions, act);
--	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
--		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
--		rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ACTION,
--				act, "Not supported action.");
--		return -rte_errno;
--	}
--
 -	/* parse attr */
 -	/* must be input direction */
 -	if (!attr->ingress) {
--		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
+-		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
 -		rte_flow_error_set(error, EINVAL,
 -			RTE_FLOW_ERROR_TYPE_ATTR_INGRESS,
 -			attr, "Only support ingress.");
@@ -162,7 +170,7 @@ index 5816b35f55..fe4ef84dda 100644
 -
 -	/* not supported */
 -	if (attr->egress) {
--		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
+-		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
 -		rte_flow_error_set(error, EINVAL,
 -			RTE_FLOW_ERROR_TYPE_ATTR_EGRESS,
 -			attr, "Not support egress.");
@@ -171,85 +179,118 @@ index 5816b35f55..fe4ef84dda 100644
 -
 -	/* not supported */
 -	if (attr->transfer) {
--		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
+-		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
 -		rte_flow_error_set(error, EINVAL,
 -			RTE_FLOW_ERROR_TYPE_ATTR_TRANSFER,
 -			attr, "No support for transfer.");
 -		return -rte_errno;
 -	}
-+	filter->queue = q_act->index;
- 
- 	/* Support 2 priorities, the lowest or highest. */
- 	if (!attr->priority) {
-@@ -1141,7 +1060,7 @@ cons_parse_syn_filter(const struct rte_flow_attr *attr,
- 		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
- 		rte_flow_error_set(error, EINVAL,
- 			RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
+-
+-	/* not supported */
+-	if (attr->priority) {
+-		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
+-		rte_flow_error_set(error, EINVAL,
+-			RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
 -			attr, "Not support priority.");
-+			attr, "Priority can be 0 or 0xFFFFFFFF");
- 		return -rte_errno;
+-		return -rte_errno;
+-	}
+-
+-	/* check if the first not void action is VF or PF. */
+-	act = next_no_void_action(actions, NULL);
+-	if (act->type != RTE_FLOW_ACTION_TYPE_VF &&
+-			act->type != RTE_FLOW_ACTION_TYPE_PF) {
+-		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
+-		rte_flow_error_set(error, EINVAL,
+-			RTE_FLOW_ERROR_TYPE_ACTION,
+-			act, "Not supported action.");
+-		return -rte_errno;
+-	}
+-
+-	if (act->type == RTE_FLOW_ACTION_TYPE_VF) {
+-		act_vf = (const struct rte_flow_action_vf *)act->conf;
++	if (action->type == RTE_FLOW_ACTION_TYPE_VF) {
++		const struct rte_flow_action_vf *act_vf = action->conf;
+ 		filter->pool = act_vf->id;
+ 	} else {
+ 		filter->pool = ad->max_vfs;
  	}
  
-@@ -1149,15 +1068,27 @@ cons_parse_syn_filter(const struct rte_flow_attr *attr,
+-	/* check if the next not void item is END */
+-	act = next_no_void_action(actions, act);
+-	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
+-		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
+-		rte_flow_error_set(error, EINVAL,
+-			RTE_FLOW_ERROR_TYPE_ACTION,
+-			act, "Not supported action.");
+-		return -rte_errno;
+-	}
+-
+ 	return 0;
  }
  
- static int
--ixgbe_parse_syn_filter(struct rte_eth_dev *dev,
--				 const struct rte_flow_attr *attr,
--			     const struct rte_flow_item pattern[],
--			     const struct rte_flow_action actions[],
--			     struct rte_eth_syn_filter *filter,
--			     struct rte_flow_error *error)
-+ixgbe_parse_syn_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
-+		const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
-+		struct rte_eth_syn_filter *filter, struct rte_flow_error *error)
+@@ -1300,29 +1224,52 @@ ixgbe_parse_l2_tn_filter(struct rte_eth_dev *dev,
+ 			struct ixgbe_l2_tunnel_conf *l2_tn_filter,
+ 			struct rte_flow_error *error)
  {
- 	int ret;
- 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct rte_eth_dev_data *dev_data = dev->data;
++	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
 +	struct ci_flow_actions parsed_actions;
 +	struct ci_flow_actions_check_param ap_param = {
 +		.allowed_types = (const enum rte_flow_action_type[]){
-+			/* only queue is allowed here */
-+			RTE_FLOW_ACTION_TYPE_QUEUE,
++			/* only vf/pf is allowed here */
++			RTE_FLOW_ACTION_TYPE_VF,
++			RTE_FLOW_ACTION_TYPE_PF,
 +			RTE_FLOW_ACTION_TYPE_END
 +		},
-+		.driver_ctx = dev->data,
++		.driver_ctx = dev_data,
 +		.check = ixgbe_flow_actions_check,
 +		.max_actions = 1,
 +	};
-+	struct ci_flow_attr_check_param attr_param = {
-+		.allow_priority = true,
-+	};
+ 	int ret = 0;
+-	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+-	struct ixgbe_adapter *ad = IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+-	uint16_t vf_num;
+-
+-	ret = cons_parse_l2_tn_filter(dev, attr, pattern,
+-				actions, l2_tn_filter, error);
 +	const struct rte_flow_action *action;
  
- 	if (hw->mac.type != ixgbe_mac_82599EB &&
- 			hw->mac.type != ixgbe_mac_X540 &&
-@@ -1167,16 +1098,19 @@ ixgbe_parse_syn_filter(struct rte_eth_dev *dev,
- 			hw->mac.type != ixgbe_mac_E610)
- 		return -ENOTSUP;
+ 	if (hw->mac.type != ixgbe_mac_X550 &&
+ 		hw->mac.type != ixgbe_mac_X550EM_x &&
+ 		hw->mac.type != ixgbe_mac_X550EM_a &&
+ 		hw->mac.type != ixgbe_mac_E610) {
+-		memset(l2_tn_filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
+ 		rte_flow_error_set(error, EINVAL,
+ 			RTE_FLOW_ERROR_TYPE_ITEM,
+ 			NULL, "Not supported by L2 tunnel filter");
+ 		return -rte_errno;
+ 	}
  
--	ret = cons_parse_syn_filter(attr, pattern,
--					actions, filter, error);
--
--	if (filter->queue >= dev->data->nb_rx_queues)
--		return -rte_errno;
+-	vf_num = ad->max_vfs;
 +	/* validate attributes */
-+	ret = ci_flow_check_attr(attr, &attr_param, error);
++	ret = ci_flow_check_attr(attr, NULL, error);
 +	if (ret)
 +		return ret;
  
+-	if (l2_tn_filter->pool > vf_num)
+-		return -rte_errno;
 +	/* parse requested actions */
 +	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
- 	if (ret)
- 		return ret;
- 
--	return 0;
++	if (ret)
++		return ret;
++
++	/* only one action is supported */
++	if (parsed_actions.count > 1) {
++		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
++					  parsed_actions.actions[1],
++					  "Only one action can be specified at a time");
++	}
 +	action = parsed_actions.actions[0];
 +
-+	return cons_parse_syn_filter(attr, pattern, action->conf, filter, error);
- }
++	ret = cons_parse_l2_tn_filter(dev, pattern, action, l2_tn_filter, error);
  
- /**
+ 	return ret;
+ }
 -- 
 2.47.3
 
