@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AF7CD4F54
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FB8CD6E51
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:38:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 08C1240DCD;
+	by mails.dpdk.org (Postfix) with ESMTP id E817240DD3;
 	Fri, 29 May 2026 17:37:03 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 41889406BB
- for <dev@dpdk.org>; Fri, 29 May 2026 17:36:58 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 677B040B92
+ for <dev@dpdk.org>; Fri, 29 May 2026 17:36:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780069018; x=1811605018;
+ t=1780069020; x=1811605020;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=jdRo9ymSuhJMNcb3xKa70WGmaiVYcTo9eTJxUg/Frdo=;
- b=bk9CpCgacm+PJMKJnf5qpZeEEYAllys5dEj+L1L6kDTSxyPg++aySdlg
- nSTJnikSliLHVoj7ymIvc6HcvG0C+s8PJfMjaMaHNuw5MRCgOjN2/DYXt
- q+S5Z83e60aLuGsMLYfFNG9Pew8uRX8SuNaIe32Oa1j/N8hDy1Dspk0mb
- t+nZ9m7rXMOUJdC+XueC89j3QlX/oO8FmX+nEX9PVRbQLb8tvHh2+BA3p
- 9GIiLpG5NW09kaLe9MhCJT7ZbUhbweQFth+VOaaZibgQM8FpHcwGi4JIH
- Gne4L3ZG+e06pfS6RNLfhS70b+qk5RWx7yTbs4wOrobeasCpCCX/ACSXA A==;
-X-CSE-ConnectionGUID: 5ahT77pTQXSPSYX6LonNZQ==
-X-CSE-MsgGUID: JDOoM8C9TCexBqADiqo32A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="84549804"
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="84549804"
+ bh=cL1diaCkUJC8VLSAsNo+sPkVRj8pFflYTQ18ockJd24=;
+ b=hiMnBZNXhdB/3hqT0sfy/2d+6iuWDxxAloqKyBldQt0taYw7ifOuHsfr
+ p8xIn+CYu4C+zG8mvldfQ6ZVb0Sqn8QOVxg3VPwDnhnWtAlJCIHXVxNlq
+ SKU20OiAgFLzf+iXOiVPjx2/LtaWomLB90xQnWrCRmKUEJtOVVeH256tg
+ Kx+LyRo+uwaJXFKlZ1RzRiC5TtNXaCJoiUyHvZpbhLmA+EYiaO34hKnbe
+ I0IBIDTCy3Zh6kcHuhcIdrmvI+g7Ye9Uluhxnn1Jc9FEQiC0RhRT9eL0z
+ NmjFGX177Nirbj19zNmylat4rJ1x3e4rPuuWfvHTQ4EHU0UFQ8xMVhQ+/ w==;
+X-CSE-ConnectionGUID: mgofHIbWSwKcmpw9uo00yg==
+X-CSE-MsgGUID: a8+J3JHURkyDmI0HkJl/Dw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="84549805"
+X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="84549805"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 May 2026 08:36:58 -0700
-X-CSE-ConnectionGUID: ywvZo1M5QhOT7JCCOD+iqw==
-X-CSE-MsgGUID: wcsI4nRyRoqpPSnL4wOrVg==
+ 29 May 2026 08:36:59 -0700
+X-CSE-ConnectionGUID: euFXJQFiSVmhZgaJ7YNH5A==
+X-CSE-MsgGUID: BQsV/JejSFqrGQd/nX8ZAw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="281001277"
+X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="281001281"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa001.jf.intel.com with ESMTP; 29 May 2026 08:36:58 -0700
+ by orviesa001.jf.intel.com with ESMTP; 29 May 2026 08:36:59 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v6 18/27] net/iavf: use common action checks for IPsec
-Date: Fri, 29 May 2026 16:36:20 +0100
-Message-ID: <c968cdf733aab0051613ae26b283187055f75017.1780068634.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 19/27] net/iavf: use common action checks for hash
+Date: Fri, 29 May 2026 16:36:21 +0100
+Message-ID: <79ca2e8b7cab3588fd819d724edae0ce5816274a.1780068634.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1780068633.git.anatoly.burakov@intel.com>
  <cover.1780068633.git.anatoly.burakov@intel.com>
@@ -61,89 +61,208 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Use the common flow action checking parsing infrastructure for checking
-flow actions for IPsec filter.
+flow actions for hash filter.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/iavf/iavf_ipsec_crypto.c | 35 ++++++++++------------
- 1 file changed, 15 insertions(+), 20 deletions(-)
+ drivers/net/intel/iavf/iavf_hash.c | 143 +++++++++++++++--------------
+ 1 file changed, 72 insertions(+), 71 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-index be9e297486..b2e08da0aa 100644
---- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-+++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-@@ -1745,26 +1745,12 @@ parse_udp_item(const struct rte_flow_item_udp *item, struct rte_udp_hdr *udp)
- 	udp->src_port = item->hdr.src_port;
+diff --git a/drivers/net/intel/iavf/iavf_hash.c b/drivers/net/intel/iavf/iavf_hash.c
+index 1615ba5ce9..9515094402 100644
+--- a/drivers/net/intel/iavf/iavf_hash.c
++++ b/drivers/net/intel/iavf/iavf_hash.c
+@@ -1429,95 +1429,81 @@ iavf_any_invalid_rss_type(enum rte_eth_hash_function rss_func,
  }
  
--static int
--has_security_action(const struct rte_flow_action actions[],
--	const void **session)
--{
--	/* only {SECURITY; END} supported */
--	if (actions[0].type == RTE_FLOW_ACTION_TYPE_SECURITY &&
--		actions[1].type == RTE_FLOW_ACTION_TYPE_END) {
--		*session = actions[0].conf;
--		return true;
--	}
--	return false;
--}
--
- static struct iavf_ipsec_flow_item *
- iavf_ipsec_flow_item_parse(struct rte_eth_dev *ethdev,
- 		const struct rte_flow_item pattern[],
--		const struct rte_flow_action actions[],
-+		const struct rte_security_session *session,
- 		uint32_t type)
+ static int
+-iavf_hash_parse_action(struct iavf_pattern_match_item *match_item,
+-		       const struct rte_flow_action actions[],
+-		       uint64_t pattern_hint, struct iavf_rss_meta *rss_meta,
+-		       struct rte_flow_error *error)
++iavf_hash_parse_rss_type(struct iavf_pattern_match_item *match_item,
++		const struct rte_flow_action_rss *rss,
++		uint64_t pattern_hint, struct iavf_rss_meta *rss_meta,
++		struct rte_flow_error *error)
  {
--	const void *session;
- 	struct iavf_ipsec_flow_item
- 		*ipsec_flow = rte_malloc("security-flow-rule",
- 		sizeof(struct iavf_ipsec_flow_item), 0);
-@@ -1831,9 +1817,6 @@ iavf_ipsec_flow_item_parse(struct rte_eth_dev *ethdev,
- 		goto flow_cleanup;
+-	enum rte_flow_action_type action_type;
+-	const struct rte_flow_action_rss *rss;
+-	const struct rte_flow_action *action;
+ 	uint64_t rss_type;
+ 
+-	/* Supported action is RSS. */
+-	for (action = actions; action->type !=
+-		RTE_FLOW_ACTION_TYPE_END; action++) {
+-		action_type = action->type;
+-		switch (action_type) {
+-		case RTE_FLOW_ACTION_TYPE_RSS:
+-			rss = action->conf;
+-			rss_type = rss->types;
++	rss_meta->rss_algorithm = rss->func == RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ ?
++		VIRTCHNL_RSS_ALG_TOEPLITZ_SYMMETRIC :
++		VIRTCHNL_RSS_ALG_TOEPLITZ_ASYMMETRIC;
+ 
+-			if (rss->func ==
+-			    RTE_ETH_HASH_FUNCTION_SIMPLE_XOR){
+-				rss_meta->rss_algorithm =
+-					VIRTCHNL_RSS_ALG_XOR_ASYMMETRIC;
+-				return rte_flow_error_set(error, ENOTSUP,
+-					RTE_FLOW_ERROR_TYPE_ACTION, action,
+-					"function simple_xor is not supported");
+-			} else if (rss->func ==
+-				   RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ) {
+-				rss_meta->rss_algorithm =
+-					VIRTCHNL_RSS_ALG_TOEPLITZ_SYMMETRIC;
+-			} else {
+-				rss_meta->rss_algorithm =
+-					VIRTCHNL_RSS_ALG_TOEPLITZ_ASYMMETRIC;
+-			}
++	/* If pattern type is raw, no need to refine rss type */
++	if (pattern_hint == IAVF_PHINT_RAW)
++		return 0;
+ 
+-			if (rss->level)
+-				return rte_flow_error_set(error, ENOTSUP,
+-					RTE_FLOW_ERROR_TYPE_ACTION, action,
+-					"a nonzero RSS encapsulation level is not supported");
++	/**
++	 * Check simultaneous use of SRC_ONLY and DST_ONLY
++	 * of the same level.
++	 */
++	rss_type = rte_eth_rss_hf_refine(rss->types);
+ 
+-			if (rss->key_len)
+-				return rte_flow_error_set(error, ENOTSUP,
+-					RTE_FLOW_ERROR_TYPE_ACTION, action,
+-					"a nonzero RSS key_len is not supported");
++	if (iavf_any_invalid_rss_type(rss->func, rss_type, match_item->input_set_mask)) {
++		return rte_flow_error_set(error, ENOTSUP,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
++				"RSS type not supported");
++	}
+ 
+-			if (rss->queue_num)
+-				return rte_flow_error_set(error, ENOTSUP,
+-					RTE_FLOW_ERROR_TYPE_ACTION, action,
+-					"a non-NULL RSS queue is not supported");
++	memcpy(&rss_meta->proto_hdrs, match_item->meta, sizeof(struct virtchnl_proto_hdrs));
+ 
+-			/* If pattern type is raw, no need to refine rss type */
+-			if (pattern_hint == IAVF_PHINT_RAW)
+-				break;
++	iavf_refine_proto_hdrs(&rss_meta->proto_hdrs, rss_type, pattern_hint);
+ 
+-			/**
+-			 * Check simultaneous use of SRC_ONLY and DST_ONLY
+-			 * of the same level.
+-			 */
+-			rss_type = rte_eth_rss_hf_refine(rss_type);
++	return 0;
++}
+ 
+-			if (iavf_any_invalid_rss_type(rss->func, rss_type,
+-					match_item->input_set_mask))
+-				return rte_flow_error_set(error, ENOTSUP,
+-						RTE_FLOW_ERROR_TYPE_ACTION,
+-						action, "RSS type not supported");
++static int
++iavf_hash_parse_action_check(const struct ci_flow_actions *actions,
++		const struct ci_flow_actions_check_param *param __rte_unused,
++		struct rte_flow_error *error)
++{
++	const struct rte_flow_action_rss *rss = actions->actions[0]->conf;
+ 
+-			memcpy(&rss_meta->proto_hdrs, match_item->meta,
+-			       sizeof(struct virtchnl_proto_hdrs));
++	/* filter out unsupported RSS functions */
++	switch (rss->func) {
++	case RTE_ETH_HASH_FUNCTION_SIMPLE_XOR:
++	case RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ_SORT:
++		return rte_flow_error_set(error, ENOTSUP,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
++				"Selected RSS hash function not supported");
++	default:
++		break;
++	}
+ 
+-			iavf_refine_proto_hdrs(&rss_meta->proto_hdrs,
+-					       rss_type, pattern_hint);
+-			break;
++	if (rss->level != 0) {
++		return rte_flow_error_set(error, ENOTSUP,
++			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
++			"Nonzero RSS encapsulation level is not supported");
++	}
+ 
+-		case RTE_FLOW_ACTION_TYPE_END:
+-			break;
++	if (rss->key_len != 0) {
++		return rte_flow_error_set(error, ENOTSUP,
++			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
++			"RSS key is not supported");
++	}
+ 
+-		default:
+-			rte_flow_error_set(error, EINVAL,
+-					   RTE_FLOW_ERROR_TYPE_ACTION, action,
+-					   "Invalid action.");
+-			return -rte_errno;
+-		}
++	if (rss->queue_num != 0) {
++		return rte_flow_error_set(error, ENOTSUP,
++			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
++			"RSS queue region is not supported");
  	}
  
--	if (!has_security_action(actions, &session))
--		goto flow_cleanup;
--
- 	if (!iavf_ipsec_crypto_action_valid(ethdev, session,
- 			ipsec_flow->spi))
- 		goto flow_cleanup;
-@@ -1958,6 +1941,14 @@ iavf_ipsec_flow_parse(struct iavf_adapter *ad,
- 		      void **meta,
- 		      struct rte_flow_error *error)
+ 	return 0;
+ }
+ 
+ static int
+-iavf_hash_parse_pattern_action(__rte_unused struct iavf_adapter *ad,
++iavf_hash_parse_pattern_action(struct iavf_adapter *ad,
+ 			       struct iavf_pattern_match_item *array,
+ 			       uint32_t array_len,
+ 			       const struct rte_flow_item pattern[],
+@@ -1526,6 +1512,17 @@ iavf_hash_parse_pattern_action(__rte_unused struct iavf_adapter *ad,
+ 			       void **meta,
+ 			       struct rte_flow_error *error)
  {
 +	struct ci_flow_actions parsed_actions = {0};
 +	struct ci_flow_actions_check_param param = {
 +		.allowed_types = (enum rte_flow_action_type[]){
-+			RTE_FLOW_ACTION_TYPE_SECURITY,
-+			RTE_FLOW_ACTION_TYPE_END,
++			RTE_FLOW_ACTION_TYPE_RSS,
++			RTE_FLOW_ACTION_TYPE_END
 +		},
 +		.max_actions = 1,
++		.driver_ctx = ad,
++		.check = iavf_hash_parse_action_check,
 +	};
- 	struct iavf_pattern_match_item *item = NULL;
- 	int ret = -1;
- 
-@@ -1965,12 +1956,16 @@ iavf_ipsec_flow_parse(struct iavf_adapter *ad,
++	const struct rte_flow_action_rss *rss;
+ 	struct iavf_pattern_match_item *pattern_match_item;
+ 	struct iavf_rss_meta *rss_meta_ptr;
+ 	uint64_t phint = IAVF_PHINT_NONE;
+@@ -1535,6 +1532,10 @@ iavf_hash_parse_pattern_action(__rte_unused struct iavf_adapter *ad,
  	if (ret)
  		return ret;
  
 +	ret = ci_flow_check_actions(actions, &param, &parsed_actions, error);
-+	if (ret < 0)
++	if (ret)
 +		return ret;
 +
- 	item = iavf_search_pattern_match_item(pattern, array, array_len, error);
- 	if (item && item->meta) {
-+		const struct rte_security_session *session = parsed_actions.actions[0]->conf;
- 		uint32_t type = (uint64_t)(item->meta);
- 		struct iavf_ipsec_flow_item *fi =
--				iavf_ipsec_flow_item_parse(ad->vf.eth_dev,
--						pattern, actions, type);
-+				iavf_ipsec_flow_item_parse(ad->vf.eth_dev, pattern, session, type);
- 		if (fi && meta) {
- 			*meta = fi;
- 			ret = 0;
+ 	rss_meta_ptr = rte_zmalloc(NULL, sizeof(*rss_meta_ptr), 0);
+ 	if (!rss_meta_ptr) {
+ 		rte_flow_error_set(error, EINVAL,
+@@ -1567,8 +1568,8 @@ iavf_hash_parse_pattern_action(__rte_unused struct iavf_adapter *ad,
+ 		}
+ 	}
+ 
+-	ret = iavf_hash_parse_action(pattern_match_item, actions, phint,
+-				     rss_meta_ptr, error);
++	rss = parsed_actions.actions[0]->conf;
++	ret = iavf_hash_parse_rss_type(pattern_match_item, rss, phint, rss_meta_ptr, error);
+ 
+ error:
+ 	if (!ret && meta)
 -- 
 2.47.3
 
