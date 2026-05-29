@@ -2,77 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA6CCD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 11:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D11CD4F54
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 12:49:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB8F94021E;
-	Fri, 29 May 2026 13:53:45 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id A3D1C400D7
- for <dev@dpdk.org>; Fri, 29 May 2026 13:53:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1780055624;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=WZgDBblsqOtHD8wHdV+9/hOIznyToMT9G+WnjguBQu8=;
- b=NIF3SrHghyw17L+kRWzilxAu7Lf8MU+v30mZVOu4A2ngTxSccRf3N0YUe36v5jO54rPROw
- rR90QKrBi1pcTKjL6avoDqeqZtCoMxfB5K9NuTlg399uOTkav/16mqigJe3taUYssMs2bR
- 551Xz1LPJpDUtStjpcWGbb6NP/clyuw=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-252-vyogJYNPPcCgtKJl88PLQg-1; Fri, 29 May 2026 07:53:42 -0400
-X-MC-Unique: vyogJYNPPcCgtKJl88PLQg-1
-X-Mimecast-MFC-AGG-ID: vyogJYNPPcCgtKJl88PLQg_1780055621
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-38e9589b7c7so15109011fa.0
- for <dev@dpdk.org>; Fri, 29 May 2026 04:53:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780055620; x=1780660420;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=WZgDBblsqOtHD8wHdV+9/hOIznyToMT9G+WnjguBQu8=;
- b=ihWwWmG7zdaHlz8TX2HgIOoriaMHN7cctHbfrJey/kwJ8Z8EKM06o8IrxBEbUojhzq
- MjHNDVFcKDAjD5S2Q68LMozjQfiOD5IC6qD7tVpvvfwv6ssbQBcR8j6FvSputx6OcHwJ
- y1U50gQoFTZh0y72MeHFf6ZwALvLPGRtX+nuOnYohAohVI5C4qMNOqch0gNJQfue/b0g
- k9miVFq4DBAsscHkLAwcZnmg15awE/HgmEluThC8VFkIB9/tZGVIqZJtfKRubiO/wV/g
- 2Lm4jiRCCUBoMXmKlI/gWjuG1cQ/daWqpd0aGXLzP8POCMFcZ62qmMgLBGG7ywvJPpeo
- npjQ==
-X-Gm-Message-State: AOJu0YyLV+AsF8cu0ErGi40c1VGsYbnrQOQ7CwYubStpg1hglBC9G/iJ
- tPPTZ0bA/fUTGSWyNnfcEAAJHn5Ay6fNLmeh3j7WA/UVYKGaebGsVnd/D1Ra/JGtLNsc6TjKLEE
- HL1gOe0f/+BKXHMZ0Q7SgjUbgT87LbBk9dquKTWv2enNf1jKaAK0VrNASGCCaZh6DitxMa1a5yo
- Tnm/0z9/xREfnL5kIL+Hg=
-X-Gm-Gg: Acq92OGXw7W7UvH6SH1VC1+V7htTbmUh1sZHZTa7EyxdBBjBVYwysk2o1FJ2l8ZKhV+
- BjYq3Ol8FDicQmE+eRlC//tYXP5q8/XeVSiHEGkJMJT6mbCbtM8zd9l2pKM7XAB5ME6hCUPnZmz
- Zkf1bfTyhHPHnncFBTSL5KG3rX7vqT174r1Uht2KnYCq3jAjmL7i9PTCBFm/sDes1cQIkcshhRU
- nxkT+EvYlFg1bqKR70oIbqJdj9dQFgSPT+RVAKoBF/LjtGh1mhPwziR8Jg8dvNeEf6V3vSQhub1
- FUVT
-X-Received: by 2002:a05:651c:24c6:b0:393:f205:eb45 with SMTP id
- 38308e7fff4ca-396539bf806mr4728961fa.24.1780055620526; 
- Fri, 29 May 2026 04:53:40 -0700 (PDT)
-X-Received: by 2002:a05:651c:24c6:b0:393:f205:eb45 with SMTP id
- 38308e7fff4ca-396539bf806mr4728831fa.24.1780055619978; Fri, 29 May 2026
- 04:53:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E7DA84021E;
+	Fri, 29 May 2026 14:49:19 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 361D8400D7
+ for <dev@dpdk.org>; Fri, 29 May 2026 14:49:18 +0200 (CEST)
+Received: from alhe-weh-mana-dpdk-s2.corp.microsoft.com (unknown
+ [131.107.1.160])
+ by linux.microsoft.com (Postfix) with ESMTPSA id 7F7ED20B7167;
+ Fri, 29 May 2026 05:49:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7F7ED20B7167
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1780058945;
+ bh=wdU4zl4QQU+OcoHRbdO+gU8zsi8R6zwROhl9x6D854c=;
+ h=From:To:Cc:Subject:Date:From;
+ b=KBh4ZiB2S/8aH/GmnNFusvQai1+bhQQX0LmL185TFecGJFLMEL/6I/+RxaYmeUxuc
+ qbqFm0YHhC9I8+sLgJ2hNmpbZUTEg0ye8oxZT5nl69woqSuNde738uvR1YGznUNjIk
+ zTzAS7wgLIU3zND0WkQ+FNndVGf6nY8lWBfmkOGA=
+From: Wei Hu <weh@linux.microsoft.com>
+To: dev@dpdk.org,
+	stephen@networkplumber.org
+Cc: longli@microsoft.com,
+	weh@microsoft.com
+Subject: [PATCH v4 0/1] net/mana: add device reset support
+Date: Fri, 29 May 2026 05:48:59 -0700
+Message-Id: <20260529124900.146698-1-weh@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20260429114503.932575-1-david.marchand@redhat.com>
- <20260527075654.3780732-1-david.marchand@redhat.com>
- <8fe9d77c-9ade-4cbe-ac99-582f95531cb4@huawei.com>
-In-Reply-To: <8fe9d77c-9ade-4cbe-ac99-582f95531cb4@huawei.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 29 May 2026 13:53:27 +0200
-X-Gm-Features: AVHnY4I-WgkOxT_Wddhpmc-Z3OtFntSgiNOKsP_NtMCeADVN25r1X1uQQ-m2XBg
-Message-ID: <CAJFAV8xMupNZD_g4BzWLiiNredbHgpFXueUtUBr4aC4Zvom-Hg@mail.gmail.com>
-Subject: Re: [PATCH v4 00/25] Consolidate bus driver infrastructure
-To: fengchengwen <fengchengwen@huawei.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, stephen@networkplumber.org, 
- bruce.richardson@intel.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: TWC9E0ashzaKrEVbg5ON9G2eIiVAJa2qtQOPZ93mguc_1780055621
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,35 +47,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Chengwen,
+From: Wei Hu <weh@microsoft.com>
 
-On Fri, 29 May 2026 at 09:47, fengchengwen <fengchengwen@huawei.com> wrote:
->
-> Hi David,
->
-> First, this is a great refactoring, thank you very much.
->
-> I have tested this patchset on the UACCE bus and it passes. Two issues were
-> found during testing and review:
->
-> 1. Patch 25/25 fails to apply to the current main branch.
+Add support for handling hardware service reset events in the
+MANA driver. When the MANA kernel driver receives a hardware
+service event, it initiates a device reset and notifies userspace
+via IBV_EVENT_DEVICE_FATAL. The MANA PMD handles this by
+performing an automatic teardown and recovery sequence.
 
-Yes, I am aware: next-net-intel got pulled in main after my rebase for v4.
+The driver uses ethdev recovery events (ERR_RECOVERING,
+RECOVERY_SUCCESS, RECOVERY_FAILED) to notify upper layers of
+the reset lifecycle, and a PCI device removal event callback
+to distinguish hot-remove from service reset.
 
+Changes since v3:
+- Converted reset_ops_lock from rte_spinlock_t to pthread_mutex_t
+  with PTHREAD_PROCESS_SHARED, since the lock is held across
+  blocking IB verbs calls and IPC with 5s timeout
+- Removed rte_dev_event_callback_unregister retry loop to avoid
+  deadlock: the callback itself blocks on reset_ops_lock, so
+  retrying on -EAGAIN while holding the lock is a deadlock
+- Introduced mana_join_reset_thread() helper using CAS on
+  reset_thread_active to prevent double-join undefined behavior
+- Added reset thread join in mana_dev_uninit to prevent thread
+  leak on device removal
+- Fixed ibv handle leak: priv->ib_ctx is now only set to NULL
+  after ibv_close_device succeeds
+- Fixed misleading "All secondary threads are quiescent" log in
+  mana_mp_reset_enter — changed to "Secondary doorbell pages
+  unmapped" since actual quiescence is enforced by the primary's
+  RCU QSBR check before IPC is sent
+- Changed event list in mana.rst to RST definition list style
+- Squashed documentation into the feature patch per convention
 
-> 2. Patch 15/25 (bus: support multiple probing) has issues with directly
->    enabling multiple probing. I suggest merging this patch into Patch 17/25.
+Changes since v2:
+- Fixed dev_state_qsv memory leak on device removal
+- Fixed reset thread TCB/stack leak: reset_thread_active is now
+  only cleared by the joiner, not the thread itself
+- Fixed second reset crash: removed reset thread join logic from
+  mana_dev_close (inner function) to avoid corrupting dev_state
+  when called from mana_reset_enter
+- Made reset_thread_active RTE_ATOMIC(bool) with explicit ordering
+- Added retry loop for rte_dev_event_callback_unregister on -EAGAIN
+- Initialized condvar/mutex with PTHREAD_PROCESS_SHARED since priv
+  is in hugepage shared memory
+- Added re-check of dev_state after lock acquisition in
+  mana_intr_handler to prevent racing with pci_remove_event_cb
+- Replaced (void *)0 with NULL in mp.c
+- Added lock ownership comment block at mana_reset_enter
+- Documented rte_dev_event_monitor_start() requirement
+- Added mana.rst documentation and release note
 
-I am not sure I understand the issue, but I will have a look asap and post a v5.
+Changes since v1:
+- Removed net/netvsc patch from this series
+- Simplified reset exit: mana_reset_exit calls
+  mana_reset_exit_delay directly instead of spawning a thread
+- Added __rte_no_thread_safety_analysis annotations for clang
+- Switched to rte_thread_create_internal_control
+- Fixed declaration-after-statement style issues
+- Removed unnecessary blank lines and stale comments
 
+Wei Hu (1):
+  net/mana: add device reset support
 
-> The UACCE bus part has passed testing. Please add my Acked-by tag to the
-> related commits.
->
-
-Thanks a lot for your reviews and testing!
-
+ doc/guides/nics/mana.rst               |   38 +
+ doc/guides/rel_notes/release_26_07.rst |    8 +
+ drivers/net/mana/mana.c                | 1005 ++++++++++++++++++++++--
+ drivers/net/mana/mana.h                |   33 +-
+ drivers/net/mana/meson.build           |    2 +-
+ drivers/net/mana/mp.c                  |   89 ++-
+ drivers/net/mana/mr.c                  |    6 +-
+ drivers/net/mana/rx.c                  |   24 +-
+ drivers/net/mana/tx.c                  |   40 +-
+ 9 files changed, 1138 insertions(+), 107 deletions(-)
 
 -- 
-David Marchand
+2.34.1
 
