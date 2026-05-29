@@ -2,48 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD37CD6E49
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 06:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C8BCD5BD2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 07:27:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2759140280;
-	Fri, 29 May 2026 08:53:49 +0200 (CEST)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
- by mails.dpdk.org (Postfix) with ESMTP id 5B06040264
- for <dev@dpdk.org>; Fri, 29 May 2026 08:53:47 +0200 (CEST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4gRYwn4z72z8XrrJ
- for <dev@dpdk.org>; Fri, 29 May 2026 14:53:45 +0800 (CST)
-Received: from szxlzmapp04.zte.com.cn ([10.5.231.166])
- by mse-fl2.zte.com.cn with SMTP id 64T6rWvF004625
- for <dev@dpdk.org>; Fri, 29 May 2026 14:53:32 +0800 (+08)
- (envelope-from chen.wenqiang2@zte.com.cn)
-Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Fri, 29 May 2026 14:53:33 +0800
-X-Zmail-TransId: 3e816a1937e6001-19b02
-X-Zmail-LocalSMTP: 1
-X-Zmail-RealSender: chen.wenqiang2@zte.com.cn
-From: Wenqiang Chen <chen.wenqiang2@zte.com.cn>
-To: dev@dpdk.org
-Cc: ran.ming@zte.com.cn,
- =?UTF-8?q?=E9=99=88=E6=96=87=E5=BC=BA10327674?= <chen.wenqiang2@zte.com.cn>
-Subject: [PATCH] raw/gdtc : update MAINTAINERS entry
-Date: Fri, 29 May 2026 14:20:58 +0800
-Message-ID: <20260529062058.82782-1-chen.wenqiang2@zte.com.cn>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 3F1DA40264;
+	Fri, 29 May 2026 09:27:20 +0200 (CEST)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id AD808400D7
+ for <dev@dpdk.org>; Fri, 29 May 2026 09:27:18 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=rTnVScXheCfnjoJTbjHC0PrggQ96JPChuMQ8KxV4jDo=;
+ b=QuPVGwehTkQvLI9i8tH5kTdLy5Db9e4lB9ItjzYkKfcB6Feb/4mm1k150G5OoXMf3PWGcYhzH
+ B3sN79TtPm65rUQDRikjVqyYi3P6LKZA6opoxeanWIP43eJpIxHDrlSY8RFekYWH0DZPnMDPsgv
+ 3ikyAzKjfFrkyuZEyFg0hEU=
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4gRZVT5RYfzLlSZ;
+ Fri, 29 May 2026 15:19:29 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 3473D402AB;
+ Fri, 29 May 2026 15:27:16 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 29 May 2026 15:27:15 +0800
+Message-ID: <124390f4-6c99-4782-9161-545752784ee8@huawei.com>
+Date: Fri, 29 May 2026 15:27:14 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 64T6rWvF004625
-X-TLS: YES
-X-ENVELOPE-SENDER: chen.wenqiang2@zte.com.cn
-X-SOURCE-IP: 10.5.228.133 unknown Fri, 29 May 2026 14:53:45 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6A1937F9.000/4gRYwn4z72z8XrrJ
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 15/25] bus: support multiple probe
+To: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>
+CC: <thomas@monjalon.net>, <stephen@networkplumber.org>,
+ <bruce.richardson@intel.com>, Parav Pandit <parav@nvidia.com>, Xueming Li
+ <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal
+ <nikhil.agarwal@amd.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin
+ Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@altera.com>, Chenbo Xia
+ <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, Long Li
+ <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
+References: <20260429114503.932575-1-david.marchand@redhat.com>
+ <20260527075654.3780732-1-david.marchand@redhat.com>
+ <20260527075654.3780732-16-david.marchand@redhat.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20260527075654.3780732-16-david.marchand@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,66 +64,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Currently, the bus probe is still the specific impl which don't test allow_multi_probe flag.
+And local_dev_probe only cover the plug device case.
 
+On 5/27/2026 3:56 PM, David Marchand wrote:
+> Add infrastructure to declare support for multiple probe attempts
+> on the same device. This prepares for the introduction of
+> generic probe_device operation.
+> 
+> The PCI bus enables this feature to support drivers with
+> RTE_PCI_DRV_PROBE_AGAIN flag.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
-
-
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
-
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-RnJvbTog6ZmI5paH5by6MTAzMjc2NzQgPGNoZW4ud2VucWlhbmcyQHp0ZS5jb20uY24+DQoNCkNo
-YW5nZSB0aGUgR0RUQyByYXdkZXYgbWFpbnRhaW5lciBmcm9tIFlvbmcgWmhhbmcNCnRvIFdlbnFp
-YW5nIENoZW4uDQoNClNpZ25lZC1vZmYtYnk6IOmZiOaWh+W8ujEwMzI3Njc0IDxjaGVuLndlbnFp
-YW5nMkB6dGUuY29tLmNuPg0KLS0tDQogTUFJTlRBSU5FUlMgfCAyICstDQogMSBmaWxlIGNoYW5n
-ZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQoNCmRpZmYgLS1naXQgYS9NQUlOVEFJ
-TkVSUyBiL01BSU5UQUlORVJTDQppbmRleCBiMzkwNDQ2ZWQzLi40OGM3MmUxZDY3IDEwMDY0NA0K
-LS0tIGEvTUFJTlRBSU5FUlMNCisrKyBiL01BSU5UQUlORVJTDQpAQCAtMTYxMiw3ICsxNjEyLDcg
-QEAgRjogZHJpdmVycy9yYXcvZHBhYTJfY21kaWYvDQogRjogZG9jL2d1aWRlcy9yYXdkZXZzL2Rw
-YWEyX2NtZGlmLnJzdA0KIA0KIFpURSBHRFRDDQotTTogWW9uZyBaaGFuZyA8emhhbmcueW9uZzI1
-QHp0ZS5jb20uY24+DQorTTogV2VucWlhbmcgQ2hlbiA8Y2hlbi53ZW5xaWFuZzJAenRlLmNvbS5j
-bj4NCiBGOiBkcml2ZXJzL3Jhdy9nZHRjLw0KIEY6IGRvYy9ndWlkZXMvcmF3ZGV2cy9nZHRjLnJz
-dA0KIA0KLS0gDQoyLjI3LjA=
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-RnJvbTombmJzcDvpmYjmloflvLoxMDMyNzY3NCZuYnNwOyZsdDtjaGVuLndlbnFpYW5nMkB6dGUu
-Y29tLmNuJmd0Ow08YnIgLz4NPGJyIC8+Q2hhbmdlJm5ic3A7dGhlJm5ic3A7R0RUQyZuYnNwO3Jh
-d2RldiZuYnNwO21haW50YWluZXImbmJzcDtmcm9tJm5ic3A7WW9uZyZuYnNwO1poYW5nPGJyIC8+
-dG8mbmJzcDtXZW5xaWFuZyZuYnNwO0NoZW4uPGJyIC8+DTxiciAvPlNpZ25lZC1vZmYtYnk6Jm5i
-c3A76ZmI5paH5by6MTAzMjc2NzQmbmJzcDsmbHQ7Y2hlbi53ZW5xaWFuZzJAenRlLmNvbS5jbiZn
-dDsNPGJyIC8+LS0tPGJyIC8+Jm5ic3A7TUFJTlRBSU5FUlMmbmJzcDt8Jm5ic3A7MiZuYnNwOyst
-PGJyIC8+Jm5ic3A7MSZuYnNwO2ZpbGUmbmJzcDtjaGFuZ2VkLCZuYnNwOzEmbmJzcDtpbnNlcnRp
-b24oKyksJm5ic3A7MSZuYnNwO2RlbGV0aW9uKC0pPGJyIC8+DTxiciAvPmRpZmYmbmJzcDstLWdp
-dCZuYnNwO2EvTUFJTlRBSU5FUlMmbmJzcDtiL01BSU5UQUlORVJTPGJyIC8+aW5kZXgmbmJzcDti
-MzkwNDQ2ZWQzLi40OGM3MmUxZDY3Jm5ic3A7MTAwNjQ0PGJyIC8+LS0tJm5ic3A7YS9NQUlOVEFJ
-TkVSUzxiciAvPisrKyZuYnNwO2IvTUFJTlRBSU5FUlM8YnIgLz5AQCZuYnNwOy0xNjEyLDcmbmJz
-cDsrMTYxMiw3Jm5ic3A7QEAmbmJzcDtGOiZuYnNwO2RyaXZlcnMvcmF3L2RwYWEyX2NtZGlmLzxi
-ciAvPiZuYnNwO0Y6Jm5ic3A7ZG9jL2d1aWRlcy9yYXdkZXZzL2RwYWEyX2NtZGlmLnJzdDxiciAv
-PiZuYnNwOw08YnIgLz4mbmJzcDtaVEUmbmJzcDtHRFRDPGJyIC8+LU06Jm5ic3A7WW9uZyZuYnNw
-O1poYW5nJm5ic3A7Jmx0O3poYW5nLnlvbmcyNUB6dGUuY29tLmNuJmd0Ow08YnIgLz4rTTombmJz
-cDtXZW5xaWFuZyZuYnNwO0NoZW4mbmJzcDsmbHQ7Y2hlbi53ZW5xaWFuZzJAenRlLmNvbS5jbiZn
-dDsNPGJyIC8+Jm5ic3A7RjombmJzcDtkcml2ZXJzL3Jhdy9nZHRjLzxiciAvPiZuYnNwO0Y6Jm5i
-c3A7ZG9jL2d1aWRlcy9yYXdkZXZzL2dkdGMucnN0PGJyIC8+Jm5ic3A7DTxiciAvPi0tJm5ic3A7
-DTxiciAvPjIuMjcuMDxiciAvPg==
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
-
+...
