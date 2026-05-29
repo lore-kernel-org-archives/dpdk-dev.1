@@ -2,50 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D01BECD6E50
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCE0CD6E4A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 May 2026 15:27:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F361440668;
-	Fri, 29 May 2026 17:26:40 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 3EF6140612
- for <dev@dpdk.org>; Fri, 29 May 2026 17:26:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780068398; x=1811604398;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=LsxGM8hfZ0aDSBS0gF0SdB19A10BCpvl+Nyw3BkqcpU=;
- b=Ga+XdtwKNLKJYPte2ETMS6UpR4kiQgYHPSTFpvxdwp65/XuYR9yqQLO9
- JTT9vMDWuNqXaK2eQvYtlkrJr+jLTzOVzFzRz0E88+ktg2tmo2gARHOAw
- AnPqAz9cHoqQFjpqAe4k9fdIVl/JRqr42b5CMTQnlaqNNJOgSyc0ov2kd
- oLBIWznrCbQfcs8ezBY3uaC0NJpbTCKhWBlMYA1W8STYyKwyPZv1Jry7w
- sEP+0dv1n/BjpZjzSUKM5KSmtvmm0LdKFUis0wnfkxV+xcbFlNS64tTgY
- wOof62yOZCkIYPzhF9WJI4bIlH5LfN5m+4tKPORdIsaV0Jaa91C61RdOT A==;
-X-CSE-ConnectionGUID: Oyfg3SGaRc+zGLenypSorw==
-X-CSE-MsgGUID: +b2+Bn2ZTniaUtVGvuyMTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11801"; a="91231665"
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="91231665"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 May 2026 08:26:38 -0700
-X-CSE-ConnectionGUID: XDuMHzXfSPmISKFY6icINw==
-X-CSE-MsgGUID: mDmwjqiUSkqfp6DJELmZIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; d="scan'208";a="236520620"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa009.fm.intel.com with ESMTP; 29 May 2026 08:26:37 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Jianfeng Tan <jianfeng.tan@intel.com>
-Subject: [PATCH v2 5/5] eal: avoid deadlock in async IPC alarm callback
-Date: Fri, 29 May 2026 16:26:31 +0100
-Message-ID: <d12f7e7fd9177180d4c8ac64cb984530ae7e23b5.1780068382.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <d7204c81e2494027fe467b8e3f5744888059fcbd.1780068382.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id 497CF40280;
+	Fri, 29 May 2026 17:27:36 +0200 (CEST)
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com
+ [74.125.82.173]) by mails.dpdk.org (Postfix) with ESMTP id 8B5B9400D7
+ for <dev@dpdk.org>; Fri, 29 May 2026 17:27:35 +0200 (CEST)
+Received: by mail-dy1-f173.google.com with SMTP id
+ 5a478bee46e88-2ee990e8597so32261800eec.1
+ for <dev@dpdk.org>; Fri, 29 May 2026 08:27:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780068455;
+ x=1780673255; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=z6Brgp04DLejwVPQZPaqcizzzC7UKNV7hCRq+nbwrk4=;
+ b=bp2t0+ct2rQgPx5fVNGNm2KfbPYwDpG4IXox4gkgsVddPXycZ+HXtad/WJ1nMUvRnj
+ 2BhSxu/mH6lpOq1Bv6WGNtJe+IYKkKUSKXNjjgjzYHhKaS/jGCx+HoJDVBgFcxwTdqiU
+ /8K4AFh9e1t0cC3EqwjeYzlPu2Of5NLHkeAbr09jhX6IFE92K36NnS/VenYtyTYpB3dH
+ d8Cdmz1z79+4JlwnMpoNO9d7rtuOzpmm3phmBiLtau5u6E1N4/yUjzUVsw2SGEFKDVZc
+ IrzEE99CPtkoph0AT8yq7A5juhvIWP8gjsnjUo7T3zTiSvbpDcPYZiQ37A45Lfz3n4DB
+ ftWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780068455; x=1780673255;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=z6Brgp04DLejwVPQZPaqcizzzC7UKNV7hCRq+nbwrk4=;
+ b=QbF4gxrorgvSZlDnAbt5YQvZ3iEesV+jeacLXBA4nKeiHIeEQdV5lDrngnQ9TAbM5A
+ LC5VuUEC1NP5LpHbVl/F+kTIDn0RyC5N/nYecWPeOYSy/Dt7F2260Bm3tLAn4HCLk33U
+ U/reE1MK5Au/wqYS7aXeOmn/T25cUYKYprc3qhHxDNPrLod3oN4djeWophcGgBj4m9xV
+ Ji3I14xIBiyHIZDAUTVqpZoYAQiasIhGOhp2ojKQPgsqjD9qwXfAyF4K/4XO9ODf6lcH
+ 70GuEylmunwCRT/jPSgIbkN+3nrO38t6fh6Inkf9mlPoaVHPNFbPB388PiVLf9cSusUQ
+ eA/g==
+X-Gm-Message-State: AOJu0YwhaUn/KSBUsZ9Jmpkk1vKW/khia8YbWZ+UwDDKVnq6lA17eBAQ
+ cURgPaEmlTSLKoH+NopVJVf0LeDiII+nYnIhZDcOXeKo643pxRAGcSLp0bQfD5Ytyj8=
+X-Gm-Gg: Acq92OHSQKHjFhIqvXrpHlPC6HqV6S2x5Cb4Ku2y2R5COnFOao6jDCGYavml4+VkShy
+ TDXfPhg7Zm/R22zQm/w1acWWSB78hAf1++m2wF1Gxy74R3njiS39IXHjjz6TAw9gYJux63Crdx9
+ m/AFFHQt7zbB2FDrN4ksPLc9S3uY0c5+9yj7bgvaqKyCO4IwFnwh9FaQSt8mr1tt4p/HhtnE4zA
+ 3GX3hwpGDtbSK6uTSaI1Zzdx42HjiSXcMqD2h6NBdtYzZMBxy30zrl4fYUavHsyg+4rGgDPTeBn
+ L9qKLHkefdP9KA13cCraFysIcep1CL3JSGL3POfXqM+2LtyYMpWKPQziKQTpRoLJnK9sYzhhEwb
+ jgh1QLhPf/5kNVqkvMWjD0TawuVWJxRxXh9XsOrrxcW+SHm9R06TjsPHWRoskaot7EnMZWa/l28
+ VZeHgfLDGlUNd7KCtXiNezP9J6pOb3j67OeIfiaMwwH00cRTD4mfe6x43pirnAaXfCJ7LVXxC6T
+ oY=
+X-Received: by 2002:a05:7300:730f:b0:2ed:e15:c927 with SMTP id
+ 5a478bee46e88-304fa69ad83mr162253eec.35.1780068454518; 
+ Fri, 29 May 2026 08:27:34 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-304ed2c154fsm1507003eec.3.2026.05.29.08.27.33
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 29 May 2026 08:27:34 -0700 (PDT)
+Date: Fri, 29 May 2026 08:27:29 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+Cc: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, "Sunil
+ Kumar Kori" <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ "Harman Kalra" <hkalra@marvell.com>, Ankur Dwivedi <adwivedi@marvell.com>,
+ "Anoob Joseph" <anoobj@marvell.com>, Tejasree Kondoj
+ <ktejasree@marvell.com>
+Subject: Re: [v1] crypto/cnxk: add ML crypto support
+Message-ID: <20260529082729.79c51aee@phoenix.local>
+In-Reply-To: <20260529091330.6308-1-gmuthukrishn@marvell.com>
+References: <20260529091330.6308-1-gmuthukrishn@marvell.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,62 +85,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-async_reply_handle_thread_unsafe() can run while holding
-pending_requests.lock and currently calls rte_eal_alarm_cancel().
+On Fri, 29 May 2026 14:43:26 +0530
+Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com> wrote:
 
-rte_eal_alarm_cancel() may spin-wait for an executing callback, which can
-deadlock if that callback is blocked on the same lock.
+> +
+> +int
+> +roc_re_ml_zeta_get(uint64_t *tbl)
+> +{
+> +	int len = (RE_MLKEM_ZETA_LEN + RE_MLDSA_ZETA_LEN);
+Unneeded paraens.
 
-Remove callback-side alarm cancellation. It is safe to do so, because any
-callback triggered without a pending request becomes a noop.
+> +	const char name[] = RE_ML_TBL_NAME;
+> +	const struct plt_memzone *mz;
+> +	struct re_ml_tbl *ml;
+> +	uint8_t *data;
+> +
+> +	if (tbl == NULL)
+> +		return -EINVAL;
+> +
+> +	mz = plt_memzone_lookup(name);
+> +	if (mz == NULL) {
+> +		/* Create memzone first time */
+> +		mz = plt_memzone_reserve_cache_align(name, sizeof(struct re_ml_tbl) + len);
+> +		if (mz == NULL)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	ml = (struct re_ml_tbl *)mz->addr;
+mz->addr is void * so cast here is unnecessary.
 
-Fixes: daf9bfca717e ("ipc: remove thread for async requests")
-Cc: stable@dpdk.org
+> +	if (plt_atomic_fetch_add_explicit(&ml->refcount, 1, plt_memory_order_seq_cst) != 0)
+> +		return 0;
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- lib/eal/common/eal_common_proc.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
 
-diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
-index 967186382e..67a393f53e 100644
---- a/lib/eal/common/eal_common_proc.c
-+++ b/lib/eal/common/eal_common_proc.c
-@@ -549,19 +549,6 @@ async_reply_handle_thread_unsafe(struct pending_request *req)
- 
- 	TAILQ_REMOVE(&pending_requests.requests, req, next);
- 
--	if (rte_eal_alarm_cancel(async_reply_handle,
--			(void *)(uintptr_t)req->id) < 0) {
--		/* if we failed to cancel the alarm because it's already in
--		 * progress, don't proceed because otherwise we will end up
--		 * handling the same message twice.
--		 */
--		if (rte_errno == EINPROGRESS) {
--			EAL_LOG(DEBUG, "Request handling is already in progress");
--			goto no_trigger;
--		}
--		EAL_LOG(ERR, "Failed to cancel alarm");
--	}
--
- 	if (action == ACTION_TRIGGER)
- 		return req;
- no_trigger:
-@@ -910,8 +897,12 @@ mp_request_async(const char *dst, struct rte_mp_msg *req,
- 		return -1;
- 	}
- 
--	/* Set alarm before allocating or sending so request timeout tracking
--	 * is active as soon as this request ID is reserved.
-+	/* Set alarm before allocating or sending. The alarm is never cancelled:
-+	 * rte_eal_alarm_cancel spin-waits for an executing callback to finish,
-+	 * which deadlocks if we hold pending_requests.lock while the callback
-+	 * is blocked on it. Instead, let stale alarms fire; with ID-based
-+	 * lookup the callback will simply not find the request and return
-+	 * harmlessly.
- 	 */
- 	id = ++next_request_id;
- 	if (rte_eal_alarm_set(ts->tv_sec * 1000000 + ts->tv_nsec / 1000,
--- 
-2.47.3
-
+> +
+> +	data = PLT_PTR_ADD(mz->addr, sizeof(uint64_t));
+> +	memcpy(data, re_ml_zeta_tbl[0].data, re_ml_zeta_tbl[0].len);
+> +	tbl[0] = plt_cpu_to_be_64((uintptr_t)data);
+> +
+> +	data = PLT_PTR_ADD(data, re_ml_zeta_tbl[0].len);
+> +	memcpy(data, re_ml_zeta_tbl[1].data, re_ml_zeta_tbl[1].len);
+> +	tbl[1] = plt_cpu_to_be_64((uintptr_t)data);
+> +
+> +	return 0;
+> +}
