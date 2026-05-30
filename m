@@ -2,35 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F250CD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Sat, 30 May 2026 05:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A61B3CD6E4A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 30 May 2026 05:36:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3569E40262;
-	Sat, 30 May 2026 07:31:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6D1E940262;
+	Sat, 30 May 2026 07:36:03 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 73CD9400D6
- for <dev@dpdk.org>; Sat, 30 May 2026 07:31:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 146C3400D6
+ for <dev@dpdk.org>; Sat, 30 May 2026 07:36:02 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 3BEF22098F;
- Sat, 30 May 2026 07:31:44 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id DDB742098F;
+ Sat, 30 May 2026 07:36:01 +0200 (CEST)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="utf-8"
 Content-Transfer-Encoding: base64
 Subject: RE: [PATCH] app/test: use memcpy in ipsec test
-Date: Sat, 30 May 2026 07:31:40 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F658BA@smartserver.smartshare.dk>
+Date: Sat, 30 May 2026 07:36:00 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F658BB@smartserver.smartshare.dk>
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260529155254.6f563f48@phoenix.local>
+In-Reply-To: <20260529155855.66c0f3dc@phoenix.local>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 Thread-Topic: [PATCH] app/test: use memcpy in ipsec test
-Thread-Index: AdzvvedKB1FFVjD5QGe76Y1l7mDXAgAN4Hdw
+Thread-Index: AdzvvsAZsDkaYPq1QOqA+xL3xisqeAAN1WiQ
 References: <20260529154651.128372-1-stephen@networkplumber.org><cd2886ccd3134ab0a712e739bad4da5e@huawei.com><98CBD80474FA8B44BF855DF32C47DC35F658B7@smartserver.smartshare.dk>
- <20260529155254.6f563f48@phoenix.local>
+ <20260529155855.66c0f3dc@phoenix.local>
 From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
 To: "Stephen Hemminger" <stephen@networkplumber.org>
 Cc: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
@@ -49,19 +49,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
-b3JnXQ0KPiBTZW50OiBTYXR1cmRheSwgMzAgTWF5IDIwMjYgMDAuNTMNCj4gDQo+IE9uIEZyaSwg
+b3JnXQ0KPiBTZW50OiBTYXR1cmRheSwgMzAgTWF5IDIwMjYgMDAuNTkNCj4gDQo+IE9uIEZyaSwg
 MjkgTWF5IDIwMjYgMjI6NDU6MDAgKzAyMDANCj4gTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hh
-cmVzeXN0ZW1zLmNvbT4gd3JvdGU6DQo+IA0KPiA+ID4gPiBAQCAtNjA0LDIyICs2MDMsMjIgQEAg
-c2V0dXBfdGVzdF9zdHJpbmdfdHVubmVsZWQoc3RydWN0DQo+IHJ0ZV9tZW1wb29sDQo+ID4gPiA+
-ICptcG9vbCwgY29uc3QgY2hhciAqc3RyaW5nLA0KPiA+ID4gPiAgCS8qIGNvcHkgb3V0ZXIgSVAg
-YW5kIEVTUCBoZWFkZXIgKi8NCj4gPiA+ID4gIAlpcHY0X291dGVyLnRvdGFsX2xlbmd0aCA9IHJ0
-ZV9jcHVfdG9fYmVfMTYodF9sZW4pOw0KPiA+ID4gPiAgCWlwdjRfb3V0ZXIucGFja2V0X2lkID0g
-cnRlX2NwdV90b19iZV8xNihzZXEpOw0KPiA+ID4gPiAtCXJ0ZV9tZW1jcHkoZHN0LCAmaXB2NF9v
-dXRlciwgc2l6ZW9mKGlwdjRfb3V0ZXIpKTsNCj4gPiA+ID4gKwltZW1jcHkoZHN0LCAmaXB2NF9v
-dXRlciwgc2l6ZW9mKGlwdjRfb3V0ZXIpKTsNCj4gPg0KPiA+IEhvdyBhYm91dDoNCj4gPiAqZHN0
-ID0gaXB2NF9vdXRlcjsNCj4gPg0KPiA+IERvbid0IGtub3cgaWYgaXQgYXBwbGllcyBoZXJlLg0K
-PiANCj4gR29vZCBpZGVhIGJ1dCBkc3QgaXMgY2hhciAqLg0KPiBJIHN1cHBvc2UgY291bGQgdXNl
-IGEgY2FzdCBidXQgYXQgdGhhdCBwb2ludCB0aGUgZ29vZA0KPiBwcm9wZXJ0aWVzIG9mIGFzc2ln
-bm1lbnQgZGlzYXBwZWFyLg0KPiANCj4gRGlkbid0IHdhbnQgdG8gZ28gY2hhbmdpbmcgb3RoZXIg
-Y29kZS4NCg0KQWdyZWUuIEJldHRlciBzdGljayB3aXRoIG1lbWNweSgpIHRoYW4gdHlwZSBjYXN0
-Lg0KDQo=
+cmVzeXN0ZW1zLmNvbT4gd3JvdGU6DQo+IA0KPiA+IElmIHlvdSBhcmUgY3VyaW91cyB0b28uLi4N
+Cj4gPiBEb2VzIHRoZSBjb21waWxlciBzdGlsbCBnZXQgY29uZnVzZWQgYWJvdXQgQVZYIHJ0ZV9t
+ZW1jcHkgKHdpdGhvdXQNCj4gdGhpcyBwYXRjaCksIGlmIGFwcGx5aW5nIHRoZSBydGVfbWVtY3B5
+IHBhdGNoPw0KPiA+IGh0dHBzOi8vcGF0Y2h3b3JrLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRj
+aC8yMDI2MDUyMTE4NTYzMS4xMTYwNDYtDQo+IDEtbWJAc21hcnRzaGFyZXN5c3RlbXMuY29tLw0K
+PiANCj4gTm8gc3RpbGwgZmFpbHMuDQo+IA0KPiBUaGlzIGlzIGlmIF9fcnRlX2Fsd2F5c19pbmxp
+bmUgaXMgZGVmaW5lZCBhcyBqdXN0IGlubGluZSBhcyBhbg0KPiBleHBlcmltZW50Lg0KPiBDb21w
+aWxlciBnZXRzIGNvbmZ1c2VkIGluIHZpcnRpb19uZXQgYmVjYXVzZSBvZiBtYXRjaGluZyBjb25k
+aXRpb25zDQo+IGRvaW5nDQo+IGluaXRpYWxpemF0aW9uIGluIHZpcnRpb19uZXQuDQo+IA0KPiBB
+bHNvLCBoYXMgaXNzdWUgd2l0aCBydGVfbWVtY3B5Lg0KPiANCj4gbmluamE6IEVudGVyaW5nIGRp
+cmVjdG9yeSBgYnVpbGQnDQo+IFsyMzUyLzM3NjNdIENvbXBpbGluZyBDIG9iamVjdA0KPiBsaWIv
+bGlicnRlX3Zob3N0LmEucC92aG9zdF92aXJ0aW9fbmV0LmMubw0KPiAuLi9saWIvdmhvc3Qvdmly
+dGlvX25ldC5jOiBJbiBmdW5jdGlvbiDigJhkZXNjX3RvX21idWbigJk6DQo+IC4uL2xpYi92aG9z
+dC92aXJ0aW9fbmV0LmM6MzAyNTozNDogd2FybmluZzog4oCYcGt0c19pbmZv4oCZIG1heSBiZSB1
+c2VkDQo+IHVuaW5pdGlhbGl6ZWQgWy1XbWF5YmUtdW5pbml0aWFsaXplZF0NCj4gIDMwMjUgfCAg
+ICAgICAgICAgICAgICAgICAgICAgICBwa3RzX2luZm9bc2xvdF9pZHhdLm5ldGhkciA9ICpoZHI7
+DQo+ICAgICAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXg0KPiAuLi9saWIv
+dmhvc3QvdmlydGlvX25ldC5jOjI5MTU6Mzc6IG5vdGU6IOKAmHBrdHNfaW5mb+KAmSB3YXMgZGVj
+bGFyZWQgaGVyZQ0KPiAgMjkxNSB8ICAgICAgICAgc3RydWN0IGFzeW5jX2luZmxpZ2h0X2luZm8g
+KnBrdHNfaW5mbzsNCj4gICAgICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBefn5+fn5+fn4NCj4gWzM0ODcvMzc2M10gQ29tcGlsaW5nIEMgb2JqZWN0IGFwcC9kcGRrLXRl
+c3QucC90ZXN0X3Rlc3RfaXBzZWMuYy5vDQo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSAvdXNyL2xp
+Yi9nY2MveDg2XzY0LWxpbnV4LQ0KPiBnbnUvMTUvaW5jbHVkZS9pbW1pbnRyaW4uaDo0MywNCj4g
+ICAgICAgICAgICAgICAgICBmcm9tIC4uL2xpYi9lYWwveDg2L2luY2x1ZGUvcnRlX3J0bS5oOjgs
+DQo+ICAgICAgICAgICAgICAgICAgZnJvbSAuLi9saWIvZWFsL3g4Ni9pbmNsdWRlL3J0ZV9zcGlu
+bG9jay5oOjksDQo+ICAgICAgICAgICAgICAgICAgZnJvbSAuLi9saWIvbWVtcG9vbC9ydGVfbWVt
+cG9vbC5oOjQ0LA0KPiAgICAgICAgICAgICAgICAgIGZyb20gLi4vbGliL21idWYvcnRlX21idWYu
+aDozOSwNCj4gICAgICAgICAgICAgICAgICBmcm9tIC4uL2FwcC90ZXN0L3Rlc3RfaXBzZWMuYzox
+MToNCj4gSW4gZnVuY3Rpb24g4oCYX21tMjU2X2xvYWR1X3NpMjU24oCZLA0KPiAgICAgaW5saW5l
+ZCBmcm9tIOKAmHJ0ZV9tb3YzMuKAmSBhdA0KPiAuLi9saWIvZWFsL3g4Ni9pbmNsdWRlL3J0ZV9t
+ZW1jcHkuaDoxMTk6OSwNCj4gICAgIGlubGluZWQgZnJvbSDigJhydGVfbW92NjTigJkgYXQNCj4g
+Li4vbGliL2VhbC94ODYvaW5jbHVkZS9ydGVfbWVtY3B5Lmg6MTU4OjIsDQo+ICAgICBpbmxpbmVk
+IGZyb20g4oCYcnRlX21vdjEyOOKAmSBhdA0KPiAuLi9saWIvZWFsL3g4Ni9pbmNsdWRlL3J0ZV9t
+ZW1jcHkuaDoxNzA6MiwNCj4gICAgIGlubGluZWQgZnJvbSDigJhydGVfbWVtY3B5X2dlbmVyaWNf
+bW9yZV90aGFuXzY04oCZIGF0DQo+IC4uL2xpYi9lYWwveDg2L2luY2x1ZGUvcnRlX21lbWNweS5o
+OjM4OTo0LA0KPiAgICAgaW5saW5lZCBmcm9tIOKAmHJ0ZV9tZW1jcHnigJkgYXQNCj4gLi4vbGli
+L2VhbC94ODYvaW5jbHVkZS9ydGVfbWVtY3B5Lmg6NzE1OjEwLA0KPiAgICAgaW5saW5lZCBmcm9t
+IOKAmHNldHVwX3Rlc3Rfc3RyaW5nX3R1bm5lbGVkLmNvbnN0cHJvcOKAmSBhdA0KPiAuLi9hcHAv
+dGVzdC90ZXN0X2lwc2VjLmM6NjE1OjM6DQo+IC91c3IvbGliL2djYy94ODZfNjQtbGludXgtZ251
+LzE1L2luY2x1ZGUvYXZ4aW50cmluLmg6ODczOjEwOiB3YXJuaW5nOg0KPiBhcnJheSBzdWJzY3Jp
+cHQg4oCYX19tMjU2aV91WzNd4oCZIGlzIHBhcnRseSBvdXRzaWRlIGFycmF5IGJvdW5kcyBvZiDi
+gJhjb25zdA0KPiBjaGFyWzEwOF3igJkgWy1XYXJyYXktYm91bmRzPV0NCj4gICA4NzMgfCAgIHJl
+dHVybiAqX19QOw0KPiAgICAgICB8ICAgICAgICAgIF5+fn4NCj4gLi4vYXBwL3Rlc3QvdGVzdF9p
+cHNlYy5jOiBJbiBmdW5jdGlvbg0KPiDigJhzZXR1cF90ZXN0X3N0cmluZ190dW5uZWxlZC5jb25z
+dHByb3DigJk6DQo+IC4uL2FwcC90ZXN0L3Rlc3RfaXBzZWMuYzo1Mjc6MTI6IG5vdGU6IGF0IG9m
+ZnNldCA5NiBpbnRvIG9iamVjdA0KPiDigJhudWxsX3BsYWluX2RhdGHigJkgb2Ygc2l6ZSAxMDgN
+Cj4gICA1MjcgfCBjb25zdCBjaGFyIG51bGxfcGxhaW5fZGF0YVtdID0NCj4gICAgICAgfCAgICAg
+ICAgICAgIF5+fn5+fn5+fn5+fn5+fg0KPiBbMzc2My8zNzYzXSBMaW5raW5nIHRhcmdldCBhcHAv
+ZHBkay10ZXN0DQoNCkludGVyZXN0aW5nIGV4cGVyaW1lbnQuIFRoYW5rcyBmb3Igc2hhcmluZy4N
+Cg0K
