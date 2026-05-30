@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF40CD6E49
-	for <dpdk-dev@archiver.kernel.org>; Sat, 30 May 2026 16:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C26CD6E49
+	for <dpdk-dev@archiver.kernel.org>; Sat, 30 May 2026 16:12:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9BCE14042E;
-	Sat, 30 May 2026 18:11:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A64D140611;
+	Sat, 30 May 2026 18:11:59 +0200 (CEST)
 Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
- by mails.dpdk.org (Postfix) with ESMTP id 30A6D40264
- for <dev@dpdk.org>; Sat, 30 May 2026 18:11:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3D9D540264
+ for <dev@dpdk.org>; Sat, 30 May 2026 18:11:57 +0200 (CEST)
 Received: by mail-dl1-f42.google.com with SMTP id
- a92af1059eb24-132830d8281so4488770c88.1
- for <dev@dpdk.org>; Sat, 30 May 2026 09:11:56 -0700 (PDT)
+ a92af1059eb24-1378943cd4aso5514072c88.0
+ for <dev@dpdk.org>; Sat, 30 May 2026 09:11:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780157515;
- x=1780762315; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780157516;
+ x=1780762316; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=QUbGkch0wLLUUl7pHVfyK2jOx4/QuKgT3cxAoYrOr2c=;
- b=dlfASCpn1BhvFRpuRSzHSZHZVn+KYs548LCsaERBPTyLeqEAhdiw2p3bDJb3yY2wVm
- 2tTJKQXgI5L0uZ+/o3w6sWvYiE5FLv4S9r26VNdMWlRmvhKfFtoWz/1BWSMjdULMRJ20
- yHOUqipbpy+BTNK1E5fQuMBvKjW89bsIAwmeNwaY0qaqFXXKfXWgg5x32xaYwdyrXzxu
- HRCVRvFBRuJBtAZDbL3ggB5mUTYZtrPPMUoC3ZFm54SOD2BxWwkayHjv9VmNDSbI6g/u
- H21+tUpX/gjGd6o+QQ5sSPjYSVUbMix0UilIJdTTr8riCL2A43oqihf1BHcB6apJcws9
- c07w==
+ bh=EGkSWxMDvX6dQhJhr2JRc/aQQXbW1ypJ4z+blSWL/3g=;
+ b=CpqS7tHjRa54jpCZpCGXRIlIVuXsOhwRktn2NApj/aEH97Ela0NNmJK3uwOzo0nsY6
+ tqm4cLPGpGxWVNK7Fae/Um/GGCj7fLnqpKYf0eprX0wzbeEMi8++MFq7kTZfRMVdERK6
+ cnrOBgB6MBDngLvxp08igH367mgrvwni3Oi0EoydmXZDUaWUOpz4FBwABQHv4goL0gMX
+ SWRcb6qWFQ9qPLrw5y5FWMvfLmEJzzBWWzIYiHGDzBn9JES66p2rnm2yffm4UawwgtG8
+ F7eg8n36ZazHxfgzqNC8GFNkKNrd5CPstXN1JRoIwmAXB+AS1xhPYHEkXo2Gd1cg2tuY
+ +IwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780157515; x=1780762315;
+ d=1e100.net; s=20251104; t=1780157516; x=1780762316;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=QUbGkch0wLLUUl7pHVfyK2jOx4/QuKgT3cxAoYrOr2c=;
- b=K2bft52Fp7FO5HLjsnXM1kF1MoTBo5ywceXQcFMJuofOiVwICZy05iyPLCRcc71hU5
- 5wRL5jnRw4kkODU31XL00xnFJww3PAFWVLhKfd2oYmrR5GLF/e9VYe1yq61v8huyE3JV
- Rt20IeJ1zKvK+EuF9pEIdzEIEHbfu/prkcPe2ym0kD6/oCimk08jOCuJBnBO4jrkCORe
- m8qXJfShEwRoHHHXPLxQKuyuocX0Cp3mXZj76pCroflXtNVH9bHxVH+sGlVCZ/pZgNlx
- c7+rec8XpR+ScPWHs7ZcdysDcbfAyTtRvcCETfG0KNJR2fuZRLi17t/ORnqdaZoK/hsr
- 2cxg==
-X-Gm-Message-State: AOJu0YxfI/mNNgQmPXOjRweCYMxf1tMw1b8PbfKiSM69IWP/htDCNVuW
- KOyLJPkk132Laoqyw0QSiFBFOaD9jWSc0xm8KXlX+aTkcAuuwlXq9WUKF3TtsYK73ibpmX+bL9e
- Medav
-X-Gm-Gg: Acq92OHNleI4F591H2P5IcxN4cq1QQ9ZimWgZV+NMjGFQfGVZFhDB3XRdnKMC3joq2r
- ayNP8uWUrjR1FTvWd8wBqnBUGWe5rJQwFgo8yjQzJ7L2TMiX+x0pcspmN/gaEUIlUoeq+Oa2Dek
- kQZeJe1ZMnLGRR86m6cs5zdxN2qnvVPOPX3EaIx4EVm83WK4Bqhd+gbkZlEFHtANtXGIr0XvTdz
- mw8Z8a/zofQBt/aTQDx7eF4+qM4GhYyxjWeWPFs5mfya1NEK60lTwC+BSM5i2kX3vzHPBEKQphW
- FAOHSfm2QAKy7fNQ2SjlEGQo30tBCcBTLLjgxrpE+ce31CkB6bQWHWw+3ecm4wFJsvucBqSGMhA
- APMQ461e89KbM9H97y9FYBiAzvCXqUTWZt1cQm814MrHOx37NDJBYWGTUtLTQDbhgFIGgsN+o7N
- KLcFl0wzCbGP47/JknfCitAOjDrLX0RZtzKJI5zQN3R6MCqwH8lIQi7XYE27OEwWcTnNi4y9kT
-X-Received: by 2002:a05:7022:628b:b0:137:ab26:7ffb with SMTP id
- a92af1059eb24-137d3f193fcmr1908694c88.9.1780157515163; 
- Sat, 30 May 2026 09:11:55 -0700 (PDT)
+ bh=EGkSWxMDvX6dQhJhr2JRc/aQQXbW1ypJ4z+blSWL/3g=;
+ b=Y7rYD5AuIC5ljEZ4vPX6Rpa8iD1uYBODPUv9m2FupyJIxNYvabdj3FhlDgQfeJcEdL
+ Z1Q8GmWiB9QirhWM6jI+mZxRACE3VGKjW/O4gNwaYCe98vvLs0nKmHQTm5NNIYARlJJ4
+ 95GsTQ1gBmjerd1qPWA2HjZIvEEh93L5A2yysw0qtXLyANhBorwUZMB3bhywCuO0pJaQ
+ FmU0UnbaC1taYYlLVQZWLXRR7hF3ubAwodi85IJctpRVJj2K4T6nSuPho1mG1QhPaDBE
+ naVavk+jj4XybUrfOTM9ONMT98RkU8LD5ntpisYae7E24s7CPMHIbITCArQAEY/rDm6y
+ kxpg==
+X-Gm-Message-State: AOJu0YxVGuww+aDyjkFrgBbwVQYLrRA1vqQtekspAU16nEciC805hRjC
+ uqHrBXEfQo9moctdCmS/1M40OiJXoMhLJCa5VOPN5YhTRzXzekSpb0mdaUy2rJLoeAPxnK3lgS5
+ +KEab
+X-Gm-Gg: Acq92OHEg3p2HSnTaByxvVvy8R6Ix28fJlWsfaN0az1Jm+EfI6rk57VvCOk+qih54eU
+ C5TXG4M02pcsPPMLym2cJiu1TiTwRG9Lb3AY3R1alSI76aYrZsZOfHRN5vVUxKkkFGZMSujXzPl
+ 0y81axZYXO5UUbXBJX91VDYydNOP4Ig7k/YCWD4m9hPS3Tw8bfxct7sbvV2lHiQaAg0wQAQyBXL
+ NwFjorc4otajYu/B5fT+gqnE9SzZ1Movk4pJLuR5PQmL2j00sEvnXJPCsuQEgaqszm2ZNL0MdqL
+ duxUoDbi6yhqtmUs4hVMz6vCD/97LQCfjCTdrW8zUA65QJffICJtM9vWI/Rvh4ius5xsvMK3gla
+ gzAZpvWponQ+Q/antVuj7IHp4/PvaY4B0uOCGi7nEPehrWEJSlbh5EIzg8agm730wjuxAa0B/ip
+ iUxRls4IOgC44I2jtlcv1MHyvXyMidGWPgopwG1K78/9E1QS4FuUcgDJlBCbe/dxGxG/K0GkQiC
+ CKlKb8e3u8=
+X-Received: by 2002:a05:7022:6283:b0:136:72f0:6c54 with SMTP id
+ a92af1059eb24-137d427080bmr1750146c88.29.1780157516209; 
+ Sat, 30 May 2026 09:11:56 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-137b3c69bdfsm3305616c88.9.2026.05.30.09.11.54
+ a92af1059eb24-137b3c69bdfsm3305616c88.9.2026.05.30.09.11.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 30 May 2026 09:11:54 -0700 (PDT)
+ Sat, 30 May 2026 09:11:55 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [RFC 1/7] net/virtio: remove unused queue stats mapping
-Date: Sat, 30 May 2026 09:09:56 -0700
-Message-ID: <20260530161151.873199-2-stephen@networkplumber.org>
+ John Daley <johndale@cisco.com>, Hyong Youb Kim <hyonkim@cisco.com>
+Subject: [RFC 2/7] net/enic: remove queue_stats_mapping ethdev_op
+Date: Sat, 30 May 2026 09:09:57 -0700
+Message-ID: <20260530161151.873199-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260530161151.873199-1-stephen@networkplumber.org>
 References: <20260530161151.873199-1-stephen@networkplumber.org>
@@ -82,67 +82,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The queue_stats_mapping op in virtio looks like a vestiage
-from when it was needed to get per queue stats. That hasn't
-been true since 25.11 release.
+Better to just let compiler initialize fields to NULL since then
+if fields change that driver doesn't use, the driver source
+will not need to be changed.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/virtio/virtio_ethdev.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+ drivers/net/enic/enic_ethdev.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/virtio_ethdev.c
-index 9fd746b80f..0b2574bd02 100644
---- a/drivers/net/virtio/virtio_ethdev.c
-+++ b/drivers/net/virtio/virtio_ethdev.c
-@@ -90,12 +90,6 @@ static int virtio_intr_disable(struct rte_eth_dev *dev);
- static int virtio_get_monitor_addr(void *rx_queue,
- 				struct rte_power_monitor_cond *pmc);
- 
--static int virtio_dev_queue_stats_mapping_set(
--	struct rte_eth_dev *eth_dev,
--	uint16_t queue_id,
--	uint8_t stat_idx,
--	uint8_t is_rx);
--
- static void virtio_notify_peers(struct rte_eth_dev *dev);
- static void virtio_ack_link_announce(struct rte_eth_dev *dev);
- 
-@@ -672,8 +666,6 @@ static const struct eth_dev_ops virtio_eth_dev_ops = {
- 	.rss_hash_conf_get       = virtio_dev_rss_hash_conf_get,
- 	.reta_update             = virtio_dev_rss_reta_update,
- 	.reta_query              = virtio_dev_rss_reta_query,
--	/* collect stats per queue */
--	.queue_stats_mapping_set = virtio_dev_queue_stats_mapping_set,
- 	.vlan_filter_set         = virtio_vlan_filter_set,
- 	.mac_addr_add            = virtio_mac_addr_add,
- 	.mac_addr_remove         = virtio_mac_addr_remove,
-@@ -693,8 +685,6 @@ const struct eth_dev_ops virtio_user_secondary_eth_dev_ops = {
- 	.xstats_get_names        = virtio_dev_xstats_get_names,
- 	.stats_reset             = virtio_dev_stats_reset,
- 	.xstats_reset            = virtio_dev_stats_reset,
--	/* collect stats per queue */
--	.queue_stats_mapping_set = virtio_dev_queue_stats_mapping_set,
- };
- 
- static void
-@@ -2823,16 +2813,5 @@ virtio_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	return 0;
- }
- 
--/*
-- * It enables testpmd to collect per queue stats.
-- */
--static int
--virtio_dev_queue_stats_mapping_set(__rte_unused struct rte_eth_dev *eth_dev,
--__rte_unused uint16_t queue_id, __rte_unused uint8_t stat_idx,
--__rte_unused uint8_t is_rx)
--{
--	return 0;
--}
--
- RTE_LOG_REGISTER_SUFFIX(virtio_logtype_init, init, NOTICE);
- RTE_LOG_REGISTER_SUFFIX(virtio_logtype_driver, driver, NOTICE);
+diff --git a/drivers/net/enic/enic_ethdev.c b/drivers/net/enic/enic_ethdev.c
+index a853a5047a..545edf12bd 100644
+--- a/drivers/net/enic/enic_ethdev.c
++++ b/drivers/net/enic/enic_ethdev.c
+@@ -1119,8 +1119,6 @@ static const struct eth_dev_ops enicpmd_eth_dev_ops = {
+ 	.dev_configure        = enicpmd_dev_configure,
+ 	.dev_start            = enicpmd_dev_start,
+ 	.dev_stop             = enicpmd_dev_stop,
+-	.dev_set_link_up      = NULL,
+-	.dev_set_link_down    = NULL,
+ 	.dev_close            = enicpmd_dev_close,
+ 	.promiscuous_enable   = enicpmd_dev_promiscuous_enable,
+ 	.promiscuous_disable  = enicpmd_dev_promiscuous_disable,
+@@ -1129,14 +1127,10 @@ static const struct eth_dev_ops enicpmd_eth_dev_ops = {
+ 	.link_update          = enicpmd_dev_link_update,
+ 	.stats_get            = enicpmd_dev_stats_get,
+ 	.stats_reset          = enicpmd_dev_stats_reset,
+-	.queue_stats_mapping_set = NULL,
+ 	.dev_infos_get        = enicpmd_dev_info_get,
+ 	.dev_supported_ptypes_get = enicpmd_dev_supported_ptypes_get,
+ 	.mtu_set              = enicpmd_mtu_set,
+-	.vlan_filter_set      = NULL,
+-	.vlan_tpid_set        = NULL,
+ 	.vlan_offload_set     = enicpmd_vlan_offload_set,
+-	.vlan_strip_queue_set = NULL,
+ 	.rx_queue_start       = enicpmd_dev_rx_queue_start,
+ 	.rx_queue_stop        = enicpmd_dev_rx_queue_stop,
+ 	.tx_queue_start       = enicpmd_dev_tx_queue_start,
+@@ -1151,11 +1145,6 @@ static const struct eth_dev_ops enicpmd_eth_dev_ops = {
+ 	.txq_info_get         = enicpmd_dev_txq_info_get,
+ 	.rx_burst_mode_get    = enicpmd_dev_rx_burst_mode_get,
+ 	.tx_burst_mode_get    = enicpmd_dev_tx_burst_mode_get,
+-	.dev_led_on           = NULL,
+-	.dev_led_off          = NULL,
+-	.flow_ctrl_get        = NULL,
+-	.flow_ctrl_set        = NULL,
+-	.priority_flow_ctrl_set = NULL,
+ 	.mac_addr_add         = enicpmd_add_mac_addr,
+ 	.mac_addr_remove      = enicpmd_remove_mac_addr,
+ 	.mac_addr_set         = enicpmd_set_mac_addr,
 -- 
 2.53.0
 
