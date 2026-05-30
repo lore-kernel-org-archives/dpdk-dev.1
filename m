@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0552CCD6E49
-	for <dpdk-dev@archiver.kernel.org>; Sat, 30 May 2026 20:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22624CD6E49
+	for <dpdk-dev@archiver.kernel.org>; Sat, 30 May 2026 20:38:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06E74402ED;
-	Sat, 30 May 2026 22:11:38 +0200 (CEST)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
- [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id 3EEF34027F
- for <dev@dpdk.org>; Sat, 30 May 2026 22:11:37 +0200 (CEST)
-Received: by mail-qv1-f43.google.com with SMTP id
- 6a1803df08f44-8ce9e56f68cso313226d6.2
- for <dev@dpdk.org>; Sat, 30 May 2026 13:11:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 297EA4029F;
+	Sat, 30 May 2026 22:38:06 +0200 (CEST)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
+ [209.85.222.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 8E8B44027F
+ for <dev@dpdk.org>; Sat, 30 May 2026 22:38:04 +0200 (CEST)
+Received: by mail-qk1-f169.google.com with SMTP id
+ af79cd13be357-91550eced6bso14672085a.1
+ for <dev@dpdk.org>; Sat, 30 May 2026 13:38:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780171896; x=1780776696; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1780173484; x=1780778284; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KOAliQEKehOielf67P4GdnK3HfBj5fKy6QiXICQWLME=;
- b=g8ZI/K849n5T+DnjAfo7quiXAg6/y+6zM4trd3258lkjG8ojs6DGKYivUmu6wXZYXo
- 3+yT2WsZmxYw9giIZFPayu8EkpPleAi8pURp68PnBu76AEo9iODh2RR7KVimgATyWLFy
- SdG72T/BtKmkh1NkvvLVzqQ6GaG640eBKboGVykHLgDEF1z4y/FdKwUZwhi+BH7TL1eF
- OYb7AkUnDpzaxcYY29VsmpW2wLMzS7X4oRdTSXI/cYsvGJnpSCGeoewL+IQbT1YjUDig
- uvM241bToSzMkGRZ8fjq6mfYOkE3I5wonEUjMgvmbRJuJMMI8l16dPQf8lrrjY03jLOx
- WLoA==
+ bh=ZTq4njVxg8OBm+hjiG1NtB0vGhlHrlwgA9muuQuS2II=;
+ b=eT6p+k2vjCIQBnG7+ABJe699GJcYqHQ+KEukRgl6sBFs3axykdUsurNsvvK3CDkzuG
+ Ey+Vr2EacmowiRkQhJuaG7dM86SXnXsOyuOR1RlefcQC2UQlzaPUSMUn16383zNF44Z3
+ bEeDSnRAMU/Kz2WGgnbD8GY8cdIkuqJEsZ8XlGsSOaYgMmUoS394TRLnUV5Jfq7tW6Or
+ sTihNARKpDSd/2tkzgbS7Uu6pmTeuC1lZNLB0Hv7WwMgdCsXuh0cSeilP9lSgmcWFtIf
+ bNgoe+5WKDnOse3WZpE9HfdMxtv7y69/iK37OvFrJqLRyaDAx1NbvdxRwD8Mp5ABYRVA
+ b+0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780171896; x=1780776696;
+ d=1e100.net; s=20251104; t=1780173484; x=1780778284;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KOAliQEKehOielf67P4GdnK3HfBj5fKy6QiXICQWLME=;
- b=me5ev1B4cP4kpPN7/iT70/hDi0L03IsoxPAD/T4SCaK5VYRd5VwnXwN4z3wZ3j7p/l
- QQ/ZivK8JXMBMyvgVJE6fdIyvyNuJR9aEgh7VaWFEuiMfximNkJ1Mg0nv7x/HlZQNaeH
- 8vbIRABJLYt+An0DXOgWb9xedCXM0DA7NUy79uoVvKS7lgMwgrJmjy8+RhkBG/xqHUkF
- 3QqEQHOXH+5YFysJliXKLQP3i5b+IaLzg+qCjmXCLvgBwdfRcE3ueXerTSmsitB8s3VD
- g02aRHcUvvIPrRYQGZ6DqC5J4Qz+si+d6HG61SPfjsgSs7abGwdqCJ4BnNVbsh+k8wre
- j7TA==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/tmEIt6dOCdCTN81MDSEz+Tj/Z13dLHE4VZ/yPx7roHXFWSXwXlxwoStQTFLwpnV3eS6k=@dpdk.org
-X-Gm-Message-State: AOJu0YzqwLezVLN3jVLDwuzQ7mYh6An5YFlwSKH4Gfxb4RuynfHgoZ4A
- mRrlhj5mp16C/FZzh2YLWuLLrJSTNxd/os8Qmy6fgx5NBiQWllA23Hw75NAfwcX7z/A=
-X-Gm-Gg: Acq92OFKUfyJeRiL1WRlFYIS0bcY78yLL9EA/FPemQCZkTl7mhfczGAQu/96jczs3Da
- fpXL9rrpOfHR3EnAN5/M9mRkedOCYubWaO5OFxXpyffch0vTTgAPuBh1C7EcWelVhp8p+E9EIZg
- r7osFjyE/zpUgPgPmxCGRCWyb5IwGxL3DE/Oa0PSbS5EyDEDLQOwAE64Suqqu6X94sMWajD0XHz
- 1N/lWRcmzjSsCJRzB85O0b4tLAPPLXgN0sg14x2O32Ssf4U44UbOSx7EC1Z17KrMRifLj4j/ZJV
- REGpFlJFLHjQKcVu8av0NREKdojlCGNldzIb686OOEwsx/hX+z9lnRmX7dedfxNksD/VLcRSKsP
- fURn1QEbfgrcGvbh3gSFje5dghq+/430veBYgY9HWfF1TaWP+sZSmYnEyeK243vdDhR3Ymf/q57
- XwienT1FQVHeJTE5qIRK7JEJ7bCi1g8LhBqaSLSm8Lj7rgfHDWp7tBso7BKO63qofCioZfxUOwg
- dZPy7+6y0fXiz1sBlh4cZjoI5S8iw==
-X-Received: by 2002:a05:6214:4890:b0:8a4:21d9:bbf2 with SMTP id
- 6a1803df08f44-8ccefddc648mr69643486d6.33.1780171896437; 
- Sat, 30 May 2026 13:11:36 -0700 (PDT)
+ bh=ZTq4njVxg8OBm+hjiG1NtB0vGhlHrlwgA9muuQuS2II=;
+ b=m6N63tU9Kr/d8SSe6/ydDNho1FM4L6D9GfqRjN+ahvF0Y1XxewjHSGIWmyDpdtNvh/
+ 4Upg1aXBRYMgDZqTDRaTb3EJZ+FNcdjfC50PreSAmZSfT9OTrN3v07uu7vSeKtLaQtey
+ L3wMiZMxChaEruziFA584DM5oCA+J/nI0I7bAKlQDDzPKyT5kJq8qyk/q1SkHoE5FVBC
+ vkX4A9cSWLqBE1jbyu8oSvwsVWlB4PZ3UPzRfUbnlLAxTY/k+tWi+c1468+1hNrRKDQg
+ vdqj7sSnG9YLLfJ4RT+WMr+zG60y2C37jSebF81cWQkgl6suJPjnb7E4kfLZHksQyQag
+ GbPg==
+X-Gm-Message-State: AOJu0YyKnIpIWqqvSw0+964urzKd8XFm0i3a+L7ps9ChrOttj6wj93lH
+ RUWCw+4sZ4HqGdoL+FQlehR1aLp4whtLXWBznZalPiVb7DqVRb4lNQW2
+X-Gm-Gg: Acq92OGIf7eWODwnXhnto8hiA8FszIgwtI1IsoNia60JPFvtnrCROYUPaZU9cxOQ+Ok
+ 4CGlX2M4OytjqYCeBiVRnH4pTr0r5mAdSjYVmJARpCYpwWUo4L2jLsmn7I2cqTYqHP4oJACgn02
+ JYLInzREsBia9d7JU1efIxL2pwTWvAIkgCovcBAGmbO386kxawJc3JltDNEOO/AIOei1v0u5qOD
+ zBES0RJbDxfsvWl0RhOpzsEsdbKpEpvwbpd4XGAn1PX8KEm/7rTK07IlabK5DoaiXhRIffqu5az
+ gtnVY0kOYfd124oBPAOzJVB+98PTqvBOLK2o/82PKKk97Ms/yOr+G610Zb8w3MsbOU45dpykHsR
+ oBm7VODMgpRsq69XDNbzLQHVVUlkVx0O2qKnVD2mftm3OzzqXxBW0a2mU4MGmUedfivyInxxKqZ
+ n8uJC6APIGeNuee0nYaBYVeODNP9RJg8X529TEAevo+8kQXShGgrC3fySO85ahFJLj/+VZSR5gi
+ Ue5b0M1nOAN4aEMryGaoxQuXBbiYA==
+X-Received: by 2002:a05:620a:a2cb:20b0:912:67ca:bab7 with SMTP id
+ af79cd13be357-9153d938bbemr534093185a.2.1780173483797; 
+ Sat, 30 May 2026 13:38:03 -0700 (PDT)
 Received: from blam-mobile.hsd1.nh.comcast.net
  ([2601:188:c083:cd0:c107:2c35:5b4a:5cad])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8ccea07e2b1sm51060286d6.17.2026.05.30.13.11.33
+ af79cd13be357-915326503d2sm573400985a.44.2026.05.30.13.38.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 30 May 2026 13:11:35 -0700 (PDT)
+ Sat, 30 May 2026 13:38:02 -0700 (PDT)
 From: Patrick Robb <patrickrobb1997@gmail.com>
-To: dmarx@iol.unh.edu
-Cc: Honnappa.Nagarahalli@arm.com, dev@dpdk.org, luca.vizzarro@arm.com,
- paul.szczepanek@arm.com, probb@iol.unh.edu, yoan.picchi@foss.arm.com,
+To: abailey@iol.unh.edu
+Cc: dev@dpdk.org, dmarx@iol.unh.edu, luca.vizzarro@arm.com, probb@iol.unh.edu,
  Patrick Robb <patrickrobb1997@gmail.com>
-Subject: Re: [v1,1/2] dts: update verbose output regex for VXLAN packets
-Date: Sat, 30 May 2026 16:11:31 -0400
-Message-ID: <20260530201131.19462-1-patrickrobb1997@gmail.com>
+Subject: Re: [v2] dts: add support for no link topology
+Date: Sat, 30 May 2026 16:37:57 -0400
+Message-ID: <20260530203757.22139-1-patrickrobb1997@gmail.com>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260312203630.96473-1-dmarx@iol.unh.edu>
-References: <20260312203630.96473-1-dmarx@iol.unh.edu>
+In-Reply-To: <20260224163200.39360-1-abailey@iol.unh.edu>
+References: <20260224163200.39360-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -83,5 +81,28 @@ List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
+
+ from pathlib import Path, PurePath
+ from typing import ClassVar, Final
+ 
++from api.capabilities import LinkTopology
+ from framework.config.test_run import (
+     DPDKBuildConfiguration,
+     DPDKBuildOptionsConfiguration,
+@@ -263,7 +264,8 @@  def _build_dpdk(self) -> None:
+         ctx = get_ctx()
+         # If the SUT is an ice driver device, make sure to build with 16B descriptors.
+         if (
+-            ctx.topology.sut_port_ingress
++            ctx.topology.type is not LinkTopology.NO_LINK
++            and not ctx.topology.sut_port_ingress
+             and ctx.topology.sut_port_ingress.config.os_driver == "ice"
+         ):
+
+
+
+I don't understand the change above. Surely we do want to set the custom meson args for ICE DUTs when there is a sut_port_ingress, not when there isn't a sut_port_ingress, right?
+
+Also, does the topology type affect whether we want to use these custom args, if the SUT driver is ice? I guess in a weird case we could have an ethdev test using an ice DUT which does not need a TG?
 
 Reviewed-by: Patrick Robb <patrickrobb1997@gmail.com>
