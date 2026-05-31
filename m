@@ -2,73 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22624CD6E49
-	for <dpdk-dev@archiver.kernel.org>; Sat, 30 May 2026 20:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28757CD6E57
+	for <dpdk-dev@archiver.kernel.org>; Sun, 31 May 2026 16:35:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 297EA4029F;
-	Sat, 30 May 2026 22:38:06 +0200 (CEST)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
- [209.85.222.169])
- by mails.dpdk.org (Postfix) with ESMTP id 8E8B44027F
- for <dev@dpdk.org>; Sat, 30 May 2026 22:38:04 +0200 (CEST)
-Received: by mail-qk1-f169.google.com with SMTP id
- af79cd13be357-91550eced6bso14672085a.1
- for <dev@dpdk.org>; Sat, 30 May 2026 13:38:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 25E8040264;
+	Sun, 31 May 2026 18:35:53 +0200 (CEST)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
+ [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 1FFC94025F
+ for <dev@dpdk.org>; Sun, 31 May 2026 18:35:52 +0200 (CEST)
+Received: by mail-dy1-f180.google.com with SMTP id
+ 5a478bee46e88-304df7ff4c2so1875532eec.0
+ for <dev@dpdk.org>; Sun, 31 May 2026 09:35:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780173484; x=1780778284; darn=dpdk.org;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780245351;
+ x=1780850151; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZTq4njVxg8OBm+hjiG1NtB0vGhlHrlwgA9muuQuS2II=;
- b=eT6p+k2vjCIQBnG7+ABJe699GJcYqHQ+KEukRgl6sBFs3axykdUsurNsvvK3CDkzuG
- Ey+Vr2EacmowiRkQhJuaG7dM86SXnXsOyuOR1RlefcQC2UQlzaPUSMUn16383zNF44Z3
- bEeDSnRAMU/Kz2WGgnbD8GY8cdIkuqJEsZ8XlGsSOaYgMmUoS394TRLnUV5Jfq7tW6Or
- sTihNARKpDSd/2tkzgbS7Uu6pmTeuC1lZNLB0Hv7WwMgdCsXuh0cSeilP9lSgmcWFtIf
- bNgoe+5WKDnOse3WZpE9HfdMxtv7y69/iK37OvFrJqLRyaDAx1NbvdxRwD8Mp5ABYRVA
- b+0g==
+ bh=+OS8Pp5lI3cVLgZbntegX+KMDRyHQTNAX8rRfyuP7rc=;
+ b=0PtBHHZy1HyHyHWvzp+srcr3USqV5rVG9GDq4qHJHRpIRXnuvbtuixUCFLc/FfMoeP
+ vZXPGR4slBLy/pjGhE9+/CApf+b95CBjE+yTwtvM1w6HfIsEnaJprrMXFcu9mtjRQxQb
+ dIIF3Ee1fUr7JYYrMPhQ2+bHbpXckvQzuhClDbxh2lo6c3KgqFfYcp7rDUaPccowZbq9
+ pZWYwVNxhhaGThk2tagHArOZrO22uoH7TZZwaMp5RzCn6Vtc8ABSQMMD+Lk3HwbB4XKW
+ 1fU1Y+YNsD1nSuTEkAPzBvrmmkslpNdxOZWyJIEKnsYNCvZnloZg0qvS1jauE+AnPEwz
+ 56Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780173484; x=1780778284;
+ d=1e100.net; s=20251104; t=1780245351; x=1780850151;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ZTq4njVxg8OBm+hjiG1NtB0vGhlHrlwgA9muuQuS2II=;
- b=m6N63tU9Kr/d8SSe6/ydDNho1FM4L6D9GfqRjN+ahvF0Y1XxewjHSGIWmyDpdtNvh/
- 4Upg1aXBRYMgDZqTDRaTb3EJZ+FNcdjfC50PreSAmZSfT9OTrN3v07uu7vSeKtLaQtey
- L3wMiZMxChaEruziFA584DM5oCA+J/nI0I7bAKlQDDzPKyT5kJq8qyk/q1SkHoE5FVBC
- vkX4A9cSWLqBE1jbyu8oSvwsVWlB4PZ3UPzRfUbnlLAxTY/k+tWi+c1468+1hNrRKDQg
- vdqj7sSnG9YLLfJ4RT+WMr+zG60y2C37jSebF81cWQkgl6suJPjnb7E4kfLZHksQyQag
- GbPg==
-X-Gm-Message-State: AOJu0YyKnIpIWqqvSw0+964urzKd8XFm0i3a+L7ps9ChrOttj6wj93lH
- RUWCw+4sZ4HqGdoL+FQlehR1aLp4whtLXWBznZalPiVb7DqVRb4lNQW2
-X-Gm-Gg: Acq92OGIf7eWODwnXhnto8hiA8FszIgwtI1IsoNia60JPFvtnrCROYUPaZU9cxOQ+Ok
- 4CGlX2M4OytjqYCeBiVRnH4pTr0r5mAdSjYVmJARpCYpwWUo4L2jLsmn7I2cqTYqHP4oJACgn02
- JYLInzREsBia9d7JU1efIxL2pwTWvAIkgCovcBAGmbO386kxawJc3JltDNEOO/AIOei1v0u5qOD
- zBES0RJbDxfsvWl0RhOpzsEsdbKpEpvwbpd4XGAn1PX8KEm/7rTK07IlabK5DoaiXhRIffqu5az
- gtnVY0kOYfd124oBPAOzJVB+98PTqvBOLK2o/82PKKk97Ms/yOr+G610Zb8w3MsbOU45dpykHsR
- oBm7VODMgpRsq69XDNbzLQHVVUlkVx0O2qKnVD2mftm3OzzqXxBW0a2mU4MGmUedfivyInxxKqZ
- n8uJC6APIGeNuee0nYaBYVeODNP9RJg8X529TEAevo+8kQXShGgrC3fySO85ahFJLj/+VZSR5gi
- Ue5b0M1nOAN4aEMryGaoxQuXBbiYA==
-X-Received: by 2002:a05:620a:a2cb:20b0:912:67ca:bab7 with SMTP id
- af79cd13be357-9153d938bbemr534093185a.2.1780173483797; 
- Sat, 30 May 2026 13:38:03 -0700 (PDT)
-Received: from blam-mobile.hsd1.nh.comcast.net
- ([2601:188:c083:cd0:c107:2c35:5b4a:5cad])
+ bh=+OS8Pp5lI3cVLgZbntegX+KMDRyHQTNAX8rRfyuP7rc=;
+ b=aepTjQp4aY2KrXi7TdY0rWE76+dqnIB0ZOvcpqRt1DadO5zTphGr1NHCFja4RQnk0T
+ aE7ANNFd3/afVMc+Xi9lNgN5OCXeq3Y0KZSE1hXX0gcL1WVmvvZmARwTWCLEO+dIxWEm
+ sOiMyDF/+cDInWzGHjZDEY431W4MXvl7dNIszNmpdlD2oTW+EBr9ZM5j8rTB0kLRnQBF
+ CCnzGgg4w1+ilLYaSyqU+KWwP+B/ifktOcw4uK21H+deDsa1IYJ7HvWdyUS+dCT50Ve+
+ tZxDKSUHHzeAr4SO3TYfQPyZA0Ls1S7ePi4U2J3BnBu48KGCA1Efcl3eAdgHJftW6r3R
+ 5jPQ==
+X-Gm-Message-State: AOJu0YxEOIqxV3ei7nANBOZog8eYpIMzFzS3k1hUukfPJWZfgVV4BrW3
+ lYUl2Lba0dftFUMMiY8baVroYTNWYeDTTqtlK3PvrIKqkJu1/67dBTVquJVEJW3OpZQ=
+X-Gm-Gg: Acq92OFVNpBq38Hz40gi+sMKBrrwvUvl3DgW/y/yiFkn3zvbHLN7o3nMtauA1OvSwNT
+ czYwZXcKPXA/gfdT6HE7sP4G1nTg3LE0TcA5JYSVvB9WyV+/RBodfxP2spwWOyWt0PEYEsDYT69
+ ZpTn4wVSeqszUqm+MTywla3v+LgkFnDJ+R52ae8r8/0ICw+PxFjkyUQaAA5sIpG2VTtJ5NB6fSI
+ KPHIBW3WbCAlb8+P/Linn//mdoWNBrEeoL15eU06+0LlKm4UXaYl2lq+LR89Zmz63LxeDU6N8D3
+ QC3cPWbs6ClW66B/bONCGdTF3Jsz91QmegRXiKho/++25nJ9HEMpEZhJ+zVptwpKZbUuhYp7yp3
+ 2/yCnSQBmuiAUN6tBEZS3uGtSvjxzKG6k/xrZkyem/cpcuPCjc8fAHkhODBz67xIJXmgZ1EcAlY
+ w9V3urDgZFOiNbvjj/Iory2foj9+azCTPTDH6h7Vm2wrydosHue4sP+4GcH1FYxwKNQgiR/TkUf
+ n4=
+X-Received: by 2002:a05:7300:6426:b0:304:c9f1:a0e9 with SMTP id
+ 5a478bee46e88-304eb115e9amr4934195eec.9.1780245350932; 
+ Sun, 31 May 2026 09:35:50 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-915326503d2sm573400985a.44.2026.05.30.13.38.01
+ 5a478bee46e88-304ed5a114dsm6932000eec.24.2026.05.31.09.35.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 30 May 2026 13:38:02 -0700 (PDT)
-From: Patrick Robb <patrickrobb1997@gmail.com>
-To: abailey@iol.unh.edu
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, luca.vizzarro@arm.com, probb@iol.unh.edu,
- Patrick Robb <patrickrobb1997@gmail.com>
-Subject: Re: [v2] dts: add support for no link topology
-Date: Sat, 30 May 2026 16:37:57 -0400
-Message-ID: <20260530203757.22139-1-patrickrobb1997@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260224163200.39360-1-abailey@iol.unh.edu>
-References: <20260224163200.39360-1-abailey@iol.unh.edu>
+ Sun, 31 May 2026 09:35:50 -0700 (PDT)
+Date: Sun, 31 May 2026 09:35:47 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Long Li <longli@microsoft.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Wei Hu <weh@microsoft.com>
+Subject: Re: [EXTERNAL] [PATCH v4 15/27] net/netvsc: replace rte_atomic32
+ with stdatomic
+Message-ID: <20260531093547.6b5b7275@phoenix.local>
+In-Reply-To: <SA1PR21MB668328954F3A75443CD9AFC9CE082@SA1PR21MB6683.namprd21.prod.outlook.com>
+References: <20260521042043.1590536-1-stephen@networkplumber.org>
+ <20260526232542.620966-1-stephen@networkplumber.org>
+ <20260526232542.620966-16-stephen@networkplumber.org>
+ <SA1PR21MB668328954F3A75443CD9AFC9CE082@SA1PR21MB6683.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,27 +84,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
- from pathlib import Path, PurePath
- from typing import ClassVar, Final
- 
-+from api.capabilities import LinkTopology
- from framework.config.test_run import (
-     DPDKBuildConfiguration,
-     DPDKBuildOptionsConfiguration,
-@@ -263,7 +264,8 @@  def _build_dpdk(self) -> None:
-         ctx = get_ctx()
-         # If the SUT is an ice driver device, make sure to build with 16B descriptors.
-         if (
--            ctx.topology.sut_port_ingress
-+            ctx.topology.type is not LinkTopology.NO_LINK
-+            and not ctx.topology.sut_port_ingress
-             and ctx.topology.sut_port_ingress.config.os_driver == "ice"
-         ):
+On Wed, 27 May 2026 00:29:55 +0000
+Long Li <longli@microsoft.com> wrote:
 
+> > @@ -59,7 +59,8 @@ hn_rndis_rid(struct hn_data *hv)
+> >  	uint32_t rid;
+> > 
+> >  	do {
+> > -		rid = rte_atomic32_add_return(&hv->rndis_req_id, 1);
+> > +		rid = rte_atomic_fetch_add_explicit(&hv->rndis_req_id, 1,
+> > +
+> > rte_memory_order_seq_cst);  
+> 
+> Does rte_atomic_fetch_add_explicit() return the old value of hv->rndis_req_id? If yes this is not correct, as the rte_atomic32_add_return() used to return the new value.
 
+In this case it is harmless, the req_id field is only used here and
+it will just sit one behind the last issued value.
 
-I don't understand the change above. Surely we do want to set the custom meson args for ICE DUTs when there is a sut_port_ingress, not when there isn't a sut_port_ingress, right?
+The do { } while (rid == 0) loop will absorb the case when request id
+is zero.
 
-Also, does the topology type affect whether we want to use these custom args, if the SUT driver is ice? I guess in a weird case we could have an ethdev test using an ice DUT which does not need a TG?
-
-Reviewed-by: Patrick Robb <patrickrobb1997@gmail.com>
+For next version, will just add one; simpler and avoids the need to explain.
