@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF27ACD6E55
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 19:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7427DCD6E55
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 20:12:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9EB0B4042C;
-	Mon,  1 Jun 2026 21:56:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EA837402EB;
+	Mon,  1 Jun 2026 22:12:21 +0200 (CEST)
 Received: from fhigh-b1-smtp.messagingengine.com
  (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
- by mails.dpdk.org (Postfix) with ESMTP id 6AB6B40150;
- Mon,  1 Jun 2026 21:56:17 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 9FB7F7A00C3;
- Mon,  1 Jun 2026 15:56:16 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Mon, 01 Jun 2026 15:56:16 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 71E7B40150
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 22:12:20 +0200 (CEST)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id B60137A0106;
+ Mon,  1 Jun 2026 16:12:19 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-10.internal (MEProxy); Mon, 01 Jun 2026 16:12:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780343776;
- x=1780430176; bh=u0yuveXEeSVDx4hq6KQD8dlkYoukKcZqU2uk2nA/Cnw=; b=
- OtpxWnK9ycEoD3AbsVaf+vsXLKIIgFcY5W2vEezWytMqb2iOYU+D45exsQhm50vO
- 7kLFelyC6fDwFlFNGs3dvK9oOr6d20MDMihppvNrW/eNfFRv78WeotSYqJWRaHhD
- rZVSegmVXzKFuwrALn2izI8bGPKofyknzm5Xs076fI7yQ4Am7othKxuIzk7mfg6D
- AxjH9ViT+kv8mcM2fbxrknaC8tSqo25MQNs0ZnPF8E9JP6T0u/eCXwNrYl50I6Pb
- bUvK9xmuYy7CVQwB4Kj7A5LOQDaKFoUW25Z4EjqX0OUPoZnwD8AYpPEyMua5dFyn
- Pn6sINshrWSsR5ZZ9JH3ew==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1780344739;
+ x=1780431139; bh=8BxF6XQgL6tZlB575Jq+uQdlgP2vJaejksFI4d7f3Lo=; b=
+ Zu3J13XicfnzkEFlmcEW/E+Oy2Ke6+d/GERP4Da6h9Ur0yGXXUj3m9oL4r4iyCq/
+ EVvGykXIhWytAOcEbvDqg9Fgyar4g3EN7dAo6LNuDlqF5O5R4YNpCumfOPcHdzCH
+ /rr6gYI0PAmOV1Cbt1R3t1SQ/SbO4EilXsqACvpbKUt+Nb2AloUFzUrgnzcEhBHP
+ loLW65wKi+tyHgKlrZxppJS5eslFSOE/rdznMFgc6NAVUAZwXSyKl5X5bD7U1Hql
+ csxd55QkqrXcUdLp9QKaudGCsG2LbwpTulQ9UBymKFeT03IlZ8SzY8N4K4Pzi4dL
+ p9mqOPvrlZV7Snj4Ky/KvA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780343776; x=
- 1780430176; bh=u0yuveXEeSVDx4hq6KQD8dlkYoukKcZqU2uk2nA/Cnw=; b=G
- TbusQY/WM3lzThoZcxgTy4LjDWdQc2asyS8jDOVUoBszePEFf90q6O/CYg0O0zm+
- 63DqRWygRyJkQRLOJhorBQHmyUhN5O7PQF4OOWXhApYQF3dN1LCG3KRwReTEC3rH
- A/uCQaRZus02kvRlvlws5qpgIHwPNDzSnAqATDgfhBSdQSkAfzBZh6daTqe5Cvtj
- tEtkiw7jKdGowZWebr8SUPDNf99qm6aUN5yGjhxxBdl57NNf+52LvFtm+qFSvyTW
- ymFZBxQtwJz4G77HhxvbYkmUeXC6arByX6Uf7k8W3v+HeTJmPEFZHCVD/4ew3VVk
- XINx0iyBXB26m30XdFwLA==
-X-ME-Sender: <xms:4OMdagWVY9cwaJFjR2vo5fVnbs12hinhadkfkO8nH5Np7rxV8pWkAw>
- <xme:4OMdaktydu6HGHk_IL8eEBI8Fli3JOUlZ17kwByTqaxoXlbBLI3IJf8RJ4666Dors
- KEfOCyfWt5rpnXqRGBfQ6gHPNu4K3vdU2O97cHl_6um_7Gy6-eR>
-X-ME-Received: <xmr:4OMdasUVFchb7EBaPtxCqMsFo59FmX8fBhnrrDFcVSiudnVdJqmT32bEpi0kzApcW85w94B6U_rvPG28V4eH7cRp1w>
-X-ME-Proxy-Cause: dmFkZTFFjl7ZTL1fn4c4hMR1gWX0eZ9vxwSFRSdJ/5ENFkHoyZJyKuNLfYX57YjbymTFQV
- kyJVsKWUw/mnGWPwI4p1y/+y0H8jJ4vHX8DuS0AnG4Qh/gjZph7213oPMvyTcIgE5i9NOr
- lqN85PHH+QDT6KmsT8q43puBqWRu1zGnNWx1tjm62h0peJEFBmtd/+ag4+MrrwKlAxb41p
- HnSzERxZui2NnKqhyt6nB9ypgSbHi73fnM7lfm/gMD+Y5fCdG4Kd8xKfsZ1EN3foVchiFk
- 2zu6RwAlZbT0aBECwPzEiK038lYvZedEAb0r1yRd4EZiYnodEz0JZ1q3/0+Enuno/VDORl
- dlnYpiDAkF4f+xmyZj5jig/EdHFPvF6j48F7Ha5JrggkJPY5YgtE2ojloSbVmrgjq5WcBY
- Vva0CmssV6Jo5h89l1X6oAA2d9e7F0SkzjC8RgK58bdmaGdV97iy2ReLrFIoZYM+WGb7uh
- 5eKYzMszk3/suPgJDoO6UrZsS3L1zJ2NTZLM/Apf+oouvy9tFFKDc4QorjgvgKfL84ES9M
- VE7GfMSp2y6EBZxPw+U0/LvTcCfgMdLgP2EYU5oeP+//Jd5O4Ndy1VGFQ2WavToPrpk3Ec
- XmEsj7XtmZlHDDqIWt6/kgK3SGGQAoKbR7RIRAXJ7qFIzlFGR4LdzO1eXHeQ
-X-ME-Proxy: <xmx:4OMdankDVG2odDX8rcPY0vdWfaOgBhtgAjHI9VJCOjpmMEvEylducQ>
- <xmx:4OMdalY-WpceKRrgJ4mwZc-KLTtTyuYcP2USEEBwAUkiGlTOrbLR6Q>
- <xmx:4OMdaqPc1Wmb1KK3S26kbyMxLMOt_GjmKTwgWIBbIquVAgaQwsoUZQ>
- <xmx:4OMdaiaZzqEbL-Nb9oK921N60iU4AQ7zkQjMvbDYN6Gfx01uGM0BAQ>
- <xmx:4OMdapj0hdgTWe5Yo-uZfYeP3r773rPmWzoAwuzsh6f02HX3ZcLdUNax>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780344739; x=
+ 1780431139; bh=8BxF6XQgL6tZlB575Jq+uQdlgP2vJaejksFI4d7f3Lo=; b=M
+ 8BYMUZ/LibHwuoW5Am4oGQnRPXZBOxDqARIrgEWTwHKA7q7gt2/aiyoC2qOZF62d
+ jDxIQKafcafwjshA4V4/6vlK8NlsnA9BH1HAe9uHgFemZHCygZgVS/hBq9Be9bQs
+ aVOp101mM620iVnZ8Son8HpGP6TLiaz2WBNlSSSSyekyrPZM9PebUSZjarm0DgxM
+ B4//ckb53vCyNDhha+ax3FlfiaEXfPIxTllMy1/xOSAO8dsDQpZsoz/F77y9xGLS
+ tZT2e7b8/99Sc84DaXJ4/km4uWiW5DGBvZYklO5FUSvu+NsBvEkQniSsX8FZKYor
+ O6i8g9Kw0tsBDf1onajmg==
+X-ME-Sender: <xms:o-cdas8BoZQEJ3OGjPX3DBavMQjmOI6EVCy6-VQDSEwkyCVtHEmINA>
+ <xme:o-cdahCsrN5nQY-O--ZfwuX6ex1j2ezdie5GjEbqJvhWe98lgRH41s48TqtzQfTJ7
+ w8ZG1LrOqZueI2OPlfFFmVLvPMxRxP-sAVELV7H9fJ_gxAJPfM>
+X-ME-Received: <xmr:o-cdakys2n87XPM6aklENC0mOnI57CLAk2ote92YHIl_e4h3InFZ8NM1Zs4DXBZrBjMqPgU1edug3OcXsyYm8CV0TQ>
+X-ME-Proxy-Cause: dmFkZTEtKGRbU/QC+lfkZgTnIPmUuPjYIztHGaDpNx4JmaAzrLHpaEPWcjPppFRjiZTyK+
+ dZsZ0ZNOLDtKizdPfoLdYVtu1KA1a72ukaAupLPZe1T3kCMqk84PCQWz3faBKMgGF37NEN
+ nBGYqJdwiTFezR7BgX20RI1PowWu69Ff1ZpCauP3K54E2NAzYoT+NLs8UL1vtho0Wc2HsN
+ sE30AcERHHm1p7TcsylQMYxU2ESxxXproQEOsAO3ZgaVAQ6EDvF3w7JLNFP+wXYdfIZHon
+ 4iZfAWI9dtb8aTI4XYIVYq2u7vokGkI5waIzt/K8gbPF1yDzztfjB9vCBj/Fnnas3WcJK7
+ 6iaV+ILCos2LoOhjflTqoPLzIx4+fFDt9fcQ1ZODXlrW/pjhiJVEshUtO4gc4b6hfDeOQA
+ BEJIxDM5X5wF9WBWgXGCh14LSzrceWM0i7ckVF/yH/gwbiUHC8ymaB9mHENXapGa7pKu/6
+ BxRijy08f42iUSxTYj7cH68czEdJTpZGXFbkCkAq5wQNn+YaOFtRmH8VI70VSkpSi6nziU
+ g08L2t/tP0iAPy5Q7xfMndhnnMxnmobe5qqBTfMPvT2BE6+D58BMyif5JuwizgAetV80NJ
+ N4kHi1eQcaZ15nCuYDmE6t2V9E+JXYBLLe4nOVeEHdHQjYXe4emynZ4HNveQ
+X-ME-Proxy: <xmx:o-cdauRDi30vq8G-2OBRI_uyUc9i0G_8Kwae-wlNpBkcPQAS4UGSKg>
+ <xmx:o-cdaj-2wxWXXuADHi93fOvxShNoenMl4CTSVuqFug67vIdDGTo18w>
+ <xmx:o-cdatp7_-UQm-1MjmZ_fTkK-VIrAfzkHOvkTBp74a5MKqRbZQNEEw>
+ <xmx:o-cdaokVzJkIKtb0dAyoqqQ-khMjyNmZWlqrYgBezFmadB8QfFrcgw>
+ <xmx:o-cdapHWCuRdNlr5qIIh-QYS1XJaQHMrrQH5v4AlMP2nVnt8pmjdl9Ps>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 1 Jun 2026 15:56:15 -0400 (EDT)
+ 1 Jun 2026 16:12:18 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Aaron Conole <aconole@redhat.com>
-Subject: Re: [PATCH] ci: update versions of actions in GHA
-Date: Mon, 01 Jun 2026 21:56:14 +0200
-Message-ID: <9jg6Bj5CT3KabfWlrZorig@monjalon.net>
-In-Reply-To: <20260511161116.18652-1-david.marchand@redhat.com>
-References: <20260511161116.18652-1-david.marchand@redhat.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 0/2] implement missing APIs on FreeBSD
+Date: Mon, 01 Jun 2026 22:12:17 +0200
+Message-ID: <CyBAPAuxTMaOXvlKSc2eQA@monjalon.net>
+In-Reply-To: <20260525171340.1701509-1-bruce.richardson@intel.com>
+References: <20260525171340.1701509-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,20 +86,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-11/05/2026 18:11, David Marchand:
-> GitHub started deprecating GHA actions based on Node 20.
-> For now, only warnings are raised, but we can switch to more recent
-> versions of the common actions, now:
-> - cache v5
-> - checkout v6
-> - upload-artifact v7
-> - setup-python v6
+25/05/2026 19:13, Bruce Richardson:
+> The APIs for converting a virtual address to an IOVA or a physical
+> address were implemented only as stubs on FreeBSD, but unfortunately
+> they are used by drivers such as "igc", part of e1000, causing the
+> drivers to fail on BSD. A workaround would be to change the use of these
+> functions with the rte_malloc equivalents (e.g. rte_malloc_virt2iova) -
+> which do work on FreeBSD - but a better solution is just to replace the
+> stubs with proper implementations in FreeBSD-specific EAL flags.
 > 
-> Link: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
-> 
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Bruce Richardson (2):
+>   eal/freebsd: fix memseg addresses in IOVA_AS_VA mode
+>   eal/freebsd: implement virtual to IOVA translation fn
 
 Applied, thanks.
 
