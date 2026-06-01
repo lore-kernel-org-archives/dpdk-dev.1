@@ -2,73 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F54CD6E60
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 10:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14365CD6E56
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 10:23:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C87C40658;
-	Mon,  1 Jun 2026 12:16:36 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id A63D840658
- for <dev@dpdk.org>; Mon,  1 Jun 2026 12:16:35 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 64VMB7CE1251586 for <dev@dpdk.org>; Mon, 1 Jun 2026 03:16:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=8
- 6tlZbymavMNbezrUIpPuVk/tapiyCi/9Sm8tefcuos=; b=UUPGorlQ0r24Nf8Qd
- MREUPNEARK9OkXR3cLnKVyg2F3Llr4mPz70l5SPVG10XEraRYIfdleFFkeFOg8a9
- 6rcVpt/WBWaNS3wsvi/371uDL7vLvtSiD8zz9h46CfrBc2Aphab4x0xZleriOUIC
- NkCM1/V2433i6vvPFGyHJerxb+sQ9t7cIF56z+9cS7/9lzZLfEVxtiNd0welLyGU
- 3FbZjZIKXFujIgoMGcUnM0m/TdfA7tKJlxE6j3dTUUdpWm0YUKqK10QbeTSyWvi7
- 8J4Vk/8BemxKlXM0fY4sLaiBN+Er/asexvc9y/bol9nUOldy/IC/7Coxun1DknTq
- IH30g==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4ega3b40k9-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 01 Jun 2026 03:16:34 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 1 Jun 2026 03:16:34 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 1 Jun 2026 03:16:34 -0700
-Received: from localhost.localdomain (unknown [10.28.34.29])
- by maili.marvell.com (Postfix) with ESMTP id 8E1173F7053;
- Mon,  1 Jun 2026 03:16:32 -0700 (PDT)
-From: Shijith Thotton <sthotton@marvell.com>
-To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, "Vidya Sagar
- Velumuri" <vvelumuri@marvell.com>
-CC: <dev@dpdk.org>, Shijith Thotton <sthotton@marvell.com>
-Subject: [PATCH v1 2/2] dma/odm: avoid zero length DMA transfers
-Date: Mon, 1 Jun 2026 15:45:59 +0530
-Message-ID: <20260601101559.1925302-3-sthotton@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260601101559.1925302-1-sthotton@marvell.com>
-References: <20260601101559.1925302-1-sthotton@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 23F294025F;
+	Mon,  1 Jun 2026 12:23:21 +0200 (CEST)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com
+ [209.85.128.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 142E74025A
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 12:23:20 +0200 (CEST)
+Received: by mail-yw1-f170.google.com with SMTP id
+ 00721157ae682-7dc6fbf3e86so46597537b3.3
+ for <dev@dpdk.org>; Mon, 01 Jun 2026 03:23:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780309399; x=1780914199;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=5vMWfTc9l7yHSM76mkR3Eu7OqPvsrVWdDjROdewFdoo=;
+ b=PG9/2DUr5y3vkZmWOc7g8pY8RPlHSzvBCPfMcv/8tFe9mQser8s2oMmCB1S/bWB1ig
+ /2Mjq4Fr4ajzqA87Eor7l5iTthkXcT1ocw90AhGRfWXXs94NG2x4lFqFgbn/jd1jb21e
+ uuVH29rzeiW70kBbbM/yF1zr9gWfms4uKaTdYNtJIgmVHtV2qUJuj5aa82JCh5K1ZryL
+ 1KJNtK1EmB9oUy6sk43Bh3mw+AYcgKvuPL+epQPGk4jeh3C7/yHz8Grf9asKpgFn5o0O
+ tV3+YJ9C1tcR3dbhmecx3o0UaU8zUKecMrS6RomkVilkVHbLtzOziW/pwHFCKwVkLBUC
+ RGMw==
+X-Gm-Message-State: AOJu0Yx2ikR2KC/jpUbQ3e+VBuf4vZZ2xqLGzYNRLok1iSX8x5rpg6vs
+ yHjkjPSWDmSd6wPU9itWzhv5VZd+vi5GYTPbGCENkcLqoIRY6RsFyhHbjq902KlK
+X-Gm-Gg: Acq92OF3AS1Zfpn7rSr8Zh0qiKWLDa91ehOiWfy5UT8rczyHXWSAs3NZ4x2ZX1PxntS
+ F7src4X0daCexxYT9z7HSxt0E1LQXYAP/gHSjPSjUFzxcNMiR2MAsnjoeu075QpVfFpCzu2CZLN
+ ioIkJHLnXc0QyWcMg15SgmWBVauN2V/DsxM4q6aNwRwNWGl+kEjdUWJDQH0dQm7XLAm/J+SvX0D
+ 7yWNy29YaAwsJcvcHK4Hmj3++GwZdbjhhHxkv/pbKZTcU1pf36FfWj/pajJ3f3yBHwPlmSYdJdM
+ /C9k/VNmo5xu5WPG53tBETuQCX923lXWkC7QfUOfasCwiyGaoYGNTTsyyIOBbIxuR7DVI9yUv+g
+ Hz9ue/trcWt2npuvf3Y4rRmLu6uZUlj9cGpoMN8uWyaJ715jjvK6TugyYh36jjgkwqx0alakY8E
+ r1VzeSKC0bMb30182UaIlNdPQu4DtND60wgT8/9WRCUiLhtrTjYF2XbDjTHdD6NVRh76o2Eg==
+X-Received: by 2002:a05:690c:e3d3:b0:7de:71bd:6811 with SMTP id
+ 00721157ae682-7e0615fc753mr89363197b3.43.1780309399271; 
+ Mon, 01 Jun 2026 03:23:19 -0700 (PDT)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com.
+ [209.85.128.181]) by smtp.gmail.com with ESMTPSA id
+ 00721157ae682-7e17bf00938sm36761997b3.36.2026.06.01.03.23.18
+ for <dev@dpdk.org>
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Mon, 01 Jun 2026 03:23:18 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id
+ 00721157ae682-7dc2b658544so31799347b3.2
+ for <dev@dpdk.org>; Mon, 01 Jun 2026 03:23:18 -0700 (PDT)
+X-Received: by 2002:a05:690c:7006:b0:7b3:b0a6:2c76 with SMTP id
+ 00721157ae682-7e05cb4194bmr82591157b3.18.1780309398676; Mon, 01 Jun 2026
+ 03:23:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjAxMDEwMyBTYWx0ZWRfX7UA9OA21GF0Z
- YtGrxkIboBkaz6N+is47FdikUImCxxfQ1sa7u2NnwDq1McF8hrGuo5RNQCZz2aH7Kj0nFDe75Ax
- 2nVEfhoTKFakyEB74Cib6aXciYia1zW3vz1Ue1Kb6eIO0TxqhRJDL0WA0tyBRZT9J5jthYfT4AP
- N0rfn6Vx6sXkQj/SmExSeRMU2T2CGp4/pB4xgBXb3QiN4YRN6sLi7XI5d+5W7pjQyos8Xx25a/J
- AJMKzbzg2vTSw2rX315UX62xvXtkgfGD8bZICn1BgPgsUyhoIUoqGKMzB0FQjpPeXdhd9d0/4ij
- YrhkbWiiGSCHtDzCZ+qHJMn6WIZEFZpOcdZ9rjXQruREgdEMyiQ8WU5TE9bA6EICzm2DcbhQlME
- M9xOxXW30Cmw0LRDPRmMar36KKLWgK8bplqBWe+PQjA+kPA1Lg/pz34d+Oav7k3YqfErqBfXTcY
- XdA/IyINxNxm3P+v+nw==
-X-Authority-Analysis: v=2.4 cv=cLjQdFeN c=1 sm=1 tr=0 ts=6a1d5c02 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=ZTsfstNl9sPyvf5yVl8A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: jZUqgmoG6oY6jaB54KHcxNsDb_cfIknL
-X-Proofpoint-GUID: jZUqgmoG6oY6jaB54KHcxNsDb_cfIknL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-01_03,2026-05-28_03,2025-10-01_01
+References: <20260531180118.274308-1-stephen@networkplumber.org>
+In-Reply-To: <20260531180118.274308-1-stephen@networkplumber.org>
+From: Luca Boccassi <bluca@debian.org>
+Date: Mon, 1 Jun 2026 11:23:07 +0100
+X-Gmail-Original-Message-ID: <CAMw=ZnRB+wv7ZN6c5YkF=LfTB328uYcBmf=xCqjTU8hSjzuVZQ@mail.gmail.com>
+X-Gm-Features: AVHnY4KU0klroxoQ8pbM_rDoy_kzFx530RAPJ-AZYkMZ3DVYGmo_baPrwitoGK0
+Message-ID: <CAMw=ZnRB+wv7ZN6c5YkF=LfTB328uYcBmf=xCqjTU8hSjzuVZQ@mail.gmail.com>
+Subject: Re: [PATCH] test/latency: fix intermittent failure on slow platforms
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, stable@dpdk.org, Reshma Pattan <reshma.pattan@intel.com>, 
+ Bruce Richardson <bruce.richardson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,62 +76,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add validation to reject zero-length DMA operations early
-with -EINVAL, preventing queue disable.
+On Sun, 31 May 2026 at 19:01, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> The forwarding loop was bounded by a fixed interval of 0.5ms
+> but on slow or emulated platforms with a low-frequency timebase
+> (e.g. RISC-V rdtime) this fails because the loop only ran once.
+> The test needs two iterations to get any samples.
+>
+> Rearrange the forwarding loop so that a minimum number of iterations
+> are required. The loop still has an upper bound on packets and time
+> interval which is expanded to 10 ms.
+>
+> If no samples are collected, mark the test as skipped.
+> Refactor the forwarding loop test so that cleanup happens on
+> failure.
+>
+> Reported-by: Luca Boccassi <bluca@debian.org>
+> Fixes: b34508b9cbcd ("test/latency: update with more checks")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  app/test/test_latencystats.c | 75 ++++++++++++++++++++++--------------
+>  1 file changed, 46 insertions(+), 29 deletions(-)
 
-Signed-off-by: Shijith Thotton <sthotton@marvell.com>
----
- drivers/dma/odm/odm_dmadev.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Thanks, this has been failing consistently in riscv64 since at least
+25.11, hopefully this makes it stable.
 
-diff --git a/drivers/dma/odm/odm_dmadev.c b/drivers/dma/odm/odm_dmadev.c
-index 0211133bd4..7488b960fd 100644
---- a/drivers/dma/odm/odm_dmadev.c
-+++ b/drivers/dma/odm/odm_dmadev.c
-@@ -110,6 +110,9 @@ odm_dmadev_copy(void *dev_private, uint16_t vchan, rte_iova_t src, rte_iova_t ds
- 	vq = &odm->vq[vchan];
- 	hdr.s.xtype = vq->xtype;
- 
-+	if (unlikely(!length))
-+		return -EINVAL;
-+
- 	h = length;
- 	h |= ((uint64_t)length << 32);
- 
-@@ -262,14 +265,20 @@ odm_dmadev_copy_sg(void *dev_private, uint16_t vchan, const struct rte_dma_sge *
- 	pending_submit_len = vq->pending_submit_len;
- 	pending_submit_cnt = vq->pending_submit_cnt;
- 
--	if (unlikely(nb_src > 4 || nb_dst > 4))
-+	if (unlikely(!nb_src || nb_src > 4 || !nb_dst || nb_dst > 4))
- 		return -EINVAL;
- 
--	for (i = 0; i < nb_src; i++)
-+	for (i = 0; i < nb_src; i++) {
-+		if (unlikely(!src[i].length))
-+			return -EINVAL;
- 		s_sz += src[i].length;
-+	}
- 
--	for (i = 0; i < nb_dst; i++)
-+	for (i = 0; i < nb_dst; i++) {
-+		if (unlikely(!dst[i].length))
-+			return -EINVAL;
- 		d_sz += dst[i].length;
-+	}
- 
- 	if (s_sz != d_sz)
- 		return -EINVAL;
-@@ -342,6 +351,9 @@ odm_dmadev_fill(void *dev_private, uint16_t vchan, uint64_t pattern, rte_iova_t
- 		.s.nlst = 1,
- 	};
- 
-+	if (unlikely(!length))
-+		return -EINVAL;
-+
- 	h = (uint64_t)length;
- 
- 	switch (pattern) {
--- 
-2.25.1
-
+Acked-by: Luca Boccassi <luca.boccassi@gmail.com>
