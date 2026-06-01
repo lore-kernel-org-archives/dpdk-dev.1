@@ -2,46 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A768CD5BD1
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 09:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683C0CD6E56
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 09:39:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CCCBD4064A;
-	Mon,  1 Jun 2026 11:38:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A91D74064A;
+	Mon,  1 Jun 2026 11:39:18 +0200 (CEST)
 Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id 9C3AD4025F
- for <dev@dpdk.org>; Mon,  1 Jun 2026 11:38:45 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru EFFAB6B
+ by mails.dpdk.org (Postfix) with ESMTP id 1590F4025F
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 11:39:17 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 6C9E966
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1780306725;
- bh=9rbpzxGmfKBvI182AyEKGUea3YFWQt4fZtXuZivALsE=;
+ s=default; t=1780306756;
+ bh=aDmqlM8tqHHXhDyt/vX6VXZrmIJrczGMofePELap8Nc=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=PcxSNOHqkL1gja+VPSBFt5JfCBT2BX76N3GqYGwT4Aj2fsVqjgMk4QKKbG2bSja/Q
- mr6TD+hLyr/mp8ijQswjZFHZLapG+gUWBMsvt8THIZvfcaqlnhAXUUlzHu/jrJzupZ
- +wNb6Y9WXNeD43OqVwhc/jhheId2N/OWPa/7we7k=
+ b=e/UhcPnO+5tktodKeVKoBlu54ex0dtz0dej/k77giSscqzyCPSNPl2hf2aHx/rV4n
+ JphYA/bAuzGIFShBNbcZG0Zu75pxrLwsTUr3MFGR9qQhxejuJFHLUvQ5ksYHD+ZnNj
+ 1jd8Ca2q8qcLh4YviM4QLgfw3ruzWKpga4OHoQ5I=
 Received: from [192.168.38.17] (aros.oktetlabs.ru [192.168.38.17])
  (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id EFFAB6B;
- Mon,  1 Jun 2026 12:38:44 +0300 (MSK)
-Message-ID: <af23230d-47ef-4f6b-9d5f-4a6996e24368@oktetlabs.ru>
-Date: Mon, 1 Jun 2026 12:38:44 +0300
+ by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 6C9E966;
+ Mon,  1 Jun 2026 12:39:16 +0300 (MSK)
+Message-ID: <0daff062-acfc-4e5b-8925-859bb6f84004@oktetlabs.ru>
+Date: Mon, 1 Jun 2026 12:39:16 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] ethdev: skip VMDq pools unless configured
+Subject: Re: [PATCH v3 3/5] ethdev: hide VMDq internal sizes
 To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
 Cc: rjarry@redhat.com, cfontain@redhat.com,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori
- <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>, Thomas Monjalon <thomas@monjalon.net>
+ Thomas Monjalon <thomas@monjalon.net>
 References: <20260403091836.1073484-1-david.marchand@redhat.com>
  <20260510170306.3406045-1-david.marchand@redhat.com>
- <20260510170306.3406045-3-david.marchand@redhat.com>
-Content-Language: en-US
+ <20260510170306.3406045-4-david.marchand@redhat.com>
 From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Content-Language: en-US
 Organization: OKTET Labs
-In-Reply-To: <20260510170306.3406045-3-david.marchand@redhat.com>
+In-Reply-To: <20260510170306.3406045-4-david.marchand@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
@@ -58,16 +55,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 On 5/10/26 8:03 PM, David Marchand wrote:
-> The mac_addr_add API describes that only the 0 pool should be passed
-> unless VMDq has been enabled, though there was no validation so far.
-> Add such a check, then cleanup the MAC related operations (adding,
-> removing, restoring).
+> Hide RTE_ETH_NUM_RECEIVE_MAC_ADDR and RTE_ETH_VMDQ_NUM_UC_HASH_ARRAY
+> in the driver API as those (ambiguous) macros are only a driver concern.
 > 
-> As a side effect, the net/cnxk does not need to manually reset the
-> mac_pool_sel[] array.
+> In practice, this is only used by the bnxt and ixgbe (+ clones) drivers.
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-for ethdev
 Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 
