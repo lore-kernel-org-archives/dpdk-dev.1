@@ -2,48 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E1BCD6E56
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 09:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D8ECD5BD1
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 09:38:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D42514025F;
-	Mon,  1 Jun 2026 11:36:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C7F8B4025F;
+	Mon,  1 Jun 2026 11:38:15 +0200 (CEST)
 Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id 559F64025A
- for <dev@dpdk.org>; Mon,  1 Jun 2026 11:36:33 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru F19FC6B
+ by mails.dpdk.org (Postfix) with ESMTP id 5F8EE4025A
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 11:38:14 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru EAD5C6B
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1780306593;
- bh=e2WvFTBw5xlDwmIM51oUAGvPE13IZO3uBecdJbgButM=;
+ s=default; t=1780306694;
+ bh=WsyqYXQVRTUT5Roo74jsSNuV8t/upC/ItMNrLY1TKOk=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=pmNAthdxumrFXeJYQykfVWV7nh4jEk1bSVmhgD8rsP3IscDnVAXqvBDVnBcu463Sn
- u/sX4EZs8tdSJZDn0naEqbYXkYd9xzEESkCrVaZRm7cQFcF8gukoMV1drAf6lTcZBu
- FQx9vtZ4Dq/f/27fmBGcephrO25z2NM0386RE7ZY=
+ b=MjExWXYLpj5lECLvazW1JoHZTtaWSzOvo7cJ1FosWcbST+vqssZqCoavoj9HxyWaU
+ C6cwkW5POrf6Unbqrut2OMmVjDcHwzeROnDZGbHkHGM4dQ030IRJhjj/8faA+Wvjvr
+ NCdQqhmGRKk/I88HtLkwB7bU9vnYi+jhBZm5tBK8=
 Received: from [192.168.38.17] (aros.oktetlabs.ru [192.168.38.17])
  (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id F19FC6B;
- Mon,  1 Jun 2026 12:36:32 +0300 (MSK)
-Message-ID: <325b0030-f3d4-4900-b13d-a518c164e95a@oktetlabs.ru>
-Date: Mon, 1 Jun 2026 12:36:32 +0300
+ by shelob.oktetlabs.ru (Postfix) with ESMTPSA id EAD5C6B;
+ Mon,  1 Jun 2026 12:38:13 +0300 (MSK)
+Message-ID: <65601920-a8c0-47b2-bbf6-281b647732ec@oktetlabs.ru>
+Date: Mon, 1 Jun 2026 12:38:13 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] ethdev: announce VMDq capability
+Subject: Re: [PATCH v3 1/5] ethdev: check VMDq availability
 To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
-Cc: Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>,
+Cc: rjarry@redhat.com, cfontain@redhat.com,
  Thomas Monjalon <thomas@monjalon.net>
 References: <20260403091836.1073484-1-david.marchand@redhat.com>
- <20260506123554.2524136-1-david.marchand@redhat.com>
- <20260506123554.2524136-3-david.marchand@redhat.com>
+ <20260510170306.3406045-1-david.marchand@redhat.com>
+ <20260510170306.3406045-2-david.marchand@redhat.com>
 Content-Language: en-US
 From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 Organization: OKTET Labs
-In-Reply-To: <20260506123554.2524136-3-david.marchand@redhat.com>
+In-Reply-To: <20260510170306.3406045-2-david.marchand@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
@@ -59,13 +54,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 5/6/26 3:35 PM, David Marchand wrote:
-> Let's mark VMDq feature availability as a per device capability.
-> We can then enforce API calls related to this feature are done on device
-> with such capability.
+On 5/10/26 8:03 PM, David Marchand wrote:
+> Refuse VMDq related Rx/Tx modes when the driver do not announce VMDq
+> pools availability.
+> This will used later as a gate to ignore/reject VMDq related matters.
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-for ethdev
-Acked-by: Andrew Rybchenko@oktetlabs.ru>
+sorry for spam, I found the latest version too late
+
+Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 
