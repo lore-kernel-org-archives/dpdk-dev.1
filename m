@@ -2,72 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D32CD6E5D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 16:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C294CD6E55
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 17:16:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B340E4042C;
-	Mon,  1 Jun 2026 18:58:08 +0200 (CEST)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 5C65C402DB
- for <dev@dpdk.org>; Mon,  1 Jun 2026 18:58:07 +0200 (CEST)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-304e83724bfso4438914eec.0
- for <dev@dpdk.org>; Mon, 01 Jun 2026 09:58:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6F1E04042C;
+	Mon,  1 Jun 2026 19:16:44 +0200 (CEST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com
+ [209.85.208.46]) by mails.dpdk.org (Postfix) with ESMTP id BDD24402DB
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 19:16:42 +0200 (CEST)
+Received: by mail-ed1-f46.google.com with SMTP id
+ 4fb4d7f45d1cf-68d234218bcso3133703a12.2
+ for <dev@dpdk.org>; Mon, 01 Jun 2026 10:16:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780334202; cv=none;
+ d=google.com; s=arc-20240605;
+ b=Mw+3IJLUciCsr07ZEtJTo5+nOfVKSvDfdA/BOrRB0tHw4ZLnntgbsBdi6xlb3+Fwnb
+ 3V1eWkwXAwdtChreOGZrTAKDHoemN2E2v47iv7TqifWiZZjTJtclv27UN8YR0yxdQu3l
+ 9VYR8F6B+Aa6Pk1b+NU3hSkecNcxu1tzyen/d3qacHGtYUfvenXGb+cMFrfRlSTDl52q
+ u7+rb34ApRKnS9lvVkThvS445oxn47ArsST75vSNgHVdzAJ8s/Jz3PJ2MWnZeh8GSfMV
+ gktwEhQTGsYPme8keHjFWofIa3yrBk+d650TMlFIfDMnsW9aFBIPdETBfOJyUFeza9bG
+ RhNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=eJa8IpruYwUY54AedLFNRIFltfdhYghei6JdOBBGpuA=;
+ fh=aqYtrYzRB5cCirfn+bt1oV8me0GZbk/ndAQae5wOO5k=;
+ b=Z0GLoDXtR2aPMAfTZsAd9Tt0pWeoXvfHdJDglAEkTG48dfPikDdgGT5ShTJfkozNQL
+ FsWTyycbzm2W3eOz/5qFjoSWXOyQenCVEiMyxDRaMuQKL9a7lQ0hZlfkW8P10Aw9K6UN
+ QXxyMwY+LY2TmIyh9UjUDUOEeevuQJrWbV2NXCUTGN6sBZmPaTlDqgXu29dbFeXKHVD+
+ fW0d5H/ceVLG5mCfEJCvKDKhvR2mh+4q2qY/QBwvMGhoSeqezO0X9K//MyE14n92ZfB1
+ eE3/Dwz61KaMdyvtwHT79EToIHseSmqNXmIqqpd0AuRbi83bM/felVyuIujo1WntKq22
+ lvTQ==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780333086;
- x=1780937886; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=hDRBOaHQVy0HqveOU0zDj+bXhqVE0ZV+EjVN69UNSFU=;
- b=h+oc7SJHGgXutz0U6gsVb8mzKb4fi5aSqtYMnW85Xkd61aGujHbQnjS+pxnQXR/uaL
- sza1B6LqNNFf6tv51t7MbuQiAxzMJU/aiZyPrua7KQn75WJuagIJcDEj7dg91vxJ87xJ
- BkZWTDE3GTetVFxxBVQutqV+2mChGMXJ8EWyT3TFsy/ojFNLs/nf3f2NRTsey6fPvTj3
- knJTEe0BxSa2xd6+hEPEj3iji+ZW3+gWqjIibG1F+3bFuZwANZjgJA9aN2oNmuaTWbaT
- UcamCNjDkk2VZSJ8tTHaPK7DmGpK4d/yrp/c5UhFXipyKKmll0NlIfoPi0DfDLjwE302
- ew+g==
+ d=iol.unh.edu; s=unh-iol; t=1780334202; x=1780939002; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=eJa8IpruYwUY54AedLFNRIFltfdhYghei6JdOBBGpuA=;
+ b=S5V7YNeDPCjgigaYUyC0vdivSCKH5iYbRNondX6D6MRtInIyfehS2L2e4klVhLlqW2
+ hfo15Iv0eUo/ovkMan5mHLaJ6bDQ6tEuaKOOUOIm4Y693bYy9VHWvjpQRcBOaVBIR+cR
+ DHfH3lu597WQs9D0+K+ybHj3nfUI4Gkm1SWkI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780333086; x=1780937886;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=hDRBOaHQVy0HqveOU0zDj+bXhqVE0ZV+EjVN69UNSFU=;
- b=rqKObTXoSe/2Wz8L4e4G95U75zwns1ExdFkVnVAEvXAM/lZ9RGCXbrmD7oOqZ2Bk1w
- YAaEFcddlP0kYzZzGHBrU3WbwRLukzdxK/fMXC3HLwn4QcMiiW6oCwh6mSNYimsykWHb
- 3Iq/ju6I1Oy3DIxRHKQjnHKTGUwjls135OdfsgL2UNaCW2bMLgheZBKBzwk4v4mo6kim
- W3YtDCVsIvdDIqE6gRHd2KIEAtjfrVMnfXkOhJnHQIQvWDMgdOsztU0Gr4C7HLHpJEYs
- I6n7zep4StayxHJGbTjFT/RLV2vcrqniR9jNqFf0pHqudWKo2SpUN488KsiQtX5uFRcM
- r++Q==
-X-Gm-Message-State: AOJu0YwpZSQynYaMfkdv+Vz6+VnGvqfVqMspD44bPnspk69CjhkEN3pj
- LI1FwC6Wba+e0qtVNuVyotvDFcH3ZdNVFksLuD1zNgtQthSvcfZfNaj51a6lSNi9+AU=
-X-Gm-Gg: Acq92OF0yvvmK4EY5DPlTx8ztzmAuCdYr930zG4ZXxGzGFn2rBkWnjoiYbK8b3ZQkeN
- 0MWoPQbZ9pCFniwz5/587/1G2i4YUNv5CGV0IiWgQ4DwnoHd6zi8j5NRY7yqHooUBsGDZDmxZBV
- LlNXIJAbjUucJv0nFEMBbsNaUu3kLTZlxAEMj5Wmuh3e7hqoY/oS9kg0ER+wyDOaoiYqRKxEzR/
- GCDKQ6sEnmD9dCuaUf0m2KSBPZlhCtnHVnVYw4Vkq/ZV3nZ5Cl1IhLy6Ls6TQUGOn5PYqdO/E0T
- 8u7KTKOvU9sDI3RXjtu1y3JF8zZhCzKu8f+wAwJw4mN+Oe1Mmpo9d2Ny0wyg0z+anB5q/3nAFG4
- ecFAM9BUcCMeeSeTzoXI2NRBdc12wX5TSo08di8O+0Tw4LoRUyc1xx1JIrhzn7MwM21gmfwkIDm
- zbjHyPpBYTtA6oHsIR6tTkxELwsoajocX5EtZWxxBNuYftI4ps/sBw9R+ayLEGgT5OMbSSKgxJs
- mA=
-X-Received: by 2002:a05:7301:290e:b0:2d9:f0b3:1d98 with SMTP id
- 5a478bee46e88-304fa4b7157mr5614240eec.7.1780333086098; 
- Mon, 01 Jun 2026 09:58:06 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-304ed5d26d1sm9516386eec.30.2026.06.01.09.58.05
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 01 Jun 2026 09:58:05 -0700 (PDT)
-Date: Mon, 1 Jun 2026 09:58:02 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wei Hu <weh@linux.microsoft.com>
-Cc: dev@dpdk.org, longli@microsoft.com, weh@microsoft.com
-Subject: Re: [PATCH v5 1/1] net/mana: add device reset support
-Message-ID: <20260601095802.36cec727@phoenix.local>
-In-Reply-To: <20260529142648.148407-2-weh@linux.microsoft.com>
-References: <20260529142648.148407-1-weh@linux.microsoft.com>
- <20260529142648.148407-2-weh@linux.microsoft.com>
+ d=1e100.net; s=20251104; t=1780334202; x=1780939002;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=eJa8IpruYwUY54AedLFNRIFltfdhYghei6JdOBBGpuA=;
+ b=PduwmkxJUzCSzWOJwmeTO1bcMGWHSbqn4RnzE6l9EGfS335z3YpTJBhCs64yAeH66Z
+ +iEQpWDO4TC3lstyuf4hnt79JF3OlPdVpfGiTvQ6DqlOUNrCI1EL1R3JM5jikYjaiS/Y
+ 3a2ykMZVy1UE0klyvR6Msb18fn2qlCE+xBU0Id7S7EEYwVXEgiQqGnW6jduZwwL7hUfz
+ lFREQXPppLw1BOP27FJECyewTrn6duJDhm4jbUAlA45nsQiXFEo35gGv/YVc94E+svwa
+ 7oIvmEKFgkWbXyoNUVO/xVY6UhB46p4V6T7DDpKz2HJmR8rylcDsHSAoJfi+dFQINTGx
+ Skug==
+X-Gm-Message-State: AOJu0YyrcxfNm6LAyuD98AayQVLdEQv649t53BQSDnfaSf8rT1MnTbpI
+ ZxLjVVh1VoTFTawaLLmAO1H2ygGYdqo+TSEICZghqfLj4vfYwlteVtnjB+AJN8hBRD/FtrRfTvy
+ aqGIUvxfvJbehtZ7ak8Kce6mYYFc7AZXZ+045hth/ew==
+X-Gm-Gg: Acq92OHTdVIdF5/OCldPefwddQoPAOF6JeaEWS//sRV9p15QALu/s3iSHbYjdfXufuF
+ JfBSR/F5d4R7fyLP7fZysB0zfnI/r/+B/4tPwHK14lHaKBJXUBrvZ+Op8EbNjViOLkdefJ0V7OR
+ 7L3B/KCg4pMfEhaqLb3ewPQX9LejE84BWMO5/VdcYuu/IW942KaxM24uChc3I42zDuDkOX2SFMG
+ SYWYknbjVHdytreDnt3j+T4ZhD4vyNDSZpzxa3mgiIm6B5WNT6foU19e2UYpLjDXGm4jN7xOYOn
+ X9Aej11BfIWuz4+2HDbaIIQdUeliork+vdLcevXbAw6U4YqrrpWS
+X-Received: by 2002:aa7:d849:0:b0:66e:6ac4:2c01 with SMTP id
+ 4fb4d7f45d1cf-68c8893631dmr4117656a12.2.1780334202333; Mon, 01 Jun 2026
+ 10:16:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260224163200.39360-1-abailey@iol.unh.edu>
+ <20260530203757.22139-1-patrickrobb1997@gmail.com>
+In-Reply-To: <20260530203757.22139-1-patrickrobb1997@gmail.com>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Mon, 1 Jun 2026 13:16:30 -0400
+X-Gm-Features: AVHnY4Lo7R4iXFitz789l1N6wb7L2EgrCm8dVuHeTL-k88fLihMboMcK1ioD-gM
+Message-ID: <CABJ3N2UVNvqK2y6776bVE0zufpcSERjiroNxpXkf26q_pgajzg@mail.gmail.com>
+Subject: Re: [v2] dts: add support for no link topology
+To: Patrick Robb <patrickrobb1997@gmail.com>
+Cc: dev@dpdk.org, dmarx@iol.unh.edu, luca.vizzarro@arm.com, probb@iol.unh.edu
+Content-Type: multipart/alternative; boundary="000000000000b63f460653345b26"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,103 +90,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 29 May 2026 07:26:48 -0700
-Wei Hu <weh@linux.microsoft.com> wrote:
+--000000000000b63f460653345b26
+Content-Type: text/plain; charset="UTF-8"
 
-> From: Wei Hu <weh@microsoft.com>
-> 
-> Add support for handling hardware reset events in the MANA driver.
-> When the MANA kernel driver receives a hardware service event, it
-> initiates a device reset and notifies userspace via
-> IBV_EVENT_DEVICE_FATAL. The DPDK driver handles this by performing
-> an automatic teardown and recovery sequence.
-> 
-> The reset flow has two phases. In the enter phase, running on the
-> EAL interrupt thread, the driver transitions the device state,
-> waits for data path threads to reach a quiescent state using RCU,
-> stops queues, tears down IB resources, and frees per-queue MR
-> caches. A control thread is then spawned to handle the exit phase:
-> it waits for the hardware to recover, unregisters the interrupt
-> handler, re-probes the PCI device, reinitializes MR caches, and
-> restarts queues.
-> 
-> A per-device mutex serializes the reset path with ethdev
-> operations. The mutex uses PTHREAD_PROCESS_SHARED for multi-process
-> support and is held across blocking IB verbs calls. Operations that
-> cannot wait (configure, queue setup) return -EBUSY during reset,
-> while dev_stop and dev_close join the reset thread before acquiring
-> the lock to ensure proper sequencing. A CAS-based helper prevents
-> double-join of the reset thread.
-> 
-> Multi-process support is included: secondary processes unmap and
-> remap doorbell pages via IPC during the reset enter and exit
-> phases. Data path functions in both primary and secondary
-> processes check the device state atomically and return early when
-> the device is not active. RCU quiescent state tracking uses
-> per-queue thread IDs in shared hugepage memory, covering both
-> primary and secondary process data path threads.
-> 
-> The driver uses ethdev recovery events to notify upper layers
-> (e.g. netvsc) of the reset lifecycle: RTE_ETH_EVENT_ERR_RECOVERING
-> on entry, RTE_ETH_EVENT_RECOVERY_SUCCESS or
-> RTE_ETH_EVENT_RECOVERY_FAILED on completion. A PCI device removal
-> event callback distinguishes hot-remove from service reset.
-> 
-> Documentation for the device reset feature is added in the MANA
-> NIC guide and the 26.07 release notes.
-> 
-> Signed-off-by: Wei Hu <weh@microsoft.com>
-> ---
-
-I went a deeper with AI and tried to figure out a good way
-to do what the driver is trying to do without reinventing so much.
+Hi Patrick, Thanks for the review
 
 
+> I don't understand the change above. Surely we do want to set the custom
+> meson args for ICE DUTs when there is a sut_port_ingress, not when there
+> isn't a sut_port_ingress, right?
+>
+> Yes, this was something I overlooked and will be updated in the next patch.
 
-This reset logic is considerably more complex than other DPDK drivers,
-and most of the complexity looks self-inflicted. A few specific things.
 
-The RCU use is not really RCU. thread_online/offline are called on every
-rx/tx burst, and the "thread" token is the queue index, not a thread. So
-it is a per-queue in-use flag paid for on the hottest path, plus a new
-library dependency, to express "wait until no queue is mid-burst" -- which
-the driver already half does by swapping the burst function to
-mana_*_burst_removed and checking dev_state. Please drop the rcu use. If
-you must drain readers, a per-queue atomic flag is lighter and local; the
-fast path already has the dev_state acquire-load it needs.
+> Also, does the topology type affect whether we want to use these custom
+> args, if the SUT driver is ice? I guess in a weird case we could have an
+> ethdev test using an ice DUT which does not need a TG?
+>
+> My understanding is that if the link topology is no link, there will be no
+ingress and the ports on the NIC would not be used for traffic. I do not
+believe this argument will still be required if no traffic is being
+handled. Please let me know if you disagree with this approach or if I am
+missing something.
 
-The data path only needs the atomic, and that part is fine. The lock is
-legitimate for serializing the teardown/rebuild against control ops, but
-the way it is used is the problem: it is acquired in mana_intr_handler,
-released in mana_reset_enter, re-acquired in mana_reset_thread, and
-released in mana_reset_exit_delay. That cross-function, cross-thread
-handoff is exactly why every function needs __rte_no_thread_safety_analysis.
-Acquire and release the lock in the same function and the annotations all
-go away. Turning off thread-safety analysis needs strong justification and
-this does not have it.
+--000000000000b63f460653345b26
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Wrapping the ops in MANA_OPS_*_LOCK macros hides the lock/state protocol.
-A single explicit helper at the top of each op is just as terse and stays
-analyzable.
+<div dir=3D"ltr"><div class=3D"gmail_quote gmail_quote_container"><div>Hi P=
+atrick, Thanks for the review<br>=C2=A0</div><blockquote class=3D"gmail_quo=
+te" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204=
+);padding-left:1ex">I don&#39;t understand the change above. Surely we do w=
+ant to set the custom meson args for ICE DUTs when there is a sut_port_ingr=
+ess, not when there isn&#39;t a sut_port_ingress, right?<br>
+<br></blockquote><div>Yes, this was something I overlooked and will be upda=
+ted in the next patch.<br>=C2=A0</div><blockquote class=3D"gmail_quote" sty=
+le=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddi=
+ng-left:1ex">
+Also, does the topology type affect whether we want to use these custom arg=
+s, if the SUT driver is ice? I guess in a weird case we could have an ethde=
+v test using an ice DUT which does not need a TG?<br>
+<br></blockquote><div>My understanding is that if the link topology is no l=
+ink, there will be no ingress and the ports on the NIC would not be used fo=
+r traffic. I do not believe this argument will still be required if no traf=
+fic is being handled. Please let me know if you disagree with this approach=
+ or if I am missing something.=C2=A0 =C2=A0=C2=A0</div></div></div>
 
-Two real bugs:
-
-- Recovery and INTR_RMV events are sent via rte_eth_dev_callback_process
-  while reset_ops_lock is held. An app handling INTR_RMV or RECOVERY_FAILED
-  by calling dev_stop/dev_close will re-enter the lock (non-recursive) and
-  deadlock; on the recovery path the callback runs on the reset thread so
-  it also tries to join itself. Emit these events after dropping the lock,
-  as ERR_RECOVERING already does.
-
-- thread_online is taken at the top of the burst functions but
-  thread_offline is only on some return paths. Any early return that
-  misses it leaves a token non-quiescent and rte_rcu_qsbr_check() in
-  mana_reset_enter spins forever. This is the kind of breakage the per-burst
-  bracketing invites -- another reason to drop it.
-
-Also: reset_ops_lock is held across ibv_close_device and the PCI re-probe
-(blocking under a sleeping mutex), and rte_alarm.h is included but no
-longer used.
-
-Please look at how hns3 or mlx5 structure reset/recovery. Matching the
-common pattern means fixes can be made across drivers at once.
+--000000000000b63f460653345b26--
