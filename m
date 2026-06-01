@@ -2,41 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AA2CD6E56
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 09:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D46CD6E56
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 09:30:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4082B4025F;
-	Mon,  1 Jun 2026 11:22:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DC6C64025F;
+	Mon,  1 Jun 2026 11:30:33 +0200 (CEST)
 Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id B51AF4025F
- for <dev@dpdk.org>; Mon,  1 Jun 2026 11:22:27 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 2953566
+ by mails.dpdk.org (Postfix) with ESMTP id B6E094025A
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 11:30:32 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 3A1DA66
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1780305747;
- bh=+FILU1w/jHDtNWyazcCPSccqT9ibERTaAAd9rE2JwYo=;
- h=Date:Subject:To:References:From:In-Reply-To:From;
- b=qJzy7+kETnV5jDIKlErpHAY1vv73PxRyW3iF2zcN15rC2pB6c4a3HYRGy6CGaepkU
- ncbxQehI71oYC8gs+rd3YybYYIUp5X0JVcIXM02UWfVvTlg3BNk+fHoxwF+9E5prpU
- st8DqbkyKL6XQnZXkCpjapI4Qn6Yj3CBq4+GJMZU=
+ s=default; t=1780306232;
+ bh=0F7Ab0kr4ZOOjLy+vQPw0x1GqwhiJ4AUJcSUO8duQvA=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=dp0eQJv655yjBNu5iCSSyXJYqqzxhLNal3AWLJHwrFb6Kl/lCAxkMdjIkA2iYNPXo
+ SLA1RgVPhZvnRAOe8SMJ4+DsrKHJbMtfXJ7qibbmV0bDSzvG+bANOoMQnOPfqqaxbR
+ rgkKyYpbcocu4wPyWezcrqWv/RrK00+7IKVs8bzk=
 Received: from [192.168.38.17] (aros.oktetlabs.ru [192.168.38.17])
  (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 2953566;
- Mon,  1 Jun 2026 12:22:27 +0300 (MSK)
-Message-ID: <5e69b696-2004-4220-9ce4-9e729dd1ffc5@oktetlabs.ru>
-Date: Mon, 1 Jun 2026 12:22:26 +0300
+ by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 3A1DA66;
+ Mon,  1 Jun 2026 12:30:32 +0300 (MSK)
+Message-ID: <7004c56b-35dc-47ac-b703-ace3d5e8b826@oktetlabs.ru>
+Date: Mon, 1 Jun 2026 12:30:32 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 11/27] net/sfc: replace rte_atomic with stdatomic
-To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
-References: <20260521042043.1590536-1-stephen@networkplumber.org>
- <20260526232542.620966-1-stephen@networkplumber.org>
- <20260526232542.620966-12-stephen@networkplumber.org>
+Subject: Re: [PATCH 1/4] ethdev: skip VMDq pools unless configured
+To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
+Cc: rjarry@redhat.com, cfontain@redhat.com,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori
+ <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>, Thomas Monjalon <thomas@monjalon.net>
+References: <20260403091836.1073484-1-david.marchand@redhat.com>
+ <20260403091836.1073484-2-david.marchand@redhat.com>
 Content-Language: en-US
 From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 Organization: OKTET Labs
-In-Reply-To: <20260526232542.620966-12-stephen@networkplumber.org>
+In-Reply-To: <20260403091836.1073484-2-david.marchand@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
@@ -52,12 +56,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 5/27/26 2:24 AM, Stephen Hemminger wrote:
-> The rte_atomicNN functions are deprecated and need to be replaced.
-> Use stdatomic for the restart required flag.
-> Use existing ethdev helper to set link status.
+On 4/3/26 12:18 PM, David Marchand wrote:
+> The mac_addr_add API describes that only the 0 pool should be passed
+> unless VMDq has been enabled, though there was no validation so far.
+> Add such a check, then cleanup the related operations (adding, removing,
+> restoring).
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> As a side effect, the net/cnxk does not need to manually reset the
+> mac_pool_sel[] array.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-Reviewed-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 
