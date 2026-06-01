@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0CACD5BD1
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 21:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D34CD5BD1
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 22:07:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A258C402ED;
-	Mon,  1 Jun 2026 23:18:58 +0200 (CEST)
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
- by mails.dpdk.org (Postfix) with ESMTP id C4C7540150
- for <dev@dpdk.org>; Mon,  1 Jun 2026 23:18:56 +0200 (CEST)
-Received: by mail-dl1-f50.google.com with SMTP id
- a92af1059eb24-137dd5161feso938284c88.1
- for <dev@dpdk.org>; Mon, 01 Jun 2026 14:18:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0371F402C4;
+	Tue,  2 Jun 2026 00:07:19 +0200 (CEST)
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+ by mails.dpdk.org (Postfix) with ESMTP id 904EF40150
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 00:07:18 +0200 (CEST)
+Received: by mail-dl1-f41.google.com with SMTP id
+ a92af1059eb24-137335bc3caso9048019c88.0
+ for <dev@dpdk.org>; Mon, 01 Jun 2026 15:07:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780348735;
- x=1780953535; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780351637;
+ x=1780956437; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=8ediB+ra8ew9Dv250eGoqjm4W5ZYZHDsyRsIRY7cUtw=;
- b=Fqd13470cTD1lUVP2gbdzRmwau/wX3qb7aAgr1Cl6SQAFiOuikAZlBNrxku7lKDsZZ
- qZXLm75UNpQtxV7UZkxrdhgKhcB5DtxT7gXlzTDgtH00rQ9Ma8HFNPX+EOeUGkUDSf2q
- W1YEII5CL0jJyPqimUhm0CDWHR0GkSpqOt1dzfdxbgYse6qXnbQ2mSDp1FJN/1TPkyz9
- suLqFc+fAl/SRq12H/vH45G+tPK3Cav3LCi6LoT86hybUx3ByPgGzZ5UO6JNcQzJoy13
- QbgT/xbGT7zzLqmq/t9FQymAtfpK4pLnTMfGomQVhTeIwHx8hM4A1qLzd/TEQn8bJxq5
- +F7g==
+ bh=D6hchXuokuKABoK6BZxphdK5qL35yrLOeGro88XauYA=;
+ b=lzXaURseZi8jXw6DBBJGet33VfZcSkOnV12UW6JHTLIJrQcAfKij/QK3ZYhQc1/Ocs
+ hGupwiZhb0buYEdHiCn3+yXiOhO1GptSqndoNwcMDt/9hGIKE1/hIvrmQdKvthsnZRXZ
+ omSXgzJAqT0itcHHPq5KoAWJzZ1YdCOtQsyFb4GXF0Jszrs2yBuOV7n4O55vPNVQ7jr5
+ YKVmVEpWjL3njG9HoTCwqiKr8YDLQ6JRldEUMFMyvYDbuzQytGI4sgC6oK6d76Mjec8K
+ IFTpcXg8+GnU7R9LQiWsx/dZiVrBOSzwfQlOupLI62d3y1UjEaJIoRrRKUSbgjEcZ8uK
+ pAlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780348735; x=1780953535;
+ d=1e100.net; s=20251104; t=1780351637; x=1780956437;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=8ediB+ra8ew9Dv250eGoqjm4W5ZYZHDsyRsIRY7cUtw=;
- b=pZPdjAx8FKuV6oLOOrEJXU23auQUfboO+3pkH22viDk4G+SI830FEtm1ngBb/F7foU
- nz7AHVtjX/xpe764MDapOxuWF356MTA4e7M10BCIKX0VQyhhBpNXFT/u18E1trl4KqKG
- v5gRSvQnEFdZJwyketXALMCpnV8dOEP7GVGR8cSaAuXcnkacK9n/KK0sX3KSJju4L423
- +dn4btTbUXNegRqpPz+eTnH+A+GkTgJniNkbA3ICQ2Q6Km6bpiSrwEkTrlRgB9jVcVtR
- 6yndNTbSNwoen06p+2kvVX4X9x7jbJxqThayANk180jF87MGmbk9jjW1Uop5ghCPsPzl
- I+VA==
-X-Gm-Message-State: AOJu0YxPiH3hDokIlu0FA3fNy1F7EjZcWYSpKVchVstAFoE4HdkWZCOp
- AS0xiT6hVLfNGxMGwhJ+MEGanAE9MhMayBGmMxugOfJvQG4wx0eEOyjFNUpuz6EnhVo=
-X-Gm-Gg: Acq92OH+SEYjrd86GkASGgd5dwC8DhZtk8FECW/zVZ+J/K0yumGuxYd2DOSPuUBqTJC
- 94/ghkwU4itOUHqd5ZqHVOf5ZT0VR4f6reKZVDT+rFr+eWk9tleJwtqc3F6XGeBLGG6YjJv/O4k
- ++uF1O5Y8RAcjYVtZhCT46nJZbeUu6kAnng4+dtqW/CyXTleHdzUTjIf7OqcZfnoPPF/YUE2RQC
- HvqIibjmONX1D+OUZCQmF2q/6PdkUOSZ/e+7kTPKCDW/xzV6/wfAgJ+bC25T5pjgqPZBSJks1rd
- aHE0lvqywGs6tkj5pVkiwbn4Fp5DYpAC1MZGzwi0D3VkUI96WLI1ZeCbivQU0u7B7kjDo1+Ivjk
- piWg4t1zsu8o/INt6zzVWv2Jwlfl2RgUbGBId/NkuIqMNxg+Y3v6y0NddtmmWbEch5er9rtgXad
- l+5wmFS7omZwvaMxdOmnvmZrG4p+S4VqEWPTRphUHvsdDyr9istBV8Z8nlm1Fplt9y7x4hkSaet
- utBbtGnZ5lvYA==
-X-Received: by 2002:a05:7301:1f0d:b0:2ce:3aa1:d39b with SMTP id
- 5a478bee46e88-304fa6800b9mr6282200eec.20.1780348735040; 
- Mon, 01 Jun 2026 14:18:55 -0700 (PDT)
+ bh=D6hchXuokuKABoK6BZxphdK5qL35yrLOeGro88XauYA=;
+ b=sDNOx7WLSNCDljjGCme2GiB+1s/Sxo5IL7Dne+k9In+E642CcIHHl4x88gsqwQGhm4
+ 1+Zi8tIt8DJ5nGqYHHwBt/vuuDOQrogpK4SK/fA2aEvOBGL0dWr0Blwm/6BgmukvH79l
+ AfIISKIdYJzmftDMFfHhdpD6GLa84vlFcvtfTvIr0iG+mDksVRVnVbMmcyDCrMJA4GHE
+ Qj4D2F/jQpkuZ39LoUOt/UhopVH9QwvrnQQ02YQU6+DZDNpp5SI8itBzEoddMsYUe/1t
+ 3juDd65WKcA9YgE6hZbAv7Iohva5ip50S9Ukr16gDEncVoVKDxf2SR/AD4c8Royc+u0q
+ plrQ==
+X-Gm-Message-State: AOJu0YxO761nMOsstdAn87ZY1GRo3uy/B2gxY7oE0X5uDtdc0dn0OVL0
+ ZTShOd/Mc8FIJC560GOVTUuVuGLnWgdghoWaUgpw0Ym4g5vBg+U3hIri7+epq0DiVt5dwbIQrO+
+ axWs9
+X-Gm-Gg: Acq92OEgBHnQqTU0Jaqo8GI+vX4RkeQCqA0kBuVqjtC99fiwRs+JZlp0c/0ISiZAm6z
+ u4GCX12fUJqDmp+ODtGoiCLBUeS8/yNxIyohel3aq11fliz+Fek87SfHfDLVbERUBQEdP0goG80
+ jkO469dllgqxsSm/jNxjym8PC9zDdo12GAOdcBuAoygbCd3TP9zACFwOTwTlx0eziU/CvoDoj7y
+ 57CD4xYSQX8UjyzWccCRxIN8wxRLP3buHFWDOQByydMfzAKHaw1Tnil4w8BXKoV3ho2A7LwjUoE
+ Q/MXQj5jugM+vX+P16ukmYmUUSyTMJbErwoINDCyOABvR1SAbBsI/etnMipK9SSPeIv+OkJTQir
+ r8VTubeKcliDURmxV1DQV3VHaapTfThzIULGiK5OLLSD9iKEzbimsYsjfO8jMkKXrenesIjF0Ix
+ pG0e1wT6X65qWmBW576rQPh+xr9+OKuZzS7j0tGjmXFrsue+MDv9Ls8w3jd0cuSaRQWgol9to7Z
+ GasihFsCvYcfA==
+X-Received: by 2002:a05:7022:eac8:b0:137:edc4:a5e6 with SMTP id
+ a92af1059eb24-137edc4a7e0mr871244c88.29.1780351636926; 
+ Mon, 01 Jun 2026 15:07:16 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-304ed30fff3sm8745373eec.12.2026.06.01.14.18.54
+ a92af1059eb24-137eda36ddbsm846494c88.12.2026.06.01.15.07.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 01 Jun 2026 14:18:54 -0700 (PDT)
-Date: Mon, 1 Jun 2026 14:18:52 -0700
+ Mon, 01 Jun 2026 15:07:16 -0700 (PDT)
+Date: Mon, 1 Jun 2026 15:07:10 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Wathsala Vithanage
+To: dev@dpdk.org
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Wathsala Vithanage
  <wathsala.vithanage@arm.com>
 Subject: Re: [PATCH v4 03/27] ring: unify memory model on C11, remove atomic32
-Message-ID: <20260601141852.78c3cc79@phoenix.local>
-In-Reply-To: <b8523a4e0ee34e8b9194935574e86f7c@huawei.com>
+Message-ID: <20260601150710.1f7ad9e9@phoenix.local>
+In-Reply-To: <20260526232542.620966-4-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
  <20260526232542.620966-1-stephen@networkplumber.org>
  <20260526232542.620966-4-stephen@networkplumber.org>
- <b8523a4e0ee34e8b9194935574e86f7c@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,23 +84,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 1 Jun 2026 18:18:18 +0000
-Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
+On Tue, 26 May 2026 16:23:53 -0700
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> > +
-> > +	/* check that we have enough room in ring */
-> > +	if (unlikely(n > *entries))
-> > +		n = (behavior == RTE_RING_QUEUE_FIXED) ? 0 : *entries;
-> > +
-> > +	if (n > 0) {
-> > +		*new_head = *old_head + n;
-> > +		d->head = *new_head;  
+> Remove the RTE_USE_C11_MEM_MODEL build switch; C11 atomics are now
+> the default for all platforms. Unifies __rte_ring_update_tail into
+> the C11 form (atomic_store_release replaces the older rte_smp_wmb +
+> plain store on the generic path) and renames rte_ring_generic_pvt.h
+> to rte_ring_x86_pvt.h to reflect its new scope.
 > 
-> There is a bit of inconsistency with the 'load' operation above:
-> If we use atomic_load(&d->head. ...) then it would be better to use
-> atomic_store(&d->head,..., order_relaxed) here.
->  
+> Also splits the head-move helper into separate ST and MT variants,
+> removing the runtime is_st branch from the MT retry loop.
+> This gets small boost and scopes the following exception
+> more tightly.
+> 
+> Exception: on x86 with GCC, atomic_compare_exchange on the head CAS
+> regresses MP/MC contended throughput by ~20% existing hand-written
+> cmpxchg. As a workaround, GCC-on-x86 builds use the older
+> __sync_bool_compare_and_swap builtin, which generates equivalent
+> code to the original asm. Can be reverted if/when GCC gets
+> fixed; similar issue was observed in Linux kernel.
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
 
-Will switch to atomic_store, with relaxed.
-It generates same code on x86 and ARM as simple store.
-And makes C11 checkers happy.
+This is a big enough change, going to split it up as its own series.
