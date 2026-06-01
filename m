@@ -2,75 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCF3CD6E55
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 15:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89803CD6E57
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 15:44:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8FBBD4042C;
-	Mon,  1 Jun 2026 17:41:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DD75640662;
+	Mon,  1 Jun 2026 17:44:16 +0200 (CEST)
 Received: from fhigh-b3-smtp.messagingengine.com
  (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
- by mails.dpdk.org (Postfix) with ESMTP id CFDAF4025F
- for <dev@dpdk.org>; Mon,  1 Jun 2026 17:41:22 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 207507A0571;
- Mon,  1 Jun 2026 11:41:22 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Mon, 01 Jun 2026 11:41:22 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id A2C234025F;
+ Mon,  1 Jun 2026 17:44:15 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id EDAA87A0591;
+ Mon,  1 Jun 2026 11:44:14 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Mon, 01 Jun 2026 11:44:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780328481;
- x=1780414881; bh=+5kQp+ohKSZ+dVYzExTbL0gdY6F7YYDcnho0Qui/uIU=; b=
- FCMaWqZZhUmVVMskCOLFb3fW5nEvLTrn8xXMBhvjGgncPLJT7uoGmbp81JFCu3Xs
- Mo5Y7bVnDyJ0Gzt+cc4tdcyIDf+OCdz0F8euxNbcfo9rbItmp0oFwxUs/qh1TgSt
- 6DS1UTzpNX0OpIiHyzx4aLd0/FIseIKiCOYwOgcOKRb1jZSVUvwmj58sA+KcC7k6
- pjD1Zc+ipM8ijb64fF7XGf5LAPdAJUlZKXDg9vBnLj1gBzX945UYCnM2u1UnKqS0
- ex8lbekErkXE1ld2E+46WV8AReeuRmMJXKJ5JQBanxiJKJWFyuqUF6+zerMD4NGd
- 3eB7bUQH1MrrQqwJuXQRnQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1780328654;
+ x=1780415054; bh=HywO15kcjgneGUqcJLX9/6iJSa0ZA+tuKDXioKhca5I=; b=
+ h+0JPNyNq9zVMRJ6WcDgERmk4Bjf8uch0x9Xotrs1NkNdsJreNCUl27Qo8v3mOF3
+ DyVcBRdAqFPTviNWB6HupsP+T6imaulgWeuEwjDj5cxfvoKd9MdvbpY6O8AUG+UK
+ z59jnr/DA0rvXvLRz27wHBDlYHByzS5lwgDvWGQWeIhydVUnfVPtS0eh5AxfweU6
+ FMX+rPNJpRjT1lFpQBjq1LmyQ09+YtjJb7b+uRNAjZmzwOABvrqFfH2MqSgxfdEz
+ 5fO+p7zEpdzzQMu8r9VCiN+KhURawHnAjgsd8i2UQ48Z/MhiP/FZiQdGQPv/ILUo
+ IMFHoSEDD7qZdMhl7K1WBA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780328481; x=
- 1780414881; bh=+5kQp+ohKSZ+dVYzExTbL0gdY6F7YYDcnho0Qui/uIU=; b=a
- TlTj+bELhVbC+KDvo97m3seOPH53Qjh/OqUTpoT/5h+8cMzKWuklWRKlAPr4JpcL
- Y//1qIVmhZaN6G21NKa8yGggnbJgiablAfJJM8AkBtYW+D7KdWahF8PqZLZn/THN
- Kgsl/lIpCjSuyDAwqnB2Nz6UG/fvIRYTmxdUJK1JJUcgODcwxJFrV8yeNI6YN8dl
- XEzxnDo3OXvpUPkf1sC03dZipi+YM6zugl3sL3VNLYKdVp4f0NdWthnh+zlrl4FM
- dxo4PWTR9cIpOkQ9F9DHvsjItcoJQqFu1xdDeUU+9SQBgV29mPzu4LzRNlHBEBLK
- v3GciOU+kDfWIC11gltdg==
-X-ME-Sender: <xms:Iagdah2VXLPECeThiRJKAAWY9WdBOJMOssFHE0ZQ96Kd5xVxhE1FNA>
- <xme:IagdaoMMsTPclq6r-tzuV2Ogz4gvAKftw4KxQKmy3nmZnXBC7QKh826UDt-0W6s64
- -Vvy9yPbWztfcRwMjPAm_N4tfhQ_iQgyELsdddn2eWLZj6mOP2x>
-X-ME-Received: <xmr:Iagdap0PN6RBqK6s92zG9CnW6dEn0jLGFvknjaitzIV62LHpnOx5lMLdPxJ6hj8yJnNPhntrvUZmOIz7N5GxNqSNlQ>
-X-ME-Proxy-Cause: dmFkZTE+QsqHSVs3BZABfYLlCBm6IKgsh4f5M48dAY2WJbhtBdDlqDjxGZVU8Q9vuEP0um
- RZdRFzZ0HY/mmHBPd5H9oqw6BIbkjpwY6h2FeSdDrjeVvzkS3Wf0h9CY2oteRcIecJoQgt
- m7CAF6CzLP5foMP2nanFUUR/LtnoW5IX6S21OZzzPxWCwn6xwDxdNT+eB7RsNG5hDTMlly
- 9yMUqQOMgvDRxzhKXnqIjbDhEU21CPGKggA7skKfaN7151xUq/UZyN6tHnYoESwsEkCSF7
- UmpkI36aVUdUN58J61dsXz2Zw89SX8MNfcipyoE9JDAc4SllE4Hfdr0X2NFytmFxOmiGlL
- x3feQPYUnr+tC2fO5pH9Ih2USCpb5LA8KRvBwOYZBWHUZLQccNVPD3dq6AVEHMkoH6ilQg
- OPfv1UKF8ebsXjoPsENSf/Aq9lCmb+ftAOGZTBONFG/U66apzkgZpMJRFuU6xZJf7GVUl8
- rQMVr591AUzDD25xOlINnpmY7sSukBXvpV91u3wBwom98DF7Zue6S2DEo9doY8JwTQ+u2G
- u5JymdVgdFVeWiCv3RlwXiWVBsrYlIcsurC3lFV3LbKY/uHv9sqqLyMyK3R+ThsW+3eK5j
- Yqr4ldPvV48dk62gWM500ZUDW0dFqZ3H2AwCSmlBLlG3VVJqgBpVmibYY7Dg
-X-ME-Proxy: <xmx:IagdanF0Y1FYddejqKEZX7faa1SEeln7Sae55xybd9xqZ1R1sdpmmA>
- <xmx:Iagdau4nDMZd1IPIXRDvinPssyq_40aESfN47x5Q_lgEaqUZgvA8zg>
- <xmx:IagdalvilEsxvyHgH2igWzl7lCMh89B5rFXh11P_efETdtsBHwUvWQ>
- <xmx:Iagdan5Y5zQpIXoQz_M7Sbt9dZ1h3zmNUJBCJsphPXICQZk0jnDruw>
- <xmx:IagdanNCQ5I8Mnijl2YBZ7C4pBSLElg7YGmfeVjL-QTt9KKfnFBYOhIU>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780328654; x=
+ 1780415054; bh=HywO15kcjgneGUqcJLX9/6iJSa0ZA+tuKDXioKhca5I=; b=C
+ eCGtf/udUAK7jlfRHbFxSsxWJLo+y+eHjZKTEGMWQrsKGqbNORpaaTujqxJDY9xH
+ XUyF+09oxuNQXG2Bj9YzHWg9PNvAR0i6uNXYqUEyNEEO+9qkpdXnu+F1C+3geNPh
+ x8m3XpDR5T5Oh/I+rpqhKbGxAeKnxVVBhCbP/q+rHH/Z1Y5Nc9tauEcmtU3ANhFF
+ X7BuPaHwofUSL3LFOm7HZUFFMGieoaIokwU6gVtKLLItuXJW+bOtCU4KQr7OiJnL
+ LZLWNjnDMqcz70tZPY9VUOIkVrCxgGP1eu/z/V+BpkcgDuJFAecUtDHrTjCU1FjW
+ BF5CwkEvsFNGdnx1WPz0w==
+X-ME-Sender: <xms:zqgdav7XXyTWUFU89CnGmmw1ZiVd0PWrTMSC89jTHCk5TWZ3TkhDIA>
+ <xme:zqgdav1JNYrCtZeoTNS9kxbj100bgLR4bp9i3cYGuesFRJx1Wss3uk0uhACN87dYy
+ wxUt7ZoryWEbrzlsPcPfp0JXW7XrCo553QkhxDWsxeGAtqprWCs>
+X-ME-Received: <xmr:zqgdaldFbmLwu3L6GzTcitY-Xh3NhVTRsAKtd8vHGnCMgq2GmcmBLO2L0WzYm9vzfmMckEMpynhd7FRdizfGXKLkWA>
+X-ME-Proxy-Cause: dmFkZTFEHe5DnKX4b0NFoLP4J3IemEgMFQZBCLKGvUmvnHehfsbTr/13SetVtiV5D1T03c
+ fZEma0DCo/OCxo/nkesKhTjxIT12Xtr3ub5RQKUDHOs59EW/xJ4/W3GA8v4KXwXAu4Bvfz
+ qqvEzLvyizFeiPXzbz7WJa2jmW91Fc2aMG75Yp4VD3g+Hca7EAIHqfWyurtCE5TMRNWYHz
+ r9IlDgWkXQevIfK7Tueeb+RFj4WN9qNh/nOzpQqbMjKun7gcDkYowZTNB/oB03pWGKipBz
+ YuoXvmGF1XF1XghSfC4PQQNOqKq5f88lqHzXhwJjmyxXwVtF2WamWEU8XO3OsJdPnAqAVC
+ msJHedN9q/2122HNqdBO3GWty5w0zzE4QzmxM5aryoXQxOtd46gjcOlsz9sd1Y7LuEbZIP
+ grwMif7K71TnFiKyHfUr82zQgKqFZ7CWyft4f+8yDOGDT2iAtcwGdX6CRNrVUnwGCORx8u
+ xV9bHUdXdUQyFjiTRkugcp+KepY15C0TKlnOv16ycZXrFfEVvPTr1YNLcy3T+NiDXsAwo8
+ lIrKk34c0kHWUpr87eJRasRsW8SnKON0MBdRabn4vNm3BdQJmK0u7VGLKNbsZFi+N1Vj0c
+ 46YK81jmr49CIY6+NHi0if1+PzmI8Pjt1e8HMf45DmBJfCWzDT7HTeVFKFCA
+X-ME-Proxy: <xmx:zqgdale0QVgmZUYBNMDFt-ESbgVStxsRYJV_OUkMGdXAGm1c0vHBIA>
+ <xmx:zqgdagzPdzlqGa6ecu7zt74AW2KWJGLD-YxyUbcHWbRFiov5kWJpUA>
+ <xmx:zqgdak9ex_Fn5E9A5AzZCTm96eyaVbh7MzJy2YO8SRSDWCMNKq86KQ>
+ <xmx:zqgdagj2JssKIzxLnP8eO6wMajhsLJIsLV0UHxhKuer0E0FlLEyYTw>
+ <xmx:zqgdaqcNaAiHQ_mqE_WeElaD34ZH-V2y5cSqOiAUrOTUR1kpKpJ0Dncz>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 1 Jun 2026 11:41:20 -0400 (EDT)
+ 1 Jun 2026 11:44:12 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org, wathsala.vithanage@arm.com, mb@smartsharesystems.com
-Subject: Re: [PATCH v5 0/2] few improvemnts for SORING lib
-Date: Mon, 01 Jun 2026 17:41:18 +0200
-Message-ID: <FBjugSZDSq6pNxxxgi84Ag@monjalon.net>
-In-Reply-To: <20260505154728.82235-1-konstantin.ananyev@huawei.com>
-References: <20260423091625.123642-1-konstantin.ananyev@huawei.com>
- <20260505154728.82235-1-konstantin.ananyev@huawei.com>
+To: Zhiguang Jin <jinzhiguang@kylinos.cn>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Dharmik Thakkar <dharmikjayesh.thakkar@arm.com>,
+ Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>, dev@dpdk.org,
+ stable@dpdk.org
+Subject: Re: [PATCH v4] ring: fix zero-copy burst API documentation
+Date: Mon, 01 Jun 2026 17:44:11 +0200
+Message-ID: <5gQNgK-fQ_ijZjH4yK5o7g@monjalon.net>
+In-Reply-To: <20260521030009.23491-1-jinzhiguang@kylinos.cn>
+References: <20260519133853.889-1-jinzhiguang@kylinos.cn>
+ <20260521030009.23491-1-jinzhiguang@kylinos.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,10 +91,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Konstantin Ananyev (2):
->   ring: make soring to always finalize its own stage
->   ring: introduce peek API for soring
+21/05/2026 05:00, Zhiguang Jin:
+> These are burst APIs relying on RTE_RING_QUEUE_VARIABLE behavior, they
+> operate on a best-effort basis and return the actual number of
+> objects processed (between 0 and n).
+> 
+> Update description to match implementation.
+> 
+> Fixes: 47bec9a5ca9f ("ring: add zero copy API")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Zhiguang Jin <jinzhiguang@kylinos.cn>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
 Applied, thanks.
+
 
 
