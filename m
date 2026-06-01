@@ -2,80 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1EECD5BD1
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 12:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBE9CD5BD1
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 13:22:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A562D4025A;
-	Mon,  1 Jun 2026 14:59:44 +0200 (CEST)
-Received: from fout-b4-smtp.messagingengine.com
- (fout-b4-smtp.messagingengine.com [202.12.124.147])
- by mails.dpdk.org (Postfix) with ESMTP id C6C754025F;
- Mon,  1 Jun 2026 14:59:43 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.stl.internal (Postfix) with ESMTP id D22841D00356;
- Mon,  1 Jun 2026 08:59:42 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Mon, 01 Jun 2026 08:59:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780318782;
- x=1780405182; bh=6+RS0k52cbZg8QhhQeyc5yeZ+foNFa8pyF1p9gqzgdg=; b=
- o8RJ8OUlTe6iS8njvgy/frbrY3hHKcrioN482Y+2xX2bHY+dE0X0I+wLE3VflKWP
- 2AAKaVEAMYTImXF7ajcKpIJTTlRlm+ZD/xYCRLcY1APIot8Bn2Xzc21H6wYKjzEI
- CB9gITYuVvXyo6/vOojU0HAJfoNbbClku+If7l8PjIFyGMuO//ORZs+7TNc/ZLZJ
- cxfDskPcm/sT8J/sqS24jZcOoUVAjlz5M+xJIr5uvcy+olZA8l6ctDfz9aNE4wl2
- gjE4ud0Yui9XmvbQ/DBJSaJobC7BpGIvX/oLM/oE5t5yz04XSd+dg/HKHfgf/4qZ
- k7g7RoF8pRKjDlvopOLXTA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780318782; x=
- 1780405182; bh=6+RS0k52cbZg8QhhQeyc5yeZ+foNFa8pyF1p9gqzgdg=; b=A
- Su32KUNvXWIfhslU9ri1rIvF1yCN23oFipfrlZoO8EvuIH/he3Vj6hi6zina/eX8
- wD7R4pIfdOfnriXL3gREn7RCJ0m8h2vEWtCQ+GsxmiroHt2pFn35w/Q5CADq/5vq
- 0d3f+VOaCsuvWHa4Gs3Ua4m5pwi2byBsohsbmqEKlSjWcTUAp2xJkh9d4CG5SmO9
- hEcDZkugpsf0ziXhyGeWAO+OLM8j4gm2KbICF91EVPzf1UCdzBBwfTAu9Jomelxj
- 2kKl37MxBa0OElFEMMqneo3CKaEyrwrJMyE3FdWu97qN66PeieOTywyHJ3fgH4AG
- niwicxEI8MemYhWG/w4SQ==
-X-ME-Sender: <xms:PYIdajNHCt70KuEJdLjFH_gMcvUvW1ZFmO1qU6FMW_sO98Lkce_oVw>
- <xme:PYIdaoCCqfUdqSvT3jcwSErxZqWhPu1HIPxeimOMGXSAqESIP9LPiIf-6eCK4Mwjj
- IH9E2FqMMxxBRNMNN5H_wXrC1OGtQfK24cKx_rVrz_RoxO6UQHS>
-X-ME-Received: <xmr:PYIdaiLsRaZKtlW6rk9kKxkVaaWILnfmjQEtkYv8N_RJ_HAV498MWI7TQUAByRRh9PcKxWyPXojay6e9dYSZREhpLw>
-X-ME-Proxy-Cause: dmFkZTF7ebAyw5jYiKD/pdUBcXQqfMPUxun+TXoeArtdb7KUWQfdxFdKLo5v3JoNp9MPAd
- Q2cEOQh4qSrmsgQDnn3isg3P6PDRxXk7M4pBo8EHGlV7s3C1Mo1M7Wt2lPT05poBBaICfX
- CV6izqwgIYt77a67U7bQFcRkzgqsT5QYna8MYVSluwcaLumpW2xZaRnR9lBy5596bMokqB
- 45AWfzipe8gnVDnv62tJZD38GlTUYtlO+rgv3fFr3jCpBxIEGA62dIAufL95O6Wd6jeS3Q
- o5xHDALAWHvbgnyx3r4hAdtgS8+qHR83tihIaUYRkAppTwOubrXZDNDoh5jLSSFlOqoyC+
- nA3cGpzWkwluozH7rxb6uEgge9HGxBKqORXhwEkvIZSkwesKBMr1jtNJNGPfyyy2xmVd4C
- gKcYZjFjbEnrZGM4HodSBiKrPAzVYm15t1Wx+Pwz+yI/ao7UpMtV6Ic22zuAXG0nkexMgJ
- b2vHJ5bVLWb+iygDcktY8keSAoN/XbVNfoRzjxOmIiIkeL7A3lV5O/dEB5r8u9nSL+1o40
- u5OEG8Cg7JZtnra0Zv/88tQHrHDOksUf2oFVrGr5EvdEG0bJrlIM97QV13yVqR1cgWKgni
- NshQGUFVX71rks4raCQXoLTFBv2M/o6JFcXiwcFwU0FOBj9k7EhFDg7filTQ
-X-ME-Proxy: <xmx:PYIdapMRrVcYMcRbal0VWEqOTyxCpocK4rKSuAHv3THcUf0ycA5aHw>
- <xmx:PYIdao5LixO9nHN4NpnihjS8Anfrc065ebldZwftxl0-GUpvjsOwCA>
- <xmx:PYIdaj7dAbjHXCt7qLPOnGRCjcbhmegSZnRPrdjYf8hSZHl6oF-Ttw>
- <xmx:PYIdauF19-bwUHMcokIIvfME-ZIs2epR-j0uH6WO7vJICJAwQsPUTQ>
- <xmx:PoIdanzobfDMv3JlUsrOdDCUDWCH7XubbeYimGrS9HZ6N8P20UZfx2FT>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 1 Jun 2026 08:59:40 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Jerin Jacob <jerinj@marvell.com>, Hemant Agrawal <hemant.agrawal@nxp.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Jie Hai <haijie1@huawei.com>
-Subject: Re: [PATCH] net: fix GTP Tunnel parse out-of-bounds read
-Date: Mon, 01 Jun 2026 14:59:38 +0200
-Message-ID: <-yUhN_HpTAq8QmssYJx54A@monjalon.net>
-In-Reply-To: <20260409161556.141251-1-stephen@networkplumber.org>
-References: <20260409161556.141251-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 4DFAB4027F;
+	Mon,  1 Jun 2026 15:22:27 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 80CA34025A
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 15:22:25 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 598D0208EE;
+ Mon,  1 Jun 2026 15:22:25 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH 4/7] app/test/mempool_perf: drop constant-values replay
+Date: Mon, 1 Jun 2026 15:22:21 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F658CB@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <1047eaf3-f41e-49b9-a4cf-0eb7d46dc6c6@oktetlabs.ru>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH 4/7] app/test/mempool_perf: drop constant-values replay
+Thread-Index: AdzxoYXA/Eb1zs28SmGzTKA0f8O1MAAJVArg
+References: <20260529171417.526892-1-stephen@networkplumber.org>
+ <20260529171417.526892-5-stephen@networkplumber.org>
+ <1047eaf3-f41e-49b9-a4cf-0eb7d46dc6c6@oktetlabs.ru>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,77 +48,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Any comment about this fix?
-
-
-09/04/2026 18:15, Stephen Hemminger:
-> If packet is fragmented across multiple mbufs or the packet
-> has only GTP header the code would reference outside
-> the incoming mbuf.
-> 
-> Send GTP packet:
-> - Valid GTP header (8 bytes)
-> - msg_type = 0xff
-> - e=1, s=1, pn=1 (sets gtp_len = 12)
-> - Total packet size = 10 bytes
-> 
-> Read at gh + 12 accesses 2 bytes beyond packet end.
-> 
-> The fix is to use rte_pktmbuf_read in a manner similar
-> to the read of the GTP header.
-> 
-> Fixes: 64ed7f854cf4 ("net: add tunnel packet type parsing")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  lib/net/rte_net.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
-> index 458b4814a9..da4018437b 100644
-> --- a/lib/net/rte_net.c
-> +++ b/lib/net/rte_net.c
-> @@ -219,8 +219,7 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
->  	case RTE_GTPU_UDP_PORT: {
->  		const struct rte_gtp_hdr *gh;
->  		struct rte_gtp_hdr gh_copy;
-> -		uint8_t gtp_len;
-> -		uint8_t ip_ver;
-> +		uint32_t gtp_len;
->  		gh = rte_pktmbuf_read(m, *off, sizeof(*gh), &gh_copy);
->  		if (unlikely(gh == NULL))
->  			return 0;
-> @@ -231,9 +230,16 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
->  		 * Check message type. If message type is 0xff, it is
->  		 * a GTP data packet. If not, it is a GTP control packet
->  		 */
-> +		*off += gtp_len;
->  		if (gh->msg_type == 0xff) {
-> -			ip_ver = *(const uint8_t *)((const char *)gh + gtp_len);
-> -			ip_ver = (ip_ver) & 0xf0;
-> +			const uint8_t *l3_hdr;
-> +			uint8_t l3_copy, ip_ver;
-> +
-> +			l3_hdr = rte_pktmbuf_read(m, *off, sizeof(*l3_hdr), &l3_copy);
-> +			if (unlikely(l3_hdr == NULL))
-> +				return 0;
-> +
-> +			ip_ver = *l3_hdr & 0xf0;
->  			if (ip_ver == RTE_GTP_TYPE_IPV4)
->  				*proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
->  			else if (ip_ver == RTE_GTP_TYPE_IPV6)
-> @@ -243,7 +249,6 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
->  		} else {
->  			*proto = 0;
->  		}
-> -		*off += gtp_len;
->  		hdr_lens->inner_l2_len = gtp_len + sizeof(struct rte_udp_hdr);
->  		hdr_lens->tunnel_len = gtp_len;
->  		if (port_no == RTE_GTPC_UDP_PORT)
-> 
-
-
-
-
-
+PiBGcm9tOiBBbmRyZXcgUnliY2hlbmtvIFttYWlsdG86YW5kcmV3LnJ5YmNoZW5rb0Bva3RldGxh
+YnMucnVdDQo+IFNlbnQ6IE1vbmRheSwgMSBKdW5lIDIwMjYgMTAuMzUNCj4gDQo+IE9uIDUvMjkv
+MjYgODoxMCBQTSwgU3RlcGhlbiBIZW1taW5nZXIgd3JvdGU6DQo+ID4gVGhlIHNlY29uZCBuZXN0
+ZWQgbWF0cml4IHJlcGxheXMgZWFjaCAobl9nZXRfYnVsayA9PSBuX3B1dF9idWxrKQ0KPiA+IHBv
+aW50IHdpdGggdXNlX2NvbnN0YW50X3ZhbHVlcz0xIHRvIGV4ZXJjaXNlIHRoZSBjb21waWxlLXRp
+bWUNCj4gPiBjb25zdGFudCBidWxrLXNpemUgcGF0aHMgaW4gdGVzdF9sb29wKCkuICBUaGlzIHJv
+dWdobHkgZG91YmxlcyB0aGUNCj4gPiB3b3JrIGZvciB0aGUgZ2V0L3B1dCBkaWFnb25hbCBhdCBl
+dmVyeSBuX2tlZXAgd2l0aG91dCBhZGRpbmcgbmV3DQo+ID4gc2lnbmFsOiB0aGUgY3ljbGVzL29w
+IHJlc3VsdCBmb3IgYSBjb25zdGFudCBidWxrIGlzIGludGVyZXN0aW5nIGluDQo+ID4gaXNvbGF0
+ZWQgaW5saW5pbmcgc3R1ZGllcywgbm90IGluIHJvdXRpbmUgcmVncmVzc2lvbiBzd2VlcHMuDQo+
+ID4NCj4gPiBEcm9wIHRoZSByZXBsYXkuICBUaGUgdXNlX2NvbnN0YW50X3ZhbHVlcyBzd2l0Y2gg
+YW5kIGl0cyBicmFuY2hlcw0KPiA+IGluIHRlc3RfbG9vcCgpIGFyZSByZXRhaW5lZCBmb3Igbm93
+IHNpbmNlIHRoZXkgYXJlIGV4ZXJjaXNlZCBieQ0KPiA+IGhhbmQgaW4gYW55IGxvY2FsIGJlbmNo
+bWFya2luZy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVw
+aGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4NCj4gDQo+IEFzIGZhciBhcyBJIGNhbiBzZWUgeW91IGRl
+bGV0ZSB0aGUgb25seSBwbGFjZSB3aGVyZSB1c2VfY29uc3RhbnRfdmFsdWVzDQo+IGlzIHNldCB0
+byAxLiBJdCBsb29rcyBzdXNwaWNpb3VzIGFuZCBiYXNpY2FsbHkgcHJlc2VydmVzIGRlYWQgY29k
+ZS4NCj4gU2luY2UgTW9ydGVuIGFkZGVkIHRoZSBjb2RlLCB0aGUgcGF0Y2ggc2hvdWxkIHdhaXQg
+Zm9yIGhpcyBhcHByb3ZhbC4NCg0KSGF2aW5nIHVzZWQgdGhlIG1lbXBvb2wgcGVyZiB0ZXN0IGV4
+dGVuc2l2ZWx5IG15c2VsZiwgSSBhZ3JlZSB0aGF0IGl0IGlzIHBhaW5mdWxseSBzbG93Lg0KTWVt
+cG9vbHMgYXJlIHZlcnkgb2Z0ZW4gdXNlZCB3aXRoIGNvbnN0YW50IHJlcXVlc3Qgc2l6ZXMsIHNv
+IHRlc3RpbmcgdGhlaXIgcGVyZm9ybWFuY2UgcmVtYWlucyByZWxldmFudCBmb3IgcmVncmVzc2lv
+biBzd2VlcHMgdG9vLg0KTkFLIHRvIHRoaXMgY2hhbmdlLg0KDQpNYXliZSB0aGUgdGVzdGluZyBv
+ZiBjb25zdGFudCB2YWx1ZXMgY291bGQgYmUgcmVkdWNlZCBieSB1c2luZyBhIHN1YnNldCBvZiB0
+aGUgbm9uLWNvbnN0YW50IG1peCBvZiB2YWx1ZXMuDQoNCj4gDQo+ID4gLS0tDQo+ID4gICBhcHAv
+dGVzdC90ZXN0X21lbXBvb2xfcGVyZi5jIHwgOCAtLS0tLS0tLQ0KPiA+ICAgMSBmaWxlIGNoYW5n
+ZWQsIDggZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXBwL3Rlc3QvdGVzdF9t
+ZW1wb29sX3BlcmYuYw0KPiBiL2FwcC90ZXN0L3Rlc3RfbWVtcG9vbF9wZXJmLmMNCj4gPiBpbmRl
+eCAxOTU5MWFkMGM5Li5kZDJmMGJiYWNhIDEwMDY0NA0KPiA+IC0tLSBhL2FwcC90ZXN0L3Rlc3Rf
+bWVtcG9vbF9wZXJmLmMNCj4gPiArKysgYi9hcHAvdGVzdC90ZXN0X21lbXBvb2xfcGVyZi5jDQo+
+ID4gQEAgLTQyMywxNCArNDIzLDYgQEAgZG9fb25lX21lbXBvb2xfdGVzdChzdHJ1Y3QgcnRlX21l
+bXBvb2wgKm1wLA0KPiB1bnNpZ25lZCBpbnQgY29yZXMsIGludCBleHRlcm5hbF9jYWMNCj4gPiAg
+IAkJCQlyZXQgPSBsYXVuY2hfY29yZXMobXAsIGNvcmVzKTsNCj4gPiAgIAkJCQlpZiAocmV0IDwg
+MCkNCj4gPiAgIAkJCQkJcmV0dXJuIC0xOw0KPiA+IC0NCj4gPiAtCQkJCS8qIHJlcGxheSB0ZXN0
+IHdpdGggY29uc3RhbnQgdmFsdWVzICovDQo+ID4gLQkJCQlpZiAobl9nZXRfYnVsayA9PSBuX3B1
+dF9idWxrKSB7DQo+ID4gLQkJCQkJdXNlX2NvbnN0YW50X3ZhbHVlcyA9IDE7DQo+ID4gLQkJCQkJ
+cmV0ID0gbGF1bmNoX2NvcmVzKG1wLCBjb3Jlcyk7DQo+ID4gLQkJCQkJaWYgKHJldCA8IDApDQo+
+ID4gLQkJCQkJCXJldHVybiAtMTsNCj4gPiAtCQkJCX0NCj4gPiAgIAkJCX0NCj4gPiAgIAkJfQ0K
+PiA+ICAgCX0NCg0K
