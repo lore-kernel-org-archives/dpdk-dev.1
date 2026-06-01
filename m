@@ -2,81 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A75C9CD5BD1
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 21:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA1ACD6E55
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 21:06:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E3B3402EB;
-	Mon,  1 Jun 2026 23:02:01 +0200 (CEST)
-Received: from fout-b7-smtp.messagingengine.com
- (fout-b7-smtp.messagingengine.com [202.12.124.150])
- by mails.dpdk.org (Postfix) with ESMTP id 667F440150
- for <dev@dpdk.org>; Mon,  1 Jun 2026 23:01:59 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.stl.internal (Postfix) with ESMTP id 8125A1D000D0;
- Mon,  1 Jun 2026 17:01:58 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Mon, 01 Jun 2026 17:01:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780347718;
- x=1780434118; bh=R4ju24CHrPu+29spAaupClEvTxnsvycgYoIczo+G4vI=; b=
- Q1XQt58UDNy+3NP7UE2gkypfBaITqNecmzQ4zKEbIb57aejSbu6Spq69IWvvbv8l
- 0AbfLx54aK/HR5nObfYDS0oUf3a8Y5QBeIh2iL1K8/0cUex7PilDOXG6outT6EBr
- 0ELzCvEn+LgNe5qyCfHeO6Jyac3rc0oq+rjCR5YEH0L5J/ih/qUT6l7HcPThWJs7
- Rwy1ZvkYsgvfBgBjKk0tAzt94RCoCbtZ9f2U4CdHBSu/ii1MJEuYyJ8LeTGR0yS+
- SXUyhXPQ3tpiKd55o2dlM9YW2cK/sI0nNApQW1EGQAediP3lBx+6Y3VdlCyRfkCa
- 9TDqYmRwJXIAYY/b1OhSjg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780347718; x=
- 1780434118; bh=R4ju24CHrPu+29spAaupClEvTxnsvycgYoIczo+G4vI=; b=S
- V2xNjVMcc1QZgYO77HYJl9Hyp8m8SbBWy5xLubm/S9VTxk4R0DkqhTNS919NKHqc
- bThCmBd2ijahTdjey7fuDyzSU7hUFHWBqfi1aUkoC2pHztKXTZNcpMXN26tRC1c1
- VvrdtF5jB/54YpXtAyGqpzqrdgjEaZf48bTnh8bUbjsT8L/mL1FOzQvio9fC/agn
- YxNhRZszN0KZYDlTYyxZVRVu417cNQFjg6Ccw6VLuQ4TwIcFNunQ892/lkpMzbRS
- QVZ4WiKRB7moxnF/ljJtl9BvBv5EnUXhBgp58ICPlaKm/HI+7XOk3Z5zlF5/2084
- KSy2po4cktECVQSU3DJjA==
-X-ME-Sender: <xms:RPMdalHLX7wWmCnNm8ANI6Z0nFW67dDLFW8h2K4GJBNygCTkweB2Dw>
- <xme:RPMdalR2UIHwzG72c0qA_7Z8bz1h0rfBnEHnYZ59bSVa2_OPS-72-5vTErJNgOTI9
- 0aYMk86goj-_D9yXx4_Nw5MbLmYV493fPUzBcOLAkwzZeQYnl8r>
-X-ME-Received: <xmr:RPMdamJQClUxVUg_00d_0sSHq1Wh14setYT2c3BmBwtcWrQ53RjDdgwpPzmUY-MBx2hwOKfV2cM3bVfB6EBjyLq-BA>
-X-ME-Proxy-Cause: dmFkZTF1EGvkzTWDcF2dx4+vB862YP8nM8YDxinRoiq49vR0kmeaew6l0pLS2rl+MsrK1F
- LmvnpLczCz/8M6CH0Xq0sjeqDFEtAkO7wRRLNcAs6qSAmMOXoJ45ZUQaAE6fZOW9LZooIA
- uVyuDlrtAmhdsu06aDy745HkCM0bSe8W2acC9nhPPKZwF1JhtnUXROxL8Z45i/AbuQ6+47
- VJ2l4iBXNrHxeiKAdH/g8TRwFHEBdKgkudfVFNCQNgS7UP9w5R/FAlB0LPQNvKdh2W3POG
- Qtsc8YrH4hi8PdNWA83h756Gbof1aisYG+F91HCCZp8OQ4qKogMRar3oq4IIlCjRNDTfqP
- agf4vFD2y9Di1k2kCpss4FEHHsXnCQGP2hJjtQRqJtyz+Dxx/412F0Zyjs72WkvfpSDAW5
- zZBpGWVIHdputIQffVGKVPcaS/FEE4hxLvkdT2Rjr9SaaomlKoBfbd2rurjboHdyTqr+yN
- A5W71TadUUxHDdHpNxppzx6XwuT82NpoiSu6hlyM1C37db7Psn4c2sZD/zTkA6k8QkKDDO
- KGty9Y7s+te4qnG8yLg5ZBZzEUxopJal5AJPvRY0b+kZJJOD0dX9q6xDlJYjyPb8HhS4iI
- 8DlfogpDo33tEoHIiAJVSiyCT01cPnHwYU2+GD9m7lUYIymcewcVO7rPMB1Q
-X-ME-Proxy: <xmx:RPMdagZKwo5wWTxOL42-nENa8Z7mp2VaI1FZZ4R0-4rS7tZVtik3MQ>
- <xmx:RPMdao_EBrR4Gw1rj5NXUQGqp88avNFBgFQOI5Uyp4sQKkwtpxAP1Q>
- <xmx:RPMdahaZ_X8vUlXOULViH2VFYvpx0CkazOZfHXqLFzgz2XeGGWJyWA>
- <xmx:RPMdasPGgNL-FQysTsavbIi_hPTPOK_Z2-iEOKck6Gc9omX0lzFoFA>
- <xmx:RvMdao_CQSt-b4VhszxUEU_Bmq2O2ZrJOafgebwYQyDO_A3fEjqH5vD7>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 1 Jun 2026 17:01:55 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Zijian <zijian.oerv@isrc.iscas.ac.cn>
-Cc: dev@dpdk.org, Sun Yuechi <sunyuechi@iscas.ac.cn>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- =?UTF-8?B?U3RhbmlzxYJhdw==?= Kardach <stanislaw.kardach@gmail.com>
-Subject: Re: [PATCH v5 2/2] node: lookup with RISC-V vector extension
-Date: Mon, 01 Jun 2026 23:01:54 +0200
-Message-ID: <FvISu5CfRJyuDjcpuWBNug@monjalon.net>
-In-Reply-To: <20260505062142.575105-3-sunyuechi@iscas.ac.cn>
-References: <20260331031059.2621971-1-sunyuechi@iscas.ac.cn>
- <20260505062142.575105-3-sunyuechi@iscas.ac.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id A7DEB402EB;
+	Mon,  1 Jun 2026 23:06:05 +0200 (CEST)
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
+ [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id 025DB40150
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 23:06:03 +0200 (CEST)
+Received: by mail-dy1-f179.google.com with SMTP id
+ 5a478bee46e88-304d0ac5e3cso6195961eec.0
+ for <dev@dpdk.org>; Mon, 01 Jun 2026 14:06:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780347963;
+ x=1780952763; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=cD07dvK6bjbishgoVqlU94iGlqm3HsT48sxVj48O2e0=;
+ b=qOOCINRoFQtUSdXlHUYlJOMIHze4LiMpXViitn3cn0Z5cxyVTOvOCv43ZHNhN8YEkL
+ 2EJWrEAK0doxCDHjG2Zx7zE9nD9ov+WVnIfOxirefDkByswMUe0t72jCmHhxHIBrT46r
+ jMPAzq0L69TfXufDHKapJHBrd9X3wcF0ky3sMxTKzdH624TOAqRNuhFeimqeUQ5WF5yW
+ D/6LGGjrXKFoftZ1mcZfeKuiCd/LnRx3EDhMt5WFMcFOT2z3VUuj3iiEXNwDQTnn8bBe
+ 0bj7svdHLD5/jWJJizn79YnaCLrnFogZgJCwenlOGisESgkQ0RrwpraJDDxSd6F+UQXu
+ XHtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780347963; x=1780952763;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=cD07dvK6bjbishgoVqlU94iGlqm3HsT48sxVj48O2e0=;
+ b=oaSwnZ57KC7GJtvuIVvmk4+heIo3NP++t1/ecmTTBr3v7IUCb+VPdA0OuZNjd5MHVV
+ wws+GcxKQxzRFeuGY1Qdy4GRoHQrUxDXajgMR931gzwfn/1/lK+q1CwEwzwHxOE+sM9V
+ 9u1DDM/leRs50EMdoElv0quw6Mv6kpHlwR8uOivInnYFBbQWgIec0La6itJhDBJ7ZLFU
+ gYwXDQVaXjOcxXBryeRgd3u4nmnaiVQc9gU0sxQxKkw7KwOAdtPvZ6znZtMML2/CVYzR
+ 3CxVzFQtPdjpfTpTvcGLNjITQ4y0Xg2GlU300/1Y3n+XsRmcXF+qXX9RoPyzmjZv88fJ
+ OFfQ==
+X-Gm-Message-State: AOJu0Yw9qwJrSnUZ15q2Xnl26Y+Cgx0+cJ7qyv30dg+Z68Q1xryGqhBB
+ v9CBdlt/CgbbhvMKX/8yUTQEGvI2RxOTMcZMRMK5rbbAjUTORMCgphE7RLKb0arWVJQ=
+X-Gm-Gg: Acq92OEWCcWByd968aUJDQsFeOXjoap7SPlwIP547R0vGdpTWBHCdXng2pI5q8DGmxb
+ kUpbe5V7cnk/T8rgLLKjZGQRzWTfxCSzhZZvCM5z2xTfXjT07zi6MPq8OaB/OLRLgLeXTOkai5R
+ NNzV35sNNhHfkfJQenvJdqK3WkXhM39rt6DTH3o2ai3WpWiMct1bBKIalWbPwwtX35oD0HroFqO
+ TpsjA2LcKRICgRm2fZxenYP0QA/EOM8ALaWFuRGckvA6G8budEpP8hL483fon5tXTLVHWR/shVD
+ 2c24Ic31en8IOUK2BxjZcLrAdx5Wd1j5vAlY9lnelxnUbj7AEzT8EDpEqpFsr/+pLtw7RYTNPem
+ ttVDiD+PXB8JJHlbxqmKJUdN1snEgDHHJF3rtCQ0MSrrMiee/UQr70Q9b1s2ELLI1UGZeYImLHC
+ 0fvrcjHQ5cThKuPPDGsAUEvtL1P+F5IddzMO5NTsGihf4qN+xN3BEE6gleyKIUzRFLOfE9JqPYE
+ otlnAvCijJa8A==
+X-Received: by 2002:a05:7301:fa06:b0:2f4:3a9c:818c with SMTP id
+ 5a478bee46e88-304fa75a308mr6157376eec.29.1780347962619; 
+ Mon, 01 Jun 2026 14:06:02 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-304ed2c3121sm9998904eec.5.2026.06.01.14.06.02
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 01 Jun 2026 14:06:02 -0700 (PDT)
+Date: Mon, 1 Jun 2026 14:05:59 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>
+Subject: Re: [PATCH v4 03/27] ring: unify memory model on C11, remove atomic32
+Message-ID: <20260601140559.2abce514@phoenix.local>
+In-Reply-To: <b8523a4e0ee34e8b9194935574e86f7c@huawei.com>
+References: <20260521042043.1590536-1-stephen@networkplumber.org>
+ <20260526232542.620966-1-stephen@networkplumber.org>
+ <20260526232542.620966-4-stephen@networkplumber.org>
+ <b8523a4e0ee34e8b9194935574e86f7c@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,22 +84,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+On Mon, 1 Jun 2026 18:18:18 +0000
+Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
 
-05/05/2026 08:21, Sun Yuechi:
-> Implement ip4_lookup_node_process_vec function for RISC-V architecture
-> using RISC-V Vector Extension instruction set.
+> > +	/* check that we have enough room in ring */
+> > +	if (unlikely(n > *entries))
+> > +		n = (behavior == RTE_RING_QUEUE_FIXED) ? 0 : *entries;
+> > +
+> > +	if (n > 0) {
+> > +		*new_head = *old_head + n;
+> > +		d->head = *new_head;  
 > 
-> Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
-> Signed-off-by: Zijian <zijian.oerv@isrc.iscas.ac.cn>
+> There is a bit of inconsistency with the 'load' operation above:
+> If we use atomic_load(&d->head. ...) then it would be better to use
+> atomic_store(&d->head,..., order_relaxed) here.
 
-Signed-off confirms we can apply the DCO rule:
-https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin
+This is single thread case, so not sure atomic_store is needed.
+The old code didn't do it.
 
-For this, we require the (quite) full name of the contributor.
-Here I feel Zijian is not the complete name.
-Please could you help by telling how we should identify you
-with english alphabet?
-Thank you
+There is a little confusion in the ST path.
+It is used in two different context SP and SC.
 
-
+For move_head, it is SC that matters and consumer moves the head;
+BUT if using multiple produces MP the tail is also examined to
+determine space.
