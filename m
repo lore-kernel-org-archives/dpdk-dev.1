@@ -2,76 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED15CD6E60
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 09:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DA2CD6E56
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 10:03:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 83B324025F;
-	Mon,  1 Jun 2026 11:51:47 +0200 (CEST)
-Received: from fout-b8-smtp.messagingengine.com
- (fout-b8-smtp.messagingengine.com [202.12.124.151])
- by mails.dpdk.org (Postfix) with ESMTP id E14244025A
- for <dev@dpdk.org>; Mon,  1 Jun 2026 11:51:45 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.stl.internal (Postfix) with ESMTP id 9BF661D00078;
- Mon,  1 Jun 2026 05:51:44 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Mon, 01 Jun 2026 05:51:44 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 70D684025F;
+	Mon,  1 Jun 2026 12:03:47 +0200 (CEST)
+Received: from fhigh-b4-smtp.messagingengine.com
+ (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 000D04025A;
+ Mon,  1 Jun 2026 12:03:45 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id A58EA7A0104;
+ Mon,  1 Jun 2026 06:03:44 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Mon, 01 Jun 2026 06:03:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780307504;
- x=1780393904; bh=saMMc7xcyRyaoRVo+PiHo5OANzzn1iXjNuHdDdipVtU=; b=
- wTl5F+LaFp6AnDVnSGUg9s/nEFzN5Y7LTKoVpyARmSMHOJVLdjRunZM9IiwTLaLb
- 0StlvgyOmKxOyRq+T4EqGQ3MZQ+ejN62fzNE1qELwaXubpqGs/2+DYG7GlZc5Fch
- xjRp7AIYotHwvxuv8EA8Q2/+LTgrOvRVkNlmO09A27Rmnlt4HyK5aG8VcOrljBCf
- CCz0lQFiYAiQ0+vwW64ECOdQoFVtzeMRmwuHXyKmuithAJJ40QfRWk1QLurahGIl
- EsDIhUm9gMbDpW+ZKNzlepoM9jJjmhs3g8xJ6GkWOFyJb3BQM2zHkLZcxuxfFeyX
- QJxFA/1V3T6enYnPMx1wIQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1780308224;
+ x=1780394624; bh=G0uZoGBaKlDR5CATDxnGs+BAyHPzV/gTrnWELcjGETU=; b=
+ rXnayRYRxWHukwQtamUvc8r2dRT6IIiDkIIICUeRrjiaQL6WCgM/VwtLP4yobK1m
+ BWVrk8PvW9XF3gs1p3vyMP3aNTjVuGOfa4XZNcobMUl7ja4D0FcaEl0+hEYbkLy1
+ YFCy7IPfJA6EdZRoI8fAYkKw4bYEW09cXeNlDroR2fh4T1qi8Kcm2QGafraRCY0h
+ 6ElPQepwOtR1iqEzp25RWu0LxcMmqr/56IxwFMVz5bFHhcllePz0q+7DcuTBOF60
+ DvMEuzNwuabwloW3+RDl1Jp7Aia4Nmf9qe5wGz0NjYn/2BfYOsxjuzl2YA1mWtIs
+ En/6DKCtaSozlbMoAeYH1g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780307504; x=
- 1780393904; bh=saMMc7xcyRyaoRVo+PiHo5OANzzn1iXjNuHdDdipVtU=; b=N
- KvVdFZN8yjYsWYgdCga38KJtESE/wege7DKn9vdog3as6Inzj8ZjRpkhvFA+mQ9P
- 0uBOeYkMw8njXi07DQNArg1xkSsq8mtb2VMEAVtJEgZXG4mcewY4VYw7LhtqtQjB
- fQO2S0G6TOlN5WToHE5S6PdMc1Zx8JKsh654cbNKoHsgoSaJgk+JOJH5+AJCyQSC
- bL8NHCkGgo7vbAmFVV9x520V+Y1fJ/gNDJmK+UT3rj0AHj+sEDorlBrYDSeTjSQc
- bn/rRMaS+atK+NVlOYafgAVXMboep1FfrDngtEBntyusCuXfJvC46toXJT3wdRDw
- hb1iWg7TSM/nsEwLbnh9A==
-X-ME-Sender: <xms:L1YdatMjAMrmUS1RJjw0QNzHVwjNCvOXCufWyi6agvpA02AeM57SMQ>
- <xme:L1YdagFUVC0oprFXtb1eaLB598zrR_pzhBKqopYCwhMmObMmu8vbOepN6O1166ftS
- 3TKqhs27VMN5xhGeznvtwz_0D2MCCgrmPLevRbfCYRPePdTNCNN>
-X-ME-Received: <xmr:L1YdakO0H810JtWlrMP6_Lyd9sxheZDCWg3JBS6V-6i1mNSiHtMfyW0PKsQR779tnCLP73bpfJd2ti1NxDx9CC2tkA>
-X-ME-Proxy-Cause: dmFkZTGGSSkrpXgAzgjBO5EItwzEhlZ240cmdZdPSNR4ggcIjzBhf68aP0WczxRHT+5AyS
- 2AgwOgmGzQsGHYB7SgS0++0TPHMga6nSznNgOVmofTA8eVMaQ22jjaAlPQOv70/tRpQ59Q
- 8BHEQlKWRQMZsEdMCpHGjt8FzI7gI6JcbM0LKv9SQyD7STWkmXZ1+dVVXUMPXVoAw1gFPo
- 6iBYVGTwGCu+AkS3x7QqtxVRKIGxlxglArLbYIzQkzAhKzIeUqteoKIsqbGREZX/UdUhic
- 4h1m7cnZrRytc8zLphPF9lINm9TDPifFvsOZm0VlZ68r8a0wXWNJpJ3tXvdgWMOEZRXZgu
- /zP/3CVhKAStJE6j+WV0SkbJv7us/cAXupOuzXAK/iIM6AuNqWPXpjO7zIwpbwaqDdL8/v
- yH7UJpwDoCiloSnodENFcxXqF+DzH5cDKaQiwScQ/cjon4Y41ZR75rflCZxTyj4SaU7zyf
- uoY1Is8i3lJM170WcrlNI3OZgILQRY0uCEiFZgCBni3PwhRkvTRg5kMMNnonBgYW01s/eN
- c+dTAa0ng/SZcSmHuMwRYXjKM5rtKBeWKTBUmQN3vD14TJByzGOFf9oEBdeSF5uZSAZIRT
- 3EsFgqie9Va4gjmP1p1yPy/Sb5u62KM/90/7zoOmDTLByAxQE/LST4FZQEmA
-X-ME-Proxy: <xmx:L1Ydah-zZn1NcxzCFcrEr414HkUb0BAI_r7iPPxJIMudYi1ON-RT6A>
- <xmx:L1YdagQsJhrIlJWBv5D-v_GhFZoWJgDgsd9a4oBGNVGEgxrkFoi5bA>
- <xmx:L1YdarljnFKPeYT3FmUlNJ9i_alJrei_neHXtES3zd_hfb5XuOtS6g>
- <xmx:L1YdaoTh-7crBXfGAK3IXunKPYXotmoyGBA0QzX0mZAwMIQOu6lvIQ>
- <xmx:MFYdasuw5qiHX2F6CVLUnTebboEcjBRIuCpSpfjJu-jJxKeH2CRRK4b_>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780308224; x=
+ 1780394624; bh=G0uZoGBaKlDR5CATDxnGs+BAyHPzV/gTrnWELcjGETU=; b=H
+ N1CZ3WDguah2ZbSiy1iCMf7Vrf3u6GEt+bwybqOrg92WLC6uW4iG4c+ZE79/4f0m
+ PFM9aIkumsSZ7nfKHm30HeBdAGkVD+Chg2Vs3TBZUwdD6xEOLAlpTcSrQ8ysPgag
+ SGL9djQTtFxXFkRBw8MF1Y4bbF+LoYuggXPgIK3vkZk2KTeM1raNuRFtsLR1IUda
+ 1t5nmLdK6vQ+FeGEokyGMCK0w7KSy1zTe13Q0bQnXMIF+Iy5SCqBzKC3wVUNNLtI
+ hRGNLfTGpC9aoMs1Ei2b/fkCNscarUMeVEpbmbxND/yBmqD7PefyjepPlgRSwsxP
+ 5GBd3J4NcTxz4zNJwlCRQ==
+X-ME-Sender: <xms:AFkdaqEcCXoj8ysfBQT3dVNmLMqS8uHt6ucCeWZIvXzTZZzwbVU9Pg>
+ <xme:AFkdakQwAixdGYCiiHCxprqoxOwYRbBg3QiaW5KriL96YNmltuEHNaHAuTi1R_2yU
+ lsB-bAea1NGM82ft7IkKvzHrhUSHqTfwHa3Pfkw1Q49iDzav2ZglLU>
+X-ME-Received: <xmr:AFkdavvsNIFRDp6_bVqyVVadtBCflQxn4HXu5tEPw6iLj8ONge5rwdqc4ozmuz7lZbtALoDdNkmInRYnOEMT2UCKRg>
+X-ME-Proxy-Cause: dmFkZTEyNMdAF7JugPQ9wouzAV+gprVMIF5D79DovPbNqYjx8ZJ1u+ydwp0krjzVxTZ6Nn
+ ljM+NoiNmLtfFTdmVAx62cqG3SPMpKfWTYffkSYfLxrWh5IwA8FhmPBG8+xlLtEFei9xdW
+ TVOoVtXGH056jXjswECf6sL6WKUPoh8gGFPAD1k/oMbklc5/nZVXA1rSJyQI4NJyg36m4w
+ MO9+fm4LZmDsOig2nyVbPuQo2sbnqWepa0y2w+wzwrnWdBo49/YvlsTPE372m11tBtRKBr
+ wyroquHHQU+3K7fCaKaIfbhO7Dm6FAuNI/cORZG73G8cI9cg57kRGnVmVDTc/SG6HB6VnP
+ Nh/GCnX5omBAYR5DU2tYteVPfcATz/shyWF9Hp3s2o+cSj5jEFf19T5ncfHqh42sfNB6mM
+ 4gsuoBDonBX3nyBv5gzBsQqqW7hFuqZYOw/GJtY9XA0nZjEEKbSHWhbB+CSY1y5Q7kNtfZ
+ bTRwyPNr6pOvBZOEL5v2RSwdpmHtQlvoe6eJqEZAk5NtMflPLN3Vey2lGulV5pU7JnQ/6S
+ JXgZYZ4ONgu/+q9iD7FpfYqwkFUw1ec+ExTPluZoiXT4/Btqfg6kOW2amzGYrspmwzMxvz
+ x3pa6F1UEMs80DdsJGM7GumYyBMj3iUi60wzfpfwQOFEbZo4X0Fc/7+WfKZQ
+X-ME-Proxy: <xmx:AFkdakKqR6n22BHj2aNTmfwLxYAemU5UK3Usfattc3G4r73FWMlq2A>
+ <xmx:AFkdaskkFvD_ouubKd92gbQlFRIImCpAbHCj3KroHAjuTh7xNH-ehg>
+ <xmx:AFkdalKvszl-RdlGlvI1w0ah_jBSFS_kR07JHdbYVh4heFLEziESNg>
+ <xmx:AFkdah4hEyM68h8VXsLX-ZNALNkKYVzFlrRnkYyt-F5YJsM3dsWfnQ>
+ <xmx:AFkdar8npM2_xBFVmAamoXZdy7VnArhGapWWdfDRygnoPSRQhl0TCf4Q>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 1 Jun 2026 05:51:43 -0400 (EDT)
+ 1 Jun 2026 06:03:43 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Jie Liu <liujie5@linkdatatechnology.com>
-Cc: dev@dpdk.org, stephen@networkplumber.org,
- David Marchand <david.marchand@redhat.com>
-Subject: Re: [PATCH v19 00/11]net/sxe2: fix logic errors and address feedback
-Date: Mon, 01 Jun 2026 11:51:40 +0200
-Message-ID: <Xwaj3QZYS3m2yOc8mSX1EQ@monjalon.net>
-In-Reply-To: <gMRpO5X1TMqg0ezYQiGHfg@monjalon.net>
-References: <20260519144810.3951202-12-liujie5@linkdatatechnology.com>
- <9XBXAO5XSSSHFRFv8zy4yQ@monjalon.net> <gMRpO5X1TMqg0ezYQiGHfg@monjalon.net>
+To: Michal Sieron <michal.sieron@nokia.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, stable@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH] eal: fix data race in hugepage prefault
+Date: Mon, 01 Jun 2026 12:03:41 +0200
+Message-ID: <EHj7g9ZXQOGUyi5M5pARcw@monjalon.net>
+In-Reply-To: <20260520170812.759638-1-stephen@networkplumber.org>
+References: <20260520125756.530808-1-michal.sieron@nokia.com>
+ <20260520170812.759638-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,26 +89,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-26/05/2026 16:13, Thomas Monjalon:
-> 21/05/2026 17:16, Thomas Monjalon:
-> > Hello,
-> > 
-> > 20/05/2026 04:17, liujie5@linkdatatechnology.com:
-> > >   common/sxe2: add sxe2 basic structures
-> > 
-> > Are you planning to add a crypto or compress driver?
-> > This is usually the reason to have a common library.
-> > If you don't intend to share some code between different driver,
-> > then you should not have a common library.
+20/05/2026 19:08, Stephen Hemminger:
+> The prefault step in alloc_seg() reads a value from the hugepage and
+> writes it back unchanged to force the kernel to commit the backing
+> page. The read and write were not atomic, which races with concurrent
+> access to the same physical page from a secondary process attaching
+> to the hugetlbfs-backed mapping during rte_eal_init().
 > 
-> We are curious about your plans for sxe2.
-> Please, could you reply?
-> Will you add another driver class to sxe2?
+> Replace the non-atomic load+store with a single atomic fetch-or of
+> zero. This touches the page with an atomic read-modify-write without
+> changing its contents, eliminating the race while preserving the
+> original intent of forcing a write fault.
+> 
+> Fixes: 0f1631be24bd ("mem: fix page fault trigger")
+> Cc: stable@dpdk.org
+> 
+> Reported-by: Michal Sieron <michal.sieron@nokia.com>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+> --- a/lib/eal/linux/eal_memalloc.c
+> +++ b/lib/eal/linux/eal_memalloc.c
+> -	*(volatile int *)addr = *(volatile int *)addr;
+> +	(void)rte_atomic_fetch_or_explicit((int *)addr, 0, rte_memory_order_relaxed);
 
-I see you are submitting patches
-but you don't take time to answer questions.
+There is a compilation failure:
 
-Please stop sending before answering,
-we need to communicate, otherwise it won't work.
+lib/eal/linux/eal_memalloc.c:604:8: error: address argument to atomic operation must be a pointer to _Atomic type ('int *' invalid)
+        (void)rte_atomic_fetch_or_explicit((int *)addr, 0, rte_memory_order_relaxed);
+              ^                            ~~~~~~~~~~~
+
 
 
