@@ -2,75 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B21CD6E56
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 12:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFE9CD6E56
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 12:46:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 640294025F;
-	Mon,  1 Jun 2026 14:40:11 +0200 (CEST)
-Received: from fout-b4-smtp.messagingengine.com
- (fout-b4-smtp.messagingengine.com [202.12.124.147])
- by mails.dpdk.org (Postfix) with ESMTP id D99114025A
- for <dev@dpdk.org>; Mon,  1 Jun 2026 14:40:09 +0200 (CEST)
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
- by mailfout.stl.internal (Postfix) with ESMTP id EDC7C1D00430;
- Mon,  1 Jun 2026 08:40:08 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-08.internal (MEProxy); Mon, 01 Jun 2026 08:40:09 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id AE9A84025F;
+	Mon,  1 Jun 2026 14:46:33 +0200 (CEST)
+Received: from fhigh-b5-smtp.messagingengine.com
+ (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+ by mails.dpdk.org (Postfix) with ESMTP id B14D74025A
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 14:46:32 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id CFDF77A03AB;
+ Mon,  1 Jun 2026 08:46:31 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Mon, 01 Jun 2026 08:46:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780317608;
- x=1780404008; bh=q9LhhxS8AO8jP9buzd8XGFYZ9BlxR0W1NQati87Me3k=; b=
- Pr1Ua/J0MLLtHsOSw76P5lXFq8wo3taOEl/DmDeRlphqFEzkBel/xKV3PWymlolu
- RAkL6/oH03hK5IB8ifse1c8vxSc79wocE/ht4xNmm/MGxS96+0/uueTrT+4gHHDy
- JihqHrBGnU44LWhCNYUkZMItoBiMimXjg7OexSH1lZ/4tgGqRRzbWSbxR0BsdBsE
- gaYtngmXHPWUaDZ+c/A/JwE4oCLvslJzccdRZnEB+PAPtCSj6oHt05nPx6zuryev
- JmnSWEqYpIxheoOhCqTVhnikP2C85pXTaTdil8NhdWJn9mSK02VPiWjiG7bCgiak
- C9jYS51Ne5wJpTltIUgEgg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1780317991;
+ x=1780404391; bh=36V/h47i2uCq/g4x8uRaOgHjn3DVSvHMQSitC6bE+D4=; b=
+ JvIiUrUbZ+09faa2BulaCrVKPL2UaplX+1v9gxIQHUJMzcv49WBgu1pwI1SnzvpH
+ zX4Vri1DFI+94F1JMXExIVSPrmJ19kja25L5Ka7xAtio/X1KlFIW8roXCd5Y0o5M
+ ZMEXFmXE8I9fjpJFgxJDcKCI2CEDDqwMoIOdTbtS8cqPCQ/06aZ+OgglKYgoQNKj
+ Zlk557foKkTl2say5fg9HV8BbEuARR58ebsiqziMFC6t4b0YwHJ0gKyMWHJKFii3
+ uf4MQ7h7Zr05B5VxKwQJRajPbfV+L0Jek6FI+HX+GsJ1vdAIIYbwVe2T21qBMkXF
+ WjsQ2kLm1YOQbD+jXAC01w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780317608; x=
- 1780404008; bh=q9LhhxS8AO8jP9buzd8XGFYZ9BlxR0W1NQati87Me3k=; b=i
- 2FE8fKBTPQuWMyGqVUDXTP8phfI330M5xnDbZvn6btyXpYCmnBK9/FaKJgMbXEhv
- vBQAio/X6QXKpLSqVLWo+WqlZ5iqpSXks6Vc2RWyxrX+6458xdUz+HFfqRN+SCLB
- Hczi4v6aOCYeMwEk9rlqVjvIQhSrmlS+rJFnn/FUw8YbmhwaZoSxLdPnfjc3e66m
- 5E0IATmZ6ys3a8ZupMbZLNlh04oA1fc27HeyVicAxS52kuWgPFX8iHu0ea4JJNhM
- ez0tNzk4wOwR0czcfcA2NNGX2IHESNYuMuoZUTAj1lA5pmsRZ4J+VTV3rTw54fLy
- vd6A7JTiBu82JntxdZN4w==
-X-ME-Sender: <xms:qH0dapgoBsZnc4wcv9iRLeM2M4sSGF6tPT-eSZPYS2vIigWqvNJK9Q>
- <xme:qH0daiXEz7LwqMdvVAqN1qLJkwQzdydIzcpQm6gUMPpfkhFToxBTv7DPPT45MMqjU
- 4sD3rTqd-GXHmpQhaUVuJWIlydXB_jJnRNmYN94WFkvfalNxjeiXQ>
-X-ME-Received: <xmr:qH0daoN0YJA2JktUVKa6o7hdx7j5STopaZzGeD8UIl-UhcaajUIyUJjB0j-6Dn-ynyqycuzDXV5uRVMfrw-2cvLUfg>
-X-ME-Proxy-Cause: dmFkZTF4cMcFGsyCUrYSxnNPiO8j2WUCXAHowHp64tBdQ/i2z+aO2/QeMLWUqEiz2jK02Y
- GDvUD8hyAp/PNytUTLBBGVyoHwvd8w/EpCyY2NM0sWHpqQ7BfVuGDKDopb6Rx5qqpi7jfy
- E45b5yd0f3ljFIKkm+gff0l20MrRh0aB6uoaKWwFWAE0SkRkvOLdR3D/1cKCYTwHcV6cuo
- FgwoaIfmBTHLZSln2mTRW7g9jWRA091lYmjHpOcPgwyfVQf1A1bq16K5FuFNEhpsiTIzKz
- JB7DQggDfg3EUQjI1buU3ySultzBlONPtoj40OxaxkwooLNimsT5I29IMgsNW9MfiH6ceR
- FYtvpgdDFNYKeubOhsjRTQoF/AqEPYPWminmuVvymvylDW7iLiBs6YRXe8VMBH6v94O4Gs
- HjFHZx2PKx31FS37fExKapwXiNRWppepVxn0C+8aaIV/NKI2qLa8tJh+O0zcx9XuxqR8AZ
- 4CjHMbPY4p1MLIe4xJTzwvkbYG4p+b5/4pw2fainIWPmyrC6q1MajjAGCIHPKs2deX6pDM
- nbIJsj7WFog3NMnWtZn2XzokLeZbZH88G4M267Kz+jH/rvPNn4Vh8JFd6jMn4iRUK7ZL9K
- TKPF80FU+xcYe6jUjSDa33OcZCr2O0wlhZaZUxvLWSK3CwTsmQTai2F9esmA
-X-ME-Proxy: <xmx:qH0damZFVdbNgWhFPVIHsTeOuyVmZc5yaEG7aK2B6v4OXvML1iaC_A>
- <xmx:qH0daso4LoGOOLwBKwq4VzPl8zE9RUeMV8StOYguB17yoYZK68MmOw>
- <xmx:qH0daqYttvZGcNV50O0rlxoEuGct65nMZvkvShYQkomCGxC0eIrLFQ>
- <xmx:qH0dakQP_it5LKjlOtzRk6j7j4mwuLGZ3y0HXFhfwDeGlqRZ3BjTKQ>
- <xmx:qH0daqBsMbMluQrJzC-O3NQGUIxQiCXFQwmLQLrZPRiF1TuR7M2SOTJv>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780317991; x=
+ 1780404391; bh=36V/h47i2uCq/g4x8uRaOgHjn3DVSvHMQSitC6bE+D4=; b=M
+ FovZeh3q5hXmPA50IW5qC/910ji+aE1cnua9liK604gxuiQ4Hbc9iZbpyPwXpHO/
+ WOUVAvgAVASfftBEp4fisgpE1sVMD32noXgB2xU/+WYbPbjOyYn2CPqZK6493Ai/
+ +HyPpoClNRK8iTnUD0L0Uh1YfxPjXyy16T34RvPJKqUsDZCsBHzKF1+vLAUBo5Vs
+ QQFrUWR3fHjYsc3si7vvRHHlXg2ieo1zxNKmRnJlb1R1ORqc4wKwd7AakQRWp3ou
+ syoJIKLjPuS4N1zyO1EQ6nNxYmHjF/P059q1/F9rKSCYXy18QctHsONS0HPhCqcb
+ JgZ7+VVByYP5R6daIIiqQ==
+X-ME-Sender: <xms:J38daix543aMouapYzwAhAjmT1e7KCPobpJ6chDXPtelLHY7JLYObA>
+ <xme:J38daikL4HcVNuO_EZRNrNWuAQ4VzR__erl9TpDBSzsd07pA2s4G-GgYfjHRyPX20
+ DC8DZBmuz9LQCqOCwJ0gujAWdT_tH5k7ZabCIFF15kX1b2jTOPiPg>
+X-ME-Received: <xmr:J38dajdJzAfVWLO_RtAclJ2VLycHfW2DQg7lEudnfcmXjjbgITJuouCn2amAHjHV_Wt6OnY5YZ7HzyIRdkPf4xIgsQ>
+X-ME-Proxy-Cause: dmFkZTFbtroOaI5j3wkOQ75ie4k+pjxGNjqXQxsY6D9bDdQ1vaGWTEzJReMk72YFkS/OGK
+ w2j0R+UwG85v7n6Qz4oI14VyVO7gkYWK3kH8nekT1f2z20Nqc+odfPGa+0/u+3+b30CI5V
+ DLXU2Ah/hmhVsDxomm/x+JLvNUX7epS7918maKt5u4HMSoVsJA9WClOqxaAvitsvyCZgt6
+ 7n+Jh1xtzMEutDnIRyfZxy7bc3GrQKqLYYCqzBBWGcuZN639avLjSjAByon8H474TcMX3z
+ fSrLW4WNpse6JwFj3TGWsy4gOAmaB03Lh/GuU1ebCz/16GpASPsvD3Dfn4Y5fNR114V+RE
+ YN/ibG6ctCQzyjNWbFceXOU/UyqlRLH0QQmC3gEnG2vVk4Zb1D6ldoxzDQIuyiQ7y0ZkPD
+ 9HSRkbmvA9/jnZexc3TSMXcyVq0XTefrJ1NXHcb9Intkxth6yGeXtlkaD3phmUyPq22xrH
+ vNE4RAzBKM6c1SvSY2a5qfXDxak661Ba5GuWU9oJWftOEFmhnUNZlI0nzrpvgtT3RvJcsP
+ KOwBdDyzGkoxMcpT0Hkeu+4ta67ODq2M7gM8qBOJIjIh4BsbHNHKbo9igQn3RuoU41Jr1o
+ 2R+lQDMFhuTrSmQtOQEvdSt39aSj/G60K6RQvKMeuUQQnopbFJrdaOzFkQUg
+X-ME-Proxy: <xmx:J38dagqOSL5umHwZL58cSTSLcKPuBdGJWCeOumgvKD9KK3pcBUT1IA>
+ <xmx:J38dap5-NwbYV0VQWqT0dGzlvejXC5gooLs-8n0CyIO7izS3YnulSg>
+ <xmx:J38daupg1Se_TgZU9ftySapP-JfVEVO7f8-o-yQoqP_87NjEj6NKnA>
+ <xmx:J38dajj7BVnbHYljT4sEd5Vyay04BEbqCV52IRqlPGMTgdEdm4pVig>
+ <xmx:J38dauUDH5lBXnqg650_RHViAqfkSjEbUZakx3h1NXe9vAbp4c0SftjC>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 1 Jun 2026 08:40:07 -0400 (EDT)
+ 1 Jun 2026 08:46:30 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Jianfeng Tan <jianfeng.tan@intel.com>
-Subject: Re: [PATCH v2 2/5] eal: fix async IPC callback not fired when no peers
-Date: Mon, 01 Jun 2026 14:40:06 +0200
-Message-ID: <FGTuNPDMQtmtEID8twKsTA@monjalon.net>
-In-Reply-To: <n2qqs3VCRg2oTV_S-0kNSw@monjalon.net>
-References: <1ad014dd239fa1e8ea62aab7e56a7bf7264c04ff.1780068382.git.anatoly.burakov@intel.com>
- <n2qqs3VCRg2oTV_S-0kNSw@monjalon.net>
+To: luca.boccassi@gmail.com
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH] tree-wide: fix 'allow[s] to' grammar
+Date: Mon, 01 Jun 2026 14:46:28 +0200
+Message-ID: <rw3_27oiSRSGYdw9eSiVGg@monjalon.net>
+In-Reply-To: <aejrN1XS0LEH7hdu@bricha3-mobl1.ger.corp.intel.com>
+References: <20260422151901.3523790-1-luca.boccassi@gmail.com>
+ <aejrN1XS0LEH7hdu@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,59 +87,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-01/06/2026 14:21, Thomas Monjalon:
-> 29/05/2026 17:26, Anatoly Burakov:
-> > Currently, when rte_mp_request_async() is called and no peer processes
-> > are connected (nb_sent == 0), the user callback is never invoked.
+22/04/2026 17:37, Bruce Richardson:
+> On Wed, Apr 22, 2026 at 04:18:53PM +0100, luca.boccassi@gmail.com wrote:
+> > From: Luca Boccassi <luca.boccassi@gmail.com>
 > > 
-> > The original implementation used a dedicated background thread and
-> > pthread_cond_signal() to wake it after queuing the dummy request. When
-> > that thread was replaced with per-message alarms, no alarm was set for
-> > the dummy request, silently breaking the nb_sent == 0 path.
+> > Lintian flags 'allow[s] to' as grammatically incorrect, as it
+> > requires an object before the next verb.
 > > 
-> > This was not noticed because async requests are used while handling
-> > secondary process requests, where peers are typically already present.
+> > Fix docs, comments and son on by either switching to gerundinve or
+> > adding 'one' as the object.
 > > 
-> > Fix it by setting a 1us alarm on the dummy request, so the callback path
-> > immediately triggers and processes it.
+> > I: dpdk-doc: typo-in-manual-page "allow to" "allow one to" [usr/share/man/man3/rte_graph_model_mcore_dispatch.h.3.gz:32]
+> > I: dpdk-doc: typo-in-manual-page "allow to" "allow one to" [usr/share/man/man3/rte_mbuf_dyn.h.3.gz:167]
+> > I: dpdk-doc: typo-in-manual-page "allow to" "allow one to" [usr/share/man/man3/rte_mbuf_history.h.3.gz:71]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_bpf_ethdev.h.3.gz:41]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_ethdev.h.3.gz:3423]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_ethdev.h.3.gz:5197]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_ethdev.h.3.gz:5224]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_event_crypto_adapter_runtime_params.3.gz:32]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_event_dma_adapter_runtime_params.3.gz:32]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_event_eth_rx_adapter_runtime_params.3.gz:32]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_event_eth_tx_adapter_runtime_params.3.gz:35]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_flow.h.3.gz:2669]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_graph.h.3.gz:222]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_mempool_objhdr.3.gz:33]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_mldev.h.3.gz:807]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_node_eth_api.h.3.gz:44]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_node_ip4_api.h.3.gz:73]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_node_ip6_api.h.3.gz:50]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_node_pkt_cls_api.h.3.gz:18]
+> > I: dpdk-doc: typo-in-manual-page "allows to" "allows one to" [usr/share/man/man3/rte_node_udp4_input_api.h.3.gz:42]
 > > 
-> > Fixes: daf9bfca717e ("ipc: remove thread for async requests")
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> > Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
 > > ---
-> >  lib/eal/common/eal_common_proc.c | 12 ++++++++++--
-> >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
-> > index 799c6e81b0..0ec79336a5 100644
-> > --- a/lib/eal/common/eal_common_proc.c
-> > +++ b/lib/eal/common/eal_common_proc.c
-> > @@ -1187,11 +1187,15 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
-> >  	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
-> >  		ret = mp_request_async(eal_mp_socket_path(), copy, param, ts);
-> >  
-> > -		/* if we didn't send anything, put dummy request on the queue */
-> > +		/* if we didn't send anything, put dummy request on the queue
-> > +		 * and set a minimum-delay alarm so the callback fires immediately.
-> > +		 */
-> >  		if (ret == 0 && reply->nb_sent == 0) {
-> >  			TAILQ_INSERT_TAIL(&pending_requests.requests, dummy,
-> >  					next);
-> >  			dummy_used = true;
-> > +			if (rte_eal_alarm_set(1, async_reply_handle, dummy) < 0)
-> > +				EAL_LOG(ERR, "Fail to set alarm for dummy request");
-> 
-> Shouldn't we return an error?
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-AI suggests this:
+Applied, thanks.
 
-      if (rte_eal_alarm_set(1, async_reply_handle,
-              (void *)(uintptr_t)dummy->id) < 0) {
-          EAL_LOG(ERR, "Fail to set alarm for dummy request");
-          TAILQ_REMOVE(&pending_requests.requests, dummy, next);
-          dummy_used = false;
-          ret = -1;
-      }
 
 
