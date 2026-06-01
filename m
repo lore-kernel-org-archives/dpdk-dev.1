@@ -2,74 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7427DCD6E55
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 20:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9CECD5BD1
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 20:21:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA837402EB;
-	Mon,  1 Jun 2026 22:12:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B3370402EB;
+	Mon,  1 Jun 2026 22:21:11 +0200 (CEST)
 Received: from fhigh-b1-smtp.messagingengine.com
  (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
- by mails.dpdk.org (Postfix) with ESMTP id 71E7B40150
- for <dev@dpdk.org>; Mon,  1 Jun 2026 22:12:20 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.stl.internal (Postfix) with ESMTP id B60137A0106;
- Mon,  1 Jun 2026 16:12:19 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-10.internal (MEProxy); Mon, 01 Jun 2026 16:12:19 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 95FF140150
+ for <dev@dpdk.org>; Mon,  1 Jun 2026 22:21:10 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 14F267A00F6;
+ Mon,  1 Jun 2026 16:21:10 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Mon, 01 Jun 2026 16:21:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780344739;
- x=1780431139; bh=8BxF6XQgL6tZlB575Jq+uQdlgP2vJaejksFI4d7f3Lo=; b=
- Zu3J13XicfnzkEFlmcEW/E+Oy2Ke6+d/GERP4Da6h9Ur0yGXXUj3m9oL4r4iyCq/
- EVvGykXIhWytAOcEbvDqg9Fgyar4g3EN7dAo6LNuDlqF5O5R4YNpCumfOPcHdzCH
- /rr6gYI0PAmOV1Cbt1R3t1SQ/SbO4EilXsqACvpbKUt+Nb2AloUFzUrgnzcEhBHP
- loLW65wKi+tyHgKlrZxppJS5eslFSOE/rdznMFgc6NAVUAZwXSyKl5X5bD7U1Hql
- csxd55QkqrXcUdLp9QKaudGCsG2LbwpTulQ9UBymKFeT03IlZ8SzY8N4K4Pzi4dL
- p9mqOPvrlZV7Snj4Ky/KvA==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1780345269;
+ x=1780431669; bh=F3iNzAbxAojUfH2pjQjdh3ew7pQsv0Vtn4Zt+78s+MI=; b=
+ HGVqnzHQTWPd4xvKHlTm5Yd64+EyPn6BOGgGbVasK8jnf2yeMcaW1sfd0lfYdovn
+ fDhqE9QtLZBsYNjYc1l2Y27NHzRiYshNwYzD3UAU0IcqA2abvpPXCF2RjxUwM2yX
+ 0GZEUqFTltBaWHIpLo/K+Hhmnv3kYHnKEVLxX9tI10rMKQs3birR4SfiiRDMU5kW
+ 6GcrTl8zIK6ZNNX6ekvh/iQcn28erMGyYciru03z+mLDWakt6j6kIFvQBNN6Q3OC
+ BXcMi5SD2xUdOyzuKYMQoSSLQ7z5RH5PHShGMfg6RzMQiw8n4213rssOdk+8MDdj
+ YmgBDzOydiy7wjyhzl5+nQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780344739; x=
- 1780431139; bh=8BxF6XQgL6tZlB575Jq+uQdlgP2vJaejksFI4d7f3Lo=; b=M
- 8BYMUZ/LibHwuoW5Am4oGQnRPXZBOxDqARIrgEWTwHKA7q7gt2/aiyoC2qOZF62d
- jDxIQKafcafwjshA4V4/6vlK8NlsnA9BH1HAe9uHgFemZHCygZgVS/hBq9Be9bQs
- aVOp101mM620iVnZ8Son8HpGP6TLiaz2WBNlSSSSyekyrPZM9PebUSZjarm0DgxM
- B4//ckb53vCyNDhha+ax3FlfiaEXfPIxTllMy1/xOSAO8dsDQpZsoz/F77y9xGLS
- tZT2e7b8/99Sc84DaXJ4/km4uWiW5DGBvZYklO5FUSvu+NsBvEkQniSsX8FZKYor
- O6i8g9Kw0tsBDf1onajmg==
-X-ME-Sender: <xms:o-cdas8BoZQEJ3OGjPX3DBavMQjmOI6EVCy6-VQDSEwkyCVtHEmINA>
- <xme:o-cdahCsrN5nQY-O--ZfwuX6ex1j2ezdie5GjEbqJvhWe98lgRH41s48TqtzQfTJ7
- w8ZG1LrOqZueI2OPlfFFmVLvPMxRxP-sAVELV7H9fJ_gxAJPfM>
-X-ME-Received: <xmr:o-cdakys2n87XPM6aklENC0mOnI57CLAk2ote92YHIl_e4h3InFZ8NM1Zs4DXBZrBjMqPgU1edug3OcXsyYm8CV0TQ>
-X-ME-Proxy-Cause: dmFkZTEtKGRbU/QC+lfkZgTnIPmUuPjYIztHGaDpNx4JmaAzrLHpaEPWcjPppFRjiZTyK+
- dZsZ0ZNOLDtKizdPfoLdYVtu1KA1a72ukaAupLPZe1T3kCMqk84PCQWz3faBKMgGF37NEN
- nBGYqJdwiTFezR7BgX20RI1PowWu69Ff1ZpCauP3K54E2NAzYoT+NLs8UL1vtho0Wc2HsN
- sE30AcERHHm1p7TcsylQMYxU2ESxxXproQEOsAO3ZgaVAQ6EDvF3w7JLNFP+wXYdfIZHon
- 4iZfAWI9dtb8aTI4XYIVYq2u7vokGkI5waIzt/K8gbPF1yDzztfjB9vCBj/Fnnas3WcJK7
- 6iaV+ILCos2LoOhjflTqoPLzIx4+fFDt9fcQ1ZODXlrW/pjhiJVEshUtO4gc4b6hfDeOQA
- BEJIxDM5X5wF9WBWgXGCh14LSzrceWM0i7ckVF/yH/gwbiUHC8ymaB9mHENXapGa7pKu/6
- BxRijy08f42iUSxTYj7cH68czEdJTpZGXFbkCkAq5wQNn+YaOFtRmH8VI70VSkpSi6nziU
- g08L2t/tP0iAPy5Q7xfMndhnnMxnmobe5qqBTfMPvT2BE6+D58BMyif5JuwizgAetV80NJ
- N4kHi1eQcaZ15nCuYDmE6t2V9E+JXYBLLe4nOVeEHdHQjYXe4emynZ4HNveQ
-X-ME-Proxy: <xmx:o-cdauRDi30vq8G-2OBRI_uyUc9i0G_8Kwae-wlNpBkcPQAS4UGSKg>
- <xmx:o-cdaj-2wxWXXuADHi93fOvxShNoenMl4CTSVuqFug67vIdDGTo18w>
- <xmx:o-cdatp7_-UQm-1MjmZ_fTkK-VIrAfzkHOvkTBp74a5MKqRbZQNEEw>
- <xmx:o-cdaokVzJkIKtb0dAyoqqQ-khMjyNmZWlqrYgBezFmadB8QfFrcgw>
- <xmx:o-cdapHWCuRdNlr5qIIh-QYS1XJaQHMrrQH5v4AlMP2nVnt8pmjdl9Ps>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780345269; x=
+ 1780431669; bh=F3iNzAbxAojUfH2pjQjdh3ew7pQsv0Vtn4Zt+78s+MI=; b=D
+ dftAzKpA8Bs4Mf+rRfcb4tTNvErXIgU+k+8OEaKys9ueP7AIZLg9Vqub9HQdDthQ
+ EmK6PtH0+ZFUpBHQjxoTiA6BxwwLDFdIUijX2AZPO6v7RS7xrmEOo38EiLopKDQT
+ BnMUe0AOwRQn5hba5BIevt8P7Vrx/Dw0NRntG0rc758AtsDLlbyaCFl0AfThXTaw
+ BT03cs7lqs9OnAnmHlC4SgTKLS/e30hhrKxtwDaQbjiQ8nW4bGtVaP++jmIWrh//
+ yjLfPx8AWCCHIorAhda6F+KS50KYHykmF+RXDfqbLnyiY0CFIaXpOM+R+w4BBuSK
+ LywbJi7r+o0XQnRi7HD+w==
+X-ME-Sender: <xms:tekdasuRSsM4z6HXSIh3PtbeN_FvdSyWLhRzJy6wQpv-j9Sv2Buw1g>
+ <xme:tekdapn2caHNLjjL38Ybk1damYg16tfgcugTQo_QbnvnjhKOa_voDMsepzqsTGcSy
+ XwiPmq6BmJRutnguMexGZHvKVRIk366CebLupryq_Ybn2v0zPQt4A>
+X-ME-Received: <xmr:tekdavt-8pGFbqapFJUkMy8nRo9nUxmqxQgiEug7KlkjbXIWZLWSZBACJx8lDCa39KbWvCP8AxFWumhgxZ97UcVRUw>
+X-ME-Proxy-Cause: dmFkZTGQIEYG3iLxdaL4YD/pOwV+INONg4LE434gll6Z2sJtN1RJ6qz3mNoqs+CBW9MW6r
+ PxlOqvnj+1QCji9u2cDBJNhZB4GV05Vz8W69zLVOPQuDnOAFDnvCICRzZE7qVAfbLs6XRU
+ J+ZHp13U57Nd0gduS/vqXDFXPYKVZrUhiZI713aR2AIdqJPVr3sdF3a6uWKQkBVsSzOOdn
+ 7sEj8GINenMQKDXCeDDPH863mq5vwZjIBYoXOnvTjck/x49adanxsorBc5mfyi5W/jsJdo
+ QdXlhH9TiNkXE2v7y8gDc20aflbew0+cN57dW3MA2YOogEXnDjXIdSEeuGrmBaBcZZBNE9
+ y6nQd8sAnPv0S5l8X6nGPG0WeNa6EVj+rsxqW58YKBd35z4UtlxTRZ8KRVzDpO1eXtVNuZ
+ gBvODRtqjvd6e04EF0K97o2OxCOAPfh/2YsXxzwIA57+kgfNAv/18TLFf8495/InV+sZCW
+ wuDxl05y9FLP9d/3WRDzq4itaGoWRCLrEPuCaNXtGj2j2rBb87m8myv7+XYyUcId2UDxZQ
+ nzbfVjihV53ZHOoDmyEP5ZFjTg6CJRbHnSmMXywiVM3XfljRxhRbqIuLXS/ULOK8+pE5dM
+ Cx4rQ/agLUw7A1OWIPl/r/0FijXnoM0EY9jOoarl0I/NZGLWJ9yRfdvOW2Sg
+X-ME-Proxy: <xmx:tekdandT6B6YxTm-SFo_fEaqo1ipMj5LRDOgXAGdf3Ia6bt_aYXXvw>
+ <xmx:tekdanyBhnW7ADmE3m2U8m1aH9y1nqcwmoLPnL-2VOTcJrTtpiOASA>
+ <xmx:tekdatGXCqJKR0v8V2TDPu2mUZyzZqEYdGpZ2oihhRLEnAnb0pdOng>
+ <xmx:tekdaryf1WJL3KZXBJ5o_rTGA4aRr70IJOxbYJG7wgmiL7fVqC3UPw>
+ <xmx:tekdapXmID9WH9uFjIvW5pUUyBuaT9g6vbQLTAWoyU195Kz4KqgxH5No>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 1 Jun 2026 16:12:18 -0400 (EDT)
+ 1 Jun 2026 16:21:08 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 0/2] implement missing APIs on FreeBSD
-Date: Mon, 01 Jun 2026 22:12:17 +0200
-Message-ID: <CyBAPAuxTMaOXvlKSc2eQA@monjalon.net>
-In-Reply-To: <20260525171340.1701509-1-bruce.richardson@intel.com>
-References: <20260525171340.1701509-1-bruce.richardson@intel.com>
+To: Chengwen Feng <fengchengwen@huawei.com>
+Cc: dev@dpdk.org, liuyonglong@huawei.com, qianweili@huawei.com
+Subject: Re: [PATCH v2] bus/uacce: support no-iommu mode
+Date: Mon, 01 Jun 2026 22:21:07 +0200
+Message-ID: <OGbmAEQxT1-uC2hrkqXCFQ@monjalon.net>
+In-Reply-To: <20260518105857.23083-1-fengchengwen@huawei.com>
+References: <20260422075326.34206-1-fengchengwen@huawei.com>
+ <20260518105857.23083-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,18 +87,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-25/05/2026 19:13, Bruce Richardson:
-> The APIs for converting a virtual address to an IOVA or a physical
-> address were implemented only as stubs on FreeBSD, but unfortunately
-> they are used by drivers such as "igc", part of e1000, causing the
-> drivers to fail on BSD. A workaround would be to change the use of these
-> functions with the rte_malloc equivalents (e.g. rte_malloc_virt2iova) -
-> which do work on FreeBSD - but a better solution is just to replace the
-> stubs with proper implementations in FreeBSD-specific EAL flags.
+18/05/2026 12:58, Chengwen Feng:
+> The uacce bus originally only supports devices with SVA capability.
+> This patch extends the uacce bus to support no-iommu mode for devices
+> without or not enabling IOMMU/SVA.
 > 
-> Bruce Richardson (2):
->   eal/freebsd: fix memseg addresses in IOVA_AS_VA mode
->   eal/freebsd: implement virtual to IOVA translation fn
+> For no-iommu mode UACCE devices:
+> - The device api name is suffixed with _noiommu
+> - The device flags bit1 was set (UACCE_DEV_FLAG_NOIOMMU)
+> 
+> To support such devices, DPDK device drivers can mark
+> RTE_UACCE_DRV_SUPPORT_NOIOMMU_MODE in drv_flags to declare capability
+> of working with no-iommu devices.
+> 
+> This commit also fixes typo UACCE_DEV_FLGA_SVA -> UACCE_DEV_FLAG_SVA.
+> 
+> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 
 Applied, thanks.
 
