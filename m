@@ -2,113 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193E9CD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 06:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E17ADC5DF71
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 06:44:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4691A402C4;
-	Tue,  2 Jun 2026 08:07:08 +0200 (CEST)
-Received: from CH4PR04CU002.outbound.protection.outlook.com
- (mail-northcentralusazon11013067.outbound.protection.outlook.com
- [40.107.201.67]) by mails.dpdk.org (Postfix) with ESMTP id 9C32940150
- for <dev@dpdk.org>; Tue,  2 Jun 2026 08:07:06 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W5l/uM9rHjcr69y5Xvkjsm70ZpRnPWgS3BTIdhBi5vI9Q2lZNr87IF8rvHzU5lNXIXsLE93bD8hmiXnooP0b9X4Sk9oOQdzYY6PnlzJG/bGy+OJHulvywHO0xQiBuKFTkdTWI0Sl3WASymm/70C0TBVudEt1A7dXce76M2llW9WhXu0IkTOb6n3GZupGtQyvLNyCBfhw6UcasZg793NVcfNFmY/Mn2sRYQz5Sgd6ZnDwpWovis4Ear73VkjmUHVBsT4xXHSCFGwJ8a8JhcG0iDiTHaGzmtRQbi/kiFOxSRAYmY1o29YfXDcKicOLS5Hfd3WDe7vqMgHA+1tVWkqdeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q8VYfwV47xfFOctXSrWsC9NcTBcGdptoCUqLP5U6pDg=;
- b=JUR0F413EJp5calRrNpexVoZebXxUFrysvBQuWwI5BrXon/iqk0hPquFcsrwPzE1bEhKtHZhbqnZbgSTjMRnxGP+z1iXpsBiino0KA2d0FvJ68XEUGSofYeJYJ7OTAo8taVUR2dSZwAZ7LbRsGtGygjufEfYFB54LP5sUCQAMfwBGAhO8iL5Xe7Ddn0ZAujQOrVMCHsXArokHD/gEqqnVelToMVh7N4/9gy/G8d8P36FyVRYG+zv06uMZvg7U0vObqjDveYmLbagR4Y4fPnKoVk9nsqb3iy9qQlxFvPpkWj/SEE8YqPbiUZ9H4nJvjWaJ3U0pFZg9IY0HErf4V1aBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q8VYfwV47xfFOctXSrWsC9NcTBcGdptoCUqLP5U6pDg=;
- b=K1xFMPbuYJYBAmLjibTIeSxMaoU0UmhARBUHiR8IfwmERzNHeb04bfKgN6J3NIi9iuRLXrMFth3R8JxaweIpt9NjUllRLbzEtbPmNrH/satp90apHvEE0w6xW6mZoZQoAlL+BofO9sNssw16BLBHJdkBE+7MfslRSxZiWR9lX1ceqQck68xnocgQzQlzM0UWOY4kZOHTKgXdhLk1r4PH4xPtN3L8a6sGANoewm8Z8Oeuw1IvVssyj40tYf+57RCb1LHPYGvMfx+2/SjprbaeXdHjU7dUptuHaxmYrtwwLnHYOi3HME3ZMoMPyPfiY5dh2/JWcVxoN/QihbXKFPUEOA==
-Received: from BN9PR12MB5338.namprd12.prod.outlook.com (2603:10b6:408:103::23)
- by MW4PR12MB7030.namprd12.prod.outlook.com (2603:10b6:303:20a::8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.17; Tue, 2 Jun 2026
- 06:07:02 +0000
-Received: from BN9PR12MB5338.namprd12.prod.outlook.com
- ([fe80::7b66:315e:f851:8ddb]) by BN9PR12MB5338.namprd12.prod.outlook.com
- ([fe80::7b66:315e:f851:8ddb%6]) with mapi id 15.21.0071.015; Tue, 2 Jun 2026
- 06:07:02 +0000
-From: Bing Zhao <bingz@nvidia.com>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>, Slava Ovsiienko
- <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v2] net/mlx5: promote private API to stable
-Thread-Topic: [PATCH v2] net/mlx5: promote private API to stable
-Thread-Index: AQHc7z10UMM73VHTAEC4y8+yxOzJcbYqzWOQ
-Date: Tue, 2 Jun 2026 06:07:02 +0000
-Message-ID: <BN9PR12MB53382148AED34F87AC368E0CD0122@BN9PR12MB5338.namprd12.prod.outlook.com>
-References: <20260527103357.633429-1-dsosnowski@nvidia.com>
- <20260529073255.689808-1-dsosnowski@nvidia.com>
-In-Reply-To: <20260529073255.689808-1-dsosnowski@nvidia.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR12MB5338:EE_|MW4PR12MB7030:EE_
-x-ms-office365-filtering-correlation-id: 7b19b949-a070-48cb-aa42-08dec06d29f9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|38070700021|4143699003|56012099006|11063799006|22082099003|6133799003|18002099003;
-x-microsoft-antispam-message-info: u5WbbXpEqDmVCe/GFh7riz/5hRYgB8bW129eE1X89lFXJZs8z5Ubnm0CUz8TwlKU/Nzf0Bkqv+4TkCAEonX6r6ZMuTjZBZz+jbKOTboaKmgbyk+aYZXlWnjDIOsBoD5QThOd34iDn/mdoEXoI9AtuMU5p5TXVWkg0sx8dgNei2Ocv+7LuLdALrzy8z1gORyPXXjKmnwovpBOqDKA/1ed15taGHTSPTD+eri9TnhHq34wObBjSJWtoPVqKVYXvm4Z5voVqo7BQp3VG3y/IezGIy6XOYumEYy+Ua4pFHKWKLYfShbozVDn8+2Q/gqwfzCb7SjOT/XB4bXno/kJd0oWh3TCWkLFN37M8eesPWnuefPrqzgVNdAvfJOc2xp+yD+AZyQgFEoIXoIIN4ngEC7iCfCe2cQpZioMRrK1rKgv+5R61qIRNWhW4euBt1iLSmFyJ77OE8HBcOsLfWgR0M45ZYYEJ79q16K1fJGBGZfKS3yCfj1hvLI4zKXUfD4tboPm42Un3Bl8thBc9CrT7M7V4lOBgC10f8lprFkHGRH1AXUcWiKyOnZkDH4SNNpW1KuGS8poAKd03id7g6g0R9vYUmy75FzpWL+yKSae0W9zOi4VrW3MN4l2W94T5nkGW9zVARbiZiThmNLtrpD737sMU95VFdeGgLkUGNV5dTN9iXR+KEw18NT3B4durHLct5DmNsIWL1jCPFGHmAWR5YTTsjKlIKwPmUn2XI8aN6KWogdIkDy8hLUKTMbdjdr3G/t4
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BN9PR12MB5338.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700021)(4143699003)(56012099006)(11063799006)(22082099003)(6133799003)(18002099003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?KBsQHDV+/RZbURQVlSeFzw9EXm4hE4gGvTzkHrbWtpt2zDzsVk10OiNVXDut?=
- =?us-ascii?Q?WwU1ky8JnwDl9L/xfOQiQKp5Ab+y9F3mPQa2UlCEup5oZ+uaJiCtA67BM08p?=
- =?us-ascii?Q?4HMpJty5PMYJxU9nbV3IxPRS5JhHUDXJcXtFiI54DXxKuelno4sZ+/LbGCRb?=
- =?us-ascii?Q?NIoOb6lXBCvoFjZF9x9e7k9MosCSFQdjtatp5iVi7JY+QpiaFSu1oDaHhpqi?=
- =?us-ascii?Q?HmFtFkyJbj/hRDGcLjtr9fsFlTPtUyOcJITEQjHmr3Q0GWKkpvTM+05zKwbG?=
- =?us-ascii?Q?ULlLU+chzQoR1f43RphfH1UViZ0wQHSH/x6B3kQPBq1qJWvO7EajHZVeHbNi?=
- =?us-ascii?Q?OL2SScvSOei4hJ4PFQ8U2/FzRMqZykPG70wLbucEFiBP/s68xPcGY4P+3MJl?=
- =?us-ascii?Q?nOJvFT9bhuNSn1zfV8Pj+c3hBrCI0NFCl9p/+Ty9ypX+h9r21adzNWNByd+E?=
- =?us-ascii?Q?+q+TSnhC2z/rQwaUYR1TqDCOSeRyrgcBk+NB6HyYLxP07ZEBYPL4OTNV+lew?=
- =?us-ascii?Q?ELQ30dR7yZPB00DbbbSdpSojlDP3tIggNpnRWizsiZSvu7lrdcmxRAEiDB5M?=
- =?us-ascii?Q?gubo/wdXTzVxJ5W/T3IdD60yoLKdSnFNN5RMixpgwC+dsmiCpPj/RUk5oHE8?=
- =?us-ascii?Q?ttHzTQbZp5LTj/90g28YYp9g2MPIat6yBKeHMG/I6VDZ3n80mTolSpp7xe7G?=
- =?us-ascii?Q?LLAHjsCcO1Bg7i3of1JEZFnZjUMii99oFay+UUl80HlwR2YQcjUaZ6hWBwFD?=
- =?us-ascii?Q?/5x69KvQmI26ytaBAdfrq5oZaJiAbbTft8r/0T04Io8a8Rfjs9aPAhOihUO8?=
- =?us-ascii?Q?4HdxkF8atNqLy/Kf8piSvvYb1mGkrhbmtoGXCD+ud2Vk9/kczwKHOj8wbQeI?=
- =?us-ascii?Q?Kk6hj7qQBjBU1e6Uum16KM3Rmb6ZgLtmyV2OiE7yNGYFXO/DMKcaYIvi0ydu?=
- =?us-ascii?Q?Ou+gkaaBJcyyamwkyu9VDHVqtPk37C56uhawp3w0DB7289hBIrVToaFFp5/9?=
- =?us-ascii?Q?k8h55Q6b2quuz7a7o6moM3BjwgYrmx8awRqi49Cop+Hm8v8iOuulmCugrdv7?=
- =?us-ascii?Q?loHyZGPA7+pDBV9HTorrqquC8BlBdDNiiirqHQu/60iBzBfxUysfG2W7GMeS?=
- =?us-ascii?Q?gWdbQyuC1Sg0tYLROx0gEXKWKxk7zvUYPLurbSqNNTc9twiaPBMmd8OI4Qkk?=
- =?us-ascii?Q?H2m0dITzwibsadRwe1e5qOLO98OLnDDKGUlFtRVz0wIf+LNThZVVhEFKbDxH?=
- =?us-ascii?Q?/NGpyCtif0mCTIsNN7mvYjhPEHULniC7S5rwqP7LWujWBGuCqnervKw7cfJD?=
- =?us-ascii?Q?tNMpO57fzwCKygY3J6wypHD8EsLbg6SI+5TX/n8ZJXb86OJC0ef95sH0TpsC?=
- =?us-ascii?Q?niAT/ExEZm88FpxOLWwcZRK/GWYUBIFznRg3xzCOs8RsVaWg3YEB+iTxm+5X?=
- =?us-ascii?Q?UmUaDiKANRuFlJSVVQarTItn3pmEbXLCEYfb4A8dZM/XIRv3pdO7jGdK6MJl?=
- =?us-ascii?Q?DerRuR7vseJ4L4/TuDOPntRxfiJWEJ1TyonwgIAVYwtGCrQc5NkTw7WTiq2z?=
- =?us-ascii?Q?PoqAosXenTYmDC93F9tuswRfX7bM81Pvo0cRx0OcTUsabBgezzZgxBdemPCI?=
- =?us-ascii?Q?Cr1i61CH7aCAcAoOLJ6eZF2VBj2ONByGn1cvFHy28c0M0cTgIQzG/nL71+EQ?=
- =?us-ascii?Q?y8vMggZnlzOuBZuynq8UujzTpEiELnb02WzmTN208eGyztGh?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id DAF87402C4;
+	Tue,  2 Jun 2026 08:44:20 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 393AB40150
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 08:44:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1780382658;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=rNAlR8bsN9bZa2SgwrE41D8BnymRx3kY97pGZJmLECA=;
+ b=a09SzCeaDYTVOSJPLV05nHordC8IUVr2Ncn7cZdEj3Hu4EeCPKFLSGUE1lKu4VpCId96KX
+ OkiXc3/q8jS7i4z3gjCF7xOiCfbdumZBC0KYRa0m9iRTCvQtUW5FCe9u1Z+XiDF56YWeSW
+ dggtijHRXBTp0SNLPO3DdrCsoR5lRlQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-356-sTJfRRzLOXeNX9qFkTVHrg-1; Tue,
+ 02 Jun 2026 02:44:15 -0400
+X-MC-Unique: sTJfRRzLOXeNX9qFkTVHrg-1
+X-Mimecast-MFC-AGG-ID: sTJfRRzLOXeNX9qFkTVHrg_1780382654
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 4D3191955DCB; Tue,  2 Jun 2026 06:44:11 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.32.204])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 407A41800352; Tue,  2 Jun 2026 06:44:08 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, Stephen Hemminger <stephen@networkplumber.org>,
+ Aaron Conole <aconole@redhat.com>
+Subject: [PATCH v2] devtools: add Vertex AI to review scripts
+Date: Tue,  2 Jun 2026 08:44:06 +0200
+Message-ID: <20260602064406.1230601-1-david.marchand@redhat.com>
+In-Reply-To: <20260601132402.1125588-1-david.marchand@redhat.com>
+References: <20260601132402.1125588-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5338.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b19b949-a070-48cb-aa42-08dec06d29f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jun 2026 06:07:02.1038 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XcybTFfngBG1x24uMQaIPO+I8Fzo/Nm1OqH3EXI7VgdUDcTjQFFqTCz5eHw9NqaXzcdlLdbHtI/IMwemaxbO/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7030
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: s81bNPdp_hiYYvigi8drHJnAInGXZvsfSvenrTAM5VQ_1780382654
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -122,201 +67,586 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+Add support for Google Vertex AI authentication as an alternative to
+direct API key authentication. All four providers (Anthropic, Google,
+OpenAI, xAI) can now use Vertex AI with Application Default Credentials.
 
-Thanks
+This requires a python dependency google-auth but it is left as
+optional.
 
-> -----Original Message-----
-> From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> Sent: Friday, May 29, 2026 3:33 PM
-> To: Slava Ovsiienko <viacheslavo@nvidia.com>; Bing Zhao
-> <bingz@nvidia.com>; Ori Kam <orika@nvidia.com>; Suanming Mou
-> <suanmingm@nvidia.com>; Matan Azrad <matan@nvidia.com>
-> Cc: dev@dpdk.org
-> Subject: [PATCH v2] net/mlx5: promote private API to stable
->=20
-> Following experimental functions are exposed by mlx5 PMD since 25.11
-> release:
->=20
-> - rte_pmd_mlx5_driver_event_cb_register
-> - rte_pmd_mlx5_driver_event_cb_unregister
-> - rte_pmd_mlx5_enable_steering
-> - rte_pmd_mlx5_disable_steering
->=20
-> First two are used to register callbacks for driver events (when Rx/Tx
-> queues are created or destroyed).
-> Other two are used to enable/disable flow steering in mlx5 PMD.
-> No changes were made and no changes are planned to these symbols.
->=20
-> These are currently used by NVIDIA DOCA SDK since version 3.3, which
-> started depending on upstream DPDK releases [1].
-> Purpose of their use is to:
->=20
-> - expose HW identifiers of Rx/Tx mlx5 queues managed by DPDK and
-> - allow flow steering to happen outside of DPDK.
->=20
-> Also, some of these symbols will be used by netdev-doca backend in Open
-> vSwitch [2].
-> Whenever a DOCA netdev would be added/removed in Open vSwitch, it will
-> have to disable/enable steering for mlx5 driver.
-> Stabilizing these symbols is required by current OVS policy to remove the
-> need for ALLOW_EXPERIMENTAL_API [3].
->=20
-> This patch promotes aforementioned symbols to stable.
->=20
-> [1]: https://docs.nvidia.com/doca/sdk/customer-affecting-
-> changes/index.html
-> [2]:
-> https://patchwork.ozlabs.org/project/openvswitch/list/?series=3D504726&st=
-ate
-> =3D%2A&archive=3Dboth
-> [3]: https://mail.openvswitch.org/pipermail/ovs-dev/2026-May/432066.html
->=20
-> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> ---
-> v2:
-> - Updated 26.07 release notes.
->=20
->  doc/guides/rel_notes/release_26_07.rst | 9 +++++++++
->  drivers/net/mlx5/mlx5_driver_event.c   | 4 ++--
->  drivers/net/mlx5/mlx5_flow.c           | 4 ++--
->  drivers/net/mlx5/rte_pmd_mlx5.h        | 4 ----
->  4 files changed, 13 insertions(+), 8 deletions(-)
->=20
-> diff --git a/doc/guides/rel_notes/release_26_07.rst
-> b/doc/guides/rel_notes/release_26_07.rst
-> index 6eba91a5e9..2af24d40a0 100644
-> --- a/doc/guides/rel_notes/release_26_07.rst
-> +++ b/doc/guides/rel_notes/release_26_07.rst
-> @@ -127,6 +127,15 @@ API Changes
->    - ``rte_flow_dynf_metadata_get``
->    - ``rte_flow_dynf_metadata_set``
->=20
-> +* **mlx5: promoted driver event and steering management APIs from
-> +experimental to stable.**
-> +
-> +  The following mlx5 APIs are no longer marked experimental:
-> +
-> +  - ``rte_pmd_mlx5_driver_event_cb_register``
-> +  - ``rte_pmd_mlx5_driver_event_cb_unregister``
-> +  - ``rte_pmd_mlx5_enable_steering``
-> +  - ``rte_pmd_mlx5_disable_steering``
-> +
->=20
->  ABI Changes
->  -----------
-> diff --git a/drivers/net/mlx5/mlx5_driver_event.c
-> b/drivers/net/mlx5/mlx5_driver_event.c
-> index 1dc8029ee5..89e49331c8 100644
-> --- a/drivers/net/mlx5/mlx5_driver_event.c
-> +++ b/drivers/net/mlx5/mlx5_driver_event.c
-> @@ -236,7 +236,7 @@
-> notify_existing_devices(rte_pmd_mlx5_driver_event_callback_t cb, void
-> *opaque)
->  		notify_existing_queues(port_id, cb, opaque);  }
->=20
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_driver_event_cb_register,
-> 25.11)
-> +RTE_EXPORT_SYMBOL(rte_pmd_mlx5_driver_event_cb_register)
->  int
->=20
-> rte_pmd_mlx5_driver_event_cb_register(rte_pmd_mlx5_driver_event_callback_=
-t
-> cb, void *opaque)  { @@ -264,7 +264,7 @@
-> rte_pmd_mlx5_driver_event_cb_register(rte_pmd_mlx5_driver_event_callback_=
-t
-> cb, v
->  	return 0;
->  }
->=20
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_driver_event_cb_unregister,
-> 25.11)
-> +RTE_EXPORT_SYMBOL(rte_pmd_mlx5_driver_event_cb_unregister)
->  int
->=20
-> rte_pmd_mlx5_driver_event_cb_unregister(rte_pmd_mlx5_driver_event_callbac=
-k
-> _t cb)  { diff --git a/drivers/net/mlx5/mlx5_flow.c
-> b/drivers/net/mlx5/mlx5_flow.c index 915ea29a5a..a95dd9dc94 100644
-> --- a/drivers/net/mlx5/mlx5_flow.c
-> +++ b/drivers/net/mlx5/mlx5_flow.c
-> @@ -12506,7 +12506,7 @@ flow_disable_steering_run_on_related(struct
-> rte_eth_dev *dev,
->  	}
->  }
->=20
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_disable_steering, 25.11)
-> +RTE_EXPORT_SYMBOL(rte_pmd_mlx5_disable_steering)
->  void
->  rte_pmd_mlx5_disable_steering(void)
->  {
-> @@ -12532,7 +12532,7 @@ rte_pmd_mlx5_disable_steering(void)
->  	mlx5_steering_disabled =3D true;
->  }
->=20
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_enable_steering, 25.11)
-> +RTE_EXPORT_SYMBOL(rte_pmd_mlx5_enable_steering)
->  int
->  rte_pmd_mlx5_enable_steering(void)
->  {
-> diff --git a/drivers/net/mlx5/rte_pmd_mlx5.h
-> b/drivers/net/mlx5/rte_pmd_mlx5.h index 55a26cb067..f482875434 100644
-> --- a/drivers/net/mlx5/rte_pmd_mlx5.h
-> +++ b/drivers/net/mlx5/rte_pmd_mlx5.h
-> @@ -620,7 +620,6 @@ int rte_pmd_mlx5_external_sq_disable(uint16_t port_id=
-,
-> uint32_t sq_num);
->   *   - (-EEXIST) if @p cb was already registered.
->   *   - (-ENOMEM) if failed to allocate memory for callback entry.
->   */
-> -__rte_experimental
->  int
->=20
-> rte_pmd_mlx5_driver_event_cb_register(rte_pmd_mlx5_driver_event_callback_=
-t
-> cb, void *opaque);
->=20
-> @@ -641,7 +640,6 @@
-> rte_pmd_mlx5_driver_event_cb_register(rte_pmd_mlx5_driver_event_callback_=
-t
-> cb, v
->   *   - 0 if callback was successfully unregistered or if no such callbac=
-k
-> was registered.
->   *   - (-EINVAL) if @p cb is NULL.
->   */
-> -__rte_experimental
->  int
->=20
-> rte_pmd_mlx5_driver_event_cb_unregister(rte_pmd_mlx5_driver_event_callbac=
-k
-> _t cb);
->=20
-> @@ -679,7 +677,6 @@
-> rte_pmd_mlx5_driver_event_cb_unregister(rte_pmd_mlx5_driver_event_callbac=
-k
-> _t cb)
->   * with other functions from ethdev API used to configure any of the mlx=
-5
-> ports.
->   * It is the responsibility of the application to enforce this.
->   */
-> -__rte_experimental
->  void
->  rte_pmd_mlx5_disable_steering(void);
->=20
-> @@ -697,7 +694,6 @@ rte_pmd_mlx5_disable_steering(void);
->   *   - 0 - Flow steering was successfully enabled or it flow steering wa=
-s
-> never disabled.
->   *   - (-EBUSY) - There are mlx5 ports probed and re-enabling steering
-> cannot be done safely.
->   */
-> -__rte_experimental
->  int
->  rte_pmd_mlx5_enable_steering(void);
->=20
-> --
-> 2.47.3
+Key features:
+- Auto-detection of authentication method based on environment
+- Manual override via --auth flag (auto, direct, vertex)
+- Automatic model name translation for Vertex format
+- Support for both global and regional Vertex endpoints
+- Proper error handling for Vertex API responses
 
-Acked-by: Bing Zhao <bingz@nvidia.com>
+Provider-specific implementations:
+- Anthropic: Uses /publishers/anthropic/models/{model}:rawPredict
+  with model name format claude-sonnet-4-5@20250929
+- Google: Uses /publishers/google/models/{model}:generateContent
+- OpenAI/xAI: Use /endpoints/openapi/chat/completions
+  with publisher prefix (e.g., openai/gpt-oss-120b-maas)
+
+Authentication detection logic:
+- Vertex: Requires google-auth library and ADC configured
+- Direct: Falls back to API key from environment variables
+
+Available models on Vertex AI:
+- Anthropic: All Claude models
+- Google: All Gemini models
+- OpenAI: gpt-oss-120b-maas, gpt-oss-20b-maas (open-weight only)
+- xAI: grok-4.20-*, grok-4.1-fast-* variants
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+Note: I only tested Vertex.
+I have no API key to double check the "direct" method is still working.
+
+Changes since v1:
+- factorized auth string generation,
+- enhanced -l option (offlist comment from Maxime),
+- fixed some pylint warnings introduced by changes,
+
+---
+ devtools/ai/_common.py      | 204 +++++++++++++++++++++++++++++++++---
+ devtools/ai/review-doc.py   |  26 ++---
+ devtools/ai/review-patch.py |  30 +++---
+ 3 files changed, 215 insertions(+), 45 deletions(-)
+
+diff --git a/devtools/ai/_common.py b/devtools/ai/_common.py
+index 69982cbda5..3e70f4cd6f 100644
+--- a/devtools/ai/_common.py
++++ b/devtools/ai/_common.py
+@@ -6,6 +6,7 @@
+ 
+ import argparse
+ import json
++import os
+ import subprocess
+ import sys
+ from dataclasses import dataclass
+@@ -13,6 +14,14 @@
+ from urllib.error import HTTPError, URLError
+ from urllib.request import Request, urlopen
+ 
++# Optional dependency for Vertex AI
++try:
++    from google.auth import default as google_auth_default
++    from google.auth.transport.requests import Request as GoogleAuthRequest
++    VERTEX_AI_AVAILABLE = True
++except ImportError:
++    VERTEX_AI_AVAILABLE = False
++
+ # Provider configurations (model defaults; override with --model).
+ PROVIDERS: dict[str, dict[str, str]] = {
+     "anthropic": {
+@@ -65,10 +74,14 @@ def get_git_config(key: str) -> str | None:
+ def list_providers() -> NoReturn:
+     """Print available providers and exit."""
+     print("Available AI Providers:\n")
+-    print(f"{'Provider':<12} {'Default Model':<30} {'API Key Variable'}")
+-    print(f"{'--------':<12} {'-------------':<30} {'----------------'}")
++    print(f"{'Provider':<12} {'Default Model':<30} {'API Key (Direct Auth)'}")
++    print(f"{'--------':<12} {'-------------':<30} {'---------------------'}")
+     for name, config in PROVIDERS.items():
+         print(f"{name:<12} {config['default_model']:<30} {config['env_var']}")
++    if VERTEX_AI_AVAILABLE:
++        print("\nVertex AI authentication is available (use --auth vertex)")
++    else:
++        print("\nVertex AI authentication requires: pip install google-auth")
+     sys.exit(0)
+ 
+ 
+@@ -128,25 +141,167 @@ def print_token_summary(
+     print(format_token_summary(usage, provider, model), file=sys.stderr)
+ 
+ 
++def get_vertex_credentials() -> tuple[str, str]:
++    """Get Google Cloud access token and project for Vertex AI.
++
++    Uses Application Default Credentials (ADC).
++    Requires: gcloud auth application-default login
++
++    Returns: (access_token, project_id)
++    """
++    credentials, project = google_auth_default()
++
++    # Refresh credentials to get access token
++    auth_request = GoogleAuthRequest()
++    credentials.refresh(auth_request)
++
++    if not project:
++        error("Could not detect GCP project. Set GOOGLE_CLOUD_PROJECT environment variable or run: gcloud config set project PROJECT_ID")
++
++    return credentials.token, project
++
++
++def model_to_vertex(model: str, provider: str) -> str:
++    """Convert model name to Vertex AI format.
++
++    Anthropic models use @ for version dates:
++    - API format: claude-sonnet-4-5-20250929
++    - Vertex format: claude-sonnet-4-5@20250929
++
++    OpenAI/xAI models need publisher prefix:
++    - Vertex requires: openai/gpt-oss-120b-maas
++
++    Other providers use the same format for both.
++    """
++    if provider == "anthropic":
++        # Match pattern: ends with -YYYYMMDD (8 digits)
++        if model.count('-') >= 3:
++            parts = model.rsplit('-', 1)
++            if len(parts) == 2 and len(parts[1]) == 8 and parts[1].isdigit():
++                return f"{parts[0]}@{parts[1]}"
++    elif provider in ("openai", "xai"):
++        # Add publisher prefix if not already present
++        if "/" not in model:
++            return f"{provider}/{model}"
++    return model
++
++
++def detect_auth_method(provider: str) -> str:
++    """Detect authentication method for a provider.
++
++    Args:
++        provider: The provider name (e.g., "anthropic", "openai")
++
++    Returns:
++        "direct" or "vertex"
++    """
++    env_var = PROVIDERS[provider]["env_var"]
++    if os.environ.get(env_var):
++        return "direct"
++    if VERTEX_AI_AVAILABLE:
++        try:
++            credentials, project = google_auth_default()
++            if credentials and project:
++                return "vertex"
++        except Exception:
++            pass
++    return "direct"
++
++
++def get_auth_string(auth_choice: str, provider: str) -> str:
++    """Get authentication string for API requests.
++
++    Args:
++        auth_choice: User's auth choice ("auto", "direct", or "vertex")
++        provider: Provider name
++
++    Returns:
++        Authentication string - either "vertex" or "direct:<api_key>"
++    """
++    config = PROVIDERS[provider]
++
++    # Determine actual auth method
++    if auth_choice == "auto":
++        auth_method = detect_auth_method(provider)
++    else:
++        auth_method = auth_choice
++
++    # Build auth string based on method
++    if auth_method == "vertex":
++        if not VERTEX_AI_AVAILABLE:
++            error("Vertex AI support requires 'google-auth' library. Install with: pip install google-auth")
++        return "vertex"
++
++    api_key = os.environ.get(config["env_var"])
++    if not api_key:
++        error(f"{config['env_var']} environment variable not set")
++    return f"direct:{api_key}"
++
++
+ def _build_request_meta(
+-    provider: str, api_key: str, model: str
+-) -> tuple[str, dict[str, str]]:
+-    """Return (url, headers) for a provider request."""
++    provider: str, auth: str, model: str, request_data: dict[str, Any]
++) -> tuple[str, dict[str, str], dict[str, Any]]:
++    """Return (url, headers, request_data) for a provider request.
++
++    Args:
++        provider: Provider name
++        auth: Authentication string - either "direct:<api_key>" or "vertex"
++        model: Model identifier
++        request_data: The request payload (may be modified for Vertex)
++
++    Returns:
++        Tuple of (url, headers, modified_request_data)
++    """
+     config = PROVIDERS[provider]
+-    if provider == "anthropic":
++
++    if auth.startswith("direct:"):
++        api_key = auth[7:]
++        if provider == "anthropic":
++            request_data["model"] = model
++            return config["endpoint"], {
++                "Content-Type": "application/json",
++                "x-api-key": api_key,
++                "anthropic-version": "2023-06-01",
++            }, request_data
++        if provider == "google":
++            url = f"{config['endpoint']}/{model}:generateContent?key={api_key}"
++            return url, {"Content-Type": "application/json"}, request_data
++        # openai, xai
++        request_data["model"] = model
+         return config["endpoint"], {
+             "Content-Type": "application/json",
+-            "x-api-key": api_key,
+-            "anthropic-version": "2023-06-01",
+-        }
+-    if provider == "google":
+-        url = f"{config['endpoint']}/{model}:generateContent?key={api_key}"
+-        return url, {"Content-Type": "application/json"}
+-    # openai, xai
+-    return config["endpoint"], {
++            "Authorization": f"Bearer {api_key}",
++        }, request_data
++
++    # Vertex AI authentication
++    if auth != "vertex":
++        error(f"Invalid auth format: {auth}")
++
++    access_token, project_id = get_vertex_credentials()
++    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get("GCP_PROJECT") or project_id
++    location = os.environ.get("CLOUD_ML_REGION", "global")
++
++    if location == "global":
++        vertex_base = f"https://aiplatform.googleapis.com/v1/projects/{project_id}/locations/{location}"
++    else:
++        vertex_base = f"https://{location}-aiplatform.googleapis.com/v1/projects/{project_id}/locations/{location}"
++
++    headers = {
+         "Content-Type": "application/json",
+-        "Authorization": f"Bearer {api_key}",
++        "Authorization": f"Bearer {access_token}",
+     }
++    vertex_model = model_to_vertex(model, provider)
++
++    if provider == "anthropic":
++        request_data["anthropic_version"] = "vertex-2023-10-16"
++        url = f"{vertex_base}/publishers/anthropic/models/{vertex_model}:rawPredict"
++    elif provider == "google":
++        url = f"{vertex_base}/publishers/google/models/{vertex_model}:generateContent"
++    else:  # openai, xai
++        request_data["model"] = vertex_model
++        url = f"{vertex_base}/endpoints/openapi/chat/completions"
++
++    return url, headers, request_data
+ 
+ 
+ def _extract_usage(provider: str, result: dict[str, Any]) -> TokenUsage:
+@@ -208,7 +363,7 @@ def _print_verbose_usage(usage: TokenUsage) -> None:
+ 
+ def send_request(
+     provider: str,
+-    api_key: str,
++    auth: str,
+     model: str,
+     request_data: dict[str, Any],
+     *,
+@@ -220,8 +375,19 @@ def send_request(
+     The caller assembles the provider-specific request body via its own
+     build_*_request helpers (the prompts differ per script). This function
+     handles transport, error reporting, and token-usage extraction.
++
++    Args:
++        provider: Provider name (anthropic, openai, xai, google)
++        auth: Authentication string - either "direct:<api_key>" or "vertex"
++        model: Model identifier
++        request_data: Provider-specific request payload
++        timeout: Request timeout in seconds
++        verbose: Show detailed token usage
++
++    Returns:
++        Tuple of (response_text, token_usage)
+     """
+-    url, headers = _build_request_meta(provider, api_key, model)
++    url, headers, request_data = _build_request_meta(provider, auth, model, request_data)
+     body = json.dumps(request_data).encode("utf-8")
+     req = Request(url, data=body, headers=headers)
+ 
+@@ -232,6 +398,8 @@ def send_request(
+         error_body = e.read().decode("utf-8")
+         try:
+             error_data = json.loads(error_body)
++            if isinstance(error_data, list) and error_data:
++                error_data = error_data[0]
+             error(f"API error: {error_data.get('error', error_body)}")
+         except json.JSONDecodeError:
+             error(f"API error ({e.code}): {error_body}")
+@@ -239,6 +407,8 @@ def send_request(
+         if isinstance(e.reason, TimeoutError):
+             error(f"Request timed out after {timeout} seconds")
+         error(f"Connection error: {e.reason}")
++    except TimeoutError:
++        error(f"Request timed out after {timeout} seconds")
+ 
+     usage = _extract_usage(provider, result)
+     if verbose:
+diff --git a/devtools/ai/review-doc.py b/devtools/ai/review-doc.py
+index 24e70ae06b..e01be077fe 100755
+--- a/devtools/ai/review-doc.py
++++ b/devtools/ai/review-doc.py
+@@ -27,6 +27,7 @@
+     TokenUsage,
+     add_token_args,
+     error,
++    get_auth_string,
+     get_git_config,
+     list_providers,
+     print_token_summary,
+@@ -259,7 +260,6 @@ def build_user_prompt(
+ 
+ 
+ def build_anthropic_request(
+-    model: str,
+     max_tokens: int,
+     agents_content: str,
+     doc_content: str,
+@@ -273,7 +273,6 @@ def build_anthropic_request(
+         doc_file, commit_prefix, output_format, include_diff_markers
+     )
+     return {
+-        "model": model,
+         "max_tokens": max_tokens,
+         "system": [
+             {"type": "text", "text": SYSTEM_PROMPT},
+@@ -293,7 +292,6 @@ def build_anthropic_request(
+ 
+ 
+ def build_openai_request(
+-    model: str,
+     max_tokens: int,
+     agents_content: str,
+     doc_content: str,
+@@ -307,7 +305,6 @@ def build_openai_request(
+         doc_file, commit_prefix, output_format, include_diff_markers
+     )
+     return {
+-        "model": model,
+         "max_tokens": max_tokens,
+         "messages": [
+             {"role": "system", "content": SYSTEM_PROMPT},
+@@ -352,7 +349,7 @@ def build_google_request(
+ 
+ def call_api(
+     provider: str,
+-    api_key: str,
++    auth: str,
+     model: str,
+     max_tokens: int,
+     agents_content: str,
+@@ -367,7 +364,6 @@ def call_api(
+     """Build the per-provider request body and dispatch via _common."""
+     if provider == "anthropic":
+         request_data = build_anthropic_request(
+-            model,
+             max_tokens,
+             agents_content,
+             doc_content,
+@@ -388,7 +384,6 @@ def call_api(
+         )
+     else:  # openai, xai
+         request_data = build_openai_request(
+-            model,
+             max_tokens,
+             agents_content,
+             doc_content,
+@@ -399,7 +394,7 @@ def call_api(
+         )
+     return send_request(
+         provider,
+-        api_key,
++        auth,
+         model,
+         request_data,
+         timeout=timeout,
+@@ -631,6 +626,12 @@ def main() -> None:
+         help="Show API request details",
+     )
+     add_token_args(parser)
++    parser.add_argument(
++        "--auth",
++        choices=["auto", "direct", "vertex"],
++        default="auto",
++        help="Authentication method: auto (default), direct (API key), vertex (Google Cloud)",
++    )
+     parser.add_argument(
+         "-q",
+         "--quiet",
+@@ -709,10 +710,8 @@ def main() -> None:
+     config = PROVIDERS[args.provider]
+     model = args.model or config["default_model"]
+ 
+-    # Get API key
+-    api_key = os.environ.get(config["env_var"])
+-    if not api_key:
+-        error(f"{config['env_var']} environment variable not set")
++    # Get authentication string
++    auth = get_auth_string(args.auth, args.provider)
+ 
+     # Validate files
+     agents_path = Path(args.agents)
+@@ -783,6 +782,7 @@ def main() -> None:
+         if args.verbose:
+             print("=== Request ===", file=sys.stderr)
+             print(f"Provider: {args.provider}", file=sys.stderr)
++            print(f"Auth method: {'vertex' if auth == 'vertex' else 'direct'}", file=sys.stderr)
+             print(f"Model: {model}", file=sys.stderr)
+             print(f"Output format: {args.output_format}", file=sys.stderr)
+             print(f"AGENTS file: {args.agents}", file=sys.stderr)
+@@ -800,7 +800,7 @@ def main() -> None:
+         # Call API
+         review_text, call_usage = call_api(
+             args.provider,
+-            api_key,
++            auth,
+             model,
+             args.tokens,
+             agents_content,
+diff --git a/devtools/ai/review-patch.py b/devtools/ai/review-patch.py
+index 52601ac156..9ac227000e 100755
+--- a/devtools/ai/review-patch.py
++++ b/devtools/ai/review-patch.py
+@@ -25,6 +25,7 @@
+     TokenUsage,
+     add_token_args,
+     error,
++    get_auth_string,
+     get_git_config,
+     list_providers,
+     print_token_summary,
+@@ -460,7 +461,6 @@ def build_system_prompt(review_date: str, release: str | None) -> str:
+ 
+ 
+ def build_anthropic_request(
+-    model: str,
+     max_tokens: int,
+     system_prompt: str,
+     agents_content: str,
+@@ -474,7 +474,6 @@ def build_anthropic_request(
+         patch_name=patch_name, format_instruction=format_instruction
+     )
+     return {
+-        "model": model,
+         "max_tokens": max_tokens,
+         "system": [
+             {"type": "text", "text": system_prompt},
+@@ -494,7 +493,6 @@ def build_anthropic_request(
+ 
+ 
+ def build_openai_request(
+-    model: str,
+     max_tokens: int,
+     system_prompt: str,
+     agents_content: str,
+@@ -508,7 +506,6 @@ def build_openai_request(
+         patch_name=patch_name, format_instruction=format_instruction
+     )
+     return {
+-        "model": model,
+         "max_tokens": max_tokens,
+         "messages": [
+             {"role": "system", "content": system_prompt},
+@@ -553,7 +550,7 @@ def build_google_request(
+ 
+ def call_api(
+     provider: str,
+-    api_key: str,
++    auth: str,
+     model: str,
+     max_tokens: int,
+     system_prompt: str,
+@@ -567,7 +564,6 @@ def call_api(
+     """Build the per-provider request body and dispatch via _common."""
+     if provider == "anthropic":
+         request_data = build_anthropic_request(
+-            model,
+             max_tokens,
+             system_prompt,
+             agents_content,
+@@ -586,7 +582,6 @@ def call_api(
+         )
+     else:  # openai, xai
+         request_data = build_openai_request(
+-            model,
+             max_tokens,
+             system_prompt,
+             agents_content,
+@@ -596,7 +591,7 @@ def call_api(
+         )
+     return send_request(
+         provider,
+-        api_key,
++        auth,
+         model,
+         request_data,
+         timeout=timeout,
+@@ -813,6 +808,12 @@ def main() -> None:
+         help="Show API request details",
+     )
+     add_token_args(parser)
++    parser.add_argument(
++        "--auth",
++        choices=["auto", "direct", "vertex"],
++        default="auto",
++        help="Authentication method: auto (default), direct (API key), vertex (Google Cloud)",
++    )
+     parser.add_argument(
+         "-f",
+         "--format",
+@@ -930,10 +931,8 @@ def main() -> None:
+     config = PROVIDERS[args.provider]
+     model = args.model or config["default_model"]
+ 
+-    # Get API key
+-    api_key = os.environ.get(config["env_var"])
+-    if not api_key:
+-        error(f"{config['env_var']} environment variable not set")
++    # Get authentication string
++    auth = get_auth_string(args.auth, args.provider)
+ 
+     # Validate files
+     agents_path = Path(args.agents)
+@@ -1041,7 +1040,7 @@ def main() -> None:
+ 
+                 review_text, call_usage = call_api(
+                     args.provider,
+-                    api_key,
++                    auth,
+                     model,
+                     args.tokens,
+                     system_prompt,
+@@ -1111,7 +1110,7 @@ def main() -> None:
+ 
+                 review_text, call_usage = call_api(
+                     args.provider,
+-                    api_key,
++                    auth,
+                     model,
+                     args.tokens,
+                     system_prompt,
+@@ -1136,6 +1135,7 @@ def main() -> None:
+     if args.verbose:
+         print("=== Request ===", file=sys.stderr)
+         print(f"Provider: {args.provider}", file=sys.stderr)
++        print(f"Auth method: {'vertex' if auth == 'vertex' else 'direct'}", file=sys.stderr)
+         print(f"Model: {model}", file=sys.stderr)
+         print(f"Review date: {review_date}", file=sys.stderr)
+         if args.release:
+@@ -1164,7 +1164,7 @@ def main() -> None:
+     if estimated_tokens > 0:  # Not already processed
+         review_text, call_usage = call_api(
+             args.provider,
+-            api_key,
++            auth,
+             model,
+             args.tokens,
+             system_prompt,
+-- 
+2.53.0
+
