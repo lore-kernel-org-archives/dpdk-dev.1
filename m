@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931E1CD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 09:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECC0CD6E4A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 09:09:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E064340659;
-	Tue,  2 Jun 2026 11:08:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id F08BD4065E;
+	Tue,  2 Jun 2026 11:08:56 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 20F22402A9
- for <dev@dpdk.org>; Tue,  2 Jun 2026 11:08:53 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BA1FB402A9
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 11:08:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780391334; x=1811927334;
+ t=1780391335; x=1811927335;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=C8G+bvMB6TawR8UjPCVaayZM7ToEN4sYa2ts/DsgQR0=;
- b=QfF0OTQk5SYe43x25dbdyT6KTKGaHgTOM/sgQKnJNwNbS9gcGMh+9Ttn
- m1Fdy6o9b93M6jDtaCyZOpM7Gnpt/DZaF39q9tiDAJU92AxhS7lbpKMls
- Cm9+GMzUtJ3UFIUjPNojDJsVZAmXDCbARKkoXJqLKgGh3bNvIk6kV88Uo
- w/MqwTH0+PLKrMccfHHUUfG0DMmT9mIwfk5omcScrCWdXiEqOWPLD9Qr5
- 2wMQGt36bAxs42mXB2cLZXHde5honRD6PznW4PHEjzDO4QlMN+QWN6vHb
- UvH3zeCErxhNal/vew62HAKEZPRZvuk1ZoS+cmhWOxNXHvTzOxWZiPVtg A==;
-X-CSE-ConnectionGUID: qZUc1lz4TJqnEAYRfRDong==
-X-CSE-MsgGUID: A5EerrJQRF+jwQmehDHntA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11804"; a="80201503"
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="80201503"
+ bh=5fTKo4C+p+jQZ/4oHzN2Flg1yvQl0o7Ua6mC+j08UN0=;
+ b=XttpzfPPFdyfA2JWkJZk90QF8fyl9xz1UP2VwNFNTambnu4VNAf1W290
+ icxDavQF47McpYEZFQRt6sI57j314ccSX6S4AVq7+xr8OJBx1eQ6qwtv0
+ yGF9qCHOqv3ngRnempJ7u4Z9/geeSKtwllBhLaxqKQptQy1FN1dxpzsu/
+ 2xokyVefoyHzyEHSHK9S8zKknGXT7uHhO8tpgRvoSjvfhA579M/X6JY0C
+ LPNLrCxPJPANzXPffKAS+sLwzmse7wd21TuS8bmThT1B1qtB1D8NqKjCM
+ 1GIeWs9vxqW4U3OsBXU8urkfqSRl2Zegv16DVj1xtoPsthuUvg1KS0BTj A==;
+X-CSE-ConnectionGUID: 0a80CBteQyqJMx3wzmtl3g==
+X-CSE-MsgGUID: 9lERmi/TRZOblC5FveDgcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11804"; a="80201504"
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="80201504"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Jun 2026 02:08:53 -0700
-X-CSE-ConnectionGUID: c/D6WXydTxOM8XGjq6sT4g==
-X-CSE-MsgGUID: JjVqB3OkRAamITiuUQGYdA==
+ 02 Jun 2026 02:08:54 -0700
+X-CSE-ConnectionGUID: lfk1mzbERheMpq5u/iheRw==
+X-CSE-MsgGUID: 8EeZX/0/T3CKVOnZRKIVzA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="247809472"
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="247809475"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa003.jf.intel.com with ESMTP; 02 Jun 2026 02:08:52 -0700
+ by orviesa003.jf.intel.com with ESMTP; 02 Jun 2026 02:08:53 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC PATCH 1/3] build: deprecate kernel dir option
-Date: Tue,  2 Jun 2026 10:08:45 +0100
-Message-ID: <20260602090847.905721-2-bruce.richardson@intel.com>
+Subject: [RFC PATCH 2/3] build: deprecate standalone tests option
+Date: Tue,  2 Jun 2026 10:08:46 +0100
+Message-ID: <20260602090847.905721-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260602090847.905721-1-bruce.richardson@intel.com>
 References: <20260602090847.905721-1-bruce.richardson@intel.com>
@@ -59,43 +59,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The kernel_dir option does nothing, so it can be deprecated and removed
-in future.
+The unit tests can be disabled in DPDK in a couple of ways. Firstly,
+there is the original "tests" boolean option - when set to false, the
+tests are skipped as part of the build. However, the newer
+enable_apps/disable_apps options also can be used to disable the tests
+[you can disable using the "enable" option by omitting "tests" from the
+list to enable].
+
+This duplication of functionality is unnecessary, so let's remove the
+standalone tests option.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- doc/guides/rel_notes/deprecation.rst | 4 ++++
+ app/meson.build                      | 6 +-----
+ doc/guides/rel_notes/deprecation.rst | 1 +
  meson_options.txt                    | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
+diff --git a/app/meson.build b/app/meson.build
+index 1798db3ae4..52f704ec94 100644
+--- a/app/meson.build
++++ b/app/meson.build
+@@ -17,6 +17,7 @@ apps = [
+         'graph',
+         'pdump',
+         'proc-info',
++        'test',
+         'test-acl',
+         'test-bbdev',
+         'test-cmdline',
+@@ -35,11 +36,6 @@ apps = [
+         'test-security-perf',
+ ]
+ 
+-if get_option('tests')
+-# build the auto test app if enabled.
+-    apps += 'test'
+-endif
+-
+ default_cflags = machine_args + ['-DALLOW_EXPERIMENTAL_API']
+ default_ldflags = []
+ if get_option('default_library') == 'static' and not is_windows
 diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 17f90a6352..ed1dda6008 100644
+index ed1dda6008..15459851d0 100644
 --- a/doc/guides/rel_notes/deprecation.rst
 +++ b/doc/guides/rel_notes/deprecation.rst
-@@ -17,6 +17,10 @@ Other API and ABI deprecation notices are to be posted below.
- Deprecation Notices
- -------------------
+@@ -20,6 +20,7 @@ Deprecation Notices
+ * build: The following meson build options are deprecated and will be removed in a future release:
  
-+* build: The following meson build options are deprecated and will be removed in a future release:
-+
-+  - ``kernel_dir``: option unused as Linux kernel drivers are in a separate ``dpdk-kmods`` repository.
-+
+   - ``kernel_dir``: option unused as Linux kernel drivers are in a separate ``dpdk-kmods`` repository.
++  - ``tests``: disabling tests can be achieved by using the ``enable_apps`` / ``disable_apps`` options instead.
+ 
  * kvargs: The function ``rte_kvargs_process`` will get a new parameter
    for returning key match count. It will ease handling of no-match case.
- 
 diff --git a/meson_options.txt b/meson_options.txt
-index e28d24054c..7bd5ebc084 100644
+index 7bd5ebc084..323a3901e1 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -33,7 +33,7 @@ option('ibverbs_link', type: 'combo', choices : ['static', 'shared', 'dlopen'],
- option('include_subdir_arch', type: 'string', value: '', description:
-        'subdirectory where to install arch-dependent headers')
- option('kernel_dir', type: 'string', value: '', description:
--       'Path to the kernel for building kernel modules. Headers must be in $kernel_dir or $kernel_dir/build. Modules will be installed in /lib/modules.')
-+       '[Deprecated] Value unused. Previously, path to the kernel for building kernel modules.')
- option('machine', type: 'string', value: 'auto', description:
-        'Alias of cpu_instruction_set.')
- option('max_ethports', type: 'integer', value: 32, description:
+@@ -55,6 +55,6 @@ option('enable_stdatomic', type: 'boolean', value: false, description:
+ option('enable_trace_fp', type: 'boolean', value: false, description:
+        'enable fast path trace points.')
+ option('tests', type: 'boolean', value: true, description:
+-       'build unit tests')
++       '[Deprecated] Value unused. Add "tests" to disable_apps setting to disable the unit tests')
+ option('use_hpet', type: 'boolean', value: false, description:
+        'use HPET timer in EAL')
 -- 
 2.53.0
 
