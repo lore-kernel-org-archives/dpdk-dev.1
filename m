@@ -2,53 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BE2C5DF71
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 07:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F144AC5DF71
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 09:02:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C95B402A9;
-	Tue,  2 Jun 2026 09:35:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id F2EC8402A9;
+	Tue,  2 Jun 2026 11:02:17 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 6CB2A40150
- for <dev@dpdk.org>; Tue,  2 Jun 2026 09:35:34 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gV2fC4PBfzHnGf1;
- Tue,  2 Jun 2026 15:34:43 +0800 (CST)
-Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
- by mail.maildlp.com (Postfix) with ESMTPS id B56A34058E;
- Tue,  2 Jun 2026 15:35:32 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 1D94E40150
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 11:02:16 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gV4Z94JJJzHnH5b;
+ Tue,  2 Jun 2026 17:01:21 +0800 (CST)
+Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
+ by mail.maildlp.com (Postfix) with ESMTPS id CE39140569;
+ Tue,  2 Jun 2026 17:02:10 +0800 (CST)
 Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
+ dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 2 Jun 2026 08:35:32 +0100
+ 15.2.1544.36; Tue, 2 Jun 2026 10:02:10 +0100
 Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
  dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Tue, 2 Jun 2026 08:35:32 +0100
+ Tue, 2 Jun 2026 10:02:10 +0100
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: "Ajmera, Megha" <megha.ajmera@intel.com>, Stephen Hemminger
- <stephen@networkplumber.org>
-CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Dumitrescu, Cristian"
- <cristian.dumitrescu@intel.com>, "Shetty, Praveen"
- <praveen.shetty@intel.com>, "Singh, Aman Deep" <aman.deep.singh@intel.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v2] app/test-pmd: add generic PROG action parser support
-Thread-Topic: [PATCH v2] app/test-pmd: add generic PROG action parser support
-Thread-Index: AQHc6QrGN/buU1ph30u0sJvA1Wd0s7YgpxUAgADqPQCAADnO4IAHUa0AgAHSX6A=
-Date: Tue, 2 Jun 2026 07:35:32 +0000
-Message-ID: <c16b1b4c36184e14bb5dc335a405e557@huawei.com>
-References: <20260521055612.508916-1-megha.ajmera@intel.com>
- <20260521101354.726240-1-megha.ajmera@intel.com>
- <20260526122218.1c29d917@phoenix.local>
- <MW4PR11MB5892D90B2AF860214FB57F4D97082@MW4PR11MB5892.namprd11.prod.outlook.com>
- <03ab65f8b69a4018aad7afcc88f337e1@huawei.com>
- <MW4PR11MB589273F3A331E94D0876900D97152@MW4PR11MB5892.namprd11.prod.outlook.com>
-In-Reply-To: <MW4PR11MB589273F3A331E94D0876900D97152@MW4PR11MB5892.namprd11.prod.outlook.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH] ring: avoid extra store at move head
+Thread-Topic: [PATCH] ring: avoid extra store at move head
+Thread-Index: AQHc8fK5OiZjmmmV7UO2NjAsOtXDQbYqNc+AgAC22aA=
+Date: Tue, 2 Jun 2026 09:02:10 +0000
+Message-ID: <580828b0214b4e1fb22e2f6d4079eadf@huawei.com>
+References: <20260601181509.71007-1-konstantin.ananyev@huawei.com>
+ <20260601152313.1946d438@phoenix.local>
+In-Reply-To: <20260601152313.1946d438@phoenix.local>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [10.195.245.94]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -63,39 +55,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
-> > For my own curiosity: how user can define his own PROG action?
-> > Is it supposed to be programmed and uplodaded to the NIC by some extern=
-al
-> tool
-> > (P4 compiler)?
-> > Or does it refer to the set of some predefined functions that given fir=
-mware
-> > supports?
-> > Or ... ?
-> > Sorry for probably naive questions, but I found is nearly zero informat=
-ion inside
-> > DPDK docs about how PROG action supposed to work.
->=20
-> PROG in rte_flow is currently a vendor-defined action interface (name +
-> arguments), not a generic DPDK programming model by itself.
->=20
-> So in practice:
->=20
-> 1. DPDK/testpmd does not define or upload user code to NIC on its own.
-> 2. testpmd just passes the prog name/argument/payload to the PMD via
-> rte_flow.
-> 3. What that name/arguments means is NIC/firmware specific.
-> 4. Depending on device support, it may map to predefined firmware-exposed
-> functions
-
-Ok, so it is predefined by the FW.
-Then shouldn't CPFL PG contain a list of supported PROGs and their argument=
-s?
-Again, some tests/examples for it with testpmd/DTS.
-Or that's all will be the next step (patch-series)?  =20
-=20
-> 5. If the PMD/firmware does not recognize it, flow validate/create will f=
-ail.
-
+DQoNCj4gPiBDMTEgX19ydGVfcmluZ19oZWFkdGFpbF9tb3ZlX2hlYWRfbXQoKSB1c2VzIG91dHB1
+dA0KPiA+IHBhcmFtZXRlcjogJ3VpbnQzMl90ICpvbGRfaGVhZCcgZGlyZWN0bHkgd2l0aGluIENB
+UyBvcGVyYXRpb24uDQo+ID4gSW4geDg2XzY0IHRoYXQgY2F1c2UgZ2NjIHRvIGdlbmVyYXRlIGV4
+dHJhIGluc3RydWN0aW9ucyB0bw0KPiA+IHN0b3JlIHJldHVybiB2YWx1ZSBvZiBDQVMgKGVheCkg
+d2l0aGluICdvbGRfaGVhZCcgbWVtb3J5IGxvY2F0aW9uLA0KPiA+IGV2ZW4gd2hlbiBDQVMgd2Fz
+IG5vdCBzdWNjZXNzZnVsIGFuZCBhbm90aGVyIGF0dGVtcHQgc2hvdWxkIGJlDQo+ID4gcGVyZm9y
+bWVkLiBJbiBzb21lIGNhc2VzLCBldmVuIGV4dHJhIGJyYW5jaCBjYW4gYmUgb2JzZXJ2ZWQuDQo+
+ID4gVG8gYmUgbW9yZSBzcGVjaWZpYyB0aGUgY29kZSBsaWtlIHRoYXQgaXMgZ2VuZXJhdGVkOg0K
+PiA+IC8vIHN0YXJ0IG9mICdkbyB7IH0gd2hpbGUoKTsnIGxvb3ANCj4gPiAuTDINCj4gPiAgICAg
+ICAgIC4uLg0KPiA+ICAgICAgICAgbG9jayBjbXB4Y2hnbCAgICVyOGQsICglcmRpKQ0KPiA+ICAg
+ICAgICAgam5lICAgICAuTDE3ICAvLw0KPiA+IC5MMTogLy8gPC0tLS0gc3VjY2Vzc2Z1bCBjb21w
+bGV0aW9uIG9mIENBUywgZmluaXNoDQo+ID4gICAgICAgICBtb3ZsICAgICVlZHgsICVlYXgNCj4g
+PiAgICAgICAgIHJldA0KPiA+IC5MMTc6IC8vIDwtLS0tIHVuc3VjY2Vzc2Z1bCBjb21wbGV0aW9u
+IG9mIENBUywgcmVwZWF0DQo+ID4gICAgICAgICBtb3ZsICAgICVlYXgsICglcjkpDQo+ID4gICAg
+ICAgICBqbXAgICAgIC5MMg0KPiA+DQo+ID4gSW4gY29uc3RyYXN0LCB4ODYgc3BlY2lmaWMgdmVy
+c2lvbiB0aGF0IHVzZXMNCj4gPiBfX3N5bmNfYm9vbF9jb21wYXJlX2FuZF9zd2FwKCkgZG9lc24n
+dCBleGliaXQgc3VjaCBwcm9ibGVtLA0KPiA+IGFzIF9fc3luY19ib29sX2NvbXBhcmVfYW5kX3N3
+YXAoKSBkb2Vzbid0IHVwZGF0ZSB0aGUgJ29sZF9oZWFkJw0KPiA+IHdpdGggbmV3IHZhbHVlLCBh
+bmQgd2UgaGF2ZSB0byByZS1yZWFkIGl0IGV4cGxpY2l0bHkgb24gZWFjaCBpdGVyYXRpb24uDQo+
+ID4NCj4gPiBPdmVyY29tZSB0aGF0IHByb2JsZW0gYnkgdXNpbmcgbG9jYWwgdmFyaWFibGUgJ2hl
+YWQnIGluc2lkZSB0aGUgbG9vcCwNCj4gPiBhbmQgdXBkYWluZyAnKm9sZF9oZWFkJyB2YWx1ZSBv
+bmx5IGF0IGV4aXQuDQo+ID4gV2l0aCBzdWNoIGNoYW5nZSBnY2MgbWFuYWdlcyB0byBhdm9pZCBl
+eHRyYSBzdG9yZSgvYnJhbmNoKS4NCj4gPg0KPiA+IERlcGVuZHMtb246IHNlcmllcy0zODIyNSAo
+ImRlcHJlY2F0ZSBydGVfYXRvbWljTk4gZmFtaWx5IikNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6
+IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2QGh1YXdlaS5jb20+DQo+ID4g
+LS0tDQo+IA0KPiBJIHVzZWQgdGhlIHN0YW5kYXJkIHJpbmcgcGVyZiB0ZXN0cyBhbmQgcmFuIDEw
+IHRpbWVzIHZpYToNCj4gISAvYmluL2Jhc2gNCj4gaWYgWyAteiAiJDEiIF07IHRoZW4NCj4gCWVj
+aG8gIlVzYWdlICQwIHZlcnNpb24iDQo+IAlleGl0IDENCj4gZmkNCj4gDQo+IFZFUlNJT049JDEN
+Cj4gZm9yIGkgaW4gJChzZXEgMSAxMCk7IGRvDQo+ICAgICAgc3VkbyBEUERLX1RFU1Q9cmluZ19w
+ZXJmX2F1dG90ZXN0IFwNCj4gICAgICAgICAuL2J1aWxkL2FwcC9kcGRrLXRlc3QgLWwgMi01IC1u
+IDQgLS1uby1wY2kgLS1maWxlLXByZWZpeD1ydW4kaSBcDQo+ICAgICAgICAgPiB+L0RQREsvcmlu
+Z19wZXJmX3Jlc3VsdHMvJHtWRVJTSU9OfV9ydW4ke2l9LmxvZyAyPiYxDQo+ICAgICBlY2hvICIk
+e1ZFUlNJT059IHJ1biAkaSBkb25lIg0KPiBkb25lDQo+IA0KPiANCj4gVGhlbiBoYWQgQ2xhdWRl
+IGNvbXBhcmUgcmVzdWx0czoNCj4gDQo+IEtleSBtZXRyaWMgKHR3byBwaHlzaWNhbCBjb3JlcyBs
+ZWdhY3kgTVAvTUMgYnVsayBuPTEyOCk6DQo+ICAgbWFpbjogICAgICAgIDUuMzgwIGN5Y2xlcy9l
+bGVtDQo+ICAgc3luYy1ib29sOiAgIDUuMzc3IGN5Y2xlcy9lbGVtICAoLTAuMDclKQ0KPiAgIGF2
+b2lkLXN0b3JlOiA1Ljg5MiBjeWNsZXMvZWxlbSAgKCs5LjUyJSkgIOKGkCByZWdyZXNzZXMNCj4g
+DQo+IA0KPiBMb29raW5nIGF0IHRoZSBkaXNzYXNzZW1ibHkgb2YgcmluZ19lbnF1ZXVlX2J1bGs6
+DQo+IA0KPiBUaGUgaW5uZXIgbG9vcCBvZiBtYWluIGFuZCBzeW5jLWJvb2wgdmVyc2lvbnMgaXM6
+DQo+IG1vdiAgICAweDgwKCVyZGkpLCVyMTFkICAgICAgICAgICAgOyBsb2FkIGQtPmhlYWQgdmlh
+IGRpc3BsYWNlbWVudA0KPiBtb3YgICAgMHgxMDQoJXJkaSksJWVieCAgICAgICAgICAgICA7IGxv
+YWQgcy0+dGFpbA0KPiBhZGQgICAgJWVjeCwlZWJ4DQo+IHN1YiAgICAlcjExZCwlZWJ4DQo+IGNt
+cCAgICAlZWJ4LCVyMTJkDQo+IGphZSAgICBbZXhpdF0NCj4gbGVhICAgICglcjgsJXIxMSwxKSwl
+cjEzZCAgICAgICAgICAgOyBuZXdfaGVhZCA9IG9sZF9oZWFkICsgbg0KPiBtb3YgICAgJXIxMWQs
+JWVheCAgICAgICAgICAgICAgICAgICA7IGV4cGVjdGVkIOKGkiBlYXgNCj4gbG9jayBjbXB4Y2hn
+ICVyMTNkLDB4ODAoJXJkaSkgICAgICAgOyDihpAgZGlzcGxhY2VtZW50IGFkZHJlc3NpbmcNCj4g
+am5lICAgIFtyZXRyeV0gICAgICAgICAgICAgICAgICAgICAgOyDihpAgZGlyZWN0IGpuZSwgZWF4
+IHByZXNlcnZlZA0KPiANCj4gVXNpbmcgYXRvbWljX2NvbXBhcmVfZXhjaGFuZ2UgYW5kIHlvdXIg
+cGF0Y2g6DQo+IG1vdiAgICAweDM4KCVyZGkpLCVyMTBkDQo+IG1vdiAgICAweDgwKCVyZGkpLCVl
+YXggICAgICAgICAgICAgIDsgbG9hZCBkLT5oZWFkIGRpcmVjdGx5IGludG8gJWVheA0KPiBsZWEg
+ICAgMHg4MCglcmRpKSwlcmN4ICAgICAgICAgICAgICAgOyDihpAgTUFURVJJQUxJWkUgJmQtPmhl
+YWQgaW50byAlcmN4DQo+IGxlYSAgICAtMHgxKCVyOCksJXIxMmQNCj4gbW92ICAgIDB4MTA0KCVy
+ZGkpLCVyMTFkDQo+IGFkZCAgICAlcjEwZCwlcjExZA0KPiBzdWIgICAgJWVheCwlcjExZA0KPiBj
+bXAgICAgJXIxMWQsJXIxMmQNCj4gamFlICAgIFtleGl0XQ0KPiBsZWEgICAgKCVyOCwlcmF4LDEp
+LCVyMTNkICAgICAgICAgICA7IG5ld19oZWFkDQo+IGxvY2sgY21weGNoZyAlcjEzZCwoJXJjeCkg
+ICAgICAgICAgIDsg4oaQIElORElSRUNUIGFkZHJlc3NpbmcgdmlhICVyY3gNCj4gbW92ICAgICVl
+YXgsJWVieCAgICAgICAgICAgICAgICAgICAgOyDihpAgRVhUUkE6IHNhdmUgcG9zdC1DQVMgJWVh
+eCB0byAlZWJ4DQo+IGpuZSAgICBbcmV0cnldDQo+IA0KPiBCb3R0b20gbGluZTogZ29vZCBpZGVh
+IGJ1dCBzdGlsbCBmaWdodGluZyB3aXRoIEdjYyBvcHRpbWl6ZXIgaGVyZS4NCg0KVGhhbmtzIGZv
+ciB0cnlpbmcuDQpPbiBteSBib3ggKEFNRCBFUFlDIDk1MzQpIHdpdGggc2FtZSB0ZXN0LCB0aGVy
+ZSBpcyBubyBtdWNoIGRpZmZlcmVuY2UgYmV0d2VlbiBhbGwgb2YgdGhlbToNCnVzZS1zeW5jLWJv
+b2w6ICAgICAgICAgICAgICAgICAgICAgMi4yMjczDQp1c2UtYzExLWN1cnJlbnQtdmVyc2lvbjog
+ICAyLjI0MjINCnVzZS1jMTEtcGF0Y2hlZDogICAgICAgICAgICAgICAgMi4yNDMxDQpBbnl3YXks
+IC0xMCUgb24gc29tZSBib3hlcyAtIHRoYXQncyBwcm9iYWJseSBnb29kIGVub3VnaCByZWFzb24g
+dG8ga2VlcCBzcGVjaWZpYyB2ZXJzaW9uDQpmb3IgIF9fcnRlX3JpbmdfaGVhZHRhaWxfbW92ZV9o
+ZWFkX210KCkuDQpNeSBhc2sgd291bGQgYmUgdG8gaGF2ZSBzb21lIHNwZWNpYWwgbWFjcm8gZm9y
+IGl0LCBzbyB1c2VycyBjYW4gZW5hYmxlL2Rpc2FibGUgaXQgdmlhDQonbWVzb24gc2V0dXAnIGF0
+IHdpbGwuDQpLb25zdGFudGluDQoNCg0K
