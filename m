@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74EFACD5BD1
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 17:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5844FCD6E60
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 17:16:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EF54540672;
-	Tue,  2 Jun 2026 19:16:01 +0200 (CEST)
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
- by mails.dpdk.org (Postfix) with ESMTP id 66C2E40667
- for <dev@dpdk.org>; Tue,  2 Jun 2026 19:16:00 +0200 (CEST)
-Received: by mail-dl1-f46.google.com with SMTP id
- a92af1059eb24-1363fe80fe8so14200105c88.0
- for <dev@dpdk.org>; Tue, 02 Jun 2026 10:16:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B518A40677;
+	Tue,  2 Jun 2026 19:16:02 +0200 (CEST)
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+ by mails.dpdk.org (Postfix) with ESMTP id 85F3D402A9
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 19:16:01 +0200 (CEST)
+Received: by mail-dl1-f50.google.com with SMTP id
+ a92af1059eb24-13721dfd471so11307485c88.1
+ for <dev@dpdk.org>; Tue, 02 Jun 2026 10:16:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780420559;
- x=1781025359; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780420561;
+ x=1781025361; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LPi+TQH7TJd/pPrAQmd6ke2JVL8jUiT/KFVpmfS9jYQ=;
- b=HPwDhJR86S7VIn/iGhBhpapFgL8ChKF4QcEM2LO8x+frWTTSI1bSCzNPs0J10mGMdf
- oecbMJPhfgETcfOU5x6JfXn7m7mw4RDqhji/0qkm5lGHY/nNBrWGSiSRJwvEPM+80p4V
- A46JzonaIlZCW5mBkXOe3x6L9a2vcvKxO/jdmO8b+rEqDWsUteW3a4cMNLW23rh3Z989
- KC1QFYOQI2dpl8bDZjp2kiyxhn9YUQgmRJARrM/HY0dTCJ7VWjWzgH8cx+0wKYlBTycF
- aS4T9QOP4BY5gOLi6OdgTByxjr8rJqIHV9AspMmUKKMlZJ2KYMX9SRYwU6Y5+kPK3FdO
- 3bSA==
+ bh=jbWHI3TiCRHnGL9XrCgSy5RGY/AU4ahPLwMY1ZcOA78=;
+ b=l6JdhB1E7K6YJzWJ9RNG6iy/cpTa9KU47lmdFh7ZbemCeaawjq0nsYI5MnwzG832ct
+ 6h7XHMSYCpCclOeDyZ+GBZFyXOc32oSlxCb++rq0/YVEGlYdNQDVU0Tef4TVocrjVQ+d
+ Z2NMiQ/rH2q1LRvctlpb9KcGhRPUixh8ImVzBGLzXKYYkasnC/pByv3MBFLUMemMAdBe
+ 9Q/DkV1YTqdJlneh/ZQlZlImn53dJS1ShMOy0103gi43uZr4IWPGhrD4HnBgEktswzhf
+ 9JNTRGxmtcwHTM6EFJE0OQjROz3AYQa11F3TVFWyFLruVkx9AzAYmIISf/azC3azIzgV
+ rF6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780420559; x=1781025359;
+ d=1e100.net; s=20251104; t=1780420561; x=1781025361;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=LPi+TQH7TJd/pPrAQmd6ke2JVL8jUiT/KFVpmfS9jYQ=;
- b=g2sdh17RGrtBY2q+DJe0FZL1lDLTtlsEvbTATi7wBWI2/DUUoq+5K6UpmnB8dEIUEt
- hkV4HUNoZAEa8MyxapYUMScHXVORTzXMhoy6TS52jB/Le6c/qYIVGsC3yalWndSOkEY2
- I3Is0k7fWj+F6hNwpVFGUjGLoQDd/+20jjPK107QUAk88gXO/DVQwJYcgdvOyZ0FLjP0
- 0DGlqo7Q8RC0XBA3MJ1xdRYtQrm/BkxSR8Rh8kbsPaqyKjII8pnMF5h9WEcsiBD/FpUd
- 8qyKYhPyYHTp5fhIUVt1hKTvw0NK1Nk91vn+hpDll2Pb/8Jg1qOeN5S5W82bzN7KDCPI
- EEIQ==
-X-Gm-Message-State: AOJu0Yxc4r9FFiy5i5S54g8ugbYoVtP1ZCdru8rP+efx5PXYS+0OT4dp
- zSiSWEXyKyJflQ+AQyULq/RQFdpfwzZ9wnkC0hHl49IrLKGQQQtHRAuzwzZTiT1lw4c+Dv4iJRB
- PFIMo
-X-Gm-Gg: Acq92OELdd/LMIB6Y5THvLyViW0kInoB0vqYky/QrbyNr9YsbNnwhN1l5FT1d35z0xS
- 1RbmFYm5WtW5xQMxt69TTS5bmFAnsZ9PX6wsLndZUkG1JdT35VeHilElmYVLmfsWks+2XZlLw7P
- DGHTiHBdEPvgoa/OFoB9jVPc1upYdoC9D5Zt5Rf/fa3CRpdvss/ZkKHvAs6o+x4h353rs28B3gy
- 34TtOlCi4fTZJpesrKMdpR0D1dlaZFDbIi0soJ2oIxlH7ff3qafMPiglUjYG9vFc772/LLQPzNe
- JfIu+CJXHG4LJDrjBzfppqWYct1lzABqkPP+UHhr2UPQm74XDAST8IHqe5lh6wEv7PZJuY2ovso
- TQek5TC/oOfwOJ5hMpR0S21BEzOcXMOGi0niUbzI4kwXfWtnxvJIzHpfxNaMhdxpVKO1X1UHO8c
- EwLgg29ZB+OK+oL9gJuCU224Jo3o9gdzKPLpn4dS2vGegQ8MZo7iKGRpZlz17COoXrmFy1GvCZ
-X-Received: by 2002:a05:7022:1283:b0:12b:f881:d8f6 with SMTP id
- a92af1059eb24-137d424af0bmr7252389c88.29.1780420559384; 
- Tue, 02 Jun 2026 10:15:59 -0700 (PDT)
+ bh=jbWHI3TiCRHnGL9XrCgSy5RGY/AU4ahPLwMY1ZcOA78=;
+ b=Be+uy8DXWgbHE6qewc9y4YWa5EjBcASTaTEFT6X7dp5KnojqS/na0oNM1ZkfjIEirD
+ 4s+ouMxpd1FNMTuslpdrmkHJyZJ2KS/InIu9EEkb2hMOW0f+GX/ebl7JY4kueLtbcren
+ TSIDDQMh7d5pUbnU/bO442PhXjn3FXI1qQn0PkRw9789BFsVy+6p2OLir1RZ7r2zKDez
+ cRoYsphIVFQ9wOD1QndNxbzYhpCUgv7xQVPmSLlGC+r7Q1sJKl9xWFu/gfrWvArQa1jU
+ yIk1V2XCa9mBf8dkmSMlLOwulCSuzk4fMPdXLdNyMt2J978byEzQC1ghTSAWsmsTsrH7
+ GRBA==
+X-Gm-Message-State: AOJu0YyNdc2U5BA1ya89oBi40peDCyFWxPNrUEVe4b7oCdOedLU9kgI4
+ WriSOazDOgNXlKtinDQvhGu6uweDUWSgMvY3fj/rxWFpUvF5EG/KUwDYyaLnMOfxnKy8hbcVLGN
+ 8xhU+
+X-Gm-Gg: Acq92OES6/DcBuzz3YW0M8n5aImpmylX/l2PyvFSL4mojpkGaH2tYKzSwIwzltjJpa/
+ KH3GdKUCYzUv8UvqJECQ26iRVW+GE7dLT2pmsxvDrON+dHxN7FBg9Wd80owa8uoqpsWJORf4KZ7
+ Gw8VJ2U2GvcJKYTgZ+gJ2ZRl4io7V01Z1vQl0pV6wFW5MW91btWBJ+3ED+AJpDTgI9Pc/CB6+Qi
+ fmspEL5vmc7LWmS1vPF7Xszdu+ri34qCs8GR2YyZX+sb+LSENaxqgvXTmsyUg0z6/FWiX9IJJwl
+ MWUJay6qA2Nd4yLvaePUBY09pesXQVvNPLNrb+b631tnhAuPO5+SycaTFqBB1T5Omuh18TkxBfX
+ nrf1+kAdq2DIKACTXCyV1hNKZ2UBmz9+RDaMo3YBCHF7SQ5d0M947Xtt/C+9DmdX2phK7K6GWdw
+ LT9su52R8eiIu5USDxyOvKj4S3G8r/sms/8t6PBYp2o0z8WVsKfPkThEJUWau9Zk4gdaLESUddN
+ J07IPcOS44=
+X-Received: by 2002:a05:7022:f909:b0:137:ea7d:a5df with SMTP id
+ a92af1059eb24-137ea7da6c3mr1920696c88.37.1780420560393; 
+ Tue, 02 Jun 2026 10:16:00 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-137f5539432sm256095c88.9.2026.06.02.10.15.58
+ a92af1059eb24-137f5539432sm256095c88.9.2026.06.02.10.15.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 02 Jun 2026 10:15:58 -0700 (PDT)
+ Tue, 02 Jun 2026 10:16:00 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>,
  Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: [PATCH 4/5] ring: drop unused arg to update_tail
-Date: Tue,  2 Jun 2026 10:07:30 -0700
-Message-ID: <20260602171552.686349-5-stephen@networkplumber.org>
+Subject: [PATCH 5/5] ring: use C11 for single thread move head
+Date: Tue,  2 Jun 2026 10:07:31 -0700
+Message-ID: <20260602171552.686349-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260602171552.686349-1-stephen@networkplumber.org>
 References: <20260602171552.686349-1-stephen@networkplumber.org>
@@ -82,133 +83,245 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The internal functions to update tail of ring no longer use
-the enqueue flag argument.
+The function to move head for single threaded case can always
+use the C11 code, there is no performance difference from GCC
+intrinsics.
+
+This reduces the exception code to just one function.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/ring/rte_ring_elem_pvt.h     |  8 +++-----
- lib/ring/rte_ring_hts_elem_pvt.h |  8 +++-----
- lib/ring/soring.c                | 10 +++++-----
- 3 files changed, 11 insertions(+), 15 deletions(-)
+ lib/ring/rte_ring_c11_pvt.h  | 62 ------------------------------
+ lib/ring/rte_ring_elem_pvt.h | 74 +++++++++++++++++++++++++++++++++---
+ lib/ring/rte_ring_gcc_pvt.h  | 59 ----------------------------
+ 3 files changed, 68 insertions(+), 127 deletions(-)
 
+diff --git a/lib/ring/rte_ring_c11_pvt.h b/lib/ring/rte_ring_c11_pvt.h
+index 3258829696..0ba64379fa 100644
+--- a/lib/ring/rte_ring_c11_pvt.h
++++ b/lib/ring/rte_ring_c11_pvt.h
+@@ -19,68 +19,6 @@
+  * For more information please refer to <rte_ring.h>.
+  */
+ 
+-/**
+- * @internal This is a helper function that moves the producer/consumer head
+- *    optimized for single threaded case
+- *
+- * @param d
+- *   A pointer to the headtail structure with head value to be moved
+- * @param s
+- *   A pointer to the counter-part headtail structure. Note that this
+- *   function only reads tail value from it
+- * @param capacity
+- *   Either ring capacity value (for producer), or zero (for consumer)
+- * @param n
+- *   The number of elements we want to move head value on
+- * @param behavior
+- *   RTE_RING_QUEUE_FIXED:    Move on a fixed number of items
+- *   RTE_RING_QUEUE_VARIABLE: Move on as many items as possible
+- * @param old_head
+- *   Returns head value as it was before the move
+- * @param new_head
+- *   Returns the new head value
+- * @param entries
+- *   Returns the number of ring entries available BEFORE head was moved
+- * @return
+- *   Actual number of objects the head was moved on
+- *   If behavior == RTE_RING_QUEUE_FIXED, this will be 0 or n only
+- */
+-static __rte_always_inline unsigned int
+-__rte_ring_headtail_move_head_st(struct rte_ring_headtail *d,
+-		const struct rte_ring_headtail *s, uint32_t capacity,
+-		unsigned int n,
+-		enum rte_ring_queue_behavior behavior,
+-		uint32_t *old_head, uint32_t *new_head, uint32_t *entries)
+-{
+-	uint32_t stail;
+-
+-	/* Single producer: only this thread writes d->head,
+-	 * so a relaxed load is sufficient.
+-	 */
+-	*old_head = rte_atomic_load_explicit(&d->head,	rte_memory_order_acquire);
+-
+-	/* Acquire pairs with the consumer's release-store of tail in __rte_ring_update_tail,
+-	 * ensuring the consumer's ring-element reads are complete before
+-	 * we observe the updated tail.
+-	 */
+-	stail = rte_atomic_load_explicit(&s->tail, rte_memory_order_acquire);
+-
+-	/* Unsigned subtraction is modulo 2^32, so entries is always in
+-	 * [0, capacity) even if old_head > stail.
+-	 */
+-	*entries = capacity + stail - *old_head;
+-
+-	/* check that we have enough room in ring */
+-	if (unlikely(n > *entries))
+-		n = (behavior == RTE_RING_QUEUE_FIXED) ? 0 : *entries;
+-
+-	if (n > 0) {
+-		*new_head = *old_head + n;
+-		rte_atomic_store_explicit(&d->head, *new_head, rte_memory_order_relaxed);
+-	}
+-
+-	return n;
+-}
+ 
+ /**
+  * @internal This is a helper function that moves the producer/consumer head
 diff --git a/lib/ring/rte_ring_elem_pvt.h b/lib/ring/rte_ring_elem_pvt.h
-index a7ff76931b..74b5fef771 100644
+index 74b5fef771..cd77343f38 100644
 --- a/lib/ring/rte_ring_elem_pvt.h
 +++ b/lib/ring/rte_ring_elem_pvt.h
-@@ -301,10 +301,8 @@ __rte_ring_dequeue_elems(struct rte_ring *r, uint32_t cons_head,
+@@ -319,12 +319,74 @@ __rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
+ 	rte_atomic_store_explicit(&ht->tail, new_val, rte_memory_order_release);
+ }
  
- static __rte_always_inline void
- __rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
--		uint32_t new_val, uint32_t single, uint32_t enqueue)
-+		       uint32_t new_val, uint32_t single)
- {
--	RTE_SET_USED(enqueue);
--
- 	/*
- 	 * If there are other enqueues/dequeues in progress that preceded us,
- 	 * we need to wait for them to complete
-@@ -448,7 +446,7 @@ __rte_ring_do_enqueue_elem(struct rte_ring *r, const void *obj_table,
- 
- 	__rte_ring_enqueue_elems(r, prod_head, obj_table, esize, n);
- 
--	__rte_ring_update_tail(&r->prod, prod_head, prod_next, is_sp, 1);
-+	__rte_ring_update_tail(&r->prod, prod_head, prod_next, is_sp);
- end:
- 	if (free_space != NULL)
- 		*free_space = free_entries - n;
-@@ -495,7 +493,7 @@ __rte_ring_do_dequeue_elem(struct rte_ring *r, void *obj_table,
- 
- 	__rte_ring_dequeue_elems(r, cons_head, obj_table, esize, n);
- 
--	__rte_ring_update_tail(&r->cons, cons_head, cons_next, is_sc, 0);
-+	__rte_ring_update_tail(&r->cons, cons_head, cons_next, is_sc);
- 
- end:
- 	if (available != NULL)
-diff --git a/lib/ring/rte_ring_hts_elem_pvt.h b/lib/ring/rte_ring_hts_elem_pvt.h
-index a01089d15d..97ae240e2e 100644
---- a/lib/ring/rte_ring_hts_elem_pvt.h
-+++ b/lib/ring/rte_ring_hts_elem_pvt.h
-@@ -25,12 +25,10 @@
+-/* Between load and load. there might be cpu reorder in weak model
+- * (powerpc/arm).
+- * There are 2 choices for the users
+- * 1.use rmb() memory barrier
+- * 2.use one-direction load_acquire/store_release barrier
+- * It depends on performance test results.
++/**
++ * @internal This is a helper function that moves the producer/consumer head
++ *    optimized for single threaded case
++ *
++ * @param d
++ *   A pointer to the headtail structure with head value to be moved
++ * @param s
++ *   A pointer to the counter-part headtail structure. Note that this
++ *   function only reads tail value from it
++ * @param capacity
++ *   Either ring capacity value (for producer), or zero (for consumer)
++ * @param n
++ *   The number of elements we want to move head value on
++ * @param behavior
++ *   RTE_RING_QUEUE_FIXED:    Move on a fixed number of items
++ *   RTE_RING_QUEUE_VARIABLE: Move on as many items as possible
++ * @param old_head
++ *   Returns head value as it was before the move
++ * @param new_head
++ *   Returns the new head value
++ * @param entries
++ *   Returns the number of ring entries available BEFORE head was moved
++ * @return
++ *   Actual number of objects the head was moved on
++ *   If behavior == RTE_RING_QUEUE_FIXED, this will be 0 or n only
++ */
++static __rte_always_inline unsigned int
++__rte_ring_headtail_move_head_st(struct rte_ring_headtail *d,
++		const struct rte_ring_headtail *s, uint32_t capacity,
++		unsigned int n,
++		enum rte_ring_queue_behavior behavior,
++		uint32_t *old_head, uint32_t *new_head, uint32_t *entries)
++{
++	uint32_t stail;
++
++	/* Single producer: only this thread writes d->head,
++	 * so a relaxed load is sufficient.
++	 */
++	*old_head = rte_atomic_load_explicit(&d->head,	rte_memory_order_acquire);
++
++	/* Acquire pairs with the consumer's release-store of tail in __rte_ring_update_tail,
++	 * ensuring the consumer's ring-element reads are complete before
++	 * we observe the updated tail.
++	 */
++	stail = rte_atomic_load_explicit(&s->tail, rte_memory_order_acquire);
++
++	/* Unsigned subtraction is modulo 2^32, so entries is always in
++	 * [0, capacity) even if old_head > stail.
++	 */
++	*entries = capacity + stail - *old_head;
++
++	/* check that we have enough room in ring */
++	if (unlikely(n > *entries))
++		n = (behavior == RTE_RING_QUEUE_FIXED) ? 0 : *entries;
++
++	if (n > 0) {
++		*new_head = *old_head + n;
++		rte_atomic_store_explicit(&d->head, *new_head, rte_memory_order_relaxed);
++	}
++
++	return n;
++}
++
++/*
++ * The function __rte_ring_headtail_move_head_mt has two versions
++ * based on what is most efficient on a given architecture.
++ *
++ * The C11 is preferred but on x86 GCC has 10% performance drop.
   */
- static __rte_always_inline void
- __rte_ring_hts_update_tail(struct rte_ring_hts_headtail *ht, uint32_t old_tail,
--	uint32_t num, uint32_t enqueue)
-+			   uint32_t num)
- {
- 	uint32_t tail;
+ #ifdef RTE_USE_C11_MEM_MODEL
+ #include "rte_ring_c11_pvt.h"
+diff --git a/lib/ring/rte_ring_gcc_pvt.h b/lib/ring/rte_ring_gcc_pvt.h
+index 6b14c1c822..ec26fe557a 100644
+--- a/lib/ring/rte_ring_gcc_pvt.h
++++ b/lib/ring/rte_ring_gcc_pvt.h
+@@ -90,63 +90,4 @@ __rte_ring_headtail_move_head_mt(struct rte_ring_headtail *d,
+ 	return n;
+ }
  
--	RTE_SET_USED(enqueue);
+-/**
+- * @internal This is a helper function that moves the producer/consumer head
+- *    optimized for single threaded case
+- *
+- * @param d
+- *   A pointer to the headtail structure with head value to be moved
+- * @param s
+- *   A pointer to the counter-part headtail structure. Note that this
+- *   function only reads tail value from it
+- * @param capacity
+- *   Either ring capacity value (for producer), or zero (for consumer)
+- * @param n
+- *   The number of elements we want to move head value on
+- * @param behavior
+- *   RTE_RING_QUEUE_FIXED:    Move on a fixed number of items
+- *   RTE_RING_QUEUE_VARIABLE: Move on as many items as possible
+- * @param old_head
+- *   Returns head value as it was before the move
+- * @param new_head
+- *   Returns the new head value
+- * @param entries
+- *   Returns the number of ring entries available BEFORE head was moved
+- * @return
+- *   Actual number of objects the head was moved on
+- *   If behavior == RTE_RING_QUEUE_FIXED, this will be 0 or n only
+- */
+-static __rte_always_inline unsigned int
+-__rte_ring_headtail_move_head_st(struct rte_ring_headtail *d,
+-		const struct rte_ring_headtail *s, uint32_t capacity,
+-		unsigned int n,
+-		enum rte_ring_queue_behavior behavior,
+-		uint32_t *old_head, uint32_t *new_head, uint32_t *entries)
+-{
+-	*old_head = d->head;
 -
- 	tail = old_tail + num;
- 
- 	/*
-@@ -217,7 +215,7 @@ __rte_ring_do_hts_enqueue_elem(struct rte_ring *r, const void *obj_table,
- 
- 	if (n != 0) {
- 		__rte_ring_enqueue_elems(r, head, obj_table, esize, n);
--		__rte_ring_hts_update_tail(&r->hts_prod, head, n, 1);
-+		__rte_ring_hts_update_tail(&r->hts_prod, head, n);
- 	}
- 
- 	if (free_space != NULL)
-@@ -258,7 +256,7 @@ __rte_ring_do_hts_dequeue_elem(struct rte_ring *r, void *obj_table,
- 
- 	if (n != 0) {
- 		__rte_ring_dequeue_elems(r, head, obj_table, esize, n);
--		__rte_ring_hts_update_tail(&r->hts_cons, head, n, 0);
-+		__rte_ring_hts_update_tail(&r->hts_cons, head, n);
- 	}
- 
- 	if (available != NULL)
-diff --git a/lib/ring/soring.c b/lib/ring/soring.c
-index 22f9c60e9c..45292c0f78 100644
---- a/lib/ring/soring.c
-+++ b/lib/ring/soring.c
-@@ -202,21 +202,21 @@ __rte_soring_move_cons_head(struct rte_soring *r, uint32_t stage, uint32_t num,
- 
- static __rte_always_inline void
- __rte_soring_update_tail(struct __rte_ring_headtail *rht,
--	enum rte_ring_sync_type st, uint32_t head, uint32_t next, uint32_t enq)
-+		 enum rte_ring_sync_type st, uint32_t head, uint32_t next)
- {
- 	uint32_t n;
- 
- 	switch (st) {
- 	case RTE_RING_SYNC_ST:
- 	case RTE_RING_SYNC_MT:
--		__rte_ring_update_tail(&rht->ht, head, next, st, enq);
-+		__rte_ring_update_tail(&rht->ht, head, next, st);
- 		break;
- 	case RTE_RING_SYNC_MT_RTS:
- 		__rte_ring_rts_update_tail(&rht->rts);
- 		break;
- 	case RTE_RING_SYNC_MT_HTS:
- 		n = next - head;
--		__rte_ring_hts_update_tail(&rht->hts, head, n, enq);
-+		__rte_ring_hts_update_tail(&rht->hts, head, n);
- 		break;
- 	default:
- 		/* unsupported mode, shouldn't be here */
-@@ -295,7 +295,7 @@ soring_enqueue(struct rte_soring *r, const void *objs,
- 			&prod_head, &prod_next, &nb_free);
- 	if (n != 0) {
- 		__enqueue_elems(r, objs, meta, prod_head, n);
--		__rte_soring_update_tail(&r->prod, st, prod_head, prod_next, 1);
-+		__rte_soring_update_tail(&r->prod, st, prod_head, prod_next);
- 	}
- 
- 	if (free_space != NULL)
-@@ -401,7 +401,7 @@ soring_dequeue(struct rte_soring *r, void *objs, void *meta,
- 	/* we have some elems to consume */
- 	if (n != 0) {
- 		__dequeue_elems(r, objs, meta, cons_head, n);
--		__rte_soring_update_tail(&r->cons, st, cons_head, cons_next, 0);
-+		__rte_soring_update_tail(&r->cons, st, cons_head, cons_next);
- 	}
- 
- 	if (available != NULL)
+-	/* add rmb barrier to avoid load/load reorder in weak
+-	 * memory model. It is noop on x86
+-	 */
+-	rte_smp_rmb();
+-
+-	/*
+-	 *  The subtraction is done between two unsigned 32bits value
+-	 * (the result is always modulo 32 bits even if we have
+-	 * *old_head > s->tail). So 'entries' is always between 0
+-	 * and capacity (which is < size).
+-	 */
+-	*entries = (capacity + s->tail - *old_head);
+-
+-	/* check that we have enough room in ring */
+-	if (unlikely(n > *entries))
+-		n = (behavior == RTE_RING_QUEUE_FIXED) ? 0 : *entries;
+-
+-	if (likely(n > 0)) {
+-		*new_head = *old_head + n;
+-		d->head = *new_head;
+-	}
+-	return n;
+-}
+-
+ #endif /* _RTE_RING_GCC_PVT_H_ */
 -- 
 2.53.0
 
