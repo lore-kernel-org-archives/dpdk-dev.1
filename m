@@ -2,144 +2,153 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C314CD6E60
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 16:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324C1CD6E68
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 17:11:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 67502402AB;
-	Tue,  2 Jun 2026 18:56:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 0472D402A9
- for <dev@dpdk.org>; Tue,  2 Jun 2026 18:56:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 78795402AB;
+	Tue,  2 Jun 2026 19:11:55 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 641CE402A9
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 19:11:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780419379; x=1811955379;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=xOJcvkMf+8PE0XxFph2Aw8WYd9yqd13zQH01YaXbZew=;
- b=Ayr+pjW+JxyhDfPW8verICpKrxN6dOrchZEVTwoKKKgPZx1CkjuCFDgn
- shggX8nhUY2gtRsk0stvnceK2LKScFd06PIXVyhTvYEPpNTIgnailV8Oa
- LxCFF20A30ldt4n6mx2aqKKcEqNmr1at1r/9W5tZ7crXsdsQ6OxY+C8k2
- ckR3OI7PUn8DsnYlRT2HP5W0uB+mXhbcoHdsW1bsNhwIivxHqLILclY7M
- TkKC0twv8iPQvhfAy/e2PM8U/0XgLSLNiLeOwOtFGgCB4zK01BbymKEBa
- 7beDdRLw3wjaD2oNWOaFiMqaonM+pFlFJvCdGsdkjiup1iAxBMnIvi8+L w==;
-X-CSE-ConnectionGUID: BmCxJDHIRcGuCNlDP4pHQQ==
-X-CSE-MsgGUID: rtnm3pVsRsKatzKv7Ui7qQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="80243138"
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208,217";a="80243138"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Jun 2026 09:56:18 -0700
-X-CSE-ConnectionGUID: 7XBhT6iLTcyz3iqrYkImXQ==
-X-CSE-MsgGUID: kDs0Ukb9ROCdE551IJ8fXA==
+ t=1780420314; x=1811956314;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=LQe/3DySP9oCE+g5oPCZpD+GRL5Y810if90uGeLqhVM=;
+ b=ZedlIM/RxssCc05joON/F0nPEH+2u31OJLq2Syahmpf21uBVNPPM+Dqa
+ efmMdWbSu0kKEsyn+ve/XtfpdzkzvewtYgTXFW7zcSUxbrmkh85VI+Tub
+ 1waMmsxNafUrUg+MainePjQqh8uY/gp+ruuhAgmGCSZbJd6fg/+bBw/Uv
+ FaFxbTVoAnzHHCLME4o3sKUXPMeDca4UtR+Z079rxt7yLsbAdhid4RCy5
+ jRsirWq8o3bpTRuNdcfeXkjwNuWFSCE/9ll5684mbKpi/8GpF+bTHjZ2r
+ LrfD+sAV+pq9LOJ2qLw3T9d2gNtEdwVbFITgem8xs3Qqjqrb/jtJoSLGO g==;
+X-CSE-ConnectionGUID: OmQ3IibzTrS8Ec4Qrb0g6Q==
+X-CSE-MsgGUID: vP7Kw0RUSfuT/cZyasN5bg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="91521436"
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="91521436"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Jun 2026 10:11:53 -0700
+X-CSE-ConnectionGUID: mH9JAQIZRbqcRvhK4v15KA==
+X-CSE-MsgGUID: lLNReJ6wQ7WlnWVENpUX5w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
- d="scan'208,217";a="248890385"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Jun 2026 09:56:18 -0700
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="239523428"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Jun 2026 10:11:52 -0700
 Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 2 Jun 2026 09:56:17 -0700
+ 15.2.2562.37; Tue, 2 Jun 2026 10:11:51 -0700
 Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
  ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 2 Jun 2026 09:56:17 -0700
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.2) by
+ 15.2.2562.37 via Frontend Transport; Tue, 2 Jun 2026 10:11:51 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.36) by
  edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 2 Jun 2026 09:56:16 -0700
+ 15.2.2562.37; Tue, 2 Jun 2026 10:11:51 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zUvaAaEhW/tANPZxNygcCmPOuF1XBnWKcxfQ+KjL2HnVgXXRju/uf73hmlrn0TdW56pWTZjYvUujCAweYOAdK+z+5ikn96I5RR+LN4anEFMrCmVS4gwwCvZMZel0gwSdNY1jUqT1e5Mo6jodjdo4wxQCjOWQvlnMRHB8b0Ngm8oeIQfugfyQ7NoD0Djv3BaVezTUqkaXFDnhS7PxaVCF/XvNJgyHC9W+JOVS5IGKeJPl2PFBh4gsu0uY5470X3AsxY9V92o6mfyePRTGjLOeyyq7FYhI0A2bSNl18e4o02aRQvJMSUUVb7Bq41tL92K9o9B/hZRcrsRKRGDLcB/MCA==
+ b=BaHvi5nFYS5ZwvKwM1oNik9URhHcwPZTp/cMynXaC9/oj7KSVaq9JLYk6aWgN+I40XaGVvRjOT7w095raoUBBkslpUfIFB8xby6PTGDyLHEyztwfnyNWD/b2vPi+mUqt87fyFj2/AxFjKbESlzWibQUZdGGlNJGznlXd8kWZCtDNW0xiTYgQWWFl9kGtgGGF680BXedvhNlTzmMO8Bm9PnENz+reygsMj+4wI2AogDRJOgw8XGo0G0qaQml4libc4pB1CU1uKg1dXslGOQnx67MEoBatXpjqTU3ad+p8gNgHa1Ujy4MRSGF6DktKhAx1x2f6O4/vDaGLGBAUcXixbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2HlPXvp5qfukvas9X3lXmZg+WxEh5UGetmbmeS7fi1s=;
- b=G7nWnhAMzhOHbTEoeHh4csc7we7N0Naf6THGGVrcCk93T408IEuoxleDDsSGh0XNL1CvbkmTkMHyi1OxRXCopJflzDtLDBCGsKvByHrgVxGevAE7VsEem32KugFuG9nj5lW/1IC8e0PYxsrWiFngQkwFAIrg5q+DPwQ3GgYMh9pfLdSOZcKUipEkiYs4HgybK/s+LRb+G6ooV1XUpDz4DFbvibmpq1SA2J72eNJ7DWti2FJhZYhukvrlu/HrCtQjN9QzsQFcrEDVhOvJsyusBzeCQvE6cD5Q+g9yUeTgCVT/yP8VbiJwt3EGZva744+IWuFxAHCn1CPXo3yqeeyyTA==
+ bh=LQe/3DySP9oCE+g5oPCZpD+GRL5Y810if90uGeLqhVM=;
+ b=A/RLrUPjus2Fe3VlcVS++ryRv3l9lQYEe0q6apSLdg/qVX5HlzieIrCLWXHyrHHX0OvkpSdOvmo33C9/44t9dNsqbfc12PpM5bWq+4TwQFEvKJq+bj15BzItxy2l2E0W4InryNyjYsDY2E9j/FiXTY23eEc7MyQygSJyOvWNZpviZWSk8MR1GGJjndTQMt4UQ64+sWcys8gGynqrXuaDhQXzoOyOvS/nKtu9iP8sA/kRAlmY7SVlP0BCiV4astqoKQvOjB5A1gZf9xs6BQyXNJt9AyRRuDx1jPma6n7n5ZdIGmvnpxIK+7fxhBdIO0vzZ/6QFuHFJ3G21WbQe05esA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from DS3PR11MB9646.namprd11.prod.outlook.com (2603:10b6:8:38f::18)
- by MW5PR11MB5785.namprd11.prod.outlook.com (2603:10b6:303:197::11) with
+Received: from MW4PR11MB5892.namprd11.prod.outlook.com (2603:10b6:303:16a::16)
+ by DS0PR11MB6520.namprd11.prod.outlook.com (2603:10b6:8:d0::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.15; Tue, 2 Jun 2026
- 16:56:08 +0000
-Received: from DS3PR11MB9646.namprd11.prod.outlook.com
- ([fe80::d32a:8f92:25b:9bcd]) by DS3PR11MB9646.namprd11.prod.outlook.com
- ([fe80::d32a:8f92:25b:9bcd%4]) with mapi id 15.21.0092.006; Tue, 2 Jun 2026
- 16:56:08 +0000
-From: "Mcnamara, John" <john.mcnamara@intel.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-CC: Thomas Monjalon <thomas@monjalon.net>, David Marchand
- <david.marchand@redhat.com>
-Subject: DPDK Release Status Meeting 2026-06-02
-Thread-Topic: DPDK Release Status Meeting 2026-06-02
-Thread-Index: AQHc8q+kKRpwyjwIAUGb3jFeRXh7YQ==
-Date: Tue, 2 Jun 2026 16:56:08 +0000
-Message-ID: <DS3PR11MB96466545C80EEF8FA8BADCAAFC122@DS3PR11MB9646.namprd11.prod.outlook.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.7; Tue, 2 Jun 2026
+ 17:11:47 +0000
+Received: from MW4PR11MB5892.namprd11.prod.outlook.com
+ ([fe80::d917:88c1:d478:1857]) by MW4PR11MB5892.namprd11.prod.outlook.com
+ ([fe80::d917:88c1:d478:1857%7]) with mapi id 15.21.0092.006; Tue, 2 Jun 2026
+ 17:11:47 +0000
+From: "Ajmera, Megha" <megha.ajmera@intel.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Stephen Hemminger
+ <stephen@networkplumber.org>
+CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Dumitrescu, Cristian"
+ <cristian.dumitrescu@intel.com>, "Shetty, Praveen"
+ <praveen.shetty@intel.com>, "Singh, Aman Deep" <aman.deep.singh@intel.com>,
+ "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH v2] app/test-pmd: add generic PROG action parser support
+Thread-Topic: [PATCH v2] app/test-pmd: add generic PROG action parser support
+Thread-Index: AQHc7UUE7t08lSBRb06Wxz6MeEO5F7YhmRSQgAAqm4CAB2Co4IABxecAgACgIQA=
+Date: Tue, 2 Jun 2026 17:11:47 +0000
+Message-ID: <MW4PR11MB589283F734826ED3A83EBC9B97122@MW4PR11MB5892.namprd11.prod.outlook.com>
+References: <20260521055612.508916-1-megha.ajmera@intel.com>
+ <20260521101354.726240-1-megha.ajmera@intel.com>
+ <20260526122218.1c29d917@phoenix.local>
+ <MW4PR11MB5892D90B2AF860214FB57F4D97082@MW4PR11MB5892.namprd11.prod.outlook.com>
+ <03ab65f8b69a4018aad7afcc88f337e1@huawei.com>
+ <MW4PR11MB589273F3A331E94D0876900D97152@MW4PR11MB5892.namprd11.prod.outlook.com>
+ <c16b1b4c36184e14bb5dc335a405e557@huawei.com>
+In-Reply-To: <c16b1b4c36184e14bb5dc335a405e557@huawei.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS3PR11MB9646:EE_|MW5PR11MB5785:EE_
-x-ms-office365-filtering-correlation-id: 375b858e-f4b9-45ab-e87c-08dec0c7d795
+x-ms-traffictypediagnostic: MW4PR11MB5892:EE_|DS0PR11MB6520:EE_
+x-ms-office365-filtering-correlation-id: ac60b938-fcae-4fba-1bad-08dec0ca0777
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|38070700021|8096899003|18002099003|56012099006|11063799006;
-x-microsoft-antispam-message-info: gYkoNSVe/JCMjH9xOTfvfDYbBGrdO3hJOIqLrWNvUrs9/eaygIR3Pj+zrXthC28SdD6JC05tu3nVTncIsln5cDLWUA/yr3P2kUx8h+ZNg+7xjmU9Spk/U8HC5htwy2f5bGEu6CKUslWYicDB1D7bE/eCAVR3H+an5+OEn1GR7WhKHFi1zW0QiDD13daEM3UcFbuz9SZwUcF6UWWQkDck3ZWn8nVaGcpJttO8Nm2pEryOZCXlayFwD4cg2gHqgPuBDmLrg0D6GYwWRTOI+ZktLsslPFG8vR+juiZJHdAeC4bW2lEYcNDmvU+nENDvUtgZbz4l19nLdGD2sBFNvhMG7gDLvO0C0JCAtpLdgs1BL6d3Kj3RGdMNPPV5AmzhwI32CD/6SvRmJpODenZJzpR+FQ8GgWUJbi1GOkVjInj37bhSEnntmxGDNrZFVFcT3GHBwFSl9GhUd9fkomYuryIbo5i57bQ+P0QvrZsaSA053BrhsTt8jL9bLyzbbV8zq5uMOxGWk2I7sbx946P6FG6vtwKidwlX4wbifdgAHocN8XFT91YvOcFDHAjJF+kPmJks84gZfCTFbIgNGch20Xnh02zJC+9iODBoULAMROTMvRfj2w+v6QHx754n7zYgiBfFAPAwv7SVqoTL8JqycHv7CTPfsNzTqRVZD4BKzRHo7ekE73rcnm6I7xAKV92piximTVeuHS6VopY47IkvCUF9KQ==
+ ARA:13230040|376014|1800799024|366016|38070700021|56012099006|11063799006|4143699003|22082099003|18002099003;
+x-microsoft-antispam-message-info: cMecehgqlZ7uzKVt6BJVso/JawG35EdVAjc/6VLOqEMqN/s2R8PzKsitynQ+tNHRaY/lX9G1WYZze/q3YbuDi3bXuCrLV7pnrFhN713r4q9NQMg5M2wgCR0fmM8IZmVVowN1RVPCKKRu1arvCnvr9xKpPTy+iyJtN3AoU4bFzKVe22J8L47GaacnEg84PlZ2FjaqzpY9YW0PUAKhmjcmT7nuAySxLHz9n7Qe2ErpiWwQsMjHQNqJ5bvkaeWaOBK+9FM50VdpVPXvMrq+gbbQ9Ad/IdYKj1XfT3VCXgc2IvKSLz07ixCdFMbdH6C2PaxyFBdVSgcHfLjjWnJJgZh2h1fUhOJF87aMezV8PEWyp0zz+P/jmY0kD8ujwZd3Tvj/UwbkTZwgRg1Q5r6iPPcfNx+zWDSVgLBUnjdEoc5KO+T3MgdeeWsbrCFuVJMtY5hyCEyV11KlviDKrBM6Zlzs9/dyJEvRxRQ6GzQDc3xY51pAwlBdPjunYI4WiTxT2hnaDW/gp+Puo6ooYLDRghjKld88mqyBjNmLfmFd2gcA5c0LnUh1HsRKsZOaiX7UVbJNHlKCGr/AWCHfr52noO6UCHhm34hPWwfzD7Hj2zEqb0LosKOGBMh66EjWCBdjzLCIdOLqXotJxZsAj4VbKfmGAi/LBlf5fL8487z/kw9hRxCYjJxhkoBRaQ0Apr+VxkOJD/pzFWZnv65dVMmkaUgdwiPUURry+kuAZfUJq6A7YvEh6k3v3KFbFGUUxnK9DsUW
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS3PR11MB9646.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(38070700021)(8096899003)(18002099003)(56012099006)(11063799006);
+ IPV:NLI; SFV:NSPM; H:MW4PR11MB5892.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700021)(56012099006)(11063799006)(4143699003)(22082099003)(18002099003);
  DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?q+H2WE5JgOhzdyEM1kzK1wYF0vfjgRckTYgt9cnm+lV+a+VbqHScfEzPkE?=
- =?iso-8859-1?Q?9AOADHh4m9eZINy4IEXbeq8JzvZNtcJR6gUCSfH5mh+lMZ5RxM5CNiqlS3?=
- =?iso-8859-1?Q?7XfvkjrNkDeUDIFHg8tV8jL4mgGUqRXzEilTwGKktzry5xrwphph5g9o67?=
- =?iso-8859-1?Q?tTGrFt/Q8kaaTTgC6d0b0P/ZIjyxdwuVxTEiIKDq+2/a+wLDIBDjdLOsop?=
- =?iso-8859-1?Q?bmbgoBf07gC+yEq4kqlj5uPUGBD9mHyCcgkS/6gp2ATlYzNg629Q3i60pN?=
- =?iso-8859-1?Q?aKrmWqxEKj0niyxsXrprsrPNawEfKRpJON+fIK14nGoZKWBDmG4QWm4FQT?=
- =?iso-8859-1?Q?reyCgeNkpFd/axP7bOMne1wpB/zSzz/kGstAzd5adYOorE/OWD0aGzHchZ?=
- =?iso-8859-1?Q?6DaVkEhZUs+AbdnYzhoSb9am8qHHl19Yf9LiLr/9UUhf+F7PY1sVDGp1nD?=
- =?iso-8859-1?Q?WjyUAj9R9mZH0MfpKz0QpVto/pX8nRDSqUKXL/1woXOlauTGKgiwYSG+ho?=
- =?iso-8859-1?Q?q2fjF2wSifyE09zznfk/i/DWEUVmfj1j8qI7Rr5ais+HlP1eFQwX+UjCWc?=
- =?iso-8859-1?Q?9sTgFNDHL+Zbwc/1YRWjLexNYIV0JMWvHQ47Ca0nHtHCoKRE62oRJRlONg?=
- =?iso-8859-1?Q?aLPiOCvoBubVLckRE37YOrlft13YQBDf1yo9h2E0IiVVb/na/kCmOeqnre?=
- =?iso-8859-1?Q?pMm3nTpTEA5XUyoPBOFd4yqsPRS3Tzp1DQJpwlwbFARjvlgzFYg0j5tMSL?=
- =?iso-8859-1?Q?PYd5w9yZ8CWoeK4dzrYBQ0zoC6Wasm63OdGdGDS+Ci2sjCKvwnz6sawb2w?=
- =?iso-8859-1?Q?W8wl15JKfwJZM2I2wNNTWNrtdzAZadk8FkWllaydsqwpZGAhN5335MiKKr?=
- =?iso-8859-1?Q?coOoDCEurXpStjvZklL8Na1AqXDc2Ti6uNQjw9+HmZo9z79I2gxeam6Wd0?=
- =?iso-8859-1?Q?VwVyW/h3et6+EPJxQsiedTDLbUxgZwh4IYy1KXTNNS60RHAF2xL6/LI0oJ?=
- =?iso-8859-1?Q?/qb+E8x7hpIp7FrDmP1J/otSwsAYqUW2J4vpDDwwEhonApZfFIAErtGqtW?=
- =?iso-8859-1?Q?kYJZSWRyKKF0CiA5W+D2XLcKX+1Y1H1UOgi8DnIZpsXUtL+qgJZ5X8RKfC?=
- =?iso-8859-1?Q?a0Qnr/jwqNXwUkVzoS+KqaXxJYfA2QbzG2hAJHMxhFkgvoroaMgy3c+Zwl?=
- =?iso-8859-1?Q?hNkDWqXExlMa4g4EPECIZooOSbmDVz6134NbfI1yaG1AOGKjpXkPntR1VQ?=
- =?iso-8859-1?Q?8ujWOZkY3KlzbD4Ng/x2h6OYN16sqOIn90HXVAJ617aOLW+jePIl3e/qmG?=
- =?iso-8859-1?Q?w9L0sgt9aNSUwzKuav/dkDmdZs0VUhU3WhczxsnXz0fo6u/hB3QOFpZbwW?=
- =?iso-8859-1?Q?gwNVtWmdGwlOiQZW7fQcKyjiIfD1pmisMHntIPaFhDu2C+ndzrca10dU8d?=
- =?iso-8859-1?Q?P+k/wgfGg0RHSlDvA7GyGXGNwznS9aKA/FCXFcKCphqWnMs93yS03nB+x0?=
- =?iso-8859-1?Q?EtlUfcm5OKhb3s37J+pfExadUWxkaPZehO2X6x3++b/YkYU0UV/DXcISqe?=
- =?iso-8859-1?Q?V2OxXGl3PvbHPNUsWwHdRbsq+RQxzCZa+LltNvB9FIMJyxdcwhZA1PBxdi?=
- =?iso-8859-1?Q?9VR9Ck0iifNf/8nJwr2PgaLjXSwvs/SGilQDYoGFSo3VmRJ/+pq64nSouS?=
- =?iso-8859-1?Q?bO0JEqwmnT/Kvtu5U0dNXosPOOgHyJByy7aPoxEamX+KYiDLUDtZo99Vxs?=
- =?iso-8859-1?Q?oM0t4fNCow4s/FbqdNOLjXr+uNOEOrBl/g9wfy15qnke3kssSzrlSqopIA?=
- =?iso-8859-1?Q?YDeqTmJeAQ=3D=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_DS3PR11MB96466545C80EEF8FA8BADCAAFC122DS3PR11MB9646namp_"
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?QhBo2WApmySkV5OAnjgNx5dM7Bac7NtsiUcVBesDiX1X5C/BK1nxx80noTqR?=
+ =?us-ascii?Q?zUeo0vn0F+OHHZe7G5wRmXZVW6NSCPcmWBDOKaogdIypAMpLKPiiwRzv5jDE?=
+ =?us-ascii?Q?evp/BDbaEQUhtzEgf/5btlGNPGqgOsMUPS80N6BZe0BlQc674B3C7Jdpe0+G?=
+ =?us-ascii?Q?AKPHRqHNfsYUhB5dp88vSSzvfxjyFZdwk6U/2UUP0g+HlNPJYCpeQ6Qaqr1K?=
+ =?us-ascii?Q?TFVoY/ztr0t6P2U7OvOKB6sILLpjtVjY1hrwmB0bhLLCXNtKOsR2A+Iq2msC?=
+ =?us-ascii?Q?upEM7b1GW8qKZobxGJDMd+GxOkKTJGrtazHMgnyisZxWhNVnO5U7UtPjyzP1?=
+ =?us-ascii?Q?PN8P73M9xBYq2AAOoTGSXmR2I+9Bwip5qxuvq6fkjsBzzmzJjn5jePvR704M?=
+ =?us-ascii?Q?x3AC/mP+z7H2vCarEtG7aJW5R7FvDt8L4lMDA4Vh1XCEzyQN5wz38rBH9m1S?=
+ =?us-ascii?Q?v8L5OLAQTgiMaG8wQiKGrSQuNnU+P1mpMOClYP5VeCj8lSoHAFKM6DQOL8f/?=
+ =?us-ascii?Q?SAawOv0DjaWIMUelKWTR30pbDRCA8KwhJrC/WDilnThuQk63vAh0VTlkgf/W?=
+ =?us-ascii?Q?HrDe4aVYvfhJJ/YpiyvPlcpFieGgqAI1YMjEqNXCEjVLn/qzPKRvLM9HSgWs?=
+ =?us-ascii?Q?mbNb6WawJZ84a38nHkdbW8fuVLqrQHfe3nd7wlVWhic01ZBqkFa+Y38dEbDZ?=
+ =?us-ascii?Q?PRLEx7vppxS1tdwaPWNhsbbV2G51qDibgPv3BtzU6nB6ubXbjbbOqxq/oTOZ?=
+ =?us-ascii?Q?M9DxUp5kkGNxL29rIsuFWpaaTSDNeuChaq7m8VI0qNoBNP3DbXKHRRgb4vY2?=
+ =?us-ascii?Q?6hnOKjJMSD942DAW/Coqx0b3gPWWa9HGYXZQatY3P6kULsKKlzTL5yjwh1kc?=
+ =?us-ascii?Q?3r+oC8H1k9ukcR92WH/QCoeRo8NfkcSJ75/AMwYUnInthhexF7WZ56XwaPSO?=
+ =?us-ascii?Q?xG1NfyFIO6m6SlFyT8/pR3hKW0vZ+YYW7m6l/oWFfKShaDehYJP9H9BL/gcz?=
+ =?us-ascii?Q?Gapd7MMsWetZgZByHZuDl+ITujau/qNIuKH3LfzYpO1dhChXLGHbEMEZ0aDd?=
+ =?us-ascii?Q?hJuPpZoiDK4Wrgrmcf3/3wxnmM7inEyxMgK+QBWlhmi9khTKUKifmUddYo0+?=
+ =?us-ascii?Q?7hsc3OfZbIS9UxWKon41SsbBRmXv0ZTGMdpMD/+nTi53r7Yfj5DIHTRZq87G?=
+ =?us-ascii?Q?uYwehOTGJln9KMFSPTYbdG/Tw1bnJqWFNskm3LPn+NExgtzfuZvahWeXIR2S?=
+ =?us-ascii?Q?wexsDx0Yx52mWpiPdlSO1EUgsOyJhHNjNas3gHyRvIJyUZUJz6hirHFz069L?=
+ =?us-ascii?Q?fW6X7dzGBqAQxGRh1XUqhYh9A/xAe/t6qBnK7hD8auY6tw9JRkVFSFLK0Fby?=
+ =?us-ascii?Q?/uEMNeAAco6t2VBG+LhV6CFgtayltMxvOiAd/7iOnQUumpe0TcNhJUu3Xhej?=
+ =?us-ascii?Q?9sBjWVohLoamweymQxtSqt8B3L4pioA3e6K4/sbuzkkwTrKuy0FGTErnV4QM?=
+ =?us-ascii?Q?25uSYhOo4eLzs++cNSVZSP/8a4pTxY1ukHA5/owlyJ9U1+GNMWnmKqbgDTiJ?=
+ =?us-ascii?Q?um47PLQPnQnxCl5tIumliLSS5oEB5ZFcBRxth7/JEWC4xRGQpKjo3syYHQ+d?=
+ =?us-ascii?Q?PxF7gk6VDPk8KdpeJPjEVzWuQeLVCvF4B8G0p8jU1EXaUJlbyIirGx3ckjvg?=
+ =?us-ascii?Q?lwobfXeKfMJhQ9yWzIbLOy+c1949SRUxHnpzJfFAem2QP4dwHe4HTKz3VCNv?=
+ =?us-ascii?Q?bh6OAKDCsg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: BxoEsXw8mktMj3SBxdKyc4uXsk/wHeY0WNwunXjtq8i3YTzeZN3imw+LYudnovQPvyxx6nh7dMXWTVMokaf88mTr+zKIyB1xHYCo4tP+0ASIVjoKSpkebT+WdBi72rdw0HTP+6HndU4KwL0jwQDJeqLWYi+ROcPOGCqxuRVDLLmhGjgdE4WTy2CPgnRVI/0boRdNKCYx+H3onm83LWxPgrOzynCxM67I3coQm2J2yUJBnw5Mp4wCOs6nZNUT/P/T6ruQmLmpc7J7fnQooA8g8x2xHF+6nOPfF8ufkmZn54CliwflMjAX3E3R0WgTGZ2UN2LUTxKTs9YFl3jJCuoETQ==
+X-Exchange-RoutingPolicyChecked: h0Ec1W5Bn3YYiGxAVLZARm5VVM2+wpcGsDi1d3VUTLgbupEuX/5iCsFyFDuGxhFCUWizzYNatJx4fPwQpSn6ivjAJP8Ls3sSuAJX8IQKBmkzo94FonutUlS6wBdq2cLbwU5g8gcqZ+QXByToMANsilH/BcC1OSuX/x2OfXHm4CwVWOtbBRclycCBMrRtL9noFT/u/FU1j4/TwFehRNY7EDZYpv2D1FbX/VN+96gwWyXpznZEiJ1Pb4nOZbFXfU8SRJz0U4lo9CJK3/xPmGaw9oVSReSMgi7fTboBCth/XgmJoy5KB/J1MBW3RrXnc/gXwoJyKFXfzPqfFeBMuUSLww==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS3PR11MB9646.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 375b858e-f4b9-45ab-e87c-08dec0c7d795
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jun 2026 16:56:08.0868 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB5892.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac60b938-fcae-4fba-1bad-08dec0ca0777
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jun 2026 17:11:47.3742 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ev03mXpPkqc8IqUQs9kw8+Y8T1WFBmV61yS3IbX8h20bSIAhhFx7bwyRaZXtlUFIQzaHiegss6+Q73DW851/Vg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR11MB5785
+X-MS-Exchange-CrossTenant-userprincipalname: 03g1xMEom5kJYmFK8zmzdDPyWPh0iZbufqasqS1e01jo6am79qjxOIlLU0YkLDyuvKWkuOpOT6HyKlUGSRVMxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6520
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -154,614 +163,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_DS3PR11MB96466545C80EEF8FA8BADCAAFC122DS3PR11MB9646namp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-Release status meeting minutes 2026-06-02
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Agenda:
-- Release Dates
-- Subtrees
-- Roadmaps
-- LTS
-- Defects
-- Opens
-
-Participants:
-- Broadcom
-- Intel
-- Marvell
-- Nvidia
-- Red Hat
-- Stephen Hemminger
-
-Release Dates
--------------
-
-The following are the proposed working dates for 27.03:
-
-| Date            | Milestone        | Description                     |
-|-----------------|------------------|---------------------------------|
-| 30 April 2026   | RFC/v1 patches   | Proposal deadline               |
-| 04 June 2026    | 26.07-rc1        | API freeze                      |
-| 25 June 2026    | 26.07-rc2        | PMD features freeze             |
-| 02 July 2026    | 26.07-rc3        | Builtin apps features freeze    |
-| 9 July 2026     | 26.07-rc4        | Documentation ready             |
-| 16 July 2026    | 26.07.0          | Release                         |
-
-
-See https://core.dpdk.org/roadmap/
-
-
-Subtrees
---------
-
-- next-net
-  - Has been pulled to main.
-  - 2 patches pending for merge.
-  - 38 patches in review/waiting.
-
-- next-net-intel
-  - Has been pulled to main.
-  - 47 patches in backlog.
-
-- next-net-mlx
-  - No update.
-
-- next-broadcom
-  - Internal testing ongoing.
-  - Patches will be pushed this week.
-  - ~20 patches in backlog.
-
-- next-net-mvl
-  - No update.
-
-- next-eventdev
-  - No update.
-
-- next-baseband
-  - No update.
-
-- next-virtio
-  - Series for ASID under review, targeting RC1
-
-- next-crypto
-  - Applying patches for RC1.
-
-- next-dts
-  - No update.
-
-- main
-  - New version of BUS drivers refactoring series. There are some conflicts
-    so will need another version.
-  - Looking at fixes in EAL. Large patchset on atomic deprecations.
-  - Series on MAC addresses targeting RC2.
-  - There are currently some strange failures in the CI that are under
-    investigation.
-  - Risc-V patches.
-  - RC1 deadline 4 June 2026
-
-
-Other
------
-  - None.
-
-LTS
----
-
-See also: https://core.dpdk.org/roadmap/#stable
-
-LTS versions ongoing/released:
-
-- 25.11.1 - Released + regression fix on 25.11.2.
-- 24.11.5 - Released + regression fix on 24.11.6.
-- 23.11.7 - Released.
-
-Older releases:
-- 20.11.10 - Will only be updated with CVE and critical fixes.
-- 19.11.14 - Will only be updated with CVE and critical fixes.
-
-- Distros
-  - Debian 13 contains DPDK v24.11
-  - Ubuntu 25.04 contains DPDK v24.11
-  - Ubuntu 24.04 LTS contains DPDK v23.11
-  - RHEL 9 contains DPDK 24.11
-
-Defects
--------
-
-- Bugzilla links, 'Bugs',  added for hosted projects
-  - https://www.dpdk.org/hosted-projects/
-
-
-
-DPDK Release Status Meetings
-----------------------------
-
-The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
-the
-status of the main tree and sub-trees, and for project managers to track
-progress or milestone dates.
-
-The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
-.jit.si/DPDK
-
-You don't need an invite to join the meeting but if you want a calendar rem=
-inder just
-send an email to "John McNamara <john.mcnamara@intel.com>" for the invite.
-
-
-
---_000_DS3PR11MB96466545C80EEF8FA8BADCAAFC122DS3PR11MB9646namp_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div style=3D"font-family: &quot;Courier New&quot;, monospace; font-size: 1=
-1pt; color: rgb(0, 0, 0);">
-Release status meeting minutes 2026-06-02</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Agenda:</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Release Dates</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Subtrees</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Roadmaps</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- LTS</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Defects</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Opens</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Participants:</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Broadcom</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Intel</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Marvell</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Nvidia</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Red Hat</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Stephen Hemminger</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Release Dates</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
--------------</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-The following are the proposed working dates for 27.03:</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| Date &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Milestone &nbsp; &nbsp; &=
-nbsp; &nbsp;| Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =
-&nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-|-----------------|------------------|---------------------------------|</d=
-iv>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 30 April 2026 &nbsp; | RFC/v1 patches &nbsp; | Proposal deadline &nbsp; &=
-nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 04 June 2026 &nbsp; &nbsp;| 26.07-rc1 &nbsp; &nbsp; &nbsp; &nbsp;| API fr=
-eeze &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =
-&nbsp;|</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 25 June 2026 &nbsp; &nbsp;| 26.07-rc2 &nbsp; &nbsp; &nbsp; &nbsp;| PMD fe=
-atures freeze &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 02 July 2026 &nbsp; &nbsp;| 26.07-rc3 &nbsp; &nbsp; &nbsp; &nbsp;| Builti=
-n apps features freeze &nbsp; &nbsp;|</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 9 July 2026 &nbsp; &nbsp; | 26.07-rc4 &nbsp; &nbsp; &nbsp; &nbsp;| Docume=
-ntation ready &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 16 July 2026 &nbsp; &nbsp;| 26.07.0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| R=
-elease &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp=
-; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-See https://core.dpdk.org/roadmap/</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Subtrees</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
---------</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Has been pulled to main.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 2 patches pending for merge.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 38 patches in review/waiting.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net-intel</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Has been pulled to main.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 47 patches in backlog.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net-mlx</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-broadcom</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Internal testing ongoing.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Patches will be pushed this week.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - ~20 patches in backlog.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net-mvl</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-eventdev</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-baseband</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-virtio</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Series for ASID under review, targeting RC1</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-crypto</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Applying patches for RC1.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-dts</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- main</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - New version of BUS drivers refactoring series. There are some conf=
-licts</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; &nbsp; so will need another version.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Looking at fixes in EAL. Large patchset on atomic deprecations.</d=
-iv>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Series on MAC addresses targeting RC2.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - There are currently some strange failures in the CI that are under=
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; &nbsp; investigation.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Risc-V patches.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - RC1 deadline 4 June 2026</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Other</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
------</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - None.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-LTS</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
----</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-See also: https://core.dpdk.org/roadmap/#stable</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-LTS versions ongoing/released:</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 25.11.1 - Released + regression fix on 25.11.2.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 24.11.5 - Released + regression fix on 24.11.6.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 23.11.7 - Released.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Older releases:</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 20.11.10 - Will only be updated with CVE and critical fixes.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 19.11.14 - Will only be updated with CVE and critical fixes.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Distros</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Debian 13 contains DPDK v24.11</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Ubuntu 25.04 contains DPDK v24.11</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Ubuntu 24.04 LTS contains DPDK v23.11</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - RHEL 9 contains DPDK 24.11</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Defects</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
--------</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Bugzilla links, 'Bugs', &nbsp;added for hosted projects</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - https://www.dpdk.org/hosted-projects/</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-DPDK Release Status Meetings</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-----------------------------</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
-the</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-status of the main tree and sub-trees, and for project managers to track</d=
-iv>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-progress or milestone dates.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
-.jit.si/DPDK</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-You don't need an invite to join the meeting but if you want a calendar rem=
-inder just</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-send an email to &quot;John McNamara &lt;john.mcnamara@intel.com&gt;&quot; =
-for the invite.</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
-, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-</body>
-</html>
-
---_000_DS3PR11MB96466545C80EEF8FA8BADCAAFC122DS3PR11MB9646namp_--
+>=20
+> Ok, so it is predefined by the FW.
+> Then shouldn't CPFL PG contain a list of supported PROGs and their argume=
+nts?
+> Again, some tests/examples for it with testpmd/DTS.
+> Or that's all will be the next step (patch-series)?
+>=20
+For now, this can be independent patch since it only enable parsing in test=
+-pmd.
+With this change one can use and test PROG actions for PMDs.=20
