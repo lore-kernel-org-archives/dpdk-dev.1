@@ -2,52 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4D9CD6E57
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 15:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E678DCD6E60
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 15:52:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51D6E4065E;
-	Tue,  2 Jun 2026 17:45:22 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 08F7B402A9
- for <dev@dpdk.org>; Tue,  2 Jun 2026 17:45:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780415119; x=1811951119;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=YG+jYUrXHArb14j8sdPNS6Udobv3kT57N4bx1PQJQfA=;
- b=iUXZdpR7AVK50+32L2na1TiKQvjkD2EMHay9WrQgD1rqibRzBoJ3X5b5
- OAdJZNqXZv+dIF8QS+vsmrNQlJ/jIQFu1aWzqAckj/xrjXJcgwZklhZXQ
- gJ/LiKvvFSDjr5xwc7PbLfAPqFiYAh3avpEbtxJ4GpmU62pKSQUZMAW46
- Efq6WZZFtgMh/LmxIrnmAYu0jCO66pOEQ/DF452pL23760SOk+WHqrfJN
- t7J1FK7dfwfmtyceadz1aPMR7YkH0DRdkv7/BVrLEapZNTRqPZqSn2Yl4
- ApBIsHrUyqE2vOOZv00tGcsL5pVhOGIfLM7olJfbTlT1ig/KwEit//WMh Q==;
-X-CSE-ConnectionGUID: a3bz7+4AS2aZpINotGgs9w==
-X-CSE-MsgGUID: D7S9i+4WQdi7uIyCujWrxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="81385613"
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="81385613"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Jun 2026 08:45:19 -0700
-X-CSE-ConnectionGUID: fBvwbbVkRomHq4aOen0HUQ==
-X-CSE-MsgGUID: wzFfewEpSVqYEAT6rxTFhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="237593649"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa009.fm.intel.com with ESMTP; 02 Jun 2026 08:45:17 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: mb@smartsharesystems.com, ciara.loftus@intel.com,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 2/2] net/intel: optimize for fast-free hint
-Date: Tue,  2 Jun 2026 16:45:12 +0100
-Message-ID: <20260602154513.1079865-3-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260602154513.1079865-1-bruce.richardson@intel.com>
-References: <20260123112032.2174361-1-bruce.richardson@intel.com>
- <20260602154513.1079865-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0883A40651;
+	Tue,  2 Jun 2026 17:52:47 +0200 (CEST)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 06A80402AB
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 17:52:44 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-01 (Coremail) with SMTP id qwCowAB3HtdK_B5q0IJyAA--.6815S2;
+ Tue, 02 Jun 2026 23:52:42 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v6 00/20] net/sxe2: added Linkdata sxe2 ethernet driver
+Date: Tue,  2 Jun 2026 23:52:19 +0800
+Message-ID: <20260602155240.1002602-1-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260602055414.630859-21-liujie5@linkdatatechnology.com>
+References: <20260602055414.630859-21-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: qwCowAB3HtdK_B5q0IJyAA--.6815S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww1DWr17ZF1kXr4xuw4fuFg_yoWxKr1xpF
+ 48ZryrZF13JFW3Gw4fXa1fZFyYg3WxJryjkrWa9as3XFykAFyUCrs0gFy5CwnFyr13JF1S
+ vrZIyr1UGan5Aw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+ 6r4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+ 0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+ 6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+ 0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC
+ 0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
+ 1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij
+ 64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+ 0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
+ 0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUeEfOUUUUU
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,212 +56,151 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the fast-free hint is provided to the driver we know that the mbufs
-have refcnt of 1 and are from the same mempool. Therefore, we can
-optimize a bit for this case by:
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-* resetting the necessary mbuf fields, ie. nb_seg and next pointer when
-  we are accessing the mbuf on writing the descriptor.
-* on cleanup of buffers after transmit, we can just write those buffers
-  straight to the mempool without accessing them.
-* when doing buffer cleanup, we can follow the model of the vector
-  driver where we cleanup in fixed bursts which don't wrap, and where we
-  track the mbufs between tx_tail and last_cleaned as invalid, so we
-  don't need to set them to NULL. [We only set to NULL valid mbuf slots
-  where we have a context descriptor or segment not backed by an mbuf]
+This patch set implements core functionality for the SXE2 PMD,
+including basic driver framework, data path setup, and advanced
+offload features (VLAN, RSS,TM, PTP etc.).
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/common/tx.h        | 21 ++++--
- drivers/net/intel/common/tx_scalar.h | 95 +++++++++++++++++++++-------
- 2 files changed, 88 insertions(+), 28 deletions(-)
+V6:
+ - Addressed AI comments
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index 23a8c39cf2..5fe71aed12 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -329,13 +329,22 @@ ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
- 		return;
- 
- 	if (!txq->use_vec_entry) {
--		/* Regular scalar path uses sw_ring with ci_tx_entry */
--		for (uint16_t i = 0; i < txq->nb_tx_desc; i++) {
--			if (txq->sw_ring[i].mbuf != NULL) {
--				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
--				txq->sw_ring[i].mbuf = NULL;
--			}
-+		/* Free mbufs from (last_desc_cleaned + 1) to (tx_tail - 1). */
-+		const uint16_t start = (txq->last_desc_cleaned + 1) % txq->nb_tx_desc;
-+		const uint16_t nb_desc = txq->nb_tx_desc;
-+		const uint16_t end = txq->tx_tail;
-+
-+		uint16_t i = start;
-+		if (end < i) {
-+			for (; i < nb_desc; i++)
-+				if (txq->sw_ring[i].mbuf != NULL)
-+					rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
-+			i = 0;
- 		}
-+		for (; i < end; i++)
-+			if (txq->sw_ring[i].mbuf != NULL)
-+				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
-+		memset(txq->sw_ring, 0, sizeof(txq->sw_ring[0]) * nb_desc);
- 		return;
- 	}
- 
-diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
-index 7809bd53e8..11ab6c08fc 100644
---- a/drivers/net/intel/common/tx_scalar.h
-+++ b/drivers/net/intel/common/tx_scalar.h
-@@ -197,16 +197,66 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
- 	const uint16_t rs_idx = (last_desc_cleaned == nb_tx_desc - 1) ?
- 			0 :
- 			(last_desc_cleaned + 1) >> txq->log2_rs_thresh;
--	uint16_t desc_to_clean_to = (rs_idx << txq->log2_rs_thresh) + (txq->tx_rs_thresh - 1);
-+	const uint16_t dd_idx = txq->rs_last_id[rs_idx];
-+	const uint16_t first_to_clean = rs_idx << txq->log2_rs_thresh;
- 
--	/* Check if descriptor is done  */
--	if ((txd[txq->rs_last_id[rs_idx]].cmd_type_offset_bsz &
--			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
--				rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
-+	/* Check if descriptor is done - all drivers use 0xF as done value in bits 3:0 */
-+	if ((txd[dd_idx].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
-+			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
-+		/* Descriptor not yet processed by hardware */
- 		return -1;
- 
-+	/* DD bit is set, descriptors are done. Now free the mbufs. */
-+	/* Note: nb_tx_desc is guaranteed to be a multiple of tx_rs_thresh,
-+	 * validated during queue setup. This means cleanup never wraps around
-+	 * the ring within a single burst (e.g., ring=256, rs_thresh=32 gives
-+	 * bursts of 0-31, 32-63, ..., 224-255).
-+	 */
-+	const uint16_t nb_to_clean = txq->tx_rs_thresh;
-+	struct ci_tx_entry *sw_ring = txq->sw_ring;
-+
-+	/* fast_free_mp is NULL only when the fast free is disabled*/
-+	if (txq->fast_free_mp != NULL) {
-+		/* FAST_FREE path: mbufs are already reset, just return to pool */
-+		struct rte_mbuf *free[CI_TX_MAX_FREE_BUF_SZ];
-+		uint16_t nb_free = 0;
-+
-+		/* Get cached mempool pointer, or cache it on first use.
-+		 * Read from mbuf at dd_idx, as it is guaranteed to be non-NULL.
-+		 */
-+		struct rte_mempool *mp =
-+			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
-+			txq->fast_free_mp :
-+			(txq->fast_free_mp = sw_ring[dd_idx].mbuf->pool);
-+
-+		/* Pack non-NULL mbufs in-place at start of sw_ring range.
-+		 * No modulo needed in loop since we're guaranteed not to wrap.
-+		 */
-+		for (uint16_t i = 0; i < nb_to_clean; i++) {
-+			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
-+			if (m == NULL)
-+				continue;
-+			free[nb_free++] = m;
-+			if (unlikely(nb_free == CI_TX_MAX_FREE_BUF_SZ)) {
-+				rte_mbuf_raw_free_bulk(mp, free, nb_free);
-+				nb_free = 0;
-+			}
-+		}
-+
-+		/* Bulk return to mempool using packed sw_ring entries directly */
-+		if (nb_free > 0)
-+			rte_mbuf_raw_free_bulk(mp, free, nb_free);
-+	} else {
-+		/* Non-FAST_FREE path: use free_seg for refcount checks and freeing */
-+		for (uint16_t i = 0; i < nb_to_clean; i++) {
-+			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
-+			if (m != NULL)
-+				rte_pktmbuf_free_seg(m);
-+		}
-+	}
-+
- 	/* Update the txq to reflect the last descriptor that was cleaned */
--	txq->last_desc_cleaned = desc_to_clean_to;
-+	txq->last_desc_cleaned = first_to_clean + txq->tx_rs_thresh - 1;
- 	txq->nb_tx_free += txq->tx_rs_thresh;
- 
- 	return 0;
-@@ -450,8 +500,6 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- 			txd = &ci_tx_ring[tx_id];
- 			tx_id = txe->next_id;
- 
--			if (txe->mbuf)
--				rte_pktmbuf_free_seg(txe->mbuf);
- 			txe->mbuf = tx_pkt;
- 			/* Setup TX Descriptor */
- 			td_cmd |= CI_TX_DESC_CMD_EOP;
-@@ -471,11 +519,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- 			uint64_t *ctx_txd = RTE_CAST_PTR(uint64_t *, &ci_tx_ring[tx_id]);
- 
- 			txn = &sw_ring[txe->next_id];
--			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
--			if (txe->mbuf) {
--				rte_pktmbuf_free_seg(txe->mbuf);
--				txe->mbuf = NULL;
--			}
-+			txe->mbuf = NULL;
- 
- 			write_txd(ctx_txd, cd_qw0, cd_qw1);
- 
-@@ -488,11 +532,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- 			uint64_t *ipsec_txd = RTE_CAST_PTR(uint64_t *, &ci_tx_ring[tx_id]);
- 
- 			txn = &sw_ring[txe->next_id];
--			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
--			if (txe->mbuf) {
--				rte_pktmbuf_free_seg(txe->mbuf);
--				txe->mbuf = NULL;
--			}
-+			txe->mbuf = NULL;
- 
- 			ipsec_txd[0] = ipsec_qw0;
- 			ipsec_txd[1] = ipsec_qw1;
-@@ -507,8 +547,19 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- 			txd = &ci_tx_ring[tx_id];
- 			txn = &sw_ring[txe->next_id];
- 
--			if (txe->mbuf)
--				rte_pktmbuf_free_seg(txe->mbuf);
-+			/* For FAST_FREE: reset mbuf fields while we have it in cache.
-+			 * [Fast free is indicated by txq->fast_free_mp being non-NULL.]
-+			 * FAST_FREE guarantees refcnt=1 and direct mbufs, so we only
-+			 * need to reset nb_segs and next pointer as per rte_pktmbuf_prefree_seg.
-+			 * Save next pointer before resetting since we need it for loop iteration.
-+			 */
-+			struct rte_mbuf *next_seg = m_seg->next;
-+			if (txq->fast_free_mp != NULL) {
-+				if (m_seg->nb_segs != 1)
-+					m_seg->nb_segs = 1;
-+				if (next_seg != NULL)
-+					m_seg->next = NULL;
-+			}
- 
- 			/* Setup TX Descriptor */
- 			/* Calculate segment length, using IPsec callback if provided */
-@@ -539,7 +590,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- 			}
- 
- 			/* fill the last descriptor with End of Packet (EOP) bit */
--			if (m_seg->next == NULL)
-+			if (next_seg == NULL)
- 				td_cmd |= CI_TX_DESC_CMD_EOP;
- 
- 			const uint64_t cmd_type_offset_bsz = CI_TX_DESC_DTYPE_DATA |
-@@ -552,7 +603,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- 
- 			tx_id = txe->next_id;
- 			txe = txn;
--			m_seg = m_seg->next;
-+			m_seg = next_seg;
- 		} while (m_seg);
- end_pkt:
- 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
+Jie Liu (20):
+  net/sxe2: support AVX512 vectorized path for Rx and Tx
+  net/sxe2: add AVX2 vector data path for Rx and Tx
+  drivers: add supported packet types get callback
+  net/sxe2: support L2 filtering and MAC config
+  drivers: support RSS feature
+  net/sxe2: support TM hierarchy and shaping
+  net/sxe2: support IPsec inline protocol offload
+  net/sxe2: support statistics and multi-process
+  drivers: interrupt handling
+  net/sxe2: add NEON vec Rx/Tx burst functions
+  drivers: add support for VF representors
+  net/sxe2: add support for custom UDP tunnel ports
+  net/sxe2: support firmware version reading
+  net/sxe2: implement get monitor address
+  common/sxe2: add shared SFP module definitions
+  net/sxe2: support SFP module info and EEPROM access
+  net/sxe2: implement private dump info
+  net/sxe2: add mbuf validation in Tx debug mode
+  drivers: add testpmd commands for private features
+  net/sxe2: update sxe2 feature matrix docs
+
+ doc/guides/nics/features/sxe2.ini          |   69 +
+ drivers/common/sxe2/sxe2_common.c          |  156 ++
+ drivers/common/sxe2/sxe2_common.h          |    4 +
+ drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      |  178 +-
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
+ drivers/common/sxe2/sxe2_msg.h             |  118 ++
+ drivers/common/sxe2/sxe2_ptype.h           | 1793 ++++++++++++++++++
+ drivers/net/sxe2/meson.build               |   56 +-
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 1587 +++++++++++++++-
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
+ drivers/net/sxe2/sxe2_drv_cmd.h            |  521 +++++-
+ drivers/net/sxe2/sxe2_dump.c               |  304 +++
+ drivers/net/sxe2/sxe2_dump.h               |   12 +
+ drivers/net/sxe2/sxe2_ethdev.c             | 1531 +++++++++++++++-
+ drivers/net/sxe2/sxe2_ethdev.h             |  112 +-
+ drivers/net/sxe2/sxe2_ethdev_repr.c        |  610 ++++++
+ drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
+ drivers/net/sxe2/sxe2_filter.c             |  895 +++++++++
+ drivers/net/sxe2/sxe2_filter.h             |  100 +
+ drivers/net/sxe2/sxe2_flow.c               | 1391 ++++++++++++++
+ drivers/net/sxe2/sxe2_flow.h               |   30 +
+ drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
+ drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
+ drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
+ drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
+ drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 ++++++++++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
+ drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
+ drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
+ drivers/net/sxe2/sxe2_irq.c                | 1025 +++++++++++
+ drivers/net/sxe2/sxe2_irq.h                |   25 +
+ drivers/net/sxe2/sxe2_mac.c                |  535 ++++++
+ drivers/net/sxe2/sxe2_mac.h                |   84 +
+ drivers/net/sxe2/sxe2_mp.c                 |  414 +++++
+ drivers/net/sxe2/sxe2_mp.h                 |   67 +
+ drivers/net/sxe2/sxe2_queue.c              |   17 +-
+ drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
+ drivers/net/sxe2/sxe2_rss.h                |   81 +
+ drivers/net/sxe2/sxe2_rx.c                 |   38 +
+ drivers/net/sxe2/sxe2_rx.h                 |    2 +
+ drivers/net/sxe2/sxe2_security.c           |  335 ++++
+ drivers/net/sxe2/sxe2_security.h           |   77 +
+ drivers/net/sxe2/sxe2_stats.c              |  591 ++++++
+ drivers/net/sxe2/sxe2_stats.h              |   39 +
+ drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
+ drivers/net/sxe2/sxe2_switchdev.h          |   33 +
+ drivers/net/sxe2/sxe2_testpmd.c            |  733 ++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.c        |  969 ++++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.h        |  142 ++
+ drivers/net/sxe2/sxe2_tm.c                 | 1169 ++++++++++++
+ drivers/net/sxe2/sxe2_tm.h                 |   78 +
+ drivers/net/sxe2/sxe2_tx.c                 |    7 +
+ drivers/net/sxe2/sxe2_txrx.c               |  176 +-
+ drivers/net/sxe2/sxe2_txrx.h               |    4 +
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
+ drivers/net/sxe2/sxe2_txrx_poll.c          |  243 ++-
+ drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
+ drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
+ drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  776 ++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  897 +++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_common.h    |    1 +
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  721 ++++++++
+ drivers/net/sxe2/sxe2_vsi.c                |  146 ++
+ drivers/net/sxe2/sxe2_vsi.h                |   12 +-
+ drivers/net/sxe2/sxe2vf_regs.h             |   85 +
+ 68 files changed, 26588 insertions(+), 124 deletions(-)
+ create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
+ create mode 100644 drivers/common/sxe2/sxe2_msg.h
+ create mode 100644 drivers/common/sxe2/sxe2_ptype.h
+ create mode 100644 drivers/net/sxe2/sxe2_dump.c
+ create mode 100644 drivers/net/sxe2/sxe2_dump.h
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
+ create mode 100644 drivers/net/sxe2/sxe2_filter.c
+ create mode 100644 drivers/net/sxe2/sxe2_filter.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
+ create mode 100644 drivers/net/sxe2/sxe2_irq.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.h
+ create mode 100644 drivers/net/sxe2/sxe2_mp.c
+ create mode 100644 drivers/net/sxe2/sxe2_mp.h
+ create mode 100644 drivers/net/sxe2/sxe2_rss.c
+ create mode 100644 drivers/net/sxe2/sxe2_rss.h
+ create mode 100644 drivers/net/sxe2/sxe2_security.c
+ create mode 100644 drivers/net/sxe2/sxe2_security.h
+ create mode 100644 drivers/net/sxe2/sxe2_stats.c
+ create mode 100644 drivers/net/sxe2/sxe2_stats.h
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.h
+ create mode 100644 drivers/net/sxe2/sxe2_tm.c
+ create mode 100644 drivers/net/sxe2/sxe2_tm.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
+ create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
+
 -- 
-2.53.0
+2.52.0
 
