@@ -2,52 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49631CD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 05:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B4BCD6E4A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 05:28:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D36B402C4;
-	Tue,  2 Jun 2026 07:21:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D0B1A402D7;
+	Tue,  2 Jun 2026 07:28:33 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id E285440150
- for <dev@dpdk.org>; Tue,  2 Jun 2026 07:21:52 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id F3BEB40150
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 07:28:31 +0200 (CEST)
 Received: from [192.168.50.151] (unknown [119.114.152.168])
- by APP-05 (Coremail) with SMTP id zQCowAAXngFtaB5qMeIeEg--.12580S3;
- Tue, 02 Jun 2026 13:21:50 +0800 (CST)
-Message-ID: <fd846229-2177-4708-9953-a3b0829f7cef@iscas.ac.cn>
-Date: Tue, 2 Jun 2026 13:21:49 +0800
+ by APP-05 (Coremail) with SMTP id zQCowAC3Etb3aR5qk_8eEg--.12396S3;
+ Tue, 02 Jun 2026 13:28:24 +0800 (CST)
+Message-ID: <99a0008b-c1e2-4646-857c-9eb8fadefde9@iscas.ac.cn>
+Date: Tue, 2 Jun 2026 13:28:23 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] node: lookup with RISC-V vector extension
-To: Thomas Monjalon <thomas@monjalon.net>,
- Zijian <zijian.oerv@isrc.iscas.ac.cn>
-Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- =?UTF-8?Q?Stanis=C5=82aw_Kardach?= <stanislaw.kardach@gmail.com>
-References: <20260331031059.2621971-1-sunyuechi@iscas.ac.cn>
- <20260505062142.575105-3-sunyuechi@iscas.ac.cn>
- <FvISu5CfRJyuDjcpuWBNug@monjalon.net>
+Subject: Re: [PATCH v2] eal/riscv: add Z sub-extension detection via hwprobe
+ syscall
+To: Thomas Monjalon <thomas@monjalon.net>, dangshiwei <1138222970gg@gmail.com>
+Cc: dev@dpdk.org, stanislaw.kardach@gmail.com
+References: <20260318144021.3308-1-1138222970gg@gmail.com>
+ <20260323041714.4386-1-1138222970gg@gmail.com>
+ <sNysWPxOScOg-GwsJvuWUQ@monjalon.net>
 Content-Language: en-US
 From: sunyuechi <sunyuechi@iscas.ac.cn>
-In-Reply-To: <FvISu5CfRJyuDjcpuWBNug@monjalon.net>
+In-Reply-To: <sNysWPxOScOg-GwsJvuWUQ@monjalon.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: zQCowAAXngFtaB5qMeIeEg--.12580S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
- VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYY7k0a2IF6F4UM7kC6x804xWl14x267AK
- xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
- A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj
- 6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr
- 1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv
- 0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z2
- 80aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI
- 7VAKI48JMxAqzxv26xkF7I0En4kS14v26r126r1DMxC20s026xCaFVCjc4AY6r1j6r4UMI
- 8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
- xVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI
- 8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280
- aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyT
- uYvjxU7GYLDUUUU
+X-CM-TRANSID: zQCowAC3Etb3aR5qk_8eEg--.12396S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr4xWw15Jr4kKw4rJrW3trb_yoWxAFb_ur
+ WkA3y7Aw40yFZ5uF48tr43A3Z293ykZ34akF48Wr9xuF95A34DWrZ3GryfWF13AFW8AFyI
+ y343XrWftwnIvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUIcSsGvfJTRUUUbrxYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
+ 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+ 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
+ cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4
+ A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+ w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMc
+ vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCF
+ s4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r
+ 1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWU
+ JVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r
+ 1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUv
+ cSsGvfC2KfnxnUUI43ZEXa7IU8Tmh5UUUUU==
 X-Originating-IP: [119.114.152.168]
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAgGAmoeW-sh9wAAsC
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAYGAmoeW-sl8AAAsP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,9 +60,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
- > On 6/2/26 5:01 AM, Thomas Monjalon wrote:
+On 6/2/26 4:24 AM, Thomas Monjalon wrote:
 
-Hi, his full name is Li Zijian
+> Hello,
+>
+> We are waiting for a review of this patch.
+> The maintainer is Sun Yuechi.
 
-Signed-off-by: Li Zijian <zijian.oerv@isrc.iscas.ac.cn>
+This patch conflicts with 
+https://inbox.dpdk.org/dev/20240618174133.33457-1-daniel.gregory@bytedance.com/
+
+dangshiwei replied to the conflicting patch, but neither side has 
+expressed any further opinion for over two months. I'm not sure whether 
+the author is still paying attention to this patch.
+
+A few days ago I pinged a small patch from the author, hoping to see 
+whether the author will respond further in the near future:
+https://inbox.dpdk.org/dev/88299ee4-723d-4bbf-86ce-3f0023fbf82e@iscas.ac.cn/
 
