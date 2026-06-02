@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8537BCD6E60
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 05:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA55CD6E4A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 05:56:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E97FC40A87;
-	Tue,  2 Jun 2026 07:54:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 69DCB40DD7;
+	Tue,  2 Jun 2026 07:54:43 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 1554C4065A
- for <dev@dpdk.org>; Tue,  2 Jun 2026 07:54:25 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0D47840651
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 07:54:27 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowABX7RALcB5qymQfEg--.680S20;
- Tue, 02 Jun 2026 13:54:24 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowABX7RALcB5qymQfEg--.680S15;
+ Tue, 02 Jun 2026 13:54:23 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v5 18/20] net/sxe2: add mbuf validation in Tx debug mode
-Date: Tue,  2 Jun 2026 13:54:11 +0800
-Message-ID: <20260602055414.630859-19-liujie5@linkdatatechnology.com>
+Subject: [PATCH v5 13/20] net/sxe2: support firmware version reading
+Date: Tue,  2 Jun 2026 13:54:06 +0800
+Message-ID: <20260602055414.630859-14-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260602055414.630859-1-liujie5@linkdatatechnology.com>
 References: <20260602031707.578932-21-liujie5@linkdatatechnology.com>
  <20260602055414.630859-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowABX7RALcB5qymQfEg--.680S20
-X-Coremail-Antispam: 1UD129KBjvAXoWfAry8Kw1rtr4DAr1DXFWkJFb_yoW8uFWxJo
- WxGw45ury8ur17urZ8tFWxZFyIgw4UK3y8Wwsa9Fs5uw1xuw1UG3sxG3y3Aay8Jws7Zr4q
- va1xWasIqr47taykn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUYE7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
- j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
- Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
- 84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r
- 4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_
- Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x
- IIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_
- Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0w
- CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
- 6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64
- vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_
- Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42
- IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbfcTJUUUUU=
- =
+X-CM-TRANSID: zQCowABX7RALcB5qymQfEg--.680S15
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1rGw1UJF1UWw1DtFy7Jrb_yoW8Kry8pF
+ 4Yqa45uFWUJF1fWw4fAw4kuF1agr48KrykKr9Igw1fCasrJ347AFyUJFyYvw1rAry8AF1r
+ Kan7Za1DGa18Wr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUBl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+ kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+ z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
+ 1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4U
+ JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
+ IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
+ M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l42
+ xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
+ GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI4
+ 8JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+ MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I
+ 8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbfcTJUUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -61,720 +60,76 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Introduce the `sxe2_txrx_check_mbuf` helper function to validate outgoing
-mbufs when `RTE_ETHDEV_DEBUG_TX` is enabled. This helps developers catch
-malformed mbufs (e.g., invalid segment lengths, bad offload flags, or
-unaligned buffers) before passing them to the hardware rings, avoiding
-potential hardware hangs or silent packet drops.
+This patch implements the logic to retrieve the firmware version and
+Build ID from the hardware during device initialization.
 
-The validation is fully wrapped inside `RTE_ETHDEV_DEBUG_TX` conditional
-compilation blocks to ensure zero performance overhead in standard
-production builds.
+The version is exposed to applications through the dev_info_get API.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/meson.build            |   2 +
- drivers/net/sxe2/sxe2_txrx.c            |   8 +-
- drivers/net/sxe2/sxe2_txrx_check_mbuf.c | 595 ++++++++++++++++++++++++
- drivers/net/sxe2/sxe2_txrx_check_mbuf.h |  38 ++
- 4 files changed, 641 insertions(+), 2 deletions(-)
- create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
- create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+ drivers/net/sxe2/sxe2_ethdev.c | 35 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index d653d071a9..4fb2333926 100644
---- a/drivers/net/sxe2/meson.build
-+++ b/drivers/net/sxe2/meson.build
-@@ -78,4 +78,6 @@ sources += files(
-         'sxe2_flow_parse_pattern.c',
-         'sxe2_flow_parse_engine.c',
-         'sxe2_dump.c',
-+        'sxe2_txrx_check_mbuf.c',
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index 14c8f6c16d..215ae772b5 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -120,7 +120,8 @@ static int32_t sxe2_udp_tunnel_port_add(struct rte_eth_dev *dev,
+ 					struct rte_eth_udp_tunnel *tunnel_udp);
+ static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
+ 					struct rte_eth_udp_tunnel *tunnel_udp);
+-
++static int32_t sxe2_fw_version_string_get(struct rte_eth_dev *dev,
++				      char *fw_version, size_t fw_size);
+ 
+ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 	.dev_configure              = sxe2_dev_configure,
+@@ -181,6 +182,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 	.xstats_reset               = sxe2_stats_info_reset,
+ 
+ 	.queue_stats_mapping_set    = sxe2_queue_stats_mapping_set,
 +
- )
-diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
-index 3861e31688..630353461d 100644
---- a/drivers/net/sxe2/sxe2_txrx.c
-+++ b/drivers/net/sxe2/sxe2_txrx.c
-@@ -13,6 +13,7 @@
- #include "sxe2_txrx_common.h"
- #include "sxe2_txrx_vec.h"
- #include "sxe2_txrx_poll.h"
-+#include "sxe2_txrx_check_mbuf.h"
- #include "sxe2_ethdev.h"
- #include "sxe2_common_log.h"
- #include "sxe2_osal.h"
-@@ -120,13 +121,11 @@ uint16_t sxe2_tx_pkts_prepare(void *tx_queue,
- 			rte_errno = -EINVAL;
- 			goto l_end;
- 		}
--#ifdef RTE_ETHDEV_DEBUG_TX
- 		ret = rte_validate_tx_offload(mbuf);
- 		if (ret != 0) {
- 			rte_errno = -ret;
- 			goto l_end;
- 		}
--#endif
- 		ret = rte_net_intel_cksum_prepare(mbuf);
- 		if (ret != 0) {
- 			rte_errno = -ret;
-@@ -137,6 +136,11 @@ uint16_t sxe2_tx_pkts_prepare(void *tx_queue,
- 			rte_errno = -ret;
- 			goto l_end;
- 		}
-+		ret = sxe2_txrx_check_mbuf(mbuf);
-+		if (ret != 0) {
-+			rte_errno = -ret;
-+			goto l_end;
-+		}
- 	}
- l_end:
- 	return i;
-diff --git a/drivers/net/sxe2/sxe2_txrx_check_mbuf.c b/drivers/net/sxe2/sxe2_txrx_check_mbuf.c
-new file mode 100644
-index 0000000000..5a12b42120
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_txrx_check_mbuf.c
-@@ -0,0 +1,595 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#include <rte_common.h>
-+#include <rte_net.h>
-+#include <rte_vect.h>
-+#include <rte_malloc.h>
-+#include <rte_memzone.h>
-+#include <ethdev_driver.h>
-+#include <rte_geneve.h>
-+
-+#include "sxe2_txrx_check_mbuf.h"
-+#include "sxe2_common_log.h"
-+
-+#define TX_IPPROTO_IPIP 4
-+#define TX_IPPROTO_GRE  47
-+#define GRE_CHECKSUM_PRESENT 0x8000
-+#define GRE_KEY_PRESENT 0x2000
-+#define GRE_SEQUENCE_PRESENT 0x1000
-+#define GRE_EXT_LEN 4
-+#define GRE_SUPPORTED_FIELDS (GRE_CHECKSUM_PRESENT | GRE_KEY_PRESENT | GRE_SEQUENCE_PRESENT)
-+
-+
-+static uint16_t vxlan_gpe_udp_port = RTE_VXLAN_GPE_DEFAULT_PORT;
-+static uint16_t geneve_udp_port = RTE_GENEVE_DEFAULT_PORT;
-+
-+static inline int32_t check_mbuf_len(struct offload_info *info, struct rte_mbuf *m)
++	.fw_version_get             = sxe2_fw_version_string_get,
+ };
+ 
+ static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
+@@ -1575,6 +1578,36 @@ static int32_t sxe2_eth_pmd_remove(struct sxe2_common_device *cdev)
+ 	return ret;
+ }
+ 
++static int32_t sxe2_fw_version_string_get(struct rte_eth_dev *dev, char *fw_version, size_t fw_size)
 +{
-+	int32_t ret = 0;
-+	if (m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+		if (info->outer_l2_len != m->outer_l2_len) {
-+			PMD_LOG_ERR(TX, "outer_l2_len error in mbuf. Original "
-+				    "length:%hu calculated length:%u", m->outer_l2_len,
-+				    info->outer_l2_len);
-+			ret = -1;
-+			goto end;
-+		}
-+		if (info->outer_l3_len != m->outer_l3_len) {
-+			PMD_LOG_ERR(TX, "outer_l3_len error in mbuf. Original "
-+				    "length:%hu calculated length:%u", m->outer_l3_len,
-+				    info->outer_l3_len);
-+			ret = -1;
-+			goto end;
-+		}
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_fw_info *fw_info = &adapter->dev_info.fw;
++	int32_t ret_len;
++	int32_t ret;
++
++	ret_len = snprintf(fw_version, fw_size,
++			   "%u.%u.%u.%u",
++			   fw_info->main_version_id,
++			   fw_info->sub_version_id,
++			   fw_info->fix_version_id,
++			   fw_info->build_id);
++
++	if (ret_len < 0) {
++		ret = -EINVAL;
++		goto out;
 +	}
 +
-+	if (info->l2_len != m->l2_len) {
-+		PMD_LOG_ERR(TX, "l2_len error in mbuf. Original "
-+			"length:%hu calculated length:%u", m->l2_len, info->l2_len);
-+		ret = -1;
-+		goto end;
-+	}
-+	if (info->l3_len != m->l3_len) {
-+		PMD_LOG_ERR(TX, "l3_len error in mbuf. Original "
-+			"length:%hu calculated length:%u", m->l3_len, info->l3_len);
-+		ret = -1;
-+		goto end;
-+	}
-+	if (info->l4_len != m->l4_len) {
-+		PMD_LOG_ERR(TX, "l4_len error in mbuf. Original "
-+			"length:%hu calculated length:%u", m->l4_len, info->l4_len);
-+		ret = -1;
-+		goto end;
-+	}
-+	ret = 0;
++	ret_len += 1;
++	if (fw_size < (size_t)ret_len)
++		ret = -EINVAL;
++	else
++		ret = 0;
 +
-+end:
++out:
 +	return ret;
 +}
 +
-+static inline int32_t check_ether_type(struct offload_info *info, struct rte_mbuf *m)
-+{
-+	int32_t ret = 0;
-+
-+	if (m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+		if (info->outer_ethertype == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4)) {
-+			if (!(m->ol_flags & RTE_MBUF_F_TX_OUTER_IPV4)) {
-+				PMD_LOG_ERR(TX, "Outer ethernet type is ipv4, "
-+					"tx offload missing `RTE_MBUF_F_TX_OUTER_IPV4` flag");
-+				ret = -1;
-+				goto end;
-+			}
-+			if (m->ol_flags & RTE_MBUF_F_TX_OUTER_IPV6) {
-+				PMD_LOG_ERR(TX, "Outer ethernet type is ipv4, tx "
-+					"offload contains wrong `RTE_MBUF_F_TX_OUTER_IPV6` flag");
-+				ret = -1;
-+				goto end;
-+			}
-+		} else if (info->outer_ethertype == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6)) {
-+			if (!(m->ol_flags & RTE_MBUF_F_TX_OUTER_IPV6)) {
-+				PMD_LOG_ERR(TX, "Outer ethernet type is ipv6, "
-+					"tx offload missing `RTE_MBUF_F_TX_OUTER_IPV6` flag");
-+				ret = -1;
-+				goto end;
-+			}
-+			if (m->ol_flags & RTE_MBUF_F_TX_OUTER_IPV4) {
-+				PMD_LOG_ERR(TX, "Outer ethernet type is ipv6, tx "
-+					"offload contains wrong `RTE_MBUF_F_TX_OUTER_IPV4` flag");
-+				ret = -1;
-+				goto end;
-+			}
-+		}
-+	}
-+
-+	if (info->ethertype == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4)) {
-+		if (!(m->ol_flags & RTE_MBUF_F_TX_IPV4)) {
-+			PMD_LOG_ERR(TX, "Ethernet type is ipv4, tx offload "
-+				"missing `RTE_MBUF_F_TX_IPV4` flag.");
-+			ret = -1;
-+			goto end;
-+		}
-+		if (m->ol_flags & RTE_MBUF_F_TX_IPV6) {
-+			PMD_LOG_ERR(TX, "Ethernet type is ipv4, tx "
-+				"offload contains wrong `RTE_MBUF_F_TX_IPV6` flag");
-+			ret = -1;
-+			goto end;
-+		}
-+	} else if (info->ethertype == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6)) {
-+		if (!(m->ol_flags & RTE_MBUF_F_TX_IPV6)) {
-+			PMD_LOG_ERR(TX, "Ethernet type is ipv6, tx offload "
-+				"missing `RTE_MBUF_F_TX_IPV6` flag.");
-+			ret = -1;
-+			goto end;
-+		}
-+		if (m->ol_flags & RTE_MBUF_F_TX_IPV4) {
-+			PMD_LOG_ERR(TX, "Ethernet type is ipv6, tx offload "
-+				"contains wrong `RTE_MBUF_F_TX_IPV4` flag");
-+			ret = -1;
-+			goto end;
-+		}
-+	}
-+	ret = 0;
-+
-+end:
-+	return ret;
-+}
-+
-+static inline void parse_ipv4(struct rte_ipv4_hdr *ipv4_hdr, struct offload_info *info)
-+{
-+	struct rte_tcp_hdr *tcp_hdr;
-+
-+	info->l3_len   = rte_ipv4_hdr_len(ipv4_hdr);
-+	info->l4_proto = ipv4_hdr->next_proto_id;
-+
-+	if (info->l4_proto == IPPROTO_TCP) {
-+		tcp_hdr = (struct rte_tcp_hdr *)((char *)ipv4_hdr + info->l3_len);
-+		info->l4_len = (tcp_hdr->data_off & 0xf0) >> 2;
-+	} else if (info->l4_proto == IPPROTO_UDP) {
-+		info->l4_len = sizeof(struct rte_udp_hdr);
-+	} else {
-+		info->l4_len = 0;
-+	}
-+}
-+
-+static inline void parse_ipv6(struct rte_ipv6_hdr *ipv6_hdr, struct offload_info *info)
-+{
-+	struct rte_tcp_hdr *tcp_hdr;
-+
-+	info->l3_len   = sizeof(struct rte_ipv6_hdr);
-+	info->l4_proto = ipv6_hdr->proto;
-+
-+	if (info->l4_proto == IPPROTO_TCP) {
-+		tcp_hdr = (struct rte_tcp_hdr *)((char *)ipv6_hdr + info->l3_len);
-+		info->l4_len = (tcp_hdr->data_off & 0xf0) >> 2;
-+	} else if (info->l4_proto == IPPROTO_UDP) {
-+		info->l4_len = sizeof(struct rte_udp_hdr);
-+	} else {
-+		info->l4_len = 0;
-+	}
-+}
-+
-+static inline void parse_ethernet(struct rte_ether_hdr *eth_hdr, struct offload_info *info)
-+{
-+	struct rte_ipv4_hdr *ipv4_hdr;
-+	struct rte_ipv6_hdr *ipv6_hdr;
-+	struct rte_vlan_hdr *vlan_hdr;
-+
-+	info->l2_len = sizeof(struct rte_ether_hdr);
-+	info->ethertype = eth_hdr->ether_type;
-+
-+	while (info->ethertype == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
-+		   info->ethertype == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
-+		vlan_hdr = (struct rte_vlan_hdr *)
-+			((char *)eth_hdr + info->l2_len);
-+		info->l2_len   += sizeof(struct rte_vlan_hdr);
-+		info->ethertype = vlan_hdr->eth_proto;
-+	}
-+
-+	switch (info->ethertype) {
-+	case RTE_STATIC_BSWAP16(RTE_ETHER_TYPE_IPV4):
-+		ipv4_hdr = (struct rte_ipv4_hdr *)((char *)eth_hdr + info->l2_len);
-+		parse_ipv4(ipv4_hdr, info);
-+		break;
-+	case RTE_STATIC_BSWAP16(RTE_ETHER_TYPE_IPV6):
-+		ipv6_hdr = (struct rte_ipv6_hdr *)((char *)eth_hdr + info->l2_len);
-+		parse_ipv6(ipv6_hdr, info);
-+		break;
-+	default:
-+		info->l4_len = 0;
-+		info->l3_len = 0;
-+		info->l4_proto = 0;
-+		break;
-+	}
-+}
-+
-+static inline void update_tunnel_outer(struct offload_info *info)
-+{
-+	info->is_tunnel       = 1;
-+	info->outer_ethertype = info->ethertype;
-+	info->outer_l2_len    = info->l2_len;
-+	info->outer_l3_len    = info->l3_len;
-+	info->outer_l4_proto  = info->l4_proto;
-+}
-+
-+static inline void parse_gtp(struct rte_udp_hdr *udp_hdr, struct offload_info *info)
-+{
-+	struct rte_ipv4_hdr *ipv4_hdr;
-+	struct rte_ipv6_hdr *ipv6_hdr;
-+	struct rte_gtp_hdr *gtp_hdr;
-+	uint8_t gtp_len = sizeof(*gtp_hdr);
-+	uint8_t ip_ver;
-+
-+	if (udp_hdr->dst_port != rte_cpu_to_be_16(RTE_GTPC_UDP_PORT) &&
-+		udp_hdr->src_port != rte_cpu_to_be_16(RTE_GTPC_UDP_PORT) &&
-+		udp_hdr->dst_port != rte_cpu_to_be_16(RTE_GTPU_UDP_PORT))
-+		goto end;
-+
-+	update_tunnel_outer(info);
-+	info->l2_len = 0;
-+
-+	gtp_hdr = (struct rte_gtp_hdr *)((char *)udp_hdr + sizeof(*udp_hdr));
-+
-+	if (gtp_hdr->msg_type == 0xff) {
-+		ip_ver = *(uint8_t *)((char *)udp_hdr + sizeof(*udp_hdr) + sizeof(*gtp_hdr));
-+		ip_ver = (ip_ver) & 0xf0;
-+
-+		if (ip_ver == RTE_GTP_TYPE_IPV4) {
-+			ipv4_hdr = (struct rte_ipv4_hdr *)((char *)gtp_hdr + gtp_len);
-+			info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+			parse_ipv4(ipv4_hdr, info);
-+		} else if (ip_ver == RTE_GTP_TYPE_IPV6) {
-+			ipv6_hdr = (struct rte_ipv6_hdr *)((char *)gtp_hdr + gtp_len);
-+			info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
-+			parse_ipv6(ipv6_hdr, info);
-+		}
-+	} else {
-+		info->ethertype = 0;
-+		info->l4_len    = 0;
-+		info->l3_len    = 0;
-+		info->l4_proto  = 0;
-+	}
-+
-+	info->l2_len += RTE_ETHER_GTP_HLEN;
-+
-+end:
-+	return;
-+}
-+
-+static inline void parse_vxlan(struct rte_udp_hdr *udp_hdr, struct offload_info *info)
-+{
-+	struct rte_ether_hdr *eth_hdr;
-+
-+	if (udp_hdr->dst_port != rte_cpu_to_be_16(RTE_VXLAN_DEFAULT_PORT))
-+		goto end;
-+
-+	update_tunnel_outer(info);
-+
-+	eth_hdr = (struct rte_ether_hdr *)((char *)udp_hdr +
-+		sizeof(struct rte_udp_hdr) + sizeof(struct rte_vxlan_hdr));
-+
-+	parse_ethernet(eth_hdr, info);
-+	info->l2_len += RTE_ETHER_VXLAN_HLEN;
-+
-+end:
-+	return;
-+}
-+
-+static inline void parse_vxlan_gpe(struct rte_udp_hdr *udp_hdr, struct offload_info *info)
-+{
-+	struct rte_ether_hdr *eth_hdr;
-+	struct rte_ipv4_hdr *ipv4_hdr;
-+	struct rte_ipv6_hdr *ipv6_hdr;
-+	struct rte_vxlan_gpe_hdr *vxlan_gpe_hdr;
-+	uint8_t vxlan_gpe_len = sizeof(*vxlan_gpe_hdr);
-+
-+	if (udp_hdr->dst_port != rte_cpu_to_be_16(vxlan_gpe_udp_port))
-+		goto end;
-+
-+	vxlan_gpe_hdr = (struct rte_vxlan_gpe_hdr *)((char *)udp_hdr + sizeof(struct rte_udp_hdr));
-+
-+	if (!vxlan_gpe_hdr->proto || vxlan_gpe_hdr->proto == RTE_VXLAN_GPE_TYPE_IPV4) {
-+		update_tunnel_outer(info);
-+
-+		ipv4_hdr = (struct rte_ipv4_hdr *)((char *)vxlan_gpe_hdr + vxlan_gpe_len);
-+
-+		parse_ipv4(ipv4_hdr, info);
-+		info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+		info->l2_len = 0;
-+
-+	} else if (vxlan_gpe_hdr->proto == RTE_VXLAN_GPE_TYPE_IPV6) {
-+		update_tunnel_outer(info);
-+
-+		ipv6_hdr = (struct rte_ipv6_hdr *)((char *)vxlan_gpe_hdr + vxlan_gpe_len);
-+
-+		info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
-+		parse_ipv6(ipv6_hdr, info);
-+		info->l2_len = 0;
-+
-+	} else if (vxlan_gpe_hdr->proto == RTE_VXLAN_GPE_TYPE_ETH) {
-+		update_tunnel_outer(info);
-+
-+		eth_hdr = (struct rte_ether_hdr *)((char *)vxlan_gpe_hdr + vxlan_gpe_len);
-+
-+		parse_ethernet(eth_hdr, info);
-+	} else {
-+		goto end;
-+	}
-+
-+	info->l2_len += RTE_ETHER_VXLAN_GPE_HLEN;
-+
-+end:
-+	return;
-+}
-+
-+static inline void parse_geneve(struct rte_udp_hdr *udp_hdr, struct offload_info *info)
-+{
-+	struct rte_ether_hdr *eth_hdr;
-+	struct rte_ipv4_hdr *ipv4_hdr;
-+	struct rte_ipv6_hdr *ipv6_hdr;
-+	struct rte_geneve_hdr *geneve_hdr;
-+	uint16_t geneve_len;
-+
-+	if (udp_hdr->dst_port != rte_cpu_to_be_16(geneve_udp_port))
-+		goto end;
-+
-+	geneve_hdr = (struct rte_geneve_hdr *)((char *)udp_hdr + sizeof(struct rte_udp_hdr));
-+	geneve_len = sizeof(struct rte_geneve_hdr) + geneve_hdr->opt_len * 4;
-+	if (!geneve_hdr->proto || geneve_hdr->proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4)) {
-+		update_tunnel_outer(info);
-+		ipv4_hdr = (struct rte_ipv4_hdr *)((char *)geneve_hdr + geneve_len);
-+		parse_ipv4(ipv4_hdr, info);
-+		info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+		info->l2_len = 0;
-+	} else if (geneve_hdr->proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6)) {
-+		update_tunnel_outer(info);
-+		ipv6_hdr = (struct rte_ipv6_hdr *)((char *)geneve_hdr + geneve_len);
-+		info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
-+		parse_ipv6(ipv6_hdr, info);
-+		info->l2_len = 0;
-+
-+	} else if (geneve_hdr->proto == rte_cpu_to_be_16(RTE_GENEVE_TYPE_ETH)) {
-+		update_tunnel_outer(info);
-+		eth_hdr = (struct rte_ether_hdr *)((char *)geneve_hdr + geneve_len);
-+		parse_ethernet(eth_hdr, info);
-+	} else {
-+		goto end;
-+	}
-+
-+	info->l2_len += (sizeof(struct rte_udp_hdr) + sizeof(struct rte_geneve_hdr) +
-+		((struct rte_geneve_hdr *)geneve_hdr)->opt_len * 4);
-+
-+end:
-+	return;
-+}
-+
-+static inline void parse_gre(struct simple_gre_hdr *gre_hdr, struct offload_info *info)
-+{
-+	struct rte_ether_hdr *eth_hdr;
-+	struct rte_ipv4_hdr *ipv4_hdr;
-+	struct rte_ipv6_hdr *ipv6_hdr;
-+	uint8_t gre_len = 0;
-+
-+	gre_len += sizeof(struct simple_gre_hdr);
-+
-+	if (gre_hdr->flags & rte_cpu_to_be_16(GRE_KEY_PRESENT))
-+		gre_len += GRE_EXT_LEN;
-+	if (gre_hdr->flags & rte_cpu_to_be_16(GRE_SEQUENCE_PRESENT))
-+		gre_len += GRE_EXT_LEN;
-+	if (gre_hdr->flags & rte_cpu_to_be_16(GRE_CHECKSUM_PRESENT))
-+		gre_len += GRE_EXT_LEN;
-+
-+	if (gre_hdr->proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4)) {
-+		update_tunnel_outer(info);
-+
-+		ipv4_hdr = (struct rte_ipv4_hdr *)((char *)gre_hdr + gre_len);
-+
-+		parse_ipv4(ipv4_hdr, info);
-+		info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+		info->l2_len = 0;
-+
-+	} else if (gre_hdr->proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6)) {
-+		update_tunnel_outer(info);
-+
-+		ipv6_hdr = (struct rte_ipv6_hdr *)((char *)gre_hdr + gre_len);
-+
-+		info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
-+		parse_ipv6(ipv6_hdr, info);
-+		info->l2_len = 0;
-+
-+	} else if (gre_hdr->proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_TEB)) {
-+		update_tunnel_outer(info);
-+
-+		eth_hdr = (struct rte_ether_hdr *)((char *)gre_hdr + gre_len);
-+
-+		parse_ethernet(eth_hdr, info);
-+	} else {
-+		goto end;
-+	}
-+
-+	info->l2_len += gre_len;
-+
-+end:
-+	return;
-+}
-+
-+static inline void parse_encap_ip(void *encap_ip, struct offload_info *info)
-+{
-+	struct rte_ipv4_hdr *ipv4_hdr = encap_ip;
-+	struct rte_ipv6_hdr *ipv6_hdr = encap_ip;
-+	uint8_t ip_version;
-+
-+	ip_version = ((ipv4_hdr->version_ihl & 0xf0) >> 4);
-+
-+	if (ip_version != 4 && ip_version != 6)
-+		goto end;
-+
-+	info->is_tunnel = 1;
-+	info->outer_ethertype = info->ethertype;
-+	info->outer_l2_len = info->l2_len;
-+	info->outer_l3_len = info->l3_len;
-+
-+	if (ip_version == 4) {
-+		parse_ipv4(ipv4_hdr, info);
-+		info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+	} else {
-+		parse_ipv6(ipv6_hdr, info);
-+		info->ethertype = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
-+	}
-+	info->l2_len = 0;
-+
-+end:
-+	return;
-+}
-+
-+__rte_unused int32_t sxe2_txrx_check_mbuf(struct rte_mbuf *m)
-+{
-+	int32_t ret = 0;
-+	struct rte_ether_hdr *eth_hdr;
-+	void *l3_hdr = NULL;
-+	struct offload_info info = {0};
-+	uint64_t ol_flags = m->ol_flags;
-+	uint64_t tunnel_type = ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK;
-+
-+	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
-+	parse_ethernet(eth_hdr, &info);
-+	l3_hdr = (char *)eth_hdr + info.l2_len;
-+	if (info.l4_proto == IPPROTO_UDP) {
-+		struct rte_udp_hdr *udp_hdr;
-+
-+		udp_hdr = (struct rte_udp_hdr *)((char *)l3_hdr + info.l3_len);
-+		if ((info.l2_len + info.l3_len + sizeof(struct rte_udp_hdr)) > m->data_len) {
-+			PMD_LOG_ERR(TX, "UDP header exceeds mbuf data length");
-+			ret = -1;
-+			goto end;
-+		}
-+		parse_gtp(udp_hdr, &info);
-+		if (info.is_tunnel) {
-+			if (!tunnel_type) {
-+				PMD_LOG_ERR(TX, "gtp tunnel packet missing tx "
-+					"offload missing `RTE_MBUF_F_TX_TUNNEL_GTP` flag");
-+				ret = -1;
-+				goto end;
-+			}
-+			if (tunnel_type != RTE_MBUF_F_TX_TUNNEL_GTP) {
-+				PMD_LOG_ERR(TX, "gtp tunnel packet, tx offload has wrong "
-+					"`%s` flag correct is `RTE_MBUF_F_TX_TUNNEL_GTP` flag",
-+				rte_get_tx_ol_flag_name(tunnel_type));
-+				ret = -1;
-+				goto end;
-+			}
-+			goto check_len;
-+		}
-+		parse_vxlan_gpe(udp_hdr, &info);
-+		if (info.is_tunnel) {
-+			if (!tunnel_type) {
-+				PMD_LOG_ERR(TX, "vxlan gpe tunnel packet missing tx "
-+					"offload missing `RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE` flag");
-+				ret = -1;
-+				goto end;
-+			}
-+			if (tunnel_type != RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE) {
-+				PMD_LOG_ERR(TX, "vxlan gpe tunnel packet, tx offload has "
-+					"wrong `%s` flag correct is `RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE` flag",
-+				rte_get_tx_ol_flag_name(tunnel_type));
-+				ret = -1;
-+				goto end;
-+			}
-+			goto check_len;
-+		}
-+		parse_vxlan(udp_hdr, &info);
-+		if (info.is_tunnel) {
-+			if (!tunnel_type) {
-+				PMD_LOG_ERR(TX, "vxlan tunnel packet missing tx "
-+					"offload missing `RTE_MBUF_F_TX_TUNNEL_VXLAN` flag");
-+				ret = -1;
-+				goto end;
-+			}
-+			if (tunnel_type != RTE_MBUF_F_TX_TUNNEL_VXLAN) {
-+				PMD_LOG_ERR(TX, "vxlan tunnel packet, tx offload has "
-+					"wrong `%s` flag correct is `RTE_MBUF_F_TX_TUNNEL_VXLAN` flag",
-+				rte_get_tx_ol_flag_name(tunnel_type));
-+				ret = -1;
-+				goto end;
-+			}
-+			goto check_len;
-+		}
-+		parse_geneve(udp_hdr, &info);
-+		if (info.is_tunnel) {
-+			if (!tunnel_type) {
-+				PMD_LOG_ERR(TX, "geneve tunnel packet missing tx "
-+					"offload missing `RTE_MBUF_F_TX_TUNNEL_GENEVE` flag");
-+				ret = -1;
-+				goto end;
-+			}
-+			if (tunnel_type != RTE_MBUF_F_TX_TUNNEL_GENEVE) {
-+				PMD_LOG_ERR(TX, "geneve tunnel packet, tx offload has "
-+					"wrong `%s` flag correct is `RTE_MBUF_F_TX_TUNNEL_GENEVE` flag",
-+				rte_get_tx_ol_flag_name(tunnel_type));
-+				ret = -1;
-+				goto end;
-+			}
-+			goto check_len;
-+		}
-+
-+		if (unlikely(RTE_ETH_IS_TUNNEL_PKT(m->packet_type) != 0)) {
-+			PMD_LOG_ERR(TX, "Unknown tunnel packet UDP dst port:%hu",
-+				    udp_hdr->dst_port);
-+			ret = -1;
-+			goto end;
-+		}
-+	} else if (info.l4_proto == TX_IPPROTO_GRE) {
-+		struct simple_gre_hdr *gre_hdr;
-+
-+		gre_hdr = (struct simple_gre_hdr *)((char *)l3_hdr + info.l3_len);
-+		parse_gre(gre_hdr, &info);
-+		if (info.is_tunnel) {
-+			if (!tunnel_type) {
-+				PMD_LOG_ERR(TX, "gre tunnel packet missing tx "
-+					"offload missing `RTE_MBUF_F_TX_TUNNEL_GRE` flag.");
-+				ret = -1;
-+				goto end;
-+			}
-+			if (tunnel_type != RTE_MBUF_F_TX_TUNNEL_GRE) {
-+				PMD_LOG_ERR(TX, "gre tunnel packet, tx offload has "
-+					"wrong `%s` flag, correct is `RTE_MBUF_F_TX_TUNNEL_GRE` flag",
-+				rte_get_tx_ol_flag_name(tunnel_type));
-+				ret = -1;
-+				goto end;
-+			}
-+			goto check_len;
-+		}
-+	} else if (info.l4_proto == TX_IPPROTO_IPIP) {
-+		void *encap_ip_hdr;
-+
-+		encap_ip_hdr = (char *)l3_hdr + info.l3_len;
-+		parse_encap_ip(encap_ip_hdr, &info);
-+		if (info.is_tunnel) {
-+			if (!tunnel_type) {
-+				PMD_LOG_ERR(TX, "Ipip tunnel packet missing tx "
-+					"offload missing `RTE_MBUF_F_TX_TUNNEL_IPIP` flag");
-+				ret = -1;
-+				goto end;
-+			}
-+			if (tunnel_type != RTE_MBUF_F_TX_TUNNEL_IPIP) {
-+				PMD_LOG_ERR(TX, "Ipip tunnel packet, tx offload has "
-+					"wrong `%s` flag, correct is `RTE_MBUF_F_TX_TUNNEL_IPIP` flag",
-+				rte_get_tx_ol_flag_name(tunnel_type));
-+				ret = -1;
-+				goto end;
-+			}
-+			goto check_len;
-+		}
-+	}
-+
-+check_len:
-+	if (check_mbuf_len(&info, m) != 0) {
-+		ret = -1;
-+		goto end;
-+	}
-+	ret = check_ether_type(&info, m);
-+
-+end:
-+	return ret;
-+}
-diff --git a/drivers/net/sxe2/sxe2_txrx_check_mbuf.h b/drivers/net/sxe2/sxe2_txrx_check_mbuf.h
-new file mode 100644
-index 0000000000..98197f85d9
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_txrx_check_mbuf.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_TXRX_CHECK_MBUF_H__
-+#define __SXE2_TXRX_CHECK_MBUF_H__
-+
-+#include <rte_common.h>
-+#include <rte_net.h>
-+#include <rte_vect.h>
-+#include <rte_malloc.h>
-+#include <rte_memzone.h>
-+#include <ethdev_driver.h>
-+
-+struct offload_info {
-+	uint16_t ethertype;
-+	uint8_t  gso_enable;
-+	uint16_t l2_len;
-+	uint16_t l3_len;
-+	uint16_t l4_len;
-+	uint8_t  l4_proto;
-+	uint8_t  is_tunnel;
-+	uint16_t outer_ethertype;
-+	uint16_t outer_l2_len;
-+	uint16_t outer_l3_len;
-+	uint8_t  outer_l4_proto;
-+	uint16_t tso_segsz;
-+	uint16_t tunnel_tso_segsz;
-+	uint32_t pkt_len;
-+};
-+
-+struct simple_gre_hdr {
-+	uint16_t flags;
-+	uint16_t proto;
-+};
-+
-+__rte_unused int32_t sxe2_txrx_check_mbuf(struct rte_mbuf *m);
-+#endif /* __SXE2_TXRX_CHECK_MBUF_H__ */
+ static uint16_t sxe2_switchdev_repr_id_encode_get(struct sxe2_switchdev_info *switchdev_info)
+ {
+ 	enum rte_eth_representor_type type;
 -- 
 2.52.0
 
