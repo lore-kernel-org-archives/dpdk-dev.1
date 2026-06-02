@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09208CD6E57
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 20:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8045CD6E5D
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 20:45:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CB06402AB;
-	Tue,  2 Jun 2026 22:45:21 +0200 (CEST)
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
- by mails.dpdk.org (Postfix) with ESMTP id 17BE8402A9
- for <dev@dpdk.org>; Tue,  2 Jun 2026 22:45:20 +0200 (CEST)
-Received: by mail-dl1-f52.google.com with SMTP id
- a92af1059eb24-137dd523634so4740417c88.1
- for <dev@dpdk.org>; Tue, 02 Jun 2026 13:45:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 123A940651;
+	Tue,  2 Jun 2026 22:45:28 +0200 (CEST)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
+ [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 53EDA402A9
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 22:45:27 +0200 (CEST)
+Received: by mail-dy1-f174.google.com with SMTP id
+ 5a478bee46e88-304545f5206so16306634eec.0
+ for <dev@dpdk.org>; Tue, 02 Jun 2026 13:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780433119;
- x=1781037919; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780433126;
+ x=1781037926; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CahNp9W3xNnFqzksnA97nmzwCDuFT5Bak9jgapl/V+8=;
- b=xUTsQmluobUmtAHR7d1RCosiVP1usuetV0aba3JyeEZjgA9viAEXeY1ug0sSmqAyGU
- Iy8JefodjeBLHkXwV8Up415nhus3CyGEHbjWlEG7Jk7u4JMSFGGN9wdqFiIPPEJLB+Bd
- nS0IQ5qU58/4ZGL+RHXUe9KWXRzvgElr/8tTE0choGveNVcLnZOVtlv8fmE9RzWLRqTP
- UuDTqplElPTidK/5HzOZRQO56IUI/X5oO5yOhxgbTYR9InumXNPIWEaiQnKdBbQm/s2o
- vM4+HEMuyi0511D6XncouMvosr7e7gu5LYH5+nHTTnmOUbm2Ygkq2jsbAPhMaX2/fnoz
- 0qCw==
+ bh=x+52diBrZJUsdGqimJQO1xyawDWICqCK+TQVEs8RDg4=;
+ b=ZKZ/htEQ/dT7L/s9X8l1TOCYWt1NavPKcX1AI5Zqh66XfuuoeImiDEJtdwTRoWanTx
+ 4d4rBeSZ00J26iKTWJiLBQkQjTSx+7TTwctBP2ZgfNpYqZXjtEBpQ64Y/f56SddyAnMJ
+ nDv5BAqoEJkgqif0kc3bumSYlrODIv+UxSLPkhCN+72D33JwekeuPGOoE7ZZw7smv4bX
+ HXLJpf98uruSA4nlpDdiaMq71g4ztKEmonwVCQCkAsmbauwKszPYoPVrbDSpcDsGFRYH
+ uNaNZCbpqo7liqDC/SjMhq4VFY4yx3m52JjySPu4EUjOycWh8LVpzlTJnMvn54aN/EQ/
+ uvJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780433119; x=1781037919;
+ d=1e100.net; s=20251104; t=1780433126; x=1781037926;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=CahNp9W3xNnFqzksnA97nmzwCDuFT5Bak9jgapl/V+8=;
- b=VCtOpVLm9v3XWOZo1qvfX5eoKRQGYWlq0oPciLsdz/VtANCuCJFvgNoY1e5GW8PcgP
- wCLdK9vrKzKaCL3LtZ9immTy4hxPix2ebYd29s5CuvH6bJIfB6+rN2KlpqRkTxcWdnB2
- Wd16AZt+BzZtMxQI6HVdHhrk6oTPSEyw4Ez7ASMu8HIbmStQR3qQUJ9v0LlAp/5xAiII
- T5eRJ/p7H4UF+s3dbBKv27YZbOUjv9Q19UDR0iXWr3IyN65+vfriD81bqLTJhKUE1vZy
- p53PygiCm/3yNuPjO3bqOw9DS9e+8hQEwh/ElD6e8ZybGfjCeYAJeQU2JiMyI8+j3WeM
- HgSA==
-X-Gm-Message-State: AOJu0YyN+hjycAley8I37m4P5TNTjjtkLSZ1q9rw4t1MwsY7zVT4fh33
- RarBw0MaOLjqcl8MjsJ6dwsufYywMsty7eXvlCBIpzfv2BxFyDxk45/1bT0hzu5mq3I=
-X-Gm-Gg: Acq92OG3oPlMVQ3bAp7Vcu61IGmsjjFpqWa5+4HfOA6vAzlqCqiSzPXNTFpSU8vcF8f
- WSmp1w4VWchyhVaQGp9Gyx2KNOwYcxUtad/UAor6K9V1dk4NR4zKUV2zCixqZ40rJrCErE+c9Sg
- 5+V5KAPOB0zrCiczjk+TgCZDZoq678njp8L3rQSCAxBYPrUg09pBirkzUXR/YDh0pYW5C+aUfKe
- 74hkb+x3HWhRai+hBEyoqz7bwBuFT6DdUnke4ybLBDiGKPVfNres0PIFHNh6Wms0SBv2bIo8Y3f
- z/Jl9fmgwOVGvRgVOwIpQgvTl4A2oIytsE7S2EKQ/1P8P7LCyf8cWRb1biW+UclKGDLqE0Z7wir
- UfFH+t4+9bWefdVz4nZfGd2PjVng6Fx794Wh4yZ5QWDaLUv7xWOMzKl9fZUCaXuFn8t6idFz3O8
- JqRM4m3D+MeUkf7VBKqMnK+ShtlQGZ23kErWsVHEET314oIzwQ3VFc0M23kPiFtXeG9ofO/4iHc
- bk=
-X-Received: by 2002:a05:7022:6290:b0:130:6c8f:5aae with SMTP id
- a92af1059eb24-137f6a47ec5mr119745c88.14.1780433118927; 
- Tue, 02 Jun 2026 13:45:18 -0700 (PDT)
+ bh=x+52diBrZJUsdGqimJQO1xyawDWICqCK+TQVEs8RDg4=;
+ b=UQgSj7n9f4w7QyXlP6BODe/Eb5fUPka8rZS9bRVDOtQZVgs7C7de69L5AiHU93oK0l
+ QpUltCloiFAJea2btIDLhqxuWEqjzFvSElDmc1Gh6cTqhBg5z0BUGzOhMe5JXyL/pjDh
+ Ns0c/fySSmpFlICeEYjLObtdfNMDZ83zWBS+UByZysLwx9yUS3q9lpIquGWgt9e0QiFq
+ jJY0uscg9oIyPwE3sF4VZgq8Ph92+pgoq9sfcRnyD2KUCN91feU9Ub22bekxfMsatT2C
+ um4LWFztbdrd26wXIwAiFycxhLRumQB1s0LC2QPY/7wYorZZOZGZCIqLynm86O3w5hU8
+ wgSw==
+X-Gm-Message-State: AOJu0YzP6t/e60Xy+PTd30nb+ZHeS/9Y9IVAvSS1bbtGTT+pbSuNZGhZ
+ 2Fx2jFy8mbFNS9bO1CjZIfdhvH30kI3Wz0LJLdHkANK5gDXVXYYaovw/Enfw05GruMLEZMJqX7W
+ KH8LB
+X-Gm-Gg: Acq92OEvPzz5Ko7yyR2XzHfzyGOYiy5wVYPe59wdNmdnQEdvIRClJ0s9DlwWmCiJMtT
+ Miro4fMT8lqiG5KHgFMcVu15GCU2cSyKPrrpzUrGm+vCVWgPUcjimHDIF36/X6a5qFFFuuKcc/X
+ x/76mnZucRCh9PlwN/1lS0nnyfO0n5Eqwpo2QfZ6T1z5oAROIVeCYduymGQwKO+5YdeFwlUH4Q3
+ e6uJfDv+HSJBw+inCkrOcvjA0Bhqr0nPgaLiksZFS+Dokulz1xlRzkPiUF5lpwYlsnhB2sC+Vw/
+ nKL/JmxcqONvYeo33glBURMjKjYZx1xBmeoXevZKvq9/vEnXIiA85yt2V1q5N2zQ0uGTUjhiJnQ
+ 8a6foQCOmgXwjzi7fi7M5l/sPoJDQmNawwootw8Ym++QoRBX6A5ffq9AA7GO9XtPjC/M6MzkZtV
+ e0V5JRPqz8ZdWELpEpy8Kx7sUcWFJ8jhR6PVE+/2V6Bip+Bm3b6Sym/Eo44wH8VUjrAbSEY9W3B
+ m2Zk1EU4zuBqQ==
+X-Received: by 2002:a05:7300:3213:b0:304:8364:e95c with SMTP id
+ 5a478bee46e88-3074fa92c24mr218976eec.15.1780433126289; 
+ Tue, 02 Jun 2026 13:45:26 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-137f53f06c4sm681333c88.0.2026.06.02.13.45.18
+ 5a478bee46e88-3074dea9226sm418985eec.19.2026.06.02.13.45.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 02 Jun 2026 13:45:18 -0700 (PDT)
-Date: Tue, 2 Jun 2026 13:45:16 -0700
+ Tue, 02 Jun 2026 13:45:26 -0700 (PDT)
+Date: Tue, 2 Jun 2026 13:43:41 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH dpdk v5 0/5] Fix and improve VLAN/MPLS parsing in
- rte_net_get_ptype
-Message-ID: <20260602134516.376b1362@phoenix.local>
-In-Reply-To: <20260518132712.70913-8-rjarry@redhat.com>
+Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>
+Subject: Re: [PATCH dpdk v5 2/5] net: support multiple stacked VLAN tags
+Message-ID: <20260602134341.5d7cd7fd@phoenix.local>
+In-Reply-To: <20260518132712.70913-10-rjarry@redhat.com>
 References: <20260422102814.645299-2-rjarry@redhat.com>
  <20260518132712.70913-8-rjarry@redhat.com>
+ <20260518132712.70913-10-rjarry@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,75 +83,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 18 May 2026 15:27:14 +0200
+On Mon, 18 May 2026 15:27:16 +0200
 Robin Jarry <rjarry@redhat.com> wrote:
 
-> Revert commit 1f250674085a ("net: fix packet type for stacked VLAN")
-> which introduced a regression causing single VLAN frames to be
-> misidentified as QinQ due to incorrect use of |= on the ptype.
+> The VLAN and QinQ code paths in rte_net_get_ptype handle at most two
+> tags with duplicated logic. Replace them with a single loop that
+> consumes all consecutive VLAN/QinQ headers regardless of depth.
 > 
-> Replace the separate VLAN and QinQ code paths with a single loop
-> that handles arbitrarily stacked VLAN tags. Fix the MPLS path to
-> use the bottom of stack bit instead of a hardcoded label limit,
-> and parse the L3 protocol of the MPLS payload by inspecting the
-> first nibble.
-> 
-> Add unit tests for rte_net_get_ptype covering Ethernet, VLAN, QinQ,
-> MPLS, IPv4/IPv6, and truncated packet scenarios.
-> 
-> v5:
-> 
-> * Split the series in multiple patches.
-> * Revert the commit that introduced the bug.
-> * Add support for stacked VLAN/QINQ as suggested by David.
-> * Fix MPLS bottom of stack detection. Try to guess MPLS payload.
-> * Add more test cases.
-> 
-> v4:
-> 
-> * changed the approach again. Only set VLAN or QINQ ptype for the first
->   encountered vlan/qinq ether type.
-> * unit tests not changed
-> 
-> v3:
-> 
-> * changed the approach: initialize pkt_type=0 and only set it to
->   RTE_PTYPE_L2_ETHER if neither of VLAN nor QINQ matched.
-> * extended the unit tests to check for header lengths and added ipv6 / tcp
->   cases.
-> 
-> v2: added new ptype tests
-> 
-> v3:
-> 
-> * changed the approach: initialize pkt_type=0 and only set it to
->   RTE_PTYPE_L2_ETHER if neither of VLAN nor QINQ matched.
-> * extended the unit tests to check for header lengths and added ipv6 / tcp
->   cases.
-> 
-> v2: added new ptype tests
-> 
-> Robin Jarry (5):
->   Revert "net: fix packet type for stacked VLAN"
->   net: support multiple stacked VLAN tags
->   net: add unit tests for rte_net_get_ptype
->   net: parse L3 protocol after MPLS labels
->   net: add truncated packet tests for rte_net_get_ptype
-> 
->  app/test/meson.build      |   1 +
->  app/test/test_net_ptype.c | 326 ++++++++++++++++++++++++++++++++++++++
->  lib/net/rte_net.c         |  72 +++++----
->  3 files changed, 369 insertions(+), 30 deletions(-)
->  create mode 100644 app/test/test_net_ptype.c
-> 
+> Bugzilla ID: 1941
+> Suggested-by: David Marchand <david.marchand@redhat.com>
+> Signed-off-by: Robin Jarry <rjarry@redhat.com>
 
+Another issue discovered by AI is that hdr_lens->l2_len is too small.
 
-In addition to the other comments, would like a release note for this.
+Patch 2/5: net: support multiple stacked VLAN tags
 
-Warning: rte_net_get_ptype() is a public stable API and this changes its
-observable output (MPLS payload now resolves to L3 IPv4/IPv6 and falls
-through to l3 instead of returning at the MPLS layer). No release-notes
-entry accompanies the series. The VLAN misidentification fix (patch 1)
-is a bug fix with Cc: stable, but the MPLS L3-detection change is a
-behavior enhancement to an existing API and warrants a note in the
-current release notes.
+Warning: hdr_lens->l2_len is uint8_t. The previous code capped the tag
+count at RTE_NET_VLAN_MAX_DEPTH (8), bounding l2_len to 14 + 8*4 = 46.
+The new do/while consumes tags until rte_pktmbuf_read() fails, so the
+only bound is packet length. A frame carrying >=61 stacked VLAN/QINQ
+tags (>=244 bytes of L2 headers) wraps l2_len around 256. There is no
+infinite loop or OOB read (off advances monotonically and the read
+terminates at end of data), but the wrapped l2_len is exactly the kind
+of bad header-length value this series set out to fix in tap_verify_csum.
+Consider keeping a depth cap, or widening/saturating l2_len.
