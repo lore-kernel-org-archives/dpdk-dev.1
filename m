@@ -2,76 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 958C2CD5BD1
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 13:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399E4CD6E57
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 15:37:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 727AB402A9;
-	Tue,  2 Jun 2026 15:53:39 +0200 (CEST)
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
- [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 653B640150
- for <dev@dpdk.org>; Tue,  2 Jun 2026 15:53:37 +0200 (CEST)
-Received: by mail-dy1-f182.google.com with SMTP id
- 5a478bee46e88-3045c195251so11832985eec.1
- for <dev@dpdk.org>; Tue, 02 Jun 2026 06:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780408416;
- x=1781013216; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=cF2qVhEcXOKBnWbB+r95qVClEELzptbN4lpRixZvbzE=;
- b=Af8qb/6gN6EDOjC5Fcq8KUvmrOne0oXTPozzc++Ol+6HmWZEyaCdnjSuFDMGiMgUSL
- fOBMkty1p8dRTR0lxQyC2MgIbw3+A8zJGADgCn0h9wCE8dHJslqEl3POv3mL9CtJeNYf
- BMGAuLwWF1FtaEBSns8nTB10cbQ1zRJjchCW3wSIts9E+4NwXHd7XUcOYminN1sgpJcG
- htrPLCcTLRKIyGhgSfRgJ3xINgJonchbTyJ71wFOX4tYFyaL3hp4qhUasTieJzszl4+C
- u6ZoF2pQ7EMe30gSBhPWEKyhkHauJjhYrvoRlbv8yFK+g3GjlO1WYcvfO0nWFy42xun2
- LccQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780408416; x=1781013216;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=cF2qVhEcXOKBnWbB+r95qVClEELzptbN4lpRixZvbzE=;
- b=riOd43J3DY7yfZhoMcOTq9eOmlvCmbSNLkmEbYdfPDk3IPb/P+R0STBjFOenvheZdM
- ERLJz1QbVUdzsack3OhQyKoWL30aaoYkne8CqAe/zrHxVCgV5UoUT5u3pPzWg+sAHZCa
- CGlTeXbJRo+3xamPPy1IiZdtQjg5AxaB5TLH56Z44WKLPUpDvNPie3jr6aYdX3j5B4GT
- OeW8/PbFGvJ7vADJgjR3kmA7/fg/8U5+BzQjn9ap2rKPJEYk5TjPvHlh6LVU41vHQsXk
- /7vd8jVBIewq6UE9bdnYubbQTrNoZlDYtNmaclj/oK8Dbyhuhu+GJuVFMoqk/WkwiXFn
- nwbQ==
-X-Gm-Message-State: AOJu0Yw7NDDrq2x1UnnKOH9sE4AHPb6BxwJhwHhuMGYCj6ThAKPNz70h
- y5Lf143tjtGD5L78e3waxRVjkgAuyC0B6iU7JQCP1ivk9dP35/fWG9W19QaODgHT1dU=
-X-Gm-Gg: Acq92OE6T/VqXGYvfOGuZyzQQ/6F2kxLYNS4+6ZfCl3KpksDnotwIepk5IyZd4vRDKg
- uzxOlqltVolYEMucMgW77mBQR1luQbsR+N+gO1evC4b7n/2VleWLCgADJbycaIfxQE0IcF/A3jb
- I1IDCvc4lYg5g3a+91X2VRw5U66e+qfA8eGCCUwpJI1NQWUzoN1RIqjwqtYmqWPWWS6CjzFiZ+4
- PtsJVqkrUXMjvbr5dwNXQ8IA6eXho7iCAE2STreORVN91b8ksEJJYIoiMz01+bU1iIm4buxGr3E
- PeMx9XhChPoJ3KqtFPDv/qtqhq13SfdNTSi2caciv/ACOJON9II5Cf1NxesI3FV0ZnIpy8nVoWb
- czdhfTAQ7Q0J1pgSC0GHoq4GbjDikdoM6oCIMRdSz3cvajYsKJ0y/PR9J4aKP7NASlVBthrWX50
- Mq9Ge4U807rP5hkhaRbFpQonmWSlJ3Sm9v8L40Bz3VBLT4evvGT2/iUHSZxyJEgOmrncKLNVG70
- +4=
-X-Received: by 2002:a05:7300:3b05:b0:2ed:b131:240e with SMTP id
- 5a478bee46e88-304fa5ee9d7mr6750119eec.23.1780408416030; 
- Tue, 02 Jun 2026 06:53:36 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-304ee0dd8e1sm16131971eec.21.2026.06.02.06.53.35
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 02 Jun 2026 06:53:35 -0700 (PDT)
-Date: Tue, 2 Jun 2026 06:53:32 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, Gregory Etelson <getelson@nvidia.com>, Dariusz Sosnowski
- <dsosnowski@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: Re: [PATCH v4 06/10] net/mlx5: support selective Rx
-Message-ID: <20260602065332.1d9e82fb@phoenix.local>
-In-Reply-To: <20260529133522.2646044-7-thomas@monjalon.net>
-References: <20260202160903.254621-1-getelson@nvidia.com>
- <20260529133522.2646044-1-thomas@monjalon.net>
- <20260529133522.2646044-7-thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 2A6B6402A9;
+	Tue,  2 Jun 2026 17:37:14 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id D9D9640150
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 17:37:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1780414632; x=1811950632;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=pimVP/IOP3MCEFm11OP2Y3aLZI27LgRHvxt7xFJ/mYo=;
+ b=eCzaoNwpc5115Vgt8QWNbTeYcmM9ZpWjqhYoMZdvR1eHPmaClV5kZBDP
+ jNBFk60x29ej+nIQlDrUI8W7UVtNKXwWknaB6BvmexsT1NRGZbV0are5T
+ THpxgEclIbnFf0wEcmDgJAGDC11ayKW2yLXlouC7GkJgYHJHami++EnBz
+ f2vvIcWJteGYXbhaciKwcgTRI9qvA2UXZX5eI/SF84xcJduqL98B3/BFr
+ 1p+MOKtA/t+aWEr3AGLKSX2Hd9Ir+BD3N0LxAb+0Uu/oXQXsEQIre+YTa
+ MUAc1ZoOHIHki5Nq+JA/6JBsgbbT+WKtxL1xy0lCESt7ZefA8xWMBUofm Q==;
+X-CSE-ConnectionGUID: LNwaa6BeQlqm0D5aa3GJhg==
+X-CSE-MsgGUID: jFLCex3wTFuUl0TNoyXItw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="80345586"
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="80345586"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Jun 2026 08:37:11 -0700
+X-CSE-ConnectionGUID: 0MxjuPtITraWcqfDUlDOvg==
+X-CSE-MsgGUID: cKjJaIS8SpSIgJxFkuuZEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="267575701"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Jun 2026 08:37:11 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 2 Jun 2026 08:37:10 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Tue, 2 Jun 2026 08:37:10 -0700
+Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.33) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 2 Jun 2026 08:37:09 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rU1ub/kdQ/iHVFOVmzRr4tOrXXKAu5dpsFbtVrBohqrftt3V9pZB6t8lVsGaIAvMGF62tgMjd+V7h+1JxGfRtDuwtWlAxY6xgDOTz8DNXcEVLrZrk2otNspauGEsy3b/xsiVqk/7/CcNvF5zZZEFikc1C4TugZ9o8AIfv/EV5W+dXMJDsw6xkwxbtV2iqfTZfu6t+v+Y284hjVkzi58LQ826W2ITxBfmxJBY2rEqWHGCN75SzA/im82WzVGLYCgAdorrxbEgsIFOTF9Nyklmev8WZtqEnRo7mK79yqAgS3NTkyRqLSA91+u32XffKwJV2idnv1xGaFT8tXcDexoXxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1pZ1dETcl7xv7B2WNXAtqRNtpi7fQsK32DUnGg+YVz0=;
+ b=up/8c2UHgRB8lMyhtpAvvoZgS5iMt6X1HTvVcrO5NqTjk1TgKodOlouvAgNek5VTXs6pY8b5Bpw4/7uLrWZxoydFwYIENIOhm7Z4SWptZosfGwckv4j+vHIxK778RZ2ufK4jDlZTWhc1LfEDpV1/ZHoIjGm8/D8NsAcMaymQ4e1yEFgVqbJjgBk01P/tnE9Q3MSdlGWtEd/5Mx9EQelAgtbALMkpeZAhDhf2orhrp1rmIntbHshcA04n68w1tMan2/dGoB294/12r/pfQXmY4s2s+EReEbvSOt/xSrEyDnqe2cZUtWLpIo/0dQ0DheUED5aDfKcbEG2SiudkqH/GnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DS3PR11MB9843.namprd11.prod.outlook.com (2603:10b6:8:366::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.13; Tue, 2 Jun 2026
+ 15:37:03 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0071.014; Tue, 2 Jun 2026
+ 15:37:03 +0000
+Date: Tue, 2 Jun 2026 16:36:57 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Loftus, Ciara" <ciara.loftus@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "mb@smartsharesystems.com"
+ <mb@smartsharesystems.com>
+Subject: Re: [PATCH v3] net/intel: optimize for fast-free hint
+Message-ID: <ah74mTpWEtIUACtG@bricha3-mobl1.ger.corp.intel.com>
+References: <20260123112032.2174361-1-bruce.richardson@intel.com>
+ <20260519110637.964965-1-bruce.richardson@intel.com>
+ <DM3PPF7D18F34A17BA228196DB8843D7D6F8E092@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <DM3PPF7D18F34A17BA228196DB8843D7D6F8E092@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+X-ClientProxiedBy: DU2PR04CA0298.eurprd04.prod.outlook.com
+ (2603:10a6:10:28c::33) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS3PR11MB9843:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34d13117-1abf-4704-04a6-08dec0bccafb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|366016|1800799024|18002099003|22082099003|11063799006|56012099006|4143699003;
+X-Microsoft-Antispam-Message-Info: XpA0jTBgavR+XmK47L06lgpll1tPCGZWjTQsFKvVxoMsx/xfcScRt3Xj+TFMM1glG1d5nH+wGCE3hAKUAUUaXawzX90MjRHQDzN+GlfG+ANvRDfkjn9K9236tcat1C2ftZbAhZdWMjlNko7AmNT16cIfuNZiqQfjpe6Ud70XL3zaRtBi8NkU51KT0/rsq5D8us3rWELw0O7592QQrT9WMqfbN30MYAhG8L7x1S1QHk7Sv7AFE76pt3Js03d2lZKf6HwB5cutJ8YJ04Beuenv0s73TD5OLo3XEz0lzgydvCRRhTtfIVSLYf2ps6A8f6UyQvYKVUWHOFBlO9oXNtzcyCaBs/VXt3oV8fti3rfSqDywbhHzapyQRbD6mtTj3V+2MYUyjgUKCV4oRq+GvFVnwpxp5Yks1xz+3RXnG1+xyJi3K3WTxAwYHlXcH1sJ87ZL9ifeQ9KNRG58cKBqYcXnjnHDlkoLGgu7YQ3D0RQ2+lQ4nCsG3Ba2ZqSNpEcJD/rlmU0aKjMtkxKJ8qZmw1uJOiVfZaa6D5j4jG2cajlw1vUU2UGaxW2ZyGpe7dOXHxKcWrpBqtkrm2klWF1WmbCVw6Cw0BZuwTs4r2hZBl6UxFKSmL6L1bIFyyL7J5sXZiQz/gHhQSyo8mxjENz2zz7UDc8fv14bTVUKPn3MZUhOpSf8dMoVZYQbLzuLrm6kHa4j
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(18002099003)(22082099003)(11063799006)(56012099006)(4143699003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Vbn9LLvavvN1VD2WbXBSTxEfVhHUL4h3Y10lZgWzoT6CBBsDejvdHdsX+60D?=
+ =?us-ascii?Q?3q9Ryw0HJwSX51X9fJ4H9p+yfuBbKdiGMejeWUwr8Uw6nbPwZQ5uJO0Y29ag?=
+ =?us-ascii?Q?zSsQkFQ79o6PLR8Z1qSg/BX2ewFG58QRdcsO6QGFKXzpqVb6/D6+RLonGMT0?=
+ =?us-ascii?Q?UACghmx2gNJC2hhTasU8OWr8SSjw+eYIQIj67RSj1AbN285zkX+2WfPEgzde?=
+ =?us-ascii?Q?+HJrFnMKOPKKTVw6FzsqWSxiPG0TNjT21EVz0uRnpQY7LtlbOHjVOH7aSIu8?=
+ =?us-ascii?Q?d0jcGjPrtU7W0ZEIsTgxf8BUz6cvYMrozwDfTX+sfhRrqxqvENq5ARdu256O?=
+ =?us-ascii?Q?CV2u+ny93z3N2C5Hsn+FlqH1oxBblMY5GD2ZwjM3Pr2VHgZyAVaU9HBcTatd?=
+ =?us-ascii?Q?MNOfJUV8gDCqD8hwykWu1BKX1tJNNX3VYkoDsxPJp+HNYG5CFfYni51DApOn?=
+ =?us-ascii?Q?TENShQachIkdv5ij21QEP+uSbuUHtM5OTIbdEfcRxGElkvbGGhE3T9eM27BU?=
+ =?us-ascii?Q?7ugj2dTAzQhY118231BrRd+ViwJ8+0LjkAWW73b0REwhKZzRIgkInNlF9b1E?=
+ =?us-ascii?Q?+vVPYnlNBWCokCAryLTqOj9AGe8pYLUvwTIXikJ6XMVPSrjxlYl9ViIjvsIF?=
+ =?us-ascii?Q?k5oyqLK7Awk6bqfU4EBlFTGSA8cJyymqI6mvGncQ+9DKgGjLOm1y3bDY5x5Y?=
+ =?us-ascii?Q?bGtTIjmdzFpvhvOclBT41vJXf0uoDq5YAVaAar4hZF+EGtCZuOpjugtW7nN7?=
+ =?us-ascii?Q?6dPYw1BXdTzW0AXEV90ZIlFMluYugUrfJxMs5LN2y4df9UMhUAz7dI8snzc+?=
+ =?us-ascii?Q?Lz0gdt3HGbtKsrqAXECfZxSGcMNH1XkAJbM5ngCeJJrQ7VUDBVocImhde0A/?=
+ =?us-ascii?Q?mLdEXfioPPGBGzK9cI+QHjHmdmQF7lvYzyy/HDYIKzDisLjyma7i6z1ISV63?=
+ =?us-ascii?Q?1Wm9xYneAv0S7RxZUCqieblYCicXLlQweimbN0N500WLgabmg0C8ulvYfb16?=
+ =?us-ascii?Q?zwg1+oFlvZwlUHfOUELmHQUcZWljstACfQ8lEmwI8nKHyUrcT1E8WauChElK?=
+ =?us-ascii?Q?Azt46brES2iZdLsveVbrqMLixwHvoX9JhxDSAv/sdgJ6k3H+4ry7t/kZlk6P?=
+ =?us-ascii?Q?+2V1fmZ3eXJM0iDOF+2KB7o92j6FPSlGAGVREWFoWQGYwC1UDSH1Wm6/0LY+?=
+ =?us-ascii?Q?p/fLS8gALnUZRY6iCbK4b0EaLCIPYlaDMkoCf4vr7tkW2seCVnLFnxbhm0uF?=
+ =?us-ascii?Q?Ii1YlIdaVdwJLlt7+wi70LzoGvl+j85HuP/UkFENpE4X+OVVNR7VrE313Bbo?=
+ =?us-ascii?Q?jlvDuJ0Hyk8MeFXSPHT5FQ5Rf4yEj46MuLedWThZlSF3Hw8BOMqnaw0wzJso?=
+ =?us-ascii?Q?OnvtxAqkBGzxfZILKMVwDoNtlGq0GwvEOPTPfJR1Y12sSALmKKzJ5AuJ2dBf?=
+ =?us-ascii?Q?6F+WSvt2Jp/1TaAx9v9X5MFtvVJjZHFrQPVgXcJ6QYqlspLv68/BnMjQ0C0l?=
+ =?us-ascii?Q?LPBj62FCTxOTqAwoPepWj4YSfAFG93COI4btKagUZAWiHOGOAqKugUHuj6g8?=
+ =?us-ascii?Q?y6a+aoOjrE6quurn8b7iTprx9cv4uXwKRlDVH/zRQ82KukxfaHWhPXoS5ocO?=
+ =?us-ascii?Q?0J9R9Hu9AUijUOGy72NhuxtSF30j0V1rmHQ9sqzw8BSq6F60P1gitSAMO1XQ?=
+ =?us-ascii?Q?IG61hbR20YpiPfAfF1PT3HnepcsLzNb1pAfuLZ0Qwt4Y3RZMMBCUF7TAcGEf?=
+ =?us-ascii?Q?LRJiVlw1hXp7lYWVyp6Tb3wXDgenPaM=3D?=
+X-Exchange-RoutingPolicyChecked: Oj64KWkL1jPxUJqIE20V5TSz/8h5pBjNt+F3a+w7EQmbOyJU+m+QMgFCXKpJ3Tum9ghzWaPZrKK9hD+vgbLl4i0xCV2BFOvOfu8H5+cyGUXI/91tRb8Cx39qkInnrtPWQeOQilGNoPkzBTYucU/re/oShFSYAJROTfzUHSppVBzK4GPRKqd8VZ9ULNddWkNhVTI0Qm6NEfBprAC/UC5z/ySFAY4ZUz62hyYA+BehAwLAZ0fkuwQTMKpPiMbsg1haae7aJq7v4fhDtjTEEna6hy++oSDUAkjviVq6hXQ0T2iNbR17HMVaXC4dfVCeTqwrZ97rTG7ZtQnFGMTWooUVLA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34d13117-1abf-4704-04a6-08dec0bccafb
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2026 15:37:02.9482 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l0GF4INVAy5R8/B1fpg0ZjpWHIJNY6N0ex4PFTp8QhAY4WdYpJP16OH2UMvtx+5JgJc5mcOIbHto2nW43Rs8mkEVIeX3gDULmr0H2FxZQdQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS3PR11MB9843
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,101 +153,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 29 May 2026 15:34:00 +0200
-Thomas Monjalon <thomas@monjalon.net> wrote:
-
-> From: Gregory Etelson <getelson@nvidia.com>
+On Thu, May 28, 2026 at 02:23:00PM +0100, Loftus, Ciara wrote:
+> > Subject: [PATCH v3] net/intel: optimize for fast-free hint
+> > 
 > 
-> Selective Rx may save some PCI bandwidth.
-> Implement selective Rx in the (quite slow) scalar SPRQ Rx path
-> mlx5_rx_burst() where the performance impact
-> of the added condition branches is acceptable.
-> Other Rx functions do not support this feature.
-> When using selective Rx, mlx5_rx_burst will be selected.
+> snip
 > 
-> A null Memory Region (MR) is always allocated
-> at shared device context initialization.
-> The selective Rx capability is not advertised
-> if this special MR allocation fails.
+> > diff --git a/drivers/net/intel/common/tx_scalar.h
+> > b/drivers/net/intel/common/tx_scalar.h
+> > index 9fcd2e4733..d27df34dfa 100644
+> > --- a/drivers/net/intel/common/tx_scalar.h
+> > +++ b/drivers/net/intel/common/tx_scalar.h
+> > @@ -197,16 +197,64 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
+> >  	const uint16_t rs_idx = (last_desc_cleaned == nb_tx_desc - 1) ?
+> >  			0 :
+> >  			(last_desc_cleaned + 1) >> txq->log2_rs_thresh;
+> > -	uint16_t desc_to_clean_to = (rs_idx << txq->log2_rs_thresh) + (txq-
+> > >tx_rs_thresh - 1);
+> > +	const uint16_t dd_idx = txq->rs_last_id[rs_idx];
+> > +	const uint16_t first_to_clean = rs_idx << txq->log2_rs_thresh;
+> > 
+> > -	/* Check if descriptor is done  */
+> > -	if ((txd[txq->rs_last_id[rs_idx]].cmd_type_offset_bsz &
+> > -			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
+> > -
+> > 	rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
+> > +	/* Check if descriptor is done - all drivers use 0xF as done value in bits
+> > 3:0 */
+> > +	if ((txd[dd_idx].cmd_type_offset_bsz &
+> > rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
+> > +			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
+> > +		/* Descriptor not yet processed by hardware */
+> >  		return -1;
+> > 
+> > +	/* DD bit is set, descriptors are done. Now free the mbufs. */
+> > +	/* Note: nb_tx_desc is guaranteed to be a multiple of tx_rs_thresh,
+> > +	 * validated during queue setup. This means cleanup never wraps
+> > around
+> > +	 * the ring within a single burst (e.g., ring=256, rs_thresh=32 gives
+> > +	 * bursts of 0-31, 32-63, ..., 224-255).
+> > +	 */
+> > +	const uint16_t nb_to_clean = txq->tx_rs_thresh;
+> > +	struct ci_tx_entry *sw_ring = txq->sw_ring;
+> > +
+> > +	/* fast_free_mp is NULL only when the fast free is disabled*/
+> > +	if (txq->fast_free_mp != NULL) {
+> > +		/* FAST_FREE path: mbufs are already reset, just return to
+> > pool */
+> > +		struct rte_mbuf *free[CI_TX_MAX_FREE_BUF_SZ];
+> > +		uint16_t nb_free = 0;
+> > +
+> > +		/* Get cached mempool pointer, or cache it on first use */
+> > +		struct rte_mempool *mp =
+> > +			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
+> > +			txq->fast_free_mp :
+> > +			(txq->fast_free_mp = sw_ring[dd_idx].mbuf->pool);
 > 
-> For each Rx segment configured with a NULL mempool,
-> a "null mbuf" is created.
-> It is a fake mbuf allocated outside any mempool,
-> used as a placeholder in the Rx ring.
-> The null MR lkey is used in the WQE for these segments
-> so the NIC writes received data to a discard buffer.
-> The mbuf data room size is resolved from the first segment having a pool.
-> For null segments, the buffer length is from the last seen pool,
-> so that the WQE stride size remains consistent.
+> Is the mbuf you are dereferencing here guaranteed to be non NULL?
 > 
-> In mlx5_rx_burst, discarded segments are not chained
-> into the packet mbuf list, NB_SEGS is decremented accordingly,
-> and no replacement buffer is allocated.
-> A separate data_seg_len accumulator tracks the total length
-> of delivered segments only.
-> The packet length is adjusted to reflect only the data
-> actually delivered to the application.
-> 
-> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> ---
+Good point. It almost certainly is, but checking through the logic of the
+code, the one possible error condition is where we have the last segment of
+the packet being a large segment using TSO which is to be split across
+multiple data descriptors. In that case (only) the mbuf pointer can be
+NULL. In all other cases, it should be valid, because the DD bit can only
+be set on a data descriptor.
 
-AI review with Opus 4.8 and High setting found one issue:
+Rather than trying to fix that issue here on cleanup, I think the better
+solution is to adjust the large segment handling so that the last
+descriptor of the segment, rather than the first, has the mbuf pointer.
+That way we can always know that the descriptor that has DD set on it will
+have a valid mbuf. Will implement this as a separate patch in v4.
 
-Patch 6: net/mlx5: support selective Rx
-
-Error: NULL pointer dereference when the first configured Rx segment is a
-discard segment (mp == NULL).
-
-In mlx5_rx_burst() the head mbuf and the chain tail are tracked like this:
-
-if (pkt) {
-    if (rep->pool)
-        NEXT(tail) = rep;
-    else
-        --NB_SEGS(pkt);
-}
-...
-if (seg->pool) {
-    tail = seg;
-    ...
-}
-
-tail is only ever assigned inside "if (seg->pool)", and pkt is set to the
-first processed segment unconditionally (pkt = seg in the !pkt block, no
-pool guard). So if the first segment of a packet is a discard segment:
-
-    pkt becomes the null_mbuf (pool == NULL), tail stays NULL;
-    on the next (real) segment, rep->pool is set, so NEXT(tail) = rep executes with tail == NULL -> write through NULL.
-
-Even without the crash, returning the pool-less null_mbuf as the packet
-head is wrong: the application later frees it back to a NULL pool.
-
-This is reachable, not theoretical. testpmd (patch 3) inserts a leading
-mp==NULL segment whenever the first offset is > 0 (seg_offset > next_offset
-with next_offset starting at 0), ethdev check_split (patch 2) now permits a
-leading NULL mp, and mlx5_rxq_new() accepts it (first_mp is just the first
-non-NULL pool; there is no requirement that rxseg[0].mp != NULL). The DTS
-cases selective_rx_payload_only (rxoffs=[34]) and selective_rx_two_segments
-(rxoffs=[14,...]) in patch 10 configure exactly this layout, and
-mlx5_selective_rx_enabled() forces the scalar mlx5_rx_burst path, so the
-buggy path is the one that runs.
-
-Trace for rxoffs=34 / rxpkts=payload (segments: discard[0,34) real[34,290)
-discard[290,max)):
-
-iter0 (discard head): pkt == NULL, seg->pool == NULL -> pkt = null_mbuf,
-tail not set; len(290) > DATA_LEN(34) -> ++NB_SEGS, continue.
-iter1 (real seg):      pkt set, rep->pool != NULL -> NEXT(tail==NULL)=rep.
-
-Suggested fix: a discard segment must not become the packet head/tail.
-Either reject rxseg[0].mp == NULL in mlx5_rxq_new() (cleanest, matches the
-"deliver last N bytes" case being unsupported here), or make the data path
-skip leading discard segments without assigning them to pkt and only set
-pkt/tail on the first segment with a pool. If leading discard is intended
-to be supported, the head selection and NEXT(tail) linking both need to
-account for tail == NULL.
-
-The same head/tail assumption also means a packet that falls entirely
-within a leading discard segment would be returned with a NULL-pool head;
-fixing the above covers that too.
+/Bruce
