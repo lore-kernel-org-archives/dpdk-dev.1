@@ -2,71 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 391CDCD6E55
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Jun 2026 22:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9204CD6E56
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 03:17:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0D8B402C4;
-	Tue,  2 Jun 2026 00:23:24 +0200 (CEST)
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
- by mails.dpdk.org (Postfix) with ESMTP id 911A440150
- for <dev@dpdk.org>; Tue,  2 Jun 2026 00:23:23 +0200 (CEST)
-Received: by mail-dl1-f47.google.com with SMTP id
- a92af1059eb24-137dd4cc208so1141534c88.1
- for <dev@dpdk.org>; Mon, 01 Jun 2026 15:23:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780352602;
- x=1780957402; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=g9Nnakl1eS7MLw2zw1Mv4qyTB9a7mQJmfXm232GywvA=;
- b=XZPSeQJe8SIvAbIuKdOwdtPAI3lCu5RWu4rJKpUszjtdMUh0JcvBigxCoe4947xapL
- T0AYaYB8Xv3OJRyRMWCxEDOmkZu4kvhLZAnuNIFV7GYvlMxwoPiQ22h+XPkvTsxaODkn
- xwJKTG+ZHccSCL2EUTgMZ7W5G7/q1r0hiqIVR8ovOe1Gn0GujrDjSq3sO6Eg3R1j/vZ5
- 8HDoXJ5LRd6wwHOZsKKh+mg6CCc9DCKoqFSpTn86ovZi1LyKX/Ul6Tu/AUG2yH2wj5yT
- 7hl3lTZwE9D5nNowa6ddL+KdUJJ8Rxxc8tbfYhpYA0x4lOV7HtIZymmfvrTVkXqTVKop
- 2NqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780352602; x=1780957402;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=g9Nnakl1eS7MLw2zw1Mv4qyTB9a7mQJmfXm232GywvA=;
- b=CN2GbVCxs97NNi5qDBHXXXTpqnq0pIzbEM8Pu+tgxIcAlfF6NCPiLtu1Gv8L9jdAWF
- kFgALG3dgegHgtWffTaEo4CBVLP3Tj2CeLz6AtgH4n0jMyem0HPdYdBFKw8iDzITrqBg
- AjsoNUkxCiiPl4ahJ7/AWQemvO1mIoBEqzCMW2tkcya0H5yZgYC7uDw8ujKGRH+YwYhP
- 9HD17AdoE7v7utD8+etDi6VpMwXp6irwsvvWocYc6ORPi8G8joYDkLIGVHqQzQQjiNNv
- F6dOcHlfTgg/BsVnyMFQEYZ5Xk4xxRJLOt/W39WZVm5LOOC7YNEqJR9Mayifywdd/C93
- R/Hg==
-X-Gm-Message-State: AOJu0YwbK0IzfK1bnkw3++EMVvgFONY2p+owxbJPo4YI1CL5mDewROkl
- 6TQBdu0yuiZ4yU+tRsxyUVhL1If9Zv80HpxVmE/iCVvdWXpo5eIgzKc+78is6b9npjo=
-X-Gm-Gg: Acq92OFz9DVc8RUK/teOXtCAuJPWXjx6110aGufgfQZXLpP2eLoA32fHnllegR6x3yJ
- Vk3JWn936riZglrH9qPrIWRpYsk6GYrjEKlasGX1ph3839QcsNGNWfjiCXn8WOPVW68T5fIkAhJ
- +3KfgXTlIlo/sFo+f6nm7hWyfg37BiuKhgo/5Pdlmmfjh5JXSNtKeoB0lbOg019gEGQ93cnFykk
- rlSjeVk6gFWXgcXgMFkSGsMkUhoo9LmQpsUq945lQEzKtCN3sx8wr6aQ2snWUjasApZ0pOVatBy
- 210QQarJ15UukqIfLGUo0Vf7LbKD9CLlnH/Cm6MHdE7MUAOuxlpMzTP4/7ojRJX1apFQBEEKYpA
- s0yJIl7e9DqJoqSFvy9CJwT2E0J3AgNVAgdZ2BspmzmvY1W7614ulDOmaQDO+BDJClSXgGJuNxT
- x6PisdlGi+TGydnwGFeCNpbwBQUj6jmt05YofRzty7fZdb8rge7hlZI4RJ2Bwu+/37ZOxb2t0Bp
- I4HBFDy/yRQMg==
-X-Received: by 2002:a05:7022:393:b0:130:5606:94d with SMTP id
- a92af1059eb24-137edff950fmr510034c88.0.1780352602245; 
- Mon, 01 Jun 2026 15:23:22 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-137b3c69c0asm8246135c88.11.2026.06.01.15.23.21
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 01 Jun 2026 15:23:22 -0700 (PDT)
-Date: Mon, 1 Jun 2026 15:23:13 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [PATCH] ring: avoid extra store at move head
-Message-ID: <20260601152313.1946d438@phoenix.local>
-In-Reply-To: <20260601181509.71007-1-konstantin.ananyev@huawei.com>
-References: <20260601181509.71007-1-konstantin.ananyev@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B2AF2402F2;
+	Tue,  2 Jun 2026 05:17:17 +0200 (CEST)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTP id 8B1C1402D6
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 05:17:15 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-03 (Coremail) with SMTP id rQCowAA3WN84Sx5qfVtREw--.7177S2;
+ Tue, 02 Jun 2026 11:17:12 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 00/20] net/sxe2: added Linkdata sxe2 ethernet driver
+Date: Tue,  2 Jun 2026 11:16:46 +0800
+Message-ID: <20260602031707.578932-1-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260601084950.269887-21-liujie5@linkdatatechnology.com>
+References: <20260601084950.269887-21-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: rQCowAA3WN84Sx5qfVtREw--.7177S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww1DWr17ZF1kXr4xuw4fuFg_yoWxKr1xpF
+ 48ZryrZF13JFW3Gw4fJa1fZFyYg3WxJryjkrWa9as3XFykAFyUCrs0gFy5CwnFyr13JF1S
+ vrZIyr1UGan5Aw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUka14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+ 6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+ 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+ I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+ 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l
+ 42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+ WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
+ I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+ 4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
+ 6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JU6CJPUUUUU=
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,96 +56,151 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 1 Jun 2026 19:15:09 +0100
-Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-> C11 __rte_ring_headtail_move_head_mt() uses output
-> parameter: 'uint32_t *old_head' directly within CAS operation.
-> In x86_64 that cause gcc to generate extra instructions to
-> store return value of CAS (eax) within 'old_head' memory location,
-> even when CAS was not successful and another attempt should be
-> performed. In some cases, even extra branch can be observed.
-> To be more specific the code like that is generated:
-> // start of 'do { } while();' loop
-> .L2
->         ...
->         lock cmpxchgl   %r8d, (%rdi)
->         jne     .L17  //
-> .L1: // <---- successful completion of CAS, finish
->         movl    %edx, %eax
->         ret
-> .L17: // <---- unsuccessful completion of CAS, repeat
->         movl    %eax, (%r9)
->         jmp     .L2
->=20
-> In constrast, x86 specific version that uses
-> __sync_bool_compare_and_swap() doesn't exibit such problem,
-> as __sync_bool_compare_and_swap() doesn't update the 'old_head'
-> with new value, and we have to re-read it explicitly on each iteration.
->=20
-> Overcome that problem by using local variable 'head' inside the loop,
-> and updaing '*old_head' value only at exit.
-> With such change gcc manages to avoid extra store(/branch).
->=20
-> Depends-on: series-38225 ("deprecate rte_atomicNN family")
->=20
-> Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-> ---
+This patch set implements core functionality for the SXE PMD,
+including basic driver framework, data path setup, and advanced
+offload features (VLAN, RSS, DCB, PTP etc.).
 
-I used the standard ring perf tests and ran 10 times via:
-! /bin/bash
-if [ -z "$1" ]; then
-	echo "Usage $0 version"
-	exit 1
-fi
+V4:
+ - Addressed AI comments
 
-VERSION=3D$1
-for i in $(seq 1 10); do
-     sudo DPDK_TEST=3Dring_perf_autotest \
-        ./build/app/dpdk-test -l 2-5 -n 4 --no-pci --file-prefix=3Drun$i \
-        > ~/DPDK/ring_perf_results/${VERSION}_run${i}.log 2>&1
-    echo "${VERSION} run $i done"
-done
+Jie Liu (20):
+  net/sxe2: support AVX512 vectorized path for Rx and Tx
+  net/sxe2: add AVX2 vector data path for Rx and Tx
+  drivers: add supported packet types get callback
+  net/sxe2: support L2 filtering and MAC config
+  drivers: support RSS feature
+  net/sxe2: support TM hierarchy and shaping
+  net/sxe2: support IPsec inline protocol offload
+  net/sxe2: support statistics and multi-process
+  drivers: interrupt handling
+  net/sxe2: add NEON vec Rx/Tx burst functions
+  drivers: add support for VF representors
+  net/sxe2: add support for custom UDP tunnel ports
+  net/sxe2: support firmware version reading
+  net/sxe2: implement get monitor address
+  common/sxe2: add shared SFP module definitions
+  net/sxe2: support SFP module info and EEPROM access
+  net/sxe2: implement private dump info
+  net/sxe2: add mbuf validation in Tx debug mode
+  drivers: add testpmd commands for private features
+  net/sxe2: update sxe2 feature matrix docs
 
+ doc/guides/nics/features/sxe2.ini          |   65 +
+ drivers/common/sxe2/sxe2_common.c          |  156 ++
+ drivers/common/sxe2/sxe2_common.h          |    4 +
+ drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      |  178 +-
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
+ drivers/common/sxe2/sxe2_msg.h             |  118 ++
+ drivers/common/sxe2/sxe2_ptype.h           | 1793 ++++++++++++++++++
+ drivers/net/sxe2/meson.build               |   56 +-
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 1587 +++++++++++++++-
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
+ drivers/net/sxe2/sxe2_drv_cmd.h            |  521 +++++-
+ drivers/net/sxe2/sxe2_dump.c               |  304 +++
+ drivers/net/sxe2/sxe2_dump.h               |   12 +
+ drivers/net/sxe2/sxe2_ethdev.c             | 1531 +++++++++++++++-
+ drivers/net/sxe2/sxe2_ethdev.h             |  112 +-
+ drivers/net/sxe2/sxe2_ethdev_repr.c        |  610 ++++++
+ drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
+ drivers/net/sxe2/sxe2_filter.c             |  895 +++++++++
+ drivers/net/sxe2/sxe2_filter.h             |  100 +
+ drivers/net/sxe2/sxe2_flow.c               | 1391 ++++++++++++++
+ drivers/net/sxe2/sxe2_flow.h               |   30 +
+ drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
+ drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
+ drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
+ drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
+ drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 ++++++++++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
+ drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
+ drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
+ drivers/net/sxe2/sxe2_irq.c                | 1025 +++++++++++
+ drivers/net/sxe2/sxe2_irq.h                |   25 +
+ drivers/net/sxe2/sxe2_mac.c                |  535 ++++++
+ drivers/net/sxe2/sxe2_mac.h                |   84 +
+ drivers/net/sxe2/sxe2_mp.c                 |  414 +++++
+ drivers/net/sxe2/sxe2_mp.h                 |   67 +
+ drivers/net/sxe2/sxe2_queue.c              |   17 +-
+ drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
+ drivers/net/sxe2/sxe2_rss.h                |   81 +
+ drivers/net/sxe2/sxe2_rx.c                 |   38 +
+ drivers/net/sxe2/sxe2_rx.h                 |    2 +
+ drivers/net/sxe2/sxe2_security.c           |  335 ++++
+ drivers/net/sxe2/sxe2_security.h           |   77 +
+ drivers/net/sxe2/sxe2_stats.c              |  591 ++++++
+ drivers/net/sxe2/sxe2_stats.h              |   39 +
+ drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
+ drivers/net/sxe2/sxe2_switchdev.h          |   33 +
+ drivers/net/sxe2/sxe2_testpmd.c            |  733 ++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.c        |  969 ++++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.h        |  142 ++
+ drivers/net/sxe2/sxe2_tm.c                 | 1169 ++++++++++++
+ drivers/net/sxe2/sxe2_tm.h                 |   78 +
+ drivers/net/sxe2/sxe2_tx.c                 |    7 +
+ drivers/net/sxe2/sxe2_txrx.c               |  176 +-
+ drivers/net/sxe2/sxe2_txrx.h               |    4 +
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
+ drivers/net/sxe2/sxe2_txrx_poll.c          |  243 ++-
+ drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
+ drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
+ drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  777 ++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  897 +++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_common.h    |    1 +
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  724 ++++++++
+ drivers/net/sxe2/sxe2_vsi.c                |  146 ++
+ drivers/net/sxe2/sxe2_vsi.h                |   12 +-
+ drivers/net/sxe2/sxe2vf_regs.h             |   82 +
+ 68 files changed, 26585 insertions(+), 124 deletions(-)
+ create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
+ create mode 100644 drivers/common/sxe2/sxe2_msg.h
+ create mode 100644 drivers/common/sxe2/sxe2_ptype.h
+ create mode 100644 drivers/net/sxe2/sxe2_dump.c
+ create mode 100644 drivers/net/sxe2/sxe2_dump.h
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
+ create mode 100644 drivers/net/sxe2/sxe2_filter.c
+ create mode 100644 drivers/net/sxe2/sxe2_filter.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
+ create mode 100644 drivers/net/sxe2/sxe2_irq.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.h
+ create mode 100644 drivers/net/sxe2/sxe2_mp.c
+ create mode 100644 drivers/net/sxe2/sxe2_mp.h
+ create mode 100644 drivers/net/sxe2/sxe2_rss.c
+ create mode 100644 drivers/net/sxe2/sxe2_rss.h
+ create mode 100644 drivers/net/sxe2/sxe2_security.c
+ create mode 100644 drivers/net/sxe2/sxe2_security.h
+ create mode 100644 drivers/net/sxe2/sxe2_stats.c
+ create mode 100644 drivers/net/sxe2/sxe2_stats.h
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.h
+ create mode 100644 drivers/net/sxe2/sxe2_tm.c
+ create mode 100644 drivers/net/sxe2/sxe2_tm.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
+ create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
 
-Then had Claude compare results:
-
-Key metric (two physical cores legacy MP/MC bulk n=3D128):
-  main:        5.380 cycles/elem
-  sync-bool:   5.377 cycles/elem  (-0.07%)
-  avoid-store: 5.892 cycles/elem  (+9.52%)  =E2=86=90 regresses
-
-
-Looking at the dissassembly of ring_enqueue_bulk:
-
-The inner loop of main and sync-bool versions is:
-mov    0x80(%rdi),%r11d            ; load d->head via displacement
-mov    0x104(%rdi),%ebx             ; load s->tail
-add    %ecx,%ebx
-sub    %r11d,%ebx
-cmp    %ebx,%r12d
-jae    [exit]
-lea    (%r8,%r11,1),%r13d           ; new_head =3D old_head + n
-mov    %r11d,%eax                   ; expected =E2=86=92 eax
-lock cmpxchg %r13d,0x80(%rdi)       ; =E2=86=90 displacement addressing
-jne    [retry]                      ; =E2=86=90 direct jne, eax preserved
-
-Using atomic_compare_exchange and your patch:
-mov    0x38(%rdi),%r10d
-mov    0x80(%rdi),%eax              ; load d->head directly into %eax
-lea    0x80(%rdi),%rcx               ; =E2=86=90 MATERIALIZE &d->head into =
-%rcx
-lea    -0x1(%r8),%r12d
-mov    0x104(%rdi),%r11d
-add    %r10d,%r11d
-sub    %eax,%r11d
-cmp    %r11d,%r12d
-jae    [exit]
-lea    (%r8,%rax,1),%r13d           ; new_head
-lock cmpxchg %r13d,(%rcx)           ; =E2=86=90 INDIRECT addressing via %rcx
-mov    %eax,%ebx                    ; =E2=86=90 EXTRA: save post-CAS %eax t=
-o %ebx
-jne    [retry]
-
-Bottom line: good idea but still fighting with Gcc optimizer here.
+-- 
+2.52.0
 
