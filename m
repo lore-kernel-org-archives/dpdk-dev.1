@@ -2,47 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A51CD6E60
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 15:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E279CD6E60
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 15:53:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20BCA40687;
-	Tue,  2 Jun 2026 17:52:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2F6D140696;
+	Tue,  2 Jun 2026 17:52:57 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 359C240652
- for <dev@dpdk.org>; Tue,  2 Jun 2026 17:52:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 33D9E40662
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 17:52:47 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowAB3HtdK_B5q0IJyAA--.6815S6;
- Tue, 02 Jun 2026 23:52:44 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowAB3HtdK_B5q0IJyAA--.6815S14;
+ Tue, 02 Jun 2026 23:52:46 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v6 04/20] net/sxe2: support L2 filtering and MAC config
-Date: Tue,  2 Jun 2026 23:52:23 +0800
-Message-ID: <20260602155240.1002602-5-liujie5@linkdatatechnology.com>
+Subject: [PATCH v6 12/20] net/sxe2: add support for custom UDP tunnel ports
+Date: Tue,  2 Jun 2026 23:52:31 +0800
+Message-ID: <20260602155240.1002602-13-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260602155240.1002602-1-liujie5@linkdatatechnology.com>
 References: <20260602055414.630859-21-liujie5@linkdatatechnology.com>
  <20260602155240.1002602-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowAB3HtdK_B5q0IJyAA--.6815S6
-X-Coremail-Antispam: 1UD129KBjvAXoWDJF1kJr4fJFWUWr45GF1DAwb_yoWxGw1rXo
- WIgrsrXr1xA342kay8Jr18GFyUZw4Fgw45Jay29rs8uwsxJw15KFZ5Zw1Yv3Z2gF4vqryv
- gw1Iva93Jr4DtFW8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUY_7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+X-CM-TRANSID: qwCowAB3HtdK_B5q0IJyAA--.6815S14
+X-Coremail-Antispam: 1UD129KBjvAXoWfAFWxGr4ftF15Ar1fGw1rWFg_yoW5WFW3to
+ WxGrWrX3WfA342vay8Xry8GrW7J3y5Wwn3Kwsaga1DWasrA34jkF93Xw17XanrWF4SkFn8
+ u3Wxu397Kr47Gr98n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UjIYCTnIWjp_UUUYE7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
- Ia0xkI8VCY1x0267AKxVW8JVW5JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
- 84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
+ Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+ 84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
  4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_
  Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x
  IIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_
  Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0w
  CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
  6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64
- vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_
- Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0x
- vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU17KsUUUUU
+ vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+ Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j6r4UJwCI42
+ IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbfcTJUUUUU=
+ =
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -60,361 +61,189 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-- Support primary/secondary MAC address setup.
-- Enable L2 broadcast/multicast filter bits.
-- Add multicast address update logic.
+This patch enables the configuration of custom UDP port numbers for
+tunneling protocols in the SXE2 PMD.
+
+The change includes:
+- Adding a new entry in the tunnel port lookup table.
+- Updating the hardware profile to recognize
+  the custom UDP port as a tunnel type.
+- Enabling inner header parsing for packets arriving on these ports.
+
+This allows the Switch module to correctly apply recipes based on
+inner packet fields (e.g., inner MAC or IP).
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/meson.build      |   1 +
- drivers/net/sxe2/sxe2_cmd_chnl.c  | 198 ++++++++
- drivers/net/sxe2/sxe2_cmd_chnl.h  |  17 +
- drivers/net/sxe2/sxe2_drv_cmd.h   |  87 ++++
- drivers/net/sxe2/sxe2_ethdev.c    |  70 ++-
- drivers/net/sxe2/sxe2_ethdev.h    |  43 +-
- drivers/net/sxe2/sxe2_filter.c    | 782 ++++++++++++++++++++++++++++++
- drivers/net/sxe2/sxe2_filter.h    |  98 ++++
- drivers/net/sxe2/sxe2_mac.c       | 432 +++++++++++++++++
- drivers/net/sxe2/sxe2_mac.h       |  34 ++
- drivers/net/sxe2/sxe2_txrx_poll.c |  49 ++
- 11 files changed, 1805 insertions(+), 6 deletions(-)
- create mode 100644 drivers/net/sxe2/sxe2_filter.c
- create mode 100644 drivers/net/sxe2/sxe2_filter.h
+ drivers/net/sxe2/sxe2_cmd_chnl.c           |  96 ++++++++++
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  17 ++
+ drivers/net/sxe2/sxe2_drv_cmd.h            |  16 ++
+ drivers/net/sxe2/sxe2_ethdev.c             | 206 ++++++++++++++++++++-
+ drivers/net/sxe2/sxe2_ethdev.h             |  12 ++
+ drivers/net/sxe2/sxe2_flow.c               |  54 ++++++
+ drivers/net/sxe2/sxe2_flow.h               |   3 +-
+ drivers/net/sxe2/sxe2_flow_define.h        |   1 +
+ drivers/net/sxe2/sxe2_flow_parse_pattern.c | 113 +++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_pattern.h |   6 +
+ drivers/net/sxe2/sxe2_txrx_poll.c          |  46 ++++-
+ 11 files changed, 566 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index b14b5120c1..b661e3cbf4 100644
---- a/drivers/net/sxe2/meson.build
-+++ b/drivers/net/sxe2/meson.build
-@@ -61,4 +61,5 @@ sources += files(
-         'sxe2_txrx.c',
-         'sxe2_txrx_vec.c',
-         'sxe2_mac.c',
-+        'sxe2_filter.c',
- )
 diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index 07eeb7f38c..1fa9ad718e 100644
+index 6e2dd139a5..926eaee062 100644
 --- a/drivers/net/sxe2/sxe2_cmd_chnl.c
 +++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -343,3 +343,201 @@ int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter)
- l_end:
+@@ -1455,6 +1455,102 @@ int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
  	return ret;
  }
-+
-+int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set)
+ 
++int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
++			    enum sxe2_udp_tunnel_protocol tunnel_proto,
++			    uint16_t udp_port)
 +{
-+	int32_t ret = 0;
 +	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_promisc_filter_cfg_req promisc_filter_cfg_req = {0};
++	struct sxe2_drv_udp_tunnel_req req = {};
++	struct sxe2_drv_cmd_params cmd = {};
++	int32_t ret = -1;
 +
-+	promisc_filter_cfg_req.vsi_id = adapter->vsi_ctxt.dpdk_vsi_id;
-+	promisc_filter_cfg_req.is_add = set;
-+	promisc_filter_cfg_req.type = SXE2_PROMISC_FILTER_TYPE_PROMISC;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_PROMISC_CFG,
-+				 &promisc_filter_cfg_req,
-+				 sizeof(promisc_filter_cfg_req),
++	req.type = tunnel_proto;
++	req.port = udp_port;
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_UDPTUNNEL_ADD,
++				 &req, sizeof(req),
 +				 NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
++	ret = sxe2_drv_cmd_exec(cdev, &cmd);
 +	if (ret)
-+		PMD_DEV_LOG_WARN(adapter, DRV, "promic config failed, ret=%d", ret);
++		PMD_LOG_ERR(DRV, "Failed to add udp proto %d port %d, ret=%d",
++				tunnel_proto, udp_port, ret);
 +
 +	return ret;
 +}
 +
-+int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set)
++int32_t sxe2_drv_udp_tunnel_del(struct sxe2_adapter *adapter,
++			    enum sxe2_udp_tunnel_protocol tunnel_proto,
++			    uint16_t udp_port)
 +{
-+	int32_t ret = 0;
 +	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_promisc_filter_cfg_req promisc_filter_cfg_req = {0};
++	struct sxe2_drv_udp_tunnel_req req = {};
++	struct sxe2_drv_cmd_params cmd = {};
++	int32_t ret = -1;
 +
-+	promisc_filter_cfg_req.vsi_id = adapter->vsi_ctxt.dpdk_vsi_id;
-+	promisc_filter_cfg_req.is_add = set;
-+	promisc_filter_cfg_req.type = SXE2_PROMISC_FILTER_TYPE_ALLMULTI;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_ALLMULTI_CFG,
-+				 &promisc_filter_cfg_req,
-+				 sizeof(promisc_filter_cfg_req),
++	req.type = tunnel_proto;
++	req.port = udp_port;
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_UDPTUNNEL_DEL,
++				 &req, sizeof(req),
 +				 NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
++	ret = sxe2_drv_cmd_exec(cdev, &cmd);
 +	if (ret)
-+		PMD_DEV_LOG_WARN(adapter, DRV, "allmulti config failed, ret=%d", ret);
++		PMD_LOG_ERR(DRV, "Failed to del udp proto %d port %d, ret=%d",
++				tunnel_proto, udp_port, ret);
 +
 +	return ret;
 +}
 +
-+int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add)
++int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
++				 enum sxe2_flow_udp_tunnel_protocol proto,
++				 uint16_t *port)
 +{
 +	int32_t ret = 0;
-+	int32_t i;
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_mac_filter_cfg_req mac_filter_cfg_req = {0};
++	static const uint16_t flow_proto_to_udp_tunnel_proto[SXE2_FLOW_UDP_TUNNEL_MAX] = {
++		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN] = SXE2_UDP_TUNNEL_PROTOCOL_VXLAN,
++		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN_GPE] = SXE2_UDP_TUNNEL_PROTOCOL_VXLAN_GPE,
++		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GENEVE] = SXE2_UDP_TUNNEL_PROTOCOL_GENEVE,
++		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GTP_U] = SXE2_UDP_TUNNEL_PROTOCOL_GTP_U,
++		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_NVGRE] = SXE2_UDP_TUNNEL_PROTOCOL_NVGRE,
++	};
++	struct sxe2_udp_tunnel_cfg tunnel_config = {};
 +
-+	mac_filter_cfg_req.vsi_id = adapter->vsi_ctxt.dpdk_vsi_id;
-+	for (i = 0; i < SXE2_ETH_ALEN; i++)
-+		mac_filter_cfg_req.addr[i] = addr->addr_bytes[i];
-+	mac_filter_cfg_req.is_add = add;
-+	mac_filter_cfg_req.type = SXE2_MAC_FILTER_TYPE_UC;
++	tunnel_config.protocol = flow_proto_to_udp_tunnel_proto[proto];
++	ret = sxe2_drv_udp_tunnel_get(adapter, &tunnel_config);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to get udp tunnel port, ret=%d", ret);
++		goto l_end;
++	}
 +
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_MAC_ADDR_UC,
-+		 &mac_filter_cfg_req, sizeof(mac_filter_cfg_req),
-+		 NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_WARN(adapter, DRV, "uc config query failed, ret=%d", ret);
-+
++	*port = tunnel_config.fw_port;
++l_end:
 +	return ret;
 +}
 +
-+int32_t sxe2_drv_mc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add)
++int32_t sxe2_drv_udp_tunnel_get(struct sxe2_adapter *adapter,
++			    struct sxe2_udp_tunnel_cfg *tunnel_config)
 +{
-+	int32_t ret = 0;
-+	int32_t i;
 +	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_mac_filter_cfg_req mac_filter_cfg_req = {0};
++	struct sxe2_drv_udp_tunnel_req req = {};
++	struct sxe2_drv_udp_tunnel_resp resp = {};
++	struct sxe2_drv_cmd_params cmd = {};
++	int32_t ret = -1;
 +
-+	mac_filter_cfg_req.vsi_id = adapter->vsi_ctxt.dpdk_vsi_id;
-+	for (i = 0; i < SXE2_ETH_ALEN; i++)
-+		mac_filter_cfg_req.addr[i] = addr->addr_bytes[i];
-+
-+	mac_filter_cfg_req.is_add = add;
-+	mac_filter_cfg_req.type = SXE2_MAC_FILTER_TYPE_MC;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_MAC_ADDR_MC,
-+		 &mac_filter_cfg_req, sizeof(mac_filter_cfg_req),
-+		 NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
++	req.type = tunnel_config->protocol;
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_UDPTUNNEL_GET,
++				 &req, sizeof(req),
++				 &resp, sizeof(resp));
++	ret = sxe2_drv_cmd_exec(cdev, &cmd);
 +	if (ret)
-+		PMD_DEV_LOG_WARN(adapter, DRV, "mac config query failed, ret=%d", ret);
++		PMD_LOG_ERR(DRV, "Failed to get udp proto %d port, ret=%d", req.type, ret);
++
++	tunnel_config->fw_port   = resp.port;
++	tunnel_config->fw_status = resp.enable;
++	tunnel_config->fw_dst_en = resp.dst;
++	tunnel_config->fw_src_en = resp.src;
++	tunnel_config->fw_used   = resp.fw_used;
 +
 +	return ret;
 +}
 +
-+int32_t sxe2_drv_vlan_config_query(struct sxe2_adapter *adapter)
-+{
-+	int32_t ret = 0;
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_drv_vlan_cfg_query_resp vlan_cfg_query_resp = {0};
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_VLAN_CFG_QUERY,
-+				 NULL, 0,
-+				 &vlan_cfg_query_resp,
-+	 sizeof(vlan_cfg_query_resp));
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_WARN(adapter, DRV, "vlan config query failed, ret=%d", ret);
-+
-+	adapter->filter_ctxt.vlan_info.port_vlan_exist = vlan_cfg_query_resp.port_vlan_exist;
-+	adapter->filter_ctxt.vlan_info.is_switchdev = vlan_cfg_query_resp.is_switchdev;
-+
-+
-+	adapter->filter_ctxt.vlan_info.tpid = vlan_cfg_query_resp.tpid;
-+	adapter->filter_ctxt.vlan_info.vid = vlan_cfg_query_resp.vid;
-+
-+	adapter->filter_ctxt.vlan_info.outer_insert = vlan_cfg_query_resp.outer_insert;
-+	adapter->filter_ctxt.vlan_info.outer_strip = vlan_cfg_query_resp.outer_strip;
-+	adapter->filter_ctxt.vlan_info.inner_insert = vlan_cfg_query_resp.inner_insert;
-+	adapter->filter_ctxt.vlan_info.inner_strip = vlan_cfg_query_resp.inner_strip;
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_vlan_filter_id_config(struct sxe2_adapter *adapter,
-+				       struct sxe2_vlan *vlan, bool on)
-+{
-+	int32_t ret = 0;
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_vlan_filter_cfg_req vlan_filter_cfg_req = {0};
-+
-+	vlan_filter_cfg_req.vsi_id = adapter->vsi_ctxt.dpdk_vsi_id;
-+	vlan_filter_cfg_req.tpid_id = vlan->tpid;
-+	vlan_filter_cfg_req.vlan_id = vlan->vid;
-+	vlan_filter_cfg_req.prio = vlan->prio;
-+	vlan_filter_cfg_req.is_add = on;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_VLAN_FILTER_ADD_DEL,
-+				 &vlan_filter_cfg_req, sizeof(vlan_filter_cfg_req),
-+				 NULL, 0);
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_WARN(adapter, DRV, "vlan config failed, ret=%d", ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_vlan_insert_strip_cfg(struct sxe2_adapter *adapter)
-+{
-+	int32_t ret = 0;
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_drv_vlan_offload_cfg_req vlan_offload_cfg_req = {0};
-+
-+	vlan_offload_cfg_req.vsi_id = adapter->vsi_ctxt.dpdk_vsi_id;
-+	vlan_offload_cfg_req.tpid = adapter->filter_ctxt.vlan_info.tpid;
-+	vlan_offload_cfg_req.outer_insert = adapter->filter_ctxt.vlan_info.outer_insert;
-+	vlan_offload_cfg_req.outer_strip = adapter->filter_ctxt.vlan_info.outer_strip;
-+	vlan_offload_cfg_req.inner_insert = adapter->filter_ctxt.vlan_info.inner_insert;
-+	vlan_offload_cfg_req.inner_strip = adapter->filter_ctxt.vlan_info.inner_strip;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_VLAN_OFFLOAD_CFG,
-+				 &vlan_offload_cfg_req,
-+				 sizeof(vlan_offload_cfg_req),
-+				 NULL, 0);
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_WARN(adapter, DRV, "vlan config query failed, ret=%d", ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_vlan_filter_switch(struct sxe2_adapter *adapter, bool on)
-+{
-+	int32_t ret = 0;
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_vlan_filter_switch_req vlan_filter_switch_req = {0};
-+
-+	vlan_filter_switch_req.vsi_id = adapter->vsi_ctxt.dpdk_vsi_id;
-+	vlan_filter_switch_req.is_oper_enable = on;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_VLAN_FILTER_SWITCH,
-+				 &vlan_filter_switch_req,
-+				 sizeof(vlan_filter_switch_req),
-+				 NULL, 0);
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_WARN(adapter, DRV, "vlan config filter failed, ret=%d", ret);
-+
-+	return ret;
-+}
+ int32_t sxe2_drv_queue_info_get_update(struct sxe2_adapter *adapter, struct eth_queue_stats *qstats)
+ {
+ 	struct sxe2_drv_cmd_params param = {0};
 diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index cda676ed97..c93bc2b0c9 100644
+index 52cd9922ad..97007c7cfa 100644
 --- a/drivers/net/sxe2/sxe2_cmd_chnl.h
 +++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -36,4 +36,21 @@ int32_t sxe2_drv_txq_ctxt_cfg(struct sxe2_adapter *adapter,
+@@ -67,6 +67,23 @@ int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
+ 
+ int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
+ 
++int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
++			    enum sxe2_udp_tunnel_protocol tunnel_proto,
++			    uint16_t udp_port);
++
++int32_t sxe2_drv_udp_tunnel_del(struct sxe2_adapter *adapter,
++			    enum sxe2_udp_tunnel_protocol tunnel_proto,
++			    uint16_t udp_port);
++
++int32_t sxe2_drv_udp_tunnel_get(struct sxe2_adapter *adapter,
++			    struct sxe2_udp_tunnel_cfg *tunnel_config);
++
++int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
++				 enum sxe2_flow_udp_tunnel_protocol proto,
++				 uint16_t *port);
++
++int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
++
+ int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
  
  int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
- 
-+int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
-+
-+int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
-+
-+int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
-+
-+int32_t sxe2_drv_mc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
-+
-+int32_t sxe2_drv_vlan_config_query(struct sxe2_adapter *adapter);
-+
-+int32_t sxe2_drv_vlan_filter_id_config(struct sxe2_adapter *adapter,
-+				       struct sxe2_vlan *vlan, bool on);
-+
-+int32_t sxe2_drv_vlan_insert_strip_cfg(struct sxe2_adapter *adapter);
-+
-+int32_t sxe2_drv_vlan_filter_switch(struct sxe2_adapter *adapter, bool on);
-+
- #endif /* SXE2_CMD_CHNL_H */
 diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index a0f08b5184..6399f22c5c 100644
+index 9db8cb1ad1..9b18365cb8 100644
 --- a/drivers/net/sxe2/sxe2_drv_cmd.h
 +++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -233,6 +233,93 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_link_info_resp {
- 	uint8_t rsv[3];
+@@ -617,6 +617,22 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_flow_fnav_query_stat_resp {
+ 	uint64_t stat_bytes;
  } __rte_packed_end;
  
-+struct __rte_aligned(4) __rte_packed_begin sxe2_switchdev_info {
-+	uint8_t is_switchdev;
-+	uint8_t master;
-+	uint8_t representor;
-+	uint8_t port_name_type;
-+	uint32_t ctrl_num;
-+	uint32_t pf_num;
-+	uint32_t vf_num;
-+	uint32_t mpesw_owner;
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_vlan_cfg_query_resp {
-+	uint16_t vsi_id;
-+	uint8_t port_vlan_exist;
-+	uint8_t is_switchdev;
-+	uint16_t tpid;
-+	uint16_t vid;
-+	uint8_t outer_insert;
-+	uint8_t outer_strip;
-+	uint8_t inner_insert;
-+	uint8_t inner_strip;
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_vlan_offload_cfg_req {
-+	uint16_t vsi_id;
-+	uint16_t tpid;
-+	uint8_t outer_insert;
-+	uint8_t outer_strip;
-+	uint8_t inner_insert;
-+	uint8_t inner_strip;
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_port_vlan_cfg_req {
-+	uint16_t vsi_id;
-+	uint16_t tpid;
-+	uint16_t vid;
-+	uint8_t prio;
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_req {
++	uint8_t type;
 +	uint8_t rsv;
++	uint16_t port;
 +} __rte_packed_end;
 +
-+struct __rte_aligned(4) __rte_packed_begin sxe2_mac_filter_cfg_req {
-+	uint16_t vsi_id;
-+	uint8_t addr[SXE2_ETH_ALEN];
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_resp {
 +	uint8_t type;
-+	uint8_t is_add;
-+	uint8_t rsv[2];
-+} __rte_packed_end;
-+
-+enum sxe2_promisc_filter_type {
-+	SXE2_PROMISC_FILTER_TYPE_PROMISC = 0,
-+	SXE2_PROMISC_FILTER_TYPE_ALLMULTI,
-+	SXE2_PROMISC_FILTER_TYPE_MAX,
-+};
-+
-+enum sxe2_mac_filter_type {
-+	SXE2_MAC_FILTER_TYPE_UC = 0,
-+	SXE2_MAC_FILTER_TYPE_MC,
-+	SXE2_MAC_FILTER_TYPE_MAX,
-+};
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_promisc_filter_cfg_req {
-+	uint16_t vsi_id;
-+	uint8_t type;
-+	uint8_t is_add;
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_srcvsi_ext_cfg_req {
-+	uint16_t vsi_id;
-+	uint16_t srcvsi_list[SXE2_SRCVSI_PRUNE_MAX_NUM];
-+	uint8_t srcvsi_cnt;
-+	uint8_t is_add;
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_vlan_filter_cfg_req {
-+	uint16_t vsi_id;
-+	uint16_t vlan_id;
-+	uint16_t tpid_id;
-+	uint8_t prio;
-+	uint8_t is_add;
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_vlan_filter_switch_req {
-+	uint16_t vsi_id;
-+	uint8_t is_oper_enable;
++	uint8_t enable;
++	uint8_t dst;
++	uint8_t src;
++	uint16_t port;
++	uint8_t fw_used;
 +	uint8_t rsv;
 +} __rte_packed_end;
 +
@@ -422,1685 +251,611 @@ index a0f08b5184..6399f22c5c 100644
  	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
  	SXE2_DRV_CMD_MODULE_DEV = 1,
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 01552a8202..9b117f097e 100644
+index 317101fb60..14c8f6c16d 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -111,8 +111,20 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.tx_burst_mode_get          = sxe2_tx_burst_mode_get,
- 	.tx_done_cleanup            = sxe2_tx_done_cleanup,
+@@ -40,10 +40,11 @@
+ #include "sxe2_ioctl_chnl_func.h"
+ #include "sxe2_ethdev_repr.h"
+ #include "sxe2vf_regs.h"
++#include "sxe2_switchdev.h"
  
-+	.promiscuous_enable         = sxe2_promisc_enable,
-+	.promiscuous_disable        = sxe2_promisc_disable,
-+	.allmulticast_enable        = sxe2_allmulti_enable,
-+	.allmulticast_disable       = sxe2_allmulti_disable,
+ #define SXE2_PCI_VENDOR_ID_1    0x1ff2
+ #define SXE2_PCI_DEVICE_ID_PF_1 0x10b1
+-#define SXE2_PCI_DEVICE_ID_VF_1 0x10b2
++#define SXE2_PCI_DEVICE_ID_VF_1 0x10b
+ 
+ #define SXE2_PCI_VENDOR_ID_2    0x1d94
+ #define SXE2_PCI_DEVICE_ID_PF_2 0x1260
+@@ -115,6 +116,11 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev);
+ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info);
+ static const uint32_t *sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev
+ 				__rte_unused, size_t *no_of_elements __rte_unused);
++static int32_t sxe2_udp_tunnel_port_add(struct rte_eth_dev *dev,
++					struct rte_eth_udp_tunnel *tunnel_udp);
++static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
++					struct rte_eth_udp_tunnel *tunnel_udp);
 +
-+	.mac_addr_add               = sxe2_mac_addr_add,
-+	.mac_addr_remove            = sxe2_mac_addr_del,
-+	.mac_addr_set               = sxe2_mac_addr_set,
-+	.set_mc_addr_list           = sxe2_set_mc_addr_list,
- 	.mtu_set                    = sxe2_mtu_set,
- 	.buffer_split_supported_hdr_ptypes_get = sxe2_buffer_split_supported_hdr_ptypes_get,
+ 
+ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 	.dev_configure              = sxe2_dev_configure,
+@@ -162,6 +168,9 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 	.rss_hash_update            = sxe2_dev_rss_hash_update,
+ 	.rss_hash_conf_get          = sxe2_dev_rss_hash_conf_get,
+ 
++	.udp_tunnel_port_add        = sxe2_udp_tunnel_port_add,
++	.udp_tunnel_port_del        = sxe2_udp_tunnel_port_del,
 +
-+	.vlan_filter_set            = sxe2_dev_vlan_filter_set,
-+	.vlan_offload_set           = sxe2_dev_vlan_offload_set,
- };
+ 	.flow_ops_get               = sxe2_flow_ops_get,
+ 	.tm_ops_get                 = sxe2_tm_ops_get,
  
- static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-@@ -123,6 +135,13 @@ static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
- 	if (dev->data->dev_conf.rxmode.mq_mode  & RTE_ETH_MQ_RX_RSS_FLAG)
- 		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+@@ -226,6 +235,12 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
+ 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
+ 	PMD_INIT_FUNC_TRACE();
  
-+	ret = sxe2_vlan_default_cfg(dev);
++	ret = sxe2_flow_init_udp_tunnel_port(dev);
 +	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to init vlan, ret=%d", ret);
-+		goto end;
-+	}
-+
-+end:
- 	return ret;
- }
- 
-@@ -138,6 +157,8 @@ static int32_t sxe2_dev_stop(struct rte_eth_dev *dev)
- 	sxe2_txqs_all_stop(dev);
- 	sxe2_rxqs_all_stop(dev);
- 
-+	(void)sxe2_filter_rule_stop(dev);
-+
- 	dev->data->dev_started = 0;
- 	adapter->started = 0;
- l_end:
-@@ -165,16 +186,23 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
- 		goto l_end;
- 	}
- 
-+	ret = sxe2_filter_rule_start(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to add all mc addr to fw.");
++		PMD_LOG_ERR(DRV, "Failed to init udp tunnel port, ret: %d.", ret);
 +		goto l_end;
 +	}
 +
- 	ret = sxe2_queues_start(dev);
+ 	ret = sxe2_queues_init(dev);
  	if (ret) {
- 		PMD_LOG_ERR(INIT, "enable queues failed");
--		goto l_end;
-+		goto l_start_queues_err;
- 	}
- 
- 	dev->data->dev_started = 1;
- 	adapter->started = 1;
- 	goto l_end;
--
-+l_start_queues_err:
-+	(void)sxe2_filter_rule_stop(dev);
- l_end:
+ 		PMD_LOG_ERR(INIT, "Failed to init queues.");
+@@ -271,6 +286,188 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
  	return ret;
  }
-@@ -194,6 +222,7 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
  
- 	dev_info->rx_offload_capa =
-+		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
- 		RTE_ETH_RX_OFFLOAD_KEEP_CRC |
- 		RTE_ETH_RX_OFFLOAD_SCATTER |
- 		RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |
-@@ -202,9 +231,15 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
- 		RTE_ETH_RX_OFFLOAD_SCTP_CKSUM |
- 		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM |
- 		RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT |
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
-+#endif
-+		RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
- 		RTE_ETH_RX_OFFLOAD_TCP_LRO;
++static enum sxe2_udp_tunnel_protocol
++sxe2_udp_tunnel_type_rte_to_sxe2(enum rte_eth_tunnel_type rte_type)
++{
++	static enum sxe2_udp_tunnel_protocol sxe2_udp_proto_map[RTE_ETH_TUNNEL_TYPE_MAX] = {
++		[RTE_ETH_TUNNEL_TYPE_NONE] = SXE2_UDP_TUNNEL_MAX,
++		[RTE_ETH_TUNNEL_TYPE_VXLAN] = SXE2_UDP_TUNNEL_PROTOCOL_VXLAN,
++		[RTE_ETH_TUNNEL_TYPE_GENEVE] = SXE2_UDP_TUNNEL_PROTOCOL_GENEVE,
++		[RTE_ETH_TUNNEL_TYPE_TEREDO] = SXE2_UDP_TUNNEL_PROTOCOL_TEREDO,
++		[RTE_ETH_TUNNEL_TYPE_NVGRE] = SXE2_UDP_TUNNEL_PROTOCOL_NVGRE,
++		[RTE_ETH_TUNNEL_TYPE_IP_IN_GRE] = SXE2_UDP_TUNNEL_MAX,
++		[RTE_ETH_L2_TUNNEL_TYPE_E_TAG] = SXE2_UDP_TUNNEL_MAX,
++		[RTE_ETH_TUNNEL_TYPE_VXLAN_GPE] = SXE2_UDP_TUNNEL_PROTOCOL_VXLAN_GPE,
++		[RTE_ETH_TUNNEL_TYPE_ECPRI]  = SXE2_UDP_TUNNEL_PROTOCOL_ECPRI
++	};
++
++	if (rte_type >= RTE_ETH_TUNNEL_TYPE_MAX) {
++		PMD_LOG_ERR(DRV, "Invalid rte_eth_tunnel_type %d!", rte_type);
++		rte_type = RTE_ETH_TUNNEL_TYPE_NONE;
++	}
++
++	return sxe2_udp_proto_map[rte_type];
++}
++
++int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
++				    enum sxe2_udp_tunnel_protocol tunnel_proto,
++				    uint16_t udp_port)
++{
++	struct sxe2_udp_tunnel_cfg *tunnel_config;
++	int32_t ret = -1;
++
++	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
++
++	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
++
++	if (tunnel_config->dev_status == SXE2_UDP_TUNNEL_ENABLE) {
++		if (udp_port == tunnel_config->dev_port &&
++			tunnel_config->dev_ref_cnt < 0xFFFFU) {
++			tunnel_config->dev_ref_cnt++;
++			ret = 0;
++			goto l_unlock_end;
++		} else {
++			PMD_LOG_ERR(DRV, "Adding multiple ports to the same protocol "
++				    "is not supported!");
++			ret = -EINVAL;
++			goto l_unlock_end;
++		}
++	} else {
++		ret = sxe2_drv_udp_tunnel_add(ad, tunnel_proto, udp_port);
++		if (ret != 0)
++			goto l_unlock_end;
++
++		tunnel_config->protocol = tunnel_proto;
++		tunnel_config->dev_port = udp_port;
++		tunnel_config->dev_status  = SXE2_UDP_TUNNEL_ENABLE;
++		tunnel_config->dev_ref_cnt++;
++	}
++
++l_unlock_end:
++	rte_spinlock_unlock(&ad->udp_tunnel_ctx.lock);
++	return ret;
++}
++
++int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
++				    enum sxe2_udp_tunnel_protocol tunnel_proto,
++				    uint16_t udp_port)
++{
++	struct sxe2_udp_tunnel_cfg *tunnel_config;
++	int32_t ret = -1;
++
++	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
++	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
++
++	if (tunnel_config->dev_status == SXE2_UDP_TUNNEL_ENABLE &&
++		udp_port == tunnel_config->dev_port) {
++		if (tunnel_config->dev_ref_cnt > 1) {
++			tunnel_config->dev_ref_cnt--;
++			ret = 0;
++			goto l_unlock_end;
++		} else {
++			ret = sxe2_drv_udp_tunnel_del(ad, tunnel_proto, udp_port);
++			if (ret != 0)
++				goto l_unlock_end;
++
++			tunnel_config->dev_status  = SXE2_UDP_TUNNEL_DISABLE;
++			tunnel_config->dev_ref_cnt = 0;
++		}
++		goto l_unlock_end;
++	}
++
++	ret = -EINVAL;
++
++l_unlock_end:
++	rte_spinlock_unlock(&ad->udp_tunnel_ctx.lock);
++	return ret;
++}
++
++int32_t sxe2_udp_tunnel_port_get_common(struct sxe2_adapter *ad,
++				    struct sxe2_udp_tunnel_cfg *tunnel_config)
++{
++	return sxe2_drv_udp_tunnel_get(ad, tunnel_config);
++}
++
++static int32_t sxe2_udp_tunnel_port_clear(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *ad = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_udp_tunnel_cfg *tunnel_config;
++	int32_t ret = 0;
++	uint16_t tunnel_proto = 0;
++
++	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
++
++	for (tunnel_proto = 0; tunnel_proto < SXE2_UDP_TUNNEL_MAX; tunnel_proto++) {
++		tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
++		if (tunnel_config->dev_status == SXE2_UDP_TUNNEL_ENABLE) {
++			ret = sxe2_drv_udp_tunnel_del(ad, tunnel_config->protocol,
++					tunnel_config->dev_port);
++			if (ret) {
++				PMD_LOG_ERR(DRV, "Failed to delete udp tunnel port %d, proto %d",
++					    tunnel_config->dev_port, tunnel_config->protocol);
++				goto l_unlock_end;
++			}
++
++			tunnel_config->dev_status  = SXE2_UDP_TUNNEL_DISABLE;
++			tunnel_config->dev_ref_cnt = 0;
++		}
++	}
++l_unlock_end:
++	rte_spinlock_unlock(&ad->udp_tunnel_ctx.lock);
++	return ret;
++}
++
++static int32_t sxe2_udp_tunnel_port_add(struct rte_eth_dev *dev,
++			struct rte_eth_udp_tunnel *tunnel_udp)
++{
++	int32_t ret = 0;
++	enum sxe2_udp_tunnel_protocol tunnel_proto;
++	struct sxe2_adapter *ad = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++
++	if (tunnel_udp->udp_port == 0) {
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	tunnel_proto = sxe2_udp_tunnel_type_rte_to_sxe2(tunnel_udp->prot_type);
++	if (tunnel_proto >= SXE2_UDP_TUNNEL_MAX) {
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	ret = sxe2_udp_tunnel_port_add_common(ad, tunnel_proto, tunnel_udp->udp_port);
++	if (ret) {
++		PMD_LOG_ERR(DRV, "Add tunnel port failed, ret = %d", ret);
++		goto l_end;
++	}
++
++l_end:
++	return ret;
++}
++
++static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
++			struct rte_eth_udp_tunnel *tunnel_udp)
++{
++	int32_t ret = 0;
++	enum sxe2_udp_tunnel_protocol tunnel_proto;
++	struct sxe2_adapter *ad = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++
++	tunnel_proto = sxe2_udp_tunnel_type_rte_to_sxe2(tunnel_udp->prot_type);
++	if (tunnel_proto >= SXE2_UDP_TUNNEL_MAX) {
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	ret = sxe2_udp_tunnel_port_del_common(ad, tunnel_proto, tunnel_udp->udp_port);
++	if (ret) {
++		PMD_LOG_ERR(DRV, "Delete tunnel port failed, ret = %d", ret);
++		goto l_end;
++	}
++
++l_end:
++	return ret;
++}
++
+ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 			struct rte_eth_dev_info *dev_info)
+ {
+@@ -1300,15 +1497,20 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
+ 	(void)sxe2_dev_stop(dev);
+ 	(void)sxe2_queues_release(dev);
+ 	sxe2_mp_uninit(dev);
+-	(void)sxe2_rss_disable(dev);
+ 	(void)sxe2_sched_uinit(dev);
++	(void)sxe2_rss_disable(dev);
++	(void)sxe2_flow_uninit(dev);
++	(void)sxe2_udp_tunnel_port_clear(dev);
+ 	sxe2_vsi_uninit(dev);
+ 	sxe2_security_uinit(dev);
+ 	sxe2_intr_uninit(dev);
+ 	(void)sxe2_switchdev_uninit(dev);
+ 	sxe2_sw_uninit(dev);
++	(void)sxe2_switchdev_uninit(dev);
++	sxe2_dev_pci_map_uinit(dev);
+ 	sxe2_eth_uinit(dev);
+ 	sxe2_dev_pci_map_uinit(dev);
++	sxe2_free_repr_info(dev);
  
- 	dev_info->tx_offload_capa =
-+		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |
-+		RTE_ETH_TX_OFFLOAD_QINQ_INSERT |
- 		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
- 		RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE |
- 		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
-@@ -428,6 +463,12 @@ static int32_t sxe2_eth_init(struct rte_eth_dev *dev)
+ l_end:
+ 	return 0;
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index ca4e23f5a8..32efa893d1 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -319,6 +319,7 @@ struct sxe2_adapter {
+ 	struct sxe2_sched_hw_cap      sched_ctxt;
+ 	struct sxe2_tm_context        tm_ctxt;
+ 	struct sxe2_devargs           devargs;
++	struct sxe2_udp_tunnel_ctx    udp_tunnel_ctx;
+ 	struct sxe2_security_ctx      security_ctx;
+ 	struct sxe2_repr_context      repr_ctxt;
+ 	struct sxe2_switchdev_info    switchdev_info;
+@@ -374,6 +375,17 @@ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
+ 
+ int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
+ 
++void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
++
++int32_t sxe2_udp_tunnel_port_get_common(struct sxe2_adapter *ad,
++		struct sxe2_udp_tunnel_cfg *tunnel_config);
++
++int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
++		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
++
++int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
++		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
++
+ void sxe2_dev_pci_map_uinit(struct rte_eth_dev *dev);
+ 
+ void sxe2_eth_uinit(struct rte_eth_dev *dev);
+diff --git a/drivers/net/sxe2/sxe2_flow.c b/drivers/net/sxe2/sxe2_flow.c
+index 6999cb0725..63cfc36968 100644
+--- a/drivers/net/sxe2/sxe2_flow.c
++++ b/drivers/net/sxe2/sxe2_flow.c
+@@ -523,6 +523,51 @@ static int32_t sxe2_flow_adjust_action(struct rte_eth_dev *dev __rte_unused,
+ 	return ret;
+ }
+ 
++int32_t sxe2_flow_init_udp_tunnel_port(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	int32_t ret = 0;
++	uint16_t i = 0;
++	uint16_t *flow_udp_tunnel_port = NULL;
++
++	memset(adapter->flow_ctxt.tunnel_port_list, 0,
++	       sizeof(adapter->flow_ctxt.tunnel_port_list));
++
++	flow_udp_tunnel_port = adapter->flow_ctxt.tunnel_port_list;
++	for (i = 0; i < SXE2_FLOW_UDP_TUNNEL_MAX; i++) {
++		if (flow_udp_tunnel_port[i] == 0) {
++			ret = sxe2_drv_get_udp_tunnel_port(adapter, i,
++							   &flow_udp_tunnel_port[i]);
++			if (ret != 0) {
++				PMD_LOG_ERR(DRV, "Failed to get udp tunnel port, proto: %d,"
++					    "ret: %d", i, ret);
++				goto l_end;
++			}
++		}
++	}
++
++l_end:
++	return ret;
++}
++
++static int32_t sxe2_flowlist_add_tunnel_port(struct rte_eth_dev *dev,
++			struct rte_flow *flow_list,
++			struct rte_flow_error *error)
++{
++	struct sxe2_flow_list_t *sxe2_flow_list = &flow_list->sxe2_flow_list;
++	struct sxe2_flow *flow = TAILQ_FIRST(sxe2_flow_list);
++	enum sxe2_flow_tunnel_type tunnel_type = flow->meta.tunnel_type;
++	DECLARE_BITMAP(flow_type, SXE2_EXPANSION_MAX);
++	sxe2_bitmap_zero(flow_type, SXE2_EXPANSION_MAX);
++	sxe2_bitmap_copy(flow_type, flow->flow_type, SXE2_EXPANSION_MAX);
++	int32_t ret = 0;
++
++	if (flow->engine_type == SXE2_FLOW_ENGINE_FNAV)
++		return sxe2_flow_add_tunnel_port(dev, error, flow, flow_type, tunnel_type);
++
++	return ret;
++}
++
+ static int32_t sxe2_flow_check_item_empty(uint8_t *item, uint16_t size)
+ {
+ 	uint16_t i = 0;
+@@ -679,6 +724,10 @@ static int32_t sxe2_flow_post_proc(struct rte_eth_dev *dev,
  {
  	int32_t ret = 0;
  
-+	ret = sxe2_filter_init(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to initialize l2 filter, ret:%d", ret);
++	ret = sxe2_flowlist_add_tunnel_port(dev, flow_list, error);
++	if (ret)
 +		goto l_end;
-+	}
 +
- 	ret = sxe2_link_update_init(dev);
- 	if (ret) {
- 		PMD_LOG_ERR(INIT, "Failed to initialize link update, ret:%d", ret);
-@@ -439,12 +480,37 @@ static int32_t sxe2_eth_init(struct rte_eth_dev *dev)
- 		PMD_LOG_ERR(INIT, "Failed to set mtu, ret=%d", ret);
+ 	ret = sxe2_flowlist_add_proto_type(dev, flow_list, error);
+ 	if (ret)
  		goto l_end;
- 	}
+@@ -1308,6 +1357,11 @@ int32_t sxe2_flow_init(struct rte_eth_dev *dev)
+ 
+ 	adapter->flow_ctxt.fnav_inited = 1;
+ 	rte_spinlock_init(&adapter->flow_ctxt.flow_list_lock);
 +
-+	ret = sxe2_mac_addr_init(dev);
-+	if (ret != 0) {
-+		PMD_LOG_ERR(INIT, "Failed to initialize mac address, ret:%d", ret);
-+		goto l_end;
-+	}
++	ret = sxe2_flow_init_udp_tunnel_port(dev);
++	if (ret)
++		PMD_LOG_ERR(DRV, "Failed to init udp tunnel port, ret: %d.", ret);
 +
-+	ret = sxe2_mac_default_cfg(dev);
-+	if (ret != 0) {
-+		PMD_LOG_ERR(INIT, "Failed to configure default mac address, ret:%d", ret);
-+		goto l_err;
-+	}
-+
-+	ret = sxe2_vlan_cfg_init(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to initialize vlan config, ret:%d", ret);
-+		goto l_err;
-+	}
-+	goto l_end;
-+
-+l_err:
-+	sxe2_mac_addr_uinit(dev);
-+	(void)sxe2_filter_uinit(dev);
- l_end:
  	return ret;
  }
  
- static void sxe2_eth_uinit(struct rte_eth_dev *dev __rte_unused)
- {
-+	sxe2_mac_addr_uinit(dev);
-+	(void)sxe2_filter_uinit(dev);
+diff --git a/drivers/net/sxe2/sxe2_flow.h b/drivers/net/sxe2/sxe2_flow.h
+index 9970fddcf0..daaeedd4dc 100644
+--- a/drivers/net/sxe2/sxe2_flow.h
++++ b/drivers/net/sxe2/sxe2_flow.h
+@@ -8,7 +8,6 @@
+ #include "sxe2_osal.h"
+ #include "sxe2_common.h"
+ 
+-
+ int32_t sxe2_flow_ops_get(struct rte_eth_dev *dev, const struct rte_flow_ops **ops);
+ 
+ int32_t sxe2_flow_init(struct rte_eth_dev *dev);
+@@ -26,4 +25,6 @@ int32_t sxe2_flow_query_mgr(struct sxe2_adapter *adapter,
+ 			struct sxe2_flow *flow,
+ 			struct sxe2_fnav_cid_mgr **mgr_ptr,
+ 			struct rte_flow_error *error);
++
++int32_t sxe2_flow_init_udp_tunnel_port(struct rte_eth_dev *dev);
+ #endif /* __SXE2_FLOW_H__ */
+diff --git a/drivers/net/sxe2/sxe2_flow_define.h b/drivers/net/sxe2/sxe2_flow_define.h
+index d2f6000efa..263a573f04 100644
+--- a/drivers/net/sxe2/sxe2_flow_define.h
++++ b/drivers/net/sxe2/sxe2_flow_define.h
+@@ -119,6 +119,7 @@ struct sxe2_flow_context {
+ 	struct rte_flow_list_t rte_flow_list;
+ 	rte_spinlock_t flow_list_lock;
+ 	struct sxe2_fnav_count_resource hw_res;
++	uint16_t tunnel_port_list[SXE2_FLOW_UDP_TUNNEL_MAX];
+ 	uint32_t fnav_inited;
+ };
+ #define SXE2_INVALID_RSS_ATTR	\
+diff --git a/drivers/net/sxe2/sxe2_flow_parse_pattern.c b/drivers/net/sxe2/sxe2_flow_parse_pattern.c
+index 189abb1a33..f5bf8922c6 100644
+--- a/drivers/net/sxe2/sxe2_flow_parse_pattern.c
++++ b/drivers/net/sxe2/sxe2_flow_parse_pattern.c
+@@ -1637,6 +1637,119 @@ static int32_t sxe2_flow_parse_pattern_vxlan_gpe(const struct rte_flow_item *ite
+ 	return ret;
  }
  
- static void sxe2_drv_dev_caps_set(struct sxe2_adapter *adapter,
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index c188b41a0e..34a4a45e4f 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -15,9 +15,11 @@
- 
- #include "sxe2_common.h"
- #include "sxe2_vsi.h"
--#include "sxe2_queue.h"
- #include "sxe2_irq.h"
-+#include "sxe2_queue.h"
-+#include "sxe2_mac.h"
- #include "sxe2_osal.h"
-+#include "sxe2_filter.h"
- 
- struct sxe2_link_msg {
- 	uint32_t speed;
-@@ -35,7 +37,7 @@ enum sxe2_fnav_tunnel_flag_type {
- #define SXE2_FRAME_SIZE_MAX    9832
- #define SXE2_VLAN_TAG_SIZE     4
- #define SXE2_ETH_OVERHEAD \
--	(RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN + SXE2_VLAN_TAG_SIZE)
-+	(RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN + 2 * SXE2_VLAN_TAG_SIZE)
- #define SXE2_ETH_MAX_LEN (RTE_ETHER_MTU + SXE2_ETH_OVERHEAD)
- 
- #ifdef SXE2_TEST
-@@ -267,6 +269,27 @@ struct sxe2_link_context {
- 	uint32_t  speed;
- };
- 
-+struct sxe2_filter_context {
-+	rte_spinlock_t filter_lock;
-+	struct sxe2_vlan_info               vlan_info;
-+	struct sxe2_uc_filter_list_head    uc_list;
-+	struct sxe2_mc_filter_list_head    mc_list;
-+	struct sxe2_vlan_filter_list_head  vlan_list;
-+	uint8_t                                 uc_num;
-+	uint8_t                                 mc_num;
-+	uint8_t                                 vlan_num;
-+	uint8_t                                 rsv;
-+	uint32_t hw_promisc_flags;
-+	uint32_t cur_promisc_flags;
-+
-+	bool hw_uplink_config;
-+	bool cur_uplink_config;
-+	bool hw_repr_config;
-+	bool cur_repr_config;
-+	bool hw_l2_config;
-+	bool cur_l2_config;
-+};
-+
- struct sxe2_adapter {
- 	struct sxe2_common_device      *cdev;
- 	struct sxe2_dev_info            dev_info;
-@@ -276,10 +299,14 @@ struct sxe2_adapter {
- 	struct sxe2_irq_context       irq_ctxt;
- 	struct sxe2_queue_context     q_ctxt;
- 	struct sxe2_vsi_context       vsi_ctxt;
-+	struct sxe2_filter_context    filter_ctxt;
- 	struct sxe2_link_context      link_ctxt;
- 	struct sxe2_devargs           devargs;
--	uint16_t                      dev_port_id;
--	uint64_t                      cap_flags;
-+	struct sxe2_switchdev_info    switchdev_info;
-+	bool                          rule_started;
-+	bool                          flow_isolated;
-+	uint16_t                           dev_port_id;
-+	uint64_t                           cap_flags;
- 	enum sxe2_dev_type            dev_type;
- 	uint32_t    ptype_tbl[SXE2_MAX_PTYPE_NUM];
- 	struct rte_ether_addr           mac_addr;
-@@ -318,4 +345,12 @@ int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
- 
- void sxe2_dev_pci_map_uinit(struct rte_eth_dev *dev);
- 
-+static inline bool
-+sxe2_dev_port_vlan_check(struct rte_eth_dev *dev)
++static int32_t sxe2_flow_parse_pattern_ipip(struct sxe2_flow *flow, BITMAP_TYPE *flow_type)
 +{
-+	struct sxe2_adapter *ad = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+
-+	return ad->filter_ctxt.vlan_info.port_vlan_exist;
-+}
-+
- #endif /* SXE2_ETHDEV_H */
-diff --git a/drivers/net/sxe2/sxe2_filter.c b/drivers/net/sxe2/sxe2_filter.c
-new file mode 100644
-index 0000000000..b2a726f77e
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_filter.c
-@@ -0,0 +1,782 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#include <rte_os.h>
-+#include <rte_tailq.h>
-+#include "sxe2_osal.h"
-+#include "sxe2_mac.h"
-+#include "sxe2_common_log.h"
-+#include "sxe2_ethdev.h"
-+#include "sxe2_cmd_chnl.h"
-+
-+static struct sxe2_mac_filter *sxe2_uc_filter_find(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *macaddr)
-+{
-+	struct sxe2_mac_filter *filter      = NULL;
-+	struct sxe2_mac_filter *entry       = NULL;
-+	struct sxe2_mac_filter *next_entry  = NULL;
-+
-+	rte_spinlock_lock(&adapter->filter_ctxt.filter_lock);
-+	RTE_TAILQ_FOREACH_SAFE(entry, &adapter->filter_ctxt.uc_list, next, next_entry) {
-+		if (rte_is_same_ether_addr(macaddr, &entry->mac_addr)) {
-+			filter = entry;
-+			break;
-+		}
++	sxe2_set_bit(SXE2_EXPANSION_IPIP, flow_type);
++	if (sxe2_test_bit(SXE2_EXPANSION_OUTER_IPV4, flow_type)) {
++		sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV4_PROT, flow->pattern_outer.map_spec);
++		if (sxe2_test_bit(SXE2_EXPANSION_IPV4, flow_type))
++			flow->pattern_outer.item_spec.ipv4.protocol = SXE2_FLOW_IP_PROTOCOL_IPV4;
++		if (sxe2_test_bit(SXE2_EXPANSION_IPV6, flow_type))
++			flow->pattern_outer.item_spec.ipv4.protocol = SXE2_FLOW_IP_PROTOCOL_IPV6;
 +	}
-+	rte_spinlock_unlock(&adapter->filter_ctxt.filter_lock);
-+
-+	return filter;
-+}
-+
-+int32_t sxe2_uc_filter_add(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *mac_addr, bool default_config)
-+{
-+	struct sxe2_mac_filter *filter = NULL;
-+	bool hw_config = false;
-+	int32_t ret = 0;
-+
-+	filter = sxe2_uc_filter_find(adapter, mac_addr);
-+	if (filter) {
-+		if (default_config && !filter->default_config)
-+			filter->default_config = true;
-+		PMD_DEV_LOG_INFO(adapter, DRV, "This MAC filter already exists.");
-+		goto l_end;
-+	}
-+
-+	if (!adapter->rule_started) {
-+		PMD_DEV_LOG_DEBUG(adapter, DRV, "cannot add hw uc addr in port stop status");
-+	} else if (adapter->flow_isolated) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot add hw uc addr in flow isolation mode");
-+	} else if (adapter->switchdev_info.is_switchdev) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot add hw uc addr in switchdev mode");
-+	} else {
-+		ret = sxe2_drv_uc_config(adapter, mac_addr, true);
-+		if (ret && ret != -EEXIST) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add uc rule");
-+			ret = -EINVAL;
-+			goto l_end;
-+		}
-+		hw_config = true;
-+	}
-+
-+	filter = rte_zmalloc("sxe2_uc_filter",
-+			     sizeof(struct sxe2_mac_filter), 0);
-+	if (!filter) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to allocate memory");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+	filter->hw_config = hw_config;
-+	filter->default_config = default_config;
-+	rte_ether_addr_copy(mac_addr, &filter->mac_addr);
-+	rte_spinlock_lock(&adapter->filter_ctxt.filter_lock);
-+	TAILQ_INSERT_TAIL(&adapter->filter_ctxt.uc_list, filter, next);
-+	adapter->filter_ctxt.uc_num++;
-+	rte_spinlock_unlock(&adapter->filter_ctxt.filter_lock);
-+
-+	PMD_DEV_LOG_INFO(adapter, DRV, "add mac rule, mac num %u.", adapter->filter_ctxt.uc_num);
-+	ret = 0;
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_uc_filter_del(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *mac_addr)
-+{
-+	struct sxe2_mac_filter *filter = NULL;
-+	int32_t ret                         = -1;
-+
-+	filter = sxe2_uc_filter_find(adapter, mac_addr);
-+	if (!filter) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "This MAC filter not exists.");
-+		ret = 0;
-+		goto l_end;
-+	}
-+	if (filter->hw_config) {
-+		ret = sxe2_drv_uc_config(adapter, mac_addr, false);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to delete mac rule");
-+			if (ret == -EPERM)
-+				goto l_free;
-+			ret = -EINVAL;
-+			goto l_end;
-+		}
-+	}
-+	PMD_DEV_LOG_INFO(adapter, DRV, "remove mac rule, uc num %u.", adapter->filter_ctxt.uc_num);
-+	ret = 0;
-+
-+l_free:
-+
-+	rte_spinlock_lock(&adapter->filter_ctxt.filter_lock);
-+	TAILQ_REMOVE(&adapter->filter_ctxt.uc_list, filter, next);
-+	adapter->filter_ctxt.uc_num--;
-+	rte_spinlock_unlock(&adapter->filter_ctxt.filter_lock);
-+	rte_free(filter);
-+	filter = NULL;
-+l_end:
-+	return ret;
-+}
-+
-+void sxe2_uc_filter_clear(struct sxe2_adapter *adapter, bool default_config)
-+{
-+	struct sxe2_mac_filter *entry;
-+	struct sxe2_mac_filter *next_entry;
-+
-+	RTE_TAILQ_FOREACH_SAFE(entry, &adapter->filter_ctxt.uc_list, next, next_entry) {
-+		if (entry->default_config && !default_config)
-+			continue;
-+
-+		if (sxe2_uc_filter_del(adapter, &entry->mac_addr))
-+			PMD_DEV_LOG_ERR(adapter, DRV, "This MAC filter delete fail.");
-+	}
-+}
-+
-+static struct sxe2_mac_filter *sxe2_mc_filter_find(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *macaddr)
-+{
-+	struct sxe2_mac_filter *filter      = NULL;
-+	struct sxe2_mac_filter *entry       = NULL;
-+	struct sxe2_mac_filter *next_entry  = NULL;
-+
-+	rte_spinlock_lock(&adapter->filter_ctxt.filter_lock);
-+	RTE_TAILQ_FOREACH_SAFE(entry, &adapter->filter_ctxt.mc_list, next, next_entry) {
-+		if (rte_is_same_ether_addr(macaddr, &entry->mac_addr)) {
-+			filter = entry;
-+			break;
-+		}
-+	}
-+	rte_spinlock_unlock(&adapter->filter_ctxt.filter_lock);
-+
-+	return filter;
-+}
-+
-+int32_t sxe2_mc_filter_add(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *mac_addr, bool default_config)
-+{
-+	struct sxe2_mac_filter *filter = NULL;
-+	bool hw_config = false;
-+	int32_t ret = 0;
-+
-+	filter = sxe2_mc_filter_find(adapter, mac_addr);
-+	if (filter) {
-+		if (default_config && !filter->default_config)
-+			filter->default_config = true;
-+		PMD_DEV_LOG_INFO(adapter, DRV, "This MAC filter already exists.");
-+		goto l_end;
-+	}
-+
-+	if (!adapter->rule_started) {
-+		PMD_DEV_LOG_DEBUG(adapter, DRV, "cannot add hw mc addr in port stop status");
-+	} else if (adapter->flow_isolated) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot add hw mc addr in flow isolation mode");
-+	} else if (adapter->switchdev_info.is_switchdev) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot add hw mc addr in switchdev mode");
-+	} else {
-+		ret = sxe2_drv_mc_config(adapter, mac_addr, true);
-+		if (ret && ret != -EEXIST) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add mac rule");
-+			ret = -EINVAL;
-+			goto l_end;
-+		}
-+		hw_config = true;
-+	}
-+
-+	filter = rte_zmalloc("sxe2_mc_filter",
-+			     sizeof(struct sxe2_mac_filter), 0);
-+	if (!filter) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to allocate memory");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+	filter->hw_config = hw_config;
-+	filter->default_config = default_config;
-+	rte_ether_addr_copy(mac_addr, &filter->mac_addr);
-+	rte_spinlock_lock(&adapter->filter_ctxt.filter_lock);
-+	TAILQ_INSERT_TAIL(&adapter->filter_ctxt.mc_list, filter, next);
-+	adapter->filter_ctxt.mc_num++;
-+	rte_spinlock_unlock(&adapter->filter_ctxt.filter_lock);
-+
-+	PMD_DEV_LOG_INFO(adapter, DRV, "add mc rule, mc num %u.", adapter->filter_ctxt.mc_num);
-+	ret = 0;
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_mc_filter_del(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *mac_addr)
-+{
-+	struct sxe2_mac_filter *filter = NULL;
-+	int32_t ret                         = -1;
-+
-+	filter = sxe2_mc_filter_find(adapter, mac_addr);
-+	if (!filter) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "This MAC filter not exists.");
-+		ret = 0;
-+		goto l_end;
-+	}
-+
-+	if (filter->hw_config) {
-+		ret = sxe2_drv_mc_config(adapter, mac_addr, false);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to delete mc rule");
-+			if (ret == -EPERM)
-+				goto l_free;
-+			ret = -EINVAL;
-+			goto l_end;
-+		}
-+	}
-+	PMD_DEV_LOG_INFO(adapter, DRV, "remove mc rule, mc num %u.", adapter->filter_ctxt.mc_num);
-+	ret = 0;
-+
-+l_free:
-+
-+	rte_spinlock_lock(&adapter->filter_ctxt.filter_lock);
-+	TAILQ_REMOVE(&adapter->filter_ctxt.mc_list, filter, next);
-+	adapter->filter_ctxt.mc_num--;
-+	rte_spinlock_unlock(&adapter->filter_ctxt.filter_lock);
-+	rte_free(filter);
-+	filter = NULL;
-+l_end:
-+	return ret;
-+}
-+
-+void sxe2_mc_filter_clear(struct sxe2_adapter *adapter, bool default_config)
-+{
-+	struct sxe2_mac_filter *entry;
-+	struct sxe2_mac_filter *next_entry;
-+
-+	RTE_TAILQ_FOREACH_SAFE(entry, &adapter->filter_ctxt.mc_list, next, next_entry) {
-+		if (entry->default_config && !default_config)
-+			continue;
-+		if (sxe2_mc_filter_del(adapter, &entry->mac_addr))
-+			PMD_DEV_LOG_ERR(adapter, DRV, "This MAC filter delete fail.");
-+	}
-+}
-+
-+static struct sxe2_vlan_filter *sxe2_vlan_filter_find(struct sxe2_adapter *adapter,
-+			struct sxe2_vlan *vlan)
-+{
-+	struct sxe2_vlan_filter *f;
-+	struct sxe2_vlan_filter *save_f = NULL;
-+
-+	rte_spinlock_lock(&adapter->filter_ctxt.filter_lock);
-+	TAILQ_FOREACH(f, &adapter->filter_ctxt.vlan_list, next)
-+	{
-+		if (vlan->tpid == f->vlan_info.tpid &&
-+			vlan->vid == f->vlan_info.vid) {
-+			save_f = f;
-+			break;
-+		}
-+	}
-+	rte_spinlock_unlock(&adapter->filter_ctxt.filter_lock);
-+
-+	return save_f;
-+}
-+
-+int32_t sxe2_vlan_filter_add(struct sxe2_adapter *adapter,
-+			     struct sxe2_vlan *vlan, bool default_config)
-+{
-+	struct sxe2_vlan_filter *filter = NULL;
-+	bool hw_config                 = false;
-+	int32_t ret                    = 0;
-+
-+	if (!vlan || vlan->vid > RTE_ETHER_MAX_VLAN_ID) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "This vlan filter is invalid.");
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	filter = sxe2_vlan_filter_find(adapter, vlan);
-+	if (filter) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "This vlan filter already exists.");
-+		ret = 0;
-+		goto l_end;
-+	}
-+	if (!adapter->rule_started) {
-+		PMD_DEV_LOG_DEBUG(adapter, DRV, "cannot add vlan in port stop status");
-+	} else if (adapter->flow_isolated) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot add vlan in flow isolation mode");
-+	} else if (adapter->switchdev_info.is_switchdev) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot add vlan in switchdev mode");
-+	} else {
-+		ret = sxe2_drv_vlan_filter_id_config(adapter, vlan, true);
-+		if (ret && ret != -EEXIST) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add vlan rule");
-+			ret = -EINVAL;
-+			goto l_end;
-+		}
-+		hw_config = true;
-+	}
-+
-+	filter = rte_zmalloc("sxe2_vlan_filter", sizeof(*filter), 0);
-+	if (!filter) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to allocate memory");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+
-+	filter->hw_config = hw_config;
-+	filter->default_config = default_config;
-+
-+	filter->vlan_info.tpid = vlan->tpid;
-+	filter->vlan_info.vid = vlan->vid;
-+	filter->vlan_info.prio = vlan->prio;
-+
-+	rte_spinlock_lock(&adapter->filter_ctxt.filter_lock);
-+	TAILQ_INSERT_TAIL(&adapter->filter_ctxt.vlan_list, filter, next);
-+	adapter->filter_ctxt.vlan_num++;
-+	rte_spinlock_unlock(&adapter->filter_ctxt.filter_lock);
-+
-+	ret = 0;
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_vlan_filter_del(struct sxe2_adapter *adapter, struct sxe2_vlan *vlan)
-+{
-+	struct sxe2_vlan_filter *filter = NULL;
-+	int32_t ret                         = -1;
-+
-+	if (!vlan || vlan->vid > RTE_ETHER_MAX_VLAN_ID) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "This vlan filter is invalid.");
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	filter = sxe2_vlan_filter_find(adapter, vlan);
-+	if (!filter) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "This vlan filter not exists.");
-+		ret = 0;
-+		goto l_end;
-+	}
-+
-+	if (filter->hw_config) {
-+		ret = sxe2_drv_vlan_filter_id_config(adapter, vlan, false);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to delete vlan rule");
-+			if (ret == -EPERM)
-+				goto l_free;
-+			ret = -EINVAL;
-+			goto l_end;
-+		}
-+	}
-+	ret = 0;
-+
-+l_free:
-+
-+	rte_spinlock_lock(&adapter->filter_ctxt.filter_lock);
-+	TAILQ_REMOVE(&adapter->filter_ctxt.vlan_list, filter, next);
-+	adapter->filter_ctxt.vlan_num--;
-+	rte_spinlock_unlock(&adapter->filter_ctxt.filter_lock);
-+	rte_free(filter);
-+	filter = NULL;
-+l_end:
-+	return ret;
-+}
-+
-+void sxe2_vlan_filters_clear(struct sxe2_adapter *adapter, bool default_config)
-+{
-+	int32_t ret = 0;
-+	struct sxe2_vlan_filter *v_f;
-+	void *temp;
-+
-+	if (adapter->filter_ctxt.vlan_num == 0)
-+		return;
-+
-+	RTE_TAILQ_FOREACH_SAFE(v_f, &adapter->filter_ctxt.vlan_list, next, temp)
-+	{
-+		if (v_f->default_config && !default_config)
-+			continue;
-+		ret = sxe2_vlan_filter_del(adapter, &v_f->vlan_info);
-+		if (ret)
-+			PMD_DEV_LOG_ERR(adapter, DRV, "This vlan filter delete fail.");
-+	}
-+}
-+
-+int32_t sxe2_vlan_filter_ctrl(struct sxe2_adapter *adapter, bool flag)
-+{
-+	struct sxe2_vlan_info *vlan_info = &adapter->filter_ctxt.vlan_info;
-+	int32_t ret = 0;
-+
-+	if (vlan_info->filter_on == flag)
-+		goto l_end;
-+	if (!adapter->rule_started) {
-+		PMD_DEV_LOG_DEBUG(adapter, DRV, "cannot add vlan filter ctrl in port stop status");
-+	} else if (adapter->flow_isolated) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot add vlan filter ctrl in flow isolation mode");
-+	} else if (adapter->switchdev_info.is_switchdev) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot add vlan filter ctrl in switchdev mode");
-+	} else {
-+		ret = sxe2_drv_vlan_filter_switch(adapter, flag);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add vlan filter ctrl");
-+			goto l_end;
-+		}
-+		vlan_info->hw_filter_on = flag;
-+	}
-+	vlan_info->filter_on = flag;
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_promisc_add(struct sxe2_adapter *adapter)
-+{
-+	int32_t ret = 0;
-+
-+	if (!adapter->rule_started) {
-+		PMD_DEV_LOG_DEBUG(adapter, DRV, "cannot enable promiscuous in port stop status");
-+	} else if (adapter->flow_isolated) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot enable promiscuous in flow isolation mode");
-+	} else if (adapter->switchdev_info.is_switchdev) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot enable promiscuous in switchdev mode");
-+	} else if (!(adapter->filter_ctxt.hw_promisc_flags & SXE2_PROMISC)) {
-+		ret = sxe2_drv_promisc_config(adapter, true);
-+		if (ret && ret != -EEXIST) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "failed to cfg promiscuous, ret:%d", ret);
-+			goto l_end;
-+		}
-+		adapter->filter_ctxt.hw_promisc_flags |= SXE2_PROMISC;
-+	}
-+	adapter->filter_ctxt.cur_promisc_flags |= SXE2_PROMISC;
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_promisc_del(struct sxe2_adapter *adapter)
-+{
-+	int32_t ret = 0;
-+
-+	if (!adapter->flow_isolated &&
-+	    (adapter->filter_ctxt.hw_promisc_flags & SXE2_PROMISC)) {
-+		ret = sxe2_drv_promisc_config(adapter, false);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "failed to cfg promiscuous, ret:%d", ret);
-+			goto l_end;
-+		}
-+		adapter->filter_ctxt.hw_promisc_flags &= ~SXE2_PROMISC;
-+	}
-+
-+	adapter->filter_ctxt.cur_promisc_flags &= ~SXE2_PROMISC;
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_allmulti_add(struct sxe2_adapter *adapter)
-+{
-+	int32_t ret = 0;
-+
-+	if (!adapter->rule_started) {
-+		PMD_DEV_LOG_DEBUG(adapter, DRV, "cannot enable allmulticast in port stop status");
-+	} else if (adapter->flow_isolated) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot enable allmulticast in flow isolation mode");
-+	} else if (adapter->switchdev_info.is_switchdev) {
-+		PMD_DEV_LOG_WARN(adapter, DRV, "cannot enable allmulticast in switchdev mode");
-+	} else if (!(adapter->filter_ctxt.hw_promisc_flags & SXE2_PROMISC_MULTICAST)) {
-+		ret = sxe2_drv_allmulti_config(adapter, true);
-+		if (ret && ret != -EEXIST) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "failed to cfg allmulticast, ret:%d", ret);
-+			goto l_end;
-+		}
-+		adapter->filter_ctxt.hw_promisc_flags |= SXE2_PROMISC_MULTICAST;
-+	}
-+	adapter->filter_ctxt.cur_promisc_flags |= SXE2_PROMISC_MULTICAST;
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_allmulti_del(struct sxe2_adapter *adapter)
-+{
-+	int32_t ret = 0;
-+
-+	if (!adapter->flow_isolated &&
-+	    (adapter->filter_ctxt.hw_promisc_flags & SXE2_PROMISC_MULTICAST)) {
-+		ret = sxe2_drv_allmulti_config(adapter, false);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "failed to cfg allmulticast, ret:%d", ret);
-+			goto l_end;
-+		}
-+		adapter->filter_ctxt.hw_promisc_flags &= ~SXE2_PROMISC_MULTICAST;
-+	}
-+
-+	adapter->filter_ctxt.cur_promisc_flags &= ~SXE2_PROMISC_MULTICAST;
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_all_filter_hw_clear(struct sxe2_adapter *adapter)
-+{
-+	int32_t ret = 0;
-+	struct sxe2_mac_filter *mac_entry;
-+	struct sxe2_mac_filter *next_mac_entry;
-+	struct sxe2_vlan_filter *vlan_entry;
-+	struct sxe2_vlan_filter *next_vlan_entry;
-+
-+	if (adapter->filter_ctxt.uc_num > 0) {
-+		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.uc_list, next,
-+			    next_mac_entry) {
-+			if (mac_entry->hw_config) {
-+				ret = sxe2_drv_uc_config(adapter, &mac_entry->mac_addr, false);
-+				if (ret) {
-+					PMD_DEV_LOG_ERR(adapter, DRV, "Failed to delete mac rule");
-+					ret = -EINVAL;
-+					goto l_end;
-+				}
-+				mac_entry->hw_config = false;
-+			}
-+		}
-+	}
-+
-+	if (adapter->filter_ctxt.mc_num > 0) {
-+		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.mc_list, next,
-+			    next_mac_entry) {
-+			if (mac_entry->hw_config) {
-+				ret = sxe2_drv_mc_config(adapter, &mac_entry->mac_addr, false);
-+				if (ret) {
-+					PMD_DEV_LOG_ERR(adapter, DRV, "Failed to delete mc rule");
-+					ret = -EINVAL;
-+					goto l_end;
-+				}
-+				mac_entry->hw_config = false;
-+			}
-+		}
-+	}
-+
-+	if (adapter->filter_ctxt.vlan_num > 0) {
-+		RTE_TAILQ_FOREACH_SAFE(vlan_entry, &adapter->filter_ctxt.vlan_list, next,
-+			    next_vlan_entry) {
-+			if (vlan_entry->hw_config) {
-+				ret = sxe2_drv_vlan_filter_id_config(adapter,
-+				    &vlan_entry->vlan_info, false);
-+				if (ret) {
-+					PMD_DEV_LOG_ERR(adapter, DRV, "Failed to delete vlan rule");
-+					ret = -EINVAL;
-+					goto l_end;
-+				}
-+				vlan_entry->hw_config = false;
-+			}
-+		}
-+	}
-+
-+	if (adapter->filter_ctxt.vlan_info.hw_filter_on) {
-+		ret = sxe2_drv_vlan_filter_switch(adapter, false);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to delete vlan rule");
-+			ret = -EINVAL;
-+			goto l_end;
-+		}
-+		adapter->filter_ctxt.vlan_info.hw_filter_on = false;
-+	}
-+
-+	if (adapter->filter_ctxt.hw_promisc_flags & SXE2_PROMISC) {
-+		ret = sxe2_drv_promisc_config(adapter, false);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "failed to cfg promiscuous, ret:%d", ret);
-+			goto l_end;
-+		}
-+		adapter->filter_ctxt.hw_promisc_flags &= ~SXE2_PROMISC;
-+	}
-+
-+	if (adapter->filter_ctxt.hw_promisc_flags & SXE2_PROMISC_MULTICAST) {
-+		ret = sxe2_drv_allmulti_config(adapter, false);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "failed to cfg allmulticast, ret:%d", ret);
-+			goto l_end;
-+		}
-+		adapter->filter_ctxt.hw_promisc_flags &= ~SXE2_PROMISC_MULTICAST;
-+	}
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_all_filter_hw_set(struct sxe2_adapter *adapter)
-+{
-+	int32_t ret = 0;
-+	struct sxe2_mac_filter *mac_entry;
-+	struct sxe2_mac_filter *next_mac_entry;
-+	struct sxe2_vlan_filter *vlan_entry;
-+	struct sxe2_vlan_filter *next_vlan_entry;
-+
-+	if (adapter->filter_ctxt.uc_num > 0) {
-+		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.uc_list, next,
-+				       next_mac_entry) {
-+			if (!mac_entry->hw_config) {
-+				ret = sxe2_drv_uc_config(adapter, &mac_entry->mac_addr,
-+							 true);
-+				if (ret && ret != -EEXIST) {
-+					PMD_DEV_LOG_ERR(adapter, DRV,
-+							"Failed to add uc rule, ret:%d", ret);
-+					ret = -EINVAL;
-+					goto l_end;
-+				}
-+				mac_entry->hw_config = true;
-+				ret = 0;
-+			}
-+		}
-+	}
-+
-+	if (adapter->filter_ctxt.mc_num > 0) {
-+		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.mc_list, next,
-+				       next_mac_entry) {
-+			if (!mac_entry->hw_config) {
-+				ret = sxe2_drv_mc_config(adapter, &mac_entry->mac_addr, true);
-+				if (ret && ret != -EEXIST) {
-+					PMD_DEV_LOG_ERR(adapter, DRV,
-+							"Failed to add mc rule, ret:%d", ret);
-+					ret = -EINVAL;
-+					goto l_end;
-+				}
-+				mac_entry->hw_config = true;
-+				ret = 0;
-+			}
-+		}
-+	}
-+
-+	if (adapter->filter_ctxt.vlan_num > 0) {
-+		RTE_TAILQ_FOREACH_SAFE(vlan_entry, &adapter->filter_ctxt.vlan_list, next,
-+				       next_vlan_entry) {
-+			if (!vlan_entry->hw_config) {
-+				ret = sxe2_drv_vlan_filter_id_config(adapter,
-+				    &vlan_entry->vlan_info, true);
-+				if (ret && ret != -EEXIST) {
-+					PMD_DEV_LOG_ERR(adapter, DRV,
-+							"Failed to add vlan rule, ret:%d", ret);
-+					ret = -EINVAL;
-+					goto l_end;
-+				}
-+				vlan_entry->hw_config = true;
-+				ret = 0;
-+			}
-+		}
-+	}
-+
-+	if (adapter->filter_ctxt.vlan_info.filter_on) {
-+		if (!(adapter->filter_ctxt.vlan_info.hw_filter_on)) {
-+			ret = sxe2_drv_vlan_filter_switch(adapter, true);
-+			if (ret && ret != -EEXIST) {
-+				PMD_DEV_LOG_ERR(adapter, DRV,
-+						"Failed to add vlan ctrl, ret:%d", ret);
-+				ret = -EINVAL;
-+				goto l_end;
-+			}
-+			adapter->filter_ctxt.vlan_info.hw_filter_on = true;
-+			ret = 0;
-+		}
-+	}
-+
-+	if ((adapter->filter_ctxt.cur_promisc_flags & SXE2_PROMISC) &&
-+	    (!(adapter->filter_ctxt.hw_promisc_flags & SXE2_PROMISC))) {
-+		ret = sxe2_drv_promisc_config(adapter, true);
-+		if (ret && ret != -EEXIST) {
-+			PMD_DEV_LOG_ERR(adapter, DRV,
-+					"Failed to set promisc, ret:%d", ret);
-+			goto l_end;
-+		}
-+		adapter->filter_ctxt.hw_promisc_flags |= SXE2_PROMISC;
-+		ret = 0;
-+	}
-+
-+	if ((adapter->filter_ctxt.cur_promisc_flags & SXE2_PROMISC_MULTICAST) &&
-+	    (!(adapter->filter_ctxt.hw_promisc_flags & SXE2_PROMISC_MULTICAST))) {
-+		ret = sxe2_drv_allmulti_config(adapter, true);
-+		if (ret && ret != -EEXIST) {
-+			PMD_DEV_LOG_ERR(adapter, DRV,
-+					"Failed to set allmulti, ret:%d", ret);
-+			goto l_end;
-+		}
-+		adapter->filter_ctxt.hw_promisc_flags |= SXE2_PROMISC_MULTICAST;
-+		ret = 0;
-+	}
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_l2_rule_update(struct sxe2_adapter *adapter)
-+{
-+	int32_t ret = 0;
-+
-+	if (!adapter->flow_isolated && !adapter->switchdev_info.is_switchdev &&
-+	    adapter->rule_started) {
-+		adapter->filter_ctxt.cur_l2_config = true;
-+	} else {
-+		adapter->filter_ctxt.cur_l2_config = false;
-+	}
-+
-+	if (adapter->filter_ctxt.cur_l2_config !=
-+	    adapter->filter_ctxt.hw_l2_config) {
-+		if (adapter->filter_ctxt.cur_l2_config) {
-+			ret = sxe2_all_filter_hw_set(adapter);
-+			if (!ret)
-+				adapter->filter_ctxt.hw_l2_config = true;
++	if (sxe2_test_bit(SXE2_EXPANSION_OUTER_IPV6, flow_type)) {
++		sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV6_PROT, flow->pattern_outer.map_spec);
++		if (sxe2_test_bit(SXE2_EXPANSION_ETH, flow_type)) {
++			flow->pattern_outer.item_spec.ipv6.nexthdr = SXE2_FLOW_IP_PROTOCOL_ETH;
 +		} else {
-+			ret = sxe2_all_filter_hw_clear(adapter);
-+			if (!ret)
-+				adapter->filter_ctxt.hw_l2_config = false;
++			if (sxe2_test_bit(SXE2_EXPANSION_IPV4, flow_type))
++				flow->pattern_outer.item_spec.ipv6.nexthdr =
++					SXE2_FLOW_IP_PROTOCOL_IPV4;
++			if (sxe2_test_bit(SXE2_EXPANSION_IPV6, flow_type))
++				flow->pattern_outer.item_spec.ipv6.nexthdr =
++					SXE2_FLOW_IP_PROTOCOL_IPV6;
 +		}
 +	}
-+	return ret;
-+}
-+
-+int32_t sxe2_filter_rule_stop(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+	adapter->rule_started = 0;
-+
-+	ret = sxe2_l2_rule_update(adapter);
-+	if (ret != 0)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to update l2 rule");
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_filter_rule_start(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+	adapter->rule_started = 1;
-+
-+	ret = sxe2_l2_rule_update(adapter);
-+	if (ret != 0)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to update l2 rule");
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_filter_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+
-+	rte_spinlock_init(&adapter->filter_ctxt.filter_lock);
-+
-+	TAILQ_INIT(&adapter->filter_ctxt.uc_list);
-+	adapter->filter_ctxt.uc_num = 0;
-+
-+	TAILQ_INIT(&adapter->filter_ctxt.mc_list);
-+	adapter->filter_ctxt.mc_num = 0;
-+
-+	TAILQ_INIT(&adapter->filter_ctxt.vlan_list);
-+	adapter->filter_ctxt.vlan_num = 0;
 +	return 0;
 +}
 +
-+int32_t sxe2_filter_uinit(struct rte_eth_dev *dev)
++static int32_t sxe2_flow_add_udp_tunnel_port(struct sxe2_adapter *adapter,
++					 enum sxe2_flow_udp_tunnel_protocol proto,
++					 struct sxe2_flow *flow,
++					 BITMAP_TYPE *flow_type)
 +{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	sxe2_uc_filter_clear(adapter, true);
-+	adapter->filter_ctxt.uc_num = 0;
++	int32_t ret = 0;
++	uint16_t tun_port;
 +
-+	sxe2_mc_filter_clear(adapter, true);
-+	adapter->filter_ctxt.mc_num = 0;
-+
-+	sxe2_vlan_filters_clear(adapter, true);
-+	adapter->filter_ctxt.vlan_num = 0;
-+	return 0;
-+}
-diff --git a/drivers/net/sxe2/sxe2_filter.h b/drivers/net/sxe2/sxe2_filter.h
-new file mode 100644
-index 0000000000..6262e8c845
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_filter.h
-@@ -0,0 +1,98 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_FILTER_H__
-+#define __SXE2_FILTER_H__
-+#include <ethdev_driver.h>
-+
-+#define SXE2_PROMISC  (1UL << 0UL)
-+#define SXE2_PROMISC_MULTICAST  (1UL << 1UL)
-+
-+struct sxe2_vlan_info {
-+	uint8_t port_vlan_exist;
-+	uint8_t is_switchdev;
-+	uint16_t max_cnt;
-+	uint16_t cnt;
-+
-+	bool filter_on;
-+	bool hw_filter_on;
-+
-+	uint16_t tpid;
-+	uint16_t vid;
-+
-+	uint8_t outer_insert;
-+	uint8_t outer_strip;
-+	uint8_t inner_insert;
-+	uint8_t inner_strip;
-+};
-+
-+struct sxe2_vlan {
-+	uint16_t tpid;
-+	uint16_t vid;
-+	uint8_t prio;
-+};
-+
-+struct sxe2_vlan_filter {
-+	TAILQ_ENTRY(sxe2_vlan_filter) next;
-+	bool hw_config;
-+	bool default_config;
-+	struct sxe2_vlan vlan_info;
-+};
-+
-+TAILQ_HEAD(sxe2_vlan_filter_list_head, sxe2_vlan_filter);
-+
-+struct sxe2_mac_filter {
-+	TAILQ_ENTRY(sxe2_mac_filter) next;
-+	bool hw_config;
-+	bool default_config;
-+	struct rte_ether_addr mac_addr;
-+};
-+
-+TAILQ_HEAD(sxe2_uc_filter_list_head, sxe2_mac_filter);
-+TAILQ_HEAD(sxe2_mc_filter_list_head, sxe2_mac_filter);
-+
-+int32_t sxe2_uc_filter_add(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *mac_addr, bool default_config);
-+
-+int32_t sxe2_uc_filter_del(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *mac_addr);
-+
-+void sxe2_uc_filter_clear(struct sxe2_adapter *adapter, bool default_config);
-+
-+int32_t sxe2_mc_filter_add(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *mac_addr, bool default_config);
-+
-+int32_t sxe2_mc_filter_del(struct sxe2_adapter *adapter,
-+			struct rte_ether_addr *mac_addr);
-+
-+void sxe2_mc_filter_clear(struct sxe2_adapter *adapter, bool default_config);
-+
-+int32_t sxe2_vlan_filter_add(struct sxe2_adapter *adapter,
-+	struct sxe2_vlan *vlan, bool default_config);
-+
-+int32_t sxe2_vlan_filter_del(struct sxe2_adapter *adapter, struct sxe2_vlan *vlan);
-+
-+void sxe2_vlan_filters_clear(struct sxe2_adapter *adapter, bool default_config);
-+
-+int32_t sxe2_vlan_filter_ctrl(struct sxe2_adapter *adapter, bool flag);
-+
-+int32_t sxe2_promisc_add(struct sxe2_adapter *adapter);
-+
-+int32_t sxe2_promisc_del(struct sxe2_adapter *adapter);
-+
-+int32_t sxe2_allmulti_add(struct sxe2_adapter *adapter);
-+
-+int32_t sxe2_allmulti_del(struct sxe2_adapter *adapter);
-+
-+int32_t sxe2_l2_rule_update(struct sxe2_adapter *adapter);
-+
-+int32_t sxe2_filter_rule_stop(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_filter_rule_start(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_filter_init(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_filter_uinit(struct rte_eth_dev *dev);
-+
-+#endif /* __SXE2_FILTER_H__ */
-diff --git a/drivers/net/sxe2/sxe2_mac.c b/drivers/net/sxe2/sxe2_mac.c
-index 3c2f909002..d94936a742 100644
---- a/drivers/net/sxe2/sxe2_mac.c
-+++ b/drivers/net/sxe2/sxe2_mac.c
-@@ -10,6 +10,438 @@
- #include "sxe2_cmd_chnl.h"
- #include "sxe2_host_regs.h"
- 
-+int32_t sxe2_mac_default_cfg(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t                     ret;
-+	struct rte_ether_addr broadcast = {
-+		.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff} };
-+	struct rte_ether_addr mac_addr;
-+
-+	rte_ether_addr_copy((struct rte_ether_addr *)
-+		adapter->dev_info.mac.perm_addr, &mac_addr);
-+	ret = sxe2_uc_filter_add(adapter, &mac_addr, true);
-+	if (ret != 0) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add default MAC filter");
-+		goto l_end;
-+	}
-+
-+	rte_ether_addr_copy(&broadcast, &mac_addr);
-+	ret = sxe2_mc_filter_add(adapter, &mac_addr, true);
-+	if (ret != 0) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add broadcast MAC filter");
-+		goto l_end;
-+	}
-+
-+	ret = 0;
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_mac_addr_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret                         = -1;
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (!rte_is_unicast_ether_addr
-+		((struct rte_ether_addr *)adapter->dev_info.mac.perm_addr)) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Invalid MAC address");
++	tun_port = adapter->flow_ctxt.tunnel_port_list[proto];
++	if (tun_port == 0xffff || tun_port == 0) {
 +		ret = -EINVAL;
++		PMD_LOG_ERR(DRV, "UDP tunnel port not initialized, proto: %d", proto);
 +		goto l_end;
 +	}
-+
-+	dev->data->mac_addrs = rte_zmalloc("sxe2_mac_adds",
-+					sizeof(struct rte_ether_addr) * SXE2_NUM_MACADDR_MAX, 0);
-+	if (!dev->data->mac_addrs) {
-+		PMD_LOG_ERR(DRV, "Failed to allocate memory to store mac address");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+
-+	rte_ether_addr_copy((struct rte_ether_addr *)adapter->dev_info.mac.perm_addr,
-+		&dev->data->mac_addrs[0]);
-+
-+	ret = 0;
-+
-+l_end:
-+	return ret;
-+}
-+
-+void sxe2_mac_addr_uinit(struct rte_eth_dev *dev)
-+{
-+	PMD_INIT_FUNC_TRACE();
-+	if (dev != NULL && dev->data->mac_addrs != NULL) {
-+		rte_free(dev->data->mac_addrs);
-+		dev->data->mac_addrs = NULL;
-+	}
-+}
-+
-+int32_t sxe2_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac_addr,
-+		      __rte_unused uint32_t index, __rte_unused uint32_t pool)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = -1;
-+
-+	if (rte_is_zero_ether_addr(mac_addr)) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Invalid MAC Address");
++	if (!sxe2_test_bit(SXE2_EXPANSION_OUTER_UDP, flow_type)) {
 +		ret = -EINVAL;
++		PMD_LOG_ERR(DRV, "UDP must be over tunnel");
 +		goto l_end;
 +	}
-+
-+	if (rte_is_multicast_ether_addr(mac_addr))
-+		ret = sxe2_mc_filter_add(adapter, mac_addr, true);
-+	else
-+		ret = sxe2_uc_filter_add(adapter, mac_addr, false);
-+
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add MAC filter");
-+
++	sxe2_set_bit(SXE2_FLOW_FLD_ID_UDP_DST_PORT, flow->pattern_outer.map_spec);
++	flow->pattern_outer.item_spec.udp.dest = rte_cpu_to_be_16(tun_port);
 +l_end:
 +	return ret;
 +}
 +
-+void sxe2_mac_addr_del(struct rte_eth_dev *dev,  uint32_t index)
++int32_t sxe2_flow_add_tunnel_port(struct rte_eth_dev *dev,
++			struct rte_flow_error *error,
++			struct sxe2_flow *flow, BITMAP_TYPE *flow_type,
++			enum sxe2_flow_tunnel_type tunnel_type)
 +{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct rte_ether_addr *mac_addr = &dev->data->mac_addrs[index];
-+	int32_t ret = -1;
-+
-+	if (rte_is_multicast_ether_addr(mac_addr))
-+		ret = sxe2_mc_filter_del(adapter, mac_addr);
-+	else
-+		ret = sxe2_uc_filter_del(adapter, mac_addr);
-+
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to remove MAC filter");
-+}
-+
-+int32_t sxe2_mac_addr_set(struct rte_eth_dev *dev, struct rte_ether_addr *mac_addr)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
 +	int32_t ret = 0;
-+	struct rte_ether_addr *old_addr = (struct rte_ether_addr *)&adapter->dev_info.mac.perm_addr;
-+	struct rte_ether_addr temp_addr;
-+
-+	if (rte_is_same_ether_addr(old_addr, mac_addr))
-+		goto l_end;
-+
-+	if (rte_is_multicast_ether_addr(mac_addr)) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set multicast addr");
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_uc_filter_del(adapter, old_addr);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to remove MAC filter");
-+		goto l_end;
-+	}
-+
-+	rte_ether_addr_copy(old_addr, &temp_addr);
-+
-+	rte_ether_addr_copy(mac_addr, old_addr);
-+
-+	ret = sxe2_uc_filter_add(adapter, mac_addr, true);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add MAC filter");
-+		rte_ether_addr_copy(&temp_addr, old_addr);
-+		(void)sxe2_uc_filter_add(adapter, old_addr, true);
-+		goto l_end;
-+	}
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_set_mc_addr_list(struct rte_eth_dev *dev,
-+			struct rte_ether_addr *mc_addrs,
-+			uint32_t mc_addrs_num)
-+{
++	enum sxe2_flow_udp_tunnel_protocol proto = SXE2_FLOW_UDP_TUNNEL_MAX;
 +	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+	uint32_t i;
-+	const uint8_t *mac;
-+
-+	if (mc_addrs_num > SXE2_NUM_MACADDR_MAX) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Too many multicast MAC addresses, ");
-+		ret =  -1;
-+		goto l_end;
-+	}
-+
-+	sxe2_mc_filter_clear(adapter, false);
-+
-+	for (i = 0; i < mc_addrs_num; i++) {
-+		if (!rte_is_multicast_ether_addr(&mc_addrs[i])) {
-+			mac = mc_addrs[i].addr_bytes;
-+			PMD_DEV_LOG_ERR(adapter, DRV,
-+					"Invalid mac: %02x:%02x:%02x:%02x:%02x:%02x",
-+					mac[0], mac[1], mac[2], mac[3], mac[4],
-+					mac[5]);
-+			ret = -EINVAL;
-+			goto add_err;
++	struct sxe2_flow_pattern *pattern = &flow->pattern_outer;
++	switch (tunnel_type) {
++	case SXE2_FLOW_TUNNEL_TYPE_VXLAN:
++		if (sxe2_test_bit(SXE2_EXPANSION_ETH, flow_type)) {
++			proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN;
++		} else if (sxe2_test_bit(SXE2_EXPANSION_IPV4, flow_type) ||
++			sxe2_test_bit(SXE2_EXPANSION_IPV6, flow_type)) {
++			proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN_GPE;
 +		}
-+
-+		ret = sxe2_mc_filter_add(adapter, &mc_addrs[i], false);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV,
-+			    "Failed to remove old multicast MAC filter list");
-+			goto add_err;
-+		}
-+	}
-+	goto l_end;
-+add_err:
-+	sxe2_mc_filter_clear(adapter, false);
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int32_t on)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_vlan vlan = {
-+		.tpid = RTE_ETHER_TYPE_VLAN,
-+		.vid = vlan_id,
-+		.prio = 0
-+	};
-+	int32_t ret = 0;
-+
-+	if (sxe2_dev_port_vlan_check(dev)) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Filter not supported with Port VLAN");
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
-+
-+	if (vlan_id == 0)
-+		goto l_end;
-+
-+	if (on) {
-+		ret = sxe2_vlan_filter_add(adapter, &vlan, false);
-+		if (ret < 0) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add vlan filter");
-+			goto l_end;
-+		}
-+	} else {
-+		ret = sxe2_vlan_filter_del(adapter, &vlan);
-+		if (ret < 0) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to remove vlan filter");
-+			goto l_end;
-+		}
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_dev_vlan_offload_set(struct rte_eth_dev *dev, int32_t mask)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+	struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
-+	struct rte_eth_txmode *txmode = &dev->data->dev_conf.txmode;
-+	struct sxe2_vlan_info new_info = adapter->filter_ctxt.vlan_info;
-+	bool port_vlan = new_info.port_vlan_exist;
-+
-+	uint8_t out_strip_mask = SXE2_DPDK_OFFLOAD_OUTER_STRIP_8021Q |
-+			    SXE2_DPDK_OFFLOAD_OUTER_STRIP_8021AD |
-+			    SXE2_DPDK_OFFLOAD_OUTER_STRIP_QINQ1;
-+
-+	if (txmode->offloads & RTE_ETH_TX_OFFLOAD_QINQ_INSERT) {
-+		if (!(txmode->offloads & RTE_ETH_TX_OFFLOAD_VLAN_INSERT)) {
-+			PMD_DEV_LOG_ERR(adapter, DRV,
-+			    "VLAN INSERT must be enabled when QinQ INSERT is enabled");
-+			return -EINVAL;
-+		}
-+		if (port_vlan) {
-+			PMD_DEV_LOG_ERR(adapter, DRV,
-+					"QINQ INSERT not supported with Port VLAN");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	if (mask & RTE_ETH_QINQ_STRIP_MASK) {
-+		if (rxmode->offloads & RTE_ETH_RX_OFFLOAD_QINQ_STRIP) {
-+			if (port_vlan) {
-+				PMD_DEV_LOG_ERR(adapter, DRV,
-+						"QinQ strip not supported with Port VLAN");
-+				return -EINVAL;
-+			}
-+			new_info.inner_strip = SXE2_VSI_TSR_ID_VLAN;
++		break;
++	case SXE2_FLOW_TUNNEL_TYPE_GTPU:
++		proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GTP_U;
++		break;
++	case SXE2_FLOW_TUNNEL_TYPE_GENEVE:
++		proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GENEVE;
++		break;
++	case SXE2_FLOW_TUNNEL_TYPE_GRE:
++		if (sxe2_test_bit(SXE2_EXPANSION_OUTER_UDP, flow_type)) {
++			proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_NVGRE;
 +		} else {
-+			new_info.inner_strip = 0;
-+		}
-+	}
-+
-+	if (mask & RTE_ETH_VLAN_STRIP_MASK) {
-+		if (rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP) {
-+			new_info.outer_strip =
-+				port_vlan ? 0 : out_strip_mask;
-+			new_info.inner_strip =
-+				port_vlan ? new_info.inner_strip : new_info.inner_strip;
-+		} else {
-+			if (new_info.inner_strip != 0) {
-+				PMD_DEV_LOG_ERR(adapter, DRV,
-+					"Must disable QinQ strip before disabling VLAN strip");
-+				return -EINVAL;
++			if (sxe2_test_bit(SXE2_EXPANSION_OUTER_IPV4, flow_type)) {
++				pattern->item_spec.ipv4.protocol = SXE2_FLOW_IP_PROTOCOL_GRE;
++				sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV4_PROT, pattern->map_spec);
 +			}
-+			new_info.outer_strip = 0;
++			if (sxe2_test_bit(SXE2_EXPANSION_OUTER_IPV6, flow_type)) {
++				pattern->item_spec.ipv6.nexthdr = SXE2_FLOW_IP_PROTOCOL_GRE;
++				sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV6_PROT, pattern->map_spec);
++			}
 +		}
++		break;
++	case SXE2_FLOW_TUNNEL_TYPE_IPIP:
++		ret = sxe2_flow_parse_pattern_ipip(flow, flow_type);
++		break;
++	default:
++		break;
 +	}
-+
-+	if (mask & (RTE_ETH_VLAN_STRIP_MASK | RTE_ETH_QINQ_STRIP_MASK)) {
-+		struct sxe2_vlan_info old_info = adapter->filter_ctxt.vlan_info;
-+		adapter->filter_ctxt.vlan_info = new_info;
-+
-+		ret = sxe2_drv_vlan_insert_strip_cfg(adapter);
-+		if (ret) {
-+			adapter->filter_ctxt.vlan_info = old_info;
-+			return ret;
-+		}
-+	}
-+	if (mask & RTE_ETH_VLAN_FILTER_MASK) {
-+		if (adapter->filter_ctxt.vlan_info.port_vlan_exist) {
-+			ret = 0;
-+			PMD_DEV_LOG_INFO(adapter, INIT, "vlan filter is not support when port vlan is enabled");
-+			goto l_end;
-+		}
-+
-+		ret = sxe2_vlan_filter_ctrl(adapter,
-+			    !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_FILTER));
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV,
-+			    "sxe2_drv_vlan_filter_switch failed ret:%d", ret);
++	if (proto != SXE2_FLOW_UDP_TUNNEL_MAX) {
++		ret = sxe2_flow_add_udp_tunnel_port(adapter, proto, flow, flow_type);
++		if (ret != 0) {
++			rte_flow_error_set(error, EINVAL,
++					RTE_FLOW_ERROR_TYPE_ITEM,
++					NULL, "Failed to add udp port for tunnel.");
++			PMD_LOG_ERR(DRV, "Failed to add udp port for tunnel, ret %d.", ret);
 +			goto l_end;
 +		}
 +	}
-+
-+	PMD_DEV_LOG_DEBUG(adapter, DRV,
-+	    "mask:0x%x rx mode offload:0x%" PRIx64 " vlan offload set done",
-+	    mask, rxmode->offloads);
++	if (tunnel_type != SXE2_FLOW_TUNNEL_TYPE_NONE) {
++		if (!sxe2_test_bit(SXE2_EXPANSION_OUTER_UDP, flow_type))
++			sxe2_set_bit(SXE2_FLOW_HDR_IPV_OTHER, pattern->hdrs);
++	}
 +l_end:
 +	return ret;
 +}
 +
-+static int32_t sxe2_vlan_filter_zero(struct sxe2_adapter *adapter)
-+{
-+	struct sxe2_vlan vlan;
-+	int32_t ret;
-+	uint16_t tpids[] = {RTE_ETHER_TYPE_VLAN, RTE_ETHER_TYPE_QINQ, RTE_ETHER_TYPE_QINQ1};
-+	uint8_t i;
-+
-+	vlan = (struct sxe2_vlan){0, 0, 0};
-+	ret = sxe2_vlan_filter_add(adapter, &vlan, true);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add VLAN ID 0");
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < RTE_DIM(tpids); i++) {
-+		vlan = (struct sxe2_vlan){tpids[i], 0, 0};
-+		ret = sxe2_vlan_filter_add(adapter, &vlan, true);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add VLAN ID 0 when tpid:0x%x",
-+					tpids[i]);
-+			goto l_end;
-+		}
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_vlan_cfg_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+
-+	ret = sxe2_drv_vlan_config_query(adapter);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to query vlan config, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	if (!sxe2_dev_port_vlan_check(dev))
-+		adapter->filter_ctxt.vlan_info.outer_insert =
-+			SXE2_DPDK_OFFLOAD_OUTER_INSERT_8021Q |
-+			SXE2_DPDK_OFFLOAD_INSERT_ENABLE;
-+	else
-+		adapter->filter_ctxt.vlan_info.outer_insert = 0;
-+
-+	adapter->filter_ctxt.vlan_info.inner_insert =
-+			SXE2_DPDK_OFFLOAD_INNER_INSERT_QINQ1 | SXE2_DPDK_OFFLOAD_INSERT_ENABLE;
-+
-+	if (!sxe2_dev_port_vlan_check(dev)) {
-+		ret = sxe2_vlan_filter_zero(adapter);
-+		if (ret != 0)
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add vlan filter switch:0 "
-+					"for port:%d", adapter->port_idx);
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_vlan_default_cfg(struct rte_eth_dev *dev)
-+{
-+	int32_t ret = 0;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+
-+	ret = sxe2_dev_vlan_offload_set(dev, RTE_ETH_VLAN_STRIP_MASK |
-+					RTE_ETH_QINQ_STRIP_MASK |
-+					RTE_ETH_VLAN_FILTER_MASK);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cfg vlan offload, ret:%d", ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_promisc_enable(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+
-+	ret = sxe2_promisc_add(adapter);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to enable promisc, ret:%d", ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_promisc_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+
-+	ret = sxe2_promisc_del(adapter);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to disable promisc, ret:%d", ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_allmulti_enable(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+
-+	ret = sxe2_allmulti_add(adapter);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to enable allmulti, ret:%d", ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_allmulti_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+
-+	ret = sxe2_allmulti_del(adapter);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to disable allmulti, ret:%d", ret);
-+
-+	return ret;
-+}
-+
- int32_t sxe2_link_update_init(struct rte_eth_dev *dev)
- {
- 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-diff --git a/drivers/net/sxe2/sxe2_mac.h b/drivers/net/sxe2/sxe2_mac.h
-index f2f3edaeff..55fd1829a0 100644
---- a/drivers/net/sxe2/sxe2_mac.h
-+++ b/drivers/net/sxe2/sxe2_mac.h
-@@ -43,6 +43,40 @@ struct sxe2_mac_mc_list {
+ struct sxe2_flow_parse_pattern_ops sxe2_flow_parse_pattern_list[] = {
+ 	[SXE2_EXPANSION_OUTER_ETH] = {
+ 		.is_inner = false,
+diff --git a/drivers/net/sxe2/sxe2_flow_parse_pattern.h b/drivers/net/sxe2/sxe2_flow_parse_pattern.h
+index 69d83a6ea6..8442c35cae 100644
+--- a/drivers/net/sxe2/sxe2_flow_parse_pattern.h
++++ b/drivers/net/sxe2/sxe2_flow_parse_pattern.h
+@@ -37,4 +37,10 @@ int32_t sxe2_flow_parse_pattern(struct rte_eth_dev *dev,
+ 			    struct rte_flow_error *error,
+ 			    struct sxe2_flow *flow);
  
- int32_t sxe2_link_update_init(struct rte_eth_dev *dev);
- 
-+int32_t sxe2_mac_default_cfg(struct rte_eth_dev *dev);
++int32_t sxe2_flow_add_tunnel_port(struct rte_eth_dev *dev,
++			      struct rte_flow_error *error,
++			      struct sxe2_flow *flow,
++			      BITMAP_TYPE *flow_type,
++			      enum sxe2_flow_tunnel_type tunnel_type);
 +
-+int32_t sxe2_vlan_cfg_init(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_mac_addr_init(struct rte_eth_dev *dev);
-+
-+void sxe2_mac_addr_uinit(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_mac_addr_add(struct rte_eth_dev *dev,
-+			struct rte_ether_addr *mac_addr,
-+			__rte_unused uint32_t index, __rte_unused uint32_t pool);
-+
-+void sxe2_mac_addr_del(struct rte_eth_dev *dev,  uint32_t index);
-+
-+int32_t sxe2_mac_addr_set(struct rte_eth_dev *dev, struct rte_ether_addr *mac_addr);
-+
-+int32_t sxe2_set_mc_addr_list(struct rte_eth_dev *dev,
-+	struct rte_ether_addr *mc_addrs,
-+	uint32_t mc_addrs_num);
-+
-+int32_t sxe2_promisc_enable(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_promisc_disable(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_allmulti_enable(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_allmulti_disable(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int32_t on);
-+
-+int32_t sxe2_dev_vlan_offload_set(struct rte_eth_dev *dev, int32_t mask);
-+
-+int32_t sxe2_vlan_default_cfg(struct rte_eth_dev *dev);
-+
- int32_t sxe2_link_update(struct rte_eth_dev *dev, __rte_unused int32_t wait_to_complete);
- 
- int32_t sxe2_mtu_set(struct rte_eth_dev *dev, uint16_t mtu);
+ #endif /* SXE2_FLOW_PARSE_PATTERN_H_ */
 diff --git a/drivers/net/sxe2/sxe2_txrx_poll.c b/drivers/net/sxe2/sxe2_txrx_poll.c
-index b9d34afb31..21d5c38725 100644
+index f3c4fa0d91..746f9cc2d5 100644
 --- a/drivers/net/sxe2/sxe2_txrx_poll.c
 +++ b/drivers/net/sxe2/sxe2_txrx_poll.c
-@@ -660,6 +660,53 @@ sxe2_rx_desc_error_para(__rte_unused struct sxe2_rx_queue *rxq,
- 	return flags;
+@@ -234,6 +234,44 @@ sxe2_tx_pkt_data_desc_count(struct rte_mbuf *tx_pkt)
+ 	return count;
  }
  
-+static inline void sxe2_rx_desc_vlan_para_fill(struct rte_mbuf *mbuf,
-+			union sxe2_rx_desc *desc)
++static __rte_always_inline void sxe2_tx_desc_tunneling_params_fill(uint64_t offloads,
++					union sxe2_tx_offload_info ol_info,
++					uint32_t *desc_tunneling_params)
 +{
-+	if (0 == (rte_le_to_cpu_64(desc->wb.status_err_ptype_len) &
-+		  SXE2_RX_DESC_STATUS_L2TAG1_P_MASK)) {
-+		mbuf->vlan_tci = 0;
-+	} else {
-+		mbuf->ol_flags |= (RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED);
-+		mbuf->vlan_tci = rte_le_to_cpu_16(desc->wb.l2tag1);
-+		PMD_LOG_DEBUG(RX, "Rx desc mbuf vlan, vlan_tci:%u",
-+			mbuf->vlan_tci);
-+	}
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+	if (0 == (rte_le_to_cpu_32(desc->wb.status_lrocnt_fdpf_id) &
-+				SXE2_RX_DESC_EXT_STATUS_L2TAG2P_MASK)) {
-+		mbuf->vlan_tci_outer = 0;
-+	} else {
-+		mbuf->ol_flags |= RTE_MBUF_F_RX_QINQ_STRIPPED | RTE_MBUF_F_RX_QINQ |
-+				RTE_MBUF_F_RX_VLAN_STRIPPED | RTE_MBUF_F_RX_VLAN;
-+		mbuf->vlan_tci_outer = mbuf->vlan_tci;
-+		mbuf->vlan_tci = rte_le_to_cpu_16(desc->wb.l2tag2_2nd);
-+		PMD_LOG_DEBUG(RX, "Rx desc out vlan, l2tag2_1st:%u l2tag2_2nd:%u.",
-+				rte_le_to_cpu_16(desc->wb.l2tag2_1st),
-+				rte_le_to_cpu_16(desc->wb.l2tag2_2nd));
-+	}
-+#endif
-+}
++	if (offloads & RTE_MBUF_F_TX_OUTER_IP_CKSUM)
++		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_EIPT_IPV4;
++	else if (offloads & RTE_MBUF_F_TX_OUTER_IPV4)
++		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_EIPT_IPV4_NO_CSUM;
++	else if (offloads & RTE_MBUF_F_TX_OUTER_IPV6)
++		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_EIPT_IPV6;
 +
-+static inline void
-+sxe2_rx_desc_filter_para_fill(struct sxe2_rx_queue *rxq __rte_unused,
-+		struct rte_mbuf *mbuf, union sxe2_rx_desc *desc)
-+{
-+	if (SXE2_RX_DESC_STATUS_RSS_VLD_MASK &
-+				rte_le_to_cpu_64(desc->wb.status_err_ptype_len)) {
-+		mbuf->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
-+		mbuf->hash.rss = rte_le_to_cpu_32(desc->wb.filter_status);
-+		PMD_LOG_DEBUG(RX, "rss id:%u", mbuf->hash.rss);
++	*desc_tunneling_params |=
++			SXE2_TX_CTXT_DESC_EIPLEN_VAL(ol_info.outer_l3_len);
++	switch (offloads & RTE_MBUF_F_TX_TUNNEL_MASK) {
++	case RTE_MBUF_F_TX_TUNNEL_IPIP:
++		break;
++	case RTE_MBUF_F_TX_TUNNEL_VXLAN:
++	case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
++	case RTE_MBUF_F_TX_TUNNEL_GTP:
++	case RTE_MBUF_F_TX_TUNNEL_GENEVE:
++		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_UDP_TUNNE;
++		break;
++	case RTE_MBUF_F_TX_TUNNEL_GRE:
++		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_GRE_TUNNE;
++		break;
++	default:
++		PMD_LOG_ERR(TX, "Tunnel type [0x%" PRIx64 "] is not supported.",
++			    (uint64_t)(offloads & RTE_MBUF_F_TX_TUNNEL_MASK));
++		return;
 +	}
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+	if (SXE2_RX_DESC_FD_VLD_MASK & desc->wb.rxdid_src) {
-+		mbuf->ol_flags |= (RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID);
-+		mbuf->hash.fdir.hi = rte_le_to_cpu_32(desc->wb.fd_filter_id);
-+		PMD_LOG_DEBUG(RX, "fdir id:%u", mbuf->hash.fdir.hi);
++	*desc_tunneling_params |= SXE2_TX_CTXT_DESC_NATLEN_VAL(ol_info.l2_len);
++	if (!(*desc_tunneling_params & SXE2_TX_CTXT_DESC_EIPT_NONE) &&
++			(*desc_tunneling_params & SXE2_TX_CTXT_DESC_UDP_TUNNE) &&
++			(offloads & RTE_MBUF_F_TX_OUTER_UDP_CKSUM)) {
++		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_L4T_CS_MASK;
 +	}
-+#endif
 +}
 +
  static __rte_always_inline void
- sxe2_rx_mbuf_common_fields_fill(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf,
- 		union sxe2_rx_desc *rxd)
-@@ -673,6 +720,8 @@ sxe2_rx_mbuf_common_fields_fill(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf
- 	mbuf->packet_type = ptype_tbl[SXE2_RX_DESC_PTYPE_VAL_GET(qword1)];
+ sxe2_tx_desc_checksum_fill(uint64_t offloads, uint32_t *desc_cmd, uint32_t *desc_offset,
+ 		union sxe2_tx_offload_info ol_info)
+@@ -414,7 +452,13 @@ uint16_t sxe2_tx_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkt
+ 			}
+ 		}
  
- 	pkt_flags = sxe2_rx_desc_error_para(rxq, rxd);
-+	sxe2_rx_desc_vlan_para_fill(mbuf, rxd);
-+	sxe2_rx_desc_filter_para_fill(rxq, mbuf, rxd);
+-		desc_offset |= SXE2_TX_DATA_DESC_MACLEN_VAL(ol_info.l2_len);
++		if ((offloads & RTE_MBUF_F_TX_TUNNEL_MASK) && ctxt_desc_num) {
++			desc_offset |= SXE2_TX_DATA_DESC_MACLEN_VAL(ol_info.outer_l2_len);
++			sxe2_tx_desc_tunneling_params_fill(offloads, ol_info,
++						&desc_tunneling_params);
++		} else {
++			desc_offset |= SXE2_TX_DATA_DESC_MACLEN_VAL(ol_info.l2_len);
++		}
  
- 	mbuf->ol_flags |= pkt_flags;
- }
+ 		if (offloads & SXE2_TX_OFFLOAD_CKSUM_MASK) {
+ 			sxe2_tx_desc_checksum_fill(offloads, &desc_cmd,
 -- 
 2.52.0
 
