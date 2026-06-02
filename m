@@ -2,35 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D669BCD6E57
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 09:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BFBCD6E57
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 09:26:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F0C9402A9;
-	Tue,  2 Jun 2026 11:24:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 61EA6402A9;
+	Tue,  2 Jun 2026 11:26:44 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id E2DBF40150
- for <dev@dpdk.org>; Tue,  2 Jun 2026 11:24:53 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 985E940150
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 11:26:43 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id AFF00208EE;
- Tue,  2 Jun 2026 11:24:53 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7282D208EE;
+ Tue,  2 Jun 2026 11:26:43 +0200 (CEST)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Subject: RE: [RFC PATCH 1/3] build: deprecate kernel dir option
-Date: Tue, 2 Jun 2026 11:24:52 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F658D5@smartserver.smartshare.dk>
+Subject: RE: [RFC PATCH 2/3] build: deprecate standalone tests option
+Date: Tue, 2 Jun 2026 11:26:42 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F658D6@smartserver.smartshare.dk>
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260602090847.905721-2-bruce.richardson@intel.com>
+In-Reply-To: <20260602090847.905721-3-bruce.richardson@intel.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC PATCH 1/3] build: deprecate kernel dir option
-Thread-Index: Adzyb3T3vaY08URHTI+Ye0ovWUB3RAAAddzQ
+Thread-Topic: [RFC PATCH 2/3] build: deprecate standalone tests option
+Thread-Index: Adzyb3fypYjHQlfERjm4qbktUkzwsQAAms0Q
 References: <20260602090847.905721-1-bruce.richardson@intel.com>
- <20260602090847.905721-2-bruce.richardson@intel.com>
+ <20260602090847.905721-3-bruce.richardson@intel.com>
 From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
 To: "Bruce Richardson" <bruce.richardson@intel.com>,
 	<dev@dpdk.org>
@@ -50,9 +50,16 @@ Errors-To: dev-bounces@dpdk.org
 > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
 > Sent: Tuesday, 2 June 2026 11.09
 >=20
-> The kernel_dir option does nothing, so it can be deprecated and =
-removed
-> in future.
+> The unit tests can be disabled in DPDK in a couple of ways. Firstly,
+> there is the original "tests" boolean option - when set to false, the
+> tests are skipped as part of the build. However, the newer
+> enable_apps/disable_apps options also can be used to disable the tests
+> [you can disable using the "enable" option by omitting "tests" from =
+the
+> list to enable].
+>=20
+> This duplication of functionality is unnecessary, so let's remove the
+> standalone tests option.
 >=20
 > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
