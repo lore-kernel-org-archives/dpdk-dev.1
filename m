@@ -2,77 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0F1CD6E57
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 16:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C17CD6E60
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 16:21:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB3C8402AB;
-	Tue,  2 Jun 2026 18:20:04 +0200 (CEST)
-Received: from fout-a8-smtp.messagingengine.com
- (fout-a8-smtp.messagingengine.com [103.168.172.151])
- by mails.dpdk.org (Postfix) with ESMTP id D5D09402A9
- for <dev@dpdk.org>; Tue,  2 Jun 2026 18:20:02 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 05169EC01FE;
- Tue,  2 Jun 2026 12:20:02 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Tue, 02 Jun 2026 12:20:02 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id D9715402AB;
+	Tue,  2 Jun 2026 18:21:53 +0200 (CEST)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 3088E402A9
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 18:21:52 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id ADF481400111;
+ Tue,  2 Jun 2026 12:21:51 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Tue, 02 Jun 2026 12:21:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780417202;
- x=1780503602; bh=M8kqxoju9bdNuT5060kgJByPPlCm/Ia0sLYTdGtevEU=; b=
- A3ZF/1LM6kaUGrXqMOzzczQ+yViP7ejboD5EXqdtsnygKmDqggmXddHnbr0q4TQU
- aeIFbdh6y+SzJYVHNA9aH4Zq9wYIW9jAgbCPCV2cg55YtKMmV/7NjcnIqxuqR1/y
- p1qplocdSRxjFehm4HcnBVFrap4H+NAWBaGntq8PPS4fWMdlV8yKcZgMagcSCkhk
- dkXJ+QPJHClSD/NHDj38TxFGZi5j0gBH/mkwnc6vyuOKNDbiPSnb6kBV2oLETH+7
- 8j6oZpGgHODhCCW9nYEOy2uUtUO3sxYfuhJ568bZB0ku436gDSn4IDSByYLfokv+
- OQzS68xZ5glYOcKU31UE3w==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1780417311;
+ x=1780503711; bh=mPMTK2CVTPp7cWaF1N1gMnDX74fvEzNwjLkrO7H8g18=; b=
+ MrzrnLXDRgr0yulAOR7m2hnQHokrboRGINDRVKQaelo7yzdy5hsRy37udm5d/1ra
+ +y6YL1U054Of7bQ/vyP4TrhTb8lDYkS2jFLwW8Q2dMZj0BxPPtSVYOp+Cvo3nPad
+ WaAcalqOmwvVMtttinzlSq0t3oebZ6sWfkknEaHtQfMUmuXxvFDr//FzH+r1Rp5G
+ N9M26nksj/hexE9NVERSeYkLNqDqCE+NBZu9Nds1+8XLiXSrEHsc3RDcATuwcVot
+ 1fuCeOk+Et5iiUB2tJZ/KGmWg/mTyNI6pM8Y4gXMxnG4fXBCEf9f7xRufl62Qvpf
+ 7ipG3H7C1RjyYyTAviJ8Jg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780417202; x=
- 1780503602; bh=M8kqxoju9bdNuT5060kgJByPPlCm/Ia0sLYTdGtevEU=; b=f
- GdGLdkLEB8dhd4mSyXAYgVzN21elOouvy1Q5yxweygipCiA9OkP20YWZZ5Kdkz59
- l8qYBt080oeM08saJuWabVMwwC7fwwGkopjWwqry5JIUNCsFm3/3QnrTPH2vLi2M
- pbCLj2ulB8IRG3gitn+Cvy2SSd2gbXtt670IG2+QddcpE5bx6mgbxfx4k38EhHnV
- 1e9bSlH7uGYWSrIXD5DWOEMvi3lsLX6jRoJHyMN/ubt/YicU3v2cswklQ5vcK2VS
- 9Hl51Iv3v/hmVV9Lb+w+9iC3TVWhbJZXoCYmPM5V3Y+lv7yJz3wV2wX24JoGJz06
- f1xZ7Dne5LCtR54rRSTwQ==
-X-ME-Sender: <xms:sAIfagCJflS9MZcb7DQt3_GSF6cbSgnsic7lFkoEVf6I2tx2su8wLg>
- <xme:sAIfatdzJoR_HioLN8I2E85TgE8jU06uxQu2AvukkKCoSrCHYvdgQYYE-GvmilPC3
- aPHJK3k2lKEhgPdx95gEQJ4spWMiLqNufS9LbY8b_uaXZUB3UeqDr4>
-X-ME-Received: <xmr:sAIfainzrhpn0WxivkCp-00RmMmBaqZai8y83FjhF3YRVW7Kxy5vTUDXhOZkgJn23RRd6TILFNBjuy9ttv-LCdVvLw>
-X-ME-Proxy-Cause: dmFkZTFUjIeQf+swTnfvQmy6NSLNeHM6vabRNf2QBnyPyjS13+bpizx2xOPlYnIHebIkbW
- tYkfD7KZ3f2tSpKAFRsM5eJdKAq2vHW0F9KPkSOz6qC8wLCJCtd2YAx8sYxjadde3bUIAA
- LpFHIBi+vglK8u7m3Yo+wgpZzz1eBsLccrhBNdNZiOVIO/z6GGliVbBdvHyYYvPZFJjkUH
- oNePJlPLEqn0vxPgSEKsNj7M5V2dEzKMmMjvXz5UP2ob90jCvKFiqkAGNDojOONX20wZe+
- OBNh2f+3o1u3IB0sWfM+sdOBjnInPEiIPo58OgLopLsbqDG7L3K/be3iZ/o/YdAh/wThOE
- /Uuky5s5Pe4HRaIfimEsSVavc8cqBQx9yBwGh5ZePlpTJqe2j0BcJy6AibFjY4GajKcJl0
- mI8QsFzQyYsCtjDaEdzfeuteZR7mIeABVlekQVb4KE3WZy0pdAlSCMecNppFWP+W50WRYs
- eiyD706fACke5ktx9gYI4EnkPueFRs+C7u5SxE4U0aXUHTt1USoqs6Myi2GQdhSqSyPH3j
- UqTOOErr+9lJHtlNv5EM3O6Fr8zHP1YrJpVRrbW21o3dkwwzQ4+DDAZNEKV4uSOqV/lKJT
- 6e3wHGi6nBJKF7ExF441aeFgZFMTesdu0NuIVGOtlg2SbEe9fYSr83ESAOSQ
-X-ME-Proxy: <xmx:sAIfasFijkGoNFNq8wiDkVMpMKPUVjM2iWHPFKsmJTsqC_ikQODLig>
- <xmx:sAIfai5OiSkfw93_eFJ1I8P8mmIzzuWlEub0bmS_RSGtO_WZOTnoFg>
- <xmx:sAIfaskLy5ARlKZniSA6QohHfWfhPq4x589f05j8CLuTK1EIw6MHdg>
- <xmx:sAIfavpuC4YOT8qrG_7lTW4SdDnIXGE3lDqYB5eQ85u7UVnIj_vdwQ>
- <xmx:sgIfavclXDmA1qobLDbzsRagGoxXPaqW_PKG4O5f9w_y-k6zw8peX7vp>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780417311; x=
+ 1780503711; bh=mPMTK2CVTPp7cWaF1N1gMnDX74fvEzNwjLkrO7H8g18=; b=Y
+ sBTd1nTgpOEoF/JihYMWh3VcGwljv+GDUhwu1PTZYUz/IDEa54Pxb2RdttD4/l2w
+ RUbkhVB3rQUe265abaij0vG9VyBC+xjsjySeMfY3QS7ifTR2IigiBcY4F9TP22vc
+ 5RCCKi4T3J7dew7PBQkuhAxgKXCVyfKJeoPi9mxQTe3haz8X7l2Y//sDt9vQ15Aj
+ R1XD05Trp/ab4MLa/cDTRwHyT3Vg4FzuIRoc4kNJKnqnJsaY0kJasiwDk/1XyGGF
+ zujg6ziD02NGWUV4IFLbWxFvuv3XkwN22vnAOZJIxBbUx2rV0PvuyNV4kuoBRKjy
+ EN8ZHbJuzKN1FGwLij8Sw==
+X-ME-Sender: <xms:HwMfanNbwUKTY3nasimfItQQlz-5Hke3MkdQlMXKcpPBjn7STVyLzA>
+ <xme:HwMfao8CsI-rnTXWDGf1xxSUEbjsqgEBJL4lZb3lfc67c8tHIvnxpe_OjZ9lMykkZ
+ jyMKEph9t7o4X7ZpAylAeovXUFZ-BwVpKN47R2lwY5wAW4d4WOdsII>
+X-ME-Received: <xmr:HwMfarSe-xsM80ilmphv_KjhzJd3UKg4ED9lkDP0k-VK6cQaovaOQadbTn_Jl_-lvvcA_pU13HxzhR5XlZiUffs1Kw>
+X-ME-Proxy-Cause: dmFkZTESHeOHBYsvIp5udD6b9Jj90v5/sOvcd65T3p541vZqDEjPPaPqLuuuqt9A8ocBdu
+ HUK7yi2XQrifotSfzDMJTqNCJUOSMrbj8mT6DymtxN/y8OIwRJyNpO48jXoE5IrRVA9CsN
+ tR/OST2emNrOLLE0Z6JqM2mOLB71MEhooC+j9ZuYp/1TGJYGlFNVddI2HonQ2kgh37TFQj
+ SxV96BoAXF+PHLjcSm0u54UoHtm5EexnQsze/hfVGIeyUhzy+FrDVd/hPfXmcbYNJfs26x
+ iXZ3i3G+hvAk2zpEyakusmhCFkwPDDQ3tri3izkZZiuMggPQ6JMTM3yy+PwTlKa3YIIHVK
+ Df0H+zaqlvMdI5f5tdNMs20ryRcLd8AuScbPu6KGnEdzgAAWVbirSuAhsP5tDZzgUoGyRa
+ qaag/vsbDmAZz9+AuWAhocQMsfM23CPBby67uj0CmuEQfCdBAj2NM2MeNCty1TSDgS+cUe
+ VS3tQGLZLXhcAXUGdpyylcMoe985boWHeMPV6ZRqOzL/agcrTbZb5wQKcj29pINRz7mHN+
+ Wf22WqKoc78d52xD5FRZP61BrSOrTUvvgBjxGx8JX1BqemOzip1sv3NCFJ9XLlwXm7gB8F
+ yMv+N7PndjzhJSjG49HTO43CCmymwELn0f0FXm+lnz57NQy1nyZTwfW3v8rw
+X-ME-Proxy: <xmx:HwMfaqlYyDlfREbFK0EFFZ7NDJnX2h2r1zHJL1_0CBfkgwSAODLWrw>
+ <xmx:HwMfarTLApHIhKf1JqbnFeB_AjqX8ovPDqSCoqJv06VdIRv3Y6G5ug>
+ <xmx:HwMfaoPBunGaz_k1mRKK30N5j4pBKvADc7VuUgjsQFE2R4ekUmazKQ>
+ <xmx:HwMfakUqD71OEu-tAd38GD8HSDueyxEMrz1DAWzb_0jEx6cR32bmgg>
+ <xmx:HwMfauytoDJqAxwt0HAGB20hF8gjxjWX1Hvnr_ny73eTZJH8XAvYtxjq>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 Jun 2026 12:19:59 -0400 (EDT)
+ 2 Jun 2026 12:21:50 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Sun Yuechi <sunyuechi@iscas.ac.cn>
-Cc: dev@dpdk.org, Zijian <zijian.oerv@isrc.iscas.ac.cn>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+Cc: dev@dpdk.org,
  =?UTF-8?B?U3RhbmlzxYJhdw==?= Kardach <stanislaw.kardach@gmail.com>,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH v3] acl: add RISC-V vector extension implementation
-Date: Tue, 02 Jun 2026 18:19:58 +0200
-Message-ID: <1Vc04deCRtGsWU9Gd6fT9A@monjalon.net>
-In-Reply-To: <20260201160957.1898027-1-sunyuechi@iscas.ac.cn>
-References: <20260201160957.1898027-1-sunyuechi@iscas.ac.cn>
+Subject: Re: [PATCH] eal/riscv: optimize memcpy for small copies under 64 bytes
+Date: Tue, 02 Jun 2026 18:21:49 +0200
+Message-ID: <zD756IrtRq2zW5FJnS7F7g@monjalon.net>
+In-Reply-To: <20251009063030.2776794-1-sunyuechi@iscas.ac.cn>
+References: <20251009063030.2776794-1-sunyuechi@iscas.ac.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -89,13 +88,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-01/02/2026 17:09, Sun Yuechi:
-> Implement ACL classify function for RISC-V architecture
-> using RISC-V Vector Extension instruction set.
+09/10/2025 08:30, Sun Yuechi:
+> Improve rte_memcpy implementation on RISC-V platform for sizes under
+> 64 bytes, based on the ARM implementation.
+> 
+> Enhanced handling for cases smaller than 64 bytes shows very significant
+> performance benefits, while the impact is minimal after 64 bytes.
+> 
+> This optimization is disabled by default as a conservative measure,
+> since future glibc versions may include similar improvements that
+> could conflict with this implementation.
+> 
+> Use RTE_ARCH_RISCV_MEMCPY to enable this optimization.
 > 
 > Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
-> Signed-off-by: Zijian <zijian.oerv@isrc.iscas.ac.cn>
-> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
 Applied, thanks.
 
