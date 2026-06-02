@@ -2,49 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C407CD6E57
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 15:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09079CD6E57
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Jun 2026 15:45:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A0FA04064C;
-	Tue,  2 Jun 2026 17:45:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F70D40656;
+	Tue,  2 Jun 2026 17:45:20 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 8E168402A9
- for <dev@dpdk.org>; Tue,  2 Jun 2026 17:45:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2EF4F402A9
+ for <dev@dpdk.org>; Tue,  2 Jun 2026 17:45:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780415118; x=1811951118;
+ t=1780415119; x=1811951119;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=0DT2ZbbH41sCnm2ACoFbCDxkfQVmRVXQyLX/x7dbNEI=;
- b=mf/OSnO0uOYKpCjgaHfZsA9g4YlPUFApFM638QGKhGL8HqiXazgOkMw5
- R4f/dnPZnjPbeqWi9SeXrpeCn4e5amLhaCVai+vtEOyaC4xTB5n5ntsLL
- Db7eRcDn2b9jX7prfZSYpp7OQp9bQL4cNK5VWUbW6aFItlT0F7jsiYRm2
- 4IMh/Fbzb6m4Nf2kdES6/duUwiXUjF5+EfvmGUK4J9DzpVJFhKBFroRdO
- Y5/wJmThOIYqNCvPwK4rbYh6mYE+AsNvlhv1bN904Xm1MC2KgyJoIjBgN
- +Jkc294HsAbBv0h1GkqBrBlVB4Qgi7+4webmvfj9HimdtmDQRym/Ujzo+ w==;
-X-CSE-ConnectionGUID: +mrysaaLREurfd0mCP8hMA==
-X-CSE-MsgGUID: PGRj9hy1Qxi3n5SWPcD8hw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="81385601"
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="81385601"
+ bh=ledrXiytj5MIUaOZjOpM7YYCBEPFJFlZROXbEr3JY8w=;
+ b=I5rgKcO87ABHT0FzWYgsvh3qEasEJnitlm3x+m1Yt0zlmrlyMsL82b2R
+ J5+fgHMrs/ivis0Qs2L0UkoMQIhLEOfJ+KptMI0mJI7oaL5oR86JmyiLj
+ b3Wk6EHTXLNiFiGc7GLwUt6/E9wlCNYjnC+wZIQBksIyS0+01vKvmbYjR
+ YY3Yt8Ej/jbntvoCYLbCkCS84dl4gGbnhEB7T4mCwPUb2DHf1BAuM1lf5
+ bogdLrUgG8ATHygMltYF8HhXWdekdyt6ps4qUW3ErWXAAWPTjIszDF/jZ
+ Ye53sEmUJp4rspbO81sozFdj7NM0XZm1fPIenBZqosHl/a3nicc4CoIPG A==;
+X-CSE-ConnectionGUID: xE81SJCLS7qn3NIoTSEJ7g==
+X-CSE-MsgGUID: UrVYkIm9Teau3VP7/Xnqbw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="81385607"
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="81385607"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Jun 2026 08:45:17 -0700
-X-CSE-ConnectionGUID: CrXco0UAQeekh00Afh9oqA==
-X-CSE-MsgGUID: pCNH9ZWhTSqtXFosxXzGtA==
+ 02 Jun 2026 08:45:18 -0700
+X-CSE-ConnectionGUID: Lo2qpRRnTgS8o7sppoxKEg==
+X-CSE-MsgGUID: kjL+M/RfRc2n+bm+JJb9rQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="237593609"
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; d="scan'208";a="237593628"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa009.fm.intel.com with ESMTP; 02 Jun 2026 08:45:15 -0700
+ by fmviesa009.fm.intel.com with ESMTP; 02 Jun 2026 08:45:16 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: mb@smartsharesystems.com, ciara.loftus@intel.com,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 0/2] net/intel: optimize for fast-free hint
-Date: Tue,  2 Jun 2026 16:45:10 +0100
-Message-ID: <20260602154513.1079865-1-bruce.richardson@intel.com>
+Subject: [PATCH v4 1/2] net/intel: write mbuf for last Tx desc of segment
+Date: Tue,  2 Jun 2026 16:45:11 +0100
+Message-ID: <20260602154513.1079865-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260123112032.2174361-1-bruce.richardson@intel.com>
+In-Reply-To: <20260602154513.1079865-1-bruce.richardson@intel.com>
 References: <20260123112032.2174361-1-bruce.richardson@intel.com>
+ <20260602154513.1079865-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -60,36 +61,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the fast-free hint is provided to the driver we know that the mbufs
-have refcnt of 1 and are from the same mempool. Therefore, we can
-optimize a bit for this case even in the scalar path of our drivers.
+When a single mbuf segment has more data than can be handled by a single
+Tx data descriptor in the TSO case, adjust how the storing of mbufs is
+being done. Rather than putting the mbuf pointer in the first slot for
+that segment, store it in the last slot instead. This guarantees for us
+that the descriptor for which we have desc-done (DD) writeback always
+has a valid mbuf associated with it.
 
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
-v4:
-* add precursor patch to adjust mbuf pointers so that the DD bit
-  is written to a descriptor with a valid mbuf pointer associated
-  with it.
+ drivers/net/intel/common/tx_scalar.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-v3:
-* used mbuf_raw_free_bulk rather than mempool function directly
-* check for fast_free via mp pointer rather than flags
-* remove unnecessary prefetches
-
-V2: Fix issues with original submission:
-* missed check for NULL mbufs
-* fixed issue with freeing directly from sw_ring in scalar path which
-  doesn't work as thats not a flag array of pointers
-* fixed missing null assignment in case of large segments for TSO
-
-
-Bruce Richardson (2):
-  net/intel: write mbuf for last Tx desc of segment
-  net/intel: optimize for fast-free hint
-
- drivers/net/intel/common/tx.h        | 21 ++++--
- drivers/net/intel/common/tx_scalar.h | 98 +++++++++++++++++++++-------
- 2 files changed, 90 insertions(+), 29 deletions(-)
-
---
+diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
+index 9fcd2e4733..7809bd53e8 100644
+--- a/drivers/net/intel/common/tx_scalar.h
++++ b/drivers/net/intel/common/tx_scalar.h
+@@ -509,7 +509,6 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 
+ 			if (txe->mbuf)
+ 				rte_pktmbuf_free_seg(txe->mbuf);
+-			txe->mbuf = m_seg;
+ 
+ 			/* Setup TX Descriptor */
+ 			/* Calculate segment length, using IPsec callback if provided */
+@@ -528,6 +527,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 					((uint64_t)CI_MAX_DATA_PER_TXD << CI_TXD_QW1_TX_BUF_SZ_S) |
+ 					((uint64_t)td_tag << CI_TXD_QW1_L2TAG1_S);
+ 				write_txd(txd, buf_dma_addr, cmd_type_offset_bsz);
++				txe->mbuf = NULL;
+ 
+ 				buf_dma_addr += CI_MAX_DATA_PER_TXD;
+ 				slen -= CI_MAX_DATA_PER_TXD;
+@@ -548,6 +548,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 				((uint64_t)slen << CI_TXD_QW1_TX_BUF_SZ_S) |
+ 				((uint64_t)td_tag << CI_TXD_QW1_L2TAG1_S);
+ 			write_txd(txd, buf_dma_addr, cmd_type_offset_bsz);
++			txe->mbuf = m_seg;
+ 
+ 			tx_id = txe->next_id;
+ 			txe = txn;
+-- 
 2.53.0
 
