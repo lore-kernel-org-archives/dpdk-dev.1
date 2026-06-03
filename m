@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AABCCD6E55
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B26CD6E55
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:24:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1533D4066F;
-	Wed,  3 Jun 2026 20:24:12 +0200 (CEST)
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
- [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 5618940667
- for <dev@dpdk.org>; Wed,  3 Jun 2026 20:24:10 +0200 (CEST)
-Received: by mail-dy1-f177.google.com with SMTP id
- 5a478bee46e88-304ec41197bso6258649eec.1
- for <dev@dpdk.org>; Wed, 03 Jun 2026 11:24:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EA6C940676;
+	Wed,  3 Jun 2026 20:24:13 +0200 (CEST)
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com
+ [74.125.82.176]) by mails.dpdk.org (Postfix) with ESMTP id DE11040674
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 20:24:12 +0200 (CEST)
+Received: by mail-dy1-f176.google.com with SMTP id
+ 5a478bee46e88-30759632453so1503023eec.1
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 11:24:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780511049;
- x=1781115849; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780511052;
+ x=1781115852; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=/U8PIDlf0VlYyPd/YFttcZZai/KLI5fM6n0fDUfOpN4=;
- b=kTHNn3NAyCZYFBlngfVwqsCZeanfPz+k5HW7PfnANi/mR9pB+RnctkEUUjU9rHC/0P
- 9IzaG/2wJ9s9i0I8K0QFb0GB+WjsA+8mlfAHNxHJlQQiDdf3ZYp95U0MbSzLzKkTuH6T
- JttfdetyVOfunDiwGJH/7eyywPLPHtCG1ARYy6vcPNMQCRNdmoKCax+aI8OCAqYbcu9Q
- 8sBIXXDBao9D6eNn+MKO2Gd2MMufuRIUWyvFNbGKF59eoSe/kJGULsISdpmHw9BBH2G5
- /tzMHU40tEZ0/EpkJCDYzIiw5qmoKXcOsoKnBubmq0+FS5k1rOvK8MuyDZujQrrN2vsp
- fUVA==
+ bh=jb38kaCXvSIMfdY77qRqBS5b5cjJhNCfxfGDcOdGDIY=;
+ b=bB9j8jRNWHfJzfj3CgXRVAsy9FbGKKjCfXJhWJPtHyEj/uaC5UYu7qhjBLfEWkOA6a
+ cIGpf0B5mNHTWFl8o4AXjlwdX6mQIrBEXhym707mgmDk+IsR+VKnMMe3pUWsjY6RKahb
+ ywnqLhOERf6oKJ462928ZO4/9WaE75oOYam5aYOZh9MBTHMZpNKXCdvPqL8Q1xYHdRzb
+ /W+53ZZa0rsotN+IEVOUoFyn4tKSArWgi2MDquqOotT6ehoP6Ma4orcMxaxmsfajlZ8X
+ 7BBtZj7jyZ/txn5hLVfO0Lm/i0MjVpDEK1Clbq7LCUOSXsRfMv3mO4+yEIR6u7BAgGW7
+ dcnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780511049; x=1781115849;
+ d=1e100.net; s=20251104; t=1780511052; x=1781115852;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=/U8PIDlf0VlYyPd/YFttcZZai/KLI5fM6n0fDUfOpN4=;
- b=U4pxYaX8xASi1XWz9Rgm0y7x+/MUF3FvUtyBRsGB/6zv38pSYNx5y83wvq2dn27Ecd
- AgI29niIA7eFmrbFqSRpb4UaRedE51txg4UcQeGtcQLIVhE2U5GTuiwSeGVgBtmN6tEg
- RUnI35U0yuaj0JiEh5usJ468sEMr9M7aPdvB0LuJjhXIS4A/s2kMWWzBOKIxvtJ+eIo3
- w9I2D3XvTzQakUgn1LGF3Pz75Bh7MWY92rm/rfV79igOkPPg+qdBie5/tpMZvXMFaRP8
- 5vuLSxCyO8x+0EsyqBVox7cfCmcqgjtD92VDRKhxh72E03CTRGFHFWm4tG3CEwXmbzpt
- Q9WA==
-X-Gm-Message-State: AOJu0YzfnMz1169t4YHsuYFnTguvBjm5mTJrduSYtfdqzIkE7vdzPt6k
- EMMWVgV7I6k1NluZ4nY0PUt6xmPIU0LWROlWhZnvl73Y2bWnJAZmo42zzI6YZKN+Xk0=
-X-Gm-Gg: Acq92OE1+0zn2MPgN3w1J6xWrA4uHrvSbmLMayGM29Y3sMg5i2tYprcteeFqv8by8DX
- EYgBhvlAJU80dxNVQ56C+OX6IdolXpfw/NHb+EyR70yn+Xq5xRlyBR7QPQzZf16R5Yqct2T01JF
- jHZmWgGSxjLkwO3n9FljrofMJEGHMhPQqNz4dbGR2E06gNnW5NBHw0vjV9qKx7Tx5rPOfwiATf9
- hebY1e4aa110OOWjK7FegqWIvj/ZCsKFOWHcxFrJgOc6XaoHK9/UzEnQo/i8lzrwlicyPtt06ku
- sJIdZ4y14jbehTaPWbLqPrPu+Tws8qvDM3bZnscKqIXFjXGPGyFOdp2om8INWWCr8qdcUhiNai7
- dnY2K+B6BFiTpiGYlEbTCRxSyM967VBfdKX6eMslXGSfHO8ZdpaL1I6KHu79l1LZ4w/wfm5KE5J
- ItGpV9uQLbRHAG8puAfQ1LNxBicUuNgLcfsYKFfxfgQMWnZ1BXNySnwoz9UW0s7VU94zWlmR2wU
- 94=
-X-Received: by 2002:a05:7300:371e:b0:303:f2dc:8ab4 with SMTP id
- 5a478bee46e88-3074fa3d73cmr2516088eec.2.1780511049290; 
- Wed, 03 Jun 2026 11:24:09 -0700 (PDT)
+ bh=jb38kaCXvSIMfdY77qRqBS5b5cjJhNCfxfGDcOdGDIY=;
+ b=nDsNDmk6NlymovyLpJ0NL0MqlBD6aYsZsrwb1hBaDVw+BTzjd9/mkMRJvlm76+ewtQ
+ YczqrpzgDSPy8T9B5QAHztmwtJXWDdbpU7eaPKDObtXwCSD2SeSbQT73KIywZppSQc8T
+ Clhmc4pG0X2vS93UNw+eJo6qJko5a//xZdSSzLsBFCJ6i7JjiAKfiBcGfIhJvlS7f3TL
+ 77d12ZSs58Hke5+K9b7nCtYdskb/dqivzwEXzSfyzg+ou4XVsX7XxR8iGexlg9paCawn
+ izwwYSQpwi8Lbd96ZVJtJzciX+noVkVuB6HxjXXLzfR3Gv8OXlpf6JvyILeaosLl/V7a
+ ehFQ==
+X-Gm-Message-State: AOJu0Yw7rvTefIVRzcIPwlcWoeGZpyWgNDagxKasf+Ds4pxfSvlHp7Le
+ lBTZfNO6C5J5ffLqDQPC10N27qeRuiVR9mmF+ww7CM9vKUy8s3p/QqxPJdfndtUUX/0=
+X-Gm-Gg: Acq92OHFRP8Sgz4TUFsaGsH+tp0vP370PTMH8mZzyLEMJto/WZ7WEa1aQYDvQc0Lcxf
+ IVMjDO3a5TZUmUXudWerIFV74p/VQlV0UORb1XyIN/GuG64V2sm3Bw0wFnAjll5tx3sOINgofno
+ tWbHAAR86q8e7aZEEBypridwHdXbkiYZhAxvimJtK/+hki2ehpL4sJzXPc23JGHcpH0oMiysMK3
+ bmCvjK15fG77vfwRNuLGSBg/qXqxX5uZPNVDL44P3u1vF6oGZjEA4010cLYrIHHWUpPnT6qSZ/d
+ RzGx9GekUBfDYx7QixsSzAK+NIUcUl/FIOfIYG056dLFfOESkLN0HHAtLPLf+i5+NTPfnbbVPWa
+ wbDNvaRZkb91P+9/gGI/bswtY91HhlAcIwVaEASPmkiuiLfwSJTzRkPPO7Jd/V3R7Gg0LzpOQyb
+ 8TzZnH/5iMOvNbehFnL7R80+70QJEaPa7uVDxs0Ucgen6B90CgpbRQ/GGJqX2vM7jI46syJ5el3
+ LA=
+X-Received: by 2002:a05:7300:ac90:b0:2d8:97d6:6abc with SMTP id
+ 5a478bee46e88-3074fb78774mr2629702eec.22.1780511051918; 
+ Wed, 03 Jun 2026 11:24:11 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3074df805d1sm2682632eec.28.2026.06.03.11.24.08
+ 5a478bee46e88-3074df805d1sm2682632eec.28.2026.06.03.11.24.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 03 Jun 2026 11:24:08 -0700 (PDT)
-Date: Wed, 3 Jun 2026 11:17:58 -0700
+ Wed, 03 Jun 2026 11:24:11 -0700 (PDT)
+Date: Wed, 3 Jun 2026 11:21:05 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: liujie5@linkdatatechnology.com
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v8 07/20] net/sxe2: support IPsec inline protocol offload
-Message-ID: <20260603111758.6c1dc572@phoenix.local>
-In-Reply-To: <20260603062945.1253672-8-liujie5@linkdatatechnology.com>
+Subject: Re: [PATCH v8 04/20] net/sxe2: support L2 filtering and MAC config
+Message-ID: <20260603112105.02546fe0@phoenix.local>
+In-Reply-To: <20260603062945.1253672-5-liujie5@linkdatatechnology.com>
 References: <20260603022150.1140722-21-liujie5@linkdatatechnology.com>
  <20260603062945.1253672-1-liujie5@linkdatatechnology.com>
- <20260603062945.1253672-8-liujie5@linkdatatechnology.com>
+ <20260603062945.1253672-5-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,25 +82,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  3 Jun 2026 14:29:32 +0800
+On Wed,  3 Jun 2026 14:29:29 +0800
 liujie5@linkdatatechnology.com wrote:
 
 > From: Jie Liu <liujie5@linkdatatechnology.com>
 > 
-> This patch adds support for IPsec inline protocol offload for both
-> inbound and outbound traffic.
-> 
-> - Implement rte_security_ops: session_create, session_destroy.
-> - Add hardware SA table management.
-> - Update Rx/Tx data path to handle security offload flags.
-> 
-> The hardware offloads the ESP encapsulation/decapsulation and
-> cryptographic processing.
+> - Support primary/secondary MAC address setup.
+> - Enable L2 broadcast/multicast filter bits.
+> - Add multicast address update logic.
 > 
 > Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+> ---
 
-Git complains about blank line:
-Applying: net/sxe2: support IPsec inline protocol offload
-/home/shemminger/DPDK/main/.git/worktrees/sxe2/rebase-apply/patch:236: new blank line at EOF.
-+
-warning: 1 line adds whitespace errors.
+As part of "inclusive naming" DPDK does not allow use of variables name master or slave.
+### [PATCH] net/sxe2: support L2 filtering and MAC config
+
+WARNING:TYPO_SPELLING: 'master' may be misspelled - perhaps 'primary'?
+#264: FILE: drivers/net/sxe2/sxe2_drv_cmd.h:238:
++	uint8_t master;
+ 	        ^^^^^^
+
