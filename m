@@ -2,77 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E31CD6E57
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 20:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8EC3CD6E57
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 20:36:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 570D740672;
-	Wed,  3 Jun 2026 22:36:00 +0200 (CEST)
-Received: from mail-pj1-f99.google.com (mail-pj1-f99.google.com
- [209.85.216.99]) by mails.dpdk.org (Postfix) with ESMTP id 170B54066B
- for <dev@dpdk.org>; Wed,  3 Jun 2026 22:35:59 +0200 (CEST)
-Received: by mail-pj1-f99.google.com with SMTP id
- 98e67ed59e1d1-36b9b15af73so6483433a91.0
- for <dev@dpdk.org>; Wed, 03 Jun 2026 13:35:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A08740693;
+	Wed,  3 Jun 2026 22:36:01 +0200 (CEST)
+Received: from mail-yw1-f225.google.com (mail-yw1-f225.google.com
+ [209.85.128.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E25040674
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 22:36:00 +0200 (CEST)
+Received: by mail-yw1-f225.google.com with SMTP id
+ 00721157ae682-7dbcb505578so81035337b3.3
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 13:36:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780518958; x=1781123758;
+ d=1e100.net; s=20251104; t=1780518960; x=1781123760;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=DfzoR95cz6RrHrOXeXAAPaoP/NUrLteCyp3IdUYibhw=;
- b=HlBaM1Gvd8oFsmexsy5C4jXnMgko2A36wjM1Os03jVhR+H0/TMJx0ZGjQYo4NolSUo
- lGeAwBzzWaoONUV7VupwHql9gz9qmQoQsep8WPK43+7urgLTPTwZs2zYDuEyGrOJhYTr
- sySigVnulRwWh+zwjtniEO4vIsK4qVnij+U2CesxoH0tpGKsIBazerFe+nK83YnPEpZg
- Rn2/tYv0EDQRrAeaI1I3RiyGXyd6L7qeE5ETy9QwyQcqolc8iJAIpc9i9TR5ZJhXRb+p
- 9oLoSqDZVHsRj2LuXxPa2LPOfBC1zL85lzQhGcxRCyqJGdVQRLN03KRmCJeXrKZaBNjk
- ZPNA==
-X-Gm-Message-State: AOJu0YybUwpn3ljZphVupQWu7nOolXVqyyN30cQvT1S8xGPhCRqvUumN
- kUKBFXdXrkERwyHZsfPxYer7yNWg+J7YJcvjB8xIVy01zk3kW4/TEGTgdZMNhhRwUKBKtn7CcTY
- 9vIrTgru5PRHZPrttbvZqwBMb0em/GBE4HzTnRxJ9Eaxg/SNS3UpTP4edPEZ8wqGQJoL4ow/yqd
- FjZ8OG5c0ztcpaSmOsaV8EDeWWt/YoWTsVt/gdmjn2kmjg4wSHjKzjtlvc2NT1u5plczgCyaY6F
- zU4T4iAI3qj
-X-Gm-Gg: Acq92OFdJTZLEBMAriXMGPPgC8Lyst34S86jx6ZjNDzxNnQXBBm3KVE1O0+jmwFkS8e
- 1in3Lz60PA22t8UfSzuedbZFtoPeK4nW6a4RAwjJTg2JlL5Kph7y0fxzN0VrB2qfR1ZYM7OD420
- RK13653za18Wz+1j2jR/ZoD4RHPjpnk8e5nnA6RhUAGCqBK3WGQMzM3cXnQh6WVTTH0VW1K7TFK
- hv5z0Lvz/4cspoZhoMAsME4eFDX2cfpNRtRlfxsqpMSugTorGDZJMMgCVJErZSJqKCekRX633JI
- HuP65yJt1e/RkWIl44DbzVxZBFgqBp91So2pdjoHfNxoyZ61TMZ/yDl9aeR7qV5hVg1x+BbIXpt
- jyI1bOGPVPNg+52Enuq3fU1AFkGvlcZmbrYz6kbqEc9RiABBj2eGggqIq2RaqbCgcU1TWpKE4KQ
- CN+7LteX1OY0wIysIgBgtAVrRLdQM/H8YWOiFgnyw/jtlkMmdx03Gys0OUcYjm9M9MWyK+LlrdA
- 7Y0Lrq5Xw==
-X-Received: by 2002:a17:90b:164c:b0:36d:ae6a:22f4 with SMTP id
- 98e67ed59e1d1-36e33bb8f9cmr4966769a91.15.1780518958059; 
- Wed, 03 Jun 2026 13:35:58 -0700 (PDT)
+ bh=UQy7dXfPfzf47jsyiB4kB51iIDJjwW3r2G3n0E+evfc=;
+ b=WdP3iSOIgIzHWU3sE4ofl/LMDVfF++LniDOnw0ygIt792FRbjsS4LDk7Pqq8mwn/+b
+ +PRjJEETp6WKJLNy8d3TOFIpuOvDAHaWwLG+t8sK2kckpHHoZUkllIf6lGaZ5lC9lAl4
+ aZm7T0jMGoxUWGfa9QCDB+hsaRGFnAYi2i0+xn5fa4uu9W51Ue7UKwK71dFNzuIMYxbb
+ CHA0/hPUXhN7WIdInu4voZuVcNE2jnQe1RELr5YH/OcL0zlRrSY6cbu19J8HhXMsrR5O
+ ivWt4Bln+iCHt+sORKhcoI8/qXj1WWE9QKhqZj9nOmxxNTPorkJCR/HQJntYqDxecg8m
+ mV6Q==
+X-Gm-Message-State: AOJu0YzoUIpB5F3Tt138BKXZXNW+0V5aKPX8nx1NorDTr8dsZf8PRnm1
+ XIZEJLH9+5f2qGKabUxHmqJ/sFC99/DtcKYs7/eOMNKHBxLoXWuaL0dCzJWUrSGpOPW5fL72riw
+ AMfi8L1NHG779y6qx7FeaXuDGrjSHYtr4704D9dCGZikpL4Q2tKGJDGbYMOvEU9w4eqj1hZjXsl
+ NNPv318wh7m/WsN8zAtC6sEqOG/6fksWQ5sc+hcvjOUkJCxJn53JgZ+DoO6ZGbYad9fitOyt8wS
+ RNV658wDMXc
+X-Gm-Gg: Acq92OEEla8M/MprX8SVoOX7Mc3mk84zywijBje7RortJWdQQ/Cy/gE8i5VbwIw/ts6
+ iF0wDsOgWQPpT99S0L6A8YXJ5vIWmmgTn36mqH/FqA5UIeLvAo5P7SgwjrRyCfidrCawfCei0vr
+ 4thURNBSo3iBMkzTVG5urM2e69vPf1SU3TaGRfl52OB3N2wcfRvQNiI8GFqIBOMn4weJoB2Tnp2
+ 5D4FtTMooEdovm5qMpy4J3gQd2CCUrOzEVsXOCjibk3l9qDmALrcmMjYmQTLA/VVe5VPDSVG1Ma
+ QCGjgPsxZKuxHjiuNhkeBKq7M93WYXW4t165yPe12JsONKhjY5af/i8WSM3UJoDXLa7L2f8TQpe
+ vt6tJItH8XF225AVL9gPpHYcsKAHynvIBZfnlq9pJRlkpGYgVOZcAg3aKf3mIj3E7jhuAiHSev+
+ vi+qrd3yAKPuZgCG0gim1zduJxmRaEnkVGXs4Fzskm6NR5Z+czov0qqiR/ci8ncy56EH88R88Ep
+ B2kHytNUHmn
+X-Received: by 2002:a05:690c:e343:b0:7c0:e1ab:87fb with SMTP id
+ 00721157ae682-7ea4a254631mr48711547b3.12.1780518959631; 
+ Wed, 03 Jun 2026 13:35:59 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-18.dlp.protect.broadcom.com. [144.49.247.18])
+ (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-36f6dba8297sm75617a91.5.2026.06.03.13.35.57
+ 00721157ae682-7ea23ea24bfsm2521377b3.25.2026.06.03.13.35.59
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 03 Jun 2026 13:35:58 -0700 (PDT)
+ Wed, 03 Jun 2026 13:35:59 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qk1-f200.google.com with SMTP id
- af79cd13be357-9157f453a27so590285a.1
- for <dev@dpdk.org>; Wed, 03 Jun 2026 13:35:57 -0700 (PDT)
+Received: by mail-qk1-f198.google.com with SMTP id
+ af79cd13be357-915767b341eso405554385a.3
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 13:35:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1780518957; x=1781123757; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1780518959; x=1781123759; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DfzoR95cz6RrHrOXeXAAPaoP/NUrLteCyp3IdUYibhw=;
- b=YZtR020iyraN3/Z96hJfjFKDAhYtPhlptyUxm4tS/NWfTfqMlFNK2En23ivryYIK30
- uSVJzaHAT2oszRt/xwpEu5VbGgexsFYxEIZx9jfm+flCM7KMMk/qtLzybSmRUzly7OZ4
- NxssYZo3v98CRVlkD1AW2bpw7mKGDuChy1i2s=
-X-Received: by 2002:a05:620a:4482:b0:914:d093:abbe with SMTP id
- af79cd13be357-9158a659b63mr857036885a.12.1780518956703; 
- Wed, 03 Jun 2026 13:35:56 -0700 (PDT)
-X-Received: by 2002:a05:620a:4482:b0:914:d093:abbe with SMTP id
- af79cd13be357-9158a659b63mr857030385a.12.1780518956065; 
- Wed, 03 Jun 2026 13:35:56 -0700 (PDT)
+ bh=UQy7dXfPfzf47jsyiB4kB51iIDJjwW3r2G3n0E+evfc=;
+ b=eufFCX4HS4pe1j3D9MXrSLDM/uIkfhoGY3oDI81a182+Muzz0O95xtgZtvg0HuNf7o
+ ZNHMKinjaZHRuJIT8nNXmnSO384H4XAdHJkqlxpY6kwIoWsobJc3qEmu/zfIyhYcRwjw
+ 1FivwGRK5VLJeDDxvDZSpoTYaYSUTRSZnkefk=
+X-Received: by 2002:a05:620a:2592:b0:90e:2f56:2f0b with SMTP id
+ af79cd13be357-9158a6cd001mr872901185a.7.1780518958855; 
+ Wed, 03 Jun 2026 13:35:58 -0700 (PDT)
+X-Received: by 2002:a05:620a:2592:b0:90e:2f56:2f0b with SMTP id
+ af79cd13be357-9158a6cd001mr872892985a.7.1780518957996; 
+ Wed, 03 Jun 2026 13:35:57 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-9158a22dbbesm340925085a.13.2026.06.03.13.35.55
+ af79cd13be357-9158a22dbbesm340925085a.13.2026.06.03.13.35.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 03 Jun 2026 13:35:55 -0700 (PDT)
+ Wed, 03 Jun 2026 13:35:57 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
@@ -80,9 +81,9 @@ To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
  Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH 2/4] net/bnxt: Support for PTP on Wh+ using HWRM interface
-Date: Wed,  3 Jun 2026 14:37:36 -0600
-Message-ID: <20260603203738.2084478-3-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH 3/4] net/bnxt: Support for Tx/Rx timestamp using HWRM on Wh+
+Date: Wed,  3 Jun 2026 14:37:37 -0600
+Message-ID: <20260603203738.2084478-4-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260603203738.2084478-1-Mohammad-Shuab.Siddique@broadcom.com>
 References: <20260603203738.2084478-1-Mohammad-Shuab.Siddique@broadcom.com>
@@ -104,156 +105,199 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
-Get rid of old code relying on mapped registers and use HWRM
-interface wherever applicable during PTP initialization for Wh+.
+The Rx/Tx timestamp will now be made available using the HWRM cmd
+PORT_TS_QUERY on BCM57414 chips.
+Get rid of the earlier code that was fetching this using register
+access.
 
 Fixes: b11cceb83a34 ("net/bnxt: support timesync")
 Cc: stable@dpdk.org
 Signed-off-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_ethdev.c | 63 ++--------------------------------
- drivers/net/bnxt/bnxt_hwrm.c   | 31 ++---------------
- 2 files changed, 4 insertions(+), 90 deletions(-)
+ drivers/net/bnxt/bnxt_ethdev.c | 109 +--------------------------------
+ drivers/net/bnxt/bnxt_rxr.c    |  17 ++++-
+ 2 files changed, 19 insertions(+), 107 deletions(-)
 
 diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index 7d70d0f3ec..14d8fa705d 100644
+index 14d8fa705d..64b12ada9f 100644
 --- a/drivers/net/bnxt/bnxt_ethdev.c
 +++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -3754,55 +3754,6 @@ bnxt_dev_supported_ptypes_get_op(struct rte_eth_dev *dev,
+@@ -3754,99 +3754,6 @@ bnxt_dev_supported_ptypes_get_op(struct rte_eth_dev *dev,
  	return ptypes;
  }
  
--static int bnxt_map_regs(struct bnxt *bp, uint32_t *reg_arr, int count,
--			 int reg_win)
+-static uint64_t bnxt_cc_read(struct bnxt *bp)
 -{
--	uint32_t reg_base = *reg_arr & 0xfffff000;
--	uint32_t win_off;
--	int i;
+-	uint64_t ns;
 -
--	for (i = 0; i < count; i++) {
--		if ((reg_arr[i] & 0xfffff000) != reg_base)
--			return -ERANGE;
--	}
--	win_off = BNXT_GRCPF_REG_WINDOW_BASE_OUT + (reg_win - 1) * 4;
--	rte_write32(reg_base, (uint8_t *)bp->bar0 + win_off);
--	return 0;
+-	ns = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-			      BNXT_GRCPF_REG_SYNC_TIME));
+-	ns |= (uint64_t)(rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-					  BNXT_GRCPF_REG_SYNC_TIME + 4))) << 32;
+-	return ns;
 -}
 -
--static int bnxt_map_ptp_regs(struct bnxt *bp)
+-static int bnxt_get_tx_ts(struct bnxt *bp, uint64_t *ts)
 -{
 -	struct bnxt_ptp_cfg *ptp = bp->ptp_cfg;
--	uint32_t *reg_arr;
--	int rc, i;
+-	uint32_t fifo;
 -
--	reg_arr = ptp->rx_regs;
--	rc = bnxt_map_regs(bp, reg_arr, BNXT_PTP_RX_REGS, 5);
--	if (rc)
--		return rc;
+-	fifo = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-				ptp->tx_mapped_regs[BNXT_PTP_TX_FIFO]));
+-	if (fifo & BNXT_PTP_TX_FIFO_EMPTY)
+-		return -EAGAIN;
 -
--	reg_arr = ptp->tx_regs;
--	rc = bnxt_map_regs(bp, reg_arr, BNXT_PTP_TX_REGS, 6);
--	if (rc)
--		return rc;
--
--	for (i = 0; i < BNXT_PTP_RX_REGS; i++)
--		ptp->rx_mapped_regs[i] = 0x5000 + (ptp->rx_regs[i] & 0xfff);
--
--	for (i = 0; i < BNXT_PTP_TX_REGS; i++)
--		ptp->tx_mapped_regs[i] = 0x6000 + (ptp->tx_regs[i] & 0xfff);
+-	fifo = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-				ptp->tx_mapped_regs[BNXT_PTP_TX_FIFO]));
+-	*ts = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-				ptp->tx_mapped_regs[BNXT_PTP_TX_TS_L]));
+-	*ts |= (uint64_t)rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-				ptp->tx_mapped_regs[BNXT_PTP_TX_TS_H])) << 32;
+-	rte_read32((uint8_t *)bp->bar0 + ptp->tx_mapped_regs[BNXT_PTP_TX_SEQ]);
 -
 -	return 0;
 -}
 -
--static void bnxt_unmap_ptp_regs(struct bnxt *bp)
+-static int bnxt_clr_rx_ts(struct bnxt *bp, uint64_t *last_ts)
 -{
--	rte_write32(0, (uint8_t *)bp->bar0 +
--			 BNXT_GRCPF_REG_WINDOW_BASE_OUT + 16);
--	rte_write32(0, (uint8_t *)bp->bar0 +
--			 BNXT_GRCPF_REG_WINDOW_BASE_OUT + 20);
+-	struct bnxt_ptp_cfg *ptp = bp->ptp_cfg;
+-	struct bnxt_pf_info *pf = bp->pf;
+-	uint16_t port_id;
+-	int i = 0;
+-	uint32_t fifo;
+-
+-	if (!ptp || (bp->flags & BNXT_FLAG_CHIP_P5))
+-		return -EINVAL;
+-
+-	port_id = pf->port_id;
+-	fifo = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-				ptp->rx_mapped_regs[BNXT_PTP_RX_FIFO]));
+-	while ((fifo & BNXT_PTP_RX_FIFO_PENDING) && (i < BNXT_PTP_RX_PND_CNT)) {
+-		rte_write32(1 << port_id, (uint8_t *)bp->bar0 +
+-			    ptp->rx_mapped_regs[BNXT_PTP_RX_FIFO_ADV]);
+-		fifo = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-					ptp->rx_mapped_regs[BNXT_PTP_RX_FIFO]));
+-		*last_ts = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-					ptp->rx_mapped_regs[BNXT_PTP_RX_TS_L]));
+-		*last_ts |= (uint64_t)rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-					ptp->rx_mapped_regs[BNXT_PTP_RX_TS_H])) << 32;
+-		i++;
+-	}
+-
+-	if (i >= BNXT_PTP_RX_PND_CNT)
+-		return -EBUSY;
+-
+-	return 0;
 -}
 -
- static uint64_t bnxt_cc_read(struct bnxt *bp)
- {
- 	uint64_t ns;
-@@ -3976,13 +3927,7 @@ bnxt_timesync_enable(struct rte_eth_dev *dev)
- 	ptp->tx_tstamp_tc.cc_shift = shift;
- 	ptp->tx_tstamp_tc.nsec_mask = (1ULL << shift) - 1;
- 
--	/* TODO Revisit for Thor 2 */
--	if (!BNXT_CHIP_P5(bp))
--		bnxt_map_ptp_regs(bp);
--	else
--		rc = bnxt_ptp_start(bp);
+-static int bnxt_get_rx_ts(struct bnxt *bp, uint64_t *ts)
+-{
+-	struct bnxt_ptp_cfg *ptp = bp->ptp_cfg;
+-	struct bnxt_pf_info *pf = bp->pf;
+-	uint16_t port_id;
+-	uint32_t fifo;
 -
--	return rc;
-+	return bnxt_ptp_start(bp);
- }
- 
+-	fifo = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-				ptp->rx_mapped_regs[BNXT_PTP_RX_FIFO]));
+-	if (!(fifo & BNXT_PTP_RX_FIFO_PENDING))
+-		return -EAGAIN;
+-
+-	port_id = pf->port_id;
+-	rte_write32(1 << port_id, (uint8_t *)bp->bar0 +
+-	       ptp->rx_mapped_regs[BNXT_PTP_RX_FIFO_ADV]);
+-
+-	fifo = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-				   ptp->rx_mapped_regs[BNXT_PTP_RX_FIFO]));
+-	if (fifo & BNXT_PTP_RX_FIFO_PENDING)
+-		return bnxt_clr_rx_ts(bp, ts);
+-
+-	*ts = rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-				ptp->rx_mapped_regs[BNXT_PTP_RX_TS_L]));
+-	*ts |= (uint64_t)rte_le_to_cpu_32(rte_read32((uint8_t *)bp->bar0 +
+-				ptp->rx_mapped_regs[BNXT_PTP_RX_TS_H])) << 32;
+-
+-	return 0;
+-}
+-
  static int
-@@ -4001,12 +3946,8 @@ bnxt_timesync_disable(struct rte_eth_dev *dev)
- 
- 	bnxt_hwrm_ptp_cfg(bp);
- 
--	/* TODO Revisit for Thor 2 */
- 	bp->ptp_all_rx_tstamp = 0;
--	if (!BNXT_CHIP_P5(bp))
--		bnxt_unmap_ptp_regs(bp);
--	else
--		bnxt_ptp_stop(bp);
-+	bnxt_ptp_stop(bp);
- 
- 	return 0;
- }
-diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index afc948ac29..68e75e43bd 100644
---- a/drivers/net/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -1027,14 +1027,8 @@ static int bnxt_hwrm_ptp_qcfg(struct bnxt *bp)
- 
- 	HWRM_CHECK_RESULT();
- 
--	/* TODO Revisit for Thor 2 */
--	if (BNXT_CHIP_P5(bp)) {
--		if (!(resp->flags & HWRM_PORT_MAC_PTP_QCFG_OUTPUT_FLAGS_HWRM_ACCESS))
--			return 0;
--	} else {
--		if (!(resp->flags & HWRM_PORT_MAC_PTP_QCFG_OUTPUT_FLAGS_DIRECT_ACCESS))
--			return 0;
--	}
-+	if (!(resp->flags & HWRM_PORT_MAC_PTP_QCFG_OUTPUT_FLAGS_HWRM_ACCESS))
-+		return 0;
- 
- 	if (resp->flags & HWRM_PORT_MAC_PTP_QCFG_OUTPUT_FLAGS_ONE_STEP_TX_TS)
- 		bp->flags |= BNXT_FLAG_FW_CAP_ONE_STEP_TX_TS;
-@@ -1043,27 +1037,6 @@ static int bnxt_hwrm_ptp_qcfg(struct bnxt *bp)
+ bnxt_timesync_write_time(struct rte_eth_dev *dev, const struct timespec *ts)
+ {
+@@ -3877,12 +3784,9 @@ bnxt_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts)
  	if (!ptp)
- 		return -ENOMEM;
+ 		return -ENOTSUP;
  
--	if (!BNXT_CHIP_P5(bp)) {
--		ptp->rx_regs[BNXT_PTP_RX_TS_L] =
--			rte_le_to_cpu_32(resp->rx_ts_reg_off_lower);
--		ptp->rx_regs[BNXT_PTP_RX_TS_H] =
--			rte_le_to_cpu_32(resp->rx_ts_reg_off_upper);
--		ptp->rx_regs[BNXT_PTP_RX_SEQ] =
--			rte_le_to_cpu_32(resp->rx_ts_reg_off_seq_id);
--		ptp->rx_regs[BNXT_PTP_RX_FIFO] =
--			rte_le_to_cpu_32(resp->rx_ts_reg_off_fifo);
--		ptp->rx_regs[BNXT_PTP_RX_FIFO_ADV] =
--			rte_le_to_cpu_32(resp->rx_ts_reg_off_fifo_adv);
--		ptp->tx_regs[BNXT_PTP_TX_TS_L] =
--			rte_le_to_cpu_32(resp->tx_ts_reg_off_lower);
--		ptp->tx_regs[BNXT_PTP_TX_TS_H] =
--			rte_le_to_cpu_32(resp->tx_ts_reg_off_upper);
--		ptp->tx_regs[BNXT_PTP_TX_SEQ] =
--			rte_le_to_cpu_32(resp->tx_ts_reg_off_seq_id);
--		ptp->tx_regs[BNXT_PTP_TX_FIFO] =
--			rte_le_to_cpu_32(resp->tx_ts_reg_off_fifo);
--	}
--
- 	ptp->bp = bp;
- 	bp->ptp_cfg = ptp;
+-	/* TODO Revisit for Thor 2 */
+ 	if (BNXT_CHIP_P5(bp))
+ 		rc = bnxt_hwrm_port_ts_query(bp, BNXT_PTP_FLAGS_CURRENT_TIME,
+ 					     &systime_cycles);
+-	else
+-		systime_cycles = bnxt_cc_read(bp);
  
+ 	ns = rte_timecounter_update(&ptp->tc, systime_cycles);
+ 	*ts = rte_ns_to_timespec(ns);
+@@ -3965,11 +3869,7 @@ bnxt_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
+ 	if (!ptp)
+ 		return -ENOTSUP;
+ 
+-	/* TODO Revisit for Thor 2 */
+-	if (BNXT_CHIP_P5(bp))
+-		rx_tstamp_cycles = ptp->rx_timestamp;
+-	else
+-		bnxt_get_rx_ts(bp, &rx_tstamp_cycles);
++	rx_tstamp_cycles = ptp->rx_timestamp;
+ 
+ 	ns = rte_timecounter_update(&ptp->rx_tstamp_tc, rx_tstamp_cycles);
+ 	*timestamp = rte_ns_to_timespec(ns);
+@@ -3990,11 +3890,8 @@ bnxt_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
+ 		return -ENOTSUP;
+ 
+ 	/* TODO Revisit for Thor 2 */
+-	if (BNXT_CHIP_P5(bp))
+-		rc = bnxt_hwrm_port_ts_query(bp, BNXT_PTP_FLAGS_PATH_TX,
+-					     &tx_tstamp_cycles);
+-	else
+-		rc = bnxt_get_tx_ts(bp, &tx_tstamp_cycles);
++	rc = bnxt_hwrm_port_ts_query(bp, BNXT_PTP_FLAGS_PATH_TX,
++				     &tx_tstamp_cycles);
+ 
+ 	ns = rte_timecounter_update(&ptp->tx_tstamp_tc, tx_tstamp_cycles);
+ 	*timestamp = rte_ns_to_timespec(ns);
+diff --git a/drivers/net/bnxt/bnxt_rxr.c b/drivers/net/bnxt/bnxt_rxr.c
+index 73fee40401..fb7c70fd45 100644
+--- a/drivers/net/bnxt/bnxt_rxr.c
++++ b/drivers/net/bnxt/bnxt_rxr.c
+@@ -727,6 +727,18 @@ bnxt_set_ol_flags(struct bnxt_rx_ring_info *rxr, struct rx_pkt_cmpl *rxcmp,
+ 	mbuf->ol_flags |= ol_flags;
+ }
+ 
++static void bnxt_get_rx_ts(struct bnxt *bp)
++{
++	struct bnxt_ptp_cfg *ptp = bp->ptp_cfg;
++
++	if (!ptp)
++		return;
++
++	rte_spinlock_lock(&ptp->ptp_lock);
++	ptp->rx_timestamp = ptp->old_time;
++	rte_spinlock_unlock(&ptp->ptp_lock);
++}
++
+ static void
+ bnxt_get_rx_ts_p5(struct bnxt *bp, uint32_t rx_ts_cmpl)
+ {
+@@ -1198,7 +1210,10 @@ static int bnxt_rx_pkt(struct rte_mbuf **rx_pkt,
+ 		      bp->ptp_cfg) {
+ 		mbuf->ol_flags |= RTE_MBUF_F_RX_IEEE1588_PTP |
+ 				  RTE_MBUF_F_RX_IEEE1588_TMST;
+-		bnxt_get_rx_ts_p5(rxq->bp, rxcmp1->reorder);
++		if (BNXT_CHIP_P5(bp))
++			bnxt_get_rx_ts_p5(rxq->bp, rxcmp1->reorder);
++		else
++			bnxt_get_rx_ts(rxq->bp);
+ #ifndef RTE_IOVA_IN_MBUF
+ 		bnxt_timestamp_dynfield_set(mbuf,
+ 					    bp->ptp_cfg->mb_rx_timestamp_offset,
 -- 
 2.47.3
 
