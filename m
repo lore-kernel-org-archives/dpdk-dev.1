@@ -2,92 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 580CFCD6E57
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 17:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089C1CD6E55
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:13:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90BBE4066F;
-	Wed,  3 Jun 2026 19:50:07 +0200 (CEST)
-Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com
- [209.85.216.98]) by mails.dpdk.org (Postfix) with ESMTP id 796824066E
- for <dev@dpdk.org>; Wed,  3 Jun 2026 19:50:06 +0200 (CEST)
-Received: by mail-pj1-f98.google.com with SMTP id
- 98e67ed59e1d1-36d630c0e35so4528594a91.3
- for <dev@dpdk.org>; Wed, 03 Jun 2026 10:50:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780509005; x=1781113805;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=e+V6lYrZ79iQ6nrgKPrSotp7RpcBeAxoYkL1bbfZ+pI=;
- b=FugDEblX3obHSunGmkLJ1ewCGIeOCYjg02AJhpJTkEbdU3B++ILolJhjp/JdxokzJB
- 1G7gAkxFSXq1+edTNsTfp9ZRwSsVRpuIFBxooSkZpXupa6aabwCG3I82oCqI6BjHtPtD
- D4TugdF6FbayXC3ARfGsN5dhf7LjlWZBaJgrq3uFZnS5UXrSDxB/OVqAmV4bUByXzLfW
- zRG+El7rBFunoUclwj/A1nFKpNLZiZU3QEBqlNTryU3hQiWr4CUq07trBtTDC7KZ0HJ1
- 5eFtX0OcjSTP6dq+1Gqgr5Gq7mD16s+ugSNlUxeb+7OkeVolFIGmVBmR/POQR902JSza
- jnLA==
-X-Gm-Message-State: AOJu0Yx4fGIC0nbYf796khFFSXzMppCYXoQMnIqIisddZr1ZjOAuQkwr
- DtrTMjnkfM23UBAM/DBYVECN/1GMopvNpoAAhAI2qQjeF1mgOIP7FE9YNFt3p5A7TlylV22VaJ3
- h/1a93uCuTg3IjcZAyWizfnlCVcMVg7/rx8MoyER4qOfvlrb13wYxu0VDroIG2NsYAgbcsm3RNU
- bR946cGnew0+mPCJ9HAleaazoC7bwlA9B2nn+lTxfGrwMhQRHnJK4MXpcVFcdiBfJ9s1YN/dG1R
- rXxKLhBHNwV
-X-Gm-Gg: Acq92OGqvJATb7QrJe4Sml3JthlLrGgKlejfmn9xheaUi8643zxTN9YBBSucDenemHW
- FYDRw8kojOCvocoyDJsIfVUu3zhQJnH120RPvzrp3yfqVmX+e5r7qehX6uk5x9aZMR0J6IcaPc3
- z48HhfEK66KoiblNb6TFdenheUjPtfIJObrsQOY/kUpJAlfw/cZ4l2NVQJ8IgElmZcbiPrxTMzy
- PoUgnaiMqHRfNsxbwOn74qp0m8qPkMdHyrEnxk3uSR/5Hl5wHQbXHiLn5mSqoydQQ2VFewOO1C7
- 1pWkgFlW+8USs8bVTPhS9c/Dl93YLsYzpIJEyKD4ugoRxNEMnYA3RsCV/T2gDYM5wU3BLrmv6kA
- 71fAnDzSHKQ33hSpqekzake6zg9ahm2+m2rfxnUTzOFPtKNi8mpsg1UpcK03ibyrXDW6Fauo0ZC
- kGNB1jmYFxVX8bs8dm7QFgGp0N4iinOFbNF/VkXDhHfQEQ2+2vz1DcYAUqGx3F+MVMC1/xfn3O7
- UDzrjKxD7rs
-X-Received: by 2002:a17:90a:d650:b0:36b:7f69:c152 with SMTP id
- 98e67ed59e1d1-36e30f0eb04mr4676602a91.18.1780509005510; 
- Wed, 03 Jun 2026 10:50:05 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
- by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-36e6b90952asm97720a91.0.2026.06.03.10.50.05
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 03 Jun 2026 10:50:05 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qt1-f199.google.com with SMTP id
- d75a77b69052e-5178444b752so10658131cf.3
- for <dev@dpdk.org>; Wed, 03 Jun 2026 10:50:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BB7644064C;
+	Wed,  3 Jun 2026 20:13:11 +0200 (CEST)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
+ [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id EE637402C4
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 20:13:10 +0200 (CEST)
+Received: by mail-dy1-f180.google.com with SMTP id
+ 5a478bee46e88-307631dbfedso178414eec.0
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 11:13:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1780509004; x=1781113804; darn=dpdk.org;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780510390;
+ x=1781115190; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=e+V6lYrZ79iQ6nrgKPrSotp7RpcBeAxoYkL1bbfZ+pI=;
- b=YUWhdzLIj0gWERGTIme+TRMpiFhUBxAaG8dOI5e+eGiDG+5m8W9YDIb3iEhs3ElFYd
- e+oPzs2O2ViM9R9q7IkvTBu1SLtbzJFocPPjuAumWOvp+eM1cwHz2S+W10Y7CirrpiOm
- EVef/kImP0PdJdiObi+kKQvGiDu/iPnFFMEK0=
-X-Received: by 2002:a05:622a:56:b0:517:5bc1:e1f0 with SMTP id
- d75a77b69052e-517784b6fdbmr68229201cf.0.1780509000901; 
- Wed, 03 Jun 2026 10:50:00 -0700 (PDT)
-X-Received: by 2002:a05:622a:56:b0:517:5bc1:e1f0 with SMTP id
- d75a77b69052e-517784b6fdbmr68228591cf.0.1780509000285; 
- Wed, 03 Jun 2026 10:50:00 -0700 (PDT)
-Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
+ bh=1vzzcF1atIW910HQCLB+UVaIK4GoN205qm8vV8T1mjg=;
+ b=OAG+3QomtLYMjr4GT5bPLxA9gyGiQ89MvTa6X7Jb4lU19UvB4hpxFEasFTrZx3K7pk
+ A5dYNg3dDcs6As4SG1d08X35mNkvWojCKNLdbKKons+8SMbqBCSrYR3TrCH+58lYkr4I
+ XhsaUnLMYTPu+ApeKwu6EyoSQN1oN9ttL9VI8ha0WbPwD91tannqrpUs4md/1p+PPYwK
+ JSW1lA7ENbRzUv7axB/79aeP9w6FoEWTFBu4FQWKXa/7knLJCvpc6uf4iQhJWKWdICsj
+ VeOWbsqHsE4pCKWjwpkp+bHXcc31L7EOqQv9ghaKGmXc4Sf/dhDJluWdBWlu1Zp9DpNJ
+ LlEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780510390; x=1781115190;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=1vzzcF1atIW910HQCLB+UVaIK4GoN205qm8vV8T1mjg=;
+ b=gnFOwixQaDH6ccuj8ncmL3IgnowepFXhK2XEJ4sGoVdOpmsFTkXcXWd8fwaeZ+PIlM
+ YAcjyohKc4JYkqpZe/eK0UMGop+nTSf8giyDxCw5a8KqziZI+c/XUE82B9ZeCi8zmEJy
+ AHeBwGK6DGadXuhkPx+it9aqLp3jm6YJaO2jtFfz1AbnXLeu40bCocDmjj0YDlXWWRpO
+ 9cfZkDFgXXPWNyRKjRMLUGYo+Fz4vLIwVH65OkqVfduLMhxQbZ8RJ9H+lMeqv1OncQ6R
+ nMrEDb7e1MSMhpABnxeK/XkP8LZ06RjWo2t9LKZPCllioyA7Fn/dceiFlvP35vkWH0/x
+ ZtRQ==
+X-Gm-Message-State: AOJu0YyIBBDk5ubFdB9cIIg7C8cOiVyrjp80Xx9QkFkLjR7+NsW02nll
+ 7ztQsF7Wr51hwggEoL9gBWX1WXVDRPwcrUCHZNnhO5uyS9m836SdFjFIy/ARWW/VdvKp9sPjPLT
+ TEq0s
+X-Gm-Gg: Acq92OHzxUCwfqXMsAaSPL41jJHfK6mgvgIZsdULjZWCvdoh43qHI5JM34cLa8C76/8
+ 18CQa2aMqsOMBEJQUrak/wfW/xbqgwrYcYURcSkNQPlcqHU6kfN1C0B4k8PSBPZT4/NphzLxC4u
+ 0IJHhy7mJx+o5MxTSIYpw8uEhxtvcjpGFD6pytbkRLXtqE4Ni96LH6GyAEB2/1L4X32S/0lGcLE
+ G9FDzad/4IzSAg43WWYn81N9cL/tkw5ls8XYF5NSCDokxA7gT7Dz44RUmduM+zVjpcvakiarOPq
+ SmL+ieg812tW5D8LgEMoQBuCgWppkliXjZBthQczimfPLjtNHvw3KDpsxdzDGkosSxUamWjepr+
+ IkSoKDvSQErFqiPIIYFFMt0AS8VeuS3kRuqca9QSyO80OF58ThA5PgJtkaReDDM3yvgTfXSRwzv
+ wG1+ILvQO5PiSavo3XqGglDyTpFcgXVj15AwRtvB+iTmHBnIdKsGXoi2B6H7Hpq/uD6G6tuY2yP
+ q4imLiqNDk=
+X-Received: by 2002:a05:7301:6885:b0:304:acc:f086 with SMTP id
+ 5a478bee46e88-3074fc56550mr2284732eec.33.1780510389877; 
+ Wed, 03 Jun 2026 11:13:09 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-517780e8169sm29021021cf.2.2026.06.03.10.49.59
+ 5a478bee46e88-3074df102a1sm2745758eec.20.2026.06.03.11.13.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 03 Jun 2026 10:49:59 -0700 (PDT)
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-X-Google-Original-From: Mohammad Shuab Siddique
- <Mohammad-Shuab.Siddique@broadcom.com>
+ Wed, 03 Jun 2026 11:13:09 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH 4/4] net/bnxt: fix RSS hash mode configuration for VFs
-Date: Wed,  3 Jun 2026 11:51:37 -0600
-Message-ID: <20260603175137.1990204-5-Mohammad-Shuab.Siddique@broadcom.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260603175137.1990204-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260603175137.1990204-1-Mohammad-Shuab.Siddique@broadcom.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Denis Sergeev <denserg.edu@gmail.com>, stable@dpdk.org,
+ "John W. Linville" <linville@tuxdriver.com>
+Subject: [PATCH] net/af_packet: fix parsing of numeric device args
+Date: Wed,  3 Jun 2026 11:13:06 -0700
+Message-ID: <20260603181306.459234-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260603170812.212262-1-denserg.edu@gmail.com>
+References: <20260603170812.212262-1-denserg.edu@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -101,48 +83,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+This driver has several numeric arguments but it was using
+atoi() which allows garbage and negative values.
+Convert to a helper using strtoul() with upper bound.
 
-Fixed VFs attempting global RSS configuration which is not
-permitted by firmware. VFs (including trusted VFs) must use
-per-VNIC RSS configuration with actual vnic_id and rss_ctx_idx
-values.
+First found by Linux Verification Center (linuxtesting.org) with SVACE.
 
+Reported-by: Denis Sergeev <denserg.edu@gmail.com>
+Fixes: 364e08f2bbc0 ("af_packet: add PMD for AF_PACKET-based virtual devices")
 Cc: stable@dpdk.org
-Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
----
- drivers/net/bnxt/bnxt_hwrm.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 0c82935de9..afc948ac29 100644
---- a/drivers/net/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -2970,8 +2970,22 @@ bnxt_hwrm_vnic_rss_cfg_hash_mode_p5(struct bnxt *bp, struct bnxt_vnic_info *vnic
- 		req.hash_mode_flags = BNXT_HASH_MODE_INNERMOST;
- 	else
- 		req.hash_mode_flags = vnic->hash_mode;
--	req.vnic_id = rte_cpu_to_le_16(BNXT_DFLT_VNIC_ID_INVALID);
--	req.rss_ctx_idx = rte_cpu_to_le_16(BNXT_RSS_CTX_IDX_INVALID);
-+
-+	/* VFs must use actual vnic_id for per-VNIC configuration.
-+	 * PFs can use INVALID vnic_id for global configuration.
-+	 * This is because VFs don't have permission to configure
-+	 * global hash mode, even if they're trusted.
-+	 */
-+	if (BNXT_VF(bp)) {
-+		req.vnic_id = rte_cpu_to_le_16(vnic->fw_vnic_id);
-+		req.rss_ctx_idx = rte_cpu_to_le_16(vnic->fw_grp_ids[0]);
-+		PMD_DRV_LOG_LINE(DEBUG, "VF using per-VNIC RSS config (vnic_id=%u)",
-+				vnic->fw_vnic_id);
-+	} else {
-+		req.vnic_id = rte_cpu_to_le_16(BNXT_DFLT_VNIC_ID_INVALID);
-+		req.rss_ctx_idx = rte_cpu_to_le_16(BNXT_RSS_CTX_IDX_INVALID);
-+		PMD_DRV_LOG_LINE(DEBUG, "PF using global RSS config");
-+	}
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/af_packet/rte_eth_af_packet.c | 58 +++++++++++++++++++----
+ 1 file changed, 48 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+index 8303ff5ca9..b0ff22ea55 100644
+--- a/drivers/net/af_packet/rte_eth_af_packet.c
++++ b/drivers/net/af_packet/rte_eth_af_packet.c
+@@ -15,7 +15,9 @@
+ #include <rte_kvargs.h>
+ #include <bus_vdev_driver.h>
  
- 	PMD_DRV_LOG_LINE(DEBUG, "RSS CFG: Hash level %d", req.hash_mode_flags);
- 	rc = bnxt_hwrm_send_message(bp, &req, sizeof(req),
++#include <ctype.h>
+ #include <errno.h>
++#include <limits.h>
+ #include <linux/if_ether.h>
+ #include <linux/if_packet.h>
+ #include <arpa/inet.h>
+@@ -1138,6 +1140,42 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 	return -1;
+ }
+ 
++/* Parse an unsigned integer device argument. */
++static int
++parse_uint(const char *key, const char *value,
++	   unsigned int *out, unsigned long limit)
++{
++	unsigned long val;
++	char *endptr;
++
++	if (value == NULL) {
++		PMD_LOG(ERR, "no value for argument \"%s\"", key);
++		return -1;
++	}
++
++	/* Skip leading whitespace so a leading sign can be detected. */
++	while (isspace((unsigned char)*value))
++		value++;
++
++	/* strtoul() silently accepts and negates a leading '-'. */
++	if (*value == '\0' || *value == '-') {
++		PMD_LOG(ERR, "invalid value \"%s\" for argument \"%s\"",
++			value, key);
++		return -1;
++	}
++
++	errno = 0;
++	val = strtoul(value, &endptr, 10);
++	if (errno != 0 || *endptr != '\0' || val > limit) {
++		PMD_LOG(ERR, "invalid value \"%s\" for argument \"%s\"",
++			value, key);
++		return -1;
++	}
++
++	*out = (unsigned int)val;
++	return 0;
++}
++
+ static int
+ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 		    int const *sockfd,
+@@ -1168,7 +1206,9 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 	for (k_idx = 0; k_idx < kvlist->count; k_idx++) {
+ 		pair = &kvlist->pairs[k_idx];
+ 		if (strstr(pair->key, ETH_AF_PACKET_NUM_Q_ARG) != NULL) {
+-			qpairs = atoi(pair->value);
++			if (parse_uint(pair->key, pair->value,
++				       &qpairs, RTE_MAX_QUEUES_PER_PORT) < 0)
++				return -1;
+ 			if (qpairs < 1) {
+ 				PMD_LOG(ERR,
+ 					"%s: invalid qpairs value",
+@@ -1178,7 +1218,8 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 			continue;
+ 		}
+ 		if (strstr(pair->key, ETH_AF_PACKET_BLOCKSIZE_ARG) != NULL) {
+-			blocksize = atoi(pair->value);
++			if (parse_uint(pair->key, pair->value, &blocksize, UINT_MAX) < 0)
++				return -1;
+ 			if (!blocksize) {
+ 				PMD_LOG(ERR,
+ 					"%s: invalid blocksize value",
+@@ -1188,7 +1229,8 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 			continue;
+ 		}
+ 		if (strstr(pair->key, ETH_AF_PACKET_FRAMESIZE_ARG) != NULL) {
+-			framesize = atoi(pair->value);
++			if (parse_uint(pair->key, pair->value, &framesize, UINT_MAX) < 0)
++				return -1;
+ 			if (!framesize) {
+ 				PMD_LOG(ERR,
+ 					"%s: invalid framesize value",
+@@ -1198,7 +1240,8 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 			continue;
+ 		}
+ 		if (strstr(pair->key, ETH_AF_PACKET_FRAMECOUNT_ARG) != NULL) {
+-			framecount = atoi(pair->value);
++			if (parse_uint(pair->key, pair->value, &framecount, UINT_MAX) < 0)
++				return -1;
+ 			if (!framecount) {
+ 				PMD_LOG(ERR,
+ 					"%s: invalid framecount value",
+@@ -1208,13 +1251,8 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 			continue;
+ 		}
+ 		if (strstr(pair->key, ETH_AF_PACKET_QDISC_BYPASS_ARG) != NULL) {
+-			qdisc_bypass = atoi(pair->value);
+-			if (qdisc_bypass > 1) {
+-				PMD_LOG(ERR,
+-					"%s: invalid bypass value",
+-					name);
++			if (parse_uint(pair->key, pair->value, &qdisc_bypass, 1) < 0)
+ 				return -1;
+-			}
+ 			continue;
+ 		}
+ 		if (strstr(pair->key, ETH_AF_PACKET_FANOUT_MODE_ARG) != NULL) {
 -- 
-2.47.3
+2.53.0
 
