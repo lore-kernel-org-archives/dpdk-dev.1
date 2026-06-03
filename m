@@ -2,89 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25603CD6E57
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 20:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDB1CD6E57
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 20:35:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 28F224065D;
-	Wed,  3 Jun 2026 22:00:41 +0200 (CEST)
-Received: from mail-qv1-f99.google.com (mail-qv1-f99.google.com
- [209.85.219.99]) by mails.dpdk.org (Postfix) with ESMTP id 06FB4402B6
- for <dev@dpdk.org>; Wed,  3 Jun 2026 22:00:40 +0200 (CEST)
-Received: by mail-qv1-f99.google.com with SMTP id
- 6a1803df08f44-8ccf0fa0aacso74983876d6.2
- for <dev@dpdk.org>; Wed, 03 Jun 2026 13:00:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 25476402BA;
+	Wed,  3 Jun 2026 22:35:53 +0200 (CEST)
+Received: from mail-yw1-f227.google.com (mail-yw1-f227.google.com
+ [209.85.128.227])
+ by mails.dpdk.org (Postfix) with ESMTP id 3FD12402B6
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 22:35:51 +0200 (CEST)
+Received: by mail-yw1-f227.google.com with SMTP id
+ 00721157ae682-7e0aa486af8so8126977b3.1
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 13:35:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780516839; x=1781121639;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=GflDDq4bN9JyZWiNch7ZnxwEhtupu76oxdcRQM+ou+g=;
- b=PusK52brgYC1xpPAWbaPGTF/3LQPrlcYlkVL0L3Nt8QVcBf5mxyPar1QUeiuGbM/FL
- f7vVoz8y/lyBxNCmG89Q0lm6R6N7nBhMtivsBuPSH27Bho/lrOO6lnI2dzcwRAxaNHru
- NeRKEf3N5/3q5cEwUI/3vIcTKn9+Nmyg4vlltJ/DosCQLx41V2KN5gFf5nQJ6yqG7fZ5
- n8a+7JnzVMA0YxTFVHIl8SCrUnuYRfmIHfOr3kobezgOkCZKOIPfgpQqppTcIQ8TZGp3
- RCBbAX95f/7/YKDzGBEy2ILWuuDte7R3XyBJgoCFbdxXgqsdQdT8rKqSHmY4yMuLKV/I
- d8iQ==
-X-Gm-Message-State: AOJu0Yx3V2S+wXN/e3xCzwukPOQNzuZSXMJp3tq+Rzurtj+Mz5aVpSxg
- Kx5HFHPiOUTiw/qGFDUVPG/Wug5xROwLFkZZRFaNrnTY0JE5XuModWvOnTGD9mnrRQOBAE0GZ9u
- l6rQqTVlxN/61+WoQOCmCxz3TSTLrkggSs90mYen4sdeGUd0aU/Pfu5Xga4pMSUt/zwIHvFpR32
- pl1q6HzT+yNykD+ZqfCDjpyWRjk6yzXlu+FtEc/2zBg38F3dpix3NTkXZ7QmDYJsAMmE1Ap1zaR
- K/wFBKH+59K
-X-Gm-Gg: Acq92OGosNDzjGguOkbB8bOTGe5uKBJpcP1a/mnnRNHAZeTIQ25ga5jMrYPdw6znLbq
- pmMYPGW+7CJJ6STkMSFiJRoI4pKpGUwye5Li7ZgF5BwCNL/ZCWp1S4INhfge9CLoCtD6brHKweb
- mzncYcSmaXM0ZAuE0xF9S/H6nstNe/6JlIlXiLWrJcil04jXOmSNugOJ91AeXYbFI9Cyfth/bgU
- 81wnkAxh+pO2KdX0r0EM2DIGYHrKa4VxH05T93YGyc7Hs8L5LVBVccEDOh3qinzQ+x+gtstqyZs
- p1rN4azeF5aInMk0neyYBQ/wz1Spp2jLVSIFyKzscSeFc9ulACXDW0NId1fbwVMBf0NcQOldtIh
- a9py8wBdRcjW9lIojuqqPIoQVPecRF0ltN0YNU+KbLPfZZUT/nIevA3S+iYWoTddYA6yGHseBkw
- 3MTRlJb5YJKxQprCOKqHrQfWlp4sSiBtO+SFB+Vy8LFNXAwQ9JnYMwN6fdMcvG+Yml+SWBMd551
- 6BpCZbRIA==
-X-Received: by 2002:a05:6214:212f:b0:8ac:b258:71d1 with SMTP id
- 6a1803df08f44-8cecde9df95mr73112276d6.3.1780516821500; 
- Wed, 03 Jun 2026 13:00:21 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1780518950; x=1781123750;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=DD63Y2yuPpoZS9eNuxqs5kO2ijqlAHaEIwjlNwZxFck=;
+ b=NmxMYbtvCxwu1AdoagQBJRI53IkwnqysP52ZHMNs5DhOkXgaBj6oLr2h9IPjkbdMWy
+ 8bkpkBHVd2EKBFDuObbTTivMxDxNvc1zuI7sh/1kYSY//ytd+hySQ1hg5nJ5WGonR8P9
+ jmMK+lBah0rNz1uQnQ/zWQ5ezXyx+D9Thbf67m36kAKi2N/h4jn2CB2Kjcxvl5kum6cU
+ Xa39Ofkg4XmE2vRrbXd0jc7Q/CbQw0pwbSE5G7QJ91GlPMc6ISwuIC/5KIB0XWF3pI2m
+ Yrs/dK4Io8CroMmump9oGAFME1XzI1mp0DiYGS6fRz7etr4sABccM3wvrVdRsC9uhnSu
+ udBg==
+X-Gm-Message-State: AOJu0YyUBL+44l8irp+5NV+KHfk2nsfL+/Gk72ifX7+H0hG/MsJvSS0l
+ edE0BWjI+hWl/0pHJnaCnseeLSHEsdfA7iGppPsLpW6LvXGMGhIysJesclfQAZJ+yDNpn05dyiv
+ hBedE1w2NfIckIWcSsbD5kxSxgAVdsNu9l8j2uqNeWCcytl8QaEToH8o+LBucZw8M3eyTuZtFvL
+ X9MXHnlnRKIQ8ZNziWYvr6RRAH1RBQwyEOFR9stunFEZH35va3G7EA3im+7ai4q5FosX1NCVZYD
+ 7gGLeVfEOtr
+X-Gm-Gg: Acq92OEXiz8PG/8bb+8xgbujXAj/voKjIeq1fVocPqsMmhAgm1iRt7+za1bsComw0zD
+ liNsGatiEz+Tfh3sMCSOs0VYPUWoFlI+a5iBaTfduNS2cwIB2rvh2Z5AkaXW1eUx3jCbnxx+ngS
+ ry9UBlsq9ahoSkj6qwivMoBmhnOfg8LlEuxTRaqR3aTElSXgC/1mwyOY4kSytiu2mF6k2xbBSps
+ kFYVGuS7TVlez5RKg+Zv2WGE4vsDDEKG2SzdqEBOC9KjPNuNIkj7rwVTT5+k/u1ge0ESsAN1NTG
+ 6C40MhqL0z6asVPc+yE3HLgnAYPNan3OZHa2+WovSCAVzUWJwFVE78ocVWAnXrA40ZZvgmJAKnZ
+ AySV34yvrAjW8ac6mOQ4tpZFzLRbH33cYAXcVoLl80GSbcVWTof6hHbSX2NaC+oJsXQwBWDy0U0
+ J7d4ZrdU5q3Lxn81Cm3zJSRo8zuZc34J0XXoerAIf6ArwGTLa2IYQfuDyt1flI5YGAkMqOOzjTN
+ 30R2SDuU/kR
+X-Received: by 2002:a05:690c:e3ec:b0:7b6:7df9:33f6 with SMTP id
+ 00721157ae682-7eb8a7bcfedmr9721257b3.2.1780518950425; 
+ Wed, 03 Jun 2026 13:35:50 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-63.dlp.protect.broadcom.com. [144.49.247.63])
+ (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
  by smtp-relay.gmail.com with ESMTPS id
- 6a1803df08f44-8cecce2802dsm1542526d6.18.2026.06.03.13.00.20
+ 00721157ae682-7ea20eab7acsm2632387b3.2.2026.06.03.13.35.50
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 03 Jun 2026 13:00:21 -0700 (PDT)
+ Wed, 03 Jun 2026 13:35:50 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qk1-f197.google.com with SMTP id
- af79cd13be357-91577337648so177302285a.1
- for <dev@dpdk.org>; Wed, 03 Jun 2026 13:00:20 -0700 (PDT)
+Received: by mail-qk1-f198.google.com with SMTP id
+ af79cd13be357-91565f8c589so233908885a.0
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 13:35:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1780516820; x=1781121620; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=GflDDq4bN9JyZWiNch7ZnxwEhtupu76oxdcRQM+ou+g=;
- b=Kn68dzlrmFeXjpGUE/MA7gcPdUs5HxbqOxD9DDg3kalWXnSw0EcYOrrl3W006h2lXm
- 17eyF3Xlw924psBCXT71zpH39k2lfSgCzLpFX6O5RpBg1E4uAm16KQpzncmczGEe/9rh
- xSNlW30E2EdS5NGTqgsi3Tp2uUHNVvcut4920=
-X-Received: by 2002:a05:620a:4621:b0:912:671b:d09b with SMTP id
- af79cd13be357-9158a6df52dmr827368185a.24.1780516819975; 
- Wed, 03 Jun 2026 13:00:19 -0700 (PDT)
-X-Received: by 2002:a05:620a:4621:b0:912:671b:d09b with SMTP id
- af79cd13be357-9158a6df52dmr827347985a.24.1780516818867; 
- Wed, 03 Jun 2026 13:00:18 -0700 (PDT)
+ d=broadcom.com; s=google; t=1780518950; x=1781123750; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=DD63Y2yuPpoZS9eNuxqs5kO2ijqlAHaEIwjlNwZxFck=;
+ b=VQ1KvtGVrn1euYqYPGIbrVXe0YR6hs+ZPAYLPJyaZT8+8wKgaqmbzWVc7OvDeSuUKZ
+ LQzuGIQKgtVL+iZRCA4OncuUCLMMbDky2CsbZToY4MxEcwKN5Mn+5s/BWMdf0xnI0i9Y
+ V4Z2J+oDaxd0NXAYqTUMggiHWu9/bQDlhU1wI=
+X-Received: by 2002:a05:620a:4690:b0:915:7787:200c with SMTP id
+ af79cd13be357-9159af2f994mr166594485a.23.1780518949644; 
+ Wed, 03 Jun 2026 13:35:49 -0700 (PDT)
+X-Received: by 2002:a05:620a:4690:b0:915:7787:200c with SMTP id
+ af79cd13be357-9159af2f994mr166578085a.23.1780518947739; 
+ Wed, 03 Jun 2026 13:35:47 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-9158a21f871sm345897785a.12.2026.06.03.13.00.17
+ af79cd13be357-9158a22dbbesm340925085a.13.2026.06.03.13.35.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 03 Jun 2026 13:00:18 -0700 (PDT)
+ Wed, 03 Jun 2026 13:35:47 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH v3 4/4] net/bnxt: fix RSS hash mode configuration for VFs
-Date: Wed,  3 Jun 2026 14:02:07 -0600
-Message-ID: <20260603200207.1996868-1-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH 0/4] net/bnxt: ULP stats timer and PTP timestamping
+ improvements
+Date: Wed,  3 Jun 2026 14:37:34 -0600
+Message-ID: <20260603203738.2084478-1-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260603175137.1990204-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260603175137.1990204-1-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
@@ -103,47 +102,34 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 
-Fixed VFs attempting global RSS configuration which is not
-permitted by firmware. VFs (including trusted VFs) must use
-per-VNIC RSS configuration with actual vnic_id and rss_ctx_idx
-values.
+This series improves PTP timestamping support and the ULP stats timer:
 
-Fixes: 8b9adaf0da6b ("net/bnxt: support RSS on ESP and AH headers")
-Cc: stable@dpdk.org
-Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
----
- drivers/net/bnxt/bnxt_hwrm.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ - Move the ULP stats timer thread to a dedicated CPU to avoid interfering
+   with DPDK worker lcores
+ - Replace register-based PTP initialization on Wh+ with HWRM interface calls
+ - Add HWRM-based Tx/Rx timestamp retrieval for BCM57414 (Wh+)
+ - Add PTP support for BCM5760X (Thor2) including TX timestamp completions
 
-diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 0c82935de9..afc948ac29 100644
---- a/drivers/net/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -2970,8 +2970,22 @@ bnxt_hwrm_vnic_rss_cfg_hash_mode_p5(struct bnxt *bp, struct bnxt_vnic_info *vnic
- 		req.hash_mode_flags = BNXT_HASH_MODE_INNERMOST;
- 	else
- 		req.hash_mode_flags = vnic->hash_mode;
--	req.vnic_id = rte_cpu_to_le_16(BNXT_DFLT_VNIC_ID_INVALID);
--	req.rss_ctx_idx = rte_cpu_to_le_16(BNXT_RSS_CTX_IDX_INVALID);
-+
-+	/* VFs must use actual vnic_id for per-VNIC configuration.
-+	 * PFs can use INVALID vnic_id for global configuration.
-+	 * This is because VFs don't have permission to configure
-+	 * global hash mode, even if they're trusted.
-+	 */
-+	if (BNXT_VF(bp)) {
-+		req.vnic_id = rte_cpu_to_le_16(vnic->fw_vnic_id);
-+		req.rss_ctx_idx = rte_cpu_to_le_16(vnic->fw_grp_ids[0]);
-+		PMD_DRV_LOG_LINE(DEBUG, "VF using per-VNIC RSS config (vnic_id=%u)",
-+				 vnic->fw_vnic_id);
-+	} else {
-+		req.vnic_id = rte_cpu_to_le_16(BNXT_DFLT_VNIC_ID_INVALID);
-+		req.rss_ctx_idx = rte_cpu_to_le_16(BNXT_RSS_CTX_IDX_INVALID);
-+		PMD_DRV_LOG_LINE(DEBUG, "PF using global RSS config");
-+	}
- 
- 	PMD_DRV_LOG_LINE(DEBUG, "RSS CFG: Hash level %d", req.hash_mode_flags);
- 	rc = bnxt_hwrm_send_message(bp, &req, sizeof(req),
+The PTP patches carry Fixes: tags and Cc: stable@dpdk.org.
+
+Note: this series depends on series "net/bnxt: miscellaneous bug fixes".
+
+Kalesh AP (3):
+  net/bnxt: Support for PTP on Wh+ using HWRM interface
+  net/bnxt: Support for Tx/Rx timestamp using HWRM on Wh+
+  net/bnxt: Add PTP support for Thor2
+
+Mohammad Shuab Siddique (1):
+  net/bnxt: move ulp stats timer thread to dedicated cpu
+
+ drivers/net/bnxt/bnxt.h              |   3 +
+ drivers/net/bnxt/bnxt_ethdev.c       | 172 +--------------------------
+ drivers/net/bnxt/bnxt_hwrm.c         |  37 ++----
+ drivers/net/bnxt/bnxt_rxr.c          |  23 +++-
+ drivers/net/bnxt/bnxt_txr.c          |  16 +++
+ drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c |  73 ++++++++++--
+ 6 files changed, 116 insertions(+), 208 deletions(-)
+
 -- 
 2.47.3
 
