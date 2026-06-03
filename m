@@ -2,64 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31827CD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 04:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A925DCD6E4A
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 04:22:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8D5A840431;
-	Wed,  3 Jun 2026 06:16:28 +0200 (CEST)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 3CD12402AB
- for <dev@dpdk.org>; Wed,  3 Jun 2026 06:16:27 +0200 (CEST)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-490b613a17bso3502075e9.3
- for <dev@dpdk.org>; Tue, 02 Jun 2026 21:16:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4922740431;
+	Wed,  3 Jun 2026 06:22:27 +0200 (CEST)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 7C6F0402BD
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 06:22:26 +0200 (CEST)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-490ac357c55so28237925e9.1
+ for <dev@dpdk.org>; Tue, 02 Jun 2026 21:22:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780460187; x=1781064987; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1780460546; x=1781065346; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=7oj4pty3gmJa+H3k41jw33StPSTPnK2Z36fVM+xkJ40=;
- b=Umf58AZLMcq2hDfLJvhEkR2NvJzFpMDH0eKOZlM9Tg01fplkv6y1GrfhNaIORjr3n4
- t8x47H/hvUrfZmd0n3NN23zijAEnHK6WBP+MORaEMTkch+AwoAzdXDXeBH9ar/4+TOHT
- y5kgJL7djUMUmTODDR3H5KnjPcyKDRLbTobZijy7bP+gazPHmOS11eUxu+NvSAi8ZHxE
- RxfjDAzzevywiccwVTZQVmikAlljSRl+uyPDY6n/Qiuy/qh4nL21P8/GCOCr3PN8wq0j
- L5pyHBfhRZU1/dSwGSCAaNJIC0Bk/NRGHIq7Um7CnYV+3QT4S9t+rgF1wjtkD+xMCmFJ
- gNtw==
+ bh=Da8JNQKc/HItfX0QACykx0Q4t5I+k3pF8ypRNlb7hDE=;
+ b=A8nkwNz4Bb3zd6k6oCmJG2IcY6vXeGIIJLYGmXcU6G+xq2xSEo4cpy0KLDu41GeFSy
+ p2DUyZQN0SIDdKZnMWXxc0isHJoPVUnaliNfVw1hByQyzyVyzUzLNwNnSJAuc+HAj7I1
+ dwiqWsd8zSdH+gcBrheWYb9Cv3YUT2iPhcVwWyg3A5xCQkM3lwhlVtaj/tTBWWcNlX3s
+ d7MphnBKEvIrmNE973OJO/Un6l8CE6t99Jn2egC2A1fwhWkNPNAdKo7rCiKkZVp8qSF5
+ th6+BT7bAP8pAgVWtMRDcKxmhcNC4c4uZ9z22Q8Bujr1Wxmyhh4wNL16ZoNHizH0PZ6Q
+ +Alg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780460187; x=1781064987;
+ d=1e100.net; s=20251104; t=1780460546; x=1781065346;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7oj4pty3gmJa+H3k41jw33StPSTPnK2Z36fVM+xkJ40=;
- b=hkJSE0IQePZFD84G9wAkFYgKv308lXQDhpeRiCUf7cUmXeImKD3H+yWWFre4R5Zogz
- jwpadVQ7i7PYgID4ghRxlC4mHgvPyyVG200TLpjUlv2JEJX6GNO7l2K6rL2pml7hXz1q
- K2acFJNPzwkPy7bfVJjkydacsWbTS1tr9fICCmQ/NeOpUH+NXVPE37IWcp5pqWMpFTud
- EaCfb3eLk4sAZ3IeWn312GaTIVWKobX9HhjI3UE/S2X9OU0f3hvIoMI80QcHXjilXa47
- KlICe9lZbyKP7txbj3VZ0dqAEcVIKwJ7jaOSO6AtjtcZOCN3fKoMihJV0FnDwDx2Abik
- ZX+Q==
-X-Gm-Message-State: AOJu0YwX6/y/plfkARautTeoGW7zY84SwoyAtgmJJKt4u+if2WO/c3cO
- QtjV1K2hTwA+YYQa+VIGFB24cegzSzL5YakSDIKjSYexGWbRyP3zrUn1UEa96Iry
-X-Gm-Gg: Acq92OFna/ePYYJ5IxWb/5fCKNFKk2yG+kuCyEFoqcd+nYQxzEhWWv3n8mcbG0SJZes
- VaH6thMjoZMWANCtwCBsu/FRu88GGdjvig78wOz/PxuOfY8qbzNvH4TinN5eM4pvPEkll/AEZq9
- QCRqsiK5ONofTnfhI/5IQ+klAopYPZ+8lacdMW8uqfCeFULc2Ck5L6ArRzYFOrK16Ac5mGNdi6b
- fVgBz8dtz5yOFx63NHdDmVPk/zvmZNYgqqapNBwS5tVm0sAQWBTJZFQctkcpjHkgrFDR0OyXar3
- yvAQpoZ3cCLOuSjJwnHm65lxNgoVVQ4Wx+UNW8Un94WNNvWMDNTivKZuZ/5Qq0LO2eW1MgzQM4f
- ak5gnU7G/L2Orx4gHQcRRSp8KGlQr66ZqDrFm4KLJeO5+XSr0eyTynSzmpZ0PQscSYJfLAoxRFF
- iAYYuJrpKNLbBVg9PsK3AO5cgihcAA+rayjjnj8+SpFC54S5BsyoJlOFRd
-X-Received: by 2002:a05:600c:810c:b0:48a:525b:e148 with SMTP id
- 5b1f17b1804b1-490b5e7959emr22779735e9.4.1780460186792; 
- Tue, 02 Jun 2026 21:16:26 -0700 (PDT)
+ bh=Da8JNQKc/HItfX0QACykx0Q4t5I+k3pF8ypRNlb7hDE=;
+ b=rKXR0BXUoUpZpF3j1nxkZevSB0G+NIGAzqd0850yCQUePPRnCH1kaFp3w0LoGXOi0r
+ Uzci18hlLw822zUNIdJSxEgXo2C7XYdEsql1rbie3KI83KdLDlxrHtSNuE8eyX5/OX+s
+ T+SIPiEM8c8i1tscxxM22niptAKFibLsNN3ELFfqkiIOypmk6HsqBDdnjXC090F+cSwB
+ UcuCRpVueqf6SC1uFsaw4H9etsPNiAGBlo82cgYdyoj2f2dbp8o54M9xy6klWf0OoBFX
+ 87NP4DRYpX7Xd0HDyZdJWkLjuYLEzYCoKjuJ08cAjqLfgTw2FtOq2irdaCoNy/XYXMpY
+ 8ovg==
+X-Gm-Message-State: AOJu0Yy2FPvKeUMrom3he4rrl4N2XAwts7a+LBKqoRHEmVy8llY+A9z2
+ 3jZXZiG9/sBQPviJ0KO41RIMWFaQLSjz2HFN0Ayxw1cDxZEmBPQa5tastrlnr+Sy
+X-Gm-Gg: Acq92OHwu9UPg3qH/6dZii5JFIdU3yiDMgoSUYqVQS6yUdPtFh2xni8rxwBwI8maaNr
+ tSCuyM7quvwprEWecB5BRpmizSQDAcbb0MM8XoIvaPFa027/wZSCY2xWeom/nSLoxPQiRSJSRoc
+ Ess7upvBHN4ZO0pYPXOXIYbui97/IAJ+FAtvClpusr33vxwdZYPFnp5xj+wy/R/LIXDQgY5bamy
+ ulxEuFyBeYTaOjYHtJDDNA+BV6obP7eH1hp5otLhCgxOs283Ens2neAN+8OoyyiIY8axcCJrvle
+ KhudSWXQLF0XGTWNSRxu5C+4i1HG58/3R7hKfXI+iMbR6sQfuW+k/VYGUz/tghTibndZ58beFE6
+ aUFhEyx9ERs6xGwPG9YSZbj+q1NZRyrtpQ3HbN70L38PI7Z0rvRXImk0zV/LDyjtk+Q4O1iDSF/
+ BoY4ugtiPDjJToRnQmQ0ue6cgmFINAGcODk0vSUWjyLzy4MGg9rdYTre+C
+X-Received: by 2002:a05:600c:5288:b0:490:b0f1:c27e with SMTP id
+ 5b1f17b1804b1-490b5ee1c64mr24199065e9.24.1780460546091; 
+ Tue, 02 Jun 2026 21:22:26 -0700 (PDT)
 Received: from happy ([185.229.111.129]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-490b7a52d6bsm5636795e9.6.2026.06.02.21.16.24
+ ffacd0b85a97d-4601f3529e0sm4406129f8f.28.2026.06.02.21.22.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 02 Jun 2026 21:16:26 -0700 (PDT)
+ Tue, 02 Jun 2026 21:22:25 -0700 (PDT)
 From: Denis Sergeev <denserg.edu@gmail.com>
 To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com, ajit.khaparde@broadcom.com,
- stable@dpdk.org, sdl.dpdk@linuxtesting.org,
- Denis Sergeev <denserg.edu@gmail.com>
-Subject: [PATCH] net/bnxt/tf_core: fix null deref on pool use allocation
-Date: Wed,  3 Jun 2026 07:15:43 +0300
-Message-ID: <20260603041557.115956-1-denserg.edu@gmail.com>
+Cc: anatoly.burakov@intel.com, sivaprasad.tummala@amd.com, stable@dpdk.org,
+ sdl.dpdk@linuxtesting.org, Denis Sergeev <denserg.edu@gmail.com>
+Subject: [PATCH] power: fix off-by-one in uncore env bounds check
+Date: Wed,  3 Jun 2026 07:21:53 +0300
+Message-ID: <20260603042205.116191-1-denserg.edu@gmail.com>
 X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -76,61 +75,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_zmalloc() in cpm_insert_pool_id() can return NULL when memory is
-exhausted. The return value was not checked before being dereferenced,
-resulting in a crash.
+The condition in rte_power_set_uncore_env() uses '<=' instead of '<'
+when comparing the env argument against the size of uncore_env_str[].
+Since RTE_DIM(uncore_env_str) equals 4 and valid indices are 0..3,
+a caller passing env=4 bypasses the guard and causes an out-of-bounds
+read of uncore_env_str[4] at two sites within the same block.
 
-Add a NULL check and return -ENOMEM on failure. Also propagate the
-error in tfc_cpm_set_cmm_inst() which silently discarded the return
-value of cpm_insert_pool_id(), and restore the pool state on failure.
+Fix by replacing '<=' with '<', consistent with the correct pattern
+already used in rte_power_uncore_init() in the same file.
 
 Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Fixes: 80317ff6adfd ("net/bnxt/tf_core: support Thor2")
+Fixes: ac1edcb6621a ("power: refactor uncore power management API")
 Cc: stable@dpdk.org
 
 Signed-off-by: Denis Sergeev <denserg.edu@gmail.com>
 ---
- drivers/net/bnxt/tf_core/v3/tfc_cpm.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ lib/power/rte_power_uncore.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_cpm.c b/drivers/net/bnxt/tf_core/v3/tfc_cpm.c
-index f58ec48db7..28e2a3d8dd 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_cpm.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_cpm.c
-@@ -92,6 +92,10 @@ static int cpm_insert_pool_id(struct tfc_cpm *cpm, uint16_t pool_id)
+diff --git a/lib/power/rte_power_uncore.c b/lib/power/rte_power_uncore.c
+index 25bdb113c5..b50e09a2ad 100644
+--- a/lib/power/rte_power_uncore.c
++++ b/lib/power/rte_power_uncore.c
+@@ -67,7 +67,7 @@ rte_power_set_uncore_env(enum rte_uncore_power_mgmt_env env)
+ 		 */
+ 		env = RTE_UNCORE_PM_ENV_INTEL_UNCORE;
  
- 	/* Alloc new entry */
- 	new_pool_use = rte_zmalloc("tf", sizeof(struct cpm_pool_use), 0);
-+	if (new_pool_use == NULL) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to allocate pool_use entry");
-+		return -ENOMEM;
-+	}
- 	new_pool_use->pool_id = pool_id;
- 	new_pool_use->prev = NULL;
- 	new_pool_use->next = NULL;
-@@ -287,6 +291,7 @@ int tfc_cpm_get_pool_size(struct tfc_cpm *cpm, uint32_t *pool_sz_in_records)
- int tfc_cpm_set_cmm_inst(struct tfc_cpm *cpm, uint16_t pool_id, struct tfc_cmm *cmm)
- {
- 	struct cpm_pool_entry *pool;
-+	int rc;
- 
- 	if (cpm == NULL) {
- 		PMD_DRV_LOG_LINE(ERR, "CPM is NULL");
-@@ -313,7 +318,12 @@ int tfc_cpm_set_cmm_inst(struct tfc_cpm *cpm, uint16_t pool_id, struct tfc_cmm *
- 		pool->valid = false;
- 	} else {
- 		pool->valid = true;
--		cpm_insert_pool_id(cpm, pool_id);
-+		rc = cpm_insert_pool_id(cpm, pool_id);
-+		if (rc) {
-+			pool->cmm = NULL;
-+			pool->valid = false;
-+			return rc;
-+		}
- 	}
- 
- 	return 0;
+-	if (env <= RTE_DIM(uncore_env_str)) {
++	if (env < RTE_DIM(uncore_env_str)) {
+ 		RTE_TAILQ_FOREACH(ops, &uncore_ops_list, next)
+ 			if (strncmp(ops->name, uncore_env_str[env],
+ 				RTE_POWER_UNCORE_DRIVER_NAMESZ) == 0) {
 -- 
 2.50.1
 
