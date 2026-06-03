@@ -2,63 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A925DCD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 04:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 761AECD6E55
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 04:43:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4922740431;
-	Wed,  3 Jun 2026 06:22:27 +0200 (CEST)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 7C6F0402BD
- for <dev@dpdk.org>; Wed,  3 Jun 2026 06:22:26 +0200 (CEST)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-490ac357c55so28237925e9.1
- for <dev@dpdk.org>; Tue, 02 Jun 2026 21:22:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E647402BD;
+	Wed,  3 Jun 2026 06:43:20 +0200 (CEST)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id CD345402AB
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 06:43:18 +0200 (CEST)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-490ace40f4bso32671165e9.3
+ for <dev@dpdk.org>; Tue, 02 Jun 2026 21:43:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780460546; x=1781065346; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1780461798; x=1781066598; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=Da8JNQKc/HItfX0QACykx0Q4t5I+k3pF8ypRNlb7hDE=;
- b=A8nkwNz4Bb3zd6k6oCmJG2IcY6vXeGIIJLYGmXcU6G+xq2xSEo4cpy0KLDu41GeFSy
- p2DUyZQN0SIDdKZnMWXxc0isHJoPVUnaliNfVw1hByQyzyVyzUzLNwNnSJAuc+HAj7I1
- dwiqWsd8zSdH+gcBrheWYb9Cv3YUT2iPhcVwWyg3A5xCQkM3lwhlVtaj/tTBWWcNlX3s
- d7MphnBKEvIrmNE973OJO/Un6l8CE6t99Jn2egC2A1fwhWkNPNAdKo7rCiKkZVp8qSF5
- th6+BT7bAP8pAgVWtMRDcKxmhcNC4c4uZ9z22Q8Bujr1Wxmyhh4wNL16ZoNHizH0PZ6Q
- +Alg==
+ bh=LK62DYnm6rUmSPIptAoHXDVg3vFaW4R2clYxeaM/HJA=;
+ b=gbwNB66RYPEnXJ1ffQ9JaCkKI4XMmoK3ZuBedbHGdE2dFsolrB//znz0brpYt3+gvK
+ P5N8Kc3+6MM1RZv/MgzErlFJrSDHly1P16+AMZsKrPhdOCArOeTrd00ff8YFhu3Nbrbx
+ Om3JI759BYdfq/QxI7leiHuYPyFUPB+eqbZgwYXIpl7CS7r4ktGXnQtevyLymjHUJDFl
+ BpGpiRsHL4zuvPAXw0O/bGMd4zUG/qKH3Y1wBUUOXWenThCACV2XfcKVYN0c/3H/RA7s
+ o7U1zbVYwo6HJG9MiSxFBjWpvG6EEt/WKEALsctiIKtyGgPOrZXjlqxCzpfXdA2sgM/e
+ CxWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780460546; x=1781065346;
+ d=1e100.net; s=20251104; t=1780461798; x=1781066598;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Da8JNQKc/HItfX0QACykx0Q4t5I+k3pF8ypRNlb7hDE=;
- b=rKXR0BXUoUpZpF3j1nxkZevSB0G+NIGAzqd0850yCQUePPRnCH1kaFp3w0LoGXOi0r
- Uzci18hlLw822zUNIdJSxEgXo2C7XYdEsql1rbie3KI83KdLDlxrHtSNuE8eyX5/OX+s
- T+SIPiEM8c8i1tscxxM22niptAKFibLsNN3ELFfqkiIOypmk6HsqBDdnjXC090F+cSwB
- UcuCRpVueqf6SC1uFsaw4H9etsPNiAGBlo82cgYdyoj2f2dbp8o54M9xy6klWf0OoBFX
- 87NP4DRYpX7Xd0HDyZdJWkLjuYLEzYCoKjuJ08cAjqLfgTw2FtOq2irdaCoNy/XYXMpY
- 8ovg==
-X-Gm-Message-State: AOJu0Yy2FPvKeUMrom3he4rrl4N2XAwts7a+LBKqoRHEmVy8llY+A9z2
- 3jZXZiG9/sBQPviJ0KO41RIMWFaQLSjz2HFN0Ayxw1cDxZEmBPQa5tastrlnr+Sy
-X-Gm-Gg: Acq92OHwu9UPg3qH/6dZii5JFIdU3yiDMgoSUYqVQS6yUdPtFh2xni8rxwBwI8maaNr
- tSCuyM7quvwprEWecB5BRpmizSQDAcbb0MM8XoIvaPFa027/wZSCY2xWeom/nSLoxPQiRSJSRoc
- Ess7upvBHN4ZO0pYPXOXIYbui97/IAJ+FAtvClpusr33vxwdZYPFnp5xj+wy/R/LIXDQgY5bamy
- ulxEuFyBeYTaOjYHtJDDNA+BV6obP7eH1hp5otLhCgxOs283Ens2neAN+8OoyyiIY8axcCJrvle
- KhudSWXQLF0XGTWNSRxu5C+4i1HG58/3R7hKfXI+iMbR6sQfuW+k/VYGUz/tghTibndZ58beFE6
- aUFhEyx9ERs6xGwPG9YSZbj+q1NZRyrtpQ3HbN70L38PI7Z0rvRXImk0zV/LDyjtk+Q4O1iDSF/
- BoY4ugtiPDjJToRnQmQ0ue6cgmFINAGcODk0vSUWjyLzy4MGg9rdYTre+C
-X-Received: by 2002:a05:600c:5288:b0:490:b0f1:c27e with SMTP id
- 5b1f17b1804b1-490b5ee1c64mr24199065e9.24.1780460546091; 
- Tue, 02 Jun 2026 21:22:26 -0700 (PDT)
+ bh=LK62DYnm6rUmSPIptAoHXDVg3vFaW4R2clYxeaM/HJA=;
+ b=eET+f98Wb28CQ6+rzSbs1HJCpzT3l0oMP4BG3qDPaGOllISVclKiJregH/TF6ZZf7h
+ g9LQIdDnPsUBV3Vc0GRxnivVBs7pev17qUCqqLftopLZNTVD8Pm2mcUp2Ues/aZAsnYB
+ S3abC53k0+ff+AyM4UKid66/+Ot8HO/BgqNZT5bP4VlyyAnso37i2Sk/2acbKos9ywab
+ RJ2F42AAIdwnlatKdkGLFIUNua+47QgnAeokAW6B7i9vT4E8L452L289Sw1/PObsyPeq
+ m7ODE3uQDBgqFSX4xvA25IbyojllDzLte4Dr/67Eb+kT681+gMx6O99IGXUYLo3UqkMo
+ ZEig==
+X-Gm-Message-State: AOJu0YwHMp27u9LFZC3PlCiRGKJPtaNP4I3UKKkwEN84FM/UD+mPfX5n
+ kFUG9MJ0TtlMM59DOouwseGvaMzWRoRLtygJyAzGyaxR1RSRt0aMMyKgQWVdFExr
+X-Gm-Gg: Acq92OGkflJuDSYfmHPIp/tRkFAWFG35uIJDnhei3JGNSkLMwHufv7R+PLhVvqNpkZz
+ vV9SuO5Fj8azAhS56tifm/2KtiZ21bLoe1HmEf65nCvSaAQWlDIRwSYRouA5z8apTPydlxh9grV
+ 2q4mGbcHf15V0qVyGWwbQribf3cOl675kUp0kbdVjnYMLNM8sFvDK6OKRQLUaGzQsGe105YTjNC
+ 5BfF4Kl31pDFgx+TWPaiXqy7JrrBB5qFr2MRuJlQPzb/sSwA7O8MCPlKTayoG14tqEGNLoeVkQk
+ 9Mf+gFmDL2sPlEuqJk0cfhpMePN/eZM/W62tM3W2e6AdnD6c52X+6j+r+tSxeo4HwdYIjhwkTus
+ GM9F0XOoA7BNgrS6+dV3fOABKQ5huPUUBcUmSUsN+7KiEql9Tu1QgqSz2fZ+zikhVUrYAB8pHzP
+ lpl4hLHFn1tSEnrboxeajE5zOKaJegAf4Nt5TWR/OaPFaECdmT04DxxR2j
+X-Received: by 2002:a05:600c:4f07:b0:490:3c15:7146 with SMTP id
+ 5b1f17b1804b1-490b5ec411bmr27302445e9.19.1780461798385; 
+ Tue, 02 Jun 2026 21:43:18 -0700 (PDT)
 Received: from happy ([185.229.111.129]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4601f3529e0sm4406129f8f.28.2026.06.02.21.22.23
+ ffacd0b85a97d-4601f3529e0sm4522408f8f.28.2026.06.02.21.43.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 02 Jun 2026 21:22:25 -0700 (PDT)
+ Tue, 02 Jun 2026 21:43:18 -0700 (PDT)
 From: Denis Sergeev <denserg.edu@gmail.com>
 To: dev@dpdk.org
-Cc: anatoly.burakov@intel.com, sivaprasad.tummala@amd.com, stable@dpdk.org,
- sdl.dpdk@linuxtesting.org, Denis Sergeev <denserg.edu@gmail.com>
-Subject: [PATCH] power: fix off-by-one in uncore env bounds check
-Date: Wed,  3 Jun 2026 07:21:53 +0300
-Message-ID: <20260603042205.116191-1-denserg.edu@gmail.com>
+Cc: stephen@networkplumber.org, sdl.dpdk@linuxtesting.org,
+ Denis Sergeev <denserg.edu@gmail.com>
+Subject: [PATCH] net/af_packet: fix qpairs argument upper bound check
+Date: Wed,  3 Jun 2026 07:42:18 +0300
+Message-ID: <20260603044228.117357-1-denserg.edu@gmail.com>
 X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -75,38 +75,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The condition in rte_power_set_uncore_env() uses '<=' instead of '<'
-when comparing the env argument against the size of uncore_env_str[].
-Since RTE_DIM(uncore_env_str) equals 4 and valid indices are 0..3,
-a caller passing env=4 bypasses the guard and causes an out-of-bounds
-read of uncore_env_str[4] at two sites within the same block.
+The qpairs vdev argument parsed via atoi() is stored in an
+unsigned int. A negative input such as "-1" wraps to UINT_MAX,
+passes the existing "< 1" check, and reaches
+rte_pmd_init_internals() as nb_queues. This causes excessive
+socket and memory allocation in the per-queue loop.
 
-Fix by replacing '<=' with '<', consistent with the correct pattern
-already used in rte_power_uncore_init() in the same file.
+Add an upper bound check against RTE_MAX_QUEUES_PER_PORT.
 
 Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Fixes: ac1edcb6621a ("power: refactor uncore power management API")
-Cc: stable@dpdk.org
+Fixes: ccd37d341e8d ("net/af_packet: remove queue number limitation")
 
 Signed-off-by: Denis Sergeev <denserg.edu@gmail.com>
 ---
- lib/power/rte_power_uncore.c | 2 +-
+ drivers/net/af_packet/rte_eth_af_packet.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/power/rte_power_uncore.c b/lib/power/rte_power_uncore.c
-index 25bdb113c5..b50e09a2ad 100644
---- a/lib/power/rte_power_uncore.c
-+++ b/lib/power/rte_power_uncore.c
-@@ -67,7 +67,7 @@ rte_power_set_uncore_env(enum rte_uncore_power_mgmt_env env)
- 		 */
- 		env = RTE_UNCORE_PM_ENV_INTEL_UNCORE;
- 
--	if (env <= RTE_DIM(uncore_env_str)) {
-+	if (env < RTE_DIM(uncore_env_str)) {
- 		RTE_TAILQ_FOREACH(ops, &uncore_ops_list, next)
- 			if (strncmp(ops->name, uncore_env_str[env],
- 				RTE_POWER_UNCORE_DRIVER_NAMESZ) == 0) {
+diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+index 0ee94e71ea..ebf015dd9a 100644
+--- a/drivers/net/af_packet/rte_eth_af_packet.c
++++ b/drivers/net/af_packet/rte_eth_af_packet.c
+@@ -1169,7 +1169,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 		pair = &kvlist->pairs[k_idx];
+ 		if (strstr(pair->key, ETH_AF_PACKET_NUM_Q_ARG) != NULL) {
+ 			qpairs = atoi(pair->value);
+-			if (qpairs < 1) {
++			if (qpairs < 1 || qpairs > RTE_MAX_QUEUES_PER_PORT) {
+ 				PMD_LOG(ERR,
+ 					"%s: invalid qpairs value",
+ 				        name);
 -- 
 2.50.1
 
