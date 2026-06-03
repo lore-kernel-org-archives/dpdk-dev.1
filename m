@@ -2,75 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 486C3CD6E55
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55813CD6E57
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:45:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 434B8402C4;
-	Wed,  3 Jun 2026 20:45:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 19CB440667;
+	Wed,  3 Jun 2026 20:45:13 +0200 (CEST)
 Received: from fhigh-b3-smtp.messagingengine.com
  (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
- by mails.dpdk.org (Postfix) with ESMTP id 661DF402BC
- for <dev@dpdk.org>; Wed,  3 Jun 2026 20:45:09 +0200 (CEST)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 5E40E7A0171;
- Wed,  3 Jun 2026 14:45:08 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id A3FCC4065E
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 20:45:11 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id E4E737A00BD;
+ Wed,  3 Jun 2026 14:45:10 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-07.internal (MEProxy); Wed, 03 Jun 2026 14:45:08 -0400
+ by phl-compute-04.internal (MEProxy); Wed, 03 Jun 2026 14:45:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm1; t=1780512308; x=
- 1780598708; bh=bELBc5Wi56flnX+Rc42hrDA5mNATNCBzqrzWO7SScnI=; b=v
- Dp9b5ZScZY6B7OWoM/HrzmyNSYoNSIA8kYMQG1Dph6wldtJlslYC3eqTzPbalZIk
- S5ijFR6aTYw59YVqWExXFWpxUid15PCe3hn2YEXLpkNDQNGm3lEz/+4wGzMEI+Vn
- hWblxxEq5l9tezp+p2FbctNUm361ricfT3c+XfZ0gC++UmDyv8gLGKFJzOtWB8+Z
- fkbjw2qwOvXnkqR46dgSgPOkZurIYOOvM2bLruyCjUVSxpW88FqQhqNiizKp2F3Q
- F5gKmwZqgmHpBoWSJMS5pwO23Lv7CEF70c4/64BIT6pUR1684rKDF6pi9RKw6T61
- viljlGJBf9Wphw5n2MkjA==
+ :reply-to:subject:subject:to:to; s=fm1; t=1780512310; x=
+ 1780598710; bh=vz/UcaUrpx+JTb+FJ3MoNOuCihSYTz37cH4yf5k+RRk=; b=W
+ 3uKFNZfnjaZb6ixOgcKOKTPA25BvTan0haWHKCPmZQMDiU2mJdpsLna+cy2CL9to
+ iklbaOA1fAXNf/lV4GWzFnsK2FT+3mxwKvhV+rQpsIIm55wuTXB9PlUdOj0I56XO
+ 1M4u0AFLelPeScxwUW3JfYoYTk1YELSoQXPFARykvxkV/dytmHdUVtZV4pTU+ga8
+ uFwR5l7PfcxDnZKX7Bu0KbzH8/o3UdY+9PUGzcknMA4RxOkCzfh6NLucYpkVrMVT
+ hLrkXKZm7p4WG5UL2QqSFh0cmpplXkA+Bl97BBeHoho0vaWlkzZy7H+AMQxS66GR
+ Vw73QA7CSjBOFaKx/v5iQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm1; t=1780512308; x=1780598708; bh=b
- ELBc5Wi56flnX+Rc42hrDA5mNATNCBzqrzWO7SScnI=; b=CgWZLrUCnndvhS+9k
- RJDDfLgOuvIdDGW3X4qOkT3G58to+4Dhyh9VkXDN766V/uxgfTb1eLQ7rnFRcs72
- i98DO+gek8mJZQ10fIOte0sppAkJIdEe4E5KEflILHDH9Uhl5J/Ljnt/RJEtZ5VH
- N96JpxVadagfOIIZ4LyZk+xmyxyvLOKYIL0TbgIj9Z/+6YI8iyKtTC6o1Rp2YjEu
- uBXFIjG3N9Tsv84TgLP53WVL8UTWZJiLs4VXpFqsSwjEgGkBG24GKT8Onxg8gg8k
- m//4SDF7NZDkKd5VfhsKfDySPmRYYdT9YOxen+VhAtxqhHZdTTmMKkEOD/7UafJi
- +HAdQ==
-X-ME-Sender: <xms:M3Ygauc72XfmDJc2VZHIp4JL8kUQSE1fkJXl6hugNfWdFThWYvfpUg>
- <xme:M3Ygakj47n8Cwb-yiHWVwuREGBxY4H-tHH8ilsEc0cs8h2DhqqrXAcCDD8yfTstis
- j6mMDhReXT_FUuMUuqlXt9NFVCsFvgzcdSbXVa4IIymDbc-_uLY>
-X-ME-Received: <xmr:M3YgaiRwL43kYljsfCQjTR24azS84QuFLrs5vHkGVbhaekmoWhVQu91Qs4g2wOokCRCDxfAMLlPL1wYZG_wdRboR_WMVBEM>
+ :x-me-sender:x-sasl-enc; s=fm1; t=1780512310; x=1780598710; bh=v
+ z/UcaUrpx+JTb+FJ3MoNOuCihSYTz37cH4yf5k+RRk=; b=avx35eZUTOtZ5rVdv
+ 7vctkEGJ+2SNa0ogkf4gj7QA0wGcrTFbxpSyftJnBQW5jQbXdKWKAeZHYp18Mw0s
+ YAMCwDGXJ84CeNNGshtbTQJoCeu2mU1cmJ45Z9PCfzllBpQwFHQslvvmYk9DHW2t
+ Gp4DMzu6Dlsvv1PzEG5nO4jclMIoJ3y+Rez2lC1ceDe5jdwBzWJlkycN25jPgi1o
+ S+3nrT3CINFkkhfXKd0ks+NwJ3PeGEpXpmrjTlgYbATMmNVTODi4SttsTQUz53GF
+ 7KfkBznucFMauvUym032/LC5Q72G+h53K7ad1wl+BKanUewf4rAZHJHML6tKL8yQ
+ E0+/g==
+X-ME-Sender: <xms:NnYgatV1oZ4d71HuAONLWtutpkztFqL16qZbT8vP4tmzvBgf6SGk4w>
+ <xme:NnYgah51kI7LYTn1szqN398vUtJJP3d48k0Fngar6YB-JHzApftixZ0KscxBsksV9
+ Uc6mV8LHoLPaYjGhg6E_B6M279L1aKUCtvWNcEV1mA1pQdieWLXmQ>
+X-ME-Received: <xmr:NnYgaoiE91MF4NOnk4yAo43-FCzGfINDyDDqwNm3GirB-ky9XJ9EoEhhRTxPRF-DoUrIWmw2XBCi6XkfvAmvoABP2OV9S0w>
 X-ME-Proxy-Cause: dmFkZTG3Cc37AEZv9gWLWp72Aes+17oTj2cMnam3xuZtyjtHoUerOWgaegF+YA5caRZxlN
  +CpkgXX/LN++ffhiXBWkGJbYR1ThI8q93cgy6Xrsdc2JOur3G+hwonLVgkZqZlxQfN01Q0
  HpCgGzFYmnGyurvfbaioIV5f6QOcRha0Y8fP0mOSR//IE6g+GyuDMiZMJK5pvJgOcqQ2v5
  RHmzDuOrWL/PsjNYI3fdzrpjl2tywyPsPRvhLE/JMnVlC+JivaixKJ8G6by84edoJi/2rf
- yBve3yBsXPqOXBzqLSIl3TiGCTdVziTKrhNFOc/ZaL0dbux7VBMxS4tmA78RDPom42yZPi
- rkfU46JZbnLvnyi0WTKBt9WJWy9x3O7rgE/MjuRPnuE7cCkBpoQ2cJUL01nYBtW/s8WUQn
- LY/yJM9sy5r31CHi2Ep3Tinwbd2Dw4CxT6WJvQh1rN8CyGNUOnPZAEQq5rM9z5fynQ/Okd
- FAu9kclNDiSKXxy6Qg+xSMdPZsyNIbbqcgU7IIn69IZO6nEIouPXoSAWbMf/iZSu/uMZWF
- R+KB2ZIWsW3nm72lmNayeTXo8XQWiWMh65EXWM4SRKF+LV9J3H1y4NsGJotzqTdPdekoNV
- qbEuHIQ51o9vSwbKRYw4KAn0eMShJaNYn60Lm5gtvkenjUvGJqh8u9qSc7ug
-X-ME-Proxy: <xmx:M3Ygaty2ti2rhKaNCd7T18RxlgpakpqFOeLV2XmEUKf7CZOr_9qPuA>
- <xmx:M3Ygatd5Li7rzsgjH3P7pDfRVXTUlkUpE-aVSgd20trGw02Y545x-A>
- <xmx:M3YgapJTT1fll66jLHiUXeMYw403xUScmD6CK_RnwSRt0sFqRkVOdw>
- <xmx:M3YgauE-OgIHRMxKDcsgw_S4cKnbh8pZgIOfxvM2DGn-WntSC7KKgA>
- <xmx:NHYgap_sVv3cr4MxOEDfJ5FX_9E8jYLJXVobjxtFz5P8JEFKwQFsThQF>
+ yBve3yBsXPqOXBzqLSIl3TiGCTdVziTKrhNFOc/ZaL0dbux7VBMxS4tmA78RDPom42yZS2
+ k80VXpXIewS1ipf9UDX1AQE/iaxzJmB0Z8rvC5xXCr1LsYLIwaoSGp71pfTDF77R4StoTJ
+ SPXBVFJ3LWDhK28vP1wVKM9DirFJt8FlnCyVpX9ITvmjexzjK6ty/JNTbAp1UXbxHB7SWS
+ ExMokfVrMM0tS0DtVziX8Oq6xyp6edcVbhdS2tzAsOI9RNLQM8n4FTmcvZAOb+bAUIDVFb
+ uHK1EzlAX4DlFuDdPJgTh9NIcFijD2fBPi+LVJ8beCycf4IvpWfLSKEnkkngEb7gSaOCNg
+ TzLQxcawNYIQeWXiVxTO1yYScBuujtVxri8tJLY4TyDZfdtojR/Ppr5oGrVA
+X-ME-Proxy: <xmx:NnYgaoeVp_BMu7mhpWxunlpakykyPn2TyMX-uI5LtITZ2JhGlz6q7g>
+ <xmx:NnYgatf8oybTdBhAmRLP4US9NsQ2dfoZPWQIVPLuxiX2Yt038lpqGQ>
+ <xmx:NnYgai9V-jkb8UKejLFw-3r5Jc_7V-8Fb5Rx7flwiKiohwtF-APEfw>
+ <xmx:NnYgapn600tfUkS4Olb2MloC4_UvLxixAw2GRBHTc22WXEQ-mG0MGg>
+ <xmx:NnYgavwOSOooielxD5uqqhxWstbAqk2f-aWKvCNXVUks2UfracXeZ2NR>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jun 2026 14:45:07 -0400 (EDT)
+ 3 Jun 2026 14:45:09 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v7 00/10] selective Rx
-Date: Wed,  3 Jun 2026 20:23:23 +0200
-Message-ID: <20260603184503.652030-1-thomas@monjalon.net>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Aman Singh <aman.deep.singh@intel.com>
+Subject: [PATCH v7 01/10] app/testpmd: print Rx split capabilities
+Date: Wed,  3 Jun 2026 20:23:24 +0200
+Message-ID: <20260603184503.652030-2-thomas@monjalon.net>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260202160903.254621-1-getelson@nvidia.com>
+In-Reply-To: <20260603184503.652030-1-thomas@monjalon.net>
 References: <20260202160903.254621-1-getelson@nvidia.com>
+ <20260603184503.652030-1-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -86,76 +88,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a new feature in ethdev with tests and mlx5 implementation.
-Selective Rx allows to receive partial data,
-saving some hardware bandwidth.
+The capabilities from rte_eth_rxseg_capa are added
+to the command "show port info".
 
-Note 1: mlx5 support patch is not correctly indented
-to make review easier. An indent patch follows to be squashed.
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+ app/test-pmd/config.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Note 2: DTS patch is an attempt to test the feature on day 1,
-it is not mandatory if it is blocking the merge.
-
-v2: rework after Gregory
-v3: fix bugs found with AI by Stephen
-v4: fix packet type in DTS test
-v5: fix mlx5 Rx to handle discarding first segment
-v6: fix reindent patch
-v7: fix mlx5 CQE error handling + outdated mcqe + redundant assignment
-
-
-Gregory Etelson (4):
-  ethdev: introduce selective Rx
-  app/testpmd: support selective Rx
-  common/mlx5: add null MR functions
-  net/mlx5: support selective Rx
-
-Thomas Monjalon (6):
-  app/testpmd: print Rx split capabilities
-  net/mlx5: fix Rx split segment counter type
-  net/mlx5: reindent previous changes
-  common/mlx5: remove callbacks for MR registration
-  dts: fix topology capability comparison
-  dts: add selective Rx tests
-
- app/test-pmd/config.c                         |  17 ++
- app/test-pmd/testpmd.c                        |  71 ++++-
- devtools/libabigail.abignore                  |   7 +
- doc/guides/nics/features.rst                  |  14 +
- doc/guides/nics/features/default.ini          |   1 +
- doc/guides/nics/features/mlx5.ini             |   1 +
- doc/guides/nics/mlx5.rst                      |  86 ++++--
- doc/guides/rel_notes/release_26_07.rst        |  11 +
- doc/guides/testpmd_app_ug/run_app.rst         |  20 ++
- drivers/common/mlx5/linux/mlx5_common_verbs.c |  53 ++--
- drivers/common/mlx5/mlx5_common.c             |   6 +-
- drivers/common/mlx5/mlx5_common_mr.c          |  37 ++-
- drivers/common/mlx5/mlx5_common_mr.h          |  29 +-
- drivers/common/mlx5/windows/mlx5_common_os.c  |  31 ++-
- drivers/compress/mlx5/mlx5_compress.c         |   4 +-
- drivers/crypto/mlx5/mlx5_crypto.h             |   2 -
- drivers/crypto/mlx5/mlx5_crypto_gcm.c         |   6 +-
- drivers/net/mlx5/mlx5.c                       |   7 +
- drivers/net/mlx5/mlx5.h                       |   4 +-
- drivers/net/mlx5/mlx5_ethdev.c                |  25 ++
- drivers/net/mlx5/mlx5_flow_aso.c              |  21 +-
- drivers/net/mlx5/mlx5_flow_hw.c               |  11 +-
- drivers/net/mlx5/mlx5_flow_quota.c            |   6 +-
- drivers/net/mlx5/mlx5_hws_cnt.c               |  19 +-
- drivers/net/mlx5/mlx5_rx.c                    | 187 ++++++++-----
- drivers/net/mlx5/mlx5_rx.h                    |   5 +-
- drivers/net/mlx5/mlx5_rxq.c                   |  75 +++--
- drivers/net/mlx5/mlx5_trigger.c               |  64 ++++-
- dts/api/capabilities.py                       |   2 +
- dts/api/testpmd/__init__.py                   |  17 ++
- dts/api/testpmd/types.py                      |   6 +
- dts/framework/testbed_model/capability.py     |  10 +-
- dts/tests/TestSuite_rx_split.py               | 262 ++++++++++++++++++
- lib/ethdev/rte_ethdev.c                       |  24 +-
- lib/ethdev/rte_ethdev.h                       |  14 +-
- 35 files changed, 881 insertions(+), 274 deletions(-)
- create mode 100644 dts/tests/TestSuite_rx_split.py
-
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index c950793aaf..55d1c6d696 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -790,6 +790,12 @@ rss_offload_types_display(uint64_t offload_types, uint16_t char_num_per_line)
+ 	printf("\n");
+ }
+ 
++static void
++print_bool_capa(const char *label, int value)
++{
++	printf("%s: %s\n", label, value ? "supported" : "not supported");
++}
++
+ void
+ port_infos_display(portid_t port_id)
+ {
+@@ -911,6 +917,16 @@ port_infos_display(portid_t port_id)
+ 		dev_info.max_rx_pktlen);
+ 	printf("Maximum configurable size of LRO aggregated packet: %u\n",
+ 		dev_info.max_lro_pkt_size);
++
++	printf("Rx split:\n");
++	printf("\tMax segments: %hu\n", dev_info.rx_seg_capa.max_nseg);
++	if (dev_info.rx_seg_capa.max_nseg > 0) {
++		print_bool_capa("\tMulti-pool", dev_info.rx_seg_capa.multi_pools);
++		print_bool_capa("\tBuffer offset", dev_info.rx_seg_capa.offset_allowed);
++		printf("\tOffset alignment: %u\n",
++				RTE_BIT32(dev_info.rx_seg_capa.offset_align_log2));
++	}
++
+ 	if (dev_info.max_vfs)
+ 		printf("Maximum number of VFs: %u\n", dev_info.max_vfs);
+ 	if (dev_info.max_vmdq_pools)
 -- 
 2.54.0
 
