@@ -2,49 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A55A4CD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 02:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C97CD6E5D
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 02:32:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E8D140E1F;
-	Wed,  3 Jun 2026 04:22:19 +0200 (CEST)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id F297340A6B
- for <dev@dpdk.org>; Wed,  3 Jun 2026 04:22:05 +0200 (CEST)
-Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowACHJ9C_jx9qM398AA--.10425S17;
- Wed, 03 Jun 2026 10:21:56 +0800 (CST)
-From: liujie5@linkdatatechnology.com
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v7 15/20] common/sxe2: add shared SFP module definitions
-Date: Wed,  3 Jun 2026 10:21:45 +0800
-Message-ID: <20260603022150.1140722-16-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260603022150.1140722-1-liujie5@linkdatatechnology.com>
-References: <20260602155240.1002602-21-liujie5@linkdatatechnology.com>
- <20260603022150.1140722-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 79D5D402DD;
+	Wed,  3 Jun 2026 04:32:13 +0200 (CEST)
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com
+ [74.125.82.175]) by mails.dpdk.org (Postfix) with ESMTP id ABDDB402D3
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 04:32:11 +0200 (CEST)
+Received: by mail-dy1-f175.google.com with SMTP id
+ 5a478bee46e88-304e6c6464dso2124416eec.1
+ for <dev@dpdk.org>; Tue, 02 Jun 2026 19:32:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780453931;
+ x=1781058731; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=2QPultiq0CAB9zru9vejO59cElG9gWUqVTsy4bccby0=;
+ b=SKS6Vq0Iypv0h8XQ+uP/qjuNsddnR56NOUHsLfpJw2/bN20NW51m7T4V8oe9cS/GKR
+ QaYl5n4lX/Cbeq1zTWzPpE9Ibk2agoClA451kYhCR551UPqBSva7pjacBS+7pO/c0dcu
+ ZCxz3GH8Z1rqLXT6y61kDaWsFEgreaLM3CQiWikbqQlkzYUBC0GrFyKEP9w0CL+JhLyH
+ /L/Xl4ow2XLh+rSp/o5bJ7CCIzq1zrat2B6ai9eaL3W4O9ar42IwRHdO/aHcZ4zBwJFc
+ JyGPwTBcNRuGwqfVx+1XXLRIjSTdcjVo8xXXUhc/0ojD5AvVOeHWqRp5FdVPtSj5cOB2
+ VIIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780453931; x=1781058731;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=2QPultiq0CAB9zru9vejO59cElG9gWUqVTsy4bccby0=;
+ b=EcQdBe5+NEtTzfAuUAJ6L6badPzlGP8vC1leHnMzd78OgDll5jDnGH8gQg3c/VAcR3
+ +PgXGPUdbY723anmCxgIxR1RouZVX7PpkAvFBs/xtgROmY5saGmJlibt7lLxHwMA9y14
+ xdGPPvV0kQNYEjpF+pvqFtgOase21kPAGZU84iZysoLgFEp7Ig8ctX+xu7UiVeTMYzf2
+ fRZIEWvIxEqR5+BgFyVZzkGhQPb7eN9vvqKsmkzQXEKJt4c/9MCIcQ6mw2r7sJYQVy6j
+ vRjJbbA8r7ifJc/E3eBwPoqWM16s0GxxwEwcMjnwsZYsD1tvo0e4n+conzRE30ZVlOwk
+ iFtQ==
+X-Gm-Message-State: AOJu0YwetmLzXgc3A8ae3IjVGSnWVEs9T2RZ+x+u5rbRBUNqMKfnJ5Zr
+ tP+eeGnPcxsauFj82uDxgLzyFG+eEnSFGocnUCH5ZZrJPF70qv/abD+em4LwgNtrWdD4nUis97g
+ NCXAd
+X-Gm-Gg: Acq92OG0vTxcP2RpIKPGD+IiiSEL8zwBnQ+l5kHeTJIxPgoRvqflmC/w06seXJgSqMJ
+ 18mANq+PzYK8fBHSwaCLGUfbb5PI3HLvsXMxSrnOCbO0wS72bpAjXaB+0m5Gsa0cGJfcJMJ9NBv
+ EDEcPFJ1+8vbPSdpNeQitADhKnRAX9byTDyNIjzAKwVoaFrb2QKkyhTFegDroFDv5NvKEZHof+y
+ xT9IHt56U1vk+fAitzFoDRC9uNtWcVePIRYiVskVLPpz2g5hCUOv7vbgXDGlGme/YwPiDrV2hw4
+ d74n4dYi/Ltkd77OzVtlFN+85x0MKYP21c/mCeBKJQldB8aUQyDFsWOAPeWRN5QIC8yJxkiNnEm
+ 96FD+MDZOmha+oq+oAemZCGP+Um/qH88bpLnD0+mf2DQUQQHx3OLnfYkZaX3V8mSldiKSBSAno2
+ GkXcqOXd+VQO7pwsrbBcVtMKaIYOkR0FAAMAV23RYzWjLv31xkWoMX02pN7XuQy3s+3TbCkKdx
+X-Received: by 2002:a05:7300:ca8:b0:304:dfae:68a with SMTP id
+ 5a478bee46e88-3074fbd4663mr761219eec.28.1780453930596; 
+ Tue, 02 Jun 2026 19:32:10 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3074db85e10sm1182482eec.7.2026.06.02.19.32.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 02 Jun 2026 19:32:09 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH] doc: add deprecation notice about upcoming change to ethdev
+ API
+Date: Tue,  2 Jun 2026 19:32:07 -0700
+Message-ID: <20260603023207.31974-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowACHJ9C_jx9qM398AA--.10425S17
-X-Coremail-Antispam: 1UD129KBjvJXoWxWry7Xr1fArW8Cw43Aw45trb_yoWrWw4rpr
- 1DJwn8Xa97Kr1ag343tF13trnxCFsYyw1UCrs3W3yFkF1kJw18CF18Cw42qa1kKrsrXFs3
- uayaqry3Ka48ZrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUBm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
- z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr
- 1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
- JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
- IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
- M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l42
- xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
- GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI4
- 8JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
- MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I
- 8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYGYpUUUUU
-X-Originating-IP: [118.112.177.181]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,151 +78,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jie Liu <liujie5@linkdatatechnology.com>
+Inform users that rte_eth_dev_get_name_by_port() will add a size
+parameter in next release.
 
-This patch adds a new shared header file 'sxe2_msg.h' which
-contains definitions for SFP/SFP+ modules. This file is shared across
-Firmware, Kernel driver, and DPDK PMD to ensure consistent protocol
-handling.
-
-The header includes:
-- SFP EEPROM memory map offsets.
-- Module type encoding definitions.
-
-By using this shared header, the PMD can correctly identify module
-capabilities and report diagnostic information in a way that is
-consistent with the underlying firmware logic.
-
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/common/sxe2/sxe2_msg.h | 118 +++++++++++++++++++++++++++++++++
- 1 file changed, 118 insertions(+)
- create mode 100644 drivers/common/sxe2/sxe2_msg.h
+ doc/guides/rel_notes/deprecation.rst | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/common/sxe2/sxe2_msg.h b/drivers/common/sxe2/sxe2_msg.h
-new file mode 100644
-index 0000000000..f08944f7c9
---- /dev/null
-+++ b/drivers/common/sxe2/sxe2_msg.h
-@@ -0,0 +1,118 @@
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index 17f90a6352..d390a1640a 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -158,3 +158,7 @@ Deprecation Notices
+ * net/iavf: The dynamic mbuf field used to detect LLDP packets on the
+   transmit path in the iavf PMD will be removed in a future release.
+   After removal, only packet type-based detection will be supported.
 +
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_MSG_H__
-+#define __SXE2_MSG_H__
-+
-+enum sfp_type_identifier {
-+	SXE2_SFP_TYPE_UNKNOWN       = 0x00,
-+	SXE2_SFP_TYPE_SFP          = 0x03,
-+
-+	SXE2_SFP_TYPE_QSFP_PLUS    = 0x0D,
-+	SXE2_SFP_TYPE_QSFP28       = 0x11,
-+
-+	SXE2_SFP_TYPE_MAX          = 0xFF,
-+};
-+
-+#ifndef SFP_DEFINE
-+#define SFP_DEFINE
-+
-+#define SXE2_SFP_EEP_WR            0x1
-+#define SXE2_SFP_EEP_QSFP          0x1
-+
-+enum sfp_bus_addr {
-+	SXE2_SFP_EEP_I2C_ADDR0 = 0xA0,
-+	SXE2_SFP_EEP_I2C_ADDR1 = 0xA2,
-+	SXE2_SFP_EEP_I2C_ADDR_NR = 0xFFFF,
-+};
-+
-+struct sxe2_sfp_req {
-+	uint8_t is_wr;
-+	uint8_t is_qsfp;
-+	uint16_t bus_addr;
-+	uint16_t page_cnt;
-+	uint16_t offset;
-+	uint16_t data_len;
-+	uint16_t rvd;
-+	uint8_t data[];
-+};
-+
-+struct sxe2_sfp_resp {
-+	uint8_t is_wr;
-+	uint8_t is_qsfp;
-+	uint16_t data_len;
-+	uint8_t data[];
-+};
-+
-+enum sfp_page_cnt {
-+	SXE2_SFP_EEP_PAGE_CNT0     = 0,
-+	SXE2_SFP_EEP_PAGE_CNT1,
-+	SXE2_SFP_EEP_PAGE_CNT2,
-+	SXE2_SFP_EEP_PAGE_CNT3,
-+	SXE2_SFP_EEP_PAGE_CNT20    = 20,
-+	SXE2_SFP_EEP_PAGE_CNT21    = 21,
-+
-+	SXE2_SFP_EEP_PAGE_CNT_NR   = 0xFFFF,
-+};
-+
-+#define SXE2_SFP_E2P_I2C_7BIT_ADDR0             (SXE2_SFP_EEP_I2C_ADDR0 >> 1)
-+#define SXE2_SFP_E2P_I2C_7BIT_ADDR1             (SXE2_SFP_EEP_I2C_ADDR1 >> 1)
-+
-+#define SXE2_QSFP_PAGE_OFST_START  128
-+#define SXE2_SFP_EEP_OFST_MAX      255
-+#define SXE2_SFP_EEP_LEN_MAX       256
-+#endif
-+
-+#ifndef FW_STATE_DEFINE
-+#define FW_STATE_DEFINE
-+
-+#define SXE2_FW_STATUS_MAIN_SHIF       (16)
-+#define SXE2_FW_STATUS_MAIN_MASK       (0xFF0000)
-+#define SXE2_FW_STATUS_SUB_MASK        (0xFFFF)
-+
-+enum Sxe2FwStateMain {
-+	SXE2_FW_STATE_MAIN_UNDEFINED       = 0x00,
-+	SXE2_FW_STATE_MAIN_INIT            = 0x10000,
-+	SXE2_FW_STATE_MAIN_RUN             = 0x20000,
-+	SXE2_FW_STATE_MAIN_ABNOMAL         = 0x30000,
-+};
-+
-+enum Sxe2FwState {
-+	SXE2_FW_START_STATE_UNDEFINED = SXE2_FW_STATE_MAIN_UNDEFINED,
-+	SXE2_FW_START_STATE_INIT_BASE = (SXE2_FW_STATE_MAIN_INIT + 0x1),
-+	SXE2_FW_START_STATE_SCAN_DEVICE = (SXE2_FW_STATE_MAIN_INIT + 0x20),
-+	SXE2_FW_START_STATE_FINISHED = (SXE2_FW_STATE_MAIN_RUN + 0x0),
-+	SXE2_FW_START_STATE_UPGRADE = (SXE2_FW_STATE_MAIN_RUN + 0x1),
-+	SXE2_FW_START_STATE_SYNC = (SXE2_FW_STATE_MAIN_RUN + 0x2),
-+	SXE2_FW_RUNNING_STATE_ABNOMAL = (SXE2_FW_STATE_MAIN_ABNOMAL + 0x1),
-+	SXE2_FW_RUNNING_STATE_ABNOMAL_CORE1 = (SXE2_FW_STATE_MAIN_ABNOMAL + 0x2),
-+	SXE2_FW_RUNNING_STATE_ABNOMAL_HEART = (SXE2_FW_STATE_MAIN_ABNOMAL + 0x3),
-+	SXE2_FW_START_STATE_MASK = (SXE2_FW_STATUS_MAIN_MASK | SXE2_FW_STATUS_SUB_MASK),
-+};
-+#endif
-+
-+#ifndef LED_DEFINE
-+#define LED_DEFINE
-+
-+enum sxe2_led_mode {
-+	SXE2_IDENTIFY_LED_BLINK_ON   = 0,
-+	SXE2_IDENTIFY_LED_BLINK_OFF,
-+	SXE2_IDENTIFY_LED_ON,
-+	SXE2_IDENTIFY_LED_OFF,
-+	SXE2_IDENTIFY_LED_RESET,
-+};
-+
-+
-+typedef struct sxe2_led_ctrl {
-+	uint32_t mode;
-+	uint32_t duration;
-+} sxe2_led_ctrl_s;
-+
-+typedef struct sxe2_led_ctrl_resp {
-+	uint32_t ack;
-+} sxe2_led_ctrl_resp_s;
-+#endif
-+
-+#endif /* __SXE2_MSG_H__ */
++* ethdev: Starting in 26.11, the function ``rte_eth_dev_get_name_by_port()``
++  will take a size parameter as well as the string buffer.
++  This will detect and prevent accidental overwriting of caller provided buffer.
 -- 
-2.52.0
+2.53.0
 
