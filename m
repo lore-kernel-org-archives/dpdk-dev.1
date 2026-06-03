@@ -2,86 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AAFCD6E57
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 15:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EDECD6E57
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 15:51:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 424B2402CC;
-	Wed,  3 Jun 2026 17:44:35 +0200 (CEST)
-Received: from fhigh-b5-smtp.messagingengine.com
- (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
- by mails.dpdk.org (Postfix) with ESMTP id 0EE08402BC
- for <dev@dpdk.org>; Wed,  3 Jun 2026 17:44:33 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.stl.internal (Postfix) with ESMTP id E3A807A0081;
- Wed,  3 Jun 2026 11:44:30 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Wed, 03 Jun 2026 11:44:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780501470;
- x=1780587870; bh=ZMuxXTygW+ty9gln+qrjqJgLcqeaVgXX+pigQ3iVM6A=; b=
- kjE50iwrLd47rHE5kUdtj2g7ppNyIZUOPJvqXZFoKF+qmncFnpc/woDGgvPGUphg
- 7ElWMz55egBbWAL36cQpa0tsoDwD10zuR1csQh3TJe1hQdHIdaqMPZVa7EPgG7sG
- badQUNVpMTC6KP5uVrOkr8vXLrrg9arw9idWDiglRHXxlERLVSPn0aE89sCuHZ43
- xNzWlqYcTojqp0HeIKXTFFJKhwnFPZC0W6ziwiq08aS01OCoGmvWvVC3zby38bMv
- Scg/QQiEXPC1j0fw20DeeUHyqzMJ2WYnLLt2ljxjlRvmsfo0bfvJK5VVAk56J8FD
- EXzXgoEAzUK/ixZHG9o8LA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780501470; x=
- 1780587870; bh=ZMuxXTygW+ty9gln+qrjqJgLcqeaVgXX+pigQ3iVM6A=; b=P
- 6M9+YR3MRMnYJd5IMu38aOusx6suJSPX97QEIOeFnscglsEvm+qeS33Ar6D/xwlr
- d2GB7T1UG4q7/TtTXjlTl8OxGAj2ss2oHBKjpPAjO/Yt2PDTkeAB+DW/q7t1sYka
- joUCUZFyCRKVFDXxGEM8Q4cggTe9Gg7M7KJCZa9+NZcw5lmRU//r4FLWkk8CLB0t
- 4k6SLAvkgcFl4Oqto4CCZvl71zrJgrkWdfuCKFobkG1/Du5/ct/OEwAEsNxIszre
- IirhI5eClPg/KjAsKP4qZSJFeHsSTugucGZ3AQOHvmwdYUtdcl7tZTcwhNQOHEiQ
- RfP3s/73gX+41LDx4nQQw==
-X-ME-Sender: <xms:3UsgaozPdCR3Ag3T-3DuIIq-OfMQt9ONTrLxCh7PMpG-8vUGaM4sQg>
- <xme:3UsgaoGRdfLhSLPIwkXAtOP0lF0y5UVPi_QiVJax2oMY3USeORvTPbHBoXuk8yYZ9
- pTw7w9UWKGbqws9OTspLl72RnCm7-ISNr8UMH5vu6aUpVUv2R_12g>
-X-ME-Received: <xmr:3UsgalsTBqbfQjLxfZ6Zu0VmqFzJFI9FDNmP_4JxUG3TVwPNjII2drpi1KaZIYrzg2IYyXO55VCo83EoYmzr06wsdg>
-X-ME-Proxy-Cause: dmFkZTFGrOhtg3t6G6QrQtuPZuXOXXm87TCNlc4wS7MJwR20owfxs9XXBd3KFiRQNnBgj8
- /4iWKGMhLKDaQA3ljKOYgRr8A73/w2FW6Z4f+36qNNkPcQ8kFWpUiNNANg8pu3ilRrpyIh
- epKU6w4uZzuzC7YpEGXohGtASZLmpFZzV5sAqnO2bTrMunuS//j57YgzYCPJcdZ+t0dFSh
- PdKwFnVvQr+ztL2rcZ7T8VOFkeDT8wZxfNUOHEnKBuWZITlwBuwOzJgo/aLvqUMPZULyG5
- ccEsUWegJKKApQx5bkLsdwFSyvp9SW5EjE+oAczPX5Kx2Uf5aBE+rZWqh6TnKLeUB1ZPT+
- Bj+Hgov/vBRUgku0EKz0+VTleomsgdDW4OzbUjHrMR/0FWsluX7UikQfwUXOMuawJRBw/b
- aFptj7/TVLva2KUSksQtwHpics2UDCT6UGs0l6Wd3fr7hoDYuyVAWkaxjLxO5xq4f1mH9t
- 7A74/VlAyT8fzL7XQBR6axSbNi628QoKHF9VcX/UxW2ojA6popTgljflKwzA29ZWDDUnu2
- lAOTrrtaTep2rFySAlAJWbIFe9Gp2cQ85ZlxkiBg15J3iUJtc/zBjr6wnC3MrKajQBqzxx
- pQ3xvX0N0qKjWAu8jTKJ3jm+1kkvptUoYpwJqbwwEhQxgKHFpiUMd7DeG8qA
-X-ME-Proxy: <xmx:3UsgagA9jBqgGn5JyPuByufHZQTQLd3Y2cchkfAiO4urkAz1R46a7A>
- <xmx:3UsgaoCPDs8LwRNkLmLTlxKbBGkUkC_EFqORVbmSJBjHjfQswTFLHg>
- <xmx:3UsgairrHrNbLdYLZ0OiJeSfQhrJiL4KAYjra4Qwr3l0Lwy9N3kwqQ>
- <xmx:3UsgarHqwgsw_XiK65CBFfvOFitQ2P-uiDd-WjVtQoOJROfSr4rw6w>
- <xmx:3ksgaofdbJZOYi4TnRz1RCUIOa07ugUXIesNpRIQ6ktA6LLWJ1puZwvf>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jun 2026 11:44:27 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- David Marchand <david.marchand@redhat.com>, Robin Jarry <rjarry@redhat.com>,
- Jerin Jacob <jerinj@marvell.com>
-Cc: dev@dpdk.org, Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>,
- Sachin Saxena <sachin.saxena@oss.nxp.com>
-Subject: Re: [PATCH v7] mempool: improve cache behaviour and performance
-Date: Wed, 03 Jun 2026 17:44:25 +0200
-Message-ID: <xfJder14R4683NtQsvKG5g@monjalon.net>
-In-Reply-To: <20260601164007.252063-1-mb@smartsharesystems.com>
-References: <20260408141315.904381-1-mb@smartsharesystems.com>
- <20260601164007.252063-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D70C4402CC;
+	Wed,  3 Jun 2026 17:51:27 +0200 (CEST)
+Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
+ by mails.dpdk.org (Postfix) with ESMTP id 2D4B4402BC
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 17:51:26 +0200 (CEST)
+Received: by mail-dl1-f43.google.com with SMTP id
+ a92af1059eb24-137f27712fdso228833c88.0
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 08:51:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780501885;
+ x=1781106685; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=WX7YlaFn/QFT5NE3x26pJoiqDF1EW5bpdvtVmZIn6xY=;
+ b=KAPPtBk5COvUGY1iPu6rRfmcM8rpvdEfXGuf/CMTzt0XicrlHnzrZpqwIdeZIlmLlG
+ zemcMlQxvaaiPOpWHgmdqIlKwrB3we1d3FSGzr4QuQQJ7k7IbM5ui+3dmvSXVCiXNlUC
+ jKajeIU+0FC0sELmBQ6ZtwFw8G76ajW6sPIVzLMF+KLJKSYO7MwdjQXDf8qcNHTIJZoX
+ J8wCgAo4FwFHcnED0PV+2ofgH99HS4Q3mQhav04dtXfRpl4AEP+WczB+9RBIanJGh3WO
+ xWyhmvL6B2dC7SgWqIKh+vgPWjr1pzeoy9OpJtNCT9Eb30/77U4320GsTFIRa8rnJBfo
+ qUiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780501885; x=1781106685;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=WX7YlaFn/QFT5NE3x26pJoiqDF1EW5bpdvtVmZIn6xY=;
+ b=R7N1VI7hgiKTj4LVCtCl5wKiFm2FfGJc0gqdQCOCPz4UyvOdgySeskHGlSot9dqbbf
+ aBP0mNv2uPiPSOCqZpxkHaCmySHduvsnxskUWqvgZJZb0exi4l77fS32NTn/FnGvbc6H
+ VGa47lGWjkoXzEJPOxayvAjm39RgaiVy0PGsDkAsOkyhCJwppjNWeKiYQtdNA+FG1Vkw
+ r4kEu9xlCOYyzwAXGDIovKxi1LI40UQXbQXTZDEyhDHaxoA/MA2DMMHtJU8a1OiDeHhq
+ m/C/DwvKe8BlfVcWluBF2M1v+fKzmY0qcpWgjVrhP6hoOvCMEOi1dk3KTFTEnhbXGNoE
+ vhQA==
+X-Gm-Message-State: AOJu0YxD1bg0F0T718/AQ3qOcDklHSAA59tsCPLcaIzfAS8/0ExqdaUy
+ fBNEaVsgL+zZ8Hq8N2Tx2wxbSXj5pOu14w3PRlbhCTtVROUBF1GKMtIVB6Vb3VaTqwc=
+X-Gm-Gg: Acq92OHBgDtmgzN6lb7NPJ/3lBs8HDEspXExNKaGquCxrFPTv3IZIlZr5ertvlBMGht
+ il5p/YI6mPS2kG6cxSOl8qT76sfPgXVXd8boMY2umk3g1LVJhXnAR1dGQXr/KYZIro0DuShrIYh
+ QrHvGiuCxHSZ29B7B3XYLb8F9np/fs/efIyq4JNBVbv1nogJZbBjeCRlIKEWZsGLN/WKqFguZbX
+ k28e1gGvjSPqx9ir9eAHA/+MqH70aAjjNx0hJcqqZnjBl/KnTbf0ColGZtPuD1N5nwKPuMYR+9B
+ fTdkCMRddPZp+FvXYrTlsirCOswRhTOOqDlJvDZpxUV00C4SdbXxj1nncpY8PlM3id0nyqL9ta6
+ ye2mDWs8AaWMgukSivglSyd0fA2jyyt0CwhBnZysOiTN9Mbysy+sgFK3Xag4iQ7BAduZLQZ5yDk
+ d5gjxWA5pTUpwle6JGXXPkxShN73yAhr1poNNeVQoMtQ/INEWB4j/j1P7F28Pwr/Hxt0H7AECou
+ Wk=
+X-Received: by 2002:a05:7300:a498:b0:2ea:5057:a304 with SMTP id
+ 5a478bee46e88-3074fa653bbmr2021324eec.2.1780501885167; 
+ Wed, 03 Jun 2026 08:51:25 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3074dcad34esm3712407eec.11.2026.06.03.08.51.24
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 03 Jun 2026 08:51:24 -0700 (PDT)
+Date: Wed, 3 Jun 2026 08:27:49 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Denis Sergeev <denserg.edu@gmail.com>
+Cc: dev@dpdk.org, sdl.dpdk@linuxtesting.org
+Subject: Re: [PATCH] net/af_packet: fix qpairs argument upper bound check
+Message-ID: <20260603082651.3fb3e81f@phoenix.local>
+In-Reply-To: <20260603044228.117357-1-denserg.edu@gmail.com>
+References: <20260603044228.117357-1-denserg.edu@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,13 +80,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-01/06/2026 18:40, Morten Br=C3=B8rup:
-> This patch refactors the mempool cache to eliminate some unexpected
-> behaviour and reduce the mempool cache miss rate.
+On Wed,  3 Jun 2026 07:42:18 +0300
+Denis Sergeev <denserg.edu@gmail.com> wrote:
 
-I feel we need more opinions about this behaviour change.
-Bruce was suggesting some user-tuning. What do you think?
-Also the decision may be easier if we have some performance benchmarks.
-Who could help to show some numbers before/after in various cases please?
+> diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+> index 0ee94e71ea..ebf015dd9a 100644
+> --- a/drivers/net/af_packet/rte_eth_af_packet.c
+> +++ b/drivers/net/af_packet/rte_eth_af_packet.c
+> @@ -1169,7 +1169,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+>  		pair = &kvlist->pairs[k_idx];
+>  		if (strstr(pair->key, ETH_AF_PACKET_NUM_Q_ARG) != NULL) {
+>  			qpairs = atoi(pair->value);
+> -			if (qpairs < 1) {
+> +			if (qpairs < 1 || qpairs > RTE_MAX_QUEUES_PER_PORT) {
+>  				PMD_LOG(ERR,
+>  					"%s: invalid qpairs value",
+>  				        name);
+> -- 
 
-
+I would rather see atoi() not used in DPDK, it accepts too much and does not do
+enough validation. Replace with strtoul() instead.
