@@ -2,88 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDB1CD6E57
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 20:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F745CD6E57
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 20:36:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 25476402BA;
-	Wed,  3 Jun 2026 22:35:53 +0200 (CEST)
-Received: from mail-yw1-f227.google.com (mail-yw1-f227.google.com
- [209.85.128.227])
- by mails.dpdk.org (Postfix) with ESMTP id 3FD12402B6
- for <dev@dpdk.org>; Wed,  3 Jun 2026 22:35:51 +0200 (CEST)
-Received: by mail-yw1-f227.google.com with SMTP id
- 00721157ae682-7e0aa486af8so8126977b3.1
- for <dev@dpdk.org>; Wed, 03 Jun 2026 13:35:51 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 39A934065D;
+	Wed,  3 Jun 2026 22:35:58 +0200 (CEST)
+Received: from mail-yw1-f226.google.com (mail-yw1-f226.google.com
+ [209.85.128.226])
+ by mails.dpdk.org (Postfix) with ESMTP id ED9C440649
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 22:35:56 +0200 (CEST)
+Received: by mail-yw1-f226.google.com with SMTP id
+ 00721157ae682-7defee656dcso120747b3.0
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 13:35:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780518950; x=1781123750;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=DD63Y2yuPpoZS9eNuxqs5kO2ijqlAHaEIwjlNwZxFck=;
- b=NmxMYbtvCxwu1AdoagQBJRI53IkwnqysP52ZHMNs5DhOkXgaBj6oLr2h9IPjkbdMWy
- 8bkpkBHVd2EKBFDuObbTTivMxDxNvc1zuI7sh/1kYSY//ytd+hySQ1hg5nJ5WGonR8P9
- jmMK+lBah0rNz1uQnQ/zWQ5ezXyx+D9Thbf67m36kAKi2N/h4jn2CB2Kjcxvl5kum6cU
- Xa39Ofkg4XmE2vRrbXd0jc7Q/CbQw0pwbSE5G7QJ91GlPMc6ISwuIC/5KIB0XWF3pI2m
- Yrs/dK4Io8CroMmump9oGAFME1XzI1mp0DiYGS6fRz7etr4sABccM3wvrVdRsC9uhnSu
- udBg==
-X-Gm-Message-State: AOJu0YyUBL+44l8irp+5NV+KHfk2nsfL+/Gk72ifX7+H0hG/MsJvSS0l
- edE0BWjI+hWl/0pHJnaCnseeLSHEsdfA7iGppPsLpW6LvXGMGhIysJesclfQAZJ+yDNpn05dyiv
- hBedE1w2NfIckIWcSsbD5kxSxgAVdsNu9l8j2uqNeWCcytl8QaEToH8o+LBucZw8M3eyTuZtFvL
- X9MXHnlnRKIQ8ZNziWYvr6RRAH1RBQwyEOFR9stunFEZH35va3G7EA3im+7ai4q5FosX1NCVZYD
- 7gGLeVfEOtr
-X-Gm-Gg: Acq92OEXiz8PG/8bb+8xgbujXAj/voKjIeq1fVocPqsMmhAgm1iRt7+za1bsComw0zD
- liNsGatiEz+Tfh3sMCSOs0VYPUWoFlI+a5iBaTfduNS2cwIB2rvh2Z5AkaXW1eUx3jCbnxx+ngS
- ry9UBlsq9ahoSkj6qwivMoBmhnOfg8LlEuxTRaqR3aTElSXgC/1mwyOY4kSytiu2mF6k2xbBSps
- kFYVGuS7TVlez5RKg+Zv2WGE4vsDDEKG2SzdqEBOC9KjPNuNIkj7rwVTT5+k/u1ge0ESsAN1NTG
- 6C40MhqL0z6asVPc+yE3HLgnAYPNan3OZHa2+WovSCAVzUWJwFVE78ocVWAnXrA40ZZvgmJAKnZ
- AySV34yvrAjW8ac6mOQ4tpZFzLRbH33cYAXcVoLl80GSbcVWTof6hHbSX2NaC+oJsXQwBWDy0U0
- J7d4ZrdU5q3Lxn81Cm3zJSRo8zuZc34J0XXoerAIf6ArwGTLa2IYQfuDyt1flI5YGAkMqOOzjTN
- 30R2SDuU/kR
-X-Received: by 2002:a05:690c:e3ec:b0:7b6:7df9:33f6 with SMTP id
- 00721157ae682-7eb8a7bcfedmr9721257b3.2.1780518950425; 
- Wed, 03 Jun 2026 13:35:50 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1780518956; x=1781123756;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=L6cHM7qIjGHy1PqcMzQ0RrOPS0TSU0mrp4dUhx8H13M=;
+ b=IABBCt2UyCvaI2oq5CwrU+mxS/P9c8r3cEaXWj/YtJ2FHsh4CecdoWMTX0+NHmqG5W
+ L8RspRhwl2JJ/0ynyhXPrGfrbnm6E+M6lqIGvSQB69zFbBgxW52bEos2yDnmf5WN5jFX
+ CrVdJCVREEg+/hY1uS32WmLsUYv+mgityy6x0kdvDsIYoxg+Zs3Go6XkzRm6Z3f2YqrY
+ 6PDmUm/oOmWjgdkZA4Ud3eJ/dZFHym77NBZpPegDd24seEzL5mTdnxQU1uctk0FSiS5M
+ 2W3lakWeC4svHsONJmmLgKushSUE+Qk4uBjOarbktCUzu8//hQ4FE/IjyAOJ8K9iy1zW
+ 26EQ==
+X-Gm-Message-State: AOJu0YwlqqYRzz88r/C6YWWwPP06XLi9OOnbVy47T/OxM9CuHtdpqWdn
+ VJVrJBOiMLQKU9jP0y3OFOQucjV9OsxXpOgQZYrCKhpHSin871J63kOZqdDAD0Cahdy5GJAEgc1
+ yzIcRZEgmQIn8TNaY5Dpe6HdeJKPo+ixKpwuiqIZl4DuTP61gEoPq+q1t3L1y9PNhOMNAwD1oKQ
+ 0X4M47x9ukl81fkmWCKZCBP3AEdHMCcdPHOOKLT7IvBQ+rEpRDHTUOJRyRVWJ4hLpvQPDyXMwGL
+ ZIazVa7rBgK
+X-Gm-Gg: Acq92OGB7nylPkGg3lRNnQPKdSHv70XvISd7bjMX6JtY6BCNBrpT+theaF8zeXsEG1w
+ vGLPVVH7JyHZDGqVpLBD93+Wy3K4Z4V8ExwbQ04/awyqrF22Zh3WuwvzC1M2zM1IaDvzORf+Nte
+ wjazWlqaar+/aGUDPM4wzd6bVRCs50cdAb2rcUt+XFdUiCjak5wzZreOcmIxw3m7RLT7y9M7yVU
+ qEqeMgfunq5kZdzTvsE9FnMiNQ7NB4hdUmHxCpSOzUW+2dQPNjaaYysMMmYhJDLImvUMF3sMYsp
+ 23VNxXPewMXXp0eNQxGrPVVYl0eKE+ZCPi5QRQTuJf+wqt+0yS+Z6/Jp/zValZyR4LH/liVzsYO
+ YtBuzWyVczLYY+emfNDHX5nt3N3VJMIV2ikNY65fX3Suik6eukWfSshgXqUIhLvMc2NXP4eiped
+ e/H7IRPOYPYrWjGV8JRHKm22WI4X/RjWU0OOs0UNX/QXeGrvLdIad/kWDqSyyCrEbaXPJqvv+J5
+ uSZcbXAXA==
+X-Received: by 2002:a05:690c:b02:b0:7db:b027:6166 with SMTP id
+ 00721157ae682-7ea488c0698mr49802987b3.22.1780518956102; 
+ Wed, 03 Jun 2026 13:35:56 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
+ (address-144-49-247-63.dlp.protect.broadcom.com. [144.49.247.63])
  by smtp-relay.gmail.com with ESMTPS id
- 00721157ae682-7ea20eab7acsm2632387b3.2.2026.06.03.13.35.50
+ 00721157ae682-7ea20eab917sm2842277b3.1.2026.06.03.13.35.55
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 03 Jun 2026 13:35:50 -0700 (PDT)
+ Wed, 03 Jun 2026 13:35:56 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qk1-f198.google.com with SMTP id
- af79cd13be357-91565f8c589so233908885a.0
- for <dev@dpdk.org>; Wed, 03 Jun 2026 13:35:50 -0700 (PDT)
+Received: by mail-qk1-f200.google.com with SMTP id
+ af79cd13be357-9157929bf8fso4852185a.0
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 13:35:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1780518950; x=1781123750; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=DD63Y2yuPpoZS9eNuxqs5kO2ijqlAHaEIwjlNwZxFck=;
- b=VQ1KvtGVrn1euYqYPGIbrVXe0YR6hs+ZPAYLPJyaZT8+8wKgaqmbzWVc7OvDeSuUKZ
- LQzuGIQKgtVL+iZRCA4OncuUCLMMbDky2CsbZToY4MxEcwKN5Mn+5s/BWMdf0xnI0i9Y
- V4Z2J+oDaxd0NXAYqTUMggiHWu9/bQDlhU1wI=
-X-Received: by 2002:a05:620a:4690:b0:915:7787:200c with SMTP id
- af79cd13be357-9159af2f994mr166594485a.23.1780518949644; 
- Wed, 03 Jun 2026 13:35:49 -0700 (PDT)
-X-Received: by 2002:a05:620a:4690:b0:915:7787:200c with SMTP id
- af79cd13be357-9159af2f994mr166578085a.23.1780518947739; 
- Wed, 03 Jun 2026 13:35:47 -0700 (PDT)
+ d=broadcom.com; s=google; t=1780518955; x=1781123755; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=L6cHM7qIjGHy1PqcMzQ0RrOPS0TSU0mrp4dUhx8H13M=;
+ b=FP7wRdwa0m254ypW8MMdYD1N+afMm3e03Zjn+grK+7OF7ovbOawRsZYibOY9UV3rLm
+ vRc6I2oEvJ6/SuLkA+JM+eqYQ7UHGZgzxzhngQTjoO5qFUOd3US4fhel7/bZ48fcAhTr
+ Z62+DYkWTw/DP+gSGD0LgetEJ9jp0vZL0hyFM=
+X-Received: by 2002:a05:620a:4621:b0:912:671b:d09b with SMTP id
+ af79cd13be357-9158a6df52dmr850351485a.24.1780518954011; 
+ Wed, 03 Jun 2026 13:35:54 -0700 (PDT)
+X-Received: by 2002:a05:620a:4621:b0:912:671b:d09b with SMTP id
+ af79cd13be357-9158a6df52dmr850346485a.24.1780518953367; 
+ Wed, 03 Jun 2026 13:35:53 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-9158a22dbbesm340925085a.13.2026.06.03.13.35.46
+ af79cd13be357-9158a22dbbesm340925085a.13.2026.06.03.13.35.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 03 Jun 2026 13:35:47 -0700 (PDT)
+ Wed, 03 Jun 2026 13:35:52 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH 0/4] net/bnxt: ULP stats timer and PTP timestamping
- improvements
-Date: Wed,  3 Jun 2026 14:37:34 -0600
-Message-ID: <20260603203738.2084478-1-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH 1/4] net/bnxt: move ulp stats timer thread to dedicated cpu
+Date: Wed,  3 Jun 2026 14:37:35 -0600
+Message-ID: <20260603203738.2084478-2-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260603203738.2084478-1-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260603203738.2084478-1-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
@@ -102,34 +104,119 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 
-This series improves PTP timestamping support and the ULP stats timer:
+The ulp stats timer thread is currently running in a lcore cpu
+that is assigned for the dpdk worker thread and this causes the
+performance to drop since ulp stats thread hogs the cpu to
+collect the stats. The fix is to move the stats timer thread to
+a dedicated cpu so it does not affect the performance of dpdk
+worker threads.
 
- - Move the ULP stats timer thread to a dedicated CPU to avoid interfering
-   with DPDK worker lcores
- - Replace register-based PTP initialization on Wh+ with HWRM interface calls
- - Add HWRM-based Tx/Rx timestamp retrieval for BCM57414 (Wh+)
- - Add PTP support for BCM5760X (Thor2) including TX timestamp completions
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+---
+ drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c | 73 ++++++++++++++++++++++++----
+ 1 file changed, 64 insertions(+), 9 deletions(-)
 
-The PTP patches carry Fixes: tags and Cc: stable@dpdk.org.
-
-Note: this series depends on series "net/bnxt: miscellaneous bug fixes".
-
-Kalesh AP (3):
-  net/bnxt: Support for PTP on Wh+ using HWRM interface
-  net/bnxt: Support for Tx/Rx timestamp using HWRM on Wh+
-  net/bnxt: Add PTP support for Thor2
-
-Mohammad Shuab Siddique (1):
-  net/bnxt: move ulp stats timer thread to dedicated cpu
-
- drivers/net/bnxt/bnxt.h              |   3 +
- drivers/net/bnxt/bnxt_ethdev.c       | 172 +--------------------------
- drivers/net/bnxt/bnxt_hwrm.c         |  37 ++----
- drivers/net/bnxt/bnxt_rxr.c          |  23 +++-
- drivers/net/bnxt/bnxt_txr.c          |  16 +++
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c |  73 ++++++++++--
- 6 files changed, 116 insertions(+), 208 deletions(-)
-
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
+index 23e1b59ca4..fd33e0d36a 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
+@@ -347,6 +347,59 @@ bool ulp_sc_mgr_thread_isstarted(struct bnxt_ulp_context *ctxt)
+ 	return false;
+ }
+ 
++/* Find a free CPU not used by DPDK lcores for the stats cache thread */
++static int ulp_sc_find_free_cpu(void)
++{
++	unsigned int lcore_id;
++	cpu_set_t dpdk_cpus, proc_cpus;
++	int cpu;
++	int rc;
++
++	CPU_ZERO(&dpdk_cpus);
++	CPU_ZERO(&proc_cpus);
++
++	/* Get process's CPU affinity mask */
++	rc = sched_getaffinity(0, sizeof(cpu_set_t), &proc_cpus);
++	if (rc)
++		return -1;
++
++	/* Collect all CPUs used by DPDK lcores */
++	RTE_LCORE_FOREACH(lcore_id) {
++		rte_cpuset_t cpuset = rte_lcore_cpuset(lcore_id);
++
++		for (cpu = 0; cpu < CPU_SETSIZE; cpu++) {
++			if (CPU_ISSET(cpu, &cpuset))
++				CPU_SET(cpu, &dpdk_cpus);
++		}
++	}
++
++	/* Find first CPU in process affinity that's not used by DPDK */
++	for (cpu = 0; cpu < CPU_SETSIZE; cpu++) {
++		if (CPU_ISSET(cpu, &proc_cpus) && !CPU_ISSET(cpu, &dpdk_cpus))
++			return cpu;
++	}
++
++	return -1;
++}
++
++/* Get the first CPU number from the first DPDK lcore */
++static int ulp_sc_get_first_dpdk_cpu(void)
++{
++	unsigned int lcore_id;
++	int cpu;
++
++	RTE_LCORE_FOREACH(lcore_id) {
++		rte_cpuset_t cpuset = rte_lcore_cpuset(lcore_id);
++
++		for (cpu = 0; cpu < CPU_SETSIZE; cpu++) {
++			if (CPU_ISSET(cpu, &cpuset))
++				return cpu;
++		}
++	}
++
++	return -1;
++}
++
+ /*
+  * Setup the Flow counter timer thread that will fetch/accumulate raw counter
+  * data from the chip's internal flow counters
+@@ -360,7 +413,7 @@ ulp_sc_mgr_thread_start(struct bnxt_ulp_context *ctxt)
+ 	struct bnxt_ulp_sc_info *ulp_sc_info;
+ 	rte_thread_attr_t attr;
+ 	rte_cpuset_t mask;
+-	size_t i;
++	int target_cpu;
+ 	int rc;
+ 
+ 	ulp_sc_info = bnxt_ulp_cntxt_ptr2_sc_info_get(ctxt);
+@@ -368,16 +421,18 @@ ulp_sc_mgr_thread_start(struct bnxt_ulp_context *ctxt)
+ 	if (ulp_sc_info && !(ulp_sc_info->flags & ULP_FLAG_SC_THREAD)) {
+ 		rte_thread_attr_init(&attr);
+ 
+-		rte_thread_get_affinity(&mask);
+-
+-		for (i = 1; i < CPU_SETSIZE; i++) {
+-			if (CPU_ISSET(i, &mask)) {
+-				CPU_ZERO(&mask);
+-				CPU_SET(i + 2, &mask);
+-				break;
+-			}
++		/* Try to find a free CPU not used by DPDK lcores */
++		target_cpu = ulp_sc_find_free_cpu();
++		/* If no free CPU found, use first CPU from first DPDK lcore */
++		if (target_cpu == -1) {
++			target_cpu = ulp_sc_get_first_dpdk_cpu();
++			if (target_cpu == -1)
++				return -ENOENT;
+ 		}
+ 
++		CPU_ZERO(&mask);
++		CPU_SET(target_cpu, &mask);
++
+ 		rc = rte_thread_attr_set_affinity(&attr, &mask);
+ 		if (rc)
+ 			return rc;
 -- 
 2.47.3
 
