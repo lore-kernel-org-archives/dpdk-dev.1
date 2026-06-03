@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 791E9CD6E55
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AABCCD6E55
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:24:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D85684065E;
-	Wed,  3 Jun 2026 20:24:08 +0200 (CEST)
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com
- [74.125.82.175]) by mails.dpdk.org (Postfix) with ESMTP id 4C1A14065E
- for <dev@dpdk.org>; Wed,  3 Jun 2026 20:24:07 +0200 (CEST)
-Received: by mail-dy1-f175.google.com with SMTP id
- 5a478bee46e88-304545f5206so17739904eec.0
- for <dev@dpdk.org>; Wed, 03 Jun 2026 11:24:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1533D4066F;
+	Wed,  3 Jun 2026 20:24:12 +0200 (CEST)
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
+ [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 5618940667
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 20:24:10 +0200 (CEST)
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-304ec41197bso6258649eec.1
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 11:24:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780511046;
- x=1781115846; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780511049;
+ x=1781115849; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=AEFZs+/JJ6o964osXkBWSOSGCgPsTYfEZgJp7wWgbxE=;
- b=Nyd+BsbUM/xxB3mnwBToW+JcE2T0T6SZz44t2ISxLiMTIEwSg9jdAhz41HCJb7se1L
- jsuXunhUUMXAWVYV+wSt5Jk90GHqvxH6xXmg2r5mj+WnwgPnv/AdQN+RaP/77yOFHdAU
- 4jAV5Aqv3W2Kpbg509aWDfHV5FD0qxmqEKtKptSIELxg4b4BA9dVHD3aXErXKo9oXifl
- Gl3TXmH/9g+WrEDdUbiGIL1TclIjKKGrsGwzEFjTamZ2W4of65Y/vPDZdMnv1xh6Gy/P
- Al0oyD5vI/FVLIrTTe/Qn/J92vx/kmzW6HkVFQzcow5oAzLPhiJO1Ht2Du27PZkGjVjq
- NtKw==
+ bh=/U8PIDlf0VlYyPd/YFttcZZai/KLI5fM6n0fDUfOpN4=;
+ b=kTHNn3NAyCZYFBlngfVwqsCZeanfPz+k5HW7PfnANi/mR9pB+RnctkEUUjU9rHC/0P
+ 9IzaG/2wJ9s9i0I8K0QFb0GB+WjsA+8mlfAHNxHJlQQiDdf3ZYp95U0MbSzLzKkTuH6T
+ JttfdetyVOfunDiwGJH/7eyywPLPHtCG1ARYy6vcPNMQCRNdmoKCax+aI8OCAqYbcu9Q
+ 8sBIXXDBao9D6eNn+MKO2Gd2MMufuRIUWyvFNbGKF59eoSe/kJGULsISdpmHw9BBH2G5
+ /tzMHU40tEZ0/EpkJCDYzIiw5qmoKXcOsoKnBubmq0+FS5k1rOvK8MuyDZujQrrN2vsp
+ fUVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780511046; x=1781115846;
+ d=1e100.net; s=20251104; t=1780511049; x=1781115849;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=AEFZs+/JJ6o964osXkBWSOSGCgPsTYfEZgJp7wWgbxE=;
- b=TbizaCVd0YgwcJj1ykJaeg2IkwcCf8d5H2Fm4HNTrAe7tNsH+OzjVJ3ePY8uNz3tvT
- csnvRQIUBHQMe2c7A6Q4BW57vYkJph1VkJlOjnz11jGtHgJkFCROtQA3mnFbZybmrnKm
- drLk9C+6MMy8dKnl6NYKcUEiO5jXig2HzI0ckXpZ7oyXCknDraLgBnGOcAB0QyrI9DUy
- MaIECm7bOVmDhGry62hC7r/yt4SD5L9HrrgJC2Uxq2ZNLlCuDOHq8yqDCpuGAEtUl6Qg
- Qnqnw3dBpjRWyKR9Jug2qW86zXQ/AVPnoAb2CPFWrLKwmraTfCwDwNPCyu22RatudV0Y
- 0nXg==
-X-Gm-Message-State: AOJu0YzsEXQrGyh5Fb8sQOaJOM1/byAn9yQh9101hpg4CxRXuIpA9Ekz
- CTQ2NTUaWRV7JdLX8g5MfHQQZoYBQvP5Eh945s2xGC+u8LKmIn/fbj84/OiY/dY/Zqs=
-X-Gm-Gg: Acq92OHzgrfBGbbSBU/e1LQCsd83yALvZBOtZgW2wwtkz9qwGIHSY/yTTzeTo6OWaCW
- o3+afCvr5PDC6tvCXVLZ8WuFgXz32mOpjzh8geQ3LneNEhdetAG1AXlFRQxDbkC43PPiVnZH+r8
- qtq09y73QgXDnJ5eLZ6jbNzs2LODFQNQWpy5kRE9SubprLjHTa+AD/9idQE+B19MMy2KwaAZ4pz
- MpNOl5h6DomQ+VuQGpl+KJLkd87I7Nti1e1dEc9pmwEngJC350k2Fj2VG019R4D53uQ+maztxIo
- edICj35tXHtlTjc4IXV0ESYhevlEaE9fIRmke60+uwMGOsOVA6UO3n86hWiIv2PS3TukUFIaxBO
- Xj0GNX9zhptwB97lGTZUN3EIk8tvj3f3Q81Vx/awnHJsKtiTyhMayQZwUSCZxl0AVc9OBA9sfCL
- UxvJY3Hitvgm5h8XGLkiQXzi4t+WkopBaz090eh0JOe6oyH/jmh0Jnroff/D2gtn9Jfh/mvaTQD
- BY=
-X-Received: by 2002:a05:7300:dc92:b0:304:b93a:511a with SMTP id
- 5a478bee46e88-3074fbd5411mr1942047eec.28.1780511046329; 
- Wed, 03 Jun 2026 11:24:06 -0700 (PDT)
+ bh=/U8PIDlf0VlYyPd/YFttcZZai/KLI5fM6n0fDUfOpN4=;
+ b=U4pxYaX8xASi1XWz9Rgm0y7x+/MUF3FvUtyBRsGB/6zv38pSYNx5y83wvq2dn27Ecd
+ AgI29niIA7eFmrbFqSRpb4UaRedE51txg4UcQeGtcQLIVhE2U5GTuiwSeGVgBtmN6tEg
+ RUnI35U0yuaj0JiEh5usJ468sEMr9M7aPdvB0LuJjhXIS4A/s2kMWWzBOKIxvtJ+eIo3
+ w9I2D3XvTzQakUgn1LGF3Pz75Bh7MWY92rm/rfV79igOkPPg+qdBie5/tpMZvXMFaRP8
+ 5vuLSxCyO8x+0EsyqBVox7cfCmcqgjtD92VDRKhxh72E03CTRGFHFWm4tG3CEwXmbzpt
+ Q9WA==
+X-Gm-Message-State: AOJu0YzfnMz1169t4YHsuYFnTguvBjm5mTJrduSYtfdqzIkE7vdzPt6k
+ EMMWVgV7I6k1NluZ4nY0PUt6xmPIU0LWROlWhZnvl73Y2bWnJAZmo42zzI6YZKN+Xk0=
+X-Gm-Gg: Acq92OE1+0zn2MPgN3w1J6xWrA4uHrvSbmLMayGM29Y3sMg5i2tYprcteeFqv8by8DX
+ EYgBhvlAJU80dxNVQ56C+OX6IdolXpfw/NHb+EyR70yn+Xq5xRlyBR7QPQzZf16R5Yqct2T01JF
+ jHZmWgGSxjLkwO3n9FljrofMJEGHMhPQqNz4dbGR2E06gNnW5NBHw0vjV9qKx7Tx5rPOfwiATf9
+ hebY1e4aa110OOWjK7FegqWIvj/ZCsKFOWHcxFrJgOc6XaoHK9/UzEnQo/i8lzrwlicyPtt06ku
+ sJIdZ4y14jbehTaPWbLqPrPu+Tws8qvDM3bZnscKqIXFjXGPGyFOdp2om8INWWCr8qdcUhiNai7
+ dnY2K+B6BFiTpiGYlEbTCRxSyM967VBfdKX6eMslXGSfHO8ZdpaL1I6KHu79l1LZ4w/wfm5KE5J
+ ItGpV9uQLbRHAG8puAfQ1LNxBicUuNgLcfsYKFfxfgQMWnZ1BXNySnwoz9UW0s7VU94zWlmR2wU
+ 94=
+X-Received: by 2002:a05:7300:371e:b0:303:f2dc:8ab4 with SMTP id
+ 5a478bee46e88-3074fa3d73cmr2516088eec.2.1780511049290; 
+ Wed, 03 Jun 2026 11:24:09 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3074df805d1sm2682632eec.28.2026.06.03.11.24.05
+ 5a478bee46e88-3074df805d1sm2682632eec.28.2026.06.03.11.24.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 03 Jun 2026 11:24:05 -0700 (PDT)
-Date: Wed, 3 Jun 2026 11:22:34 -0700
+ Wed, 03 Jun 2026 11:24:08 -0700 (PDT)
+Date: Wed, 3 Jun 2026 11:17:58 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: liujie5@linkdatatechnology.com
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v8 11/20] drivers: add support for VF representors
-Message-ID: <20260603112234.7b4f9912@phoenix.local>
-In-Reply-To: <20260603062945.1253672-12-liujie5@linkdatatechnology.com>
+Subject: Re: [PATCH v8 07/20] net/sxe2: support IPsec inline protocol offload
+Message-ID: <20260603111758.6c1dc572@phoenix.local>
+In-Reply-To: <20260603062945.1253672-8-liujie5@linkdatatechnology.com>
 References: <20260603022150.1140722-21-liujie5@linkdatatechnology.com>
  <20260603062945.1253672-1-liujie5@linkdatatechnology.com>
- <20260603062945.1253672-12-liujie5@linkdatatechnology.com>
+ <20260603062945.1253672-8-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,37 +82,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  3 Jun 2026 14:29:36 +0800
+On Wed,  3 Jun 2026 14:29:32 +0800
 liujie5@linkdatatechnology.com wrote:
 
 > From: Jie Liu <liujie5@linkdatatechnology.com>
 > 
-> Add support for VF representors in sxe2 PMD. This allows the host
-> application (e.g., OVS-DPDK) to control and monitor virtual functions
-> through a dedicated ethdev on the PF (Physical Function) side.
+> This patch adds support for IPsec inline protocol offload for both
+> inbound and outbound traffic.
 > 
-> Key changes include:
-> - Added representor enumeration and identification logic.
-> - Implemented representor-specific dev_ops (link update, stats, etc.).
-> - Configured back-channel communication between PF and VF for control
->   messages.
-> - Supported the "-a <DBDF>,representor=[0-N]" EAL parameter to
->   instantiate representor ports.
+> - Implement rte_security_ops: session_create, session_destroy.
+> - Add hardware SA table management.
+> - Update Rx/Tx data path to handle security offload flags.
+> 
+> The hardware offloads the ESP encapsulation/decapsulation and
+> cryptographic processing.
 > 
 > Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
-> ---
-### [PATCH] drivers: add support for VF representors
 
-WARNING: [TYPO_SPELLING] 'macth' may be misspelled - perhaps 'match'?
-#  drivers/net/sxe2/sxe2_flow_parse_pattern.c:1786:
-+  					"Invalid pattern spec miss macth mask for rule.");
-
-WARNING: [TYPO_SPELLING] 'macth' may be misspelled - perhaps 'match'?
-#  drivers/net/sxe2/sxe2_flow_parse_pattern.c:1787:
-+  			PMD_LOG_ERR(DRV, "Invalid pattern spec miss macth mask for rule.");
-
-WARNING: [TYPO_SPELLING] 'macth' may be misspelled - perhaps 'match'?
-#  drivers/net/sxe2/sxe2_switchdev.c:197:
-+  		PMD_DEV_LOG_INFO(adapter, DRV, "current switchdev mode miss macth");
-
-total: 0 errors, 3 warnings, 0 checks, 6571 lines checked
+Git complains about blank line:
+Applying: net/sxe2: support IPsec inline protocol offload
+/home/shemminger/DPDK/main/.git/worktrees/sxe2/rebase-apply/patch:236: new blank line at EOF.
++
+warning: 1 line adds whitespace errors.
