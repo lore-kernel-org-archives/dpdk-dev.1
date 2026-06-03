@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EDECD6E57
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 15:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1609FCD6E57
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 15:51:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D70C4402CC;
-	Wed,  3 Jun 2026 17:51:27 +0200 (CEST)
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
- by mails.dpdk.org (Postfix) with ESMTP id 2D4B4402BC
- for <dev@dpdk.org>; Wed,  3 Jun 2026 17:51:26 +0200 (CEST)
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-137f27712fdso228833c88.0
- for <dev@dpdk.org>; Wed, 03 Jun 2026 08:51:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AA5DB4065B;
+	Wed,  3 Jun 2026 17:51:30 +0200 (CEST)
+Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E12B40651
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 17:51:29 +0200 (CEST)
+Received: by mail-dl1-f47.google.com with SMTP id
+ a92af1059eb24-137ec563a95so3697120c88.0
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 08:51:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780501885;
- x=1781106685; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780501888;
+ x=1781106688; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=WX7YlaFn/QFT5NE3x26pJoiqDF1EW5bpdvtVmZIn6xY=;
- b=KAPPtBk5COvUGY1iPu6rRfmcM8rpvdEfXGuf/CMTzt0XicrlHnzrZpqwIdeZIlmLlG
- zemcMlQxvaaiPOpWHgmdqIlKwrB3we1d3FSGzr4QuQQJ7k7IbM5ui+3dmvSXVCiXNlUC
- jKajeIU+0FC0sELmBQ6ZtwFw8G76ajW6sPIVzLMF+KLJKSYO7MwdjQXDf8qcNHTIJZoX
- J8wCgAo4FwFHcnED0PV+2ofgH99HS4Q3mQhav04dtXfRpl4AEP+WczB+9RBIanJGh3WO
- xWyhmvL6B2dC7SgWqIKh+vgPWjr1pzeoy9OpJtNCT9Eb30/77U4320GsTFIRa8rnJBfo
- qUiw==
+ bh=emJ/e9j1VfFKkqqiJ1jhPUBKlIVDJu/II+Jmb+r6Srk=;
+ b=FNewBiiah3Tktc2x7L79rTUHl8qYh0wVzKYGov9tqBG4eWuUQQ/gg8xeWA7XG89Bdj
+ yhYUbP1pU7RtvdLQivJizET5nBvtsIprlo36YWfj5x5DrbGLmuLJKPuDWq/N7K9UzH0a
+ wAlPIawNjLg/I6Sxo0lK3m3ZV/7jDNgeZDgnHiCoj9TulUm7gDhRsbtCIEJ+oo2FDVjT
+ QnfHucZd3YOQBIWCBfapDjFa7vexFBaC4c78oIOKMp76EsagIEKFphNOTGduZ35efU8O
+ BHsp1NTFIPFI66AEygtMWlSreYhJkzUMrnQPEmxupZK3S3ZMsG26Y0siHzxJxy9Df+mY
+ RCsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780501885; x=1781106685;
+ d=1e100.net; s=20251104; t=1780501888; x=1781106688;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=WX7YlaFn/QFT5NE3x26pJoiqDF1EW5bpdvtVmZIn6xY=;
- b=R7N1VI7hgiKTj4LVCtCl5wKiFm2FfGJc0gqdQCOCPz4UyvOdgySeskHGlSot9dqbbf
- aBP0mNv2uPiPSOCqZpxkHaCmySHduvsnxskUWqvgZJZb0exi4l77fS32NTn/FnGvbc6H
- VGa47lGWjkoXzEJPOxayvAjm39RgaiVy0PGsDkAsOkyhCJwppjNWeKiYQtdNA+FG1Vkw
- r4kEu9xlCOYyzwAXGDIovKxi1LI40UQXbQXTZDEyhDHaxoA/MA2DMMHtJU8a1OiDeHhq
- m/C/DwvKe8BlfVcWluBF2M1v+fKzmY0qcpWgjVrhP6hoOvCMEOi1dk3KTFTEnhbXGNoE
- vhQA==
-X-Gm-Message-State: AOJu0YxD1bg0F0T718/AQ3qOcDklHSAA59tsCPLcaIzfAS8/0ExqdaUy
- fBNEaVsgL+zZ8Hq8N2Tx2wxbSXj5pOu14w3PRlbhCTtVROUBF1GKMtIVB6Vb3VaTqwc=
-X-Gm-Gg: Acq92OHBgDtmgzN6lb7NPJ/3lBs8HDEspXExNKaGquCxrFPTv3IZIlZr5ertvlBMGht
- il5p/YI6mPS2kG6cxSOl8qT76sfPgXVXd8boMY2umk3g1LVJhXnAR1dGQXr/KYZIro0DuShrIYh
- QrHvGiuCxHSZ29B7B3XYLb8F9np/fs/efIyq4JNBVbv1nogJZbBjeCRlIKEWZsGLN/WKqFguZbX
- k28e1gGvjSPqx9ir9eAHA/+MqH70aAjjNx0hJcqqZnjBl/KnTbf0ColGZtPuD1N5nwKPuMYR+9B
- fTdkCMRddPZp+FvXYrTlsirCOswRhTOOqDlJvDZpxUV00C4SdbXxj1nncpY8PlM3id0nyqL9ta6
- ye2mDWs8AaWMgukSivglSyd0fA2jyyt0CwhBnZysOiTN9Mbysy+sgFK3Xag4iQ7BAduZLQZ5yDk
- d5gjxWA5pTUpwle6JGXXPkxShN73yAhr1poNNeVQoMtQ/INEWB4j/j1P7F28Pwr/Hxt0H7AECou
- Wk=
-X-Received: by 2002:a05:7300:a498:b0:2ea:5057:a304 with SMTP id
- 5a478bee46e88-3074fa653bbmr2021324eec.2.1780501885167; 
- Wed, 03 Jun 2026 08:51:25 -0700 (PDT)
+ bh=emJ/e9j1VfFKkqqiJ1jhPUBKlIVDJu/II+Jmb+r6Srk=;
+ b=TpFQeXFPbskKTsDJfRM4eoujhUKsdaePtkxVtHIYYN/U8AZX9+38Qg1kSC8yWBr5dd
+ I56AgacAp17H6SP8yKmage/lKqtgq3WWo57UhZmlAwnZI9vO/OCBqzq6pC+p0cq/P+UC
+ UvnFPyr1UUsxuArf22CXtievnsutEEgQRenajaO0OyQAU7qXAPzc9mwHdQRU7VzBpYek
+ 5QSztIHfssE3Y2Ii897/qVwy6FEZ+s26vRrM5W5E9tNcBdp9W5aki93EFkC7m0vFCw3k
+ 1gPO04rYm2ahV4YOb4D0PwiVwdtxIZv2lBWQsdFisHVM3WZwKlZAKbPtMFrXEw8zJA6v
+ QoLA==
+X-Gm-Message-State: AOJu0Yw3HibQsSWG/DcTk/tBs6bJu6aBEfoL9us5pQ4TglHJdYa+Yh6N
+ QnfccUfxG102oAQwZ9YE+L/SG5t2Ao6dKOPkgw0w5kh6Tn6wwtqCwaE1donkEsgW2+I=
+X-Gm-Gg: Acq92OF3ltMiO3GHMzuduaMyT43An/+9XvCD6hXUZi6NQBwm3oF3liix+N1xQPU9K7j
+ vxXUNwyQzTw2loIImRVDlyTmM7bVggIU2JEwMxTTb9nKozI/fAMB/nFdURP15JpFpnDKK4NYC//
+ NwCaTHR8RMvKVIMNBYdrx0mFMh7+/ikeMcWfdsO0Fn6OpDc5yq8lLabXGurl817JO0GW5wB2a7B
+ ZOiddOKRmtVSqJSt62bAah/PnrdjfGgJYddbuU3YwW5ekAyV8Crq53iKm0Vk/7JhFySB6ZNIW2X
+ 4my0P89qmrjRfBJ8WtZn3TZFtowB7JgdJdGGYV/fOXmchO0GWVJ0bwLCHepnKkqgiMXFHbvlrli
+ 6tDiFyr4Uag9hlpfAnnxYPQwYTtVGgaFtZjtuJ73iS89IAR37Ns/0sLtbpCrOEHmJTGfiwO8HfV
+ +tvj3z1HT8YJ6WFmf1VvMegKvRBw6VQLwr1J8rdxp/RdjcVchuV8W4e3oI3sFkGzSENvff1Cwx3
+ HQ=
+X-Received: by 2002:a05:7300:3213:b0:304:8364:e95c with SMTP id
+ 5a478bee46e88-3074fa92c24mr2119516eec.15.1780501888216; 
+ Wed, 03 Jun 2026 08:51:28 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3074dcad34esm3712407eec.11.2026.06.03.08.51.24
+ 5a478bee46e88-3074dcad34esm3712407eec.11.2026.06.03.08.51.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 03 Jun 2026 08:51:24 -0700 (PDT)
-Date: Wed, 3 Jun 2026 08:27:49 -0700
+ Wed, 03 Jun 2026 08:51:27 -0700 (PDT)
+Date: Wed, 3 Jun 2026 08:31:04 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Denis Sergeev <denserg.edu@gmail.com>
-Cc: dev@dpdk.org, sdl.dpdk@linuxtesting.org
-Subject: Re: [PATCH] net/af_packet: fix qpairs argument upper bound check
-Message-ID: <20260603082651.3fb3e81f@phoenix.local>
-In-Reply-To: <20260603044228.117357-1-denserg.edu@gmail.com>
-References: <20260603044228.117357-1-denserg.edu@gmail.com>
+Cc: dev@dpdk.org, shepard.siegel@atomicrules.com, ed.czeck@atomicrules.com,
+ john.miller@atomicrules.com, stable@dpdk.org, sdl.dpdk@linuxtesting.org
+Subject: Re: [PATCH] net/ark: fix null dereference on allocation failure
+Message-ID: <20260603082738.1d94ed4d@phoenix.local>
+In-Reply-To: <20260603052207.118688-1-denserg.edu@gmail.com>
+References: <20260603052207.118688-1-denserg.edu@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,23 +81,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  3 Jun 2026 07:42:18 +0300
+On Wed,  3 Jun 2026 08:21:54 +0300
 Denis Sergeev <denserg.edu@gmail.com> wrote:
 
-> diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-> index 0ee94e71ea..ebf015dd9a 100644
-> --- a/drivers/net/af_packet/rte_eth_af_packet.c
-> +++ b/drivers/net/af_packet/rte_eth_af_packet.c
-> @@ -1169,7 +1169,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
->  		pair = &kvlist->pairs[k_idx];
->  		if (strstr(pair->key, ETH_AF_PACKET_NUM_Q_ARG) != NULL) {
->  			qpairs = atoi(pair->value);
-> -			if (qpairs < 1) {
-> +			if (qpairs < 1 || qpairs > RTE_MAX_QUEUES_PER_PORT) {
->  				PMD_LOG(ERR,
->  					"%s: invalid qpairs value",
->  				        name);
-> -- 
+> +		if (eth_dev->data->dev_private == NULL) {
+> +			ARK_PMD_LOG(ERR,
+> +				    "Memory allocation for dev_private failed!"
+> +				    " Exiting.\n");
 
-I would rather see atoi() not used in DPDK, it accepts too much and does not do
-enough validation. Replace with strtoul() instead.
+Do not split error messages across lines. And no need for ! and the Exiting part.
