@@ -2,75 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BEDECD6E57
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB14CD6E57
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:45:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4682740665;
-	Wed,  3 Jun 2026 20:45:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4A99D4067B;
+	Wed,  3 Jun 2026 20:45:18 +0200 (CEST)
 Received: from fout-b5-smtp.messagingengine.com
  (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id E5F7140677
- for <dev@dpdk.org>; Wed,  3 Jun 2026 20:45:14 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.stl.internal (Postfix) with ESMTP id 23EC01D00170;
- Wed,  3 Jun 2026 14:45:14 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id 4DE2040672
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 20:45:17 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.stl.internal (Postfix) with ESMTP id 993851D0017A;
+ Wed,  3 Jun 2026 14:45:16 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Wed, 03 Jun 2026 14:45:14 -0400
+ by phl-compute-05.internal (MEProxy); Wed, 03 Jun 2026 14:45:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm1; t=1780512314; x=
- 1780598714; bh=PxKKo8dbDIKJXpDqQmAWMhpP32cwP3+QUQ5b/OiIF54=; b=V
- eEy9YvhIeF0kUPIikt8+Hc/j3nQsLhoMqiZSDeZ3VeRDy0LGmvC+Xq8rqa1qbXUx
- 3wMRWz6JOB1Ow01hzCpOfYHwBsMddM5HQfl6ru526o0azlsMRtaF3/pv+P8IuBw8
- clvR7faEsjoEvW0RqSVwNrhJSnUme4DXnnZ0mnpFXtUueMNPkgrieqB6gAU3r8Fr
- A3lKUtQMtesdG6l5K/JhH8YksmWIsT/AUahrMTKqLd+Rgl/D2DDiIAVkKnZncigJ
- 4EmP0h2RT1YTc5IWVVaUMvqFcLetXAmRB3k2lx8LYj0Z67gqYfEkcDCnAbRUM5sj
- c8dnPCvdGyu+6+MK2JXiw==
+ :reply-to:subject:subject:to:to; s=fm1; t=1780512316; x=
+ 1780598716; bh=KNqAyCbm+udO/xzduLJ66RZ5TR3yYeRp/7ouA1hRcvE=; b=q
+ tEhNhPFWpO2T/od7TfC6VQ+i6QFX+A4BYsa4FD/V0jK+JAfhP3b6nQH6iohXegjj
+ OGt9fOfmVo+cVFtEdR0KpuFIpvM3N8x6M3ZU8a374cU8rgkOjCiS5lM7ZgrB8HDX
+ 4Km6tOsOD/MR9kz5bU5Up/OwhDVu58lDBurPxe4FGjT8f1s5h3VtXlNrPyeBLsef
+ FRmVLqNi61r0vd3F7UaZwncdn7cF6svtGl5B0umCb3kiZsk/WjwUy9gqG5pZy5wv
+ imyqOAKVPVgAHurVv0H65eoZFAq0s+j/xqcrUkWTPdl1t8LODssNO8G/T5IF8KNg
+ dGjVlKQvNqnnSlN/kWcXw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm1; t=1780512314; x=1780598714; bh=P
- xKKo8dbDIKJXpDqQmAWMhpP32cwP3+QUQ5b/OiIF54=; b=KqrrWMjtGqJK9PiXl
- Dryv3QumckIVE4NF4mvdY4Qs72gvIuFomeW6WJxI1w7kmByu4CDj000sLv9EnNuy
- k8ODSUPs0tCRRzQ5W4zCyUM9xxqYj6TybEqGRJ90SDfYxREoadgD5rY9OgXxOkCs
- gvVx5g+7qrUoE0xVfDDKWpiOsxVv1KFcW+FnetZL8vciulJrcrz1LkRiXAbUTPh6
- RWWT+UkORzKU9kj3E6uzZWtESmKvUCWLR3kseovXBGkOYObXHUDdoPhp+EqgayaW
- OyYVBhYHiYt8tv/Fte5IV1AzexKQmgbC0gpyzTgw5BAfCT2QveM6IlbSLezbJK37
- /OgWg==
-X-ME-Sender: <xms:OXYgakbbgGCvJ0GixLqyiJHctmxFRo2LQ_Ea2mFnCtM-ic-8PZKlhg>
- <xme:OXYgaq2O_AL141_P1EGx7wSGdg2TBw4iLw34wL4jdKOjB9_Q23i_ZSE6LfeGcemiD
- IHQ3wHFOe1MYSdQI2-cthtnMpsRyCKYzITkHfcbAHdGXqDLLwdQ6Q>
-X-ME-Received: <xmr:OXYgaidBH0MBsgiEhX1f1ht9gifX6THyEGMDabuRngCM_ZJh8wr0Qy3pmzxyp4gs6OovS7Gqrg7lxlnz-ED6SrAf2SQ7uSE>
+ :x-me-sender:x-sasl-enc; s=fm1; t=1780512316; x=1780598716; bh=K
+ NqAyCbm+udO/xzduLJ66RZ5TR3yYeRp/7ouA1hRcvE=; b=Je+wJpii13iq8gBZD
+ QTYGc+I/oRA3ANL71MXLlhMMrhn2TbujLai9yz8i7lLFUUpWFPDMzouwK+pF2h5F
+ 2MYWQqAE92NM58VvxSi7fQ0xAczytQkRWr3hf9Qm+B5EehJLZwjyCDJuGMXC1M42
+ juQGWdVOGRvKfJ+IgzPFq+BRrOErZqE8yDZTeaO5q0q4odBolYUdpIAfmEvXhSDK
+ 0bBxGAOEOhUg93q8RX7IrzmV6NBpTBYy+ZElyxpRklmklQmQiBVrU0KS/iTuv6JY
+ VGZa13C80UYYankkkH8nODku95bgY5WsuBO5v164t0//EAoamipQycj4lkRMROtl
+ QD4gg==
+X-ME-Sender: <xms:PHYgap0TQuBQ343t2THUbPy6R4yrarGbY0hG8QgME-gOq9dQQLJY9w>
+ <xme:PHYgagPpDh9Wqc6m0cUqORx54sXcupOYhWqUcA7yyX5DbqpRr-2B3v9_mhPY8rH1z
+ eosMYGHHqmPW8fIwmTGc03BZfOzhEfsNVQj-zwsr1q2TldABxk6jQ>
+X-ME-Received: <xmr:PHYgah3ySHUVwXaJp1kLqEDR6HYmhY8El904zKwhJwymphiXvApqsO1mM8MEA7S2px2Uhws5rnInIo38eeA_V5q64C95chI>
 X-ME-Proxy-Cause: dmFkZTG3Cc37AEZv9gWLWp72Aes+17oTj2cMnam3xuZtyjtHoUerOWgaegF+YA5caRZxlN
  +CpkgXX/LN++ffhiXBWkGJbYR1ThI8q93cgy6Xrsdc2JOur3G+hwonLVgkZqZlxQfN01Q0
  HpCgGzFYmnGyurvfbaioIV5f6QOcRha0Y8fP0mOSR//IE6g+GyuDMiZMJK5pvJgOcqQ2v5
  RHmzDuOrWL/PsjNYI3fdzrpjl2tywyPsPRvhLE/JMnVlC+JivaixKJ8G6by84edoJi/2rf
- yBve3yBsXPqOXBzqLSIl3TiGCTdVziTKrhNFOc/ZaL0dbux7VBMxS4tmA78RDPom42yZd7
- 2Re6esH/xZapSDobMWD1Q+1ERyItn5iy2uz6Y4ST4sjxwpLtY2AI0LsDg15ehjOLJcht/X
- t1iWwvzrt3pSJCwIhAt6swyBUUlUTFjH+UHqIxkJynIHUfaugBc4XryOyCAGeL6IC+NmDt
- L8m4ecSjDo/We3riC1cMU1JCBUrQS8Vnwo97xvbFbdUYNJl/D73pQUkluqkOYbqEtUuc40
- 5tZ03twE2oThxLZ/B8rXWahOKBuroHaNHeQETqSukPIJWqHdzudi0NUf/PShg0Q4j0bmKe
- otTkUJ02Mf9qvLY6MVBZaPVgkopmkdB2nGNt42jYNr5gSModWYKPLSqGRecw
-X-ME-Proxy: <xmx:OXYgajGu-KXRv70B17VWbCH7DyTyNCtISKKiPl_skMX8-mruc_Ukvw>
- <xmx:OXYgar3DoM0AR-zsFr8p7H-f7HKwDr2c8KWRjWyr6BY7wZy9afgtxw>
- <xmx:OXYgarlPLNsQg4tjUqqfSnWs35Yzkv6CMYw2aBpDwUHE0Vo22QnYgA>
- <xmx:OXYgar_kH0Nzgal8nQMb2HhJv41l43TaVSe-U2RQeu41AKCY27fvqA>
- <xmx:OnYgaqArnHWRIwHUsWkMuvzdv-akKXeLcB0Ww9-VMUnKTlLnYiHlE-5n>
+ yBve3yBsXPqOXBzqLSIl3TiGCTdVziTKrhNFOc/ZaL0dbux7VBMxS4tmA78RDPom42yZV3
+ ARPEnPeU9jVVyS3CI5WnJ9XizgnG2d8r9NT4sP/ZDLdD87m5AonvbTZ+VOOEopdLXgWHVS
+ d+pUR2PnWoU1w4PWGq+xk58H1PH0ThMU1Ra1FX5VPjofQVxDenrvj7UbEbWLEJLAuqRUBG
+ d7atnDypKYZh6zoPBloL2J8Ovp7LETH0m8cJ4qN+/AW75E9IQGq1EE4iDnQdu3pwAdyWbO
+ b6Is457PLgKZrwNKBeoVI8Mefkg5dVk+yajyQxi0unRhJ6Uso9DltQV4oV9f6vQUqiT104
+ 65ixZU8J1/TVxqmVERSkDKVRykb38zt5S8oG7CmkeJiinvuAPoXvGDeTj73A
+X-ME-Proxy: <xmx:PHYgavHkfzXTIeHSmYmrmOq192_qHM0X6vuGbrKcTA2GenYO2IBZBw>
+ <xmx:PHYgam4OOynM0gUS7bWyQ9dPKB_qCbe_hmomWcfi7RbzZjr9CM7bZQ>
+ <xmx:PHYgatsGpCctuv8WtdbNCZWKCiByjUCzH4xifs_ZcNKuJc9kmhKz4w>
+ <xmx:PHYgav7iJCiH6mZ9sabgmTb0cwbtjr2Hh427rLyNftpBaW9sye_TWg>
+ <xmx:PHYgaoXxenwDvI6t85OJRwNe10LZ5PJuILl7L7hKrfE2ZUA3-tFAEwix>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jun 2026 14:45:12 -0400 (EDT)
+ 3 Jun 2026 14:45:15 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Gregory Etelson <getelson@nvidia.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v7 02/10] ethdev: introduce selective Rx
-Date: Wed,  3 Jun 2026 20:23:25 +0200
-Message-ID: <20260603184503.652030-3-thomas@monjalon.net>
+Subject: [PATCH v7 03/10] app/testpmd: support selective Rx
+Date: Wed,  3 Jun 2026 20:23:26 +0200
+Message-ID: <20260603184503.652030-4-thomas@monjalon.net>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260603184503.652030-1-thomas@monjalon.net>
 References: <20260202160903.254621-1-getelson@nvidia.com>
@@ -92,250 +91,177 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Gregory Etelson <getelson@nvidia.com>
 
-Receiving an entire packet is not always needed.
-The Rx performance can be improved by receiving only partial data
-and safely discard the rest of the packet data,
-because it reduces the PCI bandwidth and the memory consumption.
+Add support for selective Rx using existing rxoffs and rxpkts
+command line parameters.
 
-Selective Rx allows an application to receive
-only pre-configured packet segments and discard the rest.
-For example:
-- Deliver the first N bytes only.
-- Deliver the last N bytes only.
-- Deliver N1 bytes from offset Off1 and N2 bytes from offset Off2.
+When both rxoffs and rxpkts are specified
+on PMDs supporting selective Rx, testpmd automatically:
+1. Inserts segments with NULL mempool
+   for gaps between configured segments to discard unwanted data.
+2. Adds a trailing segment with NULL mempool
+   to cover any remaining data up to the max packet length.
 
-Selective Rx is implemented on top of the Rx buffer split API:
-- rte_eth_rxseg_split uses the null mempool for segments
-that should be discarded.
-- the PMD does not create mbuf segments if no data read.
+Example usage to receive only Ethernet header and a segment at offset 128:
 
-For example: Deliver Ethernet header only
+  --rxoffs=0,128 --rxpkts=14,64
 
-Rx queue segments configuration:
-struct rte_eth_rxseg_split split[2] = {
-    {
-        .mp = <some mempool>,
-        .length = sizeof(struct rte_ether_hdr)
-    },
-    {
-        .mp = NULL, /* discard data */
-        .length = 0 /* default to buffer size */
-    }
-};
+This creates segments:
+- [0-13]: 14 bytes with mempool (received)
+- [14-127]: 114 bytes with NULL mempool (discarded)
+- [128-191]: 64 bytes with mempool (received)
+- [192-max]: remaining bytes with NULL mempool (discarded)
 
-Received mbuf:
-    pkt_len = sizeof(struct rte_ether_hdr);
-    data_len = sizeof(struct rte_ether_hdr);
-    next = NULL; /* The next segment did not deliver data */
-
-After selective Rx, the mbuf packet length reflects only the data
-that was actually received,
-and can be less than the original wire packet length.
-
-A PMD activates the selective Rx capability by setting
-the rte_eth_rxseg_capa.selective_rx bit.
-
-This new capability bit is inserted in a bitmap hole
-of the struct rte_eth_rxseg_capa,
-but it needs to be ignored in the ABI check as libabigail sees a change.
+Note: RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT is required for this feature
+and is checked at ethdev API level.
+This check is removed from testpmd to allow negative testing of the API.
 
 Signed-off-by: Gregory Etelson <getelson@nvidia.com>
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-Reviewed-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 ---
- app/test-pmd/config.c                  |  1 +
- devtools/libabigail.abignore           |  7 +++++++
- doc/guides/nics/features.rst           | 14 ++++++++++++++
- doc/guides/nics/features/default.ini   |  1 +
- doc/guides/rel_notes/release_26_07.rst |  7 +++++++
- lib/ethdev/rte_ethdev.c                | 24 ++++++++++++++++--------
- lib/ethdev/rte_ethdev.h                | 14 +++++++++++++-
- 7 files changed, 59 insertions(+), 9 deletions(-)
+ app/test-pmd/testpmd.c                | 71 ++++++++++++++++++++++-----
+ doc/guides/testpmd_app_ug/run_app.rst | 20 ++++++++
+ 2 files changed, 80 insertions(+), 11 deletions(-)
 
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 55d1c6d696..9d457ca88e 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -925,6 +925,7 @@ port_infos_display(portid_t port_id)
- 		print_bool_capa("\tBuffer offset", dev_info.rx_seg_capa.offset_allowed);
- 		printf("\tOffset alignment: %u\n",
- 				RTE_BIT32(dev_info.rx_seg_capa.offset_align_log2));
-+		print_bool_capa("\tSelective Rx", dev_info.rx_seg_capa.selective_rx);
- 	}
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index a9b35f530a..d14341d3ff 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -2731,6 +2731,16 @@ port_is_started(portid_t port_id)
+ 	return 1;
+ }
  
- 	if (dev_info.max_vfs)
-diff --git a/devtools/libabigail.abignore b/devtools/libabigail.abignore
-index 21b8cd6113..2a0efd718e 100644
---- a/devtools/libabigail.abignore
-+++ b/devtools/libabigail.abignore
-@@ -33,3 +33,10 @@
- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- ; Temporary exceptions till next major ABI version ;
- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-+
-+; Ignore new bit selective_rx in rte_eth_rxseg_capa bitmap hole
-+[suppress_type]
-+        name = rte_eth_rxseg_capa
-+        type_kind = struct
-+        has_size_change = no
-+        has_data_member_inserted_at = 6
-diff --git a/doc/guides/nics/features.rst b/doc/guides/nics/features.rst
-index a075c057ec..26357036ca 100644
---- a/doc/guides/nics/features.rst
-+++ b/doc/guides/nics/features.rst
-@@ -199,6 +199,20 @@ Scatters the packets being received on specified boundaries to segmented mbufs.
- * **[related] API**: ``rte_eth_rx_queue_setup()``, ``rte_eth_buffer_split_get_supported_hdr_ptypes()``.
- 
- 
-+.. _nic_features_selective_rx:
-+
-+Selective Rx
-+------------
-+
-+Discards some segments of buffer split on Rx.
-+
-+* **[uses]     rte_eth_rxconf,rte_eth_rxmode**: ``offloads:RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT``.
-+* **[uses]     rte_eth_rxconf**: ``rx_seg.mp = NULL`` to discard segments.
-+* **[provides] rte_eth_dev_info**: ``rx_offload_capa:RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT``.
-+* **[provides] rte_eth_dev_info**: ``rx_seg_capa.selective_rx``.
-+* **[related]  API**: ``rte_eth_rx_queue_setup()``.
-+
-+
- .. _nic_features_lro:
- 
- LRO
-diff --git a/doc/guides/nics/features/default.ini b/doc/guides/nics/features/default.ini
-index e50514d750..8303a530c1 100644
---- a/doc/guides/nics/features/default.ini
-+++ b/doc/guides/nics/features/default.ini
-@@ -25,6 +25,7 @@ Burst mode info      =
- Power mgmt address monitor =
- MTU update           =
- Buffer split on Rx   =
-+Selective Rx         =
- Scattered Rx         =
- LRO                  =
- TSO                  =
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index b8a3e2ced9..90a7948c1d 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -81,6 +81,13 @@ New Features
- 
-   Added no-IOMMU mode for devices without or not enabling IOMMU/SVA.
- 
-+* **Added selective Rx in ethdev API.**
-+
-+  Some parts of packets may be discarded in Rx
-+  by configuring a split of packets received in a queue,
-+  and assigning no mempool to some configuration segments.
-+  This is a driver capability advertised in the ``selective_rx`` bit.
-+
- * **Added LinkData sxe2 ethernet driver.**
- 
-   Added network driver for the LinkData network adapters.
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index d0273e3f7b..67d609820c 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -2129,7 +2129,7 @@ rte_eth_rx_queue_check_split(uint16_t port_id,
- 			const struct rte_eth_dev_info *dev_info)
- {
- 	const struct rte_eth_rxseg_capa *seg_capa = &dev_info->rx_seg_capa;
--	struct rte_mempool *mp_first;
-+	struct rte_mempool *mp_first = NULL;
- 	uint32_t offset_mask;
- 	uint16_t seg_idx;
- 	int ret = 0;
-@@ -2148,7 +2148,6 @@ rte_eth_rx_queue_check_split(uint16_t port_id,
- 	 * Check the sizes and offsets against buffer sizes
- 	 * for each segment specified in extended configuration.
- 	 */
--	mp_first = rx_seg[0].mp;
- 	offset_mask = RTE_BIT32(seg_capa->offset_align_log2) - 1;
- 
- 	ptypes = NULL;
-@@ -2160,13 +2159,17 @@ rte_eth_rx_queue_check_split(uint16_t port_id,
- 		uint32_t offset = rx_seg[seg_idx].offset;
- 		uint32_t proto_hdr = rx_seg[seg_idx].proto_hdr;
- 
--		if (mpl == NULL) {
--			RTE_ETHDEV_LOG_LINE(ERR, "null mempool pointer");
--			ret = -EINVAL;
--			goto out;
-+		if (mpl == NULL) { /* discarded segment */
-+			if (seg_capa->selective_rx == 0) { /* not supported */
-+				RTE_ETHDEV_LOG_LINE(ERR, "null mempool pointer");
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+			continue; /* next checks are not relevant if no mempool */
- 		}
--		if (seg_idx != 0 && mp_first != mpl &&
--		    seg_capa->multi_pools == 0) {
-+		if (mp_first == NULL)
-+			mp_first = mpl;
-+		if (mp_first != mpl && seg_capa->multi_pools == 0) {
- 			RTE_ETHDEV_LOG_LINE(ERR, "Receiving to multiple pools is not supported");
- 			ret = -ENOTSUP;
- 			goto out;
-@@ -2233,6 +2236,11 @@ rte_eth_rx_queue_check_split(uint16_t port_id,
- 		if (ret != 0)
- 			goto out;
- 	}
-+	if (mp_first == NULL) {
-+		RTE_ETHDEV_LOG_LINE(ERR, "At least one Rx segment must have a mempool");
-+		ret = -EINVAL;
-+		goto out;
++static struct rte_eth_rxseg_split *
++next_rx_seg(union rte_eth_rxseg *segs, uint16_t *idx)
++{
++	if (*idx >= MAX_SEGS_BUFFER_SPLIT) {
++		fprintf(stderr, "Too many segments (max %u)\n", MAX_SEGS_BUFFER_SPLIT);
++		return NULL;
 +	}
- out:
- 	free(ptypes);
- 	return ret;
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index dedbc05554..d7e1560828 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -1073,6 +1073,7 @@ struct rte_eth_txmode {
-  * - The first network buffer will be allocated from the memory pool,
-  *   specified in the first array element, the second buffer, from the
-  *   pool in the second element, and so on.
-+ *   If the pool is NULL, the segment will be discarded, i.e. not received.
-  *
-  * - The proto_hdrs in the elements define the split position of
-  *   received packets.
-@@ -1121,7 +1122,15 @@ struct rte_eth_txmode {
-  *   The rest will be put into the last valid pool.
-  */
- struct rte_eth_rxseg_split {
--	struct rte_mempool *mp; /**< Memory pool to allocate segment from. */
-+	/**
-+	 * Memory pool to allocate segment from.
-+	 *
-+	 * NULL means discarded segment.
-+	 * Length of discarded segment is not reflected in mbuf packet length
-+	 * and not accounted in ibytes statistics.
-+	 * @see rte_eth_rxseg_capa::selective_rx
-+	 */
-+	struct rte_mempool *mp;
- 	uint16_t length; /**< Segment data length, configures split point. */
- 	uint16_t offset; /**< Data offset from beginning of mbuf data buffer. */
- 	/**
-@@ -1752,12 +1761,15 @@ struct rte_eth_switch_info {
-  * @b EXPERIMENTAL: this structure may change without prior notice.
-  *
-  * Ethernet device Rx buffer segmentation capabilities.
-+ *
-+ * @see rte_eth_rxseg_split
-  */
- struct rte_eth_rxseg_capa {
- 	__extension__
- 	uint32_t multi_pools:1; /**< Supports receiving to multiple pools.*/
- 	uint32_t offset_allowed:1; /**< Supports buffer offsets. */
- 	uint32_t offset_align_log2:4; /**< Required offset alignment. */
-+	uint32_t selective_rx:1; /**< Supports discarding segment. */
- 	uint16_t max_nseg; /**< Maximum amount of segments to split. */
- 	uint16_t reserved; /**< Reserved field. */
- };
++	return &segs[(*idx)++].split;
++}
++
+ /* Configure the Rx with optional split. */
+ int
+ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
+@@ -2744,31 +2754,70 @@ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
+ 	uint32_t prev_hdrs = 0;
+ 	int ret;
+ 
+-	if ((rx_pkt_nb_segs > 1) &&
+-	    (rx_conf->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
++	if (rx_pkt_nb_segs > 1 || rx_pkt_nb_offs > 0) {
++		struct rte_eth_dev_info dev_info;
++		uint16_t seg_idx = 0;
++		uint16_t next_offset = 0;
++
++		ret = rte_eth_dev_info_get(port_id, &dev_info);
++		if (ret != 0)
++			return ret;
++
+ 		/* multi-segment configuration */
+ 		for (i = 0; i < rx_pkt_nb_segs; i++) {
+-			struct rte_eth_rxseg_split *rx_seg = &rx_useg[i].split;
+-			/*
+-			 * Use last valid pool for the segments with number
+-			 * exceeding the pool index.
+-			 */
++			struct rte_eth_rxseg_split *rx_seg;
++			uint16_t seg_offset;
++
++			if (i < rx_pkt_nb_offs)
++				seg_offset = rx_pkt_seg_offsets[i];
++			else
++				seg_offset = rx_pkt_nb_offs > 0 ? next_offset : 0;
++
++			/* Insert selective Rx discard segment if there's a gap */
++			if (seg_offset > next_offset) {
++				rx_seg = next_rx_seg(rx_useg, &seg_idx);
++				if (rx_seg == NULL)
++					return -EINVAL;
++				rx_seg->offset = next_offset;
++				rx_seg->length = seg_offset - next_offset;
++				rx_seg->mp = NULL;
++				next_offset = seg_offset;
++			}
++
++			rx_seg = next_rx_seg(rx_useg, &seg_idx);
++			if (rx_seg == NULL)
++				return -EINVAL;
+ 			mp_n = (i >= mbuf_data_size_n) ? mbuf_data_size_n - 1 : i;
+ 			mpx = mbuf_pool_find(socket_id, mp_n);
+-			/* Handle zero as mbuf data buffer size. */
+-			rx_seg->offset = i < rx_pkt_nb_offs ?
+-					   rx_pkt_seg_offsets[i] : 0;
++			rx_seg->offset = seg_offset;
+ 			rx_seg->mp = mpx ? mpx : mp;
+ 			if (rx_pkt_hdr_protos[i] != 0 && rx_pkt_seg_lengths[i] == 0) {
+ 				rx_seg->proto_hdr = rx_pkt_hdr_protos[i] & ~prev_hdrs;
+ 				prev_hdrs |= rx_seg->proto_hdr;
++			} else if (rx_pkt_nb_offs > 0 && rx_pkt_seg_lengths[i] == 0) {
++				/* Insert fake discard segment if explicitly requested */
++				rx_seg->mp = NULL;
++				rx_seg->length = 0;
+ 			} else {
+ 				rx_seg->length = rx_pkt_seg_lengths[i] ?
+ 						rx_pkt_seg_lengths[i] :
+ 						mbuf_data_size[mp_n];
+ 			}
++
++			next_offset = seg_offset + rx_seg->length;
+ 		}
+-		rx_conf->rx_nseg = rx_pkt_nb_segs;
++
++		/* Add trailing selective Rx discard segment up to max packet length */
++		if (rx_pkt_nb_offs > 0 && next_offset < dev_info.max_rx_pktlen) {
++			struct rte_eth_rxseg_split *rx_seg = next_rx_seg(rx_useg, &seg_idx);
++			if (rx_seg == NULL)
++				return -EINVAL;
++			rx_seg->offset = next_offset;
++			rx_seg->length = dev_info.max_rx_pktlen - next_offset;
++			rx_seg->mp = NULL;
++		}
++
++		rx_conf->rx_nseg = seg_idx;
+ 		rx_conf->rx_seg = rx_useg;
+ 		rx_conf->rx_mempools = NULL;
+ 		rx_conf->rx_nmempool = 0;
+diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
+index 1a4a4b6c12..b59991ed89 100644
+--- a/doc/guides/testpmd_app_ug/run_app.rst
++++ b/doc/guides/testpmd_app_ug/run_app.rst
+@@ -364,6 +364,11 @@ The command line options are:
+     feature is engaged. Affects only the queues configured
+     with split offloads (currently BUFFER_SPLIT is supported only).
+ 
++    When used with ``--rxpkts`` on PMDs supporting selective Rx,
++    enables receiving only specific packet segments and discarding the rest.
++    Gaps between configured segments and any trailing data up to the max packet length
++    are automatically filled with NULL mempool segments (data is discarded).
++
+ *   ``--rxpkts=X[,Y]``
+ 
+     Set the length of segments to scatter packets on receiving if split
+@@ -373,6 +378,21 @@ The command line options are:
+     command line parameter and the mbufs to receive will be allocated
+     sequentially from these extra memory pools.
+ 
++    Note: ``--rxoffs`` is required to enable selective Rx in testpmd.
++    To receive only the first N bytes, use ``--rxoffs=0 --rxpkts=N``.
++
++    To receive only the Ethernet header (14 bytes at offset 0) and
++    a 64-byte segment starting at offset 128, while discarding the rest::
++
++       --rxoffs=0,128 --rxpkts=14,64
++
++    This configuration will:
++
++    * Receive 14 bytes at offset 0 (Ethernet header)
++    * Discard bytes 14-127 (inserted NULL mempool segment)
++    * Receive 64 bytes at offset 128
++    * Discard remaining bytes (inserted NULL mempool segment)
++
+ *   ``--txpkts=X[,Y]``
+ 
+     Set TX segment sizes or total packet length. Valid for ``tx-only``
 -- 
 2.54.0
 
