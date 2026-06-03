@@ -2,76 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFC8CD6E57
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD96ECD6E55
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:46:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2E39E40665;
-	Wed,  3 Jun 2026 20:45:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A008406B8;
+	Wed,  3 Jun 2026 20:45:44 +0200 (CEST)
 Received: from fhigh-b3-smtp.messagingengine.com
  (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
- by mails.dpdk.org (Postfix) with ESMTP id 9F08940A6B;
- Wed,  3 Jun 2026 20:45:39 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfhigh.stl.internal (Postfix) with ESMTP id D72ED7A00E9;
- Wed,  3 Jun 2026 14:45:38 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id 6DEFC40A75
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 20:45:42 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id D31B37A00E9;
+ Wed,  3 Jun 2026 14:45:41 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Wed, 03 Jun 2026 14:45:39 -0400
+ by phl-compute-02.internal (MEProxy); Wed, 03 Jun 2026 14:45:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm1; t=1780512338; x=
- 1780598738; bh=ff4SeLlZGaaVyCyJkrhXjZ7MBihuQIzYUGQuIpHP03M=; b=o
- XOiUQZ8Eqko4P6UDSlSBZgRGRclT44zDA8JJ7rZTVEnHK/mi0PnUThHjW34HTVez
- OBHajl6BOVv6ENPclQgSFshFWL2QlN6k3v/FEF8TuvmkI3itVOzhSSOQR8KmA9WO
- VWOj7HiVN6j3763cFGA63dXV0OjNGutgKtdRz9T3fLSyxw4B96XIfh9MTWmXF9lv
- apL7wTSOCUcI8wbXlosvJiZafE0MLOYdqP06ractYoGat39R3hcCP+/y4a7fI8jW
- +x80VhXhxXkTn7LLmIedV+O5eON0GkHS2auliu9NHlnJabyIn4TnP1sAGoRhTb6D
- rMQzb7gyl6YilqX+z6YzA==
+ :reply-to:subject:subject:to:to; s=fm1; t=1780512341; x=
+ 1780598741; bh=zGHsZLByrdaKA4eSE1d3rOYOXowJONqm5m0ltrI5yDs=; b=B
+ QrN5vyIMqFj+w7XTg/j9XeTAmOxU+AfZ6Yh4DnJWEAc2lAgvsV7RAS9+Y0aoHmMO
+ WDrm8fxmCR4pPfeXAe9ZX2lFgXmcgd6/ahvffh79o2eFcgRG3lEm654qb/w0HyAE
+ KL6SSiCiSf6OCpuN0b0bYukP2h3/d+qBsbnHrhh+QxiAq1zEdun/6zfYHCCjCoHU
+ j0rtiWAIowt6bxnKNPmVrPJxH5QUsseyDFmrMIfJZFWFQXeJQdvYfqm1aMLv/xnv
+ O/VV97lgjCJOZmWgI5EcEnwBW7ZPzrIlKSaVzpcymG1I5/+/EQqtv2+1QTImZFsP
+ to7z2azckaizk73nSFJLA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm1; t=1780512338; x=1780598738; bh=f
- f4SeLlZGaaVyCyJkrhXjZ7MBihuQIzYUGQuIpHP03M=; b=Q8spwEOMP+Cca9YSe
- F72RPfbhMC/sjur/1iVd18/L7e0ZgWH5oGzGC7hUrQNHcUQUNOym8xhPDhoZCA0y
- wVKrc8I2YvrYpDxiWCIXMcMkayHmc/E/Hk2JV0YZEUJbGKN8o1XTu4bA/RaWE8/5
- u8L3OQPyrBS763H/F9kVs0ALqLC0QPddXX2beddQ1AKdNGXia9WPKewN5Z1m+bvG
- ZrgF0yYnLiWoCOOtKVKmahFTD1JEvBvEXiT2U0Em5jGiCzFs+pYaAt8QZFzUwASw
- UaaUtAVZErhZ2W/+Homd9tfKMzOt0cZIriPHUr2YSlWyXnuLhV7HB8Pw+fpyAWJI
- AOe6A==
-X-ME-Sender: <xms:UnYgauwthzt4W9uvLuyJX6VTvzvNrcOUTikDDFGxXX6-0e19uYsAlA>
- <xme:UnYgakSzST43JeB2FZ_TwQhBV70SrTR526jmLBYjXJkMNb78Nalaf-nf6QgD6wIYi
- UeB8n-E8dXuRdipgSNsu6N8vDmXe2e0KPiir8oX4uK0GhtRBwS_EA>
-X-ME-Received: <xmr:UnYgam_6Xh-_w88MjDyOoPi6vidHC78cxVpd-wlbgWVsMczgjGFyJuqnTP1IbtwN-ObXe9zN3XCiix1m1U_ewr9Pg1mKTU8>
-X-ME-Proxy-Cause: dmFkZTEdfC8qzFhLOH0zkZ6kb3W9lB335TfNsF/9S8fTe5Ku8VfUSq559J3SDo6G6CwABf
- 4kuMNvLAfvnWRqmwYFDVfG+uZwfdCB94yNbfJz+YqfhWAjiPxpLQWNWDa0ONrlFZ26O/a1
- u2vYy/Gr1oIAdLnyxsMp0A0dmr0i2QrHWuhAJMK0Ou0jjB9a4LHCM6T3Lhvsa48Wj2ML9e
- +E4AoT8iEkNrnVL1SipCje9dYUK/itAsEkkyZaEewuoEAfHO1vs8VDObVyQQRFmykwkZu+
- BfjVVrjguErWxOZBCSdM2elaZ8CNfOdGqIHmIqi2KU5vXMxpFjDw/QyLYkeQtnovAQdoZ+
- NfhJW0DMpmfc3h2r4RlS8CpX6kwx2MOfZZbFeHEuq2TJo0ic3QcB70H/1qyoIk25SQBELH
- 0GK3xopNBWDohsItCp478CHd3ZpYHSvseDFGR/pIEHMrtDhZguT5XFu38zCYa/bvt4QfX4
- aPLfgDmcJmlyeW7IrL5kXXeg+Z5vzmBmIhNHHfRa6P0fY/dzqNqopyUPKCaE7Y3gW3cXBe
- nRqjxV7d/HfVDqmj/3qh99jEHJWgteAsD34+GqtKl8yPaV9mEuYme6sylUw/h5Jxrf7oeO
- g++NZuN2SOJpfMZCuYW+6LrUHQUv/0AnIisiLZ12/wE+w8+luRVj3LUJfKSw
-X-ME-Proxy: <xmx:UnYgaitZfLGWYIBcpmvdnRfiRWb2fGy-7AqhAyoQtB89u09iJOg6qg>
- <xmx:UnYgauPpdUqr76DRm5sdZIcDfL5nbGYKRwyPVIr0rNHAcBWUVaStQQ>
- <xmx:UnYgavhnTk6sUOtSwq_qw7neXnt-3jrqja6ndifSI2eHlTsKD3YhEg>
- <xmx:UnYgao7piDgw2gCndbU3lJ9DemgykzRkNXf4E1kB5vaKAsHrm9KWew>
- <xmx:UnYgatGAW9-pxc9zmuw4_jguGs4dMIg2OdRCiHxUpTb2YsC_G_F7QOk0>
+ :x-me-sender:x-sasl-enc; s=fm1; t=1780512341; x=1780598741; bh=z
+ GHsZLByrdaKA4eSE1d3rOYOXowJONqm5m0ltrI5yDs=; b=abAr6gBLTCrNj5Grc
+ 2qam5BlieGdIK6gIsfZXrXE2Wk8Uj9OCZwmuk/K9X9U3xdSnn5G3ZRR82h063QtE
+ Od846GUNvSdahTn9QvnxlONG786Ag/wRZl80YHIOWcOeV7pUxSHdM5zvY0TDqmOL
+ I/6vAIuPJpHcK4loIuB4xXA11PFbcW56aKeQPY3Vj1tCSG00NWySgFHMlfqgcirB
+ 9mW3OA6TNsnOC9ubM/fmam71k3zvqtE2xKomDtCL+LE5nTQlN8ehVcDDzjCeqwYF
+ tOs8Z2FW+3g3G1s4K+LvU3sYj9F8snvzpTtbOkiuK+8IVTrkHDg9iDxGztL/DIkW
+ WffJQ==
+X-ME-Sender: <xms:VXYgagumAJP2YQXLVJ9RDJyjIVfh8NcRBRnUFdOLk2wkZtLwreszXw>
+ <xme:VXYgatkVKtPftHNC6xYNwl0bzpr_SRryEZh5PSoGlNujfmcezv5zi6dR55jvC_wCF
+ FbXk_C8Wu_CMtUf5u2Q3VCikt_IhuJhdqirpTJcqhIw6vrRF0UAxQ>
+X-ME-Received: <xmr:VXYgajtNa3iKhTTDFVnbb3vkbVhEiJ6CAEXo0vuboNGWK3NTZpIyPvEIKCFs1ZLSXrWDI2NVVIMOkeiCj86t6WY2Skna4eY>
+X-ME-Proxy-Cause: dmFkZTGlGxtYaJ/KTyf2kulfPFF0rtmo6mRMXgFWwQdpr1xap7OFkzKvkhAPr4SLXlsNwN
+ pg81hcFGJ1Uj3EJycOiMWDFZizy9L56qXI9Wpr2JPsJwD46/xNEgQEhvMHJ+qQ7VdxMuLu
+ Up+0FJzeG0KGFvINMb2E5WYGwfoq6PvoDBpldxNFNKZ+spw0g4SGaBwohpvA8UWIE66fzP
+ HgjvjxVsmWi5TVZuEufpzb3gSmrb+q9yjhXxj62f2akBW8BCwYPnl689rG16LmUNOgIXgW
+ mbEylVOXgJRlyJbCj/+GUPxrFMZe6rx6frQxgFD5Wb09Cfp0QeNK+HSgFk9UbQevvQHxBe
+ IIQjjCs4A9o3wLcwF31qWRUZova+uLMqHKiFvNu0rL9brsoi0Duk446crlixtv6n2lvSXQ
+ GiXNSDso4v3Lc+ZszLGoCjODyFYbjeGIAoXLKCWpcDua0WhxQjlGp6a2GqSxQBsKU08Oc4
+ 84ktI/FJcLpERM81MYMWXAyEV7LVVhblP+WVoCabS8Ne6Ist/9j8jt4Mf5t9MGq8hX//Dw
+ tpAqhJnOhjEVhuZDoyPM8mHJI35GWJnYp39tspbLb8x0ECXBNQ8U7io2X9iJbhNtvi63Mf
+ wgoMjWCNotHk2oNzkb9qLXds+6cCSR+1rWNWRzkHlmGvQA8c6BoE/0t3+LUg
+X-ME-Proxy: <xmx:VXYgarekpWwwylCZUc3AjqhqgYC7NA-fi_GzYrUPXcYF6FsA_0X5wg>
+ <xmx:VXYgaryZIQ3bgv1wG7QetVUJrUQtJVR0S7fD_FCw73aQirC0AZdykg>
+ <xmx:VXYgahFr3WEkWI6eUYKGcNwXRrDwXgXJDOuLgQwO_IezK_JMzl54eg>
+ <xmx:VXYgavwRZbgf7FgfJ7QZVryWVlbL1DL4xs0f0sZqBEftK_YkJeoJ-A>
+ <xmx:VXYgak6D5MZncbVyE9qN3V-RNiNViFo69_yOIpRHQt0nmUcrdHg63n7z>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jun 2026 14:45:36 -0400 (EDT)
+ 3 Jun 2026 14:45:40 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Luca Vizzarro <luca.vizzarro@arm.com>,
- Patrick Robb <patrickrobb1997@gmail.com>,
- Jeremy Spewock <jspewock@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>,
- =?UTF-8?q?Juraj=20Linke=C5=A1?= <juraj.linkes@pantheon.tech>
-Subject: [PATCH v7 09/10] dts: fix topology capability comparison
-Date: Wed,  3 Jun 2026 20:23:32 +0200
-Message-ID: <20260603184503.652030-10-thomas@monjalon.net>
+ Patrick Robb <patrickrobb1997@gmail.com>
+Subject: [PATCH v7 10/10] dts: add selective Rx tests
+Date: Wed,  3 Jun 2026 20:23:33 +0200
+Message-ID: <20260603184503.652030-11-thomas@monjalon.net>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260603184503.652030-1-thomas@monjalon.net>
 References: <20260202160903.254621-1-getelson@nvidia.com>
@@ -91,57 +89,364 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-TopologyCapability.__gt__() was delegating to __lt__(),
-which caused infinite recursion when "other" is not a TopologyCapability:
-other.__lt__(self) returns NotImplemented,
-Python retries with self.__gt__(other),
-and the cycle repeats.
+Add TestSuite_rx_split with 7 test cases:
+- 3 positive: headers only, payload only, two non-contiguous segments
+- 4 negative: missing offload flag, out-of-range, overlap, all-discard
 
-dts/framework/testbed_model/capability.py", line 579, in __gt__
-        return other < self
-               ^^^^^^^^^^^^
-    RecursionError: maximum recursion depth exceeded
+Add selective Rx capability detection via testpmd "show port info".
 
-Similarly, __le__() was delegating to "not __gt__()",
-which returns True for non-comparable types instead of False.
-
-Fix both by checking is_comparable_with() first
-and comparing topology_type directly, consistent with __lt__().
-
-Fixes: 039256daa8bf ("dts: add topology capability")
-Cc: stable@dpdk.org
+The test suite could be completed later for the basic buffer split
+configuration based on offsets or protocols.
 
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
- dts/framework/testbed_model/capability.py | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ dts/api/capabilities.py                   |   2 +
+ dts/api/testpmd/__init__.py               |  17 ++
+ dts/api/testpmd/types.py                  |   6 +
+ dts/framework/testbed_model/capability.py |   2 +
+ dts/tests/TestSuite_rx_split.py           | 262 ++++++++++++++++++++++
+ 5 files changed, 289 insertions(+)
+ create mode 100644 dts/tests/TestSuite_rx_split.py
 
+diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py
+index 09bc538523..b0c1d81d36 100644
+--- a/dts/api/capabilities.py
++++ b/dts/api/capabilities.py
+@@ -136,6 +136,8 @@ class NicCapability(IntEnum):
+     #: Device supports all VLAN capabilities.
+     PORT_RX_OFFLOAD_VLAN = auto()
+     QUEUE_RX_OFFLOAD_VLAN = auto()
++    #: Device supports selective Rx.
++    SELECTIVE_RX = auto()
+     #: Device supports Rx queue setup after device started.
+     RUNTIME_RX_QUEUE_SETUP = auto()
+     #: Device supports Tx queue setup after device started.
+diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+index e9187440bb..6973a64573 100644
+--- a/dts/api/testpmd/__init__.py
++++ b/dts/api/testpmd/__init__.py
+@@ -1409,6 +1409,23 @@ def get_capabilities_show_port_info(
+             self.ports[0].device_capabilities,
+         )
+ 
++    def get_capabilities_selective_rx(
++        self,
++        supported_capabilities: MutableSet["NicCapability"],
++        unsupported_capabilities: MutableSet["NicCapability"],
++    ) -> None:
++        """Get selective Rx capability from show port info.
++
++        Args:
++            supported_capabilities: Supported capabilities will be added to this set.
++            unsupported_capabilities: Unsupported capabilities will be added to this set.
++        """
++        port_info = self.show_port_info(self.ports[0].id)
++        if port_info.selective_rx:
++            supported_capabilities.add(NicCapability.SELECTIVE_RX)
++        else:
++            unsupported_capabilities.add(NicCapability.SELECTIVE_RX)
++
+     def get_capabilities_mcast_filtering(
+         self,
+         supported_capabilities: MutableSet["NicCapability"],
+diff --git a/dts/api/testpmd/types.py b/dts/api/testpmd/types.py
+index 0d322aece2..6f1eaf47cc 100644
+--- a/dts/api/testpmd/types.py
++++ b/dts/api/testpmd/types.py
+@@ -614,6 +614,12 @@ def _validate(info: str) -> str | None:
+         metadata=VLANOffloadFlag.make_parser(),
+     )
+ 
++    #: Selective Rx support
++    selective_rx: bool = field(
++        default=False,
++        metadata=TextParser.find(r"Selective Rx: supported"),
++    )
++
+     #: Maximum size of RX buffer
+     max_rx_bufsize: int | None = field(
+         default=None, metadata=TextParser.find_int(r"Maximum size of RX buffer: (\d+)")
 diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
-index 960370fc72..96e1cd449f 100644
+index 96e1cd449f..b10799ea4b 100644
 --- a/dts/framework/testbed_model/capability.py
 +++ b/dts/framework/testbed_model/capability.py
-@@ -574,7 +574,9 @@ def __gt__(self, other: Any) -> bool:
-         Returns:
-             :data:`True` if the instance's topology type is more complex than the compared object's.
-         """
--        return other < self
-+        if not self.is_comparable_with(other):
-+            return False
-+        return self.topology_type > other.topology_type
- 
-     def __le__(self, other: Any) -> bool:
-         """Compare the :attr:`~TopologyCapability.topology_type`s.
-@@ -586,7 +588,9 @@ def __le__(self, other: Any) -> bool:
-             :data:`True` if the instance's topology type is less complex or equal than
-             the compared object's.
-         """
--        return not self > other
-+        if not self.is_comparable_with(other):
-+            return False
-+        return self.topology_type <= other.topology_type
- 
-     def __hash__(self):
-         """Each instance is identified by :attr:`topology_type`."""
+@@ -324,6 +324,8 @@ def mapping(cap: NicCapability) -> TestPmdNicCapability:
+                     | NicCapability.FLOW_SHARED_OBJECT_KEEP
+                 ):
+                     return (TestPmd.get_capabilities_show_port_info, None)
++                case NicCapability.SELECTIVE_RX:
++                    return (TestPmd.get_capabilities_selective_rx, None)
+                 case NicCapability.MCAST_FILTERING:
+                     return (TestPmd.get_capabilities_mcast_filtering, None)
+                 case NicCapability.FLOW_CTRL:
+diff --git a/dts/tests/TestSuite_rx_split.py b/dts/tests/TestSuite_rx_split.py
+new file mode 100644
+index 0000000000..e12fe1a828
+--- /dev/null
++++ b/dts/tests/TestSuite_rx_split.py
+@@ -0,0 +1,262 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 NVIDIA Corporation & Affiliates
++
++"""Rx split test suite.
++
++Test configuring a packet split on Rx,
++and discarding some segments (selective Rx) at NIC level.
++"""
++
++from typing import Any
++
++from scapy.layers.inet import IP
++from scapy.layers.l2 import Ether
++from scapy.packet import Packet, Raw
++
++from api.capabilities import (
++    NicCapability,
++    requires_nic_capability,
++)
++from api.packet import send_packet_and_capture
++from api.test import fail, verify
++from api.testpmd import TestPmd
++from api.testpmd.config import SimpleForwardingModes
++from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
++from framework.exception import InteractiveCommandExecutionError
++from framework.test_suite import TestSuite, func_test
++
++PAYLOAD = bytes(range(256))
++ETHER_HDR_LEN = len(Ether())
++IP_HDR_LEN = len(IP())
++ETHER_IP_HDR_LEN = ETHER_HDR_LEN + IP_HDR_LEN
++
++
++@requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_BUFFER_SPLIT)
++@requires_nic_capability(NicCapability.SELECTIVE_RX)
++class TestRxSplit(TestSuite):
++    """Rx split test suite.
++
++    Configure testpmd with various Rx segment offset/length combinations
++    and verify that only the requested portions of the packet are received
++    and forwarded.
++    """
++
++    def _create_testpmd(self, **kwargs: Any) -> TestPmd:
++        """Create a TestPmd instance with defaults overridden by kwargs."""
++        defaults: dict[str, Any] = {
++            "forward_mode": SimpleForwardingModes.mac,
++            "rx_offloads": RxOffloadCapability.BUFFER_SPLIT,
++            "enable_scatter": True,
++        }
++        return TestPmd(**{**defaults, **kwargs})
++
++    def _build_packet(self) -> Packet:
++        """Build a test packet with an incrementing byte pattern payload."""
++        return Ether() / IP() / Raw(load=PAYLOAD)
++
++    def _send_and_verify(
++        self,
++        testpmd: TestPmd,
++        packet: Packet,
++        expected_bytes: bytes,
++    ) -> None:
++        """Clear stats, send a packet, and verify received content and stats.
++
++        Args:
++            testpmd: The running testpmd instance.
++            packet: The packet to send.
++            expected_bytes: Expected raw bytes of the received packet.
++        """
++        expected_len = len(expected_bytes)
++        testpmd.clear_port_stats_all(verify=False)
++
++        received = send_packet_and_capture(packet)
++        verify(
++            len(received) > 0,
++            "Did not receive any packets.",
++        )
++
++        recv_bytes = bytes(received[0])
++        verify(
++            len(recv_bytes) == expected_len,
++            f"Expected packet length {expected_len}, got {len(recv_bytes)}.",
++        )
++        verify(
++            recv_bytes == expected_bytes,
++            "Received packet content does not match expected bytes.",
++        )
++
++        all_stats, _ = testpmd.show_port_stats_all()
++        total_rx_packets = sum(s.rx_packets for s in all_stats)
++        total_rx_bytes = sum(s.rx_bytes for s in all_stats)
++        verify(
++            total_rx_packets == 1,
++            f"Expected 1 Rx packet, got {total_rx_packets}.",
++        )
++        verify(
++            total_rx_bytes == expected_len,
++            f"Expected {expected_len} Rx bytes, got {total_rx_bytes}.",
++        )
++
++    @func_test
++    def selective_rx_headers(self) -> None:
++        """Keep only the Ethernet + IP headers, discard the payload.
++
++        Steps:
++            Start testpmd with rxoffs/rxpkts and buffer split enabled.
++            Send an Ether/IP/payload packet.
++
++        Verify:
++            Received packet has Ether + IP headers only.
++            Port stats show expected rx_packets and rx_bytes.
++        """
++        with self._create_testpmd(
++            rx_segments_offsets=[0],
++            rx_segments_length=[ETHER_IP_HDR_LEN],
++        ) as testpmd:
++            testpmd.start()
++            packet = self._build_packet()
++            expected = bytes(packet)[:ETHER_IP_HDR_LEN]
++            self._send_and_verify(testpmd, packet, expected)
++
++    @func_test
++    def selective_rx_payload_only(self) -> None:
++        """Skip the Ethernet + IP headers, keep only the payload.
++
++        Steps:
++            Start testpmd with rxoffs/rxpkts and buffer split enabled.
++            Send an Ether/IP/payload packet.
++
++        Verify:
++            Received packet is matching the original payload.
++            Port stats show expected rx_packets and rx_bytes.
++        """
++        with self._create_testpmd(
++            rx_segments_offsets=[ETHER_IP_HDR_LEN],
++            rx_segments_length=[len(PAYLOAD)],
++        ) as testpmd:
++            testpmd.start()
++            self._send_and_verify(testpmd, self._build_packet(), PAYLOAD)
++
++    @func_test
++    def selective_rx_two_segments(self) -> None:
++        """Keep the IP header and the middle of the payload, skip the rest.
++
++        Steps:
++            Start testpmd with rxoffs/rxpkts, buffer split
++            and multi-segment Tx enabled.
++            Send an Ether/IP/payload packet.
++
++        Verify:
++            Received packet is matching the IP header and middle of payload.
++            Port stats show expected rx_packets and rx_bytes.
++        """
++        payload_offset = 100
++        payload_length = 100
++        with self._create_testpmd(
++            tx_offloads=TxOffloadCapability.MULTI_SEGS,
++            rx_segments_offsets=[ETHER_HDR_LEN, ETHER_IP_HDR_LEN + payload_offset],
++            rx_segments_length=[IP_HDR_LEN, payload_length],
++        ) as testpmd:
++            testpmd.start()
++            packet = self._build_packet()
++            raw = bytes(packet)
++            payload_start = ETHER_IP_HDR_LEN + payload_offset
++            expected = (
++                raw[ETHER_HDR_LEN:ETHER_IP_HDR_LEN]
++                + raw[payload_start : payload_start + payload_length]
++            )
++            self._send_and_verify(testpmd, packet, expected)
++
++    @func_test
++    def selective_rx_no_offload(self) -> None:
++        """Configure selective Rx with buffer split disabled.
++
++        Steps:
++            Start testpmd with rxoffs/rxpkts, buffer split
++            and device start disabled.
++            Attempt to start ports.
++
++        Verify:
++            Queue configuration fails.
++        """
++        with self._create_testpmd(
++            rx_offloads=None,
++            rx_segments_offsets=[0],
++            rx_segments_length=[ETHER_IP_HDR_LEN],
++            disable_device_start=True,
++        ) as testpmd:
++            try:
++                testpmd.start_all_ports()
++                fail("Expected configuration to fail with buffer split disabled.")
++            except InteractiveCommandExecutionError:
++                pass
++
++    @func_test
++    def selective_rx_offset_out_of_range(self) -> None:
++        """Configure selective Rx with an offset beyond max_rx_pktlen.
++
++        Steps:
++            Start testpmd with rxoffs too big, buffer split enabled,
++            and device start disabled.
++            Attempt to start ports.
++
++        Verify:
++            Queue configuration fails.
++        """
++        with self._create_testpmd(
++            rx_segments_offsets=[20000],
++            rx_segments_length=[100],
++            disable_device_start=True,
++        ) as testpmd:
++            try:
++                testpmd.start_all_ports()
++                fail("Expected configuration to fail with out-of-range offset.")
++            except InteractiveCommandExecutionError:
++                pass
++
++    @func_test
++    def selective_rx_overlap(self) -> None:
++        """Configure selective Rx with overlapping segments.
++
++        Steps:
++            Start testpmd with overlapping rxoffs/rxpkts, buffer split enabled,
++            and device start disabled.
++            Attempt to start ports.
++
++        Verify:
++            Queue configuration fails.
++        """
++        with self._create_testpmd(
++            rx_segments_offsets=[0, 10],
++            rx_segments_length=[64, 64],
++            disable_device_start=True,
++        ) as testpmd:
++            try:
++                testpmd.start_all_ports()
++                fail("Expected configuration to fail with overlapping segments.")
++            except InteractiveCommandExecutionError:
++                pass
++
++    @func_test
++    def selective_rx_all_discard(self) -> None:
++        """Configure selective Rx with only discard segment.
++
++        Steps:
++            Start testpmd with rxoffs/rxpkts=0 (null segment), buffer split enabled,
++            and device start disabled.
++            Attempt to start ports.
++
++        Verify:
++            Queue configuration fails.
++        """
++        with self._create_testpmd(
++            rx_segments_offsets=[0],
++            rx_segments_length=[0],
++            disable_device_start=True,
++        ) as testpmd:
++            try:
++                testpmd.start_all_ports()
++                fail("Expected configuration to fail with only discard segment.")
++            except InteractiveCommandExecutionError:
++                pass
 -- 
 2.54.0
 
