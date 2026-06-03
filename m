@@ -2,79 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8BFCD6E57
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 15:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AAFCD6E57
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 15:44:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8BFE4402CC;
-	Wed,  3 Jun 2026 17:37:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 424B2402CC;
+	Wed,  3 Jun 2026 17:44:35 +0200 (CEST)
 Received: from fhigh-b5-smtp.messagingengine.com
  (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
- by mails.dpdk.org (Postfix) with ESMTP id 54766402BC;
- Wed,  3 Jun 2026 17:37:43 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 5D33D7A0104;
- Wed,  3 Jun 2026 11:37:41 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Wed, 03 Jun 2026 11:37:42 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 0EE08402BC
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 17:44:33 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id E3A807A0081;
+ Wed,  3 Jun 2026 11:44:30 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Wed, 03 Jun 2026 11:44:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780501060;
- x=1780587460; bh=7swFsJmAvPe9GPp3U2GtP6/Gh641aYJZNxBe+tJblqc=; b=
- coS8cNa5+G9tAfG1Dvz7bTjyby1SD1x80HsOWeLFBOgD0xL8AdFSstEoT5FfNRh5
- ViW282RVeRU2tO4wKT5jpc/b5kVO+0Jff3twmLicxhRk3YUTuzMcNXCLBdnz8SWK
- PdQzUMuBp2XDeN1/kYrfEBmBVTldYy6sLBYQ4948i5cPssrDYlyuJ6s+B/4sgIGm
- 8TS1JGhaieWR00TeoslAfNeaPkj+Do9X44srdPsHT9xx5UeGbUnUtArcHgl+KD5F
- t2ZI3QoG1jm4byKcrGziLA0TW9O8H7dcl3EbofXQmw/k/emLQ58Wq4cV0FnvxpKs
- nfcxpUpMuYrFVz7pHjNQig==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1780501470;
+ x=1780587870; bh=ZMuxXTygW+ty9gln+qrjqJgLcqeaVgXX+pigQ3iVM6A=; b=
+ kjE50iwrLd47rHE5kUdtj2g7ppNyIZUOPJvqXZFoKF+qmncFnpc/woDGgvPGUphg
+ 7ElWMz55egBbWAL36cQpa0tsoDwD10zuR1csQh3TJe1hQdHIdaqMPZVa7EPgG7sG
+ badQUNVpMTC6KP5uVrOkr8vXLrrg9arw9idWDiglRHXxlERLVSPn0aE89sCuHZ43
+ xNzWlqYcTojqp0HeIKXTFFJKhwnFPZC0W6ziwiq08aS01OCoGmvWvVC3zby38bMv
+ Scg/QQiEXPC1j0fw20DeeUHyqzMJ2WYnLLt2ljxjlRvmsfo0bfvJK5VVAk56J8FD
+ EXzXgoEAzUK/ixZHG9o8LA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780501060; x=
- 1780587460; bh=7swFsJmAvPe9GPp3U2GtP6/Gh641aYJZNxBe+tJblqc=; b=G
- 7i8CfgioxhT5oNvcB/uOFHPcFcpn41hXPiCsTWn4+g5JxZkTUCRf0aCjfY8nJFKz
- 6ZvXg6bGLMJn1kem2YixzALoaGmy7FAD/S3UXxrnfcbkeuWk96Cx3FsdDThpiPZq
- NI54THGBCD/xoRqGSvrG8jFiXKuzX9JpFhBZFvGXsHXDfJVsOhvEelKv9pFj1IbD
- /5U1xbI72ArOqnvBks5uJDUPrb7XyIccHpq4JR+E2UghJofVVlGWG2ReFgA3AOWv
- FS4kROFV9KfkRK3AN8RdLd8HuJFNo12ir/3KXAjZQTP2Cb9CtyZnNUim0vP7B3bn
- TiMHqbJpkEEY5mhMl2fsQ==
-X-ME-Sender: <xms:REogalyv_npnIwNSd9DaFcpwitt9nUNXp_es6XoBw2lXa44Atk5hXQ>
- <xme:REogauOryaQQW1KDzulOlQ2IG1bm6-Ee6WAKEMm4uiBWqLqxJAejxEPk7sRJeHSZu
- 4rjky2DO5_SnPg50GtzCMhCu6UKscnKMw0W1sgYahgIbBzZ3-MKBA>
-X-ME-Received: <xmr:REogaq5pyf9coECnK4adrVrSdumRTssdhZMrsCZ_H2hr5B9mxBXqtnMxkUgU3lKlHIWMhAJf9e4qJdJeGMODK-Jjgg>
-X-ME-Proxy-Cause: dmFkZTFtWLwBwuxX9XQ9pQM63mXhfxFDDtNHng4HhYqBPipkBt3lvX72muHfQL7pyFkgUC
- SK3qXqQLeGyiVBd+AfG9O0MiMtmCD5W8Ib0x3wzqUst4kiQ5oiUu6qORWJ8WLKpdTGlpBc
- hDUsgKNEVd8mgdjIZViwHy2W0EJpgN9noxiu9kdcbruRDQViPT0kzxLFyZmJvOk436mU7b
- 85xr76h4zTd3bcEEeQ4fnjTwAoTyXo6rbvU9SGG5Bnz2AqtwtemCOyAd+dClH3UPRZFlwx
- OPXj4JwqYgqQ+NRiyB7XfaLbdcYZbcXPc5OWIm0aBL5PWmtq2nzFGPsVhIWj0b0OSUriif
- px2NnzMQT8oK+JAPxnSmehDRJxaV0HBBltFk1GyE4k2++PzYEI8G5ttvz92XTulYSkbfGE
- IkZT0oLw43VwT8qlKsXNxi0A6iDPJKV/T1ooVof5QQhk9ZIb33ZfI6UpWTfvbARUARp0QW
- 22OSCuHp/GDsBhEbxcEJplh5ATdMSePwSiym1fbkoH/WNwt1kdsMXTa0KC+xblRJDctfAt
- 8zGLCvUGQfHrvtns7uwCWk5de3pD9+HJHMf4/SQLO1rtubgBk7Kj1QaRFYalMsMsId+UHr
- CDAUMDT7lD2Ik98JzE0iZwUJUjqIIIJ2pa24iOslxvdAqrOR/+nFr0bZvR4A
-X-ME-Proxy: <xmx:REoganmUjSUC_WugHLdPN8gjdfDHFhs2TpjIPkc4MHvmm8FeGfHXow>
- <xmx:REogajRI_EZYfDn5Yl7bZYr02zS7-vUb1oJL10GkR1PPIufIY0hWyQ>
- <xmx:REogauHlJm47fW-4v6WCESnKofl7pnSIUPHDxoROoJh-gEmIUDjV5g>
- <xmx:REogagHW-UjKmJiZx3a3thyupFEJgwUXCfS_obApiTUHQNxgfu03Vw>
- <xmx:REogarHtGDf7uUgMlxJCIzlY1Nw7e5k880qgWWyhJITDxT-MEkGHnqCu>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780501470; x=
+ 1780587870; bh=ZMuxXTygW+ty9gln+qrjqJgLcqeaVgXX+pigQ3iVM6A=; b=P
+ 6M9+YR3MRMnYJd5IMu38aOusx6suJSPX97QEIOeFnscglsEvm+qeS33Ar6D/xwlr
+ d2GB7T1UG4q7/TtTXjlTl8OxGAj2ss2oHBKjpPAjO/Yt2PDTkeAB+DW/q7t1sYka
+ joUCUZFyCRKVFDXxGEM8Q4cggTe9Gg7M7KJCZa9+NZcw5lmRU//r4FLWkk8CLB0t
+ 4k6SLAvkgcFl4Oqto4CCZvl71zrJgrkWdfuCKFobkG1/Du5/ct/OEwAEsNxIszre
+ IirhI5eClPg/KjAsKP4qZSJFeHsSTugucGZ3AQOHvmwdYUtdcl7tZTcwhNQOHEiQ
+ RfP3s/73gX+41LDx4nQQw==
+X-ME-Sender: <xms:3UsgaozPdCR3Ag3T-3DuIIq-OfMQt9ONTrLxCh7PMpG-8vUGaM4sQg>
+ <xme:3UsgaoGRdfLhSLPIwkXAtOP0lF0y5UVPi_QiVJax2oMY3USeORvTPbHBoXuk8yYZ9
+ pTw7w9UWKGbqws9OTspLl72RnCm7-ISNr8UMH5vu6aUpVUv2R_12g>
+X-ME-Received: <xmr:3UsgalsTBqbfQjLxfZ6Zu0VmqFzJFI9FDNmP_4JxUG3TVwPNjII2drpi1KaZIYrzg2IYyXO55VCo83EoYmzr06wsdg>
+X-ME-Proxy-Cause: dmFkZTFGrOhtg3t6G6QrQtuPZuXOXXm87TCNlc4wS7MJwR20owfxs9XXBd3KFiRQNnBgj8
+ /4iWKGMhLKDaQA3ljKOYgRr8A73/w2FW6Z4f+36qNNkPcQ8kFWpUiNNANg8pu3ilRrpyIh
+ epKU6w4uZzuzC7YpEGXohGtASZLmpFZzV5sAqnO2bTrMunuS//j57YgzYCPJcdZ+t0dFSh
+ PdKwFnVvQr+ztL2rcZ7T8VOFkeDT8wZxfNUOHEnKBuWZITlwBuwOzJgo/aLvqUMPZULyG5
+ ccEsUWegJKKApQx5bkLsdwFSyvp9SW5EjE+oAczPX5Kx2Uf5aBE+rZWqh6TnKLeUB1ZPT+
+ Bj+Hgov/vBRUgku0EKz0+VTleomsgdDW4OzbUjHrMR/0FWsluX7UikQfwUXOMuawJRBw/b
+ aFptj7/TVLva2KUSksQtwHpics2UDCT6UGs0l6Wd3fr7hoDYuyVAWkaxjLxO5xq4f1mH9t
+ 7A74/VlAyT8fzL7XQBR6axSbNi628QoKHF9VcX/UxW2ojA6popTgljflKwzA29ZWDDUnu2
+ lAOTrrtaTep2rFySAlAJWbIFe9Gp2cQ85ZlxkiBg15J3iUJtc/zBjr6wnC3MrKajQBqzxx
+ pQ3xvX0N0qKjWAu8jTKJ3jm+1kkvptUoYpwJqbwwEhQxgKHFpiUMd7DeG8qA
+X-ME-Proxy: <xmx:3UsgagA9jBqgGn5JyPuByufHZQTQLd3Y2cchkfAiO4urkAz1R46a7A>
+ <xmx:3UsgaoCPDs8LwRNkLmLTlxKbBGkUkC_EFqORVbmSJBjHjfQswTFLHg>
+ <xmx:3UsgairrHrNbLdYLZ0OiJeSfQhrJiL4KAYjra4Qwr3l0Lwy9N3kwqQ>
+ <xmx:3UsgarHqwgsw_XiK65CBFfvOFitQ2P-uiDd-WjVtQoOJROfSr4rw6w>
+ <xmx:3ksgaofdbJZOYi4TnRz1RCUIOa07ugUXIesNpRIQ6ktA6LLWJ1puZwvf>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jun 2026 11:37:39 -0400 (EDT)
+ 3 Jun 2026 11:44:27 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, stable@dpdk.org, Reshma Pattan <reshma.pattan@intel.com>,
+To: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Bruce Richardson <bruce.richardson@intel.com>,
- Luca Boccassi <bluca@debian.org>
-Subject: Re: [PATCH] test/latency: fix intermittent failure on slow platforms
-Date: Wed, 03 Jun 2026 17:37:37 +0200
-Message-ID: <x6wO5J27RPaQicJ3onvbZQ@monjalon.net>
-In-Reply-To: <CAMw=ZnRB+wv7ZN6c5YkF=LfTB328uYcBmf=xCqjTU8hSjzuVZQ@mail.gmail.com>
-References: <20260531180118.274308-1-stephen@networkplumber.org>
- <CAMw=ZnRB+wv7ZN6c5YkF=LfTB328uYcBmf=xCqjTU8hSjzuVZQ@mail.gmail.com>
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ David Marchand <david.marchand@redhat.com>, Robin Jarry <rjarry@redhat.com>,
+ Jerin Jacob <jerinj@marvell.com>
+Cc: dev@dpdk.org, Jingjing Wu <jingjing.wu@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>,
+ Sachin Saxena <sachin.saxena@oss.nxp.com>
+Subject: Re: [PATCH v7] mempool: improve cache behaviour and performance
+Date: Wed, 03 Jun 2026 17:44:25 +0200
+Message-ID: <xfJder14R4683NtQsvKG5g@monjalon.net>
+In-Reply-To: <20260601164007.252063-1-mb@smartsharesystems.com>
+References: <20260408141315.904381-1-mb@smartsharesystems.com>
+ <20260601164007.252063-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -89,38 +95,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-01/06/2026 12:23, Luca Boccassi:
-> On Sun, 31 May 2026 at 19:01, Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
-> >
-> > The forwarding loop was bounded by a fixed interval of 0.5ms
-> > but on slow or emulated platforms with a low-frequency timebase
-> > (e.g. RISC-V rdtime) this fails because the loop only ran once.
-> > The test needs two iterations to get any samples.
-> >
-> > Rearrange the forwarding loop so that a minimum number of iterations
-> > are required. The loop still has an upper bound on packets and time
-> > interval which is expanded to 10 ms.
-> >
-> > If no samples are collected, mark the test as skipped.
-> > Refactor the forwarding loop test so that cleanup happens on
-> > failure.
-> >
-> > Reported-by: Luca Boccassi <bluca@debian.org>
-> > Fixes: b34508b9cbcd ("test/latency: update with more checks")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> > ---
-> >  app/test/test_latencystats.c | 75 ++++++++++++++++++++++--------------
-> >  1 file changed, 46 insertions(+), 29 deletions(-)
-> 
-> Thanks, this has been failing consistently in riscv64 since at least
-> 25.11, hopefully this makes it stable.
-> 
-> Acked-by: Luca Boccassi <luca.boccassi@gmail.com>
+01/06/2026 18:40, Morten Br=C3=B8rup:
+> This patch refactors the mempool cache to eliminate some unexpected
+> behaviour and reduce the mempool cache miss rate.
 
-Applied, thanks.
-
+I feel we need more opinions about this behaviour change.
+Bruce was suggesting some user-tuning. What do you think?
+Also the decision may be easier if we have some performance benchmarks.
+Who could help to show some numbers before/after in various cases please?
 
 
