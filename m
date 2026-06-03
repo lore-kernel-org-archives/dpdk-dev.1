@@ -2,145 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17587CD6E55
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 15:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEF1CD6E60
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 15:56:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 66E6A4064C;
-	Wed,  3 Jun 2026 17:56:33 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id DA830402CC
- for <dev@dpdk.org>; Wed,  3 Jun 2026 17:56:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780502191; x=1812038191;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=Ie2o69Z1JfcZYcOlp1WrDkz14yE90kAVnyXOuH4Qnl0=;
- b=kY8XylSSuWvLncUjTb+NhUr4ntZK9YfMNXW9Aia2NVScxb4sbI2oR3w/
- 4XBttOGIDt3y+YiMZVjAEoMzvF3B6gvcHxMsHEIv0sgFlBNhlXsqkpxzw
- lq8PEYO3vhfBZchi0eCVTAjy98hFEY2HKewu/6fe89/u9y3ziRM1+87Uc
- W30EqDZ0FAdBhP743Qk/nM/aguXGDyqdASQDQ7896a3PM2W6eGal9BnFf
- dtgLwRlgYVg+pCoYxL8tLeXVe+v/XUixO9oz6pFzYzqLgxAg4caYwJgjL
- KrqKAZbRPd7flKJVK8ztf5Aocuyclahon94kDzPi+zjp9XeMc0UGnHKo1 A==;
-X-CSE-ConnectionGUID: rX++K9mqQiCoJ10nNxE6+Q==
-X-CSE-MsgGUID: cozweJKnS3Sv+oasf9hKzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11806"; a="81176001"
-X-IronPort-AV: E=Sophos;i="6.24,185,1774335600"; d="scan'208";a="81176001"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Jun 2026 08:56:30 -0700
-X-CSE-ConnectionGUID: wZsY2ZnmQfi9MwTHKe2cGA==
-X-CSE-MsgGUID: uBi2HNUIQGqfVe0+nWJOyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,185,1774335600"; d="scan'208";a="237936894"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Jun 2026 08:56:30 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 3 Jun 2026 08:56:29 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 3 Jun 2026 08:56:29 -0700
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.4) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 3 Jun 2026 08:56:28 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X0qt80p7PKWaNbzQVv4wViJvCM5yEZrOxYSRoSpMhtBiTaDEZeBV2Auo8vc8/SMKVmGfbo0eWjC4qtugGKJ44Hsqr51ZKwKTVnxZjputYd/VEMmOKqlG/SGspiBtC/tVKBylbKBND3QToECuAoq+cF14+wOQqL0ngETSXM/sPZm9pRIauriI5NsGzd3QfycB6IWVz0vJzY/ZTuDKyhlcJjnCQzshSWYUfHkf8g/Hrm7mHGiKbtnFrRtFIMJB5j1z0ufQFdePBkbVT3cFaJ6Aa42TJWSIbqaxs0OzpApel97rpMDSG8aQnYtFdnd88ophsBPnFPplfM6tHWpnRj6FwQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YuALW/m2oznadW4O1YelGaHIScn0I+BzeWveWWDENj8=;
- b=oqHRYelmQA0oVWnmMbur0krlegdp+mC8DOc7/aKGnS4rJRUGltbMdgrC9qUsa/c48iEQqe2R9AwtIeGEsInsqzoBRCWaKo5+t6CegRENoXzzNFKHIDP3abo412XKWmn4kPjk40aShodHep3gsQRvOZwR5WgAqZlWqZP+6OGsclst3BuTFXFoPbuHoxOoufJj++xcL6h7cF73YBahhuRLNFay2aTALKHFzHwc67AhnVjs/UAQGfRL1mr3T3svgASJqTLKmG1PKQMfxlbbytScMOV3pqdBIAefWnFDyeIBTtBz56NTJOX6rjoQ1BDtjxGcwXKqWjn6oHpL6+CWIP4r1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SJ2PR11MB7671.namprd11.prod.outlook.com (2603:10b6:a03:4c4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.7; Wed, 3 Jun 2026
- 15:56:27 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0092.006; Wed, 3 Jun 2026
- 15:56:27 +0000
-Date: Wed, 3 Jun 2026 16:56:21 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-CC: <dev@dpdk.org>, <ciara.loftus@intel.com>
-Subject: Re: [PATCH v4 0/2] net/intel: optimize for fast-free hint
-Message-ID: <aiBOpZbi4JohjSaP@bricha3-mobl1.ger.corp.intel.com>
-References: <20260123112032.2174361-1-bruce.richardson@intel.com>
- <20260602154513.1079865-1-bruce.richardson@intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F658DD@smartserver.smartshare.dk>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F658DD@smartserver.smartshare.dk>
-X-ClientProxiedBy: DU7P189CA0030.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:10:552::34) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 6883C40662;
+	Wed,  3 Jun 2026 17:56:46 +0200 (CEST)
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+ by mails.dpdk.org (Postfix) with ESMTP id 056454065F
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 17:56:45 +0200 (CEST)
+Received: by mail-dl1-f51.google.com with SMTP id
+ a92af1059eb24-137f0aa125bso4201930c88.0
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 08:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780502204;
+ x=1781107004; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=AwabCXoFQNjhOZPPEKEtzJsfv5v4FPaC7WG3m2Be/wk=;
+ b=H1cAyu/gjpwbKCe3X7QXnVi+MlXxzrN2QF3T5WU/MAytYYMFM+8LNLAwEkAFL7gANC
+ hAchhTNCFu8XlGKcdkRiT+o5sr68RtgNXrdOx1HNPUY5eF5A0A5iLhRveYHD9vMVy4EU
+ s7hapBdub8hOKTHsrC15o1RrqhKWx+JUIllGaSyMJN/1lpQq0cLoksB7klrUU9bwgwud
+ VidTCbktV24rBJ+fCXJ1KPyGWLpsu64OMZnCTVP6igc3/9q+6vmmrfFYHimhfx5qzxPr
+ GfQuNJuHxq0C7jQIrAasPCuTo2241rGwNGXJrdxZ1JDAV98bgCyYZnk0OjpALnTZ4IWN
+ pT1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780502204; x=1781107004;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=AwabCXoFQNjhOZPPEKEtzJsfv5v4FPaC7WG3m2Be/wk=;
+ b=M0TnX3ANZd5rUv2kgf4MADXtow9fgGY2OwjJsHFkd9X/9bm1sVc29l+GAqX8Bj93a2
+ t/6DeAyidB43IFMdhUqcbvIS3zaapx+bFvleFFweT8Byi5mwLewbzxrE3WktoM8f+xvR
+ 5G2gDpIFCT4e06xD1TTqte9b8z6yyRFEazbFfMwzk9EdI68Kq3BTBVsZVLVZsmPVlAK1
+ 8JTd0lUyNBYhxMhKzYho39uO679TlzW5eHp4ECNDCti6XGYjhCgoyUDwI4YIwEIJ6oY3
+ sU3zYR4jWx+TnqddKv2kOgw520A07uhsJxA4YE2WAwOHw+oJY1VEOUusgX/qhnCtaEPF
+ WiIQ==
+X-Gm-Message-State: AOJu0Yzm6qjrW1f4gIa3KxUeCgcLhQ/DpCSZ3yZ4ylIzoKxvRdWYBTtL
+ 5qFRUdh6YZNM5afiuSiwqLHKRswyLc/vQkhn3zourMfpYvuCCGCNVXrm4A0d9SB5M7o=
+X-Gm-Gg: Acq92OFd0NheerM5JvuTHsSgA3zm1/GxDrQcgGpzbt93EfMVQelB+HRomwgae2LjN5P
+ apDtH5OVi5BITo+sDZMsdOxJ6CVELXdKTmf/xNDVTh5It34VAYh76UrzkpzGU5mVuDo9RiBuuId
+ dgGepA75p0MwIJoVG6Xc2OMOTT6Qlvu41EbamSKnHXO9a7NOnz4ukNJZkrJDLHYvKpRYRP0mTr2
+ lEkYYLIQE/EZfxhqDZ08DNlQhoqLmdCRabNJDZtNP+M2W12+o5Ku+aVKAw4YVeIHdFq9Ia/mKfB
+ ErtWJXAEnCHCZ0VSiYScSlIbuyp1qCoJ70nTbOfhgsSxbIIFWyvSmkFwWyWw0M0lhh6ttJ+movH
+ oGwqLhVr3PnUMspAZ09EV7rNh3+EsXB2KsK/Gz8sKL/x0hxh8U6s5Ja+bt6cTZ9kXIwWel28Ahd
+ wph20Kt5cxD1P87EicGTCQlZ7iiFQ97qaxHZrXjikSue2ycCa231h8bGrzMO66cCC+nsiqfQDf5
+ jg=
+X-Received: by 2002:a05:701b:260a:b0:136:959a:abdc with SMTP id
+ a92af1059eb24-137f6a464ccmr1079186c88.11.1780502203785; 
+ Wed, 03 Jun 2026 08:56:43 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-137f54c9c12sm2155710c88.6.2026.06.03.08.56.42
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 03 Jun 2026 08:56:42 -0700 (PDT)
+Date: Wed, 3 Jun 2026 08:53:59 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
+Subject: Re: [PATCH] eal: fix function versioning with LTO
+Message-ID: <20260603085359.739ab626@phoenix.local>
+In-Reply-To: <CAJFAV8w+bUJGTBSOgqp8xOHXm5av2xdFMo8TNwr=kP87R30AYg@mail.gmail.com>
+References: <20260602225722.950617-1-stephen@networkplumber.org>
+ <CAJFAV8w+bUJGTBSOgqp8xOHXm5av2xdFMo8TNwr=kP87R30AYg@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ2PR11MB7671:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e12901d-e4ff-4973-977f-08dec188ab46
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|11063799006|4143699003|56012099006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: 3iENpxCGHlHRlOBAXKfUbSD0zePGaVa0vgKijKBWisQQmSNDvCRGT96rjP8D/VzlUjZYJi0cqoEg3cJppYGIbbDLTJO3n3UVgrbsTl6aK6dMQ7U+taivL50uokOHE/zan47hNlr8MHcvG6i+DzVHYLeNmgKrBbhC8+Qynbh/amPxn5RYeP1YAULFfVFcFZecSzfj3oMhjN7umAz+xBoo5FPNLw72W3xPI3gD4lA5PRZichGFvIAFKbR1rS09MVeYCAlVGXLZAB7B++Llw1HIFknAplZY+mh/DQ069mVAhwfyBQ99LbOEBG3b9GVb1PJgh5MP7k45fA7PkNa6Yd9awGv42E8vJ+g0HLWmEXYlqM8EgHjIE/C001moSvUQt+QukncJa4l3EX5YZSRaSOvMBK1UxX6ksre6Bkfk953gaNnlKMC5Qd+r3PIFvwdJwVClqGWn9tRaOESnTgIdHzAQp3rIOU0t/hXmyHjDS3OY9p+SlMR+LhCzUo0NgCOOSQgnYgAmHLAuTF160qiEZAXGx1+tlp2x105U1cTICSBGYlkTl34DGDggBDgTt+JGst69U54mJ1cDtj90eeK1P5X2xDnsKDK70mmFqQCoSHxsDWtaI3PkAw6MxgvWjemlbjWSG32bpBFTivEqHjrM4Bp0TK28m0EAIBxj/eW1X7I+GKFFNbH8Tp4dDJTc4dZPG8te
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(11063799006)(4143699003)(56012099006)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?+Ec4D1pYjH46H1Vz3w5lTnxl9fuLsGSVq4ZOFtObIC1M6K5JvlQHq8t9Ts?=
- =?iso-8859-1?Q?R4PFCqDQ9HFY919ccWNN1VfbCZeNQJXjzjFwfRphdPtGrHcSNcARlN23A2?=
- =?iso-8859-1?Q?Hi/3U87Heao6MO0GPY2w9i7TOTcqg+M1YOqDoL/+LNWEA6qW/cApteJNTV?=
- =?iso-8859-1?Q?1twBZeeY3yt6rR1moAd2PNm8RIgh0ZEtVd1/IHlfvui3k74ysc0sJPuiQQ?=
- =?iso-8859-1?Q?6UpdSjH8RcrTqCGoDGwkEmxfl3oWvxjvIAsqpZouLIerMHODZnHnhqWj+3?=
- =?iso-8859-1?Q?Ppj8Me2LKEPwc+LbH4hVJq4ZDvm9UchlbOcP6mgY3OmvNE7LeXLztbOlqp?=
- =?iso-8859-1?Q?JyUIOuTe3gulPDGWzDT6xZ5dMAMjS4extrFycJ/eLCucPxluYKVx4vnWAF?=
- =?iso-8859-1?Q?IKgjxCHs4sR/46UK7J7SgP+GD9/xNbfS+cZJd3bdzUUrE6A9vz7N19VqmX?=
- =?iso-8859-1?Q?HEj6asaVnsy1PBIx7o4Ge9mLDPT/I2eLJpLXqrBjLWBenvhCpA+Brwecgh?=
- =?iso-8859-1?Q?o6qiC/fddmN2/9mIDs9EbLjaILdJI81EXVJ3lS7lW1QlTcnMikc6dpjJ51?=
- =?iso-8859-1?Q?Ch78GjAjbuoNpzGHUlLspVc/Twcqnauy2om2ZIlKrX790vKpalguA9ZyjS?=
- =?iso-8859-1?Q?aAZD8A5YDpaCsTzktMMu6U17nQkVvn1sAqJpm/7QNXzl3CgdgMAqZjPEeJ?=
- =?iso-8859-1?Q?3PU0HmO27SqQBikNZMIYls6DODIPt2r+DiUDY0ezfD539+248BSN3c/5Ty?=
- =?iso-8859-1?Q?Gc6CtZy85h3L7h3g4N0NP1jue42L2WbvUPc6sFN0/7CWp96CLRdCAK73v6?=
- =?iso-8859-1?Q?LsSrqx+Y4/16U6ZW6gG2JQSzVjGBAfDYccRfUOWx8qbpSLgGifIM3Yjb79?=
- =?iso-8859-1?Q?aL0bWdJoCSFvs7uSj1oJZOPrBiPZUn2Onw2I1Xo5JWxegdBhPJRZE1C2wW?=
- =?iso-8859-1?Q?NxqeQxBnz6uyez68c1f8zI8Wngyx880vJ7S84y+o0tskdSIy1qqa5q6HS9?=
- =?iso-8859-1?Q?f7jEt2VkMMsMbmsWYOvuii4j9SJeq9H9R6ggpsLXCLMFDVtN/5PJ8HqmsT?=
- =?iso-8859-1?Q?Qdldk8lztG51XbNZp4e/5tjmNji3G0l51bxL6bLMKH/vSFUqWqXrXrR8Q6?=
- =?iso-8859-1?Q?hl6lEbjj165IB7zyJmYxqwsTRF9iyTGpwpcAURrxXBIo72gOVjarVW70pI?=
- =?iso-8859-1?Q?qbpZjg7OasQw+9/Hvd5Uoi6kfy2mLUV4RTlB0LCoSlc/OwPI4XFFCBGS/5?=
- =?iso-8859-1?Q?UNALWUX+iHwsqapjO4tw8YRPJCT7OdB5ZfwvEqNvZPnVOQVcseFGVS0bFz?=
- =?iso-8859-1?Q?kAVtvm/2XKtUGy9HrHk9qFc7rCash30hULy6qdnxq1jQj5cURz0boEtTxf?=
- =?iso-8859-1?Q?jb44ZAYtJ9OtGoTAZdb4ENoxPuIhwLJWKBHU01srz/j6DXQzCbLBUjSI39?=
- =?iso-8859-1?Q?ETu4lp6ZhY4kXp/czC1oW7T/X5qkvh4ACzsCh3lJgwafZwjS5BjTtmW1D6?=
- =?iso-8859-1?Q?im7uR9Ve/2in7G7Wvt2yjtx+cZcdnpRoyBFzMUYgcYqiwPiyekgoUCq7Q0?=
- =?iso-8859-1?Q?M65zoZ1jhtgFUpN90huNJwu7NP0FnO68JB6DuSRRRgaRG8lvoWBuQVhsOK?=
- =?iso-8859-1?Q?bixKCNi8t+dNaSltpgKFMDG6xWbgRSlx83fkEcQ+x0iurFVi2kdzH47AZV?=
- =?iso-8859-1?Q?5TtfaIiZRKyWZuCt3qNPJzTdJmXAnlaltziR8L26SMbfcLUz7MSf+9k9Vm?=
- =?iso-8859-1?Q?Oj0W92eiBAs3Q6RVK9s4+1nNEhOLxV+Ld0ApyBNI8jJ1SN+24W71XgnQr/?=
- =?iso-8859-1?Q?KYheHDTHce3h4Q8qEgU0MFyZ/1bM8Jk=3D?=
-X-Exchange-RoutingPolicyChecked: rOunx6Wowy1lMRT12vmC1m0D2je80SRhy6M77KdszKZ8Uq/S4b/5reGYnG3C3UN6OUwcczHg8yPH33H16byniwLci9eObx8BKNotN8h3SMRsHsjJ8GXrbyEzuo6Fn5U75v4rupqe89QW/AqSFp+sRwcD7vmuIrFPz2NXGpkuahRcAa68El1R0LBfCfKx24SxYm22pbmdBXtfBgdk88JcQ0PfLKEHeO+OZoGorf16/ziYfpPCRb8gDQoUrHpDr0O7nvjoVMbY+pFOwF1zMrKsgWSLOrkKKQShfJgacXm5Gg3zjw0rJJiOdqrZQyXsrBHarzm9P6PyiXuT+sQN3EwVXA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e12901d-e4ff-4973-977f-08dec188ab46
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2026 15:56:27.0184 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 145iMG7d7vg055Fe+SiucqRPRg+QhA1C+YfzRI34UuCKCjQYpsarItm0FrpFxJeWo4m71Q93ZLpKHAWmzSuS6cBAf01TroKCbxQBfIVznl0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7671
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -154,49 +81,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jun 02, 2026 at 06:26:13PM +0200, Morten Brørup wrote:
-> > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > Sent: Tuesday, 2 June 2026 17.45
-> > 
-> > When the fast-free hint is provided to the driver we know that the
-> > mbufs
-> > have refcnt of 1 and are from the same mempool. Therefore, we can
-> > optimize a bit for this case even in the scalar path of our drivers.
-> > 
-> > ---
-> > v4:
-> > * add precursor patch to adjust mbuf pointers so that the DD bit
-> >   is written to a descriptor with a valid mbuf pointer associated
-> >   with it.
-> > 
-> > v3:
-> > * used mbuf_raw_free_bulk rather than mempool function directly
-> > * check for fast_free via mp pointer rather than flags
-> > * remove unnecessary prefetches
-> > 
-> > V2: Fix issues with original submission:
-> > * missed check for NULL mbufs
-> > * fixed issue with freeing directly from sw_ring in scalar path which
-> >   doesn't work as thats not a flag array of pointers
-> > * fixed missing null assignment in case of large segments for TSO
-> > 
-> > 
-> > Bruce Richardson (2):
-> >   net/intel: write mbuf for last Tx desc of segment
-> >   net/intel: optimize for fast-free hint
-> > 
-> >  drivers/net/intel/common/tx.h        | 21 ++++--
-> >  drivers/net/intel/common/tx_scalar.h | 98 +++++++++++++++++++++-------
-> >  2 files changed, 90 insertions(+), 29 deletions(-)
-> > 
-> > --
-> > 2.53.0
-> 
-> Good catch by Ciara, and good solution to it.
-> Series-Acked-by: Morten Brørup <mb@smartsharesystems.com>
-> 
-Applied to dpdk-next-net-intel.
-Thanks for all the reviews folks. Quick tests on next-net-intel tree with
-scalar driver show a nice perf bump from this change.
+On Wed, 3 Jun 2026 12:01:48 +0200
+David Marchand <david.marchand@redhat.com> wrote:
 
-/Bruce
+> Hello,
+>=20
+> On Wed, 3 Jun 2026 at 00:57, Stephen Hemminger
+> <stephen@networkplumber.org> wrote:
+> >
+> > When using function versioning and building with Link Time Optimization,
+> > the compiler does not see the __asm__ annotation of symbols and
+> > therefore thinks there are two versions of the same symbol.
+> >
+> > The fix is to use compiler symver attribute on the function which
+> > was added in GCC 10. Keep the older method for backward compatibility
+> > with older compilers.
+> >
+> > Bugzilla ID: 1949
+> > Fixes: e30e194c4d06 ("eal: rework function versioning macros") =20
+>=20
+> We never used the symver stuff, so it seems unlikely the issue was
+> introduced with this rework.
+>=20
+> The fact that clang does not support this attribute is a concern.
+
+Clang doesn't have this problem. It works as is.
+
+> > Cc: stable@dpdk.org =20
+>=20
+> Why do we need to backport?
+
+Well LTO has worked for a long time, it is not experimental just
+not commonly done since it takes so long to build.
+
+We were doing it years ago at MSFT.
+
+>=20
+> LTO is kind of experimental, so it seems good enough to reply "not
+> expected to work in older LTS" if someone reported an issue.
+>=20
+> And in practice, no LTS release call the versioning macros, since a
+> LTS drops all compatibility.
+>=20
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org> =20
+>=20
+> I would like to reproduce, but I can't build main with LTO.
+> What patches did you apply locally to avoid warnings on the hash library?
+I use Debian testing and GCC 15 but shows up on older versions as well
+I get no warnings building main
+
+ $ git am ~/Downloads/v2-ethdev-add-buffer-size-parameter-to-rte_eth_dev_ge=
+t_name_by_port.patch
+ $ meson setup build-lto -Db_lto=3Dtrue
+ $ ninja -C build-lto
+ninja: Entering directory `build-lto'
+[620/3781] Linking target lib/librte_ethdev.so.26.2
+FAILED: [code=3D1] lib/librte_ethdev.so.26.2=20
+cc  -o lib/librte_ethdev.so.26.2 lib/librte_ethdev.so.26.2.p/ethdev_ethdev_=
+driver.c.o lib/librte_ethdev.so.26.2.p/ethdev_ethdev_private.c.o lib/librte=
+_ethdev.so.26.2.p/ethdev_ethdev_profile.c.o lib/librte_ethdev.so.26.2.p/eth=
+dev_ethdev_trace_points.c.o lib/librte_ethdev.so.26.2.p/ethdev_rte_class_et=
+h.c.o lib/librte_ethdev.so.26.2.p/ethdev_rte_ethdev.c.o lib/librte_ethdev.s=
+o.26.2.p/ethdev_rte_ethdev_cman.c.o lib/librte_ethdev.so.26.2.p/ethdev_rte_=
+ethdev_telemetry.c.o lib/librte_ethdev.so.26.2.p/ethdev_rte_flow.c.o lib/li=
+brte_ethdev.so.26.2.p/ethdev_rte_mtr.c.o lib/librte_ethdev.so.26.2.p/ethdev=
+_rte_tm.c.o lib/librte_ethdev.so.26.2.p/ethdev_sff_telemetry.c.o lib/librte=
+_ethdev.so.26.2.p/ethdev_sff_common.c.o lib/librte_ethdev.so.26.2.p/ethdev_=
+sff_8079.c.o lib/librte_ethdev.so.26.2.p/ethdev_sff_8472.c.o lib/librte_eth=
+dev.so.26.2.p/ethdev_sff_8636.c.o lib/librte_ethdev.so.26.2.p/ethdev_ethdev=
+_linux_ethtool.c.o -flto=3Dauto -Wl,--as-needed -Wl,--no-undefined -Wl,-O1 =
+-shared -fPIC -Wl,-soname,librte_ethdev.so.26 -Wl,--no-as-needed -Wl,--unde=
+fined-version -pthread -Wl,--start-group -lm -ldl -lnuma -lfdt '-Wl,-rpath,=
+$ORIGIN/' lib/librte_eal.so.26.2 lib/librte_kvargs.so.26.2 lib/librte_log.s=
+o.26.2 lib/librte_telemetry.so.26.2 lib/librte_argparse.so.26.2 lib/librte_=
+net.so.26.2 lib/librte_mbuf.so.26.2 lib/librte_mempool.so.26.2 lib/librte_r=
+ing.so.26.2 lib/librte_meter.so.26.2 -Wl,--version-script=3D/home/shemminge=
+r/DPDK/lto/build-lto/lib/ethdev_exports.map /usr/lib/x86_64-linux-gnu/libbs=
+d.so /usr/lib/x86_64-linux-gnu/libarchive.so -Wl,--end-group
+/tmp/cc3RQyqL.s: Assembler messages:
+/tmp/cc3RQyqL.s: Error: invalid attempt to declare external version name as=
+ default in symbol `rte_eth_dev_get_name_by_port@@DPDK_27'
+make: *** [/tmp/ccVzgiZ2.mk:2: /tmp/ccTlGfA9.ltrans0.ltrans.o] Error 1
+make: *** Waiting for unfinished jobs....
+lto-wrapper: fatal error: make returned 2 exit status
+compilation terminated.
