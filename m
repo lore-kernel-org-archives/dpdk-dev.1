@@ -2,76 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0499ECD6E55
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EDCCD6E55
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Jun 2026 18:46:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3747406BC;
-	Wed,  3 Jun 2026 20:45:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C5FE7402BA;
+	Wed,  3 Jun 2026 20:45:34 +0200 (CEST)
 Received: from fout-b5-smtp.messagingengine.com
  (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id E350840A71
- for <dev@dpdk.org>; Wed,  3 Jun 2026 20:45:29 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.stl.internal (Postfix) with ESMTP id 480AA1D00170;
- Wed,  3 Jun 2026 14:45:29 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id E8E84402BA
+ for <dev@dpdk.org>; Wed,  3 Jun 2026 20:45:33 +0200 (CEST)
+Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
+ by mailfout.stl.internal (Postfix) with ESMTP id 31D921D00176;
+ Wed,  3 Jun 2026 14:45:33 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Wed, 03 Jun 2026 14:45:29 -0400
+ by phl-compute-08.internal (MEProxy); Wed, 03 Jun 2026 14:45:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm1; t=1780512329; x=
- 1780598729; bh=fR/DHO4kJYb54pTYqFVuwzSnmDYEQ94VJtMCZOqkFs8=; b=C
- TPoUSk87eK9AX209Dh0UKl44TAJGgxux/wA1TiCUsO2WcU6rzhzuE5fOzApo2R6L
- Ze5iGLIi1nPR1hP6p3JhMZYfFObdXs7QLADuXpf7XuyEHb0ICcp8cAsQz/5miJwh
- ZBtuWxBlof7tZpAwq98zmsqpEceB4xi7OobYUftEzssWOD/2NUTWWIh714vL+5Gu
- Jo4J1e89WYHdR6j/E2axEm5beRCOjvNem3J88SHPxt68KHHfDk9GD2dzTMWpxjS3
- 7elFFV0vEwzlo89GXAtsdw6W3o7H0XDcZMoT9wueph5y9UoOrUZ2DWNIpQ4CVdIC
- KuCKtcvhR3IeeACISTLXg==
+ :reply-to:subject:subject:to:to; s=fm1; t=1780512333; x=
+ 1780598733; bh=rcAg/w07Q8AgydlB4IbKw57IIcIaQvDUtc1/zYCOTIU=; b=g
+ fX01f1hmoG8f++A687aWZ0Uhe9b/h+YeGFGdOwqP4qo1ZPB81c7X+21lHzAMRlU0
+ FPNzVZot9q4s5nGzdcm3UiVKCRW43pzhCxxH8vOcsi+0HE7IepRKaYsTH8xmkBzX
+ YfggmoLDhFdLj6XWXTzcAQxSEKLpCJayChBCD8Uk+SnL5X4m7cDcd3yJ3Kayn9h+
+ jHY/1cgNvJO5OBNu6FcBDxeflOlnry144sKAdTgKGwNDBR55Xb+3QkFnhjHMI4vh
+ niHuYo+TxbKk3hQVAyklBUGH1IJxLyTFVYvsmA/tD+RO2LZPjIvYZdd12RPOn6JN
+ jBLbGfGQ2jcr5zidlMuHA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm1; t=1780512329; x=1780598729; bh=f
- R/DHO4kJYb54pTYqFVuwzSnmDYEQ94VJtMCZOqkFs8=; b=KgWinIoZW1Qg/3Hop
- QOM0lr2R5l+bFOaAbh3iR2/qxvE6toXOHRGFI+mungD0eAK1hmpFzF8EDasEJpjJ
- l8vY6zgEtNpIC+NGuSrzmyYDTllUG/TPTqqUG5ADTrdph0o6qxNE8OJLJcrrryuR
- qS9s4f9BXzbdOTTD8/5EBEzFzVMtvHzuX1I/95fI2R+WTPxSc0Z+HNfHELUM+N/H
- xGGhX8D/aW0nN7MSLIX9xQDrvhzycIU6+lM8nfYQqAir87cJvE9u4zn15iN/gyUg
- m1xo5hWYxzpZqX7coqX5icZLEPG8kKuwqkejp8iuqt3T2sjC6xgTTlNT+mKJWtuf
- DhMww==
-X-ME-Sender: <xms:SXYgatLTjBMsG-2UPXR9aBSmgMg1nWPe0zEbsdkZvyt9KMBQATA1Aw>
- <xme:SXYgajM8Ko3GSmA_r-6i8q0mWBwsHa_rbuur17I7ZveF--XIZeS4W_008hJZTyjH-
- WQIEALH7dHYSJQ-VeTMai4pA7yM9M9gF87TuwLx_qFv1S0rvnfQ4fA>
-X-ME-Received: <xmr:SXYgalnP7zkty4n_U5niNE8jF4amYFAetgX-491_X8nss1oOozf8-cTqm3ZRPsW45GUuMw-smT3MFgQLmdGl-UT80GCVa10>
-X-ME-Proxy-Cause: dmFkZTGYuhzhcTr5l2kyH2kEZshoeV+LOLOcoqfau4dhQKGtVKXvsJn9pr0qNsKjrL1adL
- 7EPnqrOjZSDKw4REkVp4N3nUbfmk8nvecB29qLWiqulZ1et6nUz86GOyHTGMRs5X1skYIJ
- J11FfVawF6fVNdYA595YsHEDS5NKiOrXBT86h7sZZvGNLgErOVi6FG5JCmWltg0DU5yvmW
- hNy3S2Mf1ULrpVe6rlRo0bcrtN83h7LK3i4VqPAgkNa16YGONcI6gDJMdmD6Ui9hezgO+V
- Gz8mFEbB1Kef6EoJZNfexjml5Ols4gJgPKrTak9qpCZP6Hld5nUYF/fnE2EZ0TwWJy9QAU
- wUh2eW2UNZ1hxSCI91QTEmBWc2LG+LgsrBCQ93drkOUI2TRCnnXqSyoK0FLOFugNgjnmsz
- jxDVHM8gKlNFxybapfNwi7NcUSNzAkN3A42lncUix/GyXmbJTJ2yFtfYE0m2YJcTyCbK9J
- 2PbbeNajbLru1wyx4sy2qDJsPhY3rynydoQN9Ho65fAtP0ZFoSzeNi5je7JPnm1ZtnJnq1
- QAY3YYNCMR5hwMp03hRJrgTevZBQXCWzvlBUFKnsImDOprhBqUeayOGo3P6omYJteSBpWy
- 6BXlJfnoq85YdyM2l/qCW6wyNxNWvyiQRQkur4XeDCKvI2/Gtj3OYt1cSqew
-X-ME-Proxy: <xmx:SXYgav452gHWLKGNyqqsY6RSGAtQigAstb2wzyI22aAUC_0BeA9z_g>
- <xmx:SXYgah2juSdv8YQf8AEpDCGFQjJ0FTFspUNeVbRjMaOEWRF26A_Xng>
- <xmx:SXYgaiGfO6xh342I3ILk7aGA9V4ntbQUdGPDerin0z9utNfxtnol-A>
- <xmx:SXYgaoj1BF-cEdOdWtVIMg0NOIgkmFOdp8QtgXca68RdZqsVzM3s1Q>
- <xmx:SXYgar6MgSEJnMiC1EtiS2Iya-OZSG6x74Kd6wFLy_hFc0sNWu3N-vOH>
+ :x-me-sender:x-sasl-enc; s=fm1; t=1780512333; x=1780598733; bh=r
+ cAg/w07Q8AgydlB4IbKw57IIcIaQvDUtc1/zYCOTIU=; b=EkBBJ+2DzSdNNQQVD
+ 9vD+PSSqiBeA+EmGqVRi/tZat/dr5aAVo5W6gdoH4lNwjJ2uZuEjtGAn08xqLZSv
+ FJp69g/xKJ6AIi94Dsm89lh6D0o7z7kyZLrg+LfkzL1sfCYQmG2gwyE1qs30hlz4
+ Vn0kRHd6vT5di7/AfX9Xa96TM65odjVOcy9FWswmKYurigAXtaxN9m0uZ+qr/v6K
+ GLwQ+8ku0YTtuak7BpGsJ3yjJbt1KpiFD7wzoCNL/IDxU5ap/4NVSPk2La8LuMHP
+ HH/UfEmCF6h4M5wA1HWc2JEsOngwHtjMk1FeLLsuRAgDUO07WfSyKq8sdMxlnQSZ
+ UL92g==
+X-ME-Sender: <xms:THYgauoO9hVf6sAph9f7UOOwC9e-ZKOKsKzaxxXWYR1dbYilVY90aA>
+ <xme:THYgapN8ro4anzNp4hucAPl7glHwpS8423c3VtTXQon_0QSUVMbdEMlpUf6oI5IxG
+ 2XekH84TRSqsjc4mnCw2E15ht_gCl_5iapod_gadMoOTleMrQ-J>
+X-ME-Received: <xmr:THYganpVYUlgtogj_C4n-0hQzQNcKE0zNTZx5CJ53Op5C-UAmWnLloXY32lHTj3jqlh85PSZYZHC-oghxJXI5BHXWernuuA>
+X-ME-Proxy-Cause: dmFkZTFGz9oDXhPSIY6I7ZJhbIYKptWkM2VdX7FyOAeuuJUl4qYo4zjbVaows9FevrUIx8
+ nWe7SA+SAIfcLL7nMj/VVcZH4zm95DVfYBb8y4e1VerupTUt81L3dl7epwTvlXXudppUaT
+ qxIPynY5U3VYgrMD1NO5hDZLs9zop2rkZvB//wbfMxhi0T6YHfZf6dsH0ibQn8Y9q5c9C3
+ YlUDSgZgWVBr4TcILpJAfJTWSimlr/CDo1gwQpQTvEzfFVFJrAVIDrH+y7t+MLKrjE4IEw
+ ks15eKsYjTUX6n/GX1Ckl1jyasKxpnINrk9dSlwknQvml/VakMXZkgX5aj2Y6krOsJUmlK
+ 6E842IxWM8PZCdlAftRn9Izr1NuXOHwKJw9skj0KE+Pdm3mAs3cWg1a8t98jhMMZlAuy+S
+ OPWJCHVX/OlYzUspHC/rgbxDFZB+/hgBLKFEuAaHnhjXtB/xezJedIBQDx4c/vR1I1Ak11
+ 5Y5QnmoeXvZUjis4pvJkI7rEl25Ricil34vwhGFHuCjhiR5ku2KHo4LG1dqf1MzFTn4SFd
+ RSWHuQFnjt3faXbQIWXG3OmiIoOAtPueA2dWRZg5Z90Wpj/3h4wHnSSs3j9hYLy1PefsAZ
+ hXvKq0/5DNpz/LyXlXLiTZMOanbfEmLw3JAg5HaR3CXSVQ/Yp7aBcU1S+XbQ
+X-ME-Proxy: <xmx:THYgaksCKnp6JDo91bsTDgYQQzeED_bG3V1gTQ7Z4PhwLQ-Tg-oJbA>
+ <xmx:THYgau0zNEU9mwrxEZoZfrR_JpB5A6lxO3PVSfK7Gy1rdiOtLiX2kQ>
+ <xmx:THYganGBX5tqEie2MCVCljfO6Q4OZ0bfo_ijz20d8dyb7fHqjM-GhA>
+ <xmx:THYgahsM4tv8A8_89Kw65sG6eLBCkK6Qb-bIxNMYLK5y5s9LdN7STw>
+ <xmx:TXYgasOvJK1Hc-bnKjkrSUyjzZ1Nnl1ozGWI1LUYqazjBHacjZyxLduZ>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jun 2026 14:45:27 -0400 (EDT)
+ 3 Jun 2026 14:45:31 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Dariusz Sosnowski <dsosnowski@nvidia.com>,
  Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
  Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH v7 07/10] net/mlx5: reindent previous changes
-Date: Wed,  3 Jun 2026 20:23:30 +0200
-Message-ID: <20260603184503.652030-8-thomas@monjalon.net>
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>
+Subject: [PATCH v7 08/10] common/mlx5: remove callbacks for MR registration
+Date: Wed,  3 Jun 2026 20:23:31 +0200
+Message-ID: <20260603184503.652030-9-thomas@monjalon.net>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260603184503.652030-1-thomas@monjalon.net>
 References: <20260202160903.254621-1-getelson@nvidia.com>
@@ -91,282 +92,683 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix indent which was left untouched to help reviews.
-This must be squashed before merging.
+The functions register/unregister for a Memory Region (MR)
+were not called directly.
+There are only 2 implementations for Linux and Windows,
+no need of handling this difference with function pointers.
+The callback pointers are replaced with direct calls
+and link time decision based on the Operating System.
 
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
- drivers/net/mlx5/mlx5_rx.c      | 164 ++++++++++++++++----------------
- drivers/net/mlx5/mlx5_rxq.c     |  32 +++----
- drivers/net/mlx5/mlx5_trigger.c |  18 ++--
- 3 files changed, 106 insertions(+), 108 deletions(-)
+ drivers/common/mlx5/linux/mlx5_common_verbs.c | 26 +++----------
+ drivers/common/mlx5/mlx5_common.c             |  6 +--
+ drivers/common/mlx5/mlx5_common_mr.c          | 37 ++++++++-----------
+ drivers/common/mlx5/mlx5_common_mr.h          | 26 +++----------
+ drivers/common/mlx5/windows/mlx5_common_os.c  | 23 ++----------
+ drivers/compress/mlx5/mlx5_compress.c         |  4 +-
+ drivers/crypto/mlx5/mlx5_crypto.h             |  2 -
+ drivers/crypto/mlx5/mlx5_crypto_gcm.c         |  6 +--
+ drivers/net/mlx5/mlx5.h                       |  3 +-
+ drivers/net/mlx5/mlx5_flow_aso.c              | 21 +++++------
+ drivers/net/mlx5/mlx5_flow_hw.c               | 11 ++----
+ drivers/net/mlx5/mlx5_flow_quota.c            |  6 +--
+ drivers/net/mlx5/mlx5_hws_cnt.c               | 19 ++++------
+ 13 files changed, 61 insertions(+), 129 deletions(-)
 
-diff --git a/drivers/net/mlx5/mlx5_rx.c b/drivers/net/mlx5/mlx5_rx.c
-index 1eef8ab95e..9812bc7929 100644
---- a/drivers/net/mlx5/mlx5_rx.c
-+++ b/drivers/net/mlx5/mlx5_rx.c
-@@ -1071,107 +1071,107 @@ mlx5_rx_burst(void *dpdk_rxq, struct rte_mbuf **pkts, uint16_t pkts_n)
- 		rte_prefetch0(cqe);
- 		rte_prefetch0(wqe);
- 		if (seg->pool) {
--		/* Allocate the buf from the same pool. */
--		rep = rte_mbuf_raw_alloc(seg->pool);
--		if (unlikely(rep == NULL)) {
--			++rxq->stats.rx_nombuf;
--			if (!pkt) {
--				/*
--				 * no buffers before we even started,
--				 * bail out silently.
--				 */
--				break;
--			}
--			while (pkt != seg) {
--				MLX5_ASSERT(pkt != (*rxq->elts)[idx]);
--				rep = NEXT(pkt);
--				NEXT(pkt) = NULL;
--				NB_SEGS(pkt) = 1;
--				rte_mbuf_raw_free(pkt);
--				pkt = rep;
--			}
--			rq_ci >>= sges_n;
--			++rq_ci;
--			rq_ci <<= sges_n;
--			break;
--		}
--		}
--		if (!pkt) {
--		if (len == 0) { /* no CQE polled yet */
--			mcqe = NULL;
--			cqe = &(*rxq->cqes)[rxq->cq_ci & cqe_mask];
--			len = mlx5_rx_poll_len(rxq, cqe, cqe_n, cqe_mask,
--					       &mcqe, &skip_cnt, false, NULL);
--			if (unlikely(len & MLX5_ERROR_CQE_MASK)) {
--				/* We drop packets with non-critical errors */
--				if (seg->pool)
--				rte_mbuf_raw_free(rep);
--				if (len == MLX5_CRITICAL_ERROR_CQE_RET) {
--					rq_ci = rxq->rq_ci << sges_n;
-+			/* Allocate the buf from the same pool. */
-+			rep = rte_mbuf_raw_alloc(seg->pool);
-+			if (unlikely(rep == NULL)) {
-+				++rxq->stats.rx_nombuf;
-+				if (!pkt) {
-+					/*
-+					 * no buffers before we even started,
-+					 * bail out silently.
-+					 */
- 					break;
- 				}
--				/* Skip specified amount of error CQEs packets */
-+				while (pkt != seg) {
-+					MLX5_ASSERT(pkt != (*rxq->elts)[idx]);
-+					rep = NEXT(pkt);
-+					NEXT(pkt) = NULL;
-+					NB_SEGS(pkt) = 1;
-+					rte_mbuf_raw_free(pkt);
-+					pkt = rep;
-+				}
- 				rq_ci >>= sges_n;
--				rq_ci += skip_cnt;
-+				++rq_ci;
- 				rq_ci <<= sges_n;
--				MLX5_ASSERT(!pkt);
--				len = 0;
--				continue;
--			}
--			if (len == 0) {
--				if (seg->pool)
--				rte_mbuf_raw_free(rep);
- 				break;
- 			}
--			MLX5_ASSERT(len >= (int)(rxq->crc_present << 2));
--			if (rxq->crc_present)
--				len -= RTE_ETHER_CRC_LEN;
- 		}
--		if (seg->pool) { /* first real segment */
--			pkt = seg;
--			pkt->ol_flags &= RTE_MBUF_F_EXTERNAL;
--			if (rxq->cqe_comp_layout && mcqe)
--				cqe = &rxq->title_cqe;
--			rxq_cq_to_mbuf(rxq, pkt, cqe, mcqe);
--			PKT_LEN(pkt) = len;
--			if (cqe->lro_num_seg > 1) {
--				mlx5_lro_update_hdr
--					(rte_pktmbuf_mtod(pkt, uint8_t *), cqe,
--					 mcqe, rxq, len);
--				pkt->ol_flags |= RTE_MBUF_F_RX_LRO;
--				pkt->tso_segsz = len / cqe->lro_num_seg;
-+		if (!pkt) { /* new packet */
-+			if (len == 0) { /* no CQE polled yet */
-+				mcqe = NULL;
-+				cqe = &(*rxq->cqes)[rxq->cq_ci & cqe_mask];
-+				len = mlx5_rx_poll_len(rxq, cqe, cqe_n, cqe_mask,
-+							   &mcqe, &skip_cnt, false, NULL);
-+				if (unlikely(len & MLX5_ERROR_CQE_MASK)) {
-+					/* We drop packets with non-critical errors */
-+					if (seg->pool)
-+						rte_mbuf_raw_free(rep);
-+					if (len == MLX5_CRITICAL_ERROR_CQE_RET) {
-+						rq_ci = rxq->rq_ci << sges_n;
-+						break;
-+					}
-+					/* Skip specified amount of error CQEs packets */
-+					rq_ci >>= sges_n;
-+					rq_ci += skip_cnt;
-+					rq_ci <<= sges_n;
-+					MLX5_ASSERT(!pkt);
-+					len = 0;
-+					continue;
-+				}
-+				if (len == 0) {
-+					if (seg->pool)
-+						rte_mbuf_raw_free(rep);
-+					break;
-+				}
-+				MLX5_ASSERT(len >= (int)(rxq->crc_present << 2));
-+				if (rxq->crc_present)
-+					len -= RTE_ETHER_CRC_LEN;
-+			}
-+			if (seg->pool) { /* first real segment */
-+				pkt = seg;
-+				pkt->ol_flags &= RTE_MBUF_F_EXTERNAL;
-+				if (rxq->cqe_comp_layout && mcqe)
-+					cqe = &rxq->title_cqe;
-+				rxq_cq_to_mbuf(rxq, pkt, cqe, mcqe);
-+				PKT_LEN(pkt) = len;
-+				if (cqe->lro_num_seg > 1) {
-+					mlx5_lro_update_hdr
-+						(rte_pktmbuf_mtod(pkt, uint8_t *), cqe,
-+						 mcqe, rxq, len);
-+					pkt->ol_flags |= RTE_MBUF_F_RX_LRO;
-+					pkt->tso_segsz = len / cqe->lro_num_seg;
-+				}
- 			}
--		}
- 		}
- 		if (seg->pool) { /* real segment: replenish WQE */
--		tail = seg;
--		DATA_LEN(rep) = DATA_LEN(seg);
--		PKT_LEN(rep) = PKT_LEN(seg);
--		SET_DATA_OFF(rep, DATA_OFF(seg));
--		PORT(rep) = PORT(seg);
--		(*rxq->elts)[idx] = rep;
--		/*
--		 * Fill NIC descriptor with the new buffer. The lkey and size
--		 * of the buffers are already known, only the buffer address
--		 * changes.
--		 */
--		wqe->addr = rte_cpu_to_be_64(rte_pktmbuf_mtod(rep, uintptr_t));
--		/* If there's only one MR, no need to replace LKey in WQE. */
--		if (unlikely(mlx5_mr_btree_len(&rxq->mr_ctrl.cache_bh) > 1))
--			wqe->lkey = mlx5_rx_mb2mr(rxq, rep);
-+			tail = seg;
-+			DATA_LEN(rep) = DATA_LEN(seg);
-+			PKT_LEN(rep) = PKT_LEN(seg);
-+			SET_DATA_OFF(rep, DATA_OFF(seg));
-+			PORT(rep) = PORT(seg);
-+			(*rxq->elts)[idx] = rep;
-+			/*
-+			 * Fill NIC descriptor with the new buffer. The lkey and size
-+			 * of the buffers are already known, only the buffer address
-+			 * changes.
-+			 */
-+			wqe->addr = rte_cpu_to_be_64(rte_pktmbuf_mtod(rep, uintptr_t));
-+			/* If there's only one MR, no need to replace LKey in WQE. */
-+			if (unlikely(mlx5_mr_btree_len(&rxq->mr_ctrl.cache_bh) > 1))
-+				wqe->lkey = mlx5_rx_mb2mr(rxq, rep);
- 		}
--		if (len > DATA_LEN(seg)) {
-+		if (len > DATA_LEN(seg)) { /* more data: move to next segment */
- 			if (seg->pool)
- 				data_seg_len += DATA_LEN(seg);
- 			len -= DATA_LEN(seg);
- 			if (pkt)
--			++NB_SEGS(pkt);
-+				++NB_SEGS(pkt);
- 			++rq_ci;
- 			continue;
- 		}
- 		if (seg->pool) { /* last segment */
--		DATA_LEN(seg) = len;
--		data_seg_len += len;
-+			DATA_LEN(seg) = len;
-+			data_seg_len += len;
- 		}
- 		if (unlikely(!pkt)) { /* no real segment found, skip packet */
- 			len = 0;
-diff --git a/drivers/net/mlx5/mlx5_rxq.c b/drivers/net/mlx5/mlx5_rxq.c
-index 3fae189fa4..6ca29f7543 100644
---- a/drivers/net/mlx5/mlx5_rxq.c
-+++ b/drivers/net/mlx5/mlx5_rxq.c
-@@ -152,22 +152,22 @@ rxq_alloc_elts_sprq(struct mlx5_rxq_ctrl *rxq_ctrl)
- 		struct rte_mbuf *buf;
+diff --git a/drivers/common/mlx5/linux/mlx5_common_verbs.c b/drivers/common/mlx5/linux/mlx5_common_verbs.c
+index 6d44e1f566..5e23c5844d 100644
+--- a/drivers/common/mlx5/linux/mlx5_common_verbs.c
++++ b/drivers/common/mlx5/linux/mlx5_common_verbs.c
+@@ -106,10 +106,10 @@ mlx5_set_context_attr(struct rte_device *dev, struct ibv_context *ctx)
+  * @return
+  *   0 on successful registration, -1 otherwise
+  */
+-RTE_EXPORT_INTERNAL_SYMBOL(mlx5_common_verbs_reg_mr)
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_reg_mr)
+ int
+-mlx5_common_verbs_reg_mr(void *pd, void *addr, size_t length,
+-			 struct mlx5_pmd_mr *pmd_mr)
++mlx5_os_reg_mr(void *pd, void *addr, size_t length,
++		struct mlx5_pmd_mr *pmd_mr)
+ {
+ 	struct ibv_mr *ibv_mr;
  
- 		if (seg->mp) {
--		buf = rte_pktmbuf_alloc(seg->mp);
--		if (buf == NULL) {
--			if (rxq_ctrl->share_group == 0)
--				DRV_LOG(ERR, "port %u queue %u empty mbuf pool",
--					RXQ_PORT_ID(rxq_ctrl),
--					rxq_ctrl->rxq.idx);
--			else
--				DRV_LOG(ERR, "share group %u queue %u empty mbuf pool",
--					rxq_ctrl->share_group,
--					rxq_ctrl->share_qid);
--			rte_errno = ENOMEM;
--			goto error;
--		}
--		/* Only vectored Rx routines rely on headroom size. */
--		MLX5_ASSERT(!has_vec_support ||
--			    DATA_OFF(buf) >= RTE_PKTMBUF_HEADROOM);
-+			buf = rte_pktmbuf_alloc(seg->mp);
-+			if (buf == NULL) {
-+				if (rxq_ctrl->share_group == 0)
-+					DRV_LOG(ERR, "port %u queue %u empty mbuf pool",
-+						RXQ_PORT_ID(rxq_ctrl),
-+						rxq_ctrl->rxq.idx);
-+				else
-+					DRV_LOG(ERR, "share group %u queue %u empty mbuf pool",
-+						rxq_ctrl->share_group,
-+						rxq_ctrl->share_qid);
-+				rte_errno = ENOMEM;
-+				goto error;
-+			}
-+			/* Only vectored Rx routines rely on headroom size. */
-+			MLX5_ASSERT(!has_vec_support ||
-+				    DATA_OFF(buf) >= RTE_PKTMBUF_HEADROOM);
- 		} else {
- 			buf = seg->null_mbuf;
+@@ -136,9 +136,9 @@ mlx5_common_verbs_reg_mr(void *pd, void *addr, size_t length,
+  *   pmd_mr struct set with lkey, address, length and pointer to mr object
+  *
+  */
+-RTE_EXPORT_INTERNAL_SYMBOL(mlx5_common_verbs_dereg_mr)
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_dereg_mr)
+ void
+-mlx5_common_verbs_dereg_mr(struct mlx5_pmd_mr *pmd_mr)
++mlx5_os_dereg_mr(struct mlx5_pmd_mr *pmd_mr)
+ {
+ 	if (pmd_mr && pmd_mr->obj != NULL) {
+ 		claim_zero(mlx5_glue->dereg_mr(pmd_mr->obj));
+@@ -146,22 +146,6 @@ mlx5_common_verbs_dereg_mr(struct mlx5_pmd_mr *pmd_mr)
+ 	}
+ }
+ 
+-/**
+- * Set the reg_mr and dereg_mr callbacks.
+- *
+- * @param[out] reg_mr_cb
+- *   Pointer to reg_mr func
+- * @param[out] dereg_mr_cb
+- *   Pointer to dereg_mr func
+- */
+-RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_set_reg_mr_cb)
+-void
+-mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
+-{
+-	*reg_mr_cb = mlx5_common_verbs_reg_mr;
+-	*dereg_mr_cb = mlx5_common_verbs_dereg_mr;
+-}
+-
+ RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_alloc_null_mr)
+ struct mlx5_pmd_mr *
+ mlx5_os_alloc_null_mr(struct rte_device *dev, void *pd)
+diff --git a/drivers/common/mlx5/mlx5_common.c b/drivers/common/mlx5/mlx5_common.c
+index f71dbe4637..87de6d0ff0 100644
+--- a/drivers/common/mlx5/mlx5_common.c
++++ b/drivers/common/mlx5/mlx5_common.c
+@@ -1135,7 +1135,7 @@ mlx5_common_dev_dma_map(struct rte_device *rte_dev, void *addr,
+ 		return -1;
+ 	}
+ 	mr = mlx5_create_mr_ext(dev->pd, (uintptr_t)addr, len,
+-				SOCKET_ID_ANY, dev->mr_scache.reg_mr_cb);
++				SOCKET_ID_ANY);
+ 	if (!mr) {
+ 		DRV_LOG(WARNING, "Device %s unable to DMA map", rte_dev->name);
+ 		rte_errno = EINVAL;
+@@ -1165,7 +1165,7 @@ mlx5_common_dev_dma_map(struct rte_device *rte_dev, void *addr,
+ 		ret = mlx5_mr_expand_cache(&dev->mr_scache, size,
+ 					   rte_dev->numa_node);
+ 		if (ret < 0) {
+-			mlx5_mr_free(mr, dev->mr_scache.dereg_mr_cb);
++			mlx5_mr_free(mr);
+ 			rte_errno = ret;
+ 			return -1;
  		}
-diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
-index 5b04d9a234..ac966c51b4 100644
---- a/drivers/net/mlx5/mlx5_trigger.c
-+++ b/drivers/net/mlx5/mlx5_trigger.c
-@@ -164,16 +164,14 @@ mlx5_rxq_mempool_register(struct mlx5_rxq_ctrl *rxq_ctrl)
- 		seg = &rxq_ctrl->rxq.rxseg[s];
- 		mp = seg->mp;
- 		if (mp) { /* Regular segment */
--		bool is_extmem = (rte_pktmbuf_priv_flags(mp) &
--			     RTE_PKTMBUF_POOL_F_PINNED_EXT_BUF) != 0;
--		ret = mlx5_mr_mempool_register(rxq_ctrl->sh->cdev, mp,
--					       is_extmem);
--		if (ret < 0 && rte_errno != EEXIST)
--			goto error;
--		ret = mlx5_mr_mempool_populate_cache(&rxq_ctrl->rxq.mr_ctrl,
--						     mp);
--		if (ret < 0)
--			goto error;
-+			bool is_extmem = (rte_pktmbuf_priv_flags(mp) &
-+					RTE_PKTMBUF_POOL_F_PINNED_EXT_BUF) != 0;
-+			ret = mlx5_mr_mempool_register(rxq_ctrl->sh->cdev, mp, is_extmem);
-+			if (ret < 0 && rte_errno != EEXIST)
-+				goto error;
-+			ret = mlx5_mr_mempool_populate_cache(&rxq_ctrl->rxq.mr_ctrl, mp);
-+			if (ret < 0)
-+				goto error;
- 		} else { /* NULL segment used in selective Rx */
- 			seg->null_mbuf = mlx5_alloc_null_mbuf(seg->length);
- 			if (seg->null_mbuf == NULL) {
+@@ -1221,7 +1221,7 @@ mlx5_common_dev_dma_unmap(struct rte_device *rte_dev, void *addr,
+ 	}
+ 	LIST_REMOVE(mr, mr);
+ 	DRV_LOG(DEBUG, "MR(%p) is removed from list.", (void *)mr);
+-	mlx5_mr_free(mr, dev->mr_scache.dereg_mr_cb);
++	mlx5_mr_free(mr);
+ 	mlx5_mr_rebuild_cache(&dev->mr_scache);
+ 	/*
+ 	 * No explicit wmb is needed after updating dev_gen due to
+diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
+index 64ffc7f4ea..aa2d5e88a4 100644
+--- a/drivers/common/mlx5/mlx5_common_mr.c
++++ b/drivers/common/mlx5/mlx5_common_mr.c
+@@ -492,12 +492,12 @@ mlx5_mr_lookup_cache(struct mlx5_mr_share_cache *share_cache,
+  *   Pointer to MR to free.
+  */
+ void
+-mlx5_mr_free(struct mlx5_mr *mr, mlx5_dereg_mr_t dereg_mr_cb)
++mlx5_mr_free(struct mlx5_mr *mr)
+ {
+ 	if (mr == NULL)
+ 		return;
+ 	DRV_LOG(DEBUG, "freeing MR(%p):", (void *)mr);
+-	dereg_mr_cb(&mr->pmd_mr);
++	mlx5_os_dereg_mr(&mr->pmd_mr);
+ 	rte_bitmap_free(mr->ms_bmp);
+ 	mlx5_free(mr);
+ }
+@@ -545,7 +545,7 @@ mlx5_mr_garbage_collect(struct mlx5_mr_share_cache *share_cache)
+ 		struct mlx5_mr *mr = mr_next;
+ 
+ 		mr_next = LIST_NEXT(mr, mr);
+-		mlx5_mr_free(mr, share_cache->dereg_mr_cb);
++		mlx5_mr_free(mr);
+ 	}
+ }
+ 
+@@ -821,7 +821,7 @@ mlx5_mr_create_primary(void *pd,
+ 		data.start = RTE_ALIGN_FLOOR(addr, msl->page_sz);
+ 		data.end = data.start + msl->page_sz;
+ 		rte_mcfg_mem_read_unlock();
+-		mlx5_mr_free(mr, share_cache->dereg_mr_cb);
++		mlx5_mr_free(mr);
+ 		goto alloc_resources;
+ 	}
+ 	MLX5_ASSERT(data.msl == data_re.msl);
+@@ -845,7 +845,7 @@ mlx5_mr_create_primary(void *pd,
+ 		 * Must be unlocked before calling rte_free() because
+ 		 * mlx5_mr_mem_event_free_cb() can be called inside.
+ 		 */
+-		mlx5_mr_free(mr, share_cache->dereg_mr_cb);
++		mlx5_mr_free(mr);
+ 		return entry->lkey;
+ 	}
+ 	/*
+@@ -912,7 +912,7 @@ mlx5_mr_create_primary(void *pd,
+ 	 * mlx5_alloc_buf_extern() which eventually calls rte_malloc_socket()
+ 	 * through mlx5_alloc_verbs_buf().
+ 	 */
+-	share_cache->reg_mr_cb(pd, (void *)data.start, len, &mr->pmd_mr);
++	mlx5_os_reg_mr(pd, (void *)data.start, len, &mr->pmd_mr);
+ 	if (mr->pmd_mr.obj == NULL) {
+ 		DRV_LOG(DEBUG, "Fail to create an MR for address (%p)",
+ 		      (void *)addr);
+@@ -948,7 +948,7 @@ mlx5_mr_create_primary(void *pd,
+ 	 * calling rte_free() because mlx5_mr_mem_event_free_cb() can be called
+ 	 * inside.
+ 	 */
+-	mlx5_mr_free(mr, share_cache->dereg_mr_cb);
++	mlx5_mr_free(mr);
+ 	return UINT32_MAX;
+ }
+ 
+@@ -1139,9 +1139,6 @@ mlx5_mr_release_cache(struct mlx5_mr_share_cache *share_cache)
+ int
+ mlx5_mr_create_cache(struct mlx5_mr_share_cache *share_cache, int socket)
+ {
+-	/* Set the reg_mr and dereg_mr callback functions */
+-	mlx5_os_set_reg_mr_cb(&share_cache->reg_mr_cb,
+-			      &share_cache->dereg_mr_cb);
+ 	rte_rwlock_init(&share_cache->rwlock);
+ 	rte_rwlock_init(&share_cache->mprwlock);
+ 	/* Initialize B-tree and allocate memory for global MR cache table. */
+@@ -1189,8 +1186,7 @@ mlx5_mr_flush_local_cache(struct mlx5_mr_ctrl *mr_ctrl)
+  *   Pointer to MR structure on success, NULL otherwise.
+  */
+ struct mlx5_mr *
+-mlx5_create_mr_ext(void *pd, uintptr_t addr, size_t len, int socket_id,
+-		   mlx5_reg_mr_t reg_mr_cb)
++mlx5_create_mr_ext(void *pd, uintptr_t addr, size_t len, int socket_id)
+ {
+ 	struct mlx5_mr *mr = NULL;
+ 
+@@ -1199,7 +1195,7 @@ mlx5_create_mr_ext(void *pd, uintptr_t addr, size_t len, int socket_id,
+ 			 RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (mr == NULL)
+ 		return NULL;
+-	reg_mr_cb(pd, (void *)addr, len, &mr->pmd_mr);
++	mlx5_os_reg_mr(pd, (void *)addr, len, &mr->pmd_mr);
+ 	if (mr->pmd_mr.obj == NULL) {
+ 		DRV_LOG(WARNING,
+ 			"Fail to create MR for address (%p)",
+@@ -1624,14 +1620,13 @@ mlx5_mempool_reg_create(struct rte_mempool *mp, unsigned int mrs_n,
+  *   Whether @p mpr owns its MRs exclusively, i.e. they are not shared.
+  */
+ static void
+-mlx5_mempool_reg_destroy(struct mlx5_mr_share_cache *share_cache,
+-			 struct mlx5_mempool_reg *mpr, bool standalone)
++mlx5_mempool_reg_destroy(struct mlx5_mempool_reg *mpr, bool standalone)
+ {
+ 	if (standalone) {
+ 		unsigned int i;
+ 
+ 		for (i = 0; i < mpr->mrs_n; i++)
+-			share_cache->dereg_mr_cb(&mpr->mrs[i].pmd_mr);
++			mlx5_os_dereg_mr(&mpr->mrs[i].pmd_mr);
+ 		mlx5_free(mpr->mrs);
+ 	}
+ 	mlx5_free(mpr);
+@@ -1748,7 +1743,7 @@ mlx5_mr_mempool_register_primary(struct mlx5_mr_share_cache *share_cache,
+ 		const struct mlx5_range *range = &ranges[i];
+ 		size_t len = range->end - range->start;
+ 
+-		if (share_cache->reg_mr_cb(pd, (void *)range->start, len,
++		if (mlx5_os_reg_mr(pd, (void *)range->start, len,
+ 		    &mr->pmd_mr) < 0) {
+ 			DRV_LOG(ERR,
+ 				"Failed to create an MR in PD %p for address range "
+@@ -1763,7 +1758,7 @@ mlx5_mr_mempool_register_primary(struct mlx5_mr_share_cache *share_cache,
+ 			mp->name);
+ 	}
+ 	if (i != ranges_n) {
+-		mlx5_mempool_reg_destroy(share_cache, new_mpr, true);
++		mlx5_mempool_reg_destroy(new_mpr, true);
+ 		rte_errno = EINVAL;
+ 		goto exit;
+ 	}
+@@ -1785,13 +1780,13 @@ mlx5_mr_mempool_register_primary(struct mlx5_mr_share_cache *share_cache,
+ 	if (mpr != NULL) {
+ 		DRV_LOG(DEBUG, "Mempool %s is already registered for PD %p",
+ 			mp->name, pd);
+-		mlx5_mempool_reg_destroy(share_cache, new_mpr, true);
++		mlx5_mempool_reg_destroy(new_mpr, true);
+ 		rte_errno = EEXIST;
+ 		goto exit;
+ 	} else if (old_mpr != NULL) {
+ 		DRV_LOG(DEBUG, "Mempool %s registration for PD %p updated for external memory",
+ 			mp->name, pd);
+-		mlx5_mempool_reg_destroy(share_cache, old_mpr, standalone);
++		mlx5_mempool_reg_destroy(old_mpr, standalone);
+ 	}
+ exit:
+ 	free(ranges);
+@@ -1860,7 +1855,7 @@ mlx5_mr_mempool_unregister_primary(struct mlx5_mr_share_cache *share_cache,
+ 		rte_errno = ENOENT;
+ 		return -1;
+ 	}
+-	mlx5_mempool_reg_destroy(share_cache, mpr, standalone);
++	mlx5_mempool_reg_destroy(mpr, standalone);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/common/mlx5/mlx5_common_mr.h b/drivers/common/mlx5/mlx5_common_mr.h
+index 00f3d832c3..5fb931a1b5 100644
+--- a/drivers/common/mlx5/mlx5_common_mr.h
++++ b/drivers/common/mlx5/mlx5_common_mr.h
+@@ -32,13 +32,6 @@ struct mlx5_pmd_mr {
+ 	struct mlx5_devx_obj *mkey; /* devx mkey object. */
+ };
+ 
+-/**
+- * mr operations typedef
+- */
+-typedef int (*mlx5_reg_mr_t)(void *pd, void *addr, size_t length,
+-			     struct mlx5_pmd_mr *pmd_mr);
+-typedef void (*mlx5_dereg_mr_t)(struct mlx5_pmd_mr *pmd_mr);
+-
+ /* Memory Region object. */
+ struct mlx5_mr {
+ 	LIST_ENTRY(mlx5_mr) mr; /**< Pointer to the prev/next entry. */
+@@ -88,8 +81,6 @@ struct __rte_packed_begin mlx5_mr_share_cache {
+ 	struct mlx5_mr_list mr_list; /* Registered MR list. */
+ 	struct mlx5_mr_list mr_free_list; /* Freed MR list. */
+ 	struct mlx5_mempool_reg_list mempool_reg_list; /* Mempool database. */
+-	mlx5_reg_mr_t reg_mr_cb; /* Callback to reg_mr func */
+-	mlx5_dereg_mr_t dereg_mr_cb; /* Callback to dereg_mr func */
+ } __rte_packed_end;
+ 
+ /* Multi-Packet RQ buffer header. */
+@@ -233,9 +224,8 @@ struct mlx5_mr *
+ mlx5_mr_lookup_list(struct mlx5_mr_share_cache *share_cache,
+ 		    struct mr_cache_entry *entry, uintptr_t addr);
+ struct mlx5_mr *
+-mlx5_create_mr_ext(void *pd, uintptr_t addr, size_t len, int socket_id,
+-		   mlx5_reg_mr_t reg_mr_cb);
+-void mlx5_mr_free(struct mlx5_mr *mr, mlx5_dereg_mr_t dereg_mr_cb);
++mlx5_create_mr_ext(void *pd, uintptr_t addr, size_t len, int socket_id);
++void mlx5_mr_free(struct mlx5_mr *mr);
+ __rte_internal
+ uint32_t
+ mlx5_mr_create(struct mlx5_common_device *cdev,
+@@ -246,19 +236,13 @@ __rte_internal
+ uint32_t
+ mlx5_mr_addr2mr_bh(struct mlx5_mr_ctrl *mr_ctrl, uintptr_t addr);
+ 
+-/* mlx5_common_verbs.c */
+-
+ __rte_internal
+ int
+-mlx5_common_verbs_reg_mr(void *pd, void *addr, size_t length,
+-			 struct mlx5_pmd_mr *pmd_mr);
++mlx5_os_reg_mr(void *pd, void *addr, size_t length,
++		struct mlx5_pmd_mr *pmd_mr);
+ __rte_internal
+ void
+-mlx5_common_verbs_dereg_mr(struct mlx5_pmd_mr *pmd_mr);
+-
+-__rte_internal
+-void
+-mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb);
++mlx5_os_dereg_mr(struct mlx5_pmd_mr *pmd_mr);
+ 
+ __rte_internal
+ struct mlx5_pmd_mr *
+diff --git a/drivers/common/mlx5/windows/mlx5_common_os.c b/drivers/common/mlx5/windows/mlx5_common_os.c
+index 692517a9bf..bf1b654da3 100644
+--- a/drivers/common/mlx5/windows/mlx5_common_os.c
++++ b/drivers/common/mlx5/windows/mlx5_common_os.c
+@@ -377,7 +377,8 @@ mlx5_os_umem_dereg(void *pumem)
+  * @return
+  *   0 on successful registration, -1 otherwise
+  */
+-static int
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_reg_mr)
++int
+ mlx5_os_reg_mr(void *pd,
+ 	       void *addr, size_t length, struct mlx5_pmd_mr *pmd_mr)
+ {
+@@ -425,7 +426,8 @@ mlx5_os_reg_mr(void *pd,
+  * @param[in] pmd_mr
+  *  Pointer to PMD mr object
+  */
+-static void
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_dereg_mr)
++void
+ mlx5_os_dereg_mr(struct mlx5_pmd_mr *pmd_mr)
+ {
+ 	if (!pmd_mr)
+@@ -437,23 +439,6 @@ mlx5_os_dereg_mr(struct mlx5_pmd_mr *pmd_mr)
+ 	memset(pmd_mr, 0, sizeof(*pmd_mr));
+ }
+ 
+-/**
+- * Set the reg_mr and dereg_mr callbacks.
+- *
+- * @param[out] reg_mr_cb
+- *   Pointer to reg_mr func
+- * @param[out] dereg_mr_cb
+- *   Pointer to dereg_mr func
+- *
+- */
+-RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_set_reg_mr_cb)
+-void
+-mlx5_os_set_reg_mr_cb(mlx5_reg_mr_t *reg_mr_cb, mlx5_dereg_mr_t *dereg_mr_cb)
+-{
+-	*reg_mr_cb = mlx5_os_reg_mr;
+-	*dereg_mr_cb = mlx5_os_dereg_mr;
+-}
+-
+ RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_alloc_null_mr)
+ struct mlx5_pmd_mr *
+ mlx5_os_alloc_null_mr(struct rte_device *dev, void *pd)
+diff --git a/drivers/compress/mlx5/mlx5_compress.c b/drivers/compress/mlx5/mlx5_compress.c
+index e5325c6150..1361dab630 100644
+--- a/drivers/compress/mlx5/mlx5_compress.c
++++ b/drivers/compress/mlx5/mlx5_compress.c
+@@ -117,7 +117,7 @@ mlx5_compress_qp_release(struct rte_compressdev *dev, uint16_t qp_id)
+ 	if (qp->opaque_mr.obj != NULL) {
+ 		void *opaq = qp->opaque_mr.addr;
+ 
+-		mlx5_common_verbs_dereg_mr(&qp->opaque_mr);
++		mlx5_os_dereg_mr(&qp->opaque_mr);
+ 		rte_free(opaq);
+ 	}
+ 	mlx5_mr_btree_free(&qp->mr_ctrl.cache_bh);
+@@ -199,7 +199,7 @@ mlx5_compress_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ 	qp->priv = priv;
+ 	qp->ops = (struct rte_comp_op **)RTE_ALIGN((uintptr_t)(qp + 1),
+ 						   RTE_CACHE_LINE_SIZE);
+-	if (mlx5_common_verbs_reg_mr(priv->cdev->pd, opaq_buf, qp->entries_n *
++	if (mlx5_os_reg_mr(priv->cdev->pd, opaq_buf, qp->entries_n *
+ 					sizeof(union mlx5_gga_compress_opaque),
+ 							 &qp->opaque_mr) != 0) {
+ 		rte_free(opaq_buf);
+diff --git a/drivers/crypto/mlx5/mlx5_crypto.h b/drivers/crypto/mlx5/mlx5_crypto.h
+index f9f127e9e6..93a2bb2c78 100644
+--- a/drivers/crypto/mlx5/mlx5_crypto.h
++++ b/drivers/crypto/mlx5/mlx5_crypto.h
+@@ -40,8 +40,6 @@ struct mlx5_crypto_priv {
+ 	TAILQ_ENTRY(mlx5_crypto_priv) next;
+ 	struct mlx5_common_device *cdev; /* Backend mlx5 device. */
+ 	struct rte_cryptodev *crypto_dev;
+-	mlx5_reg_mr_t reg_mr_cb; /* Callback to reg_mr func */
+-	mlx5_dereg_mr_t dereg_mr_cb; /* Callback to dereg_mr func */
+ 	struct mlx5_uar uar; /* User Access Region. */
+ 	uint32_t max_segs_num; /* Maximum supported data segs. */
+ 	uint32_t max_klm_num; /* Maximum supported klm. */
+diff --git a/drivers/crypto/mlx5/mlx5_crypto_gcm.c b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
+index 89f32c7722..1a2600655a 100644
+--- a/drivers/crypto/mlx5/mlx5_crypto_gcm.c
++++ b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
+@@ -219,7 +219,6 @@ mlx5_crypto_gcm_mkey_klm_update(struct mlx5_crypto_priv *priv,
+ static int
+ mlx5_crypto_gcm_qp_release(struct rte_cryptodev *dev, uint16_t qp_id)
+ {
+-	struct mlx5_crypto_priv *priv = dev->data->dev_private;
+ 	struct mlx5_crypto_qp *qp = dev->data->queue_pairs[qp_id];
+ 
+ 	if (qp->umr_qp_obj.qp != NULL)
+@@ -231,7 +230,7 @@ mlx5_crypto_gcm_qp_release(struct rte_cryptodev *dev, uint16_t qp_id)
+ 	if (qp->mr.obj != NULL) {
+ 		void *opaq = qp->mr.addr;
+ 
+-		priv->dereg_mr_cb(&qp->mr);
++		mlx5_os_dereg_mr(&qp->mr);
+ 		rte_free(opaq);
+ 	}
+ 	mlx5_crypto_indirect_mkeys_release(qp, qp->entries_n);
+@@ -363,7 +362,7 @@ mlx5_crypto_gcm_qp_setup(struct rte_cryptodev *dev, uint16_t qp_id,
+ 		rte_errno = ENOMEM;
+ 		goto err;
+ 	}
+-	if (priv->reg_mr_cb(priv->cdev->pd, mr_buf, mr_size, &qp->mr) != 0) {
++	if (mlx5_os_reg_mr(priv->cdev->pd, mr_buf, mr_size, &qp->mr) != 0) {
+ 		rte_free(mr_buf);
+ 		DRV_LOG(ERR, "Failed to register opaque MR.");
+ 		rte_errno = ENOMEM;
+@@ -1186,7 +1185,6 @@ mlx5_crypto_gcm_init(struct mlx5_crypto_priv *priv)
+ 
+ 	/* Override AES-GCM specified ops. */
+ 	dev_ops->sym_session_configure = mlx5_crypto_sym_gcm_session_configure;
+-	mlx5_os_set_reg_mr_cb(&priv->reg_mr_cb, &priv->dereg_mr_cb);
+ 	dev_ops->queue_pair_setup = mlx5_crypto_gcm_qp_setup;
+ 	dev_ops->queue_pair_release = mlx5_crypto_gcm_qp_release;
+ 	if (mlx5_crypto_is_ipsec_opt(priv)) {
+diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
+index bd6ef35b53..a4d5392e8f 100644
+--- a/drivers/net/mlx5/mlx5.h
++++ b/drivers/net/mlx5/mlx5.h
+@@ -2706,8 +2706,7 @@ int mlx5_aso_cnt_query(struct mlx5_dev_ctx_shared *sh,
+ int mlx5_aso_ct_queue_init(struct mlx5_dev_ctx_shared *sh,
+ 			   struct mlx5_aso_ct_pools_mng *ct_mng,
+ 			   uint32_t nb_queues);
+-int mlx5_aso_ct_queue_uninit(struct mlx5_dev_ctx_shared *sh,
+-			     struct mlx5_aso_ct_pools_mng *ct_mng);
++int mlx5_aso_ct_queue_uninit(struct mlx5_aso_ct_pools_mng *ct_mng);
+ int
+ mlx5_aso_sq_create(struct mlx5_common_device *cdev, struct mlx5_aso_sq *sq,
+ 		   void *uar, uint16_t log_desc_n);
+diff --git a/drivers/net/mlx5/mlx5_flow_aso.c b/drivers/net/mlx5/mlx5_flow_aso.c
+index 5e2a81ef9c..cd84ab1966 100644
+--- a/drivers/net/mlx5/mlx5_flow_aso.c
++++ b/drivers/net/mlx5/mlx5_flow_aso.c
+@@ -19,17 +19,15 @@
+ /**
+  * Free MR resources.
+  *
+- * @param[in] cdev
+- *   Pointer to the mlx5 common device.
+  * @param[in] mr
+  *   MR to free.
+  */
+ static void
+-mlx5_aso_dereg_mr(struct mlx5_common_device *cdev, struct mlx5_pmd_mr *mr)
++mlx5_aso_dereg_mr(struct mlx5_pmd_mr *mr)
+ {
+ 	void *addr = mr->addr;
+ 
+-	cdev->mr_scache.dereg_mr_cb(mr);
++	mlx5_os_dereg_mr(mr);
+ 	mlx5_free(addr);
+ 	memset(mr, 0, sizeof(*mr));
+ }
+@@ -59,7 +57,7 @@ mlx5_aso_reg_mr(struct mlx5_common_device *cdev, size_t length,
+ 		DRV_LOG(ERR, "Failed to create ASO bits mem for MR.");
+ 		return -1;
+ 	}
+-	ret = cdev->mr_scache.reg_mr_cb(cdev->pd, mr->addr, length, mr);
++	ret = mlx5_os_reg_mr(cdev->pd, mr->addr, length, mr);
+ 	if (ret) {
+ 		DRV_LOG(ERR, "Failed to create direct Mkey.");
+ 		mlx5_free(mr->addr);
+@@ -362,7 +360,7 @@ mlx5_aso_queue_init(struct mlx5_dev_ctx_shared *sh,
+ 		if (mlx5_aso_sq_create(cdev, &sh->aso_age_mng->aso_sq,
+ 				       sh->tx_uar.obj,
+ 				       MLX5_ASO_QUEUE_LOG_DESC)) {
+-			mlx5_aso_dereg_mr(cdev, &sh->aso_age_mng->aso_sq.mr);
++			mlx5_aso_dereg_mr(&sh->aso_age_mng->aso_sq.mr);
+ 			return -1;
+ 		}
+ 		mlx5_aso_age_init_sq(&sh->aso_age_mng->aso_sq);
+@@ -399,14 +397,14 @@ mlx5_aso_queue_uninit(struct mlx5_dev_ctx_shared *sh,
+ 
+ 	switch (aso_opc_mod) {
+ 	case ASO_OPC_MOD_FLOW_HIT:
+-		mlx5_aso_dereg_mr(sh->cdev, &sh->aso_age_mng->aso_sq.mr);
++		mlx5_aso_dereg_mr(&sh->aso_age_mng->aso_sq.mr);
+ 		sq = &sh->aso_age_mng->aso_sq;
+ 		break;
+ 	case ASO_OPC_MOD_POLICER:
+ 		mlx5_aso_mtr_queue_uninit(sh, NULL, &sh->mtrmng->pools_mng);
+ 		break;
+ 	case ASO_OPC_MOD_CONNECTION_TRACKING:
+-		mlx5_aso_ct_queue_uninit(sh, sh->ct_mng);
++		mlx5_aso_ct_queue_uninit(sh->ct_mng);
+ 		break;
+ 	default:
+ 		DRV_LOG(ERR, "Unknown ASO operation mode");
+@@ -1147,15 +1145,14 @@ __mlx5_aso_ct_get_pool(struct mlx5_dev_ctx_shared *sh,
+ }
+ 
+ int
+-mlx5_aso_ct_queue_uninit(struct mlx5_dev_ctx_shared *sh,
+-			 struct mlx5_aso_ct_pools_mng *ct_mng)
++mlx5_aso_ct_queue_uninit(struct mlx5_aso_ct_pools_mng *ct_mng)
+ {
+ 	uint32_t i;
+ 
+ 	/* 64B per object for query. */
+ 	for (i = 0; i < ct_mng->nb_sq; i++) {
+ 		if (ct_mng->aso_sqs[i].mr.addr)
+-			mlx5_aso_dereg_mr(sh->cdev, &ct_mng->aso_sqs[i].mr);
++			mlx5_aso_dereg_mr(&ct_mng->aso_sqs[i].mr);
+ 		mlx5_aso_destroy_sq(&ct_mng->aso_sqs[i]);
+ 	}
+ 	return 0;
+@@ -1197,7 +1194,7 @@ mlx5_aso_ct_queue_init(struct mlx5_dev_ctx_shared *sh,
+ error:
+ 	do {
+ 		if (ct_mng->aso_sqs[i].mr.addr)
+-			mlx5_aso_dereg_mr(sh->cdev, &ct_mng->aso_sqs[i].mr);
++			mlx5_aso_dereg_mr(&ct_mng->aso_sqs[i].mr);
+ 		mlx5_aso_destroy_sq(&ct_mng->aso_sqs[i]);
+ 	} while (i--);
+ 	ct_mng->nb_sq = 0;
+diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
+index b6bb9f12a6..7cc601d681 100644
+--- a/drivers/net/mlx5/mlx5_flow_hw.c
++++ b/drivers/net/mlx5/mlx5_flow_hw.c
+@@ -11086,12 +11086,9 @@ flow_hw_create_nic_ctrl_tables(struct rte_eth_dev *dev, struct rte_flow_error *e
+ }
+ 
+ static void
+-flow_hw_ct_mng_destroy(struct rte_eth_dev *dev,
+-		       struct mlx5_aso_ct_pools_mng *ct_mng)
++flow_hw_ct_mng_destroy(struct mlx5_aso_ct_pools_mng *ct_mng)
+ {
+-	struct mlx5_priv *priv = dev->data->dev_private;
+-
+-	mlx5_aso_ct_queue_uninit(priv->sh, ct_mng);
++	mlx5_aso_ct_queue_uninit(ct_mng);
+ 	mlx5_free(ct_mng);
+ }
+ 
+@@ -11230,7 +11227,7 @@ mlx5_flow_ct_init(struct rte_eth_dev *dev,
+ 		priv->hws_ctpool = NULL;
+ 	}
+ 	if (priv->ct_mng) {
+-		flow_hw_ct_mng_destroy(dev, priv->ct_mng);
++		flow_hw_ct_mng_destroy(priv->ct_mng);
+ 		priv->ct_mng = NULL;
+ 	}
+ 	return ret;
+@@ -11804,7 +11801,7 @@ __mlx5_flow_hw_resource_release(struct rte_eth_dev *dev, bool ctx_close)
+ 		priv->hws_ctpool = NULL;
+ 	}
+ 	if (priv->ct_mng) {
+-		flow_hw_ct_mng_destroy(dev, priv->ct_mng);
++		flow_hw_ct_mng_destroy(priv->ct_mng);
+ 		priv->ct_mng = NULL;
+ 	}
+ 	mlx5_flow_quota_destroy(dev);
+diff --git a/drivers/net/mlx5/mlx5_flow_quota.c b/drivers/net/mlx5/mlx5_flow_quota.c
+index d94167d0b0..b661bd376e 100644
+--- a/drivers/net/mlx5/mlx5_flow_quota.c
++++ b/drivers/net/mlx5/mlx5_flow_quota.c
+@@ -412,12 +412,11 @@ mlx5_quota_alloc_sq(struct mlx5_priv *priv)
+ static void
+ mlx5_quota_destroy_read_buf(struct mlx5_priv *priv)
+ {
+-	struct mlx5_dev_ctx_shared *sh = priv->sh;
+ 	struct mlx5_quota_ctx *qctx = &priv->quota_ctx;
+ 
+ 	if (qctx->mr.lkey) {
+ 		void *addr = qctx->mr.addr;
+-		sh->cdev->mr_scache.dereg_mr_cb(&qctx->mr);
++		mlx5_os_dereg_mr(&qctx->mr);
+ 		mlx5_free(addr);
+ 	}
+ 	if (qctx->read_buf)
+@@ -446,8 +445,7 @@ mlx5_quota_alloc_read_buf(struct mlx5_priv *priv)
+ 		DRV_LOG(DEBUG, "QUOTA: failed to allocate MTR ASO READ buffer [1]");
+ 		return -ENOMEM;
+ 	}
+-	ret = sh->cdev->mr_scache.reg_mr_cb(sh->cdev->pd, buf,
+-					    rd_buf_size, &qctx->mr);
++	ret = mlx5_os_reg_mr(sh->cdev->pd, buf, rd_buf_size, &qctx->mr);
+ 	if (ret) {
+ 		DRV_LOG(DEBUG, "QUOTA: failed to register MTR ASO READ MR");
+ 		return -errno;
+diff --git a/drivers/net/mlx5/mlx5_hws_cnt.c b/drivers/net/mlx5/mlx5_hws_cnt.c
+index 1b6acb7a3b..d0c4ead71b 100644
+--- a/drivers/net/mlx5/mlx5_hws_cnt.c
++++ b/drivers/net/mlx5/mlx5_hws_cnt.c
+@@ -259,12 +259,11 @@ mlx5_hws_aging_check(struct mlx5_priv *priv, struct mlx5_hws_cnt_pool *cpool)
+ }
+ 
+ static void
+-mlx5_hws_cnt_raw_data_free(struct mlx5_dev_ctx_shared *sh,
+-			   struct mlx5_hws_cnt_raw_data_mng *mng)
++mlx5_hws_cnt_raw_data_free(struct mlx5_hws_cnt_raw_data_mng *mng)
+ {
+ 	if (mng == NULL)
+ 		return;
+-	sh->cdev->mr_scache.dereg_mr_cb(&mng->mr);
++	mlx5_os_dereg_mr(&mng->mr);
+ 	mlx5_free(mng->raw);
+ 	mlx5_free(mng);
+ }
+@@ -296,8 +295,7 @@ mlx5_hws_cnt_raw_data_alloc(struct mlx5_dev_ctx_shared *sh, uint32_t n,
+ 				   NULL, "failed to allocate raw counters memory");
+ 		goto error;
+ 	}
+-	ret = sh->cdev->mr_scache.reg_mr_cb(sh->cdev->pd, mng->raw, sz,
+-					    &mng->mr);
++	ret = mlx5_os_reg_mr(sh->cdev->pd, mng->raw, sz, &mng->mr);
+ 	if (ret) {
+ 		rte_flow_error_set(error, errno,
+ 				   RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
+@@ -306,7 +304,7 @@ mlx5_hws_cnt_raw_data_alloc(struct mlx5_dev_ctx_shared *sh, uint32_t n,
+ 	}
+ 	return mng;
+ error:
+-	mlx5_hws_cnt_raw_data_free(sh, mng);
++	mlx5_hws_cnt_raw_data_free(mng);
+ 	return NULL;
+ }
+ 
+@@ -639,8 +637,7 @@ mlx5_hws_cnt_pool_dcs_alloc(struct mlx5_dev_ctx_shared *sh,
+ }
+ 
+ static void
+-mlx5_hws_cnt_pool_dcs_free(struct mlx5_dev_ctx_shared *sh,
+-			   struct mlx5_hws_cnt_pool *cpool)
++mlx5_hws_cnt_pool_dcs_free(struct mlx5_hws_cnt_pool *cpool)
+ {
+ 	uint32_t idx;
+ 
+@@ -649,7 +646,7 @@ mlx5_hws_cnt_pool_dcs_free(struct mlx5_dev_ctx_shared *sh,
+ 	for (idx = 0; idx < MLX5_HWS_CNT_DCS_NUM; idx++)
+ 		mlx5_devx_cmd_destroy(cpool->dcs_mng.dcs[idx].obj);
+ 	if (cpool->raw_mng) {
+-		mlx5_hws_cnt_raw_data_free(sh, cpool->raw_mng);
++		mlx5_hws_cnt_raw_data_free(cpool->raw_mng);
+ 		cpool->raw_mng = NULL;
+ 	}
+ }
+@@ -842,8 +839,8 @@ mlx5_hws_cnt_pool_destroy(struct mlx5_dev_ctx_shared *sh,
+ 	}
+ 	mlx5_hws_cnt_pool_action_destroy(cpool);
+ 	if (cpool->cfg.host_cpool == NULL) {
+-		mlx5_hws_cnt_pool_dcs_free(sh, cpool);
+-		mlx5_hws_cnt_raw_data_free(sh, cpool->raw_mng);
++		mlx5_hws_cnt_pool_dcs_free(cpool);
++		mlx5_hws_cnt_raw_data_free(cpool->raw_mng);
+ 	}
+ 	mlx5_free((void *)cpool->cfg.name);
+ 	mlx5_hws_cnt_pool_deinit(cpool);
 -- 
 2.54.0
 
