@@ -2,95 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB47CD6E55
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 03:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFBBCD6E55
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 03:49:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8CBFE40B8C;
-	Thu,  4 Jun 2026 05:17:23 +0200 (CEST)
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
- [209.85.214.225])
- by mails.dpdk.org (Postfix) with ESMTP id 53FA640A7F
- for <dev@dpdk.org>; Thu,  4 Jun 2026 05:17:22 +0200 (CEST)
-Received: by mail-pl1-f225.google.com with SMTP id
- d9443c01a7336-2c0c2a68d01so1504495ad.1
- for <dev@dpdk.org>; Wed, 03 Jun 2026 20:17:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780543041; x=1781147841;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=UMPaLfyNzkYTzaBwwN9HhPVAIv/zChn4oF3QCxlXw3k=;
- b=pqVj7usIGMM7abH4N1nwLerR3TyK4sW2Q5bpbrinn//INUpJHYfPRUBkUZMds3PufC
- YZkpGrC04BkNaqwBtzt+PX1mk25Sn2UY0j+qLUJ9KkhPFQRykbxmpht2pGWdDDIip0uN
- KYSlsTxYdGynp3LbWWXriSseAKLYnmAnfPHjKMp3aP2T6QC41ggzvEQwlmul78ttoXHO
- zRErT/O2Jj85JIHa2K6F+LvpHFLNlT/XyPIo+p6w0X1IUXKCfwoM+WD9lBdw/jMSn3B8
- e4O7sccmKnT5UZfxKMGD5UAhTN5UZNQ3DK9CFSfX/f2jFpk81xtLS5m2mKEUSzGbQ3hB
- RRYA==
-X-Gm-Message-State: AOJu0YzkiORl7JZKDWgveDr113acKxII6bokt4s4ncrIM2XPK1ZgwkZ7
- deRbj1Xe0Ijvo4xfRrgAGKVUj4Sen1dHY2MBHHGHKT82S7zHJPWd2sYcig+IZ1b6bXyi/Yyxtj4
- 8lkTQUa37VexklOy/N6KXtJwUEXTPj2QQxFD8KuQGoeMF/uyT7X/ivdfpOFhuG8NidpM3MSvkGg
- VQdGSd38l7yrrRa6TkFWRKdjLc9hCYAaFtlHQhqtGwcOvsAOXm+Ywa6Xf6DPe6qwY7q3YXvdns+
- zqP2RXTiLP4
-X-Gm-Gg: Acq92OF/CZWQxkxsUNdk5Hnc8VJf/d6GISLAD3Q2i9/VAyTKhF5JbaAAI9461bSuBz9
- hHiIenh60fdfaXHjWoyDgNIlHuNT+DA9q8XhzKAUiuqdotxT/qL19JrmV00rdfPMYUbETIgVmdt
- WziqmlHYKdeYJ/O07F0nlDRl1Ti+IsB66QOLF2rm5zIi+FZRFhpe8hdN9hg6NIMtwJzK57SvjLu
- hh0vQEEGI7mitzVg8G73G2rSboaASU8ukLAT1HD/V8s/Cp7vRKQUNK5YxKTEiKTnFyVnJgfmPE/
- pJD1qMDBYUcM7BDbGUPz84OoMN5Y2cUQtp4RM4gbFA0VJaxkkez26DCGiDIl5VsBP/NFO8Zbl/D
- g4Bw5fSI14JgIhSOfiL75B+Y0D2tR2O21u7dXsUACskkI3G2JXC2NETNhC0e+/Bf2VcOnaF3M+t
- J+pQuK9/WlKTktJzYZhMh/f4NO755Nlp0/RnI252fs3ps3PlBI+w71WeKClqsWe9Lo9L6ZiAjMJ
- 65sm/TvsS9C
-X-Received: by 2002:a17:903:2410:b0:2c0:b6c7:2273 with SMTP id
- d9443c01a7336-2c163a257e8mr65457105ad.3.1780543041397; 
- Wed, 03 Jun 2026 20:17:21 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
- by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-2c164f71aedsm4264355ad.3.2026.06.03.20.17.21
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 03 Jun 2026 20:17:21 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f198.google.com with SMTP id
- af79cd13be357-914f037b7dfso54108985a.3
- for <dev@dpdk.org>; Wed, 03 Jun 2026 20:17:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0749C402D5;
+	Thu,  4 Jun 2026 05:49:03 +0200 (CEST)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id E97DA402BA
+ for <dev@dpdk.org>; Thu,  4 Jun 2026 05:49:01 +0200 (CEST)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-4906869f0cbso2595885e9.1
+ for <dev@dpdk.org>; Wed, 03 Jun 2026 20:49:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1780543040; x=1781147840; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1780544941; x=1781149741; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=UMPaLfyNzkYTzaBwwN9HhPVAIv/zChn4oF3QCxlXw3k=;
- b=NYqsL7iTULVwZcjrOtQ2fgHT5gVkqU0s4A7BoUI/xDnvCTqUcK2tCW9eow0Q4HiOzY
- QAg9syweTitJ09ncs+F732TOwTiAmJTdYBSa+wwjHaJAdCG9NmEwg6IGXszX7s4n0R0o
- sWnCaBY1gic0AQ0UcrYWeNnJ8XJIStzGyN1qY=
-X-Received: by 2002:a05:620a:7081:b0:914:7b4f:cf5b with SMTP id
- af79cd13be357-9158a6a84bdmr1043522485a.16.1780543040308; 
- Wed, 03 Jun 2026 20:17:20 -0700 (PDT)
-X-Received: by 2002:a05:620a:7081:b0:914:7b4f:cf5b with SMTP id
- af79cd13be357-9158a6a84bdmr1043520185a.16.1780543039832; 
- Wed, 03 Jun 2026 20:17:19 -0700 (PDT)
-Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-9158a009fe7sm446421685a.8.2026.06.03.20.17.18
+ bh=tsH2wxCMz5R1Hj7s2YPRWdVcMaSc/J91LyDsV3M7wYA=;
+ b=BLvAXZgDjNR8NBedkLnc+WR8knqBELmQRyv2Wi4hZ2k7h2Lx9iFzHyViHWXxMLUF35
+ 8/8JMsZeJFxF1twa+d4zU0y3XG+J5gCgxL2mHX2D/0xHO8jS/m5Ewmlvbuk5iZ2D6Nqi
+ fZbj/s8YnkujMnMcPKWJitOkgZK6THEDl+HQny0Pg6c4BgZf+pnUqXR5ZWUkRnmmjWxj
+ BFfzrBMuv9POXml20NbD2CJsCraKZGSiDFGKoYU+ZEN2ddBbFlWDQpsqveKrp5zhwrp6
+ spc+hAwj6IOdXcqM0xycPy0xpZbT8votIwo6eK1je9RwckjuYpYHbH84+s8gj1Zq6kcv
+ UAIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780544941; x=1781149741;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=tsH2wxCMz5R1Hj7s2YPRWdVcMaSc/J91LyDsV3M7wYA=;
+ b=nTGtzK47IpeYvQxZbHiBVxWyx0gWRmOEvhUy7phRAVg5drAtU13rRP3vZz5JjMjoel
+ 4+DbaiseHGT0/DFMV8WBtT79mqxXMUibyaznixsh+DvOmhpWc402YTofEIPBrRb9i8Y5
+ xBFm3hzfnp0CGOFjGP03doz1CjWOO9JbSdr6rOqt6xJxyG9bctPRVV1Wx1Iq/Vca122l
+ QpPzETqP4y4TqrbGaLJqwTRvsqh32ocYgOx3XrG+wGanAMlB0qdRNVdsyptJ4MOB5H9e
+ KNyvdyXIjIsPsFC3Gk7YAtng6vcST6npaIip359xd8ca5WgJCmPNxpuJV54lAtwep69z
+ U9sQ==
+X-Gm-Message-State: AOJu0Yzqil+kpHuAmS17GVkduSA82Cuw/hv4ugiKtai2iuEpWpXz/HZ/
+ MFhhHPEVEG6c/3Ba5Az37bflHJYBTHG+C8Zrr0TqBXkl1R//wuk3t/GOimn8VoSf
+X-Gm-Gg: Acq92OHQJycsoDR5cc4Tw59IMzIj4mOD8ulvzbrspyvmKfQ8VKy2aX0ULLnH81lMZo4
+ pPfrUY0TwPgRMFLhoHfzdlLIlILUd/FTgSUq+IU8Z51ujyM/YG7+79SMVxWOylWTP1dsWLGx/xA
+ IIIpItG00zKoCOe6SpdQNB7me0LA/GJwaBvRQR5t2qtVPiBu/NEZCeMB9Tf6RjwqwmPR9E5gUb5
+ RMCu1JZl5mUZB9HecFL1UgbvPdyW4uRmtrTJ0yF7eXAUFroVxtvhm5gN5RdjI+8KF9QEGZl5sMY
+ 0ZeJXbGL51+6mlrFG0s9tk78575OsvFVcoEuflXViIQq4Q5/nR3/MjbHnyJSKWwRbo0HpPYbhYQ
+ Pxo7Q0HYx0A/tbhx13ALNgX9IQIGGRlb6Mau/AiBnWUno+zudqgySVIvGMOe8katpSWO/cFCIcI
+ TK0zQnuw5kw8UfGwDtiIRhE6KhRLk8zfk/2tyRUULLOKt6MJxU45/JQS8d
+X-Received: by 2002:a05:600c:c48e:b0:490:40f1:5314 with SMTP id
+ 5b1f17b1804b1-490b5eb73aamr88178455e9.1.1780544941363; 
+ Wed, 03 Jun 2026 20:49:01 -0700 (PDT)
+Received: from happy ([185.229.111.129]) by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-490bc3a87dasm36146805e9.7.2026.06.03.20.48.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 03 Jun 2026 20:17:18 -0700 (PDT)
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-X-Google-Original-From: Mohammad Shuab Siddique
- <Mohammad-Shuab.Siddique@broadcom.com>
+ Wed, 03 Jun 2026 20:49:01 -0700 (PDT)
+From: Denis Sergeev <denserg.edu@gmail.com>
 To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
- Keegan Freyhof <keegan.freyhof@broadcom.com>,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH 10/10] net/bnxt: fix v3 vector mode not selecting cksum
- unknown unknown
-Date: Wed,  3 Jun 2026 21:18:51 -0600
-Message-ID: <20260604031851.2267548-11-Mohammad-Shuab.Siddique@broadcom.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260604031851.2267548-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260604031851.2267548-1-Mohammad-Shuab.Siddique@broadcom.com>
+Cc: shepard.siegel@atomicrules.com, ed.czeck@atomicrules.com,
+ john.miller@atomicrules.com, stephen@networkplumber.org,
+ Denis Sergeev <denserg.edu@gmail.com>, stable@dpdk.org
+Subject: [PATCH v2] net/ark: use standard IPv4 address parser
+Date: Thu,  4 Jun 2026 06:48:37 +0300
+Message-ID: <20260604034837.250221-1-denserg.edu@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260603054742.120101-1-denserg.edu@gmail.com>
+References: <20260603054742.120101-1-denserg.edu@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -104,61 +79,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Keegan Freyhof <keegan.freyhof@broadcom.com>
+The IPv4 parsing helper used by pktgen and pktchkr read each octet with
+"%u", which accepts values above 255 from the configuration file and
+encodes them into unintended device register values.
 
-The v3 vector mode would default to all cksums being good rather
-than cksum unknown in the case that flags2 cscalc section was 0.
-Added an entry in the lookup table for this case and corrected
-the logic.
+Replace the hand-rolled parser in both modules with inet_pton(), which
+validates the dotted-quad format and the octet range, and matches the
+IPv4 parsing already used by other DPDK drivers. For valid input the
+returned value is byte-order identical to the previous helper, so the
+register contents are unchanged.
 
-Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
-Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+Fixes: 9c7188a68d7b ("net/ark: provide API for hardware modules pktchkr and pktgen")
+Cc: stable@dpdk.org
+
+Signed-off-by: Denis Sergeev <denserg.edu@gmail.com>
 ---
- drivers/net/bnxt/bnxt_rxtx_vec_avx2.c   | 14 ++++++++------
- drivers/net/bnxt/bnxt_rxtx_vec_common.h |  3 ++-
- 2 files changed, 10 insertions(+), 7 deletions(-)
+v2:
+ - Replace the hand-rolled parser with inet_pton() in both modules
+   instead of adding explicit octet range checks.
 
-diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-index 38aca98cb1..b5fb9d35c4 100644
---- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-+++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-@@ -1111,14 +1111,16 @@ recv_burst_vec_avx2_v3(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pk
- 		 * RX_PKT_CMPL_ERRORS_T_IP_CS_ERROR | RX_PKT_CMPL_ERRORS_L4_CS_ERROR |
- 		 * RX_PKT_CMPL_ERRORS_IP_CS_ERROR
- 		 */
--		errors_csum_idx = _mm256_srli_epi32(_mm256_and_si256(errors_v2,
--						    _mm256_slli_epi32(mask_fs, 4)), 4);
-+		errors_csum_idx = _mm256_and_si256(_mm256_srli_epi32(errors_v2, 4),
-+						   mask_fs);
- 		meta_format = _mm256_cmpeq_epi32(_mm256_and_si256(cs_calc,
--							_mm256_slli_epi32(mask_fs, 4)),
--							_mm256_setzero_si256());
-+						 _mm256_slli_epi32(mask_fs, 4)),
-+						 _mm256_setzero_si256());
- 		cs_valid = _mm256_cmpeq_epi32(_mm256_and_si256(cs_calc, mask_fs),
--							_mm256_setzero_si256());
--		errors_csum_idx = _mm256_andnot_si256(cs_valid, errors_csum_idx);
-+					      _mm256_setzero_si256());
-+		errors_csum_idx = _mm256_add_epi32(_mm256_andnot_si256(cs_valid, mask_1s),
-+						   _mm256_andnot_si256(cs_valid,
-+								       errors_csum_idx));
+ drivers/net/ark/ark_pktchkr.c | 9 +++++----
+ drivers/net/ark/ark_pktgen.c  | 9 +++++----
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/ark/ark_pktchkr.c b/drivers/net/ark/ark_pktchkr.c
+index e1f336c73c..67405ac18a 100644
+--- a/drivers/net/ark/ark_pktchkr.c
++++ b/drivers/net/ark/ark_pktchkr.c
+@@ -4,9 +4,11 @@
  
- 		/*
- 		 * Load ol_flags for eight packets using gather. Gather
-diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_common.h b/drivers/net/bnxt/bnxt_rxtx_vec_common.h
-index d8659d1001..c75a8bd09f 100644
---- a/drivers/net/bnxt/bnxt_rxtx_vec_common.h
-+++ b/drivers/net/bnxt/bnxt_rxtx_vec_common.h
-@@ -178,7 +178,8 @@ bnxt_tx_cmp_vec(struct bnxt_tx_queue *txq, uint32_t nr_pkts)
- 	txr->tx_raw_cons = raw_cons;
+ #include <stdlib.h>
+ #include <unistd.h>
++#include <arpa/inet.h>
+ 
+ #include <rte_string_fns.h>
+ #include <rte_malloc.h>
++#include <rte_byteorder.h>
+ 
+ #include "ark_pktchkr.h"
+ #include "ark_logs.h"
+@@ -374,12 +376,11 @@ static int32_t parse_ipv4_string(char const *ip_address);
+ static int32_t
+ parse_ipv4_string(char const *ip_address)
+ {
+-	unsigned int ip[4];
++	struct in_addr addr;
+ 
+-	if (sscanf(ip_address, "%u.%u.%u.%u",
+-		   &ip[0], &ip[1], &ip[2], &ip[3]) != 4)
++	if (inet_pton(AF_INET, ip_address, &addr) != 1)
+ 		return 0;
+-	return ip[3] + ip[2] * 0x100 + ip[1] * 0x10000ul + ip[0] * 0x1000000ul;
++	return rte_be_to_cpu_32(addr.s_addr);
  }
  
--static const uint32_t errors_to_olflags_v3[16] = {
-+static const uint32_t errors_to_olflags_v3[17] = {
-+	RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN,
- 	RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
- 	RTE_MBUF_F_RX_IP_CKSUM_GOOD,
- 	RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
+ void
+diff --git a/drivers/net/ark/ark_pktgen.c b/drivers/net/ark/ark_pktgen.c
+index 69ff7072b2..05d5773d44 100644
+--- a/drivers/net/ark/ark_pktgen.c
++++ b/drivers/net/ark/ark_pktgen.c
+@@ -4,9 +4,11 @@
+ 
+ #include <stdlib.h>
+ #include <unistd.h>
++#include <arpa/inet.h>
+ 
+ #include <rte_string_fns.h>
+ #include <rte_malloc.h>
++#include <rte_byteorder.h>
+ #include <rte_thread.h>
+ 
+ #include "ark_pktgen.h"
+@@ -355,12 +357,11 @@ static int32_t parse_ipv4_string(char const *ip_address);
+ static int32_t
+ parse_ipv4_string(char const *ip_address)
+ {
+-	unsigned int ip[4];
++	struct in_addr addr;
+ 
+-	if (sscanf(ip_address, "%u.%u.%u.%u",
+-		   &ip[0], &ip[1], &ip[2], &ip[3]) != 4)
++	if (inet_pton(AF_INET, ip_address, &addr) != 1)
+ 		return 0;
+-	return ip[3] + ip[2] * 0x100 + ip[1] * 0x10000ul + ip[0] * 0x1000000ul;
++	return rte_be_to_cpu_32(addr.s_addr);
+ }
+ 
+ static void
 -- 
-2.47.3
+2.50.1
 
