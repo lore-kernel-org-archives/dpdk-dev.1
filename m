@@ -2,123 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DE6CD6E4A
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 09:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A3FCD6E57
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 09:56:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E9F840662;
-	Thu,  4 Jun 2026 11:38:12 +0200 (CEST)
-Received: from BN1PR04CU002.outbound.protection.outlook.com
- (mail-eastus2azon11010043.outbound.protection.outlook.com [52.101.56.43])
- by mails.dpdk.org (Postfix) with ESMTP id 6CE6140270
- for <dev@dpdk.org>; Thu,  4 Jun 2026 11:38:11 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ubcTjIXb5enUDv5USOCy2XEYx/K2UpOAx6BWIOuhhjneRPHslSAHdQi5WPK9UGsBfrifez+BuGnUzfYSCqeK4v7KZ7VmwylCogFNBk51wq0M1OsT2eC3RgBupM5ZxmAWrezFerr824ELche8b5963PFh6uY97urI4+XZVEKExgauiO3eyojPq3sXmA0nUEqq5+j+9h57IsvsSi919pOFqIaLTf6DBO3rcMVP/QN+1+vDJtMKuzIiX6inq0DcR50x8fKCzwS4Xx9d277kwwv9obOjry/RyKwk7ntHgQOpwjVpng0iP+UDRBlgSy62cKllmdosjisE5Euqd6YkzIbZiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1QPg23oXawwIg1QyPI18gLpR+M8UHY1HWuXRmaC1esU=;
- b=H5hl3iPb3ALX1DQi13K/ifmgid9IxuEunbxzo6iOkpiA72tNdEnJcW6qB1AUzksVrqwdIQIN8p6OCtFtchlWJCos8k/opKYlEk+KBP1/B7EZD2U7aks+L9GKe1OLuf0c78FDL4VPueL5M9OVHr8LAd8cnc66slCZw115uOx5VCWfPg3lMk6cUPyALe5waWVKl6AqTOlUhP5rtBtRmEDKYEwxOGtIwZ+j/PgpWCpbD8IvkZ7UfnXfrKiFfa2mYgkQRDFWqAYXgLzk2oTzxo4WX5ZTK6Tw17uMrCP8G4gE4U29LRl8AUTD9gArCLH9o+02pi7Ws0SYYwSlMbct/XuFdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1QPg23oXawwIg1QyPI18gLpR+M8UHY1HWuXRmaC1esU=;
- b=XltUw+hOMMj3I2Kth87CT2Z4q0MM0N9AbEnZph9gam6fVQotY0HLHJeU8HYpah3I9MxweLp+yOQ+V3SvtAcewl3LL7lXmCbxoxBbr5hGh+HDUqlVPXUBrMQnbYxJXHNB617RhuAk58jAKU9mSTav4mGpGHTlW7Len6YNmnfxqn+EDkO20/4BhTgqOMv/rtZl6NAV/njeQ84bCFhDtNpd9muB3GGAVKrWtHaQ5qNfMxVTITmFYNGGWf8MDeXYParRAd7ONPeKXAKcMHc7kyLPJFeWENAf/K17jaPuwZ+9qwCkdJoue97C6jnQjtafpaBYxxZdyZGgEx58jwnAMrEZgQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW4PR12MB6754.namprd12.prod.outlook.com (2603:10b6:303:1eb::7)
- by BY5PR12MB4147.namprd12.prod.outlook.com (2603:10b6:a03:205::10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.8; Thu, 4 Jun 2026
- 09:38:07 +0000
-Received: from MW4PR12MB6754.namprd12.prod.outlook.com
- ([fe80::baee:e8cc:6cbf:3d84]) by MW4PR12MB6754.namprd12.prod.outlook.com
- ([fe80::baee:e8cc:6cbf:3d84%4]) with mapi id 15.21.0092.006; Thu, 4 Jun 2026
- 09:38:07 +0000
-Message-ID: <80a9a922-f183-4dfc-bc57-ebff8295504f@nvidia.com>
-Date: Thu, 4 Jun 2026 12:38:01 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net/mlx5: promote private API to stable
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
- Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
- Matan Azrad <matan@nvidia.com>
-Cc: dev@dpdk.org
-References: <20260527103357.633429-1-dsosnowski@nvidia.com>
- <20260529073255.689808-1-dsosnowski@nvidia.com>
-Content-Language: en-US
-From: Raslan Darawsheh <rasland@nvidia.com>
-In-Reply-To: <20260529073255.689808-1-dsosnowski@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0135.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9e::19) To MW4PR12MB6754.namprd12.prod.outlook.com
- (2603:10b6:303:1eb::7)
+	by mails.dpdk.org (Postfix) with ESMTP id 94E4D4042C;
+	Thu,  4 Jun 2026 11:56:21 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A3B45402CC
+ for <dev@dpdk.org>; Thu,  4 Jun 2026 11:56:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1780566980;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=YCy38uubZqMWdUkJRV8p4coTNaiQezBg37MncrwZGdc=;
+ b=Su2phqjyHwxeSdIO1e0Z11CF4uaDpXedDHsJr7mNrVOBbSZvFvYqXEtuGcnkdVzDZWDhjG
+ vkDwW0HL46jeMPuVviHI0K0EV8LpQgpZa2B+5xi6gU5V4PbQI5ij2HL7/Su5/7B/nTSy16
+ 0LOraOv4wYOpVov/ZtiIU6lcqYcRWxM=
+Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com
+ [74.125.82.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-4wlL526lPNmd67oXfCRTiQ-1; Thu, 04 Jun 2026 05:56:16 -0400
+X-MC-Unique: 4wlL526lPNmd67oXfCRTiQ-1
+X-Mimecast-MFC-AGG-ID: 4wlL526lPNmd67oXfCRTiQ_1780566976
+Received: by mail-dl1-f69.google.com with SMTP id
+ a92af1059eb24-137ea73393cso2401089c88.0
+ for <dev@dpdk.org>; Thu, 04 Jun 2026 02:56:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780566975; x=1781171775;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=YCy38uubZqMWdUkJRV8p4coTNaiQezBg37MncrwZGdc=;
+ b=Vh5L2JNHy6k9YOy8LNtdU+OPb17GVbA40dPIl5zN3SeCByasUi74N3znHDcapMV0HI
+ Yh7SDje1KilJls1KnUmaKOTnaY50eUOjQQnvmBBPtgPNkNzNadp6wsfKpIFFZtUJWTH5
+ +pdZhxL5bpu5vb/AGpcqVgwHNo+M7hoOHfpN7FAj1TI+7KqAfvTOrYPuqGOcU+xNUDub
+ 0T3huynbuYWwYdl3VZ1XybmiRMsc3EHMJDGCWwDLGfq7gEsN1NjKq81heFihG5GqUeUs
+ w2mJU9GBgwiV0RFBB170nk7uZRf2zd/dqHL2c5raNQnsxW0XYSBFGRNXVUSXDgBvWZxC
+ CEgw==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ+QzG0gofuo7/y35qMiBEwvNSBbB6VlUblpAm5gqRRMk/BTXulBkYqKCNYFClVh9zcu+aU=@dpdk.org
+X-Gm-Message-State: AOJu0Yw7a9jiNLVDRciaeHpkmTVKXbtetuG4AklFg90Sjt/HV4EGpRHP
+ Tg1CYm5n0dZFj0aze2jBsFdcQL7UZrBn2F840i8MlvGxVyflj099cNelLMVp8OdS6oLoOqxqux8
+ T8vgnNtmhDqZlzguA4+lMaed9LExMe2gk4JVQcKqpZ8kr1AA9MFTN+dj2BqBiM4Cdd70K/UR+P2
+ 7RAZq/b4mGPSXeNq5Tsmo=
+X-Gm-Gg: Acq92OF9vIVPnKgbYTyBvEpz+DLt1RrQM+XEBEAjcVBjEEQc8u/IYGMr7JwjXDDro7l
+ kaEsiNuiAIcMjNxM5cdNDDWTezp7+PHwo49xCYYWL34xYrgwxqmM++0mIQiEMbUMykYm1JgmXQ8
+ LG+IEXSjgmdEKgdoa1PfnRkGVuD8J162sS/3QvunuwmAkura0HJ+Z07j96PtGXz+RMpgKyWRowy
+ K/Ms/Vx8yoUAz3TMQUs1wq4xelz5cqiozDAN9i1eV1RBdhjXy2j7NpUby2oKOttX5yE78XhCT3Q
+X-Received: by 2002:a05:7022:689b:b0:130:6c8f:5a87 with SMTP id
+ a92af1059eb24-137f6a4b1fdmr3473317c88.13.1780566975487; 
+ Thu, 04 Jun 2026 02:56:15 -0700 (PDT)
+X-Received: by 2002:a05:7022:689b:b0:130:6c8f:5a87 with SMTP id
+ a92af1059eb24-137f6a4b1fdmr3473310c88.13.1780566974956; Thu, 04 Jun 2026
+ 02:56:14 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB6754:EE_|BY5PR12MB4147:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42e3870e-575b-4975-0a8a-08dec21cfb86
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|1800799024|6133799003|22082099003|18002099003|11063799006|4143699003|56012099006;
-X-Microsoft-Antispam-Message-Info: cxUJxz+38rpq4uLh1lfsbJ2aWhzYIgt/HqVHkHBqkitgJYT4clnXXyGlb4J+yM/HVvzogm03uy7G524WYaOkiPkiPIUmucJI9QIr/MLLIOmFiaYoSFh2OYg13giFF2ekrFPowiEQ097rTOUfhONcgYcmbs1FENAIWtsBeV8CucYTNMOKeKmyFrJbL9RRfEaaQ35c2KDWY2noVcmi0GMetOu4o45qooMULZOGAG/+ZJQ8lBqmbcMMwARF6IyF8ORtL/vndK1l01Lo+DDLc72zLr57zPQRIvALoXFcuFa6HRKXe52fDxSBPDgPMikTj+tUjQKUrptK6BEwKzZEMGhLLEp8lVRvwAuJ4RoApM+zQja7i8rEBJTBQZ91ld3ScFQi563vIuvEzs/n4bRbfzRqubqk2CPOg1MXY9He3LR3ITLz9eB2OcX52k6pDhQBJI8pvzQc+Ii6GL8jjQi+ztUH6Bs+NLx9schzJcZhVMiMIGDwVqrdOQ2SVtG5i0bmc8dkkufdLYOLmaeJZ4J9rROu2zsvcnVN1yCiM/eTmHylRDbiUNCRkfvrH83QI9qoJtOSIo/e1l07WB1oANHls91jPBwFUn+xoPwWCtkgeAmebz20e7jNKM4RFGhl//SLxVXMzVsQI7PaeCZFhMbrtfqLUWZZn+w1Spj5JmsclpDVS1KIxWb5JYauNP+oX0fN4wJq
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MW4PR12MB6754.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(6133799003)(22082099003)(18002099003)(11063799006)(4143699003)(56012099006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MGxKVC9iamk5YVBKYVBKZG5CNDJUZmFmV1VoMS9pM1NudEFDNlBsWVdnL2lJ?=
- =?utf-8?B?cTg1UWNmQ3VYZElLcXFTRXI0dkpKcG5QS044dEl6aWtGZDdhaTFzVnJWbDdw?=
- =?utf-8?B?a0VoMzFaM052anVueVpBTGhlOTkrbkRsUlpmd0NYbzJoelBPT25qYXY4ZHdl?=
- =?utf-8?B?WmIyMitqMVZqbVQvaStONG5STjlCZ2c0bkZScnlqd0dkK0plR1VVYTJ1SW9r?=
- =?utf-8?B?aHVGZ3hqcUhSamRJeFhhSHpOcmtYTDk3ZTZWYndBM0pMMjA2WkVkM05Rb2hW?=
- =?utf-8?B?WjdTOEJXbVZxRDBtL3hJUTZmYWE1K0JlTGxubWlldXVKanJVN3pnWVlHZXBZ?=
- =?utf-8?B?ZTNGdkdNR0ozQ09od1ZsSCsxMjl4MHYveUVRQ2E3Zlg3a2RWY0VMRTdsSkV5?=
- =?utf-8?B?OHAwVllqYUdtNlVmT0M1bS9XbGg5UHVJeE1iekpsSWhOUy96bFp3dkozaEhk?=
- =?utf-8?B?NnZVSlV3SlZhYmFoTklzUi9xdXA5dE9HT1YyTGhxOExRQ0QxeUZML2xUQmVK?=
- =?utf-8?B?TkhrQkZZQUdKbW5GM3Fialk1dVJ5bkRoV0ZkWTVvYVlYeFY0UmgwNUc5MndL?=
- =?utf-8?B?azdzamVPbnkxZE9sTDJRU3BtNzcwRWlJTzVEZEJTVzlPY1NkR1dBUG1ibGxK?=
- =?utf-8?B?aVBFVHR6MXNtdVR2MkNlbjhpNDNMMmhiMTBUZHB3M1g1a3FwUHYzczJJbU9P?=
- =?utf-8?B?STRqSkdYQjQ0R1ZoYmFCNGk0dEN1TVlnR3lGd0JaNS9JdXRqZjZLRy95NXJ0?=
- =?utf-8?B?ajM2eTBnWnFVTmJicVJlSVFUazRwd2YrQ29UU1lPY0x6K0RFZHJudndUa0Rp?=
- =?utf-8?B?bGx1UUhibmNBS1VuYVNpV2prODlsTklFSTNIdkdrYkMrRWE1eVVhaVlEYTYx?=
- =?utf-8?B?MSticmJ0enovZ3RFTTFRR3pycUpod09ac2grc2FRS0NRc2Y1ZmVMMlNGTDFy?=
- =?utf-8?B?Y1VzK3poYWovSTN6ZXoxY1pRT1VvRHBYT29TT1FERXpUc2ZJZThBNkp1cVQ3?=
- =?utf-8?B?ZDAxcnFrcUg4RHNkbnZ1b2lMSmhDY0pFZ0hJdUJraVBJRlcwVVBlaDNaSUNx?=
- =?utf-8?B?V1h2aE1JOUYxdlhzV3FscGt0Q0lsdHpwVGFSM3pEQ0NaaTNkOG1IWm9MZTBp?=
- =?utf-8?B?bm5ESkNvOUVVc21pRGFzeW1TQ052ckZNWWoyaThUMEpsejk5NkZZcmZDSjY5?=
- =?utf-8?B?M0VjQlNtTXkwdmxlZzEwVDJlTWpHbmtCbEt2Zm9QYlJzMFR3cXRidUxxc2Ew?=
- =?utf-8?B?cHd5S1B3WExLQWRjL1RlckwwQlUzVVJ0dDA3akZyVi9VZnZyOHFwcHluVDVl?=
- =?utf-8?B?VlhTcnRTaGhvRlF0VEtFRDRIQzhGTzdlQ1pOZlk2eVdXem9lWG1Fem0wQjRM?=
- =?utf-8?B?WlFLWjRIQ2FYNHVGTk1Yay8zMHRhejlhS3pPaDVrZ1VZVFBZMVB1WURSMWk0?=
- =?utf-8?B?VHdObFVGdUc0Z21DeUlTOWE2RDNMUkdJWThKemNwbHBqQmJXTGdFaVhTYWhs?=
- =?utf-8?B?U0xrWWtDZ2JxT3ZiQnlTVXdKWW1KNFhMWFdwL0JGY1YyQnFkbklIWm9PcEd6?=
- =?utf-8?B?a05RNXhycDZGS3pja2ZwZzNuMkpMSWo1YVJNVzFlMkFpZytuQjRSN1d0dW9T?=
- =?utf-8?B?bHhJcTFWV216RUZWVDZnOU5lUUNsL1diY1psZ0VZbVFVOG1kZG1iMit0S1JK?=
- =?utf-8?B?ZnpPcjYvSDFPUGlCZy93Rm9BNmR3VVRiL2k5N2R4NlRvM2NxSStEWXVDWGFk?=
- =?utf-8?B?ekY2MnRucUpjMURwdDY2QUZyRnVOQitGcmNRaHFWTEtaRWNKdklCWTFlSlpo?=
- =?utf-8?B?ZzYwZldnb3d0a1NNT0QzYUZXd05TNUlENmNvL2lxT3pGSmNRak9GSmQ4N2s3?=
- =?utf-8?B?WHA3b3ZlV2hVS1dqNjlTcTNiVnBFMnJvNjhqWnhlWFJwbmExRDVHemNpRXRH?=
- =?utf-8?B?VVRlaDMzN1Q2TFZDNUdTM0JrcXFZRjRNcTdHWFRKZzNiZjlZb2N6S0pLOEky?=
- =?utf-8?B?RmdyUzA0aE9YQW1PZDREMGdYUXdoQU5TY0Mvd1I4WkxSNGdOV3d0WDJDOSs5?=
- =?utf-8?B?eGk5elFvMVZEOEZVR2IrbkFDbW8ybjFNODBYQVlPVnYyOW11NzR5SnB0cFQ3?=
- =?utf-8?B?WnRmOWxkOFZTUFBaOFQ1aTVwcFFsbDI1SWJnVlNDdWF4WWt4Z3crZWk1YnVv?=
- =?utf-8?B?Y3lHalcwQXJja0YrcW5NaFVBWm5QL3ZtM0dwRGR1aFJ3ZWFOSlZwNGNRdDI0?=
- =?utf-8?B?djZmQi9FZFp1aTkyenZJKzZUaFhMSEJLQm5mTG5CcUlVQW5xeDBkUVBPUGRK?=
- =?utf-8?Q?fg+3y0rqoyXqk9Yr2f?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42e3870e-575b-4975-0a8a-08dec21cfb86
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB6754.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2026 09:38:06.9584 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ce+len2Wr74Swf/ZpOmRgW+F7UpkHexvOJgkZ//HCIBJgK8R6TbadAx7Xr3HfmFaj29gDnDRgMez1jgZr7RvRw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4147
+References: <20260514224627.2014566-1-pravin.bathija@dell.com>
+ <20260514224627.2014566-2-pravin.bathija@dell.com>
+ <b4e44ed7-7902-4369-a4e4-509ed3addf91@huawei.com>
+ <DM6PR19MB356483DFA0304202FA06F344F5012@DM6PR19MB3564.namprd19.prod.outlook.com>
+In-Reply-To: <DM6PR19MB356483DFA0304202FA06F344F5012@DM6PR19MB3564.namprd19.prod.outlook.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Date: Thu, 4 Jun 2026 11:56:03 +0200
+X-Gm-Features: AVHnY4KzMOchC0ilfs2fAniYpS26JTRNARkZFuInC-cfBe-lfgT_4FrasjVqaQQ
+Message-ID: <CAO55cswLh4S2irWROEUAp5m=tvJSbZo4Y=8YMNU5P1Foi7ZUsg@mail.gmail.com>
+Subject: Re: [PATCH v13 1/5] vhost: add user to mailmap and define to vhost hdr
+To: "Bathija, Pravin" <Pravin.Bathija@dell.com>
+Cc: fengchengwen <fengchengwen@huawei.com>, "dev@dpdk.org" <dev@dpdk.org>, 
+ "stephen@networkplumber.org" <stephen@networkplumber.org>,
+ "thomas@monjalon.net" <thomas@monjalon.net>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: LSxTrqZcPNrKHnSBGHjxvH8wXj-7jrbgywMxjqxyeMk_1780566976
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/alternative; boundary="0000000000000a9dd706536a8e7e"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -132,58 +89,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+--0000000000000a9dd706536a8e7e
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, May 20, 2026 at 4:21=E2=80=AFAM Bathija, Pravin <Pravin.Bathija@del=
+l.com>
+wrote:
 
-On 29/05/2026 10:32 AM, Dariusz Sosnowski wrote:
-> Following experimental functions are exposed by mlx5 PMD
-> since 25.11 release:
-> 
-> - rte_pmd_mlx5_driver_event_cb_register
-> - rte_pmd_mlx5_driver_event_cb_unregister
-> - rte_pmd_mlx5_enable_steering
-> - rte_pmd_mlx5_disable_steering
-> 
-> First two are used to register callbacks for driver events
-> (when Rx/Tx queues are created or destroyed).
-> Other two are used to enable/disable flow steering in mlx5 PMD.
-> No changes were made and no changes are planned to these symbols.
-> 
-> These are currently used by NVIDIA DOCA SDK since version 3.3,
-> which started depending on upstream DPDK releases [1].
-> Purpose of their use is to:
-> 
-> - expose HW identifiers of Rx/Tx mlx5 queues managed by DPDK and
-> - allow flow steering to happen outside of DPDK.
-> 
-> Also, some of these symbols will be used by netdev-doca backend
-> in Open vSwitch [2].
-> Whenever a DOCA netdev would be added/removed in Open vSwitch,
-> it will have to disable/enable steering for mlx5 driver.
-> Stabilizing these symbols is required by current OVS policy
-> to remove the need for ALLOW_EXPERIMENTAL_API [3].
-> 
-> This patch promotes aforementioned symbols to stable.
-> 
-> [1]: https://docs.nvidia.com/doca/sdk/customer-affecting-changes/index.html
-> [2]: https://patchwork.ozlabs.org/project/openvswitch/list/?series=504726&state=%2A&archive=both
-> [3]: https://mail.openvswitch.org/pipermail/ovs-dev/2026-May/432066.html
-> 
-> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> ---
-> v2:
-> - Updated 26.07 release notes.
-> 
->   doc/guides/rel_notes/release_26_07.rst | 9 +++++++++
->   drivers/net/mlx5/mlx5_driver_event.c   | 4 ++--
->   drivers/net/mlx5/mlx5_flow.c           | 4 ++--
->   drivers/net/mlx5/rte_pmd_mlx5.h        | 4 ----
->   4 files changed, 13 insertions(+), 8 deletions(-)
-> 
---
+>
+>
+>
+> Internal Use - Confidential
+> > -----Original Message-----
+> > From: fengchengwen <fengchengwen@huawei.com>
+> > Sent: Thursday, May 14, 2026 5:21 PM
+> > To: Bathija, Pravin <Pravin.Bathija@dell.com>; dev@dpdk.org;
+> > stephen@networkplumber.org; maxime.coquelin@redhat.com
+> > Cc: thomas@monjalon.net
+> > Subject: Re: [PATCH v13 1/5] vhost: add user to mailmap and define to
+> vhost
+> > hdr
+> >
+> >
+> > [EXTERNAL EMAIL]
+> >
+> > On 5/15/2026 6:46 AM, pravin.bathija@dell.com wrote:
+> > > From: Pravin M Bathija <pravin.bathija@dell.com>
+> > >
+> > > - add user to mailmap file.
+> > > - define a bit-field called
+> > VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS
+> > >   that depicts if the feature/capability to add/remove memory regions
+> > >   is supported. This is a part of the overall support for add/remove
+> > >   memory region feature in this patchset.
+> > >
+> > > Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
+> >
+> > Please attach reviewed/acked-by of this commit in new version
+>
+> done
+>
 
-Patch applied to next-net-mlx,
+I haven't added Acked-by or Reviewed-by tags to all the patches, so why did
+you add them in my name on every patch?
+I haven't checked whether this was the case for the other people.
 
-Kindest regards
-Raslan Darawsheh
+>
+> >
+>
+>
+
+--0000000000000a9dd706536a8e7e
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, May 20,=
+ 2026 at 4:21=E2=80=AFAM Bathija, Pravin &lt;<a href=3D"mailto:Pravin.Bathi=
+ja@dell.com">Pravin.Bathija@dell.com</a>&gt; wrote:<br></div><blockquote cl=
+ass=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid=
+ rgb(204,204,204);padding-left:1ex"><br>
+<br>
+<br>
+Internal Use - Confidential<br>
+&gt; -----Original Message-----<br>
+&gt; From: fengchengwen &lt;<a href=3D"mailto:fengchengwen@huawei.com" targ=
+et=3D"_blank">fengchengwen@huawei.com</a>&gt;<br>
+&gt; Sent: Thursday, May 14, 2026 5:21 PM<br>
+&gt; To: Bathija, Pravin &lt;<a href=3D"mailto:Pravin.Bathija@dell.com" tar=
+get=3D"_blank">Pravin.Bathija@dell.com</a>&gt;; <a href=3D"mailto:dev@dpdk.=
+org" target=3D"_blank">dev@dpdk.org</a>;<br>
+&gt; <a href=3D"mailto:stephen@networkplumber.org" target=3D"_blank">stephe=
+n@networkplumber.org</a>; <a href=3D"mailto:maxime.coquelin@redhat.com" tar=
+get=3D"_blank">maxime.coquelin@redhat.com</a><br>
+&gt; Cc: <a href=3D"mailto:thomas@monjalon.net" target=3D"_blank">thomas@mo=
+njalon.net</a><br>
+&gt; Subject: Re: [PATCH v13 1/5] vhost: add user to mailmap and define to =
+vhost<br>
+&gt; hdr<br>
+&gt;<br>
+&gt;<br>
+&gt; [EXTERNAL EMAIL]<br>
+&gt;<br>
+&gt; On 5/15/2026 6:46 AM, <a href=3D"mailto:pravin.bathija@dell.com" targe=
+t=3D"_blank">pravin.bathija@dell.com</a> wrote:<br>
+&gt; &gt; From: Pravin M Bathija &lt;<a href=3D"mailto:pravin.bathija@dell.=
+com" target=3D"_blank">pravin.bathija@dell.com</a>&gt;<br>
+&gt; &gt;<br>
+&gt; &gt; - add user to mailmap file.<br>
+&gt; &gt; - define a bit-field called<br>
+&gt; VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS<br>
+&gt; &gt;=C2=A0 =C2=A0that depicts if the feature/capability to add/remove =
+memory regions<br>
+&gt; &gt;=C2=A0 =C2=A0is supported. This is a part of the overall support f=
+or add/remove<br>
+&gt; &gt;=C2=A0 =C2=A0memory region feature in this patchset.<br>
+&gt; &gt;<br>
+&gt; &gt; Signed-off-by: Pravin M Bathija &lt;<a href=3D"mailto:pravin.bath=
+ija@dell.com" target=3D"_blank">pravin.bathija@dell.com</a>&gt;<br>
+&gt;<br>
+&gt; Please attach reviewed/acked-by of this commit in new version<br>
+<br>
+done<br></blockquote><div><br></div><div>I haven&#39;t added Acked-by or Re=
+viewed-by tags to all the patches, so why did you add them in my name on ev=
+ery patch?</div><div>I haven&#39;t checked whether this was the case for th=
+e other people.=C2=A0</div><div><br></div><blockquote class=3D"gmail_quote"=
+ style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);p=
+adding-left:1ex">
+&gt;<br>
+&gt;<br>
+<br>
+</blockquote></div></div>
+
+--0000000000000a9dd706536a8e7e--
 
