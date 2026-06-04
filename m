@@ -2,86 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F48CD6E75
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 22:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A109CD6E75
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 22:55:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75DD8402AC;
-	Fri,  5 Jun 2026 00:54:41 +0200 (CEST)
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
- [209.85.214.225])
- by mails.dpdk.org (Postfix) with ESMTP id 8035840665
- for <dev@dpdk.org>; Fri,  5 Jun 2026 00:54:39 +0200 (CEST)
-Received: by mail-pl1-f225.google.com with SMTP id
- d9443c01a7336-2bf55c39e16so10620365ad.0
- for <dev@dpdk.org>; Thu, 04 Jun 2026 15:54:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B61BF40695;
+	Fri,  5 Jun 2026 00:54:42 +0200 (CEST)
+Received: from mail-dy1-f228.google.com (mail-dy1-f228.google.com
+ [74.125.82.228]) by mails.dpdk.org (Postfix) with ESMTP id D348B40673
+ for <dev@dpdk.org>; Fri,  5 Jun 2026 00:54:40 +0200 (CEST)
+Received: by mail-dy1-f228.google.com with SMTP id
+ 5a478bee46e88-304f590dd91so1476328eec.0
+ for <dev@dpdk.org>; Thu, 04 Jun 2026 15:54:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780613679; x=1781218479;
+ d=1e100.net; s=20251104; t=1780613680; x=1781218480;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=Mvaz+3kKC3VgK2pnIrGdhj6b4Wm7smYFljlS6USPtmE=;
- b=Qu6EQnoojhm8qb6ZTLUI/aupr8Hst3byn5ip3ouEXMa5Le+tUylqhs7d+PbbpvFK1H
- YC/lW9BbsHXFqX9eVE56Ff6VesKAxPcH0IHEqxYQHKef3o0OoV0vBlQf8q5EPJDtV2+z
- /1YA3lpFEk02HOw/DPeTgMZOoqdB3yvKjWIsJyuLuvSO1b+3uaOc41izAlivJfWMYOsG
- d6h0F0Dh9J2ytN2PYp8Lcg104pZzK4nosyJQwD1HWnT+NOZbBojJZGeotHoHJMw5G7+s
- +RHb+ju9GilXZ0pM0MJAr3VIT/ELEC7Az6iyFpTKg0FhVMjaebH2OXxHQhOwOVd1xwO2
- E7zg==
-X-Gm-Message-State: AOJu0Yz8jA/qWHUTkNdbk8nRaUkCehefHQCf0OUGoPSkXpBB4E7UZ2in
- h/s+qLybAi+zdbzTWftqlUVqMfbhc02XJN899vtcB9p8jM6vBmlGAwa3UV/ix7AT4Zn+8ZzSK/l
- mGo28OhasyUTlK1LLeurHRMaNPv/lrmY02JFQ16Asee829ICjzt9zYbMqhfD67w9nedGjl8JMUc
- SZh2woApX5mp63kXIwVMjzXraL9tRjyf+RC6R6LjQxX/A2KJLgLHP9Np/VgemJC8w8Tea5TJpaD
- U/A8Eko9e1V
-X-Gm-Gg: Acq92OH5X2BfOSNY7HtBSQeqI2wPvl/2FX15n9e+GVo7wRCGE77YfVqIIBvAhEBPheD
- KTwFcl7V1i87JYAU8VXAf9hZiw06KJkJXHStEqgMiegkE3eZ4Da1TdGjESZJI1b+muBDUELzKgD
- 9hjvSmpYBsJJ6Uc8BjXt/pHumzpBN+GCrkP7RSprNMn+pOoS3+6Be/7qES2J9NedJ7XuutMaH1u
- BM7gQ+MGSwHkLr7Pgvvg8yAHgeNgB/pvOrnd7sizYegFwfzmn7FQWHWUB6iWX++Diki52hPXDm5
- f0TTjivN87x+jfJuBCTS/eLASOKqG19/ALhuuzIr22DU4iA1HdisXozpDkppAHzyCyuQBdQ7Bc3
- 2Du99BGyHPEx8lPJTN819QwEFw6GTtU73Uiwtmf8xkgkWHF8zBASxPj7VF+Hp6jFVGQ6qZLaG2v
- bP5HHhTenRLGmZqLRUWROQF4g4oPkRlQ==
-X-Received: by 2002:a17:902:ecd0:b0:2c0:b31b:b19 with SMTP id
- d9443c01a7336-2c1ec7d946fmr154195ad.21.1780613678479; 
- Thu, 04 Jun 2026 15:54:38 -0700 (PDT)
+ bh=GflDDq4bN9JyZWiNch7ZnxwEhtupu76oxdcRQM+ou+g=;
+ b=aOpvMZPUt0WoMnI9OUKTeO7X5VoJh+n0pfrNCB559O9VP8daYI5365MBCZC68PKW4K
+ nyBhnNOShigp4e5IeVGOYAEHMApEJmAeGKpPW9J/205+CcCstQvvqVsoPhBQJL9xaIAW
+ ZxFaCpUsJzZAixD3f3Xd2TFHp7Bq6CRYTvnNQCrpqEFblS/C4EqbNBme4e4CF3XZfTOq
+ eK03Zegf7YEKSxs3hUtx+xPMW84e7lPooOwnaYztrjXikqq76b5kDSZPkzETGAVzKbVJ
+ CKUpojj5+bVdz9UH072FexW7OtFTmyi8J/aa2MyLz7CPvVs0gtaiQvN21iOTErDphDbq
+ 5rWQ==
+X-Gm-Message-State: AOJu0Ywiw6IVD86FnZdruEGMHJacQE/K7UUQeSnpYde5s9xun5KGepPA
+ I+W4xAeiI1IA+75wW9a66jczW9oV123g0krIHtVx6+vnezaZrujxoanYN1RmAPGFl4QGo4swYZs
+ Qd16H5qGoV3jO4SMqZtb6FTH7EZ2zB2VfIsUTb6xnPYF80MoJbRSxIHtCrIF19klOzPJZxW549w
+ WVFv/hOCiU1zxXkguf8lvYNYY4aZGEOJihoCZt9ths7HCS1vKD/JSV2m+C7b9F75YC1nVBE5NYo
+ LHFeuAikeTv
+X-Gm-Gg: Acq92OFpRWNmH1JFr+LnXjcBkFFXquovHWaSo0M2t1E4Ch+jH/OZkMWJJPZObZzt6od
+ Cx7F5VQGpsTRhOMfQxXOTg9oNXD3RWLwY0ikPlyi9t0LhT0aav3DIixyU+JAOyDIotGfz+udd4j
+ aYqqP9ek6zm77yGg/QMgwu3hOuMTVI/73eGPTdUaqkzqTRAc/TyTt1pg9A4tWgpGu1xPt3h9bSq
+ 07XTDTTs+qLWjk/9ov5D6wBJiWVMx0SfKwEwUoQ1l1cVoK6dRdvIfOgvK1rwZSomDKD3A0QtKX6
+ l+O4lJxiuHYo8haG98TsmXDjB3hyC/KBVfPyaPm2rhg2JCiiKVSxhZvxNgxC8duch7syPKnwSy1
+ 88fMwfXdA4EcznC2EHNhpO2xdG/+R+mV+Z0tVjJDrjz3Fv3VuHJD3W6mx3NWcpT1Cdnrg0Oyvr/
+ +GZ4UeKaKi1kbhYGi2yC40wrKCM+i1Gw==
+X-Received: by 2002:a05:7300:4347:b0:304:bce9:25fa with SMTP id
+ 5a478bee46e88-3077b3305c5mr381318eec.4.1780613679870; 
+ Thu, 04 Jun 2026 15:54:39 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  ([144.49.247.127]) by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-2c16648f2dfsm6771525ad.47.2026.06.04.15.54.38
+ 5a478bee46e88-3074de3a522sm393016eec.27.2026.06.04.15.54.39
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 04 Jun 2026 15:54:38 -0700 (PDT)
+ Thu, 04 Jun 2026 15:54:39 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qt1-f197.google.com with SMTP id
- d75a77b69052e-517582695d7so30692701cf.0
- for <dev@dpdk.org>; Thu, 04 Jun 2026 15:54:37 -0700 (PDT)
+Received: by mail-qv1-f70.google.com with SMTP id
+ 6a1803df08f44-8ccd719a2f2so31645606d6.0
+ for <dev@dpdk.org>; Thu, 04 Jun 2026 15:54:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1780613677; x=1781218477; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1780613678; x=1781218478; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Mvaz+3kKC3VgK2pnIrGdhj6b4Wm7smYFljlS6USPtmE=;
- b=WKGdP24w+LnP2CHTLqfmGv2eGx7kKSjeb5iw+EMzMNeB2NBnNpcX39lNUVUEsqFcR3
- xRCe8zgCVNPOtdGqxudNfvoxhK3dab0nRYfHS39sEMkKSnEdVL29asrtF9H0HEq0Wz7N
- C9LaOmLYC34oLXyZpTLAUI1M0vZqTH/zVORZc=
-X-Received: by 2002:a05:622a:4c8:b0:517:63df:91a5 with SMTP id
- d75a77b69052e-517987de912mr371481cf.19.1780613677286; 
- Thu, 04 Jun 2026 15:54:37 -0700 (PDT)
-X-Received: by 2002:a05:622a:4c8:b0:517:63df:91a5 with SMTP id
- d75a77b69052e-517987de912mr371161cf.19.1780613676756; 
- Thu, 04 Jun 2026 15:54:36 -0700 (PDT)
+ bh=GflDDq4bN9JyZWiNch7ZnxwEhtupu76oxdcRQM+ou+g=;
+ b=FyI19HID4wuGAlZbixba7gQtkHgpoXNQnFpDS5GgtuvKf7RKs039RDB16THdXuHPZI
+ BkOOumBOj/2RZx2QbTnqFsuHEOT4RxT90rnJCBD+cVuooek/Hwk8cgWB0n6kZTXlYv8Q
+ cxF7yAnzHZDOdBvyn2rDz4YGLYlzj1BSINBLE=
+X-Received: by 2002:a05:6214:5196:b0:8ce:f1b:74ec with SMTP id
+ 6a1803df08f44-8cee611f20emr21428296d6.25.1780613678594; 
+ Thu, 04 Jun 2026 15:54:38 -0700 (PDT)
+X-Received: by 2002:a05:6214:5196:b0:8ce:f1b:74ec with SMTP id
+ 6a1803df08f44-8cee611f20emr21427986d6.25.1780613678143; 
+ Thu, 04 Jun 2026 15:54:38 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8cecd053032sm67043146d6.24.2026.06.04.15.54.35
+ 6a1803df08f44-8cecd053032sm67043146d6.24.2026.06.04.15.54.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 04 Jun 2026 15:54:36 -0700 (PDT)
+ Thu, 04 Jun 2026 15:54:37 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
- Zoe Cheimets <zoe.cheimets@broadcom.com>,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH v2 3/4] net/bnxt: remove implicit integer sign-extension
-Date: Thu,  4 Jun 2026 16:56:21 -0600
-Message-ID: <20260604225622.2285191-4-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH v2 4/4] net/bnxt: fix RSS hash mode configuration for VFs
+Date: Thu,  4 Jun 2026 16:56:22 -0600
+Message-ID: <20260604225622.2285191-5-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260604225622.2285191-1-Mohammad-Shuab.Siddique@broadcom.com>
 References: <20260603175137.1990204-1-Mohammad-Shuab.Siddique@broadcom.com>
@@ -102,41 +100,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Zoe Cheimets <zoe.cheimets@broadcom.com>
+From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 
-In bnxt_ring.c, the result on line 389 was auto-sign extended by
-the compiler because the arithmetic result is an int, but the
-dpi_offset is uint64_t. Fix by casting the result to uint64_t
-before the multiplication forces extension. To ensure that a
-negative integer is not being cast to uint64_t, add a check in
-the if-statement.
+Fixed VFs attempting global RSS configuration which is not
+permitted by firmware. VFs (including trusted VFs) must use
+per-VNIC RSS configuration with actual vnic_id and rss_ctx_idx
+values.
 
-Fixes: 7a1f9c782b50 ("net/bnxt: add multi-doorbell support")
+Fixes: 8b9adaf0da6b ("net/bnxt: support RSS on ESP and AH headers")
 Cc: stable@dpdk.org
-Signed-off-by: Zoe Cheimets <zoe.cheimets@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_ring.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/bnxt/bnxt_hwrm.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_ring.c b/drivers/net/bnxt/bnxt_ring.c
-index ccca779b97..579b73d2ce 100644
---- a/drivers/net/bnxt/bnxt_ring.c
-+++ b/drivers/net/bnxt/bnxt_ring.c
-@@ -385,9 +385,10 @@ void bnxt_set_db(struct bnxt *bp,
- 		db->doorbell = (char *)bp->doorbell_base + db_offset;
+diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
+index 0c82935de9..afc948ac29 100644
+--- a/drivers/net/bnxt/bnxt_hwrm.c
++++ b/drivers/net/bnxt/bnxt_hwrm.c
+@@ -2970,8 +2970,22 @@ bnxt_hwrm_vnic_rss_cfg_hash_mode_p5(struct bnxt *bp, struct bnxt_vnic_info *vnic
+ 		req.hash_mode_flags = BNXT_HASH_MODE_INNERMOST;
+ 	else
+ 		req.hash_mode_flags = vnic->hash_mode;
+-	req.vnic_id = rte_cpu_to_le_16(BNXT_DFLT_VNIC_ID_INVALID);
+-	req.rss_ctx_idx = rte_cpu_to_le_16(BNXT_RSS_CTX_IDX_INVALID);
++
++	/* VFs must use actual vnic_id for per-VNIC configuration.
++	 * PFs can use INVALID vnic_id for global configuration.
++	 * This is because VFs don't have permission to configure
++	 * global hash mode, even if they're trusted.
++	 */
++	if (BNXT_VF(bp)) {
++		req.vnic_id = rte_cpu_to_le_16(vnic->fw_vnic_id);
++		req.rss_ctx_idx = rte_cpu_to_le_16(vnic->fw_grp_ids[0]);
++		PMD_DRV_LOG_LINE(DEBUG, "VF using per-VNIC RSS config (vnic_id=%u)",
++				vnic->fw_vnic_id);
++	} else {
++		req.vnic_id = rte_cpu_to_le_16(BNXT_DFLT_VNIC_ID_INVALID);
++		req.rss_ctx_idx = rte_cpu_to_le_16(BNXT_RSS_CTX_IDX_INVALID);
++		PMD_DRV_LOG_LINE(DEBUG, "PF using global RSS config");
++	}
  
- 		if (bp->fw_cap & BNXT_FW_CAP_MULTI_DB &&
--				dpi != BNXT_PRIVILEGED_DPI) {
--			dpi_offset = (dpi - bp->nq_dpi_start) *
--					bp->db_page_size;
-+		    dpi != BNXT_PRIVILEGED_DPI &&
-+		    dpi >= bp->nq_dpi_start) {
-+			dpi_offset = (uint64_t)(dpi - bp->nq_dpi_start) *
-+							bp->db_page_size;
- 			db->doorbell = (char *)db->doorbell + dpi_offset;
- 		}
- 		db->db_key64 |= (uint64_t)fid << DBR_XID_SFT;
+ 	PMD_DRV_LOG_LINE(DEBUG, "RSS CFG: Hash level %d", req.hash_mode_flags);
+ 	rc = bnxt_hwrm_send_message(bp, &req, sizeof(req),
 -- 
 2.47.3
 
