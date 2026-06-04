@@ -2,68 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC8DCD6E6B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 12:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D66C6CD6E6D
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 13:18:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 68584402CC;
-	Thu,  4 Jun 2026 14:39:15 +0200 (CEST)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
- [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id 4E82D402E0
- for <dev@dpdk.org>; Thu,  4 Jun 2026 12:11:25 +0200 (CEST)
-Received: by mail-pj1-f47.google.com with SMTP id
- 98e67ed59e1d1-36bcf3d2565so352449a91.3
- for <dev@dpdk.org>; Thu, 04 Jun 2026 03:11:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9ACEA402CC;
+	Thu,  4 Jun 2026 15:18:33 +0200 (CEST)
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com
+ [209.85.167.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 23888402B6
+ for <dev@dpdk.org>; Thu,  4 Jun 2026 15:18:32 +0200 (CEST)
+Received: by mail-oi1-f180.google.com with SMTP id
+ 5614622812f47-48611addcfbso238745b6e.1
+ for <dev@dpdk.org>; Thu, 04 Jun 2026 06:18:32 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780579111; cv=none;
+ d=google.com; s=arc-20240605;
+ b=Yr1FDUfZr2kNTiBL+i6/uPm3qNKkF1yospQDWIjYJCNIxv7vPs/qnvY91LrLKTXaP6
+ UNjFyRfCd3MeGY3zGSETQImCFyCFqkoDik76UoIhg//6UffV8bMwvzfS4L0gpke4ie8A
+ AP8CwZm1+JYvezIMhFdOwCjuIJpZW1MINGcQ6rGPOpGH9sHM6N2Iv5+f+Wyxek5cP8Sj
+ Ek5gItwKvf2pdNNjgofqJMHGCtcrjCTMlC5w2pvjzwZKcq+Lj1LQMA/y5f+dopYJG3Pq
+ SwxmaBAgQ4u6KcpheDHEVNjAO2pTV2VNIOrAZa28RW5cNIOrHM+5tM3cTsF5Ub68JSek
+ 723g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=to:subject:message-id:date:from:mime-version:dkim-signature;
+ bh=sHfgjR1Ck4aDty+Qkux1ncqTXyzuD9Qj4mkWjQqFT3w=;
+ fh=SmeAyABM4rfT32CZ90spRvJxp9TgPXvzIvi7t3j/5Mk=;
+ b=lQKNPbyNuLSCxD6QKsHqlY6XimnOD5IavW/08hSufvG1PMqlFnOTeqK4D4SWl15Rb+
+ Pxogck7Rtjli5ssA+6L7rIp8F3vH8WJFrTlQdDj3cbsbd3EilddszmSLoyL487d4kiRg
+ PVSJM/Kj+zDVqLGU+opMRMPEF9HybTNl+rQ29iksWk9WNdvHlloBhUGPMbk/xIelyQr+
+ 4mKIGyyLGFw1gDa0AnGTgCpOtqGmbt8sHXXHtXxPFXA/6R8vwxtoXstSZCpbpumC1Rm8
+ 35HJeiPKi8sBavwVSe6ALMlzJisWhOpCSaCa+hKC2F4OfBECE1xNAPX/xMgVIz9stx9I
+ RMxA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780567884; x=1781172684; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=/73zjf44wMst5mK7oJiSaP1WtZJytkseRpD3MANfBzE=;
- b=QSkVR31OwN2IUv2pvlJEOcb4QX/Gkgi5r/qFMGd7EQiHjmgvnmTGbyP02vG5SRuK0E
- gUDIFF5Et98CdEnMrNiFCigZ1AmHFQwxmsAUinIRi4Z1PQSlgP2bPd2zu7Q5BeifbJUw
- +PNsoRJQW8+Ow49u5uaT3NQvwKFLI1CX1kqi9a6t9xSaP7cJkMfQqk7c4P9WQGnfMIDL
- bKwDmH7LeXrxOA/HaEPKc/HyAhKfoL7rjyvip2HRfYLHcbD+VMzdwL/wFuQsh2wACFvi
- PQnGPlHVaqOe5Kp0MJJaynj4UNp9RcGP/+FCKrr9Yc5EO+/NlSH02Pe2fRZWlK3f4ZON
- mb/w==
+ d=iol.unh.edu; s=unh-iol; t=1780579111; x=1781183911; darn=dpdk.org;
+ h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=sHfgjR1Ck4aDty+Qkux1ncqTXyzuD9Qj4mkWjQqFT3w=;
+ b=U2IpqyMwPbtawN+GeT8c//qTqMiZprGlhkxMGQizaOY0xMisWU5MPveP6d9QcpNbW+
+ 2615htDk0LhjxaIEfvJxqd2PR+gp/dCTygfcYY9xsQEdKvA/rbI+/7J5IhnVs54FC1et
+ zGejO+G/JaAINBFLZ1kmTNce+jgW5WZDTPzmE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780567884; x=1781172684;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=/73zjf44wMst5mK7oJiSaP1WtZJytkseRpD3MANfBzE=;
- b=GaYcJShwdpuSrrC1+s85nTAQ7xR6XtwPSdrBj3DThDqURChM315STE8Uft18SnvEGx
- svQgRAZfMUUZXc3aRQQP44YRlxWQFpSxYFEqMBzptAQ39pm+GteiqJmWd9nSetEZwwS5
- JTIZ2yMPOm4bxORA+qfSZ5AQU8zZkXz05igc4cjf3v3+z+6rE0bR5ApUOIQiXNM9T0tW
- VMe1nMTQKaGJ55DoU4rp5Q5DqL9dnPuaVNz0tGpYxU9tsiD632OYnpQVLq69gCK6ZSKo
- w9VOEKOD/fHMNSkaFmLC0thc/VvNRcv6v9jBsmB4cehA+RrhYyHNix4lSnghQ3J+bq9k
- ei+Q==
-X-Gm-Message-State: AOJu0Ywr4ohVqAUiSfb/K8qYHhXqrh6GjFzgKhOzM2HoMSO7Cd6q7CQz
- WAJzmePBm4WC6jayqa4DcG8pw54iUkAxILmjjYNyFnRFIvY3DlNXPcea0WiwoT5FU7M6
-X-Gm-Gg: Acq92OH9wdMCt+BoN/8AncQxIWf1C9/6F1VmirFOtDjOwzbVK4/VjpXI1LzGylryszG
- wX155HQyTA/kxTntL5J7lVaH/Hrq/bHAX6PHrNcIqF+bCR6mdZXH7yXd5Hk5QvEWdwOY16job/h
- tsUNdzBKcnphqeAFKvC5W70ogUPqR+h5VzptDya9Rde3wCDUrTr/GlOr5IvraUJkX8PRelZw3mk
- pVES7N4iQNtrBiWSOKOEWWvs5EW9Ou72ue//c/W2IMtzFAb23Mvk06IXXqAhu77/68YANGIOd85
- pgzYg580pFdyP6lny/lqGOJ5OjL3VzOWbXazsFD/vdjGR4zZoJjzcMpobZJHwFGgUV3Q5yGyzaZ
- SLHSG3mWtL5zuayJB4VaGfoCZ6FMjGHGS08EZp51HtaCc12uDk/1iI+gDD0eKXl7HZwYBgZVHDU
- M4khYYLUok1yhv0WuqKLCeEd8cwj1yk8uaxCMVip413+ljiA==
-X-Received: by 2002:a17:90b:2d8d:b0:36b:e8b9:46a4 with SMTP id
- 98e67ed59e1d1-36e32285cf3mr7076915a91.14.1780567884241; 
- Thu, 04 Jun 2026 03:11:24 -0700 (PDT)
-Received: from localhost ([61.119.121.204]) by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-36e719b640esm3583264a91.2.2026.06.04.03.11.23
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 04 Jun 2026 03:11:23 -0700 (PDT)
-From: Laaahu <lilinhu618@gmail.com>
-To: dev@dpdk.org
-Cc: stable@dpdk.org,
-	lilinhu <lilinhu618@gmail.com>
-Subject: [PATCH] net/mlx5: fix counter TAILQ race between free and query
- callback
-Date: Thu,  4 Jun 2026 18:11:12 +0800
-Message-Id: <20260604101112.72177-1-lilinhu618@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+ d=1e100.net; s=20251104; t=1780579111; x=1781183911;
+ h=to:subject:message-id:date:from:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=sHfgjR1Ck4aDty+Qkux1ncqTXyzuD9Qj4mkWjQqFT3w=;
+ b=NAM+aG9Zz9/R7ddqZkIw3PoEbNE3WeiuHBGhfrJ/S0PORjL1aRQ6pU6IH/TBarNhhc
+ r4miWszxzxCKUVqMrM42xU7JKfRXBq8Inq+TDahQFTbI9gesY8zTQFFMBkMUXKe1S5B3
+ 38vgS4duaF19LfhRTYLGSXeJpWdztFiX/m44dtZdFNzpYtxgW+U3fXAal2DeeXNxo2GO
+ 0fAUuHoCnwvPZoavnBjYS61wyQzDWtwuL4DfSfXJzDbsKGDRv6yVj+r8DsoVpnwXNTaR
+ ttywItLEdQuyoWeK2ESQvlY1anvf49jXDxiNkvE3xmQiwwgD+uLZWdIXcA44gTDCKVQB
+ WJXA==
+X-Gm-Message-State: AOJu0YwGd6Fhdwd6lSQW0JmxtAGtWBMNL3WpTArC7ZvJYGCfx+Fn2z6E
+ KV4xThYFh+4b6hOmWiDHXTuTy3TUpZPYVOBb2MNIQBNrUTnmRU7KwEvfIfvZ1JAUWVuLJIZEFRL
+ WR26EBf1gLsGzCDfUnqWV2RLdlXXt2766kOGh5tk6RfyYv9PSfJVL36bcJg==
+X-Gm-Gg: Acq92OFxbheLElxxGIs6TTrQrpfLSdZfiimmM4TidybNLggxLV4LTuV/3cT9lk0NKUX
+ EjTNkT2tLhOUGabZbcxu1JgDvkqwqUo6+hLRH7rgHKtP8ot7SPVltvGRD9hcnSjfbBXRo55cXtd
+ Z5eDfjPjtxy0Jg6BblH5HPioETIWc8WzIBbEnFwjte3UVAb/0bf6WIHcY84zA9bMmMKb96o0eNW
+ GmHVtgDA+ZD7OIew5xZqw/01qL7Nge5eXS/oGlJdhEA/UmTbB7PSVFZAur6+tTcpMyxokVIw0XB
+ tusPahq9K+Z39aECCJRb6PV61yUa
+X-Received: by 2002:a05:6808:159d:b0:486:33db:ef58 with SMTP id
+ 5614622812f47-4865ab9d968mr4704227b6e.35.1780579110981; Thu, 04 Jun 2026
+ 06:18:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Thu, 04 Jun 2026 14:39:14 +0200
+From: Lincoln Lavoie <lylavoie@iol.unh.edu>
+Date: Thu, 4 Jun 2026 09:18:20 -0400
+X-Gm-Features: AVHnY4Luvlaq1f0uR1gFESe6a3vFtC9ZFc_lbe-5c7lxWbpNYRbRmT6cBJqd6_E
+Message-ID: <CAOE1vsP9ZqSTMzKzdu3d7+Uo7YENyx0GwEpZKuvwhiF0uXBpxg@mail.gmail.com>
+Subject: DTS meeting / status
+To: dev <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="00000000000067a36b06536d6146"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,107 +85,431 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: lilinhu <lilinhu618@gmail.com>
+--00000000000067a36b06536d6146
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-flow_dv_counter_free() inserts counters into
-pool->counters[pool->query_gen] under pool->csl. Meanwhile,
-mlx5_flow_async_pool_query_handle() moves counters from
-pool->counters[query_gen ^ 1] to the global free list via
-TAILQ_CONCAT while holding only cmng->csl, not pool->csl.
+Hello All,
 
-The comment in flow_dv_counter_free() claims the lock is not needed
-because the query callback and the release function operate on
-different lists. That holds only if the free path always observes
-the up-to-date query_gen. It can be violated:
+It seems like we're not really getting critical mass from the community on
+the DTS meetings, while a few key participants are on leave.  I wanted to
+provide a status update on a number of patch series, so we can make sure we
+are staying on target for the July release.
 
-1. A counter free thread (non-PMD, e.g. OVS offload thread) reads
-   pool->query_gen == 0 and is about to insert into counters[0].
-2. The free thread is preempted by the OS scheduler; it is a regular
-   pthread, not pinned to a core.
-3. The eal-intr-thread alarm fires: query_gen++ (now 1) and the async
-   query is sent.
-4. Hardware completes the query and the callback runs TAILQ_CONCAT on
-   counters[0] (= query_gen ^ 1).
-5. The free thread resumes and runs TAILQ_INSERT_TAIL on counters[0]
-   concurrently with step 4 on another core.
+Below is the current list of DTS patches, where many are planned for the
+July release, if some are able to help provide reviews, that would be
+appreciated.
 
-Because the two paths take different locks, TAILQ_INSERT_TAIL and
-TAILQ_CONCAT run concurrently on the same list with no
-synchronization and corrupt it: the pool-local list ends up with a
-NULL head but a dangling tqh_last, and the global free list tail no
-longer points to the real tail. The just-freed counter and every
-counter inserted afterwards become unreachable and are leaked.
 
-Non-PMD threads can be preempted for hundreds of microseconds under
-CPU pressure, which is well within the async query round-trip time,
-so the window is reachable in practice.
+   -
 
-Fix it by taking pool->csl in the query completion callback before
-operating on pool->counters[query_gen], serializing the CONCAT with
-any concurrent INSERT. The lock is taken once per pool per query
-completion in the eal-intr-thread context, not on the datapath, so
-the cost is negligible. Lock order is pool->csl then cmng->csl,
-matching all other sites.
+   report dut/NIC info during DTS run
+   -
 
-Also handle the error path: previously the counters accumulated in
-pool->counters[query_gen] were abandoned when a query failed. Move
-them back to the global free list to avoid a leak on persistent
-query failures.
+      Needs review
+      -
 
-Fixes: ac79183dc6f7 ("net/mlx5: optimize free counter lookup")
-Cc: stable@dpdk.org
+   add code coverage reporting to DTS
+   -
 
-Signed-off-by: lilinhu <lilinhu618@gmail.com>
----
- drivers/net/mlx5/mlx5_flow.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+      Needs review
+      -
 
-diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index 915ea29a5a..20aad87f5d 100644
---- a/drivers/net/mlx5/mlx5_flow.c
-+++ b/drivers/net/mlx5/mlx5_flow.c
-@@ -9904,6 +9904,20 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
- 
- 	if (unlikely(status)) {
- 		raw_to_free = pool->raw_hw;
-+		/*
-+		 * The query failed, so the freed counters accumulated in the
-+		 * old-gen list during this round would otherwise be stranded.
-+		 * Move them back to the global free list to avoid a leak when
-+		 * queries fail persistently.
-+		 */
-+		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
-+			rte_spinlock_lock(&pool->csl);
-+			rte_spinlock_lock(&cmng->csl[cnt_type]);
-+			TAILQ_CONCAT(&cmng->counters[cnt_type],
-+				     &pool->counters[query_gen], next);
-+			rte_spinlock_unlock(&cmng->csl[cnt_type]);
-+			rte_spinlock_unlock(&pool->csl);
-+		}
- 	} else {
- 		raw_to_free = pool->raw;
- 		if (pool->is_aged)
-@@ -9913,11 +9927,20 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
- 		rte_spinlock_unlock(&pool->sl);
- 		/* Be sure the new raw counters data is updated in memory. */
- 		rte_io_wmb();
-+		/*
-+		 * A counter free thread may have read a stale query_gen
-+		 * before the generation was flipped and could still be
-+		 * inserting into this same old-gen list. Hold pool->csl to
-+		 * serialize TAILQ_CONCAT with that TAILQ_INSERT_TAIL and
-+		 * avoid corrupting the list.
-+		 */
- 		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
-+			rte_spinlock_lock(&pool->csl);
- 			rte_spinlock_lock(&cmng->csl[cnt_type]);
- 			TAILQ_CONCAT(&cmng->counters[cnt_type],
- 				     &pool->counters[query_gen], next);
- 			rte_spinlock_unlock(&cmng->csl[cnt_type]);
-+			rte_spinlock_unlock(&pool->csl);
- 		}
- 	}
- 	LIST_INSERT_HEAD(&sh->sws_cmng.free_stat_raws, raw_to_free, next);
--- 
-2.39.3 (Apple Git-146)
+   add retry loop to trex traffic generation
+   -
 
+      Needs review
+      -
+
+   add directory for test resources
+   -
+
+      Needs review
+      -
+
+   clean cryptodev environment after a test run
+   -
+
+      Needs review
+      -
+
+   update parsing for cryptodev latency
+   -
+
+      Needs review
+      -
+
+   update test suite names to be clear and consistent
+   -
+
+      Needs review
+      -
+
+   add ipgre test suite
+   -
+
+      Needs review
+      -
+
+   fix topology capability comparison
+   -
+
+      Needs review
+      -
+
+   move exception module from framework to API
+   -
+
+      Needs review
+      -
+
+   fix port info getter when port is not found
+   -
+
+      Reviewed by Luca, no comments, April 23
+      -
+
+   ConfigurationError not thrown due to lack of next default value
+   -
+
+      Needs to be marked as not active, replaced by =E2=80=9Cfix port info =
+getter
+      when port is not found=E2=80=9D
+      -
+
+   update modprobe command to be privileged
+   -
+
+      Reviewed by Luca, no comments, April 9, 2026
+      -
+
+   update verbose output regex for VXLAN packets
+   -
+
+      Still pending review
+      -
+
+   port speed capabilities test suite to next DTS
+   -
+
+      Reviewed by Patrick, no comments, May 30
+      -
+
+   add default values for queue info
+   -
+
+      Reviewed by Patrick, no comments, May 28.
+      -
+
+   refactor flow suite with generator pattern
+   -
+
+      Still pending review
+      -
+
+   add support for no link topology
+   -
+
+      Comments from Patrick on May 30 need answer
+      -
+
+   add PVVP case to virtio suite
+   -
+
+      Still pending reviews, marked ready on April 10, 2026
+
+
+Cheers,
+Lincoln
+--=20
+*Lincoln Lavoie*
+Principal Engineer, Broadband Technologies
+21 Madbury Rd., Ste. 100, Durham, NH 03824
+lylavoie@iol.unh.edu
+https://www.iol.unh.edu
++1-603-674-2755 (m)
+
+--00000000000067a36b06536d6146
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div><div class=3D"gmail_default" style=3D"font-size:small=
+">Hello All,</div><div class=3D"gmail_default" style=3D"font-size:small"><b=
+r></div><div class=3D"gmail_default" style=3D"font-size:small">It seems lik=
+e we&#39;re not really getting critical mass from the community on the DTS =
+meetings, while a few key participants are on leave.=C2=A0 I wanted to prov=
+ide a status update on a number of patch series, so we can make sure we are=
+ staying on target for the July release.</div><div class=3D"gmail_default" =
+style=3D"font-size:small"><br></div><div class=3D"gmail_default" style=3D"f=
+ont-size:small">Below is the current list of DTS patches, where many are pl=
+anned for the July release, if some are able to help provide reviews, that =
+would be appreciated.</div><div class=3D"gmail_default" style=3D"font-size:=
+small"><br></div><div class=3D"gmail_default" style=3D"font-size:small"><sp=
+an id=3D"gmail-docs-internal-guid-f412543b-7fff-7af3-86bc-dcadc6326484"><ul=
+ style=3D"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-s=
+tyle-type:disc;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0)=
+;background-color:transparent;font-variant:normal;vertical-align:baseline;w=
+hite-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;mar=
+gin-bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;backgro=
+und-color:transparent;font-variant:normal;vertical-align:baseline;white-spa=
+ce:pre-wrap">report dut/NIC info during DTS run</span></p></li><ul style=3D=
+"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type=
+:circle;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);backgr=
+ound-color:transparent;font-variant:normal;vertical-align:baseline;white-sp=
+ace:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bot=
+tom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background-col=
+or:transparent;font-variant:normal;vertical-align:baseline;white-space:pre-=
+wrap">Needs review</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-=
+type:disc;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);back=
+ground-color:transparent;font-variant:normal;vertical-align:baseline;white-=
+space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-b=
+ottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background-c=
+olor:transparent;font-variant:normal;vertical-align:baseline;white-space:pr=
+e-wrap">add code coverage reporting to DTS</span></p></li><ul style=3D"marg=
+in-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circ=
+le;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-=
+color:transparent;font-variant:normal;vertical-align:baseline;white-space:p=
+re"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0=
+pt" role=3D"presentation"><span style=3D"font-size:11pt;background-color:tr=
+ansparent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap"=
+>Needs review</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-type:=
+disc;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);backgroun=
+d-color:transparent;font-variant:normal;vertical-align:baseline;white-space=
+:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom=
+:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background-color:=
+transparent;font-variant:normal;vertical-align:baseline;white-space:pre-wra=
+p">add retry loop to trex traffic generation</span></p></li><ul style=3D"ma=
+rgin-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:ci=
+rcle;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);backgroun=
+d-color:transparent;font-variant:normal;vertical-align:baseline;white-space=
+:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom=
+:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background-color:=
+transparent;font-variant:normal;vertical-align:baseline;white-space:pre-wra=
+p">Needs review</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-typ=
+e:disc;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);backgro=
+und-color:transparent;font-variant:normal;vertical-align:baseline;white-spa=
+ce:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bott=
+om:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background-colo=
+r:transparent;font-variant:normal;vertical-align:baseline;white-space:pre-w=
+rap">add directory for test resources</span></p></li><ul style=3D"margin-to=
+p:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circle;fo=
+nt-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-color=
+:transparent;font-variant:normal;vertical-align:baseline;white-space:pre"><=
+p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" r=
+ole=3D"presentation"><span style=3D"font-size:11pt;background-color:transpa=
+rent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">Need=
+s review</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-type:disc;=
+font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-col=
+or:transparent;font-variant:normal;vertical-align:baseline;white-space:pre"=
+><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"=
+ role=3D"presentation"><span style=3D"font-size:11pt;background-color:trans=
+parent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">cl=
+ean cryptodev environment after a test run</span></p></li><ul style=3D"marg=
+in-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circ=
+le;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-=
+color:transparent;font-variant:normal;vertical-align:baseline;white-space:p=
+re"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0=
+pt" role=3D"presentation"><span style=3D"font-size:11pt;background-color:tr=
+ansparent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap"=
+>Needs review</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-type:=
+disc;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);backgroun=
+d-color:transparent;font-variant:normal;vertical-align:baseline;white-space=
+:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom=
+:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background-color:=
+transparent;font-variant:normal;vertical-align:baseline;white-space:pre-wra=
+p">update parsing for cryptodev latency</span></p></li><ul style=3D"margin-=
+top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circle;=
+font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-col=
+or:transparent;font-variant:normal;vertical-align:baseline;white-space:pre"=
+><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"=
+ role=3D"presentation"><span style=3D"font-size:11pt;background-color:trans=
+parent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">Ne=
+eds review</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-type:dis=
+c;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-c=
+olor:transparent;font-variant:normal;vertical-align:baseline;white-space:pr=
+e"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0p=
+t" role=3D"presentation"><span style=3D"font-size:11pt;background-color:tra=
+nsparent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">=
+update test suite names to be clear and consistent</span></p></li><ul style=
+=3D"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-t=
+ype:circle;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);bac=
+kground-color:transparent;font-variant:normal;vertical-align:baseline;white=
+-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-=
+bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background-=
+color:transparent;font-variant:normal;vertical-align:baseline;white-space:p=
+re-wrap">Needs review</span></p></li></ul><li dir=3D"ltr" style=3D"list-sty=
+le-type:disc;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);b=
+ackground-color:transparent;font-variant:normal;vertical-align:baseline;whi=
+te-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margi=
+n-bottom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;backgroun=
+d-color:transparent;font-variant:normal;vertical-align:baseline;white-space=
+:pre-wrap">add ipgre test suite</span></p></li><ul style=3D"margin-top:0px;=
+margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circle;font-siz=
+e:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:trans=
+parent;font-variant:normal;vertical-align:baseline;white-space:pre"><p dir=
+=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=
+=3D"presentation"><span style=3D"font-size:11pt;background-color:transparen=
+t;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">Needs r=
+eview</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-type:disc;fon=
+t-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:=
+transparent;font-variant:normal;vertical-align:baseline;white-space:pre"><p=
+ dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" ro=
+le=3D"presentation"><span style=3D"font-size:11pt;background-color:transpar=
+ent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">fix t=
+opology capability comparison</span></p></li><ul style=3D"margin-top:0px;ma=
+rgin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circle;font-size:=
+11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:transpa=
+rent;font-variant:normal;vertical-align:baseline;white-space:pre"><p dir=3D=
+"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"p=
+resentation"><span style=3D"font-size:11pt;background-color:transparent;fon=
+t-variant:normal;vertical-align:baseline;white-space:pre-wrap">Needs review=
+</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-type:disc;font-siz=
+e:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:trans=
+parent;font-variant:normal;vertical-align:baseline;white-space:pre"><p dir=
+=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=
+=3D"presentation"><span style=3D"font-size:11pt;background-color:transparen=
+t;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">move ex=
+ception module from framework to API</span></p></li><ul style=3D"margin-top=
+:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circle;fon=
+t-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:=
+transparent;font-variant:normal;vertical-align:baseline;white-space:pre"><p=
+ dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" ro=
+le=3D"presentation"><span style=3D"font-size:11pt;background-color:transpar=
+ent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">Needs=
+ review</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-type:disc;f=
+ont-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-colo=
+r:transparent;font-variant:normal;vertical-align:baseline;white-space:pre">=
+<p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" =
+role=3D"presentation"><span style=3D"font-size:11pt;background-color:transp=
+arent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">fix=
+ port info getter when port is not found</span></p></li><ul style=3D"margin=
+-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circle=
+;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-co=
+lor:transparent;font-variant:normal;vertical-align:baseline;white-space:pre=
+"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt=
+" role=3D"presentation"><span style=3D"font-size:11pt;background-color:tran=
+sparent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">R=
+eviewed by Luca, no comments, April 23</span></p></li></ul><li dir=3D"ltr" =
+style=3D"list-style-type:disc;font-size:11pt;font-family:Arial,sans-serif;c=
+olor:rgb(0,0,0);background-color:transparent;font-variant:normal;vertical-a=
+lign:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;mar=
+gin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=3D"font-si=
+ze:11pt;background-color:transparent;font-variant:normal;vertical-align:bas=
+eline;white-space:pre-wrap">ConfigurationError not thrown due to lack of ne=
+xt default value</span></p></li><ul style=3D"margin-top:0px;margin-bottom:0=
+px"><li dir=3D"ltr" style=3D"list-style-type:circle;font-size:11pt;font-fam=
+ily:Arial,sans-serif;color:rgb(0,0,0);background-color:transparent;font-var=
+iant:normal;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" style=
+=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation=
+"><span style=3D"font-size:11pt;background-color:transparent;font-variant:n=
+ormal;vertical-align:baseline;white-space:pre-wrap">Needs to be marked as n=
+ot active, replaced by =E2=80=9Cfix port info getter when port is not found=
+=E2=80=9D</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-type:disc=
+;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-co=
+lor:transparent;font-variant:normal;vertical-align:baseline;white-space:pre=
+"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt=
+" role=3D"presentation"><span style=3D"font-size:11pt;background-color:tran=
+sparent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">u=
+pdate modprobe command to be privileged</span></p></li><ul style=3D"margin-=
+top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circle;=
+font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-col=
+or:transparent;font-variant:normal;vertical-align:baseline;white-space:pre"=
+><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"=
+ role=3D"presentation"><span style=3D"font-size:11pt;background-color:trans=
+parent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">Re=
+viewed by Luca, no comments, April 9, 2026</span></p></li></ul><li dir=3D"l=
+tr" style=3D"list-style-type:disc;font-size:11pt;font-family:Arial,sans-ser=
+if;color:rgb(0,0,0);background-color:transparent;font-variant:normal;vertic=
+al-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38=
+;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=3D"fon=
+t-size:11pt;background-color:transparent;font-variant:normal;vertical-align=
+:baseline;white-space:pre-wrap">update verbose output regex for VXLAN packe=
+ts</span></p></li><ul style=3D"margin-top:0px;margin-bottom:0px"><li dir=3D=
+"ltr" style=3D"list-style-type:circle;font-size:11pt;font-family:Arial,sans=
+-serif;color:rgb(0,0,0);background-color:transparent;font-variant:normal;ve=
+rtical-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-height:=
+1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=3D=
+"font-size:11pt;background-color:transparent;font-variant:normal;vertical-a=
+lign:baseline;white-space:pre-wrap">Still pending review</span></p></li></u=
+l><li dir=3D"ltr" style=3D"list-style-type:disc;font-size:11pt;font-family:=
+Arial,sans-serif;color:rgb(0,0,0);background-color:transparent;font-variant=
+:normal;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"li=
+ne-height:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><spa=
+n style=3D"font-size:11pt;background-color:transparent;font-variant:normal;=
+vertical-align:baseline;white-space:pre-wrap">port speed capabilities test =
+suite to next DTS</span></p></li><ul style=3D"margin-top:0px;margin-bottom:=
+0px"><li dir=3D"ltr" style=3D"list-style-type:circle;font-size:11pt;font-fa=
+mily:Arial,sans-serif;color:rgb(0,0,0);background-color:transparent;font-va=
+riant:normal;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" style=
+=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation=
+"><span style=3D"font-size:11pt;background-color:transparent;font-variant:n=
+ormal;vertical-align:baseline;white-space:pre-wrap">Reviewed by Patrick, no=
+ comments, May 30</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-t=
+ype:disc;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);backg=
+round-color:transparent;font-variant:normal;vertical-align:baseline;white-s=
+pace:pre"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bo=
+ttom:0pt" role=3D"presentation"><span style=3D"font-size:11pt;background-co=
+lor:transparent;font-variant:normal;vertical-align:baseline;white-space:pre=
+-wrap">add default values for queue info</span></p></li><ul style=3D"margin=
+-top:0px;margin-bottom:0px"><li dir=3D"ltr" style=3D"list-style-type:circle=
+;font-size:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-co=
+lor:transparent;font-variant:normal;vertical-align:baseline;white-space:pre=
+"><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt=
+" role=3D"presentation"><span style=3D"font-size:11pt;background-color:tran=
+sparent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">R=
+eviewed by Patrick, no comments, May 28.</span></p></li></ul><li dir=3D"ltr=
+" style=3D"list-style-type:disc;font-size:11pt;font-family:Arial,sans-serif=
+;color:rgb(0,0,0);background-color:transparent;font-variant:normal;vertical=
+-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;m=
+argin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=3D"font-=
+size:11pt;background-color:transparent;font-variant:normal;vertical-align:b=
+aseline;white-space:pre-wrap">refactor flow suite with generator pattern</s=
+pan></p></li><ul style=3D"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr"=
+ style=3D"list-style-type:circle;font-size:11pt;font-family:Arial,sans-seri=
+f;color:rgb(0,0,0);background-color:transparent;font-variant:normal;vertica=
+l-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38;=
+margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=3D"font=
+-size:11pt;background-color:transparent;font-variant:normal;vertical-align:=
+baseline;white-space:pre-wrap">Still pending review</span></p></li></ul><li=
+ dir=3D"ltr" style=3D"list-style-type:disc;font-size:11pt;font-family:Arial=
+,sans-serif;color:rgb(0,0,0);background-color:transparent;font-variant:norm=
+al;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-he=
+ight:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span sty=
+le=3D"font-size:11pt;background-color:transparent;font-variant:normal;verti=
+cal-align:baseline;white-space:pre-wrap">add support for no link topology</=
+span></p></li><ul style=3D"margin-top:0px;margin-bottom:0px"><li dir=3D"ltr=
+" style=3D"list-style-type:circle;font-size:11pt;font-family:Arial,sans-ser=
+if;color:rgb(0,0,0);background-color:transparent;font-variant:normal;vertic=
+al-align:baseline;white-space:pre"><p dir=3D"ltr" style=3D"line-height:1.38=
+;margin-top:0pt;margin-bottom:0pt" role=3D"presentation"><span style=3D"fon=
+t-size:11pt;background-color:transparent;font-variant:normal;vertical-align=
+:baseline;white-space:pre-wrap">Comments from Patrick on May 30 need answer=
+</span></p></li></ul><li dir=3D"ltr" style=3D"list-style-type:disc;font-siz=
+e:11pt;font-family:Arial,sans-serif;color:rgb(0,0,0);background-color:trans=
+parent;font-variant:normal;vertical-align:baseline;white-space:pre"><p dir=
+=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=
+=3D"presentation"><span style=3D"font-size:11pt;background-color:transparen=
+t;font-variant:normal;vertical-align:baseline;white-space:pre-wrap">add PVV=
+P case to virtio suite</span></p></li><ul style=3D"margin-top:0px;margin-bo=
+ttom:0px"><li dir=3D"ltr" style=3D"list-style-type:circle;font-size:11pt;fo=
+nt-family:Arial,sans-serif;color:rgb(0,0,0);background-color:transparent;fo=
+nt-variant:normal;vertical-align:baseline;white-space:pre"><p dir=3D"ltr" s=
+tyle=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt" role=3D"presenta=
+tion"><span style=3D"font-size:11pt;background-color:transparent;font-varia=
+nt:normal;vertical-align:baseline;white-space:pre-wrap">Still pending revie=
+ws, marked ready on April 10, 2026</span></p></li></ul></ul></span></div><b=
+r clear=3D"all"></div><div><div class=3D"gmail_default" style=3D"font-size:=
+small">Cheers,<br>Lincoln</div></div><span class=3D"gmail_signature_prefix"=
+>-- </span><br><div dir=3D"ltr" class=3D"gmail_signature" data-smartmail=3D=
+"gmail_signature"><div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><div d=
+ir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"l=
+tr"><div dir=3D"ltr"><div><b>Lincoln Lavoie</b><br></div><div>Principal Eng=
+ineer, Broadband Technologies</div><div>21 Madbury Rd., Ste. 100, Durham, N=
+H 03824</div><div><a href=3D"mailto:lylavoie@iol.unh.edu" target=3D"_blank"=
+>lylavoie@iol.unh.edu</a></div><div><a href=3D"https://www.iol.unh.edu" tar=
+get=3D"_blank">https://www.iol.unh.edu</a></div><div>+1-603-674-2755 (m)</d=
+iv><div><img src=3D"https://www.iol.unh.edu/sites/all/themes/custom/iol2013=
+/img/logo.png" width=3D"200" height=3D"55"><br></div></div></div></div></di=
+v></div></div></div></div></div></div></div>
+
+--00000000000067a36b06536d6146--
