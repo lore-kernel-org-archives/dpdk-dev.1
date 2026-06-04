@@ -2,75 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF3BCD6E6B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 11:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC8DCD6E6B
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 12:39:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F09C9402CC;
-	Thu,  4 Jun 2026 13:52:32 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id BF089402B6
- for <dev@dpdk.org>; Thu,  4 Jun 2026 13:52:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1780573950;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=Lcuwa/dBBG5bZML+0kW/mZKY/tNufGomlhQW/QC9AdI=;
- b=FVH7mRpA5FfKzNHjopINcSjgKdWWmBFQK4KLKvWWAYhdQ30oEkvxUqfkj6WXywMkbhGxX0
- BN/nbVHWJfCumn0vLu/9WQ9z0G+Aqk33IEvxZo1ENacwvkgoSEgA0d2Rj2rMugg5j8TVof
- /1dE0rMoNmqXqanUNBA0yIX07ZVZkTw=
-Received: from mail-dl1-f71.google.com (mail-dl1-f71.google.com
- [74.125.82.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-385-4fvMgauQPLqyOnrx1OQl2g-1; Thu, 04 Jun 2026 07:52:28 -0400
-X-MC-Unique: 4fvMgauQPLqyOnrx1OQl2g-1
-X-Mimecast-MFC-AGG-ID: 4fvMgauQPLqyOnrx1OQl2g_1780573947
-Received: by mail-dl1-f71.google.com with SMTP id
- a92af1059eb24-137ea73393cso2803519c88.0
- for <dev@dpdk.org>; Thu, 04 Jun 2026 04:52:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 68584402CC;
+	Thu,  4 Jun 2026 14:39:15 +0200 (CEST)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
+ [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id 4E82D402E0
+ for <dev@dpdk.org>; Thu,  4 Jun 2026 12:11:25 +0200 (CEST)
+Received: by mail-pj1-f47.google.com with SMTP id
+ 98e67ed59e1d1-36bcf3d2565so352449a91.3
+ for <dev@dpdk.org>; Thu, 04 Jun 2026 03:11:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1780567884; x=1781172684; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=/73zjf44wMst5mK7oJiSaP1WtZJytkseRpD3MANfBzE=;
+ b=QSkVR31OwN2IUv2pvlJEOcb4QX/Gkgi5r/qFMGd7EQiHjmgvnmTGbyP02vG5SRuK0E
+ gUDIFF5Et98CdEnMrNiFCigZ1AmHFQwxmsAUinIRi4Z1PQSlgP2bPd2zu7Q5BeifbJUw
+ +PNsoRJQW8+Ow49u5uaT3NQvwKFLI1CX1kqi9a6t9xSaP7cJkMfQqk7c4P9WQGnfMIDL
+ bKwDmH7LeXrxOA/HaEPKc/HyAhKfoL7rjyvip2HRfYLHcbD+VMzdwL/wFuQsh2wACFvi
+ PQnGPlHVaqOe5Kp0MJJaynj4UNp9RcGP/+FCKrr9Yc5EO+/NlSH02Pe2fRZWlK3f4ZON
+ mb/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780573947; x=1781178747;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20251104; t=1780567884; x=1781172684;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Lcuwa/dBBG5bZML+0kW/mZKY/tNufGomlhQW/QC9AdI=;
- b=bkSOG8me1qQftf5PIeHLJT2KoTtM25Sy+djBzsUUp5NmY0eE1n+7haUpO9ZDfjN+Qv
- oRfNmLuI/iCb0JZssTxYbGHPZa9FT2kpW4flmEw4j13lVdGieU5iJOd3nkLDh/2OphaX
- F40fAQ2/7fX8k5JnUO9/PHtfYb9vXu78/DpRk7wqLbcwJD5UJxkDKtyv+t2FT+kmullp
- wG4gy0TmbzhAeT34Rou8mSfEzcZAU2/WL1jL6Ireu4XGpWrGyrmor4vYvwP3CvMdbgQ0
- kIkCG0+blqat32Lpy5yg9Eah91DglVSxwmaHEfYfr9NnGxVwATA8KQnHSTktxzjVFvIS
- zHIg==
-X-Gm-Message-State: AOJu0YxPOsrGixqs1chis8rFv0mkQNi2EZUN0aXAO9OIOu7lM8EafSHd
- UsjXyGUw/dvT9PoGwmx7HNSw+lpNlfIE7dwa+BgnpYzJpS+kfJYHcBXaLzEUXEjbXpycL+UUUO1
- nGNL8CNh3cwAXH00NhSUOCXQma0Q7kxcACdmDOVsMeWJQfEbTyqpbcVvPNGWX2iwh47w7amttgK
- 7AT/QkBQ21YuMWHuMQzys=
-X-Gm-Gg: Acq92OH4Mirz5ynoxMkr6TDJLvPtC3DQ9Hwf7IK8vcVoZKEPzXY/5hqqxAyaQVN9wQx
- oCVouEz+Re6y3D7cyi8Kk6OAeBcIie0qt1TkyDnHdKCuv7oa8BMNvooKFlHanDvrLsINrZoEigQ
- PwOZQNIlPrmSsJTu+23g8kEF2Dr9MXcz+XnJ/q9VRf/QzPoAB/XncDniKlBOvq2dylx9MJCGu4F
- /lsc9B7EhWy+2j3Tq+MRA+4OKV71BgX173UH3jHzVpdz87i6WdIPd1rhigasCdHyX3VvKBU4q/J
-X-Received: by 2002:a05:7022:661e:b0:137:f58c:3cb5 with SMTP id
- a92af1059eb24-137f6bbb081mr3427302c88.26.1780573947222; 
- Thu, 04 Jun 2026 04:52:27 -0700 (PDT)
-X-Received: by 2002:a05:7022:661e:b0:137:f58c:3cb5 with SMTP id
- a92af1059eb24-137f6bbb081mr3427282c88.26.1780573946662; Thu, 04 Jun 2026
- 04:52:26 -0700 (PDT)
+ bh=/73zjf44wMst5mK7oJiSaP1WtZJytkseRpD3MANfBzE=;
+ b=GaYcJShwdpuSrrC1+s85nTAQ7xR6XtwPSdrBj3DThDqURChM315STE8Uft18SnvEGx
+ svQgRAZfMUUZXc3aRQQP44YRlxWQFpSxYFEqMBzptAQ39pm+GteiqJmWd9nSetEZwwS5
+ JTIZ2yMPOm4bxORA+qfSZ5AQU8zZkXz05igc4cjf3v3+z+6rE0bR5ApUOIQiXNM9T0tW
+ VMe1nMTQKaGJ55DoU4rp5Q5DqL9dnPuaVNz0tGpYxU9tsiD632OYnpQVLq69gCK6ZSKo
+ w9VOEKOD/fHMNSkaFmLC0thc/VvNRcv6v9jBsmB4cehA+RrhYyHNix4lSnghQ3J+bq9k
+ ei+Q==
+X-Gm-Message-State: AOJu0Ywr4ohVqAUiSfb/K8qYHhXqrh6GjFzgKhOzM2HoMSO7Cd6q7CQz
+ WAJzmePBm4WC6jayqa4DcG8pw54iUkAxILmjjYNyFnRFIvY3DlNXPcea0WiwoT5FU7M6
+X-Gm-Gg: Acq92OH9wdMCt+BoN/8AncQxIWf1C9/6F1VmirFOtDjOwzbVK4/VjpXI1LzGylryszG
+ wX155HQyTA/kxTntL5J7lVaH/Hrq/bHAX6PHrNcIqF+bCR6mdZXH7yXd5Hk5QvEWdwOY16job/h
+ tsUNdzBKcnphqeAFKvC5W70ogUPqR+h5VzptDya9Rde3wCDUrTr/GlOr5IvraUJkX8PRelZw3mk
+ pVES7N4iQNtrBiWSOKOEWWvs5EW9Ou72ue//c/W2IMtzFAb23Mvk06IXXqAhu77/68YANGIOd85
+ pgzYg580pFdyP6lny/lqGOJ5OjL3VzOWbXazsFD/vdjGR4zZoJjzcMpobZJHwFGgUV3Q5yGyzaZ
+ SLHSG3mWtL5zuayJB4VaGfoCZ6FMjGHGS08EZp51HtaCc12uDk/1iI+gDD0eKXl7HZwYBgZVHDU
+ M4khYYLUok1yhv0WuqKLCeEd8cwj1yk8uaxCMVip413+ljiA==
+X-Received: by 2002:a17:90b:2d8d:b0:36b:e8b9:46a4 with SMTP id
+ 98e67ed59e1d1-36e32285cf3mr7076915a91.14.1780567884241; 
+ Thu, 04 Jun 2026 03:11:24 -0700 (PDT)
+Received: from localhost ([61.119.121.204]) by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-36e719b640esm3583264a91.2.2026.06.04.03.11.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 04 Jun 2026 03:11:23 -0700 (PDT)
+From: Laaahu <lilinhu618@gmail.com>
+To: dev@dpdk.org
+Cc: stable@dpdk.org,
+	lilinhu <lilinhu618@gmail.com>
+Subject: [PATCH] net/mlx5: fix counter TAILQ race between free and query
+ callback
+Date: Thu,  4 Jun 2026 18:11:12 +0800
+Message-Id: <20260604101112.72177-1-lilinhu618@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 MIME-Version: 1.0
-References: <20260520022012.243619-1-pravin.bathija@dell.com>
- <20260520022012.243619-6-pravin.bathija@dell.com>
-In-Reply-To: <20260520022012.243619-6-pravin.bathija@dell.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Thu, 4 Jun 2026 13:52:14 +0200
-X-Gm-Features: AVHnY4InhTlqiMaXSdDj-U0Cy5WRm9IlYOzCYV4i-ze97pxfZj3xhmYHjWEEs1U
-Message-ID: <CAO55csz3EORg=F++8h4mvoY525wZyPfcGNbZ+4VO8pa_DAj2qA@mail.gmail.com>
-Subject: Re: [PATCH v14 5/5] vhost: enable configure memory slots
-To: pravin.bathija@dell.com
-Cc: dev@dpdk.org, fengchengwen@huawei.com, stephen@networkplumber.org, 
- thomas@monjalon.net, Stephen Hemminger <stephen@networkplumber.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: aErZtCXrZMRpL-kzU8VaGdidYJdvvEmvvlA3Zzi0U6c_1780573947
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/alternative; boundary="0000000000009665fe06536c2d70"
+Content-Transfer-Encoding: 8bit
+X-Mailman-Approved-At: Thu, 04 Jun 2026 14:39:14 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,101 +77,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000009665fe06536c2d70
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: lilinhu <lilinhu618@gmail.com>
 
-On Wed, May 20, 2026 at 4:20=E2=80=AFAM <pravin.bathija@dell.com> wrote:
+flow_dv_counter_free() inserts counters into
+pool->counters[pool->query_gen] under pool->csl. Meanwhile,
+mlx5_flow_async_pool_query_handle() moves counters from
+pool->counters[query_gen ^ 1] to the global free list via
+TAILQ_CONCAT while holding only cmng->csl, not pool->csl.
 
-> From: Pravin M Bathija <pravin.bathija@dell.com>
->
-> This patch enables configure memory slots in the header define
-> VHOST_USER_PROTOCOL_FEATURES.
->
-> Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
-> Acked-by: Fengchengwen <fengchengwen@huawei.com>
-> Reviewed-by: Stephen Hemminger <stephen@networkplumber.com>
-> Acked-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-> ---
->  lib/vhost/vhost_user.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/lib/vhost/vhost_user.h b/lib/vhost/vhost_user.h
-> index 6435816534..732aa4dc02 100644
-> --- a/lib/vhost/vhost_user.h
-> +++ b/lib/vhost/vhost_user.h
-> @@ -32,6 +32,7 @@
->                                          (1ULL <<
-> VHOST_USER_PROTOCOL_F_BACKEND_SEND_FD) | \
->                                          (1ULL <<
-> VHOST_USER_PROTOCOL_F_HOST_NOTIFIER) | \
->                                          (1ULL <<
-> VHOST_USER_PROTOCOL_F_PAGEFAULT) | \
-> +                                        (1ULL <<
-> VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS) | \
->                                          (1ULL <<
-> VHOST_USER_PROTOCOL_F_STATUS))
->
->  typedef enum VhostUserRequest {
-> --
-> 2.43.0
->
-> Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+The comment in flow_dv_counter_free() claims the lock is not needed
+because the query callback and the release function operate on
+different lists. That holds only if the free path always observes
+the up-to-date query_gen. It can be violated:
 
---0000000000009665fe06536c2d70
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+1. A counter free thread (non-PMD, e.g. OVS offload thread) reads
+   pool->query_gen == 0 and is about to insert into counters[0].
+2. The free thread is preempted by the OS scheduler; it is a regular
+   pthread, not pinned to a core.
+3. The eal-intr-thread alarm fires: query_gen++ (now 1) and the async
+   query is sent.
+4. Hardware completes the query and the callback runs TAILQ_CONCAT on
+   counters[0] (= query_gen ^ 1).
+5. The free thread resumes and runs TAILQ_INSERT_TAIL on counters[0]
+   concurrently with step 4 on another core.
 
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, May 20,=
- 2026 at 4:20=E2=80=AFAM &lt;<a href=3D"mailto:pravin.bathija@dell.com">pra=
-vin.bathija@dell.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quo=
-te" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204=
-);padding-left:1ex">From: Pravin M Bathija &lt;<a href=3D"mailto:pravin.bat=
-hija@dell.com" target=3D"_blank">pravin.bathija@dell.com</a>&gt;<br>
-<br>
-This patch enables configure memory slots in the header define<br>
-VHOST_USER_PROTOCOL_FEATURES.<br>
-<br>
-Signed-off-by: Pravin M Bathija &lt;<a href=3D"mailto:pravin.bathija@dell.c=
-om" target=3D"_blank">pravin.bathija@dell.com</a>&gt;<br>
-Acked-by: Fengchengwen &lt;<a href=3D"mailto:fengchengwen@huawei.com" targe=
-t=3D"_blank">fengchengwen@huawei.com</a>&gt;<br>
-Reviewed-by: Stephen Hemminger &lt;<a href=3D"mailto:stephen@networkplumber=
-.com" target=3D"_blank">stephen@networkplumber.com</a>&gt;<br>
-Acked-by: Maxime Coquelin &lt;<a href=3D"mailto:maxime.coquelin@redhat.com"=
- target=3D"_blank">maxime.coquelin@redhat.com</a>&gt;<br>
----<br>
-=C2=A0lib/vhost/vhost_user.h | 1 +<br>
-=C2=A01 file changed, 1 insertion(+)<br>
-<br>
-diff --git a/lib/vhost/vhost_user.h b/lib/vhost/vhost_user.h<br>
-index 6435816534..732aa4dc02 100644<br>
---- a/lib/vhost/vhost_user.h<br>
-+++ b/lib/vhost/vhost_user.h<br>
-@@ -32,6 +32,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(1=
-ULL &lt;&lt; VHOST_USER_PROTOCOL_F_BACKEND_SEND_FD) | \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(1=
-ULL &lt;&lt; VHOST_USER_PROTOCOL_F_HOST_NOTIFIER) | \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(1=
-ULL &lt;&lt; VHOST_USER_PROTOCOL_F_PAGEFAULT) | \<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (1ULL &l=
-t;&lt; VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS) | \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(1=
-ULL &lt;&lt; VHOST_USER_PROTOCOL_F_STATUS))<br>
-<br>
-=C2=A0typedef enum VhostUserRequest {<br>
--- <br>
-2.43.0<br>
-<br></blockquote><div>Reviewed-by: Maxime Coquelin &lt;<a href=3D"mailto:ma=
-xime.coquelin@redhat.com" target=3D"_blank">maxime.coquelin@redhat.com</a>&=
-gt;=C2=A0</div></div></div>
+Because the two paths take different locks, TAILQ_INSERT_TAIL and
+TAILQ_CONCAT run concurrently on the same list with no
+synchronization and corrupt it: the pool-local list ends up with a
+NULL head but a dangling tqh_last, and the global free list tail no
+longer points to the real tail. The just-freed counter and every
+counter inserted afterwards become unreachable and are leaked.
 
---0000000000009665fe06536c2d70--
+Non-PMD threads can be preempted for hundreds of microseconds under
+CPU pressure, which is well within the async query round-trip time,
+so the window is reachable in practice.
+
+Fix it by taking pool->csl in the query completion callback before
+operating on pool->counters[query_gen], serializing the CONCAT with
+any concurrent INSERT. The lock is taken once per pool per query
+completion in the eal-intr-thread context, not on the datapath, so
+the cost is negligible. Lock order is pool->csl then cmng->csl,
+matching all other sites.
+
+Also handle the error path: previously the counters accumulated in
+pool->counters[query_gen] were abandoned when a query failed. Move
+them back to the global free list to avoid a leak on persistent
+query failures.
+
+Fixes: ac79183dc6f7 ("net/mlx5: optimize free counter lookup")
+Cc: stable@dpdk.org
+
+Signed-off-by: lilinhu <lilinhu618@gmail.com>
+---
+ drivers/net/mlx5/mlx5_flow.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+index 915ea29a5a..20aad87f5d 100644
+--- a/drivers/net/mlx5/mlx5_flow.c
++++ b/drivers/net/mlx5/mlx5_flow.c
+@@ -9904,6 +9904,20 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
+ 
+ 	if (unlikely(status)) {
+ 		raw_to_free = pool->raw_hw;
++		/*
++		 * The query failed, so the freed counters accumulated in the
++		 * old-gen list during this round would otherwise be stranded.
++		 * Move them back to the global free list to avoid a leak when
++		 * queries fail persistently.
++		 */
++		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
++			rte_spinlock_lock(&pool->csl);
++			rte_spinlock_lock(&cmng->csl[cnt_type]);
++			TAILQ_CONCAT(&cmng->counters[cnt_type],
++				     &pool->counters[query_gen], next);
++			rte_spinlock_unlock(&cmng->csl[cnt_type]);
++			rte_spinlock_unlock(&pool->csl);
++		}
+ 	} else {
+ 		raw_to_free = pool->raw;
+ 		if (pool->is_aged)
+@@ -9913,11 +9927,20 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
+ 		rte_spinlock_unlock(&pool->sl);
+ 		/* Be sure the new raw counters data is updated in memory. */
+ 		rte_io_wmb();
++		/*
++		 * A counter free thread may have read a stale query_gen
++		 * before the generation was flipped and could still be
++		 * inserting into this same old-gen list. Hold pool->csl to
++		 * serialize TAILQ_CONCAT with that TAILQ_INSERT_TAIL and
++		 * avoid corrupting the list.
++		 */
+ 		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
++			rte_spinlock_lock(&pool->csl);
+ 			rte_spinlock_lock(&cmng->csl[cnt_type]);
+ 			TAILQ_CONCAT(&cmng->counters[cnt_type],
+ 				     &pool->counters[query_gen], next);
+ 			rte_spinlock_unlock(&cmng->csl[cnt_type]);
++			rte_spinlock_unlock(&pool->csl);
+ 		}
+ 	}
+ 	LIST_INSERT_HEAD(&sh->sws_cmng.free_stat_raws, raw_to_free, next);
+-- 
+2.39.3 (Apple Git-146)
 
