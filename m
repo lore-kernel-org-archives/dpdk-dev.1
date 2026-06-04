@@ -2,84 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69500CD6E74
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 17:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C8DCD6E74
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 17:41:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 50C9A402D3;
-	Thu,  4 Jun 2026 19:37:04 +0200 (CEST)
-Received: from mail-qv1-f100.google.com (mail-qv1-f100.google.com
- [209.85.219.100])
- by mails.dpdk.org (Postfix) with ESMTP id 23A0140151
- for <dev@dpdk.org>; Thu,  4 Jun 2026 19:37:01 +0200 (CEST)
-Received: by mail-qv1-f100.google.com with SMTP id
- 6a1803df08f44-8ce65629acaso10950516d6.3
- for <dev@dpdk.org>; Thu, 04 Jun 2026 10:37:01 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E860402D3;
+	Thu,  4 Jun 2026 19:41:51 +0200 (CEST)
+Received: from mail-vs1-f98.google.com (mail-vs1-f98.google.com
+ [209.85.217.98]) by mails.dpdk.org (Postfix) with ESMTP id 4A2244028C
+ for <dev@dpdk.org>; Thu,  4 Jun 2026 19:41:50 +0200 (CEST)
+Received: by mail-vs1-f98.google.com with SMTP id
+ ada2fe7eead31-6c28e1511adso605515137.0
+ for <dev@dpdk.org>; Thu, 04 Jun 2026 10:41:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780594620; x=1781199420;
+ d=1e100.net; s=20251104; t=1780594909; x=1781199709;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=NnEdVi4kWL69DGBjeb43VoH3UfD3/9cLy/AsVll+u0g=;
- b=qsEoMT5sW+kGWs8yM3sfnwd3hxeGneLsVM1eWO7EUQRREQMKCCAwoYmt9yYSzV9hh8
- 69NNBGN2XmAsfTbY7p/gUMee/V9XfyNx9U2NOKkwjpVQc/CO0Y2hok1HWm7rp7LeGBAA
- gTy3PYrQak6DCKJ/dICfzP520p9g9TWTTU3ipy/Ng28NzLc9KoyVo8QCnc9GvMTUF2gC
- p9h7wv9qq+mb+9+LRnl30iIXYVjDdASnbWMATGpdizXsNGTfnWCOxlhlkPD4McZga5YO
- LlefW3M1iNxcJucuDzZr+skSGBU5r8X0LKxJiXUhNiwwwbv6OFnOvX9+xmrBlvVvhpKc
- Orvw==
-X-Gm-Message-State: AOJu0Ywo2c7vVYqPVbBJ+uDP1VKdFfSaQxGqAEm2gJHKc6n0apea+Bhy
- wD56XQLh9CwzufXjLCkGZ/3Pu1I/9uNPeH+c8ptgV2hBp0mqDLXPAkm67bX/Wu3FwDZELQv7dCY
- z3C/sM4n9k9SKE6bE7DH1moNeDNeVosMQ5jGaUHGPvmN9u4RCJt7ewbegK0MELdmoigk2iyInYt
- 13gGNGqaN/xwDvzupimoWI21Y33tJXFKrRAeiP5fm80kBSuhSaLYq/k/+LvInm3CGgh6czsLWse
- +AMkw==
-X-Gm-Gg: Acq92OH2d4pQfkC7z0cHAbVrHE4nlHoz3lWIcfn/h9BlmY0joRdYunzCLYe1RE4uwXq
- vYrC/d2pPUznbguoUpBfcDTUP1EJJECOMSUEutJnDKGfPocO+GyNGvxWNrwa7p8Ww8HQmKko/0P
- 4s8DGH1miVhf3nCgOA3aXH3ZBvWySaa6kfqofYAEbrUW97yi2C1R0iMmDgYJ4riDkdpAYHjC19H
- TTWEv7gdH2BXgl3bPvvrCmAmKLF+RXk6v1z8pqdc7u9ZHu29jlX0GpRsnSfgq5SukYi2Zoq/Cc9
- eJ4MngH5/97ojRkTP8EtxUEMqJMYgSebTW33NC+3PGCXqh+KaZeO6pnJWoNqmf8RfEgqGgcebA2
- CbxC9kzdyeds96F0xjtRjXVg9oN68l/a/dkv8hi/QYFhTohYCL5MAHBW1Mrg/gkHza8fqK7c+Gw
- nVzX26uRvRkd6LCPU1OhRm/KQ=
-X-Received: by 2002:ad4:5ba7:0:b0:8ce:b75f:417c with SMTP id
- 6a1803df08f44-8cee62836fdmr1190786d6.47.1780594620428; 
- Thu, 04 Jun 2026 10:37:00 -0700 (PDT)
+ bh=6ReWKgB/zICeMG5eCmifVGW+lOiMmKhQWM9HtQ+toEY=;
+ b=AP6uY45F18Dm2QeNDhpA30PeTNsqqd/T9T6lkXHi2shKXu5DWsbyQH4o1VNNO/dJEw
+ 3+wSVigDfGEmWKV+8K6x5vcHaAHQN7XHjBGHhvrQih80TPDNlje4tVaqmtN2yGmFTIS4
+ lGQNgzLE24ZfZFoxJMepK1nxF6H8urtqRGehde6Y8F/v6ft+Hi3d4KtlKyTCItp0J7js
+ sd3fYUMOEMV9wEpRpS8ECuc9eCkkPFdOn7l8l/yXPC7aYAjZJOpGBKz44WmkFK5YKRCm
+ 5dfIoTpqjklhrzThJo1GSwLQpxLLCbUGfKHON83nMW8jmVdRfqxv3uqXLd1LKl20mRMb
+ oroQ==
+X-Gm-Message-State: AOJu0YzvJnXhsIrHGvGEsNZTLCbebPw4yzatOKFAfy8UaeHyHuvY9c+N
+ 9C7x40+atLUvYJwNazdtaS+lzgKh1n4g983SrVkiw8ph6Pwma9c5cLlqq131eG3OqrQQXq7FROt
+ pkJkkJ6JlK8T6+40V9PmoAIogTv5e74D9hAqlbV0wQZ6R/Mf+hVUHKl3JoWUw0cqKyevfXZzGxz
+ LJqHndNT+50uD8HZ9eah24u1WjPaUVOuSJZdlG92hPNaqbmf/SBrXYbAuGGXV5GhtPzaNDfdXae
+ ETAIg==
+X-Gm-Gg: Acq92OHVZRD1ETsUBqxeo7vOvNMStnD6D97hcDu/wk83qlOO5bqOgDp0B1nADYTbTpO
+ rf/pMDtzUWytFbgg1QHu0NOJmFiYhRe2EBD8trHmdqIDUUnvfQMZwaZVlWCWMcGI2jezpEJvtff
+ YmJIZiNzAAuvPzyDVzM4hB3XsJvRoIzlXtVI57tnwPdmR86PXce2QrvVlPZkWU7oftTeVH6iPJs
+ 3rtcYQzo69PR/370Vi+wfPapHNPWfhzECrKbd2FOq+GmuHIVrEmFYo76u3ltmi+0tSUJigwFoo3
+ 0giXslZpgCaTY6lx2vzjJCKH6bM+4ITim2l9PWlbrIHa0JG4uCZbPUXmdCFHjtt1dLyAEa91nek
+ 3r649NqeJmjY16ekqANKGG6KEMyZNqToNhZUSLt8odZKsxq/sV9i00asShlt1ot/WcAZm1cD1vj
+ qVotPrQ+iG+pGPWE/hCgyjlMJlCf9io+Wro0wVIowWHVX3NP3VcYPqRwq8s56gcqFvxMKdACewq
+ Z4=
+X-Received: by 2002:a05:6102:6b09:b0:636:46ee:2f10 with SMTP id
+ ada2fe7eead31-6ec57a842bcmr5802662137.9.1780594909316; 
+ Thu, 04 Jun 2026 10:41:49 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- ([144.49.247.127]) by smtp-relay.gmail.com with ESMTPS id
- 6a1803df08f44-8ceccd94f48sm3479686d6.10.2026.06.04.10.37.00
+ (address-144-49-247-63.dlp.protect.broadcom.com. [144.49.247.63])
+ by smtp-relay.gmail.com with ESMTPS id
+ ada2fe7eead31-6eb662a89e7sm446099137.24.2026.06.04.10.41.48
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 04 Jun 2026 10:37:00 -0700 (PDT)
+ Thu, 04 Jun 2026 10:41:49 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-wm1-f70.google.com with SMTP id
- 5b1f17b1804b1-490b2f22ea2so10513335e9.1
- for <dev@dpdk.org>; Thu, 04 Jun 2026 10:36:59 -0700 (PDT)
+Received: by mail-wm1-f72.google.com with SMTP id
+ 5b1f17b1804b1-490a060eb84so7123855e9.0
+ for <dev@dpdk.org>; Thu, 04 Jun 2026 10:41:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1780594619; x=1781199419; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1780594908; x=1781199708; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=NnEdVi4kWL69DGBjeb43VoH3UfD3/9cLy/AsVll+u0g=;
- b=CUniVeVvMlq1xMXK+m/6hZihTKurTIEixsZDLPwRT/Ts2eFqgf7T+eFYaag1MZOF8c
- b/yMacPc+JG388YoaUYme9ogMJwPH29K1Topj2MN/0NeA/cqQvQ3G0EXeZhZPZfdhJBR
- InzdHpq++6IonZP0DHVlhGAgtutA0bVtFCIs4=
-X-Received: by 2002:a05:600c:34ca:b0:490:4ee0:82ff with SMTP id
- 5b1f17b1804b1-490b5fe6112mr141330095e9.27.1780594619000; 
- Thu, 04 Jun 2026 10:36:59 -0700 (PDT)
-X-Received: by 2002:a05:600c:34ca:b0:490:4ee0:82ff with SMTP id
- 5b1f17b1804b1-490b5fe6112mr141329635e9.27.1780594618533; Thu, 04 Jun 2026
- 10:36:58 -0700 (PDT)
+ bh=6ReWKgB/zICeMG5eCmifVGW+lOiMmKhQWM9HtQ+toEY=;
+ b=g5NhHJIz5w0qS419rLNrtIuEFsIZcea2ln1B10RFE7XiAd3vRBYt2JS1dvoMbrThr2
+ 2HYcy5MK9e1RkB3M6CC1O95Log/uBuuI054hCVqBuBQIgG9yWwfS3ukHBHCQPcdKek9P
+ HsfSYBl3NvanTiHnLU0t+I70vh7YD7VRufgQ0=
+X-Received: by 2002:a05:600c:1d86:b0:48a:58ae:9938 with SMTP id
+ 5b1f17b1804b1-490b5fe95ebmr147114115e9.19.1780594907932; 
+ Thu, 04 Jun 2026 10:41:47 -0700 (PDT)
+X-Received: by 2002:a05:600c:1d86:b0:48a:58ae:9938 with SMTP id
+ 5b1f17b1804b1-490b5fe95ebmr147113715e9.19.1780594907469; Thu, 04 Jun 2026
+ 10:41:47 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260603175137.1990204-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260603175137.1990204-2-Mohammad-Shuab.Siddique@broadcom.com>
-In-Reply-To: <20260603175137.1990204-2-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260603175137.1990204-3-Mohammad-Shuab.Siddique@broadcom.com>
+In-Reply-To: <20260603175137.1990204-3-Mohammad-Shuab.Siddique@broadcom.com>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Thu, 4 Jun 2026 13:36:43 -0400
-X-Gm-Features: AVVi8Cd-2PdFmy4m8MpEUiTxYbeY1fODseNp0BIdQgdDI4baLcnQJy2E97jvfS0
-Message-ID: <CA+BST0kQ9fh2WZawUF4XdCvdwuN5C0faR-OsO_3SCpug=2FNVw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] net/bnxt: modify check for short Tx BDs
+Date: Thu, 4 Jun 2026 13:41:28 -0400
+X-Gm-Features: AVVi8Cd_3K_WTFdx7anX6t9zuBH3V9ceEL7mqovVZhBVAqZcNtzCMwquSjD0Ytg
+Message-ID: <CA+BST0mENUPRfSjg=BAYQp_B57q2=VK0N7BN6AYznojMUOTwDw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] net/bnxt: fix QP resource count in backing store
+ config
 To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 Cc: dev@dpdk.org, stable@dpdk.org, Ajit Khaparde <ajit.khaparde@broadcom.com>
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="000000000000c55656065370fd4b"
+ micalg=sha-256; boundary="000000000000fe3e2a0653710e49"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,10 +95,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000c55656065370fd4b
-Content-Type: multipart/alternative; boundary="000000000000ba23f1065370fdb6"
+--000000000000fe3e2a0653710e49
+Content-Type: multipart/alternative; boundary="000000000000f2f9cf0653710e16"
 
---000000000000ba23f1065370fdb6
+--000000000000f2f9cf0653710e16
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -105,14 +107,16 @@ mohammad-shuab.siddique@broadcom.com> wrote:
 
 > From: Ajit Khaparde <ajit.khaparde@broadcom.com>
 >
-> There is no need to use the long BDs for transmits
-> where only checksum offload is needed.
-> Modify the check for long BD and use long BDs only in cases
-> where TSO and other offloads are requested.
+> The driver is not passing the QP1 count while
+> configuring backing store for QP type.
+> This can result in a smaller set of entries allocated by the
+> driver with the firmware.
 >
-> Fixes: 527b10089cc5 ("net/bnxt: optimize Tx completion handling")
+> The number of entries is provided by the firmware as a
+> part of backing store qcaps v2 HWRM command.
+>
+> Fixes: 5b5d398434f9 ("net/bnxt: add support for backing store v2")
 > Cc: stable@dpdk.org
->
 > Signed-off-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 > Signed-off-by: Mohammad Shuab Siddique <
 > mohammad-shuab.siddique@broadcom.com>
@@ -120,36 +124,41 @@ mohammad-shuab.siddique@broadcom.com> wrote:
 Acked-by:  Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
 > ---
->  drivers/net/bnxt/bnxt_txr.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/net/bnxt/bnxt_ethdev.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/net/bnxt/bnxt_txr.c b/drivers/net/bnxt/bnxt_txr.c
-> index 27758898b0..7ef5b15ae8 100644
-> --- a/drivers/net/bnxt/bnxt_txr.c
-> +++ b/drivers/net/bnxt/bnxt_txr.c
-> @@ -111,8 +111,7 @@ int bnxt_init_tx_ring_struct(struct bnxt_tx_queue
-> *txq, unsigned int socket_id)
->  static bool
->  bnxt_xmit_need_long_bd(struct rte_mbuf *tx_pkt, struct bnxt_tx_queue *tx=
-q)
->  {
-> -       if (tx_pkt->ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
-> RTE_MBUF_F_TX_TCP_CKSUM |
-> -                               RTE_MBUF_F_TX_UDP_CKSUM |
-> RTE_MBUF_F_TX_IP_CKSUM |
-> +       if (tx_pkt->ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
->                                 RTE_MBUF_F_TX_VLAN |
-> RTE_MBUF_F_TX_OUTER_IP_CKSUM |
->                                 RTE_MBUF_F_TX_TUNNEL_GRE |
-> RTE_MBUF_F_TX_TUNNEL_VXLAN |
->                                 RTE_MBUF_F_TX_TUNNEL_GENEVE |
-> RTE_MBUF_F_TX_IEEE1588_TMST |
+> diff --git a/drivers/net/bnxt/bnxt_ethdev.c
+> b/drivers/net/bnxt/bnxt_ethdev.c
+> index b677f9491d..7d70d0f3ec 100644
+> --- a/drivers/net/bnxt/bnxt_ethdev.c
+> +++ b/drivers/net/bnxt/bnxt_ethdev.c
+> @@ -5404,11 +5404,11 @@ int bnxt_alloc_ctx_pg_tbls(struct bnxt *bp)
+>                         if (ctxm->type =3D=3D
+> HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_CQ)
+>                                 entries =3D ctxm->cq_l2_entries;
+>                         else if (ctxm->type =3D=3D
+> HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_QP)
+> -                               entries =3D ctxm->qp_l2_entries;
+> +                               entries =3D ctxm->qp_l2_entries +
+> ctxm->qp_qp1_entries;
+>                         else if (ctxm->type =3D=3D
+> HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_MRAV)
+>                                 entries =3D ctxm->mrav_av_entries;
+>                         else if (ctxm->type =3D=3D
+> HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_TIM)
+> -                               entries =3D ctx2->qp_l2_entries;
+> +                               entries =3D ctx2->qp_l2_entries +
+> ctx2->qp_qp1_entries;
+>                         entries =3D clamp_t(uint32_t, entries,
+> ctxm->min_entries,
+>                                           ctxm->max_entries);
+>                         ctx_pg[i].entries =3D entries;
 > --
 > 2.47.3
 >
 >
 
---000000000000ba23f1065370fdb6
+--000000000000f2f9cf0653710e16
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -162,16 +171,18 @@ x 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">From: =
 Ajit Khaparde &lt;<a href=3D"mailto:ajit.khaparde@broadcom.com" target=3D"_=
 blank">ajit.khaparde@broadcom.com</a>&gt;<br>
 <br>
-There is no need to use the long BDs for transmits<br>
-where only checksum offload is needed.<br>
-Modify the check for long BD and use long BDs only in cases<br>
-where TSO and other offloads are requested.<br>
+The driver is not passing the QP1 count while<br>
+configuring backing store for QP type.<br>
+This can result in a smaller set of entries allocated by the<br>
+driver with the firmware.<br>
 <br>
-Fixes: 527b10089cc5 (&quot;net/bnxt: optimize Tx completion handling&quot;)=
+The number of entries is provided by the firmware as a<br>
+part of backing store qcaps v2 HWRM command.<br>
 <br>
+Fixes: 5b5d398434f9 (&quot;net/bnxt: add support for backing store v2&quot;=
+)<br>
 Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
 ><br>
-<br>
 Signed-off-by: Ajit Khaparde &lt;<a href=3D"mailto:ajit.khaparde@broadcom.c=
 om" target=3D"_blank">ajit.khaparde@broadcom.com</a>&gt;<br>
 Signed-off-by: Mohammad Shuab Siddique &lt;<a href=3D"mailto:mohammad-shuab=
@@ -187,43 +198,60 @@ erif;font-size:11pt">&gt;</span>=C2=A0</div><blockquote class=3D"gmail_quot=
 e" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204)=
 ;padding-left:1ex">
 ---<br>
-=C2=A0drivers/net/bnxt/bnxt_txr.c | 3 +--<br>
-=C2=A01 file changed, 1 insertion(+), 2 deletions(-)<br>
+=C2=A0drivers/net/bnxt/bnxt_ethdev.c | 4 ++--<br>
+=C2=A01 file changed, 2 insertions(+), 2 deletions(-)<br>
 <br>
-diff --git a/drivers/net/bnxt/bnxt_txr.c b/drivers/net/bnxt/bnxt_txr.c<br>
-index 27758898b0..7ef5b15ae8 100644<br>
---- a/drivers/net/bnxt/bnxt_txr.c<br>
-+++ b/drivers/net/bnxt/bnxt_txr.c<br>
-@@ -111,8 +111,7 @@ int bnxt_init_tx_ring_struct(struct bnxt_tx_queue *txq,=
- unsigned int socket_id)<br>
-=C2=A0static bool<br>
-=C2=A0bnxt_xmit_need_long_bd(struct rte_mbuf *tx_pkt, struct bnxt_tx_queue =
-*txq)<br>
-=C2=A0{<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0if (tx_pkt-&gt;ol_flags &amp; (RTE_MBUF_F_TX_TC=
-P_SEG | RTE_MBUF_F_TX_TCP_CKSUM |<br>
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.=
+c<br>
+index b677f9491d..7d70d0f3ec 100644<br>
+--- a/drivers/net/bnxt/bnxt_ethdev.c<br>
++++ b/drivers/net/bnxt/bnxt_ethdev.c<br>
+@@ -5404,11 +5404,11 @@ int bnxt_alloc_ctx_pg_tbls(struct bnxt *bp)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 if (ctxm-&gt;type =3D=3D HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TY=
+PE_CQ)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 entries =3D ctxm-&gt;cq_l2_entries;<=
+br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 else if (ctxm-&gt;type =3D=3D HWRM_FUNC_BACKING_STORE_CFG_V2_INP=
+UT_TYPE_QP)<br>
 -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0RTE_MBUF_F_TX_UDP_CKSUM | RTE_MBUF_F_=
-TX_IP_CKSUM |<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (tx_pkt-&gt;ol_flags &amp; (RTE_MBUF_F_TX_TC=
-P_SEG |<br>
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0entries =3D ctxm-&gt;qp_l2_entries;<b=
+r>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0entries =3D ctxm-&gt;qp_l2_entries + =
+ctxm-&gt;qp_qp1_entries;<br>
 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 RTE_MBUF_F_TX_VLAN | RTE_MBUF_F_TX_O=
-UTER_IP_CKSUM |<br>
+=A0 =C2=A0 else if (ctxm-&gt;type =3D=3D HWRM_FUNC_BACKING_STORE_CFG_V2_INP=
+UT_TYPE_MRAV)<br>
 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 RTE_MBUF_F_TX_TUNNEL_GRE | RTE_MBUF_=
-F_TX_TUNNEL_VXLAN |<br>
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 entries =3D ctxm-&gt;mrav_av_entries=
+;<br>
 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 RTE_MBUF_F_TX_TUNNEL_GENEVE | RTE_MB=
-UF_F_TX_IEEE1588_TMST |<br>
+=A0 =C2=A0 else if (ctxm-&gt;type =3D=3D HWRM_FUNC_BACKING_STORE_CFG_V2_INP=
+UT_TYPE_TIM)<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0entries =3D ctx2-&gt;qp_l2_entries;<b=
+r>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0entries =3D ctx2-&gt;qp_l2_entries + =
+ctx2-&gt;qp_qp1_entries;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 entries =3D clamp_t(uint32_t, entries, ctxm-&gt;min_entries,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 c=
+txm-&gt;max_entries);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 ctx_pg[i].entries =3D entries;<br>
 -- <br>
 2.47.3<br>
 <br>
 </blockquote></div></div>
 
---000000000000ba23f1065370fdb6--
+--000000000000f2f9cf0653710e16--
 
---000000000000c55656065370fd4b
+--000000000000fe3e2a0653710e49
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -317,13 +345,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCBQiRwUnHeiLuTBLr85n1htfKOstr/tBKTqvQvorZy4GzAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA2MDQxNzM2NTlaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCDdnfAXwjszCqD4AiJyzTE9idJd4Jgxiz6C5IHza20gMTAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA2MDQxNzQxNDhaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCPdOmRI8vZ
-nJPG25JW7j/tiJEJ0C7OtlAh2A1Ajg+43LFUliLRpf8rv1hpYcjBaUlaWRa0QXiBKmU5gGnaZvaU
-vSTzfyUXIK1mNA4U5PegDRyonn6Ql49I9fZiXb/RiB5G7/gY8FNJGNOFZYqmJYoI3KSXyEKaJ/bT
-n9+MIl8TqADvfKlsPatfxKygBsIW4tBVfU+Kcs7ofNQJBToVCX4t0IPeNGl24zDQ3E8/xbdjfgDy
-Y9wWpzGAi+wnjIdEp9Ph8Gr6Asnr46zCa2LWC6cgTZgxDKX4iuMhLbKdVardZ+Ljp5t+69CdRV4T
-KsthVhrlfNPCit4eUb1T1roAcTuX
---000000000000c55656065370fd4b--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAvSvc2HHto
+hUYSgcG8/kReAs0cg0tYpG85PsclbxknoxZN+PYnb2xyBwVyh6YDD+Z6xIaGY0fMSdnzxlwmt0gC
+4sQv/CtHZF4kO+NfPDnoRnpMzel+u+gXNgbluO+iEsZ6as/21U5Ljig9SffPy92MFLIuw+9/9a2t
+eqOjxG7ZsjrQwEQEH+PihJVtThCFY8Gr2Xqf9mAuyNNbDICNe4B/88VmqV1x7II6JpeDELAYoweJ
+H+ocOo8A//6eogHuFrN2tNHj4w0HfiiNxr65Mph4mpyU5UZ7REiZUgPCep6/nJIi6UO23iKrXFaO
+ZI1a6ZCa6SyzuU+zqqkhek1Ia1XC
+--000000000000fe3e2a0653710e49--
