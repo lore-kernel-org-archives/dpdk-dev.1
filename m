@@ -2,121 +2,122 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D721ACD6E57
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 09:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DE6CD6E4A
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 09:38:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1436A40430;
-	Thu,  4 Jun 2026 11:37:49 +0200 (CEST)
-Received: from SN4PR0501CU005.outbound.protection.outlook.com
- (mail-southcentralusazon11011043.outbound.protection.outlook.com
- [40.93.194.43]) by mails.dpdk.org (Postfix) with ESMTP id 8D10640430
- for <dev@dpdk.org>; Thu,  4 Jun 2026 11:37:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4E9F840662;
+	Thu,  4 Jun 2026 11:38:12 +0200 (CEST)
+Received: from BN1PR04CU002.outbound.protection.outlook.com
+ (mail-eastus2azon11010043.outbound.protection.outlook.com [52.101.56.43])
+ by mails.dpdk.org (Postfix) with ESMTP id 6CE6140270
+ for <dev@dpdk.org>; Thu,  4 Jun 2026 11:38:11 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SzLxPFBSml3F6KaTBayvJZ9fbX9/AS9rOvtA8VwjVUXXIxizzKau3AsfIA1PHxv5cK3kVMdV7X5R1SVRxjiPokXqVQUlMnsOGE7aneTXg7NuCIK/O/IzFDtBHbZ/Bp8YtDnGCaQEtKMjly2DUjXEX7tKEDSUBpV1K7BN6YauyHBmAOVFrDRqkqfrvkwAIdHQWQh6WvxbniMwJVxjpUqjW5aAj3S9t1Gz2VgBimWEojwQuCRoeD3nDaVjSuUV96jInT0JVF8vs98Pb8X4befPM58bFUtY4ga8nczpz/i4SrLvMTVFLmDDnSMHDR5tGRgXbPLK+QdrhJm+/kg0V571rA==
+ b=ubcTjIXb5enUDv5USOCy2XEYx/K2UpOAx6BWIOuhhjneRPHslSAHdQi5WPK9UGsBfrifez+BuGnUzfYSCqeK4v7KZ7VmwylCogFNBk51wq0M1OsT2eC3RgBupM5ZxmAWrezFerr824ELche8b5963PFh6uY97urI4+XZVEKExgauiO3eyojPq3sXmA0nUEqq5+j+9h57IsvsSi919pOFqIaLTf6DBO3rcMVP/QN+1+vDJtMKuzIiX6inq0DcR50x8fKCzwS4Xx9d277kwwv9obOjry/RyKwk7ntHgQOpwjVpng0iP+UDRBlgSy62cKllmdosjisE5Euqd6YkzIbZiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=myEIESGf8xg0yJs7kxubM78FzGAxvIfqvAigI46m3Bs=;
- b=YVci3HdbTNnKESrrAkIy/4amigAnOAxYCvekrpIIrSbhrUTtIb3/+HahxEJ1rZodReJPxJIG1TnGf+2Ke+4hmJOHeggK1cwJGJ2xnfp+B7o6992nC7aOwiY/RIwexMe44psuCVdy/q+BYph2CA7G0kxjVW0Q7fXh7lG7BrqcCsXU5AaCQ4uoIi5Gxl1+MwzYq8+lRDRk2Rsoe/Am0X5nfhgTTRE+e2522oH/bKvbTdl0sh/v7Nif1b3xUAwWY64Ej2Q4zHHo+/X6BB15mKg+DuF2Q8SJxw/R/WnWifz8DgYCTuGHQoQvRr4tTlQYfxr5alzkglu0kONn77kWHOsaFQ==
+ bh=1QPg23oXawwIg1QyPI18gLpR+M8UHY1HWuXRmaC1esU=;
+ b=H5hl3iPb3ALX1DQi13K/ifmgid9IxuEunbxzo6iOkpiA72tNdEnJcW6qB1AUzksVrqwdIQIN8p6OCtFtchlWJCos8k/opKYlEk+KBP1/B7EZD2U7aks+L9GKe1OLuf0c78FDL4VPueL5M9OVHr8LAd8cnc66slCZw115uOx5VCWfPg3lMk6cUPyALe5waWVKl6AqTOlUhP5rtBtRmEDKYEwxOGtIwZ+j/PgpWCpbD8IvkZ7UfnXfrKiFfa2mYgkQRDFWqAYXgLzk2oTzxo4WX5ZTK6Tw17uMrCP8G4gE4U29LRl8AUTD9gArCLH9o+02pi7Ws0SYYwSlMbct/XuFdg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=myEIESGf8xg0yJs7kxubM78FzGAxvIfqvAigI46m3Bs=;
- b=S5NlTg9R329E9BgbjirJk8PQ/9l43JbUM00xPux8PWVdSvJq68tiGnZxw5kR9rU4RB19cC15UY0S9MDXZHsDottmjCb2Xa3JiQF3xBmK3EuZJN0lzz6RD8/XJGL8hjr3ux49swSGCTKXhACS1G5arzTvzrL56C8aH4YkBvlABjlminyENsDtbsV1EVeM4OIVTJYt5y1G62fhVNQGdTR+8BNZzuDR3Hfy0/nyE1FM+ktz6QieHKdqUPgRSYmB8ybF/Sch4fWN8baaZ4CoFtod62285z4Y2gNWWIBEH2bblC+Pf9Is/f6ZXmbpWXLrnzj5VHT2TM/Q8YxPU2a9hu1E4g==
+ bh=1QPg23oXawwIg1QyPI18gLpR+M8UHY1HWuXRmaC1esU=;
+ b=XltUw+hOMMj3I2Kth87CT2Z4q0MM0N9AbEnZph9gam6fVQotY0HLHJeU8HYpah3I9MxweLp+yOQ+V3SvtAcewl3LL7lXmCbxoxBbr5hGh+HDUqlVPXUBrMQnbYxJXHNB617RhuAk58jAKU9mSTav4mGpGHTlW7Len6YNmnfxqn+EDkO20/4BhTgqOMv/rtZl6NAV/njeQ84bCFhDtNpd9muB3GGAVKrWtHaQ5qNfMxVTITmFYNGGWf8MDeXYParRAd7ONPeKXAKcMHc7kyLPJFeWENAf/K17jaPuwZ+9qwCkdJoue97C6jnQjtafpaBYxxZdyZGgEx58jwnAMrEZgQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from MW4PR12MB6754.namprd12.prod.outlook.com (2603:10b6:303:1eb::7)
  by BY5PR12MB4147.namprd12.prod.outlook.com (2603:10b6:a03:205::10)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.8; Thu, 4 Jun 2026
- 09:37:44 +0000
+ 09:38:07 +0000
 Received: from MW4PR12MB6754.namprd12.prod.outlook.com
  ([fe80::baee:e8cc:6cbf:3d84]) by MW4PR12MB6754.namprd12.prod.outlook.com
  ([fe80::baee:e8cc:6cbf:3d84%4]) with mapi id 15.21.0092.006; Thu, 4 Jun 2026
- 09:37:38 +0000
-Message-ID: <4350e4a1-2ff4-4b27-8811-1917d43b30ad@nvidia.com>
-Date: Thu, 4 Jun 2026 12:37:32 +0300
+ 09:38:07 +0000
+Message-ID: <80a9a922-f183-4dfc-bc57-ebff8295504f@nvidia.com>
+Date: Thu, 4 Jun 2026 12:38:01 +0300
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] net/mlx5: prepend implicit items in sync flow creation
- path
-To: Maxime Peim <maxime.peim@gmail.com>, dev@dpdk.org
-Cc: dsosnowski@nvidia.com, viacheslavo@nvidia.com, bingz@nvidia.com,
- orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com
-References: <20260511150854.1398044-1-maxime.peim@gmail.com>
- <20260527103531.1266488-1-maxime.peim@gmail.com>
+Subject: Re: [PATCH v2] net/mlx5: promote private API to stable
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
+ Matan Azrad <matan@nvidia.com>
+Cc: dev@dpdk.org
+References: <20260527103357.633429-1-dsosnowski@nvidia.com>
+ <20260529073255.689808-1-dsosnowski@nvidia.com>
 Content-Language: en-US
 From: Raslan Darawsheh <rasland@nvidia.com>
-In-Reply-To: <20260527103531.1266488-1-maxime.peim@gmail.com>
+In-Reply-To: <20260529073255.689808-1-dsosnowski@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TLZP290CA0007.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:9::7)
- To MW4PR12MB6754.namprd12.prod.outlook.com
+X-ClientProxiedBy: FR2P281CA0135.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9e::19) To MW4PR12MB6754.namprd12.prod.outlook.com
  (2603:10b6:303:1eb::7)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: MW4PR12MB6754:EE_|BY5PR12MB4147:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97988d73-0472-4683-cc09-08dec21cea6f
+X-MS-Office365-Filtering-Correlation-Id: 42e3870e-575b-4975-0a8a-08dec21cfb86
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|366016|376014|1800799024|6133799003|22082099003|18002099003|11063799006|4143699003|56012099006;
-X-Microsoft-Antispam-Message-Info: T629BzHHy8qo9Ec0X0J9HVIS2yBugTUC0s7N+o8XUYOB68u1ArSmMj+1eUrn/WAli0jXH4BM7ZjVEHZ0DSP4FyooZewZXoFM0pOlewJxvwGbiLjiI/3XmYVlbOKMHBJHPb1cvShablBxcukp9NOcTZSKjrldC1r2//6turRaExcF5rS65wJtaDBA3//iMmVRfzh65CHBUUZ91G/Zkin6wDpAIRbM5xU3qWRFU2wvpqSb1oJtbBgeY/ScYvlAwVMORG4YO23ZGiekM7RU+O1sYjQuCArx38Z9VzE5UUr8e2HGIN3TP9/Tcdtfmxcbf/XGJjjAYXZrlCx052ZS4p+BKjHGKboTu/I6EazWljdL2nGSoc75Wnh9FkYvSalhYHuCLxJXNsqe1yMfdePvP9KoTl28z/hdjieNIlSQDj4tp9uh+PHDma+RMy11FdfcJM2aZb6lHzIwk0FljAlbY7G2hO3AzDz/NDDk8JKfAZ6ydWhT59qFi02/clQD+1C72MRJGRGyO40EGjX0doPjM3FfBv2gC9+5HROSZoQuI7M4kwAi0ihVwqQkGUw3li5qKZyQRbWEOFAdy+71isQqxWPFFofwBrRD0Qlj5mu3UXXa8r/qc3OhSkOLC1n49iOSt1XEd/jI45sUIWhYaAtyvBnmaFojtfpScR4zv4kJfalOzNN92oPff30Msz0+l7w0vnJd
+X-Microsoft-Antispam-Message-Info: cxUJxz+38rpq4uLh1lfsbJ2aWhzYIgt/HqVHkHBqkitgJYT4clnXXyGlb4J+yM/HVvzogm03uy7G524WYaOkiPkiPIUmucJI9QIr/MLLIOmFiaYoSFh2OYg13giFF2ekrFPowiEQ097rTOUfhONcgYcmbs1FENAIWtsBeV8CucYTNMOKeKmyFrJbL9RRfEaaQ35c2KDWY2noVcmi0GMetOu4o45qooMULZOGAG/+ZJQ8lBqmbcMMwARF6IyF8ORtL/vndK1l01Lo+DDLc72zLr57zPQRIvALoXFcuFa6HRKXe52fDxSBPDgPMikTj+tUjQKUrptK6BEwKzZEMGhLLEp8lVRvwAuJ4RoApM+zQja7i8rEBJTBQZ91ld3ScFQi563vIuvEzs/n4bRbfzRqubqk2CPOg1MXY9He3LR3ITLz9eB2OcX52k6pDhQBJI8pvzQc+Ii6GL8jjQi+ztUH6Bs+NLx9schzJcZhVMiMIGDwVqrdOQ2SVtG5i0bmc8dkkufdLYOLmaeJZ4J9rROu2zsvcnVN1yCiM/eTmHylRDbiUNCRkfvrH83QI9qoJtOSIo/e1l07WB1oANHls91jPBwFUn+xoPwWCtkgeAmebz20e7jNKM4RFGhl//SLxVXMzVsQI7PaeCZFhMbrtfqLUWZZn+w1Spj5JmsclpDVS1KIxWb5JYauNP+oX0fN4wJq
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:MW4PR12MB6754.namprd12.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(366016)(376014)(1800799024)(6133799003)(22082099003)(18002099003)(11063799006)(4143699003)(56012099006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Qmp4S0Nka0JHeXdNQ1Bmb2pWMVVZT0hSMHRHdzA4ZnNQQzR4Rk9KZjZHb0E3?=
- =?utf-8?B?cG5SV2FBSWdKTWpGZEFUQWtOL3dleWdEU3Qvb3lhL21sRDROWnp1YlFRUUVS?=
- =?utf-8?B?ZHFvRHhWNTdyNHFBY1BKS3dWeVkvb2pKOWFnL0tuZGlvdEVucUFWaFZzUGkz?=
- =?utf-8?B?Nm9xNmlVR2NBU1ltY3JWYmZpOHpDZTB0UTAyN3dBOVNFeHloeFdOWHR6eE1F?=
- =?utf-8?B?OStQdld5TWhkdXJsSHJRSko5bmNhU0tDWFNNQmRBMk4zVWh1RXpIVXFlQmdX?=
- =?utf-8?B?TTczbFI2N05tekMzZHZNSitXdzV4QzM1b2tYQ054YUVaZEllU3BlSlNDbkJl?=
- =?utf-8?B?MmhnK25nYkNCNkRxSFZEQ1l4MFcwRFhFUGt6OTN2ditEajFjd1F4d0hTR0JN?=
- =?utf-8?B?ZktSbWRENnlvMi9BYzJlTVJ6RWUrWVlBZVJPSmUrZXo4L3EzZk84dzZPYjF3?=
- =?utf-8?B?bHBuOFhSVlhJT2pEREEzYWt1YW0rZGxqNWRLT0RHOXFSN2QrNzRRRERLTS9Y?=
- =?utf-8?B?U3A0OVFLWlFVVVQva09lRHdaRExLTHI4b0wzc1ZMdlBKNnVDOEtoc1BaNkJV?=
- =?utf-8?B?RXBvZlBYMGMvcmpVZUY2SVJwQXNqN1R6cERYYnFLS09HT1NNbUxaVE5rVWtv?=
- =?utf-8?B?SmJKRnQ1NVcvZTZQTmpoeDJ4bmp1czVGRnBEUEx3Ny96Ylg3MG5tTGhtRFRk?=
- =?utf-8?B?ODlKZWkwbDQwSHhaK2NUdWxORk5wVHRxeFpqTEZqS3VLRmkrajFmbTNSRHBB?=
- =?utf-8?B?UXJlK1JMUDhVd0dLR1hUZkpheGgzNGozVlVyb0JBTG1McUxUdGtVUTZKWTNX?=
- =?utf-8?B?bU5iMzI2NFZpK09LRHRvV2RMYTMrcVBpak02eGNDZ1k0ak9BZEJmRm5HZzBF?=
- =?utf-8?B?Q3NKY2RpVy9hMDFpZWIyeE9HZ1BkK2VkZFJLc3RYQnRtc2FTREo3ODZ6SWNm?=
- =?utf-8?B?cm9VVEpLbU9uYnowcEtXdzVab3ZKMGRiNklrWmtQbFREK2ZQNnZ4NklVQ09X?=
- =?utf-8?B?Z1A4L1ZHeUQwSVkxYmlENklGay90N0ZSSGlrWGlDMFhjSFVsZ0w5eE4xRExk?=
- =?utf-8?B?M0NDQmJFcCtmZmV6VU1jSGZtcUxGQ0NzSkU4Z29FY1NiZWhjWHN4Z21KUkRX?=
- =?utf-8?B?ZjZNZTRzUmJXVGxWMlpyOHRiaS9uaE5IT2x1Y0VNblh6eko3UFJkc1NMVWoy?=
- =?utf-8?B?YXZmaXlVUkR1VXRTeHpMekh1RFBwSmJUN3R6MEtYQUNVeGZiazVGaFFqT2Rl?=
- =?utf-8?B?SVVWRUVGbzBtU3ZOOW5ROWFGVG01OGV3WCtwUHJscm1Sdkhzc1JrQUNOTjFW?=
- =?utf-8?B?KzF6TWtFNXE4dm5TblE2Y1RpLzZiVitqZmttVGY4YTgwZ281K3Z2TVVjdTFz?=
- =?utf-8?B?TWRWR2x6bHN0WVQvZmxvTWdGcHNpRSsydmppUjhwNDJzUnMyMnV3ZXAzbnd1?=
- =?utf-8?B?aDlLeW5taitsbXAvdno5WXQzTVNQM2ZRMWQrMzNLdkk3Q0hDc2laY0ZxaWVa?=
- =?utf-8?B?QTZTaUY5MWo3dVFMMHQyZkFqaFBtYURCTUYzVGF4RWd3TzQycG9oU2hicW9s?=
- =?utf-8?B?bisyNUVKSktqeTRTUkVMcTNCZWFMVjNwazc1K3pOVHJEa0ltQ2xFbjlKVEE4?=
- =?utf-8?B?SkVBS3Bva0xHeU9taFF3aHBnS0ZLL00yYnFVaThjTFgrMlJmMWNNK2xZQzZu?=
- =?utf-8?B?VlhMMHVRV0FvbWp2d1V0TDJIZFo4NEx5OUdFU0xjUTFXcEIrd21XTmdjK3pP?=
- =?utf-8?B?UHQzWHgwaUVOZ0FhUmNEQUwyL0hwVTVIUFd5SEpBN3crRCtFS3RmWGM1VThH?=
- =?utf-8?B?RWVNYVRGTGRNajQ0NEZwbWpBeFNwaTNRRFpyYnFaN0JzWVZ1eWhhdzJxc092?=
- =?utf-8?B?OGRXS0xmUXByWDJkTTZyZUFpbmxDWHFVaGt3UUdRUEFXYmQwSW5tbWp1TzJE?=
- =?utf-8?B?TzV3Q1VSMlM0RjZYYkJFckFlbVVYQkt6RFR1TzEyTzdmWWNnczdnenN6WmJj?=
- =?utf-8?B?VlFyOVZPbXQrT1R0Z01GMnFXN0RMVzE1cC9OeVVCNW1GakdBakJFeWEwUG56?=
- =?utf-8?B?VlZESTNpRGJ2N1N5dmdRQmNDSmcxZ091aEZ6a21pVmt0VXhaK3JWdmNnZklS?=
- =?utf-8?B?dzNOTEtEZmdlQ1dFVGM5UGlnUnA2Snc0dmNTdmUrZnplQ2ZianBlbWJIUlZW?=
- =?utf-8?B?bUh1UVJ0S2VMUVZVWW1JMmszeFV0Zjd3SnVCbUorWnJDbktFcXVDenQ1SDdq?=
- =?utf-8?B?VXVKdzJnNTZXbG9TSXRBeVBYVXluSTFpOHArTmVBRnlxYnlYaFdlNS95S3V6?=
- =?utf-8?Q?i4vwFwXpp/76sGRvce?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MGxKVC9iamk5YVBKYVBKZG5CNDJUZmFmV1VoMS9pM1NudEFDNlBsWVdnL2lJ?=
+ =?utf-8?B?cTg1UWNmQ3VYZElLcXFTRXI0dkpKcG5QS044dEl6aWtGZDdhaTFzVnJWbDdw?=
+ =?utf-8?B?a0VoMzFaM052anVueVpBTGhlOTkrbkRsUlpmd0NYbzJoelBPT25qYXY4ZHdl?=
+ =?utf-8?B?WmIyMitqMVZqbVQvaStONG5STjlCZ2c0bkZScnlqd0dkK0plR1VVYTJ1SW9r?=
+ =?utf-8?B?aHVGZ3hqcUhSamRJeFhhSHpOcmtYTDk3ZTZWYndBM0pMMjA2WkVkM05Rb2hW?=
+ =?utf-8?B?WjdTOEJXbVZxRDBtL3hJUTZmYWE1K0JlTGxubWlldXVKanJVN3pnWVlHZXBZ?=
+ =?utf-8?B?ZTNGdkdNR0ozQ09od1ZsSCsxMjl4MHYveUVRQ2E3Zlg3a2RWY0VMRTdsSkV5?=
+ =?utf-8?B?OHAwVllqYUdtNlVmT0M1bS9XbGg5UHVJeE1iekpsSWhOUy96bFp3dkozaEhk?=
+ =?utf-8?B?NnZVSlV3SlZhYmFoTklzUi9xdXA5dE9HT1YyTGhxOExRQ0QxeUZML2xUQmVK?=
+ =?utf-8?B?TkhrQkZZQUdKbW5GM3Fialk1dVJ5bkRoV0ZkWTVvYVlYeFY0UmgwNUc5MndL?=
+ =?utf-8?B?azdzamVPbnkxZE9sTDJRU3BtNzcwRWlJTzVEZEJTVzlPY1NkR1dBUG1ibGxK?=
+ =?utf-8?B?aVBFVHR6MXNtdVR2MkNlbjhpNDNMMmhiMTBUZHB3M1g1a3FwUHYzczJJbU9P?=
+ =?utf-8?B?STRqSkdYQjQ0R1ZoYmFCNGk0dEN1TVlnR3lGd0JaNS9JdXRqZjZLRy95NXJ0?=
+ =?utf-8?B?ajM2eTBnWnFVTmJicVJlSVFUazRwd2YrQ29UU1lPY0x6K0RFZHJudndUa0Rp?=
+ =?utf-8?B?bGx1UUhibmNBS1VuYVNpV2prODlsTklFSTNIdkdrYkMrRWE1eVVhaVlEYTYx?=
+ =?utf-8?B?MSticmJ0enovZ3RFTTFRR3pycUpod09ac2grc2FRS0NRc2Y1ZmVMMlNGTDFy?=
+ =?utf-8?B?Y1VzK3poYWovSTN6ZXoxY1pRT1VvRHBYT29TT1FERXpUc2ZJZThBNkp1cVQ3?=
+ =?utf-8?B?ZDAxcnFrcUg4RHNkbnZ1b2lMSmhDY0pFZ0hJdUJraVBJRlcwVVBlaDNaSUNx?=
+ =?utf-8?B?V1h2aE1JOUYxdlhzV3FscGt0Q0lsdHpwVGFSM3pEQ0NaaTNkOG1IWm9MZTBp?=
+ =?utf-8?B?bm5ESkNvOUVVc21pRGFzeW1TQ052ckZNWWoyaThUMEpsejk5NkZZcmZDSjY5?=
+ =?utf-8?B?M0VjQlNtTXkwdmxlZzEwVDJlTWpHbmtCbEt2Zm9QYlJzMFR3cXRidUxxc2Ew?=
+ =?utf-8?B?cHd5S1B3WExLQWRjL1RlckwwQlUzVVJ0dDA3akZyVi9VZnZyOHFwcHluVDVl?=
+ =?utf-8?B?VlhTcnRTaGhvRlF0VEtFRDRIQzhGTzdlQ1pOZlk2eVdXem9lWG1Fem0wQjRM?=
+ =?utf-8?B?WlFLWjRIQ2FYNHVGTk1Yay8zMHRhejlhS3pPaDVrZ1VZVFBZMVB1WURSMWk0?=
+ =?utf-8?B?VHdObFVGdUc0Z21DeUlTOWE2RDNMUkdJWThKemNwbHBqQmJXTGdFaVhTYWhs?=
+ =?utf-8?B?U0xrWWtDZ2JxT3ZiQnlTVXdKWW1KNFhMWFdwL0JGY1YyQnFkbklIWm9PcEd6?=
+ =?utf-8?B?a05RNXhycDZGS3pja2ZwZzNuMkpMSWo1YVJNVzFlMkFpZytuQjRSN1d0dW9T?=
+ =?utf-8?B?bHhJcTFWV216RUZWVDZnOU5lUUNsL1diY1psZ0VZbVFVOG1kZG1iMit0S1JK?=
+ =?utf-8?B?ZnpPcjYvSDFPUGlCZy93Rm9BNmR3VVRiL2k5N2R4NlRvM2NxSStEWXVDWGFk?=
+ =?utf-8?B?ekY2MnRucUpjMURwdDY2QUZyRnVOQitGcmNRaHFWTEtaRWNKdklCWTFlSlpo?=
+ =?utf-8?B?ZzYwZldnb3d0a1NNT0QzYUZXd05TNUlENmNvL2lxT3pGSmNRak9GSmQ4N2s3?=
+ =?utf-8?B?WHA3b3ZlV2hVS1dqNjlTcTNiVnBFMnJvNjhqWnhlWFJwbmExRDVHemNpRXRH?=
+ =?utf-8?B?VVRlaDMzN1Q2TFZDNUdTM0JrcXFZRjRNcTdHWFRKZzNiZjlZb2N6S0pLOEky?=
+ =?utf-8?B?RmdyUzA0aE9YQW1PZDREMGdYUXdoQU5TY0Mvd1I4WkxSNGdOV3d0WDJDOSs5?=
+ =?utf-8?B?eGk5elFvMVZEOEZVR2IrbkFDbW8ybjFNODBYQVlPVnYyOW11NzR5SnB0cFQ3?=
+ =?utf-8?B?WnRmOWxkOFZTUFBaOFQ1aTVwcFFsbDI1SWJnVlNDdWF4WWt4Z3crZWk1YnVv?=
+ =?utf-8?B?Y3lHalcwQXJja0YrcW5NaFVBWm5QL3ZtM0dwRGR1aFJ3ZWFOSlZwNGNRdDI0?=
+ =?utf-8?B?djZmQi9FZFp1aTkyenZJKzZUaFhMSEJLQm5mTG5CcUlVQW5xeDBkUVBPUGRK?=
+ =?utf-8?Q?fg+3y0rqoyXqk9Yr2f?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97988d73-0472-4683-cc09-08dec21cea6f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42e3870e-575b-4975-0a8a-08dec21cfb86
 X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB6754.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2026 09:37:38.2327 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2026 09:38:06.9584 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: P1MRV+nIHxDUG9CtiUsIXzgSl5jpLzz26msaxdPR9xRIfJCjTf6T4zvXnKYreqSQOtOblQY2dWs2RrkxcXUmkg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: ce+len2Wr74Swf/ZpOmRgW+F7UpkHexvOJgkZ//HCIBJgK8R6TbadAx7Xr3HfmFaj29gDnDRgMez1jgZr7RvRw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4147
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -134,82 +135,53 @@ Errors-To: dev-bounces@dpdk.org
 Hi,
 
 
-On 27/05/2026 1:35 PM, Maxime Peim wrote:
-> In eSwitch mode, the async (template) flow creation path automatically
-> prepends implicit match items to scope flow rules to the correct
-> representor port:
->    - Ingress: REPRESENTED_PORT item matching dev->data->port_id
->    - Egress: REG_C_0 TAG item matching the port's tx tag value
+On 29/05/2026 10:32 AM, Dariusz Sosnowski wrote:
+> Following experimental functions are exposed by mlx5 PMD
+> since 25.11 release:
 > 
-> The sync path (flow_hw_list_create) was missing this logic, causing all
-> flow rules created via the non-template API to match traffic from all
-> ports rather than being scoped to the specific representor.
+> - rte_pmd_mlx5_driver_event_cb_register
+> - rte_pmd_mlx5_driver_event_cb_unregister
+> - rte_pmd_mlx5_enable_steering
+> - rte_pmd_mlx5_disable_steering
 > 
-> Add the same implicit item prepending to flow_hw_list_create, right
-> after pattern validation and before any branching (sample/RSS/single/
-> prefix), mirroring the behavior of flow_hw_pattern_template_create
-> and flow_hw_get_rule_items. The ingress case prepends
-> REPRESENTED_PORT with the current port_id; the egress case prepends
-> MLX5_RTE_FLOW_ITEM_TYPE_TAG with REG_C_0 value/mask (skipped when
-> user provides an explicit SQ item).
+> First two are used to register callbacks for driver events
+> (when Rx/Tx queues are created or destroyed).
+> Other two are used to enable/disable flow steering in mlx5 PMD.
+> No changes were made and no changes are planned to these symbols.
 > 
-> Also fix a pre-existing bug where 'return split' on metadata split
-> failure returned a negative int cast to uintptr_t, which callers
-> would treat as a valid flow handle instead of an error.
+> These are currently used by NVIDIA DOCA SDK since version 3.3,
+> which started depending on upstream DPDK releases [1].
+> Purpose of their use is to:
 > 
-> Fixes: e38776c36c8a ("net/mlx5: introduce HWS for non-template flow API")
-> Fixes: 821a6a5cc495 ("net/mlx5: add metadata split for compatibility")
-> Signed-off-by: Maxime Peim <maxime.peim@gmail.com>
+> - expose HW identifiers of Rx/Tx mlx5 queues managed by DPDK and
+> - allow flow steering to happen outside of DPDK.
+> 
+> Also, some of these symbols will be used by netdev-doca backend
+> in Open vSwitch [2].
+> Whenever a DOCA netdev would be added/removed in Open vSwitch,
+> it will have to disable/enable steering for mlx5 driver.
+> Stabilizing these symbols is required by current OVS policy
+> to remove the need for ALLOW_EXPERIMENTAL_API [3].
+> 
+> This patch promotes aforementioned symbols to stable.
+> 
+> [1]: https://docs.nvidia.com/doca/sdk/customer-affecting-changes/index.html
+> [2]: https://patchwork.ozlabs.org/project/openvswitch/list/?series=504726&state=%2A&archive=both
+> [3]: https://mail.openvswitch.org/pipermail/ovs-dev/2026-May/432066.html
+> 
+> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 > ---
-> v3:
->    - Factor the implicit-item prepend logic out of
->      flow_hw_pattern_template_create() into a new helper
->      flow_hw_adjust_pattern() and reuse it from flow_hw_list_create(),
->      instead of duplicating the prepend logic inline in the sync path.
->    - Zero-initialize item_flags in both callers. The validator is
->      read-modify-write on item_flags (reads MLX5_FLOW_LAYER_TUNNEL on
->      the first iteration), so leaving it uninitialized was UB.
->    - Call __flow_hw_pattern_validate() with nt_flow=true from the sync
->      path (was effectively nt_flow=false via the wrapper), restoring the
->      previous behavior that skips GENEVE_OPT TLV parser validation on
->      the non-template path.
->    - Document flow_hw_adjust_pattern(): the dual role of the nt_flow
->      parameter (template spec-left-zero vs. sync spec-filled + validator
->      flag), the three-way return, and the caller's ownership of
->      *copied_items across every exit path.
->    - Clarify the "omitting implicit REG_C_0 match" debug log now that
->      the helper runs on both the template and sync paths.
->    - Add Fixes: tags for the two original commits.
+> v2:
+> - Updated 26.07 release notes.
 > 
-> v4:
->    - Fix items in case splitted metadata are not needed.
-> 
-> v5:
->    - Make flow_hw_prepend_item() return a self-contained array. The
->      helper used to shallow-copy the prepended item, leaving its
->      .spec/.mask pointing at flow_hw_adjust_pattern()'s stack locals
->      (port_spec, tag_v, tag_m); once that frame returned, the
->      consumers in flow_hw_list_create() (sample / RSS / single create)
->      and the post-extraction template path dereferenced dangling
->      pointers. The prepended item is now deep-copied via
->      rte_flow_conv(RTE_FLOW_CONV_OP_ITEM, ...) into the tail of the
->      same mlx5_malloc() block, so the lifetime of every byte the
->      consumer can reach equals the lifetime of the returned array.
->      items[] continue to be shallow-copied (their spec/mask blobs are
->      application-owned and outlive the call). One alloc, one free; no
->      call-site or signature changes.
->    - Fix the &item_flags / &orig_item_nb argument order at both
->      flow_hw_adjust_pattern() call sites (introduced in v3 by the
->      helper extraction): the prior order silently stored the item
->      count into it->item_flags / the layer-flag arguments forwarded
->      into mlx5_nta_sample_flow_list_create / mlx5_flow_nta_handle_rss /
->      mlx5_flow_hw_create_flow, and stored the OR-accumulated layer
->      flags into it->orig_item_nb / per-rule item-count uses.
-> 
->   drivers/net/mlx5/mlx5_flow_hw.c | 262 +++++++++++++++++++++++---------
->   1 file changed, 194 insertions(+), 68 deletions(-)
+>   doc/guides/rel_notes/release_26_07.rst | 9 +++++++++
+>   drivers/net/mlx5/mlx5_driver_event.c   | 4 ++--
+>   drivers/net/mlx5/mlx5_flow.c           | 4 ++--
+>   drivers/net/mlx5/rte_pmd_mlx5.h        | 4 ----
+>   4 files changed, 13 insertions(+), 8 deletions(-)
 > 
 --
+
 Patch applied to next-net-mlx,
 
 Kindest regards
