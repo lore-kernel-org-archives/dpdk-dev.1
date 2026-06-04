@@ -2,47 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFE9CD6E77
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 15:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B561CD6E6D
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Jun 2026 15:20:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2FE25402D3;
-	Thu,  4 Jun 2026 17:11:29 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 8D06C402CC
- for <dev@dpdk.org>; Thu,  4 Jun 2026 17:11:27 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gWSgD5CmzzHnGhl;
- Thu,  4 Jun 2026 23:10:32 +0800 (CST)
-Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
- by mail.maildlp.com (Postfix) with ESMTPS id 70CD640570;
- Thu,  4 Jun 2026 23:11:26 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Thu, 4 Jun 2026 16:11:26 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Thu, 4 Jun 2026 16:11:26 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: RE: [PATCH 2/5] ring: use GCC builtin as alternative to rte_atomic32
-Thread-Topic: [PATCH 2/5] ring: use GCC builtin as alternative to rte_atomic32
-Thread-Index: AQHc8rN+Xems5YrDdEu55QdJffq1xrYue25w
-Date: Thu, 4 Jun 2026 15:11:25 +0000
-Message-ID: <d65ce1df239445e0bb795c852e075b1a@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 68CAD402CC;
+	Thu,  4 Jun 2026 17:20:16 +0200 (CEST)
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+ by mails.dpdk.org (Postfix) with ESMTP id F1B9E402B6
+ for <dev@dpdk.org>; Thu,  4 Jun 2026 17:20:14 +0200 (CEST)
+Received: by mail-dl1-f51.google.com with SMTP id
+ a92af1059eb24-1363e78746eso882143c88.1
+ for <dev@dpdk.org>; Thu, 04 Jun 2026 08:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780586414;
+ x=1781191214; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=CW4rsb7xdCiNlVeBu8of/ebJ+Sho/g8vJwpgRpVo6wo=;
+ b=evoui4c1+2b4oebrNoPd1AvVr96xIpSpPMAXF1D8PmOgDcXUDjQ2DSElRq3yDd3t6c
+ NqA2aZSkRnjKVhoLftEk3q4qAOD99ekcACROtPYsVlNtW/pGEeh8o1JS9OdckPLXH4ro
+ UoUXOlUmGYjZofwX86j6dj0O2y+t0Pku2Tn9Z3PNFBhNMuRUgnvAX1T9y4gBTLsF3+Tx
+ UEQn/qFgCOqJ6CsIyuvJp8Q4e1KncfhEEKD6CKhbn8OaVhosDNLgYgxL6lUKJJ1SsIkN
+ 9lfeuvZmd8T9zISoPlnbs1G923MgZub8HVv9uFCPHc3nQc5tFaaZX9Z4iAYkrbNUr62y
+ RRhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780586414; x=1781191214;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=CW4rsb7xdCiNlVeBu8of/ebJ+Sho/g8vJwpgRpVo6wo=;
+ b=ljm3HJ+cA8Q88vGObkux/5TCn0BlfGv8nKQEx+xwcmL/Juth5Y4CtMoX5+BlKJW311
+ hBwmNHvKJJuFWPqF9TpnNb+ZcH0kIT+f+uTAxz80Z3J+Q46kc1btvw6+2sxeNRqjCU5V
+ WPJ6DO/7njlswnZK8YYnBSSNQBWnXJMvnOyZFVvLJBf8gz9p36n39IVT57EKqevb0HWs
+ Pp2PuJP3aVe11P1vFmbm4Oy6yFPb4encHEqvC6wAaf2mJ8zClLs7EC1D+khH4CDwzzE/
+ b2/zB/ZM4/EdcD6e3E5JFaZuoM0OFDHcBERdd52l3sjCwkClEvzPxWVGpU/tRnDwlqCm
+ tUcg==
+X-Gm-Message-State: AOJu0YzWCSGW2coSAIi1+bX2VQx9t7mYota4jNcXu4b1Ee0s1UmNL/BE
+ u4H7Ggywz4TX/LSkXV8krNsew9Z70AardgZCG4F4nQYmCnzStNpJk1AB9wiQV96kZo4=
+X-Gm-Gg: Acq92OHDpNvD+SEcOv1L7PWlcH6e1RjhUGL9vmVdSuIc2V5yudX2bEazS96KnB4ECsL
+ kXKELv4hgCMmoiD2W2OmfwRzm7CvhuqDe7xU7wuHiZ3/4wOlM52mMr4Fp8s8zbo6GnCsM0gw7iG
+ ubhlFx6sdqu7X5Kkm0p4EiZChtIR8uNI33+sAubuiZB5RE/kqH6vD6HKmlte/F07Jra5jbfYJnb
+ 9nQl6VsaNVmoDMrr+X//JEgJ8rxk5i9xnPCT/mXi6XnN5goeEiONlSHmglQlQ89aOtFxSxxgjK3
+ sC687T1k6CeHYBAa5rt9hxFcSISUb6WZul7LqnE/AHbsgxtt8J179pE73DfPyB73Hs0USK3wcTS
+ GFgVL35zmqzKGTb2OkVV4YFUP5yaEKLIHf9/nj7y8nZrICaUczCMHdl8ZC5o+ub048HdTApg3Iw
+ NsJ16NUwxTVZptGbZFZI1z7yybteudxQoBOEEbFPRqE8fUYFFjxuB/n4PjnW0mItxUzOaLM4pxb
+ SV+rrhpnzgGSw==
+X-Received: by 2002:a05:7022:459a:b0:137:e45d:7c3e with SMTP id
+ a92af1059eb24-137f6c0ac16mr3167327c88.25.1780586413394; 
+ Thu, 04 Jun 2026 08:20:13 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-137f5550bcdsm4099106c88.14.2026.06.04.08.20.12
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 04 Jun 2026 08:20:13 -0700 (PDT)
+Date: Thu, 4 Jun 2026 08:20:10 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>
+Subject: Re: [PATCH 2/5] ring: use GCC builtin as alternative to rte_atomic32
+Message-ID: <20260604082010.1fe8a27d@phoenix.local>
+In-Reply-To: <d65ce1df239445e0bb795c852e075b1a@huawei.com>
 References: <20260602171552.686349-1-stephen@networkplumber.org>
  <20260602171552.686349-3-stephen@networkplumber.org>
-In-Reply-To: <20260602171552.686349-3-stephen@networkplumber.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.220]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ <d65ce1df239445e0bb795c852e075b1a@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,78 +83,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Thu, 4 Jun 2026 15:11:25 +0000
+Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
 
+> >  /**
+> >   * @internal This is a helper function that moves the producer/consumer head
+> >   *    optimized for single threaded case
+> > @@ -82,7 +81,7 @@ __rte_ring_headtail_move_head_st(struct rte_ring_headtail
+> > *d,
+> >  	/* Single producer: only this thread writes d->head,
+> >  	 * so a relaxed load is sufficient.
+> >  	 */
+> > -	*old_head = rte_atomic_load_explicit(&d->head,
+> > rte_memory_order_relaxed);
+> > +	*old_head = rte_atomic_load_explicit(&d->head,
+> > 	rte_memory_order_acquire);  
+> 
+> Not sure, why it had changed to 'acquire' here?
+> Looks like just patch splitting mistake, no?
 
-> This patch replaces use of the deprecated rte_atomic32 code with
-> GCC builtin atomic operations.
->=20
-> Although it would be preferable to use C11 version on all architectures,
-> there is a performance loss if we do it that way:
->=20
-> Measured on i9-13900H, two physical cores MP/MC bulk n=3D128, 10 runs:
->   with C11 builtin:           5.86 cycles/elem
->   with __sync builtin:        5.36 cycles/elem  (-9.4%)
->=20
-> The C11 __atomic_compare_exchange_n builtin writes the actual value back
-> to its expected pointer on failure. On x86 this forces GCC
-> to emit extra instructions on the critical path between the CAS
-> and the success-test.
->=20
-> __sync_bool_compare_and_swap returns a plain bool with no pointer
-> writeback, allowing GCC to emit tighter code.
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  lib/ring/meson.build                          |  2 +-
->  lib/ring/rte_ring_c11_pvt.h                   |  3 +-
->  lib/ring/rte_ring_elem_pvt.h                  |  2 +-
->  ..._ring_generic_pvt.h =3D> rte_ring_gcc_pvt.h} | 37 +++++++++++--------
->  4 files changed, 24 insertions(+), 20 deletions(-)
->  rename lib/ring/{rte_ring_generic_pvt.h =3D> rte_ring_gcc_pvt.h} (87%)
->=20
-> diff --git a/lib/ring/meson.build b/lib/ring/meson.build
-> index 21f2c12989..2ba160b178 100644
-> --- a/lib/ring/meson.build
-> +++ b/lib/ring/meson.build
-> @@ -9,7 +9,7 @@ indirect_headers +=3D files (
->          'rte_ring_elem.h',
->          'rte_ring_elem_pvt.h',
->          'rte_ring_c11_pvt.h',
-> -        'rte_ring_generic_pvt.h',
-> +        'rte_ring_gcc_pvt.h',
->          'rte_ring_hts.h',
->          'rte_ring_hts_elem_pvt.h',
->          'rte_ring_peek.h',
-> diff --git a/lib/ring/rte_ring_c11_pvt.h b/lib/ring/rte_ring_c11_pvt.h
-> index 5afc14dec9..8358b0f21f 100644
-> --- a/lib/ring/rte_ring_c11_pvt.h
-> +++ b/lib/ring/rte_ring_c11_pvt.h
-> @@ -43,7 +43,6 @@ __rte_ring_update_tail(struct rte_ring_headtail *ht,
-> uint32_t old_val,
->  	 */
->  	rte_atomic_store_explicit(&ht->tail, new_val,
-> rte_memory_order_release);
->  }
-> -
->  /**
->   * @internal This is a helper function that moves the producer/consumer =
-head
->   *    optimized for single threaded case
-> @@ -82,7 +81,7 @@ __rte_ring_headtail_move_head_st(struct rte_ring_headta=
-il
-> *d,
->  	/* Single producer: only this thread writes d->head,
->  	 * so a relaxed load is sufficient.
->  	 */
-> -	*old_head =3D rte_atomic_load_explicit(&d->head,
-> rte_memory_order_relaxed);
-> +	*old_head =3D rte_atomic_load_explicit(&d->head,
-> 	rte_memory_order_acquire);
-
-Not sure, why it had changed to 'acquire' here?
-Looks like just patch splitting mistake, no?
-
->=20
->  	/* Acquire pairs with the consumer's release-store of tail in
-> __rte_ring_update_tail,
->  	 * ensuring the consumer's ring-element reads are complete before
+I should have kept it as relaxed for the first load.
