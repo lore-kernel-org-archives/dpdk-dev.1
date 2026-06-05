@@ -2,94 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FF8CD6E75
-	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 00:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7054ACD6E6B
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 08:16:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6834C409FA;
-	Fri,  5 Jun 2026 02:48:39 +0200 (CEST)
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
- [209.85.214.225])
- by mails.dpdk.org (Postfix) with ESMTP id 642434066E
- for <dev@dpdk.org>; Fri,  5 Jun 2026 02:48:35 +0200 (CEST)
-Received: by mail-pl1-f225.google.com with SMTP id
- d9443c01a7336-2bf237e1433so15822555ad.1
- for <dev@dpdk.org>; Thu, 04 Jun 2026 17:48:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780620514; x=1781225314;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=tR5zNkq+YwKoXwxEDX+sNngYrhum1EhmHQXLnwNfOPk=;
- b=rrfSLmx62ukjPqsCmEKTSuPu3aQJWG+AzzgJFaKY6xhyh/KGLrfF/EkyYx7PrUn0g5
- 84TNuez32Tk/Jd7era761pR5WRDXbSk/py4WwXrTIhrXXBym62sMcpUV2nkUdaFsSpj7
- 8+3ZeAi2UV+6pQnXMnn3Txibq4Tzo6bkR64SacZhW0RII5omoC/H0gTmy2U4GMMaCzbd
- VsAm1t5gIopASitFvystEfTjHguSkMxNDuBbFAJfQYp+6m2SgK6LZdFSWEc+LvT3bUTu
- H7SFa5cnKc5jig0ebAMweFb7pv79yTS7cqiCZ5wGF2JvmHKwCq1FDS0YX6tr4uuqNfFF
- z9Qg==
-X-Gm-Message-State: AOJu0Ywb9V7rNo0R3tsNjw+1i64gKoiz6AWBfL8QLo5FRvUEzG2jNa1j
- mL/4dVremHn1WUR56VUfNi5GfpVQcbtG2euSo+rU1EcLlk0vWHZWWMCxxO9spZQFs3rGvLJNEI1
- TAKzlRYW0MPDUwEy/5MqDOJD1joT0V2iAkoe3xvveInJfvm8dHi+abIM9eoOMKZfgFw/5KDmCmz
- JwODYg5kb+v0GPWtpxZ01C8Bemh4qEs2GXh7wY+nXCtGcqVIw8pqagKg+eCN6jweNujLSgaZw74
- DYiCcTGZ7hp
-X-Gm-Gg: Acq92OFlkuvqxu0J0/lq/ACW8JiDEVY//dkZA3nbbCk8T92ZYp1sim4c+i4AkUb6/0b
- Tif2IPUYE4XUdcdV12bSFXjmO2d6OdCuXP186UpAN9DLSv3xUg3myeHEbK2i268EEJRtt1LXmf1
- ke2ABStlaSrVxiV34Zja19DALJuzhKtU+PTFFjlSmE5cp1TN0rOzz1hOUWgn4YuhaJfW2hlwq0C
- o35eXEZfZFIqgT19lZdsyTI3PZlBBNY/Ohf1EPOaDYouKBW7TdS4bRQShs/55CZoq7crpVGkkbL
- pCeDe1gMR7hDiPkV0LNWamS9z0GlE+YLDLUKlOjML+KAOZHoaSH3OWFXKkm7s4T1oQgVoEGuKDl
- 7gmBcJABMS3EuzTkJybU4C9h5LvsAbqE1ktsBQ3Flkn7fFLdbMD/K2JuULiY6qFCnlWzk/iRCJ1
- L2FsXa0cbcEkoun0E0Ib4YSQcCOi65xg==
-X-Received: by 2002:a17:903:f8b:b0:2c0:cf44:3b3b with SMTP id
- d9443c01a7336-2c1e847d71dmr10186195ad.24.1780620514495; 
- Thu, 04 Jun 2026 17:48:34 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- ([144.49.247.127]) by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-2c164f88df8sm6653785ad.14.2026.06.04.17.48.34
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 04 Jun 2026 17:48:34 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qv1-f69.google.com with SMTP id
- 6a1803df08f44-8ccd3213beaso27430146d6.0
- for <dev@dpdk.org>; Thu, 04 Jun 2026 17:48:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1780620513; x=1781225313; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=tR5zNkq+YwKoXwxEDX+sNngYrhum1EhmHQXLnwNfOPk=;
- b=YWqTb3GufDfQgLMBLgNLpFi0it9qUidPJgPkTR4aGOGCqmD6grNqtRvkQ3C7OMa+4B
- Xib7G/HutRMJInZaL1aHXsA2DII+MUnoNgIOsgY+0LsXIf5jBoCHxAmhkKsX1/VUOqu9
- rihcTjHgZ44+vA8qB1bN2nCwBQaCwzzSo1vZ0=
-X-Received: by 2002:a05:6214:1d2d:b0:8ac:732b:6cf1 with SMTP id
- 6a1803df08f44-8cee62654ffmr26473726d6.24.1780620513409; 
- Thu, 04 Jun 2026 17:48:33 -0700 (PDT)
-X-Received: by 2002:a05:6214:1d2d:b0:8ac:732b:6cf1 with SMTP id
- 6a1803df08f44-8cee62654ffmr26473236d6.24.1780620512753; 
- Thu, 04 Jun 2026 17:48:32 -0700 (PDT)
-Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8cecd0556c0sm67187396d6.25.2026.06.04.17.48.31
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 04 Jun 2026 17:48:32 -0700 (PDT)
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-X-Google-Original-From: Mohammad Shuab Siddique
- <Mohammad-Shuab.Siddique@broadcom.com>
-To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
- Keegan Freyhof <keegan.freyhof@broadcom.com>,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH v2 5/5] net/bnxt: fix for segmentation fault that would occur
- on exit
-Date: Thu,  4 Jun 2026 18:50:16 -0600
-Message-ID: <20260605005016.2290160-6-Mohammad-Shuab.Siddique@broadcom.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260605005016.2290160-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260603211341.2112344-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260605005016.2290160-1-Mohammad-Shuab.Siddique@broadcom.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 537FE4026A;
+	Fri,  5 Jun 2026 10:16:37 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 3AD0D40269;
+ Fri,  5 Jun 2026 10:16:35 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 654LPj303891271; Fri, 5 Jun 2026 01:16:34 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=C4Z2j/3dmuds9S9wzInj6zy
+ My7X0RlqO0UenFWVtOlQ=; b=FkJ3ljSRk5YPCd4A6VDOtRkhBfFiUF6AzByiPzd
+ 4zI8BBHtVH3tmwSgFJL0oFLln9J2HA0LEONdCxL+WWP5WjiuicBzI7HZiv8Gxpx5
+ jOp14rElb791G4AtxqbItN+yI4/Ik0QFNpYOmwIRZfff8sro/1tFdpsFY/weQTSW
+ dG2EwwcsVbobKP3DfLXOIi/c192R8cx/pcYJsx9ryZCDt7qfq1GjVWg41qoUyKo4
+ hb8Zc7dkVYHXQF5Ko+etSS/jqgRTA/81ZpibcMGPP5vUccIJytolaGk8kIylKliQ
+ OnKBoO2L6t1u0sabinEY7bk2C7oPf36jjOOLaD4iwmR0GOA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4ekh8x9mxu-3
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 05 Jun 2026 01:16:34 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 5 Jun 2026 01:16:27 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Fri, 5 Jun 2026 01:16:27 -0700
+Received: from LYYJYPGKF4.marvell.com (unknown [10.28.165.174])
+ by maili.marvell.com (Postfix) with ESMTP id 640293F7084;
+ Fri,  5 Jun 2026 01:16:24 -0700 (PDT)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Vamsi Attunuru <vattunuru@marvell.com>, "Anatoly
+ Burakov" <anatoly.burakov@intel.com>, Radha Mohan Chintakuntla
+ <radhac@marvell.com>
+CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>,
+ <stable@dpdk.org>
+Subject: [PATCH] dma/cnxk: fix crash on secondary process cleanup
+Date: Fri, 5 Jun 2026 13:46:19 +0530
+Message-ID: <20260605081620.97056-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: HJti4crglqq-k5WHtnBmthC8wZMif21e
+X-Authority-Analysis: v=2.4 cv=DqNmPm/+ c=1 sm=1 tr=0 ts=6a2285e2 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=EAYMVhzMl8SCOHhVQcBL:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
+ a=_j5PO1fiChC6nIc17HsA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA1MDA3OCBTYWx0ZWRfX0BgMJSb1qZqY
+ v+jlyh5buYgVCPaGxwrYi1ILXJMhvzl66QnZVLtgQq0bpH1/tdgSpvK9rrx2aeCA9lkRKJOw4UK
+ nakB4j7eXEGxC2+ShppbE9cAdoDp/K4BlqGII8qr89LuBOCFbE05EETnc/VHM2SfSWypjAexC5S
+ speNgqf5eo9yp2Hm3r6Op0z8FJemByrsSlF23t8NUsKSnH26Ye2XzeSfq72T+EGOnTBq7KQ8dG9
+ kZ18/gN1vypwBsJoz0zbJ3aNKtgqk6oFMJHAFKfUa/8YFh3VxwwI9Ec7mcWFXzKDscvP0vLWtDE
+ JCKnhN9nRl5vUKDv7GtodAUgoy4u5fybBVV/u2r9zjt3Jde//18kT4rn5aX+RJqS9rTnR1i+9wQ
+ ///5sYYge+TZ9Tr0QJziYQT8TmRuYgcXMGnCf+5N4o/t7opjaynuSAXu4ViEu57HVTKkX7xFuGQ
+ 3NJ6ai+aw4qHfTSStFA==
+X-Proofpoint-GUID: HJti4crglqq-k5WHtnBmthC8wZMif21e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-05_01,2026-05-28_03,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -103,90 +81,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Keegan Freyhof <keegan.freyhof@broadcom.com>
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-When exiting dpdk while having still having members in a bonded
-port, the program would experience a segmentation fault due to the
-bonding driver relying on the ethdev driver to free the rx and tx
-queues of the bond members. The member ports would then try and
-close using the bnxt driver, which would then try and access memory
-freed by the ethdev driver causing the seen issue. The bnxt stuct's
-rx and tx queues pointers would still point to the freed memory,
-while the ethdev pointer would reflect the status changes to the rx
-and tx queues array and be nulled.
-- Changed net/bnxt/bnxt_stats.c and net/bnxt/bnxt_rxr.c to check
-that the rx queues had not already been freed by the ethdev driver
-and changed net/bnxt/bnxt_stats.c and net/bnxt/bnxt_txr.c to check
-that the tx queues had not already been freed by the ethdev driver.
+cnxk_dmadev_probe() ran in secondary processes too, overwriting the
+shared rdpi->pci_dev with a process-local pointer and marking the
+device ready. With buses now cleaned up on shutdown, the primary's
+roc_dpi_dev_fini() dereferences that stale pointer and crashes.
 
-Fixes: 898248fc4287 ("net/bnxt: support statistics query when port is stopped")
+Skip HW init in secondary processes: attach to the shared device data
+and return, leaving rdpi and the device state untouched.
+
+Fixes: 53f6d7328bf4 ("dma/cnxk: create and initialize device on PCI probing")
 Cc: stable@dpdk.org
-Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
-Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
----
- drivers/net/bnxt/bnxt_rxr.c   |  2 +-
- drivers/net/bnxt/bnxt_stats.c | 17 +++++++++++------
- drivers/net/bnxt/bnxt_txr.c   |  3 +++
- 3 files changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_rxr.c b/drivers/net/bnxt/bnxt_rxr.c
-index 293b5c03b6..ab2175d21a 100644
---- a/drivers/net/bnxt/bnxt_rxr.c
-+++ b/drivers/net/bnxt/bnxt_rxr.c
-@@ -1491,7 +1491,7 @@ void bnxt_free_rx_rings(struct bnxt *bp)
- 	int i;
- 	struct bnxt_rx_queue *rxq;
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+---
+ drivers/dma/cnxk/cnxk_dmadev.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/dma/cnxk/cnxk_dmadev.c b/drivers/dma/cnxk/cnxk_dmadev.c
+index 0dcebc1b0b3b..6ae7fdca3b1b 100644
+--- a/drivers/dma/cnxk/cnxk_dmadev.c
++++ b/drivers/dma/cnxk/cnxk_dmadev.c
+@@ -617,6 +617,9 @@ cnxk_dmadev_probe(struct rte_pci_driver *pci_drv __rte_unused, struct rte_pci_de
+ 	dmadev->fp_obj->dev_private = dpivf;
+ 	dmadev->dev_ops = &cnxk_dmadev_ops;
  
--	if (!bp->rx_queues)
-+	if (!bp->rx_queues || !bp->eth_dev->data->rx_queues)
- 		return;
- 
- 	for (i = 0; i < (int)bp->rx_nr_rings; i++) {
-diff --git a/drivers/net/bnxt/bnxt_stats.c b/drivers/net/bnxt/bnxt_stats.c
-index 7b96cf0df9..49367588e4 100644
---- a/drivers/net/bnxt/bnxt_stats.c
-+++ b/drivers/net/bnxt/bnxt_stats.c
-@@ -547,15 +547,20 @@ void bnxt_free_stats(struct bnxt *bp)
- {
- 	int i;
- 
--	for (i = 0; i < (int)bp->tx_cp_nr_rings; i++) {
--		struct bnxt_tx_queue *txq = bp->tx_queues[i];
-+	if (bp->tx_queues && bp->eth_dev->data->tx_queues) {
-+		for (i = 0; i < (int)bp->tx_cp_nr_rings; i++) {
-+			struct bnxt_tx_queue *txq = bp->tx_queues[i];
- 
--		bnxt_free_txq_stats(txq);
-+			bnxt_free_txq_stats(txq);
-+		}
- 	}
--	for (i = 0; i < (int)bp->rx_cp_nr_rings; i++) {
--		struct bnxt_rx_queue *rxq = bp->rx_queues[i];
- 
--		bnxt_free_rxq_stats(rxq);
-+	if (bp->rx_queues && bp->eth_dev->data->rx_queues) {
-+		for (i = 0; i < (int)bp->rx_cp_nr_rings; i++) {
-+			struct bnxt_rx_queue *rxq = bp->rx_queues[i];
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return 0;
 +
-+			bnxt_free_rxq_stats(rxq);
-+		}
- 	}
- }
- 
-diff --git a/drivers/net/bnxt/bnxt_txr.c b/drivers/net/bnxt/bnxt_txr.c
-index 83d18e220b..d37a38735c 100644
---- a/drivers/net/bnxt/bnxt_txr.c
-+++ b/drivers/net/bnxt/bnxt_txr.c
-@@ -24,6 +24,9 @@ void bnxt_free_tx_rings(struct bnxt *bp)
- {
- 	int i;
- 
-+	if (!bp->tx_queues || !bp->eth_dev->data->tx_queues)
-+		return;
-+
- 	for (i = 0; i < (int)bp->tx_nr_rings; i++) {
- 		struct bnxt_tx_queue *txq = bp->tx_queues[i];
- 
+ 	dpivf->is_cn10k = roc_model_is_cn10k();
+ 	dpivf->mcs_lock = NULL;
+ 	rdpi = &dpivf->rdpi;
 -- 
-2.47.3
+2.50.1 (Apple Git-155)
 
