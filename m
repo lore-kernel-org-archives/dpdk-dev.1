@@ -2,73 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 593C5CD6E7C
-	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 20:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FD3CD6E7C
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 20:53:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C65C40672;
-	Fri,  5 Jun 2026 22:53:04 +0200 (CEST)
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com
- [209.85.222.171])
- by mails.dpdk.org (Postfix) with ESMTP id 97A2740667
- for <dev@dpdk.org>; Fri,  5 Jun 2026 22:53:02 +0200 (CEST)
-Received: by mail-qk1-f171.google.com with SMTP id
- af79cd13be357-9156b74006aso175516685a.0
- for <dev@dpdk.org>; Fri, 05 Jun 2026 13:53:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0071B40677;
+	Fri,  5 Jun 2026 22:53:06 +0200 (CEST)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 3FC2240677
+ for <dev@dpdk.org>; Fri,  5 Jun 2026 22:53:04 +0200 (CEST)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-51778069c31so18027311cf.1
+ for <dev@dpdk.org>; Fri, 05 Jun 2026 13:53:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780692782;
- x=1781297582; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780692783;
+ x=1781297583; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=da7MJCbmlm38VHysERl+CiyQw7M5F7w7fvyLt3oraJQ=;
- b=K3k2NLh4q2soYOKT8jQBTsrwiq1Q2lYOYX0ljR2nsnbflRIbd3Nzg3YIaZih/0wHIT
- VphmBluinSoiTgQyOCxALuUiDE/yX6k8msp/6BbgzeFT1cALuMsE7/TsqZUu4NPWN+yp
- xhm9AuqSJj4SHsyG43+v71dMNFZSiI72zbXFh2vcP54eskOkjQiuXsTzrCjCZv/mJcoJ
- VLuzkZfBwiIsCqaZjCRw6K30CkAjlLgZR8ZICDGnWIc/Rl6X4V/v2MdSLmBPxjaVKjwX
- q/iSmhoz3hpz5JNfERiUe/3PSHavc4/iMBEYZjDZ1NQNs0IhywiVfkJFDlUNmYzULGQ6
- iytw==
+ bh=lASHN9Id+KPFwFW1YeXOgFPd4y83qTz0uJAw3HW+5aE=;
+ b=YPEoJUTpVpZf6zd0k4Jo/7KMDMIhHwteq1RntW6CVdS0XLNsOMioEXUS6Nh6aPJwyJ
+ 8tmFfKeT5UjGfvyPetAoX5H6GzF1W3puChNS59t6+r1OLlyx+MD6iili1PuMfssB4Hay
+ 9jU5XQ7Yfl1DMkqx9nEJy/fB43jNeQ1Toe3QGcDxNgsX3pqSv8e7jMBziF6pAxSSPw7a
+ mAzS+LRv5Te7/69RQqCHGdtlaAG0DxFSERYcr57bAnxUfaMWP/6FA4t8O/urMU7NwgLG
+ dE07jNLu8dMPLRhlPK5Co2TlmGARLkcosprRXEe42mWmoSSNj7Vz3sKvTfQfkmZxBD8U
+ KTXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780692782; x=1781297582;
+ d=1e100.net; s=20251104; t=1780692783; x=1781297583;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=da7MJCbmlm38VHysERl+CiyQw7M5F7w7fvyLt3oraJQ=;
- b=fR8/kQpVMGENf5hPThHSRYuDNO83Ao2NO3c6FwTCwGIUiZXR77IOT754cDFqdLxVj8
- eFF7BygDDYjUtBxU4s+OLBiX8T1lWlbs4GgZ+4rGSFycCkLYPU/xVMOleAfYOjwWq5ZF
- HivYNqZeNxG4lic1x34dt0bZ0sjIlgoowiosvFoIxE6it6prTlM53mHZhxhHslGj6D1M
- wIVMBSBgeRpmGL6fpiGYTD4snUirra8yB/RYZhzj+wPCbMi8+DrZkGFAgJnW8+jFshBM
- +lolEf5B/EoWgUwmXcWB/jJclDP8UvpF9Je5zb1Rdhc9UZER4GXm0mI/mY47A3EmUy87
- FKAg==
-X-Gm-Message-State: AOJu0Yx+xbHfr8I2poV2p6Uw32yYceqffVrJUs49/ycMFlKI6dPE9Ys8
- u5unNWzER/bmDSJC0ekJqQPE3xK5soWSr3fH9xNNfmaxY/e2ChMgb17cd/FXxMEJ5i8tBaXMgXJ
- Q6r7c
-X-Gm-Gg: Acq92OG/pF7DpXL3FrlxsAg8IVQ/V0UDVLgS2LiBmdw9dJavTSKIwwDkjiwXUyTQLUy
- 9olGpgY/iWyoxPbGDIpEopCvWO/VL3B7u5JqyVsFk7mTcqVrJcvF64ksWaq+hPLhAdJxA0M94Ud
- ZupHHH2VUU1sFZ2rDxLMwJMETJgjNnKSLxZ1NhzH9gLic4X5erJ5rGIiLtMCg6+cu3c8MZwIeD+
- 4aBVZENx0iOH6cEduj1hwqSvjA48YtamRd17Dn5arcUR1jGcVtDUja+b3Y2HcTaNztJjERytZQv
- chOYL1JUDbKXwvYjoIvMrRRAWWs/E01CMoQU3KU6heqZC/OTUIwQgbsUwf8ajovtQSvgEdJJ2Gk
- DG5dRR09cHBa5UApoutBGc3EQUsbnqSRMCJNklSEpuHDmVSb0geYBN4pheOjerYenvXZnqy7pIL
- H7djN/L+en7Z4lbYmUIy4bG6XpE1H2MXDxqKpYIsEukAhJrSBbRsgfeWFE//O7GrJrWJHmXeWiC
- IX5IE3nUJQ=
-X-Received: by 2002:a05:620a:6084:b0:8d1:d0db:392e with SMTP id
- af79cd13be357-915a9d60d46mr989562385a.32.1780692781870; 
- Fri, 05 Jun 2026 13:53:01 -0700 (PDT)
+ bh=lASHN9Id+KPFwFW1YeXOgFPd4y83qTz0uJAw3HW+5aE=;
+ b=hw1vpesg/z6WP0iYklN6F6lf0V74erp7hIEVgauBbY4kNHivDvbtQh6LmtzZnU7ivv
+ j13QiNOy+FYdApEA7a2fWc9KeuTSeXOOxDiUqfvVnO6urBsyk+/BgcsDAiVo3emBCChk
+ Ab5NeqYTDCMScFsAGzvtT37Ub2j+6V/Y5GrMapun38ur0kmvqRqZBPyDeXUDXZyOMqL0
+ nH/vJbKgrOB6vl/bJO7XiBXXi+Lg3uk2qZ4QXthnAK6t0c1uk+h3tBATrVnMFZfZfi5q
+ 283ef9b7k5YBieQts3uAbD4m4k1lH0p9Qqdob9yXCpn8uNV2JNKKEg8EQCfdUtxaxY4M
+ A/xQ==
+X-Gm-Message-State: AOJu0YwpyrxHkB82hH1FibkkIfuBJFgEj2tWuxzWFzX+HdyzXrzsyJTx
+ kEYpmAcVQJP+urwfH+mWXoJdlA1JXAnyoo2WMJ033/yjwWad8BjTIrZC+rEip9Otc0l5iNiHj0h
+ Tucqv
+X-Gm-Gg: Acq92OH0W3M3PhRNfvLwh4HQ7coPQRQA5U1CD4d5k+ix/Yb+/G6ocsB1QGcjdK2BLXO
+ cZXsoVcfz2TTBNkds/+u5mpbQC1R7cZZDOLjoASUwHL/SDVQL6VxrDBztakTXHJsDy+l5U9MQEY
+ Eg9KU8cFE2dSjkRgNqi14EHzrcZMwiI8qIZyLnY6EGBRuxPwBm0VaQR3j26b+F9xrbJ2RsV74sX
+ /VEphu801OIbbzyVVnm32M7Uv/rADkhN0iFY3Mkn/hx4qA+5kDk8NO+95lx0FPvatGeRdLDneHL
+ Y7b5rCtyDX4bqtBfNUrwIRXue84BFXs0vsbBXuwWszLDJnRjsInuvCjVHb8cdz+fV2Pcztv8i10
+ EpyrcNbJY+lPlhstgVWjLawUSEVXFtUJD6MKAGaqXsSn9OKL0WwW4w+DhKchtfolZ2LWSkY0+ln
+ iy9B/f/Vj0S2chSsnb/uxGzWARwChHgUNfz+wawlmeRS9Zb1DlznZMKSJ0/qqhbSDXzzxZ7782
+X-Received: by 2002:a05:622a:58e:b0:517:773d:15cb with SMTP id
+ d75a77b69052e-51795a2b959mr78411511cf.13.1780692783325; 
+ Fri, 05 Jun 2026 13:53:03 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8cecd2629cesm90072906d6.41.2026.06.05.13.53.00
+ 6a1803df08f44-8cecd2629cesm90072906d6.41.2026.06.05.13.53.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 05 Jun 2026 13:53:01 -0700 (PDT)
+ Fri, 05 Jun 2026 13:53:02 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Chengwen Feng <fengchengwen@huawei.com>,
- Kevin Laatz <kevin.laatz@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Conor Walsh <conor.walsh@intel.com>,
- Sean Morrissey <sean.morrissey@intel.com>
-Subject: [PATCH 3/8] dmadev: validate telemetry parameters
-Date: Fri,  5 Jun 2026 13:51:00 -0700
-Message-ID: <20260605205253.520196-4-stephen@networkplumber.org>
+ Akhil Goyal <gakhil@marvell.com>, Anoob Joseph <anoobj@marvell.com>,
+ Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+Subject: [PATCH 4/8] security: harden telemetry parameter parsing
+Date: Fri,  5 Jun 2026 13:51:01 -0700
+Message-ID: <20260605205253.520196-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260605205253.520196-1-stephen@networkplumber.org>
 References: <20260605205253.520196-1-stephen@networkplumber.org>
@@ -87,41 +83,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Tighten parsing of the dmadev telemetry device and vchan parameters:
-reject non-numeric and out-of-range ids through a bounded helper rather
-than narrowing strtoul()'s result to int and leaning on the downstream
-int16_t/uint16_t API to revalidate. This also drops the thread-unsafe
-strtok() in the stats handler.
+The cryptodev security telemetry handlers parsed dev_id/capa_id with
+strtoul() and no overflow or range check, so an out-of-range dev_id
+(e.g. 256) silently truncated to a valid device in
+rte_cryptodev_is_valid_dev(). isdigit() was also called on a plain
+(signed) char, which is undefined for high-bit input.
+The parser was also using strtok() which is not thread safe.
 
-Fixes: 39b5ab60df30 ("dmadev: add telemetry")
+Use a validated parse helper and reject malformed input rather than
+logging and continuing. This also drops the thread-unsafe strtok() in
+the crypto_caps handler.
+
+Fixes: 259ca6d1617f ("security: add telemetry endpoint for capabilities")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/dmadev/rte_dmadev.c | 44 ++++++++++++++++++++++++++++-------------
- 1 file changed, 30 insertions(+), 14 deletions(-)
+ lib/security/rte_security.c | 41 ++++++++++++++++++++++++-------------
+ 1 file changed, 27 insertions(+), 14 deletions(-)
 
-diff --git a/lib/dmadev/rte_dmadev.c b/lib/dmadev/rte_dmadev.c
-index b75b4f9bd1..822bb7c89f 100644
---- a/lib/dmadev/rte_dmadev.c
-+++ b/lib/dmadev/rte_dmadev.c
-@@ -4,6 +4,7 @@
-  */
- 
+diff --git a/lib/security/rte_security.c b/lib/security/rte_security.c
+index c47fe44da0..0d89f8af3f 100644
+--- a/lib/security/rte_security.c
++++ b/lib/security/rte_security.c
+@@ -7,6 +7,8 @@
+ #include <stdalign.h>
  #include <ctype.h>
-+#include <errno.h>
- #include <inttypes.h>
  #include <stdlib.h>
++#include <errno.h>
++#include <limits.h>
  
-@@ -1157,6 +1158,25 @@ dmadev_handle_dev_list(const char *cmd __rte_unused,
+ #include <eal_export.h>
+ #include <rte_cryptodev.h>
+@@ -474,6 +476,25 @@ security_capabilities_from_dev_id(int dev_id, const void **caps)
  	return 0;
  }
  
-+/* Parse an unsigned integer telemetry parameter, returning the value or
-+ * -EINVAL.  'max' must be <= INT_MAX.
++/* Parse an unsigned integer parameter, returning the value or -EINVAL.
++ * 'max' must be <= INT_MAX.
 + */
 +static int
-+dmadev_parse_uint(const char *str, char **end, unsigned long max)
++telemetry_parse_uint(const char *str, char **end, unsigned long max)
 +{
 +	unsigned long val;
 +
@@ -136,67 +138,54 @@ index b75b4f9bd1..822bb7c89f 100644
 +	return (int)val;
 +}
 +
- #define ADD_CAPA(td, dc, c) rte_tel_data_add_dict_int(td, dma_capability_name(c), !!(dc & c))
- 
  static int
-@@ -1169,10 +1189,9 @@ dmadev_handle_dev_info(const char *cmd __rte_unused,
- 	uint64_t dev_capa;
+ security_handle_cryptodev_sec_caps(const char *cmd __rte_unused, const char *params,
+ 				   struct rte_tel_data *d)
+@@ -485,13 +506,10 @@ security_handle_cryptodev_sec_caps(const char *cmd __rte_unused, const char *par
+ 	int dev_id;
+ 	int rc;
+ 
+-	if (!params || strlen(params) == 0 || !isdigit(*params))
++	dev_id = telemetry_parse_uint(params, &end_param, RTE_CRYPTO_MAX_DEVS - 1);
++	if (dev_id < 0 || *end_param != '\0')
+ 		return -EINVAL;
+ 
+-	dev_id = strtoul(params, &end_param, 0);
+-	if (*end_param != '\0')
+-		CDEV_LOG_ERR("Extra parameters passed to command, ignoring");
+-
+ 	rc = security_capabilities_from_dev_id(dev_id, (void *)&capabilities);
+ 	if (rc < 0)
+ 		return rc;
+@@ -513,24 +531,19 @@ security_handle_cryptodev_crypto_caps(const char *cmd __rte_unused, const char *
+ {
+ 	const struct rte_security_capability *capabilities;
+ 	struct rte_tel_data *crypto_caps;
+-	const char *capa_param;
+ 	int dev_id, capa_id;
+ 	int crypto_caps_n;
  	char *end_param;
+ 	int rc;
  
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	dev_id = dmadev_parse_uint(params, &end_param, INT16_MAX);
-+	if (dev_id < 0)
- 		return -EINVAL;
--
--	dev_id = strtoul(params, &end_param, 0);
- 	if (*end_param != '\0')
- 		RTE_DMA_LOG(WARNING, "Extra parameters passed to dmadev telemetry command, ignoring");
- 
-@@ -1227,13 +1246,11 @@ dmadev_handle_dev_stats(const char *cmd __rte_unused,
- 	struct rte_dma_stats dma_stats;
- 	int dev_id, ret, vchan_id;
- 	char *end_param;
--	const char *vchan_param;
- 
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	dev_id = dmadev_parse_uint(params, &end_param, INT16_MAX);
-+	if (dev_id < 0)
+-	if (!params || strlen(params) == 0 || !isdigit(*params))
++	dev_id = telemetry_parse_uint(params, &end_param, RTE_CRYPTO_MAX_DEVS - 1);
++	if (dev_id < 0 || *end_param != ',')
  		return -EINVAL;
  
 -	dev_id = strtoul(params, &end_param, 0);
--
- 	/* Function info_get validates dev_id so we don't need to. */
- 	ret = rte_dma_info_get(dev_id, &dma_info);
- 	if (ret < 0)
-@@ -1245,11 +1262,11 @@ dmadev_handle_dev_stats(const char *cmd __rte_unused,
- 	if (dma_info.nb_vchans == 1 && *end_param == '\0')
- 		vchan_id = 0;
- 	else {
--		vchan_param = strtok(end_param, ",");
--		if (!vchan_param || strlen(vchan_param) == 0 || !isdigit(*vchan_param))
-+		if (*end_param != ',')
-+			return -EINVAL;
-+		vchan_id = dmadev_parse_uint(end_param + 1, &end_param, UINT16_MAX);
-+		if (vchan_id < 0)
- 			return -EINVAL;
--
--		vchan_id = strtoul(vchan_param, &end_param, 0);
- 	}
- 	if (*end_param != '\0')
- 		RTE_DMA_LOG(WARNING, "Extra parameters passed to dmadev telemetry command, ignoring");
-@@ -1276,10 +1293,9 @@ dmadev_handle_dev_dump(const char *cmd __rte_unused,
- 	int dev_id, ret;
- 	FILE *f;
- 
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	dev_id = dmadev_parse_uint(params, &end_param, INT16_MAX);
-+	if (dev_id < 0)
+-	capa_param = strtok(end_param, ",");
+-	if (!capa_param || strlen(capa_param) == 0 || !isdigit(*capa_param))
++	capa_id = telemetry_parse_uint(end_param + 1, &end_param, INT_MAX);
++	if (capa_id < 0 || *end_param != '\0')
  		return -EINVAL;
--
--	dev_id = strtoul(params, &end_param, 0);
- 	if (*end_param != '\0')
- 		RTE_DMA_LOG(WARNING, "Extra parameters passed to dmadev telemetry command, ignoring");
  
+-	capa_id = strtoul(capa_param, &end_param, 0);
+-	if (*end_param != '\0')
+-		CDEV_LOG_ERR("Extra parameters passed to command, ignoring");
+-
+ 	rc = security_capabilities_from_dev_id(dev_id, (void *)&capabilities);
+ 	if (rc < 0)
+ 		return rc;
 -- 
 2.53.0
 
