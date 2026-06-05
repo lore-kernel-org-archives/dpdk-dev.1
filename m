@@ -2,76 +2,149 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDF9CD6E7D
-	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 13:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51684CD6E79
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 13:54:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6591B402BA;
-	Fri,  5 Jun 2026 15:14:51 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id DFAF74026A
- for <dev@dpdk.org>; Fri,  5 Jun 2026 15:14:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1780665289;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ndtDndLcMoCjp502gWaazXEE8zDtJKggYnSIXh0KOzk=;
- b=HwAsIl/YHRmrhPruMW9mNNmu/HriVuf/8BnVy6qbAVha3phzctk/BPnx6NaB6LIJWaWxWl
- gIJHst1pmnUsqQq5nkettkKRyNU0tpkGdXXqCDXot1nnr3acuct/CLVzTjSACejNrRHcnv
- 4XJ55OeO2HWbqqHdOxhAVaLIt4fqcoc=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-672-c9fVoAfFNGuLhrGw3vW9Zw-1; Fri, 05 Jun 2026 09:14:48 -0400
-X-MC-Unique: c9fVoAfFNGuLhrGw3vW9Zw-1
-X-Mimecast-MFC-AGG-ID: c9fVoAfFNGuLhrGw3vW9Zw_1780665287
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5aa6250009eso1385656e87.3
- for <dev@dpdk.org>; Fri, 05 Jun 2026 06:14:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780665286; x=1781270086;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=ndtDndLcMoCjp502gWaazXEE8zDtJKggYnSIXh0KOzk=;
- b=DQPnP5QVz8hq5BCqJ+mWbxuYXzC0KdBWFUlNrGW3BsVU2zBGAYhJLvI6uALcBTKBAw
- 1D35g6LMciydwvDyg7RyO0Zerj/6bHykVxXolVK14pYwY3McC2Bi1pZyVNIa6Qr/zles
- GiSBy4FuYcVooOYvSIP9TezxJrzfAz8ioK6PF/zaCXKvgb6P5yEZY1qww1xeLaKTp8k4
- Rs4NFD2ihgNFnL3Zp7dwxKRYxFcoJrpMDz4Zy3KU+dwK6jWYR7UuJNHF+a+yxGEeoLqO
- UMZZxUvLCg5rjI84c3OJTy8KN1mqAsmSvHPp5ISPdKsgmQFwmzaFfUlc4n3TyE9pHgtH
- Slag==
-X-Gm-Message-State: AOJu0YwWdN6whYCiHgrDZ+ozKQ5wiEBANPP33eiV1YihEUlMlNkD4o3+
- jGF4IMQFXBTDRDd5Td+OxZnadATRPVarrXJa7QMxiRzwvkjsFbYcJ3H/x7YypM/EzvHAKIIFYj4
- 8L2+dHSdpywa6+TQzSnIC8MDkF8hhLndJC7EqONcQbE8KV0+YWS2ZMzR0jVdQBwvI9kzbUhMYFY
- XWD0llBVUr/fGIhLGuKDI=
-X-Gm-Gg: Acq92OEMXQE0uPZ5DvyBouFwdI8nkZd23UAlFV5JtOq7RgiEBRRFdOvYjBJ31nUEONk
- cKTwl8PB6JoeRs5KPqEYOdBQN3ltNe82btBKX0QZsa+F7cv4de9YT1hrmoKmCwFalWmQThz4H3f
- G7JklUqk0+yB29jZnROAiYDrW7lUiejUx7P25FXE38D5uf/GeuKSZrV49/Iwgn/vQmy2sDHDivL
- jOXlqB0X43A9Vw6S3tuhDCiraGFtv5eIB/SaqdSr4/If3wd2hEujveyXy4+cjRvmY+2LZRA31dq
-X-Received: by 2002:a05:6512:3513:b0:5aa:610a:374f with SMTP id
- 2adb3069b0e04-5aa87b91e6dmr1115256e87.38.1780665286363; 
- Fri, 05 Jun 2026 06:14:46 -0700 (PDT)
-X-Received: by 2002:a05:6512:3513:b0:5aa:610a:374f with SMTP id
- 2adb3069b0e04-5aa87b91e6dmr1115246e87.38.1780665285832; Fri, 05 Jun 2026
- 06:14:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260604235723.1046607-1-pravin.bathija@dell.com>
-In-Reply-To: <20260604235723.1046607-1-pravin.bathija@dell.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Fri, 5 Jun 2026 15:14:28 +0200
-X-Gm-Features: AVVi8CcRAOjNXicCii7jms8bLTvTK9J89FFUrwu8HO68ol0LX1npnv5gRCv8rKI
-Message-ID: <CAO55csxM0wB4u4A8c9=C6epEs2dEt3DHxGc+C_EqQqG1aNUQew@mail.gmail.com>
-Subject: Re: [PATCH v15 0/5] Support add/remove memory region and get-max-slots
-To: pravin.bathija@dell.com
-Cc: dev@dpdk.org, fengchengwen@huawei.com, stephen@networkplumber.org, 
- thomas@monjalon.net
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: kkw_rU6B32xIwQy_V5nxEXAH7Ydm4_63H-PXMYj8fSg_1780665287
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 3109C402BA;
+	Fri,  5 Jun 2026 15:54:45 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id DFAEA4026A;
+ Fri,  5 Jun 2026 15:54:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1780667683; x=1812203683;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=pSIjT0HMUQ14IZTZ7D9kg5AkwPm/RM5TLs/tNp+/7Q8=;
+ b=NMpHsmqGrujR5sdvo/Ka7r2zBsAtApNR70WIchf1sFSE9hJBUFHINnYC
+ p9z0ddgn8gZVCfWjftjjEq4bbMr38Ghgde6zfOAQEwpbvzOkVdMy+Tckm
+ MmHlyiegbvnVz8ruEkpevnh9pcs0vXfla0utwIUhR5T9mG8L3YzQ5Rvnu
+ OSSgkEJIgRWrcpJNzXs8AtfvZRFGfeU7kLAkQhRZEEZO9zaDkjjdInrK/
+ Z1gRksNviGktuRmiGOOc2euEiGXVP/qtmGJcaLKl1fbUFPyHgmyJVPD3z
+ sJi0/7Jh3HDBb76uLWTWtZylow8dkez3g/B7nX+AcyLjfue4e+Dszc1uY w==;
+X-CSE-ConnectionGUID: vlAVBqcVTTKBf6JmHyNErA==
+X-CSE-MsgGUID: LNj4LfCyQkOAzGcX2/q82Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11807"; a="80637397"
+X-IronPort-AV: E=Sophos;i="6.24,188,1774335600"; d="scan'208";a="80637397"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Jun 2026 06:54:42 -0700
+X-CSE-ConnectionGUID: W8qqC26MTz+J5Riyt+q+dA==
+X-CSE-MsgGUID: EUy07QWUTia873MJutXw8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,188,1774335600"; d="scan'208";a="246679857"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Jun 2026 06:54:42 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Fri, 5 Jun 2026 06:54:41 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Fri, 5 Jun 2026 06:54:41 -0700
+Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.40) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Fri, 5 Jun 2026 06:54:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tdqZ/2B3RcCBt44N729rXxRes8vMMqzNonSRpHuorfNwIKg/FqbRlhfvvUWLBvS+wYtL+pznDy3EzpnIdQv4mVeHSjN2lG50jZj9peGNeQd7BG4p4iGuN6ZgxoHkXsPKALBOz2eXa8JeIvgTYhyeNXxkRGGhiCeoZJCUvqiAhD94jRHFD/bDkj3A4oS9F2nAIrewxd+PWhAPo3FteCffp8Mf6c6lS5ZJMlZ6qqt4iGqc+SRW9pLMD53NqSsXP2NgFiu4zzxEIqwNv8IuyEzx73r52hIPgx3guVvRrHyIPSSUb7z3i+/ct7xFw5NltKi9nL2LAAsAYez0Xz1HSPgn9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aIsAmVgqwHc34MSQJnEF7K3KZw3jP+FbRh/hIAGt+Qk=;
+ b=k+OKfFWyHkqGE5y5Oo+sKwR0CEphbn42tY0UJwQAlVforZKgmVJn4lnyT/gV9+GMeri2gAovgdh7byqWJKYnPTR7UNBXz/HzOBJRGXJiWKFi4gXY94+Lp+0/MUY8pLn0i1QIKEy6gaM2cZBxrjZUOesJ/ZYiLvfXygKNR4NGD1MBZwsDRKVcU7fovjzDv6Nnjwwq28qSLbKHxj8H3CS+qvAMGHyyN/9P9TGLYCHnbRPmgP6sFXHiYfX3zJPnprBaEcDhpp62JxH+UiRyMIzBzlek67A6b05DVnDaNOPJ66qRgmCBJbcphQf59ejp1iAQwj8w0XYlnsfE50t8ANupEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DS4PPF6915D992B.namprd11.prod.outlook.com
+ (2603:10b6:f:fc02::29) by DS7PR11MB6037.namprd11.prod.outlook.com
+ (2603:10b6:8:74::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.8; Fri, 5 Jun 2026
+ 13:54:39 +0000
+Received: from DS4PPF6915D992B.namprd11.prod.outlook.com
+ ([fe80::2ef7:faa5:9104:f49c]) by DS4PPF6915D992B.namprd11.prod.outlook.com
+ ([fe80::2ef7:faa5:9104:f49c%8]) with mapi id 15.21.0092.007; Fri, 5 Jun 2026
+ 13:54:38 +0000
+From: "Loftus, Ciara" <ciara.loftus@intel.com>
+To: "Talluri, ChaitanyababuX" <chaitanyababux.talluri@intel.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, "Richardson, Bruce"
+ <bruce.richardson@intel.com>, "Singh, Aman Deep" <aman.deep.singh@intel.com>
+CC: "Wani, Shaiq" <shaiq.wani@intel.com>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH v3] net/iavf: fix VF reset race and stale ARQ message
+ handling
+Thread-Topic: [PATCH v3] net/iavf: fix VF reset race and stale ARQ message
+ handling
+Thread-Index: AQHc9OdqzmbH3Wi4PU6Nut9PHTnY2rYv96Rg
+Date: Fri, 5 Jun 2026 13:54:38 +0000
+Message-ID: <DS4PPF6915D992B4985581F5D7E9F6213B48E112@DS4PPF6915D992B.namprd11.prod.outlook.com>
+References: <20260518054227.110701-1-chaitanyababux.talluri@intel.com>
+ <20260605123646.1328492-1-chaitanyababux.talluri@intel.com>
+In-Reply-To: <20260605123646.1328492-1-chaitanyababux.talluri@intel.com>
+Accept-Language: en-IE, en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS4PPF6915D992B:EE_|DS7PR11MB6037:EE_
+x-ms-office365-filtering-correlation-id: 7f3127dc-6f96-47a8-8213-08dec309fc50
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|376014|1800799024|38070700021|6133799003|22082099003|18002099003|56012099006|5023799004|4143699003|11063799006|3023799007;
+x-microsoft-antispam-message-info: Il6LGzmNA9noQ3/15hacGRxYpNJkF7Ak5DfizGQdcUfAFRNFx4EibAqYJMQUIiQNmmBTa1K+igYjPv3avrsHJjkj+veVQ01VYxCpmf+VI5vTf1fUaSpH4xtKRuVG1Acs4vOiRzmDRugHsCH+dk74068HesGBB6Jd4Y1HF+0UWi0Qpf8RgG/56AbBLk2qMJTxQ76kunjXFlgWNJUYgNHsTSpAj16R4FpGyoWyJVyQmzlGVhPsljcwjUBqZSlhExQw4TCpxG6dNruUESADM52TmGfOnGHldHMVgskdNOctY3ZSWWKooGyGs5EdXlkGsc99bAllym6mnikJY68k2yPQVu7h28FED3wxr5oDlIPzLPe7M4iqEAceTpudBji5FYatBy51eYVTWnUZR0fkHawkLj322Q1Sf+UE8NDUGoFxQF2NZe8t2h86yNS9YEMW2XbH+cRqEebSwkuYLHzrkCujTJgQGR4H3pOBu1NSmQpmCfkyJrmumZi0N6tbbrw3okrNB+qKLT5TF7S26QONfsJlMLuf6lEgdDXlW6g5Q5AV53Ta9JK7MUMyNjFJ0Es6T0Et/3sXkaSWbVNxaT+HD5thIeGc+rA5HUERiTN/u5fgDYNw9guOdIf8V7bAYZbEyEjiunrJIPklNel+pOO16ZOoO55clfVzKwWHaOrCnIdf0IuNYTXANPObqKlv8DCPepmXba4nkFONHdHE/QzwIamUD4ExSATslzh7wAUm8B2SPpswc4UfQu2vYhQBFWT39xS/
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS4PPF6915D992B.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700021)(6133799003)(22082099003)(18002099003)(56012099006)(5023799004)(4143699003)(11063799006)(3023799007);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?b3ypsl0J2W0hxuuwzeEg6dFwphLN1nx2uI7tktER9gEKKvxmvzibdjlmE8xE?=
+ =?us-ascii?Q?kOU+Zsd48JfSXlPw+++BuWPUGrGJNMe6xeAy7Hs0UkAaadVdr1L1/IKwxlJ0?=
+ =?us-ascii?Q?OHEIjxoqZmhNB8ai9EVEiznT2Ki1enUU7VHXWsjmmG07l/R/9r44oGekT2Jt?=
+ =?us-ascii?Q?vWVm6cd18D97o6/XxTXmIcNGRrejpTIPZ9dgozqHcslLchlonSxto0Up2L6Z?=
+ =?us-ascii?Q?ZSDcl552FnDEXg4d7KWN6fqn85rI+aV+qFNh5kWzPf6b0KmOVmhoi8rfNtW1?=
+ =?us-ascii?Q?S6yRJdpJkURIyv8d8P2dGm9UWj2oIyy8LPSflHU0eoxt9+Wgi+poRKewBkRl?=
+ =?us-ascii?Q?nt9EhO7bgctGN4xhUuhPIwf5m5A6QmYjTb5I9iyWtZv+H8z6/PT9pmBXM1yj?=
+ =?us-ascii?Q?9mHRo3alvpxVd/zFrP98WuObyUhP6YRVlIMD4ZnKSjctF0QRUUIvI2DepTZX?=
+ =?us-ascii?Q?HhNS0XkImCTW/VEXmajAS+LCzGdbbx1pyYjH8JecWTOI6jTdwq+9dAJ4nSGX?=
+ =?us-ascii?Q?l6Q5OzJL7HlkEgGRhs0Wi5aWDfJlnMbgVpVyKlua5dO23uFYO63+/mjG1yiM?=
+ =?us-ascii?Q?j8JEnBpMr3EqKIJjQKqWYSVPPa8Kk+ISdiZ/cpafk77osDGgFlgdbwHXdJrA?=
+ =?us-ascii?Q?qjIAPmrXgxjkFv4o8xlu5f52jUzKrmeqpBPtuy0DTiPAikP4MasIqbdoyYmV?=
+ =?us-ascii?Q?cvL8Quoz9atyqQUolfYhH7nlAGiGCxJzTL5Q6os34/Fu9ivi5yYv784AI53P?=
+ =?us-ascii?Q?JyEx0xvBBu778AQ3Bdwy05R7I+HkaPCl4DbYu1cOYi3PZ5USE8VEvOslApSo?=
+ =?us-ascii?Q?VAmhFSi73YvYzlL3qVuiZgCBhLTuKCsiPX0s4Qod0QntK81ayR4Ol6GL5TTQ?=
+ =?us-ascii?Q?vF8Wa/N0b/fcR/2Yj1G/BBOCYQ9Ko9oqYAvtzeLI9mn4UhGED0hfQuwHTvSN?=
+ =?us-ascii?Q?Wxw0QA16ra6Hxq3p5pXRWDca+UqdGuYEvL64oVkxtCz/M01FIMn9BOiTziK0?=
+ =?us-ascii?Q?cov4XXCqR2ybD9dRJ7/ryIkxEanIaTIiKYPm+7YRcv8cwo0a+T8FQ5eFQAG+?=
+ =?us-ascii?Q?M43QmKMqgzeCUkg2+ux1Xt0sMZtLz+84yP9AZTuQKMFCl01XrVP6t4eIuMYN?=
+ =?us-ascii?Q?32VbsmQQhSVYfGwmFcYPgJMrznf2q5Jy6Uf5JiwhdsF8LfwljXmW4+RqUKWH?=
+ =?us-ascii?Q?gC0Ig37CoA/R8Cn7jJcQVTlNUGI5BQg0fmdCEYCyqo2AqM7lWFmtwTji+Bnm?=
+ =?us-ascii?Q?xtmqli/0vLmD19TwRB0XzcSuce0BujTnQiqHRfcP2TsLP9STb7+mUKjLEXKi?=
+ =?us-ascii?Q?I7QFTGqOQQDlEvnJ8/WzBGexRIcpLDe74G/9NHYI9IG8M72yPHcsqEI68JAY?=
+ =?us-ascii?Q?BMruvTUkQgzyGqYtoXg4BlOkjPS0A6Q32MTbV2wF39GXM+/vWIYmiIQ4sYKg?=
+ =?us-ascii?Q?e3r4KArsEQBMrXeEQ2pjXFnJzQY6gH2XxjzNB9sSq9dvs5YxXnjjvQOIoe1G?=
+ =?us-ascii?Q?kcVL01B9X+wz7pjmuUmgUx2n2jMTbFQp8RsoC28Jtd4+pzZV8U+ak0y00DYv?=
+ =?us-ascii?Q?eYER6W30oPxjVVcFFH8D7nyGZACKoidxQ/TmcJ1eWRM34liavSs2Bd2FRcl1?=
+ =?us-ascii?Q?fNUlQzHiE4PSsNQOoY/RF5y+neByLYFI2TofUp1/zK9C+3bvMyPyGoGp8OZZ?=
+ =?us-ascii?Q?XbfP31NJbZzglrU7+jetvxmjBsJ0Ry7gkmu9uB1jcsjmIyhuCuW2Rhtw+Aeo?=
+ =?us-ascii?Q?CZY25hmpNw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: Qpztbj1DvcGQKWlC65SKPuPyHKRyREm9qJeetlvDV94n7O8LmuIWV6zihWAZIXrIMikKjzlgUjc26eLrEvQlvBByL6ZGbgVKasSwPsixEZcKPTHonzTkEeWC6uagsZ2o1lEOexd85Z4iQKutN0+fk68jovstRhrB2c4sn57MkhP0jAEW3Hu+QBjleKPf+s2rcix4gTlHsqUtEbESmlDftl72/AtvO60rbfZUfUvfvxdVkGJ+P8Fj2VFCzPYTsniuEAbkrNPXufb3TybdBMZCUJrZE+mj6TrLc0lvw8VTVkrRqZDWKzCJV9uvs8Z4ebQKn+/uvrT57oxJScsJB7FIpw==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS4PPF6915D992B.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f3127dc-6f96-47a8-8213-08dec309fc50
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jun 2026 13:54:38.8241 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2LQr1qXIzPXf0c6AWV0fuXcD7munkmOUEiNsg23/S6XQ/9aoYIr+SN+SbNVPVd5UIZCZkZsNO4DDPJa9/2ry1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6037
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,162 +158,122 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Jun 5, 2026 at 1:57=E2=80=AFAM <pravin.bathija@dell.com> wrote:
->
-> From: Pravin M Bathija <pravin.bathija@dell.com>
->
-> This is version v15 of the patchset and it incorporates the
-> recommendations made by Maxime Coquelin.
->
-> Patch 4/5
-> - Changed VHOST_USER_REM_MEM_REG handler declaration from
->   accepts_fd=3Dtrue to accepts_fd=3Dfalse, as the remove request does not
->   expect FDs in ancillary data.
-> - Removed all close_msg_fds(ctx) calls from vhost_user_rem_mem_reg(), no
->   longer needed since the handler is declared as not accepting FDs.
-> - Removed validate_msg_fds(dev, ctx, 0) check from
->   vhost_user_rem_mem_reg(), as FD validation is now handled generically
->   by the framework.
-> - Added targeted IOTLB cache invalidation in vhost_user_rem_mem_reg()
->   using vhost_user_iotlb_cache_remove() for the removed region's GPA
->   range, instead of the nuclear iotlb_flush_all() used by set_mem_table.
->
-> This implementation has been extensively tested by doing Read/Write I/O
-> from multiple instances of fio + libblkio (front-end) talking to
-> spdk/dpdk (back-end) based drives. Tested with qemu front-end talking to
-> dpdk testpmd (back-end) performing add/removal of memory regions. Also
-> tested post-copy live migration after doing add_memory_region.
->
-> Version Log:
-> Version v15 (Current version): Incorporate code review suggestions from
-> Maxime Coquelin as described above.
->
-> Version v14: Incorporate code review suggestions from Stephen Hemminger
-> and Fengcheng Wen.
-> Changes from Fengcheng Wen review:
-> Patch 3/5
-> - Moved free_all_mem_regions() call sites in vhost_user_set_mem_table()
->   from patch 4/5 to patch 3/5 so each commit compiles independently
-> Patch 4/5
-> - Renamed _dev_invalidate_vrings() to vhost_user_invalidate_vrings() to
->   follow vhost naming convention
-> -  Added comment explaining *pdev propagation through
->    translate_ring_addresses / numa_realloc()
-> - Reordered local variables in vhost_user_add_mem_reg() and
->   vhost_user_rem_mem_reg() by descending line length
-> - Shortened overlap check variable names (current_region_guest_start/end
->   --> cur_start/end, proposed_region_guest_start/end -> new_start/end)
-> - Fixed DMA error path in vhost_user_add_mem_reg(): added
->   free_new_region_no_dma label so async_dma_map_region(false) is not
->   called when the map itself failed.
-> Changes from Stephen Hemminger review:
-> Patch 4/5
-> - vhost_user_add_mem_reg() now constructs a reply with the back-end's
->   host mapping address in userspace_addr and returns
->   RTE_VHOST_MSG_RESULT_REPLY per the vhost-user spec
-> - Added validate_msg_fds(dev, ctx, 0) in vhost_user_rem_mem_reg() to
->   reject malformed messages with unexpected file descriptors
-> - Dropped unnecessary (uint64_t) cast in vhost_user_get_max_mem_slots()
->
-> Version v13: Incorporate code review suggestions from Fengcheng Wen
-> Patch 2/5
-> Renamed VhostUserSingleMemReg to VhostUserMemRegMsg and memory_single
-> to memreg
-> Patches 3/5 and 4/5
-> Relocated function remove_guest_pages from patch 3/5 to 4/5
->
-> Version v12: Incorporate code review suggestions from Maxime Coquelin
-> and ai-code-review.
-> Patch 3/5
-> Refactored async_dma_map() to delegate to async_dma_map_region(),
-> eliminating code duplication between the two functions.
-> Restored original comments in async_dma_map_region() explaining why
-> ENODEV and EINVAL errors are ignored (these were stripped in v10)
-> Reverted unnecessary changes to vhost_user_postcopy_register() --
-> removed the host_user_addr =3D=3D 0 checks and reg_msg_index indirection
-> that were added in  v10, since this function is only called from
-> vhost_user_set_mem_table() where regions are always contiguous.
->
-> Version v11: Incorporate code review suggestions from Stephen Hemminger.
-> Patch 4/5
-> Fix incomplete cleanup in vhost_user_add_mem_reg() when
-> vhost_user_mmap_region() fails after the mmap succeeds (e.g.
-> add_guest_pages() realloc failure) realloc failure). The error path now
-> calls remove_guest_pages() and free_mem_region() to undo the mapping
-> and stale guest-page entries, preventing a leaked mmap and slot reuse
-> corruption. The plain close(fd) path is kept for pre-mmap failures.
->
-> Version v10: Incorporate code review suggestions from Stephen Hemminger.
-> Patch 4/5
-> Moved dev_invalidate_vrings after free_mem_region, array compaction, and
-> nregions decrement. This ensures translate_ring_addresses only sees
-> surviving memory regions, preventing vring pointers from resolving into
-> a region that is about to be unmapped.
->
-> Version v9: Incorporate code review suggestions from Stephen Hemminger.
-> Patch 3/5
-> Restored max_guest_pages initial value to hardcoded 8 instead of
-> VHOST_MEMORY_MAX_NREGIONS, matching upstream semantics.
-> Patch 4/5
-> Added close(reg->fd) and reg->fd =3D -1 before goto close_msg_fds in the
-> mmap failure path to fix fd leak after fd was moved from ctx->fds[0].
-> Converted dev_invalidate_vrings from a plain function to a macro +
-> implementation function pair, accepting message ID as a parameter so
-> the static_assert reports the correct handler at each call site.
-> Updated dev_invalidate_vrings call in add_mem_reg to pass
-> VHOST_USER_ADD_MEM_REG as message ID.
-> Updated dev_invalidate_vrings call in rem_mem_reg to pass
-> VHOST_USER_REM_MEM_REG as message ID.
->
-> Version v8:  Incorporate code review suggestions from Stephen Hemminger.
-> rewrite async_dma_map_region function to iterate guest pages by host
-> address range matching
-> change function dev_invalidate_vrings to accept a double pointer to
-> propagate pointer updates
-> new function remove_guest_pages was added
-> add_mem_reg error path was narrowed to only clean up the single failed
-> region instead of destroting all existing regions
->
-> Version v7: Incorporate code review suggestions from Maxime Coquelin.
-> Add debug messages to vhost_postcopy_register function.
->
-> Version v6: Added the enablement of this feature as a final patch in
-> this patch-set and other code optimizations as suggested by Maxime
-> Coquelin.
->
-> Version v5: removed the patch that increased the number of memory regions
-> from 8 to 128. This will be submitted as a separate feature at a later
-> point after incorporating additional optimizations. Also includes code
-> optimizations as suggested by Feng Cheng Wen.
->
-> Version v4: code optimizations as suggested by Feng Cheng Wen.
->
-> Version v3: code optimizations as suggested by Maxime Coquelin
-> and Thomas Monjalon.
->
-> Version v2: code optimizations as suggested by Maxime Coquelin.
->
-> Version v1: Initial patch set.
->
-> Pravin M Bathija (5):
->   vhost: add user to mailmap and define to vhost hdr
->   vhost: header defines for add/rem mem region
->   vhost: refactor memory helper functions
->   vhost: add mem region add/remove handlers
->   vhost: enable configure memory slots
->
->  .mailmap               |   1 +
->  lib/vhost/rte_vhost.h  |   4 +
->  lib/vhost/vhost_user.c | 425 +++++++++++++++++++++++++++++++++++------
->  lib/vhost/vhost_user.h |  10 +
->  4 files changed, 378 insertions(+), 62 deletions(-)
->
+> Subject: [PATCH v3] net/iavf: fix VF reset race and stale ARQ message han=
+dling
+
+Some comments below. I agree there is an issue here but I'm not sure about =
+this
+approach to fixing it. I've explained why inline.
+
+One alternative solution could be to call the existing iavf_is_reset_detect=
+ed helper
+immediately after iavf_vf_reset() in iavf_dev_close() (on the reset path on=
+ly). That
+would ensure that the reset has started before before proceeding with teari=
+ng down
+and reinitialising the adminq etc.
+
+[snip]
+
+> +
+>  static int
+>  iavf_init_vf(struct rte_eth_dev *dev)
+>  {
+> @@ -2654,6 +2706,10 @@ iavf_init_vf(struct rte_eth_dev *dev)
+>  		goto err;
+>  	}
+>=20
+> +	/* Drain stale ARQ messages only during reset recovery */
+> +	if (vf->in_reset_recovery)
+> +		iavf_drain_arq(hw, vf);
+
+Even with the guard, I still think this draining is unnecessary.
+The adminq is initialised in the code block immediately before this.
+I think it will be empty and there will be nothing to drain here.
+
+> +
+>  	if (iavf_check_api_version(adapter) !=3D 0) {
+>  		PMD_INIT_LOG(ERR, "check_api version failed");
+>  		goto err_api;
+> @@ -3289,6 +3345,8 @@ iavf_dev_reset(struct rte_eth_dev *dev)
+>  	ret =3D iavf_dev_uninit(dev);
+>  	if (ret)
+>  		return ret;
+> +	/* Add delay before re-initialization */
+> +	rte_delay_ms(50);
+
+Although it's a short delay it feels a bit heavy handed to unconditionally
+delay here for every reset.
+
+>=20
+>  	return iavf_dev_init(dev);
+>  }
+> @@ -3352,6 +3410,7 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev,
+> bool vf_initiated_reset)
+>  {
+>  	struct iavf_info *vf =3D IAVF_DEV_PRIVATE_TO_VF(dev->data-
+> >dev_private);
+>  	struct iavf_adapter *adapter =3D dev->data->dev_private;
+> +	struct iavf_hw *hw =3D IAVF_DEV_PRIVATE_TO_HW(dev->data-
+> >dev_private);
+>  	int ret;
+>  	bool restart_device =3D false;
+>=20
+> @@ -3370,6 +3429,11 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev,
+> bool vf_initiated_reset)
+>  	vf->in_reset_recovery =3D true;
+>  	iavf_set_no_poll(adapter, false);
+>=20
+> +	/* For VF-initiated reset, wait for PF to start processing it */
+> +	if (vf_initiated_reset)
+> +		if (iavf_wait_for_reset_start(hw) !=3D 0)
+
+At this point of the VF initiated reset we haven't indicated to
+hardware yet that we want to reset. So this wait will always time out here.
+The reset is kicked off @ iavf_vf_reset where the VIRTCHNL_OP_RESET_VF
+op is sent. Only after that does it make sense to check the reset status
+reported by the PF.
+
+> +			PMD_DRV_LOG(WARNING, "PF did not acknowledge
+> VF reset");
+> +
+>  	/* Call the pre reset callback */
+>  	if (vf->pre_reset_cb !=3D NULL)
+>  		vf->pre_reset_cb(dev->data->port_id, vf->pre_reset_cb_arg);
+> diff --git a/drivers/net/intel/iavf/iavf_vchnl.c
+> b/drivers/net/intel/iavf/iavf_vchnl.c
+> index 94ccfb5d6e..0a536a15e0 100644
+> --- a/drivers/net/intel/iavf/iavf_vchnl.c
+> +++ b/drivers/net/intel/iavf/iavf_vchnl.c
+> @@ -296,11 +296,21 @@ iavf_read_msg_from_pf(struct iavf_adapter
+> *adapter, uint16_t buf_len,
+>  					__func__, vpe->event);
+>  		}
+>  	}  else {
+> -		/* async reply msg on command issued by vf previously */
+> +		/* Async reply for previously issued VF command.
+> +		 * Stale messages from before reset are ignored, and polling
+> +		 * continues until the expected response is received.
+> +		 */
+>  		result =3D IAVF_MSG_CMD;
+>  		if (opcode !=3D vf->pend_cmd) {
+> -			PMD_DRV_LOG(WARNING, "command mismatch,
+> expect %u, get %u",
+> -					vf->pend_cmd, opcode);
+> +			if (opcode =3D=3D VIRTCHNL_OP_UNKNOWN)
+> +				PMD_DRV_LOG(DEBUG,
+> +					    "Ignoring stale msg (opcode 0),
+> pending cmd %u",
+> +					    vf->pend_cmd);
+> +			else
+> +				PMD_DRV_LOG(WARNING,
+> +					    "command mismatch, expect %u,
+> get %u",
+> +					    vf->pend_cmd, opcode);
+> +
+>  			result =3D IAVF_MSG_ERR;
+>  		}
+>  	}
 > --
 > 2.43.0
->
-
-Applied to next-virtio/for-next-net.
-
-Thanks,
-Maxime
 
