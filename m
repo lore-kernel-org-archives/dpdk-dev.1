@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E31CD6E7C
-	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 20:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17C4CD6E7B
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 20:53:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AD3B40695;
-	Fri,  5 Jun 2026 22:53:07 +0200 (CEST)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
- [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id AEB4D40677
- for <dev@dpdk.org>; Fri,  5 Jun 2026 22:53:05 +0200 (CEST)
-Received: by mail-qv1-f50.google.com with SMTP id
- 6a1803df08f44-8ccd1f57b32so22790496d6.2
- for <dev@dpdk.org>; Fri, 05 Jun 2026 13:53:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 250E3406B8;
+	Fri,  5 Jun 2026 22:53:09 +0200 (CEST)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
+ [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 193DD40698
+ for <dev@dpdk.org>; Fri,  5 Jun 2026 22:53:07 +0200 (CEST)
+Received: by mail-qv1-f52.google.com with SMTP id
+ 6a1803df08f44-8ccf6a63a45so28322256d6.3
+ for <dev@dpdk.org>; Fri, 05 Jun 2026 13:53:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780692785;
- x=1781297585; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780692786;
+ x=1781297586; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=8wNO5RFbrhgW8QZU9blP2dClilx5NljROwNQaSnwQlY=;
- b=pwErbjoRVzvOqvolmldV5Rf4cVFxQSa2YOKa3fjVYfKtJfhG7dST++dXFmK+O92oKx
- PA8RrzJMbbyO9M8ty/jHqd2OlGe5BsfZ9Hn9jumzBwjYvPCkGKot3CJb8CXXjHZf2hNa
- EJ3QaKuLt0PNPiEGYXTRU7z0nZqi93bd88V3W7eXlUBQyg7f3Ne1m3zcHVERXwxtufnS
- FcnhrELzdUho1umm6wQLfokSME+1ngo35/5DaxtTtUVl7t3Tdh/aTORcZDLnyKLdH0rq
- PjkJfGYTKFDYUktXFpkjeAK3x8FB5Cm5FQAN3Bstn+gMbMTjn33PpMtTq4jiReIAcsUd
- oZ7Q==
+ bh=LE9R6rQTKl0XD+UnYbX8shgxtI1skfkfaL6lYYyJlHk=;
+ b=V3WSZS7ZxdYSeEyuJ88olo0W6ChbyM6mSDXfGFfSKtvELBFDm9v2VndcF8buXbbb55
+ hy0c0Cyb80jobuvxuzOwdYTzfUatnOQ9YA9GdneJ63lKWHbjkw8a4fRvs2IW/3JdyT9e
+ 8C7XW3m1Blcp/ct3BPmLmOd3mRKPfjg/eGP0a5vUW2qlKsv5w7mxCFUmgupe11Mr663q
+ 4wQeRF7fzuC7mnEEQ0/gcJgiRr3f7MTFtCC+ZmZOR7DS1NQxEsZ4y4r1lJIds/Q/8784
+ EywHI/kmX+D5EMx6yL+lI9r5cE/gP5APDgxVI4AhmlAAwxFFAWZjhHggFpldPljwTSpR
+ tn4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780692785; x=1781297585;
+ d=1e100.net; s=20251104; t=1780692786; x=1781297586;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=8wNO5RFbrhgW8QZU9blP2dClilx5NljROwNQaSnwQlY=;
- b=Y3Q28esbv8kwBF1wcPc4I2V8PYezG/oJDl7ANxLnLXPMPL1DKwlF21BcxUD07vFM/a
- SzgqPsSERhmiUL6lSEG2cWzp/KzptxTTgh0tnGLp9yfIxnpriqFA/r6IwBgHhemLtqGP
- BIP8rASnOzIKXvjF+1KJgjbvOFqK6hFq/s2Y5ZNKfWlV0vK7NN3/szN/E9UhX3gPWFBG
- twbRuD/h721Hc7s5euqEoj3y1xKBIVvnNhWP7UGx4SRTOPQJvRXlBQ+fr69H53kEmH1d
- R+m0B4fAqN59ea4Th4Xh9s34+sqTs7XuLnpObs2Dd+4bYqWfwrDDCaGdd9uheUzbnb3L
- 7wMg==
-X-Gm-Message-State: AOJu0YwOsj9SK1mhTJQfA1tf6ipYKgv1J+yO8kx9m1ooNU65e7vrypEM
- iTISZ0xGtBqNRjdMdyhdBW/9SloCjslrbG0hNOE9LL6mf8Z5fOGl2mES8R1TImavrL2cVzsGmiw
- QDDFp
-X-Gm-Gg: Acq92OGXr/ZdkLwnHr5Q1Qg/xXhAwaXXw6H0F96uBdR9uC6EyN4rlacA6OdZeZWF9pa
- Vrhsotlftz9C38PbJXbS0N84HYobSgR67x9F2+BQO86ero9/0iD0lg27s1diz4k2bzOVZS0bYlt
- +1sinBPrLFhVHTB+tUu3k6+9sVJWXxiENZg90Jb89YZ8kSdZgUlywHFvJL8w8nAVdMZT2tbsqyj
- RAcK3oSqjfcfIOAtx/UzCk+kZsRu3W1lFYIeKQ/LlEsZNsqpQcAlefV6tCR8NiSuruWai3INwFR
- ZLGuJldi5QdFSx54M720NG4lpyOo34lnOyIUBhXHepWt6JY3nk28NshCPrgVnf4kmxcCZMGVkhU
- QtYTqRZrkUBGZC8kuk/0UrCqLWToJBp+Al7MW+xteH+EdTYvWKjJ/GMbiVMa74ZgKp/snhqUHrI
- qp7Nf8zJm6lP+Gd9g28QVa4gI6MlyG+RWQqHWsXRMfdKXQvJ/qm3twv9ldNYJAcWr2Lnsz3mht
-X-Received: by 2002:a05:6214:8109:b0:8ca:10cc:fdbc with SMTP id
- 6a1803df08f44-8cee611feebmr61726356d6.23.1780692784822; 
- Fri, 05 Jun 2026 13:53:04 -0700 (PDT)
+ bh=LE9R6rQTKl0XD+UnYbX8shgxtI1skfkfaL6lYYyJlHk=;
+ b=IgYyXE3mVclwxNTAu1IrAHhuk5wF5OdSiSO67ZYhPPLHscuo95k+q10Ny4ErjI9umR
+ wsw7MND4eRCte4RYLPEYzJnvxC5eakfkiE+l4VsJ9pH7dXxrNN5FE5xukSivImljyWuL
+ cZos0r2Vy4EuNYe4CpAoY5KsOSUhNXYulGEym8SpKZbkRxgF9dG38whKHKHyzhOIUMk3
+ HNvWoKsGbRW8AP2sMRiXbmMWKiFkPgrf2xvWWaNb6tHPmD70CJi4YluNSnvhuM0sSgL4
+ A5RUmozcRADfNCrsGimTJqffD9z8JmJ16voAL5US7JQ03sYsbXbVz71mVzRa2ad+ziJC
+ zBqw==
+X-Gm-Message-State: AOJu0YyuVgAZiaxuqL5aJ9xhd0ox+BxSvXVRyb75kmW2U1ZHsBC/vaWp
+ NQ2Rbn2iFHWNlqe1nwBgtXi199bmwCKcAN+NyHg4jHw730agK+Ot32tRSLZdoYYSrGfyxkkUE2P
+ 8GqTX
+X-Gm-Gg: Acq92OFsXMrzaKDyaV8DgZxpmwyh0rbjK7gORI1ufzf/Xa2Va0FN7tFDgQvpJb3oa7W
+ L46H7QHQrqSF1qVa4l3Erb1DRoCCr6QBPEjk+RLwPWNX0adD8BuDnWqg/gfdHs2RbPWn5O6LGY3
+ OTZ9RDJPOUHC9vJyGyM9UryLBrpf9Us7QdAD6hBaJPQv7TEow7/G7zfFgn1cCbXynxAKELOhskr
+ woSqK/bJmvbmtpgagFvtoYdPVKNtVoADA5BTMrSoZ6LoppvQL12vjran2I5GZz2KZa1VLTsvE3W
+ K1wgrZpC/SHNFCkWJP2rUPlcbhRCJAuvWgNqjdp5rDyT1w30juR1fITP7cnDyivEaQpeVDu4vBx
+ OqwCAqac+bGDBt8lRUUeXMBnXWJrvYIAPZRZDrC7Xrn6V/dFn/kvEg73OhRgIzQJslaYO4vtgQv
+ s1BO9JexKqQSrF1f92LXWhp0h8x+K9UMeNQ8HN2nEHbBaEYv15F0db0OuUgEr73l9xFJoBvE2a
+X-Received: by 2002:a0c:fd87:0:b0:8ae:60c4:857 with SMTP id
+ 6a1803df08f44-8cee6023aaamr69368456d6.18.1780692786285; 
+ Fri, 05 Jun 2026 13:53:06 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8cecd2629cesm90072906d6.41.2026.06.05.13.53.03
+ 6a1803df08f44-8cecd2629cesm90072906d6.41.2026.06.05.13.53.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 05 Jun 2026 13:53:04 -0700 (PDT)
+ Fri, 05 Jun 2026 13:53:05 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Naga Harish K S V <s.v.naga.harish.k@intel.com>,
  Jerin Jacob <jerinj@marvell.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 5/8] eventdev: remove strtok from telemetry handlers
-Date: Fri,  5 Jun 2026 13:51:02 -0700
-Message-ID: <20260605205253.520196-6-stephen@networkplumber.org>
+ Ganapati Kundapura <ganapati.kundapura@intel.com>,
+ Jay Jayatheerthan <jay.jayatheerthan@intel.com>
+Subject: [PATCH 6/8] eventdev/eth_rx: fix thread-unsafe telemetry parsing
+Date: Fri,  5 Jun 2026 13:51:03 -0700
+Message-ID: <20260605205253.520196-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260605205253.520196-1-stephen@networkplumber.org>
 References: <20260605205253.520196-1-stephen@networkplumber.org>
@@ -82,276 +84,224 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The eventdev telemetry command handlers parsed parameters with strtok()
-which is not thread safe. The code also has silent truncation
-issues since it assigns result of strtoul() to smaller types.
+The eth Rx adapter telemetry handlers parse multi-field parameter
+strings with a strtok()/strtok(NULL, ...) continuation chain.
+Since strtok() holds its parser state in a process-global static,
+and telemetry callbacks run in a separate thread per client connection.
+With concurrent clients the continuation calls read another thread's
+state - and since each handler strdup()s and frees its own buffer,
+a stale continuation can dereference freed memory.
+Thread the parse through a local save pointer with strtok_r().
 
-Introduce common helper that checks parameter string
-and gets a device id. Make sure and range check values
-to the appropriate upper bound for that parameter.
+Also passing was passing a char to isdigit(), which is undefined
+in C standard for high-bit input.
 
-Fixes: feaea0573429 ("eventdev: add device info telemetry command")
+Fixes: 814d01709328 ("eventdev/eth_rx: support telemetry")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eventdev/rte_eventdev.c | 136 +++++++++++++++++-------------------
- 1 file changed, 64 insertions(+), 72 deletions(-)
+ lib/eventdev/rte_event_eth_rx_adapter.c | 52 ++++++++++++-------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
 
-diff --git a/lib/eventdev/rte_eventdev.c b/lib/eventdev/rte_eventdev.c
-index 572cd5bd7d..a6f6b6879e 100644
---- a/lib/eventdev/rte_eventdev.c
-+++ b/lib/eventdev/rte_eventdev.c
-@@ -1790,6 +1790,34 @@ handle_dev_list(const char *cmd __rte_unused,
- 	return 0;
- }
+diff --git a/lib/eventdev/rte_event_eth_rx_adapter.c b/lib/eventdev/rte_event_eth_rx_adapter.c
+index 2183adce6f..96a4a0d926 100644
+--- a/lib/eventdev/rte_event_eth_rx_adapter.c
++++ b/lib/eventdev/rte_event_eth_rx_adapter.c
+@@ -308,7 +308,7 @@ rxa_event_buf_get(struct event_eth_rx_adapter *rx_adapter, uint16_t eth_dev_id,
+ } while (0)
  
-+/* Get dev ID from parameter string */
-+static int
-+parse_dev_id(const char *params, uint8_t *dev_id, char **next_param)
-+{
-+	char *end_param;
-+	unsigned long id;
-+
-+	if (params == NULL || *params == '\0' ||
-+	    !isdigit((unsigned char)*params))
-+		return -1;
-+
-+	id = strtoul(params, &end_param, 10);
-+	if (next_param != NULL) {
-+		*next_param = end_param;
-+	} else if (*end_param != '\0') {
-+		RTE_EDEV_LOG_DEBUG(
-+			"Extra parameters passed to eventdev telemetry command, ignoring");
-+	}
-+
-+	if (id >= RTE_EVENT_MAX_DEVS) {
-+		RTE_EDEV_LOG_DEBUG(
-+			"Invalid device id out of range %lu", id);
-+		return -1;
-+	}
-+	*dev_id = id;
-+	return 0;
-+}
-+
- static int
- handle_dev_info(const char *cmd __rte_unused,
- 		const char *params,
-@@ -1797,16 +1825,10 @@ handle_dev_info(const char *cmd __rte_unused,
+ #define RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, retval) do { \
+-	if ((token) == NULL || strlen(token) == 0 || !isdigit(*token)) { \
++	if ((token) == NULL || strlen(token) == 0 || !isdigit((unsigned char)*token)) { \
+ 		RTE_EDEV_LOG_ERR("Invalid eth Rx adapter token"); \
+ 		ret = retval; \
+ 		goto error; \
+@@ -3764,7 +3764,7 @@ handle_rxa_stats(const char *cmd __rte_unused,
+ 	uint8_t rx_adapter_id;
+ 	struct rte_event_eth_rx_adapter_stats rx_adptr_stats;
+ 
+-	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
++	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
+ 		return -1;
+ 
+ 	/* Get Rx adapter ID from parameter string */
+@@ -3804,7 +3804,7 @@ handle_rxa_stats_reset(const char *cmd __rte_unused,
  {
- 	uint8_t dev_id;
- 	struct rte_eventdev *dev;
--	char *end_param;
+ 	uint8_t rx_adapter_id;
  
 -	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (parse_dev_id(params, &dev_id, NULL) < 0)
++	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
  		return -1;
  
--	dev_id = strtoul(params, &end_param, 10);
--	if (*end_param != '\0')
--		RTE_EDEV_LOG_DEBUG(
--			"Extra parameters passed to eventdev telemetry command, ignoring");
--
- 	RTE_EVENTDEV_VALID_DEVID_OR_ERR_RET(dev_id, -EINVAL);
- 	dev = &rte_eventdevs[dev_id];
- 
-@@ -1833,16 +1855,10 @@ handle_port_list(const char *cmd __rte_unused,
- 	int i;
- 	uint8_t dev_id;
- 	struct rte_eventdev *dev;
--	char *end_param;
+ 	/* Get Rx adapter ID from parameter string */
+@@ -3829,29 +3829,29 @@ handle_rxa_get_queue_conf(const char *cmd __rte_unused,
+ 	uint16_t rx_queue_id;
+ 	uint16_t eth_dev_id;
+ 	int ret = -1;
+-	char *token, *l_params;
++	char *token, *l_params, *saveptr = NULL;
+ 	struct rte_event_eth_rx_adapter_queue_conf queue_conf;
  
 -	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (parse_dev_id(params, &dev_id, NULL) < 0)
++	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
  		return -1;
  
--	dev_id = strtoul(params, &end_param, 10);
--	if (*end_param != '\0')
--		RTE_EDEV_LOG_DEBUG(
--			"Extra parameters passed to eventdev telemetry command, ignoring");
--
- 	RTE_EVENTDEV_VALID_DEVID_OR_ERR_RET(dev_id, -EINVAL);
- 	dev = &rte_eventdevs[dev_id];
+ 	/* Get Rx adapter ID from parameter string */
+ 	l_params = strdup(params);
+ 	if (l_params == NULL)
+ 		return -ENOMEM;
+-	token = strtok(l_params, ",");
++	token = strtok_r(l_params, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
+ 	rx_adapter_id = strtoul(token, NULL, 10);
+ 	RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_GOTO_ERR_RET(rx_adapter_id, -EINVAL);
  
-@@ -1861,16 +1877,10 @@ handle_queue_list(const char *cmd __rte_unused,
- 	int i;
- 	uint8_t dev_id;
- 	struct rte_eventdev *dev;
--	char *end_param;
+-	token = strtok(NULL, ",");
++	token = strtok_r(NULL, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
+ 
+ 	/* Get device ID from parameter string */
+ 	eth_dev_id = strtoul(token, NULL, 10);
+ 	RTE_EVENT_ETH_RX_ADAPTER_PORTID_VALID_OR_GOTO_ERR_RET(eth_dev_id, -EINVAL);
+ 
+-	token = strtok(NULL, ",");
++	token = strtok_r(NULL, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
+ 
+ 	/* Get Rx queue ID from parameter string */
+@@ -3862,7 +3862,7 @@ handle_rxa_get_queue_conf(const char *cmd __rte_unused,
+ 		goto error;
+ 	}
+ 
+-	token = strtok(NULL, "\0");
++	token = strtok_r(NULL, "\0", &saveptr);
+ 	if (token != NULL)
+ 		RTE_EDEV_LOG_ERR("Extra parameters passed to eventdev"
+ 				 " telemetry command, ignoring");
+@@ -3902,29 +3902,29 @@ handle_rxa_get_queue_stats(const char *cmd __rte_unused,
+ 	uint16_t rx_queue_id;
+ 	uint16_t eth_dev_id;
+ 	int ret = -1;
+-	char *token, *l_params;
++	char *token, *l_params, *saveptr = NULL;
+ 	struct rte_event_eth_rx_adapter_queue_stats q_stats;
  
 -	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (parse_dev_id(params, &dev_id, NULL) != 0)
++	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
  		return -1;
  
--	dev_id = strtoul(params, &end_param, 10);
--	if (*end_param != '\0')
--		RTE_EDEV_LOG_DEBUG(
--			"Extra parameters passed to eventdev telemetry command, ignoring");
--
- 	RTE_EVENTDEV_VALID_DEVID_OR_ERR_RET(dev_id, -EINVAL);
- 	dev = &rte_eventdevs[dev_id];
+ 	/* Get Rx adapter ID from parameter string */
+ 	l_params = strdup(params);
+ 	if (l_params == NULL)
+ 		return -ENOMEM;
+-	token = strtok(l_params, ",");
++	token = strtok_r(l_params, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
+ 	rx_adapter_id = strtoul(token, NULL, 10);
+ 	RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_GOTO_ERR_RET(rx_adapter_id, -EINVAL);
  
-@@ -1886,27 +1896,28 @@ handle_queue_links(const char *cmd __rte_unused,
- 		   const char *params,
- 		   struct rte_tel_data *d)
- {
--	int i, ret, port_id = 0;
-+	int i, ret;
- 	char *end_param;
- 	uint8_t dev_id;
- 	uint8_t queues[RTE_EVENT_MAX_QUEUES_PER_DEV];
- 	uint8_t priorities[RTE_EVENT_MAX_QUEUES_PER_DEV];
--	const char *p_param;
-+	unsigned long port_id;
+-	token = strtok(NULL, ",");
++	token = strtok_r(NULL, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
+ 
+ 	/* Get device ID from parameter string */
+ 	eth_dev_id = strtoul(token, NULL, 10);
+ 	RTE_EVENT_ETH_RX_ADAPTER_PORTID_VALID_OR_GOTO_ERR_RET(eth_dev_id, -EINVAL);
+ 
+-	token = strtok(NULL, ",");
++	token = strtok_r(NULL, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
+ 
+ 	/* Get Rx queue ID from parameter string */
+@@ -3935,7 +3935,7 @@ handle_rxa_get_queue_stats(const char *cmd __rte_unused,
+ 		goto error;
+ 	}
+ 
+-	token = strtok(NULL, "\0");
++	token = strtok_r(NULL, "\0", &saveptr);
+ 	if (token != NULL)
+ 		RTE_EDEV_LOG_ERR("Extra parameters passed to eventdev"
+ 				 " telemetry command, ignoring");
+@@ -3974,28 +3974,28 @@ handle_rxa_queue_stats_reset(const char *cmd __rte_unused,
+ 	uint16_t rx_queue_id;
+ 	uint16_t eth_dev_id;
+ 	int ret = -1;
+-	char *token, *l_params;
++	char *token, *l_params, *saveptr = NULL;
  
 -	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (parse_dev_id(params, &dev_id, &end_param) != 0)
++	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
  		return -1;
  
--	/* Get dev ID from parameter string */
--	dev_id = strtoul(params, &end_param, 10);
- 	RTE_EVENTDEV_VALID_DEVID_OR_ERR_RET(dev_id, -EINVAL);
+ 	/* Get Rx adapter ID from parameter string */
+ 	l_params = strdup(params);
+ 	if (l_params == NULL)
+ 		return -ENOMEM;
+-	token = strtok(l_params, ",");
++	token = strtok_r(l_params, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
+ 	rx_adapter_id = strtoul(token, NULL, 10);
+ 	RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_GOTO_ERR_RET(rx_adapter_id, -EINVAL);
  
--	p_param = strtok(end_param, ",");
--	if (p_param == NULL || strlen(p_param) == 0 || !isdigit(*p_param))
-+	if (*end_param != ',' || !isdigit((unsigned char)end_param[1]))
- 		return -1;
+-	token = strtok(NULL, ",");
++	token = strtok_r(NULL, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
  
--	port_id = strtoul(p_param, &end_param, 10);
--	p_param = strtok(NULL, "\0");
--	if (p_param != NULL)
-+	port_id = strtoul(end_param + 1, &end_param, 10);
-+	if (port_id >= RTE_EVENT_MAX_PORTS_PER_DEV) {
-+		RTE_EDEV_LOG_DEBUG("Invalid port id out of range %lu", port_id);
-+		return -1;
-+	}
-+
-+	if (*end_param != '\0')
- 		RTE_EDEV_LOG_DEBUG(
- 			"Extra parameters passed to eventdev telemetry command, ignoring");
+ 	/* Get device ID from parameter string */
+ 	eth_dev_id = strtoul(token, NULL, 10);
+ 	RTE_EVENT_ETH_RX_ADAPTER_PORTID_VALID_OR_GOTO_ERR_RET(eth_dev_id, -EINVAL);
  
-@@ -1998,19 +2009,12 @@ handle_dev_xstats(const char *cmd __rte_unused,
- 		  const char *params,
- 		  struct rte_tel_data *d)
- {
--	int dev_id;
-+	uint8_t dev_id;
- 	enum rte_event_dev_xstats_mode mode;
--	char *end_param;
+-	token = strtok(NULL, ",");
++	token = strtok_r(NULL, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
+ 
+ 	/* Get Rx queue ID from parameter string */
+@@ -4006,7 +4006,7 @@ handle_rxa_queue_stats_reset(const char *cmd __rte_unused,
+ 		goto error;
+ 	}
+ 
+-	token = strtok(NULL, "\0");
++	token = strtok_r(NULL, "\0", &saveptr);
+ 	if (token != NULL)
+ 		RTE_EDEV_LOG_ERR("Extra parameters passed to eventdev"
+ 				 " telemetry command, ignoring");
+@@ -4036,22 +4036,22 @@ handle_rxa_instance_get(const char *cmd __rte_unused,
+ 	uint16_t rx_queue_id;
+ 	uint16_t eth_dev_id;
+ 	int ret = -1;
+-	char *token, *l_params;
++	char *token, *l_params, *saveptr = NULL;
  
 -	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (parse_dev_id(params, &dev_id, NULL) != 0)
++	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
  		return -1;
  
--	/* Get dev ID from parameter string */
--	dev_id = strtoul(params, &end_param, 10);
--	if (*end_param != '\0')
--		RTE_EDEV_LOG_DEBUG(
--			"Extra parameters passed to eventdev telemetry command, ignoring");
--
- 	RTE_EVENTDEV_VALID_DEVID_OR_ERR_RET(dev_id, -EINVAL);
+ 	l_params = strdup(params);
+ 	if (l_params == NULL)
+ 		return -ENOMEM;
+-	token = strtok(l_params, ",");
++	token = strtok_r(l_params, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
  
- 	mode = RTE_EVENT_DEV_XSTATS_DEVICE;
-@@ -2022,29 +2026,25 @@ handle_port_xstats(const char *cmd __rte_unused,
- 		   const char *params,
- 		   struct rte_tel_data *d)
- {
--	int dev_id;
--	int port_queue_id = 0;
-+	uint8_t dev_id;
- 	enum rte_event_dev_xstats_mode mode;
-+	unsigned long port_queue_id;
- 	char *end_param;
--	const char *p_param;
+ 	/* Get device ID from parameter string */
+ 	eth_dev_id = strtoul(token, NULL, 10);
+ 	RTE_EVENT_ETH_RX_ADAPTER_PORTID_VALID_OR_GOTO_ERR_RET(eth_dev_id, -EINVAL);
  
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (parse_dev_id(params, &dev_id, &end_param) != 0)
- 		return -1;
--
--	/* Get dev ID from parameter string */
--	dev_id = strtoul(params, &end_param, 10);
- 	RTE_EVENTDEV_VALID_DEVID_OR_ERR_RET(dev_id, -EINVAL);
+-	token = strtok(NULL, ",");
++	token = strtok_r(NULL, ",", &saveptr);
+ 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
  
--	p_param = strtok(end_param, ",");
- 	mode = RTE_EVENT_DEV_XSTATS_PORT;
+ 	/* Get Rx queue ID from parameter string */
+@@ -4062,7 +4062,7 @@ handle_rxa_instance_get(const char *cmd __rte_unused,
+ 		goto error;
+ 	}
  
--	if (p_param == NULL || strlen(p_param) == 0 || !isdigit(*p_param))
-+	if (*end_param != ',' || !isdigit((unsigned char)end_param[1]))
- 		return -1;
- 
--	port_queue_id = strtoul(p_param, &end_param, 10);
-+	port_queue_id = strtoul(end_param + 1, &end_param, 10);
-+	if (port_queue_id >= RTE_EVENT_MAX_PORTS_PER_DEV)
-+		return -1;
- 
--	p_param = strtok(NULL, "\0");
--	if (p_param != NULL)
-+	if (*end_param != '\0')
- 		RTE_EDEV_LOG_DEBUG(
- 			"Extra parameters passed to eventdev telemetry command, ignoring");
- 
-@@ -2056,29 +2056,26 @@ handle_queue_xstats(const char *cmd __rte_unused,
- 		    const char *params,
- 		    struct rte_tel_data *d)
- {
--	int dev_id;
--	int port_queue_id = 0;
-+	uint8_t dev_id;
-+	unsigned long port_queue_id;
- 	enum rte_event_dev_xstats_mode mode;
- 	char *end_param;
--	const char *p_param;
- 
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (parse_dev_id(params, &dev_id, &end_param) != 0)
- 		return -1;
- 
--	/* Get dev ID from parameter string */
--	dev_id = strtoul(params, &end_param, 10);
- 	RTE_EVENTDEV_VALID_DEVID_OR_ERR_RET(dev_id, -EINVAL);
- 
--	p_param = strtok(end_param, ",");
- 	mode = RTE_EVENT_DEV_XSTATS_QUEUE;
- 
--	if (p_param == NULL || strlen(p_param) == 0 || !isdigit(*p_param))
-+	if (*end_param != ',' || !isdigit((unsigned char)end_param[1]))
- 		return -1;
- 
--	port_queue_id = strtoul(p_param, &end_param, 10);
-+	port_queue_id = strtoul(end_param + 1, &end_param, 10);
-+	if (port_queue_id >= RTE_EVENT_MAX_QUEUES_PER_DEV)
-+		return -1;
- 
--	p_param = strtok(NULL, "\0");
--	if (p_param != NULL)
-+	if (*end_param != '\0')
- 		RTE_EDEV_LOG_DEBUG(
- 			"Extra parameters passed to eventdev telemetry command, ignoring");
- 
-@@ -2090,19 +2087,14 @@ handle_dev_dump(const char *cmd __rte_unused,
- 		const char *params,
- 		struct rte_tel_data *d)
- {
--	char *buf, *end_param;
--	int dev_id, ret;
-+	char *buf;
-+	uint8_t dev_id;
-+	int ret;
- 	FILE *f;
- 
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (parse_dev_id(params, &dev_id, NULL) != 0)
- 		return -1;
- 
--	/* Get dev ID from parameter string */
--	dev_id = strtoul(params, &end_param, 10);
--	if (*end_param != '\0')
--		RTE_EDEV_LOG_DEBUG(
--			"Extra parameters passed to eventdev telemetry command, ignoring");
--
- 	RTE_EVENTDEV_VALID_DEVID_OR_ERR_RET(dev_id, -EINVAL);
- 
- 	buf = calloc(RTE_TEL_MAX_SINGLE_STRING_LEN, sizeof(char));
+-	token = strtok(NULL, "\0");
++	token = strtok_r(NULL, "\0", &saveptr);
+ 	if (token != NULL)
+ 		RTE_EDEV_LOG_ERR("Extra parameters passed to eventdev"
+ 				 " telemetry command, ignoring");
 -- 
 2.53.0
 
