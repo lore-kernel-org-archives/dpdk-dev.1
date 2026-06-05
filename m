@@ -2,50 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8067BCD6E77
-	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 12:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 907A0CD6E74
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 13:03:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A3BA402BA;
-	Fri,  5 Jun 2026 14:32:41 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id B3F7E4026A;
- Fri,  5 Jun 2026 14:32:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E7D3402BA;
+	Fri,  5 Jun 2026 15:03:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 637F24026A;
+ Fri,  5 Jun 2026 15:03:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780662760; x=1812198760;
+ t=1780664603; x=1812200603;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=r0Ey567nSaSoCHXv3+8UfYKA/8p6F4Hyu/RZsqeS9eo=;
- b=cZXxsSV46pRyWIxIzDW879QKqU5qyMvCmHtMb1UXuIsum965I/aGERg3
- s1uieCBRG4OhD5elHPItB2+edyH4xtUPLyonVqXPeNQO7oIvO3HEOmbvG
- yoorvefOc3EpUBaGROgAryv9Z7Xz5Hl5cdr9aD0Zn5bV0la0uC09B0Lri
- 5tgYHDxHpsBcJBGsXOnZHufJ+Eu9GCeqGGjvS5TolipMV7+jMTWWP0TzD
- SNuPa7YLg6DZR2YaWTuAr7En18Ro7IMwI1/9DnK+AYCTswoXIBEi4KAs2
- jQJ+/4XELykWMZmsP1l4Dsb0pgOJ9h+ygGowrM+Lg1V9+KnsJwDyUUg2v w==;
-X-CSE-ConnectionGUID: kwMxys2kTEiaGZ/5WIKDEA==
-X-CSE-MsgGUID: yFwXfndyQluBkTWD6pMMBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11807"; a="81556387"
-X-IronPort-AV: E=Sophos;i="6.24,188,1774335600"; d="scan'208";a="81556387"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Jun 2026 05:32:38 -0700
-X-CSE-ConnectionGUID: MXgqQOcoQtK7cnCedpcyxA==
-X-CSE-MsgGUID: vBybRiUtSZS+glFnbQO29g==
+ bh=hzeaNS5gVB37KDM4/e2dsv8UIwLaiCyUnm2VSVOkW6w=;
+ b=GTcd1e5fUh/5bR/IvwJ5Z4DdYlBMfO52djTEO9Iwi5tRFw1XhK5dWsJK
+ Zn3J0EVs5wQtd2FZ30gaCF4yFPs3VjcKII4m52Si15YRyfbXJkIJkN2nU
+ 05SaAPh7Kvl2fqNxDx+bjA1IhXboZHsLegiVcCSQdUSenVohjipvyCO7+
+ b4iPsWKSl12O1MSKLZjWIS2z5uHSFqJKvk2OXKApl/eKx/i/V/INQvjT9
+ nYulYpAj9bjH4LX/PcJtRwF1vlnMYd6cdKcGppLuSJtTIVAzVOUqGVfBG
+ 0fsPdtwtpnt2zbMZ3j1YrkZkCDL9Qgpj0bVffxBUNnAy49ei9eJOo7Fty g==;
+X-CSE-ConnectionGUID: zv3rSAmZQze4mbObJwajmA==
+X-CSE-MsgGUID: BkMTyDn9QaSfgoRXjs5AIg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11807"; a="85386255"
+X-IronPort-AV: E=Sophos;i="6.24,188,1774335600"; d="scan'208";a="85386255"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Jun 2026 06:03:22 -0700
+X-CSE-ConnectionGUID: Ud9gHdNHT+myeUS/T/xiNA==
+X-CSE-MsgGUID: ypcgG4yvROep2VPq6b0v0A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,188,1774335600"; d="scan'208";a="268762798"
-Received: from icx009.iind.intel.com ([10.190.212.240])
- by fmviesa001.fm.intel.com with ESMTP; 05 Jun 2026 05:32:25 -0700
-From: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-To: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com,
- ciara.loftus@intel.com
-Cc: shaiq.wani@intel.com,
- Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>, stable@dpdk.org
-Subject: [PATCH v3] net/iavf: fix VF reset race and stale ARQ message handling
-Date: Fri,  5 Jun 2026 12:36:46 +0000
-Message-ID: <20260605123646.1328492-1-chaitanyababux.talluri@intel.com>
+X-IronPort-AV: E=Sophos;i="6.24,188,1774335600"; d="scan'208";a="244001639"
+Received: from silpixa00401176.ir.intel.com ([10.20.224.212])
+ by orviesa010.jf.intel.com with ESMTP; 05 Jun 2026 06:03:20 -0700
+From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+To: dev@dpdk.org
+Cc: maxime@leroys.fr,
+	stable@dpdk.org
+Subject: [PATCH 1/3] fib6: fix tbl8 reservation drift in trie
+Date: Fri,  5 Jun 2026 13:03:17 +0000
+Message-ID: <20260605130317.896413-1-vladimir.medvedkin@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260518054227.110701-1-chaitanyababux.talluri@intel.com>
-References: <20260518054227.110701-1-chaitanyababux.talluri@intel.com>
+In-Reply-To: <20260522145855.1748406-2-maxime@leroys.fr>
+References: <20260522145855.1748406-2-maxime@leroys.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,247 +60,229 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-During VF reset, multiple issues can lead to initialization
-instability.
+From: Maxime Leroy <maxime@leroys.fr>
 
-The first issue is a race condition in the VF-initiated reset path,
-where VFR state VFACTIVE is treated as both "reset not started" and
-"reset completed" in iavf_check_vf_reset_done(). When a VF initiates
-a reset, the PF may not have begun processing it by the time
-iavf_check_vf_reset_done() is called. Since VFACTIVE satisfies the
-completion check, the VF proceeds before the PF has acknowledged the
-reset, resulting in inconsistent initialization and virtchnl command
-failures (e.g., OP_VERSION timeout).
+trie_modify() maintained rsvd_tbl8s by computing a depth_diff from
+the current RIB topology at both ADD and DEL. The two values diverge
+when the RIB changes between an ADD and its later DEL (a covering
+parent added or removed), and rsvd_tbl8s eventually wraps to
+UINT32_MAX, rejecting all subsequent /25+ ADDs with -ENOSPC.
 
-The second issue is the presence of stale messages in the Admin
-Receive Queue (ARQ) after VF reset. After the admin queue is
-re-initialized during reset recovery, the PF may post responses to
-pre-reset commands or unsolicited events. These may include opcode 0
-(VIRTCHNL_OP_UNKNOWN) or responses to commands issued before reset,
-which can interfere with API negotiation and cause command mismatch
-errors.
+A helper count_empty_levels() was added to fix the issue.
 
-Additionally, opcode 0 messages generate excessive warning logs,
-causing unnecessary noise during initialization.
-
-The solution involves:
-
-1. Introducing a wait-for-reset-start helper that polls RSTAT until
-   it leaves VFACTIVE. This helper is used in VF-initiated reset paths
-   to ensure that the PF has started processing the reset before VF
-   reinitialization proceeds. It is invoked from iavf_handle_hw_reset()
-   for event-driven resets and from iavf_queues_req_reset() for
-   queue-change-triggered resets. It is intentionally not used in
-   iavf_dev_reset() to avoid redundant wait and unnecessary delay
-   when reset completion is already confirmed.
-
-2. Draining stale ARQ messages after admin queue initialization
-   during reset recovery only (vf->in_reset_recovery == true).
-   During initial device probe, the admin queue is freshly allocated
-   and does not contain stale entries.
-
-3. Downgrading opcode 0 (VIRTCHNL_OP_UNKNOWN) message logging to
-   DEBUG level while preserving mismatch detection for other
-   opcodes, allowing polling to continue until a valid response
-   is received.
-
-4. Refactoring reset-start detection and ARQ drain logic into helper
-   functions (iavf_wait_for_reset_start() and iavf_drain_arq()) to
-   improve readability and maintainability.
-
-5. Introducing a short delay after triggering VF reset in
-   iavf_dev_reset() to mitigate timing issues between VF
-   reinitialization and PF reset processing. This helps avoid
-   virtchnl command failures when PF reset completion is not yet
-   fully synchronized.
-
-This fix primarily targets VF-initiated reset handling, while ARQ
-drain and opcode handling improvements also benefit PF-initiated
-reset recovery scenarios.
-
-Fixes: 1428895ad417 ("net/iavf: fix disabling of promiscuous modes on close")
+Fixes: c3e12e0f0354 ("fib: add dataplane algorithm for IPv6")
 Cc: stable@dpdk.org
 
-Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
+Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 ---
+ lib/fib/trie.c          | 81 +++++++++++++++++++++--------------------
+ lib/rib/rib6_internal.h | 24 ++++++++++++
+ lib/rib/rte_rib6.c      | 12 +-----
+ 3 files changed, 66 insertions(+), 51 deletions(-)
+ create mode 100644 lib/rib/rib6_internal.h
 
-v3:
-- Rebased the patch.
-- Changed the Fixes tag.
-
-v2:
-- Removed iavf_wait_for_reset_start() from iavf_dev_reset() to avoid
-  redundant wait and 1-second delay after reset completion.
-- Added iavf_wait_for_reset_start() to iavf_queues_req_reset() to
-  properly handle queue-change-triggered resets.
-- Retained usage in iavf_handle_hw_reset() for VF-initiated reset flow.
-- Restricted iavf_drain_arq() to reset recovery paths only.
-- Added delay in iavf_dev_reset() to mitigate reset timing issues.
----
- drivers/net/intel/iavf/iavf_ethdev.c | 64 ++++++++++++++++++++++++++++
- drivers/net/intel/iavf/iavf_vchnl.c  | 16 +++++--
- 2 files changed, 77 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index a8031e23a5..e87f3acf5f 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -106,6 +106,7 @@ static int iavf_dev_start(struct rte_eth_dev *dev);
- static int iavf_dev_stop(struct rte_eth_dev *dev);
- static int iavf_dev_close(struct rte_eth_dev *dev);
- static int iavf_dev_reset(struct rte_eth_dev *dev);
-+static int iavf_wait_for_reset_start(struct iavf_hw *hw);
- static int iavf_dev_info_get(struct rte_eth_dev *dev,
- 			     struct rte_eth_dev_info *dev_info);
- static const uint32_t *iavf_dev_supported_ptypes_get(struct rte_eth_dev *dev,
-@@ -605,6 +606,7 @@ iavf_queues_req_reset(struct rte_eth_dev *dev, uint16_t num)
- 	struct iavf_adapter *ad =
- 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct iavf_info *vf =  IAVF_DEV_PRIVATE_TO_VF(ad);
-+	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(ad);
- 	int ret;
+diff --git a/lib/fib/trie.c b/lib/fib/trie.c
+index fa5d9ec6b0..e9f1141cef 100644
+--- a/lib/fib/trie.c
++++ b/lib/fib/trie.c
+@@ -15,6 +15,7 @@
+ #include <rte_fib6.h>
+ #include "fib_log.h"
+ #include "trie.h"
++#include <rib6_internal.h>
  
- 	ret = iavf_request_queues(dev, num);
-@@ -616,6 +618,8 @@ iavf_queues_req_reset(struct rte_eth_dev *dev, uint16_t num)
- 			vf->vsi_res->num_queue_pairs, num);
+ #ifdef CC_AVX512_SUPPORT
  
- 	iavf_dev_watchdog_disable(ad);
-+	/* Wait for PF to start processing reset triggered by queue change */
-+	iavf_wait_for_reset_start(hw);
- 	ret = iavf_dev_reset(dev);
- 	if (ret) {
- 		PMD_DRV_LOG(ERR, "vf reset failed");
-@@ -2086,6 +2090,30 @@ iavf_dev_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
+@@ -534,19 +535,45 @@ modify_dp(struct rte_trie_tbl *dp, struct rte_rib6 *rib,
  	return 0;
  }
  
-+/* Wait until PF acknowledges VF reset (RSTAT leaves VFACTIVE) */
-+static int
-+iavf_wait_for_reset_start(struct iavf_hw *hw)
++/*
++ * Count bumber of TBL8s that can be freed after deleting a prefix or allocated
++ * after adding a prefix.
++ */
++static uint8_t
++count_empty_levels(struct rte_rib6 *rib, const struct rte_ipv6_addr *ip, uint8_t depth)
 +{
-+	int i;
-+	uint32_t rstat;
++	struct rte_rib6_node *cur = rte_rib6_lookup_exact(rib, ip, depth);
++	/* expect prefix exists */
++	if (cur == NULL)
++		return 0;
 +
-+	for (i = 0; i < 100; i++) {
-+		rte_delay_ms(10);
++	/* more specifics present */
++	if (cur->left != NULL || cur->right != NULL)
++		return 0;
 +
-+		rstat = IAVF_READ_REG(hw, IAVF_VFGEN_RSTAT);
-+		rstat &= IAVF_VFGEN_RSTAT_VFR_STATE_MASK;
-+		rstat >>= IAVF_VFGEN_RSTAT_VFR_STATE_SHIFT;
++	struct rte_rib6_node *parent = cur->parent;
++	/* we know parent->depth lt a target cur->depth
++	 * also, there exists tbl8 path up to RTE_ALIGN_CEIL(parent->depth, 8)
++	 */
++	depth = RTE_MAX(depth, 24);
++	uint8_t parent_depth = (parent) ? RTE_MAX(parent->depth, 24) : 24;
++	uint8_t depth_diff = (RTE_ALIGN_CEIL(depth, 8) - RTE_ALIGN_CEIL(parent_depth, 8)) >> 3;
 +
-+		if (rstat != VIRTCHNL_VFR_VFACTIVE)
-+			return 0;
-+	}
-+
-+	PMD_DRV_LOG(DEBUG, "VF reset did not start within timeout");
-+	return -1;
++	return depth_diff;
 +}
 +
-+static void iavf_drain_arq(struct iavf_hw *hw, struct iavf_info *vf);
-+
- static int
- iavf_check_vf_reset_done(struct iavf_hw *hw)
+ int
+ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 	uint8_t depth, uint64_t next_hop, int op)
  {
-@@ -2618,6 +2646,30 @@ iavf_init_proto_xtr(struct rte_eth_dev *dev)
- 	}
- }
+ 	struct rte_trie_tbl *dp;
+ 	struct rte_rib6 *rib;
+-	struct rte_rib6_node *tmp = NULL;
+ 	struct rte_rib6_node *node;
+ 	struct rte_rib6_node *parent;
+-	struct rte_ipv6_addr ip_masked, tmp_ip;
++	struct rte_ipv6_addr ip_masked;
+ 	int ret = 0;
+ 	uint64_t par_nh, node_nh;
+-	uint8_t tmp_depth, depth_diff = 0, parent_depth = 24;
++	uint8_t new_levels;
  
-+/* Drain stale Admin Receive Queue messages after reset */
-+static void
-+iavf_drain_arq(struct iavf_hw *hw, struct iavf_info *vf)
-+{
-+	struct iavf_arq_event_info event;
-+	int drain_count = 0;
-+
-+	memset(&event, 0, sizeof(event));
-+	event.msg_buf = vf->aq_resp;
-+
-+	while (drain_count < IAVF_AQ_LEN) {
-+		event.buf_len = IAVF_AQ_BUF_SZ;
-+
-+		if (iavf_clean_arq_element(hw, &event, NULL) != IAVF_SUCCESS)
-+			break;
-+
-+		drain_count++;
-+	}
-+
-+	if (drain_count > 0)
-+		PMD_INIT_LOG(DEBUG, "Drained %d stale ARQ messages",
-+				drain_count);
-+}
-+
- static int
- iavf_init_vf(struct rte_eth_dev *dev)
- {
-@@ -2654,6 +2706,10 @@ iavf_init_vf(struct rte_eth_dev *dev)
- 		goto err;
- 	}
+ 	if ((fib == NULL) || (ip == NULL) || (depth > RTE_IPV6_MAX_DEPTH))
+ 		return -EINVAL;
+@@ -559,37 +586,6 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 	ip_masked = *ip;
+ 	rte_ipv6_addr_mask(&ip_masked, depth);
  
-+	/* Drain stale ARQ messages only during reset recovery */
-+	if (vf->in_reset_recovery)
-+		iavf_drain_arq(hw, vf);
-+
- 	if (iavf_check_api_version(adapter) != 0) {
- 		PMD_INIT_LOG(ERR, "check_api version failed");
- 		goto err_api;
-@@ -3289,6 +3345,8 @@ iavf_dev_reset(struct rte_eth_dev *dev)
- 	ret = iavf_dev_uninit(dev);
- 	if (ret)
- 		return ret;
-+	/* Add delay before re-initialization */
-+	rte_delay_ms(50);
- 
- 	return iavf_dev_init(dev);
- }
-@@ -3352,6 +3410,7 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
- 	struct iavf_adapter *adapter = dev->data->dev_private;
-+	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	int ret;
- 	bool restart_device = false;
- 
-@@ -3370,6 +3429,11 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- 	vf->in_reset_recovery = true;
- 	iavf_set_no_poll(adapter, false);
- 
-+	/* For VF-initiated reset, wait for PF to start processing it */
-+	if (vf_initiated_reset)
-+		if (iavf_wait_for_reset_start(hw) != 0)
-+			PMD_DRV_LOG(WARNING, "PF did not acknowledge VF reset");
-+
- 	/* Call the pre reset callback */
- 	if (vf->pre_reset_cb != NULL)
- 		vf->pre_reset_cb(dev->data->port_id, vf->pre_reset_cb_arg);
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 94ccfb5d6e..0a536a15e0 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -296,11 +296,21 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
- 					__func__, vpe->event);
+-	if (depth > 24) {
+-		tmp = rte_rib6_get_nxt(rib, &ip_masked,
+-			RTE_ALIGN_FLOOR(depth, 8), NULL,
+-			RTE_RIB6_GET_NXT_ALL);
+-		if (tmp && op == RTE_FIB6_DEL) {
+-			/* in case of delete operation, skip the prefix we are going to delete */
+-			rte_rib6_get_ip(tmp, &tmp_ip);
+-			rte_rib6_get_depth(tmp, &tmp_depth);
+-			if (rte_ipv6_addr_eq(&ip_masked, &tmp_ip) && depth == tmp_depth)
+-				tmp = rte_rib6_get_nxt(rib, &ip_masked,
+-					RTE_ALIGN_FLOOR(depth, 8), tmp, RTE_RIB6_GET_NXT_ALL);
+-		}
+-
+-		if (tmp == NULL) {
+-			tmp = rte_rib6_lookup(rib, ip);
+-			/**
+-			 * in case of delete operation, lookup returns the prefix
+-			 * we are going to delete. Find the parent.
+-			 */
+-			if (tmp && op == RTE_FIB6_DEL)
+-				tmp = rte_rib6_lookup_parent(tmp);
+-
+-			if (tmp != NULL) {
+-				rte_rib6_get_depth(tmp, &tmp_depth);
+-				parent_depth = RTE_MAX(tmp_depth, 24);
+-			}
+-			depth_diff = RTE_ALIGN_CEIL(depth, 8) -
+-				RTE_ALIGN_CEIL(parent_depth, 8);
+-			depth_diff = depth_diff >> 3;
+-		}
+-	}
+ 	node = rte_rib6_lookup_exact(rib, &ip_masked, depth);
+ 	switch (op) {
+ 	case RTE_FIB6_ADD:
+@@ -603,12 +599,16 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 			return 0;
  		}
- 	}  else {
--		/* async reply msg on command issued by vf previously */
-+		/* Async reply for previously issued VF command.
-+		 * Stale messages from before reset are ignored, and polling
-+		 * continues until the expected response is received.
-+		 */
- 		result = IAVF_MSG_CMD;
- 		if (opcode != vf->pend_cmd) {
--			PMD_DRV_LOG(WARNING, "command mismatch, expect %u, get %u",
--					vf->pend_cmd, opcode);
-+			if (opcode == VIRTCHNL_OP_UNKNOWN)
-+				PMD_DRV_LOG(DEBUG,
-+					    "Ignoring stale msg (opcode 0), pending cmd %u",
-+					    vf->pend_cmd);
-+			else
-+				PMD_DRV_LOG(WARNING,
-+					    "command mismatch, expect %u, get %u",
-+					    vf->pend_cmd, opcode);
+ 
+-		if ((depth > 24) && (dp->rsvd_tbl8s + depth_diff > dp->number_tbl8s))
+-			return -ENOSPC;
+-
+ 		node = rte_rib6_insert(rib, &ip_masked, depth);
+ 		if (node == NULL)
+ 			return -rte_errno;
 +
- 			result = IAVF_MSG_ERR;
++		new_levels = count_empty_levels(rib, &ip_masked, depth);
++		if (dp->rsvd_tbl8s + new_levels > dp->number_tbl8s) {
++			rte_rib6_remove(rib, &ip_masked, depth);
++			return -ENOSPC;
++		}
++
+ 		rte_rib6_set_nh(node, next_hop);
+ 		parent = rte_rib6_lookup_parent(node);
+ 		if (parent != NULL) {
+@@ -622,7 +622,7 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 			return ret;
  		}
- 	}
+ successfully_added:
+-		dp->rsvd_tbl8s += depth_diff;
++		dp->rsvd_tbl8s += new_levels;
+ 		return 0;
+ 	case RTE_FIB6_DEL:
+ 		if (node == NULL)
+@@ -640,9 +640,10 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 
+ 		if (ret != 0)
+ 			return ret;
+-		rte_rib6_remove(rib, ip, depth);
+ 
+-		dp->rsvd_tbl8s -= depth_diff;
++		dp->rsvd_tbl8s -= count_empty_levels(rib, &ip_masked, depth);
++		rte_rib6_remove(rib, &ip_masked, depth);
++
+ 		return 0;
+ 	default:
+ 		break;
+diff --git a/lib/rib/rib6_internal.h b/lib/rib/rib6_internal.h
+new file mode 100644
+index 0000000000..674befc152
+--- /dev/null
++++ b/lib/rib/rib6_internal.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2018 Vladimir Medvedkin <medvedkinv@gmail.com>
++ * Copyright(c) 2019 Intel Corporation
++ */
++
++#ifndef _RIB6_INTERNAL_H_
++#define _RIB6_INTERNAL_H_
++
++#include <stdint.h>
++
++#include <rte_ip6.h>
++
++struct rte_rib6_node {
++	struct rte_rib6_node	*left;
++	struct rte_rib6_node	*right;
++	struct rte_rib6_node	*parent;
++	uint64_t		nh;
++	struct rte_ipv6_addr	ip;
++	uint8_t			depth;
++	uint8_t			flag;
++	uint64_t ext[];
++};
++
++#endif /* _RIB6_INTERNAL_H_ */
+diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
+index ec8ff68e87..f9023fca59 100644
+--- a/lib/rib/rte_rib6.c
++++ b/lib/rib/rte_rib6.c
+@@ -19,6 +19,7 @@
+ #include <rte_rib6.h>
+ 
+ #include "rib_log.h"
++#include "rib6_internal.h"
+ 
+ #define RTE_RIB_VALID_NODE	1
+ /* Maximum length of a RIB6 name. */
+@@ -30,17 +31,6 @@ static struct rte_tailq_elem rte_rib6_tailq = {
+ };
+ EAL_REGISTER_TAILQ(rte_rib6_tailq)
+ 
+-struct rte_rib6_node {
+-	struct rte_rib6_node	*left;
+-	struct rte_rib6_node	*right;
+-	struct rte_rib6_node	*parent;
+-	uint64_t		nh;
+-	struct rte_ipv6_addr	ip;
+-	uint8_t			depth;
+-	uint8_t			flag;
+-	uint64_t ext[];
+-};
+-
+ struct rte_rib6 {
+ 	char		name[RTE_RIB6_NAMESIZE];
+ 	struct rte_rib6_node	*tree;
 -- 
 2.43.0
 
