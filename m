@@ -2,60 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B17C4CD6E7B
-	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 20:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E01CD6E7B
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 20:53:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 250E3406B8;
-	Fri,  5 Jun 2026 22:53:09 +0200 (CEST)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
- [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 193DD40698
- for <dev@dpdk.org>; Fri,  5 Jun 2026 22:53:07 +0200 (CEST)
-Received: by mail-qv1-f52.google.com with SMTP id
- 6a1803df08f44-8ccf6a63a45so28322256d6.3
- for <dev@dpdk.org>; Fri, 05 Jun 2026 13:53:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2D06240A4B;
+	Fri,  5 Jun 2026 22:53:10 +0200 (CEST)
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com
+ [209.85.219.53]) by mails.dpdk.org (Postfix) with ESMTP id 67C1E4066C
+ for <dev@dpdk.org>; Fri,  5 Jun 2026 22:53:08 +0200 (CEST)
+Received: by mail-qv1-f53.google.com with SMTP id
+ 6a1803df08f44-8ce3876a50cso22978766d6.0
+ for <dev@dpdk.org>; Fri, 05 Jun 2026 13:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780692786;
- x=1781297586; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780692788;
+ x=1781297588; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LE9R6rQTKl0XD+UnYbX8shgxtI1skfkfaL6lYYyJlHk=;
- b=V3WSZS7ZxdYSeEyuJ88olo0W6ChbyM6mSDXfGFfSKtvELBFDm9v2VndcF8buXbbb55
- hy0c0Cyb80jobuvxuzOwdYTzfUatnOQ9YA9GdneJ63lKWHbjkw8a4fRvs2IW/3JdyT9e
- 8C7XW3m1Blcp/ct3BPmLmOd3mRKPfjg/eGP0a5vUW2qlKsv5w7mxCFUmgupe11Mr663q
- 4wQeRF7fzuC7mnEEQ0/gcJgiRr3f7MTFtCC+ZmZOR7DS1NQxEsZ4y4r1lJIds/Q/8784
- EywHI/kmX+D5EMx6yL+lI9r5cE/gP5APDgxVI4AhmlAAwxFFAWZjhHggFpldPljwTSpR
- tn4g==
+ bh=U5raan3IR4GZt3jZxhOTeylA5OKZTB4G9nN29Fp+lK0=;
+ b=xJ97scEW/m97C4Uq0paQTelWoFsB+lMBZp4biEAmn880gn126Fy8RVOQTyX2FKt9GT
+ sJb79OIPLhCu99q8AvMOhipw8JIzaMvBcW4Fi5usT8wF2MqEYIufafehLLdXAYf+KouG
+ GHcCF7vcTgVneNyBOTMq8VVK4RgrXKCsTezZFb4igM3aKyeplzeWO++DuJ5H+e26GRUX
+ C0tjD+uSVMUvUPUtxXpr4YXhiWSEHwaOrpoyn/9hY+hZ1rNvPoTpfwVgAu+w8lsUkduA
+ pLG7JPvJvZW1fNS1GtD5snzq9A9FgWYtaz/PStuCr2W4/QzkkVo5tIiZUf+HEke+7Duj
+ zz+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780692786; x=1781297586;
+ d=1e100.net; s=20251104; t=1780692788; x=1781297588;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=LE9R6rQTKl0XD+UnYbX8shgxtI1skfkfaL6lYYyJlHk=;
- b=IgYyXE3mVclwxNTAu1IrAHhuk5wF5OdSiSO67ZYhPPLHscuo95k+q10Ny4ErjI9umR
- wsw7MND4eRCte4RYLPEYzJnvxC5eakfkiE+l4VsJ9pH7dXxrNN5FE5xukSivImljyWuL
- cZos0r2Vy4EuNYe4CpAoY5KsOSUhNXYulGEym8SpKZbkRxgF9dG38whKHKHyzhOIUMk3
- HNvWoKsGbRW8AP2sMRiXbmMWKiFkPgrf2xvWWaNb6tHPmD70CJi4YluNSnvhuM0sSgL4
- A5RUmozcRADfNCrsGimTJqffD9z8JmJ16voAL5US7JQ03sYsbXbVz71mVzRa2ad+ziJC
- zBqw==
-X-Gm-Message-State: AOJu0YyuVgAZiaxuqL5aJ9xhd0ox+BxSvXVRyb75kmW2U1ZHsBC/vaWp
- NQ2Rbn2iFHWNlqe1nwBgtXi199bmwCKcAN+NyHg4jHw730agK+Ot32tRSLZdoYYSrGfyxkkUE2P
- 8GqTX
-X-Gm-Gg: Acq92OFsXMrzaKDyaV8DgZxpmwyh0rbjK7gORI1ufzf/Xa2Va0FN7tFDgQvpJb3oa7W
- L46H7QHQrqSF1qVa4l3Erb1DRoCCr6QBPEjk+RLwPWNX0adD8BuDnWqg/gfdHs2RbPWn5O6LGY3
- OTZ9RDJPOUHC9vJyGyM9UryLBrpf9Us7QdAD6hBaJPQv7TEow7/G7zfFgn1cCbXynxAKELOhskr
- woSqK/bJmvbmtpgagFvtoYdPVKNtVoADA5BTMrSoZ6LoppvQL12vjran2I5GZz2KZa1VLTsvE3W
- K1wgrZpC/SHNFCkWJP2rUPlcbhRCJAuvWgNqjdp5rDyT1w30juR1fITP7cnDyivEaQpeVDu4vBx
- OqwCAqac+bGDBt8lRUUeXMBnXWJrvYIAPZRZDrC7Xrn6V/dFn/kvEg73OhRgIzQJslaYO4vtgQv
- s1BO9JexKqQSrF1f92LXWhp0h8x+K9UMeNQ8HN2nEHbBaEYv15F0db0OuUgEr73l9xFJoBvE2a
-X-Received: by 2002:a0c:fd87:0:b0:8ae:60c4:857 with SMTP id
- 6a1803df08f44-8cee6023aaamr69368456d6.18.1780692786285; 
- Fri, 05 Jun 2026 13:53:06 -0700 (PDT)
+ bh=U5raan3IR4GZt3jZxhOTeylA5OKZTB4G9nN29Fp+lK0=;
+ b=KELDa0PItIXhrcuW0vqRsO6puoksL6TwJuYBPUKPnXMmpGSBgVAxNLQmkldtfGTvDt
+ DhH12d/icXnLSoEwf8I7f4QYWVyu4jJ21ox1R+tHB2WXK+53Ofm329XtdEN6gwZpzuuv
+ 175QAAqziPRxNnLj8x5yuzFCZn+PZ29zRUcliiQmwmseti/9pmKqFt7tF4Dpaa39asXX
+ bH+4+bIn3VC46htigN5r2HztiupDMX+lShYeKehK7nywv2oEDRuN8FQ/ITWMFfPiQ0Ta
+ 1py7d1moipGgKLhluNDHCRf3yVbj4hU3Kq1X2J046d4Sx1qpmnxqvmPnLJEgqQehNB3k
+ p9cA==
+X-Gm-Message-State: AOJu0YymjnxmWmLKqP4a4bh/3KlOLA2yxtGUJLHZAOwM8MlDZfKwUwkQ
+ E2F3QQ141jqrkgXearpaTmrkGt311E1CFvrIMGqhxAN8EPxUgqTrIRr2Jd3mvcjPAbvppjCVvlj
+ XBkb/
+X-Gm-Gg: Acq92OEOLmP7XP35+mFyJmDuE/uTJamdohWxD7mTwpF0QI1xHjE66EsFSq+J7ztWhlg
+ DKwJ9ODRhJARmgAM84yIIKqwSiGBF51Ba3ZsQ0kzh2BtwgV8VA2qexiy5++pprGJmag5RkZ6C+U
+ 430+3H51amCsBXWQhRmqllI/6nfKpQKOIC8dkneez18fmtU02xvOVLVZOYvEbx6GoGVUX6MQ5CS
+ FXl66gaeDWvyIhnQL0S+rLcCQ8yw1H9AhujMR5TiX3E6qQ5V1ybrUsCtyXHykK7TTcuRZBLxwrJ
+ QXGlkLONOTBY70MieeCl9tyIsSO+a1jJ0VPGXk7rZ/ZvdbmNSaRDk2nfh/zy5onfV5tlEHtGk0t
+ FxMe1UzB16K+vlARIIrzkEjIfui9h1VMGGYKoIYDbvZNjBmYxebQcM3U25vdi0XtQBt3Jniaxve
+ p6T8M4PZHdgLAqFuJoXE3/2OLyUxxJP08F6HH02awTU2TTovJJS860xI8EDv4ZfTqjpIFZSm8s
+X-Received: by 2002:ad4:51d1:0:b0:8c6:2245:3ee1 with SMTP id
+ 6a1803df08f44-8cee600dfbemr75045256d6.18.1780692787749; 
+ Fri, 05 Jun 2026 13:53:07 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8cecd2629cesm90072906d6.41.2026.06.05.13.53.05
+ 6a1803df08f44-8cecd2629cesm90072906d6.41.2026.06.05.13.53.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 05 Jun 2026 13:53:05 -0700 (PDT)
+ Fri, 05 Jun 2026 13:53:07 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
@@ -63,9 +63,9 @@ Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
  Jerin Jacob <jerinj@marvell.com>,
  Ganapati Kundapura <ganapati.kundapura@intel.com>,
  Jay Jayatheerthan <jay.jayatheerthan@intel.com>
-Subject: [PATCH 6/8] eventdev/eth_rx: fix thread-unsafe telemetry parsing
-Date: Fri,  5 Jun 2026 13:51:03 -0700
-Message-ID: <20260605205253.520196-7-stephen@networkplumber.org>
+Subject: [PATCH 7/8] eventdev/eth_rx: reject out-of-range telemetry adapter ID
+Date: Fri,  5 Jun 2026 13:51:04 -0700
+Message-ID: <20260605205253.520196-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260605205253.520196-1-stephen@networkplumber.org>
 References: <20260605205253.520196-1-stephen@networkplumber.org>
@@ -84,224 +84,182 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The eth Rx adapter telemetry handlers parse multi-field parameter
-strings with a strtok()/strtok(NULL, ...) continuation chain.
-Since strtok() holds its parser state in a process-global static,
-and telemetry callbacks run in a separate thread per client connection.
-With concurrent clients the continuation calls read another thread's
-state - and since each handler strdup()s and frees its own buffer,
-a stale continuation can dereference freed memory.
-Thread the parse through a local save pointer with strtok_r().
-
-Also passing was passing a char to isdigit(), which is undefined
-in C standard for high-bit input.
+The eventdev rx adapter code was using atoi() to parse numeric
+parameters which does not handle out-of-range or extra garbage
+on input. Tighten the code to only accept valid numbers.
 
 Fixes: 814d01709328 ("eventdev/eth_rx: support telemetry")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eventdev/rte_event_eth_rx_adapter.c | 52 ++++++++++++-------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+ lib/eventdev/rte_event_eth_rx_adapter.c | 45 +++++++++++--------------
+ 1 file changed, 19 insertions(+), 26 deletions(-)
 
 diff --git a/lib/eventdev/rte_event_eth_rx_adapter.c b/lib/eventdev/rte_event_eth_rx_adapter.c
-index 2183adce6f..96a4a0d926 100644
+index 96a4a0d926..635bd6014b 100644
 --- a/lib/eventdev/rte_event_eth_rx_adapter.c
 +++ b/lib/eventdev/rte_event_eth_rx_adapter.c
-@@ -308,7 +308,7 @@ rxa_event_buf_get(struct event_eth_rx_adapter *rx_adapter, uint16_t eth_dev_id,
+@@ -270,8 +270,8 @@ rxa_timestamp_dynfield(struct rte_mbuf *mbuf)
+ 		event_eth_rx_timestamp_dynfield_offset, rte_mbuf_timestamp_t *);
+ }
+ 
+-static inline int
+-rxa_validate_id(uint8_t id)
++static inline bool
++rxa_validate_id(unsigned long id)
+ {
+ 	return id < RTE_EVENT_ETH_RX_ADAPTER_MAX_INSTANCE;
+ }
+@@ -294,14 +294,14 @@ rxa_event_buf_get(struct event_eth_rx_adapter *rx_adapter, uint16_t eth_dev_id,
+ 
+ #define RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_ERR_RET(id, retval) do { \
+ 	if (!rxa_validate_id(id)) { \
+-		RTE_EDEV_LOG_ERR("Invalid eth Rx adapter id = %d", id); \
++		RTE_EDEV_LOG_ERR("Invalid eth Rx adapter id = %lu", (unsigned long)id); \
+ 		return retval; \
+ 	} \
  } while (0)
  
- #define RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, retval) do { \
--	if ((token) == NULL || strlen(token) == 0 || !isdigit(*token)) { \
-+	if ((token) == NULL || strlen(token) == 0 || !isdigit((unsigned char)*token)) { \
- 		RTE_EDEV_LOG_ERR("Invalid eth Rx adapter token"); \
+ #define RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_GOTO_ERR_RET(id, retval) do { \
+ 	if (!rxa_validate_id(id)) { \
+-		RTE_EDEV_LOG_ERR("Invalid eth Rx adapter id = %d", id); \
++		RTE_EDEV_LOG_ERR("Invalid eth Rx adapter id = %lu", (unsigned long)id); \
  		ret = retval; \
  		goto error; \
-@@ -3764,7 +3764,7 @@ handle_rxa_stats(const char *cmd __rte_unused,
- 	uint8_t rx_adapter_id;
+ 	} \
+@@ -316,8 +316,8 @@ rxa_event_buf_get(struct event_eth_rx_adapter *rx_adapter, uint16_t eth_dev_id,
+ } while (0)
+ 
+ #define RTE_EVENT_ETH_RX_ADAPTER_PORTID_VALID_OR_GOTO_ERR_RET(port_id, retval) do { \
+-	if (!rte_eth_dev_is_valid_port(port_id)) { \
+-		RTE_EDEV_LOG_ERR("Invalid port_id=%u", port_id); \
++	if (port_id >= RTE_MAX_ETHPORTS || !rte_eth_dev_is_valid_port(port_id)) { \
++		RTE_EDEV_LOG_ERR("Invalid port_id=%lu", (unsigned long)port_id); \
+ 		ret = retval; \
+ 		goto error; \
+ 	} \
+@@ -3761,14 +3761,14 @@ handle_rxa_stats(const char *cmd __rte_unused,
+ 		 const char *params,
+ 		 struct rte_tel_data *d)
+ {
+-	uint8_t rx_adapter_id;
++	unsigned long rx_adapter_id;
  	struct rte_event_eth_rx_adapter_stats rx_adptr_stats;
  
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
+ 	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
  		return -1;
  
  	/* Get Rx adapter ID from parameter string */
-@@ -3804,7 +3804,7 @@ handle_rxa_stats_reset(const char *cmd __rte_unused,
+-	rx_adapter_id = atoi(params);
++	rx_adapter_id = strtoul(params, NULL, 10);
+ 	RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_ERR_RET(rx_adapter_id, -EINVAL);
+ 
+ 	/* Get Rx adapter stats */
+@@ -3802,13 +3802,13 @@ handle_rxa_stats_reset(const char *cmd __rte_unused,
+ 		       const char *params,
+ 		       struct rte_tel_data *d __rte_unused)
  {
- 	uint8_t rx_adapter_id;
+-	uint8_t rx_adapter_id;
++	unsigned long rx_adapter_id;
  
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
+ 	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
  		return -1;
  
  	/* Get Rx adapter ID from parameter string */
-@@ -3829,29 +3829,29 @@ handle_rxa_get_queue_conf(const char *cmd __rte_unused,
- 	uint16_t rx_queue_id;
- 	uint16_t eth_dev_id;
+-	rx_adapter_id = atoi(params);
++	rx_adapter_id = strtoul(params, NULL, 10);
+ 	RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_ERR_RET(rx_adapter_id, -EINVAL);
+ 
+ 	/* Reset Rx adapter stats */
+@@ -3825,9 +3825,7 @@ handle_rxa_get_queue_conf(const char *cmd __rte_unused,
+ 			  const char *params,
+ 			  struct rte_tel_data *d)
+ {
+-	uint8_t rx_adapter_id;
+-	uint16_t rx_queue_id;
+-	uint16_t eth_dev_id;
++	unsigned long rx_adapter_id, rx_queue_id, eth_dev_id;
  	int ret = -1;
--	char *token, *l_params;
-+	char *token, *l_params, *saveptr = NULL;
+ 	char *token, *l_params, *saveptr = NULL;
  	struct rte_event_eth_rx_adapter_queue_conf queue_conf;
- 
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
- 		return -1;
- 
- 	/* Get Rx adapter ID from parameter string */
- 	l_params = strdup(params);
- 	if (l_params == NULL)
- 		return -ENOMEM;
--	token = strtok(l_params, ",");
-+	token = strtok_r(l_params, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 	rx_adapter_id = strtoul(token, NULL, 10);
- 	RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_GOTO_ERR_RET(rx_adapter_id, -EINVAL);
- 
--	token = strtok(NULL, ",");
-+	token = strtok_r(NULL, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 
- 	/* Get device ID from parameter string */
- 	eth_dev_id = strtoul(token, NULL, 10);
- 	RTE_EVENT_ETH_RX_ADAPTER_PORTID_VALID_OR_GOTO_ERR_RET(eth_dev_id, -EINVAL);
- 
--	token = strtok(NULL, ",");
-+	token = strtok_r(NULL, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 
+@@ -3857,7 +3855,7 @@ handle_rxa_get_queue_conf(const char *cmd __rte_unused,
  	/* Get Rx queue ID from parameter string */
-@@ -3862,7 +3862,7 @@ handle_rxa_get_queue_conf(const char *cmd __rte_unused,
+ 	rx_queue_id = strtoul(token, NULL, 10);
+ 	if (rx_queue_id >= rte_eth_devices[eth_dev_id].data->nb_rx_queues) {
+-		RTE_EDEV_LOG_ERR("Invalid rx queue_id %u", rx_queue_id);
++		RTE_EDEV_LOG_ERR("Invalid rx queue_id %lu", rx_queue_id);
+ 		ret = -EINVAL;
  		goto error;
  	}
- 
--	token = strtok(NULL, "\0");
-+	token = strtok_r(NULL, "\0", &saveptr);
- 	if (token != NULL)
- 		RTE_EDEV_LOG_ERR("Extra parameters passed to eventdev"
- 				 " telemetry command, ignoring");
-@@ -3902,29 +3902,29 @@ handle_rxa_get_queue_stats(const char *cmd __rte_unused,
- 	uint16_t rx_queue_id;
- 	uint16_t eth_dev_id;
+@@ -3898,9 +3896,7 @@ handle_rxa_get_queue_stats(const char *cmd __rte_unused,
+ 			   const char *params,
+ 			   struct rte_tel_data *d)
+ {
+-	uint8_t rx_adapter_id;
+-	uint16_t rx_queue_id;
+-	uint16_t eth_dev_id;
++	unsigned long rx_adapter_id, rx_queue_id, eth_dev_id;
  	int ret = -1;
--	char *token, *l_params;
-+	char *token, *l_params, *saveptr = NULL;
+ 	char *token, *l_params, *saveptr = NULL;
  	struct rte_event_eth_rx_adapter_queue_stats q_stats;
- 
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
- 		return -1;
- 
- 	/* Get Rx adapter ID from parameter string */
- 	l_params = strdup(params);
- 	if (l_params == NULL)
- 		return -ENOMEM;
--	token = strtok(l_params, ",");
-+	token = strtok_r(l_params, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 	rx_adapter_id = strtoul(token, NULL, 10);
- 	RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_GOTO_ERR_RET(rx_adapter_id, -EINVAL);
- 
--	token = strtok(NULL, ",");
-+	token = strtok_r(NULL, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 
- 	/* Get device ID from parameter string */
- 	eth_dev_id = strtoul(token, NULL, 10);
- 	RTE_EVENT_ETH_RX_ADAPTER_PORTID_VALID_OR_GOTO_ERR_RET(eth_dev_id, -EINVAL);
- 
--	token = strtok(NULL, ",");
-+	token = strtok_r(NULL, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 
+@@ -3930,7 +3926,7 @@ handle_rxa_get_queue_stats(const char *cmd __rte_unused,
  	/* Get Rx queue ID from parameter string */
-@@ -3935,7 +3935,7 @@ handle_rxa_get_queue_stats(const char *cmd __rte_unused,
+ 	rx_queue_id = strtoul(token, NULL, 10);
+ 	if (rx_queue_id >= rte_eth_devices[eth_dev_id].data->nb_rx_queues) {
+-		RTE_EDEV_LOG_ERR("Invalid rx queue_id %u", rx_queue_id);
++		RTE_EDEV_LOG_ERR("Invalid rx queue_id %lu", rx_queue_id);
+ 		ret = -EINVAL;
  		goto error;
  	}
- 
--	token = strtok(NULL, "\0");
-+	token = strtok_r(NULL, "\0", &saveptr);
- 	if (token != NULL)
- 		RTE_EDEV_LOG_ERR("Extra parameters passed to eventdev"
- 				 " telemetry command, ignoring");
-@@ -3974,28 +3974,28 @@ handle_rxa_queue_stats_reset(const char *cmd __rte_unused,
- 	uint16_t rx_queue_id;
- 	uint16_t eth_dev_id;
+@@ -3970,9 +3966,7 @@ handle_rxa_queue_stats_reset(const char *cmd __rte_unused,
+ 			     const char *params,
+ 			     struct rte_tel_data *d __rte_unused)
+ {
+-	uint8_t rx_adapter_id;
+-	uint16_t rx_queue_id;
+-	uint16_t eth_dev_id;
++	unsigned long rx_adapter_id, rx_queue_id, eth_dev_id;
  	int ret = -1;
--	char *token, *l_params;
-+	char *token, *l_params, *saveptr = NULL;
+ 	char *token, *l_params, *saveptr = NULL;
  
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
- 		return -1;
- 
- 	/* Get Rx adapter ID from parameter string */
- 	l_params = strdup(params);
- 	if (l_params == NULL)
- 		return -ENOMEM;
--	token = strtok(l_params, ",");
-+	token = strtok_r(l_params, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 	rx_adapter_id = strtoul(token, NULL, 10);
- 	RTE_EVENT_ETH_RX_ADAPTER_ID_VALID_OR_GOTO_ERR_RET(rx_adapter_id, -EINVAL);
- 
--	token = strtok(NULL, ",");
-+	token = strtok_r(NULL, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 
- 	/* Get device ID from parameter string */
- 	eth_dev_id = strtoul(token, NULL, 10);
- 	RTE_EVENT_ETH_RX_ADAPTER_PORTID_VALID_OR_GOTO_ERR_RET(eth_dev_id, -EINVAL);
- 
--	token = strtok(NULL, ",");
-+	token = strtok_r(NULL, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 
+@@ -4001,7 +3995,7 @@ handle_rxa_queue_stats_reset(const char *cmd __rte_unused,
  	/* Get Rx queue ID from parameter string */
-@@ -4006,7 +4006,7 @@ handle_rxa_queue_stats_reset(const char *cmd __rte_unused,
+ 	rx_queue_id = strtoul(token, NULL, 10);
+ 	if (rx_queue_id >= rte_eth_devices[eth_dev_id].data->nb_rx_queues) {
+-		RTE_EDEV_LOG_ERR("Invalid rx queue_id %u", rx_queue_id);
++		RTE_EDEV_LOG_ERR("Invalid rx queue_id %lu", rx_queue_id);
+ 		ret = -EINVAL;
  		goto error;
  	}
- 
--	token = strtok(NULL, "\0");
-+	token = strtok_r(NULL, "\0", &saveptr);
- 	if (token != NULL)
- 		RTE_EDEV_LOG_ERR("Extra parameters passed to eventdev"
- 				 " telemetry command, ignoring");
-@@ -4036,22 +4036,22 @@ handle_rxa_instance_get(const char *cmd __rte_unused,
- 	uint16_t rx_queue_id;
- 	uint16_t eth_dev_id;
+@@ -4033,8 +4027,7 @@ handle_rxa_instance_get(const char *cmd __rte_unused,
+ 			struct rte_tel_data *d)
+ {
+ 	uint8_t instance_id;
+-	uint16_t rx_queue_id;
+-	uint16_t eth_dev_id;
++	unsigned long rx_queue_id, eth_dev_id;
  	int ret = -1;
--	char *token, *l_params;
-+	char *token, *l_params, *saveptr = NULL;
+ 	char *token, *l_params, *saveptr = NULL;
  
--	if (params == NULL || strlen(params) == 0 || !isdigit(*params))
-+	if (params == NULL || strlen(params) == 0 || !isdigit((unsigned char)*params))
- 		return -1;
- 
- 	l_params = strdup(params);
- 	if (l_params == NULL)
- 		return -ENOMEM;
--	token = strtok(l_params, ",");
-+	token = strtok_r(l_params, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 
- 	/* Get device ID from parameter string */
- 	eth_dev_id = strtoul(token, NULL, 10);
- 	RTE_EVENT_ETH_RX_ADAPTER_PORTID_VALID_OR_GOTO_ERR_RET(eth_dev_id, -EINVAL);
- 
--	token = strtok(NULL, ",");
-+	token = strtok_r(NULL, ",", &saveptr);
- 	RTE_EVENT_ETH_RX_ADAPTER_TOKEN_VALID_OR_GOTO_ERR_RET(token, -1);
- 
+@@ -4057,7 +4050,7 @@ handle_rxa_instance_get(const char *cmd __rte_unused,
  	/* Get Rx queue ID from parameter string */
-@@ -4062,7 +4062,7 @@ handle_rxa_instance_get(const char *cmd __rte_unused,
+ 	rx_queue_id = strtoul(token, NULL, 10);
+ 	if (rx_queue_id >= rte_eth_devices[eth_dev_id].data->nb_rx_queues) {
+-		RTE_EDEV_LOG_ERR("Invalid rx queue_id %u", rx_queue_id);
++		RTE_EDEV_LOG_ERR("Invalid rx queue_id %lu", rx_queue_id);
+ 		ret = -EINVAL;
  		goto error;
  	}
+@@ -4074,7 +4067,7 @@ handle_rxa_instance_get(const char *cmd __rte_unused,
+ 						  rx_queue_id,
+ 						  &instance_id)) {
+ 		RTE_EDEV_LOG_ERR("Failed to get RX adapter instance ID "
+-				 " for rx_queue_id = %d", rx_queue_id);
++				 " for rx_queue_id = %lu", rx_queue_id);
+ 		return -1;
+ 	}
  
--	token = strtok(NULL, "\0");
-+	token = strtok_r(NULL, "\0", &saveptr);
- 	if (token != NULL)
- 		RTE_EDEV_LOG_ERR("Extra parameters passed to eventdev"
- 				 " telemetry command, ignoring");
 -- 
 2.53.0
 
