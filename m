@@ -2,74 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F11ECD6E7B
-	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 21:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D11FCD6E7C
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Jun 2026 21:30:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 522F1402DD;
-	Fri,  5 Jun 2026 23:28:21 +0200 (CEST)
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com
- [74.125.82.173]) by mails.dpdk.org (Postfix) with ESMTP id 7C20F402C4
- for <dev@dpdk.org>; Fri,  5 Jun 2026 23:28:19 +0200 (CEST)
-Received: by mail-dy1-f173.google.com with SMTP id
- 5a478bee46e88-307631dbfedso5147992eec.0
- for <dev@dpdk.org>; Fri, 05 Jun 2026 14:28:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6DB8D402DD;
+	Fri,  5 Jun 2026 23:30:53 +0200 (CEST)
+Received: from mail-vs1-f73.google.com (mail-vs1-f73.google.com
+ [209.85.217.73]) by mails.dpdk.org (Postfix) with ESMTP id 3D920402C4
+ for <dev@dpdk.org>; Fri,  5 Jun 2026 23:30:52 +0200 (CEST)
+Received: by mail-vs1-f73.google.com with SMTP id
+ ada2fe7eead31-6798c46f723so1526688137.1
+ for <dev@dpdk.org>; Fri, 05 Jun 2026 14:30:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780694898;
- x=1781299698; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=vPe0em4bYag+o7amsbpJhbJn++XrDPsOKcbfaqC068U=;
- b=b66urDDnUR73pHvrcFUASt0wLqzxFubtxbpLBAfg4Mg3G4KKjoVW4XmdJgnjmr8ATL
- hUKjl5MoqlOepP6GOqAGGCy2IVJKGXDV3HXQCOFL5bJntAP3jFNtnYnFh55RQF8KGi8S
- oBCZk1Uk8+Z1c/5UcayvvPNZ1EWiHof2fJWHVLCS5J2k7S5kcCVyCNs2bvwF6ymDACvj
- n9tYma48M9pO2mX57fZVLnYaFYGYS4Dh1Hltm44uk8sQ4bqVH1lviLPBZNrs0VeJ40pa
- O/owOFAIjQ8xVP2ig+gMjxbUbjYdUM62F+V2+t4HQ94islEsqvkmPOtgl/eX46gSf9d2
- oaIg==
+ d=google.com; s=20251104; t=1780695051; x=1781299851; darn=dpdk.org;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=wcGMvB7NndrmDQV27iU6usNCnovLFcdK8LhE8Ct57xY=;
+ b=KFfSwv0EgKhuHIhk2/rsdkxxN/0ycxs5cApF7dw247cdATZnUorW1I4x8e7NSygGjE
+ qWlK3a3G7n1Fc99/zBM6xF0Euh6CRIyTqVZWavsvsnAWYD0qime5VSYoBySURjHbmbc8
+ ekSf3wmphZNtdqhivj/QTVm3zzIOoQP+vl3foCi4s8O9Fglf/kepQ9XPUJpCkX2aw7Ig
+ CdPQwSuw0GU5ZYzujwhIUdIy1dIgBrPb/sz3gfhcY/EpVENHPTbzPlgAZ8WI8E0KP51r
+ 5Mw4gowictoe2KwiCtMZ+v3NPxeyTNAcMqyRJvVev9ejsplXBL6jJTEO/0uKEhFqhi+e
+ QbZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780694898; x=1781299698;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=vPe0em4bYag+o7amsbpJhbJn++XrDPsOKcbfaqC068U=;
- b=TRHTjfP3/brsqCVGtbYMk7JcsVUqK9xSMHKiQaNQrch/CMF8z/3QMS5rPaOp7ifvHW
- eZCZMAnyCwBQ5SIgbC03v9/2JagrmoRfzPceofAFHLXfPvW4WoS1eGV7HCBdhoKRTR6Q
- yNKQgFbVMkns2OSBLSQXr5OQAjh3VRzZICTXH41mpDvK3WIrnQDrGN555TRpe4qc2UnE
- mNOCFRytBty+cLJ62ceaZm1PPwW3LxC2ECQuNHXz4DcVTWLW5lgV8G4S3yTGGkBpxxpG
- x8xMI35gSyi2r89FboK/tQI+cSI4/uf2hSssOKa2xi38eaqtt17k9LrOaqY07a05MVil
- jS5g==
-X-Gm-Message-State: AOJu0YxYZhOAnkXAa+pQJqfTg86slVFkFnd9hnLLQgusuJwvaLdrEK5A
- 9nwAOJ9KKLcc4m2zekurrjEyKAJCLaUfWDQ65WMRfxEBXbYA3yZZ4YJgKrO+jx6l4l8=
-X-Gm-Gg: Acq92OG9feI5XYdE+56AmVZygMk3Ni55UEkDQ+ag6/KiQ+CX8teSq5RtTqPONd6uR5f
- GBvc9RqtkwH3TTEuGGz0d3n1aYeMZJzHtbF++xoatwzlcaDus9JXJbJEHugPgJVnw7OPpdx7KWr
- b90Scvnve5KetOayRF3LcII9XU0OovcFGzMjHmn3kMVI6aBrZd5N9jZhxAFAApBxyZuYFwRW9zm
- PG1A2PsIv81JRPk8fu3ArfDPQ8eBRgeSfpuJDXcmigNS6Y0hKPAqdayxpugNLTrztl11rVvFYCj
- ZPJ6kz7EENDmvIXNBPvnBq5h5MMLNwm11DbrQBB4zCzy85U8XsZykl90ouyKD5wXzg3pwWUpVU6
- fTmJyG9N3TisrF5orqwQu6y8X7VO9ShJSHVpVoMF4uzxjTyZTsAu1FWekMYJUit/eHfwOLaYB45
- LkWy3fIQmmCHKqoO7y0wfFtUpqC2t9t6FuOxGAMfZbeAj2Npi73J7cx1D+lgim7LlRI5PglKRze
- lg=
-X-Received: by 2002:a05:7300:7250:b0:2ca:8099:ffc0 with SMTP id
- 5a478bee46e88-3077b2701b5mr2960579eec.7.1780694898297; 
- Fri, 05 Jun 2026 14:28:18 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3074db560d7sm12044782eec.5.2026.06.05.14.28.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 05 Jun 2026 14:28:18 -0700 (PDT)
-Date: Fri, 5 Jun 2026 14:28:15 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb
- <patrickrobb1997@gmail.com>
-Subject: Re: [PATCH v8 9/9] dts: add selective Rx tests
-Message-ID: <20260605142815.1aaf727b@phoenix.local>
-In-Reply-To: <20260604193324.1996141-10-thomas@monjalon.net>
-References: <20260202160903.254621-1-getelson@nvidia.com>
- <20260604193324.1996141-1-thomas@monjalon.net>
- <20260604193324.1996141-10-thomas@monjalon.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ d=1e100.net; s=20251104; t=1780695051; x=1781299851;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=wcGMvB7NndrmDQV27iU6usNCnovLFcdK8LhE8Ct57xY=;
+ b=fFwmbJj78yzkaziIQKVtHn9CxhEb4lKsqCYbGkSJmkSFc0Z3YqN5lUwN+tBV+1ySqP
+ ctjfdcCOHwWpV+cvJCd1If4L9wPUfO2FCotRcgWoavuoGi2fNcxkYgzdKJuqe6iuo4FM
+ 291Q9GO7yhRcmUSqeztvL3lNKV16V+G6tZXvhgswKRwyxM5WruaKrqanqKmQtvS2T1m8
+ TO3SchTpdBsxCXRxkz/UaEeBWeJ8Q1L4SbJ00Ri4gTQ0nbzrYg32whWuXt6v/WwDdlS1
+ ZAhYb7uiocLZa5TWiqOk841PwSgFw3U/w7rY7GqW/xukRAp0EKYtzqlAHuqYzNK9H8TP
+ k/cQ==
+X-Gm-Message-State: AOJu0Yxi7PaRttkTxLgjCK+r1cIlx3hJpARKZ8d+0nGTJPHYLYRRl0G5
+ 8cbSr5YeDc0Zfley/UlUf4qZrJEqMwlHayx14LDtoWr2KmC+8b8oD043l1Uvqy4GhJBXdojrXv5
+ HQ9WMEA==
+X-Received: from qvri9.prod.google.com ([2002:a0c:edc9:0:b0:8cc:e7ea:eb33])
+ (user=blasko job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6102:5346:b0:6c2:e290:cc69
+ with SMTP id ada2fe7eead31-6ff05e2d9ccmr3381079137.23.1780695051266; Fri, 05
+ Jun 2026 14:30:51 -0700 (PDT)
+Date: Fri,  5 Jun 2026 21:29:38 +0000
+In-Reply-To: <20260515231936.3296603-1-blasko@google.com>
+Mime-Version: 1.0
+References: <20260515231936.3296603-1-blasko@google.com>
+X-Mailer: git-send-email 2.54.0.1032.g2f8565e1d1-goog
+Message-ID: <20260605213022.2770893-1-blasko@google.com>
+Subject: [PATCH v3 0/6] net/gve: add hardware timestamping support
+From: Mark Blasko <blasko@google.com>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org, joshwash@google.com, jtranoleary@google.com, 
+ blasko@google.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,49 +68,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  4 Jun 2026 21:31:01 +0200
-Thomas Monjalon <thomas@monjalon.net> wrote:
+This patch series introduces support for GVE hardware timestamping on DQO
+queues. To support concurrent access, a mutex lock is introduced to protect
+admin queue operations. A mechanism is then added to periodically synchronize
+the NIC clock via AdminQ, and support is introduced for the read_clock ethdev
+operation. Finally, the RX datapath is updated to reconstruct full 64-bit
+timestamps from the 32-bit values in DQO descriptors.
 
-> Add TestSuite_rx_split with 7 test cases:
-> - 3 positive: headers only, payload only, two non-contiguous segments
-> - 4 negative: missing offload flag, out-of-range, overlap, all-discard
-> 
-> Add selective Rx capability detection via testpmd "show port info".
-> 
-> The test suite could be completed later for the basic buffer split
-> configuration based on offsets or protocols.
-> 
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> ---
+---
+v3:
+- Patch 5:
+  - Add mutex lock to protect shared NIC timestamp memzone access.
+  - Fix missing read_clock assignment to DQO queue ops table
+    (accidental omission in v2).
 
-AI review found:
-Patch 9 (dts: add selective Rx tests)
+v2:
+- Patch 1: Dropped ROBUST mutex attribute.
+- Patch 3: Added adminq timestamp counter reset to gve_adminq_alloc.
+- Patch 4:
+  - Removed redundant void* casts.
+  - Handled alarm reschedule failures by marking timestamp stale.
+  - Added transient error logging on memzone allocation failure.
+- Patch 5: Scoped read_clock ethdev operation strictly to DQO queues.
+- Patch 6:
+  - Scoped timestamp offload capability advertisement strictly to
+    DQO queues.
+  - Predicated capability advertisement directly on memzone
+    allocation.
+  - Initialized mbuf_timestamp_offset to -1.
+  - Added blank line separating release notes.
+---
 
-selective_rx_out_of_range expects a rejection that never happens, so the
-negative test will fail. It configures a real segment plus an oversized
-discard segment:
+Mark Blasko (6):
+  net/gve: add thread safety to admin queue
+  net/gve: add device option support for HW timestamps
+  net/gve: add AdminQ command for NIC timestamps
+  net/gve: add periodic NIC clock synchronization
+  net/gve: support read clock ethdev op
+  net/gve: reconstruct HW timestamps from DQO
 
-	rx_segments_length=[ETHER_IP_HDR_LEN, 20000],
-	mbuf_size=[256, 0],
+ .mailmap                               |   1 +
+ doc/guides/nics/features/gve.ini       |   1 +
+ doc/guides/nics/gve.rst                |  20 ++++
+ doc/guides/rel_notes/release_26_07.rst |   4 +
+ drivers/net/gve/base/gve_adminq.c      | 128 +++++++++++++++++---
+ drivers/net/gve/base/gve_adminq.h      |  29 +++++
+ drivers/net/gve/base/gve_desc_dqo.h    |   8 +-
+ drivers/net/gve/gve_ethdev.c           | 159 ++++++++++++++++++++++++-
+ drivers/net/gve/gve_ethdev.h           |  40 +++++++
+ drivers/net/gve/gve_rx_dqo.c           |  26 ++++
+ 10 files changed, 394 insertions(+), 22 deletions(-)
 
-and expects start_all_ports() to fail. But an over-range length on a discard
-segment is not rejected anywhere: rte_eth_rx_queue_check_split() does
-"continue" for mp == NULL segments, so it never length-checks them, and
-mlx5_rxq_new() clamps it:
+-- 
+2.54.0.1032.g2f8565e1d1-goog
 
-	if (seg_len > tail_len)
-		seg_len = qs_seg->mp != NULL ? buf_len - offset : tail_len;
-
-The discard seg_len becomes the remaining frame length, the queue is built,
-the port starts, and the test hits its fail().
-
-Clamping an over-long discard to "the rest" is harmless (the bytes are
-discarded anyway), so the cleanest fix is probably to drop or rework this
-test rather than add a rejection path. If rejection is the intended
-contract, it would have to be added for discard segments in patch 2 or
-patch 6 -- a behavior choice, not a correctness requirement.
-
-Minor: expressing a leading discard as --mbuf-size=0,... puts 0 at index 0,
-and testpmd treats mbuf_data_size[0] as the primary pool size elsewhere (the
-max_rx_pkt_len > mbuf_data_size[0] check, the default mbuf_pool_find(socket,
-0)). Only bites an unusual config, but it is a latent foot-gun.
