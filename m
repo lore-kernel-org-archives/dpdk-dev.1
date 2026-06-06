@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C33CD8C89
-	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Jun 2026 01:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2F8CD8C88
+	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Jun 2026 01:09:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 385B440A79;
-	Sat,  6 Jun 2026 03:07:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 13CD640B9E;
+	Sat,  6 Jun 2026 03:07:52 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id A35CB402C4
+ by mails.dpdk.org (Postfix) with ESMTP id 24E1740664
  for <dev@dpdk.org>; Sat,  6 Jun 2026 03:07:37 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAC3F9vTciNqlud3Eg--.15147S15;
- Sat, 06 Jun 2026 09:07:35 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAC3F9vTciNqlud3Eg--.15147S17;
+ Sat, 06 Jun 2026 09:07:36 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v10 13/20] net/sxe2: support firmware version reading
-Date: Sat,  6 Jun 2026 09:07:19 +0800
-Message-ID: <20260606010726.2256170-14-liujie5@linkdatatechnology.com>
+Subject: [PATCH v10 15/20] common/sxe2: add shared SFP module definitions
+Date: Sat,  6 Jun 2026 09:07:21 +0800
+Message-ID: <20260606010726.2256170-16-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260606010726.2256170-1-liujie5@linkdatatechnology.com>
 References: <20260604015404.1552953-21-liujie5@linkdatatechnology.com>
  <20260606010726.2256170-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAC3F9vTciNqlud3Eg--.15147S15
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1rGw1UJF1UWw1DtFy7Jrb_yoW8Kry8pF
- 4Yqa45CFWUJF1fWw4fAw4kuF1agr48trykKr9Igw1fCasrJ347ZFyjqFyYvw1rAry8AF1r
- Kan7ZF4kGa18Wr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowAC3F9vTciNqlud3Eg--.15147S17
+X-Coremail-Antispam: 1UD129KBjvJXoWxWry7Xr1fArW8Cw43Aw45trb_yoWrWw4rpr
+ 1DJwn8Xa97Kr1ag343tF13trnxCFsYyw1UCrs3W3yFkF1kJw18CF18Cw42qa1kKrsrXFs3
+ uayaqry3Ka48ZrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUBv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
  kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -60,76 +60,149 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch implements the logic to retrieve the firmware version and
-Build ID from the hardware during device initialization.
+This patch adds a new shared header file 'sxe2_msg.h' which
+contains definitions for SFP/SFP+ modules. This file is shared across
+Firmware, Kernel driver, and DPDK PMD to ensure consistent protocol
+handling.
 
-The version is exposed to applications through the dev_info_get API.
+The header includes:
+- SFP EEPROM memory map offsets.
+- Module type encoding definitions.
+
+By using this shared header, the PMD can correctly identify module
+capabilities and report diagnostic information in a way that is
+consistent with the underlying firmware logic.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 35 +++++++++++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
+ drivers/common/sxe2/sxe2_msg.h | 118 +++++++++++++++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
+ create mode 100644 drivers/common/sxe2/sxe2_msg.h
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index fd81a6db7b..4842a8cdac 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -120,7 +120,8 @@ static int32_t sxe2_udp_tunnel_port_add(struct rte_eth_dev *dev,
- 					struct rte_eth_udp_tunnel *tunnel_udp);
- static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
- 					struct rte_eth_udp_tunnel *tunnel_udp);
--
-+static int32_t sxe2_fw_version_string_get(struct rte_eth_dev *dev,
-+				      char *fw_version, size_t fw_size);
- 
- static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.dev_configure              = sxe2_dev_configure,
-@@ -181,6 +182,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.xstats_reset               = sxe2_stats_info_reset,
- 
- 	.queue_stats_mapping_set    = sxe2_queue_stats_mapping_set,
+diff --git a/drivers/common/sxe2/sxe2_msg.h b/drivers/common/sxe2/sxe2_msg.h
+new file mode 100644
+index 0000000000..f08944f7c9
+--- /dev/null
++++ b/drivers/common/sxe2/sxe2_msg.h
+@@ -0,0 +1,118 @@
 +
-+	.fw_version_get             = sxe2_fw_version_string_get,
- };
- 
- static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-@@ -1575,6 +1578,36 @@ static int32_t sxe2_eth_pmd_remove(struct sxe2_common_device *cdev)
- 	return ret;
- }
- 
-+static int32_t sxe2_fw_version_string_get(struct rte_eth_dev *dev, char *fw_version, size_t fw_size)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_fw_info *fw_info = &adapter->dev_info.fw;
-+	int32_t ret_len;
-+	int32_t ret;
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
 +
-+	ret_len = snprintf(fw_version, fw_size,
-+			   "%u.%u.%u.%u",
-+			   fw_info->main_version_id,
-+			   fw_info->sub_version_id,
-+			   fw_info->fix_version_id,
-+			   fw_info->build_id);
++#ifndef __SXE2_MSG_H__
++#define __SXE2_MSG_H__
 +
-+	if (ret_len < 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
++enum sfp_type_identifier {
++	SXE2_SFP_TYPE_UNKNOWN       = 0x00,
++	SXE2_SFP_TYPE_SFP          = 0x03,
 +
-+	ret_len += 1;
-+	if (fw_size < (size_t)ret_len)
-+		ret = -EINVAL;
-+	else
-+		ret = 0;
++	SXE2_SFP_TYPE_QSFP_PLUS    = 0x0D,
++	SXE2_SFP_TYPE_QSFP28       = 0x11,
 +
-+out:
-+	return ret;
-+}
++	SXE2_SFP_TYPE_MAX          = 0xFF,
++};
 +
- static uint16_t sxe2_switchdev_repr_id_encode_get(struct sxe2_switchdev_info *switchdev_info)
- {
- 	enum rte_eth_representor_type type;
++#ifndef SFP_DEFINE
++#define SFP_DEFINE
++
++#define SXE2_SFP_EEP_WR            0x1
++#define SXE2_SFP_EEP_QSFP          0x1
++
++enum sfp_bus_addr {
++	SXE2_SFP_EEP_I2C_ADDR0 = 0xA0,
++	SXE2_SFP_EEP_I2C_ADDR1 = 0xA2,
++	SXE2_SFP_EEP_I2C_ADDR_NR = 0xFFFF,
++};
++
++struct sxe2_sfp_req {
++	uint8_t is_wr;
++	uint8_t is_qsfp;
++	uint16_t bus_addr;
++	uint16_t page_cnt;
++	uint16_t offset;
++	uint16_t data_len;
++	uint16_t rvd;
++	uint8_t data[];
++};
++
++struct sxe2_sfp_resp {
++	uint8_t is_wr;
++	uint8_t is_qsfp;
++	uint16_t data_len;
++	uint8_t data[];
++};
++
++enum sfp_page_cnt {
++	SXE2_SFP_EEP_PAGE_CNT0     = 0,
++	SXE2_SFP_EEP_PAGE_CNT1,
++	SXE2_SFP_EEP_PAGE_CNT2,
++	SXE2_SFP_EEP_PAGE_CNT3,
++	SXE2_SFP_EEP_PAGE_CNT20    = 20,
++	SXE2_SFP_EEP_PAGE_CNT21    = 21,
++
++	SXE2_SFP_EEP_PAGE_CNT_NR   = 0xFFFF,
++};
++
++#define SXE2_SFP_E2P_I2C_7BIT_ADDR0             (SXE2_SFP_EEP_I2C_ADDR0 >> 1)
++#define SXE2_SFP_E2P_I2C_7BIT_ADDR1             (SXE2_SFP_EEP_I2C_ADDR1 >> 1)
++
++#define SXE2_QSFP_PAGE_OFST_START  128
++#define SXE2_SFP_EEP_OFST_MAX      255
++#define SXE2_SFP_EEP_LEN_MAX       256
++#endif
++
++#ifndef FW_STATE_DEFINE
++#define FW_STATE_DEFINE
++
++#define SXE2_FW_STATUS_MAIN_SHIF       (16)
++#define SXE2_FW_STATUS_MAIN_MASK       (0xFF0000)
++#define SXE2_FW_STATUS_SUB_MASK        (0xFFFF)
++
++enum Sxe2FwStateMain {
++	SXE2_FW_STATE_MAIN_UNDEFINED       = 0x00,
++	SXE2_FW_STATE_MAIN_INIT            = 0x10000,
++	SXE2_FW_STATE_MAIN_RUN             = 0x20000,
++	SXE2_FW_STATE_MAIN_ABNOMAL         = 0x30000,
++};
++
++enum Sxe2FwState {
++	SXE2_FW_START_STATE_UNDEFINED = SXE2_FW_STATE_MAIN_UNDEFINED,
++	SXE2_FW_START_STATE_INIT_BASE = (SXE2_FW_STATE_MAIN_INIT + 0x1),
++	SXE2_FW_START_STATE_SCAN_DEVICE = (SXE2_FW_STATE_MAIN_INIT + 0x20),
++	SXE2_FW_START_STATE_FINISHED = (SXE2_FW_STATE_MAIN_RUN + 0x0),
++	SXE2_FW_START_STATE_UPGRADE = (SXE2_FW_STATE_MAIN_RUN + 0x1),
++	SXE2_FW_START_STATE_SYNC = (SXE2_FW_STATE_MAIN_RUN + 0x2),
++	SXE2_FW_RUNNING_STATE_ABNOMAL = (SXE2_FW_STATE_MAIN_ABNOMAL + 0x1),
++	SXE2_FW_RUNNING_STATE_ABNOMAL_CORE1 = (SXE2_FW_STATE_MAIN_ABNOMAL + 0x2),
++	SXE2_FW_RUNNING_STATE_ABNOMAL_HEART = (SXE2_FW_STATE_MAIN_ABNOMAL + 0x3),
++	SXE2_FW_START_STATE_MASK = (SXE2_FW_STATUS_MAIN_MASK | SXE2_FW_STATUS_SUB_MASK),
++};
++#endif
++
++#ifndef LED_DEFINE
++#define LED_DEFINE
++
++enum sxe2_led_mode {
++	SXE2_IDENTIFY_LED_BLINK_ON   = 0,
++	SXE2_IDENTIFY_LED_BLINK_OFF,
++	SXE2_IDENTIFY_LED_ON,
++	SXE2_IDENTIFY_LED_OFF,
++	SXE2_IDENTIFY_LED_RESET,
++};
++
++
++typedef struct sxe2_led_ctrl {
++	uint32_t mode;
++	uint32_t duration;
++} sxe2_led_ctrl_s;
++
++typedef struct sxe2_led_ctrl_resp {
++	uint32_t ack;
++} sxe2_led_ctrl_resp_s;
++#endif
++
++#endif /* __SXE2_MSG_H__ */
 -- 
 2.52.0
 
