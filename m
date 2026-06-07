@@ -2,49 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F16FCD8C85
-	for <dpdk-dev@archiver.kernel.org>; Sun,  7 Jun 2026 01:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B92CD8C88
+	for <dpdk-dev@archiver.kernel.org>; Sun,  7 Jun 2026 15:04:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC14040DD5;
-	Sun,  7 Jun 2026 03:34:28 +0200 (CEST)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 5C9A24064C
- for <dev@dpdk.org>; Sun,  7 Jun 2026 03:33:59 +0200 (CEST)
-Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowABnTON8yiRqwHDaEw--.12864S18;
- Sun, 07 Jun 2026 09:33:55 +0800 (CST)
-From: liujie5@linkdatatechnology.com
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v11 16/20] net/sxe2: support SFP module info and EEPROM access
-Date: Sun,  7 Jun 2026 09:33:38 +0800
-Message-ID: <20260607013342.2579271-17-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260607013342.2579271-1-liujie5@linkdatatechnology.com>
-References: <20260606010726.2256170-21-liujie5@linkdatatechnology.com>
- <20260607013342.2579271-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C8701402D6;
+	Sun,  7 Jun 2026 17:04:24 +0200 (CEST)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com
+ [209.85.128.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 915E3402AD
+ for <dev@dpdk.org>; Sun,  7 Jun 2026 17:04:23 +0200 (CEST)
+Received: by mail-yw1-f179.google.com with SMTP id
+ 00721157ae682-7ddd3d67084so38414607b3.3
+ for <dev@dpdk.org>; Sun, 07 Jun 2026 08:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780844662;
+ x=1781449462; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=uSm6GaBVqDJtD/ezRlB+FEQOf44Q5Mh8au89J/BCtQE=;
+ b=XKDV+E26BxuuYBXgMfICC3ICnfwIC3vsAA7g5qlJI1FqiUjdx+hk5zShUfrwUSeoYo
+ wYoceQYGUyO5aSlpFTz+zCj9qEIet2mIe4LFAGlgypaYLWgT8B8T1TRSNGvIRTp01glU
+ YGUusJXihvk6mr1/9/rWPGdVESGcuRCA96PbjjjuvUvt4N7VohpD15Rck0xPlf5U1Zbj
+ G+Qzp5hiIPTxp/+rwYaD4hDbgeh9C6FTzN1k9Nor2udWifLDKGMNl98Q/8thmYaPh42q
+ qs7I6sxAMNPCSU9wpUZLW+L0txbRvoS2st3agEtMGGStugZdN0bUvHMXHNDPRclzlm6l
+ GUQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780844662; x=1781449462;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=uSm6GaBVqDJtD/ezRlB+FEQOf44Q5Mh8au89J/BCtQE=;
+ b=A++jrsxJeyHk3GOw+XphKuHO62Y6zLSV/jNLiuT0yE0yUZzphkeJQ3oD7b5Ltgd5St
+ ORxqgS7GpNEgC9w5WvTm7XyLwQWu0M6haPqXoz7rqASLl5TVmDoSl51/cQT+q7aexc7e
+ L4Pwqy555/dly6NioA/BXVbGJFNazIleJlSAeVcNTJ/57wW5/aq+Num0upbhr4RzPNBt
+ AJUrKPZU42BbckncNJyP/m8IP/UAtorvmh0pb9Hf5Zs6Eo7SZrOSnwbMDgP98tE8UNGr
+ Mx/XNYzhwMkW5+0mW/2sq4Mqpx6eMeuAcTSxj2nVvgLcf9bweIYr1/bb2ZVFc6gsvN5n
+ 1tZA==
+X-Gm-Message-State: AOJu0Yxf0O03MEtSoC4t1J+s4UzndacE1/JlAcfjR6jbYs562iGsOnFS
+ 5hBe9VeZnZACtm9r9elwoDEwibNvvE5Nvg/759AzYH/w7g4guDNt2L4SwZD1pBkrGcOsxw29648
+ edr+n
+X-Gm-Gg: Acq92OEeQJUdm/t+D7x7/btLPb+LZRHAdqBsCzCrmmDUkAGq3nPQbJWzQuma/Q33I8H
+ 0G4iBH2esvpUDhI//tLB/OKhk4wWoCItUCXIHV8Lo5va76mUt6J6DWWh57XT6VW8LnbdiYdnQOZ
+ JH2hLAmkHLMkPw/5EfkNtdPZvZR9CgrNF4P323dErHeoD1lWjdmjqSQozZG/c5heb/GSOstnleX
+ fQ+k6TSb063DjUG4ZeSd52gYiDg1WajhdaOvq7yI0FSFMeUGT1s3dkMhel8B/yo4atHVVXOcRmP
+ IN3hhqjRe3XC3oyNnUz/RZM0qmT9bpmW5BPtrjlJ6G1OPp8ZcGaNG6paOHFq7lPtA0FzaAP06Di
+ wsWTkAd99X7CbEF74Ia4MGL1cfHIhXNhQv/taWJTXiKBo3u25YySAbRbc1XafOa/sDP+YJWkjOi
+ lt5XWNZT59wnENmulBcSI3JtnMyda+lRtHRzo9UNnlRnEv4c5cS8RhP39xGvXnai91+U4zm2jYZ
+ 6ibDWzDTCE=
+X-Received: by 2002:a05:690e:bc4:b0:661:ab4:b048 with SMTP id
+ 956f58d0204a3-6610ab4bab5mr9114728d50.43.1780844662541; 
+ Sun, 07 Jun 2026 08:04:22 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 956f58d0204a3-660d644a68fsm8243035d50.14.2026.06.07.08.04.21
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 07 Jun 2026 08:04:22 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ David Marchand <david.marchand@redhat.com>,
+ Neil Horman <nhorman@tuxdriver.com>
+Subject: [PATCH] eal: add destructor to unregister tailq on unload
+Date: Sun,  7 Jun 2026 08:04:17 -0700
+Message-ID: <20260607150418.30885-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowABnTON8yiRqwHDaEw--.12864S18
-X-Coremail-Antispam: 1UD129KBjvAXoW3uF1kZF1xuFykXF43GryUWrg_yoW8GFyDuo
- WIgr45X34fZr17C3y8Wr1Iqry7Z3yrCF4rKw4F9r4DuanxCw1YkFy5tw43Za4qqF4qyF4U
- uws2kas2q39xJay8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUYM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
- j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
- Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
- 84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r
- 4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JVW8
- Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2I
- x0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8
- JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xxMx
- AIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_
- Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwI
- xGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8
- Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0x
- vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUB89_UUUUU=
-X-Originating-IP: [118.112.177.181]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,477 +81,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jie Liu <liujie5@linkdatatechnology.com>
+Libraries that use EAL_REGISTER_TAILQ insert a pointer to a static
+struct rte_tailq_elem into the process-local tailq list via a
+constructor, but have no matching destructor. When such a library
+is loaded as a dependency of a plugin via dlopen() and later
+unloaded via dlclose(), the list retains a dangling pointer to the
+now-unmapped static. Reloading the plugin crashes in
+rte_eal_tailq_local_register() when it traverses the stale entry.
 
-This patch implements 'get_module_info' and 'get_module_eeprom'
-ops for the sxe2 PMD. These interfaces allow applications to retrieve
-the type of the plugged-in optical module and read its internal
-EEPROM data.
+Add rte_eal_tailq_unregister() and extend the EAL_REGISTER_TAILQ
+macro to emit an RTE_FINI destructor alongside the existing
+RTE_INIT constructor. Every library that uses the macro
+automatically gets both sides; no per-library changes are needed.
 
-The implementation utilizes the shared SFP header definitions to
-parse the module ID, connector type, and encoding. It supports
-reading the standard 256-byte EEPROM maps (SFF-8472 for SFP and
-SFF-8636 for QSFP) via hardware-specific access commands.
+Bugzilla ID: 1081
+Fixes: 873a61c7526b ("tailq: introduce dynamic register system")
+Cc: stable@dpdk.org
 
-Key features:
-- Identify module types (SFP/SFP+/QSFP/QSFP28).
-- Support standard EEPROM data retrieval for diagnostic tools.
-- Add boundary checks to ensure safe I2C memory access.
-
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.c |  46 +++++
- drivers/net/sxe2/sxe2_cmd_chnl.h |   3 +
- drivers/net/sxe2/sxe2_drv_cmd.h  |  18 ++
- drivers/net/sxe2/sxe2_ethdev.c   | 298 +++++++++++++++++++++++++++++++
- drivers/net/sxe2/sxe2_ethdev.h   |   9 +
- 5 files changed, 374 insertions(+)
+ lib/eal/common/eal_common_tailqs.c |  8 ++++++++
+ lib/eal/include/rte_tailq.h        | 17 +++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index 926eaee062..43e8c59487 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -1833,3 +1833,49 @@ int32_t sxe2_drv_srcvsi_prune_config(struct sxe2_adapter *adapter,
- 
- 	return ret;
- }
-+
-+int32_t sxe2_drv_sfp_eeprom_read(struct sxe2_adapter *adapter, struct sxe2_sfp_read_info *sfp_info)
-+{
-+	int32_t ret = -1;
-+	struct sxe2_drv_sfp_req req = {0};
-+	struct sxe2_drv_sfp_resp *resp = NULL;
-+	struct sxe2_drv_cmd_params cmd = {0};
-+
-+	resp = rte_zmalloc("read sfp data", sizeof(*resp) + sfp_info->len, 0);
-+	if (!resp) {
-+		PMD_LOG_ERR(DRV, "Alloc memory failed");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+
-+	req.is_wr = false;
-+	req.is_qsfp = sfp_info->is_qsfp;
-+	req.page_cnt = rte_cpu_to_le_16(sfp_info->page_cnt);
-+	req.offset = rte_cpu_to_le_16(sfp_info->offset);
-+	req.data_len = rte_cpu_to_le_16(sfp_info->len);
-+	req.bus_addr = rte_cpu_to_le_16(sfp_info->bus_addr);
-+
-+	PMD_DEV_LOG_INFO(adapter, DRV, "is_qsfp=%u, page_cnt=%u, offset=%u, datalen=%u, "
-+			 "bus_addr=%u", sfp_info->is_qsfp, sfp_info->page_cnt, sfp_info->offset,
-+			 sfp_info->len, sfp_info->bus_addr);
-+
-+	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_OPT_EEP_GET,
-+				 &req, sizeof(req),
-+				 resp, sizeof(*resp) + sfp_info->len);
-+	ret = sxe2_drv_cmd_exec(adapter->cdev, &cmd);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to read sfp, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	ret = 0;
-+	rte_memcpy(sfp_info->data, resp->data, sfp_info->len);
-+
-+l_end:
-+	if (resp) {
-+		rte_free(resp);
-+		resp = NULL;
-+	}
-+
-+	return ret;
-+}
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index 97007c7cfa..988d4b458b 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -167,4 +167,7 @@ int32_t sxe2_drv_flow_fnav_query_stat(struct sxe2_adapter *adapter,
- int32_t sxe2_drv_srcvsi_prune_config(struct sxe2_adapter *adapter,
- 		uint16_t *vsi_list, uint16_t vsi_cnt, bool set);
- 
-+int32_t sxe2_drv_sfp_eeprom_read(struct sxe2_adapter *adapter,
-+		struct sxe2_sfp_read_info *sfp_info);
-+
- #endif /* SXE2_CMD_CHNL_H */
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index f7acd20642..09b2f7d125 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -633,6 +633,24 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_resp {
- 	uint8_t rsv;
- } __rte_packed_end;
- 
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
-+	uint8_t is_wr;
-+	uint8_t is_qsfp;
-+	uint16_t bus_addr;
-+	uint16_t page_cnt;
-+	uint16_t offset;
-+	uint16_t data_len;
-+	uint16_t rvd;
-+	uint8_t data[];
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_resp {
-+	uint8_t is_wr;
-+	uint8_t is_qsfp;
-+	uint16_t data_len;
-+	uint8_t data[];
-+} __rte_packed_end;
-+
- enum sxe2_drv_cmd_module {
- 	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
- 	SXE2_DRV_CMD_MODULE_DEV = 1,
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index d1bc5b1500..60a5d8d7c9 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -41,6 +41,7 @@
- #include "sxe2_ethdev_repr.h"
- #include "sxe2vf_regs.h"
- #include "sxe2_switchdev.h"
-+#include "sxe2_msg.h"
- 
- #define SXE2_PCI_VENDOR_ID_1    0x1ff2
- #define SXE2_PCI_DEVICE_ID_PF_1 0x10b1
-@@ -122,6 +123,10 @@ static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
- 					struct rte_eth_udp_tunnel *tunnel_udp);
- static int32_t sxe2_fw_version_string_get(struct rte_eth_dev *dev,
- 				      char *fw_version, size_t fw_size);
-+static int32_t sxe2_get_module_info(struct rte_eth_dev *dev,
-+				struct rte_eth_dev_module_info *info);
-+static int32_t sxe2_get_module_eeprom(struct rte_eth_dev *dev,
-+				  struct rte_dev_eeprom_info *info);
- 
- static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.dev_configure              = sxe2_dev_configure,
-@@ -186,6 +191,9 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.fw_version_get             = sxe2_fw_version_string_get,
- 
- 	.get_monitor_addr           = sxe2_get_monitor_addr,
-+
-+	.get_module_info            = sxe2_get_module_info,
-+	.get_module_eeprom          = sxe2_get_module_eeprom,
- };
- 
- static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-@@ -291,6 +299,296 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
- 	return ret;
+diff --git a/lib/eal/common/eal_common_tailqs.c b/lib/eal/common/eal_common_tailqs.c
+index c581f43b6f..714f91d0ec 100644
+--- a/lib/eal/common/eal_common_tailqs.c
++++ b/lib/eal/common/eal_common_tailqs.c
+@@ -148,6 +148,14 @@ rte_eal_tailq_register(struct rte_tailq_elem *t)
+ 	return -1;
  }
  
-+static int32_t sxe2_sfp_type_get(struct sxe2_adapter *adapter, uint8_t *type)
++RTE_EXPORT_SYMBOL(rte_eal_tailq_unregister)
++void
++rte_eal_tailq_unregister(struct rte_tailq_elem *t)
 +{
-+	int32_t ret = -1;
-+	struct sxe2_sfp_read_info sfp_info;
-+
-+	memset(&sfp_info, 0, sizeof(sfp_info));
-+	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
-+	sfp_info.len = 1;
-+	sfp_info.data = type;
-+	sfp_info.offset = 0;
-+	sfp_info.page_cnt = 0;
-+	sfp_info.is_qsfp = false;
-+
-+	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
-+	if (ret)
-+		goto l_end;
-+
-+	ret = 0;
-+	PMD_LOG_INFO(DRV, "Get sfp type success, type=%u", *type);
-+
-+l_end:
-+	return ret;
++	TAILQ_REMOVE(&rte_tailq_elem_head, t, next);
++	t->head = NULL;
 +}
 +
-+static int32_t sxe2_sfp_module_info_get(struct sxe2_adapter *adapter,
-+						  struct rte_eth_dev_module_info *info)
-+{
-+	int32_t ret = -1;
-+	bool page_swap = false;
-+	uint8_t sff8472_rev = 0;
-+	uint8_t addr_mode = 0;
-+	struct sxe2_sfp_read_info sfp_info;
-+
-+	memset(&sfp_info, 0, sizeof(sfp_info));
-+	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
-+	sfp_info.is_qsfp = false;
-+	sfp_info.len = 1;
-+	sfp_info.data = &sff8472_rev;
-+	sfp_info.offset = SXE2_MODULE_SFF_8472_COMP;
-+	sfp_info.page_cnt = 0;
-+
-+	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read 8472 protocol, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	sfp_info.data = &addr_mode;
-+	sfp_info.offset = SXE2_MODULE_SFF_8472_SWAP;
-+
-+	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read A2 page, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	if (addr_mode & SXE2_MODULE_SFF_ADDR_MODE) {
-+		PMD_LOG_ERR(DRV, "address change required to access page 0xA2, "
-+			    "but not supported. please report the module "
-+			    "type to the driver maintainers.");
-+		page_swap = true;
-+	}
-+
-+	PMD_LOG_INFO(DRV, "Read sfp module info, sff_8472=%u, a2_page=%u, swap_page=%d",
-+		     sff8472_rev, addr_mode, page_swap);
-+
-+	if (sff8472_rev == SXE2_MODULE_SFF_8472_UNSUP ||
-+	    page_swap ||
-+	    !(addr_mode & SXE2_MODULE_SFF_DDM_IMPLEMENTED)) {
-+		info->type = SXE2_MODULE_SFF_8079;
-+		info->eeprom_len = SXE2_MODULE_SFF_8079_LEN;
-+	} else {
-+		info->type = SXE2_MODULE_SFF_8472;
-+		info->eeprom_len = SXE2_MODULE_SFF_8472_LEN;
-+	}
-+
-+	ret = 0;
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_qsfp_module_info_get(struct sxe2_adapter *adapter, struct rte_eth_dev_module_info *info)
-+{
-+	int32_t ret = -1;
-+	uint8_t sff8636_rev = 0;
-+	struct sxe2_sfp_read_info sfp_info;
-+
-+	memset(&sfp_info, 0, sizeof(sfp_info));
-+	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
-+	sfp_info.is_qsfp = true;
-+	sfp_info.len = 1;
-+	sfp_info.data = &sff8636_rev;
-+	sfp_info.offset = SXE2_MODULE_REVISION_ADDR;
-+	sfp_info.page_cnt = 0;
-+
-+	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read 8636 protocol, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	if (sff8636_rev > 0x02) {
-+		info->type = SXE2_MODULE_SFF_8636;
-+		info->eeprom_len = SXE2_MODULE_SFF_8636_MAX_LEN;
-+	} else {
-+		info->type = SXE2_MODULE_SFF_8436;
-+		info->eeprom_len = SXE2_MODULE_SFF_8436_MAX_LEN;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_get_module_info(struct rte_eth_dev *dev, struct rte_eth_dev_module_info *info)
-+{
-+	int32_t ret = -1;
-+	uint8_t type = 0;
-+	struct sxe2_adapter *adapter = dev->data->dev_private;
-+
-+	ret = sxe2_sfp_type_get(adapter, &type);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read sfp type, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	switch (type) {
-+	case SXE2_MODULE_SFF_SFP_TYPE:
-+		ret = sxe2_sfp_module_info_get(adapter, info);
-+		if (ret)
-+			goto l_end;
-+		break;
-+	case SXE2_MODULE_TYPE_QSFP_PLUS:
-+	case SXE2_MODULE_TYPE_QSFP28:
-+		ret = sxe2_qsfp_module_info_get(adapter, info);
-+		if (ret)
-+			goto l_end;
-+		break;
-+	default:
-+		ret = -ENXIO;
-+		PMD_LOG_ERR(DRV, "Invalid sfp type, type=%d.", type);
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_INFO(DRV, "sfp eeprom type=%x, eeprom len=%d.", info->type, info->eeprom_len);
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_get_sfp_eeprom(struct sxe2_adapter *adapter, struct sxe2_sfp_read_info *sfp_info)
-+{
-+	int32_t ret = -1;
-+	uint16_t ori_len = sfp_info->len;
-+	uint16_t ori_offset = sfp_info->offset;
-+
-+	if ((ori_len + ori_offset) > SXE2_SFP_EEP_LEN_MAX) {
-+		sfp_info->len = (uint16_t)(SXE2_SFP_EEP_LEN_MAX - ori_offset);
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+		if (ret)
-+			goto l_end;
-+		sfp_info->bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR1;
-+		sfp_info->len = (uint16_t)(ori_len - (SXE2_SFP_EEP_LEN_MAX - ori_offset));
-+		sfp_info->data = (uint8_t *)(sfp_info->data) + (SXE2_SFP_EEP_LEN_MAX - ori_offset);
-+		sfp_info->offset = 0;
-+		sfp_info->page_cnt = 0;
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+	} else {
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+	}
-+
-+l_end:
-+	if (ret)
-+		PMD_LOG_ERR(DRV, "Failed to read sfp.");
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_get_qsfp_eeprom(struct sxe2_adapter *adapter,
-+					  struct sxe2_sfp_read_info *sfp_info)
-+{
-+	int32_t ret = -1;
-+	uint16_t ori_len = sfp_info->len;
-+	uint16_t ori_offset = sfp_info->offset;
-+	uint16_t read_len = 0;
-+	uint16_t remain_len = 0;
-+
-+	if ((ori_len + ori_offset) > SXE2_SFP_EEP_LEN_MAX) {
-+		sfp_info->len = (uint16_t)(SXE2_SFP_EEP_LEN_MAX - ori_offset);
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+		if (ret)
-+			goto l_end;
-+
-+		do {
-+			read_len = read_len + sfp_info->len;
-+			sfp_info->data = (uint8_t *)(sfp_info->data) + sfp_info->len;
-+			sfp_info->offset = SXE2_QSFP_PAGE_OFST_START;
-+			sfp_info->page_cnt++;
-+			remain_len = (uint16_t)(ori_len - read_len);
-+			sfp_info->len = (remain_len > SXE2_QSFP_PAGE_OFST_START) ?
-+					SXE2_QSFP_PAGE_OFST_START : remain_len;
-+			ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+			if (ret)
-+				goto l_end;
-+		} while (remain_len > SXE2_QSFP_PAGE_OFST_START);
-+	} else {
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+	}
-+
-+l_end:
-+	if (ret)
-+		PMD_LOG_ERR(DRV, "Failed to read sfp.");
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_get_module_eeprom(struct rte_eth_dev *dev, struct rte_dev_eeprom_info *info)
-+{
-+	int32_t ret = -1;
-+	uint8_t type = 0;
-+	struct sxe2_adapter *adapter = dev->data->dev_private;
-+	struct sxe2_sfp_read_info sfp_info;
-+
-+	memset(&sfp_info, 0, sizeof(sfp_info));
-+
-+	if (!info || !info->length || !info->data ||
-+			info->offset >= SXE2_SFP_EEP_LEN_MAX) {
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_INFO(DRV, "Dump sfp eeprom info offset=0x%x, len=0x%x.",
-+		     info->offset, info->length);
-+
-+	ret = sxe2_sfp_type_get(adapter, &type);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read sfp type, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
-+	sfp_info.len = info->length;
-+	sfp_info.data = info->data;
-+	sfp_info.offset = info->offset;
-+	sfp_info.page_cnt = 0;
-+
-+	switch (type) {
-+	case SXE2_MODULE_SFF_SFP_TYPE:
-+		if (info->length > SXE2_SFP_EEP_LEN_MAX * 2) {
-+			ret = -EINVAL;
-+			PMD_LOG_ERR(DRV, "sfp read size[%u] > eeprom max size[%d], ret=%d",
-+				    info->length, SXE2_SFP_EEP_LEN_MAX * 2, ret);
-+			goto l_end;
-+		}
-+		sfp_info.is_qsfp = false;
-+		ret = sxe2_get_sfp_eeprom(adapter, &sfp_info);
-+		if (ret)
-+			goto l_end;
-+		break;
-+	case SXE2_MODULE_TYPE_QSFP_PLUS:
-+	case SXE2_MODULE_TYPE_QSFP28:
-+		if (info->length > SXE2_MODULE_SFF_8636_MAX_LEN) {
-+			ret = -EINVAL;
-+			PMD_LOG_ERR(DRV, "sfp read size[%u] > eeprom max size[%d], ret=%d",
-+				    info->length, SXE2_SFP_EEP_LEN_MAX * 2, ret);
-+			goto l_end;
-+		}
-+		sfp_info.is_qsfp = true;
-+		ret = sxe2_get_qsfp_eeprom(adapter, &sfp_info);
-+		if (ret)
-+			goto l_end;
-+		break;
-+	default:
-+		ret = -ENXIO;
-+		PMD_LOG_ERR(DRV, "Invalid sfp type, type=%d.", type);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
- static enum sxe2_udp_tunnel_protocol
- sxe2_udp_tunnel_type_rte_to_sxe2(enum rte_eth_tunnel_type rte_type)
+ int
+ rte_eal_tailqs_init(void)
  {
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index 32efa893d1..b103679c78 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -275,6 +275,15 @@ struct sxe2_sched_hw_cap {
- 	uint8_t adj_lvl;
- };
+diff --git a/lib/eal/include/rte_tailq.h b/lib/eal/include/rte_tailq.h
+index e7caed6812..c5d5cb782f 100644
+--- a/lib/eal/include/rte_tailq.h
++++ b/lib/eal/include/rte_tailq.h
+@@ -117,11 +117,28 @@ struct rte_tailq_head *rte_eal_tailq_lookup(const char *name);
+  */
+ int rte_eal_tailq_register(struct rte_tailq_elem *t);
  
-+struct sxe2_sfp_read_info {
-+	uint8_t *data;
-+	uint16_t offset;
-+	uint16_t len;
-+	uint16_t bus_addr;
-+	uint16_t page_cnt;
-+	bool is_qsfp;
-+};
++/**
++ * Remove a tail queue element from the local list.
++ * This function is mainly used for EAL_REGISTER_TAILQ macro which pairs
++ * an RTE_FINI destructor with the existing RTE_INIT constructor.
++ * The destructor calls this function during dlclose() to prevent
++ * dangling pointers to unmapped library data.
++ *
++ * @param t
++ *   The tailq element which contains the name of the tailq you want to
++ *   delete
++ */
++void rte_eal_tailq_unregister(struct rte_tailq_elem *t);
 +
- struct sxe2_link_context {
- 	rte_spinlock_t link_lock;
- 	bool link_up;
+ #define EAL_REGISTER_TAILQ(t) \
+ RTE_INIT(tailqinitfn_ ##t) \
+ { \
+ 	if (rte_eal_tailq_register(&t) < 0) \
+ 		rte_panic("Cannot initialize tailq: %s\n", t.name); \
++} \
++RTE_FINI(tailqfinifn_ ##t) \
++{ \
++	rte_eal_tailq_unregister(&t); \
+ }
+ 
+ /* This macro permits both remove and free var within the loop safely.*/
 -- 
-2.52.0
+2.53.0
 
