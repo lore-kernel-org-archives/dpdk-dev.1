@@ -2,51 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1198CCD8C89
-	for <dpdk-dev@archiver.kernel.org>; Sun,  7 Jun 2026 17:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67306CD8C8C
+	for <dpdk-dev@archiver.kernel.org>; Sun,  7 Jun 2026 17:49:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC028402AD;
-	Sun,  7 Jun 2026 19:09:06 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 114EF40278;
- Sun,  7 Jun 2026 19:09:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780852145; x=1812388145;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=Smc/KWZPW86b0bLd63azWI7g5qKhBBSXcWl+aw1QMdc=;
- b=hGdDSc64va4brAOtbfGxEjjGiX0R4sqO5FQ74DcC1xpgDlZh1ufyIlrE
- 70EgX33YkVrnRAtaP06ePuk26rdZ3KXhx6CYEwsJN1rG5z7LeIxBSnMGd
- GdZXzeBb3qete2IAymV5kHnrsZqydmuRSVdg5Yc3xA9WTvAZ5V67DRIyB
- TkI0mCQhE05LXB27yDQqYCqMXknPXiHBgn+Qo3jiy/8efmaP+EkSra0cX
- TTFTbir7CmXhtmSim6rCrac0YzcH6XLKEzMVMhsbHhvljaw1f5tevZKsb
- RZbupl4BKB2ber+SZfNGXcODqNV7jTSMrxB0A83vC0ZXftoyqw4mKnnEU Q==;
-X-CSE-ConnectionGUID: 2o2S7165S4uNkvHxu/NbiA==
-X-CSE-MsgGUID: +89MveCvRM2MKjNMfN/XUg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11810"; a="92281919"
-X-IronPort-AV: E=Sophos;i="6.24,193,1774335600"; d="scan'208";a="92281919"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Jun 2026 10:09:04 -0700
-X-CSE-ConnectionGUID: oIOl6gjmRfanD0b9SxRfIw==
-X-CSE-MsgGUID: DJnr44rLTW+3nCtKeZFt+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,193,1774335600"; d="scan'208";a="238974977"
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by fmviesa009.fm.intel.com with ESMTP; 07 Jun 2026 10:09:02 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
-Subject: [PATCH v2] net/iavf: fix duplicate VF reset during PF reset recovery
-Date: Sun,  7 Jun 2026 17:09:26 +0000
-Message-Id: <20260607170926.318381-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260605202911.314359-1-anurag.mandal@intel.com>
-References: <20260605202911.314359-1-anurag.mandal@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9D005402AD;
+	Sun,  7 Jun 2026 19:49:20 +0200 (CEST)
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
+ by mails.dpdk.org (Postfix) with ESMTP id AF55E40278
+ for <dev@dpdk.org>; Sun,  7 Jun 2026 19:49:19 +0200 (CEST)
+Received: by mail-dl1-f49.google.com with SMTP id
+ a92af1059eb24-137dd4cc208so2081681c88.1
+ for <dev@dpdk.org>; Sun, 07 Jun 2026 10:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780854558;
+ x=1781459358; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=kS08nK+y10Qj31m/mudfCA5pK9J9TwyJ70g+pesItgM=;
+ b=i/2J9WjNUlrR3U/GCfSW9bKhSr/bGpaMLxMDjcYzaPkfhtRBAHUR/ueNLpAAvvZmBv
+ X+bOw0AEgXE5g6p8STDIzL7DhMPF9PXpmyAZrjyJSuS/T3Bh0nFiHFCKqeoheY1mnEZh
+ 0D6cma1HszGEbW8b04guvWf+FOWax0BdjUEGjYojMLKYajhmfaCmXt8s5lKkg5VRBJFC
+ JezyYng1sjwMHWBikLgBlf+mHLge9j4LINjo2wh2D7rcLkrFdgPuK9ibGR14E/gIJ9az
+ TVCXxaq4GkV+AoLVCzBfAVKpf8ZKvxn3flRAlCkStaVhejYKQwGhCcVM9hWUX6kd6+eF
+ swhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780854558; x=1781459358;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=kS08nK+y10Qj31m/mudfCA5pK9J9TwyJ70g+pesItgM=;
+ b=On6udZwWwz+TiAZfNBwJsfDhVCHi0cFeOSgT5IO7ivRK4Uj4VdIIPFMFQyVa/lZYin
+ aC15tD69aWBV9EWSHp7G6g+N+1m/RxsrYB/LTjQVUO+hcE4boHgJM+DSG87J0H5q3/2k
+ BD131hWSdT0uhjptsO36p9J06GmAk2yumZGZo4ZIlK4BYoOsT4VsPT+Hm5vuy+46j7zI
+ pwxzBx0Au3a7VCXyG+tNB6Cvx62PVkXR1MdAYzHfJBSvXLuXdqHQMTPPV76ujXo2WWhw
+ e+PjI13cbR45qkmPZA6P8tFYQLEKEEO9lzhbpd4zYk6qjoVPC3oz5Z7Y/hwODXtMZnbg
+ k15Q==
+X-Gm-Message-State: AOJu0YzKAngBTZkPKH3SxL156NfMcDJvmCUxWmMr4wAcSICLfFN6rxe5
+ QXUthsWkRs5qVFnaDAgVqJ0mEndIevMBGr35V5g6FO1Y2BbdYfbdL+EIWT4la75F8ko9Ywe6OiP
+ X9aL+
+X-Gm-Gg: Acq92OH29bw6U1jA1lcwMlHGKsal9mnA375ZRyV0z9JMCm/Dvj+4xnevHHn3S6oc6/i
+ 8uTyxPJcIp/7ARftA8qf2Mm2JTFLAUNBpxf0ElXZZ5flWtVHToaMBNvkoYlQAB3siPUZw9fYeWH
+ X46OAD96oz30Am2zh/v5JbE/FiB2ya2lQ4TnqmSJ8Z8HNakGKSLfpwuHxboQV38YaptTSfN/qgx
+ 0yvI38c6MyxEGEvIRZRVOMjd7+KGrXCbN4uvDzKH8kYhrwSgtvZZQIVaXS0cLYlZHguYk09qAms
+ 1NvpffW97j1LBzVl8gHVoCtanOlWhkDLzPlkhxIufs1uZ7Qf+MuGGmT/Sp1iPyu6hXdUt2CpQeU
+ qHK8weHjrgaBL6icmbwJijORUgtB6j+WkKSLilTvjYGGq8gg246ciqFgPJiN0Ip/WRobd0QczI6
+ lbn1gVTlwo6ORQdwy89wc50EKqz8pYzoLg6oohulGv7RUC8eu0EGBDEWHYB342uV1/NXCVaPSPN
+ pg=
+X-Received: by 2002:a05:7022:48d:b0:136:4e2c:95a2 with SMTP id
+ a92af1059eb24-13807c24611mr5713505c88.0.1780854558462; 
+ Sun, 07 Jun 2026 10:49:18 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-137f5550bcdsm10825108c88.14.2026.06.07.10.49.17
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 07 Jun 2026 10:49:18 -0700 (PDT)
+Date: Sun, 7 Jun 2026 10:49:15 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: liujie5@linkdatatechnology.com
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v11 00/20] net/sxe2: added Linkdata sxe2 ethernet driver
+Message-ID: <20260607104915.6db15e73@phoenix.local>
+In-Reply-To: <20260607013342.2579271-1-liujie5@linkdatatechnology.com>
+References: <20260606010726.2256170-21-liujie5@linkdatatechnology.com>
+ <20260607013342.2579271-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,293 +82,202 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-During PF initiated reset recovery, iavf_dev_close() sending
-an extra VIRTCHNL_OP_RESET_VF while recovery is already in progress.
-That second reset can leave PF/VF virtchnl state inconsistent and
-cause VIRTCHNL_OP_CONFIG_VSI_QUEUES to fail with ERR_PARAM after
-ToR link flap, leaving the VF unable to recover.
-This results in connection loss.
+On Sun,  7 Jun 2026 09:33:22 +0800
+liujie5@linkdatatechnology.com wrote:
 
-Skipped close-time VF reset and related close-time virtchnl
-operations when PF triggered reset recovery is set. This is
-done to avoid a duplicate VF reset, and keep normal behavior
-for application-driven close.
-Handled link-change events through a common static function that
-reads the correct advanced & legacy link fields properly and
-updates no-poll/watchdog/LSC state consistently.
-Also added IAVF_ERR_ADMIN_QUEUE_NO_WORK in virtchnl message
-drain as a normal empty-queue condition and avoid logging it as
-an misleading AQ failure.
+> From: Jie Liu <liujie5@linkdatatechnology.com>
+>=20
+> This patch set implements core functionality for the SXE2 PMD,
+> including basic driver framework, data path setup, and advanced
+> offload features (VLAN, RSS,TM, PTP etc.).
+>=20
+> V11:
+>  - Addressed AI comments
+>=20
+> Jie Liu (20):
+>   net/sxe2: support AVX512 vectorized path for Rx and Tx
+>   net/sxe2: add AVX2 vector data path for Rx and Tx
+>   drivers: add supported packet types get callback
+>   net/sxe2: support L2 filtering and MAC config
+>   drivers: support RSS feature
+>   net/sxe2: support TM hierarchy and shaping
+>   net/sxe2: support IPsec inline protocol offload
+>   net/sxe2: support statistics and multi-process
+>   drivers: interrupt handling
+>   net/sxe2: add NEON vec Rx/Tx burst functions
+>   drivers: add support for VF representors
+>   net/sxe2: add support for custom UDP tunnel ports
+>   net/sxe2: support firmware version reading
+>   net/sxe2: implement get monitor address
+>   common/sxe2: add shared SFP module definitions
+>   net/sxe2: support SFP module info and EEPROM access
+>   net/sxe2: implement private dump info
+>   net/sxe2: add mbuf validation in Tx debug mode
+>   drivers: add testpmd commands for private features
+>   net/sxe2: update sxe2 feature matrix docs
+>=20
+>  doc/guides/nics/features/sxe2.ini          |   56 +
+>  drivers/common/sxe2/sxe2_common.c          |  156 ++
+>  drivers/common/sxe2/sxe2_common.h          |    4 +
+>  drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
+>  drivers/common/sxe2/sxe2_ioctl_chnl.c      |  178 +-
+>  drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
+>  drivers/common/sxe2/sxe2_msg.h             |  118 ++
+>  drivers/common/sxe2/sxe2_ptype.h           | 1793 ++++++++++++++++++
+>  drivers/net/sxe2/meson.build               |   56 +-
+>  drivers/net/sxe2/sxe2_cmd_chnl.c           | 1587 +++++++++++++++-
+>  drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
+>  drivers/net/sxe2/sxe2_drv_cmd.h            |  521 +++++-
+>  drivers/net/sxe2/sxe2_dump.c               |  304 +++
+>  drivers/net/sxe2/sxe2_dump.h               |   12 +
+>  drivers/net/sxe2/sxe2_ethdev.c             | 1531 +++++++++++++++-
+>  drivers/net/sxe2/sxe2_ethdev.h             |  115 +-
+>  drivers/net/sxe2/sxe2_ethdev_repr.c        |  610 ++++++
+>  drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
+>  drivers/net/sxe2/sxe2_filter.c             |  895 +++++++++
+>  drivers/net/sxe2/sxe2_filter.h             |  100 +
+>  drivers/net/sxe2/sxe2_flow.c               | 1391 ++++++++++++++
+>  drivers/net/sxe2/sxe2_flow.h               |   30 +
+>  drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
+>  drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
+>  drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
+>  drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
+>  drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
+>  drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 ++++++++++++++++++++
+>  drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
+>  drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
+>  drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
+>  drivers/net/sxe2/sxe2_irq.c                | 1025 +++++++++++
+>  drivers/net/sxe2/sxe2_irq.h                |   25 +
+>  drivers/net/sxe2/sxe2_mac.c                |  535 ++++++
+>  drivers/net/sxe2/sxe2_mac.h                |   84 +
+>  drivers/net/sxe2/sxe2_mp.c                 |  414 +++++
+>  drivers/net/sxe2/sxe2_mp.h                 |   67 +
+>  drivers/net/sxe2/sxe2_queue.c              |   17 +-
+>  drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
+>  drivers/net/sxe2/sxe2_rss.h                |   81 +
+>  drivers/net/sxe2/sxe2_rx.c                 |   38 +
+>  drivers/net/sxe2/sxe2_rx.h                 |    2 +
+>  drivers/net/sxe2/sxe2_security.c           |  335 ++++
+>  drivers/net/sxe2/sxe2_security.h           |   77 +
+>  drivers/net/sxe2/sxe2_stats.c              |  591 ++++++
+>  drivers/net/sxe2/sxe2_stats.h              |   39 +
+>  drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
+>  drivers/net/sxe2/sxe2_switchdev.h          |   33 +
+>  drivers/net/sxe2/sxe2_testpmd.c            |  733 ++++++++
+>  drivers/net/sxe2/sxe2_testpmd_lib.c        |  969 ++++++++++
+>  drivers/net/sxe2/sxe2_testpmd_lib.h        |  142 ++
+>  drivers/net/sxe2/sxe2_tm.c                 | 1169 ++++++++++++
+>  drivers/net/sxe2/sxe2_tm.h                 |   78 +
+>  drivers/net/sxe2/sxe2_tx.c                 |    7 +
+>  drivers/net/sxe2/sxe2_txrx.c               |  176 +-
+>  drivers/net/sxe2/sxe2_txrx.h               |    4 +
+>  drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
+>  drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
+>  drivers/net/sxe2/sxe2_txrx_poll.c          |  243 ++-
+>  drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
+>  drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
+>  drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  776 ++++++++
+>  drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  897 +++++++++
+>  drivers/net/sxe2/sxe2_txrx_vec_common.h    |    1 +
+>  drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  721 ++++++++
+>  drivers/net/sxe2/sxe2_vsi.c                |  146 ++
+>  drivers/net/sxe2/sxe2_vsi.h                |   12 +-
+>  drivers/net/sxe2/sxe2vf_regs.h             |   85 +
+>  68 files changed, 26575 insertions(+), 127 deletions(-)
+>  create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
+>  create mode 100644 drivers/common/sxe2/sxe2_msg.h
+>  create mode 100644 drivers/common/sxe2/sxe2_ptype.h
+>  create mode 100644 drivers/net/sxe2/sxe2_dump.c
+>  create mode 100644 drivers/net/sxe2/sxe2_dump.h
+>  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
+>  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
+>  create mode 100644 drivers/net/sxe2/sxe2_filter.c
+>  create mode 100644 drivers/net/sxe2/sxe2_filter.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow.c
+>  create mode 100644 drivers/net/sxe2/sxe2_flow.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
+>  create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
+>  create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
+>  create mode 100644 drivers/net/sxe2/sxe2_irq.c
+>  create mode 100644 drivers/net/sxe2/sxe2_mac.c
+>  create mode 100644 drivers/net/sxe2/sxe2_mac.h
+>  create mode 100644 drivers/net/sxe2/sxe2_mp.c
+>  create mode 100644 drivers/net/sxe2/sxe2_mp.h
+>  create mode 100644 drivers/net/sxe2/sxe2_rss.c
+>  create mode 100644 drivers/net/sxe2/sxe2_rss.h
+>  create mode 100644 drivers/net/sxe2/sxe2_security.c
+>  create mode 100644 drivers/net/sxe2/sxe2_security.h
+>  create mode 100644 drivers/net/sxe2/sxe2_stats.c
+>  create mode 100644 drivers/net/sxe2/sxe2_stats.h
+>  create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
+>  create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
+>  create mode 100644 drivers/net/sxe2/sxe2_testpmd.c
+>  create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.c
+>  create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.h
+>  create mode 100644 drivers/net/sxe2/sxe2_tm.c
+>  create mode 100644 drivers/net/sxe2/sxe2_tm.h
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
+>  create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
+>=20
 
-Fixes: 675a104e2e94 ("net/iavf: fix abnormal disable HW interrupt")
-Fixes: b34fe66ea893 ("net/iavf: delay VF reset command")
-Fixes: 5e03e316c753 ("net/iavf: handle virtchnl event message without interrupt")
-Fixes: 5c8ca9f13c78 ("net/iavf: fix no polling mode switching")
-Fixes: 48de41ca11f0 ("net/avf: enable link status update")
-Fixes: 02d212ca3125 ("net/iavf: rename remaining avf strings")
-Cc: stable@dpdk.org
+Build fails:
+FAILED: [code=3D1] drivers/libtmp_rte_net_sxe2.a.p/net_sxe2_sxe2_irq.c.o=20
+ccache gcc -Idrivers/libtmp_rte_net_sxe2.a.p -Idrivers -I../drivers -Idrive=
+rs/net/sxe2 -I../drivers/net/sxe2 -Idrivers/common/sxe2 -I../drivers/common=
+/sxe2 -Ilib/ethdev -I../lib/ethdev -Ilib/eal/common -I../lib/eal/common -I.=
+ -I.. -Iconfig -I../config -Ilib/eal/include -I../lib/eal/include -Ilib/eal=
+/linux/include -I../lib/eal/linux/include -Ilib/eal/x86/include -I../lib/ea=
+l/x86/include -I../kernel/linux -Ilib/eal -I../lib/eal -Ilib/kvargs -I../li=
+b/kvargs -Ilib/log -I../lib/log -Ilib/metrics -I../lib/metrics -Ilib/teleme=
+try -I../lib/telemetry -Ilib/argparse -I../lib/argparse -Ilib/net -I../lib/=
+net -Ilib/mbuf -I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I..=
+/lib/ring -Ilib/meter -I../lib/meter -Idrivers/bus/pci -I../drivers/bus/pci=
+ -I../drivers/bus/pci/linux -Ilib/pci -I../lib/pci -Idrivers/bus/vdev -I../=
+drivers/bus/vdev -Ilib/hash -I../lib/hash -Ilib/rcu -I../lib/rcu -Ilib/cryp=
+todev -I../lib/cryptodev -Ilib/security -I../lib/security -Ilib/cmdline -I.=
+./lib/cmdline -fdiagnostics-color=3Dalways -pipe -D_FILE_OFFSET_BITS=3D64 -=
+Wall -Winvalid-pch -Wextra -Werror -std=3Dc11 -O2 -g -include rte_config.h =
+-Wvla -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-securi=
+ty -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wold-style=
+-definition -Wpointer-arith -Wshadow -Wsign-compare -Wstrict-prototypes -Wu=
+ndef -Wwrite-strings -Wno-packed-not-aligned -Wno-missing-field-initializer=
+s -D_GNU_SOURCE -fPIC -march=3Dcorei7 -mrtm -DALLOW_EXPERIMENTAL_API -DALLO=
+W_INTERNAL_API -Wno-format-truncation -Wno-address-of-packed-member -g -DCC=
+_AVX512_SUPPORT -DRTE_LOG_DEFAULT_LOGTYPE=3Dpmd.net.sxe2 -MD -MQ drivers/li=
+btmp_rte_net_sxe2.a.p/net_sxe2_sxe2_irq.c.o -MF drivers/libtmp_rte_net_sxe2=
+.a.p/net_sxe2_sxe2_irq.c.o.d -o drivers/libtmp_rte_net_sxe2.a.p/net_sxe2_sx=
+e2_irq.c.o -c ../drivers/net/sxe2/sxe2_irq.c
+../drivers/net/sxe2/sxe2_irq.c: In function =E2=80=98sxe2_intr_init=E2=80=
+=99:
+../drivers/net/sxe2/sxe2_irq.c:468:42: error: implicit declaration of funct=
+ion =E2=80=98RTE_ETH_DEV_TO_PCI=E2=80=99; did you mean =E2=80=98RTE_ETH_DEV=
+_SRIOV=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+  468 |         struct rte_pci_device *pci_dev =3D RTE_ETH_DEV_TO_PCI(dev);
+      |                                          ^~~~~~~~~~~~~~~~~~
+      |                                          RTE_ETH_DEV_SRIOV
+../drivers/net/sxe2/sxe2_irq.c:468:42: error: nested extern declaration of =
+=E2=80=98RTE_ETH_DEV_TO_PCI=E2=80=99 [-Werror=3Dnested-externs]
+../drivers/net/sxe2/sxe2_irq.c:468:42: error: initialization of =E2=80=98st=
+ruct rte_pci_device *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer fro=
+m integer without a cast [-Werror=3Dint-conversion]
+../drivers/net/sxe2/sxe2_irq.c: In function =E2=80=98sxe2_intr_uninit=E2=80=
+=99:
+../drivers/net/sxe2/sxe2_irq.c:550:42: error: initialization of =E2=80=98st=
+ruct rte_pci_device *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer fro=
+m integer without a cast [-Werror=3Dint-conversion]
+  550 |         struct rte_pci_device *pci_dev =3D RTE_ETH_DEV_TO_PCI(dev);
+      |                                          ^~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
 
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
-V2: Addressed ai-code-review comments
-
- doc/guides/rel_notes/release_26_07.rst |   3 +
- drivers/net/intel/iavf/iavf_ethdev.c   |  37 ++++---
- drivers/net/intel/iavf/iavf_vchnl.c    | 146 +++++++++++++++----------
- 3 files changed, 115 insertions(+), 71 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index b8a3e2ced9..914b61629b 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -89,6 +89,9 @@ New Features
- 
-   * Added support for transmitting LLDP packets based on mbuf packet type.
-   * Implemented AVX2 context descriptor transmit paths.
-+  * Fixed duplicate 'VIRTCHNL_OP_RESET_VF' received during a PF-initiated
-+    reset recovery resulting connection loss after a top-of-rack (ToR)
-+    link flap/power-cycle.
- 
- * **Updated PCAP ethernet driver.**
- 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index bdf650b822..fb6f287d3c 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -3166,24 +3166,27 @@ iavf_dev_close(struct rte_eth_dev *dev)
- 
- 	ret = iavf_dev_stop(dev);
- 
--	/*
--	 * Release redundant queue resource when close the dev
--	 * so that other vfs can re-use the queues.
--	 */
--	if (vf->lv_enabled) {
--		ret = iavf_request_queues(dev, IAVF_MAX_NUM_QUEUES_DFLT);
--		if (ret)
--			PMD_DRV_LOG(ERR, "Reset the num of queues failed");
-+	/* Skip RESET_VF on a PF-initiated reset */
-+	if (!adapter->closed && !vf->in_reset_recovery) {
-+		/*
-+		 * Release redundant queue resource when close the dev
-+		 * so that other vfs can re-use the queues.
-+		 */
-+		if (vf->lv_enabled) {
-+			ret = iavf_request_queues(dev, IAVF_MAX_NUM_QUEUES_DFLT);
-+			if (ret)
-+				PMD_DRV_LOG(ERR, "Reset the num of queues failed");
-+			vf->max_rss_qregion = IAVF_MAX_NUM_QUEUES_DFLT;
-+		}
- 
--		vf->max_rss_qregion = IAVF_MAX_NUM_QUEUES_DFLT;
-+		/*
-+		 * Disable promiscuous mode before resetting the VF. This is to avoid
-+		 * potential issues when the PF is bound to the kernel driver.
-+		 */
-+		if (vf->promisc_unicast_enabled || vf->promisc_multicast_enabled)
-+			iavf_config_promisc(adapter, false, false);
- 	}
- 
--	/* Disable promiscuous mode before resetting the VF. This is to avoid
--	 * potential issues when the PF is bound to the kernel driver.
--	 */
--	if (vf->promisc_unicast_enabled || vf->promisc_multicast_enabled)
--		iavf_config_promisc(adapter, false, false);
--
- 	adapter->closed = true;
- 
- 	/* free iAVF security device context all related resources */
-@@ -3195,7 +3198,9 @@ iavf_dev_close(struct rte_eth_dev *dev)
- 	iavf_flow_flush(dev, NULL);
- 	iavf_flow_uninit(adapter);
- 
--	iavf_vf_reset(hw);
-+	/* Skip RESET_VF on a PF-initiated reset */
-+	if (!vf->in_reset_recovery)
-+		iavf_vf_reset(hw);
- 	vf->aq_intr_enabled = false;
- 	iavf_shutdown_adminq(hw);
- 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR) {
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 94ccfb5d6e..9b26cc8d75 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -216,6 +216,72 @@ iavf_convert_link_speed(enum virtchnl_link_speed virt_link_speed)
- 	return speed;
- }
- 
-+/*
-+ * iavf_handle_link_change_event: common handler for VIRTCHNL link change events
-+ *
-+ * @dev: pointer to rte_eth_dev for this VF
-+ * @vpe: pointer to the virtchnl_pf_event payload received from the PF
-+ *
-+ * Handle PF link-change event: decode adv/legacy link info, update VF
-+ * link state, sync no-poll/watchdog behavior & notify app via LSC event.
-+ */
-+static void
-+iavf_handle_link_change_event(struct rte_eth_dev *dev,
-+			      struct virtchnl_pf_event *vpe)
-+{
-+	if (dev == NULL || dev->data == NULL ||
-+	    dev->data->dev_private == NULL) {
-+		PMD_DRV_LOG(ERR, "Invalid device pointer in link change handler");
-+		return;
-+	}
-+	struct iavf_adapter *adapter =
-+		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	struct iavf_info *vf = &adapter->vf;
-+	bool adv_link_speed;
-+
-+	adv_link_speed = (vf->vf_res != NULL) &&
-+		(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED);
-+
-+	if (adv_link_speed) {
-+		vf->link_up = vpe->event_data.link_event_adv.link_status;
-+		vf->link_speed = vpe->event_data.link_event_adv.link_speed;
-+	} else {
-+		enum virtchnl_link_speed speed;
-+
-+		vf->link_up = vpe->event_data.link_event.link_status;
-+		speed = vpe->event_data.link_event.link_speed;
-+		vf->link_speed = iavf_convert_link_speed(speed);
-+	}
-+
-+	iavf_dev_link_update(dev, 0);
-+
-+	/*
-+	 * Update watchdog/no_poll state BEFORE notifying the application via
-+	 * the LSC event. Otherwise the application's link-up callback could
-+	 * race with stale (link-down) no_poll/watchdog state and either
-+	 * continue to drop traffic or trigger a spurious reset detection.
-+	 *
-+	 * Keeping the watchdog enabled whenever the link cannot be trusted
-+	 * (link is down or a VF reset is in progress); the watchdog drives
-+	 * auto-reset recovery, so it must remain armed in those cases.
-+	 */
-+	if (vf->link_up && !vf->vf_reset)
-+		iavf_dev_watchdog_disable(adapter);
-+	else
-+		iavf_dev_watchdog_enable(adapter);
-+
-+	if (adapter->devargs.no_poll_on_link_down) {
-+		iavf_set_no_poll(adapter, true);
-+		PMD_DRV_LOG(DEBUG, "VF no poll turned %s",
-+			    adapter->no_poll ? "on" : "off");
-+	}
-+
-+	iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
-+
-+	PMD_DRV_LOG(INFO, "Link status update:%s",
-+		vf->link_up ? "up" : "down");
-+}
-+
- /* Read data in admin queue to get msg from pf driver */
- static enum iavf_aq_result
- iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
-@@ -253,38 +319,23 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
- 		result = IAVF_MSG_SYS;
- 		switch (vpe->event) {
- 		case VIRTCHNL_EVENT_LINK_CHANGE:
--			vf->link_up =
--				vpe->event_data.link_event.link_status;
--			if (vf->vf_res != NULL &&
--			    vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) {
--				vf->link_speed =
--				    vpe->event_data.link_event_adv.link_speed;
--			} else {
--				enum virtchnl_link_speed speed;
--				speed = vpe->event_data.link_event.link_speed;
--				vf->link_speed = iavf_convert_link_speed(speed);
--			}
--			iavf_dev_link_update(vf->eth_dev, 0);
--			iavf_dev_event_post(vf->eth_dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
--			if (vf->link_up && !vf->vf_reset) {
--				iavf_dev_watchdog_disable(adapter);
--			} else {
--				if (!vf->link_up)
--					iavf_dev_watchdog_enable(adapter);
--			}
--			if (adapter->devargs.no_poll_on_link_down) {
--				iavf_set_no_poll(adapter, true);
--				if (adapter->no_poll)
--					PMD_DRV_LOG(DEBUG, "VF no poll turned on");
--				else
--					PMD_DRV_LOG(DEBUG, "VF no poll turned off");
--			}
--			PMD_DRV_LOG(INFO, "Link status update:%s",
--					vf->link_up ? "up" : "down");
-+			iavf_handle_link_change_event(vf->eth_dev, vpe);
- 			break;
- 		case VIRTCHNL_EVENT_RESET_IMPENDING:
--			vf->vf_reset = true;
--			iavf_set_no_poll(adapter, false);
-+			/*
-+			 * Force link down on impending reset to drop
-+			 * the cached link-up state; a fresh LSC up
-+			 * event will be re-issued by the PF once the
-+			 * VF is reinitialised.
-+			 */
-+			vf->link_up = false;
-+			if (!vf->vf_reset) {
-+				vf->vf_reset = true;
-+				iavf_set_no_poll(adapter, false);
-+				iavf_dev_event_post(vf->eth_dev,
-+					RTE_ETH_EVENT_INTR_RESET,
-+					NULL, 0);
-+			}
- 			PMD_DRV_LOG(INFO, "VF is resetting");
- 			break;
- 		case VIRTCHNL_EVENT_PF_DRIVER_CLOSE:
-@@ -518,30 +569,7 @@ iavf_handle_pf_event_msg(struct rte_eth_dev *dev, uint8_t *msg,
- 		break;
- 	case VIRTCHNL_EVENT_LINK_CHANGE:
- 		PMD_DRV_LOG(DEBUG, "VIRTCHNL_EVENT_LINK_CHANGE event");
--		vf->link_up = pf_msg->event_data.link_event.link_status;
--		if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) {
--			vf->link_speed =
--				pf_msg->event_data.link_event_adv.link_speed;
--		} else {
--			enum virtchnl_link_speed speed;
--			speed = pf_msg->event_data.link_event.link_speed;
--			vf->link_speed = iavf_convert_link_speed(speed);
--		}
--		iavf_dev_link_update(dev, 0);
--		if (vf->link_up && !vf->vf_reset) {
--			iavf_dev_watchdog_disable(adapter);
--		} else {
--			if (!vf->link_up)
--				iavf_dev_watchdog_enable(adapter);
--		}
--		if (adapter->devargs.no_poll_on_link_down) {
--			iavf_set_no_poll(adapter, true);
--			if (adapter->no_poll)
--				PMD_DRV_LOG(DEBUG, "VF no poll turned on");
--			else
--				PMD_DRV_LOG(DEBUG, "VF no poll turned off");
--		}
--		iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
-+		iavf_handle_link_change_event(dev, pf_msg);
- 		break;
- 	case VIRTCHNL_EVENT_PF_DRIVER_CLOSE:
- 		PMD_DRV_LOG(DEBUG, "VIRTCHNL_EVENT_PF_DRIVER_CLOSE event");
-@@ -570,7 +598,15 @@ iavf_handle_virtchnl_msg(struct rte_eth_dev *dev)
- 	while (pending) {
- 		ret = iavf_clean_arq_element(hw, &info, &pending);
- 
--		if (ret != IAVF_SUCCESS) {
-+		/*
-+		 * IAVF_ERR_ADMIN_QUEUE_NO_WORK (-57) means AQ is empty
-+		 * and is a normal way to terminate the drain loop.
-+		 * Log error only for genuine other failure codes.
-+		 * Incorrect logging like this during VF resets might
-+		 * mislead into chasing a non-existent AQ failure.
-+		 */
-+		if (ret != IAVF_SUCCESS &&
-+		    ret != IAVF_ERR_ADMIN_QUEUE_NO_WORK) {
- 			PMD_DRV_LOG(INFO, "Failed to read msg from AdminQ,"
- 				    "ret: %d", ret);
- 			break;
--- 
-2.34.1
-
+Suggest doing local builds with clang and gcc.
