@@ -2,70 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B92CD8C88
-	for <dpdk-dev@archiver.kernel.org>; Sun,  7 Jun 2026 15:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1198CCD8C89
+	for <dpdk-dev@archiver.kernel.org>; Sun,  7 Jun 2026 17:09:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8701402D6;
-	Sun,  7 Jun 2026 17:04:24 +0200 (CEST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com
- [209.85.128.179])
- by mails.dpdk.org (Postfix) with ESMTP id 915E3402AD
- for <dev@dpdk.org>; Sun,  7 Jun 2026 17:04:23 +0200 (CEST)
-Received: by mail-yw1-f179.google.com with SMTP id
- 00721157ae682-7ddd3d67084so38414607b3.3
- for <dev@dpdk.org>; Sun, 07 Jun 2026 08:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780844662;
- x=1781449462; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=uSm6GaBVqDJtD/ezRlB+FEQOf44Q5Mh8au89J/BCtQE=;
- b=XKDV+E26BxuuYBXgMfICC3ICnfwIC3vsAA7g5qlJI1FqiUjdx+hk5zShUfrwUSeoYo
- wYoceQYGUyO5aSlpFTz+zCj9qEIet2mIe4LFAGlgypaYLWgT8B8T1TRSNGvIRTp01glU
- YGUusJXihvk6mr1/9/rWPGdVESGcuRCA96PbjjjuvUvt4N7VohpD15Rck0xPlf5U1Zbj
- G+Qzp5hiIPTxp/+rwYaD4hDbgeh9C6FTzN1k9Nor2udWifLDKGMNl98Q/8thmYaPh42q
- qs7I6sxAMNPCSU9wpUZLW+L0txbRvoS2st3agEtMGGStugZdN0bUvHMXHNDPRclzlm6l
- GUQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780844662; x=1781449462;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=uSm6GaBVqDJtD/ezRlB+FEQOf44Q5Mh8au89J/BCtQE=;
- b=A++jrsxJeyHk3GOw+XphKuHO62Y6zLSV/jNLiuT0yE0yUZzphkeJQ3oD7b5Ltgd5St
- ORxqgS7GpNEgC9w5WvTm7XyLwQWu0M6haPqXoz7rqASLl5TVmDoSl51/cQT+q7aexc7e
- L4Pwqy555/dly6NioA/BXVbGJFNazIleJlSAeVcNTJ/57wW5/aq+Num0upbhr4RzPNBt
- AJUrKPZU42BbckncNJyP/m8IP/UAtorvmh0pb9Hf5Zs6Eo7SZrOSnwbMDgP98tE8UNGr
- Mx/XNYzhwMkW5+0mW/2sq4Mqpx6eMeuAcTSxj2nVvgLcf9bweIYr1/bb2ZVFc6gsvN5n
- 1tZA==
-X-Gm-Message-State: AOJu0Yxf0O03MEtSoC4t1J+s4UzndacE1/JlAcfjR6jbYs562iGsOnFS
- 5hBe9VeZnZACtm9r9elwoDEwibNvvE5Nvg/759AzYH/w7g4guDNt2L4SwZD1pBkrGcOsxw29648
- edr+n
-X-Gm-Gg: Acq92OEeQJUdm/t+D7x7/btLPb+LZRHAdqBsCzCrmmDUkAGq3nPQbJWzQuma/Q33I8H
- 0G4iBH2esvpUDhI//tLB/OKhk4wWoCItUCXIHV8Lo5va76mUt6J6DWWh57XT6VW8LnbdiYdnQOZ
- JH2hLAmkHLMkPw/5EfkNtdPZvZR9CgrNF4P323dErHeoD1lWjdmjqSQozZG/c5heb/GSOstnleX
- fQ+k6TSb063DjUG4ZeSd52gYiDg1WajhdaOvq7yI0FSFMeUGT1s3dkMhel8B/yo4atHVVXOcRmP
- IN3hhqjRe3XC3oyNnUz/RZM0qmT9bpmW5BPtrjlJ6G1OPp8ZcGaNG6paOHFq7lPtA0FzaAP06Di
- wsWTkAd99X7CbEF74Ia4MGL1cfHIhXNhQv/taWJTXiKBo3u25YySAbRbc1XafOa/sDP+YJWkjOi
- lt5XWNZT59wnENmulBcSI3JtnMyda+lRtHRzo9UNnlRnEv4c5cS8RhP39xGvXnai91+U4zm2jYZ
- 6ibDWzDTCE=
-X-Received: by 2002:a05:690e:bc4:b0:661:ab4:b048 with SMTP id
- 956f58d0204a3-6610ab4bab5mr9114728d50.43.1780844662541; 
- Sun, 07 Jun 2026 08:04:22 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 956f58d0204a3-660d644a68fsm8243035d50.14.2026.06.07.08.04.21
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 07 Jun 2026 08:04:22 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id DC028402AD;
+	Sun,  7 Jun 2026 19:09:06 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 114EF40278;
+ Sun,  7 Jun 2026 19:09:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1780852145; x=1812388145;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=Smc/KWZPW86b0bLd63azWI7g5qKhBBSXcWl+aw1QMdc=;
+ b=hGdDSc64va4brAOtbfGxEjjGiX0R4sqO5FQ74DcC1xpgDlZh1ufyIlrE
+ 70EgX33YkVrnRAtaP06ePuk26rdZ3KXhx6CYEwsJN1rG5z7LeIxBSnMGd
+ GdZXzeBb3qete2IAymV5kHnrsZqydmuRSVdg5Yc3xA9WTvAZ5V67DRIyB
+ TkI0mCQhE05LXB27yDQqYCqMXknPXiHBgn+Qo3jiy/8efmaP+EkSra0cX
+ TTFTbir7CmXhtmSim6rCrac0YzcH6XLKEzMVMhsbHhvljaw1f5tevZKsb
+ RZbupl4BKB2ber+SZfNGXcODqNV7jTSMrxB0A83vC0ZXftoyqw4mKnnEU Q==;
+X-CSE-ConnectionGUID: 2o2S7165S4uNkvHxu/NbiA==
+X-CSE-MsgGUID: +89MveCvRM2MKjNMfN/XUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11810"; a="92281919"
+X-IronPort-AV: E=Sophos;i="6.24,193,1774335600"; d="scan'208";a="92281919"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Jun 2026 10:09:04 -0700
+X-CSE-ConnectionGUID: oIOl6gjmRfanD0b9SxRfIw==
+X-CSE-MsgGUID: DJnr44rLTW+3nCtKeZFt+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,193,1774335600"; d="scan'208";a="238974977"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by fmviesa009.fm.intel.com with ESMTP; 07 Jun 2026 10:09:02 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- David Marchand <david.marchand@redhat.com>,
- Neil Horman <nhorman@tuxdriver.com>
-Subject: [PATCH] eal: add destructor to unregister tailq on unload
-Date: Sun,  7 Jun 2026 08:04:17 -0700
-Message-ID: <20260607150418.30885-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
+ Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
+Subject: [PATCH v2] net/iavf: fix duplicate VF reset during PF reset recovery
+Date: Sun,  7 Jun 2026 17:09:26 +0000
+Message-Id: <20260607170926.318381-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260605202911.314359-1-anurag.mandal@intel.com>
+References: <20260605202911.314359-1-anurag.mandal@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,81 +60,293 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Libraries that use EAL_REGISTER_TAILQ insert a pointer to a static
-struct rte_tailq_elem into the process-local tailq list via a
-constructor, but have no matching destructor. When such a library
-is loaded as a dependency of a plugin via dlopen() and later
-unloaded via dlclose(), the list retains a dangling pointer to the
-now-unmapped static. Reloading the plugin crashes in
-rte_eal_tailq_local_register() when it traverses the stale entry.
+During PF initiated reset recovery, iavf_dev_close() sending
+an extra VIRTCHNL_OP_RESET_VF while recovery is already in progress.
+That second reset can leave PF/VF virtchnl state inconsistent and
+cause VIRTCHNL_OP_CONFIG_VSI_QUEUES to fail with ERR_PARAM after
+ToR link flap, leaving the VF unable to recover.
+This results in connection loss.
 
-Add rte_eal_tailq_unregister() and extend the EAL_REGISTER_TAILQ
-macro to emit an RTE_FINI destructor alongside the existing
-RTE_INIT constructor. Every library that uses the macro
-automatically gets both sides; no per-library changes are needed.
+Skipped close-time VF reset and related close-time virtchnl
+operations when PF triggered reset recovery is set. This is
+done to avoid a duplicate VF reset, and keep normal behavior
+for application-driven close.
+Handled link-change events through a common static function that
+reads the correct advanced & legacy link fields properly and
+updates no-poll/watchdog/LSC state consistently.
+Also added IAVF_ERR_ADMIN_QUEUE_NO_WORK in virtchnl message
+drain as a normal empty-queue condition and avoid logging it as
+an misleading AQ failure.
 
-Bugzilla ID: 1081
-Fixes: 873a61c7526b ("tailq: introduce dynamic register system")
+Fixes: 675a104e2e94 ("net/iavf: fix abnormal disable HW interrupt")
+Fixes: b34fe66ea893 ("net/iavf: delay VF reset command")
+Fixes: 5e03e316c753 ("net/iavf: handle virtchnl event message without interrupt")
+Fixes: 5c8ca9f13c78 ("net/iavf: fix no polling mode switching")
+Fixes: 48de41ca11f0 ("net/avf: enable link status update")
+Fixes: 02d212ca3125 ("net/iavf: rename remaining avf strings")
 Cc: stable@dpdk.org
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- lib/eal/common/eal_common_tailqs.c |  8 ++++++++
- lib/eal/include/rte_tailq.h        | 17 +++++++++++++++++
- 2 files changed, 25 insertions(+)
+V2: Addressed ai-code-review comments
 
-diff --git a/lib/eal/common/eal_common_tailqs.c b/lib/eal/common/eal_common_tailqs.c
-index c581f43b6f..714f91d0ec 100644
---- a/lib/eal/common/eal_common_tailqs.c
-+++ b/lib/eal/common/eal_common_tailqs.c
-@@ -148,6 +148,14 @@ rte_eal_tailq_register(struct rte_tailq_elem *t)
- 	return -1;
+ doc/guides/rel_notes/release_26_07.rst |   3 +
+ drivers/net/intel/iavf/iavf_ethdev.c   |  37 ++++---
+ drivers/net/intel/iavf/iavf_vchnl.c    | 146 +++++++++++++++----------
+ 3 files changed, 115 insertions(+), 71 deletions(-)
+
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index b8a3e2ced9..914b61629b 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -89,6 +89,9 @@ New Features
+ 
+   * Added support for transmitting LLDP packets based on mbuf packet type.
+   * Implemented AVX2 context descriptor transmit paths.
++  * Fixed duplicate 'VIRTCHNL_OP_RESET_VF' received during a PF-initiated
++    reset recovery resulting connection loss after a top-of-rack (ToR)
++    link flap/power-cycle.
+ 
+ * **Updated PCAP ethernet driver.**
+ 
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index bdf650b822..fb6f287d3c 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -3166,24 +3166,27 @@ iavf_dev_close(struct rte_eth_dev *dev)
+ 
+ 	ret = iavf_dev_stop(dev);
+ 
+-	/*
+-	 * Release redundant queue resource when close the dev
+-	 * so that other vfs can re-use the queues.
+-	 */
+-	if (vf->lv_enabled) {
+-		ret = iavf_request_queues(dev, IAVF_MAX_NUM_QUEUES_DFLT);
+-		if (ret)
+-			PMD_DRV_LOG(ERR, "Reset the num of queues failed");
++	/* Skip RESET_VF on a PF-initiated reset */
++	if (!adapter->closed && !vf->in_reset_recovery) {
++		/*
++		 * Release redundant queue resource when close the dev
++		 * so that other vfs can re-use the queues.
++		 */
++		if (vf->lv_enabled) {
++			ret = iavf_request_queues(dev, IAVF_MAX_NUM_QUEUES_DFLT);
++			if (ret)
++				PMD_DRV_LOG(ERR, "Reset the num of queues failed");
++			vf->max_rss_qregion = IAVF_MAX_NUM_QUEUES_DFLT;
++		}
+ 
+-		vf->max_rss_qregion = IAVF_MAX_NUM_QUEUES_DFLT;
++		/*
++		 * Disable promiscuous mode before resetting the VF. This is to avoid
++		 * potential issues when the PF is bound to the kernel driver.
++		 */
++		if (vf->promisc_unicast_enabled || vf->promisc_multicast_enabled)
++			iavf_config_promisc(adapter, false, false);
+ 	}
+ 
+-	/* Disable promiscuous mode before resetting the VF. This is to avoid
+-	 * potential issues when the PF is bound to the kernel driver.
+-	 */
+-	if (vf->promisc_unicast_enabled || vf->promisc_multicast_enabled)
+-		iavf_config_promisc(adapter, false, false);
+-
+ 	adapter->closed = true;
+ 
+ 	/* free iAVF security device context all related resources */
+@@ -3195,7 +3198,9 @@ iavf_dev_close(struct rte_eth_dev *dev)
+ 	iavf_flow_flush(dev, NULL);
+ 	iavf_flow_uninit(adapter);
+ 
+-	iavf_vf_reset(hw);
++	/* Skip RESET_VF on a PF-initiated reset */
++	if (!vf->in_reset_recovery)
++		iavf_vf_reset(hw);
+ 	vf->aq_intr_enabled = false;
+ 	iavf_shutdown_adminq(hw);
+ 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR) {
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index 94ccfb5d6e..9b26cc8d75 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -216,6 +216,72 @@ iavf_convert_link_speed(enum virtchnl_link_speed virt_link_speed)
+ 	return speed;
  }
  
-+RTE_EXPORT_SYMBOL(rte_eal_tailq_unregister)
-+void
-+rte_eal_tailq_unregister(struct rte_tailq_elem *t)
++/*
++ * iavf_handle_link_change_event: common handler for VIRTCHNL link change events
++ *
++ * @dev: pointer to rte_eth_dev for this VF
++ * @vpe: pointer to the virtchnl_pf_event payload received from the PF
++ *
++ * Handle PF link-change event: decode adv/legacy link info, update VF
++ * link state, sync no-poll/watchdog behavior & notify app via LSC event.
++ */
++static void
++iavf_handle_link_change_event(struct rte_eth_dev *dev,
++			      struct virtchnl_pf_event *vpe)
 +{
-+	TAILQ_REMOVE(&rte_tailq_elem_head, t, next);
-+	t->head = NULL;
++	if (dev == NULL || dev->data == NULL ||
++	    dev->data->dev_private == NULL) {
++		PMD_DRV_LOG(ERR, "Invalid device pointer in link change handler");
++		return;
++	}
++	struct iavf_adapter *adapter =
++		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
++	struct iavf_info *vf = &adapter->vf;
++	bool adv_link_speed;
++
++	adv_link_speed = (vf->vf_res != NULL) &&
++		(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED);
++
++	if (adv_link_speed) {
++		vf->link_up = vpe->event_data.link_event_adv.link_status;
++		vf->link_speed = vpe->event_data.link_event_adv.link_speed;
++	} else {
++		enum virtchnl_link_speed speed;
++
++		vf->link_up = vpe->event_data.link_event.link_status;
++		speed = vpe->event_data.link_event.link_speed;
++		vf->link_speed = iavf_convert_link_speed(speed);
++	}
++
++	iavf_dev_link_update(dev, 0);
++
++	/*
++	 * Update watchdog/no_poll state BEFORE notifying the application via
++	 * the LSC event. Otherwise the application's link-up callback could
++	 * race with stale (link-down) no_poll/watchdog state and either
++	 * continue to drop traffic or trigger a spurious reset detection.
++	 *
++	 * Keeping the watchdog enabled whenever the link cannot be trusted
++	 * (link is down or a VF reset is in progress); the watchdog drives
++	 * auto-reset recovery, so it must remain armed in those cases.
++	 */
++	if (vf->link_up && !vf->vf_reset)
++		iavf_dev_watchdog_disable(adapter);
++	else
++		iavf_dev_watchdog_enable(adapter);
++
++	if (adapter->devargs.no_poll_on_link_down) {
++		iavf_set_no_poll(adapter, true);
++		PMD_DRV_LOG(DEBUG, "VF no poll turned %s",
++			    adapter->no_poll ? "on" : "off");
++	}
++
++	iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
++
++	PMD_DRV_LOG(INFO, "Link status update:%s",
++		vf->link_up ? "up" : "down");
 +}
 +
- int
- rte_eal_tailqs_init(void)
- {
-diff --git a/lib/eal/include/rte_tailq.h b/lib/eal/include/rte_tailq.h
-index e7caed6812..c5d5cb782f 100644
---- a/lib/eal/include/rte_tailq.h
-+++ b/lib/eal/include/rte_tailq.h
-@@ -117,11 +117,28 @@ struct rte_tailq_head *rte_eal_tailq_lookup(const char *name);
-  */
- int rte_eal_tailq_register(struct rte_tailq_elem *t);
+ /* Read data in admin queue to get msg from pf driver */
+ static enum iavf_aq_result
+ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
+@@ -253,38 +319,23 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
+ 		result = IAVF_MSG_SYS;
+ 		switch (vpe->event) {
+ 		case VIRTCHNL_EVENT_LINK_CHANGE:
+-			vf->link_up =
+-				vpe->event_data.link_event.link_status;
+-			if (vf->vf_res != NULL &&
+-			    vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) {
+-				vf->link_speed =
+-				    vpe->event_data.link_event_adv.link_speed;
+-			} else {
+-				enum virtchnl_link_speed speed;
+-				speed = vpe->event_data.link_event.link_speed;
+-				vf->link_speed = iavf_convert_link_speed(speed);
+-			}
+-			iavf_dev_link_update(vf->eth_dev, 0);
+-			iavf_dev_event_post(vf->eth_dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
+-			if (vf->link_up && !vf->vf_reset) {
+-				iavf_dev_watchdog_disable(adapter);
+-			} else {
+-				if (!vf->link_up)
+-					iavf_dev_watchdog_enable(adapter);
+-			}
+-			if (adapter->devargs.no_poll_on_link_down) {
+-				iavf_set_no_poll(adapter, true);
+-				if (adapter->no_poll)
+-					PMD_DRV_LOG(DEBUG, "VF no poll turned on");
+-				else
+-					PMD_DRV_LOG(DEBUG, "VF no poll turned off");
+-			}
+-			PMD_DRV_LOG(INFO, "Link status update:%s",
+-					vf->link_up ? "up" : "down");
++			iavf_handle_link_change_event(vf->eth_dev, vpe);
+ 			break;
+ 		case VIRTCHNL_EVENT_RESET_IMPENDING:
+-			vf->vf_reset = true;
+-			iavf_set_no_poll(adapter, false);
++			/*
++			 * Force link down on impending reset to drop
++			 * the cached link-up state; a fresh LSC up
++			 * event will be re-issued by the PF once the
++			 * VF is reinitialised.
++			 */
++			vf->link_up = false;
++			if (!vf->vf_reset) {
++				vf->vf_reset = true;
++				iavf_set_no_poll(adapter, false);
++				iavf_dev_event_post(vf->eth_dev,
++					RTE_ETH_EVENT_INTR_RESET,
++					NULL, 0);
++			}
+ 			PMD_DRV_LOG(INFO, "VF is resetting");
+ 			break;
+ 		case VIRTCHNL_EVENT_PF_DRIVER_CLOSE:
+@@ -518,30 +569,7 @@ iavf_handle_pf_event_msg(struct rte_eth_dev *dev, uint8_t *msg,
+ 		break;
+ 	case VIRTCHNL_EVENT_LINK_CHANGE:
+ 		PMD_DRV_LOG(DEBUG, "VIRTCHNL_EVENT_LINK_CHANGE event");
+-		vf->link_up = pf_msg->event_data.link_event.link_status;
+-		if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) {
+-			vf->link_speed =
+-				pf_msg->event_data.link_event_adv.link_speed;
+-		} else {
+-			enum virtchnl_link_speed speed;
+-			speed = pf_msg->event_data.link_event.link_speed;
+-			vf->link_speed = iavf_convert_link_speed(speed);
+-		}
+-		iavf_dev_link_update(dev, 0);
+-		if (vf->link_up && !vf->vf_reset) {
+-			iavf_dev_watchdog_disable(adapter);
+-		} else {
+-			if (!vf->link_up)
+-				iavf_dev_watchdog_enable(adapter);
+-		}
+-		if (adapter->devargs.no_poll_on_link_down) {
+-			iavf_set_no_poll(adapter, true);
+-			if (adapter->no_poll)
+-				PMD_DRV_LOG(DEBUG, "VF no poll turned on");
+-			else
+-				PMD_DRV_LOG(DEBUG, "VF no poll turned off");
+-		}
+-		iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
++		iavf_handle_link_change_event(dev, pf_msg);
+ 		break;
+ 	case VIRTCHNL_EVENT_PF_DRIVER_CLOSE:
+ 		PMD_DRV_LOG(DEBUG, "VIRTCHNL_EVENT_PF_DRIVER_CLOSE event");
+@@ -570,7 +598,15 @@ iavf_handle_virtchnl_msg(struct rte_eth_dev *dev)
+ 	while (pending) {
+ 		ret = iavf_clean_arq_element(hw, &info, &pending);
  
-+/**
-+ * Remove a tail queue element from the local list.
-+ * This function is mainly used for EAL_REGISTER_TAILQ macro which pairs
-+ * an RTE_FINI destructor with the existing RTE_INIT constructor.
-+ * The destructor calls this function during dlclose() to prevent
-+ * dangling pointers to unmapped library data.
-+ *
-+ * @param t
-+ *   The tailq element which contains the name of the tailq you want to
-+ *   delete
-+ */
-+void rte_eal_tailq_unregister(struct rte_tailq_elem *t);
-+
- #define EAL_REGISTER_TAILQ(t) \
- RTE_INIT(tailqinitfn_ ##t) \
- { \
- 	if (rte_eal_tailq_register(&t) < 0) \
- 		rte_panic("Cannot initialize tailq: %s\n", t.name); \
-+} \
-+RTE_FINI(tailqfinifn_ ##t) \
-+{ \
-+	rte_eal_tailq_unregister(&t); \
- }
- 
- /* This macro permits both remove and free var within the loop safely.*/
+-		if (ret != IAVF_SUCCESS) {
++		/*
++		 * IAVF_ERR_ADMIN_QUEUE_NO_WORK (-57) means AQ is empty
++		 * and is a normal way to terminate the drain loop.
++		 * Log error only for genuine other failure codes.
++		 * Incorrect logging like this during VF resets might
++		 * mislead into chasing a non-existent AQ failure.
++		 */
++		if (ret != IAVF_SUCCESS &&
++		    ret != IAVF_ERR_ADMIN_QUEUE_NO_WORK) {
+ 			PMD_DRV_LOG(INFO, "Failed to read msg from AdminQ,"
+ 				    "ret: %d", ret);
+ 			break;
 -- 
-2.53.0
+2.34.1
 
