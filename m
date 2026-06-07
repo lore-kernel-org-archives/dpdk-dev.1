@@ -2,50 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D876CD8C8C
-	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Jun 2026 14:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B73CD8C85
+	for <dpdk-dev@archiver.kernel.org>; Sun,  7 Jun 2026 01:33:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 362614028F;
-	Sat,  6 Jun 2026 16:02:56 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id BCBD740278
- for <dev@dpdk.org>; Sat,  6 Jun 2026 16:02:54 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gXg376k8PzHnGds;
- Sat,  6 Jun 2026 22:01:55 +0800 (CST)
-Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
- by mail.maildlp.com (Postfix) with ESMTPS id 8852D40571;
- Sat,  6 Jun 2026 22:02:53 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Sat, 6 Jun 2026 15:02:53 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Sat, 6 Jun 2026 15:02:52 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: RE: [PATCH v2 2/3] ring: use GCC builtin as alternative to
- rte_atomic32
-Thread-Topic: [PATCH v2 2/3] ring: use GCC builtin as alternative to
- rte_atomic32
-Thread-Index: AQHc9EBi2t0z9wUFLUi0myyhr0FdirYxkWsQ
-Date: Sat, 6 Jun 2026 14:02:52 +0000
-Message-ID: <4c3d1e6746e447029cd29a58c96e5dd3@huawei.com>
-References: <20260602171552.686349-1-stephen@networkplumber.org>
- <20260604163656.1226902-1-stephen@networkplumber.org>
- <20260604163656.1226902-3-stephen@networkplumber.org>
-In-Reply-To: <20260604163656.1226902-3-stephen@networkplumber.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.173.214]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id AD721402B8;
+	Sun,  7 Jun 2026 03:33:55 +0200 (CEST)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTP id A48BE402B8
+ for <dev@dpdk.org>; Sun,  7 Jun 2026 03:33:53 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-03 (Coremail) with SMTP id rQCowABnTON8yiRqwHDaEw--.12864S2;
+ Sun, 07 Jun 2026 09:33:50 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v11 00/20] net/sxe2: added Linkdata sxe2 ethernet driver
+Date: Sun,  7 Jun 2026 09:33:22 +0800
+Message-ID: <20260607013342.2579271-1-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260606010726.2256170-21-liujie5@linkdatatechnology.com>
+References: <20260606010726.2256170-21-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: rQCowABnTON8yiRqwHDaEw--.12864S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww1DWr17ZF1kXr4xuw4fuFg_yoWxKr13pF
+ 48ZryrZF13JFW3Gw4fJa1fZFyYg3WxJryjkrWa9as3XFykAFyUCrs0gFy5CwnFyr13JF1S
+ vrZIyr1UGan5Aw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkI14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+ 6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r1j6r
+ 4UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+ jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+ 1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF
+ 04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
+ 18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
+ r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
+ 1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
+ x4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjRVbDUUUUU==
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,164 +56,151 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-> This patch replaces use of the deprecated rte_atomic32 code with
-> GCC builtin atomic operations.
->=20
-> Although it would be preferable to use C11 version on all architectures,
-> there is a performance loss if we do it that way:
->=20
-> Measured on i9-13900H, two physical cores MP/MC bulk n=3D128, 10 runs:
->   with C11 builtin:           5.86 cycles/elem
->   with __sync builtin:        5.36 cycles/elem  (-9.4%)
->=20
-> The C11 __atomic_compare_exchange_n builtin writes the actual value back
-> to its expected pointer on failure. On x86 this forces GCC
-> to emit extra instructions on the critical path between the CAS
-> and the success-test.
->=20
-> __sync_bool_compare_and_swap returns a plain bool with no pointer
-> writeback, allowing GCC to emit tighter code.
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  lib/ring/meson.build                          |  2 +-
->  lib/ring/rte_ring_elem_pvt.h                  |  2 +-
->  ..._ring_generic_pvt.h =3D> rte_ring_gcc_pvt.h} | 33 +++++++++++--------
->  3 files changed, 21 insertions(+), 16 deletions(-)
->  rename lib/ring/{rte_ring_generic_pvt.h =3D> rte_ring_gcc_pvt.h} (88%)
->=20
-> diff --git a/lib/ring/meson.build b/lib/ring/meson.build
-> index 21f2c12989..2ba160b178 100644
-> --- a/lib/ring/meson.build
-> +++ b/lib/ring/meson.build
-> @@ -9,7 +9,7 @@ indirect_headers +=3D files (
->          'rte_ring_elem.h',
->          'rte_ring_elem_pvt.h',
->          'rte_ring_c11_pvt.h',
-> -        'rte_ring_generic_pvt.h',
-> +        'rte_ring_gcc_pvt.h',
->          'rte_ring_hts.h',
->          'rte_ring_hts_elem_pvt.h',
->          'rte_ring_peek.h',
-> diff --git a/lib/ring/rte_ring_elem_pvt.h b/lib/ring/rte_ring_elem_pvt.h
-> index a0fdec9812..9a0170c4f0 100644
-> --- a/lib/ring/rte_ring_elem_pvt.h
-> +++ b/lib/ring/rte_ring_elem_pvt.h
-> @@ -309,7 +309,7 @@ __rte_ring_dequeue_elems(struct rte_ring *r, uint32_t
-> cons_head,
->  #ifdef RTE_USE_C11_MEM_MODEL
->  #include "rte_ring_c11_pvt.h"
->  #else
-> -#include "rte_ring_generic_pvt.h"
-> +#include "rte_ring_gcc_pvt.h"
->  #endif
->=20
->  /**
-> diff --git a/lib/ring/rte_ring_generic_pvt.h b/lib/ring/rte_ring_gcc_pvt.=
-h
-> similarity index 88%
-> rename from lib/ring/rte_ring_generic_pvt.h
-> rename to lib/ring/rte_ring_gcc_pvt.h
-> index c044b0824f..68ab1355e8 100644
-> --- a/lib/ring/rte_ring_generic_pvt.h
-> +++ b/lib/ring/rte_ring_gcc_pvt.h
-> @@ -7,11 +7,11 @@
->   * Used as BSD-3 Licensed with permission from Kip Macy.
->   */
->=20
-> -#ifndef _RTE_RING_GENERIC_PVT_H_
-> -#define _RTE_RING_GENERIC_PVT_H_
-> +#ifndef _RTE_RING_GCC_PVT_H_
-> +#define _RTE_RING_GCC_PVT_H_
->=20
->  /**
-> - * @file rte_ring_generic_pvt.h
-> + * @file rte_ring_gcc_pvt.h
->   * It is not recommended to include this file directly,
->   * include <rte_ring.h> instead.
->   * Contains internal helper functions for MP/SP and MC/SC ring modes.
-> @@ -25,10 +25,8 @@ static __rte_always_inline void
->  __rte_ring_update_tail(struct rte_ring_headtail *ht, uint32_t old_val,
->  		uint32_t new_val, uint32_t single, uint32_t enqueue)
->  {
-> -	if (enqueue)
-> -		rte_smp_wmb();
-> -	else
-> -		rte_smp_rmb();
-> +	RTE_SET_USED(enqueue);
-> +
->  	/*
->  	 * If there are other enqueues/dequeues in progress that preceded us,
->  	 * we need to wait for them to complete
-> @@ -37,7 +35,12 @@ __rte_ring_update_tail(struct rte_ring_headtail *ht,
-> uint32_t old_val,
->  		rte_wait_until_equal_32((volatile uint32_t *)(uintptr_t)&ht->tail,
-> old_val,
->  			rte_memory_order_relaxed);
->=20
-> -	ht->tail =3D new_val;
-> +	/*
-> +	 * R0: Establishes a synchronizing edge with load-acquire of tail at A1=
-.
-> +	 * Ensures that memory effects by this thread on ring elements array
-> +	 * is observed by a different thread of the other type.
-> +	 */
-> +	__atomic_store_n(&ht->tail, new_val, __ATOMIC_RELEASE);
->  }
->=20
->  /**
-> @@ -73,7 +76,7 @@ __rte_ring_headtail_move_head_mt(struct
-> rte_ring_headtail *d,
->  		uint32_t *old_head, uint32_t *new_head, uint32_t *entries)
->  {
->  	unsigned int max =3D n;
-> -	int success;
-> +	bool success;
->=20
->  	do {
->  		/* Reset n to the initial burst count */
-> @@ -81,10 +84,10 @@ __rte_ring_headtail_move_head_mt(struct
-> rte_ring_headtail *d,
->=20
->  		*old_head =3D d->head;
->=20
-> -		/* add rmb barrier to avoid load/load reorder in weak
-> +		/* add fence to avoid load/load reorder in weak
->  		 * memory model. It is noop on x86
->  		 */
-> -		rte_smp_rmb();
-> +		__atomic_thread_fence(__ATOMIC_ACQUIRE);
->=20
->  		/*
->  		 *  The subtraction is done between two unsigned 32bits value
-> @@ -103,10 +106,12 @@ __rte_ring_headtail_move_head_mt(struct
-> rte_ring_headtail *d,
->  			return 0;
->=20
->  		*new_head =3D *old_head + n;
-> -		success =3D rte_atomic32_cmpset(
-> +
-> +		success =3D __sync_bool_compare_and_swap(
->  				(uint32_t *)(uintptr_t)&d->head,
->  				*old_head, *new_head);
-> -	} while (unlikely(success =3D=3D 0));
-> +	} while (unlikely(!success));
-> +
->  	return n;
->  }
->=20
-> @@ -169,4 +174,4 @@ __rte_ring_headtail_move_head_st(struct
-> rte_ring_headtail *d,
->  	return n;
->  }
->=20
-> -#endif /* _RTE_RING_GENERIC_PVT_H_ */
-> +#endif /* _RTE_RING_GCC_PVT_H_ */
-> --
+This patch set implements core functionality for the SXE2 PMD,
+including basic driver framework, data path setup, and advanced
+offload features (VLAN, RSS,TM, PTP etc.).
 
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Tested-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+V11:
+ - Addressed AI comments
 
-> 2.53.0
+Jie Liu (20):
+  net/sxe2: support AVX512 vectorized path for Rx and Tx
+  net/sxe2: add AVX2 vector data path for Rx and Tx
+  drivers: add supported packet types get callback
+  net/sxe2: support L2 filtering and MAC config
+  drivers: support RSS feature
+  net/sxe2: support TM hierarchy and shaping
+  net/sxe2: support IPsec inline protocol offload
+  net/sxe2: support statistics and multi-process
+  drivers: interrupt handling
+  net/sxe2: add NEON vec Rx/Tx burst functions
+  drivers: add support for VF representors
+  net/sxe2: add support for custom UDP tunnel ports
+  net/sxe2: support firmware version reading
+  net/sxe2: implement get monitor address
+  common/sxe2: add shared SFP module definitions
+  net/sxe2: support SFP module info and EEPROM access
+  net/sxe2: implement private dump info
+  net/sxe2: add mbuf validation in Tx debug mode
+  drivers: add testpmd commands for private features
+  net/sxe2: update sxe2 feature matrix docs
+
+ doc/guides/nics/features/sxe2.ini          |   56 +
+ drivers/common/sxe2/sxe2_common.c          |  156 ++
+ drivers/common/sxe2/sxe2_common.h          |    4 +
+ drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      |  178 +-
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
+ drivers/common/sxe2/sxe2_msg.h             |  118 ++
+ drivers/common/sxe2/sxe2_ptype.h           | 1793 ++++++++++++++++++
+ drivers/net/sxe2/meson.build               |   56 +-
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 1587 +++++++++++++++-
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
+ drivers/net/sxe2/sxe2_drv_cmd.h            |  521 +++++-
+ drivers/net/sxe2/sxe2_dump.c               |  304 +++
+ drivers/net/sxe2/sxe2_dump.h               |   12 +
+ drivers/net/sxe2/sxe2_ethdev.c             | 1531 +++++++++++++++-
+ drivers/net/sxe2/sxe2_ethdev.h             |  115 +-
+ drivers/net/sxe2/sxe2_ethdev_repr.c        |  610 ++++++
+ drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
+ drivers/net/sxe2/sxe2_filter.c             |  895 +++++++++
+ drivers/net/sxe2/sxe2_filter.h             |  100 +
+ drivers/net/sxe2/sxe2_flow.c               | 1391 ++++++++++++++
+ drivers/net/sxe2/sxe2_flow.h               |   30 +
+ drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
+ drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
+ drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
+ drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
+ drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 ++++++++++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
+ drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
+ drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
+ drivers/net/sxe2/sxe2_irq.c                | 1025 +++++++++++
+ drivers/net/sxe2/sxe2_irq.h                |   25 +
+ drivers/net/sxe2/sxe2_mac.c                |  535 ++++++
+ drivers/net/sxe2/sxe2_mac.h                |   84 +
+ drivers/net/sxe2/sxe2_mp.c                 |  414 +++++
+ drivers/net/sxe2/sxe2_mp.h                 |   67 +
+ drivers/net/sxe2/sxe2_queue.c              |   17 +-
+ drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
+ drivers/net/sxe2/sxe2_rss.h                |   81 +
+ drivers/net/sxe2/sxe2_rx.c                 |   38 +
+ drivers/net/sxe2/sxe2_rx.h                 |    2 +
+ drivers/net/sxe2/sxe2_security.c           |  335 ++++
+ drivers/net/sxe2/sxe2_security.h           |   77 +
+ drivers/net/sxe2/sxe2_stats.c              |  591 ++++++
+ drivers/net/sxe2/sxe2_stats.h              |   39 +
+ drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
+ drivers/net/sxe2/sxe2_switchdev.h          |   33 +
+ drivers/net/sxe2/sxe2_testpmd.c            |  733 ++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.c        |  969 ++++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.h        |  142 ++
+ drivers/net/sxe2/sxe2_tm.c                 | 1169 ++++++++++++
+ drivers/net/sxe2/sxe2_tm.h                 |   78 +
+ drivers/net/sxe2/sxe2_tx.c                 |    7 +
+ drivers/net/sxe2/sxe2_txrx.c               |  176 +-
+ drivers/net/sxe2/sxe2_txrx.h               |    4 +
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
+ drivers/net/sxe2/sxe2_txrx_poll.c          |  243 ++-
+ drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
+ drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
+ drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  776 ++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  897 +++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_common.h    |    1 +
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  721 ++++++++
+ drivers/net/sxe2/sxe2_vsi.c                |  146 ++
+ drivers/net/sxe2/sxe2_vsi.h                |   12 +-
+ drivers/net/sxe2/sxe2vf_regs.h             |   85 +
+ 68 files changed, 26575 insertions(+), 127 deletions(-)
+ create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
+ create mode 100644 drivers/common/sxe2/sxe2_msg.h
+ create mode 100644 drivers/common/sxe2/sxe2_ptype.h
+ create mode 100644 drivers/net/sxe2/sxe2_dump.c
+ create mode 100644 drivers/net/sxe2/sxe2_dump.h
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
+ create mode 100644 drivers/net/sxe2/sxe2_filter.c
+ create mode 100644 drivers/net/sxe2/sxe2_filter.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
+ create mode 100644 drivers/net/sxe2/sxe2_irq.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.h
+ create mode 100644 drivers/net/sxe2/sxe2_mp.c
+ create mode 100644 drivers/net/sxe2/sxe2_mp.h
+ create mode 100644 drivers/net/sxe2/sxe2_rss.c
+ create mode 100644 drivers/net/sxe2/sxe2_rss.h
+ create mode 100644 drivers/net/sxe2/sxe2_security.c
+ create mode 100644 drivers/net/sxe2/sxe2_security.h
+ create mode 100644 drivers/net/sxe2/sxe2_stats.c
+ create mode 100644 drivers/net/sxe2/sxe2_stats.h
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.h
+ create mode 100644 drivers/net/sxe2/sxe2_tm.c
+ create mode 100644 drivers/net/sxe2/sxe2_tm.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
+ create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
+
+-- 
+2.52.0
 
