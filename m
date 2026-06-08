@@ -2,91 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F51CD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 17:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D936CD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 17:10:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A03B9402DD;
-	Mon,  8 Jun 2026 19:09:20 +0200 (CEST)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
- [209.85.160.171])
- by mails.dpdk.org (Postfix) with ESMTP id AE9FF4029D
- for <dev@dpdk.org>; Mon,  8 Jun 2026 19:09:19 +0200 (CEST)
-Received: by mail-qt1-f171.google.com with SMTP id
- d75a77b69052e-5176b9c476aso34330651cf.3
- for <dev@dpdk.org>; Mon, 08 Jun 2026 10:09:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780938559; cv=none;
- d=google.com; s=arc-20240605;
- b=eR9EWXTJ9RTHjFnUdWFe/6+XpTmqRGGM3XVywFr/HIXkDSt/q1QQ5fkyA/U02k/ngl
- HONPRaOrIvbQwVFq2Rfhu5qVz6azfhiM9JQy0IDmg0YtOAzN71yQ1idjkiI1prkP/9zT
- dayz26nLeLofEVKKUTsG0OFnnhoXTYGAgFUvKX13g89xt3HgIVyoWkqQRao7WoyJNBgC
- W+PjZdUXO13zyRM5RIq+qhSps2mkPYPxQfqKLZHDduVAsx4AB0YmPv8jtf9oqPr85mEk
- Z7lJTA+QQ7ZojFfB2nqaM5hvMNAHFyTZiS0f8o1s4EQ9hvt6cqZaGshIBIV8zBfmHmqT
- UkkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=xIWAEd2XNwYLH2z1UqOSpaAuup6KYhBHNgbJUi4A1cU=;
- fh=pM6NOeMZpTkEqGA6Oxt/EuysK2lM9VKfaP3GxyXFNOI=;
- b=DgsB+RrG+d2BZJeNXvqhtDsevyX3LPCxdLcsSNoTeG4bz9mfVNdi0smyTVwYpXlwEr
- OgIgvpruG9P5cYYPgZAeOkmzL1fzJZVfFiKuNIgQ21MwxEZKv0IhKA5dkSj8c4Jy6/rt
- ja4OOwI7phA15rkI8bnOzhbBK8KIYvNp+r47oyXCZX4+qu/F2Ice0SQo2R+4gX4fzJO7
- zZROpsMLEAtmmFr6+/ZDRjJAzlkXTDSvFQfyRiqXvZUPJQcAKGs/m8ChjrUImmU4CzLL
- J1siu2yZD5ez4DsSMBJ4rLewiqs5Jav4b1fMBX4zvPP8VCjD7/00AW8xvsnZVIqu93HQ
- rN2g==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 6C70D402DD;
+	Mon,  8 Jun 2026 19:10:02 +0200 (CEST)
+Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
+ by mails.dpdk.org (Postfix) with ESMTP id 30D6A4029D
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 19:10:01 +0200 (CEST)
+Received: by mail-dl1-f53.google.com with SMTP id
+ a92af1059eb24-138129a622dso844178c88.0
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 10:10:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780938559; x=1781543359; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780938600;
+ x=1781543400; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=xIWAEd2XNwYLH2z1UqOSpaAuup6KYhBHNgbJUi4A1cU=;
- b=dCnE86tfreYT4J7V8yOiniDqn75XgRD7JNt3Ffz5nZBDsIf1j3suYDfrSWI2DiLqSf
- IWv7KfHMAuTNxClyrynEsvqmFYBLgpk+fotJkIGJaeBvYrGwVgFvlwDK8Si65qgRA7Nz
- WV3QZU/BsDenixXVwCna0bzbMoVmyTnEAw9omoEpY0M5YL45TQwNbtwserLDd265z+Iw
- o1cOKI0UVlx2GCduMKaadd/UYejPNJGi0Bw9jiL4c8Rx6hZjp8bMmXdfXYr1QEiK20mV
- xw0NQ0+jZH+RtFw+KKYcFFNm28hefN2lnXOehT9biO6PHLzc8/U+PhAE5uJYJZK2Ilst
- gHVQ==
+ bh=/1fSOIYR0FQ0vKZXlUgRZaio2B7GhJhAJJo+rTOF+Jc=;
+ b=Lnz5kB40v8x34tafWoN8tKEiJ33MrHeMjkmqUivbIRvgXe+Haufe9VotLqMlbbZnOT
+ VsnK299k956Jiaml5KdvarAoxlL3Wp2qz72xpTpQAW4I4ijErq2PEd9MwyhcQHgT3rcu
+ iPFsnGYf8gm41pYbFpsPUjFXexIFgz/yXqYYwcayUmUMg9eHmgiVEQGWeN2P78WKTlYR
+ MygcYeiuv6wx9K2JI91Vlrh7Xv3DanVQg/eDwCcEW/GUmt/iLmiTqrG3U8/nxj1M250W
+ na3YLnv/n/7mBYxJBm34ajowpEWND8E1Ks2k+fM4fYWjtAFD/dfJIjS4ipAZnWdgLyQi
+ g/5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780938559; x=1781543359;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20251104; t=1780938600; x=1781543400;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=xIWAEd2XNwYLH2z1UqOSpaAuup6KYhBHNgbJUi4A1cU=;
- b=Y6XkD7MPKllZPV2/CgEMu0zwdrNvOUN+puK8ol2rhNuS5DRcdBkO8VQwrAmIZBk3YC
- 3YvucUrv3ElQlDURg4krayw2hqsK2kq6YSWRdV6NdTklRX/Kzs863Xrq/EOYJH8ca85S
- n92ggoyvuLgPE5svzRo1UmfU+SJ3f7yzhdIFB45fI0zw81DcfaNoR/X7d6DAJS53re/h
- 1XQkwYDxTn2rKxlNZnzluozY64vBJWHCIfVMMDOeRwMEGGks5vVzVanC42UxBcqPVPSN
- 9rk9B7DNKIv+hTjJbcKKomdU4atLHbSglXn3TDoEo9uX6/6q0pCX4SW1NQfy5tyiQy3n
- Tijw==
-X-Forwarded-Encrypted: i=1;
- AFNElJ9vzmUoapV512+PpkckNyhMf2dEuzvWxUaI0LZIRMmLiU7gg48YpNq7sLKMQJmyTCeS4Q8=@dpdk.org
-X-Gm-Message-State: AOJu0YxPz88TO/r3Y9fWPEfuWuRwCrKcSemSDhWNLUI1AD5Nk8XbtWL1
- Xnba/K4DiZ+9ECsbIqTkmQNIyjhOnsrL60Gv2am5xpU5et8HtoKaZWPzKx9B0XcLRpyInarkg7T
- elM0GRHu220+oslpVUAcMPpMLFbC0a+0=
-X-Gm-Gg: Acq92OHnT6Iu9BzcU9WpR9m7lQ2XrZW/8+ywq0XkTLqHWcWQcHAo9HpGqliCl7n5yo+
- cC/rTFdi+URF1d7i5W0i+jAvwVZDKvPzLzcnfItm/ouR6dPrsLkcdQ+aDs6DB3RNXmNitQPxs2b
- YBtipq48FmcVeR1otlUB24jP1yXXV0f7N8sY0alx39nq85ajkLiOtAkMJPWfYVl0QKjwtlF/wyr
- ONqqzLSDEudlgWodkr1kPdFyPqKnytA+3yf9AfyZ+RnUOPwb936ayG3r6a2k6kDpv5WLFY3OF93
- 8M4gNAeDlJWDfA==
-X-Received: by 2002:ac8:6193:0:b0:517:917d:e3e0 with SMTP id
- d75a77b69052e-51795b6de0dmr163318351cf.32.1780938558642; Mon, 08 Jun 2026
- 10:09:18 -0700 (PDT)
+ bh=/1fSOIYR0FQ0vKZXlUgRZaio2B7GhJhAJJo+rTOF+Jc=;
+ b=j2uR8DDC+evsm/cwD8z0PK3oIbcyWhtTFJBFdz064VMdm8f+5unqEHqJ8q6c4UbKKu
+ uNSpHqVOXMOwuJXyK8MxWzYWT0aOBzN8cDq3DIGSSfStdRmQC/14hVFFQhEWA9uYi3co
+ BYpSLSIqfwBeEk1UWQGRzYvNzqEtsr3cgOOlJRnwffeouR3+DWDSYxzag367/gSlPe5S
+ n9pUMMT+wd+JJQTciOzBZsB0ULxsm81QR2mXJVY6OTWdbGEAjsJTMf6Mx1s6lvlkmOrP
+ CV/KLvVqopy8SXqh5uejt3y0jTnDZNIrvb7YHmiPBNiDGSjYb2/mrNQBBlglihW8pwjI
+ 3c+g==
+X-Gm-Message-State: AOJu0YwjpYUxWZu2sRZVf4zttQ394GIUPAzQ7W5FF1VjiPgTHst7Ys6Z
+ 2I9dO3IqHRKSMgV4G++bXDb4gV6up0EHjHlKwwSJZ80WfRXUKA/zDoyf0iY4F07myr8=
+X-Gm-Gg: Acq92OG2WYL7fVGewjGQBhi9aSuM7MjLyY+vrs522VWeaLPKvjJYB+2slSHkAIxuBB6
+ 71TA5MMVAn36c2GIWu5Zer33ePNM68GQstvTMpC9QYmYcErPSbs7wk0JItYg2xJhG/8gQRcLWSG
+ QBzjl3p9HEWb+E9DNuo6vmCdpYhRwYo7w/4zeXlpPR250hhWSfw1g6lRJNZrZtV5qxbmKiP6VWE
+ +xFyPuGKnFkHrEjvFSD1iRoRsHPPkYozx1N06RxEI/FVAHbxRKYUr86xorrQSxK5FltRPXU3dIc
+ igMB+UfZpXS1UzB9CHfF76VI76CqKhRrc0nAImz7ovElPKu1xdIjaAIdMpuIuUN07ixtT8pgavW
+ JLGG32mpXG7LBiAq6QKaEk+Wsil15vVtdbUR+9MFcd6GVWYeLuzt5y9eD8TW7O9B9vUPPBaiyOF
+ sYTjW+uoPjdjeXrn9RVGAFKr15Aryc06yxAqEQSOiWdKHgnq8fAU21s+POs0yJypFKNPrGO8HS6
+ C2osBmijFVgjg==
+X-Received: by 2002:a05:7022:2390:b0:136:9ebf:3c04 with SMTP id
+ a92af1059eb24-1380670f007mr7153872c88.25.1780938600189; 
+ Mon, 08 Jun 2026 10:10:00 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3074db528dcsm21089587eec.3.2026.06.08.10.09.59
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 08 Jun 2026 10:09:59 -0700 (PDT)
+Date: Mon, 8 Jun 2026 10:09:57 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Dawid Wesierski <dawid.wesierski@intel.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, david.marchand@redhat.com,
+ vladimir.medvedkin@intel.com, bruce.richardson@intel.com,
+ anatoly.burakov@intel.com, reshma.pattan@intel.com, Marek Kasiewicz
+ <marek.kasiewicz@intel.com>
+Subject: Re: [PATCH 6/7] pcapng: add user-supplied timestamp support
+Message-ID: <20260608100957.251cb705@phoenix.local>
+In-Reply-To: <20260608164059.65420-7-dawid.wesierski@intel.com>
+References: <20260608164059.65420-1-dawid.wesierski@intel.com>
+ <20260608164059.65420-7-dawid.wesierski@intel.com>
 MIME-Version: 1.0
-References: <20260326132142.565979-2-bruce.richardson@intel.com>
- <DM3PPF7D18F34A115BCA37E02527DC8C08B8E2D2@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
-In-Reply-To: <DM3PPF7D18F34A115BCA37E02527DC8C08B8E2D2@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 8 Jun 2026 22:38:51 +0530
-X-Gm-Features: AVVi8CfGyAb4akEygajiS2A9mjT8T29rwr9_LwrFV2_D3N3g_EJb0yNpIgu_RUc
-Message-ID: <CALBAE1P6GFNqQr-QwLi=PXNj2YCcS+XS0KZ=O8i-bNPUBV_1XA@mail.gmail.com>
-Subject: Re: [PATCH] test/event_eth_rx_intr_adapter: support NICs with fewer
- int vectors
-To: "Loftus, Ciara" <ciara.loftus@intel.com>
-Cc: "Richardson, Bruce" <bruce.richardson@intel.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -100,120 +84,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Apr 22, 2026 at 4:06=E2=80=AFPM Loftus, Ciara <ciara.loftus@intel.c=
-om> wrote:
->
-> > Subject: [PATCH] test/event_eth_rx_intr_adapter: support NICs with fewe=
-r int
-> > vectors
-> >
-> > Some NICs may not be able to support interrupts on all queues that are
-> > advertised, which will cause the test to fail if the queues supporting
-> > interrupts are fewer than 64. We can work around this by retrying the
-> > NIC configuration multiple times with fewer queues in case of failure.
-> > This allows the test to pass with NICs using ixgbe driver, for example.
-> >
-> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
->
-> LGTM.
-> Acked-by: Ciara Loftus <ciara.loftus@intel.com>
+On Mon,  8 Jun 2026 12:40:58 -0400
+Dawid Wesierski <dawid.wesierski@intel.com> wrote:
 
+> @@ -737,16 +736,6 @@ rte_pcapng_write_packets(rte_pcapng_t *self,
+>  			return -1;
+>  		}
+>  
+> -		/*
+> -		 * When data is captured by pcapng_copy the current TSC is stored.
+> -		 * Adjust the value recorded in file to PCAP epoch units.
+> -		 */
+> -		cycles = (uint64_t)epb->timestamp_hi << 32;
+> -		cycles += epb->timestamp_lo;
+> -		timestamp = tsc_to_ns_epoch(&self->clock, cycles);
+> -		epb->timestamp_hi = timestamp >> 32;
+> -		epb->timestamp_lo = (uint32_t)timestamp;
+> -
 
-Applied to dpdk-next-eventdev/for-main. Thanks
-
->
-> > ---
-> >  app/test/test_event_eth_rx_adapter.c | 52 +++++++++++++++++-----------
-> >  1 file changed, 32 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/app/test/test_event_eth_rx_adapter.c
-> > b/app/test/test_event_eth_rx_adapter.c
-> > index ae428b3333..7b38935bec 100644
-> > --- a/app/test/test_event_eth_rx_adapter.c
-> > +++ b/app/test/test_event_eth_rx_adapter.c
-> > @@ -60,6 +60,7 @@ port_init_common(uint16_t port, const struct
-> > rte_eth_conf *port_conf,
-> >  {
-> >       const uint16_t rx_ring_size =3D 512, tx_ring_size =3D 512;
-> >       int retval;
-> > +     bool started =3D false;
-> >       uint16_t q;
-> >       struct rte_eth_dev_info dev_info;
-> >
-> > @@ -76,32 +77,43 @@ port_init_common(uint16_t port, const struct
-> > rte_eth_conf *port_conf,
-> >                                       MAX_NUM_RX_QUEUE);
-> >       default_params.tx_rings =3D 1;
-> >
-> > -     /* Configure the Ethernet device. */
-> > -     retval =3D rte_eth_dev_configure(port, default_params.rx_rings,
-> > +     while (!started) {
-> > +             /* Configure the Ethernet device. */
-> > +             retval =3D rte_eth_dev_configure(port, default_params.rx_=
-rings,
-> >                               default_params.tx_rings, port_conf);
-> > -     if (retval !=3D 0)
-> > -             return retval;
-> > -
-> > -     for (q =3D 0; q < default_params.rx_rings; q++) {
-> > -             retval =3D rte_eth_rx_queue_setup(port, q, rx_ring_size,
-> > -                             rte_eth_dev_socket_id(port), NULL, mp);
-> > -             if (retval < 0)
-> > +             if (retval !=3D 0)
-> >                       return retval;
-> > -     }
-> >
-> > -     /* Allocate and set up 1 TX queue per Ethernet port. */
-> > -     for (q =3D 0; q < default_params.tx_rings; q++) {
-> > -             retval =3D rte_eth_tx_queue_setup(port, q, tx_ring_size,
-> > -                             rte_eth_dev_socket_id(port), NULL);
-> > -             if (retval < 0)
-> > +             for (q =3D 0; q < default_params.rx_rings; q++) {
-> > +                     retval =3D rte_eth_rx_queue_setup(port, q, rx_rin=
-g_size,
-> > +                                     rte_eth_dev_socket_id(port), NULL=
-,
-> > mp);
-> > +                     if (retval < 0)
-> > +                             return retval;
-> > +             }
-> > +
-> > +             /* Allocate and set up 1 TX queue per Ethernet port. */
-> > +             for (q =3D 0; q < default_params.tx_rings; q++) {
-> > +                     retval =3D rte_eth_tx_queue_setup(port, q, tx_rin=
-g_size,
-> > +                                     rte_eth_dev_socket_id(port), NULL=
-);
-> > +                     if (retval < 0)
-> > +                             return retval;
-> > +             }
-> > +
-> > +             /* Start the Ethernet port. */
-> > +             retval =3D rte_eth_dev_start(port);
-> > +             if (retval < 0) {
-> > +                     /* Some NICs may not support interrupts on all
-> > reported queues.
-> > +                      * Therefore try to reconfigure and start with fe=
-wer
-> > queues
-> > +                      */
-> > +                     if (default_params.rx_rings > 2) {
-> > +                             default_params.rx_rings /=3D 2;
-> > +                             continue;
-> > +                     }
-> >                       return retval;
-> > +             }
-> > +             started =3D true;
-> >       }
-> >
-> > -     /* Start the Ethernet port. */
-> > -     retval =3D rte_eth_dev_start(port);
-> > -     if (retval < 0)
-> > -             return retval;
-> > -
-> >       /* Display the port MAC address. */
-> >       struct rte_ether_addr addr;
-> >       retval =3D rte_eth_macaddr_get(port, &addr);
-> > --
-> > 2.51.0
->
+You can't generate valid pcapng timestamps without this.
