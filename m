@@ -2,91 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFCFCD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D71CD6E79
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:35:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 39B5940693;
-	Mon,  8 Jun 2026 18:35:29 +0200 (CEST)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com
- [209.85.219.42]) by mails.dpdk.org (Postfix) with ESMTP id 8EC43402DD
- for <dev@dpdk.org>; Mon,  8 Jun 2026 18:35:27 +0200 (CEST)
-Received: by mail-qv1-f42.google.com with SMTP id
- 6a1803df08f44-8ce9e56f68cso38206536d6.2
- for <dev@dpdk.org>; Mon, 08 Jun 2026 09:35:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780936527; cv=none;
- d=google.com; s=arc-20240605;
- b=lWLgt/eiXqeJTByLhrr4jT6meE5IYQOJbgHqut0sL7sVdaC9P3ZMNVmmHzhAJA6OfL
- fPjvZV2Kd7nt82SSXUfNQ8UJCS0gY2PPTrZFHPZZKomnKbmYuJ8aUO+H5RJNj+JC6xgI
- rAmm2G2BjgnVkK+8p7/FzYoC+p7SL6R0wlQq1Q+Vv3ewgqlXWiWRVEMX9g0FYr+Rim6p
- 3Y+eCNKrjJbbr8wFZs9swmjmhe7hj/pMcuZLk5Qm5Xme1UY/j6IuMyyf2TxUGLnb0dLJ
- VnA5ZV3cU9GygZimqdquqvFLUuXuHG6jSyP8KLrwbIJiwbDQziVuwXdDOLzJ0q4jDIFf
- Wn/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=IV79q2fSXgQm93OjsiYuG7W3ZepLsk5g5u20ofk+z9c=;
- fh=HzlbzPms0lzHAykOJAPcX2CohHz/VUZhF6rINnzG4vs=;
- b=Nna45E9qEqCSC7CTDaxPUi4fJGoOnlSUld5fwXEhXDfbCWCay4KnyB4Gc8p9RnCy+O
- jm/IlfUfy6vOZTQdCgjCv2GNL+yhXt4gG+29iBr4Svkl4wrke39z7JMjyAnpixA1yHNe
- dZHB3AV9skwFZP/ikaKpaFpUgKxAn6qjgkLkZK56dOtlFcQFiUc47M5sfsIZBpun7hSK
- ZdZG2MrKXt818QXSo8CtXWlHRqKdNIW+4wq8OtN6dj3cM7yp/oGvIalRQUn5LU2b6pQ2
- XZ5MDS/lq1QSy0LfN2qQkg0sihEUmE6iEBvpZxtrJZKxJjMM+k7DqRTNYODyFoL8cTqe
- s7vw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780936527; x=1781541327; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=IV79q2fSXgQm93OjsiYuG7W3ZepLsk5g5u20ofk+z9c=;
- b=ANb+Apimq1Xlr4wZ+7CBBa1skP0N1jHInMSkNevvPafRiocqs+TBek0kE5hsrVgt+v
- tkIzN8wz+K9x0CrPw8vhkgDpIYWIs4rKgwi5HrSDrPvBSMSQyUu+16WdecTUfsKDGv81
- ycfSKdMMxZ3ySg+AcakS3FD7zC/EnL87fJoCK902YQQ13eJflMz8Z7BMtkt5T102xGIH
- OsFO88YW7tnupBxMHG2n8hfi3AJhgNp0h3jcoNOlbhBSuAgoUg+ie+wlRot822CLXYSa
- lQfJv3+eEW922JeUsSywT3ocDg/gvaD1bbJQ3HsONYlGR4k7Ep4CL4E9UX5G01Pn5p7R
- aBLQ==
+	by mails.dpdk.org (Postfix) with ESMTP id 1F547402DD;
+	Mon,  8 Jun 2026 18:35:44 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 834B74029D
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 18:35:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1780936542;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=/Tg6chPOuzxxnbbrrdpvGxt/WSgk5F9Pu1t/UHmjRJA=;
+ b=I35joF61zVDxOxUhcsWptDyu/UBQvwkTG3e3RRzybV/oKk+nDnOvDs3Nb4QWotanxtho7O
+ 22jYCrC2WF4Y035Bbos/n79nHlfejFSbl+uedQFt6bCdset+YPWq1339manjDEVMmXljG+
+ Xgh3xpXYppp5sQHTD258Gp2Jci6CCHE=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-85-Sh87jniQNPy18eCBBnke8w-1; Mon, 08 Jun 2026 12:35:40 -0400
+X-MC-Unique: Sh87jniQNPy18eCBBnke8w-1
+X-Mimecast-MFC-AGG-ID: Sh87jniQNPy18eCBBnke8w_1780936539
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5aa932535b9so797497e87.2
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 09:35:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780936527; x=1781541327;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=IV79q2fSXgQm93OjsiYuG7W3ZepLsk5g5u20ofk+z9c=;
- b=CDhanoJUeCG1y7PJixm9BZLoAe/HY7BcE2HEe+uiUg1Zut/O4pjm7f6ItV0tEP/RC0
- Wfq11GSlcNCpYymAp1rHBCwhJDTfqjMHoTMdEfeA5hx6yceOtR3tNEypna1EdlgL/gtc
- L+wQPv8mgY2oVTqCgQN9IiEJPROb4/NGZDXsHCJN8I/bpjrBzyRDzQgPvIEYHMRg0L8S
- draIiaF8VyyUksOzIf7hAqUWPj93bu4Jno0o16fnPZrqAj7IrZqGRyGh5di1p6IbgWaq
- KnUwXAHPPEYGUT6cAKIwawPbjbsXAUmTv4NQtYUaUw7J2F0HP8s2n2A6lToY52Fzre7m
- VHCg==
-X-Forwarded-Encrypted: i=1;
- AFNElJ9OEjcFRqi9zRBHCaBWL77e0N53bcNDi1oSwq9Zu9IzNcyFG8THiTcKct/7GABbMOybw8k=@dpdk.org
-X-Gm-Message-State: AOJu0YxaUUZnBFK9rgxQ1sUoA77+ujCSKRkwBOECVmCSS+5u4pOgY+fH
- FrRtIslAYqnvz8dXHGE0o02bZ/RS4h/T4POEYmYQm/6v/t7NEx/MeDB2hPV7alnPOe6Sp02sj/e
- 8zeJuT5KOyWJvT7Juci8j3L19S4P4WEM=
-X-Gm-Gg: Acq92OF5RFg6kx7ZwYN5GpXhxPird6GQmabFlW6O1bMOv0+d4hGpvKbYAKoJT8bFsew
- qgalrG1Pz4IHsoRNukk4ZUTdUPmZRNgDHgUn43yYlSBHuBMXVqyEF/o4ZU2S6q9e2nH9SGHvUvX
- 7qnyc7GTJXG6pyOcRMZxZcsZQdsPogqyKQdevOUdHa8J7hPY7018W0Wz8m7LUkGH060KM+rNdIH
- 4qPGfXwiHW/m2GScVnWHQ1L1X12aB3CVf/l8T6KGLQjf+nWrjORA2oViWU0Y6fwKHus+sgA0wyU
- Nkw6y8Ct6rfXDQ==
-X-Received: by 2002:a05:622a:586:b0:50d:863d:b50e with SMTP id
- d75a77b69052e-51795a877aemr239207031cf.3.1780936526637; Mon, 08 Jun 2026
- 09:35:26 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1780936539; x=1781541339;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=/Tg6chPOuzxxnbbrrdpvGxt/WSgk5F9Pu1t/UHmjRJA=;
+ b=UuWbolOwhgnQ23O+D5F+/SWDP2D/RlNH+l5Kf9fr8OYszQtzn1FkYy4tXXmarLk0B8
+ y78onNJ33GB7iTTGVQnfU2ENu6p/z3PUpVqpDhjb/CcA4laNZaGtPp/eoMJeIp4V5p5e
+ mJvLpdYAGo6eNGiRHx4mfq874M1pLmvAT6xy0GLUM05Ls2rAL5pPu5pPRo0V3p3bfthw
+ y8jdMvBu8lGBrdKVYtbWEu+VHgF7S4oVq0qOPqqZzEc0lMEF/G1NbYyCjPTKyEVZpIKE
+ lNBLRtZKUO9Pr9MMKi8+cSMNDMcf0/LV+qDqwnSLdO4KyUXZ8FcgjRnFrOqt5zbLxHs4
+ NEnw==
+X-Gm-Message-State: AOJu0Yy9hJqO9tq8VXKiR8mIR/sI1Ebhb+aCmVdHa+nE/iYBDX5RJtYP
+ Oh0C/Ig/SWznakntAUvuGLrR1v+KtjPIKaxizPjswCXwUX3t4R8BeFOIO3vGvItgTAakeZQxxFB
+ B+r3LGHmGvFEVbOHGR1e3/bJMfeSJ8FSwpN5fryBpcWcLgHqwp8cXGqKP3WUNRTgy5Ex55hqUC1
+ 0fWyrodFoMnFYsvAchvQg=
+X-Gm-Gg: Acq92OHrN3MJiLznsaea2TkY3F6NIYRLUDA2LIOnoqGOtseMwQ4+S97+ZQ1g62g2ABm
+ KZGSDf5CvrqCU1eit5LGeunhPgPGOCkXbyDkbDu3csRJgNLuJ7z4+Afche6HAwWa602g0vldrZb
+ M5PazVppOozr33t2CVibTakUKMhjihOKn1kKRwQl18shhxN5R40INH0AhwsOZrUqI6pxSpzs0FO
+ bBIeVOlXIgyhkE87YxRlOsnOMZ73WRrvpJGmD8Hw6FRRy8X+2pNx76B6Xu6+m7ORXVA2/ai4PwC
+ qBe4
+X-Received: by 2002:a05:6512:234d:b0:5a8:8df1:61bf with SMTP id
+ 2adb3069b0e04-5aa87be895fmr4936270e87.21.1780936539106; 
+ Mon, 08 Jun 2026 09:35:39 -0700 (PDT)
+X-Received: by 2002:a05:6512:234d:b0:5a8:8df1:61bf with SMTP id
+ 2adb3069b0e04-5aa87be895fmr4936259e87.21.1780936538572; Mon, 08 Jun 2026
+ 09:35:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260521082647.71442-1-pbhagavatula@marvell.com>
-In-Reply-To: <20260521082647.71442-1-pbhagavatula@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 8 Jun 2026 22:05:00 +0530
-X-Gm-Features: AVVi8CcRmFc5mnyC41I9T_uyw7vPVT8RWSXPB6A2Ddv41njXloxJmNPwFneodtM
-Message-ID: <CALBAE1OBK+MtBwyuBqkq78816ePJDERm4dffzeyFsBXQf=AtYA@mail.gmail.com>
-Subject: Re: [PATCH] common/cnxk: fix VFIO MSI-X interrupt setup
-To: pbhagavatula@marvell.com
-Cc: jerinj@marvell.com, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
- Stephen Hemminger <stephen@networkplumber.org>,
- Tejasree Kondoj <ktejasree@marvell.com>, dev@dpdk.org, stable@dpdk.org
+References: <20260422075414.2528455-1-maxime.peim@gmail.com>
+ <CAJFAV8wn26hRUTzCG4ai+apT8+bWL7+cEE1N-gV1tJt8B9a4hQ@mail.gmail.com>
+In-Reply-To: <CAJFAV8wn26hRUTzCG4ai+apT8+bWL7+cEE1N-gV1tJt8B9a4hQ@mail.gmail.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 8 Jun 2026 18:35:26 +0200
+X-Gm-Features: AVVi8Ceb-Esm1r9X-0zReAT5l2hFVAl2frqY_SNm-rSHBhJTgXmMVkgs7x5SnFY
+Message-ID: <CAJFAV8zsDEW6vU69NHmZiqUyB4xz+qDPQsw-cBBeScGeuE_Fiw@mail.gmail.com>
+Subject: Re: [PATCH] eal: fix core_index for non-EAL registered threads
+To: Maxime Peim <maxime.peim@gmail.com>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: h6cJUIsRAbPYoSnyd-kKQMsszKQsQsI14HSdMA4D56Y_1780936539
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -100,21 +84,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, May 21, 2026 at 2:25=E2=80=AFPM <pbhagavatula@marvell.com> wrote:
+On Mon, 8 Jun 2026 at 18:10, David Marchand <david.marchand@redhat.com> wrote:
 >
-> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
->
-> Use heap allocation sized by the configured maximum interrupt count for t=
-he
-> VFIO irq_set buffer, correct handling when irq.count is zero, and use a
-> minimal stack buffer for per-vector configuration.
->
-> Fixes: 1fb9f4ab14b3 ("common/cnxk: remove VLA in interrupt configuration"=
-)
+> On Wed, 22 Apr 2026 at 09:54, Maxime Peim <maxime.peim@gmail.com> wrote:
+> >
+> > Threads registered via rte_thread_register() are assigned a valid
+> > lcore_id by eal_lcore_non_eal_allocate(), but their core_index in
+> > lcore_config is left at -1. This value was set during rte_eal_cpu_init()
+> > for lcores with ROLE_OFF (undetected CPUs) and is never updated when the
+> > lcore is later allocated to a non-EAL thread.
+> >
+> > As a result, rte_lcore_index() returns -1 for registered non-EAL
+> > threads. Libraries that use rte_lcore_index() to select per-lcore
+> > caches fall back to a shared global path when it returns -1, causing
+> > severe contention under concurrent access from multiple registered
+> > threads.
+> >
+> > A concrete example is the mlx5 indexed memory pool (mlx5_ipool), which
+> > uses rte_lcore_index() in mlx5_ipool_malloc_cache() to select a per-core
+> > cache slot. When core_index is -1, all registered threads are funneled
+> > into a single shared slot protected by a spinlock. In testing with VPP
+> > (which registers worker threads via rte_thread_register()), this caused
+> > async flow rule insertion throughput to drop from ~6.4M rules/sec to
+> > ~1.2M rules/sec with 4 workers -- a 5x regression attributable entirely
+> > to spinlock contention in the ipool allocator.
+> >
+> > Fix by setting core_index to the next sequential index (cfg->lcore_count)
+> > in eal_lcore_non_eal_allocate() before incrementing the count. Also reset
+> > core_index back to -1 on the error rollback path and in
+> > eal_lcore_non_eal_release() for correctness.
+> >
+> > Fixes: 5c307ba2a5b1 ("eal: register non-EAL threads as lcores")
 > Cc: stable@dpdk.org
 >
-> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+> > Signed-off-by: Maxime Peim <maxime.peim@gmail.com>
+> Acked-by: David Marchand <david.marchand@redhat.com>
+>
+
+Hum, I did not push the change.
+Re-reading this code, we have an issue if some external thread
+unregisters in the middle.
+
+What do you think of the additional hunk:
+
+$ git diff
+diff --git a/lib/eal/common/eal_common_lcore.c
+b/lib/eal/common/eal_common_lcore.c
+index ae085d73e4..6f53f20d90 100644
+--- a/lib/eal/common/eal_common_lcore.c
++++ b/lib/eal/common/eal_common_lcore.c
+@@ -372,13 +372,16 @@ eal_lcore_non_eal_allocate(void)
+        struct rte_config *cfg = rte_eal_get_configuration();
+        struct lcore_callback *callback;
+        struct lcore_callback *prev;
++       unsigned int index = 0;
+        unsigned int lcore_id;
+
+        rte_rwlock_write_lock(&lcore_lock);
+        for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
+-               if (cfg->lcore_role[lcore_id] != ROLE_OFF)
++               if (cfg->lcore_role[lcore_id] != ROLE_OFF) {
++                       index++;
+                        continue;
+-               lcore_config[lcore_id].core_index = cfg->lcore_count;
++               }
++               lcore_config[lcore_id].core_index = index;
+                cfg->lcore_role[lcore_id] = ROLE_NON_EAL;
+                cfg->lcore_count++;
+                break;
 
 
+-- 
+David Marchand
 
-Series applied to dpdk-next-net-mrvl/for-main. Thanks
