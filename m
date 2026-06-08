@@ -2,75 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B5BCD8C9F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 12:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2027ACD8C9F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 12:08:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BAE54402AD;
-	Mon,  8 Jun 2026 14:05:47 +0200 (CEST)
-Received: from fout-a3-smtp.messagingengine.com
- (fout-a3-smtp.messagingengine.com [103.168.172.146])
- by mails.dpdk.org (Postfix) with ESMTP id EAEB940265
- for <dev@dpdk.org>; Mon,  8 Jun 2026 14:05:45 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 60C08EC0073;
- Mon,  8 Jun 2026 08:05:45 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Mon, 08 Jun 2026 08:05:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm1; t=1780920345; x=1781006745; bh=mCd+lqgnnRN5zpG0yJOjd
- e7ePvVo9aA23ljLXYZwEh8=; b=SvIfdOSfSQQP9HwthmDcglFou3HpVhs+5fHhA
- jmeCFGGf3nqDTvB3Ubed4z296s3DeFjCl5qlxhx+4qGq3PFKP+Y/XTs0+mkIQCg/
- wGFp+BYrak4wsVq6W5eDyPMcc+wu4I9GyW9723PYOXiCVvpDvzL/DWio1pLXcxaF
- xJB5saNxxXBCYswvzZmBBeFa5UXXIUpBM/HwViM2R2ICXTAiaH+B1hOtqi66xpld
- krMZOUfsHaC0xmDkSMDvWcFIWu50ncf/iaKLu3WzgteiP0FJV1ZTs3YnT6iDYGHp
- i0GrXrE6lm9ry6+pBCfL6oejrwO7ZPZs1w3C3ZepIP5U6gboQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
- 1780920345; x=1781006745; bh=mCd+lqgnnRN5zpG0yJOjde7ePvVo9aA23lj
- LXYZwEh8=; b=ZFJvtbDJSy5S6YZySSFwqb9bbsR5ElB+rLTiaA30qwEo9ck1Oy7
- yY4gfWytq7F7HyqyZF7wrbtDv81Ho1txbGYe2KL290E3g6VyhCXpQD8gIGVMWqwg
- CLEKJfSZUFhadmavm4gF7wDZiwgCyrvYhPOl0VQXbA6z6TnDVUxTdFFxqc1mCDfx
- MmZB3Eg8jS9k75po/hoE4ay+rYelXIjVBv/mMOIp8wNNEOQO5+IEXr4nHV0QhPRx
- Tk+kkRygaaOBQiYw07WueSqQLQZ3kSiV+mAWkBGNemP17NXsuFov7S4v9ncQZuKO
- oIv1TJ9MSGLIT3/K9jVI4/mnxbeuL+Fqreg==
-X-ME-Sender: <xms:GLAmajBqLnJqWkH8Gj8SXw45okFM7iqJ3MtSh6hDfmgVsotxA6adKw>
- <xme:GLAmakd1mmQ-yJEN5LJ9pw27Gb4CdV56KDaMr5PNa-N7_IohXFRs4A0sPlSG83yij
- AfCH8LZGKLTcrUaAdErJ9NwHotcyyrctm7G4mgZpB68gHdTY3UMlgU>
-X-ME-Received: <xmr:GLAmatkvnlj_nnnGmHZbk1gS4MaysRDwjH4zZ_O4u8CvOGS0lYcgbYwLQJLLLrNPsyi0ihFnP2r_ymchgieCu9eg40ySaJU>
-X-ME-Proxy-Cause: dmFkZTEkpA/m3J4T7oVlQTjSEe8wpCnHsexuB/5k9rSv0QKKOzFR+U51PXxMwSL+B1HDjf
- I6tKp3wAP0fYf0jKVir2M3TVzTJPNV11Ve/UDdgAexKZIzcoNr9b9xCTHzDYU+Hoqmo/ft
- W5TOi3cKdgP3XYO7ojyw3mfq/W77fFIoP+ivmtaR9txnQY/v+nsIiXuz3byBgUeRXi1Li6
- G+auIzFz9kdSFmkt5SNlk6sfkvGERyplvukCTvd9KdWgJgCrz4ohE0KuSdKgScFCKaE83n
- EdP2j+Nr5cMaXbbYdJdV9FazNJPXttPb3lNAuDA+Z1YJ7nXhlXacH3ciV/fup0IX8wJsNS
- aPqUIEjH9aqTZV3BcFH/HPOr+jfOZKJ1sOsT+pIdoBc0TdEif+Km1AIseE6ydwWBKy5fQh
- tzE3JQPT6shM1t2exfpI5wPzUZXiP86PCLr0I1CnNOhpDaKl36lObVAtvmupNG1CCfYMtk
- UBR/xrkssxxtXF/8uMs4s2DyklgqRBT8ul9JVHcMXw3piKOUsRfStZITO111BBNt7iHqdG
- vu0HxM1aKGyG+Jog9hQ8dWJOwdRA0oFfBN+Unqx93VddhQ6cxOKfDmyus9fiV1iJs1xwGq
- DPNMmHzKHrzbcKtVlg/942BYbGIn8vp6kW7e0nA2+1IooKDGwnU7sUvfJiPg
-X-ME-Proxy: <xmx:GLAmarFZMSNP_zb8d_OARUftMXRQqVzp9rfwYWTL50RwdknaJwESNg>
- <xmx:GLAmal4SCGtmuRxtHLBxkFbpZQXMcqwc-LWPuukvpSPpIsPE03NYJQ>
- <xmx:GLAmajm0R9QaMLTdI2wlN3jxa7T7vqvkvaXTcgc7OyvYjTTX1pPalg>
- <xmx:GLAmaqrGs6jQgP4d-t6ut8wk3d05jPQWG36sn9jaFPqw03kS7qBwHQ>
- <xmx:GbAmardvKHISnZDXLmD9CTd-xbm4rDUb9LshdWOBSEcJscN-UeUrm9EU>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Jun 2026 08:05:43 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH] doc: move firmware instructions in mlx5 guide
-Date: Mon,  8 Jun 2026 14:05:31 +0200
-Message-ID: <20260608120531.1037367-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.54.0
+	by mails.dpdk.org (Postfix) with ESMTP id EDB41402AD;
+	Mon,  8 Jun 2026 14:08:37 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 141B340265
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 14:08:36 +0200 (CEST)
+Received: from alhe-weh-mana-dpdk-s2.corp.microsoft.com (unknown
+ [167.220.2.160])
+ by linux.microsoft.com (Postfix) with ESMTPSA id 4C9E420B7166;
+ Mon,  8 Jun 2026 05:08:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4C9E420B7166
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1780920498;
+ bh=z25rz7Br5JFR5g/w/ZslRZhjzfkMPf7fu0xgkDiC63g=;
+ h=From:To:Cc:Subject:Date:From;
+ b=tGC21nDLTZMKNG1CdXCrnKdZODzGTZ9ph6mXiOu98a6BThTTvE4kUf1r3UtG+jw3m
+ zuDSVkKuECU8qP7UOYcYDFjL0ghyKzkA5RGNzQ1BYZW0lTQ7W0JegJDr4Fsdrl+Zh9
+ 5S9yk6GTTjum8NXoLDPxjMsiYnWGz+5MRTlTqIks=
+From: Wei Hu <weh@linux.microsoft.com>
+To: dev@dpdk.org,
+	stephen@networkplumber.org
+Cc: longli@microsoft.com,
+	weh@microsoft.com
+Subject: [PATCH v7 0/1] net/mana: add device reset support
+Date: Mon,  8 Jun 2026 05:08:23 -0700
+Message-Id: <20260608120824.287050-1-weh@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -85,53 +47,116 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Having firmware update instructions before firmware config
-looks simpler to find than in compilation prerequisites.
+From: Wei Hu <weh@microsoft.com>
 
-A link is also added after listing minimum firmware versions.
+Add support for handling hardware service reset events in the
+MANA driver. When the MANA kernel driver receives a hardware
+service event, it initiates a device reset and notifies userspace
+via IBV_EVENT_DEVICE_FATAL. The MANA PMD handles this by
+performing an automatic teardown and recovery sequence.
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- doc/guides/platform/mlx5.rst | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+The driver uses ethdev recovery events (ERR_RECOVERING,
+RECOVERY_SUCCESS, RECOVERY_FAILED) to notify upper layers of
+the reset lifecycle, and a PCI device removal event callback
+to distinguish hot-remove from service reset.
 
-diff --git a/doc/guides/platform/mlx5.rst b/doc/guides/platform/mlx5.rst
-index 285d58be4f..0a8917530d 100644
---- a/doc/guides/platform/mlx5.rst
-+++ b/doc/guides/platform/mlx5.rst
-@@ -143,7 +143,7 @@ The following dependencies are not part of DPDK and must be installed separately
-   - BlueField-2: **24.28.1002** and above.
-   - BlueField-3: **32.36.3126** and above.
- 
--  New features may be added in more recent firmwares.
-+  New features may be added in more recent :ref:`firmwares <mlx5_firmware_config>`.
- 
- Libraries and kernel modules can be provided either by the Linux distribution,
- or by installing NVIDIA MLNX_OFED/EN which provides compatibility with older kernels.
-@@ -171,11 +171,6 @@ It is possible to build rdma-core as static libraries starting with version 21::
-     ninja
-     ninja install
- 
--The firmware can be updated with `mlxup
--<https://docs.nvidia.com/networking/display/mlxupfwutility>`_.
--The latest firmwares can be downloaded at
--https://network.nvidia.com/support/firmware/firmware-downloads/
--
- 
- NVIDIA MLNX_OFED/EN
- ^^^^^^^^^^^^^^^^^^^
-@@ -490,6 +485,11 @@ Additional information can be found in the WinOF2 user manual.
- Firmware Configuration
- ~~~~~~~~~~~~~~~~~~~~~~
- 
-+The firmware can be updated with `mlxup
-+<https://docs.nvidia.com/networking/display/mlxupfwutility>`_
-+after `downloading a new version
-+<https://network.nvidia.com/support/firmware/firmware-downloads/>`_.
-+
- Firmware features can be configured as key/value pairs.
- 
- The command to set a value is::
+Changes since v6:
+- Rebased onto latest upstream for-main
+- Replaced removed RTE_ETH_DEV_TO_PCI macro with
+  RTE_CLASS_TO_BUS_DEVICE (upstream commit 4757b8df04
+  removed the old bus-specific ethdev convenience macros)
+
+Changes since v5:
+- Replaced RCU QSBR with per-queue atomic burst_state using a
+  single-variable CAS design: bit 0 is the in-burst flag, bits
+  1+ encode device state. The data path uses CAS(0→1) to enter
+  burst and fetch_and(~1) to exit. The reset path uses fetch_or
+  to set state bits and polls bit 0 to drain in-flight bursts.
+  This eliminates the two-variable Dekker pattern and the need
+  for sequential consistency (seq_cst) ordering.
+- Removed librte_rcu dependency
+- Removed __rte_no_thread_safety_analysis annotations (no longer
+  needed after mutex conversion)
+- Moved ERR_RECOVERING event emission before acquiring
+  reset_ops_lock and before mana_reset_enter, so upper layers
+  (e.g. netvsc) can switch data path before mana stops queues.
+  Emitting outside the lock avoids deadlock if the callback
+  calls dev_stop or dev_close.
+- Replaced MANA_OPS_*_LOCK macros with mana_reset_trylock()
+  helper function and explicit per-operation wrappers
+- Removed unused rte_alarm.h and rte_lock_annotations.h includes
+- Added RECOVERY_FAILED event when mana_reset_enter fails
+  internally, so the application always receives a terminal event
+- Added mana_clear_burst_state() helper to clear per-queue
+  burst_state on failure paths (reset_failed, dev_stop_lock,
+  dev_close_lock) preventing permanent silent packet drop after
+  a failed reset
+
+Changes since v4:
+- Fixed stale rte_spinlock_unlock call in mana_intr_handler that
+  was missed during the spinlock-to-mutex conversion, causing a
+  -Wincompatible-pointer-types warning
+
+Changes since v3:
+- Converted reset_ops_lock from rte_spinlock_t to pthread_mutex_t
+  with PTHREAD_PROCESS_SHARED, since the lock is held across
+  blocking IB verbs calls and IPC with 5s timeout
+- Removed rte_dev_event_callback_unregister retry loop to avoid
+  deadlock: the callback itself blocks on reset_ops_lock, so
+  retrying on -EAGAIN while holding the lock is a deadlock
+- Introduced mana_join_reset_thread() helper using CAS on
+  reset_thread_active to prevent double-join undefined behavior
+- Added reset thread join in mana_dev_uninit to prevent thread
+  leak on device removal
+- Fixed ibv handle leak: priv->ib_ctx is now only set to NULL
+  after ibv_close_device succeeds
+- Fixed misleading "All secondary threads are quiescent" log in
+  mana_mp_reset_enter — changed to "Secondary doorbell pages
+  unmapped" since actual quiescence is enforced by the primary's
+  per-queue atomic flag check before IPC is sent
+- Changed event list in mana.rst to RST definition list style
+- Squashed documentation into the feature patch per convention
+
+Changes since v2:
+- Fixed dev_state_qsv memory leak on device removal
+- Fixed reset thread TCB/stack leak: reset_thread_active is now
+  only cleared by the joiner, not the thread itself
+- Fixed second reset crash: removed reset thread join logic from
+  mana_dev_close (inner function) to avoid corrupting dev_state
+  when called from mana_reset_enter
+- Made reset_thread_active RTE_ATOMIC(bool) with explicit ordering
+- Added retry loop for rte_dev_event_callback_unregister on -EAGAIN
+- Initialized condvar/mutex with PTHREAD_PROCESS_SHARED since priv
+  is in hugepage shared memory
+- Added re-check of dev_state after lock acquisition in
+  mana_intr_handler to prevent racing with pci_remove_event_cb
+- Replaced (void *)0 with NULL in mp.c
+- Added lock ownership comment block at mana_reset_enter
+- Documented rte_dev_event_monitor_start() requirement
+- Added mana.rst documentation and release note
+
+Changes since v1:
+- Removed net/netvsc patch from this series
+- Simplified reset exit: mana_reset_exit calls
+  mana_reset_exit_delay directly instead of spawning a thread
+- Added __rte_no_thread_safety_analysis annotations for clang
+- Switched to rte_thread_create_internal_control
+- Fixed declaration-after-statement style issues
+- Removed unnecessary blank lines and stale comments
+
+Wei Hu (1):
+  net/mana: add device reset support
+
+ doc/guides/nics/mana.rst               |   39 +
+ doc/guides/rel_notes/release_26_07.rst |    8 +
+ drivers/net/mana/mana.c                | 1049 ++++++++++++++++++++++--
+ drivers/net/mana/mana.h                |   46 +-
+ drivers/net/mana/mp.c                  |   89 +-
+ drivers/net/mana/mr.c                  |    6 +-
+ drivers/net/mana/rx.c                  |   23 +-
+ drivers/net/mana/tx.c                  |   44 +-
+ 8 files changed, 1196 insertions(+), 108 deletions(-)
+
 -- 
-2.54.0
+2.34.1
 
