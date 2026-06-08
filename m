@@ -2,39 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D1ACD8C92
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D58CD8C92
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:14:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D7F9A40696;
-	Mon,  8 Jun 2026 18:14:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C4E98406A2;
+	Mon,  8 Jun 2026 18:14:21 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id DEC4440695
- for <dev@dpdk.org>; Mon,  8 Jun 2026 18:14:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 572F14069F
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 18:14:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780935258; x=1812471258;
+ t=1780935261; x=1812471261;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=bjpAr1+i3/7V1meBvmI5E3f1EEKDSUWpyY+qQaaEqfo=;
- b=QEb4JrSEKe0BcIOYtaiB71YbRxsd2eeyQ6+9Yg+Ja7bUcUtWHzTocw5Q
- ZcyeFBkTetXtboSyH795QJPCls+Edw/PIsebthfe1FNa9GI/savxpMBdA
- m1uToXWgL7WCK3aOckiqkX/qkB6mLVM75mxJ16XLIIcj0tTrXQHAdiH+g
- /9HJWzJkac6L5MIr9eojC1TIpwNXzDnIYTLDqfB0SGFLLyifSbk3lOP4f
- zALOCbYel1l9JMhKt72BqepsT+cQ3n12vZCkLZFvE5hvz4Z5Y4l10aO02
- roLzcrIcAB/SD5yIgtNGSi+W42iygJiGQ3VMQwXlIMDaZz7+ebdhZgVVL A==;
-X-CSE-ConnectionGUID: TuHVSstzSqiwjUMb+6Fm4w==
-X-CSE-MsgGUID: +Yi4vkLbRZucgBQ1A8eYBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="80809564"
-X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="80809564"
+ bh=3B8uGynd+QITGU/KQXOD04V9+bzhD+MKmw4GhIhYuQg=;
+ b=XDLV11DKuLT5RYeBCSncmczcWiPNOjEEIW3EljgU7p8so3nxB1BQI+fy
+ cW6H0Utjfy+dR0CR9iK8O7311EYRLMnt0YzQf3B++yyWTv8pNKhyRlv2s
+ cUAtGtRDNhlNyxmoAXJBUk3lRBiaZrbgAxcWLxB6xfflSj//rdntQHpz4
+ 67Mn0VtFAJ1GjD9mmA3TdM0mXVq87KbqaN98njZIjWGTMHoMYRXEbeIL1
+ 9aTG/ZMMOdBxMLa07ycbsnh863bHxISTnwoKXyMbtBrwLoiFWCOrrihC1
+ 3ltjsrxXWIjYs6j2QCFQvyGpVMPiyz9EPH8afhqEHCOq5TcXLQnjSU7u6 g==;
+X-CSE-ConnectionGUID: O4D4GpiJTRWdrfiy7Z7ERQ==
+X-CSE-MsgGUID: BmiiUghZT3eUDuFsq9/fmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="80809572"
+X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="80809572"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jun 2026 09:14:18 -0700
-X-CSE-ConnectionGUID: ptNYfW/bTMijw4ldM0opwA==
-X-CSE-MsgGUID: fbPRYnpzRN+/KhdlqKPF5w==
+ 08 Jun 2026 09:14:20 -0700
+X-CSE-ConnectionGUID: tUc2wFGPRpGrwQBH8wZAqg==
+X-CSE-MsgGUID: 7gFrQBR5QUOiTZPImxg/Cg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="245457448"
+X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="245457455"
 Received: from unknown (HELO localhost.igk.intel.com) ([10.123.235.20])
- by orviesa008.jf.intel.com with ESMTP; 08 Jun 2026 09:14:16 -0700
+ by orviesa008.jf.intel.com with ESMTP; 08 Jun 2026 09:14:18 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, david.marchand@redhat.com,
@@ -42,10 +42,9 @@ Cc: thomas@monjalon.net, david.marchand@redhat.com,
  anatoly.burakov@intel.com, reshma.pattan@intel.com,
  stephen@networkplumber.org, Marek Kasiewicz <marek.kasiewicz@intel.com>,
  Dawid Wesierski <dawid.wesierski@intel.com>
-Subject: [PATCH 4/7] net/ice: timestamp all received packets when PTP is
- enabled
-Date: Mon,  8 Jun 2026 12:40:56 -0400
-Message-ID: <20260608164059.65420-5-dawid.wesierski@intel.com>
+Subject: [PATCH 5/7] net/iavf: disable runtime queue setup capability
+Date: Mon,  8 Jun 2026 12:40:57 -0400
+Message-ID: <20260608164059.65420-6-dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260608164059.65420-1-dawid.wesierski@intel.com>
 References: <20260608164059.65420-1-dawid.wesierski@intel.com>
@@ -67,61 +66,40 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Marek Kasiewicz <marek.kasiewicz@intel.com>
 
-When PTP is enabled on the ICE PMD, hardware RX timestamps are only
-applied to packets classified as IEEE 1588 (Ethertype 0x88F7). This
-prevents applications from obtaining hardware timestamps on regular
-UDP/IP traffic.
+Remove the advertisement of RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP
+and RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP capabilities from the
+iavf VF driver.
 
-Remove the TIMESYNC packet type filter so that all received packets
-get hardware timestamps when PTP is enabled. This is required for
-time-sensitive networking applications that need per-packet arrival
-timing on media traffic, such as ST 2110-21 receiver compliance
-monitoring.
+Runtime queue setup on E810 VFs causes queue state corruption when
+queues are dynamically reconfigured while the hardware rate limiter
+is actively pacing TX queues. Queue configuration messages to the PF
+via virtchnl can race with ongoing TX operations, leading to undefined
+behavior.
 
-The change affects all three RX paths: scan, scattered, and single
-packet receive functions.
+By not advertising these capabilities, all queues are configured at
+port start and remain stable throughout the port lifecycle.
 
 
 Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
 Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
 ---
- drivers/net/intel/ice/ice_rxtx.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/net/intel/iavf/iavf_ethdev.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index c4b5454c53..8d709125f7 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -2023,8 +2023,7 @@ ice_rx_scan_hw_ring(struct ci_rx_queue *rxq)
- 				pkt_flags |= rxq->ts_flag;
- 			}
- 
--			if (ad->ptp_ena && ((mb->packet_type &
--			    RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC)) {
-+			if (ad->ptp_ena) {
- 				rxq->time_high =
- 				   rte_le_to_cpu_32(rxdp[j].wb.flex_ts.ts_high);
- 				mb->timesync = rxq->queue_id;
-@@ -2390,8 +2389,7 @@ ice_recv_scattered_pkts(void *rx_queue,
- 			pkt_flags |= rxq->ts_flag;
- 		}
- 
--		if (ad->ptp_ena && ((first_seg->packet_type & RTE_PTYPE_L2_MASK)
--		    == RTE_PTYPE_L2_ETHER_TIMESYNC)) {
-+		if (ad->ptp_ena) {
- 			rxq->time_high =
- 			   rte_le_to_cpu_32(rxd.wb.flex_ts.ts_high);
- 			first_seg->timesync = rxq->queue_id;
-@@ -2881,8 +2879,7 @@ ice_recv_pkts(void *rx_queue,
- 			pkt_flags |= rxq->ts_flag;
- 		}
- 
--		if (ad->ptp_ena && ((rxm->packet_type & RTE_PTYPE_L2_MASK) ==
--		    RTE_PTYPE_L2_ETHER_TIMESYNC)) {
-+		if (ad->ptp_ena) {
- 			rxq->time_high =
- 			   rte_le_to_cpu_32(rxd.wb.flex_ts.ts_high);
- 			rxm->timesync = rxq->queue_id;
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index a8031e23a5..4f6325ef78 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1159,9 +1159,6 @@ iavf_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	dev_info->reta_size = vf->vf_res->rss_lut_size;
+ 	dev_info->flow_type_rss_offloads = IAVF_RSS_OFFLOAD_ALL;
+ 	dev_info->max_mac_addrs = IAVF_NUM_MACADDR_MAX;
+-	dev_info->dev_capa =
+-		RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
+-		RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
+ 	dev_info->rx_offload_capa =
+ 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
+ 		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
 -- 
 2.47.3
 
