@@ -2,74 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F198ECD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5E3CD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:59:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4EFBC402DD;
-	Mon,  8 Jun 2026 18:38:12 +0200 (CEST)
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
- [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id F144B4029D
- for <dev@dpdk.org>; Mon,  8 Jun 2026 18:38:10 +0200 (CEST)
-Received: by mail-dy1-f169.google.com with SMTP id
- 5a478bee46e88-3078e0dcd67so2528711eec.0
- for <dev@dpdk.org>; Mon, 08 Jun 2026 09:38:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780936690;
- x=1781541490; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=tJq0rjelZOiKpb1ynEkC8QlWP/L2ivzNC8rqQGm/PuM=;
- b=UZ+KRPj/ktYW8V4UqVQLI4/vMcRU7xAo1zH75yROmGWlsGXR7K7+VcT9YSV3IhoScX
- kMWnhbWwZi+9/EgOue46W/dv86xtwmPaxWar6r95HaAaCNsjXUb93P4ONh9XUchOtlTE
- dcv5HkDgRiBvVMJmlxzAMS4zvuJQHEpFP5on0PnGmY/TK24SzjJTcnrodlQ4c/rRo1Ii
- d6iYJIcRlpv2nz22a1RlV5eFlQxIiC4Y7AetiP9iAgQzZopzbb2O1S93if0zSYHhugS0
- +cp5xQIrtat85l5L1tnRg1CvPWaDk0DIpJcKp30sMOiiJTJ1DpiaDEzRzywIw5RGgnkd
- o9rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780936690; x=1781541490;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=tJq0rjelZOiKpb1ynEkC8QlWP/L2ivzNC8rqQGm/PuM=;
- b=D+Tzm6YYd5ahiMZEWMgh5VpE+ufFnyGqPNiuqFoZZI/0dzC/ssovsre5v+jX35+mhn
- 32ldn2HIwoWSHboufwEgUon34jlu97QSZyH+6gkiAKhS2mae+ht2deHQG1E7aACGsd90
- kC8JNFqJ4vncXVenRzqr7GP+BQmZ2Wegl/3QBnq5WheKAU5AKyu1gRQHVnISNTHc/Bta
- q52saV2DiiVkdy1Anz1TbQu57pbAAEeZI47V8hTOSA3X/YAsJDyF0J8y9MeOHLtA25hi
- HjAKlm5Z1+x5TZKSymEdkRV+QYvyxRlhlVct9bytnP5shk6tqrC0Y77M5kbdh5LJu8d1
- OWbA==
-X-Gm-Message-State: AOJu0YyW24chr9YsagRvDMoHgllUWhxg25KesStqmwb4hBqV36bUgjCZ
- /fz6a0rQ9k1KlXyOvNao8YU7h+M02LMJYK+rSIiBa+8NDy6QxdFRXRFiYqpv1itYftY=
-X-Gm-Gg: Acq92OEGjC3OcZmbXED+f9x65Jc8L9b2ZlhgyNCj+wglCI3MdHRzQVe7xrHYfvU3gZi
- Q5bmeNZv0DkV6oZ56BcqUl/pgb8jlZC2tExrPa8ivYXfOOZikIi8pd9aalDve+q37v9R6ZEkZP3
- H5eCh036Lqhtni2/EkBPdQzmJ/yxvS/i19hvhKDZrqq5RhMWrQTJNWxx5YIBW8C5bVuoy2i1vmn
- VmBknFjg76XQ9cnZpouLlDo2JWLA/9WZO5K5NfHl9c1FSFgFhM3n5+gd1m+jJwB1vI43zXjzGZ1
- +lJRc8S6ODRdVB3Br/hkcudiflFC/2h7gwE7J46x7SfFDUly3EygChURXLPuwF9nd299pKT4BFk
- gY+OxebF0mQ2H2kRIEINGA7m8C7XE5v0gsu2ZnFtMToGuYJ7g/DB6o8KDUqEBCWtmvyOLOuV/G3
- ISoDCDb7IbwtNtcOgAKte6Y11i/zVaAxI0EY0t5zQHHcO4v+c2f72KiNv4ARi7+D8TpwV6Lu+tS
- 3Q=
-X-Received: by 2002:a05:7300:2209:b0:304:c651:bdea with SMTP id
- 5a478bee46e88-3077b22a913mr9495294eec.21.1780936689948; 
- Mon, 08 Jun 2026 09:38:09 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3074db560d7sm24674028eec.5.2026.06.08.09.38.09
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 08 Jun 2026 09:38:09 -0700 (PDT)
-Date: Mon, 8 Jun 2026 09:38:06 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id BC960402DD;
+	Mon,  8 Jun 2026 18:59:19 +0200 (CEST)
+Received: from fhigh-a4-smtp.messagingengine.com
+ (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 1A4134029D
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 18:59:19 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 7C6EF14000FC;
+ Mon,  8 Jun 2026 12:59:18 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Mon, 08 Jun 2026 12:59:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1780937958;
+ x=1781024358; bh=xUODMatyvChXTKH/AKHsC86sj4CARMIs50OuldAVnfg=; b=
+ lj4DsyHYo/3fhwaNog7XwhChEsi1kf0Ys9EaxPC+5ruwpwg3JIu6jkEIj30Ri/9I
+ B28/sCaBKyLkEZOcd0ablPeQ75yoh6syBRfqYQWWBWYdBtVWQjF1L5xDwjEy6f8C
+ yldo6kESCmdBps3rs8jQ0xlgJUKPZ9+6bPtRW5tbvNdvVMUQeqwgAuVAy9IHn21o
+ vGDNjEQzxhk6/XofFuozV+5mSKFl1ZgqUHABYCVmggbrMVpSNGX82SJpw33N5PCk
+ kOBrG90+X4BfYjtVFaU+yLNj292ABp8l8Wo5+b5NSK9BOB+WSaJijMOgx148UuE2
+ GSPxNoT0GWRo8R+ns6tbWw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780937958; x=
+ 1781024358; bh=xUODMatyvChXTKH/AKHsC86sj4CARMIs50OuldAVnfg=; b=M
+ QGkDGB4Gv0lT8WRFvWQEtqMyLF2k3sVQ0DMbyVP/KS4oYslEsEx7dryra0dwqFaD
+ o4s1nrEFl56FxEy2KiblgIi4XGGfNvg6uMDUPLFvHDirccfZQ8UqTzf4AxIGNCzU
+ u48YHODov0HdUJ0GLorl2nNMYkoUGLZN0U7RtzhUOLZrEaMSoT/Mh/g14g7Cnp9S
+ 3ynsU54Sbi40Ab7WS2K6rkSRdnfv8m4lFiSeiHEPU2Jq9FkoG85vaULSedsucpkh
+ u82Dtx1Q5XkZWT0OMDfnhZi1DfJ4oT9UDGrkp9+qMH2Wtbn4IBG9tlaXhuU3qoE/
+ RJ0SdDyQL6XtbieObU5/g==
+X-ME-Sender: <xms:5fQmajPpmLO7LfWcl2D1cDGPBaivoA_MKNhmxxNhys9bfoHLMGigKg>
+ <xme:5fQmap8aW-8FYKjx4u9-iuagsTPnNSX1yC3CwLerwe02ly_8X-Tgn4vCz6Ns2AVuD
+ G1DsTOmZ4EWV-GM1DTL5Ir1rklZv4e-uzVkoCKQtfKdit03aZYSeg>
+X-ME-Received: <xmr:5fQmakeADLMeUUkAN2WjoDEKXGiOLCLnasPRp6m189mQabp9r98MhfHsLSRcf3yoOo1OeaBeofssE7Fpnl1MQBIg4g>
+X-ME-Proxy-Cause: dmFkZTE4842FvxE31XI2pWLLxB9s0GrmAZFX0XTH5cWDudliEYMj3zR4mYXrCGtMdj6sCO
+ iuk+fk7VlZgCMziF4Z2N6CDK3/10HLFi/nECXU6iEyXnvgxAykIaOj6gbnNOrGxPrAAt1B
+ /noKZjHQyh/uT/sG5V2iwLmt4Xn1FdYAsT7r2OIt13AJLd58w8Y1wOT0xuBt7U7JjtMkJT
+ 0fhBRdBhQ6JYQ4PvD87QJhrIbVjsgCNOeuYmllrGTFmP7uQTiFn7hX6m2mqPqdBScNE7Vq
+ Mjklk6xmesQboANknUkcr7omj+KwLpLWqBciXHonPSQrBm5rI68SwdcWnWZfqI7fiOLZj8
+ EzoiVs1aiXkyIvRWyC0d6mcJoZdTU7E8oZ61U4YUfjL0yIx2Mot68G/3MceglMSi2dm9Oe
+ biv7ubNN+2BglO5YbFf/eY60GDPhX6/ePQzfTYA6f8vcMdkp9ZxtNeUy++xdLtbZbkq/Jm
+ Fd2nSkuXyyM4I/7Bq/D+I3vouY8p9QU/SAqzbttwi3+Zn9hpG9HSZXGFF50lm0Mi/LOYph
+ a0dFUbUsBYwf/Oxpqh8PvokwOQ1rPhixoCCWNyOnIveHBZJSRKVcAvOW5ht6ptroTTEZTl
+ 5YA9SNWCvC/OBG3M2BR1x7tSLbtPWdlQEhI+B4fKuj0h11dMvFKb4/QzeMdg
+X-ME-Proxy: <xmx:5fQmaoxIun1PneolHSsJWu7QR4pziJx21OPGJK_8ZFu6ZHEbL6oSLw>
+ <xmx:5fQmapKArLXKL06fBaeoAvJzzT2oq9BuzDKsgXNvrLJHGjbMraC_tg>
+ <xmx:5fQmaqGfGoYClHrzLLARG_EFqYvXx_qzMVMBfsGPCsI6wDGkPdyOKw>
+ <xmx:5fQmal_NrExYiNgufffRMHReBdxyB0_RXYzsDjsF95PalKjZ49aYOQ>
+ <xmx:5vQmauv8Brxg3SQQp8RsUqcDcc7s9efHRDg-Gg2IJ77wV-UMr9maznij>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Jun 2026 12:59:16 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
 To: Dawid Wesierski <dawid.wesierski@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, anatoly.burakov@intel.com,
- vladimir.medvedkin@intel.com, reshma.pattan@intel.com, thomas@monjalon.net,
- andrew.rybchenko@oktetlabs.ru, marek.kasiewicz@intel.com
-Subject: Re: [PATCH 6/7] pcapng: add user-supplied timestamp support
-Message-ID: <20260608093806.7b5ac251@phoenix.local>
-In-Reply-To: <20260429073111.3712950-7-dawid.wesierski@intel.com>
-References: <20260429073111.3712950-1-dawid.wesierski@intel.com>
- <20260429073111.3712950-7-dawid.wesierski@intel.com>
+Cc: dev@dpdk.org, david.marchand@redhat.com, vladimir.medvedkin@intel.com,
+ bruce.richardson@intel.com, anatoly.burakov@intel.com,
+ reshma.pattan@intel.com, stephen@networkplumber.org,
+ "Wesierski, Dawid" <dawid.wesierski@intel.com>
+Subject: Re: [PATCH 0/7] intel network and pcapng updates
+Date: Mon, 08 Jun 2026 18:59:14 +0200
+Message-ID: <FRmUxbuvS_qJ2r4iEPYdlw@monjalon.net>
+In-Reply-To: <20260608164059.65420-1-dawid.wesierski@intel.com>
+References: <20260608164059.65420-1-dawid.wesierski@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,32 +89,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 29 Apr 2026 03:31:10 -0400
-Dawid Wesierski <dawid.wesierski@intel.com> wrote:
+08/06/2026 18:40, Dawid Wesierski:
+> From: "Wesierski, Dawid" <dawid.wesierski@intel.com>
+> 
+> These patches provide various updates for Intel iavf/ice drivers and pcapng.
 
-> @@ -737,16 +736,6 @@ rte_pcapng_write_packets(rte_pcapng_t *self,
->  			return -1;
->  		}
->  
-> -		/*
-> -		 * When data is captured by pcapng_copy the current TSC is stored.
-> -		 * Adjust the value recorded in file to PCAP epoch units.
-> -		 */
-> -		cycles = (uint64_t)epb->timestamp_hi << 32;
-> -		cycles += epb->timestamp_lo;
-> -		timestamp = tsc_to_ns_epoch(&self->clock, cycles);
-> -		epb->timestamp_hi = timestamp >> 32;
-> -		epb->timestamp_lo = (uint32_t)timestamp;
-> -
->  		/*
->  		 * Handle case of highly fragmented and large burst size
->  		 * Note: this assumes that max segments per mbuf < IOV_MAX
-> diff --git a/lib/pcapng/rte_pcapng.h b/lib/pcapng/rte_pcapng.h
-
-NAK
-
-You need to keep the correct timestamp correction.
-PCAPNG specifies times as nanoseconds since 1/1/1970.
+Please would you mind sending the pcapng changes in a separate series?
+Thank you
 
 
-Any new API needs a test as well.
