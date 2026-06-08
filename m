@@ -2,75 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B42CD8C92
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE9DCD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:27:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1C5C640655;
-	Mon,  8 Jun 2026 18:17:04 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 01E8540655
- for <dev@dpdk.org>; Mon,  8 Jun 2026 18:17:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1780935422;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=gIXNN7bgVLNvp+owSx+1TMlJEr6pbE0T/kgh+BFIBc8=;
- b=iz9Chtae13IZZqPiVQ+bV41z65Rwe0vMwUHE4yPbltT8JTnczlPmg7W3fzz6Ugk/zXA0P1
- VkmkuWlZcwrzGPFSrsAsgb70AVi2dY0g55S1KpcT05f1Jv+CW2eLwOa/hIkb7gYMNSp6UP
- NriLCvWZ4BzAQVs88VkrCJS7U7FfY7U=
-Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com
- [74.125.82.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-614-o6a74KySMdWU_0P8QOLucg-1; Mon, 08 Jun 2026 12:17:01 -0400
-X-MC-Unique: o6a74KySMdWU_0P8QOLucg-1
-X-Mimecast-MFC-AGG-ID: o6a74KySMdWU_0P8QOLucg_1780935420
-Received: by mail-dl1-f69.google.com with SMTP id
- a92af1059eb24-137fc6f8e9fso4646947c88.1
- for <dev@dpdk.org>; Mon, 08 Jun 2026 09:17:01 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3600D402DD;
+	Mon,  8 Jun 2026 18:27:23 +0200 (CEST)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com
+ [209.85.160.170])
+ by mails.dpdk.org (Postfix) with ESMTP id E11D04029D
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 18:27:21 +0200 (CEST)
+Received: by mail-qt1-f170.google.com with SMTP id
+ d75a77b69052e-5176bbb9384so46190731cf.1
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 09:27:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780936040; cv=none;
+ d=google.com; s=arc-20240605;
+ b=PJ2bROu9RG0le4eXkgOSttHtuARt4JqWiMBuQ45uEt8swKORr45zp5PCAWWg2gSfow
+ 1DarZyUXvTzrSAT2MbaBvSO3jLrbjgzZhCWy0cehaqCcovly96U8FnYV4+rZppnQc8mI
+ PzW7hL2ouVFgFZWTFeqHQX7IWQ9AHDFU5O8TktjCzjWaQRp7nR82Mki1bCrGDMRVlVQ6
+ CNCKrEOV130d54BTb25t0G0F1SbVI2asLEeUhdLON+tt+av8SqIlMFmbrrghSa+csutE
+ +4ua4K7qwq0sTWTbfttn+VNfh4oEpJRtL6Nbpu/Y/SQLpeHcZ8L4kcuybgyxm71oMgo3
+ xH+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=vnQjeQmNXYSVTp14z/A3IX9628okuFRfsxSxy21UxYk=;
+ fh=6IW7+orrxRLeGMWHepYNvHBtu/+mxXppn1WugRTrmJQ=;
+ b=Vw48mp3YKMmUiOJ106lWmsE6+Dza/oOToz8If3h2Beh0uW4k/vTtbS7m3YHq01qv1T
+ RbtfCXTNhPmKrVw3QVB/FaXCqqr/1x6uiD7XRv5qiDVtp8mqqPk0tNV0Xotz4cjL6Uue
+ 54LDSHX9oeh63ghkXjMSARN1j6FXPBj9YhaCQdvWgKjsNHtKidsZuOlNDwbLxitKGc9E
+ hvtiA/cjIdH5/SsJ2OBYby/merbB/WGIJ7SqWUCpHikWAUnqugdqRsb5DMiZXh4CIX05
+ cf3mDii9DvGJN6MxoJsRBi20QUqrDj3mzwvQ2PZJJb6pnWcZL0wsesDWCldlXua5sYJJ
+ Mngg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1780936040; x=1781540840; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=vnQjeQmNXYSVTp14z/A3IX9628okuFRfsxSxy21UxYk=;
+ b=Tkcox2QHj7qsr2IQ5KbNi8Gc2wnpgM9oPXV0JcVdlP/X1chjho7PuPn6CteDDWW8Hw
+ o1icm5I54dHMWTsy9qd2a5ENRakabhKxcWKLJmw107Q+Uae9h6G2nLDnzcQIHILSLxfF
+ HytS01zZz5/efY3kyXYirnn5KLUL9flaqxgB5+QSfff3pJoWZo4NSpJj1yqYyogfYQAp
+ RMqEnQ69SJ5J0oiN+OYFfUUc9ulbSqxZjKK4BFPxFb3U51g0gcBYeRGNQbjiPUhF8dXN
+ iF4IXo5tfkY8s7MekhH7CQMIQvFKI8u+Ww96S7Z+ah+pKmnAaEPUAS99VmBeqmZa9cXP
+ B+Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780935420; x=1781540220;
+ d=1e100.net; s=20251104; t=1780936040; x=1781540840;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=gIXNN7bgVLNvp+owSx+1TMlJEr6pbE0T/kgh+BFIBc8=;
- b=F6WPPLu0ajHSefoe4QaaD7vaiQXxnJoSldASVJRpBdcpiypYdeD8S7fy+OUF1PG9jh
- L8IsnqyCiLrkTY/KVklLG+HElldncm9EkyNxpai+y52fC2uXsa9b6l4qNh2LbgEyGD4i
- ASejgYmFqfI2MvJinsOOnyxThpYFJ0vRbXaOa6DG8C5gQGeDUYlDZoFXZU5iosWifksk
- XxYqkW2p5xsY4qqN7GWlM1aOTqkaENFJ/afJ6VsmREEn1mkVI2mkwpqo6cB1uip2y9/a
- kWR3ozBuUqIJnk/YfMWUNiO+2cwcUci7VebcChEw5PYCu3ysitlR4+OIIBWdrUN6Isr8
- 1dnQ==
-X-Gm-Message-State: AOJu0YzGLNYSvDbVV4tDrXBRv1XSxEszG3SlUaoTJK6meHv9hvYuiM+U
- cfCsydu4KH5nIvQIsPdKbrjkyegHMmHE92II5/U1ZJC67+lQcH2jeaYhMJzVrsphlB7KHhiaylW
- KRg7W/Svok9SribXcgpVGL08+7J+BCB8PGHOVwTlvnBEFwOYH3BgJ0otMvrJZ4Ez/X1XuZpqsDo
- ndkVO52g26ZK5aqNWfrM4=
-X-Gm-Gg: Acq92OGHjClrtBO74hOjWXhO3Uf5rED3sUsxq8r8/56wKKu0dQbRvMcRVrv0rnlOzDr
- TuVFRwKgO+m3D5oJ5+6HTMiiNMOeYqnqi8R1JbNit4pYnVFWlug/iN2sOlfSg1tpcp6QArDO4Me
- ky093dusiSb7I1N+bT5B1Bt1WIlhN04x50K7j44q2W9wifokWlt71GGENRFsMG1BTorZJuWw1xf
- cXBpEFi4bTZs490a7TqoSR8eepL2KXRfrFa3hKnbr+C4oACDSpEjLskzCdomMVDdnalyAdcGK4X
-X-Received: by 2002:a05:7022:2222:b0:138:63d:e328 with SMTP id
- a92af1059eb24-138065b6855mr7069764c88.0.1780935419968; 
- Mon, 08 Jun 2026 09:16:59 -0700 (PDT)
-X-Received: by 2002:a05:7022:2222:b0:138:63d:e328 with SMTP id
- a92af1059eb24-138065b6855mr7069744c88.0.1780935419246; Mon, 08 Jun 2026
- 09:16:59 -0700 (PDT)
+ bh=vnQjeQmNXYSVTp14z/A3IX9628okuFRfsxSxy21UxYk=;
+ b=Hss9U0+Ne3PcRgKel3WyxWbfFpd73RgHBS8oRMZt1EJnRJAcd5cDo74ZWJ0pckReaQ
+ ug8MPWTV3QETIyG3HCDT1HlA6L8qr66UvxLrXWixfPl/0W81vkYbrC0heWUUXyZTYM2J
+ ahERlErevz8IsTMwMAnLJprDYYc/6YTrj3hIWKfjWZ+Rnqp49GOOtbBfwlf2xCrMYu8C
+ 4tGQV65SFt4Hu+1H2shkf3aSeuXDmU6k2wGkaoxFz1+ORvHeJb60gqVYRGJiwekgN/0Z
+ aiL+c1+sCUF02jDKIrOq2onqXjrOaMsyDBSKSSPNb5V7LuF1RJ5f6RwXgjJBs5SWkhoA
+ WC5Q==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ/chP0a0I70oPTmoHpNjk8HPWVFLx1XGm18r+0dXzY+15zHfjV7K+aXrxSWTE6l3AhS6HY=@dpdk.org
+X-Gm-Message-State: AOJu0Yx7P7kCgbQiH3scCqN7lbkZSVbIDmE7qffnxxU3gS2qCmWT900+
+ E6/YqDcTcNvjIdqSPlUIwpQyZ2Y2i/GMlVBG3t/aMDQRlGbcPJwi6PV72xLsVJPOoC3wNShQk1J
+ 3U2RPhd2dbmcUraSe1kqhL+vodvareMQ=
+X-Gm-Gg: Acq92OENanPhRQNlekSevCuC3amZR9uNBXFYsAb8jKZcVogyvWACeYWweAcYNFRRWeX
+ b3LzO1McxVhE1embaBBnGzTJyEn+PAOgj6AY2qkwZR2t1w9YNDsbwcyhS0b2E4iQDJIAVGAGPBm
+ 9iDXckNJoTUl6WF6VkOc5elHSuNCOO6oEWFVEzWVurgUH0g63EwhUc7hYvvWzdI6dCDrFza42Dm
+ 2d/I6szTQ8eyzKzVFYCF3mqMZPPUZUkDQ1vIrEW4R+NvF0taMv35/RALqdTecxNSlE3adhJU+7S
+ l73GsWfaPQQ74g==
+X-Received: by 2002:ac8:6109:0:b0:517:8a19:a461 with SMTP id
+ d75a77b69052e-51795c56d21mr217559111cf.42.1780936040055; Mon, 08 Jun 2026
+ 09:27:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260606025211.1082615-1-pravin.bathija@dell.com>
- <20260606025211.1082615-5-pravin.bathija@dell.com>
-In-Reply-To: <20260606025211.1082615-5-pravin.bathija@dell.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Mon, 8 Jun 2026 18:16:47 +0200
-X-Gm-Features: AVVi8Ce0HhIYYjhrq9EYO-nTUHXKUkcRT1ie7ekBzZjQ6FkcUBX437CYGWkoHcY
-Message-ID: <CAO55csyEjjMV6kKqcpJdA3bN2PSL8owBmoqMJPVupJ4K4CqRuA@mail.gmail.com>
-Subject: Re: [PATCH v16 4/5] vhost: add mem region add/remove handlers
-To: pravin.bathija@dell.com
-Cc: dev@dpdk.org, stephen@networkplumber.org, fengchengwen@huawei.com, 
- thomas@monjalon.net
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 8-zMteYO5WfgZsNmLA3qJe_6btIvuii3NyCMiGSd190_1780935420
-X-Mimecast-Originator: redhat.com
+References: <20260601101559.1925302-1-sthotton@marvell.com>
+ <20260601101559.1925302-3-sthotton@marvell.com>
+In-Reply-To: <20260601101559.1925302-3-sthotton@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 8 Jun 2026 21:56:54 +0530
+X-Gm-Features: AVVi8CcefSCKRoNsdvu58xPYD5jsJuMHQkDOpzyJf4BAZamBgU1cS_XzDqW5FUo
+Message-ID: <CALBAE1NB5fKw-=o_iu7CHhR4Hq6T5ekHYABRFDmLar7bT=ms4Q@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] dma/odm: avoid zero length DMA transfers
+To: Shijith Thotton <sthotton@marvell.com>
+Cc: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>,
+ Vidya Sagar Velumuri <vvelumuri@marvell.com>, dev@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -86,376 +99,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, Jun 6, 2026 at 4:52=E2=80=AFAM <pravin.bathija@dell.com> wrote:
+On Mon, Jun 1, 2026 at 3:46=E2=80=AFPM Shijith Thotton <sthotton@marvell.co=
+m> wrote:
 >
-> From: Pravin M Bathija <pravin.bathija@dell.com>
+> Add validation to reject zero-length DMA operations early
+> with -EINVAL, preventing queue disable.
 >
-> Add support for VHOST_USER_ADD_MEM_REG, VHOST_USER_REM_MEM_REG and
-> VHOST_USER_GET_MAX_MEM_SLOTS. Refactor memory initialization into
-> common helper and add supporting functions for dynamic memory management.
->
-> Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
+> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
+
+
+Added Fixes to 2/2 patch.
+
+Series applied to dpdk-next-net-mrvl/for-main. Thanks
+
+
+
 > ---
->  lib/vhost/vhost_user.c | 266 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 266 insertions(+)
+>  drivers/dma/odm/odm_dmadev.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
 >
-> diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-> index 94fca8b589..020c993b29 100644
-> --- a/lib/vhost/vhost_user.c
-> +++ b/lib/vhost/vhost_user.c
-> @@ -71,6 +71,9 @@ VHOST_MESSAGE_HANDLER(VHOST_USER_SET_FEATURES, vhost_us=
-er_set_features, false, t
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_OWNER, vhost_user_set_owner, false,=
- true) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_RESET_OWNER, vhost_user_reset_owner, fa=
-lse, false) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_MEM_TABLE, vhost_user_set_mem_table=
-, true, true) \
-> +VHOST_MESSAGE_HANDLER(VHOST_USER_GET_MAX_MEM_SLOTS, vhost_user_get_max_m=
-em_slots, false, false) \
-> +VHOST_MESSAGE_HANDLER(VHOST_USER_ADD_MEM_REG, vhost_user_add_mem_reg, tr=
-ue, true) \
-> +VHOST_MESSAGE_HANDLER(VHOST_USER_REM_MEM_REG, vhost_user_rem_mem_reg, fa=
-lse, true) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_LOG_BASE, vhost_user_set_log_base, =
-true, true) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_LOG_FD, vhost_user_set_log_fd, true=
-, true) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_VRING_NUM, vhost_user_set_vring_num=
-, false, true) \
-> @@ -1167,6 +1170,24 @@ add_guest_pages(struct virtio_net *dev, struct rte=
-_vhost_mem_region *reg,
->         return 0;
->  }
+> diff --git a/drivers/dma/odm/odm_dmadev.c b/drivers/dma/odm/odm_dmadev.c
+> index 0211133bd4..7488b960fd 100644
+> --- a/drivers/dma/odm/odm_dmadev.c
+> +++ b/drivers/dma/odm/odm_dmadev.c
+> @@ -110,6 +110,9 @@ odm_dmadev_copy(void *dev_private, uint16_t vchan, rt=
+e_iova_t src, rte_iova_t ds
+>         vq =3D &odm->vq[vchan];
+>         hdr.s.xtype =3D vq->xtype;
 >
-> +static void
-> +remove_guest_pages(struct virtio_net *dev, struct rte_vhost_mem_region *=
-reg)
-> +{
-> +       uint64_t reg_start =3D reg->host_user_addr;
-> +       uint64_t reg_end =3D reg_start + reg->size;
-> +       uint32_t i, j =3D 0;
+> +       if (unlikely(!length))
+> +               return -EINVAL;
 > +
-> +       for (i =3D 0; i < dev->nr_guest_pages; i++) {
-> +               if (dev->guest_pages[i].host_user_addr >=3D reg_start &&
-> +                   dev->guest_pages[i].host_user_addr < reg_end)
-> +                       continue;
-> +               if (j !=3D i)
-> +                       dev->guest_pages[j] =3D dev->guest_pages[i];
-> +               j++;
-> +       }
-> +       dev->nr_guest_pages =3D j;
-> +}
-> +
->  #ifdef RTE_LIBRTE_VHOST_DEBUG
->  /* TODO: enable it only in debug mode? */
->  static void
-> @@ -1591,6 +1612,251 @@ vhost_user_set_mem_table(struct virtio_net **pdev=
-,
->         return RTE_VHOST_MSG_RESULT_ERR;
->  }
+>         h =3D length;
+>         h |=3D ((uint64_t)length << 32);
 >
-> +
-> +static int
-> +vhost_user_get_max_mem_slots(struct virtio_net **pdev __rte_unused,
-> +                       struct vhu_msg_context *ctx,
-> +                       int main_fd __rte_unused)
-> +{
-> +       uint32_t max_mem_slots =3D VHOST_MEMORY_MAX_NREGIONS;
-> +
-> +       ctx->msg.payload.u64 =3D max_mem_slots;
-> +       ctx->msg.size =3D sizeof(ctx->msg.payload.u64);
-> +       ctx->fd_num =3D 0;
-> +
-> +       return RTE_VHOST_MSG_RESULT_REPLY;
-> +}
-> +
-> +/*
-> + * Invalidate and re-translate all vring addresses after the memory tabl=
-e
-> + * has been modified (add/remove region).
-> + *
-> + * translate_ring_addresses() may call numa_realloc(), which can realloc=
-ate
-> + * the device structure.  The updated pointer is written back through *p=
-dev
-> + * so callers must refresh their local "dev" afterwards: dev =3D *pdev.
-> + */
-> +static void
-> +vhost_user_invalidate_vrings(struct virtio_net **pdev)
-> +{
-> +       struct virtio_net *dev =3D *pdev;
-> +       uint32_t i;
-> +
-> +       for (i =3D 0; i < dev->nr_vring; i++) {
-> +               struct vhost_virtqueue *vq =3D dev->virtqueue[i];
-> +
-> +               if (!vq)
-> +                       continue;
-> +
-> +               if (vq->desc || vq->avail || vq->used) {
-> +                       vq_assert_lock(dev, vq);
-> +
-> +                       vring_invalidate(dev, vq);
-> +
-> +                       translate_ring_addresses(&dev, &vq);
-> +               }
+> @@ -262,14 +265,20 @@ odm_dmadev_copy_sg(void *dev_private, uint16_t vcha=
+n, const struct rte_dma_sge *
+>         pending_submit_len =3D vq->pending_submit_len;
+>         pending_submit_cnt =3D vq->pending_submit_cnt;
+>
+> -       if (unlikely(nb_src > 4 || nb_dst > 4))
+> +       if (unlikely(!nb_src || nb_src > 4 || !nb_dst || nb_dst > 4))
+>                 return -EINVAL;
+>
+> -       for (i =3D 0; i < nb_src; i++)
+> +       for (i =3D 0; i < nb_src; i++) {
+> +               if (unlikely(!src[i].length))
+> +                       return -EINVAL;
+>                 s_sz +=3D src[i].length;
 > +       }
-> +
-> +       *pdev =3D dev;
-> +}
-> +
-> +/*
-> + * Macro wrapper that performs the compile-time lock assertion with the
-> + * correct message ID at the call site, then calls the implementation.
-> + */
-> +#define dev_invalidate_vrings(pdev, id) do { \
-> +       static_assert(id ## _LOCK_ALL_QPS, \
-> +               #id " handler is not declared as locking all queue pairs"=
-); \
-> +       vhost_user_invalidate_vrings(pdev); \
-> +} while (0)
-> +
-> +static int
-> +vhost_user_add_mem_reg(struct virtio_net **pdev,
-> +                       struct vhu_msg_context *ctx,
-> +                       int main_fd __rte_unused)
-> +{
-> +       struct VhostUserMemoryRegion *region =3D &ctx->msg.payload.memreg=
-.region;
-> +       struct virtio_net *dev =3D *pdev;
-> +       uint32_t i;
-> +
-> +       /* convert first region add to normal memory table set */
-> +       if (dev->mem =3D=3D NULL) {
-> +               if (vhost_user_initialize_memory(pdev) < 0)
-> +                       goto close_msg_fds;
+>
+> -       for (i =3D 0; i < nb_dst; i++)
+> +       for (i =3D 0; i < nb_dst; i++) {
+> +               if (unlikely(!dst[i].length))
+> +                       return -EINVAL;
+>                 d_sz +=3D dst[i].length;
 > +       }
+>
+>         if (s_sz !=3D d_sz)
+>                 return -EINVAL;
+> @@ -342,6 +351,9 @@ odm_dmadev_fill(void *dev_private, uint16_t vchan, ui=
+nt64_t pattern, rte_iova_t
+>                 .s.nlst =3D 1,
+>         };
+>
+> +       if (unlikely(!length))
+> +               return -EINVAL;
 > +
-> +       /* make sure new region will fit */
-> +       if (dev->mem->nregions >=3D VHOST_MEMORY_MAX_NREGIONS) {
-> +               VHOST_CONFIG_LOG(dev->ifname, ERR, "too many memory regio=
-ns already (%u)",
-> +                                                                       d=
-ev->mem->nregions);
-> +               goto close_msg_fds;
-> +       }
-> +
-> +       /* make sure supplied memory fd present */
-> +       if (ctx->fd_num !=3D 1) {
-> +               VHOST_CONFIG_LOG(dev->ifname, ERR, "fd count makes no sen=
-se (%u)", ctx->fd_num);
-> +               goto close_msg_fds;
-> +       }
-> +
-> +       /* Make sure no overlap in guest virtual address space */
-> +       for (i =3D 0; i < dev->mem->nregions; i++) {
-> +               struct rte_vhost_mem_region *cur =3D &dev->mem->regions[i=
-];
-> +               uint64_t cur_start =3D cur->guest_user_addr;
-> +               uint64_t cur_end =3D cur_start + cur->size - 1;
-> +               uint64_t new_start =3D region->userspace_addr;
-> +               uint64_t new_end =3D new_start + region->memory_size - 1;
-> +
-> +               if (new_end >=3D cur_start && new_start <=3D cur_end) {
-> +                       VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +                               "requested memory region overlaps with an=
-other region");
-> +                       VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +                               "\tRequested region address:0x%" PRIx64,
-> +                               region->userspace_addr);
-> +                       VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +                               "\tRequested region size:0x%" PRIx64,
-> +                               region->memory_size);
-> +                       VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +                               "\tOverlapping region address:0x%" PRIx64=
-,
-> +                               cur->guest_user_addr);
-> +                       VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +                               "\tOverlapping region size:0x%" PRIx64,
-> +                               cur->size);
-> +                       goto close_msg_fds;
-> +               }
-> +       }
-> +
-> +       /* New region goes at the end of the contiguous array */
-> +       struct rte_vhost_mem_region *reg =3D &dev->mem->regions[dev->mem-=
->nregions];
-> +
-> +       reg->guest_phys_addr =3D region->guest_phys_addr;
-> +       reg->guest_user_addr =3D region->userspace_addr;
-> +       reg->size            =3D region->memory_size;
-> +       reg->fd              =3D ctx->fds[0];
-> +       ctx->fds[0]          =3D -1;
-> +
-> +       if (vhost_user_mmap_region(dev, reg, region->mmap_offset) < 0) {
-> +               VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to mmap region=
-");
-> +               if (reg->mmap_addr) {
-> +                       /* mmap succeeded but a later step (e.g. add_gues=
-t_pages)
-> +                        * failed; undo the mapping and any guest-page en=
-tries.
-> +                        */
-> +                       remove_guest_pages(dev, reg);
-> +                       free_mem_region(reg);
-> +               } else {
-> +                       close(reg->fd);
-> +                       reg->fd =3D -1;
-> +               }
-> +               goto close_msg_fds;
-> +       }
-> +
-> +       dev->mem->nregions++;
-> +
-> +       if (dev->async_copy && rte_vfio_is_enabled("vfio")) {
-> +               if (async_dma_map_region(dev, reg, true) < 0)
-> +                       goto free_new_region_no_dma;
-> +       }
-> +
-> +       if (dev->postcopy_listening) {
-> +               /*
-> +                * Cannot use vhost_user_postcopy_register() here because=
- it
-> +                * reads ctx->msg.payload.memory (SET_MEM_TABLE layout), =
-but
-> +                * ADD_MEM_REG uses the memreg payload.  Register the
-> +                * single new region directly instead.
-> +                */
-> +               if (vhost_user_postcopy_region_register(dev, reg) < 0)
-> +                       goto free_new_region;
-> +       }
-> +
-> +       dev_invalidate_vrings(pdev, VHOST_USER_ADD_MEM_REG);
-> +       dev =3D *pdev;
-> +       dump_guest_pages(dev);
-> +
-> +       /*
-> +        * In postcopy mode the front-end expects the back-end to reply w=
-ith
-> +        * the base of the mapped region (see VHOST_USER_SET_MEM_TABLE, w=
-hich
-> +        * applies here accordingly).  No reply is expected otherwise.
-> +        *
-> +        * translate_ring_addresses() above may have reallocated dev->mem=
- via
-> +        * numa_realloc(), so re-derive the region pointer from the refre=
-shed
-> +        * dev rather than using the now-stale reg.  The new region is th=
-e last
-> +        * entry in the contiguous array.
-> +        */
-> +       if (dev->postcopy_listening) {
-> +               reg =3D &dev->mem->regions[dev->mem->nregions - 1];
-> +               ctx->msg.payload.memreg.region.userspace_addr =3D reg->ho=
-st_user_addr;
-> +               ctx->msg.size =3D sizeof(ctx->msg.payload.memreg);
-> +               ctx->fd_num =3D 0;
-> +               return RTE_VHOST_MSG_RESULT_REPLY;
-> +       }
-
-Thanks Stephen, good catch by the AI.
-I did some digging into Qemu code, which AI later confirmed, and if
-the series was tested,
-the test passed "by accident" when postcopy was not enabled because
-Qemu would read the
-padding field of the payload, and would treat its value as
-RTE_VHOST_MSG_RESULT_OK
-because it is zero-initialized...
-
-
-With this fix:
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-
-> +
-> +       return RTE_VHOST_MSG_RESULT_OK;
-> +
-> +free_new_region:
-> +       if (dev->async_copy && rte_vfio_is_enabled("vfio"))
-> +               async_dma_map_region(dev, reg, false);
-> +free_new_region_no_dma:
-> +       remove_guest_pages(dev, reg);
-> +       free_mem_region(reg);
-> +       dev->mem->nregions--;
-> +close_msg_fds:
-> +       close_msg_fds(ctx);
-> +       return RTE_VHOST_MSG_RESULT_ERR;
-> +}
-> +
-> +static int
-> +vhost_user_rem_mem_reg(struct virtio_net **pdev,
-> +                       struct vhu_msg_context *ctx,
-> +                       int main_fd __rte_unused)
-> +{
-> +       struct VhostUserMemoryRegion *region =3D &ctx->msg.payload.memreg=
-.region;
-> +       struct virtio_net *dev =3D *pdev;
-> +       uint32_t i;
-> +
-> +       if (dev->mem =3D=3D NULL || dev->mem->nregions =3D=3D 0) {
-> +               VHOST_CONFIG_LOG(dev->ifname, ERR, "no memory regions to =
-remove");
-> +               return RTE_VHOST_MSG_RESULT_ERR;
-> +       }
-> +
-> +       for (i =3D 0; i < dev->mem->nregions; i++) {
-> +               struct rte_vhost_mem_region *current_region =3D &dev->mem=
-->regions[i];
-> +
-> +               /*
-> +                * According to the vhost-user specification:
-> +                * The memory region to be removed is identified by its G=
-PA,
-> +                * user address and size. The mmap offset is ignored.
-> +                */
-> +               if (region->userspace_addr =3D=3D current_region->guest_u=
-ser_addr
-> +                       && region->guest_phys_addr =3D=3D current_region-=
->guest_phys_addr
-> +                       && region->memory_size =3D=3D current_region->siz=
-e) {
-> +                       if (dev->async_copy && rte_vfio_is_enabled("vfio"=
-))
-> +                               async_dma_map_region(dev, current_region,=
- false);
-> +                       if (dev->features & (1ULL << VIRTIO_F_IOMMU_PLATF=
-ORM))
-> +                               vhost_user_iotlb_cache_remove(dev,
-> +                                       current_region->guest_phys_addr,
-> +                                       current_region->size);
-> +                       remove_guest_pages(dev, current_region);
-> +                       free_mem_region(current_region);
-> +
-> +                       /* Compact the regions array to keep it contiguou=
-s */
-> +                       if (i < dev->mem->nregions - 1) {
-> +                               memmove(&dev->mem->regions[i],
-> +                                       &dev->mem->regions[i + 1],
-> +                                       (dev->mem->nregions - 1 - i) *
-> +                                       sizeof(struct rte_vhost_mem_regio=
-n));
-> +                               memset(&dev->mem->regions[dev->mem->nregi=
-ons - 1],
-> +                                       0, sizeof(struct rte_vhost_mem_re=
-gion));
-> +                       }
-> +
-> +                       dev->mem->nregions--;
-> +                       dev_invalidate_vrings(pdev, VHOST_USER_REM_MEM_RE=
-G);
-> +                       dev =3D *pdev;
-> +                       return RTE_VHOST_MSG_RESULT_OK;
-> +               }
-> +       }
-> +
-> +       VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to find region");
-> +       return RTE_VHOST_MSG_RESULT_ERR;
-> +}
-> +
->  static bool
->  vq_is_ready(struct virtio_net *dev, struct vhost_virtqueue *vq)
->  {
+>         h =3D (uint64_t)length;
+>
+>         switch (pattern) {
 > --
-> 2.43.0
+> 2.25.1
 >
-
