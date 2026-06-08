@@ -2,117 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0E2CD8CAD
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 05:23:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF369CD8CAD
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 07:02:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3F3A3402AD;
-	Tue,  9 Jun 2026 07:23:44 +0200 (CEST)
-Received: from PH0PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11011005.outbound.protection.outlook.com [40.107.208.5])
- by mails.dpdk.org (Postfix) with ESMTP id 1B177400EF
- for <dev@dpdk.org>; Tue,  9 Jun 2026 07:23:43 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fZKfqBKtPB4Bqd1L/vJhOcCaLG4LIfgKC/sXU4W8Abj8qFnp5lKED93dDU2BW+n38sl7ahTpFoRWsiE974tJ0U9T4GO1sTu4fmBPfExizJOc4X1EWmYGTNgB0xlcf79VkDePgvYtn/IaJHhSg3rRS0nZlHwQa4OAg1/5u6bfO2XUnyC2qFFgVhCzxbk0T5VhAhevo/iJryKvwBmhoaPmW0jRKo1/bZgzqKal7/z0XNgGIkVEExQJTL/U9INJK91DT/Ee0RB+GJFYN9g8D4Ky9OTm5h2usMlpy+PrHvRNq9G5fP9UomiKmHaAmFdAdqkSyfqt9CFzLtBdXeCs14dVng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0otSU6Of2UPSnudqvLjNWg70MSwHsDyPVJIs0YjPAbY=;
- b=nO/MsHo1fWCFupOUnw/brFPnSTFs3ko6JyjSjbALK7j1UMJLPhhcPFSDPKKIEopCgJ4BR8vk+SqjCnQJEFIiPQ174mbGykjnLmz1Vja3IqXGXFfl/sD9ebFyUm43qUy5STR/tsrM52HNGZ7o+E7EKMIv/zP26JcUo07Blj3QQ8VX0au5hcwW77HvdCUj8YUR2Sx+umaLL6CDYI/MetNkAPotF1X8TIVPy1+fUJMoZXJS4wwWyKl2LAdPjM8i7EE2RecR1lG7ndDJn+q6jCD418e735agk4TSIA54ZYhahr+X3I+p2TYcC2wL6wT07Orul6f1yqz7h+lLkVrVFFO9Xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0otSU6Of2UPSnudqvLjNWg70MSwHsDyPVJIs0YjPAbY=;
- b=r8pGYo2rUy+kaNp1fg+299z7pqhPX996NwQBWUEIsGQ15k5AG3Dzw6oAJRrd5V44gIokSKYriCtwJxUoMiw5jph3QKOWyWv8SQIGti9kMiVg5u6xBPVj6u/UuIJrjkHXnUppK5GUmlULMyDi10X/VzazNyblX6Uu1XHAcHAFwwRGvUX8YWgUCM48Sg2me6crVCC3UnM69zljqjp/JPZrdBsHjcGJW/dCx25iluflAAO56+raAdeGq7npP+lckb5kRvcC0HlJNApygUNwZ37z2ci9xfglzieemBQycnraDiQPOhJ8citT8LFJiWHAMJAUuz3p+8Xpmjk8jk1WWqjLDQ==
-Received: from BN9PR12MB5338.namprd12.prod.outlook.com (2603:10b6:408:103::23)
- by MN2PR12MB4302.namprd12.prod.outlook.com (2603:10b6:208:1de::7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.17; Tue, 9 Jun 2026
- 05:23:39 +0000
-Received: from BN9PR12MB5338.namprd12.prod.outlook.com
- ([fe80::7b66:315e:f851:8ddb]) by BN9PR12MB5338.namprd12.prod.outlook.com
- ([fe80::7b66:315e:f851:8ddb%5]) with mapi id 15.21.0092.011; Tue, 9 Jun 2026
- 05:23:39 +0000
-From: Bing Zhao <bingz@nvidia.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: Slava Ovsiienko <viacheslavo@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>,
- Raslan Darawsheh <rasland@nvidia.com>, Ori Kam <orika@nvidia.com>, Dariusz
- Sosnowski <dsosnowski@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan
- Azrad <matan@nvidia.com>, "NBU-Contact-Thomas Monjalon (EXTERNAL)"
- <thomas@monjalon.net>
-Subject: RE: [PATCH v4] ethdev: support inline calculating masked item value
-Thread-Topic: [PATCH v4] ethdev: support inline calculating masked item value
-Thread-Index: AQHc8ztrRWrD0dpa1kuhr3GBzIA7grY01VUAgADkXoA=
-Date: Tue, 9 Jun 2026 05:23:39 +0000
-Message-ID: <BN9PR12MB53381BD8E5B7A7B90718E713D01D2@BN9PR12MB5338.namprd12.prod.outlook.com>
-References: <20260603081941.9049-1-bingz@nvidia.com>
- <20260603092805.9837-1-bingz@nvidia.com>
- <20260608084558.4dd4c07c@phoenix.local>
-In-Reply-To: <20260608084558.4dd4c07c@phoenix.local>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR12MB5338:EE_|MN2PR12MB4302:EE_
-x-ms-office365-filtering-correlation-id: 33c8ecee-af2b-4c88-40cc-08dec5e743ca
-x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|38070700021|3023799007|56012099006|18002099003|4143699003|22082099003|11063799006;
-x-microsoft-antispam-message-info: Tna/M4ThDx16VGgzk5Oh1gnnb75CarAsBJUatfXEojToc4dWhT2Dsz612GhDOkHOQpu/7r7s8+ijn94zcmxdj3lRdKlDhMwe+Ds7mqSX4v3MwVorxs7TyjoPICbbTEd9jG3mUyCoIDiH8sLAMnGriGXizkgzSYrsrFHWoAg1CFRpZacnGE7M0JCzGgWb8vQ4JYSzRFSgR9ZR4RTTFMwttZS6SUUvHS5GdndQQEsNYrIUt8ENf0aGwfSdTDYkMWf7MtEdP2QNTY+ZAua+tLiq7X8Msmd7+CRexfc3mbXBspuTrU3Cxe9/vhez2atNj0txpsS7XV0QtTtqLlxa13LrxsMiE8glZYNm7b+zMZYpzYiUsROHE2JcqBzTgWxBO3R4sHBAj4aKeab2+nyRbirIqpF2a+s/P1gChq/Jle2cGkMCEwzJ26bfRvb4iC81JsgUo31gJGhN+DgOEtjdWQVg5N2bNTWYGRJpYg5VaBKwMIhvlvmjEnrMOZjz8gYsOLiRDtb6Pp3lhDk4Q7YrBb2xWg+4bRCrv+JJXQQQoxyFmqLRIgmOGpGv9Em3AZuIqu/DU3Aw2p+Q+CuhWBcpmYkgOtf2YSGBpg0oZNiWNt20cv45EhzjYFw3/IGkxOn7AVspgSJWTKRTnEN6W6PgEqFQq9FUnTmis1nFcSEJaeB89vaBGn44Q9YFDvXannk7WqrqRilydtULf23j5ZzpIU7Lrma4OMYo7K91QNQFTiBq3WIWFLq6J6T/LhPGhdPavBDr
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BN9PR12MB5338.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700021)(3023799007)(56012099006)(18002099003)(4143699003)(22082099003)(11063799006);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?hTWesWravhSinkD0CbjccyKvPu+NUOjst7RU8rZ5OHVDrzOFqihLrP+qohs/?=
- =?us-ascii?Q?RnJa8eyYp7y87/2tKIiy+Od9bNEJtCSo1ixIFuI9PrzSZr+/+uap5QyG1m22?=
- =?us-ascii?Q?d8XXWBait/p5Di/aZbUN0LkcL0wduV+imDRsnVh9bxoWq0y8CXr6YUt9ESwF?=
- =?us-ascii?Q?yqUMOJ4+mXInZOWUWV0FawnCk++eoFU4T+SQlaruW+zavDc/HcP5azGPuLot?=
- =?us-ascii?Q?LVSpWm/Je8YHBVWgZRevhZUSkSkX5xN9P7gvT8MnYAM8Yt0NqnuUXuf5p0zH?=
- =?us-ascii?Q?avToChde4aA1e6a5IFqMCEQZp9mbVW+uUyqHRrK8Xay0duui92F+zbMfRNIU?=
- =?us-ascii?Q?Q4o6QiRCRPM7wxCxzeZG/KMDWKf0RQTk11yG1aXU4Isq7aKMU3FKGBqBpKqp?=
- =?us-ascii?Q?k4udoWHZu++AntP/V/KMAkdtPQ/g/LGiFtcqxgJT+KaBGFHzRChCmdZzN5Vs?=
- =?us-ascii?Q?rfqmJy4QVVdzv+jMRI1eukg4QYDb3d5Emt3mhy2ern9HKfbAzLlXjXIqQ9hd?=
- =?us-ascii?Q?+xrnV7I5H86OdgSV5q54J+lOHEfDT/tDXpk8uJR5mdJJttDHkX9ZZalb1Heo?=
- =?us-ascii?Q?tiGTJKWFU5dRopKsaYVDV6ABbes38OofTRQXpOsOtbMiYP4EmP3HJKmywL93?=
- =?us-ascii?Q?mNwAwtol4KykkMGw+MIvEh29lSbekBYfGLYic3M0BQq0ZFST2lNjyI0iRcXA?=
- =?us-ascii?Q?8K8C9HMN1t5YPCq8bcBB0TJT5k5t6eB22nrziBsxDOC9wkKDF4TweM6zrzW6?=
- =?us-ascii?Q?jET+0Rxz974b+dqkhvE6WV2PF2TMzzwuKS8uf+gTgvvJcam3uY9JffEMkjBK?=
- =?us-ascii?Q?71VCweJaRzKw8z5+K7MSO465SlxALgWN8olzxOfQvbCoijLM1WUASlJfB7im?=
- =?us-ascii?Q?igRcz8Sf4ioOVldDh7LjtYTQnchCO5+y3EtDmNPRwcsw149Zl7PxBVlVBkTL?=
- =?us-ascii?Q?/85EjKeWIHpLPPWN0cn/NcIzLkFi7m1OOIVbFEGrQvRVprtjRFHyhmLdZRbS?=
- =?us-ascii?Q?8YLEFKe+5bFlpITgEqWa0J/Qer84nJBLPd+t5odSoDj4TGdYGPceYzlTfQUi?=
- =?us-ascii?Q?6CrDCXf86vw73CJZ8v/8gQAkXkMf2eToQPWooI9kHd3fEo7GRBgu1V0nCaX1?=
- =?us-ascii?Q?cSbK0mPgQHjcSSChNGU9AJuSvnLjH9JP7R5E5cX7WB+T81x7dQ1liTVTycJr?=
- =?us-ascii?Q?bLvEDDoOfZYtfz20Z2b1vyMlojS5eRRoi1BoJrRgvswzEg3/IsV6C+v1Mvl7?=
- =?us-ascii?Q?ecDm8Q/JNeLJ5tN3q+5aMRON+rdm2gwABV/j78o6V6UZ6etWygtOln0SUVr7?=
- =?us-ascii?Q?ZDqss61Ii/7ZHPHAn9sgmQcV3mYbFbM8gc8RHjtThMQvloQuBhbIf7xtmh9s?=
- =?us-ascii?Q?gVeWBY+J/JeDkuzmfRK9+lNaH4RcYLFsc+8iyyFGIaCi8NOr8OtX6ad+jaAz?=
- =?us-ascii?Q?xcTTJZh8xHQ5LQsrHocFk/Tft8tBg2cIBiKPjRaqmvm90Wo1/c/LR8jWWzYT?=
- =?us-ascii?Q?qxcjdJkL8u96/4uwcfwZDJ5Mx1QVwbIV02OpFBiJuoQAWNnUQUQD9j7SZApG?=
- =?us-ascii?Q?+ZintZrp3zZPAJK73ZZVxwlurDXtFv1Zv8+1HZCZ0PePiPjd5lQydQrIRiiG?=
- =?us-ascii?Q?P7n7Ta23eQfRZ7f9fFIExLxQX3nV+5R83CCN0PwizaYdsBcPJXCZne/EUZWZ?=
- =?us-ascii?Q?vkX+3TuA3veYrycnKB6mgu5qixSw6EfljOjKKDphtPloMJLg?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id ACA31402BE;
+	Tue,  9 Jun 2026 09:02:32 +0200 (CEST)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
+ [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 21DAC402ED
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 15:26:05 +0200 (CEST)
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-36babe2c4bdso2522283a91.1
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 06:26:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1780925164; x=1781529964; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=zQpEFonZfDNVpg2dDfZVJgo+PGGA++DsD8OZa0Pwhuw=;
+ b=FedER2zMGKb1THul2N24tqRJ7rXKUWKBiq6LtuulC4plNXxLxKXCaWg1y8GZwbRJ5G
+ p1cVtNAgkzvtUIJlNk+5n8M2YVYBAO1NRX1bVdUevpOL96mIwDuxvPUP3ycE6NTFc2sz
+ O/SM021X+fYOzZ7TnMxZ1HVYV3f+tdcFncL3fgsvoSFnLiwxYanvrDhLPCwREE7i8U1b
+ JQX6iX7XAg4pe7/f6I59eUBi//4XFoWIPxelBIWWtdpq2a3CdhJyd2KU/4KyWyaZXOWA
+ oH4R+Mumzx2u3TdZdK7CRY5KE+FcQfvWsQixVRRv238jMFx590frf9tXxnGN81kO9tCd
+ Dttg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780925164; x=1781529964;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=zQpEFonZfDNVpg2dDfZVJgo+PGGA++DsD8OZa0Pwhuw=;
+ b=MjeuYC1jP0HZozly9rl/o5h1aNh5qDZ/rk/Ec8RpjAKVwjvyITbDRpQil1TtWjBUzf
+ DSHgEE+EYK5BU3hlUSEPz6XPUoKlPtXR1rLOTh0Ohu8TeZxHO7+HHOc3WsdePZION4GS
+ P0gaqXoEtoSPVPoqgZaxmudnZGIe2kzH24arMooTDK74qQ2DlEdDh/GK4r/VZeY/ocGQ
+ Cq6qog+wYozj9bpsFWsJMosTP6wHcrglOPxfoevXK2qrE3KRmD/GfPyj4U/RnWdFQuaz
+ 1h/oPtsPobKxa1+AyAjEWOO1rsrjBcFarZ9z64IPPw+yfoKjh1Owbm43N9OYSGyLQTW6
+ QxrQ==
+X-Gm-Message-State: AOJu0YzzDuXpFiWOzfuXBZJ6nokxh79kRnBdXJ4FrXxCdlr/5LFaHEq2
+ VtTb8Jf8K8MOO4Bvr7sg39hq21/y3krLa98ybAvxIB90XwsDBrimf6yy5LZd2Cg=
+X-Gm-Gg: Acq92OHiy+gozWLHVk3Z/JhgmpruBZBpF9Ff80jmH5L8Wf0W6cfN1LbQa6+YGndP9c3
+ fnM63MlQc9W02oit6rk3CJ85+ep3DXrYhUMb91w/H4mSb3800zBIRg/f6TJLuDSvFk5w9KSIw7E
+ zhoFnDwcK/OgPoFFAAwEPt+ifM30PaKPmUGyNCNHM9boP94D/UQSo5o/JHN2QJc+HXhZXVn1Q+G
+ EZp9p49u2pI+q+3+UqKtKz7fKCeVeZMkzByXZt4TGFV9m9NdNMwwZux6cng1C3KbPbeyA9awqe1
+ 8HfTT4rD1x3u6k9GWzn73l/mVfHxh3c9iCldDtOCpThy2fbcRSpYzOl+2n95iP7PgtOmOUxPYw9
+ 3LfZKB8uGIqcmUg/BYfeDKx9Dk3eAHqdMtcl6UnPw0/v27Y7jQCzrtkZf87bveQrkDtpxIYxua+
+ FuJzGagkgl6lNY+O3HaAol33ju2dJ/gNW42m7wvTS0+T+nrg==
+X-Received: by 2002:a17:90a:d606:b0:36b:5b82:4834 with SMTP id
+ 98e67ed59e1d1-370ee547414mr16054980a91.7.1780925163981; 
+ Mon, 08 Jun 2026 06:26:03 -0700 (PDT)
+Received: from localhost ([61.119.121.206]) by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-36f68b03ef6sm16385026a91.0.2026.06.08.06.26.03
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 08 Jun 2026 06:26:03 -0700 (PDT)
+From: Linhu Li <lilinhu618@gmail.com>
+To: dev@dpdk.org
+Cc: stable@dpdk.org,
+	dsosnowski@nvidia.com,
+	Linhu Li <lilinhu618@gmail.com>
+Subject: [PATCH v2] net/mlx5: fix counter TAILQ race between free and query
+ callback
+Date: Mon,  8 Jun 2026 21:25:55 +0800
+Message-Id: <20260608132555.31439-1-lilinhu618@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+In-Reply-To: <20260604101112.72177-1-lilinhu618@gmail.com>
+References: <20260604101112.72177-1-lilinhu618@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5338.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33c8ecee-af2b-4c88-40cc-08dec5e743ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2026 05:23:39.8410 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Sh9BfPhY+J7hc2urE5HlOaxIzTzpMOIlcIih9rZrsCVlRggyOer7T4fDASRXKj0Ek3kHims0KaCMc1Y6kKMolA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4302
+Content-Transfer-Encoding: 8bit
+X-Mailman-Approved-At: Tue, 09 Jun 2026 09:02:31 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -126,96 +81,105 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+flow_dv_counter_free() inserts counters into
+pool->counters[pool->query_gen] under pool->csl. Meanwhile,
+mlx5_flow_async_pool_query_handle() moves counters from
+pool->counters[query_gen ^ 1] to the global free list via
+TAILQ_CONCAT while holding only cmng->csl, not pool->csl.
 
-Let me check and update with v5.
+The comment in flow_dv_counter_free() claims the lock is not needed
+because the query callback and the release function operate on
+different lists. That holds only if the free path always observes
+the up-to-date query_gen. It can be violated:
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Monday, June 8, 2026 11:46 PM
-> To: Bing Zhao <bingz@nvidia.com>
-> Cc: Slava Ovsiienko <viacheslavo@nvidia.com>; dev@dpdk.org; Raslan
-> Darawsheh <rasland@nvidia.com>; Ori Kam <orika@nvidia.com>; Dariusz
-> Sosnowski <dsosnowski@nvidia.com>; Suanming Mou <suanmingm@nvidia.com>;
-> Matan Azrad <matan@nvidia.com>; NBU-Contact-Thomas Monjalon (EXTERNAL)
-> <thomas@monjalon.net>
-> Subject: Re: [PATCH v4] ethdev: support inline calculating masked item
-> value
->=20
-> External email: Use caution opening links or attachments
->=20
->=20
-> On Wed, 3 Jun 2026 12:28:05 +0300
-> Bing Zhao <bingz@nvidia.com> wrote:
->=20
-> > In the asynchronous API definition and some drivers, the rte_flow_item
-> > spec value may not be calculated by the driver due to the reason of
-> > speed of light rule insertion rate and sometimes the input parameters
-> > will be copied and changed internally.
-> >
-> > After copying, the spec and last will be protected by the keyword
-> > const and cannot be changed in the code itself. And also the driver
-> > needs some extra memory to do the calculation and extra conditions to
-> > understand the length of each item spec. This is not efficient.
-> >
-> > To solve the issue and support usage of the following fix, a new OP
-> > was introduced to calculate the spec and last values after applying
-> > the mask inline.
-> >
-> > Signed-off-by: Bing Zhao <bingz@nvidia.com>
-> > ---
->=20
-> More detailed AI review found some things that still need addressing.
->=20
-> On Wed,  3 Jun 2026 12:28:05 +0300, Bing Zhao wrote:
-> > Subject: [PATCH v4] ethdev: support inline calculating masked item
-> > value
->=20
-> Error: byte-wise masking corrupts embedded pointers in deep-copy item
-> types (RAW, FLEX, GENEVE_OPT).
->=20
-> In rte_flow_conv_pattern(), the new mask application runs over the fixed
-> item struct:
->=20
->         size_t item_mask_size =3D mask ? rte_flow_conv_item_mask_size(src=
-) :
-> 0;
->         ...
->         size_t mask_size =3D RTE_MIN(ret, item_mask_size);
->=20
->         for (j =3D 0; j < mask_size; j++)
->                 c_spec[j] &=3D mask[j];
->=20
-> item_mask_size is rte_flow_desc_item[type].size, the size of the fixed
-> item struct. For RTE_FLOW_ITEM_TYPE_RAW, FLEX, and GENEVE_OPT, that fixed
-> struct ends in an embedded pointer that rte_flow_conv_item_spec() has jus=
-t
-> populated to point at the deep-copied trailing data
-> (rte_flow_item_raw.pattern, rte_flow_item_flex.pattern,
-> rte_flow_item_geneve_opt.data). Because the masked range covers the whole
-> fixed struct, the loop ANDs the bytes of that pointer with the mask's
-> corresponding bytes (typically a NULL mask pointer), zeroing or garbling
-> it.
->=20
-> The converted item's pattern/data pointer is clobbered while the copied
-> payload it should reference is left unreachable. A consumer that follows
-> conv->pattern then dereferences NULL or a corrupt address. Plain value
-> conv->items
-> (eth, ipv4, ...) are unaffected; only the deep-copy item types break,
-> which is exactly what the test does not exercise.
->=20
-> Suggested fix: do not blind-mask the entire fixed struct for items that
-> carry an embedded pointer / desc_fn deep copy. Either skip masking when
-> rte_flow_desc_item[type].desc_fn !=3D NULL, or mask only the leading plai=
-n-
-> data region and leave the pointer field (and trailing copied bytes)
-> intact.
->=20
-> Warning: the new test validates only an ETH pattern, so the
-> RAW/FLEX/GENEVE_OPT path above is untested. A RAW item case would have
-> surfaced the pointer corruption.
->=20
-> Info: the Doxygen block for RTE_FLOW_CONV_OP_PATTERN_MASKED uses @p mask,
-> @p spec, @p last, but those are item fields, not parameters of the op; th=
-e
-> neighboring enum entries only document the @p src / @p dst types.
+1. A counter free thread (non-PMD, e.g. OVS offload thread) reads
+   pool->query_gen == 0 and is about to insert into counters[0].
+2. The free thread is preempted by the OS scheduler; it is a regular
+   pthread, not pinned to a core.
+3. The eal-intr-thread alarm fires: query_gen++ (now 1) and the async
+   query is sent.
+4. Hardware completes the query and the callback runs TAILQ_CONCAT on
+   counters[0] (= query_gen ^ 1).
+5. The free thread resumes and runs TAILQ_INSERT_TAIL on counters[0]
+   concurrently with step 4 on another core.
+
+Because the two paths take different locks, TAILQ_INSERT_TAIL and
+TAILQ_CONCAT run concurrently on the same list with no
+synchronization and corrupt it: the pool-local list ends up with a
+NULL head but a dangling tqh_last, and the global free list tail no
+longer points to the real tail. The just-freed counter and every
+counter inserted afterwards become unreachable and are leaked.
+
+Non-PMD threads can be preempted for hundreds of microseconds under
+CPU pressure, which is well within the async query round-trip time,
+so the window is reachable in practice.
+
+Fix it by taking pool->csl in the query completion callback before
+operating on pool->counters[query_gen], serializing the CONCAT with
+any concurrent INSERT. The lock is taken once per pool per query
+completion in the eal-intr-thread context, not on the datapath, so
+the cost is negligible. Lock order is pool->csl then cmng->csl,
+matching all other sites.
+
+Also handle the error path: previously the counters accumulated in
+pool->counters[query_gen] were abandoned when a query failed. Move
+them back to the global free list to avoid a leak on persistent
+query failures.
+
+Fixes: ac79183dc6f7 ("net/mlx5: optimize free counter lookup")
+Cc: stable@dpdk.org
+
+Signed-off-by: Linhu Li <lilinhu618@gmail.com>
+---
+ drivers/net/mlx5/mlx5_flow.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+index 915ea29a5a..20aad87f5d 100644
+--- a/drivers/net/mlx5/mlx5_flow.c
++++ b/drivers/net/mlx5/mlx5_flow.c
+@@ -9904,6 +9904,20 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
+ 
+ 	if (unlikely(status)) {
+ 		raw_to_free = pool->raw_hw;
++		/*
++		 * The query failed, so the freed counters accumulated in the
++		 * old-gen list during this round would otherwise be stranded.
++		 * Move them back to the global free list to avoid a leak when
++		 * queries fail persistently.
++		 */
++		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
++			rte_spinlock_lock(&pool->csl);
++			rte_spinlock_lock(&cmng->csl[cnt_type]);
++			TAILQ_CONCAT(&cmng->counters[cnt_type],
++				     &pool->counters[query_gen], next);
++			rte_spinlock_unlock(&cmng->csl[cnt_type]);
++			rte_spinlock_unlock(&pool->csl);
++		}
+ 	} else {
+ 		raw_to_free = pool->raw;
+ 		if (pool->is_aged)
+@@ -9913,11 +9927,20 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
+ 		rte_spinlock_unlock(&pool->sl);
+ 		/* Be sure the new raw counters data is updated in memory. */
+ 		rte_io_wmb();
++		/*
++		 * A counter free thread may have read a stale query_gen
++		 * before the generation was flipped and could still be
++		 * inserting into this same old-gen list. Hold pool->csl to
++		 * serialize TAILQ_CONCAT with that TAILQ_INSERT_TAIL and
++		 * avoid corrupting the list.
++		 */
+ 		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
++			rte_spinlock_lock(&pool->csl);
+ 			rte_spinlock_lock(&cmng->csl[cnt_type]);
+ 			TAILQ_CONCAT(&cmng->counters[cnt_type],
+ 				     &pool->counters[query_gen], next);
+ 			rte_spinlock_unlock(&cmng->csl[cnt_type]);
++			rte_spinlock_unlock(&pool->csl);
+ 		}
+ 	}
+ 	LIST_INSERT_HEAD(&sh->sws_cmng.free_stat_raws, raw_to_free, next);
+-- 
+2.39.3 (Apple Git-146)
+
