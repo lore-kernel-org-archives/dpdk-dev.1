@@ -2,77 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F278CD8C9F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 15:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C95ECD8C92
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 15:49:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 85D0F402A9;
-	Mon,  8 Jun 2026 17:49:34 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6E657402A9
- for <dev@dpdk.org>; Mon,  8 Jun 2026 17:49:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1780933771;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=TT1aapD1CLRw61G0NJNjY3Jcrk14adl5Q3c6IxqYlGU=;
- b=iEnqTD49bp3loWJGyuXi7jepiYDex7yqSxZ4qgGsUAz6+BLeVHs0WbXSbRN8jv7uI+OzN2
- t0HvApmrjcgbEwkMOXZdY8vpob93GrkaMp9OA0EJgY7fCW9s5ay/Bplh/ejAgsjxZSDW4H
- QvbaaDMGzCGQM4yrTFmfOEgEi3zWTUw=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-bZhUUHfVNTm5cShKvIWAmQ-1; Mon, 08 Jun 2026 11:49:24 -0400
-X-MC-Unique: bZhUUHfVNTm5cShKvIWAmQ-1
-X-Mimecast-MFC-AGG-ID: bZhUUHfVNTm5cShKvIWAmQ_1780933763
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5aa68d012dbso3090412e87.0
- for <dev@dpdk.org>; Mon, 08 Jun 2026 08:49:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780933762; x=1781538562;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+	by mails.dpdk.org (Postfix) with ESMTP id 66D7740670;
+	Mon,  8 Jun 2026 17:49:49 +0200 (CEST)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
+ [209.85.160.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 2BFA5402DD
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 17:49:48 +0200 (CEST)
+Received: by mail-qt1-f179.google.com with SMTP id
+ d75a77b69052e-517863a2edfso35788101cf.1
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 08:49:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780933787; cv=none;
+ d=google.com; s=arc-20240605;
+ b=SIOhDaLsQnD6VfAP7+tUI4MB0x7nzu6Oe5aOy3B9cMF+xOEETn+/q6JuHBYe7juRaW
+ RiGSkkX5xgArto+UuQnaofmG4KCafxXRK7OiSIqllM+MeM3TJ0keA1qrUcLUs6vO6/aQ
+ Qeae1JSN01c8BWOCGCtwTg0IqPi8FjK87eG5NOlzLIMRFXuClaWkHe5QCIO1X2qbXKuD
+ iqpBoD7YnKL3K7DvUhZci7M3c6CYm7g6ntl+gMNuqWQYDFUquOCb1dqWy5pcEFIHokL6
+ voG2g7CauPUwGRw6KgEn/e6U3ZRof53hx0yf1ES3TiOZphR+pvIOFm+g5cKcRm2Ej/wI
+ BeSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=LQKkMzfW4ILTsiIA+SER/eLzbpAJJ1VdnUVk6IKdyTY=;
+ fh=EWMbXYxloiF25UKa3+132FbIkngNc9Ix7z+odAXt93c=;
+ b=MWDrAixmLvZxNI/RtbvYVcfKCRlZLkF8zvbETyYhRYvX+JMOGabiz+kIo/UfPdds4+
+ rWOZOxbvrTgMhfzZGyJOj3FsIlTV6pjimUNYCCd0/QwktQ3ozwD//UlXbTOsN9MGmdcv
+ yixCppSddmIJdyd0rV5BGS20V5LgadPqkUFbpcWY7evedsJ1Tyvv2q9BKOzkelIqyNVE
+ bUzLGXaCaITew26NNj+sPKRvv5C49Z/SCrm17KTujKrUaXR7K+DRdF/JL9wzqKiaZZv8
+ fYwEnK2n1y/+74sw2+zXfXMcyWFqZ7/jLLgwVSA/zIV7I34F8avl5iWPoPKeHeEbZXCG
+ GdIQ==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1780933787; x=1781538587; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=TT1aapD1CLRw61G0NJNjY3Jcrk14adl5Q3c6IxqYlGU=;
- b=j8z8Bc1BUIiBM720ygjwN5B6LrRNOUluTCi5gV/tTodDCeLU36xWwH8GgmZVxbR06O
- 9xZicUIYdOc5X9CbUC/YYc3EKedxUAXxSb6bibVVZmqxZ+z69WLJN4HOJ0qYByE2zoiN
- FXk4JZL5P0g5DYrBsa/ovHtlbRJ6feyWGWRkXKdY98YCzCEgUyTeEtatnbpdkuy6wckB
- OuHJ7jROrs2Tetf66qllCeK8gFd5O1VrIKW2bC+Ezx4XHOJgpCVqVMyX7dBTzSHCuIQE
- 7bdxZrBebeYNDlstG8BTGA3QEglJITBHNN04mTcC0eN5EDAWBXDful618x7LNDSuiD4U
- pO0Q==
-X-Gm-Message-State: AOJu0Yy7FyEl1fgERtyWBzz7SIo6vPBbKLcNBG45hMW0nezGks0XqsYd
- qoTZpZG6kgLb6DdWX6AGUMTnaXDY96/UGGv2vEOeGukvcon//meJf5XQ5DdqDfEaqS5GzAnu5gC
- jt/4ORI0dB8cQ8Tw+KudkV1o1WV0FN9C0gt+mijy8N6rWw0uddn6l35CE9VATW47olRkO3vH8Wy
- SfT8mdBISrEBCz8DuLvP0=
-X-Gm-Gg: Acq92OHYHFqxYS2uGxHeR0wNjtKuweo6wtpH7s5KN9GKhlNE8U7IDLgaT2GoQUDMX+I
- pxy4XIpL1VEZTIkS9+ycJ4wIsdMeJ8tUi3GtnzkWkDQ86pMJOZsYpNIlaosanyhQXMyHdZ9hB4k
- Qs8JIylN2A41ijG07WTiqy/EYV2nkz813NgNS0fyZ7MboR2sJDhRiR6sfi0zDLxFP+eBCn1dP6z
- cYVT/oYY0oEoiVgXU8wdf2UbD2m7q7Oo3QSzG+JKzxSqOoYZf4hOwM1E1CVZoL4+n7qiWJFU+bj
- ycDQ
-X-Received: by 2002:a05:6512:1501:10b0:5aa:71de:74ca with SMTP id
- 2adb3069b0e04-5aa87bddd26mr2879644e87.28.1780933762454; 
- Mon, 08 Jun 2026 08:49:22 -0700 (PDT)
-X-Received: by 2002:a05:6512:1501:10b0:5aa:71de:74ca with SMTP id
- 2adb3069b0e04-5aa87bddd26mr2879631e87.28.1780933761860; Mon, 08 Jun 2026
- 08:49:21 -0700 (PDT)
+ bh=LQKkMzfW4ILTsiIA+SER/eLzbpAJJ1VdnUVk6IKdyTY=;
+ b=XUDKAa8y7Aj1SGD8zajgyI0GmA3L80bWFgFZglFTJ/+pSjUCLHBkONbdZufoIyNXEs
+ mzstPq8roxb9aB6ldbe6qU20ioP3VbM1Jx8uFbxl4Ra5nn/BPWHnei6/SEULr9jbSWsq
+ ZjjqH818M1jhtq9xm/yaUXksgIfV9nIrNoa2XyozCit2ySQ7kpjmHE0OJD+iqAkl9/yF
+ qejlJwwfDKaDCK8ipm6703wwm+m5WkAfwB7xzoVz0yrLORaCSx3h627oVs/Ay/dfYeJt
+ Wo7FGxjv9mzoE0ZroYJc31lPgK5D1oVv8tW1OpQFLHiH1d0AAZytpbJxGfwrhKXfvKDD
+ vQhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780933787; x=1781538587;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=LQKkMzfW4ILTsiIA+SER/eLzbpAJJ1VdnUVk6IKdyTY=;
+ b=hvUQ9mnkwM9ZLfM8IrZX1CULp9FDxM/uu5zD/wc9mUc91vyg6w/tqaeDfLnzV/iiM0
+ Us7zT0IsOB795RVQ/bPSKzqJFqXK1Er3EBVn8h1bbKYpVB75zrJ7ijpl7Lmvy21JRx82
+ 8tv1JIRjQuqn495f98F/5Ewov4YA5ajGNnNEjsJ01sQqI17Ddv4l+cCwA61aLy36LqO6
+ V/c+VV+xosqOYtuoaIjhCc8aYQGmTVFdc6yJJxbjc0CiwlPHL+ES5uSE1aHmF2yY0pm2
+ x/QBLa7VFzBibjhrDt5DsOoahQbqzmp12Dc9choo5DqFfuP0E28K1pBqWDBw1o2PcjCT
+ FIZA==
+X-Gm-Message-State: AOJu0YwpfCWT9tJw4krYkwYe6UQPVn2tx7tZe1c3yOVOrsf8ULl0hq87
+ J+BsFxvKbZ1+ASw6Wz2ZRqAP9FLgy1nV6Wc5NVKEEFkSeeeFOI1JFAlXnAg4NRp8tH5GHtx9r7r
+ aZdE+aSLx7Ha9uFShhtVJMz02rEk43Q4=
+X-Gm-Gg: Acq92OFBwcCxgjfqRu2wDzFomn30CnB/u84GkzeYgvRHPdA3FPXOyIp/sMdXEaGxwSE
+ k7SdcCeVPBx8jbJjMyQVebQ1vAUUlNNVpX8ZqBSDGFINsWBYMMiVl1wECiuvlrSDTdt3zn8d5BM
+ qIXKQTQ6F/vmylDCnfEhCj8bbN1J1Nd12zzL115DcMneQDo8BAaswDpE7upI/WAys38RM3N8WNr
+ 6B/yJQYfswdfm5WQemQ2hQl4abLR6oTI/CjN3wmwW26FmJw6zMLfy7uz7nRocz0LilSa32s8r+L
+ u8ziyMlxbb6etQ==
+X-Received: by 2002:ac8:5814:0:b0:517:8da1:4d3 with SMTP id
+ d75a77b69052e-51795afdceamr226984731cf.22.1780933787268; Mon, 08 Jun 2026
+ 08:49:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260422075414.2528455-1-maxime.peim@gmail.com>
-In-Reply-To: <20260422075414.2528455-1-maxime.peim@gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 8 Jun 2026 17:49:09 +0200
-X-Gm-Features: AVVi8Cek8UegEw5jwOdpFEgWPvncFET85WGUkXxB_WVrAqYlm1KKsfSGISv0-D8
-Message-ID: <CAJFAV8wd4Odtghr1qYHo0j+WZFdFTRHnjYOFrovjQbWwOH6zOQ@mail.gmail.com>
-Subject: Re: [PATCH] eal: fix core_index for non-EAL registered threads
-To: Maxime Peim <maxime.peim@gmail.com>,
- Dariusz Sosnowski <dsosnowski@nvidia.com>, 
- Slava Ovsiienko <viacheslavo@nvidia.com>
-Cc: dev@dpdk.org, Matan Azrad <matan@nvidia.com>,
- Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: dxBOUY74ASqJPQMbAtZbomN-IPhnkOh4FMqCSohGwbU_1780933763
-X-Mimecast-Originator: redhat.com
+References: <20260121180845.889190-1-stephen@networkplumber.org>
+ <20260413164652.33291-1-stephen@networkplumber.org>
+ <20260413164652.33291-3-stephen@networkplumber.org>
+In-Reply-To: <20260413164652.33291-3-stephen@networkplumber.org>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 8 Jun 2026 21:19:20 +0530
+X-Gm-Features: AVVi8Cc5rsVLe7S7-1Mf32WGLhohvbG-vq01WljiTSkoipxN3KcE_qAR4MI2Suw
+Message-ID: <CALBAE1PzEtyBzKiKaU83q0OtwRwaCTmqDETsc5NNODDQ9hzauw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] event/cnxk: add pause to spinloops
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Pavan Nikhilesh <pbhagavatula@marvell.com>, 
+ Shijith Thotton <sthotton@marvell.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,49 +98,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-On Wed, 22 Apr 2026 at 09:54, Maxime Peim <maxime.peim@gmail.com> wrote:
+On Mon, Apr 13, 2026 at 10:36=E2=80=AFPM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
 >
-> Threads registered via rte_thread_register() are assigned a valid
-> lcore_id by eal_lcore_non_eal_allocate(), but their core_index in
-> lcore_config is left at -1. This value was set during rte_eal_cpu_init()
-> for lcores with ROLE_OFF (undetected CPUs) and is never updated when the
-> lcore is later allocated to a non-EAL thread.
+> On SMT systems when a spinloop is done without a pause
+> it may cause excessive latency. This problem was found
+> by the fix_empty_spinloops coccinelle script.
 >
-> As a result, rte_lcore_index() returns -1 for registered non-EAL
-> threads. Libraries that use rte_lcore_index() to select per-lcore
-> caches fall back to a shared global path when it returns -1, causing
-> severe contention under concurrent access from multiple registered
-> threads.
->
-> A concrete example is the mlx5 indexed memory pool (mlx5_ipool), which
-> uses rte_lcore_index() in mlx5_ipool_malloc_cache() to select a per-core
-> cache slot. When core_index is -1, all registered threads are funneled
-> into a single shared slot protected by a spinlock. In testing with VPP
-> (which registers worker threads via rte_thread_register()), this caused
-> async flow rule insertion throughput to drop from ~6.4M rules/sec to
-> ~1.2M rules/sec with 4 workers -- a 5x regression attributable entirely
-> to spinlock contention in the ipool allocator.
->
-> Fix by setting core_index to the next sequential index (cfg->lcore_count)
-> in eal_lcore_non_eal_allocate() before incrementing the count. Also reset
-> core_index back to -1 on the error rollback path and in
-> eal_lcore_non_eal_release() for correctness.
->
-> Fixes: 5c307ba2a5b1 ("eal: register non-EAL threads as lcores")
-> Signed-off-by: Maxime Peim <maxime.peim@gmail.com>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Thanks for the fix Maxime, it looks correct though I am a bit
-skeptical about usage of this API with dynamic thread allocation.
-
-In the net/mlx5 context, for example, I expect no memory saving from
-using the lcore "index": mlx5 is allocating an array with
-RTE_MAX_LCORE+1 entries.
-Using rte_lcore_id() would probably be good enough.
-Dariusz, Slava, any opinion?
+rte_pause() translates to YIELD instruction. Since cnxk is an
+integrated SoC and it is a single threaded core, it won't help on
+anything other than adding one instruction bit more latency.
+In general 3/3 devtool is good. Please send a it separate version so
+that 3/3 patches can be merged through the main tree.
 
 
--- 
-David Marchand
 
+---------------
+The YIELD instruction write up from ARMv8 manual.
+
+YIELD is a hint instruction in the ARMv8-A architecture. It tells the
+CPU that the current hardware thread is doing nothing useful right now
+(typically spinning in a busy-wait loop), so the processor may
+reallocate shared execution resources to other hardware threads.
+
+On SMT (multithreaded) cores, this can give sibling hardware threads
+more resources, improving overall throughput.
+On most current single-threaded ARM cores, YIELD executes as a NOP =E2=80=
+=94
+it has no microarchitectural effect, but it's architecturally valid
+and harmless. It does not put the core to sleep (unlike WFE/WFI).
+It's a pure hint: it never changes program correctness, only
+potentially performance/fairness.
+-------------
