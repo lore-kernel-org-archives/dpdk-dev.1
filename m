@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DFECD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 05:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E454CD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 05:44:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75E8240A7F;
-	Mon,  8 Jun 2026 07:42:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6988740B97;
+	Mon,  8 Jun 2026 07:42:51 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 0D60C4065C
- for <dev@dpdk.org>; Mon,  8 Jun 2026 07:42:31 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7E37140265
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 07:42:32 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowACnHvJBViZq3m2tEg--.175S19;
- Mon, 08 Jun 2026 13:42:29 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowACnHvJBViZq3m2tEg--.175S22;
+ Mon, 08 Jun 2026 13:42:30 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v12 17/20] net/sxe2: implement private dump info
-Date: Mon,  8 Jun 2026 13:42:16 +0800
-Message-ID: <20260608054219.3000719-18-liujie5@linkdatatechnology.com>
+Subject: [PATCH v12 20/20] net/sxe2: update sxe2 feature matrix docs
+Date: Mon,  8 Jun 2026 13:42:19 +0800
+Message-ID: <20260608054219.3000719-21-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260608054219.3000719-1-liujie5@linkdatatechnology.com>
 References: <20260607013342.2579271-21-liujie5@linkdatatechnology.com>
  <20260608054219.3000719-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowACnHvJBViZq3m2tEg--.175S19
-X-Coremail-Antispam: 1UD129KBjvAXoWfJw15ZF1UKF48uryfZF17GFg_yoW8Jry5Ao
- WxXr13Xr1xAryIvws5Arn7CFW3ZaykWws5Cayaga98ua13tF4UAFWFgw43Z3Z8KF48tFyY
- 934Fyas8JFWqqF1rn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUYE7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
- j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
- Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
- 84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r
- 4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j
- 6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7V
- C0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j
- 6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F2
- 4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWU
- JVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7V
- AKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j
- 6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIx
- AIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbfcTJUUUUU=
- =
+X-CM-TRANSID: zQCowACnHvJBViZq3m2tEg--.175S22
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18JFyfGw1DXFW7Aw1UZFb_yoW8AF1rpw
+ 4DZayYqr1fJw43ZrsIyw1UGrW5ZFWvya98urZrGFy3KF1Ygr40vwsIva4IqFyDt3sxZ34Y
+ q3Wrtr9I9r4UZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUBC14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+ kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+ z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr
+ 1UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_
+ Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x
+ IIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_
+ Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0w
+ CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
+ 6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64
+ vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+ Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42
+ IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYGYpUUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -61,393 +60,92 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch implements the 'eth_dev_priv_dump' ops for the sxe2 PMD.
-This interface allows applications to dump driver-specific internal
-state and configuration information to a file stream.
-
-The output includes:
-- capabilities.
-- device base info.
-- device args info.
-- device filter info.
-- reprenstor info.
+Update the sxe2.ini feature sheet to accurately reflect the recently
+implemented hardware capabilities in the sxe2 PMD.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/meson.build        |   1 +
- drivers/net/sxe2/sxe2_dump.c        | 289 ++++++++++++++++++++++++++++
- drivers/net/sxe2/sxe2_dump.h        |  12 ++
- drivers/net/sxe2/sxe2_ethdev.c      |   3 +
- drivers/net/sxe2/sxe2_ethdev_repr.c |   3 +
- 5 files changed, 308 insertions(+)
- create mode 100644 drivers/net/sxe2/sxe2_dump.c
- create mode 100644 drivers/net/sxe2/sxe2_dump.h
+ doc/guides/nics/features/sxe2.ini | 56 +++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index 65286299aa..d653d071a9 100644
---- a/drivers/net/sxe2/meson.build
-+++ b/drivers/net/sxe2/meson.build
-@@ -77,4 +77,5 @@ sources += files(
-         'sxe2_flow_parse_action.c',
-         'sxe2_flow_parse_pattern.c',
-         'sxe2_flow_parse_engine.c',
-+        'sxe2_dump.c',
- )
-diff --git a/drivers/net/sxe2/sxe2_dump.c b/drivers/net/sxe2/sxe2_dump.c
-new file mode 100644
-index 0000000000..1753eccf99
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_dump.c
-@@ -0,0 +1,289 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
+diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
+index 09ba2f558c..3c1e6a8a39 100644
+--- a/doc/guides/nics/features/sxe2.ini
++++ b/doc/guides/nics/features/sxe2.ini
+@@ -7,17 +7,73 @@
+ ; is selected.
+ ;
+ [Features]
++Speed capabilities   = Y
++Link status          = Y
++Link status event    = Y
++Rx interrupt         = Y
+ Fast mbuf free       = P
+ Free Tx mbuf on demand = Y
+ Burst mode info      = Y
+ Queue start/stop     = Y
++Power mgmt address monitor = Y
+ Buffer split on Rx   = P
+ Scattered Rx         = Y
++Traffic manager      = Y
+ CRC offload          = Y
++VLAN offload         = Y
++QinQ offload         = P
+ L3 checksum offload  = Y
+ L4 checksum offload  = Y
++Timestamp offload    = P
++Inner L3 checksum    = P
++Inner L4 checksum    = P
+ Rx descriptor status = Y
+ Tx descriptor status = Y
++MTU update           = Y
++TSO                  = P
++Promiscuous mode     = Y
++Allmulticast mode    = Y
++Unicast MAC filter   = Y
++RSS hash             = Y
++RSS key update       = Y
++RSS reta update      = Y
++VLAN filter          = Y
++Inline crypto        = Y
++Packet type parsing  = Y
++Timesync             = Y
++Basic stats          = Y
++Extended stats       = Y
++FW version           = Y
++Module EEPROM dump   = Y
++Multiprocess aware   = Y
+ Linux                = Y
+ x86-32               = Y
+ x86-64               = Y
 +
-+#include <rte_malloc.h>
-+#include <arpa/inet.h>
++[rte_flow items]
++eth                  = P
++geneve               = Y
++gre                  = Y
++gtpu                 = Y
++ipv4                 = Y
++ipv6                 = Y
++ipv6_frag_ext        = Y
++nvgre                = Y
++sctp                 = Y
++tcp                  = Y
++udp                  = Y
++vlan                 = P
++vxlan                = Y
++vxlan_gpe            = Y
 +
-+#include "sxe2_common_log.h"
-+#include "sxe2_ethdev.h"
-+#include "sxe2_dump.h"
-+#include "sxe2_stats.h"
-+
-+static void
-+sxe2_dump_dev_feature_capability(FILE *file, struct rte_eth_dev *dev)
-+{
-+	uint32_t i;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	const struct {
-+		uint32_t cap_bit;
-+		const char *name;
-+	} caps_name[] = {
-+		{SXE2_DEV_CAPS_OFFLOAD_L2, "L2"},
-+		{SXE2_DEV_CAPS_OFFLOAD_VLAN, "VLAN"},
-+		{SXE2_DEV_CAPS_OFFLOAD_IPSEC, "IPSEC"},
-+		{SXE2_DEV_CAPS_OFFLOAD_RSS, "RSS"},
-+		{SXE2_DEV_CAPS_OFFLOAD_FNAV, "FNAV"},
-+		{SXE2_DEV_CAPS_OFFLOAD_TM, "TM"},
-+		{SXE2_DEV_CAPS_OFFLOAD_PTP, "PTP"},
-+	};
-+	if (adapter->is_dev_repr)
-+		goto l_end;
-+
-+	fprintf(file, "  - Dev Capability:\n");
-+	for (i = 0; i < RTE_DIM(caps_name); i++) {
-+		fprintf(file, "\t  -- support %s: %s\n", caps_name[i].name,
-+			(adapter->cap_flags & caps_name[i].cap_bit) ? "Yes" :
-+									 "No");
-+	}
-+l_end:
-+	return;
-+}
-+
-+static void
-+sxe2_dump_device_basic_info(FILE *file, struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+
-+	fprintf(file,
-+		"  - Device Base Info:\n"
-+		"\t  -- name: %s\n"
-+		"\t  -- pf_idx: %u port_idx: %u\n"
-+		"\t  -- tx_mode_flags: 0x%x rx_mode_flags: 0x%x\n"
-+		"\t  -- flow_isolate_cfg: 0x%x flow_isolated: 0x%x\n"
-+		"\t  -- dev_type: 0x%x is_switchdev: 0x%x\n"
-+		"\t  -- is_dev_repr: 0x%x dev_port_id: 0x%x\n"
-+		"\t  -- dev_flags: 0x%x\n"
-+		"\t  -- intr_conf lsc: %u rxq: %u rmv: %u\n",
-+		dev->data->name,
-+		adapter->pf_idx, adapter->port_idx,
-+		adapter->tx_mode_flags, adapter->rx_mode_flags,
-+		adapter->flow_isolate_cfg, adapter->flow_isolated,
-+		adapter->dev_type, adapter->switchdev_info.is_switchdev,
-+		adapter->is_dev_repr, adapter->dev_port_id,
-+		dev->data->dev_flags,
-+		dev->data->dev_conf.intr_conf.lsc,
-+		dev->data->dev_conf.intr_conf.rxq,
-+		dev->data->dev_conf.intr_conf.rmv);
-+}
-+
-+static void
-+sxe2_dump_dev_args_info(FILE *file, struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+
-+	if (adapter->is_dev_repr)
-+		goto l_end;
-+
-+	fprintf(file,
-+		"  - Device Args Info:\n"
-+		"\t  -- sw-stats-en: %s\n"
-+		"\t  -- high-performance-mode: %s\n"
-+		"\t  -- flow-duplicate-pattern: %u\n"
-+		"\t  -- fnav-stat-type: %u\n"
-+		"\t  -- sched_layer_mode: %u\n"
-+		"\t  -- rx_low_latency: %s\n"
-+		"\t  -- function-flow-direct: %s\n",
-+		adapter->devargs.sw_stats_en ? "On" : "Off",
-+		adapter->devargs.high_performance_mode ? "On" : "Off",
-+		adapter->devargs.flow_dup_pattern_mode,
-+		adapter->devargs.fnav_stat_type,
-+		adapter->devargs.sched_layer_mode,
-+		adapter->devargs.rx_low_latency ? "On" : "Off",
-+		adapter->devargs.func_flow_direct_en ? "On" : "Off");
-+l_end:
-+	return;
-+}
-+
-+static void sxe2_dump_filter_info(FILE *file, struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_mac_filter *mac_entry;
-+	struct sxe2_mac_filter *next_mac_entry;
-+	struct sxe2_vlan_filter *vlan_entry;
-+	struct sxe2_vlan_filter *next_vlan_entry;
-+
-+	if (adapter->is_dev_repr)
-+		goto l_end;
-+
-+	fprintf(file,
-+		"  - Device Filter Info:\n"
-+		"\t  -- cur_promisc:0x%x hw_promisc:0x%x\n"
-+		"\t  -- unicast_num: %u multicast_num: %u\n"
-+		"\t  -- vlan_num: %u filter_on: %u hw_filter_on: %u\n"
-+		"\t  -- vlan max_cnt: %u cnt: %u\n"
-+		"\t  -- tpid: 0x%x vid: 0x%x\n"
-+		"\t  -- vlan_outer_insert: 0x%x vlan_outer_strip: 0x%x\n"
-+		"\t  -- vlan_inner_insert: 0x%x vlan_inner_strip: 0x%x\n",
-+		adapter->filter_ctxt.cur_promisc_flags,
-+		adapter->filter_ctxt.hw_promisc_flags,
-+		adapter->filter_ctxt.uc_num,
-+		adapter->filter_ctxt.mc_num,
-+		adapter->filter_ctxt.vlan_num,
-+		adapter->filter_ctxt.vlan_info.filter_on,
-+		adapter->filter_ctxt.vlan_info.hw_filter_on,
-+		adapter->filter_ctxt.vlan_info.max_cnt,
-+		adapter->filter_ctxt.vlan_info.cnt,
-+		adapter->filter_ctxt.vlan_info.tpid,
-+		adapter->filter_ctxt.vlan_info.vid,
-+		adapter->filter_ctxt.vlan_info.outer_insert,
-+		adapter->filter_ctxt.vlan_info.outer_strip,
-+		adapter->filter_ctxt.vlan_info.inner_insert,
-+		adapter->filter_ctxt.vlan_info.inner_strip);
-+
-+	if (adapter->filter_ctxt.uc_num > 0) {
-+		fprintf(file,
-+			"\t  -- Unicast entry:\n");
-+		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.uc_list, next,
-+				       next_mac_entry) {
-+			fprintf(file,
-+				"\t  -- addr: %02x:%02x:%02x:%02x:%02x:%02x hw status:%u "
-+				"default:%u\n",
-+				mac_entry->mac_addr.addr_bytes[0],
-+				mac_entry->mac_addr.addr_bytes[1],
-+				mac_entry->mac_addr.addr_bytes[2],
-+				mac_entry->mac_addr.addr_bytes[3],
-+				mac_entry->mac_addr.addr_bytes[4],
-+				mac_entry->mac_addr.addr_bytes[5],
-+				mac_entry->hw_config,
-+				mac_entry->default_config);
-+		}
-+	}
-+
-+	if (adapter->filter_ctxt.mc_num > 0) {
-+		fprintf(file,
-+			"\t  -- Multicast entry:\n");
-+		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.mc_list,
-+				       next, next_mac_entry) {
-+			fprintf(file,
-+				"\t  -- addr: %02x:%02x:%02x:%02x:%02x:%02x "
-+				"hw status:%u default:%u\n",
-+				mac_entry->mac_addr.addr_bytes[0],
-+				mac_entry->mac_addr.addr_bytes[1],
-+				mac_entry->mac_addr.addr_bytes[2],
-+				mac_entry->mac_addr.addr_bytes[3],
-+				mac_entry->mac_addr.addr_bytes[4],
-+				mac_entry->mac_addr.addr_bytes[5],
-+				mac_entry->hw_config,
-+				mac_entry->default_config);
-+		}
-+	}
-+
-+	if (adapter->filter_ctxt.vlan_num > 0) {
-+		fprintf(file,
-+			"\t  -- Vlan entry:\n");
-+		RTE_TAILQ_FOREACH_SAFE(vlan_entry, &adapter->filter_ctxt.vlan_list,
-+			next, next_vlan_entry) {
-+			fprintf(file,
-+				"\t  -- vlan tpid:0x%04x vid:0x%04x prio:%d "
-+				"hw status:%u default:%u\n",
-+				vlan_entry->vlan_info.tpid,
-+				vlan_entry->vlan_info.vid,
-+				vlan_entry->vlan_info.prio,
-+				vlan_entry->hw_config,
-+				vlan_entry->default_config);
-+		}
-+	}
-+l_end:
-+	return;
-+}
-+
-+static const char *sxe2_vsi_id_str(uint16_t vsi_id, char *buf, size_t len)
-+{
-+	if (vsi_id == SXE2_INVALID_VSI_ID)
-+		return "NA";
-+
-+	snprintf(buf, len, "%u", vsi_id);
-+	return buf;
-+}
-+
-+static void
-+sxe2_dump_switchdev_info(FILE *file, struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	uint32_t idx;
-+	char k_vsi_buf[16];
-+	char u_vsi_buf[16];
-+
-+	if (adapter->is_dev_repr && adapter->repr_priv_data) {
-+		fprintf(file,
-+			"  - Reprenstor Info:\n"
-+			"\t  -- repr_id: %u\n"
-+			"\t  -- repr_q_id: %u\n"
-+			"\t  -- repr_pf_id: %u\n"
-+			"\t  -- repr_vf_id: %u\n"
-+			"\t  -- repr_vf_vsi_id: %u\n"
-+			"\t  -- repr_vf_k_vsi_id: %s\n"
-+			"\t  -- repr_vf_u_vsi_id: %s\n",
-+			adapter->repr_priv_data->repr_id,
-+			adapter->repr_priv_data->repr_q_id,
-+			adapter->repr_priv_data->repr_pf_id,
-+			adapter->repr_priv_data->repr_vf_id,
-+			adapter->repr_priv_data->repr_vf_vsi_id,
-+			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_k_vsi_id,
-+					k_vsi_buf, sizeof(k_vsi_buf)),
-+			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_u_vsi_id,
-+					u_vsi_buf, sizeof(u_vsi_buf)));
-+		goto l_end;
-+	}
-+	if (adapter->switchdev_info.is_switchdev) {
-+		fprintf(file,
-+			"  - Switchdev Info:\n"
-+			"\t  -- primary:0x%x\n"
-+			"\t  -- representor: 0x%x\n"
-+			"\t  -- port_name_type: 0x%x\n"
-+			"\t  -- nb_vf: %u nb_repr_vf: %u\n",
-+			adapter->switchdev_info.primary,
-+			adapter->switchdev_info.representor,
-+			adapter->switchdev_info.port_name_type,
-+			adapter->repr_ctxt.nb_vf,
-+			adapter->repr_ctxt.nb_repr_vf);
-+		if (adapter->repr_ctxt.nb_vf > 0) {
-+			fprintf(file,
-+				"\t  -- vf entry:\n");
-+			for (idx = 0; idx < adapter->repr_ctxt.nb_vf; idx++) {
-+				fprintf(file,
-+					"\t  -- func_id:%u vsi_type:%u kernel_vsi_id:%u dpdk_vsi_id:%u\n",
-+					adapter->repr_ctxt.repr_vf_id[idx].func_id,
-+					adapter->repr_ctxt.repr_vf_id[idx].vsi_type,
-+					adapter->repr_ctxt.repr_vf_id[idx].kernel_vsi_id,
-+					adapter->repr_ctxt.repr_vf_id[idx].dpdk_vsi_id);
-+			}
-+		}
-+	}
-+
-+l_end:
-+	return;
-+}
-+
-+int32_t sxe2_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file)
-+{
-+	char *buf = NULL;
-+	size_t size = 0;
-+	FILE *str;
-+	int32_t ret = -1;
-+
-+	str = open_memstream(&buf, &size);
-+	if (!str) {
-+		PMD_LOG_ERR(DRV, "fopen fail.");
-+		goto l_end;
-+	}
-+
-+	sxe2_dump_dev_feature_capability(str, dev);
-+	sxe2_dump_device_basic_info(str, dev);
-+	sxe2_dump_dev_args_info(str, dev);
-+	sxe2_dump_filter_info(str, dev);
-+	sxe2_dump_switchdev_info(str, dev);
-+
-+	(void)fflush(str);
-+
-+	(void)fwrite(buf, 1, size, file);
-+	(void)fflush(file);
-+
-+	ret = 0;
-+
-+	(void)fclose(str);
-+	free(buf);
-+l_end:
-+	return ret;
-+}
-diff --git a/drivers/net/sxe2/sxe2_dump.h b/drivers/net/sxe2/sxe2_dump.h
-new file mode 100644
-index 0000000000..05d6db9b3d
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_dump.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_DUMP_H__
-+#define __SXE2_DUMP_H__
-+
-+#include <ethdev_driver.h>
-+
-+int32_t sxe2_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file);
-+
-+#endif /* __SXE2_DUMP_H__ */
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 60a5d8d7c9..b5adc31d69 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -38,6 +38,7 @@
- #include "sxe2_host_regs.h"
- #include "sxe2_switchdev.h"
- #include "sxe2_ioctl_chnl_func.h"
-+#include "sxe2_dump.h"
- #include "sxe2_ethdev_repr.h"
- #include "sxe2vf_regs.h"
- #include "sxe2_switchdev.h"
-@@ -194,6 +195,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 
- 	.get_module_info            = sxe2_get_module_info,
- 	.get_module_eeprom          = sxe2_get_module_eeprom,
-+
-+	.eth_dev_priv_dump          = sxe2_eth_dev_priv_dump,
- };
- 
- static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
-index a43991c379..faac1b2701 100644
---- a/drivers/net/sxe2/sxe2_ethdev_repr.c
-+++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
-@@ -12,6 +12,7 @@
- #include "sxe2_switchdev.h"
- #include "sxe2_ptype.h"
- #include "sxe2_mp.h"
-+#include "sxe2_dump.h"
- #include "sxe2_stats.h"
- #include "sxe2_flow.h"
- 
-@@ -237,6 +238,8 @@ static const struct eth_dev_ops sxe2_switchdev_repr_dev_ops = {
- 	.allmulticast_enable        = sxe2_repr_allmulti_enable,
- 	.allmulticast_disable       = sxe2_repr_allmulti_disable,
- 
-+	.eth_dev_priv_dump          = sxe2_eth_dev_priv_dump,
-+
- 	.stats_get                  = sxe2_stats_info_get,
- 	.stats_reset                = sxe2_stats_info_reset,
- 	.xstats_get                 = sxe2_xstats_info_get,
++[rte_flow actions]
++count                = Y
++drop                 = Y
++mark                 = Y
++passthru             = Y
++port_representor     = Y
++queue                = Y
++represented_port     = Y
++rss                  = Y
++send_to_kernel       = Y
++port_id              = Y
 -- 
 2.52.0
 
