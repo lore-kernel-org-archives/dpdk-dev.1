@@ -2,84 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CE4CD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 15:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6857CD8C92
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 15:16:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 103E4402DD;
-	Mon,  8 Jun 2026 17:15:10 +0200 (CEST)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com
- [209.85.160.176])
- by mails.dpdk.org (Postfix) with ESMTP id 07D7040265
- for <dev@dpdk.org>; Mon,  8 Jun 2026 17:15:08 +0200 (CEST)
-Received: by mail-qt1-f176.google.com with SMTP id
- d75a77b69052e-5174a3a025aso45604651cf.3
- for <dev@dpdk.org>; Mon, 08 Jun 2026 08:15:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780931707; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 090B940666;
+	Mon,  8 Jun 2026 17:16:06 +0200 (CEST)
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com
+ [209.85.160.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 8F5B040265
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 17:16:04 +0200 (CEST)
+Received: by mail-qt1-f175.google.com with SMTP id
+ d75a77b69052e-517760dc3c2so26726791cf.3
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 08:16:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780931764; cv=none;
  d=google.com; s=arc-20240605;
- b=Tw6xokLmZEJgJ3qCoVM2fCruIfTVkm7o4+SDu02easAEP6e5hHsqrf7qTbKuPJJ23Z
- a35P0YWAL77h2HPxAki1I7qzgaT62tZiZ2X6d9wAX0K1weFfdx8ywIo/brcdwjZlz051
- XI1CJG+HxvEgYcz/6X3qu/G2O0dNzwLdpgs2n8tP1pKRYo+bFuXYKPTl7imvBHVIy2XU
- NEOaWfv30GOamJ9De+zkgZKumWHBprxiYE5gwegAg5m1vv+FSm1QTW/L/ZLRmYdLK+qJ
- 5lJi4+Te/FNfTdpQGIin1Uv2qtUVUOXBewdBjg/yEeKIAnx2Rentuqwvr/+Wz2j3ZCWB
- f4FA==
+ b=bNUhth23ytgAX708hr6MpHMblu4Owzovq/0PhCPz8b9a0wZ7iV1+qeq1EyQh+CXPQx
+ ObwJ8emWX8UfZ8POFGteYXYnMaYy0aOda+iuuocolJ9Ku/qq6p6hQJUGxfq+37XaGwIF
+ KtNwrpzQfKWXY/DT6lvGJuA+PZnX1e7Gi19GBcylDotfVj8vYc7fZuLjTbCtZdWQBqVO
+ AB8KLVDnpQuFE0WcwaYjx0qdUXxyzC3/1olGqGc/gKQNpQVjwB0t4ioOz7wdBDLje4H9
+ GeDAIcQPY9/5se0Xi0E+ugNpQnsGJLR6+IuOqukqq3ql/raFHvpSsxgapCE8iO+HSWTA
+ 0Ymg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:dkim-signature;
- bh=+T8NT3pjT8r0cJTl4zIWjMyj9UmmYCo9sRMXY67yXYM=;
- fh=jbdx/Wceb3VPJjUp74ta5d4SFbwKBSOvSND22D5uqu4=;
- b=T4BCa5PUD1GTp+DPXe+AynCSvwqzEZH0oT3h/c3LtbogGMxrtbNJuEjVg2/AQg1x34
- hNrxLhnx87ZGgZtaIQyzkTxqjSdGTx/IczZpDqc441GjWZowMGEtuh+qA+2HFa9C3p9s
- fYOfEygAl9eCsrOPHI8ldkjaOVn/qVMeyxous9rErqLpCfRqZyas0e5eFQshOD9hXEIM
- tXZ1ARoZzCm2ZvpTYz37MlFCEQCJrkCVlB0yRafyZpZKlevjjMhtuW2gDaP0AlL4lFe5
- g8p/ZDQ/z0npJnOZ1Qdepw4KItUEoFfon06x6GQk7JQjL9Yj72pMPkyGVwzfwdk8Vf/c
- wxUw==; darn=dpdk.org
+ bh=Bt5GK/4oH/TqgKJ75OQj14QFLZ8dz1pvphgpVnAwWew=;
+ fh=1JksPKFBZ/TVT7bS25FQgN7X3H4HEkKOvtUe0/7AZUc=;
+ b=DO6V8kMjglAaSkCDlopnNZ4HuzzRwXAZtlI5aUp3pB7gt8c12gCqjZ0zTQs+ly/SOM
+ TmMa+aeBtXfvH0es5S6itDrWJYcggZcU+JJ/8C1AP5eVzasNhx0s9iXKPAZldJpbWywz
+ 3ApmNUbTDB8aElveC138rZHvlsR9v6UQxhNpqNraHem34q8zUULEdnow25wWcnnGln0L
+ OFwWL2qEsnSc59flIirfvYtYATzqCSON55q5TzV+fidh/VR2b9t0nVT98GX15Blthsbk
+ UoGBPTTDXJ2ufrrF52rcnklthqhP1mWnbrmdF1fFgOEDT4OAdpwWSc/7Pyh6u/Lb3nTJ
+ khdg==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780931707; x=1781536507; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1780931764; x=1781536564; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+T8NT3pjT8r0cJTl4zIWjMyj9UmmYCo9sRMXY67yXYM=;
- b=Jq74AWD8BtCZW/A+9ibEmofkt5C3XofkphNAKIOJrFmO5ZviRq3JkvFJ7lIGsi2nOZ
- bjtyFiWM35/ZJKmIKrlz/LwdGspXSpwDC2Q5hl/PTLMBMa2A4R+8Ta6pDgQKtzPMH2uF
- fZ+f+UypeQ1cjA22ZD3BEIsf5SK+idKrAZ6UQedKyQwlsFkgU2+JSAV3D91mbCCTdpSO
- nfO/Urx5pS1Q7b7ux/1QGgsf4L7gL8EBffJsVlfQ5zBuuHQtG2LL4x3D4jvWYKJGYpI6
- Xn/Ik+qh5Kbg1QNDUrUJugFt6qOplQ/Y9FNQeLdV7x4VAivlL8izNnfHVLcE2BI9BGsF
- JMaQ==
+ bh=Bt5GK/4oH/TqgKJ75OQj14QFLZ8dz1pvphgpVnAwWew=;
+ b=je4af9tHuzBF4MWMFvXd9QAdOYNyIXVxfaAzOaecDcNTqVf2S5AiR/PoDMwBq55onc
+ rHSpo3XWHly9PaktXc/j1BDsiJkq4uqG8urAmpx2h0t+Haoo7D6d4SHcXGSE7d1D2IMB
+ XBTDsaPTQJ6NEFvaK9JFpq2m2Eg1NkmHRdKTMQoiMui8iWrjKvrOKQDU0xHX0yx0GuUl
+ 7SdFCvxhSv43OCpBAfLxaWsHfnvZBTKkJYq8iRwYGtASZyeSmizS8BmhJHcnE5lPPLsn
+ nhiUvcGUUigmbvQGVwm+EwUzhwEMXVNSC1QGzfxlhSaSwLeCTeb44lvdB0ixEclT/gO2
+ sMZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780931707; x=1781536507;
+ d=1e100.net; s=20251104; t=1780931764; x=1781536564;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+T8NT3pjT8r0cJTl4zIWjMyj9UmmYCo9sRMXY67yXYM=;
- b=KfzlB5cjOLWZ4170aSBj4sef8OEu2hJrKzbNqc6doGL5dDMTJgUfUSl6KaBw8dKr5H
- Qwbz7ZHzMRsSRp81s5BebBTFPQJ8SVcYmOslL/5WJF342st9rnG92dNlsVd8iIxGUNOH
- +djhbLG6mw1AqOyXW1s82ChZrrbMvJhzVFz5gi+To+5XTP0jb3xQQtwfxj6WVrorp+qn
- Q+7/fGUOz9TtTmhPi349bBTZauCNSR0AUe6j+TylYe7joJWAE4CEPtl1guGpYion2k6g
- NT8HOU3vH+O99v+v8EbF8L41oU7fNetKJF/SfeXUu5X+2p392bs0ZYFT4gm+CtTyNpNA
- qsQg==
-X-Gm-Message-State: AOJu0YynuwuCxCCMMCBQyHotZO5osQNRi0qy+fVFJt/UDhJayzGtRk4Q
- agY9rar2eRE5Ay136EP+Dw9uNjzu9hzMegqbxpmgNT6huZk7C6RMueqP6WT4e9yeOmjhEITs4jo
- tu3dRa0owcyBxlbLh81VJty/6CN9Eaqs=
-X-Gm-Gg: Acq92OEKb3K7l+owflNzKEQffQJKn2HcHzS5Cvi/bFSUBsDd0FJ/iQV3mUHQJoFQVtc
- NYoxiLNHR9rj6wIC7zsUm5/rhdxC8CmCN4TZDxPO680OiAFAUx/wSy4iyLxBIeyVp+mkGBCiZCx
- bT5Ej7hZXQ6S+TfAyVpyl8MRZ9acq/JRtVv3aAU/8plX2A8/EjvOcxojS+sLVHbTD/7ds9hQ7a0
- 5INCvLmSsGVRNmggMhsC4gbdhpC1TM1nkMAWJz9E8rsU7Tses9sLHIT6GieEOf4GWC1BEgLgDIa
- k6gTh1K6tK92Q787FY1F/Lnu
-X-Received: by 2002:a05:622a:1a92:b0:517:7303:df84 with SMTP id
- d75a77b69052e-51795c640e0mr236194371cf.56.1780931706999; Mon, 08 Jun 2026
- 08:15:06 -0700 (PDT)
+ bh=Bt5GK/4oH/TqgKJ75OQj14QFLZ8dz1pvphgpVnAwWew=;
+ b=RQX9ZY79cjAny7NcdW8Cv+bxcJRfLRQiVkAIo6EmySjlPadO+ZJPfKFO6wWCxLCvRB
+ s5PnAduO8Yh2NSpL7PkYlCZr0Gd/et4z0DT3ZNDwNK0+VH21bhJJLt0oJG23l9do2BNl
+ yuVOiPSCFbcuKcNmRxw6KqwxBl8fbM+pgFmffdPkbZt07dUfNo1Nayk85SOheDP3pevC
+ GtNCuJ9dyKmGFYcl0jLN8gKUyJpDEnmSYkRAaFG2wIXRNotYemFTW3Lby1r/y0cAxDxa
+ rpwckQgeCSUbw45b0BEHpoeZGRthz6HTB6N/yRfcD4IngUE3vZN+InnjeZXsrz3AKPa9
+ 3A4A==
+X-Gm-Message-State: AOJu0Yxm4Jes3TM3BGFBME+zQAH4Widi/bGIfkQMFL2ELANi1hNqv7Pl
+ ObA04XpPFfLO9THImZCXosb/4ZKzOUKsfaf9vyWCx1uPaw+ynR/hD2E7KOCC4px4Gtr7BExu2kL
+ zD0xWPKlSO8iUdZ07DGuTWhH9TbYVwUo=
+X-Gm-Gg: Acq92OECH/vGj0kS9bnjFMhlmJ4KWIUJ1l76sIl9C2lphAWap99At8kTfze+XwQ7EwV
+ HGbAl9MbfnKVCkDrRgag5TfQXH12Idaw9+A2MNCnHCwrYiHk7j4vsuiZa5sp3OlaCvk5AsAmqeC
+ mmsFBpj7mTMeqVGQHEHIHWCL2iHqfo68xc8/kxZBNVeEXkFA1XhFZ0E0Xvrd+sEaCGjT/ywK1xq
+ 1FXsOkMjUFQRlPTkjecw5uOOcUPobJepBa03cE2DLFhyCdJvUFUuQNmygkNJqWwOqgjYFGFvvWj
+ aRdzS+cORKYO7w==
+X-Received: by 2002:a05:622a:4108:b0:50d:83a4:2995 with SMTP id
+ d75a77b69052e-51795b1d1c5mr234618861cf.21.1780931763372; Mon, 08 Jun 2026
+ 08:16:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260331085445.1105590-1-syalavarthi@marvell.com>
-In-Reply-To: <20260331085445.1105590-1-syalavarthi@marvell.com>
+References: <20260331085350.1105103-1-syalavarthi@marvell.com>
+In-Reply-To: <20260331085350.1105103-1-syalavarthi@marvell.com>
 From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 8 Jun 2026 20:44:40 +0530
-X-Gm-Features: AVVi8CdU3fv6KzdShUvdR-XwqhLN0oY2S1aLkwQPiwGtsjKxfa7BHBBUZ9KqQiQ
-Message-ID: <CALBAE1P2_FqDTkvREXHinqvX6ROe=TSzghGAcd_QuErxUYN53g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ml/cnxk: avoid overwriting layer name during load
+Date: Mon, 8 Jun 2026 20:45:35 +0530
+X-Gm-Features: AVVi8CcjpsvdOcCDmCJLumVHlQ_qvvp99aaPdL9b5OITRoUY0DC-7mzPfE0AWRk
+Message-ID: <CALBAE1M=zmJzq=mmNQgKSvO3VwtanBjjSBjVYARH_=EXXQ3SGw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ml/cnxk: enable data caching for all MRVL layers
 To: Srikanth Yalavarthi <syalavarthi@marvell.com>
-Cc: dev@dpdk.org
+Cc: dev@dpdk.org, Anup Prabhu <aprabhu@marvell.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -95,42 +95,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Mar 31, 2026 at 7:10=E2=80=AFPM Srikanth Yalavarthi
+On Tue, Mar 31, 2026 at 2:30=E2=80=AFPM Srikanth Yalavarthi
 <syalavarthi@marvell.com> wrote:
 >
-> Layer name is initialized during metadata fetch and
-> parsing stage. Avoid overwriting the layer name during
-> layer load.
+> From: Anup Prabhu <aprabhu@marvell.com>
 >
-> Signed-off-by: Srikanth Yalavarthi <syalavarthi@marvell.com>
+> Enabled data caching for all MRVL layers in TVM models.
+>
+> Signed-off-by: Anup Prabhu <aprabhu@marvell.com>
 
 
-Change as ml/cnxk: fix ...
-
-and add Fixes: tag
+Applied to dpdk-next-net-mrvl/for-main. Thanks
 
 > ---
->  drivers/ml/cnxk/cn10k_ml_ops.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  drivers/ml/cnxk/cn10k_ml_ops.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
 >
 > diff --git a/drivers/ml/cnxk/cn10k_ml_ops.c b/drivers/ml/cnxk/cn10k_ml_op=
 s.c
-> index 628ff963c3c..77947120f25 100644
+> index b30af7c7a44..628ff963c3c 100644
 > --- a/drivers/ml/cnxk/cn10k_ml_ops.c
 > +++ b/drivers/ml/cnxk/cn10k_ml_ops.c
-> @@ -671,9 +671,6 @@ cn10k_ml_layer_load(void *device, uint16_t model_id, =
-const char *layer_name, uin
->         rte_memcpy(&layer->glow.metadata, buffer, sizeof(struct cn10k_ml_=
-model_metadata));
->         cn10k_ml_model_metadata_update(&layer->glow.metadata);
+> @@ -997,13 +997,8 @@ cn10k_ml_layer_start(void *device, uint16_t model_id=
+, const char *layer_name)
+>         if (ret < 0) {
+>                 cn10k_ml_layer_stop(device, model_id, layer_name);
+>         } else {
+> -               if (cn10k_mldev->cache_model_data) {
+> -                       if ((model->type =3D=3D ML_CNXK_MODEL_TYPE_GLOW &=
+&
+> -                            model->subtype =3D=3D ML_CNXK_MODEL_SUBTYPE_=
+GLOW_MRVL) ||
+> -                           (model->type =3D=3D ML_CNXK_MODEL_TYPE_TVM &&
+> -                            model->subtype =3D=3D ML_CNXK_MODEL_SUBTYPE_=
+TVM_MRVL))
+> -                               ret =3D cn10k_ml_cache_model_data(cnxk_ml=
+dev, layer);
+> -               }
+> +               if (cn10k_mldev->cache_model_data)
+> +                       ret =3D cn10k_ml_cache_model_data(cnxk_mldev, lay=
+er);
+>         }
 >
-> -       /* Set layer name */
-> -       rte_memcpy(layer->name, layer->glow.metadata.model.name, MRVL_ML_=
-MODEL_NAME_LEN);
-> -
->         /* Enable support for batch_size of 256 */
->         if (layer->glow.metadata.model.batch_size =3D=3D 0)
->                 layer->batch_size =3D 256;
+>         return ret;
 > --
-> 2.34.1
+> 2.47.0
 >
