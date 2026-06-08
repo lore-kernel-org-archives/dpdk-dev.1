@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A5DCD8CB9
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 14:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B970CD8CAA
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 14:55:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3EA64066C;
-	Mon,  8 Jun 2026 16:55:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D1EE040676;
+	Mon,  8 Jun 2026 16:55:37 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id A6C99402DD;
+ by mails.dpdk.org (Postfix) with ESMTP id CDED640265;
  Mon,  8 Jun 2026 16:55:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1780930534; x=1812466534;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=hAkDQIvd3EHRl2sxrf9vmb2NjaOojQeDVQOPo3Q9kRs=;
- b=Xi/6NQ6WlsYDnoub7j07bVrIU3O/C2qg3xxn6FpdySiprGT0gQob9fyv
- nLHLFnUUmbl5qoRg3AfbjPb7UMEJAsHmggvvzzxvWArSqcnDgQzhMaIHI
- nnA1bP/LQowjoQFCIifMDW37Nwd+JkEb7ZObqB5wjjEUGl9+CXDqJpn/e
- z+k0hiZNApLr9NUfqMAtdUi/fJJUYKYGNYpOS/B6FobPIQF7XXVmuEtPH
- YukvSfjSpOCPLenSjxDgoOAUsM8I5VDIDvgBbokqImCQPOiDkvjypTboI
- 6oJTX7jwcgTOa0irfIEzWwRJLxCwMdtXZL2kmZdl6eUxC2FFutzhC2S4K A==;
-X-CSE-ConnectionGUID: sWb+kI0tTIybvoX03zgliQ==
-X-CSE-MsgGUID: ptdTQHmVQxS5x7Cw6MdDZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="93055941"
-X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="93055941"
+ bh=VgX2CQpdmxwkTz4G9QT54ALEuq35IO+GPDighAQdadA=;
+ b=Ugp9S6zqUK+6rZknKoejJ5xtEt7YvNZDrV/t5IH06/siNsBU/YwrGaSK
+ rUpI2IqhD+NJrBfH4y8kgSiY7jyBNKAV5vieXmKZ7NyobN+e6zErZCG7x
+ vGPz9gZ1CDhK7bbEigJNzRIwWAVd2rX2T6yzePICeNaR7rGEVyjzQ9A7L
+ Jh4dTLGHDNTBIYGlLDee1KdeuYdjP91qjiroBQvoq963RKIWU8z2zQe6l
+ wAS06XVlxKUF5Js6d6hE9Ac0+oAbT288toF2aucmnDQ4514cEHZV4M63q
+ UiqOEuV12sBIX1M9gt1ulQEXhVb85S/CXVZbQx2/7vIOIB8WWg+hwOy2Z g==;
+X-CSE-ConnectionGUID: I7SwSO7ERKCCxrcUkV+a1w==
+X-CSE-MsgGUID: BpA5WphRTxWA0N+7sNU3vQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="93055943"
+X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="93055943"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jun 2026 07:55:32 -0700
-X-CSE-ConnectionGUID: Dtf1YtAOTuWNb4XtKibrrw==
-X-CSE-MsgGUID: /1DXGui1RgGjUyRwTwuzUQ==
+ 08 Jun 2026 07:55:33 -0700
+X-CSE-ConnectionGUID: tmnpo0HlQGeCk2TxMHq4kw==
+X-CSE-MsgGUID: kypBgUbOTaSw1DMv3vln2Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="247436460"
+X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="247436468"
 Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by fmviesa004.fm.intel.com with ESMTP; 08 Jun 2026 07:55:31 -0700
+ by fmviesa004.fm.intel.com with ESMTP; 08 Jun 2026 07:55:32 -0700
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>, stable@dpdk.org,
- Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-Subject: [PATCH 2/3] net/iavf: wait for PF reset start before reinitializing
-Date: Mon,  8 Jun 2026 14:55:17 +0000
-Message-ID: <20260608145518.1705524-3-ciara.loftus@intel.com>
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH 3/3] net/iavf: fix event handler refcount leak on HW reset
+Date: Mon,  8 Jun 2026 14:55:18 +0000
+Message-ID: <20260608145518.1705524-4-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260608145518.1705524-1-ciara.loftus@intel.com>
 References: <20260608145518.1705524-1-ciara.loftus@intel.com>
@@ -60,88 +60,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Commit 1428895ad417 ("net/iavf: fix disabling of promiscuous modes on
-close") added a synchronous VIRTCHNL round-trip on the close path
-before the reset request is sent. This delays the reset just long
-enough that `IAVF_VFGEN_RSTAT` still reads `VIRTCHNL_VFR_VFACTIVE`
-when the re-init path polls it for reset completion. The driver
-interprets this as the reset being complete, when in fact it has not
-yet started, and proceeds to issue VIRTCHNL commands before the PF
-has disabled the VF mailbox.
+Currently, when handling a hardware reset, the uninit path skips
+releasing the event handler reference while in_reset_recovery is set,
+to prevent premature teardown of the event handler thread. However, the
+subsequent re-init call unconditionally increments the reference count,
+inflating ndev on every reset cycle. On the final device removal, the
+count never reaches zero and the event handler thread is never joined.
 
-Fix by polling `IAVF_VF_ARQLEN1.ARQENABLE` immediately after the reset
-request and before shutting down the admin queue, when the close is
-triggered by a reset. The PF clears this bit as its first reset action,
-providing an unambiguous signal that the reset is in progress.
+Fix it by also skipping the event handler reference acquisition during
+reset recovery, matching the symmetric skip in the uninit path so the
+count stays stable across each reset cycle.
 
-Fixes: 1428895ad4 ("net/iavf: fix disabling of promiscuous modes on close")
+Fixes: 3e6a5d2d310a ("net/iavf: add devargs to enable VF auto-reset")
 Cc: stable@dpdk.org
 
-Reported-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/iavf/iavf.h        |  1 +
- drivers/net/intel/iavf/iavf_ethdev.c | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
+ drivers/net/intel/iavf/iavf_ethdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 2615b6f034..4444602a30 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -291,6 +291,7 @@ struct iavf_info {
- 	struct rte_eth_dev *eth_dev;
- 
- 	bool in_reset_recovery;
-+	bool reset_pending;
- 
- 	uint32_t ptp_caps;
- 	rte_spinlock_t phc_time_aq_lock;
 diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index a8031e23a5..a38132e80e 100644
+index a38132e80e..ec1ad02826 100644
 --- a/drivers/net/intel/iavf/iavf_ethdev.c
 +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -106,6 +106,7 @@ static int iavf_dev_start(struct rte_eth_dev *dev);
- static int iavf_dev_stop(struct rte_eth_dev *dev);
- static int iavf_dev_close(struct rte_eth_dev *dev);
- static int iavf_dev_reset(struct rte_eth_dev *dev);
-+static bool iavf_is_reset_detected(struct iavf_adapter *adapter);
- static int iavf_dev_info_get(struct rte_eth_dev *dev,
- 			     struct rte_eth_dev_info *dev_info);
- static const uint32_t *iavf_dev_supported_ptypes_get(struct rte_eth_dev *dev,
-@@ -3196,6 +3197,14 @@ iavf_dev_close(struct rte_eth_dev *dev)
- 	iavf_flow_uninit(adapter);
+@@ -3031,7 +3031,7 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+ 	adapter->tpid = RTE_ETHER_TYPE_VLAN; /* VLAN TPID set to 0x8100 by default */
+ 	rte_spinlock_init(&adapter->phc_sync_lock);
  
- 	iavf_vf_reset(hw);
-+	/*
-+	 * If a reset is pending, wait for the PF to disable the VF's admin
-+	 * receive queue (its first reset action) before we shut it down
-+	 * ourselves.  This ensures iavf_check_vf_reset_done() does not see
-+	 * a stale VFACTIVE value on the re-init path.
-+	 */
-+	if (vf->reset_pending)
-+		iavf_is_reset_detected(adapter);
- 	vf->aq_intr_enabled = false;
- 	iavf_shutdown_adminq(hw);
- 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR) {
-@@ -3273,6 +3282,7 @@ iavf_dev_reset(struct rte_eth_dev *dev)
- 	struct iavf_adapter *adapter =
- 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
- 	/*
- 	 * Check whether the VF reset has been done and inform application,
- 	 * to avoid calling the virtual channel command, which may cause
-@@ -3285,8 +3295,10 @@ iavf_dev_reset(struct rte_eth_dev *dev)
- 	}
- 	iavf_set_no_poll(adapter, false);
+-	if (iavf_dev_event_handler_init())
++	if (!vf->in_reset_recovery && iavf_dev_event_handler_init())
+ 		goto init_vf_err;
  
-+	vf->reset_pending = true;
- 	PMD_DRV_LOG(DEBUG, "Start dev_reset ...");
- 	ret = iavf_dev_uninit(dev);
-+	vf->reset_pending = false;
- 	if (ret)
- 		return ret;
- 
+ 	if (iavf_init_vf(eth_dev) != 0) {
 -- 
 2.43.0
 
