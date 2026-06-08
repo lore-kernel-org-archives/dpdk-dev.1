@@ -2,86 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95979CD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 15:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EC3CD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 15:24:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F319F40664;
-	Mon,  8 Jun 2026 17:17:07 +0200 (CEST)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
- [209.85.160.173])
- by mails.dpdk.org (Postfix) with ESMTP id 8284840265
- for <dev@dpdk.org>; Mon,  8 Jun 2026 17:17:06 +0200 (CEST)
-Received: by mail-qt1-f173.google.com with SMTP id
- d75a77b69052e-5176b9c476aso33404201cf.3
- for <dev@dpdk.org>; Mon, 08 Jun 2026 08:17:06 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780931826; cv=none;
- d=google.com; s=arc-20240605;
- b=TCk48/2O4g47NZMrWJdOgHzp+aV6rJJO8PyhpSq+tDcz2SXx3U7sZHPHiorfLLOazY
- Xvdy0LGLhw9BbxtOga4sdRMJpT5s4ACafon1zqAu9x8BTdvn9GDQOdhEdazFya5HuPO1
- ZYJ84WlFwVNEsIH+QCHdfIS9oR6BtCUZrtMvDrudm5Dc2wjoZr8AdXsyrRgJwxCM+ski
- O4Mb/gjf7kpJElfGYb2HEsbHd9MqOeEX4UwkpvPq8aGIBNTL9i634Dw6oLULG3mAESan
- mIRIVsFOCT8RRfNpxneKpbfVi0+M8ESFgp/qAvdnYBm+Xi/PDbHJDsBtnsdnxmiKssE7
- iNjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=hNeWsFeXffs85wlPN8yhK+FEZlqCddZ/jAIWWnPNnIM=;
- fh=jbdx/Wceb3VPJjUp74ta5d4SFbwKBSOvSND22D5uqu4=;
- b=XXws5ebRg11E2xDhLuI9LeqN+YFPBvSRSSVYgkfUjfpwrzfOWTs5p9Coq92GKguxdb
- kPS/8AEoEqeXrJ9WiWtKG7wsZP49Lkvnmx/xaZ9BQ/2ztnxJkdYpUkd+zQCbfMK7ujgQ
- do44gAiZZy1RGcsIlzdlH6DeSZ2ehDIfOZ8Bytliiro0BpTgPNy1JBqo39OhnTRw17ps
- 18sxNe7UA9jR7aIQAhDc5B9vYqpbXbL8fcT0CJoUsLYfP53yyeLHIG+vkkJK9Q9AwLlv
- WWy2uk5qZufHpZjQ0StOefL633AYne/rmEep4oRIfk5hRLhTsm31JZStGeXKadrPs8Ko
- SJaw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id D3FBA40664;
+	Mon,  8 Jun 2026 17:24:50 +0200 (CEST)
+Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+ by mails.dpdk.org (Postfix) with ESMTP id 36B16402DD
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 17:24:49 +0200 (CEST)
+Received: by mail-dl1-f54.google.com with SMTP id
+ a92af1059eb24-1363e78746eso4759762c88.1
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 08:24:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780931826; x=1781536626; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780932288;
+ x=1781537088; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=hNeWsFeXffs85wlPN8yhK+FEZlqCddZ/jAIWWnPNnIM=;
- b=iyUBi0eG7hqNzckmMpNgq5n0nKi9HIsrvZa1mADhsWiTtwxqEROdel1KeuFlqZ7+uJ
- uyn9gNmGPu1v/5DnequVqfpQ6fmrLbuyPbrX0q71vTSnWk10t3goCOpIn1I8gO4C4nYZ
- adovs7zs59+rQd6L2a3riWfmKEHpzZf8MPY1gdPnRJkI+JuPI819G9PqVauztjt0MHOB
- CvECcrsRP077w9M84AwSgAE6fb6BxxgF5BhIycvpmy697cq8TB8O0t2gAevtjTM94fEQ
- sRees2EN0gjxkEnNtzsoBjiIux44NkrMzHoof8lAfdtdWv8D2PLeuxQs8VSFR46/A5Lg
- s8pA==
+ bh=QWHb9erEhuaWCzKqkL8LDkzhoQJjkY4adMHouwG5uy0=;
+ b=PwRKhP66JHI/w1Si/cEbdjtn3QIJfc74uO8bmhtQU8ST3xsX38DJvKqYYi6S06PN7k
+ 1prjpvaxqGB6DU7XMINHg2/QZwYB2pq2XDBVWX/a3PUHKOWaR1V4eQ/YPZsYN7qmp3m5
+ d34jaO2Bx6aGk2wmqX4ANbTq2UU4Q0n8XkjJtxAvfpa/hBt6EPM3TACMHstEZaHSMcZC
+ dK1X7jM8svENdWuCg4niQuQj6RcIyiKHucvfOfBO+PSds/pkmiyAHRInjq7/3wppe7Rf
+ NUbTWUewYUT+eKHVVGYkr7UNqFpps3SfBQMu99EiWzQ+Dfe6VXrV5N4qdLFzn/7k6/cU
+ ohfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780931826; x=1781536626;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20251104; t=1780932288; x=1781537088;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=hNeWsFeXffs85wlPN8yhK+FEZlqCddZ/jAIWWnPNnIM=;
- b=LSrRQPceDTO0SaQjKIS4xiIFpvk4MAUI2qsPt9HGDPc1o5oKAdhDmirT68NI3xyis5
- cj1DtmpvtLevUKPFlG4o6Ev+eDzhlmS8ldQysTSKtjNmXGoaSUeJ/XnC33lDbYNfad58
- hgbcnPxT3ZHZPP7J8qFGZzNV7nDfkSwFi8yjoSiKD8joPtPUVWw22Lk3SemBhaRduDfj
- xENQf1EOeJaKHDPabvvWUeXMgzSnH1TMSRZEFpufE4qFDVrAcX6IzzoUxh2D/p1Y338V
- dl9sbGDvEXH6Hrbs+1jkn7LwceypzpN+OslOKLSnc53c9/dSZrY+Fwv1zTmDFpowR17b
- QQTQ==
-X-Gm-Message-State: AOJu0Yz3eMLLv4NGpdc7sysxGDNHUmFhlR3FVPevQ+UjUjJxEd5XwOxO
- t+IQhMTPdkcsJ2OQrYpILGE0YHRUUxq3yx2mMJc4Alxw7Q+huv0LwhzF8Xaa3W1aBPxGzR6mgF4
- /lyFe+Z89aRDsrCwv4Uq8mP6e7LDWPgY=
-X-Gm-Gg: Acq92OESEhOfQNOrXppggel6WtjLdDGx1IJG1cRKVSPehaAnRA6Uvx7/Go902LFWGel
- 66PyQN7/zVIlFkJ4BMsJBCyJgUt9ndtAsKqCROqiWOvvctWj7TUpQvaQPitvuT3GCRZK+rgFFog
- JUHjSD4i6ue2/Z/xrkHF2K8Wqrqqx22rM8VC0hNEtKYXRmsHmLvVUX73uqjHGRrYL7LYvMRJ/gh
- pNHF7CdrPX+Wd4jvmDuJtusgLryOdk1Fu6jCT1XYbpBV7UseAMaAtT0PDaX17+LtqxWw79hQKvB
- L8xxj+l5fAuvDA==
-X-Received: by 2002:ac8:6906:0:b0:50e:a1ab:67e4 with SMTP id
- d75a77b69052e-51795b9f0d3mr235887461cf.40.1780931825594; Mon, 08 Jun 2026
- 08:17:05 -0700 (PDT)
+ bh=QWHb9erEhuaWCzKqkL8LDkzhoQJjkY4adMHouwG5uy0=;
+ b=FmnQf5doX+CMJ1KoYESqNJ7c/bWpjHsPnYbLqmMIzZSydLaQeYFMw/pgd75DRkgixX
+ f13B5MyvGbSzo0XlkBnyG5tT3WjupRLxR7GjLqRps/y9ub8qGy2kUqxU9gTmXXSVSOlq
+ wBaa90UjQb/J+jZkABIcjbqhzs89YB+N1PXz7Ibv7CErbJPiECjlmckHS/YgveWF27og
+ WcUOCSY5M3T+rNI9L9sNcE2X64pWWmsIe6VQojJAp/PQpO3teLnCg9eI3zdMWH2ivjLG
+ l+/0B7BqnHDEstl6VTKpoHxx1H9tyT53kutEJFB8imfAtKkzoWKEKH8iDowymacLWifT
+ fkpA==
+X-Gm-Message-State: AOJu0Yz+ASJChuBoDKbbOjbnB0VVJ2N8E2CVccboVngWagJ4dAnnahGb
+ Reg2NecdrUwWpQ9hMrQ+gfOLaqXkxAC0yK8I5RR+E3uqjfNWDxponEUy7vjFpro8R6k=
+X-Gm-Gg: Acq92OHQIX4ndr8QRD7yUWufPFg89p8B4jNBCS3fYBr05Q8jFXALbOOz/Z6Ah1h+Nw3
+ OT6iZ3lLMSHtKxU4DWifaAG7bd+6GC5O7zXO1YZvOL0mt/2V1dbpPtp1u3HIVWXWYgXU4wWropG
+ RByOjlfVYrr7UK6FS92qp0bnK2hltLP+oM7p1sQ/G7qQxl2lLCADzPyubQHGH8mSBJdhh/vjTMl
+ UiMQuyXI5sP/JjfNicXgkD2O9UDy2YkPxFrVbwb95IY45Dd+9KhUFCnQx6yusRwU23elahhao2c
+ 2scBhRckl0bhsiXbaokZ6t9h9z5i5jHD66JCAbsBevS6V9wxymLUx9vh4rsBatnynX67jm9JK+3
+ Bxxk5kqqjsWDXrklvJDLcUy+hAB05xuBJiCMYd4pvxuFVS04OPvufTR7ac3C7LgVb/idNtli+ci
+ HybvfkmH/raZ7ayuaNV4ZwEI053DLKjLGIFdxz9orjWNxtSn3/wNMh7431O8fYlwcSb6bKZRkOQ
+ s0=
+X-Received: by 2002:a05:701b:4306:10b0:138:12fa:3794 with SMTP id
+ a92af1059eb24-13812fa38e8mr3287264c88.26.1780932288068; 
+ Mon, 08 Jun 2026 08:24:48 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-138173e5b47sm5471886c88.8.2026.06.08.08.24.47
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 08 Jun 2026 08:24:47 -0700 (PDT)
+Date: Mon, 8 Jun 2026 08:24:43 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Denis Sergeev <denserg.edu@gmail.com>
+Cc: dev@dpdk.org, shepard.siegel@atomicrules.com, ed.czeck@atomicrules.com,
+ john.miller@atomicrules.com, stable@dpdk.org, sdl.dpdk@linuxtesting.org
+Subject: Re: [PATCH v2] net/ark: fix unsafe env variable in extension loading
+Message-ID: <20260608082443.7fc29529@phoenix.local>
+In-Reply-To: <20260603053313.119342-1-denserg.edu@gmail.com>
+References: <20260603052604.118850-1-denserg.edu@gmail.com>
+ <20260603053313.119342-1-denserg.edu@gmail.com>
 MIME-Version: 1.0
-References: <20260331085529.1105898-1-syalavarthi@marvell.com>
-In-Reply-To: <20260331085529.1105898-1-syalavarthi@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 8 Jun 2026 20:46:39 +0530
-X-Gm-Features: AVVi8CcRlCxyRRSmgTHcUGsgcoqXMvGnWnjPtANdefn2uYZE9chlgMyis0RB-dQ
-Message-ID: <CALBAE1O6+cRJCef3CEC=MYs8vfBsr7eXr-RVP-_5QYq0kpHbJg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ml/cnxk: support for 64-bit int type in metadata
-To: Srikanth Yalavarthi <syalavarthi@marvell.com>
-Cc: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,11 +82,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Mar 31, 2026 at 6:41=E2=80=AFPM Srikanth Yalavarthi
-<syalavarthi@marvell.com> wrote:
->
-> Added support for 64-bit integer data type in model metadata.
->
-> Signed-off-by: Srikanth Yalavarthi <syalavarthi@marvell.com>
+On Wed,  3 Jun 2026 08:32:45 +0300
+Denis Sergeev <denserg.edu@gmail.com> wrote:
 
-Applied to dpdk-next-net-mrvl/for-main. Thanks
+> The ARK_EXT_PATH environment variable is passed to dlopen without
+> verifying process privileges. In a setuid/setgid scenario, this
+> could allow loading an arbitrary shared library with elevated
+> privileges.
+> 
+> Add a check that effective user/group IDs match real IDs before
+> trusting the environment variable, consistent with the same
+> protection already present in the mlx5 driver.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 727b3fe292bc ("net/ark: integrate PMD")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Denis Sergeev <denserg.edu@gmail.com>
+
+Thanks for the report, but it makes no sense.
+DPDK already load shared libraries via -d command line arg without
+checking. And running DPDK application as setuid would be completely
+unsafe. The startup is not hardened in anyway.
+
+NAK
+
+That said, it would be good if DPDK had some security documentation
+about what the trust boundary is and what capabilities are needed.
