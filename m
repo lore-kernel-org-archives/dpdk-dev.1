@@ -2,76 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BDCCD6E79
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 20:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C5CCD6E79
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 22:12:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC8EC402DD;
-	Mon,  8 Jun 2026 22:56:36 +0200 (CEST)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com
- [209.85.128.177])
- by mails.dpdk.org (Postfix) with ESMTP id 3B65E402D6
- for <dev@dpdk.org>; Mon,  8 Jun 2026 22:56:35 +0200 (CEST)
-Received: by mail-yw1-f177.google.com with SMTP id
- 00721157ae682-7efd49373c0so21425187b3.1
- for <dev@dpdk.org>; Mon, 08 Jun 2026 13:56:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 75929402B8;
+	Tue,  9 Jun 2026 00:12:16 +0200 (CEST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com
+ [209.85.208.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 67DFB402AD
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 00:12:15 +0200 (CEST)
+Received: by mail-lj1-f180.google.com with SMTP id
+ 38308e7fff4ca-3966c0d5ac9so47073281fa.2
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 15:12:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780956735; cv=none;
+ d=google.com; s=arc-20240605;
+ b=MFcceS0WT322LoUulP5FrKT/2Vob2AV3pkCOqAkBsJN8Bl+KObgRMndoqECQktlQ8l
+ wpd48ZVl3qjU/VZhqNdO9npahHAXtcs3Pdqlzy3LFeAhEaZptERX24dlAyEibdrWLVg3
+ tHzNVvFSfyZ3b5VzV4N/Xi6pc0P1YWh8hekY9s0h4SukUiWX7mnvPy/93DFm9Po/eI/5
+ +NzCJ5xHLWlCRlICoD1E+JlkAzx3qGrBqRVp2FSpZ4C6/iYiNTZdn8gMjPy/PHPmRVo2
+ Oh1jhGJmdpXOQj1F0Gw9LY/lBal9Huuo6/NdShNR+LkRQb8kLisou6qb1UPNQerXJzBl
+ h5/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=3w10uZlaqPItD2+mRG06qX+R4j6gdWtwWo6xevdwQQ4=;
+ fh=K2Czu0Fju3HSoAeqvapC3G5KVDYaPNySHHEuPIBE79k=;
+ b=HVFMM6LuDbbpYSan/svc3Oqsdo50dtHOwlYynlqO3/C21u81I061ty7ZJXBDUp2+wG
+ tzCOdDyFWcThIExJV2V2rWV5xH0Pnm9/stFAtkUgxOXzBSDhMGi77PYJk3hXT00FCtUH
+ TmansWGXQWF0Jei2Y3MyH3ME86+3edaumhmXxvyWJd98fmxCSQusMe9tIbWk8cpG9v5C
+ o/J5guB2IrsbXgNIlOzqOBxbzUMDg2SEHD6AUdmEZF/aSQ7OuJskVUkxa6ILDydqz4hT
+ 1a0OQa6MlWN0Jv4/xu9gjfNOOcOA+WC6lX/xndOiO3bovRX44VmEfSLkKW+HzGhwFbKf
+ JztA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780952194;
- x=1781556994; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=pNa+WKpx78KwJNGkPANJ+MrhDluJeuc629ghRBRL+UU=;
- b=xol+UhHnXmSRhzn6XBPhLcpIpLd9VvQIuasIUEC+G0mztK7uK1RxhayDhjgkPh5/IK
- elelIPfmZSbwfRihu6dKsbpN1GV2tP+r0UN+AVf2EBOXxPujpcQ7G2peXoAF+WOvzg1k
- oBDfDiopCsG0BQFgRBFu8dreF2W9a1cOBr2QpnDEPEEjWno01un1s6kyB5GHN9guvrZ4
- YvrJII9B+QoABjls0NbOkyLPP/pqolWr8B2/p94TQtdN2csjH3g1V7B6vmmFSN7NEIEk
- uy9KLwUggwjw4P/O8tp500MAHb434YbVZR0aiBHJV9K2QxMSMQ1Oy4xd0n0PIylKt/go
- yRtA==
+ d=gmail.com; s=20251104; t=1780956735; x=1781561535; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=3w10uZlaqPItD2+mRG06qX+R4j6gdWtwWo6xevdwQQ4=;
+ b=IQj9nEO3OMCt5OspNpXa0i4z4BiJlb7hQb5y2Lcj8H/VFl9uKYiOqgwiJ5S2g3r1x0
+ DBUpxp9uywrCXiS0CKc58Wvfhbb0wf3bFGgsF/fkZCZOmkgOKADsQrsK178i1QYwsV/V
+ Ro5dn21dWLwgn1NxmRrPaiiiiOmMnf0olLd3K/bAzUgesq+yAuUt+T0Vbuex9i1OUB0Z
+ ZlrxtW7YCgNWCT9KHkxOwDoBOR3FppzR1gbq6TOf945o0l2PIsCR0ZdFqnu1nt+2EVQD
+ byTX+oVurHyshZ3NoghXkZJhMrhMxck0YM5eyMRWjrsCNoH6HQJVs4DPtW0bgHmiFdhG
+ TMoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780952194; x=1781556994;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=pNa+WKpx78KwJNGkPANJ+MrhDluJeuc629ghRBRL+UU=;
- b=pYA9f8eXsz4siz5tbyxzW53VFoRMsO0jUhcM9xSa6mZx72aN94VwP4O26bnCWedGvn
- 1aNcsF4CYcaC0Re4eJLgqf+STnKwDnb1n2TscXV4OvDxmkX0lJlZaZSYhjPnpHHIB8o6
- K22e5MOcu8kFpM6WjkQNcI0DhU4bQqQfMb4Z9EfVAvxZOp/0F6iuD5sJODtMfsA22AFy
- HLFi6BKe8e5jEV96TG+BbBF3HX0aHQl4SrcZejHI608aaA8uqH5Qnz9SmZ6uWeMu2bqH
- +5VuIx42dgs9xke4Xb99Q2BPqCHBAQFch9FJ4kqcX8KkQJLkZuKkJyEt/90X9PEr6OnY
- r08g==
-X-Gm-Message-State: AOJu0YwYi6ADiEn8+cJYIuGIkkd4a/ct2QarOiZkaTKc82/YGdJoeKGi
- 2HarxkNd7G7r13Yn2k3O4y7xGghMZA4BulnmXdR+tv/zVkGXpmTvFW4e7rHe07BtG/zagBVAHkh
- Qop1K
-X-Gm-Gg: Acq92OE1k++WCJQSjp2IlM3WjsoWWpRT7A0A8lAQROsr6z9M08Sh4MqjztlNnLZEYIE
- mxOQoDT+ADzpkJe1vEiyIusj38vQdZIn+mHcZ4RhDuMrMqeM/LlS4nnkkyPZPe+1smS9s3QQfA/
- 4mxlXTKh4Rm7QgzBWj2dhBmAx3nuw3+4773sWWZdWAU3Ld+rFf1NbwKAt/ieX/vs5SOf/bmH2Iu
- D2vRDGpZM4g7dZ9PHCguJXkxK45C/VWM0UQcNzow6Ya4vETnATt8qfjvy3pq+bu1ZL6X/Idydv+
- AM1gL9nGmxQWBnyYSKnOGrActFNKsWXR2fJEqHcvppK1JjXHEOSiBfjE+iSb8Ksvohoh0eFB4KO
- zk7yyXKkB8uEgM36acaKNhjmJNRHafwx1B3/Xgu9pkgRYNVr86pJxwhw/6MDOYMD70ZHGNea7B5
- XJLAeD+6AgtA4KqF52OR18vu5ldRr2/VFgbOzjXAy1zpwAcCxM2zQyCfNUnk7xc8Q6f6XnKiD4i
- wE=
-X-Received: by 2002:a05:690c:6991:b0:7db:ccda:a40c with SMTP id
- 00721157ae682-7ed0e6710c9mr165291727b3.18.1780952194391; 
- Mon, 08 Jun 2026 13:56:34 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 00721157ae682-7ea2399ab1fsm89376637b3.33.2026.06.08.13.56.33
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 08 Jun 2026 13:56:34 -0700 (PDT)
-Date: Mon, 8 Jun 2026 13:56:30 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: liujie5@linkdatatechnology.com
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v13 01/20] net/sxe2: support AVX512 vectorized path for
- Rx and Tx
-Message-ID: <20260608135630.2326351a@phoenix.local>
-In-Reply-To: <20260608074257.3043531-2-liujie5@linkdatatechnology.com>
-References: <20260608054219.3000719-21-liujie5@linkdatatechnology.com>
- <20260608074257.3043531-1-liujie5@linkdatatechnology.com>
- <20260608074257.3043531-2-liujie5@linkdatatechnology.com>
+ d=1e100.net; s=20251104; t=1780956735; x=1781561535;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=3w10uZlaqPItD2+mRG06qX+R4j6gdWtwWo6xevdwQQ4=;
+ b=bi7MLyXoR5B3vTXsilHxs7JMoe6+6mTrG12TyN67LKwz9bT8ygV5mtcM0m65q+7xau
+ jFjn5m511kKd8p8Gk7+B/QxDt84m9F/ry9AL6VPFhHd1pzLBhVfSCjaJraNbgVFrgPSM
+ DonEB0SsDUfix7eVUOP1gyfuyGaNrTl6BWMK8vLzbNIU+8FgsUDqK42j6mHHNBhrsp5A
+ +LHEXJlRQMFLVVKpR4/NI6V7hEPdfRZf1GRIKfUzndnZg29h3AKBrjrmtCCJ9A2Ts9uf
+ thK5PUwCn7gaa9eZhIQfdaBCQ6hySrb5YtSqteV3mgug3YYdH6l4vNfRXPZDTt9cINhG
+ hmFQ==
+X-Gm-Message-State: AOJu0YwDlLDYkj3afZAwvQlcbo26XqkHafCeZ5ZtB6LnI3ybiVSZKHBL
+ pW/szdEJqHv8kmKLILltHnn1OaxVWAS77NQpYKQ/a9lbuUOyMRjcIc8bw9lwvgGiabDqas7wXto
+ w7gHmTLdiLrXY2R2t7ToApgRdLtSmX28=
+X-Gm-Gg: Acq92OF6A1UOeI1U3+tkeUSk+GFyAJWQ31Rufgfrgpi8BIEXu/Z+y1tUpH8LqmCgojo
+ ISh8jVIs0cSBtaEwDcn8DHVupKmb+U/RnN6SocfmOhYQBpqo+vrkuQ2oQJhauWcrAJCx49cRRbP
+ mVhORbZ4ujs0WIGziP+6RwGc2eI3gcROwuZvWge65fVKjbNaQLj+fitXqbnU79wGTd+Bx8x3kwQ
+ 93gsekMaAX3grHLA4Ii2eXbbuLChoA281TbxPmUXb05gDJFUauk5TUItXssjCaxz6vSMR/OjQ+V
+ 7PykHKW/QjG3wlL+xb23Pey0MnTpCNqpNlsNBWcIMaZhGAQlViY=
+X-Received: by 2002:a05:651c:12c9:b0:396:7a05:6ed7 with SMTP id
+ 38308e7fff4ca-396d074cb2fmr47068291fa.2.1780956734195; Mon, 08 Jun 2026
+ 15:12:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260224163200.39360-1-abailey@iol.unh.edu>
+ <20260530203757.22139-1-patrickrobb1997@gmail.com>
+ <CABJ3N2UVNvqK2y6776bVE0zufpcSERjiroNxpXkf26q_pgajzg@mail.gmail.com>
+In-Reply-To: <CABJ3N2UVNvqK2y6776bVE0zufpcSERjiroNxpXkf26q_pgajzg@mail.gmail.com>
+From: Patrick Robb <patrickrobb1997@gmail.com>
+Date: Mon, 8 Jun 2026 18:12:03 -0400
+X-Gm-Features: AVVi8Cc-frGGreuPpYSHZAaLrfu2wOqxJg_vKbGTz6cVWWw0JTaiV--u9p-R60Q
+Message-ID: <CAK6DuxteciZR3SMzjGLDbg=H6aDttynPMnCg1_HfUu14RhK_qw@mail.gmail.com>
+Subject: Re: [v2] dts: add support for no link topology
+To: Andrew Bailey <abailey@iol.unh.edu>
+Cc: dev@dpdk.org, dmarx@iol.unh.edu, luca.vizzarro@arm.com, probb@iol.unh.edu
+Content-Type: multipart/alternative; boundary="000000000000808e070653c54da6"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,154 +95,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  8 Jun 2026 15:42:38 +0800
-liujie5@linkdatatechnology.com wrote:
+--000000000000808e070653c54da6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->  
-> -struct sxe2_drv_queue_caps {
-> +struct __rte_aligned(4) __rte_packed_begin sxe2_drv_queue_caps {
->  	uint16_t queues_cnt;
->  	uint16_t base_idx_in_pf;
-> -};
-> +} __rte_packed_end;
+On Mon, Jun 1, 2026 at 1:16=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu> =
+wrote:
 
-I don't see the point of packed and aligned. This structure is already embedded
-in other struct. The alignment will be right.
-Packed should be reserved for where you are avoiding padding.
+>
+> Also, does the topology type affect whether we want to use these custom
+>> args, if the SUT driver is ice? I guess in a weird case we could have an
+>> ethdev test using an ice DUT which does not need a TG?
+>>
+>> My understanding is that if the link topology is no link, there will be
+> no ingress and the ports on the NIC would not be used for traffic. I do n=
+ot
+> believe this argument will still be required if no traffic is being
+> handled. Please let me know if you disagree with this approach or if I am
+> missing something.
+>
 
-Bottom line: drivers should not use packed except for hardware registers,
-network headers.  You probably could just use existing structures here
-and elsewhere; with static_assert() added in the vector code to make
-sure future changes don't break assumptions.
+So, yes it probably does not matter which way we decide on this given that
+no traffic is going to be transmitted. But, I suppose we might as well
+maintain the same logic (compile this way with this DPDK PMD) as with
+single link and dual link topologies, unless we have any reason to do
+otherwise? But again, if we did compile without the argument in a no_link
+topology, I don't think it would matter. So, in this case, whatever your
+preference is between these two (as long as you provide a reason), I will
+approve it.
 
-> diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-> index 8d66e5d8c5..e0f7002138 100644
-> --- a/drivers/net/sxe2/sxe2_ethdev.c
-> +++ b/drivers/net/sxe2/sxe2_ethdev.c
-> @@ -891,7 +891,7 @@ static int32_t sxe2_eth_pmd_probe_pf(struct sxe2_common_device *cdev,
->  static int32_t sxe2_parse_eth_devargs(struct rte_device *dev,
->  			  struct rte_eth_devargs *eth_da)
->  {
-> -	int ret = 0;
-> +	int32_t ret = 0;
->  
->  	if (dev->devargs == NULL)
->  		return 0;
+--000000000000808e070653c54da6
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hmm. This raises the question why did sxe2 clone the model from other drivers using vdpa
-but change the return to int32_t.
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Jun 1, =
+2026 at 1:16=E2=80=AFPM Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh=
+.edu">abailey@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmai=
+l_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,20=
+4,204);padding-left:1ex"><div dir=3D"ltr"><div class=3D"gmail_quote"><div><=
+br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+Also, does the topology type affect whether we want to use these custom arg=
+s, if the SUT driver is ice? I guess in a weird case we could have an ethde=
+v test using an ice DUT which does not need a TG?<br>
+<br></blockquote><div>My understanding is that if the link topology is no l=
+ink, there will be no ingress and the ports on the NIC would not be used fo=
+r traffic. I do not believe this argument will still be required if no traf=
+fic is being handled. Please let me know if you disagree with this approach=
+ or if I am missing something.=C2=A0 =C2=A0=C2=A0</div></div></div></blockq=
+uote><div><br></div><div>So, yes it probably does not matter which way we d=
+ecide on this given that no traffic is going to be transmitted. But, I supp=
+ose we might as well maintain the same logic (compile this way with this DP=
+DK PMD) as with single link and dual link topologies, unless we have any re=
+ason to do otherwise? But again, if we did compile without the argument in =
+a no_link topology, I don&#39;t think it would matter. So, in this case, wh=
+atever your preference is between these two (as long as you provide a reaso=
+n), I will approve it.=C2=A0</div></div></div>
 
-I think you are making things unnecessarily complex here:
-
-$ git grep probe_t | grep int
-drivers/bus/auxiliary/bus_auxiliary_driver.h:typedef int (rte_auxiliary_probe_t)(struct rte_auxiliary_driver *drv,
-drivers/bus/cdx/bus_cdx_driver.h:typedef int (rte_cdx_probe_t)(struct rte_cdx_driver *, struct rte_cdx_device *);
-drivers/bus/dpaa/bus_dpaa_driver.h:typedef int (*rte_dpaa_probe_t)(struct rte_dpaa_driver *dpaa_drv,
-drivers/bus/fslmc/bus_fslmc_driver.h:typedef int (*rte_dpaa2_probe_t)(struct rte_dpaa2_driver *dpaa2_drv,
-drivers/bus/ifpga/bus_ifpga_driver.h:typedef int (afu_probe_t)(struct rte_afu_device *);
-drivers/bus/pci/bus_pci_driver.h:typedef int (rte_pci_probe_t)(struct rte_pci_driver *, struct rte_pci_device *);
-drivers/bus/platform/bus_platform_driver.h:typedef int (rte_platform_probe_t)(struct rte_platform_device *pdev);
-drivers/bus/uacce/bus_uacce_driver.h:typedef int (rte_uacce_probe_t)(struct rte_uacce_driver *, struct rte_uacce_device *);
-drivers/bus/vdev/bus_vdev_driver.h:typedef int (rte_vdev_probe_t)(struct rte_vdev_device *dev);
-drivers/bus/vmbus/bus_vmbus_driver.h:typedef int (vmbus_probe_t)(struct rte_vmbus_driver *,
-drivers/common/mlx5/mlx5_common.h:typedef int (mlx5_class_driver_probe_t)(struct mlx5_common_device *cdev,
-drivers/common/nfp/nfp_common_pci.h:typedef int (nfp_class_driver_probe_t)(struct rte_pci_device *dev);
-drivers/common/sxe2/sxe2_common.h:typedef int32_t (sxe2_class_driver_probe_t)(struct sxe2_common_device *scdev,
-lib/eal/include/bus_driver.h:typedef int (*rte_bus_probe_t)(struct rte_bus *bus);
-
-No other driver uses int32...
-
-> @@ -315,19 +370,30 @@ static const struct {
->  	eth_rx_burst_t rx_burst;
->  	const char *info;
->  } sxe2_rx_burst_infos[] = {
-> -	{ sxe2_rx_pkts_scattered,          "Scalar Scattered" },
-> -	{ sxe2_rx_pkts_scattered_split,          "Scalar Scattered split" },
-> +	{ sxe2_rx_pkts_scattered,
-> +	      "Scalar Scattered" },
-> +	{ sxe2_rx_pkts_scattered_split,
-> +	      "Scalar Scattered split" },
->  #ifdef RTE_ARCH_X86
-> -	{ sxe2_rx_pkts_scattered_vec_sse_offload,      "Vector SSE Scattered" },
-> +#ifdef CC_AVX512_SUPPORT
-> +	{ sxe2_rx_pkts_scattered_vec_avx512,
-> +	      "Vector AVX512 Scattered" },
-> +	{ sxe2_rx_pkts_scattered_vec_avx512_offload,
-> +	      "Offload Vector AVX512 Scattered" },
-> +#endif
-> +	{ sxe2_rx_pkts_scattered_vec_sse_offload,
-> +	      "Vector SSE Scattered" },
->  #endif
->  };
-
-The table looked better before with longer lines.
-The DPDK coding style allows lines up to 100 characters; why not use it
-
->  int32_t sxe2_rx_burst_mode_get(struct rte_eth_dev *dev,
-> -			__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode)
-> +			       __rte_unused uint16_t queue_id,
-> +			       struct rte_eth_burst_mode *mode)
->  {
->  	eth_rx_burst_t pkt_burst = dev->rx_pkt_burst;
->  	int32_t ret = -EINVAL;
->  	uint32_t i, size;
-> +
->  	size = RTE_DIM(sxe2_rx_burst_infos);
->  	for (i = 0; i < size; ++i) {
->  		if (pkt_burst == sxe2_rx_burst_infos[i].rx_burst) {
-
-The old code was fine, no need to change this. Either indentation style is OK.
-Prefer not to have non-related changes.
-
-
-> +static __rte_always_inline void
-> +sxe2_tx_pkts_mbuf_fill_avx512(struct sxe2_tx_buffer_vec *buffer,
-> +	struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-> +{
-
-Please only use always_inline where it is absolutely necessary.
-Dont fight with the compiler.
-
-> +static __rte_always_inline int32_t sxe2_tx_bufs_free_vec_avx512(struct sxe2_tx_queue *txq)
-> +{
-> +	struct sxe2_tx_buffer_vec *buffer;
-> +	struct rte_mbuf *mbuf;
-> +	struct rte_mbuf *mbuf_free_arr[SXE2_TX_FREE_BUFFER_SIZE_MAX_VEC];
-> +	struct rte_mempool *mp;
-> +	struct rte_mempool_cache *cache;
-> +	void **cache_objs;
-> +	uint32_t copied;
-> +	uint32_t i;
-> +	int32_t ret;
-> +	uint16_t rs_thresh;
-> +	uint16_t free_num;
-> +
-> +	if (rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DESC_DONE) !=
-> +		(txq->desc_ring[txq->next_dd].wb.dd &
-> +			rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_MASK))) {
-> +		ret = 0;
-> +		goto l_end;
-> +	}
-> +
-> +	rs_thresh = txq->rs_thresh;
-> +
-> +	buffer = (struct sxe2_tx_buffer_vec *)txq->buffer_ring;
-> +	buffer += txq->next_dd - (rs_thresh - 1);
-> +
-> +	if ((txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) &&
-> +			(rs_thresh & 31) == 0) {
-> +		mp = buffer[0].mbuf->pool;
-> +		cache = rte_mempool_default_cache(mp, rte_lcore_id());
-> +
-> +		if (cache == NULL || cache->len)
-> +			goto normal;
-> +
-> +		if (rs_thresh > RTE_MEMPOOL_CACHE_MAX_SIZE) {
-> +			(void)rte_mempool_ops_enqueue_bulk(mp, (void *)buffer, rs_thresh);
-> +			goto done;
-> +		}
-> +		cache_objs = &cache->objs[cache->len];
-
-Directly using cache is going to be brittle and likely get broken by other
-coming changes to mempool cache.
-
+--000000000000808e070653c54da6--
