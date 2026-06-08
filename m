@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99716CD8C92
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 13:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13428CD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 13:13:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 04FD640663;
-	Mon,  8 Jun 2026 15:13:34 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0238C40667;
+	Mon,  8 Jun 2026 15:13:35 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 91598402AD
+ by mails.dpdk.org (Postfix) with ESMTP id BB09E40265
  for <dev@dpdk.org>; Mon,  8 Jun 2026 15:13:31 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780924411; x=1812460411;
+ t=1780924412; x=1812460412;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=S8XMe+vOJsrJ+4X5ey1ZFTMCOJn+hQsFBV8qWAjhIDo=;
- b=PqsorKUcubie0CWTfNBF0pllqackY/tR1JN1Gw9zL99xiOyvjZoTvHMM
- obhCjw2YdzNyzIlStAc1e98KfHI54Q9OqnzvtbeCm/BdaEzKVkFxkOYl7
- kXoV7PKnaZkU2tQBqGX4TKNR1lPIFnHy8dpadrD7bL/3GWqjvXX6JLWLU
- kgqPu/Oa/BN0QKboEwuS+aKlhBKEZhXl9Q9oYo2Q5vn6fOBLfxbk84H2O
- x9wbkfEjfH+TgbW797QhiuSWHDwyGBuUozO4kaZYL/tYUYsOuHLjodhAZ
- +ZIY6PZ4o5i/2adrZHMvKR/OwPFA0209qQmKZbxCFeQ4mmevjBW3/9bZG A==;
-X-CSE-ConnectionGUID: y1nTJFGTSUS2TfpXooV3eg==
-X-CSE-MsgGUID: jL+LPTCmQPedz9BEM3bSrA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11810"; a="81656721"
-X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="81656721"
+ bh=8N3e+MWVHoNTjjVMDi/gz1XOI+RgKD0Ac0Y+1NqOSc0=;
+ b=BihF5HCw5ibf/tqlxCzZV2ws7WiT2J42fNKV/eieSFpsWBDoJskQpfD+
+ q1KVG4YuOpp84pgtkHkav/wQDVCLGIvbsyEudHjX5mzd4J0Cp+o2NeXPN
+ YXVmP++sbU4UWI966xW2uSp6qscaG0/pEw1AUbt9Tzbn3UqXWyRpLbKSF
+ poldIgQjOYyn9hrXnyYlw4gnsTYqiuLBR/yNfFTFKaF9thkysd8u6wWCB
+ iyL8cDqmUBInE/FZd12WX+OvwGB3kFm5sQ1sDtgjDxIK7Wu3O8TaULkBI
+ 8ods0zBFyKl4RxdO/ZgKkSpTQD/HcDGTroXxIkZj05vRprYLuDAb7B4wI w==;
+X-CSE-ConnectionGUID: iphnyZzAQsmwIg+OoqZ6hQ==
+X-CSE-MsgGUID: Ajw7TNCsT5KFuUEgoSKXAw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11810"; a="81656722"
+X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="81656722"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jun 2026 06:13:26 -0700
-X-CSE-ConnectionGUID: Lfbj4wrpRFSIJu1kbJShcg==
-X-CSE-MsgGUID: oWMKEWTUSMGskVyRevghgg==
+ 08 Jun 2026 06:13:27 -0700
+X-CSE-ConnectionGUID: 0OZ/E7tFRX2Np60tlmaTJw==
+X-CSE-MsgGUID: SjPHysqNTgyDAKja73yYcA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="245635485"
+X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="245635493"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa007.jf.intel.com with ESMTP; 08 Jun 2026 06:13:26 -0700
+ by orviesa007.jf.intel.com with ESMTP; 08 Jun 2026 06:13:27 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Jianfeng Tan <jianfeng.tan@intel.com>
-Subject: [PATCH v5 3/5] eal: fix memory leak in async IPC secondary path
-Date: Mon,  8 Jun 2026 14:13:19 +0100
-Message-ID: <6c00a4c8a568eef993559eead0319e99c2d94845.1780924381.git.anatoly.burakov@intel.com>
+Subject: [PATCH v5 4/5] eal: fix async IPC resource leaks on partial failure
+Date: Mon,  8 Jun 2026 14:13:20 +0100
+Message-ID: <207eb727a8302284314be7bd264694efb434e80b.1780924381.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <2bc77b94493d94b53a28ea535ed96d92a157a7c7.1780924381.git.anatoly.burakov@intel.com>
 References: 
@@ -59,35 +59,257 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When rte_mp_request_async() succeeds on the secondary process path, the
-dummy request is freed only if it was inserted into the queue. However,
-when the actual request was sent successfully (nb_sent > 0), the dummy is
-not used and the function returns without freeing it.
+When rte_mp_request_async() fails to send requests to all peers,
+copy and param can lose ownership and leak.
 
-Free dummy before returning on the success path when it was not inserted
-into the queue.
+On partial failure, some requests may already be queued and still
+reference copy and param, so freeing them directly on the error
+path can cause use-after-free when those requests are later handled.
 
+Fix this by rolling back queued requests from the current batch,
+resetting nb_sent to 0, and freeing copy/param only after rollback.
+Use a numeric request ID for alarm callback lookup so stale callbacks
+from rolled-back requests become harmless no-ops.
+
+Coverity issue: 501503
 Fixes: f05e26051c15 ("eal: add IPC asynchronous request")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/eal/common/eal_common_proc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ lib/eal/common/eal_common_proc.c | 112 +++++++++++++++++++++++--------
+ 1 file changed, 84 insertions(+), 28 deletions(-)
 
 diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
-index 2a99162a21..0dd25bef8b 100644
+index 0dd25bef8b..ddcaa2f20b 100644
 --- a/lib/eal/common/eal_common_proc.c
 +++ b/lib/eal/common/eal_common_proc.c
-@@ -1210,6 +1210,8 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
- 		/* if we couldn't send anything, clean up */
- 		if (ret != 0)
- 			goto fail;
-+		if (!dummy_used)
-+			free(dummy);
- 		return 0;
+@@ -74,6 +74,7 @@ struct async_request_param {
+ 
+ struct pending_request {
+ 	TAILQ_ENTRY(pending_request) next;
++	unsigned long id;
+ 	enum {
+ 		REQUEST_TYPE_SYNC,
+ 		REQUEST_TYPE_ASYNC
+@@ -92,6 +93,8 @@ struct pending_request {
+ 	};
+ };
+ 
++static unsigned long next_request_id;
++
+ TAILQ_HEAD(pending_request_list, pending_request);
+ 
+ static struct {
+@@ -111,9 +114,9 @@ mp_send(struct rte_mp_msg *msg, const char *peer, int type);
+ static void
+ async_reply_handle(void *arg);
+ 
+-/* for use with process_msg */
++/* for use with alarm callback and process_msg */
+ static struct pending_request *
+-async_reply_handle_thread_unsafe(void *arg);
++async_reply_handle_thread_unsafe(struct pending_request *req);
+ 
+ static void
+ trigger_async_action(struct pending_request *req);
+@@ -132,6 +135,19 @@ find_pending_request(const char *dst, const char *act_name)
+ 	return r;
+ }
+ 
++static struct pending_request *
++find_async_request_by_id(unsigned long id)
++{
++	struct pending_request *r;
++
++	TAILQ_FOREACH(r, &pending_requests.requests, next) {
++		if (r->id == id && r->type == REQUEST_TYPE_ASYNC)
++			return r;
++	}
++
++	return NULL;
++}
++
+ /*
+  * Combine prefix and name(optional) to return unix domain socket path
+  * return the number of characters that would have been put into buffer.
+@@ -519,9 +535,8 @@ trigger_async_action(struct pending_request *sr)
+ }
+ 
+ static struct pending_request *
+-async_reply_handle_thread_unsafe(void *arg)
++async_reply_handle_thread_unsafe(struct pending_request *req)
+ {
+-	struct pending_request *req = (struct pending_request *)arg;
+ 	enum async_action action;
+ 	struct timespec ts_now;
+ 
+@@ -534,7 +549,8 @@ async_reply_handle_thread_unsafe(void *arg)
+ 
+ 	TAILQ_REMOVE(&pending_requests.requests, req, next);
+ 
+-	if (rte_eal_alarm_cancel(async_reply_handle, req) < 0) {
++	if (rte_eal_alarm_cancel(async_reply_handle,
++			(void *)(uintptr_t)req->id) < 0) {
+ 		/* if we failed to cancel the alarm because it's already in
+ 		 * progress, don't proceed because otherwise we will end up
+ 		 * handling the same message twice.
+@@ -557,9 +573,13 @@ static void
+ async_reply_handle(void *arg)
+ {
+ 	struct pending_request *req;
++	/* alarm arg carries the request ID packed into a void * via uintptr_t */
++	unsigned long id = (uintptr_t)arg;
+ 
+ 	pthread_mutex_lock(&pending_requests.lock);
+-	req = async_reply_handle_thread_unsafe(arg);
++	req = find_async_request_by_id(id);
++	if (req != NULL)
++		req = async_reply_handle_thread_unsafe(req);
+ 	pthread_mutex_unlock(&pending_requests.lock);
+ 
+ 	if (req != NULL)
+@@ -878,7 +898,29 @@ mp_request_async(const char *dst, struct rte_mp_msg *req,
+ {
+ 	struct rte_mp_msg *reply_msg;
+ 	struct pending_request *pending_req, *exist;
+-	int ret = -1;
++	unsigned long id;
++	int ret;
++
++	/* queue already locked by caller */
++
++	exist = find_pending_request(dst, req->name);
++	if (exist) {
++		EAL_LOG(ERR, "A pending request %s:%s", dst, req->name);
++		rte_errno = EEXIST;
++		return -1;
++	}
++
++	/* Set alarm before allocating or sending so request timeout tracking
++	 * is active as soon as this request ID is reserved.
++	 */
++	id = ++next_request_id;
++	if (rte_eal_alarm_set(ts->tv_sec * 1000000 + ts->tv_nsec / 1000,
++			async_reply_handle,
++			(void *)(uintptr_t)id) < 0) {
++		EAL_LOG(ERR, "Fail to set alarm for request %s:%s",
++			dst, req->name);
++		return -1;
++	}
+ 
+ 	pending_req = calloc(1, sizeof(*pending_req));
+ 	reply_msg = calloc(1, sizeof(*reply_msg));
+@@ -890,21 +932,12 @@ mp_request_async(const char *dst, struct rte_mp_msg *req,
  	}
  
+ 	pending_req->type = REQUEST_TYPE_ASYNC;
++	pending_req->id = id;
+ 	strlcpy(pending_req->dst, dst, sizeof(pending_req->dst));
+ 	pending_req->request = req;
+ 	pending_req->reply = reply_msg;
+ 	pending_req->async.param = param;
+ 
+-	/* queue already locked by caller */
+-
+-	exist = find_pending_request(dst, req->name);
+-	if (exist) {
+-		EAL_LOG(ERR, "A pending request %s:%s", dst, req->name);
+-		rte_errno = EEXIST;
+-		ret = -1;
+-		goto fail;
+-	}
+-
+ 	ret = send_msg(dst, req, MP_REQ);
+ 	if (ret < 0) {
+ 		EAL_LOG(ERR, "Fail to send request %s:%s",
+@@ -917,14 +950,6 @@ mp_request_async(const char *dst, struct rte_mp_msg *req,
+ 	}
+ 	param->user_reply.nb_sent++;
+ 
+-	/* if alarm set fails, we simply ignore the reply */
+-	if (rte_eal_alarm_set(ts->tv_sec * 1000000 + ts->tv_nsec / 1000,
+-			      async_reply_handle, pending_req) < 0) {
+-		EAL_LOG(ERR, "Fail to set alarm for request %s:%s",
+-			dst, req->name);
+-		ret = -1;
+-		goto fail;
+-	}
+ 	TAILQ_INSERT_TAIL(&pending_requests.requests, pending_req, next);
+ 
+ 	return 0;
+@@ -1178,6 +1203,7 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
+ 	 * it, and put it on the queue if we don't send any requests.
+ 	 */
+ 	dummy->type = REQUEST_TYPE_ASYNC;
++	dummy->id = ++next_request_id;
+ 	dummy->request = copy;
+ 	dummy->reply = NULL;
+ 	dummy->async.param = param;
+@@ -1194,8 +1220,8 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
+ 			TAILQ_INSERT_TAIL(&pending_requests.requests, dummy,
+ 					next);
+ 			dummy_used = true;
+-
+-			if (rte_eal_alarm_set(1, async_reply_handle, dummy) < 0) {
++			if (rte_eal_alarm_set(1, async_reply_handle,
++					(void *)(uintptr_t)dummy->id) < 0) {
+ 				EAL_LOG(ERR, "Fail to set alarm for dummy request");
+ 				/* roll back the changes */
+ 				TAILQ_REMOVE(&pending_requests.requests, dummy, next);
+@@ -1245,6 +1271,30 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
+ 		} else if (mp_request_async(path, copy, param, ts))
+ 			ret = -1;
+ 	}
++
++	/*
++	 * On partial failure, roll back all queued requests in this batch while
++	 * holding pending_requests.lock. Any alarm callback that runs later for
++	 * these removed IDs will not find a pending request and will return.
++	 */
++	if (ret != 0 && reply->nb_sent > 0) {
++		struct pending_request *r, *next;
++
++		for (r = TAILQ_FIRST(&pending_requests.requests);
++				r != NULL; r = next) {
++			next = TAILQ_NEXT(r, next);
++			if (r->type == REQUEST_TYPE_ASYNC &&
++					r->async.param == param) {
++				TAILQ_REMOVE(&pending_requests.requests,
++						r, next);
++				free(r->reply);
++				/* r->request == copy, freed below after the loop */
++				free(r);
++			}
++		}
++		reply->nb_sent = 0;
++	}
++
+ 	/* if we didn't send anything, put dummy request on the queue
+ 	 * and set a minimum-delay alarm so the callback fires immediately.
+ 	 */
+@@ -1252,7 +1302,8 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
+ 		TAILQ_INSERT_HEAD(&pending_requests.requests, dummy, next);
+ 		dummy_used = true;
+ 
+-		if (rte_eal_alarm_set(1, async_reply_handle, dummy) < 0) {
++		if (rte_eal_alarm_set(1, async_reply_handle,
++				(void *)(uintptr_t)dummy->id) < 0) {
+ 			EAL_LOG(ERR, "Fail to set alarm for dummy request");
+ 			/* roll back the changes */
+ 			TAILQ_REMOVE(&pending_requests.requests, dummy, next);
+@@ -1274,6 +1325,11 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
+ 	/* if dummy was unused, free it */
+ 	if (!dummy_used)
+ 		free(dummy);
++	/* if nothing was sent, nobody owns copy/param */
++	if (ret != 0) {
++		free(param);
++		free(copy);
++	}
+ 
+ 	return ret;
+ closedir_fail:
 -- 
 2.47.3
 
