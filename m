@@ -2,73 +2,94 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4000FCD4F57
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 May 2026 10:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DFACD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:09:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 418ED40652;
-	Tue, 19 May 2026 12:28:07 +0200 (CEST)
-Received: from mails.dpdk.org (localhost [127.0.0.1])
- by mails.dpdk.org (Postfix) with ESMTP id A80C940296;
- Tue, 19 May 2026 12:28:05 +0200 (CEST)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
- [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id CA0534021E
- for <announce@dpdk.org>; Tue, 19 May 2026 12:28:03 +0200 (CEST)
-Received: by mail-wr1-f45.google.com with SMTP id
- ffacd0b85a97d-43d7e23defbso1883042f8f.0
- for <announce@dpdk.org>; Tue, 19 May 2026 03:28:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F0C2402DD;
+	Mon,  8 Jun 2026 18:09:29 +0200 (CEST)
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com
+ [209.85.160.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 0CCB64029D
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 18:09:28 +0200 (CEST)
+Received: by mail-qt1-f175.google.com with SMTP id
+ d75a77b69052e-516e1525aa3so54838031cf.3
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 09:09:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780934967; cv=none;
+ d=google.com; s=arc-20240605;
+ b=dkMH7OU8FIxeYVSUcYVr8d/YNLGz2mb9O/lA/T6TR/ffzkSRa+ZlH9QN1q3/Hziy+L
+ HnGceO0gqO/Q1PXbF7hxr7Gdajq2AJh03MB3jePivW44qqtfq03/84LSeBcFGVALLARS
+ G7w2WyQKkbQGTB1RWiHCZX46XDLIzPAU4IfUA/J5xav3pXilYjIfkd3gTX8NZJRIrvD2
+ Vue0fJRa8KVTyLNNZhnj+X5QknjfFOrdH+t4r1LjRwqpIp7eRsi7ilLwfwXtyr+kFRiv
+ mpUGsmrAq911If7l9a7hVlwzLumIPvIvftSNH2TH/smPT4i76lClwo448l9AhiOjqZin
+ 6Wyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=sbe643GVpy59tUM4hu7NYlnSdGZMQWvmGVOw753QZ/o=;
+ fh=aTMQnLYYZLpeCtuW0PQBCXMt9AsmjLIm2Q9DxObMXUI=;
+ b=V1pelePh8Ycwwj97k6BnxYSf0UcYKE4SylxvxP8RRNxoEqkQ22wh+uedbNUFuBSNxT
+ 67gsGDBZwiTQFebt0lPr8kMJLHRpiBTH5GVruT1hXz6631UaYSOPx0iEsMeSZq5hTlRF
+ VfhVAc5Lr1RtOGbV0ZcnbiDQkWS80oUG5Ix1Pyj9MP+GB8Fw/t/DoAXeFwrODWhnsz1p
+ v3ccO6yIPDq4KyhS/ab95kLmAvlD28rmN464PwocdGwkrkfa9xe1nRL7txEMdTDftUnW
+ n2aj0sqBrEJEUL9CDGwF/8z4culESwUBtmf+Ww2Z80bAnEzJFjwQDrdswjCdxdaPoesB
+ YVkw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1779186483; x=1779791283; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:to
- :from:from:to:cc:subject:date:message-id:reply-to;
- bh=IRAJAwxceiIFvwTvjdrlODfhY/YUP6obgW6fVYWR0GU=;
- b=YMv/0BLku+Xet4AscNX9c8EOAeqCaoCVcZasjn/tmaqfIu1HSM4PJpyVduIGJv18Ct
- suRO+GLKExJ8v6dJwLI+bGBHWOaATXicqBQediWTdnoIgzxXJY9tLGe/45pq8iyMpr1g
- baeodXuqPQazviWoVGyNpo+coUTRSsLmZAdaa22yEAMV1ckY7d79eSiWRKjU0FrzBCc5
- 2yfsTWBOH81uUshO0m/MxS+JXCOU9H3NF0Nzd0L1eh1jZiaty8t3AjZuoHld6iAUEQo1
- 4t+6IHo4eHH/p9Lljnju/pDWHo3G04tIY2s7Jyh3ylBfgSus20fPx97BSsFdabqAkdEt
- 1kqg==
+ d=gmail.com; s=20251104; t=1780934967; x=1781539767; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=sbe643GVpy59tUM4hu7NYlnSdGZMQWvmGVOw753QZ/o=;
+ b=HczXbzwpOeu02HNk86y5eQX5lJYSa6bBX01MXPDGhtlmglxowKs/1EDIz3DDqIaUot
+ 4yxG5LfIYwAMRjsj1kwhVbV5mNS5BfUJf97OHY8KFkK3t/Vq17KLBVPMmtQye/JZT49j
+ OM9QolQGjmBcabkRTrNn/mCstqQ7DD7HazVwZ0Zky9cUwEdHZcV51GLNOUTZUQUIi/3W
+ sxsG50HcQij04aWLwC0t/xQgJ6bkqVZmTFGQciYE1T2m4xZWltpBHX1MTiOdv6x65gu0
+ Er+KDI2A/oE59gGo4KCpkGGR7eaYZltlLLHzfyhqCFzwyV9YZWNWFEpi97rFnIWridL3
+ p+uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779186483; x=1779791283;
- h=content-transfer-encoding:mime-version:message-id:date:subject:to
- :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=IRAJAwxceiIFvwTvjdrlODfhY/YUP6obgW6fVYWR0GU=;
- b=LIgf14ti8b3D1puhXT1Ai21qPDhLZDAhzhB/U/MmfnhZtVi5t9a8fgKWsz2+d77mt2
- QxzyEYxRtt/fgKnirr2fGxoo2AdimlEmJeYfW+poZ1hziYLJ+zk9k+ut7d5iAXJECQiA
- FcMQfZ4jJzLujpnLTGmT1QEyF/S2dmV/6VK6RVfE8VZNBIGn4SLdF93a1MBnzfvlbKEy
- lA/6N/BYtb+SBZzmBNj1IUpkUIkXXyZvZQv/s2eAz6pRzFhFdPojj8xOrfOi+17cCtNi
- AKq7UIE2O03wH+WSeHHHQXQMakVbCT1wW/zc/n5kILdsw8jSqaH5S2x/S6vA8sQitmhR
- dr7Q==
-X-Gm-Message-State: AOJu0Yxo7pp3z+8AXC+Ia7Hg2y5jj4+El1jRkMcO0H0M0U8xGQA5g0T0
- rVhiDHlzQUZLs4pXBIoiyCqm3aO2jjHHHAWSQr1cDJ9N2QAO/UWGl3rQWGwHbg==
-X-Gm-Gg: Acq92OHWoenOiQOFLL7+1mUcGriRGbcglteuf5W+AORPrygke6z35aBhAtU0cCbh3tx
- 8WIPLXtjl3pqyTCqwfzuLryHBe4PjdNc0mxJofqio9IninGQnGUOPmASu7YrP/MNAk/EdL7TyUk
- HTaUgI3VM4+R1m7lInaFNow19HeWZkDQZnxMIDIJMs3GjQz99oU3PQv2/nCTsApgBNp6S2U6NWO
- 0xJ9/pzHeeAJj8t8uBgD0VdcfRGh7cp6I7K+rxZJ2eVxiOkwwIaz1CAKxhmwxY8fd6Z5FpvhElw
- CQU2gFOtuN/V1MEZ1xwqMOV0iNGWy7cXsAsK2SH8coD0nk6TlYlD9v9V0Vh/U8eQxCn0Mch9ZOt
- UAk9vFAl1v6c7T2Pwd84QuaC8OeGV1yJrrpqlKJ4WxlBF/ItzE/yroJzspW9m/jqq+6tipn1jh6
- vGY1MClNmh4OuNKt5qFCIkUP56fT78B5H60AUu73c=
-X-Received: by 2002:a5d:5d12:0:b0:45e:8547:f214 with SMTP id
- ffacd0b85a97d-45e8547f294mr8402309f8f.32.1779186482979; 
- Tue, 19 May 2026 03:28:02 -0700 (PDT)
-Received: from localhost ([2a01:4b00:d036:ae00:5670:761c:bfe8:8866])
- by smtp.gmail.com with UTF8SMTPSA id
- ffacd0b85a97d-45da0a17ec2sm41712604f8f.24.2026.05.19.03.28.02
- for <announce@dpdk.org>
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 19 May 2026 03:28:02 -0700 (PDT)
-From: luca.boccassi@gmail.com
-To: announce@dpdk.org
-Subject: DPDK 24.11.6 released
-Date: Tue, 19 May 2026 11:27:55 +0100
-Message-ID: <20260519102759.451367-1-luca.boccassi@gmail.com>
-X-Mailer: git-send-email 2.47.3
+ d=1e100.net; s=20251104; t=1780934967; x=1781539767;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=sbe643GVpy59tUM4hu7NYlnSdGZMQWvmGVOw753QZ/o=;
+ b=m9STBMlkBP7IiAvYVNLwOqrfND8hbX/toTyi7pC16SYBs5GCvsZ0I4BxxcNGY16eyt
+ GNTRe1DaWU8b6B6nkTySmD+0R8KoPsUFGyLxwSvxxYGKs0dsFdvinClrSkjMi1PEA04l
+ EdI4bteYiPxgCK7lldbOhP8bDc85drqUfdlmhJAWsiB6dNIfLVSLmHd1d+5+ate7NwZ+
+ sxQbWH1gvoVhp1rZdULlrBVXI5bdMMbgBU0s0iQU654s6Mdr9nB8/swrIHmGTGWxZfGD
+ 7aKfyrCPEZ7o2srwOj/uRySXmz8wLQxBtoaiZAJioxxYdHrR0//NB0pcJsjSe8G3XJjp
+ Nzmw==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ9D/innE+754EiEDBWRroAo7PTtynok6KrrCimBI+76teU24dVNGejrKK5vuk+FjfQ4M5M=@dpdk.org
+X-Gm-Message-State: AOJu0YwGHFA1CGB+JjdBYZmKkZ4ZgPAT/rht8R9k77vCCREtvMakUf3F
+ 9NuPlCih3DmQoEq3Q/SrUJO+NlfTrol4j5E0qXrrHZwBoafShzZdIbt0u9DYDT4ayGLU/U2DBEM
+ cGbUEctlFIrErndTV43M7ccboUlNjzB4=
+X-Gm-Gg: Acq92OGgUG48APcvMmQxIxjzU3tsdtn+u9wV6VTdpnSzPkAgiSc62d+0HBefzC5xB6p
+ ixbALdmHkqQ2n+P9NPfFL5dRFGNfw/Dg47uhNR5ixC4JiLn6MfXo7ECTQ4eB3s7EiyRVhoZLkqB
+ qwkg6/r8rRotWlYPcniK/tz7h4s1ygyzJ8uyywXKroQVfuRwZJ5KUhJ/eXw3l3UEfMmtm9ylF+I
+ NmuwnxqoJfoX1re85g4QgCpsGAT0jdlvbg0PUqlaRmZSTHLt4ag7+ikxJUdnwmfafxlAcBNWBdp
+ WlhlpzQLJwbKkQ==
+X-Received: by 2002:ac8:5491:0:b0:517:a9ef:ce30 with SMTP id
+ d75a77b69052e-517a9efd0a7mr108065861cf.17.1780934967179; Mon, 08 Jun 2026
+ 09:09:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-BeenThere: announce@dpdk.org
+References: <20260605081620.97056-1-pbhagavatula@marvell.com>
+In-Reply-To: <20260605081620.97056-1-pbhagavatula@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 8 Jun 2026 21:39:00 +0530
+X-Gm-Features: AVVi8Cc6xlBfq5lIwHVZwQ-QjoZLOr0x8_oAqNB5DYK_4ZgHJnHGOrWb6xI2El4
+Message-ID: <CALBAE1M=CV5NPTxKmf03dx4B5YgUz8c6qRWE8G6sKf4hih7QFg@mail.gmail.com>
+Subject: Re: [PATCH] dma/cnxk: fix crash on secondary process cleanup
+To: pbhagavatula@marvell.com
+Cc: jerinj@marvell.com, Vamsi Attunuru <vattunuru@marvell.com>, 
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Radha Mohan Chintakuntla <radhac@marvell.com>, dev@dpdk.org, 
+ stable@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
-X-BeenThere: dev@dpdk.org
 List-Id: DPDK patches and discussions <dev.dpdk.org>
 List-Unsubscribe: <https://mails.dpdk.org/options/dev>,
  <mailto:dev-request@dpdk.org?subject=unsubscribe>
@@ -79,22 +100,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi all,
+On Fri, Jun 5, 2026 at 2:11=E2=80=AFPM <pbhagavatula@marvell.com> wrote:
+>
+> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+>
+> cnxk_dmadev_probe() ran in secondary processes too, overwriting the
+> shared rdpi->pci_dev with a process-local pointer and marking the
+> device ready. With buses now cleaned up on shutdown, the primary's
+> roc_dpi_dev_fini() dereferences that stale pointer and crashes.
+>
+> Skip HW init in secondary processes: attach to the shared device data
+> and return, leaving rdpi and the device state untouched.
+>
+> Fixes: 53f6d7328bf4 ("dma/cnxk: create and initialize device on PCI probi=
+ng")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-Here is a new stable release:
-	https://fast.dpdk.org/rel/dpdk-24.11.6.tar.xz
-
-The git tree is at:
-	https://dpdk.org/browse/dpdk-stable/?h=24.11
-
-Luca Boccassi
-
----
- VERSION                                |  2 +-
- doc/guides/rel_notes/release_24_11.rst | 17 +++++++++++++++++
- lib/net/rte_net.c                      | 29 +++++++++++++++--------------
- 3 files changed, 33 insertions(+), 15 deletions(-)
-Luca Boccassi (3):
-      docs: fix build issue due to missing spacing between paragraphs
-      Revert "net: fix packet type for stacked VLAN"
-      version: 24.11.6
+Applied to dpdk-next-net-mrvl/for-main. Thanks
