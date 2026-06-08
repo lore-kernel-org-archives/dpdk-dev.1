@@ -2,90 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE9DCD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DAECD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 16:28:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3600D402DD;
-	Mon,  8 Jun 2026 18:27:23 +0200 (CEST)
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com
- [209.85.160.170])
- by mails.dpdk.org (Postfix) with ESMTP id E11D04029D
- for <dev@dpdk.org>; Mon,  8 Jun 2026 18:27:21 +0200 (CEST)
-Received: by mail-qt1-f170.google.com with SMTP id
- d75a77b69052e-5176bbb9384so46190731cf.1
- for <dev@dpdk.org>; Mon, 08 Jun 2026 09:27:21 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780936040; cv=none;
- d=google.com; s=arc-20240605;
- b=PJ2bROu9RG0le4eXkgOSttHtuARt4JqWiMBuQ45uEt8swKORr45zp5PCAWWg2gSfow
- 1DarZyUXvTzrSAT2MbaBvSO3jLrbjgzZhCWy0cehaqCcovly96U8FnYV4+rZppnQc8mI
- PzW7hL2ouVFgFZWTFeqHQX7IWQ9AHDFU5O8TktjCzjWaQRp7nR82Mki1bCrGDMRVlVQ6
- CNCKrEOV130d54BTb25t0G0F1SbVI2asLEeUhdLON+tt+av8SqIlMFmbrrghSa+csutE
- +4ua4K7qwq0sTWTbfttn+VNfh4oEpJRtL6Nbpu/Y/SQLpeHcZ8L4kcuybgyxm71oMgo3
- xH+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=vnQjeQmNXYSVTp14z/A3IX9628okuFRfsxSxy21UxYk=;
- fh=6IW7+orrxRLeGMWHepYNvHBtu/+mxXppn1WugRTrmJQ=;
- b=Vw48mp3YKMmUiOJ106lWmsE6+Dza/oOToz8If3h2Beh0uW4k/vTtbS7m3YHq01qv1T
- RbtfCXTNhPmKrVw3QVB/FaXCqqr/1x6uiD7XRv5qiDVtp8mqqPk0tNV0Xotz4cjL6Uue
- 54LDSHX9oeh63ghkXjMSARN1j6FXPBj9YhaCQdvWgKjsNHtKidsZuOlNDwbLxitKGc9E
- hvtiA/cjIdH5/SsJ2OBYby/merbB/WGIJ7SqWUCpHikWAUnqugdqRsb5DMiZXh4CIX05
- cf3mDii9DvGJN6MxoJsRBi20QUqrDj3mzwvQ2PZJJb6pnWcZL0wsesDWCldlXua5sYJJ
- Mngg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 4DD60402DD;
+	Mon,  8 Jun 2026 18:28:44 +0200 (CEST)
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
+ [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id 754B54029D
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 18:28:42 +0200 (CEST)
+Received: by mail-dy1-f170.google.com with SMTP id
+ 5a478bee46e88-304ec41197bso4204067eec.1
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 09:28:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780936040; x=1781540840; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1780936121;
+ x=1781540921; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=vnQjeQmNXYSVTp14z/A3IX9628okuFRfsxSxy21UxYk=;
- b=Tkcox2QHj7qsr2IQ5KbNi8Gc2wnpgM9oPXV0JcVdlP/X1chjho7PuPn6CteDDWW8Hw
- o1icm5I54dHMWTsy9qd2a5ENRakabhKxcWKLJmw107Q+Uae9h6G2nLDnzcQIHILSLxfF
- HytS01zZz5/efY3kyXYirnn5KLUL9flaqxgB5+QSfff3pJoWZo4NSpJj1yqYyogfYQAp
- RMqEnQ69SJ5J0oiN+OYFfUUc9ulbSqxZjKK4BFPxFb3U51g0gcBYeRGNQbjiPUhF8dXN
- iF4IXo5tfkY8s7MekhH7CQMIQvFKI8u+Ww96S7Z+ah+pKmnAaEPUAS99VmBeqmZa9cXP
- B+Ew==
+ bh=8Yj8XS/pK8LJaYw7g7ypmumxs7EgzKd5uJfKIukP2Js=;
+ b=0MWdB/R/W+A02iZEXfh6fU3nNjAN9/ClcNhsxcydvHOA6P+vpURiJTcOMAAwWfcnOG
+ vvQUjIdn+gqogkMq5EMki8001+3CzAAsZqXNr2slcnn3O3B5h3tlHdDxJSEXMn8WedcB
+ /GknZ+DtGqgizKz2bWXKsDrQoP8cwLy9PZZIhoLUUBhHk+KvaPCeMoiVC9blOqKA2LAb
+ gXscJ0ZQgjf2GDvLy3PmVUX3OMNJUNUAs6mXzfRZBhuhxToHClb6iUrmsREQmSm+K72C
+ Q7SiEZ8L2uqajFubkmeiJ6TnVd31Hdvs8hzPLEiT9Yfn0v6atnatSkrHnCWe0ZRhVV86
+ enXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780936040; x=1781540840;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20251104; t=1780936121; x=1781540921;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=vnQjeQmNXYSVTp14z/A3IX9628okuFRfsxSxy21UxYk=;
- b=Hss9U0+Ne3PcRgKel3WyxWbfFpd73RgHBS8oRMZt1EJnRJAcd5cDo74ZWJ0pckReaQ
- ug8MPWTV3QETIyG3HCDT1HlA6L8qr66UvxLrXWixfPl/0W81vkYbrC0heWUUXyZTYM2J
- ahERlErevz8IsTMwMAnLJprDYYc/6YTrj3hIWKfjWZ+Rnqp49GOOtbBfwlf2xCrMYu8C
- 4tGQV65SFt4Hu+1H2shkf3aSeuXDmU6k2wGkaoxFz1+ORvHeJb60gqVYRGJiwekgN/0Z
- aiL+c1+sCUF02jDKIrOq2onqXjrOaMsyDBSKSSPNb5V7LuF1RJ5f6RwXgjJBs5SWkhoA
- WC5Q==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/chP0a0I70oPTmoHpNjk8HPWVFLx1XGm18r+0dXzY+15zHfjV7K+aXrxSWTE6l3AhS6HY=@dpdk.org
-X-Gm-Message-State: AOJu0Yx7P7kCgbQiH3scCqN7lbkZSVbIDmE7qffnxxU3gS2qCmWT900+
- E6/YqDcTcNvjIdqSPlUIwpQyZ2Y2i/GMlVBG3t/aMDQRlGbcPJwi6PV72xLsVJPOoC3wNShQk1J
- 3U2RPhd2dbmcUraSe1kqhL+vodvareMQ=
-X-Gm-Gg: Acq92OENanPhRQNlekSevCuC3amZR9uNBXFYsAb8jKZcVogyvWACeYWweAcYNFRRWeX
- b3LzO1McxVhE1embaBBnGzTJyEn+PAOgj6AY2qkwZR2t1w9YNDsbwcyhS0b2E4iQDJIAVGAGPBm
- 9iDXckNJoTUl6WF6VkOc5elHSuNCOO6oEWFVEzWVurgUH0g63EwhUc7hYvvWzdI6dCDrFza42Dm
- 2d/I6szTQ8eyzKzVFYCF3mqMZPPUZUkDQ1vIrEW4R+NvF0taMv35/RALqdTecxNSlE3adhJU+7S
- l73GsWfaPQQ74g==
-X-Received: by 2002:ac8:6109:0:b0:517:8a19:a461 with SMTP id
- d75a77b69052e-51795c56d21mr217559111cf.42.1780936040055; Mon, 08 Jun 2026
- 09:27:20 -0700 (PDT)
+ bh=8Yj8XS/pK8LJaYw7g7ypmumxs7EgzKd5uJfKIukP2Js=;
+ b=s3RuBMVnDaQ+8rGLs8XToY573Ww+gKdmdj5XkgjhmWXRFntFt/5X2HEL6P6WTSdbMk
+ M+0UrVQ8dHqjf+y8cUznkhkAIxTvBbjra6YXLOTqVvXRtuJIG/sepidkb9sUE3jw27m0
+ fCJ27BmSiuvk+Is+SovS9jSXu90JP58XD0QABO3aiGDjXuMTeLVuVNNEb5eUCtN3OuBL
+ qErdE9BbzzVBLA9M09F+lKPGH1j4gQUz1oIKdnoX4Heu4JQndGCCVhI01gVf3pDQfd+b
+ AqjqqPVjIi4IUHwDkCOymmUyHoLANstq7aoPVpxbWODmCYVNpzddZae5HT34Id9wgOqQ
+ P3UQ==
+X-Gm-Message-State: AOJu0YyO6eP3dc+jkc5U++31mTD1S5z+Y02soNbu9bQXah9eL3yMwGkY
+ 3B77jso0JSNg81gVYYXTdSAOhAquFQKLfZlkRA6HtP4HaLkdTVJhg5A1oHcfmUrj5sk=
+X-Gm-Gg: Acq92OFLxPVFS058uwMk83FPzDN00BDsyqwfMKFJZKqg0IOqzWC4/S/+srt4MVfWfau
+ akl/WqKrRlBb0S7PLeLZWPyePJitGuyzRu67Jjh1tdIBfqfSPkQRoVgQRAzgyb7QbZoCVG0wxOe
+ Zeu4BUDivCjHg0BLYK6C8agGvFzxN7C37VPi02WEjJ9CpxcA8frByei4caAbHad9E42Uwpeykre
+ uwfvV3DjLHTxc6JRv6lmz0lg+4bBXRh/X8DmobI1UKiZSPB6qy4O5djG97qN0UmBCsjUGJ9Hizt
+ UuYYw1x1jsgOQBQ1biTD46jYbtp/aVglvSmQFvukTq7pfLnJYDmMBbiLNMXNVvBX7cZ4JRg6XlK
+ vVJPh2lAa3V0cEBVrZC53KNnHjySbCTMTLu7/+GKT5wExD/vrNMoNlqtvFSaSnFPANb+mYp2S4c
+ Kg4UU9ZayqoqfmkG6DKe6DEH4rB6t9FkBOixFiZWdhfOUOvft0G7vf6GhxOlCN6+e6VbpFmiYzv
+ Yo=
+X-Received: by 2002:a05:7301:2923:b0:2d8:7302:d3d with SMTP id
+ 5a478bee46e88-3077b38bab4mr8373553eec.8.1780936121135; 
+ Mon, 08 Jun 2026 09:28:41 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3074db528dcsm20940816eec.3.2026.06.08.09.28.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 08 Jun 2026 09:28:40 -0700 (PDT)
+Date: Mon, 8 Jun 2026 09:28:37 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Eimear Morrissey <eimear.morrissey@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [PATCH] lib/net: Add ICMP support to rte_net_get_ptype()
+Message-ID: <20260608092837.5f5498d2@phoenix.local>
+In-Reply-To: <03abaccc37f14f4c8955580784f30cbe@huawei.com>
+References: <20251009152740.10437-1-eimear.morrissey@huawei.com>
+ <20251015102947.4614244f@hermes.local>
+ <03abaccc37f14f4c8955580784f30cbe@huawei.com>
 MIME-Version: 1.0
-References: <20260601101559.1925302-1-sthotton@marvell.com>
- <20260601101559.1925302-3-sthotton@marvell.com>
-In-Reply-To: <20260601101559.1925302-3-sthotton@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 8 Jun 2026 21:56:54 +0530
-X-Gm-Features: AVVi8CcefSCKRoNsdvu58xPYD5jsJuMHQkDOpzyJf4BAZamBgU1cS_XzDqW5FUo
-Message-ID: <CALBAE1NB5fKw-=o_iu7CHhR4Hq6T5ekHYABRFDmLar7bT=ms4Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] dma/odm: avoid zero length DMA transfers
-To: Shijith Thotton <sthotton@marvell.com>
-Cc: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>,
- Vidya Sagar Velumuri <vvelumuri@marvell.com>, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,76 +82,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Jun 1, 2026 at 3:46=E2=80=AFPM Shijith Thotton <sthotton@marvell.co=
-m> wrote:
->
-> Add validation to reject zero-length DMA operations early
-> with -EINVAL, preventing queue disable.
->
-> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
+On Fri, 31 Oct 2025 12:32:18 +0000
+Eimear Morrissey <eimear.morrissey@huawei.com> wrote:
 
+> > -----Original Message-----
+> > From: Stephen Hemminger <stephen@networkplumber.org>
+> > Sent: Wednesday 15 October 2025 18:30
+> > To: Eimear Morrissey <eimear.morrissey@huawei.com>
+> > Cc: dev@dpdk.org
+> > Subject: Re: [PATCH] lib/net: Add ICMP support to rte_net_get_ptype()
+> > 
+> > On Thu, 9 Oct 2025 16:27:40 +0100
+> > Eimear Morrissey <eimear.morrissey@huawei.com> wrote:
+> >   
+> > > Set RTE_PTYPE_L4_ICMP for ICMP packets.
+> > >
+> > > Signed-off-by: Eimear Morrissey <eimear.morrissey@huawei.com>  
+> > 
+> > Would be good to do ICMP6 as well.  
+> 
+> 
+> Should an ICMPv6 packet be RTE_PTYPE_L4_ICMP/RTE_PTYPE_INNER_L4_ICMP as well? 
+> 
+> The comments in rte_mbuf_ptype.h are inconsistent, the top level comment with examples suggests that 'version'=6, 'next header'=0x3A
+>  should be RTE_PYTPE_INNER_L4_ICMP but the comment on RTE_PTYPE_INNER_L4_ICMP itself says  'version'=6, 'next header'=1 ?
+> 
+> -Eimear
 
-Added Fixes to 2/2 patch.
-
-Series applied to dpdk-next-net-mrvl/for-main. Thanks
-
-
-
-> ---
->  drivers/dma/odm/odm_dmadev.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/dma/odm/odm_dmadev.c b/drivers/dma/odm/odm_dmadev.c
-> index 0211133bd4..7488b960fd 100644
-> --- a/drivers/dma/odm/odm_dmadev.c
-> +++ b/drivers/dma/odm/odm_dmadev.c
-> @@ -110,6 +110,9 @@ odm_dmadev_copy(void *dev_private, uint16_t vchan, rt=
-e_iova_t src, rte_iova_t ds
->         vq =3D &odm->vq[vchan];
->         hdr.s.xtype =3D vq->xtype;
->
-> +       if (unlikely(!length))
-> +               return -EINVAL;
-> +
->         h =3D length;
->         h |=3D ((uint64_t)length << 32);
->
-> @@ -262,14 +265,20 @@ odm_dmadev_copy_sg(void *dev_private, uint16_t vcha=
-n, const struct rte_dma_sge *
->         pending_submit_len =3D vq->pending_submit_len;
->         pending_submit_cnt =3D vq->pending_submit_cnt;
->
-> -       if (unlikely(nb_src > 4 || nb_dst > 4))
-> +       if (unlikely(!nb_src || nb_src > 4 || !nb_dst || nb_dst > 4))
->                 return -EINVAL;
->
-> -       for (i =3D 0; i < nb_src; i++)
-> +       for (i =3D 0; i < nb_src; i++) {
-> +               if (unlikely(!src[i].length))
-> +                       return -EINVAL;
->                 s_sz +=3D src[i].length;
-> +       }
->
-> -       for (i =3D 0; i < nb_dst; i++)
-> +       for (i =3D 0; i < nb_dst; i++) {
-> +               if (unlikely(!dst[i].length))
-> +                       return -EINVAL;
->                 d_sz +=3D dst[i].length;
-> +       }
->
->         if (s_sz !=3D d_sz)
->                 return -EINVAL;
-> @@ -342,6 +351,9 @@ odm_dmadev_fill(void *dev_private, uint16_t vchan, ui=
-nt64_t pattern, rte_iova_t
->                 .s.nlst =3D 1,
->         };
->
-> +       if (unlikely(!length))
-> +               return -EINVAL;
-> +
->         h =3D (uint64_t)length;
->
->         switch (pattern) {
-> --
-> 2.25.1
->
+	static const uint32_t ptype_l4_proto[256] = {
+		[IPPROTO_ICMP] = RTE_PTYPE_L4_ICMP,
+		[IPPROTO_ICMPV6] = RTE_PTYPE_L4_ICMP,
+		[IPPROTO_UDP] = RTE_PTYPE_L4_UDP,
+		...
