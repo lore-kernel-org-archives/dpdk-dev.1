@@ -2,51 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B970CD8CAA
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 14:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB92CCD8C92
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 15:14:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1EE040676;
-	Mon,  8 Jun 2026 16:55:37 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id CDED640265;
- Mon,  8 Jun 2026 16:55:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780930534; x=1812466534;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=VgX2CQpdmxwkTz4G9QT54ALEuq35IO+GPDighAQdadA=;
- b=Ugp9S6zqUK+6rZknKoejJ5xtEt7YvNZDrV/t5IH06/siNsBU/YwrGaSK
- rUpI2IqhD+NJrBfH4y8kgSiY7jyBNKAV5vieXmKZ7NyobN+e6zErZCG7x
- vGPz9gZ1CDhK7bbEigJNzRIwWAVd2rX2T6yzePICeNaR7rGEVyjzQ9A7L
- Jh4dTLGHDNTBIYGlLDee1KdeuYdjP91qjiroBQvoq963RKIWU8z2zQe6l
- wAS06XVlxKUF5Js6d6hE9Ac0+oAbT288toF2aucmnDQ4514cEHZV4M63q
- UiqOEuV12sBIX1M9gt1ulQEXhVb85S/CXVZbQx2/7vIOIB8WWg+hwOy2Z g==;
-X-CSE-ConnectionGUID: I7SwSO7ERKCCxrcUkV+a1w==
-X-CSE-MsgGUID: BpA5WphRTxWA0N+7sNU3vQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="93055943"
-X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="93055943"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jun 2026 07:55:33 -0700
-X-CSE-ConnectionGUID: tmnpo0HlQGeCk2TxMHq4kw==
-X-CSE-MsgGUID: kypBgUbOTaSw1DMv3vln2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,194,1774335600"; d="scan'208";a="247436468"
-Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by fmviesa004.fm.intel.com with ESMTP; 08 Jun 2026 07:55:32 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH 3/3] net/iavf: fix event handler refcount leak on HW reset
-Date: Mon,  8 Jun 2026 14:55:18 +0000
-Message-ID: <20260608145518.1705524-4-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260608145518.1705524-1-ciara.loftus@intel.com>
-References: <20260608145518.1705524-1-ciara.loftus@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id AEFD940658;
+	Mon,  8 Jun 2026 17:14:18 +0200 (CEST)
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
+ [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id E7BC640265
+ for <dev@dpdk.org>; Mon,  8 Jun 2026 17:14:16 +0200 (CEST)
+Received: by mail-qv1-f45.google.com with SMTP id
+ 6a1803df08f44-8cce26ee1e9so69840916d6.2
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 08:14:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780931656; cv=none;
+ d=google.com; s=arc-20240605;
+ b=hW0wbXUoTah4z9o5ILp8+r4wRjQvRW3Axcvz+N5YPohE5/EezSZqNXXk/P+loNNKBe
+ SRBS/Xh9L6ZHgasvOwWKJPwKPzJnMnkUrVVqiiOU9gv89UmfuF15UPsmYAg/gI5BVCeu
+ W1qgUMOr1B6AvU9qeTs89r1zAiPSMMM8Vqezudg3ScSuw9P6lNYohQ7Bj0KcuA/uoqss
+ 1LpQVSgc2AxXJQqZqVo3WEIVfYoy/AngT7sMRmOEVYwbaX6R5jy8Mdtwj2I4fwz34Tnc
+ KB4YsZTj5KF/buZuaHW9eMQDOX1iZBgGmHYOzrMXuRTkKFsXBJCq7DqDO3N+7r/uoFmH
+ 7Mmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=SczClKYkvMsM9vQt0aJu5ERpS4dPekD9jYZMA31zMTc=;
+ fh=oBzMBBXUrXJu8DCdXy429mcmyPngsflSehz1sgIePJU=;
+ b=QephFHSvRcyzMzLU7QVVuZQgEdkmp4CjzY2gITqkvkIx15unfHcxF14XCj4Eikgn4K
+ NYuC9XSPOAvR7RG2y/96TNYIDlQpAgRLEcDKflXBIOutDKgAF185mDFiUCZp3oBrcNqI
+ b0lqMlr2hDUB5M/nkel8tNUVVYgpPHl3TfLIuyGbmjsYBR8OZmqA0rOD8sm3K6d/+dGT
+ SR+HJxQQR4e3GRx+EIsmWxMfIeu8XifQcVlLKuAFXHFqTc5rUWwI298ZB/MRogNjCoZB
+ 0End45U4gWyp+OFqMtQoWSwHrwYxt17BpkIk4flJsn8vvtTE3OtmyAbua8gdgkNYGbnp
+ DP7w==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1780931656; x=1781536456; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=SczClKYkvMsM9vQt0aJu5ERpS4dPekD9jYZMA31zMTc=;
+ b=VnMhPoWsFa1B94J7q0LervJLVz3jxuBFkGrEUqlHQzmAR1b6zrpMErJSs/gNrUGysp
+ 1mZF5uJbINigLem5REOJVFgUv9xNMiCDmYmq8pJ40gxLAW944G0Th1sgmOl+lqsBtHRt
+ WPVdioOIqX5tfESBRNV/tXg45OokFK4FLwMT9+yzgKl59XJuj5K1FbDKB+Uedvjgpvs6
+ d0pggOrnvwisRCbBzOo6XkyV98WN3Hb8BNrJ+y0GmYWzSXF1QjoIIg3LmZSI52R96CYl
+ 9PCnsmKiNxaLNEsCpK6PcOQaMl+HkR1RYaiLMTMVntgL6FKWY/1W/CXFU5T2+yv9Ab2O
+ FTjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780931656; x=1781536456;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=SczClKYkvMsM9vQt0aJu5ERpS4dPekD9jYZMA31zMTc=;
+ b=n3NCiofX4QDa9yRuwk7nWravhEdZqXC9ERVvojLcnPUoOyjIHCg7sYlmBZITq7OOrH
+ LZZyMU9va9JqEWrbYpcAtP7/qJuqFPp+0EOHFRDDD/nSQSFokqXvppxpQldSCIfbqRHY
+ Td+2ZsFpGHdj2+K1ya/ancqsMUiHEDtIivN/1FR+9EkJ7UxRea2TPoeDQJp5mchd7IPc
+ smkGBkyVHKyiTqNB0osennXS2C0sarG9hs5/5EydrBq7DL5i77xPlW1H76+B0ign/0uW
+ sI3TkMQr1SfGpi7DH2qBsRVn+ZfJ9T91g0q8Qt/YILzYzlVUlNSwaJ1Yhf5VsMmvKE2p
+ RYVQ==
+X-Gm-Message-State: AOJu0YyBVwxGGUP0BpofyntVy60xg+3hGXyia+i683dUd1Y6ZTwWSp5s
+ yztl2w4Jm6o6VYOGeC3YW1uDkZdyzKDM9O8Fi9O+eQEXUwMR0yu6xIJ6quTYxYLZxUCcnp0YXIF
+ klp8Nar70pPEmFXAzlWUQorrYtMjT1pyRZwQQv7U=
+X-Gm-Gg: Acq92OFNNBNgzG8FW91Yl/vF1QuLX/h78aPdoexHvHl+uKOtzV8MTZIt84SDljcXdG/
+ +/AWtdgqPV2c+SSC23jFEB5fj1gl/XExUCUaJJWF1FidHzZhmv24LsWKj19YzrpbUduNkQV2nRS
+ 59jSb+Skl0e+n6zkvhaEgaIPPIp0yJOAiYO8r+d8g+i5Q26mrNb3i5KFb8tCLs8uktWboSoexke
+ k+QSzICni+Pewdu7sfJwuAsHNX3fchgnbcrTLbgjHNWfe3QRTvldWIC21hTyQbgqtEHGU5CkZOF
+ bbbobTjuNaEOg4Hcy8OHNcNb
+X-Received: by 2002:a05:622a:6096:b0:517:8fb6:56b1 with SMTP id
+ d75a77b69052e-51795bbf276mr202530751cf.17.1780931656128; Mon, 08 Jun 2026
+ 08:14:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260325051756.2588380-1-nkishor@marvell.com>
+ <20260325062114.2595888-1-nkishor@marvell.com>
+In-Reply-To: <20260325062114.2595888-1-nkishor@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 8 Jun 2026 20:43:49 +0530
+X-Gm-Features: AVVi8CdQ9Lr8F9SKCvGkOldjBhnktCAhTzYuPB1_q-Zn5AE7Svam1QwamqgbkOc
+Message-ID: <CALBAE1MXR=_8HeByJcmYzm_jQgDwV20=7vZp3mSsiw5CNdEdJw@mail.gmail.com>
+Subject: Re: [PATCH v2] common/cnxk: allow typecasting to CN20K NPA structures
+To: Nawal Kishor <nkishor@marvell.com>
+Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ jerinj@marvell.com, asekhar@marvell.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,38 +98,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when handling a hardware reset, the uninit path skips
-releasing the event handler reference while in_reset_recovery is set,
-to prevent premature teardown of the event handler thread. However, the
-subsequent re-init call unconditionally increments the reference count,
-inflating ndev on every reset cycle. On the final device removal, the
-count never reaches zero and the event handler thread is never joined.
+On Wed, Mar 25, 2026 at 12:10=E2=80=AFPM Nawal Kishor <nkishor@marvell.com>=
+ wrote:
+>
+> Add __attribute__((may_alias)) to the CN20K-specific NPA structures
+> (npa_cn20k_aura_s, npa_cn20k_pool_s, and npa_cn20k_halo_s) to allow
+> safe type punning when casting between these structures and their
+> base types (npa_aura_s and npa_pool_s).
+>
+> This attribute tells the compiler that these structures may alias
+> with other types, which is necessary when casting pointers between
+> compatible hardware register structures that share the same memory
+> layout. Without this attribute, such casts violate strict aliasing
+> rules and can lead to incorrect compiler optimizations.
+>
+> Signed-off-by: Nawal Kishor <nkishor@marvell.com>
 
-Fix it by also skipping the event handler reference acquisition during
-reset recovery, matching the symmetric skip in the uninit path so the
-count stays stable across each reset cycle.
-
-Fixes: 3e6a5d2d310a ("net/iavf: add devargs to enable VF auto-reset")
-Cc: stable@dpdk.org
-
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/iavf/iavf_ethdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index a38132e80e..ec1ad02826 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -3031,7 +3031,7 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
- 	adapter->tpid = RTE_ETHER_TYPE_VLAN; /* VLAN TPID set to 0x8100 by default */
- 	rte_spinlock_init(&adapter->phc_sync_lock);
- 
--	if (iavf_dev_event_handler_init())
-+	if (!vf->in_reset_recovery && iavf_dev_event_handler_init())
- 		goto init_vf_err;
- 
- 	if (iavf_init_vf(eth_dev) != 0) {
--- 
-2.43.0
-
+Applied to dpdk-next-net-mrvl/for-main. Thanks
