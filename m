@@ -2,72 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E032CD8CAE
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 05:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A99CD8CAD
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 05:03:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B3B42402AD;
-	Tue,  9 Jun 2026 07:00:36 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 9C55D400EF
- for <dev@dpdk.org>; Tue,  9 Jun 2026 07:00:34 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6594Ku2h026583 for <dev@dpdk.org>; Mon, 8 Jun 2026 22:00:33 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=JYvlmSxRmhbJxM+Mg363xgO
- +s3RUvd1QAsJXrvBUYEM=; b=BEluZ9NXvo9AYYrnOTSeawNZHo6+C285gVIrK5E
- HdOnCTG+nCW/DyLEDefFxEU7Panm9BjAo8PLINbYrKu8+k5shxkBPXG0Mrq6rj7g
- nW46BJIhflNKsuuhtf0/p8TWGGJmaLNq1Nn+DWyySAt+4gBn1RWJ5+58qq+xEMD7
- /y1K3Dih3OrOQKDGsFuS+QCsKas0ZUtLPJSNDadmBAdlW5T+B7xQShTHTRaB1Tj0
- my5Oc1GEuLSynKBz7PTqQvdbR4j1wcfnVCxUqlofCwtdWJIzOBbDxiXC2btPpKAL
- SW/XFO43HuFRhKk95EednFP2M/ba6NvXQyOwDWnHRIFMEMA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4epbqp832j-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 08 Jun 2026 22:00:33 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 8 Jun 2026 22:00:32 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 8 Jun 2026 22:00:32 -0700
-Received: from sj4r760o4u9.sclab.marvell.com (unknown [10.110.150.37])
- by maili.marvell.com (Postfix) with ESMTP id B30CB3F7057;
- Mon,  8 Jun 2026 22:00:32 -0700 (PDT)
-From: Srikanth Yalavarthi <syalavarthi@marvell.com>
-To: Srikanth Yalavarthi <syalavarthi@marvell.com>, Anup Prabhu
- <aprabhu@marvell.com>
-CC: <dev@dpdk.org>, <jerinj@marvell.com>, <sshankarnara@marvell.com>,
- <ptakkar@marvell.com>
-Subject: [PATCH 1/1] mldev: fix incorrect captions for model_ops
-Date: Tue, 9 Jun 2026 10:30:20 +0530
-Message-ID: <20260609050020.995268-1-syalavarthi@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 53A1C4066C;
+	Tue,  9 Jun 2026 07:03:22 +0200 (CEST)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
+ [209.85.160.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 73AA9400EF
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 07:03:21 +0200 (CEST)
+Received: by mail-qt1-f178.google.com with SMTP id
+ d75a77b69052e-5176fc0cc72so52788681cf.1
+ for <dev@dpdk.org>; Mon, 08 Jun 2026 22:03:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780981401; cv=none;
+ d=google.com; s=arc-20240605;
+ b=deDonmShkUe62GlwYCYaFo4tKPYGG76TvE+rX/O8FF2oLIwtUzZqN4TA+jq7y4w7ZV
+ aO1274ClQb4FtqzC0aVeWplukQLDccbyz6C+SbFX8gzHLu+PwQ2abGf3egzHO+SKs/aT
+ db59/13n1Xm7g5QEzI5jD5cAbAEdFhY7rFlmr+FfSmbDc5tDUijHbow2I6xsi0LrFf7X
+ 6NgT457NGRKYK1O/l3b6eLV7qKNILQXLObKx59h04Jir5e2xSkAk+f/3mLjwKFeq+NRg
+ pLZW+jQvBWglIYzLwaya26MeW8smgZr5fACMR53VbMLGpvO2U5rwewU9iXTf8MpVwPIO
+ Xe0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=7KadGP1NEF5T/IWSRrzsHpBiGD4F8COGI9Q2KM6tWmo=;
+ fh=H+AIAtj7CqmGfkJ7LUylfJHECI+djGy0sfwAA0JWTJ8=;
+ b=cznmKxoihI35KegclNeNBc5bsbP/jjA7EB8zZZC+QiOW+I/fRIW3JH955DlNPMIA4h
+ 0D3Mupi7q9oUV6Yfh4HWjbkctjFyqq4HFEc2gJbzQPMAhv7lIJAA3kgjqtC3GX/cEayB
+ 2mmqkLunu4VpjqVO1tAO6I8eq1dL7f8R8HNHr99tqkE17s0/AnsC2WtJ3Z7ZDp0NjPpJ
+ 4FYPRsuFVFPXQEFgStjXM3jH5CN4mNX2maKPVkLRa/Bf4FRbBB06ySL7juDbQEID/pEj
+ ZLIjcYwODtQhg2xHiSx9VXL8ZQhaFB7qAMphB2tJiWFX0KL2tBfOyoPhuTKolIYR2UjQ
+ W6Fg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1780981401; x=1781586201; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=7KadGP1NEF5T/IWSRrzsHpBiGD4F8COGI9Q2KM6tWmo=;
+ b=ZHVy2SxG+8+EK942GmdGRSyipVjRwX7ad+tZuWRHQ5fLCZ3UszHZu6YNGo8Gx3QKto
+ V/DnSreffnF68JXqI0YzAVJpuMeZjM6Tm7fnn9ZjVDKdmqa1fSu73pdw4rXwSH8Dlcy8
+ zZd+t7gXNdkqq/oA3Vo/WDB6gR9ypOfNT2R2h8DFdef00EiS+KCNwulNknZbgm9nwEbG
+ BTXpjA54eujLkoBbxc3jD+btpjsvteAOwr+NkzeYwvmrPByZOFMpcBdj3cDfhXv73E7S
+ LDV1wNUfK/npmSXcQbswn+jBOGUTGFmfrcHhTaH8Cm8+FWWdflP6nJ4PHBOJswBoyZQY
+ 3YGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780981401; x=1781586201;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=7KadGP1NEF5T/IWSRrzsHpBiGD4F8COGI9Q2KM6tWmo=;
+ b=ppwv2Umpb3O+e2pXsgsJ8w5kS7/gw0dpLylpr5TZBQuv829T2yiY4y8fH69/SVMTFf
+ c+CsUMKIROfLnE4Wzu47Ok31T15LcFo15GL/XmZx3zEmtL1Ubr6KtJEmtii28eVp2FWw
+ HCwhIcvuBYRwdE3/WeBULW/YRih6irOb6ZYh8xVj7ek078AY7hFjNfaURzFu71JUZByN
+ B3GECvfeM7W2Isfld85yBkcXSvu2cfVaaqWRWUBPSdixFCzAkMWZZmAZUvCmhQS3cw4Q
+ m4tMzCWA9tUlkXsToiwqgRPQ2zBMzqk9/+1ZYRJZigFB14lHr/3Xvkg8TQHdmAG7e5EF
+ 7LWg==
+X-Gm-Message-State: AOJu0YwjiRzCQmmEgIGoBZzKv+1YtKEJF3Er2lV8KuLqdzCpymqpQAP3
+ yvTj0lb0PHxGvzHyjHmKrOTziYRCtC3s6lDNz0tELWhS8S/QCIK6yvg3oS6zDhZK31m3YEEnq2m
+ 2y1Qrek57EuQm2KO7PJRBsFtfjxPCXEc=
+X-Gm-Gg: Acq92OHlRC3ek9MsekMfBcqWd5CKEd7802q9RM887Np+3G7I4PDCUUG16MqMRhhi1H/
+ pTVN/mpL0j3Tdohmb2SiLQaILune3mTnee90QkzKkR5jsxYST6rAx3m83BuWI36pPXXyHk3+Srj
+ qzpx1EvpkyngB+cW1GI3XJqmgGNPIfGHILQhok9I3163uhy7FsTaVChgT/o3Sxj9+mih7k5BMiN
+ 7F+ijDN5tkI96NYXUJ4wd1CQANfEjxDuqOpJ8HvriZFuOKlJJMOvWa04cktqQ/ZaxPD1es5v5X8
+ aBkIp9per7Bcyw==
+X-Received: by 2002:a05:622a:4c07:b0:50d:6b06:a453 with SMTP id
+ d75a77b69052e-517a12d2d82mr210644771cf.18.1780981400794; Mon, 08 Jun 2026
+ 22:03:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDA0MyBTYWx0ZWRfX5ezlwVsq3zUC
- 2JVfnMCedIZEIQ/E55NLYUKDSoUNI+4pt8Cp2RpeHruxy2rVeeNG0SDt5xfkBp3K7djAkeyc+Cw
- N81+9qnAlLfDJq2B+rwauMTafxEnbVE8iQ2wiymEpv8eMYj3e/pTZkjRQJH+8SoyIkJWvryiaxs
- RDnd7dKptLqBZ6YOBvO+COBqOqMiec2uhnozGyZAdTy54aCqp+roAOQLZ3gUCzMKp6rjgFS7LeN
- anQjEZ8EPcVYj57Hlmik51+n/7OB/aHXOxDYdZ6BSn12SiePP4cax7GVRew0XaoVi8h3CxNJ48G
- nla6djoehhuhbQbZe12LuewgaOYKN67kTgrJEUE5zPMgnHiWMB3upNse5VBLvEWNrRoj3BADe/J
- jYyCHlI1e9tGaLJFtljxJnT/jSclkKX/NvgUgBDr2ZCtT0oxI5U93pD94cFxKm+KkK1CiWOQorG
- 5kO25iM6b8WrJ9FrNpA==
-X-Authority-Analysis: v=2.4 cv=Y6zIdBeN c=1 sm=1 tr=0 ts=6a279df1 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=EAYMVhzMl8SCOHhVQcBL:22 a=VQ9ene8lAAAA:8 a=FP58Ms26AAAA:8 a=SSmOFEACAAAA:8
- a=M5GUcnROAAAA:8 a=hDWePBbWrKGjLJMAR7cA:9 a=5kMfGx23w8a0v5ansn-_:22
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: 2EJhK4WMBoJlhlBDu1K-wVQ7JNIxPzX4
-X-Proofpoint-ORIG-GUID: 2EJhK4WMBoJlhlBDu1K-wVQ7JNIxPzX4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-09_01,2026-06-09_01,2025-10-01_01
+References: <20260605224514.651081-1-stephen@networkplumber.org>
+ <20260605224514.651081-3-stephen@networkplumber.org>
+In-Reply-To: <20260605224514.651081-3-stephen@networkplumber.org>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 9 Jun 2026 10:32:54 +0530
+X-Gm-Features: AVVi8CezPS0g__ZD-aLNFoppYjwz8wX_Nz7fgKk91g0Vh62DKfSIR5sLDjzMKA8
+Message-ID: <CALBAE1M9nSJUUUWbNiECpk=1HLpkGg5QiFxDiscdEDcg7npwog@mail.gmail.com>
+Subject: Re: [PATCH 2/2] common/cnxk: fix thread-unsafe NIX telemetry parsing
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, stable@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
+ Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>,
+ Jerin Jacob <jerinj@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,84 +100,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fixed incorrect captions in images depecting the
-model_ops test flows.
+On Sat, Jun 6, 2026 at 4:15=E2=80=AFAM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> cnxk_nix_tel_handle_info_x() backs the /cnxk/nix/{rq,cq,sq}/{info,ctx}
+> telemetry commands and parsed its "<pcidev>,<queue_id>" parameter with
+> strtok(), which keeps non-reentrant state and races when telemetry
+> callbacks run on per-connection threads.
+>
+> Split the parameter with strchr() and parse the queue id with strtoul().
+> While here, copy the full parameter (the length was capped at
+> PCI_PRI_STR_SIZE + 1, truncating the id for longer device addresses) and
+> reject non-numeric or out-of-range ids instead of letting strtol() alias
+> them to queue 0.
+>
+> Fixes: af75aac78978 ("common/cnxk: support telemetry for NIX")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Fixes: f6661e6d9a3a ("app/mldev: validate model operations")
-
-Signed-off-by: Srikanth Yalavarthi <syalavarthi@marvell.com>
----
- doc/guides/tools/img/mldev_model_ops_subtest_a.svg | 4 ++--
- doc/guides/tools/img/mldev_model_ops_subtest_b.svg | 4 ++--
- doc/guides/tools/img/mldev_model_ops_subtest_d.svg | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/doc/guides/tools/img/mldev_model_ops_subtest_a.svg b/doc/guides/tools/img/mldev_model_ops_subtest_a.svg
-index ed12cc5a05f..9b38300d1d7 100644
---- a/doc/guides/tools/img/mldev_model_ops_subtest_a.svg
-+++ b/doc/guides/tools/img/mldev_model_ops_subtest_a.svg
-@@ -10,7 +10,7 @@
-    version="1.1"
-    id="svg5"
-    inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
--   sodipodi:docname="mldev_model_ops_subtest_d.svg"
-+   sodipodi:docname="mldev_model_ops_subtest_a.svg"
-    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-    xmlns="http://www.w3.org/2000/svg"
-@@ -407,7 +407,7 @@
-          id="tspan390"
-          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#000000;stroke-width:0.5"
-          x="-120.71075"
--         y="220.77164">mldev: model_ops / subtest D</tspan></text>
-+         y="220.77164">mldev: model_ops / subtest A</tspan></text>
-     <rect
-        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.448724;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
-        id="rect2164"
-diff --git a/doc/guides/tools/img/mldev_model_ops_subtest_b.svg b/doc/guides/tools/img/mldev_model_ops_subtest_b.svg
-index 173a2c6c059..d692b2ee023 100644
---- a/doc/guides/tools/img/mldev_model_ops_subtest_b.svg
-+++ b/doc/guides/tools/img/mldev_model_ops_subtest_b.svg
-@@ -10,7 +10,7 @@
-    version="1.1"
-    id="svg5"
-    inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
--   sodipodi:docname="mldev_model_ops_subtest_a.svg"
-+   sodipodi:docname="mldev_model_ops_subtest_b.svg"
-    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-    xmlns="http://www.w3.org/2000/svg"
-@@ -410,7 +410,7 @@
-          id="tspan390"
-          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#000000;stroke-width:0.5"
-          x="-119.78458"
--         y="220.32892">mldev: model_ops / subtest A</tspan></text>
-+         y="220.32892">mldev: model_ops / subtest B</tspan></text>
-     <rect
-        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.442854;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-        id="rect3967"
-diff --git a/doc/guides/tools/img/mldev_model_ops_subtest_d.svg b/doc/guides/tools/img/mldev_model_ops_subtest_d.svg
-index 3e2b89ad256..bf64f2b8360 100644
---- a/doc/guides/tools/img/mldev_model_ops_subtest_d.svg
-+++ b/doc/guides/tools/img/mldev_model_ops_subtest_d.svg
-@@ -10,7 +10,7 @@
-    version="1.1"
-    id="svg5"
-    inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
--   sodipodi:docname="mldev_model_ops_subtest_b.svg"
-+   sodipodi:docname="mldev_model_ops_subtest_d.svg"
-    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-    xmlns="http://www.w3.org/2000/svg"
-@@ -411,7 +411,7 @@
-          id="tspan390"
-          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#000000;stroke-width:0.5"
-          x="-122.00021"
--         y="222.26495">mldev: model_ops / subest B</tspan></text>
-+         y="222.26495">mldev: model_ops / subtest D</tspan></text>
-     <rect
-        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.462341;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-        id="rect3475"
--- 
-2.34.1
-
+@Nithin Dabilpuram  Please review and Ack the series.
