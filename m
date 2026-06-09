@@ -2,51 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C743CD8CA8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 11:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A07CCD8CAA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 11:55:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A5197402BE;
-	Tue,  9 Jun 2026 13:11:03 +0200 (CEST)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id C5BAC4025E
- for <dev@dpdk.org>; Tue,  9 Jun 2026 13:11:01 +0200 (CEST)
-Received: from LAPTOP-ARGRBVTN (unknown [101.207.145.153])
- by APP-03 (Coremail) with SMTP id rQCowABXd97D9CdqIJckFA--.2341S2;
- Tue, 09 Jun 2026 19:10:59 +0800 (CST)
-Date: Tue, 9 Jun 2026 19:10:59 +0800
-From: "liujie5@linkdatatechnology.com" <liujie5@linkdatatechnology.com>
-To: dev <dev@dpdk.org>
-Subject: Re: Re: [PATCH v14 00/20] net/sxe2: added Linkdata sxe2 ethernet
- driver
-References: <20260608074257.3043531-21-liujie5@linkdatatechnology.com>, 
- <20260609013951.3359199-1-liujie5@linkdatatechnology.com>, 
- <T4eYjXumTvWFDg9HUrMwEA@monjalon.net>
-X-Priority: 3
-X-Has-Attach: no
-X-Mailer: Foxmail 7.2.25.542[cn]
-Mime-Version: 1.0
-Message-ID: <202606091910581208482@linkdatatechnology.com>
-Content-Type: multipart/alternative;
- boundary="----=_001_NextPart366483541260_=----"
-X-CM-TRANSID: rQCowABXd97D9CdqIJckFA--.2341S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFyDtr18uF4kCw4xtry5Jwb_yoW8Kw4DpF
- W8K34Fkws5JF17Zr4vva1xuFyF93yFqa4Uu3Z8W3yDtwn8XF18KryIq340qw1xCr1rW3WF
- 9a12v3Z8G3Z5ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUU92b7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
- 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
- A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
- jxv20xvEc7CjxVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
- C2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVCF
- 0I0E4I0vr24lYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
- CFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACY4xI67k04243AVAKzVAKj4xxM4xv
- F2IEb7IF0Fy26I8I3I1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
- IqxVAqx4xG67AKxVWUGVWUWwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
- 6r1j6r15MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2
- IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv
- 67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJwCE64xvF2IEb7IF0Fy7Yx
- BIdaVFxhVjvjDU0xZFpf9x07j0LvNUUUUU=
-X-Originating-IP: [101.207.145.153]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
+	by mails.dpdk.org (Postfix) with ESMTP id 889F4402BE;
+	Tue,  9 Jun 2026 13:55:40 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+ by mails.dpdk.org (Postfix) with ESMTP id 583644025E
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 13:55:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1781006139; x=1812542139;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=46AbJZfTLb0FKq1I4TtXm9SCo7HVm0LcKLnfrpUvK88=;
+ b=PXgkziWjdHmbqcs1XlsZ78d+JkPe/WWiUxbyRYLlUwbZiKWS/UNtQGTp
+ fCGwUr7ujpNBZ/YNQVOE8hi3HG5zp6Oq5F0WBf/cNYus8F4FJpTZRNue/
+ x+S7cEaR1DfK+kU15gIH1jfwGQf13iQ+V7vBDr9aT13V0HB62TjMRM+C4
+ Kj8IVC/XDJUpOO4K65gIUDglAeaipVh+SR6NJBPNmFQdSb07hLfbZYRtV
+ iXv/geAnAMYNOVFMJdwf/GG44dRex2jsn7tVF69r/ukMhOZAFwq054ttX
+ +q1LkhGdSCA8VHTGVhGx2SF9FGqcKEo4B9Wdo8H0WMb3Z6h/5LDVJJIS2 g==;
+X-CSE-ConnectionGUID: uaDx1kw7RTmd71eocvX+SA==
+X-CSE-MsgGUID: alzsJ3CISsa7H9oN66h61A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="99339318"
+X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="99339318"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jun 2026 04:55:37 -0700
+X-CSE-ConnectionGUID: IzxAZchgRkGsFx4GlUcBKA==
+X-CSE-MsgGUID: X1eOoAhISnCxWSc16ChRhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="244986063"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jun 2026 04:55:37 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 9 Jun 2026 04:55:36 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Tue, 9 Jun 2026 04:55:36 -0700
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.42)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 9 Jun 2026 04:55:36 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xyp06w+oVx9//YgCp4WxOhYHc9mfL+E5Csz/sXl4yd8p2yfVVqlCR/cNirxf6rY4mW3FSZ+3EIHsur0F+bk4DHcwuY8bTxOvMKkIf86c3t+zcG8Wdz7npQomzRPGCWzIJv1CVvgONUVcmfD6WYqrezJVjgnM/QTmyibGB8A4uhhUB7vFGVkDYqYIpzT5rs0dsAsf4vtYcrWkcHI8c2mTFbWSJ/cDZGbAcQ+sRZmaUKTLGr6oKX8p360CRI8uHYJ/reKAdBYd2+7CUwP7bnZVFbE794KnhwiVYR37HD2DHJctPU2GxhaI6CyPMjxFdoJe9aRTF7906+qaoDxgW+A4Wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uCg/P591N0Z3igghb2rNMhY+xbW9H46pEfdDmi68kT0=;
+ b=LiM9Y5WsWQ0MPoHDltaQT7EomdwcIqGLfxIcKQH/QDzvigjyuUe3NRw7le00U0X+B4YVaSeahO0uLdNyFIs+4+pcTfiLozZg/X2qQ1fkCdzOW4EVCVCMpS9/3B9BvNoSSX6j+g1aVAkVu2ssk/g4HY1ToQ4RL9L8G6dZ7FvQbQvhNNDn6dKb2PojYbxBW/A4UxXdAfwqc4EcjuPqwhW6bAc9sEgT94nLQLD7WXuTZWad4xk5s1li5CdHSY5hnopGg/eBQZGmKvL4nUxch1STJYJE00yHl7QUPtf+Ao6H8cg0C/J7Ec0AS0ZUqxg2FYoFCSofA1gdny+4KfY76FTSyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH0PR11MB5078.namprd11.prod.outlook.com (2603:10b6:510:3e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.12; Tue, 9 Jun 2026
+ 11:55:34 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0092.011; Tue, 9 Jun 2026
+ 11:55:34 +0000
+Date: Tue, 9 Jun 2026 12:55:29 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Ciara Loftus <ciara.loftus@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH 1/2] net/ice: revert fix link up when starting device
+Message-ID: <aif_MR9pNjdT9S21@bricha3-mobl1.ger.corp.intel.com>
+References: <20260603143407.1108527-1-ciara.loftus@intel.com>
+ <20260603143407.1108527-2-ciara.loftus@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260603143407.1108527-2-ciara.loftus@intel.com>
+X-ClientProxiedBy: DU2P251CA0019.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:10:230::26) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH0PR11MB5078:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2fa12eb1-79b3-44de-4c89-08dec61e0349
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|366016|22082099003|18002099003|56012099006|11063799006|4143699003;
+X-Microsoft-Antispam-Message-Info: 8B2h8I48bFhQxPM9R1uHLqGmc36SZ9yDkCQtfc7Amhh+BRC4XMTwqbRGvOgteHQrZddPX2jlwLJOJykK3V9d2oSPDR/eP9N9O7nOwth1g8RSyAQOigT5GjS+AwVJiw6eoRcc6gZJvMYrDGBxBfpXfYTXSJv4DiaAqInuwYEw0vr4Vh26jvxgpBN/2VxYDSvRreegUDPSbBdDiF/cWzAAwnnvxWhxo9HibNq9s5tNEznHAOycpwcWW2tCfGtpvYZ8NnmRat9oNNoA1/YeTSUo+JoHCwcyeuacL5JjAqXOoDqvDMQkw5QYfwUDZQhM2d8dsArd2Du2hZeywLpDWQ+Kpet8F654B1oOAY88zQYio4xoeSIboZza/iDSok5WVjLfL9cwfSpmUoiGTFMevkyn7qvURguWmkhmv3hbwZtjtEWRTfVU1XERXoa0IqIxnrg8DUUrh2iWVBB04b/62fPZGRofkldG8EWWnIq2AoOEdHWshB41IWcchRROcz+gJmoeJQOcjEHZ0KqWk+5xtNQRXsByX3DNlBl0zPP1FFZlJs9RVEH0MZq75Zttu3aHRX56TURKg17h+/ii/8JzDWgfzhJqigQ5kUleH2gk+7Y2o/6syARTT+sL3e2JA2pJW3F4WBckzG9CnAh7Sqnf2l7FNnAbs18ZuquTZ1OQfMJbZQ4808fp1cOrmnA0DYAVj/sf
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(22082099003)(18002099003)(56012099006)(11063799006)(4143699003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XGKdU4oz0bsqa71mf6wGKNz0DckQ94B80tW2VJrQ5F7xW49SF5frfA8avySH?=
+ =?us-ascii?Q?3OVz78wXCpPknO5rTsdEgRzwiSemW7hMihRTQyZsAlVqy8Oly7CzIWnCiAyS?=
+ =?us-ascii?Q?C0XYk19VeMAHm4hoGYYakHOIDHxp+7UN9iokekYWeJQs3YJyyd3aB19s/lIP?=
+ =?us-ascii?Q?i+xaeYTcByAzk5p/JbqzNWCpKyspNyZlxpgYVW4GlW774twIL7smNeDW1Zt1?=
+ =?us-ascii?Q?0WYG768bxQ0+xJKd/6L4r8vglMQqsSX2niI+L76kGMemo6zPxratMJszB43G?=
+ =?us-ascii?Q?J5gUc+ods71UqettbmqeMWacBQcdxtv01ZixNZUclKag7PzZYu5i9eGfd5Nm?=
+ =?us-ascii?Q?hH/RlbDeaAZwCRroIpbo7DkvZl6JexOUkVEklsrQ/WOgDBJjn/ag394jcco+?=
+ =?us-ascii?Q?KcUE+YM40aViIEwXgtz8mgdefdszlRGKhc3Ctzn4xbB4zkIThLyGLbiUqz53?=
+ =?us-ascii?Q?SJAGakzzZ2gQxxE++kvJJyjQjCEzQuOvSb9B1QJhKQ9RgTFJx4LkDb0UXHVv?=
+ =?us-ascii?Q?k6BxoWs5FE/q5lbJF6xNozKYLh49uDTQzRUNKRKI/zjOnEqZ/2TKT31SZIVv?=
+ =?us-ascii?Q?MUQ+MyNfbCWX54WGbMwL1AtkZDbG1ShFd+py3DZC6jAkJ2KP5gail9mpZU/t?=
+ =?us-ascii?Q?Kg03dQUzrMbKzEfsA/xtoD8/vHq0s3qKRVQLYP2j3CMJ77f4AvX5nVpTaQ1B?=
+ =?us-ascii?Q?5Eeku7rJ7ed3aO+Jn/d8RSYetuGsE6gQBEX08GRm0iqTKERwv33bIBUpnUqO?=
+ =?us-ascii?Q?rI7QMkC7Mwa7FHVOjZcmv4A7VIhGpySGZ2+Sc9H7pSkuJ0cSUiYyvrJGE+wF?=
+ =?us-ascii?Q?W9hzm2sPSCRtY3yTFK/xT6A/ia97JWVUYILYNDVoYFLWQDx5sj7raqJjJ07Z?=
+ =?us-ascii?Q?uTRyY3/J3sOq8SfLzuYFkjByd5w9/FKsLoChjqtpNEzm8iJMLV7UTDtF4F+/?=
+ =?us-ascii?Q?8cjdUxyKBEOn4nt9/OHaQsMvnWUu9wRaAXkeMJVZPa6xih/PQ5NpYUIp8/V8?=
+ =?us-ascii?Q?PIHWS0pqSZrwoC9ktMCOJDrYdczisdhdMMIs0hPmORmdwV6SeKUBrZxyqKW+?=
+ =?us-ascii?Q?wrUJYMhCST1779wY9qgcWOdssoWi2ZLj9mtRBLdbs5HXMIrJYUoB+XOwNfkY?=
+ =?us-ascii?Q?ctJM8c9ouDubpUgMujjKG2Uro5MZ8tz1FOcpKE/z5ZIUkCy02u7w6DwOnepg?=
+ =?us-ascii?Q?w1vBkgENQm83ncXpUM3qH0f8oM2sg5m/lnrT3cx5yFAsbwstaItrtsqtBRdf?=
+ =?us-ascii?Q?XRJUpyouYyjdYWUPRiD05/Nk+Tmp3XqyP8ahVuXQTs/HjYrfZiGQqqjEnuQM?=
+ =?us-ascii?Q?Lu9wxEdwBDxQSu4Vmc7eUSo2eIHG09IlA/Dx2uFXbaMZKfhXJXfyQ9hpzqty?=
+ =?us-ascii?Q?PtezS9QIj9oorsvjKyn/Ba2kYXvgF6dm5JvryH/pXKB7jCyL4T4HLqpVo6wy?=
+ =?us-ascii?Q?dYx6/v6FO4Vrr00hOU8WuXLh1y6QuH8DpANZRGpTvQSQxPOUR8aCqptZyinQ?=
+ =?us-ascii?Q?XnM8o7lKKa5oORax5PNcJnpiIvcDq/QETBMH60S/zqi392wqQJy1ccaML2lP?=
+ =?us-ascii?Q?yKSuiSFrQnqvF+znvqGxfXQeOBgn1n2kSyXGqL68uZjQWlqG6q/sKPawLX7l?=
+ =?us-ascii?Q?HahG1P7DOp8tTsU36/VZt4RdejgKFwqu4yp1o6BHqwyCNZK9reqJzfaYiok6?=
+ =?us-ascii?Q?TIfo62AG3WSVGM10g4qk2L4lJF8p6mdq+3v1r8oR0yeUJIEc8JA3z7dHnws+?=
+ =?us-ascii?Q?Py+FuIQ6YsclY7BxcPbbivL3AnjKK+8=3D?=
+X-Exchange-RoutingPolicyChecked: eqD2mG1VQBOpKEs59K4NmNYIOlOomnP7sTCb+ejQ593vo/bHL1eNxZHwTJQVp5TwsL3gxNpUUnMSgJ95y/OS8myCv0w8/XXqM2t7R6HNpQyWbKn0E4u2glmM3DHj9l7CujFrw3yKH9sAf7XgOj/aSdH38Sn85NMvepPF/JQ3Gb2uDU+mk70LToTqr44mlyXbZMKqoA/ai+VYuK98XlPR5tiiF/KnXuacTPMS0UaGl/IAOwzI6X+mWs1KZ9b0zWg+H5eo7sCbHV4tkb0dYCIbEUpSOQbs+TyVxfs9zMu5dMnNKhnwmbgWHFc4RiBbH1D3aCelAYt3mJG0L9yMqegI0A==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fa12eb1-79b3-44de-4c89-08dec61e0349
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2026 11:55:34.1337 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YkBGPZY+l2rdjySeHo3FXwg4Ni2CLAhrM7fOJcl0EKV/Tbw3Uzr10JI3jPtq7xmRf9S0CfNOXE3IsUG7ox7msq+j6yyhc0+kzrB34tH7Drc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5078
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,124 +151,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a multi-part message in MIME format.
-
-------=_001_NextPart366483541260_=----
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-SGkgVGhvbWFzIE1vbmphbG9uLA0KDQpUaGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3IGFuZCBmb3Ig
-Z3VpZGluZyBtZSBvbiB0aGUgbWFpbGluZyBsaXN0IHdvcmtmbG93Lg0KDQo+IFBsZWFzZSBjb3Vs
-ZCB5b3Ugc2VuZCB5b3VyIG5ldyBzZXJpZXMgYXMgYSByZXBseSBvZiB0aGUgdjEgY292ZXIgbGV0
-dGVyPw0KPiBJdCB3b3VsZCBhdm9pZCBoYXZpbmcgYSBsYXJnZSBpbmRlbnQgaW4gbWFpbCBjbGll
-bnRzLg0KDQpHb3QgaXQuIEkgd2lsbCBjb25maWd1cmUgZ2l0IHNlbmQtZW1haWwgd2l0aCAiLS1p
-bi1yZXBseS10byIgYm91bmQgdG8gdGhlIA0KdjEgY292ZXIgbGV0dGVyIE1lc3NhZ2UtSUQgZm9y
-IHRoZSBuZXh0IHZlcnNpb24gb2YgdGhpcyBwYXRjaCBzZXQuIA0KQXBvbG9naWVzIGZvciB0aGUg
-aW5jb252ZW5pZW5jZSBjYXVzZWQgYnkgdGhlIGRlZXAgdGhyZWFkaW5nLg0KDQo+IEFsc28gSSdt
-IHN0aWxsIHdhaXRpbmcgZm9yIGEgcmVwbHkgdG8gbXkgcXVlc3Rpb24gYWJvdXQgdGhlIG5lZWQN
-Cj4gZm9yIGRyaXZlcnMvY29tbW9uL3N4ZTIvLg0KPiBJJ20gbm90IGdvaW5nIHRvIHB1bGwgYW55
-IHN4ZTIgcGF0Y2ggaW50byBtYWluIHVudGlsIHlvdSBleHBsYWluLg0KDQpSZWdhcmRpbmcgdGhl
-IG5lY2Vzc2l0eSBvZiB0aGUgImRyaXZlcnMvY29tbW9uL3N4ZTIvIiBkaXJlY3RvcnksIHRoZSBz
-eGUyIA0KaGFyZHdhcmUgYXJjaGl0ZWN0dXJlIGlzIGRlc2lnbmVkIHRvIHN1cHBvcnQgYm90aCBz
-dGFuZGFyZCBOSUMgYW5kIHZEUEEgDQoodkhvc3QgRGF0YSBQYXRoIEFjY2VsZXJhdGlvbikgZnVu
-Y3Rpb25hbGl0aWVzLiANCg0KVGhlIGNvZGUgY3VycmVudGx5IHBsYWNlZCBpbiAiZHJpdmVycy9j
-b21tb24vc3hlMi8iIGNvbnRhaW5zIHRoZSBmb3VuZGF0aW9uYWwgDQpIYXJkd2FyZSBBYnN0cmFj
-dGlvbiBMYXllciAoSEFMKSwgZmlybXdhcmUgaW50ZXJmYWNlcyAoQWRtaW5RKSwgYW5kIGNvbW1v
-biANCnJlZ2lzdGVyIGRlZmluaXRpb25zLiANCg0KQXBhcnQgZnJvbSB0aGUgIm5ldC9zeGUyIiBQ
-TUQgaW4gdGhpcyBzZXJpZXMsIHdlIGFyZSBhY3RpdmVseSBpbXBsZW1lbnRpbmcgdGhlIA0KInZk
-cGEvc3hlMiIgZHJpdmVyLCB3aGljaCB3aWxsIGJlIHN1Ym1pdHRlZCBpbiBhIHN1YnNlcXVlbnQg
-cGF0Y2ggc2V0LiBCb3RoIHRoZSANCiJuZXQvc3hlMiIgYW5kICJ2ZHBhL3N4ZTIiIGRyaXZlcnMg
-c3RyaWN0bHkgZGVwZW5kIG9uIHRoaXMgc2hhcmVkIGNvbW1vbiBIQUwgDQpsYXllciB0byBtYW5h
-Z2UgdGhlIHNhbWUgaGFyZHdhcmUgY29yZS4gU2VwYXJhdGluZyB0aGlzIGNvZGUgaW50byAiZHJp
-dmVycy9jb21tb24vIiANCmlzIGVzc2VudGlhbCB0byBwcmV2ZW50IG1hc3NpdmUgY29kZSBkdXBs
-aWNhdGlvbiBiZXR3ZWVuIHRoZSBuZXQgYW5kIHZkcGEgDQpzdWJzeXN0ZW1zIGluIHRoZSBuZWFy
-IGZ1dHVyZS4NCg0KUGxlYXNlIGxldCBtZSBrbm93IGlmIHRoaXMgY2xhcmlmaWVzIHlvdXIgY29u
-Y2Vybi4gT25jZSBjb25maXJtZWQsIEkgd2lsbCANCnNlbmQgb3V0IHRoZSB1cGRhdGVkIHYxNSBz
-ZXJpZXMgYXMgYSByZXBseSB0byB0aGUgdjEgY292ZXIgbGV0dGVyIGltbWVkaWF0ZWx5Lg0KDQpC
-ZXN0IHJlZ2FyZHMsDQpKaWUgTGl1IChsaXVqaWU1QGxpbmtkYXRhdGVjaG5vbG9neS5jb20pDQog
-DQoNCg0KbGl1amllNUBsaW5rZGF0YXRlY2hub2xvZ3kuY29tDQogDQpGcm9tOiBUaG9tYXMgTW9u
-amFsb24NCkRhdGU6IDIwMjYtMDYtMDkgMTY6NDINClRvOiBKaWUgTGl1DQpDQzogc3RlcGhlbjsg
-ZGV2DQpTdWJqZWN0OiBSZTogW1BBVENIIHYxNCAwMC8yMF0gbmV0L3N4ZTI6IGFkZGVkIExpbmtk
-YXRhIHN4ZTIgZXRoZXJuZXQgZHJpdmVyDQowOS8wNi8yMDI2IDAzOjM5LCBsaXVqaWU1QGxpbmtk
-YXRhdGVjaG5vbG9neS5jb206IA0KPiBGcm9tOiBKaWUgTGl1IDxsaXVqaWU1QGxpbmtkYXRhdGVj
-aG5vbG9neS5jb20+IA0KPiANCj4gVGhpcyBwYXRjaCBzZXQgaW1wbGVtZW50cyBjb3JlIGZ1bmN0
-aW9uYWxpdHkgZm9yIHRoZSBTWEUyIFBNRCwgDQo+IGluY2x1ZGluZyBiYXNpYyBkcml2ZXIgZnJh
-bWV3b3JrLCBkYXRhIHBhdGggc2V0dXAsIGFuZCBhZHZhbmNlZCANCj4gb2ZmbG9hZCBmZWF0dXJl
-cyAoVkxBTiwgUlNTLFRNLCBQVFAgZXRjLikuIA0KPiANCj4gVjE0OiANCj4gIC0gQWRkcmVzc2Vk
-IEFJIGNvbW1lbnRzIA0KDQpQbGVhc2UgY291bGQgeW91IHNlbmQgeW91ciBuZXcgc2VyaWVzIGFz
-IGEgcmVwbHkgb2YgdGhlIHYxIGNvdmVyIGxldHRlcj8gDQpJdCB3b3VsZCBhdm9pZCBoYXZpbmcg
-YSBsYXJnZSBpbmRlbnQgaW4gbWFpbCBjbGllbnRzLiANCg0KQWxzbyBJJ20gc3RpbGwgd2FpdGlu
-ZyBmb3IgYSByZXBseSB0byBteSBxdWVzdGlvbiBhYm91dCB0aGUgbmVlZCANCmZvciBkcml2ZXJz
-L2NvbW1vbi9zeGUyLy4gDQpJJ20gbm90IGdvaW5nIHRvIHB1bGwgYW55IHN4ZTIgcGF0Y2ggaW50
-byBtYWluIHVudGlsIHlvdSBleHBsYWluLiANCg0K
-
-------=_001_NextPart366483541260_=----
-Content-Type: text/html;
-	charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<html><head><meta http-equiv=3D"content-type" content=3D"text/html; charse=
-t=3DUTF-8"><style>body { line-height: 1.5; }blockquote { margin-top: 0px; =
-margin-bottom: 0px; margin-left: 0.5em; }.fox_html_content_dummy_textarea =
-{ position: absolute; overflow: hidden; width: 1px; height: 1px; opacity: =
-0; }body { font-size: 14px; font-family: "Microsoft YaHei UI"; color: rgb(=
-0, 0, 0); line-height: 1.5; }</style></head><body>=0A<div class=3D"">Hi Th=
-omas Monjalon,<br><br>Thank you for your review and for guiding me on the =
-mailing list workflow.<br><br>&gt; Please could you send your new series a=
-s a reply of the v1 cover letter?<br>&gt; It would avoid having a large in=
-dent in mail clients.<br><br>Got it. I will configure git send-email with =
-"--in-reply-to" bound to the <br>v1 cover letter Message-ID for the next v=
-ersion of this patch set. <br>Apologies for the inconvenience caused by th=
-e deep threading.<br><br>&gt; Also I'm still waiting for a reply to my que=
-stion about the need<br>&gt; for drivers/common/sxe2/.<br>&gt; I'm not goi=
-ng to pull any sxe2 patch into main until you explain.<br><br>Regarding th=
-e necessity of the "drivers/common/sxe2/" directory, the sxe2 <br>hardware=
- architecture is designed to support both standard NIC and vDPA <br>(vHost=
- Data Path Acceleration) functionalities. <br><br>The code currently place=
-d in "drivers/common/sxe2/" contains the foundational <br>Hardware Abstrac=
-tion Layer (HAL), firmware interfaces (AdminQ), and common <br>register de=
-finitions. <br><br>Apart from the "net/sxe2" PMD in this series, we are ac=
-tively implementing the <br>"vdpa/sxe2" driver, which will be submitted in=
- a subsequent patch set. Both the <br>"net/sxe2" and "vdpa/sxe2" drivers s=
-trictly depend on this shared common HAL <br>layer to manage the same hard=
-ware core. Separating this code into "drivers/common/" <br>is essential to=
- prevent massive code duplication between the net and vdpa <br>subsystems =
-in the near future.<br><br>Please let me know if this clarifies your conce=
-rn. Once confirmed, I will <br>send out the updated v15 series as a reply =
-to the v1 cover letter immediately.<br><br>Best regards,<br>Jie Liu (liuji=
-e5@linkdatatechnology.com)</div><div>&nbsp;</div><hr style=3D"WIDTH: 210px=
-; HEIGHT: 1px" color=3D"#b5c4df" size=3D"1" align=3D"left"><div><span><div=
- style=3D"MARGIN: 10px; FONT-FAMILY: verdana; FONT-SIZE: 10pt"><div>liujie=
-5@linkdatatechnology.com</div></div></span></div><blockquote style=3D"marg=
-in-Top: 0px; margin-Bottom: 0px; margin-Left: 0.5em; margin-Right: inherit=
-"><div>&nbsp;</div><div style=3D"border:none;border-top:solid #B5C4DF 1.0p=
-t;padding:3.0pt 0cm 0cm 0cm"><div style=3D"PADDING-RIGHT: 8px; PADDING-LEF=
-T: 8px; FONT-SIZE: 12px;FONT-FAMILY:tahoma;COLOR:#000000; BACKGROUND: #efe=
-fef; PADDING-BOTTOM: 8px; PADDING-TOP: 8px"><div><b>From:</b>&nbsp;<a href=
-=3D"mailto:thomas@monjalon.net">Thomas Monjalon</a></div><div><b>Date:</b>=
-&nbsp;2026-06-09&nbsp;16:42</div><div><b>To:</b>&nbsp;<a href=3D"mailto:li=
-ujie5@linkdatatechnology.com">Jie Liu</a></div><div><b>CC:</b>&nbsp;<a hre=
-f=3D"mailto:stephen@networkplumber.org">stephen</a>; <a href=3D"mailto:dev=
-@dpdk.org">dev</a></div><div><b>Subject:</b>&nbsp;Re: [PATCH v14 00/20] ne=
-t/sxe2: added Linkdata sxe2 ethernet driver</div></div></div><div><div cla=
-ss=3D""><div style=3D"height: initial; font-size: 10.5pt; transform: trans=
-lateZ(0px); overflow: auto;" class=3D"FoxDIV_20260609171540884"><div>09/06=
-/2026 03:39, liujie5@linkdatatechnology.com:=0A</div>=0A<div class=3D"plai=
-ntext_qoute">&gt; From: Jie Liu &lt;liujie5@linkdatatechnology.com&gt;=0A<=
-/div>=0A<div class=3D"plaintext_qoute">&gt; =0A</div>=0A<div class=3D"plai=
-ntext_qoute">&gt; This patch set implements core functionality for the SXE=
-2 PMD,=0A</div>=0A<div class=3D"plaintext_qoute">&gt; including basic driv=
-er framework, data path setup, and advanced=0A</div>=0A<div class=3D"plain=
-text_qoute">&gt; offload features (VLAN, RSS,TM, PTP etc.).=0A</div>=0A<di=
-v class=3D"plaintext_qoute">&gt; =0A</div>=0A<div class=3D"plaintext_qoute=
-">&gt; V14:=0A</div>=0A<div class=3D"plaintext_qoute">&gt;&nbsp; - Address=
-ed AI comments=0A</div>=0A<br>=0A<div>Please could you send your new serie=
-s as a reply of the v1 cover letter?=0A</div>=0A<div>It would avoid having=
- a large indent in mail clients.=0A</div>=0A<br>=0A<div>Also I'm still wai=
-ting for a reply to my question about the need=0A</div>=0A<div>for drivers=
-/common/sxe2/.=0A</div>=0A<div>I'm not going to pull any sxe2 patch into m=
-ain until you explain.=0A</div>=0A<br>=0A</div></div></div></blockquote></=
-body></html>
-------=_001_NextPart366483541260_=------
-
+On Wed, Jun 03, 2026 at 02:34:06PM +0000, Ciara Loftus wrote:
+> This reverts commit 6c76b76dc64183eb2f24a52b90d4ff9feb4872f4.
+> 
+> The reverted commit worked around a potential timing issue where the
+> link could be reported down immediately after the link was enabled
+> during device start. The commit introduced a blocking wait which gave
+> the driver a better chance to read the correct link state before
+> returning from device start. However, since the auto link update flag is
+> set when setting the link up in device start, an adminq notification
+> should arrive once the link is up, which will be handled and correctly
+> set the link status. This means we can remove the delay from device
+> start as it does not need to guarantee link up before returning.
+> 
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+> ---
+>  drivers/net/intel/ice/ice_ethdev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+Should this revert be marked for backport, or is it safer to keep the LTS's
+as they are?
