@@ -2,146 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF23CD8CA8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 10:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C743CD8CA8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 11:11:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D1BA402BE;
-	Tue,  9 Jun 2026 12:54:04 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 51AA84025E;
- Tue,  9 Jun 2026 12:54:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781002443; x=1812538443;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=jsLmUKD5LttGsx//vW41zgCGUSjUSusEmjk/hBuM1iQ=;
- b=cr298WDxjwCRS6IjatADbtmiqRmesZrNmGQy1LeFRlSiSPQmR6+qqKw4
- ytBkObvrLbCcz3OZEhQhps7P1reczUJrUATGBJuqj+BunDcxCaLCNAB+C
- bAxPWFnzClAjq3kJvyBEEY+G4uYk9crJe992j+TVL3L6rNidXOlq/NI4B
- FBIVUFPbzcLhZTnOqL7XpGf7da/GarWn6k076x5osdJGwaMhMoclI9Mmq
- Mk0g7WET4AzkEMpR0cjudkTCHcCMmEtDJ0gTXHLZe0/2TwgjtONyTvjgi
- /S2LU6lKKxQOBLzRHCrcv1jUv8Xjz6ZdIxOz+l/NA04py+93psajTxotM Q==;
-X-CSE-ConnectionGUID: gv/l7YQTRPOmdwgDXqC5CQ==
-X-CSE-MsgGUID: Ai10n40pRrqaLh6HY4KI4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="81944504"
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="81944504"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2026 03:54:02 -0700
-X-CSE-ConnectionGUID: bXHNy1/VTruF9w9vMUsTRA==
-X-CSE-MsgGUID: rv0HeT5yQKuCTz1ucr3d2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="276016856"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2026 03:54:01 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 9 Jun 2026 03:54:00 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 9 Jun 2026 03:54:00 -0700
-Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.21) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 9 Jun 2026 03:54:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KeLOax6ryd6OFDloGuDhdaydkUebkJZ/OGp/PtCY8GcOKC4oxR8C0BAseCaLIpgKdCjtVuy1sbTeEfHfFi8TYU0M21MEPNFe/w/irEpSfWZiw2401ewKYbxxvEtYPyjhYPEwjaKgFz/MC8avMplC+mOiRTqBY3ajUSbIwwQN0rhfoRqGOlWWE4uIkPqHtbhBbZfLUCe1SRvRFDB7L5CZTq8KeaEOjN3jgVeM5h6UMscKCeWLGdm32ssfouSTQxZ2ONW4xvGeVyu5/ic7ctX2yFlOIxbdftMxfFFQWX19SbsFR6g+rmdd63DfYW2ctfe2x1ywgjJuUPIN52wFXEMoDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WEwqGpg3JuQOL+MW6cxIarpYfIebgjvqQ4nCFWzzP1s=;
- b=lRyYXiHtYYOLL1COiFKICEwkZHktyGnvEKP77vLkXEdNOOq0Pe8AyosfdwrcxjlJWZ1/25qLd7TljH8Qlu02Wsfhdt0cBlZObumwywgYE/OOuFRCGzqz92ADg4tN0N4XwFaPyJTSop6M8TYd7oUMAVQ1rX5fFqc0DMsJiBj+j9/WYPMbaorZkiYj2G/TuSLxFWayzumQkd6f58WZsAynIqSJRxmM55R1dTXFeulEYBpBG7Xb4lNuaecldA4af1q1HIkk0RsjL7Js94Km1f0Tc/35TDBhcX7gwymdXr4SQyr0AQmCrV+KSpFJeip5qaFavr6C/OGInVTW2qy+CkB2Gw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY5PR11MB6116.namprd11.prod.outlook.com (2603:10b6:930:2b::14)
- by IA4PR11MB9177.namprd11.prod.outlook.com (2603:10b6:208:569::19)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.12; Tue, 9 Jun 2026
- 10:53:58 +0000
-Received: from CY5PR11MB6116.namprd11.prod.outlook.com
- ([fe80::7243:ab06:2282:cd8b]) by CY5PR11MB6116.namprd11.prod.outlook.com
- ([fe80::7243:ab06:2282:cd8b%5]) with mapi id 15.21.0092.011; Tue, 9 Jun 2026
- 10:53:58 +0000
-From: "Mandal, Anurag" <anurag.mandal@intel.com>
-To: "Loftus, Ciara" <ciara.loftus@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Medvedkin, Vladimir"
- <vladimir.medvedkin@intel.com>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [PATCH] net/iavf: fix to consolidate link change event handling
-Thread-Topic: [PATCH] net/iavf: fix to consolidate link change event handling
-Thread-Index: AQHc96RYhglbJRwunUu4iGgNKu0KGbY1/tUAgAANmLA=
-Date: Tue, 9 Jun 2026 10:53:58 +0000
-Message-ID: <CY5PR11MB6116C94D51C347DEAD15108DE41D2@CY5PR11MB6116.namprd11.prod.outlook.com>
-References: <20260609001022.357509-1-anurag.mandal@intel.com>
- <IA4PR11MB92782B6A7F4F58953DE954DE8E1D2@IA4PR11MB9278.namprd11.prod.outlook.com>
-In-Reply-To: <IA4PR11MB92782B6A7F4F58953DE954DE8E1D2@IA4PR11MB9278.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR11MB6116:EE_|IA4PR11MB9177:EE_
-x-ms-office365-filtering-correlation-id: aef68cff-297f-4069-2f30-08dec61568a1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|38070700021|6133799003|4143699003|11063799006|56012099006|18002099003|22082099003;
-x-microsoft-antispam-message-info: eCX5m6u0n2Pw+DUTT8XPlabeXMzgdsusCjsvxiofc20D6qgTaOxstrrgcHXjRS1D6AvrCihcl/7FDihOMlX7fDDAyMrLhNeHuILSSfpErfvjWQWRe7HAxQsC3gQvmRHN00auRtnGn/qLSKFsdG8SQ5Df5VtJ+sg4A3LAr4BYFNQno6PrHKcJSD1EDDrEd4yrAyjSDIXPo9iUpQJ2Y7ygt69OX+jZuby/6JekRzz8ihTP4FXOa4xDYA1lKISM8cd+e1/ZO5fMgcmVCvev75GUzsw8ampFm0dCmu0sHRCUJtW47ZybnHsAt0Cijq5GAwqhTUjI1bsf4h+bC4TI5fPjW9sK/yB1E2OeTgj+j9lTgGmXX6Y5a/OvqEhRGj4Ec1z6CSw6B9bKU5UmwiVKaNQnXv+vazl0H0a+Hmr1mMpwInprc7UsKFbvmBCYKveWn2xNc94sMa5aqbz0W054u5mOqamp4o5fgFQldGHXwRYF9yLxMzcYOmzDNi70iqG0lB1xBd8A58DyyaZzbOTyV6x20BkFdww1DXjfvHDA8g+BgVCCoJOt80CtJDHySMjiCZsPMMA+9pGgmi/0DPZydT9ivo01cMU1z/VnWWpF+F1Sqs0s/qcvoB8dz0ne+wBaiZ3QPoK9flfDUMu0KaUWFhBEmxy2KuNlJHNH0K6WhM4UDuVCzC2eW3fQLzgTRI7JtLn4xQcWY6FTu8RL1/XJ8WS/xJ7LggkMjVnd9T0z+DKGLznBQFrYFqnfdyKqqp2H/zy9
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY5PR11MB6116.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(38070700021)(6133799003)(4143699003)(11063799006)(56012099006)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?osv0Bg0Fp3LWBaE5z4hQEkAqQuB0025HrYsC3Tbi0X5MhTWo7aR37vSPP7UE?=
- =?us-ascii?Q?ANLzXM5FUk5JWILaxldkyhUczfa+yRVpuK/cWqyQg/HYENug25tBEKDa5RxT?=
- =?us-ascii?Q?j9Tk1KuisF4QEUJf7dvpe34hSe1AHLLUL6vXVehYYDb8umgRsGRhsQL8ZlM0?=
- =?us-ascii?Q?eSGhcSRhGTj5ym2Lr1V86nM2MavGg6xTOlhaRC9UuDj82Ygwlg2QWyYoGgx9?=
- =?us-ascii?Q?nqae7Ru42PI8BjhJEsiUugE9UaRiNB7/IVrdVbgjx5dxYZQg80ktslQwVF31?=
- =?us-ascii?Q?m+gL8w+yYjw9XEnu1yA2951z6bvtdgznRQ/PToS8OtRwU9i2JsM9JS5BaTBO?=
- =?us-ascii?Q?VKbZ8Do2VkPfVHqJ05/1GE/ePMWXtVje6HocTfL0AC4RZmE3QuRytfesdWXl?=
- =?us-ascii?Q?KP7dWtL8s0BeHFRN/4Liij6PmPmwlpb1d9wlDUVOgpDIG7ALvrp7CCM/Bzil?=
- =?us-ascii?Q?Wy+3kB/WPel6OZyKgxp4v3uJ/cJ3nlHodHNxI/S8Kuh7GTE04Q61rISiXnft?=
- =?us-ascii?Q?wQROss6qutqh42puB9dbYg0R45tRuc8jQ9JrJ13EMG6OvN7FXBUsO/Xi4xnW?=
- =?us-ascii?Q?rhCFi+aecCbN0vef7xKphbT+RMoB6AsZVPiIm4FWT6Q5TGhAa5ygOXcOG4x7?=
- =?us-ascii?Q?hqXS0zOaP/LVP/rBBj0DA3jM1e0gO2d6xZaqRg4xCzIX51P/8PC+UqPPMBu7?=
- =?us-ascii?Q?eStKkgSuxd4Dq3bGea1+fMdMhTBEssxSnNflKeYgR+Ueogji+TZ7Bhj8eCc6?=
- =?us-ascii?Q?+jqSDgObZwrTi5udKoczvpaxouluLLQ+qY2rtC/S+7Ibi+GpP4ZOiKL+fzpf?=
- =?us-ascii?Q?gIQin0H4H5Ed81NDOzXjnsG8whaXrS8KKfRVVYaGZXGzGhTRSeILtSx35oV1?=
- =?us-ascii?Q?00oceDvQuXFncMV7vbCJjny5gGl5w2WqsIbrkhVbc70v/yzQPROU6Me/IJdE?=
- =?us-ascii?Q?oCeHCF/skCLb3b7bWWlUPC6qJN384duTx0xEKfd7uJLuMltBJpL55uiPK6Y8?=
- =?us-ascii?Q?Hs877sf7U/VpQO/dz45zVLt+pQ8Cb0TOBFYPgQz1Il+GglCf+gJj2GQXSKge?=
- =?us-ascii?Q?Dr7J9uxdkUAMEGw1+yGKVTEde5Br3u9bfjJkeC3Y4kLbuMBmrkxEqggTA8V/?=
- =?us-ascii?Q?X0ODJMJUgbJjg6u5S2bHbl6SCqWhLoFtpYUDSabrHiFwOYRcpDFw3W8ykGcX?=
- =?us-ascii?Q?pNTx05u8XdNj5e0042xUPtxLPIz6H4L4R+8G7BPE2jyrsBufODpLQks3Hx2v?=
- =?us-ascii?Q?IfQyzIFnHqxKLeBw0nX53XiJoV0s2KerkkyR3+TSy38nNfAyeNjtFBepWl5M?=
- =?us-ascii?Q?f1vNQm9cf51UIVb977BXO4cOX+3IB1s+axIHURc8cyU27/PbdvOD6d4bk7W8?=
- =?us-ascii?Q?FB9o6egz1uPAZD4iMTgphUVUb1DV5pxIaBv1VVCF5I2PpY+FkTdao/o2NzlE?=
- =?us-ascii?Q?PpJaYlHJ2mIjv5L/PiYU2rNo+mHbCMSFPAF3oZu53m03iehiDQ+nlzbBqO8l?=
- =?us-ascii?Q?aADR/XcMy3Q5t2ugTsNCpTuCFvHNXkvRuO2A3nZZbs7JG+A4vJXhGvcqGTnx?=
- =?us-ascii?Q?V8nEdarfcBKuj3WPdOND1eCFwY3XDCx24LG+IyRTbILEMmp/UjlgwQQBjz5b?=
- =?us-ascii?Q?bUE7rF5E/qw0bzTM0R0QHr+7FDd82Jcnjzqs0dPKVJseej+vXXnqBK4zQ5E8?=
- =?us-ascii?Q?tQXcYo1AXbSFcLHWZwJ4iMBtn2YuoKQ3CtsUh97/X7h9jKoLPcMLdHwz7zkk?=
- =?us-ascii?Q?G58IlUEcRQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: IHC54A0AGfL2ah+icvlvGmI+5obwfVVk4uU0z8fpedaO/fXQ+Qb2jZDm7RXzPfa5obyqpVN2HvYA8aE0SEcsHed5klqqXTcRNQXad9cnwf741Zd06qjBnCPnNC9xL1AYums5nt7Q5UwIdsyRL3e7s3ukdQ73oB8ZjflDfauJjEHEcVQmwZDJ0upbFJq+NeIQOx0D71ayvkjECf/9m0a5NRodPICjFCF04yqZywSd7fyoY725mpVsC4Kwuc2+CkVggNLxiTMNwpWi4cOm4k6j3JSZLCiku9+6M+mzptv5o+joGupvBGPw6fog/HSNQAnLDrvREu8QYeVTtsFOT1eQCQ==
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6116.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aef68cff-297f-4069-2f30-08dec61568a1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2026 10:53:58.4354 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +oCJBBJVDcd7ZWnMSNl1W9+LgdMp1T/D+5fWWgBFkqveeK6qYRD6WSmENsYjjP2lCkhp7qc55h+/OSf83BjLeA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9177
-X-OriginatorOrg: intel.com
+	by mails.dpdk.org (Postfix) with ESMTP id A5197402BE;
+	Tue,  9 Jun 2026 13:11:03 +0200 (CEST)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTP id C5BAC4025E
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 13:11:01 +0200 (CEST)
+Received: from LAPTOP-ARGRBVTN (unknown [101.207.145.153])
+ by APP-03 (Coremail) with SMTP id rQCowABXd97D9CdqIJckFA--.2341S2;
+ Tue, 09 Jun 2026 19:10:59 +0800 (CST)
+Date: Tue, 9 Jun 2026 19:10:59 +0800
+From: "liujie5@linkdatatechnology.com" <liujie5@linkdatatechnology.com>
+To: dev <dev@dpdk.org>
+Subject: Re: Re: [PATCH v14 00/20] net/sxe2: added Linkdata sxe2 ethernet
+ driver
+References: <20260608074257.3043531-21-liujie5@linkdatatechnology.com>, 
+ <20260609013951.3359199-1-liujie5@linkdatatechnology.com>, 
+ <T4eYjXumTvWFDg9HUrMwEA@monjalon.net>
+X-Priority: 3
+X-Has-Attach: no
+X-Mailer: Foxmail 7.2.25.542[cn]
+Mime-Version: 1.0
+Message-ID: <202606091910581208482@linkdatatechnology.com>
+Content-Type: multipart/alternative;
+ boundary="----=_001_NextPart366483541260_=----"
+X-CM-TRANSID: rQCowABXd97D9CdqIJckFA--.2341S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFyDtr18uF4kCw4xtry5Jwb_yoW8Kw4DpF
+ W8K34Fkws5JF17Zr4vva1xuFyF93yFqa4Uu3Z8W3yDtwn8XF18KryIq340qw1xCr1rW3WF
+ 9a12v3Z8G3Z5ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUU92b7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+ 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+ A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+ jxv20xvEc7CjxVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
+ C2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVCF
+ 0I0E4I0vr24lYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
+ CFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACY4xI67k04243AVAKzVAKj4xxM4xv
+ F2IEb7IF0Fy26I8I3I1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
+ IqxVAqx4xG67AKxVWUGVWUWwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
+ 6r1j6r15MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2
+ IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv
+ 67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJwCE64xvF2IEb7IF0Fy7Yx
+ BIdaVFxhVjvjDU0xZFpf9x07j0LvNUUUUU=
+X-Originating-IP: [101.207.145.153]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -155,101 +60,124 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This is a multi-part message in MIME format.
 
-> -----Original Message-----
-> From: Loftus, Ciara <ciara.loftus@intel.com>
-> Sent: 09 June 2026 15:32
-> To: Mandal, Anurag <anurag.mandal@intel.com>; dev@dpdk.org
-> Cc: Richardson, Bruce <bruce.richardson@intel.com>; Medvedkin, Vladimir
-> <vladimir.medvedkin@intel.com>; stable@dpdk.org
-> Subject: RE: [PATCH] net/iavf: fix to consolidate link change event handl=
-ing
->=20
-> > Subject: [PATCH] net/iavf: fix to consolidate link change event
-> > handling
-> >
-> > Handled link-change events through a common static function that reads
-> > the correct advanced & legacy link fields properly and updates
-> > no-poll/watchdog/LSC state consistently.
-> >
-> > Fixes: 5e03e316c753 ("net/iavf: handle virtchnl event message without
-> > interrupt")
-> > Fixes: 48de41ca11f0 ("net/avf: enable link status update")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-> > ---
-> >  drivers/net/intel/iavf/iavf_vchnl.c | 133
-> > +++++++++++++++++-----------
-> >  1 file changed, 81 insertions(+), 52 deletions(-)
-> >
-> > diff --git a/drivers/net/intel/iavf/iavf_vchnl.c
-> > b/drivers/net/intel/iavf/iavf_vchnl.c
-> > index 94ccfb5d6e..6454632541 100644
-> > --- a/drivers/net/intel/iavf/iavf_vchnl.c
-> > +++ b/drivers/net/intel/iavf/iavf_vchnl.c
-> > @@ -216,6 +216,75 @@ iavf_convert_link_speed(enum virtchnl_link_speed
-> > virt_link_speed)
-> >  	return speed;
-> >  }
-> >
-> > +/*
-> > + * iavf_handle_link_change_event: common handler for VIRTCHNL link
-> > change events
-> > + *
-> > + * @dev: pointer to rte_eth_dev for this VF
-> > + * @vpe: pointer to the virtchnl_pf_event payload received from the
-> > +PF
-> > + *
-> > + * Handle PF link-change event: decode adv/legacy link info, update
-> > +VF
-> > + * link state, sync no-poll/watchdog behavior & notify app via LSC eve=
-nt.
-> > + */
-> > +static void
-> > +iavf_handle_link_change_event(struct rte_eth_dev *dev,
-> > +			      struct virtchnl_pf_event *vpe) {
-> > +	struct iavf_adapter *adapter;
-> > +	struct iavf_info *vf;
-> > +	bool adv_link_speed;
-> > +
-> > +	if (dev =3D=3D NULL || dev->data =3D=3D NULL ||
-> > +	    dev->data->dev_private =3D=3D NULL || vpe =3D=3D NULL) {
-> > +		PMD_DRV_LOG(ERR, "Invalid device pointer in link change
-> > handler");
-> > +		return;
-> > +	}
->=20
-> Thanks for splitting this out into a standalone patch.
-> I'm not sure if all of the above NULL checking is necessary. Especially v=
-pe =3D=3D
-> NULL considering you've checked that for NULL in both iavf_read_msg_from_=
-pf
-> and iavf_handle_pf_event_msg before entering this function. It's recommen=
-ded
-> to avoid overly defensive checks that can never trigger so I suggest taki=
-ng a look
-> at this again. Other than that the changes looks good to me.
+------=_001_NextPart366483541260_=----
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Hi Ciara,
+SGkgVGhvbWFzIE1vbmphbG9uLA0KDQpUaGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3IGFuZCBmb3Ig
+Z3VpZGluZyBtZSBvbiB0aGUgbWFpbGluZyBsaXN0IHdvcmtmbG93Lg0KDQo+IFBsZWFzZSBjb3Vs
+ZCB5b3Ugc2VuZCB5b3VyIG5ldyBzZXJpZXMgYXMgYSByZXBseSBvZiB0aGUgdjEgY292ZXIgbGV0
+dGVyPw0KPiBJdCB3b3VsZCBhdm9pZCBoYXZpbmcgYSBsYXJnZSBpbmRlbnQgaW4gbWFpbCBjbGll
+bnRzLg0KDQpHb3QgaXQuIEkgd2lsbCBjb25maWd1cmUgZ2l0IHNlbmQtZW1haWwgd2l0aCAiLS1p
+bi1yZXBseS10byIgYm91bmQgdG8gdGhlIA0KdjEgY292ZXIgbGV0dGVyIE1lc3NhZ2UtSUQgZm9y
+IHRoZSBuZXh0IHZlcnNpb24gb2YgdGhpcyBwYXRjaCBzZXQuIA0KQXBvbG9naWVzIGZvciB0aGUg
+aW5jb252ZW5pZW5jZSBjYXVzZWQgYnkgdGhlIGRlZXAgdGhyZWFkaW5nLg0KDQo+IEFsc28gSSdt
+IHN0aWxsIHdhaXRpbmcgZm9yIGEgcmVwbHkgdG8gbXkgcXVlc3Rpb24gYWJvdXQgdGhlIG5lZWQN
+Cj4gZm9yIGRyaXZlcnMvY29tbW9uL3N4ZTIvLg0KPiBJJ20gbm90IGdvaW5nIHRvIHB1bGwgYW55
+IHN4ZTIgcGF0Y2ggaW50byBtYWluIHVudGlsIHlvdSBleHBsYWluLg0KDQpSZWdhcmRpbmcgdGhl
+IG5lY2Vzc2l0eSBvZiB0aGUgImRyaXZlcnMvY29tbW9uL3N4ZTIvIiBkaXJlY3RvcnksIHRoZSBz
+eGUyIA0KaGFyZHdhcmUgYXJjaGl0ZWN0dXJlIGlzIGRlc2lnbmVkIHRvIHN1cHBvcnQgYm90aCBz
+dGFuZGFyZCBOSUMgYW5kIHZEUEEgDQoodkhvc3QgRGF0YSBQYXRoIEFjY2VsZXJhdGlvbikgZnVu
+Y3Rpb25hbGl0aWVzLiANCg0KVGhlIGNvZGUgY3VycmVudGx5IHBsYWNlZCBpbiAiZHJpdmVycy9j
+b21tb24vc3hlMi8iIGNvbnRhaW5zIHRoZSBmb3VuZGF0aW9uYWwgDQpIYXJkd2FyZSBBYnN0cmFj
+dGlvbiBMYXllciAoSEFMKSwgZmlybXdhcmUgaW50ZXJmYWNlcyAoQWRtaW5RKSwgYW5kIGNvbW1v
+biANCnJlZ2lzdGVyIGRlZmluaXRpb25zLiANCg0KQXBhcnQgZnJvbSB0aGUgIm5ldC9zeGUyIiBQ
+TUQgaW4gdGhpcyBzZXJpZXMsIHdlIGFyZSBhY3RpdmVseSBpbXBsZW1lbnRpbmcgdGhlIA0KInZk
+cGEvc3hlMiIgZHJpdmVyLCB3aGljaCB3aWxsIGJlIHN1Ym1pdHRlZCBpbiBhIHN1YnNlcXVlbnQg
+cGF0Y2ggc2V0LiBCb3RoIHRoZSANCiJuZXQvc3hlMiIgYW5kICJ2ZHBhL3N4ZTIiIGRyaXZlcnMg
+c3RyaWN0bHkgZGVwZW5kIG9uIHRoaXMgc2hhcmVkIGNvbW1vbiBIQUwgDQpsYXllciB0byBtYW5h
+Z2UgdGhlIHNhbWUgaGFyZHdhcmUgY29yZS4gU2VwYXJhdGluZyB0aGlzIGNvZGUgaW50byAiZHJp
+dmVycy9jb21tb24vIiANCmlzIGVzc2VudGlhbCB0byBwcmV2ZW50IG1hc3NpdmUgY29kZSBkdXBs
+aWNhdGlvbiBiZXR3ZWVuIHRoZSBuZXQgYW5kIHZkcGEgDQpzdWJzeXN0ZW1zIGluIHRoZSBuZWFy
+IGZ1dHVyZS4NCg0KUGxlYXNlIGxldCBtZSBrbm93IGlmIHRoaXMgY2xhcmlmaWVzIHlvdXIgY29u
+Y2Vybi4gT25jZSBjb25maXJtZWQsIEkgd2lsbCANCnNlbmQgb3V0IHRoZSB1cGRhdGVkIHYxNSBz
+ZXJpZXMgYXMgYSByZXBseSB0byB0aGUgdjEgY292ZXIgbGV0dGVyIGltbWVkaWF0ZWx5Lg0KDQpC
+ZXN0IHJlZ2FyZHMsDQpKaWUgTGl1IChsaXVqaWU1QGxpbmtkYXRhdGVjaG5vbG9neS5jb20pDQog
+DQoNCg0KbGl1amllNUBsaW5rZGF0YXRlY2hub2xvZ3kuY29tDQogDQpGcm9tOiBUaG9tYXMgTW9u
+amFsb24NCkRhdGU6IDIwMjYtMDYtMDkgMTY6NDINClRvOiBKaWUgTGl1DQpDQzogc3RlcGhlbjsg
+ZGV2DQpTdWJqZWN0OiBSZTogW1BBVENIIHYxNCAwMC8yMF0gbmV0L3N4ZTI6IGFkZGVkIExpbmtk
+YXRhIHN4ZTIgZXRoZXJuZXQgZHJpdmVyDQowOS8wNi8yMDI2IDAzOjM5LCBsaXVqaWU1QGxpbmtk
+YXRhdGVjaG5vbG9neS5jb206IA0KPiBGcm9tOiBKaWUgTGl1IDxsaXVqaWU1QGxpbmtkYXRhdGVj
+aG5vbG9neS5jb20+IA0KPiANCj4gVGhpcyBwYXRjaCBzZXQgaW1wbGVtZW50cyBjb3JlIGZ1bmN0
+aW9uYWxpdHkgZm9yIHRoZSBTWEUyIFBNRCwgDQo+IGluY2x1ZGluZyBiYXNpYyBkcml2ZXIgZnJh
+bWV3b3JrLCBkYXRhIHBhdGggc2V0dXAsIGFuZCBhZHZhbmNlZCANCj4gb2ZmbG9hZCBmZWF0dXJl
+cyAoVkxBTiwgUlNTLFRNLCBQVFAgZXRjLikuIA0KPiANCj4gVjE0OiANCj4gIC0gQWRkcmVzc2Vk
+IEFJIGNvbW1lbnRzIA0KDQpQbGVhc2UgY291bGQgeW91IHNlbmQgeW91ciBuZXcgc2VyaWVzIGFz
+IGEgcmVwbHkgb2YgdGhlIHYxIGNvdmVyIGxldHRlcj8gDQpJdCB3b3VsZCBhdm9pZCBoYXZpbmcg
+YSBsYXJnZSBpbmRlbnQgaW4gbWFpbCBjbGllbnRzLiANCg0KQWxzbyBJJ20gc3RpbGwgd2FpdGlu
+ZyBmb3IgYSByZXBseSB0byBteSBxdWVzdGlvbiBhYm91dCB0aGUgbmVlZCANCmZvciBkcml2ZXJz
+L2NvbW1vbi9zeGUyLy4gDQpJJ20gbm90IGdvaW5nIHRvIHB1bGwgYW55IHN4ZTIgcGF0Y2ggaW50
+byBtYWluIHVudGlsIHlvdSBleHBsYWluLiANCg0K
 
-Thanks for the review. Initially I also did not add. Then I added it as per=
- suggestions from ai-code-review run by DPDK. Funny thing is now, it is say=
-ing " overly defensive checks". So not sure, which suggestion of ai-cdoe-re=
-view to follow.
-Please guide. Will act accordingly.
+------=_001_NextPart366483541260_=----
+Content-Type: text/html;
+	charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Anuarg
-
->=20
-> > +
-> > +	adapter =3D IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data-
-> > >dev_private);
-> > +	vf =3D &adapter->vf;
-> > +
-> > +	adv_link_speed =3D (vf->vf_res !=3D NULL) &&
-> > +		((vf->vf_res->vf_cap_flags &
-> > VIRTCHNL_VF_CAP_ADV_LINK_SPEED) !=3D 0);
-> > +
+<html><head><meta http-equiv=3D"content-type" content=3D"text/html; charse=
+t=3DUTF-8"><style>body { line-height: 1.5; }blockquote { margin-top: 0px; =
+margin-bottom: 0px; margin-left: 0.5em; }.fox_html_content_dummy_textarea =
+{ position: absolute; overflow: hidden; width: 1px; height: 1px; opacity: =
+0; }body { font-size: 14px; font-family: "Microsoft YaHei UI"; color: rgb(=
+0, 0, 0); line-height: 1.5; }</style></head><body>=0A<div class=3D"">Hi Th=
+omas Monjalon,<br><br>Thank you for your review and for guiding me on the =
+mailing list workflow.<br><br>&gt; Please could you send your new series a=
+s a reply of the v1 cover letter?<br>&gt; It would avoid having a large in=
+dent in mail clients.<br><br>Got it. I will configure git send-email with =
+"--in-reply-to" bound to the <br>v1 cover letter Message-ID for the next v=
+ersion of this patch set. <br>Apologies for the inconvenience caused by th=
+e deep threading.<br><br>&gt; Also I'm still waiting for a reply to my que=
+stion about the need<br>&gt; for drivers/common/sxe2/.<br>&gt; I'm not goi=
+ng to pull any sxe2 patch into main until you explain.<br><br>Regarding th=
+e necessity of the "drivers/common/sxe2/" directory, the sxe2 <br>hardware=
+ architecture is designed to support both standard NIC and vDPA <br>(vHost=
+ Data Path Acceleration) functionalities. <br><br>The code currently place=
+d in "drivers/common/sxe2/" contains the foundational <br>Hardware Abstrac=
+tion Layer (HAL), firmware interfaces (AdminQ), and common <br>register de=
+finitions. <br><br>Apart from the "net/sxe2" PMD in this series, we are ac=
+tively implementing the <br>"vdpa/sxe2" driver, which will be submitted in=
+ a subsequent patch set. Both the <br>"net/sxe2" and "vdpa/sxe2" drivers s=
+trictly depend on this shared common HAL <br>layer to manage the same hard=
+ware core. Separating this code into "drivers/common/" <br>is essential to=
+ prevent massive code duplication between the net and vdpa <br>subsystems =
+in the near future.<br><br>Please let me know if this clarifies your conce=
+rn. Once confirmed, I will <br>send out the updated v15 series as a reply =
+to the v1 cover letter immediately.<br><br>Best regards,<br>Jie Liu (liuji=
+e5@linkdatatechnology.com)</div><div>&nbsp;</div><hr style=3D"WIDTH: 210px=
+; HEIGHT: 1px" color=3D"#b5c4df" size=3D"1" align=3D"left"><div><span><div=
+ style=3D"MARGIN: 10px; FONT-FAMILY: verdana; FONT-SIZE: 10pt"><div>liujie=
+5@linkdatatechnology.com</div></div></span></div><blockquote style=3D"marg=
+in-Top: 0px; margin-Bottom: 0px; margin-Left: 0.5em; margin-Right: inherit=
+"><div>&nbsp;</div><div style=3D"border:none;border-top:solid #B5C4DF 1.0p=
+t;padding:3.0pt 0cm 0cm 0cm"><div style=3D"PADDING-RIGHT: 8px; PADDING-LEF=
+T: 8px; FONT-SIZE: 12px;FONT-FAMILY:tahoma;COLOR:#000000; BACKGROUND: #efe=
+fef; PADDING-BOTTOM: 8px; PADDING-TOP: 8px"><div><b>From:</b>&nbsp;<a href=
+=3D"mailto:thomas@monjalon.net">Thomas Monjalon</a></div><div><b>Date:</b>=
+&nbsp;2026-06-09&nbsp;16:42</div><div><b>To:</b>&nbsp;<a href=3D"mailto:li=
+ujie5@linkdatatechnology.com">Jie Liu</a></div><div><b>CC:</b>&nbsp;<a hre=
+f=3D"mailto:stephen@networkplumber.org">stephen</a>; <a href=3D"mailto:dev=
+@dpdk.org">dev</a></div><div><b>Subject:</b>&nbsp;Re: [PATCH v14 00/20] ne=
+t/sxe2: added Linkdata sxe2 ethernet driver</div></div></div><div><div cla=
+ss=3D""><div style=3D"height: initial; font-size: 10.5pt; transform: trans=
+lateZ(0px); overflow: auto;" class=3D"FoxDIV_20260609171540884"><div>09/06=
+/2026 03:39, liujie5@linkdatatechnology.com:=0A</div>=0A<div class=3D"plai=
+ntext_qoute">&gt; From: Jie Liu &lt;liujie5@linkdatatechnology.com&gt;=0A<=
+/div>=0A<div class=3D"plaintext_qoute">&gt; =0A</div>=0A<div class=3D"plai=
+ntext_qoute">&gt; This patch set implements core functionality for the SXE=
+2 PMD,=0A</div>=0A<div class=3D"plaintext_qoute">&gt; including basic driv=
+er framework, data path setup, and advanced=0A</div>=0A<div class=3D"plain=
+text_qoute">&gt; offload features (VLAN, RSS,TM, PTP etc.).=0A</div>=0A<di=
+v class=3D"plaintext_qoute">&gt; =0A</div>=0A<div class=3D"plaintext_qoute=
+">&gt; V14:=0A</div>=0A<div class=3D"plaintext_qoute">&gt;&nbsp; - Address=
+ed AI comments=0A</div>=0A<br>=0A<div>Please could you send your new serie=
+s as a reply of the v1 cover letter?=0A</div>=0A<div>It would avoid having=
+ a large indent in mail clients.=0A</div>=0A<br>=0A<div>Also I'm still wai=
+ting for a reply to my question about the need=0A</div>=0A<div>for drivers=
+/common/sxe2/.=0A</div>=0A<div>I'm not going to pull any sxe2 patch into m=
+ain until you explain.=0A</div>=0A<br>=0A</div></div></div></blockquote></=
+body></html>
+------=_001_NextPart366483541260_=------
 
