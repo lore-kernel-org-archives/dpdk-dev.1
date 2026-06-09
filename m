@@ -2,101 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57079CD8CA4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 09:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DC4CD8CA4
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 09:23:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A05E402BE;
-	Tue,  9 Jun 2026 11:22:31 +0200 (CEST)
-Received: from CO1PR03CU002.outbound.protection.outlook.com
- (mail-westus2azon11010057.outbound.protection.outlook.com [52.101.46.57])
- by mails.dpdk.org (Postfix) with ESMTP id 504BB4025E;
- Tue,  9 Jun 2026 11:22:30 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dm7b79X4KBRbLM08AWlvi6C64vHTrE7wb3AOkl/6Hg/OcNpUjs38a1b8KUKgjM6UMUNIR/LpoK2TvqvLhWjCdRYdy0DQ4KdsjqC7Clda0Vawvx0lsK8UQLbZSJ+wSbiJI4Wo3g+aBEDFH5nrxT2Sgw0phv4No7WTOBzj8EAoxbHy9CgdMfgCHZUYVWNqneLiAlfsLIFEpO/krLchhWFmDQrYhtSQCNmfDHV0FxVuPpIP6p5FZoQ2ZFv5MD8fl3u5eqi4tkBv05jGYvNso1C8d+8dGYfq5DMjTHCffPmhCiwLE0hPknASRoPzpEORfZ2TppzTb57aLaeuDp4PHlvA0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6bIzlfhsQiufT6DT79R2LSvZdBohrhbKe6ALCo38BIM=;
- b=Gzvy6kNWUSshVPiFiy8oqWq29U7zycYjtDe9Zgf4JlY/FI0fhHEwSFn4yGSo6QmI+PZiY5Alk9D13vWLvGFqUzEzIJl4SfdYb9dgcxdCglnH8jdKiAhD1tFZNslOpOgHFCPdXgDdNgprTK3FkprvTft9pAJX7YdX5jvUCEx+jeH458vxekfO788wNuq19tdhidGL5NGdyu2N5N66PuQESU8utbNpuOqPuuSW2SdsCxUo0hjBmTlu5wf6Y2DoY4y2aUPnh2tCmcrKnjdj1I0W4XIOJAziL5SQcXL+Dk0i4NWaxIqFMnPnoC7oRY65nYhG+Vwo7G1Mg3cBxDD3GV8nkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6bIzlfhsQiufT6DT79R2LSvZdBohrhbKe6ALCo38BIM=;
- b=NfRb641uqlTLdc2/wYrJtQxjyd4Rwts7fUy9ACyTD66o0ZKExBES/631yFYyRolcc4cnSj8ODNa45WGSK6/xJbDFB62SvLB0AuK8a/1YNF+Nbj9DxMNtYosoH6iOR9Ck6T94+jR6azbgxflOY+uf+33PcM76veCF1Qpw8WVBADUlKZ+pMe8hC87kc+M4Pg5xWRyglFIVG+XetidglMy5K30F142ffJ37bsDliLNzRp3x4FB9qQRv9gOq5TJ0ugJNKN9jMxcb93+c6F93DeyZ9SEcOR6t0HGiUw+IJnqhL43iyba+yaz20ddFe1APIwmyx2FSkWYLlsMPdE5L8pEvBA==
-Received: from BLAPR03CA0018.namprd03.prod.outlook.com (2603:10b6:208:32b::23)
- by SJ2PR12MB9242.namprd12.prod.outlook.com (2603:10b6:a03:56f::15)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.13; Tue, 9 Jun 2026
- 09:22:23 +0000
-Received: from BL02EPF0001A107.namprd05.prod.outlook.com
- (2603:10b6:208:32b:cafe::7f) by BLAPR03CA0018.outlook.office365.com
- (2603:10b6:208:32b::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.92.14 via Frontend Transport; Tue, 9
- Jun 2026 09:22:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL02EPF0001A107.mail.protection.outlook.com (10.167.241.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.113.7 via Frontend Transport; Tue, 9 Jun 2026 09:22:22 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 9 Jun
- 2026 02:22:08 -0700
-Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 9 Jun
- 2026 02:22:08 -0700
-Date: Tue, 9 Jun 2026 11:22:05 +0200
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Linhu Li <lilinhu618@gmail.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, <rasland@nvidia.com>
-Subject: Re: [PATCH v2] net/mlx5: fix counter TAILQ race between free and
- query callback
-Message-ID: <pk467b3foqd7hubnhijcehtmyudnaamaqlbrkkxqh7jku3avnq@bcocuukaxor6>
-References: <20260604101112.72177-1-lilinhu618@gmail.com>
- <20260608132555.31439-1-lilinhu618@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 30B45402BE;
+	Tue,  9 Jun 2026 11:23:23 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8C71D4025E
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 11:23:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1780997001;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=Dy/NbJYXtjfNB8idZVJInBkyZ0GmsoG0fAUeFha7i5A=;
+ b=GnE/oSUvL0MRXpiTUJ/K9jXth7yD9EqKHWRulau0vaXb9iVawwXARTf/8JNx4ktlfMQbT3
+ J1ygWaXf+Zw0+XmZMLyCzmqONQO+jKHMBuPZK6lX/WMAWrAmiu5Zze5Gbk2yP3D2ErA5FZ
+ Wp5uC/Iofi8yx1vs31jrP+TvCTanBRI=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-170-sGthPzZYNRuxFd2X2zjQlQ-1; Tue, 09 Jun 2026 05:23:19 -0400
+X-MC-Unique: sGthPzZYNRuxFd2X2zjQlQ-1
+X-Mimecast-MFC-AGG-ID: sGthPzZYNRuxFd2X2zjQlQ_1780996998
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5aa65bc0be6so1948105e87.1
+ for <dev@dpdk.org>; Tue, 09 Jun 2026 02:23:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780996998; x=1781601798;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Dy/NbJYXtjfNB8idZVJInBkyZ0GmsoG0fAUeFha7i5A=;
+ b=XXgia32Nh1rivXvutXS9BlePpgpz3WIuLLroXyQRplAKICYqJLQ5h6OGsKSpfWJze5
+ wOd76sgc4XZSkn1mantylZJL6h0OQshRoIN8x2ZXWcACuahb4rH13k9dw9Be+vsv9Sik
+ HqNYtLZ1j+N5FFz3gSLeGQi+EFBB87IdoaPuiv2eJgNnfukKb+CLsPaP1yknm/44fOiU
+ i2lUOXZzFel2QH/C8bYXGNa1ccvyL+CcWXoRXRBw3Q9XnzHqc9hppdH+vf0Tj0TEWuXE
+ fpA2tfJxfR9QQ5D3wb07rpRLOO2cVJmX0xRe8bvy4iUjLGhKPl9iZt7v9sKWY7QK2PfI
+ HUvw==
+X-Gm-Message-State: AOJu0Yw5cWOu/SEd1flDxFhfoqHpB5JPFwvHDrFQ3S03gPihHxRUDmV6
+ XO+SNpEUF/gZ1CPIg2Qhjtub5NnFZPQr9ls4Ijfre3U+s3TI7wIW+0jH+ByeDLLO8Co5REZa7DO
+ lQJ2ok2BsPo6Fue9ta5XfR4zmUEQ/UZgHppyTh3R7SCJEznaf7mJ9+9HT1tXH8jaq0XVvPVDtqo
+ YyK2wWwNmrgzo3MoxgEEdncsXcjifE8g==
+X-Gm-Gg: Acq92OGxZUCrbXyKnjrNocfVQuRSwwnhUIu9/7jRBHNsMigcLvI9eLtRNqyoUJWV0td
+ BCidcYJZ90yrX7lYS3Ab7wo91rfQJuOV02A9FVgQtZ0zfPhRq3RzHHMlq4fhCXbfSWuFH41iIqr
+ C1RQpGsTL2NdnQdn7tShIwZpsoRN1EiwmMIEufwP7aS5wvOo6dJ45h53zXCE6NfkvtQ+SklyA2w
+ 8vsb1fYFrul2e/OulbR8wJxV0wq2JelyBoapOCLxh3mCw+GCVIgAQHbzvA0njmbc2Smjlr9mf0r
+ GNXG
+X-Received: by 2002:a05:6512:239f:b0:5aa:143e:77b7 with SMTP id
+ 2adb3069b0e04-5aa87c4c723mr5492333e87.43.1780996997708; 
+ Tue, 09 Jun 2026 02:23:17 -0700 (PDT)
+X-Received: by 2002:a05:6512:239f:b0:5aa:143e:77b7 with SMTP id
+ 2adb3069b0e04-5aa87c4c723mr5492315e87.43.1780996997070; Tue, 09 Jun 2026
+ 02:23:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260608132555.31439-1-lilinhu618@gmail.com>
-X-Originating-IP: [10.126.230.37]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A107:EE_|SJ2PR12MB9242:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e0198d0-e298-43ed-13d3-08dec6089cec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|36860700016|82310400026|1800799024|56012099006|11063799006|4143699003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: Duab1rH9pD5UTIQAlxqd33K4BSq7N/9i4w7ppjowVdEakjpBpw56KkZqZhslhSnGgKkBe9qCJxzensdypjTdh68JRLtuTSf6iltcaoEuqCdDJam/zM2JCMnwynFHSkDjwFhqkU24cKXx86n0dq1CQbxfNhaE6uBEFXmMX7X/4FTSIKdmcQIx8ebRmSl0+Lblox8/6aTPQwbN/qNgiXy1lbr4cg4pZ+r9ffSa2VmXUDEdPqVR3Gnnpbucoqr0kqHQmHkYB+qBLay7Q72XGjcslzrH0CRWSUZ10GTo/J885znFbdid1s3t8P2bp7g5KMlHB10S/HQnYcmh4aggGH1FKOyaz3KghcYJEadxFow/XE7e35EwuqrldJ+uTpWZbCTjlHcrYKXtYpPiDiwC0fFzGC5vfHVmxIyzVnQisrZ3ORAqYcVbu7CLD4K7PPC88WJJag/dDKKkk6r6lnLo636uiITbGXQhHZN/rJ5Fhf713ARlShflFVdl4A0DculTiSCmV71kwNTZr941uobna5HyvxysZN7/TNrGuq64qFP4ApCWi2yhlzVmkplESPu2BidcsrPjSwkqt/Q0Dkp+OH2YBNbg5V24BicSU+9/+z1HugsA7i7E+iDsLfI4ZHropzYAFmUMjeJCPEFtEze0uInuzuiXwLbLfaga9OIMKb4Z3B2XbEY3p8QepdZZS8r3wtBdSNmiEcYAfgR0APsaq+2jAiSjXAuj+40UmyCqejOxg6M=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(36860700016)(82310400026)(1800799024)(56012099006)(11063799006)(4143699003)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 9SAJnY0435Yotoz26aqVnuwJVVj+z3qHmlCtcmdsiLBV+e7BaAvRyJo5mFlQ2Evbqy6isEcKI4db4hI1OFS11k1K6vcyeZ//d+O/UL5iB+WiAqI0LVc20hid3JhNsF/6JXoPYQAo5JMpwBofEFydVbPhmD/7Td8clnwEon0zC8GZCPNXhjCPYGls/RgNFDNb41LYurdKeNHJ4y8BZ1fXosOMvtjBXry7mhDx6djd5EhKgDs2r/OpLWRAnpKWWRNU+M9furYt3YwgGsZatOWVgTIkNsfBWb5Zro6Je1jBoS/EQ+AQ073zHW4D7VJKH+r88kb1wBPnPlSLmK/gmYi/SC0eZTkYsNbNqhMe8PAaU9pXddmd8awVmp/TFib2GMDvx8UBFLkkEAKrF8SvwjhctpHH6vF6wvxUB0EJkdHQoW6iMYYM5LUl4AGOBcl7rrQz
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2026 09:22:22.5952 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e0198d0-e298-43ed-13d3-08dec6089cec
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0001A107.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9242
+References: <20260602225722.950617-1-stephen@networkplumber.org>
+ <CAJFAV8w+bUJGTBSOgqp8xOHXm5av2xdFMo8TNwr=kP87R30AYg@mail.gmail.com>
+ <20260603085359.739ab626@phoenix.local>
+ <CAJFAV8zEg7YNuoO-U-fwnWCJ4MWk9Zm0Zp9pwoirRRn9LHFKrQ@mail.gmail.com>
+ <20260605111233.725bb792@phoenix.local>
+In-Reply-To: <20260605111233.725bb792@phoenix.local>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 9 Jun 2026 11:23:03 +0200
+X-Gm-Features: AVVi8CcpjgbwCEgQs5XvayQTvFAmuxAE-GlFW-bJnKRlfHFfPAK2YNaneFCa70E
+Message-ID: <CAJFAV8wSidG+myr46BJ1yNMJ8nPRC=3D6-7g3RF7Ea7ABzFsdQ@mail.gmail.com>
+Subject: Re: [PATCH] eal: fix function versioning with LTO
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: VvGYJqX3x5It95Uh5sBU96xvNz2vb5g4Z5tmx_GCCZs_1780996998
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -110,55 +87,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Jun 08, 2026 at 09:25:55PM +0800, Linhu Li wrote:
-> flow_dv_counter_free() inserts counters into
-> pool->counters[pool->query_gen] under pool->csl. Meanwhile,
-> mlx5_flow_async_pool_query_handle() moves counters from
-> pool->counters[query_gen ^ 1] to the global free list via
-> TAILQ_CONCAT while holding only cmng->csl, not pool->csl.
-> 
-> The comment in flow_dv_counter_free() claims the lock is not needed
-> because the query callback and the release function operate on
-> different lists. That holds only if the free path always observes
-> the up-to-date query_gen. It can be violated:
-> 
-> 1. A counter free thread (non-PMD, e.g. OVS offload thread) reads
->    pool->query_gen == 0 and is about to insert into counters[0].
-> 2. The free thread is preempted by the OS scheduler; it is a regular
->    pthread, not pinned to a core.
-> 3. The eal-intr-thread alarm fires: query_gen++ (now 1) and the async
->    query is sent.
-> 4. Hardware completes the query and the callback runs TAILQ_CONCAT on
->    counters[0] (= query_gen ^ 1).
-> 5. The free thread resumes and runs TAILQ_INSERT_TAIL on counters[0]
->    concurrently with step 4 on another core.
-> 
-> Because the two paths take different locks, TAILQ_INSERT_TAIL and
-> TAILQ_CONCAT run concurrently on the same list with no
-> synchronization and corrupt it: the pool-local list ends up with a
-> NULL head but a dangling tqh_last, and the global free list tail no
-> longer points to the real tail. The just-freed counter and every
-> counter inserted afterwards become unreachable and are leaked.
-> 
-> Non-PMD threads can be preempted for hundreds of microseconds under
-> CPU pressure, which is well within the async query round-trip time,
-> so the window is reachable in practice.
-> 
-> Fix it by taking pool->csl in the query completion callback before
-> operating on pool->counters[query_gen], serializing the CONCAT with
-> any concurrent INSERT. The lock is taken once per pool per query
-> completion in the eal-intr-thread context, not on the datapath, so
-> the cost is negligible. Lock order is pool->csl then cmng->csl,
-> matching all other sites.
-> 
-> Also handle the error path: previously the counters accumulated in
-> pool->counters[query_gen] were abandoned when a query failed. Move
-> them back to the global free list to avoid a leak on persistent
-> query failures.
-> 
-> Fixes: ac79183dc6f7 ("net/mlx5: optimize free counter lookup")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Linhu Li <lilinhu618@gmail.com>
+On Fri, 5 Jun 2026 at 20:12, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+> >
+> > Looking at bugzilla, we had various fixes for LTO over the years.
+> > We still have one open bz btw: https://bugs.dpdk.org/show_bug.cgi?id=1709
+>
+> That bug was fixed a while back. It required addition of hints (__rte_assume)
 
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+I have trouble identifying the changes.
+Please close the 1709 bugzilla with a mention of those changes.
+
+> > > > LTO is kind of experimental, so it seems good enough to reply "not
+> > > > expected to work in older LTS" if someone reported an issue.
+> > > >
+> > > > And in practice, no LTS release call the versioning macros, since a
+> > > > LTS drops all compatibility.
+> >
+> > Just to be clear, we don't need fixing the macros in LTS: every time
+> > we prepare a LTS rc0, we drop any kind of symbol compat.
+>
+> Agree, this is not LTS related
+>
+> > > >
+> > > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > > >
+> > > > I would like to reproduce, but I can't build main with LTO.
+> > > > What patches did you apply locally to avoid warnings on the hash library?
+> > > I use Debian testing and GCC 15 but shows up on older versions as well
+> > > I get no warnings building main
+> >
+> > Building from scratch, I do avoid the warnings I hit yesterday.
+> >
+> > The fix looks correct, my problem is with the form.
+> > Fixes: tags accuracy is important.
+> > And I prefer we stick to "It is not broken, don't fix it".
+>
+> Could argue it is a GCC bug, and applying their desired workaround :-)
+
+Indeed, but the end results is the same for me :-)
+
+Can you send a v2?
+Thanks.
+
+
+-- 
+David Marchand
+
