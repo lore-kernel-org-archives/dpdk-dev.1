@@ -2,50 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCB4CD6E79
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 00:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 937DACD6E79
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 01:40:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6CF55402B8;
-	Tue,  9 Jun 2026 02:10:05 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 467CA402AD;
- Tue,  9 Jun 2026 02:10:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1780963803; x=1812499803;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=1I+bNHgqPaBTfD5NlCiF2p5RmeaFTryNSv1yaKjdR90=;
- b=c7CcCmC8hrGAzO2AjhTMwo4bmUxAl77qNPgpcgVAS6vjBeYwPT+JeIDk
- I/UlVTFjQUPLObi8uAmNoXWaNxRQWL0CGiBhkdIfZEn1Ot4w4Q5IE18Mq
- 2Dfhoc9sRYlKgdlaO7Txoycs5ZGkITj8yY0faNyxru+pUVjbckPhQA625
- g99lLNKcFrUkCb4fNzr6VMYUdkbcyG6mbC8d3oAGLa/ViCtDmCO2snM1Y
- +IGnLo104e2EhzD0K9EsYk1i7UKFsqB3QWKu8cHnkn6okOx2shdiXnEcy
- Pi8ymH3Qzduth0liEqqDXivdzFR70LKcSYE+p3ezJeWnlfp9+RU84wZ3i A==;
-X-CSE-ConnectionGUID: O916hRLlTKW90Weh1qUvcg==
-X-CSE-MsgGUID: 30N1iDFdRRyWN4PQt/iFyA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="92390505"
-X-IronPort-AV: E=Sophos;i="6.24,195,1774335600"; d="scan'208";a="92390505"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jun 2026 17:10:02 -0700
-X-CSE-ConnectionGUID: p9SCTTULQUSmx3Y6k1rI2A==
-X-CSE-MsgGUID: 3XbIZaRKSja3+6yR6IJSOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,195,1774335600"; d="scan'208";a="269702904"
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by fmviesa001.fm.intel.com with ESMTP; 08 Jun 2026 17:10:00 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
- ciara.loftus@intel.com, Anurag Mandal <anurag.mandal@intel.com>,
- stable@dpdk.org
-Subject: [PATCH] net/iavf: fix to consolidate link change event handling
-Date: Tue,  9 Jun 2026 00:10:22 +0000
-Message-Id: <20260609001022.357509-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 64923402B5;
+	Tue,  9 Jun 2026 03:40:01 +0200 (CEST)
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+ by mails.dpdk.org (Postfix) with ESMTP id 5844B400EF
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 03:39:59 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-05 (Coremail) with SMTP id zQCowAAnoPPtbidqNNnEEg--.9384S2;
+ Tue, 09 Jun 2026 09:39:57 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v14 00/20] net/sxe2: added Linkdata sxe2 ethernet driver
+Date: Tue,  9 Jun 2026 09:39:30 +0800
+Message-ID: <20260609013951.3359199-1-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260608074257.3043531-21-liujie5@linkdatatechnology.com>
+References: <20260608074257.3043531-21-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: zQCowAAnoPPtbidqNNnEEg--.9384S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww1fXFWDWF1kGFy8try5urg_yoWxKr13pF
+ 48ZryrZF13JFW3Gw4fJa1fZFyYg3WxJryjkrWa9as3XFykAFyUCrs0gFy5CwnFyr13JF1S
+ vrZIyr1UGan5Aw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUka14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+ 6r4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+ 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+ I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+ 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l
+ 42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+ WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
+ I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+ 4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
+ 6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JU6CJPUUUUU=
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,188 +56,151 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Handled link-change events through a common static function that
-reads the correct advanced & legacy link fields properly and
-updates no-poll/watchdog/LSC state consistently.
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Fixes: 5e03e316c753 ("net/iavf: handle virtchnl event message without interrupt")
-Fixes: 48de41ca11f0 ("net/avf: enable link status update")
-Cc: stable@dpdk.org
+This patch set implements core functionality for the SXE2 PMD,
+including basic driver framework, data path setup, and advanced
+offload features (VLAN, RSS,TM, PTP etc.).
 
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
- drivers/net/intel/iavf/iavf_vchnl.c | 133 +++++++++++++++++-----------
- 1 file changed, 81 insertions(+), 52 deletions(-)
+V14:
+ - Addressed AI comments
 
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 94ccfb5d6e..6454632541 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -216,6 +216,75 @@ iavf_convert_link_speed(enum virtchnl_link_speed virt_link_speed)
- 	return speed;
- }
- 
-+/*
-+ * iavf_handle_link_change_event: common handler for VIRTCHNL link change events
-+ *
-+ * @dev: pointer to rte_eth_dev for this VF
-+ * @vpe: pointer to the virtchnl_pf_event payload received from the PF
-+ *
-+ * Handle PF link-change event: decode adv/legacy link info, update VF
-+ * link state, sync no-poll/watchdog behavior & notify app via LSC event.
-+ */
-+static void
-+iavf_handle_link_change_event(struct rte_eth_dev *dev,
-+			      struct virtchnl_pf_event *vpe)
-+{
-+	struct iavf_adapter *adapter;
-+	struct iavf_info *vf;
-+	bool adv_link_speed;
-+
-+	if (dev == NULL || dev->data == NULL ||
-+	    dev->data->dev_private == NULL || vpe == NULL) {
-+		PMD_DRV_LOG(ERR, "Invalid device pointer in link change handler");
-+		return;
-+	}
-+
-+	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	vf = &adapter->vf;
-+
-+	adv_link_speed = (vf->vf_res != NULL) &&
-+		((vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) != 0);
-+
-+	if (adv_link_speed) {
-+		vf->link_up = vpe->event_data.link_event_adv.link_status;
-+		vf->link_speed = vpe->event_data.link_event_adv.link_speed;
-+	} else {
-+		enum virtchnl_link_speed speed;
-+
-+		vf->link_up = vpe->event_data.link_event.link_status;
-+		speed = vpe->event_data.link_event.link_speed;
-+		vf->link_speed = iavf_convert_link_speed(speed);
-+	}
-+
-+	iavf_dev_link_update(dev, 0);
-+
-+	/*
-+	 * Update watchdog/no_poll state BEFORE notifying the application via
-+	 * the LSC event. Otherwise the application's link-up callback could
-+	 * race with stale (link-down) no_poll/watchdog state and either
-+	 * continue to drop traffic or trigger a spurious reset detection.
-+	 *
-+	 * Keeping the watchdog enabled whenever the link cannot be trusted
-+	 * (link is down or a VF reset is in progress); the watchdog drives
-+	 * auto-reset recovery, so it must remain armed in those cases.
-+	 */
-+	if (vf->link_up && !vf->vf_reset)
-+		iavf_dev_watchdog_disable(adapter);
-+	else
-+		iavf_dev_watchdog_enable(adapter);
-+
-+	if (adapter->devargs.no_poll_on_link_down) {
-+		iavf_set_no_poll(adapter, true);
-+		PMD_DRV_LOG(DEBUG, "VF no poll turned %s",
-+			    adapter->no_poll ? "on" : "off");
-+	}
-+
-+	iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
-+
-+	PMD_DRV_LOG(INFO, "Link status update:%s",
-+		vf->link_up ? "up" : "down");
-+}
-+
- /* Read data in admin queue to get msg from pf driver */
- static enum iavf_aq_result
- iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
-@@ -249,38 +318,15 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
- 	if (opcode == VIRTCHNL_OP_EVENT) {
- 		struct virtchnl_pf_event *vpe =
- 			(struct virtchnl_pf_event *)event.msg_buf;
-+		if (vpe == NULL) {
-+			PMD_DRV_LOG(ERR, "Invalid PF event message");
-+			return IAVF_MSG_ERR;
-+		}
- 
- 		result = IAVF_MSG_SYS;
- 		switch (vpe->event) {
- 		case VIRTCHNL_EVENT_LINK_CHANGE:
--			vf->link_up =
--				vpe->event_data.link_event.link_status;
--			if (vf->vf_res != NULL &&
--			    vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) {
--				vf->link_speed =
--				    vpe->event_data.link_event_adv.link_speed;
--			} else {
--				enum virtchnl_link_speed speed;
--				speed = vpe->event_data.link_event.link_speed;
--				vf->link_speed = iavf_convert_link_speed(speed);
--			}
--			iavf_dev_link_update(vf->eth_dev, 0);
--			iavf_dev_event_post(vf->eth_dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
--			if (vf->link_up && !vf->vf_reset) {
--				iavf_dev_watchdog_disable(adapter);
--			} else {
--				if (!vf->link_up)
--					iavf_dev_watchdog_enable(adapter);
--			}
--			if (adapter->devargs.no_poll_on_link_down) {
--				iavf_set_no_poll(adapter, true);
--				if (adapter->no_poll)
--					PMD_DRV_LOG(DEBUG, "VF no poll turned on");
--				else
--					PMD_DRV_LOG(DEBUG, "VF no poll turned off");
--			}
--			PMD_DRV_LOG(INFO, "Link status update:%s",
--					vf->link_up ? "up" : "down");
-+			iavf_handle_link_change_event(vf->eth_dev, vpe);
- 			break;
- 		case VIRTCHNL_EVENT_RESET_IMPENDING:
- 			vf->vf_reset = true;
-@@ -505,6 +551,12 @@ iavf_handle_pf_event_msg(struct rte_eth_dev *dev, uint8_t *msg,
- 		PMD_DRV_LOG(DEBUG, "Error event");
- 		return;
- 	}
-+
-+	if (pf_msg == NULL) {
-+		PMD_DRV_LOG(ERR, "Invalid PF event message");
-+		return;
-+	}
-+
- 	switch (pf_msg->event) {
- 	case VIRTCHNL_EVENT_RESET_IMPENDING:
- 		PMD_DRV_LOG(DEBUG, "VIRTCHNL_EVENT_RESET_IMPENDING event");
-@@ -518,30 +570,7 @@ iavf_handle_pf_event_msg(struct rte_eth_dev *dev, uint8_t *msg,
- 		break;
- 	case VIRTCHNL_EVENT_LINK_CHANGE:
- 		PMD_DRV_LOG(DEBUG, "VIRTCHNL_EVENT_LINK_CHANGE event");
--		vf->link_up = pf_msg->event_data.link_event.link_status;
--		if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) {
--			vf->link_speed =
--				pf_msg->event_data.link_event_adv.link_speed;
--		} else {
--			enum virtchnl_link_speed speed;
--			speed = pf_msg->event_data.link_event.link_speed;
--			vf->link_speed = iavf_convert_link_speed(speed);
--		}
--		iavf_dev_link_update(dev, 0);
--		if (vf->link_up && !vf->vf_reset) {
--			iavf_dev_watchdog_disable(adapter);
--		} else {
--			if (!vf->link_up)
--				iavf_dev_watchdog_enable(adapter);
--		}
--		if (adapter->devargs.no_poll_on_link_down) {
--			iavf_set_no_poll(adapter, true);
--			if (adapter->no_poll)
--				PMD_DRV_LOG(DEBUG, "VF no poll turned on");
--			else
--				PMD_DRV_LOG(DEBUG, "VF no poll turned off");
--		}
--		iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
-+		iavf_handle_link_change_event(dev, pf_msg);
- 		break;
- 	case VIRTCHNL_EVENT_PF_DRIVER_CLOSE:
- 		PMD_DRV_LOG(DEBUG, "VIRTCHNL_EVENT_PF_DRIVER_CLOSE event");
+Jie Liu (20):
+  net/sxe2: support AVX512 vectorized path for Rx and Tx
+  net/sxe2: add AVX2 vector data path for Rx and Tx
+  drivers: add supported packet types get callback
+  net/sxe2: support L2 filtering and MAC config
+  drivers: support RSS feature
+  net/sxe2: support TM hierarchy and shaping
+  net/sxe2: support IPsec inline protocol offload
+  net/sxe2: support statistics and multi-process
+  drivers: interrupt handling
+  net/sxe2: add NEON vec Rx/Tx burst functions
+  drivers: add support for VF representors
+  net/sxe2: add support for custom UDP tunnel ports
+  net/sxe2: support firmware version reading
+  net/sxe2: implement get monitor address
+  common/sxe2: add shared SFP module definitions
+  net/sxe2: support SFP module info and EEPROM access
+  net/sxe2: implement private dump info
+  net/sxe2: add mbuf validation in Tx debug mode
+  drivers: add testpmd commands for private features
+  net/sxe2: update sxe2 feature matrix docs
+
+ doc/guides/nics/features/sxe2.ini          |   56 +
+ drivers/common/sxe2/sxe2_common.c          |  156 ++
+ drivers/common/sxe2/sxe2_common.h          |    4 +
+ drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      |  178 +-
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
+ drivers/common/sxe2/sxe2_msg.h             |  118 ++
+ drivers/common/sxe2/sxe2_ptype.h           | 1793 ++++++++++++++++++
+ drivers/net/sxe2/meson.build               |   56 +-
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 1587 +++++++++++++++-
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
+ drivers/net/sxe2/sxe2_drv_cmd.h            |  521 +++++-
+ drivers/net/sxe2/sxe2_dump.c               |  304 +++
+ drivers/net/sxe2/sxe2_dump.h               |   12 +
+ drivers/net/sxe2/sxe2_ethdev.c             | 1531 +++++++++++++++-
+ drivers/net/sxe2/sxe2_ethdev.h             |  112 +-
+ drivers/net/sxe2/sxe2_ethdev_repr.c        |  610 ++++++
+ drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
+ drivers/net/sxe2/sxe2_filter.c             |  895 +++++++++
+ drivers/net/sxe2/sxe2_filter.h             |  100 +
+ drivers/net/sxe2/sxe2_flow.c               | 1391 ++++++++++++++
+ drivers/net/sxe2/sxe2_flow.h               |   30 +
+ drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
+ drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
+ drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
+ drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
+ drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 ++++++++++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
+ drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
+ drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
+ drivers/net/sxe2/sxe2_irq.c                | 1026 +++++++++++
+ drivers/net/sxe2/sxe2_irq.h                |   25 +
+ drivers/net/sxe2/sxe2_mac.c                |  535 ++++++
+ drivers/net/sxe2/sxe2_mac.h                |   84 +
+ drivers/net/sxe2/sxe2_mp.c                 |  414 +++++
+ drivers/net/sxe2/sxe2_mp.h                 |   67 +
+ drivers/net/sxe2/sxe2_queue.c              |   17 +-
+ drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
+ drivers/net/sxe2/sxe2_rss.h                |   81 +
+ drivers/net/sxe2/sxe2_rx.c                 |   38 +
+ drivers/net/sxe2/sxe2_rx.h                 |    2 +
+ drivers/net/sxe2/sxe2_security.c           |  335 ++++
+ drivers/net/sxe2/sxe2_security.h           |   77 +
+ drivers/net/sxe2/sxe2_stats.c              |  591 ++++++
+ drivers/net/sxe2/sxe2_stats.h              |   39 +
+ drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
+ drivers/net/sxe2/sxe2_switchdev.h          |   33 +
+ drivers/net/sxe2/sxe2_testpmd.c            |  733 ++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.c        |  969 ++++++++++
+ drivers/net/sxe2/sxe2_testpmd_lib.h        |  142 ++
+ drivers/net/sxe2/sxe2_tm.c                 | 1169 ++++++++++++
+ drivers/net/sxe2/sxe2_tm.h                 |   78 +
+ drivers/net/sxe2/sxe2_tx.c                 |    7 +
+ drivers/net/sxe2/sxe2_txrx.c               |  176 +-
+ drivers/net/sxe2/sxe2_txrx.h               |    4 +
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
+ drivers/net/sxe2/sxe2_txrx_poll.c          |  243 ++-
+ drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
+ drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
+ drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  776 ++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  897 +++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_common.h    |    1 +
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  721 ++++++++
+ drivers/net/sxe2/sxe2_vsi.c                |  146 ++
+ drivers/net/sxe2/sxe2_vsi.h                |   12 +-
+ drivers/net/sxe2/sxe2vf_regs.h             |   85 +
+ 68 files changed, 26576 insertions(+), 124 deletions(-)
+ create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
+ create mode 100644 drivers/common/sxe2/sxe2_msg.h
+ create mode 100644 drivers/common/sxe2/sxe2_ptype.h
+ create mode 100644 drivers/net/sxe2/sxe2_dump.c
+ create mode 100644 drivers/net/sxe2/sxe2_dump.h
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
+ create mode 100644 drivers/net/sxe2/sxe2_filter.c
+ create mode 100644 drivers/net/sxe2/sxe2_filter.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
+ create mode 100644 drivers/net/sxe2/sxe2_irq.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.h
+ create mode 100644 drivers/net/sxe2/sxe2_mp.c
+ create mode 100644 drivers/net/sxe2/sxe2_mp.h
+ create mode 100644 drivers/net/sxe2/sxe2_rss.c
+ create mode 100644 drivers/net/sxe2/sxe2_rss.h
+ create mode 100644 drivers/net/sxe2/sxe2_security.c
+ create mode 100644 drivers/net/sxe2/sxe2_security.h
+ create mode 100644 drivers/net/sxe2/sxe2_stats.c
+ create mode 100644 drivers/net/sxe2/sxe2_stats.h
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.c
+ create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.h
+ create mode 100644 drivers/net/sxe2/sxe2_tm.c
+ create mode 100644 drivers/net/sxe2/sxe2_tm.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
+ create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
+
 -- 
-2.34.1
+2.52.0
 
