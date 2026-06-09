@@ -2,81 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E34CD8CA4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 09:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16CF2CD6E79
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 09:18:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 234F0402BE;
-	Tue,  9 Jun 2026 11:15:12 +0200 (CEST)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTP id 1996E4025E
- for <dev@dpdk.org>; Tue,  9 Jun 2026 11:15:10 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 97313EC0225;
- Tue,  9 Jun 2026 05:15:09 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Tue, 09 Jun 2026 05:15:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1780996509;
- x=1781082909; bh=6NDH/UIeNj2fzgZBkiyBjjs/fI60wSaH0FQr9gbUyLc=; b=
- P6c+DOPGVnGrCGkYiBb3sbDVMq3YwrfK++QhEvOufV5PY9siPn7InHhTe/WGjs5v
- 9k3UXKi0JQ1x+d5nWefo5U1upr01HjTDVUEFGEGJ38C1GQkgosAHAEOF3Wp5EgSJ
- wX+DmrHCy67HznTde0xsmkmm9J9fKQoiXl4xgLO29NRaGsOMV/L3CgeMt8fiDMCy
- ibmiVNlZCfly4acoCWoyK3qsEWNtJol6Mg+SG+seC6vYTA+GhVeZh5sOMI18DxP+
- M6nd3c0vh+B31lLKaGgwKIF7wwQIu0tejkXrEjcoaK9oJ5XsIvlehLb2/eYZBBs8
- 7CRpu2AtYzWAPQ5a31DI0A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780996509; x=
- 1781082909; bh=6NDH/UIeNj2fzgZBkiyBjjs/fI60wSaH0FQr9gbUyLc=; b=h
- usfxaWEv9Ih/dNE4fIYdy92AptgLWqX/aaqjSY+BjTsm9jXsLoFNSx+WzFyVRrNC
- z5Jg8SjdWwHn3IAHwEiuyBgsvym3/MNIZ9iMk0XVvpWDiMG/xgkoTDjn9gqc/pPG
- zE2cC7DWUcQEnjg1YuxUeMCeqksa/NrgkV1eVj8+4qnLrW9TUJqoOOA0PQi0NdHa
- JLRjVbPWH0ai6OK0nhZcUP+6aXNXgNkkVmSPmkDC6Wo8taBqd9M+m202pDqHFEMA
- FPakBT2TdpWGk7GcFUoE8bJuaA8SMb/Ci8qxV27sZ8/fiUiMg7Imm26osZUPi9fO
- j9CI50SKe8/NKBhXAzDEQ==
-X-ME-Sender: <xms:ndknam6A-xmpNA0EtoOdgttRcQyO-7xAmvHhMTJMn7KZ-nkZwdinng>
- <xme:ndknao3c3NIeKSKYf_yMmrARxYyWQgb4Zr3bHjKRB6Hm0edxV26ozoCdAh92MmVwX
- 9K8SoCKQ_4UHQ-VhfXg-uzKSqD7t1MHHovSrNvWVs4iskxKzMZ1Zg>
-X-ME-Received: <xmr:ndknahDeZSSqOpqJ_VtPjJflBa-gOdRMZk7yfCmc7WrJYd6vt5lZmBPbLNCnBNFOV6Sla5g3rYwt-3H1W_6ba9-RjQ>
-X-ME-Proxy-Cause: dmFkZTFVBkvMn0ur+1KgVktFwnn8GKs7LmyWzNLYwZXg/zEZRzN48MXrHaJjqxwVEaS2m4
- M0gKq4HI3ya2wPnUPXgEVYn+HygWUIygWh1FgXMCEyI4RV+qqFAymyMT7vF2+rFisxyfZh
- OTHVXcdl0g9ucuhwUd2js4IDSBUdX2lwUUIXnC0VQAHgeCadzXhG8O9awK4wpQ2sX1jALO
- 7odwO6+yzBFfBhOfxFarP2om5M1M7mVpHBd6EWxeo45JzZAk50Alf2uSE4zvBPT4XcPSdM
- bC3EC2JS9uT9tOEv2QMPKFrLD5vu2x0PJuHLLhPT1wg4QlpkgLNOlHO/LkNDuqDQYXgEfu
- fucpU0n2S3Qw9VkV29bQjD6LbM9oealgErhSMPKGr2gsbTWsLyyb/FsgCblBT8xmQVSCdQ
- bQHZbaORljUjEUQu0bAeqnwdaFwmFvzcy9LOCobhPhEjHT9FRC/FrwxHyIA2hX/7jY1Mf5
- MpSFarFtWt8oVgJb2GDeUfqtc5ktJJMc6WHWZ5FpMuc2Gg16l1CDn4/v49dOFuRQhjGc88
- NnAMW3wHsTTNHYCq7MTy+p7lQFxsUWrKynBIM2rCypgGSCoSbsZgCP1BPacak1ZhAym1kX
- 4l4JwuGk54Vp7XpmDXAp7RmN0I4hjjXr9fdxYeoHMiGV+o0UdAdEHqMosmsw
-X-ME-Proxy: <xmx:ndknajMuE5Mw9hDuhaaCmK1hTiAP_vglahp6RRcrnIa9UP_0bl1Haw>
- <xmx:ndknambYc_SPgingjWtvi7MfSgVYGY8eHCycesDYovZBqxXuLqc_GQ>
- <xmx:ndknais3tP-fsZ8o4ZVhzCUJUPhZ3x9dR-UDpabxxk-bItq2hlsPuw>
- <xmx:ndknaoPuZVVFLSEvHpFurJkdYtIC2g9y8AP6QLCrnyRK7Az6wJixpQ>
- <xmx:ndknak5-LMf9isKeTVgrP8b-dWoa_GmXb81jZLIUm14q7Vxsexb2wpFZ>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Jun 2026 05:15:08 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Rajesh Kumar <rajesh3.kumar@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com,
- stephen@networkplumber.org, mb@smartsharesystems.com
-Subject: Re: [PATCH v8 2/4] examples/ptp_tap_relay_sw: add PTP software
- transparent clock relay
-Date: Tue, 09 Jun 2026 11:15:06 +0200
-Message-ID: <p_KNjZUnRFuVgaqDyhfeWw@monjalon.net>
-In-Reply-To: <FtOw8lUNTi2iReVfgCFy-Q@monjalon.net>
-References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
- <20260509232551.2844201-3-rajesh3.kumar@intel.com>
- <FtOw8lUNTi2iReVfgCFy-Q@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 3D701402BE;
+	Tue,  9 Jun 2026 11:18:58 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A274B4025E
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 11:18:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1780996736;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=wfxCfc56W6UUNJve/iOofEjGFzhaYRpMLvtYPC30mtw=;
+ b=CWtA0Nug68L5clIt2HO/5KCBKU5ZjhuhXkMErXOkxIQJT2/7PMBTYK5k6idY6j+thdlUYX
+ 3HzfKekyQimGNRn3vKs86DOQkbnYTsxgEYSVFTFD7ThhWYPqnZuHUetPGAV4l0JUMPFi/r
+ CPDxBxQXxriN4CmuA6IixtrPOCw0K9I=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-80--873ebFmPc6SvEANNM3hZg-1; Tue, 09 Jun 2026 05:18:54 -0400
+X-MC-Unique: -873ebFmPc6SvEANNM3hZg-1
+X-Mimecast-MFC-AGG-ID: -873ebFmPc6SvEANNM3hZg_1780996733
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5aa65733812so3042651e87.2
+ for <dev@dpdk.org>; Tue, 09 Jun 2026 02:18:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1780996733; x=1781601533;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=wfxCfc56W6UUNJve/iOofEjGFzhaYRpMLvtYPC30mtw=;
+ b=jWdj/hUeFPun7zDbWBlxzCh5s3OKp1eznykESvHWwBSSuotIWV7y9thYUwXV5jT2uv
+ aqPQ7WZ5DuB30xpwGmls5fhhvfwi+LK74DFmp/LaGe5U+WbMwYl1uHcVPYWjwqAW6Bbk
+ zd4FtMUyTtXCgO2BgN+MBEIafp/Rw1+pslmfGaEgeJXDbOBd8IpyB6luDkFvVPzRf0kS
+ psqVbfbzc5/ARUrdm8YBQhZ1ja8pX/ooe7CbhJhq7+4ciajqxyEp733JLhgJ05+PCqDv
+ ogpX2Qrvu9pYW9kSbSrTVbGOt8ImPPr4CWHue9MrYsQTOGmJy6vtQD2glIQ2PJl3ZElu
+ zZuA==
+X-Gm-Message-State: AOJu0YwtYvgxShpTIxd15BNUlQtvZwas4ryPpaFpETD8oKQ8WiW5tHem
+ BMluDG/rubfiENfhTAl8ESZU8cBb00ht6TS5e/ndlCM9wGYp/hIzqadOwj09VrAhiyzoR45Xyp7
+ qlmkutZQWI5D8ordbCEX0h96a0+itpzE1l9mCT72gdVwH1D4qHOcPq/7/fR5gD5105J5mbFljhh
+ hr552AXlk9xbMLHck6NV15BgCRKHDaKw==
+X-Gm-Gg: Acq92OHrqgafWxSNTos8OkQpQfZFqnIYjwDjjePyM5soPlZvVao8z0xTT/Urs51CvWw
+ ZMa3UqwymGbAw2W7YUcvaU5jR9Q1wUoUn9b7zNvWC09SPfdP/ewFt6LgfEFcJHf24PL9fWJ8/yc
+ PzLkFARrT2yNmkleGP8CX9iR12IBB0P69Y+kdtdic6njUKn0oBugvEMQTBwBraD1c2oTFYVZqyD
+ ks10eSQWwHcqdduXmGAcXd6Q2N5TxF5H8g5/Zdk3a76+P004d5O5WhctDWjwHXQJAthGeOcg4Uu
+ 59Jg
+X-Received: by 2002:a05:6512:3194:b0:5aa:8822:f27e with SMTP id
+ 2adb3069b0e04-5aa8822f2b3mr6191332e87.46.1780996732765; 
+ Tue, 09 Jun 2026 02:18:52 -0700 (PDT)
+X-Received: by 2002:a05:6512:3194:b0:5aa:8822:f27e with SMTP id
+ 2adb3069b0e04-5aa8822f2b3mr6191308e87.46.1780996732098; Tue, 09 Jun 2026
+ 02:18:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20260607150418.30885-1-stephen@networkplumber.org>
+In-Reply-To: <20260607150418.30885-1-stephen@networkplumber.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 9 Jun 2026 11:18:40 +0200
+X-Gm-Features: AVVi8CdodjY99OyP_KypQTGV75BKJg3YjkHMkRjjzdYb9DQwoRKdn0HnX27YI-A
+Message-ID: <CAJFAV8wBPKNErY246875FHEDbAHuKNfquYuzWbE62LQQjePq8A@mail.gmail.com>
+Subject: Re: [PATCH] eal: add destructor to unregister tailq on unload
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, stable@dpdk.org, Neil Horman <nhorman@tuxdriver.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 8oKgm-smfDvWAuVSrJukdrtTV812afJ88Z2EU1Hm6SA_1780996733
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,24 +83,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-09/06/2026 10:52, Thomas Monjalon:
-> 10/05/2026 01:25, Rajesh Kumar:
-> > Add a new example application demonstrating a software PTP Transparent
-> > Clock relay between a DPDK-bound physical NIC and a Linux kernel TAP
-> > virtual interface.
-> [...]
-> >  doc/guides/sample_app_ug/index.rst            |   1 +
-> >  doc/guides/sample_app_ug/ptp_tap_relay_sw.rst | 212 +++++++++
-> >  examples/ptp_tap_relay_sw/Makefile            |  41 ++
-> >  examples/ptp_tap_relay_sw/meson.build         |  13 +
-> >  examples/ptp_tap_relay_sw/ptp_parse.h         | 211 +++++++++
-> >  examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c  | 432 ++++++++++++++++++
-> >  6 files changed, 910 insertions(+)
-> 
-> You didn't update the file MAINTAINERS.
-> I assume you will be the maintainer for this new example?
-> I will update when merging.
+On Sun, 7 Jun 2026 at 17:04, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> Libraries that use EAL_REGISTER_TAILQ insert a pointer to a static
+> struct rte_tailq_elem into the process-local tailq list via a
+> constructor, but have no matching destructor. When such a library
+> is loaded as a dependency of a plugin via dlopen() and later
+> unloaded via dlclose(), the list retains a dangling pointer to the
+> now-unmapped static. Reloading the plugin crashes in
+> rte_eal_tailq_local_register() when it traverses the stale entry.
+>
+> Add rte_eal_tailq_unregister() and extend the EAL_REGISTER_TAILQ
+> macro to emit an RTE_FINI destructor alongside the existing
+> RTE_INIT constructor. Every library that uses the macro
+> automatically gets both sides; no per-library changes are needed.
+>
+> Bugzilla ID: 1081
+> Fixes: 873a61c7526b ("tailq: introduce dynamic register system")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  lib/eal/common/eal_common_tailqs.c |  8 ++++++++
+>  lib/eal/include/rte_tailq.h        | 17 +++++++++++++++++
+>  2 files changed, 25 insertions(+)
+>
+> diff --git a/lib/eal/common/eal_common_tailqs.c b/lib/eal/common/eal_common_tailqs.c
+> index c581f43b6f..714f91d0ec 100644
+> --- a/lib/eal/common/eal_common_tailqs.c
+> +++ b/lib/eal/common/eal_common_tailqs.c
+> @@ -148,6 +148,14 @@ rte_eal_tailq_register(struct rte_tailq_elem *t)
+>         return -1;
+>  }
+>
+> +RTE_EXPORT_SYMBOL(rte_eal_tailq_unregister)
+> +void
+> +rte_eal_tailq_unregister(struct rte_tailq_elem *t)
+> +{
+> +       TAILQ_REMOVE(&rte_tailq_elem_head, t, next);
+> +       t->head = NULL;
+> +}
 
-Sorry I see you did the update in the lib patch.
+This cleans up the local storage which is good, but it leaves an entry
+reserved in the mcfg->tailq_head[] array.
 
+
+-- 
+David Marchand
 
