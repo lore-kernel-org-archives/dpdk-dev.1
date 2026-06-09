@@ -2,73 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAD4CD8CB9
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 15:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095C6CD98C5
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 16:14:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0EA040684;
-	Tue,  9 Jun 2026 17:54:26 +0200 (CEST)
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com
- [74.125.82.176]) by mails.dpdk.org (Postfix) with ESMTP id 226DE40658
- for <dev@dpdk.org>; Tue,  9 Jun 2026 17:54:25 +0200 (CEST)
-Received: by mail-dy1-f176.google.com with SMTP id
- 5a478bee46e88-307263ad0cbso7635108eec.0
- for <dev@dpdk.org>; Tue, 09 Jun 2026 08:54:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781020464;
- x=1781625264; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=tFd3SR0Dr112CCXrBdh0GJ/BWCrHRXx2uMDX2QYAEOc=;
- b=XOfNPBi4Hb/WeaiLw9YthOSMxVFarsypE+Xb+sP/6n3FKndgB+655DrzGP6Qq+vwNT
- 7Ue/+QVk+s7LnX+xrDfNjBMS5I3+z2gfmYdQ5KZlvkfxofe6aEs90JGXVcxgIgOmWQ9z
- tK8OVTxfaJozQKawPq4V418/iQdV7FITmXhzthwbRED0nUBjfISAnVUpxaCQu0KQHMNW
- 2aKhDA9Ty1TgHaPCyJVO9rCq//ncUiBzoDMRXpwMV9ksFX1BHOOvlIklB40zAs820a/9
- sOFgkxgaWyh07XBrtXlRgF/+4cdB5AsuXVvZEyoCqnnNU/bDZt4/1E8pdxQcQG4P0fOE
- i9EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781020464; x=1781625264;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=tFd3SR0Dr112CCXrBdh0GJ/BWCrHRXx2uMDX2QYAEOc=;
- b=BT8UqXj7HC1aP+5HLdlNyyFlt228s28cNiPrFTknUnGS2Fep7a2LHkua+SWrcjPA4t
- tps4yQC448blFezEURCD7QG+y3G9R/BT7qRZgjUkifnwI1SqNuhZKV5MOy4uJEWsswqS
- x4TDMUvRyA8zGoDJ9IWxnhdAmBGibu30LdsH/BqzZjzio7TCVGQ4V0W+LV24bI/W+LLh
- DstyWc8UklphrBRc88DNrmx+QvZEJBwCjqlq1vr+asuuuYDd3KRcbBbq1ya/7+H79sFk
- OQ1TSK2+R5wLRcqAvUhfOKaNt3foB9FTg40/SzvScK+SHIEsmr1mrgMDDZz7vUcRHq9a
- E9Xg==
-X-Gm-Message-State: AOJu0YxnLBG2hDT5mU3O8ZELERaeM38irzHMqere/j9jUoSaW6F3PUiW
- t8rCVf3qwk2GHtGZjCj1uwe5a+5IknY0tghqrHV0w1uYGmMi1ZMQscKsCf39Ri3i6J6a+1ONbea
- JbcLw
-X-Gm-Gg: Acq92OGhM8Gn2dLrzeBdqNv2ccGzs13469Rb/tFoXxZ/IqbYpRaCXheOVvLTrgmKAFT
- SJnTcR1h0LpoHSyJUBzgWDCZJXPWUXedWwwGSyCfkz3HYp0dHpHahlKdwkqyU9RF99XJThF6Zps
- FTHdvnod8Tu5Vv0x3Y2ym19vTuDm7MB3GeMxE8+7rcabX9xO1L5rs9YRN3JFQ0kv4nx9bJEgXCq
- PTeRbyAD/cy60M9KJ/UrACBVpYil1DyDeQQm9+ILWGxv55RvH74uZ8gKsK99BO4np0wSnP+t+fr
- e4AmGZjakd0dd1AcNeWgrevcF9Sx95jYajvwlseTfo4Nxlzy8H9RNcdl4uMXaPjTX6oJytMlVp2
- ePMSJ5PdjpqINhOS1PFlxNB0R36BOMfeCQWdwv2ZXaaFRm1pdB4e0/p2rHYf+SKXLFb9SZq4C8t
- tCcoDI/PJor13oTDmF7XGPM9aRdiCFBBX9YlnTEhQL0mOUF5OXEPLYQWu9Tm41gcyxu0+aKkPz
-X-Received: by 2002:a05:7301:168e:b0:304:630d:e4ec with SMTP id
- 5a478bee46e88-3077b272073mr13014148eec.28.1781020464163; 
- Tue, 09 Jun 2026 08:54:24 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3074dcad34esm31015551eec.11.2026.06.09.08.54.23
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 09 Jun 2026 08:54:23 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 09333402B6;
+	Tue,  9 Jun 2026 18:14:12 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id B38D3400D5
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 18:14:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1781021650; x=1812557650;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=l0jJ7245ncD2BXnRVPpsdHqlsrXIX8G7uZrq4Wx7ya8=;
+ b=bbJ9zM+V4Kfwdbj6OL9l8lmBtoQkiR3nQKg4U9OMWXChDhc0Y4rpDmnt
+ z7cyMbwzu1ILZpFgER2CrmOLUT5sr1BiCjrcWSak1P1d2uDdz8ld+6Si8
+ kSEuoQyHBu04q2/eBaDpiKKpNKNTaY+6ddLafFA6Dvox11KzuQT2WYqHd
+ X+4qU1pvAlZEblMT9UkXJWf7MbApUxX4mq6CKR2xuHmMZqx32SMwqLQmI
+ pzFSpStbHNitV7vyYDrUe/GVZMm1tti64DyASyw3Z5W5EWPArW1p8+kfo
+ 7pCzwFH2v3/HvSw3IqO4YvNEb+bOLoyU/prxdlKRJA2QDN9qbzWoMImAR g==;
+X-CSE-ConnectionGUID: YWrb4/8BSJGJ8emH4Lv+Cg==
+X-CSE-MsgGUID: qxx5Om5aRsG2orcoMSwvYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11812"; a="80809683"
+X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="80809683"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jun 2026 09:14:09 -0700
+X-CSE-ConnectionGUID: ZxUkIcbrQ9GUREZAv2B98w==
+X-CSE-MsgGUID: B2VNV3VZSJupnW3rHtLUKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="249830057"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa003.jf.intel.com with ESMTP; 09 Jun 2026 09:14:08 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>,
- David Marchand <david.marchand@redhat.com>,
- Neil Horman <nhorman@tuxdriver.com>
-Subject: [PATCH v3 2/2] eal: add destructor to unregister tailq on unload
-Date: Tue,  9 Jun 2026 08:53:31 -0700
-Message-ID: <20260609155419.263787-3-stephen@networkplumber.org>
+Cc: fengchengwen@huawei.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v3 0/3] extend interactive telemetry script
+Date: Tue,  9 Jun 2026 17:13:57 +0100
+Message-ID: <20260609161400.3661268-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260609155419.263787-1-stephen@networkplumber.org>
-References: <20260607150418.30885-1-stephen@networkplumber.org>
- <20260609155419.263787-1-stephen@networkplumber.org>
+In-Reply-To: <20260521153913.82634-1-bruce.richardson@intel.com>
+References: <20260521153913.82634-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -84,94 +60,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-EAL_REGISTER_TAILQ registers a static rte_tailq_elem from a
-constructor but provides no destructor. If a library using the
-macro is loaded with dlopen() and later unloaded with dlclose(),
-the process-local list keeps a dangling pointer to the unmapped
-elem, and the next dlopen() crashes in rte_eal_tailq_local_register()
-while walking the list.
+To simplify interactive telemetry script for general use, i.e. not from
+other scripts, we can add two new features to it:
 
-Add a new RTE_FINI destructor that is paired with the constructor
-in the macro. rte_eal_tailq_unregister() drops the local entry on
-unload. The shared mcfg->tailq_head[] slot is left reserved since
-it is keyed by name and shared between processes;
-rte_eal_tailq_update() now reattaches to that slot on re-register
-instead of failing.
+1. Support for FOREACH to allow gathering a set of output values across
+   a list of ports or devices, e.g. ethdevs or rawdevs.
+2. Support having predefined aliases in a file in the user's home
+   directory to simplify the use of more complicated FOREACH commands.
 
-Bugzilla ID: 1081
-Fixes: 873a61c7526b ("tailq: introduce dynamic register system")
-Cc: stable@dpdk.org
+Putting these together, we can create new commands such as "eth_names".
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+  bruce@host:$ cat ~/.dpdk_telemetry_aliases
+  eth_names=FOREACH index /ethdev/list /ethdev/info,$index .name
+
+  bruce@host:$ echo eth_names | ./usertools/dpdk-telemetry.py | jq
+  [
+    {
+      "index": 0,
+      "name": "0000:16:00.0"
+    },
+    {
+      "index": 1,
+      "name": "0000:16:00.1"
+    }
+  ]
+
 ---
- lib/eal/common/eal_common_tailqs.c | 13 +++++++++++++
- lib/eal/include/rte_tailq.h        | 16 ++++++++++++++++
- 2 files changed, 29 insertions(+)
+v3: updated based on review feedback from Chengwen:
+    - added arg to override alias file
+    - printed one-line summary of alias count loaded
+    - improved doc for "help" command
+    - added "help alias" to list aliases.
+v2: added third patch with "help" command giving more details on
+    how to use the various commands.
 
-diff --git a/lib/eal/common/eal_common_tailqs.c b/lib/eal/common/eal_common_tailqs.c
-index fe3ced21c7..34e6883f65 100644
---- a/lib/eal/common/eal_common_tailqs.c
-+++ b/lib/eal/common/eal_common_tailqs.c
-@@ -113,6 +113,11 @@ rte_eal_tailq_update(struct rte_tailq_elem *t)
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		/* primary process is the only one that creates */
- 		t->head = rte_eal_tailq_create(t->name);
-+
-+		if (t->head == NULL) {
-+			/* slot reserved by an earlier load -- reuse it */
-+			t->head = rte_eal_tailq_lookup(t->name);
-+		}
- 	} else {
- 		t->head = rte_eal_tailq_lookup(t->name);
- 	}
-@@ -148,6 +153,14 @@ rte_eal_tailq_register(struct rte_tailq_elem *t)
- 	return -1;
- }
- 
-+RTE_EXPORT_SYMBOL(rte_eal_tailq_unregister)
-+void
-+rte_eal_tailq_unregister(struct rte_tailq_elem *t)
-+{
-+	TAILQ_REMOVE(&rte_tailq_elem_head, t, next);
-+	t->head = NULL;
-+}
-+
- int
- rte_eal_tailqs_init(void)
- {
-diff --git a/lib/eal/include/rte_tailq.h b/lib/eal/include/rte_tailq.h
-index e7caed6812..d4d8bfd6d4 100644
---- a/lib/eal/include/rte_tailq.h
-+++ b/lib/eal/include/rte_tailq.h
-@@ -117,11 +117,27 @@ struct rte_tailq_head *rte_eal_tailq_lookup(const char *name);
-  */
- int rte_eal_tailq_register(struct rte_tailq_elem *t);
- 
-+/**
-+ * Remove a tail queue element from the local list.
-+ * This function is mainly used for EAL_REGISTER_TAILQ macro which pairs
-+ * an RTE_FINI destructor with the existing RTE_INIT constructor.
-+ * The destructor calls this function during dlclose() to prevent
-+ * dangling pointers to unmapped library data.
-+ *
-+ * @param t
-+ *   The tailq element to remove from the EAL tailq list.
-+ */
-+void rte_eal_tailq_unregister(struct rte_tailq_elem *t);
-+
- #define EAL_REGISTER_TAILQ(t) \
- RTE_INIT(tailqinitfn_ ##t) \
- { \
- 	if (rte_eal_tailq_register(&t) < 0) \
- 		rte_panic("Cannot initialize tailq: %s\n", t.name); \
-+} \
-+RTE_FINI(tailqfinifn_ ##t) \
-+{ \
-+	rte_eal_tailq_unregister(&t); \
- }
- 
- /* This macro permits both remove and free var within the loop safely.*/
--- 
+Bruce Richardson (3):
+  usertools/telemetry: add a FOREACH command
+  usertools/telemetry: support using aliases for long commands
+  usertools/telemetry: add help support
+
+ doc/guides/howto/telemetry.rst | 106 ++++++++++++-
+ usertools/dpdk-telemetry.py    | 278 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 373 insertions(+), 11 deletions(-)
+
+--
 2.53.0
 
