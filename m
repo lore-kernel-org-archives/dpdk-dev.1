@@ -2,78 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E33CD8CA4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 08:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABCDCD6E79
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 08:53:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06E544065F;
-	Tue,  9 Jun 2026 10:52:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 26DA44060F;
+	Tue,  9 Jun 2026 10:53:22 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5E91F4065F
- for <dev@dpdk.org>; Tue,  9 Jun 2026 10:52:55 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id BA0E3402BE
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 10:53:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1780995174;
+ s=mimecast20190719; t=1780995200;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=RXEqFL+nYsAWpxTqc07lHVb4wfRCYzZlOe4DPMjlcZY=;
- b=TO5oMBzhqcx01ATyXr4N1BEQEd3zNaWNyw8UOPGSKnKfY5G/hwa2qc9Rt3EJFrjodMEBKU
- MfxG785RmLqHhbomh2SN9bVylwWgweiQxT1s8vb8lSkZ0uKpsrxXiTyqUbizV7BJktQxQK
- Qj44/i+5tsdaMj074Rhfbrv0yhCjaw8=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=N3pXb2I4fGK1pF3UL4Y+4Sst0s0TVNSSYnXFeZf4rrs=;
+ b=ggoU8IvpovpTf4XA7N70+OkLyiHdHQE9ZNiwHH6134QoF1oEa3mVeThKHldh5QxRpUe+MC
+ yFkCL+xhqgGOynybC9zrqJqggXzg/g5VuNJJ0HT+UsR5Dg3ZRg1SgYB/LSx+KSHlRxnWFE
+ x3aVkRE9BmSLcUIO0Tb0TaG3ZXxt7+Q=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-711-_mNwrvyjOZCepD2pWx_BOQ-1; Tue, 09 Jun 2026 04:52:53 -0400
-X-MC-Unique: _mNwrvyjOZCepD2pWx_BOQ-1
-X-Mimecast-MFC-AGG-ID: _mNwrvyjOZCepD2pWx_BOQ_1780995172
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-5aa5bfe8497so4695454e87.1
- for <dev@dpdk.org>; Tue, 09 Jun 2026 01:52:52 -0700 (PDT)
+ us-mta-396-m1dbOPy9P-iGwEIg517vDA-1; Tue, 09 Jun 2026 04:53:17 -0400
+X-MC-Unique: m1dbOPy9P-iGwEIg517vDA-1
+X-Mimecast-MFC-AGG-ID: m1dbOPy9P-iGwEIg517vDA_1780995196
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-396a4ef1af2so24402941fa.2
+ for <dev@dpdk.org>; Tue, 09 Jun 2026 01:53:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780995171; x=1781599971;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=RXEqFL+nYsAWpxTqc07lHVb4wfRCYzZlOe4DPMjlcZY=;
- b=RJ5D/Q9Q2IRYMOn79tkI6kdW3ML6gOMevtwxwE60Lndaxj+RlkCF0MtyZyu3rzQ7Ih
- ZPkb/ugos/uvwEximP33ckA2DIByE/khqWSOPvCu5NCMYhzoFfEX2697tPcJEEwJxaWC
- 8jVGm0VzH4OIzw//ldK8E8ru+Qa6hfGaFkf2FgZNw2aLP/e9b16El4C58elrDOV+p0FM
- 9K/Np7bpmIqGGXbFbqArSso88b1Q/EF3RGdAFOmQWFMARXOD7nXs4eisoKFABptJHfrF
- Y4C6wdVW3+iMjxzS2zP6xZ8rLW0ZjR7uE/lyG2AhH3t6ZfwfqZm4A8OaT59C9aqi5Rmt
- XbMQ==
-X-Forwarded-Encrypted: i=1;
- AFNElJ8JMurwYDyWe9IucGAM4wwZDSKt0+e2h80RAh/uKqRlfpM2wtIdsqnP20/OLn2x8pxV7Fc=@dpdk.org
-X-Gm-Message-State: AOJu0Yy/TMVGyRjncm0XXacqDZWxiZAYM5sKGo7xUrwquB6bfYblL/CZ
- LBQnBYdj8nB6zzFyOshGQpG1D0VhwZfI9ELT0BQeYQkG/SvEOBlemug07hi1339GBriaIlu0/vP
- VDd4gM27f5D3Uk7Gb1by7MqxS2rlaoyTAC1rZIDGmvuuCqF3mcEm6/d1tuua4hfm29b5zX/hWtK
- jBxd/ASpzaFD+9E2Iena0=
-X-Gm-Gg: Acq92OG7nPF7vuj/18SB92odL8ZwqL4iNYlonvpQkE58gN8EVm7Moe3vov/7e0S5ZxO
- k78a4oEAby5IhbJVPKKV2HgGctTCDiLNBsi3XmHI3RDJbJ/69CAeb/rltP9/3PoG1LmCVUogwfF
- 8HL2oLCJ05HvyuryYS49wMFTN6bbWXnpMRN8gChaenJ5QkhVxSn3eFT5gfR7G6bclmxvq3EfO0v
- rZcE5+2B6+fs4aY3c9WXf23k+rmpy/AnsymTkCbVPlnZfEDYirgyWhsSjgsVGpY6sjagS9kbSAm
- fcuK
-X-Received: by 2002:a05:6512:b90:b0:5ad:a25:b8a3 with SMTP id
- 2adb3069b0e04-5ad0a25b90emr320361e87.29.1780995171353; 
- Tue, 09 Jun 2026 01:52:51 -0700 (PDT)
-X-Received: by 2002:a05:6512:b90:b0:5ad:a25:b8a3 with SMTP id
- 2adb3069b0e04-5ad0a25b90emr320349e87.29.1780995170896; Tue, 09 Jun 2026
- 01:52:50 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1780995196; x=1781599996;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=N3pXb2I4fGK1pF3UL4Y+4Sst0s0TVNSSYnXFeZf4rrs=;
+ b=fM/omcIRnAMiUupKBwL1+IlQ47vZkJ0P3anb6icAA2123nKvUXLDuXrLZaOqkyLdTL
+ HTCYAukyuzDIiCbAD8z5cKYPkPuL+bjrkVotb5yftNmYya98Fhxbh2S+R3K48K+HSwdx
+ jorQRvtjy2ru5zGGsmsKYLMphqvY74uXmgXYykBsDi8OxYQeL9X4awKOWQsxErrJb1P1
+ g0t6QQNz5fbvFS0EKree7rIHU4L5y41ra7nGIKG0aupmbyE0SbtZ5547dp/NejN1WfQ/
+ lkFY/kd2ntqT/ze0ciX8mhtuwbKlQkk0EhJqFbh9KEKf/AkBzJI+o0ivc1/KU/l4oP1P
+ 2KBw==
+X-Gm-Message-State: AOJu0Yw49Q0rVLxZlnXf5xlBnnx+cee9RijNchkUeb3PNA875jHYhjyG
+ JT9oCnn0SMi80PrqnwmjCYSlkIIY/+eL4aZDNO/0+daX+T3ocCf6uzRzzI0Y0j1iYvK+rHCWYop
+ VPyTgsZ6YUKFHvDK1FkO0DRxwrlCork0pBV/r8eEAHu+Ej7doDW8AUurtRnPpsv5JAvxUCy++hs
+ 2IivPoHTBwrQ4czaVXuD0=
+X-Gm-Gg: Acq92OFYSaseqfeX3WMpg99C1tybLSzE3JncK/AaxAoLmbOxuJI1yF4mpvG9d3WYNTK
+ rfLZ2gYwVQtKYFBUQje91xNs5hZ2GugBgViVW3+QJbYR50f7dgGPjU2KangVVZnVK/pUrDa2Bxr
+ tp6rhnFAytrTODF7YJYet8HSNUfTocE+KTfRFrc5DnFdzEmcdSQ/RhkYxMUU0Ph2aktsUVecOyF
+ AmgjA2PexvL/Z7ecsaFA2qXAUYBigk7LNghR86rQL3f+lPCp1tsG9V9ubT9MvN9GxV+oTlgUEtX
+ glVN
+X-Received: by 2002:a05:651c:1a0b:b0:394:472e:e430 with SMTP id
+ 38308e7fff4ca-396d08fbd30mr55594551fa.18.1780995196112; 
+ Tue, 09 Jun 2026 01:53:16 -0700 (PDT)
+X-Received: by 2002:a05:651c:1a0b:b0:394:472e:e430 with SMTP id
+ 38308e7fff4ca-396d08fbd30mr55594271fa.18.1780995194987; Tue, 09 Jun 2026
+ 01:53:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260513235518.408895-1-andremue@linux.microsoft.com>
-In-Reply-To: <20260513235518.408895-1-andremue@linux.microsoft.com>
+References: <CAJFAV8zBGUVp-Df3aqY_pUw-JZpVqJfXERXsw4oQ+k2_TJbu2Q@mail.gmail.com>
+ <20260512191651.126274-1-arinkharkar@gmail.com>
+In-Reply-To: <20260512191651.126274-1-arinkharkar@gmail.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 9 Jun 2026 10:52:37 +0200
-X-Gm-Features: AVVi8CcY6d5KRovvownt5vBV_q6wG4Lr90ZP95EBAMd2nbaTVeGnnILtuqQ8gSE
-Message-ID: <CAJFAV8y+eCrK4O9pigs59x3YT3UyJR-o0FsOxxbpJO69Q=L+hg@mail.gmail.com>
-Subject: Re: [PATCH] Windows: fix core count on NUMA with more than 64 cores
- per node
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>, dev@dpdk.org, 
- Gena Tertychnyi <genter@microsoft.com>
+Date: Tue, 9 Jun 2026 10:53:03 +0200
+X-Gm-Features: AVVi8Ce3oksVg5UkpIzPs4LdTjLlzxxdpHcfZzNcaB_M22aqz9K4ocwVFitsmcY
+Message-ID: <CAJFAV8xaWiE8D3XM8N_Lj6dz1aF8JcwKZQHZ278cj2LY3hJXNQ@mail.gmail.com>
+Subject: Re: [PATCH] Remove redundant simpler equivalent section
+To: Arin Kharkar <arinkharkar@gmail.com>
+Cc: dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 9Kjslz1fYk4XKQQpmH7iM7oxyq9osjpO4Xk98l3GL-o_1780995172
+X-Mimecast-MFC-PROC-ID: OaEnaCJyYFbXEL3ff0ibgARF7l-sMWFo-cg0WAK_Rxs_1780995196
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,27 +86,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 14 May 2026 at 01:56, Andre Muezerie
-<andremue@linux.microsoft.com> wrote:
+On Wed, 13 May 2026 at 14:35, Arin Kharkar <arinkharkar@gmail.com> wrote:
 >
-> From: Gena Tertychnyi <genter@microsoft.com>
+> Fixed outdated documentation on the hello world doc, which incorrectly st=
+ated an easier way to launch the lcore_hello function. The example program =
+uses the simpler version and the documentation stating it as an "equivalent=
+ and simpler" alternative is moot. It is now the default.
 >
-> Fix specific to Windows NUMA machines with more than 64 cores per node
-> (e.g. 2 NUMAs with 128 cores each):
+> Signed-off-by: Arin Kharkar <arinkharkar@gmail.com>
+> ---
+>  doc/guides/sample_app_ug/hello_world.rst | 8 --------
+>  examples/helloworld/main.c               | 4 +---
+>  2 files changed, 1 insertion(+), 11 deletions(-)
 >
-> - NumaNode.GroupMasks[] array is used instead of NumaNode.GroupMask.
-> - RelationAll is used instead of RelationNumaNode when calling
-> GetLogicalProcessorInformationEx because RelationAll returns the full
-> multi-group NUMA affinity as RelationNumaNode returns only the NUMA
-> node's primary group.
+> diff --git a/doc/guides/sample_app_ug/hello_world.rst b/doc/guides/sample=
+_app_ug/hello_world.rst
+> index 5bfd4b3fda..b7167aa345 100644
+> --- a/doc/guides/sample_app_ug/hello_world.rst
+> +++ b/doc/guides/sample_app_ug/hello_world.rst
+> @@ -70,12 +70,4 @@ The code that launches the function on each lcore is a=
+s follows:
+>      :end-before: >8 End of launching the function on each lcore.
+>      :dedent: 1
 >
-> Signed-off-by: Gena Tertychnyi <genter@microsoft.com>
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> -The following code is equivalent and simpler:
+> -
+> -.. literalinclude:: ../../../examples/helloworld/main.c
+> -    :language: c
+> -    :start-after: Simpler equivalent. 8<
+> -    :end-before: >8 End of simpler equivalent.
+> -    :dedent: 2
+> -
+>  Refer to the *DPDK API Reference* for detailed information on the rte_ea=
+l_mp_remote_launch() function.
+> diff --git a/examples/helloworld/main.c b/examples/helloworld/main.c
+> index af509138da..8d1a959c58 100644
+> --- a/examples/helloworld/main.c
+> +++ b/examples/helloworld/main.c
+> @@ -40,13 +40,11 @@ main(int argc, char **argv)
+>
+>         /* Launches the function on each lcore. 8< */
+>         RTE_LCORE_FOREACH_WORKER(lcore_id) {
+> -               /* Simpler equivalent. 8< */
+>                 rte_eal_remote_launch(lcore_hello, NULL, lcore_id);
+> -               /* >8 End of simpler equivalent. */
+>         }
+>
+>         /* call it on main lcore too */
+> -       lcore_hello(NULL);
+> +        lcore_hello(NULL);
 
-Applied with Dmitry suggestion on the Fixes: tag.
-Thanks.
+Unneeded change, which I dropped when applying.
+
+>         /* >8 End of launching the function on each lcore. */
+>
+>         rte_eal_mp_wait_lcore();
 
 
--- 
+Applied, thanks.
+
+
+--=20
 David Marchand
 
