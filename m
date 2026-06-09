@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF0D2CD6E79
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 01:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F5ACD6E79
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 01:42:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B905B40B94;
-	Tue,  9 Jun 2026 03:40:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2C3F440B9A;
+	Tue,  9 Jun 2026 03:40:24 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 12D9740693
- for <dev@dpdk.org>; Tue,  9 Jun 2026 03:40:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D59EF40662
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 03:40:05 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAAnoPPtbidqNNnEEg--.9384S12;
- Tue, 09 Jun 2026 09:40:00 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAAnoPPtbidqNNnEEg--.9384S9;
+ Tue, 09 Jun 2026 09:39:59 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v14 10/20] net/sxe2: add NEON vec Rx/Tx burst functions
-Date: Tue,  9 Jun 2026 09:39:40 +0800
-Message-ID: <20260609013951.3359199-11-liujie5@linkdatatechnology.com>
+Subject: [PATCH v14 07/20] net/sxe2: support IPsec inline protocol offload
+Date: Tue,  9 Jun 2026 09:39:37 +0800
+Message-ID: <20260609013951.3359199-8-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260609013951.3359199-1-liujie5@linkdatatechnology.com>
 References: <20260608074257.3043531-21-liujie5@linkdatatechnology.com>
  <20260609013951.3359199-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAAnoPPtbidqNNnEEg--.9384S12
-X-Coremail-Antispam: 1UD129KBjvAXoWfuF4xJrWfuryfuFyUGr4fuFg_yoW5Cw13Xo
- Wxur4fJr47Jr18Zw4Dur1xZFyjqw4UZ34UCayF9FnF93WkCFn0ka43t3WayFy7Wr4ftFs0
- ga4Iyas3trZ3XrWxn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: zQCowAAnoPPtbidqNNnEEg--.9384S9
+X-Coremail-Antispam: 1UD129KBjvAXoWkJw4rWw1xZFW7tFy7KrW3KFg_yoW3Kr47Ao
+ WxWw4UWry7Xrs7A3yxWr1IgFW7J398u3WDArWS9FsruwsrCa4rKay7JFy5XFnrXF4FyFsx
+ W3sak393XFWjyrWxn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
  AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
  Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
- 84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
+ 84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
  4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
  JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
  IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
  M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l42
  xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
  GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI4
- 8JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
- MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I
+ 8JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+ MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
  8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYGYpUUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
@@ -60,915 +60,2807 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-- Implement sxe2_recv_pkts_vec_neon for bulk packet receiving.
-- Implement sxe2_xmit_pkts_vec_neon for bulk packet transmission.
-- Added logic to select the vectorized path based on runtime config
-  and CPU flags (RTE_ARCH_ARM64).
+This patch adds support for IPsec inline protocol offload for both
+inbound and outbound traffic.
 
-Vectorized path improves throughput for small packets by processing
-multiple descriptors simultaneously using SIMD instructions.
+- Implement rte_security_ops: session_create, session_destroy.
+- Add hardware SA table management.
+- Update Rx/Tx data path to handle security offload flags.
+
+The hardware offloads the ESP encapsulation/decapsulation and
+cryptographic processing.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/meson.build            |   2 +
- drivers/net/sxe2/sxe2_txrx.c            |  39 +-
- drivers/net/sxe2/sxe2_txrx_vec.h        |  16 +-
- drivers/net/sxe2/sxe2_txrx_vec_common.h |   1 +
- drivers/net/sxe2/sxe2_txrx_vec_neon.c   | 721 ++++++++++++++++++++++++
- 5 files changed, 774 insertions(+), 5 deletions(-)
- create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
+ drivers/net/sxe2/meson.build      |    2 +
+ drivers/net/sxe2/sxe2_cmd_chnl.c  |  197 ++++
+ drivers/net/sxe2/sxe2_cmd_chnl.h  |   20 +
+ drivers/net/sxe2/sxe2_drv_cmd.h   |   61 ++
+ drivers/net/sxe2/sxe2_ethdev.c    |   14 +
+ drivers/net/sxe2/sxe2_ethdev.h    |    3 +
+ drivers/net/sxe2/sxe2_ipsec.c     | 1565 +++++++++++++++++++++++++++++
+ drivers/net/sxe2/sxe2_ipsec.h     |  254 +++++
+ drivers/net/sxe2/sxe2_rx.c        |    5 +
+ drivers/net/sxe2/sxe2_security.c  |  335 ++++++
+ drivers/net/sxe2/sxe2_security.h  |   77 ++
+ drivers/net/sxe2/sxe2_tx.c        |    8 +
+ drivers/net/sxe2/sxe2_txrx_poll.c |   55 +
+ 13 files changed, 2596 insertions(+)
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
+ create mode 100644 drivers/net/sxe2/sxe2_security.c
+ create mode 100644 drivers/net/sxe2/sxe2_security.h
 
 diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index fc4466556b..4565046eae 100644
+index f03ea15356..86973edc99 100644
 --- a/drivers/net/sxe2/meson.build
 +++ b/drivers/net/sxe2/meson.build
-@@ -48,6 +48,8 @@ if arch_subdir == 'x86'
-                 include_directories: includes,
-                 c_args: [cflags, '-mavx2'])
-         objs += sxe2_avx2_lib.extract_objects('sxe2_txrx_vec_avx2.c')
-+elif arch_subdir == 'arm'
-+        sources += files('sxe2_txrx_vec_neon.c')
- endif
- 
- sources += files(
-diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
-index eaf95259a5..a919a84450 100644
---- a/drivers/net/sxe2/sxe2_txrx.c
-+++ b/drivers/net/sxe2/sxe2_txrx.c
-@@ -175,6 +175,9 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
- 
- 			if ((0 == (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK)))
- 				tx_mode_flags |=  SXE2_TX_MODE_VEC_SSE;
-+#elif defined(RTE_ARCH_ARM64)
-+			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1)
-+				tx_mode_flags |= (vec_flags | SXE2_TX_MODE_VEC_NEON);
- #endif
- 			if (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) {
- 				ret = sxe2_tx_queues_vec_prepare(dev);
-@@ -218,8 +221,15 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
- 				dev->tx_pkt_burst = sxe2_tx_pkts_vec_sse_simple;
- 			}
- 		}
--	} else {
-+#elif defined(RTE_ARCH_ARM64)
-+		if (tx_mode_flags & SXE2_TX_MODE_VEC_NEON) {
-+			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
-+			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon;
-+		} else {
-+			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon_simple;
-+		}
- #endif
-+	} else {
- 		if (tx_mode_flags & SXE2_TX_MODE_SIMPLE_BATCH) {
- 			dev->tx_pkt_prepare = NULL;
- 			dev->tx_pkt_burst = sxe2_tx_pkts_simple;
-@@ -227,9 +237,7 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
- 			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
- 			dev->tx_pkt_burst = sxe2_tx_pkts;
- 		}
--#ifdef RTE_ARCH_X86
- 	}
--#endif
+@@ -64,4 +64,6 @@ sources += files(
+         'sxe2_filter.c',
+         'sxe2_rss.c',
+         'sxe2_tm.c',
++        'sxe2_ipsec.c',
++        'sxe2_security.c',
+ )
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
+index 19323ffcc4..7711e8e57d 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.c
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
+@@ -877,3 +877,200 @@ int32_t sxe2_drv_tm_commit(struct sxe2_adapter *adapter)
+ l_end:
+ 	return ret;
  }
- 
- static const struct {
-@@ -253,6 +261,12 @@ static const struct {
- 	{ sxe2_tx_pkts_vec_sse_simple,
- 	      "Vector SSE Simple" },
- #endif
-+#ifdef RTE_ARCH_ARM64
-+	{ sxe2_tx_pkts_vec_neon,
-+	  "Vector NEON" },
-+	{ sxe2_tx_pkts_vec_neon_simple,
-+	  "Vector NEON Simple" },
-+#endif
- };
- 
- int32_t sxe2_tx_burst_mode_get(struct rte_eth_dev *dev,
-@@ -356,6 +370,11 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
- 			if (((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0) &&
- 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
- 				rx_mode_flags |= SXE2_RX_MODE_VEC_SSE;
 +
-+#elif defined(RTE_ARCH_ARM64)
-+			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1) {
-+				rx_mode_flags |= (vec_flags | SXE2_RX_MODE_VEC_NEON);
-+			}
- #endif
- 			if ((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) != 0) {
- 				ret = sxe2_rx_queues_vec_prepare(dev);
-@@ -387,6 +406,14 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
- 		}
- 		return;
- 	}
-+#elif defined(RTE_ARCH_ARM64)
-+	if (rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) {
-+		if (rx_mode_flags & SXE2_RX_MODE_VEC_OFFLOAD)
-+			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_neon_offload;
-+		else
-+			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_neon;
-+		return;
++
++int32_t sxe2_drv_ipsec_get_capa(struct sxe2_adapter *adapter)
++{
++	int32_t ret = -1;
++	struct sxe2_drv_cmd_params cmd = { 0 };
++	struct sxe2_drv_ipsec_capa_resq resp;
++	struct sxe2_common_device *cdev = adapter->cdev;
++
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_IPSEC_CAP_GET,
++				 NULL, 0,
++				 &resp, sizeof(resp));
++	ret = sxe2_drv_cmd_exec(cdev, &cmd);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to get ipsec specifications, ret=%d", ret);
++		goto l_end;
 +	}
- #endif
- 	if (sxe2_rx_offload_en_check(dev, RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT))
- 		dev->rx_pkt_burst = sxe2_rx_pkts_scattered_split;
-@@ -416,6 +443,12 @@ static const struct {
- 	{ sxe2_rx_pkts_scattered_vec_sse_offload,
- 	      "Vector SSE Scattered" },
- #endif
-+#ifdef RTE_ARCH_ARM64
-+	{ sxe2_rx_pkts_scattered_vec_neon,
-+	  "Vector NEON Scattered" },
-+	{ sxe2_rx_pkts_scattered_vec_neon_offload,
-+	  "Offload Vector NEON Scattered" },
-+#endif
- };
- 
- int32_t sxe2_rx_burst_mode_get(struct rte_eth_dev *dev,
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec.h b/drivers/net/sxe2/sxe2_txrx_vec.h
-index 369777606f..c139aed776 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec.h
-+++ b/drivers/net/sxe2/sxe2_txrx_vec.h
-@@ -13,19 +13,23 @@
- #define SXE2_RX_MODE_VEC_SSE       RTE_BIT32(2)
- #define SXE2_RX_MODE_VEC_AVX2      RTE_BIT32(3)
- #define SXE2_RX_MODE_VEC_AVX512    RTE_BIT32(4)
-+#define SXE2_RX_MODE_VEC_NEON      RTE_BIT32(5)
- #define SXE2_RX_MODE_BATCH_ALLOC   RTE_BIT32(10)
- #define SXE2_RX_MODE_VEC_SET_MASK	(SXE2_RX_MODE_VEC_SIMPLE | \
- 			SXE2_RX_MODE_VEC_OFFLOAD | SXE2_RX_MODE_VEC_SSE | \
--			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512)
-+			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512 | \
-+			SXE2_RX_MODE_VEC_NEON)
- #define SXE2_TX_MODE_VEC_SIMPLE   RTE_BIT32(0)
- #define SXE2_TX_MODE_VEC_OFFLOAD  RTE_BIT32(1)
- #define SXE2_TX_MODE_VEC_SSE      RTE_BIT32(2)
- #define SXE2_TX_MODE_VEC_AVX2     RTE_BIT32(3)
- #define SXE2_TX_MODE_VEC_AVX512   RTE_BIT32(4)
-+#define SXE2_TX_MODE_VEC_NEON     RTE_BIT32(5)
- #define SXE2_TX_MODE_SIMPLE_BATCH RTE_BIT32(10)
- #define SXE2_TX_MODE_VEC_SET_MASK	(SXE2_TX_MODE_VEC_SIMPLE | \
- 			SXE2_TX_MODE_VEC_OFFLOAD | SXE2_TX_MODE_VEC_SSE | \
--			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512)
-+			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512 | \
-+			SXE2_TX_MODE_VEC_NEON)
- #define SXE2_TX_VEC_NO_SUPPORT_OFFLOAD (		  \
- 			RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		  \
- 			RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	  \
-@@ -76,6 +80,14 @@ uint16_t sxe2_rx_pkts_scattered_vec_avx2(void *rx_queue,
- 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- uint16_t sxe2_rx_pkts_scattered_vec_avx2_offload(void *rx_queue,
- 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
 +
-+#elif defined(RTE_ARCH_ARM64)
-+uint16_t sxe2_rx_pkts_scattered_vec_neon(void *rx_queue, struct rte_mbuf **rx_pkts,
-+					 uint16_t nb_pkts);
-+uint16_t sxe2_rx_pkts_scattered_vec_neon_offload(void *rx_queue, struct rte_mbuf **rx_pkts,
-+						 uint16_t nb_pkts);
-+uint16_t sxe2_tx_pkts_vec_neon_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
-+uint16_t sxe2_tx_pkts_vec_neon(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
- #endif
- int32_t __rte_cold sxe2_tx_vec_support_check(struct rte_eth_dev *dev, uint32_t *vec_flags);
- int32_t __rte_cold sxe2_tx_queues_vec_prepare(struct rte_eth_dev *dev);
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_common.h b/drivers/net/sxe2/sxe2_txrx_vec_common.h
-index 6b1649c390..c093c3c80c 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec_common.h
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_common.h
-@@ -2,6 +2,7 @@
-  * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-  */
- 
++	adapter->security_ctx.ipsec_ctx.max_tx_sa = rte_le_to_cpu_16(resp.tx_sa_cnt);
++	adapter->security_ctx.ipsec_ctx.max_rx_sa = rte_le_to_cpu_16(resp.rx_sa_cnt);
++	adapter->security_ctx.ipsec_ctx.max_tcam = rte_le_to_cpu_16(resp.ip_id_cnt);
++	adapter->security_ctx.ipsec_ctx.max_udp_group = rte_le_to_cpu_16(resp.udp_group_cnt);
 +
- #ifndef SXE2_TXRX_VEC_COMMON_H
- #define SXE2_TXRX_VEC_COMMON_H
++	PMD_DEV_LOG_INFO(adapter, DRV, "Max tx sa:%u, max rx sa:%u, max tcam:%u, udp group:%u.",
++			 rte_le_to_cpu_16(resp.tx_sa_cnt),
++			 rte_le_to_cpu_16(resp.rx_sa_cnt),
++			 rte_le_to_cpu_16(resp.ip_id_cnt),
++			 rte_le_to_cpu_16(resp.udp_group_cnt));
++
++l_end:
++	return ret;
++}
++
++int32_t sxe2_drv_ipsec_resource_clear(struct sxe2_adapter *adapter)
++{
++	int32_t ret = -1;
++	struct sxe2_drv_cmd_params cmd = { 0 };
++	struct sxe2_common_device *cdev = adapter->cdev;
++
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_IPSEC_RESOURCE_CLEAR,
++				 NULL, 0,
++				 NULL, 0);
++	ret = sxe2_drv_cmd_exec(cdev, &cmd);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to clear ipsec resource, ret=%d", ret);
++		goto l_end;
++	}
++
++l_end:
++	return ret;
++}
++
++int32_t sxe2_drv_ipsec_txsa_add(struct sxe2_adapter *adapter,
++		struct sxe2_ipsec_tx_sa *tx_sa)
++{
++	struct sxe2_drv_cmd_params cmd               = { 0 };
++	struct sxe2_drv_ipsec_txsa_add_req req   = { 0 };
++	struct sxe2_drv_ipsec_txsa_add_resp resp = { 0 };
++	struct sxe2_common_device *cdev = adapter->cdev;
++	int32_t ret                                   = -1;
++	uint32_t mode                                  = 0;
++	uint32_t i                                     = 0;
++
++	if (tx_sa->algo == SXE2_IPSEC_ALGO_SM4_CBC_AND_SM3_96_HMAC)
++		mode |= IPSEC_TX_ENGINE_SM4;
++	if (tx_sa->mode == SXE2_IPSEC_MODE_ENC_AND_AUTH)
++		mode |= IPSEC_TX_ENCRYPT;
++	req.mode = rte_cpu_to_le_32(mode);
++	for (i = 0; i < SXE2_IPSEC_KEY_LEN; i++) {
++		req.encrypt_keys[i] = tx_sa->enc_key[i];
++		req.auth_keys[i] = tx_sa->auth_key[i];
++	}
++
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_IPSEC_TXSA_ADD,
++				 &req, sizeof(req),
++				 &resp, sizeof(resp));
++
++	ret = sxe2_drv_cmd_exec(cdev, &cmd);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "failed to add tx sa, ret=%d", ret);
++		goto l_end;
++	}
++	tx_sa->hw_sa_id = rte_le_to_cpu_16(resp.index);
++
++l_end:
++	return ret;
++}
++
++int32_t sxe2_drv_ipsec_rxsa_add(struct sxe2_adapter *adapter,
++		struct sxe2_ipsec_rx_sa *rx_sa,
++		struct sxe2_ipsec_rx_tcam *rx_tcam,
++		struct sxe2_ipsec_rx_udp_group *rx_udp_group)
++{
++	struct sxe2_drv_cmd_params cmd               = { 0 };
++	struct sxe2_drv_ipsec_rxsa_add_req req   = { 0 };
++	struct sxe2_drv_ipsec_rxsa_add_resp resp = { 0 };
++	struct sxe2_common_device *cdev = adapter->cdev;
++	int32_t ret                                   = -1;
++	uint32_t mode                                  = 0;
++	uint32_t i                                     = 0;
++
++	if (rx_sa->algo == SXE2_IPSEC_ALGO_SM4_CBC_AND_SM3_96_HMAC)
++		mode |= IPSEC_RX_ENGINE_SM4;
++	if (rx_sa->mode == SXE2_IPSEC_MODE_ENC_AND_AUTH)
++		mode |= IPSEC_RX_DECRYPT;
++	if (rx_tcam->ip_addr.type == RTE_SECURITY_IPSEC_TUNNEL_IPV6) {
++		mode |= IPSEC_RX_IPV6;
++		memcpy(req.ipaddr, rx_tcam->ip_addr.dst_ipv6, sizeof(req.ipaddr));
++	} else {
++		req.ipaddr[0] = rx_tcam->ip_addr.dst_ipv4;
++	}
++	req.mode = rte_cpu_to_le_32(mode);
++	req.spi = rte_cpu_to_le_32(rx_sa->spi);
++	if (rx_udp_group != NULL) {
++		req.udp_port = rte_cpu_to_le_32((uint32_t)rx_udp_group->udp_port);
++		req.sport_en = rx_udp_group->sport_en;
++		req.dport_en = rx_udp_group->dport_en;
++	}
++
++	PMD_DEV_LOG_INFO(adapter, DRV, "Add rx sa, mode: 0x%x, spi: 0x%x, udp_port: %u, "
++			 "sport_en: %u, dport_en: %u.",
++			 req.mode, req.spi, req.udp_port, req.sport_en, req.dport_en);
++
++	/* encrypt and auth keys */
++	for (i = 0; i < SXE2_IPSEC_KEY_LEN; i++) {
++		req.encrypt_keys[i] = rx_sa->enc_key[i];
++		req.auth_keys[i] = rx_sa->auth_key[i];
++	}
++
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_IPSEC_RXSA_ADD,
++				 &req, sizeof(req),
++				 &resp, sizeof(resp));
++
++	ret = sxe2_drv_cmd_exec(cdev, &cmd);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add rx sa, ret=%d", ret);
++		goto l_end;
++	}
++	rx_sa->hw_sa_id = rte_le_to_cpu_16(resp.sa_idx);
++	rx_sa->hw_ip_id = resp.ip_id;
++	rx_tcam->hw_ip_id = resp.ip_id;
++	rx_sa->hw_udp_group_id = resp.udp_group_id;
++	if (rx_udp_group != NULL)
++		rx_udp_group->hw_group_id = resp.udp_group_id;
++
++l_end:
++	return ret;
++}
++
++int32_t sxe2_drv_ipsec_rxsa_delete(struct sxe2_adapter *adapter,
++					struct sxe2_ipsec_rx_sa *rx_sa)
++{
++	struct sxe2_drv_ipsec_rxsa_del_req req = { 0 };
++	struct sxe2_drv_cmd_params cmd             = { 0 };
++	struct sxe2_common_device *cdev = adapter->cdev;
++	int32_t ret                                 = -1;
++
++	req.sa_idx = rte_cpu_to_le_16(rx_sa->hw_sa_id);
++	req.spi = rte_cpu_to_le_32(rx_sa->spi);
++	req.ip_id = rx_sa->hw_ip_id;
++	req.group_id = rx_sa->hw_udp_group_id;
++
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_IPSEC_RXSA_DEL,
++				 &req, sizeof(req),
++				 NULL, 0);
++	ret = sxe2_drv_cmd_exec(cdev, &cmd);
++	if (ret)
++		PMD_DEV_LOG_ERR(adapter, DRV,
++				"Failed to delete rx sa, sa id: %u, spi: %u, "
++				"ip id: %u, udp group id: %u, ret: %d.",
++				rx_sa->hw_sa_id, rx_sa->spi, rx_sa->hw_ip_id,
++				rx_sa->hw_udp_group_id, ret);
++
++	return ret;
++}
++
++int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
++					   uint16_t sa_id)
++{
++	struct sxe2_drv_ipsec_txsa_del_req req = { 0 };
++	struct sxe2_drv_cmd_params cmd             = { 0 };
++	struct sxe2_common_device *cdev = adapter->cdev;
++	int32_t ret                                 = -1;
++
++	req.sa_idx = rte_cpu_to_le_16(sa_id);
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_IPSEC_TXSA_DEL,
++				 &req, sizeof(req),
++				 NULL, 0);
++	ret = sxe2_drv_cmd_exec(cdev, &cmd);
++	if (ret)
++		PMD_DEV_LOG_ERR(adapter, DRV,
++				"Failed to delete tx sa, sa id: %u, ret: %d.",
++				sa_id, ret);
++
++	return ret;
++}
++
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
+index 77e689abcd..dac487fe7d 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.h
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
+@@ -44,6 +44,26 @@ int32_t sxe2_drv_root_tree_alloc(struct rte_eth_dev *dev);
  
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_neon.c b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
+ int32_t sxe2_drv_tm_commit(struct sxe2_adapter *adapter);
+ 
++int32_t sxe2_drv_ipsec_resource_clear(struct sxe2_adapter *adapter);
++
++int32_t sxe2_drv_ipsec_get_capa(struct sxe2_adapter *adapter);
++
++int32_t sxe2_drv_ipsec_rxsa_add(struct sxe2_adapter *adapter,
++			    struct sxe2_ipsec_rx_sa *rx_sa,
++			    struct sxe2_ipsec_rx_tcam *rx_tcam,
++			    struct sxe2_ipsec_rx_udp_group *rx_udp_group);
++
++int32_t sxe2_drv_ipsec_txsa_add(struct sxe2_adapter *adapter,
++			    struct sxe2_ipsec_tx_sa *tx_sa);
++
++int32_t sxe2_drv_ipsec_rxsa_delete(struct sxe2_adapter *adapter,
++			       struct sxe2_ipsec_rx_sa *rx_sa);
++
++int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
++			       uint16_t sa_id);
++
++int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
++
+ int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
+ 
+ int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
+diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
+index 67c6885cae..39a108d76a 100644
+--- a/drivers/net/sxe2/sxe2_drv_cmd.h
++++ b/drivers/net/sxe2/sxe2_drv_cmd.h
+@@ -375,6 +375,67 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_tm_add_queue_msg {
+ 	struct sxe2_tm_info info;
+ } __rte_packed_end;
+ 
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_capa_resq {
++	uint16_t tx_sa_cnt;
++	uint16_t rx_sa_cnt;
++	uint16_t ip_id_cnt;
++	uint16_t udp_group_cnt;
++} __rte_packed_end;
++
++#define SXE2_IPSEC_KEY_LEN (32)
++#define SXE2_IPV6_ADDR_LEN (4)
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_txsa_add_req {
++	uint32_t mode;
++	uint8_t encrypt_keys[SXE2_IPSEC_KEY_LEN];
++	uint8_t auth_keys[SXE2_IPSEC_KEY_LEN];
++	bool func_type;
++	uint8_t func_id;
++	uint8_t drv_id;
++} __rte_packed_end;
++
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_txsa_add_resp {
++	uint16_t index;
++} __rte_packed_end;
++
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_rxsa_add_req {
++	uint32_t mode;
++	uint32_t spi;
++	uint32_t ipaddr[SXE2_IPV6_ADDR_LEN];
++	uint32_t udp_port;
++	uint8_t sport_en;
++	uint8_t dport_en;
++	uint8_t is_over_sdn;
++	uint8_t sdn_group_id;
++	uint8_t encrypt_keys[SXE2_IPSEC_KEY_LEN];
++	uint8_t auth_keys[SXE2_IPSEC_KEY_LEN];
++	bool func_type;
++	uint8_t func_id;
++	uint8_t drv_id;
++} __rte_packed_end;
++
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_rxsa_add_resp {
++	uint8_t ip_id;
++	uint8_t udp_group_id;
++	uint16_t sa_idx;
++} __rte_packed_end;
++
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_txsa_del_req {
++	uint16_t sa_idx;
++	bool func_type;
++	uint8_t func_id;
++	uint8_t drv_id;
++} __rte_packed_end;
++
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_rxsa_del_req {
++	uint8_t ip_id;
++	uint8_t group_id;
++	uint16_t sa_idx;
++	uint32_t spi;
++	bool func_type;
++	uint8_t func_id;
++	uint8_t drv_id;
++} __rte_packed_end;
++
+ enum sxe2_drv_cmd_module {
+ 	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
+ 	SXE2_DRV_CMD_MODULE_DEV = 1,
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index f98cf367f1..9c9d98782b 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -298,6 +298,11 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_PTP)
+ 		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+ 
++	if (sxe2_ipsec_supported(adapter)) {
++		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_SECURITY;
++		dev_info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_SECURITY;
++	}
++
+ 	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_RSS) {
+ 		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+ 		dev_info->flow_type_rss_offloads  |= SXE2_RSS_HF_SUPPORT_ALL;
+@@ -1053,6 +1058,12 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ 		goto init_eth_err;
+ 	}
+ 
++	ret = sxe2_security_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize security, ret=%d", ret);
++		goto init_security_err;
++	}
++
+ 	ret = sxe2_rss_disable(dev);
+ 	if (ret) {
+ 		PMD_LOG_ERR(INIT, "Failed to disable rss, ret=%d", ret);
+@@ -1067,6 +1078,8 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ 
+ 	goto l_end;
+ 
++init_security_err:
++	sxe2_eth_uinit(dev);
+ init_sched_err:
+ init_rss_err:
+ init_eth_err:
+@@ -1085,6 +1098,7 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
+ 	(void)sxe2_rss_disable(dev);
+ 	(void)sxe2_sched_uinit(dev);
+ 	sxe2_vsi_uninit(dev);
++	sxe2_security_uinit(dev);
+ 	sxe2_dev_pci_map_uinit(dev);
+ 	sxe2_eth_uinit(dev);
+ 
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index 95594fcbde..fed8ce37d9 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -20,6 +20,8 @@
+ #include "sxe2_queue.h"
+ #include "sxe2_mac.h"
+ #include "sxe2_osal.h"
++#include "sxe2_security.h"
++#include "sxe2_ipsec.h"
+ #include "sxe2_tm.h"
+ #include "sxe2_filter.h"
+ 
+@@ -313,6 +315,7 @@ struct sxe2_adapter {
+ 	struct sxe2_sched_hw_cap      sched_ctxt;
+ 	struct sxe2_tm_context        tm_ctxt;
+ 	struct sxe2_devargs           devargs;
++	struct sxe2_security_ctx      security_ctx;
+ 	struct sxe2_switchdev_info    switchdev_info;
+ 	bool                          rule_started;
+ 	bool                          flow_isolated;
+diff --git a/drivers/net/sxe2/sxe2_ipsec.c b/drivers/net/sxe2/sxe2_ipsec.c
 new file mode 100644
-index 0000000000..26d3bef21a
+index 0000000000..e783a51b85
 --- /dev/null
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
-@@ -0,0 +1,721 @@
++++ b/drivers/net/sxe2/sxe2_ipsec.c
+@@ -0,0 +1,1565 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
 + */
 +
-+#ifdef RTE_ARCH_ARM64
-+#include <arm_neon.h>
-+#include <rte_vect.h>
++#include <rte_malloc.h>
++#include <rte_bitmap.h>
 +
-+#include "sxe2_txrx_vec_common.h"
-+#include "sxe2_txrx_vec.h"
++#include "sxe2_ethdev.h"
++#include "sxe2_security.h"
++#include "sxe2_ipsec.h"
++#include "sxe2_cmd_chnl.h"
 +#include "sxe2_common_log.h"
 +
-+#define PKTLEN_SHIFT     10
-+#define SXE2_UINT16_BIT (CHAR_BIT * sizeof(uint16_t))
-+
-+static __rte_always_inline void
-+sxe2_tx_desc_fill_one_neon(volatile union sxe2_tx_data_desc *desc,
-+			struct rte_mbuf *pkt, uint64_t desc_cmd, bool with_offloads)
++bool sxe2_ipsec_supported(struct sxe2_adapter *adapter)
 +{
-+	uint64_t desc_qw1;
-+	uint32_t desc_offset;
++	uint64_t cap = adapter->cap_flags;
 +
-+	desc_qw1 = (SXE2_TX_DESC_DTYPE_DATA |
-+				((uint64_t)desc_cmd) << SXE2_TX_DATA_DESC_CMD_SHIFT |
-+				((uint64_t)pkt->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
-+
-+	desc_offset = SXE2_TX_DATA_DESC_MACLEN_VAL(pkt->l2_len);
-+	desc_qw1 |= ((uint64_t)desc_offset) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
-+	if (with_offloads)
-+		sxe2_tx_desc_fill_offloads(pkt, &desc_qw1);
-+
-+	uint64x2_t data_desc = { rte_pktmbuf_iova(pkt), desc_qw1 };
-+
-+	vst1q_u64(RTE_CAST_PTR(uint64_t *, desc), data_desc);
++	return !!(cap & SXE2_DEV_CAPS_OFFLOAD_IPSEC);
 +}
 +
-+static __rte_always_inline uint16_t
-+sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
-+			uint16_t nb_pkts, bool with_offloads)
++bool sxe2_ipsec_valid_tx_offloads(uint64_t offloads)
 +{
-+	volatile union sxe2_tx_data_desc *desc;
-+	struct sxe2_tx_buffer *buffer;
-+	uint16_t next_use;
-+	uint16_t res_num;
-+	uint16_t tx_num;
-+	uint16_t i;
++	bool ret = true;
++	uint64_t tso_features = 0;
++	uint64_t cksum_features = 0;
 +
-+	if (txq->desc_free_num < txq->free_thresh)
-+		(void)sxe2_tx_bufs_free_vec(txq);
-+
-+	nb_pkts = RTE_MIN(txq->desc_free_num, nb_pkts);
-+	if (unlikely(nb_pkts == 0)) {
-+		PMD_LOG_DEBUG(TX, "Tx pkts neon batch: may not enough free desc, "
-+				"free_desc=%u, need_tx_pkts=%u",
-+				txq->desc_free_num, nb_pkts);
-+		goto l_end;
-+	}
-+	tx_num = nb_pkts;
-+
-+	next_use = txq->next_use;
-+	desc     = &txq->desc_ring[next_use];
-+	buffer   = &txq->buffer_ring[next_use];
-+
-+	txq->desc_free_num -= nb_pkts;
-+
-+	res_num = txq->ring_depth - txq->next_use;
-+
-+	if (tx_num >= res_num) {
-+		sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, res_num);
-+
-+		for (i = 0; i < res_num - 1; ++i, ++tx_pkts, ++desc) {
-+			sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
-+					SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++	if (offloads & RTE_ETH_TX_OFFLOAD_SECURITY) {
++		tso_features = RTE_ETH_TX_OFFLOAD_TCP_TSO |
++			RTE_ETH_TX_OFFLOAD_UDP_TSO |
++			RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |
++			RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO |
++			RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |
++			RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO;
++		if (offloads & tso_features) {
++			PMD_LOG_ERR(DRV, "Security offload is not compatible with TSO offload.");
++			ret = false;
++			goto l_end;
 +		}
 +
-+		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts++,
-+					(SXE2_TX_DATA_DESC_CMD_EOP | SXE2_TX_DATA_DESC_CMD_RS),
-+					with_offloads);
++		cksum_features = RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
++			RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
++			RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
++			RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |
++			RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |
++			RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM;
++		if (offloads & cksum_features) {
++			PMD_LOG_ERR(DRV, "Security offload is not compatible with checksum offload.");
++			ret = false;
++			goto l_end;
++		}
 +
-+		tx_num -= res_num;
-+
-+		next_use     = 0;
-+		txq->next_rs = txq->rs_thresh - 1;
-+		desc         = &txq->desc_ring[next_use];
-+		buffer       = &txq->buffer_ring[next_use];
++		if (offloads & (RTE_ETH_TX_OFFLOAD_VLAN_INSERT | RTE_ETH_TX_OFFLOAD_QINQ_INSERT)) {
++			PMD_LOG_ERR(DRV, "Security offload is not compatible with vlan offload.");
++			ret = false;
++			goto l_end;
++		}
 +	}
-+
-+	sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, tx_num);
-+
-+	for (i = 0; i < tx_num; ++i, ++tx_pkts, ++desc) {
-+		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
-+				SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
-+	}
-+
-+	next_use += tx_num;
-+	if (next_use > txq->next_rs) {
-+		txq->desc_ring[txq->next_rs].read.type_cmd_off_bsz_l2t |=
-+			rte_cpu_to_le_64(SXE2_TX_DATA_DESC_CMD_RS_MASK);
-+
-+		txq->next_rs += txq->rs_thresh;
-+	}
-+	txq->next_use = next_use;
-+
-+	SXE2_PCI_REG_WRITE_WC(txq->tdt_reg_addr, txq->next_use);
 +
 +l_end:
-+	return nb_pkts;
++	return ret;
 +}
 +
-+static __rte_always_inline uint16_t
-+sxe2_tx_pkts_vec_neon_common(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
-+			uint16_t nb_pkts, bool with_offloads)
++bool sxe2_ipsec_valid_rx_offloads(uint64_t offloads)
 +{
-+	uint16_t tx_done_num = 0;
-+	uint16_t tx_once_num;
-+	uint16_t tx_need_num;
++	bool ret = true;
 +
-+	while (nb_pkts) {
-+		tx_need_num = RTE_MIN(nb_pkts, txq->rs_thresh);
-+		tx_once_num = sxe2_tx_pkts_vec_neon_batch(txq,
-+					tx_pkts + tx_done_num,
-+					tx_need_num, with_offloads);
-+
-+		nb_pkts     -= tx_once_num;
-+		tx_done_num += tx_once_num;
-+
-+		if (tx_once_num < tx_need_num)
-+			break;
-+	}
-+
-+	PMD_LOG_DEBUG(TX, "Tx pkts neon: port_id=%u, queue_id=%u, "
-+			"nb_pkts=%u, tx_done_num=%u with_offloads=%u",
-+			txq->port_id, txq->idx_in_func, nb_pkts, tx_done_num, with_offloads);
-+
-+	return tx_done_num;
-+}
-+
-+uint16_t sxe2_tx_pkts_vec_neon_simple(void *tx_queue,
-+			struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	return sxe2_tx_pkts_vec_neon_common((struct sxe2_tx_queue *)tx_queue,
-+				tx_pkts, nb_pkts, false);
-+}
-+
-+uint16_t sxe2_tx_pkts_vec_neon(void *tx_queue,
-+			struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	return sxe2_tx_pkts_vec_neon_common((struct sxe2_tx_queue *)tx_queue,
-+				tx_pkts, nb_pkts, true);
-+}
-+
-+static __rte_always_inline void
-+sxe2_rx_desc_ptype_fill_neon(uint16x8_t staterr, struct rte_mbuf **__rte_restrict rx_pkts,
-+		const uint32_t *__rte_restrict ptype_tbl)
-+{
-+	uint16x8_t ptype_mask = {
-+		0, 0x3FFULL,
-+		0, 0x3FFULL,
-+		0, 0x3FFULL,
-+		0, 0x3FFULL,
-+	};
-+	uint16x8_t ptype_all;
-+
-+	ptype_all = vandq_u16(staterr, ptype_mask);
-+
-+	rx_pkts[3]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 3)];
-+	rx_pkts[2]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 7)];
-+	rx_pkts[1]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 1)];
-+	rx_pkts[0]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 5)];
-+}
-+
-+static __rte_always_inline uint32x4_t
-+sxe2_rx_desc_fnav_flags_neon(uint64x2_t descs_arr[4])
-+{
-+	uint32x4_t descs_tmp1, descs_tmp2;
-+	uint32x4_t descs_fnav_vld;
-+	uint32x4_t v_zeros, v_ffff, v_u32_one;
-+	uint32x4_t m_flags;
-+
-+	const uint32x4_t fdir_flags = vdupq_n_u32(RTE_MBUF_F_RX_FDIR |
-+						  RTE_MBUF_F_RX_FDIR_ID);
-+
-+	uint32x4_t d0 = vreinterpretq_u32_u64(descs_arr[0]);
-+	uint32x4_t d1 = vreinterpretq_u32_u64(descs_arr[1]);
-+	uint32x4_t d2 = vreinterpretq_u32_u64(descs_arr[2]);
-+	uint32x4_t d3 = vreinterpretq_u32_u64(descs_arr[3]);
-+
-+	descs_tmp1 = vzip1q_u32(d1, d0);
-+	descs_tmp2 = vzip1q_u32(d3, d2);
-+
-+	uint64x2_t a = vreinterpretq_u64_u32(descs_tmp1);
-+	uint64x2_t b = vreinterpretq_u64_u32(descs_tmp2);
-+
-+	descs_fnav_vld = vreinterpretq_u32_u64(vcombine_u64(vget_low_u64(a), vget_low_u64(b)));
-+
-+	descs_fnav_vld = vshlq_n_u32(descs_fnav_vld, 26);
-+	descs_fnav_vld = vshrq_n_u32(descs_fnav_vld, 31);
-+
-+	v_zeros = vdupq_n_u32(0);
-+	v_ffff = vceqq_u32(v_zeros, v_zeros);
-+	v_u32_one = vshrq_n_u32(v_ffff, 31);
-+
-+	m_flags = vceqq_u32(descs_fnav_vld, v_u32_one);
-+
-+	m_flags = vandq_u32(m_flags, fdir_flags);
-+	return m_flags;
-+}
-+
-+static __rte_always_inline void
-+sxe2_rx_desc_offloads_para_fill_neon(struct sxe2_rx_queue *rxq,
-+			volatile union sxe2_rx_desc *desc,
-+			uint64x2_t descs[4], struct rte_mbuf **rx_pkts)
-+{
-+	uint32x4_t desc_lo, desc_hi, flags, tmp_flags;
-+	const uint64x2_t mbuf_init = {rxq->mbuf_init_value, 0};
-+	uint64x2_t rearm0, rearm1, rearm2, rearm3;
-+
-+	const uint32x4_t desc_msk = {
-+		0x00001C04, 0x00001C04, 0x00001C04, 0x00001C04};
-+
-+	const uint32x4_t rss_msk = {
-+		0x20000000, 0x20000000, 0x20000000, 0x20000000};
-+
-+	const uint32x4_t vlan_msk = {
-+		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
-+		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
-+		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
-+		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED
-+	};
-+	const uint8x16_t vlan_flags = {
-+		0, 0, 0, 0,
-+		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED, 0, 0, 0,
-+		0, 0, 0, 0,
-+		0, 0, 0, 0
-+	};
-+
-+	const uint8x16_t rss_flags = {
-+		0, 0, 0, 0,
-+		RTE_MBUF_F_RX_RSS_HASH, 0, 0, 0,
-+		0, 0, 0, 0,
-+		0, 0, 0, 0
-+	};
-+
-+	const uint32x4_t cksum_mask = {
-+		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
-+		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
-+		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
-+		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
-+		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
-+		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
-+		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
-+		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
-+	};
-+
-+	const uint8x16_t cksum_flags = {
-+		((RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+		((RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+		((RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+		((RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+			RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+			RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+			RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+			RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+		0, 0, 0, 0, 0, 0, 0, 0
-+	};
-+
-+	{
-+		uint32x4_t d0 = vreinterpretq_u32_u64(descs[0]);
-+		uint32x4_t d1 = vreinterpretq_u32_u64(descs[1]);
-+		uint32x4_t d2 = vreinterpretq_u32_u64(descs[2]);
-+		uint32x4_t d3 = vreinterpretq_u32_u64(descs[3]);
-+		uint64x2_t f64, t64;
-+
-+		flags = vzip2q_u32(d1, d0);
-+		tmp_flags = vzip2q_u32(d3, d2);
-+		f64 = vreinterpretq_u64_u32(flags);
-+		t64 = vreinterpretq_u64_u32(tmp_flags);
-+		desc_lo = vreinterpretq_u32_u64(vcombine_u64(vget_low_u64(f64),
-+							     vget_low_u64(t64)));
-+		desc_hi = vreinterpretq_u32_u64(vcombine_u64(vget_high_u64(f64),
-+							     vget_high_u64(t64)));
-+	}
-+
-+	desc_lo = vandq_u32(desc_lo, desc_msk);
-+	desc_hi = vandq_u32(desc_hi, rss_msk);
-+
-+	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(vlan_flags,
-+						vreinterpretq_u8_u32(desc_lo)));
-+	flags = vandq_u32(tmp_flags, vlan_msk);
-+
-+	desc_lo = vshrq_n_u32(desc_lo, 10);
-+	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(cksum_flags,
-+					 vreinterpretq_u8_u32(desc_lo)));
-+	tmp_flags = vshlq_n_u32(tmp_flags, 1);
-+	tmp_flags = vandq_u32(tmp_flags, cksum_mask);
-+	flags = vorrq_u32(flags, tmp_flags);
-+
-+	desc_hi = vshrq_n_u32(desc_hi, 27);
-+	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(rss_flags,
-+					 vreinterpretq_u8_u32(desc_hi)));
-+	flags = vorrq_u32(flags, tmp_flags);
-+
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+	if (rxq->fnav_enable) {
-+		uint32x4_t tmp_fnav_flags = sxe2_rx_desc_fnav_flags_neon(descs);
-+		flags = vorrq_u32(flags, tmp_fnav_flags);
-+
-+		rx_pkts[0]->hash.fdir.hi = desc[0].wb.fd_filter_id;
-+		rx_pkts[1]->hash.fdir.hi = desc[1].wb.fd_filter_id;
-+		rx_pkts[2]->hash.fdir.hi = desc[2].wb.fd_filter_id;
-+		rx_pkts[3]->hash.fdir.hi = desc[3].wb.fd_filter_id;
-+	}
-+#endif
-+
-+	rearm0 = vsetq_lane_u64(vgetq_lane_u32(flags, 0), mbuf_init, 1);
-+	rearm1 = vsetq_lane_u64(vgetq_lane_u32(flags, 1), mbuf_init, 1);
-+	rearm2 = vsetq_lane_u64(vgetq_lane_u32(flags, 2), mbuf_init, 1);
-+	rearm3 = vsetq_lane_u64(vgetq_lane_u32(flags, 3), mbuf_init, 1);
-+
-+	vst1q_u64((uint64_t *)&rx_pkts[0]->rearm_data, rearm0);
-+	vst1q_u64((uint64_t *)&rx_pkts[1]->rearm_data, rearm1);
-+	vst1q_u64((uint64_t *)&rx_pkts[2]->rearm_data, rearm2);
-+	vst1q_u64((uint64_t *)&rx_pkts[3]->rearm_data, rearm3);
-+}
-+
-+static inline void sxe2_rx_queue_rearm_neon(struct sxe2_rx_queue *rxq)
-+{
-+	volatile union sxe2_rx_desc *desc;
-+	struct rte_mbuf **buffer;
-+	struct rte_mbuf *mbuf0, *mbuf1;
-+	uint64x2_t dma_addr0, dma_addr1;
-+	uint64x2_t zero = vdupq_n_u64(0);
-+	uint64x2_t virt_addr0, virt_addr1;
-+	uint64x2_t hdr_room = vdupq_n_u64(RTE_PKTMBUF_HEADROOM);
-+	int32_t ret;
-+	uint16_t i;
-+	uint16_t new_tail;
-+
-+	buffer = &rxq->buffer_ring[rxq->realloc_start];
-+	desc = &rxq->desc_ring[rxq->realloc_start];
-+
-+	ret = rte_mempool_get_bulk(rxq->mb_pool, (void *)buffer,
-+			SXE2_RX_REARM_THRESH_VEC);
-+	if (ret != 0) {
-+		PMD_LOG_INFO(RX, "Rx mbuf vec alloc failed port_id=%u "
-+				"queue_id=%u", rxq->port_id, rxq->idx_in_func);
-+
-+		if ((rxq->realloc_num + SXE2_RX_REARM_THRESH_VEC) >= rxq->ring_depth) {
-+			for (i = 0; i < SXE2_RX_NUM_PER_LOOP_NEON; ++i) {
-+				buffer[i] = &rxq->fake_mbuf;
-+				vst1q_u64(RTE_CAST_PTR(uint64_t *, &desc[i].read), zero);
-+			}
++	if (offloads & RTE_ETH_RX_OFFLOAD_SECURITY) {
++		if (offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO) {
++			PMD_LOG_ERR(DRV, "Security offload is not compatible with LRO offload.");
++			ret = false;
++			goto l_end;
 +		}
 +
-+		rxq->vsi->adapter->dev_info.dev_data->rx_mbuf_alloc_failed +=
-+				SXE2_RX_REARM_THRESH_VEC;
++		if (offloads & RTE_ETH_RX_OFFLOAD_CHECKSUM) {
++			PMD_LOG_ERR(DRV, "Security offload is not compatible with checksum offload.");
++			ret = false;
++			goto l_end;
++		}
++
++		if (offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC) {
++			PMD_LOG_ERR(DRV, "Security offload is not compatible with keep CRC offload.");
++			ret = false;
++			goto l_end;
++		}
++
++		if (offloads & RTE_ETH_RX_OFFLOAD_VLAN) {
++			PMD_LOG_ERR(DRV, "Security offload is not compatible with vlan offload.");
++			ret = false;
++			goto l_end;
++		}
++	}
++
++l_end:
++	return ret;
++}
++
++static int32_t sxe2_ipsec_bitmap_mem_init(struct rte_bitmap **d_bmp, void **d_mem, uint32_t bits)
++{
++	struct rte_bitmap *bmp = NULL;
++	uint32_t bmp_size           = 0;
++	void *mem              = NULL;
++	int32_t ret                = -1;
++
++	bmp_size = rte_bitmap_get_memory_footprint(bits);
++
++	mem = rte_zmalloc("ipsec bitmap", bmp_size, RTE_CACHE_LINE_SIZE);
++	if (mem == NULL) {
++		PMD_LOG_ERR(DRV, "Alloc ipsec bitmap memory failed.");
++		ret = -ENOMEM;
 +		goto l_end;
 +	}
 +
-+	for (i = 0; i < SXE2_RX_REARM_THRESH_VEC; i += 2, buffer += 2) {
-+		mbuf0 = buffer[0];
-+		mbuf1 = buffer[1];
-+#if RTE_IOVA_IN_MBUF
-+		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-+				 offsetof(struct rte_mbuf, buf_addr) + 8);
-+#endif
-+		virt_addr0 = vld1q_u64((uint64_t *)&mbuf0->buf_addr);
-+		virt_addr1 = vld1q_u64((uint64_t *)&mbuf1->buf_addr);
-+
-+#if RTE_IOVA_IN_MBUF
-+		dma_addr0 = vdupq_n_u64((uint64_t)vget_high_u64(virt_addr0));
-+		dma_addr1 = vdupq_n_u64((uint64_t)vget_high_u64(virt_addr1));
-+#else
-+		dma_addr0 = vdupq_n_u64((uint64_t)vget_low_u64(virt_addr0));
-+		dma_addr1 = vdupq_n_u64((uint64_t)vget_low_u64(virt_addr1));
-+#endif
-+		dma_addr0 = vaddq_u64(dma_addr0, hdr_room);
-+		dma_addr1 = vaddq_u64(dma_addr1, hdr_room);
-+
-+		vst1q_u64(RTE_CAST_PTR(uint64_t *, &desc++->read), dma_addr0);
-+		vst1q_u64(RTE_CAST_PTR(uint64_t *, &desc++->read), dma_addr1);
++	bmp = rte_bitmap_init(bits, mem, bmp_size);
++	if (bmp == NULL) {
++		PMD_LOG_ERR(DRV, "Failed to init ipsec bitmap.");
++		rte_free(mem);
++		ret = -ENOMEM;
++		goto l_end;
 +	}
 +
-+	rxq->realloc_start += SXE2_RX_REARM_THRESH_VEC;
-+	if (rxq->realloc_start >= rxq->ring_depth)
-+		rxq->realloc_start = 0;
-+	rxq->realloc_num -= SXE2_RX_REARM_THRESH_VEC;
++	*d_bmp = bmp;
++	*d_mem = mem;
 +
-+	new_tail = (rxq->realloc_start == 0) ?
-+		(rxq->ring_depth - 1) : (rxq->realloc_start - 1);
++	ret = 0;
 +
-+	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, new_tail);
++l_end:
++	return ret;
++}
++
++static int32_t sxe2_ipsec_bitmap_init(struct sxe2_security_ctx *sxe2_sctx)
++{
++	int32_t ret  = -1;
++
++	ret = sxe2_ipsec_bitmap_mem_init(&sxe2_sctx->ipsec_ctx.bmp.tx_sa_bmp,
++			&sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem, sxe2_sctx->ipsec_ctx.max_tx_sa);
++	if (ret)
++		goto l_end;
++
++	ret = sxe2_ipsec_bitmap_mem_init(&sxe2_sctx->ipsec_ctx.bmp.rx_sa_bmp,
++			&sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem, sxe2_sctx->ipsec_ctx.max_rx_sa);
++	if (ret) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem);
++		sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem = NULL;
++		goto l_end;
++	}
++
++	ret = sxe2_ipsec_bitmap_mem_init(&sxe2_sctx->ipsec_ctx.bmp.rx_tcam_bmp,
++			&sxe2_sctx->ipsec_ctx.bmp.rx_tcam_mem, sxe2_sctx->ipsec_ctx.max_tcam);
++	if (ret) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem);
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem);
++		sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem = NULL;
++		sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem = NULL;
++		goto l_end;
++	}
++
++	ret = sxe2_ipsec_bitmap_mem_init(&sxe2_sctx->ipsec_ctx.bmp.rx_udp_bmp,
++			&sxe2_sctx->ipsec_ctx.bmp.rx_udp_mem, sxe2_sctx->ipsec_ctx.max_udp_group);
++	if (ret) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem);
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem);
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.rx_tcam_mem);
++		sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem = NULL;
++		sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem = NULL;
++		sxe2_sctx->ipsec_ctx.bmp.rx_tcam_mem = NULL;
++		goto l_end;
++	}
++
++l_end:
++	return ret;
++}
++
++static uint16_t sxe2_ipsec_id_alloc(struct rte_bitmap *bmp, uint16_t bits)
++{
++	uint16_t i = 0;
++	uint16_t index = 0XFFFF;
++
++	for (i = 0; i < bits; i++) {
++		if (!rte_bitmap_get(bmp, i)) {
++			index = i;
++			rte_bitmap_set(bmp, i);
++			break;
++		}
++	}
++
++	return index;
++}
++
++static void sxe2_ipsec_id_free(struct rte_bitmap *bmp, uint16_t pos)
++{
++	rte_bitmap_clear(bmp, pos);
++}
++
++static struct rte_cryptodev_symmetric_capability *
++sxe2_ipsec_cipher_cap_get(struct rte_cryptodev_capabilities *crypto_cap,
++			enum rte_crypto_cipher_algorithm algo)
++{
++	struct rte_cryptodev_symmetric_capability *capability = NULL;
++	uint8_t index                                              = 0;
++
++	for (index = 0; index < SXE2_IPSEC_CAP_MAX; index++) {
++		if (crypto_cap[index].sym.xform_type == RTE_CRYPTO_SYM_XFORM_CIPHER &&
++			crypto_cap[index].sym.cipher.algo == algo) {
++			capability = &crypto_cap[index].sym;
++			goto l_end;
++		}
++	}
++
++l_end:
++	return capability;
++}
++
++static struct rte_cryptodev_symmetric_capability *
++sxe2_ipsec_auth_cap_get(struct rte_cryptodev_capabilities *crypto_cap,
++			enum rte_crypto_auth_algorithm algo)
++{
++	struct rte_cryptodev_symmetric_capability *capability = NULL;
++	uint8_t index                                              = 0;
++
++	for (index = 0; index < SXE2_IPSEC_CAP_MAX; index++) {
++		if (crypto_cap[index].sym.xform_type == RTE_CRYPTO_SYM_XFORM_AUTH &&
++			crypto_cap[index].sym.auth.algo == algo) {
++			capability = &crypto_cap[index].sym;
++			goto l_end;
++		}
++	}
++
++l_end:
++	return capability;
++}
++
++static bool sxe2_security_valid_key(uint16_t src_key, uint16_t max_key,
++				    uint16_t min_key, uint16_t increment)
++{
++	bool is_valid = false;
++
++	if (src_key > SXE2_IPSEC_MAX_KEY_LEN) {
++		is_valid = false;
++		goto l_end;
++	}
++
++	if (src_key < min_key || src_key > max_key) {
++		is_valid = false;
++		goto l_end;
++	}
++
++	if (increment == 0) {
++		is_valid = true;
++		goto l_end;
++	}
++
++	if ((uint16_t)(src_key - min_key) % increment) {
++		is_valid = false;
++		goto l_end;
++	}
++
++	is_valid = true;
++
++l_end:
++	return is_valid;
++}
++
++static int32_t
++sxe2_ipsec_valid_cipher(enum rte_crypto_cipher_operation cipher_op,
++			struct rte_cryptodev_capabilities *crypto_cap,
++			struct rte_crypto_sym_xform *xform)
++{
++	const struct rte_cryptodev_symmetric_capability *capability = NULL;
++	uint16_t src_key                                = 0;
++	uint16_t max_key                                = 0;
++	uint16_t min_key                                = 0;
++	uint16_t increment                              = 0;
++	int32_t ret                                    = -1;
++
++	if (xform->cipher.op != cipher_op) {
++		PMD_LOG_ERR(DRV, "Invalid cipher direction specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	capability = sxe2_ipsec_cipher_cap_get(crypto_cap, xform->cipher.algo);
++	if (!capability) {
++		PMD_LOG_ERR(DRV, "Invalid cipher algo specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	src_key = xform->cipher.key.length;
++	min_key = capability->cipher.key_size.min;
++	max_key = capability->cipher.key_size.max;
++	increment = capability->cipher.key_size.increment;
++	if (!sxe2_security_valid_key(src_key, max_key, min_key, increment)) {
++		PMD_LOG_ERR(DRV, "Invalid cipher key size specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_ipsec_valid_auth(enum rte_crypto_auth_operation auth_op,
++		      struct rte_cryptodev_capabilities *crypto_cap,
++		      struct rte_crypto_sym_xform *xform)
++{
++	const struct rte_cryptodev_symmetric_capability *capability = NULL;
++	uint16_t src_key                                = 0;
++	uint16_t max_key                                = 0;
++	uint16_t min_key                                = 0;
++	uint16_t increment                              = 0;
++	int32_t ret                                    = -1;
++
++	if (xform->auth.op != auth_op) {
++		PMD_LOG_ERR(DRV, "Invalid auth direction specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	capability = sxe2_ipsec_auth_cap_get(crypto_cap, xform->auth.algo);
++	if (!capability) {
++		PMD_LOG_ERR(DRV, "Invalid auth algo specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	src_key = xform->auth.key.length;
++	min_key = capability->auth.key_size.min;
++	max_key = capability->auth.key_size.max;
++	increment = capability->auth.key_size.increment;
++	if (!sxe2_security_valid_key(src_key, max_key, min_key, increment)) {
++		PMD_LOG_ERR(DRV, "Invalid auth key size specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++static bool
++sxe2_ipsec_valid_algo(enum rte_crypto_auth_algorithm auth_algo,
++		      enum rte_crypto_cipher_algorithm cipher_algo)
++{
++	bool ret = false;
++
++	if ((cipher_algo == SXE2_RTE_CRYPTO_CIPHER_AES_CBC &&
++		 auth_algo == SXE2_RTE_CRYPTO_AUTH_SHA256_HMAC) ||
++		(cipher_algo == SXE2_RTE_RTE_CRYPTO_CIPHER_SM4_CBC &&
++		 auth_algo == SXE2_RTE_CRYPTO_AUTH_SM3_HMAC)) {
++		ret = true;
++		goto l_end;
++	}
++
++l_end:
++	return ret;
++}
++
++static enum sxe2_ipsec_algorithm
++sxe2_ipsec_algo_gen(enum rte_crypto_cipher_algorithm cipher_algo)
++{
++	enum sxe2_ipsec_algorithm algo = SXE2_IPSEC_ALGO_INVALID;
++
++	if (cipher_algo == SXE2_RTE_CRYPTO_CIPHER_AES_CBC)
++		algo = SXE2_IPSEC_ALGO_AES_CBC_AND_SHA256_128_HMAC;
++	else if (cipher_algo == SXE2_RTE_RTE_CRYPTO_CIPHER_SM4_CBC)
++		algo = SXE2_IPSEC_ALGO_SM4_CBC_AND_SM3_96_HMAC;
++
++	return algo;
++}
++
++static int32_t
++	sxe2_ipsec_valid_xform(struct sxe2_security_ctx *sxe2_sctx,
++			       struct rte_security_session_conf *conf)
++{
++	struct rte_crypto_sym_xform *xform = NULL;
++	struct rte_cryptodev_capabilities *crypto_cap =
++		sxe2_sctx->sxe2_capabilities[SXE2_SECURITY_PROTOCOL_IPSEC].crypto_capabilities;
++	enum rte_crypto_auth_algorithm auth_algo = RTE_CRYPTO_AUTH_NULL;
++	enum rte_crypto_cipher_algorithm cipher_algo = RTE_CRYPTO_CIPHER_NULL;
++	int32_t ret = -1;
++
++	if (conf->ipsec.direction == RTE_SECURITY_IPSEC_SA_DIR_EGRESS &&
++		conf->crypto_xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
++		xform = conf->crypto_xform;
++		cipher_algo = xform->cipher.algo;
++		ret = sxe2_ipsec_valid_cipher(RTE_CRYPTO_CIPHER_OP_ENCRYPT,
++					      crypto_cap, xform);
++		if (ret)
++			goto l_end;
++
++		if (conf->crypto_xform->next) {
++			if (conf->crypto_xform->next->type == RTE_CRYPTO_SYM_XFORM_AUTH) {
++				auth_algo = conf->crypto_xform->next->auth.algo;
++				if (!sxe2_ipsec_valid_algo(auth_algo, cipher_algo)) {
++					PMD_LOG_ERR(DRV, "Invalid algo group.");
++					ret = -EINVAL;
++					goto l_end;
++				}
++				xform = conf->crypto_xform->next;
++				ret = sxe2_ipsec_valid_auth(RTE_CRYPTO_AUTH_OP_GENERATE,
++									crypto_cap, xform);
++				if (ret)
++					goto l_end;
++			} else {
++				PMD_LOG_ERR(DRV, "Encrypt direction next xform only verify.");
++				ret = -EINVAL;
++				goto l_end;
++			}
++		}
++	} else if (conf->ipsec.direction == RTE_SECURITY_IPSEC_SA_DIR_INGRESS &&
++		conf->crypto_xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
++		xform = conf->crypto_xform;
++		ret = sxe2_ipsec_valid_cipher(RTE_CRYPTO_CIPHER_OP_DECRYPT,
++										crypto_cap, xform);
++		if (ret)
++			goto l_end;
++
++	} else if (conf->ipsec.direction == RTE_SECURITY_IPSEC_SA_DIR_INGRESS &&
++		conf->crypto_xform->type == RTE_CRYPTO_SYM_XFORM_AUTH) {
++		xform = conf->crypto_xform;
++		ret = sxe2_ipsec_valid_auth(RTE_CRYPTO_AUTH_OP_VERIFY, crypto_cap, xform);
++		if (ret)
++			goto l_end;
++
++		if (conf->crypto_xform->next &&
++			conf->crypto_xform->next->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
++			auth_algo = conf->crypto_xform->auth.algo;
++			cipher_algo = conf->crypto_xform->next->cipher.algo;
++			if (!sxe2_ipsec_valid_algo(auth_algo, cipher_algo)) {
++				PMD_LOG_ERR(DRV, "Invalid algo group.");
++				ret = -EINVAL;
++				goto l_end;
++			}
++			xform = conf->crypto_xform->next;
++			ret = sxe2_ipsec_valid_cipher(RTE_CRYPTO_CIPHER_OP_DECRYPT,
++										crypto_cap, xform);
++			if (ret)
++				goto l_end;
++		} else {
++			PMD_LOG_ERR(DRV, "Not support decrypt direction only verify, but not decrypt.");
++			ret = -EINVAL;
++			goto l_end;
++		}
++	} else {
++		PMD_LOG_ERR(DRV, "Encrypt/decrypt xform invalid.");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_ipsec_valid_udp(struct rte_security_session_conf *conf)
++{
++	int32_t ret = -1;
++	uint16_t sport = conf->ipsec.udp.sport;
++	uint16_t dport = conf->ipsec.udp.dport;
++
++	if (conf->ipsec.options.udp_encap == 0) {
++		ret = 0;
++		goto l_end;
++	}
++
++	if (sport == 0 && dport == 0) {
++		PMD_LOG_ERR(DRV, "Invalid udp port, cannot be zero.");
++		ret = -1;
++		goto l_end;
++	}
++
++	if (sport != 0 && dport != 0 && sport != dport) {
++		PMD_LOG_ERR(DRV, "Invalid udp port, if sport and dport is not zero, must be equal.");
++		ret = -1;
++		goto l_end;
++	}
++
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_ipsec_session_conf_valid(struct sxe2_security_ctx *sxe2_sctx,
++			      struct rte_security_session_conf *conf)
++{
++	int32_t ret = -1;
++
++	if (sxe2_sctx == NULL) {
++		PMD_LOG_ERR(DRV, "Invalid  security ctx.");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	if (conf->action_type !=
++		sxe2_sctx->sxe2_capabilities[SXE2_SECURITY_PROTOCOL_IPSEC].action) {
++		PMD_LOG_ERR(DRV, "Invalid action specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	if (conf->ipsec.mode !=
++		sxe2_sctx->sxe2_capabilities[SXE2_SECURITY_PROTOCOL_IPSEC].ipsec.mode) {
++		PMD_LOG_ERR(DRV, "Invalid IPsec mode specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	if (conf->ipsec.proto !=
++	    sxe2_sctx->sxe2_capabilities[SXE2_SECURITY_PROTOCOL_IPSEC].ipsec.proto) {
++		PMD_LOG_ERR(DRV, "Invalid IPsec protocol specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	if (conf->ipsec.options.esn) {
++		PMD_LOG_ERR(DRV, "Not support esn.");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	if (conf->ipsec.direction == RTE_SECURITY_IPSEC_SA_DIR_INGRESS &&
++		conf->ipsec.spi == 0) {
++		PMD_LOG_ERR(DRV, "spi cannot be zero.");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	if (conf->crypto_xform == NULL) {
++		PMD_LOG_ERR(DRV, "Invalid ipsec xform specified");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	ret = sxe2_ipsec_valid_udp(conf);
++	if (ret)
++		goto l_end;
++
++	ret = sxe2_ipsec_valid_xform(sxe2_sctx, conf);
++	if (ret)
++		goto l_end;
++
++l_end:
++	return ret;
++}
++
++static void
++sxe2_ipsec_session_save(struct sxe2_security_ctx *sxe2_sctx,
++			struct rte_security_session_conf *conf,
++			struct sxe2_security_session *sxe2_sess, uint16_t sa_id, uint16_t index)
++{
++	enum rte_crypto_cipher_algorithm cipher_algo   = RTE_CRYPTO_CIPHER_NULL;
++
++	sxe2_sess->adapter = sxe2_sctx->adapter;
++	sxe2_sess->direction = conf->ipsec.direction;
++	sxe2_sess->protocol = conf->protocol;
++	sxe2_sess->mode = conf->ipsec.mode;
++	sxe2_sess->sa_proto = conf->ipsec.proto;
++	sxe2_sess->sa.spi = conf->ipsec.spi;
++	sxe2_sess->sa.hw_idx = sa_id;
++	sxe2_sess->sa.sw_idx = index;
++
++	if (conf->ipsec.options.esn) {
++		sxe2_sess->esn.enabled = true;
++		sxe2_sess->esn.value = conf->ipsec.esn.value;
++	}
++
++	if (sxe2_sess->mode == RTE_SECURITY_IPSEC_SA_MODE_TUNNEL)
++		sxe2_sess->type = conf->ipsec.tunnel.type;
++
++	if (conf->ipsec.options.udp_encap) {
++		sxe2_sess->udp_cap.enabled = true;
++		memcpy(&sxe2_sess->udp_cap.value, &conf->ipsec.udp,
++			sizeof(struct rte_security_ipsec_udp_param));
++	}
++
++	sxe2_sess->pkt_metadata_template.sa_idx = sa_id;
++	sxe2_sess->pkt_metadata_template.ol_flags |= SXE2_IPSEC_OL_FLAGS_IS_TUN;
++	sxe2_sess->pkt_metadata_template.ol_flags |= SXE2_IPSEC_OL_FLAGS_IS_ESP;
++
++	if (conf->ipsec.direction == RTE_SECURITY_IPSEC_SA_DIR_EGRESS &&
++		conf->crypto_xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
++		cipher_algo = conf->crypto_xform->cipher.algo;
++		sxe2_sess->pkt_metadata_template.algo = sxe2_ipsec_algo_gen(cipher_algo);
++		if (conf->crypto_xform->next)
++			sxe2_sess->pkt_metadata_template.mode = SXE2_IPSEC_MODE_ENC_AND_AUTH;
++		else
++			sxe2_sess->pkt_metadata_template.mode = SXE2_IPSEC_MODE_ONLY_ENCRYPT;
++	}
++
++	PMD_LOG_INFO(DRV,
++		"Save security info to session ctx, said:%u, spi:%u, mode:%u, algo:%u",
++		sa_id, sxe2_sess->sa.spi,
++		sxe2_sess->pkt_metadata_template.mode,
++		sxe2_sess->pkt_metadata_template.algo);
++}
++
++static void
++sxe2_ipsec_tx_sa_fill(struct sxe2_ipsec_tx_sa *tx_sa,
++		      struct rte_security_session_conf *conf)
++{
++	uint8_t *dst = NULL;
++	uint8_t len  = 0;
++
++	memcpy(&tx_sa->xform, &conf->ipsec, sizeof(struct rte_security_ipsec_xform));
++
++	if (conf->crypto_xform->next)
++		tx_sa->mode = SXE2_IPSEC_MODE_ENC_AND_AUTH;
++	else
++		tx_sa->mode = SXE2_IPSEC_MODE_ONLY_ENCRYPT;
++
++	if (conf->crypto_xform->cipher.algo == SXE2_RTE_RTE_CRYPTO_CIPHER_SM4_CBC)
++		tx_sa->algo = SXE2_IPSEC_ALGO_SM4_CBC_AND_SM3_96_HMAC;
++	else
++		tx_sa->algo = SXE2_IPSEC_ALGO_AES_CBC_AND_SHA256_128_HMAC;
++
++	dst = tx_sa->enc_key;
++	len = conf->crypto_xform->cipher.key.length;
++	memcpy(dst, conf->crypto_xform->cipher.key.data, len);
++
++	if (conf->crypto_xform->next) {
++		dst = tx_sa->auth_key;
++		len = conf->crypto_xform->next->auth.key.length;
++		memcpy(dst, conf->crypto_xform->next->auth.key.data, len);
++	}
++}
++
++static int32_t
++sxe2_ipsec_tx_sa_add(struct sxe2_security_ctx *sxe2_sctx,
++		     struct rte_security_session_conf *conf,
++		     struct sxe2_security_session *sxe2_sess)
++{
++	struct sxe2_ipsec_tx_sa *tx_sa = NULL;
++	struct rte_bitmap *bmp          = sxe2_sctx->ipsec_ctx.bmp.tx_sa_bmp;
++	uint16_t bits                        = sxe2_sctx->ipsec_ctx.max_tx_sa;
++	uint16_t index                       = 0xFFFF;
++	int32_t ret                         = -1;
++
++	rte_spinlock_lock(&sxe2_sctx->security_lock);
++	index = sxe2_ipsec_id_alloc(bmp, bits);
++	rte_spinlock_unlock(&sxe2_sctx->security_lock);
++	if (index == 0xFFFF) {
++		PMD_LOG_ERR(DRV, "Failed to allocate ipsec tx sa index.");
++		ret = -ENOMEM;
++		goto l_end;
++	}
++	tx_sa = &sxe2_sctx->ipsec_ctx.tx_sa[index];
++
++	sxe2_ipsec_tx_sa_fill(tx_sa, conf);
++
++	ret = sxe2_drv_ipsec_txsa_add(sxe2_sctx->adapter, tx_sa);
++	if (ret) {
++		PMD_LOG_ERR(DRV, "Failed to add tx sa.");
++		ret = -EIO;
++		rte_spinlock_lock(&sxe2_sctx->security_lock);
++		sxe2_ipsec_id_free(bmp, index);
++		rte_spinlock_unlock(&sxe2_sctx->security_lock);
++		goto l_end;
++	}
++
++	sxe2_ipsec_session_save(sxe2_sctx, conf, sxe2_sess, tx_sa->hw_sa_id, tx_sa->id);
++
++	PMD_LOG_INFO(DRV, "Add tx sa success, tx sa id: %u, index: %u.",
++		tx_sa->hw_sa_id, tx_sa->id);
++
++l_end:
++	return ret;
++}
++
++static uint16_t
++sxe2_ipsec_tcam_id_find(struct sxe2_ipsec_rx_tcam *rx_tcam,
++			struct rte_security_ipsec_tunnel_param tunnel, uint16_t len)
++{
++	struct sxe2_ipsec_rx_tcam *per = NULL;
++	uint16_t tcam_id = 0XFFFF;
++	uint16_t i       = 0;
++
++	for (i = 0; i < len; i++) {
++		per = &rx_tcam[i];
++		if (per->ip_addr.type == tunnel.type) {
++			if (tunnel.type == RTE_SECURITY_IPSEC_TUNNEL_IPV4 &&
++			per->ip_addr.dst_ipv4 == (uint32_t)tunnel.ipv4.dst_ip.s_addr) {
++				tcam_id = i;
++				goto l_end;
++			}
++			if (tunnel.type == RTE_SECURITY_IPSEC_TUNNEL_IPV6) {
++				if (!memcmp(&tunnel.ipv6, &per->ip_addr.dst_ipv6,
++				sizeof(tunnel.ipv6))) {
++					tcam_id = i;
++					goto l_end;
++				}
++			}
++		}
++	}
++
++l_end:
++	return tcam_id;
++}
++
++static uint16_t
++sxe2_ipsec_group_id_find(struct sxe2_ipsec_rx_udp_group *rx_udp_group,
++			 uint16_t udp_port, uint8_t sport_en, uint8_t dport_en, uint16_t len)
++{
++	struct sxe2_ipsec_rx_udp_group *per = NULL;
++	uint16_t group_id = 0XFFFF;
++	uint16_t i;
++
++	for (i = 0; i < len; i++) {
++		per = &rx_udp_group[i];
++		if (per->udp_port == udp_port && per->sport_en == sport_en &&
++			per->dport_en == dport_en) {
++			group_id = i;
++			goto l_end;
++		}
++	}
++
++l_end:
++	return group_id;
++}
++
++static void
++sxe2_ipsec_rx_sa_fill(struct sxe2_ipsec_rx_sa *rx_sa,
++		      struct rte_security_session_conf *conf)
++{
++	uint8_t *dst = NULL;
++	uint8_t len = 0;
++
++	memcpy(&rx_sa->xform, &conf->ipsec, sizeof(struct rte_security_ipsec_xform));
++
++	if (conf->crypto_xform->next)
++		rx_sa->mode = SXE2_IPSEC_MODE_ENC_AND_AUTH;
++	else
++		rx_sa->mode = SXE2_IPSEC_MODE_ONLY_ENCRYPT;
++
++	if (conf->crypto_xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
++		if (conf->crypto_xform->cipher.algo == SXE2_RTE_RTE_CRYPTO_CIPHER_SM4_CBC)
++			rx_sa->algo = SXE2_IPSEC_ALGO_SM4_CBC_AND_SM3_96_HMAC;
++		else
++			rx_sa->algo = SXE2_IPSEC_ALGO_AES_CBC_AND_SHA256_128_HMAC;
++	} else {
++		if (conf->crypto_xform->auth.algo == SXE2_RTE_CRYPTO_AUTH_SM3_HMAC)
++			rx_sa->algo = SXE2_IPSEC_ALGO_SM4_CBC_AND_SM3_96_HMAC;
++		else
++			rx_sa->algo = SXE2_IPSEC_ALGO_AES_CBC_AND_SHA256_128_HMAC;
++	}
++
++	if (conf->crypto_xform->next) {
++		dst = rx_sa->auth_key;
++		len = conf->crypto_xform->auth.key.length;
++		memcpy(dst, conf->crypto_xform->auth.key.data, len);
++
++		dst = rx_sa->enc_key;
++		len = conf->crypto_xform->next->cipher.key.length;
++		memcpy(dst, conf->crypto_xform->next->cipher.key.data, len);
++	} else {
++		dst = rx_sa->enc_key;
++		len = conf->crypto_xform->cipher.key.length;
++		memcpy(dst, conf->crypto_xform->cipher.key.data, len);
++	}
++
++	rx_sa->spi = conf->ipsec.spi;
++}
++
++static int32_t
++sxe2_ipsec_rx_tcam_fill(struct sxe2_security_ctx *sxe2_sctx, uint16_t *tcam_id,
++			struct rte_security_session_conf *conf)
++{
++	int32_t ret = -1;
++	uint16_t len = sxe2_sctx->ipsec_ctx.max_tcam;
++	struct sxe2_ipsec_rx_tcam *rx_tcam = NULL;
++
++	*tcam_id = sxe2_ipsec_tcam_id_find(sxe2_sctx->ipsec_ctx.rx_tcam,
++			conf->ipsec.tunnel, len);
++	if (*tcam_id == 0XFFFF) {
++		*tcam_id = sxe2_ipsec_id_alloc(sxe2_sctx->ipsec_ctx.bmp.rx_tcam_bmp, len);
++		if (*tcam_id == 0xFFFF) {
++			ret = -ENOMEM;
++			goto l_end;
++		}
++		rx_tcam = &sxe2_sctx->ipsec_ctx.rx_tcam[*tcam_id];
++
++		rx_tcam->ip_addr.type = conf->ipsec.tunnel.type;
++		if (rx_tcam->ip_addr.type == RTE_SECURITY_IPSEC_TUNNEL_IPV4) {
++			rx_tcam->ip_addr.dst_ipv4 = (uint32_t)conf->ipsec.tunnel.ipv4.dst_ip.s_addr;
++		} else {
++			memcpy(&rx_tcam->ip_addr.dst_ipv6, &conf->ipsec.tunnel.ipv6.dst_addr,
++				sizeof(rx_tcam->ip_addr.dst_ipv6));
++		}
++	} else {
++		rx_tcam = &sxe2_sctx->ipsec_ctx.rx_tcam[*tcam_id];
++	}
++	rx_tcam->ref_cnt++;
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_ipsec_rx_udp_group_fill(struct sxe2_security_ctx *sxe2_sctx, uint16_t *udp_group_id,
++			     struct rte_security_session_conf *conf)
++{
++	int32_t ret = -1;
++	uint16_t len = sxe2_sctx->ipsec_ctx.max_udp_group;
++	struct sxe2_ipsec_rx_udp_group *rx_udp_group = NULL;
++	uint8_t sport_en = 0;
++	uint8_t dport_en = 0;
++	uint16_t udp_port = 0;
++
++	if (!conf->ipsec.options.udp_encap) {
++		ret = 0;
++		goto l_end;
++	}
++
++	if (conf->ipsec.udp.sport) {
++		sport_en = 1;
++		udp_port = conf->ipsec.udp.sport;
++	} else {
++		sport_en = 0;
++	}
++	if (conf->ipsec.udp.dport) {
++		dport_en = 1;
++		udp_port = conf->ipsec.udp.dport;
++	} else {
++		dport_en = 0;
++	}
++
++	*udp_group_id = sxe2_ipsec_group_id_find(sxe2_sctx->ipsec_ctx.rx_udp_group,
++			udp_port, sport_en, dport_en, len);
++	if (*udp_group_id == 0XFFFF) {
++		*udp_group_id = sxe2_ipsec_id_alloc(sxe2_sctx->ipsec_ctx.bmp.rx_udp_bmp, len);
++		if (*udp_group_id == 0xFFFF) {
++			ret = -ENOMEM;
++			goto l_end;
++		}
++		rx_udp_group = &sxe2_sctx->ipsec_ctx.rx_udp_group[*udp_group_id];
++		rx_udp_group->sport_en = sport_en;
++		rx_udp_group->dport_en = dport_en;
++		rx_udp_group->udp_port = udp_port;
++	} else {
++		rx_udp_group = &sxe2_sctx->ipsec_ctx.rx_udp_group[*udp_group_id];
++	}
++	rx_udp_group->ref_cnt++;
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_ipsec_rx_sa_add(struct sxe2_security_ctx *sxe2_sctx,
++		     struct rte_security_session_conf *conf,
++		     struct sxe2_security_session *sxe2_sess)
++{
++	struct sxe2_ipsec_rx_tcam *rx_tcam = NULL;
++	struct sxe2_ipsec_rx_sa *rx_sa     = NULL;
++	struct sxe2_ipsec_rx_udp_group *rx_udp_group = NULL;
++	struct rte_bitmap *rx_sa_bmp        = sxe2_sctx->ipsec_ctx.bmp.rx_sa_bmp;
++	struct rte_bitmap *rx_tcam_bmp      = sxe2_sctx->ipsec_ctx.bmp.rx_tcam_bmp;
++	uint16_t sa_bits                         = sxe2_sctx->ipsec_ctx.max_rx_sa;
++	uint16_t sa_id                           = 0xFFFF;
++	uint16_t tcam_id                         = 0xFFFF;
++	uint16_t udp_group_id                    = 0xFFFF;
++	int32_t ret                             = -1;
++
++	rte_spinlock_lock(&sxe2_sctx->security_lock);
++	sa_id = sxe2_ipsec_id_alloc(rx_sa_bmp, sa_bits);
++	if (sa_id == 0xFFFF) {
++		PMD_LOG_ERR(DRV, "Failed to allocate ipsec rx sa index.");
++		ret = -ENOMEM;
++		goto l_end;
++	}
++	rx_sa = &sxe2_sctx->ipsec_ctx.rx_sa[sa_id];
++	sxe2_ipsec_rx_sa_fill(rx_sa, conf);
++
++	ret = sxe2_ipsec_rx_tcam_fill(sxe2_sctx, &tcam_id, conf);
++	if (ret) {
++		PMD_LOG_ERR(DRV, "Failed to allocate ipsec rx tcam index.");
++		sxe2_ipsec_id_free(rx_sa_bmp, sa_id);
++		goto l_end;
++	}
++	rx_sa->tcam_id = tcam_id;
++	rx_tcam = &sxe2_sctx->ipsec_ctx.rx_tcam[tcam_id];
++
++	ret = sxe2_ipsec_rx_udp_group_fill(sxe2_sctx, &udp_group_id, conf);
++	if (ret) {
++		PMD_LOG_ERR(DRV, "Failed to allocate ipsec rx udp group index.");
++		sxe2_ipsec_id_free(rx_sa_bmp, sa_id);
++		sxe2_ipsec_id_free(rx_tcam_bmp, tcam_id);
++		goto l_end;
++	}
++
++	if (udp_group_id != 0XFFFF) {
++		rx_sa->udp_group_id = (uint8_t)udp_group_id;
++		rx_udp_group = &sxe2_sctx->ipsec_ctx.rx_udp_group[udp_group_id];
++	} else {
++		rx_sa->udp_group_id = 0XFF;
++	}
++
++	ret = sxe2_drv_ipsec_rxsa_add(sxe2_sctx->adapter, rx_sa, rx_tcam, rx_udp_group);
++	if (ret) {
++		PMD_LOG_ERR(DRV, "Failed to add rx sa.");
++		sxe2_ipsec_id_free(rx_sa_bmp, sa_id);
++		rx_tcam->ref_cnt--;
++		if (rx_tcam->ref_cnt == 0)
++			sxe2_ipsec_id_free(rx_tcam_bmp, tcam_id);
++
++		if (rx_udp_group != NULL) {
++			rx_udp_group->ref_cnt--;
++			if (rx_udp_group->ref_cnt == 0)
++				sxe2_ipsec_id_free(sxe2_sctx->ipsec_ctx.bmp.rx_udp_bmp,
++						   udp_group_id);
++		}
++
++		ret = -EIO;
++		goto l_end;
++	}
++
++	sxe2_ipsec_session_save(sxe2_sctx, conf, sxe2_sess, rx_sa->hw_sa_id, rx_sa->id);
++
++	PMD_LOG_INFO(DRV, "Add rx sa success, rx sa id: %u, rx ip id: %u, group id: %u, index: %u.",
++				rx_sa->hw_sa_id, rx_sa->hw_ip_id, rx_sa->udp_group_id, rx_sa->id);
++
++l_end:
++	rte_spinlock_unlock(&sxe2_sctx->security_lock);
++	return ret;
++}
++
++static int32_t
++sxe2_ipsec_hw_table_add(struct sxe2_security_ctx *sxe2_sctx,
++			struct rte_security_session_conf *conf,
++			struct sxe2_security_session *sxe2_sess)
++{
++	int32_t ret = -1;
++
++	switch (conf->ipsec.direction) {
++	case RTE_SECURITY_IPSEC_SA_DIR_EGRESS:
++		ret = sxe2_ipsec_tx_sa_add(sxe2_sctx, conf, sxe2_sess);
++		break;
++	case RTE_SECURITY_IPSEC_SA_DIR_INGRESS:
++		ret = sxe2_ipsec_rx_sa_add(sxe2_sctx, conf, sxe2_sess);
++		break;
++	default:
++		PMD_LOG_ERR(DRV, "Invalid sa direction.");
++		ret = -EINVAL;
++		break;
++	}
++
++	return ret;
++}
++
++int sxe2_ipsec_session_create(void *device,
++			      struct rte_security_session_conf *conf,
++			      struct sxe2_security_session *sxe2_sess)
++{
++	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)device;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(eth_dev);
++	struct sxe2_security_ctx *sxe2_sctx = &adapter->security_ctx;
++	int32_t ret = -1;
++
++	ret = sxe2_ipsec_session_conf_valid(sxe2_sctx, conf);
++	if (ret) {
++		PMD_LOG_ERR(DRV, "Input ipsec session conf invalid.");
++		goto l_end;
++	}
++
++	ret = sxe2_ipsec_hw_table_add(sxe2_sctx, conf, sxe2_sess);
++	if (ret)
++		goto l_end;
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_ipsec_tx_sa_delete(struct sxe2_security_ctx *sxe2_sctx,
++			struct sxe2_security_session *sxe2_sess)
++{
++	struct sxe2_ipsec_tx_sa *tx_sa = NULL;
++	uint16_t sa_id = sxe2_sess->sa.hw_idx;
++	uint16_t sw_sa_id = sxe2_sess->sa.sw_idx;
++	int32_t ret   = -1;
++
++	if (sw_sa_id >= sxe2_sctx->ipsec_ctx.max_tx_sa) {
++		ret = 0;
++		PMD_LOG_WARN(DRV, "invalid sw sa id: %u.", sw_sa_id);
++		goto l_end;
++	}
++
++	if (!rte_bitmap_get(sxe2_sctx->ipsec_ctx.bmp.tx_sa_bmp, sw_sa_id)) {
++		ret = 0;
++		PMD_LOG_WARN(DRV, "bitmap not set, index: %u.", sw_sa_id);
++		goto l_end;
++	}
++
++	tx_sa = &sxe2_sctx->ipsec_ctx.tx_sa[sw_sa_id];
++
++	if (tx_sa->hw_sa_id != sa_id) {
++		ret = 0;
++		PMD_LOG_WARN(DRV, "invalid hw sa id: %u != %u.", sa_id, tx_sa->hw_sa_id);
++		goto l_end;
++	}
++
++	ret = sxe2_drv_ipsec_txsa_delete(sxe2_sctx->adapter, sa_id);
++	if (ret)
++		goto l_end;
++
++	rte_spinlock_lock(&sxe2_sctx->security_lock);
++	sxe2_ipsec_id_free(sxe2_sctx->ipsec_ctx.bmp.tx_sa_bmp, sw_sa_id);
++	rte_spinlock_unlock(&sxe2_sctx->security_lock);
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_ipsec_rx_sa_delete(struct sxe2_security_ctx *sxe2_sctx,
++			struct sxe2_security_session *sxe2_sess)
++{
++	struct sxe2_ipsec_rx_udp_group *rx_udp = NULL;
++	struct sxe2_ipsec_rx_tcam *rx_tcam = NULL;
++	struct sxe2_ipsec_rx_sa *rx_sa = NULL;
++	uint16_t sa_id                            = sxe2_sess->sa.hw_idx;
++	uint16_t sw_sa_id                         = sxe2_sess->sa.sw_idx;
++	int32_t ret                              = -1;
++
++	if (sw_sa_id >= sxe2_sctx->ipsec_ctx.max_rx_sa) {
++		ret = 0;
++		PMD_LOG_WARN(DRV, "invalid sw sa id: %u.", sw_sa_id);
++		goto l_end;
++	}
++
++	if (!rte_bitmap_get(sxe2_sctx->ipsec_ctx.bmp.rx_sa_bmp, sw_sa_id)) {
++		ret = 0;
++		PMD_LOG_INFO(DRV, "bitmap not set, id: %u.", sw_sa_id);
++		goto l_end;
++	}
++
++	rx_sa = &sxe2_sctx->ipsec_ctx.rx_sa[sw_sa_id];
++
++	if (rx_sa->hw_sa_id != sa_id) {
++		ret = 0;
++		PMD_LOG_WARN(DRV, "invalid hw sa id: %u != %u.", sa_id, rx_sa->hw_sa_id);
++		goto l_end;
++	}
++
++	ret = sxe2_drv_ipsec_rxsa_delete(sxe2_sctx->adapter, rx_sa);
++	if (ret)
++		goto l_end;
++
++	rte_spinlock_lock(&sxe2_sctx->security_lock);
++	sxe2_ipsec_id_free(sxe2_sctx->ipsec_ctx.bmp.rx_sa_bmp, sw_sa_id);
++
++	rx_tcam = &sxe2_sctx->ipsec_ctx.rx_tcam[rx_sa->tcam_id];
++	rx_tcam->ref_cnt--;
++	if (rx_tcam->ref_cnt == 0)
++		sxe2_ipsec_id_free(sxe2_sctx->ipsec_ctx.bmp.rx_tcam_bmp, rx_sa->tcam_id);
++
++	if (rx_sa->udp_group_id == 0xFF) {
++		PMD_LOG_INFO(DRV, "Not need to release udp group resource.");
++		rte_spinlock_unlock(&sxe2_sctx->security_lock);
++		goto l_end;
++	}
++	rx_udp = &sxe2_sctx->ipsec_ctx.rx_udp_group[rx_sa->udp_group_id];
++	rx_udp->ref_cnt--;
++	if (rx_udp->ref_cnt == 0)
++		sxe2_ipsec_id_free(sxe2_sctx->ipsec_ctx.bmp.rx_udp_bmp, rx_sa->udp_group_id);
++	rte_spinlock_unlock(&sxe2_sctx->security_lock);
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_ipsec_hw_table_delete(struct sxe2_security_ctx *sxe2_sctx,
++			   struct sxe2_security_session *sxe2_sess)
++{
++	int32_t ret = -1;
++
++	switch (sxe2_sess->direction) {
++	case RTE_SECURITY_IPSEC_SA_DIR_EGRESS:
++		ret = sxe2_ipsec_tx_sa_delete(sxe2_sctx, sxe2_sess);
++		break;
++	case RTE_SECURITY_IPSEC_SA_DIR_INGRESS:
++		ret = sxe2_ipsec_rx_sa_delete(sxe2_sctx, sxe2_sess);
++		break;
++	default:
++		PMD_LOG_ERR(DRV, "Invalid sa direction.");
++		ret = -EINVAL;
++		break;
++	}
++
++	return ret;
++}
++
++int sxe2_ipsec_session_destroy(void *device, struct rte_security_session *session)
++{
++	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)device;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(eth_dev);
++	struct sxe2_security_ctx *sxe2_sctx = &adapter->security_ctx;
++	struct sxe2_security_session *sxe2_sess = NULL;
++	sxe2_sess = SECURITY_GET_SESS_PRIV(session);
++	int32_t ret = -1;
++
++	if (unlikely(sxe2_sess == NULL || sxe2_sess->adapter != adapter)) {
++		PMD_LOG_ERR(DRV, "Invalid device adapter.");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	ret = sxe2_ipsec_hw_table_delete(sxe2_sctx, sxe2_sess);
++	if (ret) {
++		ret = -EIO;
++		PMD_LOG_ERR(DRV, "Failed to delete ipsec hw tables.");
++		goto l_end;
++	}
++
++	memset(sxe2_sess, 0, sizeof(struct sxe2_security_session));
++
++	PMD_LOG_INFO(DRV, "Delete ipsec session success, sa_id: %u, spi: %u.",
++			sxe2_sess->sa.hw_idx, sxe2_sess->sa.spi);
++
++l_end:
++	return ret;
++}
++
++int sxe2_ipsec_pkt_metadata_set(void *device, struct rte_security_session *session,
++				struct rte_mbuf *m, void *params)
++{
++	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)device;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(eth_dev);
++	struct sxe2_security_ctx *sxe2_sctx = &adapter->security_ctx;
++	struct sxe2_security_session *sxe2_sess = NULL;
++	struct sxe2_ipsec_pkt_metadata *md             = NULL;
++	uint16_t offset                                      = 0;
++	int32_t ret                                         = -1;
++
++	sxe2_sess = SECURITY_GET_SESS_PRIV(session);
++	if (unlikely(sxe2_sess == NULL || sxe2_sess->adapter != adapter)) {
++		PMD_LOG_ERR(DRV, "Invalid parameters.");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	offset = ((struct sxe2_ipsec_metadata_params *)params)->esp_header_offset;
++	if (offset <= IPSEC_ESP_OFFSET_MIN || offset >= IPSEC_ESP_OFFSET_MAX) {
++		PMD_LOG_ERR(DRV, "Invalid esp header offset.");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	md = RTE_MBUF_DYNFIELD(m, sxe2_sctx->ipsec_ctx.md_offset, struct sxe2_ipsec_pkt_metadata *);
++
++	memcpy(md, &sxe2_sess->pkt_metadata_template, sizeof(struct sxe2_ipsec_pkt_metadata));
++	md->esp_head_offset = offset;
++
++	PMD_LOG_INFO(DRV, "ipsec metadata set, offset:%u, said:%u, mode:%u, algo:%u.", offset,
++		sxe2_sess->pkt_metadata_template.sa_idx, sxe2_sess->pkt_metadata_template.mode,
++		sxe2_sess->pkt_metadata_template.algo);
++
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++int sxe2_ipsec_pkt_md_offset_get(struct sxe2_adapter *adapter)
++{
++	return adapter->security_ctx.ipsec_ctx.md_offset;
++}
++
++static void sxe2_ipsec_enc_aes_cbc_fill(struct rte_cryptodev_capabilities *cap)
++{
++	cap->sym.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER;
++
++	cap->sym.cipher.algo = SXE2_RTE_CRYPTO_CIPHER_AES_CBC;
++
++	cap->sym.cipher.block_size = SXE2_SECURITY_BLOCK_SIZE_16;
++
++	cap->sym.cipher.key_size.min = SXE2_IPSEC_AES_KEY_MIN;
++	cap->sym.cipher.key_size.max = SXE2_IPSEC_AES_KEY_MAX;
++	cap->sym.cipher.key_size.increment = SXE2_IPSEC_AES_KEY_INC;
++
++	cap->sym.cipher.iv_size.min = SXE2_IPSEC_AES_IV_MIN;
++	cap->sym.cipher.iv_size.max = SXE2_IPSEC_AES_IV_MAX;
++	cap->sym.cipher.iv_size.increment = SXE2_IPSEC_AES_IV_INC;
++
++	cap->sym.cipher.dataunit_set |= RTE_CRYPTO_CIPHER_DATA_UNIT_LEN_512_BYTES;
++}
++
++static void sxe2_ipsec_enc_sm4_cbc_fill(struct rte_cryptodev_capabilities *cap)
++{
++	cap->sym.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER;
++
++	cap->sym.cipher.algo = SXE2_RTE_RTE_CRYPTO_CIPHER_SM4_CBC;
++
++	cap->sym.cipher.block_size = SXE2_SECURITY_BLOCK_SIZE_16;
++
++	cap->sym.cipher.key_size.min = SXE2_IPSEC_SM4_KEY_MIN;
++	cap->sym.cipher.key_size.max = SXE2_IPSEC_SM4_KEY_MAX;
++	cap->sym.cipher.key_size.increment = SXE2_IPSEC_SM4_KEY_INC;
++
++	cap->sym.cipher.iv_size.min = SXE2_IPSEC_SM4_IV_MIN;
++	cap->sym.cipher.iv_size.max = SXE2_IPSEC_SM4_IV_MAX;
++	cap->sym.cipher.iv_size.increment = SXE2_IPSEC_SM4_IV_INC;
++
++	cap->sym.cipher.dataunit_set |= RTE_CRYPTO_CIPHER_DATA_UNIT_LEN_512_BYTES;
++}
++
++static void sxe2_ipsec_auth_sha_hmac_fill(struct rte_cryptodev_capabilities *cap)
++{
++	cap->sym.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH;
++
++	cap->sym.auth.algo = SXE2_RTE_CRYPTO_AUTH_SHA256_HMAC;
++
++	cap->sym.auth.block_size = SXE2_SECURITY_BLOCK_SIZE_64;
++
++	cap->sym.auth.key_size.min = SXE2_IPSEC_SHA_KEY_MIN;
++	cap->sym.auth.key_size.max = SXE2_IPSEC_SHA_KEY_MAX;
++	cap->sym.auth.key_size.increment = SXE2_IPSEC_SHA_KEY_INC;
++
++	cap->sym.auth.iv_size.min = SXE2_IPSEC_SHA_IV_MIN;
++	cap->sym.auth.iv_size.max = SXE2_IPSEC_SHA_IV_MAX;
++	cap->sym.auth.iv_size.increment = SXE2_IPSEC_SHA_IV_INC;
++
++	cap->sym.auth.digest_size.min = SXE2_IPSEC_SHA_DIGEST_MIN;
++	cap->sym.auth.digest_size.max = SXE2_IPSEC_SHA_DIGEST_MAX;
++	cap->sym.auth.digest_size.increment = SXE2_IPSEC_SHA_DIGEST_INC;
++
++	cap->sym.auth.aad_size.min = SXE2_IPSEC_AAD_MIN;
++	cap->sym.auth.aad_size.max = SXE2_IPSEC_AAD_MAX;
++	cap->sym.auth.aad_size.increment = SXE2_IPSEC_AAD_INC;
++}
++
++static void sxe2_ipsec_auth_sm3_hmac_fill(struct rte_cryptodev_capabilities *cap)
++{
++	cap->sym.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH;
++
++	cap->sym.auth.algo = SXE2_RTE_CRYPTO_AUTH_SM3_HMAC;
++
++	cap->sym.auth.block_size = SXE2_SECURITY_BLOCK_SIZE_64;
++
++	cap->sym.auth.key_size.min = SXE2_IPSEC_SM3_KEY_MIN;
++	cap->sym.auth.key_size.max = SXE2_IPSEC_SM3_KEY_MAX;
++	cap->sym.auth.key_size.increment = SXE2_IPSEC_SM3_KEY_INC;
++
++	cap->sym.auth.iv_size.min = SXE2_IPSEC_SM3_IV_MIN;
++	cap->sym.auth.iv_size.max = SXE2_IPSEC_SM3_IV_MAX;
++	cap->sym.auth.iv_size.increment = SXE2_IPSEC_SM3_IV_INC;
++
++	cap->sym.auth.digest_size.min = SXE2_IPSEC_SM3_DIGEST_MIN;
++	cap->sym.auth.digest_size.max = SXE2_IPSEC_SM3_DIGEST_MAX;
++	cap->sym.auth.digest_size.increment = SXE2_IPSEC_SM3_DIGEST_INC;
++
++	cap->sym.auth.aad_size.min = SXE2_IPSEC_AAD_MIN;
++	cap->sym.auth.aad_size.max = SXE2_IPSEC_AAD_MAX;
++	cap->sym.auth.aad_size.increment = SXE2_IPSEC_AAD_INC;
++}
++
++static int32_t
++sxe2_ipsec_capabilities_init(struct sxe2_security_ctx *sxe2_sctx)
++{
++	struct rte_cryptodev_capabilities *capabilities = NULL;
++	struct sxe2_security_capabilities *sxe2_cap   =
++			&sxe2_sctx->sxe2_capabilities[SXE2_SECURITY_PROTOCOL_IPSEC];
++	int32_t ret                                         = -1;
++	uint8_t index                                        = 0;
++
++	sxe2_cap->action = RTE_SECURITY_ACTION_TYPE_INLINE_CRYPTO;
++	sxe2_cap->ipsec.proto = RTE_SECURITY_IPSEC_SA_PROTO_ESP;
++	sxe2_cap->ipsec.mode = RTE_SECURITY_IPSEC_SA_MODE_TUNNEL;
++	sxe2_cap->ipsec.options.stats = 1;
++
++	capabilities = rte_zmalloc("security_caps",
++				sizeof(struct rte_cryptodev_capabilities) * SXE2_IPSEC_CAP_MAX, 0);
++	if (capabilities == NULL) {
++		ret = -ENOMEM;
++		goto l_end;
++	}
++
++	for (index = 0; index < SXE2_IPSEC_CAP_MAX; index++) {
++		capabilities[index].op = RTE_CRYPTO_OP_TYPE_SYMMETRIC;
++		switch (index) {
++		case SXE2_IPSEC_CAP_ENC_AES_CBC:
++			sxe2_ipsec_enc_aes_cbc_fill(&capabilities[index]);
++			break;
++		case SXE2_IPSEC_CAP_ENC_SM4_CBC:
++			sxe2_ipsec_enc_sm4_cbc_fill(&capabilities[index]);
++			break;
++		case SXE2_IPSEC_CAP_AUTH_SHA256_HMAC:
++			sxe2_ipsec_auth_sha_hmac_fill(&capabilities[index]);
++			break;
++		case SXE2_IPSEC_CAP_AUTH_SM3_HMAC:
++			sxe2_ipsec_auth_sm3_hmac_fill(&capabilities[index]);
++			break;
++		default:
++			break;
++		}
++	}
++
++	sxe2_cap->crypto_capabilities = capabilities;
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++static void
++sxe2_ipsec_tx_sa_init(struct sxe2_ipsec_tx_sa *tx_sa, uint16_t len)
++{
++	struct sxe2_ipsec_tx_sa *per = NULL;
++	uint16_t i;
++
++	memset(tx_sa, 0, sizeof(struct sxe2_ipsec_tx_sa) * len);
++	for (i = 0; i < len; i++) {
++		per = &tx_sa[i];
++		per->id = i;
++	}
++}
++
++static void
++sxe2_ipsec_rx_sa_init(struct sxe2_ipsec_rx_sa *rx_sa, uint16_t len)
++{
++	struct sxe2_ipsec_rx_sa *per = NULL;
++	uint16_t i;
++
++	memset(rx_sa, 0, sizeof(struct sxe2_ipsec_rx_sa) * len);
++	for (i = 0; i < len; i++) {
++		per = &rx_sa[i];
++		per->id = i;
++	}
++}
++
++static void
++sxe2_ipsec_rx_tcam_init(struct sxe2_ipsec_rx_tcam *rx_tcam, uint16_t len)
++{
++	struct sxe2_ipsec_rx_tcam *per = NULL;
++	uint16_t i;
++
++	memset(rx_tcam, 0, sizeof(struct sxe2_ipsec_rx_tcam) * len);
++	for (i = 0; i < len; i++) {
++		per = &rx_tcam[i];
++		per->id = i;
++	}
++}
++
++static void
++sxe2_ipsec_rx_udp_group_init(struct sxe2_ipsec_rx_udp_group *rx_udp_group, uint16_t len)
++{
++	struct sxe2_ipsec_rx_udp_group *per = NULL;
++	uint16_t i;
++
++	memset(rx_udp_group, 0, sizeof(struct sxe2_ipsec_rx_udp_group) * len);
++	for (i = 0; i < len; i++) {
++		per = &rx_udp_group[i];
++		per->id = i;
++	}
++}
++
++static int32_t
++sxe2_ipsec_hw_table_init(struct sxe2_security_ctx *sxe2_sctx)
++{
++	struct sxe2_ipsec_tx_sa *tx_sa = NULL;
++	struct sxe2_ipsec_rx_sa *rx_sa = NULL;
++	struct sxe2_ipsec_rx_tcam *rx_tcam = NULL;
++	struct sxe2_ipsec_rx_udp_group *rx_udp_group = NULL;
++	uint16_t max_tx_sa = sxe2_sctx->ipsec_ctx.max_tx_sa;
++	uint16_t max_rx_sa = sxe2_sctx->ipsec_ctx.max_rx_sa;
++	uint16_t max_tcam  = sxe2_sctx->ipsec_ctx.max_tcam;
++	uint16_t max_udp_group  = sxe2_sctx->ipsec_ctx.max_udp_group;
++	int32_t ret       = -1;
++
++	tx_sa = rte_zmalloc("sxe2_ipsec_tx_sa", sizeof(struct sxe2_ipsec_tx_sa) * max_tx_sa, 0);
++	if (tx_sa == NULL) {
++		ret = -ENOMEM;
++		goto l_end;
++	}
++	sxe2_ipsec_tx_sa_init(tx_sa, max_tx_sa);
++	sxe2_sctx->ipsec_ctx.tx_sa = tx_sa;
++
++	rx_sa = rte_zmalloc("sxe2_ipsec_rx_sa", sizeof(struct sxe2_ipsec_rx_sa) * max_rx_sa, 0);
++	if (rx_sa == NULL) {
++		ret = -ENOMEM;
++		goto l_end;
++	}
++	sxe2_ipsec_rx_sa_init(rx_sa, max_rx_sa);
++	sxe2_sctx->ipsec_ctx.rx_sa = rx_sa;
++
++	rx_tcam = rte_zmalloc("sxe2_ipsec_rx_tcam",
++				sizeof(struct sxe2_ipsec_rx_tcam) * max_tcam, 0);
++	if (rx_tcam == NULL) {
++		ret = -ENOMEM;
++		goto l_end;
++	}
++	sxe2_ipsec_rx_tcam_init(rx_tcam, max_tcam);
++	sxe2_sctx->ipsec_ctx.rx_tcam = rx_tcam;
++
++	rx_udp_group = rte_zmalloc("sxe2_ipsec_rx_udp_group",
++				sizeof(struct sxe2_ipsec_rx_udp_group) * max_udp_group, 0);
++	if (rx_udp_group == NULL) {
++		ret = -ENOMEM;
++		goto l_end;
++	}
++	sxe2_ipsec_rx_udp_group_init(rx_udp_group, max_udp_group);
++	sxe2_sctx->ipsec_ctx.rx_udp_group = rx_udp_group;
++
++	ret = 0;
++
++l_end:
++	if (ret) {
++		if (tx_sa != NULL) {
++			rte_free(tx_sa);
++			sxe2_sctx->ipsec_ctx.tx_sa = NULL;
++		}
++		if (rx_sa != NULL) {
++			rte_free(rx_sa);
++			sxe2_sctx->ipsec_ctx.rx_sa = NULL;
++		}
++		if (rx_tcam != NULL) {
++			rte_free(rx_tcam);
++			sxe2_sctx->ipsec_ctx.rx_tcam = NULL;
++		}
++		if (rx_udp_group != NULL) {
++			rte_free(rx_udp_group);
++			sxe2_sctx->ipsec_ctx.rx_udp_group = NULL;
++		}
++	}
++	return ret;
++}
++
++int32_t sxe2_ipsec_init(struct sxe2_adapter *adapter)
++{
++	struct sxe2_security_ctx *sxe2_sctx = &adapter->security_ctx;
++	struct sxe2_security_capabilities *sxe2_cap = NULL;
++	int32_t ret                               = -1;
++	struct rte_mbuf_dynfield pkt_md_dynfield = {
++	.name = "sxe2_ipsec_pkt_metadata",
++		.size = sizeof(struct sxe2_ipsec_pkt_metadata),
++		.align = alignof(struct sxe2_ipsec_pkt_metadata)
++	};
++
++	PMD_LOG_INFO(INIT, "Init ipsec.");
++
++	sxe2_sctx->ipsec_ctx.md_offset = rte_mbuf_dynfield_register(&pkt_md_dynfield);
++	if (sxe2_sctx->ipsec_ctx.md_offset < 0) {
++		PMD_LOG_ERR(INIT, "Failed to register ipsec mbuf dynamic field.");
++		ret = -EIO;
++		goto l_end;
++	}
++
++	ret = sxe2_ipsec_capabilities_init(sxe2_sctx);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to init ipsec capabilities.");
++		goto l_end;
++	}
++
++	ret = sxe2_drv_ipsec_get_capa(adapter);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to get ipsec capabilities.");
++		goto l_caps_free;
++	}
++
++	ret = sxe2_ipsec_bitmap_init(sxe2_sctx);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to init ipsec bitmap.");
++		goto l_caps_free;
++	}
++
++	ret = sxe2_ipsec_hw_table_init(sxe2_sctx);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to init ipsec hw table.");
++		goto l_bitmap_free;
++	}
++
++	goto l_end;
++
++l_bitmap_free:
++
++	if (sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem != NULL) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem);
++		sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem = NULL;
++	}
++	if (sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem != NULL) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem);
++		sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem = NULL;
++	}
++	if (sxe2_sctx->ipsec_ctx.bmp.rx_tcam_mem != NULL) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.rx_tcam_mem);
++		sxe2_sctx->ipsec_ctx.bmp.rx_tcam_mem = NULL;
++	}
++	if (sxe2_sctx->ipsec_ctx.bmp.rx_udp_mem != NULL) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.rx_udp_mem);
++		sxe2_sctx->ipsec_ctx.bmp.rx_udp_mem = NULL;
++	}
++l_caps_free:
++	sxe2_cap = &sxe2_sctx->sxe2_capabilities[SXE2_SECURITY_PROTOCOL_IPSEC];
++	if (sxe2_cap->crypto_capabilities != NULL) {
++		rte_free(sxe2_cap->crypto_capabilities);
++		sxe2_cap->crypto_capabilities = NULL;
++	}
++l_end:
++	return ret;
++}
++
++void sxe2_ipsec_uinit(struct sxe2_adapter *adapter)
++{
++	struct sxe2_security_ctx *sxe2_sctx = &adapter->security_ctx;
++	struct sxe2_security_capabilities *sxe2_cap   =
++			&sxe2_sctx->sxe2_capabilities[SXE2_SECURITY_PROTOCOL_IPSEC];
++	struct sxe2_ipsec_tx_sa *tx_sa = sxe2_sctx->ipsec_ctx.tx_sa;
++	struct sxe2_ipsec_rx_sa *rx_sa = sxe2_sctx->ipsec_ctx.rx_sa;
++	struct sxe2_ipsec_rx_tcam *rx_tcam = sxe2_sctx->ipsec_ctx.rx_tcam;
++	struct sxe2_ipsec_rx_udp_group *rx_udp_group = sxe2_sctx->ipsec_ctx.rx_udp_group;
++
++	PMD_LOG_INFO(INIT, "Uinit ipsec.");
++
++	(void)sxe2_drv_ipsec_resource_clear(adapter);
++
++	if (sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem != NULL) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem);
++		sxe2_sctx->ipsec_ctx.bmp.tx_sa_mem = NULL;
++	}
++	if (sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem != NULL) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem);
++		sxe2_sctx->ipsec_ctx.bmp.rx_sa_mem = NULL;
++	}
++	if (sxe2_sctx->ipsec_ctx.bmp.rx_tcam_mem != NULL) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.rx_tcam_mem);
++		sxe2_sctx->ipsec_ctx.bmp.rx_tcam_mem = NULL;
++	}
++	if (sxe2_sctx->ipsec_ctx.bmp.rx_udp_mem != NULL) {
++		rte_free(sxe2_sctx->ipsec_ctx.bmp.rx_udp_mem);
++		sxe2_sctx->ipsec_ctx.bmp.rx_udp_mem = NULL;
++	}
++
++	if (tx_sa != NULL) {
++		rte_free(tx_sa);
++		sxe2_sctx->ipsec_ctx.tx_sa = NULL;
++	}
++	if (rx_sa != NULL) {
++		rte_free(rx_sa);
++		sxe2_sctx->ipsec_ctx.rx_sa = NULL;
++	}
++	if (rx_tcam != NULL) {
++		rte_free(rx_tcam);
++		sxe2_sctx->ipsec_ctx.rx_tcam = NULL;
++	}
++	if (rx_udp_group != NULL) {
++		rte_free(rx_udp_group);
++		sxe2_sctx->ipsec_ctx.rx_udp_group = NULL;
++	}
++
++	if (sxe2_cap->crypto_capabilities != NULL) {
++		rte_free(sxe2_cap->crypto_capabilities);
++		sxe2_cap->crypto_capabilities = NULL;
++	}
++}
+diff --git a/drivers/net/sxe2/sxe2_ipsec.h b/drivers/net/sxe2/sxe2_ipsec.h
+new file mode 100644
+index 0000000000..02930ddb4f
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_ipsec.h
+@@ -0,0 +1,254 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++#ifndef __SXE2_IPSEC_H__
++#define __SXE2_IPSEC_H__
++
++#include <rte_security.h>
++#include <rte_security_driver.h>
++
++struct sxe2_adapter;
++struct sxe2_security_session;
++
++#define        SXE2_IPSEC_AES_KEY_MIN    (32)
++#define        SXE2_IPSEC_AES_KEY_MAX    (32)
++#define        SXE2_IPSEC_AES_KEY_INC    (0)
++
++#define        SXE2_IPSEC_SM4_KEY_MIN    (16)
++#define        SXE2_IPSEC_SM4_KEY_MAX    (16)
++#define        SXE2_IPSEC_SM4_KEY_INC    (0)
++
++#define        SXE2_IPSEC_SHA_KEY_MIN    (32)
++#define        SXE2_IPSEC_SHA_KEY_MAX    (32)
++#define        SXE2_IPSEC_SHA_KEY_INC    (0)
++
++#define        SXE2_IPSEC_SM3_KEY_MIN    (32)
++#define        SXE2_IPSEC_SM3_KEY_MAX    (32)
++#define        SXE2_IPSEC_SM3_KEY_INC    (0)
++
++#define        SXE2_IPSEC_AES_IV_MIN    (16)
++#define        SXE2_IPSEC_AES_IV_MAX    (16)
++#define        SXE2_IPSEC_AES_IV_INC    (0)
++
++#define        SXE2_IPSEC_SM4_IV_MIN    (16)
++#define        SXE2_IPSEC_SM4_IV_MAX    (16)
++#define        SXE2_IPSEC_SM4_IV_INC    (0)
++
++#define        SXE2_IPSEC_SHA_IV_MIN    (0)
++#define        SXE2_IPSEC_SHA_IV_MAX    (32)
++#define        SXE2_IPSEC_SHA_IV_INC    (16)
++
++#define        SXE2_IPSEC_SM3_IV_MIN    (0)
++#define        SXE2_IPSEC_SM3_IV_MAX    (32)
++#define        SXE2_IPSEC_SM3_IV_INC    (16)
++
++#define        SXE2_IPSEC_SHA_DIGEST_MIN    (32)
++#define        SXE2_IPSEC_SHA_DIGEST_MAX    (32)
++#define        SXE2_IPSEC_SHA_DIGEST_INC    (0)
++
++#define        SXE2_IPSEC_SM3_DIGEST_MIN    (32)
++#define        SXE2_IPSEC_SM3_DIGEST_MAX    (32)
++#define        SXE2_IPSEC_SM3_DIGEST_INC    (0)
++
++#define        SXE2_IPSEC_AAD_MIN           (0)
++#define        SXE2_IPSEC_AAD_MAX           (0)
++#define        SXE2_IPSEC_AAD_INC           (0)
++
++#define        SXE2_IPSEC_MAX_KEY_LEN		 (32)
++#define        SXE2_IPSEC_MIN_KEY_LEN       (0)
++
++#define SXE2_IPSEC_OL_FLAGS_IS_TUN    (0x1 << 0)
++#define SXE2_IPSEC_OL_FLAGS_IS_ESP    (0x1 << 1)
++
++#define SXE2_IPSEC_DEFAULT_SA_OFFSET  (0)
++#define SXE2_IPSEC_DEFAULT_SA_LEN     (1024)
++
++#define IPSEC_TX_ENCRYPT    (RTE_BIT32(0))
++#define IPSEC_TX_ENGINE_SM4 (RTE_BIT32(1))
++
++#define IPSEC_RX_VALID      (RTE_BIT32(0))
++#define IPSEC_RX_IPV6       (RTE_BIT32(2))
++#define IPSEC_RX_DECRYPT    (RTE_BIT32(3))
++#define IPSEC_RX_ENGINE_SM4 (RTE_BIT32(4))
++
++#define IPSEC_IPV6_LEN                 (4)
++#define IPSEC_ESP_OFFSET_MIN           (16)
++#define IPSEC_ESP_OFFSET_MAX           (256)
++
++enum sxe2_ipsec_cap {
++	SXE2_IPSEC_CAP_ENC_AES_CBC      = 0,
++	SXE2_IPSEC_CAP_ENC_SM4_CBC      = 1,
++	SXE2_IPSEC_CAP_AUTH_SHA256_HMAC = 2,
++	SXE2_IPSEC_CAP_AUTH_SM3_HMAC    = 3,
++	SXE2_IPSEC_CAP_MAX              = 4,
++};
++
++enum sxe2_ipsec_icv_len {
++	SXE2_IPSEC_ICV_0_BYTES = 0,
++	SXE2_IPSEC_ICV_12_BYTES,
++	SXE2_IPSEC_ICV_16_BYTES,
++	SXE2_IPSEC_ICV_INVALID,
++};
++
++enum sxe2_ipsec_bypass_dir {
++	SXE2_IPSEC_BYPASS_DIR_RX = 0,
++	SXE2_IPSEC_BYPASS_DIR_TX,
++	SXE2_IPSEC_BYPASS_DIR_INVALID,
++};
++
++enum sxe2_ipsec_bypass_status {
++	SXE2_IPSEC_BYPASS_STATUS_DISABLE = 0,
++	SXE2_IPSEC_BYPASS_STATUS_ENABLE,
++	SXE2_IPSEC_BYPASS_STATUS_INVALID,
++};
++
++enum sxe2_ipsec_status {
++	SXE2_IPSEC_ENC_BYPASS = 0,
++	SXE2_IPSEC_ENC_ENABLE,
++	SXE2_IPSEC_ENC_INVALID,
++};
++
++enum sxe2_ipsec_mode {
++	SXE2_IPSEC_MODE_ENC_AND_AUTH = 0,
++	SXE2_IPSEC_MODE_ONLY_ENCRYPT,
++	SXE2_IPSEC_MODE_INVALID,
++};
++
++struct sxe2_ipsec_ip_param {
++	enum rte_security_ipsec_tunnel_type type;
++	union {
++		uint32_t dst_ipv4;
++		uint32_t dst_ipv6[IPSEC_IPV6_LEN];
++	};
++};
++
++enum sxe2_ipsec_algorithm {
++	SXE2_IPSEC_ALGO_AES_CBC_AND_SHA256_128_HMAC = 0,
++	SXE2_IPSEC_ALGO_SM4_CBC_AND_SM3_96_HMAC,
++	SXE2_IPSEC_ALGO_INVALID,
++};
++
++struct sxe2_ipsec_pkt_metadata {
++	uint16_t                  sa_idx;
++	uint16_t                  esp_head_offset;
++	uint8_t                   ol_flags;
++	uint8_t                   mode;
++	uint8_t                   algo;
++};
++
++struct sxe2_ipsec_bitmap {
++	struct rte_bitmap *tx_sa_bmp;
++	struct rte_bitmap *rx_sa_bmp;
++	struct rte_bitmap *rx_tcam_bmp;
++	struct rte_bitmap *rx_udp_bmp;
++	void *tx_sa_mem;
++	void *rx_sa_mem;
++	void *rx_tcam_mem;
++	void *rx_udp_mem;
++};
++
++struct sxe2_ipsec_security_sa {
++	uint32_t spi;
++	uint16_t hw_idx;
++	uint16_t sw_idx;
++};
++
++struct sxe2_ipsec_esn {
++	union {
++		uint64_t value;
++		struct {
++			uint32_t hi;
++			uint32_t low;
++		};
++	};
++	uint8_t enabled;
++};
++
++struct sxe2_ipsec_udp {
++	struct rte_security_ipsec_udp_param value;
++	uint8_t enabled;
++};
++
++struct sxe2_ipsec_tx_sa {
++	struct rte_security_ipsec_xform xform;
++	uint16_t id;
++	uint16_t hw_sa_id;
++	enum sxe2_ipsec_mode mode;
++	enum sxe2_ipsec_algorithm algo;
++	uint8_t enc_key[SXE2_IPSEC_MAX_KEY_LEN];
++	uint8_t auth_key[SXE2_IPSEC_MAX_KEY_LEN];
++};
++
++struct sxe2_ipsec_rx_sa {
++	struct rte_security_ipsec_xform xform;
++	uint32_t spi;
++	uint16_t id;
++	uint16_t hw_sa_id;
++	uint8_t hw_ip_id;
++	uint8_t hw_udp_group_id;
++	uint8_t tcam_id;
++	uint8_t udp_group_id;
++	uint8_t sdn_group_id;
++	enum sxe2_ipsec_mode mode;
++	enum sxe2_ipsec_algorithm algo;
++	uint8_t enc_key[SXE2_IPSEC_MAX_KEY_LEN];
++	uint8_t auth_key[SXE2_IPSEC_MAX_KEY_LEN];
++};
++
++struct sxe2_ipsec_rx_tcam {
++	struct sxe2_ipsec_ip_param ip_addr;
++	uint16_t id;
++	uint8_t hw_ip_id;
++	uint8_t ref_cnt;
++};
++
++struct sxe2_ipsec_rx_udp_group {
++	uint16_t udp_port;
++	uint8_t sport_en;
++	uint8_t dport_en;
++	uint8_t id;
++	uint8_t hw_group_id;
++	uint8_t ref_cnt;
++};
++
++struct sxe2_ipsec_ctx {
++	struct sxe2_ipsec_tx_sa             *tx_sa;
++	struct sxe2_ipsec_rx_sa             *rx_sa;
++	struct sxe2_ipsec_rx_tcam           *rx_tcam;
++	struct sxe2_ipsec_rx_udp_group      *rx_udp_group;
++	struct sxe2_ipsec_bitmap            bmp;
++	int                                  md_offset;
++	uint16_t                                  max_tx_sa;
++	uint16_t                                  max_rx_sa;
++	uint16_t                                  max_tcam;
++	uint8_t                                   max_udp_group;
++};
++
++struct sxe2_ipsec_metadata_params {
++	uint16_t esp_header_offset;
++	uint16_t reserved;
++};
++
++bool sxe2_ipsec_supported(struct sxe2_adapter *adapter);
++
++bool sxe2_ipsec_valid_tx_offloads(uint64_t offloads);
++
++bool sxe2_ipsec_valid_rx_offloads(uint64_t offloads);
++
++int sxe2_ipsec_pkt_md_offset_get(struct sxe2_adapter *adapter);
++
++int sxe2_ipsec_session_create(void *device,
++			      struct rte_security_session_conf *conf,
++			      struct sxe2_security_session *sxe2_sess);
++
++int sxe2_ipsec_session_destroy(void *device,
++		struct rte_security_session *session);
++
++int sxe2_ipsec_pkt_metadata_set(void *device, struct rte_security_session *session,
++				struct rte_mbuf *m, void *params);
++
++int32_t sxe2_ipsec_init(struct sxe2_adapter *adapter);
++
++void sxe2_ipsec_uinit(struct sxe2_adapter *adapter);
++
++#endif /* __SXE2_IPSEC_H__ */
+diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
+index 28832d5f71..007192c7d8 100644
+--- a/drivers/net/sxe2/sxe2_rx.c
++++ b/drivers/net/sxe2/sxe2_rx.c
+@@ -294,6 +294,11 @@ int32_t __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
+ 		goto l_end;
+ 	}
+ 
++	if (!sxe2_ipsec_valid_rx_offloads(offloads)) {
++		ret = -EINVAL;
++		goto l_end;
++	}
++
+ 	rxq = sxe2_rx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
+ 	if (rxq == NULL) {
+ 		PMD_LOG_ERR(RX, "rx queue[%d] resource alloc failed", queue_idx);
+diff --git a/drivers/net/sxe2/sxe2_security.c b/drivers/net/sxe2/sxe2_security.c
+new file mode 100644
+index 0000000000..bc59d1b880
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_security.c
+@@ -0,0 +1,335 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#include <rte_malloc.h>
++
++#include "sxe2_ethdev.h"
++#include "sxe2_security.h"
++#include "sxe2_ipsec.h"
++#include "sxe2_common_log.h"
++
++static unsigned int
++sxe2_security_session_size_get(void *device __rte_unused)
++{
++	return sizeof(struct sxe2_security_session);
++}
++
++static int
++sxe2_security_session_create(void *device,
++			     struct rte_security_session_conf *conf,
++			     struct rte_security_session *session)
++{
++	int32_t ret = -1;
++	struct sxe2_security_session *sxe2_sess = NULL;
++	sxe2_sess = SECURITY_GET_SESS_PRIV(session);
++
++	switch (conf->protocol) {
++	case RTE_SECURITY_PROTOCOL_IPSEC:
++		ret = sxe2_ipsec_session_create(device, conf, sxe2_sess);
++		break;
++	default:
++		PMD_LOG_ERR(DRV, "Invalid security protocol.");
++		ret = -EINVAL;
++		break;
++	}
++
++	return ret;
++}
++
++static int
++sxe2_security_session_destroy(void *device, struct rte_security_session *session)
++{
++	int32_t ret = -1;
++	struct sxe2_security_session *sxe2_sess = NULL;
++	sxe2_sess = SECURITY_GET_SESS_PRIV(session);
++
++	switch (sxe2_sess->protocol) {
++	case RTE_SECURITY_PROTOCOL_IPSEC:
++		ret = sxe2_ipsec_session_destroy(device, session);
++		break;
++	default:
++		PMD_LOG_ERR(DRV, "Invalid security protocol.");
++		ret = -EINVAL;
++		break;
++	}
++	return ret;
++}
++
++static int
++sxe2_security_pkt_metadata_set(void *device,
++			       struct rte_security_session *session,
++			       struct rte_mbuf *m, void *params)
++{
++	struct sxe2_security_session *sxe2_sess = NULL;
++	sxe2_sess = SECURITY_GET_SESS_PRIV(session);
++	int32_t ret = -1;
++
++	switch (sxe2_sess->protocol) {
++	case RTE_SECURITY_PROTOCOL_IPSEC:
++		ret = sxe2_ipsec_pkt_metadata_set(device, session, m, params);
++		break;
++	default:
++		PMD_LOG_ERR(DRV, "Invalid security protocol.");
++		ret = -EINVAL;
++		break;
++	}
++
++	return ret;
++}
++
++static const struct rte_security_capability *
++sxe2_security_capabilities_get(void *device __rte_unused)
++{
++	static const struct rte_cryptodev_capabilities
++	ipsec_crypto_capabilities[] = {
++		{
++			.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++			{.sym = {
++				.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
++				{.cipher = {
++					.algo = SXE2_RTE_CRYPTO_CIPHER_AES_CBC,
++					.block_size = SXE2_SECURITY_BLOCK_SIZE_16,
++					.key_size = {
++						.min = SXE2_IPSEC_AES_KEY_MIN,
++						.max = SXE2_IPSEC_AES_KEY_MAX,
++						.increment = SXE2_IPSEC_AES_KEY_INC
++					},
++					.iv_size = {
++						.min = SXE2_IPSEC_AES_IV_MIN,
++						.max = SXE2_IPSEC_AES_IV_MAX,
++						.increment = SXE2_IPSEC_AES_IV_INC
++					},
++					.dataunit_set = RTE_CRYPTO_CIPHER_DATA_UNIT_LEN_512_BYTES,
++				}, }
++			}, }
++		},
++		{
++			.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++			{.sym = {
++				.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
++				{.cipher = {
++					.algo = SXE2_RTE_RTE_CRYPTO_CIPHER_SM4_CBC,
++					.block_size = SXE2_SECURITY_BLOCK_SIZE_16,
++					.key_size = {
++						.min = SXE2_IPSEC_SM4_KEY_MIN,
++						.max = SXE2_IPSEC_SM4_KEY_MAX,
++						.increment = SXE2_IPSEC_SM4_KEY_INC
++					},
++					.iv_size = {
++						.min = SXE2_IPSEC_SM4_IV_MIN,
++						.max = SXE2_IPSEC_SM4_IV_MAX,
++						.increment = SXE2_IPSEC_SM4_IV_INC
++					},
++					.dataunit_set = RTE_CRYPTO_CIPHER_DATA_UNIT_LEN_512_BYTES,
++				}, }
++			}, }
++		},
++		{
++			.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++			{.sym = {
++				.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++				{.auth = {
++					.algo = SXE2_RTE_CRYPTO_AUTH_SHA256_HMAC,
++					.block_size = SXE2_SECURITY_BLOCK_SIZE_64,
++					.key_size = {
++						.min = SXE2_IPSEC_SHA_KEY_MIN,
++						.max = SXE2_IPSEC_SHA_KEY_MAX,
++						.increment = SXE2_IPSEC_SHA_KEY_INC
++					},
++					.digest_size = {
++						.min = SXE2_IPSEC_SHA_DIGEST_MIN,
++						.max = SXE2_IPSEC_SHA_DIGEST_MAX,
++						.increment = SXE2_IPSEC_SHA_DIGEST_INC
++					},
++					.iv_size = {
++						.min = SXE2_IPSEC_SHA_IV_MIN,
++						.max = SXE2_IPSEC_SHA_IV_MAX,
++						.increment = SXE2_IPSEC_SHA_IV_INC
++					},
++					.aad_size = {
++						.min = SXE2_IPSEC_AAD_MIN,
++						.max = SXE2_IPSEC_AAD_MAX,
++						.increment = SXE2_IPSEC_AAD_INC
++					}
++				}, }
++			}, }
++		},
++		{
++			.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++			{.sym = {
++				.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++				{.auth = {
++					.algo = SXE2_RTE_CRYPTO_AUTH_SM3_HMAC,
++					.block_size = SXE2_SECURITY_BLOCK_SIZE_64,
++					.key_size = {
++						.min = SXE2_IPSEC_SM3_KEY_MIN,
++						.max = SXE2_IPSEC_SM3_KEY_MAX,
++						.increment = SXE2_IPSEC_SM3_KEY_INC
++					},
++					.digest_size = {
++						.min = SXE2_IPSEC_SM3_DIGEST_MIN,
++						.max = SXE2_IPSEC_SM3_DIGEST_MAX,
++						.increment = SXE2_IPSEC_SM3_DIGEST_INC
++					},
++					.iv_size = {
++						.min = SXE2_IPSEC_SM3_IV_MIN,
++						.max = SXE2_IPSEC_SM3_IV_MAX,
++						.increment = SXE2_IPSEC_SM3_IV_INC
++					},
++					.aad_size = {
++						.min = SXE2_IPSEC_AAD_MIN,
++						.max = SXE2_IPSEC_AAD_MAX,
++						.increment = SXE2_IPSEC_AAD_INC
++					}
++				}, }
++			}, }
++		},
++		{
++			.op = RTE_CRYPTO_OP_TYPE_UNDEFINED,
++			{.sym = {
++				.xform_type = RTE_CRYPTO_SYM_XFORM_NOT_SPECIFIED
++			}, }
++		}
++	};
++
++	static const struct rte_security_capability
++	sxe2_security_capabilities[] = {
++		{
++			.action = RTE_SECURITY_ACTION_TYPE_INLINE_CRYPTO,
++			.protocol = RTE_SECURITY_PROTOCOL_IPSEC,
++			{.ipsec = {
++				.proto = RTE_SECURITY_IPSEC_SA_PROTO_ESP,
++				.mode = RTE_SECURITY_IPSEC_SA_MODE_TUNNEL,
++				.direction = RTE_SECURITY_IPSEC_SA_DIR_EGRESS,
++				.options = {
++					.esn = 0,
++					.udp_encap = 1,
++					.copy_dscp = 0,
++					.copy_flabel = 0,
++					.copy_df = 0,
++					.dec_ttl = 0,
++					.ecn = 0,
++					.stats = 1,
++					.iv_gen_disable = 0,
++					.tunnel_hdr_verify = 1,
++					.udp_ports_verify = 1,
++					.ip_csum_enable = 0,
++					.l4_csum_enable = 0,
++					.ip_reassembly_en = 0,
++					.ingress_oop = 0
++			} } },
++			.crypto_capabilities = ipsec_crypto_capabilities,
++			.ol_flags = RTE_SECURITY_TX_OLOAD_NEED_MDATA
++		},
++		{
++			.action = RTE_SECURITY_ACTION_TYPE_INLINE_CRYPTO,
++			.protocol = RTE_SECURITY_PROTOCOL_IPSEC,
++			{.ipsec = {
++				.proto = RTE_SECURITY_IPSEC_SA_PROTO_ESP,
++				.mode = RTE_SECURITY_IPSEC_SA_MODE_TUNNEL,
++				.direction = RTE_SECURITY_IPSEC_SA_DIR_INGRESS,
++				.options = {
++					.esn = 0,
++					.udp_encap = 1,
++					.copy_dscp = 0,
++					.copy_flabel = 0,
++					.copy_df = 0,
++					.dec_ttl = 0,
++					.ecn = 0,
++					.stats = 1,
++					.iv_gen_disable = 0,
++					.tunnel_hdr_verify = 1,
++					.udp_ports_verify = 1,
++					.ip_csum_enable = 0,
++					.l4_csum_enable = 0,
++					.ip_reassembly_en = 0,
++					.ingress_oop = 0
++			} } },
++			.crypto_capabilities = ipsec_crypto_capabilities,
++			.ol_flags = 0
++		},
++		{
++			.action = RTE_SECURITY_ACTION_TYPE_NONE
++		}
++	};
++
++	return sxe2_security_capabilities;
++}
++
++static struct rte_security_ops sxe2_security_ops = {
++	.session_get_size		= sxe2_security_session_size_get,
++	.session_create			= sxe2_security_session_create,
++	.session_destroy		= sxe2_security_session_destroy,
++	.set_pkt_metadata		= sxe2_security_pkt_metadata_set,
++	.capabilities_get		= sxe2_security_capabilities_get,
++};
++
++int32_t sxe2_security_init(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct rte_security_ctx *sctx = NULL;
++	struct sxe2_security_ctx *sxe2_sctx = &adapter->security_ctx;
++	int32_t ret = -1;
++
++	if (!sxe2_ipsec_supported(adapter)) {
++		ret = 0;
++		PMD_LOG_INFO(INIT, "Not support security feature.");
++		goto l_end;
++	}
++
++	PMD_LOG_INFO(INIT, "Init security feature.");
++
++	sctx = rte_zmalloc("security_ctx", sizeof(struct rte_security_ctx), 0);
++	if (sctx == NULL) {
++		ret = -ENOMEM;
++		goto l_end;
++	}
++
++	sctx->device = dev;
++	sctx->ops = &sxe2_security_ops;
++	sctx->sess_cnt = 0;
++	sctx->flags = 0;
++	dev->security_ctx = (void *)sctx;
++
++	rte_spinlock_init(&sxe2_sctx->security_lock);
++	sxe2_sctx->adapter = adapter;
++
++	if (sxe2_ipsec_supported(adapter)) {
++		ret = sxe2_ipsec_init(adapter);
++		if (ret) {
++			rte_free(sctx);
++			sctx = NULL;
++			dev->security_ctx = NULL;
++			goto l_end;
++		}
++	}
++
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++void sxe2_security_uinit(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct rte_security_ctx *sctx = dev->security_ctx;
++
++	if (!sxe2_ipsec_supported(adapter)) {
++		PMD_LOG_INFO(INIT, "Not support security feature.");
++		goto l_end;
++	}
++
++	PMD_LOG_INFO(INIT, "Uinit security feature.");
++
++	if (sctx != NULL) {
++		rte_free(sctx);
++		sctx = NULL;
++	}
++
++	sxe2_ipsec_uinit(adapter);
 +
 +l_end:
 +	return;
 +}
+diff --git a/drivers/net/sxe2/sxe2_security.h b/drivers/net/sxe2/sxe2_security.h
+new file mode 100644
+index 0000000000..366c0614bd
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_security.h
+@@ -0,0 +1,77 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
 +
-+static __rte_always_inline uint16_t
-+sxe2_rx_pkts_common_vec_neon(struct sxe2_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-+		uint16_t nb_pkts, uint8_t *split_rxe_flags, uint8_t *umbcast_flags,
-+		bool do_offload)
++#ifndef __SXE2_SECURITY_H__
++#define __SXE2_SECURITY_H__
++
++#include <rte_security.h>
++#include <rte_cryptodev.h>
++#include <rte_security_driver.h>
++
++#include "sxe2_ipsec.h"
++
++#define SXE2_DEV_TO_SECURITY(eth) \
++	((struct rte_security_ctx *)(((struct rte_eth_dev *)eth)->security_ctx))
++
++#define SXE2_RTE_CRYPTO_CIPHER_AES_CBC   (RTE_CRYPTO_CIPHER_AES_CBC)
++
++#define SXE2_RTE_RTE_CRYPTO_CIPHER_SM4_CBC   (RTE_CRYPTO_CIPHER_SM4_CBC)
++
++#define SXE2_RTE_CRYPTO_AUTH_SHA256_HMAC  (RTE_CRYPTO_AUTH_SHA256_HMAC)
++
++#define SXE2_RTE_CRYPTO_AUTH_SM3_HMAC   (RTE_CRYPTO_AUTH_SM3_HMAC)
++
++enum sxe2_security_protocol {
++	SXE2_SECURITY_PROTOCOL_IPSEC       = 0,
++	SXE2_SECURITY_PROTOCOL_MAX         = 1,
++};
++
++enum sxe2_security_xform {
++	SXE2_SECURITY_IPSEC_EN       = 0,
++	SXE2_SECURITY_IPSEC_DE       = 1,
++	SXE2_SECURITY_NUM_MAX        = 2,
++};
++
++enum sxe2_security_block_size {
++	SXE2_SECURITY_BLOCK_SIZE_16        = 16,
++	SXE2_SECURITY_BLOCK_SIZE_64        = 64,
++};
++
++struct sxe2_security_ipsec_caps {
++	enum rte_security_ipsec_sa_protocol   proto;
++	enum rte_security_ipsec_sa_mode       mode;
++	struct rte_security_ipsec_sa_options  options;
++};
++
++struct sxe2_security_capabilities {
++	struct rte_cryptodev_capabilities     *crypto_capabilities;
++	enum rte_security_session_action_type action;
++	struct sxe2_security_ipsec_caps      ipsec;
++};
++
++struct sxe2_security_session {
++	struct sxe2_adapter                   *adapter;
++	struct sxe2_ipsec_pkt_metadata        pkt_metadata_template;
++	struct sxe2_ipsec_security_sa         sa;
++	struct sxe2_ipsec_esn                 esn;
++	struct sxe2_ipsec_udp                 udp_cap;
++	enum rte_security_session_protocol     protocol;
++	enum rte_security_ipsec_sa_direction   direction;
++	enum rte_security_ipsec_sa_mode        mode;
++	enum rte_security_ipsec_sa_protocol    sa_proto;
++	enum rte_security_ipsec_tunnel_type    type;
++};
++
++struct sxe2_security_ctx {
++	struct sxe2_adapter                 *adapter;
++	struct sxe2_security_capabilities   sxe2_capabilities[SXE2_SECURITY_PROTOCOL_MAX];
++	struct sxe2_ipsec_ctx               ipsec_ctx;
++	rte_spinlock_t                       security_lock;
++};
++
++int32_t sxe2_security_init(struct rte_eth_dev *dev);
++
++void sxe2_security_uinit(struct rte_eth_dev *dev);
++
++#endif /* __SXE2_SECURITY_H__ */
+diff --git a/drivers/net/sxe2/sxe2_tx.c b/drivers/net/sxe2/sxe2_tx.c
+index a280edc9c5..f49238ceef 100644
+--- a/drivers/net/sxe2/sxe2_tx.c
++++ b/drivers/net/sxe2/sxe2_tx.c
+@@ -304,6 +304,11 @@ int32_t __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
+ 	}
+ 
+ 	offloads = tx_conf->offloads | dev->data->dev_conf.txmode.offloads;
++	if (!sxe2_ipsec_valid_tx_offloads(offloads)) {
++		ret = -EINVAL;
++		goto end;
++	}
++
+ 	txq = sxe2_tx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
+ 	if (txq == NULL) {
+ 		PMD_LOG_ERR(TX, "failed to alloc sxe2vf tx queue:%u resource", queue_idx);
+@@ -327,6 +332,9 @@ int32_t __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
+ 	txq->ops               = sxe2_tx_default_ops_get();
+ 	txq->ops.queue_reset(txq);
+ 
++	if (sxe2_ipsec_supported(adapter) && txq->offloads & RTE_ETH_TX_OFFLOAD_SECURITY)
++		txq->ipsec_pkt_md_offset = sxe2_ipsec_pkt_md_offset_get(adapter);
++
+ 	dev->data->tx_queues[queue_idx] = txq;
+ 	ret = 0;
+ 
+diff --git a/drivers/net/sxe2/sxe2_txrx_poll.c b/drivers/net/sxe2/sxe2_txrx_poll.c
+index 3c6fe37404..8b6e585c36 100644
+--- a/drivers/net/sxe2/sxe2_txrx_poll.c
++++ b/drivers/net/sxe2/sxe2_txrx_poll.c
+@@ -307,6 +307,25 @@ static __rte_always_inline void sxe2_desc_tso_fill(struct rte_mbuf *tx_pkt,
+ 	return;
+ }
+ 
++static __rte_always_inline void sxe2_desc_ipsec_fill(struct rte_mbuf *tx_pkt,
++			struct sxe2_tx_queue *txq, uint16_t *ipsec_offset,
++			uint64_t *desc_type_cmd_tso_mss)
 +{
-+	volatile union sxe2_rx_desc *desc;
-+	struct rte_mbuf **buffer;
-+	uint32_t i;
-+	uint16_t done_num = 0;
-+	const uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
++	struct sxe2_ipsec_pkt_metadata *md = NULL;
++	uint16_t ipsec_pkt_md_offset = txq->ipsec_pkt_md_offset;
 +
-+	uint8x16_t rvp_shuf_mask = {
-+		0xFF, 0xFF, 0xFF, 0xFF,
-+		12, 13, 0xFF, 0xFF,
-+		12, 13,
-+		2, 3,
-+		4, 5, 6, 7
-+	};
++	md = RTE_MBUF_DYNFIELD(tx_pkt, ipsec_pkt_md_offset, struct sxe2_ipsec_pkt_metadata *);
++	*ipsec_offset = md->esp_head_offset;
++	*desc_type_cmd_tso_mss |= SXE2_TX_CTXT_DESC_IPSEC_EN;
++	if (md->mode == SXE2_IPSEC_MODE_ONLY_ENCRYPT)
++		*desc_type_cmd_tso_mss |= SXE2_TX_CTXT_DESC_IPSEC_MODE;
 +
-+	uint16x8_t crc_adjust = {
-+		0, 0,
-+		rxq->crc_len,
-+		0, rxq->crc_len,
-+		0, 0, 0
-+	};
++	if (md->algo == SXE2_IPSEC_ALGO_SM4_CBC_AND_SM3_96_HMAC)
++		*desc_type_cmd_tso_mss |= SXE2_TX_CTXT_DESC_IPSEC_ENGINE;
 +
-+	desc = &rxq->desc_ring[rxq->processing_idx];
-+	rte_prefetch0(desc);
-+
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, SXE2_RX_NUM_PER_LOOP_NEON);
-+
-+	if (rxq->realloc_num > SXE2_RX_REARM_THRESH_VEC)
-+		sxe2_rx_queue_rearm_neon(rxq);
-+
-+	if ((rte_le_to_cpu_64(desc->wb.status_err_ptype_len) &
-+			SXE2_RX_DESC_STATUS_DD_MASK) == 0) {
-+		goto l_end;
-+	}
-+
-+	buffer = &rxq->buffer_ring[rxq->processing_idx];
-+	for (i = 0; i < nb_pkts; i += SXE2_RX_NUM_PER_LOOP_NEON,
-+				desc += SXE2_RX_NUM_PER_LOOP_NEON) {
-+		uint64x2_t descs[SXE2_RX_NUM_PER_LOOP_NEON];
-+		uint8x16_t pkt_mb1, pkt_mb2, pkt_mb3, pkt_mb4;
-+		uint64x2_t mbp1, mbp2;
-+		uint16x8_t staterr;
-+		uint16x8_t tmp;
-+		uint16_t bit_num;
-+
-+		descs[3] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc + 3));
-+		rte_atomic_thread_fence(rte_memory_order_acquire);
-+		descs[2] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc + 2));
-+		rte_atomic_thread_fence(rte_memory_order_acquire);
-+		descs[1] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc + 1));
-+		rte_atomic_thread_fence(rte_memory_order_acquire);
-+		descs[0] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc));
-+
-+		rte_atomic_thread_fence(rte_memory_order_acquire);
-+
-+		descs[3] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc + 3), descs[3], 0);
-+		descs[2] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc + 2), descs[2], 0);
-+		descs[1] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc + 1), descs[1], 0);
-+		descs[0] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc), descs[0], 0);
-+
-+		mbp1 = vld1q_u64((uint64_t *)&buffer[i]);
-+		mbp2 = vld1q_u64((uint64_t *)&buffer[i + 2]);
-+
-+		vst1q_u64((uint64_t *)&rx_pkts[i], mbp1);
-+		vst1q_u64((uint64_t *)&rx_pkts[i + 2], mbp2);
-+
-+		if (split_rxe_flags) {
-+			rte_mbuf_prefetch_part2(rx_pkts[i]);
-+			rte_mbuf_prefetch_part2(rx_pkts[i + 1]);
-+			rte_mbuf_prefetch_part2(rx_pkts[i + 2]);
-+			rte_mbuf_prefetch_part2(rx_pkts[i + 3]);
-+		}
-+
-+		pkt_mb4 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[3]), rvp_shuf_mask);
-+		pkt_mb3 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[2]), rvp_shuf_mask);
-+		pkt_mb2 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[1]), rvp_shuf_mask);
-+		pkt_mb1 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[0]), rvp_shuf_mask);
-+
-+		if (do_offload) {
-+			sxe2_rx_desc_offloads_para_fill_neon(rxq, desc, descs, &rx_pkts[i]);
-+		} else {
-+			const uint64x2_t mbuf_init = {
-+				rxq->mbuf_init_value,
-+				0,
-+			};
-+
-+			vst1q_u64((uint64_t *)&rx_pkts[i]->rearm_data, mbuf_init);
-+			vst1q_u64((uint64_t *)&rx_pkts[i + 1]->rearm_data, mbuf_init);
-+			vst1q_u64((uint64_t *)&rx_pkts[i + 2]->rearm_data, mbuf_init);
-+			vst1q_u64((uint64_t *)&rx_pkts[i + 3]->rearm_data, mbuf_init);
-+		}
-+
-+		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb4), crc_adjust);
-+		pkt_mb4 = vreinterpretq_u8_u16(tmp);
-+		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb3), crc_adjust);
-+		pkt_mb3 = vreinterpretq_u8_u16(tmp);
-+		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb2), crc_adjust);
-+		pkt_mb2 = vreinterpretq_u8_u16(tmp);
-+		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb1), crc_adjust);
-+		pkt_mb1 = vreinterpretq_u8_u16(tmp);
-+
-+		vst1q_u8((void *)&rx_pkts[i + 3]->rx_descriptor_fields1,
-+				pkt_mb4);
-+		vst1q_u8((void *)&rx_pkts[i + 2]->rx_descriptor_fields1,
-+				pkt_mb3);
-+		vst1q_u8((void *)&rx_pkts[i + 1]->rx_descriptor_fields1,
-+				pkt_mb2);
-+		vst1q_u8((void *)&rx_pkts[i]->rx_descriptor_fields1,
-+				pkt_mb1);
-+
-+		if (likely(i + SXE2_RX_NUM_PER_LOOP_NEON < nb_pkts))
-+			rte_prefetch_non_temporal(desc + SXE2_RX_NUM_PER_LOOP_NEON);
-+
-+		{
-+			uint32x4_t d0 = vreinterpretq_u32_u64(descs[0]);
-+			uint32x4_t d1 = vreinterpretq_u32_u64(descs[1]);
-+			uint32x4_t d2 = vreinterpretq_u32_u64(descs[2]);
-+			uint32x4_t d3 = vreinterpretq_u32_u64(descs[3]);
-+			uint32x4_t sterr_tmp1 = vzip2q_u32(d1, d0);
-+			uint32x4_t sterr_tmp2 = vzip2q_u32(d3, d2);
-+			uint32x4_t sterr_u32 = vzip1q_u32(sterr_tmp1, sterr_tmp2);
-+
-+			staterr = vreinterpretq_u16_u32(sterr_u32);
-+		}
-+
-+		sxe2_rx_desc_ptype_fill_neon(staterr, &rx_pkts[i], ptype_tbl);
-+
-+		if (umbcast_flags != NULL) {
-+			uint32x4_t umbcast_mask = {
-+				SXE2_RX_DESC_STATUS_UMBCAST_MASK, SXE2_RX_DESC_STATUS_UMBCAST_MASK,
-+				SXE2_RX_DESC_STATUS_UMBCAST_MASK, SXE2_RX_DESC_STATUS_UMBCAST_MASK,
-+			};
-+
-+			uint8x16_t umbcast_shuf_mask = {
-+				0x0B, 0x03, 0x0F, 0x07,
-+				0xFF, 0xFF, 0xFF, 0xFF,
-+				0xFF, 0xFF, 0xFF, 0xFF,
-+				0xFF, 0xFF, 0xFF, 0xFF,
-+			};
-+			uint8x16_t umbcast_bits =
-+				vreinterpretq_u8_u32(vandq_u32(vreinterpretq_u32_u16(staterr),
-+							       umbcast_mask));
-+
-+			umbcast_bits = vqtbl1q_u8(umbcast_bits, umbcast_shuf_mask);
-+			vst1q_lane_u32((uint32_t *)umbcast_flags,
-+					vreinterpretq_u32_u8(umbcast_bits), 0);
-+			umbcast_flags += SXE2_RX_NUM_PER_LOOP_NEON;
-+		}
-+
-+		if (split_rxe_flags) {
-+			uint8x16_t eop_shuf_mask = {
-+					0x08, 0x00, 0x0C, 0x04,
-+					0xFF, 0xFF, 0xFF, 0xFF,
-+					0xFF, 0xFF, 0xFF, 0xFF,
-+					0xFF, 0xFF, 0xFF, 0xFF};
-+			uint8x16_t eop_bits;
-+			uint32x4_t rxe_mask = {
-+				0x2080, 0x2080, 0x2080, 0x2080
-+			};
-+			uint32x4_t rxe_bits;
-+			uint32x4_t eop_mask;
-+
-+			eop_mask = vshlq_n_u32(vdupq_n_u32(1), SXE2_RX_DESC_STATUS_EOP_SHIFT);
-+			eop_bits = vandq_u8(vmvnq_u8(vreinterpretq_u8_u16(staterr)),
-+					vreinterpretq_u8_u32(eop_mask));
-+
-+			rxe_bits = vandq_u32(vreinterpretq_u32_u16(staterr), rxe_mask);
-+			rxe_bits = vshrq_n_u32(rxe_bits, 7);
-+
-+			eop_bits = vorrq_u8(eop_bits, vreinterpretq_u8_u32(rxe_bits));
-+
-+			eop_bits = vqtbl1q_u8(eop_bits, eop_shuf_mask);
-+
-+			vst1q_lane_u32((uint32_t *)split_rxe_flags,
-+				       vreinterpretq_u32_u8(eop_bits), 0);
-+			split_rxe_flags += SXE2_RX_NUM_PER_LOOP_NEON;
-+
-+#ifdef RTE_IOVA_IN_MBUF
-+			rx_pkts[i]->next = NULL;
-+			rx_pkts[i + 1]->next = NULL;
-+			rx_pkts[i + 2]->next = NULL;
-+			rx_pkts[i + 3]->next = NULL;
-+#endif
-+		}
-+
-+		{
-+			uint32x4_t dd_mask = vdupq_n_u32(1);
-+			uint32x4_t sterr_dd = vandq_u32(vreinterpretq_u32_u16(staterr), dd_mask);
-+			uint16x4_t packed_lo = vmovn_u32(sterr_dd);
-+			uint64_t dd64 = vget_lane_u64(vreinterpret_u64_u16(packed_lo), 0);
-+
-+			bit_num = (uint16_t)rte_popcount64(dd64);
-+		}
-+		done_num += bit_num;
-+		if (likely(bit_num != SXE2_RX_NUM_PER_LOOP_NEON))
-+			break;
-+	}
-+
-+	rxq->processing_idx += done_num;
-+	rxq->processing_idx &= (rxq->ring_depth - 1);
-+	rxq->realloc_num    += done_num;
-+
-+l_end:
-+	return done_num;
++	*desc_type_cmd_tso_mss |= (uint64_t)(md->sa_idx) << SXE2_TX_CTXT_DESC_IPSEC_SA_SHIFT;
 +}
 +
-+static __rte_always_inline uint16_t
-+sxe2_rx_pkts_scattered_batch_vec_neon(struct sxe2_rx_queue *rxq,
-+		struct rte_mbuf **rx_pkts, uint16_t nb_pkts, bool do_offload)
-+{
-+	const uint64_t *split_flags64;
-+	uint8_t split_rxe_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
-+	uint8_t umbcast_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
-+	uint16_t rx_done_num;
-+	uint16_t rx_pkt_done_num;
-+
-+	rx_pkt_done_num = 0;
-+
-+	if (rxq->vsi->adapter->devargs.sw_stats_en) {
-+		rx_done_num = sxe2_rx_pkts_common_vec_neon((struct sxe2_rx_queue *)rxq,
-+					rx_pkts, nb_pkts, split_rxe_flags, umbcast_flags,
-+					do_offload);
-+	} else {
-+		rx_done_num = sxe2_rx_pkts_common_vec_neon((struct sxe2_rx_queue *)rxq,
-+					rx_pkts, nb_pkts, split_rxe_flags, NULL,
-+					do_offload);
-+	}
-+
-+	if (rx_done_num == 0)
-+		goto l_end;
-+
-+	if (!rxq->vsi->adapter->devargs.sw_stats_en) {
-+		split_flags64 = (uint64_t *)split_rxe_flags;
-+
-+		if (rxq->pkt_first_seg == NULL &&
-+				split_flags64[0] == 0 && split_flags64[1] == 0 &&
-+				split_flags64[2] == 0 && split_flags64[3] == 0) {
-+			rx_pkt_done_num = rx_done_num;
-+			goto l_end;
-+		}
-+
-+		if (rxq->pkt_first_seg == NULL) {
-+			while (rx_pkt_done_num < rx_done_num &&
-+					split_rxe_flags[rx_pkt_done_num] == 0) {
-+				rx_pkt_done_num++;
+ static __rte_always_inline uint64_t
+ sxe2_tx_data_desc_build_cobt(uint32_t cmd, uint32_t offset, uint16_t buf_size, uint16_t l2tag)
+ {
+@@ -426,6 +445,11 @@ uint16_t sxe2_tx_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkt
+ 			else if (offloads & RTE_MBUF_F_TX_IEEE1588_TMST)
+ 				desc_type_cmd_tso_mss |= SXE2_TX_CTXT_DESC_CMD_TSYN_MASK;
+ 
++			if (offloads & RTE_MBUF_F_TX_SEC_OFFLOAD) {
++				sxe2_desc_ipsec_fill(tx_pkt, txq, &ipsec_offset,
++						     &desc_type_cmd_tso_mss);
 +			}
 +
-+			if (rx_pkt_done_num == rx_done_num)
-+				goto l_end;
+ 			if (offloads & RTE_MBUF_F_TX_QINQ) {
+ 				desc_l2tag2 = tx_pkt->vlan_tci_outer;
+ 				desc_type_cmd_tso_mss |= SXE2_TX_CTXT_DESC_CMD_IL2TAG2_MASK;
+@@ -786,6 +810,36 @@ static inline void sxe2_rx_desc_ptp_para_fill(struct sxe2_rx_queue *rxq,
+ 			     rxq->ts_low);
+ 	}
+ }
 +
-+			rxq->pkt_first_seg = rx_pkts[rx_pkt_done_num];
++static inline void sxe2_rx_desc_ipsec_para_fill(struct sxe2_rx_queue *rxq __rte_unused,
++		struct rte_mbuf *mbuf, union sxe2_rx_desc *desc)
++{
++	uint32_t status_lrocnt_fdpf_id = rte_le_to_cpu_32(desc->wb.status_lrocnt_fdpf_id);
++	enum sxe2_rx_desc_ipsec_status ipsec_status;
++
++	if (status_lrocnt_fdpf_id & SXE2_RX_DESC_IPSEC_PKT_MASK) {
++		mbuf->ol_flags |= RTE_MBUF_F_RX_SEC_OFFLOAD;
++		ipsec_status = SXE2_RX_DESC_IPSEC_STATUS_VAL_GET(status_lrocnt_fdpf_id);
++		switch (ipsec_status) {
++		case SXE2_RX_DESC_IPSEC_STATUS_SUCCESS:
++			break;
++		case SXE2_RX_DESC_IPSEC_STATUS_PKG_OVER_2K:
++		case SXE2_RX_DESC_IPSEC_STATUS_SPI_IP_INVALID:
++		case SXE2_RX_DESC_IPSEC_STATUS_SA_INVALID:
++		case SXE2_RX_DESC_IPSEC_STATUS_NOT_ALIGN:
++		case SXE2_RX_DESC_IPSEC_STATUS_ICV_ERROR:
++		case SXE2_RX_DESC_IPSEC_STATUS_BY_PASSH:
++		case SXE2_RX_DESC_IPSEC_STATUS_MAC_BY_PASSH:
++			PMD_LOG_INFO(RX, "IPsec status error:%d", ipsec_status);
++			mbuf->ol_flags |= RTE_MBUF_F_RX_SEC_OFFLOAD_FAILED;
++			break;
++		default:
++			PMD_LOG_INFO(RX, "Invalid ipsec status:%d", ipsec_status);
++			mbuf->ol_flags |= RTE_MBUF_F_RX_SEC_OFFLOAD_FAILED;
++			break;
 +		}
 +	}
-+
-+	rx_pkt_done_num += sxe2_rx_pkts_refactor(rxq, &rx_pkts[rx_pkt_done_num],
-+			rx_done_num - rx_pkt_done_num, &split_rxe_flags[rx_pkt_done_num],
-+			&umbcast_flags[rx_pkt_done_num]);
-+
-+l_end:
-+	return rx_pkt_done_num;
 +}
-+
-+uint16_t sxe2_rx_pkts_scattered_vec_neon_offload(void *rx_queue,
-+			struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
-+{
-+	uint16_t done_num = 0;
-+	uint16_t once_num;
-+
-+	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM_VEC) {
-+		once_num = sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
-+								 rx_pkts + done_num,
-+								 SXE2_RX_PKTS_BURST_BATCH_NUM_VEC,
-+								 true);
-+
-+		done_num += once_num;
-+		nb_pkts  -= once_num;
-+
-+		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM_VEC)
-+			goto l_end;
-+	}
-+
-+	done_num += sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
-+							  rx_pkts + done_num,
-+							  nb_pkts,
-+							  true);
-+l_end:
-+	return done_num;
-+}
-+
-+uint16_t sxe2_rx_pkts_scattered_vec_neon(void *rx_queue,
-+			struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
-+{
-+	uint16_t done_num = 0;
-+	uint16_t once_num;
-+
-+	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM_VEC) {
-+		once_num = sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
-+								 rx_pkts + done_num,
-+								 SXE2_RX_PKTS_BURST_BATCH_NUM_VEC,
-+								 false);
-+
-+		done_num += once_num;
-+		nb_pkts  -= once_num;
-+
-+		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM_VEC)
-+			goto l_end;
-+	}
-+
-+	done_num += sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
-+							  rx_pkts + done_num,
-+							  nb_pkts,
-+							  false);
-+l_end:
-+	return done_num;
-+}
-+#endif
+ #endif
+ 
+ static __rte_always_inline void
+@@ -803,6 +857,7 @@ sxe2_rx_mbuf_common_fields_fill(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf
+ 	sxe2_rx_desc_vlan_para_fill(mbuf, rxd);
+ 	sxe2_rx_desc_filter_para_fill(rxq, mbuf, rxd);
+ #ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
++	sxe2_rx_desc_ipsec_para_fill(rxq, mbuf, rxd);
+ 	sxe2_rx_desc_ptp_para_fill(rxq, mbuf, rxd);
+ #endif
+ 
 -- 
 2.52.0
 
