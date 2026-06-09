@@ -2,80 +2,147 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 214B0CD8CAA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 10:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8900CD8CAA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 10:53:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BA8F402BE;
-	Tue,  9 Jun 2026 12:43:58 +0200 (CEST)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id 356004025E
- for <dev@dpdk.org>; Tue,  9 Jun 2026 12:43:57 +0200 (CEST)
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
- by mailfout.phl.internal (Postfix) with ESMTP id C961FEC00D0;
- Tue,  9 Jun 2026 06:43:56 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-08.internal (MEProxy); Tue, 09 Jun 2026 06:43:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1781001836;
- x=1781088236; bh=RAssODySkAQCVKeh8PbBONhCGC8sm79Qk4Jvx0QJMx8=; b=
- plPAOqoxeleDQeKELfRNGc+wL8Eah9v+D2/zh/C1Ajy0DFRsoY6MlDq8fjhK8mbj
- cysG5QckI8OHcPxe732TfktleJLG8qI6pBikdZLTIiGqxt+RvQhMGCSU2Jtnrvsi
- CetlKOPAQNXI/r3fvnMzNXOHWxLvohzZCrnUpwFCBNuUuLLGQcccYdGNJ2cy3RZl
- sHjpv5THSDjv+n4lEneMl1AUJzJPbNphdIOT9nt6K02M6T++GpC3p2Pme8rKTH9x
- Z1MAgNfLNALdYHFYzZJrl5K+H+O1TGjLrlSEuAlKcDOeO0uyezgsJ2CNm6tYpO/T
- e1NHYbYRh4isxD9aIKIhZg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781001836; x=
- 1781088236; bh=RAssODySkAQCVKeh8PbBONhCGC8sm79Qk4Jvx0QJMx8=; b=L
- bKxHaF/KOePmsPyhiVOFZebNgvVYzSRaOWLApQj8ccL4S1ddje+ut/C/87lf/uzD
- a969/2/9/SwtUq38JDMsejfy8HDvI4RKxuFSSVgjPswZ5BeqXFADFsi8B0GLrCnz
- yuJdDfAFBqInEFmraoia8jdLh9d/Qj4biDVBIuMzS/SeL6o9Sv6EoFvGrZjafuF1
- x5nnfhuvoz73ehNpO31Tq9VxxUQXmIUOFHiid2MEQeqjQti+6njWmbBdgRKDWNw1
- yQ82YUkAvnDVk8tY6Gpo2r4X/hxamZL8jkYEZSh/olEt0ytMyQo1amNtL9CRMS5u
- nzpBfoAvgu7lOp4MMFP/w==
-X-ME-Sender: <xms:bO4nasiqlKhwi_p6WOk662vCy_-8Ol-xdUJBSqabPSzK04W-Ip_lLw>
- <xme:bO4napVStNZeS6S5Rm0_pdc13ymJchah_dQHBKN7VuLawEPHYlpvMt69xbWVT70bQ
- pKur459KxO5Z1RTVtRMJROLrRW-P0flleEnTf9mXeX7LNMm6XUR0kM>
-X-ME-Received: <xmr:bO4najO66Z-oX1vS_2i-T0SZbEVqstCGXr_Odabc27PU-_bjyrmBPntc_7qcRDNtHc59ZTTv_h3KBSXS1r8lLUeKug>
-X-ME-Proxy-Cause: dmFkZTEf0yaIq5ICUJvC9A7UDxDvnJnFa04iJzgOe5qAHhzhvQLNLFn4oFEUpdkixp9Ian
- PnNmh0iJjqcIhbzj7xLa86IfxSD4Mx8WjctTcpDnppGPh+qg4mEOI7lJslbCStZckBB4De
- KJlnV28yDZzl1dGpCxzxvhSo1A+HD1VFL18Pwt3ZzPsutfR40pGgwS7fpkOUU4ZL1px+bN
- CaenPfU0Uitrcf6yLO+ikw9ZyQ9OkHgJC1I0CiD/v+yqWz460B6YWPHAzS0HIejCaPSeB0
- tfLh6ah8wWeAlydJtPawDikB6Ap2QYUeMEkQ+xBQlJ0w/rtwJA43AobrRtxkgrLkUvvGBY
- 6qI88Qq73It/JIAnm5sxORE4VIwru5TzkmiIoCbJEvwD2AdGue574XrD2c54b7HjGrz5Gx
- 92JAkQ5HTq//7antBMmahYx3rBYok2WX42Zs9hm/PuQeShjKoc7sjBaaN9tC8joeYGWTqY
- rJcmoAtwfR28bFcKikQ0MciJU5lvkwkdKOMEfGO1NPDyIbpGbNtfi4NRtBLBoLdBQppMKn
- DooGvWcjtweCvoq5Bk6rfEkj0/AdbkSS5r9Tc8+OnIe+AIZtark7g9FFY/l8aAF1fhN1yj
- 0P3GXDMoCGXQOIm/sAgUthwgvipOxt00WBC8zcgxySlLUnudvt9seLtngkDQ
-X-ME-Proxy: <xmx:bO4nalYRpKZAuGrHzfZ7YWHMfCtPqptVD44DaEf6alGkD8dXPVs2hA>
- <xmx:bO4navqtNB9RwrjjpuQ84Qv4vwNc-sS53OFrgPfcUwGFD8T0AR33ew>
- <xmx:bO4nahYz_7T2YWtov7sA4ZfwmdwXinNS_hBFADPhbLbadGzLcOKJRQ>
- <xmx:bO4navT_N--BKZ6SQJ6lqzvLhgYBvfckVl_fE92T99OS87u2lTk05Q>
- <xmx:bO4namGRDNhP0AYCiER9IeYEevgwXPVQGqELEkL1Iy0FILBGLlF7hfIu>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Jun 2026 06:43:55 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: =?UTF-8?B?6K64546y54eV?= <lingyan.xu@metax-tech.com>
-Cc: dev <dev@dpdk.org>, eagostini <eagostini@nvidia.com>
-Subject: Re: =?UTF-8?B?5Zue5aSN77yaW1BBVENIXQ==?= gpu/metax: add new driver
- for Metax GPU
-Date: Tue, 09 Jun 2026 12:43:54 +0200
-Message-ID: <J2c1Ke4gRXqOUlr2bqZFPg@monjalon.net>
-In-Reply-To: <fbe7f8ce-f680-411a-a7a6-82eda60300de.lingyan.xu@metax-tech.com>
-References: <6c18e957-c1c2-4b43-9b2c-b36424c1e9af.lingyan.xu@metax-tech.com>
- <CsAn75rzSb2jiQLRSeXkmQ@monjalon.net>
- <fbe7f8ce-f680-411a-a7a6-82eda60300de.lingyan.xu@metax-tech.com>
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id CD3D2402BE;
+	Tue,  9 Jun 2026 12:53:04 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id D347B4025E;
+ Tue,  9 Jun 2026 12:53:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1781002384; x=1812538384;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=XKC8mLMD66iv5qUo4GWPRpb9BIjhd9Qi7l3BeD9RHt8=;
+ b=kRDscnj4zXdur1mqbTrFnMrmMwpps9hnvd14A37FYfWjux2BIUjxOATS
+ 2mPohdgpG/w8hl4JyRSJea267co3zq5kkflDPXjx4bMBH2HoQsenyDIce
+ Im8MnwWZ3btmxzKeaQC9z9Kwwai1MNJyMDUB4Bl/a/Wp5QyRSHGzYpoAb
+ p7sTO2cyZ0q/0xRsYShZFJa9hbl7+dJYwoKbQ5/kmFi5HDP6sYTa1/O3F
+ hKSwYAaRues6NWPasbBPwhxgCvOhSuyWGoZXU6QfJNDfZrQzMrfEm2atO
+ i+Uj3U6ZZYQfY+nIte6FNFMEFkcy1nEcZvAceSwUQgExy9H0GL4F5Ys30 Q==;
+X-CSE-ConnectionGUID: 1qyMQ+iSQ+unrY4BHot6Xg==
+X-CSE-MsgGUID: TM2eYE+qR5O4z2xc1pzkpw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="81944397"
+X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="81944397"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jun 2026 03:53:02 -0700
+X-CSE-ConnectionGUID: hcR8UQcsS4KfABcliys07w==
+X-CSE-MsgGUID: XMP89/swQ7ee08Ie3ojfCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="276016364"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jun 2026 03:53:01 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 9 Jun 2026 03:53:01 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Tue, 9 Jun 2026 03:53:00 -0700
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.57)
+ by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 9 Jun 2026 03:53:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZsXSlpJFmki+16h8W5clU9dDBEBfns6qbgC4ZZ0vsMFYGNy676hnbCbogpNakonQLHH5zutzdEhjqsd7W32VSAabcJwff/Y3m+KeEXM2LxWgNXiQ38MOfljDXQjKcG2hN5v7b15VWRD6utwX/TLgW2ZoZOiLG1XTrpNGs6cCc9PIe9jmNgGSwlmSn3any+yt6Ry/Zg3YFcZ7CudVA/fu78q7E/6uRaJ/EYQyHwv8W/K+oZ2oUWm4yo49VP7MMDK8wOUxbbXAvB89rB3wk7EkWANyM0eqjIMJA20owOGsOpBkisfrwXHdaZeBaR65Agr3zTl0yd5PW+f4hz6arhqp6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NnF9tvROhvVy34VHGae6o1bmkP7jAb1sC/1UMtthR+s=;
+ b=GlWQmuohpf6YWLmHodFOb4AxNMuGflWLqa1JiIn/w3f+Qv75CJd9AHmqTQpi6GIJTogChy3wZ7bjiPFQGEJZgIUt0tPyxdCdzQk+54lfFd0JMSe3CWNtALyIQkxnya8XN1IcP5cXVDiHAue2bVo+jy2V1nlah4nYXm7S9xs8gNN9bmEcxMXp7Q8BtoyJ3hxZuC8EYWHPnsI42DpGx9J+Z6d+Ozp3P697gylMrD2K6NPeOBvKR3YxBd37akWGfyFHqlSMrXIRx4DZ4Wp/A0rvlTlR2/J4o8Mfm4eDQxcH6gFNm+HiGrBSP8ZjTsH0nxQ2S+iUzcKJEW77wDZOtwSqjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA4PR11MB9278.namprd11.prod.outlook.com (2603:10b6:208:563::12)
+ by DM4PR11MB5263.namprd11.prod.outlook.com (2603:10b6:5:38a::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.13; Tue, 9 Jun 2026
+ 10:52:53 +0000
+Received: from IA4PR11MB9278.namprd11.prod.outlook.com
+ ([fe80::9bef:c20f:571f:7057]) by IA4PR11MB9278.namprd11.prod.outlook.com
+ ([fe80::9bef:c20f:571f:7057%6]) with mapi id 15.21.0092.011; Tue, 9 Jun 2026
+ 10:52:53 +0000
+From: "Loftus, Ciara" <ciara.loftus@intel.com>
+To: "Mandal, Anurag" <anurag.mandal@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Medvedkin, Vladimir"
+ <vladimir.medvedkin@intel.com>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH v4] net/iavf: fix duplicate VF reset during PF reset
+ recovery
+Thread-Topic: [PATCH v4] net/iavf: fix duplicate VF reset during PF reset
+ recovery
+Thread-Index: AQHc92QBBPuzAs4D/UCvnCtph0L4sbY2C3tg
+Date: Tue, 9 Jun 2026 10:52:53 +0000
+Message-ID: <IA4PR11MB9278C6E444FC5E3D969865318E1D2@IA4PR11MB9278.namprd11.prod.outlook.com>
+References: <20260605202911.314359-1-anurag.mandal@intel.com>
+ <20260608162936.354248-1-anurag.mandal@intel.com>
+In-Reply-To: <20260608162936.354248-1-anurag.mandal@intel.com>
+Accept-Language: en-IE, en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA4PR11MB9278:EE_|DM4PR11MB5263:EE_
+x-ms-office365-filtering-correlation-id: bb28a4e2-5068-4935-48a2-08dec61541af
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|366016|376014|6133799003|22082099003|18002099003|38070700021|4143699003|11063799006|56012099006;
+x-microsoft-antispam-message-info: UDDOd97R42FwYPkNXdQhZIJhV01YEr7GZWrN4sRmRD/OTUQjfr0K9ZTe7OoW0c8W6WLNQIWwdUP4zn5RsQdizKDQto9heBFtgIrtC4lhTeIwJjzhNKrWe/uWffI/H5LbbFygVKdkzmHOpkuCQ8MlLxH0JpkZxz4HrPyfFurI3p3hsWkYnH7IpZVZazzTAYbdWloVUGXP/DDp9jPKV/LIo5LWTe7qOLRmAXk9bVNPVtyw4ScH97CNpDLp/K8PGBAhSr1kF1tl2aCEmDzuvHNzixhp9hlcsqcB7RUR7N+vTVJgn+L+koCX45XwMfO5NhhJpwwuAG4zLwawzUe5FRZJ9hkBjpe3H06KRQZ67VnGg+ukkdGaG3qf7GXcPbBA/sKYWnye87HdPtI6IjR3bUVgsduwjI+ZzYKzunyyJIauwJuOpCJaEkzIr1dlxheW/Kb/TRUa0Z+FnxDUsB5NWysL8IR00HmG6G4eAFfRLYz6K1CI79RFY00O25AONOX+zZFdqHKLncPO77Plqvg6fqvh5phSa9FOS52ws/RszLhOEr1j/LzQ73uxnew9K8M43gDof0Lwkz0qJ+Pq6M/GlFtPHw63gzHjF1dcJ4bYz3Sv3Z5ymP0yAzyLxJXtZEZQlc4E6EgRnb2nS3NZGvakFxYUbb+rVSPC5kLyZeEX1TzkyuXJFstjdP1FBr3wiEDYsJDF4EoP5C83EDEvp/wFJMkFCuHBb/lff5wF+acNEfOKFM4zC7H0C908gdhcEsu7aPkt
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA4PR11MB9278.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(6133799003)(22082099003)(18002099003)(38070700021)(4143699003)(11063799006)(56012099006);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?BODMOMcvH81ztsr2NaCm2I681KL8+78+NXCg6TZdpcOpWlaYwJIeqRLvAgwA?=
+ =?us-ascii?Q?8/+RXqP0hUii6YpA6e9tqC4zFa4Ur1N6zqaR6f5hM3KwORgR8EddWuCAfxZz?=
+ =?us-ascii?Q?PolkcJ5vkIF3VmX/G08KVbN+6v85MHiYJbeWOLls4Xr+Vsq0HvouhH679CN/?=
+ =?us-ascii?Q?/0uWcLBU7eG6+JdEMh5aYqqVyXOYweDSdlcUghQgLydbK91MfcwmwNs6+RWf?=
+ =?us-ascii?Q?xKI7uXcdmOuvSAbIvvPlfSI/eDGeQlFpxPHiY6O4GYWqko+CDBkPsA+scDO8?=
+ =?us-ascii?Q?nbs+rKSHDkJoitJJq/hXKbOHhG+e9iRX64i0ho5uORCySBWHYzwXElKaObmI?=
+ =?us-ascii?Q?2MDPKp1kC1ZDcpGdXSTnx5DOnizIC9BB6oUHNZ/GrxmilCVK4dil9XiEUvyi?=
+ =?us-ascii?Q?3OheCzbQwQ7qTIu6G4Adz2x2WpNmECC1JxEwnAYhVtim23A1uZCunBn2EX4+?=
+ =?us-ascii?Q?OFzQUwwXmvszDlaZCO+TAhHLzdwvb7KRf3KjLkqqpe6+ScDJhQyt6/BKoOII?=
+ =?us-ascii?Q?npaK5iyHiiy7YDII1F+n1EbBRxH9ubi/j1CeoywXsUNXaRCN8KB8goE/8VyV?=
+ =?us-ascii?Q?ir7ZAh5HRumB2M+Odw522kvDDY1Uwp6SS6CT+3nf8zT89YTIMELO4ac6fzdm?=
+ =?us-ascii?Q?RFAF/1kJbmxbDTAJ/sYdW2CFlIIv7xN+ujJkrrqz93BkImNvaVIbm+bQYaHx?=
+ =?us-ascii?Q?j34IU6y6V8DrpPy5OuemzNJ2HDFwIOvguk5dUw2Y2KLD+ckVqN7IGEw6uwV6?=
+ =?us-ascii?Q?UPPQ+VFKI9rN4t6n2Pj1usKo+34KSlR6DQ27+qD3E44mHwn+QLVKnm8eCWzq?=
+ =?us-ascii?Q?vgVaIY/6AjIRIDuqKq6Wv8CvVYA9o/6mcP+zEjIwNolw2m6eMJm4SW4se3x1?=
+ =?us-ascii?Q?qjEoPwdw8vzQS4c3b2NqoJYMUDnD7r3vf5MJEou/BkK9tm1RE00jJAZr9prb?=
+ =?us-ascii?Q?984qOXsLyMu8uqaMa7TOMPWK/xZKvmaX9yguKmlwXgwML2zQt08OluQa6OVP?=
+ =?us-ascii?Q?ahehXtfZzCP4/MFryYSDl0DksaFBm8JgfnpLh9cwQqGNPs5ixP6d1Ud54+qc?=
+ =?us-ascii?Q?deH0NjV4MB2AL/u/B2cs3zFiDZqil2NVSf3TkN1hk5wzGXlOsxOoGeQ9DaiW?=
+ =?us-ascii?Q?1sCWmDh14q7FJ7v9fhicIdVkEegsUY39PNWMUosIOAdiVRprC58UxnbPlJvk?=
+ =?us-ascii?Q?xuG4e7MWL82iuo4UV9dY3u+kTGIIoG+QVezK+36e70mgWAwNK1uUL6Y4LOUO?=
+ =?us-ascii?Q?xS4Nzs8VjrGA5UBzMY0XcOMWu9OunqU+6YOBB89MgAz7tRa/vj3g0nBZVziv?=
+ =?us-ascii?Q?B6ORmStKJSX9jh3Luxxx0uOrD0k3OW9fi1eOMgLrXno8DdIHha6igv8+AZTD?=
+ =?us-ascii?Q?xT6SqOkG6AJJb1ZzrVfvwyPYIhwCiynNC1vbWCzsKS8mCADvgQQcY6Hvlxim?=
+ =?us-ascii?Q?Wrjn7dJ7Xy7LJTYG2BIgv43U/2UEP31++zBLs+QkRi2CLvVLlcUj/V1+9zzZ?=
+ =?us-ascii?Q?SYwovM26EGAGzC3eGO2Rt0eKnmJTZ4K6/ru+FoQyfUNleyO1DfKd8HvTG3Op?=
+ =?us-ascii?Q?pt/FlQsbGaDVy9ivprCXo7An9j7HyfdETl0AApImsfd34rOFw8DXvpIc0CDQ?=
+ =?us-ascii?Q?swAJ6sIHqr11Dliyx2hCoJXiO+oQQYx8P+n5NVYCywPEAVBihEDmIoLWKKrL?=
+ =?us-ascii?Q?Eo+wKnKxAOWvkJl1khUn0FOMvisSZZ/VafWg7wfjIby7ydAS?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: XnkjmrPL8jT2Bb1MPQC+y2LjO8JvVYZQihJf2dBt4r+9nX4FFai6OofLVu5v9QJgXXysSuqUIhIpP1Icad3YPrh++t1mFvEZcKf6dtGQz0Kr+RYuILRmSBzGAGRxi2Yy7i5t7T4ptEw9EeMxHG8gxdSQQmgRYiu0LxhGspW02RGIuUGfk3oQWFZjuSV+bW21Qy81e+6Kf0s74YuoIRQSDZVr8Dn9q045z252iJYQ8KQjxLkPIzU+OpTHgayq8Wb8GoFTrGe1zazHcMELTCr/TNYx9tLFpnykThhjWnogwPptiKcOozGXZCJzl9+FX2S1gS24PwBlU3+TIhTWdzdizQ==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9278.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb28a4e2-5068-4935-48a2-08dec61541af
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2026 10:52:53.1539 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OgpkCd37Fe+yVUW3ArvVfX46IooRILppqSbF6x1aI1xL5zbuwT64LCtqAn5n9Vx3PAKWLHMg1KJC/3Dzzq8QsQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5263
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,117 +156,165 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thank you for the detailed answer and your understanding.
+> Subject: [PATCH v4] net/iavf: fix duplicate VF reset during PF reset reco=
+very
+>=20
+> During PF initiated reset recovery, iavf_dev_close() sending
+> an extra VIRTCHNL_OP_RESET_VF while recovery is already in progress.
+> That second reset can leave PF/VF virtchnl state inconsistent and
+> cause VIRTCHNL_OP_CONFIG_VSI_QUEUES to fail with ERR_PARAM after
+> ToR link flap/power-cycle, leaving the VF unable to recover.
+> This results in connection loss.
+>=20
+> This patch skipped close-time VF reset and related close-time
+> virtchnl operations when PF triggered reset recovery is set.
+> This is done to avoid a duplicate VF reset, and keep normal
+> behavior for application-driven close.
+>=20
+> Fixes: 675a104e2e94 ("net/iavf: fix abnormal disable HW interrupt")
+> Fixes: b34fe66ea893 ("net/iavf: delay VF reset command")
+> Fixes: 5e03e316c753 ("net/iavf: handle virtchnl event message without
+> interrupt")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+> ---
+> V4: Addressed Ciara Loftus comments
+>   - split VF reset from other code changes
+> V3: Addressed latest ai-code-review comments
+> V2: Addressed ai-code-review comments
+>=20
+>  doc/guides/rel_notes/release_26_07.rst |  3 +++
+>  drivers/net/intel/iavf/iavf_ethdev.c   | 37 +++++++++++++++-----------
+>  drivers/net/intel/iavf/iavf_vchnl.c    | 18 ++++++++++---
+>  3 files changed, 39 insertions(+), 19 deletions(-)
+>=20
+> diff --git a/doc/guides/rel_notes/release_26_07.rst
+> b/doc/guides/rel_notes/release_26_07.rst
+> index d2563ac503..f6899a78c3 100644
+> --- a/doc/guides/rel_notes/release_26_07.rst
+> +++ b/doc/guides/rel_notes/release_26_07.rst
+> @@ -95,6 +95,9 @@ New Features
+>=20
+>    * Added support for transmitting LLDP packets based on mbuf packet typ=
+e.
+>    * Implemented AVX2 context descriptor transmit paths.
+> +  * Prevented duplicate 'VIRTCHNL_OP_RESET_VF' during a PF-initiated
+> +    reset recovery, which earlier caused virtchnl state corruption
+> +    and connection loss after a top-of-rack (ToR) link flap/power-cycle.
+>=20
+>  * **Updated PCAP ethernet driver.**
+>=20
+> diff --git a/drivers/net/intel/iavf/iavf_ethdev.c
+> b/drivers/net/intel/iavf/iavf_ethdev.c
+> index a8031e23a5..99457ae510 100644
+> --- a/drivers/net/intel/iavf/iavf_ethdev.c
+> +++ b/drivers/net/intel/iavf/iavf_ethdev.c
+> @@ -3166,24 +3166,27 @@ iavf_dev_close(struct rte_eth_dev *dev)
+>=20
+>  	ret =3D iavf_dev_stop(dev);
+>=20
+> -	/*
+> -	 * Release redundant queue resource when close the dev
+> -	 * so that other vfs can re-use the queues.
+> -	 */
+> -	if (vf->lv_enabled) {
+> -		ret =3D iavf_request_queues(dev,
+> IAVF_MAX_NUM_QUEUES_DFLT);
+> -		if (ret)
+> -			PMD_DRV_LOG(ERR, "Reset the num of queues
+> failed");
+> +	/* Skip RESET_VF on a PF-initiated reset */
+> +	if (!adapter->closed && !vf->in_reset_recovery) {
 
-One more question: are the lib and module upstreamed already?
+adapter->closed will always be false here so no need to check it.
 
+vf->in_reset_recovery is set for a VF initiated reset as well which does
+require sending VIRTCHNL_OP_RESET_VF because that kicks off the reset.
+(rte_pmd_iavf_reinit -> handle_hw_reset is the vf initiated reset path.)
 
-09/06/2026 12:22, =E8=AE=B8=E7=8E=B2=E7=87=95:
-> Hi,
-> Thank you for the detailed feedback and for reviewing the proposal for th=
-e Metax GPU driver.
-> Based on the questions raised and the analysis of the code implementation=
-, here are the clarifications and my action plan:
-> 1. Regarding GPU Access Method
-> The driver interfaces with the Metax GPU hardware through a combination o=
-f the vendor-provided MC Runtime (Metax Compute Runtime) library and GDRCop=
-y (GPU Direct RDMA) technology.
->=20
->  *=20
-> User-space Library: As seen in the maca.c code, the driver dynamically lo=
-ads (dlopen) the libmcruntime.so library. It uses mc_runtime_api.h to manag=
-e GPU contexts, memory allocation, and device attributes.
->=20
->  *=20
-> Kernel Module: The driver relies on the underlying Metax kernel driver (f=
-or PCI probing and basic device access) and the gdrapi (GDRCopy) kernel mod=
-ule to facilitate zero-copy data transfer between CPU and GPU memory.
->=20
->  *=20
-> Dependency: The build log confirms the detection of headers like mc_runti=
-me_api.h and gdrapi.h, which are essential for this integration.
-> 2. Clarification on "Rendering" Functionality
-> I apologize for the confusion caused by the term "Rendering" in the initi=
-al description. Upon reviewing the code and your feedback, I realize this w=
-as an inaccurate choice of words.
->=20
->  *=20
-> Correction: The intended functionality is purely "Compute/Data Processing=
-" and "Memory Management".
->=20
->  *=20
-> Explanation: The driver's core logic (as shown in the patch) focuses on m=
-emory registration, allocation, and CPU/GPU data synchronization (via maca_=
-mem_cpu_map and gdrcopy_pin), which are essential for network data processi=
-ng acceleration rather than graphical rendering. I will correct this termin=
-ology in the documentation to avoid further confusion.
-> 3. Action Plan: Following the Contribution Guide
-> I have reviewed the <"Adding a New Driver"> guide you linked.
->=20
->  *=20
-> Patch Splitting: I understand that the current monolithic patch is not su=
-itable. I will rework the submission and split it into a logical patch seri=
-es:
->  *=20
-> Patch 1: Add the basic infrastructure (Meson files, maintainers, configur=
-ation).
->=20
->  *=20
-> Patch 2: Implement core device functionality (PCI probing, initialization=
-, context management).
->=20
->  *=20
-> Patch 3: Add memory management and data path features (allocation, regist=
-ration, and CPU mapping).
-> Thank you again for your guidance. I will resubmit the revised patch seri=
-es shortly.
-> Best regards,
-> Lingyan Xu
-> ------------------------------------------------------------------
-> =E5=8F=91=E4=BB=B6=E4=BA=BA=EF=BC=9AThomas Monjalon <thomas@monjalon.net>
-> =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4=EF=BC=9A2026=E5=B9=B46=E6=9C=882=E6=
-=97=A5(=E5=91=A8=E4=BA=8C) 18:01
-> =E6=94=B6=E4=BB=B6=E4=BA=BA=EF=BC=9A"=E8=AE=B8=E7=8E=B2=E7=87=95"<lingyan=
-=2Exu@metax-tech.com>
-> =E6=8A=84=E3=80=80=E9=80=81=EF=BC=9Adev<dev@dpdk.org>; eagostini<eagostin=
-i@nvidia.com>
-> =E4=B8=BB=E3=80=80=E9=A2=98=EF=BC=9ARe: [PATCH] gpu/metax: add new driver=
- for Metax GPU
-> Hello,
-> 01/06/2026 07:47, =E8=AE=B8=E7=8E=B2=E7=87=95:
-> > I am writing to propose a new driver for the Metax GPU,
-> How do you access the GPU?
-> Are you using a specific library or kernel module?
-> > which I believe will significantly enhance our support
-> > and performance for this hardware.
-> > The patch attached includes the initial implementation of the driver,
-> > with key features such as:
-> >=20
-> > * Basic initialization and configuration=20
-> > * Memory management and allocation=20
-> > * Core functionality for rendering and compute tasks=20
-> I am familiar with connecting compute tasks of a GPU
-> with DPDK networking, but I'm surprised by the rendering functionality.
-> Do you mean graphical rendering of data coming from the network?
-> > Please review the code and let me know if you have any feedback or sugg=
-estions.
-> > I am more than happy to make any necessary adjustments and improvements.
-> Thank you for working on this.
-> I recommend following this guide to introduce a new driver:
-> https://doc.dpdk.org/guides/contributing/new_driver.html <https://doc.dpd=
-k.org/guides/contributing/new_driver.html >
->=20
->=20
->     =E8=B6=85=E5=A4=A7=E9=99=84=E4=BB=B6=E5=88=97=E8=A1=A8            dpd=
-k-build-test-log.txt  [48KB]
->         =E8=BF=9B=E5=85=A5=E4=B8=8B=E8=BD=BD=E9=A1=B5=E9=9D=A2  https://q=
-iye.aliyun.com/alimail/openLinks/downloadMimeMetaDiskBigAttach?id=3Dnetdisk=
-id%3Av001%3Afile%3ADzzzzzzNqZx%3BJYiJwCficINAoHh55iyjKdydQzW5hDE%2FGjddF2Xp=
-4ghl2ujmlGlWdfhgNCLOb5s3BZAHvDXTdZhtzGA3q8HJ%2Fv%2FPGnrPJfO1Xc%2BWnHr%2FKRw=
-IkHzWFe5Iwm1IZrurr9hW   =20
->=20
+We need some way to know if we are currently handling a PF initiated
+reset here. Another adapter flag, or else make in_reset_recovery
+tri-state eg. 0 (no reset) 1 (pf initiated) 2 (vf initiated)
+Then skip the OP_RESET_VF if pf initiated.
 
-
-
-
+> +		/*
+> +		 * Release redundant queue resource when close the dev
+> +		 * so that other vfs can re-use the queues.
+> +		 */
+> +		if (vf->lv_enabled) {
+> +			ret =3D iavf_request_queues(dev,
+> IAVF_MAX_NUM_QUEUES_DFLT);
+> +			if (ret)
+> +				PMD_DRV_LOG(ERR, "Reset the num of
+> queues failed");
+> +			vf->max_rss_qregion =3D
+> IAVF_MAX_NUM_QUEUES_DFLT;
+> +		}
+>=20
+> -		vf->max_rss_qregion =3D IAVF_MAX_NUM_QUEUES_DFLT;
+> +		/*
+> +		 * Disable promiscuous mode before resetting the VF. This is to
+> avoid
+> +		 * potential issues when the PF is bound to the kernel driver.
+> +		 */
+> +		if (vf->promisc_unicast_enabled || vf-
+> >promisc_multicast_enabled)
+> +			iavf_config_promisc(adapter, false, false);
+>  	}
+>=20
+> -	/* Disable promiscuous mode before resetting the VF. This is to avoid
+> -	 * potential issues when the PF is bound to the kernel driver.
+> -	 */
+> -	if (vf->promisc_unicast_enabled || vf->promisc_multicast_enabled)
+> -		iavf_config_promisc(adapter, false, false);
+> -
+>  	adapter->closed =3D true;
+>=20
+>  	/* free iAVF security device context all related resources */
+> @@ -3195,7 +3198,9 @@ iavf_dev_close(struct rte_eth_dev *dev)
+>  	iavf_flow_flush(dev, NULL);
+>  	iavf_flow_uninit(adapter);
+>=20
+> -	iavf_vf_reset(hw);
+> +	/* Skip RESET_VF on a PF-initiated reset */
+> +	if (!vf->in_reset_recovery)
+> +		iavf_vf_reset(hw);
+>  	vf->aq_intr_enabled =3D false;
+>  	iavf_shutdown_adminq(hw);
+>  	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR)
+> {
+> diff --git a/drivers/net/intel/iavf/iavf_vchnl.c
+> b/drivers/net/intel/iavf/iavf_vchnl.c
+> index 94ccfb5d6e..cf3513ef94 100644
+> --- a/drivers/net/intel/iavf/iavf_vchnl.c
+> +++ b/drivers/net/intel/iavf/iavf_vchnl.c
+> @@ -283,9 +283,21 @@ iavf_read_msg_from_pf(struct iavf_adapter
+> *adapter, uint16_t buf_len,
+>  					vf->link_up ? "up" : "down");
+>  			break;
+>  		case VIRTCHNL_EVENT_RESET_IMPENDING:
+> -			vf->vf_reset =3D true;
+> -			iavf_set_no_poll(adapter, false);
+> -			PMD_DRV_LOG(INFO, "VF is resetting");
+> +			/*
+> +			 * Force link down on impending reset to drop
+> +			 * the cached link-up state; a fresh LSC up
+> +			 * event will be re-issued by the PF once the
+> +			 * VF is reinitialised.
+> +			 */
+> +			vf->link_up =3D false;
+> +			if (!vf->vf_reset) {
+> +				vf->vf_reset =3D true;
+> +				iavf_set_no_poll(adapter, false);
+> +				iavf_dev_event_post(vf->eth_dev,
+> +					RTE_ETH_EVENT_INTR_RESET,
+> +					NULL, 0);
+> +			}
+> +			PMD_DRV_LOG(DEBUG, "VF is resetting");
+>  			break;
+>  		case VIRTCHNL_EVENT_PF_DRIVER_CLOSE:
+>  			vf->dev_closed =3D true;
+> --
+> 2.34.1
 
