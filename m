@@ -2,37 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9F6CD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 01:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324D6CD6E79
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 01:40:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 367194066A;
-	Tue,  9 Jun 2026 03:40:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6FA9F40674;
+	Tue,  9 Jun 2026 03:40:08 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 42AEE400EF
+ by mails.dpdk.org (Postfix) with ESMTP id 0227740658
  for <dev@dpdk.org>; Tue,  9 Jun 2026 03:40:01 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAAnoPPtbidqNNnEEg--.9384S7;
- Tue, 09 Jun 2026 09:39:58 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAAnoPPtbidqNNnEEg--.9384S11;
+ Tue, 09 Jun 2026 09:40:00 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v14 05/20] drivers: support RSS feature
-Date: Tue,  9 Jun 2026 09:39:35 +0800
-Message-ID: <20260609013951.3359199-6-liujie5@linkdatatechnology.com>
+Subject: [PATCH v14 09/20] drivers: interrupt handling
+Date: Tue,  9 Jun 2026 09:39:39 +0800
+Message-ID: <20260609013951.3359199-10-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260609013951.3359199-1-liujie5@linkdatatechnology.com>
 References: <20260608074257.3043531-21-liujie5@linkdatatechnology.com>
  <20260609013951.3359199-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAAnoPPtbidqNNnEEg--.9384S7
-X-Coremail-Antispam: 1UD129KBjvAXoWfKw4fGF47WFy5ZF17JFWDJwb_yoWxCryDJo
- WfWr12q3Wjya42yw45Zr1kXa4jqw47ZF4xJan3uFs8Can2v34UKr13Ja4rAF4UWrsIvr1j
- gwn3Zay8trsrAFW8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: zQCowAAnoPPtbidqNNnEEg--.9384S11
+X-Coremail-Antispam: 1UD129KBjvAXoWDAr4Duw17Jw47Zr15uFW5Awb_yoW7Jw1Dto
+ WxWrsxX3WrW34Ik3yxJr4kGFy7Zw48uw45ta1SgFs8uwnxG34Yga43Xr1DX3WqgFs5tr9F
+ grn2vrZ7KFsxJrWrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
  AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
- Ia0xkI8VCY1x0267AKxVW8JVW5JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+ Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
  84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
  4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
  JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
@@ -42,7 +42,7 @@ X-Coremail-Antispam: 1UD129KBjvAXoWfKw4fGF47WFy5ZF17JFWDJwb_yoWxCryDJo
  GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI4
  8JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
  MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
- 8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU1PfHUUUUU
+ 8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYGYpUUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -60,2051 +60,1633 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add support for Receive Side Scaling (RSS) to distribute incoming
-traffic across multiple receive queues.
+This patch includes:
+- MSI-X vector allocation and mapping logic.
+- Support for rx_queue_intr_enable and rx_queue_intr_disable ops.
+- Interrupt handler to process admin and queue events.
+- Integration with EAL interrupt framework.
 
-- Implement rss_hash_update and rss_hash_conf_get.
-- Implement reta_update and reta_query.
-- Support RSS hash configuration for IPv4, IPv6, TCP and UDP.
-- Default hash key is initialized during port start.
+RX queue interrupts allow applications to use rte_eth_dev_rx_intr_wait()
+for power-efficient packet processing.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/common/sxe2/sxe2_flow_public.h | 633 +++++++++++++++++++++++++
- drivers/net/sxe2/meson.build           |   1 +
- drivers/net/sxe2/sxe2_cmd_chnl.c       | 173 +++++++
- drivers/net/sxe2/sxe2_cmd_chnl.h       |  16 +
- drivers/net/sxe2/sxe2_drv_cmd.h        |  29 ++
- drivers/net/sxe2/sxe2_ethdev.c         |  37 ++
- drivers/net/sxe2/sxe2_ethdev.h         |   8 +
- drivers/net/sxe2/sxe2_flow_define.h    | 143 ++++++
- drivers/net/sxe2/sxe2_queue.c          |  11 +
- drivers/net/sxe2/sxe2_rss.c            | 584 +++++++++++++++++++++++
- drivers/net/sxe2/sxe2_rss.h            |  81 ++++
- drivers/net/sxe2/sxe2_txrx.h           |   4 +
- drivers/net/sxe2/sxe2_txrx_poll.c      |  85 +++-
- 13 files changed, 1804 insertions(+), 1 deletion(-)
- create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
- create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
- create mode 100644 drivers/net/sxe2/sxe2_rss.c
- create mode 100644 drivers/net/sxe2/sxe2_rss.h
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      | 176 +++-
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |  18 +
+ drivers/net/sxe2/meson.build               |   1 +
+ drivers/net/sxe2/sxe2_cmd_chnl.c           |  42 +
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |   4 +
+ drivers/net/sxe2/sxe2_drv_cmd.h            |   8 +
+ drivers/net/sxe2/sxe2_ethdev.c             |  93 +-
+ drivers/net/sxe2/sxe2_ethdev.h             |   6 +
+ drivers/net/sxe2/sxe2_irq.c                | 942 +++++++++++++++++++++
+ drivers/net/sxe2/sxe2_irq.h                |  21 +
+ drivers/net/sxe2/sxe2vf_regs.h             |  85 ++
+ 11 files changed, 1393 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/sxe2/sxe2_irq.c
+ create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
 
-diff --git a/drivers/common/sxe2/sxe2_flow_public.h b/drivers/common/sxe2/sxe2_flow_public.h
-new file mode 100644
-index 0000000000..32ab2a9713
---- /dev/null
-+++ b/drivers/common/sxe2/sxe2_flow_public.h
-@@ -0,0 +1,633 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_FLOW_PUBLIC_H__
-+#define __SXE2_FLOW_PUBLIC_H__
-+#include "sxe2_osal.h"
-+
-+enum sxe2_flow_type {
-+	SXE2_FLOW_TYPE_NONE                               = 0,
-+	SXE2_FLOW_MAC_PAY                                 = 1,
-+	SXE2_FLOW_MAC_IPV4_FRAG_PAY                       = 22,
-+	SXE2_FLOW_MAC_IPV4_PAY                            = 23,
-+	SXE2_FLOW_MAC_IPV4_UDP_PAY                        = 24,
-+	SXE2_FLOW_MAC_IPV4_TCP_PAY                        = 26,
-+	SXE2_FLOW_MAC_IPV4_SCTP_PAY                       = 27,
-+	SXE2_FLOW_MAC_IPV4_IPV4_FRAG_PAY                  = 29,
-+	SXE2_FLOW_MAC_IPV4_IPV4_PAY                       = 30,
-+	SXE2_FLOW_MAC_IPV4_IPV4_UDP_PAY                   = 31,
-+	SXE2_FLOW_MAC_IPV4_IPV4_TCP_PAY                   = 33,
-+	SXE2_FLOW_MAC_IPV4_IPV4_SCTP_PAY                  = 34,
-+	SXE2_FLOW_MAC_IPV4_IPV6_FRAG_PAY                  = 36,
-+	SXE2_FLOW_MAC_IPV4_IPV6_PAY                       = 37,
-+	SXE2_FLOW_MAC_IPV4_IPV6_UDP_PAY                   = 38,
-+	SXE2_FLOW_MAC_IPV4_IPV6_TCP_PAY                   = 40,
-+	SXE2_FLOW_MAC_IPV4_IPV6_SCTP_PAY                  = 41,
-+	SXE2_FLOW_MAC_IPV4_GRE_PAY                        = 43,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_FRAG_PAY              = 44,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_PAY                   = 45,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_UDP_PAY               = 46,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_TCP_PAY               = 48,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV4_SCTP_PAY              = 49,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_FRAG_PAY              = 51,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_PAY                   = 52,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_UDP_PAY               = 53,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_TCP_PAY               = 55,
-+	SXE2_FLOW_MAC_IPV4_GRE_IPV6_SCTP_PAY              = 56,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_PAY                    = 58,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_FRAG_PAY          = 59,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_PAY               = 60,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_UDP_PAY           = 61,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_TCP_PAY           = 63,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV4_SCTP_PAY          = 64,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_FRAG_PAY          = 66,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_PAY               = 67,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_UDP_PAY           = 68,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_TCP_PAY           = 70,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_IPV6_SCTP_PAY          = 71,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_PAY               = 73,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_FRAG_PAY     = 74,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_PAY          = 75,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_UDP_PAY      = 76,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_TCP_PAY      = 78,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV4_SCTP_PAY     = 79,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_FRAG_PAY     = 81,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_PAY          = 82,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_UDP_PAY      = 83,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_TCP_PAY      = 85,
-+	SXE2_FLOW_MAC_IPV4_GRE_MAC_VLAN_IPV6_SCTP_PAY     = 86,
-+	SXE2_FLOW_MAC_IPV6_FRAG_PAY                       = 88,
-+	SXE2_FLOW_MAC_IPV6_PAY                            = 89,
-+	SXE2_FLOW_MAC_IPV6_UDP_PAY                        = 90,
-+	SXE2_FLOW_MAC_IPV6_TCP_PAY                        = 92,
-+	SXE2_FLOW_MAC_IPV6_SCTP_PAY                       = 93,
-+	SXE2_FLOW_MAC_IPV6_IPV4_FRAG_PAY                  = 95,
-+	SXE2_FLOW_MAC_IPV6_IPV4_PAY                       = 96,
-+	SXE2_FLOW_MAC_IPV6_IPV4_UDP_PAY                   = 97,
-+	SXE2_FLOW_MAC_IPV6_IPV4_TCP_PAY                   = 99,
-+	SXE2_FLOW_MAC_IPV6_IPV4_SCTP_PAY                  = 100,
-+	SXE2_FLOW_MAC_IPV6_IPV6_FRAG_PAY                  = 102,
-+	SXE2_FLOW_MAC_IPV6_IPV6_PAY                       = 103,
-+	SXE2_FLOW_MAC_IPV6_IPV6_UDP_PAY                   = 104,
-+	SXE2_FLOW_MAC_IPV6_IPV6_TCP_PAY                   = 106,
-+	SXE2_FLOW_MAC_IPV6_IPV6_SCTP_PAY                  = 107,
-+	SXE2_FLOW_MAC_IPV6_GRE_PAY                        = 109,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_FRAG_PAY              = 110,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_PAY                   = 111,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_UDP_PAY               = 112,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_TCP_PAY               = 114,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV4_SCTP_PAY              = 115,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_FRAG_PAY              = 117,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_PAY                   = 118,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_UDP_PAY               = 119,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_TCP_PAY               = 121,
-+	SXE2_FLOW_MAC_IPV6_GRE_IPV6_SCTP_PAY              = 122,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_PAY                    = 124,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_FRAG_PAY          = 125,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_PAY               = 126,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_UDP_PAY           = 127,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_TCP_PAY           = 129,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV4_SCTP_PAY          = 130,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_FRAG_PAY          = 132,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_PAY               = 133,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_UDP_PAY           = 134,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_TCP_PAY           = 136,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_IPV6_SCTP_PAY          = 137,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_PAY               = 139,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_FRAG_PAY     = 140,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_PAY          = 141,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_UDP_PAY      = 142,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_TCP_PAY      = 144,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV4_SCTP_PAY     = 145,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_FRAG_PAY     = 147,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_PAY          = 148,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_UDP_PAY      = 149,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_TCP_PAY      = 151,
-+	SXE2_FLOW_MAC_IPV6_GRE_MAC_VLAN_IPV6_SCTP_PAY     = 152,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_PAY                   = 329,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_PAY                   = 330,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_FRAG_PAY         = 331,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_PAY              = 332,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_UDP_PAY          = 333,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_TCP_PAY          = 334,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV4_SCTP_PAY         = 335,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_FRAG_PAY         = 336,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_PAY              = 337,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_UDP_PAY          = 338,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_TCP_PAY          = 339,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV4_SCTP_PAY         = 340,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_FRAG_PAY         = 341,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_PAY              = 342,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_UDP_PAY          = 343,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_TCP_PAY          = 344,
-+	SXE2_FLOW_MAC_IPV4_UDP_GTPU_IPV6_SCTP_PAY         = 345,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_FRAG_PAY         = 346,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_PAY              = 347,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_UDP_PAY          = 348,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_TCP_PAY          = 349,
-+	SXE2_FLOW_MAC_IPV6_UDP_GTPU_IPV6_SCTP_PAY         = 350,
-+	SXE2_FLOW_MAC_IPV6_MAC_PAY                        = 820,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_FRAG_PAY              = 821,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_PAY                   = 822,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_UDP_PAY               = 823,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_TCP_PAY               = 824,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV4_SCTP_PAY              = 825,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_FRAG_PAY              = 827,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_PAY                   = 828,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_UDP_PAY               = 829,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_TCP_PAY               = 830,
-+	SXE2_FLOW_MAC_IPV6_MAC_IPV6_SCTP_PAY              = 831,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_PAY                   = 835,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_FRAG_PAY         = 836,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_PAY              = 837,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_UDP_PAY          = 838,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_TCP_PAY          = 839,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV4_SCTP_PAY         = 840,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_FRAG_PAY         = 842,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_PAY              = 843,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_UDP_PAY          = 844,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_TCP_PAY          = 845,
-+	SXE2_FLOW_MAC_IPV6_MAC_VLAN_IPV6_SCTP_PAY         = 846,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_PAY                  = 878,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_FRAG_PAY        = 877,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_PAY             = 876,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_UDP_PAY         = 879,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_TCP_PAY         = 880,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV4_SCTP_PAY        = 875,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_FRAG_PAY        = 871,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_PAY             = 870,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_UDP_PAY         = 872,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_TCP_PAY         = 873,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_IPV6_SCTP_PAY        = 869,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_PAY                  = 891,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_FRAG_PAY        = 890,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_PAY             = 889,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_UDP_PAY         = 892,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_TCP_PAY         = 893,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV4_SCTP_PAY        = 888,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_FRAG_PAY        = 884,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_PAY             = 883,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_UDP_PAY         = 885,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_TCP_PAY         = 886,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_IPV6_SCTP_PAY        = 882,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_PAY                    = 904,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_FRAG_PAY          = 903,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_PAY               = 902,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_UDP_PAY           = 905,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_TCP_PAY           = 906,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV4_SCTP_PAY          = 901,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_FRAG_PAY          = 897,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_PAY               = 896,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_UDP_PAY           = 898,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_TCP_PAY           = 899,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_IPV6_SCTP_PAY          = 895,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_PAY                    = 917,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_FRAG_PAY          = 916,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_PAY               = 915,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_UDP_PAY           = 918,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_TCP_PAY           = 919,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV4_SCTP_PAY          = 914,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_FRAG_PAY          = 910,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_PAY               = 909,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_UDP_PAY           = 911,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_TCP_PAY           = 912,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_IPV6_SCTP_PAY          = 908,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_PAY         = 930,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_FRAG_PAY = 929,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_PAY    = 928,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_UDP_PAY = 931,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_TCP_PAY = 932,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV4_SCTP_PAY = 927,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_FRAG_PAY = 923,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_PAY    = 922,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_UDP_PAY = 924,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_TCP_PAY = 925,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_VLAN_IPV6_SCTP_PAY = 921,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_PAY         = 943,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_FRAG_PAY = 942,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_PAY    = 941,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_UDP_PAY = 944,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_TCP_PAY = 945,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV4_SCTP_PAY = 940,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_FRAG_PAY = 936,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_PAY    = 935,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_UDP_PAY = 937,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_TCP_PAY = 938,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_VLAN_IPV6_SCTP_PAY = 934,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_PAY           = 956,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_FRAG_PAY = 955,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_PAY      = 954,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_UDP_PAY  = 957,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_TCP_PAY  = 958,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV4_SCTP_PAY = 953,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_FRAG_PAY = 949,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_PAY      = 948,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_UDP_PAY  = 950,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_TCP_PAY  = 951,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_VLAN_IPV6_SCTP_PAY = 947,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_PAY           = 969,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_FRAG_PAY = 968,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_PAY      = 967,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_UDP_PAY  = 970,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_TCP_PAY  = 971,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV4_SCTP_PAY = 966,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_FRAG_PAY = 962,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_PAY      = 961,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_UDP_PAY  = 963,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_TCP_PAY  = 964,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_VLAN_IPV6_SCTP_PAY = 960,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_PAY              = 982,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_FRAG_PAY    = 981,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_PAY         = 980,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_UDP_PAY     = 983,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_TCP_PAY     = 984,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV4_SCTP_PAY    = 979,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_FRAG_PAY    = 975,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_PAY         = 974,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_UDP_PAY     = 976,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_TCP_PAY     = 977,
-+	SXE2_FLOW_MAC_IPV6_UDP_VXGEN_MAC_IPV6_SCTP_PAY    = 973,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_PAY              = 995,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_FRAG_PAY    = 994,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_PAY         = 993,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_UDP_PAY     = 996,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_TCP_PAY     = 997,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV4_SCTP_PAY    = 992,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_FRAG_PAY    = 988,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_PAY         = 987,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_UDP_PAY     = 989,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_TCP_PAY     = 990,
-+	SXE2_FLOW_MAC_IPV4_UDP_VXGEN_MAC_IPV6_SCTP_PAY    = 986,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_PAY                = 1008,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_FRAG_PAY      = 1007,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_PAY           = 1006,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_UDP_PAY       = 1009,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_TCP_PAY       = 1010,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV4_SCTP_PAY      = 1005,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_FRAG_PAY      = 1001,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_PAY           = 1000,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_UDP_PAY       = 1002,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_TCP_PAY       = 1003,
-+	SXE2_FLOW_MAC_IPV6_UDP_GRE_MAC_IPV6_SCTP_PAY      = 999,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_PAY                = 1021,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_FRAG_PAY      = 1020,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_PAY           = 1019,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_UDP_PAY       = 1022,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_TCP_PAY       = 1023,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV4_SCTP_PAY      = 1018,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_FRAG_PAY      = 1014,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_PAY           = 1013,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_UDP_PAY       = 1015,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_TCP_PAY       = 1016,
-+	SXE2_FLOW_MAC_IPV4_UDP_GRE_MAC_IPV6_SCTP_PAY      = 1012,
-+	SXE2_FLOW_TYPE_MAX                                = 2048,
-+};
-+
-+enum sxe2_rss_cfg_hdr_type {
-+	SXE2_RSS_OUTER_HEADERS,
-+	SXE2_RSS_INNER_HEADERS,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_GRE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_GRE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_UDP_GRE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_UDP_GRE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_UDP_VXLAN,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_UDP_VXLAN,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_UDP_GENEVE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_UDP_GENEVE,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV4_UDP_GTPU,
-+
-+	SXE2_RSS_INNER_HEADERS_WITH_OUTER_IPV6_UDP_GTPU,
-+	SXE2_RSS_ANY_HEADERS
-+};
-+
-+enum sxe2_flow_hdr {
-+	SXE2_FLOW_HDR_ETH = 0,
-+	SXE2_FLOW_HDR_VLAN,
-+	SXE2_FLOW_HDR_QINQ,
-+	SXE2_FLOW_HDR_IPV4,
-+	SXE2_FLOW_HDR_IPV6,
-+	SXE2_FLOW_HDR_ICMP = 5,
-+	SXE2_FLOW_HDR_TCP,
-+	SXE2_FLOW_HDR_UDP,
-+	SXE2_FLOW_HDR_SCTP,
-+	SXE2_FLOW_HDR_GRE,
-+	SXE2_FLOW_HDR_VXLAN = 10,
-+	SXE2_FLOW_HDR_GENEVE,
-+	SXE2_FLOW_HDR_GTPU,
-+
-+	SXE2_FLOW_HDR_IPV_FRAG,
-+
-+	SXE2_FLOW_HDR_IPV_OTHER,
-+
-+	SXE2_FLOW_HDR_ETH_NON_IP = 15,
-+	SXE2_FLOW_HDR_MAX = 128,
-+};
-+
-+enum sxe2_flow_fld_id {
-+	SXE2_FLOW_FLD_ID_ETH_DA = 0,
-+	SXE2_FLOW_FLD_ID_ETH_SA,
-+	SXE2_FLOW_FLD_ID_S_TCI,
-+	SXE2_FLOW_FLD_ID_C_TCI,
-+	SXE2_FLOW_FLD_ID_S_TPID,
-+	SXE2_FLOW_FLD_ID_C_TPID = 5,
-+	SXE2_FLOW_FLD_ID_S_VID,
-+	SXE2_FLOW_FLD_ID_C_VID,
-+	SXE2_FLOW_FLD_ID_ETH_TYPE,
-+
-+	SXE2_FLOW_FLD_ID_IPV4_TOS,
-+	SXE2_FLOW_FLD_ID_IPV6_DSCP = 10,
-+	SXE2_FLOW_FLD_ID_IPV4_TTL,
-+	SXE2_FLOW_FLD_ID_IPV4_PROT,
-+	SXE2_FLOW_FLD_ID_IPV6_TTL,
-+	SXE2_FLOW_FLD_ID_IPV6_PROT,
-+	SXE2_FLOW_FLD_ID_IPV4_SA = 15,
-+	SXE2_FLOW_FLD_ID_IPV4_DA,
-+	SXE2_FLOW_FLD_ID_IPV6_SA,
-+	SXE2_FLOW_FLD_ID_IPV6_DA,
-+	SXE2_FLOW_FLD_ID_IPV4_CHKSUM,
-+	SXE2_FLOW_FLD_ID_IPV4_ID = 20,
-+	SXE2_FLOW_FLD_ID_IPV6_ID,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE32_SA,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE32_DA,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE48_SA,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE48_DA = 25,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE64_SA,
-+	SXE2_FLOW_FLD_ID_IPV6_PRE64_DA,
-+
-+	SXE2_FLOW_FLD_ID_TCP_SRC_PORT,
-+	SXE2_FLOW_FLD_ID_TCP_DST_PORT,
-+	SXE2_FLOW_FLD_ID_UDP_SRC_PORT = 30,
-+	SXE2_FLOW_FLD_ID_UDP_DST_PORT,
-+	SXE2_FLOW_FLD_ID_SCTP_SRC_PORT,
-+	SXE2_FLOW_FLD_ID_SCTP_DST_PORT,
-+	SXE2_FLOW_FLD_ID_TCP_FLAGS,
-+	SXE2_FLOW_FLD_ID_TCP_CHKSUM = 35,
-+	SXE2_FLOW_FLD_ID_UDP_CHKSUM,
-+	SXE2_FLOW_FLD_ID_SCTP_CHKSUM,
-+
-+	SXE2_FLOW_FLD_ID_VXLAN_VNI,
-+
-+	SXE2_FLOW_FLD_ID_GENEVE_VNI,
-+
-+	SXE2_FLOW_FLD_ID_GTPU_TEID = 40,
-+
-+	SXE2_FLOW_FLD_ID_NVGRE_TNI,
-+
-+	SXE2_FLOW_FLD_ID_MAX = 128,
-+};
-+
-+struct sxe2_ether_hdr {
-+	uint8_t dst_addr[SXE2_ETH_ALEN];
-+	uint8_t src_addr[SXE2_ETH_ALEN];
-+	uint16_t  ether_type;
-+};
-+
-+struct sxe2_vlan_hdr {
-+	uint16_t  type;
-+	uint16_t  vlan;
-+};
-+
-+struct sxe2_ipv4_hdr {
-+	uint8_t ver_ihl;
-+	uint8_t tos;
-+	uint16_t  tot_len;
-+	uint16_t  id;
-+	uint16_t  frag_off;
-+	uint8_t ttl;
-+	uint8_t protocol;
-+	uint16_t  check;
-+	uint32_t saddr;
-+	uint32_t daddr;
-+};
-+#define SXE2_IPV6_ADDR_LENGTH        (16)
-+#define SXE2_IPV6_TC_SHIFT (20)
-+#define SXE2_IPV6_TC_MASK  (0xFF)
-+
-+struct sxe2_ipv6_hdr {
-+	uint32_t pri_ver_flow;
-+	uint16_t  payload_len;
-+	uint8_t nexthdr;
-+	uint8_t hop_limit;
-+	union {
-+		uint8_t saddr[16];
-+		uint16_t	saddr16[8];
-+		uint32_t	saddr32[4];
-+	};
-+	union {
-+		uint8_t daddr[16];
-+		uint16_t	daddr16[8];
-+		uint32_t	daddr32[4];
-+	};
-+};
-+
-+struct sxe2_tcp_hdr {
-+	uint16_t  source;
-+	uint16_t  dest;
-+	uint32_t seq;
-+	uint32_t ack_seq;
-+	uint16_t  flag;
-+	uint16_t  window;
-+	uint16_t  check;
-+	uint16_t  urg_ptr;
-+};
-+
-+struct sxe2_udp_hdr {
-+	uint16_t  source;
-+	uint16_t  dest;
-+	uint16_t  len;
-+	uint16_t  check;
-+};
-+
-+struct sxe2_sctp_hdr {
-+	uint16_t src_port;
-+	uint16_t dst_port;
-+};
-+
-+struct sxe2_nvgre_hdr {
-+	uint16_t flags;
-+	uint16_t protocol;
-+	uint32_t tni;
-+};
-+struct sxe2_geneve_hdr {
-+	uint16_t flags;
-+	uint16_t protocol;
-+	uint32_t vni;
-+};
-+struct sxe2_gtpu_hdr {
-+	uint8_t flag;
-+	uint8_t msg_type;
-+	uint16_t msg_len;
-+	uint32_t teid;
-+};
-+struct sxe2_vxlan_hdr {
-+	uint8_t flag;
-+	uint8_t resvd0;
-+	uint8_t resvd1;
-+	uint8_t protocol;
-+	uint32_t vni;
-+};
-+
-+enum sxe2_flow_act_type {
-+	SXE2_FLOW_ACTION_DROP = 0,
-+	SXE2_FLOW_ACTION_TC_REDIRECT,
-+	SXE2_FLOW_ACTION_TO_VSI,
-+	SXE2_FLOW_ACTION_TO_VSI_LIST,
-+	SXE2_FLOW_ACTION_PASSTHRU,
-+	SXE2_FLOW_ACTION_QUEUE,
-+	SXE2_FLOW_ACTION_Q_REGION,
-+	SXE2_FLOW_ACTION_MARK,
-+	SXE2_FLOW_ACTION_COUNT,
-+	SXE2_FLOW_ACTION_RSS,
-+	SXE2_FLOW_ACTION_MAX = 32,
-+};
-+
-+enum sxe2_rss_hash_key_func {
-+	SXE2_RSS_HASH_FUNC_TOEPLITZ     = 0,
-+	SXE2_RSS_HASH_FUNC_SYM_TOEPLITZ = 1,
-+	SXE2_RSS_HASH_FUNC_XOR          = 2,
-+	SXE2_RSS_HASH_FUNC_JEKINS       = 3
-+};
-+
-+struct sxe2_flow_action_rss {
-+	DECLARE_BITMAP(hdr_out, SXE2_FLOW_HDR_MAX);
-+	DECLARE_BITMAP(hdr_in, SXE2_FLOW_HDR_MAX);
-+	DECLARE_BITMAP(fld, SXE2_FLOW_FLD_ID_MAX);
-+	uint8_t is_inner;
-+	uint8_t func;
-+	uint8_t hdr_type;
-+};
-+
-+struct sxe2_flow_action_queue {
-+	uint16_t vsi_index;
-+	uint16_t q_index;
-+};
-+
-+struct sxe2_flow_action_queue_region {
-+	uint16_t vsi_index;
-+	uint16_t q_index;
-+	uint8_t region;
-+};
-+
-+struct sxe2_flow_action_passthru {
-+	uint16_t vsi_index;
-+};
-+
-+struct sxe2_flow_action_mark {
-+	uint32_t mark_id;
-+};
-+
-+#define SXE2_VSI_MAX (2048)
-+struct sxe2_flow_action_vsi {
-+	uint16_t vsi_index;
-+};
-+
-+struct sxe2_flow_action_vsi_list {
-+	DECLARE_BITMAP(vsi_list_map, SXE2_VSI_MAX);
-+	uint16_t vsi_cnt;
-+};
-+
-+enum sxe2_fnav_stat_ctrl_type {
-+	SXE2_FNAV_STAT_ENA_NONE = 0,
-+	SXE2_FNAV_STAT_ENA_PKTS,
-+	SXE2_FNAV_STAT_ENA_BYTES,
-+	SXE2_FNAV_STAT_ENA_ALL,
-+};
-+
-+struct sxe2_flow_action_count {
-+	uint32_t user_id;
-+	uint32_t driver_id;
-+	uint32_t stat_index;
-+	uint32_t stat_ctrl;
-+};
-+
-+enum sxe2_flow_engine_type {
-+	SXE2_FLOW_ENGINE_ACL,
-+	SXE2_FLOW_ENGINE_SWITCH,
-+	SXE2_FLOW_ENGINE_FNAV,
-+	SXE2_FLOW_ENGINE_RSS,
-+	SXE2_FLOW_ENGINE_MAX,
-+};
-+
-+struct sxe2_flow_item {
-+	struct sxe2_ether_hdr eth;
-+	struct sxe2_vlan_hdr vlan;
-+	struct sxe2_vlan_hdr qinq;
-+	struct sxe2_ipv4_hdr ipv4;
-+	struct sxe2_ipv6_hdr ipv6;
-+	struct sxe2_udp_hdr udp;
-+	struct sxe2_tcp_hdr tcp;
-+	struct sxe2_sctp_hdr sctp;
-+	struct sxe2_gtpu_hdr gtpu;
-+	struct sxe2_vxlan_hdr vxlan;
-+	struct sxe2_nvgre_hdr nvgre;
-+	struct sxe2_geneve_hdr geneve;
-+};
-+
-+enum sxe2_flow_sw_direct_type {
-+	SXE2_FLOW_SW_DIRECT_TX,
-+	SXE2_FLOW_SW_DIRECT_RX,
-+	SXE2_FLOW_SW_DIRECT_MAX,
-+};
-+enum sxe2_flow_sw_pattern_type {
-+	SXE2_FLOW_SW_PATTERN_ONLY,
-+	SXE2_FLOW_SW_PATTERN_LAST,
-+	SXE2_FLOW_SW_PATTERN_FIRST,
-+	SXE2_FLOW_SW_PATTERN_MAX,
-+};
-+
-+enum sxe2_flow_tunnel_type {
-+	SXE2_FLOW_TUNNEL_TYPE_NONE,
-+	SXE2_FLOW_TUNNEL_TYPE_PARENT,
-+	SXE2_FLOW_TUNNEL_TYPE_VXLAN,
-+	SXE2_FLOW_TUNNEL_TYPE_GTPU,
-+	SXE2_FLOW_TUNNEL_TYPE_GENEVE,
-+	SXE2_FLOW_TUNNEL_TYPE_GRE,
-+	SXE2_FLOW_TUNNEL_TYPE_IPIP,
-+};
-+
-+struct sxe2_flow_meta {
-+	uint8_t switch_pattern_dup_allow;
-+	uint8_t switch_src_direct;
-+	uint16_t flow_src_vsi;
-+	uint16_t flow_rule_vsi;
-+	uint32_t flow_prio;
-+	uint16_t flow_type;
-+	uint8_t tunnel_type;
-+	uint8_t rsv;
-+};
-+
-+struct sxe2_flow_pattern {
-+	DECLARE_BITMAP(hdrs, SXE2_FLOW_HDR_MAX);
-+	DECLARE_BITMAP(map_spec, SXE2_FLOW_FLD_ID_MAX);
-+	DECLARE_BITMAP(map_mask, SXE2_FLOW_FLD_ID_MAX);
-+	struct sxe2_flow_item item_spec;
-+	struct sxe2_flow_item item_mask;
-+	uint64_t rss_type_allow;
-+};
-+
-+struct sxe2_flow_action {
-+	DECLARE_BITMAP(act_types, SXE2_FLOW_ACTION_MAX);
-+	struct sxe2_flow_action_rss rss;
-+	struct sxe2_flow_action_queue queue;
-+	struct sxe2_flow_action_queue_region q_region;
-+	struct sxe2_flow_action_passthru passthru;
-+	struct sxe2_flow_action_vsi vsi;
-+	struct sxe2_flow_action_vsi_list vsi_list;
-+	struct sxe2_flow_action_mark mark;
-+	struct sxe2_flow_action_count count;
-+};
-+#endif /* __SXE2_FLOW_PUBLIC_H__ */
-diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index b661e3cbf4..da7a690063 100644
---- a/drivers/net/sxe2/meson.build
-+++ b/drivers/net/sxe2/meson.build
-@@ -62,4 +62,5 @@ sources += files(
-         'sxe2_txrx_vec.c',
-         'sxe2_mac.c',
-         'sxe2_filter.c',
-+        'sxe2_rss.c',
- )
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index 1fa9ad718e..b997e7b044 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -541,3 +541,176 @@ int32_t sxe2_drv_vlan_filter_switch(struct sxe2_adapter *adapter, bool on)
- 
+diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+index 51aea327e5..173d8d57ae 100644
+--- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
++++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+@@ -67,6 +67,7 @@ sxe2_drv_cmd_exec(struct sxe2_common_device *cdev,
  	return ret;
  }
+ 
 +
-+int32_t sxe2_drv_rss_key_set(struct sxe2_adapter *adapter, uint8_t *key, uint16_t key_size)
+ RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_open)
+ int32_t
+ sxe2_drv_dev_open(struct sxe2_common_device *cdev, struct rte_pci_device *pci_dev)
+@@ -87,7 +88,7 @@ sxe2_drv_dev_open(struct sxe2_common_device *cdev, struct rte_pci_device *pci_de
+ 	if (fd < 0) {
+ 		ret = -EBADF;
+ 		PMD_LOG_ERR(COM, "Fail to open device:%s, ret=%d, err:%s",
+-				drv_name, ret, strerror(errno));
++			    drv_name, ret, strerror(errno));
+ 		goto l_end;
+ 	}
+ 
+@@ -159,6 +160,177 @@ sxe2_drv_dev_handshake(struct sxe2_common_device *cdev)
+ 	return ret;
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_rxq_irq_set)
++int32_t
++sxe2_drv_dev_rxq_irq_set(struct sxe2_common_device *cdev,
++		       uint16_t base_irq, int32_t *efd, uint16_t nb_irq)
 +{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_key_req *req = NULL;
++	struct sxe2_ioctl_irq_set cmd_params;
 +	int32_t ret = 0;
-+	uint16_t buf_size = sizeof(*req) + key_size;
++	int32_t cmd_fd = 0;
 +
-+	req = rte_zmalloc("drv_cmd_rss_key", buf_size, 0);
-+	if (!req) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to alloc rss key");
-+		ret = -ENOMEM;
++	if (cdev->config.kernel_reset) {
++		ret = -EPERM;
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
 +		goto l_end;
 +	}
 +
-+	req->vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req->key_size = rte_cpu_to_le_16(key_size);
-+	rte_memcpy(req->key, key, key_size);
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_KEY_SET,
-+		req, buf_size, NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd set rss key, ret=%d", ret);
++	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
++	if (cmd_fd < 0) {
++		ret = -EBADF;
++		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
 +		goto l_end;
 +	}
++
++	PMD_LOG_DEBUG(COM, "Open fd=%d to set rxq irq, base_queue=%d, efds=%p, nb_irq=%d",
++		cmd_fd, base_irq, efd, nb_irq);
++
++	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_irq_set));
++	cmd_params.base_irq_in_com = base_irq;
++	cmd_params.cnt = nb_irq;
++	cmd_params.event_fd = efd;
++
++	pthread_mutex_lock(&cdev->config.lock);
++	ret = ioctl(cmd_fd, SXE2_COM_CMD_IO_IRQS_REQ, &cmd_params);
++	if (ret < 0) {
++		PMD_LOG_ERR(COM, "Failed to set io irqs, fd=%d, ret=%d, err:%s",
++			    cmd_fd, ret, strerror(errno));
++		pthread_mutex_unlock(&cdev->config.lock);
++		goto l_end;
++	}
++	pthread_mutex_unlock(&cdev->config.lock);
 +
 +l_end:
-+	if (req) {
-+		rte_free(req);
-+		req = NULL;
-+	}
 +	return ret;
 +}
 +
-+int32_t sxe2_drv_rss_lut_set(struct sxe2_adapter *adapter, uint8_t *lut, uint16_t lut_size)
++RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_other_irq_set)
++int32_t
++sxe2_drv_dev_other_irq_set(struct sxe2_common_device *cdev,
++			int32_t efd, uint64_t event)
 +{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_lut_req *req = NULL;
 +	int32_t ret = 0;
-+	uint16_t buf_size = sizeof(struct sxe2_rss_lut_req) + lut_size;
++	int32_t cmd_fd = 0;
++	struct sxe2_ioctl_other_evt_set cmd_params;
 +
-+	req = rte_zmalloc("drv_cmd_rss_lut", buf_size, 0);
-+	if (!req) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to alloc rss lut");
-+		ret = -ENOMEM;
++	if (cdev->config.kernel_reset) {
++		ret = -EPERM;
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
 +		goto l_end;
 +	}
 +
-+	req->vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req->lut_size = rte_cpu_to_le_16(lut_size);
-+	rte_memcpy(req->lut, lut, lut_size);
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_LUT_SET,
-+		req, buf_size, NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd set rss lut, ret=%d", ret);
++	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
++	if (cmd_fd < 0) {
++		ret = -EBADF;
++		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
 +		goto l_end;
 +	}
++
++	PMD_LOG_DEBUG(COM, "Open fd=%d to set other irq, efd=%d, event=%"PRIu64"",
++		cmd_fd, efd, event);
++
++	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_other_evt_set));
++	cmd_params.eventfd = efd;
++	cmd_params.filter_table = event;
++
++	pthread_mutex_lock(&cdev->config.lock);
++	ret = ioctl(cmd_fd, SXE2_COM_CMD_EVT_IRQ_REQ, &cmd_params);
++	if (ret < 0) {
++		PMD_LOG_ERR(COM, "Failed to set others evt, fd=%d, ret=%d, err:%s",
++			   cmd_fd, ret, strerror(errno));
++		ret = -EIO;
++		pthread_mutex_unlock(&cdev->config.lock);
++		goto l_end;
++	}
++	pthread_mutex_unlock(&cdev->config.lock);
 +
 +l_end:
-+	if (req) {
-+		rte_free(req);
-+		req = NULL;
++	return ret;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_other_irq_get)
++int32_t
++sxe2_drv_dev_other_irq_get(struct sxe2_common_device *cdev, uint64_t *event)
++{
++	int32_t ret = 0;
++	int32_t cmd_fd = 0;
++	struct sxe2_ioctl_other_evt_get cmd_params;
++
++	if (cdev->config.kernel_reset) {
++		ret = -EPERM;
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
++		goto l_end;
 +	}
-+	return ret;
-+}
 +
-+int32_t sxe2_drv_rss_hash_ctrl_func(struct sxe2_adapter *adapter, enum sxe2_rss_hash_key_func func)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_func_req req = {0};
-+	int32_t ret = 0;
-+
-+	req.vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req.func = func;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_FUNC_SET,
-+		&req, sizeof(req), NULL, 0);
-+
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd set rss func, ret=%d", ret);
-+	return ret;
-+}
-+
-+static void sxe2_drv_flow_bitmap_fill(uint32_t *bitmap, uint16_t *list)
-+{
-+	uint16_t index = 0;
-+	uint16_t i = 0;
-+	uint16_t map_size = sizeof(*bitmap) * SXE2_BITS_PER_BYTE;
-+
-+	while (list[i] != SXE2_FLOW_END) {
-+		index = list[i] / map_size;
-+		bitmap[index] |= (1UL << (list[i] % map_size));
-+		i++;
++	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
++	if (cmd_fd < 0) {
++		ret = -EBADF;
++		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
++		goto l_end;
 +	}
-+}
 +
-+int32_t sxe2_drv_rss_hf_add(struct sxe2_adapter *adapter,
-+			struct sxe2_rss_hf_config *rss_conf)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_hf_req req = {0};
-+	int32_t ret = 0;
++	PMD_LOG_DEBUG(COM, "Open fd=%d to get other irq", cmd_fd);
 +
-+	req.vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req.symm = rss_conf->symm;
-+	req.hdr_type = rte_cpu_to_le_32(SXE2_RSS_OUTER_HEADERS);
-+	sxe2_drv_flow_bitmap_fill(req.headers, rss_conf->hdrs);
-+	sxe2_drv_flow_bitmap_fill(req.hash_flds, rss_conf->flds);
++	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_other_evt_get));
 +
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_HF_ADD,
-+		&req, sizeof(req), NULL, 0);
++	pthread_mutex_lock(&cdev->config.lock);
++	ret = ioctl(cmd_fd, SXE2_COM_CMD_EVT_CAUSE_GET, &cmd_params);
++	if (ret < 0) {
++		PMD_LOG_ERR(COM, "Failed to set others evt, fd=%d, ret=%d, err:%s",
++			   cmd_fd, ret, strerror(errno));
++		ret = -EIO;
++		pthread_mutex_unlock(&cdev->config.lock);
++		goto l_end;
++	}
++	pthread_mutex_unlock(&cdev->config.lock);
++	*event = cmd_params.evt_cause;
 +
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd add rss hf, ret=%d", ret);
++l_end:
 +	return ret;
 +}
 +
-+int32_t sxe2_drv_rss_hf_del(struct sxe2_adapter *adapter,
-+				struct sxe2_rss_hf_config *rss_conf)
++RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_reset_irq_set)
++int32_t
++sxe2_drv_dev_reset_irq_set(struct sxe2_common_device *cdev, int32_t efd)
 +{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_rss_hf_req req = {0};
 +	int32_t ret = 0;
++	int32_t cmd_fd = 0;
++	struct sxe2_ioctl_reset_sub_set cmd_params;
 +
-+	req.vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
-+	req.symm = rss_conf->symm;
-+	req.hdr_type = rte_cpu_to_le_32(SXE2_RSS_OUTER_HEADERS);
-+	sxe2_drv_flow_bitmap_fill(req.headers, rss_conf->hdrs);
-+	sxe2_drv_flow_bitmap_fill(req.hash_flds, rss_conf->flds);
++	if (cdev->config.kernel_reset) {
++		ret = -EPERM;
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
++		goto l_end;
++	}
 +
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_HF_DEL,
-+		&req, sizeof(req), NULL, 0);
++	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
++	if (cmd_fd < 0) {
++		ret = -EBADF;
++		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
++		goto l_end;
++	}
 +
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd del rss hf, ret=%d", ret);
++	PMD_LOG_DEBUG(COM, "Open fd=%d to set reset irq, efd=%d",
++		cmd_fd, efd);
++
++	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_reset_sub_set));
++	cmd_params.eventfd = efd;
++
++	pthread_mutex_lock(&cdev->config.lock);
++	ret = ioctl(cmd_fd, SXE2_COM_CMD_RST_IRQ_REQ, &cmd_params);
++	if (ret < 0) {
++		PMD_LOG_ERR(COM, "Failed to set reset irqs, fd=%d, ret=%d, err:%s",
++			   cmd_fd, ret, strerror(errno));
++		ret = -EIO;
++		pthread_mutex_unlock(&cdev->config.lock);
++		goto l_end;
++	}
++	pthread_mutex_unlock(&cdev->config.lock);
++
++l_end:
 +	return ret;
 +}
 +
-+int32_t sxe2_drv_rss_hf_clear(struct sxe2_adapter *adapter)
+ RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_mmap)
+ void
+ *sxe2_drv_dev_mmap(struct sxe2_common_device *cdev, uint8_t bar_idx, uint64_t len, uint64_t offset)
+@@ -223,7 +395,7 @@ sxe2_drv_dev_munmap(struct sxe2_common_device *cdev, void *virt, uint64_t len)
+ RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_dma_map)
+ int32_t
+ sxe2_drv_dev_dma_map(struct sxe2_common_device *cdev, uint64_t vaddr,
+-			uint64_t iova, uint64_t size)
++		     uint64_t iova, uint64_t size)
+ {
+ 	struct sxe2_ioctl_iommu_dma_map cmd_params;
+ 	enum rte_iova_mode iova_mode;
+diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl_func.h b/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
+index e5d8cad1e0..368be16d4f 100644
+--- a/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
++++ b/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
+@@ -29,6 +29,7 @@ int32_t
+ sxe2_drv_dev_open(struct sxe2_common_device *cdev,
+ 		struct rte_pci_device *pci_dev);
+ 
++
+ __rte_internal
+ void
+ sxe2_drv_dev_close(struct sxe2_common_device *cdev);
+@@ -37,6 +38,23 @@ __rte_internal
+ int32_t
+ sxe2_drv_dev_handshake(struct sxe2_common_device *cdev);
+ 
++__rte_internal
++int32_t
++sxe2_drv_dev_rxq_irq_set(struct sxe2_common_device *cdev, uint16_t base_irq,
++			 int32_t *efd, uint16_t nb_irq);
++
++__rte_internal
++int32_t
++sxe2_drv_dev_other_irq_set(struct sxe2_common_device *cdev, int32_t efd, uint64_t event);
++
++__rte_internal
++int32_t
++sxe2_drv_dev_other_irq_get(struct sxe2_common_device *cdev, uint64_t *event);
++
++__rte_internal
++int32_t
++sxe2_drv_dev_reset_irq_set(struct sxe2_common_device *cdev, int32_t fd);
++
+ __rte_internal
+ void
+ *sxe2_drv_dev_mmap(struct sxe2_common_device *cdev, uint8_t bar_idx,
+diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
+index 8c8f16863e..fc4466556b 100644
+--- a/drivers/net/sxe2/meson.build
++++ b/drivers/net/sxe2/meson.build
+@@ -68,4 +68,5 @@ sources += files(
+         'sxe2_security.c',
+         'sxe2_mp.c',
+         'sxe2_stats.c',
++        'sxe2_irq.c',
+ )
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
+index a1fc8a50e3..d1f15084ed 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.c
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
+@@ -348,6 +348,48 @@ int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter)
+ 	return ret;
+ }
+ 
++int32_t sxe2_drv_rxq_bind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx, uint16_t msix_idx)
 +{
 +	struct sxe2_common_device *cdev = adapter->cdev;
 +	struct sxe2_drv_cmd_params param = {0};
++	struct sxe2_drv_queue_irq_bind_req req = {0};
 +	int32_t ret = 0;
 +
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_HF_CLEAR,
-+		NULL, 0, NULL, 0);
++	req.msix_idx = msix_idx;
++	req.q_idx = rxq_idx;
++	req.itr_idx = 0;
++	req.bind = true;
 +
++	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_EVT_IRQ_BAND_RXQ,
++				 &req, sizeof(req),
++				 NULL, 0);
 +	ret = sxe2_drv_cmd_exec(cdev, &param);
 +	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to cmd clear rss hf, ret=%d", ret);
++		PMD_DEV_LOG_ERR(adapter, DRV, "rxq bind irq failed, ret=%d", ret);
 +
 +	return ret;
 +}
 +
-+int32_t sxe2_drv_ptp_gettime(struct sxe2_adapter *adapter, struct sxe2_rx_queue *rxq)
++int32_t sxe2_drv_rxq_unbind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx)
 +{
-+	(void)adapter;
-+	(void)rxq;
-+	return 0;
++	struct sxe2_common_device *cdev = adapter->cdev;
++	struct sxe2_drv_cmd_params param = {0};
++	struct sxe2_drv_queue_irq_bind_req req = {0};
++	int32_t ret = 0;
++
++	req.bind = false;
++	req.q_idx = rxq_idx;
++
++	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_EVT_IRQ_BAND_RXQ,
++				 &req, sizeof(req),
++				 NULL, 0);
++	ret = sxe2_drv_cmd_exec(cdev, &param);
++	if (ret)
++		PMD_DEV_LOG_ERR(adapter, DRV, "rxq unbind irq failed, ret=%d", ret);
++
++	return ret;
 +}
++
+ int32_t sxe2_drv_get_mac_stats(struct sxe2_adapter *adapter)
+ {
+ 	int32_t ret = 0;
 diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index c93bc2b0c9..2546c65a6c 100644
+index 80ad10ac00..3eb30078e1 100644
 --- a/drivers/net/sxe2/sxe2_cmd_chnl.h
 +++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -53,4 +53,20 @@ int32_t sxe2_drv_vlan_insert_strip_cfg(struct sxe2_adapter *adapter);
+@@ -118,4 +118,8 @@ int32_t sxe2_drv_rss_hf_clear(struct sxe2_adapter *adapter);
  
- int32_t sxe2_drv_vlan_filter_switch(struct sxe2_adapter *adapter, bool on);
+ int32_t sxe2_drv_ptp_gettime(struct sxe2_adapter *adapter, struct sxe2_rx_queue *rxq);
  
-+int32_t sxe2_drv_rss_key_set(struct sxe2_adapter *adapter, uint8_t *key, uint16_t key_size);
++int32_t sxe2_drv_rxq_bind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx, uint16_t msix_idx);
 +
-+int32_t sxe2_drv_rss_lut_set(struct sxe2_adapter *adapter, uint8_t *lut, uint16_t lut_size);
-+
-+int32_t sxe2_drv_rss_hash_ctrl_func(struct sxe2_adapter *adapter, enum sxe2_rss_hash_key_func func);
-+
-+int32_t sxe2_drv_rss_hf_add(struct sxe2_adapter *adapter,
-+			struct sxe2_rss_hf_config *rss_conf);
-+
-+int32_t sxe2_drv_rss_hf_del(struct sxe2_adapter *adapter,
-+				struct sxe2_rss_hf_config *rss_conf);
-+
-+int32_t sxe2_drv_rss_hf_clear(struct sxe2_adapter *adapter);
-+
-+int32_t sxe2_drv_ptp_gettime(struct sxe2_adapter *adapter, struct sxe2_rx_queue *rxq);
++int32_t sxe2_drv_rxq_unbind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx);
 +
  #endif /* SXE2_CMD_CHNL_H */
 diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index d69d650148..9998f241f0 100644
+index 7935a28dc1..807edfc4d6 100644
 --- a/drivers/net/sxe2/sxe2_drv_cmd.h
 +++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -6,6 +6,7 @@
- #define SXE2_DRV_CMD_H
- 
- #include "sxe2_osal.h"
-+#include "sxe2_flow_public.h"
- 
- #define SXE2_DRV_CMD_MODULE_S        (16)
- #define SXE2_MK_DRV_CMD(module, cmd) (((module) << SXE2_DRV_CMD_MODULE_S) | ((cmd) & 0xFFFF))
-@@ -320,6 +321,34 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_vlan_filter_switch_req {
- 	uint8_t rsv;
+@@ -556,6 +556,14 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_tx_map_req {
+ 	uint8_t pool_idx;
  } __rte_packed_end;
  
-+struct __rte_aligned(4) __rte_packed_begin sxe2_rss_key_req {
-+	uint16_t vsi_id;
-+	uint16_t key_size;
-+	uint8_t key[];
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_rss_lut_req {
-+	uint16_t vsi_id;
-+	uint16_t lut_size;
-+	uint8_t lut[];
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_rss_func_req {
-+	uint16_t vsi_id;
-+	uint8_t func;
-+	uint8_t rsv[1];
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_rss_hf_req {
-+	uint16_t vsi_id;
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_queue_irq_bind_req {
++	uint16_t q_idx;
++	uint16_t msix_idx;
++	uint8_t itr_idx;
++	uint8_t bind;
 +	uint8_t rsv[2];
-+	uint32_t headers[BITS_TO_U32(SXE2_FLOW_HDR_MAX)];
-+	uint32_t hash_flds[BITS_TO_U32(SXE2_FLOW_FLD_ID_MAX)];
-+	uint32_t hdr_type;
-+	uint8_t symm;
-+	uint8_t rsv1[3];
 +} __rte_packed_end;
 +
  enum sxe2_drv_cmd_module {
  	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
  	SXE2_DRV_CMD_MODULE_DEV = 1,
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 4ffe32d353..77a2b5b1dc 100644
+index 46c6c993bf..07d67321c9 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -125,6 +125,11 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+@@ -22,6 +22,7 @@
+ #include <rte_eal_paging.h>
  
- 	.vlan_filter_set            = sxe2_dev_vlan_filter_set,
- 	.vlan_offload_set           = sxe2_dev_vlan_offload_set,
+ #include "sxe2_ethdev.h"
++#include "sxe2_irq.h"
+ #include "sxe2_drv_cmd.h"
+ #include "sxe2_cmd_chnl.h"
+ #include "sxe2_tx.h"
+@@ -107,6 +108,9 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 	.rx_queue_release           = sxe2_rx_queue_release,
+ 	.tx_queue_setup             = sxe2_tx_queue_setup,
+ 	.tx_queue_release           = sxe2_tx_queue_release,
++	.rx_queue_intr_enable       = sxe2_rx_queue_intr_enable,
++	.rx_queue_intr_disable      = sxe2_rx_queue_intr_disable,
 +
-+	.reta_update                = sxe2_dev_rss_reta_update,
-+	.reta_query                 = sxe2_dev_rss_reta_query,
-+	.rss_hash_update            = sxe2_dev_rss_hash_update,
-+	.rss_hash_conf_get          = sxe2_dev_rss_hash_conf_get,
- };
+ 	.rxq_info_get               = sxe2_rx_queue_info_get,
+ 	.txq_info_get               = sxe2_tx_queue_info_get,
+ 	.rx_burst_mode_get          = sxe2_rx_burst_mode_get,
+@@ -177,6 +181,8 @@ static int32_t sxe2_dev_stop(struct rte_eth_dev *dev)
+ 	if (adapter->started == 0)
+ 		goto l_end;
  
- static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-@@ -141,6 +146,12 @@ static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
- 		goto end;
++	sxe2_rxq_intr_disable(dev);
++
+ 	sxe2_txqs_all_stop(dev);
+ 	sxe2_rxqs_all_stop(dev);
+ 
+@@ -215,6 +221,12 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
+ 		goto l_end;
  	}
  
-+	ret = sxe2_rss_init(dev);
++	ret = sxe2_rxq_intr_enable(dev);
 +	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to init rss, ret=%d", ret);
-+		goto end;
++		PMD_LOG_ERR(INIT, "Failed to enable rx queue intr");
++		goto l_rxq_intr_err;
 +	}
 +
- end:
+ 	ret = sxe2_queues_start(dev);
+ 	if (ret) {
+ 		PMD_LOG_ERR(INIT, "enable queues failed");
+@@ -224,7 +236,10 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
+ 	dev->data->dev_started = 1;
+ 	adapter->started = 1;
+ 	goto l_end;
++
+ l_start_queues_err:
++	(void)sxe2_rxq_intr_disable(dev);
++l_rxq_intr_err:
+ 	(void)sxe2_filter_rule_stop(dev);
+ l_end:
  	return ret;
- }
-@@ -281,6 +292,22 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
- 		RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |
- 		RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO;
- 
-+
-+	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_PTP)
-+		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
-+
-+	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_RSS) {
-+		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
-+		dev_info->flow_type_rss_offloads  |= SXE2_RSS_HF_SUPPORT_ALL;
-+		dev_info->reta_size = adapter->rss_ctxt.rss_lut_size;
-+		dev_info->hash_key_size = adapter->rss_ctxt.rss_key_size;
-+		dev_info->rss_algo_capa =
-+			RTE_ETH_HASH_ALGO_TO_CAPA(RTE_ETH_HASH_FUNCTION_DEFAULT) |
-+			RTE_ETH_HASH_ALGO_TO_CAPA(RTE_ETH_HASH_FUNCTION_TOEPLITZ) |
-+			RTE_ETH_HASH_ALGO_TO_CAPA(RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ) |
-+			RTE_ETH_HASH_ALGO_TO_CAPA(RTE_ETH_HASH_FUNCTION_SIMPLE_XOR);
-+	}
-+
- 	dev_info->default_rxconf = (struct rte_eth_rxconf) {
- 		.rx_thresh = {
- 			.pthresh = SXE2_DEFAULT_RX_PTHRESH,
-@@ -563,6 +590,8 @@ static int32_t sxe2_func_caps_get(struct sxe2_adapter *adapter)
+@@ -615,6 +630,8 @@ static int32_t sxe2_func_caps_get(struct sxe2_adapter *adapter)
  
  	sxe2_sw_queue_ctx_hw_cap_set(adapter, &dev_caps.queue_caps);
  
-+	sxe2_sw_rss_ctx_hw_cap_set(adapter, &dev_caps.rss_hash_caps);
++	sxe2_sw_irq_ctx_hw_cap_set(adapter, &dev_caps.msix_caps);
 +
+ 	sxe2_sw_rss_ctx_hw_cap_set(adapter, &dev_caps.rss_hash_caps);
+ 
  	sxe2_sw_vsi_ctx_hw_cap_set(adapter, &dev_caps.vsi_caps);
- 
- l_end:
-@@ -950,8 +979,15 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
- 		goto init_eth_err;
- 	}
- 
-+	ret = sxe2_rss_disable(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to disable rss, ret=%d", ret);
-+		goto init_rss_err;
-+	}
-+
- 	goto l_end;
- 
-+init_rss_err:
- init_eth_err:
- init_dev_info_err:
- 	sxe2_vsi_uninit(dev);
-@@ -965,6 +1001,7 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
- {
- 	(void)sxe2_dev_stop(dev);
- 	(void)sxe2_queues_release(dev);
-+	(void)sxe2_rss_disable(dev);
- 	sxe2_vsi_uninit(dev);
- 	sxe2_dev_pci_map_uinit(dev);
- 	sxe2_eth_uinit(dev);
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index fa3c69d360..3aa3799b79 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -15,6 +15,7 @@
- 
- #include "sxe2_common.h"
- #include "sxe2_vsi.h"
-+#include "sxe2_rss.h"
- #include "sxe2_irq.h"
- #include "sxe2_queue.h"
- #include "sxe2_mac.h"
-@@ -122,6 +123,11 @@ enum {
- 	SXE2_FLAGS_NBITS
- };
- 
-+struct sxe2_ptp_context {
-+	uint64_t mbuf_rx_ts_flag;
-+	int32_t mbuf_rx_ts_offset;
-+};
-+
- struct sxe2_devargs {
- 	uint8_t flow_dup_pattern_mode;
- 	uint8_t func_flow_direct_en;
-@@ -300,7 +306,9 @@ struct sxe2_adapter {
- 	struct sxe2_queue_context     q_ctxt;
- 	struct sxe2_vsi_context       vsi_ctxt;
- 	struct sxe2_filter_context    filter_ctxt;
-+	struct sxe2_rss_context       rss_ctxt;
- 	struct sxe2_link_context      link_ctxt;
-+	struct sxe2_ptp_context       ptp_ctxt;
- 	struct sxe2_devargs           devargs;
- 	struct sxe2_switchdev_info    switchdev_info;
- 	bool                          rule_started;
-diff --git a/drivers/net/sxe2/sxe2_flow_define.h b/drivers/net/sxe2/sxe2_flow_define.h
-new file mode 100644
-index 0000000000..d2f6000efa
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_flow_define.h
-@@ -0,0 +1,143 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_FLOW_DEFINE_H__
-+#define __SXE2_FLOW_DEFINE_H__
-+#include <rte_tailq.h>
-+#include <rte_eal.h>
-+#include <rte_flow_driver.h>
-+
-+#include "sxe2_osal.h"
-+#include "sxe2_flow_public.h"
-+
-+#define SXE2_FLOW_ETH_TYPE_MIN        (1500)
-+
-+enum sxe2_expansion {
-+	SXE2_EXPANSION_ERROR = 0,
-+	SXE2_EXPANSION_OUTER_ETH,
-+	SXE2_EXPANSION_OUTER_VLAN,
-+	SXE2_EXPANSION_OUTER_QINQ,
-+	SXE2_EXPANSION_OUTER_IPV4,
-+	SXE2_EXPANSION_OUTER_IPV4_FRAG_EXT,
-+	SXE2_EXPANSION_OUTER_IPV6,
-+	SXE2_EXPANSION_OUTER_IPV6_FRAG_EXT,
-+	SXE2_EXPANSION_OUTER_UDP,
-+	SXE2_EXPANSION_OUTER_TCP,
-+	SXE2_EXPANSION_OUTER_SCTP,
-+
-+	SXE2_EXPANSION_VXLAN,
-+	SXE2_EXPANSION_VXLAN_GPE,
-+	SXE2_EXPANSION_GRE,
-+	SXE2_EXPANSION_NVGRE,
-+	SXE2_EXPANSION_GENEVE,
-+	SXE2_EXPANSION_GTPU,
-+	SXE2_EXPANSION_IPIP,
-+	SXE2_EXPANSION_OUTER_END,
-+
-+	SXE2_EXPANSION_ETH,
-+	SXE2_EXPANSION_VLAN,
-+	SXE2_EXPANSION_IPV4,
-+	SXE2_EXPANSION_IPV4_FRAG_EXT,
-+	SXE2_EXPANSION_IPV6,
-+	SXE2_EXPANSION_IPV6_FRAG_EXT,
-+	SXE2_EXPANSION_UDP,
-+	SXE2_EXPANSION_TCP,
-+	SXE2_EXPANSION_SCTP,
-+
-+	SXE2_EXPANSION_END,
-+	SXE2_EXPANSION_MAX,
-+};
-+
-+enum sxe2_flow_udp_tunnel_protocol {
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN,
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN_GPE,
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GENEVE,
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GTP_U,
-+	SXE2_FLOW_UDP_TUNNEL_PROTOCOL_NVGRE,
-+	SXE2_FLOW_UDP_TUNNEL_MAX,
-+};
-+
-+enum {
-+	SXE2_FLOW_ETH_TYPE_IPV4 = 0x0800,
-+	SXE2_FLOW_ETH_TYPE_IPV6 = 0x86DD,
-+	SXE2_FLOW_IP_PROTOCOL_GRE = 0x2F,
-+	SXE2_FLOW_IP_PROTOCOL_IPV4 = 0x04,
-+	SXE2_FLOW_IP_PROTOCOL_IPV6 = 0x29,
-+	SXE2_FLOW_IP_PROTOCOL_ETH = 0x3B,
-+	SXE2_FLOW_IP_PROTOCOL_UDP = 0x11,
-+	SXE2_FLOW_IP_PROTOCOL_TCP = 0x06,
-+	SXE2_FLOW_IP_PROTOCOL_SCTP = 0x84,
-+};
-+
-+union sxe2_flow_item_raw {
-+	struct sxe2_flow_item item;
-+	uint8_t raw[sizeof(struct sxe2_flow_item)];
-+};
-+
-+struct sxe2_flow {
-+	TAILQ_ENTRY(sxe2_flow) next;
-+	enum sxe2_flow_engine_type engine_type;
-+	struct sxe2_flow_pattern pattern_outer;
-+	struct sxe2_flow_pattern pattern_inner;
-+	uint8_t has_mask;
-+	uint8_t has_spec;
-+	uint8_t has_hdr;
-+	struct sxe2_flow_meta meta;
-+	struct sxe2_flow_action action;
-+	uint32_t flow_id;
-+	int32_t create_err;
-+	DECLARE_BITMAP(flow_type, SXE2_EXPANSION_MAX);
-+};
-+
-+TAILQ_HEAD(sxe2_flow_list_t, sxe2_flow);
-+
-+struct rte_flow {
-+	TAILQ_ENTRY(rte_flow) next;
-+	struct sxe2_flow_list_t sxe2_flow_list;
-+};
-+TAILQ_HEAD(rte_flow_list_t, rte_flow);
-+
-+struct sxe2_fnav_cid_mgr {
-+	TAILQ_ENTRY(sxe2_fnav_cid_mgr) next;
-+	uint16_t stat_index;
-+	uint32_t user_id;
-+	uint32_t driver_id;
-+	uint32_t count_type;
-+	uint64_t hits;
-+	uint64_t bytes;
-+};
-+TAILQ_HEAD(sxe2_fnav_cid_mgr_list_t, sxe2_fnav_cid_mgr);
-+
-+struct sxe2_fnav_count_resource {
-+	uint32_t count_type;
-+	uint32_t global_index;
-+	struct sxe2_fnav_cid_mgr_list_t fnav_cid_mgr_list;
-+};
-+
-+struct sxe2_flow_context {
-+	struct rte_flow_list_t rte_flow_list;
-+	rte_spinlock_t flow_list_lock;
-+	struct sxe2_fnav_count_resource hw_res;
-+	uint32_t fnav_inited;
-+};
-+#define SXE2_INVALID_RSS_ATTR	\
-+			(RTE_ETH_RSS_L3_PRE40 | RTE_ETH_RSS_L3_PRE56 | RTE_ETH_RSS_L3_PRE96)
-+#define SXE2_VALID_RSS_IPV4_L4	 \
-+			(RTE_ETH_RSS_NONFRAG_IPV4_UDP | RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
-+			 RTE_ETH_RSS_NONFRAG_IPV4_SCTP)
-+
-+#define SXE2_VALID_RSS_IPV6_L4	\
-+			(RTE_ETH_RSS_NONFRAG_IPV6_UDP | RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
-+			 RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
-+#define SXE2_VALID_RSS_IPV4	\
-+			(RTE_ETH_RSS_IPV4 | RTE_ETH_RSS_FRAG_IPV4  | \
-+			 RTE_ETH_RSS_NONFRAG_IPV4_OTHER | SXE2_VALID_RSS_IPV4_L4)
-+#define SXE2_VALID_RSS_IPV6	\
-+			(RTE_ETH_RSS_IPV6 | RTE_ETH_RSS_FRAG_IPV6 | \
-+			 RTE_ETH_RSS_NONFRAG_IPV6_OTHER | SXE2_VALID_RSS_IPV6_L4)
-+
-+#define SXE2_VALID_RSS_L3	(SXE2_VALID_RSS_IPV4 | SXE2_VALID_RSS_IPV6)
-+#define SXE2_VALID_RSS_L4	(SXE2_VALID_RSS_IPV4_L4 | SXE2_VALID_RSS_IPV6_L4)
-+
-+#endif /* __SXE2_FLOW_DEFINE_H__ */
-diff --git a/drivers/net/sxe2/sxe2_queue.c b/drivers/net/sxe2/sxe2_queue.c
-index 1786d6ea4f..220cab6fce 100644
---- a/drivers/net/sxe2/sxe2_queue.c
-+++ b/drivers/net/sxe2/sxe2_queue.c
-@@ -17,6 +17,7 @@ void sxe2_sw_queue_ctx_hw_cap_set(struct sxe2_adapter *adapter,
- 
- int32_t sxe2_queues_init(struct rte_eth_dev *dev)
- {
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
- 	int32_t ret = 0;
- 	uint16_t buf_size;
- 	uint16_t frame_size;
-@@ -36,6 +37,16 @@ int32_t sxe2_queues_init(struct rte_eth_dev *dev)
- 			dev->data->scattered_rx = 1;
- 	}
- 
-+	adapter->ptp_ctxt.mbuf_rx_ts_offset = -1;
-+	adapter->ptp_ctxt.mbuf_rx_ts_flag = 0;
-+	if (dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
-+		ret = rte_mbuf_dyn_rx_timestamp_register
-+			(&adapter->ptp_ctxt.mbuf_rx_ts_offset,
-+			 (uint64_t *)&adapter->ptp_ctxt.mbuf_rx_ts_flag);
-+		if (ret)
-+			PMD_LOG_ERR(INIT, "Failed to enable timestamp offloads, ret=%d", ret);
-+	}
-+
+@@ -636,6 +653,41 @@ static int32_t sxe2_dev_caps_get(struct sxe2_adapter *adapter)
  	return ret;
  }
  
-diff --git a/drivers/net/sxe2/sxe2_rss.c b/drivers/net/sxe2/sxe2_rss.c
++uint32_t sxe2_pci_map_read_reg(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type, uint16_t idx_in_func)
++{
++	void *reg_addr;
++	uint32_t value;
++
++	reg_addr = sxe2_pci_map_addr_get(adapter, res_type, idx_in_func);
++	if (unlikely(reg_addr == NULL)) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "reg addr:0x%p is error.", reg_addr);
++		value = SXE2_PCI_MAP_INVALID_VAL;
++		goto l_ret;
++	}
++
++	value = SXE2_PCI_REG_READ(reg_addr);
++
++l_ret:
++	return value;
++}
++
++void sxe2_pci_map_write_reg(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type, uint16_t idx_in_func, uint32_t value)
++{
++	void *reg_addr;
++
++	reg_addr = sxe2_pci_map_addr_get(adapter, res_type, idx_in_func);
++	if (unlikely(reg_addr == NULL)) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "reg addr:0x%p is error.", reg_addr);
++		goto l_ret;
++	}
++
++	SXE2_PCI_REG_WRITE_WC(reg_addr, value);
++l_ret:
++	return;
++}
++
+ int32_t sxe2_dev_pci_seg_map(struct sxe2_adapter *adapter,
+ 			     enum sxe2_pci_map_resource res_type,
+ 			     uint64_t org_len,
+@@ -715,6 +767,27 @@ static int32_t sxe2_hw_init(struct rte_eth_dev *dev)
+ 	return ret;
+ }
+ 
++static int32_t sxe2_sw_init(struct rte_eth_dev *dev)
++{
++	int32_t ret = -1;
++
++	PMD_INIT_FUNC_TRACE();
++
++	ret = sxe2_sw_irq_ctxt_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to sw irq ctxt init, ret=[%d]", ret);
++		goto l_end;
++	}
++
++l_end:
++	return ret;
++}
++
++static void sxe2_sw_uninit(struct rte_eth_dev *dev)
++{
++	sxe2_sw_irq_ctxt_uninit(dev);
++}
++
+ int32_t sxe2_dev_pci_res_seg_map(struct sxe2_adapter *adapter,
+ 				 uint32_t res_type,
+ 				 uint32_t item_cnt,
+@@ -1065,6 +1138,18 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ 		goto init_dev_info_err;
+ 	}
+ 
++	ret = sxe2_sw_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize sw parameters, ret=[%d]", ret);
++		goto init_sw_err;
++	}
++
++	ret = sxe2_intr_init(dev);
++	if (ret != 0) {
++		PMD_LOG_ERR(INIT, "Failed to initialize interrupt, ret:%d", ret);
++		goto init_irq_err;
++	}
++
+ 	ret = sxe2_eth_init(dev);
+ 	if (ret) {
+ 		PMD_LOG_ERR(INIT, "Failed to initialize eth parameters, ret=%d", ret);
+@@ -1109,6 +1194,10 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ init_rss_err:
+ 	sxe2_security_uinit(dev);
+ init_security_err:
++	sxe2_intr_uninit(dev);
++init_irq_err:
++	sxe2_sw_uninit(dev);
++init_sw_err:
+ 	sxe2_eth_uinit(dev);
+ init_eth_err:
+ init_dev_info_err:
+@@ -1132,8 +1221,10 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
+ 	(void)sxe2_sched_uinit(dev);
+ 	sxe2_vsi_uninit(dev);
+ 	sxe2_security_uinit(dev);
+-	sxe2_dev_pci_map_uinit(dev);
++	sxe2_intr_uninit(dev);
++	sxe2_sw_uninit(dev);
+ 	sxe2_eth_uinit(dev);
++	sxe2_dev_pci_map_uinit(dev);
+ 
+ l_end:
+ 	return 0;
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index fed8ce37d9..263d407587 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -352,6 +352,12 @@ int32_t sxe2_dev_pci_res_seg_map(struct sxe2_adapter *adapter,
+ 				 uint32_t item_cnt,
+ 				 uint32_t item_base);
+ 
++void sxe2_pci_map_write_reg(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type, uint16_t idx_in_func, uint32_t value);
++
++uint32_t sxe2_pci_map_read_reg(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type, uint16_t idx_in_func);
++
+ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
+ 
+ int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
+diff --git a/drivers/net/sxe2/sxe2_irq.c b/drivers/net/sxe2/sxe2_irq.c
 new file mode 100644
-index 0000000000..1d56613043
+index 0000000000..fd9cd4b1ff
 --- /dev/null
-+++ b/drivers/net/sxe2/sxe2_rss.c
-@@ -0,0 +1,584 @@
++++ b/drivers/net/sxe2/sxe2_irq.c
+@@ -0,0 +1,942 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
 + */
 +
-+#include "sxe2_rss.h"
-+#include "sxe2_common_log.h"
++#include <stdint.h>
++#include <sys/eventfd.h>
++#include <unistd.h>
++#include <ethdev_pci.h>
++#include <ethdev_driver.h>
++#include <rte_alarm.h>
++#include <fcntl.h>
++#include <rte_stdatomic.h>
++
 +#include "sxe2_ethdev.h"
++#include "sxe2_irq.h"
++#include "sxe2_common_log.h"
++#include "sxe2_queue.h"
++#include "sxe2_drv_cmd.h"
++#include "sxe2_ioctl_chnl_func.h"
++#include "sxe2vf_regs.h"
++#include "sxe2_host_regs.h"
 +#include "sxe2_cmd_chnl.h"
 +
-+void sxe2_sw_rss_ctx_hw_cap_set(struct sxe2_adapter *adapter,
-+		struct sxe2_drv_rss_hash_caps *rss_caps)
-+{
-+	adapter->rss_ctxt.rss_key_size = rss_caps->hash_key_size;
-+	adapter->rss_ctxt.rss_lut_size = rss_caps->lut_key_size;
-+}
++#define SXE2_INT_EVENT_OICR_ALL (SXE2_PF_INT_OICR_SWINT | \
++					SXE2_PF_INT_OICR_LAN_TX_ERR | \
++					SXE2_PF_INT_OICR_LAN_RX_ERR | \
++					SXE2_PF_INT_OICR_FW)
 +
-+int32_t sxe2_rss_hash_key_init(struct rte_eth_dev *dev)
-+{
-+	struct rte_eth_rss_conf *rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+	uint16_t i = 0;
++#define MAX_EVENT_PENDING (16)
 +
-+	if (rss_ctxt->rss_key == NULL) {
-+		rss_ctxt->rss_key = (uint8_t *)rte_zmalloc("rss_key", rss_ctxt->rss_key_size, 0);
-+		if (rss_ctxt->rss_key == NULL) {
-+			PMD_LOG_ERR(INIT, "Failed to allocate rss key");
-+			ret = -ENOMEM;
-+			goto l_end;
-+		}
-+	}
-+
-+	if (!rss_conf->rss_key) {
-+		for (i = 0; i < rss_ctxt->rss_key_size; i++)
-+			rss_ctxt->rss_key[i] = (uint8_t)rte_rand();
-+	} else {
-+		rte_memcpy(rss_ctxt->rss_key, rss_conf->rss_key,
-+			   RTE_MIN(rss_conf->rss_key_len, rss_ctxt->rss_key_size));
-+	}
-+
-+	ret = sxe2_drv_rss_key_set(adapter, rss_ctxt->rss_key,
-+				   rss_ctxt->rss_key_size);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rss key, ret:%d", ret);
-+		rte_free(rss_ctxt->rss_key);
-+		rss_ctxt->rss_key = NULL;
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+void sxe2_rss_hash_key_uninit(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+
-+	if (rss_ctxt->rss_key) {
-+		rte_free(rss_ctxt->rss_key);
-+		rss_ctxt->rss_key = NULL;
-+	}
-+}
-+
-+int32_t sxe2_rss_lut_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+	uint16_t i;
-+
-+	if (rss_ctxt->rss_lut == NULL) {
-+		rss_ctxt->rss_lut = (uint8_t *)rte_zmalloc("rss_lut", rss_ctxt->rss_lut_size, 0);
-+		if (rss_ctxt->rss_lut == NULL) {
-+			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to allocate rss lut");
-+			ret = -ENOMEM;
-+			goto l_end;
-+		}
-+	}
-+
-+	for (i = 0; i < rss_ctxt->rss_lut_size; i++)
-+		rss_ctxt->rss_lut[i] = (uint8_t)(i % dev->data->nb_rx_queues);
-+
-+	ret = sxe2_drv_rss_lut_set(adapter, rss_ctxt->rss_lut, rss_ctxt->rss_lut_size);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rss lut, ret:%d", ret);
-+		rte_free(rss_ctxt->rss_lut);
-+		rss_ctxt->rss_lut = NULL;
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+void sxe2_rss_lut_uninit(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+
-+	if (rss_ctxt->rss_lut) {
-+		rte_free(rss_ctxt->rss_lut);
-+		rss_ctxt->rss_lut = NULL;
-+	}
-+}
-+
-+static struct sxe2_rss_hf_config sxe2_rss_default_hf_config[] = {
-+	{
-+		.rss_hf = RTE_ETH_RSS_L2_PAYLOAD,
-+		.hdrs = {SXE2_FLOW_HDR_ETH,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_ETH_TYPE,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_IPV4,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_IPV6,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_FRAG_IPV4,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_IPV_FRAG,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_FRAG_IPV6,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_IPV_FRAG,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV4_OTHER,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_IPV_OTHER,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV6_OTHER,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_IPV_OTHER,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV4_UDP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_UDP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_FLD_ID_UDP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_UDP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV6_UDP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_UDP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_FLD_ID_UDP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_UDP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV4_TCP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_TCP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_FLD_ID_TCP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_TCP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV6_TCP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_TCP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_FLD_ID_TCP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_TCP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV4_SCTP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV4,
-+				 SXE2_FLOW_HDR_SCTP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV4_SA,
-+				 SXE2_FLOW_FLD_ID_IPV4_DA,
-+				 SXE2_FLOW_FLD_ID_SCTP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_SCTP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
-+	{
-+		.rss_hf = RTE_ETH_RSS_NONFRAG_IPV6_SCTP,
-+		.hdrs = {SXE2_FLOW_HDR_IPV6,
-+				 SXE2_FLOW_HDR_SCTP,
-+				 SXE2_FLOW_END},
-+		.flds = {SXE2_FLOW_FLD_ID_IPV6_SA,
-+				 SXE2_FLOW_FLD_ID_IPV6_DA,
-+				 SXE2_FLOW_FLD_ID_SCTP_SRC_PORT,
-+				 SXE2_FLOW_FLD_ID_SCTP_DST_PORT,
-+				 SXE2_FLOW_END},
-+	},
++struct sxe2_event_element {
++	TAILQ_ENTRY(sxe2_event_element) next;
++	struct rte_eth_dev *dev;
 +};
 +
-+int32_t sxe2_rss_hf_type_set(struct rte_eth_dev *dev, uint64_t rss_hf)
++struct sxe2_event_handler {
++	RTE_ATOMIC(uint16_t)ndev;
++	rte_thread_t tid;
++	int32_t fd[2];
++	rte_spinlock_t  lock;
++	TAILQ_HEAD(event_list, sxe2_event_element) pending;
++};
++static struct sxe2_event_handler event_handler = {
++	.fd = {-1, -1},
++};
++
++static RTE_ATOMIC(uint32_t)event_thread_run;
++
++
++static void sxe2_event_irq_common_handler(struct sxe2_adapter *adapter, uint64_t oicr)
 +{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+	uint32_t i;
-+	uint8_t symm = 0;
++	struct rte_eth_dev *dev = &rte_eth_devices[adapter->dev_info.dev_data->port_id];
 +
-+	if (0 == (rss_hf & SXE2_RSS_HF_SUPPORT_ALL) && rss_hf != 0) {
-+		PMD_DEV_LOG_ERR(adapter, DRV,
-+			"Failed to set unsupported rss_hf:0x%016" PRIx64,
-+			rss_hf);
-+		ret = -EINVAL;
-+		goto l_end;
++	if (oicr & RTE_BIT32(SXE2_COM_EC_LINK_CHG)) {
++		PMD_DEV_LOG_INFO(adapter, DRV, "OICR=%" PRIu64, oicr);
++		(void)sxe2_drv_mac_link_status_get(adapter);
++		if (rte_eal_process_type() == RTE_PROC_PRIMARY)
++			rte_eth_dev_callback_process(dev,
++						     RTE_ETH_EVENT_INTR_LSC,
++						     NULL);
 +	}
++}
 +
-+	for (i = 0; i < RTE_DIM(sxe2_rss_default_hf_config); i++) {
-+		if (rss_ctxt->rss_hf & sxe2_rss_default_hf_config[i].rss_hf) {
-+			sxe2_rss_default_hf_config[i].symm = rss_ctxt->symm;
-+			ret = sxe2_drv_rss_hf_del(adapter, &sxe2_rss_default_hf_config[i]);
-+			if (ret) {
-+				PMD_DEV_LOG_ERR(adapter, INIT,
-+					"Failed to del rss hf cfg[%d], ret:%d", i, ret);
-+				goto l_end;
-+			}
++static uint32_t sxe2_event_intr_handle(void *param __rte_unused)
++{
++	struct sxe2_event_handler *handler = &event_handler;
++	struct sxe2_adapter *adapter;
++	struct sxe2_event_element *pos;
++	struct sxe2_event_element *tmp;
++	int32_t ret = 0;
++	uint64_t oicr = 0;
++	TAILQ_HEAD(event_list, sxe2_event_element) pending;
++	int8_t unused[MAX_EVENT_PENDING];
++	ssize_t nr;
++
++	while (rte_atomic_load_explicit(&event_thread_run, rte_memory_order_relaxed)) {
++		nr = read(handler->fd[0], &unused, sizeof(unused));
++		if (nr <= 0)
++			break;
++
++		rte_spinlock_lock(&handler->lock);
++		TAILQ_INIT(&pending);
++		TAILQ_CONCAT(&pending, &handler->pending, next);
++		rte_spinlock_unlock(&handler->lock);
++
++		TAILQ_FOREACH_SAFE(pos, &pending, next, tmp) {
++			TAILQ_REMOVE(&pending, pos, next);
++			adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(pos->dev);
++
++			ret = sxe2_drv_dev_other_irq_get(adapter->cdev, &oicr);
++			sxe2_event_irq_common_handler(adapter, oicr);
++
++			rte_free(pos);
 +		}
 +	}
 +
-+	if (rss_ctxt->hash_func == RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ)
-+		symm = 1;
-+
-+	for (i = 0; i < RTE_DIM(sxe2_rss_default_hf_config); i++) {
-+		if (rss_hf & sxe2_rss_default_hf_config[i].rss_hf) {
-+			sxe2_rss_default_hf_config[i].symm = symm;
-+			ret = sxe2_drv_rss_hf_add(adapter, &sxe2_rss_default_hf_config[i]);
-+			if (ret) {
-+				PMD_DEV_LOG_ERR(adapter, INIT,
-+					"Failed to add rss hf cfg[%d], ret:%d", i, ret);
-+				goto l_end;
-+			}
-+		}
-+	}
-+
-+	rss_ctxt->rss_hf = rss_hf & SXE2_RSS_HF_SUPPORT_ALL;
-+	rss_ctxt->symm = symm;
-+l_end:
 +	return ret;
 +}
 +
-+int32_t sxe2_rss_hash_function_set(struct rte_eth_dev *dev, enum rte_eth_hash_function func)
++static int32_t sxe2_event_intr_handler_init(void)
 +{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	enum sxe2_rss_hash_key_func hash_func = SXE2_RSS_HASH_FUNC_SYM_TOEPLITZ;
++	struct sxe2_event_handler *handler = &event_handler;
 +	int32_t ret = 0;
-+
-+	switch (func) {
-+	case RTE_ETH_HASH_FUNCTION_DEFAULT:
-+	case RTE_ETH_HASH_FUNCTION_TOEPLITZ:
-+	case RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ:
-+		hash_func = SXE2_RSS_HASH_FUNC_SYM_TOEPLITZ;
-+		break;
-+	case RTE_ETH_HASH_FUNCTION_SIMPLE_XOR:
-+		hash_func = SXE2_RSS_HASH_FUNC_XOR;
-+		break;
-+	default:
-+		PMD_DEV_LOG_ERR(adapter, DRV, "RSS hash function[%d] not support.", func);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_drv_rss_hash_ctrl_func(adapter, hash_func);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rss hash function, ret=[%d]", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_rss_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct rte_eth_rss_conf *rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
-+	enum rte_eth_hash_function rss_func = RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ;
-+	int32_t ret = 0;
-+
-+	adapter->rss_ctxt.inited = false;
-+
-+	if (dev->data->nb_rx_queues <= 1) {
-+		PMD_DEV_LOG_DEBUG(adapter, INIT, "No need to init rss, rx queues %d.",
-+				dev->data->nb_rx_queues);
-+		goto l_end;
-+	}
-+
-+	if ((adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_RSS) == 0) {
-+		PMD_DEV_LOG_WARN(adapter, INIT, "RSS not supported");
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_rss_hash_key_init(dev);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to init rss key");
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_rss_lut_init(dev);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to init rss lut");
-+		goto l_err_key;
-+	}
-+
-+	rss_func = rss_conf->algorithm;
-+	ret = sxe2_rss_hash_function_set(dev, rss_func);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to init rss hash function");
-+		goto l_err_lut;
-+	}
-+	ret = sxe2_rss_hf_type_set(dev, rss_conf->rss_hf);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rss hf type");
-+		goto l_err_lut;
-+	}
-+	adapter->rss_ctxt.inited = true;
-+	goto l_end;
-+
-+l_err_lut:
-+	sxe2_rss_lut_uninit(dev);
-+l_err_key:
-+	sxe2_rss_hash_key_uninit(dev);
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_rss_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
++	int err = 0;
 +
 +	PMD_INIT_FUNC_TRACE();
-+
-+	if ((adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_RSS) == 0)
-+		goto l_end;
-+
-+	ret = sxe2_drv_rss_hf_clear(adapter);
-+	if (ret)
-+		PMD_LOG_ERR(INIT, "Failed to clear rss hf");
-+
-+	sxe2_rss_hash_key_uninit(dev);
-+
-+	sxe2_rss_lut_uninit(dev);
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_dev_rss_reta_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_reta_entry64 *reta_conf,
-+		uint16_t reta_size)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	uint8_t *lut_tmp = NULL;
-+	int32_t ret = 0;
-+	uint16_t i;
-+	uint16_t shift;
-+	uint16_t idx;
-+
-+	if (!adapter->rss_ctxt.inited) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "RSS not inited.");
-+		ret = -ENOTSUP;
++	if (rte_atomic_fetch_add_explicit(&handler->ndev, 1, rte_memory_order_acq_rel) >= 1) {
++		ret = 0;
++		PMD_LOG_DEBUG(INIT, "%s: ndev > 1", __func__);
 +		goto l_end;
 +	}
 +
-+	if (reta_size != rss_ctxt->rss_lut_size) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "The size of hash lookup table configured "
-+				"(%d) doesn't match the number of hardware can "
-+			"support (%d)", reta_size, rss_ctxt->rss_lut_size);
-+		ret = -EINVAL;
++#if defined(RTE_EXEC_ENV_IS_WINDOWS) && RTE_EXEC_ENV_IS_WINDOWS != 0
++	err = _pipe(handler->fd, MAX_EVENT_PENDING, O_BINARY);
++#else
++	err = pipe(handler->fd);
++#endif
++	if (err != 0) {
++		ret = -ECHILD;
++		rte_atomic_fetch_sub_explicit(&handler->ndev, 1, rte_memory_order_release);
++		PMD_LOG_ERR(INIT, "%s: pipe failed", __func__);
 +		goto l_end;
 +	}
 +
-+	lut_tmp = rte_zmalloc("rss_lut_temp", reta_size, 0);
-+	if (!lut_tmp) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "No memory can be allocated");
-+		ret = -ENOMEM;
++	rte_atomic_store_explicit(&event_thread_run, 1, rte_memory_order_relaxed);
++
++	TAILQ_INIT(&handler->pending);
++	rte_spinlock_init(&handler->lock);
++
++	if (rte_thread_create_internal_control(&handler->tid, "sxe2-event",
++				sxe2_event_intr_handle, NULL)) {
++		PMD_LOG_ERR(INIT, "%s: thread create failed", __func__);
++		rte_atomic_fetch_sub_explicit(&handler->ndev, 1, rte_memory_order_release);
++		ret = -ECHILD;
 +		goto l_end;
-+	}
-+	rte_memcpy(lut_tmp, rss_ctxt->rss_lut, reta_size);
-+
-+	for (i = 0; i < reta_size; i++) {
-+		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-+		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-+		if (reta_conf[idx].mask & (1ULL << shift))
-+			lut_tmp[i] = reta_conf[idx].reta[shift];
-+	}
-+
-+	ret = sxe2_drv_rss_lut_set(adapter, lut_tmp, reta_size);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss lut");
-+		goto l_end;
-+	}
-+
-+	rte_memcpy(rss_ctxt->rss_lut, lut_tmp, reta_size);
-+
-+l_end:
-+	if (lut_tmp)
-+		rte_free(lut_tmp);
-+	return ret;
-+}
-+
-+int32_t sxe2_dev_rss_reta_query(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_reta_entry64 *reta_conf,
-+		uint16_t reta_size)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+	uint16_t i;
-+	uint16_t shift;
-+	uint16_t idx;
-+
-+	if (!adapter->rss_ctxt.inited) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "RSS not inited.");
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
-+
-+	if (reta_size != rss_ctxt->rss_lut_size) {
-+		PMD_LOG_ERR(INIT, "The size of hash lookup table configured "
-+			"(%d) doesn't match the number of hardware can "
-+			"support (%d)", reta_size, rss_ctxt->rss_lut_size);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < reta_size; i++) {
-+		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-+		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-+		if (reta_conf[idx].mask & (1ULL << shift))
-+			reta_conf[idx].reta[shift] = rss_ctxt->rss_lut[i];
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_rss_hash_key_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
-+	uint16_t i;
-+
-+	if (rss_conf->rss_key_len == 0 || rss_conf->rss_key == NULL)
-+		goto l_end;
-+
-+	if (rss_conf->rss_key_len != rss_ctxt->rss_key_size) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "The size of hash key configured "
-+			"(%d) doesn't match the size of hardware can "
-+			"support (%d)", rss_conf->rss_key_len,
-+			rss_ctxt->rss_key_size);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < rss_conf->rss_key_len; i++) {
-+		if (rss_conf->rss_key[i] != rss_ctxt->rss_key[i])
-+			break;
-+	}
-+	if (i == rss_conf->rss_key_len)
-+		goto l_end;
-+
-+	ret = sxe2_drv_rss_key_set(adapter, rss_conf->rss_key,
-+				   rss_conf->rss_key_len);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss key");
-+		goto l_end;
-+	}
-+
-+	rte_memcpy(rss_ctxt->rss_key, rss_conf->rss_key, rss_conf->rss_key_len);
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_dev_rss_hash_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = -1;
-+
-+	if (!adapter->rss_ctxt.inited) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "RSS not inited.");
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_rss_hash_key_update(dev, rss_conf);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss hash key");
-+		goto l_end;
-+	}
-+
-+	if (rss_conf->algorithm != rss_ctxt->hash_func) {
-+		ret = sxe2_rss_hash_function_set(dev, rss_conf->algorithm);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss hash function");
-+			goto l_end;
-+		}
-+		rss_ctxt->hash_func = rss_conf->algorithm;
-+	}
-+
-+	if ((rss_conf->rss_hf & SXE2_RSS_HF_SUPPORT_ALL)
-+			!= rss_ctxt->rss_hf) {
-+		ret = sxe2_rss_hf_type_set(dev, rss_conf->rss_hf);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, DRV, "Failed to set rss hf type");
-+			goto l_end;
-+		}
 +	}
 +	ret = 0;
 +l_end:
 +	return ret;
 +}
 +
-+int32_t sxe2_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf)
++static void sxe2_event_intr_handler_uinit(void)
 +{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rss_context *rss_ctxt = &adapter->rss_ctxt;
-+	int32_t ret = 0;
++	struct sxe2_event_handler *handler = &event_handler;
++	struct sxe2_event_element *pos;
++	struct sxe2_event_element *tmp;
++	ssize_t nw = 0;
++	int8_t notify_byte = 0;
 +
-+	if (adapter->rss_ctxt.inited == 0) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "RSS not inited.");
-+		ret = -ENOTSUP;
-+		goto l_end;
++	PMD_INIT_FUNC_TRACE();
++	if (rte_atomic_fetch_sub_explicit(&handler->ndev, 1, rte_memory_order_acq_rel) > 1) {
++		PMD_LOG_DEBUG(INIT, "event handler uinit, ndev > 0");
++		return;
 +	}
 +
-+	if (rss_conf->rss_key) {
-+		rss_conf->rss_key_len = rss_ctxt->rss_key_size;
-+		rte_memcpy(rss_conf->rss_key, rss_ctxt->rss_key, rss_ctxt->rss_key_size);
++	rte_atomic_store_explicit(&event_thread_run, 0, rte_memory_order_relaxed);
++	nw = write(handler->fd[1], &notify_byte, 1);
++	RTE_SET_USED(nw);
++
++	(void)rte_thread_join(handler->tid, NULL);
++
++	if (handler->fd[0] != -1) {
++		close(handler->fd[0]);
++		handler->fd[0] = -1;
 +	}
-+	rss_conf->rss_hf = rss_ctxt->rss_hf;
-+	rss_conf->algorithm = rss_ctxt->hash_func;
-+l_end:
-+	return ret;
++	if (handler->fd[1] != -1) {
++		close(handler->fd[1]);
++		handler->fd[1] = -1;
++	}
++
++	rte_spinlock_lock(&handler->lock);
++	TAILQ_FOREACH_SAFE(pos, &handler->pending, next, tmp) {
++		TAILQ_REMOVE(&handler->pending, pos, next);
++		rte_free(pos);
++	}
++	rte_spinlock_unlock(&handler->lock);
 +}
-diff --git a/drivers/net/sxe2/sxe2_rss.h b/drivers/net/sxe2/sxe2_rss.h
-new file mode 100644
-index 0000000000..2a454ac1b3
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_rss.h
-@@ -0,0 +1,81 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
 +
-+#ifndef __SXE2_RSS_H__
-+#define __SXE2_RSS_H__
-+#include <ethdev_driver.h>
-+#include "sxe2_osal.h"
-+#include "sxe2_drv_cmd.h"
-+#include "sxe2_flow_define.h"
-+
-+#define SXE2_FLOW_END (0xFFFF)
-+
-+struct sxe2_rss_context {
-+	enum rte_eth_hash_function hash_func;
-+	uint16_t rss_key_size;
-+	uint16_t rss_lut_size;
-+	uint8_t  *rss_key;
-+	uint8_t  *rss_lut;
-+	uint64_t rss_hf;
-+	uint8_t symm;
-+	bool inited;
-+};
-+
-+struct sxe2_rss_hf_config {
-+	uint64_t rss_hf;
-+	uint16_t hdrs[SXE2_FLOW_HDR_MAX];
-+	uint16_t flds[SXE2_FLOW_FLD_ID_MAX];
-+	uint8_t symm;
-+};
-+
-+#define SXE2_RSS_HF_SUPPORT_ALL ( \
-+	RTE_ETH_RSS_IPV4 | \
-+	RTE_ETH_RSS_FRAG_IPV4 | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_SCTP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_OTHER | \
-+	RTE_ETH_RSS_IPV6 | \
-+	RTE_ETH_RSS_FRAG_IPV6 | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_SCTP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_OTHER | \
-+	RTE_ETH_RSS_L2_PAYLOAD)
-+
-+struct sxe2_adapter;
-+
-+void sxe2_sw_rss_ctx_hw_cap_set(struct sxe2_adapter *adapter,
-+		struct sxe2_drv_rss_hash_caps *rss_caps);
-+
-+int32_t sxe2_rss_hash_key_init(struct rte_eth_dev *dev);
-+
-+void sxe2_rss_hash_key_uninit(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_rss_lut_init(struct rte_eth_dev *dev);
-+
-+void sxe2_rss_lut_uninit(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_rss_init(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_rss_hash_function_set(struct rte_eth_dev *dev, enum rte_eth_hash_function func);
-+
-+int32_t sxe2_rss_hf_type_set(struct rte_eth_dev *dev, uint64_t rss_hf);
-+
-+int32_t sxe2_rss_disable(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_dev_rss_reta_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_reta_entry64 *reta_conf,
-+		uint16_t reta_size);
-+
-+int32_t sxe2_dev_rss_reta_query(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_reta_entry64 *reta_conf,
-+		uint16_t reta_size);
-+
-+int32_t sxe2_dev_rss_hash_update(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf);
-+
-+int32_t sxe2_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
-+		struct rte_eth_rss_conf *rss_conf);
-+#endif /* __SXE2_RSS_H__ */
-diff --git a/drivers/net/sxe2/sxe2_txrx.h b/drivers/net/sxe2/sxe2_txrx.h
-index 6f6ff3e3d1..2ff5fee7c7 100644
---- a/drivers/net/sxe2/sxe2_txrx.h
-+++ b/drivers/net/sxe2/sxe2_txrx.h
-@@ -23,4 +23,8 @@ int32_t sxe2_tx_burst_mode_get(struct rte_eth_dev *dev,
- int32_t sxe2_rx_burst_mode_get(struct rte_eth_dev *dev,
- 			__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
- 
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+int32_t sxe2_rx_update_ptp_time(struct sxe2_rx_queue *rxq);
-+#endif
-+
- #endif /* SXE2_TXRX_H */
-diff --git a/drivers/net/sxe2/sxe2_txrx_poll.c b/drivers/net/sxe2/sxe2_txrx_poll.c
-index 21d5c38725..3c6fe37404 100644
---- a/drivers/net/sxe2/sxe2_txrx_poll.c
-+++ b/drivers/net/sxe2/sxe2_txrx_poll.c
-@@ -17,6 +17,7 @@
- #include "sxe2_queue.h"
- #include "sxe2_ethdev.h"
- #include "sxe2_common_log.h"
-+#include "sxe2_cmd_chnl.h"
- 
- static __rte_always_inline int32_t
- sxe2_tx_bufs_free(struct sxe2_tx_queue *txq)
-@@ -282,6 +283,30 @@ sxe2_tx_desc_checksum_fill(uint64_t offloads, uint32_t *desc_cmd, uint32_t *desc
- 	return;
- }
- 
-+static __rte_always_inline void sxe2_desc_tso_fill(struct rte_mbuf *tx_pkt,
-+						   uint64_t *desc_type_cmd_tso_mss,
-+						   union sxe2_tx_offload_info ol_info)
++static void sxe2_event_intr_post(struct rte_eth_dev *dev)
 +{
-+	uint32_t hdr_len;
-+	uint32_t tso_len;
++	struct sxe2_event_handler *handler = &event_handler;
++	struct sxe2_event_element *elem = rte_malloc(NULL, sizeof(struct sxe2_event_element), 0);
++	int8_t notify_byte = 0;
++	ssize_t nw = 0;
 +
-+	if (!ol_info.l4_len) {
-+		PMD_LOG_DEBUG(TX, "TSO ERROR: L4 length is 0");
++	if (!elem)
 +		goto l_end;
-+	}
-+	hdr_len = ol_info.l2_len + ol_info.l3_len + ol_info.l4_len;
-+	if (tx_pkt->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
-+		hdr_len += ol_info.outer_l2_len + ol_info.outer_l3_len;
 +
-+	tso_len = tx_pkt->pkt_len - hdr_len;
-+	*desc_type_cmd_tso_mss |=
-+			((uint64_t)SXE2_TX_CTXT_DESC_CMD_TSO << SXE2_TX_CTXT_DESC_CMD_SHIFT) |
-+			((uint64_t)tso_len << SXE2_TX_CTXT_DESC_TSO_LEN_SHIFT) |
-+			((uint64_t)tx_pkt->tso_segsz << SXE2_TX_CTXT_DESC_MSS_SHIFT);
++	elem->dev = dev;
++
++	rte_spinlock_lock(&handler->lock);
++	TAILQ_INSERT_TAIL(&handler->pending, elem, next);
++	rte_spinlock_unlock(&handler->lock);
++
++	nw = write(handler->fd[1], &notify_byte, 1);
++	RTE_SET_USED(nw);
++
 +l_end:
 +	return;
 +}
 +
- static __rte_always_inline uint64_t
- sxe2_tx_data_desc_build_cobt(uint32_t cmd, uint32_t offset, uint16_t buf_size, uint16_t l2tag)
- {
-@@ -395,6 +420,11 @@ uint16_t sxe2_tx_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkt
- 				rte_pktmbuf_free_seg(buffer->mbuf);
- 				buffer->mbuf = NULL;
- 			}
-+			if (offloads & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
-+				sxe2_desc_tso_fill(tx_pkt,
-+					&desc_type_cmd_tso_mss, ol_info);
-+			else if (offloads & RTE_MBUF_F_TX_IEEE1588_TMST)
-+				desc_type_cmd_tso_mss |= SXE2_TX_CTXT_DESC_CMD_TSYN_MASK;
- 
- 			if (offloads & RTE_MBUF_F_TX_QINQ) {
- 				desc_l2tag2 = tx_pkt->vlan_tci_outer;
-@@ -707,6 +737,57 @@ sxe2_rx_desc_filter_para_fill(struct sxe2_rx_queue *rxq __rte_unused,
- #endif
- }
- 
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+int32_t sxe2_rx_update_ptp_time(struct sxe2_rx_queue *rxq)
++static void sxe2_interrupt_handler_other(void *arg)
 +{
-+	struct sxe2_adapter *adapter;
-+	uint64_t cur_time_ms;
++	struct rte_eth_dev *dev = (struct rte_eth_dev *)arg;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	int32_t eventfd = adapter->irq_ctxt.other_event_fd;
 +	int32_t ret = 0;
-+	cur_time_ms = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
++	uint64_t buf = 0;
 +
-+	if (likely((cur_time_ms - rxq->update_time) < SXE2_RX_PKTS_TS_TIMEOUT_VAL))
++	ret = read(eventfd, &buf, sizeof(buf));
++	if (ret != sizeof(buf)) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "read eventfd[%d] failed, ret:%d, errno:%d.",
++				eventfd, ret, errno);
++	}
++
++	sxe2_event_intr_post(dev);
++}
++
++static void sxe2_interrupt_handler_reset(void *arg)
++{
++	struct rte_eth_dev *dev = (struct rte_eth_dev *)arg;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	int32_t resetfd = adapter->irq_ctxt.reset_event_fd;
++	int32_t ret = 0;
++	uint64_t buf = 0;
++
++	ret = read(resetfd, &buf, sizeof(buf));
++	if (ret != sizeof(buf)) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "read resetfd[%d] failed, ret:%d, errno:%d.",
++				resetfd, ret, errno);
++	}
++
++	sxe2_drv_cmd_close(adapter->cdev);
++
++	rte_eth_dev_callback_process(dev, RTE_ETH_EVENT_INTR_RMV, NULL);
++}
++
++int32_t sxe2_sw_irq_ctxt_init(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
++	int32_t ret = 0;
++
++	irq_ctxt->rxq_avail_cnt = irq_ctxt->max_cnt_hw;
++	irq_ctxt->rxq_base_idx_in_pf = irq_ctxt->base_idx_in_func;
++	irq_ctxt->reset_event_fd = -1;
++	irq_ctxt->other_event_fd = -1;
++
++	return ret;
++}
++
++void sxe2_sw_irq_ctxt_uninit(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++
++	memset(&adapter->irq_ctxt, 0, sizeof(adapter->irq_ctxt));
++	adapter->irq_ctxt.reset_event_fd = -1;
++	adapter->irq_ctxt.other_event_fd = -1;
++}
++
++void sxe2_sw_irq_ctx_hw_cap_set(struct sxe2_adapter *adapter,
++				struct sxe2_drv_msix_caps *msix_caps)
++{
++	adapter->irq_ctxt.max_cnt_hw = msix_caps->msix_vectors_cnt;
++	adapter->irq_ctxt.base_idx_in_func = msix_caps->base_idx_in_func;
++}
++
++static int32_t sxe2_intr_handler_cfg(struct rte_intr_handle *handle,
++		int32_t fd, rte_intr_callback_fn cb, void *cb_arg)
++{
++	int32_t ret = 0;
++
++	ret = rte_intr_fd_set(handle, fd);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to set intr_handle->fd, error %i (%s)",
++			errno, strerror(errno));
++		goto err;
++	}
++
++	ret = rte_intr_type_set(handle, RTE_INTR_HANDLE_EXT);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to set intr_handle->type, error %i (%s)",
++			errno, strerror(errno));
++		goto err;
++	}
++
++	ret = rte_intr_callback_register(handle, cb, cb_arg);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize register intr callback, ret=%d", ret);
++		goto err;
++	}
++err:
++	return ret;
++}
++
++static struct rte_intr_handle *
++sxe2_intr_handler_create(int32_t fd, rte_intr_callback_fn cb, void *cb_arg)
++{
++	struct rte_intr_handle *tmp_intr_handle = NULL;
++	int32_t ret = 0;
++
++	tmp_intr_handle = rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
++	if (!tmp_intr_handle) {
++		PMD_LOG_ERR(INIT, "Failed to alloc memory for intr_handler, error %i (%s)",
++			errno, strerror(errno));
++		goto err;
++	}
++
++	ret = rte_intr_fd_set(tmp_intr_handle, fd);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to set intr_handle->fd, error %i (%s)",
++				errno, strerror(errno));
++		goto err;
++	}
++
++	ret = rte_intr_type_set(tmp_intr_handle, RTE_INTR_HANDLE_EXT);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to set intr_handle->type, error %i (%s)",
++				errno, strerror(errno));
++		goto err;
++	}
++
++	ret = rte_intr_callback_register(tmp_intr_handle, cb, cb_arg);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize register intr callback, ret=%d", ret);
++		goto err;
++	}
++
++	return tmp_intr_handle;
++err:
++	rte_intr_instance_free(tmp_intr_handle);
++	return NULL;
++}
++
++static void sxe2_intr_handler_destroy(struct rte_intr_handle *intr_handle,
++				  rte_intr_callback_fn cb, void *cb_arg)
++{
++	if (!intr_handle)
++		return;
++
++	if (rte_intr_fd_get(intr_handle) >= 0)
++		(void)rte_intr_callback_unregister(intr_handle, cb, cb_arg);
++	rte_intr_instance_free(intr_handle);
++}
++
++static int32_t sxe2_event_intr_fd_create(void)
++{
++	int32_t fd = 0;
++
++	fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
++	if (fd < 0) {
++		PMD_LOG_ERR(INIT, "Can't setup eventfd, error %i (%s)",
++			errno, strerror(errno));
++		goto err;
++	}
++
++	return fd;
++err:
++	return -EBADF;
++}
++
++static void sxe2_event_intr_fd_destroy(int32_t fd)
++{
++	if (fd >= 0)
++		close(fd);
++}
++
++static int32_t sxe2_other_intr_register(struct rte_eth_dev *dev, int32_t fd)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	int32_t ret = 0;
++	uint64_t event = RTE_BIT32(SXE2_COM_EC_LINK_CHG) |
++				RTE_BIT32(SXE2_COM_SW_MODE_LEGACY) |
++				RTE_BIT32(SXE2_COM_SW_MODE_SWITCHDEV) |
++				RTE_BIT32(SXE2_COM_FC_ST_CHANGE);
++
++	ret = sxe2_drv_dev_other_irq_set(adapter->cdev, fd, event);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set other irq, ret=%d", ret);
 +		goto l_end;
-+	rxq->update_time = cur_time_ms;
-+	adapter = rxq->vsi->adapter;
-+	rxq->ts_need_update = true;
-+	ret = sxe2_drv_ptp_gettime(adapter, rxq);
-+	if (rxq->desc_ts < rxq->ts_low)
-+		rxq->ts_need_update = false;
++	}
 +
-+	PMD_LOG_INFO(RX, "rxq update time ret=%d, cur time=%" PRIu64 ", rxqh=%" PRIu64 ", rxql=%d",
-+		     ret, cur_time_ms, rxq->ts_high, rxq->ts_low);
 +l_end:
 +	return ret;
 +}
 +
-+static inline void sxe2_rx_desc_ptp_para_fill(struct sxe2_rx_queue *rxq,
-+					      struct rte_mbuf *mbuf,
-+					      union sxe2_rx_desc *desc)
++static void sxe2_other_intr_unregister(struct rte_eth_dev *dev)
 +{
-+	struct sxe2_adapter *adapter = rxq->vsi->adapter;
-+	uint64_t ts_ns;
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	int32_t ret = 0;
 +
-+	if (adapter->ptp_ctxt.mbuf_rx_ts_flag != 0 &&
-+	    (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) &&
-+	    SXE2_RX_DESC_RXDID_VAL_GET(desc->wb.rxdid_src) == SXE2_RX_DESC_RXDID_1588) {
-+		rxq->desc_ts = rte_le_to_cpu_32(desc->wb_ts.ts_h);
-+		(void)sxe2_rx_update_ptp_time(rxq);
-+		if (rxq->ts_need_update && rxq->desc_ts < rxq->ts_low)
-+			rxq->ts_high += 1;
-+
-+		rxq->ts_need_update = true;
-+		rxq->ts_low = rxq->desc_ts;
-+		rxq->update_time = rte_get_timer_cycles() /
-+			(rte_get_timer_hz() / 1000);
-+		ts_ns = rxq->ts_high * NSEC_PER_SEC + rxq->ts_low;
-+		*RTE_MBUF_DYNFIELD(mbuf, adapter->ptp_ctxt.mbuf_rx_ts_offset, uint64_t *) = ts_ns;
-+		mbuf->ol_flags |= adapter->ptp_ctxt.mbuf_rx_ts_flag;
-+		PMD_LOG_INFO(RX, "receive ptp pkt,ts_s=%" PRIu64 ", ts_ns=%d", rxq->ts_high,
-+			     rxq->ts_low);
-+	}
++	ret = sxe2_drv_dev_other_irq_set(adapter->cdev, -1, 0);
++	if (ret)
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set other irq, ret=%d", ret);
 +}
-+#endif
 +
- static __rte_always_inline void
- sxe2_rx_mbuf_common_fields_fill(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf,
- 		union sxe2_rx_desc *rxd)
-@@ -718,10 +799,12 @@ sxe2_rx_mbuf_common_fields_fill(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf
++static int32_t sxe2_reset_intr_register(struct rte_eth_dev *dev, int32_t fd)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	int32_t ret = 0;
++
++	ret = sxe2_drv_dev_reset_irq_set(adapter->cdev, fd);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set reset irq, ret=%d", ret);
++		goto l_end;
++	}
++
++l_end:
++	return ret;
++}
++
++static void sxe2_reset_intr_unregister(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	int32_t ret = 0;
++
++	ret = sxe2_drv_dev_reset_irq_set(adapter->cdev, -1);
++	if (ret)
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set reset irq, ret=%d", ret);
++}
++
++int32_t sxe2_intr_init(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct rte_pci_device *pci_dev = SXE2_DEV_TO_PCI(dev);
++	struct rte_intr_handle *reset_handle = NULL;
++	int32_t ofd = -1;
++	int32_t rfd = -1;
++	int32_t ret = 0;
++
++	PMD_INIT_FUNC_TRACE();
++
++	ofd = sxe2_event_intr_fd_create();
++	if (ofd < 0) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to create event intr fd");
++		ret = -EBADF;
++		goto l_end;
++	}
++
++	ret = sxe2_intr_handler_cfg(pci_dev->intr_handle,
++			ofd, sxe2_interrupt_handler_other, dev);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to create intr handler");
++		goto l_err_create_other_handler;
++	}
++
++	ret = sxe2_event_intr_handler_init();
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Event handler init failed, ret=%d", ret);
++		goto l_err_event_intr_handler_init;
++	}
++
++	ret = sxe2_other_intr_register(dev, ofd);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to register other intr, ret=%d", ret);
++		goto l_err_register_other_intr;
++	}
++	adapter->irq_ctxt.other_event_fd = ofd;
++
++	rfd = sxe2_event_intr_fd_create();
++	if (rfd < 0) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to create event intr fd");
++		ret = -EBADF;
++		goto l_err_create_reset_fd;
++	}
++
++	reset_handle = sxe2_intr_handler_create(rfd, sxe2_interrupt_handler_reset, dev);
++	if (!reset_handle) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to create intr handler");
++		ret = -ENOMEM;
++		goto l_err_create_reset_handler;
++	}
++	adapter->irq_ctxt.reset_handle = reset_handle;
++
++	ret = sxe2_reset_intr_register(dev, rfd);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to register reset intr, ret=%d", ret);
++		goto l_err_register_reset_intr;
++	}
++	adapter->irq_ctxt.reset_event_fd = rfd;
++
++	goto l_end;
++l_err_register_reset_intr:
++	sxe2_intr_handler_destroy(reset_handle, sxe2_interrupt_handler_reset, dev);
++	adapter->irq_ctxt.reset_handle = NULL;
++l_err_create_reset_handler:
++	sxe2_event_intr_fd_destroy(rfd);
++l_err_create_reset_fd:
++	sxe2_other_intr_unregister(dev);
++	adapter->irq_ctxt.other_event_fd = -1;
++l_err_register_other_intr:
++	sxe2_event_intr_handler_uinit();
++l_err_event_intr_handler_init:
++	sxe2_intr_handler_destroy(pci_dev->intr_handle,
++			sxe2_interrupt_handler_other, dev);
++	pci_dev->intr_handle = NULL;
++l_err_create_other_handler:
++	sxe2_event_intr_fd_destroy(ofd);
++l_end:
++	return ret;
++}
++
++void sxe2_intr_uninit(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct rte_pci_device *pci_dev = SXE2_DEV_TO_PCI(dev);
++
++	sxe2_reset_intr_unregister(dev);
++	sxe2_intr_handler_destroy(adapter->irq_ctxt.reset_handle,
++				sxe2_interrupt_handler_reset, dev);
++	sxe2_event_intr_fd_destroy(adapter->irq_ctxt.reset_event_fd);
++	sxe2_other_intr_unregister(dev);
++	sxe2_event_intr_handler_uinit();
++	sxe2_intr_handler_destroy(pci_dev->intr_handle,
++				sxe2_interrupt_handler_other, dev);
++	sxe2_event_intr_fd_destroy(adapter->irq_ctxt.other_event_fd);
++
++	adapter->irq_ctxt.other_event_fd = -1;
++	adapter->irq_ctxt.reset_event_fd = -1;
++	pci_dev->intr_handle = NULL;
++	adapter->irq_ctxt.reset_handle = NULL;
++}
++
++static int32_t sxe2_rxq_intr_efd_alloc(struct rte_eth_dev *dev, int32_t *efd)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	int32_t ret = 0;
++	int32_t fd = 0;
++
++	fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
++	if (fd < 0) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Can't setup eventfd, error %i (%s)",
++			errno, strerror(errno));
++		ret = -EBADF;
++		goto l_end;
++	}
++
++	*efd = fd;
++
++l_end:
++	return ret;
++}
++
++static void sxe2_rxq_intr_efd_free(int32_t efd)
++{
++	close(efd);
++}
++
++static void sxe2_pci_hw_int_itr_set(struct sxe2_adapter *adapter, uint16_t msix_idx, uint16_t itr)
++{
++	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_ITR, msix_idx, itr);
++}
++
++static void sxe2_pci_hw_irq_disable(struct sxe2_adapter *adapter, uint16_t irq_idx)
++{
++	uint32_t value = (SXE2_ITR_IDX_NONE << SXE2_VF_DYN_CTL_ITR_IDX_S);
++
++	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx, value);
++}
++
++static void sxe2_pci_hw_irq_enable(struct sxe2_adapter *adapter, uint16_t irq_idx)
++{
++	uint32_t value = SXE2_VF_DYN_CTL_INTENABLE |
++		SXE2_VF_DYN_CTL_CLEARPBA |
++			(SXE2_ITR_IDX_NONE << SXE2_VF_DYN_CTL_ITR_IDX_S);
++
++	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx, value);
++}
++
++static uint32_t sxe2_pci_hw_irq_dyn_ctl_read(struct sxe2_adapter *adapter, uint16_t irq_idx)
++{
++	return sxe2_pci_map_read_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx);
++}
++
++static void sxe2_pci_hw_msix_disable(struct sxe2_adapter *adapter, uint16_t irq_idx)
++{
++	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_MSIX,
++			irq_idx, SXE2VF_BAR4_MSIX_DISABLE);
++}
++
++static void sxe2_pci_hw_msix_enable(struct sxe2_adapter *adapter, uint16_t irq_idx)
++{
++	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_MSIX,
++			irq_idx, SXE2VF_BAR4_MSIX_ENABLE);
++}
++
++static void sxe2_pci_hw_irq_trigger(struct sxe2_adapter *adapter, uint16_t irq_idx)
++{
++	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx,
++			(SXE2VF_ITR_IDX_NONE << SXE2VF_DYN_CTL_ITR_IDX_SHIFT) |
++			SXE2VF_DYN_CTL_SWINT_TRIG | SXE2VF_DYN_CTL_INTENABLE_MSK);
++}
++
++static void sxe2_pci_hw_irq_clear_pba(struct sxe2_adapter *adapter, uint16_t irq_idx)
++{
++	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx,
++		(SXE2VF_ITR_IDX_NONE << SXE2VF_DYN_CTL_ITR_IDX_SHIFT) |
++		SXE2VF_DYN_CTL_CLEARPBA | SXE2VF_DYN_CTL_INTENABLE_MSK);
++}
++
++static void sxe2_rxq_msix_cfg_unmap(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
++	uint16_t rxq_cnt = adapter->q_ctxt.qp_cnt_assign;
++	uint16_t i = 0;
++
++	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++)
++		sxe2_pci_hw_irq_disable(adapter, irq_ctxt->rxq_msix_idx[i]);
++
++	for (i = 0; i < rxq_cnt; i++)
++		(void)sxe2_drv_rxq_unbind_irq(adapter, i);
++}
++
++static int32_t sxe2_rxq_msix_cfg_map(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
++	int32_t ret = 0;
++	uint32_t val;
++	uint16_t rxq_cnt = dev->data->nb_rx_queues;
++	uint16_t i = 0;
++	uint8_t rx_low_latency = adapter->devargs.rx_low_latency;
++
++	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++) {
++		sxe2_pci_hw_irq_disable(adapter, irq_ctxt->rxq_msix_idx[i]);
++		if (rx_low_latency) {
++			sxe2_pci_hw_int_itr_set(adapter, irq_ctxt->rxq_msix_idx[i],
++					SXE2_ITR_INTERVAL_LOW);
++		} else {
++			sxe2_pci_hw_int_itr_set(adapter, irq_ctxt->rxq_msix_idx[i],
++					SXE2_ITR_INTERVAL_NORMAL);
++		}
++	}
++
++	for (i = 0; i < rxq_cnt; i++) {
++		ret = sxe2_drv_rxq_bind_irq(adapter, i, irq_ctxt->rxq_msix_idx[i]);
++		if (ret != 0) {
++			PMD_DEV_LOG_ERR(adapter, INIT, "RXQ[%u] bind IRQ[%u] failed.",
++				i, irq_ctxt->rxq_msix_idx[i]);
++			goto l_end;
++		}
++	}
++
++	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++)
++		sxe2_pci_hw_irq_enable(adapter, irq_ctxt->rxq_msix_idx[i]);
++
++	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++) {
++		val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, i);
++		if ((val & SXE2VF_DYN_CTL_INTENABLE) == 0)
++			continue;
++
++		sxe2_pci_hw_msix_disable(adapter, i);
++		sxe2_pci_hw_irq_trigger(adapter, i);
++		val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, i);
++		sxe2_pci_hw_irq_clear_pba(adapter, i);
++		val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, i);
++		sxe2_pci_hw_msix_enable(adapter, i);
++	}
++
++l_end:
++	if (ret != 0)
++		sxe2_rxq_msix_cfg_unmap(dev);
++	return ret;
++}
++
++static int32_t sxe2_rxq_map_msix_intr(struct rte_eth_dev *dev,
++		uint16_t msix_base __rte_unused, uint16_t nb_msix,
++		uint16_t base_queue, uint16_t nb_queue)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
++	uint32_t *msix_tbl = NULL;
++	int32_t ret = 0;
++	uint16_t i;
++
++	if (!nb_queue || !nb_msix || nb_queue < nb_msix) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Queue num[%u] or msix num[%u] is invalid.",
++				nb_queue, nb_msix);
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	msix_tbl = rte_zmalloc(NULL, sizeof(uint32_t) * nb_queue, 0);
++	if (!msix_tbl) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to alloc msix_tbl memory.");
++		ret = -ENOMEM;
++		goto l_end;
++	}
++	for (i = 0; i < nb_queue; i++) {
++		msix_tbl[i] = i % nb_msix;
++		PMD_DEV_LOG_INFO(adapter, INIT, "Queue %u is binding to vect %u",
++				base_queue + i, msix_tbl[i]);
++	}
++
++	irq_ctxt->rxq_irq_cnt = nb_msix;
++	irq_ctxt->rxq_msix_idx = msix_tbl;
++
++l_end:
++	return ret;
++}
++
++static void sxe2_rxq_unmap_msix_intr(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
++
++	rte_free(irq_ctxt->rxq_msix_idx);
++	irq_ctxt->rxq_msix_idx = NULL;
++	irq_ctxt->rxq_irq_cnt = 0;
++}
++
++static int32_t sxe2_rxq_intr_register(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
++	struct rte_intr_handle *intr_handle = dev->intr_handle;
++	int32_t *efd_tbl = NULL;
++	uint16_t rxq_cnt = dev->data->nb_rx_queues;
++	uint16_t nb_msix = irq_ctxt->rxq_irq_cnt;
++	uint16_t i;
++	int32_t ret = 0;
++
++	if (rte_intr_type_set(intr_handle, RTE_INTR_HANDLE_EXT)) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set intr_handle->type, error %i (%s)",
++				errno, strerror(errno));
++		ret = -EPERM;
++		goto l_end;
++	}
++
++	efd_tbl = rte_zmalloc(NULL, sizeof(int32_t) * nb_msix, 0);
++	if (!efd_tbl) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to alloc efd_tbl memory.");
++		ret = -ENOMEM;
++		goto l_end;
++	}
++
++	for (i = 0; i < nb_msix; i++) {
++		ret = sxe2_rxq_intr_efd_alloc(dev, &efd_tbl[i]);
++		if (ret) {
++			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to alloc efd_tbl, ret=%d", ret);
++			goto l_free_efd_tbl;
++		}
++	}
++
++	if (rte_intr_vec_list_alloc(intr_handle, "sxe2 rxq int", rxq_cnt)) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to allocate %d rx_queues intr_vec",
++				rxq_cnt);
++		ret = -ENOMEM;
++		goto l_free_efd_tbl;
++	}
++
++	for	(i = 0; i < rxq_cnt; i++) {
++		ret = rte_intr_vec_list_index_set(intr_handle, i,
++				irq_ctxt->rxq_msix_idx[i] + RTE_INTR_VEC_RXTX_OFFSET);
++		if (ret) {
++			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set msix_tbl, ret=%d", ret);
++			goto l_free_efd_tbl;
++		}
++	}
++
++	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++) {
++		ret = rte_intr_efds_index_set(intr_handle, i, efd_tbl[i]);
++		if (ret) {
++			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set efd_tbl, ret=%d", ret);
++			goto l_free_efd_tbl;
++		}
++	}
++
++	if (rte_intr_nb_efd_set(intr_handle, rxq_cnt)) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Set intr nb efd failed, error %i (%s)",
++			errno, strerror(errno));
++		ret = -EPERM;
++		goto l_free_efd_tbl;
++	}
++
++	ret = sxe2_drv_dev_rxq_irq_set(adapter->cdev, 0, efd_tbl, nb_msix);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rxq irq, ret=%d", ret);
++		goto l_free_efd_tbl;
++	}
++	irq_ctxt->rxq_event_fd = efd_tbl;
++
++	goto l_end;
++
++l_free_efd_tbl:
++	if (efd_tbl) {
++		for (i = 0; i < nb_msix; i++)
++			if (efd_tbl[i] >= 0)
++				sxe2_rxq_intr_efd_free(efd_tbl[i]);
++		rte_free(efd_tbl);
++	}
++	irq_ctxt->rxq_event_fd = NULL;
++
++	rte_intr_vec_list_free(intr_handle);
++l_end:
++	return ret;
++}
++
++static void sxe2_rxq_intr_unregister(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
++	struct rte_intr_handle *intr_handle = dev->intr_handle;
++	int32_t efd = -1;
++	uint16_t msix_cnt = irq_ctxt->rxq_irq_cnt;
++	uint16_t i;
++
++	if (irq_ctxt->rxq_event_fd) {
++		for (i = 0; i < msix_cnt; i++) {
++			(void)sxe2_drv_dev_rxq_irq_set(adapter->cdev, i, &efd, 1);
++			sxe2_rxq_intr_efd_free(irq_ctxt->rxq_event_fd[i]);
++		}
++	}
++	rte_free(irq_ctxt->rxq_event_fd);
++	irq_ctxt->rxq_event_fd = NULL;
++
++	rte_intr_vec_list_free(intr_handle);
++
++	rte_intr_nb_efd_set(intr_handle, 0);
++	rte_intr_max_intr_set(intr_handle, 0);
++}
++
++int32_t sxe2_rxq_intr_enable(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	uint16_t msix_vect = adapter->irq_ctxt.rxq_base_idx_in_pf;
++	uint16_t msix_cnt = adapter->irq_ctxt.rxq_avail_cnt;
++	uint16_t rxq_cnt = dev->data->nb_rx_queues;
++	uint16_t rxq_base = adapter->q_ctxt.base_idx_in_pf;
++	int32_t ret = 0;
++
++	if (!rxq_cnt)
++		goto l_end;
++
++	msix_cnt = RTE_MIN(msix_cnt, rxq_cnt);
++
++	ret = sxe2_rxq_map_msix_intr(dev, msix_vect, msix_cnt, rxq_base, rxq_cnt);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to rxq[%d] map msix[%d] intr, cnt=%d, ret=%d",
++					rxq_base, msix_vect, rxq_cnt, ret);
++		goto l_end;
++	}
++
++	if (dev->data->dev_conf.intr_conf.rxq) {
++		ret = sxe2_rxq_intr_register(dev);
++		if (ret) {
++			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to register rxq[%d] intr, ret=%d",
++					rxq_base, ret);
++			goto l_err_unmap;
++		}
++	}
++
++	ret = sxe2_rxq_msix_cfg_map(dev);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to rxq[%d] map msix[%d] intr, ret=%d",
++					rxq_base, msix_vect, ret);
++		goto l_err_unregister;
++	}
++
++	goto l_end;
++l_err_unregister:
++	if (dev->data->dev_conf.intr_conf.rxq)
++		sxe2_rxq_intr_unregister(dev);
++l_err_unmap:
++	sxe2_rxq_unmap_msix_intr(dev);
++l_end:
++	return ret;
++}
++
++void sxe2_rxq_intr_disable(struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
++
++	if (!irq_ctxt->rxq_irq_cnt)
++		goto l_end;
++
++	sxe2_rxq_msix_cfg_unmap(dev);
++
++	if (dev->data->dev_conf.intr_conf.rxq)
++		sxe2_rxq_intr_unregister(dev);
++
++	sxe2_rxq_unmap_msix_intr(dev);
++
++l_end:
++	return;
++}
++
++int32_t sxe2_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
++	uint64_t buf;
++	uint16_t irq_idx = irq_ctxt->rxq_msix_idx[queue_id];
++	size_t read_ret;
++
++	read_ret = read(irq_ctxt->rxq_event_fd[irq_idx], &buf, sizeof(buf));
++	(void)read_ret;
++	sxe2_pci_hw_irq_enable(adapter, irq_idx);
++	return 0;
++}
++
++int32_t sxe2_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
++{
++	struct sxe2_adapter *adapter =
++		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	uint32_t val;
++	int32_t ret = 0;
++	uint16_t irq_idx = adapter->irq_ctxt.rxq_msix_idx[queue_id];
++
++	val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, irq_idx);
++	if ((val & SXE2VF_DYN_CTL_INTENABLE) == 0) {
++		PMD_DEV_LOG_DEBUG(adapter, INIT, "rxq [%d] interrupt is disabled.", queue_id);
++		goto l_end;
++	}
++
++	sxe2_pci_hw_msix_disable(adapter, irq_idx);
++	sxe2_pci_hw_irq_trigger(adapter, irq_idx);
++	val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, irq_idx);
++	sxe2_pci_hw_irq_clear_pba(adapter, irq_idx);
++	val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, irq_idx);
++	sxe2_pci_hw_msix_enable(adapter, irq_idx);
++l_end:
++	return ret;
++}
+diff --git a/drivers/net/sxe2/sxe2_irq.h b/drivers/net/sxe2/sxe2_irq.h
+index 4ca2118b92..31216240e6 100644
+--- a/drivers/net/sxe2/sxe2_irq.h
++++ b/drivers/net/sxe2/sxe2_irq.h
+@@ -45,4 +45,25 @@ struct sxe2_irq_context {
+ 	int32_t *rxq_event_fd;
+ };
  
- 	mbuf->ol_flags = 0;
- 	mbuf->packet_type = ptype_tbl[SXE2_RX_DESC_PTYPE_VAL_GET(qword1)];
--
- 	pkt_flags = sxe2_rx_desc_error_para(rxq, rxd);
- 	sxe2_rx_desc_vlan_para_fill(mbuf, rxd);
- 	sxe2_rx_desc_filter_para_fill(rxq, mbuf, rxd);
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+	sxe2_rx_desc_ptp_para_fill(rxq, mbuf, rxd);
-+#endif
- 
- 	mbuf->ol_flags |= pkt_flags;
- }
++uint32_t sxe2_drv_dev_other_cause_get(struct sxe2_adapter *adapter);
++
++int32_t sxe2_intr_init(struct rte_eth_dev *dev);
++
++void sxe2_intr_uninit(struct rte_eth_dev *dev);
++
++int32_t sxe2_sw_irq_ctxt_init(struct rte_eth_dev *dev);
++
++void sxe2_sw_irq_ctxt_uninit(struct rte_eth_dev *dev);
++
++void sxe2_sw_irq_ctx_hw_cap_set(struct sxe2_adapter *adapter,
++		struct sxe2_drv_msix_caps *msix_caps);
++
++int32_t sxe2_rxq_intr_enable(struct rte_eth_dev *dev);
++
++void sxe2_rxq_intr_disable(struct rte_eth_dev *dev);
++
++int32_t sxe2_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id);
++
++int32_t sxe2_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id);
++
+ #endif /* SXE2_IRQ_H */
+diff --git a/drivers/net/sxe2/sxe2vf_regs.h b/drivers/net/sxe2/sxe2vf_regs.h
+new file mode 100644
+index 0000000000..854f1d3ae8
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2vf_regs.h
+@@ -0,0 +1,85 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#ifndef __SXE2VF_REGS_H__
++#define __SXE2VF_REGS_H__
++
++#define SXE2VF_MBX_Q_LEN_M      0x3FF
++#define SXE2VF_MBX_Q_LEN_VFE_M  RTE_BIT32(28)
++
++#define SXE2VF_MBX_Q_LEN_OVFL_M RTE_BIT32(29)
++#define SXE2VF_MBX_Q_LEN_CRIT_M RTE_BIT32(30)
++#define SXE2VF_MBX_Q_LEN_ENA_M  RTE_BIT32(31)
++
++#define SXE2VF_MBX_RQ_HEAD      (0x00008000)
++#define SXE2VF_MBX_RQ_TAIL      (0x00008400)
++#define SXE2VF_MBX_RQ_LEN       (0x00007C00)
++#define SXE2VF_MBX_RQ_BAH       (0x00007800)
++#define SXE2VF_MBX_RQ_BAL       (0x00007400)
++
++#define SXE2VF_MBX_TQ_HEAD      (0x00006C00)
++#define SXE2VF_MBX_TQ_TAIL      (0x00007000)
++#define SXE2VF_MBX_TQ_LEN       (0x00006800)
++#define SXE2VF_MBX_TQ_BAH       (0x00006400)
++#define SXE2VF_MBX_TQ_BAL       (0x00006000)
++
++#define SXE2VF_RXQ_TAIL(_QRX)                 (0x2000 + ((_QRX) * 4))
++#define SXE2VF_TXQ_TAIL(_QRX)                 (0x1000 + ((_QRX) * 4))
++
++#define SXE2VF_INT_BASE 0x00002800
++
++#define SXE2VF_DYN_CTL0 (SXE2VF_INT_BASE + 0x0)
++
++#define SXE2VF_DYN_CTL(_idx) (SXE2VF_INT_BASE + 0x4 + ((_idx) * 4))
++#define SXE2VF_VF_DYN_CTL(_idx) (SXE2VF_INT_BASE + ((_idx) * 4))
++
++#define SXE2VF_BAR4_MSIX_BASE 0
++#define SXE2VF_BAR4_MSIX_CTL(_idx) (SXE2VF_BAR4_MSIX_BASE + 0xC + ((_idx) * 0x10))
++#define SXE2VF_BAR4_MSIX_ENABLE 0
++#define SXE2VF_BAR4_MSIX_DISABLE 1
++
++#define SXE2VF_DYN_CTL_INTENABLE RTE_BIT32(0)
++#define SXE2VF_DYN_CTL_CLEARPBA   RTE_BIT32(1)
++#define SXE2VF_DYN_CTL_SWINT_TRIG RTE_BIT32(2)
++#define SXE2VF_DYN_CTL_SW_ITR_IDX_ENABLE RTE_BIT32(24)
++
++#define SXE2VF_DYN_CTL_INTENABLE_MSK \
++	RTE_BIT32(31)
++
++#define SXE2VF_DYN_CTL_ITR_IDX_SHIFT 3
++
++enum sxe2vf_itr_idx {
++	SXE2VF_ITR_IDX_0 = 0,
++	SXE2VF_ITR_IDX_1,
++	SXE2VF_ITR_IDX_2,
++	SXE2VF_ITR_IDX_NONE,
++};
++
++#define SXE2VF_INT_ITR0   (0x00002800 + 65 * 0x4)
++#define SXE2VF_INT_ITR(_i, _irq_idx) (SXE2VF_INT_ITR0 + \
++			0x4 + (_i) * 0x104 + ((_irq_idx) * 4))
++#define SXE2VF_VF_INT_ITR(_itr_idx, _irq_idx) (0x00002800 + \
++			(0x104 * (_itr_idx)) + ((_irq_idx) * 4))
++#define SXE2VF_PFG_INT_CTL_ITR_GRAN_0    (2)
++
++#define SXE2VF_PCIE_SYS_READY              0x38c
++#define SXE2VF_PCIE_SYS_READY_CORER_ASSERT RTE_BIT32(0)
++#define SXE2VF_PCIE_SYS_READY_STOP_DROP_DONE RTE_BIT32(2)
++#define SXE2VF_PCIE_SYS_READY_R5        RTE_BIT32(3)
++#define SXE2VF_PCIE_SYS_READY_STOP_DROP RTE_BIT32(16)
++
++#define SXE2VF_PCIE_DEV_CTRL_DEV_STATUS               0x78
++#define SXE2VF_PCIE_DEV_CTRL_DEV_STATUS_TRANS_PENDING RTE_BIT32(21)
++
++#define SXE2VF_VF_VRC_VFGEN_RSTAT             (0x5800)
++#define SXE2VF_VF_VRC_VFGEN_VFRSTAT           GENMASK(1, 0)
++#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_VFR       (0)
++#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_COMPLETE  (RTE_BIT32(0))
++#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_VF_ACTIVE (RTE_BIT32(1))
++
++#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_FORVF_VFR (1)
++#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_FORVF_MASK \
++	(RTE_BIT32(10))
++
++#endif /* SXE2VF_VF_INT_ITR */
 -- 
 2.52.0
 
