@@ -2,141 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF97CD8CA4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 13:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75399CD8CAA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 13:33:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90B3C402BE;
-	Tue,  9 Jun 2026 15:14:14 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 94C994025E
- for <dev@dpdk.org>; Tue,  9 Jun 2026 15:14:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781010853; x=1812546853;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=VYXsqiFbv3yQdA9ENvMwx0jnDemDnkf+FpO/sZ5Mg/8=;
- b=gUQF715yyoVXLBZCtAsZ2R7me3m1ucdkWWocTjj/fDCAGsipvCDGG8Cu
- ATZWhnT2Qj1Ce68TWi4IgOmslqFqe4FDgzh9itKl/ow7aPP1RWd8qB580
- NHz8AIuNIb16bF1e5gViaaH4UEJHvbcTUCu5lJTXkoU3qM4kvpmBQdkQq
- ARRERhIROqYAyC8STeY2xZlMPq0h0BnClIaCnUXjyWtn1TmW3161IXqpC
- 427SmZP/5JvyXVvB0UbNxI3sMU4MijyOUFZxbu4MX0Hc68uI4xRTgnx3r
- mmRiOnrEAYQsjy0WjBUQOTqdB06CsLseORNjjciJTmDNNTt97bE34JH5Y w==;
-X-CSE-ConnectionGUID: 5RqZQ9MPQoiztf+fSJx6Tg==
-X-CSE-MsgGUID: vpevqnWtRQ+DAXq25Ri/Kg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11811"; a="99346225"
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="99346225"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2026 06:14:11 -0700
-X-CSE-ConnectionGUID: /92KWSKlTBOmTzJtoMMsvA==
-X-CSE-MsgGUID: zxH4pQGKSDSBwZNBqH5R9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; d="scan'208";a="247722009"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2026 06:14:11 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 9 Jun 2026 06:14:11 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 9 Jun 2026 06:14:11 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.22) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 9 Jun 2026 06:14:11 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Sth+G9YisDgqCEOCVNuI3X+ZXn+QIFNSKUHhaBjK2ReMA0r2ZS+INo1Bc4Ev7m8DWdarf8QC4bazK7TV7A5ENh0xnfQhylvae9BQKJePcDiR0efEMOrhohsflHhtlQcmm85UQsrUpDbv6LXGj6oOrsQqvrX4BTK5/lM23Kmj1dKrH+8iR0Qyi/65RBolaoxrS25m1AJBAp7JJqlCRrYdabTioqf+pBfCyAkIp+HlushvZL9p4BKL6vm3dclGhAi2TLBeErp9qAhKV5+lVH4nIPmYeirkaCXDD1UZUM51r3n/Ut81khjTgBskdqV7JMRNbiWvNuMepT3KDMHQLpQ9Dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JHkGt+dvpMn2pY0COByLNQpx4eI2p4zHymOj5oeR2Vo=;
- b=ZHO7HPo0n/hcZUkmwx3NMA7fe1PtGx7pYoi2hyLSgYbDIj3Tm6+s1qbPlsmWC4D3H3RKkdYqDxh33PAkZjUjVyX0mKYd5rBgldPsnnLgrUechg0tY455mD338idZn46FQforxIbPjRKIouYPcg+kiuUVyjNvBG/T0qXjALg2fQP7n3xFHwc4+6V80IWrDJPKf/cAkT9ufPXKokNA+Esk9/s8l32BiPy/+GhHBo4OxAEy8vwZliQqVpdmaaJlKknbSmWDwOXwjN9QYlv+4/knG6sphaxmIMxAjj8Bz/jXp1XYW6YtA/YwZmjFhNH2gJKQ2kWTv1y4x1dZBlg3+G4zGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SA2PR11MB4907.namprd11.prod.outlook.com (2603:10b6:806:111::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.11; Tue, 9 Jun
- 2026 13:14:04 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0092.011; Tue, 9 Jun 2026
- 13:14:04 +0000
-Date: Tue, 9 Jun 2026 14:13:59 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Ciara Loftus <ciara.loftus@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH 0/2] net/intel: fix blocking link wait on device start
-Message-ID: <aigRl3bHblKct6G0@bricha3-mobl1.ger.corp.intel.com>
-References: <20260603143407.1108527-1-ciara.loftus@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260603143407.1108527-1-ciara.loftus@intel.com>
-X-ClientProxiedBy: DUZPR01CA0303.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b7::27) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 94A3E402B8;
+	Tue,  9 Jun 2026 15:33:56 +0200 (CEST)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com
+ [209.85.160.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 5B2434025E
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 15:33:55 +0200 (CEST)
+Received: by mail-qt1-f172.google.com with SMTP id
+ d75a77b69052e-5177945a22eso37780331cf.1
+ for <dev@dpdk.org>; Tue, 09 Jun 2026 06:33:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1781012034; x=1781616834; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=C8Gm6Nj/kiLTI+FJwbA4pPDUjaz+8sC3Ju9WSy+ENqQ=;
+ b=bjjIaxsuce+Crzd+/42jm/R9ss96Ykr7kx5W7UyFeahEYLAp1rTyQc0897BvHBHDFC
+ SyWqpU3r8N0TnkptEdWPA7EjsocHg/dEZt52oPYY7RpynU2trxgfiJjdDKMTY7OZJz9M
+ oIAF46l8Wt1nRq0yzduZFE4sJq04+AD8RbQVU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781012034; x=1781616834;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=C8Gm6Nj/kiLTI+FJwbA4pPDUjaz+8sC3Ju9WSy+ENqQ=;
+ b=Klbybs7ugleEU+u5lA58o52xb4mdLcPQ04Qb1outcf494ynZD1qlzfULMTfOQSbHm3
+ YobLFcXgfX8GAwBhkCtDdTZbZwgx8VTwPXTeChJKTayHXS1xjeEmoRNQAtezjMhLgF1Z
+ Tvg25XpllQlGkqYkOcZu2vvBx1RS2fRIq1bSEDKAWNtYrPtRXKa5xcDzjNR4Jymk6//t
+ 57OaebStEQf0MZWvmCpRPnLdXj7mKu+pDBCJJkq8x9qpbirutXq6qK82fgTw61mXoN47
+ Uuw6L5CjVjkxU+JB/AROXqamPe86XIGhvQdxdc5dSatlR+hGz9NlN5UyiFZ6vT9ZP/+j
+ nY4Q==
+X-Gm-Message-State: AOJu0YwWkv3cpcWukxScDHSVSo/bMbciktgGoKNbjFv/WrW9xqpz3+1L
+ q9PA5GfA3OsylxGUK+ULg7l5pQWdzPLrGTcoD9m+/K1GnACkUz+DNnh3JpMdIyxOPps=
+X-Gm-Gg: Acq92OHYvfs9n3KASKqji+xERdAPKZ63xpyAD30AZyLU3e7U/j+Q0HkDO43gmYr8aJQ
+ REu+Ss+829BHJyQ1DmXUFmxkw+0n8bMf92k470WdlWXIHp01I9GjrqlpwZTCF+KpsuoWDZUuUmj
+ uDrgBlPQ2CriLPwW6/hrGEnOvHF6kbjwCV50TW5J7cjDLb6b3kGWDwDIOsUhFfP4b9fq7yeul1i
+ y3hblm/a20IW9qpohhyN0+XUhlLfmMPJqg4H3QoERQcFMdeyIIY3ayGxnO1orBMWgq1AKUmJMGs
+ y5HQOWBfVWtTE8S3Bg/2h4Zb5MdwjmR7zhN1BAuZRgQ8/FvFNN1aHseId66wkbjS1p6ta4rUel7
+ KHbAQyfvA/IX69hsc5Rp2RlXLvrTDIadsBrGRFA1q4gDDXnMcslcGlVcRtOzJfBvCb78qKdSK9+
+ UebVaZAie4zTG1KH8HBMclsJZoGF6+WWHumWWojdPzXW7k2yEEvlYAkPJeBtgMbm7k9+MLUQp4r
+ AEAslIRASsZMw==
+X-Received: by 2002:a05:622a:20e:b0:50d:a8f5:1bf8 with SMTP id
+ d75a77b69052e-51795be10dfmr298493011cf.37.1781012034432; 
+ Tue, 09 Jun 2026 06:33:54 -0700 (PDT)
+Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:2a32:2ddf:c455:dafe])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-51795d46f12sm132146711cf.16.2026.06.09.06.33.51
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 09 Jun 2026 06:33:52 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: patrickrobb1997@gmail.com,
+	luca.vizzarro@arm.com
+Cc: dev@dpdk.org, knimoji@iol.unh.edu, ahassick@iol.unh.edu,
+ lylavoie@iol.unh.edu, Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v4] dts: add retry loop to trex traffic generation
+Date: Tue,  9 Jun 2026 09:33:49 -0400
+Message-ID: <20260609133349.242758-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260518175424.253600-1-abailey@iol.unh.edu>
+References: <20260518175424.253600-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA2PR11MB4907:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d1fbadc-5dec-47fd-8119-08dec628fa9d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|18002099003|22082099003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info: bEOuPuNxDFkzHgwBgjsHuI3amOxEVPCWmq/E0GEnbn/X+ldl0jHGKYD/e/vQr0b+A3vfEUDVuU3cFy1LZ2sejkyO5AbJpp2BvimFzD6RttFbuzybvU/5Xam9u0W3mR2tKImytJ7iQVipCE7MOiEWfBRlcf3U+I4WH+ohAFZ0Fdquzp5/WQVg0VxsCy1ZkATErdxlSe6DsPAZTvR+k+usefiTulbkN2mFMseaZchh43QMlgMsi9B/wm+eZNVZuuoZwvIW/ytIRuwgRrWffXrRcQBbtrkCr+NZlsWCHaQEqwZ/0zkvhsIogLAOFFkJOKheCYm1Q3nHKtIAwAKYpfKj8NOkVnQssIpo8p5y8vVSAy1Io2LZNrK+P+v3B8xw6WDyPTDThj69Z8vwSMfG7PiTyqOP183AW74q0JfTXKgrHiDr78XSjS7tnsN2a8LZbe1NxrMVVryiK+x+Q3l7CdGGkE/lGeXDxrWFlTAPZKpj358Wl2wV1Fk1F4sN/aTWpxGZlXhMJyevmkPu44cDnzqAtdvF2wV/yLyhr9IufxlAT6xxHy2oIukNmZwtnn1JlklnU0lArZ4Lu53CrOVtdCcch2h28jDRk0Unu8vEsmQf8DlqCl97EanHF2D/w8jCeM1MCLkbeL5dw9m5j6uRlHcUCi5Hko/qp2OR/wNncyudSa2rmSD3sVH9M4Lb0boHoo8W
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(18002099003)(22082099003)(56012099006)(11063799006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MaOzneu4WnhJ56Px04XzQ63qxxtQQy4QzqhFx9zzCoeMT8l5hPWOFUdMrn6p?=
- =?us-ascii?Q?ts3qjN6qv/9cE6y1l/92RYTEIUQL81AHA67rMU/RfyirSxw8amj6DiXcQHss?=
- =?us-ascii?Q?zBSj8539Zq0RtWyGiaAubLjFA0SlJGHm/PMWT+SvK6q/DWOjhS48U4PE+OM7?=
- =?us-ascii?Q?shwNxY9oj0c3hgXbzDaNFA/u4B/AIG0nChCs/5/MdXTYc0eOmq8q6lxDZY1t?=
- =?us-ascii?Q?xon1iJYWrCl6OnGmmB4WILeUNhvi3C3wtFhEIDF38XE2NMqJbD+OwMjYv4LW?=
- =?us-ascii?Q?BrLRzwfZ1oxXZrBKH3lFV+yvEt1lasYJTvc2Yr4z+LGe9rWqfrafecxOSNiv?=
- =?us-ascii?Q?UllIMQPD50rlEcY2z9lJjKr1cgEFw00HsjuAvzpR5s5WiShxwhSWctis0VP2?=
- =?us-ascii?Q?PQtqFYNIy5gy9FxXeak0DLXma2JKluiFEYxEUjf7i6tDskUcyxrR5X0uyba5?=
- =?us-ascii?Q?btEOl4Eclp4Ne1pR1kslB+e8HDHvZF2/pcO487vnE6zFEXQenuPlMDBtTv93?=
- =?us-ascii?Q?7I4tq79Cr3FTxNyNCgeVrSMCLoqtUS1O3gGXA673bhJ7q+hznxtfFRb3kIbS?=
- =?us-ascii?Q?WibWXicxN8ASPGUHbSEeUAXGJFKmA9iFX7rg7RcT+IvgAatnxNWRO6DvkI7y?=
- =?us-ascii?Q?zpc3Qll+KBFnyMJplG3kcFAW82GhgbcwkzBjO/T62Ep7dhRSGuLGD59pRYGW?=
- =?us-ascii?Q?9u20sXoMtV0HHA4tUaLLC7LhvV49ONRh0SGhgwjXRXFnzhyqi8gKms/QS6DJ?=
- =?us-ascii?Q?V1mA6H1dVm0di2qGYTmJ2Mz41Y5QBdCOUArjCbPl8HLDZo+ZENX14Z56xjmH?=
- =?us-ascii?Q?CTokvRxKVHlsBzpglzu1KeBSWOCtci2O7eM7/uZ1rnHf0iIHQpv3sxi7uxLC?=
- =?us-ascii?Q?cZbj3i+ljbPr825Ur97Mr/G1KaU5/55+vjdnvpNZrDbWMHpNTLDavhMHi/Sg?=
- =?us-ascii?Q?lAr6PYCVP6INb2J1aqvTFxhsrln6NtfYMX8eAAlRkTG9/zjCxuUU8RyCFVTQ?=
- =?us-ascii?Q?g+g5DixYzxq4guoQacD1gy9c0Ildb3gUaH7bXGqRIJzqRw3wNAsBxIba9/be?=
- =?us-ascii?Q?RaM8kobtmeVcKkQE63vdTxYIS+v7gMDaihj4bPGqBH+U2d0fy1hI5DQiozyS?=
- =?us-ascii?Q?QIQirLPYr9WGaU+5cu4CISAngReq8XhUD3Jp/Lq536b8jTl7CIqRugGzUts+?=
- =?us-ascii?Q?p+EDgjVfTHSQ7My6hODrunz8PHh5RzfaH6ZPHpA0u/Q4R0nxzxBwekYbarXo?=
- =?us-ascii?Q?TaZg/tOOZR1I2jxxzmWsH9eCRGv4Uuv/Ve51aiQmSWGW1gOHu2dP6JmEiM8h?=
- =?us-ascii?Q?bQD1QRYUvMrBlHRn/ChJJqw7+Y5FrmEiRFyrGRxb1nEGuWYKEIBGZbrdgur5?=
- =?us-ascii?Q?u9+GU+PUONdwM/Ol2LxBZ9aW1aQJaJgkLcWVud+yYc/eL1h3db5bZsxLDJuc?=
- =?us-ascii?Q?1QyPA6bz0N7A1gpiRnytQXAYBnedmNTwTUv+GbDQoOGB4EVIyc1nCuxrJb2x?=
- =?us-ascii?Q?WseDXtKJcjsQn73dzutvzvLPBGHKpsd9I5irejFdGO0v6a0hgnsPXfVN/WhJ?=
- =?us-ascii?Q?p1sS/QJnDpznS2xFJAbaG07DMP+NYG73yep2Omy4wajVvfhMFB14LU/vZp5b?=
- =?us-ascii?Q?AybOtfAYzTmyziMFyaL+oQifFn/mVdGm6lJu/SAPg396jwRfSt5CHWmcJnyp?=
- =?us-ascii?Q?OAcrB3oo7KQfeGrJ9YNri50aJpUNvj0GsmDLE6mebZyUDrlZvMuuFedYyMef?=
- =?us-ascii?Q?FNQYBgVLHfOzFsSlbBn2ULatrCEwEbU=3D?=
-X-Exchange-RoutingPolicyChecked: ExHVYD/hephWOPiLmxmhv39Nf3rQRbiH+DKRNJelWtvX/25/TI4xCNI5dlLGpNmfTIZK/dU4vEdoc6EN2kusYntuBk1x6WB86y9qYSu8KuBNHmzwOKeuVOVEHUXpksSb+Srca9ILgNetOXhBaiQ665+0nJYic6K4AASykL5i1spUZOoovS5YOPEHnRH0aOoVSqh9iKjt3FpJpOn1l4SLMfG7NuRfxxlBh0Sb00FiaCAlj89IDkv0cKpox1VevRA/Z2MOyMV8h3QvvyJ2bSPjrabw6Z9lGifgZJBbf5Bxn9u+eqmo0wqGRIfFvPVt/7EYdKSmySF4F3CAdt75x+aCQw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d1fbadc-5dec-47fd-8119-08dec628fa9d
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2026 13:14:04.1331 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: geCqInsKbU7+XL0q4WOsGrj5NaCx+/gawcIXduu56JskCDlDPkxHsycuhYCEWNQ6JEGZQ7itx/FwUxr24SjdRyhUivzMOQFP6TdVBcH+c98=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4907
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -150,25 +79,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jun 03, 2026 at 02:34:05PM +0000, Ciara Loftus wrote:
-> Device start in both ice and i40e has historically blocked for up to
-> two seconds waiting for link to come up before returning. This causes
-> noticeable startup delay when a link partner is slow to come up or
-> absent entirely. This series reverts the wait in ice, and removes the
-> wait in i40e while ensuring that the MAC config is applied when the
-> link is up which is a requirement for some devices.
-> 
-> Ciara Loftus (2):
->   net/ice: revert fix link up when starting device
->   net/i40e: fix blocking link wait on device start
-> 
->  drivers/net/intel/i40e/i40e_ethdev.c | 25 +++++++++++++++++++++----
->  drivers/net/intel/i40e/i40e_ethdev.h |  2 ++
->  drivers/net/intel/ice/ice_ethdev.c   |  2 +-
->  3 files changed, 24 insertions(+), 5 deletions(-)
-> 
-> -- 
-Series applied to dpdk-next-net-intel.
+There was an issue where the single core forward test would report zero
+MPPS intermittently. This was due to TREX reporting that the link was
+down when the client was called to start generating traffic. The links
+were being reported down by TREX on the tg even when testpmd was
+reporting them up on the SUT. Adding a retry loop to the generate
+traffic method of TREX gives the tg enough time to set up and send
+traffic.
 
-Thanks,
-/Bruce
+Bugzilla ID: 1946
+Fixes: d77d7f04f24c ("dts: add single-core performance test suite")
+
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ .../testbed_model/traffic_generator/trex.py   | 35 ++++++++++++++-----
+ 1 file changed, 26 insertions(+), 9 deletions(-)
+
+diff --git a/dts/framework/testbed_model/traffic_generator/trex.py b/dts/framework/testbed_model/traffic_generator/trex.py
+index 22cd20dea9..f21892e396 100644
+--- a/dts/framework/testbed_model/traffic_generator/trex.py
++++ b/dts/framework/testbed_model/traffic_generator/trex.py
+@@ -220,7 +220,9 @@ def _create_packet_stream(self, packet: Packet) -> None:
+         ]
+         self._shell.send_command("\n".join(packet_stream))
+ 
+-    def _send_traffic_and_get_stats(self, duration: float, send_mpps: float | None = None) -> str:
++    def _send_traffic_and_get_stats(
++        self, duration: float, send_mpps: float | None = None, retry_attempts: int = 5
++    ) -> str:
+         """Send traffic and get TG Rx stats.
+ 
+         Sends traffic from the TRex client's ports for the given duration.
+@@ -230,15 +232,30 @@ def _send_traffic_and_get_stats(self, duration: float, send_mpps: float | None =
+         Args:
+             duration: The traffic generation duration.
+             send_mpps: The millions of packets per second for TRex to send from each port.
++            retry_attempts: The number of times to retry this command on failure.
++
++        Raises:
++            SSHTimeoutError: If TRex fails to send traffic in the allotted attempts.
+         """
+-        if send_mpps:
+-            self._shell.send_command(f"""{self.stl_client_name}.start(ports=[0, 1],
+-                mult = '{send_mpps}mpps',
+-                duration = {duration})""")
+-        else:
+-            self._shell.send_command(f"""{self.stl_client_name}.start(ports=[0, 1],
+-                mult = '100%',
+-                duration = {duration})""")
++        link_up = False
++        attempt = 0
++
++        while not link_up and attempt < retry_attempts:
++            if send_mpps:
++                result = self._shell.send_command(f"""{self.stl_client_name}.start(ports=[0, 1],
++                    mult = '{send_mpps}mpps',
++                    duration = {duration})""")
++            else:
++                result = self._shell.send_command(f"""{self.stl_client_name}.start(ports=[0, 1],
++                    mult = '100%',
++                    duration = {duration})""")
++            link_up = "link is DOWN" not in result
++            if not link_up:
++                self._logger.info(
++                    f"Generate traffic command failed (attempt {attempt + 1} of {retry_attempts})"
++                )
++                time.sleep(0.25)
++            attempt += 1
+ 
+         time.sleep(duration)
+ 
+-- 
+2.54.0
+
