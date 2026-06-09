@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7742CD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 01:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05623CD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Jun 2026 01:42:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 27B3F40C35;
-	Tue,  9 Jun 2026 03:40:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 193CB40DF5;
+	Tue,  9 Jun 2026 03:40:27 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id F074440A6D
- for <dev@dpdk.org>; Tue,  9 Jun 2026 03:40:11 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5238D40A76
+ for <dev@dpdk.org>; Tue,  9 Jun 2026 03:40:13 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAAnoPPtbidqNNnEEg--.9384S17;
- Tue, 09 Jun 2026 09:40:01 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAAnoPPtbidqNNnEEg--.9384S18;
+ Tue, 09 Jun 2026 09:40:02 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v14 15/20] common/sxe2: add shared SFP module definitions
-Date: Tue,  9 Jun 2026 09:39:45 +0800
-Message-ID: <20260609013951.3359199-16-liujie5@linkdatatechnology.com>
+Subject: [PATCH v14 16/20] net/sxe2: support SFP module info and EEPROM access
+Date: Tue,  9 Jun 2026 09:39:46 +0800
+Message-ID: <20260609013951.3359199-17-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260609013951.3359199-1-liujie5@linkdatatechnology.com>
 References: <20260608074257.3043531-21-liujie5@linkdatatechnology.com>
  <20260609013951.3359199-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAAnoPPtbidqNNnEEg--.9384S17
-X-Coremail-Antispam: 1UD129KBjvJXoWxWry7Xr1fArW8Cw43Aw45trb_yoWrWw4rpr
- 1DJwn8Xa97Kr1ag343tF13trnxCFsYyw1UCrs3W3yFkF1kJw18CF18Cw42qa1kKrsrXFs3
- uayaqry3Ka48ZrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUBv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
- z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
- M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
- v20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
- F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF04
- k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
- MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr4
- 1lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
- IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4
- A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUB89_UUUUU=
+X-CM-TRANSID: zQCowAAnoPPtbidqNNnEEg--.9384S18
+X-Coremail-Antispam: 1UD129KBjvAXoW3uF1kZF1xuFykXF43GryUWrg_yoW8GFyDuo
+ WIgr45X34fZr17C3y8Wr1Iqry7Z3yrCF4rGw4F9r4DuanxCw1YkFy5tw43Za4qqF4qyF4U
+ uws2kas2q39xJay8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UjIYCTnIWjp_UUUYM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
+ j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
+ Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+ 84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r
+ 4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JVW8
+ Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2I
+ x0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8
+ JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xxMx
+ AIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_
+ Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwI
+ xGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8
+ Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0x
+ vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUB89_UUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -60,62 +60,105 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch adds a new shared header file 'sxe2_msg.h' which
-contains definitions for SFP/SFP+ modules. This file is shared across
-Firmware, Kernel driver, and DPDK PMD to ensure consistent protocol
-handling.
+This patch implements 'get_module_info' and 'get_module_eeprom'
+ops for the sxe2 PMD. These interfaces allow applications to retrieve
+the type of the plugged-in optical module and read its internal
+EEPROM data.
 
-The header includes:
-- SFP EEPROM memory map offsets.
-- Module type encoding definitions.
+The implementation utilizes the shared SFP header definitions to
+parse the module ID, connector type, and encoding. It supports
+reading the standard 256-byte EEPROM maps (SFF-8472 for SFP and
+SFF-8636 for QSFP) via hardware-specific access commands.
 
-By using this shared header, the PMD can correctly identify module
-capabilities and report diagnostic information in a way that is
-consistent with the underlying firmware logic.
+Key features:
+- Identify module types (SFP/SFP+/QSFP/QSFP28).
+- Support standard EEPROM data retrieval for diagnostic tools.
+- Add boundary checks to ensure safe I2C memory access.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/common/sxe2/sxe2_msg.h | 118 +++++++++++++++++++++++++++++++++
- 1 file changed, 118 insertions(+)
- create mode 100644 drivers/common/sxe2/sxe2_msg.h
+ drivers/net/sxe2/sxe2_cmd_chnl.c |  46 +++++
+ drivers/net/sxe2/sxe2_cmd_chnl.h |   3 +
+ drivers/net/sxe2/sxe2_drv_cmd.h  |  18 ++
+ drivers/net/sxe2/sxe2_ethdev.c   | 298 +++++++++++++++++++++++++++++++
+ drivers/net/sxe2/sxe2_ethdev.h   |   9 +
+ 5 files changed, 374 insertions(+)
 
-diff --git a/drivers/common/sxe2/sxe2_msg.h b/drivers/common/sxe2/sxe2_msg.h
-new file mode 100644
-index 0000000000..f08944f7c9
---- /dev/null
-+++ b/drivers/common/sxe2/sxe2_msg.h
-@@ -0,0 +1,118 @@
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
+index 926eaee062..43e8c59487 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.c
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
+@@ -1833,3 +1833,49 @@ int32_t sxe2_drv_srcvsi_prune_config(struct sxe2_adapter *adapter,
+ 
+ 	return ret;
+ }
 +
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
++int32_t sxe2_drv_sfp_eeprom_read(struct sxe2_adapter *adapter, struct sxe2_sfp_read_info *sfp_info)
++{
++	int32_t ret = -1;
++	struct sxe2_drv_sfp_req req = {0};
++	struct sxe2_drv_sfp_resp *resp = NULL;
++	struct sxe2_drv_cmd_params cmd = {0};
 +
-+#ifndef __SXE2_MSG_H__
-+#define __SXE2_MSG_H__
++	resp = rte_zmalloc("read sfp data", sizeof(*resp) + sfp_info->len, 0);
++	if (!resp) {
++		PMD_LOG_ERR(DRV, "Alloc memory failed");
++		ret = -ENOMEM;
++		goto l_end;
++	}
 +
-+enum sfp_type_identifier {
-+	SXE2_SFP_TYPE_UNKNOWN       = 0x00,
-+	SXE2_SFP_TYPE_SFP          = 0x03,
++	req.is_wr = false;
++	req.is_qsfp = sfp_info->is_qsfp;
++	req.page_cnt = rte_cpu_to_le_16(sfp_info->page_cnt);
++	req.offset = rte_cpu_to_le_16(sfp_info->offset);
++	req.data_len = rte_cpu_to_le_16(sfp_info->len);
++	req.bus_addr = rte_cpu_to_le_16(sfp_info->bus_addr);
 +
-+	SXE2_SFP_TYPE_QSFP_PLUS    = 0x0D,
-+	SXE2_SFP_TYPE_QSFP28       = 0x11,
++	PMD_DEV_LOG_INFO(adapter, DRV, "is_qsfp=%u, page_cnt=%u, offset=%u, datalen=%u, "
++			 "bus_addr=%u", sfp_info->is_qsfp, sfp_info->page_cnt, sfp_info->offset,
++			 sfp_info->len, sfp_info->bus_addr);
 +
-+	SXE2_SFP_TYPE_MAX          = 0xFF,
-+};
++	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_OPT_EEP_GET,
++				 &req, sizeof(req),
++				 resp, sizeof(*resp) + sfp_info->len);
++	ret = sxe2_drv_cmd_exec(adapter->cdev, &cmd);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to read sfp, ret=%d", ret);
++		goto l_end;
++	}
 +
-+#ifndef SFP_DEFINE
-+#define SFP_DEFINE
++	ret = 0;
++	rte_memcpy(sfp_info->data, resp->data, sfp_info->len);
 +
-+#define SXE2_SFP_EEP_WR            0x1
-+#define SXE2_SFP_EEP_QSFP          0x1
++l_end:
++	if (resp) {
++		rte_free(resp);
++		resp = NULL;
++	}
 +
-+enum sfp_bus_addr {
-+	SXE2_SFP_EEP_I2C_ADDR0 = 0xA0,
-+	SXE2_SFP_EEP_I2C_ADDR1 = 0xA2,
-+	SXE2_SFP_EEP_I2C_ADDR_NR = 0xFFFF,
-+};
++	return ret;
++}
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
+index 97007c7cfa..988d4b458b 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.h
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
+@@ -167,4 +167,7 @@ int32_t sxe2_drv_flow_fnav_query_stat(struct sxe2_adapter *adapter,
+ int32_t sxe2_drv_srcvsi_prune_config(struct sxe2_adapter *adapter,
+ 		uint16_t *vsi_list, uint16_t vsi_cnt, bool set);
+ 
++int32_t sxe2_drv_sfp_eeprom_read(struct sxe2_adapter *adapter,
++		struct sxe2_sfp_read_info *sfp_info);
 +
-+struct sxe2_sfp_req {
+ #endif /* SXE2_CMD_CHNL_H */
+diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
+index f7acd20642..09b2f7d125 100644
+--- a/drivers/net/sxe2/sxe2_drv_cmd.h
++++ b/drivers/net/sxe2/sxe2_drv_cmd.h
+@@ -633,6 +633,24 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_resp {
+ 	uint8_t rsv;
+ } __rte_packed_end;
+ 
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
 +	uint8_t is_wr;
 +	uint8_t is_qsfp;
 +	uint16_t bus_addr;
@@ -124,85 +167,368 @@ index 0000000000..f08944f7c9
 +	uint16_t data_len;
 +	uint16_t rvd;
 +	uint8_t data[];
-+};
++} __rte_packed_end;
 +
-+struct sxe2_sfp_resp {
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_resp {
 +	uint8_t is_wr;
 +	uint8_t is_qsfp;
 +	uint16_t data_len;
 +	uint8_t data[];
++} __rte_packed_end;
++
+ enum sxe2_drv_cmd_module {
+ 	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
+ 	SXE2_DRV_CMD_MODULE_DEV = 1,
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index d1ced7d427..d2b884c6cd 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -41,6 +41,7 @@
+ #include "sxe2_ethdev_repr.h"
+ #include "sxe2vf_regs.h"
+ #include "sxe2_switchdev.h"
++#include "sxe2_msg.h"
+ 
+ #define SXE2_PCI_VENDOR_ID_1    0x1ff2
+ #define SXE2_PCI_DEVICE_ID_PF_1 0x10b1
+@@ -122,6 +123,10 @@ static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
+ 					struct rte_eth_udp_tunnel *tunnel_udp);
+ static int32_t sxe2_fw_version_string_get(struct rte_eth_dev *dev,
+ 				      char *fw_version, size_t fw_size);
++static int32_t sxe2_get_module_info(struct rte_eth_dev *dev,
++				struct rte_eth_dev_module_info *info);
++static int32_t sxe2_get_module_eeprom(struct rte_eth_dev *dev,
++				  struct rte_dev_eeprom_info *info);
+ 
+ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 	.dev_configure              = sxe2_dev_configure,
+@@ -186,6 +191,9 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 	.fw_version_get             = sxe2_fw_version_string_get,
+ 
+ 	.get_monitor_addr           = sxe2_get_monitor_addr,
++
++	.get_module_info            = sxe2_get_module_info,
++	.get_module_eeprom          = sxe2_get_module_eeprom,
+ };
+ 
+ static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
+@@ -291,6 +299,296 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
+ 	return ret;
+ }
+ 
++static int32_t sxe2_sfp_type_get(struct sxe2_adapter *adapter, uint8_t *type)
++{
++	int32_t ret = -1;
++	struct sxe2_sfp_read_info sfp_info;
++
++	memset(&sfp_info, 0, sizeof(sfp_info));
++	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
++	sfp_info.len = 1;
++	sfp_info.data = type;
++	sfp_info.offset = 0;
++	sfp_info.page_cnt = 0;
++	sfp_info.is_qsfp = false;
++
++	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
++	if (ret)
++		goto l_end;
++
++	ret = 0;
++	PMD_LOG_INFO(DRV, "Get sfp type success, type=%u", *type);
++
++l_end:
++	return ret;
++}
++
++static int32_t sxe2_sfp_module_info_get(struct sxe2_adapter *adapter,
++						  struct rte_eth_dev_module_info *info)
++{
++	int32_t ret = -1;
++	bool page_swap = false;
++	uint8_t sff8472_rev = 0;
++	uint8_t addr_mode = 0;
++	struct sxe2_sfp_read_info sfp_info;
++
++	memset(&sfp_info, 0, sizeof(sfp_info));
++	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
++	sfp_info.is_qsfp = false;
++	sfp_info.len = 1;
++	sfp_info.data = &sff8472_rev;
++	sfp_info.offset = SXE2_MODULE_SFF_8472_COMP;
++	sfp_info.page_cnt = 0;
++
++	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
++	if (ret) {
++		ret = -EIO;
++		PMD_LOG_ERR(DRV, "Failed to read 8472 protocol, ret=%d", ret);
++		goto l_end;
++	}
++
++	sfp_info.data = &addr_mode;
++	sfp_info.offset = SXE2_MODULE_SFF_8472_SWAP;
++
++	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
++	if (ret) {
++		ret = -EIO;
++		PMD_LOG_ERR(DRV, "Failed to read A2 page, ret=%d", ret);
++		goto l_end;
++	}
++
++	if (addr_mode & SXE2_MODULE_SFF_ADDR_MODE) {
++		PMD_LOG_ERR(DRV, "address change required to access page 0xA2, "
++			    "but not supported. please report the module "
++			    "type to the driver maintainers.");
++		page_swap = true;
++	}
++
++	PMD_LOG_INFO(DRV, "Read sfp module info, sff_8472=%u, a2_page=%u, swap_page=%d",
++		     sff8472_rev, addr_mode, page_swap);
++
++	if (sff8472_rev == SXE2_MODULE_SFF_8472_UNSUP ||
++	    page_swap ||
++	    !(addr_mode & SXE2_MODULE_SFF_DDM_IMPLEMENTED)) {
++		info->type = SXE2_MODULE_SFF_8079;
++		info->eeprom_len = SXE2_MODULE_SFF_8079_LEN;
++	} else {
++		info->type = SXE2_MODULE_SFF_8472;
++		info->eeprom_len = SXE2_MODULE_SFF_8472_LEN;
++	}
++
++	ret = 0;
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_qsfp_module_info_get(struct sxe2_adapter *adapter, struct rte_eth_dev_module_info *info)
++{
++	int32_t ret = -1;
++	uint8_t sff8636_rev = 0;
++	struct sxe2_sfp_read_info sfp_info;
++
++	memset(&sfp_info, 0, sizeof(sfp_info));
++	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
++	sfp_info.is_qsfp = true;
++	sfp_info.len = 1;
++	sfp_info.data = &sff8636_rev;
++	sfp_info.offset = SXE2_MODULE_REVISION_ADDR;
++	sfp_info.page_cnt = 0;
++
++	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
++	if (ret) {
++		ret = -EIO;
++		PMD_LOG_ERR(DRV, "Failed to read 8636 protocol, ret=%d", ret);
++		goto l_end;
++	}
++
++	if (sff8636_rev > 0x02) {
++		info->type = SXE2_MODULE_SFF_8636;
++		info->eeprom_len = SXE2_MODULE_SFF_8636_MAX_LEN;
++	} else {
++		info->type = SXE2_MODULE_SFF_8436;
++		info->eeprom_len = SXE2_MODULE_SFF_8436_MAX_LEN;
++	}
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_get_module_info(struct rte_eth_dev *dev, struct rte_eth_dev_module_info *info)
++{
++	int32_t ret = -1;
++	uint8_t type = 0;
++	struct sxe2_adapter *adapter = dev->data->dev_private;
++
++	ret = sxe2_sfp_type_get(adapter, &type);
++	if (ret) {
++		ret = -EIO;
++		PMD_LOG_ERR(DRV, "Failed to read sfp type, ret=%d", ret);
++		goto l_end;
++	}
++
++	switch (type) {
++	case SXE2_MODULE_SFF_SFP_TYPE:
++		ret = sxe2_sfp_module_info_get(adapter, info);
++		if (ret)
++			goto l_end;
++		break;
++	case SXE2_MODULE_TYPE_QSFP_PLUS:
++	case SXE2_MODULE_TYPE_QSFP28:
++		ret = sxe2_qsfp_module_info_get(adapter, info);
++		if (ret)
++			goto l_end;
++		break;
++	default:
++		ret = -ENXIO;
++		PMD_LOG_ERR(DRV, "Invalid sfp type, type=%d.", type);
++		goto l_end;
++	}
++
++	PMD_LOG_INFO(DRV, "sfp eeprom type=%x, eeprom len=%d.", info->type, info->eeprom_len);
++
++l_end:
++	return ret;
++}
++
++static int32_t
++sxe2_get_sfp_eeprom(struct sxe2_adapter *adapter, struct sxe2_sfp_read_info *sfp_info)
++{
++	int32_t ret = -1;
++	uint16_t ori_len = sfp_info->len;
++	uint16_t ori_offset = sfp_info->offset;
++
++	if ((ori_len + ori_offset) > SXE2_SFP_EEP_LEN_MAX) {
++		sfp_info->len = (uint16_t)(SXE2_SFP_EEP_LEN_MAX - ori_offset);
++		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
++		if (ret)
++			goto l_end;
++		sfp_info->bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR1;
++		sfp_info->len = (uint16_t)(ori_len - (SXE2_SFP_EEP_LEN_MAX - ori_offset));
++		sfp_info->data = (uint8_t *)(sfp_info->data) + (SXE2_SFP_EEP_LEN_MAX - ori_offset);
++		sfp_info->offset = 0;
++		sfp_info->page_cnt = 0;
++		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
++	} else {
++		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
++	}
++
++l_end:
++	if (ret)
++		PMD_LOG_ERR(DRV, "Failed to read sfp.");
++	return ret;
++}
++
++static int32_t
++sxe2_get_qsfp_eeprom(struct sxe2_adapter *adapter,
++					  struct sxe2_sfp_read_info *sfp_info)
++{
++	int32_t ret = -1;
++	uint16_t ori_len = sfp_info->len;
++	uint16_t ori_offset = sfp_info->offset;
++	uint16_t read_len = 0;
++	uint16_t remain_len = 0;
++
++	if ((ori_len + ori_offset) > SXE2_SFP_EEP_LEN_MAX) {
++		sfp_info->len = (uint16_t)(SXE2_SFP_EEP_LEN_MAX - ori_offset);
++		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
++		if (ret)
++			goto l_end;
++
++		do {
++			read_len = read_len + sfp_info->len;
++			sfp_info->data = (uint8_t *)(sfp_info->data) + sfp_info->len;
++			sfp_info->offset = SXE2_QSFP_PAGE_OFST_START;
++			sfp_info->page_cnt++;
++			remain_len = (uint16_t)(ori_len - read_len);
++			sfp_info->len = (remain_len > SXE2_QSFP_PAGE_OFST_START) ?
++					SXE2_QSFP_PAGE_OFST_START : remain_len;
++			ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
++			if (ret)
++				goto l_end;
++		} while (remain_len > SXE2_QSFP_PAGE_OFST_START);
++	} else {
++		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
++	}
++
++l_end:
++	if (ret)
++		PMD_LOG_ERR(DRV, "Failed to read sfp.");
++	return ret;
++}
++
++static int32_t
++sxe2_get_module_eeprom(struct rte_eth_dev *dev, struct rte_dev_eeprom_info *info)
++{
++	int32_t ret = -1;
++	uint8_t type = 0;
++	struct sxe2_adapter *adapter = dev->data->dev_private;
++	struct sxe2_sfp_read_info sfp_info;
++
++	memset(&sfp_info, 0, sizeof(sfp_info));
++
++	if (!info || !info->length || !info->data ||
++			info->offset >= SXE2_SFP_EEP_LEN_MAX) {
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	PMD_LOG_INFO(DRV, "Dump sfp eeprom info offset=0x%x, len=0x%x.",
++		     info->offset, info->length);
++
++	ret = sxe2_sfp_type_get(adapter, &type);
++	if (ret) {
++		ret = -EIO;
++		PMD_LOG_ERR(DRV, "Failed to read sfp type, ret=%d", ret);
++		goto l_end;
++	}
++
++	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
++	sfp_info.len = info->length;
++	sfp_info.data = info->data;
++	sfp_info.offset = info->offset;
++	sfp_info.page_cnt = 0;
++
++	switch (type) {
++	case SXE2_MODULE_SFF_SFP_TYPE:
++		if (info->length > SXE2_SFP_EEP_LEN_MAX * 2) {
++			ret = -EINVAL;
++			PMD_LOG_ERR(DRV, "sfp read size[%u] > eeprom max size[%d], ret=%d",
++				    info->length, SXE2_SFP_EEP_LEN_MAX * 2, ret);
++			goto l_end;
++		}
++		sfp_info.is_qsfp = false;
++		ret = sxe2_get_sfp_eeprom(adapter, &sfp_info);
++		if (ret)
++			goto l_end;
++		break;
++	case SXE2_MODULE_TYPE_QSFP_PLUS:
++	case SXE2_MODULE_TYPE_QSFP28:
++		if (info->length > SXE2_MODULE_SFF_8636_MAX_LEN) {
++			ret = -EINVAL;
++			PMD_LOG_ERR(DRV, "sfp read size[%u] > eeprom max size[%d], ret=%d",
++				    info->length, SXE2_SFP_EEP_LEN_MAX * 2, ret);
++			goto l_end;
++		}
++		sfp_info.is_qsfp = true;
++		ret = sxe2_get_qsfp_eeprom(adapter, &sfp_info);
++		if (ret)
++			goto l_end;
++		break;
++	default:
++		ret = -ENXIO;
++		PMD_LOG_ERR(DRV, "Invalid sfp type, type=%d.", type);
++		goto l_end;
++	}
++
++l_end:
++	return ret;
++}
++
+ static enum sxe2_udp_tunnel_protocol
+ sxe2_udp_tunnel_type_rte_to_sxe2(enum rte_eth_tunnel_type rte_type)
+ {
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index 34f9aa46b2..510f5139c3 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -275,6 +275,15 @@ struct sxe2_sched_hw_cap {
+ 	uint8_t adj_lvl;
+ };
+ 
++struct sxe2_sfp_read_info {
++	uint8_t *data;
++	uint16_t offset;
++	uint16_t len;
++	uint16_t bus_addr;
++	uint16_t page_cnt;
++	bool is_qsfp;
 +};
 +
-+enum sfp_page_cnt {
-+	SXE2_SFP_EEP_PAGE_CNT0     = 0,
-+	SXE2_SFP_EEP_PAGE_CNT1,
-+	SXE2_SFP_EEP_PAGE_CNT2,
-+	SXE2_SFP_EEP_PAGE_CNT3,
-+	SXE2_SFP_EEP_PAGE_CNT20    = 20,
-+	SXE2_SFP_EEP_PAGE_CNT21    = 21,
-+
-+	SXE2_SFP_EEP_PAGE_CNT_NR   = 0xFFFF,
-+};
-+
-+#define SXE2_SFP_E2P_I2C_7BIT_ADDR0             (SXE2_SFP_EEP_I2C_ADDR0 >> 1)
-+#define SXE2_SFP_E2P_I2C_7BIT_ADDR1             (SXE2_SFP_EEP_I2C_ADDR1 >> 1)
-+
-+#define SXE2_QSFP_PAGE_OFST_START  128
-+#define SXE2_SFP_EEP_OFST_MAX      255
-+#define SXE2_SFP_EEP_LEN_MAX       256
-+#endif
-+
-+#ifndef FW_STATE_DEFINE
-+#define FW_STATE_DEFINE
-+
-+#define SXE2_FW_STATUS_MAIN_SHIF       (16)
-+#define SXE2_FW_STATUS_MAIN_MASK       (0xFF0000)
-+#define SXE2_FW_STATUS_SUB_MASK        (0xFFFF)
-+
-+enum Sxe2FwStateMain {
-+	SXE2_FW_STATE_MAIN_UNDEFINED       = 0x00,
-+	SXE2_FW_STATE_MAIN_INIT            = 0x10000,
-+	SXE2_FW_STATE_MAIN_RUN             = 0x20000,
-+	SXE2_FW_STATE_MAIN_ABNOMAL         = 0x30000,
-+};
-+
-+enum Sxe2FwState {
-+	SXE2_FW_START_STATE_UNDEFINED = SXE2_FW_STATE_MAIN_UNDEFINED,
-+	SXE2_FW_START_STATE_INIT_BASE = (SXE2_FW_STATE_MAIN_INIT + 0x1),
-+	SXE2_FW_START_STATE_SCAN_DEVICE = (SXE2_FW_STATE_MAIN_INIT + 0x20),
-+	SXE2_FW_START_STATE_FINISHED = (SXE2_FW_STATE_MAIN_RUN + 0x0),
-+	SXE2_FW_START_STATE_UPGRADE = (SXE2_FW_STATE_MAIN_RUN + 0x1),
-+	SXE2_FW_START_STATE_SYNC = (SXE2_FW_STATE_MAIN_RUN + 0x2),
-+	SXE2_FW_RUNNING_STATE_ABNOMAL = (SXE2_FW_STATE_MAIN_ABNOMAL + 0x1),
-+	SXE2_FW_RUNNING_STATE_ABNOMAL_CORE1 = (SXE2_FW_STATE_MAIN_ABNOMAL + 0x2),
-+	SXE2_FW_RUNNING_STATE_ABNOMAL_HEART = (SXE2_FW_STATE_MAIN_ABNOMAL + 0x3),
-+	SXE2_FW_START_STATE_MASK = (SXE2_FW_STATUS_MAIN_MASK | SXE2_FW_STATUS_SUB_MASK),
-+};
-+#endif
-+
-+#ifndef LED_DEFINE
-+#define LED_DEFINE
-+
-+enum sxe2_led_mode {
-+	SXE2_IDENTIFY_LED_BLINK_ON   = 0,
-+	SXE2_IDENTIFY_LED_BLINK_OFF,
-+	SXE2_IDENTIFY_LED_ON,
-+	SXE2_IDENTIFY_LED_OFF,
-+	SXE2_IDENTIFY_LED_RESET,
-+};
-+
-+
-+typedef struct sxe2_led_ctrl {
-+	uint32_t mode;
-+	uint32_t duration;
-+} sxe2_led_ctrl_s;
-+
-+typedef struct sxe2_led_ctrl_resp {
-+	uint32_t ack;
-+} sxe2_led_ctrl_resp_s;
-+#endif
-+
-+#endif /* __SXE2_MSG_H__ */
+ struct sxe2_link_context {
+ 	rte_spinlock_t link_lock;
+ 	bool link_up;
 -- 
 2.52.0
 
