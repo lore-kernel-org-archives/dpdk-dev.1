@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BF3CD8CB9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 17:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6468CD8CB9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 17:57:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 72BAB42686;
-	Wed, 10 Jun 2026 19:13:51 +0200 (CEST)
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
- [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 51674402BA
- for <dev@dpdk.org>; Wed, 10 Jun 2026 19:13:50 +0200 (CEST)
-Received: by mail-dy1-f182.google.com with SMTP id
- 5a478bee46e88-304c520fe9aso2574234eec.0
- for <dev@dpdk.org>; Wed, 10 Jun 2026 10:13:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EF5E042789;
+	Wed, 10 Jun 2026 19:57:06 +0200 (CEST)
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
+ [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id 9B425402B0
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 19:57:05 +0200 (CEST)
+Received: by mail-dy1-f181.google.com with SMTP id
+ 5a478bee46e88-304c520fe9aso2662031eec.0
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 10:57:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781111629;
- x=1781716429; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781114224;
+ x=1781719024; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=8tQ4UyNxvMUUL1n2hDSiiMRQ/nb92A/R8o6dQE0yy6c=;
- b=p2OuxflsbYVv87/ehA7te+jveaau1c9IH7NgVRWBufTL/LMzt46SJDnFDvQRvoCeOc
- ufasEOye5o/QwEQUuOnTIc7vieDD1IlWF8HWzYG8nFMVpSXrw0DzfW/g6N9vAfMMPmsp
- BCak9j3mvyDpGn4yqMM9dB1xGNnChHzg6+HuKTbIkOcu2684VbEHpg4/J1IGEJdS1+J7
- 2icp59S7vwFIF8UhaIAoYjDuamkVGbcAuyIKbPegZhpoEZV1gvTpT0IM0kgQWxjZMa8o
- GDGEDQfE482Jd/2PRyvIcV9yCKbPhb33V3Xyk659rHpJZj0uMTf/pLMDXUY++u/Igk7t
- 0XPA==
+ bh=8d/H3S8fSEyJ/ikwfUCAXoJdtoQN6PgaM4C/gD88brw=;
+ b=NyhbjGtmzAp6Pr4CH3lWFugCnnWEaXVBUU6pXEhXy17T3TZkCP9CW4P+Te33uVDhVz
+ 2gadHxt+Ukg5iRBqeeOczi8ZARkVFGGk2/zXAw6hPdFc7A3Fh6rfkN2EIkGv6agmaUJW
+ I31nZdnDUEwJwrA1v3DQzA3aTQkdQ/qfHxdRTEL3+loTCVpSpGjqEx/mWIIo5Md31MtD
+ FrW/YPLbcQK6xe25Ms+3Tgr5FPeNfC9QtV2EgearVFyzbW1A3knW12uQhpEXvzZWTaPZ
+ aFeDrswjp+h4tCpxFH/4HjSnyMKf/js3QB3mEk1OhpQGgBi3rWue8Sqz2ksIRodCzWZg
+ GpwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781111629; x=1781716429;
+ d=1e100.net; s=20251104; t=1781114224; x=1781719024;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=8tQ4UyNxvMUUL1n2hDSiiMRQ/nb92A/R8o6dQE0yy6c=;
- b=k0dmr6xggkdmF5/lLMvi06zj7RgGrEHUDa16JDBbP2UHsByI6cq+uOG2LEdos9SsSA
- mT8Iq86gYgrPrOCCwHHUyrqPH94lVZsHeyZ1AFWdaDWuraTqVrC+oQK8uysjso/697x2
- 3yKp95VM6w/w7RHhvM9YOWexIKtKN0CbhVmnH7Ew7W0xmaFEyPIAwIG3KDDB1QBWDWLK
- RJ3noLqgSLOSRADL4itJXLVyoY6/g7UrepK5L/oKIPFe7RXpiUS6nEp5YtqKizksKUBf
- Crgppu9So6d7yNSxa3Kz/J+BXMmGKpKjIEArBIbKQ2LM+4QASUcAQrgkRZ02iD/qe+QQ
- O4OQ==
-X-Gm-Message-State: AOJu0YyynONfHRIdj621GWqTIiRAxvwEB/ldrqsc9d6meLe0Q/DzIKAH
- 1MVbWbRd44u9ZMK9zvz5ymj9IACYkduDnIx1NjmuPDt+tBkgGM2qHy71zXWFdLZ6+qXcLoIVvhH
- V64or
-X-Gm-Gg: Acq92OE9LeGVxYwHqzOi6HjTw/zRyDBpz+0wxOWAKvFBWRqPRxb81PTWf67PcrpTjBP
- S8Eul6hV9/liad1Vp1y3BVOu3lfu8AnpbCY08Jv/eEn3Rl3wp8oexeUX6/yXOJBvBIvcAV4GLA+
- brldwQgf0pFaKL83TLttWzvflod0ZqzK+BYGtnMU9hr/3QVgehz+OkwRT/xUdM/Id1aoS/OoYh0
- WNtJUV8rQnrhpwq43aT1W0chhI5n6GtQ1T3CAZovkz26KoimpPec4ND0Lf/UpzUjveWPpFiJdic
- sKyZln0GWSRn7H6tAPB8l6eWIaT3R6N8WHWzo+TVxNkJjlppR7QaWABDiib2OdyJ+zxyEO9ajH2
- YNSaIJu8LOyoXSA6YWz6NdInNGXLzBRpq+PumZ+uZSOvTH4BPIW8T4pPy9RRekQzlp+BZyh+c4Y
- Z3Nc7eXCFu2PINacRvR9HPoTKVFLCGlF7CjH7foYC94q/cfYX2hnL63OM0vHd9ByaojEBtPfXeC
- 0k=
-X-Received: by 2002:a05:7300:80c7:b0:2ed:e15:c926 with SMTP id
- 5a478bee46e88-3077b8b5007mr18863123eec.34.1781111629063; 
- Wed, 10 Jun 2026 10:13:49 -0700 (PDT)
+ bh=8d/H3S8fSEyJ/ikwfUCAXoJdtoQN6PgaM4C/gD88brw=;
+ b=JAOYRfQXiHv2EgECRv4FfGXeVGjfCqfqcd769M967902p3/rhAijUkCDQXa9HSXuDu
+ dVoo5JZWMgv/uBmHMlp8wJyXLRNnfBHuaaaaCWlfZ0Qh0E3iVMYsfJs4mAREqE9tdq4F
+ kfIYc6HlkzrTQZGxfpx/nNzmKcQaipQGVF7vVOvnzbhznyfWAjSHO1n61AeCsIi/+jsH
+ 5FzUi84znuTxEslCNp9SGRthP5J4bt8tNcJVd4x0y3ex6kqR30FQa+PKWKSvQ3xOVznR
+ +NX1+n1PWWuwkQt0i8LqMJ7XTBNszUTTjffUFATuix1XZuTceA4/kFplJsX1HY4SYVYY
+ MgXA==
+X-Gm-Message-State: AOJu0YxxrA3WVKuku4orbz4xf6016yDsQBobX/zG5JF3djP9OARldRp6
+ /xhPvc2Mlv36vEqiWOjM/+F+PjiUlTVprXCS1IjR48oxy72pwJDJiw4Db3r25BQ6trGcINgSlNk
+ 6OXxd
+X-Gm-Gg: Acq92OELpNEP53xrj8/H5e8BHIX1XenSYehuE9qXVN9gdHXOJxvkHT3cwU6SM3vAOl2
+ LGqbFx7QbutdjL2PB/LmCKfTzxppvX65iIuRrx6dAOXWpaXVEc793Xh+7jRQNnaOS6CnKibVlV3
+ HCAz7LF/rse0iSDkWgQL2ADyGEtB8CDhkGFn4TrpTJh/J3F+3krMwEi4j5vAmW5rVURaXT/Jq06
+ oHFwuZRWGIJxPORld+3y6l2Gi7M9Ob10A267YwOElUN0QtQssTs6WjVBgscoNexX9xOcmeDCs91
+ esrAoWzU06HjN4O/vtTcvto096J0/jv1IqR/7ln/uAktgQ27foVc8wD5q/wZoRV4ufiiBzvWBDA
+ v6X+htS3Lc1lS0SjSEwoSExzQ1GsdqzR0wPTsFkVACRRsaHRhpn8ABC1TaZocWMzs7n6IxmYaJW
+ dTNCA+nazpY/7dk9VL5IxBW+d+vA2dZkbRWgs0W/t0SIRoVAqfNT70Dy7OvMQXUm6nQkkVlihH/
+ rrsGGVvn0mlqA==
+X-Received: by 2002:a05:693c:69db:b0:304:e2a5:689a with SMTP id
+ 5a478bee46e88-3077b7595c7mr10690622eec.21.1781114224291; 
+ Wed, 10 Jun 2026 10:57:04 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3074dcbe995sm33877206eec.13.2026.06.10.10.13.48
+ 5a478bee46e88-3074db5610esm26601334eec.4.2026.06.10.10.57.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 10 Jun 2026 10:13:48 -0700 (PDT)
-Date: Wed, 10 Jun 2026 10:11:40 -0700
+ Wed, 10 Jun 2026 10:57:03 -0700 (PDT)
+Date: Wed, 10 Jun 2026 10:22:39 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: liujie5@linkdatatechnology.com
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 00/20] net/sxe2: added Linkdata sxe2 ethernet driver
-Message-ID: <20260610101140.2eb767dd@phoenix.local>
-In-Reply-To: <20260610013936.3634968-1-liujie5@linkdatatechnology.com>
+Subject: Re: [PATCH v1 19/20] drivers: add testpmd commands for private
+ features
+Message-ID: <20260610102228.72882490@phoenix.local>
+In-Reply-To: <20260610013936.3634968-20-liujie5@linkdatatechnology.com>
 References: <20260609013951.3359199-21-liujie5@linkdatatechnology.com>
  <20260610013936.3634968-1-liujie5@linkdatatechnology.com>
+ <20260610013936.3634968-20-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,190 +84,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 10 Jun 2026 09:39:16 +0800
+On Wed, 10 Jun 2026 09:39:35 +0800
 liujie5@linkdatatechnology.com wrote:
 
 > From: Jie Liu <liujie5@linkdatatechnology.com>
 > 
-> This patch set implements core functionality for the SXE2 PMD,
-> including basic driver framework, data path setup, and advanced
-> offload features (VLAN, RSS,TM, PTP etc.).
+> Introduce private testpmd commands and implementation files to enable
+> debugging and testing of sxe2-specific hardware features (such as
+> packet scheduling reset, UDP tunnel configuration, and IPsec ingress/
+> egress offloads) directly within the testpmd application.
 > 
-> Jie Liu (20):
->   net/sxe2: support AVX512 vectorized path for Rx and Tx
->   net/sxe2: add AVX2 vector data path for Rx and Tx
->   drivers: add supported packet types get callback
->   net/sxe2: support L2 filtering and MAC config
->   drivers: support RSS feature
->   net/sxe2: support TM hierarchy and shaping
->   net/sxe2: support IPsec inline protocol offload
->   net/sxe2: support statistics and multi-process
->   drivers: interrupt handling
->   net/sxe2: add NEON vec Rx/Tx burst functions
->   drivers: add support for VF representors
->   net/sxe2: add support for custom UDP tunnel ports
->   net/sxe2: support firmware version reading
->   net/sxe2: implement get monitor address
->   common/sxe2: add shared SFP module definitions
->   net/sxe2: support SFP module info and EEPROM access
->   net/sxe2: implement private dump info
->   net/sxe2: add mbuf validation in Tx debug mode
->   drivers: add testpmd commands for private features
->   net/sxe2: update sxe2 feature matrix docs
+> The parameters are parsed using the standard 'rte_kvargs' library during
+> the PCI/vdev probing phase. Documentation for these parameters is also
+> updated.
 > 
->  doc/guides/nics/features/sxe2.ini          |   56 +
->  drivers/common/sxe2/sxe2_common.c          |  156 ++
->  drivers/common/sxe2/sxe2_common.h          |    4 +
->  drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
->  drivers/common/sxe2/sxe2_ioctl_chnl.c      |  178 +-
->  drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
->  drivers/common/sxe2/sxe2_msg.h             |  118 ++
->  drivers/common/sxe2/sxe2_ptype.h           | 1793 ++++++++++++++++++
->  drivers/net/sxe2/meson.build               |   56 +-
->  drivers/net/sxe2/sxe2_cmd_chnl.c           | 1587 +++++++++++++++-
->  drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
->  drivers/net/sxe2/sxe2_drv_cmd.h            |  521 +++++-
->  drivers/net/sxe2/sxe2_dump.c               |  304 +++
->  drivers/net/sxe2/sxe2_dump.h               |   12 +
->  drivers/net/sxe2/sxe2_ethdev.c             | 1531 +++++++++++++++-
->  drivers/net/sxe2/sxe2_ethdev.h             |  112 +-
->  drivers/net/sxe2/sxe2_ethdev_repr.c        |  610 ++++++
->  drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
->  drivers/net/sxe2/sxe2_filter.c             |  895 +++++++++
->  drivers/net/sxe2/sxe2_filter.h             |  100 +
->  drivers/net/sxe2/sxe2_flow.c               | 1391 ++++++++++++++
->  drivers/net/sxe2/sxe2_flow.h               |   30 +
->  drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
->  drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
->  drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
->  drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
->  drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
->  drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 ++++++++++++++++++++
->  drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
->  drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
->  drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
->  drivers/net/sxe2/sxe2_irq.c                | 1026 +++++++++++
->  drivers/net/sxe2/sxe2_irq.h                |   25 +
->  drivers/net/sxe2/sxe2_mac.c                |  535 ++++++
->  drivers/net/sxe2/sxe2_mac.h                |   84 +
->  drivers/net/sxe2/sxe2_mp.c                 |  414 +++++
->  drivers/net/sxe2/sxe2_mp.h                 |   67 +
->  drivers/net/sxe2/sxe2_queue.c              |   17 +-
->  drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
->  drivers/net/sxe2/sxe2_rss.h                |   81 +
->  drivers/net/sxe2/sxe2_rx.c                 |   38 +
->  drivers/net/sxe2/sxe2_rx.h                 |    2 +
->  drivers/net/sxe2/sxe2_security.c           |  335 ++++
->  drivers/net/sxe2/sxe2_security.h           |   77 +
->  drivers/net/sxe2/sxe2_stats.c              |  591 ++++++
->  drivers/net/sxe2/sxe2_stats.h              |   39 +
->  drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
->  drivers/net/sxe2/sxe2_switchdev.h          |   33 +
->  drivers/net/sxe2/sxe2_testpmd.c            |  733 ++++++++
->  drivers/net/sxe2/sxe2_testpmd_lib.c        |  969 ++++++++++
->  drivers/net/sxe2/sxe2_testpmd_lib.h        |  142 ++
->  drivers/net/sxe2/sxe2_tm.c                 | 1169 ++++++++++++
->  drivers/net/sxe2/sxe2_tm.h                 |   78 +
->  drivers/net/sxe2/sxe2_tx.c                 |    7 +
->  drivers/net/sxe2/sxe2_txrx.c               |  176 +-
->  drivers/net/sxe2/sxe2_txrx.h               |    4 +
->  drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
->  drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
->  drivers/net/sxe2/sxe2_txrx_poll.c          |  243 ++-
->  drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
->  drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
->  drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  776 ++++++++
->  drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  897 +++++++++
->  drivers/net/sxe2/sxe2_txrx_vec_common.h    |    1 +
->  drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  721 ++++++++
->  drivers/net/sxe2/sxe2_vsi.c                |  146 ++
->  drivers/net/sxe2/sxe2_vsi.h                |   12 +-
->  drivers/net/sxe2/sxe2vf_regs.h             |   85 +
->  68 files changed, 26576 insertions(+), 124 deletions(-)
->  create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
->  create mode 100644 drivers/common/sxe2/sxe2_msg.h
->  create mode 100644 drivers/common/sxe2/sxe2_ptype.h
->  create mode 100644 drivers/net/sxe2/sxe2_dump.c
->  create mode 100644 drivers/net/sxe2/sxe2_dump.h
->  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
->  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
->  create mode 100644 drivers/net/sxe2/sxe2_filter.c
->  create mode 100644 drivers/net/sxe2/sxe2_filter.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
->  create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
->  create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
->  create mode 100644 drivers/net/sxe2/sxe2_irq.c
->  create mode 100644 drivers/net/sxe2/sxe2_mac.c
->  create mode 100644 drivers/net/sxe2/sxe2_mac.h
->  create mode 100644 drivers/net/sxe2/sxe2_mp.c
->  create mode 100644 drivers/net/sxe2/sxe2_mp.h
->  create mode 100644 drivers/net/sxe2/sxe2_rss.c
->  create mode 100644 drivers/net/sxe2/sxe2_rss.h
->  create mode 100644 drivers/net/sxe2/sxe2_security.c
->  create mode 100644 drivers/net/sxe2/sxe2_security.h
->  create mode 100644 drivers/net/sxe2/sxe2_stats.c
->  create mode 100644 drivers/net/sxe2/sxe2_stats.h
->  create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
->  create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
->  create mode 100644 drivers/net/sxe2/sxe2_testpmd.c
->  create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.c
->  create mode 100644 drivers/net/sxe2/sxe2_testpmd_lib.h
->  create mode 100644 drivers/net/sxe2/sxe2_tm.c
->  create mode 100644 drivers/net/sxe2/sxe2_tm.h
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
->  create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
+> During memory hotplug events, the SXE2 driver needs to track memory
+> segment layout changes to maintain internal DMA mappings. However,
+> existing memseg walk functions (rte_memseg_walk) acquire memory locks
+> and cannot be called from within memory event callbacks, leading to
+> potential deadlocks.
 > 
+> This commit introduces sxe2_memseg_walk_cb() as a helper that walks
+> memory segments using the thread-unsafe variant
+> rte_memseg_walk_thread_unsafe(), which is safe to call from
+> memory-related callbacks [citation:1][citation:3][citation:5].
+> 
+> The implementation follows the standard rte_memseg_walk_t prototype,
+> processing each memseg to update driver-specific data structures.
+> 
+> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+> ---
 
-I assume you meant v15 for this. The simple things first.
-The code needs rebase against main and you need to run at a minimum the
-full set of build tests: devtools/test-meson-builds.sh
+This memory stuff looks problematic and needs more review.
+At a minimum I see a pattern of not handling values from strtoul()
+that are out of range.
 
-Also, concerned that not all patches will bisect cleanly.
-You should run a build at each step; yes that means 20 builds.
 
-The amount of new devargs and testpmd functions concerns me.
-Each new option increases the amount of options, and increases the probablity
-of bugs. 
+I asked AI for a more detailed review and it saw.
+[PATCH 19/20] drivers: add testpmd commands for private features
 
-AI code review also found:
+There is concern about the amount of driver-private testpmd plumbing and
+devargs this patch adds. The raw command count (7) is within precedent
+(i40e has 29, mlx5 13, ixgbe 11), but the mechanism and content are not.
 
-Deep-dive review of the latest sxe2 respin (01-20/20), including full
-compilation of the assembled tree and per-commit bisect builds.
+Error: the command logic is placed in sxe2_testpmd_lib.c, compiled into the
+driver library, and exposed through 14 new RTE_EXPORT_EXPERIMENTAL_SYMBOL
+entries (sxe2_ipsec_egress_create, sxe2_ipsec_conf_set, sxe2_flow_rule_dump,
+sxe2_udp_tunnel_operations, sxe2_stats_info_show, sxe2_testpmd_sched_reset,
+etc). No upstream driver exports symbols for its testpmd commands; all six
+existing drivers with testpmd integration compile their *_testpmd.c into
+testpmd via testpmd_sources and use internal access. These exports are
+vendor public API that any application can link against. The driver .so also
+gains application state for the commands: g_tx_session[][], g_rx_session[][],
+g_esp_header_offset[], g_sess_pool. SA-manager bookkeeping does not belong
+in a PMD. Move the logic into sxe2_testpmd.c and drop all 14 exports; at
+most RTE_EXPORT_INTERNAL_SYMBOL is appropriate here.
 
-[09/20] drivers: interrupt handling
+Error: three commands duplicate standard testpmd functionality the driver
+already supports. "sxe2 flow rule dump" exists because the driver does not
+implement the rte_flow dev_dump op; implement the op and the standard
+"flow dump <port> all" works for every application. "sxe2 <port>
+udp_tunnel_port add|rm" duplicates "port config <port> udp_tunnel_port
+add|rm", which calls the udp_tunnel ops added in patch 12. "sxe2 show stats"
+duplicates "show port xstats"; the driver already implements xstats, and
+anything missing from xstats should be added there, not shown by a private
+formatter.
 
-Error: patches 09/20 through 18/20 do not link. sxe2_irq.c (added by 09/20)
-calls SXE2_DEV_TO_PCI() at lines 430 and 512, but that macro no longer exists:
-upstream removed it from sxe2_ethdev.h in early June (it was present in the
-May 29 tree, gone by June 8). Nothing in this series defines it. The series
-only links from 19/20 onward, where the two calls are converted to
-container_of(dev->device, struct rte_pci_device, device).
+Warning: the 9-subcommand ipsec suite (egress/ingress add/rm/show,
+session-id and esp-hdr-offset set/get, flush, stats) is an SA management
+application embedded in the driver. Inline crypto is exercised with
+examples/ipsec-secgw, as done for other inline-crypto PMDs. If interactive
+SA management in testpmd is needed, propose it as generic testpmd commands
+over rte_security so all drivers benefit.
 
-Verified empirically, not by patch inspection: I applied the series to a
-June 8 upstream base (applies cleanly) and built at every one of the 20
-commits. Commits 9-18 all fail with "undefined reference to SXE2_DEV_TO_PCI";
-commits 19-20 link. Ten consecutive broken commits breaks git bisect.
-
-This looks like rebase fallout from the upstream macro removal: the previous
-revision removed the macro definition in 19/20 (correct when the base still
-had it); after upstream deleted it, that hunk was dropped - but the
-container_of conversion stayed in 19/20 instead of moving into 09/20 where
-the calls are introduced. Fix: have 09/20 use RTE_DEV_TO_PCI(dev->device)
-or container_of directly, and drop the conversion hunk from 19/20.
-
-Also note the series needs a trivial rebase: 11/20 conflicts with the June 10
-sxe2_common.c refactor on current main.
-
+Warning: seven private devargs are added (flow-duplicate-pattern,
+function-flow-direct, fnav-stat-type, drv-sw-stats, high-performance-mode,
+sched-layer-mode, rx-low-latency) with no documentation: no Runtime
+Configuration section in sxe2.rst and no RTE_PMD_REGISTER_PARAM_STRING, so
+they are undiscoverable. Beyond documentation: flow-duplicate-pattern makes
+rte_flow duplicate-rule semantics vary per boot option, which is not
+acceptable for a standard API; fnav-stat-type and drv-sw-stats select stats
+sources and belong in xstats; sched-layer-mode configures TM topology that
+the rte_tm hierarchy built by the application should determine;
+high-performance-mode accepts only the value 1 and is undocumented - if the
+mode is safe make it the default, otherwise document the trade-off. Each
+surviving devarg needs documentation and a rationale for why no standard
+API covers it.
 
