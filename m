@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2277ECD98CF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 15:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED7CECD8CB9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 15:58:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD85540C35;
-	Wed, 10 Jun 2026 17:46:27 +0200 (CEST)
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com
- [74.125.82.173]) by mails.dpdk.org (Postfix) with ESMTP id 3EE35402BA
- for <dev@dpdk.org>; Wed, 10 Jun 2026 17:46:26 +0200 (CEST)
-Received: by mail-dy1-f173.google.com with SMTP id
- 5a478bee46e88-3075ce9c05aso1088374eec.1
- for <dev@dpdk.org>; Wed, 10 Jun 2026 08:46:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8D5E340E03;
+	Wed, 10 Jun 2026 17:58:04 +0200 (CEST)
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com
+ [209.85.160.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 66D5340DD5
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 17:58:02 +0200 (CEST)
+Received: by mail-qt1-f169.google.com with SMTP id
+ d75a77b69052e-517760dc3c2so42197661cf.3
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 08:58:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781106385;
- x=1781711185; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781107082;
+ x=1781711882; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+5PbVpzhvPnWI9DLrFjZDyvtPId2bVmEl8X++q6EvIc=;
- b=qWjP4Ky88L13USrZ6izh3sLZfOeCWz3HsXUSgOtpSZfXpTCe0ab8fO4qmODyrWSnbQ
- Ur/2KH2BKp9ycai56KNLP3UVpCP/gJh0JTHJJtBFC5V590MCLOBGQCLPlHZX3tfExXCc
- 7NiYP1fYnrBL7j3ge/n2Wc84sFdK/A/mdqOomQnXd1Vc/xiJlBFSuWJ2/8Ys4PT0jnkc
- HZCDyIF5tVMfrEw5TZ7qYbTf7/4k3Ay/gTZiRQ86W+yu30bNDOWQ9duGXjCGvHBqDjvK
- 0BN+pinLBe7o0D+HAgzrQA8W/cm5TnbF3oUpyesHLMTJo620dOFrztAL7G23xV67xy6y
- eF/Q==
+ bh=n1LAbZr/+eIQZRS7mEkAziKiqRoCSgpqTT+xNjtPjDk=;
+ b=kmZ8/y+oJM/ChlOIDc96rWUMJ2+h4BHYl22l9FdZxEMps2iG7oZX8AJrTzKRBup6Tg
+ DyXfkAPZKq4ZeUAefe/eQ2HXFS8w4Bg8g3jhWf6gfy18rFy/LYLr6eLUMuenCGh8eZ6L
+ JHg2WyP3hkPBjob13c+CezJgrZqeHdzVg9rEKIYKaxQ5XHpeylSFRC4yRWjfRbM/Sz31
+ a0/z6d+q83zT89EdtNMhYsvtvdyqxzHju7Earjp+5lelo00ZMn9A74yx5TrDEkFbxUy7
+ lZylPmAxp+7GQajveZUk+STyI9TAVlzo0yFoo/OiRHrKwzgfzHchzdADRJz0TzBBixRU
+ XAxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781106385; x=1781711185;
+ d=1e100.net; s=20251104; t=1781107082; x=1781711882;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+5PbVpzhvPnWI9DLrFjZDyvtPId2bVmEl8X++q6EvIc=;
- b=anE+QSd/61zEAaxqbU/daD1AAN9exP1aQHyY6jmnxxjFPoveAQfNFKAp0FjL9Nh/VA
- /+1bCsO1305wuGgYCDR1VYByux5offUT/5ESN6VPIlVaXJyiKQUSmVLNaTCM2VuXjM2b
- +tcmSnhcxqAxZxNWXbWFIpX/sUcC0pzrvr8F3ihkdwLhHmwwsfPBdPtHPkEX9nOCiiTk
- Kzeyh+m1TL2J/8ogJccNU+cJZFZarhitF+HxeqUJIrQjgsivBo5H4pWml/uexA/rvxtw
- O5WiHxlIjli4pBpTzYkr8O23i4LpWX0bPrF9sBpXG65TREKvCaHhIwynWhRnYNxiANv/
- 8Deg==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/ZReE2pOWM3mqVICASX/gY9x54Zv16SVAYHJBk81ucHjVsF0H4VDjoaE8hfhYyEz/uZcE=@dpdk.org
-X-Gm-Message-State: AOJu0YxW6E0LoWbsykornebEIKbJHNFOXydObIXZeJjMBkyoKzTcUOaM
- v3xlVH+dBDfOXRe7kl6RSyxJTbT8PBJ/u4UNjXFhfeScI+MYvmB5TvlGSp1Vx+5UOKA=
-X-Gm-Gg: Acq92OGnZXGFoM7la8h3qfMGCIvcsyF0kbSiJyLkFmaE7qNhI1th0ybO3YJ5m0Enbg2
- 0vqdiWnPtCLbFGehq8JEuMG+cI7t3uwTNeoYwqAtfzlsyYsBVL2h2cpBBV8ngb8gjw5m3S6nWkF
- 0rnicUdWOIGhSav9u59JrIVHgm3c1G8c1mo7iqIjSBugSgdftQjo2XBk8QYp0fwMl0XVh2sCLsu
- OmZe4XkSfmGQloIjLT5sDc2bdzmkgGY6eYCzOB5MQIBZy6Vb79yyR95xF/mJls4NtpfO+9D38Rf
- yngtq7TtdRyaztiOWg/bmoxQZ0jDbQVTolv17kGEFziny+5D45fo1G04+NZ8r5S6BJdA8SOgS5z
- aCogJPngndMcryBlyhzxK4vZ/3NzWGnhBT2lpGw2r39Qeby+Py2Vd/LviYQTXdo0ogh5jZbpTNv
- CAxsJd4FaZYACyw0+WG5O0l5fns1hRJ15EcCFsZhyh+JsunRC7e19OMK+cZqb0yMgLU0WhT/uqZ
- H4=
-X-Received: by 2002:a05:7300:80c9:b0:2f4:3a9c:818c with SMTP id
- 5a478bee46e88-3077b2d826emr16219086eec.29.1781106374315; 
- Wed, 10 Jun 2026 08:46:14 -0700 (PDT)
+ bh=n1LAbZr/+eIQZRS7mEkAziKiqRoCSgpqTT+xNjtPjDk=;
+ b=SqINC7VViLZ8nufEH4sZZ+IgF42V8E9pULNm0foKZhz3FHzFb/tsmDy1IgRQIlSGjN
+ SsWPZuL3rAsT1tF288ZlthLmzfAHRKpqkNnp+zFZA/x/tR/jGhGuFkoT7H73/u8z1TGv
+ NCj2ZLDlZM1GX1vG9lucqmpuJgqu8cnPgmpRraLp+lXQfqvFrkCtgpGseS3t8tgWhGJU
+ hxcmdEjghlSYkbuzx9ANNIh4sgpmz5XpfuQEUhMRfkItiTsCqJrPF05lfsQAxGMTpAQO
+ bP1ir6WqsAHnwDBONNj9zNulUKy9GCroGXiB8MXfmwjmTsU0bSFfhRFALUEXfOev+UvE
+ NWRw==
+X-Gm-Message-State: AOJu0YwbFv6aQ2nldrFRv5pL2LqdUrqzFvit3S6BgzEvzeTa2Y512rzk
+ +71uALl+RCEU/kYpQ20tANkU/m/EVlRLkCVbHSUlKdYF6sXFAv4LMVVvaa258kaxurU=
+X-Gm-Gg: Acq92OGF9MOvlM1FraxfdBAYw1Errz08qaiITwgLkvLHQ2qxkdcZPaRmo6yeKwETowW
+ TmlnBYFnyNcQvaFkGZKFahVNCm7D5BJTU223vW++Ey72Xy4Whs+7dTnsx2WErEvhIkG36AcFSfZ
+ INmvM/G4XNfMfQV+CTnc1+fNZv0bWdZhFaJZUNGw1+hoE4jDE9cbTcSVcYYJZbNQAItHT+HyKsg
+ Fd1INFiUQW8XRoxc6XTthW7Dof2AhxDJSaUyVuI8oxDyF4L3qDTRCU63cQ7DgDuGfYc7LVklUAf
+ QUQySNXBfot5BMHZQ0t2toITk5u6XcyYLbzlKK1D01tSeX3lbs5DxV+SRLw0nqv1QvZAQsfJOvU
+ N7fUjHlRr0YLZmFzLBJODolcAmjRT9NPjbYjI9G6aTMutaAj1nBWCuFjxugYUOi9YUV0B749ukS
+ RRF9Umjx0kCV6jThrcnVKGlRV4EjjMNZguWDCldM005dyhPNLLXOOjq4N9v5smtLPGYOqonS4MQ
+ RCkQFe9zGtWxQ==
+X-Received: by 2002:a05:622a:291:b0:516:ed02:c85a with SMTP id
+ d75a77b69052e-51795be0d00mr377820671cf.32.1781107078595; 
+ Wed, 10 Jun 2026 08:57:58 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3074dea8e8csm25948430eec.16.2026.06.10.08.46.13
+ d75a77b69052e-51775c08234sm218357451cf.6.2026.06.10.08.57.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 10 Jun 2026 08:46:14 -0700 (PDT)
-Date: Wed, 10 Jun 2026 08:46:10 -0700
+ Wed, 10 Jun 2026 08:57:58 -0700 (PDT)
+Date: Wed, 10 Jun 2026 08:57:49 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bing Zhao <bingz@nvidia.com>
-Cc: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>,
- <orika@nvidia.com>, <dsosnowski@nvidia.com>, <suanmingm@nvidia.com>,
- <matan@nvidia.com>, <thomas@monjalon.net>
-Subject: Re: [PATCH v5] ethdev: support inline calculating masked item value
-Message-ID: <20260610084610.102932a1@phoenix.local>
-In-Reply-To: <20260610052729.5637-1-bingz@nvidia.com>
-References: <20260603092805.9837-1-bingz@nvidia.com>
- <20260610052729.5637-1-bingz@nvidia.com>
+To: fengchengwen <fengchengwen@huawei.com>
+Cc: <dev@dpdk.org>, <stable@dpdk.org>, Bruce Richardson
+ <bruce.richardson@intel.com>, Neil Horman <nhorman@tuxdriver.com>, David
+ Marchand <david.marchand@redhat.com>
+Subject: Re: [PATCH v2] eal: add destructor to unregister tailq on unload
+Message-ID: <20260610085749.7bb0a4f3@phoenix.local>
+In-Reply-To: <bfa31475-848f-42af-bfb4-f796433c3073@huawei.com>
+References: <20260607150418.30885-1-stephen@networkplumber.org>
+ <20260609142701.163908-1-stephen@networkplumber.org>
+ <bfa31475-848f-42af-bfb4-f796433c3073@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,73 +85,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 10 Jun 2026 08:27:29 +0300
-Bing Zhao <bingz@nvidia.com> wrote:
+On Wed, 10 Jun 2026 09:19:42 +0800
+fengchengwen <fengchengwen@huawei.com> wrote:
 
-> In the asynchronous API definition and some drivers, the
-> rte_flow_item spec value may not be calculated by the driver due to the
-> reason of speed of light rule insertion rate and sometimes the input
-> parameters will be copied and changed internally.
+> >  
+> > +RTE_EXPORT_SYMBOL(rte_eal_tailq_unregister)  
 > 
-> After copying, the spec and last will be protected by the keyword
-> const and cannot be changed in the code itself. And also the driver
-> needs some extra memory to do the calculation and extra conditions
-> to understand the length of each item spec. This is not efficient.
+> this should be with EXPERIMENTAL
+
+Not possible, this is part of the EAL_REGISTER_TAILQ macro and usage
+is under the covers. So if anything was marked experimental it would
+fail code that did not allow experimental
+
 > 
-> To solve the issue and support usage of the following fix, a new OP
-> was introduced to calculate the spec and last values after applying
-> the mask inline.
+> > +void
+> > +rte_eal_tailq_unregister(struct rte_tailq_elem *t)
+> > +{
+> > +	TAILQ_REMOVE(&rte_tailq_elem_head, t, next);  
 > 
-> Signed-off-by: Bing Zhao <bingz@nvidia.com>
-> Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> ---
+> We need first make sure it exist the tailq, just like TAILQ_FOREACH rte_eal_tailq_local_register()
 
-Detailed AI review still sees issues here:
-
-On Wed, 10 Jun 2026 08:27:29 +0300, Bing Zhao wrote:
-> Subject: [PATCH v5] ethdev: support inline calculating masked item value
-> v5: handle some items separately and add test for them
-
-The v5 lib/ethdev/rte_flow.c and app/test/test_ethdev_api.c hunks are
-identical to v4 -- the masking loop is unchanged and the test still only
-covers ETH. The changelog says items are handled separately and a test was
-added, but no such change is present in the diff. The v4 issue is still open.
-
-Error: byte-wise masking corrupts embedded pointers in deep-copy item
-types (RAW, FLEX, GENEVE_OPT).
-
-In rte_flow_conv_pattern(), the mask is applied over the fixed item struct:
-
-	size_t item_mask_size = mask ? rte_flow_conv_item_mask_size(src) : 0;
-	...
-	size_t mask_size = RTE_MIN(ret, item_mask_size);
-
-	for (j = 0; j < mask_size; j++)
-		c_spec[j] &= mask[j];
-
-item_mask_size is rte_flow_desc_item[type].size, the fixed item struct size.
-For RTE_FLOW_ITEM_TYPE_RAW, FLEX, and GENEVE_OPT, that fixed struct ends in an
-embedded pointer that rte_flow_conv_item_spec() has just populated to point at
-the deep-copied trailing data (rte_flow_item_raw.pattern,
-rte_flow_item_flex.pattern, rte_flow_item_geneve_opt.data). Because the masked
-range covers the whole fixed struct, the loop ANDs the bytes of that pointer
-with the mask's corresponding bytes (typically a NULL mask pointer), zeroing
-or garbling it.
-
-The converted item's pattern/data pointer is clobbered while the copied
-payload it should reference is left unreachable. A consumer that follows
-conv->pattern then dereferences NULL or a corrupt address. Plain value items
-(eth, ipv4, ...) are unaffected; only the deep-copy item types break.
-
-Suggested fix: do not blind-mask the entire fixed struct for items that carry
-an embedded pointer / desc_fn deep copy. Either skip masking when
-rte_flow_desc_item[type].desc_fn != NULL, or mask only the leading plain-data
-region and leave the pointer field (and trailing copied bytes) intact.
-
-Warning: the new test validates only an ETH pattern, so the RAW/FLEX/GENEVE_OPT
-path above is untested. A RAW item case would have surfaced the pointer
-corruption -- and is what the v5 changelog claims to have added but did not.
-
-Info: the Doxygen block for RTE_FLOW_CONV_OP_PATTERN_MASKED uses @p mask,
-@p spec, @p last, but those are item fields, not parameters of the op; the
-neighboring enum entries only document the @p src / @p dst types.
+Ok cheap scan since not in critical path.
