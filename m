@@ -2,49 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD01CD8CA8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 01:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E348CD8CB2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 01:42:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BE3F409FA;
-	Wed, 10 Jun 2026 03:40:16 +0200 (CEST)
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 228D7400D5
- for <dev@dpdk.org>; Wed, 10 Jun 2026 03:39:54 +0200 (CEST)
-Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowABHkcRfwChqCLLnEg--.7019S22;
- Wed, 10 Jun 2026 09:39:49 +0800 (CST)
-From: liujie5@linkdatatechnology.com
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v1 20/20] net/sxe2: update sxe2 feature matrix docs
-Date: Wed, 10 Jun 2026 09:39:36 +0800
-Message-ID: <20260610013936.3634968-21-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260610013936.3634968-1-liujie5@linkdatatechnology.com>
-References: <20260609013951.3359199-21-liujie5@linkdatatechnology.com>
- <20260610013936.3634968-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0353D40E20;
+	Wed, 10 Jun 2026 03:40:17 +0200 (CEST)
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com
+ [113.46.200.224])
+ by mails.dpdk.org (Postfix) with ESMTP id E47044026D
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 03:39:55 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=toDoo+h1z/GZ4IzyZ/l6KmOSpEFsKy4427NFU5bwNDg=;
+ b=nDTF2A6NdBckmReh9O5KrLJrXrF3DG+XHH78Oq2kaORsvhSmd7G5oTuu0Fl3TbHkiU8UK3WDH
+ hDngweBTsxVQLFiXsOhJYUgbuMOCfQ5vTmOgvtntkEMMgLU5HrIqMY9lh+OqqdNMs6+cq2suDaA
+ yIBBbvvunZjoAcKe3Jdwf20=
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+ by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4gZpD13GgGz1cyP6
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 09:32:01 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 44B8740573
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 09:39:54 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 10 Jun 2026 09:39:53 +0800
+Message-ID: <97afe9be-41c0-44da-b144-0fddeb7374e5@huawei.com>
+Date: Wed, 10 Jun 2026 09:39:47 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowABHkcRfwChqCLLnEg--.7019S22
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18JFyfGw1DXFW7Aw1UZFb_yoW8AF1rpw
- 4DZayYqr1fJw43ZrsIyw1UGrW5ZFWvya98urZrGFy3KF1Ygr40vwsIva4IqFyDt3sxZ34Y
- q3Wrtr9I9r4UZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUBl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
- z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr
- 1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
- JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
- IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
- M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l42
- xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
- GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI4
- 8JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4U
- JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcV
- C2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbfcTJUUUUU==
-X-Originating-IP: [118.112.177.181]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] extend interactive telemetry script
+To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
+References: <20260521153913.82634-1-bruce.richardson@intel.com>
+ <20260609161400.3661268-1-bruce.richardson@intel.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20260609161400.3661268-1-bruce.richardson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,94 +56,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jie Liu <liujie5@linkdatatechnology.com>
+Series-acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
-Update the sxe2.ini feature sheet to accurately reflect the recently
-implemented hardware capabilities in the sxe2 PMD.
-
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
----
- doc/guides/nics/features/sxe2.ini | 56 +++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
-
-diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
-index 09ba2f558c..3c1e6a8a39 100644
---- a/doc/guides/nics/features/sxe2.ini
-+++ b/doc/guides/nics/features/sxe2.ini
-@@ -7,17 +7,73 @@
- ; is selected.
- ;
- [Features]
-+Speed capabilities   = Y
-+Link status          = Y
-+Link status event    = Y
-+Rx interrupt         = Y
- Fast mbuf free       = P
- Free Tx mbuf on demand = Y
- Burst mode info      = Y
- Queue start/stop     = Y
-+Power mgmt address monitor = Y
- Buffer split on Rx   = P
- Scattered Rx         = Y
-+Traffic manager      = Y
- CRC offload          = Y
-+VLAN offload         = Y
-+QinQ offload         = P
- L3 checksum offload  = Y
- L4 checksum offload  = Y
-+Timestamp offload    = P
-+Inner L3 checksum    = P
-+Inner L4 checksum    = P
- Rx descriptor status = Y
- Tx descriptor status = Y
-+MTU update           = Y
-+TSO                  = P
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+Inline crypto        = Y
-+Packet type parsing  = Y
-+Timesync             = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+FW version           = Y
-+Module EEPROM dump   = Y
-+Multiprocess aware   = Y
- Linux                = Y
- x86-32               = Y
- x86-64               = Y
-+
-+[rte_flow items]
-+eth                  = P
-+geneve               = Y
-+gre                  = Y
-+gtpu                 = Y
-+ipv4                 = Y
-+ipv6                 = Y
-+ipv6_frag_ext        = Y
-+nvgre                = Y
-+sctp                 = Y
-+tcp                  = Y
-+udp                  = Y
-+vlan                 = P
-+vxlan                = Y
-+vxlan_gpe            = Y
-+
-+[rte_flow actions]
-+count                = Y
-+drop                 = Y
-+mark                 = Y
-+passthru             = Y
-+port_representor     = Y
-+queue                = Y
-+represented_port     = Y
-+rss                  = Y
-+send_to_kernel       = Y
-+port_id              = Y
--- 
-2.52.0
+On 6/10/2026 12:13 AM, Bruce Richardson wrote:
+> To simplify interactive telemetry script for general use, i.e. not from
+> other scripts, we can add two new features to it:
+> 
+> 1. Support for FOREACH to allow gathering a set of output values across
+>    a list of ports or devices, e.g. ethdevs or rawdevs.
+> 2. Support having predefined aliases in a file in the user's home
+>    directory to simplify the use of more complicated FOREACH commands.
+> 
+> Putting these together, we can create new commands such as "eth_names".
+> 
+>   bruce@host:$ cat ~/.dpdk_telemetry_aliases
+>   eth_names=FOREACH index /ethdev/list /ethdev/info,$index .name
+> 
+>   bruce@host:$ echo eth_names | ./usertools/dpdk-telemetry.py | jq
+>   [
+>     {
+>       "index": 0,
+>       "name": "0000:16:00.0"
+>     },
+>     {
+>       "index": 1,
+>       "name": "0000:16:00.1"
+>     }
+>   ]
+> 
+> ---
+> v3: updated based on review feedback from Chengwen:
+>     - added arg to override alias file
+>     - printed one-line summary of alias count loaded
+>     - improved doc for "help" command
+>     - added "help alias" to list aliases.
+> v2: added third patch with "help" command giving more details on
+>     how to use the various commands.
+> 
+> Bruce Richardson (3):
+>   usertools/telemetry: add a FOREACH command
+>   usertools/telemetry: support using aliases for long commands
+>   usertools/telemetry: add help support
+> 
+>  doc/guides/howto/telemetry.rst | 106 ++++++++++++-
+>  usertools/dpdk-telemetry.py    | 278 ++++++++++++++++++++++++++++++++-
+>  2 files changed, 373 insertions(+), 11 deletions(-)
+> 
+> --
+> 2.53.0
+> 
+> 
 
