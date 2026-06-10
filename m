@@ -2,78 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24106CD8CB2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 14:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 894C2CD8CB9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 14:12:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0339A402B8;
-	Wed, 10 Jun 2026 16:02:19 +0200 (CEST)
-Received: from fout-a2-smtp.messagingengine.com
- (fout-a2-smtp.messagingengine.com [103.168.172.145])
- by mails.dpdk.org (Postfix) with ESMTP id 332314026D
- for <dev@dpdk.org>; Wed, 10 Jun 2026 16:02:18 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id 9661FEC020E;
- Wed, 10 Jun 2026 10:02:17 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Wed, 10 Jun 2026 10:02:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1781100137;
- x=1781186537; bh=eLeLqFNiUKUUkB/JlnCayxvMVSVYV7VWfh8CFP/iupE=; b=
- uaoZZh1t2ye1U65/ccT5yUQGKjgMIAH2muElITgHtsZvTrRRK+jnJQ4dHM1npbmz
- yOWu1VnKiT3P6uB92UTmGPAJK3suGmK+VWvGhP9WSOZtmP8yJcktncVPnnBJPqRI
- nDMpoJM91qMI3gDBrj6qzktIAj+nKymS8vVOYTsdNkXIdB/AkGum6jvPFzZdWlOA
- g5bb1ophChNEUPi4bkMhMuQKbY1UK52QeeXrll9iq3TSaC5xZXLWjQdXZxXcWaik
- kmUzh3qMrTVs3AzUe13zyt92zAJCNpslAwPCEaSRs8uQkQavoQRIFZA8kgziN65q
- lNp9bG8u/LptyVUCIAdN4w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781100137; x=
- 1781186537; bh=eLeLqFNiUKUUkB/JlnCayxvMVSVYV7VWfh8CFP/iupE=; b=L
- +nNNK6XwTzK15gu3NqNQq/dfgQV/tOLRCv/phssXJZDZxsqey03AJl/rc602ubo3
- 7v7afoZ3vrT1vqxRIDb/Ntj1O1qi3Xjy504h4T35x58HYQCCRbuImU5GiNyEfz9N
- 8uY4NmBvo8tvzsSkuMyv3iHtp/DER9pbbIRTaiRbN/1QxyLI7zsFazwgUGc+oDt/
- tVqQMzJjM/ubUrD6f58EEhooCLg8PqJME2U772MvXEunipAY4f1SXQArSf8g7oOy
- BjHCa00F8XLTsHRt9IeRQSrKSy6jDMRX5ujlsGw+Tb+Cn9scxFOi7Xv6tqXMPVzX
- XwIA7f7X3YHt3u40Hf/YA==
-X-ME-Sender: <xms:aW4palTCU4qFvcoVEvpLIysq8GQ_fJk3m3MppRQxTXd8vG6hDwlIPA>
- <xme:aW4pajEhScGiS987xMdJGAdI5zYomJ5mHXR_YLU_C6XP0RGEcbaA5I5yzWfln0rHr
- IKqD9V3thVwBlXFVBfq68KSb6iKu0vED2UFf6f4a2IHIdZtq74qeg>
-X-ME-Received: <xmr:aW4pap_atfI3Fk559VGFpf04FgqsutZg9qIzw9EuHzKs2I3lLaBWX6OBfkPs4a3cOYMlv5m4fshnV6j1U4kE_QklcQ>
-X-ME-Proxy-Cause: dmFkZTEXclm11/aMZYJHnFbI2tEnHu9Izc9BfWSb3/iyebUVOu0PW6K7FwLYV6MoSzPGe1
- UOKKCCagkmVp+AibEB/wrKreGNxgKzlQc8PS7r1g0aaKlUJ5Dlm/nawQYI0pCD8x3Y2e9b
- OZvuv5rdEZWLEqHh10Kd7xtaS6CZGl/99BPyNRqaftyQ2EwmhoFH32r8MHPgQt6rRF5A5Q
- mQAN36G3j75RV67Wk11N5ic8Ybxsrdl1JcprcgRWp2ukv44hS5pBijSGssYFBNgbAz5uWq
- qWI3DWQje74U3KjWZxvkJag00+STAQvNs6HAxxK3vyrr9XMW44kHKQBnB0BobLXMK8LIfu
- 1wcVUot2ucb9xqnVPbACMkfT8mmMqhKIO8CQT8Ie6oF3Ufrla8+SYaCkkYPvlfAS4nT5Vb
- yJyEpZ27bdG8S8i2X1QOGzGKEJA0c101xcxFP8/Q2r8VpWE0eY64vsjBh7Fpz63Nx5CUEh
- 7nkcSmkGTkSkEB8zmMH2t9v9AHras/bfZCuUhHN5pO2z5DdKdZIatXdy78RKW8Bz/uyT1w
- YawO8I/XB2uRQgpdY9AYnL6MDkRuZeK2lWaxY3DWayMm6eHnLzh5VDBufbFwvjlnirbef7
- FO6iXXNBwNhrl3TXhR7jhTMpEDar8OVzQAEXjKJX9MBQ7pKWvgYqtJMCHX+A
-X-ME-Proxy: <xmx:aW4palLnPthFHMCVNGdj1fbqDBFx5a8Yz1Hzs4x17SgFSnlzGV2SJQ>
- <xmx:aW4pakYysiZ-xPUPKnUoIUtGs_ic6ivJng-sUr9G0MThSeVu-Cgncw>
- <xmx:aW4panLPXIhKe-RuRPlYQ1DAhTJwpRKX8ajyFt-4nK5jMC9ve_mb3w>
- <xmx:aW4paiA7XvXx93TTwO2a-8K57OYeibaMgSWbeGjQXhA3nixXuKGyHQ>
- <xmx:aW4paqRiOj7UUj9FpSvC2DlqzGCXxJDuE-l6S96-cNP12NtjPLWU2scn>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 10 Jun 2026 10:02:16 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Jie Liu <liujie5@linkdatatechnology.com>
-Cc: stephen@networkplumber.org, dev@dpdk.org
-Subject: Re: [PATCH v1 00/20] net/sxe2: added Linkdata sxe2 ethernet driver
-Date: Wed, 10 Jun 2026 16:02:15 +0200
-Message-ID: <GfNoEEuaTxKZNwCazSoaAA@monjalon.net>
-In-Reply-To: <20260610013936.3634968-1-liujie5@linkdatatechnology.com>
-References: <20260609013951.3359199-21-liujie5@linkdatatechnology.com>
- <20260610013936.3634968-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D1DEA40669;
+	Wed, 10 Jun 2026 16:12:14 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 8F4B54026D;
+ Wed, 10 Jun 2026 16:12:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1781100734; x=1812636734;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=3KPiTo0vX6Jw9ybgaDfri1dZepsEHEb11MKyxfI9R88=;
+ b=Gl4mGnxAa48gvyhHR2aXnsH4d2C6+TzlN9RCYcsYzhsEyewIrTXtjfsY
+ rIF9rT+dVQnrV2S1d7iu71JmXeL32LZpk80WZIS31A+KF0HKlAP3cqxHA
+ GNnQlTYHG3DlANeM4bVPJbD9fBR4L95GGpTj1FBEEuRVbv6DgtSqKA7Yo
+ A8KSiKBsSbHYedSqahfjhePvLUXGvfG/zHus+3LiZgt+sWJT4yGzIEu//
+ 9kAupKjR4GQmy7Lzvtr8CfZDYi1YuiSBpPGGyaS0JBala68XpCLbCRjeo
+ NFD877QEAuXGjJRmmqJ8fN5Bjyd5IGe1SUY5OPIsp8H3WC2cZK6RkonG9 w==;
+X-CSE-ConnectionGUID: Zg+FdYxmTLiTne5wCp8B7A==
+X-CSE-MsgGUID: /5DQcwDITl6xyRIPWplzyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11812"; a="69433723"
+X-IronPort-AV: E=Sophos;i="6.24,197,1774335600"; d="scan'208";a="69433723"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Jun 2026 07:12:12 -0700
+X-CSE-ConnectionGUID: V5013TOKSgONvY5rNQFmjg==
+X-CSE-MsgGUID: R1Dom2FTT82Qs20yvGQ/Eg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,197,1774335600"; d="scan'208";a="246271470"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by orviesa007.jf.intel.com with ESMTP; 10 Jun 2026 07:12:10 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
+ ciara.loftus@intel.com, Anurag Mandal <anurag.mandal@intel.com>,
+ stable@dpdk.org
+Subject: [PATCH v3] net/iavf: fix to consolidate link change event handling
+Date: Wed, 10 Jun 2026 14:12:30 +0000
+Message-Id: <20260610141230.369232-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260609001022.357509-1-anurag.mandal@intel.com>
+References: <20260609001022.357509-1-anurag.mandal@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,45 +61,164 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-It should be v15.
+Handled link-change events through a common static function that
+reads the correct advanced & legacy link fields properly and
+updates no-poll/watchdog/LSC state consistently.
 
-10/06/2026 03:39, liujie5@linkdatatechnology.com:
-> From: Jie Liu <liujie5@linkdatatechnology.com>
-> 
-> This patch set implements core functionality for the SXE2 PMD,
-> including basic driver framework, data path setup, and advanced
-> offload features (VLAN, RSS,TM, PTP etc.).
-> 
-> Jie Liu (20):
->   net/sxe2: support AVX512 vectorized path for Rx and Tx
->   net/sxe2: add AVX2 vector data path for Rx and Tx
->   drivers: add supported packet types get callback
->   net/sxe2: support L2 filtering and MAC config
->   drivers: support RSS feature
->   net/sxe2: support TM hierarchy and shaping
->   net/sxe2: support IPsec inline protocol offload
->   net/sxe2: support statistics and multi-process
->   drivers: interrupt handling
->   net/sxe2: add NEON vec Rx/Tx burst functions
->   drivers: add support for VF representors
->   net/sxe2: add support for custom UDP tunnel ports
->   net/sxe2: support firmware version reading
->   net/sxe2: implement get monitor address
->   common/sxe2: add shared SFP module definitions
->   net/sxe2: support SFP module info and EEPROM access
->   net/sxe2: implement private dump info
->   net/sxe2: add mbuf validation in Tx debug mode
->   drivers: add testpmd commands for private features
+Fixes: 5e03e316c753 ("net/iavf: handle virtchnl event message without interrupt")
+Fixes: 48de41ca11f0 ("net/avf: enable link status update")
+Cc: stable@dpdk.org
 
-There are big chances that this commit is too much controversial.
-Please remove it from this series so we can discuss it separately.
-Also it should be split: 1 commit per feature.
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+---
+V3: Addressed Ciara Loftus's review comments
+ - removed two unnecessary NULL checks
+V2: Addressed Ciara Loftus's review comments
+ - removed unnecessary NULL checks which were overly defensive checks
 
->   net/sxe2: update sxe2 feature matrix docs
+ drivers/net/intel/iavf/iavf_vchnl.c | 115 +++++++++++++++-------------
+ 1 file changed, 63 insertions(+), 52 deletions(-)
 
-Please update the documentation atomically in previous commits.
-When you support a new feature, the commit should include the related doc changes.
-
-Thank you
-
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index 0643a835d5..36b7ee9526 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -216,6 +216,67 @@ iavf_convert_link_speed(enum virtchnl_link_speed virt_link_speed)
+ 	return speed;
+ }
+ 
++/*
++ * iavf_handle_link_change_event: common handler for VIRTCHNL link change events
++ *
++ * @dev: pointer to rte_eth_dev for this VF
++ * @vpe: pointer to the virtchnl_pf_event payload received from the PF
++ *
++ * Handle PF link-change event: decode adv/legacy link info, update VF
++ * link state, sync no-poll/watchdog behavior & notify app via LSC event.
++ */
++static void
++iavf_handle_link_change_event(struct rte_eth_dev *dev,
++			      struct virtchnl_pf_event *vpe)
++{
++	struct iavf_adapter *adapter =
++		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
++	struct iavf_info *vf = &adapter->vf;
++	bool adv_link_speed;
++
++	adv_link_speed = (vf->vf_res != NULL) &&
++		((vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) != 0);
++
++	if (adv_link_speed) {
++		vf->link_up = vpe->event_data.link_event_adv.link_status;
++		vf->link_speed = vpe->event_data.link_event_adv.link_speed;
++	} else {
++		enum virtchnl_link_speed speed;
++
++		vf->link_up = vpe->event_data.link_event.link_status;
++		speed = vpe->event_data.link_event.link_speed;
++		vf->link_speed = iavf_convert_link_speed(speed);
++	}
++
++	iavf_dev_link_update(dev, 0);
++
++	/*
++	 * Update watchdog/no_poll state BEFORE notifying the application via
++	 * the LSC event. Otherwise the application's link-up callback could
++	 * race with stale (link-down) no_poll/watchdog state and either
++	 * continue to drop traffic or trigger a spurious reset detection.
++	 *
++	 * Keeping the watchdog enabled whenever the link cannot be trusted
++	 * (link is down or a VF reset is in progress); the watchdog drives
++	 * auto-reset recovery, so it must remain armed in those cases.
++	 */
++	if (vf->link_up && !vf->vf_reset)
++		iavf_dev_watchdog_disable(adapter);
++	else
++		iavf_dev_watchdog_enable(adapter);
++
++	if (adapter->devargs.no_poll_on_link_down) {
++		iavf_set_no_poll(adapter, true);
++		PMD_DRV_LOG(DEBUG, "VF no poll turned %s",
++			    adapter->no_poll ? "on" : "off");
++	}
++
++	iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
++
++	PMD_DRV_LOG(INFO, "Link status update:%s",
++		vf->link_up ? "up" : "down");
++}
++
+ /* Read data in admin queue to get msg from pf driver */
+ static enum iavf_aq_result
+ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
+@@ -253,34 +314,7 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
+ 		result = IAVF_MSG_SYS;
+ 		switch (vpe->event) {
+ 		case VIRTCHNL_EVENT_LINK_CHANGE:
+-			vf->link_up =
+-				vpe->event_data.link_event.link_status;
+-			if (vf->vf_res != NULL &&
+-			    vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) {
+-				vf->link_speed =
+-				    vpe->event_data.link_event_adv.link_speed;
+-			} else {
+-				enum virtchnl_link_speed speed;
+-				speed = vpe->event_data.link_event.link_speed;
+-				vf->link_speed = iavf_convert_link_speed(speed);
+-			}
+-			iavf_dev_link_update(vf->eth_dev, 0);
+-			iavf_dev_event_post(vf->eth_dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
+-			if (vf->link_up && !vf->vf_reset) {
+-				iavf_dev_watchdog_disable(adapter);
+-			} else {
+-				if (!vf->link_up)
+-					iavf_dev_watchdog_enable(adapter);
+-			}
+-			if (adapter->devargs.no_poll_on_link_down) {
+-				iavf_set_no_poll(adapter, true);
+-				if (adapter->no_poll)
+-					PMD_DRV_LOG(DEBUG, "VF no poll turned on");
+-				else
+-					PMD_DRV_LOG(DEBUG, "VF no poll turned off");
+-			}
+-			PMD_DRV_LOG(INFO, "Link status update:%s",
+-					vf->link_up ? "up" : "down");
++			iavf_handle_link_change_event(vf->eth_dev, vpe);
+ 			break;
+ 		case VIRTCHNL_EVENT_RESET_IMPENDING:
+ 			vf->vf_reset = true;
+@@ -525,30 +559,7 @@ iavf_handle_pf_event_msg(struct rte_eth_dev *dev, uint8_t *msg,
+ 		break;
+ 	case VIRTCHNL_EVENT_LINK_CHANGE:
+ 		PMD_DRV_LOG(DEBUG, "VIRTCHNL_EVENT_LINK_CHANGE event");
+-		vf->link_up = pf_msg->event_data.link_event.link_status;
+-		if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_ADV_LINK_SPEED) {
+-			vf->link_speed =
+-				pf_msg->event_data.link_event_adv.link_speed;
+-		} else {
+-			enum virtchnl_link_speed speed;
+-			speed = pf_msg->event_data.link_event.link_speed;
+-			vf->link_speed = iavf_convert_link_speed(speed);
+-		}
+-		iavf_dev_link_update(dev, 0);
+-		if (vf->link_up && !vf->vf_reset) {
+-			iavf_dev_watchdog_disable(adapter);
+-		} else {
+-			if (!vf->link_up)
+-				iavf_dev_watchdog_enable(adapter);
+-		}
+-		if (adapter->devargs.no_poll_on_link_down) {
+-			iavf_set_no_poll(adapter, true);
+-			if (adapter->no_poll)
+-				PMD_DRV_LOG(DEBUG, "VF no poll turned on");
+-			else
+-				PMD_DRV_LOG(DEBUG, "VF no poll turned off");
+-		}
+-		iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
++		iavf_handle_link_change_event(dev, pf_msg);
+ 		break;
+ 	case VIRTCHNL_EVENT_PF_DRIVER_CLOSE:
+ 		PMD_DRV_LOG(DEBUG, "VIRTCHNL_EVENT_PF_DRIVER_CLOSE event");
+-- 
+2.34.1
 
