@@ -2,80 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A24ECD8CB2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 12:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22929CD8CB9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 12:28:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E61164026D;
-	Wed, 10 Jun 2026 14:17:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D49834026D;
+	Wed, 10 Jun 2026 14:28:20 +0200 (CEST)
 Received: from fhigh-a6-smtp.messagingengine.com
  (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
- by mails.dpdk.org (Postfix) with ESMTP id A884A40269
- for <dev@dpdk.org>; Wed, 10 Jun 2026 14:17:47 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B442140269;
+ Wed, 10 Jun 2026 14:28:18 +0200 (CEST)
 Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 0A3121400179;
- Wed, 10 Jun 2026 08:17:47 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Wed, 10 Jun 2026 08:17:47 -0400
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 5B0591400018;
+ Wed, 10 Jun 2026 08:28:18 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Wed, 10 Jun 2026 08:28:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1781093867;
- x=1781180267; bh=HkORoX60XsPI0zGyePXzL5Dz22en1pZFSYcqwzuOLPo=; b=
- aC6uCo7m3a8X+faad89SiGvQMgf8fdWLMDnmcCVkN8hxKfWrDWBMFdtuVagXtCqZ
- rVlk2T0sZqfaMkInHf+AKfmm2Hp/Fl+zQe16HbgbTQWc2ywOUfLTfPUGUnP6AyWA
- /qFEemDUIspX1ZpOYeY9svez8ByU01FO98yEkmGBTqjNLrXy0cQiw0rgJdVZgWj+
- Dnn9ECWR6lDFIgVkOKPXitivQ0FBTqpzemX+gJ1RhsJ6HRF/TAeJLMWywODYqoI+
- QbexfwMSIy2LXSCvfsN3/ur+J7v07iCH+y4Lub9lCtWlFed1Jrm4BThQwA5s4y/N
- 33pxYLDZtoGYd9ZvjLHOAg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1781094498;
+ x=1781180898; bh=hejqpBrhGjU7GWT4OPek993ZEGstsudkkaOEhtwGpxk=; b=
+ ZiQCgKdNw/mTAqhO4nuXZZDjccEexl0Geq856aiLaAD8115IYe2WTl/XUtbhUqta
+ kDycDa8jsA8ZRz95V72s7iTxGKeV5+rWkjVn/MK4r0bSEpqSuFeGqB54pFu0KQPO
+ 8ojpHEJnz3RAsgP3H7wqfLTRTBHDCDGViqS4ZEmLlaBTTMts37vPfEiwTRJMKg84
+ 2M/dMGPJCMGarpaDf3aFxEr64e3v7encwq9mam5f7WhB69WqPsaR0+F4CB7wVDio
+ x6KcfWh1akF5r3AtCq/wusrQZnKLPjtOWzd9iFUSLXdojknjYzjZJaU/dStdFM4q
+ f8NXp2fW/b2sVQq3BgqyRA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781093867; x=
- 1781180267; bh=HkORoX60XsPI0zGyePXzL5Dz22en1pZFSYcqwzuOLPo=; b=P
- w8hgeSde5nLFU5LpmeNU6kBWsPX41JGFMvbHrEx5cHSbowRr5PujDYmx/lX7rZG8
- jcj0dYMNBKrMbpQC31R7b4gOOJpL7iHRtWCBKVUGO2xyZtgCNEgxUiAiITRkgawV
- XPNvvFn9teWES3jxTNcXCDdgbVQZLmLkNXeK0mvarhMYTAYLGKFjIelkZaCwkiyp
- z15xxj6Yle+rTdHk+xk5qVoRueCekrY1r4DBLMy+J79A4qksl1bciJHv7p9NVdDq
- IuqOOO2XGCRCOGAOWrrTxWgA0Bu8ZNLNLnuEHBzaLr7Kgj6vZsIe+wmfN3rKSDQD
- xyREL2aCBU3KROFf8zJvQ==
-X-ME-Sender: <xms:6lUpasmw_oL0n8OaJ0ElmRTkz_rzQOi8iVwQy1TJUZVbbdhZSTuV_g>
- <xme:6lUpanQpKC-GDbwzYNyMEnC-IjwOfbxWEa1vo8u-dsu3bYxj1v0sUZS1bX3mmTl2r
- MZC_GamH2N77Kl1J6t1RxAfFasKlP4wEQvMaTWrEaxNZ0Nk6gLdNg>
-X-ME-Received: <xmr:6lUpauLxMoDFiLZmw8iDCJ_aByfOIPO2_j7FIvwF2-X7lvmtXkrVHXVMs_Mu_K4Jbo3yCL4y0YRkTNY_4lqMTAne-A>
-X-ME-Proxy-Cause: dmFkZTGCr0nCbitYzswCn1s0X0SyVKJpMV7v1cvYy0d78FOF9gHAt9Mn7SUxp6fHPHi0Lz
- a9Of1X2y0J8JuFnPw9F3HIVsM7QQ04oY7bk972a3RXX+90KYjympvBd7d/SVr1B8JSp3Rm
- spXJo+Gjv6mRDYeaXiTWhPNei/o6vTDxerq0VSlHtGd5eJpMLme/Ox70NBRhV5bxC85s5E
- YldSDA2TdV4/77Dzt+c+kj8g9JWg15IIUkxjFim+xYVyEq7vIQXJIFF4ztSb0sRkZffCvs
- sVvti+dpOUFaHz6FGVeRwRJizzaPcbzWgFrj3/wTr9ZZEhlM+UvvkxXSdNaYgJm+P1FxQg
- Jo14R96Oo64NFnokHEtUsVLADWpxsNjgps8fqLdlk92JdgUKyUx4VPWMdmODhVhu4gLPUU
- mQMx8Y9VpLQ+mUC7uI718qFyE/53Dx0et15YvtPz64LVkkqJtls3PHvMTmY1muSAnSpvFG
- tFkUkoWn0XPrxKBreIkiC7eseLyZR6vzPlnSfhgK2UaiGF7/wVIHPUMVbG89w6WZCM4e2g
- gScM4QuFloppBt5dbN0w3iJ647P2paj1JknuLFf9ZtPJ/zSN7cxEomgYkKLD52CL4fbVNt
- MAQhSuW16Zawqh0R72NXv6aaYUrcrRyjPCEiifVdA+9kZ7nnvhzSp2G83Z7w
-X-ME-Proxy: <xmx:6lUpatDvhm4OQNEU6SBQ_wft1MXTBeKiKpzQPpDrGp6XZh4oyMbzvA>
- <xmx:6lUpanCOu2E-XLSC71UkVeaj_TkuEuFFeAA9cFf-rwl_x83V-vB7yA>
- <xmx:6lUpavBvtRMTezwKf-pGKdsGmlC29wXhIs1yG3iDUafV9IXx-UPv9g>
- <xmx:6lUpaioGKO1ivt6s8DvzrQsyjNObEPkupvkrU58zoKWzT7v8HWtZBQ>
- <xmx:61Upamwz3hUNlDUKzywQr5OHc-td3oThnZ-K-7jh8OY3TlAKUrHt2Ua2>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781094498; x=
+ 1781180898; bh=hejqpBrhGjU7GWT4OPek993ZEGstsudkkaOEhtwGpxk=; b=B
+ 3FYidjLUJXaUmY4MhdY153rTjyP4B+0r3LrPbm/5NqaVPH4zm2uzPy406bvxWPux
+ FRVXseAH0OYJXUfN8VdfPP6fJfEDHJ9xU6ydZkUnyFu7tcMFEKUwVGq0olQ0qQhC
+ pF7K7XVGhFaTsCy78bqeM91DacfZdHe1aC5qbfzdD+gmwaAyLwlKMVW1JMKz6okh
+ cBYK7Di6yjEwJllDW0kwcIi8jBqLISsO+XWYa97McnfC2b4lB2K4lcFg6AbFjuBU
+ 5WlOAzpO16ZgtfBO/S+Uxm6edyZ2MYTUmQqzTV4qTcXA/2jLs/GVHhe0h5R/0OFG
+ zmyoKHyR8AzAATjrvpzmA==
+X-ME-Sender: <xms:YVgpaokruvIHnprwAUCxOjQCzm_NWwhFRjS_liAz1SiR131QA3Irog>
+ <xme:YVgpajTtQ9sjptsyhhWco0lnkj7EpkS3V47TwfB6DUvTOqPjXcFnqvY8RHJLExBWP
+ ZogL2dhcM1OG2Lv6mRLQfLMO28tc1RN_LLPJYokNOReYLLDXzFYCg>
+X-ME-Received: <xmr:YVgpaqLK464MBgK0CLSBTpbI-Je8AGO2gejREQCfJ6OTFKyYR0X7kqYa95q0LLT9rfiHfUSb-M492kEazZjE3eiA0g>
+X-ME-Proxy-Cause: dmFkZTE0EuHJh8RBoXRKn8PLONCdxAt1WwLj5X9hrkTN4vUDRRhG1VfIzpZrsXdto3QnD3
+ LbrZBoyzEMNJuerG7JmYm8zCrTDfrs5ACBdELRzdvV+1dnGIhE5+FnAxQmH/gEo5fv8MqV
+ GDcI+2S2036vtruwnThzRzZXMDpEwJBHp7qsla7ql1YgUf+BMu76sQ1fNRyiUxEy+V/7KW
+ qoSQinvs+S8v2s1Rp3FBS6VOwXE46ShQCb29ypHqOJFONDEOTD9+rpalE+HXRx1Ac/O/x3
+ 7LZf42IApWly5QhE6G7qKMz/O76JSj6DZIGYTLxirPYnoDRGuYMJDK6bDsP1VBW9Xp1dQK
+ QftjtTNE6ftiBP4D6twZITeDHaMFM1hPAUm8rpfX4C1DXy5POttRRINWec2FhZJTeFW9Rf
+ D8th67M2ZDO2NZfzNKBou7+olMWzAn4sCn9p5756I+FwYC7nkMjUl7hTVN8b7b2NPBymVj
+ 5V/AR/sxQXcTl1c5PlRLxOyUiaXyh698HF9KoSLpJwigi8DSk0P1QEekGMUdUafbD1mu/T
+ QioPcknLewmoy/ypzIs5sgRQ8cWtr1qYqIi7m/nn//3XLsvAbryzDmT/Ffg2pYtpn3XygI
+ MaLGAK8OYxz6tQOg+mhMJT32/x6D5KQ3Fm8FKQc5VZf64A+hKMJTEKxqXuEQ
+X-ME-Proxy: <xmx:YVgpapC5j4Pz-eEtgrzi-GALkwK2hSKLYAew3CVRZy42fFZFLv9A8A>
+ <xmx:YVgpajD1u7gcYJS6P6jb1465ZYbpzvLSq19EcYDEedtogpvItyDKtQ>
+ <xmx:YVgparCvMbRe3fhG4_7TdhJVxCdAOxOkql4RIpKcgQSnoQyKhhNDPg>
+ <xmx:YVgpauqqVSh3zvh2_NMy3XOgZmULv748UZ7ZdrsNSKz6oRZNWqqMTw>
+ <xmx:YlgpahuCTVSsffazlZr5ZrWcSDfd_OitT87b_qNjXlK26-ltc_0BjXdX>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 10 Jun 2026 08:17:45 -0400 (EDT)
+ 10 Jun 2026 08:28:16 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Cc: Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH v7] net/idpf: update for new mempool cache algorithm
-Date: Wed, 10 Jun 2026 14:17:43 +0200
-Message-ID: <b0-eVG8rSLyIiCcsmRSskA@monjalon.net>
-In-Reply-To: <ailLDte3Xo8jsUWf@bricha3-mobl1.ger.corp.intel.com>
-References: <20260408141315.904381-1-mb@smartsharesystems.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65902@smartserver.smartshare.dk>
- <ailLDte3Xo8jsUWf@bricha3-mobl1.ger.corp.intel.com>
+To: Daniil Iskhakov <dish@amicon.ru>
+Cc: stable@dpdk.org, dev@dpdk.org, rrv@amicon.ru, sdl.dpdk@linuxtesting.org
+Subject: Re: [PATCH v3] cmdline: prevent out-of-bounds read in completion
+ buffer
+Date: Wed, 10 Jun 2026 14:28:14 +0200
+Message-ID: <L9FKH0WQStK2yvI_geheig@monjalon.net>
+In-Reply-To: <20260430170111.1557768-1-dish@amicon.ru>
+References: <20260427153430.1805689-1-dish@amicon.ru>
+ <20260430170111.1557768-1-dish@amicon.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -90,26 +88,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-10/06/2026 13:31, Bruce Richardson:
-> On Wed, Jun 10, 2026 at 01:21:38PM +0200, Morten Br=C3=B8rup wrote:
-> > Intel idpf maintainers,
-> >=20
-> > PING for review.
-> >=20
-> > The mempool library has been improved [1], so the idpf PMD - which bypa=
-sses the mempool API - must be updated to match the library implementation.=
- This patch does that.
-> >=20
-> > [1]: https://git.dpdk.org/dpdk/commit/?id=3Df5e1310f16e0909e7e7f7180712=
-3644c63b23cba
-> >=20
-> >=20
-> > Venlig hilsen / Kind regards,
-> > -Morten Br=C3=B8rup
-> >=20
-> Yep. I was waiting to see what happened to the mempool patch before
-> considering this for next-net-intel.
+30/04/2026 19:01, Daniil Iskhakov:
+> tmp_buf is populated by the completion callback and is not guaranteed
+> to be NUL-terminated.
+> 
+> The code already accounts for this when computing tmp_size with
+> strnlen(tmp_buf, sizeof(tmp_buf)). However, another loop in the same
+> path still walks tmp_buf until a NUL byte is found, without checking
+> the buffer limit.
+> 
+> If the callback writes a full-sized non-NUL-terminated string, the loop
+> may read past the end of tmp_buf.
+> 
+> Fix this by computing a bounded length for each completion choice before
+> printing it.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: af75078fece3 ("first public release")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Daniil Iskhakov <dish@amicon.ru>
 
-I've merged it directly in main with dpaa mempool patches.
+Applied, thanks.
+
 
 
