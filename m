@@ -2,86 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C554CD8C90
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 18:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA07CD8CB9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Jun 2026 18:18:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BCF1F42797;
-	Wed, 10 Jun 2026 20:17:24 +0200 (CEST)
-Received: from mail-yw1-f227.google.com (mail-yw1-f227.google.com
- [209.85.128.227])
- by mails.dpdk.org (Postfix) with ESMTP id 816FF42792
- for <dev@dpdk.org>; Wed, 10 Jun 2026 20:17:23 +0200 (CEST)
-Received: by mail-yw1-f227.google.com with SMTP id
- 00721157ae682-7de68222e96so66062767b3.2
- for <dev@dpdk.org>; Wed, 10 Jun 2026 11:17:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 079F042792;
+	Wed, 10 Jun 2026 20:18:06 +0200 (CEST)
+Received: from mail-oi1-f225.google.com (mail-oi1-f225.google.com
+ [209.85.167.225])
+ by mails.dpdk.org (Postfix) with ESMTP id E7DF6402B0
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 20:18:03 +0200 (CEST)
+Received: by mail-oi1-f225.google.com with SMTP id
+ 5614622812f47-48662d16d08so2825376b6e.2
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 11:18:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781115443; x=1781720243;
+ d=1e100.net; s=20251104; t=1781115483; x=1781720283;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=GYRQ0BhbttscIU5Qlq0AQwHO54M+BvtKdCfDbtS8QQU=;
- b=CbdT6Y7JdN5fE56QQ4H8b1T8bXIFoTPPG0DRzkyDNrpo4SwQBcwH3XUsJwuhDqxIy+
- gT2pcX1/Htr6XWqlp9q5yzI0TEYVPmzt+8HbIbYaC/ksbdnuH1j6wsl3k/po1GsPqtl3
- 2b9fTMMBqshbRk5IpIlzL/m9ucHPIjKrHT4ASqBT1TuRo3q3Iqhie2s9nec0Z0Hk2QKL
- Id42QKXQ6LNXpVKOM0JH+xsvWEs8XWVc8hJQML9amw3RjgssuaPUhaPLN91qVdHZUQ08
- gOeC3dywx+KHIpE5cCS5hpJCcx9tHJIAeVRAT8HS54LbBiNufhGq5VlgJ3u2yVEQy25z
- oE2w==
-X-Gm-Message-State: AOJu0YzJH2MB8B02qbQysjxGd3ejqnxiYPuNBw0Kf0U3qD74zAnY4c5+
- 7VR6Izwy4WrBk2blnVtbZuLU5kfQ6orROnml8gpnjWEEfQNivVU2NQkkL8LIqAaQ3X6v+Wtc5dF
- UcdJuNN3FbKdxJ+S9QbMX6znksOK2bTAIYJYx/g58DSirC5Ts1yEL371PCftSgKaYyMt69HYXMO
- K84s4dhloTc0FdvrRcqmbkUgDOCb1OoJlOQVmVCqKVvUkriWE8nGB62qlDUEa3IXqwBsZrAU/6l
- dbhrQ==
-X-Gm-Gg: Acq92OFPPOeUSq0upn1eUjaUSzbDeoNcrKm6Zpstez+s8Ez7Hvvgi22v2llgrCFBID1
- uZKIeeahXOl7q7cUjC9FgZeMjL2kyT0B3Urr4j2keaKEOuTvhCULe5GFHlSDZ8fTfwgipF0OLXs
- aGY/tu2p2zeTh4VMOikA68BexwDr/dXXBc1clyiyLtwqagDnv9pwKqmdjRyAHcO2rEutGKsOtuz
- Xq1EwDnmZU2vc35pp8cXYf4jONDXCy6X14FRw+xIQH3fC0DWh+TiW7kYu6+btVmT+Cu7ScOB9tp
- pTevQj/vn3LTx1Yzbux9Pmt0P2bbCXyGdZCfMwf0SnggvBCIJW03cEnOMw/25+aYJpMiIG0qV32
- wlwaS7ZbHk7EO4YgZ9E0buNOPTxbFkbOZadvaIbIYbIEWXBsTh1m+C7UK9vebJktvzUVWD9m9Xj
- ShoXaYA3EcYEgBhpzUxwPihuTfrJ0tIkd6wBp/WXe3Qud9XJ16thfe8gHPQEIT9ilvnsC4srKKi
- rvMYw==
-X-Received: by 2002:a05:690c:45c3:b0:7dc:fc4c:58bd with SMTP id
- 00721157ae682-7f61a17c22cmr3298987b3.35.1781115442493; 
- Wed, 10 Jun 2026 11:17:22 -0700 (PDT)
+ bh=q3x56Pu4kgoR3OxBSYDeTv+9perciJmD5rzzKsTko6I=;
+ b=SWy5TlNapqOm6+bCUFbQ/5q4tOE1y71pnq2/F++yFizrjYIicoUql3QglmxyQuqlyV
+ pHM82uij/Y8stkTkqwACf65Oe16d5jVSQe5xPuSXhXPyL0jBn3wljujbqN6ONAM3J8lg
+ hUDv3Vwil57OhPdG9VJBK60vNn7ly7LDpfKxidwcdidrAKZGxpk1VjUq6h5iZVI1GWKx
+ kZqrWJbzClfkSdPoMFyG/in4B4wQL5IYpYXsHLT+TOxOL9QrrCgkf9tcgH3htKMxo7g6
+ kf50ExAPs/QduCnXyHuRnVVQtjQxYcCuBCMI+hMBxprPJmN9dISLIaxXo4RU6/JHJEQe
+ jMKw==
+X-Gm-Message-State: AOJu0YxYG3p34Rs93clyjWNx4deqYasxRRHUoP+ZMdBhaK9f+x0FHyfR
+ +ZIA7zM+g+bLBkweFSpago9qIInmBT4Q2bE7hKpTz5nu4KSP4I/2RGyP+WC50aZYpgQ/NT1/zIz
+ tD+gUBAqYqU9yvCREaaOHmLdsSFHF4SZgxnWnLdrLdzyoQ5a49TJJ4PSVj6FIaY/islVo5zA2uK
+ 397rP0wuAyH0SWRxRj6+RzFqgg7jO9EaapPNN4ej8sRxhfTEi9GLrFq42+RUjNlIs8IxxONj6rA
+ 04utw==
+X-Gm-Gg: Acq92OHnP3JUPgBncUgQH9hCyZgKTzQ0bV83myBew7ooQKuqO1UkPTfsc4OqzaEe23g
+ 7W3PnzNUErFOI/y2QMPAB9qXCLcig5hiW4ZCirlqLGgdeOi8ppYVuaNs1dwdqkyyVeQ124ipoUY
+ Te/sg21jA3JlFUSIb/LJJGsIXri8S3IvZ5ch+g7406ORt+EEWloEDMwkSPFY6zCc/xMGDpUHuwQ
+ 0XWgLo2nCpUdyDp7EFjxBCKzI5/XVt77pO+oJDZ5sIMf2oPXC0P+bJ9zMyz8yH+b8Iz0rtNqmPs
+ Y55bu8NHBfB/BAhUgoZ/4cdkwdV9Tjiv9BcmexUDKb/G+jW5ucVZ6OUbp2rZk/q21c+C8uATdHa
+ 9rswXxlQEKZYlQIgCzh7nudGTL8wwCRg0UggKs7hW9oKS9oKNqEbKwguZEPUOEWnBFsdHfUSCXg
+ +e2xkRlATT3moLWXOmBGrM8u932s+K2B24bOyD/ajBp5LPre2QX/971wzl+A+aSBgpbp+pvlao9
+ tIbTQ==
+X-Received: by 2002:a05:6808:2389:b0:486:3634:e80b with SMTP id
+ 5614622812f47-4868dc46e34mr15924929b6e.10.1781115482881; 
+ Wed, 10 Jun 2026 11:18:02 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
+ (address-144-49-247-121.dlp.protect.broadcom.com. [144.49.247.121])
  by smtp-relay.gmail.com with ESMTPS id
- 00721157ae682-7ea23a99589sm17083507b3.24.2026.06.10.11.17.22
+ 586e51a60fabf-440d86c7c19sm2104268fac.15.2026.06.10.11.18.02
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 10 Jun 2026 11:17:22 -0700 (PDT)
+ Wed, 10 Jun 2026 11:18:02 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-wr1-f71.google.com with SMTP id
- ffacd0b85a97d-45ef616db45so6058991f8f.2
- for <dev@dpdk.org>; Wed, 10 Jun 2026 11:17:21 -0700 (PDT)
+Received: by mail-wm1-f70.google.com with SMTP id
+ 5b1f17b1804b1-490b37e1f48so56924715e9.0
+ for <dev@dpdk.org>; Wed, 10 Jun 2026 11:18:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1781115441; x=1781720241; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1781115481; x=1781720281; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=GYRQ0BhbttscIU5Qlq0AQwHO54M+BvtKdCfDbtS8QQU=;
- b=E7A93Dy9X3h2wjCAcuTPb1s14VuAcd4ZCNkO1s7Q1c9mOVnWTtQzGFMvSL/5k/MVQR
- rujayBonWVhsOldjV7ulHYiNzuHQRErnqAE4CB3fVJaPA/xpLtiCyMJ2VlWAhMUe1bCr
- fDHgZpUqj6pTKFbVRQwPXuLtmMwTQmNEAClgw=
-X-Received: by 2002:a5d:42d1:0:b0:43c:fa96:d939 with SMTP id
- ffacd0b85a97d-46030609782mr29555011f8f.22.1781115441017; 
- Wed, 10 Jun 2026 11:17:21 -0700 (PDT)
-X-Received: by 2002:a5d:42d1:0:b0:43c:fa96:d939 with SMTP id
- ffacd0b85a97d-46030609782mr29554988f8f.22.1781115440511; Wed, 10 Jun 2026
- 11:17:20 -0700 (PDT)
+ bh=q3x56Pu4kgoR3OxBSYDeTv+9perciJmD5rzzKsTko6I=;
+ b=SuM4tacroD8ZE48zdn90yEl0kURCn5/6gmCna0Kmw79TCoYFtJeIYwigpov1aajZ0w
+ Ee2uNqGxw0QGTXHo1T3+KR1V40mSh6Nv5gU6NaosJUS4MbNNvQTnVKcCFaDrbDpx+mU+
+ E7m/LuaBZYSWLWbjfqhdIq3VuS0MF5cRhh13M=
+X-Received: by 2002:a05:600c:c16f:b0:490:b8e6:be40 with SMTP id
+ 5b1f17b1804b1-490c25fc0d5mr418118205e9.21.1781115481137; 
+ Wed, 10 Jun 2026 11:18:01 -0700 (PDT)
+X-Received: by 2002:a05:600c:c16f:b0:490:b8e6:be40 with SMTP id
+ 5b1f17b1804b1-490c25fc0d5mr418117745e9.21.1781115480700; Wed, 10 Jun 2026
+ 11:18:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260603175137.1990204-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260604225622.2285191-1-Mohammad-Shuab.Siddique@broadcom.com>
-In-Reply-To: <20260604225622.2285191-1-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260603211341.2112344-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260605005016.2290160-1-Mohammad-Shuab.Siddique@broadcom.com>
+In-Reply-To: <20260605005016.2290160-1-Mohammad-Shuab.Siddique@broadcom.com>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Wed, 10 Jun 2026 14:17:04 -0400
-X-Gm-Features: AVVi8Ccx2hsMs2Tuo9mzT-MRFd9Jn4_IR0qPJsdrnCnkUmK6eAv8bO1vstFMlSw
-Message-ID: <CA+BST0=Yp__SEo5ZENEg3Vb5BYDw+oaAQspArJuCObSsQg_YMA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] net/bnxt: miscellaneous bug fixes
+Date: Wed, 10 Jun 2026 14:17:45 -0400
+X-Gm-Features: AVVi8CcxiJFFK8eYyaBiVABmEKj8feeAQL8vyDWlwOKgx-GRKJZGzIpHh-0cf2Y
+Message-ID: <CA+BST0nLhVCYvcvcePF13gqFuR09zNVRb7OX+ZzLfQM8xNwaqQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] net/bnxt: interrupt handling, external mbuf and
+ stability fixes
 To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 Cc: dev@dpdk.org, stable@dpdk.org
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="0000000000002ecf4a0653ea410a"
+ micalg=sha-256; boundary="0000000000009463320653ea431e"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,45 +96,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000002ecf4a0653ea410a
-Content-Type: multipart/alternative; boundary="00000000000022df830653ea417b"
+--0000000000009463320653ea431e
+Content-Type: multipart/alternative; boundary="0000000000008814670653ea439e"
 
---00000000000022df830653ea417b
+--0000000000008814670653ea439e
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 4, 2026 at 6:54=E2=80=AFPM Mohammad Shuab Siddique <
+On Thu, Jun 4, 2026 at 8:48=E2=80=AFPM Mohammad Shuab Siddique <
 mohammad-shuab.siddique@broadcom.com> wrote:
 
 > From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 >
-> This series collects four independent bug fixes for the bnxt PMD:
+> This series addresses interrupt handling, external memory, and crash bugs=
+:
 >
->  - Eliminate unnecessary long TX BDs when only checksum offload is needed
->  - Pass QP1 resource count correctly when configuring backing store
->  - Fix implicit integer sign-extension in the doorbell calculation
->  - Prevent VFs from attempting global RSS configuration
+>  - Fix incorrect completion validation for NQEs and RX completions causin=
+g
+>    excess interrupts
+>  - Use buf_addr instead of IOVA for mbufs from external memory pools
+>  - Skip IOVA range check for external mbuf head nodes to avoid false
+> failures
+>  - Add null checks to prevent segfaults when accessing uninitialized
+> structures
+>  - Fix segfault on exit when bonded ports are present, by checking whethe=
+r
+>    ethdev has already freed the RX/TX queue arrays
 >
 > All patches carry Fixes: tags and Cc: stable@dpdk.org.
 >
+> Note: this series depends on series "net/bnxt: ULP stats timer and PTP".
+>
 > Changes in v2:
->  - Patch 4/4: add missing Fixes: tag for RSS hash mode fix
+>  - Patch 1/5: replace printf() with PMD_DRV_LOG_LINE() (DPDK logging
+> standard)
+>  - Patch 2/5: replace custom bnxt_mbuf_buf_addr() with
+> rte_pktmbuf_mtod_offset()
 >
 > Ajit Khaparde (2):
->   net/bnxt: modify check for short Tx BDs
->   net/bnxt: fix QP resource count in backing store config
+>   net/bnxt: use buf address for external mbuf
+>   net/bnxt: prevent a potential segfault
+>
+> Keegan Freyhof (2):
+>   net/bnxt: fix NQ/CQ processing for interrupt handling
+>   net/bnxt: fix for segmentation fault that would occur on exit
 >
 > Mohammad Shuab Siddique (1):
->   net/bnxt: fix RSS hash mode configuration for VFs
+>   net/bnxt: fix IOVA range check for external mbuf head node
 >
-> Zoe Cheimets (1):
->   net/bnxt: remove implicit integer sign-extension
->
->  drivers/net/bnxt/bnxt_ethdev.c |  4 ++--
->  drivers/net/bnxt/bnxt_hwrm.c   | 18 ++++++++++++++++--
->  drivers/net/bnxt/bnxt_ring.c   |  7 ++++---
->  drivers/net/bnxt/bnxt_txr.c    |  3 +--
->  4 files changed, 23 insertions(+), 9 deletions(-)
+>  drivers/net/bnxt/bnxt.h        |  2 +
+>  drivers/net/bnxt/bnxt_cpr.c    | 100 ++++++++++++++++++++++++++++++++++
+>  drivers/net/bnxt/bnxt_cpr.h    |  34 +++++++++++-
+>  drivers/net/bnxt/bnxt_ethdev.c |   3 ++
+>  drivers/net/bnxt/bnxt_hwrm.c   |   3 ++
+>  drivers/net/bnxt/bnxt_ring.c   |  11 +++-
+>  drivers/net/bnxt/bnxt_rxq.c    |  47 +++++++++++++++-
+>  drivers/net/bnxt/bnxt_rxr.c    |   2 +-
+>  drivers/net/bnxt/bnxt_stats.c  |  17 +++---
+>  drivers/net/bnxt/bnxt_txr.c    |  19 +++++--
+>  10 files changed, 223 insertions(+), 15 deletions(-)
 >
 > patches merged into dpdk-next-net-brcm
 Thanks
@@ -143,60 +164,82 @@ Thanks
 >
 >
 
---00000000000022df830653ea417b
+--0000000000008814670653ea439e
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
 mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Jun 4, =
-2026 at 6:54=E2=80=AFPM Mohammad Shuab Siddique &lt;<a href=3D"mailto:moham=
+2026 at 8:48=E2=80=AFPM Mohammad Shuab Siddique &lt;<a href=3D"mailto:moham=
 mad-shuab.siddique@broadcom.com">mohammad-shuab.siddique@broadcom.com</a>&g=
 t; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0p=
 x 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">From: =
 Mohammad Shuab Siddique &lt;<a href=3D"mailto:mohammad-shuab.siddique@broad=
 com.com" target=3D"_blank">mohammad-shuab.siddique@broadcom.com</a>&gt;<br>
 <br>
-This series collects four independent bug fixes for the bnxt PMD:<br>
+This series addresses interrupt handling, external memory, and crash bugs:<=
+br>
 <br>
-=C2=A0- Eliminate unnecessary long TX BDs when only checksum offload is nee=
-ded<br>
-=C2=A0- Pass QP1 resource count correctly when configuring backing store<br=
->
-=C2=A0- Fix implicit integer sign-extension in the doorbell calculation<br>
-=C2=A0- Prevent VFs from attempting global RSS configuration<br>
+=C2=A0- Fix incorrect completion validation for NQEs and RX completions cau=
+sing<br>
+=C2=A0 =C2=A0excess interrupts<br>
+=C2=A0- Use buf_addr instead of IOVA for mbufs from external memory pools<b=
+r>
+=C2=A0- Skip IOVA range check for external mbuf head nodes to avoid false f=
+ailures<br>
+=C2=A0- Add null checks to prevent segfaults when accessing uninitialized s=
+tructures<br>
+=C2=A0- Fix segfault on exit when bonded ports are present, by checking whe=
+ther<br>
+=C2=A0 =C2=A0ethdev has already freed the RX/TX queue arrays<br>
 <br>
 All patches carry Fixes: tags and Cc: <a href=3D"mailto:stable@dpdk.org" ta=
 rget=3D"_blank">stable@dpdk.org</a>.<br>
 <br>
+Note: this series depends on series &quot;net/bnxt: ULP stats timer and PTP=
+&quot;.<br>
+<br>
 Changes in v2:<br>
-=C2=A0- Patch 4/4: add missing Fixes: tag for RSS hash mode fix<br>
+=C2=A0- Patch 1/5: replace printf() with PMD_DRV_LOG_LINE() (DPDK logging s=
+tandard)<br>
+=C2=A0- Patch 2/5: replace custom bnxt_mbuf_buf_addr() with rte_pktmbuf_mto=
+d_offset()<br>
 <br>
 Ajit Khaparde (2):<br>
-=C2=A0 net/bnxt: modify check for short Tx BDs<br>
-=C2=A0 net/bnxt: fix QP resource count in backing store config<br>
+=C2=A0 net/bnxt: use buf address for external mbuf<br>
+=C2=A0 net/bnxt: prevent a potential segfault<br>
+<br>
+Keegan Freyhof (2):<br>
+=C2=A0 net/bnxt: fix NQ/CQ processing for interrupt handling<br>
+=C2=A0 net/bnxt: fix for segmentation fault that would occur on exit<br>
 <br>
 Mohammad Shuab Siddique (1):<br>
-=C2=A0 net/bnxt: fix RSS hash mode configuration for VFs<br>
+=C2=A0 net/bnxt: fix IOVA range check for external mbuf head node<br>
 <br>
-Zoe Cheimets (1):<br>
-=C2=A0 net/bnxt: remove implicit integer sign-extension<br>
-<br>
-=C2=A0drivers/net/bnxt/bnxt_ethdev.c |=C2=A0 4 ++--<br>
-=C2=A0drivers/net/bnxt/bnxt_hwrm.c=C2=A0 =C2=A0| 18 ++++++++++++++++--<br>
-=C2=A0drivers/net/bnxt/bnxt_ring.c=C2=A0 =C2=A0|=C2=A0 7 ++++---<br>
-=C2=A0drivers/net/bnxt/bnxt_txr.c=C2=A0 =C2=A0 |=C2=A0 3 +--<br>
-=C2=A04 files changed, 23 insertions(+), 9 deletions(-)<br>
+=C2=A0drivers/net/bnxt/bnxt.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 2 +<br>
+=C2=A0drivers/net/bnxt/bnxt_cpr.c=C2=A0 =C2=A0 | 100 ++++++++++++++++++++++=
+++++++++++++<br>
+=C2=A0drivers/net/bnxt/bnxt_cpr.h=C2=A0 =C2=A0 |=C2=A0 34 +++++++++++-<br>
+=C2=A0drivers/net/bnxt/bnxt_ethdev.c |=C2=A0 =C2=A03 ++<br>
+=C2=A0drivers/net/bnxt/bnxt_hwrm.c=C2=A0 =C2=A0|=C2=A0 =C2=A03 ++<br>
+=C2=A0drivers/net/bnxt/bnxt_ring.c=C2=A0 =C2=A0|=C2=A0 11 +++-<br>
+=C2=A0drivers/net/bnxt/bnxt_rxq.c=C2=A0 =C2=A0 |=C2=A0 47 +++++++++++++++-<=
+br>
+=C2=A0drivers/net/bnxt/bnxt_rxr.c=C2=A0 =C2=A0 |=C2=A0 =C2=A02 +-<br>
+=C2=A0drivers/net/bnxt/bnxt_stats.c=C2=A0 |=C2=A0 17 +++---<br>
+=C2=A0drivers/net/bnxt/bnxt_txr.c=C2=A0 =C2=A0 |=C2=A0 19 +++++--<br>
+=C2=A010 files changed, 223 insertions(+), 15 deletions(-)<br>
 <br></blockquote><div>patches merged into dpdk-next-net-brcm</div><div>Than=
-ks</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex=
-;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+ks=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px=
+ 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
 -- <br>
 2.47.3<br>
 <br>
 </blockquote></div></div>
 
---00000000000022df830653ea417b--
+--0000000000008814670653ea439e--
 
---0000000000002ecf4a0653ea410a
+--0000000000009463320653ea431e
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -290,13 +333,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCDuiJXDpqxkrioAELUqgz7Ho58/3Sj0pyAdZCwr40Mb9DAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA2MTAxODE3MjFaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCA2K8oazIumtjbeXkDTnAXwZXgViMKkZtZkd2JOLHOLoDAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA2MTAxODE4MDFaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAliGl5tDzO
-+Zk9BUGXRsWAhQU90NVZ5HeSO4IJPzgaUdxXR7vKXQkFKDJi4iAnlIkjqj5J84uo/y19CmK00M7z
-vvk5pIoZMPpG5XXrXxeT2Cnkk0xS7P767dQ39U5TJA/iB4cJ4VPpPC30njJ4vDx+yM8eY+4ys0Tr
-xRgqG8k2x1NAealc+y2hxG8qTh2AO8s3b8syYVPvlk/N/Vs4FJbmAfeCvMuUQlRLWghMns89Ycah
-jVtU4/lTvDZxUbEBJOfTULND8Wi8moPfPJWQCd+74l54SVD/I3iY96Rz15lo7A7VKrZmxziMoeby
-KeQZlGIoUBYU7flKUOTmT5XXXD+X
---0000000000002ecf4a0653ea410a--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQChTbL7CuxE
+LxuEKtrro05hMR1jQLiIP0smj2DyC5tpUfI8EGn/8rIv4gazSyFgZzkwkVZ08JilSChqL7Yv2Pm2
+mI2T0itGetKcyREtKXpDABaMyl7lFQNZH/ycCHEuw7xK/K0QtTekr8x524UiwIpbREB36ddlde49
+4k1bWXC2Wj3jsEkHRP0jTZHBr1u8UF0zegIaKbeoKr0K9XON2sZXSkPPvUzBBsJGYqVepE3+s9B3
+MkYg8a2iADR7Tzehj9p2TPAYOP5jvtrSKRNDaDyl3lsjXf4AQbWFjsegvhp7sW5RKZ52yx18fs5N
+lJocWCwUV4ZhvbRT/RYegXz7cTAK
+--0000000000009463320653ea431e--
