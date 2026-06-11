@@ -2,59 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E397CD98D4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 09:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47BBBCD98D5
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 10:07:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76ACC42FB5;
-	Thu, 11 Jun 2026 11:47:22 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id D8AB142F97
- for <dev@dpdk.org>; Thu, 11 Jun 2026 11:47:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1781171240;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=XPqoxHDzK1jZVRnPvl5QwE/sJAvPXdrbnhBMnIvW6Zo=;
- b=hok6TcCYBZ70g3SGo+C6icY/D3nenvag105k2XJtONy5bLwhv88MuwWQVdY49qy77q0Kwd
- /ZzLqW/C1kdHYb8FUFWqbwGbyXsDdc1LC6ogpSbs0kZD3+y+smf5SCUIUmizaDGV9Nhl8O
- ZyMgZzWGrmTMOPCQsLeHfbDzIVC1Ado=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-314-DL7z3NOmNjGKBxj9jCm_Aw-1; Thu,
- 11 Jun 2026 05:47:16 -0400
-X-MC-Unique: DL7z3NOmNjGKBxj9jCm_Aw-1
-X-Mimecast-MFC-AGG-ID: DL7z3NOmNjGKBxj9jCm_Aw_1781171235
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 72B421801323; Thu, 11 Jun 2026 09:47:15 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.33.28])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 0DEB81774; Thu, 11 Jun 2026 09:47:12 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: thomas@monjalon.net, stephen@networkplumber.org,
- bruce.richardson@intel.com, fengchengwen@huawei.com,
- Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
-Subject: [PATCH 13/13] bus/vmbus: support unplug
-Date: Thu, 11 Jun 2026 11:45:50 +0200
-Message-ID: <20260611094551.1514962-14-david.marchand@redhat.com>
-In-Reply-To: <20260611094551.1514962-1-david.marchand@redhat.com>
-References: <20260611094551.1514962-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A5F3642FB9;
+	Thu, 11 Jun 2026 12:07:46 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 5595940041;
+ Thu, 11 Jun 2026 12:07:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1781172464; x=1812708464;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=pkgxDVPvDWiAHGdWrr3hDaJ/Z/rVgexsL/nmPqTMGsE=;
+ b=EU5qcOKE53BHIcMt3Qv/VVnCNYdaTyhBn5OWLjpd4t45SgD7+M6DoVMR
+ SL2xecWpJVTc2hGiUVPI7KOb68USf7f8BeHd8OPeawl3/0bAgxICzLlhP
+ Ox50NCv3yM7zwXsiDzxRmKWJpb6+x8QwdffvTyo1fF2pAHRShWyoj7Q8V
+ IimhcRUJWrbtZJ9tnwf7fOBYitaF5OMZuYMyAjg5WfXxp83jVJYehaTkW
+ JINNlwHz7mngZWoaKj0sZeTqdi/xXOM1/7gQMMqSHceWB38XOJg6wW0/Z
+ ZNhkD36nGZBT/HGe/PQXacw4cUZztcLMtuByE/UF/8cw+RDq9vsrr/2A2 w==;
+X-CSE-ConnectionGUID: q4XnMXzzQSqCREGEC239rg==
+X-CSE-MsgGUID: b7h1TILhRKyfvNt386t7yA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="85879662"
+X-IronPort-AV: E=Sophos;i="6.24,198,1774335600"; d="scan'208";a="85879662"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Jun 2026 03:07:43 -0700
+X-CSE-ConnectionGUID: TDjaETxIRqKvUNhiQ4XtTw==
+X-CSE-MsgGUID: 8Lrg13QfSsapANKM7gdGFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,198,1774335600"; d="scan'208";a="248312031"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Jun 2026 03:07:43 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Thu, 11 Jun 2026 03:07:43 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Thu, 11 Jun 2026 03:07:43 -0700
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.2) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Thu, 11 Jun 2026 03:07:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SariUPh5DyggyY18w77yX9V7OIPOB8oLtJomCWdRNzJ0kiPD2JuXO4qEn1WAhJgN+xuMgDG9/DgIjPB5+DyilPKJ9WeMYNR1LIgN3BuyUTnuTw/7Wf2pElbyQYHwi73fTBszQTjgZUHktFcO/WaSBlioWrbSiO2Q2UqTJx4pOWqs/tExBtGHwyR3A4Ql7qpLBIFsGH7qysgGKskrp5eK7uLv3BN09NYEnaP7J0FeKgv6hVw+vI9hops5z06flQhkrdnK27RpKmmyjLwbmkaNG0mr/Tr4Ing9iLmecrIPot9bxefTGulXnvpP4Ddl+cyPfUqzIYcgUvhuY5gbTLqQUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rRyjQiz0l/4dKcObuw4ix5ZJzT1pr60mhpmWMKmDYoQ=;
+ b=FJqkJ69fHA/vjH24lX14y9F7SVZYjerqXlgqox5BvRoiRA1A1m8gvm/JcE4XppwDzltbT8KP9YKn1fp6b0PyvCMia2UGcP1a6LtBx9JCMbWGkfKR8Y6uUzTqwGwxyne+J6CV7LgwYwki780eadRls2Nbh4WcOBq20rDHxxBLcRoxs+13XYgna+SfhXlKUc2Uu4HSLJ3oTjMX3kZaewb0XeG0y8AN/oIxEcJ35hC3SpMcOp0KX2O2WeRjriTXpmrtA4qjMRZIYgIn0/5PnH2lmc/M9GyLWueTSaa3hxOe67IN+qaKqtPoAgQRKK7bm/muoK6hRwSlX9pCQAH0eD3NnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by CY5PR11MB6389.namprd11.prod.outlook.com (2603:10b6:930:3a::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.13; Thu, 11 Jun
+ 2026 10:07:38 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0092.016; Thu, 11 Jun 2026
+ 10:07:38 +0000
+Date: Thu, 11 Jun 2026 11:07:33 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Loftus, Ciara" <ciara.loftus@intel.com>
+CC: "Mandal, Anurag" <anurag.mandal@intel.com>, "dev@dpdk.org" <dev@dpdk.org>, 
+ "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>, "stable@dpdk.org"
+ <stable@dpdk.org>
+Subject: Re: [PATCH v3] net/iavf: fix to consolidate link change event handling
+Message-ID: <aiqI5XxPOvu1m0Bj@bricha3-mobl1.ger.corp.intel.com>
+References: <20260609001022.357509-1-anurag.mandal@intel.com>
+ <20260610141230.369232-1-anurag.mandal@intel.com>
+ <IA4PR11MB927893A5541358313C538CA28E1A2@IA4PR11MB9278.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <IA4PR11MB927893A5541358313C538CA28E1A2@IA4PR11MB9278.namprd11.prod.outlook.com>
+X-ClientProxiedBy: DUZPR01CA0065.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:3c2::8) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: s9n0fMkgyhdWwxjSLfp2-9MkB3tHGKVJlhQ_uOaDrB8_1781171235
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CY5PR11MB6389:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa882e14-2c2e-401f-f20d-08dec7a14433
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|1800799024|366016|376014|18002099003|22082099003|56012099006|11063799006|4143699003;
+X-Microsoft-Antispam-Message-Info: Fj5RHms87msAgd5FX0g900nHgHdeZpDpDQo7cB0mPQQALnS6M/bcZlV6aDJZV63YMqdNxY2fqD1kxFVrwY38+8PQL91h54B/er2cut5ZZQsxmTUzJyxer3ztWCVp7duij+A8+LnEFYwY8yClmlkJSzzJKi/vkEwU9yQ/tOR/f1vM3BJxwnmVTGbgNQUjbL3EdAA7BjpfWcjKcVMJcPMBwWYN9/ywmM5hu64XXshu3zjih51X9J6QXlnEAjynx6IwWF9lRg9I2uUYdw8DTcO4B+NxEj3HM9FCZGPDJ+Lprebbox10Joh8DmGqR8Ri9ak3rKFzpCLECpH4ABwm2Fj9WQdag+5OhQZ61tpt6LjzeXCfA55OIRThbUHv8qL2/fteoF+cFd5vh+snOBMT2jrTraXCSZjAYQce04YaKPmMKHziIE8cfOSc1DuQNF4WvzBWrGWgQTk4yVLT9TQcPZFum6BP8omr1KDq0vh7vfV/p0t4poiy78EjEaesen8WhulJ+nBbmQiTZPc8jKnE4dEuEa+F3nonQYVVja0cHtK6IE8BGI5QSRfx/nbEwWwA73AVvYNSZh56sU95K8pr/9htaPIgHn4X9hCK5hCmxbn6l4es394jRR32rwTjFh7KFwAWcD0tb4k0Poq0iLACydYRtFwfatWrck07Yb8QO3bkMr7RMn9LysXLDE0ELV7ZQlA8
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(18002099003)(22082099003)(56012099006)(11063799006)(4143699003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bGN5jCA80g/UgDfBztF3vnQmgh+vd1ehGmcl3Eo++1EeST1NDN7W8ZsbF7pO?=
+ =?us-ascii?Q?1bXIvlSiQqlreZU/OVG8rOjs40UaxYqKg+XZ8K4kSzcrR5Q+HiZrzIhZxx4S?=
+ =?us-ascii?Q?IbuXcdyGFJys3nxF+ViVYKoMP2c+14wQY2x4SAkSGOcyzNhifx1+bfMe/Aah?=
+ =?us-ascii?Q?wxOmgYP/IsNztSuxyhBLKjlaCrEZYJ3Pw+sVH/HUXdqJ8h0NvOv+xIUuNlq2?=
+ =?us-ascii?Q?sTLCME/ydm/yWfW1/8zT9Ft5WFummxpFsb1ukOE2Hw/FpQnMI4Zi21iXRkNy?=
+ =?us-ascii?Q?rWdr20T3s3JK3HBvAlREd5Fi1oByNXdCoABP514cZU/eDgVs8br3EiD2EBX6?=
+ =?us-ascii?Q?w6+RBCdN3YOxzInVyqrgfji7HWv0MbyOmbFEUpzKQWlf4FN5SEMev/7AKI8O?=
+ =?us-ascii?Q?LDjTy3yD5rZIJ0Wzb98X9a/mBy/1OLjcGiJ4Ns2xin6BpUSl/AeXhFJtVuZv?=
+ =?us-ascii?Q?nKc5+zeCUgaQAhCAxZJCZiY+i+FW30w4b6247q//VCaQ7Tf2xcCbztl4iJ7K?=
+ =?us-ascii?Q?tYjmzbfjFJdGf5xEXeUuR/8MkBg6HLKODi//xFTdKNGTkPZoMSBCeLq4Td2D?=
+ =?us-ascii?Q?YDNDz2WkQTFM5r+6mLlMkkOn09Eh19E/aUncej4T8djxLy2eHJGkO8KpLYLd?=
+ =?us-ascii?Q?A0MpCc9wxwH3PuaBL1LbzvrAu88t7BayzMHjoWMNbVXNtSyhp8apt6dA4nQK?=
+ =?us-ascii?Q?+C8CfO/uSpYuWjBAwE2QPW8orSkIyqRjAUDG+/q8N8rQBDGnNbu5fP7B6PC9?=
+ =?us-ascii?Q?AUs0zhEpAw71JRpKNbX6m3pc7DDQzpTgR/1WgoRMIDH+ksTWZtxm0+fvtbGg?=
+ =?us-ascii?Q?sqSCIpmmiGOP4pd4mzJzdby/b2JCTvLZt+5/oqiv49g+lx7jif92ozbps9E2?=
+ =?us-ascii?Q?fi4MoESTV7SbY9F9MeDL8Zot7SbsrJdshK9K1nCe+khIFnHtWL5rObKy4kgV?=
+ =?us-ascii?Q?jdflB4XhnFxbyU04YwJhANoHSznQl7tIs54OKxBxsAfuydQteVbfjKZk/lhb?=
+ =?us-ascii?Q?juzGnLYX/CPC6oWWJg9L2N574Q6B/jm1J8hDhUIZ6dQltJy4ClQg3RvaU2HX?=
+ =?us-ascii?Q?sJYfPgyyKA2Say+Cs34f2OGQc/nA69T0vSaUO4dJ4I7Vn9U/t0Mc5efZIqnt?=
+ =?us-ascii?Q?pvSUbBjF2Dh1Frk0PhqiYEG5iA73CsAzEDgXBojYsDvPBiGw8Cryfl3rTBky?=
+ =?us-ascii?Q?8s7FUrTFWjSTdum4rrrkWLc+lK1lE5EnosGFVmOQ42F68f3z9IX6RZZU04MJ?=
+ =?us-ascii?Q?9IP9mkcNz8chapHU+FfEDKKF+u4lEGSPC1YEGN9gocuSMafQEob7UVDkSrPs?=
+ =?us-ascii?Q?PUdMnNfx/9Gr9qglW2p7Zp2W9oLbPRJpKxyz3rc0UuFkbifZVSmTBVpO87xE?=
+ =?us-ascii?Q?8UWd7UedpGEz2ELkkHjRqGrrIYSKY2KB2jimwWx4JuqPBjaVTMRfTT/Qo3nE?=
+ =?us-ascii?Q?EHiZKGLQN0qJy/Xr+TD0uZ9ZG3bAlTR6KG+d0r5b68IChFLBkMqRPXDgi12t?=
+ =?us-ascii?Q?VZpKUc3Ah4UBTlXZSErPJ2i+HUjaGJyV72DVjG8dLvGbftnpnOTsRAqY6Pmx?=
+ =?us-ascii?Q?iLsnDd4xYhGoAGxVCePfbgjzZM2wDywNXENTeqdVIV19Elk4F/fhczdWZFpn?=
+ =?us-ascii?Q?YdmLrJ5NDK2i2zAGGv2tB/qNJcdDPWbvpx98ZmQWHglQW2nHaG6XM7Xn94XM?=
+ =?us-ascii?Q?dbkVjlzpcQL5+y9NPZF2zag93zgnnB4/GvH40JgAc6+I0vGckek6eflKgUpz?=
+ =?us-ascii?Q?4Blp4+om+/u/euIWcLbYgsluBETo2Nc=3D?=
+X-Exchange-RoutingPolicyChecked: s15Om0wOPQCioX5w8UNdxEi7uY4Nlhprf5j0rJtY43QTf2SOrivDFqf75CjrMlVdGXPExmSAms1oUPupxmUqJBekoGIW9eCGuaOIvv5KXbXViwI+nFLF/ITWFkYeXoOTVRfCwu5h4fDZI9TTI4fUKE1Mc55ARic11iLDGxVDgxKyX52OIPEubtIs6Lfys/91UnjPDM+rJUfHPrJbA8LZ2ZgP88S8YjkRuT+p6i16AAeL5Iip6KIPZGd/oXVxhmNRXCLMFyxrEKPMR9VVuw0YX5G/b26yaXa+eHrTQTL7Sz+ZEVLNObea3jZMXmkkHMU9FMMZE7J1QnyUyhwCl8sLQw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa882e14-2c2e-401f-f20d-08dec7a14433
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2026 10:07:38.2564 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4DL1/aoeZdn2zeQBzHrRid5G7ycoBI3eiG/hj9I0rU1eJG8AoggxOqF5OvinmdqdcxIhFI+CEYWMsVEazGzpiypK76WRNG8hhLUxDLaFK/Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6389
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,97 +154,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add .unplug callback to handle driver removal, device unmapping, and
-interrupt cleanup. This enables use of the generic bus cleanup helper.
+On Wed, Jun 10, 2026 at 03:34:27PM +0100, Loftus, Ciara wrote:
+> > Subject: [PATCH v3] net/iavf: fix to consolidate link change event handling
+> > 
+> > Handled link-change events through a common static function that
+> > reads the correct advanced & legacy link fields properly and
+> > updates no-poll/watchdog/LSC state consistently.
+> > 
+> > Fixes: 5e03e316c753 ("net/iavf: handle virtchnl event message without
+> > interrupt")
+> > Fixes: 48de41ca11f0 ("net/avf: enable link status update")
+> > Cc: stable@dpdk.org
+> > 
+> > Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+> 
+> Thanks Anurag.
+> 
+> Acked-by: Ciara Loftus <ciara.loftus@intel.com>
+> 
+Just to confirm something here: does this change fix an actual underlying
+issue, or is it just a code cleanup? If the latter we probably don't want
+to backport it, but if it is a bug-fix, I'd like to include some details in
+the commit log of what the observed issue was.
 
-The cleanup function was already performing these operations, so it
-seems safe to expose them through the unplug operation.
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- doc/guides/rel_notes/release_26_07.rst |  4 +++
- drivers/bus/vmbus/vmbus_common.c       | 37 ++++++++++----------------
- 2 files changed, 18 insertions(+), 23 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 966f6501b4..38e4dd87b3 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -118,6 +118,10 @@ New Features
- 
-   Implemented device unplug operation to allow runtime removal of DPAA devices.
- 
-+* **bus/vmbus: Added unplug operation support.**
-+
-+  Implemented device unplug operation to allow runtime removal of VMBUS devices.
-+
- * **Added selective Rx in ethdev API.**
- 
-   Some parts of packets may be discarded in Rx
-diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index 4c4170a4b5..419eb9b895 100644
---- a/drivers/bus/vmbus/vmbus_common.c
-+++ b/drivers/bus/vmbus/vmbus_common.c
-@@ -146,34 +146,23 @@ rte_vmbus_probe(void)
- }
- 
- static int
--rte_vmbus_cleanup(struct rte_bus *bus)
-+vmbus_unplug_device(struct rte_device *rte_dev)
- {
--	struct rte_vmbus_device *dev;
--	int error = 0;
--
--	RTE_BUS_FOREACH_DEV(dev, bus) {
--		const struct rte_vmbus_driver *drv;
--		int ret;
--
--		if (!rte_dev_is_probed(&dev->device))
--			continue;
--		drv = RTE_BUS_DRIVER(dev->device.driver, *drv);
--		if (drv->remove == NULL)
--			continue;
-+	const struct rte_vmbus_driver *drv = RTE_BUS_DRIVER(rte_dev->driver, *drv);
-+	struct rte_vmbus_device *dev = RTE_BUS_DEVICE(rte_dev, *dev);
-+	int ret = 0;
- 
-+	if (drv->remove != NULL) {
- 		ret = drv->remove(dev);
- 		if (ret < 0)
--			error = -1;
--
--		rte_vmbus_unmap_device(dev);
--		rte_intr_instance_free(dev->intr_handle);
--
--		dev->device.driver = NULL;
--		rte_bus_remove_device(bus, &dev->device);
--		free(dev);
-+			return ret;
- 	}
- 
--	return error;
-+	rte_vmbus_unmap_device(dev);
-+	rte_intr_instance_free(dev->intr_handle);
-+	dev->intr_handle = NULL;
-+
-+	return 0;
- }
- 
- static int
-@@ -224,10 +213,12 @@ rte_vmbus_unregister(struct rte_vmbus_driver *driver)
- struct rte_bus rte_vmbus_bus = {
- 	.scan = rte_vmbus_scan,
- 	.probe = rte_bus_generic_probe,
--	.cleanup = rte_vmbus_cleanup,
-+	.free_device = free,
-+	.cleanup = rte_bus_generic_cleanup,
- 	.find_device = rte_bus_generic_find_device,
- 	.match = vmbus_bus_match,
- 	.probe_device = vmbus_probe_device,
-+	.unplug_device = vmbus_unplug_device,
- 	.parse = vmbus_parse,
- 	.dev_compare = vmbus_dev_compare,
- };
--- 
-2.53.0
-
+Thanks,
+/Bruce
