@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AE0CD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 21:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B88CD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 21:22:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17A07433E0;
-	Thu, 11 Jun 2026 23:21:35 +0200 (CEST)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 6F5F2433BF
- for <dev@dpdk.org>; Thu, 11 Jun 2026 23:21:31 +0200 (CEST)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-3042a388168so798358eec.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 14:21:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 202E8433E4;
+	Thu, 11 Jun 2026 23:21:36 +0200 (CEST)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
+ [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 9FF2D433D1
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 23:21:32 +0200 (CEST)
+Received: by mail-dy1-f174.google.com with SMTP id
+ 5a478bee46e88-3074adb8fcaso906287eec.0
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 14:21:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781212890;
- x=1781817690; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781212892;
+ x=1781817692; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CSvf55c5XNE0xNj+ODPZ4oNPDwO/h7WzUcZmaDMbqmM=;
- b=dtV7XEKmIDIJAUzo0GuDXm61+BuLAJnct82il8L2iFXmn93re/I1SauvxqqrTONda1
- E6KFhhbWhFrDYooxEcthptRwhWajwshbyjoslDehDs8vDbjsc5tvsl50sNUH4YAHVW3q
- qBb+UbcQtvEzjWxxPs6LiyYlDwAHAUhXiUBUBBoWkCCk4VnH1z5gzdnTXTwLDKtPpeF2
- Kvilx0YYWXf/pZ5VjB3H66BdInKbw/Cxl3zVCEXJ/4Nr8Qp4BdA9y5B5TVWmu5wfh/1t
- qPBP70p8V2ZWKJ4rD0g4psKs9gPfkElvhP8y3Zx9ASQd63cE6l1SFBREfMWnjGfnbk7/
- LT0w==
+ bh=p3S8UvmG+6zm7S91CddaBYzOBQ0R8FO3nYtf0nCA2Lk=;
+ b=D9ZO7O0fYMKtK/9KRzeZu5u8/T+7fyLnZvdcfOAWo9ryFbgrkWPIceU5k92qVlGPSS
+ +Ap3Uvh0y4DVCayJlLr4af5K0dD+Uj8Il6lcUjHueK5XNlvzGCYlnvMCI1AZg6BS3BG8
+ 5+saXl8bQ+lP4SrKhYRoB19exCoT3PJI1K6ZEZv7w05pTHjLP+3C/8layQK2ZUzFY15P
+ 9cg5If77OBw5OhoteuNSYEHGVAqR5P5VV4xfBNjPeJdQ1Q7vj/Y5Jd8HcNTpYBZnNdpK
+ /DxRgmeUp6q/7rwnURKXtWu7W3/TYOyKg8uOBQNJV8rIICZapaHjZdo1UUY5GP4qOuC2
+ UvEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781212890; x=1781817690;
+ d=1e100.net; s=20251104; t=1781212892; x=1781817692;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=CSvf55c5XNE0xNj+ODPZ4oNPDwO/h7WzUcZmaDMbqmM=;
- b=Z5cESHKEHWKZeTv/HifVCzPfGhve8iQtFkmIw42DKssYkdlaCNUSuvX9f4AeEmqS2v
- rnnWPJnw4dzAfP+uBZ3ikJzOeIApiy3dF4oAn2nJYHyE18hZAkx3KrsWcq1/vJFz6uao
- TiG9PAmLveUu80wOegxXsKbPkno9Ftlode6TALGxxG3+w+P6e/R8TXirR45aCp0HZQyE
- CebJL7qN1X9vBkHsOO5y/5Aj9nch7UWnGyVq/AEnWbx4XkGPgmKF6lWvcVz4s2oFZz0Q
- 52p0/YppfvURMlv010NLWcuYW+m/nAT4Ib4ApGTbBnETbGU8gUGU344wMlwMVri9QyUW
- EjjQ==
-X-Gm-Message-State: AOJu0YwuX7I21RiOQgZhWvImTRlZXIpCjauEbGCXU6rh2sICrLm2MhxG
- 3lO0bH5iYNuqqmdHvlYG/SUMClenPwRgUJZNu9X/K33f70BZUcorXJz//9aHJp1YcSlennzEXp4
- T/0RQ
-X-Gm-Gg: Acq92OFya32cmF3HX0llW6gocxbnLXWX7RYYvWLohFV28NEoZlHughnyy8yL+e0VGiR
- 2woVQeW07oKOg4sfh9BECzA5ZWy4CLc/6aXBgf1BuXC4WIf4UFubqm3dsqBO/rNOj4HMHLrlz2R
- cpxV6CX4UupjpCTDNJGdEwWViiF/2+1j/zUmCrZA1FM9UgwbJ4jm5ckdqbfJ15Jqb3XObzApUyA
- sZ7MoxHPhbzcuCPQRAUqYu5yWVeCKuh7n6RlxOUcyAeKxzFRVcQo2m2D1+VvNShlR1ll2HI6RLS
- xVGi49IxamtVdlkuNHCSuduKUgVadDHD3c9AnebOnmPJzbB7eJPnNPd+HWcZRcFTT1BSanDVDad
- xKq6qmlIQ4YHqffNmng6ccRJo/A29UJs8UF9NqdMmcqt/Fuw7mOBiZRv78rt66rcZY6xpWZxE2V
- ECUalr1poInCxjegccbRRP3ziPonmxF359KZ8cOcPNSMrodv6PJDIn6ZlLS2YQ/Q==
-X-Received: by 2002:a05:7301:1e90:b0:307:286d:c14e with SMTP id
- 5a478bee46e88-3081f070209mr204701eec.17.1781212890268; 
- Thu, 11 Jun 2026 14:21:30 -0700 (PDT)
+ bh=p3S8UvmG+6zm7S91CddaBYzOBQ0R8FO3nYtf0nCA2Lk=;
+ b=PEW/kqIacztqHzQBjbQQ0pDKt5AlT6xpes8j/jLsUPSoNNklCw76SqR+9BN5g3u18R
+ Yo9jsO6Vfdpcu0yLviukvVyMUIAPe6U8liJ08hymDlxm1Q0Z/+ljcK1vj0SMF1BW+93o
+ M/o+drr9u+MRS+GXmDi4SyYFiFcBfZycXvp1rcq+ZAC4oCGfnb9HlqEF6O+jxFAz6ZW8
+ 6vt6QEA/0vTVx4m3Wbp6g+jKcDl20O6GeBAv+8XSxLccp+Be6hafkAwXIwzjJIzt7uFO
+ nNE5GQ+/6CHShc/JARXnzCv0Uh6zyD4ykJa9s3uD5pEm60cgiO7ZyW3ri9q7kIRvNMZD
+ K93w==
+X-Gm-Message-State: AOJu0YyYftCiABNh2MysMr5e2ngG9Yae0RESQzAhbtMrqsbNu0gP9bFs
+ RUm4aF2aU/ZB7Bku9Ec1fLAFcYb15UvhYNtXRgcqjjDdZWEOd/zfGmegXuL/G+chPe6VKI/StNx
+ X23z1
+X-Gm-Gg: Acq92OHoVuFBOTH28I0UW/Y5GEuvkMHALpkmCcAJpfoDxUXTblpkiqzc2WC6jKJZ/Pt
+ jajaGDJj3jdVxyr5xWXNqQxIn8QEF5GvI7j2MT7m7/BjX4J5CgYJyrx8WAQ7Lm8cJkqGUg/I6e/
+ rDq9ubNNs7032hGol3afcpZYEtgQBAp/O/hfmht0Fi3umya17hwfrOE0iZz4TQC0ht53NUb1q2x
+ uvjXgAyjQYAFR7YXetRnyGCGGtjrFYrXdIgSZGuMenKMo3fWWWoKXhrxcdddoFQ1BBaNLtGSrDw
+ YbAOT3EeKB8XvLL5v30xCeTStxJo7zebAxyGxjAziQk6bo2Qo0usA5efDsAUu02Lp/NU12mhVLt
+ KJ9/QWXTC8tA8LZf3qQ+kk1Nl42KjqJFvG9A59ghNdvlMJRlfTsgkjBAXnl/Ff8+m5BcgnI08xl
+ kXr9FvobQCpu4rlltKU3xqpzN4xH/rzQrML12tqx1qErnpn17ck2/IWMzXka4zKA==
+X-Received: by 2002:a05:7300:6417:b0:2e2:3381:2fba with SMTP id
+ 5a478bee46e88-3081ff64166mr48692eec.3.1781212891344; 
+ Thu, 11 Jun 2026 14:21:31 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3081eb95450sm546238eec.28.2026.06.11.14.21.29
+ 5a478bee46e88-3081eb95450sm546238eec.28.2026.06.11.14.21.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 14:21:29 -0700 (PDT)
+ Thu, 11 Jun 2026 14:21:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH 08/15] doc: enhance hello_world, intro, IP frag and pipeline
-Date: Thu, 11 Jun 2026 14:18:47 -0700
-Message-ID: <20260611212119.1026721-9-stephen@networkplumber.org>
+ Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>
+Subject: [PATCH 09/15] doc: improve IP reassembly, IPsec, multicast,
+ and keep-alive
+Date: Thu, 11 Jun 2026 14:18:48 -0700
+Message-ID: <20260611212119.1026721-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260611212119.1026721-1-stephen@networkplumber.org>
 References: <20250216230903.124496-1-nandinipersad361@gmail.com>
@@ -84,532 +84,534 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improved documentation across multiple sample applications:
+Updated multiple networking sample application guides:
 
-hello_world.rst:
-- Minor formatting and clarity improvements
+ip_reassembly.rst:
+- Enhanced fragment reassembly process descriptions
+- Improved command-line parameter documentation
+- Fixed formatting and terminology consistency
 
-intro.rst:
-- Updated sample application descriptions for accuracy
-- Fixed formatting and improved readability
-- Clarified application purposes and use cases
+ipsec_secgw.rst:
+- Restructured configuration file format sections
+- Improved security association descriptions
+- Enhanced clarity of IPsec gateway operations
 
-ip_frag.rst:
-- Enhanced command-line option descriptions
-- Improved flow explanations
-- Fixed terminology and formatting consistency
+ipv4_multicast.rst:
+- Simplified multicast forwarding explanations
+- Fixed formatting in code examples
+- Improved readability of routing descriptions
 
-ip_pipeline.rst:
-- Restructured pipeline configuration sections
-- Improved CLI command descriptions
-- Enhanced clarity of pipeline concepts
+keep_alive.rst:
+- Enhanced keep-alive mechanism descriptions
+- Fixed minor formatting issues
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/sample_app_ug/hello_world.rst |   6 +-
- doc/guides/sample_app_ug/intro.rst       |  34 +++----
- doc/guides/sample_app_ug/ip_frag.rst     |  46 +++++-----
- doc/guides/sample_app_ug/ip_pipeline.rst | 109 ++++++++++++-----------
- 4 files changed, 103 insertions(+), 92 deletions(-)
+ doc/guides/sample_app_ug/ip_reassembly.rst  |  57 ++++++-----
+ doc/guides/sample_app_ug/ipsec_secgw.rst    | 108 ++++++++++----------
+ doc/guides/sample_app_ug/ipv4_multicast.rst |  26 ++---
+ doc/guides/sample_app_ug/keep_alive.rst     |  12 +--
+ 4 files changed, 105 insertions(+), 98 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/hello_world.rst b/doc/guides/sample_app_ug/hello_world.rst
-index b7167aa345..603a1d8767 100644
---- a/doc/guides/sample_app_ug/hello_world.rst
-+++ b/doc/guides/sample_app_ug/hello_world.rst
-@@ -9,7 +9,7 @@ Overview
+diff --git a/doc/guides/sample_app_ug/ip_reassembly.rst b/doc/guides/sample_app_ug/ip_reassembly.rst
+index 04b581a489..02ed9f0472 100644
+--- a/doc/guides/sample_app_ug/ip_reassembly.rst
++++ b/doc/guides/sample_app_ug/ip_reassembly.rst
+@@ -4,15 +4,15 @@
+ IP Reassembly Sample Application
+ ================================
+ 
+-The L3 Forwarding application is a simple example of packet processing using the DPDK.
+-The application performs L3 forwarding with reassembly for fragmented IPv4 and IPv6 packets.
++The IP Reassembly application is a simple example of packet processing using the DPDK.
++The application performs L3 forwarding with reassembly of fragmented IPv4 and IPv6 packets.
+ 
+ Overview
  --------
  
- The Hello World sample application is an example of the simplest DPDK application that can be written.
--The application simply prints an "helloworld" message on every enabled lcore.
-+The application simply prints a "helloworld" message on every enabled lcore.
+ The application demonstrates the use of the DPDK libraries to implement packet forwarding
+ with reassembly for IPv4 and IPv6 fragmented packets.
+-The initialization and run- time paths are very similar to those of the :doc:`l2_forward_real_virtual`.
++The initialization and run-time paths are very similar to those of the :doc:`l2_forward_real_virtual`.
+ The main difference from the L2 Forwarding sample application is that
+ it reassembles fragmented IPv4 and IPv6 packets before forwarding.
+ The maximum allowed size of reassembled packet is 9.5 KB.
+@@ -21,11 +21,11 @@ There are two key differences from the L2 Forwarding sample application:
+ 
+ *   The first difference is that the forwarding decision is taken based on information read from the input packet's IP header.
+ 
+-*   The second difference is that the application differentiates between IP and non-IP traffic by means of offload flags.
++*   The second difference is that the applications differentiate between IP and non-IP traffic by means of offload flags.
+ 
+ The Longest Prefix Match (LPM for IPv4, LPM6 for IPv6) table is used to store/lookup an outgoing port number,
+-associated with that IPv4 address. Any unmatched packets are forwarded to the originating port.
+-
++associated with that IPv4 address.
++Any unmatched packets are forwarded to the originating port.
  
  Compiling the Application
  -------------------------
-@@ -21,7 +21,7 @@ The application is located in the ``helloworld`` sub-directory.
- Running the Application
- -----------------------
+@@ -46,15 +46,20 @@ The application has a number of command line options:
  
--To run the example in a linux environment:
-+To run the example in a Linux environment:
+ where:
  
- .. code-block:: console
+-*   -p PORTMASK: Hexadecimal bitmask of ports to configure
++``-p PORTMASK``
++    Hexadecimal bitmask of ports to configure
  
-@@ -50,7 +50,7 @@ This call finishes the initialization process that was started before main() is
- The argc and argv arguments are provided to the rte_eal_init() function.
- The value returned is the number of parsed arguments.
+-*   -q NQ: Number of RX queues per lcore
++``-q NQ``
++    Number of RX queues per lcore
  
--Starting Application Unit Lcores
-+Starting Application on Lcores
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-*   --maxflows=FLOWS: determines maximum number of active fragmented flows (1-65535). Default value: 4096.
++``--maxflows=FLOWS``
++    Determines the maximum number of active fragmented flows (1-65535).
++    Default value: 4096.
  
- Once the EAL is initialized, the application is ready to launch a function on an lcore.
-diff --git a/doc/guides/sample_app_ug/intro.rst b/doc/guides/sample_app_ug/intro.rst
-index a19c0b8c13..dfd0254b0c 100644
---- a/doc/guides/sample_app_ug/intro.rst
-+++ b/doc/guides/sample_app_ug/intro.rst
-@@ -4,9 +4,9 @@
- Introduction to the DPDK Sample Applications
- ============================================
+-*   --flowttl=TTL[(s|ms)]: determines maximum Time To Live for fragmented packet.
+-    If all fragments of the packet wouldn't appear within given time-out,
+-    then they are considered as invalid and will be dropped.
++``--flowttl=TTL[(s|ms)]``
++    Determines the maximum Time To Live for fragmented packets.
++    If all fragments of the packet do not appear within the given timeout,
++    then they are considered invalid and will be dropped.
+     Valid range is 1ms - 3600s. Default value: 1s.
  
--The DPDK Sample Applications are small standalone applications that
--demonstrate various features of DPDK. They can be considered as a cookbook of
--DPDK features. Users interested in getting started with DPDK can take the
-+The DPDK sample applications are small standalone applications that
-+demonstrate various features of DPDK. They serve as practical examples of
-+DPDK functionality. Users interested in getting started with DPDK can take the
- applications, try out the features, and then extend them to fit their needs.
- 
- 
-@@ -30,7 +30,7 @@ examples are highlighted below.
- 
- 
- * :doc:`Hello World<hello_world>`: As with most introductions to a
--  programming framework, a good place to start is with the Hello World
-+  programming framework, a good place to start is the Hello World
-   application. The Hello World example sets up the DPDK Environment Abstraction
-   Layer (EAL), and prints a simple "Hello World" message to each of the DPDK
-   enabled cores. This application doesn't do any packet forwarding, but it is a
-@@ -38,32 +38,32 @@ examples are highlighted below.
- 
- * :doc:`Basic Forwarding/Skeleton Application<skeleton>`: The Basic
-   Forwarding/Skeleton contains the minimum amount of code required to enable
--  basic packet forwarding with DPDK. This allows you to test if your network
-+  basic packet forwarding with DPDK. This allows you to test whether your network
-   interfaces are working with DPDK.
- 
- * :doc:`Network Layer 2 forwarding<l2_forward_real_virtual>`: The Network Layer 2
-   forwarding, or ``l2fwd`` application does forwarding based on Ethernet MAC
-   addresses like a simple switch.
- 
--* :doc:`Network Layer 2 forwarding<l2_forward_event>`: The Network Layer 2
--  forwarding, or ``l2fwd-event`` application does forwarding based on Ethernet MAC
--  addresses like a simple switch. It demonstrates usage of poll and event mode
--  IO mechanism under a single application.
-+* :doc:`Network Layer 2 forwarding with event mode<l2_forward_event>`: The
-+  ``l2fwd-event`` application does forwarding based on Ethernet MAC addresses
-+  like a simple switch. It demonstrates usage of poll and event mode IO
-+  mechanisms under a single application.
- 
--* :doc:`Network Layer 3 forwarding<l3_forward>`: The Network Layer3
-+* :doc:`Network Layer 3 forwarding<l3_forward>`: The Network Layer 3
-   forwarding, or ``l3fwd`` application does forwarding based on Internet
-   Protocol, IPv4 or IPv6 like a simple router.
- 
--* :doc:`Network Layer 3 forwarding Graph<l3_forward_graph>`: The Network Layer3
-+* :doc:`Network Layer 3 forwarding Graph<l3_forward_graph>`: The Network Layer 3
-   forwarding Graph, or ``l3fwd_graph`` application does forwarding based on IPv4
--  like a simple router with DPDK Graph framework.
-+  like a simple router with the DPDK Graph framework.
- 
- * :doc:`Hardware packet copying<dma>`: The Hardware packet copying,
--  or ``dmafwd`` application demonstrates how to use DMAdev library for
-+  or ``dmafwd`` application demonstrates how to use the DMAdev library for
-   copying packets between two threads.
- 
- * :doc:`Packet Distributor<dist_app>`: The Packet Distributor
--  demonstrates how to distribute packets arriving on an Rx port to different
-+  demonstrates how to distribute packets arriving on a receive port to different
-   cores for processing and transmission.
- 
- * :doc:`Multi-Process Application<multi_process>`: The
-@@ -78,9 +78,9 @@ examples are highlighted below.
-   and TX packet processing functions.
- 
- * :doc:`IPsec Security Gateway<ipsec_secgw>`: The IPsec Security
--  Gateway application is a minimal example of something closer to a real world
--  example. This is also a good example of an application using the DPDK
--  Cryptodev framework.
-+  Gateway application demonstrates a minimal implementation that is closer to
-+  a real-world use case. This is also a good example of an application using
-+  the DPDK Cryptodev framework.
- 
- * :doc:`Precision Time Protocol (PTP) client<ptpclient>`: The PTP
-   client is another minimal implementation of a real world application.
-diff --git a/doc/guides/sample_app_ug/ip_frag.rst b/doc/guides/sample_app_ug/ip_frag.rst
-index d2c66683e3..0d0a01ac0a 100644
---- a/doc/guides/sample_app_ug/ip_frag.rst
-+++ b/doc/guides/sample_app_ug/ip_frag.rst
-@@ -15,23 +15,28 @@ The application demonstrates the use of zero-copy buffers for packet fragmentati
- The initialization and run-time paths are very similar to those of the :doc:`l2_forward_real_virtual`.
- This guide highlights the differences between the two applications.
- 
--There are three key differences from the L2 Forwarding sample application:
-+Key differences from the L2 Forwarding sample application:
- 
--*   The first difference is that the IP Fragmentation sample application makes use of indirect buffers.
-+indirect buffers
-+    The IP Fragmentation application uses indirect buffers for zero-copy packet fragmentation.
- 
--*   The second difference is that the forwarding decision is taken
--    based on information read from the input packet's IP header.
-+IP-based forwarding
-+    Forwarding decisions are based on the destination IP address in the packet header,
-+    using Longest Prefix Match (LPM) lookup.
- 
--*   The third difference is that the application differentiates between
--    IP and non-IP traffic by means of offload flags.
-+traffic classification
-+    The application distinguishes IP traffic from non-IP traffic using packet offload flags.
- 
--The Longest Prefix Match (LPM for IPv4, LPM6 for IPv6) table
-+The application supports both IPv4 and IPv6 packet fragmentation.
-+
-+The Longest Prefix Match table (LPM for IPv4, LPM6 for IPv6)
- is used to store/lookup an outgoing port number associated with that IP address.
- Any unmatched packets are forwarded to the originating port.
- 
- By default, input frame sizes up to 9.5 KB are supported.
- Before forwarding, the input IP packet is fragmented
--to fit into the "standard" Ethernet* v2 MTU (1500 bytes).
-+to fit the standard Ethernet v2 MTU of 1500 bytes (the L3 payload size,
-+excluding the Ethernet frame overhead).
- 
- Compiling the Application
- -------------------------
-@@ -43,10 +48,10 @@ The application is located in the ``ip_fragmentation`` sub-directory.
- Running the Application
- -----------------------
- 
--The LPM object is created and loaded with the pre-configured entries read from
--global l3fwd_ipv4_route_array and l3fwd_ipv6_route_array tables.
--For each input packet, the packet forwarding decision
--(that is, the identification of the output interface for the packet) is taken as a result of LPM lookup.
-+The application creates an LPM object and populates it with pre-configured routing entries
-+from the global ``l3fwd_ipv4_route_array`` and ``l3fwd_ipv6_route_array`` tables.
-+For each input packet, the forwarding decision (output interface selection)
-+is determined by an LPM lookup on the destination IP address.
- If the IP packet size is greater than the default output MTU,
- then the input packet is fragmented and several fragments are sent via the output interface.
- 
-@@ -56,13 +61,13 @@ Application usage:
- 
-     ./<build_dir>/examples/dpdk-ip_fragmentation [EAL options] -- -p PORTMASK [-q NQ]
- 
--where:
-+where,
- 
--*   -p PORTMASK is a hexadecimal bitmask of ports to configure
-+*   ``-p PORTMASK``: hexadecimal bitmask of ports to configure
- 
- *   -q NQ: Maximum number of queues per lcore (default is 1)
- 
--To run the example in linux environment with 2 lcores (2,4) over 2 ports(0,2) with 1 RX queue per lcore:
-+To run the example in a Linux environment with 2 lcores (2,4) over 2 ports (0,2) with 1 RX queue per lcore:
- 
- .. code-block:: console
- 
-@@ -73,12 +78,12 @@ To run the example in linux environment with 2 lcores (2,4) over 2 ports(0,2) wi
+ To run the example in a Linux environment with 2 lcores (2,4) over 2 ports(0,2)
+@@ -69,7 +74,7 @@ with 1 Rx queue per lcore:
      Skipping disabled port 1
      Initializing port 2 on lcore 4... Address:00:1B:21:5C:FF:54, rxq=0 txq=2,0 txq=4,1
      done: Link Up - speed 10000 Mbps - full-duplex
 -    Skipping disabled port 3IP_FRAG: Socket 0: adding route 100.10.0.0/16 (port 0)
-+    Skipping disabled port 3
-+    IP_FRAG: Socket 0: adding route 100.10.0.0/16 (port 0)
-     IP_FRAG: Socket 0: adding route 100.20.0.0/16 (port 1)
++    Skipping disabled port 3 IP_FRAG: Socket 0: adding route 100.10.0.0/16 (port 0)
+     IP_RSMBL: Socket 0: adding route 100.20.0.0/16 (port 1)
      ...
-     IP_FRAG: Socket 0: adding route 0101:0101:0101:0101:0101:0101:0101:0101/48 (port 0)
-     IP_FRAG: Socket 0: adding route 0201:0101:0101:0101:0101:0101:0101:0101/48 (port 1)
--    ...
-     IP_FRAG: entering main loop on lcore 4
-     IP_FRAG: -- lcoreid=4 portid=2
-     IP_FRAG: entering main loop on lcore 2
-@@ -108,10 +113,11 @@ The default l3fwd_ipv6_route_array table is:
+     IP_RSMBL: Socket 0: adding route 0101:0101:0101:0101:0101:0101:0101:0101/48 (port 0)
+@@ -110,7 +115,7 @@ The default l3fwd_ipv6_route_array table is:
      :end-before: >8 End of default l3fwd_ipv6_route_array table.
  
- For example, for the input IPv4 packet with destination address: 100.10.1.1 and packet length 9198 bytes,
--seven IPv4 packets will be sent out from port #0 to the destination address 100.10.1.1:
--six of those packets will have length 1500 bytes and one packet will have length 318 bytes.
-+the application will fragment it into seven packets sent out from port 0:
-+six fragments of 1500 bytes each (the MTU limit for L3 payload) and one final fragment of 318 bytes.
+ For example, for the fragmented input IPv4 packet with destination address: 100.10.1.1,
+-a reassembled IPv4 packet be sent out from port #0 to the destination address 100.10.1.1
++a reassembled IPv4 packet will be sent out from port #0 to the destination address 100.10.1.1
+ once all the fragments are collected.
+ 
+ Explanation
+@@ -119,12 +124,12 @@ Explanation
+ The following sections provide in-depth explanation of the sample application code.
+ As mentioned in the overview section, the initialization and run-time paths
+ are very similar to those of the :doc:`l2_forward_real_virtual`.
+-The following sections describe aspects that are specific to the IP reassemble sample application.
++The following sections describe aspects that are specific to the IP reassembly sample application.
+ 
+ IPv4 Fragment Table Initialization
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-This application uses the :doc:`../prog_guide/ip_fragment_reassembly_lib` library.
++This application uses the IP Fragment and Reassembly Library (:doc:`../prog_guide/ip_fragment_reassembly_lib`).
+ The fragment table maintains information about already received fragments of the packet.
+ Each IP packet is uniquely identified by triple <Source IP address>, <Destination IP address>, <ID>.
+ To avoid lock contention, each Rx queue has its own fragment table.
+@@ -144,7 +149,7 @@ Mempools Initialization
+ 
+ The reassembly application demands a lot of mbuf's to be allocated.
+ At any given time, up to (2 \* max_flow_num \* RTE_LIBRTE_IP_FRAG_MAX_FRAG \* <maximum number of mbufs per packet>)
+-can be stored inside the fragment table waiting for remaining fragments.
++can be stored inside the fragment table, waiting for remaining fragments.
+ To keep mempool size under reasonable limits
+ and to avoid a situation when one Rx queue can starve other queues,
+ each Rx queue uses its own mempool.
+@@ -161,8 +166,8 @@ Packet Reassembly and Forwarding
+ For each input packet, the packet forwarding operation is done by the l3fwd_simple_forward() function.
+ If the packet is an IPv4 or IPv6 fragment, then it calls ``rte_ipv4_reassemble_packet()`` for IPv4 packets,
+ or ``rte_ipv6_reassemble_packet()`` for IPv6 packets.
+-These functions either return a pointer to a valid mbuf that contains a reassembled packet,
+-or NULL (if the packet can't be reassembled for some reason).
++These functions return either a pointer to a valid mbuf that contains a reassembled packet,
++or NULL (if the packet cannot be reassembled for some reason).
+ Then, ``l3fwd_simple_forward()`` continues with the code for the packet forwarding decision
+ (that is, the identification of the output interface for the packet) and
+ actual transmit of the packet.
+@@ -171,25 +176,25 @@ The ``rte_ipv4_reassemble_packet()`` or ``rte_ipv6_reassemble_packet()`` are res
+ 
+ #.  Searching the fragment table for entry with packet's <IP Source Address, IP Destination Address, Packet ID>
+ 
+-#.  If the entry is found, then check if that entry already timed-out.
++#.  If the entry is found, then check whether that entry has already timed out.
+     If yes, then free all previously received fragments,
+     and remove information about them from the entry.
+ 
+ #.  If no entry with such key is found, then try to create a new one by one of two ways:
+ 
+-    #.  Use as empty entry
++    #.  Use an empty entry
+ 
+-    #.  Delete a timed-out entry, free mbufs associated with it mbufs and store a new entry with specified key in it.
++    #.  Delete a timed-out entry, free mbufs associated with it, and store a new entry with the specified key in it.
+ 
+-#.  Update the entry with new fragment information and check
+-    if a packet can be reassembled (the packet's entry contains all fragments).
++#.  Update the entry with new fragment information and check whether
++    the packet can be reassembled (the packet's entry contains all fragments).
+ 
+     #.  If yes, then, reassemble the packet, mark table's entry as empty and return the reassembled mbuf to the caller.
+ 
+     #.  If no, then just return a NULL to the caller.
+ 
+-If at any stage of packet processing a reassembly function encounters an error
+-(can't insert new entry into the Fragment table, or invalid/timed-out fragment),
++If at any stage of packet processing, a reassembly function encounters an error
++(cannot insert new entry into the Fragment table, or invalid/timed-out fragment),
+ then it will free all associated with the packet fragments,
+ mark the table entry as invalid and return NULL to the caller.
+ 
+diff --git a/doc/guides/sample_app_ug/ipsec_secgw.rst b/doc/guides/sample_app_ug/ipsec_secgw.rst
+index 7c31c96b7c..8826ffb286 100644
+--- a/doc/guides/sample_app_ug/ipsec_secgw.rst
++++ b/doc/guides/sample_app_ug/ipsec_secgw.rst
+@@ -11,40 +11,40 @@ application using DPDK cryptodev framework.
+ Overview
+ --------
+ 
+-The application demonstrates the implementation of a Security Gateway
+-(not IPsec compliant, see the Constraints section below) using DPDK based on RFC4301,
+-RFC4303, RFC3602 and RFC2404.
++This application demonstrates the implementation of a Security Gateway
++(not fully IPsec-compliant; see the Constraints section) using DPDK, based
++on RFC4301, RFC4303, RFC3602, and RFC2404.
+ 
+-Internet Key Exchange (IKE) is not implemented, so only manual setting of
+-Security Policies and Security Associations is supported.
++Internet Key Exchange (IKE) is not implemented in this example; only manual
++setting of Security Policies and Security Associations is supported.
+ 
+ The Security Policies (SP) are implemented as ACL rules, the Security
+-Associations (SA) are stored in a table and the routing is implemented
++Associations (SA) are stored in a table, and the routing is implemented
+ using LPM.
+ 
+-The application classifies the ports as *Protected* and *Unprotected*.
+-Thus, traffic received on an Unprotected or Protected port is consider
+-Inbound or Outbound respectively.
++The application classifies ports as *Protected* or *Unprotected*, with traffic
++received on Unprotected ports considered Inbound and traffic on Protected ports
++considered Outbound.
+ 
+ The application also supports complete IPsec protocol offload to hardware
+-(Look aside crypto accelerator or using ethernet device). It also support
+-inline ipsec processing by the supported ethernet device during transmission.
+-These modes can be selected during the SA creation configuration.
++using crypto acceleration hardware or NIC with crypto acceleration. It also
++supports inline IPsec processing by supported Ethernet devices during
++transmission. These modes can be selected during SA creation.
+ 
+-In case of complete protocol offload, the processing of headers(ESP and outer
+-IP header) is done by the hardware and the application does not need to
+-add/remove them during outbound/inbound processing.
++In case of complete protocol offload, the processing of headers (ESP and
++outer IP header) is done by the hardware and the application does not need
++to add/remove them during Outbound/Inbound processing.
+ 
+-For inline offloaded outbound traffic, the application will not do the LPM
+-lookup for routing, as the port on which the packet has to be forwarded will be
+-part of the SA. Security parameters will be configured on that port only, and
++For inline offloaded Outbound traffic, the application does not perform the
++LPM lookup for routing, as the port on which the packet is to be forwarded
++is part of the SA. Security parameters are configured on that port only, and
+ sending the packet on other ports could result in unencrypted packets being
+ sent out.
+ 
+ The Path for IPsec Inbound traffic is:
+ 
+ *  Read packets from the port.
+-*  Classify packets between IPv4 and ESP.
++*  Classify packets as IPv4 or ESP.
+ *  Perform Inbound SA lookup for ESP packets based on their SPI.
+ *  Perform Verification/Decryption (Not needed in case of inline ipsec).
+ *  Remove ESP and outer IP header (Not needed in case of protocol offload).
+@@ -64,28 +64,30 @@ The Path for the IPsec Outbound traffic is:
+ 
+ The application supports two modes of operation: poll mode and event mode.
+ 
+-* In the poll mode a core receives packets from statically configured list
++* In the poll mode, a core receives packets from statically configured list
+   of eth ports and eth ports' queues.
+ 
+-* In the event mode a core receives packets as events. After packet processing
+-  is done core submits them back as events to an event device. This enables
+-  multicore scaling and HW assisted scheduling by making use of the event device
+-  capabilities. The event mode configuration is predefined. All packets reaching
+-  given eth port will arrive at the same event queue. All event queues are mapped
+-  to all event ports. This allows all cores to receive traffic from all ports.
+-  Since the underlying event device might have varying capabilities, the worker
+-  threads can be drafted differently to maximize performance. For example, if an
+-  event device - eth device pair has Tx internal port, then application can call
+-  rte_event_eth_tx_adapter_enqueue() instead of regular rte_event_enqueue_burst().
+-  So a thread which assumes that the device pair has internal port will not be the
+-  right solution for another pair. The infrastructure added for the event mode aims
+-  to help application to have multiple worker threads by maximizing performance from
+-  every type of event device without affecting existing paths/use cases. The worker
+-  to be used will be determined by the operating conditions and the underlying device
++* In event mode, a core receives packets as events. After processing,
++  the core submits them back as events to an event device. This enables
++  multicore scaling and hardware-assisted scheduling by making use of
++  the event device capabilities. The event mode configuration is
++  predefined. All packets reaching a given Ethernet port arrive at the
++  same event queue. All event queues are mapped to all event ports,
++  allowing all cores to receive traffic from all ports.
++  Since the underlying event device might have varying capabilities,
++  worker threads can be designed differently to maximize performance.
++  For example, if an event device-Ethernet device pair has a Tx internal
++  port, the application can call ``rte_event_eth_tx_adapter_enqueue()``
++  instead of ``rte_event_enqueue_burst()``. A thread that assumes the
++  device pair has an internal port may not be suitable for another pair.
++  The event mode infrastructure supports multiple worker threads,
++  maximizing performance from every type of event device without
++  affecting existing paths or use cases. The worker to be used is
++  determined by the operating conditions and underlying device
+   capabilities.
 +
- IP Fragmentation sample application provides basic NUMA support
--in that all the memory structures are allocated on all sockets that have active lcores on them.
-+in that all memory structures are allocated on all sockets that have active lcores on them.
- 
- 
- Refer to the *DPDK Getting Started Guide* for general information on running applications
-diff --git a/doc/guides/sample_app_ug/ip_pipeline.rst b/doc/guides/sample_app_ug/ip_pipeline.rst
-index f9e8caa0a8..1c8ad05061 100644
---- a/doc/guides/sample_app_ug/ip_pipeline.rst
-+++ b/doc/guides/sample_app_ug/ip_pipeline.rst
-@@ -4,15 +4,15 @@
- Internet Protocol (IP) Pipeline Application
- ===========================================
- 
--Application overview
----------------------
-+Overview
-+--------
+   **Currently the application provides non-burst, internal port worker threads.**
+-  It also provides infrastructure for non-internal port
+-  however does not define any worker threads.
++  It also provides infrastructure for non-internal ports but does not define any worker threads.
+ 
+   Event mode also supports event vectorization. The event devices, ethernet device
+   pairs which support the capability ``RTE_EVENT_ETH_RX_ADAPTER_CAP_EVENT_VECTOR`` can
+@@ -99,7 +101,7 @@ The application supports two modes of operation: poll mode and event mode.
+   ``RTE_EVENT_CRYPTO_ADAPTER_CAP_EVENT_VECTOR`` vector aggregation
+   could also be enable using event-vector option.
+ 
+-Additionally the event mode introduces two submodes of processing packets:
++Additionally, the event mode introduces two submodes of processing packets:
+ 
+ * Driver submode: This submode has bare minimum changes in the application to support
+   IPsec. There are no lookups, no routing done in the application. And for inline
+@@ -115,7 +117,7 @@ Additionally the event mode introduces two submodes of processing packets:
+   benchmark numbers.
+ 
+ Constraints
+------------
++~~~~~~~~~~~
+ 
+ *  No IPv6 options headers.
+ *  No AH mode.
+@@ -127,7 +129,7 @@ Constraints
+ Compiling the Application
+ -------------------------
+ 
+-To compile the sample application see :doc:`compiling`.
++To compile the sample application, see :doc:`compiling`.
+ 
+ The application is located in the ``ipsec-secgw`` sub-directory.
+ 
+@@ -354,7 +356,7 @@ where each option means:
+ Refer to the *DPDK Getting Started Guide* for general information on running
+ applications and the Environment Abstraction Layer (EAL) options.
+ 
+-The application would do a best effort to "map" crypto devices to cores, with
++The application makes a best effort to "map" crypto devices to cores, with
+ hardware devices having priority. Basically, hardware devices if present would
+ be assigned to a core before software ones.
+ This means that if the application is using a single core and both hardware
+@@ -377,7 +379,7 @@ For example, something like the following command line:
  
--The *Internet Protocol (IP) Pipeline* application is intended to be a vehicle for rapid development of packet processing
-+The *Internet Protocol (IP) Pipeline* application is a vehicle for rapid development of packet processing
- applications on multi-core CPUs.
- 
--Following OpenFlow and P4 design principles, the application can be used to create functional blocks called pipelines out
--of input/output ports, tables and actions in a modular way. Multiple pipelines can be inter-connected through packet queues
--to create complete applications (super-pipelines).
-+Following OpenFlow and P4 design principles, the application can be used to create functional blocks called pipelines
-+from input/output ports, tables and actions in a modular way. Multiple pipelines can be inter-connected through packet
-+queues to create complete applications (super-pipelines).
- 
- The pipelines are mapped to application threads, with each pipeline executed by a single thread and each thread able to run
- one or several pipelines. The possibilities of creating pipelines out of ports, tables and actions, connecting multiple
-@@ -21,13 +21,14 @@ a true application generator.
- 
- Pipelines are created and managed through Command Line Interface (CLI):
- 
-- * Any standard TCP client (e.g. telnet, netcat, custom script, etc) is typically able to connect to the application, send
-+ * Any standard TCP client (e.g. telnet, netcat, custom script, etc.) is typically able to connect to the application, send
-    commands through the network and wait for the response before pushing the next command.
- 
-  * All the application objects are created and managed through CLI commands:
--    * 'Primitive' objects used to create pipeline ports: memory pools, links (i.e. network interfaces), SW queues, traffic managers, etc.
--    * Action profiles: used to define the actions to be executed by pipeline input/output ports and tables.
--    * Pipeline components: input/output ports, tables, pipelines, mapping of pipelines to execution threads.
-+
-+   * 'Primitive' objects used to create pipeline ports: memory pools, links (i.e. network interfaces), SW queues, traffic managers, etc.
-+   * Action profiles: used to define the actions to be executed by pipeline input/output ports and tables.
-+   * Pipeline components: input/output ports, tables, pipelines, mapping of pipelines to execution threads.
- 
- Running the application
- -----------------------
-@@ -85,7 +86,7 @@ The application should start successfully and display as follows:
-     EAL:   probe driver: 8086:10fb net_ixgbe
-     ...
- 
--To run remote client (e.g. telnet) to communicate with the ip pipeline application:
-+To run a remote client (for example, telnet) to communicate with the IP pipeline application:
- 
- .. code-block:: console
- 
-@@ -103,19 +104,21 @@ When running a telnet client as above, command prompt is displayed:
- 
-     pipeline>
- 
--Once application and telnet client start running, messages can be sent from client to application.
--At any stage, telnet client can be terminated using the quit command.
-+Once the application and telnet client start running, messages can be sent from the client to the application.
-+At any stage, the telnet client can be terminated using the ``quit`` command.
- 
- 
--Application stages
--------------------
-+Explanation
-+-----------
-+
-+The following explains the stages of the application.
- 
- Initialization
- ~~~~~~~~~~~~~~
- 
--During this stage, EAL layer is initialised and application specific arguments are parsed. Furthermore, the data structures
--(i.e. linked lists) for application objects are initialized. In case of any initialization error, an error message
--is displayed and the application is terminated.
-+During this stage, the EAL layer is initialized and application-specific arguments are parsed.
-+Furthermore, the data structures (linked lists) for application objects are initialized.
-+In case of any initialization error, an error message is displayed and the application is terminated.
- 
- .. _ip_pipeline_runtime:
- 
-@@ -124,17 +127,18 @@ Run-time
- 
- The main thread is creating and managing all the application objects based on CLI input.
- 
--Each data plane thread runs one or several pipelines previously assigned to it in round-robin order. Each data plane thread
--executes two tasks in time-sharing mode:
-+Each data plane thread runs one or more pipelines previously assigned to it in round-robin order.
-+Each data plane thread executes two tasks in time-sharing mode:
- 
- #. *Packet processing task*: Process bursts of input packets read from the pipeline input ports.
- 
--#. *Message handling task*: Periodically, the data plane thread pauses the packet processing task and polls for request
--   messages send by the main thread. Examples: add/remove pipeline to/from current data plane thread, add/delete rules
--   to/from given table of a specific pipeline owned by the current data plane thread, read statistics, etc.
-+#. *Message handling task*: Periodically, the data plane thread pauses the packet processing task and polls for
-+   request messages sent by the main thread. Examples include adding or removing pipelines from the current
-+   data plane thread, adding or deleting rules in a table of a specific pipeline owned by the current data
-+   plane thread, reading statistics, and similar operations.
- 
- Examples
----------
-+~~~~~~~~
- 
- .. _table_examples:
- 
-@@ -207,7 +211,7 @@ Link
- 
-  Link configuration ::
- 
--   link <link_name>
-+  link <link_name>
-     dev <device_name>|port <port_id>
-     rxq <n_queues> <queue_size> <mempool_name>
-     txq <n_queues> <queue_size> promiscuous on | off
-@@ -236,7 +240,7 @@ Software queue
- Traffic manager
- ~~~~~~~~~~~~~~~
- 
-- Add traffic manager subport profile ::
-+Add traffic manager subport profile ::
- 
-   tmgr subport profile
-    <tb_rate> <tb_size>
-@@ -245,7 +249,7 @@ Traffic manager
-    <tc9_rate> <tc10_rate> <tc11_rate> <tc12_rate>
-    <tc_period>
- 
-- Add traffic manager pipe profile ::
-+Add traffic manager pipe profile ::
- 
-   tmgr pipe profile
-    <tb_rate> <tb_size>
-@@ -256,7 +260,7 @@ Traffic manager
-    <tc_ov_weight>
-    <wrr_weight0..3>
- 
-- Create traffic manager port ::
-+Create traffic manager port ::
- 
-   tmgr <tmgr_name>
-    rate <rate>
-@@ -266,16 +270,16 @@ Traffic manager
-    mtu <mtu>
-    cpu <cpu_id>
- 
-- Configure traffic manager subport ::
-+Configure traffic manager subport ::
- 
-   tmgr <tmgr_name>
-    subport <subport_id>
-    profile <subport_profile_id>
+ 
+ Configurations
+---------------
++~~~~~~~~~~~~~~
+ 
+ The following sections provide the syntax of configurations to initialize
+ your SP, SA, Routing, Flow and Neighbour tables.
+@@ -390,17 +392,17 @@ accordingly.
+ Configuration File Syntax
+ ~~~~~~~~~~~~~~~~~~~~~~~~~
  
-- Configure traffic manager pipe ::
-+Configure traffic manager pipe ::
- 
-   tmgr <tmgr_name>
--   subport <subport_id>
-+  subport <subport_id>
-    pipe from <pipe_id_first> to <pipe_id_last>
-    profile <pipe_profile_id>
- 
-@@ -291,7 +295,7 @@ Tap
- Cryptodev
- ~~~~~~~~~
- 
--  Create cryptodev port ::
-+Create cryptodev port ::
- 
-    cryptodev <cryptodev_name>
-     dev <DPDK Cryptodev PMD name>
-@@ -300,13 +304,13 @@ Cryptodev
- Action profile
- ~~~~~~~~~~~~~~
- 
-- Create action profile for pipeline input port ::
-+Create action profile for pipeline input port ::
- 
-   port in action profile <profile_name>
-    [filter match | mismatch offset <key_offset> mask <key_mask> key <key_value> port <port_id>]
-    [balance offset <key_offset> mask <key_mask> port <port_id0> ... <port_id15>]
- 
-- Create action profile for the pipeline table ::
-+Create action profile for the pipeline table ::
- 
-   table action profile <profile_name>
-    ipv4 | ipv6
-@@ -389,18 +393,18 @@ Connect pipeline input port to table ::
- 
-   pipeline <pipeline_name> port in <port_id> table <table_id>
- 
--Display statistics for specific pipeline input port, output port
-+Display statistics for specific pipeline input port, output port,
- or table ::
- 
-   pipeline <pipeline_name> port in <port_id> stats read [clear]
-   pipeline <pipeline_name> port out <port_id> stats read [clear]
-   pipeline <pipeline_name> table <table_id> stats read [clear]
- 
--Enable given input port for specific pipeline instance ::
-+Enable given output port for specific pipeline instance ::
- 
--  pipeline <pipeline_name> port out <port_id> disable
-+  pipeline <pipeline_name> port out <port_id> enable
- 
--Disable given input port for specific pipeline instance ::
-+Disable given output port for specific pipeline instance ::
- 
-   pipeline <pipeline_name> port out <port_id> disable
- 
-@@ -408,9 +412,9 @@ Add default rule to table for specific pipeline instance ::
- 
-   pipeline <pipeline_name> table <table_id> rule add
-      match
--        default
-+       default
-      action
--        fwd
-+       fwd
-            drop
-            | port <port_id>
-            | meta
-@@ -484,9 +488,10 @@ Add bulk rules to table for specific pipeline instance ::
- 
-   pipeline <pipeline_name> table <table_id> rule add bulk <file_name> <n_rules>
- 
--  Where:
--  - file_name = path to file
--  - File line format = match <match> action <action>
-+Where:
-+
-+- ``file_name`` = path to file
-+- File line format = ``match <match> action <action>``
- 
- Delete table rule for specific pipeline instance ::
- 
-@@ -497,9 +502,9 @@ Delete default table rule for specific pipeline instance ::
- 
-   pipeline <pipeline_name> table <table_id> rule delete
-      match
--        default
-+       default
- 
--Add meter profile to the table for specific pipeline instance ::
-+Add meter profile to table for specific pipeline instance ::
- 
-   pipeline <pipeline_name> table <table_id> meter profile <meter_profile_id>
-    add srtcm cir <cir> cbs <cbs> ebs <ebs>
-@@ -512,24 +517,24 @@ Delete meter profile from the table for specific pipeline instance ::
- 
- 
- Update the dscp table for meter or traffic manager action for specific
--pipeline instance ::
-+pipeline instance::
- 
-    pipeline <pipeline_name> table <table_id> dscp <file_name>
- 
--   Where:
--      - file_name = path to file
--      - exactly 64 lines
--      - File line format = <tc_id> <tc_queue_id> <color>, with <color> as: g | y | r
-+Where:
- 
-+- ``file_name`` = path to file
-+- exactly 64 lines
-+- File line format = ``<tc_id> <tc_queue_id> <color>``, with ``<color>`` as: g | y | r
- 
- Pipeline enable/disable
- ~~~~~~~~~~~~~~~~~~~~~~~
- 
--   Enable given pipeline instance for specific data plane thread ::
-+Enable given pipeline instance for specific data plane thread::
- 
-     thread <thread_id> pipeline <pipeline_name> enable
- 
- 
--   Disable given pipeline instance for specific data plane thread ::
-+Disable given pipeline instance for specific data plane thread::
- 
-     thread <thread_id> pipeline <pipeline_name> disable
+-As mention in the overview, the Security Policies are ACL rules.
+-The application parsers the rules specified in the configuration file and
+-passes them to the ACL table, and replicates them per socket in use.
++As mentioned in the overview, the Security Policies are ACL rules.
++The application parses the rules specified in the configuration file and
++passes them to ACL table, and replicates them per socket in use.
+ 
+-Following are the configuration file syntax.
++The following sections contains the configuration file syntax.
+ 
+ General rule syntax
+ ^^^^^^^^^^^^^^^^^^^
+ 
+ The parse treats one line in the configuration file as one configuration
+-item (unless the line concatenation symbol exists). Every configuration
++item (unless line concatenation is used). Every configuration
+ item shall follow the syntax of either SP, SA, Routing, Flow or Neighbour
+ rules specified below.
+ 
+@@ -711,7 +713,7 @@ where each options means:
+  * Port/device ID of the ethernet/crypto accelerator for which the SA is
+    configured. For *inline-crypto-offload* and *inline-protocol-offload*, this
+    port will be used for routing. The routing table will not be referred in
+-   this case.
++   that case.
+ 
+  * Optional: No, if *type* is not *no-offload*
+ 
+@@ -766,7 +768,7 @@ where each options means:
+ 
+  ``<mss>``
+ 
+- * Maximum segment size for TSO offload, available for egress SAs only.
++ * Maximum segment size for TSO offload; available for egress SAs only.
+    Currently only supports TCP/IP.
+ 
+  * Optional: Yes, TSO offload not set by default
+@@ -1113,7 +1115,7 @@ available.
+ Server configuration
+ ~~~~~~~~~~~~~~~~~~~~
+ 
+-Two servers are required for the tests, SUT and DUT.
++Two servers are required for the tests: SUT and DUT.
+ 
+ Make sure the user from the SUT can ssh to the DUT without entering the password.
+ To enable this feature keys must be setup on the DUT.
+@@ -1152,7 +1154,7 @@ It then tries to perform some data transfer using the scheme described above.
+ Usage
+ ~~~~~
+ 
+-In the ipsec-secgw/test directory run
++In the ipsec-secgw/test directory run:
+ 
+ /bin/bash run_test.sh <options> <ipsec_mode>
+ 
+@@ -1165,7 +1167,7 @@ Available options:
+     selected.
+ 
+ *   ``-m`` Add IPSec tunnel mixed IP version tests - outer IP version different
+-    than inner. Inner IP version will match selected option [-46].
++    from inner. Inner IP version will match selected option [-46].
+ 
+ *   ``-i`` Run tests in inline mode. Regular tests will not be invoked.
+ 
+@@ -1185,4 +1187,4 @@ Available options:
+ *   ``-h`` Show usage.
+ 
+ If <ipsec_mode> is specified, only tests for that mode will be invoked. For the
+-list of available modes please refer to run_test.sh.
++list of available modes, please refer to run_test.sh.
+diff --git a/doc/guides/sample_app_ug/ipv4_multicast.rst b/doc/guides/sample_app_ug/ipv4_multicast.rst
+index 3eb8b95f29..4304be665d 100644
+--- a/doc/guides/sample_app_ug/ipv4_multicast.rst
++++ b/doc/guides/sample_app_ug/ipv4_multicast.rst
+@@ -63,7 +63,7 @@ where,
+ 
+ *   -p PORTMASK: Hexadecimal bitmask of ports to configure
+ 
+-*   -q NQ: determines the number of queues per lcore
++*   -q NQ: number of queues per lcore
+ 
+ .. note::
+ 
+@@ -125,7 +125,7 @@ Forwarding
+ ~~~~~~~~~~
+ 
+ All forwarding is done inside the ``mcast_forward()`` function.
+-Firstly, the Ethernet* header is removed from the packet and the IPv4 address is extracted from the IPv4 header:
++Firstly, the Ethernet header is removed from the packet and the IPv4 address is extracted from the IPv4 header:
+ 
+ .. literalinclude:: ../../../examples/ipv4_multicast/main.c
+     :language: c
+@@ -170,7 +170,7 @@ with the Ethernet address 01:00:5e:00:00:00, as per RFC 1112:
+     :start-after: Construct Ethernet multicast address from IPv4 multicast Address. 8<
+     :end-before: >8 End of Construction of multicast address from IPv4 multicast address.
+ 
+-Packets are then dispatched to the destination ports according to the portmask associated with a multicast group:
++Packets are then dispatched to the destination ports according to the port mask associated with the multicast group:
+ 
+ .. literalinclude:: ../../../examples/ipv4_multicast/main.c
+     :language: c
+@@ -190,12 +190,11 @@ Buffer Cloning
+ 
+ This is the most important part of the application
+ since it demonstrates the use of zero-copy buffer cloning.
+-There are two approaches for creating the outgoing packet.
+-Although both are based on the data zero-copy idea,
+-there are some differences in the details.
++There are two approaches for creating outgoing packets.
++Both are based on the zero-copy idea, but they differ in implementation details.
+ 
+-The first approach creates a clone of the input packet. For example,
+-walk though all segments of the input packet and for each of segment,
++The first approach creates a clone of the input packet:
++walk through all segments of the input packet and for each segment,
+ create a new buffer and attach that new buffer to the segment
+ (refer to ``rte_pktmbuf_clone()`` in the mbuf library for more details).
+ A new buffer is then allocated for the packet header and is prepended to the cloned buffer.
+@@ -205,18 +204,19 @@ It simply increments the reference counter for all input packet segments,
+ allocates a new buffer for the packet header and prepends it to the input packet.
+ 
+ Basically, the first approach reuses only the input packet's data, but creates its own copy of packet's metadata.
+-The second approach reuses both input packet's data and metadata.
++The second approach reuses both the input packet's data and metadata.
+ 
+-The advantage of the first approach is that each outgoing packet has its own copy of the metadata,
++The advantage of the first approach is that each outgoing packet has its own copy of metadata,
+ so we can safely modify the data pointer of the input packet.
+-That allows us to skip creation if the output packet is for the last destination port
++That allows us to skip packet creation if the output packet is for the last destination port
+ and, instead, modify the input packet's header in place.
+ For example, for N destination ports, we need to invoke ``mcast_out_pkt()`` (N-1) times.
+ 
+ The advantage of the second approach is that there is less work to be done for each outgoing packet.
+ The "clone" operation is skipped completely.
+-However, there is a price to pay.
+-The input packet's metadata must remain intact. For N destination ports,
++However, there is a price to pay:
++the input packet's metadata must remain intact.
++For N destination ports,
+ we need to invoke ``mcast_out_pkt()`` (N) times.
+ 
+ Therefore, for a small number of outgoing ports (and segments in the input packet),
+diff --git a/doc/guides/sample_app_ug/keep_alive.rst b/doc/guides/sample_app_ug/keep_alive.rst
+index 8ae9d7c689..9353b65e91 100644
+--- a/doc/guides/sample_app_ug/keep_alive.rst
++++ b/doc/guides/sample_app_ug/keep_alive.rst
+@@ -5,7 +5,7 @@ Keep Alive Sample Application
+ =============================
+ 
+ The Keep Alive application is a simple example of a
+-heartbeat/watchdog for packet processing cores. It demonstrates how
++heartbeat and watchdog for packet processing cores. It demonstrates how
+ to detect 'failed' DPDK cores and notify a fault management entity
+ of this failure. Its purpose is to ensure the failure of the core
+ does not result in a fault that is not detectable by a management
+@@ -19,7 +19,7 @@ The application demonstrates how to protect against 'silent outages'
+ on packet processing cores. A Keep Alive Monitor Agent Core (main)
+ monitors the state of packet processing cores (worker cores) by
+ dispatching pings at a regular time interval (default is 5ms) and
+-monitoring the state of the cores. Cores states are: Alive, MIA, Dead
++monitoring the state of the cores. Core states are: Alive, MIA, Dead
+ or Buried. MIA indicates a missed ping, and Dead indicates two missed
+ pings within the specified time interval. When a core is Dead, a
+ callback function is invoked to restart the packet processing core;
+@@ -80,16 +80,16 @@ Explanation
+ 
+ The following sections provide explanation of the
+ Keep-Alive/'Liveliness' conceptual scheme. As mentioned in the
+-overview section, the initialization and run-time paths are very
++Overview section, the initialization and run-time paths are very
+ similar to those of the :doc:`l2_forward_real_virtual`.
+ 
+ The Keep-Alive/'Liveliness' conceptual scheme:
+ 
+-* A Keep- Alive Agent Runs every N Milliseconds.
++* A keep-alive agent runs every N milliseconds.
+ 
+-* DPDK Cores respond to the keep-alive agent.
++* DPDK cores respond to the keep-alive agent.
+ 
+-* If a keep-alive agent detects time-outs, it notifies the
++* If a keep-alive agent detects timeouts, it notifies the
+   fault management entity through a callback function.
+ 
+ The following sections provide explanation of the code aspects
 -- 
 2.53.0
 
