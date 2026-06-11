@@ -2,55 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6239ECD98D2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 09:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 067A8CD98CC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 09:46:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B3DEC42F89;
-	Thu, 11 Jun 2026 11:46:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B356242F8F;
+	Thu, 11 Jun 2026 11:46:21 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D1A8642F87
- for <dev@dpdk.org>; Thu, 11 Jun 2026 11:46:16 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CB3A342F97
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 11:46:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1781171176;
+ s=mimecast20190719; t=1781171180;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=+cPfgtHxaBYC6H+spw5W7jIGLtRqzBR786iDIuqZTbY=;
- b=S1hPc1N/6BQllAJZc5ghxxLYktLxUpsQlQ2joqi00QVMlSXkkrgzgIXELRYUzpRtVY7XZK
- 2lQAjkAc85uxQ8hZe/aZXNtOi0BAdTYRbEfudh8w9y3/Rr6pJ1IUDzi0snIpCAubuRNisJ
- NorwYbDCNANmm3gRbeNsZhIXGbknRVw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=4FQuiEpDN92xOd9yCSlcQbapKAk7P/cNiyQPbdu5Wrg=;
+ b=iJzD9EsocNK59K5BuFHyMcrSSWrcGAXPL2lws+g7mwCbMavneNEXJWdo5khLAVoHmNm0Uf
+ NTorZ0CKyUmmuFAydnlYHC1NRxyFdeJ8dSFGHEUSnEYcUzwYamyBcobqph0q3SZhRnfwtW
+ HxnwWUrx9fXwU9j2PqI3Rfqz5kIkogk=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-nICwqyo8NUy4B-B7JGxE1Q-1; Thu,
- 11 Jun 2026 05:46:10 -0400
-X-MC-Unique: nICwqyo8NUy4B-B7JGxE1Q-1
-X-Mimecast-MFC-AGG-ID: nICwqyo8NUy4B-B7JGxE1Q_1781171169
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-163-Iy0YZsqxO3S0pq8TMnhvKQ-1; Thu,
+ 11 Jun 2026 05:46:15 -0400
+X-MC-Unique: Iy0YZsqxO3S0pq8TMnhvKQ-1
+X-Mimecast-MFC-AGG-ID: Iy0YZsqxO3S0pq8TMnhvKQ_1781171174
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 335DD18D97D9; Thu, 11 Jun 2026 09:46:09 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 18FA4180ACF3; Thu, 11 Jun 2026 09:46:14 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.33.28])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id F39E236917; Thu, 11 Jun 2026 09:46:06 +0000 (UTC)
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id F2AAB30001A7; Thu, 11 Jun 2026 09:46:11 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, stephen@networkplumber.org,
- bruce.richardson@intel.com, fengchengwen@huawei.com
-Subject: [PATCH 01/13] bus: fix reference to plug callback
-Date: Thu, 11 Jun 2026 11:45:38 +0200
-Message-ID: <20260611094551.1514962-2-david.marchand@redhat.com>
+ bruce.richardson@intel.com, fengchengwen@huawei.com,
+ Kevin Laatz <kevin.laatz@intel.com>
+Subject: [PATCH 02/13] dma/idxd: remove next pointer in bus specific device
+Date: Thu, 11 Jun 2026 11:45:39 +0200
+Message-ID: <20260611094551.1514962-3-david.marchand@redhat.com>
 In-Reply-To: <20260611094551.1514962-1-david.marchand@redhat.com>
 References: <20260611094551.1514962-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: OS__8oqEANV1nxTYNIi7TWNKBmd2SMdeQfPfhZUSsuU_1781171169
+X-Mimecast-MFC-PROC-ID: R-x8meGsxFtdn6Cb0RAFdenEBBz2yL4J-ZihtdMzEKE_1781171174
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -67,42 +68,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update documentation and some log following the callback rename.
+The dma/idxd devices are now stored in a list of generic rte_device
+objects.
 
-Fixes: 76622feba9e6 ("bus: refactor device probe")
+Fixes: b4f0974a995b ("bus: factorize device list")
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- doc/guides/prog_guide/device_hotplug.rst | 2 +-
- lib/eal/common/eal_common_dev.c          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/idxd/idxd_bus.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/doc/guides/prog_guide/device_hotplug.rst b/doc/guides/prog_guide/device_hotplug.rst
-index 9896a097f3..7eb7fbcc2b 100644
---- a/doc/guides/prog_guide/device_hotplug.rst
-+++ b/doc/guides/prog_guide/device_hotplug.rst
-@@ -234,7 +234,7 @@ When ``rte_dev_probe()`` is called, the following sequence occurs:
-    and the attach operation fails if the device is not found.
+diff --git a/drivers/dma/idxd/idxd_bus.c b/drivers/dma/idxd/idxd_bus.c
+index 4810d52f2a..2ec526ec09 100644
+--- a/drivers/dma/idxd/idxd_bus.c
++++ b/drivers/dma/idxd/idxd_bus.c
+@@ -34,7 +34,6 @@ struct dsa_wq_addr {
+ /** a DSA device instance */
+ struct rte_dsa_device {
+ 	struct rte_device device;           /**< Inherit core device */
+-	TAILQ_ENTRY(rte_dsa_device) next;   /**< next dev in list */
  
- #. **Device Probe**:
--   The bus's ``plug()`` method is called, which triggers the device driver's probe function.
-+   The bus's ``probe_device()`` method is called, which triggers the device driver's probe function.
-    The probe function typically allocates device-specific resources,
-    maps device memory regions, initializes device hardware,
-    and registers the device with the appropriate subsystem (e.g., ethdev for network devices).
-diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
-index 48b631532a..2a2103ec57 100644
---- a/lib/eal/common/eal_common_dev.c
-+++ b/lib/eal/common/eal_common_dev.c
-@@ -193,7 +193,7 @@ local_dev_probe(const char *devargs, struct rte_device **new_dev)
- 		goto err_devarg;
- 
- 	if (da->bus->probe_device == NULL) {
--		EAL_LOG(ERR, "Function plug not supported by bus (%s)",
-+		EAL_LOG(ERR, "Function probe_device not supported by bus (%s)",
- 			da->bus->name);
- 		ret = -ENOTSUP;
- 		goto err_devarg;
+ 	char wq_name[32];                   /**< the workqueue name/number e.g. wq0.1 */
+ 	struct dsa_wq_addr addr;            /**< Identifies the specific WQ */
 -- 
 2.53.0
 
