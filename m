@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4829CD98CE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 17:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1D4CD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 17:31:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 04E2743354;
-	Thu, 11 Jun 2026 19:23:48 +0200 (CEST)
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
- by mails.dpdk.org (Postfix) with ESMTP id 0E31D427CE
- for <dev@dpdk.org>; Thu, 11 Jun 2026 19:23:46 +0200 (CEST)
-Received: by mail-dl1-f41.google.com with SMTP id
- a92af1059eb24-137dd523634so94210c88.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 10:23:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2273743366;
+	Thu, 11 Jun 2026 19:31:05 +0200 (CEST)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
+ [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 01F45427CE
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 19:31:04 +0200 (CEST)
+Received: by mail-dy1-f174.google.com with SMTP id
+ 5a478bee46e88-30807ba471bso321251eec.1
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 10:31:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781198625;
- x=1781803425; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781199063;
+ x=1781803863; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4GmGAbAy/Yjfla/EDRMqit0cObB5+ILOMAXp8Ecdmto=;
- b=cFuWBHp4sFQ3rP7SAnObkEQFUxtIByfJoxuQoht16dIoHXz4yIcy/MsCltNLXHm5zI
- nOLWmuTiu2F4OoUIsDXAbq0E9VvKvqmzJvjWxP0HHZFKv/PpN43AqFc60mtqoiEg82Py
- kfwStqGXnwfb+2CuihysbnYkZ9Q353DV7Q3phP+BrKvmAa7JD4D9HbQYeZuj6pC12Z7k
- 0EqHFd8Ewpt8DfCFnAHfMkUsEYN/CpeyvZONhzHgYGe6biB3SpJuHx/CoYxAX+qnQl5p
- 1sitYhQsDTPEQxlK8+fgLwWCnucu0NFtfSqhHcpA/Qzqqa9iNWADfaE+V3KdU6g8H/dK
- 1WgQ==
+ bh=oqVjgbvH1PVjpsb1dTSUyHrue+zW45mPe+su/3YKsIw=;
+ b=V4wLSSTIoj52WM0spae+u6jXM2P5m0Uns12Ut9tIC9JIyEN9hojIj43I4YAvEgzl3B
+ 9bmz1NGBycviW8WeQOs9BUPZsk4+eWqw8fPjEMLB1z/zfTCEn911zKxdmS4Mu2pyGIDA
+ sKzcc7d5PDHFSN82rGcZjtwrdAxrK82um1/UoJHLdMntzRBPCfaSxpXrj8DQ+j458lZp
+ rECNfZLWsq6Uh1C/i11sU3tPhJ90LA7zJAKdwo0dANsYF2Gyf9HY9hwK5ryibxHy9EgJ
+ 3i8IEdld5WgMzYRwjVSD5yfIRYorvSbu+NKm1nlyaRavJu8CB1GMH8C5K35Ua8Hof01w
+ Zylw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781198625; x=1781803425;
+ d=1e100.net; s=20251104; t=1781199063; x=1781803863;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=4GmGAbAy/Yjfla/EDRMqit0cObB5+ILOMAXp8Ecdmto=;
- b=dLRUujQf/BO+OKTEZdhQgObbS3TlWk2pzDMjn/5UyON0A7LKqUe/kdstepYKLKap5V
- m1XtU+4IIlK3aUsNYG6daSO8dKSd2OF9MBSmOCM8N4p+CQBeSubTMT7HEfYXVj84bByu
- ZRwWlWDVas0MqBcS0fKkvYZnyiWm98gbdNvtCcSYgUmEtiy01eOc9+xMb1mIqNbpc/1a
- 8qk7/j9BRqXm/vfLImKrBFEvKDiXpnQtqeiyY67IWlDGps49YZ/BwMrYagatK8MdXXL4
- 637SKmVaWgSo8/yIV8hXNOYefDTPD1i6PVFcz5j2wWA63Baw5v3Ccs3i3sbO/eAX6a4Q
- Crgw==
-X-Gm-Message-State: AOJu0YyhFLecZHLpqJl3v+1EkMLgyOdlqHnMgFkBIsqI9m7Z9/0EgnLl
- hAR3PmyWcPpn2WOte6NId9XAhUf1lp5CSH6FYE5Ep/1UvXBGuyQNWFRhwX/IA91DeCQ=
-X-Gm-Gg: Acq92OEFBwxjPCJijsM22c8sHZQawEhWzEE3Icc+pu3SjTod7v5mEsFlol1ZoGhNpDZ
- y3qGIgIpBT+/JuogujEhCqdYLnD6es12VaOLb1u/SrhLhsW9doBUngB87fWeddoVXOLCPyrQAxR
- 9nOA8pHmtzcDLC81910WZxb/hl7ylomolsQXh8tCZPy2EActsK7O+P9ARG2eHGUN9ILaFmN3qw+
- yse7MRsDxYHL92dZyLzQkSEYwK1eFruaQ1D7DoJ0gnj72C9o9FEp3gY1XvF/rzZOKI7Tt0vzdWc
- 4lDUp+wBpJEONxsb4LTbQ77gkdvIk1Ip8K/6ql/MESoPw+4Wxl4bWr6BqHHWyJdcJX6lKiAu8Vz
- h27ZnfXNxhehVdchw8D/4YdnhOXFFcg9QhAqDrp6rt9mtuKX9oXNdtkutHpb54xJdZ0Cv/0LFh9
- LtaGaIFrWNk8QT3GswG4bZcYrxFrCQL9d9IdQPJRJXLH11kCYm4zZFPh+F98Bwb0gc
-X-Received: by 2002:a05:7022:1283:b0:137:6781:7dd4 with SMTP id
- a92af1059eb24-1384215139cmr2429836c88.8.1781198625057; 
- Thu, 11 Jun 2026 10:23:45 -0700 (PDT)
+ bh=oqVjgbvH1PVjpsb1dTSUyHrue+zW45mPe+su/3YKsIw=;
+ b=k9ue7euHgETZPjSDiAnz9cbtjymzh1eoHOxyK3dkF5Vwym8Lal2NblbbM+i/54TDmX
+ x04wz91vkMeUfy8ybaa4Tu9rE1cGYcacH6Cg/vzwcJld2Z28GU8J+/dRDVXIPQKAg3wh
+ hoVP1C1GaQ8f8iVSt8o+sMIIauK57xsTIpZi61oWsZ4JPTbS3tzRQjAkAT7doCMmmrz7
+ yKAZ3oVETvvdgJeK+FksC1GXM+xLp+T+E51DbwXDp0jimS17Z3bQJIogKVb8bJXAoztm
+ YFmi8QpDQQ04AETBt8EQrDt6cdimegcUFPeiFAttMLp7NZB3Ke3VDL25dVzT5iqYpq3g
+ y6JA==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ/0ao3ucTOTEn7+Tu2XzhFkMvgjuKuew0q3QfJepoKgmwiuv4Dp4JY1PiyqwwVXiPV00z4=@dpdk.org
+X-Gm-Message-State: AOJu0Yxw/fQnjed6UKIyoPqnrssovwJMyoc3TbcypDgbj9JBXu+1NK5D
+ iO8R3sQS23r+RYu1kTfW9oqqy/6s8gVloCKtd4yjmCYHVrOTM+SKnXzGFqpsOLWN3XM=
+X-Gm-Gg: Acq92OH9NiuVmkDfH1j4NVz4XipkO6h5Ph6VLtOfQBMeu4imuz+T7OhwMNBysei2e/4
+ ywj9K/li4u5ep3yQ8XZ+ww6APq0Mg6Kll7qIvd7oUFODI3QPWni48TowwyzNeJ/Bqae8I1Xh+fN
+ bzPrw31YgsbPIWmQsoCXimH5aKT0LzAUes4qQQo6r/x8Cf0VpLoCi2qCtnBtjD8/mVjM9JK7yNM
+ V+fh+PrPXln3hELucstKGp0wR9d3jfRGJEM+o7KxMicgbuvWe4kA+p7WlkmevsV1Dt/usiOhBsw
+ F6/cE7kQmY5wRm0ofcXHm13Uc56lv/L4qYgnSFKA9W0XJcsEJeb5g1/aJ83DuxGs1rwLWw+3R7t
+ GjUlo9LLFBj+xOx4g4DvGogE5lzGq969QyzJ9QS2m6ZFiSQZkOTy+/aMHmXkE/7B51lYy37b39L
+ 1GQvQ5JvkM+OlUiwGidHsKgm5mU56u630MFwp2EgHDpRFHOXCiC9bFm577QalCj06ezEk0rm3/P
+ /w=
+X-Received: by 2002:a05:693c:2c97:b0:2d9:6373:ad22 with SMTP id
+ 5a478bee46e88-30804819c1fmr2653857eec.12.1781199062862; 
+ Thu, 11 Jun 2026 10:31:02 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13842f92a78sm2534047c88.5.2026.06.11.10.23.44
+ 5a478bee46e88-30806c2f0acsm3691013eec.1.2026.06.11.10.31.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 10:23:44 -0700 (PDT)
-Date: Thu, 11 Jun 2026 10:23:41 -0700
+ Thu, 11 Jun 2026 10:31:02 -0700 (PDT)
+Date: Thu, 11 Jun 2026 10:30:58 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Rahul Bhansali <rbhansali@marvell.com>
-Cc: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar
- K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha
- Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
- <jerinj@marvell.com>
-Subject: Re: [PATCH 01/17] net/cnxk: update mbuf next field for multi segment
-Message-ID: <20260611102341.79793480@phoenix.local>
-In-Reply-To: <20260611073311.3129711-1-rbhansali@marvell.com>
-References: <20260611073311.3129711-1-rbhansali@marvell.com>
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: hemant.agrawal@nxp.com, sachin.saxena@nxp.com, dev@dpdk.org
+Subject: Re: [PATCH 9/9] net/dpaa2: drop the fake software VLAN strip offload
+Message-ID: <20260611103058.160842f4@phoenix.local>
+In-Reply-To: <20260611154926.392670-10-maxime@leroys.fr>
+References: <20260611154926.392670-1-maxime@leroys.fr>
+ <20260611154926.392670-10-maxime@leroys.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,23 +83,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 11 Jun 2026 13:02:55 +0530
-Rahul Bhansali <rbhansali@marvell.com> wrote:
+On Thu, 11 Jun 2026 17:49:24 +0200
+Maxime Leroy <maxime@leroys.fr> wrote:
 
-> As per the requirement of rte_mbuf_raw_reset_bulk(), the mbuf's
-> 'next' and 'nb_segs' fields are required to be reset.
-> This reset these field for multi-segment mbufs on cn9k platform.
+> It saves a forwarding application nothing: the datapath reads the L2
+> header anyway to classify or strip. The offload does not remove that
+> read, it relocates it into the driver Rx burst, where it is far more
+> expensive.
 > 
-> Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
+> The cost is a matter of timing. rte_vlan_strip() reaches the L2 header
+> through rte_pktmbuf_mtod(), which dereferences mbuf->buf_addr. On a
+> freshly recycled buffer that mbuf cacheline is cold. eth_fd_to_mbuf()
+> has just written other fields of it (data_off, ol_flags), but buf_addr
+> is a persistent field it does not rewrite. A write does not stall: it
+> posts to the store buffer while the line fills in the background, and
+> the rewritten fields are forwarded straight from there. buf_addr has
+> nothing to forward, so it must be read from the line, whose fill is
+> still in flight, and the read stalls. The ethertype read that follows,
+> on the cold payload line, stalls again. Read later by the application,
+> when the fill has completed, the same read hits. The offload just
+> performs it at the worst possible moment.
+> 
+> Measured on a single-core port-to-port forwarding test over two 10G
+> ports (one core at 2 GHz, 64-byte untagged frames):
+> 
+>   - throughput 4.22 -> 5.00 Mpps (+18 percent)
+>   - IPC 0.93 -> 1.25: the cost was memory stall, not compute
+>   - L3/DRAM-bound L2 refills 319M -> 200M over 10s (-37 percent)
+> 
+> perf confirms it: with the offload, the buf_addr load (the cold mbuf
+> field) and the payload load account for about 84 percent of the Rx
+> burst's L2 refills; removing it, those vanish and only the inherent DQRR
+> dequeue misses remain.
+> 
+> Stop advertising VLAN_STRIP and remove the rte_vlan_strip() calls from
+> every Rx path. This is a behavioural change: the tag is left in the
+> frame, so an application must strip it itself, on the L2 header it
+> already reads.
+> 
+> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 > ---
 
-Please follow code submission guidelines for DPDK and use
-cover letter and threading of replies.
-https://doc.dpdk.org/guides/contributing/patches.html#sending-patches
+In general I agree, but you overstate the impact. Any real application
+is going to look at the mbuf anyway. Relying on testpmd numbers is BS.
 
-What you get wrong:
-  - Please allow at least 24 hours to pass between posting patch revisions.
-  - Missing cover letter to explain patchset
-  - Use versions and in-reply-to. This keeps mail threads organized and
-    helps maintainers track in patchwork as well.
+The NBL driver does the same thing.
+So does PCAP but it has no choice, and is slow anyway.
+Virtio/vhost does as well.
+
+
+
 
