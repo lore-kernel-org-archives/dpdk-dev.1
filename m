@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08547CD98C7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 21:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F16CD98C7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 21:22:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB07C433E7;
-	Thu, 11 Jun 2026 23:21:38 +0200 (CEST)
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
- [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id D60A2433DD
- for <dev@dpdk.org>; Thu, 11 Jun 2026 23:21:34 +0200 (CEST)
-Received: by mail-dy1-f179.google.com with SMTP id
- 5a478bee46e88-307d0405e07so507091eec.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 14:21:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 32DB4433FF;
+	Thu, 11 Jun 2026 23:21:40 +0200 (CEST)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
+ [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id F1187433D3
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 23:21:35 +0200 (CEST)
+Received: by mail-dy1-f180.google.com with SMTP id
+ 5a478bee46e88-307d0405e07so507116eec.1
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 14:21:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781212894;
- x=1781817694; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781212895;
+ x=1781817695; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=okcEtnp2its2cLegQSk3aN3hnTv436Q9fG0mpHSYejU=;
- b=H/VXuZ2rLlHqLR/gIXWTw+BgYiBt9cwb5CX5w2vL4q18YdPH9H2vDvE0JMpKgzM8lF
- yDpeaL1M4d7dGbHF47bLmjZ1hUNJbi9XcPITkiPJ7B7PXXbhGkS2Oz8YkiypaLe3HQxL
- ckc2a8UjLmqhjU3F2OBCEAGNJcxKOJ6rCewPQjYnLoHgrpWP5Rhoyf9c+YCuPSNlPx/B
- VrPGRcQGeQgehwKfp5Ews1kUXQdLcI/dvHoiuLz2YSOL9LLAdXiU/6yDhL+DE5V1sSnC
- ZnS9gs+uQUQ6DWJFZrernhARvHk0BvCTa7sqmH5dEmsNElkRGBMeG+qnNlBPbIzly2H/
- MbSQ==
+ bh=qHC/hioDHh1g/4s7vl5QjhRyknxxKx2ge1mXQ9MqaHI=;
+ b=XqwEBool9Bh8/xn1cdHK04gqylPbeqBkYftY246KGCDBj3pnNt/pN1/aDfSHorYh2r
+ vOZDtFJzie1HLk7cPG1i/jb9bb5Qm9vyg/zhBiH9Ex5Eq0lMPVGHbRx3Vtd9FP9b0YEB
+ n/HFci2U7sgvc9UISOHZliESGTJGt2x6v0PZY+7wZ+stbvyWGeL8tDuX5xG6TkAw6CxI
+ 1xgUy4lpaJdMgtT9toFPebGdQLI4EUGKyNrKvWzSsRLbLsPFzaamRI1Ec0ki17LHGKyH
+ ak/0VdY6suIh4TZTGsputaQk9js/QgYNsOL7XvoRduwxCWQ5gVz/v7jdxpuFoB2lxWzd
+ QF1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781212894; x=1781817694;
+ d=1e100.net; s=20251104; t=1781212895; x=1781817695;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=okcEtnp2its2cLegQSk3aN3hnTv436Q9fG0mpHSYejU=;
- b=ogw8mKzmbF4ZtMFTNcosZABqFOLRD7BvlH1bzsKd1bOxyPPJ3QCjmD4aRWaxWGvo1U
- dvRvci8lBm0EbvCWkYWSFvq9x48aKz1M3/X6e1ueSZBdvmXR5wpJk8oVIHDGuaUXRtB6
- r0gE/Wema3oMyOgCBtuQEJR/kmnPshjEOm93dqozY6EyaMfGk77rA2qr8fCRAByuou0z
- xBIhA02hSG8ZfVpppmwRPf6Csgui/w/Oo7l+0VxfMsNTwsN5i0P7SPly3a9ilZ3Gn9VL
- jjV+dZq0JQMb/ZZV47G0e1MpO+oU6eh7FnHZ7p1+LLvF/E2wjwF15GgooQwoC8NYnogB
- jz9g==
-X-Gm-Message-State: AOJu0YzM2Z14o/0a/Yj5aLyI1G3oeMupijDYseTyShj92975Ov1zKZUb
- 1E1H6LE4G0X1P4a2tWsp5UeqTDNH05cY17X6UoATd75GBD119TZdqKQR+piimhMZvSQ9awQQsFN
- Gy0t0
-X-Gm-Gg: Acq92OFJ4PcUr2O8T3ETDOf6jOM+WMjBocdsu6AwS2LSZkBPEo3o5qSUnCqQ9f2nRje
- EsBcnx/qg+BYU6zuXRnq6XOUQR0JNzxvfcmpopulnWzgj+78qejyeGxt3k68U0bqI0reWRSaRWC
- hSBZdAi60wwLWDo9inYByB/XjndZRS08x/uiuqAcZRj/M352uglZOR+RgYU4+MQbHFYaprjG22s
- yasS2WOrDPE2mm6Mk/XxP0QWwIGnW0vOfUL8tKoEH4drJT93Px2gIA4CWouIgv9rVw759AIR0u1
- VpbrbVXI7WFePV2xA7WnYpINw2ILiekOJrE1MRlARvlOecavVRTziGTNQY7GazlqXpQuDWDDjBd
- UOOFw48OckA8P3Ei911eOmGSKhabXCdv6FyqauGVSTV0Ci1uzeFOssenO4eGrbj9cO+Inn8tnmL
- 0XOocPB3vQZuWid9w7mKJlFn9c477b+Hhcw19C8nfq+o9IU2Qe2P/YnGrq3BiwOS1qlv+YiOEr
-X-Received: by 2002:a05:7300:8b85:b0:2f2:6dde:df54 with SMTP id
- 5a478bee46e88-308200e18a9mr18448eec.33.1781212893669; 
- Thu, 11 Jun 2026 14:21:33 -0700 (PDT)
+ bh=qHC/hioDHh1g/4s7vl5QjhRyknxxKx2ge1mXQ9MqaHI=;
+ b=iVPKJ+nvHNF1UdVM4k2m9C9545mu0zBefuVTUxYRklL/SH+UkcN1qSOt7eoOLah0ai
+ WBI9IZkOwPNQdrNIn7vFlYcYqIEQDWCvcQBBEUclUYtb9ruZlVvTgNfliQJWwuFVve3n
+ O4lR0dXjXalbNcC4Iil+W6gnyIyTWrJjFF4+nEMz4BFhTST3qkUJo1XbDkxOIguJUU8f
+ rPp8/fLb19hF50/XsOKP3/UnOnX6xm2LMZnDI41fm1JOIvUxPLk9fqlqDJov/J4b9xS7
+ k7r9gxO2+8MzKZ6d+Ti5LL4nqW+g/F67AmHKfr0WOdUhdNt6boH4ZbDQ0IR88EYX2RhZ
+ ITcQ==
+X-Gm-Message-State: AOJu0Yw8nWp2Z7cH2P1Gy2UjwYst9XdpfMaMI6y+J8UgIseXndj8sGhF
+ pyU4jtXdkG9de61zfPnZh4jaKGnSeGbNb+jxO2KdU9cwOWwrizZHs2BOjLni4vl2lpIpdj2jBzn
+ t2lN4
+X-Gm-Gg: Acq92OHNhMMn6dI4nd9lnZ6uDUXNyMhMYp3hSgeLYeyqHsRjf+7zAznmtT7JnBc6V2P
+ gezp4ZznVC8DXsvsWn97Z11V0wr+xRm3dSCmZp+c2ZD4J+WNYodFQjSQuKgOqvKEbft2BEOvUvM
+ zq+bFP8HCU1EhbaDOQyLmC6gKoBygZ8+/YcNq9/yxgO7bFowzoP6uUbJjGoZrAu7Gx3/Ma04XgZ
+ OxbuoPiXLdw5qgQ0k8ut4XOXNxnIq7hxHdindW7+Ei16uVMRFuKkZ/5EWn5+0DfPShls0ikQniM
+ E7H+qJ/oca3gEXba+hB3lJkhZAByzGaN5Zf/UtfqrrWRPWzLNZg3nE3rQkQ4+8s1dR+WDy/hRUR
+ 2po/xJlChtLQyfnBOdt0BSbK3UVvLhIagL0WFw4ueHfaK6vFy1tFZK+aRVCyl8dv5I3N/OBHRDu
+ O6e7/yVxUBSDBjtHkGpNkDdsoCCdVzH0ltYTPN7qYmS4d4HWE6paURyzDDaD/i/g==
+X-Received: by 2002:a05:7300:7496:b0:2da:a813:a5fd with SMTP id
+ 5a478bee46e88-30820086f78mr28083eec.22.1781212894805; 
+ Thu, 11 Jun 2026 14:21:34 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3081eb95450sm546238eec.28.2026.06.11.14.21.32
+ 5a478bee46e88-3081eb95450sm546238eec.28.2026.06.11.14.21.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 14:21:33 -0700 (PDT)
+ Thu, 11 Jun 2026 14:21:34 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>, Volodymyr Fialko <vfialko@marvell.com>
-Subject: [PATCH 11/15] doc: enhance multi-process, NTB, ordering,
- and PTP guides
-Date: Thu, 11 Jun 2026 14:18:50 -0700
-Message-ID: <20260611212119.1026721-12-stephen@networkplumber.org>
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ John McNamara <john.mcnamara@intel.com>,
+ Yipeng Wang <yipeng1.wang@intel.com>
+Subject: [PATCH 12/15] doc: improve QoS, callbacks, EFD,
+ and service cores guides
+Date: Thu, 11 Jun 2026 14:18:51 -0700
+Message-ID: <20260611212119.1026721-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260611212119.1026721-1-stephen@networkplumber.org>
 References: <20250216230903.124496-1-nandinipersad361@gmail.com>
@@ -84,217 +86,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improved documentation for various sample applications:
+Enhanced documentation for QoS and service applications:
 
-multi_process.rst:
-- Clarified primary/secondary process model
-- Enhanced shared memory descriptions
-- Improved command-line examples
-
-ntb.rst:
-- Minor formatting fix
-
-packet_ordering.rst:
-- Improved packet reordering algorithm descriptions
-- Enhanced worker thread explanations
+qos_metering.rst:
+- Improved traffic metering algorithm descriptions
 - Fixed formatting consistency
 
-pipeline.rst:
-- Clarified pipeline stage configurations
-- Improved table action descriptions
+qos_scheduler.rst:
+- Enhanced hierarchical scheduler explanations
+- Improved traffic class descriptions
 
-ptpclient.rst:
-- Enhanced PTP synchronization explanations
-- Improved timestamp handling descriptions
-- Fixed formatting in configuration examples
+rxtx_callbacks.rst:
+- Clarified callback mechanism usage
+- Fixed formatting in code examples
+
+server_node_efd.rst:
+- Minor formatting improvements
+
+service_cores.rst:
+- Restructured service core architecture descriptions
+- Improved service mapping explanations
+- Enhanced clarity of multi-service configurations
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/sample_app_ug/multi_process.rst   | 47 ++++++++++---------
- doc/guides/sample_app_ug/ntb.rst             |  2 +-
- doc/guides/sample_app_ug/packet_ordering.rst | 42 +++++++++--------
- doc/guides/sample_app_ug/pipeline.rst        | 26 ++++++-----
- doc/guides/sample_app_ug/ptpclient.rst       | 49 +++++++++++---------
- 5 files changed, 89 insertions(+), 77 deletions(-)
+ doc/guides/sample_app_ug/qos_metering.rst    |  9 +--
+ doc/guides/sample_app_ug/qos_scheduler.rst   | 16 +++--
+ doc/guides/sample_app_ug/rxtx_callbacks.rst  |  9 ++-
+ doc/guides/sample_app_ug/server_node_efd.rst |  4 +-
+ doc/guides/sample_app_ug/service_cores.rst   | 67 +++++++++++---------
+ 5 files changed, 56 insertions(+), 49 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/multi_process.rst b/doc/guides/sample_app_ug/multi_process.rst
-index 1bd858bfb5..e9e5809a92 100644
---- a/doc/guides/sample_app_ug/multi_process.rst
-+++ b/doc/guides/sample_app_ug/multi_process.rst
-@@ -42,9 +42,10 @@ passing at least two cores in the corelist:
+diff --git a/doc/guides/sample_app_ug/qos_metering.rst b/doc/guides/sample_app_ug/qos_metering.rst
+index e7101559aa..b317d4079d 100644
+--- a/doc/guides/sample_app_ug/qos_metering.rst
++++ b/doc/guides/sample_app_ug/qos_metering.rst
+@@ -4,7 +4,7 @@
+ QoS Metering Sample Application
+ ===============================
  
-     ./<build_dir>/examples/dpdk-simple_mp -l 0-1 --proc-type=primary
- 
--For the first DPDK process run, the proc-type flag can be omitted or set to auto,
--since all DPDK processes will default to being a primary instance,
--meaning they have control over the hugepage shared memory regions.
-+For the first DPDK process run, the proc-type flag can be omitted or set to auto
-+since all DPDK processes will default to being a primary instance
-+(meaning, they have control over the hugepage shared memory regions).
-+
- The process should start successfully and display a command prompt as follows:
- 
- .. code-block:: console
-@@ -99,7 +100,7 @@ At any stage, either process can be terminated using the quit command.
-     The secondary process can be stopped and restarted without affecting the primary process.
- 
- How the Application Works
--^^^^^^^^^^^^^^^^^^^^^^^^^
-+~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- This application uses two queues and a single memory pool created in the primary process.
- The secondary process then uses lookup functions to attach to these objects.
-@@ -141,7 +142,7 @@ Each process writes outgoing packets to a different Tx queue on each port.
- Running the Application
- ^^^^^^^^^^^^^^^^^^^^^^^
- 
--The first instance of the ``symmetric_mp`` process is the primary instance, with the EAL arguments:
-+The first instance of the ``symmetric_mp`` process becomes the primary instance, with the following application arguments:
- 
- ``-p <portmask>``
-   The ``portmask`` is a hexadecimal bitmask of what ports on the system are to be used.
-@@ -155,7 +156,7 @@ The first instance of the ``symmetric_mp`` process is the primary instance, with
- ``--proc-id <n>``
-   Where ``n`` is a numeric value in the range ``0 <= n < N``
-   (number of processes, specified above).
--  This identifies which ``symmetric_mp`` instance is being run,
-+  This identifies which ``symmetric_mp`` instance is running,
-   so that each process can read a unique receive queue on each network port.
- 
- The secondary instance must be started with similar EAL parameters.
-@@ -173,7 +174,7 @@ Example:
-    In the above example, ``auto`` is used so the first instance becomes the primary process.
- 
- How the Application Works
--^^^^^^^^^^^^^^^^^^^^^^^^^
-+~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- The primary instance creates the memory pool and initializes the network ports.
- 
-@@ -183,8 +184,8 @@ The primary instance creates the memory pool and initializes the network ports.
-         :end-before: >8 End of primary instance initialization.
-         :dedent: 1
- 
--The secondary instance gets the port information and exported by the primary process.
--The memory pool is accessed by doing a lookup for it by name:
-+The secondary instance gets the port information exported by the primary process.
-+The memory pool is accessed by looking it up by name:
- 
- .. code-block:: c
- 
-@@ -198,7 +199,7 @@ Each process reads from each port using the queue corresponding to its proc-id p
- and writes to the corresponding transmit queue on the output port.
- 
- Client-Server Multi-process Example
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+-----------------------------------
- 
- The example multi-process application demonstrates a client-server type multi-process design.
- A single server process receives a set of packets from the ports
-@@ -216,22 +217,22 @@ The following diagram shows the data-flow through the application, using two cli
- 
- 
- Running the Application
--^^^^^^^^^^^^^^^^^^^^^^^
-+~~~~~~~~~~~~~~~~~~~~~~~
- 
--The server process must be run as the primary process to set up all memory structures.
-+The server process must run as the primary process to set up all memory structures.
- In addition to the EAL parameters, the application-specific parameters are:
- 
--*   -p <portmask >, where portmask is a hexadecimal bitmask of what ports on the system are to be used.
--    For example: -p 3 to use ports 0 and 1 only.
-+*   ``-p <portmask>``, where portmask is a hexadecimal bitmask of what ports on the system are to be used.
-+    For example: ``-p 3`` to use ports 0 and 1 only.
- 
--*   -n <num-clients>, where the num-clients parameter is the number of client processes that will process the packets received
-+*   ``-n <num-clients>``, where the num-clients parameter is the number of client processes that will process the packets received
-     by the server application.
- 
- .. note::
- 
--   In the server process, has a single thread using the lowest numbered lcore
--   in the corelist, performs all packet I/O.
--   If corelist parameter specifies with more than a single lcore,
-+   In the server process, a single thread using the lowest numbered lcore
-+   in the corelist performs all packet I/O.
-+   If the corelist parameter specifies more than a single lcore,
-    an additional lcore will be used for a thread to print packet count periodically.
- 
- The server application stores configuration data in shared memory,
-@@ -251,14 +252,14 @@ the commands are:
- 
-     If the server application dies and needs to be restarted, all client applications also need to be restarted,
-     as there is no support in the server application for it to run as a secondary process.
--    Any client processes that need restarting can be restarted without affecting the server process.
-+    Client processes can be restarted without affecting the server process.
- 
- How the Application Works
--^^^^^^^^^^^^^^^^^^^^^^^^^
-+~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--The server (primary) process performs the initialization of network port and data structure
-+The server (primary) process performs the initialization of network ports and data structures
- and stores its port configuration data in a memory zone in hugepage shared memory.
--The client process does not need the portmask parameter passed in via the command line.
-+The client processes do not need the portmask parameter passed in via the command line.
- The server process is the primary process, and the client processes are secondary processes.
- 
- The server operates by reading packets from each network port
-@@ -266,4 +267,4 @@ and distributing those packets to the client queues.
- The client reads from the ring and routes the packet to a different network port.
- The routing used is very simple: all packets received on the first NIC port
- are transmitted back out on the second port and vice versa.
--Similarly, packets are routed between the 3rd and 4th network ports and so on.
-+Similarly, packets are routed between the third and fourth network ports and so on.
-diff --git a/doc/guides/sample_app_ug/ntb.rst b/doc/guides/sample_app_ug/ntb.rst
-index f54de6cecd..ca0ff54757 100644
---- a/doc/guides/sample_app_ug/ntb.rst
-+++ b/doc/guides/sample_app_ug/ntb.rst
-@@ -12,7 +12,7 @@ This sample supports 4 types of packet forwarding mode.
- 
- * ``file-trans``: transmit files between two systems. The sample will
-   be polling to receive files from the peer and save the file as
--  ``ntb_recv_file[N]``, [N] represents the number of received file.
-+  ``ntb_recv_file[N]``, where [N] represents the number of received files.
- * ``rxonly``: NTB receives packets but doesn't transmit them.
- * ``txonly``: NTB generates and transmits packets without receiving any.
- * ``iofwd``: iofwd between NTB device and ethdev.
-diff --git a/doc/guides/sample_app_ug/packet_ordering.rst b/doc/guides/sample_app_ug/packet_ordering.rst
-index f96c0ad697..2082f49ad1 100644
---- a/doc/guides/sample_app_ug/packet_ordering.rst
-+++ b/doc/guides/sample_app_ug/packet_ordering.rst
-@@ -4,29 +4,30 @@
- Packet Ordering Application
- ============================
- 
--The Packet Ordering sample app simply shows the impact of reordering a stream.
--It's meant to stress the library with different configurations for performance.
-+The Packet Ordering sample application demonstrates packet reordering
-+functionality and its impact on stream processing.
-+It stresses the library with different configurations for performance.
+-The QoS meter sample application is an example that demonstrates the use of DPDK to provide QoS marking and metering,
++The QoS meter sample application demonstrates the use of DPDK to provide QoS marking and metering,
+ as defined by RFC2697 for Single Rate Three Color Marker (srTCM) and RFC 2698 for Two Rate Three Color Marker (trTCM) algorithm.
  
  Overview
- --------
+@@ -14,7 +14,8 @@ The application uses a single thread for reading the packets from the RX port,
+ metering, marking them with the appropriate color (green, yellow or red) and writing them to the TX port.
  
- The application uses at least three CPU cores:
+ A policing scheme can be applied before writing the packets to the TX port by dropping or
+-changing the color of the packet in a static manner depending on both the input and output colors of the packets that are processed by the meter.
++changing the color of the packet in a static manner. This would depend on both the input and output colors
++of the packets that are processed by the meter.
  
--* RX core (main core) receives traffic from the NIC ports and feeds Worker
-+* The RX core (main core) receives traffic from the NIC ports and feeds worker
-   cores with traffic through SW queues.
+ The operation mode can be selected as compile time out of the following options:
  
--* Worker (worker core) basically do some light work on the packet.
--  Currently it modifies the output port of the packet for configurations with
--  more than one port enabled.
-+* Worker cores perform lightweight processing on each packet.
-+  For configurations with more than one port enabled, it swaps the destination
-+  port of the packet.
+@@ -126,9 +127,9 @@ There are four different actions:
  
--* TX Core (worker core) receives traffic from Worker cores through software queues,
-+* The TX core receives traffic from worker cores through software queues,
-   inserts out-of-order packets into reorder buffer, extracts ordered packets
--  from the reorder buffer and sends them to the NIC ports for transmission.
-+  from the reorder buffer, and sends them to the NIC ports for transmission.
+ In this particular case:
+ 
+-*   Every packet which input and output color are the same, keeps the same color.
++*   For every packet where the input and output color are the same, keep the same color.
+ 
+-*   Every packet which color has improved is dropped (this particular case can't happen, so these values will not be used).
++*   For every packet where the color has improved is dropped (this particular case can't happen, so these values will not be used).
+ 
+ *   For the rest of the cases, the color is changed to red.
+ 
+diff --git a/doc/guides/sample_app_ug/qos_scheduler.rst b/doc/guides/sample_app_ug/qos_scheduler.rst
+index cd33beecb0..645f134e7f 100644
+--- a/doc/guides/sample_app_ug/qos_scheduler.rst
++++ b/doc/guides/sample_app_ug/qos_scheduler.rst
+@@ -20,24 +20,26 @@ The architecture of the QoS scheduler application is shown in the following figu
+ 
+ There are two flavors of the runtime execution for this application,
+ with two or three threads per each packet flow configuration being used.
+-The RX thread reads packets from the RX port,
++
++The RX thread reads packets from the RX port and
+ classifies the packets based on the double VLAN (outer and inner) and
+-the lower byte of the IP destination address and puts them into the ring queue.
++the lower byte of the IP destination address. It then puts them into the ring queue.
++
+ The worker thread dequeues the packets from the ring and calls the QoS scheduler enqueue/dequeue functions.
+ If a separate TX core is used, these are sent to the TX ring.
+ Otherwise, they are sent directly to the TX port.
+-The TX thread, if present, reads from the TX ring and write the packets to the TX port.
++The TX thread, if present, reads from the TX ring and writes the packets to the TX port.
  
  Compiling the Application
  -------------------------
@@ -302,235 +179,203 @@ index f96c0ad697..2082f49ad1 100644
 -To compile the sample application see :doc:`compiling`.
 +To compile the sample application, see :doc:`compiling`.
  
- The application is located in the ``packet_ordering`` sub-directory.
+ The application is located in the ``qos_sched`` sub-directory.
  
-@@ -36,6 +37,9 @@ Running the Application
- Refer to *DPDK Getting Started Guide* for general information on running applications
- and the Environment Abstraction Layer (EAL) options.
+     .. note::
  
-+Explanation
-+-----------
-+
- Application Command Line
- ~~~~~~~~~~~~~~~~~~~~~~~~
+-        This application is intended as a linux only.
++        This application is intended for Linux only.
  
-@@ -46,16 +50,16 @@ The application execution command line is:
-     ./<build_dir>/examples/dpdk-packet_ordering [EAL options] -- -p PORTMASK /
-     [--disable-reorder] [--insight-worker]
+ .. note::
  
--The -l EAL corelist option has to contain at least 3 CPU cores.
--The first CPU core in the core mask is the main core and would be assigned to
--RX core, the last to TX core and the rest to Worker cores.
-+The ``-l`` EAL corelist option must contain at least 3 CPU cores.
-+The first CPU core in the corelist is assigned to the RX core (main core),
-+the last to the TX core, and the remaining cores to worker cores.
+@@ -63,7 +65,7 @@ Mandatory application parameters include:
  
--The PORTMASK parameter must contain either 1 or even enabled port numbers.
--When setting more than 1 port, traffic would be forwarded in pairs.
--For example, if we enable 4 ports, traffic from port 0 to 1 and from 1 to 0,
--then the other pair from 2 to 3 and from 3 to 2, having [0,1] and [2,3] pairs.
-+The ``PORTMASK`` parameter must specify either 1 port or an even number of ports.
-+When setting more than 1 port, traffic is forwarded in pairs.
-+For example, if 4 ports are enabled, traffic flows between port 0 and port 1,
-+and between port 2 and port 3 (forming port pairs [0,1] and [2,3]).
+ *   --pfc "RX PORT, TX PORT, RX LCORE, WT LCORE, TX CORE": Packet flow configuration.
+     Multiple pfc entities can be configured in the command line,
+-    having 4 or 5 items (if TX core defined or not).
++    with 4 or 5 items (depending on whether a TX core is defined).
  
--The disable-reorder long option does, as its name implies, disable the reordering
--of traffic, which should help evaluate reordering performance impact.
-+The ``--disable-reorder`` option disables packet reordering, which allows
-+evaluation of the performance impact of reordering.
+ Optional application parameters include:
  
--The insight-worker long option enables output the packet statistics of each worker thread.
-+The ``--insight-worker`` long option enables outputting packet statistics for each worker thread.
-diff --git a/doc/guides/sample_app_ug/pipeline.rst b/doc/guides/sample_app_ug/pipeline.rst
-index 2d7c977068..2e8f5b7f24 100644
---- a/doc/guides/sample_app_ug/pipeline.rst
-+++ b/doc/guides/sample_app_ug/pipeline.rst
-@@ -4,10 +4,10 @@
- Pipeline Application
- ====================
+@@ -153,7 +155,7 @@ These are the commands that are currently working under the command line interfa
  
--Application overview
----------------------
-+Overview
-+--------
+ All of these commands work the same way, averaging the number of packets throughout a specific subset of queues.
  
--This application showcases the features of the Software Switch (SWX) pipeline that is aligned with the P4 language.
-+This application showcases the features of the Software Switch (SWX) pipeline that aligns with the P4 language.
+-Two parameters can be configured for this prior to calling any of these commands:
++Two parameters can be configured prior to calling any of these commands:
  
- Each pipeline is created using a specification file that can either be manually developed or generated using a P4 compiler.
+     *   qavg n X: n is the number of times that the calculation will take place.
+         Bigger numbers provide higher accuracy. The default value is 10.
+diff --git a/doc/guides/sample_app_ug/rxtx_callbacks.rst b/doc/guides/sample_app_ug/rxtx_callbacks.rst
+index cd6512508b..7dfcab5d65 100644
+--- a/doc/guides/sample_app_ug/rxtx_callbacks.rst
++++ b/doc/guides/sample_app_ug/rxtx_callbacks.rst
+@@ -18,10 +18,9 @@ prior to transmission to calculate the elapsed time in CPU cycles.
  
-@@ -78,7 +78,7 @@ To run remote client (e.g. telnet) to communicate with the application:
- 
-     $ telnet 0.0.0.0 8086
- 
--When running a telnet client as above, command prompt is displayed:
-+When running a telnet client as above, the command prompt is displayed:
- 
- .. code-block:: console
- 
-@@ -90,23 +90,25 @@ When running a telnet client as above, command prompt is displayed:
- 
-     pipeline>
- 
--Once application and telnet client start running, messages can be sent from client to application.
-+Once the application and telnet client start running, you can send messages from the client to the application.
- 
- 
--Application stages
--------------------
-+Explanation
-+-----------
-+
-+Here is a description of the various stages of the application.
- 
- Initialization
- ~~~~~~~~~~~~~~
- 
--During this stage, EAL layer is initialised and application specific arguments are parsed. Furthermore, the data structures
--for application objects are initialized. In case of any initialization error, an error message is displayed and the application
--is terminated.
-+During this stage, EAL layer is initialized and application specific arguments are parsed.
-+Furthermore, the data structures for application objects are initialized.
-+In case of any initialization error, an error message is displayed and the application is terminated.
- 
- Run-time
- ~~~~~~~~
- 
--The main thread is creating and managing all the application objects based on CLI input.
-+The main thread creates and manages all the application objects based on CLI input.
- 
- Each data plane thread runs one or several pipelines previously assigned to it in round-robin order. Each data plane thread
- executes two tasks in time-sharing mode:
-@@ -114,5 +116,5 @@ executes two tasks in time-sharing mode:
- #. *Packet processing task*: Process bursts of input packets read from the pipeline input ports.
- 
- #. *Message handling task*: Periodically, the data plane thread pauses the packet processing task and polls for request
--   messages send by the main thread. Examples: add/remove pipeline to/from current data plane thread, add/delete rules
-+   messages sent by the main thread. Examples: add/remove pipeline to/from current data plane thread, add/delete rules
-    to/from given table of a specific pipeline owned by the current data plane thread, read statistics, etc.
-diff --git a/doc/guides/sample_app_ug/ptpclient.rst b/doc/guides/sample_app_ug/ptpclient.rst
-index 0df465bcb4..28007604a0 100644
---- a/doc/guides/sample_app_ug/ptpclient.rst
-+++ b/doc/guides/sample_app_ug/ptpclient.rst
-@@ -5,14 +5,19 @@ PTP Client Sample Application
- =============================
- 
- The PTP (Precision Time Protocol) client sample application is a simple
--example of using the DPDK IEEE1588 API to communicate with a PTP time transmitter
-+example of using the DPDK IEEE1588 API to communicate with a PTP timeTransmitter
- to synchronize the time on the NIC and, optionally, on the Linux system.
- 
--Note, PTP is a time syncing protocol and cannot be used within DPDK as a
-+Note, PTP is a time synchronization protocol and cannot be used within DPDK as a
- time-stamping mechanism. See the following for an explanation of the protocol:
- `Precision Time Protocol
- <https://en.wikipedia.org/wiki/Precision_Time_Protocol>`_.
- 
-+.. note::
-+
-+   This documentation uses PTPv3 (IEEE 1588-2019) terminology where timeTransmitter/timeReceiver
-+   replace the older master/slave terms from PTPv2.
-+
- 
- Limitations
- -----------
-@@ -21,10 +26,10 @@ The PTP sample application is intended as a simple reference implementation of
- a PTP client using the DPDK IEEE1588 API.
- In order to keep the application simple the following assumptions are made:
- 
--* The first discovered time transmitter is the main for the session.
-+* The first discovered timeTransmitter is used for the session.
- * Only L2 PTP packets are supported.
- * Only the PTP v2 protocol is supported.
--* Only the time receiver clock is implemented.
-+* Only the timeReceiver clock is implemented.
- 
- 
- How the Application Works
-@@ -36,18 +41,18 @@ How the Application Works
- 
-    PTP Synchronization Protocol
- 
--The PTP synchronization in the sample application works as follows:
-+The PTP synchronization in the sample application (timeReceiver mode) works as follows:
- 
--* Time transmitter sends *Sync* message - the time receiver saves it as T2.
--* Time transmitter sends *Follow Up* message and sends time of T1.
--* Time receiver sends *Delay Request* frame to PTP time transmitter and stores T3.
--* Time transmitter sends *Delay Response* T4 time which is time of received T3.
-+* TimeTransmitter sends *Sync* message - the timeReceiver saves the receive time as T2.
-+* TimeTransmitter sends *Follow Up* message containing the transmit time T1.
-+* TimeReceiver sends *Delay Request* frame to the PTP timeTransmitter and stores the transmit time as T3.
-+* TimeTransmitter sends *Delay Response* containing T4, the time it received the Delay Request.
- 
--The adjustment for time receiver can be represented as:
-+The clock adjustment for the timeReceiver can be calculated as:
- 
-    adj = -[(T2-T1)-(T4 - T3)]/2
- 
--If the command line parameter ``-T 1`` is used the application also
-+If the command line parameter ``-T 1`` is used, the application also
- synchronizes the PTP PHC clock with the Linux kernel clock.
+ If hardware timestamping is supported by the NIC, the sample application will
+ also display the average latency.
+-The packet was timestamped in hardware
+-on top of the latency since the packet was received and processed by the RX
+-callback.
+-
++This shows the additional hardware timestamping latency on top of the
++software latency measured since the packet was received and processed by
++the RX callback.
  
  Compiling the Application
-@@ -61,7 +66,7 @@ The application is located in the ``ptpclient`` sub-directory.
+ -------------------------
+@@ -72,7 +71,7 @@ callbacks are added. This is explained in the next section:
+ 
+ 
+ The Port Initialization Function
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ The main functional part of the port initialization is shown below with
+ comments:
+diff --git a/doc/guides/sample_app_ug/server_node_efd.rst b/doc/guides/sample_app_ug/server_node_efd.rst
+index c90d74ae1c..d543148328 100644
+--- a/doc/guides/sample_app_ug/server_node_efd.rst
++++ b/doc/guides/sample_app_ug/server_node_efd.rst
+@@ -9,7 +9,7 @@ load balancer. For more information about the EFD Library, please refer to the
+ DPDK programmer's guide.
+ 
+ This sample application is a variant of the :doc:`multi_process`
+-where a specific target node is specified for every and each flow
++where a specific target node is specified for each flow
+ (not in a round-robin fashion as the original load balancing sample application).
+ 
+ Overview
+@@ -192,7 +192,7 @@ flow is not handled by the node.
+     :start-after: Packets dequeued from the shared ring. 8<
+     :end-before: >8 End of packets dequeuing.
+ 
+-Finally, note that both processes updates statistics, such as transmitted, received
++Finally, note that both processes update statistics, such as transmitted, received
+ and dropped packets, which are shown and refreshed by the server app.
+ 
+ .. literalinclude:: ../../../examples/server_node_efd/efd_server/main.c
+diff --git a/doc/guides/sample_app_ug/service_cores.rst b/doc/guides/sample_app_ug/service_cores.rst
+index 307a6c5fbb..11b6ebde1e 100644
+--- a/doc/guides/sample_app_ug/service_cores.rst
++++ b/doc/guides/sample_app_ug/service_cores.rst
+@@ -4,31 +4,34 @@
+ Service Cores Sample Application
+ ================================
+ 
+-The service cores sample application demonstrates the service cores capabilities
+-of DPDK. The service cores infrastructure is part of the DPDK EAL, and allows
+-any DPDK component to register a service. A service is a work item or task, that
++Overview
++--------
++
++This sample application demonstrates the service cores API of DPDK.
++The service cores infrastructure is part of the DPDK EAL and allows any
++DPDK component to register a service. A service is a work item or task that
+ requires CPU time to perform its duty.
+ 
+-This sample application registers 5 dummy services. These 5 services are used
+-to show how the service_cores API can be used to orchestrate these services to
+-run on different service lcores. This orchestration is done by calling the
+-service cores APIs, however the sample application introduces a "profile"
+-concept to contain the service mapping details. Note that the profile concept
+-is application specific, and not a part of the service cores API.
++This sample application registers 5 dummy services to demonstrate how the
++service cores API can orchestrate these services to run on different service
++lcores. The orchestration is performed by calling the service cores APIs.
++The sample application introduces a "profile" concept to group service-to-core
++mapping configurations. Note that profiles are application-specific and not
++part of the service cores API itself.
+ 
+ 
+ Compiling the Application
+ -------------------------
+ 
+-To compile the sample application see :doc:`compiling`.
++See :doc:`compiling`.
+ 
+ The application is located in the ``service_cores`` sub-directory.
+ 
  Running the Application
  -----------------------
  
--To run the example in a ``linux`` environment:
-+To run the example in a Linux environment:
+-To run the example, just execute the binary. Since the application dynamically
+-adds service cores in the application code itself, there is no requirement to
++To run the example, execute the binary. Since the application dynamically
++adds service cores at runtime, there is no requirement to
+ pass a service core-mask as an EAL argument at startup time.
  
  .. code-block:: console
+@@ -39,19 +42,19 @@ pass a service core-mask as an EAL argument at startup time.
+ Explanation
+ -----------
  
-@@ -71,8 +76,8 @@ Refer to *DPDK Getting Started Guide* for general information on running
- applications and the Environment Abstraction Layer (EAL) options.
- 
- * ``-p portmask``: Hexadecimal portmask.
--* ``-T 0``: Update only the PTP time receiver clock.
--* ``-T 1``: Update the PTP time receiver clock and synchronize the Linux Kernel to the PTP clock.
-+* ``-T 0``: Update only the PTP timeReceiver clock.
-+* ``-T 1``: Update the PTP timeReceiver clock and synchronize the Linux kernel clock to the PTP clock.
+-The following sections provide some explanation of code focusing on
+-registering applications from an applications point of view, and modifying the
+-service core counts and mappings at runtime.
++The following sections explain the application code, focusing on registering
++services from an application's perspective and modifying service core counts
++and mappings at runtime.
  
  
- Code Explanation
-@@ -101,7 +106,7 @@ function. The value returned is the number of parsed arguments:
-     :end-before: >8 End of initialization of EAL.
-     :dedent: 1
+ Registering a Service
+ ~~~~~~~~~~~~~~~~~~~~~
  
--And than we parse application specific arguments
-+Then we parse application-specific arguments:
+ The following code section shows how to register a service as an application.
+-Note that the service component header must be included by the application in
+-order to register services: ``rte_service_component.h``, in addition
+-to the ordinary service cores header ``rte_service.h`` which provides
+-the runtime functions to add, remove and remap service cores.
++Note: The service component header must be included by the application in
++order to register services: ``rte_service_component.h``. In addition, the
++service cores header ``rte_service.h`` provides the runtime functions to add,
++remove, and remap service cores.
  
- .. literalinclude:: ../../../examples/ptpclient/ptpclient.c
+ .. literalinclude:: ../../../examples/service_cores/main.c
      :language: c
-@@ -178,8 +183,8 @@ The forwarding loop can be interrupted and the application closed using
- PTP parsing
- ~~~~~~~~~~~
+@@ -63,9 +66,9 @@ the runtime functions to add, remove and remap service cores.
+ Controlling A Service Core
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~
  
--The ``parse_ptp_frames()`` function processes PTP packets, implementing time receiver
--PTP IEEE1588 L2 functionality.
-+The ``parse_ptp_frames()`` function processes PTP packets, implementing
-+PTP IEEE1588 L2 timeReceiver functionality.
+-This section demonstrates how to add a service core. The ``rte_service.h``
+-header file provides the functions for dynamically adding and removing cores.
+-The APIs to add and remove cores use lcore IDs similar to existing DPDK
++This section demonstrates how to add a service core and assign a service to it.
++The ``rte_service.h`` header file provides functions for dynamically adding
++and removing cores. These APIs use lcore IDs similar to existing DPDK
+ functions.
  
- .. literalinclude:: ../../../examples/ptpclient/ptpclient.c
-     :language: c
-@@ -187,12 +192,12 @@ PTP IEEE1588 L2 functionality.
-     :end-before:  >8 End of function processes PTP packets.
+ These are the functions to start a service core, and have it run a service:
+@@ -79,18 +82,20 @@ These are the functions to start a service core, and have it run a service:
+ Removing A Service Core
+ ~~~~~~~~~~~~~~~~~~~~~~~
  
- There are 3 types of packets on the RX path which we must parse to create a minimal
--implementation of the PTP time receiver client:
-+implementation of the PTP timeReceiver:
+-To remove a service core, the steps are similar to adding but in reverse order.
+-Note that it is not allowed to remove a service core if the service is running,
+-and the service-core is the only core running that service (see documentation
++To remove a service core, perform the adding steps in reverse order.
++Note: Removing a service core is not allowed if a service is running and
++the service core is the only core running that service (see documentation
+ for ``rte_service_lcore_stop`` function for details).
  
- * SYNC packet.
--* FOLLOW UP packet
-+* FOLLOW UP packet.
- * DELAY RESPONSE packet.
  
--When we parse the *FOLLOW UP* packet we also create and send a *DELAY_REQUEST* packet.
--Also when we parse the *DELAY RESPONSE* packet, and all conditions are met
--we adjust the PTP time receiver clock.
-+When we parse the *FOLLOW UP* packet, we also create and send a *DELAY REQUEST* packet.
-+When we parse the *DELAY RESPONSE* packet, and all conditions are met,
-+we adjust the PTP timeReceiver clock.
+ Conclusion
+ ~~~~~~~~~~
+ 
+-The service cores infrastructure provides DPDK with two main features. The first
+-is to abstract away hardware differences: the service core can CPU cycles to
+-a software fallback implementation, allowing the application to be abstracted
+-from the difference in HW / SW availability. The second feature is a flexible
+-method of registering functions to be run, allowing the running of the
+-functions to be scaled across multiple CPUs.
++The service cores infrastructure provides DPDK with two main features.
++
++First, it abstracts hardware differences: service cores can provide CPU cycles
++to software fallback implementations, allowing applications to be abstracted
++from hardware and software availability differences.
++
++Second, it provides a flexible method for registering functions to run,
++allowing function execution to scale across multiple CPUs.
 -- 
 2.53.0
 
