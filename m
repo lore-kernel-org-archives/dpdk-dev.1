@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 033ACCD98C7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E189CD98C7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:50:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 13DEA43356;
+	by mails.dpdk.org (Postfix) with ESMTP id EBB224335A;
 	Thu, 11 Jun 2026 17:50:26 +0200 (CEST)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
- [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id 0451443346
- for <dev@dpdk.org>; Thu, 11 Jun 2026 17:50:24 +0200 (CEST)
-Received: by mail-wr1-f45.google.com with SMTP id
- ffacd0b85a97d-45eeea039ebso4456882f8f.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 08:50:24 -0700 (PDT)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com
+ [209.85.221.51]) by mails.dpdk.org (Postfix) with ESMTP id 431C243357
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 17:50:26 +0200 (CEST)
+Received: by mail-wr1-f51.google.com with SMTP id
+ ffacd0b85a97d-45eeea039ebso4456925f8f.1
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 08:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781193023; x=1781797823; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1781193026; x=1781797826; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=wkB2UuxZXEDrRWj+rSbc29g4BovOjjBHbQg5jxXgklg=;
- b=G+lb/osUzXUGVTc6zIrpXs3RgzZB9HlGCWZRIcFYRHGqszkPRNUCCFCd4zQaLxK8pl
- Jh5S6wagg0ce/ZtPUIR4co4VWJ7smCmFnnzFqkUXu5aeaShqTWN0BIBmoZFLaILc8K7C
- KdrVk7JoOaf30KXFPvSRhcqkV7Cz16Fvc2TAUP2xIMB6OMI2BwwME9Fx+cwN+6ImP1Zg
- dbBCfGRMwKOyOiMrK1OcnunTx+e0FmuFMQUd5xtfDd3k8SpM4v+E5qpfirjVp+GgtpYC
- G6CWZYl3zICo74sV2W9ncveh7FyC5Wrp+c9zmgNiIDxGVoGOoeu9hXHilyB5dvVn3iCo
- D0gw==
+ bh=n9Tqydf0WP7QPy6fGrWKmAsnklX5h4vMU7DNZLmLHyE=;
+ b=XEys27ImRKWgk7nmu17ZVf97+sNtNphY73mI45Bne+MP3xFrl1SvDCO6zcOidhRjSO
+ aqu17JB46OVYFmSaBbG8B7tSpUJYD2HJBJvXSGQ+JIMuJIC2D2SuSbjGcCzfGHxzi01s
+ 0YHnWogf9ruoF3fnmWm+7t65XZJJ7e8QayYx6LUxKt5dE/HAWv6LzruWQN0XGpudDm42
+ iT9UIImlNK/Sg47Z0HnW8WTAHj4+mflhSrCFNoVhnUf3bvMPVn/vZbUy3l1Nc+vnL1Xz
+ nWCSg4rmES0kZRpxs+WVR9MgDEsvql9fTMMKVV1zFtoTxLn3MXLXsZlqXe/UeXouQpAK
+ jQ/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781193023; x=1781797823;
+ d=1e100.net; s=20251104; t=1781193026; x=1781797826;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=wkB2UuxZXEDrRWj+rSbc29g4BovOjjBHbQg5jxXgklg=;
- b=rO2UmPrBRwbejETJX1467lGbKwX2Pr+0NzpW8KQluzbu5OT/jfzZNU8YF3l5Uhnb4E
- cLmDf0YpmSS+cWPUecSbF4J0siUb4HnssjiJ1FTekLFenrG0VUyN9lfMImwlENONEyk3
- RDuUSZn66tVbtmA+U6JHZRC8j8lmCUGg80dN+moPAmhl4KgnQnMMWX7zAx4F0CNGtyYQ
- ksBnJFaVkMVGBdF25bazAhlhbvLMaRhMAVXlUS0Jk2TOyiBZOmSfsn67pi4LShW+SpYF
- cxpUD/1MPNfVJjTbpLuS9bgAV+jlUn1dW+rSyiN5Yl69OVMODf5Rd2II+5jZCEYsFVV7
- Dq9g==
-X-Gm-Message-State: AOJu0Yybc6vAFYRBur25WDAsTUUyohFhQpE8FUo4e5/iPunGDp9HFVMv
- nT6+23QNHVhPvpudXjBGgveAjyEFTQoHzLeTyvC0ZM97+eJmKwp5/JlI
-X-Gm-Gg: Acq92OGkK6wFLOFUsjgixpi3IHWlpblCdqRqPUKPA2slbkc8K08tv/p18ilRHfjgFqI
- G1g8boMnnpnyoJXS7cNzsdJhDbVPbQduGfCdFHlidV8KL/pmX1QCv3f0I9hEtBY0GnrZUCXwVQF
- GuVvPQeQBBCZO7QqfSyts/IeYP+mOAa1nLEavLzd1vDhvUYac8zfD2JOvD+iNeCnbQjUNGOaU/Y
- 4xiF0hWIc2MvWp4IBpFZlh20glqEbq1C9LlYdAV3AnMum19zsaDJ7ZIjhYFJ71//zxTV3pZ0IOP
- zKVo/FNSKCCregn8ed57L+Z3gM42rwQcuYvgM/M8nCdHUiU4E9slZjgtUB0WFBG6shX5BXek+tb
- KnfKhrCL3qDOsCM9zNbQr+2X7Vdn1tvZUO3Lv0SgV9Aa2+PC6N+Pv2Cqd0QGrNYWO5LIg0PFFka
- J48HGb7vLxNIsG/usWTAf0sOd2pX3fg2KClD6kSl+R34JaKSLuEs0hR5VbcVcACkw=
-X-Received: by 2002:a05:6000:4287:b0:45e:f68d:e791 with SMTP id
- ffacd0b85a97d-460673f42efmr5728564f8f.0.1781193023450; 
- Thu, 11 Jun 2026 08:50:23 -0700 (PDT)
+ bh=n9Tqydf0WP7QPy6fGrWKmAsnklX5h4vMU7DNZLmLHyE=;
+ b=GU1kDXH/88yTrTpL3NNW0wUtVMo8GE1Z/Ne29TNG7nIv9KtYGgEFzmayamdGKOHcY3
+ uHuRDaABh4QIlixFIX5Y5ZakxWDDTArZWN77w58yAWmvY2/uS1/UfJQNEBHI17OoxvOU
+ tb+Mmh0oxsv6ZXb62re6KYoG7f/0EscpUDnBU/z1TxNiO3VD+8iDPKEsaOUx7DBGJufD
+ 9qbl3F+6wSXibBxfp8QouPSlSWuCuHZhK9QFGnkOjchg1B7k5QL928zttcnQ3o1igvo1
+ 7whafeaetPhchAJ+uQ9cJKy4rnTPu+GTkIu4O0XunFX5+c0lWIq/ZzC9JWB7cGhXkq4f
+ 2fig==
+X-Gm-Message-State: AOJu0YzD5GHx9o+0WSDBiOjhLUtd5s5VwwR6NuqB5SGlFvuzEZ6OEXHm
+ aNSdWg7su6EqIpKjIZY8D8W6A4QMNRPJc/UHoCMIn3iQxblowAKhrRmDeBxP6mgI
+X-Gm-Gg: Acq92OH8vvmFSdAsizojSEAUNJT9uW/g8d+TgGAFS1KRl/Hwe7z1eEoes+fitRz9LBv
+ HsSgQbTxgNH5IXOazTRgGh9MEv5XzVWE9XvWRN5txr4ZeYcnuBurRXyFAwoubu9xpVcZtXrTJDO
+ yjXiQglnzNTDh7Q9sok/4m3bOGNX/IPKqbiPdxMqeucJse2KnH5mNdbTfW2Vp1/otO+EpSeuBY0
+ 0yat+rlk/LFf52Wqke7oS2VceejC5ZlAsVtYCAibyYhDV9BJqU6qrhtGQT4+BJ3xdKIMSLxihct
+ xxGCorDI/PGXnUovhCaGkzjRa/dPP1E22cuSaHciqongyNSU5BVbK9AyK4NZzR7xB0Dasf8XFmw
+ hsIgtYkR7WszKkufXXWIXre3gPtwLYIH5G8G35mvQDeoQyrpKIDvtfwNJ0B+hGRrwatrmKk5mY9
+ hucd8gCILG0TKqSsfEw21NjwD6wrUIL1tJMSt6o8HtPoJNwuFtWRMWJNdgj5YdeMI=
+X-Received: by 2002:a5d:584a:0:b0:45f:f142:d56f with SMTP id
+ ffacd0b85a97d-460675835b7mr5466668f8f.12.1781193025825; 
+ Thu, 11 Jun 2026 08:50:25 -0700 (PDT)
 Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4601f2e4004sm81988829f8f.9.2026.06.11.08.50.22
+ ffacd0b85a97d-4601f35133csm78844890f8f.25.2026.06.11.08.50.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 08:50:23 -0700 (PDT)
+ Thu, 11 Jun 2026 08:50:25 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: hemant.agrawal@nxp.com,
 	sachin.saxena@nxp.com
-Cc: dev@dpdk.org,
-	Maxime Leroy <maxime@leroys.fr>
-Subject: [PATCH 6/9] bus/fslmc/dpio: tune DQRI interrupt coalescing holdoff
-Date: Thu, 11 Jun 2026 17:49:21 +0200
-Message-ID: <20260611154926.392670-7-maxime@leroys.fr>
+Cc: dev@dpdk.org, Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org,
+ Ferruh Yigit <ferruh.yigit@amd.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ David Marchand <david.marchand@redhat.com>
+Subject: [PATCH 7/9] net/dpaa2: fix Rx queue count for primary process
+Date: Thu, 11 Jun 2026 17:49:22 +0200
+Message-ID: <20260611154926.392670-8-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260611154926.392670-1-maxime@leroys.fr>
 References: <20260611154926.392670-1-maxime@leroys.fr>
@@ -81,382 +83,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The portal DQRI interrupt used a fixed threshold of 3 and a raw 0xFF
-timeout. Parameterize dpaa2_dpio_intr_init() with (threshold, timeout) so
-each mode supplies its own: the event driver keeps the legacy 3 / 0xFF
-and its DPAA2_PORTAL_INTR_THRESHOLD / DPAA2_PORTAL_INTR_TIMEOUT env-var
-overrides, while rx-queue interrupts default the threshold to the HW DQRR
-ring depth (ring-1, =7 on QBMan >= 4.1) and use a coalescing holdoff in
-microseconds, converted to ITP units from the MC-reported QBMan clock
-(itp = holdoff_us * clk_MHz / 256, capped at the 12-bit field). The setup
-is portal-wide and idempotent, so the first mode to arm a given portal
-wins; a portal is normally driven by a single mode.
+The rx_queue_count callback was only assigned on the secondary process
+path of dpaa2_dev_init(), leaving eth_dev->rx_queue_count NULL for the
+primary process. The fast-path rte_eth_rx_queue_count() performs an
+unguarded indirect call in non-debug builds, so invoking it on a
+primary-process dpaa2 port dereferences a NULL function pointer and
+crashes.
 
-The net/dpaa2 PMD exposes both rx-queue-interrupt knobs as per-port
-devargs: drv_rx_intr_holdoff_us (default 100us) and drv_rx_intr_threshold
-(default 0 = ring-1, clamped to [1, ring-1]). Also expose
-dpaa2_dpio_intr_deinit() (no longer event-only), and on the intr_init
-error paths close the epoll fd and disable the interrupt.
+Assign the callback once before the process-type split so both the
+primary and secondary paths set it.
 
-Add qbman_swp_dqrr_size() to expose the ring depth.
-
+Fixes: cbfc6111b557 ("ethdev: move inline device operations")
+Cc: stable@dpdk.org
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- doc/guides/nics/dpaa2.rst                     | 10 +++
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      | 72 +++++++++++++------
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.h      | 12 +++-
- .../fslmc/qbman/include/fsl_qbman_portal.h    |  9 +++
- drivers/bus/fslmc/qbman/qbman_portal.c        |  6 ++
- drivers/net/dpaa2/dpaa2_ethdev.c              | 60 +++++++++++++++-
- drivers/net/dpaa2/dpaa2_ethdev.h              |  7 ++
- 7 files changed, 151 insertions(+), 25 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/doc/guides/nics/dpaa2.rst b/doc/guides/nics/dpaa2.rst
-index 2d70bd0ab9..47a52c9287 100644
---- a/doc/guides/nics/dpaa2.rst
-+++ b/doc/guides/nics/dpaa2.rst
-@@ -492,6 +492,16 @@ for details.
-   packets, so that user can check what is wrong with those packets.
-   e.g. ``fslmc:dpni.1,drv_error_queue=1``
- 
-+* Use dev arg option ``drv_rx_intr_holdoff_us=<uint32>`` to set the Rx queue
-+  interrupt coalescing holdoff in microseconds (default 100). Only applies in
-+  Rx queue interrupt mode.
-+  e.g. ``fslmc:dpni.1,drv_rx_intr_holdoff_us=50``
-+
-+* Use dev arg option ``drv_rx_intr_threshold=<uint32>`` to set the Rx queue
-+  interrupt coalescing frame threshold; 0 (default) means the DQRR ring depth
-+  minus one.
-+  e.g. ``fslmc:dpni.1,drv_rx_intr_threshold=4``
-+
- Enabling logs
- -------------
- 
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-index e6b4e74b3b..c5525a94fa 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-@@ -206,12 +206,35 @@ dpaa2_affine_dpio_intr_to_respective_core(int32_t dpio_id, int cpu_id)
- }
- #endif /* RTE_EVENT_DPAA2 */
- 
-+/* holdoff (us) -> QBMan ITP units (256 cycles each), capped at the 12-bit field */
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dpio_holdoff_to_itp)
-+int dpaa2_dpio_holdoff_to_itp(struct dpaa2_dpio_dev *dpio_dev, uint32_t holdoff_us)
-+{
-+	uint32_t qman_mhz = 0;
-+	struct dpio_attr attr;
-+	uint64_t itp;
-+
-+	if (dpio_get_attributes(dpio_dev->dpio, CMD_PRI_LOW, dpio_dev->token, &attr) == 0)
-+		qman_mhz = attr.clk / 1000000;
-+	itp = qman_mhz ? ((uint64_t)holdoff_us * qman_mhz) / 256 : 0xFF;
-+	if (itp > 0xfff)	/* 12-bit ITP field */
-+		itp = 0xfff;
-+
-+	return (int)itp;
-+}
-+
-+/* threshold: DQRR fill raising DQRI (< ring depth); timeout: holdoff in ITP units.
-+ * Per-mode values from the caller (eventdev vs rx-queue intr); no env override.
-+ * The DQRI config is portal-wide and this is idempotent: the first caller to
-+ * arm a portal wins, a later caller's values are ignored (a portal normally
-+ * serves a single mode).
-+ */
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dpio_intr_init)
--int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
-+int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, int threshold,
-+			 int timeout, bool build_epoll)
- {
--	struct epoll_event epoll_ev;
- 	int eventfd, dpio_epoll_fd, ret;
--	int threshold = 0x3, timeout = 0xFF;
-+	struct epoll_event epoll_ev;
- 
- 	if (dpio_dev->intr_enabled)
- 		return 0;
-@@ -222,12 +245,6 @@ int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
- 		return -1;
- 	}
- 
--	if (getenv("DPAA2_PORTAL_INTR_THRESHOLD"))
--		threshold = atoi(getenv("DPAA2_PORTAL_INTR_THRESHOLD"));
--
--	if (getenv("DPAA2_PORTAL_INTR_TIMEOUT"))
--		sscanf(getenv("DPAA2_PORTAL_INTR_TIMEOUT"), "%x", &timeout);
--
- 	qbman_swp_interrupt_set_trigger(dpio_dev->sw_portal,
- 					QBMAN_SWP_INTERRUPT_DQRI);
- 	qbman_swp_interrupt_clear_status(dpio_dev->sw_portal, 0xffffffff);
-@@ -238,9 +255,9 @@ int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
- 	dpio_dev->epoll_fd = -1;
- 
- 	/* The event PMD dequeues by sleeping on a private epoll instance owned
--	 * by the portal, so build it here. A caller that waits on another
--	 * epoll (the net rx-queue-interrupt path uses the application's) skips
--	 * this.
-+	 * by the portal, so build it here. The net rx-queue-interrupt path
-+	 * exposes the raw eventfd through the generic ethdev API and waits on
-+	 * the application's own epoll instead, so it skips this.
- 	 */
- 	if (build_epoll) {
- 		dpio_epoll_fd = epoll_create(1);
-@@ -269,11 +286,14 @@ int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
- 	return 0;
- }
- 
--#ifdef RTE_EVENT_DPAA2
--static void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dpio_intr_deinit)
-+void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
- {
- 	int ret;
- 
-+	if (!dpio_dev->intr_enabled)
-+		return;
-+
- 	ret = rte_dpaa2_intr_disable(dpio_dev->intr_handle, 0);
- 	if (ret)
- 		DPAA2_BUS_ERR("DPIO interrupt disable failed");
-@@ -284,7 +304,6 @@ static void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
- 	}
- 	dpio_dev->intr_enabled = 0;
- }
--#endif
- 
- static int
- dpaa2_configure_stashing(struct dpaa2_dpio_dev *dpio_dev, int cpu_id)
-@@ -306,9 +325,18 @@ dpaa2_configure_stashing(struct dpaa2_dpio_dev *dpio_dev, int cpu_id)
- 	}
- 
- #ifdef RTE_EVENT_DPAA2
--	if (dpaa2_dpio_intr_init(dpio_dev, true)) {
--		DPAA2_BUS_ERR("Interrupt registration failed for dpio");
--		return -1;
-+	{
-+		int threshold = 3, timeout = 0xFF;
-+
-+		if (getenv("DPAA2_PORTAL_INTR_THRESHOLD"))
-+			threshold = atoi(getenv("DPAA2_PORTAL_INTR_THRESHOLD"));
-+		if (getenv("DPAA2_PORTAL_INTR_TIMEOUT"))
-+			sscanf(getenv("DPAA2_PORTAL_INTR_TIMEOUT"), "%x", &timeout);
-+
-+		if (dpaa2_dpio_intr_init(dpio_dev, threshold, timeout, true)) {
-+			DPAA2_BUS_ERR("Interrupt registration failed for dpio");
-+			return -1;
-+		}
- 	}
- 	dpaa2_affine_dpio_intr_to_respective_core(dpio_dev->hw_id, cpu_id);
- #endif
-@@ -319,9 +347,11 @@ dpaa2_configure_stashing(struct dpaa2_dpio_dev *dpio_dev, int cpu_id)
- static void dpaa2_put_qbman_swp(struct dpaa2_dpio_dev *dpio_dev)
- {
- 	if (dpio_dev) {
--#ifdef RTE_EVENT_DPAA2
-+		/* rx-queue interrupts (net PMD) can arm a portal without the
-+		 * event driver; tear it down unconditionally. Safe when never
-+		 * armed: intr_deinit returns early if intr is not enabled.
-+		 */
- 		dpaa2_dpio_intr_deinit(dpio_dev);
--#endif
- 		rte_atomic16_clear(&dpio_dev->ref_count);
- 	}
- }
-@@ -512,6 +542,8 @@ dpaa2_create_dpio_device(int vdev_fd,
- 		goto err;
- 	}
- 
-+	DPAA2_BUS_DEBUG("QBMAN clk = %u Hz (%u MHz)", attr.clk, attr.clk / 1000000);
-+
- 	/* find the SoC type for the first time */
- 	if (!dpaa2_svr_family) {
- 		struct mc_soc_version mc_plat_info = {0};
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h
-index 10dd968e5f..090fa14410 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h
-@@ -50,9 +50,17 @@ int dpaa2_affine_qbman_swp(void);
- __rte_internal
- int dpaa2_affine_qbman_ethrx_swp(void);
- 
--/* set up a DPIO portal's DQRI interrupt (rx-queue interrupt mode) */
-+/* set up / tear down a DPIO portal's DQRI interrupt (rx-queue interrupt mode) */
- __rte_internal
--int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll);
-+int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, int threshold,
-+			 int timeout, bool build_epoll);
-+
-+__rte_internal
-+void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev);
-+
-+/* convert a coalescing holdoff (microseconds) to QBMan ITP units */
-+__rte_internal
-+int dpaa2_dpio_holdoff_to_itp(struct dpaa2_dpio_dev *dpio_dev, uint32_t holdoff_us);
- 
- /* allocate memory for FQ - dq storage */
- __rte_internal
-diff --git a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
-index 5375ea386d..842ef6f067 100644
---- a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
-+++ b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
-@@ -157,6 +157,15 @@ uint32_t qbman_swp_intr_timeout_read_status(struct qbman_swp *p);
-  */
- void qbman_swp_intr_timeout_write(struct qbman_swp *p, uint32_t mask);
- 
-+/**
-+ * qbman_swp_dqrr_size() - Get the HW DQRR ring depth of a software portal.
-+ * @p: the given software portal object.
-+ *
-+ * Returns the number of DQRR entries (4 on QBMan < 4.1, 8 on >= 4.1). Useful
-+ * as the upper bound for the DQRR interrupt coalescing threshold.
-+ */
-+uint8_t qbman_swp_dqrr_size(struct qbman_swp *p);
-+
- /**
-  * qbman_swp_interrupt_get_trigger() - Get the data in software portal
-  * interrupt enable register.
-diff --git a/drivers/bus/fslmc/qbman/qbman_portal.c b/drivers/bus/fslmc/qbman/qbman_portal.c
-index 947415363a..81c2d87e0a 100644
---- a/drivers/bus/fslmc/qbman/qbman_portal.c
-+++ b/drivers/bus/fslmc/qbman/qbman_portal.c
-@@ -433,6 +433,12 @@ void qbman_swp_intr_timeout_write(struct qbman_swp *p, uint32_t mask)
- 	qbman_cinh_write(&p->sys, QBMAN_CINH_SWP_ITPR, mask);
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(qbman_swp_dqrr_size)
-+uint8_t qbman_swp_dqrr_size(struct qbman_swp *p)
-+{
-+	return p->dqrr.dqrr_size;
-+}
-+
- uint32_t qbman_swp_interrupt_get_trigger(struct qbman_swp *p)
- {
- 	return qbman_cinh_read(&p->sys, QBMAN_CINH_SWP_IER);
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 6407c24755..7ca454eaae 100644
+index 7ca454eaae..fb117e761f 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -36,6 +36,9 @@
- #define DRIVER_ERROR_QUEUE  "drv_err_queue"
- #define DRIVER_NO_TAILDROP  "drv_no_taildrop"
- #define DRIVER_NO_DATA_STASHING "drv_no_data_stashing"
-+#define DRIVER_RX_INTR_HOLDOFF_US "drv_rx_intr_holdoff_us"
-+#define DPAA2_RX_INTR_HOLDOFF_US_DEF 100
-+#define DRIVER_RX_INTR_THRESHOLD "drv_rx_intr_threshold"
- #define CHECK_INTERVAL         100  /* 100ms */
- #define MAX_REPEAT_TIME        90   /* 9s (90 * 100ms) in total */
- 
-@@ -3078,7 +3081,7 @@ dpaa2_dev_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
- 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
- 	struct dpaa2_queue *dpaa2_q = priv->rx_vq[queue_id];
- 	struct dpaa2_dpio_dev *dpio, *old;
--	int ret;
-+	int ret, threshold, timeout, dqrr_max;
- 
- 	if (!dpaa2_q->napi_dpcon)
- 		return -ENOTSUP;	/* no channel -> caller keeps polling */
-@@ -3087,10 +3090,22 @@ dpaa2_dev_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
- 		return -EIO;
- 	dpio = DPAA2_PER_LCORE_ETHRX_DPIO;
- 
-+	/* threshold from drv_rx_intr_threshold (0 = ring-1), holdoff from
-+	 * drv_rx_intr_holdoff_us. idempotent: no-op if the dpio is already
-+	 * armed (e.g. event driver)
-+	 */
-+	dqrr_max = qbman_swp_dqrr_size(dpio->sw_portal) - 1;
-+	threshold = priv->rx_intr_threshold ? (int)priv->rx_intr_threshold : dqrr_max;
-+	if (threshold < 1 || threshold > dqrr_max) {
-+		DPAA2_PMD_WARN("drv_rx_intr_threshold %d out of [1, %d], clamping",
-+			       threshold, dqrr_max);
-+		threshold = threshold < 1 ? 1 : dqrr_max;
-+	}
-+	timeout = dpaa2_dpio_holdoff_to_itp(dpio, priv->rx_intr_holdoff_us);
- 	/* build_epoll=false: the generic ethdev rx-intr API waits on the
- 	 * application epoll, not the portal's private one (event PMD only).
- 	 */
--	ret = dpaa2_dpio_intr_init(dpio, false);	/* VFIO eventfd, no MC */
-+	ret = dpaa2_dpio_intr_init(dpio, threshold, timeout, false);
- 	if (ret)
- 		return ret;
- 
-@@ -3346,6 +3361,35 @@ dpaa2_get_devargs(struct rte_devargs *devargs, const char *key)
- 	return 1;
- }
- 
-+static int
-+u32_devarg_handler(__rte_unused const char *key, const char *value, void *opaque)
-+{
-+	char *end;
-+	unsigned long v = strtoul(value, &end, 0);
-+
-+	if (*value == '\0' || *end != '\0' || v > UINT32_MAX)
-+		return -1;
-+	*(uint32_t *)opaque = (uint32_t)v;
-+
-+	return 0;
-+}
-+
-+/* Read a u32-valued devarg into *out, leaving *out untouched if absent. */
-+static void
-+dpaa2_get_devargs_u32(struct rte_devargs *devargs, const char *key, uint32_t *out)
-+{
-+	struct rte_kvargs *kvlist;
-+
-+	if (!devargs)
-+		return;
-+	kvlist = rte_kvargs_parse(devargs->args, NULL);
-+	if (!kvlist)
-+		return;
-+	if (rte_kvargs_count(kvlist, key))
-+		rte_kvargs_process(kvlist, key, u32_devarg_handler, out);
-+	rte_kvargs_free(kvlist);
-+}
-+
- static int
- dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- {
-@@ -3373,6 +3417,14 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 		DPAA2_PMD_INFO("No RX prefetch mode");
+@@ -3617,6 +3617,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
  	}
  
-+	priv->rx_intr_holdoff_us = DPAA2_RX_INTR_HOLDOFF_US_DEF;
-+	dpaa2_get_devargs_u32(dev->devargs, DRIVER_RX_INTR_HOLDOFF_US,
-+			      &priv->rx_intr_holdoff_us);
-+
-+	priv->rx_intr_threshold = 0;
-+	dpaa2_get_devargs_u32(dev->devargs, DRIVER_RX_INTR_THRESHOLD,
-+			      &priv->rx_intr_threshold);
-+
- 	if (dpaa2_get_devargs(dev->devargs, DRIVER_LOOPBACK_MODE)) {
- 		priv->flags |= DPAA2_RX_LOOPBACK_MODE;
- 		DPAA2_PMD_INFO("Rx loopback mode");
-@@ -3888,5 +3940,7 @@ RTE_PMD_REGISTER_PARAM_STRING(NET_DPAA2_PMD_DRIVER_NAME,
- 		DRIVER_RX_PARSE_ERR_DROP "=<int>"
- 		DRIVER_ERROR_QUEUE "=<int>"
- 		DRIVER_NO_TAILDROP "=<int>"
--		DRIVER_NO_DATA_STASHING "=<int>");
-+		DRIVER_NO_DATA_STASHING "=<int> "
-+		DRIVER_RX_INTR_HOLDOFF_US "=<uint32> "
-+		DRIVER_RX_INTR_THRESHOLD "=<uint32>");
- RTE_LOG_REGISTER_DEFAULT(dpaa2_logtype_pmd, NOTICE);
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index 65fb48bd27..d8be1f8bce 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -412,6 +412,13 @@ struct dpaa2_dev_priv {
- 	uint8_t max_cgs;
- 	uint8_t cgid_in_use[MAX_RX_QUEUES];
+ 	eth_dev->dev_ops = &dpaa2_ethdev_ops;
++	eth_dev->rx_queue_count = dpaa2_dev_rx_queue_count;
  
-+	/* DQRI holdoff (us) for rx-queue interrupts (drv_rx_intr_holdoff_us) */
-+	uint32_t rx_intr_holdoff_us;
-+	/* DQRI threshold for rx-queue interrupts (drv_rx_intr_threshold);
-+	 * 0 = auto (DQRR ring depth - 1)
-+	 */
-+	uint32_t rx_intr_threshold;
-+
- 	/* Current hash distribution size per RX TC, written by
- 	 * dpaa2_setup_flow_dist_size() and read by reta_query / reta_update.
- 	 * Zero means "use default" (= nb_rx_queues clamped to dist_queues).
+ 	if (dpaa2_get_devargs(dev->devargs, DRIVER_LOOPBACK_MODE)) {
+ 		eth_dev->rx_pkt_burst = dpaa2_dev_loopback_rx;
 -- 
 2.43.0
 
