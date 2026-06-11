@@ -2,49 +2,148 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E679CD98C7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 08:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0878CD98C7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 08:52:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF45D42EE9;
-	Thu, 11 Jun 2026 10:52:44 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 78F4E4026A
- for <dev@dpdk.org>; Thu, 11 Jun 2026 10:52:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C0F3642F3B;
+	Thu, 11 Jun 2026 10:52:53 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 5595D4026A;
+ Thu, 11 Jun 2026 10:52:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781167963; x=1812703963;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=1CaVF99ZUrihtmuJrGOz9Gl5F6CRtjYZUC1YRKO4l1M=;
- b=bhp8Ur/5e7+6l7jNgtfBzgaew6IPs9QLeYEZo+XzWxZ2SpoYncqC5r13
- Qnq5Qf/XaeC0ytitee/0NDCpU5++VVYYxiSKfmGLZg9Es9ghbY0T6rGZr
- 3dX8CVHTZ1pKD194J0BQR1jA4CWFQpjcsObFYLqLx+AIbdhiM1L8Lh22N
- mvYtPHVVFOVbKp+7hMw/J6Oi97MhVO5c1JcQe0pF93tOZtyXYStwTCANB
- oVQl0gxbudIQVLLpgLlGjwQuisfoLbxeNr7HhqZsya8reaVL9NlXNdZf6
- NcKBcYFiu6VXXp1DDOJAY94u56P0LoM0WKoJMF5EZWSp4nrEKzuSVOGN9 A==;
-X-CSE-ConnectionGUID: ZaStISnTSB2pALxGD/4tIQ==
-X-CSE-MsgGUID: zRPuwdYpS76fe5up6oXVvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="84546601"
-X-IronPort-AV: E=Sophos;i="6.24,198,1774335600"; d="scan'208";a="84546601"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Jun 2026 01:52:42 -0700
-X-CSE-ConnectionGUID: r4XuKqvDTEG47tYheB2T4A==
-X-CSE-MsgGUID: XxARTnwgR+eb/kx2Fcdp/g==
+ t=1781167972; x=1812703972;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=IrCyfXdyGHL+TExdbTaFcy9UHDCuOdy9EmsLiJ03SAQ=;
+ b=LEK6vXIeCil31rV18+BIYYRfoiqYASmkATtSv+zFGIM/4vIG8I8Rkvxn
+ 3uG/ditcUoqbSFhYXkAmZ34fX+GL5XSQ1nuStvv5YuvbU69cerz0rOYUx
+ ZBQmtLOJmnZMyY921ZeY1JthNXASWwootjVCL6fTeUZzYauLU0u/Hsc4C
+ stWJVqiut8SMy9qpMB9ZVTuN57UkZlDkDUCa1K6MrsJJ/RPRMysmJhBhL
+ v2cIvj0gxayKQdVof1bTKXoouvx7QYv9rNUhEXyIxf2Q9R0aKo4DnqB0N
+ AhJAAvVl0MavyW6m/T22qzIwrkFTi7nvoLjG63d5wdXf6BsCvqdsx7zs7 A==;
+X-CSE-ConnectionGUID: /afFkPTiQZ6E5PaFGWgcXA==
+X-CSE-MsgGUID: TcIECpt9SgGMEpJgvyvSbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="81955897"
+X-IronPort-AV: E=Sophos;i="6.24,198,1774335600"; d="scan'208";a="81955897"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Jun 2026 01:52:50 -0700
+X-CSE-ConnectionGUID: 1by5lVuNTqK/RS5i0GvRcA==
+X-CSE-MsgGUID: 6hW8rJGVTTe3tUxIX1A/Lg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,198,1774335600"; d="scan'208";a="246446563"
-Received: from silpixa00401454.ir.intel.com ([10.20.224.230])
- by orviesa009.jf.intel.com with ESMTP; 11 Jun 2026 01:52:41 -0700
-From: Emma Finn <emma.finn@intel.com>
-To: Kai Ji <kai.ji@intel.com>
-Cc: dev@dpdk.org,
-	Emma Finn <emma.finn@intel.com>
-Subject: [v1] crypto/qat: require IPsec MB for HMAC precomputes
-Date: Thu, 11 Jun 2026 08:52:36 +0000
-Message-ID: <20260611085237.1459286-1-emma.finn@intel.com>
-X-Mailer: git-send-email 2.43.0
+X-IronPort-AV: E=Sophos;i="6.24,198,1774335600"; d="scan'208";a="243976182"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Jun 2026 01:52:50 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Thu, 11 Jun 2026 01:52:49 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Thu, 11 Jun 2026 01:52:49 -0700
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.7) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Thu, 11 Jun 2026 01:52:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oQYYRwadLpjakblQ88LtxJWsnpHnXyOnLFBkmVFLR0S6JFOM1byFyFFkKoNc0BOKvj1NbmZhJHgkSagNCEhfHzugaW8zaRL4LhHa5o8vH0tMcy8pVqFMZDYMW9gmwrPkBEV02u8SFMyCwXvsMflx2o4k4cZv+sZmvgGrkJBVE/GQdl64AKSCjr1OoL+BgH+72ilaJKJc6/cGkC1a0XhBS5G8W/IMTg/2Als8eSCOVQYbjFTE05hkjhxmxYjp9N0Lbmaz82DAmqhGvuPqGh/tRGP9y6MTf2lQTK1OregAPlYnbsT3dhBxREb5YaAKsLc0QL29Dww0Wh6cIUz9EyTgqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h3kQBTPO4VDg7IJBncu4FQbt/ANqClB99Avy9MMIx6c=;
+ b=sDe6tZQSIKlq3qLZmbrjn8wMZBt08ENNY3v1V+ASLrJL9Wv2UKv+MOebKioSXP5kQ8+h8PGkRWmvjPwgsRwnSSMY202tqG5MJRGxmac3bf/JWoO3BvQmH8fDrF1QFjU/6k6VOKk6gfmrZ/eLO35ufKNNV2Thmw1qp59mK4hm/HsRvFWcOsMSdPQ69TFEBDjuEj4Iy4vrfYxsyP9RRd/5xloB3ayg/R3TP9+ibiXE+ylqebK3OcuNdQxDU4Z3X6PhfkHxnhvFv8NqaLrljrWo2GrAzuJXwinIsnD0voTHzWQfOZS9irE21vjbY8rvobBgXajXbS22+8rqU+OUVzBL+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA4PR11MB9278.namprd11.prod.outlook.com (2603:10b6:208:563::12)
+ by SA3PR11MB7980.namprd11.prod.outlook.com (2603:10b6:806:2fc::11)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.13; Thu, 11 Jun
+ 2026 08:52:39 +0000
+Received: from IA4PR11MB9278.namprd11.prod.outlook.com
+ ([fe80::9bef:c20f:571f:7057]) by IA4PR11MB9278.namprd11.prod.outlook.com
+ ([fe80::9bef:c20f:571f:7057%6]) with mapi id 15.21.0092.011; Thu, 11 Jun 2026
+ 08:52:39 +0000
+From: "Loftus, Ciara" <ciara.loftus@intel.com>
+To: "Mandal, Anurag" <anurag.mandal@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Medvedkin, Vladimir"
+ <vladimir.medvedkin@intel.com>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH v6] net/iavf: fix duplicate VF reset during PF reset
+ recovery
+Thread-Topic: [PATCH v6] net/iavf: fix duplicate VF reset during PF reset
+ recovery
+Thread-Index: AQHc+O/RPxzKXnv44EW3L0NHVui2LLY5DT6g
+Date: Thu, 11 Jun 2026 08:52:39 +0000
+Message-ID: <IA4PR11MB92783284E084FA4FEE8422638E1B2@IA4PR11MB9278.namprd11.prod.outlook.com>
+References: <20260605202911.314359-1-anurag.mandal@intel.com>
+ <20260610154306.371431-1-anurag.mandal@intel.com>
+In-Reply-To: <20260610154306.371431-1-anurag.mandal@intel.com>
+Accept-Language: en-IE, en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA4PR11MB9278:EE_|SA3PR11MB7980:EE_
+x-ms-office365-filtering-correlation-id: aa5c86a4-10b6-4b50-c3fb-08dec796cafe
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|23010399003|366016|376014|1800799024|6133799003|4143699003|56012099006|18002099003|11063799006|22082099003|38070700021;
+x-microsoft-antispam-message-info: F0R3TUjRbgoocYUapYBkoMwPjOac44JmbaAYKeW6b/oyq4eondrRLHdEj01AcLjPDwZ5GNiyM6KOwCYVLhL7/lEIO/h498rSMoBmjsEWiuzHSY2b6dDb8UKxt2tFvlvNe7mfgN4p6BcHD44i5UGonEZSZ89KbOnoO+IVquuPdoMpBrjqTBa3xzoKlMEKOU4Pyd0SO0C2IFA3JIBYfZAYFNWlyO9hCAYys8IFGJvJcqdt6emrNP5GZE3Xe48gwlCl4fScTD6Ysog6QgsDbhPCqf41/c1Syl4L9hA3bC44b91hIt128bzvO9wsrjU164xNMM//p7WSIBR/Jjc5KYSUuF2hsDA+i56MpSp/LVBcLJgj8pFAU/mzFTaL9fCgtS4fLHnwBM0VV594e9LvTqPIzFj3VVJ/fpKau0G7h/1M0PaxUrRMkvUIerteYzCtRPBv7W4Bc87mxRakUxfImN8Wv3oMdiQeN/b9qoU4NIpVWpM3jZlRUnV51TcGQNsR3QNZ+/9HqnUxfjp95LeHZrt0pDeVprg3tWPDqF48VdKwlJ88aGjaP9X8jGGEuVLl/vm2Ufh/t+HT/A0i0keVqKQiVNwyUmoYgOTXPeJSzClzvnR/XawMgvGl1sJ2ebFOTWxzoAzDm7g+/5vCdosC1W3G62s+Tegrq5BwThGWWdQTnN6hU24bA4tDUFNHz20yY2XeDuql/pyg3FCUlo4t3C3aNfqWj2vvaTDO20GO9KSYZKm0814FtyqfPQaNtgqxrgbQ
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA4PR11MB9278.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(366016)(376014)(1800799024)(6133799003)(4143699003)(56012099006)(18002099003)(11063799006)(22082099003)(38070700021);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?AKY3Asjr7FBKf6wiu03SVzTmAxIl9OxOS7JCIemG8Rzgd4yFNbbTfIDXqZbv?=
+ =?us-ascii?Q?AK39DgKRWJWhdgguECSywlQr5XgA2WujqOVzC5T3zzbdwQ0B0/jemoF6TnFH?=
+ =?us-ascii?Q?sn8MIlK3YMI5hbwi7MlKi1uN1FJIBut3OJkA97VMIxGxb4hHmSzLcHagAcxo?=
+ =?us-ascii?Q?QidOgLYQKmdxg+yClfC2qsuHmZRmmJqlIR2anEnXOIvI+jYVq0QY57vWMbWw?=
+ =?us-ascii?Q?uNAx6/DJ6eB3VGvF0O/W3GsrTdqZrCB9ibjd80jkGAhN5c6QhoNFIbvkd1/x?=
+ =?us-ascii?Q?UuAQL4ExbZh9gn72zcShOecbo7f2F5RW9LtiqvdEsEcQ6WPBkXHtCX16mEie?=
+ =?us-ascii?Q?8URqoxnABzrb3GOsjHGgFFMgz0rfCZSTuLdjZqANIoQoqWVfoTXhCrVfWD0D?=
+ =?us-ascii?Q?9MSy0b3lXnNIOPHr9vz8aHMfiB3DcDHuCWeqO1ck6n31lcMqjWBn+RPWBPKl?=
+ =?us-ascii?Q?nncpT4ll6r19qNoHTcF286scSKdQa1lPCnBu9DR+P7SDuMny1IfRBXkFyEKX?=
+ =?us-ascii?Q?5GYj0SGP4VoHKyHlCCAxju5aFCx60qqTu70wu7ujwmIH6c7HM3B6dZR7et/a?=
+ =?us-ascii?Q?towB4LnvZONLnKXBABCcQiTK9tuIFxn4nugCmpcH6kLIfP4FsiMSlbxI5nYu?=
+ =?us-ascii?Q?P1wHOOvFKz+L0gSPYvkkEJvIW6f61NVK69ORddtMt0W4QW+r9guohaaCdJU9?=
+ =?us-ascii?Q?IlYs7DRcURWrseuzDoOyWzMy4+bUMsLet+pZsQEJxcYE2vWhF4QjJ4cdRXqd?=
+ =?us-ascii?Q?QpYE0A3CwjIqrCSoAgz6pD2cKVkI3qQp+qcS1aFoGdK47OhyxxnZ594EhjxS?=
+ =?us-ascii?Q?i0v1q1GHnYUhCZIJn8zcTwZaZ6C5GJBjE3vR+sn8Us41Ot5UJ6q9t0nqXPbd?=
+ =?us-ascii?Q?tzoD3KkFGsJihSFkVMWORJbLsxhtpKbLydhJxGFpP2er3NmASBXgIImqDi7M?=
+ =?us-ascii?Q?vX1WuytgobnvRAg8GI7dJfKwoYVJ6WzRtRjEiesmyAYHRG7lNyWGomztiAkr?=
+ =?us-ascii?Q?RGOWuCbrBTpQ/po5N3iQfiaNi9cDGz0QWaaYwa7yv/EYWAkXSUHJsPpHtRmh?=
+ =?us-ascii?Q?fWoKcWvv/kBTTjqsRUkjDbTS6aNahT1FkoltwJKYmG1uGqEmehdoMiKxmyqc?=
+ =?us-ascii?Q?QXAdL9WZjr72qUZQ+2HsK7zfkBE5H0G5QX/cgjrFCTLvWgAZSgvnrSNoKgxI?=
+ =?us-ascii?Q?rro8LoQDgGqWZnAYHGgb+1t9R/HmWC942eYKyfuTJKTZdYkoAHSRY622518J?=
+ =?us-ascii?Q?RJ9NSubtid9laXofjrLAVsLIW0wUtnit7LYcKAMhhzbu1kvLXYKzBYHhI3Os?=
+ =?us-ascii?Q?QeyJjdFTKXVWmnip+pt5GbkRmEFHxVdpSqJ3DyFnaQrfVupxtQtqb2dmLrgM?=
+ =?us-ascii?Q?nyZ0JiSjZNiFv0BVY90ckgn2I+NW8zUblWbyicrxCJgdFYZZzfQf18HZeVaU?=
+ =?us-ascii?Q?3SOyC3lXVp23hk3tW2LV1OGmWYoogNOecGcpzkLyWxpw/pI8aoFc/i76otH3?=
+ =?us-ascii?Q?BGNevqrsJtylRB/b6LbnL7OVKbE7sUfXrqZapbakbVZAITtS9wBTHaTbOBgD?=
+ =?us-ascii?Q?whlfPGb656PDpZpr3SfvaYgikOMnJOnQ9CJ9AZRZCGKKgxhaU9w1a/GPe1CW?=
+ =?us-ascii?Q?gpVG8jVbuijDA0eD8TDtgMlL/aoT1U7WmbU3Y2pAIapxA1R83yAAbyzC1NR4?=
+ =?us-ascii?Q?83zCqiqGZsUEQ2/rtigvuM+GrbX5baK2LDuC9oozo/zjBhwCU3BKFz4Cn5sY?=
+ =?us-ascii?Q?eD94xsh8CA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Exchange-RoutingPolicyChecked: QgtMa5P+Dyhc1t/+XTiA132Mhg5MDfQ5mm97sdk8pzVmsUJw3vJ/Ghu3dJiwiMYauZgB+3BgvngXyCnT5sQowLzx1Cnv0E6ptipC9wz5iHsTiu7P2mpQrHsViB4Rvbs14vkaGlMhJmnoaArXAPspIeDWm/Hys3FaG6FjmQ7juCgkNQH1nqlVOFLjsFOTr2JAcuAj/5U0tdbVSp+eH06Q+ENIRP/ujeBB9KMGSNVmVJI1YTqgQPVcxCcQQ4UK9FhTTyg87EiAmAKapqW1uAmeSwbcvGnHe1dB5GMPs0NSxb+4Ue/dlNPcnbiQ1lXvh7W4ol/aYUVZFRwsJeFx75Mr/A==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9278.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa5c86a4-10b6-4b50-c3fb-08dec796cafe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2026 08:52:39.7117 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /gUihbiti1S1dFJCfl+0yk6l38k4mi+QjmOp/0ZuK2HtIvYYt5zUnSVXaZZN8lwfn1qkLyqUw0zU0VnPutq8tw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7980
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,678 +157,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-IPsec MB library (v1.4.0+) is now required for HMAC precomputes as
-OpenSSL 3.0 removed SHA*_Transform APIs. OpenSSL remains optional
-for DOCSIS BPI cipher fallback via EVP API.
+> Subject: [PATCH v6] net/iavf: fix duplicate VF reset during PF reset reco=
+very
+>=20
+> During PF initiated reset recovery, iavf_dev_close() sends an
+> extra 'VIRTCHNL_OP_RESET_VF' while recovery is already in progress.
+> That second reset can leave PF/VF virtchnl state inconsistent and
+> cause 'VIRTCHNL_OP_CONFIG_VSI_QUEUES' to fail with 'ERR_PARAM' after
+> ToR link flap/power-cycle, leaving the VF unable to recover.
+> This results in connection loss.
+>=20
+> This patch introduces a new flag 'pf_reset_in_progress', which
+> is set only when iavf_handle_hw_reset() is entered for a
+> PF-initiated reset (vf_initiated_reset is false), and
+> it is cleared on exit.
+> The aforesaid flag is used to prevent sending close-time VF
+> reset and related close-time virtchnl operation messages to the
+> AdminQ when PF triggered reset recovery is set.
+> This is done to avoid duplicate VF reset requests while preserving
+> normal behavior for application-driven close or VF-initiated reinit.
+>=20
+> Fixes: 675a104e2e94 ("net/iavf: fix abnormal disable HW interrupt")
+> Fixes: b34fe66ea893 ("net/iavf: delay VF reset command")
+> Fixes: 5e03e316c753 ("net/iavf: handle virtchnl event message without
+> interrupt")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 
-On x86: IPsec MB required, OpenSSL optional (DOCSIS fallback)
-On ARM: IPsec MB required, OpenSSL required (DOCSIS support)
+Thanks Anurag.
 
-Signed-off-by: Emma Finn <emma.finn@intel.com>
----
- doc/guides/cryptodevs/qat.rst        |  28 +-
- drivers/common/qat/meson.build       |  69 +++--
- drivers/crypto/qat/qat_sym_session.c | 412 +--------------------------
- 3 files changed, 74 insertions(+), 435 deletions(-)
+Acked-by: Ciara Loftus <ciara.loftus@intel.com>
 
-diff --git a/doc/guides/cryptodevs/qat.rst b/doc/guides/cryptodevs/qat.rst
-index 0c2b85444e..4e60e8343c 100644
---- a/doc/guides/cryptodevs/qat.rst
-+++ b/doc/guides/cryptodevs/qat.rst
-@@ -352,15 +352,25 @@ To use this feature the user must set the devarg on process start as a device ad
-  -a 03:01.1,qat_sym_cipher_crc_enable=1
- 
- 
--Running QAT PMD with Intel IPsec MB library for symmetric precomputes function
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--
--The QAT PMD uses Intel IPsec MB library for partial hash calculation
--in symmetric precomputes function by default,
--the minimum required version of IPsec MB library is v1.4.
--If this version of IPsec is not met, it will fallback to use OpenSSL.
--ARM will always default to using OpenSSL
--as ARM IPsec MB does not support the necessary algorithms.
-+Running QAT PMD with Intel IPsec MB library
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The QAT PMD requires IPsec MB library for HMAC partial hash calculation
-+in symmetric precomputes function. OpenSSL 3.0+ removed the low-level SHA*_Transform APIs
-+that were previously used for HMAC precomputes.
-+
-+**On x86 platforms:**
-+
-+* Intel IPsec MB library (v1.4.0+) is required for HMAC precomputes
-+* OpenSSL (3.0+) is optional for DOCSIS BPI cipher fallback
-+
-+**On ARM platforms:**
-+
-+* ARM IPsec MB library from ``gitlab.arm.com/arm-reference-solutions/ipsec-mb``
-+  is required for HMAC precomputes.
-+* OpenSSL (3.0+) is required for DOCSIS BPI cipher algorithms. ARM IPsec MB does not
-+  implement CFB-one-byte cipher modes needed for DOCSIS. Without OpenSSL, DOCSIS
-+  algorithms will not be available on ARM.
- 
- 
- Device and driver naming
-diff --git a/drivers/common/qat/meson.build b/drivers/common/qat/meson.build
-index 31e06f4376..4f516dea2a 100644
---- a/drivers/common/qat/meson.build
-+++ b/drivers/common/qat/meson.build
-@@ -27,47 +27,58 @@ if disable_drivers.contains(qat_compress_path)
-             'Explicitly disabled via build config')
- endif
- 
--libcrypto = dependency('libcrypto', required: false, method: 'pkg-config')
-+# IPsec MB is REQUIRED for HMAC precomputes (no OpenSSL 3.0 alternative)
-+# OpenSSL is OPTIONAL for DOCSIS BPI cipher fallback
-+IMB_required_ver = '1.4.0'
- 
- if arch_subdir == 'arm'
--    if libcrypto.found()
--        ext_deps += libcrypto
--        dpdk_conf.set('RTE_QAT_OPENSSL', true)
-+    IMB_header = '#include<ipsec-mb.h>'
-+else
-+    IMB_header = '#include<intel-ipsec-mb.h>'
-+endif
-+
-+# Check for IPsec MB library (required)
-+libipsecmb = cc.find_library('IPSec_MB', required: false)
-+if libipsecmb.found() and cc.links(
-+        'int main(void) {return 0;}', dependencies: libipsecmb)
-+    imb_ver = cc.get_define('IMB_VERSION_STR',
-+        prefix : IMB_header).split('"')[1]
-+
-+    if (imb_ver.version_compare('>=' + IMB_required_ver))
-+        ext_deps += libipsecmb
-+        dpdk_conf.set('RTE_QAT_IPSECMB', true)
-     else
-         qat_crypto = false
-         dpdk_drvs_disabled += qat_crypto_path
-         set_variable('drv_' + qat_crypto_path.underscorify() + '_disable_reason',
--        'missing dependency for Arm, libcrypto')
-+            'IPSec_MB version >= @0@ is required, found version @1@'.format(
-+                IMB_required_ver, imb_ver))
-     endif
- else
--    IMB_required_ver = '1.4.0'
--    IMB_header = '#include<intel-ipsec-mb.h>'
--    libipsecmb = cc.find_library('IPSec_MB', required: false)
--    if libipsecmb.found() and cc.links(
--            'int main(void) {return 0;}', dependencies: libipsecmb)
--        # version comes with quotes, so we split based on " and take the middle
--        imb_ver = cc.get_define('IMB_VERSION_STR',
--            prefix : IMB_header).split('"')[1]
-+    qat_crypto = false
-+    dpdk_drvs_disabled += qat_crypto_path
-+    set_variable('drv_' + qat_crypto_path.underscorify() + '_disable_reason',
-+        'missing required dependency, libIPSec_MB >= @0@'.format(IMB_required_ver))
-+endif
- 
--        if (imb_ver.version_compare('>=' + IMB_required_ver))
--            ext_deps += libipsecmb
--        elif libcrypto.found()
--            ext_deps += libcrypto
--            dpdk_conf.set('RTE_QAT_OPENSSL', true)
--        else
--            qat_crypto = false
--            dpdk_drvs_disabled += qat_crypto_path
--            set_variable('drv_' + qat_crypto_path.underscorify() + '_disable_reason',
--                'missing dependency, libipsecmb or libcrypto')
--        endif
--    elif libcrypto.found()
-+# Check for OpenSSL (optional, for DOCSIS BPI cipher fallback)
-+openssl_required_ver = '3.0.0'
-+if qat_crypto
-+    libcrypto = dependency('libcrypto', required: false, method: 'pkg-config', version: '>= ' + openssl_required_ver)
-+    if libcrypto.found()
-         ext_deps += libcrypto
-         dpdk_conf.set('RTE_QAT_OPENSSL', true)
-+        if arch_subdir == 'arm'
-+            message('QAT: Using OpenSSL @0@ for DOCSIS on ARM'.format(libcrypto.version()))
-+        else
-+            message('QAT: OpenSSL @0@ available for DOCSIS fallback'.format(libcrypto.version()))
-+        endif
-     else
--        qat_crypto = false
--        dpdk_drvs_disabled += qat_crypto_path
--        set_variable('drv_' + qat_crypto_path.underscorify() + '_disable_reason',
--            'missing dependency, libipsecmb or libcrypto')
-+        if arch_subdir == 'arm'
-+            warning('QAT: OpenSSL >= @0@ not found - DOCSIS algorithms will not be available on ARM'.format(openssl_required_ver))
-+        else
-+            message('QAT: OpenSSL >= @0@ not found - DOCSIS will use IPsec MB only'.format(openssl_required_ver))
-+        endif
-     endif
- endif
- 
-diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
-index ff01db4372..8be8802e8d 100644
---- a/drivers/crypto/qat/qat_sym_session.c
-+++ b/drivers/crypto/qat/qat_sym_session.c
-@@ -2,19 +2,18 @@
-  * Copyright(c) 2015-2022 Intel Corporation
-  */
- 
--#define OPENSSL_API_COMPAT 0x10100000L
--
--#ifdef RTE_QAT_OPENSSL
--#include <openssl/sha.h>	/* Needed to calculate pre-compute values */
--#include <openssl/aes.h>	/* Needed to calculate pre-compute values */
--#include <openssl/md5.h>	/* Needed to calculate pre-compute values */
--#include <openssl/evp.h>	/* Needed for bpi runt block processing */
--#endif
--
--#ifndef RTE_QAT_OPENSSL
--#ifndef RTE_ARCH_ARM
-+/* IPsec MB is required for HMAC precomputes (OpenSSL 3.0 removed Transform APIs)
-+ * OpenSSL is optional for DOCSIS BPI cipher fallback
-+ */
-+#ifdef RTE_ARCH_ARM
-+#include <ipsec-mb.h>
-+#else
- #include <intel-ipsec-mb.h>
- #endif
-+
-+#ifdef RTE_QAT_OPENSSL
-+#define OPENSSL_API_COMPAT 0x30000000L
-+#include <openssl/evp.h>	/* For DOCSIS BPI cipher fallback */
- #endif
- 
- #include <rte_memcpy.h>
-@@ -38,9 +37,8 @@
- static OSSL_PROVIDER * legacy_lib;
- static OSSL_PROVIDER *default_lib;
- 
--/* Some cryptographic algorithms such as MD and DES are now considered legacy
-- * and not enabled by default in OpenSSL 3.0. Load up lagacy provider as MD5
-- * DES are needed in QAT pre-computes and secure session creation.
-+/* DES is considered legacy and not enabled by default in OpenSSL 3.0.
-+ * Load legacy provider for DES-DOCSISBPI cipher fallback support.
-  */
- static int ossl_legacy_provider_load(void)
- {
-@@ -1412,339 +1410,9 @@ static int qat_hash_get_block_size(enum icp_qat_hw_auth_algo qat_hash_alg)
- #define HMAC_OPAD_VALUE	0x5c
- #define HASH_XCBC_PRECOMP_KEY_NUM 3
- 
--#ifdef RTE_QAT_OPENSSL
--static int partial_hash_sha1(uint8_t *data_in, uint8_t *data_out)
--{
--	SHA_CTX ctx;
--
--	if (!SHA1_Init(&ctx))
--		return -EFAULT;
--	SHA1_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx, SHA_DIGEST_LENGTH);
--	return 0;
--}
--
--static int partial_hash_sha224(uint8_t *data_in, uint8_t *data_out)
--{
--	SHA256_CTX ctx;
--
--	if (!SHA224_Init(&ctx))
--		return -EFAULT;
--	SHA256_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx, SHA256_DIGEST_LENGTH);
--	return 0;
--}
--
--static int partial_hash_sha256(uint8_t *data_in, uint8_t *data_out)
--{
--	SHA256_CTX ctx;
--
--	if (!SHA256_Init(&ctx))
--		return -EFAULT;
--	SHA256_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx, SHA256_DIGEST_LENGTH);
--	return 0;
--}
--
--static int partial_hash_sha384(uint8_t *data_in, uint8_t *data_out)
--{
--	SHA512_CTX ctx;
--
--	if (!SHA384_Init(&ctx))
--		return -EFAULT;
--	SHA512_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx, SHA512_DIGEST_LENGTH);
--	return 0;
--}
--
--static int partial_hash_sha512(uint8_t *data_in, uint8_t *data_out)
--{
--	SHA512_CTX ctx;
--
--	if (!SHA512_Init(&ctx))
--		return -EFAULT;
--	SHA512_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx, SHA512_DIGEST_LENGTH);
--	return 0;
--}
--
--static int partial_hash_md5(uint8_t *data_in, uint8_t *data_out)
--{
--	MD5_CTX ctx;
--
--	if (!MD5_Init(&ctx))
--		return -EFAULT;
--	MD5_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx, MD5_DIGEST_LENGTH);
--
--	return 0;
--}
--
--static void aes_cmac_key_derive(uint8_t *base, uint8_t *derived)
--{
--	int i;
--
--	derived[0] = base[0] << 1;
--	for (i = 1; i < ICP_QAT_HW_AES_BLK_SZ ; i++) {
--		derived[i] = base[i] << 1;
--		derived[i - 1] |= base[i] >> 7;
--	}
--
--	if (base[0] & 0x80)
--		derived[ICP_QAT_HW_AES_BLK_SZ - 1] ^= QAT_AES_CMAC_CONST_RB;
--}
--
--static int
--partial_hash_compute(enum icp_qat_hw_auth_algo hash_alg,
--		uint8_t *data_in, uint8_t *data_out)
--{
--	int digest_size;
--	uint8_t digest[qat_hash_get_digest_size(
--			ICP_QAT_HW_AUTH_ALGO_DELIMITER)];
--	uint32_t *hash_state_out_be32;
--	uint64_t *hash_state_out_be64;
--	int i;
--
--	/* Initialize to avoid gcc warning */
--	memset(digest, 0, sizeof(digest));
--
--	digest_size = qat_hash_get_digest_size(hash_alg);
--	if (digest_size <= 0)
--		return -EFAULT;
--
--	hash_state_out_be32 = (uint32_t *)data_out;
--	hash_state_out_be64 = (uint64_t *)data_out;
--
--	switch (hash_alg) {
--	case ICP_QAT_HW_AUTH_ALGO_SHA1:
--		if (partial_hash_sha1(data_in, digest))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 2; i++, hash_state_out_be32++)
--			*hash_state_out_be32 =
--				rte_bswap32(*(((uint32_t *)digest)+i));
--		break;
--	case ICP_QAT_HW_AUTH_ALGO_SHA224:
--		if (partial_hash_sha224(data_in, digest))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 2; i++, hash_state_out_be32++)
--			*hash_state_out_be32 =
--				rte_bswap32(*(((uint32_t *)digest)+i));
--		break;
--	case ICP_QAT_HW_AUTH_ALGO_SHA256:
--		if (partial_hash_sha256(data_in, digest))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 2; i++, hash_state_out_be32++)
--			*hash_state_out_be32 =
--				rte_bswap32(*(((uint32_t *)digest)+i));
--		break;
--	case ICP_QAT_HW_AUTH_ALGO_SHA384:
--		if (partial_hash_sha384(data_in, digest))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 3; i++, hash_state_out_be64++)
--			*hash_state_out_be64 =
--				rte_bswap64(*(((uint64_t *)digest)+i));
--		break;
--	case ICP_QAT_HW_AUTH_ALGO_SHA512:
--		if (partial_hash_sha512(data_in, digest))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 3; i++, hash_state_out_be64++)
--			*hash_state_out_be64 =
--				rte_bswap64(*(((uint64_t *)digest)+i));
--		break;
--	case ICP_QAT_HW_AUTH_ALGO_MD5:
--		if (partial_hash_md5(data_in, data_out))
--			return -EFAULT;
--		break;
--	default:
--		QAT_LOG(ERR, "invalid hash alg %u", hash_alg);
--		return -EFAULT;
--	}
--
--	return 0;
--}
--
--static const uint8_t AES_CMAC_SEED[ICP_QAT_HW_AES_128_KEY_SZ];
--
--static int qat_sym_do_precomputes(enum icp_qat_hw_auth_algo hash_alg,
--				const uint8_t *auth_key,
--				uint16_t auth_keylen,
--				uint8_t *p_state_buf,
--				uint16_t *p_state_len,
--				uint8_t aes_cmac)
--{
--	int block_size;
--	uint8_t ipad[qat_hash_get_block_size(ICP_QAT_HW_AUTH_ALGO_DELIMITER)];
--	uint8_t opad[qat_hash_get_block_size(ICP_QAT_HW_AUTH_ALGO_DELIMITER)];
--	int i;
--
--	if (hash_alg == ICP_QAT_HW_AUTH_ALGO_AES_XCBC_MAC) {
--
--		/* CMAC */
--		if (aes_cmac) {
--			AES_KEY enc_key;
--			uint8_t *in = NULL;
--			uint8_t k0[ICP_QAT_HW_AES_128_KEY_SZ];
--			uint8_t *k1, *k2;
--
--			auth_keylen = ICP_QAT_HW_AES_128_KEY_SZ;
--
--			in = rte_zmalloc("AES CMAC K1",
--					 ICP_QAT_HW_AES_128_KEY_SZ, 16);
--
--			if (in == NULL) {
--				QAT_LOG(ERR, "Failed to alloc memory");
--				return -ENOMEM;
--			}
--
--			rte_memcpy(in, AES_CMAC_SEED,
--				   ICP_QAT_HW_AES_128_KEY_SZ);
--			rte_memcpy(p_state_buf, auth_key, auth_keylen);
--
--			if (AES_set_encrypt_key(auth_key, auth_keylen << 3,
--				&enc_key) != 0) {
--				rte_free_sensitive(in);
--				return -EFAULT;
--			}
--
--			AES_encrypt(in, k0, &enc_key);
--
--			k1 = p_state_buf + ICP_QAT_HW_AES_XCBC_MAC_STATE1_SZ;
--			k2 = k1 + ICP_QAT_HW_AES_XCBC_MAC_STATE1_SZ;
--
--			aes_cmac_key_derive(k0, k1);
--			aes_cmac_key_derive(k1, k2);
--
--			rte_memzero_explicit(k0, ICP_QAT_HW_AES_128_KEY_SZ);
--			*p_state_len = ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ;
--			rte_free_sensitive(in);
--			goto out;
--		} else {
--			static uint8_t qat_aes_xcbc_key_seed[
--					ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ] = {
--				0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
--				0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
--				0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
--				0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
--				0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
--				0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
--			};
--
--			uint8_t *in = NULL;
--			uint8_t *out = p_state_buf;
--			int x;
--			AES_KEY enc_key;
--
--			in = rte_zmalloc("working mem for key",
--					ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ, 16);
--			if (in == NULL) {
--				QAT_LOG(ERR, "Failed to alloc memory");
--				return -ENOMEM;
--			}
--
--			rte_memcpy(in, qat_aes_xcbc_key_seed,
--					ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ);
--			for (x = 0; x < HASH_XCBC_PRECOMP_KEY_NUM; x++) {
--				if (AES_set_encrypt_key(auth_key,
--							auth_keylen << 3,
--							&enc_key) != 0) {
--					rte_free_sensitive(in -
--							   (x * ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ));
--					rte_memzero_explicit(out -
--							     (x * ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ),
--							     ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ);
--					return -EFAULT;
--				}
--				AES_encrypt(in, out, &enc_key);
--				in += ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ;
--				out += ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ;
--			}
--			*p_state_len = ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ;
--			rte_free_sensitive(in - x*ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ);
--			goto out;
--		}
--
--	} else if ((hash_alg == ICP_QAT_HW_AUTH_ALGO_GALOIS_128) ||
--		(hash_alg == ICP_QAT_HW_AUTH_ALGO_GALOIS_64)) {
--		uint8_t *in = NULL;
--		uint8_t *out = p_state_buf;
--		AES_KEY enc_key;
--
--		memset(p_state_buf, 0, ICP_QAT_HW_GALOIS_H_SZ +
--				ICP_QAT_HW_GALOIS_LEN_A_SZ +
--				ICP_QAT_HW_GALOIS_E_CTR0_SZ);
--		in = rte_zmalloc("working mem for key",
--				ICP_QAT_HW_GALOIS_H_SZ, 16);
--		if (in == NULL) {
--			QAT_LOG(ERR, "Failed to alloc memory");
--			return -ENOMEM;
--		}
--
--		rte_memzero_explicit(in, ICP_QAT_HW_GALOIS_H_SZ);
--		if (AES_set_encrypt_key(auth_key, auth_keylen << 3,
--			&enc_key) != 0) {
--			return -EFAULT;
--		}
--		AES_encrypt(in, out, &enc_key);
--		*p_state_len = ICP_QAT_HW_GALOIS_H_SZ +
--				ICP_QAT_HW_GALOIS_LEN_A_SZ +
--				ICP_QAT_HW_GALOIS_E_CTR0_SZ;
--		rte_free_sensitive(in);
--		return 0;
--	}
--
--	block_size = qat_hash_get_block_size(hash_alg);
--	if (block_size < 0)
--		return block_size;
--	/* init ipad and opad from key and xor with fixed values */
--	memset(ipad, 0, block_size);
--	memset(opad, 0, block_size);
--
--	if (auth_keylen > (unsigned int)block_size) {
--		QAT_LOG(ERR, "invalid keylen %u", auth_keylen);
--		return -EFAULT;
--	}
--
--	RTE_VERIFY(auth_keylen <= sizeof(ipad));
--	RTE_VERIFY(auth_keylen <= sizeof(opad));
--
--	rte_memcpy(ipad, auth_key, auth_keylen);
--	rte_memcpy(opad, auth_key, auth_keylen);
--
--	for (i = 0; i < block_size; i++) {
--		uint8_t *ipad_ptr = ipad + i;
--		uint8_t *opad_ptr = opad + i;
--		*ipad_ptr ^= HMAC_IPAD_VALUE;
--		*opad_ptr ^= HMAC_OPAD_VALUE;
--	}
--
--	/* do partial hash of ipad and copy to state1 */
--	if (partial_hash_compute(hash_alg, ipad, p_state_buf)) {
--		rte_memzero_explicit(ipad, block_size);
--		rte_memzero_explicit(opad, block_size);
--		QAT_LOG(ERR, "ipad precompute failed");
--		return -EFAULT;
--	}
--
--	/*
--	 * State len is a multiple of 8, so may be larger than the digest.
--	 * Put the partial hash of opad state_len bytes after state1
--	 */
--	*p_state_len = qat_hash_get_state1_size(hash_alg);
--	if (partial_hash_compute(hash_alg, opad, p_state_buf + *p_state_len)) {
--		rte_memzero_explicit(ipad, block_size);
--		rte_memzero_explicit(opad, block_size);
--		QAT_LOG(ERR, "opad precompute failed");
--		return -EFAULT;
--	}
--
--	/*  don't leave data lying around */
--	rte_memzero_explicit(ipad, block_size);
--	rte_memzero_explicit(opad, block_size);
--out:
--	return 0;
--}
--
--#else
-+/* HMAC precomputes always use IPsec MB (OpenSSL 3.0 removed SHA*_Transform APIs)
-+ * OpenSSL is only used for DOCSIS BPI cipher fallback (via EVP API)
-+ */
- 
- static int aes_ipsecmb_job(uint8_t *in, uint8_t *out, IMB_MGR *m,
- 		const uint8_t *key, uint16_t auth_keylen)
-@@ -1992,7 +1660,6 @@ static int qat_sym_do_precomputes_ipsec_mb(enum icp_qat_hw_auth_algo hash_alg,
- 	free_mb_mgr(m);
- 	return ret;
- }
--#endif
- 
- static void
- qat_sym_session_init_common_hdr(struct qat_sym_session *session)
-@@ -2482,16 +2149,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 			break;
- 		}
- 		/* SHA-1 HMAC */
--#ifdef RTE_QAT_OPENSSL
--		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA1, authkey,
--			authkeylen, cdesc->cd_cur_ptr, &state1_size,
--			cdesc->aes_cmac);
--
--#else
- 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA1,
- 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
- 			cdesc->aes_cmac);
--#endif
- 
- 		if (ret) {
- 			QAT_LOG(ERR, "(SHA)precompute failed");
-@@ -2509,15 +2169,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 			break;
- 		}
- 		/* SHA-224 HMAC */
--#ifdef RTE_QAT_OPENSSL
--		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA224, authkey,
--			authkeylen, cdesc->cd_cur_ptr, &state1_size,
--			cdesc->aes_cmac);
--#else
- 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA224,
- 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
- 			cdesc->aes_cmac);
--#endif
- 		if (ret) {
- 			QAT_LOG(ERR, "(SHA)precompute failed");
- 			return -EFAULT;
-@@ -2534,15 +2188,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 			break;
- 		}
- 		/* SHA-256 HMAC */
--#ifdef RTE_QAT_OPENSSL
--		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA256, authkey,
--			authkeylen, cdesc->cd_cur_ptr, &state1_size,
--			cdesc->aes_cmac);
--#else
- 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA256,
- 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
- 			cdesc->aes_cmac);
--#endif
- 		if (ret) {
- 			QAT_LOG(ERR, "(SHA)precompute failed");
- 			return -EFAULT;
-@@ -2559,15 +2207,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 			break;
- 		}
- 		/* SHA-384 HMAC */
--#ifdef RTE_QAT_OPENSSL
--		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA384, authkey,
--			authkeylen, cdesc->cd_cur_ptr, &state1_size,
--			cdesc->aes_cmac);
--#else
- 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA384,
- 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
- 			cdesc->aes_cmac);
--#endif
- 		if (ret) {
- 			QAT_LOG(ERR, "(SHA)precompute failed");
- 			return -EFAULT;
-@@ -2584,15 +2226,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 			break;
- 		}
- 		/* SHA-512 HMAC */
--#ifdef RTE_QAT_OPENSSL
--		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA512, authkey,
--			authkeylen, cdesc->cd_cur_ptr, &state1_size,
--			cdesc->aes_cmac);
--#else
- 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA512,
- 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
- 			cdesc->aes_cmac);
--#endif
- 		if (ret) {
- 			QAT_LOG(ERR, "(SHA)precompute failed");
- 			return -EFAULT;
-@@ -2628,16 +2264,10 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 
- 		if (cdesc->aes_cmac)
- 			memset(cdesc->cd_cur_ptr, 0, state1_size);
--#ifdef RTE_QAT_OPENSSL
--		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_AES_XCBC_MAC,
--			authkey, authkeylen, cdesc->cd_cur_ptr + state1_size,
--			&state2_size, cdesc->aes_cmac);
--#else
- 		ret = qat_sym_do_precomputes_ipsec_mb(
- 			ICP_QAT_HW_AUTH_ALGO_AES_XCBC_MAC,
- 			authkey, authkeylen, cdesc->cd_cur_ptr + state1_size,
- 			&state2_size, cdesc->aes_cmac);
--#endif
- 		if (ret) {
- 			QAT_LOG(ERR, "(%s)precompute failed",
- 				cdesc->aes_cmac ? "CMAC" : "XCBC");
-@@ -2654,15 +2284,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 	case ICP_QAT_HW_AUTH_ALGO_GALOIS_64:
- 		cdesc->qat_proto_flag = QAT_CRYPTO_PROTO_FLAG_GCM;
- 		state1_size = ICP_QAT_HW_GALOIS_128_STATE1_SZ;
--#ifdef RTE_QAT_OPENSSL
--		ret = qat_sym_do_precomputes(cdesc->qat_hash_alg, authkey,
--			authkeylen, cdesc->cd_cur_ptr + state1_size,
--			&state2_size, cdesc->aes_cmac);
--#else
- 		ret = qat_sym_do_precomputes_ipsec_mb(cdesc->qat_hash_alg, authkey,
- 			authkeylen, cdesc->cd_cur_ptr + state1_size,
- 			&state2_size, cdesc->aes_cmac);
--#endif
- 		if (ret) {
- 			QAT_LOG(ERR, "(GCM)precompute failed");
- 			return -EFAULT;
-@@ -2734,15 +2358,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 		auth_param->hash_state_sz = ICP_QAT_HW_ZUC_256_IV_SZ >> 3;
- 		break;
- 	case ICP_QAT_HW_AUTH_ALGO_MD5:
--#ifdef RTE_QAT_OPENSSL
--		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_MD5, authkey,
--			authkeylen, cdesc->cd_cur_ptr, &state1_size,
--			cdesc->aes_cmac);
--#else
- 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_MD5,
- 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
- 			cdesc->aes_cmac);
--#endif
- 		if (ret) {
- 			QAT_LOG(ERR, "(MD5)precompute failed");
- 			return -EFAULT;
--- 
-2.43.0
+> ---
+> V6: Addressed Ciara Loftus's review comments
+>  - changed to concise relase note
+>  - removed unwarranted comment
+>  - added proper comments in two places
+>  - aligned commits with latest 'next-net-intel-for-next-net' branch
+> V5: Addressed Ciara Loftus's review comments
+>  - added separate flag for PF initiated reset recovery
+> V4: Addressed Ciara Loftus's review comments
+>  - split VF reset from other code changes
+> V3: Addressed latest ai-code-review comments
+> V2: Addressed ai-code-review comments
+>=20
 
