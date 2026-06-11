@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54978CD98C7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 21:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08547CD98C7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 21:22:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC633433F5;
-	Thu, 11 Jun 2026 23:21:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BB07C433E7;
+	Thu, 11 Jun 2026 23:21:38 +0200 (CEST)
 Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
- [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id D36A8433D1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 23:21:33 +0200 (CEST)
+ [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id D60A2433DD
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 23:21:34 +0200 (CEST)
 Received: by mail-dy1-f179.google.com with SMTP id
- 5a478bee46e88-304cf518c9dso572133eec.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 14:21:33 -0700 (PDT)
+ 5a478bee46e88-307d0405e07so507091eec.1
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 14:21:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781212893;
- x=1781817693; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781212894;
+ x=1781817694; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=3IqtWlpj7N4JTnnXMe+WZjYim5L7SRQQHd0L6CjigwY=;
- b=Pa5sWoiI2vVdC//9Y78iNKw7N6IkzSs29NRLJJT7B5w7ZiDR9bOvV6rxfEEduTqYCU
- SDXJIZ8IK+jj9NOO7SkgxgHaPnIOv4xVb8QRf5iSXtD4fQ42RiLPxhkcVVItKmLPDHJk
- TaMYqMsYY1TDAgQ4rrGVl8uWAC7kKFNj0IlEN+3GvNZh3AbnxNcoqvzUku5sjfE/FE1P
- VQoSsczwe+lxYWt17TUIPninro7LVjmmTLxTJ34OVdnyslns3YlW0zd9aVQY5nTF8yWU
- c64Zt/zusIEdx7QDJWoNRNNelgVsRtVZfPVZvJItXC4g0LgmQNQKmXkSwJGpN5nE4vIo
- zthg==
+ bh=okcEtnp2its2cLegQSk3aN3hnTv436Q9fG0mpHSYejU=;
+ b=H/VXuZ2rLlHqLR/gIXWTw+BgYiBt9cwb5CX5w2vL4q18YdPH9H2vDvE0JMpKgzM8lF
+ yDpeaL1M4d7dGbHF47bLmjZ1hUNJbi9XcPITkiPJ7B7PXXbhGkS2Oz8YkiypaLe3HQxL
+ ckc2a8UjLmqhjU3F2OBCEAGNJcxKOJ6rCewPQjYnLoHgrpWP5Rhoyf9c+YCuPSNlPx/B
+ VrPGRcQGeQgehwKfp5Ews1kUXQdLcI/dvHoiuLz2YSOL9LLAdXiU/6yDhL+DE5V1sSnC
+ ZnS9gs+uQUQ6DWJFZrernhARvHk0BvCTa7sqmH5dEmsNElkRGBMeG+qnNlBPbIzly2H/
+ MbSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781212893; x=1781817693;
+ d=1e100.net; s=20251104; t=1781212894; x=1781817694;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=3IqtWlpj7N4JTnnXMe+WZjYim5L7SRQQHd0L6CjigwY=;
- b=kcOFvtbjY7oo1WLWnzDXtzhIH3cuvZFt2HncUjhRaZtmhD+bv3k6ZSIQC4qgrYWuYO
- s5y4YwbBvs3GnyOsAGQpiJzJ88bWgyr9rncmvouszHAtM/Li/dQS1E8ANgczhst6dAv8
- Me97jFR0MTC/15uk9R01Zf6gegkQYkZRX/oyvPWpcfL6ZYyKYMAOKtOcKWIWX53kiEx+
- K2k0GRqIZ6OWcbB92Uaj1iBEb4KilPAaSuXoTJM48x0czrhcOgnL8oOJwoNuomh9bOor
- 6iEe2irHJyPNaXJdZS4gyLZ0RJQO+m4PCTqJOvhXet5+XUXHLYIawZocXbI8ckuX7si1
- ATHw==
-X-Gm-Message-State: AOJu0YylU0lUfBNp2r64+ts/1zybACtKc/fxBhZy5X4Dnjo3qZxGhuqX
- 85xCnuG786C9/Z0igct8zqlmOI31HVswal6HUoKXZTABfqY7i7igqYW9v/mHUWbtT4GXawiLKQV
- Dur0B
-X-Gm-Gg: Acq92OEegr5Rc0Hq8zrOiUj3MKmMNALR8xMtJyo9u3ID9ZhFFr332TO9Ocy/AAh4xvv
- pJQCYvAJe6eKrnruFDo+KwgtH86caOCg09V4Jnkhx3sWCSniC60xVcP72lVV//04Xv7OFFf+dMU
- RlQJz0GOuOH06eJ1ptpv2H8mlIBXecT3EIlh6X8ANUjw9cWZKAss4h7mGEpWCDOiZuEnWepgZR/
- 9Ml88zQZ04/jq6jviqsUbYg/uaUxSjWGaSmlw8fnLhbKdNRJTyxXJTd+Xr6NBSGbFQDQRp6NiPG
- nZAVfiV9Iih4bvxWf2QwVkDTI6Ws0aq3BBTtHev7ymIfKui8WUJVf+BnbAyW/Mqrp1PdjYTCNjs
- qV6daNmAvwWz9qPPEoWIeBDCq1Zb405yD6iwGob9ot4pXMj5ZKLO1AD84vK5zEx0Yali658uUKe
- dD43uq04vAHky6hjPkVIxLV+niGLwAmnemsImisOxR8ebZDCsZ428zCw3nFLIa2Q==
-X-Received: by 2002:a05:7300:8cab:b0:304:ab8:f87c with SMTP id
- 5a478bee46e88-3081ff7c07fmr48109eec.12.1781212892576; 
- Thu, 11 Jun 2026 14:21:32 -0700 (PDT)
+ bh=okcEtnp2its2cLegQSk3aN3hnTv436Q9fG0mpHSYejU=;
+ b=ogw8mKzmbF4ZtMFTNcosZABqFOLRD7BvlH1bzsKd1bOxyPPJ3QCjmD4aRWaxWGvo1U
+ dvRvci8lBm0EbvCWkYWSFvq9x48aKz1M3/X6e1ueSZBdvmXR5wpJk8oVIHDGuaUXRtB6
+ r0gE/Wema3oMyOgCBtuQEJR/kmnPshjEOm93dqozY6EyaMfGk77rA2qr8fCRAByuou0z
+ xBIhA02hSG8ZfVpppmwRPf6Csgui/w/Oo7l+0VxfMsNTwsN5i0P7SPly3a9ilZ3Gn9VL
+ jjV+dZq0JQMb/ZZV47G0e1MpO+oU6eh7FnHZ7p1+LLvF/E2wjwF15GgooQwoC8NYnogB
+ jz9g==
+X-Gm-Message-State: AOJu0YzM2Z14o/0a/Yj5aLyI1G3oeMupijDYseTyShj92975Ov1zKZUb
+ 1E1H6LE4G0X1P4a2tWsp5UeqTDNH05cY17X6UoATd75GBD119TZdqKQR+piimhMZvSQ9awQQsFN
+ Gy0t0
+X-Gm-Gg: Acq92OFJ4PcUr2O8T3ETDOf6jOM+WMjBocdsu6AwS2LSZkBPEo3o5qSUnCqQ9f2nRje
+ EsBcnx/qg+BYU6zuXRnq6XOUQR0JNzxvfcmpopulnWzgj+78qejyeGxt3k68U0bqI0reWRSaRWC
+ hSBZdAi60wwLWDo9inYByB/XjndZRS08x/uiuqAcZRj/M352uglZOR+RgYU4+MQbHFYaprjG22s
+ yasS2WOrDPE2mm6Mk/XxP0QWwIGnW0vOfUL8tKoEH4drJT93Px2gIA4CWouIgv9rVw759AIR0u1
+ VpbrbVXI7WFePV2xA7WnYpINw2ILiekOJrE1MRlARvlOecavVRTziGTNQY7GazlqXpQuDWDDjBd
+ UOOFw48OckA8P3Ei911eOmGSKhabXCdv6FyqauGVSTV0Ci1uzeFOssenO4eGrbj9cO+Inn8tnmL
+ 0XOocPB3vQZuWid9w7mKJlFn9c477b+Hhcw19C8nfq+o9IU2Qe2P/YnGrq3BiwOS1qlv+YiOEr
+X-Received: by 2002:a05:7300:8b85:b0:2f2:6dde:df54 with SMTP id
+ 5a478bee46e88-308200e18a9mr18448eec.33.1781212893669; 
+ Thu, 11 Jun 2026 14:21:33 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3081eb95450sm546238eec.28.2026.06.11.14.21.31
+ 5a478bee46e88-3081eb95450sm546238eec.28.2026.06.11.14.21.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 14:21:32 -0700 (PDT)
+ Thu, 11 Jun 2026 14:21:33 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tomasz Kantecki <tomasz.kantecki@intel.com>,
- Sunil Kumar Kori <skori@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- Akhil Goyal <gakhil@marvell.com>
-Subject: [PATCH 10/15] doc: enhance L2 forwarding sample application guides
-Date: Thu, 11 Jun 2026 14:18:49 -0700
-Message-ID: <20260611212119.1026721-11-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>, Volodymyr Fialko <vfialko@marvell.com>
+Subject: [PATCH 11/15] doc: enhance multi-process, NTB, ordering,
+ and PTP guides
+Date: Thu, 11 Jun 2026 14:18:50 -0700
+Message-ID: <20260611212119.1026721-12-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260611212119.1026721-1-stephen@networkplumber.org>
 References: <20250216230903.124496-1-nandinipersad361@gmail.com>
@@ -85,621 +84,453 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Improved documentation for L2 forwarding variants:
+Improved documentation for various sample applications:
 
-l2_forward_cat.rst:
-- Enhanced Cache Allocation Technology descriptions
-- Fixed command-line parameter formatting
-- Improved clarity of CAT configuration steps
+multi_process.rst:
+- Clarified primary/secondary process model
+- Enhanced shared memory descriptions
+- Improved command-line examples
 
-l2_forward_crypto.rst:
-- Restructured cryptographic operation descriptions
-- Improved cipher and authentication algorithm lists
-- Enhanced command-line option explanations
+ntb.rst:
+- Minor formatting fix
 
-l2_forward_event.rst:
-- Clarified event-driven processing model
-- Fixed formatting and terminology consistency
+packet_ordering.rst:
+- Improved packet reordering algorithm descriptions
+- Enhanced worker thread explanations
+- Fixed formatting consistency
 
-l2_forward_job_stats.rst:
-- Improved job statistics collection descriptions
-- Enhanced clarity of monitoring mechanisms
+pipeline.rst:
+- Clarified pipeline stage configurations
+- Improved table action descriptions
 
-l2_forward_macsec.rst:
-- Simplified MACsec configuration explanations
-- Fixed formatting in security association setup
+ptpclient.rst:
+- Enhanced PTP synchronization explanations
+- Improved timestamp handling descriptions
+- Fixed formatting in configuration examples
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/sample_app_ug/l2_forward_cat.rst   | 34 ++++-----
- .../sample_app_ug/l2_forward_crypto.rst       | 70 +++++++++----------
- doc/guides/sample_app_ug/l2_forward_event.rst | 20 +++---
- .../sample_app_ug/l2_forward_job_stats.rst    | 46 ++++++------
- .../sample_app_ug/l2_forward_macsec.rst       | 38 +++++-----
- 5 files changed, 100 insertions(+), 108 deletions(-)
+ doc/guides/sample_app_ug/multi_process.rst   | 47 ++++++++++---------
+ doc/guides/sample_app_ug/ntb.rst             |  2 +-
+ doc/guides/sample_app_ug/packet_ordering.rst | 42 +++++++++--------
+ doc/guides/sample_app_ug/pipeline.rst        | 26 ++++++-----
+ doc/guides/sample_app_ug/ptpclient.rst       | 49 +++++++++++---------
+ 5 files changed, 89 insertions(+), 77 deletions(-)
 
-diff --git a/doc/guides/sample_app_ug/l2_forward_cat.rst b/doc/guides/sample_app_ug/l2_forward_cat.rst
-index f96f789f75..9901a796e0 100644
---- a/doc/guides/sample_app_ug/l2_forward_cat.rst
-+++ b/doc/guides/sample_app_ug/l2_forward_cat.rst
-@@ -14,22 +14,22 @@ Overview
+diff --git a/doc/guides/sample_app_ug/multi_process.rst b/doc/guides/sample_app_ug/multi_process.rst
+index 1bd858bfb5..e9e5809a92 100644
+--- a/doc/guides/sample_app_ug/multi_process.rst
++++ b/doc/guides/sample_app_ug/multi_process.rst
+@@ -42,9 +42,10 @@ passing at least two cores in the corelist:
  
- This app is intended as a demonstration of the basic components
- of a DPDK forwarding application
--and use of the libpqos library to the program CAT.
-+and the use of the libpqos library to program CAT.
- For more detailed implementations, see the L2 and L3 forwarding sample applications.
+     ./<build_dir>/examples/dpdk-simple_mp -l 0-1 --proc-type=primary
  
--CAT and Code Data Prioritization (CDP) features allow management of the CPU's
--last level cache. CAT introduces classes of service (COS) that are essentially
-+The CAT and Code Data Prioritization (CDP) features allow management of the CPU's
-+last level cache. CAT introduces Classes of Service (COS) that are essentially
- bitmasks. In current CAT implementations, a bit in a COS bitmask corresponds to
- one cache way in last level cache.
+-For the first DPDK process run, the proc-type flag can be omitted or set to auto,
+-since all DPDK processes will default to being a primary instance,
+-meaning they have control over the hugepage shared memory regions.
++For the first DPDK process run, the proc-type flag can be omitted or set to auto
++since all DPDK processes will default to being a primary instance
++(meaning, they have control over the hugepage shared memory regions).
++
+ The process should start successfully and display a command prompt as follows:
  
- A CPU core is always assigned to one of the CAT classes.
- By programming CPU core assignment and COS bitmasks, applications can be given
- exclusive, shared, or mixed access to the CPU's last level cache.
--CDP extends CAT so that there are two bitmasks per COS,
-+The CDP feature extends CAT so that there are two bitmasks per COS,
- one for data and one for code.
- The number of classes and number of valid bits in a COS bitmask is CPU model
- specific and COS bitmasks need to be contiguous. Sample code calls this bitmask
--``cbm`` or capacity bitmask.
-+a ``cbm`` or capacity bitmask.
- By default, after reset, all CPU cores are assigned to COS 0 and all classes
- are programmed to allow fill into all cache ways.
- CDP is off by default.
-@@ -47,7 +47,7 @@ Compiling the Application
+ .. code-block:: console
+@@ -99,7 +100,7 @@ At any stage, either process can be terminated using the quit command.
+     The secondary process can be stopped and restarted without affecting the primary process.
+ 
+ How the Application Works
+-^^^^^^^^^^^^^^^^^^^^^^^^^
++~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ This application uses two queues and a single memory pool created in the primary process.
+ The secondary process then uses lookup functions to attach to these objects.
+@@ -141,7 +142,7 @@ Each process writes outgoing packets to a different Tx queue on each port.
+ Running the Application
+ ^^^^^^^^^^^^^^^^^^^^^^^
+ 
+-The first instance of the ``symmetric_mp`` process is the primary instance, with the EAL arguments:
++The first instance of the ``symmetric_mp`` process becomes the primary instance, with the following application arguments:
+ 
+ ``-p <portmask>``
+   The ``portmask`` is a hexadecimal bitmask of what ports on the system are to be used.
+@@ -155,7 +156,7 @@ The first instance of the ``symmetric_mp`` process is the primary instance, with
+ ``--proc-id <n>``
+   Where ``n`` is a numeric value in the range ``0 <= n < N``
+   (number of processes, specified above).
+-  This identifies which ``symmetric_mp`` instance is being run,
++  This identifies which ``symmetric_mp`` instance is running,
+   so that each process can read a unique receive queue on each network port.
+ 
+ The secondary instance must be started with similar EAL parameters.
+@@ -173,7 +174,7 @@ Example:
+    In the above example, ``auto`` is used so the first instance becomes the primary process.
+ 
+ How the Application Works
+-^^^^^^^^^^^^^^^^^^^^^^^^^
++~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ The primary instance creates the memory pool and initializes the network ports.
+ 
+@@ -183,8 +184,8 @@ The primary instance creates the memory pool and initializes the network ports.
+         :end-before: >8 End of primary instance initialization.
+         :dedent: 1
+ 
+-The secondary instance gets the port information and exported by the primary process.
+-The memory pool is accessed by doing a lookup for it by name:
++The secondary instance gets the port information exported by the primary process.
++The memory pool is accessed by looking it up by name:
+ 
+ .. code-block:: c
+ 
+@@ -198,7 +199,7 @@ Each process reads from each port using the queue corresponding to its proc-id p
+ and writes to the corresponding transmit queue on the output port.
+ 
+ Client-Server Multi-process Example
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++-----------------------------------
+ 
+ The example multi-process application demonstrates a client-server type multi-process design.
+ A single server process receives a set of packets from the ports
+@@ -216,22 +217,22 @@ The following diagram shows the data-flow through the application, using two cli
+ 
+ 
+ Running the Application
+-^^^^^^^^^^^^^^^^^^^^^^^
++~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-The server process must be run as the primary process to set up all memory structures.
++The server process must run as the primary process to set up all memory structures.
+ In addition to the EAL parameters, the application-specific parameters are:
+ 
+-*   -p <portmask >, where portmask is a hexadecimal bitmask of what ports on the system are to be used.
+-    For example: -p 3 to use ports 0 and 1 only.
++*   ``-p <portmask>``, where portmask is a hexadecimal bitmask of what ports on the system are to be used.
++    For example: ``-p 3`` to use ports 0 and 1 only.
+ 
+-*   -n <num-clients>, where the num-clients parameter is the number of client processes that will process the packets received
++*   ``-n <num-clients>``, where the num-clients parameter is the number of client processes that will process the packets received
+     by the server application.
  
  .. note::
  
--    Requires ``libpqos`` from Intel's
-+    Requires the ``libpqos`` library from Intel's
-     `intel-cmt-cat software package <https://github.com/01org/intel-cmt-cat>`_
-     hosted on GitHub repository. For installation notes, please see ``README`` file.
+-   In the server process, has a single thread using the lowest numbered lcore
+-   in the corelist, performs all packet I/O.
+-   If corelist parameter specifies with more than a single lcore,
++   In the server process, a single thread using the lowest numbered lcore
++   in the corelist performs all packet I/O.
++   If the corelist parameter specifies more than a single lcore,
+    an additional lcore will be used for a thread to print packet count periodically.
  
-@@ -70,7 +70,7 @@ The application is located in the ``l2fwd-cat`` sub-directory.
- Running the Application
- -----------------------
+ The server application stores configuration data in shared memory,
+@@ -251,14 +252,14 @@ the commands are:
  
--To run the example in a ``linux`` environment and enable CAT on cpus 0-2:
-+To run the example in a Linux environment and enable CAT on CPUs 0-2:
+     If the server application dies and needs to be restarted, all client applications also need to be restarted,
+     as there is no support in the server application for it to run as a secondary process.
+-    Any client processes that need restarting can be restarted without affecting the server process.
++    Client processes can be restarted without affecting the server process.
  
- .. code-block:: console
+ How the Application Works
+-^^^^^^^^^^^^^^^^^^^^^^^^^
++~~~~~~~~~~~~~~~~~~~~~~~~~
  
-@@ -87,7 +87,7 @@ If CDP is not supported, it will fail with following error message:
- .. code-block:: console
+-The server (primary) process performs the initialization of network port and data structure
++The server (primary) process performs the initialization of network ports and data structures
+ and stores its port configuration data in a memory zone in hugepage shared memory.
+-The client process does not need the portmask parameter passed in via the command line.
++The client processes do not need the portmask parameter passed in via the command line.
+ The server process is the primary process, and the client processes are secondary processes.
  
-     PQOS: CDP requested but not supported.
--    PQOS: Requested CAT configuration is not valid!
-+    PQOS: Requested CAT configuration is not valid.
-     PQOS: Shutting down PQoS library...
-     EAL: Error - exiting with code: 1
-       Cause: PQOS: L3CA init failed!
-@@ -99,7 +99,7 @@ The option to enable CAT is:
-   where ``cbm`` stands for capacity bitmask and must be expressed in
-   hexadecimal form.
+ The server operates by reading packets from each network port
+@@ -266,4 +267,4 @@ and distributing those packets to the client queues.
+ The client reads from the ring and routes the packet to a different network port.
+ The routing used is very simple: all packets received on the first NIC port
+ are transmitted back out on the second port and vice versa.
+-Similarly, packets are routed between the 3rd and 4th network ports and so on.
++Similarly, packets are routed between the third and fourth network ports and so on.
+diff --git a/doc/guides/sample_app_ug/ntb.rst b/doc/guides/sample_app_ug/ntb.rst
+index f54de6cecd..ca0ff54757 100644
+--- a/doc/guides/sample_app_ug/ntb.rst
++++ b/doc/guides/sample_app_ug/ntb.rst
+@@ -12,7 +12,7 @@ This sample supports 4 types of packet forwarding mode.
  
--  ``common_cbm`` is a single mask, for a CDP enabled system, a group of two
-+  ``common_cbm`` is a single mask; for a CDP-enabled system, a group of two
-   masks (``code_cbm`` and ``data_cbm``) is used.
+ * ``file-trans``: transmit files between two systems. The sample will
+   be polling to receive files from the peer and save the file as
+-  ``ntb_recv_file[N]``, [N] represents the number of received file.
++  ``ntb_recv_file[N]``, where [N] represents the number of received files.
+ * ``rxonly``: NTB receives packets but doesn't transmit them.
+ * ``txonly``: NTB generates and transmits packets without receiving any.
+ * ``iofwd``: iofwd between NTB device and ethdev.
+diff --git a/doc/guides/sample_app_ug/packet_ordering.rst b/doc/guides/sample_app_ug/packet_ordering.rst
+index f96c0ad697..2082f49ad1 100644
+--- a/doc/guides/sample_app_ug/packet_ordering.rst
++++ b/doc/guides/sample_app_ug/packet_ordering.rst
+@@ -4,29 +4,30 @@
+ Packet Ordering Application
+ ============================
  
-   ``(`` and ``)`` are necessary if it's a group.
-@@ -125,7 +125,7 @@ The option to enable CAT is:
-     data ways are not overlapping.
- 
- 
--Refer to *DPDK Getting Started Guide* for general information on running
-+Refer to the *DPDK Getting Started Guide* for general information on running
- applications and the Environment Abstraction Layer (EAL) options.
- 
- 
-@@ -133,7 +133,7 @@ To reset or list CAT configuration and control CDP please use ``pqos`` tool
- from Intel's
- `intel-cmt-cat software package <https://github.com/01org/intel-cmt-cat>`_.
- 
--To enabled or disable CDP:
-+To enable or disable CDP:
- 
- .. code-block:: console
- 
-@@ -141,7 +141,7 @@ To enabled or disable CDP:
- 
-     sudo ./pqos -S cdp-off
- 
--to reset CAT configuration:
-+To reset CAT configuration:
- 
- .. code-block:: console
- 
-@@ -193,11 +193,11 @@ function. The value returned is the number of parsed arguments:
-     :end-before: >8 End of initialization of PQoS.
-     :dedent: 1
- 
--``cat_init()`` is a wrapper function which parses the command, validates
-+The ``cat_init()`` function is a wrapper function which parses the command, validates
- the requested parameters and configures CAT accordingly.
- 
--The parsing of command line arguments is done in ``parse_args(...)``.
--Libpqos is then initialized with the ``pqos_init(...)`` call.
-+The parsing of command line arguments is done in the ``parse_args(...)`` function.
-+The libpqos library is then initialized with the ``pqos_init(...)`` call.
- Next, libpqos is
- queried for system CPU information and L3CA capabilities via
- ``pqos_cap_get(...)`` and ``pqos_cap_get_type(..., PQOS_CAP_TYPE_L3CA, ...)``
-@@ -207,6 +207,6 @@ for a sufficient number of un-associated COS. COS are selected and
- configured via the ``pqos_l3ca_set(...)`` call. Finally, COS are associated to
- relevant CPUs via ``pqos_l3ca_assoc_set(...)`` calls.
- 
--``atexit(...)`` is used to register ``cat_exit(...)`` to be called on
--a clean exit. ``cat_exit(...)`` performs a simple CAT clean-up, by associating
-+The ``atexit(...)`` function is used to register ``cat_exit(...)`` to be called on
-+a clean exit. The ``cat_exit(...)`` function performs a simple CAT clean-up, by associating
- COS 0 to all involved CPUs via ``pqos_l3ca_assoc_set(...)`` calls.
-diff --git a/doc/guides/sample_app_ug/l2_forward_crypto.rst b/doc/guides/sample_app_ug/l2_forward_crypto.rst
-index ba38d9f22e..add535cd39 100644
---- a/doc/guides/sample_app_ug/l2_forward_crypto.rst
-+++ b/doc/guides/sample_app_ug/l2_forward_crypto.rst
-@@ -1,18 +1,18 @@
- ..  SPDX-License-Identifier: BSD-3-Clause
-     Copyright(c) 2016-2017 Intel Corporation.
- 
--L2 Forwarding with Crypto Sample Application
-+L2 forwarding with crypto sample application
- ============================================
- 
- The L2 Forwarding with Crypto (l2fwd-crypto) sample application
- is a simple example of packet processing
--using the Data Plane Development Kit (DPDK)
--in conjunction with the cryptodev library.
-+using the Data Plane Development Kit (DPDK),
-+in conjunction with the Cryptodev library.
+-The Packet Ordering sample app simply shows the impact of reordering a stream.
+-It's meant to stress the library with different configurations for performance.
++The Packet Ordering sample application demonstrates packet reordering
++functionality and its impact on stream processing.
++It stresses the library with different configurations for performance.
  
  Overview
  --------
  
--The L2 Forwarding with Crypto sample application performs a crypto operation (cipher/hash)
-+The L2 Forwarding with Crypto sample application performs crypto operations (cipher/hash)
- specified by the user from the command line (or using the default values),
- with a crypto device capable of doing that operation,
- for each packet that is received on an RX_PORT and performs L2 forwarding.
-@@ -20,10 +20,9 @@ for each packet that is received on an RX_PORT and performs L2 forwarding.
- The destination port is the adjacent port from the enabled portmask.
- If the first four ports are enabled (portmask 0xf),
- ports 0 and 1 forward into each other, and ports 2 and 3 forward into each other.
--If the MAC addresses updating is enabled, the MAC addresses are affected as follows:
-+If MAC address updating is enabled, the MAC addresses are affected as follows:
+ The application uses at least three CPU cores:
  
- *   The source MAC address is replaced by the TX_PORT MAC address
--
- *   The destination MAC address is replaced by  02:00:00:00:00:TX_PORT_ID
+-* RX core (main core) receives traffic from the NIC ports and feeds Worker
++* The RX core (main core) receives traffic from the NIC ports and feeds worker
+   cores with traffic through SW queues.
+ 
+-* Worker (worker core) basically do some light work on the packet.
+-  Currently it modifies the output port of the packet for configurations with
+-  more than one port enabled.
++* Worker cores perform lightweight processing on each packet.
++  For configurations with more than one port enabled, it swaps the destination
++  port of the packet.
+ 
+-* TX Core (worker core) receives traffic from Worker cores through software queues,
++* The TX core receives traffic from worker cores through software queues,
+   inserts out-of-order packets into reorder buffer, extracts ordered packets
+-  from the reorder buffer and sends them to the NIC ports for transmission.
++  from the reorder buffer, and sends them to the NIC ports for transmission.
  
  Compiling the Application
-@@ -40,17 +39,17 @@ The application requires a number of command line options:
+ -------------------------
+ 
+-To compile the sample application see :doc:`compiling`.
++To compile the sample application, see :doc:`compiling`.
+ 
+ The application is located in the ``packet_ordering`` sub-directory.
+ 
+@@ -36,6 +37,9 @@ Running the Application
+ Refer to *DPDK Getting Started Guide* for general information on running applications
+ and the Environment Abstraction Layer (EAL) options.
+ 
++Explanation
++-----------
++
+ Application Command Line
+ ~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+@@ -46,16 +50,16 @@ The application execution command line is:
+     ./<build_dir>/examples/dpdk-packet_ordering [EAL options] -- -p PORTMASK /
+     [--disable-reorder] [--insight-worker]
+ 
+-The -l EAL corelist option has to contain at least 3 CPU cores.
+-The first CPU core in the core mask is the main core and would be assigned to
+-RX core, the last to TX core and the rest to Worker cores.
++The ``-l`` EAL corelist option must contain at least 3 CPU cores.
++The first CPU core in the corelist is assigned to the RX core (main core),
++the last to the TX core, and the remaining cores to worker cores.
+ 
+-The PORTMASK parameter must contain either 1 or even enabled port numbers.
+-When setting more than 1 port, traffic would be forwarded in pairs.
+-For example, if we enable 4 ports, traffic from port 0 to 1 and from 1 to 0,
+-then the other pair from 2 to 3 and from 3 to 2, having [0,1] and [2,3] pairs.
++The ``PORTMASK`` parameter must specify either 1 port or an even number of ports.
++When setting more than 1 port, traffic is forwarded in pairs.
++For example, if 4 ports are enabled, traffic flows between port 0 and port 1,
++and between port 2 and port 3 (forming port pairs [0,1] and [2,3]).
+ 
+-The disable-reorder long option does, as its name implies, disable the reordering
+-of traffic, which should help evaluate reordering performance impact.
++The ``--disable-reorder`` option disables packet reordering, which allows
++evaluation of the performance impact of reordering.
+ 
+-The insight-worker long option enables output the packet statistics of each worker thread.
++The ``--insight-worker`` long option enables outputting packet statistics for each worker thread.
+diff --git a/doc/guides/sample_app_ug/pipeline.rst b/doc/guides/sample_app_ug/pipeline.rst
+index 2d7c977068..2e8f5b7f24 100644
+--- a/doc/guides/sample_app_ug/pipeline.rst
++++ b/doc/guides/sample_app_ug/pipeline.rst
+@@ -4,10 +4,10 @@
+ Pipeline Application
+ ====================
+ 
+-Application overview
+---------------------
++Overview
++--------
+ 
+-This application showcases the features of the Software Switch (SWX) pipeline that is aligned with the P4 language.
++This application showcases the features of the Software Switch (SWX) pipeline that aligns with the P4 language.
+ 
+ Each pipeline is created using a specification file that can either be manually developed or generated using a P4 compiler.
+ 
+@@ -78,7 +78,7 @@ To run remote client (e.g. telnet) to communicate with the application:
+ 
+     $ telnet 0.0.0.0 8086
+ 
+-When running a telnet client as above, command prompt is displayed:
++When running a telnet client as above, the command prompt is displayed:
  
  .. code-block:: console
  
--    ./<build_dir>/examples/dpdk-l2fwd-crypto [EAL options] -- [-p PORTMASK] [-q NQ] [-s] [-T PERIOD] /
--    [--cdev_type HW/SW/ANY] [--chain HASH_CIPHER/CIPHER_HASH/CIPHER_ONLY/HASH_ONLY/AEAD] /
--    [--cipher_algo ALGO] [--cipher_op ENCRYPT/DECRYPT] [--cipher_dataunit_len SIZE] /
--    [--cipher_key KEY] [--cipher_key_random_size SIZE] [--cipher_iv IV] /
--    [--cipher_iv_random_size SIZE] /
--    [--auth_algo ALGO] [--auth_op GENERATE/VERIFY] [--auth_key KEY] /
--    [--auth_key_random_size SIZE] [--auth_iv IV] [--auth_iv_random_size SIZE] /
--    [--aead_algo ALGO] [--aead_op ENCRYPT/DECRYPT] [--aead_key KEY] /
--    [--aead_key_random_size SIZE] [--aead_iv] [--aead_iv_random_size SIZE] /
--    [--aad AAD] [--aad_random_size SIZE] /
--    [--digest size SIZE] [--sessionless] [--cryptodev_mask MASK] /
-+    ./<build_dir>/examples/dpdk-l2fwd-crypto [EAL options] -- [-p PORTMASK] [-q NQ] [-s] [-T PERIOD] \
-+    [--cdev_type HW/SW/ANY] [--chain HASH_CIPHER/CIPHER_HASH/CIPHER_ONLY/HASH_ONLY/AEAD] \
-+    [--cipher_algo ALGO] [--cipher_op ENCRYPT/DECRYPT] [--cipher_dataunit_len SIZE] \
-+    [--cipher_key KEY] [--cipher_key_random_size SIZE] [--cipher_iv IV] \
-+    [--cipher_iv_random_size SIZE] \
-+    [--auth_algo ALGO] [--auth_op GENERATE/VERIFY] [--auth_key KEY] \
-+    [--auth_key_random_size SIZE] [--auth_iv IV] [--auth_iv_random_size SIZE] \
-+    [--aead_algo ALGO] [--aead_op ENCRYPT/DECRYPT] [--aead_key KEY] \
-+    [--aead_key_random_size SIZE] [--aead_iv] [--aead_iv_random_size SIZE] \
-+    [--aad AAD] [--aad_random_size SIZE] \
-+    [--digest size SIZE] [--sessionless] [--cryptodev_mask MASK] \
-     [--mac-updating] [--no-mac-updating]
+@@ -90,23 +90,25 @@ When running a telnet client as above, command prompt is displayed:
  
- where,
-@@ -143,7 +142,7 @@ where,
+     pipeline>
  
- *   aad_random_size: set the size of the AAD, which will be generated randomly.
+-Once application and telnet client start running, messages can be sent from client to application.
++Once the application and telnet client start running, you can send messages from the client to the application.
  
--    Note that if --aad is used, this will be ignored.
-+    Note that if ``--aad`` is used, this will be ignored.
  
- *   digest_size: set the size of the digest to be generated/verified.
+-Application stages
+-------------------
++Explanation
++-----------
++
++Here is a description of the various stages of the application.
  
-@@ -159,10 +158,10 @@ where,
+ Initialization
+ ~~~~~~~~~~~~~~
  
- The application requires that crypto devices capable of performing
- the specified crypto operation are available on application initialization.
--This means that HW crypto device/s must be bound to a DPDK driver or
-+This means that HW crypto devices must be bound to a DPDK driver or
- a SW crypto device/s (virtual crypto PMD) must be created (using --vdev).
+-During this stage, EAL layer is initialised and application specific arguments are parsed. Furthermore, the data structures
+-for application objects are initialized. In case of any initialization error, an error message is displayed and the application
+-is terminated.
++During this stage, EAL layer is initialized and application specific arguments are parsed.
++Furthermore, the data structures for application objects are initialized.
++In case of any initialization error, an error message is displayed and the application is terminated.
  
--To run the application in Linux environment with 2 lcores, 2 ports and 2 crypto devices, issue the command:
-+To run the application in the Linux environment with 2 lcores, 2 ports and 2 crypto devices, issue the command:
+ Run-time
+ ~~~~~~~~
+ 
+-The main thread is creating and managing all the application objects based on CLI input.
++The main thread creates and manages all the application objects based on CLI input.
+ 
+ Each data plane thread runs one or several pipelines previously assigned to it in round-robin order. Each data plane thread
+ executes two tasks in time-sharing mode:
+@@ -114,5 +116,5 @@ executes two tasks in time-sharing mode:
+ #. *Packet processing task*: Process bursts of input packets read from the pipeline input ports.
+ 
+ #. *Message handling task*: Periodically, the data plane thread pauses the packet processing task and polls for request
+-   messages send by the main thread. Examples: add/remove pipeline to/from current data plane thread, add/delete rules
++   messages sent by the main thread. Examples: add/remove pipeline to/from current data plane thread, add/delete rules
+    to/from given table of a specific pipeline owned by the current data plane thread, read statistics, etc.
+diff --git a/doc/guides/sample_app_ug/ptpclient.rst b/doc/guides/sample_app_ug/ptpclient.rst
+index 0df465bcb4..28007604a0 100644
+--- a/doc/guides/sample_app_ug/ptpclient.rst
++++ b/doc/guides/sample_app_ug/ptpclient.rst
+@@ -5,14 +5,19 @@ PTP Client Sample Application
+ =============================
+ 
+ The PTP (Precision Time Protocol) client sample application is a simple
+-example of using the DPDK IEEE1588 API to communicate with a PTP time transmitter
++example of using the DPDK IEEE1588 API to communicate with a PTP timeTransmitter
+ to synchronize the time on the NIC and, optionally, on the Linux system.
+ 
+-Note, PTP is a time syncing protocol and cannot be used within DPDK as a
++Note, PTP is a time synchronization protocol and cannot be used within DPDK as a
+ time-stamping mechanism. See the following for an explanation of the protocol:
+ `Precision Time Protocol
+ <https://en.wikipedia.org/wiki/Precision_Time_Protocol>`_.
+ 
++.. note::
++
++   This documentation uses PTPv3 (IEEE 1588-2019) terminology where timeTransmitter/timeReceiver
++   replace the older master/slave terms from PTPv2.
++
+ 
+ Limitations
+ -----------
+@@ -21,10 +26,10 @@ The PTP sample application is intended as a simple reference implementation of
+ a PTP client using the DPDK IEEE1588 API.
+ In order to keep the application simple the following assumptions are made:
+ 
+-* The first discovered time transmitter is the main for the session.
++* The first discovered timeTransmitter is used for the session.
+ * Only L2 PTP packets are supported.
+ * Only the PTP v2 protocol is supported.
+-* Only the time receiver clock is implemented.
++* Only the timeReceiver clock is implemented.
+ 
+ 
+ How the Application Works
+@@ -36,18 +41,18 @@ How the Application Works
+ 
+    PTP Synchronization Protocol
+ 
+-The PTP synchronization in the sample application works as follows:
++The PTP synchronization in the sample application (timeReceiver mode) works as follows:
+ 
+-* Time transmitter sends *Sync* message - the time receiver saves it as T2.
+-* Time transmitter sends *Follow Up* message and sends time of T1.
+-* Time receiver sends *Delay Request* frame to PTP time transmitter and stores T3.
+-* Time transmitter sends *Delay Response* T4 time which is time of received T3.
++* TimeTransmitter sends *Sync* message - the timeReceiver saves the receive time as T2.
++* TimeTransmitter sends *Follow Up* message containing the transmit time T1.
++* TimeReceiver sends *Delay Request* frame to the PTP timeTransmitter and stores the transmit time as T3.
++* TimeTransmitter sends *Delay Response* containing T4, the time it received the Delay Request.
+ 
+-The adjustment for time receiver can be represented as:
++The clock adjustment for the timeReceiver can be calculated as:
+ 
+    adj = -[(T2-T1)-(T4 - T3)]/2
+ 
+-If the command line parameter ``-T 1`` is used the application also
++If the command line parameter ``-T 1`` is used, the application also
+ synchronizes the PTP PHC clock with the Linux kernel clock.
+ 
+ Compiling the Application
+@@ -61,7 +66,7 @@ The application is located in the ``ptpclient`` sub-directory.
+ Running the Application
+ -----------------------
+ 
+-To run the example in a ``linux`` environment:
++To run the example in a Linux environment:
  
  .. code-block:: console
  
-@@ -178,7 +177,7 @@ and the Environment Abstraction Layer (EAL) options.
+@@ -71,8 +76,8 @@ Refer to *DPDK Getting Started Guide* for general information on running
+ applications and the Environment Abstraction Layer (EAL) options.
  
- .. Note::
- 
--    * The ``l2fwd-crypto`` sample application requires IPv4 packets for crypto operation.
-+    * The ``l2fwd-crypto`` sample application requires IPv4 packets for crypto operations.
- 
-     * If multiple Ethernet ports are passed, then equal number of crypto devices are to be passed.
- 
-@@ -200,17 +199,15 @@ from reception until transmission.
-    Encryption flow through the L2 Forwarding with Crypto Application
+ * ``-p portmask``: Hexadecimal portmask.
+-* ``-T 0``: Update only the PTP time receiver clock.
+-* ``-T 1``: Update the PTP time receiver clock and synchronize the Linux Kernel to the PTP clock.
++* ``-T 0``: Update only the PTP timeReceiver clock.
++* ``-T 1``: Update the PTP timeReceiver clock and synchronize the Linux kernel clock to the PTP clock.
  
  
--The following sections provide explanation of the application.
-+The following sections provide an explanation of the application.
- 
- Crypto operation specification
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- All the packets received in all the ports get transformed by the crypto devices
- (ciphering and/or authentication).
--The crypto operation to be performed on the packet is parsed from the command line.
--(Go to "Running the Application" section for all the options.)
--
--If no parameter is passed, the default crypto operation is:
-+The crypto operation to be performed on the packet is parsed from the command line (see "Running the Application" for all options).
-+If no parameters are passed, the default crypto operation is:
- 
- * Encryption with AES-CBC with 128 bit key.
- 
-@@ -218,7 +215,7 @@ If no parameter is passed, the default crypto operation is:
- 
- * Keys, IV and AAD are generated randomly.
- 
--There are two methods to pass keys, IV and ADD from the command line:
-+There are two methods to pass keys, IV and AAD from the command line:
- 
- * Passing the full key, separated bytes by ":"::
- 
-@@ -236,7 +233,7 @@ The size of these keys are checked (regardless of the method) before starting th
- to make sure that it is supported by the crypto devices.
- 
- Crypto device initialization
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- Once the encryption operation is defined, the crypto devices are initialized.
- The crypto devices must be either bound to a DPDK driver (if they are physical devices)
-@@ -245,9 +242,9 @@ when running the application.
- 
- The initialize_cryptodevs() function performs the device initialization.
- It iterates through the list of the available crypto devices and
--checks which ones are capable of performing the operation.
--Each device has a set of capabilities associated with it,
--which are stored in the device info structure, so the function checks if the operation
-+checks which are capable of performing the operation.
-+Each device has a set of capabilities associated with it
-+that are stored in the device info structure, so the function checks if the operation
- is within the structure of each device.
- 
- The following code checks if the device supports the specified cipher algorithm
-@@ -273,14 +270,15 @@ crypto device list.
- 
- **Note**:
-    The number of crypto devices that supports the specified crypto operation
--   must be at least the number of ports to be used.
-+   must be at least equal to the number of Ethernet ports in use. If using
-+   multiple Ethernet ports, an equal number of crypto devices must be provided.
- 
- Session creation
- ~~~~~~~~~~~~~~~~
- 
- The crypto operation has a crypto session associated to it, which contains
--information such as the transform chain to perform (e.g. ciphering then hashing)
--pointers to the keys, lengths... etc.
-+information such as the transform chain to perform (e.g. ciphering then hashing),
-+pointers to the keys, lengths, etc.
- 
- This session is created and is later attached to the crypto operation:
- 
-@@ -306,7 +304,7 @@ the mbuf which will be transformed is attached to it::
- 
-    op->sym->m_src = m;
- 
--Since no destination mbuf is set, the source mbuf will be overwritten
-+Since no destination mbuf is set, the source mbuf is overwritten
- after the operation is done (in-place).
- 
- Crypto operation enqueuing/dequeuing
-@@ -315,7 +313,7 @@ Crypto operation enqueuing/dequeuing
- Once the operation has been created, it has to be enqueued in one of the crypto devices.
- Before doing so, for performance reasons, the operation stays in a buffer.
- When the buffer has enough operations (MAX_PKT_BURST), they are enqueued in the device,
--which will perform the operation at that moment:
-+which performs the operation at that moment:
- 
- .. literalinclude:: ../../../examples/l2fwd-crypto/main.c
-     :language: c
-diff --git a/doc/guides/sample_app_ug/l2_forward_event.rst b/doc/guides/sample_app_ug/l2_forward_event.rst
-index 1d52211b9a..c4329d0036 100644
---- a/doc/guides/sample_app_ug/l2_forward_event.rst
-+++ b/doc/guides/sample_app_ug/l2_forward_event.rst
-@@ -17,7 +17,7 @@ The destination port is the adjacent port from the enabled portmask.
- If the first four ports are enabled (portmask=0x0f),
- ports 1 and 2 forward into each other,
- and ports 3 and 4 forward into each other.
--Also, if MAC address updating is enabled,
-+Also, if MAC addresses updating is enabled,
- the MAC addresses are affected as follows:
- 
- *   The source MAC address is replaced by the Tx port MAC address
-@@ -26,7 +26,7 @@ the MAC addresses are affected as follows:
- Application receives packets from Rx port using these methods:
- 
- *   Poll mode
--*   Eventdev mode (default)
-+*   Eventdev mode (by default)
- 
- This application can be used to benchmark performance using a traffic-generator,
- as shown in the :numref:`figure_l2fwd_event_benchmark_setup`.
-@@ -64,7 +64,7 @@ where,
- 
- *   q NQ: Maximum number of queues per lcore (default is 1)
- 
--*   --[no-]mac-updating: Enable or disable MAC addresses updating (enabled by default).
-+*   --[no-]mac-updating: Enable or disable MAC addresses updating (enabled by default)
- 
- *   --mode=MODE: Packet transfer mode for I/O, poll or eventdev. Eventdev by default.
- 
-@@ -374,9 +374,9 @@ is assigned that is either the next or previous enabled port from the portmask.
- If the number of ports are odd in portmask, then the packet from the last port will be
- forwarded to first port i.e. if portmask=0x07, then forwarding will take place
- like p0--->p1, p1--->p2, p2--->p0.
-+If MAC address updating is enabled, the source and destination MAC addresses are updated.
- 
--Also, to optimize enqueue operation, ``l2fwd_simple_forward()`` stores incoming mbufs
--up to ``MAX_PKT_BURST``.
-+To optimize enqueue operation, ``l2fwd_simple_forward()`` stores incoming mbufs up to ``MAX_PKT_BURST``.
- Once it reaches the limit, all packets are transmitted to destination ports.
- 
- .. literalinclude:: ../../../examples/l2fwd/main.c
-@@ -420,15 +420,15 @@ to ensure the correct allowed deq length by the eventdev.
- The ``rte_event_dequeue_burst()`` function writes the mbuf pointers in a local table
- and returns the number of available mbufs in the table.
- 
--Then, each mbuf in the table is processed by the ``l2fwd_eventdev_forward()``
--function. The processing is very simple: process the TX port from the RX port,
--then replace the source and destination MAC addresses if MAC address updating
--is enabled.
-+Then, each mbuf in the table is processed by the ``l2fwd_eventdev_forward()`` function.
-+The processing is very simple: determine the TX port from the RX port,
-+then replace the source and destination MAC addresses if MAC addresses updating is enabled.
- 
- During the initialization process, a static array of destination ports
- (``l2fwd_dst_ports[]``) is filled so that for each source port, a destination port
- is assigned that is either the next or previous enabled port from the portmask.
--If number of ports are odd in portmask then packet from last port will be
-+If the number of ports are odd in portmask,
-+then the packet from the last port will be
- forwarded to first port i.e. if portmask=0x07, then forwarding will take place
- like p0--->p1, p1--->p2, p2--->p0.
- 
-diff --git a/doc/guides/sample_app_ug/l2_forward_job_stats.rst b/doc/guides/sample_app_ug/l2_forward_job_stats.rst
-index 23448f23a4..6b8f8dda3e 100644
---- a/doc/guides/sample_app_ug/l2_forward_job_stats.rst
-+++ b/doc/guides/sample_app_ug/l2_forward_job_stats.rst
-@@ -10,8 +10,8 @@ also takes advantage of Single Root I/O Virtualization (SR-IOV) features in a vi
- 
- .. note::
- 
--    This application is a variation of L2 Forwarding sample application. It demonstrate possible
--    scheme of job stats library usage therefore some parts of this document is identical with original
-+    This application is a variation of the L2 Forwarding sample application. It demonstrates a possible
-+    scheme of job stats library usage therefore some parts of this document are identical with the original
-     L2 forwarding application.
- 
- Overview
-@@ -92,7 +92,7 @@ where,
- 
- *   q NQ: Maximum number of queues per lcore (default is 1)
- 
--*   l: Use locale thousands separator when formatting big numbers.
-+*   l: Use a locale thousands separator when formatting big numbers.
- 
- To run the application in a Linux environment with 4 lcores, 16 ports, 8 RX queues per lcore
- and thousands separator printing, issue the command:
-@@ -157,14 +157,14 @@ but it is possible to extend this code to allocate one mbuf pool per socket.
- The ``rte_pktmbuf_pool_create()`` function uses the default mbuf pool and mbuf
- initializers, respectively ``rte_pktmbuf_pool_init()`` and ``rte_pktmbuf_init()``.
- An advanced application may want to use the mempool API to create the
--mbuf pool with more control.
-+mbuf pool with greater control.
- 
- Driver Initialization
- ~~~~~~~~~~~~~~~~~~~~~
- 
- The main part of the code in the ``main()`` function relates to the initialization of the driver.
- To fully understand this code, it is recommended to study the chapters that related to the Poll Mode Driver
--in the *DPDK Programmer's Guide* and the *DPDK API Reference*.
-+To fully understand this code, it is recommended to study the chapters related to the Poll Mode Driver in the *DPDK Programmer's Guide* and the *DPDK API Reference*.
- 
- .. literalinclude:: ../../../examples/l2fwd-jobstats/main.c
-     :language: c
-@@ -211,7 +211,7 @@ Values of struct lcore_queue_conf:
- *   n_rx_port and rx_port_list[] are used in the main packet processing loop
-     (see Section `Receive, Process and Transmit Packets`_ later in this chapter).
- 
--*   rx_timers and flush_timer are used to ensure forced TX on low packet rate.
-+*   rx_timers and flush_timer are used to force TX on low packet rate.
- 
- *   flush_job, idle_job and jobs_context are librte_jobstats objects used for managing l2fwd jobs.
- 
-@@ -228,9 +228,9 @@ Each lcore should be able to transmit on any port. For every port, a single TX q
-     :end-before: >8 End of init one TX queue on each port.
-     :dedent: 2
- 
--Jobs statistics initialization
-+Job Statistics Initialization
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--There are several statistics objects available:
-+Several statistics objects are available:
- 
- *   Flush job statistics
- 
-@@ -260,7 +260,7 @@ Main loop
- ~~~~~~~~~
- 
- The forwarding path is reworked comparing to original L2 Forwarding application.
--In the ``l2fwd_main_loop()`` function, three loops are placed.
-+In the ``l2fwd_main_loop()`` function, three loop iterations are used.
- 
- .. literalinclude:: ../../../examples/l2fwd-jobstats/main.c
-     :language: c
-@@ -268,13 +268,13 @@ In the ``l2fwd_main_loop()`` function, three loops are placed.
-     :end-before: >8 End of minimize impact of stats reading.
+ Code Explanation
+@@ -101,7 +106,7 @@ function. The value returned is the number of parsed arguments:
+     :end-before: >8 End of initialization of EAL.
      :dedent: 1
  
--The first infinite for loop is to minimize impact of stats reading.
-+The first infinite loop minimizes the impact of statistics reading.
- Lock is only locked/unlocked when asked.
+-And than we parse application specific arguments
++Then we parse application-specific arguments:
  
--Second inner while loop do the whole jobs management.
--When any job is ready, the use ``rte_timer_manage()`` is used to call the job handler.
-+The second inner while loop performs the whole jobs management.
-+When any job is ready, ``rte_timer_manage()`` is used to call the job handler.
+ .. literalinclude:: ../../../examples/ptpclient/ptpclient.c
+     :language: c
+@@ -178,8 +183,8 @@ The forwarding loop can be interrupted and the application closed using
+ PTP parsing
+ ~~~~~~~~~~~
  
--In this place, functions ``l2fwd_fwd_job()`` and ``l2fwd_flush_job()`` are called when needed.
-+At this point, functions ``l2fwd_fwd_job()`` and ``l2fwd_flush_job()`` are called when needed.
- Then, ``rte_jobstats_context_finish()`` is called to mark loop end -
- no other jobs are ready to execute.
- By this time, stats are ready to be read
-@@ -283,11 +283,11 @@ and if stats_read_pending is set, loop breaks allowing stats to be read.
- Third do-while loop is the idle job (idle stats counter).
- Its only purpose is monitoring if any job is ready
- or stats job read is pending for this lcore.
--Statistics from this part of the code is considered as
-+Statistics from this part of the code are considered as
- the headroom available for additional processing.
+-The ``parse_ptp_frames()`` function processes PTP packets, implementing time receiver
+-PTP IEEE1588 L2 functionality.
++The ``parse_ptp_frames()`` function processes PTP packets, implementing
++PTP IEEE1588 L2 timeReceiver functionality.
  
--Receive, Process and Transmit Packets
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+Receive, Process, and Transmit Packets
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ .. literalinclude:: ../../../examples/ptpclient/ptpclient.c
+     :language: c
+@@ -187,12 +192,12 @@ PTP IEEE1588 L2 functionality.
+     :end-before:  >8 End of function processes PTP packets.
  
- The main task of ``l2fwd_fwd_job()`` function is to read ingress packets
- from the Rx queue of particular port and forward it.
-@@ -354,18 +354,12 @@ However, in real-life applications (such as, L3 routing),
- packet N is not necessarily forwarded on the same port as packet N-1.
- The application is implemented to illustrate that, so the same approach can be reused in a more complex application.
+ There are 3 types of packets on the RX path which we must parse to create a minimal
+-implementation of the PTP time receiver client:
++implementation of the PTP timeReceiver:
  
--The ``l2fwd_send_packet()`` function stores the packet in a per-lcore and per-txport table.
--If the table is full, the whole packets table is transmitted
--using the ``l2fwd_send_burst()`` function:
-+The ``l2fwd_simple_forward()`` function uses ``rte_eth_tx_buffer()`` to buffer packets
-+for transmission. When the buffer is full, packets are automatically transmitted.
+ * SYNC packet.
+-* FOLLOW UP packet
++* FOLLOW UP packet.
+ * DELAY RESPONSE packet.
  
--.. literalinclude:: ../../../examples/l2fwd-crypto/main.c
--    :language: c
--    :start-after: Enqueue packets for TX and prepare them to be sent. 8<
--    :end-before: >8 End of Enqueuing packets for TX.
--
--To ensure that no packets remain in the tables, the flush job exists.
-+To ensure that no packets remain in the buffers, the flush job exists.
- The ``l2fwd_flush_job()``
--is called periodically to for each lcore draining TX queue of each port.
-+is called periodically for each lcore to drain the TX queue of each port.
- This technique introduces some latency when there are not many packets to send,
- however it improves performance:
- 
-diff --git a/doc/guides/sample_app_ug/l2_forward_macsec.rst b/doc/guides/sample_app_ug/l2_forward_macsec.rst
-index 7e6c971465..c0452992e8 100644
---- a/doc/guides/sample_app_ug/l2_forward_macsec.rst
-+++ b/doc/guides/sample_app_ug/l2_forward_macsec.rst
-@@ -15,7 +15,7 @@ The L2 forwarding MACsec application performs L2 forwarding for each packet
- that is received on an Rx port after encrypting/decrypting the packets
- based on rte_security sessions using inline protocol mode.
- 
--The destination port is the adjacent port from the enabled portmask
-+The destination port is the adjacent port from the enabled portmask,
- if the first four ports are enabled (portmask ``0xf``),
- ports 1 and 2 forward into each other, and ports 3 and 4 forward into each other.
- 
-@@ -43,44 +43,44 @@ The application requires a number of command line options:
-        [--portmap="(port, port)[,(port, port)]"]
-        [-T STAT_INTERVAL]
- 
--where,
-+where:
- 
--``p PORTMASK``
--  Hexadecimal bitmask of the ports to configure.
-+``-p PORTMASK``
-+   Hexadecimal bitmask of the ports to configure.
- 
--``q NQ``
--  Number of queues (=ports) per lcore (default is 1).
-+``-q NQ``
-+   Number of queues (=ports) per lcore (default is 1).
- 
--``T STAT_INTERVAL``
--  Time interval in seconds for refreshing the stats (default is 1 sec).
--  Value 0 disables stats display.
-+``-T STAT_INTERVAL``
-+   Time interval in seconds for refreshing the stats (default is 1).
-+   Value 0 disables stats display.
- 
- ``--mcs-tx-portmask OUTBOUND_PORTMASK``
--  Hexadecimal bitmask of the ports to configure encryption flows.
-+   Hexadecimal bitmask of the ports to configure encryption flows.
- 
- ``--mcs-rx-portmask INBOUND_PORTMASK``
--  Hexadecimal bitmask of the ports to configure decryption flows.
-+   Hexadecimal bitmask of the ports to configure decryption flows.
- 
--``--mcs-port-config '(port,src_mac,dst_mac)[,(port,src_mac,dst_mac)]'``
--  Source and destination MAC addresses of incoming packets
--  on a port for which MACsec processing is to be done.
-+``--mcs-port-config "(port,src_mac,dst_mac)[,(port,src_mac,dst_mac)]"``
-+   Source and destination MAC addresses of incoming packets
-+   on a port for which MACsec processing is to be done.
- 
- ``--portmap="(port,port)[,(port,port)]"``
-   Forwarding ports mapping.
- 
- To run the application in Linux environment with 4 lcores,
--4 ports with 2 ports for outbound and 2 ports for outbound,
-+4 ports with 2 ports for outbound and 2 ports for inbound,
- issue the command:
- 
- .. code-block:: console
- 
-    $ ./<build_dir>/examples/dpdk-l2fwd-macsec -a 0002:04:00.0 -a 0002:05:00.0 \
-        -a 0002:06:00.0 -a 0002:07:00.0 -l 1-4 -- -p 0xf                      \
--       --mcs-tx-portmask 0x5 --mcs-rx-portmask 0xA                            \
--       --mcs-port-config '(0,02:03:04:05:06:07,01:02:03:04:05:06),            \
-+       --mcs-tx-portmask 0x5 --mcs-rx-portmask 0xa                            \
-+       --mcs-port-config="(0,02:03:04:05:06:07,01:02:03:04:05:06),            \
-        (1,02:03:04:05:06:17,01:02:03:04:05:16),                               \
-        (2,02:03:04:05:06:27,01:02:03:04:05:26),                               \
--       (3,02:03:04:05:06:37,01:02:03:04:05:36)' -T 10
-+       (3,02:03:04:05:06:37,01:02:03:04:05:36)" -T 10
- 
- To run the application in Linux environment with 4 lcores, 4 ports,
- to forward Rx traffic of ports 0 & 1 on ports 2 & 3 respectively and vice versa,
-@@ -90,7 +90,7 @@ issue the command:
- 
-    $ ./<build_dir>/examples/dpdk-l2fwd-macsec -a 0002:04:00.0 -a 0002:05:00.0 \
-        -a 0002:06:00.0 -a 0002:07:00.0 -l 1-4 -- -p 0xf                      \
--       --mcs-tx-portmask 0x5 --mcs-rx-portmask 0xA                            \
-+       --mcs-tx-portmask 0x5 --mcs-rx-portmask 0xa                            \
-        --mcs-port-config="(0,02:03:04:05:06:07,01:02:03:04:05:06),            \
-        (1,02:03:04:05:06:17,01:02:03:04:05:16),                               \
-        (2,02:03:04:05:06:27,01:02:03:04:05:26),                               \
+-When we parse the *FOLLOW UP* packet we also create and send a *DELAY_REQUEST* packet.
+-Also when we parse the *DELAY RESPONSE* packet, and all conditions are met
+-we adjust the PTP time receiver clock.
++When we parse the *FOLLOW UP* packet, we also create and send a *DELAY REQUEST* packet.
++When we parse the *DELAY RESPONSE* packet, and all conditions are met,
++we adjust the PTP timeReceiver clock.
 -- 
 2.53.0
 
