@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1A5CD98CC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CF7CD98CC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:10:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4FFC142EA1;
-	Thu, 11 Jun 2026 17:09:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4D53A4327E;
+	Thu, 11 Jun 2026 17:09:38 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 624C742F69
- for <dev@dpdk.org>; Thu, 11 Jun 2026 17:09:33 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C409243276
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 17:09:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781190576; x=1812726576;
+ t=1781190577; x=1812726577;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=a+bNdSVO/FU4TZHtnpQX3mVntkCuPVDydRGj/Dhwxn4=;
- b=J0LAnqfNWuLHPNp1Cj/92rBPbzDJXvZ/87AhslNEY9AhmilXi3VK3ytp
- NPkgBUDxdEwiqhZNEWzWcnI81Ho71aZfTsBDOOhXmhgjk1yLk6bRUoc8Y
- 7WjezdGm/+/oN91baDTRW+VF2qONXCkgtm/+c+yobriZhmCD0AvOShAsV
- WcBY8TqOL7AZXX45qUUiEz4XieOiP4Vrz71QgEfgCqnXCG7YELUSh/BFq
- oDKbSqU0Di/DFa1OlLTkqp2m1okpB2ovq78XOnND1/qxFvrhP/CUFbec0
- L61iHEe7TzjKPp5cLioY0ZE2QEnxLFj9ikggkDHY7anFBLbl85C80BMDq Q==;
-X-CSE-ConnectionGUID: LAYAwXxiQmarJVWmppqWHQ==
-X-CSE-MsgGUID: 3SyRNwSXSgKpEln94C+pYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="85845373"
-X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; d="scan'208";a="85845373"
+ bh=3mqeqyqvTwfR4MOw36NsxnAZBAoQRptnJzNgO/9+wTM=;
+ b=b0p2XZ6XJnB91PrBYfF3t90JKvH14V2lWUPj3IDbTptVAsiW7Wv/gops
+ 8w5ax5wNW7QJ1urIxuTXQIr4k57rxzQMkV502Imubm6D3N9iZN4Ia+q4N
+ qahMa5LvM5DuQQH8k3erH73g2xWloUqmrJC3E9WhOlr0iCEVAilp9FHTV
+ FwS7yz65usFArdOzPw42wMuZKdwKzIQT6eMPCdrxOrHcYE0q6dmLizrqx
+ GRWBmNnr4aJSL8lhINoTgdW5muixPOxKc+IURs2a5qpkt2aOO+NOO0Hdm
+ nOCKjCwhfen8/NKjJ/VC1nzh5xgHPA6+Gkf4zvTjzOxh7aQhwYwzTfV7s w==;
+X-CSE-ConnectionGUID: 5aP3VdhCT+u814ZcJb/omg==
+X-CSE-MsgGUID: q9Xh1FYISv67zQmAayJaLA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="85845366"
+X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; d="scan'208";a="85845366"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Jun 2026 08:09:30 -0700
-X-CSE-ConnectionGUID: w68S4dEUTK617f/jnCxpBQ==
-X-CSE-MsgGUID: RKVqAUMcSsiuLEUl/v9y9A==
+ 11 Jun 2026 08:09:29 -0700
+X-CSE-ConnectionGUID: AyMl4u0dQ064qCYikpdsbQ==
+X-CSE-MsgGUID: tXJeBKTQQgO/Ld+O42250Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; d="scan'208";a="245625223"
+X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; d="scan'208";a="245625187"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa010.jf.intel.com with ESMTP; 11 Jun 2026 08:09:28 -0700
+ by orviesa010.jf.intel.com with ESMTP; 11 Jun 2026 08:09:25 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Christian Koue Muf <ckm@napatech.com>,
- Serhii Iliushyk <sil-plv@napatech.com>
-Subject: [PATCH v8 06/18] net/ntnic: use container device assignment API
-Date: Thu, 11 Jun 2026 16:08:58 +0100
-Message-ID: <e93317cf6bc19bf4bcea0046dbc57aac3fb7eff7.1781190152.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v8 04/18] vfio: add container device assignment API
+Date: Thu, 11 Jun 2026 16:08:56 +0100
+Message-ID: <540fcf5cb36f3771b2013b0f1a48e952ea5e1eb1.1781190152.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1781190151.git.anatoly.burakov@intel.com>
  <cover.1781190151.git.anatoly.burakov@intel.com>
@@ -60,88 +60,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The NTNIC driver uses VFIO group bind/unbind functionality for container
-device assignment purposes. Use the new container device assignment API
-instead to provide clearer semantics.
+Currently, VFIO has explicit group bind API's, but the way they're used is
+such that no one actually cares about VFIO groups, and the real goal of
+everyone using VFIO group bind API is to bind devices to particular VFIO
+container, such that when `rte_vfio_setup_device` call eventually comes,
+VFIO will pick up the correct container.
+
+To remove dependency on group API's, add a new "container assign device"
+API call that will do the same thing, but will not depend on managing VFIO
+group fd's.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/ntnic/ntnic_vfio.c | 30 +++++++++---------------------
- 1 file changed, 9 insertions(+), 21 deletions(-)
+ lib/eal/freebsd/eal.c      | 10 ++++++++++
+ lib/eal/include/rte_vfio.h | 26 ++++++++++++++++++++++++++
+ lib/eal/linux/eal_vfio.c   | 32 ++++++++++++++++++++++++++++++++
+ 3 files changed, 68 insertions(+)
 
-diff --git a/drivers/net/ntnic/ntnic_vfio.c b/drivers/net/ntnic/ntnic_vfio.c
-index 439468b3a2..c746b300b2 100644
---- a/drivers/net/ntnic/ntnic_vfio.c
-+++ b/drivers/net/ntnic/ntnic_vfio.c
-@@ -28,7 +28,6 @@ nt_vfio_vf_num(const struct rte_pci_device *pdev)
- /* Internal API */
- struct vfio_dev {
- 	int container_fd;
--	int group_fd;
- 	int dev_fd;
- 	uint64_t iova_addr;
- };
-@@ -50,7 +49,6 @@ nthw_vfio_setup(struct rte_pci_device *dev)
- {
- 	int ret;
- 	char devname[RTE_DEV_NAME_MAX_LEN] = { 0 };
--	int iommu_group_num;
- 	int vf_num;
- 	struct vfio_dev *vfio;
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index f8ab932962..0c64a62c5a 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -944,3 +944,13 @@ rte_vfio_container_dma_unmap(__rte_unused int container_fd,
+ 	rte_errno = ENOTSUP;
+ 	return -1;
+ }
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_assign_device)
++int
++rte_vfio_container_assign_device(__rte_unused int vfio_container_fd,
++		__rte_unused const char *sysfs_base,
++		__rte_unused const char *dev_addr)
++{
++	rte_errno = ENOTSUP;
++	return -1;
++}
+diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
+index fb666141f6..e7e2ee950b 100644
+--- a/lib/eal/include/rte_vfio.h
++++ b/lib/eal/include/rte_vfio.h
+@@ -271,6 +271,32 @@ __rte_internal
+ int
+ rte_vfio_container_destroy(int container_fd);
  
-@@ -66,14 +64,9 @@ nthw_vfio_setup(struct rte_pci_device *dev)
- 	}
++/**
++ * @internal
++ *
++ * Assign a device to a VFIO container.
++ *
++ * Doing so will cause `rte_vfio_setup_device()` to set up the device with the VFIO container
++ * specified in this assign operation.
++ *
++ * This function is only relevant on Linux.
++ *
++ * @param vfio_container_fd
++ *   VFIO container file descriptor.
++ * @param sysfs_base
++ *   Sysfs path prefix.
++ * @param dev_addr
++ *   Device identifier.
++ *
++ * @return
++ *   0 on success.
++ *   <0 on failure, rte_errno is set.
++ */
++__rte_internal
++int
++rte_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
++		const char *dev_addr);
++
+ /**
+  * @internal
+  * Bind a IOMMU group to a container.
+diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
+index 47c973e49a..02fec64658 100644
+--- a/lib/eal/linux/eal_vfio.c
++++ b/lib/eal/linux/eal_vfio.c
+@@ -2102,6 +2102,38 @@ rte_vfio_container_destroy(int container_fd)
+ 	return 0;
+ }
  
- 	vfio->dev_fd = -1;
--	vfio->group_fd = -1;
- 	vfio->iova_addr = START_VF_IOVA;
- 
- 	rte_pci_device_name(&dev->addr, devname, RTE_DEV_NAME_MAX_LEN);
--	ret = rte_vfio_get_group_num(rte_pci_get_sysfs_path(), devname, &iommu_group_num);
--	if (ret <= 0)
--		return -1;
--
- 	if (vf_num == 0) {
- 		/* use default container for pf0 */
- 		vfio->container_fd = RTE_VFIO_DEFAULT_CONTAINER_FD;
-@@ -86,17 +79,14 @@ nthw_vfio_setup(struct rte_pci_device *dev)
- 				"VFIO device setup failed. VFIO container creation failed.");
- 			return -1;
- 		}
--	}
-+		ret = rte_vfio_container_assign_device(vfio->container_fd,
-+				rte_pci_get_sysfs_path(), devname);
-+		if (ret < 0) {
-+			NT_LOG(ERR, NTNIC,
-+				"VFIO device setup failed. Assign device to container failed.");
-+			goto err;
-+		}
- 
--	vfio->group_fd = rte_vfio_container_group_bind(vfio->container_fd, iommu_group_num);
--
--	if (vfio->group_fd < 0) {
--		NT_LOG(ERR, NTNIC,
--			"VFIO device setup failed. VFIO container group bind failed.");
--		goto err;
--	}
--
--	if (vf_num > 0) {
- 		if (rte_pci_map_device(dev)) {
- 			NT_LOG(ERR, NTNIC,
- 				"Map VFIO device failed. is the vfio-pci driver loaded?");
-@@ -106,10 +96,8 @@ nthw_vfio_setup(struct rte_pci_device *dev)
- 
- 	vfio->dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
- 
--	NT_LOG(DBG, NTNIC,
--		"%s: VFIO id=%d, dev_fd=%d, container_fd=%d, group_fd=%d, iommu_group_num=%d",
--		dev->name, vf_num, vfio->dev_fd, vfio->container_fd, vfio->group_fd,
--		iommu_group_num);
-+	NT_LOG(DBG, NTNIC, "%s: VFIO id=%d, dev_fd=%d, container_fd=%d",
-+		dev->name, vf_num, vfio->dev_fd, vfio->container_fd);
- 
- 	return vf_num;
- 
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_assign_device)
++int
++rte_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
++		const char *dev_addr)
++{
++	int iommu_group_num;
++	int ret;
++
++	ret = rte_vfio_get_group_num(sysfs_base, dev_addr, &iommu_group_num);
++	if (ret < 0) {
++		EAL_LOG(ERR, "Cannot get IOMMU group number for device %s",
++			dev_addr);
++		return -1;
++	} else if (ret == 0) {
++		EAL_LOG(ERR,
++			"Device %s is not assigned to any IOMMU group",
++			dev_addr);
++		return -1;
++	}
++
++	ret = rte_vfio_container_group_bind(vfio_container_fd,
++			iommu_group_num);
++	if (ret < 0) {
++		EAL_LOG(ERR,
++			"Cannot bind IOMMU group %d for device %s",
++			iommu_group_num, dev_addr);
++		return -1;
++	}
++
++	return 0;
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_bind)
+ int
+ rte_vfio_container_group_bind(int container_fd, int iommu_group_num)
 -- 
 2.47.3
 
