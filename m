@@ -2,52 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC86BCD98CE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 14:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B80EBCD98CE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 14:22:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B4BB9432A8;
-	Thu, 11 Jun 2026 16:22:04 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id BD519427D0;
- Thu, 11 Jun 2026 16:22:03 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 65BCXWbK2094843; Thu, 11 Jun 2026 07:22:03 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id EECED432B2;
+	Thu, 11 Jun 2026 16:22:09 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id EEA17432B2;
+ Thu, 11 Jun 2026 16:22:08 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 65BCXfpS2190687; Thu, 11 Jun 2026 07:22:08 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
- wVpVzGULTitxbyBGBDvDqWgw7ec175/+7eiJh1bIDs=; b=c2Hrcj63UMPQtdpqd
- PGFhBuYyhdD4M5XIoTfdrD+DLP431nruW3WZVEZNCOCIWn/Na2KgwqLQftB7t6a9
- fqyERrWtLwByh4MvGAwnc0Lovb9LdAPTy6lg8PTE8uv8LNapVOwpLh5TjjkaiZBe
- LXwfAWMH1duSpw0iLtFarmE+l1ZVyNp5K7E+rX0H3KcGyYhKoY5GhbHYfVf2gNIY
- dKZKb0u9yLDnFf94zZi0WOXJhvOq/O6z807v03o1NJQGuz0WZvfY4+MIaMIBTn+v
- YMc+lPNzHQFnkOpEeipal3XnCPB7/vrbtwVCOKdGDzb66KNBRiRu1XKuIEhJiT3A
- ucqWA==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=W
+ qZyxrai84ZYXpjmD+RnLXflmbNEAnwSKhugE8OWYno=; b=Twn+iXgpHD41Z9OVs
+ VRt4j9a3TxXobJE15quCTu4zDAVpOOOSlKym/E87+i5QSbA39I84aEggVYdb+yxj
+ 46KReWXsoHoExPyVV/z55ecAdzzlZxCwwpM4uwV+yRgI/9mbp1mamtfRm68bHUgK
+ LZO91ZB0qOWxNM+xZ7SHvzr3HcIiFmJhfg4lxUqFjYKSo1xYDz14lqcVUnVGStyH
+ O9/+cn+kl/QFkLcZy29lAlG1FIMDFqVAjXyeDLrQyIOOSDnfj6Wl6qhyV517SNvQ
+ Dt5O4JXLc0cl2VA/PcWmEGKLIy8Jij/coiIzR3XrOEzbRnl0AkBpcAm/qJjX6jtm
+ UG+uA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4eqe5w372p-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4eqe5rb820-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 11 Jun 2026 07:22:02 -0700 (PDT)
+ Thu, 11 Jun 2026 07:22:08 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 11 Jun 2026 07:22:01 -0700
+ 15.2.1544.25; Thu, 11 Jun 2026 07:22:07 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 11 Jun 2026 07:22:01 -0700
+ Transport; Thu, 11 Jun 2026 07:22:07 -0700
 Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id 042BA5B6974;
- Thu, 11 Jun 2026 07:21:57 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 507605B6974;
+ Thu, 11 Jun 2026 07:22:03 -0700 (PDT)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, Satheesh Paul
- <psatheesh@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
- Rakesh Kudurumalla <rkudurumalla@marvell.com>
-CC: Aarnav JP <ajp@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH v2 16/22] common/cnxk: fix Klocwork static analysis issues
-Date: Thu, 11 Jun 2026 19:50:23 +0530
-Message-ID: <20260611142029.3351415-16-rbhansali@marvell.com>
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, "Archana
+ Muniganti" <marchana@marvell.com>, Vidya Sagar Velumuri
+ <vvelumuri@marvell.com>, Akhil Goyal <gakhil@marvell.com>
+CC: <jerinj@marvell.com>, Aarnav JP <ajp@marvell.com>, <stable@dpdk.org>
+Subject: [PATCH v2 17/22] common/cnxk: add auth key len check in inbound SA
+Date: Thu, 11 Jun 2026 19:50:24 +0530
+Message-ID: <20260611142029.3351415-17-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260611142029.3351415-1-rbhansali@marvell.com>
 References: <20260611073311.3129711-1-rbhansali@marvell.com>
@@ -55,24 +55,24 @@ References: <20260611073311.3129711-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDE0NCBTYWx0ZWRfXylQV67QWLUgw
- YTE79gSRgw4/DIpJ8wDQKVqt30+iRGCz45eIUNC8/XgFieevYP+5VmsskTuqby78wwyZeGlhG7P
- sT1XJXLf+ETcabqhftU88usVzDbDWbGx02W8+ZTc3g6rlTHH1N8ZrX3sFyHVJ2XCrEQgR4AGyCf
- ux83sjcbQnNOoCc5WtoMUFyPlm0fd8toW/EqU+C6k1qYl5/3oj7d0t/PqMGWlzRgyiJX17HYJl7
- vXbYI80JWUXYcZzbQgxDD8j/htQlDVNm+i+6lUxwWADWEdhdDdvtLhGzDuRoGOHJtrGXhHhOFKr
- UntG7O6Gtn64Pz6jpDx6En5keIFBI4zv7z2KXBdOxbv+PZBGJK9Tl4BWClryE3urT4RteCu/2P1
- yGxZp10cvET5/k4329uBchcm3cQw9Rf4VRT125YrtGmrF6nFmgyrk9cBKMfy5qPwzaLPFWK+5XL
- 6mlv7grveHaeKuNrYkw==
-X-Authority-Analysis: v=2.4 cv=fv7sol4f c=1 sm=1 tr=0 ts=6a2ac48a cx=c_pps
+X-Authority-Analysis: v=2.4 cv=Zqnd7d7G c=1 sm=1 tr=0 ts=6a2ac490 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=TtqV-g6YmW1Jfm2GSLaY:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=qwpVHXkZySjjlazszK4A:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDE0NCBTYWx0ZWRfX9L85lcsfCgZT
- ZPwL4ZpuwgRTX5Gs7Z4UuNEIkwZJmCGsJZXUGoLwwU1oyxgOT2QeCSzhf0H8YgwWizs62cQ8tBA
- nEoDT1rPfsO7iUlNREfiBrTt/4oioBU=
-X-Proofpoint-GUID: pjOr6FPiRtHnp1FPeDF1ad43kfR8PNFV
-X-Proofpoint-ORIG-GUID: pjOr6FPiRtHnp1FPeDF1ad43kfR8PNFV
+ a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
+ a=RWGwor0Ld7hqSKGVtXEA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-GUID: YTkP-dTTS-ruJ5PptNhIkptGXNlqOWhO
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDE0NCBTYWx0ZWRfX/7ISCcFaYAkR
+ Y0f2SV5nRXYWxPPGfX6Y8an+IRWb8Y11dQv0sxsB8PabU4KSUqN3KNLq0FKtqadGigB+Ob2zm4S
+ HahOIuAro1rrMU90ng3PYckmnED5BCU=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDE0NCBTYWx0ZWRfX3j6UAp4JMTX7
+ Juc9TbpCvvE/EXE1bROU298GHTJlksVtBXJ/vBAw2ld21BKs2uPbe5Pz/iDkgg1tFZxttq6IN9t
+ S1B35g0NwUL/LylYonNvJYD3qCMQ7Ynw52HAuBAZzNHviSRuBoV0ZFdNM0I13q/ERmfdNFsbFf2
+ VC8Qq3R+i1sVk9jyzE31cHF+u8FG4G+N1ayUgOFej16ub0JWnSlWC76UbSH6q7VTOyQotNvilBI
+ f/I77ZkE9PIrsbr+ylEjohECtfZvHkapTGFIfKUuM+ovzcjgn1MBySJFp6DJtg/Tz4AIne7S28k
+ e/CeATE3c1TNM8vH7hjtiFswimjcuetz1DlwC2qTWL8MZgFPEUpELquhmj2NH7o//+mOmzMF5by
+ AHmoybpKGMUzcPP17EUu8+BjNree5RLiCaGZcN+ZSL48dG1ovqN1WkDTBDcOIQ7uZ0QZMRPmX7Q
+ F+sQVKBObnyoKsZrhIA==
+X-Proofpoint-ORIG-GUID: YTkP-dTTS-ruJ5PptNhIkptGXNlqOWhO
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-11_02,2026-06-11_01,2025-10-01_01
@@ -91,293 +91,67 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Aarnav JP <ajp@marvell.com>
 
-Fix NULL pointer dereferences (roc_dev.c, roc_npa.c, roc_nix_inl.c),
-resource leaks in error paths (roc_dev.c, roc_dpi.c, roc_ree.c,
-roc_nix.c, roc_emdev.c), uninitialized variables (roc_npa_debug.c,
-roc_emdev.c), array out-of-bounds access (roc_npc_utils.c, roc_emdev.c),
-bitwise operand size mismatches (roc_mbox.h, roc_emdev_irq.c), and
-format string type mismatches (roc_cpt_debug.c).
+Add auth key length validation before memcpy in
+cnxk_on_ipsec_inb_sa_create() to prevent caller-provided
+keys from overflowing fixed-size in-struct buffers and
+corrupting adjacent fields.
 
-Fixes: 5d8ff275433a ("common/cnxk: fix race condition between up and down mailbox")
-Fixes: 9a92937cf0c8 ("common/cnxk: fix possible out-of-bounds access")
-Fixes: 7557e3f5b9fa ("common/cnxk: replace direct API usage in REE")
-Fixes: 3fdf3e53f3c4 ("common/cnxk: enable CPT CQ for inline IPsec inbound")
-Fixes: c758279fee32 ("common/cnxk: support debug dump to file")
+Fixes: 532963b80707 ("crypto/cnxk: move IPsec SA creation to common")
 Cc: stable@dpdk.org
 
 Signed-off-by: Aarnav JP <ajp@marvell.com>
 ---
 Changes in v2: No change.
 
- drivers/common/cnxk/roc_cpt_debug.c | 29 ++++++++++++++---------------
- drivers/common/cnxk/roc_dev.c       | 15 +++++++++++----
- drivers/common/cnxk/roc_mbox.h      |  4 ++--
- drivers/common/cnxk/roc_nix_inl.c   |  3 +--
- drivers/common/cnxk/roc_npa.c       |  3 +++
- drivers/common/cnxk/roc_npa_debug.c |  8 +++++++-
- drivers/common/cnxk/roc_npc_utils.c | 10 +++++++---
- drivers/common/cnxk/roc_ree.c       | 17 ++++++++++++-----
- 8 files changed, 57 insertions(+), 32 deletions(-)
+ drivers/common/cnxk/cnxk_security.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_cpt_debug.c b/drivers/common/cnxk/roc_cpt_debug.c
-index 3b3e678c20..3c1c052e50 100644
---- a/drivers/common/cnxk/roc_cpt_debug.c
-+++ b/drivers/common/cnxk/roc_cpt_debug.c
-@@ -33,7 +33,7 @@ cpt_cnxk_parse_hdr_dump(FILE *file, const struct cpt_parse_hdr_s *cpth)
- 		 cpth->w0.num_frags, cpth->w0.pkt_out);
-
- 	/* W1 */
--	cpt_dump(file, "W1: wqe_ptr \t0x%016lx\t", cpth->wqe_ptr);
-+	cpt_dump(file, "W1: wqe_ptr \t0x%016" PRIx64 "\t", cpth->wqe_ptr);
-
- 	/* W2 */
- 	cpt_dump(file, "W2: pkt_inline \t0x%x\t\torig_pkt_aura \t0x%x", cpth->w2.pkt_inline,
-@@ -135,29 +135,28 @@ cpt_cn10k_parse_hdr_dump(FILE *file, const struct cpt_cn10k_parse_hdr_s *cpth)
- 	cpt_dump(file, "W0: cookie \t0x%x\t\tmatch_id \t0x%04x \t",
- 		  cpth->w0.cookie, cpth->w0.match_id);
- 	cpt_dump(file, "W0: err_sum \t%u \t", cpth->w0.err_sum);
--	cpt_dump(file, "W0: reas_sts \t0x%x\t\tet_owr \t%u\t\tpkt_fmt \t%u \t",
--		  cpth->w0.reas_sts, cpth->w0.et_owr, cpth->w0.pkt_fmt);
--	cpt_dump(file, "W0: pad_len \t%u\t\tnum_frags \t%u\t\tpkt_out \t%u \t",
--		  cpth->w0.pad_len, cpth->w0.num_frags, cpth->w0.pkt_out);
-+	cpt_dump(file, "W0: reas_sts \t0x%x\t\tet_owr \t%u\t\tpkt_fmt \t%u \t", cpth->w0.reas_sts,
-+		 cpth->w0.et_owr, cpth->w0.pkt_fmt);
-+	cpt_dump(file, "W0: pad_len \t%u\t\tnum_frags \t%u\t\tpkt_out \t%u \t", cpth->w0.pad_len,
-+		 cpth->w0.num_frags, cpth->w0.pkt_out);
-
- 	/* W1 */
--	cpt_dump(file, "W1: wqe_ptr \t0x%016lx\t",
--			plt_be_to_cpu_64(cpth->wqe_ptr));
-+	cpt_dump(file, "W1: wqe_ptr \t0x%016" PRIx64 "\t",
-+		 (uint64_t)plt_be_to_cpu_64(cpth->wqe_ptr));
-
- 	/* W2 */
--	cpt_dump(file, "W2: frag_age \t0x%x\t\torig_pf_func \t0x%04x",
--		  cpth->w2.frag_age, cpth->w2.orig_pf_func);
--	cpt_dump(file, "W2: il3_off \t0x%x\t\tfi_pad \t0x%x \t",
--		  cpth->w2.il3_off, cpth->w2.fi_pad);
-+	cpt_dump(file, "W2: frag_age \t0x%x\t\torig_pf_func \t0x%04x", cpth->w2.frag_age,
-+		 cpth->w2.orig_pf_func);
-+	cpt_dump(file, "W2: il3_off \t0x%x\t\tfi_pad \t0x%x \t", cpth->w2.il3_off, cpth->w2.fi_pad);
- 	cpt_dump(file, "W2: fi_offset \t0x%x \t", cpth->w2.fi_offset);
-
- 	/* W3 */
--	cpt_dump(file, "W3: hw_ccode \t0x%x\t\tuc_ccode \t0x%x\t\tspi \t0x%08x",
--		  cpth->w3.hw_ccode, cpth->w3.uc_ccode, cpth->w3.spi);
-+	cpt_dump(file, "W3: hw_ccode \t0x%x\t\tuc_ccode \t0x%x\t\tspi \t0x%08x", cpth->w3.hw_ccode,
-+		 cpth->w3.uc_ccode, cpth->w3.spi);
-
- 	/* W4 */
--	cpt_dump(file, "W4: esn \t%" PRIx64 " \t OR frag1_wqe_ptr \t0x%" PRIx64,
--		  cpth->esn, plt_be_to_cpu_64(cpth->frag1_wqe_ptr));
-+	cpt_dump(file, "W4: esn \t%" PRIx64 " \t OR frag1_wqe_ptr \t0x%" PRIx64, cpth->esn,
-+		 (uint64_t)plt_be_to_cpu_64(cpth->frag1_wqe_ptr));
-
- 	/* offset of 0 implies 256B, otherwise it implies offset*8B */
- 	offset = cpth->w2.fi_offset;
-diff --git a/drivers/common/cnxk/roc_dev.c b/drivers/common/cnxk/roc_dev.c
-index 32409f2ef3..61aa4b3075 100644
---- a/drivers/common/cnxk/roc_dev.c
-+++ b/drivers/common/cnxk/roc_dev.c
-@@ -1796,14 +1796,17 @@ dev_init(struct dev *dev, struct plt_pci_device *pci_dev)
-
- 	rc = npa_lf_init(dev, pci_dev);
- 	if (rc)
--		goto stop_msg_thrd;
-+		goto vf_flr_unregister;
-
- 	/* Setup LMT line base */
- 	rc = dev_lmt_setup(dev);
- 	if (rc)
--		goto stop_msg_thrd;
-+		goto vf_flr_unregister;
-
- 	return rc;
-+vf_flr_unregister:
-+	if (!is_vf)
-+		dev_vf_flr_unregister_irqs(pci_dev, dev);
- stop_msg_thrd:
- 	/* Exiting the mbox sync thread */
- 	if (dev->sync.start_thread) {
-@@ -1812,10 +1815,14 @@ dev_init(struct dev *dev, struct plt_pci_device *pci_dev)
- 		plt_thread_join(dev->sync.pfvf_msg_thread, NULL);
- 	}
- thread_fail:
--	pthread_mutex_destroy(&dev->sync.mutex);
--	pthread_cond_destroy(&dev->sync.pfvf_msg_cond);
-+	if (pci_dev->max_vfs > 0) {
-+		pthread_mutex_destroy(&dev->sync.mutex);
-+		pthread_cond_destroy(&dev->sync.pfvf_msg_cond);
-+	}
- iounmap:
- 	dev_vf_mbase_put(pci_dev, vf_mbase);
-+	mbox_fini(&dev->mbox_vfpf);
-+	mbox_fini(&dev->mbox_vfpf_up);
- mbox_unregister:
- 	dev_mbox_unregister_irq(pci_dev, dev);
- 	if (dev->ops)
-diff --git a/drivers/common/cnxk/roc_mbox.h b/drivers/common/cnxk/roc_mbox.h
-index 1158ff50a7..52ecde6563 100644
---- a/drivers/common/cnxk/roc_mbox.h
-+++ b/drivers/common/cnxk/roc_mbox.h
-@@ -47,8 +47,8 @@ struct mbox_msghdr {
- #define RVU_VF_VFPF_MBOX0 (0x0000)
- #define RVU_VF_VFPF_MBOX1 (0x0008)
-
--#define MBOX_DOWN_MSG 1
--#define MBOX_UP_MSG   2
-+#define MBOX_DOWN_MSG 1ULL
-+#define MBOX_UP_MSG   2ULL
-
- /* Mailbox message types */
- #define MBOX_MSG_MASK	 0xFFFF
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index b515d52534..db101e71a5 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -638,9 +638,8 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
- 		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
- 		if (res_addr_offset)
- 			res_addr_offset |= (1UL << 56);
-+		cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
- 	}
--
--	cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
- 	lf_cfg->enable = 1;
- 	lf_cfg->profile_id = profile_id;
- 	lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id] | cpt_cq_ena;
-diff --git a/drivers/common/cnxk/roc_npa.c b/drivers/common/cnxk/roc_npa.c
-index 88e328105a..4a3e96a97a 100644
---- a/drivers/common/cnxk/roc_npa.c
-+++ b/drivers/common/cnxk/roc_npa.c
-@@ -1113,6 +1113,9 @@ roc_npa_pool_destroy(uint64_t aura_handle)
- 	struct npa_lf *lf = idev_npa_obj_get();
- 	int rc = 0, aura_id;
-
-+	if (lf == NULL)
-+		return NPA_ERR_DEVICE_NOT_BOUNDED;
-+
- 	plt_npa_dbg("lf=%p aura_handle=0x%" PRIx64, lf, aura_handle);
- 	aura_id = roc_npa_aura_handle_to_aura(aura_handle);
-
-diff --git a/drivers/common/cnxk/roc_npa_debug.c b/drivers/common/cnxk/roc_npa_debug.c
-index e64696730f..f978be9642 100644
---- a/drivers/common/cnxk/roc_npa_debug.c
-+++ b/drivers/common/cnxk/roc_npa_debug.c
-@@ -283,6 +283,9 @@ roc_npa_ctx_dump(void)
- 		if (lf->aura_attr[q].halo) {
- 			aq->ctype = NPA_AQ_CTYPE_HALO;
- 			rc = mbox_process_msg(mbox, (void *)&rsp_cn20k);
-+		} else if (roc_model_is_cn20k()) {
-+			aq->ctype = NPA_AQ_CTYPE_AURA;
-+			rc = mbox_process_msg(mbox, (void *)&rsp_cn20k);
- 		} else {
- 			aq->ctype = NPA_AQ_CTYPE_AURA;
- 			rc = mbox_process_msg(mbox, (void *)&rsp);
-@@ -323,7 +326,10 @@ roc_npa_ctx_dump(void)
- 		aq->ctype = NPA_AQ_CTYPE_POOL;
- 		aq->op = NPA_AQ_INSTOP_READ;
-
--		rc = mbox_process_msg(mbox, (void *)&rsp);
-+		if (roc_model_is_cn20k())
-+			rc = mbox_process_msg(mbox, (void *)&rsp_cn20k);
-+		else
-+			rc = mbox_process_msg(mbox, (void *)&rsp);
- 		if (rc) {
- 			plt_err("Failed to get pool(%d) context", q);
- 			goto exit;
-diff --git a/drivers/common/cnxk/roc_npc_utils.c b/drivers/common/cnxk/roc_npc_utils.c
-index 3c05e46e1b..8e83b8662d 100644
---- a/drivers/common/cnxk/roc_npc_utils.c
-+++ b/drivers/common/cnxk/roc_npc_utils.c
-@@ -486,7 +486,7 @@ npc_process_ipv6_field_hash_o20k(const struct roc_npc_flow_item_ipv6 *ipv6_spec,
- 	uint8_t hash_field[ROC_IPV6_ADDR_LEN];
- 	struct npc_xtract_info *xinfo;
- 	uint32_t hash = 0, mask;
--	int intf, i, rc = 0;
-+	int intf, i, hash_idx = 0, rc = 0;
-
- 	memset(hash_field, 0, sizeof(hash_field));
-
-@@ -505,14 +505,18 @@ npc_process_ipv6_field_hash_o20k(const struct roc_npc_flow_item_ipv6 *ipv6_spec,
- 		if (rc == 0)
- 			continue;
-
--		rc = npc_ipv6_field_hash_get(pst->npc, (const uint32_t *)hash_field, intf, i,
--					     &hash);
-+		if (hash_idx >= NPC_MAX_HASH)
-+			break;
-+
-+		rc = npc_ipv6_field_hash_get(pst->npc, (const uint32_t *)hash_field, intf,
-+					     hash_idx, &hash);
- 		if (rc)
- 			return rc;
-
- 		mask = GENMASK(31, 0);
- 		memcpy(pst->mcam_mask + xinfo->key_off, (uint8_t *)&mask, 4);
- 		memcpy(pst->mcam_data + xinfo->key_off, (uint8_t *)&hash, 4);
-+		hash_idx++;
- 	}
-
- 	return 0;
-diff --git a/drivers/common/cnxk/roc_ree.c b/drivers/common/cnxk/roc_ree.c
-index b6392658c3..923d9251ad 100644
---- a/drivers/common/cnxk/roc_ree.c
-+++ b/drivers/common/cnxk/roc_ree.c
-@@ -592,14 +592,15 @@ roc_ree_dev_init(struct roc_ree_vf *vf)
- 	vf->block_address = ree_get_blkaddr(dev);
- 	if (!vf->block_address) {
- 		plt_err("Could not determine block PF number");
--		goto fail;
-+		rc = -ENODEV;
-+		goto dev_fini;
- 	}
-
- 	/* Get number of queues available on the device */
- 	rc = roc_ree_available_queues_get(vf, &nb_queues);
- 	if (rc) {
- 		plt_err("Could not determine the number of queues available");
--		goto fail;
-+		goto dev_fini;
- 	}
-
- 	/* Don't exceed the limits set per VF */
-@@ -607,7 +608,8 @@ roc_ree_dev_init(struct roc_ree_vf *vf)
-
- 	if (nb_queues == 0) {
- 		plt_err("No free queues available on the device");
--		goto fail;
-+		rc = -ENOSPC;
-+		goto dev_fini;
- 	}
-
- 	vf->max_queues = nb_queues;
-@@ -618,18 +620,23 @@ roc_ree_dev_init(struct roc_ree_vf *vf)
- 	rc = roc_ree_max_matches_get(vf, &max_matches);
- 	if (rc) {
- 		plt_err("Could not determine the maximum matches supported");
--		goto fail;
-+		goto dev_fini;
- 	}
- 	/* Don't exceed the limits set per VF */
- 	max_matches = RTE_MIN(max_matches, REE_MAX_MATCHES_PER_VF);
- 	if (max_matches == 0) {
- 		plt_err("Could not determine the maximum matches supported");
--		goto fail;
-+		rc = -EIO;
-+		goto dev_fini;
- 	}
-
- 	vf->max_matches = max_matches;
-
- 	plt_ree_dbg("Max matches supported by device: %d", vf->max_matches);
-+
-+	return 0;
-+dev_fini:
-+	dev_fini(dev, pci_dev);
- fail:
- 	return rc;
- }
+diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
+index 6f46ad3276..228ff2781d 100644
+--- a/drivers/common/cnxk/cnxk_security.c
++++ b/drivers/common/cnxk/cnxk_security.c
+@@ -1199,22 +1199,33 @@ cnxk_on_ipsec_inb_sa_create(struct rte_security_ipsec_xform *ipsec,
+ 			break;
+ 		case RTE_CRYPTO_AUTH_MD5_HMAC:
+ 		case RTE_CRYPTO_AUTH_SHA1_HMAC:
+-			memcpy(in_sa->sha1_or_gcm.hmac_key, auth_key,
+-			       auth_key_len);
+-			ctx_len = offsetof(struct roc_ie_on_inb_sa,
+-					   sha1_or_gcm.selector);
++			if (auth_key_len > (int)sizeof(in_sa->sha1_or_gcm.hmac_key)) {
++				plt_err("Auth key len %d exceeds max %zu for algo %u", auth_key_len,
++					sizeof(in_sa->sha1_or_gcm.hmac_key), auth_xform->auth.algo);
++				return -EINVAL;
++			}
++			memcpy(in_sa->sha1_or_gcm.hmac_key, auth_key, auth_key_len);
++			ctx_len = offsetof(struct roc_ie_on_inb_sa, sha1_or_gcm.selector);
+ 			break;
+ 		case RTE_CRYPTO_AUTH_SHA256_HMAC:
+ 		case RTE_CRYPTO_AUTH_SHA384_HMAC:
+ 		case RTE_CRYPTO_AUTH_SHA512_HMAC:
++			if (auth_key_len > (int)sizeof(in_sa->sha2.hmac_key)) {
++				plt_err("Auth key len %d exceeds max %zu for algo %u", auth_key_len,
++					sizeof(in_sa->sha2.hmac_key), auth_xform->auth.algo);
++				return -EINVAL;
++			}
+ 			memcpy(in_sa->sha2.hmac_key, auth_key, auth_key_len);
+-			ctx_len = offsetof(struct roc_ie_on_inb_sa,
+-					   sha2.selector);
++			ctx_len = offsetof(struct roc_ie_on_inb_sa, sha2.selector);
+ 			break;
+ 		case RTE_CRYPTO_AUTH_AES_XCBC_MAC:
++			if (auth_key_len > (int)sizeof(in_sa->aes_xcbc.key)) {
++				plt_err("Auth key len %d exceeds max %zu for algo %u", auth_key_len,
++					sizeof(in_sa->aes_xcbc.key), auth_xform->auth.algo);
++				return -EINVAL;
++			}
+ 			memcpy(in_sa->aes_xcbc.key, auth_key, auth_key_len);
+-			ctx_len = offsetof(struct roc_ie_on_inb_sa,
+-					   aes_xcbc.selector);
++			ctx_len = offsetof(struct roc_ie_on_inb_sa, aes_xcbc.selector);
+ 			break;
+ 		default:
+ 			plt_err("Unsupported auth algorithm %u", auth_xform->auth.algo);
 --
 2.34.1
 
