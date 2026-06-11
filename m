@@ -2,75 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA37ECD98CC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 14:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676A1CD98CC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:09:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D552F40276;
-	Thu, 11 Jun 2026 16:30:10 +0200 (CEST)
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com
- [209.85.160.41]) by mails.dpdk.org (Postfix) with ESMTP id 744D040041
- for <dev@dpdk.org>; Thu, 11 Jun 2026 16:30:09 +0200 (CEST)
-Received: by mail-oa1-f41.google.com with SMTP id
- 586e51a60fabf-43ccd4f6f6eso5940624fac.0
- for <dev@dpdk.org>; Thu, 11 Jun 2026 07:30:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781188208; cv=none;
- d=google.com; s=arc-20240605;
- b=SmbeueDKxsIPOC0lzzA8ZTeQMNSQfmk4AQfHevoUam/3I7gG/sl4wAD4jaSECvUvrU
- nkF8/tna1+oH4XtZx8xaJ4sq0O/EcxzzngR5eaQNZIgs824aviLn7isIom6I6kfG4Yk8
- LFBmJjV2OFzVgdr9HnrbAKW/fvQCJQ01vtyTIXJzYCo3eirVKwu9/6cLpcN/Es7wCCTc
- pvx1GOP4tl2OrbeSilBB78nSbpby2dwL7mSyNfrWOT9f+Wv4u48dJCsF4hag6EtMwWC9
- w+Neh3L1TatPMqK2Kpt90jyYOZ5RyircIstoI8Wa119u2jBJNc8OHuT9ZedErX0RZaCJ
- MIjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=to:subject:message-id:date:from:mime-version:dkim-signature;
- bh=o8GXblckLA5q9m4H+kQnfbt9chaNOscTgVuP9300ccs=;
- fh=SmeAyABM4rfT32CZ90spRvJxp9TgPXvzIvi7t3j/5Mk=;
- b=jZv/N8zL6M9ptBYtObP/RR24gpDr6BsmvmWBLTnq86S1bbJvMvBFuVH+rGuggUsDEb
- GU1TD3eut2jIW/H8N9Sel8WdN1/fzV719Ev+60LPweKYROidsnZKe27lrZj+P1AW5ofH
- uADlkGUovWHjlJIYFtSeVSzA4sM3pebHRtarJVu1UR64JJ48reiFTGBlBXBb9oCtfI6m
- atZBMJgUAjAEvdhkEV48ESfHkxO46PwpEEwjhAeE6HtHAR8Sg1kYX5WrmJGeRzyD7sAX
- O34YIuIfysG/a5DPX7XrhDrHSGPmkx8952+KEoGu+ArYqzOPgBRYcwGIfuGWNHsaXcAP
- 0I7g==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1781188208; x=1781793008; darn=dpdk.org;
- h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=o8GXblckLA5q9m4H+kQnfbt9chaNOscTgVuP9300ccs=;
- b=EaqaFj+NpeA1V5YaBDpOIP0rTSiR96RwzKoeFr+DxyC/pZpYPxnO8K+45x7AXhwWHq
- pOPbejdMxeu+dLZ5y8qfAbAAZhvllni0z9+ZptB4a73MzRq2e3qtfQazHjN1gwFPXanp
- Y9G25ZlM4PZLk2VwvIYhrl3tnuEAQ7lRoeulE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781188208; x=1781793008;
- h=to:subject:message-id:date:from:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=o8GXblckLA5q9m4H+kQnfbt9chaNOscTgVuP9300ccs=;
- b=nh9VgIFSBIEfbRgmU86a36qfd9lz7CB/NX0T8Vj0p87iO3HpEnfDSqhoW4CS40+x/L
- 2SekILIFH+5sbO9ZqfzAJtzWXz7nh5x+U/jvwdhJfbR5tY3QQOZaC8lbGyeqtcCh/E2u
- qJ0rtDdi1PGeN+/IZ4MIcbTo3ILpeG6oAWGgLUYIskSjzzqEebaCD0nn29db4UHU9rag
- sKhy0xLozAWhrpHFJJN22JqVLorxKwqfx8mRsyn4sFQiikY+A4NbeUat49+8OysXthsk
- i5FdG2lcm8XC8+iEeyU7GV/fJqmsEPOLzF9EA418eceWitXLiXRkLymChwvBlstXRKYh
- bCRg==
-X-Gm-Message-State: AOJu0YyxIFgN9RF/+Nhtf28cPZrsjtK8LFzBlaB7BLEEQw8Cg06S5no9
- SCdlKnV6Tp/dnwwGM7/KZW8hyTsrCPwrJn6S2qN2X0Duogp4afcT9E0z17RiUPDXrsD5oyGMMob
- S8Fl0aduNFgygx33ubCRdTidYTLmIHaUPD0/JbMG1LihsG1wZ/ir5Ots=
-X-Gm-Gg: Acq92OHgIVeHSyMgZcuvgMvdXlI0QXZjQgiJz8uhlRlVnwXFRdELZwjEvjmqkksqgvd
- B5/00sB4ZQ69CBky7OxgChcn84yIfT2nTXozKrDOa1qZKPx/dyzGkmplWbkSuZli011PSDJpNBT
- VtCCkzFstilD2VjqUqV84Hm8P+MHF9A6ozypxUpowErjqYgwFrgW7QK6JGxQyJS0ay2WCS95UXY
- IdAqPEl39WjLasd5vkQ78rtkWYOACu1NI3oiE0Mn55qXZ9rrFEIN8GDDEGk0LWKMFmImF58yreH
- onLUzL7OK5iM5iCdQ/xAN4HKfdR3a/Lr9aHWhj7ANCmkNaz/eeo=
-X-Received: by 2002:a05:6871:3313:b0:423:9219:4c6 with SMTP id
- 586e51a60fabf-4424195c681mr1880988fac.13.1781188208466; Thu, 11 Jun 2026
- 07:30:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 944CA42EA1;
+	Thu, 11 Jun 2026 17:09:20 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 225D040684
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 17:09:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1781190560; x=1812726560;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=6PjrSwV9N/TRtll6yFxtGnU2raoq4jr3q68Ag3OohXI=;
+ b=dstq20vPD0iBiRGPnDJxz7poSOSmd/jxCDC+eoaa0JPltUX1wj28JE8U
+ qYvvnIcb7gsbNVR4qSNo5tsoUCbh9zAbAnr6cjwYOvIJ4zANc8drqXhJN
+ JBUI88d9QWo5+HS1yUnOfmst9D2p3GheSKf6iEuQf4Mwr61dqjwE+snZI
+ QmayNDFjq6IrVJ434LdUkElgdEfydgy+5uEFFljHMBd2iOfbcmkbcfgln
+ ePXzfOE2bZVR/BysjPL3hbcUFiOIxuKjWgoeRFkerh4S42D+HH3KHFT1S
+ A6jgP4rlrd9/bIOmfhkYnThLng6jrGqjLsp9iduvHkiewNrE3WIdixRcN A==;
+X-CSE-ConnectionGUID: 5BGUKoqrQpySaJjZVfzj0w==
+X-CSE-MsgGUID: 3D8e9o02QF+mFVuooAkikQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="85845347"
+X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; d="scan'208";a="85845347"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Jun 2026 08:09:18 -0700
+X-CSE-ConnectionGUID: ntmFtT3NR1SUj3jf0bjKYQ==
+X-CSE-MsgGUID: EMTOt+vITZCJNtiMNCHfJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; d="scan'208";a="245624829"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa010.jf.intel.com with ESMTP; 11 Jun 2026 08:09:17 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v8 00/18] Support VFIO cdev API in DPDK
+Date: Thu, 11 Jun 2026 16:08:52 +0100
+Message-ID: <cover.1781190151.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1763141462.git.anatoly.burakov@intel.com>
+References: <cover.1763141462.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-From: Lincoln Lavoie <lylavoie@iol.unh.edu>
-Date: Thu, 11 Jun 2026 10:29:57 -0400
-X-Gm-Features: AVVi8CeBpirogyyMksH-btfX-vLqletAXkciVa5NLQ2bzb2tGReCjBWQGApHwxc
-Message-ID: <CAOE1vsNCkhZ8q7ieRAGbJZTFg+xUsjBXXOmegXdoG6L24-Y2HQ@mail.gmail.com>
-Subject: DTS code coverage question
-To: dev <dev@dpdk.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,31 +58,172 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello All,
+This patchset introduces a major refactor of the VFIO subsystem in DPDK to
+support character device (cdev) interface introduced in Linux kernel, as well as
+make the API more streamlined and useful. The goal is to simplify device
+management, improve compatibility, and clarify API responsibilities.
 
-We have a patch into the 26.07 release that will enable generating
-code coverage reports when DTS is run. The community lab can then
-generate coverage reports, like we do for unit testing
-(https://lab.dpdk.org/results/dashboard/code-coverage).
+The following sections outline the key issues addressed by this patchset and the
+corresponding changes introduced.
 
-The question is, with DTS, tests can run on combinations of NICs, etc.
-So how should those be factored into the reporting.  We can do 1 of
-the following:
+1. Only group mode is supported
+===============================
 
-Option 1: Collect coverage reports per NIC / PMD
-Option 2: Aggregate (combine) reports from multiple NICs / PMDs into a
-single report
-Option 3: Only run it on one NIC / PMD, assuming specific PMDs don't
-change the coverage much.
+Since kernel version 4.14.327 (LTS), VFIO supports the new character device
+(cdev)-based way of working with VFIO devices (otherwise known as IOMMUFD). This
+is a device-centric mode and does away with all the complexity regarding groups
+and IOMMU types, delegating it all to the kernel, and exposes a much simpler
+interface to userspace.
 
-Is there a specific direction the community would prefer?
+The old group interface is still around, and will need to be kept in DPDK both
+for compatibility reasons, as well as supporting special cases (FSLMC bus, NBL
+driver, no-IOMMU mode etc.).
 
-Cheers,
-Lincoln
+To enable this, VFIO is heavily refactored, so that the code can support both
+modes while relying on (mostly) common infrastructure.
+
+Note that the existing `rte_vfio_device_setup/release` model is fundamentally
+incompatible with cdev mode, because for custom container cases, the expected
+flow is that the user binds the IOMMU group (and thus, implicitly, the device
+itself) to a specific container using `rte_vfio_container_group_bind`, whereas
+this step is not needed for cdev as the device fd is assigned to the container
+straight away.
+
+Therefore, what we do instead is introduce a new API for container device
+assignment which, semantically, will assign a device to specified container, so
+that when it is mapped using `rte_pci_map_device`, the appropriate container is
+selected. Under the hood though, we essentially transition to getting device fd
+straight away at assign stage, so that by the time the PCI bus attempts to map
+the device, it is already mapped and we just return an fd. There is no
+"unassign" API because `release_device` already performs that function.
+
+Additionally, a new `rte_vfio_get_mode` API is added for those cases that need
+some introspection into VFIO's internals, with three new modes: group
+(old-style), no-iommu (old-style but without IOMMU), and cdev (the new mode).
+Although no-IOMMU is technically a variant of group mode, the distinction is
+largely irrelevant to the user, as all usages of noiommu checks in our codebase
+are for deciding whether to use IOVA or PA, not anything to do with managing
+groups. The current plan for kernel community is to *not* introduce no-IOMMU
+cdev implementation, and IOMMUFD's own group API compatibility layer also does
+not implement no-IOMMU mode, which is why this will be kept for compatibility
+for these use cases.
+
+There were other users of VFIO which relied on group API but only for convenience
+purposes; no actual VFIO functionality depended on those API's. Therefore, group
+API's are removed and, where appropriate, replaced with the new API's.
+
+List of removed API's:
+
+* `rte_vfio_get_group_fd`
+* `rte_vfio_clear_group`
+* `rte_vfio_container_group_bind` (replaced by container assign API)
+* `rte_vfio_container_group_unbind`
+* `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
+
+2. The API responsibilities aren't clear and bleed into each other
+==================================================================
+
+Some API's do multiple things at once. In particular:
+
+* `rte_vfio_get_device_info` will setup the device
+* `rte_vfio_setup_device` will get device info
+
+These API's have been adjusted to do one thing only.
+
+v8:
+- Rebase
+- Fixed build errors due to variable shadowing
+- Removed duplicate fd check as kernel does not provide a way to distinguish
+  between device fd's
+
+v7:
+- Rebase
+- Added removal of deprecation notices
+- Fixed implicit numeric comparison in patch 12
+
+v6:
+- Fixed missing header include in vfio cdev file
+
+v5:
+- Added back missing uapi patch
+
+v4:
+- Fixed issues with documenting rte_vfio_mode enum
+- Separated deprecation notices into a separate patchset
+
+v3:
+- Make API removal cleaner
+- Fix `get_group_num` usages to align with new API
+- Fix issues with function exports
+- Fix issues with `setup_device` returning old-style values in some cases
+
+v2:
+- Make the entire API internal
+- More aggressive API pruning, complete removal of group API
+- Fixed a bug in group mode where device could not be used
+- Better documentation and deprecation notice patches
+- Moved doc patches to beginning of patchset
+
+Anatoly Burakov (18):
+  uapi: update to v6.17 and add iommufd.h
+  vfio: make all functions internal
+  vfio: split get device info from setup
+  vfio: add container device assignment API
+  net/nbl: do not use VFIO group bind API
+  net/ntnic: use container device assignment API
+  vdpa/ifc: use container device assignment API
+  vdpa/nfp: use container device assignment API
+  vdpa/sfc: use container device assignment API
+  vhost: remove group-related API from drivers
+  vfio: remove group-based API
+  vfio: cleanup and refactor
+  bus/pci: use the new VFIO mode API
+  bus/fslmc: use the new VFIO mode API
+  net/hinic3: use the new VFIO mode API
+  net/ntnic: use the new VFIO mode API
+  vfio: remove no-IOMMU check API
+  vfio: introduce cdev mode
+
+ config/arm/meson.build                    |    1 +
+ config/meson.build                        |    1 +
+ doc/guides/prog_guide/vhost_lib.rst       |    4 -
+ doc/guides/rel_notes/deprecation.rst      |   10 -
+ drivers/bus/cdx/cdx_vfio.c                |   25 +-
+ drivers/bus/fslmc/fslmc_bus.c             |   10 +-
+ drivers/bus/fslmc/fslmc_vfio.c            |    6 +-
+ drivers/bus/pci/linux/pci.c               |    2 +-
+ drivers/bus/pci/linux/pci_vfio.c          |   33 +-
+ drivers/bus/platform/platform.c           |    9 +-
+ drivers/crypto/bcmfs/bcmfs_vfio.c         |   14 +-
+ drivers/net/hinic3/base/hinic3_hwdev.c    |    3 +-
+ drivers/net/nbl/nbl_common/nbl_userdev.c  |   20 +-
+ drivers/net/nbl/nbl_include/nbl_include.h |    1 +
+ drivers/net/ntnic/ntnic_ethdev.c          |    2 +-
+ drivers/net/ntnic/ntnic_vfio.c            |   30 +-
+ drivers/vdpa/ifc/ifcvf_vdpa.c             |   34 +-
+ drivers/vdpa/mlx5/mlx5_vdpa.c             |    1 -
+ drivers/vdpa/nfp/nfp_vdpa.c               |   37 +-
+ drivers/vdpa/sfc/sfc_vdpa.c               |   39 +-
+ drivers/vdpa/sfc/sfc_vdpa.h               |    2 -
+ kernel/linux/uapi/linux/iommufd.h         | 1292 +++++++++++
+ kernel/linux/uapi/linux/vduse.h           |    2 +-
+ kernel/linux/uapi/linux/vfio.h            |   12 +-
+ kernel/linux/uapi/version                 |    2 +-
+ lib/eal/freebsd/eal.c                     |   98 +-
+ lib/eal/include/rte_vfio.h                |  387 ++--
+ lib/eal/linux/eal_vfio.c                  | 2437 ++++++++-------------
+ lib/eal/linux/eal_vfio.h                  |  167 +-
+ lib/eal/linux/eal_vfio_cdev.c             |  390 ++++
+ lib/eal/linux/eal_vfio_group.c            |  984 +++++++++
+ lib/eal/linux/eal_vfio_mp_sync.c          |   80 +-
+ lib/eal/linux/meson.build                 |    2 +
+ lib/eal/windows/eal.c                     |    4 +-
+ lib/vhost/vdpa_driver.h                   |    3 -
+ 35 files changed, 4248 insertions(+), 1896 deletions(-)
+ create mode 100644 kernel/linux/uapi/linux/iommufd.h
+ create mode 100644 lib/eal/linux/eal_vfio_cdev.c
+ create mode 100644 lib/eal/linux/eal_vfio_group.c
+
 -- 
-Lincoln Lavoie
-Principal Engineer, Broadband Technologies
-21 Madbury Rd., Ste. 100, Durham, NH 03824
-lylavoie@iol.unh.edu
-https://www.iol.unh.edu
-+1-603-674-2755 (m)
+2.47.3
+
