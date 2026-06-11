@@ -2,71 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD821CD98CE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 16:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6ABCD98CE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 16:58:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E115E4334F;
-	Thu, 11 Jun 2026 18:47:05 +0200 (CEST)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id E4C094334F
- for <dev@dpdk.org>; Thu, 11 Jun 2026 18:47:03 +0200 (CEST)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-304f590dd91so139264eec.0
- for <dev@dpdk.org>; Thu, 11 Jun 2026 09:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781196423;
- x=1781801223; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=88iwG+xw8QKNPOyGJXmTlRzaRyGqeAI0rdSsJqemf4c=;
- b=b4h1toOY5N1/ZJeVLLVyXNynA3YUFk9zVe1BYZD1wC2BsfFSmVY8BP7Af+RZJ8OpGz
- 5ll/F6c08ocOvEg33LfVwwpE9JRzjAPhN/d6aJdrIC8/Mr9MrtMd8sVnmx7vVULHQTAh
- pcX3DeDpdOFTNXdoqXrzXCirFT8QlY3/8YUNNznnLnPwFiyFkBeVMUSFnHtUOkhVr0H1
- yaBudxA1Gq9dlf107XLmfpDB8IXIicVQSCJQUKIBbiZOWK2kPnesjb2OP9cQ18d6T18J
- AbVoxwJ0uVlIelcZy73kzufXtFOs6xmmER+PBn5rHZM3Jyu7X83xqkN4Nz61G8nn8GaD
- ACnw==
+	by mails.dpdk.org (Postfix) with ESMTP id C63F743352;
+	Thu, 11 Jun 2026 18:58:55 +0200 (CEST)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
+ [209.85.222.179])
+ by mails.dpdk.org (Postfix) with ESMTP id B31EB40279
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 18:58:54 +0200 (CEST)
+Received: by mail-qk1-f179.google.com with SMTP id
+ af79cd13be357-915d17e2721so10481985a.3
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 09:58:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781197134; cv=none;
+ d=google.com; s=arc-20240605;
+ b=HzXrbl1m+QtgFzHCNzGjf7CAC5S5asXyj7EL3HmYFJqWrs5m+u4XHLJlHlTKUKhqm1
+ 2fJ/OyLhEj7F3IXrJ1wK7/L7RYgnUs+VFonySJiQRZLgc6hHwCGrM4wdiNsXuiwJWdpt
+ WcDllddhD43fIT0QyPqGksDcGRs9DgRhicItPo1d7HRKKP0wVuMQD6j/ZVhHhmmM9aka
+ kn8wiT9KHXQKh3HcUQJEB9mp1Szn2UrGeRKpe2QC5J1IGRmB8Lmuhu9YZKz4SfFxi/Hj
+ 6TyR6s6Or/JlfziteLn0Vae59+EcD6awXDrpXZTh9Kurl9X+SfOP0btgQ0jvbUo/1c/p
+ SijQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version;
+ bh=lGwYqiDGQvm1aQ4Z5d60SQFiKKLr83v3LVLeACk/qW8=;
+ fh=xF+uuR7mn7H4EycvgUkwvdIDZDSqg1kWKtrpkOZ3ipA=;
+ b=ddElMqTkh5hITvjhThuqMRnr6RMb2EBmKKo/z9tQUSf3RtFAqXiQrPbvwc5/lgIjep
+ Pag12NHLURQohAr8zMOv2pWSxA+nx9aMr43jyGeG2GO43OF3O3fb3tax6CbAkrvqJNN9
+ BFQNGNvd9PMRXCqQK0Bej8G7Dl/fO5qjiLtBMw9Dne30wvovQCzezCq5eSxCpeOB+bDV
+ /eZo59Nov8IHQfxgNJ0PCD63oskSj68ax1jvMcAGMSkArvIlu4zqZ5q/gG8XkYn9q87r
+ Q4twxH6NU9IqAFQ7LFaCr7QDbpATHDsrv4/IwFLe0XxHuSzqjzl5wvgdP4yQBv3vPCA9
+ 8ioA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781196423; x=1781801223;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=88iwG+xw8QKNPOyGJXmTlRzaRyGqeAI0rdSsJqemf4c=;
- b=Q4n8mAZZNMKiUzI3o20a/ERJw67T3yzPhWlJyhL3wToArejEpErl5k3op3TMPFTz6J
- zTgPTZybe01VKGkeMhbbIGWq+e/6yQhE0UditkK3fx4xfuduI3iV20JsXiI1qdaEhq7I
- XaMR/iIgL7B7reZsf30d+4Vudkk4DTqa1GN3xKlnNx5MZPa9E5U0iKKtce/9lQb0wmCx
- 75d1i78gH630dudFunH6u4Mj6zgK9I+za+RyIsBnliRGvxcb4vBmBVpbuXza81i7Q5iv
- 9v93BW5Sb7JQHMvrL/dFiN89fVCs/93QPbRahPw/B1FLBw9zkJi/uSwtk1Afp+Og6g5A
- 731Q==
-X-Gm-Message-State: AOJu0YxzRDJ6M0o7hDk9bSMwicq3cRTfTCAkSHjvYaiULEPxOkpto4Xw
- n70SCNKRyanmRvwfwo4yYmpqdVtQgKyDhrd+NPJThW3ms0OAtJG5ro9Ex4MWJCbigR8=
-X-Gm-Gg: Acq92OED+J/1pC0dTc8/X4fEwm7+quAaD4JkZ5RnxA8xBV61r22vGBkvMOgHsbIIRXg
- 8CqCXLsNeHChqpfyNZKzKUHdmDHx+VEg6qYr1ArjVqZKDz/+dh4fH4nnYbti3LbTsH4egJaNoEa
- 9ENrmy1v4ATdLKKqQgIHCrU0p1JCa7j/BWygppQMmYO1+FvQLp4LC0mpfFPQvj3oshipUHP2jbd
- KAK1oxN3YQTMgSdW7XXckL4lbpolVI7dOZmgAVJj1IXD2Ir6qT5dBxk6cIh+g3XXM+5BGqQw5lT
- wK+DrIOne1WWkIiRzIBkCqpSXFNK04MKRvSyvo8I6l9dDbYfKdWYmy5iMQV0czQisv6euSvwW1a
- mPRqFDFiPNySe9BeiCM3SmX8NoY5uLrTlswUuxNcCBMhyxOnbLmhDXZwGC4T6dy8wSxJ9W4/1JT
- WMsXi3vfoaCYrFrUo/bje9YPTftdK6i4EEo8DVsyjcS2T9rFveqDmtKiRiP4xE250L
-X-Received: by 2002:a05:7300:7fac:b0:304:bce9:25fa with SMTP id
- 5a478bee46e88-30804607632mr2957279eec.4.1781196422453; 
- Thu, 11 Jun 2026 09:47:02 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30806c2f0acsm3491611eec.1.2026.06.11.09.47.01
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 09:47:01 -0700 (PDT)
-Date: Thu, 11 Jun 2026 09:46:57 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Howard Wang <howard_wang@realsil.com.cn>
-Cc: <dev@dpdk.org>, <pro_nic_dpdk@realtek.com>
-Subject: Re: [PATCH v1 0/6] net/r8169: hardware updates, optimizations, and
- a bug fix
-Message-ID: <20260611094657.4299136a@phoenix.local>
-In-Reply-To: <20260611083521.20669-1-howard_wang@realsil.com.cn>
-References: <20260611083521.20669-1-howard_wang@realsil.com.cn>
+ d=1e100.net; s=20251104; t=1781197134; x=1781801934;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=lGwYqiDGQvm1aQ4Z5d60SQFiKKLr83v3LVLeACk/qW8=;
+ b=AS530CuBTiJwHyRSqBUFuC12NwX1XEED+7QpwD6WZadb6dykCy2NWr6T5yMu2nqN8r
+ gHCGMLWdmh4XxM9LsQ8ww4P4yDPfbqX0dUo/9dDkzokHclV2gtNd6kOF9Zlc4ZmmoKrb
+ 31I3ss1mwR8WoF7V/ubIRoOnDvot2DhyOhNs85NeQ/viC4xc5Bz5+4kywJ4NIlOnNKm6
+ aeQ3uLU0qitqsZakIKz8YLzdh7HS10THt7Tk0xX9GYfBreK3RqbSRBN0CRvXn/rXoARK
+ xrf9STcfW0RUwjoXho8fbfAW8hzgpKKun5neRS2H6+UwvhG3vKz/dnoILhIUE60Zr2/p
+ zMfg==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ+ajujW0OKBzClHyVyCU/STEYVnJoteQALRlP0V2UJEc+sBiybBzQUE2jWLga7/zpH2f9Q=@dpdk.org
+X-Gm-Message-State: AOJu0Yxyav8N7k2fVHafR04DJvTtkFaYWV7x+PGsYBcrDowsdK8iZVdB
+ 7sjxc9VcMyyypI1LLJ2G0lAjSWKJNFHt9aASLS4EE6d4+u+RjwT/FGi58ZWHClHxQy9/8Q/jjJk
+ eh72IV2YVhRme4okH8vDCOvu6sieVsXY=
+X-Gm-Gg: Acq92OGTm+SxOh8SZeW49yp35GFt3QBHwSqmHhjNuzwl5bjpGlnEMHGUMbjesqhLQPY
+ D8DMWuF4EI2JHnRWVBiug6EruUfFs2Ds/shEfDuFxmgii3p5nCCFLRXHl9KkByNiYXvdr3E8LYi
+ R1qBNFd1D3pziz7odDz1SrJfWLfv2A3ZzjC2cXe3FDnTauKQn3dCg0ZwOW5JcEQQsigNuCPcZ+x
+ fy0QIm+MqyOI0BCe2b3wOW3Ls+j7Lf1yMux4UhH7jKpWu0M7denHGXzOoYz+dS5zzdZLKgAuJET
+ Jvo6Dui/QfimyRqsHNZ5LbLWxAi+RztyJyTWvSHf
+X-Received: by 2002:a05:620a:4687:b0:915:8e6d:35c4 with SMTP id
+ af79cd13be357-9160ac9fd6dmr555415285a.3.1781197133913; Thu, 11 Jun 2026
+ 09:58:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260611154926.392670-1-maxime@leroys.fr>
+ <20260611154926.392670-10-maxime@leroys.fr>
+ <98CBD80474FA8B44BF855DF32C47DC35F65908@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65908@smartserver.smartshare.dk>
+From: Maxime Leroy <maxime@leroys.fr>
+Date: Thu, 11 Jun 2026 18:58:42 +0200
+X-Gm-Features: AVVi8Cc_rsTh6TM8Qjzz4rHqcFjGEE7rEqDoVL060UYm_Mudt2ugKg2MxsUa4Wo
+Message-ID: <CAHHRULWf7oLGLs0_skYZ0ow8sdKVSLXegFhRpMf4c0ThjTk=YA@mail.gmail.com>
+Subject: Re: [PATCH 9/9] net/dpaa2: drop the fake software VLAN strip offload
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000071215c0653fd461d"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,46 +87,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 11 Jun 2026 16:28:27 +0800
-Howard Wang <howard_wang@realsil.com.cn> wrote:
+--00000000000071215c0653fd461d
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> This patch series primarily focuses on updating hardware configurations, 
-> optimizing the datapath, and refining device behaviors for the net/r8169 PMD. 
-> Additionally, it includes one bug fix for a segmentation fault encountered 
-> during initialization.
-> 
-> Summary of the series:
-> 
->   - Patch 1: Updates RX CRC drop behavior for RTL8125BP and later MAC versions
->     to align with device shutdown sequences and prevent cross-driver states.
->   - Patch 2: Optimizes the Tx datapath performance by removing redundant branch
->     checks for malformed packets, replacing them with RTE_ASSERT.
->   - Patch 3: Enhances RTL8125+ flow control by utilizing a new formula for 
->     nearfull and nearempty thresholds.
->   - Patch 4: Removes RTL9151 CSI (DBI) channel support, as firmware handling 
->     latency makes it no longer suitable for the driver.
->   - Patch 5: Updates PHY and MAC MCU configurations for RTL9151A and RTL8125BP.
->   - Patch 6: Fixes a segmentation fault during RTL8168 initialization by 
->     restricting RTL8125-specific RSS/VMQ configurations to the correct hardware.
-> 
-> Howard Wang (6):
->   net/r8169: disable RX CRC drop for RTL8125BP and later
->   net/r8169: optimize Tx datapath by removing redundant packet checks
->   net/r8169: improve RTL8125+ flow control
->   net/r8169: remove RTL9151 CSI (DBI) channel support
->   net/r8169: update hardware configurations for 8125
->   net/r8169: fix segmentation fault during RTL8168 initialization
-> 
->  drivers/net/r8169/base/rtl8125bp_mcu.c | 15 ++--
->  drivers/net/r8169/base/rtl9151a.c      |  8 +++
->  drivers/net/r8169/base/rtl9151a_mcu.c  | 14 +++-
->  drivers/net/r8169/r8169_compat.h       |  1 +
->  drivers/net/r8169/r8169_hw.c           | 98 ++++++++++++++++++++++++--
->  drivers/net/r8169/r8169_hw.h           |  2 +-
->  drivers/net/r8169/r8169_rxtx.c         | 32 ++++-----
->  7 files changed, 137 insertions(+), 33 deletions(-)
-> 
+Le jeu. 11 juin 2026, 17:56, Morten Br=C3=B8rup <mb@smartsharesystems.com> =
+a
+=C3=A9crit :
 
-Looks good, the CI AI review complaints are noise and will ignore those.
-Applied to next-net
+> This patch is unrelated to the series.
+>
+>
+> Splitting this would create an ordering problem. If the NAPI series is
+merged with a software VLAN strip implementation and the cleanup removing
+the fake VLAN_STRIP offload is merged separately, the two can land in
+either order and leave the PMD with inconsistent Rx paths.
 
+The new NAPI/DQRR path must match the offloads reported by the PMD at the
+end
+of the series. Since VLAN_STRIP is not a real dpaa2 hardware offload, this
+series removes the advertised offload and the software rte_vlan_strip()
+calls together, so all Rx paths remain consistent at each merge point.
+
+--00000000000071215c0653fd461d
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto"><div dir=3D"auto"><div dir=3D"auto">Le jeu. 11 juin 2026,=
+ 17:56, Morten Br=C3=B8rup &lt;<a href=3D"mailto:mb@smartsharesystems.com" =
+target=3D"_blank" rel=3D"noreferrer">mb@smartsharesystems.com</a>&gt; a =C3=
+=A9crit=C2=A0:</div><div class=3D"gmail_quote" dir=3D"auto"><blockquote cla=
+ss=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;pa=
+dding-left:1ex">This patch is unrelated to the series.<br><br></blockquote>=
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex"><br></blockquote></div></div>
+<div dir=3D"auto">Splitting this would create an ordering problem. If the N=
+API series is merged with a software VLAN strip implementation and the clea=
+nup removing the fake VLAN_STRIP offload is merged separately, the two can =
+land in either order and leave the PMD with inconsistent Rx paths.</div><di=
+v dir=3D"auto"><br></div><div dir=3D"auto">The new NAPI/DQRR path must matc=
+h the offloads reported by the PMD at the end</div><div dir=3D"auto">of the=
+ series. Since VLAN_STRIP is not a real dpaa2 hardware offload, this series=
+ removes the advertised offload and the software rte_vlan_strip() calls tog=
+ether, so all Rx paths remain consistent at each merge point.</div></div>
+
+--00000000000071215c0653fd461d--
