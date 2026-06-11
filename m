@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1DBCD98C7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F8BCD98CE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:50:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D92414332C;
-	Thu, 11 Jun 2026 17:50:15 +0200 (CEST)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
- [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id 210354331C
- for <dev@dpdk.org>; Thu, 11 Jun 2026 17:50:15 +0200 (CEST)
-Received: by mail-wr1-f42.google.com with SMTP id
- ffacd0b85a97d-45ee5cdbd28so726889f8f.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 08:50:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EB9D64331C;
+	Thu, 11 Jun 2026 17:50:18 +0200 (CEST)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 8228B43310
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 17:50:17 +0200 (CEST)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-490aebf33e9so45617455e9.3
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 08:50:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781193015; x=1781797815; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1781193017; x=1781797817; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=No0224kbL29x41lqqXsAifHyVLhb7rbMhZbUBraefIg=;
- b=majOL+qRXdyEm7UKKXiRpcJSELNWwX/T/rKDjyLkiRBjpsgvzrbIhMnFpHuj3XLZtm
- X5hdEl+0xONHkiJF4ymYmHDYmnx3vzM91mRAD3P2tyro89Y6NFLYBhCGLUCeCZJSZr1P
- +vhs0BW/11UDFiOVZAbPJ4b/7C7MO1dhoOV5lbwGi2QxlEHAE9PH9JlXJhIwDOGqvh/7
- nKL/H1GigSbgX8Ck5SclM2gPoNxMSmTTTvuJBny+BOuVXZkQwHVVpSl5aWjRsrD39IwW
- M7eKIvrSBuyq60rpMFukq6XgorCPjoVKFADUdaQCt3yc1HJBOUd1LdT4BU7+QnKglBSr
- Fe1A==
+ bh=zt+0G3S7691SOW1IOG+68MMP3GrvCSsAinzdE0NCNlI=;
+ b=LQN/SsYUuOE3UFLLydZmtInr+LOma+aOUR3ID58MDU3EhnFnaa6WggdUdgNWywkkAh
+ 8urGzdQv1OQkMi3SuuKdqmD7/kkzhrR+gKGRSrBEzZaR+LHFE4ud9B8eYRt2nbiBGT3l
+ GFQL0+8zrPbnKkJZVEevvLhpjHagXsAKfwYcqjqaJQykkkNLsfHuH2DSNO0r3koo7qWH
+ UGU+v2eiYZN/c+elowSJTEG06s+HPWPH1M0cokzDj5U8xq7G8VatSrZIKQVx3pj3vInO
+ pzAi3rrgzWW3yUg6bPoFIkMg2/2AjfewihCCfksIa2Q0LomHX4ZOLO/mP5I7gBWIQqtd
+ xelg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781193015; x=1781797815;
+ d=1e100.net; s=20251104; t=1781193017; x=1781797817;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=No0224kbL29x41lqqXsAifHyVLhb7rbMhZbUBraefIg=;
- b=sQQDHgNE9quJRrwImE7QOqDz7MC+t4P/fE7iRI7Ea32jXlF9n+JCw+9lcmi+Yb7N0F
- nW6WwL/jpDxhJmWyhNKOrPrS8qJQpd5dmawylXbysmVEvVTufKLxDWS0aKoUL5jATCrw
- xJ//qruEOSOAbOGMB/O7Nk2qdk429hDuMFjj4CsUz5nwTWBv3XV69/onmdr7AkhyjIr8
- dudg1V/J3bxrQ+5rzr/ZfBFlSJ/zgW+MlgDVu70d2b5Vd5mlrOzpRr5Og3G7qRrc/kEW
- XGcG4HhapyXZmXEhH8yPQSMiNdRgu/BkRzFNXbV+9xVxeOqiR9ZLit490w9qURJ+Etl2
- l8cA==
-X-Gm-Message-State: AOJu0Yy2sI5n8X0AsoU4BZO3uA/uzKiErwaziJDWT+c1DdxzbsMovQMu
- 57T4Cq2R5Yp193HF/3Lg8X0lUGFxRRNBAnUAGvC8iBhrnxxuTcRBO73C
-X-Gm-Gg: Acq92OHdABFw7YEdq/pogCGx4adPr9u2J9urZGYbtMqE+TdGsfSZAmibA51ACcO2axR
- JKwMYgDxdVAEwODrlh15x8hyXnRiNidqJZA13yorUwQrWpHNcglpCdw7+7ebTLb0t0YsRN9oEus
- vRBCTLWIHI4G3QrMQaC12OnfdNfH0cWASCxm+SwtYDgc1w9arnFKB0dU7MZsbdCZSFu4A7+njnf
- 6RCE+U90w+CEuaVKQ8Mk2l1QxdkZFxNahlkmonkQ7Fk/llYMFL6J/v7y0r4BOzgZ4MqLn3Mpqnf
- bNUA/7vBGHWyejHCoTyHdBRKpklP5qlUZm+S5BkeQYuMHiB5fzRSpLjID+iQhoCC8XO0DCmbwLj
- kS5GAgLQ5TN4O3XT+fuBGPz23ZZ1aB2D5VNCvh61IG1UdLWcqi+XknPlujT24bf8xSdhO6P6ebC
- 0nkkBRBlO4DH9ROJ1o9TUhqiAYeo+nluxCKTyJDMuBXP5XjlxgKtpQMr8TDsI1dDA=
-X-Received: by 2002:a05:6000:22c6:b0:460:d18:865c with SMTP id
- ffacd0b85a97d-46067bd5376mr5002337f8f.1.1781193014495; 
- Thu, 11 Jun 2026 08:50:14 -0700 (PDT)
+ bh=zt+0G3S7691SOW1IOG+68MMP3GrvCSsAinzdE0NCNlI=;
+ b=DXxHuO9j2bwCGpM4ZEIY/fg3vBbWFMaxjd3dtCj9VeoXj9v1fh/uyEKq6lgoE3h8wB
+ BIqz99hynmmBL9Ml3Dp8F/0srbcXVv0aK3JN6dLAPAQ70Xr5abyhugpNSpCdcD926jbk
+ Ou9fYCE6u8elOM4WruBcchDD3zAxjXQqK64HdBB1ZXq/WWVChIrtwTU1ELQv6w3fjd2A
+ X4tSVWqSoTlq4xhvCmgwsGtOlz5Owr1JouEdltt4ArC32ZI4TaFbuY105w3Ip2Wnj7lI
+ hNyy5KWXwhI0EUBK+o4MSmN47dsnrJp5YTJwwKiKhe/JRHv6gPRG17kOZYP+Gv1RjDqf
+ 6xSQ==
+X-Gm-Message-State: AOJu0YzVzvBEVvIgYJG1u98VsdM4cu4NZookujUUq2GoiC3bX07idIOS
+ VapFINJHLI3Z9zyUkfM8sFY4rUahclvZyCSJx1liI3CAFr4XrGGHS7tH2zQ/DA==
+X-Gm-Gg: Acq92OGh29TEmOakbailA0QlBzTijVn7eB2ZwMUU9fTQr4ObcTTSOf6JfIjzHqR65Rg
+ VS2p0GInFoejs6qVEDWJ3VZ1bkdtWsN8LYhag0O6aQ4NVk9wIDytk+wsEZOLanmhH7jK5HF984q
+ Y7JseKW8wMI9gbpKVkjRUrs4fqxV93fgHHVZeJmV6vreh3T3HoCVCYsl29YvyW/+BuMpDsWMGhf
+ 6d8cZv6IjhyXu8vXNhJLckm0ZvXWcG3dDqipBUyevbkwDk9vCETjB6NvYKhab1Q/c58RL7fJUsB
+ cu5A7vm4kx2mAs0vVlirhO42l88A0Egfqs3MzqhIKo9crO6/NunMpYyL7kTPkVPvnZyGh1ZdqW0
+ Nhr9N32L/dG1PAM5aeWnhYhj81WhPQgol8oiAAt6vmFsqyXfJu8tM2XFBqfkc3YE5451qk6nm4F
+ DGkMAquLzA8onJATsZma/y20aURidUeQa2DN369zPxVqNEtRjW26opitk+Iht7zQc=
+X-Received: by 2002:a05:600c:c093:b0:490:b724:507d with SMTP id
+ 5b1f17b1804b1-490e55e2208mr46654575e9.11.1781193016787; 
+ Thu, 11 Jun 2026 08:50:16 -0700 (PDT)
 Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4601f2f2710sm64190064f8f.14.2026.06.11.08.50.13
+ 5b1f17b1804b1-490e52a553csm64402205e9.2.2026.06.11.08.50.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 08:50:14 -0700 (PDT)
+ Thu, 11 Jun 2026 08:50:16 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: hemant.agrawal@nxp.com,
 	sachin.saxena@nxp.com
-Cc: dev@dpdk.org, Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org,
- Harman Kalra <hkalra@marvell.com>, Cunming Liang <cunming.liang@intel.com>
-Subject: [PATCH 2/9] eal/interrupts: keep real errno on epoll error
-Date: Thu, 11 Jun 2026 17:49:17 +0200
-Message-ID: <20260611154926.392670-3-maxime@leroys.fr>
+Cc: dev@dpdk.org,
+	Maxime Leroy <maxime@leroys.fr>
+Subject: [PATCH 3/9] bus/fslmc: move DPCON management from event driver to bus
+Date: Thu, 11 Jun 2026 17:49:18 +0200
+Message-ID: <20260611154926.392670-4-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260611154926.392670-1-maxime@leroys.fr>
 References: <20260611154926.392670-1-maxime@leroys.fr>
@@ -81,98 +81,151 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some interrupt users have several vectors backed by the same eventfd
-(e.g. several Rx queues behind one DPAA2 portal eventfd). Adding the
-second vector to the same epoll instance then fails with EEXIST.
+The DPCON allocation helpers (rte_dpaa2_alloc_dpcon_dev /
+rte_dpaa2_free_dpcon_dev) lived in the event driver, but a notification
+channel is a generic QBMan resource. Move dpaa2_hw_dpcon.c to the fslmc
+bus and export the helpers as internal symbols so both the event PMD and
+the net driver's rx-queue interrupt path can draw channels from the same
+pool. No functional change.
 
-Upper layers such as ethdev and bbdev already treat -EEXIST as a
-non-fatal duplicate registration (if (ret && ret != -EEXIST)), but
-rte_intr_rx_ctl() lost that information: rte_epoll_ctl() returned -1 and
-rte_intr_rx_ctl() flattened every failure to -EPERM.
-
-Return the negative errno from rte_epoll_ctl() (its documented contract
-is already "a negative value") and stop rte_intr_rx_ctl() from
-flattening errors to -EPERM, so EEXIST reaches the upper layers that
-already handle it; other failures carry their real errno.
-
-Fixes: 9efe9c6cdcac ("eal/linux: add epoll wrappers")
-Fixes: c9f3ec1a0f3f ("eal/linux: add Rx interrupt control function")
-Cc: stable@dpdk.org
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- lib/eal/include/rte_epoll.h    |  3 ++-
- lib/eal/linux/eal_interrupts.c | 18 +++++++++++-------
- 2 files changed, 13 insertions(+), 8 deletions(-)
+ drivers/bus/fslmc/meson.build                    |  1 +
+ .../dpaa2 => bus/fslmc/portal}/dpaa2_hw_dpcon.c  | 16 +++++++---------
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h          |  8 ++++++++
+ drivers/event/dpaa2/dpaa2_eventdev.h             |  5 +++--
+ drivers/event/dpaa2/meson.build                  |  1 -
+ 5 files changed, 19 insertions(+), 12 deletions(-)
+ rename drivers/{event/dpaa2 => bus/fslmc/portal}/dpaa2_hw_dpcon.c (90%)
 
-diff --git a/lib/eal/include/rte_epoll.h b/lib/eal/include/rte_epoll.h
-index ae0cf20853..0c7b510563 100644
---- a/lib/eal/include/rte_epoll.h
-+++ b/lib/eal/include/rte_epoll.h
-@@ -104,7 +104,8 @@ rte_epoll_wait_interruptible(int epfd, struct rte_epoll_event *events,
-  *   Note: The caller must take care the object deletion after CTL_DEL.
-  * @return
-  *   - On success, zero.
-- *   - On failure, a negative value.
-+ *   - On failure, a negative errno value, e.g. -EEXIST if the fd is already
-+ *     registered on the epoll instance (a fd shared between vectors).
-  */
- int
- rte_epoll_ctl(int epfd, int op, int fd,
-diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
-index 5d0607effe..4cfaeba7fe 100644
---- a/lib/eal/linux/eal_interrupts.c
-+++ b/lib/eal/linux/eal_interrupts.c
-@@ -1443,7 +1443,7 @@ rte_epoll_ctl(int epfd, int op, int fd,
+diff --git a/drivers/bus/fslmc/meson.build b/drivers/bus/fslmc/meson.build
+index ceae1c6c11..50d9e91a37 100644
+--- a/drivers/bus/fslmc/meson.build
++++ b/drivers/bus/fslmc/meson.build
+@@ -22,6 +22,7 @@ sources = files(
+         'mc/mc_sys.c',
+         'portal/dpaa2_hw_dpbp.c',
+         'portal/dpaa2_hw_dpci.c',
++        'portal/dpaa2_hw_dpcon.c',
+         'portal/dpaa2_hw_dpio.c',
+         'portal/dpaa2_hw_dprc.c',
+         'qbman/qbman_portal.c',
+diff --git a/drivers/event/dpaa2/dpaa2_hw_dpcon.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c
+similarity index 90%
+rename from drivers/event/dpaa2/dpaa2_hw_dpcon.c
+rename to drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c
+index ea5b0d4b85..6fd96ec0b9 100644
+--- a/drivers/event/dpaa2/dpaa2_hw_dpcon.c
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c
+@@ -18,13 +18,12 @@
+ #include <rte_cycles.h>
+ #include <rte_kvargs.h>
+ #include <dev_driver.h>
+-#include <ethdev_driver.h>
++#include <eal_export.h>
  
- 	if (!event) {
- 		EAL_LOG(ERR, "rte_epoll_event can't be NULL");
--		return -1;
-+		return -EINVAL;
+ #include <bus_fslmc_driver.h>
+ #include <mc/fsl_dpcon.h>
+ #include <portal/dpaa2_hw_pvt.h>
+-#include "dpaa2_eventdev.h"
+-#include "dpaa2_eventdev_logs.h"
++#include <fslmc_logs.h>
+ 
+ TAILQ_HEAD(dpcon_dev_list, dpaa2_dpcon_dev);
+ static struct dpcon_dev_list dpcon_dev_list
+@@ -55,8 +54,7 @@ rte_dpaa2_create_dpcon_device(int dev_fd __rte_unused,
+ 	/* Allocate DPAA2 dpcon handle */
+ 	dpcon_node = rte_malloc(NULL, sizeof(struct dpaa2_dpcon_dev), 0);
+ 	if (!dpcon_node) {
+-		DPAA2_EVENTDEV_ERR(
+-				"Memory allocation failed for dpcon device");
++		DPAA2_BUS_ERR("Memory allocation failed for dpcon device");
+ 		return -1;
  	}
  
- 	/* using per thread epoll fd */
-@@ -1460,13 +1460,21 @@ rte_epoll_ctl(int epfd, int op, int fd,
- 
- 	ev.events = event->epdata.event;
- 	if (epoll_ctl(epfd, op, fd, &ev) < 0) {
-+		int err = errno;
-+
-+		/* the fd is already in the set (e.g. shared across vectors):
-+		 * keep the event valid and report -EEXIST, not a hard error.
-+		 */
-+		if (op == EPOLL_CTL_ADD && err == EEXIST)
-+			return -EEXIST;
-+
- 		EAL_LOG(ERR, "Error op %d fd %d epoll_ctl, %s",
--			op, fd, strerror(errno));
-+			op, fd, strerror(err));
- 		if (op == EPOLL_CTL_ADD)
- 			/* rollback status when CTL_ADD fail */
- 			rte_atomic_store_explicit(&event->status, RTE_EPOLL_INVALID,
- 					rte_memory_order_relaxed);
--		return -1;
-+		return -err;
+@@ -65,8 +63,7 @@ rte_dpaa2_create_dpcon_device(int dev_fd __rte_unused,
+ 	ret = dpcon_open(&dpcon_node->dpcon,
+ 			 CMD_PRI_LOW, dpcon_id, &dpcon_node->token);
+ 	if (ret) {
+-		DPAA2_EVENTDEV_ERR("Unable to open dpcon device: err(%d)",
+-				   ret);
++		DPAA2_BUS_ERR("Unable to open dpcon device: err(%d)", ret);
+ 		rte_free(dpcon_node);
+ 		return -1;
  	}
+@@ -75,8 +72,7 @@ rte_dpaa2_create_dpcon_device(int dev_fd __rte_unused,
+ 	ret = dpcon_get_attributes(&dpcon_node->dpcon,
+ 				   CMD_PRI_LOW, dpcon_node->token, &attr);
+ 	if (ret != 0) {
+-		DPAA2_EVENTDEV_ERR("dpcon attribute fetch failed: err(%d)",
+-				   ret);
++		DPAA2_BUS_ERR("dpcon attribute fetch failed: err(%d)", ret);
+ 		rte_free(dpcon_node);
+ 		return -1;
+ 	}
+@@ -92,6 +88,7 @@ rte_dpaa2_create_dpcon_device(int dev_fd __rte_unused,
+ 	return 0;
+ }
  
- 	if (op == EPOLL_CTL_DEL && rte_atomic_load_explicit(&event->status,
-@@ -1518,8 +1526,6 @@ rte_intr_rx_ctl(struct rte_intr_handle *intr_handle, int epfd,
- 			EAL_LOG(DEBUG,
- 				"efd %d associated with vec %d added on epfd %d",
- 				rev->fd, vec, epfd);
--		else
--			rc = -EPERM;
- 		break;
- 	case RTE_INTR_EVENT_DEL:
- 		epfd_op = EPOLL_CTL_DEL;
-@@ -1531,8 +1537,6 @@ rte_intr_rx_ctl(struct rte_intr_handle *intr_handle, int epfd,
- 		}
++RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa2_alloc_dpcon_dev)
+ struct dpaa2_dpcon_dev *rte_dpaa2_alloc_dpcon_dev(void)
+ {
+ 	struct dpaa2_dpcon_dev *dpcon_dev = NULL;
+@@ -105,6 +102,7 @@ struct dpaa2_dpcon_dev *rte_dpaa2_alloc_dpcon_dev(void)
+ 	return dpcon_dev;
+ }
  
- 		rc = rte_epoll_ctl(rev->epfd, epfd_op, rev->fd, rev);
--		if (rc)
--			rc = -EPERM;
- 		break;
- 	default:
- 		EAL_LOG(ERR, "event op type mismatch");
++RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa2_free_dpcon_dev)
+ void rte_dpaa2_free_dpcon_dev(struct dpaa2_dpcon_dev *dpcon)
+ {
+ 	struct dpaa2_dpcon_dev *dpcon_dev = NULL;
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+index e625a5c035..79a2ec41e3 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+@@ -274,6 +274,14 @@ struct dpaa2_dpcon_dev {
+ 	uint8_t channel_index;
+ };
+ 
++/* DPCON channel allocation -- managed by the fslmc bus so both the net
++ * NAPI/DQRR rx path and the event PMD can grab channels.
++ */
++__rte_internal
++struct dpaa2_dpcon_dev *rte_dpaa2_alloc_dpcon_dev(void);
++__rte_internal
++void rte_dpaa2_free_dpcon_dev(struct dpaa2_dpcon_dev *dpcon);
++
+ /* Refer to Table 7-3 in SEC BG */
+ #define QBMAN_FLE_WORD4_FMT_SBF 0x0    /* Single buffer frame */
+ #define QBMAN_FLE_WORD4_FMT_SGE 0x2 /* Scatter gather frame */
+diff --git a/drivers/event/dpaa2/dpaa2_eventdev.h b/drivers/event/dpaa2/dpaa2_eventdev.h
+index bb87bdbab2..f53efce61c 100644
+--- a/drivers/event/dpaa2/dpaa2_eventdev.h
++++ b/drivers/event/dpaa2/dpaa2_eventdev.h
+@@ -85,8 +85,9 @@ struct dpaa2_eventdev {
+ 	uint32_t event_dev_cfg;
+ };
+ 
+-struct dpaa2_dpcon_dev *rte_dpaa2_alloc_dpcon_dev(void);
+-void rte_dpaa2_free_dpcon_dev(struct dpaa2_dpcon_dev *dpcon);
++/* rte_dpaa2_alloc_dpcon_dev()/rte_dpaa2_free_dpcon_dev() now live in the fslmc
++ * bus (portal/dpaa2_hw_pvt.h), which this header's includers already pull in.
++ */
+ 
+ int test_eventdev_dpaa2(void);
+ 
+diff --git a/drivers/event/dpaa2/meson.build b/drivers/event/dpaa2/meson.build
+index dd5063af43..62b8507652 100644
+--- a/drivers/event/dpaa2/meson.build
++++ b/drivers/event/dpaa2/meson.build
+@@ -7,7 +7,6 @@ if not is_linux
+ endif
+ deps += ['bus_vdev', 'net_dpaa2', 'crypto_dpaa2_sec']
+ sources = files(
+-        'dpaa2_hw_dpcon.c',
+         'dpaa2_eventdev.c',
+         'dpaa2_eventdev_selftest.c',
+ )
 -- 
 2.43.0
 
