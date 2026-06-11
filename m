@@ -2,77 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3779CD8CB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 07:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB43BCD8CB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 07:34:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F67E42ED2;
-	Thu, 11 Jun 2026 09:34:25 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 5831942EF4;
- Thu, 11 Jun 2026 09:34:22 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 65B0RjDX730144; Thu, 11 Jun 2026 00:34:21 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 9A1F242F06;
+	Thu, 11 Jun 2026 09:34:27 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id C025942F06
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 09:34:26 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 65B0STZE1256951 for <dev@dpdk.org>; Thu, 11 Jun 2026 00:34:26 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=N
- Iezg7GBmprz5bp8Eu3j/Q2mbz35Umwt0uPaEBiBuUM=; b=O2pCQ3/B//CYV48Zp
- R7dPsvyQNUT9SsyeaAABr8NZpQwUn/5Kel5dEDxE8jT8FclKZb+X1a01M+FcZqrZ
- h28FoTWHNQFQwiIzTcedLXCFfkHvEoJjAIqddtPUTI2iD43atNV16/M9rHnjA6Tj
- Gbt7WD3naIcIB019gzoQtDRBT/PBBukSKjYAnbkGaBhZ9KmAIZhiPW9QbiOXULqI
- 5DEMCKLlWGiSPmHmCfIAPUkTNryWEEEslHNMGJHKe/BP2FXOGUNGW9qdUCUnowWZ
- kt0Ld2/93+FJ2ez3clFj6X2a2cYB7aA9x8+aFdu+3q8VoeuiwBrZk4o41Bfo4/xO
- nEpZg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4eqe5r1yb3-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 11 Jun 2026 00:34:21 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=g
+ AKZf3AyHxhnL7IypNfSrKcqykxP7Vr28krOkr/H1k8=; b=XpKxn1TTOAh2CUXON
+ YQeajsMH2iJo2+AaK8V5zs0stpItauGFhfxN+V+48R2TiqOFalWk4f7Xz3KoYHTi
+ dv6Sgf7UuVklNWrEpZWl5vCzg8rmoDgfwTgqxfE9cE/VdtuRAeV11Bab9f2ykn7W
+ cpp/nQAJelvbz+ndHhL6LmRMykpinWRNE0vj3khREfrlXLD1oqlrkfyi8pmFowCp
+ +nJAhs4rcH2H71aRaZZIt3dyrn7IEA/yvfN4XmM/QuxC918u5Wb1BmGDI4gZsxvN
+ 3dx6hM9nTSBrF3SVRKVaaL3EFDOfudZujiPdPmYRjBRlH2yj4jyR7/LQ0QAzFMER
+ fJhAQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4eqe5vswv9-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 00:34:25 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 11 Jun 2026 00:34:21 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 11 Jun 2026 00:34:21 -0700
+ 15.2.1544.25; Thu, 11 Jun 2026 00:34:25 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 11 Jun 2026 00:34:25 -0700
 Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id 801895B6974;
- Thu, 11 Jun 2026 00:34:17 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id A00FE5B6973;
+ Thu, 11 Jun 2026 00:34:22 -0700 (PDT)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- Jerin Jacob <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-CC: Aarnav JP <ajp@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH 12/17] net/cnxk: fix unsigned integer underflow in LSO
- calculation
-Date: Thu, 11 Jun 2026 13:03:06 +0530
-Message-ID: <20260611073311.3129711-12-rbhansali@marvell.com>
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <jerinj@marvell.com>, Aarnav JP <ajp@marvell.com>
+Subject: [PATCH 13/17] net/cnxk: derive ethdev from SA for inbound CPT CQ
+ events
+Date: Thu, 11 Jun 2026 13:03:07 +0530
+Message-ID: <20260611073311.3129711-13-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260611073311.3129711-1-rbhansali@marvell.com>
 References: <20260611073311.3129711-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDA3MyBTYWx0ZWRfXykTFG4F0on0X
- NFoJZ3BVd+6tVu9rf2vr+MMFKF5w6JUxSnO+681UnVqVItS0TTBSukReAKd11ul+bfu3qFiOFb4
- Siu20NP1yNHrx3K5mB65UNtNHPs06gU=
-X-Authority-Analysis: v=2.4 cv=O6gJeh9W c=1 sm=1 tr=0 ts=6a2a64fd cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDA3MyBTYWx0ZWRfX9/wdeep9Zn0k
+ ug6MQc8XcvxDHbY2AEZjDSnoobxhoaJKYLEZZGp7Ag+08pNc3i5J/U/m94OudObJjUHbW3jPgAg
+ Y2TDA2WmblxN4k5TXkAIyBQ5HcMo340=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDA3MyBTYWx0ZWRfXzxaX54uEgr1F
+ GGDGRI+2zBmOWOc+34M0d/CnVLiqBEtlTxmco4gfw0lOiHex7QMajS/ryqDx6dSKSchYg6zThnV
+ o1Bp3VUP8IsSL2PI4sZdYZE2DIJiia5SuFccKOkq67H2shIw2Flequh0kKpohvcY7jiEMsyJ3v4
+ lcjoT6gV0Jw430/xYngXHKqbl2ciyE+J9Nu4aMeIALD3RLoKVS4Q7smYgRiYWGyDNrWk3Mhs/9t
+ r+sG6wFrFRiBIHr2pXJvFdeNoqfvh8aaZ59GVWJyIeqN+8zibbiOE5yYZ4glWwky90OL3XT5vi+
+ kP8eHaIXNhed23ZuNlqauMTtScThw2yiD8dFTLl6SFMacAeA9MwBeZUpNEq4fsV9kIuNktfpcKU
+ OXBFeAvIW/BnlSPeWL27kMnhQYTPESQ8SZRZZvbZtUNPL31NzV9WeWNYetxSyRBoFbNhFfGOw46
+ 1ZXZhdQ4ATSJ9dmEoEQ==
+X-Authority-Analysis: v=2.4 cv=UPDt2ify c=1 sm=1 tr=0 ts=6a2a6501 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=GenB60bvT37fuVtJNQoA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: dfHTD83zXGjsb-KfUr0lbttR6LuS84dN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDA3MyBTYWx0ZWRfX1zNgVDB4IXTq
- 3zGJbCTxluDKenmGL3CrMUTeTQzCz+OVV09XVMWacnxNv0tnwqMvp/AhfBEUOIvVEPsKG1Swp9v
- xPUGvPITUjZlvlGmK4l8h8Fep7xkcl/lfulEULqwDRnkbJm892YFrfrxGKp8xkC6yg+xQn7Q53f
- IkZXH13j26vkRWBfYzIxr/sjUvKYpJTE33Q8T+VoLx/UFpaldOyw6AfupaTbC9+VhUU2hkP/Fno
- QYPS1dA43rs6fjawwoQLUflJC53PGS4xo3sw8h5Z1m5yxABBvHQt5JgMuzgNMHCouJ6ftbG8wyK
- xSXl7/IzSUhJBEyOyuDqQf/SAaURckOtuHrGy8u4N76AtYhoyZpDlhC252naIFzPI1pe2BqyKwJ
- lU5XIVsOHKWGYE/XNHNsdMgBVfFn8bGj5KFw5MvyfxYOrXCf13DHv8Q2QV9PCv9Ll518/VIoHUU
- YXJYLiZYBrxFCkESyDQ==
-X-Proofpoint-ORIG-GUID: dfHTD83zXGjsb-KfUr0lbttR6LuS84dN
+ a=EAYMVhzMl8SCOHhVQcBL:22 a=M5GUcnROAAAA:8 a=tdCZ4XcxNkfdhnRNllIA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: rTak4xpVYJNjPJORlgVqmUtlC7mQhm_6
+X-Proofpoint-GUID: rTak4xpVYJNjPJORlgVqmUtlC7mQhm_6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-11_01,2026-06-09_02,2025-10-01_01
@@ -91,118 +89,83 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Aarnav JP <ajp@marvell.com>
 
-Replace branchless mask-based selection with a ternary operator
-to resolve Coverity integer underflow warning. The expression
--(!w1.il3type) assigned -1 to a uint64_t variable, which is
-well-defined but flagged as an unsigned integer underflow.
+With inbound CPT CQ events, port_id is unavailable since the inline
+device has no roc_nix. Resolve eth_dev for inbound CQ events in the
+cn20k PMD callback via the SA private data chain instead of relying
+on port_id.
 
-Coverity issue: 502004
-
-Fixes: 19f3af2371a7 ("net/cnxk: add Tx burst for CN10K")
-Fixes: 39dc567c1955 ("net/cnxk: add Tx burst for CN9K")
-Fixes: 006c1daa89b9 ("net/cnxk: support Tx burst scalar for CN20K")
-Cc: stable@dpdk.org
+Add an eth_dev back pointer to cnxk_eth_sec_sess, populated at
+session creation, to complete the SA-to-ethdev lookup path
+(inb_priv->eth_sec->eth_dev).
 
 Signed-off-by: Aarnav JP <ajp@marvell.com>
 ---
- drivers/net/cnxk/cn10k_tx.h | 8 ++------
- drivers/net/cnxk/cn20k_tx.h | 8 ++------
- drivers/net/cnxk/cn9k_tx.h  | 8 ++------
- 3 files changed, 6 insertions(+), 18 deletions(-)
+ drivers/net/cnxk/cn20k_ethdev_sec.c | 22 ++++++++++++++++++++--
+ drivers/net/cnxk/cnxk_ethdev.h      |  3 +++
+ 2 files changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/cnxk/cn10k_tx.h b/drivers/net/cnxk/cn10k_tx.h
-index 8c912a1f35..d5cb2c3294 100644
---- a/drivers/net/cnxk/cn10k_tx.h
-+++ b/drivers/net/cnxk/cn10k_tx.h
-@@ -1138,10 +1138,8 @@ cn10k_nix_xmit_prepare(struct cn10k_eth_txq *txq,
- 	if (flags & NIX_TX_NEED_EXT_HDR && flags & NIX_TX_OFFLOAD_TSO_F &&
- 	    (ol_flags & RTE_MBUF_F_TX_TCP_SEG)) {
- 		uint16_t lso_sb;
--		uint64_t mask;
+diff --git a/drivers/net/cnxk/cn20k_ethdev_sec.c b/drivers/net/cnxk/cn20k_ethdev_sec.c
+index 31f2518ea3..a5be85901f 100644
+--- a/drivers/net/cnxk/cn20k_ethdev_sec.c
++++ b/drivers/net/cnxk/cn20k_ethdev_sec.c
+@@ -541,7 +541,6 @@ cn20k_eth_sec_sso_work_cb(uint64_t *gw, void *args, enum nix_inl_event_type type
+ 	uintptr_t nixtx;
+ 	uint8_t port;
  
--		mask = -(!w1.il3type);
--		lso_sb = (mask & w1.ol4ptr) + (~mask & w1.il4ptr) + m->l4_len;
-+		lso_sb = (w1.il3type ? w1.il4ptr : w1.ol4ptr) + m->l4_len;
+-	RTE_SET_USED(args);
+ 	plt_nix_dbg("Received %s event", get_inl_event_type(type));
  
- 		send_hdr_ext->w0.lso_sb = lso_sb;
- 		send_hdr_ext->w0.lso = 1;
-@@ -1766,13 +1764,11 @@ cn10k_nix_prepare_tso(struct rte_mbuf *m, union nix_send_hdr_w1_u *w1,
- 		      const uint64_t flags, const uint64_t lso_tun_fmt)
- {
- 	uint16_t lso_sb;
--	uint64_t mask;
+ 	switch ((gw[0] >> 28) & 0xF) {
+@@ -561,8 +560,26 @@ cn20k_eth_sec_sso_work_cb(uint64_t *gw, void *args, enum nix_inl_event_type type
+ 		/* Fall through */
+ 	default:
+ 		if (type) {
+-			eth_dev = &rte_eth_devices[port_id];
+ 			struct cpt_cq_s *cqs = (struct cpt_cq_s *)cq_s;
++
++			if (type == NIX_INL_INB_CPT_CQ) {
++				struct cn20k_inb_priv_data *inb_priv;
++
++				inb_priv = roc_nix_inl_ow_ipsec_inb_sa_sw_rsvd(args);
++				if (inb_priv->eth_sec && inb_priv->eth_sec->eth_dev) {
++					eth_dev = inb_priv->eth_sec->eth_dev;
++				} else {
++					plt_err("Inbound CPT CQ event: no eth_dev in SA priv");
++					return;
++				}
++			} else {
++				if (port_id >= RTE_MAX_ETHPORTS) {
++					plt_err("CPT CQ event: invalid port_id %u", port_id);
++					return;
++				}
++				eth_dev = &rte_eth_devices[port_id];
++			}
++
+ 			if (type < NIX_INL_SSO) {
+ 				cn20k_eth_sec_post_event(eth_dev, args, type,
+ 							 (uint16_t)cqs->w0.s.uc_compcode,
+@@ -804,6 +821,7 @@ cn20k_eth_sec_session_create(void *device, struct rte_security_session_conf *con
+ 	inl_dev = !!dev->inb.inl_dev;
  
- 	if (!(ol_flags & RTE_MBUF_F_TX_TCP_SEG))
- 		return;
+ 	memset(eth_sec, 0, sizeof(struct cnxk_eth_sec_sess));
++	eth_sec->eth_dev = eth_dev;
+ 	sess_priv.u64 = 0;
  
--	mask = -(!w1->il3type);
--	lso_sb = (mask & w1->ol4ptr) + (~mask & w1->il4ptr) + m->l4_len;
-+	lso_sb = (w1->il3type ? w1->il4ptr : w1->ol4ptr) + m->l4_len;
+ 	lock = inbound ? &dev->inb.lock : &dev->outb.lock;
+diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
+index ea6a2be30e..6686fdba31 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.h
++++ b/drivers/net/cnxk/cnxk_ethdev.h
+@@ -225,6 +225,9 @@ struct cnxk_eth_sec_sess {
  
- 	w0->u |= BIT(14);
- 	w0->lso_sb = lso_sb;
-diff --git a/drivers/net/cnxk/cn20k_tx.h b/drivers/net/cnxk/cn20k_tx.h
-index 8e64d2e352..a1c71f2761 100644
---- a/drivers/net/cnxk/cn20k_tx.h
-+++ b/drivers/net/cnxk/cn20k_tx.h
-@@ -1117,10 +1117,8 @@ cn20k_nix_xmit_prepare(struct cn20k_eth_txq *txq, struct rte_mbuf *m, struct rte
- 	if (flags & NIX_TX_NEED_EXT_HDR && flags & NIX_TX_OFFLOAD_TSO_F &&
- 	    (ol_flags & RTE_MBUF_F_TX_TCP_SEG)) {
- 		uint16_t lso_sb;
--		uint64_t mask;
+ 	/* Out-Of-Place processing */
+ 	bool inb_oop;
++
++	/* Back pointer to eth_dev for port_id derivation in CQ callbacks */
++	struct rte_eth_dev *eth_dev;
+ };
  
--		mask = -(!w1.il3type);
--		lso_sb = (mask & w1.ol4ptr) + (~mask & w1.il4ptr) + m->l4_len;
-+		lso_sb = (w1.il3type ? w1.il4ptr : w1.ol4ptr) + m->l4_len;
- 
- 		send_hdr_ext->w0.lso_sb = lso_sb;
- 		send_hdr_ext->w0.lso = 1;
-@@ -1732,13 +1730,11 @@ cn20k_nix_prepare_tso(struct rte_mbuf *m, union nix_send_hdr_w1_u *w1, union nix
- 		      uint64_t ol_flags, const uint64_t flags, const uint64_t lso_tun_fmt)
- {
- 	uint16_t lso_sb;
--	uint64_t mask;
- 
- 	if (!(ol_flags & RTE_MBUF_F_TX_TCP_SEG))
- 		return;
- 
--	mask = -(!w1->il3type);
--	lso_sb = (mask & w1->ol4ptr) + (~mask & w1->il4ptr) + m->l4_len;
-+	lso_sb = (w1->il3type ? w1->il4ptr : w1->ol4ptr) + m->l4_len;
- 
- 	w0->u |= BIT(14);
- 	w0->lso_sb = lso_sb;
-diff --git a/drivers/net/cnxk/cn9k_tx.h b/drivers/net/cnxk/cn9k_tx.h
-index 0ec448e36c..2f9b936d56 100644
---- a/drivers/net/cnxk/cn9k_tx.h
-+++ b/drivers/net/cnxk/cn9k_tx.h
-@@ -478,10 +478,8 @@ cn9k_nix_xmit_prepare(struct cn9k_eth_txq *txq, struct rte_mbuf *m, struct rte_m
- 
- 	if (flags & NIX_TX_OFFLOAD_TSO_F && (ol_flags & RTE_MBUF_F_TX_TCP_SEG)) {
- 		uint16_t lso_sb;
--		uint64_t mask;
- 
--		mask = -(!w1.il3type);
--		lso_sb = (mask & w1.ol4ptr) + (~mask & w1.il4ptr) + m->l4_len;
-+		lso_sb = (w1.il3type ? w1.il4ptr : w1.ol4ptr) + m->l4_len;
- 
- 		send_hdr_ext->w0.lso_sb = lso_sb;
- 		send_hdr_ext->w0.lso = 1;
-@@ -875,13 +873,11 @@ cn9k_nix_prepare_tso(struct rte_mbuf *m, union nix_send_hdr_w1_u *w1,
- 		     uint64_t flags)
- {
- 	uint16_t lso_sb;
--	uint64_t mask;
- 
- 	if (!(ol_flags & RTE_MBUF_F_TX_TCP_SEG))
- 		return;
- 
--	mask = -(!w1->il3type);
--	lso_sb = (mask & w1->ol4ptr) + (~mask & w1->il4ptr) + m->l4_len;
-+	lso_sb = (w1->il3type ? w1->il4ptr : w1->ol4ptr) + m->l4_len;
- 
- 	w0->u |= BIT(14);
- 	w0->lso_sb = lso_sb;
+ TAILQ_HEAD(cnxk_eth_sec_sess_list, cnxk_eth_sec_sess);
 -- 
 2.34.1
 
