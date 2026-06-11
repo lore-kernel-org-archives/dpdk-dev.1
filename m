@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C63F1CD98D2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 09:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22B2CD98C7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 09:30:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D235542F75;
-	Thu, 11 Jun 2026 11:29:34 +0200 (CEST)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id B673842E98
- for <dev@dpdk.org>; Thu, 11 Jun 2026 09:51:51 +0200 (CEST)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-2bf2247e38eso78303115ad.3
- for <dev@dpdk.org>; Thu, 11 Jun 2026 00:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781164311; x=1781769111; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=NumvtYXa/1WGG8iNJGH4DAX5FC9DugPqh2UOhsfXSoE=;
- b=T8H8bCrdBdRok0A1pqs8LTq9hwB2qlgwRUB8FTlkWpYETZgCpGhzrYbILRuQJao/T8
- NfEQNhn3QEQjlww/W5zDthUp7uLrEZZymCXy+sQo4hxMhXUEkMtkjr8+bj3dtf26N+0z
- ivuR8RJG6W3drv8P+vIUIu0/MwXjIzzUvn5LTdfJHA1WS6PjbOFKlvirxfkvRTYo5CvV
- YMRlWOwzDt5xvX1xbK+h1ja3q4cJknjYk/akxJpc2T6G75R7s5F/x4WVTGSfnxaboBYY
- mPTxbzcRn2mejiX6H+fbUdlKOf8JxWakImHmstBPWD3iDzBniSkCtP0zL6Y+ViuztCK4
- mk4A==
+	by mails.dpdk.org (Postfix) with ESMTP id 1BD7442F7B;
+	Thu, 11 Jun 2026 11:30:19 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 08F4842F75
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 11:30:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1781170217;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=fEZuUuoJIXTu5ywpvRAQ+3+G0ZwRWHhYAILI1/KwwSU=;
+ b=FIahK2iKdWZTYGr3I0lazKnM+154syk/kYDtVKMJEF8d2P332LTfbssKZpvJViuXxFsYFw
+ +acLeA79/ZP4lfCCHoWJ9Fubvo8sdVKeoGhSaMYTZSzjvGckaqtnFKuM1DW1itkbs10RaR
+ 1CzbPHkY3+vdyJnFLFZ+Uy7wVxvuge0=
+Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com
+ [74.125.82.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-349-aiPf6Do6PpSrrCfASBX7lA-1; Thu, 11 Jun 2026 05:30:16 -0400
+X-MC-Unique: aiPf6Do6PpSrrCfASBX7lA-1
+X-Mimecast-MFC-AGG-ID: aiPf6Do6PpSrrCfASBX7lA_1781170215
+Received: by mail-dy1-f200.google.com with SMTP id
+ 5a478bee46e88-3080bb0267dso278274eec.1
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 02:30:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781164311; x=1781769111;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=NumvtYXa/1WGG8iNJGH4DAX5FC9DugPqh2UOhsfXSoE=;
- b=OsKgFG4XZ65I1kMjIspMDrfnrRWjz/6Rdx3ziW/KNv2XmaGZ9AASa6VZGszGXJbF+S
- 3FquxoHL4bASkUKLtwxfkwwUZgLlxtS5Pzh5G1AR9d6I8om4ZiL+U5mtq5obnWh6dlT4
- JtoC+F+sqHi70GlZp8rjLBnBODyNyrB1g0q5NGqsw5od28lrwlycW8eAhIRWs5lAVNDA
- P1yO7YTxWRIiEdu6SKrzM49fJtYCXxzl1gKlV8Fyway/H1CDk4SNczEDp5FzDTjjHLiZ
- 2bJAau8coDF85KhPwrj1kjpxRZJCTstUxtwCUObRdBRhqXAo+lp4QtBdQOIjQmPi1p6+
- KWIQ==
-X-Gm-Message-State: AOJu0Yy1SLZGiBvQkXRn4PCgZuPQro0irGVnzUqSzsLgoyukZRiBMAqq
- w8W+3uuiiv+anLTDP6kaBcAvw98ge4uLOw4XXxl1wIwKMwX0hCIAWIGyG4MMtseOtQ==
-X-Gm-Gg: Acq92OHhMbShIkHZEvtp6Gca7z5bp7p2CdgOFYgqxPnXUQ9HPeqXAfSLI1jUvTLky9a
- ueJuAUydlkIaBvZVtYyXKHlajUzNVzeHwq0nhxFllAxR2G7tXXCl79Lcx+G8Rs8hPZLdL4kRQGa
- mxlJ3dNlaeWfc+Ep49IZZxbUA1knASoOhrWpx65yzEBs25QgzCyCg0AbtedJnzXMDOYf0VH8gK8
- F7rF0WJBZUF/guSjKcWd5zkIoEKseTTmMf+Y8CQkgp87hJ+lWJeB14N3l1Sns38OAKYsnP2P7zt
- bqo7zr8mkr+AcX5F1iXv5Vl5P8HtmJcyVVcSIOfBvR6I+T4IIzpd6Oxhstu1Y738IBpgortIOIP
- XMqpajFAKdhHkkCSUvtnSxjok3vkbmpnKy4eEIS/DiI3EIbrQ+8eTzqFp21cZqwwcMDnisijq+1
- xK+4DFO046VF66chY1XnvUwxpsGnCPLwIHnHUhTnmexhgu1w==
-X-Received: by 2002:a17:903:2c0c:b0:2c1:98b7:ecf3 with SMTP id
- d9443c01a7336-2c2f1eba128mr19132975ad.23.1781164310600; 
- Thu, 11 Jun 2026 00:51:50 -0700 (PDT)
-Received: from localhost ([61.119.121.204]) by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2c164f8679esm260198355ad.21.2026.06.11.00.51.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 00:51:50 -0700 (PDT)
-From: Linhu Li <lilinhu618@gmail.com>
-To: dev@dpdk.org
-Cc: stable@dpdk.org,
-	dsosnowski@nvidia.com,
-	Linhu Li <lilinhu618@gmail.com>
-Subject: [PATCH v4] net/mlx5: fix counter TAILQ race between free and query
- callback
-Date: Thu, 11 Jun 2026 15:51:47 +0800
-Message-Id: <20260611075147.38924-1-lilinhu618@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20260604101112.72177-1-lilinhu618@gmail.com>
-References: <20260604101112.72177-1-lilinhu618@gmail.com>
+ d=1e100.net; s=20251104; t=1781170214; x=1781775014;
+ h=content-transfer-encoding:to:subject:message-id:date:from
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=fEZuUuoJIXTu5ywpvRAQ+3+G0ZwRWHhYAILI1/KwwSU=;
+ b=k+n8NObVEHbKGNyKiA1QkdV5yN+seaixjGv/wbyE783VzV9hbW3Tagj0DpttS/ECro
+ RqDQDtkiDfIyRR2XgMfDnLY/vPFNLiTrixFUvMEUF15fWEwk0fc4aZz9vDqACQoTf3my
+ uw5ZXcs4lchooh9OwQcbBSOt3fXkI6TZnFRztMv0eo7Yni9I6SJ+IWMkPUBoyg+Bt5ml
+ /dZq5IGooPJ7M4PPoeFm2RnRTrC5Nzw5pzWisKKkvoMZNxTOE1kfmZbQ/w5gslfIPxH9
+ AWqaodr1+uZZXuWxhIsSt9u9rplrLKu/YNyXV5eUlYgLUzc/fk25txhLoU4ZQ62FN0Jo
+ uolA==
+X-Gm-Message-State: AOJu0YxdcFWzmLp3/zGziIVI8Tl6osfxJZI+LmaeUue+s8RA5FyL/jIw
+ cQex2jWGH5Bes72RO7JQMFJVsE8ap4jqlRVJlskF6MRDLdnThasBQAZpJPdkFCq2eU7/5b9tvRM
+ 286jLRtae1aM0y7D70AC9jGNW2+26CS11ieU2C4eBRyhl62nh9W8Ddz54tsM8vz4e8Sb5SiPZlZ
+ Y4+pIjOeafmhv54YqWvxs7jO6pIOwNoQ==
+X-Gm-Gg: Acq92OFWwfdKZiuvgMn5aL+ibziDcOgdpZAzCvXuUwWthkshXRzU8bB0D8TBrmrsG/C
+ kStgAzxRwLm1Y19RT/kPW6YV+Kefd57QyGgtf2y5IEQDrz+LWYxlscUdKSmzi87G8LTswqVvH9O
+ nXj4XYY3gx/JHv8XI1Gbuyawr+2X1SzhmJiMFacakOSXLTeB6wazZ+jXZ6rDvQ/kd7jW72ryMIL
+ H3TgLxAertZRP9rtxaE1Pj7ic4wFA9VbS/7R/PnHwAoQKySb1NgtKOcAuNMYQh7Ooyshb8Qh0W7
+X-Received: by 2002:a05:7022:2383:b0:137:567:14c4 with SMTP id
+ a92af1059eb24-138421d1998mr1153835c88.29.1781170214466; 
+ Thu, 11 Jun 2026 02:30:14 -0700 (PDT)
+X-Received: by 2002:a05:7022:2383:b0:137:567:14c4 with SMTP id
+ a92af1059eb24-138421d1998mr1153818c88.29.1781170213920; Thu, 11 Jun 2026
+ 02:30:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Thu, 11 Jun 2026 11:29:33 +0200
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Date: Thu, 11 Jun 2026 11:30:01 +0200
+X-Gm-Features: AVVi8CcmcB1JwQttvTNFfNJ-pOXhX1xWTMmoxeOZuLEuzpLhn-t1mP3OZ1a5S4E
+Message-ID: <CAO55csz03U8zwNudQjhz6H1pdtEGuS2j5OBQw5sXUcNXe7nCfw@mail.gmail.com>
+Subject: Technical board meeting minutes for June 10th 2026
+To: dev <dev@dpdk.org>, DPDK Techboard <techboard@dpdk.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: jr3JcWCB1MgpoB1DFvlQmvDMNRqYcgk-uVWKMZ_se5Y_1781170215
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,154 +80,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-flow_dv_counter_free() inserts counters into
-pool->counters[pool->query_gen] under pool->csl. Meanwhile,
-mlx5_flow_async_pool_query_handle() moves counters from
-pool->counters[query_gen ^ 1] to the global free list via
-TAILQ_CONCAT while holding only cmng->csl, not pool->csl.
+Attendees:
+=3D=3D=3D=3D=3D=3D=3D=3D
+Maxime Coquelin (Chair)
+Thomas Monjalon
+Bruce Richardson
+Stephen Hemminger
+Konstantin Ananyev
+Aaron Conole
+Jerin Jacob
+Hemant Agrawal
+Morten Br=C3=B8rup
 
-The comment in flow_dv_counter_free() claims the lock is not needed
-because the query callback and the release function operate on
-different lists. That holds only if the free path always observes
-the up-to-date query_gen. It can be violated:
+Topics:
+=3D=3D=3D=3D=3D=3D
+* Security reports (Thomas)
+ - Discussion on the CVE filing process using Red Hat as CNA.
+ - Maxime will file CVEs for vhost-related vulnerabilities.
+ - Need to identify who handles CVEs for other components (e.g., crypto).
+ - 10 security reports on Marvell drivers; 5-6 already fixed as bugs.
+   * Jerin to follow up with Akhil to reply to reporters.
+   * Discussion on distinguishing bugs vs. security vulnerabilities.
+ - AI-generated security reports are becoming common.
+   * Aaron suggested treating AI-detected issues as public since
+anyone can run AI tools.
+   * Stephen noted duplicate reports for already-fixed issues.
+ - Vote: Create a Slack channel for security coordination.
+   * Members: Techboard members, release maintainers, and component
+maintainers as needed.
+   * Vote passed.
+   * Next Step: Thomas will create the Slack channel.
 
-1. A counter free thread (non-PMD, e.g. OVS offload thread) reads
-   pool->query_gen == 0 and is about to insert into counters[0].
-2. The free thread is preempted by the OS scheduler; it is a regular
-   pthread, not pinned to a core.
-3. The eal-intr-thread alarm fires: query_gen++ (now 1) and the async
-   query is sent.
-4. Hardware completes the query and the callback runs TAILQ_CONCAT on
-   counters[0] (= query_gen ^ 1).
-5. The free thread resumes and runs TAILQ_INSERT_TAIL on counters[0]
-   concurrently with step 4 on another core.
+* Loongarch Lab (Thomas)
+ - Lab was producing systematic failures and erratic results.
+ - Thomas disabled access to test-report mailing list (reports now in
+moderation queue).
+ - Next Step: Aaron will raise the issue at the DPDK CI meeting to
+coordinate with Loongson.
 
-Because the two paths take different locks, TAILQ_INSERT_TAIL and
-TAILQ_CONCAT run concurrently on the same list with no synchronization
-and corrupt it: the pool-local list ends up with a NULL head but a
-dangling tqh_last, and the global free list tail no longer points to
-the real tail. The just-freed counter and every counter inserted
-afterwards become unreachable and are leaked.
+* New PTP example (Thomas)
+ - Thomas merged a PTP relay example (ptp_tap_relay_software) without
+prior Techboard approval.
+ - Concern about naming inconsistency with existing PTP client example.
+ - Stephen will review the example and consider renaming for consistency.
 
-Non-PMD threads can be preempted for hundreds of microseconds under
-CPU pressure, which is well within the async query round-trip time,
-so the window is reachable in practice.
-
-Fix it by taking pool->csl in the query completion callback before
-operating on pool->counters[query_gen], serializing the CONCAT with
-any concurrent INSERT. The lock is taken once per pool per query
-completion in the eal-intr-thread context, not on the datapath, so
-the cost is negligible. Lock order is pool->csl then cmng->csl,
-matching all other sites.
-
-Also handle the error path: previously the counters accumulated in
-pool->counters[query_gen] were abandoned when a query failed. Move
-them back to the global free list to avoid a leak on persistent
-query failures.
-
-Fixes: ac79183dc6f7 ("net/mlx5: optimize free counter lookup")
-Cc: stable@dpdk.org
-
-Signed-off-by: Linhu Li <lilinhu618@gmail.com>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
----
- doc/guides/rel_notes/release_26_07.rst | 21 +++++++++++++++++
- drivers/net/mlx5/mlx5_flow.c           | 31 ++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
-
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index b8a3e2ced9..30a9564884 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -153,6 +153,27 @@ ABI Changes
- * No ABI change that would break compatibility with 25.11.
- 
- 
-+Fixed Issues
-+------------
-+
-+.. This section should contain fixed issues in this release. Sample format:
-+
-+   * **Add a title in the past tense with a full stop.**
-+
-+     Add a short 1-2 sentence description of the fix in the past tense.
-+
-+   This section is a comment. Do not overwrite or remove it.
-+   Also, make sure to start the actual text at the margin.
-+   =======================================================
-+
-+* **net/mlx5: Fixed counter TAILQ race between free and query callback.**
-+
-+  Fixed a race condition where concurrent counter free operations and async
-+  query completions could corrupt the counter free list, causing counter leaks.
-+  The issue occurred when non-PMD threads were preempted between reading
-+  ``query_gen`` and inserting into the counter list.
-+
-+
- Known Issues
- ------------
- 
-diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index 915ea29a5a..2f785d58ec 100644
---- a/drivers/net/mlx5/mlx5_flow.c
-+++ b/drivers/net/mlx5/mlx5_flow.c
-@@ -9893,6 +9893,13 @@ void
- mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
- 				  uint64_t async_id, int status)
- {
-+	/*
-+	 * Handle async counter pool query completion.
-+	 * query_gen is flipped each round: freed counters go into [query_gen],
-+	 * while this callback moves [query_gen ^ 1] to the global free list.
-+	 * pool->csl must be held when operating on pool->counters[] to serialize
-+	 * with concurrent free-path insertions.
-+	 */
- 	struct mlx5_flow_counter_pool *pool =
- 		(struct mlx5_flow_counter_pool *)(uintptr_t)async_id;
- 	struct mlx5_counter_stats_raw *raw_to_free;
-@@ -9904,6 +9911,21 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
- 
- 	if (unlikely(status)) {
- 		raw_to_free = pool->raw_hw;
-+		/*
-+		 * The query failed, so the freed counters accumulated
-+		 * in the old-gen list would otherwise be stranded.
-+		 * Move them back to the global free list. This is safe
-+		 * for both transient and persistent failures: the
-+		 * counters are still valid and can be reused.
-+		 */
-+		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
-+			rte_spinlock_lock(&pool->csl);
-+			rte_spinlock_lock(&cmng->csl[cnt_type]);
-+			TAILQ_CONCAT(&cmng->counters[cnt_type],
-+				     &pool->counters[query_gen], next);
-+			rte_spinlock_unlock(&cmng->csl[cnt_type]);
-+			rte_spinlock_unlock(&pool->csl);
-+		}
- 	} else {
- 		raw_to_free = pool->raw;
- 		if (pool->is_aged)
-@@ -9913,11 +9935,20 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
- 		rte_spinlock_unlock(&pool->sl);
- 		/* Be sure the new raw counters data is updated in memory. */
- 		rte_io_wmb();
-+		/*
-+		 * A counter free thread may have read a stale query_gen
-+		 * before the generation was flipped and could still be
-+		 * inserting into this same old-gen list. Hold pool->csl to
-+		 * serialize TAILQ_CONCAT with that TAILQ_INSERT_TAIL and
-+		 * avoid corrupting the list.
-+		 */
- 		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
-+			rte_spinlock_lock(&pool->csl);
- 			rte_spinlock_lock(&cmng->csl[cnt_type]);
- 			TAILQ_CONCAT(&cmng->counters[cnt_type],
- 				     &pool->counters[query_gen], next);
- 			rte_spinlock_unlock(&cmng->csl[cnt_type]);
-+			rte_spinlock_unlock(&pool->csl);
- 		}
- 	}
- 	LIST_INSERT_HEAD(&sh->sws_cmng.free_stat_raws, raw_to_free, next);
--- 
-2.39.3 (Apple Git-146)
+* Release update (Thomas)
+ - BPF patches from Marat Khalili have compilation failures when
+applying patch-by-patch.
+   * Marat will fix the bisect issue.
+ - Ring library patches from Stephen also have compilation failures;
+Thomas will send details.
+ - Power library patches still to be reviewed for RC1.
 
