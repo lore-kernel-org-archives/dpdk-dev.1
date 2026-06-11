@@ -2,76 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 363C0CD98CE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29134CD98C7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:50:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 593224327C;
-	Thu, 11 Jun 2026 17:26:42 +0200 (CEST)
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
- by mails.dpdk.org (Postfix) with ESMTP id A3B444278E
- for <dev@dpdk.org>; Thu, 11 Jun 2026 17:26:40 +0200 (CEST)
-Received: by mail-dl1-f48.google.com with SMTP id
- a92af1059eb24-137dd523634so12769703c88.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 08:26:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E0FD042F99;
+	Thu, 11 Jun 2026 17:50:11 +0200 (CEST)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id A6E8940677
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 17:50:10 +0200 (CEST)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-490ac357c55so84436955e9.1
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 08:50:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781191600;
- x=1781796400; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=xc/sz5DsbBoLR7bDJzQs3JfiOli+bPH8q2u5qlFqbHc=;
- b=KHHpFJseLq6WgV9R7Nmz9rpXDStv+NCt8MNeydEy9K8MWaUidIIpwGVBUkqLJlFjXI
- sWBXHU4j6S806wCNf19VgSTI109GsbOyEXma5SupHF4YIMv27MPD1kjjQSw9S7SS6jSh
- nwOpMTawA51tVGUmNUWjEcDgA4K4u3zPrj0A21lW0Lwy/WezAk+bax4STREBmdIYu6FS
- tp56xk037hIu4REUD0TlIynlK+nPew/dj8QPcVSnxOmOkg0jUQ17YTcUGCo89DuzdrWn
- lrr5kJcTn9Efoj8pbOKcX/Rb/TEAzt5jX0fWPFivlJsOQbwkHmYLD5FCE/nRQoQrM+1S
- Getg==
+ d=gmail.com; s=20251104; t=1781193010; x=1781797810; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+ bh=shhjkLtXUcKumOx4Oi8o0jtB32vpLSUb34S0qLxZmZo=;
+ b=eFRBRGl74u9r28MvPli3SqPgDzKQ8Tkv2FBLMCZryFs1URNwKzVsBPbQL74i+rrsQg
+ pFSpa91RzosA2CHDS7M2gFTnTaOIebcy/ZykIHY2l37bXn33BInkHu0DzrK83k2xmORq
+ C8K4M9+f72B7Wybo44vERTvgb0q79m3omM6rAYm7PQYOhrAG9GBfbFPfAxul4iGuYWQv
+ /Bjr2v05AjLeLhrVurvhaoLe/gmTrnYvff963ioTuGqcuhpo8XPqIeU6ObW5NUl5Ifou
+ GOeXyRSvCRVIwN0BVZzcdJpuivmXSaSPTcTob4IifUDlrAop9UR45BerJY0oyBGzAUxQ
+ wx/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781191600; x=1781796400;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=xc/sz5DsbBoLR7bDJzQs3JfiOli+bPH8q2u5qlFqbHc=;
- b=s1IJvbfJhclWqS1rXUZKcPKSfJ6ozlo4yAMQShPZ4P3J5Jz/wB+abqS4LDpW//qFXK
- Mqx/ICaqNHpMg52RmaLXybfsxIxhPLZN3TCKTuI6xlVi7dP/wKXkf0E0pMIIlzwj3l8Q
- WIUTVfHv9zHq+VTGs0nL96sA4yJNeSy6REEGyHw1jR0mlP0r95p1G+nIVFAZ+E4sUnyW
- xNtjM9x2A4fOwdIzM7GXOsH46vy4dJSToh9pDlriHh6YqhIl0xLUe3R5rfngqt0iiTQH
- zjuEeZpVu5ab7DhnFR4sMHf2P5iJG99lQzVzYpuVcI42iReFqQJ2AByBWwkRTypV1pXA
- p4MQ==
-X-Gm-Message-State: AOJu0YyeSySKTOwybxaVjcXbmSkRnu9x94qL8rSOWS3puDKCcv3k/531
- ox4nJi6suToQEGU54hW1DIEF3Gz7DLE3pxlKI240mL99nrZY7d8k313nmD4BTjCs34U=
-X-Gm-Gg: Acq92OEdppVQCx5xGFC9xeSzubKOpXEZtu1lFH1hP6DqXx3kJQcCfSudgp6R0/thXWb
- kkQBcYlaLpGQO/W/VNeXSwy5U2ddj6+uGnnrKdqm6JPuOQ8dXRvan+smCvQEL6HaJI3cPYXxvUV
- ooT/AYHNvXiDuj6Gj51lDdl1wUAI3b5JFdTzsxLxIYedVkoobY0vpSuijMozUmgECHOgGAj7v8O
- kUn9Lhoh8jFn904bbscJrhVzwHK9wDmhHcrVumP9MI0R0k6yfzwEOjPWxbai7sbDcwWteKlav1Z
- T5iJUBB5u3+QtEk74P4wX+di/Y8tXFRHal/nRnq7pbmJivNPcAeZtVr6B5WykWF3rKTcEcYBSaF
- vfOrh0HDlpf6oclCbrXx4ZoC34YAJNszN385MbZrVd0nnPe+oBGDo6puE5rHZWXSMvY35ABcBKm
- lC6Cf+Vr/dQtUEaK3qbxWhEOhYiNMyZzHmbFHYxyPg5IbQhO/AvLfHrmN42HLzzvZ1h40miztKX
- 7U=
-X-Received: by 2002:a05:701b:4552:20b0:138:44ab:75f7 with SMTP id
- a92af1059eb24-13844ab773cmr791725c88.21.1781191599570; 
- Thu, 11 Jun 2026 08:26:39 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1781193010; x=1781797810;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=shhjkLtXUcKumOx4Oi8o0jtB32vpLSUb34S0qLxZmZo=;
+ b=Ue/dTQeH2AKUMqTZNIrwgBPhMdX+C1MaDZJaEF5/ux5L83QPM42NAzoVkdnZtk15Kp
+ Kqk1VPKHrzW5s1rA9grjrc+zLInLCHZ31ctaKcCgjz1Wod3s0xU9NpPxgxukkdMRa4W/
+ OVJgcUSUmTlCa45kM3UTdE1CU+PO7WjyfBTDAN99Kg3VjyrzbFrQCu2FP9Bmpwoo7gVN
+ Z0OZOzALHZFNBhx9i0uQn5pyRHkA1My1LPppxeEiTpVvVLgH8qTI/jZZbtSLRemkxkmm
+ jkSxy2j3Hddm/HrlS2Dv8WQT0KhlypuRSmGLnLAfZVEAVqQIMCPWUn+heoex2f3Qlg1g
+ HSfA==
+X-Gm-Message-State: AOJu0YyAOcCfcEKzge3dUSx9NjrlwZi5bPa9UyWHpijNIqR1xIvX3b5Q
+ lzWjf2SjTOI+7UZp3KehnUbglv4z6/SdAbtQCBjhzjEZMDH7tSDmvhDxBQmVCw==
+X-Gm-Gg: Acq92OF/m7M3pO9pfxAV1DX7iMz9qi/UEoTyPgFP90YPtINUinzMUjbHNazD/BPIxKS
+ 9f0uT2S+Ht7wt2pW7O8GWyX06r6K4U8ijc2jWNubRcrif7euNjiRrdXh52mvPcE1o7u2KivJS0Y
+ GvZV7DOlo4dOlr09TA9tqkc3Zxup78dRYcGueWP8nTJfwcpSAeIUm/XgQDLzytrCsKSvJr6XaQ5
+ vv+qyBCBxnlglssX/3FhI/Q0LlGNOk3wYiC99acyi93jySjoOWjvoxOLW99UUTDYENHAd77Y3J9
+ ITsLvTcg8CW81FU8zqHzEIrw2qq+8oDEO5x+7vsp2aBgeQHZmrQSlEEgGMlC7aIUN8XTzXyELX0
+ uCwq8tsfjswSvkaTNXjxrsj22WHkr0djcLK1RUdu1c3P4z/oAmVwO6t9fmFGUpEV7rRmHH8rez6
+ BOcWwshd9WvGAahvx6nMXVBOwMs5Q7Y76fm2syawaJrDcKzvtkNiJUivzIRZsiW3A=
+X-Received: by 2002:a05:600c:3511:b0:490:b99c:9337 with SMTP id
+ 5b1f17b1804b1-490e55d6e5amr48032335e9.10.1781193009888; 
+ Thu, 11 Jun 2026 08:50:09 -0700 (PDT)
+Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-138430452a2sm2110508c88.14.2026.06.11.08.26.38
+ 5b1f17b1804b1-490e2d0475asm119556315e9.12.2026.06.11.08.50.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 08:26:39 -0700 (PDT)
-Date: Thu, 11 Jun 2026 08:26:34 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Rahul Bhansali <rbhansali@marvell.com>
-Cc: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar
- K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha
- Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
- <jerinj@marvell.com>
-Subject: Re: [PATCH v2 01/22] net/cnxk: update mbuf next field for multi
- segment
-Message-ID: <20260611082634.46209b98@phoenix.local>
-In-Reply-To: <20260611142029.3351415-1-rbhansali@marvell.com>
-References: <20260611073311.3129711-1-rbhansali@marvell.com>
- <20260611142029.3351415-1-rbhansali@marvell.com>
+ Thu, 11 Jun 2026 08:50:09 -0700 (PDT)
+Sender: Maxime Leroy <maxime.leroys@gmail.com>
+From: Maxime Leroy <maxime@leroys.fr>
+To: hemant.agrawal@nxp.com,
+	sachin.saxena@nxp.com
+Cc: dev@dpdk.org,
+	Maxime Leroy <maxime@leroys.fr>
+Subject: [PATCH 0/9] net/dpaa2: NAPI-style Rx queue interrupts
+Date: Thu, 11 Jun 2026 17:49:15 +0200
+Message-ID: <20260611154926.392670-1-maxime@leroys.fr>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,60 +78,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 11 Jun 2026 19:50:08 +0530
-Rahul Bhansali <rbhansali@marvell.com> wrote:
+This series lets a dpaa2 worker sleep on a queue's data-availability
+notification instead of busy-polling, exposed through the generic
+rte_eth_dev_rx_intr_* API (NAPI-style: poll while frames keep coming,
+arm the interrupt and sleep when the queue runs dry).
 
-> As per the requirement of rte_mbuf_raw_reset_bulk(), the mbuf's
-> 'next' and 'nb_segs' fields are required to be reset.
-> This reset these field for multi-segment mbufs on cn9k platform.
-> 
-> Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
+Why it is not a trivial .rx_queue_intr_enable
+----------------------------------------------
+A worker wakes on its software portal's DQRI, which fires when the
+portal's DQRR holds frames. The default dpaa2 Rx burst pulls frames
+from the FQ with a volatile dequeue and cannot be interrupt-driven; to
+wake on the DQRI the FQ must instead be pushed to the portal's DQRR.
 
+The natural dpni_set_queue with a notification destination would have to
+target the worker's portal, but that portal is only known once a worker
+affines, after dev_start, and that MC command holds the global MC lock
+long enough to wedge the firmware while traffic runs. So the bind cannot
+be done late, against the polling lcore.
 
-Please put a cover letter on large multi-patch series in future.
+Design
+------
+Each Rx FQ is bound to its own DPCON channel, statically, at dev_start
+while the dpni is still disabled (no knowledge of the polling lcore). A
+worker later subscribes its own ethrx portal to the channel and arms the
+DQRI in rx_queue_intr_enable, a one-shot per-portal op, never the wedging
+set_queue. One portal serves every queue a worker owns, so the DQRR
+burst demuxes frames to their FQ by fqd_ctx; foreign frames are parked in
+the target queue's stash, so the application polls all its queues after a
+wakeup, the same scheduling contract as plain DPDK polling. A queue can
+be re-homed to another lcore at runtime with no set_queue and no port
+stop.
 
-The CI AI review doesn't look at original source and uses cost optimized
-model (ie. is not that smart).  Did a UI based review and it saw:
+This reuses the event PMD's pushed/DQRR model but with one DPCON per FQ
+and static affinity (no QBMan scheduling), so the DPCON allocator is
+moved from the event driver to the fslmc bus and shared.
 
-Reviewed the v2 series. Three issues, rest look good.
+Patches 3 to 6 build the interrupt support proper, on top of three bug
+fixes the path depends on and which it uncovered: patch 2 (eal, the
+shared portal eventfd must not fail with -EEXIST), patch 7 (rx_queue_count
+NULL on the primary process) and patch 8 (fast-path ops NULL after port
+stop). They are real fixes, tagged for stable and backportable on their
+own. Patches 1 (RSS RETA) and 9 (drop the software VLAN strip) are
+independent net/dpaa2 changes the interrupt path does not require.
 
-[06/22] net/cnxk: reserve memory for lookup mem at probe
+Tested on LX2160A (lx2160acex7).
 
-Error: error path returns success. At the new check rc is still 0 from
-the prior successful roc_nix_dev_init(). When
-cnxk_nix_fastpath_lookup_mem_get() returns NULL, "goto dev_fini" falls
-through to "return rc" with rc == 0, so dev init reports success and the
-rc=%d message prints 0. Set rc before the jump:
+Maxime Leroy (9):
+  net/dpaa2: implement RSS RETA query and update
+  eal/interrupts: keep real errno on epoll error
+  bus/fslmc: move DPCON management from event driver to bus
+  bus/fslmc/dpio: make the portal DQRI epoll optional
+  net/dpaa2: support Rx queue interrupts
+  bus/fslmc/dpio: tune DQRI interrupt coalescing holdoff
+  net/dpaa2: fix Rx queue count for primary process
+  ethdev: keep fast-path ops valid after port stop
+  net/dpaa2: drop the fake software VLAN strip offload
 
-	if (!cnxk_nix_fastpath_lookup_mem_get()) {
-		plt_err("Failed to reserve lookup memory");
-		rc = -ENOMEM;
-		goto dev_fini;
-	}
+ doc/guides/nics/dpaa2.rst                     |  10 +
+ doc/guides/nics/features/dpaa2.ini            |   2 +
+ doc/guides/rel_notes/release_26_07.rst        |   8 +
+ drivers/bus/fslmc/meson.build                 |   1 +
+ .../fslmc/portal}/dpaa2_hw_dpcon.c            |  16 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      | 113 +++-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.h      |  12 +
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h       |  35 +-
+ .../fslmc/qbman/include/fsl_qbman_portal.h    |   9 +
+ drivers/bus/fslmc/qbman/qbman_portal.c        |   7 +
+ drivers/event/dpaa2/dpaa2_eventdev.h          |   5 +-
+ drivers/event/dpaa2/meson.build               |   1 -
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c        |  34 +-
+ drivers/net/dpaa2/dpaa2_ethdev.c              | 556 +++++++++++++++++-
+ drivers/net/dpaa2/dpaa2_ethdev.h              |  19 +
+ drivers/net/dpaa2/dpaa2_rxtx.c                | 123 +++-
+ lib/eal/include/rte_epoll.h                   |   3 +-
+ lib/eal/linux/eal_interrupts.c                |  18 +-
+ lib/ethdev/ethdev_private.c                   |   7 +
+ 19 files changed, 908 insertions(+), 71 deletions(-)
+ rename drivers/{event/dpaa2 => bus/fslmc/portal}/dpaa2_hw_dpcon.c (90%)
 
-[07/22] drivers: add support for devargs skip size
+-- 
+2.43.0
 
-Warning: shared memzone freed while other ports still use it.
-SKIP_SIZE_PKIND_MEMZONE is a single global memzone created once (lookup-
-guarded) in roc_npc_init(), but roc_npc_fini() frees it unconditionally.
-On a multi-port device the first port closed tears down the table the
-other ports still read in roc_npc_skip_size_pkind_get() during inbound SA
-creation; the lookup then returns NULL and skip-size pkind selection
-silently stops working for the surviving ports. Refcount the memzone or
-tie its lifetime to the common/inline layer instead of per-NPC fini.
-
-[19/22] net/cnxk: add FEC get set and capability ops
-
-Warning: feature not reflected in the features matrix. features.rst maps
-the FEC feature to fec_get_capability/fec_get/fec_set, which this patch
-implements, but doc/guides/nics/features/cnxk.ini is not updated with
-"FEC = Y". The ops return NOTSUP on VF/SDP, so cnxk_vf.ini is correct as-
-is. Add the matrix entry.
-
-Note on [16/22]: the changes are good. Moving cpt_cq_ena inside the
-"if (idev && idev->nix_inl_dev)" block fixes a NULL deref of inl_dev, and
-cpt_cq_ena is initialized to 0 so the fall-through default is correct.
-The roc_dev.c / roc_ree.c error-path rework fixes real leaks and wrong-
-success returns.
-
-Other patches reviewed with no issues.
