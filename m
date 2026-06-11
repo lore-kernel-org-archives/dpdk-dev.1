@@ -2,72 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225EBCD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 18:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DECDCD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 18:39:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C5D64339A;
-	Thu, 11 Jun 2026 20:15:53 +0200 (CEST)
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
- by mails.dpdk.org (Postfix) with ESMTP id 9340D43396
- for <dev@dpdk.org>; Thu, 11 Jun 2026 20:15:51 +0200 (CEST)
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-1383e116edfso283476c88.0
- for <dev@dpdk.org>; Thu, 11 Jun 2026 11:15:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781201750;
- x=1781806550; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=tcrOrG7zOecEomBGpKMKNTcQrjQLK9KrhdZZIK+AEPU=;
- b=R0BeiFnQQa36LM3AIjob/nGjejDSBwBCvchhAg2RPzELV/KZbjXn4l2lpUdKUlj8gh
- ZgeX6HLncfS4m7X+YXBuM5XBQIF/66vUA14fvWwUeVQ9ZF5QfLqmoBGV3FeGDegx4gX9
- e2NmN4HxY1Uo7l14T03ezUAZxjknY9BkapU55FtQI+RyuTZ0igR+QDMKvx9BHbaMi9Uk
- B0SQGj+kSp5tUjZGch5sjVGZlWfqOJlNKfSvK0cuJrT8chTdIdnTgJDRaLLA+c3P1jnQ
- fGv8fmGPUF3UdU8pJEibRZLbvlqpl5Qt0RBifTnMv4jSpzDa1PWVHH4bAwzhP3sIC3sG
- ap+A==
+	by mails.dpdk.org (Postfix) with ESMTP id 3BB8F43246;
+	Thu, 11 Jun 2026 20:39:26 +0200 (CEST)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
+ [209.85.222.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 2A1154025F
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 20:39:24 +0200 (CEST)
+Received: by mail-qk1-f179.google.com with SMTP id
+ af79cd13be357-9157b94a07aso20759485a.0
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 11:39:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781203163; cv=none;
+ d=google.com; s=arc-20240605;
+ b=IFiDniYX6iS/UYWvvLsgHQjhPduqnF3AHUU5vs/ty2Brcbfu8LZDhrqTT9Okjy2zjn
+ kh71XrOFcSygxoOoSptxGqsBUSPC5UACY8CoOZglU6S9eYZBNTodRwfUUN246jSydXY7
+ QVa4GwD2VCGDUz9c08ju8lqwogGupDCa15AEWVkAXXZj/vVmlf7Hex17DrhD2javpYXN
+ 830/RHdNhdHJry5zpXWBy9OOCHST9tx+n+8jaR1WTO5Ci7qEa4IrpMyPs6/zAaSjzdhz
+ Z2kg2Nt6BPyDupmL8PveNO3vrZthF0qWex9jalTnaBeq1mfWktBBvn5ufsQPw/bh+dbt
+ H2GA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version;
+ bh=KL6qNsHhhHQ1ksidmUIv2ZVGHAgWWd0TpmHSyMMwJYA=;
+ fh=vgiQ8qO7x7a9MtbXs5dA6KZwSJMFZrWTAES2NmeMYIc=;
+ b=OZHRaO7qgrexPC8cwvZRM3DHVP/a+DiPnfnLbZ6iOnrNHV2tM+vHE2Fq7VZgdIFabj
+ 2UxpDaTaP//xODTtlVQY0hWn/GtAmT/vgcGFZZMJQ7YMuK9uYyVbF/Rbf8/2uInEBj0h
+ wcSbW9sDrR+6Yh6E35aMiIAYRy0Ju1PNiOZDNBPJyqm8TYiUjiVEyNaw5cVQFvOUfDxO
+ eWfFcW3PjZtvN2Op+k/+udDdVwzW1FyZ02myP9k7akd146pNgVujrfvB4+/gr/VIxMJk
+ Mn0M8cjzykI/huIQUVBNoG5Z7+iNMEzQ29aZoYWgQzbFwtukg5zBmY9mKibmeGR2wZDw
+ fMkg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781201750; x=1781806550;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=tcrOrG7zOecEomBGpKMKNTcQrjQLK9KrhdZZIK+AEPU=;
- b=ldnRxNHUzkaSZ2s/QCqOvmqLAlbdwAG3XdaqpxS9Qwh71TnMH1rzAR6esl80MdquKa
- hbwQLxU42hU1c2uo7/R1Rdv+GeTn0rAW0DpaTRYcmLeb/Rjm7CL/99kSyoRjRakiPFUv
- UphHf7dkCyA6b/ySnxI+R1PmgM3EAX14NVwL0kMUrDjt3ntI/Khbwl8giQIJgI9jOuxi
- BzpNuEteYBX0VXEHxYinp59udwThgx9mkZMn8dMzMGpXfpkPLEmlwqrmP0s2kyeLEYww
- El4zUBr2w7LtFqlt2LBbys49E+/Y01vqh56fkBboiYRFqSnbTMZ8+twsLHXHBGwbq2Ut
- setg==
-X-Gm-Message-State: AOJu0Yz/VIBeNJgo6bpBFC6MXggA/z4LEA4PlpTkTemgkq3P8IdvdcWQ
- 6PSOMNRkmnIu5QUqwJR1QAqFl6wJnGRLOe6J/9lx2WUhwsTF2sNksyr7qOwuL+P46fg=
-X-Gm-Gg: Acq92OHwJdlpUqAph/6FXV+CYYCC9O8MX8wzOb2vV8RS+pNmP+mu8WdUnlUhEtNoc74
- +Webekk7tMRzLu9I3nQaE/dxlfaxbvnm0K/wr/ml3SZWqYXXzXDC+yp8sGV2BvQJwANyq1NAWuG
- 0j2QM/sju1kRwPFTDxMZudjydt5SEBjETB8J28U7wcaWKKRn5O+LYD9981L/sm+pa5BpIx1ujsq
- 0vPtiXVv7cQurpZsrD6pw8DNIDnJq0bp6XoHdtpcFFcZ56S0csRKX2LnOjSRYMJDFsciwSr6gL0
- JRHIPk4pO3rkzKHklZhZWC9Ay4zgtf3qtOEwJgu6c8djRidHSg6aP291r5q2r26pRbwzRZE1+C/
- xy9LiRs3Ytzcmotii/ayjz95W+xmZHZLspvtDIYRRUbq8TERn8hj6lJ81RJMbxvwQvjUkx7Qw/q
- 4qSJVePZ6Q+WVFAKUlKwW5tS/TWCaEFbWiUxzBSKQe4pXAYADgRfE+2BMPcOHbhO92yRky4iezH
- qI=
-X-Received: by 2002:a05:7300:b918:b0:2ea:ed3e:13b7 with SMTP id
- 5a478bee46e88-308046071f2mr3208420eec.7.1781201750268; 
- Thu, 11 Jun 2026 11:15:50 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30806c47afbsm4338866eec.10.2026.06.11.11.15.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 11:15:50 -0700 (PDT)
-Date: Thu, 11 Jun 2026 11:15:47 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: James Raphael Tiovalen <jamestiotio@gmail.com>
-Cc: dev@dpdk.org, orika@nvidia.com, thomas@monjalon.net,
- andrew.rybchenko@oktetlabs.ru, stable@dpdk.org
-Subject: Re: [PATCH v2 0/2] ethdev: fix out-of-bounds writes in rte_flow_conv()
-Message-ID: <20260611111547.0d2aadbe@phoenix.local>
-In-Reply-To: <20260610113334.277895-1-jamestiotio@gmail.com>
-References: <20260610113334.277895-1-jamestiotio@gmail.com>
+ d=1e100.net; s=20251104; t=1781203163; x=1781807963;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=KL6qNsHhhHQ1ksidmUIv2ZVGHAgWWd0TpmHSyMMwJYA=;
+ b=ScIosysaWUtiReaQPbX7XrXy0dK9Peb3X1lu6kR/Xta8IKiwngE/8lJTsUPU+nsuQX
+ 3gCifvJB/GdQm8dsLRjr6wUOLZiO3PjnAfNAIcCfvk/zuFS6xqw2PYe4jGDhE21wsFMy
+ oTgFVhU+po1t6GOsRdsVInX8ojV1WyPwo5M4nltxxJ2d3sitIhSyuMzDyACsZNpHDv/n
+ WWEplUDLV1u31uBkdl8w+SxlhxKmuFIQIsR7A5fUw67NkYO7xjZdaQtOazAbjqkTBJxl
+ n7T9r9xR6hZbupob5NeG5nETJp2P/fR8QtXGvJJyGH7MFIw7cvavcnzYqMHh5+GcCeGu
+ /w8A==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ8EKawfpIMiBmTZnoj/UxtSSYAlEw5T4pQZRya4jyI1ehXbW8aXURii1uZUakCULHa0E6c=@dpdk.org
+X-Gm-Message-State: AOJu0Yx1vkHwEg2gl7wpTtS4rBYUIDWEnuK1HOfzCz7vpRnwiPqyGDQy
+ f0rUA4QOaKa4IUkxMKxNEir4OCfHavhjtggQyIKoY7GEWVuqId9Z6LltdH6IpsMprHboTv486TS
+ /1EHwGWXNFD/of55M/vS+ZWTgBaDVCCo=
+X-Gm-Gg: Acq92OGCiWRIUhkltLHPTY14Ba7IYiMXq+rpLB/GI/AY0fqRO32XbgfjgOk2J90khu1
+ 9HbGhYxDeBkpNkJ26C/ytLnMrjrdXRxcG5QyktOEcMLjsRTmCPbXL0oo5itvZnW5CLo91SR0an6
+ qfIex8eWiV2EnBNlFy2VVVmv2v2BbQQtaLDMg7+Q3DxRhVu+zAaYmlSQ/CWNaO1k7LreVWP4xuO
+ ntOQdrLdbnJJ50mh8NLO+5U1xG49Ha3kGiMMdUbVELNCD5mYnkD8YrgZXjeexea40Na1AdBMR3S
+ IGWlOsyasK1QsLlckc9zIVgbFt6IKD4h/06CfqDhiw==
+X-Received: by 2002:a05:620a:1b93:b0:915:9de3:2260 with SMTP id
+ af79cd13be357-9160ad0df56mr642996985a.24.1781203163354; Thu, 11 Jun 2026
+ 11:39:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260611154926.392670-1-maxime@leroys.fr>
+ <20260611154926.392670-9-maxime@leroys.fr>
+ <98CBD80474FA8B44BF855DF32C47DC35F65909@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65909@smartserver.smartshare.dk>
+From: Maxime Leroy <maxime@leroys.fr>
+Date: Thu, 11 Jun 2026 20:39:12 +0200
+X-Gm-Features: AVVi8CcsVo-21eBmqtp5S9KUqE-pLHE1JaKTVb7zQImTwnN-41SXP9CjXjzujww
+Message-ID: <CAHHRULUGdnTmpnAX2aONEMj3bJmN11RG2cHGJ7h3-qhjoJLsFw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] ethdev: keep fast-path ops valid after port stop
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, dev@dpdk.org, 
+ stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Sunil Kumar Kori <skori@marvell.com>
+Content-Type: multipart/alternative; boundary="000000000000d33e2a0653feada4"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,34 +90,140 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 10 Jun 2026 19:33:32 +0800
-James Raphael Tiovalen <jamestiotio@gmail.com> wrote:
+--000000000000d33e2a0653feada4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> rte_flow_conv() is documented to truncate output to the caller-supplied
-> buffer size, but two paths handling variable-length trailing data
-> ignored that contract and copied the full payload whenever the
-> destination pointer was non-NULL. A caller passing a buffer just large
-> enough for the fixed-size header had adjacent memory clobbered:
-> 
-> - GENEVE_OPT: up to option_len * 4 bytes
-> - FLEX: up to 4 GiB, since src->length is a uint32_t and the API places
->   no bounds on it
-> 
-> Patch 1 aligns the GENEVE_OPT guard with the sibling RAW branch, which
-> already gates its copy on the remaining buffer size.
-> 
-> Patch 2 plumbs the remaining buffer size into the flex-item desc_fn
-> callback (which previously took no size argument at all) and gates the
-> inner rte_memcpy() on it.
-> 
-> v2 fixes the merge conflict between patch 1 and the main branch.
-> 
-> James Raphael Tiovalen (2):
->   ethdev: fix out-of-bounds write in GENEVE option conversion
->   ethdev: fix out-of-bounds write in flex item conversion
-> 
->  lib/ethdev/rte_flow.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
+Le jeu. 11 juin 2026, 18:01, Morten Br=C3=B8rup <mb@smartsharesystems.com> =
+a
+=C3=A9crit :
 
-Applied to next-net, and added you to .mailmap
+> > From: Maxime Leroy [mailto:maxime.leroys@gmail.com] On Behalf Of Maxime
+> > Leroy
+> > Sent: Thursday, 11 June 2026 17.49
+> >
+> > eth_dev_fp_ops_reset() restores a port's fast-path ops on stop/release
+> > via a compound literal, so every field it omits is zeroed to NULL. It
+> > sets only rx_pkt_burst/tx_pkt_burst (and the rxq/txq data), leaving
+> > rx_queue_count, tx_queue_count, rx/tx_descriptor_status, tx_pkt_prepare
+> > and the recycle callbacks NULL.
+> >
+> > In non-debug builds these ops are reached through an unguarded indirect
+> > call (the NULL check exists only under RTE_ETHDEV_DEBUG_RX/TX). So a
+> > thread calling e.g. rte_eth_rx_queue_count() on a port being stopped
+> > dereferences NULL and crashes, while the same race on
+> > rte_eth_rx_burst()
+> > is harmless because the burst ops are reset to dummies. A poll-mode
+> > worker re-checking rx_queue_count before arming the Rx interrupt and
+> > sleeping hits exactly this.
+> >
+> > Reset these ops to the same dummies eth_dev_set_dummy_fops() installs,
+> > so a stopped port behaves like a freshly allocated one: every fast-path
+> > op is a safe no-op, none is NULL.
+> >
+> > Fixes: 066f3d9cc21c ("ethdev: remove callback checks from fast path")
+> > Cc: stable@dpdk.org
+> > Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+> > ---
+>
+> Good catch.
+> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+>
+> Not related to the series, consider sending as separate patch.
+>
+Thanks for the review and Ack.
+
+Agreed, this is a generic ethdev fix. I kept it in this series because the
+NAPI user depends on it.
+
+The current Grout NAPI loop arms RX queue interrupts and then re-checks
+rte_eth_rx_queue_count() before blocking, to avoid sleeping when a packet
+arrived between the last empty poll and epoll_wait.
+
+With the current ethdev reset path, rx_burst is replaced by a dummy
+callback on stop/release, but rx_queue_count becomes NULL. So if the port
+is stopped concurrently, the NAPI worker dereferences a NULL function
+pointer and
+segfaults on that recheck.
+
+I can split it out if maintainers prefer, but then the dpaa2 NAPI series
+has a real dependency on the standalone ethdev fix.
+
+>
+
+--000000000000d33e2a0653feada4
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto"><div><br><br><div class=3D"gmail_quote gmail_quote_contai=
+ner"><div dir=3D"ltr" class=3D"gmail_attr">Le jeu. 11 juin 2026, 18:01, Mor=
+ten Br=C3=B8rup &lt;<a href=3D"mailto:mb@smartsharesystems.com">mb@smartsha=
+resystems.com</a>&gt; a =C3=A9crit=C2=A0:<br></div><blockquote class=3D"gma=
+il_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-lef=
+t:1ex">&gt; From: Maxime Leroy [mailto:<a href=3D"mailto:maxime.leroys@gmai=
+l.com" target=3D"_blank" rel=3D"noreferrer">maxime.leroys@gmail.com</a>] On=
+ Behalf Of Maxime<br>
+&gt; Leroy<br>
+&gt; Sent: Thursday, 11 June 2026 17.49<br>
+&gt; <br>
+&gt; eth_dev_fp_ops_reset() restores a port&#39;s fast-path ops on stop/rel=
+ease<br>
+&gt; via a compound literal, so every field it omits is zeroed to NULL. It<=
+br>
+&gt; sets only rx_pkt_burst/tx_pkt_burst (and the rxq/txq data), leaving<br=
+>
+&gt; rx_queue_count, tx_queue_count, rx/tx_descriptor_status, tx_pkt_prepar=
+e<br>
+&gt; and the recycle callbacks NULL.<br>
+&gt; <br>
+&gt; In non-debug builds these ops are reached through an unguarded indirec=
+t<br>
+&gt; call (the NULL check exists only under RTE_ETHDEV_DEBUG_RX/TX). So a<b=
+r>
+&gt; thread calling e.g. rte_eth_rx_queue_count() on a port being stopped<b=
+r>
+&gt; dereferences NULL and crashes, while the same race on<br>
+&gt; rte_eth_rx_burst()<br>
+&gt; is harmless because the burst ops are reset to dummies. A poll-mode<br=
+>
+&gt; worker re-checking rx_queue_count before arming the Rx interrupt and<b=
+r>
+&gt; sleeping hits exactly this.<br>
+&gt; <br>
+&gt; Reset these ops to the same dummies eth_dev_set_dummy_fops() installs,=
+<br>
+&gt; so a stopped port behaves like a freshly allocated one: every fast-pat=
+h<br>
+&gt; op is a safe no-op, none is NULL.<br>
+&gt; <br>
+&gt; Fixes: 066f3d9cc21c (&quot;ethdev: remove callback checks from fast pa=
+th&quot;)<br>
+&gt; Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank" rel=3D"norefe=
+rrer">stable@dpdk.org</a><br>
+&gt; Signed-off-by: Maxime Leroy &lt;<a href=3D"mailto:maxime@leroys.fr" ta=
+rget=3D"_blank" rel=3D"noreferrer">maxime@leroys.fr</a>&gt;<br>
+&gt; ---<br>
+<br>
+Good catch.<br>
+Acked-by: Morten Br=C3=B8rup &lt;<a href=3D"mailto:mb@smartsharesystems.com=
+" target=3D"_blank" rel=3D"noreferrer">mb@smartsharesystems.com</a>&gt;<br>
+<br>
+Not related to the series, consider sending as separate patch.<br></blockqu=
+ote></div></div><div dir=3D"auto"><div dir=3D"auto">Thanks for the review a=
+nd Ack.</div><div dir=3D"auto"><br></div><div dir=3D"auto">Agreed, this is =
+a generic ethdev fix. I kept it in this series because the NAPI user depend=
+s on it.</div><div dir=3D"auto"><br></div><div dir=3D"auto">The current Gro=
+ut NAPI loop arms RX queue interrupts and then re-checks rte_eth_rx_queue_c=
+ount() before blocking, to avoid sleeping when a packet arrived between the=
+ last empty poll and epoll_wait.</div><div dir=3D"auto"><br></div><div dir=
+=3D"auto">With the current ethdev reset path, rx_burst is replaced by a dum=
+my callback on stop/release, but rx_queue_count becomes NULL. So if the por=
+t is stopped concurrently, the NAPI worker dereferences a NULL function poi=
+nter and</div><div dir=3D"auto">segfaults on that recheck.</div><div dir=3D=
+"auto"><br></div><div dir=3D"auto">I can split it out if maintainers prefer=
+, but then the dpaa2 NAPI series has a real dependency on the standalone et=
+hdev fix.</div></div><div dir=3D"auto"><div class=3D"gmail_quote gmail_quot=
+e_container"><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;b=
+order-left:1px #ccc solid;padding-left:1ex"></blockquote></div></div></div>
+
+--000000000000d33e2a0653feada4--
