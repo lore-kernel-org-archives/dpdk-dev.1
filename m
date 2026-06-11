@@ -2,71 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1D4CD8C9D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 17:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E11CCD8C9D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 17:49:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2273743366;
-	Thu, 11 Jun 2026 19:31:05 +0200 (CEST)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 01F45427CE
- for <dev@dpdk.org>; Thu, 11 Jun 2026 19:31:04 +0200 (CEST)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-30807ba471bso321251eec.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 10:31:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 52C6543377;
+	Thu, 11 Jun 2026 19:49:45 +0200 (CEST)
+Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+ by mails.dpdk.org (Postfix) with ESMTP id 8DA24427CE
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 19:49:44 +0200 (CEST)
+Received: by mail-dl1-f54.google.com with SMTP id
+ a92af1059eb24-1370417c01cso106090c88.1
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 10:49:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781199063;
- x=1781803863; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781200183;
+ x=1781804983; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=oqVjgbvH1PVjpsb1dTSUyHrue+zW45mPe+su/3YKsIw=;
- b=V4wLSSTIoj52WM0spae+u6jXM2P5m0Uns12Ut9tIC9JIyEN9hojIj43I4YAvEgzl3B
- 9bmz1NGBycviW8WeQOs9BUPZsk4+eWqw8fPjEMLB1z/zfTCEn911zKxdmS4Mu2pyGIDA
- sKzcc7d5PDHFSN82rGcZjtwrdAxrK82um1/UoJHLdMntzRBPCfaSxpXrj8DQ+j458lZp
- rECNfZLWsq6Uh1C/i11sU3tPhJ90LA7zJAKdwo0dANsYF2Gyf9HY9hwK5ryibxHy9EgJ
- 3i8IEdld5WgMzYRwjVSD5yfIRYorvSbu+NKm1nlyaRavJu8CB1GMH8C5K35Ua8Hof01w
- Zylw==
+ bh=08j6ovXw0+D1kq0vmVE2LL2fVTRn5dZUXyNz0jkTwQM=;
+ b=NZEPJeKbRF6C6occouSYPr/xFyj9STmJNc5TK6JdJIj+wx8SB/sOscBzV12HVeByXK
+ U0PH5FSQ7Zd9zPOSITucVccWJtZTrDf/PnjudigzK8DogfNKEPeA421TG0yfDwPZCEA/
+ 2Ptp3y79TT1yzm0LGZ7bL4cfZbZ027VZyPqhb2yDK75lDhmc7sN5654EwANUrS84O/cX
+ rmS7V8SoWKHy96SZAY7+8MKjMr4LdS4WIdcvtbn5PCObKgYwdAcKgLzIOjKY8XG0agnR
+ JIhPjkIzVMtEiu+pUJOlbIHPQT5FSDp8YMlQqfoCkqSpY5D29iCy7Mt/TZmHFF871Rcm
+ Sj/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781199063; x=1781803863;
+ d=1e100.net; s=20251104; t=1781200183; x=1781804983;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=oqVjgbvH1PVjpsb1dTSUyHrue+zW45mPe+su/3YKsIw=;
- b=k9ue7euHgETZPjSDiAnz9cbtjymzh1eoHOxyK3dkF5Vwym8Lal2NblbbM+i/54TDmX
- x04wz91vkMeUfy8ybaa4Tu9rE1cGYcacH6Cg/vzwcJld2Z28GU8J+/dRDVXIPQKAg3wh
- hoVP1C1GaQ8f8iVSt8o+sMIIauK57xsTIpZi61oWsZ4JPTbS3tzRQjAkAT7doCMmmrz7
- yKAZ3oVETvvdgJeK+FksC1GXM+xLp+T+E51DbwXDp0jimS17Z3bQJIogKVb8bJXAoztm
- YFmi8QpDQQ04AETBt8EQrDt6cdimegcUFPeiFAttMLp7NZB3Ke3VDL25dVzT5iqYpq3g
- y6JA==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/0ao3ucTOTEn7+Tu2XzhFkMvgjuKuew0q3QfJepoKgmwiuv4Dp4JY1PiyqwwVXiPV00z4=@dpdk.org
-X-Gm-Message-State: AOJu0Yxw/fQnjed6UKIyoPqnrssovwJMyoc3TbcypDgbj9JBXu+1NK5D
- iO8R3sQS23r+RYu1kTfW9oqqy/6s8gVloCKtd4yjmCYHVrOTM+SKnXzGFqpsOLWN3XM=
-X-Gm-Gg: Acq92OH9NiuVmkDfH1j4NVz4XipkO6h5Ph6VLtOfQBMeu4imuz+T7OhwMNBysei2e/4
- ywj9K/li4u5ep3yQ8XZ+ww6APq0Mg6Kll7qIvd7oUFODI3QPWni48TowwyzNeJ/Bqae8I1Xh+fN
- bzPrw31YgsbPIWmQsoCXimH5aKT0LzAUes4qQQo6r/x8Cf0VpLoCi2qCtnBtjD8/mVjM9JK7yNM
- V+fh+PrPXln3hELucstKGp0wR9d3jfRGJEM+o7KxMicgbuvWe4kA+p7WlkmevsV1Dt/usiOhBsw
- F6/cE7kQmY5wRm0ofcXHm13Uc56lv/L4qYgnSFKA9W0XJcsEJeb5g1/aJ83DuxGs1rwLWw+3R7t
- GjUlo9LLFBj+xOx4g4DvGogE5lzGq969QyzJ9QS2m6ZFiSQZkOTy+/aMHmXkE/7B51lYy37b39L
- 1GQvQ5JvkM+OlUiwGidHsKgm5mU56u630MFwp2EgHDpRFHOXCiC9bFm577QalCj06ezEk0rm3/P
- /w=
-X-Received: by 2002:a05:693c:2c97:b0:2d9:6373:ad22 with SMTP id
- 5a478bee46e88-30804819c1fmr2653857eec.12.1781199062862; 
- Thu, 11 Jun 2026 10:31:02 -0700 (PDT)
+ bh=08j6ovXw0+D1kq0vmVE2LL2fVTRn5dZUXyNz0jkTwQM=;
+ b=W3zcrwOe/0PJTGLoLeLklH8zCOmTiS/c2/07c1BV5nzfZLQH9Lh0E4eMVjJvP4nlXc
+ 8liKFoF6MG/vM5aSRCXGF654OjcRn1hs487J0mO0JZym12IS/as4QD35O/hvGdH5x3Ub
+ 0xHmMvtMKMik9CBuF6wHl4UcG4dq5LiZE0xs04hxtLMY4VTWBqGSXqpyNe+BbLPV9VN9
+ YBrL0fRhi925ibVv0F55arMkGhU1rZabZpiLwoc89HEm+eyHDlGhI5pXWOcwFQD65kP5
+ h5vICZD4Q35+q1sJc0ITfl4inUptgQTfil37lQYFKCyIEdgAzM0wcXUIxPDwya/2h1xp
+ zM8g==
+X-Gm-Message-State: AOJu0Yy69dnrBsl55e+MtL/5YUcS50vPlrzW3nbfm31x3UGXVLv3fxEz
+ UZIRayn0w3VCebo0sqVEfOlLTIoaKT2crKQ7rurijdm+0FSJz5XaHUlt5hYw/0WhZlw=
+X-Gm-Gg: Acq92OHyvbr2O6sARsRCPfjjfnEBREDPqa0d9BjPKxJ8VYPOpnJdGe/oZ9WDQxmK/pz
+ 2Ef5GIemVkR3TsBgfMY8s+Zg/IXxIXmPhwhwooL5fVslUum/QhHjNQSac6BsrRWeOWsiZATOUVn
+ C/3ft6hFopmLqESNEvmtL5FzEqxU3fzvDI+HtKjqPMduwssE8qlRH28RPRBlWi795T51oB7Y3MV
+ 9651s2urRsZjTL+zssr8ahe3XePfL5BGUpuoa3Oks178bMyFibSy0GAY0m9fWZO8hD/Ls+deYF8
+ /UqE5JLDhYTtsJaGYwrOljgCIDUbdbABQHFPtTdyaow1hQ2rb9r3APHNGlvcAl+8H7D8QAwajRL
+ pXC5UoLBgUUz0nuVarZjiJW9Q9VtkrWfvpPFN7PL5BL4ho0we3jVNq2iKZWrtHip81+gadFaQ/b
+ 7NKc/6qi2MVBod08sIuB6jsW9zgFrJ2RuT0xwryWfJL/p3AeoMX4NgxWBsdZ7D6KOc
+X-Received: by 2002:a05:7300:7309:b0:304:dfb2:2274 with SMTP id
+ 5a478bee46e88-30804cef532mr2923015eec.28.1781200183139; 
+ Thu, 11 Jun 2026 10:49:43 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30806c2f0acsm3691013eec.1.2026.06.11.10.31.01
+ 5a478bee46e88-30806e8b141sm2512960eec.15.2026.06.11.10.49.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 10:31:02 -0700 (PDT)
-Date: Thu, 11 Jun 2026 10:30:58 -0700
+ Thu, 11 Jun 2026 10:49:42 -0700 (PDT)
+Date: Thu, 11 Jun 2026 10:49:40 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Maxime Leroy <maxime@leroys.fr>
-Cc: hemant.agrawal@nxp.com, sachin.saxena@nxp.com, dev@dpdk.org
-Subject: Re: [PATCH 9/9] net/dpaa2: drop the fake software VLAN strip offload
-Message-ID: <20260611103058.160842f4@phoenix.local>
-In-Reply-To: <20260611154926.392670-10-maxime@leroys.fr>
-References: <20260611154926.392670-1-maxime@leroys.fr>
- <20260611154926.392670-10-maxime@leroys.fr>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v8 00/18] Support VFIO cdev API in DPDK
+Message-ID: <20260611104940.41312f98@phoenix.local>
+In-Reply-To: <cover.1781190151.git.anatoly.burakov@intel.com>
+References: <cover.1763141462.git.anatoly.burakov@intel.com>
+ <cover.1781190151.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,54 +80,251 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 11 Jun 2026 17:49:24 +0200
-Maxime Leroy <maxime@leroys.fr> wrote:
+On Thu, 11 Jun 2026 16:08:52 +0100
+Anatoly Burakov <anatoly.burakov@intel.com> wrote:
 
-> It saves a forwarding application nothing: the datapath reads the L2
-> header anyway to classify or strip. The offload does not remove that
-> read, it relocates it into the driver Rx burst, where it is far more
-> expensive.
+> This patchset introduces a major refactor of the VFIO subsystem in DPDK to
+> support character device (cdev) interface introduced in Linux kernel, as well as
+> make the API more streamlined and useful. The goal is to simplify device
+> management, improve compatibility, and clarify API responsibilities.
 > 
-> The cost is a matter of timing. rte_vlan_strip() reaches the L2 header
-> through rte_pktmbuf_mtod(), which dereferences mbuf->buf_addr. On a
-> freshly recycled buffer that mbuf cacheline is cold. eth_fd_to_mbuf()
-> has just written other fields of it (data_off, ol_flags), but buf_addr
-> is a persistent field it does not rewrite. A write does not stall: it
-> posts to the store buffer while the line fills in the background, and
-> the rewritten fields are forwarded straight from there. buf_addr has
-> nothing to forward, so it must be read from the line, whose fill is
-> still in flight, and the read stalls. The ethertype read that follows,
-> on the cold payload line, stalls again. Read later by the application,
-> when the fill has completed, the same read hits. The offload just
-> performs it at the worst possible moment.
+> The following sections outline the key issues addressed by this patchset and the
+> corresponding changes introduced.
 > 
-> Measured on a single-core port-to-port forwarding test over two 10G
-> ports (one core at 2 GHz, 64-byte untagged frames):
+> 1. Only group mode is supported
+> ===============================
 > 
->   - throughput 4.22 -> 5.00 Mpps (+18 percent)
->   - IPC 0.93 -> 1.25: the cost was memory stall, not compute
->   - L3/DRAM-bound L2 refills 319M -> 200M over 10s (-37 percent)
+> Since kernel version 4.14.327 (LTS), VFIO supports the new character device
+> (cdev)-based way of working with VFIO devices (otherwise known as IOMMUFD). This
+> is a device-centric mode and does away with all the complexity regarding groups
+> and IOMMU types, delegating it all to the kernel, and exposes a much simpler
+> interface to userspace.
 > 
-> perf confirms it: with the offload, the buf_addr load (the cold mbuf
-> field) and the payload load account for about 84 percent of the Rx
-> burst's L2 refills; removing it, those vanish and only the inherent DQRR
-> dequeue misses remain.
+> The old group interface is still around, and will need to be kept in DPDK both
+> for compatibility reasons, as well as supporting special cases (FSLMC bus, NBL
+> driver, no-IOMMU mode etc.).
 > 
-> Stop advertising VLAN_STRIP and remove the rte_vlan_strip() calls from
-> every Rx path. This is a behavioural change: the tag is left in the
-> frame, so an application must strip it itself, on the L2 header it
-> already reads.
+> To enable this, VFIO is heavily refactored, so that the code can support both
+> modes while relying on (mostly) common infrastructure.
 > 
-> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
-> ---
+> Note that the existing `rte_vfio_device_setup/release` model is fundamentally
+> incompatible with cdev mode, because for custom container cases, the expected
+> flow is that the user binds the IOMMU group (and thus, implicitly, the device
+> itself) to a specific container using `rte_vfio_container_group_bind`, whereas
+> this step is not needed for cdev as the device fd is assigned to the container
+> straight away.
+> 
+> Therefore, what we do instead is introduce a new API for container device
+> assignment which, semantically, will assign a device to specified container, so
+> that when it is mapped using `rte_pci_map_device`, the appropriate container is
+> selected. Under the hood though, we essentially transition to getting device fd
+> straight away at assign stage, so that by the time the PCI bus attempts to map
+> the device, it is already mapped and we just return an fd. There is no
+> "unassign" API because `release_device` already performs that function.
+> 
+> Additionally, a new `rte_vfio_get_mode` API is added for those cases that need
+> some introspection into VFIO's internals, with three new modes: group
+> (old-style), no-iommu (old-style but without IOMMU), and cdev (the new mode).
+> Although no-IOMMU is technically a variant of group mode, the distinction is
+> largely irrelevant to the user, as all usages of noiommu checks in our codebase
+> are for deciding whether to use IOVA or PA, not anything to do with managing
+> groups. The current plan for kernel community is to *not* introduce no-IOMMU
+> cdev implementation, and IOMMUFD's own group API compatibility layer also does
+> not implement no-IOMMU mode, which is why this will be kept for compatibility
+> for these use cases.
+> 
+> There were other users of VFIO which relied on group API but only for convenience
+> purposes; no actual VFIO functionality depended on those API's. Therefore, group
+> API's are removed and, where appropriate, replaced with the new API's.
+> 
+> List of removed API's:
+> 
+> * `rte_vfio_get_group_fd`
+> * `rte_vfio_clear_group`
+> * `rte_vfio_container_group_bind` (replaced by container assign API)
+> * `rte_vfio_container_group_unbind`
+> * `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
+> 
+> 2. The API responsibilities aren't clear and bleed into each other
+> ==================================================================
+> 
+> Some API's do multiple things at once. In particular:
+> 
+> * `rte_vfio_get_device_info` will setup the device
+> * `rte_vfio_setup_device` will get device info
+> 
+> These API's have been adjusted to do one thing only.
+> 
+> v8:
+> - Rebase
+> - Fixed build errors due to variable shadowing
+> - Removed duplicate fd check as kernel does not provide a way to distinguish
+>   between device fd's
+> 
+> v7:
+> - Rebase
+> - Added removal of deprecation notices
+> - Fixed implicit numeric comparison in patch 12
+> 
+> v6:
+> - Fixed missing header include in vfio cdev file
+> 
+> v5:
+> - Added back missing uapi patch
+> 
+> v4:
+> - Fixed issues with documenting rte_vfio_mode enum
+> - Separated deprecation notices into a separate patchset
+> 
+> v3:
+> - Make API removal cleaner
+> - Fix `get_group_num` usages to align with new API
+> - Fix issues with function exports
+> - Fix issues with `setup_device` returning old-style values in some cases
+> 
+> v2:
+> - Make the entire API internal
+> - More aggressive API pruning, complete removal of group API
+> - Fixed a bug in group mode where device could not be used
+> - Better documentation and deprecation notice patches
+> - Moved doc patches to beginning of patchset
+> 
+> Anatoly Burakov (18):
+>   uapi: update to v6.17 and add iommufd.h
+>   vfio: make all functions internal
+>   vfio: split get device info from setup
+>   vfio: add container device assignment API
+>   net/nbl: do not use VFIO group bind API
+>   net/ntnic: use container device assignment API
+>   vdpa/ifc: use container device assignment API
+>   vdpa/nfp: use container device assignment API
+>   vdpa/sfc: use container device assignment API
+>   vhost: remove group-related API from drivers
+>   vfio: remove group-based API
+>   vfio: cleanup and refactor
+>   bus/pci: use the new VFIO mode API
+>   bus/fslmc: use the new VFIO mode API
+>   net/hinic3: use the new VFIO mode API
+>   net/ntnic: use the new VFIO mode API
+>   vfio: remove no-IOMMU check API
+>   vfio: introduce cdev mode
+> 
+>  config/arm/meson.build                    |    1 +
+>  config/meson.build                        |    1 +
+>  doc/guides/prog_guide/vhost_lib.rst       |    4 -
+>  doc/guides/rel_notes/deprecation.rst      |   10 -
+>  drivers/bus/cdx/cdx_vfio.c                |   25 +-
+>  drivers/bus/fslmc/fslmc_bus.c             |   10 +-
+>  drivers/bus/fslmc/fslmc_vfio.c            |    6 +-
+>  drivers/bus/pci/linux/pci.c               |    2 +-
+>  drivers/bus/pci/linux/pci_vfio.c          |   33 +-
+>  drivers/bus/platform/platform.c           |    9 +-
+>  drivers/crypto/bcmfs/bcmfs_vfio.c         |   14 +-
+>  drivers/net/hinic3/base/hinic3_hwdev.c    |    3 +-
+>  drivers/net/nbl/nbl_common/nbl_userdev.c  |   20 +-
+>  drivers/net/nbl/nbl_include/nbl_include.h |    1 +
+>  drivers/net/ntnic/ntnic_ethdev.c          |    2 +-
+>  drivers/net/ntnic/ntnic_vfio.c            |   30 +-
+>  drivers/vdpa/ifc/ifcvf_vdpa.c             |   34 +-
+>  drivers/vdpa/mlx5/mlx5_vdpa.c             |    1 -
+>  drivers/vdpa/nfp/nfp_vdpa.c               |   37 +-
+>  drivers/vdpa/sfc/sfc_vdpa.c               |   39 +-
+>  drivers/vdpa/sfc/sfc_vdpa.h               |    2 -
+>  kernel/linux/uapi/linux/iommufd.h         | 1292 +++++++++++
+>  kernel/linux/uapi/linux/vduse.h           |    2 +-
+>  kernel/linux/uapi/linux/vfio.h            |   12 +-
+>  kernel/linux/uapi/version                 |    2 +-
+>  lib/eal/freebsd/eal.c                     |   98 +-
+>  lib/eal/include/rte_vfio.h                |  387 ++--
+>  lib/eal/linux/eal_vfio.c                  | 2437 ++++++++-------------
+>  lib/eal/linux/eal_vfio.h                  |  167 +-
+>  lib/eal/linux/eal_vfio_cdev.c             |  390 ++++
+>  lib/eal/linux/eal_vfio_group.c            |  984 +++++++++
+>  lib/eal/linux/eal_vfio_mp_sync.c          |   80 +-
+>  lib/eal/linux/meson.build                 |    2 +
+>  lib/eal/windows/eal.c                     |    4 +-
+>  lib/vhost/vdpa_driver.h                   |    3 -
+>  35 files changed, 4248 insertions(+), 1896 deletions(-)
+>  create mode 100644 kernel/linux/uapi/linux/iommufd.h
+>  create mode 100644 lib/eal/linux/eal_vfio_cdev.c
+>  create mode 100644 lib/eal/linux/eal_vfio_group.c
+> 
 
-In general I agree, but you overstate the impact. Any real application
-is going to look at the mbuf anyway. Relying on testpmd numbers is BS.
+Big patchset so sent the big AI model at it...
 
-The NBL driver does the same thing.
-So does PCAP but it has no choice, and is slow anyway.
-Virtio/vhost does as well.
+Patch 4 (vfio: add container device assignment API)
 
+Warning: header doc for rte_vfio_container_assign_device() says "<0 on
+failure, rte_errno is set", but neither rte_vfio_get_group_num() nor
+rte_vfio_container_group_bind() sets rte_errno on the Linux failure
+paths at this point in the series. The rte_errno contract only becomes
+true after the patch 12 rewrite. Either set rte_errno here or defer the
+doc claim to patch 12.
 
+Patch 5 (net/nbl: do not use VFIO group bind API)
 
+Info: function definition does not follow DPDK style (return type on
+its own line, blank line between declarations and statements):
 
+	static int
+	nbl_open_group_fd(int iommu_group_num)
+	{
+		char path[PATH_MAX];
+
+		snprintf(path, sizeof(path), RTE_VFIO_GROUP_FMT, iommu_group_num);
+		return open(path, O_RDWR);
+	}
+
+Patch 7 (vdpa/ifc: use container device assignment API)
+
+Warning: this patch removes both the "internal->vfio_group_fd = -1"
+initialization and the only assignment, but ifcvf_get_vfio_group_fd()
+still returns the field until patch 10. Between patches 7 and 10 the
+vdpa op returns 0 (zeroed allocation), i.e. a "valid" fd value. Nothing
+in lib/vhost calls the op anymore so it is not reachable in practice,
+but for bisectability either keep the -1 initialization here or move
+patch 10 ahead of patches 7-9.
+
+Patch 8 (vdpa/nfp: use container device assignment API)
+
+Warning: same staging issue as patch 7, plus nfp_vdpa_vfio_teardown()
+still calls rte_vfio_container_group_unbind(fd, device->iommu_group)
+with device->iommu_group now never assigned (always 0 from calloc), so
+every teardown between patches 8 and 10 issues an unbind for group 0
+that fails silently. The teardown unbind removal currently in patch 10
+belongs in this patch (patch 9 does this correctly for sfc, removing
+the fields and all uses in one patch).
+
+Patch 12 (vfio: cleanup and refactor) -- partial review
+
+Warning: missing release notes. This patch (together with patches 2, 11,
+17, 18) removes the public rte_vfio API, removes the group-bind API, and
+changes rte_vfio_setup_device()/rte_vfio_get_group_num() return
+semantics. None of the series touches the current release notes file;
+the entire VFIO API removal and the new cdev mode need entries in
+"Removed Items" / "New Features".
+
+Info: rte_errno convention comment at top of eal_vfio.c says "ENOXIO";
+the errno is ENXIO (code uses the correct one).
+
+Patch 18 (vfio: introduce cdev mode)
+
+Error: ioas_id is corrupted in secondary processes. struct container
+puts vfio_group_config and vfio_cdev_config in a union, and both place
+their first member at offset 0 (bool dma_setup_done / uint32_t ioas_id).
+In vfio_select_mode(), the secondary path does:
+
+	if (mode == RTE_VFIO_MODE_CDEV && vfio_cdev_sync_ioas(cfg) < 0)
+		goto err;
+
+	/* primary handles DMA setup for default containers */
+	group_cfg->dma_setup_done = true;
+
+In cdev mode the unconditional dma_setup_done store overwrites the low
+byte of the ioas_id just received from the primary. The corrupted id is
+then used by VFIO_DEVICE_ATTACH_IOMMUFD_PT and IOMMU_IOAS_MAP/UNMAP in
+the secondary. It happens to work only when the primary's IOAS id has
+low byte 1. Fix is to make the store mode-conditional:
+
+	if (mode == RTE_VFIO_MODE_GROUP || mode == RTE_VFIO_MODE_NOIOMMU)
+		group_cfg->dma_setup_done = true;
