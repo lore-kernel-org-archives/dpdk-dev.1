@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B57DCD98C7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033ACCD98C7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 15:50:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DEE74334E;
-	Thu, 11 Jun 2026 17:50:23 +0200 (CEST)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com
- [209.85.221.43]) by mails.dpdk.org (Postfix) with ESMTP id E421243346
- for <dev@dpdk.org>; Thu, 11 Jun 2026 17:50:21 +0200 (CEST)
-Received: by mail-wr1-f43.google.com with SMTP id
- ffacd0b85a97d-4600cbb06deso13682f8f.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 08:50:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 13DEA43356;
+	Thu, 11 Jun 2026 17:50:26 +0200 (CEST)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
+ [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id 0451443346
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 17:50:24 +0200 (CEST)
+Received: by mail-wr1-f45.google.com with SMTP id
+ ffacd0b85a97d-45eeea039ebso4456882f8f.1
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 08:50:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781193021; x=1781797821; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1781193023; x=1781797823; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=F8KmGrBED144uptnOy6HOpv3ebv0wGi5PGiI3cdCiW8=;
- b=apJpNxO3e3+jPH6yjsTgVCjmEEJ1p136fD2Ak+4hMFTQKb5b6mtyieb1jzrVs2/JfX
- MCXHzF/afYc6HOUeg5KiH72fd6RgCOr0Ob+wpq/jzbSIpHY9mhAGPwXcw0/S912s8gNe
- IWIeALaHYH+kOwLzVWyVKkqYuEG/nPpmGkHoaI4fQ5K99Q+pmZ8utmFKM/kAa/KEudfu
- QyCmMeNUiSUVXIoNPLxwUoyazyQw7yDr39rnwLZ+/dlyfSXcOkrNoPZGO/ale0l3yzLw
- vxg32t5QNi69/cFiEYNIfWUBMLTXuaUcZMKBhz7Tlq2TXs7A21vSvFrjiHe97RlkhR3s
- N1cw==
+ bh=wkB2UuxZXEDrRWj+rSbc29g4BovOjjBHbQg5jxXgklg=;
+ b=G+lb/osUzXUGVTc6zIrpXs3RgzZB9HlGCWZRIcFYRHGqszkPRNUCCFCd4zQaLxK8pl
+ Jh5S6wagg0ce/ZtPUIR4co4VWJ7smCmFnnzFqkUXu5aeaShqTWN0BIBmoZFLaILc8K7C
+ KdrVk7JoOaf30KXFPvSRhcqkV7Cz16Fvc2TAUP2xIMB6OMI2BwwME9Fx+cwN+6ImP1Zg
+ dbBCfGRMwKOyOiMrK1OcnunTx+e0FmuFMQUd5xtfDd3k8SpM4v+E5qpfirjVp+GgtpYC
+ G6CWZYl3zICo74sV2W9ncveh7FyC5Wrp+c9zmgNiIDxGVoGOoeu9hXHilyB5dvVn3iCo
+ D0gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781193021; x=1781797821;
+ d=1e100.net; s=20251104; t=1781193023; x=1781797823;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=F8KmGrBED144uptnOy6HOpv3ebv0wGi5PGiI3cdCiW8=;
- b=axtqv5+qo1yHDgOkG4O4p0cHnzXSTswqzXgI8+W4V5QKlAQFRQZIfzul21sXzN/OBS
- 1K0Zjhzj2RWytWvtojzufjxcb6cjX4bf0SlSzimavy1bbLe/rJW/HVcCinBe39aoVlcF
- qPIzgdjHcrXNIxHuXi3GGWEyVcAyCq+g1E5NwzDJ3dGMBDf5jgHKjS4HRqklyRx9knjk
- 51eCZAJSnTK1VJ5Cj2nsRT/QAn9pv+MeS0RRZuNih55at0CqIjOo8UTOrPPslbSsmjis
- lWgPyfnXTF3GL39FeJCvm+gSjUzW1u0PLYlLuWel+qsL++tRCAxz5FjuptqS9z4X5B2V
- cvmA==
-X-Gm-Message-State: AOJu0YwcJxG0cjNvFralHcN0OVWri7Cdgm0DNMIMqY1S+kayp4AsS1V2
- z6xf3o49GvKsmhpJfdaRSDOU1IXNGeXMr+iBxR4TRBnyiiyvluczg4my
-X-Gm-Gg: Acq92OFdiKa8L73C7AqPOJ0ESpuLmoxA4pLeAMsRNbT28xEFCzy239HUnLkSGwOaBMg
- jzJM/Q+ACWDVzXJ90Xe/9b7uJ7lHvqHPbXiFaagO6P5FvLd4WMqPnx2GJZpX1zQdffMQ6KZ3nrt
- i3dK05v4uBoH+Q4aZA/y5iTqIgF5Is3nHi9cFUEnsImsPAsLmfL9i0wHlGzb+Z94n9rX7hM+mmb
- pIO0/S8AWSOyvFuSh/cIH4iAoHAQxwuf5wXWz4hz2vL/lSFTP1uQ3Aif5hKXbQtOfH2n5ijMwmk
- O6OIOcbd+VPOCrdr+rQPcjYa+GlkpOf2F2wkceqpkU8cwet3U5C9ViUERK6F9+VI7unMUbf5n5Q
- uG4DDixNSTgD/49jKUBj8A22WCo6EU5IOGBR2sOmfQmLVRDHu9K2mlLk9xUIhfCk3RhipguB4/I
- mH77ZchL18gSYVOARPvJRz3xEIKbNN5DPJE2/dh2GfKGLmVp3fCx5SD8L2Sx8Gxb8=
-X-Received: by 2002:a05:6000:22c6:b0:460:d18:865c with SMTP id
- ffacd0b85a97d-46067bd5376mr5003245f8f.1.1781193021279; 
- Thu, 11 Jun 2026 08:50:21 -0700 (PDT)
+ bh=wkB2UuxZXEDrRWj+rSbc29g4BovOjjBHbQg5jxXgklg=;
+ b=rO2UmPrBRwbejETJX1467lGbKwX2Pr+0NzpW8KQluzbu5OT/jfzZNU8YF3l5Uhnb4E
+ cLmDf0YpmSS+cWPUecSbF4J0siUb4HnssjiJ1FTekLFenrG0VUyN9lfMImwlENONEyk3
+ RDuUSZn66tVbtmA+U6JHZRC8j8lmCUGg80dN+moPAmhl4KgnQnMMWX7zAx4F0CNGtyYQ
+ ksBnJFaVkMVGBdF25bazAhlhbvLMaRhMAVXlUS0Jk2TOyiBZOmSfsn67pi4LShW+SpYF
+ cxpUD/1MPNfVJjTbpLuS9bgAV+jlUn1dW+rSyiN5Yl69OVMODf5Rd2II+5jZCEYsFVV7
+ Dq9g==
+X-Gm-Message-State: AOJu0Yybc6vAFYRBur25WDAsTUUyohFhQpE8FUo4e5/iPunGDp9HFVMv
+ nT6+23QNHVhPvpudXjBGgveAjyEFTQoHzLeTyvC0ZM97+eJmKwp5/JlI
+X-Gm-Gg: Acq92OGkK6wFLOFUsjgixpi3IHWlpblCdqRqPUKPA2slbkc8K08tv/p18ilRHfjgFqI
+ G1g8boMnnpnyoJXS7cNzsdJhDbVPbQduGfCdFHlidV8KL/pmX1QCv3f0I9hEtBY0GnrZUCXwVQF
+ GuVvPQeQBBCZO7QqfSyts/IeYP+mOAa1nLEavLzd1vDhvUYac8zfD2JOvD+iNeCnbQjUNGOaU/Y
+ 4xiF0hWIc2MvWp4IBpFZlh20glqEbq1C9LlYdAV3AnMum19zsaDJ7ZIjhYFJ71//zxTV3pZ0IOP
+ zKVo/FNSKCCregn8ed57L+Z3gM42rwQcuYvgM/M8nCdHUiU4E9slZjgtUB0WFBG6shX5BXek+tb
+ KnfKhrCL3qDOsCM9zNbQr+2X7Vdn1tvZUO3Lv0SgV9Aa2+PC6N+Pv2Cqd0QGrNYWO5LIg0PFFka
+ J48HGb7vLxNIsG/usWTAf0sOd2pX3fg2KClD6kSl+R34JaKSLuEs0hR5VbcVcACkw=
+X-Received: by 2002:a05:6000:4287:b0:45e:f68d:e791 with SMTP id
+ ffacd0b85a97d-460673f42efmr5728564f8f.0.1781193023450; 
+ Thu, 11 Jun 2026 08:50:23 -0700 (PDT)
 Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4601f35fb24sm88484214f8f.34.2026.06.11.08.50.20
+ ffacd0b85a97d-4601f2e4004sm81988829f8f.9.2026.06.11.08.50.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 11 Jun 2026 08:50:20 -0700 (PDT)
+ Thu, 11 Jun 2026 08:50:23 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: hemant.agrawal@nxp.com,
 	sachin.saxena@nxp.com
 Cc: dev@dpdk.org,
 	Maxime Leroy <maxime@leroys.fr>
-Subject: [PATCH 5/9] net/dpaa2: support Rx queue interrupts
-Date: Thu, 11 Jun 2026 17:49:20 +0200
-Message-ID: <20260611154926.392670-6-maxime@leroys.fr>
+Subject: [PATCH 6/9] bus/fslmc/dpio: tune DQRI interrupt coalescing holdoff
+Date: Thu, 11 Jun 2026 17:49:21 +0200
+Message-ID: <20260611154926.392670-7-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260611154926.392670-1-maxime@leroys.fr>
 References: <20260611154926.392670-1-maxime@leroys.fr>
@@ -81,814 +81,382 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement .rx_queue_intr_enable / .rx_queue_intr_disable so a worker
-can sleep on a queue's data-availability notification instead of
-busy-polling, through the generic rte_eth_dev_rx_intr_* API.
+The portal DQRI interrupt used a fixed threshold of 3 and a raw 0xFF
+timeout. Parameterize dpaa2_dpio_intr_init() with (threshold, timeout) so
+each mode supplies its own: the event driver keeps the legacy 3 / 0xFF
+and its DPAA2_PORTAL_INTR_THRESHOLD / DPAA2_PORTAL_INTR_TIMEOUT env-var
+overrides, while rx-queue interrupts default the threshold to the HW DQRR
+ring depth (ring-1, =7 on QBMan >= 4.1) and use a coalescing holdoff in
+microseconds, converted to ITP units from the MC-reported QBMan clock
+(itp = holdoff_us * clk_MHz / 256, capped at the 12-bit field). The setup
+is portal-wide and idempotent, so the first mode to arm a given portal
+wins; a portal is normally driven by a single mode.
 
-A worker wakes on its software portal's DQRI, which fires when the
-portal's DQRR holds frames, so the Rx FQ must be scheduled to a channel
-that portal dequeues. The natural dpni_set_queue with a notification
-destination holds the global MC lock long enough to wedge the firmware
-and must target a disabled dpni. But the polling portal is only known
-once a worker affines, after dev_start, so the destination cannot be
-the worker's portal.
+The net/dpaa2 PMD exposes both rx-queue-interrupt knobs as per-port
+devargs: drv_rx_intr_holdoff_us (default 100us) and drv_rx_intr_threshold
+(default 0 = ring-1, clamped to [1, ring-1]). Also expose
+dpaa2_dpio_intr_deinit() (no longer event-only), and on the intr_init
+error paths close the epoll fd and disable the interrupt.
 
-Bind each Rx FQ to its own DPCON channel instead. The default Rx burst
-pulls frames from the FQ with a volatile dequeue and cannot be
-interrupt-driven; to wake on the DQRI the FQ must be pushed to the
-portal's DQRR. dev_start issues the DEST_DPCON set_queue statically on
-the still-disabled dpni with no knowledge of the polling lcore; a worker
-later subscribes its own ethrx portal to the channel and arms the DQRI
-in rx_queue_intr_enable (a one-shot per-portal MC op plus QBMan, never
-the wedging set_queue).
-
-This pushed/DQRR consumption is how the event PMD works, but the DPCON
-use differs. The event PMD uses one DPCON per worker, concentrates N
-FQs onto it, and lets the QBMan scheduler load-balance events across
-cores. Here affinity is static and there is no scheduling, so each FQ
-gets its own DPCON (one per FQ, more channels, drawn from the shared
-pool that the DPCON move to the fslmc bus now feeds), bound once at
-dev_start before the lcore is known. Frames are delivered by
-rte_eth_rx_burst (dpaa2_dev_rx_dqrr), not as events via
-rte_event_dequeue.
-
-rte_eth_dev_rx_intr_enable(q) subscribes the lcore portal to q's DPCON
-and arms the DQRI. rte_eth_dev_rx_intr_ctl_q(q) adds q's eventfd (the
-portal DQRI fd) to the thread epoll.
-
-      wire
-       |
-    [ DPMAC ]
-       |
-    [ DPNI ]                                     (1)
-       |
-    TC0:  FQ0   FQ1   FQ2   FQ3                  (2)
-           |     |     |     |                   (3)
-        [DPCON][DPCON][DPCON][DPCON]
-            \     |     |     /                  (4)
-          [ DPIO A ]      [ DPIO B ]             (5)
-             |               |
-            DQRR            DQRR                 (6)
-             |               |
-            DQRI            DQRI                 (7)
-             |               |
-          eventfd         eventfd                (8)
-             |               |
-        rte_epoll_wait  rte_epoll_wait           (9)
-             |               |
-        dpaa2_dev_rx_dqrr                        (10)
-
-  (1)  WRIOP picks a TC (QoS), then RSS-hashes within the TC to an FQ
-  (2)  FQ0..FQ3 are the rte_eth Rx queues
-  (3)  dpni_set_queue(DEST_DPCON): one DPCON per FQ
-  (4)  the lcore portal subscribes to its DPCONs (push_set)
-  (5)  one QBMan software portal per lcore
-  (6)  QMan pushes the FDs into the portal DQRR
-  (7)  DQRI is raised when the DQRR is non-empty
-  (8)  a portal's queues share one fd (its DQRI eventfd)
-  (9)  worker sleeps here when all its queues are idle
-  (10) dpaa2_dev_rx_dqrr drains the DQRR, demuxes FDs to FQs by fqd_ctx
-
-The DQRI and eventfd are portal-wide: a queue's eventfd is its portal's
-DQRI fd, and the inhibit bit is refcounted by armed queues so disabling
-one queue never masks a sibling. The static per-queue bind also lets a
-queue be re-homed to another lcore at runtime, the new worker
-reclaiming the channel, with no set_queue and no port stop.
-
-On single-core 64-byte forwarding this interrupt path runs at ~5.0 Mpps
-versus ~5.86 Mpps polling: per-frame DQRR demux and consume cost about
-15 percent over the polling batch dequeue.
+Add qbman_swp_dqrr_size() to expose the ring depth.
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- doc/guides/nics/features/dpaa2.ini       |   1 +
- doc/guides/rel_notes/release_26_07.rst   |   1 +
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c |  11 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.h |   4 +
- drivers/bus/fslmc/portal/dpaa2_hw_pvt.h  |  27 ++-
- drivers/bus/fslmc/qbman/qbman_portal.c   |   1 +
- drivers/net/dpaa2/dpaa2_ethdev.c         | 293 ++++++++++++++++++++++-
- drivers/net/dpaa2/dpaa2_ethdev.h         |   3 +
- drivers/net/dpaa2/dpaa2_rxtx.c           | 122 ++++++++++
- 9 files changed, 457 insertions(+), 6 deletions(-)
+ doc/guides/nics/dpaa2.rst                     | 10 +++
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      | 72 +++++++++++++------
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.h      | 12 +++-
+ .../fslmc/qbman/include/fsl_qbman_portal.h    |  9 +++
+ drivers/bus/fslmc/qbman/qbman_portal.c        |  6 ++
+ drivers/net/dpaa2/dpaa2_ethdev.c              | 60 +++++++++++++++-
+ drivers/net/dpaa2/dpaa2_ethdev.h              |  7 ++
+ 7 files changed, 151 insertions(+), 25 deletions(-)
 
-diff --git a/doc/guides/nics/features/dpaa2.ini b/doc/guides/nics/features/dpaa2.ini
-index 5def653d1d..b53353eb77 100644
---- a/doc/guides/nics/features/dpaa2.ini
-+++ b/doc/guides/nics/features/dpaa2.ini
-@@ -7,6 +7,7 @@
- Speed capabilities   = Y
- Link status          = Y
- Link status event    = Y
-+Rx interrupt         = Y
- Burst mode info      = Y
- Queue start/stop     = Y
- Scattered Rx         = Y
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 103c4034ca..87c7c57bcc 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -129,6 +129,7 @@ New Features
- * **Updated NXP dpaa2 driver.**
+diff --git a/doc/guides/nics/dpaa2.rst b/doc/guides/nics/dpaa2.rst
+index 2d70bd0ab9..47a52c9287 100644
+--- a/doc/guides/nics/dpaa2.rst
++++ b/doc/guides/nics/dpaa2.rst
+@@ -492,6 +492,16 @@ for details.
+   packets, so that user can check what is wrong with those packets.
+   e.g. ``fslmc:dpni.1,drv_error_queue=1``
  
-   * Added RSS RETA query and update support.
-+  * Added Rx queue interrupt support.
- 
- * **Updated PCAP ethernet driver.**
++* Use dev arg option ``drv_rx_intr_holdoff_us=<uint32>`` to set the Rx queue
++  interrupt coalescing holdoff in microseconds (default 100). Only applies in
++  Rx queue interrupt mode.
++  e.g. ``fslmc:dpni.1,drv_rx_intr_holdoff_us=50``
++
++* Use dev arg option ``drv_rx_intr_threshold=<uint32>`` to set the Rx queue
++  interrupt coalescing frame threshold; 0 (default) means the DQRR ring depth
++  minus one.
++  e.g. ``fslmc:dpni.1,drv_rx_intr_threshold=4``
++
+ Enabling logs
+ -------------
  
 diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-index 3a5abb2e6d..e6b4e74b3b 100644
+index e6b4e74b3b..c5525a94fa 100644
 --- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
 +++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-@@ -204,13 +204,18 @@ dpaa2_affine_dpio_intr_to_respective_core(int32_t dpio_id, int cpu_id)
- 
- 	fclose(file);
+@@ -206,12 +206,35 @@ dpaa2_affine_dpio_intr_to_respective_core(int32_t dpio_id, int cpu_id)
  }
-+#endif /* RTE_EVENT_DPAA2 */
+ #endif /* RTE_EVENT_DPAA2 */
  
--static int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dpio_intr_init)
-+int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
- {
- 	struct epoll_event epoll_ev;
- 	int eventfd, dpio_epoll_fd, ret;
- 	int threshold = 0x3, timeout = 0xFF;
- 
-+	if (dpio_dev->intr_enabled)
-+		return 0;
++/* holdoff (us) -> QBMan ITP units (256 cycles each), capped at the 12-bit field */
++RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dpio_holdoff_to_itp)
++int dpaa2_dpio_holdoff_to_itp(struct dpaa2_dpio_dev *dpio_dev, uint32_t holdoff_us)
++{
++	uint32_t qman_mhz = 0;
++	struct dpio_attr attr;
++	uint64_t itp;
 +
- 	ret = rte_dpaa2_intr_enable(dpio_dev->intr_handle, 0);
- 	if (ret) {
- 		DPAA2_BUS_ERR("Interrupt registration failed");
-@@ -259,9 +264,12 @@ static int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epol
- 		dpio_dev->epoll_fd = dpio_epoll_fd;
++	if (dpio_get_attributes(dpio_dev->dpio, CMD_PRI_LOW, dpio_dev->token, &attr) == 0)
++		qman_mhz = attr.clk / 1000000;
++	itp = qman_mhz ? ((uint64_t)holdoff_us * qman_mhz) / 256 : 0xFF;
++	if (itp > 0xfff)	/* 12-bit ITP field */
++		itp = 0xfff;
++
++	return (int)itp;
++}
++
++/* threshold: DQRR fill raising DQRI (< ring depth); timeout: holdoff in ITP units.
++ * Per-mode values from the caller (eventdev vs rx-queue intr); no env override.
++ * The DQRI config is portal-wide and this is idempotent: the first caller to
++ * arm a portal wins, a later caller's values are ignored (a portal normally
++ * serves a single mode).
++ */
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dpio_intr_init)
+-int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
++int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, int threshold,
++			 int timeout, bool build_epoll)
+ {
+-	struct epoll_event epoll_ev;
+ 	int eventfd, dpio_epoll_fd, ret;
+-	int threshold = 0x3, timeout = 0xFF;
++	struct epoll_event epoll_ev;
+ 
+ 	if (dpio_dev->intr_enabled)
+ 		return 0;
+@@ -222,12 +245,6 @@ int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
+ 		return -1;
  	}
  
-+	dpio_dev->intr_enabled = 1;
-+
+-	if (getenv("DPAA2_PORTAL_INTR_THRESHOLD"))
+-		threshold = atoi(getenv("DPAA2_PORTAL_INTR_THRESHOLD"));
+-
+-	if (getenv("DPAA2_PORTAL_INTR_TIMEOUT"))
+-		sscanf(getenv("DPAA2_PORTAL_INTR_TIMEOUT"), "%x", &timeout);
+-
+ 	qbman_swp_interrupt_set_trigger(dpio_dev->sw_portal,
+ 					QBMAN_SWP_INTERRUPT_DQRI);
+ 	qbman_swp_interrupt_clear_status(dpio_dev->sw_portal, 0xffffffff);
+@@ -238,9 +255,9 @@ int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
+ 	dpio_dev->epoll_fd = -1;
+ 
+ 	/* The event PMD dequeues by sleeping on a private epoll instance owned
+-	 * by the portal, so build it here. A caller that waits on another
+-	 * epoll (the net rx-queue-interrupt path uses the application's) skips
+-	 * this.
++	 * by the portal, so build it here. The net rx-queue-interrupt path
++	 * exposes the raw eventfd through the generic ethdev API and waits on
++	 * the application's own epoll instead, so it skips this.
+ 	 */
+ 	if (build_epoll) {
+ 		dpio_epoll_fd = epoll_create(1);
+@@ -269,11 +286,14 @@ int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
  	return 0;
  }
  
-+#ifdef RTE_EVENT_DPAA2
- static void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
+-#ifdef RTE_EVENT_DPAA2
+-static void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
++RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dpio_intr_deinit)
++void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
  {
  	int ret;
-@@ -274,6 +282,7 @@ static void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
- 		close(dpio_dev->epoll_fd);
- 		dpio_dev->epoll_fd = -1;
- 	}
-+	dpio_dev->intr_enabled = 0;
- }
- #endif
  
++	if (!dpio_dev->intr_enabled)
++		return;
++
+ 	ret = rte_dpaa2_intr_disable(dpio_dev->intr_handle, 0);
+ 	if (ret)
+ 		DPAA2_BUS_ERR("DPIO interrupt disable failed");
+@@ -284,7 +304,6 @@ static void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
+ 	}
+ 	dpio_dev->intr_enabled = 0;
+ }
+-#endif
+ 
+ static int
+ dpaa2_configure_stashing(struct dpaa2_dpio_dev *dpio_dev, int cpu_id)
+@@ -306,9 +325,18 @@ dpaa2_configure_stashing(struct dpaa2_dpio_dev *dpio_dev, int cpu_id)
+ 	}
+ 
+ #ifdef RTE_EVENT_DPAA2
+-	if (dpaa2_dpio_intr_init(dpio_dev, true)) {
+-		DPAA2_BUS_ERR("Interrupt registration failed for dpio");
+-		return -1;
++	{
++		int threshold = 3, timeout = 0xFF;
++
++		if (getenv("DPAA2_PORTAL_INTR_THRESHOLD"))
++			threshold = atoi(getenv("DPAA2_PORTAL_INTR_THRESHOLD"));
++		if (getenv("DPAA2_PORTAL_INTR_TIMEOUT"))
++			sscanf(getenv("DPAA2_PORTAL_INTR_TIMEOUT"), "%x", &timeout);
++
++		if (dpaa2_dpio_intr_init(dpio_dev, threshold, timeout, true)) {
++			DPAA2_BUS_ERR("Interrupt registration failed for dpio");
++			return -1;
++		}
+ 	}
+ 	dpaa2_affine_dpio_intr_to_respective_core(dpio_dev->hw_id, cpu_id);
+ #endif
+@@ -319,9 +347,11 @@ dpaa2_configure_stashing(struct dpaa2_dpio_dev *dpio_dev, int cpu_id)
+ static void dpaa2_put_qbman_swp(struct dpaa2_dpio_dev *dpio_dev)
+ {
+ 	if (dpio_dev) {
+-#ifdef RTE_EVENT_DPAA2
++		/* rx-queue interrupts (net PMD) can arm a portal without the
++		 * event driver; tear it down unconditionally. Safe when never
++		 * armed: intr_deinit returns early if intr is not enabled.
++		 */
+ 		dpaa2_dpio_intr_deinit(dpio_dev);
+-#endif
+ 		rte_atomic16_clear(&dpio_dev->ref_count);
+ 	}
+ }
+@@ -512,6 +542,8 @@ dpaa2_create_dpio_device(int vdev_fd,
+ 		goto err;
+ 	}
+ 
++	DPAA2_BUS_DEBUG("QBMAN clk = %u Hz (%u MHz)", attr.clk, attr.clk / 1000000);
++
+ 	/* find the SoC type for the first time */
+ 	if (!dpaa2_svr_family) {
+ 		struct mc_soc_version mc_plat_info = {0};
 diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h
-index 328e1e788a..10dd968e5f 100644
+index 10dd968e5f..090fa14410 100644
 --- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h
 +++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h
-@@ -50,6 +50,10 @@ int dpaa2_affine_qbman_swp(void);
+@@ -50,9 +50,17 @@ int dpaa2_affine_qbman_swp(void);
  __rte_internal
  int dpaa2_affine_qbman_ethrx_swp(void);
  
-+/* set up a DPIO portal's DQRI interrupt (rx-queue interrupt mode) */
-+__rte_internal
-+int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll);
+-/* set up a DPIO portal's DQRI interrupt (rx-queue interrupt mode) */
++/* set up / tear down a DPIO portal's DQRI interrupt (rx-queue interrupt mode) */
+ __rte_internal
+-int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll);
++int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, int threshold,
++			 int timeout, bool build_epoll);
 +
++__rte_internal
++void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev);
++
++/* convert a coalescing holdoff (microseconds) to QBMan ITP units */
++__rte_internal
++int dpaa2_dpio_holdoff_to_itp(struct dpaa2_dpio_dev *dpio_dev, uint32_t holdoff_us);
+ 
  /* allocate memory for FQ - dq storage */
  __rte_internal
- int
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-index 79a2ec41e3..af75e96b27 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-@@ -133,6 +133,8 @@ struct dpaa2_dpio_dev {
- 	struct rte_intr_handle *intr_handle; /* Interrupt related info */
- 	int32_t	epoll_fd; /**< File descriptor created for interrupt polling */
- 	int32_t hw_id; /**< An unique ID of this DPIO device instance */
-+	uint8_t intr_enabled; /**< DQRI portal interrupt already set up */
-+	uint16_t ethrx_intr_refcnt; /**< rx queues currently armed on this portal */
- 	struct dpaa2_portal_dqrr dpaa2_held_bufs;
- };
+diff --git a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
+index 5375ea386d..842ef6f067 100644
+--- a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
++++ b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
+@@ -157,6 +157,15 @@ uint32_t qbman_swp_intr_timeout_read_status(struct qbman_swp *p);
+  */
+ void qbman_swp_intr_timeout_write(struct qbman_swp *p, uint32_t mask);
  
-@@ -164,6 +166,20 @@ typedef void (dpaa2_queue_cb_dqrr_t)(struct qbman_swp *swp,
- typedef void (dpaa2_queue_cb_eqresp_free_t)(uint16_t eqresp_ci,
- 					struct dpaa2_queue *dpaa2_q);
- 
-+#define DPAA2_NAPI_FD_STASH_SIZE 64	/*!< power of 2; >= 2x rx burst so the
-+					 * peer port's frames fit before HW
-+					 * backpressure (2 ports/worker)
-+					 */
-+
-+/* Lcore-local FIFO of raw FDs demuxed to this queue by another queue's burst
-+ * on the same portal (see dpaa2_queue::napi_stash).
++/**
++ * qbman_swp_dqrr_size() - Get the HW DQRR ring depth of a software portal.
++ * @p: the given software portal object.
++ *
++ * Returns the number of DQRR entries (4 on QBMan < 4.1, 8 on >= 4.1). Useful
++ * as the upper bound for the DQRR interrupt coalescing threshold.
 + */
-+struct dpaa2_napi_stash {
-+	uint16_t head;	/*!< pop index (drain) */
-+	uint16_t tail;	/*!< push index (park) */
-+	struct qbman_fd fd[DPAA2_NAPI_FD_STASH_SIZE];
-+};
++uint8_t qbman_swp_dqrr_size(struct qbman_swp *p);
 +
- struct __rte_cache_aligned dpaa2_queue {
- 	struct rte_mempool *mb_pool; /**< mbuf pool to populate RX ring. */
- 	union {
-@@ -176,7 +192,7 @@ struct __rte_cache_aligned dpaa2_queue {
- 	uint8_t cgid;		/*! < Congestion Group id for this queue */
- 	uint64_t rx_pkts;
- 	uint64_t tx_pkts;
--	uint64_t err_pkts;
-+	uint64_t err_pkts;	/*!< also counts NAPI stash-full drops (imissed) */
- 	union {
- 		/**Ingress*/
- 		struct queue_storage_info_t *q_storage[RTE_MAX_LCORE];
-@@ -195,6 +211,15 @@ struct __rte_cache_aligned dpaa2_queue {
- 	uint64_t offloads;
- 	uint64_t lpbk_cntx;
- 	uint8_t data_stashing_off;
-+	/* NAPI rx-interrupt: per-queue DPCON bound to this FQ at dev_start
-+	 * (DEST_DPCON, static); the polling worker subscribes its ethrx portal
-+	 * to the channel and arms the DQRI, rx_dqrr drains+demuxes by fqd_ctx.
-+	 */
-+	struct dpaa2_dpcon_dev *napi_dpcon;	/*!< notif channel, NULL = napi off */
-+	RTE_ATOMIC(struct dpaa2_dpio_dev *) napi_sub_dpio;	/*!< subscribed portal or NULL */
-+	uint8_t napi_channel_index;		/*!< portal-local static-dequeue idx */
-+	uint8_t napi_armed;			/*!< this queue requests DQRI wakeups */
-+	struct dpaa2_napi_stash napi_stash;	/*!< NAPI/DQRR demux FDs (~2 KB) */
- };
- 
- struct swp_active_dqs {
+ /**
+  * qbman_swp_interrupt_get_trigger() - Get the data in software portal
+  * interrupt enable register.
 diff --git a/drivers/bus/fslmc/qbman/qbman_portal.c b/drivers/bus/fslmc/qbman/qbman_portal.c
-index 84853924e7..947415363a 100644
+index 947415363a..81c2d87e0a 100644
 --- a/drivers/bus/fslmc/qbman/qbman_portal.c
 +++ b/drivers/bus/fslmc/qbman/qbman_portal.c
-@@ -448,6 +448,7 @@ int qbman_swp_interrupt_get_inhibit(struct qbman_swp *p)
- 	return qbman_cinh_read(&p->sys, QBMAN_CINH_SWP_IIR);
+@@ -433,6 +433,12 @@ void qbman_swp_intr_timeout_write(struct qbman_swp *p, uint32_t mask)
+ 	qbman_cinh_write(&p->sys, QBMAN_CINH_SWP_ITPR, mask);
  }
  
-+RTE_EXPORT_INTERNAL_SYMBOL(qbman_swp_interrupt_set_inhibit)
- void qbman_swp_interrupt_set_inhibit(struct qbman_swp *p, int inhibit)
++RTE_EXPORT_INTERNAL_SYMBOL(qbman_swp_dqrr_size)
++uint8_t qbman_swp_dqrr_size(struct qbman_swp *p)
++{
++	return p->dqrr.dqrr_size;
++}
++
+ uint32_t qbman_swp_interrupt_get_trigger(struct qbman_swp *p)
  {
- 	qbman_cinh_write(&p->sys, QBMAN_CINH_SWP_IIR,
+ 	return qbman_cinh_read(&p->sys, QBMAN_CINH_SWP_IER);
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 8589398324..6407c24755 100644
+index 6407c24755..7ca454eaae 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -658,6 +658,8 @@ dpaa2_clear_queue_active_dps(struct dpaa2_queue *q, int num_lcores)
- 	}
- }
+@@ -36,6 +36,9 @@
+ #define DRIVER_ERROR_QUEUE  "drv_err_queue"
+ #define DRIVER_NO_TAILDROP  "drv_no_taildrop"
+ #define DRIVER_NO_DATA_STASHING "drv_no_data_stashing"
++#define DRIVER_RX_INTR_HOLDOFF_US "drv_rx_intr_holdoff_us"
++#define DPAA2_RX_INTR_HOLDOFF_US_DEF 100
++#define DRIVER_RX_INTR_THRESHOLD "drv_rx_intr_threshold"
+ #define CHECK_INTERVAL         100  /* 100ms */
+ #define MAX_REPEAT_TIME        90   /* 9s (90 * 100ms) in total */
  
-+static void dpaa2_dev_rx_queue_intr_unbind(struct dpaa2_queue *dpaa2_q);
-+
- static void
- dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
- {
-@@ -675,6 +677,12 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
- 		/* cleaning up queue storage */
- 		for (i = 0; i < priv->nb_rx_queues; i++) {
- 			dpaa2_q = priv->rx_vq[i];
-+			if (dpaa2_q->napi_dpcon) {	/* release the rx-intr channel */
-+				dpaa2_dev_rx_queue_intr_unbind(dpaa2_q);
-+				rte_dpaa2_free_dpcon_dev(dpaa2_q->napi_dpcon);
-+				dpaa2_q->napi_dpcon = NULL;
-+				dpaa2_q->napi_sub_dpio = NULL;
-+			}
- 			dpaa2_clear_queue_active_dps(dpaa2_q,
- 						RTE_MAX_LCORE);
- 			dpaa2_queue_storage_free(dpaa2_q,
-@@ -880,6 +888,21 @@ dpaa2_eth_dev_configure(struct rte_eth_dev *dev)
- 		}
- 	}
- 
-+	if (dev->data->dev_conf.intr_conf.rxq) {
-+		if (!dev->intr_handle)
-+			dev->intr_handle = rte_intr_instance_alloc(
-+					RTE_INTR_INSTANCE_F_PRIVATE);
-+		if (!dev->intr_handle ||
-+		    rte_intr_vec_list_alloc(dev->intr_handle, "rxq_intr",
-+				dev->data->nb_rx_queues) ||
-+		    rte_intr_nb_efd_set(dev->intr_handle,
-+				dev->data->nb_rx_queues) ||
-+		    rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_EXT)) {
-+			DPAA2_PMD_ERR("Failed to set up rx-queue interrupts");
-+			return -rte_errno;
-+		}
-+	}
-+
- 	dpaa2_tm_init(dev);
- 
- 	return 0;
-@@ -898,6 +921,7 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- {
+@@ -3078,7 +3081,7 @@ dpaa2_dev_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
  	struct dpaa2_dev_priv *priv = dev->data->dev_private;
- 	struct fsl_mc_io *dpni = dev->process_private;
-+	bool dpcon_allocated = false;
- 	struct dpaa2_queue *dpaa2_q;
- 	struct dpni_queue cfg;
- 	uint8_t options = 0;
-@@ -938,6 +962,21 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 	dpaa2_q->bp_array = rte_dpaa2_bpid_info;
- 	dpaa2_q->offloads = rx_conf->offloads;
+ 	struct dpaa2_queue *dpaa2_q = priv->rx_vq[queue_id];
+ 	struct dpaa2_dpio_dev *dpio, *old;
+-	int ret;
++	int ret, threshold, timeout, dqrr_max;
  
-+	/* NAPI: grab a DPCON channel so dev_start can bind this FQ statically.
-+	 * The DQRR burst replaces the poll path for every queue at once, so a
-+	 * missing channel is fatal rather than a silent per-queue fallback.
+ 	if (!dpaa2_q->napi_dpcon)
+ 		return -ENOTSUP;	/* no channel -> caller keeps polling */
+@@ -3087,10 +3090,22 @@ dpaa2_dev_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
+ 		return -EIO;
+ 	dpio = DPAA2_PER_LCORE_ETHRX_DPIO;
+ 
++	/* threshold from drv_rx_intr_threshold (0 = ring-1), holdoff from
++	 * drv_rx_intr_holdoff_us. idempotent: no-op if the dpio is already
++	 * armed (e.g. event driver)
 +	 */
-+	dpaa2_q->napi_sub_dpio = NULL;
-+	if (dev->data->dev_conf.intr_conf.rxq && !dpaa2_q->napi_dpcon) {
-+		dpaa2_q->napi_dpcon = rte_dpaa2_alloc_dpcon_dev();
-+		if (!dpaa2_q->napi_dpcon) {
-+			DPAA2_PMD_ERR("rxq %d: no DPCON for rx-queue interrupts",
-+				      rx_queue_id);
-+			return -ENODEV;
-+		}
-+		dpcon_allocated = true;
++	dqrr_max = qbman_swp_dqrr_size(dpio->sw_portal) - 1;
++	threshold = priv->rx_intr_threshold ? (int)priv->rx_intr_threshold : dqrr_max;
++	if (threshold < 1 || threshold > dqrr_max) {
++		DPAA2_PMD_WARN("drv_rx_intr_threshold %d out of [1, %d], clamping",
++			       threshold, dqrr_max);
++		threshold = threshold < 1 ? 1 : dqrr_max;
 +	}
-+
- 	/*Get the flow id from given VQ id*/
- 	flow_id = dpaa2_q->flow_id;
- 	memset(&cfg, 0, sizeof(struct dpni_queue));
-@@ -945,6 +984,10 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 	options = options | DPNI_QUEUE_OPT_USER_CTX;
- 	cfg.user_context = (size_t)(dpaa2_q);
++	timeout = dpaa2_dpio_holdoff_to_itp(dpio, priv->rx_intr_holdoff_us);
+ 	/* build_epoll=false: the generic ethdev rx-intr API waits on the
+ 	 * application epoll, not the portal's private one (event PMD only).
+ 	 */
+-	ret = dpaa2_dpio_intr_init(dpio, false);	/* VFIO eventfd, no MC */
++	ret = dpaa2_dpio_intr_init(dpio, threshold, timeout, false);
+ 	if (ret)
+ 		return ret;
  
-+	/* clear any stale DPIO dest left scheduled by a prior rx-intr run */
-+	options |= DPNI_QUEUE_OPT_DEST;
-+	cfg.destination.type = DPNI_DEST_NONE;
-+
- 	/* check if a private cgr available. */
- 	for (i = 0; i < priv->max_cgs; i++) {
- 		if (!priv->cgid_in_use[i]) {
-@@ -985,7 +1028,7 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 			dpaa2_q->tc_index, flow_id, options, &cfg);
- 	if (ret) {
- 		DPAA2_PMD_ERR("Error in setting the rx flow: = %d", ret);
--		return ret;
-+		goto err_free_dpcon;
- 	}
- 
- 	dpaa2_q->nb_desc = nb_rx_desc;
-@@ -1026,7 +1069,7 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 		if (ret) {
- 			DPAA2_PMD_ERR("Error in setting taildrop. err=(%d)",
- 				ret);
--			return ret;
-+			goto err_free_dpcon;
- 		}
- 	} else { /* Disable tail Drop */
- 		struct dpni_taildrop taildrop = {0};
-@@ -1046,12 +1089,22 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 		if (ret) {
- 			DPAA2_PMD_ERR("Error in setting taildrop. err=(%d)",
- 				ret);
--			return ret;
-+			goto err_free_dpcon;
- 		}
- 	}
- 
- 	dev->data->rx_queues[rx_queue_id] = dpaa2_q;
- 	return 0;
-+
-+err_free_dpcon:
-+	/* free only the DPCON this call allocated; a pre-existing one belongs to
-+	 * an earlier setup and is released at dev_close
-+	 */
-+	if (dpcon_allocated) {
-+		rte_dpaa2_free_dpcon_dev(dpaa2_q->napi_dpcon);
-+		dpaa2_q->napi_dpcon = NULL;
-+	}
-+	return ret;
+@@ -3346,6 +3361,35 @@ dpaa2_get_devargs(struct rte_devargs *devargs, const char *key)
+ 	return 1;
  }
  
- static int
-@@ -1210,6 +1263,62 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	return 0;
- }
- 
-+/* Fully release a queue's rx-interrupt state: detach the FQ from its DPCON,
-+ * unbind the static dequeue channel from the portal and free any stashed FDs.
-+ * Teardown only: the port is stopped and the portal quiesced; not a runtime
-+ * rx_queue_intr_disable() replacement. Call before freeing the DPCON.
-+ */
++static int
++u32_devarg_handler(__rte_unused const char *key, const char *value, void *opaque)
++{
++	char *end;
++	unsigned long v = strtoul(value, &end, 0);
++
++	if (*value == '\0' || *end != '\0' || v > UINT32_MAX)
++		return -1;
++	*(uint32_t *)opaque = (uint32_t)v;
++
++	return 0;
++}
++
++/* Read a u32-valued devarg into *out, leaving *out untouched if absent. */
 +static void
-+dpaa2_dev_rx_queue_intr_unbind(struct dpaa2_queue *dpaa2_q)
++dpaa2_get_devargs_u32(struct rte_devargs *devargs, const char *key, uint32_t *out)
 +{
-+	struct dpaa2_dev_priv *priv;
-+	struct dpaa2_dpio_dev *dpio;
-+	struct fsl_mc_io *dpni;
-+	struct dpni_queue cfg;
-+	int ret;
++	struct rte_kvargs *kvlist;
 +
-+	if (!dpaa2_q || !dpaa2_q->napi_dpcon)
++	if (!devargs)
 +		return;
-+
-+	/* detach the FQ from its DPCON so it no longer points at a channel
-+	 * about to be returned to the pool (dpni is disabled at teardown)
-+	 */
-+	priv = dpaa2_q->eth_data->dev_private;
-+	dpni = priv->eth_dev->process_private;
-+	memset(&cfg, 0, sizeof(cfg));
-+	cfg.destination.type = DPNI_DEST_NONE;
-+	ret = dpni_set_queue(dpni, CMD_PRI_LOW, priv->token, DPNI_QUEUE_RX,
-+			     dpaa2_q->tc_index, dpaa2_q->flow_id,
-+			     DPNI_QUEUE_OPT_DEST, &cfg);
-+	if (ret)
-+		DPAA2_PMD_ERR("napi: DEST_NONE rxq flow %u: %d",
-+			      dpaa2_q->flow_id, ret);
-+
-+	/* unbind the static dequeue channel from the portal it was armed on */
-+	dpio = rte_atomic_load_explicit(&dpaa2_q->napi_sub_dpio,
-+			rte_memory_order_acquire);
-+	if (dpio) {
-+		qbman_swp_push_set(dpio->sw_portal,
-+				dpaa2_q->napi_channel_index, 0);
-+		if (dpaa2_q->napi_armed) {
-+			dpaa2_q->napi_armed = 0;
-+			if (dpio->ethrx_intr_refcnt > 0 &&
-+			    --dpio->ethrx_intr_refcnt == 0)
-+				qbman_swp_interrupt_set_inhibit(dpio->sw_portal, 1);
-+		}
-+		ret = dpio_remove_static_dequeue_channel(dpio->dpio, CMD_PRI_LOW,
-+				dpio->token, dpaa2_q->napi_dpcon->dpcon_id);
-+		if (ret)
-+			DPAA2_PMD_ERR("napi: remove DPCON %d static dequeue channel: %d",
-+				      dpaa2_q->napi_dpcon->dpcon_id, ret);
-+		rte_atomic_store_explicit(&dpaa2_q->napi_sub_dpio, NULL,
-+				rte_memory_order_release);
-+	}
-+
-+	/* free FDs parked for this queue but never drained by a burst */
-+	dpaa2_dev_rx_queue_napi_stash_drain(dpaa2_q);
++	kvlist = rte_kvargs_parse(devargs->args, NULL);
++	if (!kvlist)
++		return;
++	if (rte_kvargs_count(kvlist, key))
++		rte_kvargs_process(kvlist, key, u32_devarg_handler, out);
++	rte_kvargs_free(kvlist);
 +}
 +
- static void
- dpaa2_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t rx_queue_id)
- {
-@@ -1239,6 +1348,12 @@ dpaa2_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t rx_queue_id)
- 		priv->cgid_in_use[dpaa2_q->cgid] = 0;
- 		dpaa2_q->cgid = DPAA2_INVALID_CGID;
- 	}
-+
-+	if (dpaa2_q->napi_dpcon) {
-+		dpaa2_dev_rx_queue_intr_unbind(dpaa2_q);
-+		rte_dpaa2_free_dpcon_dev(dpaa2_q->napi_dpcon);
-+		dpaa2_q->napi_dpcon = NULL;
-+	}
- }
- 
  static int
-@@ -1389,6 +1504,36 @@ dpaa2_dev_start(struct rte_eth_dev *dev)
- 	intr_handle = dpaa2_dev->intr_handle;
- 
- 	PMD_INIT_FUNC_TRACE();
-+
-+	/* NAPI: bind each rx FQ to its own DPCON channel while the dpni is still
-+	 * disabled (a DEST set_queue on an enabled dpni wedges the shared MC).
-+	 * Static, affinity-free; the polling worker subscribes its portal later.
-+	 */
-+	if (dev->data->dev_conf.intr_conf.rxq) {
-+		for (i = 0; i < data->nb_rx_queues; i++) {
-+			dpaa2_q = data->rx_queues[i];
-+			if (!dpaa2_q->napi_dpcon)
-+				continue;
-+			memset(&cfg, 0, sizeof(cfg));
-+			cfg.destination.type = DPNI_DEST_DPCON;
-+			cfg.destination.id = dpaa2_q->napi_dpcon->dpcon_id;
-+			cfg.user_context = (size_t)dpaa2_q;
-+			ret = dpni_set_queue(dpni, CMD_PRI_LOW, priv->token,
-+					DPNI_QUEUE_RX, dpaa2_q->tc_index,
-+					dpaa2_q->flow_id,
-+					DPNI_QUEUE_OPT_DEST | DPNI_QUEUE_OPT_USER_CTX,
-+					&cfg);
-+			if (ret) {
-+				DPAA2_PMD_ERR("napi: DPCON bind rxq %d: %d", i, ret);
-+				return ret;
-+			}
-+		}
-+		/* DQRR burst for all queues; a queue only yields frames once
-+		 * rx_queue_intr_enable() has subscribed its portal
-+		 */
-+		dev->rx_pkt_burst = dpaa2_dev_rx_dqrr;
-+	}
-+
- 	ret = dpni_enable(dpni, CMD_PRI_LOW, priv->token);
- 	if (ret) {
- 		DPAA2_PMD_ERR("Failure in enabling dpni %d device: err=%d",
-@@ -1859,6 +2004,13 @@ dpaa2_dev_stats_get(struct rte_eth_dev *dev,
- 	stats->oerrors = value.page_2.egress_discarded_frames;
- 	stats->imissed = value.page_2.ingress_nobuffer_discards;
- 
-+	/* software Rx drops (full napi stash) are not in the HW counters */
-+	for (i = 0; i < priv->nb_rx_queues; i++) {
-+		dpaa2_rxq = priv->rx_vq[i];
-+		if (dpaa2_rxq != NULL)
-+			stats->imissed += dpaa2_rxq->err_pkts;
-+	}
-+
- 	/* Fill in per queue stats */
- 	if (qstats != NULL) {
- 		for (i = 0; (i < RTE_ETHDEV_QUEUE_STAT_CNTRS) &&
-@@ -2172,8 +2324,10 @@ dpaa2_dev_stats_reset(struct rte_eth_dev *dev)
- 	/* Reset the per queue stats in dpaa2_queue structure */
- 	for (i = 0; i < priv->nb_rx_queues; i++) {
- 		dpaa2_q = priv->rx_vq[i];
--		if (dpaa2_q)
-+		if (dpaa2_q) {
- 			dpaa2_q->rx_pkts = 0;
-+			dpaa2_q->err_pkts = 0;
-+		}
+ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ {
+@@ -3373,6 +3417,14 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 		DPAA2_PMD_INFO("No RX prefetch mode");
  	}
  
- 	for (i = 0; i < priv->nb_tx_queues; i++) {
-@@ -2901,6 +3055,135 @@ rte_pmd_dpaa2_thread_init(void)
- 	}
- }
- 
-+/* Arm rx-queue interrupts on the worker lcore: subscribe its ethrx portal to
-+ * the queue's DPCON channel (one-shot per-portal MC) and unmask the portal DQRI
-+ * (pure QBMan).
-+ *
-+ * Affinity is static queue-to-lcore; a lcore may own several rx queues. The
-+ * DQRI and the eventfd are portal-wide, so frames are demuxed by fqd_ctx in the
-+ * burst and the portal's inhibit bit is reference-counted by the number of its
-+ * queues currently armed (ethrx_intr_refcnt) -- disabling one queue must not
-+ * mask wakeups still wanted by its siblings. napi_armed and ethrx_intr_refcnt
-+ * are plain (not atomic): these ops run on the queue's owner lcore against its
-+ * own portal (one portal per lcore), so per-portal isolation keeps them from
-+ * racing, not control-plane serialization.
-+ *
-+ * A re-home reclaims the channel by poking the old portal, so the caller must
-+ * have quiesced the previous owner and disabled the queue there; napi_armed is
-+ * then 0 and only the new portal is counted.
-+ */
-+static int
-+dpaa2_dev_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_queue *dpaa2_q = priv->rx_vq[queue_id];
-+	struct dpaa2_dpio_dev *dpio, *old;
-+	int ret;
++	priv->rx_intr_holdoff_us = DPAA2_RX_INTR_HOLDOFF_US_DEF;
++	dpaa2_get_devargs_u32(dev->devargs, DRIVER_RX_INTR_HOLDOFF_US,
++			      &priv->rx_intr_holdoff_us);
 +
-+	if (!dpaa2_q->napi_dpcon)
-+		return -ENOTSUP;	/* no channel -> caller keeps polling */
++	priv->rx_intr_threshold = 0;
++	dpaa2_get_devargs_u32(dev->devargs, DRIVER_RX_INTR_THRESHOLD,
++			      &priv->rx_intr_threshold);
 +
-+	if (dpaa2_affine_qbman_ethrx_swp())
-+		return -EIO;
-+	dpio = DPAA2_PER_LCORE_ETHRX_DPIO;
-+
-+	/* build_epoll=false: the generic ethdev rx-intr API waits on the
-+	 * application epoll, not the portal's private one (event PMD only).
-+	 */
-+	ret = dpaa2_dpio_intr_init(dpio, false);	/* VFIO eventfd, no MC */
-+	if (ret)
-+		return ret;
-+
-+	old = rte_atomic_load_explicit(&dpaa2_q->napi_sub_dpio, rte_memory_order_acquire);
-+	if (old && old != dpio && dpaa2_q->napi_armed) {
-+		DPAA2_PMD_ERR("rxq %d still armed on another portal; disable it first",
-+			      queue_id);
-+		return -EBUSY;
-+	}
-+	if (old != dpio) {
-+		if (old) {	/* reclaim from old portal (quiesced; QBMan MMIO unsynced) */
-+			qbman_swp_push_set(old->sw_portal,
-+					dpaa2_q->napi_channel_index, 0);
-+			ret = dpio_remove_static_dequeue_channel(old->dpio,
-+					CMD_PRI_LOW, old->token,
-+					dpaa2_q->napi_dpcon->dpcon_id);
-+			/* push_set(0) above already stops the old portal from
-+			 * dequeuing; a failed unbind only leaks a static-channel
-+			 * slot on the old DPIO, so warn and proceed
-+			 */
-+			if (ret)
-+				DPAA2_PMD_WARN("napi: reclaim rxq %d: %d",
-+					       queue_id, ret);
-+			/* on no portal until the add below succeeds */
-+			rte_atomic_store_explicit(&dpaa2_q->napi_sub_dpio, NULL,
-+					rte_memory_order_release);
-+		}
-+		ret = dpio_add_static_dequeue_channel(dpio->dpio, CMD_PRI_LOW,
-+				dpio->token, dpaa2_q->napi_dpcon->dpcon_id,
-+				&dpaa2_q->napi_channel_index);
-+		if (ret) {
-+			DPAA2_PMD_ERR("napi: subscribe rxq %d: %d", queue_id, ret);
-+			return ret;
-+		}
-+		qbman_swp_push_set(dpio->sw_portal,
-+				dpaa2_q->napi_channel_index, 1);
-+		/* point this queue's eventfd at the portal's DQRI fd so the
-+		 * generic rte_eth_dev_rx_intr_ctl_q epoll wakes on it
-+		 */
-+		if (rte_intr_vec_list_index_set(dev->intr_handle, queue_id, queue_id) ||
-+		    rte_intr_efds_index_set(dev->intr_handle, queue_id,
-+				rte_intr_fd_get(dpio->intr_handle))) {
-+			DPAA2_PMD_ERR("napi: efd wiring rxq %d", queue_id);
-+			/* unwind the half-done subscription so HW and driver
-+			 * state stay consistent
-+			 */
-+			qbman_swp_push_set(dpio->sw_portal,
-+					dpaa2_q->napi_channel_index, 0);
-+			dpio_remove_static_dequeue_channel(dpio->dpio,
-+					CMD_PRI_LOW, dpio->token,
-+					dpaa2_q->napi_dpcon->dpcon_id);
-+			return -EIO;
-+		}
-+		rte_atomic_store_explicit(&dpaa2_q->napi_sub_dpio, dpio, rte_memory_order_release);
-+	}
-+
-+	/* arm this queue; the portal DQRI is unmasked only on the 0 -> 1 edge
-+	 * of its armed-queue count
-+	 */
-+	if (!dpaa2_q->napi_armed) {
-+		dpaa2_q->napi_armed = 1;
-+		if (dpio->ethrx_intr_refcnt++ == 0) {
-+			qbman_swp_interrupt_clear_status(dpio->sw_portal,
-+					0xffffffff);
-+			qbman_swp_interrupt_set_inhibit(dpio->sw_portal, 0);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/* Disarm rx-queue interrupts for this queue. The portal DQRI is masked only
-+ * once the last of its queues disarms; act on the portal the queue is actually
-+ * subscribed to, not the caller's current portal.
-+ */
-+static int
-+dpaa2_dev_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_queue *dpaa2_q = priv->rx_vq[queue_id];
-+	struct dpaa2_dpio_dev *dpio;
-+
-+	dpio = rte_atomic_load_explicit(&dpaa2_q->napi_sub_dpio, rte_memory_order_acquire);
-+	if (dpio && dpaa2_q->napi_armed) {
-+		dpaa2_q->napi_armed = 0;
-+		if (dpio->ethrx_intr_refcnt > 0 &&
-+		    --dpio->ethrx_intr_refcnt == 0)
-+			qbman_swp_interrupt_set_inhibit(dpio->sw_portal, 1);
-+	}
-+
-+	return 0;
-+}
-+
- static struct eth_dev_ops dpaa2_ethdev_ops = {
- 	.dev_configure	  = dpaa2_eth_dev_configure,
- 	.dev_start	      = dpaa2_dev_start,
-@@ -2929,6 +3212,8 @@ static struct eth_dev_ops dpaa2_ethdev_ops = {
- 	.vlan_tpid_set	      = dpaa2_vlan_tpid_set,
- 	.rx_queue_setup    = dpaa2_dev_rx_queue_setup,
- 	.rx_queue_release  = dpaa2_dev_rx_queue_release,
-+	.rx_queue_intr_enable = dpaa2_dev_rx_queue_intr_enable,
-+	.rx_queue_intr_disable = dpaa2_dev_rx_queue_intr_disable,
- 	.tx_queue_setup    = dpaa2_dev_tx_queue_setup,
- 	.rx_burst_mode_get = dpaa2_dev_rx_burst_mode_get,
- 	.tx_burst_mode_get = dpaa2_dev_tx_burst_mode_get,
+ 	if (dpaa2_get_devargs(dev->devargs, DRIVER_LOOPBACK_MODE)) {
+ 		priv->flags |= DPAA2_RX_LOOPBACK_MODE;
+ 		DPAA2_PMD_INFO("Rx loopback mode");
+@@ -3888,5 +3940,7 @@ RTE_PMD_REGISTER_PARAM_STRING(NET_DPAA2_PMD_DRIVER_NAME,
+ 		DRIVER_RX_PARSE_ERR_DROP "=<int>"
+ 		DRIVER_ERROR_QUEUE "=<int>"
+ 		DRIVER_NO_TAILDROP "=<int>"
+-		DRIVER_NO_DATA_STASHING "=<int>");
++		DRIVER_NO_DATA_STASHING "=<int> "
++		DRIVER_RX_INTR_HOLDOFF_US "=<uint32> "
++		DRIVER_RX_INTR_THRESHOLD "=<uint32>");
+ RTE_LOG_REGISTER_DEFAULT(dpaa2_logtype_pmd, NOTICE);
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index 3f224c654e..65fb48bd27 100644
+index 65fb48bd27..d8be1f8bce 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.h
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -500,6 +500,9 @@ uint16_t dpaa2_dev_loopback_rx(void *queue, struct rte_mbuf **bufs,
+@@ -412,6 +412,13 @@ struct dpaa2_dev_priv {
+ 	uint8_t max_cgs;
+ 	uint8_t cgid_in_use[MAX_RX_QUEUES];
  
- uint16_t dpaa2_dev_prefetch_rx(void *queue, struct rte_mbuf **bufs,
- 			       uint16_t nb_pkts);
-+uint16_t dpaa2_dev_rx_dqrr(void *queue, struct rte_mbuf **bufs,
-+			   uint16_t nb_pkts);
-+void dpaa2_dev_rx_queue_napi_stash_drain(struct dpaa2_queue *dpaa2_q);
- void dpaa2_dev_process_parallel_event(struct qbman_swp *swp,
- 				      const struct qbman_fd *fd,
- 				      const struct qbman_result *dq,
-diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index b316e23e87..189accc1de 100644
---- a/drivers/net/dpaa2/dpaa2_rxtx.c
-+++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -922,6 +922,128 @@ dpaa2_dev_prefetch_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	return num_rx;
- }
- 
-+/* Convert a DQRR'd FD (single or scatter-gather) to an mbuf and apply software
-+ * VLAN strip, like the poll path.
-+ */
-+static inline struct rte_mbuf *
-+dpaa2_dqrr_fd_to_mbuf(const struct qbman_fd *fd,
-+		      struct rte_eth_dev_data *eth_data)
-+{
-+	struct rte_mbuf *m;
++	/* DQRI holdoff (us) for rx-queue interrupts (drv_rx_intr_holdoff_us) */
++	uint32_t rx_intr_holdoff_us;
++	/* DQRI threshold for rx-queue interrupts (drv_rx_intr_threshold);
++	 * 0 = auto (DQRR ring depth - 1)
++	 */
++	uint32_t rx_intr_threshold;
 +
-+	if (unlikely(DPAA2_FD_GET_FORMAT(fd) == qbman_fd_sg))
-+		m = eth_sg_fd_to_mbuf(fd, eth_data->port_id);
-+	else
-+		m = eth_fd_to_mbuf(fd, eth_data->port_id);
-+	if (eth_data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
-+		rte_vlan_strip(m);
-+	return m;
-+}
-+
-+/* prefetch a DQRR'd FD's HW annotation (parse area) ahead of conversion */
-+static inline void
-+dpaa2_dqrr_prefetch_annot(const struct qbman_fd *fd)
-+{
-+	rte_prefetch0((void *)((size_t)DPAA2_IOVA_TO_VADDR(DPAA2_GET_FD_ADDR(fd))
-+			       + DPAA2_FD_PTA_SIZE));
-+}
-+
-+/* Free FDs a sibling burst parked in this queue's stash but that were never
-+ * drained (queue released/freed while the lcore still held its frames).
-+ */
-+void
-+dpaa2_dev_rx_queue_napi_stash_drain(struct dpaa2_queue *dpaa2_q)
-+{
-+	struct dpaa2_napi_stash *stash = &dpaa2_q->napi_stash;
-+	const struct qbman_fd *fd;
-+
-+	while (stash->head != stash->tail) {
-+		fd = &stash->fd[stash->head & (DPAA2_NAPI_FD_STASH_SIZE - 1)];
-+		rte_pktmbuf_free(dpaa2_dqrr_fd_to_mbuf(fd, dpaa2_q->eth_data));
-+		stash->head++;
-+	}
-+	stash->head = 0;
-+	stash->tail = 0;
-+}
-+
-+/* rx interrupt/DQRR path: the FQ is scheduled to a channel the lcore's ethrx
-+ * portal statically dequeues -- a VDQ on a scheduled FQ never completes, so DQRR
-+ * is the only model compatible with interrupt sleep. One portal serves every
-+ * queue the lcore owns, so the burst demuxes by fqd_ctx: own frames are
-+ * returned, foreign ones have their raw FD parked in the target queue's stash.
-+ *
-+ * The application must therefore poll all queues assigned to the lcore after a
-+ * wakeup -- the same scheduling contract as plain DPDK polling. When a foreign
-+ * queue's stash is full the FD is dropped (freed) rather than left on the shared
-+ * DQRR ring, which would head-of-line block every other queue on the portal.
-+ */
-+uint16_t __rte_hot
-+dpaa2_dev_rx_dqrr(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
-+{
-+	struct dpaa2_queue *dpaa2_q = queue;
-+	struct rte_eth_dev_data *eth_data = dpaa2_q->eth_data;
-+	struct dpaa2_napi_stash *stash = &dpaa2_q->napi_stash;
-+	const struct qbman_result *dq;
-+	const struct qbman_fd *fd;
-+	struct dpaa2_queue *rxq;
-+	struct qbman_swp *swp;
-+	uint16_t num_rx = 0;
-+
-+	if (unlikely(!DPAA2_PER_LCORE_ETHRX_DPIO)) {
-+		if (dpaa2_affine_qbman_ethrx_swp()) {
-+			DPAA2_PMD_ERR("Failure in affining portal");
-+			return 0;
-+		}
-+	}
-+	swp = DPAA2_PER_LCORE_ETHRX_PORTAL;
-+
-+	/* our frames parked by another queue's burst -- convert now (hot) */
-+	while (num_rx < nb_pkts && stash->head != stash->tail) {
-+		fd = &stash->fd[stash->head & (DPAA2_NAPI_FD_STASH_SIZE - 1)];
-+		if (dpaa2_svr_family != SVR_LX2160A &&
-+		    (uint16_t)(stash->head + 1) != stash->tail)
-+			dpaa2_dqrr_prefetch_annot(&stash->fd[(stash->head + 1) &
-+					(DPAA2_NAPI_FD_STASH_SIZE - 1)]);
-+		bufs[num_rx++] = dpaa2_dqrr_fd_to_mbuf(fd, eth_data);
-+		stash->head++;
-+	}
-+
-+	while (num_rx < nb_pkts) {
-+		dq = qbman_swp_dqrr_next(swp);
-+		if (!dq)
-+			break;			/* ring momentarily empty */
-+		qbman_swp_prefetch_dqrr_next(swp);
-+		fd = qbman_result_DQ_fd(dq);
-+		/* parse summary is in the FRC on LX2160A; annotation is HW-stashed */
-+		if (dpaa2_svr_family != SVR_LX2160A)
-+			dpaa2_dqrr_prefetch_annot(fd);
-+		rxq = (struct dpaa2_queue *)(size_t)qbman_result_DQ_fqd_ctx(dq);
-+		if (unlikely(!rxq))
-+			rxq = dpaa2_q;
-+		if (rxq == dpaa2_q) {
-+			bufs[num_rx++] = dpaa2_dqrr_fd_to_mbuf(fd, eth_data);
-+		} else {
-+			struct dpaa2_napi_stash *fs = &rxq->napi_stash;
-+
-+			if (unlikely((uint16_t)(fs->tail - fs->head) >=
-+						DPAA2_NAPI_FD_STASH_SIZE)) {
-+				/* stash full: drop rather than leave it on the ring
-+				 * and head-of-line block the shared portal
-+				 */
-+				rte_pktmbuf_free(dpaa2_dqrr_fd_to_mbuf(fd, rxq->eth_data));
-+				rxq->err_pkts++;
-+			} else {
-+				fs->fd[fs->tail & (DPAA2_NAPI_FD_STASH_SIZE - 1)] = *fd;
-+				fs->tail++;
-+			}
-+		}
-+		qbman_swp_dqrr_consume(swp, dq);
-+	}
-+
-+	dpaa2_q->rx_pkts += num_rx;
-+	return num_rx;
-+}
-+
- void __rte_hot
- dpaa2_dev_process_parallel_event(struct qbman_swp *swp,
- 				 const struct qbman_fd *fd,
+ 	/* Current hash distribution size per RX TC, written by
+ 	 * dpaa2_setup_flow_dist_size() and read by reta_query / reta_update.
+ 	 * Zero means "use default" (= nb_rx_queues clamped to dist_queues).
 -- 
 2.43.0
 
