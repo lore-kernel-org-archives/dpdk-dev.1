@@ -2,71 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D22B2CD98C7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 09:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D123FCD98CC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 09:46:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1BD7442F7B;
-	Thu, 11 Jun 2026 11:30:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B4CE342F7A;
+	Thu, 11 Jun 2026 11:46:10 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 08F4842F75
- for <dev@dpdk.org>; Thu, 11 Jun 2026 11:30:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7F5044026A
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 11:46:09 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1781170217;
+ s=mimecast20190719; t=1781171169;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding;
- bh=fEZuUuoJIXTu5ywpvRAQ+3+G0ZwRWHhYAILI1/KwwSU=;
- b=FIahK2iKdWZTYGr3I0lazKnM+154syk/kYDtVKMJEF8d2P332LTfbssKZpvJViuXxFsYFw
- +acLeA79/ZP4lfCCHoWJ9Fubvo8sdVKeoGhSaMYTZSzjvGckaqtnFKuM1DW1itkbs10RaR
- 1CzbPHkY3+vdyJnFLFZ+Uy7wVxvuge0=
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com
- [74.125.82.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-349-aiPf6Do6PpSrrCfASBX7lA-1; Thu, 11 Jun 2026 05:30:16 -0400
-X-MC-Unique: aiPf6Do6PpSrrCfASBX7lA-1
-X-Mimecast-MFC-AGG-ID: aiPf6Do6PpSrrCfASBX7lA_1781170215
-Received: by mail-dy1-f200.google.com with SMTP id
- 5a478bee46e88-3080bb0267dso278274eec.1
- for <dev@dpdk.org>; Thu, 11 Jun 2026 02:30:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781170214; x=1781775014;
- h=content-transfer-encoding:to:subject:message-id:date:from
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=fEZuUuoJIXTu5ywpvRAQ+3+G0ZwRWHhYAILI1/KwwSU=;
- b=k+n8NObVEHbKGNyKiA1QkdV5yN+seaixjGv/wbyE783VzV9hbW3Tagj0DpttS/ECro
- RqDQDtkiDfIyRR2XgMfDnLY/vPFNLiTrixFUvMEUF15fWEwk0fc4aZz9vDqACQoTf3my
- uw5ZXcs4lchooh9OwQcbBSOt3fXkI6TZnFRztMv0eo7Yni9I6SJ+IWMkPUBoyg+Bt5ml
- /dZq5IGooPJ7M4PPoeFm2RnRTrC5Nzw5pzWisKKkvoMZNxTOE1kfmZbQ/w5gslfIPxH9
- AWqaodr1+uZZXuWxhIsSt9u9rplrLKu/YNyXV5eUlYgLUzc/fk25txhLoU4ZQ62FN0Jo
- uolA==
-X-Gm-Message-State: AOJu0YxdcFWzmLp3/zGziIVI8Tl6osfxJZI+LmaeUue+s8RA5FyL/jIw
- cQex2jWGH5Bes72RO7JQMFJVsE8ap4jqlRVJlskF6MRDLdnThasBQAZpJPdkFCq2eU7/5b9tvRM
- 286jLRtae1aM0y7D70AC9jGNW2+26CS11ieU2C4eBRyhl62nh9W8Ddz54tsM8vz4e8Sb5SiPZlZ
- Y4+pIjOeafmhv54YqWvxs7jO6pIOwNoQ==
-X-Gm-Gg: Acq92OFWwfdKZiuvgMn5aL+ibziDcOgdpZAzCvXuUwWthkshXRzU8bB0D8TBrmrsG/C
- kStgAzxRwLm1Y19RT/kPW6YV+Kefd57QyGgtf2y5IEQDrz+LWYxlscUdKSmzi87G8LTswqVvH9O
- nXj4XYY3gx/JHv8XI1Gbuyawr+2X1SzhmJiMFacakOSXLTeB6wazZ+jXZ6rDvQ/kd7jW72ryMIL
- H3TgLxAertZRP9rtxaE1Pj7ic4wFA9VbS/7R/PnHwAoQKySb1NgtKOcAuNMYQh7Ooyshb8Qh0W7
-X-Received: by 2002:a05:7022:2383:b0:137:567:14c4 with SMTP id
- a92af1059eb24-138421d1998mr1153835c88.29.1781170214466; 
- Thu, 11 Jun 2026 02:30:14 -0700 (PDT)
-X-Received: by 2002:a05:7022:2383:b0:137:567:14c4 with SMTP id
- a92af1059eb24-138421d1998mr1153818c88.29.1781170213920; Thu, 11 Jun 2026
- 02:30:13 -0700 (PDT)
+ bh=9KrtLBnm2c0cxQRkgq13ENNsnfcjDOYnkpSddWOIMT4=;
+ b=Y80L0Qm1r2jKfXydfb6pYrrGzAG5p2fuMAmsfGogDkdsycR58aVukdKgh8L8+v2ZzCLT4n
+ 3RDnds3g8VnHgO3XPVjVjv5hScS0qVCroq4remjpgeZAyKX4hi6fXDogjK2FgrkUrXsUpA
+ jpJ1/X4PHRASAotkA71l/PHy/asasH0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-qcNV0sMhMsuTJONTD1BVWg-1; Thu,
+ 11 Jun 2026 05:46:05 -0400
+X-MC-Unique: qcNV0sMhMsuTJONTD1BVWg-1
+X-Mimecast-MFC-AGG-ID: qcNV0sMhMsuTJONTD1BVWg_1781171164
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 133261808954; Thu, 11 Jun 2026 09:46:04 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.33.28])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id D9BCF18005B3; Thu, 11 Jun 2026 09:46:01 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, stephen@networkplumber.org,
+ bruce.richardson@intel.com, fengchengwen@huawei.com
+Subject: [PATCH 00/13] Bus cleanup infrastructure and fixes
+Date: Thu, 11 Jun 2026 11:45:37 +0200
+Message-ID: <20260611094551.1514962-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Thu, 11 Jun 2026 11:30:01 +0200
-X-Gm-Features: AVVi8CcmcB1JwQttvTNFfNJ-pOXhX1xWTMmoxeOZuLEuzpLhn-t1mP3OZ1a5S4E
-Message-ID: <CAO55csz03U8zwNudQjhz6H1pdtEGuS2j5OBQw5sXUcNXe7nCfw@mail.gmail.com>
-Subject: Technical board meeting minutes for June 10th 2026
-To: dev <dev@dpdk.org>, DPDK Techboard <techboard@dpdk.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: jr3JcWCB1MgpoB1DFvlQmvDMNRqYcgk-uVWKMZ_se5Y_1781170215
+X-Mimecast-MFC-PROC-ID: 6qNVLEaD1CwOpdlhWGv3tAfq7RIpQmsv9GLSP7QhBpk_1781171164
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,55 +64,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Attendees:
-=3D=3D=3D=3D=3D=3D=3D=3D
-Maxime Coquelin (Chair)
-Thomas Monjalon
-Bruce Richardson
-Stephen Hemminger
-Konstantin Ananyev
-Aaron Conole
-Jerin Jacob
-Hemant Agrawal
-Morten Br=C3=B8rup
+This is a followup of the previous bus refactoring.
+See https://inbox.dpdk.org/dev/CAJFAV8zvFpLwz8SY8DUUezyJyM43eRZ17Yj30ex808eHC4ZE=g@mail.gmail.com/.
 
-Topics:
-=3D=3D=3D=3D=3D=3D
-* Security reports (Thomas)
- - Discussion on the CVE filing process using Red Hat as CNA.
- - Maxime will file CVEs for vhost-related vulnerabilities.
- - Need to identify who handles CVEs for other components (e.g., crypto).
- - 10 security reports on Marvell drivers; 5-6 already fixed as bugs.
-   * Jerin to follow up with Akhil to reply to reporters.
-   * Discussion on distinguishing bugs vs. security vulnerabilities.
- - AI-generated security reports are becoming common.
-   * Aaron suggested treating AI-detected issues as public since
-anyone can run AI tools.
-   * Stephen noted duplicate reports for already-fixed issues.
- - Vote: Create a Slack channel for security coordination.
-   * Members: Techboard members, release maintainers, and component
-maintainers as needed.
-   * Vote passed.
-   * Next Step: Thomas will create the Slack channel.
+This series refactors the bus cleanup infrastructure to reduce code
+duplication and fix resource leaks in several bus drivers.
+It should address the leak Thomas pointed at.
 
-* Loongarch Lab (Thomas)
- - Lab was producing systematic failures and erratic results.
- - Thomas disabled access to test-report mailing list (reports now in
-moderation queue).
- - Next Step: Aaron will raise the issue at the DPDK CI meeting to
-coordinate with Loongson.
+The first part of the series (patches 1-8) addresses several bugs and
+inconsistencies:
+- Documentation and log message inconsistencies from earlier bus
+  refactoring
+- Device list management issues in dma/idxd and bus/vdev
+- Resource leaks in PCI and VMBUS bus cleanup (mappings and interrupts)
+- Simplified device freeing in NXP buses (DPAA and FSLMC)
+- Deferred interrupt allocation to probe time (NXP buses, VMBUS)
 
-* New PTP example (Thomas)
- - Thomas merged a PTP relay example (ptp_tap_relay_software) without
-prior Techboard approval.
- - Concern about naming inconsistency with existing PTP client example.
- - Stephen will review the example and consider renaming for consistency.
+The core infrastructure changes (patches 9-10) introduce the generic
+cleanup framework:
+- Refactors unplug operations to be the counterpart of probe_device
+- Implements rte_bus_generic_cleanup() to centralize cleanup logic
+- Adds .free_device operation to struct rte_bus
+- Adds compile-time verification that rte_device is at offset 0
 
-* Release update (Thomas)
- - BPF patches from Marat Khalili have compilation failures when
-applying patch-by-patch.
-   * Marat will fix the bisect issue.
- - Ring library patches from Stephen also have compilation failures;
-Thomas will send details.
- - Power library patches still to be reviewed for RC1.
+The final patches (11-13) convert remaining buses to use the generic
+cleanup helper:
+- DPAA bus: add unplug support
+- VMBUS bus: switch to embedded device name and add unplug support
+
+After this series, most buses use the generic cleanup helper, eliminating
+duplicated code and ensuring consistent cleanup behavior across the
+codebase.
+
+
+-- 
+David Marchand
+
+David Marchand (13):
+  bus: fix reference to plug callback
+  dma/idxd: remove next pointer in bus specific device
+  bus/vdev: remove driver setting in probe
+  drivers/bus: cleanup device freeing in NXP bus
+  drivers/bus: allocate interrupt during probing in NXP bus
+  bus/pci: fix mapping leak in bus cleanup
+  bus/vmbus: fix interrupt leak in cleanup
+  bus/vmbus: allocate interrupt during probing
+  bus: align unplug with device probe
+  bus: implement cleanup in EAL
+  bus/dpaa: support unplug
+  bus/vmbus: store name in bus specific device
+  bus/vmbus: support unplug
+
+ doc/guides/prog_guide/device_hotplug.rst | 20 +++--
+ doc/guides/rel_notes/release_26_07.rst   |  8 ++
+ drivers/bus/auxiliary/auxiliary_common.c | 56 +++-----------
+ drivers/bus/cdx/cdx.c                    | 31 ++------
+ drivers/bus/dpaa/dpaa_bus.c              | 96 ++++++++++--------------
+ drivers/bus/fslmc/fslmc_bus.c            | 55 ++++++--------
+ drivers/bus/ifpga/ifpga_bus.c            | 65 ++++------------
+ drivers/bus/pci/pci_common.c             | 69 +++--------------
+ drivers/bus/platform/platform.c          | 28 ++-----
+ drivers/bus/uacce/uacce.c                | 61 ++-------------
+ drivers/bus/vdev/vdev.c                  | 71 ++++++------------
+ drivers/bus/vmbus/bus_vmbus_driver.h     |  1 +
+ drivers/bus/vmbus/linux/vmbus_bus.c      | 16 +---
+ drivers/bus/vmbus/vmbus_common.c         | 56 ++++++++------
+ drivers/dma/idxd/idxd_bus.c              |  3 +-
+ lib/eal/common/eal_common_bus.c          | 33 +++++++-
+ lib/eal/common/eal_common_dev.c          | 10 ++-
+ lib/eal/include/bus_driver.h             | 42 ++++++++++-
+ 18 files changed, 268 insertions(+), 453 deletions(-)
+
+-- 
+2.53.0
 
