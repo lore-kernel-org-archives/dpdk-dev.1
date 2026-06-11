@@ -2,86 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8C7CD8CB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 07:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C607CD8CB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Jun 2026 07:33:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 665DD42ECF;
-	Thu, 11 Jun 2026 09:25:17 +0200 (CEST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com
- [209.85.218.42]) by mails.dpdk.org (Postfix) with ESMTP id 701434026D
- for <dev@dpdk.org>; Wed, 10 Jun 2026 15:46:03 +0200 (CEST)
-Received: by mail-ej1-f42.google.com with SMTP id
- a640c23a62f3a-bec3f69d343so1030401266b.0
- for <dev@dpdk.org>; Wed, 10 Jun 2026 06:46:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781099163; cv=none;
- d=google.com; s=arc-20240605;
- b=S5txtg5T9QKN0PBsdnpOSU2bL7gwNVwDPxhg98HkqJiIUZ4hvWPEYNBTjNJDWrdyoW
- wNd9FXleoHM7KbpPaeQnfpxqwc/nwTJCD+LZBqAIrg7VvsqC9hVU/hPpA4ErurqCAjDW
- kjx/aZ8brjPQEy+TykhTvY3Wc+T5BuSPaD3RxD6iHbjU6IL7x4vqOkU+EvE5E1sXo6wh
- RGXZ+U1zLb9RGW61kHhEH0k40jsvUTeunrJI8qHcEVKastIitBS390nqNduQm5u9ZBES
- fu/ECGVmaAVmD8mI5yhEJK3K8IVGDKxDMMiJwxQUsY3+osOzo7DfvCEJ5dZDNxdAmLPq
- myzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=7+KKcp6acVn1+HN+58eY+7odp2XJzUipPitV6k4LheA=;
- fh=qtx+rTXMu0jT4NwnisPY8YqyFA3IRvAKA50FaVvbcNg=;
- b=TX2P6AlAcu0YPUo3jGbXzSOdhxiYuaL/Ox09HS+mxQyGdefMSKKFchBCsBoZZTh40b
- QEusgN3gs641161mVYlk+y2g+D6ESjI7iTdwann3bt8NA4yPDSgkSDcR2GZFvstr9dWf
- kg+lmy6BjoSaBQoFstCybiDjVUWJswh7U/yi+N3uzcQEFaqYLPqKSI0IQqZt+jCVLxht
- E06YsgJK7R8IuxoOyIhsKZrLhZGw2ZTfrxWsuQOts/xAyWxHJKJTXdu2O4Va9RtoRhFG
- 5OEyaI80wZ0YZV6/6qNdLc+YOFJloQuXv1vFSVbVt/UC1Hcz44Q2RoObWM5oRazz2dpQ
- 6kWQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781099163; x=1781703963; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=7+KKcp6acVn1+HN+58eY+7odp2XJzUipPitV6k4LheA=;
- b=hi8ACdqA16g9SC92faQS2MbiVeD10trw16/aGnBl3xWckJ0t4jZnsi+yl+MRbyW1vi
- Qas1NMK1R3WBVIZ4Vyqrcz7dbPXaBjQalpJman3pHpKFG26TwGotYO1oj2W/61/TbizH
- IA8356BSthyqfsiUWE9QJeSbthenpEDZxtKSdSMSiK3tlwzBAfiqtNWWIoLDMk0Rbga/
- 3v4t6Ap2uwsBVkKMmZMKdf90EKO8gj1MBnLc+YhTVDpkHgkiEMLH3kKGNZAFMXIyAWhL
- hmowri+uENVMGVLL1AY2zNr/tG92SoVloLdV5eHludA2NaaTlUIcD/QF/xDaQBSsp2z0
- 9TTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781099163; x=1781703963;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=7+KKcp6acVn1+HN+58eY+7odp2XJzUipPitV6k4LheA=;
- b=ph5f7U8ytKTTL301hwMEDwu5OAhfoaxW2pNKTxgFTu3h672RN6q+wY8+lUNbSs02fs
- VqNQ49aBryX+Mc10/sIvaj/9BAoKP0ZADn07BlPoI26ke+1+E/UfCRE/hVlWZdaHUQqY
- /EX0NQP0jajr0zN7j6c1FmTb76dSSDMP5YR2bKmxddXBRmheDzBszaI36RbrHB9Oe2R5
- pP92rNn+jemOfchnlwyxrkztZG6I84+C77kG9JNhzXQEiDPBbJJZNWqicNhJNVTxQ8uc
- EWHot1Low52lDwDfiyqqTPxk3mQ4d1U48C/xR5LGDL7DrZh/DWxbBK4oJbB1O3kVjo3b
- Btlw==
-X-Gm-Message-State: AOJu0Yxj/Ub6jLrs5KoVFqwfchAlDpw540Z+aqNYWWCuJYb6suBsOQOt
- q/dS3CjrHNoZrJ8BMaagWsYD4M1sPiokxcvaEwI2AOZLroSdcNFW811bNfTgIrwrzvPWktC69EG
- ntb8MjEuiJAFWvIYYPIxtc0wqX4PEU7Y=
-X-Gm-Gg: Acq92OE36gomERHPbj1KGKPVtUdbY6d1orcjfej14L4/+8NhS+Al0qdGni3qxS8bU/S
- ISPA6B0TkltkhF37yC68RxmH0drCywvoHmK2QG0t3nGIXNxTOS9+NyK5cr+ihA14apm3UB8Xj1/
- ZMvMQnaj+HQjxSIITKiR9CNuQlEvGevidyrDQ48fkasrcVRnVtrq7Glq5tR/iIXwt2E50sTsThh
- sr6NnLssrLso4G7ottD26iJuaQsuRVRIy6ceG0OaPnYiAdNoH2afsnOLNZ7yd3imAXF/kTyv2qK
- ntuEJkoyFtUlxGI/l9z7PuM9jhPmiIZBR54oeIHvXknRcTyIoeo=
-X-Received: by 2002:a17:907:971b:b0:bee:b5f2:6385 with SMTP id
- a640c23a62f3a-bf37076fe79mr1226222466b.11.1781099162597; Wed, 10 Jun 2026
- 06:46:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5358942ECD;
+	Thu, 11 Jun 2026 09:33:30 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id EABD240288
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 09:33:28 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 65B0Qs9N1253731 for <dev@dpdk.org>; Thu, 11 Jun 2026 00:33:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=rSoRS40oV2fJDb27Rcn6sib
+ 0b2C1gpWbOYnqPwvfm7Q=; b=cQlU3aorvlNv2C3ymznquOlXrtPRjsg8eRqqZxO
+ w7j34LYx2pxxHjFmelkTb3elAEP3V5/graMWjzmm3q84Gw7PGNJwurIlqGxN7sZl
+ NjKDxF3jva38xrHzX/zbDX6qcZlg62MaNXf6sqZns6eDQHB+ShawWuaO5gNSjOX9
+ HAxjQUQhrbzyCqTB1urUMLhnQLLP+Dg0c4+XCWXbSsRYCV6+FL9OcM/9EBn2+XIQ
+ wnuQ82KdIZZiJuJSw+6ZQ4oIunot9XN2hmTeH2Lsx1FFP9d2cubU55eCVKZdXTdP
+ /mdz9NcOjSWIvaFUvKGmBlLlVuXpy8WEaHaAvY+4BsDEk+w==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4eqe5vswn5-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Thu, 11 Jun 2026 00:33:27 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 11 Jun 2026 00:33:26 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 11 Jun 2026 00:33:26 -0700
+Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
+ by maili.marvell.com (Postfix) with ESMTP id E3E6F5B6973;
+ Thu, 11 Jun 2026 00:33:23 -0700 (PDT)
+From: Rahul Bhansali <rbhansali@marvell.com>
+To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
+Subject: [PATCH 01/17] net/cnxk: update mbuf next field for multi segment
+Date: Thu, 11 Jun 2026 13:02:55 +0530
+Message-ID: <20260611073311.3129711-1-rbhansali@marvell.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20260422075414.2528455-1-maxime.peim@gmail.com>
- <CAJFAV8wn26hRUTzCG4ai+apT8+bWL7+cEE1N-gV1tJt8B9a4hQ@mail.gmail.com>
- <CAJFAV8zsDEW6vU69NHmZiqUyB4xz+qDPQsw-cBBeScGeuE_Fiw@mail.gmail.com>
-In-Reply-To: <CAJFAV8zsDEW6vU69NHmZiqUyB4xz+qDPQsw-cBBeScGeuE_Fiw@mail.gmail.com>
-From: Maxime Peim <maxime.peim@gmail.com>
-Date: Wed, 10 Jun 2026 15:45:50 +0200
-X-Gm-Features: AVVi8Cde0SE9zLysKLz-QdSAoLSOHSJEU9X3QwOhn70nbXRpYOfUB1teQcd26ys
-Message-ID: <CACyZvzgxXHmfeXtCwV37VR7moci6d1p_chy5XVuLYZ1LufsdwA@mail.gmail.com>
-Subject: Re: [PATCH] eal: fix core_index for non-EAL registered threads
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000e57e9d0653e67641"
-X-Mailman-Approved-At: Thu, 11 Jun 2026 09:25:15 +0200
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDA3MyBTYWx0ZWRfX9D9cZxAlXq+B
+ rBmOaXIJGDUWe70CvxFwpaG4PgIcam4V6zZ7mtpnuD9B8lFRXzBjrxtgVINSP62l7EPfO2/aZtJ
+ BkO0V1AvYciZGAK7AhtV9jsa3JPtBdA=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDA3MyBTYWx0ZWRfX1m+8EZ08IR/A
+ Ypd1QNcdLoXboCZKXSv1P9yVh8gTIe/1fpXUOEUL9GG1mcTKRtiGFX+n07YL5Od4a+dK1ZuelQx
+ 37XTFTJLR1AVtqWwAYnhFQc8JCZyAqMDcfGGEiXV15DLF3euD18wWop4akWpx+dB06nY61dOBcA
+ nBJIuaNAd5pqnLeF2CDJsF5uTO9Y64ARcss+lNIrSUdrt1qBWZQtOaB/ZNaEF1MehpP7H0YFChU
+ Bvwmw/sEThBWBw2XB1jPoBHd5u3sOO0HhojjNQt1jAHoO0h1bc0jHU+PCZRMcdCu/RZfCHBvjmg
+ A5RNsKzG4uC65j0QVtnS5NjIpJGzFM3/8qeqckTXDVJluYidqixDQAki8OTHk7lDPq1aBAA+8Pw
+ MmSBETO0lD+Sl5KhT4ipPpKbFegayrB0dPG2oGFZtM0rrLC5Gcoejqp3A7yHQAoJuDgqMxDtufy
+ SSPTTsZp8+xquo0qtOw==
+X-Authority-Analysis: v=2.4 cv=UPDt2ify c=1 sm=1 tr=0 ts=6a2a64c7 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=EAYMVhzMl8SCOHhVQcBL:22 a=M5GUcnROAAAA:8 a=yO0h6PI_INuvHoUhAc0A:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: VdG1aTZGQlueweCzxKfSA8jERZS08EXf
+X-Proofpoint-GUID: VdG1aTZGQlueweCzxKfSA8jERZS08EXf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-11_01,2026-06-09_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,242 +83,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000e57e9d0653e67641
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+As per the requirement of rte_mbuf_raw_reset_bulk(), the mbuf's
+'next' and 'nb_segs' fields are required to be reset.
+This reset these field for multi-segment mbufs on cn9k platform.
 
-Hi David
+Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
+---
+ drivers/net/cnxk/cn9k_rx.h |  8 --------
+ drivers/net/cnxk/cn9k_tx.h | 42 ++++++++++++++++++--------------------
+ 2 files changed, 20 insertions(+), 30 deletions(-)
 
-I am not sure it works either, if the lcore are manual set with a gap:
-`--lcores=3D0,7` (from `eal_parse_lcores`):
-- lcore 0 will get core_index =3D 0
-- lcore 7 will get core_index =3D 1
+diff --git a/drivers/net/cnxk/cn9k_rx.h b/drivers/net/cnxk/cn9k_rx.h
+index 79b56fe160..5ccdc5dee1 100644
+--- a/drivers/net/cnxk/cn9k_rx.h
++++ b/drivers/net/cnxk/cn9k_rx.h
+@@ -410,8 +410,6 @@ cn9k_nix_cqe_to_mbuf(const struct nix_cqe_hdr_s *cq, const uint32_t tag,
+ 		 * Hence, flag argument is not required.
+ 		 */
+ 		nix_cqe_xtract_mseg(rx, mbuf, val, 0);
+-	else
+-		mbuf->next = NULL;
+ }
+ 
+ static inline uint16_t
+@@ -826,12 +824,6 @@ cn9k_nix_recv_pkts_vector(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			nix_cqe_xtract_mseg((union nix_rx_parse_u *)
+ 						(cq0 + CQE_SZ(3) + 8), mbuf3,
+ 					    mbuf_initializer, flags);
+-		} else {
+-			/* Update that no more segments */
+-			mbuf0->next = NULL;
+-			mbuf1->next = NULL;
+-			mbuf2->next = NULL;
+-			mbuf3->next = NULL;
+ 		}
+ 
+ 		/* Store the mbufs to rx_pkts */
+diff --git a/drivers/net/cnxk/cn9k_tx.h b/drivers/net/cnxk/cn9k_tx.h
+index 32665d2050..0ec448e36c 100644
+--- a/drivers/net/cnxk/cn9k_tx.h
++++ b/drivers/net/cnxk/cn9k_tx.h
+@@ -665,14 +665,14 @@ cn9k_nix_prepare_mseg(struct cn9k_eth_txq *txq, struct rte_mbuf *m, struct rte_m
+ #else
+ 	RTE_SET_USED(cookie);
+ #endif
+-#ifdef RTE_ENABLE_ASSERT
+-	m->next = NULL;
+-	m->nb_segs = 1;
+-#endif
+-	m = m_next;
+-	if (!m)
++	if (likely(!m_next))
+ 		goto done;
+ 
++	if (!(flags & NIX_TX_OFFLOAD_MBUF_NOFF_F)) {
++		m->next = NULL;
++		m->nb_segs = 1;
++	}
++	m = m_next;
+ 	/* Fill mbuf segments */
+ 	do {
+ 		m_next = m->next;
+@@ -704,12 +704,13 @@ cn9k_nix_prepare_mseg(struct cn9k_eth_txq *txq, struct rte_mbuf *m, struct rte_m
+ 			sg_u = sg->u;
+ 			slist++;
+ 		}
+-#ifdef RTE_ENABLE_ASSERT
+-		m->next = NULL;
+-#endif
++		if (!(flags & NIX_TX_OFFLOAD_MBUF_NOFF_F))
++			m->next = NULL;
+ 		m = m_next;
+ 	} while (nb_segs);
+ 
++	if (!(flags & NIX_TX_OFFLOAD_MBUF_NOFF_F))
++		rte_io_wmb();
+ done:
+ 	sg->u = sg_u;
+ 	sg->segs = i;
+@@ -720,9 +721,6 @@ cn9k_nix_prepare_mseg(struct cn9k_eth_txq *txq, struct rte_mbuf *m, struct rte_m
+ 	segdw += (off >> 1) + 1 + !!(flags & NIX_TX_OFFLOAD_TSTAMP_F);
+ 	send_hdr->w0.sizem1 = segdw - 1;
+ 
+-#ifdef RTE_ENABLE_ASSERT
+-	rte_io_wmb();
+-#endif
+ 	return segdw;
+ }
+ 
+@@ -950,10 +948,10 @@ cn9k_nix_prepare_mseg_vec_list(struct cn9k_eth_txq *txq,
+ 	RTE_SET_USED(cookie);
+ #endif
+ 
+-#ifdef RTE_ENABLE_ASSERT
+-	m->next = NULL;
+-	m->nb_segs = 1;
+-#endif
++	if (!(flags & NIX_TX_OFFLOAD_MBUF_NOFF_F)) {
++		m->next = NULL;
++		m->nb_segs = 1;
++	}
+ 	m = m_next;
+ 	/* Fill mbuf segments */
+ 	do {
+@@ -984,9 +982,8 @@ cn9k_nix_prepare_mseg_vec_list(struct cn9k_eth_txq *txq,
+ 			sg_u = sg->u;
+ 			slist++;
+ 		}
+-#ifdef RTE_ENABLE_ASSERT
+-		m->next = NULL;
+-#endif
++		if (!(flags & NIX_TX_OFFLOAD_MBUF_NOFF_F))
++			m->next = NULL;
+ 		m = m_next;
+ 	} while (nb_segs);
+ 
+@@ -1002,9 +999,6 @@ cn9k_nix_prepare_mseg_vec_list(struct cn9k_eth_txq *txq,
+ 		 !!(flags & NIX_TX_OFFLOAD_TSTAMP_F);
+ 	send_hdr->w0.sizem1 = segdw - 1;
+ 
+-#ifdef RTE_ENABLE_ASSERT
+-	rte_io_wmb();
+-#endif
+ 	return segdw;
+ }
+ 
+@@ -1089,6 +1083,10 @@ cn9k_nix_xmit_pkts_mseg_vector(uint64x2_t *cmd0, uint64x2_t *cmd1,
+ 		}
+ 	}
+ 
++	/* Multi segment mbufs */
++	if (!(flags & NIX_TX_OFFLOAD_MBUF_NOFF_F))
++		rte_io_wmb();
++
+ 	for (j = 0; j < NIX_DESCS_PER_LOOP;) {
+ 		/* Fit consecutive packets in same LMTLINE. */
+ 		if ((segdw[j] + segdw[j + 1]) <= 8) {
+-- 
+2.34.1
 
-When calling `rte_thread_register` we will hit lcore=3D1 as first
-not-assigned lcore and set core_index=3D1 as well.
-
-It seems like a solution should be to have a bitmap of the currently used
-core_index stored in the global config.
-
-Please let me know what you think about that.
-
-Maxime Peim
-
-On Mon, Jun 8, 2026 at 6:35=E2=80=AFPM David Marchand <david.marchand@redha=
-t.com>
-wrote:
-
-> On Mon, 8 Jun 2026 at 18:10, David Marchand <david.marchand@redhat.com>
-> wrote:
-> >
-> > On Wed, 22 Apr 2026 at 09:54, Maxime Peim <maxime.peim@gmail.com> wrote=
-:
-> > >
-> > > Threads registered via rte_thread_register() are assigned a valid
-> > > lcore_id by eal_lcore_non_eal_allocate(), but their core_index in
-> > > lcore_config is left at -1. This value was set during
-> rte_eal_cpu_init()
-> > > for lcores with ROLE_OFF (undetected CPUs) and is never updated when
-> the
-> > > lcore is later allocated to a non-EAL thread.
-> > >
-> > > As a result, rte_lcore_index() returns -1 for registered non-EAL
-> > > threads. Libraries that use rte_lcore_index() to select per-lcore
-> > > caches fall back to a shared global path when it returns -1, causing
-> > > severe contention under concurrent access from multiple registered
-> > > threads.
-> > >
-> > > A concrete example is the mlx5 indexed memory pool (mlx5_ipool), whic=
-h
-> > > uses rte_lcore_index() in mlx5_ipool_malloc_cache() to select a
-> per-core
-> > > cache slot. When core_index is -1, all registered threads are funnele=
-d
-> > > into a single shared slot protected by a spinlock. In testing with VP=
-P
-> > > (which registers worker threads via rte_thread_register()), this caus=
-ed
-> > > async flow rule insertion throughput to drop from ~6.4M rules/sec to
-> > > ~1.2M rules/sec with 4 workers -- a 5x regression attributable entire=
-ly
-> > > to spinlock contention in the ipool allocator.
-> > >
-> > > Fix by setting core_index to the next sequential index
-> (cfg->lcore_count)
-> > > in eal_lcore_non_eal_allocate() before incrementing the count. Also
-> reset
-> > > core_index back to -1 on the error rollback path and in
-> > > eal_lcore_non_eal_release() for correctness.
-> > >
-> > > Fixes: 5c307ba2a5b1 ("eal: register non-EAL threads as lcores")
-> > Cc: stable@dpdk.org
-> >
-> > > Signed-off-by: Maxime Peim <maxime.peim@gmail.com>
-> > Acked-by: David Marchand <david.marchand@redhat.com>
-> >
->
-> Hum, I did not push the change.
-> Re-reading this code, we have an issue if some external thread
-> unregisters in the middle.
->
-> What do you think of the additional hunk:
->
-> $ git diff
-> diff --git a/lib/eal/common/eal_common_lcore.c
-> b/lib/eal/common/eal_common_lcore.c
-> index ae085d73e4..6f53f20d90 100644
-> --- a/lib/eal/common/eal_common_lcore.c
-> +++ b/lib/eal/common/eal_common_lcore.c
-> @@ -372,13 +372,16 @@ eal_lcore_non_eal_allocate(void)
->         struct rte_config *cfg =3D rte_eal_get_configuration();
->         struct lcore_callback *callback;
->         struct lcore_callback *prev;
-> +       unsigned int index =3D 0;
->         unsigned int lcore_id;
->
->         rte_rwlock_write_lock(&lcore_lock);
->         for (lcore_id =3D 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
-> -               if (cfg->lcore_role[lcore_id] !=3D ROLE_OFF)
-> +               if (cfg->lcore_role[lcore_id] !=3D ROLE_OFF) {
-> +                       index++;
->                         continue;
-> -               lcore_config[lcore_id].core_index =3D cfg->lcore_count;
-> +               }
-> +               lcore_config[lcore_id].core_index =3D index;
->                 cfg->lcore_role[lcore_id] =3D ROLE_NON_EAL;
->                 cfg->lcore_count++;
->                 break;
->
->
-> --
-> David Marchand
->
->
-
---000000000000e57e9d0653e67641
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Hi David<div><br></div><div>I am not sure it works either,=
- if the lcore are manual set with a gap: `--lcores=3D0,7` (from `eal_parse_=
-lcores`):</div><div>- lcore 0 will get core_index =3D 0</div><div>- lcore 7=
- will get core_index =3D 1</div><div><br></div><div>When calling `rte_threa=
-d_register` we will hit lcore=3D1 as first not-assigned lcore and set core_=
-index=3D1 as well.</div><div><br></div><div>It seems like a solution should=
- be to have a bitmap of the currently used core_index stored in the global =
-config.</div><div><br></div><div>Please let me know what you think about th=
-at.</div><div><br></div><div>Maxime Peim</div></div><br><div class=3D"gmail=
-_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon,=
- Jun 8, 2026 at 6:35=E2=80=AFPM David Marchand &lt;<a href=3D"mailto:david.=
-marchand@redhat.com">david.marchand@redhat.com</a>&gt; wrote:<br></div><blo=
-ckquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left=
-:1px solid rgb(204,204,204);padding-left:1ex">On Mon, 8 Jun 2026 at 18:10, =
-David Marchand &lt;<a href=3D"mailto:david.marchand@redhat.com" target=3D"_=
-blank">david.marchand@redhat.com</a>&gt; wrote:<br>
-&gt;<br>
-&gt; On Wed, 22 Apr 2026 at 09:54, Maxime Peim &lt;<a href=3D"mailto:maxime=
-.peim@gmail.com" target=3D"_blank">maxime.peim@gmail.com</a>&gt; wrote:<br>
-&gt; &gt;<br>
-&gt; &gt; Threads registered via rte_thread_register() are assigned a valid=
-<br>
-&gt; &gt; lcore_id by eal_lcore_non_eal_allocate(), but their core_index in=
-<br>
-&gt; &gt; lcore_config is left at -1. This value was set during rte_eal_cpu=
-_init()<br>
-&gt; &gt; for lcores with ROLE_OFF (undetected CPUs) and is never updated w=
-hen the<br>
-&gt; &gt; lcore is later allocated to a non-EAL thread.<br>
-&gt; &gt;<br>
-&gt; &gt; As a result, rte_lcore_index() returns -1 for registered non-EAL<=
-br>
-&gt; &gt; threads. Libraries that use rte_lcore_index() to select per-lcore=
-<br>
-&gt; &gt; caches fall back to a shared global path when it returns -1, caus=
-ing<br>
-&gt; &gt; severe contention under concurrent access from multiple registere=
-d<br>
-&gt; &gt; threads.<br>
-&gt; &gt;<br>
-&gt; &gt; A concrete example is the mlx5 indexed memory pool (mlx5_ipool), =
-which<br>
-&gt; &gt; uses rte_lcore_index() in mlx5_ipool_malloc_cache() to select a p=
-er-core<br>
-&gt; &gt; cache slot. When core_index is -1, all registered threads are fun=
-neled<br>
-&gt; &gt; into a single shared slot protected by a spinlock. In testing wit=
-h VPP<br>
-&gt; &gt; (which registers worker threads via rte_thread_register()), this =
-caused<br>
-&gt; &gt; async flow rule insertion throughput to drop from ~6.4M rules/sec=
- to<br>
-&gt; &gt; ~1.2M rules/sec with 4 workers -- a 5x regression attributable en=
-tirely<br>
-&gt; &gt; to spinlock contention in the ipool allocator.<br>
-&gt; &gt;<br>
-&gt; &gt; Fix by setting core_index to the next sequential index (cfg-&gt;l=
-core_count)<br>
-&gt; &gt; in eal_lcore_non_eal_allocate() before incrementing the count. Al=
-so reset<br>
-&gt; &gt; core_index back to -1 on the error rollback path and in<br>
-&gt; &gt; eal_lcore_non_eal_release() for correctness.<br>
-&gt; &gt;<br>
-&gt; &gt; Fixes: 5c307ba2a5b1 (&quot;eal: register non-EAL threads as lcore=
-s&quot;)<br>
-&gt; Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.o=
-rg</a><br>
-&gt;<br>
-&gt; &gt; Signed-off-by: Maxime Peim &lt;<a href=3D"mailto:maxime.peim@gmai=
-l.com" target=3D"_blank">maxime.peim@gmail.com</a>&gt;<br>
-&gt; Acked-by: David Marchand &lt;<a href=3D"mailto:david.marchand@redhat.c=
-om" target=3D"_blank">david.marchand@redhat.com</a>&gt;<br>
-&gt;<br>
-<br>
-Hum, I did not push the change.<br>
-Re-reading this code, we have an issue if some external thread<br>
-unregisters in the middle.<br>
-<br>
-What do you think of the additional hunk:<br>
-<br>
-$ git diff<br>
-diff --git a/lib/eal/common/eal_common_lcore.c<br>
-b/lib/eal/common/eal_common_lcore.c<br>
-index ae085d73e4..6f53f20d90 100644<br>
---- a/lib/eal/common/eal_common_lcore.c<br>
-+++ b/lib/eal/common/eal_common_lcore.c<br>
-@@ -372,13 +372,16 @@ eal_lcore_non_eal_allocate(void)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct rte_config *cfg =3D rte_eal_get_configur=
-ation();<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct lcore_callback *callback;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 struct lcore_callback *prev;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0unsigned int index =3D 0;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 unsigned int lcore_id;<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_rwlock_write_lock(&amp;lcore_lock);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 for (lcore_id =3D 0; lcore_id &lt; RTE_MAX_LCOR=
-E; lcore_id++) {<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cfg-&gt;lcore_r=
-ole[lcore_id] !=3D ROLE_OFF)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cfg-&gt;lcore_r=
-ole[lcore_id] !=3D ROLE_OFF) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0index++;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 continue;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0lcore_config[lcore_=
-id].core_index =3D cfg-&gt;lcore_count;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0lcore_config[lcore_=
-id].core_index =3D index;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cfg-&gt;lcore_role[=
-lcore_id] =3D ROLE_NON_EAL;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cfg-&gt;lcore_count=
-++;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;<br>
-<br>
-<br>
--- <br>
-David Marchand<br>
-<br>
-</blockquote></div>
-
---000000000000e57e9d0653e67641--
