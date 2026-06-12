@@ -2,156 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AADCD98CE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 10:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35526CD98CE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 10:48:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 03F88434BA;
-	Fri, 12 Jun 2026 12:07:09 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id CBA4F434B7
- for <dev@dpdk.org>; Fri, 12 Jun 2026 12:07:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781258829; x=1812794829;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=mwbq0a+IoRHX0JU2/9Kj78rv5Hy8/+koBj5WJfyA14k=;
- b=nBvj/tkCqopJCppLGo5PkEclgH/Qk3tVkqEN9VP0m7q/vE/uWntA/uBC
- shTUOZpjxVx8cjMq0VgEmNot0xwcg4ba3OKqMDQ5UATXLQsrKUTjUyW8L
- QuFyBXjnWSLKZpYTCRRTFLvVqsQz6/7llf++A9ujLSFWKg4G36nAVdAkC
- GGjD79ydW66fzsOIXlRLrhQWpeeHiEW1OwR/YjucxQkKPtoGQwYsCec9D
- bhxlWiOqc71RE2cDD6rZrmJ/DGc2lqFs0cl1IOXG8X2qrCNjyNZs0QBz9
- U3XinjeXofNINUgDvaBP5/gsklYavvRq+liV4ScLC9o58MSKR0I3DU6XE w==;
-X-CSE-ConnectionGUID: E6Npmvm5RHGrtwdTVb/RlQ==
-X-CSE-MsgGUID: C6u01l69RcyHDnHIxgqgXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="82071578"
-X-IronPort-AV: E=Sophos;i="6.24,200,1774335600"; d="scan'208";a="82071578"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Jun 2026 03:06:58 -0700
-X-CSE-ConnectionGUID: mU5Djz+SSxSwLSwh9zG/eg==
-X-CSE-MsgGUID: Q+m1L372RLivB1LQs1WOsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,200,1774335600"; d="scan'208";a="270445764"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Jun 2026 03:06:57 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 50A4A42EC9;
+	Fri, 12 Jun 2026 12:48:07 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 2A04940279
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 12:48:05 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gcGSX68RfzHnH5n
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 18:47:56 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id 1F6AC4058D
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 18:48:05 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 12 Jun 2026 03:06:56 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Fri, 12 Jun 2026 03:06:56 -0700
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.22) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 12 Jun 2026 03:06:56 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=whg6xygodjY/ktl6bAFNhplKBydBL76ro9CgjHBED9lYTZsgEdNP6ohh33j/AJpFrmrd8M5cDz21Q+cF6Ao/bNhLqaiM9qM9KRca5iaNbvkNRcg9/pOFXWblz/UNEiaXI72PA0XfSWJbcsFvsotrlwSeVsXuvPFMUOMaLSe5A7DQK/VmRVDOE0aUiaYQ1958UqJ8zb4YjBGRdJTafKvfqAYv4CoSVioy6MOiyL9lxAb6HowIt4Au4Hgc33I5iW//vKBHuMEunVm2xPWepkSKOX9q+fjA/ryNgdRh1317n6XPIa+sAjROMJjFl5VynT0GSbZwQOAByH3iBo5/LfMVew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mwbq0a+IoRHX0JU2/9Kj78rv5Hy8/+koBj5WJfyA14k=;
- b=o97d0YJRoZxCc1MzsLFavbZSw82u1aOdJnHc1ZmFT3UWb2iZVUFVDFZu5lwClwYRJr1WMpP6UqEoo37ctCOvGxnOGBz3LDbXSQe3X/xSii8ShQTRWITCnAs2U1gpoZSTruQqsZ/n0EkQSAC3+xdBmKzi+TPxpT6c3x/kExsooz1xnczVK2ROAwvzRtyWrKnk6dNYfBElGCUhFu5KHM3bKF0L0ex4LwxAMcStUqrzMSWK6YyvWjmXVupFMUj6N1HsWZI53gcFA0qTOUKrGp4UyvCysq6JkebSd8MhxqXnSnLwvvBjcEeugWqK05CivHtTTX0ASZASKCYxbMnngLI50A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
- BL3PR11MB6411.namprd11.prod.outlook.com (2603:10b6:208:3ba::5) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.113.14; Fri, 12 Jun 2026 10:06:54 +0000
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa%4]) with mapi id 15.21.0113.014; Fri, 12 Jun 2026
- 10:06:54 +0000
-Message-ID: <ba648a06-3605-4cb6-bb5a-0b842ba31b40@intel.com>
-Date: Fri, 12 Jun 2026 11:06:49 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/15] doc: improve IP reassembly, IPsec, multicast, and
- keep-alive
-To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
-CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Akhil Goyal
- <gakhil@marvell.com>
-References: <20250216230903.124496-1-nandinipersad361@gmail.com>
- <20260611212119.1026721-1-stephen@networkplumber.org>
- <20260611212119.1026721-10-stephen@networkplumber.org>
-Content-Language: en-US
-From: Radu Nicolau <radu.nicolau@intel.com>
-In-Reply-To: <20260611212119.1026721-10-stephen@networkplumber.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0020.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46b::16) To SJ0PR11MB5661.namprd11.prod.outlook.com
- (2603:10b6:a03:3b9::5)
+ 15.2.1544.11; Fri, 12 Jun 2026 12:48:04 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: 
+CC: <dev@dpdk.org>
+Subject: [PATCH v3 00/25] bpf: test and fix issues in verifier
+Date: Fri, 12 Jun 2026 11:47:14 +0100
+Message-ID: <20260612104743.6465-1-marat.khalili@huawei.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260519093131.52022-1-marat.khalili@huawei.com>
+References: <20260519093131.52022-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|BL3PR11MB6411:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c74ce84-e338-492c-6f92-08dec86a541c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|23010399003|22082099003|18002099003|11063799006|56012099006|6133799003|4143699003;
-X-Microsoft-Antispam-Message-Info: MPLb3Sryuk0xHg6LeYuo21N/xGY/UIJa4QIQz0PXClYGpgj08rPZmjlne7AR2vuyjtF8kg4QT7XisvHZsgaOilEPAR7972DH+VzxGFDfuRrJ6umpamRnWd4KvCtgh5DORTSVL9ceSUf06hYb7jksIL4cvfqBjTjzmhNghML9ASkqjVo6QAqwcCK7uaNA95hpS1y5t4mlosDv+4/OGU7UONFbLcNklX3jh0rg/jXu9WE3uZy6KuISZzdeFpJ2rFrFTEUGFR2A1KCs4XK8xU6g0EOIl+L7kOxE8EaIGpvjiSCHfQJB71uNVtR5aidGL6si6axqhdymHcBv0ZP9ujkinYrGEQNjPefKTwYKZbknrV11TZGXjkmiH9dvOCXI6FE3J2mkQ2eFoDo9tuyIoPtucEWeoFBGpn8mGDkc6VZgHF0ySzaRFVEG3/dWS92Q60g4BNkP+7A5OR+M6F37sBxXcyT3TPBIq/1BPkTui5xlFLyissT2OIB60ATwfnnkfuA48GDEDwUK73JZbi4MaIc3RpvdoGxJYH0wcC5GKfgdlmdMtgKmO1p82LiEo+zqda67xqh8gix7DaDx0sxa33nQc11cow8c5xk+KUK5V5eq+vE9We5BYh5PccvuiHH7eWkokgHlEFa3wJQA1N5RIuvlSF0T0GT1ozHMz9rkrJyiycZj0GtVEVwMWJ3aYdhL/Unu
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(23010399003)(22082099003)(18002099003)(11063799006)(56012099006)(6133799003)(4143699003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WG5KS0dZTXlXOHBBdWk3NTFiRHpRQ3c1RDdYWnR4VlI4QzNCZm52SkQyMWh2?=
- =?utf-8?B?dXVMbW82aEo2RlI1SGlvZ0laemFHaStJZm4wRXI3UkIweFlVRVNXQjRiN05p?=
- =?utf-8?B?S291UDB1amlXekZpakRDYjVXL1JSNU9rc0JTaXI2QzB5UGJsZjRxbU5uZnln?=
- =?utf-8?B?OUJGYWZLcDJYViswaGNhdU11clNoZmE2TUxBcGF0WlhyekZLa0dIbTZXR1My?=
- =?utf-8?B?VWEzQVNiWEh0YTI0SVZrekFjWVBVZ3AycFoxb1ZtQisva2hDdHR2RUJsWVFS?=
- =?utf-8?B?MTVVaXFwcDVET3NYTFgxWTJPbFUydmFKUG9zdG9ERDVVbzdGQ2F3SVdvQmZF?=
- =?utf-8?B?V1EvQXJUNFVGYTc4c2RxNXA1QTVoTlBodVZZTndnNFlwNjl3SDA1dW1RdWlT?=
- =?utf-8?B?anNUVHIrS2JVTG9NczN4WCtEcVJNUnY5am5uSUxwbWVmK1daL2ZMZHNraFFZ?=
- =?utf-8?B?TmtCM1JTYmxzRXVBMHplQ2tsZXdLVDhaNFhycCtSL05ZcGtyMUlVS3gvM2V1?=
- =?utf-8?B?c0dKb0FJSUZ5Y25CWWNkRXBLeDFqeWZ0VXFNRk5JQUxDV0N0V3RNZkd5Undj?=
- =?utf-8?B?Qm9jTzBEd3oyOEdmME1HTjNTb3R2dWhNa1ZqM29qa2tBemVaR1lTRGhKMlJz?=
- =?utf-8?B?VzlrdEtCdmNKdGVuNlRZckhLSjQ3TnFWN0d2aDNsdFBMa2xndkMxbWlrWW5l?=
- =?utf-8?B?UHNxRFFaWDE0YnJCMFF5dEFBeWpKZ1VNWEM0c0kxRGlwQThxUVZxMnJiUm45?=
- =?utf-8?B?UHg3WEQrNSs0RzdzbTBoT3hlVGE2Mm4xUlJDSDh2RHpld3QyY2MrVWE5V2do?=
- =?utf-8?B?anlwaXFpWWNpSjNPN0VsQjVkTVRVUUlsczg4NG5NdThlWEdWTzlVMlhCdWRt?=
- =?utf-8?B?TThQY1pwVklYUE5YNVdpMUt6bmlDNjBqYm9zMHJibGR5YkVxL3laTlNjTDRK?=
- =?utf-8?B?QXdJNTJOSCtqU0lMZHkxc0tSRHBrQi9vZUp5NGg1cXF2M1RGS3FLZnFSS3ZH?=
- =?utf-8?B?RythMUNvSHNKS0pQcnR2OUUxS0I4Q0Q5YWFQTzZzTkpUSjdncmV2VERrMUhN?=
- =?utf-8?B?cXZDcU55Y0tsRzg4NXdXSHo2T0IvWWo3YnN0Nml1aEdxcHFoaW5iOHZPNWhV?=
- =?utf-8?B?azRwMW1jeCtnQkx2K3ZLL2FtaGtrTW45ODAxTFV5dG9vcFkzMWZCWmcxTzRt?=
- =?utf-8?B?OHVlTlg1TDBtbzZKOUtpcHBuNG9UaWVtcnF2R0ZnZWIxd3NraWg3L0JxVDd0?=
- =?utf-8?B?YkhkN0M3enNybzk0WTViNElTNThyUDZydWk5bHlQNGdZQm5LbXZyRmlaYjJV?=
- =?utf-8?B?MFIrTjhpWnBRSGJBbjd3VGxUYjFYV1dXdFdtNW0xdDZtdFhuL2tVMU10M2ow?=
- =?utf-8?B?RDhqL1pnQTlNTUdsd1MwWGJBR2JGVjNYR00vYzlHMUl2bDl2V01KOTc5Y2Vr?=
- =?utf-8?B?a2xKeGRKaGF0LzJHS0MvNGhGempzcEd3U01YZXYvWWNOY1NyRGhKd0l2UUpE?=
- =?utf-8?B?N3RzRVdweUdnRWswMmpQcWRNUnBOUmhQSDhid2QveTlyNGNCbDVjSWRORExH?=
- =?utf-8?B?alpXNUw1SFNLWWRwWkY2dkhsY0J1YjMrTUhTVlhhUE00TmlyMk54WCtWSC9W?=
- =?utf-8?B?MlZMci92ei9jWGpBTkVSMHJReXE0YUI4Y1BOMURoUGJ3emVxTlNKWUxrRDlP?=
- =?utf-8?B?SVpFbFF5V0ZkazJ1T21YMWFLVHFRRU0zdGNsTHFKemMreXFCL21MbzlvYzFY?=
- =?utf-8?B?WHQ2V1VWV0tmZ2lDR0dMRm9mdERmd3J2RlJLSi9IcjVOODhoVnhJWWJlUC9O?=
- =?utf-8?B?ZURpVndMTSsydVdsZjcwSy8xbEREQlhmTUxKZm5tdlRmZ20wMWo0a3ArVXV4?=
- =?utf-8?B?RTVuSldyQ2xoZnA1YU5CYXBKWExHQURHcEtVN29aUUJLSVVJV0RjMnozdEUr?=
- =?utf-8?B?TitiUWN4amI0WFBIY253bEdUNmcyamRTYzROanhzQkhQT3NCd1ZSdmV2UGhE?=
- =?utf-8?B?RjNWcXdEMUNYRVJ0dzhmRjBJMnFpbDRJaVRXdmpjNTZNNUNSak85Qkl5UEF6?=
- =?utf-8?B?b256ZkhDWWNmNmVnK05ST1k3RGtyWnZhd1drZURiZXkyYnVxUzYxWFRndlVj?=
- =?utf-8?B?czlFVVNXR0ovNC91STdGeStWelhXYnZDZjE5ZUFXemZSeDZJeXFsVmJnaW1W?=
- =?utf-8?B?Rzd5R2FXeTdqbFIxVi9UR2RUU2lvRXlOQnVpbnZ1MFROYjhSSG1vbTVBajZC?=
- =?utf-8?B?SXNsSXl0bldhTlptcHdwRXR1VzJ1cW10OUdZbXBkQTB3OFAvcEQ1MUVjSFBt?=
- =?utf-8?B?NUlFWWVqZkQvZ1pEWHErdHo3QzNnU2VrdWJDR0VaNmFwdHJlRWdidz09?=
-X-Exchange-RoutingPolicyChecked: og+DrMPdcsyboUscp+JN+PybPet5ESkDz1atlG2TW1nEqa8crZfF57Pv8YB7r1WIU2OZngD0cNZd7zkMk4IRRCVRIzvfAD1W89VKykWjStwGXnFZJNm4THegpXDZnPVrj0VkNFOoQ7Q/1B6oGH10ZqTSd+Xx6oLPLPh1OcEWIrAtBhTWFBcyiDaWr15wstPL/xw7yZbq132x5WyTolDa+Du/8+EbxWKjnP77IWkAdOwzXG3wgU8SLsbOBXB8p6M98kJr8sYiVDBlgoHSx/GtRK0ATgbuZDcttcU8/g7B9MdOw4OlXBMzYS0AGAndYuA4n4Z+p0U9NKAKwx+b/vMIVg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c74ce84-e338-492c-6f92-08dec86a541c
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5661.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2026 10:06:54.4136 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MDQ5fcMAduOT/ROHZMh4Cc2se2IP9/4E+G9uVfGhIXUGO3+kO5qzzO8OMd5m6RnfXCU2Rzdvm6zNeLhz9jacKw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6411
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapema100001.china.huawei.com (7.182.19.23) To
+ frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -165,29 +48,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This patchset addresses numerous bugs in the BPF verifier's abstract
+interpretation logic and introduces a new validation debugger API to
+enable precise, robust testing of the verifier itself.
 
-On 11-Jun-26 10:18 PM, Stephen Hemminger wrote:
-> Updated multiple networking sample application guides:
->
-> ip_reassembly.rst:
-> - Enhanced fragment reassembly process descriptions
-> - Improved command-line parameter documentation
-> - Fixed formatting and terminology consistency
->
-> ipsec_secgw.rst:
-> - Restructured configuration file format sections
-> - Improved security association descriptions
-> - Enhanced clarity of IPsec gateway operations
->
-> ipv4_multicast.rst:
-> - Simplified multicast forwarding explanations
-> - Fixed formatting in code examples
-> - Improved readability of routing descriptions
->
-> keep_alive.rst:
-> - Enhanced keep-alive mechanism descriptions
-> - Fixed minor formatting issues
->
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
-Acked-by: Radu Nicolau <radu.nicolau@intel.com>
+While the existing DPDK eBPF verifier is capable of checking basic
+execution graph loops and dead code, the mathematical tracking of
+register bounds (both signed and unsigned) contained flaws resulting in
+false positives and false negatives, undefined behavior, and hardware
+exceptions such as SIGFPE during validation.
+
+To resolve these issues and ensure they do not regress, this patchset
+first introduces the "Validation Debugger API"
+(`rte_bpf_validate_debug_*`). This gdb-like interface allows setting
+breakpoints and catchpoints during the validation process to inspect the
+verifier's internal state.
+
+Using this new API, a comprehensive test harness
+(`app/test/test_bpf_validate.c`) was created to formally check the
+abstract domains of instructions across all their valid branches. The
+remainder of the patchset incrementally fixes the math and bounds logic
+for individual eBPF instructions, using the new tests to prove the
+correctness of the fixes.
+
+This debugger API also lays the foundation for an interactive eBPF
+validation debugger to be introduced in the future.
+
+Series-Depends-on: series-38434 ("bpf: introduce extensible load API")
+
+
+v3:
+* Rebased on v5 of the prerequisite series and updated Depends-on tags.
+* Replaced a hardcoded compiler attribute with __rte_format_printf.
+
+v2:
+* Addressed AI reviewer comments:
+  * replaced `false` and `true` with 0 and 1 in some API descriptions
+    and invocations that multiplex boolean and negative error code;
+  * made some previously implicit casts explicit;
+  * moved new enum value to the end of the definition.
+* Added Acked-by and Depends-on tags to all individual commits to
+  align with patchwork requirements.
+* Added Reported-by tags to fixes of issues discovered by Claudia Cauli
+  using a formal methods framework.
+
+
+Marat Khalili (25):
+  bpf: format and dump jlt, jle, jslt, and jsle
+  bpf: add format instruction function
+  bpf/validate: break on error in evaluate
+  bpf/validate: expand comments in evaluate cycle
+  bpf/validate: introduce debugging interface
+  bpf/validate: fix BPF_ADD of pointer to a scalar
+  bpf/validate: fix BPF_LDX | EBPF_DW signed range
+  test/bpf_validate: add setup and basic tests
+  test/bpf_validate: add harness for pointer tests
+  bpf/validate: fix EBPF_JSLT | BPF_X evaluation
+  bpf/validate: fix BPF_NEG of INT64_MIN and 0
+  bpf/validate: fix BPF_DIV and BPF_MOD signed part
+  bpf/validate: fix BPF_MUL ranges minimum typo
+  bpf/validate: fix BPF_MUL signed overflow UB
+  bpf/validate: fix BPF_JGT/EBPF_JSGT no-jump max
+  bpf/validate: fix BPF_JMP source range calculation
+  bpf/validate: fix BPF_JMP empty range handling
+  bpf/validate: fix BPF_AND min calculations
+  bpf/validate: fix BPF_LSH shift-out-of-bounds UB
+  bpf/validate: fix BPF_OR min calculations
+  bpf/validate: fix BPF_SUB signed max zero case
+  bpf/validate: fix BPF_XOR signed min calculation
+  bpf/validate: prevent overflow when building graph
+  doc: add release notes for BPF validation fixes
+  doc: add BPF validate debug to programmer's guide
+
+ app/test/meson.build                   |    1 +
+ app/test/test_bpf.c                    |   99 ++
+ app/test/test_bpf_validate.c           | 2271 ++++++++++++++++++++++++
+ doc/guides/prog_guide/bpf_lib.rst      |   31 +
+ doc/guides/rel_notes/release_26_07.rst |   16 +
+ lib/bpf/bpf_dump.c                     |  292 +--
+ lib/bpf/bpf_validate.c                 |  730 +++++++-
+ lib/bpf/bpf_validate.h                 |   60 +
+ lib/bpf/bpf_validate_debug.c           |  663 +++++++
+ lib/bpf/bpf_validate_debug.h           |   86 +
+ lib/bpf/bpf_value_set.c                |  403 +++++
+ lib/bpf/bpf_value_set.h                |  126 ++
+ lib/bpf/meson.build                    |    9 +-
+ lib/bpf/rte_bpf.h                      |   55 +
+ lib/bpf/rte_bpf_validate_debug.h       |  377 ++++
+ 15 files changed, 5022 insertions(+), 197 deletions(-)
+ create mode 100644 app/test/test_bpf_validate.c
+ create mode 100644 lib/bpf/bpf_validate.h
+ create mode 100644 lib/bpf/bpf_validate_debug.c
+ create mode 100644 lib/bpf/bpf_validate_debug.h
+ create mode 100644 lib/bpf/bpf_value_set.c
+ create mode 100644 lib/bpf/bpf_value_set.h
+ create mode 100644 lib/bpf/rte_bpf_validate_debug.h
+
+-- 
+2.43.0
+
