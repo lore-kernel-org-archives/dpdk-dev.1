@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A86CD4F2C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 08:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420BECD4F2C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 08:43:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05BE843492;
+	by mails.dpdk.org (Postfix) with ESMTP id D72C34348F;
 	Fri, 12 Jun 2026 10:42:53 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 67F2B4347B
- for <dev@dpdk.org>; Fri, 12 Jun 2026 10:42:50 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gcCgs5Y41zJ46ZQ
- for <dev@dpdk.org>; Fri, 12 Jun 2026 16:42:33 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id C388343482
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 10:42:51 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gcCgt3lPCzJ46Cf
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 16:42:34 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 47CFE40572
- for <dev@dpdk.org>; Fri, 12 Jun 2026 16:42:50 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 08D0740577
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 16:42:51 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 12 Jun 2026 10:42:49 +0200
+ 15.2.1544.11; Fri, 12 Jun 2026 10:42:50 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
 To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v5 06/11] bpf: support loading ELF files from memory
-Date: Fri, 12 Jun 2026 09:42:13 +0100
-Message-ID: <20260612084219.38399-7-marat.khalili@huawei.com>
+Subject: [PATCH v5 08/11] test/bpf: test loading ELF file from memory
+Date: Fri, 12 Jun 2026 09:42:15 +0100
+Message-ID: <20260612084219.38399-9-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260612084219.38399-1-marat.khalili@huawei.com>
 References: <20260520124922.42445-1-marat.khalili@huawei.com>
@@ -49,145 +49,332 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce new ELF origin RTE_BPF_ORIGIN_ELF_MEMORY allowing one to
-specify data area containing ELF image.
+Run each subtest in test_bpf_elf twice: the old way loading ELF images
+via temporary file, and using the new rte_bpf_load_ex API to load them
+directly from memory.
+
+In tests loading port/queue filters use new rte_bpf_eth_(rx|tx)_install
+API to install an already loaded (via one of the ways) BPF program.
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/bpf/bpf_impl.h     |  5 +++++
- lib/bpf/bpf_load.c     |  4 ++++
- lib/bpf/bpf_load_elf.c | 40 +++++++++++++++++++++++++++++++++++++++-
- lib/bpf/rte_bpf.h      |  6 ++++++
- 4 files changed, 54 insertions(+), 1 deletion(-)
+ app/test/test_bpf.c | 194 ++++++++++++++++++++++++++------------------
+ 1 file changed, 114 insertions(+), 80 deletions(-)
 
-diff --git a/lib/bpf/bpf_impl.h b/lib/bpf/bpf_impl.h
-index 92d03583d9..14ad772d4b 100644
---- a/lib/bpf/bpf_impl.h
-+++ b/lib/bpf/bpf_impl.h
-@@ -27,6 +27,7 @@ struct __rte_bpf_load {
- 	/* Loading ELF and applying relocations. */
- 	int elf_fd;  /* ELF fd, must be negative (not zero) by default. */
- 	void *elf;  /* Using void to avoid dependency on libelf. */
-+	const char *elf_section;
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index c43b872a4c..026ba18b75 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -3977,12 +3977,61 @@ create_temp_bpf_file(const uint8_t *data, size_t size, const char *name)
  
- 	/* Value we are going to return, if any. */
- 	struct rte_bpf *bpf;
-@@ -53,6 +54,10 @@ __rte_bpf_load_elf_cleanup(struct __rte_bpf_load *load);
- int
- __rte_bpf_load_elf_file(struct __rte_bpf_load *load);
+ #include "test_bpf_load.h"
  
-+/* Open the ELF memory image. */
-+int
-+__rte_bpf_load_elf_memory(struct __rte_bpf_load *load);
++/* Function loading BPF program from ELF image in memory. */
++typedef struct rte_bpf *
++(*load_elf_image_t)(const void *data, size_t size, const char *section,
++	const struct rte_bpf_xsym *xsym, uint32_t nb_xsym, const struct rte_bpf_arg *prog_arg);
 +
- /* Get code from ELF and apply relocations to it. */
- int
- __rte_bpf_load_elf_code(struct __rte_bpf_load *load);
-diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
-index e3265e97ff..e406211e0e 100644
---- a/lib/bpf/bpf_load.c
-+++ b/lib/bpf/bpf_load.c
-@@ -247,6 +247,10 @@ load_try(struct __rte_bpf_load *load, const struct rte_bpf_prm_ex *app_prm)
- 		rc = rc < 0 ? rc : __rte_bpf_load_elf_file(load);
- 		rc = rc < 0 ? rc : __rte_bpf_load_elf_code(load);
- 		break;
-+	case RTE_BPF_ORIGIN_ELF_MEMORY:
-+		rc = rc < 0 ? rc : __rte_bpf_load_elf_memory(load);
-+		rc = rc < 0 ? rc : __rte_bpf_load_elf_code(load);
-+		break;
- 	default:
- 		rc = rc < 0 ? rc : -EINVAL;
- 	}
-diff --git a/lib/bpf/bpf_load_elf.c b/lib/bpf/bpf_load_elf.c
-index 4ae7492351..80443cb63a 100644
---- a/lib/bpf/bpf_load_elf.c
-+++ b/lib/bpf/bpf_load_elf.c
-@@ -310,6 +310,36 @@ __rte_bpf_load_elf_file(struct __rte_bpf_load *load)
- 		return -EINVAL;
- 	}
- 
-+	load->elf_section = prm->elf_file.section;
-+
-+	return 0;
-+}
-+
-+int
-+__rte_bpf_load_elf_memory(struct __rte_bpf_load *load)
++/* Load BPF program by writing ELF image to temporary file and opening this file. */
++static struct rte_bpf *
++load_elf_image_temp_file(const void *data, size_t size, const char *section,
++	const struct rte_bpf_xsym *xsym, uint32_t nb_xsym, const struct rte_bpf_arg *prog_arg)
 +{
-+	const struct rte_bpf_prm_ex *const prm = &load->prm;
-+
-+	RTE_ASSERT(prm->origin == RTE_BPF_ORIGIN_ELF_MEMORY);
-+
-+	if (prm->elf_memory.data == NULL || prm->elf_memory.section == NULL)
-+		return -EINVAL;
-+
-+	if (elf_version(EV_CURRENT) == EV_NONE)
-+		return -ENOTSUP;
-+
-+	load->elf = elf_memory(
-+		/* Cast away const, we are not going to modify the ELF image. */
-+		(char *)(uintptr_t)prm->elf_memory.data, prm->elf_memory.size);
-+	if (load->elf == NULL) {
-+		const int rc = elf_errno();
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "error %d opening ELF image: %s",
-+			rc, elf_errmsg(rc));
-+		return -EINVAL;
++	/* Create temp file from embedded BPF object */
++	char *tmpfile = create_temp_bpf_file(data, size, "test");
++	if (tmpfile == NULL) {
++		rte_errno = EIO;
++		return NULL;
 +	}
 +
-+	load->elf_section = prm->elf_memory.section;
++	/* Try to load BPF program from temp file */
++	const struct rte_bpf_prm prm = {
++		.xsym = xsym,
++		.nb_xsym = nb_xsym,
++		.prog_arg = *prog_arg,
++	};
 +
- 	return 0;
- }
- 
-@@ -321,7 +351,7 @@ __rte_bpf_load_elf_code(struct __rte_bpf_load *load)
- 	size_t sidx;
- 	int rc;
- 
--	rc = find_elf_code(load->elf, prm->elf_file.section, &sd, &sidx);
-+	rc = find_elf_code(load->elf, load->elf_section, &sd, &sidx);
- 	if (rc < 0)
- 		return rc;
- 
-@@ -353,6 +383,14 @@ __rte_bpf_load_elf_file(struct __rte_bpf_load *load)
- 	return -ENOTSUP;
- }
- 
-+int
-+__rte_bpf_load_elf_memory(struct __rte_bpf_load *load)
-+{
-+	RTE_SET_USED(load);
-+	RTE_BPF_LOG_FUNC_LINE(ERR, "not supported, rebuild with libelf installed");
-+	return -ENOTSUP;
++	struct rte_bpf *bpf = rte_bpf_elf_load(&prm, tmpfile, section);
++	unlink(tmpfile);
++	free(tmpfile);
++
++	return bpf;
 +}
 +
- int
- __rte_bpf_load_elf_code(struct __rte_bpf_load *load)
++/* Load BPF program by calling rte_bpf_load_ex and specifying image as the origin. */
++static struct rte_bpf *
++load_elf_image_direct(const void *data, size_t size, const char *section,
++	const struct rte_bpf_xsym *xsym, uint32_t nb_xsym, const struct rte_bpf_arg *prog_arg)
++{
++	return rte_bpf_load_ex(&(struct rte_bpf_prm_ex){
++		.sz = sizeof(struct rte_bpf_prm_ex),
++		.origin = RTE_BPF_ORIGIN_ELF_MEMORY,
++		.elf_memory.data = data,
++		.elf_memory.size = size,
++		.elf_memory.section = section,
++		.xsym = xsym,
++		.nb_xsym = nb_xsym,
++		.prog_arg[0] = *prog_arg,
++		.nb_prog_arg = 1,
++	});
++}
++
+ /*
+  * Test loading BPF program from an object file.
+  * This test uses same arguments as previous test_call1 example.
+  */
+ static int
+-test_bpf_elf_load(void)
++test_bpf_elf_load(load_elf_image_t load_elf_image)
  {
-diff --git a/lib/bpf/rte_bpf.h b/lib/bpf/rte_bpf.h
-index da2bdea7e0..413ccf0497 100644
---- a/lib/bpf/rte_bpf.h
-+++ b/lib/bpf/rte_bpf.h
-@@ -97,6 +97,7 @@ enum rte_bpf_origin {
- 	RTE_BPF_ORIGIN_RAW,		/**< code loaded from raw array */
- 	RTE_BPF_ORIGIN_CBPF,		/**< code converted from cbpf */
- 	RTE_BPF_ORIGIN_ELF_FILE,	/**< code loaded from elf_file */
-+	RTE_BPF_ORIGIN_ELF_MEMORY,	/**< code loaded from elf_memory */
- };
- 
- struct bpf_insn;
-@@ -127,6 +128,11 @@ struct rte_bpf_prm_ex {
- 			const char *path;  /**< path to the ELF file */
- 			const char *section;  /**< ELF section with the code */
- 		} elf_file;
-+		struct {
-+			const void *data;  /**< pointer to the ELF image */
-+			size_t size;  /**< size of the ELF image */
-+			const char *section;  /**< ELF section with the code */
-+		} elf_memory;
+ 	static const char test_section[] = "call1";
+ 	uint8_t tbuf[sizeof(struct dummy_vect8)];
+@@ -4010,28 +4059,15 @@ test_bpf_elf_load(void)
+ 			},
+ 		},
  	};
+-	int ret;
+-
+-	/* Create temp file from embedded BPF object */
+-	char *tmpfile = create_temp_bpf_file(app_test_bpf_load_o,
+-					     app_test_bpf_load_o_len,
+-					     "load");
+-	if (tmpfile == NULL)
+-		return -1;
+-
+-	/* Try to load BPF program from temp file */
+-	const struct rte_bpf_prm prm = {
+-		.xsym = xsym,
+-		.nb_xsym = RTE_DIM(xsym),
+-		.prog_arg = {
+-			.type = RTE_BPF_ARG_PTR,
+-			.size = sizeof(tbuf),
+-		},
++	static const struct rte_bpf_arg prog_arg = {
++		.type = RTE_BPF_ARG_PTR,
++		.size = sizeof(tbuf),
+ 	};
++	struct rte_bpf *bpf;
++	int ret;
  
- 	const struct rte_bpf_xsym *xsym;
+-	struct rte_bpf *bpf = rte_bpf_elf_load(&prm, tmpfile, test_section);
+-	unlink(tmpfile);
+-	free(tmpfile);
++	bpf = load_elf_image(app_test_bpf_load_o, app_test_bpf_load_o_len, test_section,
++		xsym, RTE_DIM(xsym), &prog_arg);
+ 
+ 	/* If libelf support is not available */
+ 	if (bpf == NULL && rte_errno == ENOTSUP)
+@@ -4174,22 +4210,28 @@ setup_mbufs(struct rte_mbuf *burst[], unsigned int n)
+ 	return tcp_count;
+ }
+ 
+-static int bpf_tx_test(uint16_t port, const char *tmpfile, struct rte_mempool *pool,
+-		       const char *section, uint32_t flags)
++static int bpf_tx_test(uint16_t port, struct rte_mempool *pool, load_elf_image_t load_elf_image,
++	const char *section, uint32_t flags)
+ {
+-	const struct rte_bpf_prm prm = {
+-		.prog_arg = {
+-			.type = RTE_BPF_ARG_PTR,
+-			.size = sizeof(struct dummy_net),
+-		},
++	static const struct rte_bpf_arg prog_arg = {
++		.type = RTE_BPF_ARG_PTR,
++		.size = sizeof(struct dummy_net),
+ 	};
++	struct rte_bpf *bpf;
+ 	int ret;
+ 
+-	/* Try to load BPF TX program from temp file */
+-	ret = rte_bpf_eth_tx_elf_load(port, 0, &prm, tmpfile, section, flags);
++	/* Try to load BPF program from image */
++	bpf = load_elf_image(app_test_bpf_filter_o, app_test_bpf_filter_o_len, section,
++		NULL, 0, &prog_arg);
++	TEST_ASSERT_NOT_NULL(bpf, "failed to load BPF filter from image, error=%d:(%s)\n",
++		       rte_errno, rte_strerror(rte_errno));
++
++	/* Try to install loaded BPF program */
++	ret = rte_bpf_eth_tx_install(port, 0, bpf, flags);
+ 	if (ret != 0) {
+-		printf("%s@%d: failed to load BPF filter from file=%s error=%d:(%s)\n",
+-		       __func__, __LINE__, tmpfile, rte_errno, rte_strerror(rte_errno));
++		printf("%s@%d: failed to install BPF filter, error=%d:(%s)\n",
++		       __func__, __LINE__, rte_errno, rte_strerror(rte_errno));
++		rte_bpf_destroy(bpf);
+ 		return ret;
+ 	}
+ 
+@@ -4217,10 +4259,9 @@ static int bpf_tx_test(uint16_t port, const char *tmpfile, struct rte_mempool *p
+ 
+ /* Test loading a transmit filter which only allows IPv4 packets */
+ static int
+-test_bpf_elf_tx_load(void)
++test_bpf_elf_tx_load(load_elf_image_t load_elf_image)
+ {
+ 	static const char null_dev[] = "net_null_bpf0";
+-	char *tmpfile = NULL;
+ 	struct rte_mempool *mb_pool = NULL;
+ 	uint16_t port = UINT16_MAX;
+ 	int ret;
+@@ -4237,27 +4278,17 @@ test_bpf_elf_tx_load(void)
+ 	if (ret != 0)
+ 		goto fail;
+ 
+-	/* Create temp file from embedded BPF object */
+-	tmpfile = create_temp_bpf_file(app_test_bpf_filter_o, app_test_bpf_filter_o_len, "tx");
+-	if (tmpfile == NULL)
+-		goto fail;
+-
+ 	/* Do test with VM */
+-	ret = bpf_tx_test(port, tmpfile, mb_pool, "filter", 0);
++	ret = bpf_tx_test(port, mb_pool, load_elf_image, "filter", 0);
+ 	if (ret != 0)
+ 		goto fail;
+ 
+ 	/* Repeat with JIT */
+-	ret = bpf_tx_test(port, tmpfile, mb_pool, "filter", RTE_BPF_ETH_F_JIT);
++	ret = bpf_tx_test(port, mb_pool, load_elf_image, "filter", RTE_BPF_ETH_F_JIT);
+ 	if (ret == 0)
+ 		printf("%s: TX ELF load test passed\n", __func__);
+ 
+ fail:
+-	if (tmpfile) {
+-		unlink(tmpfile);
+-		free(tmpfile);
+-	}
+-
+ 	if (port != UINT16_MAX)
+ 		rte_vdev_uninit(null_dev);
+ 
+@@ -4272,23 +4303,29 @@ test_bpf_elf_tx_load(void)
+ }
+ 
+ /* Test loading a receive filter */
+-static int bpf_rx_test(uint16_t port, const char *tmpfile, struct rte_mempool *pool,
+-		       const char *section, uint32_t flags, uint16_t expected)
++static int bpf_rx_test(uint16_t port, struct rte_mempool *pool, load_elf_image_t load_elf_image,
++	const char *section, uint32_t flags, uint16_t expected)
+ {
+-	struct rte_mbuf *pkts[BPF_TEST_BURST];
+-	const struct rte_bpf_prm prm = {
+-		.prog_arg = {
+-			.type = RTE_BPF_ARG_PTR,
+-			.size = sizeof(struct dummy_net),
+-		},
++	static const struct rte_bpf_arg prog_arg = {
++		.type = RTE_BPF_ARG_PTR,
++		.size = sizeof(struct dummy_net),
+ 	};
++	struct rte_mbuf *pkts[BPF_TEST_BURST];
++	struct rte_bpf *bpf;
+ 	int ret;
+ 
+-	/* Load BPF program to drop all packets */
+-	ret = rte_bpf_eth_rx_elf_load(port, 0, &prm, tmpfile, section, flags);
++	/* Try to load BPF program from image */
++	bpf = load_elf_image(app_test_bpf_filter_o, app_test_bpf_filter_o_len, section,
++		NULL, 0, &prog_arg);
++	TEST_ASSERT_NOT_NULL(bpf, "failed to load BPF filter from image, error=%d:(%s)\n",
++		       rte_errno, rte_strerror(rte_errno));
++
++	/* Try to install loaded BPF program */
++	ret = rte_bpf_eth_rx_install(port, 0, bpf, flags);
+ 	if (ret != 0) {
+-		printf("%s@%d: failed to load BPF filter from file=%s error=%d:(%s)\n",
+-		       __func__, __LINE__, tmpfile, rte_errno, rte_strerror(rte_errno));
++		printf("%s@%d: failed to install BPF filter, error=%d:(%s)\n",
++		       __func__, __LINE__, rte_errno, rte_strerror(rte_errno));
++		rte_bpf_destroy(bpf);
+ 		return ret;
+ 	}
+ 
+@@ -4311,11 +4348,10 @@ static int bpf_rx_test(uint16_t port, const char *tmpfile, struct rte_mempool *p
+ 
+ /* Test loading a receive filters, first with drop all and then with allow all packets */
+ static int
+-test_bpf_elf_rx_load(void)
++test_bpf_elf_rx_load(load_elf_image_t load_elf_image)
+ {
+ 	static const char null_dev[] = "net_null_bpf0";
+ 	struct rte_mempool *pool = NULL;
+-	char *tmpfile = NULL;
+ 	uint16_t port = UINT16_MAX;
+ 	int ret;
+ 
+@@ -4331,28 +4367,23 @@ test_bpf_elf_rx_load(void)
+ 	if (ret != 0)
+ 		goto fail;
+ 
+-	/* Create temp file from embedded BPF object */
+-	tmpfile = create_temp_bpf_file(app_test_bpf_filter_o, app_test_bpf_filter_o_len, "rx");
+-	if (tmpfile == NULL)
+-		goto fail;
+-
+ 	/* Do test with VM */
+-	ret = bpf_rx_test(port, tmpfile, pool, "drop", 0, 0);
++	ret = bpf_rx_test(port, pool, load_elf_image, "drop", 0, 0);
+ 	if (ret != 0)
+ 		goto fail;
+ 
+ 	/* Repeat with JIT */
+-	ret = bpf_rx_test(port, tmpfile, pool, "drop", RTE_BPF_ETH_F_JIT, 0);
++	ret = bpf_rx_test(port, pool, load_elf_image, "drop", RTE_BPF_ETH_F_JIT, 0);
+ 	if (ret != 0)
+ 		goto fail;
+ 
+ 	/* Repeat with allow all */
+-	ret = bpf_rx_test(port, tmpfile, pool, "allow", 0, BPF_TEST_BURST);
++	ret = bpf_rx_test(port, pool, load_elf_image, "allow", 0, BPF_TEST_BURST);
+ 	if (ret != 0)
+ 		goto fail;
+ 
+ 	/* Repeat with JIT */
+-	ret = bpf_rx_test(port, tmpfile, pool, "allow", RTE_BPF_ETH_F_JIT, BPF_TEST_BURST);
++	ret = bpf_rx_test(port, pool, load_elf_image, "allow", RTE_BPF_ETH_F_JIT, BPF_TEST_BURST);
+ 	if (ret != 0)
+ 		goto fail;
+ 
+@@ -4364,11 +4395,6 @@ test_bpf_elf_rx_load(void)
+ 			  "Mempool available %u != %u leaks?", avail, BPF_TEST_POOLSIZE);
+ 
+ fail:
+-	if (tmpfile) {
+-		unlink(tmpfile);
+-		free(tmpfile);
+-	}
+-
+ 	if (port != UINT16_MAX)
+ 		rte_vdev_uninit(null_dev);
+ 
+@@ -4381,13 +4407,21 @@ test_bpf_elf_rx_load(void)
+ static int
+ test_bpf_elf(void)
+ {
+-	int ret;
++	static const load_elf_image_t elf_image_loaders[] = {
++		load_elf_image_temp_file,
++		load_elf_image_direct,
++	};
+ 
+-	ret = test_bpf_elf_load();
+-	if (ret == TEST_SUCCESS)
+-		ret = test_bpf_elf_tx_load();
+-	if (ret == TEST_SUCCESS)
+-		ret = test_bpf_elf_rx_load();
++	int ret = TEST_SUCCESS;
++
++	for (int li = 0; li != RTE_DIM(elf_image_loaders); ++li) {
++		if (ret == TEST_SUCCESS)
++			ret = test_bpf_elf_load(elf_image_loaders[li]);
++		if (ret == TEST_SUCCESS)
++			ret = test_bpf_elf_tx_load(elf_image_loaders[li]);
++		if (ret == TEST_SUCCESS)
++			ret = test_bpf_elf_rx_load(elf_image_loaders[li]);
++	}
+ 
+ 	return ret;
+ }
 -- 
 2.43.0
 
