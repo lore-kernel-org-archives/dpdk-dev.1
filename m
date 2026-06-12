@@ -2,83 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D48CD98CE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 15:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AC0CD98CE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 15:20:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8071D43416;
-	Fri, 12 Jun 2026 17:00:56 +0200 (CEST)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id 3770940279;
- Fri, 12 Jun 2026 17:00:55 +0200 (CEST)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
- by mailfout.phl.internal (Postfix) with ESMTP id 98434EC01E4;
- Fri, 12 Jun 2026 11:00:54 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-07.internal (MEProxy); Fri, 12 Jun 2026 11:00:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1781276454;
- x=1781362854; bh=fka1oWLfEnzZqDaxuqH6maaMR1vDUB2GY5MEhx4EUyo=; b=
- hUMGihazkMPLTZOqaO8pvej/vMzvyDAREFNunYku2i9FflikncxgR+w4p6oBtumi
- ZDDTQfpEuagqaoeVgaWy/8RS+7D5n2XQU/dDY0oOy2QAceDT49sve2AopAL3mOBf
- ApSD1cNlYl1AfxZwphgIpwBQ1MmPEVycz9X0/gqK0K+tE1BCD/SutgaUEAfaqRQ0
- 6g6bTMGuCxmUN4+EoQvsxfJd1a2bh2vv9iGFts+gEYkH7dKQBqN39gGeTJNCledD
- h51taeK+h0gSBQuHiJvsQ558BfGTbe6BLZS1fzYBWaEy0jMQ/XKh1FM+IEiL7K+b
- ImCWUfCI0boCiPJpCK6vBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781276454; x=
- 1781362854; bh=fka1oWLfEnzZqDaxuqH6maaMR1vDUB2GY5MEhx4EUyo=; b=Y
- lpy0OsLTbK1abUF2K31HL/BU1lfDXd2wdvuKU5wiRXLdbA3RiNNdluR/EQUcrE7S
- zmXQckx3T2rmsqUJ47t6ENTzESsIt4x61q2U49ej9RI73dpBrFLXvFHOnKRxrLQK
- /vBfZafP66l3E9vueNxTCFHEVsPwc1i+NhhgN2vh6sreqK5NCMccpy9ucoPgVJpT
- sCxPPlqMvJO1OCtY2KF0bdDNPsQajoInMGRNGAYgXgn5H806PIRlbKOWJ8WIBh+k
- lh4/fQnQdPA7tny97e6NBncua3k+qK++YBjcEw8Suv27GmEb1L1CZE6+vlo0E/ro
- Aprs7viEvxm9pXu8zX4ng==
-X-ME-Sender: <xms:JR8saqLT013y8S7VtZzJMWhAI7fRHa82UXUeeg6hKP2UhsacsNRhsA>
- <xme:JR8sasMH-irOjYSwwZFCAwkltkRL0U66JTtjLDIcbR_I_3wkq8gemKGKNofvuS3YA
- E4V1oGOxvtSIcEzhx-f_MWJIokE-q2T6clc7FroMeREierYDQl19g>
-X-ME-Received: <xmr:JR8saqnbDKWY0021TMlQWe5Fgm80YqqbZ4ZviUURyyrGLjcfdfcElIG2IoC5_EeLcFxWP3-uogtIlfvBs0RJL9l_Kg>
-X-ME-Proxy-Cause: dmFkZTGwQFgcG72uGIbTkkiSaKJJUupY72OXFhHALzF2MyvsFFTOF58ycDzbj+bRz75kjj
- AUYmZ/6CDybpvwQqwX3nc2N2JvKmFe1NLnMY9Z+Hz+rfteZaX3TIrGQMCOZ4t3hdAVQ4Cb
- xibfue4knM3lXyna5z5n4+RSPAcg9wZMC+SlAD6+sdUXfexUwlcmGB+ssmlreWqqrXCXqS
- 5IUGDE6wmxlIkjFvoQwyXBwheZ4pnXGxMB3B50L/HsURBqzOZICrW53/YKQZHddJxIh5Sz
- hKk3ikzN4PcOW44Lu8BwkkxsdniUMFuDeTSElQViHIsHP5X10HeUhORQfGTUahDjtOCaNW
- n4p9YztLFoOuvJvZCrZeHxIkh5E1gX7UN4h/AdDy/DPVg5ZJdm8okiUURkuLr6usyesdKd
- +XUreO2Xh9HUgtigZB8o83V6wnFpyTZS6pimZdIIzhXF/SSiozOVRt9GiRjGYOxShqgl6s
- jjqrTJXVJpMRmHUtiDDD1H42plJRYtucbR43OqYAW7qp3o6Jz3v4AjOflWI5be6X628lI6
- J8bOWs1uQpxsa7fIDA+QUfQdsguz81OsMNRWlqDvU49UaPzEBgXEV4FkuXiKdyYMBx3ajx
- uOHdxDHFUzcWW8HBQIS2qDSdmIHAKvwx6cjVMPwgjHVYEYutPIAHU7Ea8DZQ
-X-ME-Proxy: <xmx:JR8sag5YCHDcJpbjOY4nrp2M7H2dymCuR-rtfJuytNpq-Zc6rTJPtA>
- <xmx:JR8sau3PHhdtyxBp_LnEc7VqK5PROiTasXumbXWf6kzQksR7PG1I1g>
- <xmx:JR8sarGTUjCfuIsWzBYu8xkjLZTuMB8FdeK-nQyRR3MK3YsD_45H_A>
- <xmx:JR8sath2RJH6ts6q2n9ICgYL0l_MHEQ94YlOQRR34_RbJc2eBHRYnA>
- <xmx:Jh8satybuzSjZYw2UZXBVEmIZbl0MB6qA6jBaTygi8s0KKBiOBF7hKNj>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Jun 2026 11:00:51 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Maxime Leroy <maxime@leroys.fr>
-Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, dev@dpdk.org, stable@dpdk.org,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Sunil Kumar Kori <skori@marvell.com>
-Subject: Re: [PATCH 8/9] ethdev: keep fast-path ops valid after port stop
-Date: Fri, 12 Jun 2026 17:00:50 +0200
-Message-ID: <2ePv3yh4QL-977KPOt1dXg@monjalon.net>
-In-Reply-To: <CAHHRULUGdnTmpnAX2aONEMj3bJmN11RG2cHGJ7h3-qhjoJLsFw@mail.gmail.com>
-References: <20260611154926.392670-1-maxime@leroys.fr>
- <98CBD80474FA8B44BF855DF32C47DC35F65909@smartserver.smartshare.dk>
- <CAHHRULUGdnTmpnAX2aONEMj3bJmN11RG2cHGJ7h3-qhjoJLsFw@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 264B3427B7;
+	Fri, 12 Jun 2026 17:20:15 +0200 (CEST)
+Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
+ by mails.dpdk.org (Postfix) with ESMTP id 061FF40279
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 17:20:12 +0200 (CEST)
+Received: by mail-dl1-f53.google.com with SMTP id
+ a92af1059eb24-137dd4cc208so696351c88.1
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 08:20:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781277612;
+ x=1781882412; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=D7bJLdW2XS/lXtNg1pkgBw8ioJcUuuw+2gUybll7NOY=;
+ b=ECaubxcXOQR4Ii3xOKnz4bUcXQP3JYqlVnFmmt7eGddPJdx1r5/M+0kyQWpq40IHIM
+ Cwmp7A4d9RYJJ+/hxXl20EU4CDIeLRuDtYhlBTqIDvokRCmNZdjwGm53EbADUU0E3l09
+ urOtQzwLNWpPe824xUVaBnPA3pCdo1t6cd20A1GrFrXRKsGCp+44PDP3c/alJUndVfD2
+ BdVm8X88ju0xP29c8PBA8LMfKJoY4mw5Ta4NdnlJN8yLavnRxw5ol6e3O82Uyn2WPg76
+ fXKDreanKdAEdb7N+NZagZCASUBmHEZEf3tmrbGsKQSSqdrQulC1vBIyDr++1asRCz3Y
+ Uw+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781277612; x=1781882412;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=D7bJLdW2XS/lXtNg1pkgBw8ioJcUuuw+2gUybll7NOY=;
+ b=IIkt7dF1gvMU3kimpHKr3+gsjTQZyXJCe/a3hJ6dHw8l25G6F/f2MdqsqmHo2qC4N9
+ iaugBMw2QPsNhjvCVrS9eIK+K0zwXJM2yVI0pGb+ovqhpT3fas4wxSOCwqMz1Em9GGOy
+ IXfq/R0x13x8rEWqhCydiegZzjzy5i42Wowwz6GLAdnWRIywD9j83MYHldUvGixzQRho
+ zCcBjDAS+6SlsVoUgSV6l2Z+xTbIVZxMBBLYOW3c19yTmFBmotvV7tBmkb5maCu1IAgd
+ gVMi9oLmBQM/VMA6lDC2dAY4uCvfchxCOEuAv3WUUjKR8GNJjpsGdo4xXpab/aSrlK6m
+ Y9Bw==
+X-Gm-Message-State: AOJu0YywZU9/hgvmo3PJ8R6cwLlwVXwzh9dMGubS4ZjDWPKa+yeX6pxd
+ 4hPW+gWYSKnEwptpRXR3iXP1xfmRd3rYjClAku7jzPS9ytaOQ2Tao61tHIrpGhOF8IY=
+X-Gm-Gg: Acq92OEr85jMFs8MXaLuU+M0PEZy9KvBn3CuAJNoWoMLXoNlNZfLEddZOwj9JC9xM98
+ EtKjfeNssgVD9c5JNr3nuFgOTSrEzx6vdCpMwoGBRFIjsJ4N5R7bjf7ogaVeI+Q2JwW9D9eG0Lg
+ 4U/OPcJCHSZORRIGYgIoY1OZ6yHQbHWyHuf2Hs3CeoAOVkD7qClgGeWczC2tSn7tlRygJxXfly2
+ wdFeEmZZxALvxY6o0TDmEfx3GErPwHsdKPMCZq/7YutsZBCDPVdvu/dMB0LTtTuAxXNgdhzoyFv
+ 6y49CrQ6ro4by1Rp6TKA6uKRO8T1WF179rusLOW53K8FABBMci5tIFhnCn4HrfnDPNKdd+pJlPI
+ 7tsIATMoyK0FaEVvS2PhgjHWF3WZBH1HX8ib1PEM5uj2KVGOhSZK6Vs6Q0qc8BrcOr78TcYoBLh
+ gOswJt25+r25CxCUaZMHOZl99V+trcwUu+fu0rHbKAbJ0Ba5ZpPKGdjifO69nTT+L1
+X-Received: by 2002:a05:701b:42d3:20b0:12a:8122:24a9 with SMTP id
+ a92af1059eb24-1384b438985mr1266679c88.22.1781277611734; 
+ Fri, 12 Jun 2026 08:20:11 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3081ea43f69sm3540925eec.20.2026.06.12.08.20.10
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 12 Jun 2026 08:20:11 -0700 (PDT)
+Date: Fri, 12 Jun 2026 08:20:05 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Xingui Yang <yangxingui@huawei.com>
+Cc: <dev@dpdk.org>, <david.marchand@redhat.com>,
+ <aman.deep.singh@intel.com>, <fengchengwen@huawei.com>,
+ <yangshuaisong@h-partners.com>, <lihuisong@huawei.com>,
+ <liuyonglong@huawei.com>, <kangfenglong@huawei.com>
+Subject: Re: [PATCH] app/testpmd: add padding mode to txonly engine
+Message-ID: <20260612082005.0bf14115@phoenix.local>
+In-Reply-To: <20260612073715.2739007-1-yangxingui@huawei.com>
+References: <20260612073715.2739007-1-yangxingui@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -92,39 +82,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-11/06/2026 20:39, Maxime Leroy:
-> Le jeu. 11 juin 2026, 18:01, Morten Br=C3=B8rup <mb@smartsharesystems.com=
-> a
-> =C3=A9crit :
->=20
-> > > From: Maxime Leroy [mailto:maxime.leroys@gmail.com] On Behalf Of Maxi=
-me
-> > > Leroy
-> >
-> > Good catch.
-> > Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> >
-> > Not related to the series, consider sending as separate patch.
-> >
-> Thanks for the review and Ack.
->=20
-> Agreed, this is a generic ethdev fix. I kept it in this series because the
-> NAPI user depends on it.
->=20
-> The current Grout NAPI loop arms RX queue interrupts and then re-checks
-> rte_eth_rx_queue_count() before blocking, to avoid sleeping when a packet
-> arrived between the last empty poll and epoll_wait.
->=20
-> With the current ethdev reset path, rx_burst is replaced by a dummy
-> callback on stop/release, but rx_queue_count becomes NULL. So if the port
-> is stopped concurrently, the NAPI worker dereferences a NULL function
-> pointer and
-> segfaults on that recheck.
->=20
-> I can split it out if maintainers prefer, but then the dpaa2 NAPI series
-> has a real dependency on the standalone ethdev fix.
+On Fri, 12 Jun 2026 15:37:15 +0800
+Xingui Yang <yangxingui@huawei.com> wrote:
 
-You can keep this patch in the series AND
-send it separately for a quick merge.
+> Add a new padding mode to the txonly forwarding engine, which allows
+> sending packets with configurable small sizes without standard L2/L3
+> headers. This is useful for testing NIC padding logic.
+> 
+> When padding mode is enabled via --tx-pkt-pad-mode flag:
+> - l2_len and l3_len are set to 0 instead of standard header lengths
+> - Packet data is filled with a static pattern instead of
+>   Ethernet/IP/UDP headers
+> - Minimum packet length validation is bypassed to allow small
+>   packet sizes (e.g., set txpkts 14)
+> 
+> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
 
-
+Why add yet another setting to already bloated testpmd command?
+Instead I would suggest allowing user to specify any length from
+14 up to UINT32_MAX.  The code to format packet would need to
+handle it there.
