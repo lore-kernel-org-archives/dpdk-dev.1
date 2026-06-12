@@ -2,55 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B732CD4F2C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 08:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC0DCD4F2C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 08:17:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4CCFB43461;
-	Fri, 12 Jun 2026 10:14:21 +0200 (CEST)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id 73C8640279
- for <dev@dpdk.org>; Fri, 12 Jun 2026 10:14:19 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=GEm6BTAeNGEv1VVg26qsJZj+QMzqdeXMKO9/ztza6pE=;
- b=dlBsS+QH1fxu66FqQgToCIsG5Z/3rDINIrPm4aDrr5nSgVT0ZAJTRVdyhgjo9kE5Qtwko/u2x
- CFlCWynW8GBUe1RYP3CsOHZhazzFohiYpbJp6XhXDiX0isuwMzfaBa+31RowbLPjlMCJ4D4vxT8
- M/545qaD2UJJAllPwXu/o78=
-Received: from canpmsgout01.his.huawei.com (unknown [172.19.92.178])
- by szxga01-in.huawei.com (SkyGuard) with ESMTPS id 4gcC2s6zVxz1BFrF
- for <dev@dpdk.org>; Fri, 12 Jun 2026 16:13:57 +0800 (CST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=GEm6BTAeNGEv1VVg26qsJZj+QMzqdeXMKO9/ztza6pE=;
- b=dlBsS+QH1fxu66FqQgToCIsG5Z/3rDINIrPm4aDrr5nSgVT0ZAJTRVdyhgjo9kE5Qtwko/u2x
- CFlCWynW8GBUe1RYP3CsOHZhazzFohiYpbJp6XhXDiX0isuwMzfaBa+31RowbLPjlMCJ4D4vxT8
- M/545qaD2UJJAllPwXu/o78=
-Received: from mail.maildlp.com (unknown [172.19.162.223])
- by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4gcBsS4n2Jz1T4Ff;
- Fri, 12 Jun 2026 16:05:48 +0800 (CST)
-Received: from kwepemj100018.china.huawei.com (unknown [7.202.194.12])
- by mail.maildlp.com (Postfix) with ESMTPS id 6827F4066E;
- Fri, 12 Jun 2026 16:14:12 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemj100018.china.huawei.com (7.202.194.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Fri, 12 Jun 2026 16:14:11 +0800
-From: Xingui Yang <yangxingui@huawei.com>
-To: <dev@dpdk.org>
-CC: <stephen@networkplumber.org>, <david.marchand@redhat.com>,
- <aman.deep.singh@intel.com>, <fengchengwen@huawei.com>,
- <yangshuaisong@h-partners.com>, <lihuisong@huawei.com>,
- <liuyonglong@huawei.com>, <kangfenglong@huawei.com>
-Subject: [PATCH] app/testpmd: add VLAN priority insert support
-Date: Fri, 12 Jun 2026 16:14:11 +0800
-Message-ID: <20260612081411.2798403-1-yangxingui@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 92A0843464;
+	Fri, 12 Jun 2026 10:17:38 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id B4BE340279
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 10:17:36 +0200 (CEST)
+Received: from alhe-weh-mana-dpdk-s2.corp.microsoft.com (unknown
+ [167.220.2.160])
+ by linux.microsoft.com (Postfix) with ESMTPSA id 8F0A320B716B;
+ Fri, 12 Jun 2026 01:17:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8F0A320B716B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1781252236;
+ bh=Lv/IMf+7woz0Zx6yFbWw230QgBcuRbdrx1o3RNjHM7M=;
+ h=From:To:Cc:Subject:Date:From;
+ b=W+6yZC4POcCLxJT6era5m7xlRULTlg5gKfDbIRWNCLx/LYJz29PTSy2wACEOg0oIP
+ Izsb75czWntMGumurTLQxBhdYhJD777NiCVxHHkgdKmyofnrDyfBvbvo7Fx8eEVhJX
+ lQGvnHuCDnjpJrskJAv0cG1AZIrPlDTGQTQ90UgY=
+From: Wei Hu <weh@linux.microsoft.com>
+To: dev@dpdk.org,
+	stephen@networkplumber.org
+Cc: longli@microsoft.com,
+	weh@microsoft.com
+Subject: [PATCH v9 0/1] net/mana: add device reset support
+Date: Fri, 12 Jun 2026 01:17:22 -0700
+Message-Id: <20260612081723.27699-1-weh@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemj100018.china.huawei.com (7.202.194.12)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,153 +47,144 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The tx_vlan set command currently only accepts a VLAN ID in range
-[0, 4095].  This patch adds support for an extended format that includes
-802.1p priority and CFI bits, allowing users to set the VLAN priority
-tag when inserting VLAN headers in TX packets.
+From: Wei Hu <weh@microsoft.com>
 
-The extended format is:
-  bit 0-11:  VLAN ID (0-4095)
-  bit 12:    CFI (Canonical Format Indicator)
-  bit 13-15: Priority (0-7, 802.1p CoS)
+Add support for handling hardware service reset events in the
+MANA driver. When the MANA kernel driver receives a hardware
+service event, it initiates a device reset and notifies userspace
+via IBV_EVENT_DEVICE_FATAL. The MANA PMD handles this by
+performing an automatic teardown and recovery sequence.
 
-This is consistent with the VLAN tag structure used by
-rte_eth_dev_set_vlan_pvid() where the PVID field encodes VLAN ID, CFI
-and priority in the same format.
+The driver uses ethdev recovery events (ERR_RECOVERING,
+RECOVERY_SUCCESS, RECOVERY_FAILED) to notify upper layers of
+the reset lifecycle, and a PCI device removal event callback
+to distinguish hot-remove from service reset.
 
-A new command line option --enable-vlan-priority is added to enable this
-feature. By default, the feature is disabled to maintain backward
-compatibility with existing users. When enabled, the
-vlan_id_is_invalid() function allows any 16-bit value to pass, while the
-full 16-bit value (including CFI and priority bits) is passed to the
-driver for hardware VLAN insertion.
+Changes since v8:
+- Fixed reset thread resource leak: previously reset_thread_active
+  was cleared before emitting recovery callbacks, so no join site
+  would reap the thread. Now the flag stays true throughout the
+  thread lifetime. mana_join_reset_thread detects the self-join
+  case (callback calling dev_stop/dev_close from the reset thread)
+  using rte_thread_equal and calls rte_thread_detach instead of
+  join, so thread resources are freed on exit. External callers
+  continue to join normally.
+- Fixed lost condvar signal: added a predicate loop around
+  pthread_cond_timedwait that checks dev_state under
+  reset_cond_mutex. If mana_pci_remove_event_cb signals before
+  the reset thread enters the wait, the wakeup is no longer lost.
+  The PCI remove callback sets dev_state to RESET_FAILED under
+  the same mutex before signaling.
+- Added a lock/unlock barrier on reset_ops_lock in
+  mana_pci_remove_event_cb to ensure teardown has completed
+  before emitting the INTR_RMV event.
+- Fixed mana_reset_exit_delay return type from uint32_t to int
+  to match the negative error codes it stores.
+- Removed unnecessary else-after-goto in mana_probe_port.
 
-Signed-off-by: Xingui Yang <yangxingui@huawei.com>
----
- app/test-pmd/config.c     | 24 +++++++++++++++---------
- app/test-pmd/parameters.c |  6 ++++++
- app/test-pmd/testpmd.c    |  5 +++++
- app/test-pmd/testpmd.h    |  2 ++
- 4 files changed, 28 insertions(+), 9 deletions(-)
+Changes since v7:
+- Moved heavy teardown (dev_stop, IPC to secondaries, dev_close,
+  MR btree free) from mana_reset_enter (EAL interrupt thread)
+  to mana_reset_thread (control thread). The interrupt handler
+  now only sets state, drains in-flight bursts, and spawns the
+  thread. Teardown runs immediately in the control thread before
+  the recovery timer wait, avoiding blocking the interrupt thread
+  on multi-second IPC timeouts and ibverbs calls. Each function
+  now owns its own lock scope with no lock hand-off between
+  threads.
+- Simplified burst_state from encoding device state in bits 1+
+  to a single blocked flag (bit 1). Only one value was ever
+  stored, so the multi-state encoding was misleading. Added
+  MANA_BURST_BLOCKED constant.
+- Updated mana.rst to reflect that teardown runs on the control
+  thread, not the interrupt handler.
 
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 36b9b023e2..80cde109e6 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -1241,12 +1241,18 @@ void print_valid_ports(void)
- }
- 
- static int
--vlan_id_is_invalid(uint16_t vlan_id)
-+vlan_id_is_invalid(uint16_t vlan_id, int vlan_priority_ena)
- {
--	if (vlan_id < 4096)
--		return 0;
--	fprintf(stderr, "Invalid vlan_id %d (must be < 4096)\n", vlan_id);
--	return 1;
-+	if (!vlan_priority_ena && vlan_id >= 4096) {
-+		fprintf(stderr, "Invalid vlan_id %d (must be < 4096)\n", vlan_id);
-+		return 1;
-+	}
-+
-+	/*
-+	 * When vlan_priority_ena is enabled, allow any 16-bit value
-+	 * to pass priority and CFI bits to the driver.
-+	 */
-+	return 0;
- }
- 
- static uint32_t
-@@ -6876,7 +6882,7 @@ rx_vft_set(portid_t port_id, uint16_t vlan_id, int on)
- 
- 	if (port_id_is_invalid(port_id, ENABLED_WARN))
- 		return 1;
--	if (vlan_id_is_invalid(vlan_id))
-+	if (vlan_id_is_invalid(vlan_id, vlan_priority_insert_ena))
- 		return 1;
- 	diag = rte_eth_dev_vlan_filter(port_id, vlan_id, on);
- 	if (diag == 0)
-@@ -6923,7 +6929,7 @@ tx_vlan_set(portid_t port_id, uint16_t vlan_id)
- 	struct rte_eth_dev_info dev_info;
- 	int ret;
- 
--	if (vlan_id_is_invalid(vlan_id))
-+	if (vlan_id_is_invalid(vlan_id, vlan_priority_insert_ena))
- 		return;
- 
- 	if (ports[port_id].dev_conf.txmode.offloads &
-@@ -6954,9 +6960,9 @@ tx_qinq_set(portid_t port_id, uint16_t vlan_id, uint16_t vlan_id_outer)
- 	struct rte_eth_dev_info dev_info;
- 	int ret;
- 
--	if (vlan_id_is_invalid(vlan_id))
-+	if (vlan_id_is_invalid(vlan_id, vlan_priority_insert_ena))
- 		return;
--	if (vlan_id_is_invalid(vlan_id_outer))
-+	if (vlan_id_is_invalid(vlan_id_outer, vlan_priority_insert_ena))
- 		return;
- 
- 	ret = eth_dev_info_get_print_err(port_id, &dev_info);
-diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
-index 8c3b1244e7..3f37498d3b 100644
---- a/app/test-pmd/parameters.c
-+++ b/app/test-pmd/parameters.c
-@@ -117,6 +117,8 @@ enum {
- 	TESTPMD_OPT_ENABLE_HW_VLAN_EXTEND_NUM,
- #define TESTPMD_OPT_ENABLE_HW_QINQ_STRIP "enable-hw-qinq-strip"
- 	TESTPMD_OPT_ENABLE_HW_QINQ_STRIP_NUM,
-+#define TESTPMD_OPT_ENABLE_VLAN_PRIORITY "enable-vlan-priority"
-+	TESTPMD_OPT_ENABLE_VLAN_PRIORITY_NUM,
- #define TESTPMD_OPT_ENABLE_DROP_EN "enable-drop-en"
- 	TESTPMD_OPT_ENABLE_DROP_EN_NUM,
- #define TESTPMD_OPT_DISABLE_RSS "disable-rss"
-@@ -461,6 +463,7 @@ usage(char* progname)
- 	printf("  --enable-hw-vlan-strip: enable hardware vlan strip.\n");
- 	printf("  --enable-hw-vlan-extend: enable hardware vlan extend.\n");
- 	printf("  --enable-hw-qinq-strip: enable hardware qinq strip.\n");
-+	printf("  --enable-vlan-priority: enable vlan priority insert.\n");
- 	printf("  --enable-drop-en: enable per queue packet drop.\n");
- 	printf("  --disable-rss: disable rss.\n");
- 	printf("  --enable-rss: Force rss even for single-queue operation.\n");
-@@ -1259,6 +1262,9 @@ launch_args_parse(int argc, char** argv)
- 		case TESTPMD_OPT_ENABLE_HW_QINQ_STRIP_NUM:
- 			rx_offloads |= RTE_ETH_RX_OFFLOAD_QINQ_STRIP;
- 			break;
-+		case TESTPMD_OPT_ENABLE_VLAN_PRIORITY_NUM:
-+			vlan_priority_insert_ena = 1;
-+			break;
- 		case TESTPMD_OPT_ENABLE_DROP_EN_NUM:
- 			rx_drop_en = 1;
- 			break;
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index 457bb6d3fe..0239ec59de 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -307,6 +307,11 @@ uint16_t mb_mempool_cache = DEF_MBUF_CACHE; /**< Size of mbuf mempool cache. */
- /* current configuration is in DCB or not,0 means it is not in DCB mode */
- uint8_t dcb_config = 0;
- 
-+/*
-+ * Configurable value of vlan priority insert enable.
-+ */
-+uint8_t vlan_priority_insert_ena;
-+
- /*
-  * Configurable number of RX/TX queues.
-  */
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index 04fdc2db42..104a6e73be 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -618,6 +618,8 @@ extern uint64_t noisy_lkup_num_reads_writes;
- 
- extern uint8_t dcb_config;
- 
-+extern uint8_t vlan_priority_insert_ena;
-+
- extern uint32_t mbuf_data_size_n;
- extern uint16_t mbuf_data_size[MAX_SEGS_BUFFER_SPLIT];
- /**< Mbuf data space size. */
+Changes since v6:
+- Rebased onto latest upstream for-main
+- Replaced removed RTE_ETH_DEV_TO_PCI macro with
+  RTE_CLASS_TO_BUS_DEVICE (upstream commit 4757b8df04
+  removed the old bus-specific ethdev convenience macros)
+
+Changes since v5:
+- Replaced RCU QSBR with per-queue atomic burst_state using a
+  single-variable CAS design: bit 0 is the in-burst flag, bit 1
+  is the blocked flag. The data path uses CAS(0→1) to enter
+  burst and fetch_and(~1) to exit. The reset path uses fetch_or
+  to set the blocked bit and polls bit 0 to drain in-flight
+  bursts. This eliminates the two-variable Dekker pattern and the
+  need for sequential consistency (seq_cst) ordering.
+- Removed librte_rcu dependency
+- Removed __rte_no_thread_safety_analysis annotations (no longer
+  needed after mutex conversion)
+- Moved ERR_RECOVERING event emission before acquiring
+  reset_ops_lock and before mana_reset_enter, so upper layers
+  (e.g. netvsc) can switch data path before mana stops queues.
+  Emitting outside the lock avoids deadlock if the callback
+  calls dev_stop or dev_close.
+- Replaced MANA_OPS_*_LOCK macros with mana_reset_trylock()
+  helper function and explicit per-operation wrappers
+- Removed unused rte_alarm.h and rte_lock_annotations.h includes
+- Added RECOVERY_FAILED event when mana_reset_enter fails
+  internally, so the application always receives a terminal event
+- Added mana_clear_burst_state() helper to clear per-queue
+  burst_state on failure paths (reset_failed, dev_stop_lock,
+  dev_close_lock) preventing permanent silent packet drop after
+  a failed reset
+
+Changes since v4:
+- Fixed stale rte_spinlock_unlock call in mana_intr_handler that
+  was missed during the spinlock-to-mutex conversion, causing a
+  -Wincompatible-pointer-types warning
+
+Changes since v3:
+- Converted reset_ops_lock from rte_spinlock_t to pthread_mutex_t
+  with PTHREAD_PROCESS_SHARED, since the lock is held across
+  blocking IB verbs calls and IPC with 5s timeout
+- Removed rte_dev_event_callback_unregister retry loop to avoid
+  deadlock when interrupt thread and reset thread contend
+
+Changes since v2:
+- Added per-queue burst_state atomic variable with Dekker-like
+  synchronization to block data path during reset without RCU
+- Replaced rte_alarm with condvar + control thread for reset exit
+- Made reset_thread_active atomic with CAS — flag is set by
+  creator and only cleared by the joiner, not the thread itself
+- Fixed second reset crash: removed reset thread join logic from
+  mana_dev_close (inner function) to avoid corrupting dev_state
+  when called from mana_reset_enter
+- Made reset_thread_active RTE_ATOMIC(bool) with explicit ordering
+- Added retry loop for rte_dev_event_callback_unregister on -EAGAIN
+- Initialized condvar/mutex with PTHREAD_PROCESS_SHARED since priv
+  is in hugepage shared memory
+- Added re-check of dev_state after lock acquisition in
+  mana_intr_handler to prevent racing with pci_remove_event_cb
+- Replaced (void *)0 with NULL in mp.c
+- Added lock ownership comment block at mana_reset_enter
+- Documented rte_dev_event_monitor_start() requirement
+- Added mana.rst documentation and release note
+
+Changes since v1:
+- Removed net/netvsc patch from this series
+- Simplified reset exit: mana_reset_exit calls
+  mana_reset_exit_delay directly instead of spawning a thread
+- Added __rte_no_thread_safety_analysis annotations for clang
+- Switched to rte_thread_create_internal_control
+- Fixed declaration-after-statement style issues
+- Removed unnecessary blank lines and stale comments
+
+Wei Hu (1):
+  net/mana: add device reset support
+
+ doc/guides/nics/mana.rst               |   40 +
+ doc/guides/rel_notes/release_26_07.rst |    8 +
+ drivers/net/mana/mana.c                | 1088 ++++++++++++++++++++++--
+ drivers/net/mana/mana.h                |   52 +-
+ drivers/net/mana/mp.c                  |   89 +-
+ drivers/net/mana/mr.c                  |    6 +-
+ drivers/net/mana/rx.c                  |   23 +-
+ drivers/net/mana/tx.c                  |   44 +-
+ 8 files changed, 1242 insertions(+), 108 deletions(-)
+
 -- 
-2.43.0
+2.34.1
 
