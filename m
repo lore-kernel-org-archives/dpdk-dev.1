@@ -2,40 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB31CD98CE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 10:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA658CD98CE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 10:50:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D29314356E;
-	Fri, 12 Jun 2026 12:48:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 15F6943517;
+	Fri, 12 Jun 2026 12:48:40 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 45734434E9
- for <dev@dpdk.org>; Fri, 12 Jun 2026 12:48:18 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gcGSn6FgHzHnGcp
- for <dev@dpdk.org>; Fri, 12 Jun 2026 18:48:09 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 23B8540571
- for <dev@dpdk.org>; Fri, 12 Jun 2026 18:48:18 +0800 (CST)
-Received: from localhost.localdomain (10.220.239.45) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 652CB43579
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 12:48:38 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gcGT964N5zHnGg3;
+ Fri, 12 Jun 2026 18:48:29 +0800 (CST)
+Received: from frapema500001.china.huawei.com (unknown [7.182.19.243])
+ by mail.maildlp.com (Postfix) with ESMTPS id 1DB5F40569;
+ Fri, 12 Jun 2026 18:48:38 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema500001.china.huawei.com (7.182.19.243) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 12 Jun 2026 12:48:17 +0200
+ 15.2.1544.11; Fri, 12 Jun 2026 12:48:37 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Fri, 12 Jun 2026 12:48:37 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH v3 25/25] doc: add BPF validate debug to programmer's guide
-Date: Fri, 12 Jun 2026 11:47:39 +0100
-Message-ID: <20260612104743.6465-26-marat.khalili@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260612104743.6465-1-marat.khalili@huawei.com>
-References: <20260519093131.52022-1-marat.khalili@huawei.com>
- <20260612104743.6465-1-marat.khalili@huawei.com>
+To: Thomas Monjalon <thomas@monjalon.net>
+CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH v4 02/11] bpf: introduce extensible load API
+Thread-Topic: [PATCH v4 02/11] bpf: introduce extensible load API
+Thread-Index: AQHc6Fc+klzS1Yq0NkK9U/ssCLSym7Y33b8AgALvRiA=
+Date: Fri, 12 Jun 2026 10:48:37 +0000
+Message-ID: <0610e3575ac44cf9b62e7f38a4b5c2ab@huawei.com>
+References: <20260518084912.57006-1-marat.khalili@huawei.com>
+ <20260520124922.42445-1-marat.khalili@huawei.com>
+ <20260520124922.42445-3-marat.khalili@huawei.com>
+ <n9qJkNlCQDazx_P9i-5XTQ@monjalon.net>
+In-Reply-To: <n9qJkNlCQDazx_P9i-5XTQ@monjalon.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.16]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.220.239.45]
-X-ClientProxiedBy: frapema100001.china.huawei.com (7.182.19.23) To
- frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,62 +58,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Document the new gdb-like validation debugger API, outlining how it can
-be used to set breakpoints and inspect register states during
-validation.
-
-Highlight its primary use case: writing robust tests for the eBPF
-verifier using the harness in app/test/test_bpf_validate.c.
-
-Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
----
-Depends-on: series-38434 ("bpf: introduce extensible load API")
- doc/guides/prog_guide/bpf_lib.rst | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/doc/guides/prog_guide/bpf_lib.rst b/doc/guides/prog_guide/bpf_lib.rst
-index df3782508829..08ea1876875a 100644
---- a/doc/guides/prog_guide/bpf_lib.rst
-+++ b/doc/guides/prog_guide/bpf_lib.rst
-@@ -118,6 +118,37 @@ For example, ``(BPF_IND | BPF_W | BPF_LD)`` means:
- and ``R1-R5`` were scratched.
- 
- 
-+Validation Debugger
-+-------------------
-+
-+The DPDK BPF library includes a validation debugger API designed primarily for
-+writing comprehensive unit tests for the eBPF verifier. It allows developers
-+to introspect the abstract interpretation process step-by-step to guarantee
-+that the verifier correctly models the semantics of eBPF instructions.
-+
-+The debugger operates using a gdb-like approach:
-+
-+1.  **Initialization:** Create a debug session using
-+    ``rte_bpf_validate_debug_create()`` and pass it to the loader via the
-+    ``debug`` field in ``struct rte_bpf_prm_ex``.
-+2.  **Breakpoints and Catchpoints:** Before loading, use
-+    ``rte_bpf_validate_debug_break()`` or ``rte_bpf_validate_debug_catch()``
-+    to register callback functions that trigger at specific instruction indices
-+    (program counters) or upon specific validation events.
-+3.  **State Introspection:** Within the callbacks, the API provides functions
-+    like ``rte_bpf_validate_debug_can_access()``,
-+    ``rte_bpf_validate_debug_may_jump()``, and various formatting functions
-+    to safely inspect the verifier's internal belief about register bounds
-+    and memory states at that specific execution point.
-+
-+When adding a test for a new eBPF instruction or fixing a validator bug,
-+developers should utilize the harness provided in
-+``app/test/test_bpf_validate.c``. This harness encapsulates the debugger API,
-+allowing you to define the expected abstract domains (signed and unsigned
-+intervals) for registers before and after a tested instruction, generating
-+the necessary eBPF bytecode and breakpoints automatically.
-+
-+
- Not currently supported eBPF features
- -------------------------------------
- 
--- 
-2.43.0
-
+PiBVbmZvcnR1bmF0ZWx5LCBjb21waWxhdGlvbiBpcyBmYWlsaW5nIG9uIHRoaXMgcGF0Y2g6DQo+
+IA0KPiBsaWIvYnBmL2JwZl9sb2FkLmM6Mjc0OjQwOiBlcnJvcjogJ3N0cnVjdCBydGVfYnBmX2pp
+dCcgaGFzIG5vIG1lbWJlciBuYW1lZCAncmF3Jw0KDQpTZW50IHY1IGZpeGluZyB0aGUgaXNzdWUs
+IGFwb2xvZ2llcyBmb3Igc2VuZGluZyB3aXRob3V0IGRvdWJsZS1jaGVja2luZyANCmNvbXBpbGFi
+aWxpdHkgb2YgaW5kaXZpZHVhbCBjb21taXRzIG9uIG15IHNpZGUuDQo=
