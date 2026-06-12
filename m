@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765C3CD98CF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 08:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE20CD8CA8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 08:43:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6701F434AD;
-	Fri, 12 Jun 2026 10:42:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 414F9434B2;
+	Fri, 12 Jun 2026 10:43:00 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 16DB443499
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 20C834349A
  for <dev@dpdk.org>; Fri, 12 Jun 2026 10:42:54 +0200 (CEST)
 Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gcCh15tvnzHnGkC
- for <dev@dpdk.org>; Fri, 12 Jun 2026 16:42:41 +0800 (CST)
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gcCh40H82zHnGkX
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 16:42:44 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id DE58140577
- for <dev@dpdk.org>; Fri, 12 Jun 2026 16:42:49 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 1F99540569
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 16:42:52 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 12 Jun 2026 10:42:49 +0200
+ 15.2.1544.11; Fri, 12 Jun 2026 10:42:51 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
 To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v5 05/11] bpf: support rte_bpf_prm_ex with port callbacks
-Date: Fri, 12 Jun 2026 09:42:12 +0100
-Message-ID: <20260612084219.38399-6-marat.khalili@huawei.com>
+Subject: [PATCH v5 11/11] test/bpf: add tests for error handling contracts
+Date: Fri, 12 Jun 2026 09:42:18 +0100
+Message-ID: <20260612084219.38399-12-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260612084219.38399-1-marat.khalili@huawei.com>
 References: <20260520124922.42445-1-marat.khalili@huawei.com>
@@ -49,217 +49,162 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce new functions to install an already loaded BPF program into RX
-or TX port/queue, since previous API was tied to rte_bpf_prm.
+Verify NULL parameter rejection in load APIs, graceful failure on
+argument/flag mismatch in burst execution APIs, and safe return of the
+libpcap stub.
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/bpf/bpf_pkt.c        | 65 ++++++++++++++++++++++++++++++----------
- lib/bpf/rte_bpf_ethdev.h | 54 +++++++++++++++++++++++++++++++++
- 2 files changed, 104 insertions(+), 15 deletions(-)
+ app/test/test_bpf.c | 128 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 127 insertions(+), 1 deletion(-)
 
-diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
-index 5007f6aef5..87065e939f 100644
---- a/lib/bpf/bpf_pkt.c
-+++ b/lib/bpf/bpf_pkt.c
-@@ -490,13 +490,11 @@ rte_bpf_eth_tx_unload(uint16_t port, uint16_t queue)
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index 026ba18b75..6422bae6fe 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -3514,6 +3514,121 @@ run_test(const struct bpf_test *tst)
+ 
  }
  
++/* Test all eBPF load APIs with prm set to NULL. */
++static int
++test_bpf_load_null(void)
++{
++	struct rte_bpf *bpf;
++	int saved_errno;
++
++	rte_errno = 0;
++	bpf = rte_bpf_load(NULL);
++	saved_errno = rte_errno;
++	rte_bpf_destroy(bpf);
++	RTE_TEST_ASSERT_NULL(bpf, "rte_bpf_load(NULL) did not return NULL\n");
++	RTE_TEST_ASSERT_EQUAL(saved_errno, EINVAL,
++		"rte_bpf_load(NULL) did not set rte_errno to EINVAL\n");
++
++	rte_errno = 0;
++	bpf = rte_bpf_elf_load(NULL, "a", "b");
++	saved_errno = rte_errno;
++	rte_bpf_destroy(bpf);
++	RTE_TEST_ASSERT_NULL(bpf, "rte_bpf_elf_load(NULL, \"a\", \"b\") did not return NULL\n");
++	RTE_TEST_ASSERT_EQUAL(saved_errno, EINVAL,
++		"rte_bpf_elf_load(NULL, \"a\", \"b\") did not set rte_errno to EINVAL\n");
++
++	rte_errno = 0;
++	bpf = rte_bpf_load_ex(NULL);
++	saved_errno = rte_errno;
++	rte_bpf_destroy(bpf);
++	RTE_TEST_ASSERT_NULL(bpf, "rte_bpf_load_ex(NULL) did not return NULL\n");
++	RTE_TEST_ASSERT_EQUAL(saved_errno, EINVAL,
++		"rte_bpf_load_ex(NULL) did not set rte_errno to EINVAL\n");
++
++	return 0;
++}
++REGISTER_FAST_TEST(bpf_load_null_autotest, NOHUGE_OK, ASAN_OK, test_bpf_load_null);
++
++/* Test calling wrong API for execution of a multi-argument eBPF program. */
++static int
++test_bpf_exec_wrong_nb_prog_arg(void)
++{
++	static const struct ebpf_insn ins[] = {
++		{ .code = (EBPF_ALU64 | EBPF_MOV | BPF_K), .dst_reg = EBPF_REG_0, .imm = 0 },
++		{ .code = (BPF_JMP | EBPF_EXIT), }
++	};
++	static const struct rte_bpf_prm_ex prm = {
++		.sz = sizeof(struct rte_bpf_prm_ex),
++		.origin = RTE_BPF_ORIGIN_RAW,
++		.raw.ins = ins,
++		.raw.nb_ins = RTE_DIM(ins),
++		.prog_arg = {
++			{ .type = RTE_BPF_ARG_RAW, .size = sizeof(uint64_t) },
++			{ .type = RTE_BPF_ARG_RAW, .size = sizeof(uint64_t) },
++		},
++		.nb_prog_arg = 2, /* Intentionally mismatched: expects 2, burst gives 1 */
++	};
++
++	struct rte_bpf *bpf;
++	uint64_t rc[1];
++	void *ctx[1] = {NULL};
++	uint32_t result;
++	int saved_errno;
++
++	bpf = rte_bpf_load_ex(&prm);
++	RTE_TEST_ASSERT_NOT_NULL(bpf, "rte_bpf_load_ex failed\n");
++
++	rte_errno = 0;
++	result = rte_bpf_exec_burst(bpf, ctx, rc, 1);
++	saved_errno = rte_errno;
++	rte_bpf_destroy(bpf);
++	RTE_TEST_ASSERT_EQUAL(result, 0, "rte_bpf_exec_burst did not return 0\n");
++	RTE_TEST_ASSERT_EQUAL(saved_errno, EINVAL,
++		"rte_bpf_exec_burst did not set rte_errno to EINVAL\n");
++
++	return 0;
++}
++REGISTER_FAST_TEST(bpf_exec_wrong_nb_prog_arg_autotest, NOHUGE_OK, ASAN_OK,
++		test_bpf_exec_wrong_nb_prog_arg);
++
++/* Test passing unsupported flags when executing an eBPF program. */
++static int
++test_bpf_exec_wrong_flags(void)
++{
++	static const struct ebpf_insn ins[] = {
++		{ .code = (EBPF_ALU64 | EBPF_MOV | BPF_K), .dst_reg = EBPF_REG_0, .imm = 0 },
++		{ .code = (BPF_JMP | EBPF_EXIT), }
++	};
++	static const struct rte_bpf_prm_ex prm = {
++		.sz = sizeof(struct rte_bpf_prm_ex),
++		.origin = RTE_BPF_ORIGIN_RAW,
++		.raw.ins = ins,
++		.raw.nb_ins = RTE_DIM(ins),
++		.prog_arg = { { .type = RTE_BPF_ARG_RAW, .size = sizeof(uint64_t) } },
++		.nb_prog_arg = 1,
++	};
++
++	struct rte_bpf *bpf;
++	uint64_t rc[1];
++	struct rte_bpf_prog_ctx ctx_ex[1] = {};
++	uint32_t result;
++	int saved_errno;
++
++	bpf = rte_bpf_load_ex(&prm);
++	RTE_TEST_ASSERT_NOT_NULL(bpf, "rte_bpf_load_ex failed\n");
++
++	rte_errno = 0;
++	result = rte_bpf_exec_burst_ex(bpf, ctx_ex, rc, 1, UINT64_MAX);
++	saved_errno = rte_errno;
++	rte_bpf_destroy(bpf);
++	RTE_TEST_ASSERT_EQUAL(result, 0, "rte_bpf_exec_burst_ex did not return 0\n");
++	RTE_TEST_ASSERT_EQUAL(saved_errno, EINVAL,
++		"rte_bpf_exec_burst_ex did not set rte_errno to EINVAL\n");
++
++	return 0;
++}
++REGISTER_FAST_TEST(bpf_exec_wrong_flags_autotest, NOHUGE_OK, ASAN_OK, test_bpf_exec_wrong_flags);
++
  static int
--bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
--	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
--	uint32_t flags)
-+bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
-+	struct rte_bpf *bpf, uint32_t flags)
+ test_bpf(void)
  {
- 	int32_t rc;
- 	struct bpf_eth_cbi *bc;
--	struct rte_bpf *bpf;
- 	rte_rx_callback_fn frx;
- 	rte_tx_callback_fn ftx;
- 	struct rte_bpf_jit jit;
-@@ -504,14 +502,17 @@ bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
- 	frx = NULL;
- 	ftx = NULL;
- 
--	if (prm == NULL || rte_eth_dev_is_valid_port(port) == 0 ||
-+	if (bpf == NULL || rte_eth_dev_is_valid_port(port) == 0 ||
- 			queue >= RTE_MAX_QUEUES_PER_PORT)
- 		return -EINVAL;
- 
-+	if (bpf->prm.nb_prog_arg != 1)
-+		return -EINVAL;
-+
- 	if (cbh->type == BPF_ETH_RX)
--		frx = select_rx_callback(prm->prog_arg.type, flags);
-+		frx = select_rx_callback(bpf->prm.prog_arg[0].type, flags);
- 	else
--		ftx = select_tx_callback(prm->prog_arg.type, flags);
-+		ftx = select_tx_callback(bpf->prm.prog_arg[0].type, flags);
- 
- 	if (frx == NULL && ftx == NULL) {
- 		RTE_BPF_LOG_LINE(ERR, "%s(%u, %u): no callback selected;",
-@@ -519,16 +520,11 @@ bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
- 		return -EINVAL;
- 	}
- 
--	bpf = rte_bpf_elf_load(prm, fname, sname);
--	if (bpf == NULL)
--		return -rte_errno;
--
- 	rte_bpf_get_jit(bpf, &jit);
- 
- 	if ((flags & RTE_BPF_ETH_F_JIT) != 0 && jit.func == NULL) {
- 		RTE_BPF_LOG_LINE(ERR, "%s(%u, %u): no JIT generated;",
- 			__func__, port, queue);
--		rte_bpf_destroy(bpf);
- 		return -ENOTSUP;
- 	}
- 
-@@ -551,7 +547,6 @@ bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
- 
- 	if (bc->cb == NULL) {
- 		rc = -rte_errno;
--		rte_bpf_destroy(bpf);
- 		bpf_eth_cbi_cleanup(bc);
- 	} else
- 		rc = 0;
-@@ -564,13 +559,33 @@ int
- rte_bpf_eth_rx_elf_load(uint16_t port, uint16_t queue,
- 	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
- 	uint32_t flags)
-+{
-+	struct rte_bpf *bpf;
-+	int32_t rc;
-+
-+	bpf = rte_bpf_elf_load(prm, fname, sname);
-+	if (bpf == NULL)
-+		return -rte_errno;
-+
-+	rc = rte_bpf_eth_rx_install(port, queue, bpf, flags);
-+
-+	if (rc < 0)
-+		rte_bpf_destroy(bpf);
-+
-+	return rc;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_eth_rx_install, 26.11)
-+int
-+rte_bpf_eth_rx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
-+	uint32_t flags)
+@@ -4444,7 +4559,18 @@ REGISTER_FAST_TEST(bpf_elf_autotest, NOHUGE_OK, ASAN_OK, test_bpf_elf);
+ static int
+ test_bpf_convert(void)
  {
- 	int32_t rc;
- 	struct bpf_eth_cbh *cbh;
- 
- 	cbh = &rx_cbh;
- 	rte_spinlock_lock(&cbh->lock);
--	rc = bpf_eth_elf_load(cbh, port, queue, prm, fname, sname, flags);
-+	rc = bpf_eth_elf_install(cbh, port, queue, bpf, flags);
- 	rte_spinlock_unlock(&cbh->lock);
- 
- 	return rc;
-@@ -581,13 +596,33 @@ int
- rte_bpf_eth_tx_elf_load(uint16_t port, uint16_t queue,
- 	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
- 	uint32_t flags)
-+{
-+	struct rte_bpf *bpf;
-+	int32_t rc;
+-	printf("BPF convert RTE_HAS_LIBPCAP is undefined, skipping test\n");
++	int dummy = 0;
++	struct rte_bpf_prm *prm;
 +
-+	bpf = rte_bpf_elf_load(prm, fname, sname);
-+	if (bpf == NULL)
-+		return -rte_errno;
++	prm = rte_bpf_convert(NULL);
++	rte_free(prm);
++	RTE_TEST_ASSERT_NULL(prm, "rte_bpf_convert(NULL) without libpcap did not return NULL\n");
 +
-+	rc = rte_bpf_eth_tx_install(port, queue, bpf, flags);
++	prm = rte_bpf_convert((const struct bpf_program *)&dummy);
++	rte_free(prm);
++	RTE_TEST_ASSERT_NULL(prm, "rte_bpf_convert(&dummy) without libpcap did not return NULL\n");
 +
-+	if (rc < 0)
-+		rte_bpf_destroy(bpf);
-+
-+	return rc;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_eth_tx_install, 26.11)
-+int
-+rte_bpf_eth_tx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
-+	uint32_t flags)
- {
- 	int32_t rc;
- 	struct bpf_eth_cbh *cbh;
- 
- 	cbh = &tx_cbh;
- 	rte_spinlock_lock(&cbh->lock);
--	rc = bpf_eth_elf_load(cbh, port, queue, prm, fname, sname, flags);
-+	rc = bpf_eth_elf_install(cbh, port, queue, bpf, flags);
- 	rte_spinlock_unlock(&cbh->lock);
- 
- 	return rc;
-diff --git a/lib/bpf/rte_bpf_ethdev.h b/lib/bpf/rte_bpf_ethdev.h
-index 8c6dc0825f..e82e0c5f8c 100644
---- a/lib/bpf/rte_bpf_ethdev.h
-+++ b/lib/bpf/rte_bpf_ethdev.h
-@@ -109,6 +109,60 @@ rte_bpf_eth_tx_elf_load(uint16_t port, uint16_t queue,
- 	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
- 	uint32_t flags);
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Install callback to execute specified BPF program on given RX port/queue.
-+ *
-+ * On success the ownership of the program passes to the library,
-+ * rte_bpf_eth_unload must be used to unload it, and rte_bpf_destroy must no
-+ * longer be called.
-+ *
-+ * @param port
-+ *   The identifier of the ethernet port
-+ * @param queue
-+ *   The identifier of the RX queue on the given port
-+ * @param bpf
-+ *   BPF program
-+ * @param flags
-+ *   Flags that define expected behavior of the loaded filter
-+ *   (i.e. jited/non-jited version to use).
-+ * @return
-+ *   Zero on successful completion or negative error code otherwise.
-+ */
-+__rte_experimental
-+int
-+rte_bpf_eth_rx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
-+	uint32_t flags);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Install callback to execute specified BPF program on given TX port/queue.
-+ *
-+ * On success the ownership of the program passes to the library,
-+ * rte_bpf_eth_unload must be used to unload it, and rte_bpf_destroy must no
-+ * longer be called.
-+ *
-+ * @param port
-+ *   The identifier of the ethernet port
-+ * @param queue
-+ *   The identifier of the TX queue on the given port
-+ * @param bpf
-+ *   BPF program
-+ * @param flags
-+ *   Flags that define expected behavior of the loaded filter
-+ *   (i.e. jited/non-jited version to use).
-+ * @return
-+ *   Zero on successful completion or negative error code otherwise.
-+ */
-+__rte_experimental
-+int
-+rte_bpf_eth_tx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
-+	uint32_t flags);
-+
- #ifdef __cplusplus
++	printf("BPF convert RTE_HAS_LIBPCAP is undefined, skipping full test\n");
+ 	return TEST_SKIPPED;
  }
- #endif
+ 
 -- 
 2.43.0
 
