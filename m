@@ -2,65 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A41CD98D2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 19:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C1DCD98CF
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 19:08:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBE2043267;
-	Fri, 12 Jun 2026 21:02:44 +0200 (CEST)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
- [209.85.160.178])
- by mails.dpdk.org (Postfix) with ESMTP id 3B1F940278
- for <dev@dpdk.org>; Fri, 12 Jun 2026 21:02:43 +0200 (CEST)
-Received: by mail-qt1-f178.google.com with SMTP id
- d75a77b69052e-5177b9a02bdso15424081cf.1
- for <dev@dpdk.org>; Fri, 12 Jun 2026 12:02:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5510842E8D;
+	Fri, 12 Jun 2026 21:08:39 +0200 (CEST)
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com
+ [209.85.219.53]) by mails.dpdk.org (Postfix) with ESMTP id 2270F40278
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 21:08:38 +0200 (CEST)
+Received: by mail-qv1-f53.google.com with SMTP id
+ 6a1803df08f44-8d18de80b29so17905566d6.1
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 12:08:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1781290962; x=1781895762; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=xGQTcznqPdmvlke5ZtWj3ggNMEMaMKomCQEqrhoxIp0=;
- b=feAKklvED7vPfKBNB78cUdRrB9HFFYsICkQCK3ZLqtIhEK+5IDM0n16P2F7uZRrZI8
- muvE8pZqpI7AisFF56sasJVsMB8gOSHNYVO+gcDtw7/6Fa7/TDCyVxGADbgX0axajZzY
- /KClG86bPHfK8RGta1dmhSQR8314ZcDlNmRJo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781290962; x=1781895762;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1781291317; x=1781896117; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=xGQTcznqPdmvlke5ZtWj3ggNMEMaMKomCQEqrhoxIp0=;
- b=lxC2QHmldTZkdmJ3kw6gdSNHkxJ4VP3i+cAwhQ2qo7GYorr9YC5KGMxQ5vEqYgTdSW
- kDGQ5bkBQpaLqCR9ItGo+UbxFUH75BUDh0087qEiZrNgzsptpG1PmiaIAvfzzIVy8kb8
- BhTdgqVAv1trQoCVIxys6YpzzCDMxYuplxATl2uCKtLG+hGr9iL/v+HX3Drt3jJa37R0
- YT9iBONthBFiPS9LX0aDJ9GuJBPpPPce5z4yRlj3O0eMDZPIU5oZ/EyIpvuubtGhpxyO
- 7SWWvqfETfGJTi1USq3528tDp9Rgy5h8vr1fWRhpmcRxQAHLyYnYmL7DXVsXYR9DuEBi
- KNzw==
-X-Gm-Message-State: AOJu0YwPCwnPAH+mDL+8zKTF2Oh/NkUmnvpaikbx3MgrdVgmmaw4qv8/
- XQOremEcAfEXRR4W2/GffAcbqH2VvpttARNINli24wS8mNa8GlMky/mfDNWNQGkqcYxwcZrZJNv
- i9r1OTkIcVJrlraQHCTNJc20sFBAvy3t/2jmFZ8LUqya9YkgJhygwl5Ov8bvHVzA/NNZvZ4dNWN
- kuoTKIK8gPajpJmZTe3hzFZzQWBw==
-X-Gm-Gg: Acq92OHD5JtUfgXf6cCoWyoaaEspv84b9kw3HUMzwPCHxYeZVjcIXiLqOzpa4ULWfKj
- OAOmWGCwtM44MNYz7Fwc0fnRdCp/gV+Ohcaz7Ov0c0zE5LAstMRHlZwQJAZkxK6MdzOcTIS0LMa
- A/6Abg4sFDdsScTF/PjpEU36tb3ZLlkWE8irMGlD2XuVE9frvPYz0AHpg0bj7+PQD+CFMjz7aKO
- lW/aEDZV/+qn1dRWaOrfg5xAV7SixBMvs3m9P1T+aYOu8JgKxEIiPLFdvmX0QcI5ywYSfTo1LYF
- VUeHammOQPoEAKXtT3gXZM62ylWO4/Svf6k5jRKIJKXAVCHdEap0cefnvtYPr7Xr98MMbtJaPFy
- 64rcGBSkq6FP7ByNeAPOaCRnv5RrstKoHgHT3KbhSQffO6jlUxvXBPP5W45fWDzV3JvrLOpqjrl
- tF5XeGlBBioIld5hf6DpTtqSpQv2o0CliaTlwjAi1xtlXn9jHQqRvMs7LQxEWBEg==
-X-Received: by 2002:a05:622a:143:b0:509:44c3:5fe7 with SMTP id
- d75a77b69052e-519535e9887mr14325291cf.46.1781290962489; 
- Fri, 12 Jun 2026 12:02:42 -0700 (PDT)
+ bh=mDBAbdHtKfHIR86EIDMwiPj7/FJi4Rhuob8Db99ek2U=;
+ b=iuonoxj2Eb8HzAt71zy98p+we5U+bkcuRDvmkm4O2KvxUZGZXJmXvroSAPOYNfp80w
+ yYV4MtcNv6YT94dojZ0LoJAsbwLFrlnluDNm5U6nWSQqMP6kraGqzmIpIhp0gd4tyGNm
+ HQIcoVMcNox3HObSAPVL0NDgWhy8WObp+zzhI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781291317; x=1781896117;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=mDBAbdHtKfHIR86EIDMwiPj7/FJi4Rhuob8Db99ek2U=;
+ b=cdEUd+203hJ/q6IKA8L7oixMe3lxkakPOp5nPhndc44XxMxjDxax2vALUX8U5AZHkS
+ 6PXTZ/aX0gXhe+Wwpw0WI/H716q220kNepVdQtXaODJp/0oCf9hCEFHxTaO16w5atxJA
+ TN6OrzTc/YHWxFpwYhxwJclg3LwjUX/iZNA2MD2u3pstYPEIe4sOpxeuBiVJnBiVbD+y
+ ieO8CRj19fZ3fKwCpLx7+DBSKhS3txWexFoJZb3l/0BSTMMD7BBFxLDgquOgg/ZX7vtE
+ Ay5kNM8VRQGS75PaV39gscxseLReBUc1YpOTymujSXmlfXGUiMJAMvUu9+U3wXSGmgc2
+ gksw==
+X-Gm-Message-State: AOJu0Yy5PzP8z0w2Wepoot+FTh6vCJRc8vP4qDoXHXc87oZZKSc5+P34
+ ImSRqgnzg6XWnDGXAEo7qZ9W72Uu7ruBUGv3/ylKas34q1LB0ohVWBErn2eXLcreUWM746qHB1I
+ Y+Xayo2WhSQC7vzCnbeJ3gWeI3leY1GK09aoyh//hSunpsD81TU6mBXJsk3I262eKygbVDQ5xUs
+ eK8Bi9v4n6/3gagdcLJBuVTTsMZw==
+X-Gm-Gg: Acq92OEkf+wcEQ6tueG4Q4IuMZmxaRpfCZEae9GPZknkOGo+1yOP9HSz4etkZYQAre/
+ Jk9R8HRThcfWC/66lA7t2m+brFeVJX5flxMNnzyHJ0J1GnohtzzfYFEW8kia9M8zLDBZnR7XkNx
+ zGDH/YkxeENSCLJAOkxHLbKsCyV+d783mB5E+JFqChiYcvUucGMwJ88kSt7QSd89Ir7MM+HNfL8
+ VY67H1imLn82iO07aFFOeL62fWcPrI232lw4aNhgqaqyw36ug6r9df7JQlymfxbiwDZSWt0a/mc
+ c1Z70WkGL0vhjhkhLQ4KcMNBO6C0ZdgLRnPqyFDD/jc9HTUkzL1tdhEQtNPEGeMth/1PT7v6Ykn
+ u0D+5cHLqLwu5Li9mjlLTcNjYUHMPMl5DrwLslnGRmcrR4gVwwuB/X5sAVuqpPPOVFon9oHSrHQ
+ OmTVKNxASftH3J+WJgBPImDjuNTKoLG7TYjYpABlKLmdAfvHN72UtIK7vSsy749g==
+X-Received: by 2002:a05:6214:5085:b0:8d0:3950:aa0f with SMTP id
+ 6a1803df08f44-8d3166caa85mr67224376d6.22.1781291317110; 
+ Fri, 12 Jun 2026 12:08:37 -0700 (PDT)
 Received: from d122153.iol.unh.edu ([2606:4100:3880:1220:e309:5f72:1c4b:9e64])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-517fb61fb15sm29891031cf.5.2026.06.12.12.02.41
+ 6a1803df08f44-8d304b58edesm30573516d6.37.2026.06.12.12.08.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 12 Jun 2026 12:02:42 -0700 (PDT)
+ Fri, 12 Jun 2026 12:08:36 -0700 (PDT)
 From: Matthew Gee <mgee@iol.unh.edu>
 To: dev@dpdk.org
 Cc: stephen@networkplumber.org, aconole@redhat.com, lylavoie@iol.unh.edu,
  Matthew Gee <mgee@iol.unh.edu>
-Subject: [PATCH v1] tools: AI review handle empty Error sections
-Date: Fri, 12 Jun 2026 15:02:25 -0400
-Message-ID: <20260612190225.1016275-1-mgee@iol.unh.edu>
+Subject: [PATCH v2] tools: AI review handle empty Error sections
+Date: Fri, 12 Jun 2026 15:08:07 -0400
+Message-ID: <20260612190807.1020863-1-mgee@iol.unh.edu>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260612190225.1016275-1-mgee@iol.unh.edu>
+References: <20260612190225.1016275-1-mgee@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -99,7 +101,7 @@ Signed-off-by: Matthew Gee <mgee@iol.unh.edu>
  1 file changed, 27 insertions(+), 8 deletions(-)
 
 diff --git a/devtools/ai/review-patch.py b/devtools/ai/review-patch.py
-index 52601ac156..b009368638 100755
+index 52601ac156..eb608566d2 100755
 --- a/devtools/ai/review-patch.py
 +++ b/devtools/ai/review-patch.py
 @@ -19,6 +19,7 @@
@@ -122,14 +124,14 @@ index 52601ac156..b009368638 100755
 +        rgx_should_match: str = r"#+\s(\*+)?{err_or_warn}"
 +        # Matches against headers followed only by filler text, formatting, or no additional text
 +        rgx_should_not_match: str = r"#+\s(\*+)?{err_or_warn}(s?)(\*+)?(none(.)?$| \(must fix\)$|$)"
-+        
++
 +        curr_lines: iter[str]
 +        next_lines: iter[str | None]
 +        next_next_lines: iter[str | None]
 +        curr_lines, next_lines, next_next_lines = tee(review_text.splitlines(), 3)
 +        next_lines = chain(islice(next_lines, 1, None), [None])
 +        next_next_lines = chain(islice(next_next_lines, 2, None), [None, None])
-+        
++
 +        curr_lines: str
 +        next_lines: str | None
 +        next_next_lines: str | None
