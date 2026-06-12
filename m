@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BAECD98CE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 10:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EE3CD98CE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Jun 2026 10:49:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7CEE2434FA;
-	Fri, 12 Jun 2026 12:48:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 748C4434F2;
+	Fri, 12 Jun 2026 12:48:20 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 36864434D4;
- Fri, 12 Jun 2026 12:48:13 +0200 (CEST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 366EE434CD
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 12:48:13 +0200 (CEST)
 Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gcGST1T6PzJ46cZ;
- Fri, 12 Jun 2026 18:47:53 +0800 (CST)
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gcGSR6gxVzJ46cP
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 18:47:51 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id D2A854058D;
- Fri, 12 Jun 2026 18:48:09 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 90E884058D
+ for <dev@dpdk.org>; Fri, 12 Jun 2026 18:48:08 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 12 Jun 2026 12:48:09 +0200
+ 15.2.1544.11; Fri, 12 Jun 2026 12:48:08 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
 To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH v3 06/25] bpf/validate: fix BPF_ADD of pointer to a scalar
-Date: Fri, 12 Jun 2026 11:47:20 +0100
-Message-ID: <20260612104743.6465-7-marat.khalili@huawei.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH v3 03/25] bpf/validate: break on error in evaluate
+Date: Fri, 12 Jun 2026 11:47:17 +0100
+Message-ID: <20260612104743.6465-4-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260612104743.6465-1-marat.khalili@huawei.com>
 References: <20260519093131.52022-1-marat.khalili@huawei.com>
@@ -50,70 +49,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Function `eval_add` preserved type of the destination register even when
-a pointer was added to it. If it contained scalar, it remained a scalar,
-and if it contained pointer, it remained a pointer.
+Evaluation loop previously continued until the cycle end in case of an
+evaluation error. It made reasoning about the code difficult since it
+might be executing when the evaluation is already in an invalid state.
 
-E.g. consider the following program with the current validation code:
-
-    Tested program:
-        0:  mov r0, #0x0
-        1:  mov r3, #0x0
-        2:  add r3, r1  ; tested instruction
-        3:  ldxdw r2, [r3 + 16]
-        4:  mov r0, #0x1
-        5:  exit
-
-After the tested instruction validator considers r3 to be scalar and
-fails validation with the error:
-
-    BPF: evaluate(): destination is not a pointer at pc: 3
-
-However, this code is valid as long as program argument points to a
-valid memory area at least 24 bytes long which we read at offset 16.
-
-When adding pointer to a scalar set type of the result to pointer of
-the same type. When adding pointer to a pointer set type of the result
-to scalar and value to unknown.
-
-The test will be added in subsequent commits since it depends on other
-fixes.
-
-Fixes: 8021917293d0 ("bpf: add extra validation for input BPF program")
-Cc: stable@dpdk.org
+Change loop logic to break out of the loop immediately after an error.
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
 Depends-on: series-38434 ("bpf: introduce extensible load API")
- lib/bpf/bpf_validate.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ lib/bpf/bpf_validate.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-index f3f462920a3d..5609bfcd5c16 100644
+index bf8a4abb5a5a..1619faf3604a 100644
 --- a/lib/bpf/bpf_validate.c
 +++ b/lib/bpf/bpf_validate.c
-@@ -647,8 +647,20 @@ eval_apply_mask(struct bpf_reg_val *rv, uint64_t mask)
- static void
- eval_add(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
+@@ -2401,11 +2401,11 @@ prune_eval_state(struct bpf_verifier *bvf, const struct inst_node *node,
+ static int
+ evaluate(struct bpf_verifier *bvf)
  {
-+	struct bpf_reg_val rs_buf;
- 	struct bpf_reg_val rv;
+-	int32_t rc;
+ 	uint32_t idx, op;
+ 	const char *err;
+ 	const struct ebpf_insn *ins;
+ 	struct inst_node *next, *node;
++	int rc = 0;
  
-+	if (RTE_BPF_ARG_PTR_TYPE(rs->v.type) != 0) {
-+		if (RTE_BPF_ARG_PTR_TYPE(rd->v.type) != 0) {
-+			/* treat sum of pointers as sum of two unknown scalars */
-+			eval_fill_max_bound(&rs_buf, msk);
-+			*rd = rs_buf;
-+			rs = &rs_buf;
-+		} else
-+			/* scalar + pointer is a pointer of the same type */
-+			rd->v = rs->v;
-+	}
-+
- 	rv.u.min = (rd->u.min + rs->u.min) & msk;
- 	rv.u.max = (rd->u.max + rs->u.max) & msk;
- 	rv.s.min = ((uint64_t)rd->s.min + (uint64_t)rs->s.min) & msk;
+ 	struct {
+ 		uint32_t nb_eval;
+@@ -2439,11 +2439,10 @@ evaluate(struct bpf_verifier *bvf)
+ 	ins = bvf->prm->raw.ins;
+ 	node = bvf->in;
+ 	next = node;
+-	rc = 0;
+ 
+ 	memset(&stats, 0, sizeof(stats));
+ 
+-	while (node != NULL && rc == 0) {
++	while (node != NULL) {
+ 
+ 		/*
+ 		 * current node evaluation, make sure we evaluate
+@@ -2457,17 +2456,20 @@ evaluate(struct bpf_verifier *bvf)
+ 
+ 			/* for jcc node make a copy of evaluation state */
+ 			if (node->nb_edge > 1) {
+-				rc |= save_cur_eval_state(bvf, node);
++				rc = save_cur_eval_state(bvf, node);
++				if (rc < 0)
++					break;
+ 				stats.nb_save++;
+ 			}
+ 
+-			if (ins_chk[op].eval != NULL && rc == 0) {
++			if (ins_chk[op].eval != NULL) {
+ 				err = ins_chk[op].eval(bvf, ins + idx);
+ 				stats.nb_eval++;
+ 				if (err != NULL) {
+ 					RTE_BPF_LOG_FUNC_LINE(ERR,
+ 						"%s at pc: %u", err, idx);
+ 					rc = -EINVAL;
++					break;
+ 				}
+ 			}
+ 
 -- 
 2.43.0
 
