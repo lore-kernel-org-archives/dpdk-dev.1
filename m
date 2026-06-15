@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EE8CD98DA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 17:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6861FCD98C5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 18:06:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F320C402EB;
-	Mon, 15 Jun 2026 19:37:58 +0200 (CEST)
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
- [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 0C789400D6
- for <dev@dpdk.org>; Mon, 15 Jun 2026 19:37:57 +0200 (CEST)
-Received: by mail-dy1-f177.google.com with SMTP id
- 5a478bee46e88-3074adb8fcaso5661835eec.0
- for <dev@dpdk.org>; Mon, 15 Jun 2026 10:37:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3C97F40A80;
+	Mon, 15 Jun 2026 20:06:01 +0200 (CEST)
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
+ [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id 2D71E400D6
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 20:05:59 +0200 (CEST)
+Received: by mail-dy1-f172.google.com with SMTP id
+ 5a478bee46e88-30b9e755555so944538eec.1
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 11:05:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781545077;
- x=1782149877; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781546758;
+ x=1782151558; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=0cd1dErf1+vF1cctStUw5L6t0OaE13gkAmYQdttjWrE=;
- b=PhI4SOTwa7izld/nGtJH/36IHVXf9/Vnzp/gzqKEDdNtQulIjgpxewiqMZfDpBYOc9
- lD6SJMJl9QotWmFRVtN2c7ZHjpDXhsOImLyZR8Xn+5GyvMiZrkmVbgDNZq9BF3cp52Ot
- sbukkNzMuO/VQcedXmINv/BYIEgaSEcNRNxyzYUcB2+s4dumaRHWdo94HHcXHZIVeU+I
- RUhhzw0sZz0mcIzabTesDZsUEaJJNe1cYx3HKytTsHwYsID7WmEDbjwxTC/yhGhGLAB1
- 8dtARJKTmkNj9UxQqnfEepR4PnTmG3PWI50DpbLsN5UEK+2lVaV+cJCRC0MxSothaQTn
- KEQw==
+ bh=Vv8iuQ1I8u1JW1ypeVdVrH7k+4iJD2etLLnxZbZM+8c=;
+ b=yDdgyaYeDDTYC3k1gJF0d0qXvNUrE9TjE3cgrwPf2D1sUlaSpKYjs7S0RZZON64wxS
+ QcaROK+373SJcOTYdBbC6dIc3TGPlnuqCt7Wu9ypD4yECkT1QLJIihIblVebAxMvd1UT
+ FqrANU/k0+AXBqJzpMxx/7ce5YSE4MNxCs7fmnqfPDESnPixmIAixxQn/fl28k9m0fYo
+ ZR3ek9hUuD+fiRp98vkvSYvy7ry8rKqqegxwwVbal06GePsNAecjdziZ5jUmcNgIFgVz
+ rY2kDsbphQ1HtAhsNeQLo8lu75QQ/1KEG1OmqkXlQiK4HnslMSIyz4DggXyScoxH2ppk
+ fxOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781545077; x=1782149877;
+ d=1e100.net; s=20251104; t=1781546758; x=1782151558;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=0cd1dErf1+vF1cctStUw5L6t0OaE13gkAmYQdttjWrE=;
- b=a+srcGotcMw5zm6urA7BnCy+Pj/zI9UlTKokup5vD9YVOYHR7u2I+Dpe4Px4D6VnXj
- CpWGXbiIeKsfc3ydGqunrA9MFsDhcVWAOyKWxQ2bW9tQ2Ry0Yek3nFrz3UHFM06yhMJt
- w/mWWAW1J07BW6Jv0uJBZrXI8/c4Lou+2gTO0GzxJcWKMrFVzmgWHuVsOo5fJ83uhyEw
- 8Df/jqlS+zOI+dannvj87Q6Kj5y8ZIJoHCW0A9rlfQ0WbgyYEdYz3Igc9Sj7kaa+GUp8
- DK9kLZfs3WCsT/FmO2etnjP7x6yZlXKD/MgXYeUI2OdbAQXvdFCGz+KsXxvcFzjE8LT7
- Riww==
-X-Gm-Message-State: AOJu0Yw1oAg1irrAbfPmUK0m4DKa3dBfKU8EI4wMux+hG7InaTyE8OAa
- yPyynyKh2WPrEC/Q5OArl5CSaB2Umyk3EzijElW6VO/Wm0CDaG2gK47Xw1OJ64h6PF4=
-X-Gm-Gg: Acq92OGNxoJsu9qo5prYZqewgtQKt47FDuJfHxJhoZpWVJnyEivtaYsiD/IHGL942Nz
- f1ia9smU1vn7vd9Pjb7KdSgI9LoRNsOK+MS2/a4+mBbWxKlN7c3AieeiWPerdkNjiix9/Dhe83m
- m6Cx/0VhohQO8d7edNd9FxpuXfI1k6EtcBMDIKkZTsW4dzqGeaXdCv4ARqe990pPWzD648RJ0y3
- Tm0OaZHnF7c6whEHuehWnk0c0V87M0N1Vf4pPIsFWWGstfFiohzGHxUN5UFh4vDdElJ1fhSbAxf
- zEhqslm623U/jr7pvgGMOCbKC4yOjV+5B/MMnWa2NyF5MZCILg218vqJq0Vb80ClaIJRVQENXk0
- 4DeUtAIzVZjdqXm3VByN+Ad35OMMePvgNeYYvAL1ApjuhNnT8I8aGMwF3+lAINF9w512kB+1KAV
- Dl8mzQABJBXv/wVDi4r0OFfxwLznLri1qjRJc+dCPSm7AD0Yb9mh93JlxA87lBMXJ5
-X-Received: by 2002:a05:7300:5341:b0:2fc:9ae6:e5a8 with SMTP id
- 5a478bee46e88-3082009c394mr10220270eec.20.1781545076796; 
- Mon, 15 Jun 2026 10:37:56 -0700 (PDT)
+ bh=Vv8iuQ1I8u1JW1ypeVdVrH7k+4iJD2etLLnxZbZM+8c=;
+ b=NbPMhWHMMje9qjLgwE9EFMwFfgXPx1wAfh0H7LOmk/wYKPKkTTMZFiXuetGRRyNSMv
+ WYIIfs0JdsN32rz6FCybuE94qqlj6bdUzCtqXdRxIxFRGfnUNBYUyL9pxwx+DHH1+9jX
+ Jjff98UVvemG7PBJ52r7S7rNjQEMsv3mgajzDcaumrFMnHwQVO7fCHqo56kNzsToPG5V
+ uprq9n9jV0k2/prEIWJSvamBkTlbFSnQ1X2UBxHHbOilgDhR5AyEbuvgwmo6wmJqYtNN
+ S91JX0/9NEz6uWfECcdDXBp5y9eylaSpLi5IHrf3/gqut6b1UBZtY28HbsgYQ3FmTB96
+ u1eQ==
+X-Gm-Message-State: AOJu0YwzvPzy0uUcUQJOVr8LBqPIywD8Rvo9mRqnEc/1YA+WM1p7jqC0
+ lX6uNs0mDBA/RdERDkkXgsxlVqM+pExTJ7fXzcNxK6Q/xrz8My8uqYezEe0aHGH7LK0WFZoguKL
+ wusNZ
+X-Gm-Gg: Acq92OE0Rv/wY3xC5nFLulqIuMQac0HlfdSTWGYFlnxtmr/cQF5UcksM7vJ1pFgYxK/
+ aafHwhh76B8qqAc3za8Xyz/dlIYMnpgcmsyKaBY6N7i5CuHQij1ruJsMwpibB3b0zIDwMlPCBaw
+ tFhp7km1Ot8TI4qAZU1qi1atirvvbfMcojxYZNGqI3VL91188RL7MTOKm2PC160TliR3KGeDqm7
+ dATkTBk+O78XcOPSvskkvQS8GwBw8E/iNlO6UcIz73zTq/+QaZZBqipNEiF82nASTv4aNFfhuLr
+ Tjg2rjuMLseO/ZWsX9zA+Sqm/51gZRtZJ+/XkveJQ2YFJu6/IwpM0tM+7eC64Hj91hMSYBgz+cX
+ ydbquBTbEZ+IK+WVdV0tJhNAs/Gn9OcXAJGGCKYnKPD6Z5+MVVIFwYlHuNAkLiqdbnaajbkF4IQ
+ btM1sSvSvpMve2o6hauqWFhBe0dcXUCz/8MDp17eWbE0RDwnqkqHDG389wnmeBjAR+
+X-Received: by 2002:a05:7300:1481:b0:304:df0e:9db0 with SMTP id
+ 5a478bee46e88-3093a8ebbe2mr7214088eec.15.1781546757555; 
+ Mon, 15 Jun 2026 11:05:57 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3081e5d0849sm17266698eec.7.2026.06.15.10.37.55
+ 5a478bee46e88-3081eb95450sm19159002eec.28.2026.06.15.11.05.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 15 Jun 2026 10:37:56 -0700 (PDT)
-Date: Mon, 15 Jun 2026 10:37:52 -0700
+ Mon, 15 Jun 2026 11:05:57 -0700 (PDT)
+Date: Mon, 15 Jun 2026 11:05:53 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Samyak Jain <samyak.jain@amantyatech.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Vikash kumar
- <vikash.kumar@amantyatech.com>, Ankur Bharadwaj
- <ankur.bharadwaj@amantyatech.com>
-Subject: Re: Question regarding duplicate fragment handling in DPDK IP
- reassembly library
-Message-ID: <20260615103752.6155db47@phoenix.local>
-In-Reply-To: <PN4PR01MB114326CC09306DA93ABA7C2ECEEE62@PN4PR01MB11432.INDPRD01.PROD.OUTLOOK.COM>
-References: <PN4PR01MB114326CC09306DA93ABA7C2ECEEE62@PN4PR01MB11432.INDPRD01.PROD.OUTLOOK.COM>
+To: liujie5@linkdatatechnology.com
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2 08/20] net/sxe2: support statistics and multi-process
+Message-ID: <20260615110553.67333ae4@phoenix.local>
+In-Reply-To: <20260614092328.201826-11-liujie5@linkdatatechnology.com>
+References: <20260610013936.3634968-21-liujie5@linkdatatechnology.com>
+ <20260614092328.201826-1-liujie5@linkdatatechnology.com>
+ <20260614092328.201826-11-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,33 +82,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 15 Jun 2026 12:39:48 +0000
-Samyak Jain <samyak.jain@amantyatech.com> wrote:
+On Sun, 14 Jun 2026 17:23:12 +0800
+liujie5@linkdatatechnology.com wrote:
 
-> Hi DPDK Community,
+> From: Jie Liu <liujie5@linkdatatechnology.com>
 > 
-> I am using DPDK 25.11 and evaluating the IP reassembly library
-> (librte_ip_frag).
+> - The statistics support includes:
+> - Basic statistics (ipackets, opackets, ibytes, obytes, etc.)
+> - Extended statistics (xstats) for detailed hardware counters.
+> - Per-queue statistics for both RX and TX.
 > 
-> During testing, I observed that duplicate fragments appear to cause reassembly failure and the fragment context gets invalidated.
+> The multi-process support allows secondary processes to retrieve
+> statistics. Since secondary processes cannot access hardware registers
+> directly, an IPC mechanism is implemented using the DPDK MP API.
 > 
-> I would like to know:
+> Atomic operations are used when reading 64-bit counters to ensure
+> data consistency between processes.
 > 
-> 1. Is duplicate fragment handling intentionally unsupported in
->    rte_ipv4_frag_reassemble_packet() / rte_ipv6_frag_reassemble_packet()?
-> 
-> 2. Has there been any upstream discussion or patch to support
->    duplicate fragments while still rejecting conflicting
->    fragments?
-> 
-> 3. Are there any recommended approaches for applications that need
->    Linux-like duplicate fragment tolerance?
-> 
-> Any guidance would be appreciated.
-> 
-> Thanks & Regards,
-> Samyak Jain
-> 
+> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+> ---
 
-Short answer: yes it is buggy, no it shouldn't be.
-Looking into it but not a simple answer
+The software stats do not need to be optional. You mentioned that they
+have a performance cost, but that is because of the choice to use atomic counters.
+
+Atomic operations are slow and not required for per-queue software statistics.
+Even with memory order relaxed, the atomic operations cause a locked instruction
+on x86. Thats what you are observing.
+The DPDK follows the pattern of BSD and Linux kernel and does not use atomic
+for software stats. When using per-queue statistics in some case, the point
+in time measurement (summation) will be inaccurate but that is ok.
+
+If you take off the atomic, I bet the cost of doing the conditional branch
+outweighs the cost of simple basic arithmetic operation.
+
+Please have them always on, drivers should only have options when
+there is no other choice.
