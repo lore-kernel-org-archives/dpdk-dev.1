@@ -2,40 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6279FCD98C5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 07:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78137CD98D6
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 07:33:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D26CE436C1;
-	Mon, 15 Jun 2026 09:33:29 +0200 (CEST)
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
- [113.46.200.225])
- by mails.dpdk.org (Postfix) with ESMTP id CFA95436C0
- for <dev@dpdk.org>; Mon, 15 Jun 2026 09:33:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DED44436C6;
+	Mon, 15 Jun 2026 09:33:30 +0200 (CEST)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id 6D9A4436C1
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 09:33:28 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=EHEzHppJk2Pu7UVwGl7dmMXwex9IAu+ze4yIE4rmbr4=;
- b=B1u5BYfxlXy6uGajgCagjwpyPLGuLOBpTBBxQRMUmvpD38vh231PB9Zs0qfaTdV6xLtJzIQ0i
- XBZulZjPlv0g01N7VlFTG/OYcbvi9Hcyyb1gIocqf7pXqUY0J70f59JJR/d2d1c7JB5k+fKpAlt
- 6yafRcE7by93Ez79vFf7Ta8=
-Received: from mail.maildlp.com (unknown [172.19.163.214])
- by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4gf1qX30xTz1K97d;
- Mon, 15 Jun 2026 15:25:28 +0800 (CST)
+ bh=mnhjsADucT0VLfT54AkMq8lgaMoPOgZ5FSdglyyLgeY=;
+ b=kJGeD5Ax+9curriTjOeFy5s7O1wXaKrHLRpyqpRDLOUd5P3hB2guo6Y78KUAikqvkUnoy4puO
+ L2NAaMV5ixz+pN/4A/7e7cPc3REXhry/Yt6roWNVoGEMx5bOWVtIkhZ7AaYW8BFDQkmQBr9k2sS
+ me5Xp1wsAJ5v6+DxRTkKvIA=
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4gf1qZ1LL0zLlVP;
+ Mon, 15 Jun 2026 15:25:30 +0800 (CST)
 Received: from kwepemo100005.china.huawei.com (unknown [7.202.195.212])
- by mail.maildlp.com (Postfix) with ESMTPS id 5AA6E40561;
- Mon, 15 Jun 2026 15:33:24 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 110B040573;
+ Mon, 15 Jun 2026 15:33:27 +0800 (CST)
 Received: from localhost.localdomain (10.90.31.46) by
  kwepemo100005.china.huawei.com (7.202.195.212) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Mon, 15 Jun 2026 15:33:23 +0800
+ 15.2.1544.36; Mon, 15 Jun 2026 15:33:26 +0800
 From: Huisong Li <lihuisong@huawei.com>
 To: <thomas@monjalon.net>, <anatoly.burakov@intel.com>,
  <sivaprasad.tummala@amd.com>
 CC: <dev@dpdk.org>, <stephen@networkplumber.org>, <fengchengwen@huawei.com>,
  <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>
-Subject: [PATCH v4 2/9] power/cpufreq: add the lcore ID verification to
- framework
-Date: Mon, 15 Jun 2026 15:30:43 +0800
-Message-ID: <20260615073050.1996063-3-lihuisong@huawei.com>
+Subject: [PATCH v4 3/9] power/acpi: remove redundant lcore ID checks
+Date: Mon, 15 Jun 2026 15:30:44 +0800
+Message-ID: <20260615073050.1996063-4-lihuisong@huawei.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20260615073050.1996063-1-lihuisong@huawei.com>
 References: <20260615073050.1996063-1-lihuisong@huawei.com>
@@ -58,131 +57,178 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, many cpufreq drivers verify the lcore ID in their
-own driver and just restrict it to the RTE_MAX_LCORE range.
-Actually, the lcore ID verification is common for each cpufreq
-driver. It is better to add this verification to framework.
+Now that the cpufreq framework validates the lcore ID using
+RTE_POWER_VALID_LCOREID_OR_ERR_RET() before dispatching to any driver,
+each individual cpufreq driver no longer needs its own range
+check against RTE_MAX_LCORE.
 
-In addition, the lcore ID for cpufreq library is used by the
-application, which is missing in cpufreq library or driver.
-So use RTE_POWER_VALID_LCOREID_OR_ERR_RET to verify it in
-cpufreq framework.
-
-Please note the lcore ID for cpufreq library must be ROLE_RTE
-or ROLE_SERVICE after this patch.
+Remove the duplicated lcore ID checks from the acpi cpufreq
+driver ops.
 
 Signed-off-by: Huisong Li <lihuisong@huawei.com>
 ---
- lib/power/rte_power_cpufreq.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/power/acpi/acpi_cpufreq.c | 65 -------------------------------
+ 1 file changed, 65 deletions(-)
 
-diff --git a/lib/power/rte_power_cpufreq.c b/lib/power/rte_power_cpufreq.c
-index f63e976dc2..8394cbc77f 100644
---- a/lib/power/rte_power_cpufreq.c
-+++ b/lib/power/rte_power_cpufreq.c
-@@ -116,6 +116,7 @@ rte_power_init(unsigned int lcore_id)
- 	struct rte_power_cpufreq_ops *ops;
- 	uint8_t env;
+diff --git a/drivers/power/acpi/acpi_cpufreq.c b/drivers/power/acpi/acpi_cpufreq.c
+index 875c66336d..af85a8cdec 100644
+--- a/drivers/power/acpi/acpi_cpufreq.c
++++ b/drivers/power/acpi/acpi_cpufreq.c
+@@ -234,12 +234,6 @@ power_acpi_cpufreq_init(unsigned int lcore_id)
+ 		return -1;
+ 	}
  
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	if (global_default_env != PM_ENV_NOT_SET)
- 		return global_cpufreq_ops->init(lcore_id);
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Lcore id %u can not exceeds %u",
+-				lcore_id, RTE_MAX_LCORE - 1U);
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 	exp_state = POWER_IDLE;
+ 	/* The power in use state works as a guard variable between
+@@ -311,11 +305,6 @@ power_acpi_cpufreq_exit(unsigned int lcore_id)
+ 	struct acpi_power_info *pi;
+ 	uint32_t exp_state;
  
-@@ -147,6 +148,7 @@ RTE_EXPORT_SYMBOL(rte_power_exit)
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Lcore id %u can not exceeds %u",
+-				lcore_id, RTE_MAX_LCORE - 1U);
+-		return -1;
+-	}
+ 	pi = &lcore_power_info[lcore_id];
+ 	exp_state = POWER_USED;
+ 	/* The power in use state works as a guard variable between
+@@ -365,11 +354,6 @@ power_acpi_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t num)
+ {
+ 	struct acpi_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return 0;
+-	}
+-
+ 	if (freqs == NULL) {
+ 		POWER_LOG(ERR, "NULL buffer supplied");
+ 		return 0;
+@@ -388,22 +372,12 @@ power_acpi_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t num)
+ uint32_t
+ power_acpi_cpufreq_get_freq(unsigned int lcore_id)
+ {
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return RTE_POWER_INVALID_FREQ_INDEX;
+-	}
+-
+ 	return lcore_power_info[lcore_id].curr_idx;
+ }
+ 
  int
- rte_power_exit(unsigned int lcore_id)
+ power_acpi_cpufreq_set_freq(unsigned int lcore_id, uint32_t index)
  {
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	if (global_default_env != PM_ENV_NOT_SET)
- 		return global_cpufreq_ops->exit(lcore_id);
- 
-@@ -161,6 +163,7 @@ uint32_t
- rte_power_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t n)
- {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, 0);
- 	return global_cpufreq_ops->get_avail_freqs(lcore_id, freqs, n);
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return -1;
+-	}
+-
+ 	return set_freq_internal(&(lcore_power_info[lcore_id]), index);
  }
  
-@@ -169,6 +172,7 @@ uint32_t
- rte_power_get_freq(unsigned int lcore_id)
+@@ -412,11 +386,6 @@ power_acpi_cpufreq_freq_down(unsigned int lcore_id)
  {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, RTE_POWER_INVALID_FREQ_INDEX);
- 	return global_cpufreq_ops->get_freq(lcore_id);
- }
+ 	struct acpi_power_info *pi;
  
-@@ -177,6 +181,7 @@ uint32_t
- rte_power_set_freq(unsigned int lcore_id, uint32_t index)
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 	if (pi->curr_idx + 1 == pi->nb_freqs)
+ 		return 0;
+@@ -430,11 +399,6 @@ power_acpi_cpufreq_freq_up(unsigned int lcore_id)
  {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	return global_cpufreq_ops->set_freq(lcore_id, index);
- }
+ 	struct acpi_power_info *pi;
  
-@@ -185,6 +190,7 @@ int
- rte_power_freq_up(unsigned int lcore_id)
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 	if (pi->curr_idx == 0 ||
+ 	    (pi->curr_idx == 1 && pi->turbo_available && !pi->turbo_enable))
+@@ -447,11 +411,6 @@ power_acpi_cpufreq_freq_up(unsigned int lcore_id)
+ int
+ power_acpi_cpufreq_freq_max(unsigned int lcore_id)
  {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	return global_cpufreq_ops->freq_up(lcore_id);
- }
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return -1;
+-	}
+-
+ 	/* Frequencies in the array are from high to low. */
+ 	if (lcore_power_info[lcore_id].turbo_available) {
+ 		if (lcore_power_info[lcore_id].turbo_enable)
+@@ -471,11 +430,6 @@ power_acpi_cpufreq_freq_min(unsigned int lcore_id)
+ {
+ 	struct acpi_power_info *pi;
  
-@@ -193,6 +199,7 @@ int
- rte_power_freq_down(unsigned int lcore_id)
- {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	return global_cpufreq_ops->freq_down(lcore_id);
- }
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
  
-@@ -201,6 +208,7 @@ int
- rte_power_freq_max(unsigned int lcore_id)
+ 	/* Frequencies in the array are from high to low. */
+@@ -488,11 +442,6 @@ power_acpi_turbo_status(unsigned int lcore_id)
  {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	return global_cpufreq_ops->freq_max(lcore_id);
- }
+ 	struct acpi_power_info *pi;
  
-@@ -209,6 +217,7 @@ int
- rte_power_freq_min(unsigned int lcore_id)
- {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	return global_cpufreq_ops->freq_min(lcore_id);
- }
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
  
-@@ -217,6 +226,7 @@ int
- rte_power_turbo_status(unsigned int lcore_id)
+ 	return pi->turbo_enable;
+@@ -504,11 +453,6 @@ power_acpi_enable_turbo(unsigned int lcore_id)
  {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	return global_cpufreq_ops->turbo_status(lcore_id);
- }
+ 	struct acpi_power_info *pi;
  
-@@ -225,6 +235,7 @@ int
- rte_power_freq_enable_turbo(unsigned int lcore_id)
- {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	return global_cpufreq_ops->enable_turbo(lcore_id);
- }
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
  
-@@ -233,6 +244,7 @@ int
- rte_power_freq_disable_turbo(unsigned int lcore_id)
+ 	if (pi->turbo_available)
+@@ -537,11 +481,6 @@ power_acpi_disable_turbo(unsigned int lcore_id)
  {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	return global_cpufreq_ops->disable_turbo(lcore_id);
- }
+ 	struct acpi_power_info *pi;
  
-@@ -242,5 +254,6 @@ rte_power_get_capabilities(unsigned int lcore_id,
- 		struct rte_power_core_capabilities *caps)
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 
+ 	 pi->turbo_enable = 0;
+@@ -564,10 +503,6 @@ int power_acpi_get_capabilities(unsigned int lcore_id,
  {
- 	RTE_ASSERT(global_cpufreq_ops != NULL);
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -1);
- 	return global_cpufreq_ops->get_caps(lcore_id, caps);
- }
+ 	struct acpi_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
+-		return -1;
+-	}
+ 	if (caps == NULL) {
+ 		POWER_LOG(ERR, "Invalid argument");
+ 		return -1;
 -- 
 2.33.0
 
