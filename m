@@ -2,39 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78137CD98D6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 07:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D15CD98C5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 07:33:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DED44436C6;
-	Mon, 15 Jun 2026 09:33:30 +0200 (CEST)
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
- [113.46.200.222])
- by mails.dpdk.org (Postfix) with ESMTP id 6D9A4436C1
+	by mails.dpdk.org (Postfix) with ESMTP id DE9E1436CD;
+	Mon, 15 Jun 2026 09:33:31 +0200 (CEST)
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
+ [113.46.200.217])
+ by mails.dpdk.org (Postfix) with ESMTP id BBD1A436C2
  for <dev@dpdk.org>; Mon, 15 Jun 2026 09:33:28 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=mnhjsADucT0VLfT54AkMq8lgaMoPOgZ5FSdglyyLgeY=;
- b=kJGeD5Ax+9curriTjOeFy5s7O1wXaKrHLRpyqpRDLOUd5P3hB2guo6Y78KUAikqvkUnoy4puO
- L2NAaMV5ixz+pN/4A/7e7cPc3REXhry/Yt6roWNVoGEMx5bOWVtIkhZ7AaYW8BFDQkmQBr9k2sS
- me5Xp1wsAJ5v6+DxRTkKvIA=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
- by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4gf1qZ1LL0zLlVP;
- Mon, 15 Jun 2026 15:25:30 +0800 (CST)
+ bh=4+t5zLl74fDZv4H8q38xlctLuUzMpZD6A5X1ZwmZsAs=;
+ b=jNeRWhJbGZkKcqjWKxuRXtkwnlez3+bze+Je7YDg/Rtvfp7zs1fYOASIe6LTA+NRUZNoIueVC
+ 1lH7WZCYz0s2x5JRfbWA8uzhDem1ynQYBF6lS6lefJOE8IQnPzVeXKTHQcfVRbeQ6Y7ESPskH32
+ WyRnaSinPMIsEhRG80/JR+Y=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+ by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4gf1q04WGGzcb3s;
+ Mon, 15 Jun 2026 15:25:00 +0800 (CST)
 Received: from kwepemo100005.china.huawei.com (unknown [7.202.195.212])
- by mail.maildlp.com (Postfix) with ESMTPS id 110B040573;
- Mon, 15 Jun 2026 15:33:27 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 8AF0240537;
+ Mon, 15 Jun 2026 15:33:21 +0800 (CST)
 Received: from localhost.localdomain (10.90.31.46) by
  kwepemo100005.china.huawei.com (7.202.195.212) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Mon, 15 Jun 2026 15:33:26 +0800
+ 15.2.1544.36; Mon, 15 Jun 2026 15:33:21 +0800
 From: Huisong Li <lihuisong@huawei.com>
 To: <thomas@monjalon.net>, <anatoly.burakov@intel.com>,
  <sivaprasad.tummala@amd.com>
 CC: <dev@dpdk.org>, <stephen@networkplumber.org>, <fengchengwen@huawei.com>,
  <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>
-Subject: [PATCH v4 3/9] power/acpi: remove redundant lcore ID checks
-Date: Mon, 15 Jun 2026 15:30:44 +0800
-Message-ID: <20260615073050.1996063-4-lihuisong@huawei.com>
+Subject: [PATCH v4 1/9] power: add a common macro to verify lcore ID
+Date: Mon, 15 Jun 2026 15:30:42 +0800
+Message-ID: <20260615073050.1996063-2-lihuisong@huawei.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20260615073050.1996063-1-lihuisong@huawei.com>
 References: <20260615073050.1996063-1-lihuisong@huawei.com>
@@ -57,178 +57,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Now that the cpufreq framework validates the lcore ID using
-RTE_POWER_VALID_LCOREID_OR_ERR_RET() before dispatching to any driver,
-each individual cpufreq driver no longer needs its own range
-check against RTE_MAX_LCORE.
+There are many places to verify lcore ID in power. It is necessary
+to add a common macro in power core.
 
-Remove the duplicated lcore ID checks from the acpi cpufreq
-driver ops.
+According to the applicattion in l3fwd-power, the lcore must be at
+least within the RTE_MAX_LCORE range and be a core of the ROLE_RTE
+role. But the service on the ROLE_SERVICE core also can use and
+require power management feature.
+
+So this common macro restricts that the lcore ID must be ROLE_RTE
+and ROLE_SERVICE.
 
 Signed-off-by: Huisong Li <lihuisong@huawei.com>
 ---
- drivers/power/acpi/acpi_cpufreq.c | 65 -------------------------------
- 1 file changed, 65 deletions(-)
+ doc/guides/rel_notes/release_26_07.rst | 4 ++++
+ lib/power/power_common.h               | 8 ++++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/drivers/power/acpi/acpi_cpufreq.c b/drivers/power/acpi/acpi_cpufreq.c
-index 875c66336d..af85a8cdec 100644
---- a/drivers/power/acpi/acpi_cpufreq.c
-+++ b/drivers/power/acpi/acpi_cpufreq.c
-@@ -234,12 +234,6 @@ power_acpi_cpufreq_init(unsigned int lcore_id)
- 		return -1;
- 	}
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index 5d7aa8d1bf..aeabb908ec 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -155,6 +155,10 @@ New Features
+   Added AGENTS.md file for AI review
+   and supporting scripts to review patches and documentation.
  
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Lcore id %u can not exceeds %u",
--				lcore_id, RTE_MAX_LCORE - 1U);
--		return -1;
--	}
--
- 	pi = &lcore_power_info[lcore_id];
- 	exp_state = POWER_IDLE;
- 	/* The power in use state works as a guard variable between
-@@ -311,11 +305,6 @@ power_acpi_cpufreq_exit(unsigned int lcore_id)
- 	struct acpi_power_info *pi;
- 	uint32_t exp_state;
++* **Added a common macro to verify lcore ID in power core.**
++
++  Added the ``RTE_POWER_VALID_LCOREID_OR_ERR_RET`` macro to verify lcore ID
++  in power core.
  
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Lcore id %u can not exceeds %u",
--				lcore_id, RTE_MAX_LCORE - 1U);
--		return -1;
--	}
- 	pi = &lcore_power_info[lcore_id];
- 	exp_state = POWER_USED;
- 	/* The power in use state works as a guard variable between
-@@ -365,11 +354,6 @@ power_acpi_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t num)
- {
- 	struct acpi_power_info *pi;
+ Removed Items
+ -------------
+diff --git a/lib/power/power_common.h b/lib/power/power_common.h
+index e2d5b68a17..370c5246c6 100644
+--- a/lib/power/power_common.h
++++ b/lib/power/power_common.h
+@@ -25,6 +25,14 @@ extern int rte_power_logtype;
  
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return 0;
--	}
--
- 	if (freqs == NULL) {
- 		POWER_LOG(ERR, "NULL buffer supplied");
- 		return 0;
-@@ -388,22 +372,12 @@ power_acpi_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t num)
- uint32_t
- power_acpi_cpufreq_get_freq(unsigned int lcore_id)
- {
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return RTE_POWER_INVALID_FREQ_INDEX;
--	}
--
- 	return lcore_power_info[lcore_id].curr_idx;
- }
+ #define POWER_CONVERT_TO_DECIMAL 10
  
- int
- power_acpi_cpufreq_set_freq(unsigned int lcore_id, uint32_t index)
- {
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return -1;
--	}
--
- 	return set_freq_internal(&(lcore_power_info[lcore_id]), index);
- }
- 
-@@ -412,11 +386,6 @@ power_acpi_cpufreq_freq_down(unsigned int lcore_id)
- {
- 	struct acpi_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return -1;
--	}
--
- 	pi = &lcore_power_info[lcore_id];
- 	if (pi->curr_idx + 1 == pi->nb_freqs)
- 		return 0;
-@@ -430,11 +399,6 @@ power_acpi_cpufreq_freq_up(unsigned int lcore_id)
- {
- 	struct acpi_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return -1;
--	}
--
- 	pi = &lcore_power_info[lcore_id];
- 	if (pi->curr_idx == 0 ||
- 	    (pi->curr_idx == 1 && pi->turbo_available && !pi->turbo_enable))
-@@ -447,11 +411,6 @@ power_acpi_cpufreq_freq_up(unsigned int lcore_id)
- int
- power_acpi_cpufreq_freq_max(unsigned int lcore_id)
- {
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return -1;
--	}
--
- 	/* Frequencies in the array are from high to low. */
- 	if (lcore_power_info[lcore_id].turbo_available) {
- 		if (lcore_power_info[lcore_id].turbo_enable)
-@@ -471,11 +430,6 @@ power_acpi_cpufreq_freq_min(unsigned int lcore_id)
- {
- 	struct acpi_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return -1;
--	}
--
- 	pi = &lcore_power_info[lcore_id];
- 
- 	/* Frequencies in the array are from high to low. */
-@@ -488,11 +442,6 @@ power_acpi_turbo_status(unsigned int lcore_id)
- {
- 	struct acpi_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return -1;
--	}
--
- 	pi = &lcore_power_info[lcore_id];
- 
- 	return pi->turbo_enable;
-@@ -504,11 +453,6 @@ power_acpi_enable_turbo(unsigned int lcore_id)
- {
- 	struct acpi_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return -1;
--	}
--
- 	pi = &lcore_power_info[lcore_id];
- 
- 	if (pi->turbo_available)
-@@ -537,11 +481,6 @@ power_acpi_disable_turbo(unsigned int lcore_id)
- {
- 	struct acpi_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return -1;
--	}
--
- 	pi = &lcore_power_info[lcore_id];
- 
- 	 pi->turbo_enable = 0;
-@@ -564,10 +503,6 @@ int power_acpi_get_capabilities(unsigned int lcore_id,
- {
- 	struct acpi_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
--		return -1;
--	}
- 	if (caps == NULL) {
- 		POWER_LOG(ERR, "Invalid argument");
- 		return -1;
++#define RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, retval) do {   \
++	if (rte_eal_lcore_role(lcore_id) != ROLE_RTE &&             \
++	    rte_eal_lcore_role(lcore_id) != ROLE_SERVICE) {         \
++		POWER_LOG(ERR, "lcore id %u is invalid", lcore_id); \
++		return retval;                                      \
++	}                                                           \
++} while (0)
++
+ /* check if scaling driver matches one we want */
+ __rte_internal
+ int cpufreq_check_scaling_driver(const char *driver);
 -- 
 2.33.0
 
