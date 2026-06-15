@@ -2,79 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50437CD98C5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 16:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EE8CD98DA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 17:37:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 000AA40A76;
-	Mon, 15 Jun 2026 18:27:44 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 2B92340663;
- Mon, 15 Jun 2026 18:27:41 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 65FFbJUg279785; Mon, 15 Jun 2026 09:27:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=g
- tb5xVAEiXZhbBpzG29gZsShU6QvJYR9um9/xFRuPII=; b=eJP0bcy/JMOUuOTys
- v4dvQdqTt7X1/LLhh37P+MgPDCSDjBveRf3OlbcEBIuX5eg4Kg49rlHfwLb4EYbx
- m/FkZjONi+S91fcH6RjFc6kETXyrmYOFcyzvoHURSz3T4ILnERehZ3NKKzYI6+YL
- e28EcnIRfqBbDootpuE+rWaKRxdoTkd5xGtvxjoSI73JN3gWSlDGP2qm1DO6c2u4
- KdS5NsYneYx3aU7Wh6qbs6iqeWFriNzJZWowgbrji1zvMG0pvzFGJ8eSmi0nQ48b
- bJd08TVWknMo6oB07ls9ozUmpJdZladUXCvIQmcNz4i009KR+8HS/VhpMVKFNKpA
- Ws9PQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4esuf8vpv3-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 15 Jun 2026 09:27:40 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 15 Jun 2026 09:27:39 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 15 Jun 2026 09:27:39 -0700
-Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id 924F43F7063;
- Mon, 15 Jun 2026 09:27:36 -0700 (PDT)
-From: Rahul Bhansali <rbhansali@marvell.com>
-To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH v3 20/20] common/cnxk: fix TM link config selection in debug
- dump
-Date: Mon, 15 Jun 2026 21:54:46 +0530
-Message-ID: <20260615162446.578336-20-rbhansali@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260615162446.578336-1-rbhansali@marvell.com>
-References: <20260611073311.3129711-1-rbhansali@marvell.com>
- <20260615162446.578336-1-rbhansali@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F320C402EB;
+	Mon, 15 Jun 2026 19:37:58 +0200 (CEST)
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
+ [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 0C789400D6
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 19:37:57 +0200 (CEST)
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-3074adb8fcaso5661835eec.0
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 10:37:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781545077;
+ x=1782149877; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=0cd1dErf1+vF1cctStUw5L6t0OaE13gkAmYQdttjWrE=;
+ b=PhI4SOTwa7izld/nGtJH/36IHVXf9/Vnzp/gzqKEDdNtQulIjgpxewiqMZfDpBYOc9
+ lD6SJMJl9QotWmFRVtN2c7ZHjpDXhsOImLyZR8Xn+5GyvMiZrkmVbgDNZq9BF3cp52Ot
+ sbukkNzMuO/VQcedXmINv/BYIEgaSEcNRNxyzYUcB2+s4dumaRHWdo94HHcXHZIVeU+I
+ RUhhzw0sZz0mcIzabTesDZsUEaJJNe1cYx3HKytTsHwYsID7WmEDbjwxTC/yhGhGLAB1
+ 8dtARJKTmkNj9UxQqnfEepR4PnTmG3PWI50DpbLsN5UEK+2lVaV+cJCRC0MxSothaQTn
+ KEQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781545077; x=1782149877;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=0cd1dErf1+vF1cctStUw5L6t0OaE13gkAmYQdttjWrE=;
+ b=a+srcGotcMw5zm6urA7BnCy+Pj/zI9UlTKokup5vD9YVOYHR7u2I+Dpe4Px4D6VnXj
+ CpWGXbiIeKsfc3ydGqunrA9MFsDhcVWAOyKWxQ2bW9tQ2Ry0Yek3nFrz3UHFM06yhMJt
+ w/mWWAW1J07BW6Jv0uJBZrXI8/c4Lou+2gTO0GzxJcWKMrFVzmgWHuVsOo5fJ83uhyEw
+ 8Df/jqlS+zOI+dannvj87Q6Kj5y8ZIJoHCW0A9rlfQ0WbgyYEdYz3Igc9Sj7kaa+GUp8
+ DK9kLZfs3WCsT/FmO2etnjP7x6yZlXKD/MgXYeUI2OdbAQXvdFCGz+KsXxvcFzjE8LT7
+ Riww==
+X-Gm-Message-State: AOJu0Yw1oAg1irrAbfPmUK0m4DKa3dBfKU8EI4wMux+hG7InaTyE8OAa
+ yPyynyKh2WPrEC/Q5OArl5CSaB2Umyk3EzijElW6VO/Wm0CDaG2gK47Xw1OJ64h6PF4=
+X-Gm-Gg: Acq92OGNxoJsu9qo5prYZqewgtQKt47FDuJfHxJhoZpWVJnyEivtaYsiD/IHGL942Nz
+ f1ia9smU1vn7vd9Pjb7KdSgI9LoRNsOK+MS2/a4+mBbWxKlN7c3AieeiWPerdkNjiix9/Dhe83m
+ m6Cx/0VhohQO8d7edNd9FxpuXfI1k6EtcBMDIKkZTsW4dzqGeaXdCv4ARqe990pPWzD648RJ0y3
+ Tm0OaZHnF7c6whEHuehWnk0c0V87M0N1Vf4pPIsFWWGstfFiohzGHxUN5UFh4vDdElJ1fhSbAxf
+ zEhqslm623U/jr7pvgGMOCbKC4yOjV+5B/MMnWa2NyF5MZCILg218vqJq0Vb80ClaIJRVQENXk0
+ 4DeUtAIzVZjdqXm3VByN+Ad35OMMePvgNeYYvAL1ApjuhNnT8I8aGMwF3+lAINF9w512kB+1KAV
+ Dl8mzQABJBXv/wVDi4r0OFfxwLznLri1qjRJc+dCPSm7AD0Yb9mh93JlxA87lBMXJ5
+X-Received: by 2002:a05:7300:5341:b0:2fc:9ae6:e5a8 with SMTP id
+ 5a478bee46e88-3082009c394mr10220270eec.20.1781545076796; 
+ Mon, 15 Jun 2026 10:37:56 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3081e5d0849sm17266698eec.7.2026.06.15.10.37.55
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 15 Jun 2026 10:37:56 -0700 (PDT)
+Date: Mon, 15 Jun 2026 10:37:52 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Samyak Jain <samyak.jain@amantyatech.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Vikash kumar
+ <vikash.kumar@amantyatech.com>, Ankur Bharadwaj
+ <ankur.bharadwaj@amantyatech.com>
+Subject: Re: Question regarding duplicate fragment handling in DPDK IP
+ reassembly library
+Message-ID: <20260615103752.6155db47@phoenix.local>
+In-Reply-To: <PN4PR01MB114326CC09306DA93ABA7C2ECEEE62@PN4PR01MB11432.INDPRD01.PROD.OUTLOOK.COM>
+References: <PN4PR01MB114326CC09306DA93ABA7C2ECEEE62@PN4PR01MB11432.INDPRD01.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE1MDE3NCBTYWx0ZWRfXzs3GH25gEm6p
- HO8VRPwVDUMtqzcYk8wjkrB1G8LRNM9ZVW9Nb+KHSAgPBIcTwEb6p+HDV4TvSSVuGiO+RjdzLSC
- EHAB4xmnRq7dQN08DGhpCFCBrYUHCnFQd/ohjUy3rBFTk4Wpicy/eyeNkxYYho3YMSM0+nPWj/C
- byUpdQdvRXDAYCJ+WkLVWPSHCG/LxJB8uX4Cvse0n3tRdFUkm8knB2hhDAvGvnBA01DdVGg8HDY
- 3GsnvtWFJAWGTgFvOxwP1w5IYQkCpdb3W7Zpd8MERwnSg8GiF13MigENpBoiKpkAVjf5lcDiLay
- 8rsR7vjNeUuRCz/QK/XVA+wtGimiPTPvhZ0nMH2zHYiCG7CR3iEpCCDM3Kt3OKYn12ybwv1NfDY
- gHjLwDdlByt8faPvze92t66ari5T5u5mQvncoEiXvABUsyhyzxYgLlc0+PMOqypeRALwJZ/NYa2
- Uze3wyRVq+Ixl5iK9Bg==
-X-Proofpoint-ORIG-GUID: HsYjjb8nEN2bxk1lhBY3ktwdiqrXfSIm
-X-Proofpoint-GUID: HsYjjb8nEN2bxk1lhBY3ktwdiqrXfSIm
-X-Authority-Analysis: v=2.4 cv=KJZqylFo c=1 sm=1 tr=0 ts=6a3027fc cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=TtqV-g6YmW1Jfm2GSLaY:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=Z8oDhAq_kd8QiYM-ZfAA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE1MDE3NCBTYWx0ZWRfX8xJjFbYg2iD1
- jdwja4Yl17KKOT/eTwC6GxX37RqGRisN8z3YcYM5JAThwXLEc8Y2lXseBYSsm03HCsYzx7Q8D++
- rBt8fhuwwj0VPKWpxqj8Sr0p8KvnxKk=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-15_04,2026-06-15_04,2025-10-01_01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,93 +82,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Satha Rao <skoteshwar@marvell.com>
+On Mon, 15 Jun 2026 12:39:48 +0000
+Samyak Jain <samyak.jain@amantyatech.com> wrote:
 
-Only emit the TM link configuration register when the configured TM
-link level matches the hardware level being dumped, and use nix->tx_link
-for the register and label so the dump reflects the active link.
+> Hi DPDK Community,
+> 
+> I am using DPDK 25.11 and evaluating the IP reassembly library
+> (librte_ip_frag).
+> 
+> During testing, I observed that duplicate fragments appear to cause reassembly failure and the fragment context gets invalidated.
+> 
+> I would like to know:
+> 
+> 1. Is duplicate fragment handling intentionally unsupported in
+>    rte_ipv4_frag_reassemble_packet() / rte_ipv6_frag_reassemble_packet()?
+> 
+> 2. Has there been any upstream discussion or patch to support
+>    duplicate fragments while still rejecting conflicting
+>    fragments?
+> 
+> 3. Are there any recommended approaches for applications that need
+>    Linux-like duplicate fragment tolerance?
+> 
+> Any guidance would be appreciated.
+> 
+> Thanks & Regards,
+> Samyak Jain
+> 
 
-Fixes: fcdef46b6698 ("common/cnxk: support NIX TM debug and misc utils")
-Cc: stable@dpdk.org
-
-Signed-off-by: Satha Rao <skoteshwar@marvell.com>
----
-Changes in v3: No code change. FEC patches removed from series and patches reordered.
-Changes in v2: No change.
-
- drivers/common/cnxk/roc_nix_debug.c | 31 +++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/common/cnxk/roc_nix_debug.c b/drivers/common/cnxk/roc_nix_debug.c
-index d4b2b86916..9c3bc8abe3 100644
---- a/drivers/common/cnxk/roc_nix_debug.c
-+++ b/drivers/common/cnxk/roc_nix_debug.c
-@@ -1150,7 +1150,7 @@ roc_nix_sq_dump(struct roc_nix_sq *sq, FILE *file)
- };
-
- static uint8_t
--nix_tm_reg_dump_prep(uint16_t hw_lvl, uint16_t schq, uint16_t link,
-+nix_tm_reg_dump_prep(struct nix *nix, uint16_t hw_lvl, uint16_t schq,
- 		     uint64_t *reg, char regstr[][NIX_REG_NAME_SZ])
- {
- 	FILE *file = NULL;
-@@ -1228,9 +1228,14 @@ nix_tm_reg_dump_prep(uint16_t hw_lvl, uint16_t schq, uint16_t link,
- 		snprintf(regstr[k++], NIX_REG_NAME_SZ,
- 			 "NIX_AF_TL3[%u]_TOPOLOGY", schq);
-
--		reg[k] = NIX_AF_TL3_TL2X_LINKX_CFG(schq, link);
--		snprintf(regstr[k++], NIX_REG_NAME_SZ,
--			 "NIX_AF_TL3_TL2[%u]_LINK[%u]_CFG", schq, link);
-+		/* Link configuration */
-+		if (!nix->sdp_link &&
-+		    nix->tm_link_cfg_lvl == NIX_TXSCH_LVL_TL3) {
-+			reg[k] = NIX_AF_TL3_TL2X_LINKX_CFG(schq, nix->tx_link);
-+			snprintf(regstr[k++], NIX_REG_NAME_SZ,
-+				 "NIX_AF_TL3_TL2[%u]_LINK[%u]_CFG", schq,
-+				 nix->tx_link);
-+		}
-
- 		reg[k] = NIX_AF_TL3X_SCHEDULE(schq);
- 		snprintf(regstr[k++], NIX_REG_NAME_SZ,
-@@ -1261,9 +1266,14 @@ nix_tm_reg_dump_prep(uint16_t hw_lvl, uint16_t schq, uint16_t link,
- 		snprintf(regstr[k++], NIX_REG_NAME_SZ,
- 			 "NIX_AF_TL2[%u]_TOPOLOGY", schq);
-
--		reg[k] = NIX_AF_TL3_TL2X_LINKX_CFG(schq, link);
--		snprintf(regstr[k++], NIX_REG_NAME_SZ,
--			 "NIX_AF_TL3_TL2[%u]_LINK[%u]_CFG", schq, link);
-+		/* Link configuration */
-+		if (!nix->sdp_link &&
-+		    nix->tm_link_cfg_lvl == NIX_TXSCH_LVL_TL2) {
-+			reg[k] = NIX_AF_TL3_TL2X_LINKX_CFG(schq, nix->tx_link);
-+			snprintf(regstr[k++], NIX_REG_NAME_SZ,
-+				 "NIX_AF_TL3_TL2[%u]_LINK[%u]_CFG", schq,
-+				 nix->tx_link);
-+		}
-
- 		reg[k] = NIX_AF_TL2X_SCHEDULE(schq);
- 		snprintf(regstr[k++], NIX_REG_NAME_SZ,
-@@ -1370,8 +1380,7 @@ nix_tm_dump_lvl(struct nix *nix, struct nix_tm_node_list *list, uint8_t hw_lvl)
- 			root = node;
-
- 		/* Dump registers only when HWRES is present */
--		k = nix_tm_reg_dump_prep(node->hw_lvl, schq, nix->tx_link, reg,
--					 regstr);
-+		k = nix_tm_reg_dump_prep(nix, node->hw_lvl, schq, reg, regstr);
- 		if (!k)
- 			continue;
-
-@@ -1396,8 +1405,8 @@ nix_tm_dump_lvl(struct nix *nix, struct nix_tm_node_list *list, uint8_t hw_lvl)
-
- 	/* Dump TL1 node data when root level is TL2 */
- 	if (root && root->hw_lvl == NIX_TXSCH_LVL_TL2) {
--		k = nix_tm_reg_dump_prep(NIX_TXSCH_LVL_TL1, root->parent_hw_id,
--					 nix->tx_link, reg, regstr);
-+		k = nix_tm_reg_dump_prep(nix, NIX_TXSCH_LVL_TL1,
-+					 root->parent_hw_id, reg, regstr);
- 		if (!k)
- 			return;
-
---
-2.34.1
-
+Short answer: yes it is buggy, no it shouldn't be.
+Looking into it but not a simple answer
