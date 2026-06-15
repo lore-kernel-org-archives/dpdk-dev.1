@@ -2,88 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31603CD98CE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 21:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E203CCD98CE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 21:29:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C2AF4066B;
-	Mon, 15 Jun 2026 23:01:58 +0200 (CEST)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com
- [209.85.208.47]) by mails.dpdk.org (Postfix) with ESMTP id 341E5402A7
- for <dev@dpdk.org>; Mon, 15 Jun 2026 23:01:56 +0200 (CEST)
-Received: by mail-ed1-f47.google.com with SMTP id
- 4fb4d7f45d1cf-6912f4acca4so6702114a12.1
- for <dev@dpdk.org>; Mon, 15 Jun 2026 14:01:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781557316; cv=none;
- d=google.com; s=arc-20240605;
- b=IHZ+ywL8wJscvH2hnOes7aQLsbI+LLZIP7/KUYkM6ucJnFzv4WEAV13Tx5vnIXds9z
- Dq8LvMAiK5FzTHKL3Z6UaIY2s4hbhTb5Nj/EAT9GHIvLF6msF0fSvC9ibd0rdcuJWGss
- QbyZHi2/oOsf2exySf93M6M1FeyTQVEpcCfKcyn35PW2uxxt39n3gKcW4w09K4uU6WoK
- VCQCwGD0dlCORReL/M4UCxOJrIHDj5fFK/ABtnDq0fQP+oxFLz8WLTQL6Mpswf0MnM0y
- P3JkGTBuasPC1R83tIU7QrOhg5fDbacw0Y2ycKO71fnl4TzbqGPKjWEHiLQmT3yw+tbJ
- RqNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=GL4daG5fjYaiFHiNGLM6AU7gjmeNITe94G0ldUdux2w=;
- fh=gXuVkZy4DIH1KclIgOOu3nfImmY3eADSFcCnKAnDptE=;
- b=NHKBYR91untyOEK1oJLzHppIWfH/ZunuC2S9M305e1C0AE9SkKyI1+n6/rcnlH/MMn
- no2Vm3Mc33zJP6avpmqejXJIKUTSxDHrNh/h6uoioSYDCMdKdV/qaMVn8y6XqN5U6JQa
- s3fomZcqTbrMtfTci+xZ2rOT+H0ZR35+8DHnmogXNUp/+w2UvIKI4F1FHQD1vREtQxba
- p2YCyX+7kO+NnYcuPWl4nb+zmaQQ0dU122WufA3kLNyR1q2hsqgD6ugIL/gQhDARZgWb
- HyTWgxavRC2HgwFudixOCEsyfxRzvBeMHTq2YFdYdHIyJwFOlUD0c1fTkUucF3K/VlYl
- g6dw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id BD82540666;
+	Mon, 15 Jun 2026 23:29:33 +0200 (CEST)
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com
+ [74.125.82.173]) by mails.dpdk.org (Postfix) with ESMTP id BC39F402F1
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 23:29:32 +0200 (CEST)
+Received: by mail-dy1-f173.google.com with SMTP id
+ 5a478bee46e88-30759632453so5578975eec.1
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 14:29:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1781557316; x=1782162116; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781558971;
+ x=1782163771; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=GL4daG5fjYaiFHiNGLM6AU7gjmeNITe94G0ldUdux2w=;
- b=oCNtwDHlI7UPxZB8xtJbWty78jJYL4tymT87Vk5W6WPLXdl+FWXU1Njyt2s52+egB/
- tB3tx2Ivy31hWQSWLeTxdgfoQRYL6aSoWsYr1kd5nShSKDErTkhsxvr4qa5ZIvBx94RD
- 9qXwmG4xKzpHU5bkMe8uiHGP/qMv9NHJnbpwO0GFZIXxI/k/7zh2HVeI4TxZ5DGfHElm
- 0kRoiAaFduUxRTlR6q5Xw/Rqu2SViW61vyxUPQiFAoih5sjoHIBKxmkn3Yg+QvZWXnRP
- 1NVyoJwTSHcSMHpiF2jakLr2l1ktnucTKSgohIz5GAYTujglu5yGLquZYxl2VWXpiyPK
- z6iw==
+ bh=F1pOfD14VKhVOaSiUjQFTiIbwSd3D/SWNWV4bPP0fjE=;
+ b=eUISCYObIppgKkGMoNC+RYdCQJtl6p59XG/cVBH/CCrq7JDVPEz7UxkMpyhalFVfe3
+ 0cLIKGE3cKypsVLokpJcKjlBwH0Gs5OgyacdC944fjzLR8wLWinXFfKMoKOEyoshuUDb
+ lSsdfBSLEVtYVpoyIIh2/eaWua24OZm3Lzqp8DQt6PzbbHbzze5TpRbMNj7CPVsVKeeo
+ QPJ38mpXYiEAfPyORmqPpMcRNrLQdLkv7SL7+WGDVgEJKE58LNUcURmdNO7G7BJY5ZtT
+ I2FGZSt0u7qiNLweFU9lJ/Khw5Qzh8uYTK/HHQP/QexunSyy676x4xGYAmiaV5PfqSrI
+ QjCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781557316; x=1782162116;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20251104; t=1781558971; x=1782163771;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=GL4daG5fjYaiFHiNGLM6AU7gjmeNITe94G0ldUdux2w=;
- b=LI7JIFCWVbnQ7v22IhamsrG804jmIgI7joITkEWzlYB1H4CWtcn3lEl+4+tsBpEhgM
- fI29jys8osRzr9p5db+WDrgkqItJYUYLS+KleMjillUlROBqAu3UC4Wqrp3gwwy7zyuI
- XrOpwGm99MKxWjKzf89xGg/EU4byLWi6fJmoM/5+sFm0sv5Ei1Ndi3Hs2LyQR0o1QKhP
- YfxjsnB/htaIrx11woJpbaFlS3clXwyeDYxDC5tngpYZtDneoDFDhF90GkCB1bDg5HI4
- w6+ZN3ex762W/3aG54Ipgbgq/t2jgYEVvZ6+WagQD4IWlcFI0TrWZKFfrf/LN7X9VD1J
- b9pA==
-X-Gm-Message-State: AOJu0Yzlu4WuPVGRo2outrTMyYhdTN+1UiC03VLEnlndqzHkjKYaSOq0
- 5P7eiDtJDMvWV7kokm1BywBu+bkiLX4wRTKgNKNS84E0IdzShiAlsvAM6R4q6hPYwjtC9cM5qZr
- azeVUSFXxUtdgnWwUAQOFAPT5UuNJZdNqN9xvRsDR
-X-Gm-Gg: Acq92OFXkSTestJErJ2+/JlEnE1nyr2lNGsZhL26BzrN5ytnYClitprrID7TTTfOXq8
- TRzdeTsC7+hhGlS9iiZ7Qf6RS9zbXgm7KhtWtp9j8eeaajzgb9hVJnDFqrLjGp9Bipi97DO2XA8
- BK10238E5ya1VswKfDh44JxjvEk4PGyHrGzttR2lccxf6hYggKh18sVl78Fm6jEz8uWD05HMwYP
- X8TeJs5Rc21mou6gkHfZdwSCM4Z2Cmt49FZGYZoC+ha6KSCoRQFWvv7Sb0C/8vbBRlLMeRvXPKZ
- peNMWJ3rUfS+qAswolCtP8wrc9KdSGOEGfRZNLqLb8JKHM1c/454Jmhbb+uUjoqB9N4zDqNqVCs
- zytE8YA==
-X-Received: by 2002:a17:907:762a:b0:bec:c237:4ec1 with SMTP id
- a640c23a62f3a-bff4a8fbcf6mr404298366b.13.1781557314968; Mon, 15 Jun 2026
- 14:01:54 -0700 (PDT)
-MIME-Version: 1.0
+ bh=F1pOfD14VKhVOaSiUjQFTiIbwSd3D/SWNWV4bPP0fjE=;
+ b=rn28XEGn8FCUoPztAFW6Eu2vzA1tux1EMT/moxMCGEtk72sqfoTs2LFM0u/ruw800V
+ hL1wBJgpzKV3yoQGO4wESk7TmIuBvaYV/UtEX3AoLwaENXB+7DVngp6v1AFp4qT6+Pjt
+ ZiK0kBHrfq3C2RIs3F9URmCGL69JYsmyZRYCIZ1eugJvCy3qzyAResIN8Tk/OqMNPhgB
+ suakhCSSw0nwBUHUkl2kNhcrhHoXWe4zDnO40yMRN9nDQUrwKp7+B+jNVwNNUT/DeZoA
+ LcycqmvTpCsXGaCbmnAO3dRTDEgRDy/LnubNnT844zMV5PDouWslxgnjXcVhKAdPGrVE
+ Ydug==
+X-Gm-Message-State: AOJu0Yw2IL14y1tXDC38JOerwwhPE6qCcWIIpRGxs7vUg8G5O7rggYcN
+ VPy6jrs3psw/7Ypz/6/PsCgslpgYKWjigALblUC0ZGInSO0iaQgWcBHebJOvXdtKUYg=
+X-Gm-Gg: Acq92OFLUyqmDo3AbnWDgQ86onuvrJXLYMk83qI5RbONHmztvFonZ3TJz8k+ni3J0ZE
+ GOS6OUbLe7EJjui4rdYxXH42B3XvpD/lGqBINi03QwA6vNfSuJQ+lyD5G+dgZk6HduUzAytG6Kh
+ w92USnzwhratEJdqdXK9RN5Sv8Z+t6cHqdgjSXRNpu/OGICuNBJ9L4ootL0OtXPfiUQ5vUslJId
+ JYDoeKwkcbK4qjD8eQnQfGlh6RI+iWCflCq38jZO8gocK3s19NmqxS/+bXSTNJ8R2DgMjR3U2YU
+ ZX9hCzj3mk3jzSikxvVMaGrFlv6xCOqCaRRuuQ0DMi3DbVkKDk3r4pmPfqnulCP+YjuGXvjA33d
+ TmVXni5HIUOeNdiyy/s2u7phmMUEqwYz4EUJW821iDhMF7tFJ4zn9XZc81GVYEEMu1XQNq7rVXr
+ UyAqwN1Ca3WZudWJS5+PCkNfozn8qEFMO88adCKZCFrmdvHGdHu7fIUFZxBGa0gkbO
+X-Received: by 2002:a05:7300:2148:b0:2f5:5dd3:1fd8 with SMTP id
+ 5a478bee46e88-3081ff91132mr10809668eec.8.1781558971386; 
+ Mon, 15 Jun 2026 14:29:31 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3081eb95342sm16480947eec.29.2026.06.15.14.29.30
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 15 Jun 2026 14:29:31 -0700 (PDT)
+Date: Mon, 15 Jun 2026 14:29:27 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Mark Blasko <blasko@google.com>
+Cc: dev@dpdk.org, joshwash@google.com, jtranoleary@google.com
+Subject: Re: [PATCH v4 0/6] net/gve: add hardware timestamping support
+Message-ID: <20260615142927.525f01dd@phoenix.local>
+In-Reply-To: <CANULgnLQ6E-JFEJoB6N5DEcKcFsJ3Vj3qJMmAB=2OvBfbPWKFw@mail.gmail.com>
 References: <20260605213022.2770893-1-blasko@google.com>
  <20260613042300.3760470-1-blasko@google.com>
  <20260615115314.5e2ff054@phoenix.local>
-In-Reply-To: <20260615115314.5e2ff054@phoenix.local>
-From: Mark Blasko <blasko@google.com>
-Date: Mon, 15 Jun 2026 14:01:42 -0700
-X-Gm-Features: AVVi8CcZ7kK1y9Kexbx_ZREdAaKZGNqW4vd7MCIbjQ8c4kVesHwzxo5xvR8x4Io
-Message-ID: <CANULgnLQ6E-JFEJoB6N5DEcKcFsJ3Vj3qJMmAB=2OvBfbPWKFw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] net/gve: add hardware timestamping support
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, joshwash@google.com, jtranoleary@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <CANULgnLQ6E-JFEJoB6N5DEcKcFsJ3Vj3qJMmAB=2OvBfbPWKFw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,89 +82,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-That appears to be the AI feedback from V3 (which was addressed in V4).
-I also looked at the AI feedback in the mail archive for V4 and it does not
-look like there's anything actionable.
+On Mon, 15 Jun 2026 14:01:42 -0700
+Mark Blasko <blasko@google.com> wrote:
 
-Do you have any other feedback for the V4 patches?
+> That appears to be the AI feedback from V3 (which was addressed in V4).
+> I also looked at the AI feedback in the mail archive for V4 and it does not
+> look like there's anything actionable.
+> 
+> Do you have any other feedback for the V4 patches?
 
-On Mon, Jun 15, 2026 at 11:53=E2=80=AFAM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Sat, 13 Jun 2026 04:22:33 +0000
-> Mark Blasko <blasko@google.com> wrote:
->
-> > This patch series introduces support for GVE hardware timestamping
-> > on DQO queues. To support concurrent access, a mutex lock is introduced
-> > to protect admin queue operations. A mechanism is then added to
-> > periodically synchronize the NIC clock via a dedicated control thread,
-> > and support is introduced for the read_clock ethdev operation.
-> > Finally, the RX datapath is updated to reconstruct full 64-bit
-> > timestamps from the 32-bit values in DQO descriptors.
-> >
-> > ---
->
-> AI spotted several issues...
->
-> Reviewed the v3 series against current main. Findings on 4/6 and 5/6
-> below; patches 1, 2, 3, and 6 look good.
->
-> [PATCH v3 4/6] net/gve: add periodic NIC clock synchronization
->
-> Warning: gve_read_nic_clock() runs as an rte_alarm callback, i.e. on the
-> shared EAL interrupt thread, and calls gve_adminq_report_nic_timestamp()
-> -> gve_adminq_kick_and_wait(), which busy-waits via rte_delay_ms() up to
-> GVE_MAX_ADMINQ_EVENT_COUNTER_CHECK * GVE_ADMINQ_SLEEP_LEN =3D 100 * 20ms =
-=3D
-> 2s on an AdminQ timeout (tens of ms in the normal case). Blocking the
-> interrupt thread that long stalls link-status/reset detection and every
-> other device's interrupt and alarm handling for the whole process. The
-> existing gve_check_device_status() alarm only does a single ioread32be(),
-> so this is new behavior for the driver. Consider running the periodic
-> read off a dedicated control thread, or otherwise bounding the time spent
-> on the interrupt thread.
->
-> The teardown ordering itself is fine: rte_eal_alarm_cancel() is called
-> before gve_free_nic_ts_report(), and its spin-until-not-executing
-> semantics catch the self-rescheduled alarm, since the new entry is queued
-> during the callback before the dispatcher removes the executing one. No
-> use-after-free on the memzone there.
->
-> [PATCH v3 5/6] net/gve: support read clock ethdev op
->
-> Error: priv->nic_ts_lock is locked before it is initialized. In
-> gve_dev_init() the order is:
->
->         err =3D gve_init_priv(priv, false);
->         ...
->         pthread_mutex_init(&priv->nic_ts_lock, &mutexattr);
->
-> but gve_init_priv() -> gve_setup_device_resources() ->
-> gve_setup_nic_timestamp() calls gve_read_nic_clock() synchronously when
-> the device reports NIC-timestamp support, and after this patch
-> gve_read_nic_clock() takes priv->nic_ts_lock. So on timestamp-capable
-> hardware the first lock runs on an uninitialized mutex, and the later
-> pthread_mutex_init() then re-initializes an already-used mutex - both
-> undefined behavior. It only appears to work because dev_private is zeroed
-> (a zeroed pthread_mutex_t happens to be a valid default mutex on glibc).
-> Initialize nic_ts_lock (and the mutexattr) before the gve_init_priv()
-> call.
->
-> Error: priv->nic_ts_lock is destroyed before the alarm that uses it is
-> cancelled. In gve_dev_close():
->
->         pthread_mutex_destroy(&priv->nic_ts_lock);
->         gve_free_queues(dev);
->         gve_teardown_device_resources(priv);    /* cancels gve_read_nic_c=
-lock alarm */
->
-> The periodic gve_read_nic_clock() alarm is still armed when the mutex is
-> destroyed, and that callback locks nic_ts_lock; if it fires in the window
-> before gve_teardown_device_resources() cancels it, it locks a destroyed
-> mutex. Move the pthread_mutex_destroy(&priv->nic_ts_lock) to after
-> gve_teardown_device_resources() returns.
->
-> The two 5/6 errors are the same root cause from opposite ends: the
-> nic_ts_lock lifetime needs to bracket all its users - initialized before
-> the synchronous setup-time read, and destroyed only after the alarm is
-> cancelled.
+Let me re-run it.
+
+Sorry got wrong part of long AI thread.
+
+Re-reviewed v4 against current main. The two correctness errors and the
+interrupt-thread warning from v3 are all resolved:
+
+  - 4/6: the periodic read now runs on a dedicated control thread via
+    rte_thread_create_internal_control(), sleeping in 10ms increments
+    with a relaxed stop flag, instead of blocking the shared EAL
+    interrupt thread. Teardown sets the stop flag, joins the thread,
+    then frees the memzone, so the join keeps the thread off the freed
+    memzone. Good.
+
+  - 5/6: nic_ts_lock is now initialized before gve_init_priv() (so the
+    setup-time gve_read_nic_clock() locks an initialized mutex) and
+    destroyed only after gve_teardown_device_resources() has joined the
+    sync thread. Both ordering bugs are fixed, and the gve_init_priv()
+    failure path destroys both mutexes correctly.
+
+One item remains:
+
+[PATCH v4 4/6] net/gve: add periodic NIC clock synchronization
+
+Warning: the commit message body still describes the old implementation.
+It says the sync "runs every 250ms using rte_alarm" and "the alarm is
+still rescheduled", but the code no longer uses rte_alarm - it is a
+dedicated control thread (gve_nic_ts_thread) that polls with
+rte_delay_us_sleep() and a stop flag. The v4 changelog notes the switch,
+but the commit message body itself was not updated. Please reword it to
+match the thread-based implementation.
+
+Patches 1, 2, 3, 5, and 6 look good. With the 4/6 commit message
+corrected, the series is ready.
