@@ -2,49 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324A3CD98C5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 09:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B1ECD98DA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 09:25:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F8B8436E2;
-	Mon, 15 Jun 2026 11:23:02 +0200 (CEST)
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
- [113.46.200.225])
- by mails.dpdk.org (Postfix) with ESMTP id 3ED0B436DF
- for <dev@dpdk.org>; Mon, 15 Jun 2026 11:23:01 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=6IHYC/elQN0cSIdJDsjBEtSNR5ZGgFM0HWev7yiv2HM=;
- b=If23aEOGV/n8jiVcIl2W0tHZVG0RSGXglTTXfnc4Wh+BRnxDFpv8ACzrTV0CLXvpXCob2qMQC
- /ZKx/FKbd2346MYAHj1mW1zSJgxDKVSG6699bqeOndjxU0eYxsazG+9Dq7jRGEUHjH2mteMgL+r
- 23HGE8nN6SX4pQ1g5fGDAxA=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
- by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4gf4Fy4vR4z1K97d;
- Mon, 15 Jun 2026 17:15:02 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 57535402AB;
- Mon, 15 Jun 2026 17:22:58 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 15 Jun 2026 17:22:57 +0800
-Message-ID: <2a191a7f-5439-407b-b2cd-44dae6ab0cbc@huawei.com>
-Date: Mon, 15 Jun 2026 17:22:57 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 93ADC436E2;
+	Mon, 15 Jun 2026 11:25:22 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id B4D5C436DF
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 11:25:21 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 9FBA04B69A; Mon, 15 Jun 2026 11:25:21 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/core Bug 1955] [dpdk26.07-rc1] power_intel_uncore: start
+ dpdk-l3fwd-power failed on Ubuntu26.04
+Date: Mon, 15 Jun 2026 09:25:21 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: core
+X-Bugzilla-Version: 26.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: daxuex.gao@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1955-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/9] power: centralize lcore ID validation
-To: Huisong Li <lihuisong@huawei.com>, <thomas@monjalon.net>,
- <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
-CC: <dev@dpdk.org>, <stephen@networkplumber.org>, <yangxingui@huawei.com>,
- <zhanjie9@hisilicon.com>
-References: <20260615073050.1996063-1-lihuisong@huawei.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260615073050.1996063-1-lihuisong@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,81 +55,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-LGTM
-Series-acked-by: Chengwen Feng <fengchengwen@huawei.com>
+http://bugs.dpdk.org/show_bug.cgi?id=3D1955
 
-On 6/15/2026 3:30 PM, Huisong Li wrote:
-> This series centralizes the lcore ID verification in the power cpufreq
-> framework, replacing the per-driver range checks with a common validation.
-> 
-> Background
-> ----------
-> Currently, various cpufreq drivers implement their own lcore ID checks,
-> which are limited to simple range validation against RTE_MAX_LCORE and
-> involve significant code duplication across 12+ functions per driver.
-> The checks are duplicated across all drivers — any change requires
-> updating 5+ drivers identically. Moreover, these checks do not verify
-> whether the lcore is actually managed by the application. So it is better
-> to verify lcore ID in cpufreq core.
-> 
-> For cpufreq-related APIs, although service cores do not typically invoke
-> these APIs, they may operate in polling modes where power management is
-> required. To maintain compatibility with applications using service cores,
-> the validation logic now explicitly accepts both ROLE_RTE and ROLE_SERVICE.
-> 
-> The usage of power QoS APIs are similar to that of cpufreq. They also can
-> accepts ROLE_RTE and ROLE_SERVICE.
-> 
-> For PMD power management APIs, the lcore must be ROLE_RTE because these
-> are used together with the data plane of ethdev PMD. Hence,
-> rte_lcore_is_enabled() is used for validation.
-> 
-> Key Changes:
-> ------------
-> Patch 1: Adds a common macro (RTE_POWER_VALID_LCOREID_OR_ERR_RET)
->          that accepts both roles.
-> Patch 2: Adds the validation to the cpufreq framework layer.
-> Patches 3-7: Remove the now-redundant per-driver RTE_MAX_LCORE checks.
-> Patch 8: Update power QoS to use the new validation, allowing
->          service cores to configure QoS parameters.
-> Patch 9: Add lcore validation to PMD management functions.
-> 
-> Changes:
-> --------
-> v4: remove the patch that add the helper function rte_lcore_is_eal_managed.
-> 
-> v3:
->  - update release note.
->  - add __rte_experimental for new helper function.
->  - restructure this patch set to facilitate review.
-> 
-> v2:
->  - allow the service cores to set power API.
-> 
-> ----
-> 
-> Huisong Li (9):
->   power: add a common macro to verify lcore ID
->   power/cpufreq: add the lcore ID verification to framework
->   power/acpi: remove redundant lcore ID checks
->   power/amd_pstate: remove redundant lcore ID checks
->   power/cppc: remove redundant lcore ID checks
->   power/intel_pstate: remove redundant lcore ID checks
->   power/kvm_vm: remove redundant lcore ID checks
->   power: allow the service core to config power QoS
->   power: add lcore ID check for PMD mgmt
-> 
->  doc/guides/rel_notes/release_26_07.rst        |  7 ++
->  drivers/power/acpi/acpi_cpufreq.c             | 65 -------------------
->  drivers/power/amd_pstate/amd_pstate_cpufreq.c | 65 -------------------
->  drivers/power/cppc/cppc_cpufreq.c             | 65 -------------------
->  .../power/intel_pstate/intel_pstate_cpufreq.c | 65 -------------------
->  drivers/power/kvm_vm/guest_channel.c          | 22 -------
->  drivers/power/kvm_vm/kvm_vm.c                 | 10 ---
->  lib/power/power_common.h                      |  8 +++
->  lib/power/rte_power_cpufreq.c                 | 13 ++++
->  lib/power/rte_power_pmd_mgmt.c                | 21 +++---
->  lib/power/rte_power_qos.c                     | 10 +--
->  11 files changed, 41 insertions(+), 310 deletions(-)
-> 
+            Bug ID: 1955
+           Summary: [dpdk26.07-rc1] power_intel_uncore: start
+                    dpdk-l3fwd-power failed on Ubuntu26.04
+           Product: DPDK
+           Version: 26.07
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: core
+          Assignee: dev@dpdk.org
+          Reporter: daxuex.gao@intel.com
+  Target Milestone: ---
 
+Environment
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DPDK version: dpdk-26.07-rc1 (c429b06df56788795f8)
+OS: Ubuntu 26.04 LTS/Linux 7.0.0-14-generic
+Compiler: gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1)
+NIC hardware: Ethernet Controller E810-C for SFP 1593 [8086:1593 (rev 01)]
+NIC firmware:=20
+  driver: vfio-pci
+  kdriver: ice-2.6.4
+  fw: 5.00 0x80021c11 1.4002.0
+  ddp: ICE OS Package version 1.3.59.0
+
+Test Setup
+Steps to reproduce
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+1.Build dpdk=20
+CC=3Dgcc meson -Dlibdir=3Dlib  --default-library=3Dstatic x86_64-native-lin=
+uxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc
+meson configure -Dexamples=3Dl3fwd-power x86_64-native-linuxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc
+
+2.Start dpdk-l3fwd-power
+usertools/dpdk-devbind.py --force --bind=3Dvfio-pci 0000:38:00.0 0000:38:00=
+.1
+/root/dpdk/x86_64-native-linuxapp-gcc/examples/dpdk-l3fwd-power  -l 1-2 -n =
+1 --
+-p 0x1 -P --config=3D"(0,0,2)" -u
+
+Results:=20
+=3D=3D=3D=3D=3D=3D=3D=3D
+# /root/dpdk/x86_64-native-linuxapp-gcc/examples/dpdk-l3fwd-power  -l 1-2 -=
+n 1
+-- -p 0x1 -P --config=3D"(0,0,2)" -u
+EAL: Detected CPU lcores: 112
+EAL: Detected NUMA nodes: 8
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+Promiscuous mode selected
+/root/dpdk/x86_64-native-linuxapp-gcc/examples/dpdk-l3fwd-power [EAL option=
+s]
+-- -p PORTMASK -P  [--config (port,queue,lcore)[,(port,queue,lcore]]=20
+[--high-perf-cores CORELIST  [--perf-config
+(port,queue,hi_perf,lcore_index)[,(port,queue,hi_perf,lcore_index]]=20
+[--max-pkt-len PKTLEN]
+  -p PORTMASK: hexadecimal bitmask of ports to configure
+  -P: enable promiscuous mode
+  -u: set min/max frequency for uncore to minimum value
+  -U: set min/max frequency for uncore to maximum value
+  -i (frequency index): set min/max frequency for uncore to specified frequ=
+ency
+index
+  --config (port,queue,lcore): rx queues configuration
+  --eth-link-speed: force link speed
+  --cpu-resume-latency LATENCY: set CPU resume latency to control C-state
+selection, 0 : just allow to enter C0-state
+  --high-perf-cores CORELIST: list of high performance cores
+  --perf-config: similar as config, cores specified as indices for bins
+containing high or regular performance cores
+  --no-numa: optional, disable numa awareness
+  --max-pkt-len PKTLEN: maximum packet length in decimal (64-9600)
+  --parse-ptype: parse packet type by software
+  --legacy: use legacy interrupt-based scaling
+ --telemetry: enable telemetry mode, to update empty polls, full polls, and
+core busyness to telemetry
+ --interrupt-only: enable interrupt-only mode
+ --pmd-mgmt MODE: enable PMD power management mode. Currently supported mod=
+es:
+baseline, monitor, pause, scale
+  --max-empty-polls MAX_EMPTY_POLLS: number of empty polls to wait before
+entering sleep state
+  --pause-duration DURATION: set the duration, in microseconds, of the pause
+callback
+  --scale-freq-min FREQ_MIN: set minimum frequency for scaling mode for all
+application lcores (FREQ_MIN must be in kHz, in increments of 100MHz)
+  --scale-freq-max FREQ_MAX: set maximum frequency for scaling mode for all
+application lcores (FREQ_MAX must be in kHz, in increments of 100MHz)
+EAL: Error - exiting with code: 1
+Invalid L3FWD parameters
+
+
+Expected Result:
+Startup successful=20
+
+Regression
+Is this issue a regression: (Y/N)Y
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
