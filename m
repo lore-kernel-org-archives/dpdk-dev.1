@@ -2,47 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A668CD98C7
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 11:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208FECD98DA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 11:34:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 25CED436D4;
-	Mon, 15 Jun 2026 13:02:03 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 586E9400D5
- for <dev@dpdk.org>; Mon, 15 Jun 2026 13:02:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781521322; x=1813057322;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=zktKgxvAa+Gen/mg1HwCebJgRJEmpxEJKZFNhJCMJaE=;
- b=LOIZWXjaYTGySszRiqH9h1wsF3L32TLK3+CA7V6q7n5DH5i9PwI1QuF7
- Yk8PbD4FyrQL2hC35TgXL0VONR82GkQZK8CJmiS71m2sZ7ljCabyZlMZe
- td+8Ibu0u1Ad/6Mz12EZVsdsn5wDy9BSVbpcMVgoNpD7j0oGMom5gjcUP
- B8rQo0Ca304XSaGSnaGig7FezeyAKr0u5DSs2uj7f1gfY0/Q9jKeczuUE
- ZitXcMnCr7snHW+v9+7Zu6+omHwvnPAbI/YdtupqIaeLcLRYhAH8jtUnD
- GktW4kCyUiVNdCRWT1g5gCXOr3JCKpnLG9aGq0dsvazHpF6flyzMTMEo2 Q==;
-X-CSE-ConnectionGUID: qwrRcmRtTvOSsZfQzsh5Dg==
-X-CSE-MsgGUID: uD4nj1ZJTh+Oui9OT7GBaA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11817"; a="85891152"
-X-IronPort-AV: E=Sophos;i="6.24,206,1774335600"; d="scan'208";a="85891152"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Jun 2026 04:02:00 -0700
-X-CSE-ConnectionGUID: 4C06kX6UQWuf5G040LoU9g==
-X-CSE-MsgGUID: /d/4X/dHRKS6OxvyZDuglQ==
-X-ExtLoop1: 1
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 15 Jun 2026 04:01:59 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v1 1/1] net/i40e: allow discontiguous queue lists in hash
-Date: Mon, 15 Jun 2026 12:01:58 +0100
-Message-ID: <9999fab5d9491d15ff98ac5aafa248e11df558de.1781521311.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
+	by mails.dpdk.org (Postfix) with ESMTP id E533E436F2;
+	Mon, 15 Jun 2026 13:34:21 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 18FCE400D5
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 13:34:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1781523259;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=W7hVd5d/uq0JI2DhrWpEoWB7uGvBgBQPam2ouVd+IXo=;
+ b=aCJp0Rkbk2623mObno+QJl0mTOn35Bh5rVRINtI5UEFpAiGMVh4vEUnM0d2K2KwZW1qi37
+ d61EzoMSaCoLUAnwwuiwYs3Ubdw/K27KIi9NJp/js9ti6tUVAFkiaBvL0jNgqA9sz3WHHK
+ Z9tbpVkGCO3lF+YG623nOegd2C21FNw=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-183-A2RdSYgaPP6093Z0r4Phlw-1; Mon, 15 Jun 2026 07:34:18 -0400
+X-MC-Unique: A2RdSYgaPP6093Z0r4Phlw-1
+X-Mimecast-MFC-AGG-ID: A2RdSYgaPP6093Z0r4Phlw_1781523256
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5aa60c031f3so1765224e87.0
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 04:34:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781523256; x=1782128056;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=W7hVd5d/uq0JI2DhrWpEoWB7uGvBgBQPam2ouVd+IXo=;
+ b=Vf8+brjtnDVNF7v10PWgRkqWjGEHoD9pY5uoBRogn7cpwYjLFth6DjbSk2NdR/noQp
+ 21RhItgH6Sfia2R3yIBSVOIyRwPz+iEnEgcxfbwh6li68GzJKE6NSAV/EbaEaMcgnDsx
+ sQLDT7Zx00gmUVNG69dB3ZrVjwL0zzGQUP2CJx8DP1+PKQF0Ed3u6QEVb/Su1b4zPqJk
+ /ulZ/Pbd4WDVXgHhw2ipmYTJeRGoNEQmdx/gsVYktPF4tgcrGZ6t1ED8RsjVKPsHl3+X
+ +w0K9MS8aeL6ffaUEi/URoINZEaPam+TWtGqLiteHpDny8wMDzAhoEhpPa2vWyDnWwLJ
+ CSSw==
+X-Gm-Message-State: AOJu0YxhZF/N76fS38hjERne7TUQkMF53L4Ql/OfGfdpiQLd0rouuAWN
+ iULXTWJPF64b4IBLKPNtQMg/ZgAGIIrgloT0XW36AIVvUkBXwEJPBprT59CXqd1iEyzqxu27Q40
+ asNR2i/5qdowFcLFuAbF5Gps0NCOEXLF+yJmo6YZv5Ng3z9nJBT9MQ2/Ys8V6pWnTB8npYVcV1o
+ HT/BTfZCFE5I7MTLdieLA=
+X-Gm-Gg: Acq92OEIh0KJSiqSCYYXOoY7bBvYEZHIt+HLX0LkbPUy16PUCQEcd4gmFkDrdfg5gZF
+ x9rdE2affVQ+JFiYQ0GxWfu+SmBLV9H1HjdoG98qbHIORSevLcxT/L6Ab9xDg2CASMjWuoo+efH
+ MAhmN4zMqdG+EkT2abfuKowSHxLarrzxuD4BEas8wCJBzSHXi+PHatqaxvsP9z8SCMRjq29UZdX
+ y472dOh7svaEz3/mkjU/5ByAkcxvHmoTrLZyWVMDgKJcQ36HeHlDh8HTHz/Nu9XFmaUcA==
+X-Received: by 2002:a05:6512:10c7:b0:5a8:74c3:5d9b with SMTP id
+ 2adb3069b0e04-5ad2dabd31amr4072322e87.0.1781523256240; 
+ Mon, 15 Jun 2026 04:34:16 -0700 (PDT)
+X-Received: by 2002:a05:6512:10c7:b0:5a8:74c3:5d9b with SMTP id
+ 2adb3069b0e04-5ad2dabd31amr4072303e87.0.1781523255542; Mon, 15 Jun 2026
+ 04:34:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260609182652.1053422-1-aconole@redhat.com>
+In-Reply-To: <20260609182652.1053422-1-aconole@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 15 Jun 2026 13:34:02 +0200
+X-Gm-Features: AVVi8CfkunDj-LndRsQzwdwkerGs4amV3CLoZFTolzRsZ02Hml_90gV_g4X0cWo
+Message-ID: <CAJFAV8zQRYO6pWubXc5rKfaK3edg=OOPyZdMkTrkCP2cUiiCEQ@mail.gmail.com>
+Subject: Re: [RFC] devtools: add tool calling support to review-patch.py
+To: Aaron Conole <aconole@redhat.com>
+Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 8H2ydBprhXc0gFVeKOimtrViF8E23Q8WbYcy9R2XSi0_1781523256
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,50 +82,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Due to recent refactors and code unification, there are now the following
-properties of RSS queue list that can be checked by common infrastructure:
+On Tue, 9 Jun 2026 at 20:26, Aaron Conole <aconole@redhat.com> wrote:
+>
+> Add an iterative tool-use loop to review-patch.py for the Anthropic
+> and OpenAI providers. The reviewer can now look up additional context
+> from the DPDK source tree when the patch alone is insufficient,
+> rather than having to guess at surrounding code, API contracts, or
+> function signatures.
+>
+> Tool calling is enabled by default with a limit of 10 rounds. Pass
+> '--tool-rounds 0' to disable it and restore the previous single-shot
+> behavior.  The round limit prevents runaway cost on large patches
+> that when reached will force the model to deliver a final judgement.
+>
+> Initial tool set:
+>   - grep           Searches for regex across the file system with
+>                    optional path restrictions and case-insensitive
+>                    matches.
+>   - file_read      Line range read of a specific path.
+>
+> Both tools are limited to the repository root to prevent path
+> traversal.  Path outputs are relative to the repo root.
+>
+> The system prompt is extended when tool calling is active to
+> encourage the model to use tools only when genuinely needed,
+> keeping unnecessary round trips and token costs under control
+> and to a minimum.
+>
+> Internally, _common.py gains send_request_raw() (returning the
+> raw response dict) so the tool-calling loops can inspect
+> stop_reason / finish_reason before extracting text.
+>
+> Signed-off-by: Aaron Conole <aconole@redhat.com>
 
-- Monotony (i.e. queue indices always increase, never decrease)
-- No duplication (i.e. can't have the same index specified twice)
-- Contiguousness (i.e. can't have holes in the queue list)
+- I got a strange comment that a (valid) sha1 (from a Fixes: tag) was
+unknown to the grep tool.
 
-The latter is an optional feature that can be enabled with a flag. However,
-previous hash code only enforced contiguousness for queue *regions* but not
-queue *lists*, whereas after the refactor, all queue lists were required to
-be contiguous. This is an unnecessary restriction, and it breaks backwards
-compatibility.
 
-Fix it by only specifying contiguousness requirement for the VLAN branch
-where we are actually looking for a queue *region* not queue *list*.
+- Are those tools returning results on the current working directory?
+If so, the result may differ depending on whether you applied the series or not.
 
-Fixes: 0185303c2e24 ("net/i40e: refactor RSS flow parameter checks")
+Did you consider wrapping around "git grep $pattern origin/main" /
+"git show origin/main:$file" ?
+(determining the correct git reference may be hard..)
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- drivers/net/intel/i40e/i40e_hash.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_hash.c b/drivers/net/intel/i40e/i40e_hash.c
-index 3c1302469c..8b80d0a91c 100644
---- a/drivers/net/intel/i40e/i40e_hash.c
-+++ b/drivers/net/intel/i40e/i40e_hash.c
-@@ -1238,7 +1238,6 @@ i40e_hash_parse(struct rte_eth_dev *dev,
- 		},
- 		.max_actions = 1,
- 		.driver_ctx = dev->data->dev_private,
--		.rss_queues_contig = true,
- 		/* each pattern type will add specific check function */
- 	};
- 	const struct rte_flow_action_rss *rss_act;
-@@ -1265,6 +1264,8 @@ i40e_hash_parse(struct rte_eth_dev *dev,
- 	/* VLAN path */
- 	if (is_vlan) {
- 		ac_param.check = i40e_hash_validate_queue_region;
-+		/* queue regions must be contiguous */
-+		ac_param.rss_queues_contig = true;
- 		ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
- 		if (ret)
- 			return ret;
 -- 
-2.47.3
+David Marchand
 
