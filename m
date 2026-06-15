@@ -2,46 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B1ECD98DA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 09:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2C8CD98DA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 09:26:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93ADC436E2;
-	Mon, 15 Jun 2026 11:25:22 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id B4D5C436DF
- for <dev@dpdk.org>; Mon, 15 Jun 2026 11:25:21 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 9FBA04B69A; Mon, 15 Jun 2026 11:25:21 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1955] [dpdk26.07-rc1] power_intel_uncore: start
- dpdk-l3fwd-power failed on Ubuntu26.04
-Date: Mon, 15 Jun 2026 09:25:21 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 26.07
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: daxuex.gao@intel.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1955-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id BA40B436E2;
+	Mon, 15 Jun 2026 11:26:46 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 4B24E436DF
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 11:26:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1781515603;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=SZ2eyNu9EVpmF5EFAt5Jz5436kacRt9K+oHYb4Wbuvc=;
+ b=g+UaWXUnRWLbpNCuR9sQgnK0f/fNNgNIY5sFFDVbJcdyUuyDHXiOIpYzZ8W2F7K5WbxXxV
+ uwCcymmoHbpGKA4yA9K9V7Y1MVK+vbZqV3NB/jfN3v6GBMRjFQicrlIvvwTwq/N4DwLDG7
+ ACIZaMWEe3xrDImCS9251u8G4Yp4iwI=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-328-W6vH_TuFMNSz4YcYi9s9JA-1; Mon, 15 Jun 2026 05:26:41 -0400
+X-MC-Unique: W6vH_TuFMNSz4YcYi9s9JA-1
+X-Mimecast-MFC-AGG-ID: W6vH_TuFMNSz4YcYi9s9JA_1781515600
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-5aa61a298a6so1937978e87.1
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 02:26:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781515600; x=1782120400;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=SZ2eyNu9EVpmF5EFAt5Jz5436kacRt9K+oHYb4Wbuvc=;
+ b=I2oBquJyXWs/WhqD+LSjzE/QuTuuRLgf99Hti00UBh1NwKAUJ+ElHgfKgu0PHaeAzI
+ 0WvMBRn9bH6D1RX+dK5rj2q/McEuuczRYJTlW7rgjqDwIi1o/J8j/zOB0ft3v+TDBJAc
+ /0QhNHXUsBxacAoeqT/lH+3g6zKQyPIfBDK3Wvtrqm2XRBe73pMoED4bWuLMaqHkyhFX
+ CttursQ0TiV4DatxxfijMRXzt9oV6kSCt4Ib1hWe8v5vUIjcxZJOq2qdhtEl8Yd0wIWY
+ wrbB7TTaQZkX6s1lUO7WbMXWrRnXfvaxpc3r81Zm6CqzQ9rJwMthnznDkJTFju52gbiG
+ H3Dg==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ9XcdghsWRawnGPiAIgK0FbiujTfAvRbahZjZs1Eexqu61jXdiOKQcWT3KJvYs1n3NLJDY=@dpdk.org
+X-Gm-Message-State: AOJu0YzZgLiwvCC2Ef2BlBvTvMkITGuMZDIf2uvAgk+5R3IlX/7/jVW2
+ LYf/7Hjs5T1JNkAKQJurkJO9eDnLhGf9uF/1hfnX2VJfDOXj5OrT8Cd06EqMaymzOgn5YZZ01EU
+ ekodZofJiYQx312pKUJfxBYUM86XYhOzAWAah0KXQ7SRv+L/gg1nh7lyX52wBb6u19c0LzkM+xa
+ 3cRjZLXN/B+7zv0Xa4GYY=
+X-Gm-Gg: Acq92OFCSAH/ckQQNbGbhpon8WXsCrJ4zRVztnkXO285HT2XhKfy4aIkXZpTvkKmZPL
+ nBrsSnYo4AMTeno23xOMJwZKK1Vy9TYVxYAQummVeDTf2E1ekBioGxbpYSpXm/Z/eP3cecUG+57
+ M+JYhOfqT4igCgIgUjqzt4lEGUr4kZiTdZsFxa1dyU0agPihrcIP422OWEKSpdsBSTGuHsyM0TO
+ 7QjgLu4P5npIKvz/gHMbUgy8/eh7JUwA1SFd/T+enwuD6DRyCpbxv9UzwQ1MV41Ir7kMA==
+X-Received: by 2002:a05:6512:3f1b:b0:5aa:655b:ac29 with SMTP id
+ 2adb3069b0e04-5ad2db1d87amr4119771e87.13.1781515600024; 
+ Mon, 15 Jun 2026 02:26:40 -0700 (PDT)
+X-Received: by 2002:a05:6512:3f1b:b0:5aa:655b:ac29 with SMTP id
+ 2adb3069b0e04-5ad2db1d87amr4119754e87.13.1781515599371; Mon, 15 Jun 2026
+ 02:26:39 -0700 (PDT)
 MIME-Version: 1.0
+References: <20260611154926.392670-1-maxime@leroys.fr>
+ <20260611154926.392670-9-maxime@leroys.fr>
+In-Reply-To: <20260611154926.392670-9-maxime@leroys.fr>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 15 Jun 2026 11:26:27 +0200
+X-Gm-Features: AVVi8CdSgBvQ4sZPUprWPRmDLiD3POwAH5_Rewha_KJTDl_K2R4Pbtg8aQgK6Bw
+Message-ID: <CAJFAV8xTgkgdSzX980qW3zT+gqcDkrQyDV48SMzGh5qSCkz=7Q@mail.gmail.com>
+Subject: Re: [PATCH 8/9] ethdev: keep fast-path ops valid after port stop
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: hemant.agrawal@nxp.com, sachin.saxena@nxp.com, dev@dpdk.org, 
+ stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
+ Sunil Kumar Kori <skori@marvell.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: aWfYrf1nKlodp6hP7HDOuILS2CdsxVs3jz4KqJUUXuI_1781515600
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,112 +89,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1955
+On Thu, 11 Jun 2026 at 17:51, Maxime Leroy <maxime@leroys.fr> wrote:
+>
+> eth_dev_fp_ops_reset() restores a port's fast-path ops on stop/release
+> via a compound literal, so every field it omits is zeroed to NULL. It
+> sets only rx_pkt_burst/tx_pkt_burst (and the rxq/txq data), leaving
+> rx_queue_count, tx_queue_count, rx/tx_descriptor_status, tx_pkt_prepare
+> and the recycle callbacks NULL.
+>
+> In non-debug builds these ops are reached through an unguarded indirect
+> call (the NULL check exists only under RTE_ETHDEV_DEBUG_RX/TX). So a
+> thread calling e.g. rte_eth_rx_queue_count() on a port being stopped
+> dereferences NULL and crashes, while the same race on rte_eth_rx_burst()
+> is harmless because the burst ops are reset to dummies. A poll-mode
+> worker re-checking rx_queue_count before arming the Rx interrupt and
+> sleeping hits exactly this.
+>
+> Reset these ops to the same dummies eth_dev_set_dummy_fops() installs,
+> so a stopped port behaves like a freshly allocated one: every fast-path
+> op is a safe no-op, none is NULL.
+>
+> Fixes: 066f3d9cc21c ("ethdev: remove callback checks from fast path")
+> Cc: stable@dpdk.org
+> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+> ---
+>  lib/ethdev/ethdev_private.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.c
+> index 72a0723846..75ea3eedff 100644
+> --- a/lib/ethdev/ethdev_private.c
+> +++ b/lib/ethdev/ethdev_private.c
+> @@ -263,6 +263,13 @@ eth_dev_fp_ops_reset(struct rte_eth_fp_ops *fpo)
+>         *fpo = (struct rte_eth_fp_ops) {
+>                 .rx_pkt_burst = dummy_eth_rx_burst,
+>                 .tx_pkt_burst = dummy_eth_tx_burst,
+> +               .tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy,
+> +               .rx_queue_count = rte_eth_queue_count_dummy,
+> +               .tx_queue_count = rte_eth_queue_count_dummy,
+> +               .rx_descriptor_status = rte_eth_descriptor_status_dummy,
+> +               .tx_descriptor_status = rte_eth_descriptor_status_dummy,
+> +               .recycle_tx_mbufs_reuse = rte_eth_recycle_tx_mbufs_reuse_dummy,
+> +               .recycle_rx_descriptors_refill = rte_eth_recycle_rx_descriptors_refill_dummy,
+>                 .rxq = {
+>                         .data = (void **)&dummy_queues_array[port_id],
+>                         .clbk = dummy_data,
 
-            Bug ID: 1955
-           Summary: [dpdk26.07-rc1] power_intel_uncore: start
-                    dpdk-l3fwd-power failed on Ubuntu26.04
-           Product: DPDK
-           Version: 26.07
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: daxuex.gao@intel.com
-  Target Milestone: ---
-
-Environment
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-DPDK version: dpdk-26.07-rc1 (c429b06df56788795f8)
-OS: Ubuntu 26.04 LTS/Linux 7.0.0-14-generic
-Compiler: gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1)
-NIC hardware: Ethernet Controller E810-C for SFP 1593 [8086:1593 (rev 01)]
-NIC firmware:=20
-  driver: vfio-pci
-  kdriver: ice-2.6.4
-  fw: 5.00 0x80021c11 1.4002.0
-  ddp: ICE OS Package version 1.3.59.0
-
-Test Setup
-Steps to reproduce
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-1.Build dpdk=20
-CC=3Dgcc meson -Dlibdir=3Dlib  --default-library=3Dstatic x86_64-native-lin=
-uxapp-gcc
-ninja -C x86_64-native-linuxapp-gcc
-meson configure -Dexamples=3Dl3fwd-power x86_64-native-linuxapp-gcc
-ninja -C x86_64-native-linuxapp-gcc
-
-2.Start dpdk-l3fwd-power
-usertools/dpdk-devbind.py --force --bind=3Dvfio-pci 0000:38:00.0 0000:38:00=
-.1
-/root/dpdk/x86_64-native-linuxapp-gcc/examples/dpdk-l3fwd-power  -l 1-2 -n =
-1 --
--p 0x1 -P --config=3D"(0,0,2)" -u
-
-Results:=20
-=3D=3D=3D=3D=3D=3D=3D=3D
-# /root/dpdk/x86_64-native-linuxapp-gcc/examples/dpdk-l3fwd-power  -l 1-2 -=
-n 1
--- -p 0x1 -P --config=3D"(0,0,2)" -u
-EAL: Detected CPU lcores: 112
-EAL: Detected NUMA nodes: 8
-EAL: Detected static linkage of DPDK
-EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-EAL: Selected IOVA mode 'VA'
-EAL: VFIO support initialized
-Promiscuous mode selected
-/root/dpdk/x86_64-native-linuxapp-gcc/examples/dpdk-l3fwd-power [EAL option=
-s]
--- -p PORTMASK -P  [--config (port,queue,lcore)[,(port,queue,lcore]]=20
-[--high-perf-cores CORELIST  [--perf-config
-(port,queue,hi_perf,lcore_index)[,(port,queue,hi_perf,lcore_index]]=20
-[--max-pkt-len PKTLEN]
-  -p PORTMASK: hexadecimal bitmask of ports to configure
-  -P: enable promiscuous mode
-  -u: set min/max frequency for uncore to minimum value
-  -U: set min/max frequency for uncore to maximum value
-  -i (frequency index): set min/max frequency for uncore to specified frequ=
-ency
-index
-  --config (port,queue,lcore): rx queues configuration
-  --eth-link-speed: force link speed
-  --cpu-resume-latency LATENCY: set CPU resume latency to control C-state
-selection, 0 : just allow to enter C0-state
-  --high-perf-cores CORELIST: list of high performance cores
-  --perf-config: similar as config, cores specified as indices for bins
-containing high or regular performance cores
-  --no-numa: optional, disable numa awareness
-  --max-pkt-len PKTLEN: maximum packet length in decimal (64-9600)
-  --parse-ptype: parse packet type by software
-  --legacy: use legacy interrupt-based scaling
- --telemetry: enable telemetry mode, to update empty polls, full polls, and
-core busyness to telemetry
- --interrupt-only: enable interrupt-only mode
- --pmd-mgmt MODE: enable PMD power management mode. Currently supported mod=
-es:
-baseline, monitor, pause, scale
-  --max-empty-polls MAX_EMPTY_POLLS: number of empty polls to wait before
-entering sleep state
-  --pause-duration DURATION: set the duration, in microseconds, of the pause
-callback
-  --scale-freq-min FREQ_MIN: set minimum frequency for scaling mode for all
-application lcores (FREQ_MIN must be in kHz, in increments of 100MHz)
-  --scale-freq-max FREQ_MAX: set maximum frequency for scaling mode for all
-application lcores (FREQ_MAX must be in kHz, in increments of 100MHz)
-EAL: Error - exiting with code: 1
-Invalid L3FWD parameters
+Could we replace eth_dev_set_dummy_fops() with a call to
+eth_dev_fp_ops_reset() in rte_eth_dev_allocate?
+I don't like keeping two separate helpers.
 
 
-Expected Result:
-Startup successful=20
+-- 
+David Marchand
 
-Regression
-Is this issue a regression: (Y/N)Y
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
