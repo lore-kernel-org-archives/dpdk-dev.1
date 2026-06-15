@@ -2,51 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 018ABCD98DA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 09:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A668CD98C7
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 11:02:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D4F7436DF;
-	Mon, 15 Jun 2026 11:50:37 +0200 (CEST)
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
- [113.46.200.223])
- by mails.dpdk.org (Postfix) with ESMTP id 60F5A400D5
- for <dev@dpdk.org>; Mon, 15 Jun 2026 11:50:35 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=5JMqM40U64/lElymdATRycb5Bez3RwrMY081AmBmTRg=;
- b=ofsZJdS/bodg6QrT2fSR3FLl1/3nhTUALB2LQeNLbI1wK75Po98j2cK6jqqFugg81s2TEU7y0
- Uyx0YDWujMJng5NKYHKpEpqCpZty5lSYZIlSpyi+0iUsRLPOW/H8DJCp7fN0HiMg851amuRw9sR
- auJqG88Wo21JvBwjOF1dsuc=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
- by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4gf4sj6dpmzmV6m;
- Mon, 15 Jun 2026 17:42:33 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 749FA40594;
- Mon, 15 Jun 2026 17:50:32 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 15 Jun 2026 17:50:32 +0800
-Message-ID: <dbccfc80-6527-476c-8870-c9050f0188ae@huawei.com>
-Date: Mon, 15 Jun 2026 17:50:31 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 25CED436D4;
+	Mon, 15 Jun 2026 13:02:03 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 586E9400D5
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 13:02:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1781521322; x=1813057322;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=zktKgxvAa+Gen/mg1HwCebJgRJEmpxEJKZFNhJCMJaE=;
+ b=LOIZWXjaYTGySszRiqH9h1wsF3L32TLK3+CA7V6q7n5DH5i9PwI1QuF7
+ Yk8PbD4FyrQL2hC35TgXL0VONR82GkQZK8CJmiS71m2sZ7ljCabyZlMZe
+ td+8Ibu0u1Ad/6Mz12EZVsdsn5wDy9BSVbpcMVgoNpD7j0oGMom5gjcUP
+ B8rQo0Ca304XSaGSnaGig7FezeyAKr0u5DSs2uj7f1gfY0/Q9jKeczuUE
+ ZitXcMnCr7snHW+v9+7Zu6+omHwvnPAbI/YdtupqIaeLcLRYhAH8jtUnD
+ GktW4kCyUiVNdCRWT1g5gCXOr3JCKpnLG9aGq0dsvazHpF6flyzMTMEo2 Q==;
+X-CSE-ConnectionGUID: qwrRcmRtTvOSsZfQzsh5Dg==
+X-CSE-MsgGUID: uD4nj1ZJTh+Oui9OT7GBaA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11817"; a="85891152"
+X-IronPort-AV: E=Sophos;i="6.24,206,1774335600"; d="scan'208";a="85891152"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Jun 2026 04:02:00 -0700
+X-CSE-ConnectionGUID: 4C06kX6UQWuf5G040LoU9g==
+X-CSE-MsgGUID: /d/4X/dHRKS6OxvyZDuglQ==
+X-ExtLoop1: 1
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa003.fm.intel.com with ESMTP; 15 Jun 2026 04:01:59 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v1 1/1] net/i40e: allow discontiguous queue lists in hash
+Date: Mon, 15 Jun 2026 12:01:58 +0100
+Message-ID: <9999fab5d9491d15ff98ac5aafa248e11df558de.1781521311.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/15] doc: improve clarity and consistency in DMA sample
- app guide
-To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
-CC: Kevin Laatz <kevin.laatz@intel.com>, Bruce Richardson
- <bruce.richardson@intel.com>
-References: <20250216230903.124496-1-nandinipersad361@gmail.com>
- <20260611212119.1026721-1-stephen@networkplumber.org>
- <20260611212119.1026721-6-stephen@networkplumber.org>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260611212119.1026721-6-stephen@networkplumber.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,16 +56,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+Due to recent refactors and code unification, there are now the following
+properties of RSS queue list that can be checked by common infrastructure:
 
-On 6/12/2026 5:18 AM, Stephen Hemminger wrote:
-> Enhanced the DMA sample application documentation:
-> - Simplified MAC address modification description using bullet points
-> - Improved grammar and readability throughout
-> - Standardized terminology (DMAdev, Tx/Rx port formatting)
-> - Fixed article usage and clarified technical explanations
-> - Enhanced sentence structure for better flow
-> - Corrected minor grammatical issues and typos
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+- Monotony (i.e. queue indices always increase, never decrease)
+- No duplication (i.e. can't have the same index specified twice)
+- Contiguousness (i.e. can't have holes in the queue list)
+
+The latter is an optional feature that can be enabled with a flag. However,
+previous hash code only enforced contiguousness for queue *regions* but not
+queue *lists*, whereas after the refactor, all queue lists were required to
+be contiguous. This is an unnecessary restriction, and it breaks backwards
+compatibility.
+
+Fix it by only specifying contiguousness requirement for the VLAN branch
+where we are actually looking for a queue *region* not queue *list*.
+
+Fixes: 0185303c2e24 ("net/i40e: refactor RSS flow parameter checks")
+
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/intel/i40e/i40e_hash.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/intel/i40e/i40e_hash.c b/drivers/net/intel/i40e/i40e_hash.c
+index 3c1302469c..8b80d0a91c 100644
+--- a/drivers/net/intel/i40e/i40e_hash.c
++++ b/drivers/net/intel/i40e/i40e_hash.c
+@@ -1238,7 +1238,6 @@ i40e_hash_parse(struct rte_eth_dev *dev,
+ 		},
+ 		.max_actions = 1,
+ 		.driver_ctx = dev->data->dev_private,
+-		.rss_queues_contig = true,
+ 		/* each pattern type will add specific check function */
+ 	};
+ 	const struct rte_flow_action_rss *rss_act;
+@@ -1265,6 +1264,8 @@ i40e_hash_parse(struct rte_eth_dev *dev,
+ 	/* VLAN path */
+ 	if (is_vlan) {
+ 		ac_param.check = i40e_hash_validate_queue_region;
++		/* queue regions must be contiguous */
++		ac_param.rss_queues_contig = true;
+ 		ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
+ 		if (ret)
+ 			return ret;
+-- 
+2.47.3
 
