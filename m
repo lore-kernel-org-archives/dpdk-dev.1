@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB633CD98CF
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 18:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE65CD98CF
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Jun 2026 19:12:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2240E40B9F;
-	Mon, 15 Jun 2026 20:53:19 +0200 (CEST)
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
- by mails.dpdk.org (Postfix) with ESMTP id 1FE4E400D6
- for <dev@dpdk.org>; Mon, 15 Jun 2026 20:53:18 +0200 (CEST)
-Received: by mail-dl1-f41.google.com with SMTP id
- a92af1059eb24-137335bc3caso4350166c88.0
- for <dev@dpdk.org>; Mon, 15 Jun 2026 11:53:18 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E15A540DD5;
+	Mon, 15 Jun 2026 21:12:20 +0200 (CEST)
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
+ [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id 57623400D6
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 21:12:19 +0200 (CEST)
+Received: by mail-dy1-f179.google.com with SMTP id
+ 5a478bee46e88-307d0405e07so5640370eec.1
+ for <dev@dpdk.org>; Mon, 15 Jun 2026 12:12:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781549597;
- x=1782154397; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781550738;
+ x=1782155538; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=O7FIBFXTjifFwgIRIDnPUyZO7XX1tvXqxh7Yemjk89k=;
- b=sALUkpyXeOQpwlm/u0zQDHk7lQEekyn9/OvALa29bLRR+o137OMuUWS2u4/a/4d289
- 2CS5YU61PGXW4twS7Qeo+D4fJ7WIg1sNjTp+vkJ0p1ZrMJ5zeDLQ1Crvlz0oUp4y+O0D
- O3r+ZNoor1n0QvIMm4c4FLLx2UFSaaOtZIdAha4mipoFfZoEVNAJVa5SwbZ4oNJ5OOD1
- X0NvIlsupUgnYJRzBAcuj3p3uWXbV3RL5O3dELEmUKSa/9+JQqb0qCzvcdOewDkaVvKn
- KVPfEUAIycUFgKstq4XZ7RMU4FRroD9oPBjAmQ449O3xxqNjJHt8PhqlfGxo1DU1kio4
- i1TA==
+ bh=iUCBsjL6RZmUYaL5Ync3yd/QM4a7IsOfEI/d1CkNlsc=;
+ b=EooM8Bz605DChah/G6K/6i2MSE5AdT+qIwVx8InnglqSKth9f9fXhoAiZU4zlJFhq5
+ KT6Z8AXJ51vEFiKEdVSjD8uTRRjPbK38iNsaxd1e6RweY8qILooFOUK1wMVX5rjdeTRT
+ zUqGo7Vp+ZkwnWsgR9ng9oSu3+9MIVU7RlRac/iPm0DgRcrUfoM57C6LRbXrCBsE3VwC
+ OORVlWCA0m5vEBbqEqTuUangRIoALXd7sXSUefb/8p972QmRRaQLwKvXduQO4HCThxrI
+ U9ao8KutIBciRskhIupA/F880KOf3JZeEG/TkDxSaYSdoVZCmXxw484mSg2GVYswlLUY
+ Me9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781549597; x=1782154397;
+ d=1e100.net; s=20251104; t=1781550738; x=1782155538;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=O7FIBFXTjifFwgIRIDnPUyZO7XX1tvXqxh7Yemjk89k=;
- b=Bi5k54VY8BITt3RMwVQrzqKER+cg7yyJTlbpp4b8AeWZUiGAws6HXLvHXhYFfu3oe2
- Pf6PdgLKvNKcWs+mDFT9b8LH43Q2nyx/OMIExHKaENQmfccDc4NOL8SJ9cRVnUGd+hyT
- f1Gk+yxAZx3TyJj16YU5AKueykx58ypyupCOpNq1U50bmyM6MkrR44Bj+Qds4Y/GZdeN
- FeL+3K7cPwTcfELoe6O7MFV1iJhCAhPEOm1vO8Ts2s944USpUWh+7WQljnWoF0ZuWzgV
- MfeZ1Jo3Yy2W4oVPdlYzTlGI8zYK9jONVPHnGThXhTiz+5Sgq9OK90ZWmqgpwnTttQzl
- m2xQ==
-X-Gm-Message-State: AOJu0YwCrGCDe2XT4OeRQ/ayq3I/wqI8Fgz1mzUVVujtACT1j353h2eA
- 3DJe0i3IisYxvy1Eq4+SOAgSt2swWVphQRe4E5GE44Lp8YjPC2Nedmeypw/B6FeuSmM=
-X-Gm-Gg: Acq92OExOhW1PtUg8NDaAUmqIlJPIc7Qqa3oJqhm/a5fYrGd73CFSJL7M0zLbwJjPL1
- 8YhTA1bGg/uRps6MH4FTA0s7pqszU5lQvDWe3+dqHWkwCTPgwvlowwZ25CjNhEPu0brE7zk7HAt
- Kjr3xgOi5LTvEsSCG4vlO5RkCXL5zS12nd2V9dECEd1oLf+lyVbYUowxnEDVFV3LCDyDCYG0Uwf
- 8btFno8eTSRboPVj7+bPvec3vqw7aNCw/70iJwljZIWb8GlowFJHdMZkFaXiCE/dMEdwe1O9tar
- 3XCY1LVIOUFmg6XvGmsDF7sBUUrOfg/00QljNY20d8169qVkRxIt4Kfe5Ea64s9drZ6UqKF1lPT
- XSHXErGDh1df8u5PLdzk80yvklA7L93MbxdYrTZRp9AC759hG0K2h1bMrbi4zV7QIera574+Car
- 2M84GqF2pi+NKv2qqm5w6DuNfHisK36LTYo7HX/64gJ8ytUNT3G2wWiWP+2bulb2TV
-X-Received: by 2002:a05:7022:2585:b0:137:9ee5:208d with SMTP id
- a92af1059eb24-13985f45c3bmr143469c88.33.1781549596971; 
- Mon, 15 Jun 2026 11:53:16 -0700 (PDT)
+ bh=iUCBsjL6RZmUYaL5Ync3yd/QM4a7IsOfEI/d1CkNlsc=;
+ b=RS9AzzS/Pzf4410Ma8OkjVrsPd8VMWsT00iA10nZtG6YbMxspyM4L97E0+bPplIyZc
+ JkU9zyz/pjrYtzqee7vOnz+bHxGdkBXzH93teBCaFcSOnZJ2CBnXKfmFr8kTOoGueBOP
+ TzhWaMWCl/oYyWEbakC71mk+UTOfcyVtqJUM5IL5Ca017wBsQo5axkueGgRN+M7WQ62Y
+ iShilVCtEBz3Fqqhaci0/JCnyzHrHXM9UsipflBOI9/FR9mrgSYBwKDRqSl+csVoRTHb
+ YVQy8259ME+C5tfLuYXJTMSzQNHM58nlOpDVwh7wxK3+VkL6aP703SaRhpr5HgLoUc7j
+ qXsQ==
+X-Gm-Message-State: AOJu0YyH4T8dc4+VjXOwvAljiWTs2BRvDV5IiAZpBSAumdVHdNLzlI6X
+ VR/t7JiNkk9l50milkKnb7skgYOEkO+vnQWUr3c4OrvVxbLhdZZJHx3TMNfQk9JCOWQ=
+X-Gm-Gg: Acq92OFfM7nx+rhKNt39lb2lXDMyRvjbIxydjynacYO/B/LMnK/r/LsdCPN5D+LE0zd
+ Bi2+37Aqx1VoVkr8C0t486CCiR6dcO56MrJz8cWPb4ABqWEw1ggve1/tS2gNEQwgZiqRI03pd/h
+ BKDSQCo0j5sv1vyMyXOcjVjKiugXa2wxKe77F2zjr6tigIEM5RV6kWECxJ3tD3KEX1bcooTvNUi
+ KrP5fAI0OY2VFnEtbJHz9ZEn5so0HplKvMidUY0ezx/kowCsVgrDMDfcf2ED1dhgmt9BSL99tRA
+ I/Kwb1r/WPisbCTNiqXHmSRU0m6MEOhNXbRWtg3utemcQv+KXm/yvy1C1RQa8etp6JGGr3CPl72
+ KGjZF5SLXnvWXm8fBfbqcjkzPs0/dI8cajBIG6OfE+oHSsLzYQb8hOYUq7wAPuW/Grb4wis6QSP
+ OE6psSDOOzFwr8dTaivzQkGmjQBrBzWOCqceZ5ebTj8QxinSBKUgzvDeG4KarKxJ5d
+X-Received: by 2002:a05:7300:640e:b0:307:43ff:f32e with SMTP id
+ 5a478bee46e88-3093fba1d77mr6404487eec.32.1781550737851; 
+ Mon, 15 Jun 2026 12:12:17 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1384b9110d3sm11609193c88.5.2026.06.15.11.53.16
+ 5a478bee46e88-3081e5d810fsm16243417eec.12.2026.06.15.12.12.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 15 Jun 2026 11:53:16 -0700 (PDT)
-Date: Mon, 15 Jun 2026 11:53:14 -0700
+ Mon, 15 Jun 2026 12:12:17 -0700 (PDT)
+Date: Mon, 15 Jun 2026 12:12:14 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mark Blasko <blasko@google.com>
-Cc: dev@dpdk.org, joshwash@google.com, jtranoleary@google.com
-Subject: Re: [PATCH v4 0/6] net/gve: add hardware timestamping support
-Message-ID: <20260615115314.5e2ff054@phoenix.local>
-In-Reply-To: <20260613042300.3760470-1-blasko@google.com>
-References: <20260605213022.2770893-1-blasko@google.com>
- <20260613042300.3760470-1-blasko@google.com>
+To: Xingui Yang <yangxingui@huawei.com>
+Cc: <dev@dpdk.org>, <david.marchand@redhat.com>,
+ <aman.deep.singh@intel.com>, <fengchengwen@huawei.com>,
+ <yangshuaisong@h-partners.com>, <lihuisong@huawei.com>,
+ <liuyonglong@huawei.com>, <kangfenglong@huawei.com>
+Subject: Re: [PATCH] app/testpmd: add VLAN priority insert support
+Message-ID: <20260615121214.6fb7d8b7@phoenix.local>
+In-Reply-To: <20260612081411.2798403-1-yangxingui@huawei.com>
+References: <20260612081411.2798403-1-yangxingui@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,78 +82,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 13 Jun 2026 04:22:33 +0000
-Mark Blasko <blasko@google.com> wrote:
+On Fri, 12 Jun 2026 16:14:11 +0800
+Xingui Yang <yangxingui@huawei.com> wrote:
 
-> This patch series introduces support for GVE hardware timestamping
-> on DQO queues. To support concurrent access, a mutex lock is introduced
-> to protect admin queue operations. A mechanism is then added to
-> periodically synchronize the NIC clock via a dedicated control thread,
-> and support is introduced for the read_clock ethdev operation.
-> Finally, the RX datapath is updated to reconstruct full 64-bit
-> timestamps from the 32-bit values in DQO descriptors.
+> The tx_vlan set command currently only accepts a VLAN ID in range
+> [0, 4095].  This patch adds support for an extended format that includes
+> 802.1p priority and CFI bits, allowing users to set the VLAN priority
+> tag when inserting VLAN headers in TX packets.
 > 
+> The extended format is:
+>   bit 0-11:  VLAN ID (0-4095)
+>   bit 12:    CFI (Canonical Format Indicator)
+>   bit 13-15: Priority (0-7, 802.1p CoS)
+> 
+> This is consistent with the VLAN tag structure used by
+> rte_eth_dev_set_vlan_pvid() where the PVID field encodes VLAN ID, CFI
+> and priority in the same format.
+> 
+> A new command line option --enable-vlan-priority is added to enable this
+> feature. By default, the feature is disabled to maintain backward
+> compatibility with existing users. When enabled, the
+> vlan_id_is_invalid() function allows any 16-bit value to pass, while the
+> full 16-bit value (including CFI and priority bits) is passed to the
+> driver for hardware VLAN insertion.
+> 
+> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
 > ---
 
-AI spotted several issues...
 
-Reviewed the v3 series against current main. Findings on 4/6 and 5/6
-below; patches 1, 2, 3, and 6 look good.
+Having ability to set priority bits is good, and testpmd should allow it.
+The mbuf vlan_tci is already a full 16-bit TCI (priority/CFI/VID), and
+the TX insert path copies tx_vlan_id straight into it.  So priority
+insert already works; the only thing in the way is the < 4096 check.
 
-[PATCH v3 4/6] net/gve: add periodic NIC clock synchronization
+Do you actually need a new option for this?  Both of_push_vlan +
+of_set_vlan_pcp (rte_flow) and "tx_vlan set pvid" already let you set
+the priority bits today, with no new code.
 
-Warning: gve_read_nic_clock() runs as an rte_alarm callback, i.e. on the
-shared EAL interrupt thread, and calls gve_adminq_report_nic_timestamp()
--> gve_adminq_kick_and_wait(), which busy-waits via rte_delay_ms() up to
-GVE_MAX_ADMINQ_EVENT_COUNTER_CHECK * GVE_ADMINQ_SLEEP_LEN = 100 * 20ms =
-2s on an AdminQ timeout (tens of ms in the normal case). Blocking the
-interrupt thread that long stalls link-status/reset detection and every
-other device's interrupt and alarm handling for the whole process. The
-existing gve_check_device_status() alarm only does a single ioread32be(),
-so this is new behavior for the driver. Consider running the periodic
-read off a dedicated control thread, or otherwise bounding the time spent
-on the interrupt thread.
+If you still want "tx_vlan set" itself to carry priority, I'd suggest
+a smaller change: relax only the TX insert validators and drop the
+option and the global.  Don't touch rx_vft_set -- it feeds the VLAN
+filter, which only takes a VLAN ID and rejects > 4095 anyway, so the
+flag just turns a clear error into a confusing one.
 
-The teardown ordering itself is fine: rte_eal_alarm_cancel() is called
-before gve_free_nic_ts_report(), and its spin-until-not-executing
-semantics catch the self-rescheduled alarm, since the new entry is queued
-during the callback before the dispatcher removes the executing one. No
-use-after-free on the memzone there.
+Either way, if the option stays, please document it, and add a release note.
+The commit message why the existing paths aren't enough.
 
-[PATCH v3 5/6] net/gve: support read clock ethdev op
-
-Error: priv->nic_ts_lock is locked before it is initialized. In
-gve_dev_init() the order is:
-
-	err = gve_init_priv(priv, false);
-	...
-	pthread_mutex_init(&priv->nic_ts_lock, &mutexattr);
-
-but gve_init_priv() -> gve_setup_device_resources() ->
-gve_setup_nic_timestamp() calls gve_read_nic_clock() synchronously when
-the device reports NIC-timestamp support, and after this patch
-gve_read_nic_clock() takes priv->nic_ts_lock. So on timestamp-capable
-hardware the first lock runs on an uninitialized mutex, and the later
-pthread_mutex_init() then re-initializes an already-used mutex - both
-undefined behavior. It only appears to work because dev_private is zeroed
-(a zeroed pthread_mutex_t happens to be a valid default mutex on glibc).
-Initialize nic_ts_lock (and the mutexattr) before the gve_init_priv()
-call.
-
-Error: priv->nic_ts_lock is destroyed before the alarm that uses it is
-cancelled. In gve_dev_close():
-
-	pthread_mutex_destroy(&priv->nic_ts_lock);
-	gve_free_queues(dev);
-	gve_teardown_device_resources(priv);	/* cancels gve_read_nic_clock alarm */
-
-The periodic gve_read_nic_clock() alarm is still armed when the mutex is
-destroyed, and that callback locks nic_ts_lock; if it fires in the window
-before gve_teardown_device_resources() cancels it, it locks a destroyed
-mutex. Move the pthread_mutex_destroy(&priv->nic_ts_lock) to after
-gve_teardown_device_resources() returns.
-
-The two 5/6 errors are the same root cause from opposite ends: the
-nic_ts_lock lifetime needs to bracket all its users - initialized before
-the synchronous setup-time read, and destroyed only after the alarm is
-cancelled.
