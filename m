@@ -2,66 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC8DCD98D2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 21:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2AECD98D2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 21:07:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6B7940289;
-	Tue, 16 Jun 2026 23:07:02 +0200 (CEST)
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
- by mails.dpdk.org (Postfix) with ESMTP id 5D6DF40268
- for <dev@dpdk.org>; Tue, 16 Jun 2026 23:07:01 +0200 (CEST)
-Received: by mail-dl1-f46.google.com with SMTP id
- a92af1059eb24-13721dfd471so5592663c88.1
- for <dev@dpdk.org>; Tue, 16 Jun 2026 14:07:01 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9C0C140655;
+	Tue, 16 Jun 2026 23:07:04 +0200 (CEST)
+Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+ by mails.dpdk.org (Postfix) with ESMTP id 6654540289
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 23:07:02 +0200 (CEST)
+Received: by mail-dl1-f52.google.com with SMTP id
+ a92af1059eb24-13809223fd4so5461676c88.1
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 14:07:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781644020;
- x=1782248820; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=d9fydfeQmB+MubHqtoya78UuQH7mW4hCKDs70cF0O3g=;
- b=Ll3KXBLHB/sSMAy6uYsqtyP12RR39BOMHsCVR/KGg9nNW+aW2exkjSovARep4O19Aa
- RcgTVQgGL55aCNe9ZMwK1lRtNz72qmYVK459DzOVym+J+nkDVjk4QFBTAE8YC2Oe4pQR
- 8fzmhliLDHHgHvEtcg7llN4vNHe5U3APo8wotEa0PRoVdLQ63MzXa2HiHsFPn91A1TJG
- wfg/8K7Kv3Wi1xSFGp3vgZByz8dKuNIQu4tEpcSLKmMPeWX67i7BOfEj96WUwZjpAS60
- jdoP0LGwkwYQj5ezQLIjoYo3PcVEGpveAFvNS552UEa7zbVpMcbJkDimZuDsamy5fjuz
- 3jFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781644020; x=1782248820;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781644021;
+ x=1782248821; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=d9fydfeQmB+MubHqtoya78UuQH7mW4hCKDs70cF0O3g=;
- b=Rnm9cAbg3uQS0CwyqD1TzL7aRC6lpMLXeE7NHM2RjgSFp1YVqcvrAiilNHQXT29XNT
- g9QSWRaVMyGN0c0sXSUgaU2N1C0ptqs+AIuvTCHTUcrDXySP2A9mO5uMvrIixQkVSB9R
- MXIbToGPja8uZ7ZFLM8TAVOXvZ9tywIxaGbmFcyf1w0ZkJyI7jlq0RTu+wsVczZgBdgE
- jJzzSHk6vF1JhGNhJO2yObS4khphd9xhJvn8vNd34m88wE8eqkGSu5LUMlpm6QatTff3
- aHH+4GAiTlt/NJDlwuG0h3EirYqcTLKL7lHx72Rfu8LWLo6JAk91kI/J6o5gPHKt72Rn
- Ih2w==
-X-Gm-Message-State: AOJu0YzmXhfg4c9v1AOBViPHy72FQ4HRDQvvsNVE3mYcbEq7pCVUlEYt
- eV4kR05H1AP11VoFJFQPMK/uTn1P26x7uE7BOV/N/D56A2+qtXdB1Qfpcgld2YHNywz3yMTMfU3
- TuzC2
-X-Gm-Gg: Acq92OFfrYQ/s0eqRB7di7TbYPp3uV7SvCmpeP6qBGMUh2naQAMyd8b5iTFZtB0BwEf
- DW2jZwepmBzkrVhe/gqZf62hEHtXeNfCmWHKezJoUg3q7Go2aYQyZclxRdNSFIuaoobMo+r03P2
- 2YhXbRvMBco4hW0Mix02bmhyDeprZ51vf03iBZ7oViSesnIMLciJOwR41zWpXTHfpSzWaNxTXN0
- MxdDH8tuf9LUn8I2LWyqRdrkaUm6zD5NfuK/s2cDRuSdyIeZ+6EEbBO4W8u/AzwJwDUIZexnOvM
- dvUV7iQKrUYp9UslHCeY1P0X9CnMK50zPudN9Y7spnzYF9ocdcNofr+H5htYJQBcx8LWYHOeeGv
- YXW+V2r90DSWMHS92jcxiagckL0Nxf84GIOCrIIH33Yl2qtcEnJHrgcf60YpJL6lzZNOJ8ynnYX
- ac7MbqyH88dkILwyDvDLzFvPtKbyeYbzYeFEkQmp8PNMURUzAklI+Ttqx045zmlA==
-X-Received: by 2002:a05:7022:910:b0:138:243e:ceb1 with SMTP id
- a92af1059eb24-1398f669484mr335230c88.6.1781644020161; 
- Tue, 16 Jun 2026 14:07:00 -0700 (PDT)
+ bh=XGzFd6QqDSrFUsoZld+Dj+mn9sG5gwTlfnu9M9KQw2A=;
+ b=iWhV+TJgCvNm8mhmoAzIiGuei+BKn9URbbjw1UnKBuL7FziAJfSzppz1o35EFF/BOz
+ 5Mc0OcInML4Ii/jPV4jni93cvS7WSO0+JQroECzRPsLH63pQ4wXM9dyEbP1cXVlqOGvn
+ 26JfJ7wqTeQL+bLseLQhabjJ1iQ2o4C943ScO0xIp+cSBD4yATRTyrWzhk6+UlLzvNzB
+ CckUPWsQ7NC+bIrA8eMpQcF6vTxMi21aQaXBxDuqD53KK6wBlOs3gROxHqpFpp4QECEN
+ 2FbC/3DXO3GesNX//eVghLR11usYTS3o3t+v4jSZcorNkJgNPEEVSDFa9fJxewrEPqEO
+ HtcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781644021; x=1782248821;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=XGzFd6QqDSrFUsoZld+Dj+mn9sG5gwTlfnu9M9KQw2A=;
+ b=ccIh+fpF3gkLG8a5JvqBYuzEE1IjG6U0vfkRjdRWjwHpVbsVMwOUEBHgOa5crJw3vx
+ U+2KD5Ep/+/l8HD2tNbAKU0Le+IICau/otW9+K9XcES9ATmSRUeDm9Oy178Z6lVkYxI5
+ 5iAbUGrJthvITkkX7jl7sUe43gzyUdq5Qrw++/i9uhv41lu5jRLVJi5LsFBrtONOV8T7
+ ckLHln54jnJzGBa5D5vCQEbH1vb0Aj3ifnwdnAXaVP8S07UycMNShSqk4IzPT4RwORwP
+ FjraZTcGDpwjEaxksFWSZoz86fEbb42bVXF+xt7Y4FYUpIsb/c3jaMBzCzBHMaRPBYda
+ p+Tw==
+X-Gm-Message-State: AOJu0YwW/jo+Lx8WhaYsnXhsrF9MMLvTWuoBnU+NvBc/v1+NgbVJGgVQ
+ wkZEC5m/Pe8x/k74u7t7Ug5sK2xBlDjcZWuKSnccW/fRfnhbz8k82lzkhmxTxsmWffxXQSQ1fvI
+ QipEB
+X-Gm-Gg: Acq92OGWRPhtPkvL9FSMw30Ubq31HyAuWkZSh6C7D1GeY/yenPH8f/79PCPJQai4fHQ
+ aaLHT9MXMzeglvMao5Wdz//yRCmBYRBx5miSt/FF919vacON0s4eQylzjK1yy2NyN7QV/mZ2XGB
+ /caAL7ZsTqf1da8xFLhO8pDP5lHjTfLQCxpUvCSyAPjYXvE4EU9V0pAMiukgrml/PhHjjd8hQdu
+ fuJpAJRFTv/1OP8Y5HlfVvNm5TDPclViF6N+VpToUuodFGIDFtzABGdC2Fi+mnOGhiewjlynIbb
+ ljIbUFvJK+o024RZbq67wQF+Tq6vMwVdCK2Ofq3C13Q4vy8qVutrtVqGNCHf485ysJQL8oLr3rZ
+ b+qFtd/tiE3egApHDOS7qcqp6sOGTCOYH/ktT5Fd1NE9kHOjN1tZEs8+lG4uCWcgwgXjptTesVT
+ w9SpH3RCQLT2uXf1RrQvJZUcO7QWnojA3jaeGOJP2WKMaxDrWVQvCvEVWgjBdLhA==
+X-Received: by 2002:a05:7022:2601:b0:136:b50c:c0e9 with SMTP id
+ a92af1059eb24-1398f6cd5e5mr266028c88.21.1781644021352; 
+ Tue, 16 Jun 2026 14:07:01 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1384b96d6c4sm15118446c88.9.2026.06.16.14.06.58
+ a92af1059eb24-1384b96d6c4sm15118446c88.9.2026.06.16.14.07.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 14:06:59 -0700 (PDT)
+ Tue, 16 Jun 2026 14:07:00 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 0/6] ip_frag: fix reassembly defects and add test
-Date: Tue, 16 Jun 2026 14:05:32 -0700
-Message-ID: <20260616210656.464062-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Samyak Jain <samyak.jain@amantyatech.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH 1/6] ip_frag: tolerate duplicate fragments
+Date: Tue, 16 Jun 2026 14:05:33 -0700
+Message-ID: <20260616210656.464062-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260616210656.464062-1-stephen@networkplumber.org>
+References: <20260616210656.464062-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -77,38 +82,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The IP reassembly library tracks only a running byte total and reserved
-slots for the first and last fragments, with no coverage map. As a result
-it mishandles duplicate, overlapping, oversized, and misheadered
-fragments, and the IPv4 key is missing a field RFC 791 requires. There
-was also no functional test to catch any of it.
+The reassembly code tracked only a running byte total and reserved slots
+for the first and last fragments, with no check for a fragment
+duplicating data already received. A single duplicate could destroy a
+recoverable datagram:
+ - a duplicate first or last fragment collided with the reserved slot and
+   sent the whole entry down the error path, freeing every collected
+   fragment;
+ - a duplicate intermediate fragment was appended to a new slot, inflating
+   frag_size past total_size so reassembly never completed.
 
-These came out of reviewing a duplicate-fragment report on the list.
+RFC 791 reassembly tolerates duplicates: a fragment covering bytes
+already present carries no new information. Check for an exact duplicate
+(stored fragment with the same offset and length) and drop only that
+mbuf, before frag_size is updated, leaving the entry's accounting
+unchanged.
 
-Patches 1 and 2 are interdependent: the overlap discard relies on the
-duplicate handling so an exact duplicate is dropped on its own rather
-than discarding the whole datagram. The rest are independent.
+Overlapping fragments with differing bounds are a separate issue
+addressed in the next patch.
 
-Patch 6 adds a functional test modeled on the Linux selftest ip_defrag.c.
-It passes on this series; with any single fix reverted the matching case
-fails.
+Fixes: cc8f4d020c0b ("examples/ip_reassembly: initial import")
+Cc: stable@dpdk.org
+Reported-by: Samyak Jain <samyak.jain@amantyatech.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/ip_frag/ip_frag_internal.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-Stephen Hemminger (6):
-  ip_frag: tolerate duplicate fragments
-  ip_frag: discard datagrams with overlapping fragments
-  ip_frag: include protocol in IPv4 reassembly key
-  ip_frag: drop IPv6 fragments with unexpected headers
-  ip_frag: reject oversized reassembled datagrams
-  app/test: add test for IP reassembly
-
- app/test/meson.build              |   1 +
- app/test/test_reassembly.c        | 644 ++++++++++++++++++++++++++++++
- lib/ip_frag/ip_frag_internal.c    |  36 +-
- lib/ip_frag/rte_ipv4_reassembly.c |  17 +-
- lib/ip_frag/rte_ipv6_reassembly.c |  22 +-
- 5 files changed, 714 insertions(+), 6 deletions(-)
- create mode 100644 app/test/test_reassembly.c
-
+diff --git a/lib/ip_frag/ip_frag_internal.c b/lib/ip_frag/ip_frag_internal.c
+index 382f42d0e1..9a03ef995a 100644
+--- a/lib/ip_frag/ip_frag_internal.c
++++ b/lib/ip_frag/ip_frag_internal.c
+@@ -89,7 +89,23 @@ struct rte_mbuf *
+ ip_frag_process(struct ip_frag_pkt *fp, struct rte_ip_frag_death_row *dr,
+ 	struct rte_mbuf *mb, uint16_t ofs, uint16_t len, uint16_t more_frags)
+ {
+-	uint32_t idx;
++	uint32_t i, idx;
++
++	/*
++	 * Discard an exact duplicate fragment. If a previously stored fragment
++	 * already covers the same offset and length, this fragment carries no
++	 * new data. Reassembly is tolerant of duplicates (RFC 791), so drop
++	 * only this mbuf and keep the reassembly entry intact rather than
++	 * treating it as an error. Fragments overlapping an existing one with
++	 * different bounds are not handled here.
++	 */
++	for (i = 0; i != fp->last_idx; i++) {
++		if (fp->frags[i].mb != NULL && fp->frags[i].ofs == ofs &&
++				fp->frags[i].len == len) {
++			IP_FRAG_MBUF2DR(dr, mb);
++			return NULL;
++		}
++	}
+ 
+ 	fp->frag_size += len;
+ 
 -- 
 2.53.0
 
