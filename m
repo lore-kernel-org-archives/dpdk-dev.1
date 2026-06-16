@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16347CD98E1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 14:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94662CD98E4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 14:11:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CEED40289;
-	Tue, 16 Jun 2026 16:07:45 +0200 (CEST)
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
- by mails.dpdk.org (Postfix) with ESMTP id CFDB240289
- for <dev@dpdk.org>; Tue, 16 Jun 2026 16:07:43 +0200 (CEST)
-Received: by mail-dl1-f42.google.com with SMTP id
- a92af1059eb24-1384eb94d20so8546309c88.1
- for <dev@dpdk.org>; Tue, 16 Jun 2026 07:07:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 74CB540289;
+	Tue, 16 Jun 2026 16:11:17 +0200 (CEST)
+Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com
+ [74.125.82.178]) by mails.dpdk.org (Postfix) with ESMTP id 42E564026A
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 16:11:16 +0200 (CEST)
+Received: by mail-dy1-f178.google.com with SMTP id
+ 5a478bee46e88-30b6dad2382so4540421eec.0
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 07:11:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781618863;
- x=1782223663; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781619075;
+ x=1782223875; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=zicpUuLc97+7rMG/+chu5RC4dppetltExl+H42q2OvU=;
- b=wMvlf5tSuYKfR5aoWyg+LBlztSb/cx1q2yxWsEWHyUlWnmJHWb/dkgYj1gZ6cT0pjW
- 9jnyxa+MgO7HHqD1ljgI9m2pEi9EaehDhSob8sKOEghjpy0yCqBloQSkIIzAIo33cL7a
- 4WcnLnAzQbmHcx+O3K0RAgepYWpblXU3FfBhXIZdtGsYAX+gsEnbuVCaKnNxfL0TDrBH
- GqbuBmK3NHKrSJ0TYvOYn5a6QOhYknVTJP8ipA7f3gsUS7I8ZyLG0etT3yvKl6Y2gEzC
- 7nuoQfkUwUtJcHyYXOH/RKbeqF16znMvOh5ctw7CcjbebPNsQG/eOjTKRY/iS4Ok86NA
- mnpw==
+ bh=Se/oUxAt2eWW56TN02rrS7qvLjeMgJ9/Q4TDg1/jOnQ=;
+ b=pmuBaFBzzQhovF/ZeJFgIiRxCcoETQPDVtTYeXmDYXFpTrxhgNh7zQaleS6DTNoJMH
+ r3gIlRFujLh+37QugPeOG0UXr8F0Ll/oXI6MQm4HEu1cjJZIAoQQ8s1pBIv8myiAEYlf
+ YlHnmvP0+7EJWm/PpJyWas/dC+zrPsRTez42bRg6GlmaALjofulQ0zjJiRv+bTjBe9+g
+ tbr5MKS6xHgA91o9vOT4PnA0evj03OZkh2MlhBeEe/IUg9JzONRG+U/0aTpYbfUCDnUi
+ BO7EDZIYTFuQVhY4cqe8BFgz2x3ILRjzOsk5fhQX+hpmLk1l1L56BMzkPPCryfIkUlYV
+ lCxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781618863; x=1782223663;
+ d=1e100.net; s=20251104; t=1781619075; x=1782223875;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=zicpUuLc97+7rMG/+chu5RC4dppetltExl+H42q2OvU=;
- b=flTDfCrPURlKV97ZG1aGEnMAfkmYjMLYdXgqNMPqpnAbynywAbuFk+syggHxfp7XgV
- KZv6BceNtBKHF/2+XjdztrxDUtKUKA+Vp3zWv+oXHSrlfSSI4pOd12PMyEWZl00Odh5W
- ruQsxUTWEtGKeL2vGmT1zhVvM7JYw6xAE0aZ9HT0zNvpfHPXrtPwVNLX3gWEHom0JLhf
- 1k/J2dtMh9w06j3kufywjtfSeXzMlSr1sYLbIa/GlHShvvoAf3K9yCqbx4ghlPai0+Zv
- ngVAWLVQfoLFtYt+zBUelbkjT2+GW4gL5uQCxPn2fq/bHqIZpcXhhnrzbkjZnfakv1d1
- KHTQ==
-X-Gm-Message-State: AOJu0Yy7wSq29I6HjtKRq+DGj3r2TtN3Fsrm9qOLklQh6XnDUUb7edAG
- ybC3kuaoyT4Q1ESnRSNyohwQvVTbBPxRtzaP+t2F+ePVtiFdzjybezgsjIynYdlhkp8=
-X-Gm-Gg: Acq92OGZtJh+ubmuV1WuRshrwIQfqy8M012jrlX/ibkinEDP5tba1fN2XPMj6G52e4r
- 2c2QCuXxMVwtLP/c9xprofbkmUIQuv6m3ieNiH7tdK7hjLTRALdpb90PVIHNd+3QozHJtxvR1f7
- hLhJULJtLpvXwtcdAy115sMhxT+U47F+2O9aaiU7GQbOspJ2vS81EKgbeyfdwnyTrOP4PmtZbe6
- cILpn9ovUWaJzVzbqpIeShdil+IchiZwa3YCjOSv+0TFyh6YL8+xTwxwJjrbdSGMV/09nocrvF/
- vFU+TrIx7AUuOTSlRdFrsT4FDNZKg6l0JlOgvUQOMtk94eTpBz88VMjlgAvxSacZ7GXbXUfNps7
- 8lYTNmPXCZirg9H15lhnbYeHu/vpchlhbEQ1JdHlHU+P8WEujbsrehUKSf5MchhhAO7fKN6NZ48
- JwL8yoCaiX0IgruPy/AXTx/kcZeJ/vgLUi1v4g/izJE+O3LTho/v0cmxZbNXWqNb7t8c6uCOiLB
- 2I=
-X-Received: by 2002:a05:7022:68a4:b0:138:14dd:16c6 with SMTP id
- a92af1059eb24-1386f3a02a0mr7860311c88.34.1781618862229; 
- Tue, 16 Jun 2026 07:07:42 -0700 (PDT)
+ bh=Se/oUxAt2eWW56TN02rrS7qvLjeMgJ9/Q4TDg1/jOnQ=;
+ b=c1zwVBMTlVR4Ck1Dc43lOwSah8aqz/buBs+GOHQbo/Rl/UF1Kqid3haNkvapk30UGU
+ WxARWzEgQ0ImL1QIWSPG8+VAhj6n3UsIw5shHOPepDGm6iN9Kabu7J3OOlHwesGpesHI
+ RWHwNwOqQs51eNc5f/PmBUY35Cc2PI0aGKH8FX8rxrzuBKAnnYEUrW05igkW7luYwrgf
+ ZKpbAMJ5MwUZcl6NsVgszVY3PB3P1wvoQGd2KqT9OHCzbzosoIDo7h4HfCC4q3OA3DX7
+ D7gk58cv+Gw8ZRZG/nUU+KMFnH/sJqQFSPO102xKrISSrZw89yVzqqQ7HfEsOOGeYFfa
+ andg==
+X-Gm-Message-State: AOJu0YzoHHuPEVn+shOoHdZqyVa57dBgem1jyOop46C45n0tn3oTyXr9
+ IFIep47DQkWFX/iMBMj3fTepnZ86M+CxbmPeMTvdv0fIYLBX+gXfSZVI5r+6BYq4+bQ=
+X-Gm-Gg: Acq92OGgKuG9VMHrFnxXwMki0rYuIMZmpRdvZsd1VGfBbZAvo3f12eMJnXvE+NUHHc+
+ geLqh1ASKGunlgLSq0ywqYCv+fCZZqIIJtP47N2+FmXRHX5KHlb7vSZus4pyMkmWjc3SHET3leJ
+ h2Hs9AVU4dpzkcFoBxr1oA84hlrapDAF8OhxVUEfCzSy/Ixx4VZYSocIKK91d9AhqSSmviEvmRE
+ dZaY3fCfxPnyWqcU8mpGra3MnH/Eb+L0ht7QtdYRkMzrqsz6Lq4HEd7qIKWgZ+l/ukKHiYUCcO5
+ U0K6HFzmkwMmvq8fqix2hSF3B4q1FPkiWyE8Uq3qhgAREjiIpRDg7KHoOcrXI+ueqbl9DXp+ubn
+ 8tQJ9YjXOu4MIT1QEkAtkbsdKtybE4hvUIMVKNo1Lpr7y0qwYzXxHtwnk1/l6cVzcqOJ2UhsnYI
+ DShPRTkPUstjH/97YjFMr/nOae6p3UgkSUqDc1grYxiiuHzytb+W4In4xBU3xYxbOsF7dNrVDii
+ 5A=
+X-Received: by 2002:a05:7300:a509:b0:2ed:e12:376b with SMTP id
+ 5a478bee46e88-308200db1c9mr10234876eec.33.1781619075097; 
+ Tue, 16 Jun 2026 07:11:15 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1384b91a4c7sm13458705c88.8.2026.06.16.07.07.41
+ 5a478bee46e88-3081e5d0849sm21206233eec.7.2026.06.16.07.11.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 07:07:41 -0700 (PDT)
-Date: Tue, 16 Jun 2026 07:07:38 -0700
+ Tue, 16 Jun 2026 07:11:14 -0700 (PDT)
+Date: Tue, 16 Jun 2026 07:11:10 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Maxime Leroy <maxime@leroys.fr>
-Cc: dev@dpdk.org, stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, Sunil Kumar Kori
- <skori@marvell.com>, Morten =?UTF-8?B?QnLDuHJ1cA==?=
- <mb@smartsharesystems.com>
-Subject: Re: [PATCH 2/2] ethdev: return 0 from dummy queue count
-Message-ID: <20260616070738.10dab11b@phoenix.local>
-In-Reply-To: <20260616094259.686555-3-maxime@leroys.fr>
-References: <20260616094259.686555-1-maxime@leroys.fr>
- <20260616094259.686555-3-maxime@leroys.fr>
+Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
+ <sachin.saxena@nxp.com>
+Subject: Re: [PATCH v2 6/6] net/dpaa2: drop the fake software VLAN strip
+ offload
+Message-ID: <20260616071110.1baf1beb@phoenix.local>
+In-Reply-To: <20260616102727.708948-7-maxime@leroys.fr>
+References: <20260611154926.392670-1-maxime@leroys.fr>
+ <20260616102727.708948-1-maxime@leroys.fr>
+ <20260616102727.708948-7-maxime@leroys.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,23 +84,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 16 Jun 2026 11:42:58 +0200
+On Tue, 16 Jun 2026 12:27:26 +0200
 Maxime Leroy <maxime@leroys.fr> wrote:
 
-> The dummy rx_queue_count/tx_queue_count callback returned -ENOTSUP. On a
-> port that is not started (freshly allocated, or stopped once the fast-path
-> ops are reset to dummies) there are no packets queued, so the truthful
-> answer is 0, not an error: querying the count is not an unsupported
-> operation. This also matches the dummy Rx/Tx burst, which reports 0
-> packets.
+> RTE_ETH_RX_OFFLOAD_VLAN_STRIP is advertised, but no hardware VLAN strip
+> backs it: when enabled, the Rx burst calls rte_vlan_strip() on every
+> frame, a software op masquerading as a hardware offload.
 > 
-> A poll-mode worker checking rte_eth_rx_queue_count() across a concurrent
-> port stop then sees an empty queue instead of a negative error.
+> It saves a forwarding application nothing: the datapath reads the L2
+> header anyway to classify or strip. The offload does not remove that
+> read, it relocates it into the driver Rx burst, where it is far more
+> expensive.
 > 
-> Fixes: 066f3d9cc21c ("ethdev: remove callback checks from fast path")
-> Cc: stable@dpdk.org
+> The cost is a matter of timing. rte_vlan_strip() reaches the L2 header
+> through rte_pktmbuf_mtod(), which dereferences mbuf->buf_addr. On a
+> freshly recycled buffer that mbuf cacheline is cold. eth_fd_to_mbuf()
+> has just written other fields of it (data_off, ol_flags), but buf_addr
+> is a persistent field it does not rewrite. A write does not stall: it
+> posts to the store buffer while the line fills in the background, and
+> the rewritten fields are forwarded straight from there. buf_addr has
+> nothing to forward, so it must be read from the line, whose fill is
+> still in flight, and the read stalls. The ethertype read that follows,
+> on the cold payload line, stalls again. Read later by the application,
+> when the fill has completed, the same read hits. The offload just
+> performs it at the worst possible moment.
 > 
-> Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+> Measured on a single-core port-to-port forwarding test over two 10G
+> ports (one core at 2 GHz, 64-byte untagged frames):
+> 
+>   - throughput 4.22 -> 5.00 Mpps (+18 percent)
+>   - IPC 0.93 -> 1.25: the cost was memory stall, not compute
+>   - L3/DRAM-bound L2 refills 319M -> 200M over 10s (-37 percent)
+> 
+> perf confirms it: with the offload, the buf_addr load (the cold mbuf
+> field) and the payload load account for about 84 percent of the Rx
+> burst's L2 refills; removing it, those vanish and only the inherent DQRR
+> dequeue misses remain.
+> 
+> Stop advertising VLAN_STRIP and remove the rte_vlan_strip() calls from
+> every Rx path. This is a behavioural change: the tag is left in the
+> frame, so an application must strip it itself, on the L2 header it
+> already reads.
+> 
 > Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
