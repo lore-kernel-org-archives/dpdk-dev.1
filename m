@@ -2,77 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434ABCD98D2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 07:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C8ACD98DA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 08:02:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BF7F402DB;
-	Tue, 16 Jun 2026 09:58:04 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 4B45640289
- for <dev@dpdk.org>; Tue, 16 Jun 2026 09:58:03 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 65G65xvs1992644; Tue, 16 Jun 2026 00:57:55 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=4
- 7DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=; b=aIAmmhxL4q3HPEVG9
- b1rGbsJEDfATXp+6h+vkjNppP0u3ppjGkbCyJaww+ac3OR6X26SUzWX0Mk+vxqwr
- l6JNYEcwG6QcCTqkRypzZQcTDt9OtU9tu1c4WtKyfwvJ89kdepXWYM4gXB277u1I
- bC5N/xZzD2k+OoFdUmuDt4oUFrxqb7l1MGZm299maUVQiXOnJjgwCaVC8ERYCwyQ
- MhMQaloKqGYglDH3CNXprriuDWpuaCyYec5FMBxxlxWzMowdvoPth7eALWha7ihS
- nSFB4/kDeDcPlvvUX3bmq/Rnd5Lw4mZQxo4nhG5RYaph0NkXg9AFbdZBW2dRvWH+
- u/ymw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4etu38hrn8-4
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 16 Jun 2026 00:57:55 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 16 Jun 2026 00:57:53 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 16 Jun 2026 00:57:53 -0700
-Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id D2EAF3F7099;
- Tue, 16 Jun 2026 00:57:49 -0700 (PDT)
-From: <kirankumark@marvell.com>
-To: <rjarry@redhat.com>
-CC: <cfontain@redhat.com>, <david.marchand@redhat.com>, <dev@dpdk.org>,
- <jerinj@marvell.com>, <kirankumark@marvell.com>,
- <konstantin.ananyev@huawei.com>, <maxime@leroys.fr>,
- <ndabilpuram@marvell.com>, <vladimir.medvedkin@intel.com>,
- <yanzhirun_163@163.com>
-Subject: Re: [PATCH dpdk v2 2/2] graph: replace circular buffer with
- priority-based bitmap
-Date: Tue, 16 Jun 2026 13:27:48 +0530
-Message-ID: <20260616075748.2354181-1-kirankumark@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <DJAAFGOSALXB.3BJ91NA2ES267@redhat.com>
-References: <DJAAFGOSALXB.3BJ91NA2ES267@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C31A94065D;
+	Tue, 16 Jun 2026 10:02:54 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E9385402DB
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 10:02:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1781596972;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=Rl9QEQoI1Jg59kbJyMVgFxfys2anm6T8z7glxiVI3Gs=;
+ b=CEsCrZ1xNfvI/6aDvuTdB/75imm/sV6O3niUWUAcRcW467vCBeddqMtFe0rXXZO6vA+i2V
+ exsurTj9b+8mT9FZVfmhqI7/2Zwk30w71NZOeMqFivPRQKSYBO8rKRQOB+y0UVJ9FOJV8+
+ qOA5gb+y1Z7D3pfos8dmsCa+eENCBvM=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-73-dCQ90aoQO7WQjOJRl0KjQg-1; Tue, 16 Jun 2026 04:02:50 -0400
+X-MC-Unique: dCQ90aoQO7WQjOJRl0KjQg-1
+X-Mimecast-MFC-AGG-ID: dCQ90aoQO7WQjOJRl0KjQg_1781596969
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-39664f3e398so17493291fa.2
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 01:02:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781596969; x=1782201769;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Rl9QEQoI1Jg59kbJyMVgFxfys2anm6T8z7glxiVI3Gs=;
+ b=ign06m99n1HP2sHXMp8dd8Z5cnii5u5s4yPgOGafIaPGIQOtk4pNszpSCyyH6ImIxb
+ Cufef5X/bEzJeybnPxUyrGqPQhdWcLzwmegn1r0ekP/zaxzYoMprXQD4EgU16vY8SG5f
+ SXtQZWc5wXm5rG8WomEmTxC6V8HdrLfbKjTepvhw0p/mXxeuXKlHHBXKpr4/UxwgmC8w
+ xlk6nh6ocl7dwzwccmfqaf/U16rnp1p+k1UNw29pIhrGo8MCkaTPapI8dupKbhrJWUsc
+ WuDVwhnruk/weh8L4wRbu26KSr6EZ9vkeTEqcFNwS6VNLOoCgC/eUQgonwy1yYoXdD/V
+ tdQQ==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ+E88QZcvyZA6kg6lLB+QRXpNlfxRdAwpP+oaKhyDF9AR2cyjcuuz34YNlIod06Hs4dmpQ=@dpdk.org
+X-Gm-Message-State: AOJu0YxOziV2Xjeh3cCvdRp8ozWcu/soichHbQ2dzmRqtPeQQz1l2rOb
+ PPnYN1xxtwicXTq3oPuSYgeCzLjIA/KHs/yPY3HKkvHZg5D09xky6tZu7QkZQ+p8PjMrASaDqhF
+ SvJ0osYmr3LmT/0KqX07dihC8mNQc1lWiy5V7VAcEuxPtpQ3vkmrGlllcBJVTfqpjm8UAY/oB2G
+ s1bHrTHdSoEH1Tr37u7Fo=
+X-Gm-Gg: Acq92OEJRZa2uBh6u1Xb/oqm4xxLJEIomvO7i5j9f02chJoeCoJ45GRadxGzhmb+DzQ
+ fmrLriyLKZQq2MIGjFkYOkIIyM027MHICS75CcD9hEjZSF5n94wCFF1/tfD0Kr5X1Z4o84FF9RN
+ bKu7SETFgkGSaYAjXC3Ot73mxHrhZ1es33Bllta+A9BFuDbu49R6qPys35Nsva8GVcAwspDYjKE
+ fsFO+lZUzeRE/SF2NPlYjf+JyL+QvM9iB+2IOBidU97QSiSM5faYVkqfn49mkhOLbv0hQ==
+X-Received: by 2002:a05:651c:505:b0:393:71d3:d019 with SMTP id
+ 38308e7fff4ca-3995c824bbemr8391441fa.15.1781596968946; 
+ Tue, 16 Jun 2026 01:02:48 -0700 (PDT)
+X-Received: by 2002:a05:651c:505:b0:393:71d3:d019 with SMTP id
+ 38308e7fff4ca-3995c824bbemr8391211fa.15.1781596968293; Tue, 16 Jun 2026
+ 01:02:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: p8pVBd7eZyxFR10w3sgqaMS-DG-iNJKG
-X-Proofpoint-ORIG-GUID: p8pVBd7eZyxFR10w3sgqaMS-DG-iNJKG
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE2MDA3OSBTYWx0ZWRfX+YhLwcAye73t
- PA1pDn/HZCNINV9WbW5FVVBbo9jWwCuf6WKcbwmLoF7iPhjdoADibDzbb3LbbZTUTt0oCOTM+ez
- 6ahlxAa9eyApxyNJfqZ5CAUx1rDRjXg=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE2MDA3OSBTYWx0ZWRfX2ddna2ZaxOxh
- 4XcDp5KdsgoVv2qAJIv80bVi4L57KywaTVwx6wjr+GB1dXZvv/30NeJrh7l2y/CFNbL/RZu5/qY
- 14sJnI86p8HH8S9dbrFTj9S+/U7MOkYsXz2isMv1OGTnn4IlShDouw0w4cdvR8L6rnFQ1UgiTN2
- VQQhbDBCapZHvrCpoatqQNxDs0m14fqP0QFFBjnO9x+wfGRf6gJ8NJrLvNf3hSaD/wz9uNFPqlz
- tg5tkeSA9UPxbFx/If/YmLqMGHGxJH1jxDZKi4jDrdS//q1kYknUfpWpRz+O+HMLVE6dTGIkMrq
- 17755IsRKa/r4d3z8cjnXMN3ULw6GpT0NBa4cCCb+OFVHmUecNcG4fcFk+d7mMvGvGFMv+tO87R
- HXEvxk28Bxtge47O9XmeNg/1nuFUQ/8TYL/8GYe+9WpLg2YdDSSpwdIuMvJONH7jl/5McLdgAe3
- TIHqQDUojvRE8BRZhZw==
-X-Authority-Analysis: v=2.4 cv=SeXHsPRu c=1 sm=1 tr=0 ts=6a310203 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=tclcd6dtLQvEqt9_mmAA:9
-X-Proofpoint-Virus-Version: 
+References: <20260611154926.392670-1-maxime@leroys.fr>
+ <20260611154926.392670-3-maxime@leroys.fr>
+In-Reply-To: <20260611154926.392670-3-maxime@leroys.fr>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 16 Jun 2026 10:02:36 +0200
+X-Gm-Features: AVVi8CdtETiMsMEz2MXQ2i6rhdG0dTyHgPsR2vf-GWzbY_ukJGhvdedB63ZPY2U
+Message-ID: <CAJFAV8xH9GOGF2aR7tp2uMsjhpJs-1gXW=xzG4Gak3T_n1KpNQ@mail.gmail.com>
+Subject: Re: [PATCH 2/9] eal/interrupts: keep real errno on epoll error
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: hemant.agrawal@nxp.com, sachin.saxena@nxp.com, dev@dpdk.org, 
+ stable@dpdk.org, Harman Kalra <hkalra@marvell.com>, 
+ Cunming Liang <cunming.liang@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: MEmnrdoKjYSedlcyGRv8VAHh4WX1e3EDXBsqTLmSaU4_1781596969
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,4 +86,34 @@ List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
+
+On Thu, 11 Jun 2026 at 17:50, Maxime Leroy <maxime@leroys.fr> wrote:
+>
+> Some interrupt users have several vectors backed by the same eventfd
+> (e.g. several Rx queues behind one DPAA2 portal eventfd). Adding the
+> second vector to the same epoll instance then fails with EEXIST.
+>
+> Upper layers such as ethdev and bbdev already treat -EEXIST as a
+> non-fatal duplicate registration (if (ret && ret != -EEXIST)), but
+> rte_intr_rx_ctl() lost that information: rte_epoll_ctl() returned -1 and
+> rte_intr_rx_ctl() flattened every failure to -EPERM.
+>
+> Return the negative errno from rte_epoll_ctl() (its documented contract
+> is already "a negative value") and stop rte_intr_rx_ctl() from
+> flattening errors to -EPERM, so EEXIST reaches the upper layers that
+> already handle it; other failures carry their real errno.
+>
+> Fixes: 9efe9c6cdcac ("eal/linux: add epoll wrappers")
+> Fixes: c9f3ec1a0f3f ("eal/linux: add Rx interrupt control function")
+> Cc: stable@dpdk.org
+> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+
+Reviewed-by: David Marchand <david.marchand@redhat.com>
+
+Nit: the eal/ prefix is only for OS specific / arch specific changes.
+The title prefix should be interrupt:
+
+
+-- 
+David Marchand
 
