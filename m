@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CBDCD98E1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 22:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D9ECD98D2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 22:44:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AF7E4027A;
-	Wed, 17 Jun 2026 00:42:27 +0200 (CEST)
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
- by mails.dpdk.org (Postfix) with ESMTP id 050EF4026F
- for <dev@dpdk.org>; Wed, 17 Jun 2026 00:42:25 +0200 (CEST)
-Received: by mail-dl1-f42.google.com with SMTP id
- a92af1059eb24-137ec563a95so5852531c88.0
- for <dev@dpdk.org>; Tue, 16 Jun 2026 15:42:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C61624027A;
+	Wed, 17 Jun 2026 00:44:17 +0200 (CEST)
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+ by mails.dpdk.org (Postfix) with ESMTP id 3DE724026F
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 00:44:16 +0200 (CEST)
+Received: by mail-dl1-f46.google.com with SMTP id
+ a92af1059eb24-1384ebe7a10so241074c88.1
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 15:44:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781649745;
- x=1782254545; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781649855;
+ x=1782254655; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KLDbcsXG/SbKzIJBc1D2tPBvyqJQf/FcVjINi8Pd3v4=;
- b=Vzzo89pTYb92JZNq0BySr8y3MjCLqlvixVLI+zfAzHi2s1zlGUxM+dv1SLDdvIQZsD
- wTUeP6OHm0cXO7dyo+slErxDby97VvfyNyolCj5DuUe6GHbeJ9nAd6tlS35UZVY0iC1z
- f/hzfCyVFMebMJ+L5yHZ/UaIYNpqoCxMLN5ENUC5orUQJAYI+XMJSswTqZw/qrKm7EVC
- ooe42iOB2e7qQAnf4M8JxLpzUyPmDVQu+hJjYD+EgZn0OWo/oTxKUctMQrkYRGbDtZ3d
- hBjRlgWe5AwGLbqdpQ/tO6oOBnDcaYAWfX+zGVD0vf4/zErRNmLazIpV84+u579IWW3Z
- JchQ==
+ bh=sdS5VI3gk6V3FF/4Lr5dAdWU9ULR2jCQA+UkhljlIQ8=;
+ b=DVO/GZVWLAVYM1ZMcTFDCoe93+RJYUZHlmyZQkOfYZbHic3+SYXcFkM9cl5If9GHQN
+ 8rF4neazStLvIpSZyJIyvHDPfKz7zX57zVnd39c9imqnJDPuxPUv1lNNo5k//ldReSSv
+ /lqKgQizYMtnYighGkel7YBMRJP8GPCitY4JiYVHTO0tiQ1Bo0/79qWKI4IFBvtUMkru
+ 2soBIrE76Y7Mfjob8Wo91QpqK/87jh+bbZ2G1WI52zDAPKPIk+bOikjdXHk9jsHsAc4Y
+ LK+UpPow9P5KkPHbk1zLfYNoBs9rkTlsYMgAUMY+pEsYjMpxK2UrZvizFJrWb5lR7gyg
+ +gCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781649745; x=1782254545;
+ d=1e100.net; s=20251104; t=1781649855; x=1782254655;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KLDbcsXG/SbKzIJBc1D2tPBvyqJQf/FcVjINi8Pd3v4=;
- b=EWH7gta7h6W6Nn50hdoLpXQakiES7CY0t4L0lUhMWVB9LIb55S5PqtiyP/cD2d/yek
- G4L4A3YD73UWTud7OoJP/0RseTP5qO3oLWmZdqEbbkOdI/Xu3jV81Y4jJqOKgolgs2uz
- oZnneYF9+u42H6zn9aICtUv4XWEGewkgFoRhklYonQLBmqbrxF17jhvlv+6XrM60qNfy
- MMZmNNz12zYDlNn8syBN04kKxy78Ce4FWvC+z3i59ZhbPBJfh/0gGaiDBJgyM7tNSME3
- s+E3iwwce8ekwtYbodo7jevbTJaDyLORR5Y/HFTUqNrtA8+wxygdLOWJZyJ5otHsM12t
- j6WA==
-X-Gm-Message-State: AOJu0YwHHEBpoEWPvBIPV1wmP35CelNpSMIL9mCGEjBVN+UB1hcRD5Fw
- PpRgipOWKm9xiRkWhwtWEiAL65Ss7qNS+RpQ6I9DHyqal9+U7UxU+8QpyNAzwXznjfk=
-X-Gm-Gg: AfdE7cnc7XzySctGakr9/nEi75noVcR2tZpu+ptPXjITx9bWXGCKc2rQGfTvg37q+ck
- 01dVGDJypykTl2guQoXggqMQy4dhM8af99uUJCH90mQmUE0Kad4mdejIQuD963gB5a9nXghmm98
- Qk4YAoBjdVkn5hd6XhWgrQIH4YalEJlYnUG1ezZAUhKVMZH0Mbe2harexmz8Tat3zylLAuJalcG
- Eu86Xew3SGV5hg8J4JUY3SSTTEaYc5ksTUI+lMUs1QWUeSy4GFugeBQw4D/rE4Ro+KgGkX660I4
- GMRpGa+nmrVmy5hvDu4+982tTW8j8WK4At69TqeNmbatr2iDQg1hv/LGBaE1zsZfCKkwBjwxYtV
- eJuropy1bfTU8UJRaJ6NQW+VAo7pnuJ5FRBugnxDbTiOPOUbsdpr5Ygg5TvOjjBEHZouJFOBqDk
- rA59Musu1FEPAPVuby2sldtqQOq8SAQ3pEGdeSV+F6d+kF0UYPgHPTSbFwuf7qHS+Q
-X-Received: by 2002:a05:7301:2f8b:b0:304:d8e2:3c4d with SMTP id
- 5a478bee46e88-30bca0e256amr682540eec.25.1781649744671; 
- Tue, 16 Jun 2026 15:42:24 -0700 (PDT)
+ bh=sdS5VI3gk6V3FF/4Lr5dAdWU9ULR2jCQA+UkhljlIQ8=;
+ b=gCr6BrUSyQcXl6XmOxfyCPABef6apkGwnE/DH53o0bAnNwJRR4fvq/KBBnLIO4FO5f
+ l6Zte2Sgf8/7o7IQXhTIu8IbQ6LfeZkrG2uU7/UiJcCNizz2j52dW/QohhoWBUEGJz7a
+ R95F9h0RbJCSPB+sMvlGvOLzhbQVdxQpOo+tredUMADdIeVPAONS8TbCScx2RS3D8lOs
+ ba8T+daGRX9AxngCyY6hBH0C+3i9gCV7HmhFA9QE7NtXfxIw7sx5QCxjSe2RoMHZUsjR
+ W04nIrF01wXvVs9/KvKfhFfAeFMeW+oHc0rzv9PUfchtaSDCg1t7SNTf/Ux02DVVZ0Up
+ LMQw==
+X-Gm-Message-State: AOJu0Yy+Ns7OmJJS1Mag3c3a13EKwdXRxwKEHBbBoMLZMndoMwm1IYk7
+ VF4nj2E9DNXgtCC9lBdPTsMibWNz7q/GcQcM+PtrdyrsHo0Bu4P0FMBNsyIseCi3Yeg=
+X-Gm-Gg: Acq92OHbRJeSDMt3ntYkeYFgk1E8G6kuy4rySraYoqiZkfhBTTAWs3ooFKYGxd/+80Y
+ KU/CuOhZymNCjjlBnk6XDovpv5AOUNyNA7xDBIcpnLzMUk09gFSyiuEusRdVS5A5sQI/5W54qAZ
+ M2/7H85JP3IaIGvY/xxbTGK3JXYyk6kCoLaIdUeXlrsle5o3P4HTaXzU+un7EwSfT5ydxk/KAn5
+ /+JvDdCpGXAPSSukAVH+SMUwxIUGQn018qj6rd7djgbTzX/Q0N4/6Gn+O7u87xiHsy4worOwHYu
+ /CHMuxxQdHEtczesYp+93p+vG9LWVjWoxluej9622v3RQvgzk1RIdozZeBD7VM91yTeNkkR4Uiq
+ XPluP6StpcvkGA98KRzNu07tGwDiMPljr66D6VzNAaEHAsqa7/Szxucyi6NLjgy01kiGc/tGZuJ
+ xsF0cvAISSukUb4ayVoabgb6OY9VvSpwCM7KDsO/ULcri3zToO15i2bhJox9gUxKv87LT87QwMZ
+ tk=
+X-Received: by 2002:a05:7022:50a:b0:130:9b78:b17b with SMTP id
+ a92af1059eb24-1398f6f3a77mr487177c88.38.1781649855169; 
+ Tue, 16 Jun 2026 15:44:15 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30bd23401ecsm170167eec.25.2026.06.16.15.42.23
+ a92af1059eb24-1384b964853sm14739455c88.11.2026.06.16.15.44.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 15:42:24 -0700 (PDT)
-Date: Tue, 16 Jun 2026 15:42:21 -0700
+ Tue, 16 Jun 2026 15:44:14 -0700 (PDT)
+Date: Tue, 16 Jun 2026 15:44:11 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Aaron Conole <aconole@redhat.com>
-Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>
-Subject: Re: [RFC] devtools: add tool calling support to review-patch.py
-Message-ID: <20260616154221.42d0c5d5@phoenix.local>
-In-Reply-To: <20260609182652.1053422-1-aconole@redhat.com>
-References: <20260609182652.1053422-1-aconole@redhat.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, Aaron Conole <aconole@redhat.com>
+Subject: Re: [PATCH v2] devtools: add Vertex AI to review scripts
+Message-ID: <20260616154411.6b9fd576@phoenix.local>
+In-Reply-To: <20260602064406.1230601-1-david.marchand@redhat.com>
+References: <20260601132402.1125588-1-david.marchand@redhat.com>
+ <20260602064406.1230601-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -79,106 +81,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  9 Jun 2026 14:26:47 -0400
-Aaron Conole <aconole@redhat.com> wrote:
+On Tue,  2 Jun 2026 08:44:06 +0200
+David Marchand <david.marchand@redhat.com> wrote:
 
-> Add an iterative tool-use loop to review-patch.py for the Anthropic
-> and OpenAI providers. The reviewer can now look up additional context
-> from the DPDK source tree when the patch alone is insufficient,
-> rather than having to guess at surrounding code, API contracts, or
-> function signatures.
+> OpenAI, xAI) can now use Vertex AI with Application Default Credentials.
 > 
-> Tool calling is enabled by default with a limit of 10 rounds. Pass
-> '--tool-rounds 0' to disable it and restore the previous single-shot
-> behavior.  The round limit prevents runaway cost on large patches
-> that when reached will force the model to deliver a final judgement.
+> This requires a python dependency google-auth but it is left as
+> optional.
 > 
-> Initial tool set:
->   - grep           Searches for regex across the file system with
->                    optional path restrictions and case-insensitive
->                    matches.
->   - file_read      Line range read of a specific path.
+> Key features:
+> - Auto-detection of authentication method based on environment
+> - Manual override via --auth flag (auto, direct, vertex)
+> - Automatic model name translation for Vertex format
+> - Support for both global and regional Vertex endpoints
+> - Proper error handling for Vertex API responses
 > 
-> Both tools are limited to the repository root to prevent path
-> traversal.  Path outputs are relative to the repo root.
+> Provider-specific implementations:
+> - Anthropic: Uses /publishers/anthropic/models/{model}:rawPredict
+>   with model name format claude-sonnet-4-5@20250929
+> - Google: Uses /publishers/google/models/{model}:generateContent
+> - OpenAI/xAI: Use /endpoints/openapi/chat/completions
+>   with publisher prefix (e.g., openai/gpt-oss-120b-maas)
 > 
-> The system prompt is extended when tool calling is active to
-> encourage the model to use tools only when genuinely needed,
-> keeping unnecessary round trips and token costs under control
-> and to a minimum.
+> Authentication detection logic:
+> - Vertex: Requires google-auth library and ADC configured
+> - Direct: Falls back to API key from environment variables
 > 
-> Internally, _common.py gains send_request_raw() (returning the
-> raw response dict) so the tool-calling loops can inspect
-> stop_reason / finish_reason before extracting text.
+> Available models on Vertex AI:
+> - Anthropic: All Claude models
+> - Google: All Gemini models
+> - OpenAI: gpt-oss-120b-maas, gpt-oss-20b-maas (open-weight only)
+> - xAI: grok-4.20-*, grok-4.1-fast-* variants
 > 
-> Signed-off-by: Aaron Conole <aconole@redhat.com>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 > ---
 
-Well AI saw the security bypass here...
+I have no direct knowledge of Vertex pro/con.
+AI review with better model had some insights.
 
-Error
-=====
+On the whole the refactor is sound: moving "model" insertion into
+_build_request_meta and threading an auth string instead of api_key is
+consistent across _common.py, review-patch.py and review-doc.py, and the
+build_*_request signature changes match their only callers. Two issues and
+a couple of minor notes.
 
-devtools/ai/review-patch.py: path containment check is bypassable
-(_tool_grep and _tool_file_read)
+Warning: project-id resolution is split and the early error is unreachable-
+proof in the wrong direction.
 
-	repo_resolved = Path(repo_root).resolve()
-	search_path = (repo_resolved / rel_path).resolve()
-	if not str(search_path).startswith(str(repo_resolved)):
-		return "Error: path is outside the repository"
+  get_vertex_credentials() does:
 
-str.startswith() on the resolved path string is a prefix match, not a
-path-component match. If repo_root resolves to /home/me/dpdk, then
-/home/me/dpdk-private/secrets passes the check, since the string starts
-with "/home/me/dpdk". The commit message states both tools are "limited
-to the repository root to prevent path traversal" -- that property does
-not hold for sibling directories sharing the name prefix. Same bug in
-both tool helpers.
+      credentials, project = google_auth_default()
+      ...
+      if not project:
+          error("Could not detect GCP project. Set GOOGLE_CLOUD_PROJECT ...")
+      return credentials.token, project
 
-	# is_relative_to (3.9+), raises nothing, no string games
-	if not search_path.is_relative_to(repo_resolved):
-		return "Error: path is outside the repository"
+  but the caller then applies its own fallback:
 
-(Absolute rel_path and ../ escapes are already caught by resolve() +
-this fix; only the prefix case is currently open.)
+      access_token, project_id = get_vertex_credentials()
+      project_id = os.environ.get("GOOGLE_CLOUD_PROJECT") \
+                   or os.environ.get("GCP_PROJECT") or project_id
 
+  If ADC resolves no project, get_vertex_credentials() calls error() and
+  exits before the GCP_PROJECT fallback can run. google.auth.default()
+  honors GOOGLE_CLOUD_PROJECT itself, but not GCP_PROJECT, so the
+  GCP_PROJECT branch here is dead in exactly the case it exists for, and
+  the error message tells the user to set a variable that wouldn't have
+  helped. Resolve the project in one place: drop the "if not project"
+  error from get_vertex_credentials() and check after the env fallback,
+  or move the env lookups into get_vertex_credentials().
 
-Warning
-=======
+Warning: several added lines exceed the 100-column limit.
 
-devtools/ai/_common.py: unrelated reformatting mixed into a feature
-patch. The docstring re-wrapping in print_token_summary(),
-_extract_text(), _print_verbose_usage(), and the classify_review()
-regex reflow in review-patch.py are cosmetic churn unrelated to tool
-calling. Drop them or split into a separate cleanup; they inflate the
-diff and obscure the actual change.
+      _common.py: error("Could not detect GCP project...")        137 cols
+      _common.py: error("Vertex AI support requires...")          108 cols
+      _common.py: project_id = os.environ.get(...) or ...         102 cols
+      _common.py: vertex_base = f"https://aiplatform..."          104 cols
+      _common.py: vertex_base = f"https://{location}-..."         115 cols
 
-devtools/ai/review-patch.py: grep --include list excludes the files the
-tool prompt points the model at. _tool_grep restricts to
-*.[ch]/*.py/*.rst/*.ini, but TOOL_PROMPT_EXTENSION explicitly directs
-the model to check ".ci/" scripts, meson.build, and MAINTAINERS. Those
-are extensionless or shell, so grep silently returns "No matches found"
-rather than surfacing the omission. Either widen the include set or
-note the restriction in the tool description so the model doesn't draw
-false conclusions from empty results.
+  pycodestyle/flake8 will flag all five; the project_id line is also
+  black-splittable so "black --check" fails on it. Wrap the f-strings and
+  split the message strings.
 
+Info: detect_auth_method() catches bare Exception around
+google_auth_default(). Acceptable for best-effort autodetection, but
+narrowing it (or a "# noqa"/pylint disable with a reason) documents intent.
 
-Info
-====
+Info: the HTTPError path now does error_data[0].get('error', ...) after
+unwrapping a list. If a Vertex error body is a list of non-dicts this
+raises AttributeError outside the JSONDecodeError guard. Low risk, but a
+type check would harden it.
 
-xai is OpenAI wire-compatible and already shares build_openai_request()
-elsewhere, but tool calling is gated to provider == "openai" in
-call_api() and the verbose banner. xai (and any future
-OpenAI-compatible provider) falls back to single-shot with no notice.
-Reusing call_api_with_tools_openai() for xai looks free.
-
-send_request_raw() bypasses _extract_text(), which is where the
-"error" in result check lived. The tool loops read stop_reason /
-choices directly, so a provider error returned with HTTP 200 yields an
-empty string and a misleading "clean" review instead of a hard failure.
-Worth a guard on api_result.get("error") at the top of each loop body.
-
-Default-on at 10 rounds is a behavior and cost change for every existing
-caller, and grants repo-wide read to the model by default. Reasonable
-for an RFC to propose, but worth calling out explicitly for the list --
-some CI users may want opt-in rather than opt-out.
+Info: --auth is wired into review-patch.py and review-doc.py but
+compare-patch-reviews.sh has no passthrough, so Vertex can't be selected
+when comparing providers. May be intentional for this patch.
