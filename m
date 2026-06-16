@@ -2,65 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C54BCD98DA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 363ADCD98DA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:43:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6AAA940298;
-	Tue, 16 Jun 2026 11:43:08 +0200 (CEST)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id BC4FE40289
- for <dev@dpdk.org>; Tue, 16 Jun 2026 11:43:07 +0200 (CEST)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-490acbb0f89so28024845e9.0
- for <dev@dpdk.org>; Tue, 16 Jun 2026 02:43:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 40AAE406BB;
+	Tue, 16 Jun 2026 11:43:11 +0200 (CEST)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id ABDC4406BB
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 11:43:09 +0200 (CEST)
+Received: by mail-wr1-f48.google.com with SMTP id
+ ffacd0b85a97d-45ef56d9b67so3686155f8f.2
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 02:43:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781602987; x=1782207787; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
- bh=y/OG/IEoRpIAZcFfnUiYFFsyew79MTQ2TPcX4LFRB4Q=;
- b=Cj3ECSH9Dk5Gsaqyl7jkTdc8RlOUms+6SSYZWzgnvT/xkboM/0mB32cQO9haqazpEw
- cx6MlMWuKMzaTnB/NUjjHEvbhA1taRWf7K464y2q3fJEQ52+R9jhWBf+xE3jjmxJuZkU
- 76+ZVm851QWOfInpkwykPp4TzLjWLTlpPBQK0Drwz3gY+qIqsWMssPIOrIAyFF6Ti9pT
- afkU/Wqx8p202vzVlLHc3g4pLKkWHbiCwOsz5kF33UJP8kQ8VdA9Z+FLoYWFp7NrO1mB
- f23l2DYMWgTE8ZMB9eRyUB7QCIRY1ZtivKitBz8XEmwsS9rZFa1C8C5SYTPtemgUtY7S
- RndQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781602987; x=1782207787;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1781602989; x=1782207789; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=y/OG/IEoRpIAZcFfnUiYFFsyew79MTQ2TPcX4LFRB4Q=;
- b=a1C3ZxpmLGmcwK3I+lcwkMudJQu3QdzBOxbdsmvoUVvvfyvaVverKJ0WMaDq7MbROi
- x9KcrbbzDKePTP3lm2yBpD9hj1UD8Ew9r802S4P4Cx2eWE3vP30zU5k7k3KxNTnAfSRz
- cBwZMP3eka1s06iE275kk9dr3G6x7/vJK2T2WyHULQiDH2IkemBEJhDfeyvXl59CqJcN
- fcM3fgg4qVWDxLBE81w4Rg3bg1C+hNtKuzth+PO5qzuTavZIuVs/ZD7ZcP0kz8bRZID6
- /epnFeGpyvRMBOHRWjQSXMt92Sbf5DU2mdI8KwICAJVdkJD374B2XmDtJ5rgAR/OxAWu
- lOXw==
-X-Gm-Message-State: AOJu0YyhAFtGvw/D0lsaqwXwd6URyPXsfJqLxhHXdfos02bSZZH1HAo0
- Qad8khtun6oFGc06XlGY9ZZhX63f0YMw8ZKwn77BVcAu6MrsW4EeD37f/bEa8RzK
-X-Gm-Gg: Acq92OEaPUHBY7ujty2Qbu48ydTd3c0w2Z4SSeM/5TaoLN96iQlWV6zuzFi9+/m6AnK
- 9JSgsBJnCEyuwH2omiCDn20cagDIp/OjfNSeRVcKq/yYygCCKlKcuDVt5fC+4SXy8rRjU394Uav
- zqbHY1oU9Q8yTJmihGlGue4QhItIvK4T8LLUjRcOtqSARo1iJ4U07VsglyYs3z8Hw94noKA5Pza
- pKrqInsAlXh7hZusNlZo2aIjtaPhT8pGvQ6fOmrhmmkyoHisA0mjYwcaRZGoJXNTeEbNBBzrakF
- gSs3FhIUfxo7JZiYOZTXbB25Wquw0zluflTidyUO0qCfRPeWUfoS2m3Zr97AfevrKY2+fkOjeg8
- D3g8d7UNyGcpKdBgFXO2kmVMqRbelHlNf6ZsOeEFkb7uLhgmjecGufoFMZAJ2clgyyYH+3xvpIR
- hpG1m2kpzLute/3lKKvtjxGt3ePteC1ZjJ3Ok0Xt5AZqa3QaqpBv8U
-X-Received: by 2002:a7b:c017:0:b0:48e:6db3:ff2e with SMTP id
- 5b1f17b1804b1-49220093459mr141526145e9.15.1781602987090; 
- Tue, 16 Jun 2026 02:43:07 -0700 (PDT)
+ bh=Gc02EQv5QA6SxV+V+dDP9i6L6+UcqtHQ/X5gxIR96yM=;
+ b=ddCaUW3oi5WCFvT3YULB48x3V/0rn7YWKPseg6Yn9zwkIsD6vN4jbD2IQsIrEdNweE
+ ZYqNaZLJvQKBB2bxqYmKxt4L3i7B8CSQYHdzHWPmzsAQLpAR8JPjj8wTBWDEDBYqNzfL
+ E8F+aClUWNAkvW6DqlBPMHenivEx3zj5dvbxtKHnpjGyXTJ72C0/3bKyEJQsezsoVT5E
+ 5EDsN16ETVoWZ6a1gCi4gAVFd0TtfjUnVxQh6ith+FGxoP/uhO2HYMeF9ySL4UWbqyTC
+ JC4lj7F9lWwoU4r9GIgMI10132hfoS/fYYwGscBn1WI80KRyArS0QNPrvGvzaOree1cZ
+ xVEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781602989; x=1782207789;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=Gc02EQv5QA6SxV+V+dDP9i6L6+UcqtHQ/X5gxIR96yM=;
+ b=frkcrcTQWQJS6i43t4FbFPpmRC3bRMilXaV+g8FFPDCoTwngWvrSY8ArsDF2kC2qQT
+ TBCishebL/MsqGJAk8M8KnRBcZRD+GVni3mTXABA2I+ZaBD6qHZ2qPgmt+iwg1SdOV1J
+ p+91qf+GQ/3Eg+5EmCjaLeSgM6HCK+2Ra7YTsKj7LUof6xyjcfuYsQMxmeTFz+7uZGca
+ SclHD+u1cuqPnVSMSI0hIE82VW/ZbexUyYCBuVmOOZWmqGDcaDEfnDjfFX3NiS+vOhNU
+ YnfcjHvBuqtGJvPRgcfMw6CbJVw8twfYlVJ6jMm3n8lRBVsYqKMGawIkP/NqdYpmp8O4
+ o2RQ==
+X-Gm-Message-State: AOJu0Ywe8IVcOBeaMIfKEiHiZa9wUXiKfAGOtKfJrNoecTaUGi7aMXpU
+ ci+PdWP8bAHZzgeGJKmTtVGXS1R3z73XMeKhqOgaHoizi58jVwPResHCA8d1gew8
+X-Gm-Gg: Acq92OHOY+fT0r2kiTBYg581Q3DqdqeBCPHmD4RI4YzdZ/8Rjsu5RvAalmN76+IWFCQ
+ cTVJYgn1UUmlM6OUK8gvpVGWaV/hy9baQWwCaXJF11THVHSs/0qBqAsyAZtivPpnraxi5meajKQ
+ I1g5JLsvLPykcpl06CJ0S2B6aAHm72FLWs5HazhGA7a2fqS+MdY0GCPipFbQocZvcThyvvvOSMy
+ wZRlxtkTO06ZT49aYS5MyaUHqmTEpcGqMh3OnVh2IiXayltCng/wi1g6saqTPzMDJVVI++NjgJp
+ Czb+dewZZkuTZN0mOWIfaQIbQSvnJvAo+kLzUJ/UHtduCKX9t5we1q1JOpQ6ppHOdesqfBdJ0dq
+ UYXK88k6QR9J6MukYcYq5pmGi5+jzmh/hLfRbxYGNH12MjqJMyNm92cFFfz6JfKXOSE9F3wV++P
+ 0p3QiDVBCrQ61V2Rxgr+M3w3gzQ+GM424/aQDvwoah3e8x0MPp/+mU
+X-Received: by 2002:a05:6000:992:b0:460:6a83:222b with SMTP id
+ ffacd0b85a97d-46079db7283mr20286526f8f.28.1781602989164; 
+ Tue, 16 Jun 2026 02:43:09 -0700 (PDT)
 Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-490ea95c51dsm290345795e9.1.2026.06.16.02.43.06
+ ffacd0b85a97d-4606f2dbfb1sm45814089f8f.35.2026.06.16.02.43.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 02:43:06 -0700 (PDT)
+ Tue, 16 Jun 2026 02:43:08 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
-Cc: Maxime Leroy <maxime@leroys.fr>
-Subject: [PATCH 0/2] ethdev: fix fast-path ops on a stopped port
-Date: Tue, 16 Jun 2026 11:42:56 +0200
-Message-ID: <20260616094259.686555-1-maxime@leroys.fr>
+Cc: Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Sunil Kumar Kori <skori@marvell.com>
+Subject: [PATCH 1/2] ethdev: keep fast-path ops valid after port stop
+Date: Tue, 16 Jun 2026 11:42:57 +0200
+Message-ID: <20260616094259.686555-2-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260616094259.686555-1-maxime@leroys.fr>
+References: <20260616094259.686555-1-maxime@leroys.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -77,19 +84,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Two small fixes for fast-path ops on a stopped port:
-patch 1 stops rte_eth_rx_queue_count() from dereferencing NULL after a port
-stop, patch 2 makes the dummy queue count return 0 (empty queue) instead of
--ENOTSUP.
+eth_dev_fp_ops_reset() restores a port's fast-path ops on stop/release
+via a compound literal, so every field it omits is zeroed to NULL. It
+sets only rx_pkt_burst/tx_pkt_burst (and the rxq/txq data), leaving
+rx_queue_count, tx_queue_count, rx/tx_descriptor_status, tx_pkt_prepare
+and the recycle callbacks NULL.
 
-Maxime Leroy (2):
-  ethdev: keep fast-path ops valid after port stop
-  ethdev: return 0 from dummy queue count
+In non-debug builds these ops are reached through an unguarded indirect
+call (the NULL check exists only under RTE_ETHDEV_DEBUG_RX/TX). So a
+thread calling e.g. rte_eth_rx_queue_count() on a port being stopped
+dereferences NULL and crashes, while the same race on rte_eth_rx_burst()
+is harmless because the burst ops are reset to dummies. A poll-mode
+worker re-checking rx_queue_count before arming the Rx interrupt and
+sleeping hits exactly this.
 
- lib/ethdev/ethdev_driver.c  | 2 +-
+Reset these non-burst ops to the same dummies eth_dev_set_dummy_fops()
+installs, so a stopped port behaves like a freshly allocated one: every
+fast-path op is a safe no-op, none is NULL.
+
+Fixes: 066f3d9cc21c ("ethdev: remove callback checks from fast path")
+Cc: stable@dpdk.org
+
+Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+Acked-by: Morten Brørup <mb@smartsharesystems.com>
+---
  lib/ethdev/ethdev_private.c | 7 +++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ 1 file changed, 7 insertions(+)
 
+diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.c
+index 72a0723846..75ea3eedff 100644
+--- a/lib/ethdev/ethdev_private.c
++++ b/lib/ethdev/ethdev_private.c
+@@ -263,6 +263,13 @@ eth_dev_fp_ops_reset(struct rte_eth_fp_ops *fpo)
+ 	*fpo = (struct rte_eth_fp_ops) {
+ 		.rx_pkt_burst = dummy_eth_rx_burst,
+ 		.tx_pkt_burst = dummy_eth_tx_burst,
++		.tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy,
++		.rx_queue_count = rte_eth_queue_count_dummy,
++		.tx_queue_count = rte_eth_queue_count_dummy,
++		.rx_descriptor_status = rte_eth_descriptor_status_dummy,
++		.tx_descriptor_status = rte_eth_descriptor_status_dummy,
++		.recycle_tx_mbufs_reuse = rte_eth_recycle_tx_mbufs_reuse_dummy,
++		.recycle_rx_descriptors_refill = rte_eth_recycle_rx_descriptors_refill_dummy,
+ 		.rxq = {
+ 			.data = (void **)&dummy_queues_array[port_id],
+ 			.clbk = dummy_data,
 -- 
 2.43.0
 
