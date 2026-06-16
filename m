@@ -2,80 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F47CD98D2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 08:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CF7CD98CF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 08:06:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C719B402DB;
-	Tue, 16 Jun 2026 10:03:22 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id C881240289
- for <dev@dpdk.org>; Tue, 16 Jun 2026 10:03:21 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 65G65xUY1992650; Tue, 16 Jun 2026 01:03:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=9
- XU+W3rdRMez1+451U8illJIBy1WaM6KuiO85FOV8fs=; b=j63rjI25cpHQ/3ABn
- Wk01d/E2CZfgsCH61nUnr2A4wWbDxqRlVB9ODFobl2MZlPAISeq+SySR+XoHJRWE
- zcaVvPE5XK4LjG3bcJ2jy41NNxgBrMQ0vAvQMtANufFdU6YMFcp0PU3xMpIIuF7e
- jAjbSccKpcbI7kJJz4qVv+iqzx3ZanWm5qaU1XGHzEieo4vr13SXmlDSWyA1C3hs
- 2J8WAv5aWaNKNMbJxHtzQs/QPld4tDcvhUV7wQwJUbP3B+A7nzk3ww2lPSkvYHIz
- bAaT1jZR+c2RvSjFyMGu2DKy7VPxkCYi/Elf7xPAX6g5gO5mIeGLEeV5cVfglH3Z
- 7HGvA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4etu38hs8k-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 16 Jun 2026 01:03:16 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 16 Jun 2026 01:03:15 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 16 Jun 2026 01:03:15 -0700
-Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id 72B2C3F7043;
- Tue, 16 Jun 2026 01:03:12 -0700 (PDT)
-From: <kirankumark@marvell.com>
-To: <rjarry@redhat.com>
-CC: <cfontain@redhat.com>, <david.marchand@redhat.com>, <dev@dpdk.org>,
- <jerinj@marvell.com>, <kirankumark@marvell.com>,
- <konstantin.ananyev@huawei.com>, <maxime@leroys.fr>,
- <ndabilpuram@marvell.com>, <vladimir.medvedkin@intel.com>,
- <yanzhirun_163@163.com>
-Subject: Re: [PATCH dpdk v2 2/2] graph: replace circular buffer with
- priority-based bitmap
-Date: Tue, 16 Jun 2026 13:33:11 +0530
-Message-ID: <20260616080311.2372090-1-kirankumark@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <DJAAFGOSALXB.3BJ91NA2ES267@redhat.com>
-References: <DJAAFGOSALXB.3BJ91NA2ES267@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5A7194065D;
+	Tue, 16 Jun 2026 10:06:12 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 42966402DB
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 10:06:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1781597170;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=S8OpEiDVGP3Y343ITPJAkqEGLMSDsk8MauGWKCO+QHA=;
+ b=FJ9L0JIN8nTrMjpZepnXCtR5trmdIJlszyaQDm8J4VsD9gwQyKQngXBjNBd93NBbvmJcCH
+ nSL60uEFUmvThBMgYls5z3iEWn9p2DY+Z9Z8wb5dEo4VbRHlOA1uOxFm9rxg3m5ogie1z3
+ hqUU0YoDifCavBR+mKGlULmGz4gYsSU=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-531-XIa3vJw_OXKcStzT5-2Deg-1; Tue, 16 Jun 2026 04:06:08 -0400
+X-MC-Unique: XIa3vJw_OXKcStzT5-2Deg-1
+X-Mimecast-MFC-AGG-ID: XIa3vJw_OXKcStzT5-2Deg_1781597167
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-396a5b0307cso17941011fa.0
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 01:06:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781597167; x=1782201967;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=S8OpEiDVGP3Y343ITPJAkqEGLMSDsk8MauGWKCO+QHA=;
+ b=EmHH1vSi6Jkj1Q/J77z+QSThAZkPkrHFpzEj6q3vQ8uDDW8fUARQsn6j+SBvQo6rs0
+ eojtG+RDX3RNWYyb8U26toRaPhJ2U6Ly0MKiod/ecdI1KDkHVr2XHOetfNpfUhvKEuT2
+ ea0qtUMiWZ/BbIo7VP4kciZoEloRIx6IzluMzpjqkXz0XdipgZIChazff0Io3fs40qh8
+ M/iq8dvkC+yR207ZYF43I5taCr9RXvb676W9goPD7UfKyy0WwiR3zkttQQa5Ko0t/CwP
+ UmE0qVz+OZS46VteG7kcK2XQejQe8X095sCxdBzm5QNZNo+YL9XXELSRAos+19e0ajdf
+ fP4g==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ9SH/329zhyJpsMrLro2rOlPlSLNiUsnxbIBJ+2THkOVjh1XOr/kKmJKn46wLJX3g/Nkrc=@dpdk.org
+X-Gm-Message-State: AOJu0Ywt4sMOxg1S1yRNWEdjp+NQI5UHv0glAKEa3z8rBu573JmRfUBb
+ kcKFvHt9SDzGoFGo/5G9QuvoAzUgbmcta6rCXQvhbz7D+0+Y7LiLIiXN9rU7+R20BkvdUFBYxz4
+ XvFG6I1JdZlB4+QUzDO7UFETwWSsFesmT8hEmEjcornQPeaU3HOBMo2zOHB8xggIX8XXmWk2XtT
+ gveiMGRIdTvBEAjUg0Y/0=
+X-Gm-Gg: Acq92OGhzOxUdDHIBiTKhqTYV+quCDz+qAEze0mjez3/haWnMiiupRAH/gFtaDb0ezh
+ 5yajtOmO8QpELyHMYWU0GXQB/8CkrlDHtXA2C6heHVs+Vg3HaScrzjyn4nlwGzM9A5FCg/2oyqQ
+ gukyFGLE1zLuOf5aVaVZ2+xnsHxoejyJ3p31sj2/6NIHzvwiptAAK8hVbNXk3YfUAvkb5Snszkw
+ 2U1QwOTI5dS6zMqPavcD/q3EY0wN++peZ09jHGQKTntdY9/Peg/0K0Eq1ZS3a7WsYDQbw==
+X-Received: by 2002:a2e:bd8b:0:b0:38e:83bc:1573 with SMTP id
+ 38308e7fff4ca-3995c8759e6mr8622821fa.24.1781597167001; 
+ Tue, 16 Jun 2026 01:06:07 -0700 (PDT)
+X-Received: by 2002:a2e:bd8b:0:b0:38e:83bc:1573 with SMTP id
+ 38308e7fff4ca-3995c8759e6mr8622671fa.24.1781597166401; Tue, 16 Jun 2026
+ 01:06:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: U-CRWMRWvX4OIguf3f_fkgvkVB-ZxOAT
-X-Proofpoint-ORIG-GUID: U-CRWMRWvX4OIguf3f_fkgvkVB-ZxOAT
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE2MDA4MCBTYWx0ZWRfX/F06kUbkFF1D
- QY61UjHWFsk/awYkYG/z7dXA556e6jt+kkWIg+uAkGi/XXZ1TIHgLNpCXtQJNqWqV978iCfzbdv
- BNi0JbEbwJxzmFKdck4Q7nME6Aq7vrw=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE2MDA4MCBTYWx0ZWRfXwfmym0SNp5Im
- I2TfJyvghXX58NpUJF4V5XbOQwHEWBc0OdyXv8pq9r04h11cTAzbH9K9mnfsfDs9NEKUC0yWK1j
- GqpXNz60E58kddlc2UE6l3/TzhSAGtxlXQxBVdtTYfnrDJoBEaDeCBEvy5E9Hju5TWIiY5ewUDe
- pFG3ebEVlXrNOL6JhKFvCkNqoIk/FZ2dNyAVk/5CecOLtGcHG4kfvk+dDBRBCHW8vcksKesu9x+
- u4M6bagVLkXrCEOrsccoVDDnedgAN73FNLFwx7+LX8kERqgg0v8OVAn7EUv4M6CbY+Cnd2NsgzZ
- pb/0FtoF/s7bW0TMr1/7pImxOx+swJd0HcHFKWdqfRcp7WXJKm2GN6+hhoqA38QNyw99UBYwxTI
- 7E3rRome44StMHIX1nXmJwX/gMTUMrE/SgPdLw9vP0xLFMw+i3CMJIuVIeyE3CaoC8Huv+Gm474
- NrmKt+xvj1K6XZzGeAg==
-X-Authority-Analysis: v=2.4 cv=SeXHsPRu c=1 sm=1 tr=0 ts=6a310344 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=dGCdxeqfR0iHkFUmFQIA:9 a=zZCYzV9kfG8A:10
- a=0lgtpPvCYYIA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-16_02,2026-06-15_04,2025-10-01_01
+References: <20260611154926.392670-1-maxime@leroys.fr>
+ <20260611154926.392670-6-maxime@leroys.fr>
+In-Reply-To: <20260611154926.392670-6-maxime@leroys.fr>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 16 Jun 2026 10:05:54 +0200
+X-Gm-Features: AVVi8CfFlBXOBaAX80DpAB5w77pluhqdIwC6DAb2Sx-Y8tbAKHrgX1Oni1aZoXg
+Message-ID: <CAJFAV8z5gLWxTcGiYYiZvkZUfe_YxgRKAx-UfU02FZFpsqN0+g@mail.gmail.com>
+Subject: Re: [PATCH 5/9] net/dpaa2: support Rx queue interrupts
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: hemant.agrawal@nxp.com, sachin.saxena@nxp.com, dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: tJUL61zdC4gne-lWzS4JLqeKlf0KhEM73febnX6e38g_1781597167
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,14 +85,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Hi,
+On Thu, 11 Jun 2026 at 17:51, Maxime Leroy <maxime@leroys.fr> wrote:
+> diff --git a/drivers/bus/fslmc/qbman/qbman_portal.c b/drivers/bus/fslmc/qbman/qbman_portal.c
+> index 84853924e7..947415363a 100644
+> --- a/drivers/bus/fslmc/qbman/qbman_portal.c
+> +++ b/drivers/bus/fslmc/qbman/qbman_portal.c
+> @@ -448,6 +448,7 @@ int qbman_swp_interrupt_get_inhibit(struct qbman_swp *p)
+>         return qbman_cinh_read(&p->sys, QBMAN_CINH_SWP_IIR);
+>  }
 >
-> , Jun 16, 2026 at 08:30:
-> > This will break the ABI. Please check and fix.
->
-> Yes it will break the ABI. There is no way around it. What did you mean
-> by "check and fix"?
->
+> +RTE_EXPORT_INTERNAL_SYMBOL(qbman_swp_interrupt_set_inhibit)
+>  void qbman_swp_interrupt_set_inhibit(struct qbman_swp *p, int inhibit)
 
- Looks like we canot avoid ABI break, Since Graph is not experimental library,
-please send deprication notice and we need to wait for next ABI breaking release i.e 27.11
+qbman_swp_interrupt_set_inhibit is not declared as __rte_internal.
+
+>  {
+>         qbman_cinh_write(&p->sys, QBMAN_CINH_SWP_IIR,
+
+
+-- 
+David Marchand
+
