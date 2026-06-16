@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E05FCD98E1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 21:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 032F5CD98D2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 21:42:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90939402E3;
-	Tue, 16 Jun 2026 23:22:56 +0200 (CEST)
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
- [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id 12F2040289
- for <dev@dpdk.org>; Tue, 16 Jun 2026 23:22:55 +0200 (CEST)
-Received: by mail-dy1-f169.google.com with SMTP id
- 5a478bee46e88-304f590dd91so5803618eec.0
- for <dev@dpdk.org>; Tue, 16 Jun 2026 14:22:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E0868402E3;
+	Tue, 16 Jun 2026 23:42:23 +0200 (CEST)
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
+ [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id 7A18140289
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 23:42:22 +0200 (CEST)
+Received: by mail-dy1-f181.google.com with SMTP id
+ 5a478bee46e88-30bc806fcf8so530910eec.1
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 14:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781644974;
- x=1782249774; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781646141;
+ x=1782250941; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=PuUZc95rEC+cXTAApFFwYrhf/yG7sa/BCax0LhVSmlQ=;
- b=FvAIwDb6ifKoVA0K3QVF8Xrnb5eGNSa8drTiZIIST/5FHiRm5dw+LrgJw+PLHPCXnS
- Tdo9XfWj4TBFzF+Bk5jLLudxJIeZ5kjnm7Z+q+j6A595weyOiXduZeF8DJ0EPjhmAutZ
- 7ZLHrZzZAETes/s2R3YLwhVH7w15J8QyadUttD4dUVRwnQLZRpXSxHz/bHRXwH1eRDZv
- CG9mN/ySCup2fTSjVeJc7j5OG0BVPBXFIXEZv/jYJd7B1vBCpHM68ogm1s8b26BpNKkg
- JUlbS924GOz5Bp+J5F4D8xojhnQUIzby3ZE3rBxUy/Uc+wY1Euj+3gveozTmIPp/gUtq
- Zx7w==
+ bh=MHO0vJnL6+rsRhVwiBIffB6MBIUgNZ3R8O7ONfqvrY4=;
+ b=IBH1iSgAVF7OIYcGcgqehX1aW03oKvGsxGf/iU23sWI1EK8hYE5UEIIsWoQFf3uCpp
+ pkkPQMaCYtttrwEmEvvvhvZW9EN7+7mHbTdlXTrRfd7ZSX2v8Wzjlq9TcBoHT50YEfYN
+ 6zTsWbpWjou3HKECxqmZQJ3jUFQUhzi+1rLiqQ36xSDgO4dFrw5yVn1+064v/xES5me3
+ zhkS71Z/X3ixdoVweRcHXeObbuKNrFDFx7ylzUhDB07bG96h6gCRguMquOu0irCCw0z4
+ qSmyt0CTTDjMS6MjE5qO2Htd7M02QzCtmgxqNPJs2rV8hLDdnktqCX7Y5pnlOrneAKX5
+ YU3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781644974; x=1782249774;
+ d=1e100.net; s=20251104; t=1781646141; x=1782250941;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=PuUZc95rEC+cXTAApFFwYrhf/yG7sa/BCax0LhVSmlQ=;
- b=R4vrziQSNJB6W+yPxCQnHTtgFkDvXoqkqdhu12IbDFu5w+oarj11qom8owQ4lbvwN9
- iOn7cBWiP/mCE/MvYDsSfjhvnK9987teX8ie+WkwW9rmJ2TSThrD8JAx2NsMm1xPE4RI
- eMXk34eN5q0Lszzery345Kj+pFSWKVV64T8XGoZVQqN5XjC7HRWZbFPlzYQfvildIB9P
- jBBIobBwiQoIDBpdDjKfMRxPJF9Nr2NqJmBSRNKG/a3m1f7RBMcW2IUN65EiCSsrxdSo
- Pch1CAFmxVcq5F+GUnu1ghxt6NUXEPtheVNZmdKRTo/e2GzHkuo5gbtUuJeP3MyNqyn3
- wHQw==
-X-Gm-Message-State: AOJu0YxbtswOsaPrf3V827Exrq4vVDroF3SNTTKGtxON9kCtr8CcCRIe
- h1J7hxkSGp7roeelu/zefyaV7a4LGuIApVyhm4Nmo6a/CJMLrYbEULb1DgUuyb6TrGI=
-X-Gm-Gg: Acq92OEALLiyH85ojszevOtGj9T3/aVAFTIpNFu7uXneeJJ6uU7yNnx8wsKbTiK/XaE
- 3R5pDtRd+qgj8y+rwFOVPjE2hjUvl6wbSMyDEdXwJQXyENiDAsepYZxkHsc1nLmQEpA8BFr7Csy
- 44Ry3C7D59V/jc8GgZLFI4ejmmn29EOIzaUPk/JInaUNgBXA9TTy0J6VtEoQhtVGZ73/veaaacj
- PyEuQdw/K1vmzJ8m2z4DnSQ0x4v1olPvum2Brp47eAEZPZJ9iDI+F9SY7pXftQ/vL6eZh6LO3vd
- Xcns1PVqYa9iz47KyxydC0Fa4COhWABknfIJtObCRXuT/OiQRlA7CgLrN6bOyzTQ6QJEWuUHz3D
- pr8XTsN8PoJniCgZExtWm20gBWJnQl67kK5Dnxp8B0NiGP7RjuWlU3vhCGBfaERwbaWq53HIQcU
- 8rJHFi8X71xh8OCrcbk02fmuJMW0Js0VIpdVaCOrHdUbDxAdgCy4MVlhBFL6oHQfHF
-X-Received: by 2002:a05:7301:10c1:b0:304:de94:1c2c with SMTP id
- 5a478bee46e88-30bca0cfa9fmr576134eec.34.1781644973961; 
- Tue, 16 Jun 2026 14:22:53 -0700 (PDT)
+ bh=MHO0vJnL6+rsRhVwiBIffB6MBIUgNZ3R8O7ONfqvrY4=;
+ b=Kk6CbArWZWEZvdYgT4e6gTwXnmbX0O5C6B7Kxw3O6PfP3+Gey3ze13mLs95SnugcBA
+ oxfr45LPVKFc0wvgAtBY78+OMPmvtFnzOt1d6cOWkIYPOXK4wciAQDT9s4lAn8P+Nh/B
+ rR8Etxvd7qfHwxEwR9l3O1NuryKWSZ0M3R0bNBwRrNzkCJIlNloJdoVbNrBkWD3cbgGc
+ oVOvvmgiyR3Yvne4xE1Azs83FA0vEVnam39t3UcQ/M1XRidzNRi+dJtlLEKgKlhgYhrp
+ oI8+lhdbh1YvlvgfKtyZsy7jy/APLcAqdHWLmMUgjKbJq2T4Ps07Gozp87Ue/NraFWLs
+ X/Lw==
+X-Gm-Message-State: AOJu0Yz6g4VxYN/F3Q29gMx06BScLjbxKyMBsZuoa1KKB5q8fv9DFfvL
+ RpY3Rhtexc30gd1mJdQ95yz7qkw3WqoRB0MjiGTcYlFDxSTkqXIz2vKAH0gzYG8LNCCQXfcwNzz
+ bjlIN
+X-Gm-Gg: Acq92OEiDQsz1T4B4Xj6VSQJAm6ddAqbrJT01laW3jEa7Sv9fTdJQSux59Kw1HzuL8D
+ yOgUwCZyWJ9h+7kCxjWyyEdNsFh+ynAkR0vbcigUeIn1mOOH764aZ+RHaS1ZwtLMxUtJ+yk4fO9
+ Uk8lZB3xKDghE9ifQKkACCmWVWIIRc5AjH1yVWUxG39qnFKEgtqZCLqKQCarvKmANL3HK46Dl+n
+ cOyxjeA0QsE0XAyq6j1B6yRzy86dqQrDc5fIPEnCEXy3ddi3iAzJgA/3oh01obuHp8hEO9H7bPz
+ qZBwUPJafEg4ds2a2j9veiIIiDXdc9T/v6khYi/KT0ZyAhN59sc9dSsYfOn85LJmnhfFgwDAb8y
+ hDYsbueZnIpTH2zsZ4RTw5dwPDxdB/p7JqxbxGy7evVuL5iMuYcPW/1MgMPhIbiQ39kC8P0WDU9
+ cSTCk1ztdoN/VoyYunoWbl/eNCUjyiwEPiuG8rjtEH6IIHWRKxNbYYHptjVdjSaK38
+X-Received: by 2002:a05:7300:6413:b0:2ed:e12:3769 with SMTP id
+ 5a478bee46e88-30bcae465c7mr596290eec.31.1781646141126; 
+ Tue, 16 Jun 2026 14:42:21 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3081e5cea89sm22062676eec.8.2026.06.16.14.22.53
+ 5a478bee46e88-3081e920243sm20701708eec.18.2026.06.16.14.42.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 14:22:53 -0700 (PDT)
-Date: Tue, 16 Jun 2026 14:22:50 -0700
+ Tue, 16 Jun 2026 14:42:20 -0700 (PDT)
+Date: Tue, 16 Jun 2026 14:42:18 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wei Hu <weh@linux.microsoft.com>
-Cc: dev@dpdk.org, longli@microsoft.com, weh@microsoft.com
-Subject: Re: [PATCH v10 1/1] net/mana: add device reset support
-Message-ID: <20260616142250.29603185@phoenix.local>
-In-Reply-To: <20260616123158.43583-2-weh@linux.microsoft.com>
-References: <20260616123158.43583-1-weh@linux.microsoft.com>
- <20260616123158.43583-2-weh@linux.microsoft.com>
+To: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v6 00/21] Wangxun Fixes
+Message-ID: <20260616144218.3bb7ea85@phoenix.local>
+In-Reply-To: <20260616122030.9688-1-zaiyuwang@trustnetic.com>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
+ <20260616122030.9688-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,73 +81,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 16 Jun 2026 05:31:58 -0700
-Wei Hu <weh@linux.microsoft.com> wrote:
+On Tue, 16 Jun 2026 20:20:08 +0800
+Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 
-> teardown immediately (dev_stop, secondary IPC, dev_close, MR cache
-> free) before waiting for the hardware recovery timer to fire. This
-> avoids blocking the EAL interrupt thread on multi-second IPC
-> timeouts and ibverbs calls. After the recovery delay, the thread
-> unregisters the interrupt handler, re-probes the PCI device,
-> reinitializes MR caches, and restarts queues. Each function owns
-> its own lock scope with no lock hand-off between threads.
-> 
-> Each queue has an atomic burst_state variable where bit 0 is the
-> in-burst flag and bit 1 is a blocked flag. The data path uses a
-> single compare-and-swap (0 to 1) to enter a burst, which fails
-> immediately if the blocked bit is set. The reset path sets the
-> blocked bit via atomic fetch-or and polls bit 0 to wait for
-> in-flight bursts to drain. This single-variable design avoids the
-> need for sequential consistency ordering.
-> 
-> A per-device mutex serializes the reset path with ethdev
-> operations. The mutex uses PTHREAD_PROCESS_SHARED for multi-process
-> support and is held across blocking IB verbs calls. A trylock
-> helper encapsulates the lock acquisition and device state check
-> for all ethdev operation wrappers. Operations that cannot wait
-> (configure, queue setup) return -EBUSY during reset, while
-> dev_stop and dev_close join the reset thread before acquiring
-> the lock to ensure proper sequencing.
-> 
-> The reset thread keeps reset_thread_active true throughout its
-> lifetime. mana_join_reset_thread uses rte_thread_equal to detect
-> the self-join case (when a recovery callback calls dev_stop or
-> dev_close from the reset thread itself) and calls
-> rte_thread_detach instead of join, so thread resources are freed
-> on exit. External callers join normally.
-> 
-> The condvar wait in the reset thread uses a predicate loop that
-> checks dev_state under reset_cond_mutex, so a PCI remove signal
-> that arrives before the thread enters the wait is not lost. The
-> PCI remove callback sets dev_state to RESET_FAILED under the
-> same mutex before signaling. A lock/unlock barrier on
-> reset_ops_lock in the PCI remove path ensures teardown has
-> completed before emitting the INTR_RMV event.
-> 
-> Multi-process support is included: secondary processes unmap and
-> remap doorbell pages via IPC during the reset enter and exit
-> phases. The secondary RESET_EXIT handler closes the received fd
-> unconditionally after processing, even when the doorbell page is
-> already mapped. Data path functions in both primary and secondary
-> processes check the device state atomically and return early when
-> the device is not active.
-> 
-> The driver emits RTE_ETH_EVENT_ERR_RECOVERING before entering the
-> reset path so that upper layers (e.g. netvsc) can switch their
-> data path before queues are stopped. The event is emitted outside
-> the reset lock to avoid deadlock if the callback calls dev_stop or
-> dev_close. On completion, the driver emits RECOVERY_SUCCESS or
-> RECOVERY_FAILED after releasing the lock. If a recovery callback
-> triggers dev_stop or dev_close, the self-join detection in
-> mana_join_reset_thread detaches the thread to avoid deadlock. If
-> the enter phase fails internally, RECOVERY_FAILED is sent
-> immediately so the application receives a terminal event. A PCI
-> device removal event callback distinguishes hot-remove from
-> service reset.
-> 
-> Documentation for the device reset feature is added in the MANA
-> NIC guide and the 26.07 release notes.
-> 
-> Signed-off-by: Wei Hu <weh@microsoft.com>
+> This series fixes several issues found on Wangxun Emerald, Sapphire and
+> Amber-lite NICs, with a focus on link-related problems.
 > ---
-Applied to next-net
+> v6:
+> - Fixed more issues identified by AI review
+> ---
+> v5:
+> - Fixed issues identified by AI review
+> ---
+> v4:
+> - Fixed issues identified by devtools scripts
+> ---
+> v3:
+> - Addressed Stephen's comments
+> ---
+> v2:
+> - Fixed compilation error and code style issues
+> ---
+> 
+> Zaiyu Wang (21):
+>   net/txgbe: remove duplicate xstats counters
+>   net/ngbe: remove duplicate xstats counters
+>   net/ngbe: add missing CDR config for YT PHY
+>   net/ngbe: fix VF promiscuous and allmulticast
+>   net/txgbe: fix inaccuracy in Tx rate limiting
+>   net/txgbe: fix link status check condition
+>   net/txgbe: fix Tx desc free logic
+>   net/txgbe: fix link flow control registers for Amber-Lite
+>   net/txgbe: fix link flow control config for Sapphire
+>   net/txgbe: fix a mass of unknown interrupts
+>   net/txgbe: fix traffic class priority configuration
+>   net/txgbe: fix link stability for 25G NIC
+>   net/txgbe: fix link stability for 40G NIC
+>   net/txgbe: fix link stability for Amber-Lite backplane mode
+>   net/txgbe: fix FEC mode configuration on 25G NIC
+>   net/txgbe: fix SFP module identification
+>   net/txgbe: fix get module info operation
+>   net/txgbe: fix get EEPROM operation
+>   net/txgbe: fix to reset Tx write-back pointer
+>   net/txgbe: fix to enable Tx desc check
+>   net/txgbe: fix temperature track for AML NIC
+> 
+>  drivers/net/ngbe/base/ngbe_phy_yt.c       |    3 +
+>  drivers/net/ngbe/ngbe_ethdev.c            |    5 -
+>  drivers/net/ngbe/ngbe_ethdev_vf.c         |   11 +-
+>  drivers/net/txgbe/base/meson.build        |    2 +
+>  drivers/net/txgbe/base/txgbe.h            |    2 +
+>  drivers/net/txgbe/base/txgbe_aml.c        |  185 +-
+>  drivers/net/txgbe/base/txgbe_aml.h        |    6 +-
+>  drivers/net/txgbe/base/txgbe_aml40.c      |  114 +-
+>  drivers/net/txgbe/base/txgbe_aml40.h      |    6 +-
+>  drivers/net/txgbe/base/txgbe_dcb_hw.c     |    2 +-
+>  drivers/net/txgbe/base/txgbe_e56.c        | 3773 +++++++++++++++++++++
+>  drivers/net/txgbe/base/txgbe_e56.h        | 1753 ++++++++++
+>  drivers/net/txgbe/base/txgbe_e56_bp.c     | 2597 ++++++++++++++
+>  drivers/net/txgbe/base/txgbe_e56_bp.h     |  282 ++
+>  drivers/net/txgbe/base/txgbe_hw.c         |   54 +-
+>  drivers/net/txgbe/base/txgbe_hw.h         |    4 +-
+>  drivers/net/txgbe/base/txgbe_osdep.h      |    4 +
+>  drivers/net/txgbe/base/txgbe_phy.c        |  362 +-
+>  drivers/net/txgbe/base/txgbe_phy.h        |   46 +-
+>  drivers/net/txgbe/base/txgbe_regs.h       |   13 +-
+>  drivers/net/txgbe/base/txgbe_type.h       |   43 +-
+>  drivers/net/txgbe/txgbe_ethdev.c          |  472 ++-
+>  drivers/net/txgbe/txgbe_ethdev.h          |    7 +-
+>  drivers/net/txgbe/txgbe_rxtx.c            |  109 +-
+>  drivers/net/txgbe/txgbe_rxtx.h            |   36 +
+>  drivers/net/txgbe/txgbe_rxtx_vec_common.h |   17 +-
+>  26 files changed, 9464 insertions(+), 444 deletions(-)
+>  create mode 100644 drivers/net/txgbe/base/txgbe_e56.c
+>  create mode 100644 drivers/net/txgbe/base/txgbe_e56.h
+>  create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.c
+>  create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.h
+> 
+
+AI review was mostly clean, do you want to change this one thing?
+
+Review of [PATCH v6 00/21] net/{txgbe,ngbe} fixes from Zaiyu Wang
+
+All findings from the v5 review are addressed:
+
+  - 07/21: Tx desc free now loads the 32-bit headwb_mem atomically and
+    casts to uint16_t at the use site, removing the type pun.
+  - 14/21: kr_read_poll() switches from usleep() to usec_delay() to
+    match the rest of the txgbe base layer.
+  - 16/21: stray tab+space indent in txgbe_read_i2c_sff8636() is gone.
+  - 17/21: stray tab+space indent in txgbe_get_module_info() is gone.
+    TXGBE_SFF_DDM_IMPLEMENTED is now indented as a bit mask under the
+    8472_SWAP register definition, which reads correctly.
+  - 18/21: page is reset to 0 inside each iteration of the for loop so
+    it no longer accumulates across iterations.  The flat-memory check
+    is now driven by an explicit read of module byte 2 via
+    read_i2c_sff8636() into a local is_flat_mem flag, instead of
+    reading data[0x2] out of the caller's output buffer.  databyte is
+    cleared to 0 at the top of each loop body so the skipped-read
+    branch can no longer leak the previous iteration's value.
+  - 20/21: RTE_LIBRTE_SECURITY is corrected to RTE_LIB_SECURITY so the
+    !txq->using_ipsec guard is actually preprocessed in.
+
+One small remaining comment on 18/21, not blocking.
+
+Patch 18/21 (net/txgbe: fix get EEPROM operation)
+
+Info: is_flat_mem has inverted semantics relative to its name, which
+is going to confuse future maintainers.  SFF-8636 byte 2 bit 2
+("Flat_mem") is 1 for flat-memory modules and 0 for paged-memory
+modules (this is the same convention ethtool uses).  The new code
+treats the bit the opposite way:
+
+  +	bool is_flat_mem = true;
+  ...
+  +		if (rdata & 0x4)
+  +			is_flat_mem = false;
+  ...
+  +			if (page == 0 || is_flat_mem) {
+  +				status = hw->phy.read_i2c_sff8636(hw, page, ...);
+
+So when the module reports flat (bit set), is_flat_mem is set to
+false; when paged (bit clear), is_flat_mem stays true.  The condition
+'page == 0 || is_flat_mem' reads only page 0 in the flat case and any
+page in the paged case, which is the right behavior, but the variable
+ends up meaning "paged memory is OK to read" rather than "module is
+flat".  Suggest either:
+
+	bool is_flat_mem = false;
+	if (rdata & 0x4)
+		is_flat_mem = true;
+	...
+	if (page == 0 || !is_flat_mem) {
+		...
+	}
+
+or renaming to allow_paged_reads (or similar) and keeping the existing
+default and condition.
+
+
