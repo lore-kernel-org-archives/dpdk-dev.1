@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED43CD98E1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 21:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0C1CD98E6
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 21:07:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8ED5040A84;
-	Tue, 16 Jun 2026 23:07:07 +0200 (CEST)
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
- by mails.dpdk.org (Postfix) with ESMTP id 64D57402EE
- for <dev@dpdk.org>; Tue, 16 Jun 2026 23:07:05 +0200 (CEST)
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-1363fe80fe8so7349065c88.0
- for <dev@dpdk.org>; Tue, 16 Jun 2026 14:07:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C29D140DD0;
+	Tue, 16 Jun 2026 23:07:08 +0200 (CEST)
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+ by mails.dpdk.org (Postfix) with ESMTP id 93D4740A8A
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 23:07:06 +0200 (CEST)
+Received: by mail-dl1-f50.google.com with SMTP id
+ a92af1059eb24-13986d61b4eso2833125c88.0
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 14:07:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781644024;
- x=1782248824; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781644026;
+ x=1782248826; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=zGieHqVAR7vg5SBk/wOS7C1FD9FIbYnBGwRUrHPVGfY=;
- b=XZuorg5N29TgPWSKc/Px9w9VLsg7yrFrBzR5ax3hABHwoXLh53/EsPFbFUROQEBKxG
- 7i877preFxyhtf9DlszLSClpGPuSpW8T6e95A/gQVpWUwcJZjKLIupiSkTXn3giNV3ig
- ObDDhnGiAR2UF7tZxuFFeZyVcXyc7j8bjcH4R1jbxMT64B8w1peaFt0LyBEJYrJdYEcF
- 4QHBeTijDC+v6pggcnF7ADcRLhwHZvSmZjxxDlNvZvk46tmNh71dsC2eMdn3+2ZJ2oea
- o0FMAQVJJkrfmh+6w/RQb+R6Iav/ztqNQw8HwPcT59bIILv4neHJCVoX7NxbDvjANYHI
- f3Yg==
+ bh=LiofEvyIGeRZcyU71SeiDXEL6yuTUzjq52/fwp+17zg=;
+ b=b20DFWOl+ShQtRtREAlTQplkaG7rjTmrSc9MTLiHTsEHPdyKsHGvuKewJARdnBjreY
+ 9zn2Cq3csUzrJopMnKJaHVchglFEb2gudEJioJSMlK8o0GN49TiFfcXw8ZzuDrsA0dyo
+ 5pSyl/0Uh714aBaHHrxHsLPRD0bRjCQfdfNoeMjZYtziSFnMl1/mX5YHHrAjrE2DGgTG
+ 7LVTpKAbWK74DOMFyVP3i9jIrwN2vSBNBlzql/H4VNy8W68K5Ovp/PRhtdEzICNi/9+G
+ Xuz18+Ow+lY/nmDbqgb2N7Rf0Ho8vqIekmR2DK58XZxAVaxHbb/tGteQEKG7cz7IbW/B
+ y2Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781644024; x=1782248824;
+ d=1e100.net; s=20251104; t=1781644026; x=1782248826;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=zGieHqVAR7vg5SBk/wOS7C1FD9FIbYnBGwRUrHPVGfY=;
- b=sU8ZhtDOIAgWjEpiMzCcXGwKiflMvo81cTaZzoTHWbW65mXdynt7OxAjBa0OsZxUA8
- FnnDe4w84Udx0DS0oM9MqxIFRAq131rLHqtrh6PLCsbgnPdyLVo1c1gL2nLVAPKipVj8
- fezOQujXK/y2+Rg5UfbaFUtMnRw8D4tVLgDwvqKkiugSxUx9KP48iiGmY9K3QBmoowgJ
- lbomWt6lX2sjonuPTGxfldUO7z6v3zPfGYlELKwbKeJaejO2z/hCIS57GHgEk873+nKL
- U77OpYvyt2oDBKCuzGf03qeCPOOiSNSftXJZUAEm3D1sqo5uF5FKZ5rr/Qg7BN8fZS/4
- SBcQ==
-X-Gm-Message-State: AOJu0YwPdcqZWojTRKlVSMCmAs7KQZgv2qgwI3MoGlOfiLdh8wjNUByc
- lfGVl4H/CyBGsqpK7ifEt2B5JieozDe3zp6lD/PCKZLjZ9DZhFZLzw8Nh2rKow3UQ+R3u6k6Gpm
- gHS6d
-X-Gm-Gg: Acq92OGhjXAnAq87TBh5kcFQfqQwbtcUonnDZ6E5aayxfyJ/yFvahTv8lh2JgYicvWZ
- gBRl8Yakk0dq8IvVt3LVEADsDw36f/KPmuej5ieRAzWksnptMdxIaWVP3mw0ZwUftSzDh+JmxZT
- +oOwtA0pdej8jHGfWwUE5cYgX+zysYJ42oo1ihLdoSVd74YqWgD+E5DYlrkF2ppF+1CDAa5JkBh
- ImVARkXf9e1Q/okrZYBmuiK7rHUiIFoscUUSeI9UWfCMajhCfz9LYlJRb20oyDurEN4FIZAZJGS
- izQd71km0858Bv7NnpUaov6HEjLqOui1hw/Yr2L+UFDAmrAqt0SbNYag9+6O1J+CcKfazwhIXQI
- hFgMnifVZFQ40lp5DfBDyFAB26BiOkGTjVOF46rDUQjc4K0CFvFACzrfF7avr9l+jkGAROKNO6D
- Hh86tbcElBFCRKIAvQGzewJ47wRy3CsznjVy8/USfVi/HJfBQTDb2i4TEJLePz3A==
-X-Received: by 2002:a05:7022:f8c:b0:138:916:5179 with SMTP id
- a92af1059eb24-1398f676bd6mr310929c88.14.1781644024369; 
- Tue, 16 Jun 2026 14:07:04 -0700 (PDT)
+ bh=LiofEvyIGeRZcyU71SeiDXEL6yuTUzjq52/fwp+17zg=;
+ b=mgD5r1eHKlXqC4qFaNO5TtmxqHTCc5UsbJzZ6yJ/8G19IfyzDlKVjVtjQDh2Tr4Thx
+ gnfu5VR1xiUFOeNwf9A8ErqMcHzDu9rkfxb/ie5CyKV7xIduRDECxsc736ov0PZogRIV
+ VsnRfa5kh//C3hzfl4w3bauN9niRdwVDmiHFfPilJoei+hRLR4yhrnIjnHGmQnJYMfuU
+ DzZT+TXFhVcdheaR+stSv2YoF9lex3Cag5BaUkJWjrm8JcVNtIcbXDduB0QqAZUNb0B+
+ SkdHiDLqnLE8qMKnur+LS+RzDYqsOhww10BCBekB4jLVv81SPZrf+7RO+bRZeQyqwtDo
+ IV3Q==
+X-Gm-Message-State: AOJu0Yxsg1yNcPap3fka8/AcpAeUfub3zS46CcK7CAR7ukdBS3zFA0PV
+ Ml5bSNeiPtDFi5ExPgGM6UjChitpg0iV5fMqS8aTU0/uHgJF4zgKjU6vzFtDCtTFbOVgbAKIQsU
+ aQJVQ
+X-Gm-Gg: Acq92OG6g6xucjbm7vyIkQ84QiYti3d9HCt8wr6tRMNQ7WDK50QgaHosgdQvTk3sKWY
+ kMi2e4RuejcO7u6tRZtlWVlwa77m7xLyF0mUBI3ZK0QQSnwbzZnyuTeGYfLFSp1xp7txuN2xJvo
+ NgaNcfldqQvFBHghNZkYbA2Lda4PK6GI61Yn8+RHtpKvLykD2D4GSmy7rLSrZUQh1NrMXD3QsYM
+ GsGqwcI7kRUsHK67wkVeUESR+5wSnkUoSx0f0KGWSYWfj0Zqh8mpNU/rlaJQvW79nL9iQm08Co2
+ gkRBSXImO9KXPrTesB+A3omj9Ss9PFb7dmLZi8ngy5SZ4jWyILWz9DJkEF4aFwJma9/uwXeeqWF
+ sBT0j518Hls3+/kxraAKkyNDo9VV3ZMlEtnyeTX3fGTb16VkHeQ7RBORTdSKS7uGeku4TxGdnH3
+ ITsFM5cHBTU+ctUBol4apuy5lMnBcxvKhZr+Rz6H1JkpN/HBeVt+xsDITTsZkVGQ==
+X-Received: by 2002:a05:7022:207:b0:136:5e4c:7aba with SMTP id
+ a92af1059eb24-1398f68658cmr384444c88.16.1781644025647; 
+ Tue, 16 Jun 2026 14:07:05 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1384b96d6c4sm15118446c88.9.2026.06.16.14.07.03
+ a92af1059eb24-1384b96d6c4sm15118446c88.9.2026.06.16.14.07.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 14:07:03 -0700 (PDT)
+ Tue, 16 Jun 2026 14:07:05 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH 3/6] ip_frag: include protocol in IPv4 reassembly key
-Date: Tue, 16 Jun 2026 14:05:35 -0700
-Message-ID: <20260616210656.464062-4-stephen@networkplumber.org>
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH 4/6] ip_frag: drop IPv6 fragments with unexpected headers
+Date: Tue, 16 Jun 2026 14:05:36 -0700
+Message-ID: <20260616210656.464062-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260616210656.464062-1-stephen@networkplumber.org>
 References: <20260616210656.464062-1-stephen@networkplumber.org>
@@ -81,51 +83,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DPDK IPv4 reassembly code was not following RFC 791 section 3.2
-which says:
-    The internet identification field (ID) is used together with the
-    source and destination address, and the protocol fields, to identify
-    datagram fragments for reassembly.
+DPDK version of IPv6 reassembly only handles a fragment header placed
+directly after the IPv6 header. With other extension headers in the
+unfragmentable part, ipv6_frag_reassemble() patches the wrong
+next-header field, miscomputes the payload length, and shifts the
+wrong bytes, corrupting the result.
 
-Omitting the protocol means two datagrams between the
-same pair of hosts that share an IP id but carry different protocols
-(for example UDP and ICMP) are merged into a single reassembly context,
-producing a corrupted datagram.
+Drop the fragment when l3_len covers more than the IPv6 and fragment
+headers. RFC 8200 allows a receiver to discard packets whose extension
+headers are not in the recommended order, and RFC 9099 recommends
+dropping non-conforming fragmented IPv6 packets, so dropping here is
+permitted rather than a deviation.
 
-Fold the protocol into the unused upper bits of the 32-bit id field
-of the key. The IPv4 identification is 16 bits and occupies the low
-half, so the protocol can be carried in the upper bits without changing
-the key layout, the key comparison or the hash.
-
-Fixes: cc8f4d020c0b ("examples/ip_reassembly: initial import")
+Fixes: 4f1a8f633862 ("ip_frag: add IPv6 reassembly")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/ip_frag/rte_ipv4_reassembly.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ lib/ip_frag/rte_ipv6_reassembly.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/lib/ip_frag/rte_ipv4_reassembly.c b/lib/ip_frag/rte_ipv4_reassembly.c
-index 3c8ae113ba..980f7a3b77 100644
---- a/lib/ip_frag/rte_ipv4_reassembly.c
-+++ b/lib/ip_frag/rte_ipv4_reassembly.c
-@@ -111,9 +111,15 @@ rte_ipv4_frag_reassemble_packet(struct rte_ip_frag_tbl *tbl,
- 	ip_ofs = (uint16_t)(flag_offset & RTE_IPV4_HDR_OFFSET_MASK);
- 	ip_flag = (uint16_t)(flag_offset & RTE_IPV4_HDR_MF_FLAG);
+diff --git a/lib/ip_frag/rte_ipv6_reassembly.c b/lib/ip_frag/rte_ipv6_reassembly.c
+index 0e809a01e5..7c1659002b 100644
+--- a/lib/ip_frag/rte_ipv6_reassembly.c
++++ b/lib/ip_frag/rte_ipv6_reassembly.c
+@@ -180,6 +180,19 @@ rte_ipv6_frag_reassemble_packet(struct rte_ip_frag_tbl *tbl,
+ 		return NULL;
+ 	}
  
 +	/*
-+	 * RFC 791 requires using: source, destination, identifier field and protocol
++	 * Only a fragment header directly following the IPv6 header is
++	 * supported. Other extension headers in the unfragmentable part are
++	 * not handled: ipv6_frag_reassemble() assumes l3_len covers exactly
++	 * the IPv6 and fragment headers when it patches the next-header field
++	 * and removes the fragment header. Drop the fragment rather than
++	 * produce a corrupt datagram.
 +	 */
++	if (mb->l3_len != sizeof(struct rte_ipv6_hdr) + sizeof(*frag_hdr)) {
++		IP_FRAG_MBUF2DR(dr, mb);
++		return NULL;
++	}
 +
- 	/* use first 8 bytes only */
- 	memcpy(&key.src_dst[0], &ip_hdr->src_addr, 8);
--	key.id = ip_hdr->packet_id;
-+
-+	/* packet_id is 16 bits and proto id is 8 bits */
-+	key.id = ((uint32_t) ip_hdr->next_proto_id << 16) | ip_hdr->packet_id;
- 	key.key_len = IPV4_KEYLEN;
+ 	if (unlikely(trim > 0))
+ 		rte_pktmbuf_trim(mb, trim);
  
- 	ip_ofs *= RTE_IPV4_HDR_OFFSET_UNITS;
 -- 
 2.53.0
 
