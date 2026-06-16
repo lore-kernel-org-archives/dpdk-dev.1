@@ -2,84 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD094CD98CF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E46CD98CF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:39:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1C8534060C;
-	Tue, 16 Jun 2026 11:33:32 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 91DC94060C
- for <dev@dpdk.org>; Tue, 16 Jun 2026 11:33:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1781602410;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=xR5K7OpCBu5x7k68IgGihIiQ/B50Ccl4ekHzFSuKvRk=;
- b=YOKdlbyzETrVQSsKzu+1CB4n9b4mM4FqtEU+LlbgSAvk0pg00Y6Lg2fcUK8l8XGx0ej7Fi
- Uuk4Bn5hkv7SRLnA+NZWuLfhChX8+zNmpyPmO+W9fMMo83W7rzFk/o9aDFk6tow1+n/e4Z
- FrvLFLYshFDYMQA7d5KO05XG4chnqYI=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-347-Ijc9K34EPgeg3NahTqDIiQ-1; Tue, 16 Jun 2026 05:33:26 -0400
-X-MC-Unique: Ijc9K34EPgeg3NahTqDIiQ-1
-X-Mimecast-MFC-AGG-ID: Ijc9K34EPgeg3NahTqDIiQ_1781602405
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-396775c26f6so19879581fa.3
- for <dev@dpdk.org>; Tue, 16 Jun 2026 02:33:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0B6A740298;
+	Tue, 16 Jun 2026 11:39:19 +0200 (CEST)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
+ [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 636E840298
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 11:39:18 +0200 (CEST)
+Received: by mail-wm1-f53.google.com with SMTP id
+ 5b1f17b1804b1-490ae94a89eso38283525e9.1
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 02:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1781602758; x=1782207558; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+ bh=/jNfazvuMmaiE80lDjBcAzAiJpiDDMBdcJ7a59H+zsE=;
+ b=qvSl2AGtOhpahLtbrT2aEwmmlparKaU2Y4KF1Q9sid7WK9RmWVviWtOSi6v3kyipev
+ NY9E9sLfHSnhZD2qMAOarZ9emBX9ilke+ZN07Af+sQq0tvqbDLx5HMHk8X/vzjL7hW1a
+ OdH7G9HHBMZk2cJJHeGHE3fu2fW0wavcdE6kTRSk+FSCMSe1V+yvhIDJmvGKwy4IQ2SW
+ RY/akTigzfqKtg4to/uQHj2bWFDWplphhh6nwTULSRgStI6J3YKFa7M6zOn0JVw4y645
+ EBlGcZeHpCwC7KCsUkmyFZ1FRv3BGARGDCSU9SlIzVHQFzE3LNlExxX7gWdKDuLWi0yK
+ ugTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781602405; x=1782207205;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=xR5K7OpCBu5x7k68IgGihIiQ/B50Ccl4ekHzFSuKvRk=;
- b=VO2k5JM1OBtsQnXWWDJtJMRFZX8Hw8V8GxrT4TBbeZzvY1ZSyaFTm+0IS4eQh13FBN
- MrNH/Ywhe5IyLcIvHd6tWyxomqQ4aCip9/THcNVRdAWvMyeUMGA2+wwINZ8hJNU4hUSj
- xlmHNH/HXP91YZoaYLw+IJh84q/0VJbG3jD6qQ0v2VDQ2oBF6CtubcfFfj1XOcR9eH5U
- JkAJ2xvra20WNsgilEDNZhxAJIxG/sigl6dThOgJ0wVxKXFbK4lZmE7LygSKK0wsZCI3
- GYNIPsvZ9M6MWJN8tLxIWUlrkTuZQSflRwYEW1k2tf6IGg4bgYCiiA4sVxCecS/gQAki
- +J5g==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/oBGXBQqUsIS5otYr9XUMCPQEjmJqqyFqUh9bGFeVwvJDuyz1dt0YTJLyb7dSQnyBh9bY=@dpdk.org
-X-Gm-Message-State: AOJu0YygTUj82lNp59/rNMTsffWB0o43aPvLxAEv1EBNzwUn4e1HGp4s
- jQgho9HKQ7s8obS2QWjo/7lB/qi2MFpoYp0NuVUlLtBsT36d1b5umZNjY7T/7LNn3Qf2rO+wH3T
- uKLyQjSdRu4DaJf1gHjzcPs9ft2kaMWSiEIPyK+EyXnVkUHklMPb03Uj49l6q2gBZ6HP6MWfMyd
- 1f40ulGfIu7HijW3FHCKA=
-X-Gm-Gg: Acq92OFVV3Yrpn0LzZGykfwYDT2t5qHL039TWn4fuMmyW6/q8HCSK5P7FUhJC8hUqk7
- F0xqpgC2M5pUblSu/yIxsNMM0K6N1QnsUoqwRHxM3aGBVx/NV4Sp4Gta42as8+0UMSB7uiyovJD
- LIrQH33d9fW37c2us8zdZ6viynbZX1eCRD8VTTHfDaWf7jCqHQR+gE1xV2mOV89akQbg40jJqwS
- k7BA0LbQdkbZcO2yDlLW/zrcfi33BgT5BJkchUeXDhzx7jWgaf7rE9iQNqRjty0vs0F0A==
-X-Received: by 2002:a2e:a681:0:b0:393:d562:d51b with SMTP id
- 38308e7fff4ca-3995c7bbde9mr6608471fa.9.1781602405080; 
- Tue, 16 Jun 2026 02:33:25 -0700 (PDT)
-X-Received: by 2002:a2e:a681:0:b0:393:d562:d51b with SMTP id
- 38308e7fff4ca-3995c7bbde9mr6608341fa.9.1781602404512; Tue, 16 Jun 2026
- 02:33:24 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1781602758; x=1782207558;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=/jNfazvuMmaiE80lDjBcAzAiJpiDDMBdcJ7a59H+zsE=;
+ b=ldvKs4qS/LI2BoteKjvsV0raferbANnsC3AnlGEJ4nAG/9v8eKaPcEtRL8gQ3PVsQr
+ IlkTYExzZ9dbhy5+2W7oIfLaRV63XlzuMApbONwhabxpVCKh6lT+zoYTNutFUW0GCSEa
+ ptmiY2o+s5GeNnlBy4qHcSCYpLnCWy/aX45AF+Xv69xXNWPBY6sGaTk/drnTWqvKLfbk
+ FAQY/0syYKuCm/dcqqhZWHFCsnSZsLC35L2Sl+q5lKb5rqPNTsPRCwq7w7eCAQsAzhMB
+ qMNNenyWt/9vWaHF1WJ9knp0tFKEGL6H9CDq5h7oXTpP/S+NUnrbwFf+l0Wt5VZvd+To
+ AAEg==
+X-Gm-Message-State: AOJu0Yyr00ZGsPKbAXFEtLnmsAI+KfOeQYg48wnvL0a4B0uGe40+YLHR
+ n4iQBDVAStywSPO2glT1/I5ECUW33FTQRoX54VM4pvEGdMRfHiUs01sOx3lHGeli
+X-Gm-Gg: Acq92OHPSCcJ8lPwIo3SwebRmGH3WgcBZlstIL74k7Gipk3fdMDuMwfaJMfkagLWEdA
+ eorB4cgT1X/oJGT4RAkLUC0AYEu849A64CbuD4hBEfVzYOlKbCPbGyQWjsve1TpuaIeQcRtvBnO
+ TKRhBqp6XeKUlGEEE4AlF20Y4yrH293eJIzFgRwhHqn7hi+AkUVM3S8LonavtL2uV3sTTIvuv6Y
+ UW72xJ7kfhG/6eFwnzOxmo3fXNZrpy7hFc3hrrntnB5ugbvMcsvdSLL++BQgPbNFdjdNEeCfuLB
+ SSPBmvvw0rppF6ZxSv+Rwxn4HR+sOZzH/cYJXTN0YxnR0ZB4pkIkuIAlIZJShvFIYuMdir4S4TS
+ DCGZAL8V3ostigQknMDjT105TKGif9x2NOTecxo4077wZ+pEJIUFl1lyE1LExB16CwuxdUvZrUT
+ NJ2RleIt7hJIY4sly69XecMeJ8xJnki09EceD2J0KbYlseQ87uZn0OAPsEVUaZ91o=
+X-Received: by 2002:a05:600c:c0c3:10b0:490:c024:2ec8 with SMTP id
+ 5b1f17b1804b1-4921fcb3ffemr155439345e9.0.1781602757543; 
+ Tue, 16 Jun 2026 02:39:17 -0700 (PDT)
+Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-4922fa890d8sm72639155e9.10.2026.06.16.02.39.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 16 Jun 2026 02:39:17 -0700 (PDT)
+Sender: Maxime Leroy <maxime.leroys@gmail.com>
+From: Maxime Leroy <maxime@leroys.fr>
+To: dev@dpdk.org
+Cc: Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org,
+ Aman Singh <aman.deep.singh@intel.com>, Heqing Zhu <heqing.zhu@intel.com>,
+ Jijiang Liu <jijiang.liu@intel.com>, Helin Zhang <helin.zhang@intel.com>,
+ Cunming Liang <cunming.liang@intel.com>, Jing Chen <jing.d.chen@intel.com>
+Subject: [PATCH] app/testpmd: include IP fields in UDP RSS option
+Date: Tue, 16 Jun 2026 11:39:12 +0200
+Message-ID: <20260616093912.685791-1-maxime@leroys.fr>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-References: <20260611154926.392670-1-maxime@leroys.fr>
- <20260611154926.392670-9-maxime@leroys.fr>
- <CAJFAV8xTgkgdSzX980qW3zT+gqcDkrQyDV48SMzGh5qSCkz=7Q@mail.gmail.com>
- <CAHHRULXCs5yrQn_rQt_iPY3gBgoEx7K+vvdVOT_4dGk6E9_2NQ@mail.gmail.com>
-In-Reply-To: <CAHHRULXCs5yrQn_rQt_iPY3gBgoEx7K+vvdVOT_4dGk6E9_2NQ@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 16 Jun 2026 11:33:11 +0200
-X-Gm-Features: AVVi8CelmX9QgKfniz3zjDOlOGmG9DLDtSPPiMadBR5XopjvusRllq13PTCZZhk
-Message-ID: <CAJFAV8xzdfmykx2qcCjeywJdCPeEiJ5BE4KPLdWTXZVq44ptBg@mail.gmail.com>
-Subject: Re: [PATCH 8/9] ethdev: keep fast-path ops valid after port stop
-To: Maxime Leroy <maxime@leroys.fr>
-Cc: hemant.agrawal@nxp.com, sachin.saxena@nxp.com, dev@dpdk.org, 
- stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
- Sunil Kumar Kori <skori@marvell.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: kqNrAtoa9b9P2gurXA_bMSie5bHj3vfZ0L5Qt7YtIoY_1781602405
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,107 +79,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 16 Jun 2026 at 11:23, Maxime Leroy <maxime@leroys.fr> wrote:
-> On Mon, Jun 15, 2026 at 11:26=E2=80=AFAM David Marchand
-> <david.marchand@redhat.com> wrote:
-> >
-> > On Thu, 11 Jun 2026 at 17:51, Maxime Leroy <maxime@leroys.fr> wrote:
-> > >
-> > > eth_dev_fp_ops_reset() restores a port's fast-path ops on stop/releas=
-e
-> > > via a compound literal, so every field it omits is zeroed to NULL. It
-> > > sets only rx_pkt_burst/tx_pkt_burst (and the rxq/txq data), leaving
-> > > rx_queue_count, tx_queue_count, rx/tx_descriptor_status, tx_pkt_prepa=
-re
-> > > and the recycle callbacks NULL.
-> > >
-> > > In non-debug builds these ops are reached through an unguarded indire=
-ct
-> > > call (the NULL check exists only under RTE_ETHDEV_DEBUG_RX/TX). So a
-> > > thread calling e.g. rte_eth_rx_queue_count() on a port being stopped
-> > > dereferences NULL and crashes, while the same race on rte_eth_rx_burs=
-t()
-> > > is harmless because the burst ops are reset to dummies. A poll-mode
-> > > worker re-checking rx_queue_count before arming the Rx interrupt and
-> > > sleeping hits exactly this.
-> > >
-> > > Reset these ops to the same dummies eth_dev_set_dummy_fops() installs=
-,
-> > > so a stopped port behaves like a freshly allocated one: every fast-pa=
-th
-> > > op is a safe no-op, none is NULL.
-> > >
-> > > Fixes: 066f3d9cc21c ("ethdev: remove callback checks from fast path")
-> > > Cc: stable@dpdk.org
-> > > Signed-off-by: Maxime Leroy <maxime@leroys.fr>
-> > > ---
-> > >  lib/ethdev/ethdev_private.c | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > >
-> > > diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.=
-c
-> > > index 72a0723846..75ea3eedff 100644
-> > > --- a/lib/ethdev/ethdev_private.c
-> > > +++ b/lib/ethdev/ethdev_private.c
-> > > @@ -263,6 +263,13 @@ eth_dev_fp_ops_reset(struct rte_eth_fp_ops *fpo)
-> > >         *fpo =3D (struct rte_eth_fp_ops) {
-> > >                 .rx_pkt_burst =3D dummy_eth_rx_burst,
-> > >                 .tx_pkt_burst =3D dummy_eth_tx_burst,
-> > > +               .tx_pkt_prepare =3D rte_eth_tx_pkt_prepare_dummy,
-> > > +               .rx_queue_count =3D rte_eth_queue_count_dummy,
-> > > +               .tx_queue_count =3D rte_eth_queue_count_dummy,
-> > > +               .rx_descriptor_status =3D rte_eth_descriptor_status_d=
-ummy,
-> > > +               .tx_descriptor_status =3D rte_eth_descriptor_status_d=
-ummy,
-> > > +               .recycle_tx_mbufs_reuse =3D rte_eth_recycle_tx_mbufs_=
-reuse_dummy,
-> > > +               .recycle_rx_descriptors_refill =3D rte_eth_recycle_rx=
-_descriptors_refill_dummy,
-> > >                 .rxq =3D {
-> > >                         .data =3D (void **)&dummy_queues_array[port_i=
-d],
-> > >                         .clbk =3D dummy_data,
-> >
-> > Could we replace eth_dev_set_dummy_fops() with a call to
-> > eth_dev_fp_ops_reset() in rte_eth_dev_allocate?
-> > I don't like keeping two separate helpers.
->
-> Thanks for the review.
->
-> Avoiding the duplication is a good idea, but I could not find a clean
-> way to do it: eth_dev_set_dummy_fops() and eth_dev_fp_ops_reset()
-> cannot be unified without making things worse.
->
-> - They write two different structures. eth_dev_set_dummy_fops() sets
-> struct rte_eth_dev (the source ops); rte_eth_dev_allocate() fills
-> eth_dev->*, and eth_dev_fp_ops_setup() then copies eth_dev->* into the
-> per-port struct rte_eth_fp_ops. eth_dev_fp_ops_reset() writes that
-> fast-path table entry directly. So calling fp_ops_reset() from
-> rte_eth_dev_allocate() would populate the wrong structure.
->
-> - The burst dummies are intentionally different. set_dummy_fops() uses
-> the silent rte_eth_pkt_burst_dummy (a freshly allocated,
-> not-yet-started port is benign), while fp_ops_reset() uses
-> dummy_eth_rx_burst/dummy_eth_tx_burst, which log an error and dump the
-> stack because hitting the data path on a stopped port is a misuse
-> worth flagging.
->
-> - fp_ops_reset() also wires fpo->rxq/txq to the
-> dummy_queues_array/dummy_data used by the fast-path table, with no
-> equivalent on rte_eth_dev.
->
-> The only shared part is the non-burst dummy assignments, but factoring
-> those across the two different struct types would require a token
-> macro, and I don't have a clean solution for it. So for now I have
-> kept the two helpers as they are. Suggestions welcome.
+The --rss-udp option is documented as enabling IPv4/IPv6 + UDP RSS, but it
+currently sets the RSS hash functions to RTE_ETH_RSS_UDP only.
 
-Ok, I had missed the separate structs.
+On PMDs that translate this directly to L4 port extracts, this can build a
+L4-only RSS key. Add RTE_ETH_RSS_IP when --rss-udp is selected so the
+configured key matches the documented IPv4/IPv6 + UDP behavior.
 
-Let's keep it simple, and avoid adding macros.
-Can you add a comment that those helpers should be kept in sync?
+Make --rss-ip additive as well, so combining --rss-ip and --rss-udp is
+order-independent.
 
+Fixes: 8a387fa85f02 ("ethdev: more RSS flags")
+Cc: stable@dpdk.org
+Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+---
+ app/test-pmd/parameters.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---=20
-David Marchand
+diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
+index 337d8fc8ac..0032ea4e25 100644
+--- a/app/test-pmd/parameters.c
++++ b/app/test-pmd/parameters.c
+@@ -1286,10 +1286,10 @@ launch_args_parse(int argc, char** argv)
+ 			set_pkt_forwarding_mode(optarg);
+ 			break;
+ 		case TESTPMD_OPT_RSS_IP_NUM:
+-			rss_hf = RTE_ETH_RSS_IP;
++			rss_hf |= RTE_ETH_RSS_IP;
+ 			break;
+ 		case TESTPMD_OPT_RSS_UDP_NUM:
+-			rss_hf = RTE_ETH_RSS_UDP;
++			rss_hf |= RTE_ETH_RSS_IP | RTE_ETH_RSS_UDP;
+ 			break;
+ 		case TESTPMD_OPT_RSS_LEVEL_INNER_NUM:
+ 			rss_hf |= RTE_ETH_RSS_LEVEL_INNERMOST;
+-- 
+2.43.0
 
