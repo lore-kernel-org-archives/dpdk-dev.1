@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 363ADCD98DA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D747BCD98DA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:43:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 40AAE406BB;
-	Tue, 16 Jun 2026 11:43:11 +0200 (CEST)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id ABDC4406BB
- for <dev@dpdk.org>; Tue, 16 Jun 2026 11:43:09 +0200 (CEST)
-Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-45ef56d9b67so3686155f8f.2
- for <dev@dpdk.org>; Tue, 16 Jun 2026 02:43:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5542640DDA;
+	Tue, 16 Jun 2026 11:43:14 +0200 (CEST)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
+ [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id 3766940DC9
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 11:43:12 +0200 (CEST)
+Received: by mail-wr1-f44.google.com with SMTP id
+ ffacd0b85a97d-45eec22fab7so1887152f8f.3
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 02:43:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781602989; x=1782207789; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1781602992; x=1782207792; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Gc02EQv5QA6SxV+V+dDP9i6L6+UcqtHQ/X5gxIR96yM=;
- b=ddCaUW3oi5WCFvT3YULB48x3V/0rn7YWKPseg6Yn9zwkIsD6vN4jbD2IQsIrEdNweE
- ZYqNaZLJvQKBB2bxqYmKxt4L3i7B8CSQYHdzHWPmzsAQLpAR8JPjj8wTBWDEDBYqNzfL
- E8F+aClUWNAkvW6DqlBPMHenivEx3zj5dvbxtKHnpjGyXTJ72C0/3bKyEJQsezsoVT5E
- 5EDsN16ETVoWZ6a1gCi4gAVFd0TtfjUnVxQh6ith+FGxoP/uhO2HYMeF9ySL4UWbqyTC
- JC4lj7F9lWwoU4r9GIgMI10132hfoS/fYYwGscBn1WI80KRyArS0QNPrvGvzaOree1cZ
- xVEg==
+ bh=oYwJG+F/i99oD03wigHiKABjErd9HTA+XGyMICpNmOw=;
+ b=Vv5j5eoGGT/l1KZ9xmtCGkJb+sN5VJ0SlOsRenHMQTXBy82JBg7tg/8Vofl5hYiEfR
+ o/LPlBR4GA5h40j7zenJOB1BrwVnrvAIjUdMx8NMlWryImEVjIBUeAfQI2qywO2xtc5K
+ wYgL+1SPSfVY3obPNYYQpfRyEdd/jINsW8IL5PfHjW+myKWnecf911EUN2N49qDjb6vi
+ Mh9RkyE21He9pbJv5+wrMJhKGkin+EDK444KRD0izQOFRYIvfX4ITbAju02C6pwdxXfP
+ /NXgQwjCoBhhvdpKihLzLVf+ieeyl6PwxRZRfkYv4Zm16/RJkMXJ38PBPjZwJph1GoLz
+ wv5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781602989; x=1782207789;
+ d=1e100.net; s=20251104; t=1781602992; x=1782207792;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=Gc02EQv5QA6SxV+V+dDP9i6L6+UcqtHQ/X5gxIR96yM=;
- b=frkcrcTQWQJS6i43t4FbFPpmRC3bRMilXaV+g8FFPDCoTwngWvrSY8ArsDF2kC2qQT
- TBCishebL/MsqGJAk8M8KnRBcZRD+GVni3mTXABA2I+ZaBD6qHZ2qPgmt+iwg1SdOV1J
- p+91qf+GQ/3Eg+5EmCjaLeSgM6HCK+2Ra7YTsKj7LUof6xyjcfuYsQMxmeTFz+7uZGca
- SclHD+u1cuqPnVSMSI0hIE82VW/ZbexUyYCBuVmOOZWmqGDcaDEfnDjfFX3NiS+vOhNU
- YnfcjHvBuqtGJvPRgcfMw6CbJVw8twfYlVJ6jMm3n8lRBVsYqKMGawIkP/NqdYpmp8O4
- o2RQ==
-X-Gm-Message-State: AOJu0Ywe8IVcOBeaMIfKEiHiZa9wUXiKfAGOtKfJrNoecTaUGi7aMXpU
- ci+PdWP8bAHZzgeGJKmTtVGXS1R3z73XMeKhqOgaHoizi58jVwPResHCA8d1gew8
-X-Gm-Gg: Acq92OHOY+fT0r2kiTBYg581Q3DqdqeBCPHmD4RI4YzdZ/8Rjsu5RvAalmN76+IWFCQ
- cTVJYgn1UUmlM6OUK8gvpVGWaV/hy9baQWwCaXJF11THVHSs/0qBqAsyAZtivPpnraxi5meajKQ
- I1g5JLsvLPykcpl06CJ0S2B6aAHm72FLWs5HazhGA7a2fqS+MdY0GCPipFbQocZvcThyvvvOSMy
- wZRlxtkTO06ZT49aYS5MyaUHqmTEpcGqMh3OnVh2IiXayltCng/wi1g6saqTPzMDJVVI++NjgJp
- Czb+dewZZkuTZN0mOWIfaQIbQSvnJvAo+kLzUJ/UHtduCKX9t5we1q1JOpQ6ppHOdesqfBdJ0dq
- UYXK88k6QR9J6MukYcYq5pmGi5+jzmh/hLfRbxYGNH12MjqJMyNm92cFFfz6JfKXOSE9F3wV++P
- 0p3QiDVBCrQ61V2Rxgr+M3w3gzQ+GM424/aQDvwoah3e8x0MPp/+mU
-X-Received: by 2002:a05:6000:992:b0:460:6a83:222b with SMTP id
- ffacd0b85a97d-46079db7283mr20286526f8f.28.1781602989164; 
- Tue, 16 Jun 2026 02:43:09 -0700 (PDT)
+ bh=oYwJG+F/i99oD03wigHiKABjErd9HTA+XGyMICpNmOw=;
+ b=F9BlF/xSLWQAqCsuxPYkfWEAGEMNvv9C1jLzp8J70Jglvxh0zfCt5Zrgar082ZjYZa
+ kf2MAExYoyMO1qulKT12NvFLLwjNsWCkT7YmBp3+Qfz5hWCm8y4v61mxjDZFTFtv/0+K
+ lJMUs3JDbiDs3Qy8o9snd3UcbeaB3FkvD+Yhsyos+ai3T7/y+0GlyCn0eykRAzp2ATyH
+ 0Y3EBHTW/9b3m4aSvQCDTBTFvMzr7zAwIcxplC5STTzfnmaEKYKfMUFr1ATh2L3wd4Av
+ /R91z4sy3B1eK9gGPnxVXjWiECR0uBcv/iO2G5jvUVBg1WebMqSTAwcIuDbfZ0qFcVtT
+ ZF7A==
+X-Gm-Message-State: AOJu0YyNBfJ63EFm3umw2lWnu6nNf3RGCXyCYgMapQl3oZLpmBWRMFBS
+ 6JyuWwzgks4cYPhz3Jt0Q/CK8vfT8szliH2OvmVlv7WVprRaffbAgUc0qr8A3Gv5
+X-Gm-Gg: Acq92OEw6iO3n3H5gU7ZORazuetnaQHIuIvh6OYvjFvcGTGHU9fEC7Y+9dN8+o6Fkfn
+ lVehUiebwUCS22z3F0A73JwLQPA0iroMQWK1kRGFvrVYfjYoCGAlVTxz7ZusSCYGkXTV7hVuRfi
+ CPYbbsMcxXUvnPF3LMP2jGo3W2Bfw53fJG8+WV/b9m4+RkkOycdbd9hzZpzkZ/0Xkq/D711ZYii
+ IUcoLTny6BLmVte4BrwJP7JrIyXetvYenxL7xMXdGKiCcJS3PyVpf/QnubJTRhTp+5ldcOG/v3z
+ Yl3o+VY+4mGAXMOQugAtzp+qY3zfDFgcSRIQLOrtRtcK/5bdHOfmNFmXB9dcQ+9z6Aa+OTg1EVU
+ sYFCtcOWSGJzMikCBQ7TQbmHZnrEXnEcGPQQXqz2/mV/VIwwwPWAo0jCFFHoWfKeObqeGdVVg7t
+ egA+uXJ35/JQIT5r091b2nmoap0MuO/RMiOYvwKBstoc8camq40y3VWrsinfY2YmE=
+X-Received: by 2002:a05:600c:6749:b0:490:3f7a:108b with SMTP id
+ 5b1f17b1804b1-4922ffa2367mr41517345e9.16.1781602991494; 
+ Tue, 16 Jun 2026 02:43:11 -0700 (PDT)
 Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4606f2dbfb1sm45814089f8f.35.2026.06.16.02.43.08
+ 5b1f17b1804b1-49230a96b47sm39396145e9.13.2026.06.16.02.43.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 02:43:08 -0700 (PDT)
+ Tue, 16 Jun 2026 02:43:10 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
  Thomas Monjalon <thomas@monjalon.net>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Sunil Kumar Kori <skori@marvell.com>
-Subject: [PATCH 1/2] ethdev: keep fast-path ops valid after port stop
-Date: Tue, 16 Jun 2026 11:42:57 +0200
-Message-ID: <20260616094259.686555-2-maxime@leroys.fr>
+ Sunil Kumar Kori <skori@marvell.com>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH 2/2] ethdev: return 0 from dummy queue count
+Date: Tue, 16 Jun 2026 11:42:58 +0200
+Message-ID: <20260616094259.686555-3-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260616094259.686555-1-maxime@leroys.fr>
 References: <20260616094259.686555-1-maxime@leroys.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -84,51 +84,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-eth_dev_fp_ops_reset() restores a port's fast-path ops on stop/release
-via a compound literal, so every field it omits is zeroed to NULL. It
-sets only rx_pkt_burst/tx_pkt_burst (and the rxq/txq data), leaving
-rx_queue_count, tx_queue_count, rx/tx_descriptor_status, tx_pkt_prepare
-and the recycle callbacks NULL.
+The dummy rx_queue_count/tx_queue_count callback returned -ENOTSUP. On a
+port that is not started (freshly allocated, or stopped once the fast-path
+ops are reset to dummies) there are no packets queued, so the truthful
+answer is 0, not an error: querying the count is not an unsupported
+operation. This also matches the dummy Rx/Tx burst, which reports 0
+packets.
 
-In non-debug builds these ops are reached through an unguarded indirect
-call (the NULL check exists only under RTE_ETHDEV_DEBUG_RX/TX). So a
-thread calling e.g. rte_eth_rx_queue_count() on a port being stopped
-dereferences NULL and crashes, while the same race on rte_eth_rx_burst()
-is harmless because the burst ops are reset to dummies. A poll-mode
-worker re-checking rx_queue_count before arming the Rx interrupt and
-sleeping hits exactly this.
-
-Reset these non-burst ops to the same dummies eth_dev_set_dummy_fops()
-installs, so a stopped port behaves like a freshly allocated one: every
-fast-path op is a safe no-op, none is NULL.
+A poll-mode worker checking rte_eth_rx_queue_count() across a concurrent
+port stop then sees an empty queue instead of a negative error.
 
 Fixes: 066f3d9cc21c ("ethdev: remove callback checks from fast path")
 Cc: stable@dpdk.org
 
+Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- lib/ethdev/ethdev_private.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ lib/ethdev/ethdev_driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.c
-index 72a0723846..75ea3eedff 100644
---- a/lib/ethdev/ethdev_private.c
-+++ b/lib/ethdev/ethdev_private.c
-@@ -263,6 +263,13 @@ eth_dev_fp_ops_reset(struct rte_eth_fp_ops *fpo)
- 	*fpo = (struct rte_eth_fp_ops) {
- 		.rx_pkt_burst = dummy_eth_rx_burst,
- 		.tx_pkt_burst = dummy_eth_tx_burst,
-+		.tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy,
-+		.rx_queue_count = rte_eth_queue_count_dummy,
-+		.tx_queue_count = rte_eth_queue_count_dummy,
-+		.rx_descriptor_status = rte_eth_descriptor_status_dummy,
-+		.tx_descriptor_status = rte_eth_descriptor_status_dummy,
-+		.recycle_tx_mbufs_reuse = rte_eth_recycle_tx_mbufs_reuse_dummy,
-+		.recycle_rx_descriptors_refill = rte_eth_recycle_rx_descriptors_refill_dummy,
- 		.rxq = {
- 			.data = (void **)&dummy_queues_array[port_id],
- 			.clbk = dummy_data,
+diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
+index 70ddce5bfc..eab5c15d12 100644
+--- a/lib/ethdev/ethdev_driver.c
++++ b/lib/ethdev/ethdev_driver.c
+@@ -875,7 +875,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_queue_count_dummy)
+ int
+ rte_eth_queue_count_dummy(void *queue __rte_unused)
+ {
+-	return -ENOTSUP;
++	return 0;
+ }
+ 
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_descriptor_status_dummy)
 -- 
 2.43.0
 
