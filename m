@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FEF7CD98E1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 12:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12142CD98DA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 12:21:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 80DFF40E5A;
-	Tue, 16 Jun 2026 14:21:18 +0200 (CEST)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id 58B6240E40;
- Tue, 16 Jun 2026 14:21:16 +0200 (CEST)
-X-QQ-mid: esmtpsz20t1781612473tf7477f90
-X-QQ-Originating-IP: rnQY6JUE23d8T+lQSQbkAA4SZBPLthGGB5uQOv9EY4w=
+	by mails.dpdk.org (Postfix) with ESMTP id 9FC5C40E30;
+	Tue, 16 Jun 2026 14:21:24 +0200 (CEST)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+ by mails.dpdk.org (Postfix) with ESMTP id 1266940DC9;
+ Tue, 16 Jun 2026 14:21:22 +0200 (CEST)
+X-QQ-mid: esmtpsz20t1781612476t8f937cb0
+X-QQ-Originating-IP: 5hp+fDJhxB+NlV/1qF83lK3dSv73gEoM8JXCWHNY7/E=
 Received: from DSK-zaiyuwang.trustnetic.com ( [183.157.22.210])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 16 Jun 2026 20:21:12 +0800 (CST)
+ id ; Tue, 16 Jun 2026 20:21:14 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8847358170659570412
-EX-QQ-RecipientCnt: 4
+X-BIZMAIL-ID: 17895895793683023674
+EX-QQ-RecipientCnt: 5
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v6 08/21] net/txgbe: fix link flow control registers for
- Amber-Lite
-Date: Tue, 16 Jun 2026 20:20:16 +0800
-Message-Id: <20260616122030.9688-9-zaiyuwang@trustnetic.com>
+ Jiawen Wu <jiawenwu@trustnetic.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v6 09/21] net/txgbe: fix link flow control config for Sapphire
+Date: Tue, 16 Jun 2026 20:20:17 +0800
+Message-Id: <20260616122030.9688-10-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260616122030.9688-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -35,23 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MUe2PhP7Eq798VObQqJX7c59Q0iD4CsWD2TI4Gc1J02dVODsf0/IL5Dn
- qnCpZkgXL23uOH2RrV/ZWEG2uOfEnRgr0fBUcPEFNC3oB4KyvFGQBUU/YtReH31b2r4Rg/Q
- k1lzhLuBpL/2FQqJMkFrI23RBrR7/HijG6Ie6jGaRA5WrGZwV/iSuWseoXYlZgEjNEd0W90
- F+hZj4yhs1L4RcO2wwyoKJ0woK/LdI4RyL21c6QKX+YA0dKK4rhtc8G7RIZIQqz5diSW2Xb
- aiDuTzsy2pUyNQW2qyNsok67CNmkC5Rqz4yjrHAPiuadbgt+tJG4zvBlNgzQ/RZ5kCzFp1c
- QJIJWHqcfU/n4FCWR8/KWy1H3SrZR7zCyjJInwlPCYFAGpcOOUERN4YgDtH7zeDAKBUuM3J
- JyuKTLZizrSqAKLpOWCOPmLE7iSLBYY4rNA3bYsZ/xNQkC7wPfThaZQKrk7SbO5KiaHwYdx
- Sg2czijnz879tIk4afEr1bBLfLTJNBD4qpkVvqIDk7pjNkXhgbLRMkfjwSpXwul5UEbIaqy
- Phq8w2KkG69wWtLXJCJEdcn++1mc/4kJ+aphu+BllOc/cUrZ1RUtEks186ghySmso00SQ2u
- Ta6emEq1rRmeJA2Wo9ZSmRI2wloc0WS3G3fwTemB+k4L5dPeX+vOs+Sv8uor77SwpbFbrGA
- yNEyMP7LA5nl9Svp5VoxLYCY4vWqqFCV7mcZojK0tshml/RkWRiSPnFWf9xicPVCuMxv2E+
- LQBinbxtck9ZTo9Cmf8YNE8HEN+eDTiBmDFbcJ08yVWJazHvXmgqoe3LYRIccQlT1OfhKT+
- UZKqtt/6zWKJdsFYEhuDeLRKBDHKtoO3VSd/ia2D5QuLroNM2GSkwjMT2ioQOEM4Y0hH0rw
- rtIdwlIazlsJvMVBsJ/VFEB+IE4OjiU0KuhKhktxBEN2kZo3F0A5HzVTw/41Lkne4pkQQqr
- 7u3L5GLPzTHKR1h+Wc4MS/5qdYbGWoQIxlc0STnqKE5Y3Ql8T10dIEbIbJKqCboRDdhXDmJ
- uhkvnwUaWac4zaa5bgvhCY55PdzUuL0ko01A02bhj4ILXJvKX81907iH3y7Y/5yFSnmnrdL
- WROn+59iMTR7wIoIRERfL4=
+X-QQ-XMAILINFO: NQPN/EATMxZDa+3/LWbZ165Nzij1DzZDHGFgYMI7DsVt0O4veQy/sljE
+ TMP4CVh1eSQp4TSap/LC28vnDugxHfg9YTbTgq4WStj+OVERabIH/eysKrJal5P6YrscTF5
+ mJc0ET6bsLVbFTmSkdhs6jgBKYT+GHRmMXnGbJBFDDevqfaSlR6llt18KTArp1pzCy9xYRN
+ Sj7ROw+VQQPbGheAU4dafYQ56J/lQnfHGwrg+lK1g9chmK//pGUfemmX8zxyKffGj/ydcen
+ uIyk1zfSpOzfOVzmre1puRl4BPK6xWem4uUrViXg+VVXrRN/Fw6O337UQ0Jk6cG4Z8wUyv5
+ rVhpFp+8dNY+3soMKY8m9h/PSYe2BIAIjdKxMOiGOtzEEo9j5dDBhXskfQGQ05upxfZPsZy
+ oAGAFC9GXh3ITrvF1S9wZMtrlQRwiUzr8IWXCamjBJZhdx8RB9qG8YzLBe9A0Ut4OnRK8V3
+ uEN8R5fojZ38eJyM+LWN3lO/tX61rDVO+52arNktX+F5PeYOdf7VqfCL6feMIWY8B7Hqb+r
+ XjVGN+0expFmB3hYyhUyTokA+6SPBcWUVxWZg65uwY0OvU7pUZQDJ61glVFnVnKrEQ6VnTz
+ UwnMWKNOa1i0VUBlCEPB6g5LC7pGWxlw3htYQzCthNeU92ZWgh+cN2YmLDxMnYsamhDQ+gO
+ YXdy5WuW4x965UkUEM+giIz+ohlkpEyjAiLt6x4AygtF3eBUGDip3jl49usu5kWm8U7jd8Z
+ FjvB2yrHpG9ZtqnFKAoP4EK6/Tw8BVVx8KNbPCu9EsG4PGYMoWqmn1QliXJqvAsGf9mCf+g
+ DqLmjKiozm8kNxkLva0LZm9Jv6SVbzswWkIiHZIplNTwdEMAbWgGU84nUB/PJzXz71cb7Aa
+ LCtcUhHo74yT9kyakgYx4MAWm+XWjuLSSk3v+ebuJLbb9DYSKxVuhdNoY1j6o1M8STMc1C3
+ D+Ubmt4xGaAzyFuQS/+CcyPbao3lpkt/Lw0ZvKm4XwGHebv4vYAwWKhRYar3n3WJUxN5Vap
+ UdW+2+r261/qcwkTABd7jKyb7IVVAIIBv/w2NKd2UprJUSX7q3ZlD0DlHulTdCjFONrvb7W
+ pHBn7xkOW9TK/hof925lZc=
 X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -67,120 +66,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The flow control counter registers on AML NICs differ from those on SP
-NICs. Update the register offsets accordingly to ensure the counters
-work correctly.
+SP chips have a hardware bug preventing XON flow control support,
+so the driver disables it.
 
-Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
+Fixes: 69ce8c8a4ce3 ("net/txgbe: support flow control")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_hw.c   |  7 ++++++
- drivers/net/txgbe/base/txgbe_regs.h |  2 ++
- drivers/net/txgbe/base/txgbe_type.h |  4 ++++
- drivers/net/txgbe/txgbe_ethdev.c    | 34 +++++++++++++++++++----------
- 4 files changed, 36 insertions(+), 11 deletions(-)
+ drivers/net/txgbe/base/txgbe_hw.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
-index 0f3db3a1ad..0d3310e15c 100644
+index 0d3310e15c..db45c5c0ef 100644
 --- a/drivers/net/txgbe/base/txgbe_hw.c
 +++ b/drivers/net/txgbe/base/txgbe_hw.c
-@@ -394,6 +394,13 @@ s32 txgbe_clear_hw_cntrs(struct txgbe_hw *hw)
- 	rd32(hw, TXGBE_PBTXLNKXON);
- 	rd32(hw, TXGBE_PBTXLNKXOFF);
- 
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
-+		wr32(hw, TXGBE_PBRXLNKXON_AML, 0);
-+		wr32(hw, TXGBE_PBRXLNKXOFF_AML, 0);
-+		hw->last_stats.rx_xon_packets = 0;
-+		hw->last_stats.rx_xoff_packets = 0;
-+	}
-+
- 	/* DMA Stats */
- 	rd32(hw, TXGBE_DMARXPKT);
- 	rd32(hw, TXGBE_DMATXPKT);
-diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
-index 3d1bc88430..22c46e3d56 100644
---- a/drivers/net/txgbe/base/txgbe_regs.h
-+++ b/drivers/net/txgbe/base/txgbe_regs.h
-@@ -1085,6 +1085,8 @@ enum txgbe_5tuple_protocol {
- #define TXGBE_PBRXDROP                    0x019068
- #define TXGBE_PBRXLNKXOFF                 0x011988
- #define TXGBE_PBRXLNKXON                  0x011E0C
-+#define TXGBE_PBRXLNKXOFF_AML             0x011F80
-+#define TXGBE_PBRXLNKXON_AML              0x011F84
- #define TXGBE_PBRXUPXON(up)               (0x011E30 + (up) * 4)
- #define TXGBE_PBRXUPXOFF(up)              (0x011E10 + (up) * 4)
- 
-diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index ede780321f..505f598fb7 100644
---- a/drivers/net/txgbe/base/txgbe_type.h
-+++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -876,6 +876,10 @@ struct txgbe_hw {
- 		u64 tx_qp_bytes;
- 		u64 rx_qp_mc_packets;
- 	} qp_last[TXGBE_MAX_QP];
-+	struct {
-+		u64 rx_xon_packets;
-+		u64 rx_xoff_packets;
-+	} last_stats;
- 
- 	rte_spinlock_t phy_lock;
- 	/*amlite: new SW-FW mbox */
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 099341b5ab..9b5a4b72e4 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2264,16 +2264,18 @@ txgbe_dev_reset(struct rte_eth_dev *dev)
- 	return ret;
- }
- 
-+#define TXGBE_UPDATE_COUNTER_32BIT_GENERIC(reg, last, count, reset)  \
-+	do {                                                            \
-+		uint32_t current = rd32(hw, reg);                       \
-+		if ((current) < (last))                                 \
-+			current += 0x100000000ULL;                      \
-+		if (reset)                                           \
-+			(last) = current;                               \
-+		(count) = (uint32_t)((current) - (last));               \
-+	} while (0)
-+
- #define UPDATE_QP_COUNTER_32bit(reg, last_counter, counter)     \
--	{                                                       \
--		uint32_t current_counter = rd32(hw, reg);       \
--		if (current_counter < last_counter)             \
--			current_counter += 0x100000000LL;       \
--		if (!hw->offset_loaded)                         \
--			last_counter = current_counter;         \
--		counter = current_counter - last_counter;       \
--		counter &= 0xFFFFFFFFLL;                        \
--	}
-+	TXGBE_UPDATE_COUNTER_32BIT_GENERIC(reg, last_counter, counter, !hw->offset_loaded)
- 
- #define UPDATE_QP_COUNTER_36bit(reg_lsb, reg_msb, last_counter, counter) \
- 	{                                                                \
-@@ -2331,8 +2333,18 @@ txgbe_read_stats_registers(struct txgbe_hw *hw,
- 		hw_stats->up[i].rx_up_dropped +=
- 				rd32(hw, TXGBE_PBRXMISS(i));
- 	}
--	hw_stats->rx_xon_packets += rd32(hw, TXGBE_PBRXLNKXON);
--	hw_stats->rx_xoff_packets += rd32(hw, TXGBE_PBRXLNKXOFF);
-+
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
-+		TXGBE_UPDATE_COUNTER_32BIT_GENERIC(TXGBE_PBRXLNKXON_AML,
-+						   hw->last_stats.rx_xon_packets,
-+						   hw_stats->rx_xon_packets, !hw->offset_loaded);
-+		TXGBE_UPDATE_COUNTER_32BIT_GENERIC(TXGBE_PBRXLNKXOFF_AML,
-+						   hw->last_stats.rx_xoff_packets,
-+						   hw_stats->rx_xoff_packets, !hw->offset_loaded);
-+	} else {
-+		hw_stats->rx_xon_packets += rd32(hw, TXGBE_PBRXLNKXON);
-+		hw_stats->rx_xoff_packets += rd32(hw, TXGBE_PBRXLNKXOFF);
-+	}
- 	hw_stats->tx_xon_packets += rd32(hw, TXGBE_PBTXLNKXON);
- 	hw_stats->tx_xoff_packets += rd32(hw, TXGBE_PBTXLNKXOFF);
- 
+@@ -1037,8 +1037,10 @@ s32 txgbe_fc_enable(struct txgbe_hw *hw)
+ 	for (i = 0; i < TXGBE_DCB_TC_MAX; i++) {
+ 		if ((hw->fc.current_mode & txgbe_fc_tx_pause) &&
+ 		    hw->fc.high_water[i]) {
+-			fcrtl = TXGBE_FCWTRLO_TH(hw->fc.low_water[i]) |
+-				TXGBE_FCWTRLO_XON;
++			fcrtl = TXGBE_FCWTRLO_TH(hw->fc.low_water[i]);
++			/* Only AML support XON */
++			if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
++				fcrtl |= TXGBE_FCWTRLO_XON;
+ 			fcrth = TXGBE_FCWTRHI_TH(hw->fc.high_water[i]) |
+ 				TXGBE_FCWTRHI_XOFF;
+ 		} else {
 -- 
 2.21.0.windows.1
 
