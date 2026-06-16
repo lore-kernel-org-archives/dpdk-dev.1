@@ -2,141 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFF1CD98E1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 12:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 130B7CD98DA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 12:38:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 479AE40289;
-	Tue, 16 Jun 2026 14:37:49 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 7AAB94026A
- for <dev@dpdk.org>; Tue, 16 Jun 2026 14:37:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781613468; x=1813149468;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=Xvop0w6GUB8LzYyi0IYcJFK+7MWkVWk8+OXh+rqxnPM=;
- b=ZRO8gz3jHEH9QGDq6I4Ta/mnIbdrqT1bajcbFS8OM8FBW6IFbx0tmsPl
- JRJp4Twwsd+EbUIDlQ1sAQlBv66A6Z9Pc1RWl0y+Vyd7uzp86uafty4NN
- BA1BjQpjhaFrkze1rRlrN/wUlnd+ASt7wHWFHTtrlKr5jnw2MGnM1sN1R
- y9CFDWyzZin9IyI5DTnu2krflpu0ISLepaZx5PNqbHscPHwQqAA1y6XNr
- IkJ9fVtS+/HTQGuWB8S7DPhDmox1xG8w3g6St1gdXhzKv5aOPPBDlQgNQ
- Nj0hqGggSjhaN2FiUPftia0yW1KKHbNgOBxZXVVI4Ji37B684TN429uDO w==;
-X-CSE-ConnectionGUID: Y5wPglD5TSGJPWy6mwmYng==
-X-CSE-MsgGUID: vkJzs7S4RTulcYAs2y1GRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11818"; a="93864629"
-X-IronPort-AV: E=Sophos;i="6.24,208,1774335600"; d="scan'208";a="93864629"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Jun 2026 05:37:47 -0700
-X-CSE-ConnectionGUID: dcHqXfIzSmOVNhWw2OwEnw==
-X-CSE-MsgGUID: lfmo+UPVSy2ezt41OMwdyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,208,1774335600"; d="scan'208";a="247823860"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Jun 2026 05:37:46 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 16 Jun 2026 05:37:46 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 16 Jun 2026 05:37:46 -0700
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.56)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 16 Jun 2026 05:37:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G/NzQ7u/8+E9aO0rfdOg68N69LYxweeOkhR2TvkV9LAHwKVo+43Vy8OoRtNfzqzmaGBcuyXE1WiuT4zUyQdjmCS5Uub6y0wOuHHMch8BUROrZ7uQAih+kpx4ZrQ6Dh2JuL9ntLpPeG1yYZ3SL4AWUXOjl4ezDkWkBqCbO0DR7yRsKYUkpQITZMNcpmnKCuWdQEd5O2ao4O3qpHVqp9+WQy/Hy2didGMISRo0HFq0gQhwW3RIL2JOH19eAQx0WdZg4y33SgjxB6uYGJiFHS01alj2WxNMTbbeUXS6FfYyZv8NKGNQr+mvKaQQ8AUSZIJ2aB8JOk2I7u3SlE/tsyJpWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zLNK+OIn7DsYATRq4XVOK50q31qwNdhnM80aXgBmowA=;
- b=jWsKPWS/EJRnUPoTs7bNOFSs0jF0z8ogOKmtPmE04oF6aJ7wkfWK5tAa32FBNk72HIocRyQby84oWVudsr4HzoqPZApmAX87gYyd+0iPzd/SWWvJxN9SfkiBLQALQzvXWhwyZjerqUxwQcWsgVHatN9wFHJCxedeFUFJq3pouS4Fde2B70qdAmEu0oLCJ67WqeR+is3ukDEncLOnmE+JA7EozSLABtGpfeX9a25cGYHoZUtbVRY/biWB0iNJPL8q5gxKsfzTw98npvTG1I3uGRjvm+y6DykCQbMN1tdx6V0Ky0NA/HiSbydJ+4T00AZYEQBVqq8d/Yomv5UpVG1d4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DM6PR11MB4628.namprd11.prod.outlook.com (2603:10b6:5:28f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Tue, 16 Jun
- 2026 12:37:39 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0113.015; Tue, 16 Jun 2026
- 12:37:39 +0000
-Date: Tue, 16 Jun 2026 13:37:34 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: <dev@dpdk.org>
-Subject: Re: [RFC 0/4] alternative capture mechanism
-Message-ID: <ajFDjhDc5hXhE8km@bricha3-mobl1.ger.corp.intel.com>
-References: <20260609210540.768074-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260609210540.768074-1-stephen@networkplumber.org>
-X-ClientProxiedBy: DUZPR01CA0291.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b7::9) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 7067E40289;
+	Tue, 16 Jun 2026 14:38:25 +0200 (CEST)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 2F2C34026A
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 14:38:24 +0200 (CEST)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-2c0c2d8b95bso34519985ad.1
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 05:38:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1781613503; x=1782218303; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=LocTYEejZBE7D1B/NNDfjX0jD/NO2T3H+9jfzA3Jb7k=;
+ b=KS8lTCS3NE3aIqIynHkuvOXfHpFNXHr4Dve5tR/EuKLP7Hn7jGB3CeV9ErGt0AnZlZ
+ imQs8JBwlqegWl1CYWbftxfOCf1CTdutM0Znp+1YhB7k3IfdY+y4dIH4fWb8mxZkLh61
+ Jv74m9uR9KMU+DCGxdsqLu0vzFjQJATiUD59EE5/tgGrXkO8DGX+09bg/jJt9HcFlfHF
+ shGKfG4omjqJB6cug4ZMHsB9Y/2eNsblD8GaPx8JDl6ZT9RV48k0+dVBDOdqj/EMQRxm
+ KAEYOji6HBUHY2H9mP6ki5L140sw7Gq1lELmQV0F+dvGKMiS2iFCRP7iwJkd3Ag9xisg
+ tAlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781613503; x=1782218303;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=LocTYEejZBE7D1B/NNDfjX0jD/NO2T3H+9jfzA3Jb7k=;
+ b=Hdcd/XFxfGvkCVCGCBDpqAajnGEqFMq0q868vmingHUo5oDTnmbf/+3a0rwTeZ0i9Z
+ hKp6d7oVH9nZXtMK+tMaDH81UMr6qolZY7mcD3uqzVRvX2xi3AkYNKpzhrwapX1HVxp9
+ iUJTdE9ZPqMf/5qxHdR0HuXaO0pVA4o4RH22IpE+OJ4H7kZvyIAF6b8ADjouAun7SGTe
+ SXHoIwBHOc6YZPjmtSpFPVofJvDJNs6X/jnJ5Alm9zlwybKwzh6Us5kiCumeMk9pEcXl
+ ffLlliQPYOBKUxaDZlS+0lcYEUuJuap8jOdaiJ5ow9YPcT4Exgts7T+LiLVSaZg0tylx
+ xOkw==
+X-Gm-Message-State: AOJu0YzKpHs7ZwE8ZqZ/reofptg5R9ICHwzFKu7uIOJENdePWWDhGUyr
+ krlhNqlSicuuIETQsdI1GtcnV2KCZpxDKCFlQ07j7HcbL4x4wb9imCPK
+X-Gm-Gg: Acq92OE1JPYpRENCM5X50Y1iX9k18nDYzrhQAzhKFZsLGvVDhGv7QoIdKFTDalicMvv
+ fvYAEYFgfREZcZgng0qp7SEAA5KLSFfo/ZZIpkDNr1vg/83LDcdWJ9zze0qyNLKnL7OF3/ylrl4
+ d4sYvNXn0FLIy+DzyZq0hgnrHRJtBDZx9kZ8gzl6D6s57d2F5BWVLuvpVwFiksztyCC16e1erAv
+ EPB4kICGS0Y/LVoZWLD+a80RlLMv2kF22xuZQfdWI+VnF7CS/W+DrtX1jLuUPSDXHnHN4o/6dLW
+ MTzl+Fs1KuR4mNxebmXMk3h2gBg4G0O/fHFNaan4HkfWkpRryJPXJu3DMe1QN7CwGSdkRK+UayM
+ pFCxKxbmp701QLPhCPrDDi5EMpaab7JqRt3tA21wdgybiGXPwBCVeM2oaXtY4mYlcPsJ62yFQtH
+ C4UkD7xIb3OBE4jWTGJnWQkdrblIhsAZa3RCZls8xnYAe0Yg62ZEkCXFuR0dnez78=
+X-Received: by 2002:a17:903:2351:b0:2c0:dd75:e824 with SMTP id
+ d9443c01a7336-2c6641ca3cbmr167474945ad.4.1781613503212; 
+ Tue, 16 Jun 2026 05:38:23 -0700 (PDT)
+Received: from YTJMJ2RP0G.bytedance.net ([139.177.225.229])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2c42fbb4134sm118865005ad.30.2026.06.16.05.38.17
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Tue, 16 Jun 2026 05:38:22 -0700 (PDT)
+From: Su Sai <spiderdetective.ss@gmail.com>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	spiderdetective.ss@gmail.com
+Subject: [v4] net/cksum: compute raw cksum for several segments
+Date: Tue, 16 Jun 2026 20:38:12 +0800
+Message-Id: <20260616123812.21048-1-spiderdetective.ss@gmail.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+In-Reply-To: <20260608100202.0deac83d@phoenix.local>
+References: <20260608100202.0deac83d@phoenix.local>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM6PR11MB4628:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d91c87f-f1fb-41fc-589d-08decba40d31
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|366016|23010399003|1800799024|6133799003|56012099006|3023799007|11063799006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: 1rpIfWYkSX73WnbtHt9YFKJbdHZirZgQUfmgCA+/mbPdleXVh4CIgoyXsw4sjgJO9F8TrnnnAkbgabP7mkhdZ9/qhXj+Tgp+idNyWH8VFHmOUvvWvNu5eFH8nLsVBcJljrYN2y5eS/wfr1Nq6myQm3jTGzJudpxKRLEUuF/3Dcjvyz2ln2nUTYzaawoa7GGLaCHMnESfUMqg4d8bI8eObX77m8Tkv+LAnLWJOrBKqkHFmZ3OCe/0VaEVTRKNn+XAaHnRzYCwAPGjieawmoXqIFojSS/gY7RHrpyR5wIN+EwiNPY8x3WmuF1BEAuAbB1Fb3KACmFchG5Xm+F3ZZQeCJdtZ68CUbdbe8WzRNfpy3VSyIqnEIaTPtih/rAg5vIy8t7L8t0eYFqswxJhdxc2wYt3TsFtF3B13gWkSlNVH2X3lK5xi4mD2h4nCZS/99Znz9ZRc0jwW3xmmZpG0hCesszK3Y9hQxVJhbXDSjhFwFlqoXOMvHTqP/BSjmIf3ZOic/JNKflULlZDM5Ax2oXcXTaUhfdh4/nV7p+T/ekqWhZtGHoCEMmZC6zvmQjqfpfsNPS0RCHwO54Z896NxNHTPW1xbg+qy9mlFLippMM3hLsSXOVmot+pp3H0TPaovZsG7nAzwoqJV2s8uYo4a6OBoX2V5iv+DmCG9qqmXcjvCKvfX0fU9kTIIP8VvV2OeqNs
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(6133799003)(56012099006)(3023799007)(11063799006)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?CD//bJ8IaVjsgLpacIyyj5DMsUP1PP0tpc0VaP/X2gRYlyOQbeWHaXavp4YN?=
- =?us-ascii?Q?BM8zJ8hfRG0u4RNR/978sOQvBIVUT/sVra0eWYcQfOxmoDVlYHMCz8GilElJ?=
- =?us-ascii?Q?Zwjo4pqUrvHFnPOi9dmRRgFNfLPrdvFvW50Imaj3WTuluye14ukfClYkn9kg?=
- =?us-ascii?Q?3uqc4M518FTWQEAqvi6QHba03a+67Ju2sdrbcx5ejHD/DeTkvAA9ZbXhlsOz?=
- =?us-ascii?Q?6BWqVuPHX8NDZ2f2I/nshglStXiyTqLO2llumYZiCrhZaUJ6CcQ08C3ULv0U?=
- =?us-ascii?Q?GznlNGGMDRYhLGWDvS9UI+6Fv6kEwqplMZmrkDD+P5VmG6pTLC2ri7Z4CtQK?=
- =?us-ascii?Q?kAAtEntxNuK6q7DdIpIuAR9D9+H4MCBnQvIUaQ3+0F6r5GaSiX74fcfMtAjM?=
- =?us-ascii?Q?Nh8mftV4iZIth2iuhnnJLwe/rrZ/ZvPf3j0Xnzm5DNPJvSgakSYb5QxXie9x?=
- =?us-ascii?Q?o0P/0fNh4+mKA/NuKU10eOozqSMFVxZRuahs6LJtIkj0wT3Of9EBl9wIeFYA?=
- =?us-ascii?Q?W7/HsDLiGdiPmFvhea/k6DhI9XCEA2oPSCOP0MNpS8w9yxIHj7/qPgrEfzzR?=
- =?us-ascii?Q?NlgZPht6n6hAp3pgSVjH9oJfj65OMGzWGVRziOKfL/4XKzYfT0enBhNke16B?=
- =?us-ascii?Q?T5eKonidys1B9yEcrhjzjdX4LJljUei1nd48MWwgTJPddL8V7BlqDIHFpA7K?=
- =?us-ascii?Q?ddkLYJy4dshoMjH2Otvyqgm9fm/U334RLuljCvM+ygG1bT2UTUoO3mf+j+ib?=
- =?us-ascii?Q?0QsgJYMrAidSfpK8/MiELT6blg6jfssTag+A+UL37bewhDX0Rgh54McIqQ/d?=
- =?us-ascii?Q?kVbNwC5f3gjW0kw230WvGXicPv88U3r3hO68VpGx5KnUrnvJW69eY41GdNLv?=
- =?us-ascii?Q?6lgbDHPjMcvQ5yQy8zJJQOaShmKa8T5Ql+tzoZ8ksiwoiDY2AlV4q6rBkMmh?=
- =?us-ascii?Q?HT76Ukdsd4KrTjholu+FL4Vb2sY4jF0sfYiYe5QY/gJdNCg9HzzybV7cESQ2?=
- =?us-ascii?Q?oZYpdIoWI1prD1vdVWrtXOFdxyUAJ+eP+/yESbhoEz10/ZIPOy+wT2gLpFWo?=
- =?us-ascii?Q?OJRmpB/vHxX/oE1Dr9lRBuWnUwZWCC8QJoX7sd7V0UL38dcKBmdngwMJjQ5v?=
- =?us-ascii?Q?nDBp/9FGfAqzSU7HsBXExho1mI3KvauHri2Wog+iOlS4b+b5MwObQpC0UOYf?=
- =?us-ascii?Q?dEl7/6qaf97wB/85efzdykVa+87fguqHF2gz9BeAQO/Z9fx8tImKq3LTUtb/?=
- =?us-ascii?Q?RMaExepZYzXKhKIbMUWxhfGjUQaCRghA/zEpRbZ+J8xSw0P53iePrENV2eDs?=
- =?us-ascii?Q?aKybGD4kIrojAMgkSFUrLP9G5HJiA15BUj1y/gu0Sm/LRQdKthOU2uIXfFzO?=
- =?us-ascii?Q?o7wGDwOPKn7ltxY8XngjmoKw7KaHSMbSsO9gzufPWxSQebkC//oXdfvX9Kz5?=
- =?us-ascii?Q?f+kVw1WVBC4i8rCDgXPa7ac83DNpXZcl6UeTzckKQkkdIy/Ddge8/RZ2nD7E?=
- =?us-ascii?Q?6DOtkLkkffPHJUfTlmc9VNay1MHPutKV9/YvPL3YEHNWMSCsTgEXSfLRcERh?=
- =?us-ascii?Q?yuiVpQpJVXnG46m8DpGJ5s8lJd2WM3wG6AlIDEHxU7+RNSaV3zqKkY88Qp2+?=
- =?us-ascii?Q?1Y6r9lPKAet8wgUwRg7KSqH2qEi+8qlU/LjGe3R/Mfm3ld8Yr9M7qZvTSiuu?=
- =?us-ascii?Q?ph0OEp/6g3TtI5cOMwW/wMx3d3hT931pNqW6qtXraDnzN0OUHV4U6LDzR7x0?=
- =?us-ascii?Q?OGuS4t6Rsm2CvfBgjt2gxc7Xo48hGA4=3D?=
-X-Exchange-RoutingPolicyChecked: XK1DNeGLtJyKRnvkW8SQID9foKkVI0t5gp6XyFwfP41x5MZ6goPexZ7yAfOovUpM9h2hO/aP/0zB7CNop4lkzJfJHeeFNn8BVTd2tfZPTVfH0ytsogEJEPMyAS1pJcGN0e2tmfQfHmWJOZCb8cw5nSkARgIlgzEdQg2kXC4ymwOZS5/UPUCvYAB0r4TjszfI9xxtz0UeLthwqCvOlTSjT/V6L0wy3k88F0i5JecwO2F/z4etrxZ6rSOxGj1PSFE5PFWRyof22Nnbp+KdHGDwB9ArY7tnVtoJ/SA9YS8vIpfeDlQHlfFfg6yzggoDuxSOziIo3CgiMWKtMDsWGwFpWQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d91c87f-f1fb-41fc-589d-08decba40d31
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2026 12:37:39.1859 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: A5TBhe0jFfLU57OmtGCxN7ZS/88v/KAkeQ+58zEEcbeqFKqUs1F4WWiu11ix3X8B86+7emUoxR6jY8plIpKonhTKCnx4h2MKywSEjHwcBac=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4628
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -150,71 +81,222 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jun 09, 2026 at 02:02:01PM -0700, Stephen Hemminger wrote:
-> This is an RFC for an alternative way to capture packets from a DPDK
-> application. I did brief demo of similar mechanism at DPDK summit but
-> this is more complete. Capture runs in the primary process and is driven
-> entirely over telemetry; no secondary process is involved.
-> 
-> A client asks the application to start capturing and passes it a file
-> descriptor to write to. The application writes pcapng to that descriptor.
-> A Wireshark extcap script is the intended front end, but the control path
-> is just telemetry and the output is just a pipe, so other front ends are
-> possible.
-> 
->   1/4  telemetry: let a command receive file descriptors from the client
->   2/4  capture: the library
->   3/4  test: functional test
->   4/4  app: the Wireshark extcap script and its documentation
-> 
-> Setup and usage are in doc/guides/tools/wireshark_extcap.rst.
-> 
-> Primary process only for now; secondary-process capture is possible as
-> follow-on. Posting as RFC to get feedback on the approach.
-> 
-> The extcap script is dual licensed (BSD-3-Clause OR GPL-2.0-or-later) as
-> it may be more useful in the Wireshark tree.
-> 
+The rte_raw_cksum_mbuf function is used to compute
+the raw checksum of a packet.
+If the packet payload stored in multi mbuf, the function
+will goto the hard case. In hard case,
+the variable 'tmp' is a type of uint32_t,
+so rte_bswap16 will drop high 16 bit.
+Meanwhile, the variable 'sum' is a type of uint32_t,
+so 'sum += tmp' will drop the carry when overflow.
+Both drop will make cksum incorrect.
+This commit fixes the above bug.
 
-One concern I have though - does this cause system-calls to be made in the
-fast-path because we are writting to a passed in FD? For performance
-reasons, would it not be better to use a memory buffer for this, thereby
-avoiding syscalls? For example, rather than passing in an FD to telemetry,
-we could pass in a key to be passed to shmget (going old-school!), or
-name parameter for shm_open. Thereafter with the memory buffer we can use a
-circular ring or similar to pass the data from app to client.
+Signed-off-by: Su Sai <spiderdetective.ss@gmail.com>
+---
+ .mailmap              |   1 +
+ app/test/test_cksum.c | 102 ++++++++++++++++++++++++++++++++++++++++++
+ lib/net/rte_cksum.h   |  27 +++++++++--
+ 3 files changed, 126 insertions(+), 4 deletions(-)
 
-/Bruce
+diff --git a/.mailmap b/.mailmap
+index 4001e5fb0e..bcf73cb902 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1630,6 +1630,7 @@ Sylvia Grundwürmer <sylvia.grundwuermer@b-plus.com>
+ Sylwester Dziedziuch <sylwesterx.dziedziuch@intel.com>
+ Sylwia Wnuczko <sylwia.wnuczko@intel.com>
+ Szymon Sliwa <szs@semihalf.com>
++Su Sai <spiderdetective.ss@gmail.com> <susai.ss@bytedance.com>
+ Szymon T Cudzilo <szymon.t.cudzilo@intel.com>
+ Tadhg Kearney <tadhg.kearney@intel.com>
+ Taekyung Kim <kim.tae.kyung@navercorp.com>
+diff --git a/app/test/test_cksum.c b/app/test/test_cksum.c
+index ea443382a1..5bd9723fbd 100644
+--- a/app/test/test_cksum.c
++++ b/app/test/test_cksum.c
+@@ -85,6 +85,42 @@ static const char test_cksum_ipv4_opts_udp[] = {
+ 	0x00, 0x35, 0x00, 0x09, 0x89, 0x6f, 0x78,
+ };
+ 
++/*
++ * generated in scapy with
++ * Ether()/IP()/TCP(options=[NOP,NOP,Timestamps])/os.urandom(113))
++ */
++static const char test_cksum_ipv4_tcp_multi_segs[] = {
++	0x00, 0x16, 0x3e, 0x0b, 0x6b, 0xd2, 0xee, 0xff,
++	0xff, 0xff, 0xff, 0xff, 0x08, 0x00, 0x45, 0x00,
++	0x00, 0xa5, 0x46, 0x10, 0x40, 0x00, 0x40, 0x06,
++	0x80, 0xb5, 0xc0, 0xa8, 0xf9, 0x1d, 0xc0, 0xa8,
++	0xf9, 0x1e, 0xdc, 0xa2, 0x14, 0x51, 0xbb, 0x8f,
++	0xa0, 0x00, 0xe4, 0x7c, 0xe4, 0xb8, 0x80, 0x10,
++	0x02, 0x00, 0x4b, 0xc1, 0x00, 0x00, 0x01, 0x01,
++	0x08, 0x0a, 0x90, 0x60, 0xf4, 0xff, 0x03, 0xc5,
++	0xb4, 0x19, 0x77, 0x34, 0xd4, 0xdc, 0x84, 0x86,
++	0xff, 0x44, 0x09, 0x63, 0x36, 0x2e, 0x26, 0x9b,
++	0x90, 0x70, 0xf2, 0xed, 0xc8, 0x5b, 0x87, 0xaa,
++	0xb4, 0x67, 0x6b, 0x32, 0x3d, 0xc4, 0xbf, 0x15,
++	0xa9, 0x16, 0x6c, 0x2a, 0x9d, 0xb2, 0xb7, 0x6b,
++	0x58, 0x44, 0x58, 0x12, 0x4b, 0x8f, 0xe5, 0x12,
++	0x11, 0x90, 0x94, 0x68, 0x37, 0xad, 0x0a, 0x9b,
++	0xd6, 0x79, 0xf2, 0xb7, 0x31, 0xcf, 0x44, 0x22,
++	0xc8, 0x99, 0x3f, 0xe5, 0xe7, 0xac, 0xc7, 0x0b,
++	0x86, 0xdf, 0xda, 0xed, 0x0a, 0x0f, 0x86, 0xd7,
++	0x48, 0xe2, 0xf1, 0xc2, 0x43, 0xed, 0x47, 0x3a,
++	0xea, 0x25, 0x2d, 0xd6, 0x60, 0x38, 0x30, 0x07,
++	0x28, 0xdd, 0x1f, 0x0c, 0xdd, 0x7b, 0x7c, 0xd9,
++	0x35, 0x9d, 0x14, 0xaa, 0xc6, 0x35, 0xd1, 0x03,
++	0x38, 0xb1, 0xf5,
++};
++
++static const uint8_t test_cksum_ipv4_tcp_multi_segs_len[] = {
++	66,  /* the first seg contains all headers, including L2 to L4 */
++	61,  /* the second seg length is odd, test byte order independent */
++	52,  /* three segs are sufficient to test the most complex scenarios */
++};
++
+ /* test l3/l4 checksum api */
+ static int
+ test_l4_cksum(struct rte_mempool *pktmbuf_pool, const char *pktdata, size_t len)
+@@ -223,6 +259,66 @@ test_l4_cksum(struct rte_mempool *pktmbuf_pool, const char *pktdata, size_t len)
+ 	return -1;
+ }
+ 
++/* test l4 checksum api for a packet with multiple mbufs */
++static int
++test_l4_cksum_multi_mbufs(struct rte_mempool *pktmbuf_pool, const char *pktdata, size_t len,
++			     const uint8_t *segs, size_t segs_len)
++{
++	struct rte_mbuf *m[NB_MBUF] = {0};
++	struct rte_mbuf *m_hdr = NULL;
++	struct rte_net_hdr_lens hdr_lens;
++	size_t i, off = 0;
++	uint32_t packet_type, l3;
++	void *l3_hdr;
++	char *data;
++
++	for (i = 0; i < segs_len; i++) {
++		m[i] = rte_pktmbuf_alloc(pktmbuf_pool);
++		if (m[i] == NULL)
++			GOTO_FAIL("Cannot allocate mbuf");
++
++		data = rte_pktmbuf_append(m[i], segs[i]);
++		if (data == NULL)
++			GOTO_FAIL("Cannot append data");
++
++		memcpy(data, pktdata + off, segs[i]);
++		off += segs[i];
++
++		if (m_hdr) {
++			if (rte_pktmbuf_chain(m_hdr, m[i]))
++				GOTO_FAIL("Cannot chain mbuf");
++		} else {
++			m_hdr = m[i];
++		}
++	}
++
++	if (off != len)
++		GOTO_FAIL("Invalid segs");
++
++	packet_type = rte_net_get_ptype(m_hdr, &hdr_lens, RTE_PTYPE_ALL_MASK);
++	l3 = packet_type & RTE_PTYPE_L3_MASK;
++
++	l3_hdr = rte_pktmbuf_mtod_offset(m_hdr, void *, hdr_lens.l2_len);
++	off = hdr_lens.l2_len + hdr_lens.l3_len;
++
++	if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
++		if (rte_ipv4_udptcp_cksum_mbuf_verify(m_hdr, l3_hdr, off) != 0)
++			GOTO_FAIL("Invalid L4 checksum verification for multiple mbufs");
++	} else if (l3 == RTE_PTYPE_L3_IPV6 || l3 == RTE_PTYPE_L3_IPV6_EXT) {
++		if (rte_ipv6_udptcp_cksum_mbuf_verify(m_hdr, l3_hdr, off) != 0)
++			GOTO_FAIL("Invalid L4 checksum verification for multiple mbufs");
++	}
++
++	rte_pktmbuf_free_bulk(m, segs_len);
++
++	return 0;
++
++fail:
++	rte_pktmbuf_free_bulk(m, segs_len);
++
++	return -1;
++}
++
+ static int
+ test_cksum(void)
+ {
+@@ -256,6 +352,12 @@ test_cksum(void)
+ 			  sizeof(test_cksum_ipv4_opts_udp)) < 0)
+ 		GOTO_FAIL("checksum error on ipv4_opts_udp");
+ 
++	if (test_l4_cksum_multi_mbufs(pktmbuf_pool, test_cksum_ipv4_tcp_multi_segs,
++			  sizeof(test_cksum_ipv4_tcp_multi_segs),
++			  test_cksum_ipv4_tcp_multi_segs_len,
++			  sizeof(test_cksum_ipv4_tcp_multi_segs_len)) < 0)
++		GOTO_FAIL("checksum error on multi mbufs check");
++
+ 	rte_mempool_free(pktmbuf_pool);
+ 
+ 	return 0;
+diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
+index a8e8927952..679ba82eb6 100644
+--- a/lib/net/rte_cksum.h
++++ b/lib/net/rte_cksum.h
+@@ -80,6 +80,25 @@ __rte_raw_cksum_reduce(uint32_t sum)
+ 	return (uint16_t)sum;
+ }
+ 
++/**
++ * @internal Reduce a sum to the non-complemented checksum.
++ * Helper routine for the rte_raw_cksum_mbuf().
++ *
++ * @param sum
++ *   Value of the sum.
++ * @return
++ *   The non-complemented checksum.
++ */
++static inline uint16_t
++__rte_raw_cksum_reduce_u64(uint64_t sum)
++{
++	uint32_t tmp;
++
++	tmp = __rte_raw_cksum_reduce((uint32_t)sum);
++	tmp += __rte_raw_cksum_reduce((uint32_t)(sum >> 32));
++	return __rte_raw_cksum_reduce(tmp);
++}
++
+ /**
+  * Process the non-complemented checksum of a buffer.
+  *
+@@ -119,8 +138,8 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t off, uint32_t len,
+ {
+ 	const struct rte_mbuf *seg;
+ 	const char *buf;
+-	uint32_t sum, tmp;
+-	uint32_t seglen, done;
++	uint32_t seglen, done, tmp;
++	uint64_t sum;
+ 
+ 	/* easy case: all data in the first segment */
+ 	if (off + len <= rte_pktmbuf_data_len(m)) {
+@@ -157,7 +176,7 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t off, uint32_t len,
+ 	for (;;) {
+ 		tmp = __rte_raw_cksum(buf, seglen, 0);
+ 		if (done & 1)
+-			tmp = rte_bswap16((uint16_t)tmp);
++			tmp = rte_bswap32(tmp);
+ 		sum += tmp;
+ 		done += seglen;
+ 		if (done == len)
+@@ -169,7 +188,7 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t off, uint32_t len,
+ 			seglen = len - done;
+ 	}
+ 
+-	*cksum = __rte_raw_cksum_reduce(sum);
++	*cksum = __rte_raw_cksum_reduce_u64(sum);
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
 
-> Stephen Hemminger (4):
->   telemetry: allow commands to receive file descriptors
->   capture: infrastructure wireshark packet capture
->   test: add test for capture hooks
->   usertools/dpdk-wireshark-extcap.py: script for external capture
-> 
->  MAINTAINERS                            |   4 +
->  app/test/meson.build                   |   1 +
->  app/test/test_capture.c                | 365 +++++++++++
->  doc/guides/rel_notes/release_26_07.rst |  12 +
->  doc/guides/tools/index.rst             |   1 +
->  doc/guides/tools/wireshark_extcap.rst  | 155 +++++
->  lib/capture/capture.c                  | 821 +++++++++++++++++++++++++
->  lib/capture/capture_impl.h             |  56 ++
->  lib/capture/filter.c                   | 108 ++++
->  lib/capture/meson.build                |  19 +
->  lib/meson.build                        |   1 +
->  lib/telemetry/rte_telemetry.h          |  66 ++
->  lib/telemetry/telemetry.c              | 115 +++-
->  usertools/dpdk-wireshark-extcap.py     | 274 +++++++++
->  14 files changed, 1986 insertions(+), 12 deletions(-)
->  create mode 100644 app/test/test_capture.c
->  create mode 100644 doc/guides/tools/wireshark_extcap.rst
->  create mode 100644 lib/capture/capture.c
->  create mode 100644 lib/capture/capture_impl.h
->  create mode 100644 lib/capture/filter.c
->  create mode 100644 lib/capture/meson.build
->  create mode 100755 usertools/dpdk-wireshark-extcap.py
-> 
-> -- 
-> 2.53.0
-> 
