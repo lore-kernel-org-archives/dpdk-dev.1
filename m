@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94662CD98E4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 14:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1A4CD98E4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 14:23:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 74CB540289;
-	Tue, 16 Jun 2026 16:11:17 +0200 (CEST)
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com
- [74.125.82.178]) by mails.dpdk.org (Postfix) with ESMTP id 42E564026A
- for <dev@dpdk.org>; Tue, 16 Jun 2026 16:11:16 +0200 (CEST)
-Received: by mail-dy1-f178.google.com with SMTP id
- 5a478bee46e88-30b6dad2382so4540421eec.0
- for <dev@dpdk.org>; Tue, 16 Jun 2026 07:11:16 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0EA0040289;
+	Tue, 16 Jun 2026 16:23:34 +0200 (CEST)
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
+ [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id 55F7A4026A
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 16:23:33 +0200 (CEST)
+Received: by mail-dy1-f169.google.com with SMTP id
+ 5a478bee46e88-304ec41197bso5237108eec.1
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 07:23:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781619075;
- x=1782223875; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781619812;
+ x=1782224612; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Se/oUxAt2eWW56TN02rrS7qvLjeMgJ9/Q4TDg1/jOnQ=;
- b=pmuBaFBzzQhovF/ZeJFgIiRxCcoETQPDVtTYeXmDYXFpTrxhgNh7zQaleS6DTNoJMH
- r3gIlRFujLh+37QugPeOG0UXr8F0Ll/oXI6MQm4HEu1cjJZIAoQQ8s1pBIv8myiAEYlf
- YlHnmvP0+7EJWm/PpJyWas/dC+zrPsRTez42bRg6GlmaALjofulQ0zjJiRv+bTjBe9+g
- tbr5MKS6xHgA91o9vOT4PnA0evj03OZkh2MlhBeEe/IUg9JzONRG+U/0aTpYbfUCDnUi
- BO7EDZIYTFuQVhY4cqe8BFgz2x3ILRjzOsk5fhQX+hpmLk1l1L56BMzkPPCryfIkUlYV
- lCxw==
+ bh=vIy8MSmW/NXV2JrgiF7kvFtGiSnhwo56O33FHNyaBrI=;
+ b=KFg471Mmt3ds6+3iK9G4FWgNuloScpERCAnrVfRJeT8uNmiiFMb8DKtR03ilHYtuSL
+ MLXkbqzAVJkKjqG1CxYjF/VQu9fiywryWlPz+drQ6GBSrKOs4tpGeZgbZzzhY4YebC2M
+ I0DgwGMZc8lL3zUvtC8iDXnsBnuZ66WsUa0eoJpAYsQqSiD2BLODBolBhfGvniqtkh2Q
+ aAXDug0cqbiUZ3UyEckr5K7NAosZ6r3XKQAgHUH7UM19d9VbPjEdoB9KT1IwNGu6DLo/
+ EcJmNwRDqA/mvob2ifX3MvShhRUODSEENgQP9qC/KM9gSydx8tp+CR5B51HZ2TM6gaRx
+ jTrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781619075; x=1782223875;
+ d=1e100.net; s=20251104; t=1781619812; x=1782224612;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Se/oUxAt2eWW56TN02rrS7qvLjeMgJ9/Q4TDg1/jOnQ=;
- b=c1zwVBMTlVR4Ck1Dc43lOwSah8aqz/buBs+GOHQbo/Rl/UF1Kqid3haNkvapk30UGU
- WxARWzEgQ0ImL1QIWSPG8+VAhj6n3UsIw5shHOPepDGm6iN9Kabu7J3OOlHwesGpesHI
- RWHwNwOqQs51eNc5f/PmBUY35Cc2PI0aGKH8FX8rxrzuBKAnnYEUrW05igkW7luYwrgf
- ZKpbAMJ5MwUZcl6NsVgszVY3PB3P1wvoQGd2KqT9OHCzbzosoIDo7h4HfCC4q3OA3DX7
- D7gk58cv+Gw8ZRZG/nUU+KMFnH/sJqQFSPO102xKrISSrZw89yVzqqQ7HfEsOOGeYFfa
- andg==
-X-Gm-Message-State: AOJu0YzoHHuPEVn+shOoHdZqyVa57dBgem1jyOop46C45n0tn3oTyXr9
- IFIep47DQkWFX/iMBMj3fTepnZ86M+CxbmPeMTvdv0fIYLBX+gXfSZVI5r+6BYq4+bQ=
-X-Gm-Gg: Acq92OGgKuG9VMHrFnxXwMki0rYuIMZmpRdvZsd1VGfBbZAvo3f12eMJnXvE+NUHHc+
- geLqh1ASKGunlgLSq0ywqYCv+fCZZqIIJtP47N2+FmXRHX5KHlb7vSZus4pyMkmWjc3SHET3leJ
- h2Hs9AVU4dpzkcFoBxr1oA84hlrapDAF8OhxVUEfCzSy/Ixx4VZYSocIKK91d9AhqSSmviEvmRE
- dZaY3fCfxPnyWqcU8mpGra3MnH/Eb+L0ht7QtdYRkMzrqsz6Lq4HEd7qIKWgZ+l/ukKHiYUCcO5
- U0K6HFzmkwMmvq8fqix2hSF3B4q1FPkiWyE8Uq3qhgAREjiIpRDg7KHoOcrXI+ueqbl9DXp+ubn
- 8tQJ9YjXOu4MIT1QEkAtkbsdKtybE4hvUIMVKNo1Lpr7y0qwYzXxHtwnk1/l6cVzcqOJ2UhsnYI
- DShPRTkPUstjH/97YjFMr/nOae6p3UgkSUqDc1grYxiiuHzytb+W4In4xBU3xYxbOsF7dNrVDii
- 5A=
-X-Received: by 2002:a05:7300:a509:b0:2ed:e12:376b with SMTP id
- 5a478bee46e88-308200db1c9mr10234876eec.33.1781619075097; 
- Tue, 16 Jun 2026 07:11:15 -0700 (PDT)
+ bh=vIy8MSmW/NXV2JrgiF7kvFtGiSnhwo56O33FHNyaBrI=;
+ b=OIdbnHe17TOsrlYNsJ0WtZlF5zm4EEVrL+k5cDPqIZupybej6iWLjUvGjEqu0xl0Ie
+ 5kJH8zYPN3dRzaRkb9UOD6ojguvXflml4GYLWtE3KoY17ybbXjMAalky0SDsYjHvXTlQ
+ STY2M8BZYHmz7zToPzNkTAHXNi04mfuaaiI/WkDxQm7bDUUQfpK5kSm5eM8UcCAaCWTQ
+ gBYcpdGRKmfhtbWZJAViGmoGsPxDHL1JFFq6RJW1c+QJB3tzkNnfUGhlGkORZ97S0b42
+ NabNF5GEAancBIXCj2vlKvTb8RfT7CNzqv1PJXz6qBZQl0KCJn+IlnVoJNvM7CDQoiJ+
+ mdXQ==
+X-Gm-Message-State: AOJu0Yy9bUo744XBEt9qlzOO3aMowcXYIDaVWTwEQWaxsiXIY5uwaVUe
+ GRUp9FYeaoxmGvLVXBypu+/p34ijuR2oTDvxEM5zMDDlRmdRU76lIn3qngSpYcLnXkQ=
+X-Gm-Gg: Acq92OErE9OhJiG2eFaikErv/FksXEzhKYMw9ze0RgXS8SRf5nXeCW193LgcFa8n2o2
+ ucwSLaq8uJzV0A+TsW+st+aBjbceW/BJfSER5iDyeIgdB5zgj5eUZ/U3OTiNXss7U/cmRAZd2/b
+ oguO1yRCCcB0+GHe9H991BY+mlc6cjiUWOB/OUkyqmQ+VIekb08JUf25RIXpNUK9KWXBJh8K9UR
+ 2bheu/FzUEmhXLVhxrfxz+vAO3KoDu4208L9YBTjIFpfwR/6/ARxiqknHUnbmhgzpUSTpGDoNjR
+ /+HGbgGvFneTVKAaBkZLD3F7DAKzy338fEmRj4RaXQuXiTZHekqpPUncjpEML4UpeUFZ+W6qsJ2
+ 2YgPAj/pnJOTqz96GvZNn8FZ0wUFqEHznZnekTNowjJefp8SqSH68Wx7Dm5CUqAmcLAKjn1k/Ls
+ 2BJ8zF4oI+UKlEhhtBkaF7cib5zUU8iF5tLYAX6y5jpGny+k4vyIPkXpJg9K0VghGM
+X-Received: by 2002:a05:7300:80cc:b0:307:91f5:8eee with SMTP id
+ 5a478bee46e88-30ba59ea7femr2815686eec.12.1781619812178; 
+ Tue, 16 Jun 2026 07:23:32 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3081e5d0849sm21206233eec.7.2026.06.16.07.11.14
+ 5a478bee46e88-3081e5d3f20sm18802451eec.9.2026.06.16.07.23.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 07:11:14 -0700 (PDT)
-Date: Tue, 16 Jun 2026 07:11:10 -0700
+ Tue, 16 Jun 2026 07:23:31 -0700 (PDT)
+Date: Tue, 16 Jun 2026 07:23:28 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Maxime Leroy <maxime@leroys.fr>
-Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>
-Subject: Re: [PATCH v2 6/6] net/dpaa2: drop the fake software VLAN strip
- offload
-Message-ID: <20260616071110.1baf1beb@phoenix.local>
-In-Reply-To: <20260616102727.708948-7-maxime@leroys.fr>
-References: <20260611154926.392670-1-maxime@leroys.fr>
- <20260616102727.708948-1-maxime@leroys.fr>
- <20260616102727.708948-7-maxime@leroys.fr>
+To: Xingui Yang <yangxingui@huawei.com>
+Cc: <dev@dpdk.org>, <david.marchand@redhat.com>,
+ <aman.deep.singh@intel.com>, <fengchengwen@huawei.com>,
+ <yangshuaisong@h-partners.com>, <lihuisong@huawei.com>,
+ <liuyonglong@huawei.com>, <kangfenglong@huawei.com>
+Subject: Re: [PATCH v2] app/testpmd: add VLAN priority insert support
+Message-ID: <20260616072328.1dcb8cf8@phoenix.local>
+In-Reply-To: <20260616131001.2955655-1-yangxingui@huawei.com>
+References: <20260612081411.2798403-1-yangxingui@huawei.com>
+ <20260616131001.2955655-1-yangxingui@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,48 +83,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 16 Jun 2026 12:27:26 +0200
-Maxime Leroy <maxime@leroys.fr> wrote:
+On Tue, 16 Jun 2026 21:10:01 +0800
+Xingui Yang <yangxingui@huawei.com> wrote:
 
-> RTE_ETH_RX_OFFLOAD_VLAN_STRIP is advertised, but no hardware VLAN strip
-> backs it: when enabled, the Rx burst calls rte_vlan_strip() on every
-> frame, a software op masquerading as a hardware offload.
+> The tx_vlan set and tx_qinq set commands only accepted VLAN ID in range
+> [0, 4095]. This prevented users from setting 802.1p priority and CFI
+> bits when using hardware VLAN insertion.
 > 
-> It saves a forwarding application nothing: the datapath reads the L2
-> header anyway to classify or strip. The offload does not remove that
-> read, it relocates it into the driver Rx burst, where it is far more
-> expensive.
+> Since mbuf vlan_tci field already supports full 16-bit VLAN Tag Control
+> Information (TCI), relax the validation for TX paths to allow priority
+> and CFI bits. The vlan_id parameter now accepts:
+>   - Bits 0-11:  VLAN ID (0-4095)
+>   - Bit 12:    CFI (Canonical Format Indicator)
+>   - Bits 13-15: Priority (0-7, 802.1p CoS)
 > 
-> The cost is a matter of timing. rte_vlan_strip() reaches the L2 header
-> through rte_pktmbuf_mtod(), which dereferences mbuf->buf_addr. On a
-> freshly recycled buffer that mbuf cacheline is cold. eth_fd_to_mbuf()
-> has just written other fields of it (data_off, ol_flags), but buf_addr
-> is a persistent field it does not rewrite. A write does not stall: it
-> posts to the store buffer while the line fills in the background, and
-> the rewritten fields are forwarded straight from there. buf_addr has
-> nothing to forward, so it must be read from the line, whose fill is
-> still in flight, and the read stalls. The ethertype read that follows,
-> on the cold payload line, stalls again. Read later by the application,
-> when the fill has completed, the same read hits. The offload just
-> performs it at the worst possible moment.
+> Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+> Suggested-by: fengchengwen <fengchengwen@huawei.com>
+> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+> ---
+> v2:
+> - Removed --enable-vlan-priority option and global variable as suggested
+>   by Stephen Hemminger. The feature is now always enabled for TX paths
+> - RX VLAN filter continues to enforce strict VLAN ID validation as
+>   suggested by fengchengwen
+> - Added documentation updates for testpmd_funcs.rst and release notes
 > 
-> Measured on a single-core port-to-port forwarding test over two 10G
-> ports (one core at 2 GHz, 64-byte untagged frames):
+>  app/test-pmd/config.c                       | 13 ++++++++-----
+>  doc/guides/rel_notes/release_26_07.rst      |  7 +++++++
+>  doc/guides/testpmd_app_ug/testpmd_funcs.rst | 17 ++++++++++++++---
+>  3 files changed, 29 insertions(+), 8 deletions(-)
 > 
->   - throughput 4.22 -> 5.00 Mpps (+18 percent)
->   - IPC 0.93 -> 1.25: the cost was memory stall, not compute
->   - L3/DRAM-bound L2 refills 319M -> 200M over 10s (-37 percent)
-> 
-> perf confirms it: with the offload, the buf_addr load (the cold mbuf
-> field) and the payload load account for about 84 percent of the Rx
-> burst's L2 refills; removing it, those vanish and only the inherent DQRR
-> dequeue misses remain.
-> 
-> Stop advertising VLAN_STRIP and remove the rte_vlan_strip() calls from
-> every Rx path. This is a behavioural change: the tag is left in the
-> frame, so an application must strip it itself, on the L2 header it
-> already reads.
-> 
-> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+> diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+> index 9d457ca88e..38758f9c05 100644
+> --- a/app/test-pmd/config.c
+> +++ b/app/test-pmd/config.c
+> @@ -1241,8 +1241,11 @@ void print_valid_ports(void)
+>  }
+>  
+>  static int
+> -vlan_id_is_invalid(uint16_t vlan_id)
+> +vlan_id_is_invalid(uint16_t vlan_id, bool is_tx)
+>  {
+> +	if (is_tx)
+> +		return 0;
+> +
+>  	if (vlan_id < 4096)
+>  		return 0;
+>  	fprintf(stderr, "Invalid vlan_id %d (must be < 4096)\n", vlan_id);
+> @@ -6876,7 +6879,7 @@ rx_vft_set(portid_t port_id, uint16_t vlan_id, int on)
+>  
+>  	if (port_id_is_invalid(port_id, ENABLED_WARN))
+>  		return 1;
+> -	if (vlan_id_is_invalid(vlan_id))
+> +	if (vlan_id_is_invalid(vlan_id, false))
+>  		return 1;
+>  	diag = rte_eth_dev_vlan_filter(port_id, vlan_id, on);
+>  	if (diag == 0)
+> @@ -6923,7 +6926,7 @@ tx_vlan_set(portid_t port_id, uint16_t vlan_id)
+>  	struct rte_eth_dev_info dev_info;
+>  	int ret;
+>  
+> -	if (vlan_id_is_invalid(vlan_id))
+> +	if (vlan_id_is_invalid(vlan_id, true))
+>  		return;
 
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+Why have the is_tx flag if it is always used as constant?
+Just remove the whole vlan_id_is_invalid() branch test in the transmit path.
+Maybe add a comment that any VLAN is allowed on transmit?
+
+Or make a new function. Since VLAN of 0xffff is reserved. Though you might want
+to allow it since testpmd is for testing even invalid packets.
+
