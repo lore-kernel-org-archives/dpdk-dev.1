@@ -2,116 +2,93 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADB5CD98DA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 15:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8793ECD98DA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 15:49:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E682A40289;
-	Tue, 16 Jun 2026 17:40:18 +0200 (CEST)
-Received: from DU2PR03CU002.outbound.protection.outlook.com
- (mail-northeuropeazon11011031.outbound.protection.outlook.com [52.101.65.31])
- by mails.dpdk.org (Postfix) with ESMTP id 4B4EB40150
- for <dev@dpdk.org>; Tue, 16 Jun 2026 17:40:17 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gtRNo9yNBOaYPMqRqZdSVDMOyXRy0Zc74jmLguri+j52A0Iahc2KKgEbKaobzahaPCE9r/IeQ7Uzn+70n5wFrqmcNQn2UK1AI4sJMYXrGQm5IBlecY77yITG4wUstcvmWdjaCbxRbxt8lQtEWeRmYgRHSZagTMtq3gRbmmIVAZ5RfWm+wf8UEBkDjDBkhX6CDoDZRhz76RH57VUFcisPDk762ERA0Ek3rO8DRnYk7heQKTwCh3TsrnknRCUTb0gP0vSPc02G5aXC0x1NS85l0ipn2LGEJEH8E9MEMvmodz3EuRA7+/CNOckasW9ZNOtfo0jTQ3uI0YD3v3DsH0HPfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L7MgrNZmtDonfGhYoktXAbIThS2Er09MwOWE586Ajvc=;
- b=e21waqQyLkBmQy5tL93OIWOfesBsPfGArbVNJelTz2A8hjd8OOaeIKqrSDm1YuSJ3Kk4y/Y3aqy1Fa9sgkaY5PJXXEGacoQsvofTvj7JqWztZ8GB8Vm6wc1fxHuVe9M7M5a6WfqL0UJvHIMVtI5HjPBOD7NRqG1uMKsrOG56gYLM4vh1Zx5JqtKajuhNwVzrwa4QAzRUiL9ecrE0ES53e7urANA7XzrOPyfUbLuqKJZinq1DaL+ShMFL1DsSKueUT7UqshGLxvR73DlO/lzOeJMAU+6qNr4+bqszU9iA/37hY50+1ZbQYvt5YNJdmQUtJSZ5Q73VTWiQ8ziTM3RUXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L7MgrNZmtDonfGhYoktXAbIThS2Er09MwOWE586Ajvc=;
- b=K1Ur5XfuP0wY4JzZ9lj8XSRPRCqhXnxyNmnE+i/BGAh0S+r3Lve04LQJTmbKp7RoUDX1SIIYJnCUKN4gyRl//7yYeZ5q4gso0BH899s1YG4OlZ9dKZoF1BKaCCpyByrAvYUIdIlUONZUgRXAz7wq/jOmax3hGkUqmBM+qDPAxRuKe1kfhgntYAKNd5ifbuqzUCnDrJsy8rWrsFyjUhX+SO57MZunwOY0SuPivWMR0MTOEw7ilOntloTXriwzJO4aNcU3AB9+NcA34KuvIDM7Rkj0k4FRyWtSvLKiylB4oi+7ctUo0bsM+aWsS0zyan9PFJj3e22LXV1FeXLyKv5cCw==
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- (2603:10a6:150:212::14) by DB9PR04MB9282.eurprd04.prod.outlook.com
- (2603:10a6:10:36e::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Tue, 16 Jun
- 2026 15:40:15 +0000
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003]) by GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003%6]) with mapi id 15.21.0113.015; Tue, 16 Jun 2026
- 15:40:15 +0000
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, Maxime Leroy
- <maxime@leroys.fr>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Sachin Saxena <sachin.saxena@nxp.com>
-Subject: RE: [PATCH v2 6/6] net/dpaa2: drop the fake software VLAN strip
- offload
-Thread-Topic: [PATCH v2 6/6] net/dpaa2: drop the fake software VLAN strip
- offload
-Thread-Index: AQHc/XrMr3OEKWyl6Eq7EfUvl4M1mLZBOQAAgAAYwWA=
-Date: Tue, 16 Jun 2026 15:40:14 +0000
-Message-ID: <GV1PR04MB107509FA6AF5BEA46A72676DA89E52@GV1PR04MB10750.eurprd04.prod.outlook.com>
-References: <20260611154926.392670-1-maxime@leroys.fr>
- <20260616102727.708948-1-maxime@leroys.fr>
- <20260616102727.708948-7-maxime@leroys.fr>
- <20260616071110.1baf1beb@phoenix.local>
-In-Reply-To: <20260616071110.1baf1beb@phoenix.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: GV1PR04MB10750:EE_|DB9PR04MB9282:EE_
-x-ms-office365-filtering-correlation-id: 29599463-8c0a-4780-8741-08decbbd8f81
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|23010399003|376014|366016|19092799006|1800799024|56012099006|4143699003|5023799004|11063799006|38070700021|18002099003|22082099003;
-x-microsoft-antispam-message-info: qajjnq6etCG5vfgnGKpx9maW05IwFUyrpLtdsQ/eKYhlZMed5aQLDE3Z+j62hFa8Nk/fo0soAqWoxThfLp0fwvxkKw9tJcaafLiK+6SVvO0BU/WbaUQON3LIyMnYX53CclnkFJQTvR5AiKoAbWfQvjNfRCa6OOS20BY/gmgTT8iadN9WAgTTTyv3j13bVXEegBIAQLySfcoZKzbyiPUn2pM7HZt6lLFBISvf9sb1KWnloGBPzIPm7H8AnD3y9aea3oOcMd0aUWdYrUbC/lJp4tQWuB1+qni92LxumeuUtT/4vC7AvQlcJj6ajH5dwvhNMPdjcF1Wfumf23KrwaBrp4T3m4xxDaUzqupN93PqhohC92wMC4TwdfgJ6qr7i+w4B6JVSl45Iaf7M8eFAI17y4umqQLs5Dc2fhE+CVeuEQ6IW2CraOq4rRHljKHb+9rIR8NWMPMQ2LAJR8fVAxTlP2Xf+xBpKqZCNMoFFiNRdY5RB1+ggcJfkSudI9vjkBqPoPqlJFdL7ug3jZo6pEfnqhmog12OzQIzVlxtYkLUV3aTVa2wgPlrdkwMU1Q36Z3VWYSMEcNbXKYCrrVl/KH7QwWDMqc4P2+kbUmtMu3S9wEi2V8s+qeG49OM79ypGUTi9y8QKyAtolrPV+XIIXPEumVyU01SivZKjza/0SlbJhKGAVzVFulFxPnMomToHyGPoyPxIF06ashXZjLTpaMIFNUVcz8IWV9P5QGtwyfvqUMcjDAXlLipfgY+HRr7JV0f
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:GV1PR04MB10750.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(366016)(19092799006)(1800799024)(56012099006)(4143699003)(5023799004)(11063799006)(38070700021)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Baya3IgojoJGkBBwpYmDKcEsRveJ5YbdelUadqoRkPq88m2bcBXzfK9oc/nz?=
- =?us-ascii?Q?2KEvQ+59TsOBS9ZK4L7+GjFoJ3BbFR/J/RXAT64YgZbu7TC4LonvoNqBLfnG?=
- =?us-ascii?Q?WlO9Gx+//SsE+c1qK8PIXwFZU3CYuVwM6liH1vJT3ptKwLX6tzfTOozr+2fP?=
- =?us-ascii?Q?0YC4uEwbxmwL+rjK23g7BClpHFrLdKjUF+dDzrdTKj/D2F/qtQVGuZFV/BVs?=
- =?us-ascii?Q?exsmXszQOiyokByqEW0jiQjlW+IpTED5+Np76pu13Wp2+g9x5xw0xGygy4fs?=
- =?us-ascii?Q?WSCcjUcf0juvCZQbnFLiQ3KWCdc4NJ+fC4rPtjcl4ysFDmkdvYyt8yVX2jjq?=
- =?us-ascii?Q?Jle89faHi89LzVVm6rJ/4nVvCGYRwEjCH0mUTNTqMzRyWnP4sO5fMCSLBd+9?=
- =?us-ascii?Q?LfVB1wU9rNLRYUlnf3/Rrg4yzYQWUc4sn6VWgpFoKFR4OWUEkYroxAGw0daT?=
- =?us-ascii?Q?67k/Fpcd/oOxOb/yVsabjc9GL+907V6AI9NxSMNZ1wAfZNbqjeckrhVEVuFv?=
- =?us-ascii?Q?zna0Ns/np0Hpc5Z+V+6NmdyM+alR+FFKTxo4kOKpUdyY11xZQ6zgRh4PWJ4V?=
- =?us-ascii?Q?i3Tt8YHw/dTSLhuRuik7HsXEDp0cnQUKDdjDssy2Qv9VCUVFipCTSYz+LrWv?=
- =?us-ascii?Q?Rivv4K5F6xOIw2lG9lEQx3kUwaaIVcWe12waaGqMjtiGOKqIvJ/bwG930wYS?=
- =?us-ascii?Q?kRmIlPliRGzGrYfbsJullZCiIRSbHb9mlM0AcFV/tDDjwrwbXes7mpVlxWBq?=
- =?us-ascii?Q?WtutybkNBJbg0Ya0PJKfpbPVOHARicvPeEGTLkj6HR/giI+MKHXKNwcozoMd?=
- =?us-ascii?Q?bqQoQpo8uE/gsHaH9GKEdjU2GsetMubNEbtzokcEzgZFNbpTa5wlXCLpKA2z?=
- =?us-ascii?Q?rUxjJQS9pnmtZH+te28BJ8pc7LmQVO1xm80pBHPrO9kCfOc8ljk2hoTdPjGF?=
- =?us-ascii?Q?vyNCYataGaNd9e1Iibq9cBk8VQK/PFQYL2f4C531kEmCl9awWlFJboRf61Xd?=
- =?us-ascii?Q?YstTxGzhM+wHzrfKDUgKAlVIJC6vvob7HNDwjT3cC8K47hjRBYayLtzrip/R?=
- =?us-ascii?Q?JXPxDobzi/H6CL8Amzve0Rf7yxa0uFd8mHZrclCB82kfsQT4OhRFlfgX3OZR?=
- =?us-ascii?Q?QolTfW2dvjxwaUhuaKqOtFODZQWVYjSfGu60wS77aRjF7A9CZcI4UR5cB+DW?=
- =?us-ascii?Q?tj9ExCHWbtZ3z9bFRVCythVUjeKGJGm2AFMqdPjt2jlBKMe/CGASviU0I9nQ?=
- =?us-ascii?Q?j/thPW2coxHXewMe7fqpsdq3YCue7P+aDnPsJbaIcHRyI30kRIHP0AKy76fI?=
- =?us-ascii?Q?q2jGkDQJLY33APcsDOTbQAbMLPdI3j0/QFjOYQKsGMQpkF074TDD6F20/bRB?=
- =?us-ascii?Q?vGsUvh2jadLFe/A8l+CNLMKTK5Q1tq+84+topOS8+LEldhfj/QSEs3595Jtn?=
- =?us-ascii?Q?9EWMDBHHQ4TQCH/UQQtNauN8iZNRcCRX+s6I4cKY0Oj+s6dYCSlVTAaGRm41?=
- =?us-ascii?Q?H6Jhkf+H5aU//lYQCxBSjJNOtZkO9ak+VHPE3xFkpJPrOac07yUzsu1rDbAu?=
- =?us-ascii?Q?PZL1rrzka+qP9u1yUrhx1gh103IsSEYOz19NufyWcELw/UYlwY+kVHXfq9/1?=
- =?us-ascii?Q?LelNjNjgHaDiLftwQiwP9tk45DR2n0lRUWLBQuXIqUoWfm/v+4QHPzlAEsLa?=
- =?us-ascii?Q?33a4oyhAAX4QMKB48oWYAMvDvkmfuD97OcwraJHGvOejB0G7sHrJ8mZ3qnT5?=
- =?us-ascii?Q?p1oxV51/fQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
+	by mails.dpdk.org (Postfix) with ESMTP id 97DD140289;
+	Tue, 16 Jun 2026 17:48:59 +0200 (CEST)
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com
+ [148.163.156.1]) by mails.dpdk.org (Postfix) with ESMTP id DD73940150
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 17:48:57 +0200 (CEST)
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 65GFmOvp1948300; Tue, 16 Jun 2026 15:48:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+ content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pp1; bh=+XS/TY
+ DzvLRr1+VsFWDLODVQTEU43SqqmadwJ2jLw0E=; b=diD9AOdpMFYdq9qjkNHPTY
+ Ap29J1rNDhGqCRahTMWKaVaNkchTdPH8KAdzYmPBVjudhcz1NkRElyedK3cgZ2j7
+ lHg1HfqZarKzV+m8q32bafu537pl4muQ8ZW7DU9u3pfzhq4jkhYLdD5WiZPULSZW
+ y0bHtmCsCluj8ZfguPIXS8krKwPunVoOf4DY5VLtuBQkHmJLDchHm0JIHl+Rh5Xk
+ V2EUIzHomXRdKV9f/SdJgW+OVM54fToHr34s6nkVVRJCQVe5ojLxwTyRhIUmhH2N
+ 7c0aq6zrOeNQww01lIKaWuURsMpnqCHx2ybECvkEl1F9zzsmUPHBrpg3maOKXUkg
+ ==
+Received: from ppma11.dal12v.mail.ibm.com
+ (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+ by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4es1wm6m9j-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 16 Jun 2026 15:48:56 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+ by ppma11.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 65GFYagP032018;
+ Tue, 16 Jun 2026 15:48:55 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+ by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4esm7y3w3t-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 16 Jun 2026 15:48:55 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com
+ [10.241.53.102])
+ by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
+ 65GFmNhf61604342
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Tue, 16 Jun 2026 15:48:23 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id C769558056;
+ Tue, 16 Jun 2026 15:48:54 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id A93E65803F;
+ Tue, 16 Jun 2026 15:48:54 +0000 (GMT)
+Received: from li-4c4c4544-0048-3510-8036-cac04f563434.ibm.com (unknown
+ [9.16.58.171]) by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+ Tue, 16 Jun 2026 15:48:54 +0000 (GMT)
+Message-ID: <db81df752edfb548dd00ad2c5bb8dea726349c25.camel@linux.ibm.com>
+Subject: Re: DPDK release candidate 26.07-rc1
+From: Riley Fletcher <rileyf@linux.ibm.com>
+To: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
+Date: Tue, 16 Jun 2026 10:48:54 -0500
+In-Reply-To: <EE7NFX47QzqKRvGYzs3QUA@monjalon.net>
+References: <EE7NFX47QzqKRvGYzs3QUA@monjalon.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.60.2 (3.60.2-1.fc44) 
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB10750.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29599463-8c0a-4780-8741-08decbbd8f81
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jun 2026 15:40:14.9744 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: H2n46iz617m5bkZGmTWlT+1yhHpLY9DQSs7BD229cWjU07Dw0DxAbc7J5Nf95Xyfne6YHywGje3NCVbGmyms8Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9282
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE2MDE2MiBTYWx0ZWRfXxpT2LcVAiAI1
+ pBQKWNBya/CTe2OTYbuQs0bGx7+lM1w0ajPxjUHkMV41ARV1RdgGhuFw9Zqah+YVI8FHrkbLiGY
+ ERCbD0bCBnVfaeFaGHRS9TsNC5Ep3hU=
+X-Proofpoint-GUID: eKdSuGTy27GA7zwAPPQSB4pa7UGCP8Y2
+X-Authority-Analysis: v=2.4 cv=SY/HsPRu c=1 sm=1 tr=0 ts=6a317068 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=8rWy6zfcAAAA:8
+ a=o0H6PxKc5kZCS8mi02EA:9 a=QEXdDO2ut3YA:10 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE2MDE2MiBTYWx0ZWRfX+Ll5vXA5/gMJ
+ H1rJhKlKwnpavoWxIaUwdBnvsx3hlW1SavW/QF6gKhnHFt0RcCZpkCQudtfTqUIwPDhHXS6qaer
+ OqzZB5uP94I82C6dX8Evbpkmnx6KjjEPRIaTBEwvMXoAEhH3pOsujZRvtuWDJQcQXJfkXmIjR4Y
+ UK2fGGNwCmbhlJLe566ODhWxYmKu+vF+9RJnuXx0k0fzKVW8aFk90N4Npv2mCtR53sFALAc3sVj
+ yDnBAvjWdGUP9nii4Ldsu7P3kh+uMJa8rbJt0dwz2o6VxCXcwmtCPIyURzMR8iYLT10chh6G01Z
+ +GAy/aajyweh26fQT6SarJLjDjQN0JoPRIL+SDqLH1AZPmPT+tjHnu3Sp6DQLCSvLX8WFphSnOR
+ EYydH48IBx3pDPtpZ/2LTjLQVDWHgu4wgxU+FXfDZHK1pYbNIlqIfnnVMx1qZUUffuMHUORUTJR
+ klFg9Gxe0LWd1oQY+mQ==
+X-Proofpoint-ORIG-GUID: eKdSuGTy27GA7zwAPPQSB4pa7UGCP8Y2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-16_05,2026-06-15_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ malwarescore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606040000
+ definitions=main-2606160162
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -125,61 +102,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+IBM - Power Systems Testing
+DPDK v26.07-rc1
 
+* Build CI on Fedora 40, 41, 42 and 43 container images for ppc64le
+* Basic PF on Mellanox: No issues found
+* Performance: TestPMD throughput single core tests
+* OS:- RHEL 10.2  kernel: 6.12.0-211.7.3.el10_2.ppc64le
+         with gcc version 14.3.1 20251022 (Red Hat 14.3.1-4)
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: 16 June 2026 19:41
-> To: Maxime Leroy <maxime@leroys.fr>
-> Cc: dev@dpdk.org; Hemant Agrawal <hemant.agrawal@nxp.com>; Sachin
-> Saxena <sachin.saxena@nxp.com>
-> Subject: Re: [PATCH v2 6/6] net/dpaa2: drop the fake software VLAN strip
-> offload
-> Importance: High
+Systems tested:
+  - LPARs on IBM Power11 CHRP IBM, 9105-22A
+     NICs:
+     - Mellanox Technologies MT4129 Family [ConnectX-7 100 GbE 2-Port]
+     - Firmware Version: 28.48.1000 (MT_0000000834)
+     - OFED 26.04-0.8.6
+
+Regards,
+
+Riley Fletcher
+
+On Thu, 2026-06-11 at 04:52 +0200, Thomas Monjalon wrote:
+> A new DPDK release candidate is ready for testing:
+> 	https://git.dpdk.org/dpdk/tag/?id=3Dv26.07-rc1
 >=20
-> On Tue, 16 Jun 2026 12:27:26 +0200
-> Maxime Leroy <maxime@leroys.fr> wrote:
+> There are 432 new patches in this snapshot.
 >=20
-> > RTE_ETH_RX_OFFLOAD_VLAN_STRIP is advertised, but no hardware VLAN
-> > strip backs it: when enabled, the Rx burst calls rte_vlan_strip() on
-> > every frame, a software op masquerading as a hardware offload.
-> >
-> > It saves a forwarding application nothing: the datapath reads the L2
-> > header anyway to classify or strip. The offload does not remove that
-> > read, it relocates it into the driver Rx burst, where it is far more
-> > expensive.
-> >
-> > The cost is a matter of timing. rte_vlan_strip() reaches the L2 header
-> > through rte_pktmbuf_mtod(), which dereferences mbuf->buf_addr. On a
-> > freshly recycled buffer that mbuf cacheline is cold. eth_fd_to_mbuf()
-> > has just written other fields of it (data_off, ol_flags), but buf_addr
-> > is a persistent field it does not rewrite. A write does not stall: it
-> > posts to the store buffer while the line fills in the background, and
-> > the rewritten fields are forwarded straight from there. buf_addr has
-> > nothing to forward, so it must be read from the line, whose fill is
-> > still in flight, and the read stalls. The ethertype read that follows,
-> > on the cold payload line, stalls again. Read later by the application,
-> > when the fill has completed, the same read hits. The offload just
-> > performs it at the worst possible moment.
-> >
-> > Measured on a single-core port-to-port forwarding test over two 10G
-> > ports (one core at 2 GHz, 64-byte untagged frames):
-> >
-> >   - throughput 4.22 -> 5.00 Mpps (+18 percent)
-> >   - IPC 0.93 -> 1.25: the cost was memory stall, not compute
-> >   - L3/DRAM-bound L2 refills 319M -> 200M over 10s (-37 percent)
-> >
-> > perf confirms it: with the offload, the buf_addr load (the cold mbuf
-> > field) and the payload load account for about 84 percent of the Rx
-> > burst's L2 refills; removing it, those vanish and only the inherent
-> > DQRR dequeue misses remain.
-> >
-> > Stop advertising VLAN_STRIP and remove the rte_vlan_strip() calls from
-> > every Rx path. This is a behavioural change: the tag is left in the
-> > frame, so an application must strip it itself, on the L2 header it
-> > already reads.
-> >
-> > Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+> Release notes:
+> 	https://doc.dpdk.org/guides/rel_notes/release_26_07.html
 >=20
-> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+> Highlights of 26.07-rc1:
+> 	- option --pagesz-mem for per-page-size maximum
+> 	- option --no-auto-probing for no device at init
+> 	- less mempool cache misses in run-to-completion
+> 	- peek style API for staged-ordered ring
+> 	- RISC-V vector paths
+> 	- PTP helpers and clock relay example
+> 	- selective Rx API to save PCI bandwidth
+> 	- vhost memory hotplug
+> 	- pcap driver enhanced
+> 	- LinkData sxe2 NIC driver
+> 	- AI review helpers
+>=20
+> Important note:
+> Pipelined applications, where ethdev Rx and Tx run on separate
+> lcores,
+> should adapt to the new algorithm by doubling their configured
+> mempool
+> cache size, to avoid doubling their mempool cache miss rate.
+>=20
+> Please test and report issues on bugs.dpdk.org.
+>=20
+> We plan to release -rc2 in 2 weeks.
+>=20
+> Thank you everyone
+>=20
