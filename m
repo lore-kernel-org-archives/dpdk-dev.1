@@ -2,46 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159BECD98CF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 10:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2B6CD98CF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 10:47:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B55F40E24;
-	Tue, 16 Jun 2026 12:28:05 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 6D77340DF8
- for <dev@dpdk.org>; Tue, 16 Jun 2026 12:28:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781605682; x=1813141682;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=JsWMG53Dw/myKazbfXudAykzDQcXHPI+1SXmYVE2KQE=;
- b=eAwsZYsneXvfiXu2QZrn7Xjs7vTUxBDL7L0bywABXYG9qosH0rmNZnCf
- ekFXfsYa3ad443MAEtXWbaVOXImNm/QInHxquOt+zemUBsVgO2rdjf0J5
- d1nx2fYWoMKJ+8B7ELzqDc1xhdi70oTKoZzWNS2tn7AujtPcGry0qstp5
- BTgrcI3VYLKp7LT08OGMUt6ZRDmduNkoUAbzCXQc1BXEcXd6ZNtOx4Nbp
- hH6KR1q7NglzLHQPPVrLjd9NhYCTUwKZWoyRAf9DhP20sNYi8u3Vkj2qS
- 4RjOVndn7GRcNOVuGT/XCTwN9zOR8L5PYjEsA5aj2TqxESkVI1lA4dUjL g==;
-X-CSE-ConnectionGUID: XJ5B9eh5TY6fuKXCCCTcxQ==
-X-CSE-MsgGUID: pkoaKDt/Tjye98uEcA4e9Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11818"; a="86005066"
-X-IronPort-AV: E=Sophos;i="6.24,208,1774335600"; d="scan'208";a="86005066"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Jun 2026 03:27:49 -0700
-X-CSE-ConnectionGUID: /dTKa9rKQE66qB2QVstdjA==
-X-CSE-MsgGUID: Me8j49xESSK7dChgVwetkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,208,1774335600"; d="scan'208";a="252856743"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa005.fm.intel.com with ESMTP; 16 Jun 2026 03:27:41 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Ori Kam <orika@nvidia.com>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v1 1/2] app/testpmd: mask VLAN TCI when specified
-Date: Tue, 16 Jun 2026 11:27:38 +0100
-Message-ID: <00f78873fdb3d48542a7226e68a94e74cab4d8c0.1781605650.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
+	by mails.dpdk.org (Postfix) with ESMTP id 6BDFE402DB;
+	Tue, 16 Jun 2026 12:47:41 +0200 (CEST)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
+ [209.85.128.46]) by mails.dpdk.org (Postfix) with ESMTP id 38E534026A
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 12:47:40 +0200 (CEST)
+Received: by mail-wm1-f46.google.com with SMTP id
+ 5b1f17b1804b1-490bb83a3f6so34382695e9.0
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 03:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1781606860; x=1782211660; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+ bh=kf6M2yx68XnX+BJH1EPkuam0kc13j9h1ubKu5LXmdfk=;
+ b=r4An1mx4rwSo11WRSrJYAt+j7Bnww4L4gAJUJ7HHcnXmpJq1Ri4jZUCgdlFesGjucG
+ 4AL1dkOUywbHeeg63ZYhahjgOSDDoB8H/WP8imQpSeDpOghs99FNbgjrqrDRhO7D03Pu
+ roOCCuaccw3fcJnaYpKpUhOOw41exMQGJAtggAWSOGnhiVzMdtXUgAvuXoXcIw7Mo75u
+ NROVSV29Jz/MH4wPNB+RfavomYN7cQ9xWu1rlOlbGYooQLAnZIspziApd/MS2anrMQ22
+ hRSL6+sLwjI5xJEXaFeQZW3WI7QLld4nqSSw/PQEcZacSUwgrEfyWoQnRziB6rfFfOU1
+ gkzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781606860; x=1782211660;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=kf6M2yx68XnX+BJH1EPkuam0kc13j9h1ubKu5LXmdfk=;
+ b=UTg/xEDZpN9eW9RNit+vpjPGTSmA/1obGoPaAtwlrtX3N3wH0EwGkn5pZTkWGkSPnf
+ cG5j3smuoEqvBUWT1FsDOA+7d4H+OTh3FrRAN1Nu+0exetMe4Cy0U0xsZsAkuwQbq9jS
+ N5uY48PV8puz4RkiGeA3tsl+oadorcwLvSzf8/1NROwuVv8JyudKJNcVd23Z3RftnVVA
+ SsIcFqSupeBBnjqEWzSsfBIbdUk+4JCNyW+H4GymTlDMEVQ0A7w7Z/YRWUrPZcbFru4L
+ HFgXj0hXlNuEy12BvAnxb/7+ybrOtjc3ZnSWPLpd4EAKEF8MdVGei2WuALSPX9bFz2yQ
+ 1i/Q==
+X-Gm-Message-State: AOJu0YzP/2JxtiwGMqsPj/Ire/yHzpW+izALIws+J1HFYyzdcuCTUlF1
+ EH/Y3qjMq0qNyCqvglYkdm6H6xwZFJkbSC/fzinsrv5tw6rTA82+RH6siQeOV2li
+X-Gm-Gg: Acq92OGDoB/THgaNddmYebBrl1+C8xtQYDg2YgSt2RWhIUh90p/iLs1WaNE0fous864
+ mzjE8y6QfDPc9Emb6TOn4utaZOex6DCa0UI+E+J4p2G3BcYudlhqOU+KzcnLYi/TEPMXoAIGL8D
+ tPzTdgIwqVUEHY0gJxKo1k+AewEkUAp/o3okFd27j7heJOt5IfCzw51ymNyhuWzn4AbJ2aEPeGH
+ P0nQia2AW+7KlSD6xig0jDmXtBfYMB2lzpTEO1B6ohikWFMF0vu48VC6fNTQ6eQALY18nYZZ48t
+ JQrvpuOge0CyKKWIhL+4WTyD6dZEvPEPUzkma/s7Zl2XKKD/qrVCrq6THILlAmO5MXz8V3wugkc
+ hffw6JlD2OlbCM9QmkeJYjoJ64tQcbfb8wxLWdGiK8pyRns23NkMzZ58x4RhV83vx7vVNSJA40D
+ 4Mn3y4mUtSun+8+3ETLaLXc2b3Z69n7X8VdGLjMKmPiA6JNdmuP67l5NtPCqljHvE=
+X-Received: by 2002:a05:600c:4fc9:b0:490:b446:fb8 with SMTP id
+ 5b1f17b1804b1-4922ff938e3mr49847725e9.11.1781606859489; 
+ Tue, 16 Jun 2026 03:47:39 -0700 (PDT)
+Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-461eaa0d275sm150875f8f.2.2026.06.16.03.47.38
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 16 Jun 2026 03:47:38 -0700 (PDT)
+Sender: Maxime Leroy <maxime.leroys@gmail.com>
+From: Maxime Leroy <maxime@leroys.fr>
+To: dev@dpdk.org
+Cc: Maxime Leroy <maxime@leroys.fr>
+Subject: [PATCH 0/6] net/dpaa2: RSS fixes and improvements
+Date: Tue, 16 Jun 2026 12:47:09 +0200
+Message-ID: <20260616104717.723087-1-maxime@leroys.fr>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -57,29 +76,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when testpmd command `...vlan tci is 0x1234`, the VLAN TCI field
-is being specified in spec, but is not masked in mask. Add full mask to
-VLAN TCI when specified.
+A set of RSS fixes and improvements for the dpaa2 PMD.
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- app/test-pmd/cmdline_flow.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Patches 1 and 2 fix the RSS hash key: the L4 destination port was never
+added (both extracts used the source port), and SCTP now uses the same L4
+port extraction as TCP/UDP. Both are tagged for stable.
 
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index 67f200f2e3..0b7d268535 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -4610,7 +4610,8 @@ static const struct token token_list[] = {
- 		.help = "tag control information",
- 		.next = NEXT(item_vlan, NEXT_ENTRY(COMMON_UNSIGNED),
- 			     item_param),
--		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vlan, hdr.vlan_tci)),
-+		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_vlan,
-+					  hdr.vlan_tci, "\xff\xff")),
- 	},
- 	[ITEM_VLAN_PCP] = {
- 		.name = "pcp",
+Patches 3 and 4 are small cleanups in the key builder (a dead num_extracts
+increment, and the unset PPPoE guard flag).
+
+Patch 5 honours RTE_ETH_RSS_LEVEL_INNERMOST so tunnelled traffic hashes on
+the inner IP header. Patch 6 implements reta_query / reta_update as an
+emulation over the HW distribution-size mechanism, since dpaa2 has no
+software-visible indirection table.
+
+Tested on LX2160A (lx2160acex7).
+
+Maxime Leroy (6):
+  net/dpaa2: add L4 destination port to the RSS hash key
+  net/dpaa2: use L4 port extraction for SCTP RSS
+  net/dpaa2: drop stray extract count bump in RSS key build
+  net/dpaa2: set PPPoE configured flag in RSS key build
+  net/dpaa2: support inner RSS level for tunnelled traffic
+  net/dpaa2: implement RSS RETA query and update
+
+ doc/guides/nics/features/dpaa2.ini     |   1 +
+ doc/guides/rel_notes/release_26_07.rst |   5 +
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c |  94 +++++++-----
+ drivers/net/dpaa2/dpaa2_ethdev.c       | 204 ++++++++++++++++++++++++-
+ drivers/net/dpaa2/dpaa2_ethdev.h       |   9 ++
+ 5 files changed, 272 insertions(+), 41 deletions(-)
+
 -- 
-2.47.3
+2.43.0
 
