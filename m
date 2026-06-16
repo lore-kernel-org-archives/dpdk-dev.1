@@ -2,79 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC855CD8CA8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 06:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10905CD98DA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 06:44:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EE5FC40289;
-	Tue, 16 Jun 2026 08:30:42 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id BB09A40285
- for <dev@dpdk.org>; Tue, 16 Jun 2026 08:30:41 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 65G65xFb1992650; Mon, 15 Jun 2026 23:30:32 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=j
- Wy5kApMFdK8YWYX7AZDjEnm5ZgCuZumg+DXEw6AmR0=; b=iEAVj+0oPDShKuNQW
- 2t2Igf3358fqx9ahstvkVC/10UCnP1vhcTGfEqzI3/xNoENRjme9+InvZadcX7PP
- fCgWrPXnDm5YNuA0UYYAh6fjl54bXFjjvQ40KnKkAXjA9gBpi3r/Fa3WXBAIKSU2
- LAxbfO2Q25nzgTJowxhqcUhCFjWDaugr76+FMByj7PTQIpbKha437+o/MKx8DyBs
- kdGmrLrl2z/XoiO/7pWsQRHTvMY1xRgownALvEVbFYNuDxIHyK7dQPUj/LHmpPgY
- J5v2r2LQFezmiFryrKmwIRyen7f88XgksL2AP6FH3VLCWuzXebyZ3u+uv22Apw7y
- Olx9A==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4etu38hdmj-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 15 Jun 2026 23:30:32 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 15 Jun 2026 23:30:31 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 15 Jun 2026 23:30:31 -0700
-Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id 0B1243F709B;
- Mon, 15 Jun 2026 23:30:27 -0700 (PDT)
-From: <kirankumark@marvell.com>
-To: <rjarry@redhat.com>
-CC: <cfontain@redhat.com>, <david.marchand@redhat.com>, <dev@dpdk.org>,
- <jerinj@marvell.com>, <kirankumark@marvell.com>,
- <konstantin.ananyev@huawei.com>, <maxime@leroys.fr>,
- <ndabilpuram@marvell.com>, <vladimir.medvedkin@intel.com>,
- <yanzhirun_163@163.com>
-Subject: [PATCH dpdk v2 2/2] graph: replace circular buffer with
- priority-based bitmap
-Date: Tue, 16 Jun 2026 12:00:26 +0530
-Message-ID: <20260616063026.2007191-1-kirankumark@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20260519213822.735891-3-rjarry@redhat.com>
-References: <20260519213822.735891-3-rjarry@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: BLC5TQskzVZXtSDTY32dDTgZf_aMl0eB
-X-Proofpoint-ORIG-GUID: BLC5TQskzVZXtSDTY32dDTgZf_aMl0eB
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE2MDA2MiBTYWx0ZWRfX7TMFQ1eKGpMW
- suiqVHTfieTG9K60eZytNVX2aYvGMhpdFUCxhUnbpSErvJsh9M1h7KjYff0XfTNv92HCVDDGku2
- z+u9Id7B9nTnW5XTcKj3COp6MbyYC40=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE2MDA2MiBTYWx0ZWRfXyu31/YWn+mvR
- ScRCFXQB4MAFSyKD2yBE4ti98MUzcFT1Ra39GZo7/p2j9IA8v3+QD+9f8GrZTaRikBpG3gMYCcC
- 4hrdDTx5tykSjpe5rr7N7CcuMP4xs9boPonTIORwgkavvnBpJi7Up3gOZ0fYJdsrfliaWXiNuCO
- uhHjmYRvPnTox/qd+9IimvLi9m4TDSUdDI+oKxI+3HKw8As7awctc13xXjnVrqJV2f5jY2EbpAH
- wDbXZVd2CJ5iZ5KWIs+wM208LFOzU6nkAh3kZBTKQ63bQjL/yJpK5cNl4mFdRl3CgvRxCzjyy6w
- 92N19W86XhHqWljTWF0W6tROuRnsEVyHkhw2AUeYlKufzjyLjkHv+sWPBYQ7hfkeCI55bD0+3UY
- bJOieMBJ1FnibD8D0j+P7iqAzdXL1zyPoCp9P4ijgbCgNKQWO1Mx7nTwHBRGLrhminp85qVUPGG
- EfkfU5tY7ELdPUYIoCw==
-X-Authority-Analysis: v=2.4 cv=SeXHsPRu c=1 sm=1 tr=0 ts=6a30ed88 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=ELgZ-yp8V7MKu1yRJRUA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-16_02,2026-06-15_04,2025-10-01_01
+	by mails.dpdk.org (Postfix) with ESMTP id 0E8DC40289;
+	Tue, 16 Jun 2026 08:44:48 +0200 (CEST)
+Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com
+ [203.205.221.210])
+ by mails.dpdk.org (Postfix) with UTF8SMTP id 5A26B40285
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 08:44:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+ t=1781592283; bh=nmLtOA+WFBDnTrZuwndG9D0BoSWrUH9+aFSrefhO5wQ=;
+ h=From:To:Subject:Date;
+ b=dpJYVoPMTjW2WKKZ6+z2aFwRIX7hDEUPDoJBmm2pjgyaVS6gckyBbNXGrIhuoBF1L
+ oFoXiw1axyFruWvWbaKAtB/R3fyN9MJQT2AQ60VgwUxUCqUi5irVyUjEcIX++wf317
+ ffO9DkYL8GHXvkMhvHKnRKswZ55/OsV8yERPyl+U=
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+X-QQ-XMAILINFO: N/ZzipFY+s/j7yOSWSsSHygVTCFKWaZLVVjTFlsAtPCjQcvvoMs1Un2eyRoGka
+ 4Fv48XoDtA0K09bGx2BnI/uvrndc9ZmrsnKXu05AdAu8xsG9gPpGAdvEqPZUHUmGvkdaw//XVn6iy
+ doHgN+RCw4H3u+MNMJ15Qiys/HZVRtnl8C4cW8tXk1JHJ+IK2ovDc6xuetpIUW5z0YXvyMKrZDW8k
+ YFPjWQYMcT2VRDwyYgGheXGJHz14VbijVJ2THKoVTfqqJpvDrhcg9zymbEGd9Houf27saAnarDHQh
+ veyQ7NqdY+8aP2Kzfly8g5/OidUQs2tLe7COdDSlOMdZTaHTpXwvXHg5v1sZkQgVgkhgKen0P6vnx
+ 0LC6cbQ4E0eYjKD0GU0euzjoYP3y5kUZmLlSMFP/y9z45rClhwMLYhJrWv1xZjE8DTe8pgOdhvYM/
+ Wv5pFATUPPfW+LC/YfloifkLRdGj7tPYJajjC6mxqftCeWJ2QBHwjjoKZzhk4AE10RrPPTM4hRy1y
+ OfXyNCdygx3HHk0XMum/RpUry4VqHe+HrxkjjzpblK2g5geWpkCVml4ifMQ7PIilgo0aYNa4AFSxT
+ nFdfdTQwdO3oLq+7jqCGAUd0O/k9vsSHFbck4gRPSVrpM1tbDsrDOwvDxx3xxrzoplCQsB3zPvJwV
+ PVjd9/kJJtD1/wY87jxqEwOqL9vJR3CY2bKTjyNA/rFZI0d41x9WYeV6Ph/QXPHw+3dbqs3JG05wG
+ w/jSt7Owqm6WUuP0WQU2pSRwykFq9LO3J1zCxYYUXFEq0pnszvDiJXJMsdFjf+C6grLH4xD3sHUWG
+ KidFx0D72ykODJztjn3vwRbpxO8I4qodpP4sU6Jwigb33Wy4+XvO/VkXdNaoMqhTeXOF/yrYvp+Hl
+ My8Q1fQ/rLqtG61fb4r1ohnWPIWfO/umEJ23qEYOAFWyU6w1uGrrWlJabUgkZZMSV4d5S91qsi6T9
+ 08LNemy/irk5MaKrYlXJFWleDz0W2Qc/zTSgxQULklhSSuixdg8Y58sa21V0uY8XIzeXKZ8Zhmj44
+ vYyQk7xcrqG40TNTvwjh3BPjpgGwY/rMEulzyX43Mv4jZ9JU=
+From: "=?utf-8?B?6IOh5YW06I+K?=" <huxingju_001@qq.com>
+To: "=?utf-8?B?ZGV2?=" <dev@dpdk.org>
+Subject: Deep Dive into DPDK NIC RX/TX Flow
+Mime-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="----=_NextPart_6A30F0D7_CB8642E0_2CE7E20B"
+Content-Transfer-Encoding: 8Bit
+Date: Tue, 16 Jun 2026 14:44:39 +0800
+X-Priority: 3
+Message-ID: <tencent_41D9AF5F93348511280699EF5546E8D1D806@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+X-QQ-mid: xmseza28-1t1781592279txs72fxia
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,386 +60,148 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This will break the ABI. Please check and fix.
+This is a multi-part message in MIME format.
 
+------=_NextPart_6A30F0D7_CB8642E0_2CE7E20B
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 
->  	rte_node_process_t process; /**< Node process function. */
->  	rte_node_init_t init;       /**< Node init function. */
->  	rte_node_fini_t fini;       /**< Node fini function. */
-> diff --git a/lib/graph/rte_graph_model_mcore_dispatch.h b/lib/graph/rte_graph_model_mcore_dispatch.h
-> index f9ff3daa88ec..50a473564b56 100644
-> --- a/lib/graph/rte_graph_model_mcore_dispatch.h
-> +++ b/lib/graph/rte_graph_model_mcore_dispatch.h
-> @@ -77,9 +77,13 @@ int rte_graph_model_mcore_dispatch_node_lcore_affinity_set(const char *name,
->  							   unsigned int lcore_id);
->
->  /**
-> - * Perform graph walk on the circular buffer and invoke the process function
-> + * Perform graph walk on the pending bitmap and invoke the process function
->   * of the nodes and collect the stats.
->   *
-> + * Nodes are visited in scheduling order (lowest priority value first).
-> + * Source nodes are seeded into the pending bitmap at the start of each walk.
-> + * Nodes with different lcore affinity are dispatched to their target lcore.
-> + *
->   * @param graph
->   *   Graph pointer returned from rte_graph_lookup function.
->   *
-> @@ -88,20 +92,28 @@ int rte_graph_model_mcore_dispatch_node_lcore_affinity_set(const char *name,
->  static inline void
->  rte_graph_walk_mcore_dispatch(struct rte_graph *graph)
->  {
-> -	const rte_graph_off_t *cir_start = graph->cir_start;
-> -	const rte_node_t mask = graph->cir_mask;
-> -	uint32_t head = graph->head;
-> +	const uint16_t nwords = graph->nb_sched_words;
->  	struct rte_node *node;
-> +	uint16_t word, bit;
->
->  	if (graph->dispatch.wq != NULL)
->  		__rte_graph_mcore_dispatch_sched_wq_process(graph);
->
-> -	while (likely(head != graph->tail)) {
-> -		node = (struct rte_node *)RTE_PTR_ADD(graph, cir_start[(int32_t)head++]);
-> +	/* Seed pending bitmap with source nodes bound to this lcore */
-> +	for (word = 0; word < nwords; word++)
-> +		graph->pending[word] |= graph->src_pending[word];
->
-> -		/* skip the src nodes which not bind with current worker */
-> -		if ((int32_t)head < 1 && node->dispatch.lcore_id != graph->dispatch.lcore_id)
-> -			continue;
-> +	for (;;) {
-> +		/* find first word with any pending bit */
-> +		for (word = 0; word < nwords; word++)
-> +			if (graph->pending[word])
-> +				break;
-> +		if (word == nwords)
-> +			break; /* no more pending nodes */
-> +
-> +		bit = rte_ctz64(graph->pending[word]);
-> +		graph->pending[word] &= ~(1ULL << bit);
-> +		node = __rte_graph_pending_node(graph, word, bit);
->
->  		/* Schedule the node until all task/objs are done */
->  		if (node->dispatch.lcore_id != RTE_MAX_LCORE &&
-> @@ -111,11 +123,7 @@ rte_graph_walk_mcore_dispatch(struct rte_graph *graph)
->  			continue;
->
->  		__rte_node_process(graph, node);
-> -
-> -		head = likely((int32_t)head > 0) ? head & mask : head;
->  	}
-> -
-> -	graph->tail = 0;
->  }
->
->  #ifdef __cplusplus
-> diff --git a/lib/graph/rte_graph_model_rtc.h b/lib/graph/rte_graph_model_rtc.h
-> index 4b6236e301e3..38feb3e1ca88 100644
-> --- a/lib/graph/rte_graph_model_rtc.h
-> +++ b/lib/graph/rte_graph_model_rtc.h
-> @@ -6,9 +6,12 @@
->  #include "rte_graph_worker_common.h"
->
->  /**
-> - * Perform graph walk on the circular buffer and invoke the process function
-> + * Perform graph walk on the pending bitmap and invoke the process function
->   * of the nodes and collect the stats.
->   *
-> + * Nodes are visited in scheduling order (lowest priority value first).
-> + * Source nodes are seeded into the pending bitmap at the start of each walk.
-> + *
->   * @param graph
->   *   Graph pointer returned from rte_graph_lookup function.
->   *
-> @@ -17,30 +20,52 @@
->  static inline void
->  rte_graph_walk_rtc(struct rte_graph *graph)
->  {
-> -	const rte_graph_off_t *cir_start = graph->cir_start;
-> -	const rte_node_t mask = graph->cir_mask;
-> -	uint32_t head = graph->head;
-> +	const uint16_t nwords = graph->nb_sched_words;
->  	struct rte_node *node;
-> +	uint16_t word, bit;
->
->  	/*
-> -	 * Walk on the source node(s) ((cir_start - head) -> cir_start) and then
-> -	 * on the pending streams (cir_start -> (cir_start + mask) -> cir_start)
-> -	 * in a circular buffer fashion.
-> +	 * Nodes are assigned a bit position (sched_idx) sorted by (priority,
-> +	 * node_id) at graph creation time. Source nodes are forced to INT16_MIN
-> +	 * priority so they always come first.
->  	 *
-> -	 *	+-----+ <= cir_start - head [number of source nodes]
-> -	 *	|     |
-> -	 *	| ... | <= source nodes
-> -	 *	|     |
-> -	 *	+-----+ <= cir_start [head = 0] [tail = 0]
-> -	 *	|     |
-> -	 *	| ... | <= pending streams
-> -	 *	|     |
-> -	 *	+-----+ <= cir_start + mask
-> +	 * sched_table[] maps bit positions to node offsets:
-> +	 *
-> +	 *   pending[]         sched_table[]
-> +	 *   +----------+      +------------------+
-> +	 *   | word 0   | ---> | src_node_0       | bit 0 (prio=INT16_MIN)
-> +	 *   | 1100...1 |      | src_node_1       | bit 1 (prio=INT16_MIN)
-> +	 *   |          |      | mpls_input       | bit 2 (prio=-10)
-> +	 *   |          |      | ipv4_input       | bit 3 (prio=0)
-> +	 *   |          |      | ...              |
-> +	 *   +----------+      +------------------+
-> +	 *   | word 1   | ---> | ip4_rewrite      | bit 64 (prio=10)
-> +	 *   | ...      |      | ...              |
-> +	 *   +----------+      +------------------+
-> +	 *
-> +	 * Walk: for each word, find lowest set bit (rte_ctz64), process that
-> +	 * node, clear the bit, re-read the word (processing may have set new
-> +	 * bits), repeat.
-> +	 *
-> +	 * After each node is processed, restart scanning from word 0 since
-> +	 * processing may set bits in any word, including earlier ones.
->  	 */
-> -	while (likely(head != graph->tail)) {
-> -		node = (struct rte_node *)RTE_PTR_ADD(graph, cir_start[(int32_t)head++]);
-> +
-> +	/* Seed pending bitmap with source nodes */
-> +	for (word = 0; word < nwords; word++)
-> +		graph->pending[word] |= graph->src_pending[word];
-> +
-> +	for (;;) {
-> +		/* find first word with any pending bit */
-> +		for (word = 0; word < nwords; word++)
-> +			if (graph->pending[word])
-> +				break;
-> +		if (word == nwords)
-> +			break; /* no more pending nodes */
-> +
-> +		bit = rte_ctz64(graph->pending[word]);
-> +		graph->pending[word] &= ~(1ULL << bit);
-> +		node = __rte_graph_pending_node(graph, word, bit);
->  		__rte_node_process(graph, node);
-> -		head = likely((int32_t)head > 0) ? head & mask : head;
->  	}
-> -	graph->tail = 0;
->  }
-> diff --git a/lib/graph/rte_graph_worker.h b/lib/graph/rte_graph_worker.h
-> index b0f952a82cc9..e513d7a655d9 100644
-> --- a/lib/graph/rte_graph_worker.h
-> +++ b/lib/graph/rte_graph_worker.h
-> @@ -14,7 +14,7 @@ extern "C" {
->  #endif
->
->  /**
-> - * Perform graph walk on the circular buffer and invoke the process function
-> + * Perform graph walk on the pending bitmap and invoke the process function
->   * of the nodes and collect the stats.
->   *
->   * @param graph
-> diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
-> index 4ab53a533e4c..0e60486043d8 100644
-> --- a/lib/graph/rte_graph_worker_common.h
-> +++ b/lib/graph/rte_graph_worker_common.h
-> @@ -49,15 +49,14 @@ SLIST_HEAD(rte_graph_rq_head, rte_graph);
->   */
->  struct __rte_cache_aligned rte_graph {
->  	/* Fast path area. */
-> -	uint32_t tail;		     /**< Tail of circular buffer. */
-> -	uint32_t head;		     /**< Head of circular buffer. */
-> -	uint32_t cir_mask;	     /**< Circular buffer wrap around mask. */
->  	rte_node_t nb_nodes;	     /**< Number of nodes in the graph. */
-> -	rte_graph_off_t *cir_start;  /**< Pointer to circular buffer. */
->  	rte_graph_off_t nodes_start; /**< Offset at which node memory starts. */
-> +	rte_graph_off_t *sched_table; /**< Node offset indexed by sched_idx. */
-> +	uint64_t *pending;	     /**< Bitmap of pending nodes. */
-> +	uint64_t *src_pending;	     /**< Bitmap of source nodes (constant). */
-> +	uint16_t nb_sched_words;     /**< Number of uint64_t words in pending bitmaps. */
->  	uint8_t model;		     /**< graph model */
-> -	uint8_t reserved1;	     /**< Reserved for future use. */
-> -	uint16_t reserved2;	     /**< Reserved for future use. */
-> +	/* 26 bytes padding */
->  	union {
->  		/* Fast schedule area for mcore dispatch model */
->  		struct {
-> @@ -98,6 +97,7 @@ struct __rte_cache_aligned rte_node {
->  	rte_node_t id;		/**< Node identifier. */
->  	rte_node_t parent_id;	/**< Parent Node identifier. */
->  	rte_edge_t nb_edges;	/**< Number of edges from this node. */
-> +	uint16_t sched_idx;	/**< Bit position in pending bitmap. */
->  	uint32_t realloc_count;	/**< Number of times realloced. */
->
->  	char parent[RTE_NODE_NAMESIZE];	/**< Parent node name. */
-> @@ -132,7 +132,7 @@ struct __rte_cache_aligned rte_node {
->  		}; /**< Node Context. */
->  		uint16_t size;		/**< Total number of objects available. */
->  		uint16_t idx;		/**< Number of objects used. */
-> -		rte_graph_off_t off;	/**< Offset of node in the graph reel. */
-> +		rte_graph_off_t off;	/**< Offset of node in the graph memory. */
->  		uint64_t total_cycles;	/**< Cycles spent in this node. */
->  		uint64_t total_calls;	/**< Calls done to this node. */
->  		uint64_t total_objs;	/**< Objects processed by this node. */
-> @@ -187,12 +187,12 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
->  /**
->   * @internal
->   *
-> - * Enqueue a given node to the tail of the graph reel.
-> + * Process a node's pending objects and collect stats.
->   *
->   * @param graph
->   *   Pointer Graph object.
->   * @param node
-> - *   Pointer to node object to be enqueued.
-> + *   Pointer to node object to be processed.
->   */
->  static __rte_always_inline void
->  __rte_node_process(struct rte_graph *graph, struct rte_node *node)
-> @@ -220,21 +220,42 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
->  /**
->   * @internal
->   *
-> - * Enqueue a given node to the tail of the graph reel.
-> + * Get a pointer to a node from the scheduling table.
->   *
->   * @param graph
->   *   Pointer Graph object.
-> + * @param word
-> + *   Offset in the pending bitmap.
-> + * @param bit
-> + *   Bit number.
-> + *
-> + * @return
-> + *   Pointer to the node.
-> + */
-> +static __rte_always_inline struct rte_node *
-> +__rte_graph_pending_node(struct rte_graph *graph, uint16_t word, uint16_t bit)
-> +{
-> +	const uint16_t index = (word * sizeof(*graph->pending) * CHAR_BIT) + bit;
-> +	const rte_graph_off_t node_offset = graph->sched_table[index];
-> +	return RTE_PTR_ADD(graph, node_offset);
-> +}
-> +
-> +/**
-> + * @internal
-> + *
-> + * Mark a node as pending in the graph scheduling bitmap.
-> + *
-> + * @param bitmap
-> + *   Either graph->pending or graph->src_pending.
->   * @param node
-> - *   Pointer to node object to be enqueued.
-> + *   Pointer to node object to be marked pending.
->   */
->  static __rte_always_inline void
-> -__rte_node_enqueue_tail_update(struct rte_graph *graph, struct rte_node *node)
-> +__rte_node_pending_set(uint64_t *bitmap, struct rte_node *node)
->  {
-> -	uint32_t tail;
-> -
-> -	tail = graph->tail;
-> -	graph->cir_start[tail++] = node->off;
-> -	graph->tail = tail & graph->cir_mask;
-> +	const uint16_t word = node->sched_idx / (sizeof(*bitmap) * CHAR_BIT);
-> +	const uint16_t bit = node->sched_idx % (sizeof(*bitmap) * CHAR_BIT);
-> +	bitmap[word] |= 1ULL << bit;
->  }
->
->  /**
-> @@ -242,8 +263,8 @@ __rte_node_enqueue_tail_update(struct rte_graph *graph, struct rte_node *node)
->   *
->   * Enqueue sequence prologue function.
->   *
-> - * Updates the node to tail of graph reel and resizes the number of objects
-> - * available in the stream as needed.
-> + * Marks the node as pending in the scheduling bitmap and resizes the number
-> + * of objects available in the stream as needed.
->   *
->   * @param graph
->   *   Pointer to the graph object.
-> @@ -259,9 +280,8 @@ __rte_node_enqueue_prologue(struct rte_graph *graph, struct rte_node *node,
->  			    const uint16_t idx, const uint16_t space)
->  {
->
-> -	/* Add to the pending stream list if the node is new */
->  	if (idx == 0)
-> -		__rte_node_enqueue_tail_update(graph, node);
-> +		__rte_node_pending_set(graph->pending, node);
->
->  	if (unlikely(node->size < (idx + space)))
->  		__rte_node_stream_alloc_size(graph, node, node->size + space);
-> @@ -293,7 +313,7 @@ __rte_node_next_node_get(struct rte_node *node, rte_edge_t next)
->
->  /**
->   * Enqueue the objs to next node for further processing and set
-> - * the next node to pending state in the circular buffer.
-> + * the next node to pending state in the scheduling bitmap.
->   *
->   * @param graph
->   *   Graph pointer returned from rte_graph_lookup().
-> @@ -321,7 +341,7 @@ rte_node_enqueue(struct rte_graph *graph, struct rte_node *node,
->
->  /**
->   * Enqueue only one obj to next node for further processing and
-> - * set the next node to pending state in the circular buffer.
-> + * set the next node to pending state in the scheduling bitmap.
->   *
->   * @param graph
->   *   Graph pointer returned from rte_graph_lookup().
-> @@ -347,7 +367,7 @@ rte_node_enqueue_x1(struct rte_graph *graph, struct rte_node *node,
->
->  /**
->   * Enqueue only two objs to next node for further processing and
-> - * set the next node to pending state in the circular buffer.
-> + * set the next node to pending state in the scheduling bitmap.
->   * Same as rte_node_enqueue_x1 but enqueue two objs.
->   *
->   * @param graph
-> @@ -377,7 +397,7 @@ rte_node_enqueue_x2(struct rte_graph *graph, struct rte_node *node,
->
->  /**
->   * Enqueue only four objs to next node for further processing and
-> - * set the next node to pending state in the circular buffer.
-> + * set the next node to pending state in the scheduling bitmap.
->   * Same as rte_node_enqueue_x1 but enqueue four objs.
->   *
->   * @param graph
-> @@ -414,7 +434,7 @@ rte_node_enqueue_x4(struct rte_graph *graph, struct rte_node *node,
->
->  /**
->   * Enqueue objs to multiple next nodes for further processing and
-> - * set the next nodes to pending state in the circular buffer.
-> + * set the next nodes to pending state in the scheduling bitmap.
->   * objs[i] will be enqueued to nexts[i].
->   *
->   * @param graph
-> @@ -472,7 +492,7 @@ rte_node_next_stream_get(struct rte_graph *graph, struct rte_node *node,
->  }
->
->  /**
-> - * Put the next stream to pending state in the circular buffer
-> + * Put the next stream to pending state in the scheduling bitmap
->   * for further processing. Should be invoked after rte_node_next_stream_get().
->   *
->   * @param graph
-> @@ -496,8 +516,7 @@ rte_node_next_stream_put(struct rte_graph *graph, struct rte_node *node,
->
->  	node = __rte_node_next_node_get(node, next);
->  	if (node->idx == 0)
-> -		__rte_node_enqueue_tail_update(graph, node);
-> -
-> +		__rte_node_pending_set(graph->pending, node);
->  	node->idx += idx;
->  }
->
-> @@ -530,7 +549,7 @@ rte_node_next_stream_move(struct rte_graph *graph, struct rte_node *src,
->  		src->objs = dobjs;
->  		src->size = dsz;
->  		dst->idx = src->idx;
-> -		__rte_node_enqueue_tail_update(graph, dst);
-> +		__rte_node_pending_set(graph->pending, dst);
->  	} else { /* Move the objects from src node to dst node */
->  		rte_node_enqueue(graph, src, next, src->objs, src->idx);
->  	}
-> --
-> 2.54.0
->
+SGVsbG8gRFBESyB0ZWFtLA0KDQoNCkknZCBsaWtlIHRvIHN1Ym1pdCB0aGUgZm9sbG93aW5n
+IHRlY2huaWNhbCBjb250ZW50IGZvciBjb25zaWRlcmF0aW9uIGluIHRoZSBEUERLIG5ld3Ns
+ZXR0ZXIuDQoNCg0KVGl0bGU6IERQREvnvZHljaHmlLblj5HmiqXmlofmtYHnqIvmt7Hluqbo
+p6PmnpAgKERlZXAgRGl2ZSBpbnRvIERQREsgTklDIFJYL1RYIEZsb3cpDQpMaW5rOiBodHRw
+czovL2dpdGh1Yi5jb20vaHV4aW5nanUvZHBkay1zb3VyY2UtYW5hbHl6ZXIvYmxvYi9tYWlu
+L05JQ19SWF9UWF9GTE9XLm1kDQoNCg0KVHlwZTogVGVjaG5pY2FsIGRlZXAgZGl2ZSAvIERl
+dmVsb3BlciBibG9nDQoNCg0KRGVzY3JpcHRpb246DQpUaGlzIGFydGljbGUgcHJvdmlkZXMg
+YSBjb21wcmVoZW5zaXZlIGFuYWx5c2lzIG9mIERQREsncyBSWC9UWCBkYXRhIHBhdGgsIGNv
+dmVyaW5nOg0KLSBIYXJkd2FyZSBhcmNoaXRlY3R1cmU6IFJYL1RYIEZJRk8sIERNQSBlbmdp
+bmUsIGRlc2NyaXB0b3IgcmluZw0KLSBTb2Z0d2FyZSBsYXllcjogcnRlX21idWYgc3RydWN0
+dXJlLCBkcml2ZXIgaW1wbGVtZW50YXRpb24gKGl4Z2JlIGFzIGV4YW1wbGUpDQotIFJlbGF0
+aW9uc2hpcCBiZXR3ZWVuIGhhcmR3YXJlIGRlc2NyaXB0b3IsIFNXIHJpbmcsIGFuZCBtYnVm
+DQotIFBlcmZvcm1hbmNlIG9wdGltaXphdGlvbiB0ZWNobmlxdWVzOiBiYXRjaGluZywgcHJl
+ZmV0Y2hpbmcsIE5VTUEgYXdhcmVuZXNzDQoNCg0KKipBYm91dCB0aGUgY3JlYXRpb24gcHJv
+Y2VzczoqKg0KVGhpcyBhcnRpY2xlIHdhcyBodW1hbi1kaXJlY3RlZCBhbmQgQUktYXNzaXN0
+ZWQuIEFzIGEgZGV2ZWxvcGVyIHdpdGggOCsgeWVhcnMgb2YgbmV0d29yayBkZXZlbG9wbWVu
+dCBleHBlcmllbmNlLCBJOg0KLSBEZWZpbmVkIHRoZSBzY29wZSwgc3RydWN0dXJlLCBhbmQg
+a2V5IHRlY2huaWNhbCBwb2ludHMNCi0gR3VpZGVkIHRoZSBBSSB0byBnZW5lcmF0ZSBzcGVj
+aWZpYyBzZWN0aW9ucw0KLSBSZXZpZXdlZCwgY29ycmVjdGVkLCBhbmQgdmFsaWRhdGVkIGFs
+bCB0ZWNobmljYWwgY29udGVudA0KDQoNClRoZSBmaW5hbCByZXN1bHQgcmVmbGVjdHMgbXkg
+ZXhwZXJ0aXNlIGFuZCBoYXMgYmVlbiB2ZXJpZmllZCBmb3IgdGVjaG5pY2FsIGFjY3VyYWN5
+Lg0KDQoNCkJlc3QgcmVnYXJkcywNCkh1eGluZ2p1DQpHaXRIdWI6IGdpdGh1Yi5jb20vaHV4
+aW5nanU=
+
+------=_NextPart_6A30F0D7_CB8642E0_2CE7E20B
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+
+PGRpdiBzdHlsZT0idGV4dC1hbGlnbjogbGVmdDsgdGV4dC1pbmRlbnQ6IDBweDsgbGluZS1o
+ZWlnaHQ6IDEuNDM7IGZvbnQtZmFtaWx5OiAtYXBwbGUtc3lzdGVtLCBzeXN0ZW0tdWk7IGZv
+bnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPkhlbGxvIERQREsgdGVhbSw8
+L2Rpdj48ZGl2IHN0eWxlPSJ0ZXh0LWFsaWduOiBsZWZ0OyB0ZXh0LWluZGVudDogMHB4OyBs
+aW5lLWhlaWdodDogMS40MzsgZm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIHN5c3RlbS11
+aTsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGJyICAvPjwvZGl2
+PjxkaXYgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUt
+aGVpZ2h0OiAxLjQzOyBmb250LWZhbWlseTogLWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBm
+b250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij5JJ2QgbGlrZSB0byBzdWJt
+aXQgdGhlIGZvbGxvd2luZyB0ZWNobmljYWwgY29udGVudCBmb3IgY29uc2lkZXJhdGlvbiBp
+biB0aGUgRFBESyBuZXdzbGV0dGVyLjwvZGl2PjxkaXYgc3R5bGU9InRleHQtYWxpZ246IGxl
+ZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUtaGVpZ2h0OiAxLjQzOyBmb250LWZhbWlseTog
+LWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2Io
+MCwgMCwgMCk7Ij48YnIgIC8+PC9kaXY+PGRpdiBzdHlsZT0idGV4dC1hbGlnbjogbGVmdDsg
+dGV4dC1pbmRlbnQ6IDBweDsgbGluZS1oZWlnaHQ6IDEuNDM7IGZvbnQtZmFtaWx5OiAtYXBw
+bGUtc3lzdGVtLCBzeXN0ZW0tdWk7IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAw
+LCAwKTsiPlRpdGxlOiBEUERL572R5Y2h5pS25Y+R5oql5paH5rWB56iL5rex5bqm6Kej5p6Q
+IChEZWVwIERpdmUgaW50byBEUERLIE5JQyBSWC9UWCBGbG93KTwvZGl2PjxkaXYgc3R5bGU9
+InRleHQtYWxpZ246IGxlZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUtaGVpZ2h0OiAxLjQz
+OyBmb250LWZhbWlseTogLWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBmb250LXNpemU6IDE0
+cHg7Ij48c3BhbiBzdHlsZT0iY29sb3I6IHJnYigwLCAwLCAwKTsiPkxpbms6IDwvc3Bhbj48
+c3BhbiBzdHlsZT0iY29sb3I6IHJnYigxNCwgMTEyLCAyMjMpOyI+PHU+PGEgaHJlZj0iaHR0
+cHM6Ly9naXRodWIuY29tL2h1eGluZ2p1L2RwZGstc291cmNlLWFuYWx5emVyL2Jsb2IvbWFp
+bi9OSUNfUlhfVFhfRkxPVy5tZCIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIgbm9y
+ZWZlcnJlciIgc3R5bGU9InRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lO2NvbG9yOiByZ2Io
+MTQsIDExMiwgMjIzKTsiPmh0dHBzOi8vZ2l0aHViLmNvbS9odXhpbmdqdS9kcGRrLXNvdXJj
+ZS1hbmFseXplci9ibG9iL21haW4vTklDX1JYX1RYX0ZMT1cubWQ8L2E+PC91Pjwvc3Bhbj48
+L2Rpdj48ZGl2IHN0eWxlPSJ0ZXh0LWFsaWduOiBsZWZ0OyB0ZXh0LWluZGVudDogMHB4OyBs
+aW5lLWhlaWdodDogMS40MzsgZm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIHN5c3RlbS11
+aTsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGJyICAvPjwvZGl2
+PjxkaXYgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUt
+aGVpZ2h0OiAxLjQzOyBmb250LWZhbWlseTogLWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBm
+b250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij5UeXBlOiBUZWNobmljYWwg
+ZGVlcCBkaXZlIC8gRGV2ZWxvcGVyIGJsb2c8L2Rpdj48ZGl2IHN0eWxlPSJ0ZXh0LWFsaWdu
+OiBsZWZ0OyB0ZXh0LWluZGVudDogMHB4OyBsaW5lLWhlaWdodDogMS40MzsgZm9udC1mYW1p
+bHk6IC1hcHBsZS1zeXN0ZW0sIHN5c3RlbS11aTsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjog
+cmdiKDAsIDAsIDApOyI+PGJyICAvPjwvZGl2PjxkaXYgc3R5bGU9InRleHQtYWxpZ246IGxl
+ZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUtaGVpZ2h0OiAxLjQzOyBmb250LWZhbWlseTog
+LWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2Io
+MCwgMCwgMCk7Ij5EZXNjcmlwdGlvbjo8L2Rpdj48ZGl2IHN0eWxlPSJ0ZXh0LWFsaWduOiBs
+ZWZ0OyB0ZXh0LWluZGVudDogMHB4OyBsaW5lLWhlaWdodDogMS40MzsgZm9udC1mYW1pbHk6
+IC1hcHBsZS1zeXN0ZW0sIHN5c3RlbS11aTsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdi
+KDAsIDAsIDApOyI+VGhpcyBhcnRpY2xlIHByb3ZpZGVzIGEgY29tcHJlaGVuc2l2ZSBhbmFs
+eXNpcyBvZiBEUERLJ3MgUlgvVFggZGF0YSBwYXRoLCBjb3ZlcmluZzo8L2Rpdj48ZGl2IHN0
+eWxlPSJ0ZXh0LWFsaWduOiBsZWZ0OyB0ZXh0LWluZGVudDogMHB4OyBsaW5lLWhlaWdodDog
+MS40MzsgZm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIHN5c3RlbS11aTsgZm9udC1zaXpl
+OiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+LSBIYXJkd2FyZSBhcmNoaXRlY3R1cmU6
+IFJYL1RYIEZJRk8sIERNQSBlbmdpbmUsIGRlc2NyaXB0b3IgcmluZzwvZGl2PjxkaXYgc3R5
+bGU9InRleHQtYWxpZ246IGxlZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUtaGVpZ2h0OiAx
+LjQzOyBmb250LWZhbWlseTogLWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBmb250LXNpemU6
+IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4tIFNvZnR3YXJlIGxheWVyOiBydGVfbWJ1
+ZiBzdHJ1Y3R1cmUsIGRyaXZlciBpbXBsZW1lbnRhdGlvbiAoaXhnYmUgYXMgZXhhbXBsZSk8
+L2Rpdj48ZGl2IHN0eWxlPSJ0ZXh0LWFsaWduOiBsZWZ0OyB0ZXh0LWluZGVudDogMHB4OyBs
+aW5lLWhlaWdodDogMS40MzsgZm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIHN5c3RlbS11
+aTsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+LSBSZWxhdGlvbnNo
+aXAgYmV0d2VlbiBoYXJkd2FyZSBkZXNjcmlwdG9yLCBTVyByaW5nLCBhbmQgbWJ1ZjwvZGl2
+PjxkaXYgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUt
+aGVpZ2h0OiAxLjQzOyBmb250LWZhbWlseTogLWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBm
+b250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4tIFBlcmZvcm1hbmNlIG9w
+dGltaXphdGlvbiB0ZWNobmlxdWVzOiBiYXRjaGluZywgcHJlZmV0Y2hpbmcsIE5VTUEgYXdh
+cmVuZXNzPC9kaXY+PGRpdiBzdHlsZT0idGV4dC1hbGlnbjogbGVmdDsgdGV4dC1pbmRlbnQ6
+IDBweDsgbGluZS1oZWlnaHQ6IDEuNDM7IGZvbnQtZmFtaWx5OiAtYXBwbGUtc3lzdGVtLCBz
+eXN0ZW0tdWk7IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxiciAg
+Lz48L2Rpdj48ZGl2IHN0eWxlPSJ0ZXh0LWFsaWduOiBsZWZ0OyB0ZXh0LWluZGVudDogMHB4
+OyBsaW5lLWhlaWdodDogMS40MzsgZm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIHN5c3Rl
+bS11aTsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+KipBYm91dCB0
+aGUgY3JlYXRpb24gcHJvY2VzczoqKjwvZGl2PjxkaXYgc3R5bGU9InRleHQtYWxpZ246IGxl
+ZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUtaGVpZ2h0OiAxLjQzOyBmb250LWZhbWlseTog
+LWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2Io
+MCwgMCwgMCk7Ij5UaGlzIGFydGljbGUgd2FzIGh1bWFuLWRpcmVjdGVkIGFuZCBBSS1hc3Np
+c3RlZC4gQXMgYSBkZXZlbG9wZXIgd2l0aCA4KyB5ZWFycyBvZiBuZXR3b3JrIGRldmVsb3Bt
+ZW50IGV4cGVyaWVuY2UsIEk6PC9kaXY+PGRpdiBzdHlsZT0idGV4dC1hbGlnbjogbGVmdDsg
+dGV4dC1pbmRlbnQ6IDBweDsgbGluZS1oZWlnaHQ6IDEuNDM7IGZvbnQtZmFtaWx5OiAtYXBw
+bGUtc3lzdGVtLCBzeXN0ZW0tdWk7IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAw
+LCAwKTsiPi0gRGVmaW5lZCB0aGUgc2NvcGUsIHN0cnVjdHVyZSwgYW5kIGtleSB0ZWNobmlj
+YWwgcG9pbnRzPC9kaXY+PGRpdiBzdHlsZT0idGV4dC1hbGlnbjogbGVmdDsgdGV4dC1pbmRl
+bnQ6IDBweDsgbGluZS1oZWlnaHQ6IDEuNDM7IGZvbnQtZmFtaWx5OiAtYXBwbGUtc3lzdGVt
+LCBzeXN0ZW0tdWk7IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPi0g
+R3VpZGVkIHRoZSBBSSB0byBnZW5lcmF0ZSBzcGVjaWZpYyBzZWN0aW9uczwvZGl2PjxkaXYg
+c3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUtaGVpZ2h0
+OiAxLjQzOyBmb250LWZhbWlseTogLWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBmb250LXNp
+emU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4tIFJldmlld2VkLCBjb3JyZWN0ZWQs
+IGFuZCB2YWxpZGF0ZWQgYWxsIHRlY2huaWNhbCBjb250ZW50PC9kaXY+PGRpdiBzdHlsZT0i
+dGV4dC1hbGlnbjogbGVmdDsgdGV4dC1pbmRlbnQ6IDBweDsgbGluZS1oZWlnaHQ6IDEuNDM7
+IGZvbnQtZmFtaWx5OiAtYXBwbGUtc3lzdGVtLCBzeXN0ZW0tdWk7IGZvbnQtc2l6ZTogMTRw
+eDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxiciAgLz48L2Rpdj48ZGl2IHN0eWxlPSJ0ZXh0
+LWFsaWduOiBsZWZ0OyB0ZXh0LWluZGVudDogMHB4OyBsaW5lLWhlaWdodDogMS40MzsgZm9u
+dC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIHN5c3RlbS11aTsgZm9udC1zaXplOiAxNHB4OyBj
+b2xvcjogcmdiKDAsIDAsIDApOyI+VGhlIGZpbmFsIHJlc3VsdCByZWZsZWN0cyBteSBleHBl
+cnRpc2UgYW5kIGhhcyBiZWVuIHZlcmlmaWVkIGZvciB0ZWNobmljYWwgYWNjdXJhY3kuPC9k
+aXY+PGRpdiBzdHlsZT0idGV4dC1hbGlnbjogbGVmdDsgdGV4dC1pbmRlbnQ6IDBweDsgbGlu
+ZS1oZWlnaHQ6IDEuNDM7IGZvbnQtZmFtaWx5OiAtYXBwbGUtc3lzdGVtLCBzeXN0ZW0tdWk7
+IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxiciAgLz48L2Rpdj48
+ZGl2IHN0eWxlPSJ0ZXh0LWFsaWduOiBsZWZ0OyB0ZXh0LWluZGVudDogMHB4OyBsaW5lLWhl
+aWdodDogMS40MzsgZm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIHN5c3RlbS11aTsgZm9u
+dC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+QmVzdCByZWdhcmRzLDwvZGl2
+PjxkaXYgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUt
+aGVpZ2h0OiAxLjQzOyBmb250LWZhbWlseTogLWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBm
+b250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij5IdXhpbmdqdTwvZGl2Pjxk
+aXYgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IHRleHQtaW5kZW50OiAwcHg7IGxpbmUtaGVp
+Z2h0OiAxLjQzOyBmb250LWZhbWlseTogLWFwcGxlLXN5c3RlbSwgc3lzdGVtLXVpOyBmb250
+LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij5HaXRIdWI6IGdpdGh1Yi5jb20v
+aHV4aW5nanU8L2Rpdj48ZGl2IHN0eWxlPSJsaW5lLWhlaWdodDogMS40MzsgZm9udC1mYW1p
+bHk6IC1hcHBsZS1zeXN0ZW0sIHN5c3RlbS11aTsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjog
+cmdiKDAsIDAsIDApOyI+PGJyICAvPjwvZGl2PjxkaXYgc3R5bGU9ImxpbmUtaGVpZ2h0OiAx
+LjQzOyI+PGJyICAvPjwvZGl2Pg==
+
+------=_NextPart_6A30F0D7_CB8642E0_2CE7E20B--
+
