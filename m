@@ -2,75 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D747BCD98DA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD41CD98CF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:53:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5542640DDA;
-	Tue, 16 Jun 2026 11:43:14 +0200 (CEST)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
- [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id 3766940DC9
- for <dev@dpdk.org>; Tue, 16 Jun 2026 11:43:12 +0200 (CEST)
-Received: by mail-wr1-f44.google.com with SMTP id
- ffacd0b85a97d-45eec22fab7so1887152f8f.3
- for <dev@dpdk.org>; Tue, 16 Jun 2026 02:43:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781602992; x=1782207792; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
- :message-id:reply-to;
- bh=oYwJG+F/i99oD03wigHiKABjErd9HTA+XGyMICpNmOw=;
- b=Vv5j5eoGGT/l1KZ9xmtCGkJb+sN5VJ0SlOsRenHMQTXBy82JBg7tg/8Vofl5hYiEfR
- o/LPlBR4GA5h40j7zenJOB1BrwVnrvAIjUdMx8NMlWryImEVjIBUeAfQI2qywO2xtc5K
- wYgL+1SPSfVY3obPNYYQpfRyEdd/jINsW8IL5PfHjW+myKWnecf911EUN2N49qDjb6vi
- Mh9RkyE21He9pbJv5+wrMJhKGkin+EDK444KRD0izQOFRYIvfX4ITbAju02C6pwdxXfP
- /NXgQwjCoBhhvdpKihLzLVf+ieeyl6PwxRZRfkYv4Zm16/RJkMXJ38PBPjZwJph1GoLz
- wv5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781602992; x=1782207792;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:sender:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=oYwJG+F/i99oD03wigHiKABjErd9HTA+XGyMICpNmOw=;
- b=F9BlF/xSLWQAqCsuxPYkfWEAGEMNvv9C1jLzp8J70Jglvxh0zfCt5Zrgar082ZjYZa
- kf2MAExYoyMO1qulKT12NvFLLwjNsWCkT7YmBp3+Qfz5hWCm8y4v61mxjDZFTFtv/0+K
- lJMUs3JDbiDs3Qy8o9snd3UcbeaB3FkvD+Yhsyos+ai3T7/y+0GlyCn0eykRAzp2ATyH
- 0Y3EBHTW/9b3m4aSvQCDTBTFvMzr7zAwIcxplC5STTzfnmaEKYKfMUFr1ATh2L3wd4Av
- /R91z4sy3B1eK9gGPnxVXjWiECR0uBcv/iO2G5jvUVBg1WebMqSTAwcIuDbfZ0qFcVtT
- ZF7A==
-X-Gm-Message-State: AOJu0YyNBfJ63EFm3umw2lWnu6nNf3RGCXyCYgMapQl3oZLpmBWRMFBS
- 6JyuWwzgks4cYPhz3Jt0Q/CK8vfT8szliH2OvmVlv7WVprRaffbAgUc0qr8A3Gv5
-X-Gm-Gg: Acq92OEw6iO3n3H5gU7ZORazuetnaQHIuIvh6OYvjFvcGTGHU9fEC7Y+9dN8+o6Fkfn
- lVehUiebwUCS22z3F0A73JwLQPA0iroMQWK1kRGFvrVYfjYoCGAlVTxz7ZusSCYGkXTV7hVuRfi
- CPYbbsMcxXUvnPF3LMP2jGo3W2Bfw53fJG8+WV/b9m4+RkkOycdbd9hzZpzkZ/0Xkq/D711ZYii
- IUcoLTny6BLmVte4BrwJP7JrIyXetvYenxL7xMXdGKiCcJS3PyVpf/QnubJTRhTp+5ldcOG/v3z
- Yl3o+VY+4mGAXMOQugAtzp+qY3zfDFgcSRIQLOrtRtcK/5bdHOfmNFmXB9dcQ+9z6Aa+OTg1EVU
- sYFCtcOWSGJzMikCBQ7TQbmHZnrEXnEcGPQQXqz2/mV/VIwwwPWAo0jCFFHoWfKeObqeGdVVg7t
- egA+uXJ35/JQIT5r091b2nmoap0MuO/RMiOYvwKBstoc8camq40y3VWrsinfY2YmE=
-X-Received: by 2002:a05:600c:6749:b0:490:3f7a:108b with SMTP id
- 5b1f17b1804b1-4922ffa2367mr41517345e9.16.1781602991494; 
- Tue, 16 Jun 2026 02:43:11 -0700 (PDT)
-Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-49230a96b47sm39396145e9.13.2026.06.16.02.43.10
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 02:43:10 -0700 (PDT)
-Sender: Maxime Leroy <maxime.leroys@gmail.com>
-From: Maxime Leroy <maxime@leroys.fr>
-To: dev@dpdk.org
-Cc: Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org,
- Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Sunil Kumar Kori <skori@marvell.com>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH 2/2] ethdev: return 0 from dummy queue count
-Date: Tue, 16 Jun 2026 11:42:58 +0200
-Message-ID: <20260616094259.686555-3-maxime@leroys.fr>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260616094259.686555-1-maxime@leroys.fr>
-References: <20260616094259.686555-1-maxime@leroys.fr>
+	by mails.dpdk.org (Postfix) with ESMTP id 51F5D4060C;
+	Tue, 16 Jun 2026 11:53:36 +0200 (CEST)
+Received: from fhigh-a5-smtp.messagingengine.com
+ (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+ by mails.dpdk.org (Postfix) with ESMTP id EFE1840289
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 11:53:34 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 9142B1400077;
+ Tue, 16 Jun 2026 05:53:34 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Tue, 16 Jun 2026 05:53:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1781603614;
+ x=1781690014; bh=NUmOHhenM6d4uFZV8nvU6sQCTjnzds3Z1AfxrkLR5ng=; b=
+ Dax2h/YSVA9R+Z8s0TRQm34X9RoHYoTJZjQQsPqH3NUSdvQ6xYVxDaNjkffT4t4H
+ oEmF1TiHQljH15FO+1ZC19DmAp/goPvLY8nRrJeqPdzCgUu1j3HwtDdAnY5CZO9T
+ rjfsotCcuzKYQlXY813QFTlLJekjofTXyj8T6WJ3avlAFd62/615dWODQ0PEgrDC
+ Cl3aSfil6/sIOtif2H+KsX4FTTjKFaoFWlPVxhlq1Nge4ZmXNPa6kNq7Y+U+PcqR
+ Yh7cRim1wJet74RlCUFJp5CweOKMHcZ4sJ+3cGhDfNETA1JqcfMrhsvct6cMVLJ6
+ udP0uh4pbioaba7pAs0FMQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781603614; x=
+ 1781690014; bh=NUmOHhenM6d4uFZV8nvU6sQCTjnzds3Z1AfxrkLR5ng=; b=C
+ GKhkJyjjOoIK8Aj/z2HiJ/a4U9y0KxqpkL8qTLopEOKeFC/GrXT1ZpjQiDvGA9Gb
+ o8QO+UzU1cQdL6r+t9maysDdpf050jsmCou8kOPRHKOZfDWsA8Q2MpwceuDRrZnY
+ UOMcGIBUdR/0PH6DVZ8XAmZCS0J2Mqa6rogRB8t/t8Y6HHOdOElCCYVAE7Svmbmn
+ zDlutUsYpUhIcUcc+qGL8YzeLKaLicJg5ModoeT7P/riFHZcHXtaFviAc+On0Ei5
+ K6+TvnlrfQsBzDS4qcORV3cI/FK+2ZIAnzQFenO7oGle/p3RSf/MbTBwhU7w4d/L
+ XaPHeAjYU1hiae5Xsj7Rw==
+X-ME-Sender: <xms:Hh0xatbgjTHBghneon9a1UMr6vyViuqbAgU49OqgewMTkB5N5xhs5w>
+ <xme:Hh0xakiAQnXlikx1e2iRcrRwChB0H8pWW67FSq-tfkdtFOpExfM3VXNVG2DUQ1doM
+ b2zVZVOqrsCGnw4cBgu25MCcWO41LZ9X1-bFR7UjT-hPJUlrmav8g>
+X-ME-Received: <xmr:Hh0xan5YxMxTK4G5pChdC8TWiChhqRPex20ApjsvjhM-0LrppnoJCCMlJTJPEhMr083OrnLRLuA37mdtJu53g5aq5g>
+X-ME-Proxy-Cause: dmFkZTGbtvvYAo5paxlgQke1aFue1L3YriIuvqYi8xiZvOjuudwPXW81t3jLx5AGYYfbkE
+ PTC+s5Vqz4QVfC9FuFEGwLSn4w1/7Vfnhc2LsPH2r4uc7+awAglaSsSY8KrBZPzk11aKAQ
+ JOLOAC8C4RiVro5lhZTk2AM5vui7K2HI64SJjxwsvNJDe/oEElJc6eJk74ViP41SyRAgpx
+ H5yf1/UBlQ/ISRGH3/oKVZNYXn2PH5HhWIWO/dpAB2r+ZoUg8T1k29hrgNlYImOxxE74M5
+ fPqLJjfBn5UFlWpygBs89vSxPTYFYLkUEy+a6ga4pxzxtZciCTQpRekq3HFR0dSDkJ+CJN
+ FdjqqCNM+RVXRV3q+67a5JAtm/yjwZl4fIbCeu8b9vlMLagGFzy0PAS8us5Dgf89/0yQvg
+ rEmM1veOF4uGf8Fha7SVDcyCjEO4Hx1I2CysHh9ecajV/obhd301OE9gtl6Kg2IPFKXiwH
+ MmD+KrS+wauEoX7mlAj7DWMqlcg4L5/UzD7JY0TeJ2m8+3ZpB4v1+Kflg5Swse3TlOlEY4
+ qFWOuKERiyqpWH5KZPLgPxCNKbQBqEOsjlMnrSbod1trGC+Fw3N8+0bxESkqwAuiZd8dGF
+ JHTU4ZF/Tnoi4OHbdEexhzf+ZGdXA+2IdMcBDFVhxr61HxiBwjSj20l4MzTQ
+X-ME-Proxy: <xmx:Hh0xaj6icdJ3HTtYLHmGKpmvh1AYhRFA9237_KYvAlS_sN8dYJIy4Q>
+ <xmx:Hh0xajfWN3ULHCzVn_4ljXhXI06NaDBldO-cX6RmJTuwtuyDiBVdJg>
+ <xmx:Hh0xanCtDxlE9MPd6LP13kA54kBiKD95W7vQEMZPeY1iI7BrrZVFEA>
+ <xmx:Hh0xam-uAHK_w-S7Pr6KcJoxm3T2ja4eV14tjigU6NqS6qQDaZ4m2A>
+ <xmx:Hh0xagEj6m4upFhijD40FbQFYIaTzBnrP233O-t_OTYtlo3MrPTKF7Zp>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 16 Jun 2026 05:53:33 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Luca Vizzarro <luca.vizzarro@arm.com>,
+ Patrick Robb <patrickrobb1997@gmail.com>
+Subject: Re: [PATCH] dts: avoid Scapy MAC resolution in Rx split test
+Date: Tue, 16 Jun 2026 11:53:31 +0200
+Message-ID: <NL9cREhFRLisrPBqJv34SA@monjalon.net>
+In-Reply-To: <20260611115421.12c4e6ee@phoenix.local>
+References: <20260610183218.751941-1-thomas@monjalon.net>
+ <20260611115421.12c4e6ee@phoenix.local>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,38 +88,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The dummy rx_queue_count/tx_queue_count callback returned -ENOTSUP. On a
-port that is not started (freshly allocated, or stopped once the fast-path
-ops are reset to dummies) there are no packets queued, so the truthful
-answer is 0, not an error: querying the count is not an unsupported
-operation. This also matches the dummy Rx/Tx burst, which reports 0
-packets.
+11/06/2026 20:54, Stephen Hemminger:
+> On Wed, 10 Jun 2026 20:32:18 +0200
+> Thomas Monjalon <thomas@monjalon.net> wrote:
+> 
+> > The test gets the Ethernet header length from Scapy with len(Ether()).
+> > 
+> > When building DTS API documentation, Sphinx imports the test module
+> > and shows this warning:
+> > WARNING: MAC address to reach destination not found. Using broadcast.
+> > 
+> > Use a dummy MAC address so Scapy no longer performs
+> > destination resolution during import.
+> > 
+> > Fixes: 01c70544cffd ("dts: add selective Rx tests")
+> > 
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> 
+> Thanks, I previously reported this as:
+> 
+> https://bugs.dpdk.org/show_bug.cgi?id=1951
 
-A poll-mode worker checking rte_eth_rx_queue_count() across a concurrent
-port stop then sees an empty queue instead of a negative error.
+OK, added the tag in the commit log.
 
-Fixes: 066f3d9cc21c ("ethdev: remove callback checks from fast path")
-Cc: stable@dpdk.org
+> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Maxime Leroy <maxime@leroys.fr>
----
- lib/ethdev/ethdev_driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied
 
-diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
-index 70ddce5bfc..eab5c15d12 100644
---- a/lib/ethdev/ethdev_driver.c
-+++ b/lib/ethdev/ethdev_driver.c
-@@ -875,7 +875,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_queue_count_dummy)
- int
- rte_eth_queue_count_dummy(void *queue __rte_unused)
- {
--	return -ENOTSUP;
-+	return 0;
- }
- 
- RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_descriptor_status_dummy)
--- 
-2.43.0
 
