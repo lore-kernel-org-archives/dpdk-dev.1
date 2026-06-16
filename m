@@ -2,65 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C09CD98CF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F7ACD98DA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Jun 2026 09:18:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C9F0F40298;
-	Tue, 16 Jun 2026 11:12:05 +0200 (CEST)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 1D2D840289
- for <dev@dpdk.org>; Tue, 16 Jun 2026 11:12:04 +0200 (CEST)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-36b9b15af73so3571747a91.0
- for <dev@dpdk.org>; Tue, 16 Jun 2026 02:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781601123; x=1782205923; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=qP9nWOPLnpUAisYWyJSAyEsTmC5xdQgwarURmqLlVYY=;
- b=fjIDf021gLvBmMRAjFmvuOwuGXUD/CepJW4HwZM8CNmWFyB5QgAdzDBwAGcVkT/CIw
- RVfPSgfrEdgMPE3xZsjPFxa002drV9J6b+B8KlSkUZFn++vPUmG2XAtNZ4bvYDlzpE1j
- RSNx+pJIO4CnYm/AL27hs2N1HIyKLiueZMsGcn5+U1VsJ/98wA4hSOatlzuEy+l+7HLn
- ID6GEi0CzkOhXT5H49JKKZpRuScNWGpb4cPg2Et/CCU9SghbEuU2E6VaK7KVL3rSHPMn
- tZPj6akBB4rTa8RpxeOTo3pP8vYhm8Wk2lLbJqlUKZQSKn8Vy9klBtEUT6C1PSWgtRON
- /fow==
+	by mails.dpdk.org (Postfix) with ESMTP id 6063B40661;
+	Tue, 16 Jun 2026 11:18:03 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id BAF2740298
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 11:18:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1781601481;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=YCY4I+Ab4q/CUEka95w69DSqUGN1Dh0YortonH/gSFU=;
+ b=OMjk6QKXXf1ueTKnW/dX58fXms3Emj9X5RCRj5ef8BNaheSxX7nLlnhrQkIRqXsuQ7xDVM
+ A7EIzlASvoCx1ODgY942Jhelm2hGBGFQsJgLnUEPyer9m8zuNL9uEpRskSwumTY22cvFk9
+ JOq2a5sHrnhKXQBY0nT//ep0x11+NBs=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-422-zr0ATB7PP--8pBVuW0R1Nw-1; Tue, 16 Jun 2026 05:17:58 -0400
+X-MC-Unique: zr0ATB7PP--8pBVuW0R1Nw-1
+X-Mimecast-MFC-AGG-ID: zr0ATB7PP--8pBVuW0R1Nw_1781601476
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-3966afc5d18so13539811fa.3
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 02:17:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781601123; x=1782205923;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20251104; t=1781601476; x=1782206276;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qP9nWOPLnpUAisYWyJSAyEsTmC5xdQgwarURmqLlVYY=;
- b=Qyz91VDZdiQqOg29B6dY0dVQOtGiWI4IUuqk4Vvzakzltnfy/mlwYzqk/ZR36j5awg
- dHW2Cx6jmYxcf6xpTMgUX1Zm6ICNGVEdNadZeF8ry0r4bJ4VQ4YkXZXfGVkgPFpUVxsi
- EkWHEfQpNjCUQjdQ00tWJ9oT/5WgLnbSMF3W9Fb83oH1QQsXMpKzRxKwKbQvyeYO2Q41
- LXRG3Fkh84T7boYwlCkd+tnRwxXsxsp5RvpPGmpmhJwEOZxiMwIIzfH9wzXzqPi7grIA
- t+Veoa6o8GlIJEKUNfg5MzG//RuIPbyjBtdjc3g9xYoSFu/HMM8J3T8HNdGeOGfJ0S28
- lisw==
-X-Gm-Message-State: AOJu0YzUgPgD6C16kMaIzgX6LRCBePPkZSSndXLfAJ7XrZk3yxizzb1g
- sN0T4QaeM+OikIxDWVMRPzEot7Pas/TM4bm6iqW2fEDM8RXPc831dJYO
-X-Gm-Gg: Acq92OEBJp+0YLdrelAM2V9/z/bnoLOHdspr6ZqaJHnqfMCEbwKlIa/XgKcnPqmYBOz
- W0T9LSXph/9hqnqLJkjen6pJFrG+gdG3WJnUP1zEue5dN5qFa+EOEjv6AIufqtM1U8xNzYoSEF9
- C3lESqZE/JBQUExlKgosKKuqz52BUPYc+fRBBNzfpcGqlHp3F3kOB0CU0W2sRBlw7BbJKI4YRAt
- yzkmG5cmJkdDm5aCAhg0UFkVpHytEe0YD9D45ALiCN4ZCAXWZ8T9Je9tKlCJHD6Ww9bN67rrVCh
- gskInniVbhJX85knsHyPdI6B6tOyOaGz5cVq37Rs5J6fsyfr3AhVwGd8gsH+FJdTt4kIC8GgmN5
- wBtoRVbOQKk/iG4RZvLUKcG8+HQ0AmYO0tGmJrXwSucPLoFDQKso2yjCEhTDzjTqJ+GAJIbTDhP
- g/ntwXngI8anRtUa/lbYjjCE2YIjA=
-X-Received: by 2002:a17:90b:5827:b0:369:de03:29c8 with SMTP id
- 98e67ed59e1d1-37a03dc2867mr18734414a91.23.1781601122975; 
- Tue, 16 Jun 2026 02:12:02 -0700 (PDT)
-Received: from gentoo ([49.204.144.242]) by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-37c521ca7a7sm2207433a91.7.2026.06.16.02.12.01
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 02:12:02 -0700 (PDT)
-From: Shreesh Adiga <16567adigashreesh@gmail.com>
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Cc: dev@dpdk.org
-Subject: [PATCH] net/crc: add 4x folding loop for aarch64 NEON implementation
-Date: Tue, 16 Jun 2026 14:41:58 +0530
-Message-ID: <20260616091158.731075-1-16567adigashreesh@gmail.com>
-X-Mailer: git-send-email 2.53.0
+ bh=YCY4I+Ab4q/CUEka95w69DSqUGN1Dh0YortonH/gSFU=;
+ b=Gju6PcKObx41loYiXAFwQsXwiORFjcdOd+zPJeOCA95YSoGJPejjB9BCmEgmBPAvek
+ oq2eS9hIxEk9xzQP8Jlq+x1fyeQXwufdJikOy63t1F4UPwBiZ2cmWM090C2qW8IcRyRR
+ tI8mNqli7UejsqeCUj7kS3pA4uCcjL7Frjsz6Mhzc5WYI+PW4h1j8kV/6hW9dCz697H8
+ kkxLk+oO33I9OSnwJjuCsvA23z04u56I5K3m2MfjmFRGcK9OFXTc9RJXbh/yaTQVSvMZ
+ gX3iTym8YYNu9MtYXAxh2R4HpSTkAjiCk2GwzKJcKLHJZQ+l6K1lHSdwHu5a3+M7qFrt
+ IVtg==
+X-Gm-Message-State: AOJu0YxYEGXQrL0xBR30tBFBibti/Ql9EcE9865OR3GfGZVUFcjbvxdt
+ tsx5CjU9KfFodFYysHc3DlPjF+PVEVIu2nLdb+jL5pmi2Iejn6V/VTo/+AHHDS/b7h5rT+hnRUU
+ NM0fWH6HcF4x0y4xBQ6NpWU8XWLcnqW54UyU4YDkqdY33rNdA6pkHAtZ1gm6T/+V91Bmhuv7dUC
+ FwnY7iJ/89oyBA3idbi64=
+X-Gm-Gg: Acq92OFWi8ydJWCy2qah4fyymJQ47V2io0UHX5tyjBwoa3vspfQNXNQzB0nvZmSEvJl
+ XsDFX7KOaI78dLxyyiBAqAruPBIBeFUErHCbet8wbBdx+d3x0SbJzHyWTSgtjAJGssNTBcljQN2
+ y1/SvyVRPjSOrMXb0ExcVOc7niXJxu3OnwmXimIaRD39oSXINAFYMGXfXXdylES8vlgK0lxPDJY
+ 3PBAOVoz2NWDobFfkJcxrKbcSv/5XQeWvBVq94MG8D9M6l6cJ0dLV45ThBskupajK7JEw==
+X-Received: by 2002:a2e:bd8a:0:b0:393:a7d7:7e84 with SMTP id
+ 38308e7fff4ca-39935773dd6mr39984611fa.24.1781601476345; 
+ Tue, 16 Jun 2026 02:17:56 -0700 (PDT)
+X-Received: by 2002:a2e:bd8a:0:b0:393:a7d7:7e84 with SMTP id
+ 38308e7fff4ca-39935773dd6mr39984511fa.24.1781601475803; Tue, 16 Jun 2026
+ 02:17:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260607150418.30885-1-stephen@networkplumber.org>
+ <20260609155419.263787-1-stephen@networkplumber.org>
+ <20260609155419.263787-2-stephen@networkplumber.org>
+ <cd21b6e3-1efe-4ad6-9110-13b8c88f3248@huawei.com>
+In-Reply-To: <cd21b6e3-1efe-4ad6-9110-13b8c88f3248@huawei.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 16 Jun 2026 11:17:44 +0200
+X-Gm-Features: AVVi8Cf2Xlg92MeTNQ074XK--vDcUPaXkmsPPWKoOlIN6q8mPEdw478YZ7SXuKE
+Message-ID: <CAJFAV8xrcXbbaxeie7NWo+TZTwvzTXJiFpkiM+SUeH1dRi7Uag@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] eal: fix off by one in in tailq name init
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, stable@dpdk.org, 
+ Bruce Richardson <bruce.richardson@intel.com>,
+ fengchengwen <fengchengwen@huawei.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: QZfA5j31JuLhaD5wd95pwhjGWDQWKtUT_PXmyAJr-7E_1781601476
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -74,125 +87,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a 64-byte loop that maintains 4 fold registers and processes
-64 bytes at a time. The 4x fold registers is then reduced to 16 byte
-single fold, similar to x86 SSE implementation. This technique is
-described in the paper by Intel:
-"Fast CRC Computation for Generic Polynomials Using PCLMULQDQ Instruction"
+On Wed, 10 Jun 2026 at 03:36, fengchengwen <fengchengwen@huawei.com> wrote:
+>
+> On 6/9/2026 11:53 PM, Stephen Hemminger wrote:
+> > The tailq name is defined as 32 bytes, but name would be
+> > silently truncated at 31 bytes. The function strlcpy() size
+> > already accounts for the NUL character at the end.
+> >
 
-This results in roughly 2x performance improvement due to better ILP
-for large input sizes like 1024 observed on Cortex-X925.
+Bugzilla ID: 1954
+> > Fixes: f9acaf84e923 ("replace snprintf with strlcpy without adding extra include")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
-Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
----
- lib/net/net_crc_neon.c | 51 +++++++++++++++++++++++++++++++++++-------
- 1 file changed, 43 insertions(+), 8 deletions(-)
+Applied, thanks.
 
-diff --git a/lib/net/net_crc_neon.c b/lib/net/net_crc_neon.c
-index cee75ddd31..fc817e54f5 100644
---- a/lib/net/net_crc_neon.c
-+++ b/lib/net/net_crc_neon.c
-@@ -16,6 +16,7 @@
- /** PMULL CRC computation context structure */
- struct crc_pmull_ctx {
- 	uint64x2_t rk1_rk2;
-+	uint64x2_t rk3_rk4;
- 	uint64x2_t rk5_rk6;
- 	uint64x2_t rk7_rk8;
- };
-@@ -136,9 +137,36 @@ crc32_eth_calc_pmull(
- 	temp = vreinterpretq_u64_u32(vsetq_lane_u32(crc, vmovq_n_u32(0), 0));
- 
- 	/**
--	 * Folding all data into single 16 byte data block
--	 * Assumes: fold holds first 16 bytes of data
-+	 * Folding all data into 4 parallel 16 byte data block
-+	 * Later folds 4 parallel blocks into single fold block
- 	 */
-+	if (likely(data_len >= 64)) {
-+		uint64x2_t fold1, fold2, fold3, fold4;
-+		uint64x2_t temp1, temp2, temp3, temp4;
-+		fold1 = vld1q_u64((const uint64_t *)(data +  0));
-+		fold2 = vld1q_u64((const uint64_t *)(data + 16));
-+		fold3 = vld1q_u64((const uint64_t *)(data + 32));
-+		fold4 = vld1q_u64((const uint64_t *)(data + 48));
-+		fold1 = veorq_u64(fold1, temp);
-+		k = params->rk1_rk2;
-+
-+		for (n = 64; (n + 64) <= data_len; n += 64) {
-+			temp1 = vld1q_u64((const uint64_t *)&data[n +  0]);
-+			temp2 = vld1q_u64((const uint64_t *)&data[n + 16]);
-+			temp3 = vld1q_u64((const uint64_t *)&data[n + 32]);
-+			temp4 = vld1q_u64((const uint64_t *)&data[n + 48]);
-+			fold1 = crcr32_folding_round(temp1, k, fold1);
-+			fold2 = crcr32_folding_round(temp2, k, fold2);
-+			fold3 = crcr32_folding_round(temp3, k, fold3);
-+			fold4 = crcr32_folding_round(temp4, k, fold4);
-+		}
-+		k = params->rk3_rk4;
-+		fold1 = crcr32_folding_round(fold2, k, fold1);
-+		fold1 = crcr32_folding_round(fold3, k, fold1);
-+		fold = crcr32_folding_round(fold4, k, fold1);
-+		goto single_fold_loop;
-+	}
-+
- 	if (unlikely(data_len < 32)) {
- 		if (unlikely(data_len == 16)) {
- 			/* 16 bytes */
-@@ -176,9 +204,12 @@ crc32_eth_calc_pmull(
- 	fold = vld1q_u64((const uint64_t *)data);
- 	fold = veorq_u64(fold, temp);
- 
--	/** Main folding loop - the last 16 bytes is processed separately */
--	k = params->rk1_rk2;
--	for (n = 16; (n + 16) <= data_len; n += 16) {
-+	/** Single folding loop - the last 16 bytes is processed separately */
-+	k = params->rk3_rk4;
-+	n = 16;
-+
-+single_fold_loop:
-+	for (; (n + 16) <= data_len; n += 16) {
- 		temp = vld1q_u64((const uint64_t *)&data[n]);
- 		fold = crcr32_folding_round(temp, k, fold);
- 	}
-@@ -194,7 +225,7 @@ crc32_eth_calc_pmull(
- 		mask = vshift_bytes_left(vdupq_n_u64(-1), 16 - rem);
- 		b = vorrq_u64(b, vandq_u64(mask, last16));
- 
--		/* k = rk1 & rk2 */
-+		/* k = rk3 & rk4 */
- 		temp = vreinterpretq_u64_p128(vmull_p64(
- 				vgetq_lane_p64(vreinterpretq_p64_u64(a), 1),
- 				vgetq_lane_p64(vreinterpretq_p64_u64(k), 0)));
-@@ -221,22 +252,26 @@ void
- rte_net_crc_neon_init(void)
- {
- 	/* Initialize CRC16 data */
--	uint64_t ccitt_k1_k2[2] = {0x189aeLLU, 0x8e10LLU};
-+	uint64_t ccitt_k1_k2[2] = {0x14ff2LLU, 0x19a3cLLU};
-+	uint64_t ccitt_k3_k4[2] = {0x189aeLLU, 0x8e10LLU};
- 	uint64_t ccitt_k5_k6[2] = {0x189aeLLU, 0x114aaLLU};
- 	uint64_t ccitt_k7_k8[2] = {0x11c581910LLU, 0x10811LLU};
- 
- 	/* Initialize CRC32 data */
--	uint64_t eth_k1_k2[2] = {0xccaa009eLLU, 0x1751997d0LLU};
-+	uint64_t eth_k1_k2[2] = {0x1c6e41596LLU, 0x154442bd4LLU};
-+	uint64_t eth_k3_k4[2] = {0xccaa009eLLU, 0x1751997d0LLU};
- 	uint64_t eth_k5_k6[2] = {0xccaa009eLLU, 0x163cd6124LLU};
- 	uint64_t eth_k7_k8[2] = {0x1f7011640LLU, 0x1db710641LLU};
- 
- 	/** Save the params in context structure */
- 	crc16_ccitt_pmull.rk1_rk2 = vld1q_u64(ccitt_k1_k2);
-+	crc16_ccitt_pmull.rk3_rk4 = vld1q_u64(ccitt_k3_k4);
- 	crc16_ccitt_pmull.rk5_rk6 = vld1q_u64(ccitt_k5_k6);
- 	crc16_ccitt_pmull.rk7_rk8 = vld1q_u64(ccitt_k7_k8);
- 
- 	/** Save the params in context structure */
- 	crc32_eth_pmull.rk1_rk2 = vld1q_u64(eth_k1_k2);
-+	crc32_eth_pmull.rk3_rk4 = vld1q_u64(eth_k3_k4);
- 	crc32_eth_pmull.rk5_rk6 = vld1q_u64(eth_k5_k6);
- 	crc32_eth_pmull.rk7_rk8 = vld1q_u64(eth_k7_k8);
- }
+
 -- 
-2.53.0
+David Marchand
 
