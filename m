@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE6FCD98E2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 13:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F983CD98E2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 13:52:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B30394027F;
-	Wed, 17 Jun 2026 15:52:06 +0200 (CEST)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
- [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id D6EB14065D
- for <dev@dpdk.org>; Tue, 16 Jun 2026 10:03:57 +0200 (CEST)
-Received: by mail-pj1-f45.google.com with SMTP id
- 98e67ed59e1d1-36b9ec98144so3392322a91.1
- for <dev@dpdk.org>; Tue, 16 Jun 2026 01:03:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B5C2840609;
+	Wed, 17 Jun 2026 15:52:07 +0200 (CEST)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
+ [209.85.214.177])
+ by mails.dpdk.org (Postfix) with ESMTP id CE80640654
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 14:30:34 +0200 (CEST)
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-2c0c379e8ffso30415705ad.3
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 05:30:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781597037; x=1782201837; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1781613034; x=1782217834; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=w+x0ssWT7SAJynLotZs7QdCWw3168EwmB/vfsk4cdbE=;
- b=Wr/JiYPrWSPP3T0OYNVm+dNrcJnRCH+g7uxfRFFVQDb3r0wLjZei5/Rgl2ymoOq48R
- Pt2+8R0CgF7ZpbUZI99vGpPd4MVE18khjo44bxzBt+I6Suo7+jqLC4pV4OufUw2Ll8/I
- cXcgrv9O5QUyAbFFj9S5V+rQn5sVZUTKtGH45FfgjPMV4bnYOhfyMFcCfwfVa9iY0JRj
- pFJEHKdnQ4aM1bpJm9IUlnyFcmvkdSqIh6ueoBKcDMFSq/0YX08hX9jrCvgNFu4LjwVy
- l/4L6LIXJA6xUUkPHJT8hQCmf58aT8Ekb9HVjd0rxl0OQj0ip7OWYPIKpnR8D2OWWtEN
- Pwww==
+ bh=LocTYEejZBE7D1B/NNDfjX0jD/NO2T3H+9jfzA3Jb7k=;
+ b=Hn2rYYWNynaTBl/FddCoFl0KswvDfTWvLwNgHDMuMVcDTOf97nJq0JfYG49FPEwS29
+ PqPRsaGZ5aXJE9jvlHwjXEnw3AsdzabtlpV62o5Laluye3rh5/8GTG07Qwzyg98xBAgY
+ 6BjyOo41J7RIyyEWNrqUctMvw2l6RIIbmfLC5Er/TqJCyVdmHNJ8lazRpH1GAK8tt8me
+ TQJ6LXj2b9jh9Uj42pWMmzAoLNewiySEp27enzc92wsdGEf/ajygdDlN29nMn1SnvHVu
+ TUyMGZBLc8JmzxA2fnHbmxPuKWpXw3HqaApL4JWthCVAwGUmMnhaLukg8yu1ZnBfAPly
+ eVIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781597037; x=1782201837;
+ d=1e100.net; s=20251104; t=1781613034; x=1782217834;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=w+x0ssWT7SAJynLotZs7QdCWw3168EwmB/vfsk4cdbE=;
- b=XjfjQud3mpHqJBgaC9jURR0EYloub+PTYnwWBG0gksop2TBIV8KvUuisRutcGaOst3
- 6ZLwdr740ysi3avftSSNGFRnaputUbo/L/yW6cESRrxDa0ZEgv4Pgl59BVg2zB7k63Di
- bnKIfwzqLvdLgI5btv7ugM/ue/8HdpEz3FlieTYdxQXc7GQ0jJbQHcupfE5PuFo4n9es
- 8Cw3EpX9NaAZ8C720p0rc0f97BUh9b9ApWVBUNuXnf0Knx+4GmEg1MNLuYGPthK50dih
- 02sOMvWaH/7iUESNXL7oucoQKtR/j1NnqXvjwkGQd8QN568CYkwrD1/SWbTQtEZz44gH
- +D9A==
-X-Gm-Message-State: AOJu0YzPPgnGb6asU9MOKAGpJ9hoYwhoODcOwyFj36dlQK4b6AQgJK2Z
- GyiGcTegTUhZrRIRAAVB/38owwBd/duAoF6eUZ+15cHZ+LPB0r9v2gkiYjkQtIVV1bBL
-X-Gm-Gg: Acq92OF0moHEu8vfX736cYHiEvQUykBLu74M1CJaIG0FBkuDmQgEXdb8hN+aN71jyLy
- Qw7wcuLrIyW9+thLMWg98mhbE0t+EEMsbK4/1xKBpyxJxEKstuvWJj2FhCDRiS/1Bf11uL1E3z0
- oHp9E/jP1CgOTAg2QybJw7SfIUtoDvy4XPnNwsAF7HnZdwt8/sSgeoq2Pzgvg5fDtkwbwyFYw9W
- 1WfXbXLcWNMa9XijLnLQcD5q4j9a/uTAm1sRmlNAcgJZPxRoKOrBkKCSdsssX0/6OGtF7O4pz02
- WwSnJms8h0aSl2JHiLHeKeFPEzlFNe0+/GjjhETcEDyKHozm8CvnsXHax7NG7mgd6nQoq5F38uU
- cs4gafVcAEstszz4DBgq3SBximNYjPoT+//jQk/Rzaw3ag5RMdfyuOFl42u/aeqr24Qu1PsD2+H
- JwAacb8Y/CUhaUlIDxBdB70hI0/Jt/ZWJhlhw=
-X-Received: by 2002:a17:90b:28c7:b0:36a:95c:7613 with SMTP id
- 98e67ed59e1d1-37c5233ff67mr2955250a91.10.1781597036780; 
- Tue, 16 Jun 2026 01:03:56 -0700 (PDT)
-Received: from localhost ([61.119.121.206]) by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-37c521a959bsm2011535a91.2.2026.06.16.01.03.55
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jun 2026 01:03:56 -0700 (PDT)
-From: Linhu Li <lilinhu618@gmail.com>
-To: dev@dpdk.org
-Cc: stable@dpdk.org,
-	dsosnowski@nvidia.com,
-	Linhu Li <lilinhu618@gmail.com>
-Subject: [PATCH v5] net/mlx5: fix counter TAILQ race between free and query
- callback
-Date: Tue, 16 Jun 2026 16:03:52 +0800
-Message-Id: <20260616080352.10378-1-lilinhu618@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20260604101112.72177-1-lilinhu618@gmail.com>
-References: <20260604101112.72177-1-lilinhu618@gmail.com>
+ bh=LocTYEejZBE7D1B/NNDfjX0jD/NO2T3H+9jfzA3Jb7k=;
+ b=YDh15KBdUBok8q3E9LeZix2ZDNJ2l0G1s1+Nz1QmGNvs3Iofz5eSTNnODy15P/BUQ9
+ aucuqLl4TYSTiuzvHn8P5QlxZkvmRRh8avecMi/hcKOYgZV8huaEI171ej929l1rQ/z1
+ hquNUvEHmzA5T5D0LQE7WiqKlsjAZLariLwQTG5NJYMm/IjWhzWTMWHQ99m3HP1BD7MV
+ xt5WH1BbBY55QCRf2NKmszhDSoXg8XEoJd/47rTB2SWcy+sVOOcAWUd1JcIiSGt9Z0Mo
+ uOq8wo0sfXiUTkd46PSMgEUdFlIg7F/oDK1Toueq9lhHMAh6aLByVhJkg1wbBPIWhvP1
+ Diog==
+X-Gm-Message-State: AOJu0YxNzOd2JNoVa2fBJgd5wtLieBFxcMe5Fcdc8fiAGt09H7UL/9hk
+ XzcGzC79zcqhFYgOyCP2bfu4yE2Re+bHj5sgTN+ZXeu2LFH6uvU2kyiKwQs4hg==
+X-Gm-Gg: Acq92OGByKovQT5X/0mXXbA/yISmWMpt1h0ZuG2uXw/BTHQxc0Eze34EM2WGJJHlUL9
+ yFPr8re+1ESchFUFyxUeZZuQxkZTu/9xv0qdGjKYZEkZI9PfYPz13/re+YnJCU9pCyXuA+sZNvD
+ KyEwlmVaCQdeQVAv/Nxr3RMnXJPcwqv3dGQRVlnio5jvMXwtK2Ozy1Qqhp6G+dlFs39bsSzgEXy
+ o2kvyhS1EbAXYT/u5U/b3AB2N94FcfkC3wzzGpLaQ8l2R4fnM+YLJAHNIdTRgds20tFaeFaTD6Y
+ +ak4RErU+T+rpc7G6tqT21zDEODatYF3OwrQXw6hDpmfRsZoPQfJ0/xwzDI7Z4jyAyO/6xngupr
+ +TcyutbVUBGC6H+BUgT3WTd3r1X6w4dQ+yYM/H+TAkfKYuEQTvgy2fkCTYNFa0AFJRck2A1BZhA
+ VyyyzhYfmDzEGnSut71yIq4c08/BQXnKIZkCPEVuYyZds1tAfh6Auf0hu9AmXr+o8=
+X-Received: by 2002:a17:902:ecc6:b0:2c0:cb90:1e08 with SMTP id
+ d9443c01a7336-2c66407c2b9mr165299825ad.0.1781613033783; 
+ Tue, 16 Jun 2026 05:30:33 -0700 (PDT)
+Received: from YTJMJ2RP0G.bytedance.net ([139.177.225.229])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2c433558365sm130495705ad.77.2026.06.16.05.30.29
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Tue, 16 Jun 2026 05:30:33 -0700 (PDT)
+From: Su Sai <spiderdetective.ss@gmail.com>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	spiderdetective.ss@gmail.com
+Subject: [v4] net/cksum: compute raw cksum for several segments
+Date: Tue, 16 Jun 2026 20:30:26 +0800
+Message-Id: <20260616123026.19382-1-spiderdetective.ss@gmail.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+In-Reply-To: <20260608100202.0deac83d@phoenix.local>
+References: <20260608100202.0deac83d@phoenix.local>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Wed, 17 Jun 2026 15:52:05 +0200
 X-BeenThere: dev@dpdk.org
@@ -81,211 +82,222 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-flow_dv_counter_free() inserts counters into
-pool->counters[pool->query_gen] under pool->csl. Meanwhile,
-mlx5_flow_async_pool_query_handle() moves counters from
-pool->counters[query_gen ^ 1] to the global free list via
-TAILQ_CONCAT while holding only cmng->csl, not pool->csl.
+The rte_raw_cksum_mbuf function is used to compute
+the raw checksum of a packet.
+If the packet payload stored in multi mbuf, the function
+will goto the hard case. In hard case,
+the variable 'tmp' is a type of uint32_t,
+so rte_bswap16 will drop high 16 bit.
+Meanwhile, the variable 'sum' is a type of uint32_t,
+so 'sum += tmp' will drop the carry when overflow.
+Both drop will make cksum incorrect.
+This commit fixes the above bug.
 
-The comment in flow_dv_counter_free() claims the lock is not needed
-because the query callback and the release function operate on
-different lists. That holds only if the free path always observes
-the up-to-date query_gen. It can be violated:
-
-1. A counter free thread (non-PMD, e.g. OVS offload thread) reads
-   pool->query_gen == 0 and is about to insert into counters[0].
-2. The free thread is preempted by the OS scheduler; it is a regular
-   pthread, not pinned to a core.
-3. The eal-intr-thread alarm fires: query_gen++ (now 1) and the async
-   query is sent.
-4. Hardware completes the query and the callback runs TAILQ_CONCAT on
-   counters[0] (= query_gen ^ 1).
-5. The free thread resumes and runs TAILQ_INSERT_TAIL on counters[0]
-   concurrently with step 4 on another core.
-
-Because the two paths take different locks, TAILQ_INSERT_TAIL and
-TAILQ_CONCAT run concurrently on the same list with no synchronization
-and corrupt it: the pool-local list ends up with a NULL head but a
-dangling tqh_last, and the global free list tail no longer points to
-the real tail. The just-freed counter and every counter inserted
-afterwards become unreachable and are leaked.
-
-Non-PMD threads can be preempted for hundreds of microseconds under
-CPU pressure, which is well within the async query round-trip time,
-so the window is reachable in practice.
-
-Fix it by taking pool->csl in the query completion callback before
-operating on pool->counters[query_gen], serializing the CONCAT with
-any concurrent INSERT. The lock is taken once per pool per query
-completion in the eal-intr-thread context, not on the datapath, so
-the cost is negligible. Lock order is pool->csl then cmng->csl,
-matching all other sites.
-
-Also handle the error path: previously the counters accumulated in
-pool->counters[query_gen] were abandoned when a query failed. Move
-them back to the global free list to avoid a leak on persistent
-query failures.
-
-Additionally, fix a second independent race in flow_dv_counter_free():
-TAILQ_INSERT_TAIL is passed &pool->counters[pool->query_gen] directly,
-but the macro evaluates its head argument multiple times. Since
-pool->query_gen is a volatile bit-field, if mlx5_flow_query_alarm()
-increments query_gen between two evaluations of the macro, the same
-insertion can operate on two different lists: the earlier steps update
-counters[0] while the later steps update counters[1], leaving both
-lists with inconsistent metadata and leaking the counter. Fix by
-caching pool->query_gen into a local variable before calling the macro.
-
-Fixes: ac79183dc6f7 ("net/mlx5: optimize free counter lookup")
-Cc: stable@dpdk.org
-
-Signed-off-by: Linhu Li <lilinhu618@gmail.com>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Signed-off-by: Su Sai <spiderdetective.ss@gmail.com>
 ---
+ .mailmap              |   1 +
+ app/test/test_cksum.c | 102 ++++++++++++++++++++++++++++++++++++++++++
+ lib/net/rte_cksum.h   |  27 +++++++++--
+ 3 files changed, 126 insertions(+), 4 deletions(-)
 
-v5:
-- Added fix for Race 2: cache pool->query_gen into a local variable
-  before TAILQ_INSERT_TAIL to prevent the macro from evaluating the
-  volatile bit-field multiple times and crossing generation lists.
-- Updated release notes: moved the fix entry under "Updated NVIDIA mlx5
-  driver" in New Features instead of using a separate "Fixed Issues" section.
-
-v4:
-- Fixed commit log line length over 75 characters.
-
-v3:
-- Added release notes entry.
-- Added function comment in mlx5_flow_async_pool_query_handle().
-- Clarified error path comment to note it is safe for transient failures.
-
-v2:
-- Fixed Signed-off-by to use full name.
-
- doc/guides/rel_notes/release_26_07.rst |  6 +++++
- drivers/net/mlx5/mlx5_flow.c           | 31 ++++++++++++++++++++++++++
- drivers/net/mlx5/mlx5_flow_dv.c        | 12 +++++-----
- 3 files changed, 44 insertions(+), 5 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index b8a3e2ced9..6c6f0aa696 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -90,6 +90,11 @@ New Features
-   * Added support for transmitting LLDP packets based on mbuf packet type.
-   * Implemented AVX2 context descriptor transmit paths.
+diff --git a/.mailmap b/.mailmap
+index 4001e5fb0e..bcf73cb902 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1630,6 +1630,7 @@ Sylvia Grundwürmer <sylvia.grundwuermer@b-plus.com>
+ Sylwester Dziedziuch <sylwesterx.dziedziuch@intel.com>
+ Sylwia Wnuczko <sylwia.wnuczko@intel.com>
+ Szymon Sliwa <szs@semihalf.com>
++Su Sai <spiderdetective.ss@gmail.com> <susai.ss@bytedance.com>
+ Szymon T Cudzilo <szymon.t.cudzilo@intel.com>
+ Tadhg Kearney <tadhg.kearney@intel.com>
+ Taekyung Kim <kim.tae.kyung@navercorp.com>
+diff --git a/app/test/test_cksum.c b/app/test/test_cksum.c
+index ea443382a1..5bd9723fbd 100644
+--- a/app/test/test_cksum.c
++++ b/app/test/test_cksum.c
+@@ -85,6 +85,42 @@ static const char test_cksum_ipv4_opts_udp[] = {
+ 	0x00, 0x35, 0x00, 0x09, 0x89, 0x6f, 0x78,
+ };
  
-+* **Updated NVIDIA mlx5 driver.**
++/*
++ * generated in scapy with
++ * Ether()/IP()/TCP(options=[NOP,NOP,Timestamps])/os.urandom(113))
++ */
++static const char test_cksum_ipv4_tcp_multi_segs[] = {
++	0x00, 0x16, 0x3e, 0x0b, 0x6b, 0xd2, 0xee, 0xff,
++	0xff, 0xff, 0xff, 0xff, 0x08, 0x00, 0x45, 0x00,
++	0x00, 0xa5, 0x46, 0x10, 0x40, 0x00, 0x40, 0x06,
++	0x80, 0xb5, 0xc0, 0xa8, 0xf9, 0x1d, 0xc0, 0xa8,
++	0xf9, 0x1e, 0xdc, 0xa2, 0x14, 0x51, 0xbb, 0x8f,
++	0xa0, 0x00, 0xe4, 0x7c, 0xe4, 0xb8, 0x80, 0x10,
++	0x02, 0x00, 0x4b, 0xc1, 0x00, 0x00, 0x01, 0x01,
++	0x08, 0x0a, 0x90, 0x60, 0xf4, 0xff, 0x03, 0xc5,
++	0xb4, 0x19, 0x77, 0x34, 0xd4, 0xdc, 0x84, 0x86,
++	0xff, 0x44, 0x09, 0x63, 0x36, 0x2e, 0x26, 0x9b,
++	0x90, 0x70, 0xf2, 0xed, 0xc8, 0x5b, 0x87, 0xaa,
++	0xb4, 0x67, 0x6b, 0x32, 0x3d, 0xc4, 0xbf, 0x15,
++	0xa9, 0x16, 0x6c, 0x2a, 0x9d, 0xb2, 0xb7, 0x6b,
++	0x58, 0x44, 0x58, 0x12, 0x4b, 0x8f, 0xe5, 0x12,
++	0x11, 0x90, 0x94, 0x68, 0x37, 0xad, 0x0a, 0x9b,
++	0xd6, 0x79, 0xf2, 0xb7, 0x31, 0xcf, 0x44, 0x22,
++	0xc8, 0x99, 0x3f, 0xe5, 0xe7, 0xac, 0xc7, 0x0b,
++	0x86, 0xdf, 0xda, 0xed, 0x0a, 0x0f, 0x86, 0xd7,
++	0x48, 0xe2, 0xf1, 0xc2, 0x43, 0xed, 0x47, 0x3a,
++	0xea, 0x25, 0x2d, 0xd6, 0x60, 0x38, 0x30, 0x07,
++	0x28, 0xdd, 0x1f, 0x0c, 0xdd, 0x7b, 0x7c, 0xd9,
++	0x35, 0x9d, 0x14, 0xaa, 0xc6, 0x35, 0xd1, 0x03,
++	0x38, 0xb1, 0xf5,
++};
 +
-+  Fixed counter free list corruption when counter free operations race with
-+  asynchronous query completions.
++static const uint8_t test_cksum_ipv4_tcp_multi_segs_len[] = {
++	66,  /* the first seg contains all headers, including L2 to L4 */
++	61,  /* the second seg length is odd, test byte order independent */
++	52,  /* three segs are sufficient to test the most complex scenarios */
++};
 +
- * **Updated PCAP ethernet driver.**
+ /* test l3/l4 checksum api */
+ static int
+ test_l4_cksum(struct rte_mempool *pktmbuf_pool, const char *pktdata, size_t len)
+@@ -223,6 +259,66 @@ test_l4_cksum(struct rte_mempool *pktmbuf_pool, const char *pktdata, size_t len)
+ 	return -1;
+ }
  
-   * Added support for VLAN insertion and stripping.
-@@ -153,6 +158,7 @@ ABI Changes
- * No ABI change that would break compatibility with 25.11.
- 
- 
++/* test l4 checksum api for a packet with multiple mbufs */
++static int
++test_l4_cksum_multi_mbufs(struct rte_mempool *pktmbuf_pool, const char *pktdata, size_t len,
++			     const uint8_t *segs, size_t segs_len)
++{
++	struct rte_mbuf *m[NB_MBUF] = {0};
++	struct rte_mbuf *m_hdr = NULL;
++	struct rte_net_hdr_lens hdr_lens;
++	size_t i, off = 0;
++	uint32_t packet_type, l3;
++	void *l3_hdr;
++	char *data;
 +
- Known Issues
- ------------
- 
-diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index 915ea29a5a..2f785d58ec 100644
---- a/drivers/net/mlx5/mlx5_flow.c
-+++ b/drivers/net/mlx5/mlx5_flow.c
-@@ -9893,6 +9893,13 @@ void
- mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
- 				  uint64_t async_id, int status)
- {
-+	/*
-+	 * Handle async counter pool query completion.
-+	 * query_gen is flipped each round: freed counters go into [query_gen],
-+	 * while this callback moves [query_gen ^ 1] to the global free list.
-+	 * pool->csl must be held when operating on pool->counters[] to serialize
-+	 * with concurrent free-path insertions.
-+	 */
- 	struct mlx5_flow_counter_pool *pool =
- 		(struct mlx5_flow_counter_pool *)(uintptr_t)async_id;
- 	struct mlx5_counter_stats_raw *raw_to_free;
-@@ -9904,6 +9911,21 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
- 
- 	if (unlikely(status)) {
- 		raw_to_free = pool->raw_hw;
-+		/*
-+		 * The query failed, so the freed counters accumulated
-+		 * in the old-gen list would otherwise be stranded.
-+		 * Move them back to the global free list. This is safe
-+		 * for both transient and persistent failures: the
-+		 * counters are still valid and can be reused.
-+		 */
-+		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
-+			rte_spinlock_lock(&pool->csl);
-+			rte_spinlock_lock(&cmng->csl[cnt_type]);
-+			TAILQ_CONCAT(&cmng->counters[cnt_type],
-+				     &pool->counters[query_gen], next);
-+			rte_spinlock_unlock(&cmng->csl[cnt_type]);
-+			rte_spinlock_unlock(&pool->csl);
++	for (i = 0; i < segs_len; i++) {
++		m[i] = rte_pktmbuf_alloc(pktmbuf_pool);
++		if (m[i] == NULL)
++			GOTO_FAIL("Cannot allocate mbuf");
++
++		data = rte_pktmbuf_append(m[i], segs[i]);
++		if (data == NULL)
++			GOTO_FAIL("Cannot append data");
++
++		memcpy(data, pktdata + off, segs[i]);
++		off += segs[i];
++
++		if (m_hdr) {
++			if (rte_pktmbuf_chain(m_hdr, m[i]))
++				GOTO_FAIL("Cannot chain mbuf");
++		} else {
++			m_hdr = m[i];
 +		}
- 	} else {
- 		raw_to_free = pool->raw;
- 		if (pool->is_aged)
-@@ -9913,11 +9935,20 @@ mlx5_flow_async_pool_query_handle(struct mlx5_dev_ctx_shared *sh,
- 		rte_spinlock_unlock(&pool->sl);
- 		/* Be sure the new raw counters data is updated in memory. */
- 		rte_io_wmb();
-+		/*
-+		 * A counter free thread may have read a stale query_gen
-+		 * before the generation was flipped and could still be
-+		 * inserting into this same old-gen list. Hold pool->csl to
-+		 * serialize TAILQ_CONCAT with that TAILQ_INSERT_TAIL and
-+		 * avoid corrupting the list.
-+		 */
- 		if (!TAILQ_EMPTY(&pool->counters[query_gen])) {
-+			rte_spinlock_lock(&pool->csl);
- 			rte_spinlock_lock(&cmng->csl[cnt_type]);
- 			TAILQ_CONCAT(&cmng->counters[cnt_type],
- 				     &pool->counters[query_gen], next);
- 			rte_spinlock_unlock(&cmng->csl[cnt_type]);
-+			rte_spinlock_unlock(&pool->csl);
- 		}
- 	}
- 	LIST_INSERT_HEAD(&sh->sws_cmng.free_stat_raws, raw_to_free, next);
-diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
-index c2a2874913..060ccdeec2 100644
---- a/drivers/net/mlx5/mlx5_flow_dv.c
-+++ b/drivers/net/mlx5/mlx5_flow_dv.c
-@@ -7129,6 +7129,7 @@ flow_dv_counter_free(struct rte_eth_dev *dev, uint32_t counter)
- 	struct mlx5_flow_counter_pool *pool = NULL;
- 	struct mlx5_flow_counter *cnt;
- 	enum mlx5_counter_type cnt_type;
-+	uint32_t query_gen;
++	}
++
++	if (off != len)
++		GOTO_FAIL("Invalid segs");
++
++	packet_type = rte_net_get_ptype(m_hdr, &hdr_lens, RTE_PTYPE_ALL_MASK);
++	l3 = packet_type & RTE_PTYPE_L3_MASK;
++
++	l3_hdr = rte_pktmbuf_mtod_offset(m_hdr, void *, hdr_lens.l2_len);
++	off = hdr_lens.l2_len + hdr_lens.l3_len;
++
++	if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
++		if (rte_ipv4_udptcp_cksum_mbuf_verify(m_hdr, l3_hdr, off) != 0)
++			GOTO_FAIL("Invalid L4 checksum verification for multiple mbufs");
++	} else if (l3 == RTE_PTYPE_L3_IPV6 || l3 == RTE_PTYPE_L3_IPV6_EXT) {
++		if (rte_ipv6_udptcp_cksum_mbuf_verify(m_hdr, l3_hdr, off) != 0)
++			GOTO_FAIL("Invalid L4 checksum verification for multiple mbufs");
++	}
++
++	rte_pktmbuf_free_bulk(m, segs_len);
++
++	return 0;
++
++fail:
++	rte_pktmbuf_free_bulk(m, segs_len);
++
++	return -1;
++}
++
+ static int
+ test_cksum(void)
+ {
+@@ -256,6 +352,12 @@ test_cksum(void)
+ 			  sizeof(test_cksum_ipv4_opts_udp)) < 0)
+ 		GOTO_FAIL("checksum error on ipv4_opts_udp");
  
- 	if (!counter)
- 		return;
-@@ -7153,16 +7154,17 @@ flow_dv_counter_free(struct rte_eth_dev *dev, uint32_t counter)
- 	cnt->pool = pool;
- 	/*
- 	 * Put the counter back to list to be updated in none fallback mode.
--	 * Currently, we are using two list alternately, while one is in query,
-+	 * Currently, we are using two lists alternately, while one is in query,
- 	 * add the freed counter to the other list based on the pool query_gen
- 	 * value. After query finishes, add counter the list to the global
--	 * container counter list. The list changes while query starts. In
--	 * this case, lock will not be needed as query callback and release
--	 * function both operate with the different list.
-+	 * container counter list. Cache query_gen into a local variable before
-+	 * TAILQ_INSERT_TAIL, since the macro evaluates its head argument
-+	 * multiple times and pool->query_gen is a volatile bit-field.
- 	 */
- 	if (!priv->sh->sws_cmng.counter_fallback) {
- 		rte_spinlock_lock(&pool->csl);
--		TAILQ_INSERT_TAIL(&pool->counters[pool->query_gen], cnt, next);
-+		query_gen = pool->query_gen;
-+		TAILQ_INSERT_TAIL(&pool->counters[query_gen], cnt, next);
- 		rte_spinlock_unlock(&pool->csl);
- 	} else {
- 		cnt->dcs_when_free = cnt->dcs_when_active;
++	if (test_l4_cksum_multi_mbufs(pktmbuf_pool, test_cksum_ipv4_tcp_multi_segs,
++			  sizeof(test_cksum_ipv4_tcp_multi_segs),
++			  test_cksum_ipv4_tcp_multi_segs_len,
++			  sizeof(test_cksum_ipv4_tcp_multi_segs_len)) < 0)
++		GOTO_FAIL("checksum error on multi mbufs check");
++
+ 	rte_mempool_free(pktmbuf_pool);
+ 
+ 	return 0;
+diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
+index a8e8927952..679ba82eb6 100644
+--- a/lib/net/rte_cksum.h
++++ b/lib/net/rte_cksum.h
+@@ -80,6 +80,25 @@ __rte_raw_cksum_reduce(uint32_t sum)
+ 	return (uint16_t)sum;
+ }
+ 
++/**
++ * @internal Reduce a sum to the non-complemented checksum.
++ * Helper routine for the rte_raw_cksum_mbuf().
++ *
++ * @param sum
++ *   Value of the sum.
++ * @return
++ *   The non-complemented checksum.
++ */
++static inline uint16_t
++__rte_raw_cksum_reduce_u64(uint64_t sum)
++{
++	uint32_t tmp;
++
++	tmp = __rte_raw_cksum_reduce((uint32_t)sum);
++	tmp += __rte_raw_cksum_reduce((uint32_t)(sum >> 32));
++	return __rte_raw_cksum_reduce(tmp);
++}
++
+ /**
+  * Process the non-complemented checksum of a buffer.
+  *
+@@ -119,8 +138,8 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t off, uint32_t len,
+ {
+ 	const struct rte_mbuf *seg;
+ 	const char *buf;
+-	uint32_t sum, tmp;
+-	uint32_t seglen, done;
++	uint32_t seglen, done, tmp;
++	uint64_t sum;
+ 
+ 	/* easy case: all data in the first segment */
+ 	if (off + len <= rte_pktmbuf_data_len(m)) {
+@@ -157,7 +176,7 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t off, uint32_t len,
+ 	for (;;) {
+ 		tmp = __rte_raw_cksum(buf, seglen, 0);
+ 		if (done & 1)
+-			tmp = rte_bswap16((uint16_t)tmp);
++			tmp = rte_bswap32(tmp);
+ 		sum += tmp;
+ 		done += seglen;
+ 		if (done == len)
+@@ -169,7 +188,7 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t off, uint32_t len,
+ 			seglen = len - done;
+ 	}
+ 
+-	*cksum = __rte_raw_cksum_reduce(sum);
++	*cksum = __rte_raw_cksum_reduce_u64(sum);
+ 	return 0;
+ }
+ 
 -- 
-2.39.3 (Apple Git-146)
+2.20.1
 
