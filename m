@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4E7CD98EE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 08:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7943DCD98EE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 09:02:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD14440289;
-	Wed, 17 Jun 2026 10:52:57 +0200 (CEST)
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
- [113.46.200.221])
- by mails.dpdk.org (Postfix) with ESMTP id 9B34B4027A
- for <dev@dpdk.org>; Wed, 17 Jun 2026 10:52:55 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=xOhJokYyAd8rs+cDwRgGqyFU282KM09ry2ObAWCMQ68=;
- b=Vy7hqRAFivg7Kf2vEmchttak3V7IYidm/uqGbk/jb3su/KxmyKZJhoB/nH7CYOUI8MR4H9mOB
- AmPJIe+ZIZTuF47/X8UnGmvYF/0RqUAbXbA0qCT+DC6jZo7lDwsO8K0YbBnrK9Jwd61Z6XPj6/k
- 5ajpYL3GKe63HjINCJ/hj54=
-Received: from mail.maildlp.com (unknown [172.19.162.197])
- by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4ggHVB4QH8zRhRC;
- Wed, 17 Jun 2026 16:44:50 +0800 (CST)
-Received: from kwepemj100018.china.huawei.com (unknown [7.202.194.12])
- by mail.maildlp.com (Postfix) with ESMTPS id DD04A40569;
- Wed, 17 Jun 2026 16:52:48 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemj100018.china.huawei.com (7.202.194.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 17 Jun 2026 16:52:48 +0800
-From: Xingui Yang <yangxingui@huawei.com>
-To: <dev@dpdk.org>
-CC: <stephen@networkplumber.org>, <david.marchand@redhat.com>,
- <aman.deep.singh@intel.com>, <fengchengwen@huawei.com>,
- <yangshuaisong@h-partners.com>, <lihuisong@huawei.com>,
- <liuyonglong@huawei.com>, <kangfenglong@huawei.com>
-Subject: [PATCH v3] app/testpmd: add VLAN priority insert support
-Date: Wed, 17 Jun 2026 16:52:47 +0800
-Message-ID: <20260617085247.2204050-1-yangxingui@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C1A6340289;
+	Wed, 17 Jun 2026 11:02:43 +0200 (CEST)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id 94B944027A
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 11:02:41 +0200 (CEST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4ggHtj1h0xz55RJ4;
+ Wed, 17 Jun 2026 17:02:37 +0800 (CST)
+Received: from szxlzmapp03.zte.com.cn ([10.5.231.207])
+ by mse-fl2.zte.com.cn with SMTP id 65H92QQN019043;
+ Wed, 17 Jun 2026 17:02:26 +0800 (+08)
+ (envelope-from wang.junlong1@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Wed, 17 Jun 2026 17:02:28 +0800
+X-Zmail-TransId: 3e816a3262a0004-fe0df
+X-Zmail-LocalSMTP: 1
+X-Zmail-RealSender: wang.junlong1@zte.com.cn
+From: Junlong Wang <wang.junlong1@zte.com.cn>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>
+Subject: [PATCH v6 0/4] net/zxdh: optimize Rx/Tx path performance
+Date: Wed, 17 Jun 2026 16:28:23 +0800
+Message-ID: <20260617082828.1058127-1-wang.junlong1@zte.com.cn>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260616131001.2955655-1-yangxingui@huawei.com/>
-References: <20260616131001.2955655-1-yangxingui@huawei.com/>
+In-Reply-To: <20260606063226.491848-1-wang.junlong1@zte.com.cn>
+References: <20260606063226.491848-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemj100018.china.huawei.com (7.202.194.12)
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl2.zte.com.cn 65H92QQN019043
+X-TLS: YES
+X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
+X-SOURCE-IP: 10.5.228.133 unknown Wed, 17 Jun 2026 17:02:37 +0800
+X-CLEAN: YES
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6A3262AD.000/4ggHtj1h0xz55RJ4
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,417 +58,225 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The tx_vlan set and tx_qinq set commands now accept full 16-bit VLAN TCI
-(Tag Control Information) instead of only 12-bit VLAN ID. This allows
-users to set 802.1p priority and CFI/DEI bits for hardware VLAN insertion.
 
----
-v3:
-- Remove TX path validation to accept full 16-bit TCI values
-- Rename parameter from vlan_id to vlan_tci in code and documentation
-- Rename struct fields tx_vlan_id to tx_vlan_tci for consistency
-- Rename token variables cmd_tx_vlan_set_vlanid to cmd_tx_vlan_set_vlantci
-- Update cmdline.c structure fields, TOKEN definitions, and help strings
-- Add documentation with TCI bit layout and calculation examples
 
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-Suggested-by: Chengwen Feng <fengchengwen@huawei.com>
-Signed-off-by: Xingui Yang <yangxingui@huawei.com>
----
- app/test-pmd/5tswap.h                       |  2 +-
- app/test-pmd/cmdline.c                      | 42 ++++++++++-----------
- app/test-pmd/config.c                       | 22 ++++-------
- app/test-pmd/flowgen.c                      |  4 +-
- app/test-pmd/macfwd.h                       |  4 +-
- app/test-pmd/macswap.h                      |  2 +-
- app/test-pmd/macswap_neon.h                 |  2 +-
- app/test-pmd/macswap_sse.h                  |  2 +-
- app/test-pmd/testpmd.h                      |  8 ++--
- app/test-pmd/txonly.c                       |  4 +-
- doc/guides/rel_notes/release_26_07.rst      | 15 ++++++++
- doc/guides/testpmd_app_ug/testpmd_funcs.rst | 33 +++++++++++++---
- 12 files changed, 85 insertions(+), 55 deletions(-)
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-diff --git a/app/test-pmd/5tswap.h b/app/test-pmd/5tswap.h
-index 345c08b4d0..1909d4e2fa 100644
---- a/app/test-pmd/5tswap.h
-+++ b/app/test-pmd/5tswap.h
-@@ -85,7 +85,7 @@ do_5tswap(struct rte_mbuf *pkts_burst[], uint16_t nb_rx,
- 	txp = &ports[fs->tx_port];
- 	ol_flags = ol_flags_init(txp->dev_conf.txmode.offloads);
- 	vlan_qinq_set(pkts_burst, nb_rx, ol_flags,
--		      txp->tx_vlan_id, txp->tx_vlan_id_outer);
-+		      txp->tx_vlan_tci, txp->tx_vlan_tci_outer);
- 	for (i = 0; i < nb_rx; i++) {
- 		if (likely(i < nb_rx - 1))
- 			rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[i+1],
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 3c39e27aa8..233d3b8ee2 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -447,9 +447,9 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"rx_vxlan_port rm (udp_port) (port_id)\n"
- 			"    Remove an UDP port for VXLAN packet filter on a port\n\n"
- 
--			"tx_vlan set (port_id) vlan_id[, vlan_id_outer]\n"
--			"    Set hardware insertion of VLAN IDs (single or double VLAN "
--			"depends on the number of VLAN IDs) in packets sent on a port.\n\n"
-+			"tx_vlan set (port_id) vlan_tci[, vlan_tci_outer]\n"
-+			"    Set hardware insertion of VLAN TCI (single or double VLAN "
-+			"depends on the number of VLAN TCIs) in packets sent on a port.\n\n"
- 
- 			"tx_vlan set pvid port_id vlan_id (on|off)\n"
- 			"    Set port based TX VLAN insertion.\n\n"
-@@ -4931,7 +4931,7 @@ struct cmd_tx_vlan_set_result {
- 	cmdline_fixed_string_t tx_vlan;
- 	cmdline_fixed_string_t set;
- 	portid_t port_id;
--	uint16_t vlan_id;
-+	uint16_t vlan_tci;
- };
- 
- static void
-@@ -4949,7 +4949,7 @@ cmd_tx_vlan_set_parsed(void *parsed_result,
- 		return;
- 	}
- 
--	tx_vlan_set(res->port_id, res->vlan_id);
-+	tx_vlan_set(res->port_id, res->vlan_tci);
- 
- 	cmd_reconfig_device_queue(res->port_id, 1, 1);
- }
-@@ -4963,21 +4963,21 @@ static cmdline_parse_token_string_t cmd_tx_vlan_set_set =
- static cmdline_parse_token_num_t cmd_tx_vlan_set_portid =
- 	TOKEN_NUM_INITIALIZER(struct cmd_tx_vlan_set_result,
- 			      port_id, RTE_UINT16);
--static cmdline_parse_token_num_t cmd_tx_vlan_set_vlanid =
-+static cmdline_parse_token_num_t cmd_tx_vlan_set_vlantci =
- 	TOKEN_NUM_INITIALIZER(struct cmd_tx_vlan_set_result,
--			      vlan_id, RTE_UINT16);
-+			      vlan_tci, RTE_UINT16);
- 
- static cmdline_parse_inst_t cmd_tx_vlan_set = {
- 	.f = cmd_tx_vlan_set_parsed,
- 	.data = NULL,
--	.help_str = "tx_vlan set <port_id> <vlan_id>: "
-+	.help_str = "tx_vlan set <port_id> <vlan_tci>: "
- 		"Enable hardware insertion of a single VLAN header "
--		"with a given TAG Identifier in packets sent on a port",
-+		"with a given TCI in packets sent on a port",
- 	.tokens = {
- 		(void *)&cmd_tx_vlan_set_tx_vlan,
- 		(void *)&cmd_tx_vlan_set_set,
- 		(void *)&cmd_tx_vlan_set_portid,
--		(void *)&cmd_tx_vlan_set_vlanid,
-+		(void *)&cmd_tx_vlan_set_vlantci,
- 		NULL,
- 	},
- };
-@@ -4987,8 +4987,8 @@ struct cmd_tx_vlan_set_qinq_result {
- 	cmdline_fixed_string_t tx_vlan;
- 	cmdline_fixed_string_t set;
- 	portid_t port_id;
--	uint16_t vlan_id;
--	uint16_t vlan_id_outer;
-+	uint16_t vlan_tci;
-+	uint16_t vlan_tci_outer;
- };
- 
- static void
-@@ -5006,7 +5006,7 @@ cmd_tx_vlan_set_qinq_parsed(void *parsed_result,
- 		return;
- 	}
- 
--	tx_qinq_set(res->port_id, res->vlan_id, res->vlan_id_outer);
-+	tx_qinq_set(res->port_id, res->vlan_tci, res->vlan_tci_outer);
- 
- 	cmd_reconfig_device_queue(res->port_id, 1, 1);
- }
-@@ -5020,25 +5020,25 @@ static cmdline_parse_token_string_t cmd_tx_vlan_set_qinq_set =
- static cmdline_parse_token_num_t cmd_tx_vlan_set_qinq_portid =
- 	TOKEN_NUM_INITIALIZER(struct cmd_tx_vlan_set_qinq_result,
- 		port_id, RTE_UINT16);
--static cmdline_parse_token_num_t cmd_tx_vlan_set_qinq_vlanid =
-+static cmdline_parse_token_num_t cmd_tx_vlan_set_qinq_vlantci =
- 	TOKEN_NUM_INITIALIZER(struct cmd_tx_vlan_set_qinq_result,
--		vlan_id, RTE_UINT16);
--static cmdline_parse_token_num_t cmd_tx_vlan_set_qinq_vlanid_outer =
-+		vlan_tci, RTE_UINT16);
-+static cmdline_parse_token_num_t cmd_tx_vlan_set_qinq_vlantci_outer =
- 	TOKEN_NUM_INITIALIZER(struct cmd_tx_vlan_set_qinq_result,
--		vlan_id_outer, RTE_UINT16);
-+		vlan_tci_outer, RTE_UINT16);
- 
- static cmdline_parse_inst_t cmd_tx_vlan_set_qinq = {
- 	.f = cmd_tx_vlan_set_qinq_parsed,
- 	.data = NULL,
--	.help_str = "tx_vlan set <port_id> <vlan_id> <outer_vlan_id>: "
-+	.help_str = "tx_vlan set <port_id> <vlan_tci> <vlan_tci_outer>: "
- 		"Enable hardware insertion of double VLAN header "
--		"with given TAG Identifiers in packets sent on a port",
-+		"with given TCIs in packets sent on a port",
- 	.tokens = {
- 		(void *)&cmd_tx_vlan_set_qinq_tx_vlan,
- 		(void *)&cmd_tx_vlan_set_qinq_set,
- 		(void *)&cmd_tx_vlan_set_qinq_portid,
--		(void *)&cmd_tx_vlan_set_qinq_vlanid,
--		(void *)&cmd_tx_vlan_set_qinq_vlanid_outer,
-+		(void *)&cmd_tx_vlan_set_qinq_vlantci,
-+		(void *)&cmd_tx_vlan_set_qinq_vlantci_outer,
- 		NULL,
- 	},
- };
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 9d457ca88e..3df7412ef6 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -6918,14 +6918,11 @@ vlan_tpid_set(portid_t port_id, enum rte_vlan_type vlan_type, uint16_t tp_id)
- }
- 
- void
--tx_vlan_set(portid_t port_id, uint16_t vlan_id)
-+tx_vlan_set(portid_t port_id, uint16_t vlan_tci)
- {
- 	struct rte_eth_dev_info dev_info;
- 	int ret;
- 
--	if (vlan_id_is_invalid(vlan_id))
--		return;
--
- 	if (ports[port_id].dev_conf.txmode.offloads &
- 	    RTE_ETH_TX_OFFLOAD_QINQ_INSERT) {
- 		fprintf(stderr, "Error, as QinQ has been enabled.\n");
-@@ -6945,20 +6942,15 @@ tx_vlan_set(portid_t port_id, uint16_t vlan_id)
- 
- 	tx_vlan_reset(port_id);
- 	ports[port_id].dev_conf.txmode.offloads |= RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
--	ports[port_id].tx_vlan_id = vlan_id;
-+	ports[port_id].tx_vlan_tci = vlan_tci;
- }
- 
- void
--tx_qinq_set(portid_t port_id, uint16_t vlan_id, uint16_t vlan_id_outer)
-+tx_qinq_set(portid_t port_id, uint16_t vlan_tci, uint16_t vlan_tci_outer)
- {
- 	struct rte_eth_dev_info dev_info;
- 	int ret;
- 
--	if (vlan_id_is_invalid(vlan_id))
--		return;
--	if (vlan_id_is_invalid(vlan_id_outer))
--		return;
--
- 	ret = eth_dev_info_get_print_err(port_id, &dev_info);
- 	if (ret != 0)
- 		return;
-@@ -6973,8 +6965,8 @@ tx_qinq_set(portid_t port_id, uint16_t vlan_id, uint16_t vlan_id_outer)
- 	tx_vlan_reset(port_id);
- 	ports[port_id].dev_conf.txmode.offloads |= (RTE_ETH_TX_OFFLOAD_VLAN_INSERT |
- 						    RTE_ETH_TX_OFFLOAD_QINQ_INSERT);
--	ports[port_id].tx_vlan_id = vlan_id;
--	ports[port_id].tx_vlan_id_outer = vlan_id_outer;
-+	ports[port_id].tx_vlan_tci = vlan_tci;
-+	ports[port_id].tx_vlan_tci_outer = vlan_tci_outer;
- }
- 
- void
-@@ -6983,8 +6975,8 @@ tx_vlan_reset(portid_t port_id)
- 	ports[port_id].dev_conf.txmode.offloads &=
- 				~(RTE_ETH_TX_OFFLOAD_VLAN_INSERT |
- 				  RTE_ETH_TX_OFFLOAD_QINQ_INSERT);
--	ports[port_id].tx_vlan_id = 0;
--	ports[port_id].tx_vlan_id_outer = 0;
-+	ports[port_id].tx_vlan_tci = 0;
-+	ports[port_id].tx_vlan_tci_outer = 0;
- }
- 
- void
-diff --git a/app/test-pmd/flowgen.c b/app/test-pmd/flowgen.c
-index 53b5f24f11..8dac7b9209 100644
---- a/app/test-pmd/flowgen.c
-+++ b/app/test-pmd/flowgen.c
-@@ -84,8 +84,8 @@ pkt_burst_flow_gen(struct fwd_stream *fs)
- 	rte_pktmbuf_free_bulk(pkts_burst, nb_rx);
- 
- 	mbp = current_fwd_lcore()->mbp;
--	vlan_tci = ports[fs->tx_port].tx_vlan_id;
--	vlan_tci_outer = ports[fs->tx_port].tx_vlan_id_outer;
-+	vlan_tci = ports[fs->tx_port].tx_vlan_tci;
-+	vlan_tci_outer = ports[fs->tx_port].tx_vlan_tci_outer;
- 
- 	tx_offloads = ports[fs->tx_port].dev_conf.txmode.offloads;
- 	if (tx_offloads	& RTE_ETH_TX_OFFLOAD_VLAN_INSERT)
-diff --git a/app/test-pmd/macfwd.h b/app/test-pmd/macfwd.h
-index ae2346e589..5209644bb7 100644
---- a/app/test-pmd/macfwd.h
-+++ b/app/test-pmd/macfwd.h
-@@ -37,8 +37,8 @@ do_macfwd(struct rte_mbuf *pkts_burst[], uint16_t nb_rx,
- 		mb->ol_flags |= ol_flags;
- 		mb->l2_len = sizeof(struct rte_ether_hdr);
- 		mb->l3_len = sizeof(struct rte_ipv4_hdr);
--		mb->vlan_tci = txp->tx_vlan_id;
--		mb->vlan_tci_outer = txp->tx_vlan_id_outer;
-+		mb->vlan_tci = txp->tx_vlan_tci;
-+		mb->vlan_tci_outer = txp->tx_vlan_tci_outer;
- 	}
- }
- 
-diff --git a/app/test-pmd/macswap.h b/app/test-pmd/macswap.h
-index 29c252bb8f..fe15934d96 100644
---- a/app/test-pmd/macswap.h
-+++ b/app/test-pmd/macswap.h
-@@ -19,7 +19,7 @@ do_macswap(struct rte_mbuf *pkts[], uint16_t nb,
- 
- 	ol_flags = ol_flags_init(txp->dev_conf.txmode.offloads);
- 	vlan_qinq_set(pkts, nb, ol_flags,
--			txp->tx_vlan_id, txp->tx_vlan_id_outer);
-+			txp->tx_vlan_tci, txp->tx_vlan_tci_outer);
- 
- 	for (i = 0; i < nb; i++) {
- 		if (likely(i < nb - 1))
-diff --git a/app/test-pmd/macswap_neon.h b/app/test-pmd/macswap_neon.h
-index df6c260cd4..195c7d1640 100644
---- a/app/test-pmd/macswap_neon.h
-+++ b/app/test-pmd/macswap_neon.h
-@@ -32,7 +32,7 @@ do_macswap(struct rte_mbuf *pkts[], uint16_t nb,
- 
- 	ol_flags = ol_flags_init(txp->dev_conf.txmode.offloads);
- 	vlan_qinq_set(pkts, nb, ol_flags,
--			txp->tx_vlan_id, txp->tx_vlan_id_outer);
-+			txp->tx_vlan_tci, txp->tx_vlan_tci_outer);
- 
- 	i = 0;
- 	r = nb;
-diff --git a/app/test-pmd/macswap_sse.h b/app/test-pmd/macswap_sse.h
-index 1f547388b7..341c9ba681 100644
---- a/app/test-pmd/macswap_sse.h
-+++ b/app/test-pmd/macswap_sse.h
-@@ -29,7 +29,7 @@ do_macswap(struct rte_mbuf *pkts[], uint16_t nb,
- 
- 	ol_flags = ol_flags_init(txp->dev_conf.txmode.offloads);
- 	vlan_qinq_set(pkts, nb, ol_flags,
--			txp->tx_vlan_id, txp->tx_vlan_id_outer);
-+			txp->tx_vlan_tci, txp->tx_vlan_tci_outer);
- 
- 	i = 0;
- 	r = nb;
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index 3d4b36d668..bf88758118 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -346,8 +346,8 @@ struct rte_port {
- 	uint16_t		parse_tunnel:1; /**< Parse internal headers */
- 	uint16_t                tso_segsz;  /**< Segmentation offload MSS for non-tunneled packets. */
- 	uint16_t                tunnel_tso_segsz; /**< Segmentation offload MSS for tunneled pkts. */
--	uint16_t                tx_vlan_id;/**< The tag ID */
--	uint16_t                tx_vlan_id_outer;/**< The outer tag ID */
-+	uint16_t                tx_vlan_tci;/**< The TCI */
-+	uint16_t                tx_vlan_tci_outer;/**< The outer TCI */
- 	volatile uint16_t        port_status;    /**< port started or not */
- 	uint8_t                 need_setup;     /**< port just attached */
- 	uint8_t                 need_reconfig;  /**< need reconfiguring port or not */
-@@ -1142,8 +1142,8 @@ int rx_vft_set(portid_t port_id, uint16_t vlan_id, int on);
- void vlan_extend_set(portid_t port_id, int on);
- void vlan_tpid_set(portid_t port_id, enum rte_vlan_type vlan_type,
- 		   uint16_t tp_id);
--void tx_vlan_set(portid_t port_id, uint16_t vlan_id);
--void tx_qinq_set(portid_t port_id, uint16_t vlan_id, uint16_t vlan_id_outer);
-+void tx_vlan_set(portid_t port_id, uint16_t vlan_tci);
-+void tx_qinq_set(portid_t port_id, uint16_t vlan_tci, uint16_t vlan_tci_outer);
- void tx_vlan_reset(portid_t port_id);
- void tx_vlan_pvid_set(portid_t port_id, uint16_t vlan_id, int on);
- 
-diff --git a/app/test-pmd/txonly.c b/app/test-pmd/txonly.c
-index 64893fa205..a4acb85d29 100644
---- a/app/test-pmd/txonly.c
-+++ b/app/test-pmd/txonly.c
-@@ -325,8 +325,8 @@ pkt_burst_transmit(struct fwd_stream *fs)
- 	mbp = current_fwd_lcore()->mbp;
- 	txp = &ports[fs->tx_port];
- 	tx_offloads = txp->dev_conf.txmode.offloads;
--	vlan_tci = txp->tx_vlan_id;
--	vlan_tci_outer = txp->tx_vlan_id_outer;
-+	vlan_tci = txp->tx_vlan_tci;
-+	vlan_tci_outer = txp->tx_vlan_tci_outer;
- 	if (tx_offloads	& RTE_ETH_TX_OFFLOAD_VLAN_INSERT)
- 		ol_flags = RTE_MBUF_F_TX_VLAN;
- 	if (tx_offloads & RTE_ETH_TX_OFFLOAD_QINQ_INSERT)
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 5d7aa8d1bf..03e24030bc 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -150,6 +150,21 @@ New Features
-   * Added ``eof`` devarg to use link state to signal end of receive file input.
-   * Added unit test suite.
- 
-+* **Updated testpmd application.**
-+
-+  Added support for setting VLAN priority and CFI/DEI bits in ``tx_vlan set``
-+  and ``tx_qinq set`` commands. The ``vlan_tci`` parameter now accepts the
-+  full 16-bit VLAN Tag Control Information (TCI) format:
-+
-+  Priority (bits 13-15)
-+     802.1p Class of Service value (0-7).
-+
-+  CFI/DEI (bit 12)
-+     Canonical Format Indicator / Drop Eligible Indicator.
-+
-+  VLAN ID (bits 0-11)
-+     VLAN identifier (0-4095).
-+
- * **Added AI review helpers.**
- 
-   Added AGENTS.md file for AI review
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index f0f2b0758b..364d348372 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -1118,17 +1118,40 @@ Remove an UDP port for VXLAN packet filter on a port::
- tx_vlan set
- ~~~~~~~~~~~
- 
--Set hardware insertion of VLAN IDs in packets sent on a port::
-+Set hardware insertion of VLAN TCI (Tag Control Information) in packets sent on a port::
- 
--   testpmd> tx_vlan set (port_id) vlan_id[, vlan_id_outer]
-+   testpmd> tx_vlan set (port_id) vlan_tci[, vlan_tci_outer]
-+
-+The ``vlan_tci`` parameter accepts the full 16-bit VLAN Tag Control Information (TCI):
-+
-+Bits 0-11
-+   VLAN ID (0-4095).
-+
-+Bit 12
-+   CFI (Canonical Format Indicator) / DEI (Drop Eligible Indicator).
-+
-+Bits 13-15
-+   Priority (0-7, 802.1p Class of Service).
- 
- For example, set a single VLAN ID (5) insertion on port 0::
- 
--   tx_vlan set 0 5
-+   testpmd> tx_vlan set 0 5
-+
-+Or, set a VLAN with priority 3 and VLAN ID 100 on port 0::
-+
-+   testpmd> tx_vlan set 0 0x6064
-+
-+Calculation: ``(priority << 13) | vlan_id``.
-+Priority 3 in bits 13-15: ``(3 << 13) = 0x6000``.
-+VLAN ID 100 in bits 0-11: ``100 = 0x0064``.
-+Combined TCI: ``0x6000 | 0x0064 = 0x6064``.
-+
-+Or, set double VLAN with priority (inner: priority 2, ID 10; outer: priority 5, ID 20)::
- 
--Or, set double VLAN ID (inner: 2, outer: 3) insertion on port 1::
-+   testpmd> tx_vlan set 1 0x400A 0xA014
- 
--   tx_vlan set 1 2 3
-+Inner TCI calculation: ``(2 << 13) | 10 = 0x400A``.
-+Outer TCI calculation: ``(5 << 13) | 20 = 0xA014``.
- 
- 
- tx_vlan set pvid
--- 
-2.43.0
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+djY6DQogIC0gUmVtb3ZlIHVubmVjZXNzYXJ5IGVycm9yIGNoZWNraW5nIGNvZGUgaW4gc3VibWl0
+X3RvX2JhY2tlbmRfc2ltcGxlKCkgYW5kDQogICAgcGt0X3BhZGRpbmcoKS4gU2luY2UgYXMgdGhl
+IG1heCBkbF9uZXRfaGRyX2xlbiBpcyBhbHdheXMgbGVzcyB0aGFuDQogICAgUlRFX1BLVE1CVUZf
+SEVBRFJPT00sIHJ0ZV9wa3RtYnVmX3ByZXBlbmQoKSBjYW5ub3QgZmFpbCBpbiB0aGUNCiAgICBz
+aW1wbGUgcGF0aCAoc2luZ2xlLXNlZ21lbnQgbWJ1ZnMpLg0KDQp2NToNCiAgLSBSZW9yZ2FuaXpl
+IHBhdGNoIHNlcmllcywgcGxhY2luZyBpbnRlcnJ1cHQgZml4IGFzIHRoZSBmaXJzdCBwYXRjaA0K
+ICAgIGFuZCBmaXggY29uZGl0aW9uIGNoZWNrIHRvIHByb3Blcmx5IGVuYWJsZSBpbnRlcnJ1cHRz
+Lg0KICAtIEZpeCB6eGRoX3JlY3Zfc2luZ2xlX3BrdHMoKSBub3QgY29tcGFjdGluZyByY3ZfcGt0
+c1tdIG9uIGZhaWx1cmUsDQogICAgd2hpY2ggY291bGQgY2F1c2UgdXNlLWFmdGVyLWZyZWUgYW5k
+IG1idWYgbGVhay4NCiAgLSBGaXggdHhfYnVuY2goKSBhbmQgdHgxKCkgbWlzc2luZyBzdG9yZSBi
+YXJyaWVyIGJlZm9yZSBzZXR0aW5nIEFWQUlMIGZsYWcsDQogICAgcHJldmVudGluZyBkYXRhIHJh
+Y2Ugb24gd2Vha2x5LW9yZGVyZWQgYXJjaGl0ZWN0dXJlcy4NCiAgLSBGaXggc3VibWl0X3RvX2Jh
+Y2tlbmRfc2ltcGxlKCkgd3JpdGluZyBkZXNjcmlwdG9ycyBmb3IgcGFja2V0cyB0aGF0DQogICAg
+ZmFpbGVkIHBrdF9wYWRkaW5nKCksIGNhdXNpbmcgbWJ1ZiBsZWFrLg0KDQp2NDoNCiAgLSBmaXgg
+c29tZSBBSSByZXZpZXcgaXNzdWVzLg0KICAtIGZpeCBxdWV1ZSBlbmFibGUgaW50ciBidWcuDQoN
+CnYzOg0KICAtIHJlbW92ZSB1bm5lY2Vzc2FyeSBOVUxMIGNoZWNrIGluIHp4ZGhfaW5pdF9xdWV1
+ZS4NCiAgLSBTcGxpdCBSaW5nOiBCaXRbMzFdIGlzIHVudXNlZCBhbmQgcmVzZXJ2ZWQsIHp4ZGhf
+cXVldWVfbm90aWZ5KCk6IHJlbW92aW5nIHRoZQ0KICAgIHp4ZGhfcGNpX3dpdGhfZmVhdHVyZSho
+dywgWlhESF9GX1JJTkdfUEFDS0VEKSBjaGVjazsNCiAgLSByZW1vdmUgdW5uZWNlc3NhcnkgZG91
+YmxlLWZyZWUgaW4gaW4genhkaF9yZWN2X3NpbmdsZV9wa3RzKCk7DQogIC0gdXNlZCBydGVfcGt0
+bWJ1Zl9tdG9kKCk7DQogIC0gcmVtb3ZlIHJ4cV9nZXRfdnEocSkgbWFjcm8sIHVzZSBxLT52cSBh
+bmQgYXBwbHkgaXQgY29uc2lzdGVudGx5Ow0KICAtIFJlZmFjdG9yaW5nIHNjYXR0ZXIgYW5kIG10
+dSBjaGVjayBsb2dpYyBpbiB6eGRoX2Rldl9tdHVfc2V0KCk7DQogIC0gc2V0IHR4ZHAtPmlkID0g
+YXZhaWxfaWR4ICsgaSBpbiB0eF9idW5jaC90eDEuDQogIC0gYWRkIGNvbW1lbnQgZG9jdW1lbnRp
+bmcgenhkaF94bWl0X2VucXVldWVfYXBwZW5kKCkgbm93IHNldHMgZHhwLT5jb29raWUgPSBOVUxM
+IGZvcg0KICAgIHRoZSBoZWFkIHNsb3QgYW5kIHN0b3JlcyBjb29raWVzIHBlciBkZXNjcmlwdG9y
+IHZpYSBkZXBbaWR4XS5jb29raWUuDQogIC0gYWRkIG9uZS1saW5lIGNvbW1lbnQgbm90aW5nIHR4
+X2J1bmNoKCkgaXMgdGhlIHNpbXBsZSBwYXRoIGhhbmRsZXMgc2luZ2xlLXNlZ21lbnQuDQogIC0g
+cmVtb3ZlIHVubmVjZXNzYXJ5IEV4dHJhIGluaXRpYWxpemF0aW9uIGFuZCB0aGUgdWludDMyX3Qg
+Y2FzdC4NCg0KdjI6DQogIC0genhkaF9yeHR4LmMsIHBrdF9wYWRkaW5nKCk6IG1vZGlmeWVkIHRo
+ZSByZXR1cm4gdmFsdWUgb2YgcGt0X3BhZGRpbmcoKTsNCiAgLSB6eGRoX3J4dHguYywgenhkaF9y
+ZWN2X3NpbmdsZV9wa3RzKCk6IG1vZGlmeWVkIFdoZW4genhkaF9pbml0X21idWYoKSBmYWlscw0K
+ICAgIHRoZSBsb29wIGRvZXMgImNvbnRpbnVlIiBhbmQgZnJlZSBtYnVmczsNCiAgLSB6eGRoX3J4
+dHguYywgcmVmaWxsX2Rlc2NfdW53cmFwKCk6IEFkZCBydGVfaW9fd21iKCkgYmVmb3JlIHdyaXRp
+bmcgZmxhZ3MNCiAgICBpbiB0aGUgcmVmaWxsX3F1ZV9kZXNjcygpOw0KICAtIHp4ZGhfcXVldWUu
+aCwgenhkaF9xdWV1ZV9lbmFibGVfaW50cigpOiBSZW1vdmUgdW5uZWNlc3NhcnkgZnVuY3Rpb24g
+b2YgenhkaF9xdWV1ZV9lbmFibGVfaW50cjsNCiAgLSB6eGRoX2V0aGRldi5jLCB6eGRoX2luaXRf
+cXVldWUoKTogY2hhbmdlZCB0aGUgaGRyX216IE5VTEwgY2hlY2sgbG9naWM7DQoNCiAgLSB6eGRo
+X3J4dHguYywgenhkaF94bWl0X3BrdHNfc2ltcGxlKCnjgIF6eGRoX3JlY3Zfc2luZ2xlX3BrdHMo
+KTogYWRkIHN0YXRzLmJ5dGVzIGNvdW50Ow0KICAtIHp4ZGhfcnh0eC5jLCB6eGRoX2luaXRfbWJ1
+ZigpOnJlbW92ZSAgcnRlX3BrdG1idWZfZHVtcChzdGRvdXQsIHJ4bSwgNDApOw0KICAtIHp4ZGhf
+ZXRoZGV2LmMsIHp4ZGhfZGV2X2ZyZWVfbWJ1ZnMoKTogdXNpbmcgcnRlX3BrdG1idWZfZnJlZSgp
+IHRvIGZyZWUgbWJ1ZnM7DQogIC0gU3BsaXR0aW5nIGludG8gc2VwYXJhdGUgcGF0Y2hlcywgc3Ry
+dWN0dXJlIHJlb3JnYW5pemF0aW9uIGFuZCBzd19yaW5nIHJlbW92YWzjgIENCiAgICBSWCByZWN2
+IG9wdGltaXpl44CBVHggeG1pdCBvcHRpbWl6ZeOAgVR4Ow0KDQp2MToNCiAgVGhpcyBwYXRjaCBv
+cHRpbWl6ZXMgdGhlIFpYREggUE1EJ3MgcmVjZWl2ZSBhbmQgdHJhbnNtaXQgcGF0aCBmb3IgYmV0
+dGVyDQogIHBlcmZvcm1hbmNlIHRocm91Z2ggc2V2ZXJhbCBpbXByb3ZlbWVudHM6DQoNCi0gQWRk
+IHNpbXBsZSBUWC9SWCBidXJzdCBmdW5jdGlvbnMgKHp4ZGhfeG1pdF9wa3RzX3NpbXBsZSBhbmQN
+CiAgenhkaF9yZWN2X3NpbmdsZV9wa3RzKSBmb3Igc2luZ2xlLXNlZ21lbnQgcGFja2V0IHNjZW5h
+cmlvcy4NCi0gUmVtb3ZlIFJYIHNvZnR3YXJlIHJpbmcgKHN3X3JpbmcpIHRvIHJlZHVjZSBtZW1v
+cnkgYWxsb2NhdGlvbiBhbmQNCiAgY29weS4NCi0gT3B0aW1pemUgZGVzY3JpcHRvciBtYW5hZ2Vt
+ZW50IHdpdGggcHJlZmV0Y2hpbmcgYW5kIHNpbXBsaWZpZWQNCiAgY2xlYW51cC4NCi0gUmVvcmdh
+bml6ZSBzdHJ1Y3R1cmUgZmllbGRzIGZvciBiZXR0ZXIgY2FjaGUgbG9jYWxpdHkuDQoNCiAgVGhl
+c2UgY2hhbmdlcyByZWR1Y2UgQ1BVIGN5Y2xlcyBhbmQgbWVtb3J5IGJhbmR3aWR0aCBjb25zdW1w
+dGlvbiwNCiAgcmVzdWx0aW5nIGluIGltcHJvdmVkIHBhY2tldCBwcm9jZXNzaW5nIHRocm91Z2hw
+dXQuDQoNCkp1bmxvbmcgV2FuZyAoNCk6DQogIG5ldC96eGRoOiBmaXggcXVldWUgZW5hYmxlIGlu
+dHIgaXNzdWVzDQogIG5ldC96eGRoOiBvcHRpbWl6ZSBxdWV1ZSBzdHJ1Y3R1cmUgdG8gaW1wcm92
+ZSBwZXJmb3JtYW5jZQ0KICBuZXQvenhkaDogb3B0aW1pemUgUnggcmVjdiBwa3RzIHBlcmZvcm1h
+bmNlDQogIG5ldC96eGRoOiBvcHRpbWl6ZSBUeCB4bWl0IHBrdHMgcGVyZm9ybWFuY2UNCg0KIGRy
+aXZlcnMvbmV0L3p4ZGgvenhkaF9ldGhkZXYuYyAgICAgfCAgODEgKystLS0NCiBkcml2ZXJzL25l
+dC96eGRoL3p4ZGhfZXRoZGV2X29wcy5jIHwgIDIzICstDQogZHJpdmVycy9uZXQvenhkaC96eGRo
+X2V0aGRldl9vcHMuaCB8ICAgNCArDQogZHJpdmVycy9uZXQvenhkaC96eGRoX3BjaS5jICAgICAg
+ICB8ICAgMiArLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9xdWV1ZS5jICAgICAgfCAgMTEgKy0N
+CiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfcXVldWUuaCAgICAgIHwgMTIyICsrKystLS0NCiBkcml2
+ZXJzL25ldC96eGRoL3p4ZGhfcnh0eC5jICAgICAgIHwgNTI5ICsrKysrKysrKysrKysrKysrKysr
+KystLS0tLS0tDQogZHJpdmVycy9uZXQvenhkaC96eGRoX3J4dHguaCAgICAgICB8ICAyNyArLQ0K
+IDggZmlsZXMgY2hhbmdlZCwgNTM5IGluc2VydGlvbnMoKyksIDI2MCBkZWxldGlvbnMoLSkNCg0K
+LS0gDQoyLjI3LjA=
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+djY6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO1JlbW92ZSZuYnNwO3VubmVjZXNzYXJ5Jm5ic3A7
+ZXJyb3ImbmJzcDtjaGVja2luZyZuYnNwO2NvZGUmbmJzcDtpbiZuYnNwO3N1Ym1pdF90b19iYWNr
+ZW5kX3NpbXBsZSgpJm5ic3A7YW5kPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7cGt0X3Bh
+ZGRpbmcoKS4mbmJzcDtTaW5jZSZuYnNwO2FzJm5ic3A7dGhlJm5ic3A7bWF4Jm5ic3A7ZGxfbmV0
+X2hkcl9sZW4mbmJzcDtpcyZuYnNwO2Fsd2F5cyZuYnNwO2xlc3MmbmJzcDt0aGFuPGJyIC8+Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7UlRFX1BLVE1CVUZfSEVBRFJPT00sJm5ic3A7cnRlX3BrdG1i
+dWZfcHJlcGVuZCgpJm5ic3A7Y2Fubm90Jm5ic3A7ZmFpbCZuYnNwO2luJm5ic3A7dGhlPGJyIC8+
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7c2ltcGxlJm5ic3A7cGF0aCZuYnNwOyhzaW5nbGUtc2Vn
+bWVudCZuYnNwO21idWZzKS48YnIgLz4NPGJyIC8+djU6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNw
+O1Jlb3JnYW5pemUmbmJzcDtwYXRjaCZuYnNwO3NlcmllcywmbmJzcDtwbGFjaW5nJm5ic3A7aW50
+ZXJydXB0Jm5ic3A7Zml4Jm5ic3A7YXMmbmJzcDt0aGUmbmJzcDtmaXJzdCZuYnNwO3BhdGNoPGJy
+IC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7YW5kJm5ic3A7Zml4Jm5ic3A7Y29uZGl0aW9uJm5i
+c3A7Y2hlY2smbmJzcDt0byZuYnNwO3Byb3Blcmx5Jm5ic3A7ZW5hYmxlJm5ic3A7aW50ZXJydXB0
+cy48YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7Rml4Jm5ic3A7enhkaF9yZWN2X3NpbmdsZV9wa3Rz
+KCkmbmJzcDtub3QmbmJzcDtjb21wYWN0aW5nJm5ic3A7cmN2X3BrdHNbXSZuYnNwO29uJm5ic3A7
+ZmFpbHVyZSw8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt3aGljaCZuYnNwO2NvdWxkJm5i
+c3A7Y2F1c2UmbmJzcDt1c2UtYWZ0ZXItZnJlZSZuYnNwO2FuZCZuYnNwO21idWYmbmJzcDtsZWFr
+LjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtGaXgmbmJzcDt0eF9idW5jaCgpJm5ic3A7YW5kJm5i
+c3A7dHgxKCkmbmJzcDttaXNzaW5nJm5ic3A7c3RvcmUmbmJzcDtiYXJyaWVyJm5ic3A7YmVmb3Jl
+Jm5ic3A7c2V0dGluZyZuYnNwO0FWQUlMJm5ic3A7ZmxhZyw8YnIgLz4mbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDtwcmV2ZW50aW5nJm5ic3A7ZGF0YSZuYnNwO3JhY2UmbmJzcDtvbiZuYnNwO3dlYWts
+eS1vcmRlcmVkJm5ic3A7YXJjaGl0ZWN0dXJlcy48YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7Rml4
+Jm5ic3A7c3VibWl0X3RvX2JhY2tlbmRfc2ltcGxlKCkmbmJzcDt3cml0aW5nJm5ic3A7ZGVzY3Jp
+cHRvcnMmbmJzcDtmb3ImbmJzcDtwYWNrZXRzJm5ic3A7dGhhdDxiciAvPiZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwO2ZhaWxlZCZuYnNwO3BrdF9wYWRkaW5nKCksJm5ic3A7Y2F1c2luZyZuYnNwO21i
+dWYmbmJzcDtsZWFrLjxiciAvPg08YnIgLz52NDo8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7Zml4
+Jm5ic3A7c29tZSZuYnNwO0FJJm5ic3A7cmV2aWV3Jm5ic3A7aXNzdWVzLjxiciAvPiZuYnNwOyZu
+YnNwOy0mbmJzcDtmaXgmbmJzcDtxdWV1ZSZuYnNwO2VuYWJsZSZuYnNwO2ludHImbmJzcDtidWcu
+PGJyIC8+DTxiciAvPnYzOjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtyZW1vdmUmbmJzcDt1bm5l
+Y2Vzc2FyeSZuYnNwO05VTEwmbmJzcDtjaGVjayZuYnNwO2luJm5ic3A7enhkaF9pbml0X3F1ZXVl
+LjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtTcGxpdCZuYnNwO1Jpbmc6Jm5ic3A7Qml0WzMxXSZu
+YnNwO2lzJm5ic3A7dW51c2VkJm5ic3A7YW5kJm5ic3A7cmVzZXJ2ZWQsJm5ic3A7enhkaF9xdWV1
+ZV9ub3RpZnkoKTombmJzcDtyZW1vdmluZyZuYnNwO3RoZTxiciAvPiZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwO3p4ZGhfcGNpX3dpdGhfZmVhdHVyZShodywmbmJzcDtaWERIX0ZfUklOR19QQUNLRUQp
+Jm5ic3A7Y2hlY2s7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3JlbW92ZSZuYnNwO3VubmVjZXNz
+YXJ5Jm5ic3A7ZG91YmxlLWZyZWUmbmJzcDtpbiZuYnNwO2luJm5ic3A7enhkaF9yZWN2X3Npbmds
+ZV9wa3RzKCk7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3VzZWQmbmJzcDtydGVfcGt0bWJ1Zl9t
+dG9kKCk7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3JlbW92ZSZuYnNwO3J4cV9nZXRfdnEocSkm
+bmJzcDttYWNybywmbmJzcDt1c2UmbmJzcDtxLSZndDt2cSZuYnNwO2FuZCZuYnNwO2FwcGx5Jm5i
+c3A7aXQmbmJzcDtjb25zaXN0ZW50bHk7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO1JlZmFjdG9y
+aW5nJm5ic3A7c2NhdHRlciZuYnNwO2FuZCZuYnNwO210dSZuYnNwO2NoZWNrJm5ic3A7bG9naWMm
+bmJzcDtpbiZuYnNwO3p4ZGhfZGV2X210dV9zZXQoKTs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7
+c2V0Jm5ic3A7dHhkcC0mZ3Q7aWQmbmJzcDs9Jm5ic3A7YXZhaWxfaWR4Jm5ic3A7KyZuYnNwO2km
+bmJzcDtpbiZuYnNwO3R4X2J1bmNoL3R4MS48YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7YWRkJm5i
+c3A7Y29tbWVudCZuYnNwO2RvY3VtZW50aW5nJm5ic3A7enhkaF94bWl0X2VucXVldWVfYXBwZW5k
+KCkmbmJzcDtub3cmbmJzcDtzZXRzJm5ic3A7ZHhwLSZndDtjb29raWUmbmJzcDs9Jm5ic3A7TlVM
+TCZuYnNwO2ZvcjxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3RoZSZuYnNwO2hlYWQmbmJz
+cDtzbG90Jm5ic3A7YW5kJm5ic3A7c3RvcmVzJm5ic3A7Y29va2llcyZuYnNwO3BlciZuYnNwO2Rl
+c2NyaXB0b3ImbmJzcDt2aWEmbmJzcDtkZXBbaWR4XS5jb29raWUuPGJyIC8+Jm5ic3A7Jm5ic3A7
+LSZuYnNwO2FkZCZuYnNwO29uZS1saW5lJm5ic3A7Y29tbWVudCZuYnNwO25vdGluZyZuYnNwO3R4
+X2J1bmNoKCkmbmJzcDtpcyZuYnNwO3RoZSZuYnNwO3NpbXBsZSZuYnNwO3BhdGgmbmJzcDtoYW5k
+bGVzJm5ic3A7c2luZ2xlLXNlZ21lbnQuPGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3JlbW92ZSZu
+YnNwO3VubmVjZXNzYXJ5Jm5ic3A7RXh0cmEmbmJzcDtpbml0aWFsaXphdGlvbiZuYnNwO2FuZCZu
+YnNwO3RoZSZuYnNwO3VpbnQzMl90Jm5ic3A7Y2FzdC48YnIgLz4NPGJyIC8+djI6PGJyIC8+Jm5i
+c3A7Jm5ic3A7LSZuYnNwO3p4ZGhfcnh0eC5jLCZuYnNwO3BrdF9wYWRkaW5nKCk6Jm5ic3A7bW9k
+aWZ5ZWQmbmJzcDt0aGUmbmJzcDtyZXR1cm4mbmJzcDt2YWx1ZSZuYnNwO29mJm5ic3A7cGt0X3Bh
+ZGRpbmcoKTs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7enhkaF9yeHR4LmMsJm5ic3A7enhkaF9y
+ZWN2X3NpbmdsZV9wa3RzKCk6Jm5ic3A7bW9kaWZ5ZWQmbmJzcDtXaGVuJm5ic3A7enhkaF9pbml0
+X21idWYoKSZuYnNwO2ZhaWxzPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7dGhlJm5ic3A7
+bG9vcCZuYnNwO2RvZXMmbmJzcDsmcXVvdDtjb250aW51ZSZxdW90OyZuYnNwO2FuZCZuYnNwO2Zy
+ZWUmbmJzcDttYnVmczs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7enhkaF9yeHR4LmMsJm5ic3A7
+cmVmaWxsX2Rlc2NfdW53cmFwKCk6Jm5ic3A7QWRkJm5ic3A7cnRlX2lvX3dtYigpJm5ic3A7YmVm
+b3JlJm5ic3A7d3JpdGluZyZuYnNwO2ZsYWdzPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+aW4mbmJzcDt0aGUmbmJzcDtyZWZpbGxfcXVlX2Rlc2NzKCk7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZu
+YnNwO3p4ZGhfcXVldWUuaCwmbmJzcDt6eGRoX3F1ZXVlX2VuYWJsZV9pbnRyKCk6Jm5ic3A7UmVt
+b3ZlJm5ic3A7dW5uZWNlc3NhcnkmbmJzcDtmdW5jdGlvbiZuYnNwO29mJm5ic3A7enhkaF9xdWV1
+ZV9lbmFibGVfaW50cjs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7enhkaF9ldGhkZXYuYywmbmJz
+cDt6eGRoX2luaXRfcXVldWUoKTombmJzcDtjaGFuZ2VkJm5ic3A7dGhlJm5ic3A7aGRyX216Jm5i
+c3A7TlVMTCZuYnNwO2NoZWNrJm5ic3A7bG9naWM7PGJyIC8+DTxiciAvPiZuYnNwOyZuYnNwOy0m
+bmJzcDt6eGRoX3J4dHguYywmbmJzcDt6eGRoX3htaXRfcGt0c19zaW1wbGUoKeOAgXp4ZGhfcmVj
+dl9zaW5nbGVfcGt0cygpOiZuYnNwO2FkZCZuYnNwO3N0YXRzLmJ5dGVzJm5ic3A7Y291bnQ7PGJy
+IC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3p4ZGhfcnh0eC5jLCZuYnNwO3p4ZGhfaW5pdF9tYnVmKCk6
+cmVtb3ZlJm5ic3A7Jm5ic3A7cnRlX3BrdG1idWZfZHVtcChzdGRvdXQsJm5ic3A7cnhtLCZuYnNw
+OzQwKTs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7enhkaF9ldGhkZXYuYywmbmJzcDt6eGRoX2Rl
+dl9mcmVlX21idWZzKCk6Jm5ic3A7dXNpbmcmbmJzcDtydGVfcGt0bWJ1Zl9mcmVlKCkmbmJzcDt0
+byZuYnNwO2ZyZWUmbmJzcDttYnVmczs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7U3BsaXR0aW5n
+Jm5ic3A7aW50byZuYnNwO3NlcGFyYXRlJm5ic3A7cGF0Y2hlcywmbmJzcDtzdHJ1Y3R1cmUmbmJz
+cDtyZW9yZ2FuaXphdGlvbiZuYnNwO2FuZCZuYnNwO3N3X3JpbmcmbmJzcDtyZW1vdmFs44CBPGJy
+IC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7UlgmbmJzcDtyZWN2Jm5ic3A7b3B0aW1pemXjgIFU
+eCZuYnNwO3htaXQmbmJzcDtvcHRpbWl6ZeOAgVR4OzxiciAvPg08YnIgLz52MTo8YnIgLz4mbmJz
+cDsmbmJzcDtUaGlzJm5ic3A7cGF0Y2gmbmJzcDtvcHRpbWl6ZXMmbmJzcDt0aGUmbmJzcDtaWERI
+Jm5ic3A7UE1EJmFwb3M7cyZuYnNwO3JlY2VpdmUmbmJzcDthbmQmbmJzcDt0cmFuc21pdCZuYnNw
+O3BhdGgmbmJzcDtmb3ImbmJzcDtiZXR0ZXI8YnIgLz4mbmJzcDsmbmJzcDtwZXJmb3JtYW5jZSZu
+YnNwO3Rocm91Z2gmbmJzcDtzZXZlcmFsJm5ic3A7aW1wcm92ZW1lbnRzOjxiciAvPg08YnIgLz4t
+Jm5ic3A7QWRkJm5ic3A7c2ltcGxlJm5ic3A7VFgvUlgmbmJzcDtidXJzdCZuYnNwO2Z1bmN0aW9u
+cyZuYnNwOyh6eGRoX3htaXRfcGt0c19zaW1wbGUmbmJzcDthbmQ8YnIgLz4mbmJzcDsmbmJzcDt6
+eGRoX3JlY3Zfc2luZ2xlX3BrdHMpJm5ic3A7Zm9yJm5ic3A7c2luZ2xlLXNlZ21lbnQmbmJzcDtw
+YWNrZXQmbmJzcDtzY2VuYXJpb3MuPGJyIC8+LSZuYnNwO1JlbW92ZSZuYnNwO1JYJm5ic3A7c29m
+dHdhcmUmbmJzcDtyaW5nJm5ic3A7KHN3X3JpbmcpJm5ic3A7dG8mbmJzcDtyZWR1Y2UmbmJzcDtt
+ZW1vcnkmbmJzcDthbGxvY2F0aW9uJm5ic3A7YW5kPGJyIC8+Jm5ic3A7Jm5ic3A7Y29weS48YnIg
+Lz4tJm5ic3A7T3B0aW1pemUmbmJzcDtkZXNjcmlwdG9yJm5ic3A7bWFuYWdlbWVudCZuYnNwO3dp
+dGgmbmJzcDtwcmVmZXRjaGluZyZuYnNwO2FuZCZuYnNwO3NpbXBsaWZpZWQ8YnIgLz4mbmJzcDsm
+bmJzcDtjbGVhbnVwLjxiciAvPi0mbmJzcDtSZW9yZ2FuaXplJm5ic3A7c3RydWN0dXJlJm5ic3A7
+ZmllbGRzJm5ic3A7Zm9yJm5ic3A7YmV0dGVyJm5ic3A7Y2FjaGUmbmJzcDtsb2NhbGl0eS48YnIg
+Lz4NPGJyIC8+Jm5ic3A7Jm5ic3A7VGhlc2UmbmJzcDtjaGFuZ2VzJm5ic3A7cmVkdWNlJm5ic3A7
+Q1BVJm5ic3A7Y3ljbGVzJm5ic3A7YW5kJm5ic3A7bWVtb3J5Jm5ic3A7YmFuZHdpZHRoJm5ic3A7
+Y29uc3VtcHRpb24sPGJyIC8+Jm5ic3A7Jm5ic3A7cmVzdWx0aW5nJm5ic3A7aW4mbmJzcDtpbXBy
+b3ZlZCZuYnNwO3BhY2tldCZuYnNwO3Byb2Nlc3NpbmcmbmJzcDt0aHJvdWdocHV0LjxiciAvPg08
+YnIgLz5KdW5sb25nJm5ic3A7V2FuZyZuYnNwOyg0KTo8YnIgLz4mbmJzcDsmbmJzcDtuZXQvenhk
+aDombmJzcDtmaXgmbmJzcDtxdWV1ZSZuYnNwO2VuYWJsZSZuYnNwO2ludHImbmJzcDtpc3N1ZXM8
+YnIgLz4mbmJzcDsmbmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO3F1ZXVlJm5ic3A7
+c3RydWN0dXJlJm5ic3A7dG8mbmJzcDtpbXByb3ZlJm5ic3A7cGVyZm9ybWFuY2U8YnIgLz4mbmJz
+cDsmbmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO1J4Jm5ic3A7cmVjdiZuYnNwO3Br
+dHMmbmJzcDtwZXJmb3JtYW5jZTxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO29wdGlt
+aXplJm5ic3A7VHgmbmJzcDt4bWl0Jm5ic3A7cGt0cyZuYnNwO3BlcmZvcm1hbmNlPGJyIC8+DTxi
+ciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9ldGhkZXYuYyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDs4MSZuYnNwOysrLS0tPGJyIC8+Jm5ic3A7ZHJpdmVy
+cy9uZXQvenhkaC96eGRoX2V0aGRldl9vcHMuYyZuYnNwO3wmbmJzcDsmbmJzcDsyMyZuYnNwOyst
+PGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldl9vcHMuaCZuYnNwO3wmbmJz
+cDsmbmJzcDsmbmJzcDs0Jm5ic3A7KzxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9w
+Y2kuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJz
+cDsmbmJzcDsmbmJzcDsyJm5ic3A7Ky08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhf
+cXVldWUuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsx
+MSZuYnNwOystPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX3F1ZXVlLmgmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7MTIyJm5ic3A7KysrKy0tLTxiciAv
+PiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9yeHR4LmMmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7NTI5Jm5ic3A7KysrKysrKysrKysrKysrKysrKysr
+Ky0tLS0tLS08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfcnh0eC5oJm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzI3Jm5ic3A7Ky08
+YnIgLz4mbmJzcDs4Jm5ic3A7ZmlsZXMmbmJzcDtjaGFuZ2VkLCZuYnNwOzUzOSZuYnNwO2luc2Vy
+dGlvbnMoKyksJm5ic3A7MjYwJm5ic3A7ZGVsZXRpb25zKC0pPGJyIC8+DTxiciAvPi0tJm5ic3A7
+DTxiciAvPjIuMjcuMDxiciAvPg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
