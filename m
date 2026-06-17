@@ -2,71 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D61ABCD98F0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 21:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4563CD98ED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 21:13:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CDC4240268;
-	Wed, 17 Jun 2026 23:13:28 +0200 (CEST)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com
- [209.85.128.171])
- by mails.dpdk.org (Postfix) with ESMTP id A5A4440268
- for <dev@dpdk.org>; Wed, 17 Jun 2026 23:13:27 +0200 (CEST)
-Received: by mail-yw1-f171.google.com with SMTP id
- 00721157ae682-7dbcb505578so3423267b3.3
- for <dev@dpdk.org>; Wed, 17 Jun 2026 14:13:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1CD27402EF;
+	Wed, 17 Jun 2026 23:13:41 +0200 (CEST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com
+ [209.85.208.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 2BEFB4014F
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 23:13:39 +0200 (CEST)
+Received: by mail-lj1-f170.google.com with SMTP id
+ 38308e7fff4ca-39677c80386so2626591fa.3
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 14:13:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781730818; cv=none;
+ d=google.com; s=arc-20240605;
+ b=KFs0s7AF2ROt93xtA9WqwJ9Tc974zJRf3i5+mU5YSm3mDy3I8HksnHaTJdiCgDUxvd
+ NGbaaOqUW9tRKOyuQt1NxOQi6HcUYqWfho/cOVnaeGhL0NWVaYHq4pHt2tDsFzkOA7A0
+ B6ruoltjRLRK0RQs4aqHGPjR/M5LAfz1zgGsd+Zud+G9iqZauzIzYz4F8o32ZZ8chS+f
+ TxszlmnIwsTeR5/hunGn7ILPjCA+tCZCLHdVvqWkZR6wH8LeBSRguiRqXRJDVw57wJgu
+ bI0SFe/V5iIkCZjunWvsQ2eI62DU8sL0L1d2c+eD+Rx8e0Z88oJk+s/4zZ9YgcN7R74+
+ 6peg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=TpPklP/+mzJz0CLNHCyU4I38ibDIzJ6EZMSlnluyI1w=;
+ fh=L7PlYjTBKKtpJjl+RgwGrNyMHYJxmwrIIqb/mtt1BGc=;
+ b=IoUJe+kBQ4S3xAUZik+aaYX6ZOlk2DcfH02EhXc7Nr5A0L0ZeOwiYKb/CGUYF38/K7
+ JrTASLe9z0fCUh/X0485A2Qmb8Etuggs5+nGSDpetyO1x+tTiEShaMbYRCKsKL90xdZi
+ upVnNh6r5ZKgGsXOf38ipjOqT3z0jT3W7SR9f6uX4VApXIXhUFXk5ju5y0sqjFkITyuZ
+ jJa/AkYTYaJn9+6+shPm2/u1+csm51Jpm9MaM1hu4sVKqLaBcbyKytmMYvxjwAvrvwdj
+ BSUuwVhNBIS9wGFANJrFJnbekv+V7Naha0aNgZoqir0xipmSxFw0nBIcqS3+SNjFknVW
+ g71g==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781730807;
- x=1782335607; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=zSR+kHHzV/MVqOmoiQkTwsb6iiUefvNrY7efqEtblyg=;
- b=jkMGpPNstanyTsIFD8Kur9ZXgYBxd9VB4K+/4QKbT34dzGIyHMZbYbax6QuPMq5zrF
- A7W0OMKxQdIuAMZ9ZSxUHxxtNJSeFZUKI4FT+u1UhCfDG4xBJ2jqGol2G8tyx9/13I5Y
- +htCmjFqOHw6QpFvykt+zNZDSNCq1pr7SAZDXhOrk4huv8UuQP5V1mOdPJ8/1/WfLOPA
- VUCv1MwzQQ3yG3IbeiUVsxry9Ny09FPezOhUQvKWOWSvaY506bVTdzwq6EfvkAKLSIgG
- V4JJJE3iExDiqyYwNEP/ouRBmWl52jpJ/26re4qqGc/+ke6UB5ciScLRqdxpk4L+IIE2
- xpDA==
+ d=gmail.com; s=20251104; t=1781730818; x=1782335618; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=TpPklP/+mzJz0CLNHCyU4I38ibDIzJ6EZMSlnluyI1w=;
+ b=CnG9RnLr1i3fsDkRZQySrVdlcuCZhuQOvXKa/hmDHHBHKrmo4IV2039B1sWtdmNc0W
+ wTsyFrHPKOb4SHdMtkE9u8xMOSnXxsICh06EsIgsJCajMVgPDw8RZ525IC4dzhOuYt4A
+ JcwZweGM72xB2SA829k+Os+tTQg74mVOHPFMXNBfP8T2bO1lt/rh+X7cS+C8HUXLbd9B
+ +TlpdUW0RpxIRuppV64y1IV6TtW+9J/Lifh3EdN7Z0cEMqcJ761gaeiTAZ+nYwRQfwqc
+ RqvKHeREJ+eK1i9wxl2S2NEnG3Z8rfT66DJS3nx5RoAF8EShDRlWQLAsUT8xNjACw1H9
+ pKjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781730807; x=1782335607;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=zSR+kHHzV/MVqOmoiQkTwsb6iiUefvNrY7efqEtblyg=;
- b=DqgKRfQRI0RdTR0WTNdvgL7iiTtNHWzei597ImYs+Tx8SMAh4XO+0Zwbs1jaAl6tFA
- 9fOIc2EY7Hgzp/g8HUXEDLPJTfxYmbefgQ925QOCG3MAmZ815eIYafmyztOt36Qz0zMD
- wROxWn6f+gQ1gNmH83CncXDsgggO6ln6fx7pH7uti57ejhXv8CbFPZOqauC+vQUdmkYM
- 7SDBVsRvpv423VS6Owg2sNHP27HDqF4OWr50WYFGWVrors/eXw9/XHOEBHCd+ePP7hca
- 44UIQk/TwkVWt+uiZM20jQ639Uuxv6P842KtbyioneBNZRgHTpAIOZnpI5ReGZJ/UIaC
- A5RA==
-X-Gm-Message-State: AOJu0YyVhcpk+BUBPcNBh3sPIe7al1xzdtzL++lXK+RkRsHl6HbjZqo/
- b2+WTiWix9J8KuSGOpehMUnTA8cJ0Qf4iFNzvWSNmEf2D3HXRDkVY7V5g/ZFV5C1kD4=
-X-Gm-Gg: AfdE7cmcWVWwyQcImQiT/gwUc/AGQ5dqK7ZA89LuvlrUmyXj3QCxeaRsRsd6VV/qOS7
- zN5rgGd2YhwoW4gBXbK9UdjXcvyBPrIEVwH1zZIhFbyP9Si8AM//6tVtctCqStdyKc1360foJA+
- x1BSx9zvoxnR/4Cr4eG6knGvQExRnTQl0Ya4dex+QG+FyOTM8+vpWTaKsa0tPyntialT4jjWjqM
- ayE8um1V328DLafLtdF5Gi7JEpOelodO7EFeF8e/csiEFjdcxGxr0n+0lILsjaiRdjJCG8INs+F
- B7m8H/fnc3YxBsE1ezAT+LdgTqf7XK4V74wxCcrzx2rGdQV0/8gRSo9W++8Z2ZV2PUF47eQ/zs8
- HqrfiRxTVk2MeWQxqTKReToPiAaL621YqfmmTARp1mgf1UVC5JVL3ekatvtbKlyHf4NwL6KbmhX
- AimQRwQe3JsSYL+jxgunLRj0Tbk/QPYgjEGsdXq4gDhg05faedDyZqrw==
-X-Received: by 2002:a05:690c:22c5:b0:7fd:a6d8:ec7b with SMTP id
- 00721157ae682-7fe5d8a634dmr65205987b3.22.1781730806829; 
- Wed, 17 Jun 2026 14:13:26 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 00721157ae682-7fcd3465c7csm55245107b3.39.2026.06.17.14.13.26
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 17 Jun 2026 14:13:26 -0700 (PDT)
-Date: Wed, 17 Jun 2026 14:13:24 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Maxime Leroy <maxime@leroys.fr>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 0/2] ethdev: fix fast-path ops on a stopped port
-Message-ID: <20260617141324.31176764@phoenix.local>
-In-Reply-To: <20260616094259.686555-1-maxime@leroys.fr>
-References: <20260616094259.686555-1-maxime@leroys.fr>
+ d=1e100.net; s=20251104; t=1781730818; x=1782335618;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=TpPklP/+mzJz0CLNHCyU4I38ibDIzJ6EZMSlnluyI1w=;
+ b=mcr4ukXw9Ih6R0rIXhStPasAYJm7s+U9GtslROnLKRTePS0kQIwufwUXOHtf353azj
+ guNjbCqY0WBzfabmUdnY1WI4K1mE2jYsbdgpUi3eW+62elRM+IHlejd0j3p2Vfb/5PRA
+ ROT673O578yD/LwX1JlFA+f/BFiWPX3YhUbiUQdhGmnWceNKK1nLuILujxPkFwgvMJOL
+ o7KH9aB7AuXRv24Sejeim6MEHrY2ogNrxWof6Xp2Bau6xZQBIwORRDYK9oY8M9FdniFf
+ sc8Dr7vYLQ5DdQCn2Zm8AnV+cnEwYeePLYIhihEOCu0SUvED9mxDUZac+rQGGDcIdfZu
+ cx3Q==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ+9hRCoEJN4c7x1xhhjMXsHXfrfOsCUQ/ktXNGpkDgqoSDGbhpRecNq4RZBvY2SfvQNngo=@dpdk.org
+X-Gm-Message-State: AOJu0YxuqOCirPemN0Sgd5EG8+XfxhfwhAmtMovoWCDaleG4eVfhUVXl
+ Q0r4lsCLuaRFhdi8ItenEF3/uLDQHk/FJyucpkaxn0ud1EFDJTjE2iSvMRU5t36FnqTcbL86RFw
+ Q27HT/eEro6Qr5KHG3CiuFoRsAVpBe2w=
+X-Gm-Gg: AfdE7clm5IkAsV3NSU8B1t7BEGFUgD43a/XZ9fE0qCtBjRwx/34yFTvegpH0aw1gIr3
+ JR2IDW3ox+pTtYqSXeJI4DQrn5TS5O05qIiB1Rh1siqnVAO0GciErr3SNDmAo+ZCi3IHnSwxjIW
+ Rx7yu3Cc+s6iv1r+o8Kbrp0VkRHEYJLAmRR25YRu3TagcaOkhaOqpFWHelYNuPHvWYzR3YGW0Wt
+ ltzN9nbBzyeKBhR2qtHnpGEzZ+bMkZ6GCno+HYbwFukkwDIEopghbw0j7IZuXxTdbYJRr3rrCva
+ qnisNPtAXZTDdiWV7HCMZN5uyFzSUg==
+X-Received: by 2002:a05:651c:2207:b0:396:c3c:d27e with SMTP id
+ 38308e7fff4ca-39969b8224amr16072281fa.12.1781730818214; Wed, 17 Jun 2026
+ 14:13:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260507163659.40739-1-abailey@iol.unh.edu>
+ <20260513154055.134729-1-abailey@iol.unh.edu>
+In-Reply-To: <20260513154055.134729-1-abailey@iol.unh.edu>
+From: Patrick Robb <patrickrobb1997@gmail.com>
+Date: Wed, 17 Jun 2026 17:13:25 -0400
+X-Gm-Features: AVVi8Cd4reD6P1IzZO5U0Bg7OZxEegYw-pthj-DpDTeIzhWwshBJh-N2BQtAoF8
+Message-ID: <CAK6Duxv=rS07Wn9OOv=97DbvRYVNGmydH7_MPkcvXL+_dQC51w@mail.gmail.com>
+Subject: Re: [PATCH v3] dts: clean cryptodev environment after a test run
+To: Andrew Bailey <abailey@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, lylavoie@iol.unh.edu, ahassick@iol.unh.edu, 
+ knimoji@iol.unh.edu, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000814e600654798894"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,21 +97,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 16 Jun 2026 11:42:56 +0200
-Maxime Leroy <maxime@leroys.fr> wrote:
+--000000000000814e600654798894
+Content-Type: text/plain; charset="UTF-8"
 
-> Two small fixes for fast-path ops on a stopped port:
-> patch 1 stops rte_eth_rx_queue_count() from dereferencing NULL after a port
-> stop, patch 2 makes the dummy queue count return 0 (empty queue) instead of
-> -ENOTSUP.
-> 
-> Maxime Leroy (2):
->   ethdev: keep fast-path ops valid after port stop
->   ethdev: return 0 from dummy queue count
-> 
->  lib/ethdev/ethdev_driver.c  | 2 +-
->  lib/ethdev/ethdev_private.c | 7 +++++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
+So, some cryptodevs must be unbound from their DPDK driver before they can
+be destroyed by linux? Out of curiosity, which devices are these?
 
-Applied to next-net
+Reviewed-by: Patrick Robb <patrickrobb1997@gmail.com>
+
+--000000000000814e600654798894
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>So, some cryptodevs=C2=A0must be unbound from their D=
+PDK driver before they can be destroyed by linux? Out of curiosity, which d=
+evices are these?</div><div><br></div>Reviewed-by: Patrick Robb &lt;<a href=
+=3D"mailto:patrickrobb1997@gmail.com">patrickrobb1997@gmail.com</a>&gt;</di=
+v>
+
+--000000000000814e600654798894--
