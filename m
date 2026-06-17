@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F42CD98E6
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 03:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 897CBCD98E1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 03:36:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2804C40E2F;
-	Wed, 17 Jun 2026 05:35:05 +0200 (CEST)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id 08A4B40E42;
- Wed, 17 Jun 2026 05:35:00 +0200 (CEST)
-X-QQ-mid: esmtpsz11t1781667297t9dd89f48
-X-QQ-Originating-IP: wMhVSX9Bktzb99lIugJFHn8PH5OCgCYqrEWQiCDsKbo=
+	by mails.dpdk.org (Postfix) with ESMTP id E606140A73;
+	Wed, 17 Jun 2026 05:35:06 +0200 (CEST)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTP id ED7B740E72;
+ Wed, 17 Jun 2026 05:35:03 +0200 (CEST)
+X-QQ-mid: esmtpsz11t1781667300t4bb8e8a2
+X-QQ-Originating-IP: 3ratRbLPZEPFNHkTp3TLziqrosr5G/XFfux4xWkQe+w=
 Received: from DSK-zaiyuwang.trustnetic.com ( [183.157.22.210])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 17 Jun 2026 11:34:56 +0800 (CST)
+ id ; Wed, 17 Jun 2026 11:34:58 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15023395778304858126
+X-BIZMAIL-ID: 10539644292069449422
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v7 15/21] net/txgbe: fix FEC mode configuration on 25G NIC
-Date: Wed, 17 Jun 2026 11:33:53 +0800
-Message-Id: <20260617033400.376-16-zaiyuwang@trustnetic.com>
+Subject: [PATCH v7 16/21] net/txgbe: fix SFP module identification
+Date: Wed, 17 Jun 2026 11:33:54 +0800
+Message-Id: <20260617033400.376-17-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260617033400.376-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,23 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MmPNY57tR1XnsifJrKtIMX7nsLVywoFtpH4C9CI9Gj96i+xcXd/lmn81
- m7FCn8rxCXNHdxod0WCEuKA6lwfVbJP2Xwqay8mvHcjD3nBVBc4/yTsKL4NuNoIBVrQ5dyQ
- wPZmBUNRKabHg0Z79ADLfaPVEhrDLO/PZjHcG7AX82O4QjfZMQ1hgHzpcH4u8TR8nJm9gEO
- Al5TKhLynWfc+mDJBNdCyrhc+bPVlzMgs24VHOP6MbgCy86UcFrhjh874exE/1hqTmrmOl5
- uWgk65MTQr9cvVV24Dp/jQhM41wIO2zNKDxHzucrsVFCdyJ+StIXClzRgYc1JkmgV0BjZqM
- 82Jlfon7dOG1Ppzvyf4izq1uC1ZAWO1/J1u6l71IswRSJa5r8CHq+R00IuUSKwM9TshSyJr
- wuWrTAqyhov/cLt/qF4Jq9wmmWn4v6aYKRts2ErjvqiZIZlKqQM6fhNAGECVa45iOjCTvSM
- U7FUrTtUt9tRzwBtBcUjErcKBQluKvd4cC7C038+Sc5F9YpsJ6FvprTNA0nv4Rt0msFpMFX
- S3PjFVzeege/7V/y+KRaURS6Ie128P8qF3dqfZSSQfONjCI5YEweKrHEKtDz/7n132rNjmK
- /uJnsGh7SKeEoa51/hxvEckLdxTX9sRacL86t0gNUf2FAwdmf4IhPxEqw6l+AM5lYKwBmmP
- PMwPKdxdMzDLjw6kAjL4yvmn7TjjVs9LVmQ052kaZqWRx+tTz2CC+z/9anUcFO3Dvv1Ju/g
- Ng9Qt11jOd/WePmuoUP2E9IFZzVIrJeWClbtjNED+dledI5ElR2oUpb9HOei2kSLmm7J1s8
- bVYFxjCInoamMktFllLTOnNFS8astGbPQtundpcUjJpXFEk0j3rFwSiFsRaHSKFEumOf27f
- mTUX/bpOjd7nZONB2YcRUSYz9kX4k1oKjS+Vn1jmS4EqHjbdhlbPFskAcslZ+5GYRmfs8Ul
- 9cscntsxqMttVS2ATOinhbFKYbwjIq0l5KCPsG3nX/bGEYRiD+DMGGwvBjTsCu/fBrujEhB
- G/CeIccKcjI6oxgyefEYpitdGN0/stLHJqSQDVMhH6z0uGj5cn/+DZ1JeKfTeKkllgvwgUW
- jD4WrpBFDJG7kj6cwnfl/FscHHoDOycVA==
+X-QQ-XMAILINFO: MeukCuWaRbQl057v3UA4w1kVBXPYjvxFMWdvZ6e7Qd8wjVYE5wJRFQmc
+ rrG+95mxBVsjIZeSm0DuIXI479qi1aBwP1YdvRclLH+1Gm+Fuc49hwBPacOSai0M8Z82Ipl
+ BJliYXitW9A1EtQNJI6ON+fsYTXzt4YZbaYH8o2lUwTGNYOEgCYETYuFWs8sPahNHETQX5F
+ lJc7UFroF0heKnpwEtX/BH2PNUUsHYNUsJhwQ2U0jTh2Z/JfY/Upywf0GqxNVM5h93qBRwU
+ DyAv5s3jN8h64tQ6QtTXRSGKXyag0Lb+HyrIBKDbf920To6lp7s5LEccYjqFi5o77FKPSRE
+ CrBS6AiuJN1KzBV1P24DFYhZDDk7diNP1sygclKU0xuWyYnUmwLcOxvhfJwtIEKd4+sHhwQ
+ +k+CeOnENxb/OVOtP3rlYEcqJpRm79x7fREbeF7azABdtLhrJ/taUCsi+GuZG7+QgBno73I
+ QcCCWHkJhMKDzsRGAeK83uRqhjLp6svwdp4Ox2wzufRgW7OFZ5Ru9CTU3cMdgDkZd4EmsVn
+ WtU09PDdwxNKxPIoukX0wScEXyWl47D6kBlltt/L0AzY7cTyjCuAJwwhXNbzVpVwzDvhk2t
+ UCFetz1n7VonCVFGwxodEiE8+mzdEyuZUckdn/bmAzQNO8ssH2Sjwuc8ZIZLc71F2DjhwbY
+ e+uXnAe41KcaE3hoHgCu8JMySMgeLz03juHGPEFB6mZCZk/+Rm4yeCfNTPwrBRGJ/3tbgda
+ jQX90iwpZmAiFZoPyivLTfdCEVMmqQJiCHbMZGDE3mpxu+Mb5r6cxR0Kgz8nzAa/4Bj+pk6
+ JDnEk38cbxrpEgCW1AUOv2emONxVVDfdOyLunxLYy0qOGJihoXsHbCZ829RTVHjTQBEide6
+ RkN1x6uL4vRjc6Bor0e4d5gwroPs0RYkbcfYRUsrKQCmOWJzXFO13vrGq4Juc2ZOJPsDkFK
+ JkMcgP6JTFvnW1o+i9oh5AVQvdGqKTvFENnKQJKXy5/xj3v8CfRx7mw5X4RC5OYQIIEA7c6
+ y7m23TYYlYNELfvpSA2CzBf5CRIOIAmJ2bAdJKb9gKaaH4SPfZ3KSPoDZJbHIdDjLd9gG9K
+ 8NCIYYgBNiwdnWE+b88V0w=
 X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -66,53 +66,591 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The 25G NIC offers off, RS, Base-R, and auto FEC modes. When
-reconfiguring the PHY, the FEC mode must match on both sides;
-otherwise, the link cannot come up. The current driver fails to
-maintain this requirement, causing link instability.
+Some optical modules were not correctly recognized due to ambiguous
+classification in the original detection flow. Rework the module
+identification logic to cover all module types. Also narrow the
+I2C lock scope to avoid potential race conditions during module
+access.
 
-Add proper FEC mode handling during PHY reconfiguration to
-guarantee link establishment.
-
-Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
+Fixes: ab191e6d9189 ("net/txgbe: support new SFP/QSFP modules")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/net/txgbe/base/txgbe_hw.c   |   2 -
+ drivers/net/txgbe/base/txgbe_phy.c  | 341 ++++++++++------------------
+ drivers/net/txgbe/base/txgbe_phy.h  |  18 +-
+ drivers/net/txgbe/base/txgbe_type.h |   2 +
+ 4 files changed, 134 insertions(+), 229 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
-index 5d449a0bd9..ac80d85f08 100644
---- a/drivers/net/txgbe/base/txgbe_aml.c
-+++ b/drivers/net/txgbe/base/txgbe_aml.c
-@@ -282,6 +282,14 @@ s32 txgbe_setup_phy_link_aml(struct txgbe_hw *hw,
- 	    !(hw->fec_mode & hw->cur_fec_link)))
- 		goto out;
+diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
+index 8b7cbd592a..c84656e206 100644
+--- a/drivers/net/txgbe/base/txgbe_hw.c
++++ b/drivers/net/txgbe/base/txgbe_hw.c
+@@ -2909,8 +2909,6 @@ s32 txgbe_init_ops_generic(struct txgbe_hw *hw)
+ 	phy->read_i2c_eeprom = txgbe_read_i2c_eeprom;
+ 	phy->write_i2c_eeprom = txgbe_write_i2c_eeprom;
+ 	phy->identify_sfp = txgbe_identify_module;
+-	phy->read_i2c_byte_unlocked = txgbe_read_i2c_byte_unlocked;
+-	phy->write_i2c_byte_unlocked = txgbe_write_i2c_byte_unlocked;
+ 	phy->check_overtemp = txgbe_check_overtemp;
+ 	phy->reset = txgbe_reset_phy;
+ 	phy->set_link_hostif = txgbe_hic_ephy_set_link;
+diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
+index f3e3491b30..2fbe50e242 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.c
++++ b/drivers/net/txgbe/base/txgbe_phy.c
+@@ -830,6 +830,10 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 		return TXGBE_ERR_SFP_NOT_PRESENT;
+ 	}
  
-+	if (speed == TXGBE_LINK_SPEED_25GB_FULL &&
-+	    link_speed == TXGBE_LINK_SPEED_25GB_FULL) {
-+		txgbe_e56_fec_polling(hw, &link_up);
++	err = hw->mac.acquire_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
++	if (err)
++		return -EBUSY;
 +
-+		if (link_up)
-+			goto out;
-+	}
-+
- 	rte_spinlock_lock(&hw->phy_lock);
- 	ret_status = txgbe_set_link_to_amlite(hw, speed);
- 	rte_spinlock_unlock(&hw->phy_lock);
-@@ -360,7 +368,10 @@ static s32 txgbe_setup_mac_link_multispeed_fiber_aml(struct txgbe_hw *hw,
- 		/* If we already have link at this speed, just jump out */
- 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
+ 	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_IDENTIFIER,
+ 					     &identifier);
+ 	if (err != 0) {
+@@ -839,11 +843,13 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 			hw->phy.id = 0;
+ 			hw->phy.type = txgbe_phy_unknown;
+ 		}
++		hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
+ 		return TXGBE_ERR_SFP_NOT_PRESENT;
+ 	}
  
--		if (link_speed == TXGBE_LINK_SPEED_25GB_FULL && link_up)
-+		hw->cur_fec_link = txgbe_phy_fec_get(hw);
-+
-+		if (link_speed == TXGBE_LINK_SPEED_25GB_FULL && link_up &&
-+		    hw->fec_mode & hw->cur_fec_link)
- 			goto out;
+ 	if (identifier != TXGBE_SFF_IDENTIFIER_SFP) {
+ 		hw->phy.type = txgbe_phy_sfp_unsupported;
++		hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
+ 		return TXGBE_ERR_SFP_NOT_SUPPORTED;
+ 	}
  
- 		/* Allow module to change analog characteristics (10G -> 25G) */
+@@ -888,7 +894,42 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 	  * 11  SFP_1g_sx_CORE0 - chip-specific
+ 	  * 12  SFP_1g_sx_CORE1 - chip-specific
+ 	  */
+-	if (cable_tech & TXGBE_SFF_CABLE_DA_ACTIVE) {
++	if (cable_tech & TXGBE_SFF_CABLE_DA_PASSIVE) {
++		if (hw->bus.lan_id == 0)
++			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core0;
++		else
++			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core1;
++
++		if (hw->phy.sfp_type == txgbe_sfp_type_da_cu_core0 ||
++		    hw->phy.sfp_type == txgbe_sfp_type_da_cu_core1) {
++			hw->dac_sfp = true;
++		}
++
++		if (comp_copper_len == TXGBE_SFF_COPPER_1M)
++			hw->bypass_ctle = true;
++		else
++			hw->bypass_ctle = false;
++
++		if (comp_codes_25g == TXGBE_SFF_25GBASECR_91FEC ||
++		    comp_codes_25g == TXGBE_SFF_25GBASECR_74FEC ||
++		    comp_codes_25g == TXGBE_SFF_25GBASECR_NOFEC) {
++			hw->phy.fiber_suppport_speed =
++				TXGBE_LINK_SPEED_25GB_FULL |
++				TXGBE_LINK_SPEED_10GB_FULL;
++		} else {
++			hw->phy.fiber_suppport_speed |=
++				TXGBE_LINK_SPEED_10GB_FULL;
++		}
++	} else if (comp_codes_25g == TXGBE_SFF_25GAUI_C2M_AOC_BER_5 ||
++		   comp_codes_25g == TXGBE_SFF_25GAUI_C2M_ACC_BER_5 ||
++		   comp_codes_25g == TXGBE_SFF_25GAUI_C2M_AOC_BER_12 ||
++		   comp_codes_25g == TXGBE_SFF_25GAUI_C2M_ACC_BER_12) {
++		hw->dac_sfp = false;
++		hw->phy.sfp_type = (hw->bus.lan_id == 0
++				? txgbe_sfp_type_25g_aoc_core0
++				: txgbe_sfp_type_25g_aoc_core1);
++	} else if (cable_tech & TXGBE_SFF_CABLE_DA_ACTIVE) {
++		hw->dac_sfp = false;
+ 		err = hw->phy.read_i2c_eeprom(hw,
+ 			TXGBE_SFF_CABLE_SPEC_COMP, &cable_spec);
+ 		if (err != 0)
+@@ -1005,6 +1046,7 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 	/* Allow any DA cable vendor */
+ 	if (cable_tech & (TXGBE_SFF_CABLE_DA_PASSIVE |
+ 			  TXGBE_SFF_CABLE_DA_ACTIVE)) {
++		hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
+ 		return 0;
+ 	}
+ 
+@@ -1017,6 +1059,7 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 	      hw->phy.sfp_type == txgbe_sfp_type_1g_sx_core0 ||
+ 	      hw->phy.sfp_type == txgbe_sfp_type_1g_sx_core1)) {
+ 		hw->phy.type = txgbe_phy_sfp_unsupported;
++		hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
+ 		return TXGBE_ERR_SFP_NOT_SUPPORTED;
+ 	}
+ 
+@@ -1031,9 +1074,11 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 	      hw->phy.sfp_type == txgbe_sfp_type_1g_sx_core1)) {
+ 		DEBUGOUT("SFP+ module not supported");
+ 		hw->phy.type = txgbe_phy_sfp_unsupported;
++		hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
+ 		return TXGBE_ERR_SFP_NOT_SUPPORTED;
+ 	}
+ 
++	hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
+ 	return err;
+ }
+ 
+@@ -1046,28 +1091,13 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
+ {
+ 	s32 err = TXGBE_ERR_PHY_ADDR_INVALID;
+-	u32 vendor_oui = 0;
+-	enum txgbe_sfp_type stored_sfp_type = hw->phy.sfp_type;
+-	u8 identifier = 0;
+-	u8 comp_codes_1g = 0;
+-	u8 comp_codes_10g = 0;
+-	u8 oui_bytes[3] = {0, 0, 0};
+-	u16 enforce_sfp = 0;
+-	u8 connector = 0;
+-	u8 cable_length = 0;
+-	u8 device_tech = 0;
+-	bool active_cable = false;
++	u8 identifier = 0, transceiver_type = 0;
+ 	u32 value;
+ 
+-	if (hw->phy.media_type != txgbe_media_type_fiber_qsfp) {
+-		hw->phy.sfp_type = txgbe_sfp_type_not_present;
+-		err = TXGBE_ERR_SFP_NOT_PRESENT;
+-		goto out;
+-	}
++	/* config GPIO before read i2c */
++	wr32(hw, TXGBE_GPIODATA, TXGBE_GPIOBIT_1);
+ 
+ 	if (hw->mac.type == txgbe_mac_aml40) {
+-		/* config GPIO before read i2c */
+-		wr32(hw, TXGBE_GPIODATA, TXGBE_GPIOBIT_1);
+ 		value = rd32(hw, TXGBE_GPIOEXT);
+ 		if (value & TXGBE_SFP1_MOD_PRST_LS) {
+ 			hw->phy.sfp_type = txgbe_sfp_type_not_present;
+@@ -1075,175 +1105,68 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
+ 		}
+ 	}
+ 
+-	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_IDENTIFIER,
+-					     &identifier);
+-ERR_I2C:
+-	if (err != 0) {
++	if (hw->phy.media_type != txgbe_media_type_fiber_qsfp) {
+ 		hw->phy.sfp_type = txgbe_sfp_type_not_present;
+-		hw->phy.id = 0;
+-		hw->phy.type = txgbe_phy_unknown;
+ 		return TXGBE_ERR_SFP_NOT_PRESENT;
+ 	}
+-	if (identifier != TXGBE_SFF_IDENTIFIER_QSFP_PLUS) {
+-		hw->phy.type = txgbe_phy_sfp_unsupported;
+-		err = TXGBE_ERR_SFP_NOT_SUPPORTED;
+-		goto out;
+-	}
+-
+-	hw->phy.id = identifier;
+-
+-	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_QSFP_10GBE_COMP,
+-					     &comp_codes_10g);
+ 
++	err = hw->mac.acquire_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
+ 	if (err != 0)
+-		goto ERR_I2C;
++		return -EBUSY;
+ 
+-	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_QSFP_1GBE_COMP,
+-					     &comp_codes_1g);
++	err = hw->phy.read_i2c_sff8636(hw, 0, TXGBE_SFF_IDENTIFIER,
++				       &identifier);
+ 
+ 	if (err != 0)
+-		goto ERR_I2C;
++		goto err_read_i2c_eeprom;
+ 
+-	if (comp_codes_10g & TXGBE_SFF_QSFP_DA_PASSIVE_CABLE) {
+-		hw->phy.type = txgbe_phy_qsfp_unknown_passive;
+-		if (hw->mac.type == txgbe_mac_aml40) {
++	if (identifier != TXGBE_SFF_IDENTIFIER_QSFP &&
++	    identifier != TXGBE_SFF_IDENTIFIER_QSFP_PLUS) {
++		PMD_INIT_LOG(ERR, "port[%d] QSFP module not supported, identifier = 0x%x",
++			     hw->bus.lan_id, identifier);
++		hw->phy.type = txgbe_phy_sfp_unsupported;
++		err = TXGBE_ERR_SFP_NOT_SUPPORTED;
++	} else {
++		err = hw->phy.read_i2c_sff8636(hw, 0,
++					       TXGBE_ETHERNET_COMP_OFFSET,
++					       &transceiver_type);
++		if (err != 0)
++			goto err_read_i2c_eeprom;
++
++		if (transceiver_type & TXGBE_SFF_ETHERNET_40G_CR4) {
+ 			if (hw->bus.lan_id == 0)
+ 				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core0;
+ 			else
+ 				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core1;
+-		} else {
+-			if (hw->bus.lan_id == 0)
+-				hw->phy.sfp_type = txgbe_sfp_type_da_cu_core0;
+-			else
+-				hw->phy.sfp_type = txgbe_sfp_type_da_cu_core1;
+-		}
+-	} else if (comp_codes_10g & TXGBE_SFF_40GBASE_SR4) {
+-		if (hw->bus.lan_id == 0)
+-			hw->phy.sfp_type = txgbe_qsfp_type_40g_sr_core0;
+-		else
+-			hw->phy.sfp_type = txgbe_qsfp_type_40g_sr_core1;
+-	} else if (comp_codes_10g & TXGBE_SFF_40GBASE_LR4) {
+-		if (hw->bus.lan_id == 0)
+-			hw->phy.sfp_type = txgbe_qsfp_type_40g_lr_core0;
+-		else
+-			hw->phy.sfp_type = txgbe_qsfp_type_40g_lr_core1;
+-	} else if (comp_codes_10g & (TXGBE_SFF_10GBASESR_CAPABLE |
+-				     TXGBE_SFF_10GBASELR_CAPABLE)) {
+-		if (hw->bus.lan_id == 0)
+-			hw->phy.sfp_type = txgbe_sfp_type_srlr_core0;
+-		else
+-			hw->phy.sfp_type = txgbe_sfp_type_srlr_core1;
+-	} else {
+-		if (comp_codes_10g & TXGBE_SFF_QSFP_DA_ACTIVE_CABLE)
+-			active_cable = true;
+-
+-		if (!active_cable) {
+-			hw->phy.read_i2c_eeprom(hw,
+-					TXGBE_SFF_QSFP_CONNECTOR,
+-					&connector);
+-
+-			hw->phy.read_i2c_eeprom(hw,
+-					TXGBE_SFF_QSFP_CABLE_LENGTH,
+-					&cable_length);
+-
+-			hw->phy.read_i2c_eeprom(hw,
+-					TXGBE_SFF_QSFP_DEVICE_TECH,
+-					&device_tech);
+-
+-			if (connector ==
+-				     TXGBE_SFF_QSFP_CONNECTOR_NOT_SEPARABLE &&
+-			    cable_length > 0 &&
+-			    ((device_tech >> 4) ==
+-				     TXGBE_SFF_QSFP_TRANSMITTER_850NM_VCSEL))
+-				active_cable = true;
++			hw->phy.fiber_suppport_speed =
++						TXGBE_LINK_SPEED_40GB_FULL |
++						TXGBE_LINK_SPEED_10GB_FULL;
+ 		}
+ 
+-		if (active_cable) {
+-			hw->phy.type = txgbe_phy_qsfp_unknown_active;
++		if (transceiver_type & TXGBE_SFF_ETHERNET_40G_SR4) {
+ 			if (hw->bus.lan_id == 0)
+-				hw->phy.sfp_type =
+-					txgbe_sfp_type_da_act_lmt_core0;
++				hw->phy.sfp_type = txgbe_qsfp_type_40g_sr_core0;
+ 			else
+-				hw->phy.sfp_type =
+-					txgbe_sfp_type_da_act_lmt_core1;
+-		} else {
+-			/* unsupported module type */
+-			hw->phy.type = txgbe_phy_sfp_unsupported;
+-			err = TXGBE_ERR_SFP_NOT_SUPPORTED;
+-			goto out;
++				hw->phy.sfp_type = txgbe_qsfp_type_40g_sr_core1;
+ 		}
+-	}
+-
+-	if (hw->phy.sfp_type != stored_sfp_type)
+-		hw->phy.sfp_setup_needed = true;
+-
+-	/* Determine if the QSFP+ PHY is dual speed or not. */
+-	hw->phy.multispeed_fiber = false;
+-	if (((comp_codes_1g & TXGBE_SFF_1GBASESX_CAPABLE) &&
+-	   (comp_codes_10g & TXGBE_SFF_10GBASESR_CAPABLE)) ||
+-	   ((comp_codes_1g & TXGBE_SFF_1GBASELX_CAPABLE) &&
+-	   (comp_codes_10g & TXGBE_SFF_10GBASELR_CAPABLE)))
+-		hw->phy.multispeed_fiber = true;
+-
+-	/* Determine PHY vendor for optical modules */
+-	if (comp_codes_10g & (TXGBE_SFF_10GBASESR_CAPABLE |
+-			      TXGBE_SFF_10GBASELR_CAPABLE))  {
+-		err = hw->phy.read_i2c_eeprom(hw,
+-					    TXGBE_SFF_QSFP_VENDOR_OUI_BYTE0,
+-					    &oui_bytes[0]);
+-
+-		if (err != 0)
+-			goto ERR_I2C;
+-
+-		err = hw->phy.read_i2c_eeprom(hw,
+-					    TXGBE_SFF_QSFP_VENDOR_OUI_BYTE1,
+-					    &oui_bytes[1]);
+-
+-		if (err != 0)
+-			goto ERR_I2C;
+ 
+-		err = hw->phy.read_i2c_eeprom(hw,
+-					    TXGBE_SFF_QSFP_VENDOR_OUI_BYTE2,
+-					    &oui_bytes[2]);
+-
+-		if (err != 0)
+-			goto ERR_I2C;
+-
+-		vendor_oui =
+-		  ((oui_bytes[0] << 24) |
+-		   (oui_bytes[1] << 16) |
+-		   (oui_bytes[2] << 8));
+-
+-		if (vendor_oui == TXGBE_SFF_VENDOR_OUI_INTEL)
+-			hw->phy.type = txgbe_phy_qsfp_intel;
+-		else
+-			hw->phy.type = txgbe_phy_qsfp_unknown;
+-
+-		hw->mac.get_device_caps(hw, &enforce_sfp);
+-		if (!(enforce_sfp & TXGBE_DEVICE_CAPS_ALLOW_ANY_SFP)) {
+-			/* Make sure we're a supported PHY type */
+-			if (hw->phy.type == txgbe_phy_qsfp_intel) {
+-				err = 0;
+-			} else {
+-				if (hw->allow_unsupported_sfp) {
+-					DEBUGOUT("WARNING: Wangxun (R) Network Connections are quality tested using Wangxun (R) Ethernet Optics. "
+-						"Using untested modules is not supported and may cause unstable operation or damage to the module or the adapter. "
+-						"Wangxun Corporation is not responsible for any harm caused by using untested modules.");
+-					err = 0;
+-				} else {
+-					DEBUGOUT("QSFP module not supported");
+-					hw->phy.type =
+-						txgbe_phy_sfp_unsupported;
+-					err = TXGBE_ERR_SFP_NOT_SUPPORTED;
+-				}
+-			}
+-		} else {
+-			err = 0;
++		if (transceiver_type & TXGBE_SFF_ETHERNET_40G_LR4) {
++			if (hw->bus.lan_id == 0)
++				hw->phy.sfp_type = txgbe_qsfp_type_40g_lr_core0;
++			else
++				hw->phy.sfp_type = txgbe_qsfp_type_40g_lr_core1;
+ 		}
+ 	}
+ 
+-out:
++	hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
+ 	return err;
++
++err_read_i2c_eeprom:
++	hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
++	hw->phy.sfp_type = txgbe_sfp_type_not_present;
++	hw->phy.id = 0;
++	hw->phy.type = txgbe_phy_unknown;
++	return TXGBE_ERR_SFP_NOT_PRESENT;
+ }
+ 
+ /**
+@@ -1278,6 +1201,28 @@ s32 txgbe_read_i2c_sff8472(struct txgbe_hw *hw, u8 byte_offset,
+ 					 sff8472_data);
+ }
+ 
++/**
++ *  txgbe_read_i2c_sff8636 - Reads 8 bit word over I2C interface
++ *  @hw: pointer to hardware structure
++ *  @byte_offset: byte offset at address 0xA2
++ *  @eeprom_data: value read
++ *
++ *  Performs byte read operation to SFP module's SFF-8472 data over I2C
++ **/
++s32 txgbe_read_i2c_sff8636(struct txgbe_hw *hw, u8 page, u8 byte_offset,
++				 u8 *sff8636_data)
++{
++	s32 err = hw->phy.write_i2c_byte(hw, TXGBE_SFF_QSFP_PAGE_SELECT,
++					TXGBE_I2C_EEPROM_DEV_ADDR,
++					page);
++	if (err != 0)
++		return err;
++
++	return hw->phy.read_i2c_byte(hw, byte_offset,
++					TXGBE_I2C_EEPROM_DEV_ADDR,
++					sff8636_data);
++}
++
+ /**
+  *  txgbe_write_i2c_eeprom - Writes 8 bit EEPROM word over I2C interface
+  *  @hw: pointer to hardware structure
+@@ -1295,7 +1240,7 @@ s32 txgbe_write_i2c_eeprom(struct txgbe_hw *hw, u8 byte_offset,
+ }
+ 
+ /**
+- *  txgbe_read_i2c_byte_unlocked - Reads 8 bit word over I2C
++ *  txgbe_read_i2c_byte - Reads 8 bit word over I2C
+  *  @hw: pointer to hardware structure
+  *  @byte_offset: byte offset to read
+  *  @dev_addr: address to read from
+@@ -1304,7 +1249,7 @@ s32 txgbe_write_i2c_eeprom(struct txgbe_hw *hw, u8 byte_offset,
+  *  Performs byte read operation to SFP module's EEPROM over I2C interface at
+  *  a specified device address.
+  **/
+-s32 txgbe_read_i2c_byte_unlocked(struct txgbe_hw *hw, u8 byte_offset,
++s32 txgbe_read_i2c_byte(struct txgbe_hw *hw, u8 byte_offset,
+ 					   u8 dev_addr, u8 *data)
+ {
+ 	txgbe_i2c_start(hw, dev_addr);
+@@ -1334,30 +1279,7 @@ s32 txgbe_read_i2c_byte_unlocked(struct txgbe_hw *hw, u8 byte_offset,
+ }
+ 
+ /**
+- *  txgbe_read_i2c_byte - Reads 8 bit word over I2C
+- *  @hw: pointer to hardware structure
+- *  @byte_offset: byte offset to read
+- *  @dev_addr: address to read from
+- *  @data: value read
+- *
+- *  Performs byte read operation to SFP module's EEPROM over I2C interface at
+- *  a specified device address.
+- **/
+-s32 txgbe_read_i2c_byte(struct txgbe_hw *hw, u8 byte_offset,
+-				u8 dev_addr, u8 *data)
+-{
+-	u32 swfw_mask = hw->phy.phy_semaphore_mask;
+-	int err = 0;
+-
+-	if (hw->mac.acquire_swfw_sync(hw, swfw_mask))
+-		return TXGBE_ERR_SWFW_SYNC;
+-	err = txgbe_read_i2c_byte_unlocked(hw, byte_offset, dev_addr, data);
+-	hw->mac.release_swfw_sync(hw, swfw_mask);
+-	return err;
+-}
+-
+-/**
+- *  txgbe_write_i2c_byte_unlocked - Writes 8 bit word over I2C
++ *  txgbe_write_i2c_byte - Writes 8 bit word over I2C
+  *  @hw: pointer to hardware structure
+  *  @byte_offset: byte offset to write
+  *  @dev_addr: address to write to
+@@ -1366,54 +1288,29 @@ s32 txgbe_read_i2c_byte(struct txgbe_hw *hw, u8 byte_offset,
+  *  Performs byte write operation to SFP module's EEPROM over I2C interface at
+  *  a specified device address.
+  **/
+-s32 txgbe_write_i2c_byte_unlocked(struct txgbe_hw *hw, u8 byte_offset,
+-					    u8 dev_addr, u8 data)
++s32 txgbe_write_i2c_byte(struct txgbe_hw *hw, u8 byte_offset,
++			       u8 dev_addr, u8 data)
+ {
+ 	txgbe_i2c_start(hw, dev_addr);
+ 
+ 	/* wait tx empty */
+ 	if (!po32m(hw, TXGBE_I2CICR, TXGBE_I2CICR_TXEMPTY,
+-		TXGBE_I2CICR_TXEMPTY, NULL, 100, 100)) {
++		   TXGBE_I2CICR_TXEMPTY, NULL, 100, 100))
+ 		return -TERR_TIMEOUT;
+-	}
+ 
+-	wr32(hw, TXGBE_I2CDATA, byte_offset | TXGBE_I2CDATA_STOP);
++	wr32(hw, TXGBE_I2CDATA, byte_offset);
+ 	wr32(hw, TXGBE_I2CDATA, data | TXGBE_I2CDATA_WRITE);
+ 
+ 	/* wait for write complete */
+ 	if (!po32m(hw, TXGBE_I2CICR, TXGBE_I2CICR_RXFULL,
+-		TXGBE_I2CICR_RXFULL, NULL, 100, 100)) {
++		   TXGBE_I2CICR_RXFULL, NULL, 100, 100))
+ 		return -TERR_TIMEOUT;
+-	}
++
+ 	txgbe_i2c_stop(hw);
+ 
+ 	return 0;
+ }
+ 
+-/**
+- *  txgbe_write_i2c_byte - Writes 8 bit word over I2C
+- *  @hw: pointer to hardware structure
+- *  @byte_offset: byte offset to write
+- *  @dev_addr: address to write to
+- *  @data: value to write
+- *
+- *  Performs byte write operation to SFP module's EEPROM over I2C interface at
+- *  a specified device address.
+- **/
+-s32 txgbe_write_i2c_byte(struct txgbe_hw *hw, u8 byte_offset,
+-				 u8 dev_addr, u8 data)
+-{
+-	u32 swfw_mask = hw->phy.phy_semaphore_mask;
+-	int err = 0;
+-
+-	if (hw->mac.acquire_swfw_sync(hw, swfw_mask))
+-		return TXGBE_ERR_SWFW_SYNC;
+-	err = txgbe_write_i2c_byte_unlocked(hw, byte_offset, dev_addr, data);
+-	hw->mac.release_swfw_sync(hw, swfw_mask);
+-
+-	return err;
+-}
+-
+ /**
+  *  txgbe_i2c_start - Sets I2C start condition
+  *  @hw: pointer to hardware structure
+diff --git a/drivers/net/txgbe/base/txgbe_phy.h b/drivers/net/txgbe/base/txgbe_phy.h
+index 93a5ad18c1..20c80d9d88 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.h
++++ b/drivers/net/txgbe/base/txgbe_phy.h
+@@ -261,7 +261,9 @@
+ #define TXGBE_SFF_SFF_8472_COMP		0x5E
+ #define TXGBE_SFF_SFF_8472_OSCB		0x6E
+ #define TXGBE_SFF_SFF_8472_ESCB		0x76
++#define TXGBE_SFF_QSFP_PAGE_SELECT      0x7F
+ 
++#define TXGBE_SFF_IDENTIFIER_QSFP	0x0C
+ #define TXGBE_SFF_IDENTIFIER_QSFP_PLUS	0x0D
+ #define TXGBE_SFF_QSFP_VENDOR_OUI_BYTE0	0xA5
+ #define TXGBE_SFF_QSFP_VENDOR_OUI_BYTE1	0xA6
+@@ -289,6 +291,9 @@
+ #define TXGBE_SFF_4x10GBASESR_CAP		0x11
+ #define TXGBE_SFF_40GBASEPSM4_PARALLEL		0x12
+ #define TXGBE_SFF_40GBASE_SWMD4_CAP		0x1f
++#define TXGBE_SFF_COPPER_5M			0x5
++#define TXGBE_SFF_COPPER_3M			0x3
++#define TXGBE_SFF_COPPER_1M			0x1
+ 
+ #define TXGBE_SFF_DA_SPEC_ACTIVE_LIMITING	0x4
+ #define TXGBE_SFF_25GAUI_C2M_AOC_BER_5		0x1
+@@ -296,6 +301,11 @@
+ #define TXGBE_SFF_25GAUI_C2M_AOC_BER_12		0x18
+ #define TXGBE_SFF_25GAUI_C2M_ACC_BER_12		0x19
+ 
++#define TXGBE_ETHERNET_COMP_OFFSET		0x83
++#define TXGBE_SFF_ETHERNET_40G_CR4		MS(3, 0x1)
++#define TXGBE_SFF_ETHERNET_40G_SR4		MS(2, 0x1)
++#define TXGBE_SFF_ETHERNET_40G_LR4		MS(1, 0x1)
++
+ #define TXGBE_SFF_SOFT_RS_SELECT_MASK		0x8
+ #define TXGBE_SFF_SOFT_RS_SELECT_10G		0x8
+ #define TXGBE_SFF_SOFT_RS_SELECT_1G		0x0
+@@ -493,14 +503,12 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw);
+ s32 txgbe_check_overtemp(struct txgbe_hw *hw);
+ s32 txgbe_read_i2c_byte(struct txgbe_hw *hw, u8 byte_offset,
+ 				u8 dev_addr, u8 *data);
+-s32 txgbe_read_i2c_byte_unlocked(struct txgbe_hw *hw, u8 byte_offset,
+-					 u8 dev_addr, u8 *data);
+ s32 txgbe_write_i2c_byte(struct txgbe_hw *hw, u8 byte_offset,
+ 				 u8 dev_addr, u8 data);
+-s32 txgbe_write_i2c_byte_unlocked(struct txgbe_hw *hw, u8 byte_offset,
+-					  u8 dev_addr, u8 data);
+ s32 txgbe_read_i2c_sff8472(struct txgbe_hw *hw, u8 byte_offset,
+-					  u8 *sff8472_data);
++				  u8 *sff8472_data);
++s32 txgbe_read_i2c_sff8636(struct txgbe_hw *hw, u8 page, u8 byte_offset,
++					  u8 *sff8636_data);
+ s32 txgbe_read_i2c_eeprom(struct txgbe_hw *hw, u8 byte_offset,
+ 				  u8 *eeprom_data);
+ s32 txgbe_write_i2c_eeprom(struct txgbe_hw *hw, u8 byte_offset,
+diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
+index 47629aa9e0..2e2d79e0e1 100644
+--- a/drivers/net/txgbe/base/txgbe_type.h
++++ b/drivers/net/txgbe/base/txgbe_type.h
+@@ -702,6 +702,8 @@ struct txgbe_phy_info {
+ 				u8 dev_addr, u8 data);
+ 	s32 (*read_i2c_sff8472)(struct txgbe_hw *hw, u8 byte_offset,
+ 				u8 *sff8472_data);
++	s32 (*read_i2c_sff8636)(struct txgbe_hw *hw, u8 page, u8 byte_offset,
++				u8 *sff8636_data);
+ 	s32 (*read_i2c_eeprom)(struct txgbe_hw *hw, u8 byte_offset,
+ 				u8 *eeprom_data);
+ 	s32 (*write_i2c_eeprom)(struct txgbe_hw *hw, u8 byte_offset,
 -- 
 2.21.0.windows.1
 
