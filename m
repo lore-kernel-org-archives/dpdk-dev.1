@@ -2,69 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C78CD98F0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 19:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0191CD98E2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 19:35:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17C0C40276;
-	Wed, 17 Jun 2026 21:33:04 +0200 (CEST)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com
- [209.85.222.180])
- by mails.dpdk.org (Postfix) with ESMTP id EA5C340268
- for <dev@dpdk.org>; Wed, 17 Jun 2026 21:33:02 +0200 (CEST)
-Received: by mail-qk1-f180.google.com with SMTP id
- af79cd13be357-91587626a3eso22365285a.2
- for <dev@dpdk.org>; Wed, 17 Jun 2026 12:33:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1781724782; x=1782329582; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=rS7GmcMx/ElRh1wx3qtwy0BMQSpRZxvkwfGONircRcM=;
- b=G/DxvjV/sDcKOR3WO0sWTnDPLEv+93NdrlTbuDENtUd6+pSdvK43rjToN/eu4NFXya
- 2TThWgMiY2EvjFqJ60s9TEiabqBjraL6A9FvfZKCLCHhbED892dCjFc9mk5gEKfWwg9R
- KMbK6haAw+r5ftNDlHbVFytKEH6Y77yXvSPSw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781724782; x=1782329582;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=rS7GmcMx/ElRh1wx3qtwy0BMQSpRZxvkwfGONircRcM=;
- b=JiCETTdcIGozsdxKZdmdu0w1tiSlA6czm01iJDOsPESQHD3t29McRUMNSCZBmWqI+j
- 94Muz+7DraM5Bb6AbBU33kECgh68PTqQ/i67STY0pv3xrZ4ISyE5r0ZPZA3lvlT57gBC
- ZRGLBGlrqJLNnH0Vhz7Cp8jtPFmRe1YIU8d0jH39IvUerjO0Ri+3ooIC28ZjOHLT1jOd
- 25U4itldjTn4nd9p6snTEZD7rWfcPE5KU0jl7Pu1HTop0xve6F95REPeFJdGMhRQIm9K
- nzcEmkuvruL72nHOyFW6lL8cLh857V9jEW3FWPEKqK7EBCEJCzKvH4G493VTvJKJj32Y
- B3kA==
-X-Gm-Message-State: AOJu0YwmfU36CB7KpRhZMnvNr9Rx5zuh2IR03K3XkL5r2T30dR9E9yG9
- xbtOLcN4Wi/3zkn8PDG0gVlcHV1/8+L8GMOoNU0YR4istu/oGK/sKBXYQN+Jxpw0Wjw=
-X-Gm-Gg: Acq92OHoEHcmo5/Bg0eSt+mlxudboZHWgsbsuQC6X60rK6KV64Ju3SQslj6ZbswZcwv
- 7ZV3g1Bip+NI75yqb+FFFhkVzcpGtfy4GjEXssO6qP+0x21NKSYA7JWKj15Gs/CQe/ZC2nbFRH7
- 2rzP+IYIbRLasfEoWRiN+tWoSJnYt2ZjUJlgrTZIDPoJvmR0gUNIYvPzMKyJHgWxtl/SHBZS3Q/
- tkiP3b5c07WaHASOku8ptzfEbNXV2lWGJSQg3VeLfW0ae2k17sFwzfoWOf6IujweXmgicpKFwIw
- 6ydB/TiQHCUkX/zKXch/g2/UkN2xByvxFpZXLyjP+JwFw/K39uK1+qWB8AWQdJUNM4aW/zkw17p
- G+KHleNEj25DfE1hPajY00dLch5B7PITRu5sBDnEqvdn0ZaakWUhPVTifpnUR6/SbR/siXUt3bR
- 7+S48TcdS5pa4BFEKx8PfAPcec5/GF9Y4La0iJ+digbjU18u/wOgzSMw==
-X-Received: by 2002:a05:620a:6c0d:b0:915:eec4:1ec8 with SMTP id
- af79cd13be357-91dba869ddemr847214185a.18.1781724782097; 
- Wed, 17 Jun 2026 12:33:02 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:2a32:2ddf:c455:dafe])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-91619ed7f16sm1798088285a.1.2026.06.17.12.33.01
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 17 Jun 2026 12:33:01 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: patrickrobb1997@gmail.com,
-	luca.vizzarro@arm.com
-Cc: dev@dpdk.org, knimoji@iol.unh.edu, lylavoie@iol.unh.edu,
- ahassick@iol.unh.edu, Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v4] dts: add support for no link topology
-Date: Wed, 17 Jun 2026 15:32:40 -0400
-Message-ID: <20260617193240.149708-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260220192510.37163-1-abailey@iol.unh.edu>
-References: <20260220192510.37163-1-abailey@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 20CEF402D0;
+	Wed, 17 Jun 2026 21:35:08 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 37EDD40276
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 21:35:06 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4ggYvz117kzJ467Y;
+ Thu, 18 Jun 2026 03:34:39 +0800 (CST)
+Received: from frapema500002.china.huawei.com (unknown [7.182.19.148])
+ by mail.maildlp.com (Postfix) with ESMTPS id A1A0C40570;
+ Thu, 18 Jun 2026 03:35:04 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema500002.china.huawei.com (7.182.19.148) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 17 Jun 2026 21:35:04 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Wed, 17 Jun 2026 21:35:04 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: Wathsala Vithanage <wathsala.vithanage@arm.com>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>
+Subject: RE: [PATCH 4/4] bpf/arm64: add BPF_ABS/BPF_IND packet load support
+Thread-Topic: [PATCH 4/4] bpf/arm64: add BPF_ABS/BPF_IND packet load support
+Thread-Index: AQHc94YUU1XjLCE+P0629UQkL+sFk7ZDHOrg
+Date: Wed, 17 Jun 2026 19:35:04 +0000
+Message-ID: <5d3ac533de2f4e1fbb43f983a408fb23@huawei.com>
+References: <20260608203322.1116296-1-stephen@networkplumber.org>
+ <20260608203322.1116296-5-stephen@networkplumber.org>
+In-Reply-To: <20260608203322.1116296-5-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.72.97]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,426 +57,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for running DTS with no traffic generator node and no ethdev
-interfaces. Some applications, like dpdk-test-crypto-perf run without
-ethdev interfaces and no traffic generator. In these cases, it is
-beneficial to remove the overhead of creating a node and ports that are
-not used. The specified build option for ice devices is removed since
-the query to sut port ingress causes python to crash when there are no
-ports. Notably, since this is only the case in which there are no ports,
-traffic will not be sent and therefore the build argument is not
-required. For these reasons it is skipped when running a no-link
-topology.
+Thank you for doing this. I suggest comparing against the previous effort b=
+y Christophe Fontaine though.
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
----
+Couple of comments inline, superficially looks correct otherwise.
 
-v4:
-* Made it possible to run no link topology even if a TG node is
-  present in the config.
-* Updated the test run example config file to properly document how no
-  link topology is run.
+> +/*
+> + * Helper for emit_ld_mbuf(): fast path.
+> + * Compute the packet offset; if it lies inside the first segment leave =
+the
+> + * data pointer in R0, otherwise branch to the slow path.
+> + */
+> +static void
+> +emit_ldmb_fast_path(struct a64_jit_ctx *ctx, uint8_t src, uint8_t mode,
+> +		    uint32_t sz, int32_t imm, const uint32_t ofs[LDMB_OFS_NUM])
+> +{
+> +	uint8_t r0 =3D ebpf_to_a64_reg(ctx, EBPF_REG_0);
+> +	uint8_t r6 =3D ebpf_to_a64_reg(ctx, EBPF_REG_6);
+> +	uint8_t tmp1 =3D ebpf_to_a64_reg(ctx, TMP_REG_1);
+> +	uint8_t tmp2 =3D ebpf_to_a64_reg(ctx, TMP_REG_2);
+> +	uint8_t tmp3 =3D ebpf_to_a64_reg(ctx, TMP_REG_3);
+> +
+> +	/* off =3D imm (+ src for BPF_IND) */
+> +	emit_mov_imm(ctx, 1, tmp1, imm);
+> +	if (mode =3D=3D BPF_IND)
+> +		emit_add(ctx, 1, tmp1, src);
+> +
+> +	/* if ((int64_t)(mbuf->data_len - off) < sz) goto slow_path */
+> +	emit_mov_imm(ctx, 1, tmp2, offsetof(struct rte_mbuf, data_len));
+> +	emit_ldr(ctx, BPF_H, tmp2, r6, tmp2);
+> +	emit_sub(ctx, 1, tmp2, tmp1);
+> +	emit_mov_imm(ctx, 1, tmp3, sz);
+> +	emit_cmp(ctx, 1, tmp2, tmp3);
+> +	emit_b_cond(ctx, A64_LT, (int32_t)(ofs[LDMB_SLOW_OFS] - ctx->idx));
 
- dts/api/test.py                          | 11 ++-
- dts/configurations/test_run.example.yaml |  7 +-
- dts/framework/config/__init__.py         | 36 ++++-----
- dts/framework/config/test_run.py         |  4 +-
- dts/framework/context.py                 |  2 +-
- dts/framework/remote_session/dpdk.py     |  4 +-
- dts/framework/runner.py                  |  6 +-
- dts/framework/test_run.py                | 95 ++++++++++++++----------
- dts/framework/testbed_model/topology.py  | 17 ++++-
- 9 files changed, 109 insertions(+), 73 deletions(-)
+Are we checking that (int64_t)off >=3D 0 anywhere?
 
-diff --git a/dts/api/test.py b/dts/api/test.py
-index e17babe0ca..7947c407d2 100644
---- a/dts/api/test.py
-+++ b/dts/api/test.py
-@@ -10,6 +10,7 @@
- from datetime import datetime
+> +
+> +	/* R0 =3D mbuf->buf_addr + mbuf->data_off + off */
+> +	emit_mov_imm(ctx, 1, tmp2, offsetof(struct rte_mbuf, data_off));
+> +	emit_ldr(ctx, BPF_H, tmp2, r6, tmp2);
+> +	emit_mov_imm(ctx, 1, r0, offsetof(struct rte_mbuf, buf_addr));
+> +	emit_ldr(ctx, EBPF_DW, r0, r6, r0);
+> +	emit_add(ctx, 1, r0, tmp2);
+> +	emit_add(ctx, 1, r0, tmp1);
+> +
+> +	emit_b(ctx, (int32_t)(ofs[LDMB_FIN_OFS] - ctx->idx));
+> +}
 
- from api.artifact import Artifact
-+from api.capabilities import LinkTopology
- from framework.context import get_ctx
- from framework.exception import InternalError, SkippedTestException, TestCaseVerifyError
- from framework.logger import DTSLogger
-@@ -109,12 +110,14 @@ def fail(failure_description: str) -> None:
-     Raises:
-         TestCaseVerifyError: Always raised to indicate the test case failed.
-     """
-+    ctx = get_ctx()
-     get_logger().debug("A test case failed, showing the last 10 commands executed on SUT:")
--    for command_res in get_ctx().sut_node.main_session.remote_session.history[-10:]:
--        get_logger().debug(command_res.command)
--    get_logger().debug("A test case failed, showing the last 10 commands executed on TG:")
--    for command_res in get_ctx().tg_node.main_session.remote_session.history[-10:]:
-+    for command_res in ctx.sut_node.main_session.remote_session.history[-10:]:
-         get_logger().debug(command_res.command)
-+    if ctx.topology.type is not LinkTopology.NO_LINK and ctx.tg_node is not None:
-+        get_logger().debug("A test case failed, showing the last 10 commands executed on TG:")
-+        for command_res in ctx.tg_node.main_session.remote_session.history[-10:]:
-+            get_logger().debug(command_res.command)
-     raise TestCaseVerifyError(failure_description)
+// snip
 
+> +/*
+> + * Emit code for BPF_LD | BPF_ABS and BPF_LD | BPF_IND packet loads:
+> + *
+> + *	off =3D imm (+ src for BPF_IND)
+> + *	if (mbuf->data_len - off >=3D sz)			    -- fast path
+> + *		ptr =3D mbuf->buf_addr + mbuf->data_off + off;
+> + *	else						    -- slow path
+> + *		ptr =3D __rte_pktmbuf_read(mbuf, off, sz, buf);
+> + *		if (ptr =3D=3D NULL)
+> + *			return 0;
+> + *	R0 =3D ntoh(*(size *)ptr);			    -- common tail
 
-diff --git a/dts/configurations/test_run.example.yaml b/dts/configurations/test_run.example.yaml
-index ee641f5dce..127aa51152 100644
---- a/dts/configurations/test_run.example.yaml
-+++ b/dts/configurations/test_run.example.yaml
-@@ -25,6 +25,9 @@
- #       By removing the `test_suites` field, this test run will run every test suite available.
- #   `vdevs`:
- #       Uncomment to add a specific virtual device to run on the SUT node.
-+#   `port_topology`:
-+#   	By providing an empty list, DTS will run in no link topology mode and will not allocate a TG
-+#   	node.
+nit: this pseudo-code could probably be made more C-like.
 
- # Define the test run environment
- dpdk:
-@@ -58,8 +61,8 @@ test_suites: # see `Optional Fields`; the following test suites will be run in t
- # The machine running the DPDK test executable
- system_under_test_node: "SUT 1"
- # Traffic generator node to use for this execution environment
--traffic_generator_node: "TG 1"
--port_topology:
-+traffic_generator_node: "TG 1" # see
-+port_topology: # see `Optional Fields`
-   - sut.port-0 <-> tg.port-0  # explicit link. `sut` and `tg` are special identifiers that refer
-                               # to the respective test run's configured nodes.
-   - port-1 <-> port-1         # implicit link, left side is always SUT, right side is always TG.
-diff --git a/dts/framework/config/__init__.py b/dts/framework/config/__init__.py
-index d2f0138e4a..abcd9b525f 100644
---- a/dts/framework/config/__init__.py
-+++ b/dts/framework/config/__init__.py
-@@ -94,17 +94,19 @@ def validate_port_links(self) -> Self:
-                 f"already linked to port {sut_node_port_peer[0]}.{sut_node_port_peer[1]}."
-             )
+> + *
+> + * The three blocks are sized in a dry run so the forward branches can b=
+e
+> + * resolved, then emitted for real (arm64 instructions are fixed width, =
+so
+> + * the dry run reproduces the real instruction count exactly).
+> + */
+> +static void
+> +emit_ld_mbuf(struct a64_jit_ctx *ctx, uint8_t op, uint8_t src, int32_t i=
+mm,
+> +	     uint32_t stack_ofs)
+> +{
+> +	uint8_t mode =3D BPF_MODE(op);
+> +	uint8_t opsz =3D BPF_SIZE(op);
+> +	uint32_t sz =3D bpf_size(opsz);
+> +	uint32_t ofs[LDMB_OFS_NUM];
+> +
+> +	/* seed offsets so the dry-run branches stay in range */
+> +	ofs[LDMB_FAST_OFS] =3D ofs[LDMB_SLOW_OFS] =3D ofs[LDMB_FIN_OFS] =3D ctx=
+->idx;
+> +
+> +	/* dry run to record block offsets */
+> +	emit_ldmb_fast_path(ctx, src, mode, sz, imm, ofs);
+> +	ofs[LDMB_SLOW_OFS] =3D ctx->idx;
+> +	emit_ldmb_slow_path(ctx, sz, stack_ofs);
+> +	ofs[LDMB_FIN_OFS] =3D ctx->idx;
+> +	emit_ldmb_fin(ctx, opsz, sz);
 
--            tg_node_port_peer = existing_port_links.get(
--                (self.test_run.traffic_generator_node, link.tg_port), None
--            )
--            assert (
--                tg_node_port_peer is not None
--            ), f"Invalid TG node port specified for link port_topology.{link_idx}."
--
--            assert tg_node_port_peer is False or sut_node_port_peer == link.left, (
--                f"The TG node port for link port_topology.{link_idx} is "
--                f"already linked to port {tg_node_port_peer[0]}.{tg_node_port_peer[1]}."
--            )
-+            if self.test_run.port_topology != []:
-+                assert self.test_run.traffic_generator_node is not None, "No TG node specified."
-+                tg_node_port_peer = existing_port_links.get(
-+                    (self.test_run.traffic_generator_node, link.tg_port), None
-+                )
-+                assert (
-+                    tg_node_port_peer is not None
-+                ), f"Invalid TG node port specified for link port_topology.{link_idx}."
-+
-+                assert tg_node_port_peer is False or sut_node_port_peer == link.left, (
-+                    f"The TG node port for link port_topology.{link_idx} is "
-+                    f"already linked to port {tg_node_port_peer[0]}.{tg_node_port_peer[1]}."
-+                )
+nit: we already do two passes for the whole program, could avoid quadruple =
+work here
 
-             existing_port_links[link.left] = link.right
-             existing_port_links[link.right] = link.left
-@@ -121,13 +123,13 @@ def validate_test_run_against_nodes(self) -> Self:
-             sut_node is not None
-         ), f"The system_under_test_node {sut_node_name} is not a valid node name."
+> +
+> +	/* rewind and emit for real with resolved offsets */
+> +	ctx->idx =3D ofs[LDMB_FAST_OFS];
+> +	emit_ldmb_fast_path(ctx, src, mode, sz, imm, ofs);
+> +	emit_ldmb_slow_path(ctx, sz, stack_ofs);
+> +	emit_ldmb_fin(ctx, opsz, sz);
+> +}
 
--        tg_node_name = self.test_run.traffic_generator_node
--        tg_node = next((n for n in self.nodes if n.name == tg_node_name), None)
--
--        assert (
--            tg_node is not None
--        ), f"The traffic_generator_name {tg_node_name} is not a valid node name."
-+        if self.test_run.port_topology != []:
-+            tg_node_name = self.test_run.traffic_generator_node
-+            tg_node = next((n for n in self.nodes if n.name == tg_node_name), None)
-
-+            assert (
-+                tg_node is not None
-+            ), f"The traffic_generator_name {tg_node_name} is not a valid node name."
-         return self
-
-
-diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
-index 76e24d1785..f9143dfc4e 100644
---- a/dts/framework/config/test_run.py
-+++ b/dts/framework/config/test_run.py
-@@ -492,11 +492,11 @@ class TestRunConfiguration(FrozenModel):
-     #: The SUT node name to use in this test run.
-     system_under_test_node: str
-     #: The TG node name to use in this test run.
--    traffic_generator_node: str
-+    traffic_generator_node: str | None = Field(default=None)
-     #: The seed to use for pseudo-random generation.
-     random_seed: int | None = None
-     #: The port links between the specified nodes to use.
--    port_topology: list[PortLinkConfig] = Field(max_length=2)
-+    port_topology: list[PortLinkConfig] = Field(default=[], max_length=2)
-
-     fields_from_settings = model_validator(mode="before")(
-         load_fields_from_settings("test_suites", "random_seed")
-diff --git a/dts/framework/context.py b/dts/framework/context.py
-index 8f1021dc96..371473f61c 100644
---- a/dts/framework/context.py
-+++ b/dts/framework/context.py
-@@ -72,7 +72,7 @@ class Context:
-     """Runtime context."""
-
-     sut_node: Node
--    tg_node: Node
-+    tg_node: Node | None
-     topology: Topology
-     dpdk_build: "DPDKBuildEnvironment"
-     dpdk: "DPDKRuntimeEnvironment"
-diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-index c3575cfcaf..e43e1f2123 100644
---- a/dts/framework/remote_session/dpdk.py
-+++ b/dts/framework/remote_session/dpdk.py
-@@ -13,6 +13,7 @@
- from pathlib import Path, PurePath
- from typing import ClassVar, Final
-
-+from api.capabilities import LinkTopology
- from framework.config.test_run import (
-     DPDKBuildConfiguration,
-     DPDKBuildOptionsConfiguration,
-@@ -263,7 +264,8 @@ def _build_dpdk(self) -> None:
-         ctx = get_ctx()
-         # If the SUT is an ice driver device, make sure to build with 16B descriptors.
-         if (
--            ctx.topology.sut_port_ingress
-+            ctx.topology.type is not LinkTopology.NO_LINK
-+            and ctx.topology.sut_port_ingress
-             and ctx.topology.sut_port_ingress.config.os_driver == "ice"
-         ):
-             meson_args = MesonArgs(
-diff --git a/dts/framework/runner.py b/dts/framework/runner.py
-index 6ea4749ff4..fa4f06844e 100644
---- a/dts/framework/runner.py
-+++ b/dts/framework/runner.py
-@@ -61,7 +61,11 @@ def run(self) -> None:
-             self._check_dts_python_version()
-
-             for node_config in self._configuration.nodes:
--                nodes.append(Node(node_config))
-+                if self._configuration.test_run.port_topology == []:
-+                    if node_config.name == self._configuration.test_run.system_under_test_node:
-+                        nodes.append(Node(node_config))
-+                else:
-+                    nodes.append(Node(node_config))
-
-             test_run = TestRun(
-                 self._configuration.test_run,
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index 94dc6023a7..9b973532da 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -106,6 +106,7 @@
- from types import MethodType
- from typing import ClassVar, Protocol, Union
-
-+from api.capabilities import LinkTopology
- from framework.config.test_run import TestRunConfiguration
- from framework.context import Context, init_ctx
- from framework.exception import InternalError, SkippedTestException, TestCaseVerifyError
-@@ -190,24 +191,33 @@ def __init__(
-         self.logger = get_dts_logger()
-
-         sut_node = next(n for n in nodes if n.name == config.system_under_test_node)
--        tg_node = next(n for n in nodes if n.name == config.traffic_generator_node)
--
--        topology = Topology.from_port_links(
--            PortLink(sut_node.ports_by_name[link.sut_port], tg_node.ports_by_name[link.tg_port])
--            for link in self.config.port_topology
--        )
-+        if config.port_topology != []:
-+            tg_node = next(n for n in nodes if n.name == config.traffic_generator_node)
-+            topology = Topology.from_port_links(
-+                PortLink(sut_node.ports_by_name[link.sut_port], tg_node.ports_by_name[link.tg_port])
-+                for link in self.config.port_topology
-+            )
-+        else:
-+            tg_node = None
-+            topology = Topology.from_port_links(iter([]))
-
-         dpdk_build_env = DPDKBuildEnvironment(config.dpdk.build, sut_node)
-         dpdk_runtime_env = DPDKRuntimeEnvironment(config.dpdk, sut_node, dpdk_build_env)
-
-         func_traffic_generator = (
-             create_traffic_generator(config.func_traffic_generator, tg_node)
--            if config.func and config.func_traffic_generator
-+            if config.func
-+            and config.func_traffic_generator
-+            and topology.type is not LinkTopology.NO_LINK
-+            and tg_node is not None
-             else None
-         )
-         perf_traffic_generator = (
-             create_traffic_generator(config.perf_traffic_generator, tg_node)
--            if config.perf and config.perf_traffic_generator
-+            if config.perf
-+            and config.perf_traffic_generator
-+            and topology.type is not LinkTopology.NO_LINK
-+            and tg_node is not None
-             else None
-         )
-
-@@ -336,39 +346,40 @@ def description(self) -> str:
-     def next(self) -> State | None:
-         """Process state and return the next one."""
-         test_run = self.test_run
--        init_ctx(test_run.ctx)
-+        ctx = test_run.ctx
-+        init_ctx(ctx)
-
--        self.logger.info(f"Running on SUT node '{test_run.ctx.sut_node.name}'.")
-+        self.logger.info(f"Running on SUT node '{ctx.sut_node.name}'.")
-         test_run.init_random_seed()
-         test_run.remaining_tests = deque(test_run.selected_tests)
-
--        test_run.ctx.sut_node.setup()
--        test_run.ctx.tg_node.setup()
--        test_run.ctx.dpdk.setup()
--        test_run.ctx.topology.setup()
-+        ctx.sut_node.setup()
-+        if ctx.topology.type is not LinkTopology.NO_LINK and ctx.tg_node is not None:
-+            ctx.tg_node.setup()
-+        ctx.dpdk.setup()
-+        ctx.topology.setup()
-
-         if test_run.config.use_virtual_functions:
--            test_run.ctx.topology.instantiate_vf_ports()
--        if test_run.ctx.sut_node.cryptodevs and test_run.config.crypto:
--            test_run.ctx.topology.instantiate_crypto_ports()
--            test_run.ctx.topology.bind_cryptodevs("dpdk")
-+            ctx.topology.instantiate_vf_ports()
-+        if ctx.sut_node.cryptodevs and test_run.config.crypto:
-+            ctx.topology.instantiate_crypto_ports()
-+            ctx.topology.bind_cryptodevs("dpdk")
-
--        test_run.ctx.topology.configure_ports("sut", "dpdk")
--        if test_run.ctx.func_tg:
--            test_run.ctx.func_tg.setup(test_run.ctx.topology)
--        if test_run.ctx.perf_tg:
--            test_run.ctx.perf_tg.setup(test_run.ctx.topology)
-+        ctx.topology.configure_ports("sut", "dpdk")
-+        if ctx.func_tg and ctx.topology.type is not LinkTopology.NO_LINK:
-+            ctx.func_tg.setup(ctx.topology)
-+        if ctx.perf_tg and ctx.topology.type is not LinkTopology.NO_LINK:
-+            ctx.perf_tg.setup(ctx.topology)
-
-         self.result.ports = [
--            port.to_dict()
--            for port in test_run.ctx.topology.sut_ports + test_run.ctx.topology.tg_ports
-+            port.to_dict() for port in ctx.topology.sut_ports + ctx.topology.tg_ports
-         ]
--        self.result.sut_session_info = test_run.ctx.sut_node.node_info
--        self.result.dpdk_build_info = test_run.ctx.dpdk_build.get_dpdk_build_info()
-+        self.result.sut_session_info = ctx.sut_node.node_info
-+        self.result.dpdk_build_info = ctx.dpdk_build.get_dpdk_build_info()
-
-         self.logger.debug(f"Found capabilities to check: {test_run.required_capabilities}")
-         test_run.supported_capabilities = get_supported_capabilities(
--            test_run.ctx.sut_node, test_run.ctx.topology, test_run.required_capabilities
-+            ctx.sut_node, ctx.topology, test_run.required_capabilities
-         )
-         return TestRunExecution(test_run, self.result)
-
-@@ -443,20 +454,22 @@ def description(self) -> str:
-
-     def next(self) -> State | None:
-         """Next state."""
-+        ctx = self.test_run.ctx
-         if self.test_run.config.use_virtual_functions:
--            self.test_run.ctx.topology.delete_vf_ports()
--        if self.test_run.ctx.sut_node.cryptodevs:
--            self.test_run.ctx.topology.delete_crypto_vf_ports()
--
--        self.test_run.ctx.shell_pool.terminate_current_pool()
--        if self.test_run.ctx.func_tg and self.test_run.ctx.func_tg.is_setup:
--            self.test_run.ctx.func_tg.teardown()
--        if self.test_run.ctx.perf_tg and self.test_run.ctx.perf_tg.is_setup:
--            self.test_run.ctx.perf_tg.teardown()
--        self.test_run.ctx.topology.teardown()
--        self.test_run.ctx.dpdk.teardown()
--        self.test_run.ctx.tg_node.teardown()
--        self.test_run.ctx.sut_node.teardown()
-+            ctx.topology.delete_vf_ports()
-+        if ctx.sut_node.cryptodevs:
-+            ctx.topology.delete_crypto_vf_ports()
-+
-+        ctx.shell_pool.terminate_current_pool()
-+        if ctx.func_tg is not None and ctx.func_tg.is_setup:
-+            ctx.func_tg.teardown()
-+        if ctx.perf_tg is not None and ctx.perf_tg.is_setup:
-+            ctx.perf_tg.teardown()
-+        ctx.topology.teardown()
-+        ctx.dpdk.teardown()
-+        if ctx.topology.type is not LinkTopology.NO_LINK and ctx.tg_node is not None:
-+            ctx.tg_node.teardown()
-+        ctx.sut_node.teardown()
-         return None
-
-     def on_error(self, ex: BaseException) -> State | None:
-diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/testbed_model/topology.py
-index 34862c4d2e..1db444fc01 100644
---- a/dts/framework/testbed_model/topology.py
-+++ b/dts/framework/testbed_model/topology.py
-@@ -73,6 +73,8 @@ def from_port_links(cls, port_links: Iterator[PortLink]) -> Self:
-             ConfigurationError: If an unsupported link topology is supplied.
-         """
-         type = LinkTopology.NO_LINK
-+        sut_ports = []
-+        tg_ports = []
-
-         if port_link := next(port_links, None):
-             type = LinkTopology.ONE_LINK
-@@ -103,10 +105,12 @@ def node_and_ports_from_id(self, node_identifier: NodeIdentifier) -> tuple[Node,
-             case "sut":
-                 return ctx.sut_node, self.sut_ports
-             case "tg":
--                return ctx.tg_node, self.tg_ports
--            case _:
--                msg = f"Invalid node `{node_identifier}` given."
-+                if ctx.tg_node is not None:
-+                    return ctx.tg_node, self.tg_ports
-+                msg = "node tg does not exist with current topology."
-                 raise InternalError(msg)
-+        msg = f"Invalid node `{node_identifier}` given."
-+        raise InternalError(msg)
-
-     def get_crypto_vfs(self, num_vfs: int) -> list[Port]:
-         """Retrieve virtual functions from active crypto vfs.
-@@ -139,6 +143,8 @@ def setup(self) -> None:
-
-         Binds all the ports to the right kernel driver to retrieve MAC addresses and logical names.
-         """
-+        if self.type is LinkTopology.NO_LINK:
-+            return
-         self._prepare_devbind_script()
-         self._setup_ports("sut")
-         self._setup_ports("tg")
-@@ -148,6 +154,8 @@ def teardown(self) -> None:
-
-         Restores all the ports to their original drivers before the test run.
-         """
-+        if self.type is LinkTopology.NO_LINK:
-+            return
-         self._restore_ports_original_drivers("sut")
-         self._restore_ports_original_drivers("tg")
-
-@@ -338,7 +346,8 @@ def prepare_node(node: Node) -> None:
-             node.main_session.devbind_script_path = devbind_script_path
-
-         ctx = get_ctx()
--        prepare_node(ctx.tg_node)
-+        if ctx.tg_node:
-+            prepare_node(ctx.tg_node)
-         prepare_node(ctx.sut_node)
-
-     @property
---
-2.54.0
-
+// snip the rest
