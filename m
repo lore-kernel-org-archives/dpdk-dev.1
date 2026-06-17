@@ -2,47 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0C5CD98E4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 10:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B6DCD98E4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 10:40:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D9EE340B95;
-	Wed, 17 Jun 2026 12:31:19 +0200 (CEST)
-Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
- [113.46.200.227])
- by mails.dpdk.org (Postfix) with ESMTP id 67FB240A7A
- for <dev@dpdk.org>; Wed, 17 Jun 2026 12:31:18 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=DRgk7ziEzDw/Dt1y/XE1L5V8eFNab0c52bJ0EQxoVX4=;
- b=SHxxH8uaQy06ODa8vI1Nm2C2i+/GYO67ncFOK2W4Sjg1hMs1KKJHbSpSVGYhEGCoXSLa/P68C
- pnsGDBdfxRqaLfSajwebwzAbIw6J5fZ8juRpGvlS6c+fswiSPuDFYsegLRYgkJzG1u36o3XAWGe
- hxofpfSfp0Ep9x5bvlDOqLc=
-Received: from mail.maildlp.com (unknown [172.19.163.163])
- by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ggKfs16T7znTVR;
- Wed, 17 Jun 2026 18:22:29 +0800 (CST)
-Received: from kwepemo100005.china.huawei.com (unknown [7.202.195.212])
- by mail.maildlp.com (Postfix) with ESMTPS id F2201405D1;
- Wed, 17 Jun 2026 18:31:16 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemo100005.china.huawei.com (7.202.195.212) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 17 Jun 2026 18:31:16 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <thomas@monjalon.net>
-CC: <mb@smartsharesystems.com>, <andrew.rybchenko@oktetlabs.ru>,
- <dev@dpdk.org>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>
-Subject: [PATCH v1 5/5] test: use new lcore role enum names
-Date: Wed, 17 Jun 2026 18:28:34 +0800
-Message-ID: <20260617102834.2343356-6-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20260617102834.2343356-1-lihuisong@huawei.com>
-References: <20260617102834.2343356-1-lihuisong@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E9D1E40289;
+	Wed, 17 Jun 2026 12:40:31 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id B60084027A
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 12:40:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1781692830; x=1813228830;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=KICULBLzr0VJVdbIAFrvVMrtnaYJf63FdHSIb6q1oaI=;
+ b=h0H4MoWc43U+8KUubIIhcCmKLfgFju04K5y5sMx+yrzt1pZfUO8HJNmu
+ rHNaiCysFtoIyrPe8V2fuzCyh1/xH41svvgfQPdxO9akN0P+b4yoFKhq/
+ B2p3FSd/8n8p5HGDLmuScosJ1N7XUon0osyTBWH/l8/Y2hA4ZPkGwa/zZ
+ m5R0PQmq4Lkl1WUg/sq9VCjLfQGL+9lx1Ld0H9jNXJ93hyJXnhCFKPTNz
+ pbZI6t293pIUanu/cv40VAP4uQZ66zZQ/Ysldo6+OPtnP28CA0Ugtn8GE
+ pUAMFKHFb3ik5OFWz7DRHQlCMGrSa4uaYCSuBabIge7kEOPL+Y4F0TMfP Q==;
+X-CSE-ConnectionGUID: BSKRSqlkRe+YsYe9ARuNyA==
+X-CSE-MsgGUID: 6fvupElURPegTpdmV4JUnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11819"; a="93146599"
+X-IronPort-AV: E=Sophos;i="6.24,209,1774335600"; d="scan'208";a="93146599"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Jun 2026 03:40:29 -0700
+X-CSE-ConnectionGUID: bJWMkmOjQbyjeRDo8e+6Zw==
+X-CSE-MsgGUID: NyjsSrn/REu1nmzB/oYkVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,209,1774335600"; d="scan'208";a="286146772"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa001.jf.intel.com with ESMTP; 17 Jun 2026 03:40:27 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v1 1/1] net/i40e: do not reject RSS types parameter
+Date: Wed, 17 Jun 2026 11:40:26 +0100
+Message-ID: <7f6f11fb07bc550784335123af6a270cd514f7d7.1781692817.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.90.31.46]
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemo100005.china.huawei.com (7.202.195.212)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,41 +57,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace old lcore role enum names with new RTE_LCORE_ prefixed names
-in test applications.
+After the recent refactor, global RSS configuration started rejecting the
+RSS types parameter because it was not used for anything.
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
+However, because testpmd will specify RSS types by default if omitted from
+the flow command (i.e. `actions rss queues 0 1 end` vs `actions rss queues
+0 1 end types end`), RSS action based flows that are created without
+mentioning RSS types will still have RSS types as non-zero, causing flow
+creation failures not directly related to the pattern.
+
+Fix it by printing a warning but allowing spurious RSS types as opposed to
+rejecting it outright.
+
+Fixes: 0185303c2e24 ("net/i40e: refactor RSS flow parameter checks")
+
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- app/test/test_lcores.c  | 2 +-
- app/test/test_mempool.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/intel/i40e/i40e_hash.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/app/test/test_lcores.c b/app/test/test_lcores.c
-index 13842615d5..60354b3f7f 100644
---- a/app/test/test_lcores.c
-+++ b/app/test/test_lcores.c
-@@ -396,7 +396,7 @@ test_lcores(void)
- 	unsigned int i;
+diff --git a/drivers/net/intel/i40e/i40e_hash.c b/drivers/net/intel/i40e/i40e_hash.c
+index 8b80d0a91c..5a6543a9ec 100644
+--- a/drivers/net/intel/i40e/i40e_hash.c
++++ b/drivers/net/intel/i40e/i40e_hash.c
+@@ -1089,12 +1089,18 @@ i40e_hash_validate_rss_common(const struct rte_flow_action_rss *rss_act,
+ 				"Symmetric hash function not supported without specific patterns");
+ 	}
  
- 	for (i = 0; i < RTE_MAX_LCORE; i++) {
--		if (!rte_lcore_has_role(i, ROLE_OFF))
-+		if (!rte_lcore_has_role(i, RTE_LCORE_ROLE_OFF))
- 			eal_threads_count++;
- 	}
- 	if (eal_threads_count == 0) {
-diff --git a/app/test/test_mempool.c b/app/test/test_mempool.c
-index e54249ce61..38f0b6e712 100644
---- a/app/test/test_mempool.c
-+++ b/app/test/test_mempool.c
-@@ -353,7 +353,7 @@ test_mempool_sp_sc(void)
- 		ret = -1;
- 		goto err;
- 	}
--	if (rte_eal_lcore_role(lcore_next) != ROLE_RTE) {
-+	if (rte_eal_lcore_role(lcore_next) != RTE_LCORE_ROLE_RTE) {
- 		ret = -1;
- 		goto err;
- 	}
+-	/* hash types are not supported for global RSS configuration */
+-	if (rss_act->types != 0) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS types not supported without a pattern");
+-	}
++	/*
++	 * When RSS types is not specified in testpmd, it will set up a default
++	 * RSS types value for the flow. Even though no hash engine part calling
++	 * this particular function will use RSS types parameter for anything,
++	 * we cannot reject having it because it is extra effort for testpmd
++	 * user to avoid specifying it.
++	 *
++	 * So, instead, accept types value even though we are not using it for
++	 * anything, but produce a warning for the user.
++	 */
++	if (rss_act->types != 0)
++		PMD_DRV_LOG(WARNING, "RSS types specified but will not be used");
+ 
+ 	/* check RSS key length if it is specified */
+ 	if (rss_act->key_len != 0 && rss_act->key_len != I40E_RSS_KEY_LEN) {
 -- 
-2.33.0
+2.47.3
 
