@@ -2,57 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C0FCD98D2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 00:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC94CD98D2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 00:07:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B22E40DD2;
-	Wed, 17 Jun 2026 02:07:27 +0200 (CEST)
-Received: from mail-qk1-f202.google.com (mail-qk1-f202.google.com
- [209.85.222.202])
- by mails.dpdk.org (Postfix) with ESMTP id D67A240A84
- for <dev@dpdk.org>; Wed, 17 Jun 2026 02:07:22 +0200 (CEST)
-Received: by mail-qk1-f202.google.com with SMTP id
- af79cd13be357-91579011fd1so764302085a.1
- for <dev@dpdk.org>; Tue, 16 Jun 2026 17:07:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CFC2440DF6;
+	Wed, 17 Jun 2026 02:07:28 +0200 (CEST)
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com
+ [209.85.128.201])
+ by mails.dpdk.org (Postfix) with ESMTP id CC60440B94
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 02:07:23 +0200 (CEST)
+Received: by mail-yw1-f201.google.com with SMTP id
+ 00721157ae682-7e9bb6a1ca4so80467517b3.1
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 17:07:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1781654842; x=1782259642; darn=dpdk.org;
+ d=google.com; s=20251104; t=1781654843; x=1782259643; darn=dpdk.org;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=AlfjLX4bfd9CKa1yQYM7nKoR8F0en8bk01lhKQ1A78s=;
- b=uJXC5xywDXMaAk6MHBXEiYtlHe/1+Na5Rh0+I21jjWy8F4g10q0a5Ym+ACk6bdUblR
- qlColEkp4G5Fu6NHZXOGK6fqxPoef8jpin1ce4pVx9svhFiDdYtQ99fAHTWMUVXeCD9r
- Q6YOYZ+iZbdyLA5MBtbNu96NdiOxTAipPCGytqWdhjuhWylphCZqqtQAtIBREwyhQnJR
- PxqgJj9bQdgTFBg0G7MzIDW62Sz/WOTYnck8vFCXX9ApqJCFfimoTeZn/WoosX9jZ7sY
- R9FQiW9tBppkmZNghRHLnj/3g+O2uiaFHWieCpOdtWnRFVizYWkmZpvnkBFwSGWRrhbv
- u1FQ==
+ bh=PftHDBsSZNun6pabdUr3HYzHWO83E5n5UQL9IcYpNfw=;
+ b=cfL+J9IC7Q/D9jxWVV6EHIw3k5WnCX+yWx1S/7I41VF4P4lXHA1waKqYEzVhUZYPpC
+ 5FP4PgLD4xO5i3vFZDnSIGIZEJ8edaHjpJTvgFeypoUE+MhJBGVcEh4KrKg8usVmQ/Go
+ tZeHRvKJqYgwzNKQzV5UPlyVe57gMNku6hsQNVYNO4rsliJgJmEQtdUbwJ66zHOkP5mm
+ QqyefTgP5e9u/uej6BwrD31cJA6fajFIWJQmfGHJ8FKsIXpjusf+KEpyO/A5giMuDOjQ
+ fCzlPIEhCpyqgwDEZ3mcKRgC869VGlIQt/Zsb8VHcZD6mLvjP4yYTWhohr3Ktm0SY7jr
+ kGKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781654842; x=1782259642;
+ d=1e100.net; s=20251104; t=1781654843; x=1782259643;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=AlfjLX4bfd9CKa1yQYM7nKoR8F0en8bk01lhKQ1A78s=;
- b=rVR993N5J75IDCBv7YDn+/Vc2e8pHesglG2I6KBUWFu9PemBuoJJn+B1aifZS4xJsS
- +nDJC+Cw5GvV7tHSxS9B/4AjDK2+yRaHLlR21y1ziXWZwJzZe7w/y4iavlnR1fQ1MvkE
- RTrd1m9ZxDNlUv7Zvs8hnurVwd4j/n6W6LgkDtnYwCncdTT7Iui+gnYFnU5IUPJwuSA3
- LBa9ljvQZpAxE6XE2pTcUBZSY720jIh+ur+etkQoZA4Z7XVu5oY2Pw3DtOHKkZMQD7Gu
- kWX5nRnn8x/SebOdQOuJi4SwAr6Sc0AN7lbkcUjIvbAjIClroFohMiD4dNxNJCmvXk9B
- d0eA==
-X-Gm-Message-State: AOJu0YxSyX50OuEd+DykP2T3NydnTLwirrVzauAgWJ/KCbiDlWmNd89j
- SGJabFbKdWlVMh3yeYZfWtsqY757oHvMZa4OErYxu9eU2Fyc97Cir3vZRn4u5H9MWcU/cRO2nG8
- 9BcPU4Q==
-X-Received: from qknsn22.prod.google.com
- ([2002:a05:620a:9496:b0:915:7fe4:76cb])
+ bh=PftHDBsSZNun6pabdUr3HYzHWO83E5n5UQL9IcYpNfw=;
+ b=WLB9GxjS+CUPScyKcNi0B0gRRAQvnmGJQ9VybQuZYPBVP4WRKTgGjxg9d/DVsGU4xK
+ ZWKI6zkMGpvU2XFL0a/nnaRywrX+DCiRksuB7jmQ0rdFU2CxGcpweC3oYxIM/qk29gqB
+ BgwYzg5XyGtEhRBdUw/YmCa5hFyO/uQbXpvCalw+JefN0joa42118ZZzQN8isBELbDw2
+ y0d8T67k4pBE8mXtEW6Eyijmj29RVosPd1p+gp6jVjjgtvixc5ZYGLINRO5RtugpD5RS
+ 7eFsyBW/vY1WpfPjQN7DKASYj6LgVZXpjKCexLnODWIJjvkwDd6IqO5Aaw2ngR07MKAv
+ DE1w==
+X-Gm-Message-State: AOJu0YxNYtnyqijcjZWZV2dBQ9AvKIToVqpecqJ1m0rpK7TCXU72pnZc
+ HxWb5lhMCSXhDCkr4tVie8R6jobRqe2+rACQ/U3uLy46XPxbkBgd+H6ZvsCVnrSu6m63jfy9szx
+ A7z0o2Q==
+X-Received: from ywdo11.prod.google.com ([2002:a05:690c:e4eb:b0:7dd:7dca:4469])
  (user=blasko job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:620a:2626:b0:914:c226:ecce
- with SMTP id af79cd13be357-91d8856da59mr332973985a.9.1781654841833; Tue, 16
- Jun 2026 17:07:21 -0700 (PDT)
-Date: Wed, 17 Jun 2026 00:07:09 +0000
+ 2002:a05:690c:6087:b0:7e8:e31d:9d98
+ with SMTP id 00721157ae682-7fe5d5a42a5mr12277657b3.25.1781654842865; Tue, 16
+ Jun 2026 17:07:22 -0700 (PDT)
+Date: Wed, 17 Jun 2026 00:07:10 +0000
 In-Reply-To: <20260617000712.2195506-1-blasko@google.com>
 Mime-Version: 1.0
 References: <20260613042300.3760470-1-blasko@google.com>
  <20260617000712.2195506-1-blasko@google.com>
 X-Mailer: git-send-email 2.54.0.1189.g8c84645362-goog
-Message-ID: <20260617000712.2195506-6-blasko@google.com>
-Subject: [PATCH v5 5/6] net/gve: support read clock ethdev op
+Message-ID: <20260617000712.2195506-7-blasko@google.com>
+Subject: [PATCH v5 6/6] net/gve: reconstruct HW timestamps from DQO
 From: Mark Blasko <blasko@google.com>
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org, joshwash@google.com, jtranoleary@google.com, 
@@ -71,166 +70,286 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement the read_clock operation in eth_dev_ops. The function calls
-the AdminQ command to fetch the current NIC timestamp synchronously,
-updates the cached timestamp used for reconstruction, and returns the
-full 64-bit value.
+A full 64-bit NIC timestamp is periodically synced via an AdminQ
+command and cached in the driver. In the RX datapath, this cached
+value is used as a base to expand the 32-bit hardware timestamp into
+a full 64-bit value, which is then stored in the mbuf's dynamic
+timestamp field.
 
 Signed-off-by: Mark Blasko <blasko@google.com>
 Reviewed-by: Joshua Washington <joshwash@google.com>
 Reviewed-by: Jasper Tran O'Leary <jtranoleary@google.com>
 ---
 v4:
-    - Fix mutex initialization order: initialize nic_ts_lock before
-      calling gve_init_priv() (which invokes early setup-time read).
-    - Fix mutex teardown order: destroy nic_ts_lock only after the
-      background sync thread has been joined and stopped.
-
-v3:
-    - Add mutex lock to protect shared NIC timestamp memzone access.
-    - Fix missing read_clock assignment to DQO queue ops table
-      (accidental omission in v2).
+    - Clarify in GVE documentation that both read_clock ethdev op and
+      per-packet RX timestamp offloading require the DQO queue format.
 
 v2:
-    - Scoped read_clock ethdev operation strictly to DQO queues.
+    - Scoped timestamp offload capability advertisement strictly
+      to DQO queues.
+    - Predicated capability advertisement directly on memzone
+      allocation.
+    - Initialized mbuf_timestamp_offset to -1.
+    - Added blank line separating release notes.
 ---
- drivers/net/gve/gve_ethdev.c | 57 +++++++++++++++++++++++++++++++-----
- drivers/net/gve/gve_ethdev.h |  1 +
- 2 files changed, 50 insertions(+), 8 deletions(-)
+ doc/guides/nics/features/gve.ini       |  1 +
+ doc/guides/nics/gve.rst                | 20 ++++++++++++++++++++
+ doc/guides/rel_notes/release_26_07.rst |  4 ++++
+ drivers/net/gve/base/gve_desc_dqo.h    |  8 ++++++--
+ drivers/net/gve/gve_ethdev.c           | 15 ++++++++++++++-
+ drivers/net/gve/gve_ethdev.h           | 25 +++++++++++++++++++++++++
+ drivers/net/gve/gve_rx_dqo.c           | 26 ++++++++++++++++++++++++++
+ 7 files changed, 96 insertions(+), 3 deletions(-)
 
+diff --git a/doc/guides/nics/features/gve.ini b/doc/guides/nics/features/gve.ini
+index 89c97fd27a..117ad4fc65 100644
+--- a/doc/guides/nics/features/gve.ini
++++ b/doc/guides/nics/features/gve.ini
+@@ -13,6 +13,7 @@ RSS hash             = Y
+ RSS key update       = Y
+ RSS reta update      = Y
+ L4 checksum offload  = Y
++Timestamp offload    = Y
+ Basic stats          = Y
+ FreeBSD              = Y
+ Linux                = Y
+diff --git a/doc/guides/nics/gve.rst b/doc/guides/nics/gve.rst
+index be855b645d..b73375c5c9 100644
+--- a/doc/guides/nics/gve.rst
++++ b/doc/guides/nics/gve.rst
+@@ -72,6 +72,7 @@ Supported features of the GVE PMD are:
+ - Tx UDP/TCP/SCTP Checksum
+ - RSS hash configuration
+ - RSS redirection table query and update
++- Timestamp offload
+ 
+ Currently, only GQI_QPL and GQI_RDA queue format are supported in PMD.
+ Jumbo Frame is not supported in PMD for now.
+@@ -132,6 +133,25 @@ Security Protocols
+ - Flow priorities are not supported (must be 0).
+ - Masking is limited to full matches i.e. ``0x00...0`` or ``0xFF...F``.
+ 
++Timestamp Offload
++^^^^^^^^^^^^^^^^^
++
++The driver supports hardware-based packet timestamping on supported
++devices via the standard ``RTE_ETH_RX_OFFLOAD_TIMESTAMP`` offload capability.
++Both the ethdev ``.read_clock`` operation and per-packet RX timestamp offloading
++require the DQO queue format.
++
++**Limitations**
++
++- If the driver fails to fetch the NIC hardware clock for 7 consecutive periods,
++  the cached timestamp is marked as stale,
++  and the reconstructed timestamps are no longer propagated to the mbuf.
++- The timestamp reconstruction is only accurate
++  if the time between a packet's reception
++  and the last hardware clock sync is less than approximately 2 seconds.
++  The driver's internal clock sync period is set to respect this limitation.
++
++
+ Device Reset
+ ^^^^^^^^^^^^
+ 
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index 2e449d3ee8..73c9a36007 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -91,6 +91,10 @@ New Features
+ 
+   Added network driver for the LinkData network adapters.
+ 
++* **Updated Google GVE net driver.**
++
++  * Added hardware timestamping support on DQO queues.
++
+ * **Updated Intel iavf driver.**
+ 
+   * Added support for transmitting LLDP packets based on mbuf packet type.
+diff --git a/drivers/net/gve/base/gve_desc_dqo.h b/drivers/net/gve/base/gve_desc_dqo.h
+index 71d9d60bb9..c1534959c2 100644
+--- a/drivers/net/gve/base/gve_desc_dqo.h
++++ b/drivers/net/gve/base/gve_desc_dqo.h
+@@ -226,7 +226,8 @@ struct gve_rx_compl_desc_dqo {
+ 
+ 	u8 status_error1;
+ 
+-	__le16 reserved5;
++	u8 reserved5;
++	u8 ts_sub_nsecs_low;
+ 	__le16 buf_id; /* Buffer ID which was sent on the buffer queue. */
+ 
+ 	union {
+@@ -237,9 +238,12 @@ struct gve_rx_compl_desc_dqo {
+ 	};
+ 	__le32 hash;
+ 	__le32 reserved6;
+-	__le64 reserved7;
++	__le32 reserved7;
++	__le32 ts; /* timestamp in nanosecs */
+ } __packed;
+ 
++#define GVE_DQO_RX_HWTSTAMP_VALID 0x1
++
+ GVE_CHECK_STRUCT_LEN(32, gve_rx_compl_desc_dqo);
+ 
+ /* Ringing the doorbell too often can hurt performance.
 diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index fa91575b3e..111f66efa8 100644
+index 111f66efa8..0b02dcb3ad 100644
 --- a/drivers/net/gve/gve_ethdev.c
 +++ b/drivers/net/gve/gve_ethdev.c
-@@ -463,11 +463,13 @@ gve_read_nic_clock(void *arg)
- 	if (!priv || !priv->nic_ts_report_mz)
- 		return;
- 
-+	pthread_mutex_lock(&priv->nic_ts_lock);
- 	memset(priv->nic_ts_report, 0, sizeof(struct gve_nic_ts_report));
- 
- 	err = gve_adminq_report_nic_timestamp(priv, priv->nic_ts_report_mz->iova);
- 	if (err == 0) {
- 		ts = be64_to_cpu(priv->nic_ts_report->nic_timestamp);
-+		pthread_mutex_unlock(&priv->nic_ts_lock);
- 		rte_atomic_store_explicit(&priv->last_read_nic_timestamp, ts,
- 					  rte_memory_order_relaxed);
- 		PMD_DRV_LOG(DEBUG, "Fetched NIC Timestamp: %" PRIu64, ts);
-@@ -476,6 +478,7 @@ gve_read_nic_clock(void *arg)
- 		rte_atomic_store_explicit(&priv->nic_ts_stale, 0,
- 					  rte_memory_order_release);
- 	} else {
-+		pthread_mutex_unlock(&priv->nic_ts_lock);
- 		PMD_DRV_LOG(ERR, "Failed to read NIC clock, AQ err: %d", err);
- 		fails = rte_atomic_fetch_add_explicit(&priv->nic_ts_read_fails, 1,
- 						      rte_memory_order_relaxed) + 1;
-@@ -705,12 +708,13 @@ gve_dev_close(struct rte_eth_dev *dev)
- 	if (gve_get_flow_subsystem_ok(priv))
- 		gve_teardown_flow_subsystem(priv);
- 
--	pthread_mutex_destroy(&priv->flow_rule_lock);
--
- 	gve_free_queues(dev);
- 	gve_teardown_device_resources(priv);
- 	gve_adminq_free(priv);
- 
-+	pthread_mutex_destroy(&priv->flow_rule_lock);
-+	pthread_mutex_destroy(&priv->nic_ts_lock);
-+
- 	dev->data->mac_addrs = NULL;
- 
- 	return err;
-@@ -1278,6 +1282,38 @@ gve_flow_ops_get(struct rte_eth_dev *dev, const struct rte_flow_ops **ops)
- 	return 0;
- }
- 
-+static int
-+gve_read_clock(struct rte_eth_dev *dev, uint64_t *clock)
-+{
-+	struct gve_priv *priv = dev->data->dev_private;
-+	uint64_t ts;
+@@ -214,6 +214,7 @@ static int
+ gve_dev_configure(struct rte_eth_dev *dev)
+ {
+ 	struct gve_priv *priv = dev->data->dev_private;
 +	int err;
-+
-+	if (!priv->nic_timestamp_supported)
-+		return -EOPNOTSUPP;
-+
-+	if (!priv->nic_ts_report_mz)
-+		return -EIO;
-+
-+	pthread_mutex_lock(&priv->nic_ts_lock);
-+	err = gve_adminq_report_nic_timestamp(priv, priv->nic_ts_report_mz->iova);
-+	if (err != 0) {
-+		pthread_mutex_unlock(&priv->nic_ts_lock);
-+		return err;
+ 
+ 	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG) {
+ 		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+@@ -223,13 +224,22 @@ gve_dev_configure(struct rte_eth_dev *dev)
+ 	if (dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO)
+ 		priv->enable_rsc = 1;
+ 
++	if (dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
++		err = rte_mbuf_dyn_rx_timestamp_register(&priv->mbuf_timestamp_offset,
++							 &priv->mbuf_timestamp_mask);
++		if (err < 0) {
++			PMD_DRV_LOG(ERR, "Failed to register dynamic timestamp field");
++			return err;
++		}
 +	}
 +
-+	ts = be64_to_cpu(priv->nic_ts_report->nic_timestamp);
-+	pthread_mutex_unlock(&priv->nic_ts_lock);
-+	*clock = ts;
-+
-+	/* Update the cached value */
-+	rte_atomic_store_explicit(&priv->last_read_nic_timestamp, ts, rte_memory_order_relaxed);
-+	rte_atomic_store_explicit(&priv->nic_ts_read_fails, 0, rte_memory_order_relaxed);
-+	rte_atomic_store_explicit(&priv->nic_ts_stale, 0, rte_memory_order_release);
-+
-+	return 0;
-+}
-+
- static const struct eth_dev_ops gve_eth_dev_ops = {
- 	.dev_configure        = gve_dev_configure,
- 	.dev_start            = gve_dev_start,
-@@ -1332,6 +1368,7 @@ static const struct eth_dev_ops gve_eth_dev_ops_dqo = {
- 	.rss_hash_conf_get    = gve_rss_hash_conf_get,
- 	.reta_update          = gve_rss_reta_update,
- 	.reta_query           = gve_rss_reta_query,
-+	.read_clock           = gve_read_clock,
- };
+ 	/* Reset RSS RETA in case number of queues changed. */
+ 	if (priv->rss_config.indir) {
+ 		struct gve_rss_config update_reta_config;
+ 		gve_init_rss_config_from_priv(priv, &update_reta_config);
+ 		gve_generate_rss_reta(dev, &update_reta_config);
  
- static int
-@@ -1640,9 +1677,18 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
- 	priv->max_nb_txq = max_tx_queues;
- 	priv->max_nb_rxq = max_rx_queues;
+-		int err = gve_adminq_configure_rss(priv, &update_reta_config);
++		err = gve_adminq_configure_rss(priv, &update_reta_config);
+ 		if (err)
+ 			PMD_DRV_LOG(ERR,
+ 				"Could not reconfigure RSS redirection table.");
+@@ -828,6 +838,8 @@ gve_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
  
-+	pthread_mutexattr_init(&mutexattr);
-+	pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);
-+	pthread_mutex_init(&priv->flow_rule_lock, &mutexattr);
-+	pthread_mutex_init(&priv->nic_ts_lock, &mutexattr);
-+	pthread_mutexattr_destroy(&mutexattr);
-+
+ 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_RSS_HASH;
++	if (!gve_is_gqi(priv) && priv->nic_ts_report_mz)
++		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+ 	dev_info->tx_offload_capa =
+ 		RTE_ETH_TX_OFFLOAD_MULTI_SEGS	|
+ 		RTE_ETH_TX_OFFLOAD_UDP_CKSUM	|
+@@ -1683,6 +1695,7 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
+ 	pthread_mutex_init(&priv->nic_ts_lock, &mutexattr);
+ 	pthread_mutexattr_destroy(&mutexattr);
+ 
++	priv->mbuf_timestamp_offset = -1;
  	err = gve_init_priv(priv, false);
--	if (err)
-+	if (err) {
-+		pthread_mutex_destroy(&priv->flow_rule_lock);
-+		pthread_mutex_destroy(&priv->nic_ts_lock);
- 		return err;
-+	}
- 
- 	if (gve_is_gqi(priv)) {
- 		eth_dev->dev_ops = &gve_eth_dev_ops;
-@@ -1656,11 +1702,6 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
- 
- 	eth_dev->data->mac_addrs = &priv->dev_addr;
- 
--	pthread_mutexattr_init(&mutexattr);
--	pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);
--	pthread_mutex_init(&priv->flow_rule_lock, &mutexattr);
--	pthread_mutexattr_destroy(&mutexattr);
--
- 	return 0;
- }
- 
+ 	if (err) {
+ 		pthread_mutex_destroy(&priv->flow_rule_lock);
 diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index 4dcbaa9971..1e80f3a906 100644
+index 1e80f3a906..4a7e5ecdf3 100644
 --- a/drivers/net/gve/gve_ethdev.h
 +++ b/drivers/net/gve/gve_ethdev.h
-@@ -366,6 +366,7 @@ struct gve_priv {
- 	bool nic_timestamp_supported;
- 	const struct rte_memzone *nic_ts_report_mz;
- 	struct gve_nic_ts_report *nic_ts_report;
-+	pthread_mutex_t nic_ts_lock;
- 	RTE_ATOMIC(uint64_t) last_read_nic_timestamp;
- 	RTE_ATOMIC(uint32_t) nic_ts_read_fails;
+@@ -261,6 +261,7 @@ struct gve_rx_queue {
+ 	struct rte_mbuf **refill_bufs;
+ 
+ 	uint8_t is_gqi_qpl;
++	bool timestamp_enabled;
+ };
+ 
+ struct gve_flow {
+@@ -372,8 +373,32 @@ struct gve_priv {
  	RTE_ATOMIC(uint8_t) nic_ts_stale;
+ 	rte_thread_t nic_ts_thread_id;
+ 	RTE_ATOMIC(uint8_t) nic_ts_thread_should_stop;
++
++	int mbuf_timestamp_offset;
++	uint64_t mbuf_timestamp_mask;
+ };
+ 
++/* Expand the hardware timestamp to the full 64 bits of width.
++ *
++ * This algorithm works by using the passed hardware timestamp to generate a
++ * diff relative to the last read of the nic clock. This diff can be positive or
++ * negative, as it is possible that we have read the clock more recently than
++ * the hardware has received this packet. To detect this, we use the high bit of
++ * the diff, and assume that the read is more recent if the high bit is set. In
++ * this case we invert the process.
++ *
++ * Note that this means if the time delta between packet reception and the last
++ * clock read is greater than ~2 seconds, this will provide invalid results.
++ */
++static inline uint64_t
++gve_reconstruct_ts(uint64_t last_sync, uint32_t ts)
++{
++	uint32_t low = (uint32_t)last_sync;
++	int32_t diff = (int32_t)(ts - low);
++
++	return last_sync + diff;
++}
++
+ static inline bool
+ gve_is_gqi(struct gve_priv *priv)
+ {
+diff --git a/drivers/net/gve/gve_rx_dqo.c b/drivers/net/gve/gve_rx_dqo.c
+index 8035aee572..cc343f3fd8 100644
+--- a/drivers/net/gve/gve_rx_dqo.c
++++ b/drivers/net/gve/gve_rx_dqo.c
+@@ -160,6 +160,8 @@ gve_rx_burst_dqo(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ {
+ 	volatile struct gve_rx_compl_desc_dqo *rx_desc;
+ 	struct gve_rx_queue *rxq;
++	uint64_t last_sync = 0;
++	struct gve_priv *priv;
+ 	struct rte_mbuf *rxm;
+ 	uint16_t rx_buf_id;
+ 	uint16_t pkt_len;
+@@ -171,6 +173,15 @@ gve_rx_burst_dqo(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 	nb_rx = 0;
+ 	rxq = rx_queue;
+ 	rx_id = rxq->rx_tail;
++	priv = rxq->hw;
++
++	if (rxq->timestamp_enabled &&
++	    !rte_atomic_load_explicit(&priv->nic_ts_stale,
++				      rte_memory_order_acquire)) {
++		last_sync =
++			rte_atomic_load_explicit(&priv->last_read_nic_timestamp,
++						 rte_memory_order_relaxed);
++	}
+ 
+ 	while (nb_rx < nb_pkts) {
+ 		rx_desc = &rxq->compl_ring[rx_id];
+@@ -208,6 +219,16 @@ gve_rx_burst_dqo(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 		gve_parse_csum_ol_flags(rxm, rx_desc);
+ 		rxm->hash.rss = rte_le_to_cpu_32(rx_desc->hash);
+ 
++		if (last_sync != 0 &&
++		    (rx_desc->ts_sub_nsecs_low & GVE_DQO_RX_HWTSTAMP_VALID) &&
++		    priv->mbuf_timestamp_offset >= 0) {
++			uint32_t ts = rte_le_to_cpu_32(rx_desc->ts);
++			uint64_t full_ts = gve_reconstruct_ts(last_sync, ts);
++
++			*RTE_MBUF_DYNFIELD(rxm, priv->mbuf_timestamp_offset, uint64_t *) = full_ts;
++			rxm->ol_flags |= priv->mbuf_timestamp_mask;
++		}
++
+ 		rx_pkts[nb_rx++] = rxm;
+ 		bytes += pkt_len;
+ 	}
+@@ -320,6 +341,11 @@ gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
+ 		return -ENOMEM;
+ 	}
+ 
++	/* Setup hardware timestamping if enabled */
++	if ((conf->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) ||
++	    (dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP))
++		rxq->timestamp_enabled = true;
++
+ 	/* check free_thresh here */
+ 	free_thresh = conf->rx_free_thresh ?
+ 			conf->rx_free_thresh : GVE_DEFAULT_RX_FREE_THRESH;
 -- 
 2.54.0.1189.g8c84645362-goog
 
