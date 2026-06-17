@@ -2,48 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0191CD98E2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 19:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8B1CD98E2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 19:45:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20CEF402D0;
-	Wed, 17 Jun 2026 21:35:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C3DEF40276;
+	Wed, 17 Jun 2026 21:45:51 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 37EDD40276
- for <dev@dpdk.org>; Wed, 17 Jun 2026 21:35:06 +0200 (CEST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 047D040268
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 21:45:50 +0200 (CEST)
 Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4ggYvz117kzJ467Y;
- Thu, 18 Jun 2026 03:34:39 +0800 (CST)
-Received: from frapema500002.china.huawei.com (unknown [7.182.19.148])
- by mail.maildlp.com (Postfix) with ESMTPS id A1A0C40570;
- Thu, 18 Jun 2026 03:35:04 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500002.china.huawei.com (7.182.19.148) with Microsoft SMTP Server
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4ggZ8M5Px9zJ467Y
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 03:45:23 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id 47B9B40570
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 03:45:49 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Jun 2026 21:35:04 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Wed, 17 Jun 2026 21:35:04 +0200
+ 15.2.1544.11; Wed, 17 Jun 2026 21:45:48 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Wathsala Vithanage <wathsala.vithanage@arm.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>
-Subject: RE: [PATCH 4/4] bpf/arm64: add BPF_ABS/BPF_IND packet load support
-Thread-Topic: [PATCH 4/4] bpf/arm64: add BPF_ABS/BPF_IND packet load support
-Thread-Index: AQHc94YUU1XjLCE+P0629UQkL+sFk7ZDHOrg
-Date: Wed, 17 Jun 2026 19:35:04 +0000
-Message-ID: <5d3ac533de2f4e1fbb43f983a408fb23@huawei.com>
-References: <20260608203322.1116296-1-stephen@networkplumber.org>
- <20260608203322.1116296-5-stephen@networkplumber.org>
-In-Reply-To: <20260608203322.1116296-5-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.72.97]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+To: 
+CC: <dev@dpdk.org>
+Subject: [PATCH v6 00/11] bpf: introduce extensible load API
+Date: Wed, 17 Jun 2026 20:44:12 +0100
+Message-ID: <20260617194425.12690-1-marat.khalili@huawei.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260612084219.38399-1-marat.khalili@huawei.com>
+References: <20260612084219.38399-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapema100003.china.huawei.com (7.182.19.100) To
+ frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,107 +48,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thank you for doing this. I suggest comparing against the previous effort b=
-y Christophe Fontaine though.
+This patchset introduces an extensible load API for the BPF library in
+DPDK, addressing current limitations regarding ABI stability and feature
+constraints.
 
-Couple of comments inline, superficially looks correct otherwise.
+Currently, `rte_bpf_load` relies on a fixed `struct rte_bpf_prm`, which
+makes it difficult to add new loading options or parameters without
+breaking the ABI.
 
-> +/*
-> + * Helper for emit_ld_mbuf(): fast path.
-> + * Compute the packet offset; if it lies inside the first segment leave =
-the
-> + * data pointer in R0, otherwise branch to the slow path.
-> + */
-> +static void
-> +emit_ldmb_fast_path(struct a64_jit_ctx *ctx, uint8_t src, uint8_t mode,
-> +		    uint32_t sz, int32_t imm, const uint32_t ofs[LDMB_OFS_NUM])
-> +{
-> +	uint8_t r0 =3D ebpf_to_a64_reg(ctx, EBPF_REG_0);
-> +	uint8_t r6 =3D ebpf_to_a64_reg(ctx, EBPF_REG_6);
-> +	uint8_t tmp1 =3D ebpf_to_a64_reg(ctx, TMP_REG_1);
-> +	uint8_t tmp2 =3D ebpf_to_a64_reg(ctx, TMP_REG_2);
-> +	uint8_t tmp3 =3D ebpf_to_a64_reg(ctx, TMP_REG_3);
-> +
-> +	/* off =3D imm (+ src for BPF_IND) */
-> +	emit_mov_imm(ctx, 1, tmp1, imm);
-> +	if (mode =3D=3D BPF_IND)
-> +		emit_add(ctx, 1, tmp1, src);
-> +
-> +	/* if ((int64_t)(mbuf->data_len - off) < sz) goto slow_path */
-> +	emit_mov_imm(ctx, 1, tmp2, offsetof(struct rte_mbuf, data_len));
-> +	emit_ldr(ctx, BPF_H, tmp2, r6, tmp2);
-> +	emit_sub(ctx, 1, tmp2, tmp1);
-> +	emit_mov_imm(ctx, 1, tmp3, sz);
-> +	emit_cmp(ctx, 1, tmp2, tmp3);
-> +	emit_b_cond(ctx, A64_LT, (int32_t)(ofs[LDMB_SLOW_OFS] - ctx->idx));
+To resolve these issues, this series introduces `rte_bpf_load_ex` taking
+`struct rte_bpf_prm_ex`. The new parameter structure includes a `sz`
+field for backward compatibility, allowing future extensions.
 
-Are we checking that (int64_t)off >=3D 0 anywhere?
+Taking advantage of the new extensible API, this patchset also adds
+several new features:
+* Support for loading and executing BPF programs with up to 5 arguments.
+* Support for loading classic BPF (cBPF) directly.
+* Support for loading ELF files directly from memory buffers.
+* New API functions (`rte_bpf_eth_rx_install` and `rte_bpf_eth_tx_install`)
+  to install an already loaded BPF program as a port callback, decoupling
+  the loading phase from the installation phase.
 
-> +
-> +	/* R0 =3D mbuf->buf_addr + mbuf->data_off + off */
-> +	emit_mov_imm(ctx, 1, tmp2, offsetof(struct rte_mbuf, data_off));
-> +	emit_ldr(ctx, BPF_H, tmp2, r6, tmp2);
-> +	emit_mov_imm(ctx, 1, r0, offsetof(struct rte_mbuf, buf_addr));
-> +	emit_ldr(ctx, EBPF_DW, r0, r6, r0);
-> +	emit_add(ctx, 1, r0, tmp2);
-> +	emit_add(ctx, 1, r0, tmp1);
-> +
-> +	emit_b(ctx, (int32_t)(ofs[LDMB_FIN_OFS] - ctx->idx));
-> +}
 
-// snip
+v6:
+* Fixed several typos.
 
-> +/*
-> + * Emit code for BPF_LD | BPF_ABS and BPF_LD | BPF_IND packet loads:
-> + *
-> + *	off =3D imm (+ src for BPF_IND)
-> + *	if (mbuf->data_len - off >=3D sz)			    -- fast path
-> + *		ptr =3D mbuf->buf_addr + mbuf->data_off + off;
-> + *	else						    -- slow path
-> + *		ptr =3D __rte_pktmbuf_read(mbuf, off, sz, buf);
-> + *		if (ptr =3D=3D NULL)
-> + *			return 0;
-> + *	R0 =3D ntoh(*(size *)ptr);			    -- common tail
+v5:
+* Fixed compilation between commits broken in v4 while addressing AI
+  comments.
+* Rebased on fresh main, addressing conflicts in release notes.
 
-nit: this pseudo-code could probably be made more C-like.
+v4:
+* Restored missing NULL checks in wrapper functions `rte_bpf_load` and
+  `rte_bpf_elf_load`.
+* Fixed the burst execution functions (`rte_bpf_exec_burst*`) to return
+  `0` and set `rte_errno = EINVAL` on failure, preventing `-EINVAL`
+  being reinterpreted as a large `uint32_t` value. Initialized `rc`
+  properly in scalar execution wrappers for this case.
+* Swapped the Doxygen comments in `rte_bpf_ethdev.h` for RX and TX functions.
+* Added diagnostic dump on failure path in `test_bpf_filter`.
+* Fixed memory leak of the BPF handle in `bpf_rx_test` upon install failure.
+* Added tests for NULL parameter rejection, mismatched execution arguments,
+  unsupported execution flags, and the libpcap-less `rte_bpf_convert` stub.
 
-> + *
-> + * The three blocks are sized in a dry run so the forward branches can b=
-e
-> + * resolved, then emitted for real (arm64 instructions are fixed width, =
-so
-> + * the dry run reproduces the real instruction count exactly).
-> + */
-> +static void
-> +emit_ld_mbuf(struct a64_jit_ctx *ctx, uint8_t op, uint8_t src, int32_t i=
-mm,
-> +	     uint32_t stack_ofs)
-> +{
-> +	uint8_t mode =3D BPF_MODE(op);
-> +	uint8_t opsz =3D BPF_SIZE(op);
-> +	uint32_t sz =3D bpf_size(opsz);
-> +	uint32_t ofs[LDMB_OFS_NUM];
-> +
-> +	/* seed offsets so the dry-run branches stay in range */
-> +	ofs[LDMB_FAST_OFS] =3D ofs[LDMB_SLOW_OFS] =3D ofs[LDMB_FIN_OFS] =3D ctx=
-->idx;
-> +
-> +	/* dry run to record block offsets */
-> +	emit_ldmb_fast_path(ctx, src, mode, sz, imm, ofs);
-> +	ofs[LDMB_SLOW_OFS] =3D ctx->idx;
-> +	emit_ldmb_slow_path(ctx, sz, stack_ofs);
-> +	ofs[LDMB_FIN_OFS] =3D ctx->idx;
-> +	emit_ldmb_fin(ctx, opsz, sz);
+v3:
+* Appended Acked-by tags to all individual commits to align with
+  patchwork requirements.
 
-nit: we already do two passes for the whole program, could avoid quadruple =
-work here
+v2:
+* Fixed a potential segmentation fault in `exec_vm_burst_ex` by deferring
+  the dereference of `ctx[i].arg` until it is confirmed that `nb_prog_arg > 0`.
+* Clarified documentation and code comments for `RTE_BPF_EXEC_FLAG_JIT`
+  requirements and fast-path expectations.
 
-> +
-> +	/* rewind and emit for real with resolved offsets */
-> +	ctx->idx =3D ofs[LDMB_FAST_OFS];
-> +	emit_ldmb_fast_path(ctx, src, mode, sz, imm, ofs);
-> +	emit_ldmb_slow_path(ctx, sz, stack_ofs);
-> +	emit_ldmb_fin(ctx, opsz, sz);
-> +}
+Marat Khalili (11):
+  bpf: make logging prefixes more consistent
+  bpf: introduce extensible load API
+  bpf: support up to 5 arguments
+  bpf: add cBPF origin to rte_bpf_load_ex
+  bpf: support rte_bpf_prm_ex with port callbacks
+  bpf: support loading ELF files from memory
+  test/bpf: test loading cBPF directly
+  test/bpf: test loading ELF file from memory
+  doc: add release notes for new extensible BPF API
+  doc: add load API to BPF programmer's guide
+  test/bpf: add tests for error handling contracts
 
-// snip the rest
+ app/test/test_bpf.c                    | 455 +++++++++++++++++--------
+ doc/guides/prog_guide/bpf_lib.rst      |  75 +++-
+ doc/guides/rel_notes/release_26_07.rst |  20 ++
+ lib/bpf/bpf.c                          |  32 +-
+ lib/bpf/bpf_convert.c                  |  99 +++++-
+ lib/bpf/bpf_exec.c                     | 134 +++++++-
+ lib/bpf/bpf_impl.h                     |  53 ++-
+ lib/bpf/bpf_jit_arm64.c                |  18 +-
+ lib/bpf/bpf_jit_x86.c                  |  10 +-
+ lib/bpf/bpf_load.c                     | 213 ++++++++++--
+ lib/bpf/bpf_load_elf.c                 | 189 ++++++----
+ lib/bpf/bpf_pkt.c                      |  65 +++-
+ lib/bpf/bpf_stub.c                     |  46 ---
+ lib/bpf/bpf_validate.c                 |  94 +++--
+ lib/bpf/meson.build                    |  15 +-
+ lib/bpf/rte_bpf.h                      | 199 ++++++++++-
+ lib/bpf/rte_bpf_ethdev.h               |  54 +++
+ 17 files changed, 1400 insertions(+), 371 deletions(-)
+ delete mode 100644 lib/bpf/bpf_stub.c
+
+-- 
+2.43.0
+
