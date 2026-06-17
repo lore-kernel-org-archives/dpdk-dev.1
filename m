@@ -2,57 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C27BFCD98D2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 00:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A151CD98D2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 00:07:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDB7740DD0;
-	Wed, 17 Jun 2026 02:07:24 +0200 (CEST)
-Received: from mail-qt1-f201.google.com (mail-qt1-f201.google.com
- [209.85.160.201])
- by mails.dpdk.org (Postfix) with ESMTP id D17F940674
- for <dev@dpdk.org>; Wed, 17 Jun 2026 02:07:20 +0200 (CEST)
-Received: by mail-qt1-f201.google.com with SMTP id
- d75a77b69052e-5177b8def69so75070851cf.2
- for <dev@dpdk.org>; Tue, 16 Jun 2026 17:07:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1826940DD7;
+	Wed, 17 Jun 2026 02:07:26 +0200 (CEST)
+Received: from mail-qk1-f202.google.com (mail-qk1-f202.google.com
+ [209.85.222.202])
+ by mails.dpdk.org (Postfix) with ESMTP id D40C24068A
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 02:07:21 +0200 (CEST)
+Received: by mail-qk1-f202.google.com with SMTP id
+ af79cd13be357-915757be497so743467885a.2
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 17:07:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1781654840; x=1782259640; darn=dpdk.org;
+ d=google.com; s=20251104; t=1781654841; x=1782259641; darn=dpdk.org;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=3aHa23V5OPalSQbCBLHOce5pklCGfWjeuSvArek+W6I=;
- b=kptuPdE30nRWqjKmpHo4AyAX4FdR0pybQENJIW/fa7MkyxTlLaheD2hawOE9nKaMFk
- LU+jKg2wCVXYVn9O+BxncjIFcTwwArdjhaQ2Fj5o6+prOw2tFLYjBdKiK3UkAAhsI4nw
- pwNBi7kMi3uL01W3CdkPtt5rNvp/GikR/tBd3Yc6XXhPEKoNCQKdntXGLkYBbfdQwxTz
- 8hUZubYUsifEkmNE2+wMvooWThp3t+H4usKoMXJJqceUCgxwXK8zhurv6c1aa+Vd4iZh
- erUrR9MiAhYmJAf/vD6GEWG96vuWKX2//ANDD2N+Ifo06q0XVY5I4BjSMUmILI8gLegv
- 2kiQ==
+ bh=JBdnc9k1S/K7rNRhboxwccxZrgmoLnNWQJIuKw/sUjU=;
+ b=qgUo4d6qmpw3gf+KncgzwtbK0JaaLeW7pECTpqrLVsSddhkAP3Yxxv+SwkFGIUHLl5
+ pbk288qRskBDvPB1lb5jaawih932na7OW8skjdl7NSy6Th9sZ0+jOM/G0e8zTeu+AXbv
+ D220c+JvY8gtbbjAWbxUAnwuYXOEqHMtvbWoPbkBYyaFMBtzLToH1b8D7hs7t+T0O5V3
+ dYaOBmjKg9/KVZ+LaTLNWWB4/wFyMVuWFzzj47NZxLHZOwV76Bt7zVB+i7fGUk8PGiLp
+ Pk/pkxv98Kxwo6gXw01LlEFPKfgZVPICoL3w1rZbo5ilxg3qqV0Ez2LtNPs92yS/KbgU
+ 9jfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781654840; x=1782259640;
+ d=1e100.net; s=20251104; t=1781654841; x=1782259641;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=3aHa23V5OPalSQbCBLHOce5pklCGfWjeuSvArek+W6I=;
- b=jWBvCXYR69x3PfVnMvjd6aVoFurK+mINRMy0HHEMxq9F0Z8C2UlPnC2f3b5El8dg0/
- L2LzOThuMIcCAvwBJEw8/oi/sp4pu9I6V0zMl9JZ5E1RXhlY+QuILvI7QVsx96WU5/Ux
- PQbXtZ6ZZ/fRgsBp0Pa8lsnTsHG0iD3flY3Mvx87E6WVP/A8dN5TX172aOhxagpUN7uJ
- LfDq0M2yMaAYs1s1uvI3bY4Ag20W8TKb7dvfjohMVDBYdrV6C0Ysxcf7UWAuFCrBiNbT
- m+H4s7VMUpNzSVc2remJx2oID4s696m5iJI43Xue0lIS/Dv5/lc4jC0OvUmxxjLnghTf
- flkg==
-X-Gm-Message-State: AOJu0YxRi63jTXw3njuABOFZ6rPte84d8WmG4P+LZ8r2D5VUqcnWDJfK
- HWOc2Zl6PIvxOXbsxU++uHBRE+GdRSGTXIGHfdH8BUqoPT2gT7pN18aQ+kxCRBGfqwmbUF2e2Ua
- XlimYCg==
-X-Received: from qknxj53.prod.google.com
- ([2002:a05:620a:5bf5:b0:915:8d87:833a])
+ bh=JBdnc9k1S/K7rNRhboxwccxZrgmoLnNWQJIuKw/sUjU=;
+ b=HnqUctXLQsz+jQEc6GOIqW/0DLsEW3jhzKJgQqdbJKUPYjKmXN6rwmYKGrHLqP2PNW
+ MZSGmZJ801mxqMZ6+I8DNXqUC2qv7TeBAJbAZWBocGHzZXDviVsWCXoQEsHwmDDxwpDU
+ J5vS12ERmnDdomQ/GTmg2Wl7dy4YqFpU9J4oiOqjT1ZgicayVsKfK2hoVnNrnjQQ4gIu
+ q+1eOE0pVNbD6kxNGIqdYorOmMSso2C4FAHlSvdKPDCNNc4Sr7mThIUsBmjqR651vAvv
+ 3BuSXW6OOEzLJ6lHVfWEAIbQliLnR/1qVO56cfwMZvkDNO9RxYDE8KHNgIbDi5vYlWyU
+ Rvqg==
+X-Gm-Message-State: AOJu0YwyvDkZC9SMTtRhGiR5IMz2DmrKbP+q/URCT/olaw7TWSterJ4X
+ gomh5XdZJcHiQFseQA/o7MMn2m7lHNusS+eQHbXJ3NFug4N56UAU6piztNUwkEoxzTRZ7dZr8EM
+ 19SrExg==
+X-Received: from qkkk23.prod.google.com ([2002:a05:620a:7f7:b0:915:74f2:62ac])
  (user=blasko job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:620a:25ca:b0:915:351b:3ae5
- with SMTP id af79cd13be357-91d8dcaab4amr344916785a.41.1781654839426; Tue, 16
- Jun 2026 17:07:19 -0700 (PDT)
-Date: Wed, 17 Jun 2026 00:07:07 +0000
+ 2002:a05:620a:7106:b0:915:cf88:1e41
+ with SMTP id af79cd13be357-91dbc52dc18mr205348185a.45.1781654840713; Tue, 16
+ Jun 2026 17:07:20 -0700 (PDT)
+Date: Wed, 17 Jun 2026 00:07:08 +0000
 In-Reply-To: <20260617000712.2195506-1-blasko@google.com>
 Mime-Version: 1.0
 References: <20260613042300.3760470-1-blasko@google.com>
  <20260617000712.2195506-1-blasko@google.com>
 X-Mailer: git-send-email 2.54.0.1189.g8c84645362-goog
-Message-ID: <20260617000712.2195506-4-blasko@google.com>
-Subject: [PATCH v5 3/6] net/gve: add AdminQ command for NIC timestamps
+Message-ID: <20260617000712.2195506-5-blasko@google.com>
+Subject: [PATCH v5 4/6] net/gve: add periodic NIC clock synchronization
 From: Mark Blasko <blasko@google.com>
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org, joshwash@google.com, jtranoleary@google.com, 
@@ -71,129 +70,232 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce the necessary definitions and functions for the
-GVE_ADMINQ_REPORT_NIC_TIMESTAMP AdminQ command.
+Introduce a mechanism to periodically fetch the NIC hardware timestamp
+using the GVE_ADMINQ_REPORT_NIC_TIMESTAMP AdminQ command. The
+synchronization runs every 250ms via a dedicated background control thread
+(gve_nic_ts_thread). The thread polls using an incremental sleep loop
+checking a stop flag to ensure fast termination during driver teardown.
+After 7 consecutive clock read failures, the timestamp is marked as stale,
+indicating to the RX path that reconstructed timestamps may be unreliable.
+
+Atomics exist because of the potential for async callers (introduced
+here) and async callers (introduced later in the RX datapath) accessing
+the cached state.
 
 Signed-off-by: Mark Blasko <blasko@google.com>
 Reviewed-by: Joshua Washington <joshwash@google.com>
 Reviewed-by: Jasper Tran O'Leary <jtranoleary@google.com>
 ---
-v2:
-    - Added adminq timestamp counter reset to gve_adminq_alloc.
----
- drivers/net/gve/base/gve_adminq.c | 20 ++++++++++++++++++++
- drivers/net/gve/base/gve_adminq.h | 20 ++++++++++++++++++++
- drivers/net/gve/gve_ethdev.h      |  1 +
- 3 files changed, 41 insertions(+)
+v5:
+    - Reword commit message body to accurately describe the dedicated control
+      thread polling mechanism instead of obsolete rte_alarm.
 
-diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
-index 1ced1e442e..2b25c7f390 100644
---- a/drivers/net/gve/base/gve_adminq.c
-+++ b/drivers/net/gve/base/gve_adminq.c
-@@ -263,6 +263,8 @@ int gve_adminq_alloc(struct gve_priv *priv)
- 	priv->adminq_get_ptype_map_cnt = 0;
- 	priv->adminq_cfg_flow_rule_cnt = 0;
- 
-+	priv->adminq_report_nic_timestamp_cnt = 0;
-+
- 	pthread_mutexattr_init(&mutexattr);
- 	pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);
- 	pthread_mutex_init(&priv->adminq_lock, &mutexattr);
-@@ -522,6 +524,10 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
- 	case GVE_ADMINQ_CONFIGURE_FLOW_RULE:
- 		priv->adminq_cfg_flow_rule_cnt++;
- 		break;
-+	case GVE_ADMINQ_REPORT_NIC_TIMESTAMP:
-+		priv->adminq_report_nic_timestamp_cnt++;
-+		break;
-+
- 	default:
- 		PMD_DRV_LOG(ERR, "unknown AQ command opcode %d", opcode);
- 	}
-@@ -636,6 +642,20 @@ int gve_adminq_reset_flow_rules(struct gve_priv *priv)
- 	return gve_adminq_configure_flow_rule(priv, &flow_rule_cmd);
+v4:
+    - Replace EAL alarm thread with a dedicated control thread to
+      prevent blocking shared EAL interrupt thread for up to 2s
+      on GVE AdminQ timeouts.
+    - Implement incremental sleep loop to support fast termination.
+
+v2:
+    - Removed redundant void* casts.
+    - Handled alarm reschedule failures by marking timestamp stale.
+    - Added transient error logging on memzone allocation failure.
+---
+ drivers/net/gve/gve_ethdev.c | 122 +++++++++++++++++++++++++++++++++++
+ drivers/net/gve/gve_ethdev.h |  12 ++++
+ 2 files changed, 134 insertions(+)
+
+diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
+index 476b2c311f..fa91575b3e 100644
+--- a/drivers/net/gve/gve_ethdev.c
++++ b/drivers/net/gve/gve_ethdev.c
+@@ -452,6 +452,94 @@ gve_dev_start(struct rte_eth_dev *dev)
+ 	return 0;
  }
  
-+int gve_adminq_report_nic_timestamp(struct gve_priv *priv, dma_addr_t nic_ts_report_addr)
++static void
++gve_read_nic_clock(void *arg)
 +{
-+	union gve_adminq_command cmd;
++	struct gve_priv *priv = arg;
++	uint32_t fails;
++	uint64_t ts;
++	int err;
 +
-+	memset(&cmd, 0, sizeof(cmd));
-+	cmd.opcode = cpu_to_be32(GVE_ADMINQ_REPORT_NIC_TIMESTAMP);
-+	cmd.report_nic_timestamp = (struct gve_adminq_report_nic_timestamp) {
-+		.nic_ts_report_len = cpu_to_be64(sizeof(struct gve_nic_ts_report)),
-+		.nic_timestamp_addr = cpu_to_be64(nic_ts_report_addr),
-+	};
++	if (!priv || !priv->nic_ts_report_mz)
++		return;
 +
-+	return gve_adminq_execute_cmd(priv, &cmd);
++	memset(priv->nic_ts_report, 0, sizeof(struct gve_nic_ts_report));
++
++	err = gve_adminq_report_nic_timestamp(priv, priv->nic_ts_report_mz->iova);
++	if (err == 0) {
++		ts = be64_to_cpu(priv->nic_ts_report->nic_timestamp);
++		rte_atomic_store_explicit(&priv->last_read_nic_timestamp, ts,
++					  rte_memory_order_relaxed);
++		PMD_DRV_LOG(DEBUG, "Fetched NIC Timestamp: %" PRIu64, ts);
++		rte_atomic_store_explicit(&priv->nic_ts_read_fails, 0,
++					  rte_memory_order_relaxed);
++		rte_atomic_store_explicit(&priv->nic_ts_stale, 0,
++					  rte_memory_order_release);
++	} else {
++		PMD_DRV_LOG(ERR, "Failed to read NIC clock, AQ err: %d", err);
++		fails = rte_atomic_fetch_add_explicit(&priv->nic_ts_read_fails, 1,
++						      rte_memory_order_relaxed) + 1;
++		if (fails >= GVE_NIC_CLOCK_READ_MAX_FAILS) {
++			if (!rte_atomic_load_explicit(&priv->nic_ts_stale,
++						      rte_memory_order_relaxed))
++				PMD_DRV_LOG(ERR,
++					"NIC timestamping marked as stale after %u consecutive failures",
++					GVE_NIC_CLOCK_READ_MAX_FAILS);
++			rte_atomic_store_explicit(&priv->nic_ts_stale, 1,
++						  rte_memory_order_release);
++		}
++	}
 +}
 +
- /* The device specifies that the management vector can either be the first irq
-  * or the last irq. ntfy_blk_msix_base_idx indicates the first irq assigned to
-  * the ntfy blks. It if is 0 then the management vector is last, if it is 1 then
-diff --git a/drivers/net/gve/base/gve_adminq.h b/drivers/net/gve/base/gve_adminq.h
-index eaee5649f2..954be39fbf 100644
---- a/drivers/net/gve/base/gve_adminq.h
-+++ b/drivers/net/gve/base/gve_adminq.h
-@@ -26,6 +26,7 @@ enum gve_adminq_opcodes {
- 	GVE_ADMINQ_REPORT_LINK_SPEED		= 0xD,
- 	GVE_ADMINQ_GET_PTYPE_MAP		= 0xE,
- 	GVE_ADMINQ_VERIFY_DRIVER_COMPATIBILITY	= 0xF,
-+	GVE_ADMINQ_REPORT_NIC_TIMESTAMP		= 0x11,
- 	/* For commands that are larger than 56 bytes */
- 	GVE_ADMINQ_EXTENDED_COMMAND		= 0xFF,
- };
-@@ -373,6 +374,23 @@ struct gve_stats_report {
++static uint32_t
++gve_nic_ts_thread(void *arg)
++{
++	struct gve_priv *priv = arg;
++	unsigned int sleep_cnt;
++
++	while (!rte_atomic_load_explicit(&priv->nic_ts_thread_should_stop,
++					 rte_memory_order_relaxed)) {
++		gve_read_nic_clock(priv);
++		for (sleep_cnt = 0; sleep_cnt < GVE_NIC_CLOCK_READ_PERIOD_MS / 10; sleep_cnt++) {
++			if (rte_atomic_load_explicit(&priv->nic_ts_thread_should_stop,
++						     rte_memory_order_relaxed))
++				break;
++			rte_delay_us_sleep(10000);
++		}
++	}
++	return 0;
++}
++
++static int
++gve_alloc_nic_ts_report(struct gve_priv *priv)
++{
++	char z_name[RTE_MEMZONE_NAMESIZE];
++
++	snprintf(z_name, sizeof(z_name), "gve_%s_nic_ts_report",
++		 priv->pci_dev->device.name);
++	priv->nic_ts_report_mz = rte_memzone_reserve_aligned(z_name,
++			sizeof(struct gve_nic_ts_report), rte_socket_id(),
++			RTE_MEMZONE_IOVA_CONTIG, PAGE_SIZE);
++
++	if (!priv->nic_ts_report_mz) {
++		PMD_DRV_LOG(ERR, "Failed to allocate memzone for NIC TS report");
++		return -ENOMEM;
++	}
++	priv->nic_ts_report = priv->nic_ts_report_mz->addr;
++	rte_atomic_store_explicit(&priv->nic_ts_read_fails, 0, rte_memory_order_relaxed);
++	return 0;
++}
++
++static void
++gve_free_nic_ts_report(struct gve_priv *priv)
++{
++	if (priv->nic_ts_report_mz) {
++		rte_memzone_free(priv->nic_ts_report_mz);
++		priv->nic_ts_report_mz = NULL;
++		priv->nic_ts_report = NULL;
++	}
++}
++
+ static int
+ gve_dev_stop(struct rte_eth_dev *dev)
+ {
+@@ -586,6 +674,13 @@ gve_teardown_device_resources(struct gve_priv *priv)
+ 				err);
+ 	}
  
- GVE_CHECK_STRUCT_LEN(8, gve_stats_report);
++	if (priv->nic_ts_report_mz) {
++		rte_atomic_store_explicit(&priv->nic_ts_thread_should_stop, 1,
++					  rte_memory_order_relaxed);
++		rte_thread_join(priv->nic_ts_thread_id, NULL);
++		gve_free_nic_ts_report(priv);
++	}
++
+ 	gve_free_ptype_lut_dqo(priv);
+ 	gve_free_counter_array(priv);
+ 	gve_free_irq_db(priv);
+@@ -1252,6 +1347,32 @@ pci_dev_msix_vec_count(struct rte_pci_device *pdev)
+ 	return 0;
+ }
  
-+struct gve_adminq_report_nic_timestamp {
-+	__be64 nic_ts_report_len;
-+	__be64 nic_timestamp_addr;
-+};
++static void
++gve_setup_nic_timestamp(struct gve_priv *priv)
++{
++	int err;
 +
-+GVE_CHECK_STRUCT_LEN(16, gve_adminq_report_nic_timestamp);
++	if (!priv->nic_timestamp_supported)
++		return;
 +
-+struct gve_nic_ts_report {
-+	__be64 nic_timestamp; /* NIC clock in nanoseconds */
-+	__be64 pre_cycles; /* System cycle counter before NIC clock read */
-+	__be64 post_cycles; /* System cycle counter after NIC clock read */
-+	__be64 reserved3;
-+	__be64 reserved4;
-+};
++	rte_atomic_store_explicit(&priv->nic_ts_read_fails, 0, rte_memory_order_relaxed);
++	rte_atomic_store_explicit(&priv->nic_ts_stale, 1, rte_memory_order_relaxed);
++	err = gve_alloc_nic_ts_report(priv);
++	if (err == 0) {
++		gve_read_nic_clock(priv);
++		rte_atomic_store_explicit(&priv->nic_ts_thread_should_stop, 0,
++					  rte_memory_order_relaxed);
++		err = rte_thread_create_internal_control(&priv->nic_ts_thread_id, "gve-ts",
++							 gve_nic_ts_thread, priv);
++		if (err != 0) {
++			PMD_DRV_LOG(ERR, "Failed to create NIC clock sync thread, err=%d", err);
++			gve_free_nic_ts_report(priv);
++		}
++	} else {
++		PMD_DRV_LOG(ERR, "Failed to allocate memory for NIC timestamping subsystem. Please reset device to retry.");
++	}
++}
 +
-+GVE_CHECK_STRUCT_LEN(40, gve_nic_ts_report);
-+
- /* Numbers of gve tx/rx stats in stats report. */
- #define GVE_TX_STATS_REPORT_NUM        6
- #define GVE_RX_STATS_REPORT_NUM        2
-@@ -490,6 +508,7 @@ union gve_adminq_command {
- 			struct gve_adminq_verify_driver_compatibility
- 				verify_driver_compatibility;
- 			struct gve_adminq_extended_command extended_command;
-+			struct gve_adminq_report_nic_timestamp report_nic_timestamp;
- 		};
- 	};
- 	u8 reserved[64];
-@@ -537,5 +556,6 @@ int gve_adminq_add_flow_rule(struct gve_priv *priv,
- 			     struct gve_flow_rule_params *rule, u32 loc);
- int gve_adminq_del_flow_rule(struct gve_priv *priv, u32 loc);
- int gve_adminq_reset_flow_rules(struct gve_priv *priv);
-+int gve_adminq_report_nic_timestamp(struct gve_priv *priv, dma_addr_t nic_ts_report_addr);
+ static int
+ gve_setup_device_resources(struct gve_priv *priv)
+ {
+@@ -1307,6 +1428,7 @@ gve_setup_device_resources(struct gve_priv *priv)
+ 			goto free_ptype_lut;
+ 		}
+ 	}
++	gve_setup_nic_timestamp(priv);
  
- #endif /* _GVE_ADMINQ_H */
+ 	gve_set_device_resources_ok(priv);
+ 
 diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index b9b4688367..b67f82c263 100644
+index b67f82c263..4dcbaa9971 100644
 --- a/drivers/net/gve/gve_ethdev.h
 +++ b/drivers/net/gve/gve_ethdev.h
-@@ -328,6 +328,7 @@ struct gve_priv {
- 	uint32_t adminq_get_ptype_map_cnt;
- 	uint32_t adminq_verify_driver_compatibility_cnt;
- 	uint32_t adminq_cfg_flow_rule_cnt;
-+	uint32_t adminq_report_nic_timestamp_cnt;
- 	volatile uint32_t state_flags;
+@@ -12,6 +12,8 @@
+ #include <rte_pci.h>
+ #include <pthread.h>
+ #include <rte_bitmap.h>
++#include <rte_memzone.h>
++#include <rte_thread.h>
  
- 	/* Gvnic device link speed from hypervisor. */
+ #include "base/gve.h"
+ 
+@@ -39,6 +41,9 @@
+ #define GVE_RSS_HASH_KEY_SIZE 40
+ #define GVE_RSS_INDIR_SIZE 128
+ 
++#define GVE_NIC_CLOCK_READ_PERIOD_MS 250
++#define GVE_NIC_CLOCK_READ_MAX_FAILS 7
++
+ #define GVE_TX_CKSUM_OFFLOAD_MASK (		\
+ 		RTE_MBUF_F_TX_L4_MASK  |	\
+ 		RTE_MBUF_F_TX_TCP_SEG)
+@@ -359,6 +364,13 @@ struct gve_priv {
+ 
+ 	/* HW Timestamping Fields */
+ 	bool nic_timestamp_supported;
++	const struct rte_memzone *nic_ts_report_mz;
++	struct gve_nic_ts_report *nic_ts_report;
++	RTE_ATOMIC(uint64_t) last_read_nic_timestamp;
++	RTE_ATOMIC(uint32_t) nic_ts_read_fails;
++	RTE_ATOMIC(uint8_t) nic_ts_stale;
++	rte_thread_t nic_ts_thread_id;
++	RTE_ATOMIC(uint8_t) nic_ts_thread_should_stop;
+ };
+ 
+ static inline bool
 -- 
 2.54.0.1189.g8c84645362-goog
 
