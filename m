@@ -2,58 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA775CD98E2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 08:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC50BCD98E2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 08:24:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7EC5D40DF6;
-	Wed, 17 Jun 2026 10:15:33 +0200 (CEST)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
- by mails.dpdk.org (Postfix) with ESMTP id A376E40ED9;
- Wed, 17 Jun 2026 10:15:30 +0200 (CEST)
-X-QQ-mid: zesmtpgz4t1781684128tbc489bb0
-X-QQ-Originating-IP: +/sQmVArEQyq+L6qmdhbVtJX1ZK5nLbuvcAU/I+oSVE=
-Received: from DSK-zaiyuwang.trustnetic.com ( [183.157.22.210])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 17 Jun 2026 16:15:27 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17835260442906159549
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v8 21/21] net/txgbe: fix temperature track for AML NIC
-Date: Wed, 17 Jun 2026 16:13:08 +0800
-Message-Id: <20260617081309.19124-22-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20260617081309.19124-1-zaiyuwang@trustnetic.com>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
- <20260617081309.19124-1-zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0FF0C40289;
+	Wed, 17 Jun 2026 10:24:12 +0200 (CEST)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id BA3474027A
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 10:24:10 +0200 (CEST)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-490a76757e5so39380865e9.2
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 01:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1781684650; x=1782289450; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=tkYL0E3LmTEtOS7n0jr3DPObjuLjjjpKJh+VXIo18/o=;
+ b=caP54QDldHIxeO75ie4vbn6x9/Eh0Bpkl/2xD0VPv4AtmHCMfsPP9HezQff/XQmSAE
+ D/J5b1xFrnjGFhW5J9NmMaPmaXs0TNbz/OAMsGpV3opRF43tlaSeONWKi4eTevG73hNp
+ 09fvi1PO69DB5P3w3BMSu3LBpp6Kx7zY1RQbztIc5fpFxXM9e94oCLwgAkctcx8UxBs9
+ xBhRDHlzWEKE8OaA68Sl0/6gWxJkNbWEnS4WzSbE9VmqfZzedOpBnZIbdVJZBdncvFzK
+ AVqdI8m5JYma3Wmj1ogvOG0qnMA9/6WhRCtFtop+mi2RPhahzB+P8iwIjeHXHHaiLBGY
+ 5nCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781684650; x=1782289450;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=tkYL0E3LmTEtOS7n0jr3DPObjuLjjjpKJh+VXIo18/o=;
+ b=FNA9WM2DozK7lPrAXatZAQ/TJemssnOEefSzlLG3bmwXTFjv/DWeCqsqn4J/Q9HxQ0
+ Y8HbqfOJdFh9kC7rdM6bsyQq8UjyxTWw0xn9UoeWjZ/WuaZT173AKIdGJygCtS9vFRCJ
+ BUjwQkZHsEx/LHfCvGVMsY306BvP7l8XvfLLCO9VehHs8bXMT+MrQ682EiJHOP0CJN6+
+ 3Y1zRJmNi6VaQVJS/5jirDjkqLgGLOc1NItlSGUDcNoq+QKF7o75UROXn21a1ufgItwe
+ qs1QxpYIugamCKwqNWc2modnuhzapDSwYcFzlm70neMLbh/PiRqVSpNUFrq43C6HDmKO
+ Icxg==
+X-Gm-Message-State: AOJu0YzcDd19+oPury8rbdJ3IhUHcYsZimNcXLUHK3ramX9d9pPeNB5S
+ tbFv8ji32l1VvcXYJtjfUGNUNnQAJ6nuWpfqpC+2PDwof321KwdhocvH
+X-Gm-Gg: Acq92OGnzrTwopdCNwUlTDp2nvXpxv5omx3GkqmsitrhbCU1MdJjCQv0/jZYUHPgXsR
+ UXr6rrTUuaCAZXz7qAPiB1TMfcbsWIWPbwiMai6M4ku9otLX7f634uV/5/PVWljxMFPX/x3fsBw
+ Vooert0NNaNeqNdOelF23ww8yRmLlN6gN7WH2/pgTgb5H9KnnMAdRV8INFluyWnLFStOJMCdjFd
+ RvWCQpj9ujbnhuzhYHnni2ehbfVPeTsYDRlTLswgzUXUE2mOUHtJRMsgrvCnv08Z4mTBrrSjINt
+ I4rKdscAD/FHPpDiQuQnpaTvJRnnnNrMpXDB3meGmWXPjhy4slvDbQMkbeOh08YWjMn0p5GRuPE
+ dV0TxvwOw0/TGHCbRqUZTkFM8MwL+wZJCAda5DdjIz1V0wEAyZ+eM2VDyje9lpAT18sLLGtUckM
+ dHCOtH8+jyv6seM1JA9owr+3qEwrBsxniqmFh/G942dKGu
+X-Received: by 2002:a05:600c:c09a:b0:490:bb37:9d49 with SMTP id
+ 5b1f17b1804b1-492333bf9f6mr41574255e9.11.1781684650077; 
+ Wed, 17 Jun 2026 01:24:10 -0700 (PDT)
+Received: from localhost.localdomain (free-mobile.vlq16.iliad.fr.
+ [213.36.7.11]) by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-49230a58fddsm127854015e9.8.2026.06.17.01.24.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 17 Jun 2026 01:24:09 -0700 (PDT)
+Sender: Maxime Leroy <maxime.leroys@gmail.com>
+From: Maxime Leroy <maxime@leroys.fr>
+To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Cc: dev@dpdk.org,
+	Maxime Leroy <maxime@leroys.fr>
+Subject: [PATCH v2 0/3] fib6: fix tbl8 reservation drift
+Date: Wed, 17 Jun 2026 10:23:57 +0200
+Message-ID: <20260617082400.142129-1-maxime@leroys.fr>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260522145855.1748406-1-maxime@leroys.fr>
+References: <20260522145855.1748406-1-maxime@leroys.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: ORuEwgb9eurkhVjMTms/IVzd7Ct6wZAgrErxWvzQMTUkFI6+N9ZNMnjN
- 5nqKfGrxK2rQozlfdrAMyX5xVRrW75soilx2qSiFfjKJaOFQGM3YxHTrSrjuusRDCocdoEj
- dbvAQqalSOTiFP1RqE8AvCx8hSa+T28xA5v07lMWaisL4PVdKU9RitwaPYC0bBdNOk1h1/c
- 2TOjkk4S5b8RYatYYEqfgfWXQ0s5+TouBuDEtjzAfVeEEs9bltZZqmpcrkEqN7QIXuJ8u3D
- 1BuYOwXMOdpjdPt4d79eXOWb3JxDNP/sI4WsOlL61aYP2x8NpPU4HIntN/EWcvDWFHdfy2X
- LVCFe72F9jgQG0D7MTo/wqHLDiiJGnZXR28XgkuEeOKyvR0/IeTeS/D4xqpQnjVmKZYGTau
- KohWAmXhoagjecSy7zG0UVaxfZQ0Xtl5uutjvikFY6WyrWidFUzaj9w6hoZj7pjUs5FG+It
- 2b70hB0lSpdsOXxcvzsB+nWcLB/u69eH8b/zbo1UTAZwMWqHgkz6XkDHaDTOWr+m/2bTEtz
- 7Ln2UNxaT70rgE1UISd+a7X3Sdv7QuCWlkGDkjyNGdG9wopMv7hS4bt8sofXKZq/5d8bvzz
- X64KOPJdfEh/Q7p9k/fa1zknsSPSVjUKy1k0gEYRS7mNk4KSIRFN90OZrU0XvLSwR2cY+sf
- caX7VEm8Djhng7dRRZGVq2S3eFJXdwP51D2gh59Qp/WyEjCU7emBm2nd/7B0og7uV1+ZZHw
- PV42MgymkDk7B/ULqfJJeq3H/Ks1bB5nPGg+r9U35TgCUXC2biDds22k+wTQxVQvITroanX
- p9l720VO6YMHhjubk2x8LSjEwFXjmsMetsLs6BDxYbVfaR27E8D1LGXZZd2L82erxpsiIYn
- 4EK7uE9bGnHU1Ajmrom5/jNwQGElLglHtVib75mGs31POVQbFgQZuwYLAFIyQdsz61c2Ms8
- Ke9hjqQxDZFqe/hTGoaiUfAGZ5BEVIr21DwHgO1b3jNJxdL8FOpjECOU6H4gr2xGFQyXfxq
- AUnE7d1mtIKX0dPKFmnQqxKvv3qX+Z87qw1QK5rpwBlHpIRQE77wXaQdotfVgtb7oi7xrWZ
- 3Ci7d0qtLAt9H5xAnTVuUA=
-X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
-X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -67,112 +80,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Previously, temperature tracking for the amlite NIC was handled by
-firmware together with the hardware setup. However, the firmware-based
-PHY configuration has proven to be unstable.
+trie_modify() maintained rsvd_tbl8s by computing a depth_diff from the
+current RIB topology at both ADD and DEL. The two values diverge when
+the RIB changes between an ADD and its later DEL (a covering parent
+added or removed), so rsvd_tbl8s eventually wraps to UINT32_MAX and
+rejects all subsequent /25+ ADDs with -ENOSPC. A zebra-kill /
+reconverge cycle on a live BGP router reproduces it.
 
-Re-add the temperature tracking function directly in the driver and
-invoke it periodically to ensure the PHY remains calibrated. According
-to the hardware recommendation, the tracking sequence should be run at
-least every 100 ms to keep temperature drift within 5 °C. Considering
-the software and hardware overhead, a 2-second interval is used as a
-practical trade-off that still meets stability requirements while
-minimizing performance impact.
+The fix computes the reservation from the RIB node shape:
+count_empty_levels() returns the number of byte boundaries between the
+prefix and its covering parent that no other prefix occupies
+(has_children + parent depth), in O(1). It is the count of tbl8 levels
+the current route set needs, so ADD/DEL accounting stays consistent and
+cannot drift.
 
-The periodic tracking is implemented using a timer in the driver, and
-the sequence itself is the same as the one originally performed during
-link setup.
+Patch 1 is the minimal self-contained fix (Fixes: + Cc: stable).
+Patches 2-3 add the reproducer and extended regression tests.
 
-Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
-Cc: stable@dpdk.org
+Validated on a live BGP router (grout + FRR, 128 IPv6 prefixes):
+RSVD_TBL8 returned to its pre-cycle value (70) after a zebra-kill /
+reconverge cycle.
 
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Maxime Leroy (3):
+  fib6: fix tbl8 reservation drift in trie
+  test/fib6: add reproducer for tbl8 reservation drift
+  test/fib6: extended drift test cases
+
+ app/test/test_fib6.c    | 335 ++++++++++++++++++++++++++++++++++++++++
+ lib/fib/trie.c          |  83 +++++-----
+ lib/rib/rib6_internal.h |  22 +++
+ lib/rib/rte_rib6.c      |  15 ++
+ 4 files changed, 415 insertions(+), 40 deletions(-)
+ create mode 100644 lib/rib/rib6_internal.h
+
 ---
- drivers/net/txgbe/txgbe_ethdev.c | 44 +++++++++++++++++++++++++++++++-
- drivers/net/txgbe/txgbe_ethdev.h |  1 +
- 2 files changed, 44 insertions(+), 1 deletion(-)
+v2:
+* Compute the empty-level count directly from the RIB node
+  (rte_rib6_node_has_children + rte_rib6_get_parent, O(1)) instead of
+  the v1 multi-level supernet scan over byte boundaries.
+* Drop v1 patches 4-5 (valid_descendants counter + single-descent
+  helper): no longer needed, the node-based count is already O(1), so
+  rte_rib6 needs no new per-node accounting field.
 
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index f2c3a35900..2ed9a8c179 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2011,8 +2011,10 @@ txgbe_dev_start(struct rte_eth_dev *dev)
- 	txgbe_filter_restore(dev);
- 
- 	hw->bp_event_interval = 100 * 1000;
--	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
- 		rte_eal_alarm_set(hw->bp_event_interval, txgbe_dev_e56_check_bp_event, dev);
-+		rte_eal_alarm_set(1000 * 1000 * 2, txgbe_dev_check_aml_temp_event, dev);
-+	}
- 
- 	if (tm_conf->root && !tm_conf->committed)
- 		PMD_DRV_LOG(WARNING,
-@@ -2060,6 +2062,7 @@ txgbe_dev_stop(struct rte_eth_dev *dev)
- 
- 	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
- 		rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
-+		rte_eal_alarm_cancel(txgbe_dev_check_aml_temp_event, dev);
- 		rte_eal_alarm_cancel(txgbe_dev_setup_link_alarm_handler_aml, hw);
- 	}
- 
-@@ -2932,6 +2935,45 @@ txgbe_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
- 	return NULL;
- }
- 
-+void txgbe_dev_check_aml_temp_event(void *param)
-+{
-+	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
-+	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
-+	uint32_t link_speed = 0, val = 0;
-+	s32 status = 0;
-+	int temp;
-+
-+	if (hw == NULL)
-+		return;
-+
-+	status = txgbe_e56_get_temp(hw, &temp);
-+	if (status)
-+		temp = DEFAULT_TEMP;
-+
-+	if (!(temp - hw->temperature > 4 ||
-+		hw->temperature - temp > 4))
-+		goto out;
-+
-+	hw->temperature = temp;
-+	val = rd32(hw, TXGBE_PORT);
-+	if (val & TXGBE_AMLITE_LED_LINK_40G)
-+		link_speed = TXGBE_LINK_SPEED_40GB_FULL;
-+	else if (val & TXGBE_AMLITE_LED_LINK_25G)
-+		link_speed = TXGBE_LINK_SPEED_25GB_FULL;
-+	else
-+		link_speed = TXGBE_LINK_SPEED_10GB_FULL;
-+
-+	rte_spinlock_lock(&hw->phy_lock);
-+	if (hw->mac.type == txgbe_mac_aml)
-+		txgbe_temp_track_seq(hw, link_speed);
-+	else if (hw->mac.type == txgbe_mac_aml40)
-+		txgbe_temp_track_seq_40g(hw, link_speed);
-+	rte_spinlock_unlock(&hw->phy_lock);
-+
-+out:
-+	rte_eal_alarm_set(1000 * 1000 * 2, txgbe_dev_check_aml_temp_event, dev);
-+}
-+
- void txgbe_dev_e56_check_bp_event(void *param)
- {
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
-diff --git a/drivers/net/txgbe/txgbe_ethdev.h b/drivers/net/txgbe/txgbe_ethdev.h
-index 309db3bfe9..c32c61d8bf 100644
---- a/drivers/net/txgbe/txgbe_ethdev.h
-+++ b/drivers/net/txgbe/txgbe_ethdev.h
-@@ -747,5 +747,6 @@ void txgbe_vlan_hw_strip_bitmap_set(struct rte_eth_dev *dev,
- 		uint16_t queue, bool on);
- void txgbe_config_vlan_strip_on_all_queues(struct rte_eth_dev *dev,
- 						  int mask);
-+void txgbe_dev_check_aml_temp_event(void *param);
- void txgbe_dev_e56_check_bp_event(void *param);
- #endif /* _TXGBE_ETHDEV_H_ */
--- 
-2.21.0.windows.1
+v1:
+* Keep rsvd_tbl8s; recompute it via topology-stable empty-supernet
+  count (dir24_8 pattern at 13 levels) instead of RIB-derived
+  depth_diff.
+* Drop RFC patch 3/3 (no longer needed).
+* Add extended regression tests.
+* Add patches 4-5: RIB valid_descendants + single-descent helper
+  (optional perf optimization; not for stable).
+* Production-validated on a live BGP router.
+
+--
+2.43.0
 
