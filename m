@@ -2,41 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC40CD98E4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 11:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F325CCD98E4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 13:43:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2D7B64027F;
-	Wed, 17 Jun 2026 13:57:12 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id F2A2A40276
- for <dev@dpdk.org>; Wed, 17 Jun 2026 13:57:10 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82936466A;
- Wed, 17 Jun 2026 04:57:05 -0700 (PDT)
-Received: from [10.174.9.76] (unknown [10.174.9.76])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 620613F915;
- Wed, 17 Jun 2026 04:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
- t=1781697430; bh=aJeHZT0ryezVtW8Bz2e9jnWJKZ3/tFv6NGp5f7sCiTY=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=ngvlTv75H+ZEpgPgGukiIOkvTEzQycYix609s+PYxA+3WaOsg9vCI6JenjoONn9HZ
- 9Ez1V0x+C/viWjyXY65FlR62fYuCP/wqetyw0wuRRdlzTPW8u3BFkCQM0Hrvb028Mz
- HtTGu9IHAnzcCmJFt0XNqamheyeLYgc1BmHVBk0Q=
-Message-ID: <09dbd9b1-f4a6-48e2-9424-546eafdfa01b@arm.com>
-Date: Wed, 17 Jun 2026 06:57:04 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id F393F4027F;
+	Wed, 17 Jun 2026 15:43:06 +0200 (CEST)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
+ [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id EF5D440276
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 15:43:04 +0200 (CEST)
+Received: by mail-wm1-f50.google.com with SMTP id
+ 5b1f17b1804b1-490b1c39fe4so3713845e9.3
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 06:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1781703784; x=1782308584; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=DYLgYaib7yCVbYE8N902Pt92KxmyBMs3Rdxe7FOOjwY=;
+ b=qA1ffGBHsrYRGQ5e9AAcDnbzoKA3/9C1MyNXme/fLWj3aexH9/mjSvsXETPIJ3kwdJ
+ +YpVZ6Obbn1OUklqtATZ6ZjkvL9h9z1qC+88ZA66Grr5qIo/V+/xblWVSLsSvJsy194T
+ P2ZY5VF4rUFVEceUqq0u8rNx28eNnLuMqDUjH/jiGLpGF/atwipKMyWwu+rMJj+CXvfo
+ ou3fEvJJsRtEaK8evUdVVBldzBxOP+Oppc9oECKkuvGNa1NluE1Hs8cfA4aosiQRgXvH
+ v4yUlLOd+hD0aUBTfVQtJI3LnL3t2rEzbs9ELgwJYq4pWrfKHTDLispW5tI5/rZ6z2KP
+ zUYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781703784; x=1782308584;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=DYLgYaib7yCVbYE8N902Pt92KxmyBMs3Rdxe7FOOjwY=;
+ b=Zxx243NfzY/N7QM3EjT9D4acJugq0avXk4dnnaAJB5c0raElAxrOI+BdqQgvIKxG1N
+ 7FVWHmtUtSLAhu0p/HwCerHzGN2z1aHY+yEDja7Wqw4pUslP8aV51gIZxscJhN/plqFp
+ Aej2pBGTQ7lEqJAr0ZXyvtgvLojdWa4/QjD92MgOJ0PpYZq0mVnaHYTem02gDyk28WUq
+ JJz0IyedckN+u7ZK5V/+4uamMSPPCht0EYKOY3/z5plXoFfO9RS+EdRuygUsnalWZ58J
+ tFib+aS1wjiWbfEDF+V+5tWxCgddee1vc4j77bYAf4/OK3xVftKo4+IhSNIdPLwhT25A
+ VZxQ==
+X-Gm-Message-State: AOJu0YzrFNfxHSWoz7VnIoU5fpkaJJ5tpRkDAwvXX/0J3BVbOpUy66BP
+ 3LlfOxOvh23eOD1c5/IF6uHGRVXPbk3JeORonAchN0tU19vAgCJ7L4/e
+X-Gm-Gg: Acq92OGOuZiWIowlduF56GjwkY6hqssCpaz6g/ULfDwVElrN6Ktq9QZDLkjEzcdtFKz
+ kuP22rggJJ6hgfu84/BVNTgJ81FwMIhsBEa/853JO5mdCIKl6pNFpBnFzJ/3Fs0darbNMa2DuME
+ 6qfmB2dOnzyOKK7mNlELitLIoM1CyBilyE4iYv4bZOofvTcwSAxy5mz048zzmIFYISHgWHmgmq0
+ QC1CR8EbeKT8bEuE5yC1aqGUMgHw+UsWmE2xnwuBHxtH+fuQR6kHVymGQmK5zZao+5cYm91sAD/
+ gb6p7tVzV5MUkt5fUjG5hIfecneSqfyJa5QEbIIJ3UtKUNVt6tIvXH7A/0LKphNfThTKFJYdNif
+ Fg4AIC6h/wwEqpxT7yHkSv8fd1lhbCjVBUAyww4hQzuamEopC/gbHhsPLWbVJQbXCejZdXS7aFV
+ ybbmbzwq/1zfmBqFqv7v/2d7S9M5gy+KpHpz56tLjEWPdM+CC9+OgJqSTYYg==
+X-Received: by 2002:a05:600c:19cd:b0:490:ade7:9ca4 with SMTP id
+ 5b1f17b1804b1-4923339f546mr34486715e9.2.1781703784377; 
+ Wed, 17 Jun 2026 06:43:04 -0700 (PDT)
+Received: from tsyrulb-Lenovo-ideapad-S530-13IWL..
+ ([2a00:a041:e3c1:6100:975d:4242:f7c4:c21e])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-4922fa3a4easm180755645e9.3.2026.06.17.06.43.02
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 17 Jun 2026 06:43:03 -0700 (PDT)
+From: Borys Tsyrulnikov <tsyrulnikov.borys@gmail.com>
+To: Thomas Monjalon <thomas@monjalon.net>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ Alexander Kozyrev <akozyrev@nvidia.com>
+Cc: dev@dpdk.org, stable@dpdk.org,
+ Borys Tsyrulnikov <tsyrulnikov.borys@gmail.com>
+Subject: [PATCH] net/mlx5: fix double free in vectorized Rx recovery
+Date: Wed, 17 Jun 2026 16:43:01 +0300
+Message-Id: <20260617134301.798213-1-tsyrulnikov.borys@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ARM v8 rte_power_pause
-To: Hemant Agrawal <hemant.agrawal@nxp.com>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Maxime Leroy <maxime@leroys.fr>,
- Gagandeep Singh <G.Singh@nxp.com>
-References: <98CBD80474FA8B44BF855DF32C47DC35F658E5@smartserver.smartshare.dk>
- <GV1PR04MB10750E293DBDCCDF9FEEFE00289182@GV1PR04MB10750.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-In-Reply-To: <GV1PR04MB10750E293DBDCCDF9FEEFE00289182@GV1PR04MB10750.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -51,80 +82,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Morten and Hemant,
+During Rx queue error recovery, the vectorized path in
+mlx5_rx_err_handle() reallocates an mbuf for every queue element. When
+rte_mbuf_raw_alloc() fails (for example, the mempool is exhausted), the
+rollback loop frees the mbufs allocated so far, but masks the element
+ring index with "& elts_n" instead of "& (elts_n - 1)".
 
-YIELD is a NOP on non-SMT CPUs, such as Neoverse.
+elts_n is a power-of-two element count, so "x & elts_n" isolates a
+single bit and can only evaluate to 0 or elts_n, regardless of the loop
+counter. The rollback therefore never frees the mbufs just allocated in
+this pass (they are leaked); instead it repeatedly frees elts[0], a live
+mbuf still posted to the NIC (use-after-free / double free), and
+elts[elts_n], the fake_mbuf padding entry used by the vector datapath.
 
-WFE is universally available on AArch64, but it comes with a caveat: the 
-CPU can remain in a low-power state indefinitely unless an event is 
-triggered. That event can be generated explicitly via SEV/SEVL by a 
-different CPU, or implicitly through address monitoring (LDAXR).
+Mask with the existing e_mask (elts_n - 1), as already done in the
+matching forward allocation loop just above.
 
-WFET is the safer variant because it includes a timeout, so explicit or 
-implicit event-register manipulation is not required.
+Fixes: 0f20acbf5eda ("net/mlx5: implement vectorized MPRQ burst")
+Cc: stable@dpdk.org
 
---wathsala
+Signed-off-by: Borys Tsyrulnikov <tsyrulnikov.borys@gmail.com>
+---
+ .mailmap                   | 1 +
+ drivers/net/mlx5/mlx5_rx.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-On 6/12/26 01:11, Hemant Agrawal wrote:
-> Hi Morten,
-> On Cortex‑A72 (ARMv8), the only architectural primitives available are YIELD, WFE, and WFI:
->
-> 	YIELD is the only deterministic, low-overhead option (pure CPU relax, no entry into low-power state)
-> 	WFE can be used as a low-power idle hint, but it is event-driven and not time-based (it may return immediately)
-> 	WFI depends on interrupt wakeup and is therefore not suitable for tight latency loops
->
-> For ~1 µs latency targets, the practical approach is a hybrid strategy:
->
-> Short waits → spin using YIELD
-> Slightly longer waits → opportunistically use WFE for power reduction
->
-> A simple implementation could look like (not tested):
->
-> static inline void rte_armv8_pause(unsigned int iters)
-> {
-> 	if (iters < 64) {
-> 		for (unsigned int i = 0; i < iters; i++)
-> 			asm volatile("yield");
-> 	} else {
-> 		asm volatile("sevl");
-> 		asm volatile("wfe");
-> 	}
-> }
->
-> @Wathsala Vithanage — would appreciate your thoughts, especially if there are any micro-architectural nuances we should consider.
->
-> Regards,
-> Hemant
->
->> -----Original Message-----
->> From: Morten Brørup <mb@smartsharesystems.com>
->> Sent: 03 June 2026 17:26
->> To: Wathsala Vithanage <wathsala.vithanage@arm.com>; Hemant Agrawal
->> <hemant.agrawal@nxp.com>; Sachin Saxena (OSS)
->> <sachin.saxena@oss.nxp.com>
->> Cc: dev@dpdk.org; Maxime Leroy <maxime@leroys.fr>
->> Subject: ARM v8 rte_power_pause
->> Importance: High
->>
->> Hi Wathsala, Hemant and Sachin,
->>
->> Over at the Grout project, we are discussing power management in the
->> context of 100 Gbit/s latency deadlines [1].
->>
->> rte_power_pause() is not implemented for ARM v8 / Cortex-A72.
->> Syscalls such as nanosleep() have too much overhead, and cannot be used.
->>
->> Any suggestions for a power-reducing method to make a CPU core "sleep" (i.e.
->> do nothing) for durations in the order of 1 microsecond?
->>
->> [1]:
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithu
->> b.com%2FDPDK%2Fgrout%2Fpull%2F624%23issuecomment-
->> 4602036364&data=05%7C02%7Chemant.agrawal%40nxp.com%7Cdbff5f2e
->> 8db1406f0c4008dec1671791%7C686ea1d3bc2b4c6fa92cd99c5c301635%7
->> C0%7C0%7C639160845728472826%7CUnknown%7CTWFpbGZsb3d8eyJFb
->> XB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTW
->> FpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=DRpJWjm2yaF3Cnhk0b
->> bFFhmGbKRweOOiWdsWco2NbX0%3D&reserved=0
->>
->> -Morten
+diff --git a/.mailmap b/.mailmap
+index 4001e5fb0e..0b09243c45 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -222,6 +222,7 @@ Boleslav Stankevich <boleslav.stankevich@oktetlabs.ru>
+ Boon Ang <boon.ang@broadcom.com> <bang@vmware.com>
+ Boris Ouretskey <borisusun@gmail.com>
+ Boris Pismenny <borisp@mellanox.com>
++Borys Tsyrulnikov <tsyrulnikov.borys@gmail.com>
+ Brad Larson <bradley.larson@amd.com>
+ Brandon Lo <blo@iol.unh.edu>
+ Brendan Ryan <brendan.ryan@intel.com>
+diff --git a/drivers/net/mlx5/mlx5_rx.c b/drivers/net/mlx5/mlx5_rx.c
+index ce50087b70..c0ad8d6701 100644
+--- a/drivers/net/mlx5/mlx5_rx.c
++++ b/drivers/net/mlx5/mlx5_rx.c
+@@ -662,7 +662,7 @@ mlx5_rx_err_handle(struct mlx5_rxq_data *rxq, uint8_t vec,
+ 					if (!*elt) {
+ 						for (i--; i >= 0; --i) {
+ 							elt_idx = (elts_ci +
+-								   i) & elts_n;
++								   i) & e_mask;
+ 							elt = &(*rxq->elts)
+ 								[elt_idx];
+ 							rte_pktmbuf_free_seg
+-- 
+2.34.1
+
