@@ -2,88 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4563CD98ED
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 21:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34067CD98ED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 21:17:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1CD27402EF;
-	Wed, 17 Jun 2026 23:13:41 +0200 (CEST)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com
- [209.85.208.170])
- by mails.dpdk.org (Postfix) with ESMTP id 2BEFB4014F
- for <dev@dpdk.org>; Wed, 17 Jun 2026 23:13:39 +0200 (CEST)
-Received: by mail-lj1-f170.google.com with SMTP id
- 38308e7fff4ca-39677c80386so2626591fa.3
- for <dev@dpdk.org>; Wed, 17 Jun 2026 14:13:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781730818; cv=none;
- d=google.com; s=arc-20240605;
- b=KFs0s7AF2ROt93xtA9WqwJ9Tc974zJRf3i5+mU5YSm3mDy3I8HksnHaTJdiCgDUxvd
- NGbaaOqUW9tRKOyuQt1NxOQi6HcUYqWfho/cOVnaeGhL0NWVaYHq4pHt2tDsFzkOA7A0
- B6ruoltjRLRK0RQs4aqHGPjR/M5LAfz1zgGsd+Zud+G9iqZauzIzYz4F8o32ZZ8chS+f
- TxszlmnIwsTeR5/hunGn7ILPjCA+tCZCLHdVvqWkZR6wH8LeBSRguiRqXRJDVw57wJgu
- bI0SFe/V5iIkCZjunWvsQ2eI62DU8sL0L1d2c+eD+Rx8e0Z88oJk+s/4zZ9YgcN7R74+
- 6peg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=TpPklP/+mzJz0CLNHCyU4I38ibDIzJ6EZMSlnluyI1w=;
- fh=L7PlYjTBKKtpJjl+RgwGrNyMHYJxmwrIIqb/mtt1BGc=;
- b=IoUJe+kBQ4S3xAUZik+aaYX6ZOlk2DcfH02EhXc7Nr5A0L0ZeOwiYKb/CGUYF38/K7
- JrTASLe9z0fCUh/X0485A2Qmb8Etuggs5+nGSDpetyO1x+tTiEShaMbYRCKsKL90xdZi
- upVnNh6r5ZKgGsXOf38ipjOqT3z0jT3W7SR9f6uX4VApXIXhUFXk5ju5y0sqjFkITyuZ
- jJa/AkYTYaJn9+6+shPm2/u1+csm51Jpm9MaM1hu4sVKqLaBcbyKytmMYvxjwAvrvwdj
- BSUuwVhNBIS9wGFANJrFJnbekv+V7Naha0aNgZoqir0xipmSxFw0nBIcqS3+SNjFknVW
- g71g==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 7E09A40268;
+	Wed, 17 Jun 2026 23:17:17 +0200 (CEST)
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+ by mails.dpdk.org (Postfix) with ESMTP id C26D84014F
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 23:17:15 +0200 (CEST)
+Received: by mail-dl1-f42.google.com with SMTP id
+ a92af1059eb24-13986d61b4eso746519c88.0
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 14:17:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781730818; x=1782335618; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=TpPklP/+mzJz0CLNHCyU4I38ibDIzJ6EZMSlnluyI1w=;
- b=CnG9RnLr1i3fsDkRZQySrVdlcuCZhuQOvXKa/hmDHHBHKrmo4IV2039B1sWtdmNc0W
- wTsyFrHPKOb4SHdMtkE9u8xMOSnXxsICh06EsIgsJCajMVgPDw8RZ525IC4dzhOuYt4A
- JcwZweGM72xB2SA829k+Os+tTQg74mVOHPFMXNBfP8T2bO1lt/rh+X7cS+C8HUXLbd9B
- +TlpdUW0RpxIRuppV64y1IV6TtW+9J/Lifh3EdN7Z0cEMqcJ761gaeiTAZ+nYwRQfwqc
- RqvKHeREJ+eK1i9wxl2S2NEnG3Z8rfT66DJS3nx5RoAF8EShDRlWQLAsUT8xNjACw1H9
- pKjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781730818; x=1782335618;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781731035;
+ x=1782335835; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=TpPklP/+mzJz0CLNHCyU4I38ibDIzJ6EZMSlnluyI1w=;
- b=mcr4ukXw9Ih6R0rIXhStPasAYJm7s+U9GtslROnLKRTePS0kQIwufwUXOHtf353azj
- guNjbCqY0WBzfabmUdnY1WI4K1mE2jYsbdgpUi3eW+62elRM+IHlejd0j3p2Vfb/5PRA
- ROT673O578yD/LwX1JlFA+f/BFiWPX3YhUbiUQdhGmnWceNKK1nLuILujxPkFwgvMJOL
- o7KH9aB7AuXRv24Sejeim6MEHrY2ogNrxWof6Xp2Bau6xZQBIwORRDYK9oY8M9FdniFf
- sc8Dr7vYLQ5DdQCn2Zm8AnV+cnEwYeePLYIhihEOCu0SUvED9mxDUZac+rQGGDcIdfZu
- cx3Q==
-X-Forwarded-Encrypted: i=1;
- AFNElJ+9hRCoEJN4c7x1xhhjMXsHXfrfOsCUQ/ktXNGpkDgqoSDGbhpRecNq4RZBvY2SfvQNngo=@dpdk.org
-X-Gm-Message-State: AOJu0YxuqOCirPemN0Sgd5EG8+XfxhfwhAmtMovoWCDaleG4eVfhUVXl
- Q0r4lsCLuaRFhdi8ItenEF3/uLDQHk/FJyucpkaxn0ud1EFDJTjE2iSvMRU5t36FnqTcbL86RFw
- Q27HT/eEro6Qr5KHG3CiuFoRsAVpBe2w=
-X-Gm-Gg: AfdE7clm5IkAsV3NSU8B1t7BEGFUgD43a/XZ9fE0qCtBjRwx/34yFTvegpH0aw1gIr3
- JR2IDW3ox+pTtYqSXeJI4DQrn5TS5O05qIiB1Rh1siqnVAO0GciErr3SNDmAo+ZCi3IHnSwxjIW
- Rx7yu3Cc+s6iv1r+o8Kbrp0VkRHEYJLAmRR25YRu3TagcaOkhaOqpFWHelYNuPHvWYzR3YGW0Wt
- ltzN9nbBzyeKBhR2qtHnpGEzZ+bMkZ6GCno+HYbwFukkwDIEopghbw0j7IZuXxTdbYJRr3rrCva
- qnisNPtAXZTDdiWV7HCMZN5uyFzSUg==
-X-Received: by 2002:a05:651c:2207:b0:396:c3c:d27e with SMTP id
- 38308e7fff4ca-39969b8224amr16072281fa.12.1781730818214; Wed, 17 Jun 2026
- 14:13:38 -0700 (PDT)
+ bh=uy2HSu4iI/ZGALjEqv526I7CrhTQ7C4/m2AiVpeHFx8=;
+ b=scucbu31vi9Q5vfnZDa4kEIm2/mE/POT/3vDAEpPsVLs1EiChoNxH5jEKaB9ACKziP
+ 0vbrQh7p57m6NkFAPKf+/Uug6stsxybwl25rmxkcG4JHXkgCkQAiq9zl2xViR8G0aIpg
+ PF1/aQSLGOtCEf+WmCHlSqiZpUCSKTmikj8n+cr5pYSeY2KpqgL21gFQU5MRn5rqdTi+
+ 4rxDJedQNMpgkzmpX7iHSfL+4+se0K5LyRo75So4dOWNSOmESjUsNdtRUsgVRQb5wV+v
+ cKeGc02eQmQbjg8lvMO1iZcFKoPGXAtKw28aU5ffRPrkR3eMgz8IpBU9WNco9FZ3dfGn
+ ngNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781731035; x=1782335835;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=uy2HSu4iI/ZGALjEqv526I7CrhTQ7C4/m2AiVpeHFx8=;
+ b=csN5LCRRv2xVMhjqcEcpfCa/GvV2EYKxhDYEOXRlioDqBNmfQisKHJkGsA6pHp8ITj
+ em1QvAkmjUKXgz7Gr81PUlwIywJoxqDrQFXfKmONgqr7jJb5D6DjwINUkPSuTy/F7Ysp
+ eBW40/og2dEfQvxoVXcIYDgS4rQrP4sF4uvGYxB85wQcQuqQ/UgZFoWLqlsSoN7Z4DPO
+ 9/sftjz0tfDcTCVo9FA4z/0033+HLfiNMPgJN1ubKdVsSLYilyoULX8rWauO++TmcZkm
+ pRJBjSSAhv7xzX2MqNa/rTLynGoJ19Eabd9nKxV1VvrTkCweo3gB/FxLUF7HPR5MtW0J
+ uDaA==
+X-Gm-Message-State: AOJu0YwOKl/vvZZWJWvKl5lvhQOl9UsmqGQ03iLBIovdLpgD/uSDEyqG
+ ljK9A2e4mQG0ppX2pqiDbfWkTeI8a1YfcB+Y2PP/TZCKwTVdrqjeNghw1ir9douuWgA=
+X-Gm-Gg: Acq92OFBXCQfM8ekgiZRnlm43+/H2xmtaSl4fIi09Utk2aajdL9RANrS4f2Xstvgj80
+ PM7n8dA718sqODnPPrNV3WaoiEIL/g7IS5LwkP5JRT1FNTqEvFsnyEaR7sSxIPmp3rh/g0Ov6Sn
+ e3Y6NPd+rp+GnWb4RDFP+k8uzU1uEkRHmnv96NFIYLGl8LZ5IUVZf4KgqRzeGF26/Nx9YK6YB6M
+ 0E/kC2Ck3coZ8i7lD0cNmuxPNKDMU6piGc1FI49Rm81mWwSDQk628ts2ZyXh2OAoDjHn2yI0FGZ
+ wQjpnArkwF0w87wzA+ZU/C/taF/F1ByC9kYLvvBOTq3N2TdnpNeacYZG5oKPzOTAsRPmi5tpeH4
+ n3gp6mxz9GkQICj4HmUIUwgPcjdQ9LclgRoE5vS6GPJs1AjhLBUKQdIYkcyEGet218rshmox9Gt
+ Tj0PCbASkJe128BP1aghjCQkD9pwalKmn+OXqcSWrlXKYLmKcS2KC45oiSGvw/KmqG
+X-Received: by 2002:a05:7022:6198:b0:12d:de3e:86a8 with SMTP id
+ a92af1059eb24-1398f6fa489mr2728871c88.38.1781731034702; 
+ Wed, 17 Jun 2026 14:17:14 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-1384b96d6c4sm17894774c88.9.2026.06.17.14.17.14
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 17 Jun 2026 14:17:14 -0700 (PDT)
+Date: Wed, 17 Jun 2026 14:17:11 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [PATCH 0/4] bpf/arm64: add BPF_ABS/BPF_IND packet load support
+Message-ID: <20260617141711.413b8b65@phoenix.local>
+In-Reply-To: <e8f68b2da12a4bb58ccb580c49557510@huawei.com>
+References: <20260608203322.1116296-1-stephen@networkplumber.org>
+ <e8f68b2da12a4bb58ccb580c49557510@huawei.com>
 MIME-Version: 1.0
-References: <20260507163659.40739-1-abailey@iol.unh.edu>
- <20260513154055.134729-1-abailey@iol.unh.edu>
-In-Reply-To: <20260513154055.134729-1-abailey@iol.unh.edu>
-From: Patrick Robb <patrickrobb1997@gmail.com>
-Date: Wed, 17 Jun 2026 17:13:25 -0400
-X-Gm-Features: AVVi8Cd4reD6P1IzZO5U0Bg7OZxEegYw-pthj-DpDTeIzhWwshBJh-N2BQtAoF8
-Message-ID: <CAK6Duxv=rS07Wn9OOv=97DbvRYVNGmydH7_MPkcvXL+_dQC51w@mail.gmail.com>
-Subject: Re: [PATCH v3] dts: clean cryptodev environment after a test run
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, lylavoie@iol.unh.edu, ahassick@iol.unh.edu, 
- knimoji@iol.unh.edu, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000814e600654798894"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,22 +80,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000814e600654798894
-Content-Type: text/plain; charset="UTF-8"
+On Wed, 17 Jun 2026 17:37:39 +0000
+Marat Khalili <marat.khalili@huawei.com> wrote:
 
-So, some cryptodevs must be unbound from their DPDK driver before they can
-be destroyed by linux? Out of curiosity, which devices are these?
+> I think this should CC participants of the previous discussion: 
+> https://inbox.dpdk.org/dev/20260319114500.9757-1-cfontain@redhat.com/
+> 
+> (Humans may think they submit patches independently, but weights of their LLMs
+> were already contaminated with the other effort. Hello brave new world.)
 
-Reviewed-by: Patrick Robb <patrickrobb1997@gmail.com>
+Didn't see previous thread. This effort was more targeted at
+why can't capture which uses pcap_compile -> bpf_convert flow be JIT'd?
 
---000000000000814e600654798894
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Had not looked back at other overlaps.
 
-<div dir=3D"ltr"><div>So, some cryptodevs=C2=A0must be unbound from their D=
-PDK driver before they can be destroyed by linux? Out of curiosity, which d=
-evices are these?</div><div><br></div>Reviewed-by: Patrick Robb &lt;<a href=
-=3D"mailto:patrickrobb1997@gmail.com">patrickrobb1997@gmail.com</a>&gt;</di=
-v>
-
---000000000000814e600654798894--
