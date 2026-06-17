@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA1BCD98E6
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 03:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC780CD98E6
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 03:34:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F76D40A6D;
-	Wed, 17 Jun 2026 05:34:35 +0200 (CEST)
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
- by mails.dpdk.org (Postfix) with ESMTP id 362ED40679;
+	by mails.dpdk.org (Postfix) with ESMTP id 5F55440B9D;
+	Wed, 17 Jun 2026 05:34:36 +0200 (CEST)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+ by mails.dpdk.org (Postfix) with ESMTP id DB8E140696;
  Wed, 17 Jun 2026 05:34:31 +0200 (CEST)
-X-QQ-mid: esmtpsz11t1781667266tbcdbb424
-X-QQ-Originating-IP: vFfLSYBxKskET98vauRjtLTSoQUbaEUxvh0InuThwO0=
+X-QQ-mid: esmtpsz11t1781667269t346ce055
+X-QQ-Originating-IP: CSr29zf+8QNuDfAwpAJ5aeiP+CaFEPyL48Sx1z869xY=
 Received: from DSK-zaiyuwang.trustnetic.com ( [183.157.22.210])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 17 Jun 2026 11:34:25 +0800 (CST)
+ id ; Wed, 17 Jun 2026 11:34:27 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12003226916428528437
+X-BIZMAIL-ID: 5267499830145035683
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v7 03/21] net/ngbe: add missing CDR config for YT PHY
-Date: Wed, 17 Jun 2026 11:33:41 +0800
-Message-Id: <20260617033400.376-4-zaiyuwang@trustnetic.com>
+Subject: [PATCH v7 04/21] net/ngbe: fix VF promiscuous and allmulticast
+Date: Wed, 17 Jun 2026 11:33:42 +0800
+Message-Id: <20260617033400.376-5-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260617033400.376-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,23 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NZcrde3zhHkVxWO/7qw6bV+byY7IZWdQQwWSWLazLbZcECj8lHah4S7l
- L287cKOj/FCF6Q7e5Zqzmf25GAi2uLBm1fiAJcO4h2+SJwVUa15iQFKFqe+D31GzyX8uQkQ
- wowKHLpNhXIpbKJW2kRV7DySJclR0Pqib5JAiifIFMcWicUDqHsghIJdKC8TpyPDBGsSH23
- N134bQHw5EVOfWlyXnvowpbkw+j1ZjCAwNggvpiPsKickkkIvBkacemlikKhiWbCBZmahxu
- n44rCUXhxgk2tAdLNTGuxNh0MvQEUp4acT37bptXMa3gUFCvLqqFUipztZfn2wEWldeXgXD
- 9INNdW2ZV7DN3hbieRtshYpAtXWu0h9ELTqqfStzGKnXEsZCFHRXDLvo6J3/gNozWfa+T/r
- La7SuuO/bR29nBVuRkeLV/OKGa0vDVd10mbrdsucsqSgRrSCmTA0VXVa3beS1vozwYzRtXr
- k/+AhCsPP+5B+lkr0toRTN0LZyll74jH/qYUs2VyQ9X9VWLem7RGBqRdbZ8o5ebH4x+BF77
- FYx9YVuxYVYmpsKFvXZ/qVzxXn4B0uHNm9ip+CVqqPpPR1m67akCmkGtCkD/pEZY+tWQqfZ
- NnbQwfnnevk9KzpMqsdEdTmeurzvCEdRVU25O+T2PS7GNMQJPwC2fm6kIBIORwyFOTgZyJd
- IxTe4E2t8q6ahmRjTnlXUu7IiIZRQa9pCb3xbaMwh0XEYCsnTubksjg7imDnVC/oWwwAWDI
- trZP2ck7E8zVu6cCjPrBrZU1Lj0n9Eq/yDjyIGpCsojlVsxhcJhf9mmugCRDwxgcuvlrpHo
- Lvn5ZgeA4Fs9IN8oxUBHPloXM0kAXzSDYmE3CQwYsrlFjtIN+U+/9MQVt4WlL4eHBClG2Lw
- nm9KmkH1gWp7usl/SaVCppqjpgRyZFjXlfCwrrCNBTq8tHzoIMdZ3B/MOkg60STeDk+6Zgh
- PjsZy2lRMqWntiNjCLps3fq4X5SpcmYOFeZNSPoQGURpx5YT6Ncn3eYZz3sYTwDjrhZfR/Y
- 6McbdPPlkQosPO69PosEuYQKen6TvnFf2P+nmUhvFA7gcBMcZPuMprDCUgOF4=
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+X-QQ-XMAILINFO: M75I2DDAzREFgMc4VkUu0Utqxj46YbNrSJvhRqDalZ6QQ5mFXpJt2Iiu
+ F17T7x1yF0PvSvSPI1GlksTd2fj5NypnGcDgTSXcx4hVS0Y4zrQZgTl4jQINXK3vdwJ0Z+f
+ Ho14zQMCAzbD9pUv9fKFDSaj2VoEfvBs++MHffYf456bJ7+lgBd3b9432ZnOd04Bpel1UJQ
+ tjewGsQfDCu3mdwZgoGrl72Y7XiQdsRlxuwjpuTj7YVL5SipLuCH94raD9blpASFDtDy9qx
+ Db5rT371MsQQ5TuHaD6J6xaOvfeu5ZTA1wRf89y9Ane9FMRpAgokH4qvgnxH3LSvvkXYlwv
+ egOG7JPmrZe+XOIBG+M4vmKRirT6NyL9z2QDOzDaGv+NhwyzxoAzNgoXuw/IJkcrKIVfHIj
+ 5dMI64O57+QoWBjEy1bOvs/Aext65il1YXNtv8MVM5+6TkZidY8jl3JgM6DwhmmRwDL5dqF
+ kgoG1vs0GghwJUX+sj1319taOz41ZnqCMUXSufzGx56mXIiCDffBOKGw3T7S3MZUQqjnbql
+ nr7J4fNokMDbR7LBjMzZxDww+C3g5cBNjOQy3aDz6JovGfJSwuDGQOd7gOlhTjwPS9s1js+
+ CRAxjn/czuIK8RdID9A4hqC7/fedkPjHuC+avR4ULoGQFOuTkJw4FlNP22UNqkHqZjfniAP
+ tDNTqa/eDD3ve3aNtM2+Bbl4himW4cieIv2ACtls4drXd9gjChwN2A+bgv8bu9m1670D56N
+ Uw/zfyFak4o08dRXqkOI4SwMnuXxY3o1firKMzo4JZFRVpKNCAfqpYF1xiSiL/rzJWCniqr
+ S4UDLuc8ShpSh1iOSP1Hs+weG1hm/a2WktJarLec8nGScKUTWGJ66Ff20Fof3pCbv4CCQ0r
+ 5BnHZAqZWezgwVj93nuZmYCyh42OxGVDscWKnMKZZ7vgHQmtumfAvSoOevf5ONgDzac/zYn
+ DONFEcm/MbpyYpYcX7md4E/dFM25h1PQRUzEx18gkmxNLtCz7yYpllj9YLghbaMJ4qI4gIa
+ xIAz+bUd/1FhxnTNTNILBysV2ehXeESCYO0MP0SqBk6jf/nfw/cXLg1NZA63Gf7e7fYdwVs
+ w==
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,34 +66,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-According to the PHY vendor, when YT8531S operates in UTP-to-Fiber or
-RGMII-to-Fiber mode with auto-negotiation disabled (Force mode),
-additional CDR (Clock Data Recovery) configuration is required to
-improve link connectivity. Without this config, link may be unstable
-or fail to establish.
+The configuration of allmulti and promiscuous modes conflicts
+together. For instance, if we enable promiscuous mode, then enable and
+disable allmulti, then the promiscuous mode is wrongly disabled.
 
-Fixes: f1268369403d ("net/ngbe: support autoneg on/off for external PHY SFI mode")
+To resolve this, the following changes are made:
+- do nothing when we set/unset allmulti if promiscuous mode is on
+- restore the proper mode (none or allmulti) when we disable
+  promiscuous mode
+
+Fixes: 7744e90805b5 ("net/ngbe: add promiscuous and allmulticast ops for VF device")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/ngbe/base/ngbe_phy_yt.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ngbe/ngbe_ethdev_vf.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ngbe/base/ngbe_phy_yt.c b/drivers/net/ngbe/base/ngbe_phy_yt.c
-index d110fbc8b2..ab0778d246 100644
---- a/drivers/net/ngbe/base/ngbe_phy_yt.c
-+++ b/drivers/net/ngbe/base/ngbe_phy_yt.c
-@@ -264,6 +264,9 @@ s32 ngbe_setup_phy_link_yt(struct ngbe_hw *hw, u32 speed,
- 			value = YT_BCR_RESET | YT_BCR_ANE | YT_BCR_RESTART_AN |
- 				YT_BCR_DUPLEX | YT_BCR_SPEED_SELECT1;
- 		} else {
-+			/* force mode need to config cdr */
-+			ngbe_write_phy_reg_sds_ext_yt(hw, 0x3, 0, 0x1434);
-+			ngbe_write_phy_reg_sds_ext_yt(hw, 0xe, 0, 0x163);
- 			value = YT_BCR_RESET | YT_BCR_DUPLEX;
- 			if (speed & NGBE_LINK_SPEED_1GB_FULL)
- 				value |= YT_BCR_SPEED_SELECT1;
+diff --git a/drivers/net/ngbe/ngbe_ethdev_vf.c b/drivers/net/ngbe/ngbe_ethdev_vf.c
+index 6406df40d0..81511fed8a 100644
+--- a/drivers/net/ngbe/ngbe_ethdev_vf.c
++++ b/drivers/net/ngbe/ngbe_ethdev_vf.c
+@@ -1196,9 +1196,13 @@ static int
+ ngbevf_dev_promiscuous_disable(struct rte_eth_dev *dev)
+ {
+ 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
++	int mode = NGBEVF_XCAST_MODE_NONE;
+ 	int ret;
+ 
+-	switch (hw->mac.update_xcast_mode(hw, NGBEVF_XCAST_MODE_NONE)) {
++	if (dev->data->all_multicast)
++		mode = NGBEVF_XCAST_MODE_ALLMULTI;
++
++	switch (hw->mac.update_xcast_mode(hw, mode)) {
+ 	case 0:
+ 		ret = 0;
+ 		break;
+@@ -1219,7 +1223,7 @@ ngbevf_dev_allmulticast_enable(struct rte_eth_dev *dev)
+ 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
+ 	int ret;
+ 
+-	if (dev->data->promiscuous == 1)
++	if (dev->data->promiscuous)
+ 		return 0;
+ 
+ 	switch (hw->mac.update_xcast_mode(hw, NGBEVF_XCAST_MODE_ALLMULTI)) {
+@@ -1243,6 +1247,9 @@ ngbevf_dev_allmulticast_disable(struct rte_eth_dev *dev)
+ 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
+ 	int ret;
+ 
++	if (dev->data->promiscuous)
++		return 0;
++
+ 	switch (hw->mac.update_xcast_mode(hw, NGBEVF_XCAST_MODE_MULTI)) {
+ 	case 0:
+ 		ret = 0;
 -- 
 2.21.0.windows.1
 
