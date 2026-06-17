@@ -2,121 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6213CD98EE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 05:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07569CD98E2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 05:49:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B4F3440276;
-	Wed, 17 Jun 2026 07:34:22 +0200 (CEST)
-Received: from DU2PR03CU002.outbound.protection.outlook.com
- (mail-northeuropeazon11011071.outbound.protection.outlook.com [52.101.65.71])
- by mails.dpdk.org (Postfix) with ESMTP id 682764026A
- for <dev@dpdk.org>; Wed, 17 Jun 2026 07:34:21 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yMik+74/bWh0pJCx1lpxJnZvwCv2k+nyJl00aAb/iMT1dWLta0h0FXDodTyCH39wqBpFKPrqfn6MIcsXztViJOUQ4F2q9DIzP9BosmLFNdSEQsgAVWKkdOBNYKyMIua8NCy4H3bA0gic+TtKAsBscIqxYph8/tB54EbnSHYB7kHM6CF3H9cx6DOuvGTGIVXWAHrZMnfG1mj2J6nhfZn51iqtKV84Ek9prUd+um/Efe+GtQkoLlNwg2ZyGrwq3AOiB16MVGCO5EMHkillMRK5j6ou3jKsaIFxWMgWag68Uqhv/rBM6gpsaFo9TA/foj9ymZD7GnruoAkGe00m7i7YxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dLq2TUjPILdWIASNKuzksAzIa7CkaDmz5R+hk4LFm9Q=;
- b=cBTbQtYioz6j83KEbE4lcsBe+q7s+ZpXADexM71vHn5M1JMI4ADXz4SBYUmcRySVRtynWW4x4N7se4t5PAu7P+7NIWlhtgJ79ZzcMeT9IlY8Vpmjz3bHSs4YBdEcyVLWhKonNMhdGsXuyMvfNchxTh0WktSzlBP6n/1WejZRxOUNN6VnE5mUcN9dUd8h567EIaFu7vskg/SufieL8yw6V0S7Bl06JkpL6b/WjdF8qxeyk/dgfXY9LX1CauuZxAEscWksftb69Gic23pgAgzAJBM7ebB/hoqQHLsF/mdJFCcfzM1Wa7+clcrmkOl+3tAS4zic4EFgTPfkg4UWra6W6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dLq2TUjPILdWIASNKuzksAzIa7CkaDmz5R+hk4LFm9Q=;
- b=jwmzfdE4HI/sVU2QV3SywtzD0q2JPJvaQeMMFjIDv2t8ESvjvh1sUJRtPx/HOYI8YGc3yyzYLGWtyyJPLZ3pr4viNaM5Eijy4FMgz1lPzBtDsFTxOl2o+TmeJeTFAxggMUKc7lwJ+jWKZ0+KZVpnYjsyaapi0z6A9tKrSlAg7n3A9uekDnxMCkQLy3ptqINcH7Blgm7APy5Zx8S9e9NgNuSQ4b9L2iV0xL4RkO1o8sK11nKV++nLT2Rp9o3eBWiE7O0ZTE/zStWBX+5x3m2dcvrthpWnOk/PrNYQ4fjZRIOCHHAp9E5TRaHSBvfcUDeq1Np9gYWd+fUeX2fRPug8Ug==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- (2603:10a6:150:212::14) by GVXPR04MB10707.eurprd04.prod.outlook.com
- (2603:10a6:150:214::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.11; Wed, 17 Jun
- 2026 05:34:19 +0000
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003]) by GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003%6]) with mapi id 15.21.0139.009; Wed, 17 Jun 2026
- 05:34:18 +0000
-Content-Type: multipart/alternative;
- boundary="------------waa484eGo5eI3WQPnbY2PG6K"
-Message-ID: <2960c0ce-95e0-492f-afeb-4e91c3059902@oss.nxp.com>
-Date: Wed, 17 Jun 2026 11:03:56 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] net/dpaa2: RSS fixes and improvements
-To: Maxime Leroy <maxime@leroys.fr>, dev@dpdk.org
-References: <20260616104717.723087-1-maxime@leroys.fr>
-Content-Language: en-US
-From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
-In-Reply-To: <20260616104717.723087-1-maxime@leroys.fr>
-X-ClientProxiedBy: MA5PR01CA0250.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:223::11) To GV1PR04MB10750.eurprd04.prod.outlook.com
- (2603:10a6:150:212::14)
+	by mails.dpdk.org (Postfix) with ESMTP id 1C49640276;
+	Wed, 17 Jun 2026 07:49:53 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id CF6124026A
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 07:49:50 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 65H1mwit4174953 for <dev@dpdk.org>; Tue, 16 Jun 2026 22:49:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=qtCZWYQWPa7+MKsl9MAaGVu
+ WB1C/au6VZxJ0c9+2BB0=; b=WuCM7wywmIPaxZc/IcEYjyZbghKQFf0QTL+r1Pu
+ P8P0QYSYP6GdTnBlvoaPUe6jA9uXPHRh1iDOnVmsXrH+YfvR/g8JJUeWoQoUF8X1
+ lch8sMgg0OnILYOrvUoYMJb9nTzo/JEe1VxKuRfefHZKgCFaVocMQd/7sQwmZGsb
+ xN8lhTnmJXGoHqcjQhRycrH0HhUEiizJMA43zGnIaqBmYBaNQD3QXReh+BEiYWuk
+ 0nF+mBzWGOyqmntXNJ8EaHp16gXfdE/cxdMzJNSBa9VX6LiE6wEdZvdMwF2y8r2m
+ +Lw4w7yUP0HG26/PcH94nIUG7bZ1TDPkyPhkv36Z+Ztatew==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4euefyhbrk-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Tue, 16 Jun 2026 22:49:49 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 16 Jun 2026 22:49:48 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 16 Jun 2026 22:49:48 -0700
+Received: from localhost.localdomain (unknown [10.28.36.154])
+ by maili.marvell.com (Postfix) with ESMTP id A02CA3F704B;
+ Tue, 16 Jun 2026 22:49:45 -0700 (PDT)
+From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <dev@dpdk.org>, <jerinj@marvell.com>, Rakesh Kudurumalla
+ <rkudurumalla@marvell.com>
+Subject: [PATCH] common/cnxk: add bulk Rx queue enable/disable
+Date: Wed, 17 Jun 2026 11:19:43 +0530
+Message-ID: <20260617054943.287815-1-rkudurumalla@marvell.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV1PR04MB10750:EE_|GVXPR04MB10707:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0428c87-b15b-4205-ac47-08decc3213ba
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|1800799024|366016|376014|19092799006|11063799006|56012099006|8096899003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: wDAjzgB4CyLAi1u1Q5Armx3M61QI4mVjSoXqROYrXUxNLAtMkob01rcqpjImo6/YsdjTIX6hFAZbnzRVuQ3MpycaZ9ETBc0E5IoR1ji7DLInV9mFKmFNmPkKq7r6B8vQ8VcL7VN+uTVo+8jqm1jv/KOpyoGScKmk2vB6otVpLXE04ESfBUNyOPtyfkk29+7iNnXw2wnPlO3OkxQykF6Wgf3zcsZTs+7xoXW/+DkeSczmvWyZJ/hshyAPUFp5YQcS2u3JifguDfv1JRKGlxsvF0jml4jnioGUK/TYJzjwzCuho8h8JHPvSI8iNM272ZoQH+6BRgqE5aUxmaY/t/rHrpgQw6nmmZm/xrnNEx5qMIw0dHX1DLdqoNGpQ4XJ6TxI4t1ZpvW/ZmMytrg30MseKhPqCLnzJwt4OCSyQdkp19Dmd/Vz+9sVDjcUNLlwYaYOZ8huHmR7jNo2NNHSyTyfh2TwMUaJCWUlOEgBmjmc1lZUdeBryD+r+g1UF0Mo7NljFcW6SWLfRfWHyxo8mjxsPeWHbuyP1WlUwFpoT2SNFN+feIcIZmRCm8Eq8b9llDU07u+esRnqY1pIsSO2JaR/0nty6cLaC6yLBb5vKPNowr708tYDQ38QsSatBLBmW2TGPBXNyllgRCQ8m8XHFcfjqHIkeYAtYhIGvlRjrreol59d68+5egruJs5OoaqiVXYE
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:GV1PR04MB10750.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(19092799006)(11063799006)(56012099006)(8096899003)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c0kxRVhweExuYnZLM293czh4Y2o4eTNuQThkSHhPTkhPb0dYVkxMUksvQ1Zr?=
- =?utf-8?B?eFRPMkhiM1NDc1dXQW1XY2RPNlNHWmwzRjFFbDdXVjI5Y1NyMTkzRlN2TVJS?=
- =?utf-8?B?MU51TDQ4UHJFRDJORXJ1ejhXdGNma2NDdmJ1TmJJNmdOZHpJZU56OFdGaXpn?=
- =?utf-8?B?YWFQOGpNSDN3WXhiVGU4dHVmS1NMbnFEQWo2R1NUODVwQUU3elVQSkgveUhm?=
- =?utf-8?B?Y3Z4NGh2dVV0YmEwL282NmFuQlB4a0d6ZGVUY1hnMzlyR05GSHZwR2R2TmNu?=
- =?utf-8?B?YWdhM1ZHOWZNY0p3SS9QMVdpUGU1MWF2UkVlR2xXUmlhM0dOeWxuV1NjbHc0?=
- =?utf-8?B?YjVuR01RQzA0MzVVR2swVzNZUTFXbGtQc3NlaVNrb0d5NmMyUDh3Y0ZDdlg5?=
- =?utf-8?B?eURGQnBvdHVSU3FmOFMyYUZ3REpVNjRSZ0tLdlZpU2JMaExNY3dJOU9sVzkz?=
- =?utf-8?B?RVcwb0VxdzdDbTBOanhWUUw4MVBBTFllVDdYRWszbVR3SnhhT2t5Y3UzSWNW?=
- =?utf-8?B?L0pTSDZuaUNTampJay9wWE94Q0FQUTI0eHlyTVZ1Y0NYK2h2V3U3UG5XelhF?=
- =?utf-8?B?REdSUVZKQys3bFNnTVhLd1FqcENmbVNxeWRQV2pLUHVud1RodXJlSnZtVldz?=
- =?utf-8?B?RzFUdkxpTnNNaHBwQkFMOUJKcXNCMkxYeUo3b1FaNFhpZVlVMDlrYUdGT1cr?=
- =?utf-8?B?b0ZhbG50ekNTSmsvZVc1SVN3WHY0TUVkN1NEVkh2ZXZFU2RpM1BNZmRHOCtz?=
- =?utf-8?B?dVBaWUVkUW9ZK1V5Ri9LeW9GUnh3Q3RaVFgyZzJVWEFnUXlua1RySUhzaWVy?=
- =?utf-8?B?YlBTN0Fyc3NjV2wrNFRJdEQrN01vN3dxblcwM011VzliaXN5REF4UHJkVm91?=
- =?utf-8?B?cnhXTklHM2F1cXNwb21iblRFK0huK2M5MURyYmJvQUxjYVdtMExkMzhjTXZx?=
- =?utf-8?B?d1c0ZkFJcnc1d0cxdkN3d0NqT2pPckUxSGxoZ3RpbDFmOHZyV2JIYmxOUWhD?=
- =?utf-8?B?U2lIeFh1YjhySU4xcHJxTCtXOEdZY3JIRnN3NVNMTU4vbnRFVG1FWHdYWWpz?=
- =?utf-8?B?b1FlbnZoT0ZlbExLYmFUamdFZmdBSlFZY0NRSTkzY2dCUXNvT3JlZno4YjRO?=
- =?utf-8?B?THlYbUIra2VPQm1EYS9OTytHcHlFZDNCVkswUlJBSjhRUHhHTEYyc3Qva3J1?=
- =?utf-8?B?ajlkeTJSdGI2MVduSEo0RzlEaWNtdHhUMmxUVVlVdm5pRC9XcXgvVFNMWUxW?=
- =?utf-8?B?bGlqSXRYaE04VWxpYUIvSzk0Nkk3RGFZQ2pka1k0c21tWWNXQUxUR29lUjZw?=
- =?utf-8?B?WXFvbnJlVVdFYk1qR0ExWGdoTlFUWkZreXk5YytGYXlwYkN0ZytpUm82ckN4?=
- =?utf-8?B?bEdCM3Z4WnBZdmVWVkFtTk55bzNISGtjci9rbTZneFRDd3p3MmNWcW9KakF2?=
- =?utf-8?B?ekRocXVWZmhST2FBK1YzRlNvd3pZQ2JnOUd6bm1ZOHdQOGJud3BMYXRQN0FJ?=
- =?utf-8?B?VGREZkFVUWdST2o0bVhLeG1aRzdMK0hyVlNHRVlEQVp0b1JrTDUySzczY1lz?=
- =?utf-8?B?aVNLL2ZBUW9yNEhINDJGKzI3VTBXZVFoM3NKeHh2NnM3TENiN1VVeXpvemhT?=
- =?utf-8?B?WmNTUXFWWjhSdEJDb1A0Ymk5L1BrUlQ0eVNiVFZmT0FYOWkxZkYrcDNTM01X?=
- =?utf-8?B?Tk0vZUppMDk4NXozWjVvakdtWVZCQUhVZEJiSDdJQ2ZWbkRjNnJKS05wVWs4?=
- =?utf-8?B?OEZWZ2ZQdU1ETm5sWTR4NTBuYTlVYUg1cjNvWk1jSGROZWVaalpPNHg4TGRZ?=
- =?utf-8?B?TkEvZ0pUbjVMc2RTZVJuOGVhQ2hWZ1BlNGtlRnpEVGJSTXAzeERvYzd1SVZ0?=
- =?utf-8?B?Q09ZYmQ4dWFiYU5mMVVZMDlWNlBBeGFMbGxTT0plVmFtTlFUaVYxc1VBT1k1?=
- =?utf-8?B?N0pvSmJyWmtCK0wvd2NmREZyc0ZiVFpRYllzcHh0Z3piemdvVzNqQ0dQNHdJ?=
- =?utf-8?B?WlFQMDVuUE5qNS80WlZyalFrMHlTRmtQWEhhWk92OHdVMGNSTFl0WDl6SWEr?=
- =?utf-8?B?RkR1ODZ2RFlLMVVTVXNucmJoYU9ra3F0Qmd1T3Z4cnNXRnJIN2JVdnE2VXpR?=
- =?utf-8?B?UkQ0VXMyalIrZERCS1gvaWtsZXc0V1pHby9WamJzN09EQlo2Z2N6c1FidVpE?=
- =?utf-8?B?NG16OG9TejJFSlcxYis5bVJVMEtPNnRKTEtjOWRNRjVWLzhwd3pLekhIZnoz?=
- =?utf-8?B?S2d2Tk1oWnpqM3hiOEtBQkNXT0FHRlRJTGJMbjRpTVBrcSt0Snc2bGNJZnJT?=
- =?utf-8?B?clkvcVE0NFhxZjVnY2llbjd0Y1loNS9BUlpObVhKb1pSMXZQRDBabEEyVlJF?=
- =?utf-8?Q?iG5rkLaa6qtNFmiI=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0428c87-b15b-4205-ac47-08decc3213ba
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB10750.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2026 05:34:18.8709 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HIU2G/2a/OsRW8PzomJ4EB7WwbGK8KSALHzAQ/3oMdgeiidchxKUpNPYRXymlq8uScqEIZU2ikJH05klFWR8hg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10707
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: uFPXcnsDWjqChoXSfHxMdEmnGH0TKgff
+X-Authority-Analysis: v=2.4 cv=Zf0t8MVA c=1 sm=1 tr=0 ts=6a32357d cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=Gf0DblXfq_GWlY6mU-YA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE3MDA1MSBTYWx0ZWRfXwmfRElGQ0nFV
+ 9fMD4NQAfqtGV9zpMNAOJvKbkZu2nrHgkvims9GVxmv4zFQ48s/Lq1dS6C2fXZDGa330/GadlZR
+ l8hR/GODxsw8ydzfKMDfr57hNV1GODA=
+X-Proofpoint-ORIG-GUID: uFPXcnsDWjqChoXSfHxMdEmnGH0TKgff
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE3MDA1MSBTYWx0ZWRfXxNfe8xBqcGUV
+ jvFASioAlQ8pL+IREKXYgfelKqfboKk0yiXh8TWVK4X3baf5bsi8T9BFJtG8No+A7DhS47NAd1n
+ Rl7aP3T1Ci4lc1/WQYoSScpB3RNeVfqUSIHZz3zDrQEMTZ6WXvdgQKXf9H6+jX+IwTImASfV9Lb
+ 9L6EVCQ4btryGaRSC8AAc7FP4b15DEuwAoyAYtC1gRGBOj2DoU6o1IgH+WuvZblKODSJdYVmJ5I
+ K9qz375CUVieHrtWmMjhIrt19VeY3iUSQ30dYWXdVWbGJ6LNhavl8/JZm/32gR5htTIJhbfisqV
+ nLQuAlZPj/Q/cJLL24M/Qiuqki51ijexxxxbMA8F6ro5hut94bQTCOCHJWyu3ai6X0jBFjYhtbA
+ D9QrEa2xEhezXezxdm2LyjgAHMFblEr4V9XNjOcjPwUlYHWQvWOTFPnw8gh+xlmEKFG6ITb60vb
+ 4elGHUJYIveqgrtqUcA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-16_05,2026-06-16_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -130,67 +84,178 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---------------waa484eGo5eI3WQPnbY2PG6K
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Add roc_nix_rq_multi_ena_dis() to batch RQ enable/disable mailbox
+AQ operations and process them in a single mbox_process() call.
 
+Skip mbox_process() when no messages were queued (e.g. all qid are
+UINT16_MAX) by checking num_msgs and msg_size via mbox_nonempty_nolock().
 
-On 16-06-2026 16:17, Maxime Leroy wrote:
-> A set of RSS fixes and improvements for the dpaa2 PMD.
->
-> Patches 1 and 2 fix the RSS hash key: the L4 destination port was never
-> added (both extracts used the source port), and SCTP now uses the same L4
-> port extraction as TCP/UDP. Both are tagged for stable.
->
-> Patches 3 and 4 are small cleanups in the key builder (a dead num_extracts
-> increment, and the unset PPPoE guard flag).
->
-> Patch 5 honours RTE_ETH_RSS_LEVEL_INNERMOST so tunnelled traffic hashes on
-> the inner IP header. Patch 6 implements reta_query / reta_update as an
-> emulation over the HW distribution-size mechanism, since dpaa2 has no
-> software-visible indirection table.
->
-> Tested on LX2160A (lx2160acex7).
+Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+---
+ drivers/common/cnxk/roc_mbox_priv.h           |  6 +-
+ drivers/common/cnxk/roc_nix.h                 |  2 +
+ drivers/common/cnxk/roc_nix_queue.c           | 87 +++++++++++++++++++
+ .../common/cnxk/roc_platform_base_symbols.c   |  1 +
+ 4 files changed, 92 insertions(+), 4 deletions(-)
 
-Series-
+diff --git a/drivers/common/cnxk/roc_mbox_priv.h b/drivers/common/cnxk/roc_mbox_priv.h
+index 354c8fa52a..e9da1959b6 100644
+--- a/drivers/common/cnxk/roc_mbox_priv.h
++++ b/drivers/common/cnxk/roc_mbox_priv.h
+@@ -113,14 +113,12 @@ mbox_rsp_init(uint16_t mbox_id, void *msghdr)
+ }
+ 
+ static inline bool
+-mbox_nonempty(struct mbox *mbox, int devid)
++mbox_nonempty_nolock(struct mbox *mbox, int devid)
+ {
+ 	struct mbox_dev *mdev = &mbox->dev[devid];
+ 	bool ret;
+ 
+-	plt_spinlock_lock(&mdev->mbox_lock);
+-	ret = mdev->num_msgs != 0;
+-	plt_spinlock_unlock(&mdev->mbox_lock);
++	ret = mdev->num_msgs != 0 && mdev->msg_size != 0;
+ 
+ 	return ret;
+ }
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index 8ba8b3e0b6..f495e2a5ad 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -1094,6 +1094,8 @@ int __roc_api roc_nix_rq_modify(struct roc_nix *roc_nix, struct roc_nix_rq *rq,
+ 				bool ena);
+ int __roc_api roc_nix_rq_cman_config(struct roc_nix *roc_nix, struct roc_nix_rq *rq);
+ int __roc_api roc_nix_rq_ena_dis(struct roc_nix_rq *rq, bool enable);
++int __roc_api roc_nix_rq_multi_ena_dis(struct roc_nix *roc_nix, struct roc_nix_rq *rqs,
++				       int nb_rx_queues, bool enable);
+ int __roc_api roc_nix_rq_is_sso_enable(struct roc_nix *roc_nix, uint32_t qid);
+ int __roc_api roc_nix_rq_fini(struct roc_nix_rq *rq);
+ int __roc_api roc_nix_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq *cq);
+diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/roc_nix_queue.c
+index ef9b651022..331e503e09 100644
+--- a/drivers/common/cnxk/roc_nix_queue.c
++++ b/drivers/common/cnxk/roc_nix_queue.c
+@@ -10,6 +10,32 @@
+ /* Default SQB slack per SQ */
+ #define ROC_NIX_SQB_SLACK_DFLT 24
+ 
++#define NIX_RQ_BULK_ENA_DIS_LOOP(REQ_TYPE, ALLOC_FN)                                               \
++	do {                                                                                       \
++		for (i = 0; i < nb_rx_queues; i++) {                                               \
++			REQ_TYPE *aq;                                                              \
++			if (rqs[i].qid == UINT16_MAX)                                              \
++				continue;                                                          \
++			struct roc_nix_rq *rq = &rqs[i];                                           \
++			aq = ALLOC_FN(mbox);                                                       \
++			if (!aq) {                                                                 \
++				rc = mbox_process(mbox);                                           \
++				if (rc)                                                            \
++					goto exit;                                                 \
++				aq = ALLOC_FN(mbox);                                               \
++				if (!aq) {                                                         \
++					rc = -ENOSPC;                                              \
++					goto exit;                                                 \
++				}                                                                  \
++			}                                                                          \
++			aq->qidx = rq->qid;                                                        \
++			aq->ctype = NIX_AQ_CTYPE_RQ;                                               \
++			aq->op = NIX_AQ_INSTOP_WRITE;                                              \
++			aq->rq.ena = enable;                                                       \
++			aq->rq_mask.ena = ~(aq->rq_mask.ena);                                      \
++		}                                                                                  \
++	} while (0)
++
+ static inline uint32_t
+ nix_qsize_to_val(enum nix_q_size qsize)
+ {
+@@ -47,6 +73,30 @@ nix_rq_vwqe_flush(struct roc_nix_rq *rq, uint16_t vwqe_interval)
+ 	}
+ }
+ 
++static int
++nix_rq_bulk_ena_dis(struct nix *nix, struct roc_nix_rq *rqs, int nb_rx_queues, bool enable)
++{
++	struct mbox *mbox = mbox_get((&nix->dev)->mbox);
++	int rc = 0, i;
++
++	if (roc_model_is_cn9k())
++		NIX_RQ_BULK_ENA_DIS_LOOP(struct nix_aq_enq_req, mbox_alloc_msg_nix_aq_enq);
++
++	else if (roc_model_is_cn10k())
++		NIX_RQ_BULK_ENA_DIS_LOOP(struct nix_cn10k_aq_enq_req,
++					 mbox_alloc_msg_nix_cn10k_aq_enq);
++
++	else /* CN20K */
++		NIX_RQ_BULK_ENA_DIS_LOOP(struct nix_cn20k_aq_enq_req,
++					 mbox_alloc_msg_nix_cn20k_aq_enq);
++
++	if (mbox_nonempty_nolock(mbox, 0))
++		rc = mbox_process(mbox);
++exit:
++	mbox_put(mbox);
++	return rc;
++}
++
+ int
+ nix_rq_ena_dis(struct dev *dev, struct roc_nix_rq *rq, bool enable)
+ {
+@@ -126,6 +176,43 @@ roc_nix_sq_ena_dis(struct roc_nix_sq *sq, bool enable)
+ 	return rc;
+ }
+ 
++int
++roc_nix_rq_multi_ena_dis(struct roc_nix *roc_nix, struct roc_nix_rq *rqs, int nb_rx_queues,
++			 bool enable)
++{
++	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
++	struct roc_nix_rq *rq;
++	int rc, i;
++
++	rc = nix_rq_bulk_ena_dis(nix, rqs, nb_rx_queues, enable);
++	if (rc) {
++		plt_err("Failed to %s Rx queues rc=%d pf=%d vf=%d nb_rx_queues=%d",
++			enable ? "enable" : "disable", rc, nix->dev.pf, nix->dev.vf,
++			nb_rx_queues);
++		return rc;
++	}
++
++	for (i = 0; i < nb_rx_queues; i++) {
++		rq = &rqs[i];
++
++		if (rq->qid == UINT16_MAX)
++			continue;
++
++		nix_rq_vwqe_flush(rq, nix->vwqe_interval);
++
++		/* Check for meta aura if RQ is enabled */
++		if (enable && nix->need_meta_aura) {
++			rc = roc_nix_inl_meta_aura_check(rq->roc_nix, rq);
++			if (rc) {
++				plt_err("Failed meta aura check for rq=%u rc=%d pf=%d vf=%d",
++					rq->qid, rc, nix->dev.pf, nix->dev.vf);
++				return rc;
++			}
++		}
++	}
++	return 0;
++}
++
+ int
+ roc_nix_rq_ena_dis(struct roc_nix_rq *rq, bool enable)
+ {
+diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
+index ed34d4b05b..08b2f4c6f8 100644
+--- a/drivers/common/cnxk/roc_platform_base_symbols.c
++++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+@@ -353,6 +353,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_ena_dis)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_is_sso_enable)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_init)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_modify)
++RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_multi_ena_dis)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_cman_config)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_fini)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_cq_init)
+-- 
+2.25.1
 
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
-
---------------waa484eGo5eI3WQPnbY2PG6K
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-<!DOCTYPE html><html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  </head>
-  <body>
-    <br>
-    <div class="moz-cite-prefix">On 16-06-2026 16:17, Maxime Leroy
-      wrote:<br>
-    </div>
-    <blockquote type="cite" cite="mid:20260616104717.723087-1-maxime@leroys.fr">
-      <pre wrap="" class="moz-quote-pre">A set of RSS fixes and improvements for the dpaa2 PMD.
-
-Patches 1 and 2 fix the RSS hash key: the L4 destination port was never
-added (both extracts used the source port), and SCTP now uses the same L4
-port extraction as TCP/UDP. Both are tagged for stable.
-
-Patches 3 and 4 are small cleanups in the key builder (a dead num_extracts
-increment, and the unset PPPoE guard flag).
-
-Patch 5 honours RTE_ETH_RSS_LEVEL_INNERMOST so tunnelled traffic hashes on
-the inner IP header. Patch 6 implements reta_query / reta_update as an
-emulation over the HW distribution-size mechanism, since dpaa2 has no
-software-visible indirection table.
-
-Tested on LX2160A (lx2160acex7).
-</pre>
-    </blockquote>
-    <p>Series-</p>
-    <p>Acked-by: Hemant Agrawal <a class="moz-txt-link-rfc2396E" href="mailto:hemant.agrawal@nxp.com">&lt;hemant.agrawal@nxp.com&gt;</a><span style="white-space: pre-wrap">
-</span><br>
-    </p>
-  </body>
-</html>
-
---------------waa484eGo5eI3WQPnbY2PG6K--
