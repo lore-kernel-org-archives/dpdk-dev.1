@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A187FCD98F0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 19:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68ED9CD98E2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Jun 2026 19:46:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AAB7040609;
-	Wed, 17 Jun 2026 21:45:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B263B40670;
+	Wed, 17 Jun 2026 21:45:56 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 5F82D402EF
- for <dev@dpdk.org>; Wed, 17 Jun 2026 21:45:52 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4ggZ8Q4lQCzJ467Y;
- Thu, 18 Jun 2026 03:45:26 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 11EF440653
+ for <dev@dpdk.org>; Wed, 17 Jun 2026 21:45:54 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4ggZ8S2cqfzJ467W
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 03:45:28 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 310B240584;
- Thu, 18 Jun 2026 03:45:52 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id DBA2440570
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 03:45:53 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Jun 2026 21:45:51 +0200
+ 15.2.1544.11; Wed, 17 Jun 2026 21:45:53 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v6 01/11] bpf: make logging prefixes more consistent
-Date: Wed, 17 Jun 2026 20:44:13 +0100
-Message-ID: <20260617194425.12690-2-marat.khalili@huawei.com>
+Subject: [PATCH v6 05/11] bpf: support rte_bpf_prm_ex with port callbacks
+Date: Wed, 17 Jun 2026 20:44:17 +0100
+Message-ID: <20260617194425.12690-6-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260617194425.12690-1-marat.khalili@huawei.com>
 References: <20260612084219.38399-1-marat.khalili@huawei.com>
@@ -50,233 +49,217 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Logging in lib/bpf is inconsistent: some places use `%s()`, other just
-`%s` for `__func__`.
-
-Introduce new macro for logging prefixed with function name and use it
-everywhere function name without arguments is prefixed to the log line.
+Introduce new functions to install an already loaded BPF program into RX
+or TX port/queue, since previous API was tied to rte_bpf_prm.
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/bpf/bpf_convert.c   | 18 +++++++++---------
- lib/bpf/bpf_impl.h      |  3 +++
- lib/bpf/bpf_jit_arm64.c |  4 ++--
- lib/bpf/bpf_load.c      |  2 +-
- lib/bpf/bpf_load_elf.c  |  2 +-
- lib/bpf/bpf_stub.c      |  6 ++----
- lib/bpf/bpf_validate.c  | 25 ++++++++++++-------------
- 7 files changed, 30 insertions(+), 30 deletions(-)
+ lib/bpf/bpf_pkt.c        | 65 ++++++++++++++++++++++++++++++----------
+ lib/bpf/rte_bpf_ethdev.h | 54 +++++++++++++++++++++++++++++++++
+ 2 files changed, 104 insertions(+), 15 deletions(-)
 
-diff --git a/lib/bpf/bpf_convert.c b/lib/bpf/bpf_convert.c
-index 86e703299d05..953ca80670c4 100644
---- a/lib/bpf/bpf_convert.c
-+++ b/lib/bpf/bpf_convert.c
-@@ -247,8 +247,8 @@ static int bpf_convert_filter(const struct bpf_insn *prog, size_t len,
- 	uint8_t bpf_src;
+diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
+index 5007f6aef57d..87065e939f31 100644
+--- a/lib/bpf/bpf_pkt.c
++++ b/lib/bpf/bpf_pkt.c
+@@ -490,13 +490,11 @@ rte_bpf_eth_tx_unload(uint16_t port, uint16_t queue)
+ }
  
- 	if (len > BPF_MAXINSNS) {
--		RTE_BPF_LOG_LINE(ERR, "%s: cBPF program too long (%zu insns)",
--			    __func__, len);
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "cBPF program too long (%zu insns)",
-+			    len);
- 		return -EINVAL;
- 	}
- 
-@@ -483,8 +483,8 @@ static int bpf_convert_filter(const struct bpf_insn *prog, size_t len,
- 
- 			/* Unknown instruction. */
- 		default:
--			RTE_BPF_LOG_LINE(ERR, "%s: Unknown instruction!: %#x",
--				    __func__, fp->code);
-+			RTE_BPF_LOG_FUNC_LINE(ERR, "Unknown instruction!: %#x",
-+				    fp->code);
- 			goto err;
- 		}
- 
-@@ -528,7 +528,7 @@ rte_bpf_convert(const struct bpf_program *prog)
- 	int ret;
- 
- 	if (prog == NULL) {
--		RTE_BPF_LOG_LINE(ERR, "%s: NULL program", __func__);
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "NULL program");
- 		rte_errno = EINVAL;
- 		return NULL;
- 	}
-@@ -536,13 +536,13 @@ rte_bpf_convert(const struct bpf_program *prog)
- 	/* 1st pass: calculate the eBPF program length */
- 	ret = bpf_convert_filter(prog->bf_insns, prog->bf_len, NULL, &ebpf_len);
- 	if (ret < 0) {
--		RTE_BPF_LOG_LINE(ERR, "%s: cannot get eBPF length", __func__);
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "cannot get eBPF length");
- 		rte_errno = -ret;
- 		return NULL;
- 	}
- 
--	RTE_BPF_LOG_LINE(DEBUG, "%s: prog len cBPF=%u -> eBPF=%u",
--		    __func__, prog->bf_len, ebpf_len);
-+	RTE_BPF_LOG_FUNC_LINE(DEBUG, "prog len cBPF=%u -> eBPF=%u",
-+		    prog->bf_len, ebpf_len);
- 
- 	prm = rte_zmalloc("bpf_filter",
- 			  sizeof(*prm) + ebpf_len * sizeof(*ebpf), 0);
-@@ -557,7 +557,7 @@ rte_bpf_convert(const struct bpf_program *prog)
- 	/* 2nd pass: remap cBPF to eBPF instructions  */
- 	ret = bpf_convert_filter(prog->bf_insns, prog->bf_len, ebpf, &ebpf_len);
- 	if (ret < 0) {
--		RTE_BPF_LOG_LINE(ERR, "%s: cannot convert cBPF to eBPF", __func__);
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "cannot convert cBPF to eBPF");
- 		rte_free(prm);
- 		rte_errno = -ret;
- 		return NULL;
-diff --git a/lib/bpf/bpf_impl.h b/lib/bpf/bpf_impl.h
-index f5fa22098489..fb5ec3c4d65f 100644
---- a/lib/bpf/bpf_impl.h
-+++ b/lib/bpf/bpf_impl.h
-@@ -32,6 +32,9 @@ extern int rte_bpf_logtype;
- #define RTE_BPF_LOG_LINE(lvl, ...) \
- 	RTE_LOG_LINE(lvl, BPF, __VA_ARGS__)
- 
-+#define RTE_BPF_LOG_FUNC_LINE(lvl, fmt, ...) \
-+	RTE_LOG_LINE(lvl, BPF, "%s(): " fmt, __func__, ##__VA_ARGS__)
-+
- static inline size_t
- bpf_size(uint32_t bpf_op_sz)
+ static int
+-bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
+-	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
+-	uint32_t flags)
++bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
++	struct rte_bpf *bpf, uint32_t flags)
  {
-diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
-index a04ef33a9c88..4bbb97da1b89 100644
---- a/lib/bpf/bpf_jit_arm64.c
-+++ b/lib/bpf/bpf_jit_arm64.c
-@@ -98,8 +98,8 @@ check_invalid_args(struct a64_jit_ctx *ctx, uint32_t limit)
+ 	int32_t rc;
+ 	struct bpf_eth_cbi *bc;
+-	struct rte_bpf *bpf;
+ 	rte_rx_callback_fn frx;
+ 	rte_tx_callback_fn ftx;
+ 	struct rte_bpf_jit jit;
+@@ -504,14 +502,17 @@ bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
+ 	frx = NULL;
+ 	ftx = NULL;
  
- 	for (idx = 0; idx < limit; idx++) {
- 		if (rte_le_to_cpu_32(ctx->ins[idx]) == A64_INVALID_OP_CODE) {
--			RTE_BPF_LOG_LINE(ERR,
--				"%s: invalid opcode at %u;", __func__, idx);
-+			RTE_BPF_LOG_FUNC_LINE(ERR,
-+				"invalid opcode at %u;", idx);
- 			return -EINVAL;
- 		}
- 	}
-diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
-index 6983c026af0e..b8a0426fe2ed 100644
---- a/lib/bpf/bpf_load.c
-+++ b/lib/bpf/bpf_load.c
-@@ -100,7 +100,7 @@ rte_bpf_load(const struct rte_bpf_prm *prm)
+-	if (prm == NULL || rte_eth_dev_is_valid_port(port) == 0 ||
++	if (bpf == NULL || rte_eth_dev_is_valid_port(port) == 0 ||
+ 			queue >= RTE_MAX_QUEUES_PER_PORT)
+ 		return -EINVAL;
  
- 	if (rc != 0) {
- 		rte_errno = -rc;
--		RTE_BPF_LOG_LINE(ERR, "%s: %d-th xsym is invalid", __func__, i);
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "%d-th xsym is invalid", i);
- 		return NULL;
- 	}
++	if (bpf->prm.nb_prog_arg != 1)
++		return -EINVAL;
++
+ 	if (cbh->type == BPF_ETH_RX)
+-		frx = select_rx_callback(prm->prog_arg.type, flags);
++		frx = select_rx_callback(bpf->prm.prog_arg[0].type, flags);
+ 	else
+-		ftx = select_tx_callback(prm->prog_arg.type, flags);
++		ftx = select_tx_callback(bpf->prm.prog_arg[0].type, flags);
  
-diff --git a/lib/bpf/bpf_load_elf.c b/lib/bpf/bpf_load_elf.c
-index 1d30ba17e25d..2390823cbf30 100644
---- a/lib/bpf/bpf_load_elf.c
-+++ b/lib/bpf/bpf_load_elf.c
-@@ -122,7 +122,7 @@ check_elf_header(const Elf64_Ehdr *eh)
- 		err = "unexpected machine type";
- 
- 	if (err != NULL) {
--		RTE_BPF_LOG_LINE(ERR, "%s(): %s", __func__, err);
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "%s", err);
+ 	if (frx == NULL && ftx == NULL) {
+ 		RTE_BPF_LOG_LINE(ERR, "%s(%u, %u): no callback selected;",
+@@ -519,16 +520,11 @@ bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
  		return -EINVAL;
  	}
  
-diff --git a/lib/bpf/bpf_stub.c b/lib/bpf/bpf_stub.c
-index dea0d703ca27..e06e820d8327 100644
---- a/lib/bpf/bpf_stub.c
-+++ b/lib/bpf/bpf_stub.c
-@@ -21,8 +21,7 @@ rte_bpf_elf_load(const struct rte_bpf_prm *prm, const char *fname,
- 		return NULL;
- 	}
+-	bpf = rte_bpf_elf_load(prm, fname, sname);
+-	if (bpf == NULL)
+-		return -rte_errno;
+-
+ 	rte_bpf_get_jit(bpf, &jit);
  
--	RTE_BPF_LOG_LINE(ERR, "%s() is not supported, rebuild with libelf installed",
--		__func__);
-+	RTE_BPF_LOG_FUNC_LINE(ERR, "not supported, rebuild with libelf installed");
- 	rte_errno = ENOTSUP;
- 	return NULL;
- }
-@@ -38,8 +37,7 @@ rte_bpf_convert(const struct bpf_program *prog)
- 		return NULL;
- 	}
- 
--	RTE_BPF_LOG_LINE(ERR, "%s() is not supported, rebuild with libpcap installed",
--		__func__);
-+	RTE_BPF_LOG_FUNC_LINE(ERR, "not supported, rebuild with libpcap installed");
- 	rte_errno = ENOTSUP;
- 	return NULL;
- }
-diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-index e8dbec282779..a7f4f576c9d6 100644
---- a/lib/bpf/bpf_validate.c
-+++ b/lib/bpf/bpf_validate.c
-@@ -1838,16 +1838,16 @@ add_edge(struct bpf_verifier *bvf, struct inst_node *node, uint32_t nidx)
- 	uint32_t ne;
- 
- 	if (nidx >= bvf->prm->nb_ins) {
--		RTE_BPF_LOG_LINE(ERR,
--			"%s: program boundary violation at pc: %u, next pc: %u",
--			__func__, get_node_idx(bvf, node), nidx);
-+		RTE_BPF_LOG_FUNC_LINE(ERR,
-+			"program boundary violation at pc: %u, next pc: %u",
-+			get_node_idx(bvf, node), nidx);
- 		return -EINVAL;
- 	}
- 
- 	ne = node->nb_edge;
- 	if (ne >= RTE_DIM(node->edge_dest)) {
--		RTE_BPF_LOG_LINE(ERR, "%s: internal error at pc: %u",
--			__func__, get_node_idx(bvf, node));
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "internal error at pc: %u",
-+			get_node_idx(bvf, node));
- 		return -EINVAL;
- 	}
- 
-@@ -2005,8 +2005,7 @@ validate(struct bpf_verifier *bvf)
- 
- 		err = check_syntax(ins);
- 		if (err != 0) {
--			RTE_BPF_LOG_LINE(ERR, "%s: %s at pc: %u",
--				__func__, err, i);
-+			RTE_BPF_LOG_FUNC_LINE(ERR, "%s at pc: %u", err, i);
- 			rc |= -EINVAL;
- 		}
- 
-@@ -2230,9 +2229,9 @@ save_cur_eval_state(struct bpf_verifier *bvf, struct inst_node *node)
- 	/* get new eval_state for this node */
- 	st = pull_eval_state(&bvf->evst_sr_pool);
- 	if (st == NULL) {
--		RTE_BPF_LOG_LINE(ERR,
--			"%s: internal error (out of space) at pc: %u",
--			__func__, get_node_idx(bvf, node));
-+		RTE_BPF_LOG_FUNC_LINE(ERR,
-+			"internal error (out of space) at pc: %u",
-+			get_node_idx(bvf, node));
- 		return -ENOMEM;
- 	}
- 
-@@ -2462,8 +2461,8 @@ evaluate(struct bpf_verifier *bvf)
- 				err = ins_chk[op].eval(bvf, ins + idx);
- 				stats.nb_eval++;
- 				if (err != NULL) {
--					RTE_BPF_LOG_LINE(ERR, "%s: %s at pc: %u",
--						__func__, err, idx);
-+					RTE_BPF_LOG_FUNC_LINE(ERR,
-+						"%s at pc: %u", err, idx);
- 					rc = -EINVAL;
- 				}
- 			}
-@@ -2533,7 +2532,7 @@ __rte_bpf_validate(struct rte_bpf *bpf)
- 			bpf->prm.prog_arg.type != RTE_BPF_ARG_PTR &&
- 			(sizeof(uint64_t) != sizeof(uintptr_t) ||
- 			bpf->prm.prog_arg.type != RTE_BPF_ARG_PTR_MBUF)) {
--		RTE_BPF_LOG_LINE(ERR, "%s: unsupported argument type", __func__);
-+		RTE_BPF_LOG_FUNC_LINE(ERR, "unsupported argument type");
+ 	if ((flags & RTE_BPF_ETH_F_JIT) != 0 && jit.func == NULL) {
+ 		RTE_BPF_LOG_LINE(ERR, "%s(%u, %u): no JIT generated;",
+ 			__func__, port, queue);
+-		rte_bpf_destroy(bpf);
  		return -ENOTSUP;
  	}
  
+@@ -551,7 +547,6 @@ bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
+ 
+ 	if (bc->cb == NULL) {
+ 		rc = -rte_errno;
+-		rte_bpf_destroy(bpf);
+ 		bpf_eth_cbi_cleanup(bc);
+ 	} else
+ 		rc = 0;
+@@ -564,13 +559,33 @@ int
+ rte_bpf_eth_rx_elf_load(uint16_t port, uint16_t queue,
+ 	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
+ 	uint32_t flags)
++{
++	struct rte_bpf *bpf;
++	int32_t rc;
++
++	bpf = rte_bpf_elf_load(prm, fname, sname);
++	if (bpf == NULL)
++		return -rte_errno;
++
++	rc = rte_bpf_eth_rx_install(port, queue, bpf, flags);
++
++	if (rc < 0)
++		rte_bpf_destroy(bpf);
++
++	return rc;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_eth_rx_install, 26.11)
++int
++rte_bpf_eth_rx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
++	uint32_t flags)
+ {
+ 	int32_t rc;
+ 	struct bpf_eth_cbh *cbh;
+ 
+ 	cbh = &rx_cbh;
+ 	rte_spinlock_lock(&cbh->lock);
+-	rc = bpf_eth_elf_load(cbh, port, queue, prm, fname, sname, flags);
++	rc = bpf_eth_elf_install(cbh, port, queue, bpf, flags);
+ 	rte_spinlock_unlock(&cbh->lock);
+ 
+ 	return rc;
+@@ -581,13 +596,33 @@ int
+ rte_bpf_eth_tx_elf_load(uint16_t port, uint16_t queue,
+ 	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
+ 	uint32_t flags)
++{
++	struct rte_bpf *bpf;
++	int32_t rc;
++
++	bpf = rte_bpf_elf_load(prm, fname, sname);
++	if (bpf == NULL)
++		return -rte_errno;
++
++	rc = rte_bpf_eth_tx_install(port, queue, bpf, flags);
++
++	if (rc < 0)
++		rte_bpf_destroy(bpf);
++
++	return rc;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_eth_tx_install, 26.11)
++int
++rte_bpf_eth_tx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
++	uint32_t flags)
+ {
+ 	int32_t rc;
+ 	struct bpf_eth_cbh *cbh;
+ 
+ 	cbh = &tx_cbh;
+ 	rte_spinlock_lock(&cbh->lock);
+-	rc = bpf_eth_elf_load(cbh, port, queue, prm, fname, sname, flags);
++	rc = bpf_eth_elf_install(cbh, port, queue, bpf, flags);
+ 	rte_spinlock_unlock(&cbh->lock);
+ 
+ 	return rc;
+diff --git a/lib/bpf/rte_bpf_ethdev.h b/lib/bpf/rte_bpf_ethdev.h
+index 8c6dc0825f32..49ccc1347257 100644
+--- a/lib/bpf/rte_bpf_ethdev.h
++++ b/lib/bpf/rte_bpf_ethdev.h
+@@ -109,6 +109,60 @@ rte_bpf_eth_tx_elf_load(uint16_t port, uint16_t queue,
+ 	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
+ 	uint32_t flags);
+ 
++/**
++ * @warning
++ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
++ *
++ * Install callback to execute specified BPF program on given RX port/queue.
++ *
++ * On success the ownership of the program passes to the library,
++ * rte_bpf_eth_rx_unload must be used to unload it, and rte_bpf_destroy must no
++ * longer be called.
++ *
++ * @param port
++ *   The identifier of the ethernet port
++ * @param queue
++ *   The identifier of the RX queue on the given port
++ * @param bpf
++ *   BPF program
++ * @param flags
++ *   Flags that define expected behavior of the loaded filter
++ *   (i.e. jited/non-jited version to use).
++ * @return
++ *   Zero on successful completion or negative error code otherwise.
++ */
++__rte_experimental
++int
++rte_bpf_eth_rx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
++	uint32_t flags);
++
++/**
++ * @warning
++ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
++ *
++ * Install callback to execute specified BPF program on given TX port/queue.
++ *
++ * On success the ownership of the program passes to the library,
++ * rte_bpf_eth_tx_unload must be used to unload it, and rte_bpf_destroy must no
++ * longer be called.
++ *
++ * @param port
++ *   The identifier of the ethernet port
++ * @param queue
++ *   The identifier of the TX queue on the given port
++ * @param bpf
++ *   BPF program
++ * @param flags
++ *   Flags that define expected behavior of the loaded filter
++ *   (i.e. jited/non-jited version to use).
++ * @return
++ *   Zero on successful completion or negative error code otherwise.
++ */
++__rte_experimental
++int
++rte_bpf_eth_tx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
++	uint32_t flags);
++
+ #ifdef __cplusplus
+ }
+ #endif
 -- 
 2.43.0
 
