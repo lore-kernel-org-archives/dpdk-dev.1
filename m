@@ -2,69 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 390B9CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 16:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F050ECD98F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 16:09:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BACE4027F;
-	Thu, 18 Jun 2026 18:00:43 +0200 (CEST)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id A989440268
- for <dev@dpdk.org>; Thu, 18 Jun 2026 18:00:41 +0200 (CEST)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-1397e093f90so2876357c88.1
- for <dev@dpdk.org>; Thu, 18 Jun 2026 09:00:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 283924027F;
+	Thu, 18 Jun 2026 18:09:46 +0200 (CEST)
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
+ [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id AE39A40268
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 18:09:44 +0200 (CEST)
+Received: by mail-dy1-f172.google.com with SMTP id
+ 5a478bee46e88-30bc806fcf8so1326132eec.1
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 09:09:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781798441;
- x=1782403241; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781798984;
+ x=1782403784; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=QZMXVKIVJuzQti+k5GU5NQEw9ro7wZmFFdhTVkgAHjc=;
- b=NFP40g+Lfr1knuabq1u74nIyPyc3y1PVV66GAvcuBe3dpkmAFv8maqnp0AUXwNkM8l
- +fxHbVfl9NFN2HORZJj5zgsF4ywKn1vjhsjHUr1ZJiE6eez/m1dliljZcWrvjwObd+SD
- y/DiTeQLrw7sAVlhWOel1r9f1qeWbEk7vaOfpZnEYC7rrk0+AmOSeeINNn2zORPLkahj
- F5ts/m04c3IPM2Bw5miMritWZlmwKCCr0n4wi5j3hWDa9dysUYsmV39xNg7qfrXssdQV
- gOsKRJKRv0BYJ65LecdFXk/DprRSi0GLQlzrg2tJqcLQkASlLGhK+5xX/VY+gKDaifm/
- zSzA==
+ :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+ :reply-to; bh=W7wpnVyzu83lFX6WrwopHhgOTH6qzlCCetfuglbAsFk=;
+ b=eO67PlttYSQE5SQc2HvzBpXED2I1wrTlSKaSonVEuGrwKcfARzfrjJ777Tj3AmnXT4
+ rfzaAakmtwXJGiVTQQLs5XIJ+vfdf7FzRpWK/dO3I6iX9YdXUeHEkMQaM70+PemoHAl9
+ lh4+V9WN6qg5eUOnmpaM+0huJSBo4IfaiQ6d85lGiha/oHRXGRsj0CPonX9oBULzHehj
+ +cBL/rUPJXna4jntyJlvti/dGHDo428S0kKdsomEudC3u0Txv8IpnWBhd01N50LYeoOd
+ SEGzzwww1Oig4K7f6T1rdIBDuw9BeCEtz3Eb1prim7wYgqyOLeqq1ZCa+05R+3R4S5+D
+ vUbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781798441; x=1782403241;
+ d=1e100.net; s=20251104; t=1781798984; x=1782403784;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=QZMXVKIVJuzQti+k5GU5NQEw9ro7wZmFFdhTVkgAHjc=;
- b=mRY+NNmZPr9rJ3lfeI9jdUnqgso2NSzVO0ROn5eil3ENVakY5xBRx9xPxa8DZY4oSV
- srw6vfV/Ml595TantqKDCR0AgWnizSUo5AMmuglOcIGt1hVLqp0nXYiTHfPI01+i3IGK
- 4bNSpOw2A/v1rExaK1hfIc8ll3HhW5O1eTm0m+GnGkrh2gyimJkcQ7nSb0wool4D1pu0
- 1Fc2vZPUtdcdArBHvi9jpptnGSsEVBglghLqrupfVje9B8ghNqrvDYTErr8lq6TBTUk8
- iyXlL1HwYSSCMUFW+ZIJOQQM+/HCSgRXmZ0XFQckNDpCl3tJC674n43BNszcR37BVQ20
- uYyg==
-X-Gm-Message-State: AOJu0YwxZpPafYRinD3oerMVijmjycZBQdK29hwHkhMlMTMxNmRDp1T2
- cKY1U7yfggb+bEwRjZso8BwTYVzfPN8DbD8SRSQYDB2H4+xVzScn5w+iOQW7sZ+1LOK3AOVYrPP
- PCvv3
-X-Gm-Gg: AfdE7ckLCDLgEL7xxS28bvUsHCiLKfVQnySJUeO6msiYU5eW418G8bSpBC96tNI/ngM
- SKErdTxnliVgVq/EeVEzmbEGvypBDEpYopPcLNIe3Bx/Q19ntFpQCfUcUbkZHaefoUIpXn9n17r
- T49ZKYsHvZ3MrxfUafEeXTwORH68UE3EdGisl/LXa9Vl/68mXbHglLdn8wJwtFXQpYywz9zG2/t
- oMo6y0TNy2wA8bONvme19QbVrrJUvwspHWommJazk2MYe+9mk7kmHtCjP++cy4x9MA3dClHgj/P
- QdpCKiOV4R+w1lE+tvUjOMvKOOZGAnQStk3In0Fj4pOiIj/nr5Np+N3BY/Xh5rror20t9PXj7aP
- Dpoj6NdQR+Ot0wuQjVaVFH1ohc5ziRgvc2zN8d0d8z37yBuj+EehUDlo+vIAJxuor/jRBcviQ5n
- iwPR9oOPOnyaPCbi4VYEYrmMsZwTjMQYFIZqv0G512+tRy/oK9ACOF1w==
-X-Received: by 2002:a05:7022:913:b0:12b:ebb9:1c18 with SMTP id
- a92af1059eb24-139a21a67e5mr145193c88.31.1781798440260; 
- Thu, 18 Jun 2026 09:00:40 -0700 (PDT)
+ :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=W7wpnVyzu83lFX6WrwopHhgOTH6qzlCCetfuglbAsFk=;
+ b=FMvzd1KHGJcMiLB1U+a1F352zCxYLLdVidVcLWziDOaeDHbcb/05aOGBPUB3/2AvgT
+ GuOrfjZcluYtKaTHY1NIVDAiV206gmliKHxdBZmmesGbEHjbCSr+oVkukJLHNcXTW2S4
+ i+PhB6qoImQE31WVvo8I+/yShNG3fseigxZK0H9ahDWGnzQO0sU2UPTW5mtwTTdzrPow
+ GwZwdNn8RpSc+m4XkHMwrlBa2BaRz1cyy5cepLRVGumIQ4qeG4nWj5zr51BVIAkEJNML
+ aluuG1pvozgtXue52qFHzU9FyDKG3U9QvXUIA8jf+1KFuKN0yGDQnH5Fz3NoE6tlfN+A
+ wzMA==
+X-Gm-Message-State: AOJu0YwZgnVq2gsn1OUyYEuzCJ1g9ShIJaUL62wu+rJApoPrNurWGyfK
+ oit48f7PYuJXFZJhJnoGvjkvV+Ktp9dWcRmyvSmF2zK9dCu98SIY7KBOdPfQNb3MYPguQHLLyHg
+ ZsDEv
+X-Gm-Gg: AfdE7cl+ostZz8jRhgTBCO8wB8EWDByj4F6mgMY469OpsxIxGcpX2/do9VNmlQwQqGn
+ AMxcidSyE1Dzk1pXvDFsABWi6tFUXq7wa4pjHPVGBrzZpbNlTOv1qFD/UONCEoV1abXCUS3IZOU
+ brGkuYauS56EOEBbebH7+aCevVvcwgVadoRGzAw+sFMNeiuvV64EXgH26DGpRbhbLI4fC+rqN9F
+ 4E+Lp0Z9/9oCN8+0BvKtZ/B863k0o0J5blrzAYzb66yY82qctEbSDD5rOQSKuNes4iAcCbevmfB
+ reqS1US+KGXVq/hkOik03lX3I+V5GQkujs1JYA/aC4UiNwdHCP4VWbMjho3d41IQayp0leAxavn
+ rUWJTN49cS+4IDNHaCWvEmHC4lcOz3JzTfXrfNVEJMNHIyU18P0iWSDz7K24jA3xI5bgWzqAIIu
+ yRLDLxu3M2GZZJ5k76grkv1XURO8iQVEdSYAcJVzdL+0kzhn3hKvhDCsWl0170UqbC
+X-Received: by 2002:a05:7022:69f:b0:138:49ea:f468 with SMTP id
+ a92af1059eb24-139a20b8d5bmr211257c88.2.1781798983181; 
+ Thu, 18 Jun 2026 09:09:43 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30bcbb684absm6085587eec.1.2026.06.18.09.00.39
+ a92af1059eb24-1386f20ad25sm17702511c88.0.2026.06.18.09.09.42
+ for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Jun 2026 09:00:39 -0700 (PDT)
-Date: Thu, 18 Jun 2026 09:00:37 -0700
+ Thu, 18 Jun 2026 09:09:42 -0700 (PDT)
+Date: Thu, 18 Jun 2026 09:09:40 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/4] net/bond: fixes and cleanup
-Message-ID: <20260618090037.78d9659c@phoenix.local>
-In-Reply-To: <20260529000157.235931-1-stephen@networkplumber.org>
-References: <20260417165530.653328-1-stephen@networkplumber.org>
- <20260529000157.235931-1-stephen@networkplumber.org>
+To: dev@dpdk.org
+Subject: Re: [PATCH 0/2] eal: notify secondaries on primary exit
+Message-ID: <20260618090940.6853e9cb@phoenix.local>
+In-Reply-To: <20260507210152.410419-1-stephen@networkplumber.org>
+References: <20260507210152.410419-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,28 +79,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 28 May 2026 16:59:12 -0700
+On Thu,  7 May 2026 13:58:35 -0700
 Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> Automated analysis of the bonding found a few minor things.
-> The bug fix is in patch 3 for secondary process crash does rx/tx. 
+> Bugzilla 1942: when a primary process exits cleanly, secondary
+> processes other than testpmd do not get notified.  The notification
+> mechanism added in 25.11 was placed in testpmd and used
+> rte_mp_request_sync() with a testpmd-specific action name, so any
+> non-testpmd secondary (dpdk-dumpcap, dpdk-pdump, dpdk-procinfo, or
+> out-of-tree consumers) would log "Cannot find action: mp_testpmd"
+> and the primary would block on the 5 second request timeout.
 > 
-> The cleanups are in handling of 8023ad mode setting
-> and the logging macros.
+> Putting application-specific IPC actions on a broadcast request path
+> is the wrong layer.  Notification of primary exit is something every
+> secondary needs and should come from EAL, not from each application.
 > 
-> v2 - feedback about the mode setting and log messages
+> Patch 1 reverts the testpmd-side mechanism (commit f96273c8e9d3).
+> The secondary-side primary alive monitor (enable_primary_monitor)
+> is preserved and continues to handle detection of primary exit via
+> the existing alarm-based polling of rte_eal_primary_proc_alive().
 > 
-> Stephen Hemminger (4):
->   net/bonding: make 8023ad enable function void
->   net/bonding: check mode before setting dedicated queues
->   net/bonding: prevent crash on Rx/Tx from secondary process
->   net/bonding: remove redundant function names from log
+> Patch 2 adds a generic EAL-level notification.  On primary cleanup,
+> rte_mp_channel_cleanup() broadcasts an MP_REQ_QUIT message to all
+> known secondaries via rte_mp_sendmsg().  Secondaries register an
+> internal action handler that tears down their own MP channel on
+> receipt.  No new public API; no application changes required for
+> any secondary, in-tree or out.
 > 
->  drivers/net/bonding/eth_bond_8023ad_private.h | 17 +----
->  drivers/net/bonding/rte_eth_bond_8023ad.c     | 16 ++--
->  drivers/net/bonding/rte_eth_bond_api.c        |  4 +-
->  drivers/net/bonding/rte_eth_bond_pmd.c        | 73 ++++++++++++++-----
->  4 files changed, 67 insertions(+), 43 deletions(-)
+> This is the minimum fix suitable for backport to 25.11 stable.
+> It addresses the clean exit case.  The crash case (primary killed
+> or signaled) continues to be handled by the existing
+> rte_eal_primary_proc_alive() polling on the secondary side, which
+> detects the primary's release of the config file lock.
+> 
+> A more complete solution using a connected socket type (SOCK_SEQPACKET)
+> is planned since that can handle both planned and forced exiting
+> of the primary.
+> 
+> Tested with testpmd (primary) and dpdk-dumpcap, dpdk-pdump,
+> dpdk-procinfo (secondaries).
+> 
+> 
+> Stephen Hemminger (2):
+>   Revert "app/testpmd: stop forwarding in secondary process"
+>   eal: notify secondary on primary exit
+> 
+>  app/test-pmd/testpmd.c           | 103 ++-----------------------------
+>  lib/eal/common/eal_common_proc.c |  51 ++++++++++++++-
+>  2 files changed, 53 insertions(+), 101 deletions(-)
 > 
 
-Ping. Need review and ack for these patches
+This is a real bug fix. Even if AI is being overly wordy in describing
+it; what it does is move the notification from being testpmd -> testpmd only
+to a more general primary -> secondary mechanism.
+
+Without it can demonstrate the bug rather trivially with packet
+capture tools (pdump or dumpcap)
+
+Could this get reviewed?
