@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED51CD98F6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 15:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E3ECD98F8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 15:47:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07AF54027F;
-	Thu, 18 Jun 2026 17:47:11 +0200 (CEST)
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
- [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id 6ED2D40268
- for <dev@dpdk.org>; Thu, 18 Jun 2026 17:47:09 +0200 (CEST)
-Received: by mail-dy1-f171.google.com with SMTP id
- 5a478bee46e88-30c001b21feso426640eec.1
- for <dev@dpdk.org>; Thu, 18 Jun 2026 08:47:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F1A384064F;
+	Thu, 18 Jun 2026 17:47:13 +0200 (CEST)
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+ by mails.dpdk.org (Postfix) with ESMTP id 64E7D4064F
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 17:47:12 +0200 (CEST)
+Received: by mail-dl1-f51.google.com with SMTP id
+ a92af1059eb24-1363fe80fe8so1522889c88.0
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 08:47:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781797628;
- x=1782402428; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781797631;
+ x=1782402431; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JfSMT4NfLKw8qam3hITdc/XUyHPQuomEg6R3kAgp7jo=;
- b=vVbm+FJqLUpW9+gMNSIbBJ34Fr+kA8mZcGMSdjfV5m0h4K1fCF93MXo3C6zimdaFGW
- wfAj+zE+7k2P9YjKYhGQYToMEToE4uIT4FPwqduGSOyfilgh7yFcPB9nCOzb6ZwraUDV
- kZheD1iVn2hoG2D2OXgZBGQP5roAKNi3bdBQ/qS5e7pj0Tn3nDGQMWvct+f7H6WeNorU
- XqCoYZ51BZ8quCI0cbLiJqhtAgNFXujjTq/4f8wtdwygwH+cEo07iRLydsdoJtuNyfhK
- yBWIYzNtzbgl+eZ/w8iWvZRxswrXqsj4aw87WDPy798NzFh73H6sNZ8mxorQ06aj6TWH
- mkjQ==
+ bh=G8h3LPe0K2df8E8lEkbRdxEoL9yJkdPBRBh00PKD0C0=;
+ b=QxxyNmp3FISNjs/GBCs6UOo5GgaOB2UJgAWwhxbM+SrVBOQHhMy6GmNQVKnC+U61aE
+ /lWZViG4rg5jHrA2hXVGtlcNtKi3wF8vi0ViIqWP/lmDiVH9y07y5Xj2h2M3MAuyuqrf
+ j5uXAkUUR8WbiFSkgTffbfHBhrL4TycZ3wI3uZQvXv08BQ0nQr6sYF/6WkW7OJsOl2Km
+ oRDski7XQgQ67X+pD/X2anJ6LwFB7jEDzYsqxOmsVsgAd+A9/jIo0xk0mZR2csjoRqci
+ Bt5mvdNqI6K4j2eQeE3fFQyv6pY8jVUgFYhDw9eF5Yr3/kdtz5gshd4pV7CMfXuGAivB
+ ZSxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781797628; x=1782402428;
+ d=1e100.net; s=20251104; t=1781797631; x=1782402431;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=JfSMT4NfLKw8qam3hITdc/XUyHPQuomEg6R3kAgp7jo=;
- b=s2VLDVK/YKhGOl7P413W3Nhsj7uBtyrJHLNUPP0OsYXCGpstuu4DVKQIIW0fCQb72h
- bRTgU3WdWtKhIBMIkj5O4H9/Mt08CaLKaLICuMb/RJiUFJz81l4BwlOSW904t5HUSsa8
- VRraz/79jvQfXs723W8YhtNsmV6uC9r5MLZV2u/VjptgPPV1LgNUzJ8K8f2lut7gYIM+
- sMOJcjj6EIdSvHSch38umzxRW9cwycs99ITFoSgSIrxjt01gepk2nkdRTNQhXjqgN9wk
- oYUqJqCTSAQu4kbqQxx0H/rqHuQuZBVpxLuA1GjrpmQCXdNBqgGr+2Jos0+F9IXLK+g/
- pV6Q==
-X-Gm-Message-State: AOJu0YxoiHEbDgsFTolSeyu1QQYNSpHMA1/g8OUD/nfHlhTm2iIluTti
- T1ReZx6awFKsaJzQp3GLbRHHZ0jQH/QjHGijv4CRQurlEeQBMMCRjZyVxYqBDfAbcxE=
-X-Gm-Gg: AfdE7cnY1AVvfUkADjNVL3IgKv74xKBabEIqTqZG8eoafctpl+6SiNHlfpsZoQyCa1X
- 0h0h1MvhasGs/tEcuNJg65vLR88xoBdvm9MO9YMDDHwG1TUDluBfcfmPVoJrCR5zfDNZ/g3okeg
- 5stlWlo5qSabiD+W5hdRkdgYK+MR88UKwulX+5GdoxOglHPRkFHTWJKuIGIODbH4HPxdUqm+8x2
- WlaAOiSPwfPK4DK1MBi6Z06hI4yAoutrLZNAqGgSVyQytumNt5IU9DhDHnABdCyBaA61r7ZnnOq
- hFsblHKZPqSOyI1gqv1NunQT3YX8vIpVDZrISwz0zRkE61gtXVlNHj5apeEA+gXKOd9NPkyesRz
- sf4lj12M6j308Cn8N/Atsmqh45DjfUhWt9dum/VxHhIb9bF21vjXY67kR9jtXc9vx9LZQnI/HsX
- VuUgOXkF3JLf94N7IQKN/2Lwsy6CBCRYr0kdcMTVeH2X5ttkxQuqMV7buF0uktZI8A
-X-Received: by 2002:a05:7300:bc1a:b0:2ee:be86:7b90 with SMTP id
- 5a478bee46e88-30bf09a78e4mr3795346eec.29.1781797628200; 
- Thu, 18 Jun 2026 08:47:08 -0700 (PDT)
+ bh=G8h3LPe0K2df8E8lEkbRdxEoL9yJkdPBRBh00PKD0C0=;
+ b=rL+eM7UuTxdIBeBqeRZxWbRHJZPQ+UNiqR1+BbIM7RghkQ3rSaFx2kCHtBLW+IDSQC
+ 82582se6NWoNF2AUcjyvj4hFDqtYki2emJiOmVlB1SHh/qtlJ5CAZSv9vnWZjAcH8UGg
+ WO7MyOo59/sHtqRTRHhmZ6p+H0qfRfiIi0c8pmR07Fle2VaLmOSW42JdJ7rnAoBtCQFF
+ ZAEtSYdshF+sdbYpEkHOEnjNpn4Pdj46gHf6KEprZ9nkTlqJdQfk5f60jBOWes9O3rpo
+ WXH4rnw7p3bwu7Ngp9AuLCY5uk0h0qRFrfZ4TNR2nUWqmeoDk38wow+XwTJw9CzDYvG7
+ ug5g==
+X-Gm-Message-State: AOJu0YxVII36Sfoxi0Xi/YnZYBhSCsiOM0kt2inMuufUULsnVWs2jXMQ
+ xjWxN9j3TFco42SxUD7M9bpkK0PyzCKAfTejHn9vF5CtPv87xdUMxUUS15rjJltpVJQ=
+X-Gm-Gg: AfdE7cmqsmugknE021IfsLSE/Ft92UnP5A9Ou5sdFVkAQYETVKiihJGaIytF5hjcE0+
+ 7K26Skda78RFkZ0Z4hQmbjOzlQ9Egp4LHbwPB+9bP79RektEhQXN9BC1Jk+ifXOwjNSQWw0wDF+
+ 553rU15AY7tI06hkrr9mr1n4rSIQjfcIMrEqmMe1CuMQBx4PkkknrNDXT9RvqnPis53Mg1HTEiq
+ kw8W1kWLyovovFTGF+Bx/ff/z7Ms9SZ8aXAMFY0r5Tp/RLq6e7Dimk0/Zju2cSLtHXuYGO6wl9N
+ TUgBItuOC9LtSPTz8Z0lNynDC0KqMaqmFOktd/ad2+h6f/unFFzRwrV6DN5TxrA7tKjX337uI2h
+ 9dX/g2zU4hQAT+TMS0nOchR/eIE1on5/BtAcYS3eRMwbsO3ix+lmOCwNyx+cxzXLyXHpjPmhf10
+ upodTdJHN4vA4JRgI3tJiD5/pEOKleGBHljz22+mA7I9VeajuN77lZlLtpTEqvGeDf
+X-Received: by 2002:a05:7022:6727:b0:12d:de3f:f3e5 with SMTP id
+ a92af1059eb24-139a21bacaemr96244c88.37.1781797631130; 
+ Thu, 18 Jun 2026 08:47:11 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3081e5d0357sm24199005eec.11.2026.06.18.08.47.07
+ 5a478bee46e88-3081e5d0357sm24199005eec.11.2026.06.18.08.47.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Jun 2026 08:47:08 -0700 (PDT)
-Date: Thu, 18 Jun 2026 08:45:17 -0700
+ Thu, 18 Jun 2026 08:47:10 -0700 (PDT)
+Date: Thu, 18 Jun 2026 08:46:48 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Dawid Wesierski <dawid.wesierski@intel.com>
 Cc: dev@dpdk.org, thomas@monjalon.net, david.marchand@redhat.com, Marek
  Kasiewicz <marek.kasiewicz@intel.com>
 Subject: Re: [PATCH v2 0/7] Intel network drivers enhancements
-Message-ID: <20260618084517.4d7f6c85@phoenix.local>
+Message-ID: <20260618084648.7c43eb59@phoenix.local>
 In-Reply-To: <20260618144442.312844-1-dawid.wesierski@intel.com>
 References: <20260608164059.65420-1-dawid.wesierski@intel.com>
  <20260618144442.312844-1-dawid.wesierski@intel.com>
@@ -113,61 +113,95 @@ Dawid Wesierski <dawid.wesierski@intel.com> wrote:
 >  11 files changed, 153 insertions(+), 15 deletions(-)
 > 
 
-This looks interesting but I don't understand the motivation
-or use case for the new code. There is no documentation, examples
-or test integration.  At this point the patch is in pure RFC state.
+AI review found lots of problems with the implementation as well.
 
-More wordy answer from AI...
+Series composition
 
-Documentation and motivation
+This v2 series bundles seven patches under one cover letter, but only
+1/7 (ethdev API) and 7/7 (net/intel) implement the header-split mbuf
+callback. Patches 2/7 (iavf max ring desc), 3/7 (iavf queue rate
+limit), 4/7 (ice base burst size), 5/7 (ice PTP timestamp), and 6/7
+(iavf runtime queue setup) are unrelated driver changes. Please split
+these into a separate series so each can be reviewed and merged on its
+own merits; mixing them obscures the dependency and complicates bisect.
 
-This adds a new public ethdev RX mechanism but ships no prose
-rationale, no documentation, and no worked example. For a new API
-the series needs to make the case before the code can be evaluated.
 
-Missing documentation:
+[PATCH v2 1/7] ethdev: add header split mbuf callback API
 
-- No prog_guide section. A new RX model -- header split where the
-  application supplies the payload buffer -- needs a write-up (e.g.
-  in doc/guides/prog_guide) covering the buffer-lifetime contract,
-  the IOVA/headroom semantics, which offloads must be enabled
-  (RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT), and what happens on a PMD that
-  does not implement the hook.
+Warning: struct rte_eth_hdrs_mbuf carries only buf_addr and buf_iova,
+no length. The callback therefore cannot tell the PMD how large the
+application buffer is. In buffer-split mode the NIC DMAs up to the
+queue's configured payload buffer size; if the application buffer is
+smaller, the hardware writes past it. Add a length field and have the
+PMD (and/or ethdev) validate it against the configured payload size.
 
-- No example or testpmd integration. There is no end-to-end flow a
-  reviewer can read or run: register the callback, supply buffers,
-  receive, consume, recycle. Without one there is no demonstrated
-  use case and no way to validate the design (the mempool-corruption
-  and headroom issues in 7/7 would likely have surfaced in a working
-  example).
+Warning: the buffer lifetime and ownership are undocumented. The
+Doxygen does not state who owns the buffer after the payload mbuf is
+freed, whether the address is consumed as-is or with headroom applied
+(the 7/7 implementation adds RTE_PKTMBUF_HEADROOM to the IOVA -- see
+below), or that the callback must return a distinct buffer per call.
+These are contract details an application cannot guess.
 
-Missing motivation:
+Warning: new experimental API with no testpmd hook and no functional
+test in app/test. Both are required for new ethdev API.
 
-- The actual use case is not named. "Zero-copy RX into mapped frame
-  buffers with known IOVA" describes a mechanism, not a user. Who
-  needs this -- an AF_XDP-style external umem, a GPU/DMA target
-  (gpudev), something else? State it.
+Warning: new experimental public API but no release notes entry
+(doc/guides/rel_notes/release_26_07.rst). The series touches only the
+three code files.
 
-- The benefit is unquantified. The claim is avoiding "an extra
-  memcpy from the mempool mbuf," but the patch replaces that with a
-  per-allocation indirect callback on the Rx fast path
-  (ice_recv_pkts, ice_rx_alloc_bufs). The rationale should show the
-  memcpy actually exists in the path being optimized and that the
-  indirect call per buffer is a net win.
+Info: rte_eth_hdrs_set_mbuf_callback() validates port_id and the
+hdrs_mbuf_set_cb hook, but passes rx_queue_id to the PMD without
+checking it against dev->data->nb_rx_queues. Sibling per-queue ethdev
+calls (e.g. rte_eth_rx_queue_setup) validate the queue id at the
+ethdev layer. The ICE PMD does check it in 7/7, but validating in the
+wrapper would be consistent and would protect future PMDs that forget.
 
-- It does not explain why existing mechanisms are insufficient. DPDK
-  already lets an application own payload memory via
-  rte_pktmbuf_attach_extbuf() and via external-buffer mempools
-  (pinned external memory passed to the Rx mempool). The series must
-  argue why a new callback API is needed instead of those -- this is
-  the same alternative raised against the 7/7 implementation, so the
-  motivation and the correctness fix point at the same question.
 
-- Constraints are undocumented: PMD support scope, fast-path
-  threading and reentrancy of the callback, and interaction with the
-  buffer-split configuration.
+[PATCH v2 7/7] net/intel: support header split mbuf callback
 
-Until there is a documented model and at least one example showing
-the buffer lifecycle, it is hard to tell whether the callback API is
-the right shape -- or whether attach_extbuf / an external-mempool
-already covers the use case.
+Error: overwriting buf_addr/buf_iova on a pool mbuf corrupts the
+payload mempool. At all three sites (ice_alloc_rx_queue_mbufs,
+ice_rx_alloc_bufs, ice_recv_pkts) the payload mbuf is allocated from
+rxq->rxseg[1].mp and then has its buf_addr/buf_iova rewritten to point
+at application memory:
+
+	if (ret >= 0) {
+		mbuf_pay->buf_addr = hdrs_mbuf.buf_addr;
+		mbuf_pay->buf_iova = hdrs_mbuf.buf_iova;
+	}
+
+DPDK never restores buf_addr/buf_iova on free. When these mbufs are
+returned to rxseg[1].mp (via rte_pktmbuf_free of the received chain,
+or _ice_rx_queue_release_mbufs on queue stop), the pool objects retain
+the foreign buffer pointer, and buf_len still describes the original
+mempool buffer. The next rte_mbuf_raw_alloc()/raw_alloc_bulk() from
+that pool hands back an mbuf pointing at application memory. The
+correct mechanism for pointing an mbuf at non-pool memory is
+rte_pktmbuf_attach_extbuf() (sets buf_addr/buf_iova/buf_len, the
+EXTERNAL flag, and a free callback), or a dedicated external-buffer
+mempool. As written the payload pool is progressively poisoned.
+
+Error: the callback's failure return is swallowed. On ret < 0 the code
+skips the address update but still programs the descriptor from the
+mbuf's current buf_iova:
+
+	rxdp->read.pkt_addr =
+		rte_cpu_to_le_64(rte_mbuf_data_iova_default(nmb_pay));
+
+Because of the pool corruption above, a recycled mbuf's buf_iova may
+point at a buffer the application already reclaimed, so a failed
+callback silently arms the NIC to DMA into stale/foreign memory. A
+callback failure should abort the refill (or fall back to a known-good
+pool buffer), not fall through. Separately, the documented contract is
+"0 on success, negative on failure"; the test should be ret == 0, not
+ret >= 0.
+
+Warning: RTE_PKTMBUF_HEADROOM is silently applied to the supplied
+IOVA. The descriptor is programmed with rte_mbuf_data_iova_default(),
+i.e. buf_iova + data_off (128), but the API documents buf_iova as "the
+IOVA of the payload buffer". The NIC therefore writes 128 bytes into
+the application buffer, and the tail of a buffer sized to the payload
+overruns by the headroom. Either document that the headroom offset is
+applied, or program pkt_addr from the raw buf_iova for callback-
+provided buffers.
+
