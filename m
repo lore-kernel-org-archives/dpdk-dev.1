@@ -2,79 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 595C3CD98ED
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 09:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FA8CD98ED
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 09:20:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A2AE540296;
-	Thu, 18 Jun 2026 11:13:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 61EE240296;
+	Thu, 18 Jun 2026 11:20:42 +0200 (CEST)
 Received: from fout-b1-smtp.messagingengine.com
  (fout-b1-smtp.messagingengine.com [202.12.124.144])
- by mails.dpdk.org (Postfix) with ESMTP id 1447540268
- for <dev@dpdk.org>; Thu, 18 Jun 2026 11:13:04 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.stl.internal (Postfix) with ESMTP id DAFD71D00067;
- Thu, 18 Jun 2026 05:13:01 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Thu, 18 Jun 2026 05:13:02 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 9419440268
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 11:20:41 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfout.stl.internal (Postfix) with ESMTP id D5E191D0012F;
+ Thu, 18 Jun 2026 05:20:38 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-04.internal (MEProxy); Thu, 18 Jun 2026 05:20:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1781773981;
- x=1781860381; bh=QtIzVJ2qsSJYt1/oJazhWHktBZcDtSkP9sEreSy5lfA=; b=
- owr/rDBO6Xn8GEvWVEwVAdKCe2UBE4/rfZrhFBfRLyXynxMvqnvRfLqnEsi5vgm0
- xAuGkDWBC1EKO2/2emztrAOdkZ7AjXu6c1BOaPZEvyL8Dop0kYmmJqezsmxfGz9+
- VV1k7jZ/jFc0+5uJjAwAZd11Z8pvWyzn7XtAxIA8CA+4l46pP05XVLp8D72o9tbg
- 9jFvng+w5KuOqOXxNMeA1NkwOJIg9T04snm1WhCEXAY/OLOLEjtNjVUfyxP7KQQ5
- WW4+XGZ5PBJnpF6DBKK2XKUGtJhKol/hWklz8liG/07nkbl3jNVBMSi0d89jHt4P
- z11YvllxnXpQA9KJJBFePg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1781774438;
+ x=1781860838; bh=4IUrWUrGSbInXjbGTYBgsp9ZVPautniIZW/RkDrF5P4=; b=
+ YHWxC9BQTap02PqZKur/Ahf8Pm51Qp8ORycPWEhX+TbcYnC1keIZESFpdB2FZlwn
+ E6XdIj9MqzAL7DP71Ys1D9+guNWqQjas1PBKQx7Xo0VNBrI4jvrXU346ClRCCqcd
+ XEXghRYtezNIpWEcgpGD8K/aKzUirHWLut7DRTqx1pLP9f3X491wYoG1Eq87g8bO
+ 4g2FCDKcYRA7UZjRv2lEuv9Djn9mF/bzC6VmtmVtbaq8elHHHerRe4BZvPkip4od
+ /AuZS5iKs0/DSUxOz0CIVFXgOna9EthJ45czqfr/qjOkryLAoIrKE3LHK9Frqk4f
+ dSqiAQPrSXJW/hn8m9E8Vg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781773981; x=
- 1781860381; bh=QtIzVJ2qsSJYt1/oJazhWHktBZcDtSkP9sEreSy5lfA=; b=c
- kKxTaOYOwjHbikpXdQxAwp/lpLSykcJgkS+atPwVOW1sDga2x7sWkK4HBfgvubiz
- 6V8Pfut1fPtUs30INV78BJWGcOrTYNrxamSFC9u11cIz/4kuXoDQYQV+7B1Z3SEK
- rr4RBrdtMNeicGDtxaEnG0P5Q/UUruRRoE2yno8dBiLoxjGFgUS3KA/XxXa//Pct
- /mghOQv8W988G2LDVd1qNlIsAJjkvNG4JKoaLUWW84OsS75qTze/TANzvmqxVadD
- oHRDRDzCmMPFm88F0pVTdUB4Vvj1Q53ewFYDY1Eozy/ELeXTW6DJxxWT5T7p+JCV
- K1l7QceTF/Zc+zdZpKSUA==
-X-ME-Sender: <xms:nbYzasgpo1eRHFyugg6G7HyteL2zCRLT4AtXkTvPNlduA6bhQcCXnw>
- <xme:nbYzai_CmzI20UC9xhWjbrun32-2ibUK6XPxgSMJJghCvnXHFv2FR3hGs7MGwNRdk
- 9x8Uy4JLG7YiYAIazPl4t2Tqkpl-zZR8QU-1-_I7c-LAY7YPrkSWA>
-X-ME-Received: <xmr:nbYzamYpjTmJYGnfsZewlPKQGEfJfuq0RgyAYamCURqCcwGUR1-McDmB7ZGWKyOq_1lYt2iZlwgSYFfF9vcaiH7bxQ>
-X-ME-Proxy-Cause: dmFkZTGl24gxmFcwc5XGm3EASdmt6PMfLmpH6StQmy8PE/BNz64JHTSPLPHyaKr53/90yc
- Ry8dcx4ZPMlW7Xlu8wUIw4lJZhFrwmv8+BlNvF8SluWJMo6evnS6MNbMhp2LP4BvR/JLqw
- qBRUOU01taSWPjDPeT/11Qrq9J5nedIpSwY9ztFMQvfLJDSQ4/jNGBLQVzzV4ACnMPLx19
- fa+6NEMpABjM3+n0U/VvnXxX17+aaw62UWucwa/PDqvupe+fhyi5JmPIqYXB8AhDxjQzgj
- pE6av6KB99vXzp20rvft9hwQhPrAvNfnZDM4oVaSLS8hzSNNOw3YCLB5jpbxDwZ1Jgr5oG
- uUueVgQQPZLCp4q6cF5S3OmsfXkT4HsA9BpSrFyLjllAOkMkTX0EVctd0UztprwsYIyCdW
- Gec7SgXfzrNlewijBJROBl1Bbcb5YbVJlnZqsy5KvnkkIYV1OnxyAEFfMPDWzgmFyB7ey1
- ERH6P48gcySGEaPui5UwopDiattkTuzIi01rz/D5GDPmtwS0r1asCK3P0pRlqc+nxC+ywi
- IeNSak2FF38yfp4DCJWug4i1ZLUo85qFOIjHpHlcHfdxCakp6V0V+peeAZtCEL2ZHkRXkJ
- S7bI8b4hlNN7xEhXIC5HQ1i2FaN860AxEB1ayeyGTC/sZuZK+bO3ZUmOzNiA
-X-ME-Proxy: <xmx:nbYzah2fFzvGSl0ggV3K3if5ie4gh8xQCtGpr7PxNHx8UW7LmwCHaQ>
- <xmx:nbYzahY9rBpeSWj8s5xe0TCPfsugXTe1k_dS7j5UxFf3xOci9Q7cKg>
- <xmx:nbYzapKV9eTDilnLjZRxEQX-QcTy1-LhnqCQKjRmsHhURRJpqViPXw>
- <xmx:nbYzagH6uS4jXifuhzEcIkQqjfJldDMuEjnPQx77k-QV_tELXCGHRQ>
- <xmx:nbYzageE64N_07eT-wdtzk-0SchffwiObu6ngcSo0DhzGDrSNz1HaWzo>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781774438; x=
+ 1781860838; bh=4IUrWUrGSbInXjbGTYBgsp9ZVPautniIZW/RkDrF5P4=; b=j
+ oqT04kHTftcaMAiUD4dpkZA3Gs5DQcZOZrMMooxrMFCT7RwI9wlS/BSGBiKqjS88
+ aHOvevwxf0tDMoa1LPe/9KzdfQPZ+y0PGnxdxD5sWiSGNVq3ouGbv2oHmoRUPBTN
+ saU/FZlCna4cYk9SS6b3FwRLUczdWrHRAWU10QMzE2FPPTIBd57uwCH2YhnujVWU
+ 0gtKtTTal3JxO0I7c2EUVKFxUiQm8kKu3D6ddEE2G9DysWKIPEQ4eW3o1DJx2TqY
+ ki3ARzqP1aOHyeBb37S+GV9fWyVxC4F3kPtX8UOFaBnyMqkxCD8XchXqIAUTS6wS
+ Y5xlsPMIJEaFGc9qvshdA==
+X-ME-Sender: <xms:ZrgzaqcwfuvkH8A5_q4O3CtIpW-9B6p8fhzib7b0tEpguxVbu-Cxsg>
+ <xme:ZrgzapnUT9ht97xHhCmoKlZRbM_ra_vHJicNqRD5zd5LxSINWiw9KnokYvCr3AKRK
+ 9mENDxwgTRw_vEgAQYtgtCDZ2yXHdfg6VmTFqdPu2dGVQ3TpnugWUU>
+X-ME-Received: <xmr:ZrgzarvhN5lqDiI6NnTAaaZ7BJz5tispd_I1S_wCPlviLDA9gcTuHGaLWaGCH8x3xwap-5GfZlp2Kug6EdUgzIrE7g>
+X-ME-Proxy-Cause: dmFkZTFkHfASk8yobF/KvscNzqnwnqxwyn/NXk6hF/T8hPJj3QwMQMNqLhNy6gQf6tl7m4
+ /iybhB54F6cxCDsg7EFTrnF7CV/jxHISsAyGvPzex/MhsUyJYE0EMAH9hylVA79RtC3Xsv
+ NeFbg49xLvT835RHp+I4UsoR6v0ideQQmUXvE8yqcoDs99xZorD0u3PNicFjKq4ppG8BJQ
+ Z8jJirK/XNSXnRLMuUgPCiWCfuEYg1I9Xb5igdLp/FgwqhVRAV4ePXZOHKB9BfnAIC9REA
+ qz+if3ywCJzILcjTaixfj677D9HYrSQlU9uSph84Z0/yPvQl6y6bqEkZJs2g+GJOUNWEqS
+ hDkX3I2/Mc1aNcUi94SCdupVdOY0zHRDHgK1C2SyNYGLxoqat9qM41QDMTRxtpxgUTNdiQ
+ 6+9R9O4AxbIfRQbYZfaOQP6SrIZX0uKVR9IgBxSYNCAkZowLW6bMMD7MjupW5tG6jHvAjc
+ vSrW/Zvdv2gml1pCfcnBOAnxQZjpezbZAPNPRNhoiuudAJ4JQJFKR/qjdNqY1aXVM5aTKB
+ GRZQ1YyRnKyG0+T8qBnM/ojLXwDpY7Dwt71CcUYbkYAd5r5hHXJYhpOl93dvZgwiqJBYkd
+ zGXksUPkiHMhMwJcILmy+nAZyVhnXDhR+5AGgYsb+RCT88osUFtiOJZr3gqQ
+X-ME-Proxy: <xmx:Zrgzan-xD1clhDdfDyIlVo3Yqe6ITEWh3BJuWeVI5X4t_Qoogt5Xzg>
+ <xmx:ZrgzalPX23P18CayyoJxB32LNjFA5f1kVD8Lplt538GCZLFECQ34sQ>
+ <xmx:ZrgzalH9qIfHL8qGln-i3cJ4mCWM7wrRAQKenC6J6KDJVDaa8A_v6g>
+ <xmx:ZrgzajT7Ml8ncQmCmllwiX9yf7BUDzI6HBUcc_aBt0LkBVFruyteAA>
+ <xmx:ZrgzageuKfPsmKPe1pbHwBHosZuVjPOTJ1JJSZZV5alC1YowXz0HdO1k>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 18 Jun 2026 05:13:00 -0400 (EDT)
+ 18 Jun 2026 05:20:37 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-Subject: Re: [PATCH v2 12/23] examples/vm_power_manage: enable shadow warnings
-Date: Thu, 18 Jun 2026 11:12:57 +0200
-Message-ID: <z0IQFk2sS_2ltp9U4Sbr9Q@monjalon.net>
-In-Reply-To: <20260407151732.272195-13-stephen@networkplumber.org>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>
+Subject: Re: [PATCH v2 09/23] examples/ipsec-secgw: resolve shadowed variable
+ warnings
+Date: Thu, 18 Jun 2026 11:20:36 +0200
+Message-ID: <S0plvKIjQ4ufoB1fJelRcw@monjalon.net>
+In-Reply-To: <20260407151732.272195-10-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
  <20260407151732.272195-1-stephen@networkplumber.org>
- <20260407151732.272195-13-stephen@networkplumber.org>
+ <20260407151732.272195-10-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -92,9 +91,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 07/04/2026 17:16, Stephen Hemminger:
-> No problems in this code, re-enable the warning.
+> Rename variables where local variable shadows a global declaration.
+> Remove unused lcore_conf parameter from sa_init().
+> Replace shadowed optarg with parameter named arg.
 
-Actually, there are a lot of variables ret defined multiple times
-in the same function.
+There are more in the Arm implementation.
+
 
 
