@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F37CD98F8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 14:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCEACD98F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 14:12:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D4A8A40A84;
-	Thu, 18 Jun 2026 16:11:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1D0E84027C;
+	Thu, 18 Jun 2026 16:11:54 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 0C990406BC
- for <dev@dpdk.org>; Thu, 18 Jun 2026 16:11:49 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 95F934027C
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 16:11:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781791910; x=1813327910;
+ t=1781791911; x=1813327911;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=hpQP0fCypU5iPkdnpO/KH1J/w6fHsQ4HSmeIKqJHKP4=;
- b=VdHWvJfKRRPefHUvYHKga7xZFukHEHehChBOcwlQwcuZk+vM9ocBo1OP
- LmzhhxcZopeX0JOfuXcTjJxfnOCK8skzbr7uK70+1TEsHxOXo9R/ecAj+
- cKaV/1xr+mIEdJrjYZ68FNyAGadumQrbjGpi4KtME9PWWhA7kzEI8Mknn
- JQmSuYy6aoivim+xePvUmIp4HR8REF8Xyun7zd+4tV+XfnyRwaYWzDc7g
- iB7bD5N5ig085QIn9UDpObMcqvYy0ZVTT53q6AlVF4suzmyX6IP5eAqjY
- nRe0SeULcLdyEUPLnU99LvMgJaWWSCWDO31Wbi5BPkRTqcPd5QwmPKixG A==;
-X-CSE-ConnectionGUID: 7JoT5JrSS/S7EjNdu93EIA==
-X-CSE-MsgGUID: Zf9tb6HdTR2/uUbeF1MSMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11820"; a="82628755"
-X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="82628755"
+ bh=ZmJy5XZwEp6JdfJsGm6Wkw43f/xOjzKoXvzT98ZnRyk=;
+ b=mXHHDnoZgcBzjFiK7OxY7da03YtioXzNLo0e2+DvImhAdiYPJ77qc7OU
+ vqayb1mfO2zlA/URaMKXooKnCyzQqcoyss2DEZhp71WSHDKk/cwBb+4tw
+ xhoz3D1oOTjgWKg9pXZudtycHLZgzyNvhgD3nhtVy4J4QRqM74hkZ3qHY
+ An2w9vmXo3XcZsqJklPXTMLtezndNqBXP0XXzua+mlBFyXCeL8LIZDViy
+ n3EoL3k5I4c+TJRHr2QRRz2MLPdi7x2biSb8l68BgPg9ROxL5hTZjpcq7
+ pyDqOfBRF9ho+rW/32uet68f0BCQ28ZgkhoRktC6PkiKVwmYM5+Kq3P8l w==;
+X-CSE-ConnectionGUID: XLG4fV0CTgigeDB22AE01A==
+X-CSE-MsgGUID: w3qY51gJSpOmmdn2JOK9Pg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11820"; a="82628762"
+X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="82628762"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Jun 2026 07:11:49 -0700
-X-CSE-ConnectionGUID: rmhHVNbhRF+ZA+cUAs1LCw==
-X-CSE-MsgGUID: Iheb1/pXS1WjNAxRkO7GuQ==
+ 18 Jun 2026 07:11:51 -0700
+X-CSE-ConnectionGUID: 8E4g/a+FS4KA+ZnLCDPv7A==
+X-CSE-MsgGUID: 1ixlgTTzR1ikfPVBYR9vGQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="244211262"
+X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="244211277"
 Received: from unknown (HELO localhost.igk.intel.com) ([10.123.235.20])
- by fmviesa010.fm.intel.com with ESMTP; 18 Jun 2026 07:11:48 -0700
+ by fmviesa010.fm.intel.com with ESMTP; 18 Jun 2026 07:11:49 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, david.marchand@redhat.com,
  Marek Kasiewicz <marek.kasiewicz@intel.com>,
  Dawid Wesierski <dawid.wesierski@intel.com>
-Subject: [PATCH v2 6/7] net/iavf: disable runtime queue setup capability
-Date: Thu, 18 Jun 2026 10:38:36 -0400
-Message-ID: <20260618143837.310156-7-dawid.wesierski@intel.com>
+Subject: [PATCH v2 7/7] net/intel: support header split mbuf callback
+Date: Thu, 18 Jun 2026 10:38:37 -0400
+Message-ID: <20260618143837.310156-8-dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260618143837.310156-1-dawid.wesierski@intel.com>
 References: <20260618143837.310156-1-dawid.wesierski@intel.com>
@@ -64,39 +64,163 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Marek Kasiewicz <marek.kasiewicz@intel.com>
 
-Remove the advertisement of RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP
-and RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP capabilities from the
-iavf VF driver.
+Wire the new ethdev header split mbuf callback API into the ICE PMD.
+A new dev_ops hook, hdrs_mbuf_set_cb, lets applications register a
+callback (and private context) on a receive queue; the callback returns
+a payload buffer (virtual address and IOVA) that overrides the default
+mempool-backed payload mbuf for header split RX.
 
-Runtime queue setup on E810 VFs causes queue state corruption when
-queues are dynamically reconfigured while the hardware rate limiter
-is actively pacing TX queues. Queue configuration messages to the PF
-via virtchnl can race with ongoing TX operations, leading to undefined
-behavior.
+The callback is invoked at three allocation points in the ICE driver:
 
-By not advertising these capabilities, all queues are configured at
-port start and remain stable throughout the port lifecycle.
+  - initial queue setup (ice_alloc_rx_queue_mbufs),
+  - bulk buffer allocation (ice_rx_alloc_bufs),
+  - single-packet receive path (ice_recv_pkts).
+
+This enables zero-copy RX for header split: the NIC DMAs the payload
+directly into application-managed buffers (e.g., mapped frame buffers
+with known IOVA), bypassing an extra memcpy from the mempool mbuf.
+
+Depends on: "ethdev: add header split mbuf callback API"
 
 Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
 Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
 ---
- drivers/net/intel/iavf/iavf_ethdev.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/net/intel/common/rx.h      |  2 +
+ drivers/net/intel/ice/ice_ethdev.c |  1 +
+ drivers/net/intel/ice/ice_rxtx.c   | 63 ++++++++++++++++++++++++++++++
+ drivers/net/intel/ice/ice_rxtx.h   |  2 +
+ 4 files changed, 68 insertions(+)
 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index ec1ad02826..ab223e6afd 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -1160,9 +1160,6 @@ iavf_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->reta_size = vf->vf_res->rss_lut_size;
- 	dev_info->flow_type_rss_offloads = IAVF_RSS_OFFLOAD_ALL;
- 	dev_info->max_mac_addrs = IAVF_NUM_MACADDR_MAX;
--	dev_info->dev_capa =
--		RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
--		RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
- 	dev_info->rx_offload_capa =
- 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
- 		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
+diff --git a/drivers/net/intel/common/rx.h b/drivers/net/intel/common/rx.h
+index e0bf520ebd..8abb2a3ce9 100644
+--- a/drivers/net/intel/common/rx.h
++++ b/drivers/net/intel/common/rx.h
+@@ -113,6 +113,8 @@ struct ci_rx_queue {
+ 			uint32_t hw_time_low; /* low 32 bits of timestamp */
+ 			int ts_offset; /* dynamic mbuf timestamp field offset */
+ 			uint64_t ts_flag; /* dynamic mbuf timestamp flag */
++			rte_eth_hdrs_mbuf_callback_fn hdrs_mbuf_cb; /* hdr split mbuf cb */
++			void *hdrs_mbuf_cb_priv; /* hdr split mbuf cb priv */
+ 		};
+ 		struct { /* iavf specific values */
+ 			const struct iavf_rxq_ops *ops; /**< queue ops */
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index ad9c49b339..353da8f2bd 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -282,6 +282,7 @@ static const struct eth_dev_ops ice_eth_dev_ops = {
+ 	.dev_set_link_down            = ice_dev_set_link_down,
+ 	.dev_led_on                   = ice_dev_led_on,
+ 	.dev_led_off                  = ice_dev_led_off,
++	.hdrs_mbuf_set_cb             = ice_hdrs_mbuf_set_cb,
+ 	.rx_queue_start               = ice_rx_queue_start,
+ 	.rx_queue_stop                = ice_rx_queue_stop,
+ 	.tx_queue_start               = ice_tx_queue_start,
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index 8d709125f7..867f595291 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -487,6 +487,17 @@ ice_alloc_rx_queue_mbufs(struct ci_rx_queue *rxq)
+ 				return -ENOMEM;
+ 			}
+ 
++			if (rxq->hdrs_mbuf_cb) {
++				struct rte_eth_hdrs_mbuf hdrs_mbuf = {0};
++				int ret = rxq->hdrs_mbuf_cb(rxq->hdrs_mbuf_cb_priv,
++					&hdrs_mbuf);
++
++				if (ret >= 0) {
++					mbuf_pay->buf_addr = hdrs_mbuf.buf_addr;
++					mbuf_pay->buf_iova = hdrs_mbuf.buf_iova;
++				}
++			}
++
+ 			mbuf_pay->next = NULL;
+ 			mbuf_pay->data_off = RTE_PKTMBUF_HEADROOM;
+ 			mbuf_pay->nb_segs = 1;
+@@ -2126,6 +2137,16 @@ ice_rx_alloc_bufs(struct ci_rx_queue *rxq)
+ 			rxdp[i].read.pkt_addr = dma_addr;
+ 		} else {
+ 			mb->next = rxq->sw_split_buf[i].mbuf;
++			if (rxq->hdrs_mbuf_cb && mb->next) {
++				struct rte_eth_hdrs_mbuf hdrs_mbuf = {0};
++				int ret = rxq->hdrs_mbuf_cb(rxq->hdrs_mbuf_cb_priv,
++					&hdrs_mbuf);
++
++				if (ret >= 0) {
++					mb->next->buf_addr = hdrs_mbuf.buf_addr;
++					mb->next->buf_iova = hdrs_mbuf.buf_iova;
++				}
++			}
+ 			pay_addr = rte_cpu_to_le_64(rte_mbuf_data_iova_default(mb->next));
+ 			rxdp[i].read.hdr_addr = dma_addr;
+ 			rxdp[i].read.pkt_addr = pay_addr;
+@@ -2810,6 +2831,17 @@ ice_recv_pkts(void *rx_queue,
+ 				break;
+ 			}
+ 
++			if (rxq->hdrs_mbuf_cb) {
++				struct rte_eth_hdrs_mbuf hdrs_mbuf = {0};
++				int ret = rxq->hdrs_mbuf_cb(rxq->hdrs_mbuf_cb_priv,
++					&hdrs_mbuf);
++
++				if (ret >= 0) {
++					nmb_pay->buf_addr = hdrs_mbuf.buf_addr;
++					nmb_pay->buf_iova = hdrs_mbuf.buf_iova;
++				}
++			}
++
+ 			nmb->next = nmb_pay;
+ 			nmb_pay->next = NULL;
+ 
+@@ -4533,3 +4565,34 @@ ice_fdir_programming(struct ice_pf *pf, struct ice_fltr_desc *fdir_desc)
+ 
+ 
+ }
++
++int
++ice_hdrs_mbuf_set_cb(struct rte_eth_dev *dev, uint16_t rx_queue_id,
++	void *priv, rte_eth_hdrs_mbuf_callback_fn cb)
++{
++	struct ci_rx_queue *rxq;
++
++	if (rx_queue_id >= dev->data->nb_rx_queues) {
++		PMD_DRV_LOG(ERR, "RX queue %u out of range", rx_queue_id);
++		return -EINVAL;
++	}
++
++	rxq = dev->data->rx_queues[rx_queue_id];
++	if (rxq == NULL) {
++		PMD_DRV_LOG(ERR, "RX queue %u not available or setup", rx_queue_id);
++		return -EINVAL;
++	}
++
++	if (rxq->hdrs_mbuf_cb) {
++		PMD_DRV_LOG(ERR, "RX queue %u has hdrs mbuf cb already",
++			rx_queue_id);
++		return -EEXIST;
++	}
++
++	rxq->hdrs_mbuf_cb_priv = priv;
++	rxq->hdrs_mbuf_cb = cb;
++	PMD_DRV_LOG(NOTICE, "RX queue %u register hdrs mbuf cb at %p",
++		rx_queue_id, cb);
++
++	return 0;
++}
+diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
+index 999b6b30d6..7ed114ee94 100644
+--- a/drivers/net/intel/ice/ice_rxtx.h
++++ b/drivers/net/intel/ice/ice_rxtx.h
+@@ -303,6 +303,8 @@ uint16_t ice_xmit_pkts_vec_avx512_offload(void *tx_queue,
+ int ice_fdir_programming(struct ice_pf *pf, struct ice_fltr_desc *fdir_desc);
+ int ice_tx_done_cleanup(void *txq, uint32_t free_cnt);
+ int ice_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
++int ice_hdrs_mbuf_set_cb(struct rte_eth_dev *dev, uint16_t rx_queue_id,
++		void *priv, rte_eth_hdrs_mbuf_callback_fn cb);
+ enum rte_vect_max_simd ice_get_max_simd_bitwidth(void);
+ 
+ #define FDIR_PARSING_ENABLE_PER_QUEUE(ad, on) do { \
 -- 
 2.47.3
 
