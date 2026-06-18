@@ -2,53 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCEACD98F2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 14:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D75CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 14:12:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D0E84027C;
-	Thu, 18 Jun 2026 16:11:54 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 95F934027C
- for <dev@dpdk.org>; Thu, 18 Jun 2026 16:11:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781791911; x=1813327911;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=ZmJy5XZwEp6JdfJsGm6Wkw43f/xOjzKoXvzT98ZnRyk=;
- b=mXHHDnoZgcBzjFiK7OxY7da03YtioXzNLo0e2+DvImhAdiYPJ77qc7OU
- vqayb1mfO2zlA/URaMKXooKnCyzQqcoyss2DEZhp71WSHDKk/cwBb+4tw
- xhoz3D1oOTjgWKg9pXZudtycHLZgzyNvhgD3nhtVy4J4QRqM74hkZ3qHY
- An2w9vmXo3XcZsqJklPXTMLtezndNqBXP0XXzua+mlBFyXCeL8LIZDViy
- n3EoL3k5I4c+TJRHr2QRRz2MLPdi7x2biSb8l68BgPg9ROxL5hTZjpcq7
- pyDqOfBRF9ho+rW/32uet68f0BCQ28ZgkhoRktC6PkiKVwmYM5+Kq3P8l w==;
-X-CSE-ConnectionGUID: XLG4fV0CTgigeDB22AE01A==
-X-CSE-MsgGUID: w3qY51gJSpOmmdn2JOK9Pg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11820"; a="82628762"
-X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="82628762"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Jun 2026 07:11:51 -0700
-X-CSE-ConnectionGUID: 8E4g/a+FS4KA+ZnLCDPv7A==
-X-CSE-MsgGUID: 1ixlgTTzR1ikfPVBYR9vGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="244211277"
-Received: from unknown (HELO localhost.igk.intel.com) ([10.123.235.20])
- by fmviesa010.fm.intel.com with ESMTP; 18 Jun 2026 07:11:49 -0700
-From: Dawid Wesierski <dawid.wesierski@intel.com>
-To: dev@dpdk.org
-Cc: thomas@monjalon.net, david.marchand@redhat.com,
- Marek Kasiewicz <marek.kasiewicz@intel.com>,
- Dawid Wesierski <dawid.wesierski@intel.com>
-Subject: [PATCH v2 7/7] net/intel: support header split mbuf callback
-Date: Thu, 18 Jun 2026 10:38:37 -0400
-Message-ID: <20260618143837.310156-8-dawid.wesierski@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260618143837.310156-1-dawid.wesierski@intel.com>
-References: <20260618143837.310156-1-dawid.wesierski@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2218840DD1;
+	Thu, 18 Jun 2026 16:11:55 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 4FFB640DD1
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 16:11:54 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1694620002B;
+ Thu, 18 Jun 2026 16:11:54 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D1EF6200028;
+ Thu, 18 Jun 2026 16:11:53 +0200 (CEST)
+Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
+ [92.120.146.12])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7BB1C1800071;
+ Thu, 18 Jun 2026 22:11:52 +0800 (+08)
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: stephen@networkplumber.org,
+	david.marchand@redhat.com,
+	dev@dpdk.org
+Subject: [PATCH v1 00/17] net/dpaa: bug fixes for bus, net and fmlib drivers
+Date: Thu, 18 Jun 2026 19:41:34 +0530
+Message-Id: <20260618141151.3990283-1-hemant.agrawal@nxp.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,173 +45,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Marek Kasiewicz <marek.kasiewicz@intel.com>
+This series contains bug fixes for the DPAA PMD (bus/dpaa, net/dpaa,
+net/dpaa/fmlib and dma/dpaa):
 
-Wire the new ethdev header split mbuf callback API into the ICE PMD.
-A new dev_ops hook, hdrs_mbuf_set_cb, lets applications register a
-callback (and private context) on a receive queue; the callback returns
-a payload buffer (virtual address and IOVA) that overrides the default
-mempool-backed payload mbuf for header split RX.
+- Fix error handling in qman_create_fq and qman_query
+- Fix fqid endianness in qman_fq_flow_control
+- Fix CGR index usage in dpaa_modify_cgr
+- Add null check in fmlib scheme delete
+- Fix BMI RX stats register offset
+- Fix file descriptor leak after CCSR mmap
+- Fix device probe regression on LS1043A
+- Fix double-close in device remove path
+- Fix incorrect condition in interrupt unregister
+- Fix Coverity-reported issues in dpaa_flow and dpaa_qdma
+- Fix xstat name for tx undersized counter
+- Fix xstat string typos in BMI stats table
+- Remove duplicate ptype entries
+- Fix wrong buffer in xstats get by id
+- Fix null l3_len check in checksum offload
+- Fix mbuf leak in SG fd creation
 
-The callback is invoked at three allocation points in the ICE driver:
+All patches are bug fixes tagged with Fixes: and Cc: stable@dpdk.org.
 
-  - initial queue setup (ice_alloc_rx_queue_mbufs),
-  - bulk buffer allocation (ice_rx_alloc_bufs),
-  - single-packet receive path (ice_recv_pkts).
+Gagandeep Singh (3):
+  bus/dpaa: fix device probe issue
+  net/dpaa: fix device remove
+  net/dpaa: fix invalid check on interrupt unregister
 
-This enables zero-copy RX for header split: the NIC DMAs the payload
-directly into application-managed buffers (e.g., mapped frame buffers
-with known IOVA), bypassing an extra memcpy from the mempool mbuf.
+Hemant Agrawal (11):
+  bus/dpaa: fix error handling of qman_create_fq
+  bus/dpaa: fix fqid endianness
+  bus/dpaa: fix error handling in qman_query
+  net/dpaa: fix modify cgr to use index
+  bus/dpaa: fix fd leak for ccsr mmap
+  net/dpaa: fix xstat name for tx undersized counter
+  net/dpaa: fix xstat string typos in BMI stats table
+  net/dpaa: remove duplicate ptype entries
+  net/dpaa: fix wrong buffer in xstats get by id
+  net/dpaa: fix null l3_len check in checksum offload
+  net/dpaa: fix mbuf leak in SG fd creation
 
-Depends on: "ethdev: add header split mbuf callback API"
+Jun Yang (1):
+  bus/dpaa: fix BMI RX stats register offset
 
-Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
-Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
----
- drivers/net/intel/common/rx.h      |  2 +
- drivers/net/intel/ice/ice_ethdev.c |  1 +
- drivers/net/intel/ice/ice_rxtx.c   | 63 ++++++++++++++++++++++++++++++
- drivers/net/intel/ice/ice_rxtx.h   |  2 +
- 4 files changed, 68 insertions(+)
+Prashant Gupta (1):
+  net/dpaa/fmlib: add null check in scheme delete
 
-diff --git a/drivers/net/intel/common/rx.h b/drivers/net/intel/common/rx.h
-index e0bf520ebd..8abb2a3ce9 100644
---- a/drivers/net/intel/common/rx.h
-+++ b/drivers/net/intel/common/rx.h
-@@ -113,6 +113,8 @@ struct ci_rx_queue {
- 			uint32_t hw_time_low; /* low 32 bits of timestamp */
- 			int ts_offset; /* dynamic mbuf timestamp field offset */
- 			uint64_t ts_flag; /* dynamic mbuf timestamp flag */
-+			rte_eth_hdrs_mbuf_callback_fn hdrs_mbuf_cb; /* hdr split mbuf cb */
-+			void *hdrs_mbuf_cb_priv; /* hdr split mbuf cb priv */
- 		};
- 		struct { /* iavf specific values */
- 			const struct iavf_rxq_ops *ops; /**< queue ops */
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index ad9c49b339..353da8f2bd 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -282,6 +282,7 @@ static const struct eth_dev_ops ice_eth_dev_ops = {
- 	.dev_set_link_down            = ice_dev_set_link_down,
- 	.dev_led_on                   = ice_dev_led_on,
- 	.dev_led_off                  = ice_dev_led_off,
-+	.hdrs_mbuf_set_cb             = ice_hdrs_mbuf_set_cb,
- 	.rx_queue_start               = ice_rx_queue_start,
- 	.rx_queue_stop                = ice_rx_queue_stop,
- 	.tx_queue_start               = ice_tx_queue_start,
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 8d709125f7..867f595291 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -487,6 +487,17 @@ ice_alloc_rx_queue_mbufs(struct ci_rx_queue *rxq)
- 				return -ENOMEM;
- 			}
- 
-+			if (rxq->hdrs_mbuf_cb) {
-+				struct rte_eth_hdrs_mbuf hdrs_mbuf = {0};
-+				int ret = rxq->hdrs_mbuf_cb(rxq->hdrs_mbuf_cb_priv,
-+					&hdrs_mbuf);
-+
-+				if (ret >= 0) {
-+					mbuf_pay->buf_addr = hdrs_mbuf.buf_addr;
-+					mbuf_pay->buf_iova = hdrs_mbuf.buf_iova;
-+				}
-+			}
-+
- 			mbuf_pay->next = NULL;
- 			mbuf_pay->data_off = RTE_PKTMBUF_HEADROOM;
- 			mbuf_pay->nb_segs = 1;
-@@ -2126,6 +2137,16 @@ ice_rx_alloc_bufs(struct ci_rx_queue *rxq)
- 			rxdp[i].read.pkt_addr = dma_addr;
- 		} else {
- 			mb->next = rxq->sw_split_buf[i].mbuf;
-+			if (rxq->hdrs_mbuf_cb && mb->next) {
-+				struct rte_eth_hdrs_mbuf hdrs_mbuf = {0};
-+				int ret = rxq->hdrs_mbuf_cb(rxq->hdrs_mbuf_cb_priv,
-+					&hdrs_mbuf);
-+
-+				if (ret >= 0) {
-+					mb->next->buf_addr = hdrs_mbuf.buf_addr;
-+					mb->next->buf_iova = hdrs_mbuf.buf_iova;
-+				}
-+			}
- 			pay_addr = rte_cpu_to_le_64(rte_mbuf_data_iova_default(mb->next));
- 			rxdp[i].read.hdr_addr = dma_addr;
- 			rxdp[i].read.pkt_addr = pay_addr;
-@@ -2810,6 +2831,17 @@ ice_recv_pkts(void *rx_queue,
- 				break;
- 			}
- 
-+			if (rxq->hdrs_mbuf_cb) {
-+				struct rte_eth_hdrs_mbuf hdrs_mbuf = {0};
-+				int ret = rxq->hdrs_mbuf_cb(rxq->hdrs_mbuf_cb_priv,
-+					&hdrs_mbuf);
-+
-+				if (ret >= 0) {
-+					nmb_pay->buf_addr = hdrs_mbuf.buf_addr;
-+					nmb_pay->buf_iova = hdrs_mbuf.buf_iova;
-+				}
-+			}
-+
- 			nmb->next = nmb_pay;
- 			nmb_pay->next = NULL;
- 
-@@ -4533,3 +4565,34 @@ ice_fdir_programming(struct ice_pf *pf, struct ice_fltr_desc *fdir_desc)
- 
- 
- }
-+
-+int
-+ice_hdrs_mbuf_set_cb(struct rte_eth_dev *dev, uint16_t rx_queue_id,
-+	void *priv, rte_eth_hdrs_mbuf_callback_fn cb)
-+{
-+	struct ci_rx_queue *rxq;
-+
-+	if (rx_queue_id >= dev->data->nb_rx_queues) {
-+		PMD_DRV_LOG(ERR, "RX queue %u out of range", rx_queue_id);
-+		return -EINVAL;
-+	}
-+
-+	rxq = dev->data->rx_queues[rx_queue_id];
-+	if (rxq == NULL) {
-+		PMD_DRV_LOG(ERR, "RX queue %u not available or setup", rx_queue_id);
-+		return -EINVAL;
-+	}
-+
-+	if (rxq->hdrs_mbuf_cb) {
-+		PMD_DRV_LOG(ERR, "RX queue %u has hdrs mbuf cb already",
-+			rx_queue_id);
-+		return -EEXIST;
-+	}
-+
-+	rxq->hdrs_mbuf_cb_priv = priv;
-+	rxq->hdrs_mbuf_cb = cb;
-+	PMD_DRV_LOG(NOTICE, "RX queue %u register hdrs mbuf cb at %p",
-+		rx_queue_id, cb);
-+
-+	return 0;
-+}
-diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
-index 999b6b30d6..7ed114ee94 100644
---- a/drivers/net/intel/ice/ice_rxtx.h
-+++ b/drivers/net/intel/ice/ice_rxtx.h
-@@ -303,6 +303,8 @@ uint16_t ice_xmit_pkts_vec_avx512_offload(void *tx_queue,
- int ice_fdir_programming(struct ice_pf *pf, struct ice_fltr_desc *fdir_desc);
- int ice_tx_done_cleanup(void *txq, uint32_t free_cnt);
- int ice_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
-+int ice_hdrs_mbuf_set_cb(struct rte_eth_dev *dev, uint16_t rx_queue_id,
-+		void *priv, rte_eth_hdrs_mbuf_callback_fn cb);
- enum rte_vect_max_simd ice_get_max_simd_bitwidth(void);
- 
- #define FDIR_PARSING_ENABLE_PER_QUEUE(ad, on) do { \
+Vanshika Shukla (1):
+  net/dpaa: fix coverity reported issues
+
+ drivers/bus/dpaa/base/qbman/bman_driver.c |  3 ++-
+ drivers/bus/dpaa/base/qbman/qman.c        | 11 +++++----
+ drivers/bus/dpaa/base/qbman/qman_driver.c |  6 ++---
+ drivers/bus/dpaa/dpaa_bus.c               |  6 ++---
+ drivers/bus/dpaa/include/fman.h           |  6 ++---
+ drivers/dma/dpaa/dpaa_qdma.c              |  7 +++++-
+ drivers/net/dpaa/dpaa_ethdev.c            | 27 +++++++++++------------
+ drivers/net/dpaa/dpaa_flow.c              |  4 ++++
+ drivers/net/dpaa/dpaa_rxtx.c              |  3 +++
+ drivers/net/dpaa/fmlib/fm_lib.c           |  3 +++
+ 10 files changed, 46 insertions(+), 30 deletions(-)
+
 -- 
-2.47.3
-
----------------------------------------------------------------------
-Intel Technology Poland sp. z o.o.
-ul. Slowackiego 173 | 80-298 Gdansk | Sad Rejonowy Gdansk Polnoc | VII Wydzial Gospodarczy Krajowego Rejestru Sadowego - KRS 101882 | NIP 957-07-52-316 | Kapital zakladowy 200.000 PLN.
-Spolka oswiadcza, ze posiada status duzego przedsiebiorcy w rozumieniu ustawy z dnia 8 marca 2013 r. o przeciwdzialaniu nadmiernym opoznieniom w transakcjach handlowych.
-
-Ta wiadomosc wraz z zalacznikami jest przeznaczona dla okreslonego adresata i moze zawierac informacje poufne. W razie przypadkowego otrzymania tej wiadomosci, prosimy o powiadomienie nadawcy oraz trwale jej usuniecie; jakiekolwiek przegladanie lub rozpowszechnianie jest zabronione.
-This e-mail and any attachments may contain confidential material for the sole use of the intended recipient(s). If you are not the intended recipient, please contact the sender and delete all copies; any review or distribution by others is strictly prohibited.
+2.43.0
 
