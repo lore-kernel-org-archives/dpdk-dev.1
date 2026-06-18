@@ -2,33 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D75CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 14:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B69FCD98F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 14:12:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2218840DD1;
-	Thu, 18 Jun 2026 16:11:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0B1A540B9D;
+	Thu, 18 Jun 2026 16:11:57 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 4FFB640DD1
- for <dev@dpdk.org>; Thu, 18 Jun 2026 16:11:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 731E640DDA;
+ Thu, 18 Jun 2026 16:11:55 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1694620002B;
- Thu, 18 Jun 2026 16:11:54 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5319D200037;
+ Thu, 18 Jun 2026 16:11:55 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D1EF6200028;
- Thu, 18 Jun 2026 16:11:53 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1B17120001A;
+ Thu, 18 Jun 2026 16:11:55 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7BB1C1800071;
- Thu, 18 Jun 2026 22:11:52 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 89B7E1800088;
+ Thu, 18 Jun 2026 22:11:53 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Subject: [PATCH v1 00/17] net/dpaa: bug fixes for bus, net and fmlib drivers
-Date: Thu, 18 Jun 2026 19:41:34 +0530
-Message-Id: <20260618141151.3990283-1-hemant.agrawal@nxp.com>
+Cc: stable@dpdk.org
+Subject: [PATCH v1 01/17] bus/dpaa: fix error handling of qman_create_fq
+Date: Thu, 18 Jun 2026 19:41:35 +0530
+Message-Id: <20260618141151.3990283-2-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260618141151.3990283-1-hemant.agrawal@nxp.com>
+References: <20260618141151.3990283-1-hemant.agrawal@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
@@ -45,67 +48,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series contains bug fixes for the DPAA PMD (bus/dpaa, net/dpaa,
-net/dpaa/fmlib and dma/dpaa):
+Fix the error handling path in qman_create_fq() to properly
+return error codes instead of silently ignoring failures.
 
-- Fix error handling in qman_create_fq and qman_query
-- Fix fqid endianness in qman_fq_flow_control
-- Fix CGR index usage in dpaa_modify_cgr
-- Add null check in fmlib scheme delete
-- Fix BMI RX stats register offset
-- Fix file descriptor leak after CCSR mmap
-- Fix device probe regression on LS1043A
-- Fix double-close in device remove path
-- Fix incorrect condition in interrupt unregister
-- Fix Coverity-reported issues in dpaa_flow and dpaa_qdma
-- Fix xstat name for tx undersized counter
-- Fix xstat string typos in BMI stats table
-- Remove duplicate ptype entries
-- Fix wrong buffer in xstats get by id
-- Fix null l3_len check in checksum offload
-- Fix mbuf leak in SG fd creation
+Fixes: c47ff048b9 ("bus/dpaa: add QMAN driver core routines")
+Cc: stable@dpdk.org
 
-All patches are bug fixes tagged with Fixes: and Cc: stable@dpdk.org.
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+---
+ drivers/bus/dpaa/base/qbman/qman.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Gagandeep Singh (3):
-  bus/dpaa: fix device probe issue
-  net/dpaa: fix device remove
-  net/dpaa: fix invalid check on interrupt unregister
-
-Hemant Agrawal (11):
-  bus/dpaa: fix error handling of qman_create_fq
-  bus/dpaa: fix fqid endianness
-  bus/dpaa: fix error handling in qman_query
-  net/dpaa: fix modify cgr to use index
-  bus/dpaa: fix fd leak for ccsr mmap
-  net/dpaa: fix xstat name for tx undersized counter
-  net/dpaa: fix xstat string typos in BMI stats table
-  net/dpaa: remove duplicate ptype entries
-  net/dpaa: fix wrong buffer in xstats get by id
-  net/dpaa: fix null l3_len check in checksum offload
-  net/dpaa: fix mbuf leak in SG fd creation
-
-Jun Yang (1):
-  bus/dpaa: fix BMI RX stats register offset
-
-Prashant Gupta (1):
-  net/dpaa/fmlib: add null check in scheme delete
-
-Vanshika Shukla (1):
-  net/dpaa: fix coverity reported issues
-
- drivers/bus/dpaa/base/qbman/bman_driver.c |  3 ++-
- drivers/bus/dpaa/base/qbman/qman.c        | 11 +++++----
- drivers/bus/dpaa/base/qbman/qman_driver.c |  6 ++---
- drivers/bus/dpaa/dpaa_bus.c               |  6 ++---
- drivers/bus/dpaa/include/fman.h           |  6 ++---
- drivers/dma/dpaa/dpaa_qdma.c              |  7 +++++-
- drivers/net/dpaa/dpaa_ethdev.c            | 27 +++++++++++------------
- drivers/net/dpaa/dpaa_flow.c              |  4 ++++
- drivers/net/dpaa/dpaa_rxtx.c              |  3 +++
- drivers/net/dpaa/fmlib/fm_lib.c           |  3 +++
- 10 files changed, 46 insertions(+), 30 deletions(-)
-
+diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
+index 5534e1846c..9a99eb9785 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.c
++++ b/drivers/bus/dpaa/base/qbman/qman.c
+@@ -1579,6 +1579,9 @@ int qman_create_fq(u32 fqid, u32 flags, struct qman_fq *fq)
+ err:
+ 	if (flags & QMAN_FQ_FLAG_DYNAMIC_FQID)
+ 		qman_release_fqid(fqid);
++#ifdef CONFIG_FSL_QMAN_FQ_LOOKUP
++	clear_fq_table_entry(fq->key);
++#endif
+ 	return -EIO;
+ }
+ 
 -- 
 2.43.0
 
