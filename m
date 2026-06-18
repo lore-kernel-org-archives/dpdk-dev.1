@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E29D6CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 21:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9EB0CD98ED
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 21:00:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 216D040613;
-	Thu, 18 Jun 2026 23:00:36 +0200 (CEST)
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
- [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 029564028C
- for <dev@dpdk.org>; Thu, 18 Jun 2026 23:00:32 +0200 (CEST)
-Received: by mail-dy1-f177.google.com with SMTP id
- 5a478bee46e88-30bf8b2bd20so1903382eec.0
- for <dev@dpdk.org>; Thu, 18 Jun 2026 14:00:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 30FF54067C;
+	Thu, 18 Jun 2026 23:00:37 +0200 (CEST)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
+ [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 7953640609
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 23:00:34 +0200 (CEST)
+Received: by mail-dy1-f174.google.com with SMTP id
+ 5a478bee46e88-30bb7d20ad9so2092122eec.1
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 14:00:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781816432;
- x=1782421232; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781816433;
+ x=1782421233; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=E3EmkC3Hc98n7MeOQI3axdLDM6TN5jua/tnyuzXpkN0=;
- b=ddjyHXvuABgI5Klmx/Lgx2hz3j1YIDpEE1R4RXvRLJ3K7Ap/iIDwt/SVE1GSO1ZzCR
- fb4rkNLRExQLbApK8Lh/9JvejsQi9BmB6+9wOg3xKzjUC4FkIsNRJNcMWG+tCbIjWr5S
- OsaRyQVxpUnsVekQI9Xx68iqY78gHvRkY1eqOtaw6iFxCK8dPLqhn5sH5f32IF4JSwHG
- PdKpBolS784e3Rn7tUTppLGBDZi+BjpUGWkT3UzMrpDIIjPg8MgrUZaKHBhHFOKTJIE7
- dZq2lNJ9bC93mF7TDaEdsocqv4RHmJal+riQNpODkI9wYA81FWnGR5fcNH5ll3LFfdzH
- guHA==
+ bh=ZAGOm+DoEr/AJrW8h2pOz1d3tbtWAaOhOK3qUe4Lj98=;
+ b=o9QnC13GwcqI11bYhJm4yujFHRH/d7siz+bxAvlPWP6FOJsRTt5khkWULH3hl6xDBB
+ 2vp2sy6JigBos92AaX2u7y6Oe/t5mz17tLCk7SllfOU4Dc472/jrmwjtM7fzxW7RDx92
+ RSXVzxfOIp5EH8kuSFKkXWy0gjhG4DvFmCCNdw15xdXxP3FuCgXS8VvSbQowtdp4bIzw
+ Nvm4LAyrzKpFMxGU4wVTYeQEh173sxqZxoc9ERjD67entSmGfWx5QJVsCuFg8/9rdgSq
+ RUhbNdqQCtn1SRPyU0RDy9uxCHQy1KDipn2VF4cuqdeyXEeOsjcRmdgMJjmY1XAE/kmz
+ xWAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781816432; x=1782421232;
+ d=1e100.net; s=20251104; t=1781816433; x=1782421233;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=E3EmkC3Hc98n7MeOQI3axdLDM6TN5jua/tnyuzXpkN0=;
- b=oizCROWNeH1HygbUqU8W5EN91NShz2mRsxPWOeNDNF5Cmo6yARLQGv0Q3cd4VwF/hu
- TTPCKoIbQivzwlx2OAH+aXO8uXB1pjPQFiydvCzihcCQT2DWuAMyXYRovK0SbbI+85Eo
- NNxXKPOyMoq4rxXeDjssko72g/lpIrCwd6rAfr3vtAor3N6oIHdR5j4QreDGqepRTH+Q
- mAU2/CasDAI4XVHyYhwKofVuL4R5o6iWMmTEe6Nr/p3GLCqUbT8WzG8NiVHul3Qq5jR4
- MKbnXmLu7R6XU2/xvK0fAp3lMIMwBvzirNVkUWsgPEp5MNmTujEAmd6Q8rk3X1hg1iQg
- L8aQ==
-X-Gm-Message-State: AOJu0YzG9Fqc36NmbsTB4ijqBVUINTZWxGvB+lx59M01ie9r+z4ua8gt
- qB7g4DGWqfKI7zd5rtt30I1V3IzQPJyv0jxrha9nb1ijmoPPKa+KIG5Zl3GriNlIRNFn703p+Sq
- EINca
-X-Gm-Gg: AfdE7clY3IN8vjz43T3Uu+gC1c75DmWubp4IDA0MgylOcC+Uq0Ze6rI7PFLOX3kWPVi
- ySOfE3KDcixG8h+nEIBUBXHu7hoGq97Bz93f8svUIFKBcsw4mtieJCQoKNBuWjC+Sl7zEBVB5yB
- 6TnwaBAC8JzvuvBSRlt7BD0jmdETpOSThkDtsSLzAYQF/21StO/TCHuCncuODLmyX9BhU9GKmie
- NxecD8fyBzNOSc3n5iL8IzgOOzFegby0Jq5MzrZIfbEkd8oTm+Gmuh9SS7GVXcVxCJGkfR1899r
- HZQB5ngjBwoPIkJNDu0ldz82+PZpAz7MkQoDK+8GbftUonBsHx2bf7ba3sCWhiEzqjhGn1n9Q+y
- js9uPhJHLTmdhmydlNP9VPBtc7VKgrOukVQ4kio3q1WID1VvPUaNCEAVNN0VzXgLYI6d+DIiJtn
- +sS4zpLwToEAKO9dhvcTWgzPaw93NhuWCCS12mjmU3EesrCbEJxyo=
-X-Received: by 2002:a05:7300:3091:b0:30b:dd58:e134 with SMTP id
- 5a478bee46e88-30c071dfef9mr785767eec.21.1781816431963; 
- Thu, 18 Jun 2026 14:00:31 -0700 (PDT)
+ bh=ZAGOm+DoEr/AJrW8h2pOz1d3tbtWAaOhOK3qUe4Lj98=;
+ b=MgiddeT/J5ITDCHFQ8t1sMIFSOnfvc6snE4tjr+HumT24j/6o2iTfOZ2sE58Yjot7Z
+ IfdEp+FLFCs25QIwZOFdmlJpvehVWjE4OxlaVUU0wX23JzQzSwEDBSqjwjA3Avb9c6DY
+ 7iuUPbo1PfhnlACcq+uBx+fK02BY3LuDalU8y+IS0z4WpPd+B8shcPvQOz3ix+EUT7Ax
+ KkQHzfQk127B4D72c4MzgQI8Ceypm1zb19dmBqg/ftySMoYt8XZRxpJeBCkBIK7Yhmv+
+ G9/zniyEcuieMx4DT04Guky+LRMRjuuWrQFyQSm/Mkw6XigS31m+SJESf3gh87F4K0/z
+ 0Oxw==
+X-Gm-Message-State: AOJu0YyuHOYMDx/sD94L74sAFYeU8lz8++EB4eC9RR7C9P7FxLBI/w8b
+ MN7WGhrC3qqnWuHb2K3LEezEeaKI2iSTZ1qR3H+j6dVXTaXsXdsU0CnJzXuTtbHSfOT0Q5W97M5
+ p6EvQ
+X-Gm-Gg: AfdE7clGOSpTU1UEsFR79ArdxJpupBF7kmvFOYp7qUUx+gqfwFy9tN5lkCyR/M/B9hZ
+ /5u5IzUoSOY7EkRlBZM60F5FVSY41+fELJfmE6cXcWO0y6qpvcr6jL6b8E9Doryjp/E3aYN5tIs
+ MipoN28A9eR+ffObMTu0mh1sKHnS9xfA7dooehMnliCiT3W+Ic6uQXF9uZV2mOIV9WLBTrVuxpE
+ RgCXoEO4jviSfhIeEk3Y8i47reEZf5SQwv18m1KktFieW0OVm90XcyanG2Gyg1EGzhdsR2gwUbC
+ hkMIwyHMHa9VaVSQkxyPEO4qB5Gs48Q4ZyyqgeD0XTZQwexdG0Qczzs3zV7y4pDw1u7yOLNmrRJ
+ Ga1v2cXLN4Ns5VO2HCMSFVw5yp4MjLvgjMkCBIJqHg839CTHYjiRAsE8EnVDefB8lpgJ8AbggxG
+ iYVri0hvZ/O3hthaVFj5ZRLgoVSq6+2nEb8mQYil6Hn/O7KxzGduw=
+X-Received: by 2002:a05:7300:3c14:b0:30c:5fe:7f2e with SMTP id
+ 5a478bee46e88-30c070ee7a2mr777205eec.19.1781816433390; 
+ Thu, 18 Jun 2026 14:00:33 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30c06d6766fsm863387eec.29.2026.06.18.14.00.30
+ 5a478bee46e88-30c06d6766fsm863387eec.29.2026.06.18.14.00.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Jun 2026 14:00:30 -0700 (PDT)
+ Thu, 18 Jun 2026 14:00:32 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Marat Khalili <marat.khalili@huawei.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: [PATCH v2 1/6] bpf/x86: fix JIT encoding of BPF_JSET with immediate
-Date: Thu, 18 Jun 2026 13:47:05 -0700
-Message-ID: <20260618210026.430288-2-stephen@networkplumber.org>
+ Marat Khalili <marat.khalili@huawei.com>
+Subject: [PATCH v2 2/6] test/bpf: add JSET test with small immediate
+Date: Thu, 18 Jun 2026 13:47:06 -0700
+Message-ID: <20260618210026.430288-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260618210026.430288-1-stephen@networkplumber.org>
 References: <20260608203322.1116296-1-stephen@networkplumber.org>
@@ -84,36 +83,110 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-emit_tst_imm() emits TEST (0xF7 /0) but sized the immediate with
-imm_size(), which can return 1 byte. TEST has no imm8 form; it always
-takes imm32. A small mask like BPF_JSET | BPF_K #0x1 then produced a
-4-byte instruction the CPU decodes as 7, swallowing the following Jcc
-and crashing.
-
-Always emit a 32-bit immediate for TEST.
-
-Bugzilla ID: 1959
-Fixes: cc752e43e079 ("bpf: add JIT compilation for x86_64 ISA")
-Cc: stable@dpdk.org
+The existing jump test only used a 32-bit JSET mask,
+so the broken imm8 encoding of TEST in the x86 JIT was never exercised.
+Add a case with a byte-sized mask;
+run_test() runs it through the interpreter and the JIT.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/bpf/bpf_jit_x86.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ app/test/test_bpf.c | 82 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/lib/bpf/bpf_jit_x86.c b/lib/bpf/bpf_jit_x86.c
-index 88b1b5aeab..0ffe3783ff 100644
---- a/lib/bpf/bpf_jit_x86.c
-+++ b/lib/bpf/bpf_jit_x86.c
-@@ -921,7 +921,7 @@ emit_tst_imm(struct bpf_jit_state *st, uint32_t op, uint32_t dreg, uint32_t imm)
- 	emit_rex(st, op, 0, dreg);
- 	emit_bytes(st, &ops, sizeof(ops));
- 	emit_modregrm(st, MOD_DIRECT, mods, dreg);
--	emit_imm(st, imm, imm_size(imm));
-+	emit_imm(st, imm, sizeof(int32_t));
- }
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index dd24722450..e70dea736f 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -3158,7 +3158,89 @@ static const struct ebpf_insn test_ld_mbuf3_prog[] = {
+ };
  
- static void
+ /* all bpf test cases */
++/*
++ * JSET with a byte-sized mask: exercises the imm8 path of the TEST
++ * encoding in the x86 JIT (a 32-bit mask takes a different path).
++ */
++static const struct ebpf_insn test_jset1_prog[] = {
++	{
++		.code = (BPF_ALU | EBPF_MOV | BPF_K),
++		.dst_reg = EBPF_REG_0,
++		.imm = 0,
++	},
++	{
++		.code = (BPF_LDX | BPF_MEM | BPF_B),
++		.dst_reg = EBPF_REG_2,
++		.src_reg = EBPF_REG_1,
++		.off = offsetof(struct dummy_offset, u8),
++	},
++	/* bit 0 is set in the input: branch is taken */
++	{
++		.code = (BPF_JMP | BPF_JSET | BPF_K),
++		.dst_reg = EBPF_REG_2,
++		.imm = 0x1,
++		.off = 1,
++	},
++	{
++		.code = (BPF_JMP | BPF_JA),
++		.off = 1,
++	},
++	{
++		.code = (EBPF_ALU64 | BPF_OR | BPF_K),
++		.dst_reg = EBPF_REG_0,
++		.imm = 0x1,
++	},
++	/* bit 1 is clear in the input: branch is not taken */
++	{
++		.code = (BPF_JMP | BPF_JSET | BPF_K),
++		.dst_reg = EBPF_REG_2,
++		.imm = 0x2,
++		.off = 1,
++	},
++	{
++		.code = (BPF_JMP | BPF_JA),
++		.off = 1,
++	},
++	{
++		.code = (EBPF_ALU64 | BPF_OR | BPF_K),
++		.dst_reg = EBPF_REG_0,
++		.imm = 0x2,
++	},
++	{
++		.code = (BPF_JMP | EBPF_EXIT),
++	},
++};
++
++static void
++test_jset1_prepare(void *arg)
++{
++	struct dummy_offset *df = arg;
++
++	memset(df, 0, sizeof(*df));
++	df->u8 = 0x1;	/* bit 0 set, bit 1 clear */
++}
++
++static int
++test_jset1_check(uint64_t rc, const void *arg)
++{
++	return cmp_res(__func__, 0x1, rc, arg, arg, 0);
++}
++
+ static const struct bpf_test tests[] = {
++	{
++		.name = "test_jset1",
++		.arg_sz = sizeof(struct dummy_offset),
++		.prm = {
++			.ins = test_jset1_prog,
++			.nb_ins = RTE_DIM(test_jset1_prog),
++			.prog_arg = {
++				.type = RTE_BPF_ARG_PTR,
++				.size = sizeof(struct dummy_offset),
++			},
++		},
++		.prepare = test_jset1_prepare,
++		.check_result = test_jset1_check,
++	},
+ 	{
+ 		.name = "test_store1",
+ 		.arg_sz = sizeof(struct dummy_offset),
 -- 
 2.53.0
 
