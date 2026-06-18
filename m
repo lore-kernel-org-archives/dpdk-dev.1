@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9EB0CD98ED
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 21:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C384ECD98F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 21:00:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30FF54067C;
-	Thu, 18 Jun 2026 23:00:37 +0200 (CEST)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 7953640609
- for <dev@dpdk.org>; Thu, 18 Jun 2026 23:00:34 +0200 (CEST)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-30bb7d20ad9so2092122eec.1
- for <dev@dpdk.org>; Thu, 18 Jun 2026 14:00:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 49F1D40678;
+	Thu, 18 Jun 2026 23:00:40 +0200 (CEST)
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
+ [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id CD5AD4066D
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 23:00:36 +0200 (CEST)
+Received: by mail-dy1-f181.google.com with SMTP id
+ 5a478bee46e88-30b6dad2382so2729000eec.0
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 14:00:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781816433;
- x=1782421233; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781816436;
+ x=1782421236; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZAGOm+DoEr/AJrW8h2pOz1d3tbtWAaOhOK3qUe4Lj98=;
- b=o9QnC13GwcqI11bYhJm4yujFHRH/d7siz+bxAvlPWP6FOJsRTt5khkWULH3hl6xDBB
- 2vp2sy6JigBos92AaX2u7y6Oe/t5mz17tLCk7SllfOU4Dc472/jrmwjtM7fzxW7RDx92
- RSXVzxfOIp5EH8kuSFKkXWy0gjhG4DvFmCCNdw15xdXxP3FuCgXS8VvSbQowtdp4bIzw
- Nvm4LAyrzKpFMxGU4wVTYeQEh173sxqZxoc9ERjD67entSmGfWx5QJVsCuFg8/9rdgSq
- RUhbNdqQCtn1SRPyU0RDy9uxCHQy1KDipn2VF4cuqdeyXEeOsjcRmdgMJjmY1XAE/kmz
- xWAQ==
+ bh=t+2ghHD60zgbMYRSZ6C9jtUI7a9ClanIEDG1dt/Udk4=;
+ b=JHhWkhDWPOQMyx36kCKhSwoOxgWB3pDh2AwTtaqyxnCweFR0WYagcISePb7VGLvs8P
+ Vji6rr36buGLxAB+pvLMFBxEBps+x30UyO55YqvN30DS0HcxHcs+RlMzMOWzEdwpzTOV
+ ftVea+05M17SrwrEmUxwqTPyXHMSxyrg+HgInhC3w7o8gFAfen2XupHoWbrY1nh6R1Ol
+ hbapULnA1F7/jYTD0zA+dK85b1pz7akEqHH91lvmBLDH5FgQepPDOCgvi95d043bgEco
+ X0X9xhNWy+YLbVr9EfuLASm34yMFawEApLdmWxPu3/FhYGo1qgAAc/P1lRGT4+C6a7HL
+ d7XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781816433; x=1782421233;
+ d=1e100.net; s=20251104; t=1781816436; x=1782421236;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ZAGOm+DoEr/AJrW8h2pOz1d3tbtWAaOhOK3qUe4Lj98=;
- b=MgiddeT/J5ITDCHFQ8t1sMIFSOnfvc6snE4tjr+HumT24j/6o2iTfOZ2sE58Yjot7Z
- IfdEp+FLFCs25QIwZOFdmlJpvehVWjE4OxlaVUU0wX23JzQzSwEDBSqjwjA3Avb9c6DY
- 7iuUPbo1PfhnlACcq+uBx+fK02BY3LuDalU8y+IS0z4WpPd+B8shcPvQOz3ix+EUT7Ax
- KkQHzfQk127B4D72c4MzgQI8Ceypm1zb19dmBqg/ftySMoYt8XZRxpJeBCkBIK7Yhmv+
- G9/zniyEcuieMx4DT04Guky+LRMRjuuWrQFyQSm/Mkw6XigS31m+SJESf3gh87F4K0/z
- 0Oxw==
-X-Gm-Message-State: AOJu0YyuHOYMDx/sD94L74sAFYeU8lz8++EB4eC9RR7C9P7FxLBI/w8b
- MN7WGhrC3qqnWuHb2K3LEezEeaKI2iSTZ1qR3H+j6dVXTaXsXdsU0CnJzXuTtbHSfOT0Q5W97M5
- p6EvQ
-X-Gm-Gg: AfdE7clGOSpTU1UEsFR79ArdxJpupBF7kmvFOYp7qUUx+gqfwFy9tN5lkCyR/M/B9hZ
- /5u5IzUoSOY7EkRlBZM60F5FVSY41+fELJfmE6cXcWO0y6qpvcr6jL6b8E9Doryjp/E3aYN5tIs
- MipoN28A9eR+ffObMTu0mh1sKHnS9xfA7dooehMnliCiT3W+Ic6uQXF9uZV2mOIV9WLBTrVuxpE
- RgCXoEO4jviSfhIeEk3Y8i47reEZf5SQwv18m1KktFieW0OVm90XcyanG2Gyg1EGzhdsR2gwUbC
- hkMIwyHMHa9VaVSQkxyPEO4qB5Gs48Q4ZyyqgeD0XTZQwexdG0Qczzs3zV7y4pDw1u7yOLNmrRJ
- Ga1v2cXLN4Ns5VO2HCMSFVw5yp4MjLvgjMkCBIJqHg839CTHYjiRAsE8EnVDefB8lpgJ8AbggxG
- iYVri0hvZ/O3hthaVFj5ZRLgoVSq6+2nEb8mQYil6Hn/O7KxzGduw=
-X-Received: by 2002:a05:7300:3c14:b0:30c:5fe:7f2e with SMTP id
- 5a478bee46e88-30c070ee7a2mr777205eec.19.1781816433390; 
- Thu, 18 Jun 2026 14:00:33 -0700 (PDT)
+ bh=t+2ghHD60zgbMYRSZ6C9jtUI7a9ClanIEDG1dt/Udk4=;
+ b=aQxM6aiUsL+o6PmdpU+TnMj9gKKwZOv8/k5Ih1VK8OyADASkKA8OJ6tQVRPDNSkmdI
+ wsf85f2f3C79C+7gmg2kw/Zl1U6eKDi1u4+RVJWZVPPbMh4gRHlFEBcET+rxXRLFRC94
+ 7rGGl9drSbr9HmiIA8OVj27Au0yD+gExvK0+OLNyhjr/DwECFU4Wb1T0QdAZ0CBaSPXf
+ KQvFKLxHCLj8S6sxMj2BfTCFXTEB5wLLE//1xbf4LJ0VdF4VIyRZVMmNDfNI0+L9ZLrV
+ 3g128A/HAXggaKeGhuISXAYR3yVjSRUw3nIbkJUPUraWhZzs1iPYiSu+n/y3h/fMY+a8
+ 8EfA==
+X-Gm-Message-State: AOJu0YzL+c5qiQB/sSa2rSt5OyuwucDx3OJJ9OKa33WU7/b0gLq8nUvz
+ g6DCraAozZ/7BeuTKeYvhsf1xG+ka0P5SE/y/RyLieLccTObJT1FH4Uugxb5mXAfbH9giXAqhe+
+ RG2f1
+X-Gm-Gg: AfdE7ckiC4mXRVtU3KpHdGIU1Kpciorjf59nMthRQgveRN8gF/XwHj1Ry/R7ICSGEoU
+ +J7SuONkbQ+bJMj25eI7aB8pVu1I9ndSxC8m3Anjh53/9C1RIJ4Gx+22N7tXuQUyWm/PQQR6yuR
+ hiDDvbuI1o0KIlZNo/kTp3437Fjy0q1o4kJyQDl+0XKC9TAbr5Uw7jL9Iy8Fnv1AKymGj78DsUY
+ spvB8p3ioimk3mEXc5MEVThAX4wMCT/1+qKwLGNClqeybXp2LkEqVI6cFCdvVTBE4GDpk2o6u4Q
+ X0uogNnXUbxk+oHgLkW8yBp4hy1jTH2/ZWd2iW7Bk6mPmmbf6tMvRCs1fgbPt5lwZXFhj4g0Cxv
+ 1gNdgJtUhjEq4BC8rC4XC1BqlMAKfE9v2jhK66XxZmtkmT9QuLi1cPTR1Iqi8O0fcgcW9Wg05Hy
+ b2pm/H6hO4ks7gWyGntHo8hCL6480I0+PciaXtNSKKdyIsyA1H21M=
+X-Received: by 2002:a05:7301:10cc:b0:304:7a67:6104 with SMTP id
+ 5a478bee46e88-30c07086a40mr708281eec.7.1781816435509; 
+ Thu, 18 Jun 2026 14:00:35 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30c06d6766fsm863387eec.29.2026.06.18.14.00.32
+ 5a478bee46e88-30c06d6766fsm863387eec.29.2026.06.18.14.00.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Jun 2026 14:00:32 -0700 (PDT)
+ Thu, 18 Jun 2026 14:00:34 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
+Cc: Christophe Fontaine <cfontain@redhat.com>, stable@dpdk.org,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Marat Khalili <marat.khalili@huawei.com>
-Subject: [PATCH v2 2/6] test/bpf: add JSET test with small immediate
-Date: Thu, 18 Jun 2026 13:47:06 -0700
-Message-ID: <20260618210026.430288-3-stephen@networkplumber.org>
+ Marat Khalili <marat.khalili@huawei.com>, Jerin Jacob <jerinj@marvell.com>
+Subject: [PATCH v2 3/6] bpf/arm64: fix offset type to allow a negative jump
+Date: Thu, 18 Jun 2026 13:47:07 -0700
+Message-ID: <20260618210026.430288-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260618210026.430288-1-stephen@networkplumber.org>
 References: <20260608203322.1116296-1-stephen@networkplumber.org>
@@ -83,110 +85,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The existing jump test only used a 32-bit JSET mask,
-so the broken imm8 encoding of TEST in the x86 JIT was never exercised.
-Add a case with a byte-sized mask;
-run_test() runs it through the interpreter and the JIT.
+From: Christophe Fontaine <cfontain@redhat.com>
 
+The DPDK BPF JIT standalone test test_ld_mbuf1 fails on arm64.
+It does:
+	r6 = r1                    // mbuf
+	r0 = *(u8 *)pkt[0]         // BPF_ABS
+	if ((r0 & 0xf0) == 0x40)
+		goto parse
+	r0 = 0
+	exit                       // epilogue E0
+parse:
+	r0 = *(u8 *)pkt[r0 + 3]    // BPF_IND
+	...
+	exit
+
+emit_return_zero_if_src_zero() returns 0 by branching to a function
+epilogue. The target maybe a previous epilogue so branch
+might be backwards; therefore the offset needs to be negative.
+
+The offset was stored in a uint16_t, so a negative value wrapped to a
+large positive number; emit_b() then branched past the end of the
+program and faulted at run time.
+
+Fixes: 111e2a747a4f ("bpf/arm: add basic arithmetic operations")
+Cc: stable@dpdk.org
+
+Signed-off-by: Christophe Fontaine <cfontain@redhat.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_bpf.c | 82 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ lib/bpf/bpf_jit_arm64.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index dd24722450..e70dea736f 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -3158,7 +3158,89 @@ static const struct ebpf_insn test_ld_mbuf3_prog[] = {
- };
+diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
+index a04ef33a9c..67e42015de 100644
+--- a/lib/bpf/bpf_jit_arm64.c
++++ b/lib/bpf/bpf_jit_arm64.c
+@@ -957,10 +957,12 @@ static void
+ emit_return_zero_if_src_zero(struct a64_jit_ctx *ctx, bool is64, uint8_t src)
+ {
+ 	uint8_t r0 = ebpf_to_a64_reg(ctx, EBPF_REG_0);
+-	uint16_t jump_to_epilogue;
++	int32_t jump_to_epilogue;
  
- /* all bpf test cases */
-+/*
-+ * JSET with a byte-sized mask: exercises the imm8 path of the TEST
-+ * encoding in the x86 JIT (a 32-bit mask takes a different path).
-+ */
-+static const struct ebpf_insn test_jset1_prog[] = {
-+	{
-+		.code = (BPF_ALU | EBPF_MOV | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 0,
-+	},
-+	{
-+		.code = (BPF_LDX | BPF_MEM | BPF_B),
-+		.dst_reg = EBPF_REG_2,
-+		.src_reg = EBPF_REG_1,
-+		.off = offsetof(struct dummy_offset, u8),
-+	},
-+	/* bit 0 is set in the input: branch is taken */
-+	{
-+		.code = (BPF_JMP | BPF_JSET | BPF_K),
-+		.dst_reg = EBPF_REG_2,
-+		.imm = 0x1,
-+		.off = 1,
-+	},
-+	{
-+		.code = (BPF_JMP | BPF_JA),
-+		.off = 1,
-+	},
-+	{
-+		.code = (EBPF_ALU64 | BPF_OR | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 0x1,
-+	},
-+	/* bit 1 is clear in the input: branch is not taken */
-+	{
-+		.code = (BPF_JMP | BPF_JSET | BPF_K),
-+		.dst_reg = EBPF_REG_2,
-+		.imm = 0x2,
-+		.off = 1,
-+	},
-+	{
-+		.code = (BPF_JMP | BPF_JA),
-+		.off = 1,
-+	},
-+	{
-+		.code = (EBPF_ALU64 | BPF_OR | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 0x2,
-+	},
-+	{
-+		.code = (BPF_JMP | EBPF_EXIT),
-+	},
-+};
+ 	emit_cbnz(ctx, is64, src, 3);
+ 	emit_mov_imm(ctx, is64, r0, 0);
 +
-+static void
-+test_jset1_prepare(void *arg)
-+{
-+	struct dummy_offset *df = arg;
-+
-+	memset(df, 0, sizeof(*df));
-+	df->u8 = 0x1;	/* bit 0 set, bit 1 clear */
-+}
-+
-+static int
-+test_jset1_check(uint64_t rc, const void *arg)
-+{
-+	return cmp_res(__func__, 0x1, rc, arg, arg, 0);
-+}
-+
- static const struct bpf_test tests[] = {
-+	{
-+		.name = "test_jset1",
-+		.arg_sz = sizeof(struct dummy_offset),
-+		.prm = {
-+			.ins = test_jset1_prog,
-+			.nb_ins = RTE_DIM(test_jset1_prog),
-+			.prog_arg = {
-+				.type = RTE_BPF_ARG_PTR,
-+				.size = sizeof(struct dummy_offset),
-+			},
-+		},
-+		.prepare = test_jset1_prepare,
-+		.check_result = test_jset1_check,
-+	},
- 	{
- 		.name = "test_store1",
- 		.arg_sz = sizeof(struct dummy_offset),
++	/* maybe backwards branch to earlier epilogue */
+ 	jump_to_epilogue = (ctx->program_start + ctx->program_sz) - ctx->idx;
+ 	emit_b(ctx, jump_to_epilogue);
+ }
 -- 
 2.53.0
 
