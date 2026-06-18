@@ -2,40 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8963CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 16:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBDFCD98ED
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 17:25:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9939A402B6;
-	Thu, 18 Jun 2026 18:45:23 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 2F94F4028C
- for <dev@dpdk.org>; Thu, 18 Jun 2026 18:45:22 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0BDFA201E4;
- Thu, 18 Jun 2026 18:45:22 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 46CA5402B6;
+	Thu, 18 Jun 2026 19:25:51 +0200 (CEST)
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+ by mails.dpdk.org (Postfix) with ESMTP id A50104028C
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 19:25:49 +0200 (CEST)
+Received: by mail-dl1-f46.google.com with SMTP id
+ a92af1059eb24-137dd4cc208so1026120c88.1
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 10:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781803548;
+ x=1782408348; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=JA6fsStPR1plVLEuowfh5irmLI83+NDhqe++akzhSZI=;
+ b=G5HfdnfIEU0IOtGobiUDevsThmEufkB1k/WP+TaWUE0rqX3dAfAVDyR1VdhrequZAN
+ l5/hFCXCD/p8xq8PlAHNaduKuJGQkPS7dxevhQSHkmn58Q4zNWpkdFN28kvgn+dCUFoN
+ 2s/O54dYwKynBIzx6T33w+FFOybQ+Pn77okyvVp578fTUeJiyQ8aWyvr3B3xn5iDsJVI
+ kSb8QaWSB8yp+qXfrw7dlqXY9RDJXzVXVkYaei2gdfSu2B4km4HlOFrXz5YhEK3vhEeX
+ 4WBhmK5ULgqzjB2HFbavup9z1+w9AvJFNrGQQc7/iulzbtZIzV8Nc4a6udn1ivCuNJPO
+ OeeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781803548; x=1782408348;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=JA6fsStPR1plVLEuowfh5irmLI83+NDhqe++akzhSZI=;
+ b=gpueH/O9+9/bXQ/5fSbwlf3XRVBPEept6Q1/0Ugdw3YLdoiLqcwwM0TZHcZWrf8hVD
+ 2//tVPefPU0bEuJuvDHuhzLyK6FmOi9NYtrOxEQNaaf5TrIlJ/y7ZVCuXm3TYQN8K+sI
+ 9eoD3rF/PcdLfUkylQ7+CXX7FIdFMCEPQssngaT2be7Xb29b8DrsvZb3uqz9meeNeM22
+ FwJ5gPajHzkSM4etCZBHe7gRWCm7PAPnT5cCO6O3p7opZhdMBsJsDw6+HhRmsOAHWrRV
+ Nu0961bw+k9ZsXdaLwDrflf+/3tf7jyxoXInzbYw7qatzb+KfhNc5c/kmO2sID/4tbBo
+ 5/og==
+X-Gm-Message-State: AOJu0Yy5OdF8ga79rY5jXSmWr/qo1+oWS94HWInn2HafqIJox8qn/uh9
+ DafLJwd9txPtcD+jhDPgs61npFBMNWrC88PYHiGrq1SAMUVmvxmFNSLnaB2nOPWAJUuZEYJwlKz
+ wp4IY
+X-Gm-Gg: AfdE7cnhq4GYy7gAGYtT2u4Lh7vi4YVJ/NHlbUL0AgF4J7sDrciYMDMG1HRJiTBPGJh
+ lrWy9ETxNmPZEE1jmEO6rvV5PSieVbVJ8RoVBLX6cM2kvHsmUpaBWRNXXgZiF1EEvZk9mImjsKG
+ eD+cEQs3Lrt8FVbCZT6gWv1YMt1v/9Uo66AcgeE3GAQWfoNsn3cyaTF/uhw7rFEnTMPbTJp7n9V
+ qBbCJh5v6fyhzGA54kc2DqJjcfdlmAO8S1Ji8sPZ/jbx/GkxGzyPs2duukxrGnlg9IexONlDos7
+ OjJsGAqc4ppYEqZRrpXrtxMpJ0+G5fV35ZtY9pm93zJ+Cu5NlVQJ6PJnHAC1wx1mhJMvgocfWpz
+ mHKSn62alsBVxurwVqgPVpLzlD0WV3Ybab+joQ7IE7zeTvBp1Y39lh7rAbY/aAMlG8AGCOw4E0j
+ wJLer35awJ39Cn2C92pCVaFFbs24OkYel+0jgS1zVU+X9ZAG2j/fo=
+X-Received: by 2002:a05:7022:2201:b0:137:24c9:fb7a with SMTP id
+ a92af1059eb24-13997192d0dmr3573720c88.2.1781803548440; 
+ Thu, 18 Jun 2026 10:25:48 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-30c0670a1b4sm122443eec.8.2026.06.18.10.25.47
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 18 Jun 2026 10:25:48 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/4] net/axgbe: fix resource leaks and OOB access
+Date: Thu, 18 Jun 2026 10:21:55 -0700
+Message-ID: <20260618172544.338758-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260218164324.915065-1-stephen@networkplumber.org>
+References: <20260218164324.915065-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v3 1/1] pcapng: add user-supplied timestamp support
-Date: Thu, 18 Jun 2026 18:45:19 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65924@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260618082240.517e60cb@phoenix.local>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v3 1/1] pcapng: add user-supplied timestamp support
-Thread-Index: Adz/NlMyx9iBOoBeTFe47DIDkf9IfgABuEzw
-References: <20260618143819.310046-1-dawid.wesierski@intel.com>
- <20260618082240.517e60cb@phoenix.local>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>,
- "Dawid Wesierski" <dawid.wesierski@intel.com>
-Cc: <dev@dpdk.org>, <thomas@monjalon.net>,
- "Marek Kasiewicz" <marek.kasiewicz@intel.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,44 +80,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> Sent: Thursday, 18 June 2026 17.23
->=20
-> On Thu, 18 Jun 2026 10:38:15 -0400
-> Dawid Wesierski <dawid.wesierski@intel.com> wrote:
->=20
-> > + * @param ts
-> > + *   Packet timestamp in nanoseconds since the Unix epoch. If zero,
-> the
-> > + *   current TSC is captured and converted to epoch ns by
-> > + *   rte_pcapng_write_packets() when the packet is written.
-> >   *
->=20
-> It might help users if a helper rte_tsc_to_epoch() was exposed.
+A code review of the axgbe PMD turned up several correctness bugs,
+most of them in resource management on the device initialization
+error paths, plus an out-of-bounds descriptor ring access.
 
-+1
+v3:
+  - Patch 1: consolidate the error-path cleanup 
+  - Patch 2: split Rx buffer setup into two passes
 
-Please note that such a helper would need to compensate for rte_rdtsc() =
-drift.
+Stephen Hemminger (4):
+  net/axgbe: fix resource leaks in device init error paths
+  net/axgbe: fix Rx queue leak on descriptor init failure
+  net/axgbe: destroy mutexes on device close
+  net/axgbe: fix descriptor status out-of-bounds access
 
-Simplified:
+ drivers/net/axgbe/axgbe_dev.c    | 43 ++++++++++++++++++--------------
+ drivers/net/axgbe/axgbe_ethdev.c | 40 +++++++++++++++++++++--------
+ drivers/net/axgbe/axgbe_rxtx.c   |  8 +++---
+ 3 files changed, 58 insertions(+), 33 deletions(-)
 
-int64_t rte_tsc_to_ns(tsc)
-{
-  struct timespec ts =3D clock_gettime(CLOCK_REALTIME);
-  int64_t now_ns =3D ts.tv_sec * NS_PER_S + ts.tv_nsec;
-  int64_t now_tsc =3D rte_rdtsc();
-  int64_t diff_tsc =3D tsc - tsc_now;
-  return now_ns + diff_tsc * NS_PER_S / rte_get_tsc_hz();
-}
-
-A performance optimized version would take "now_ns" and "now_tsc" as =
-parameters.
-And with "now_ns" passed as a parameter, the function also works with =
-other clocks, such as CLOCK_MONOTONIC.
-
-Also see this discussion on the Grout mailing list:
-https://inbox.dpdk.org/grout/98CBD80474FA8B44BF855DF32C47DC35F6590E@smart=
-server.smartshare.dk/T/#m465a04ca2e8219612dd9c3efb4198d23d5813422
-
+-- 
+2.53.0
 
