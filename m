@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A800CD98ED
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 14:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0B3CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Jun 2026 14:17:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6138F40DCE;
-	Thu, 18 Jun 2026 16:17:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AB00940DF8;
+	Thu, 18 Jun 2026 16:17:45 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 91BC940268
- for <dev@dpdk.org>; Thu, 18 Jun 2026 16:17:40 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 158DA40C35
+ for <dev@dpdk.org>; Thu, 18 Jun 2026 16:17:41 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1781792261; x=1813328261;
+ t=1781792262; x=1813328262;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=xQQW5pN1Wx/4LXKg3/fIR+9VtY0Khl264cL+T6EGsKA=;
- b=gjKQEI505zZ8MuLNr7ONlbhWYb4O1tq1VBQi0XgbQRL8B2cy//MN1HXq
- bEfmScX8KK7fpNBviGdQzbzmiahA3kk8o7VFP5rUs45L8ZCqxNsvy6dGZ
- U9JcprLSwh1HR6npoGSF9ZyHpxCr7VKxRaFoBE9SZY79Mk8E6SstR5tcn
- +O+Ib9mDjkEsPqIaJr26hPbvr+BbBlzEOZql5MtysH9oIlNK0MBacVilz
- USHyGZmSP34EKk03znTGZw3+8bELsddsDCgDfsQETQ9YjPxPwfXFmSJTF
- dhgv9Gv4a92jxLHyCoBr94W/1Wb3x7+jI92HxcmZwBCkqRXgiejrxxL8e w==;
-X-CSE-ConnectionGUID: i/5vdauVTsSkFQDbmNPoGA==
-X-CSE-MsgGUID: h1LX6MFpSGWPUiDA4Cot1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11820"; a="81736960"
-X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="81736960"
+ bh=p3WiKpjV57trgcSInouV2QcrpgjH5tApI7vNrHFG8lM=;
+ b=mYIb2YlM8U74SYNPYnUyy2W57egTu3+I7T3OwWtYEqrUc32dxYlg1SFe
+ Qwj88c4E5CJaR7x8dB7dU+jirR3Cfu7sS4PSopr2AwUWAnLCkj2KTvSSd
+ fuIGg7Oj3yCF4Tiq8zzwyrpfPBrOV46eIYmTD6FcVa7c5i5sdmPIbWVdo
+ N2h9hVOyHTTMvSfozsLx5no+Xa+BzdkzFdoKhj+I3Z6qkyvj9eBXBrpQV
+ 5GalUtybQcFDWY1xOIx1rkiuou4XlNJXEQ/mQDgaE+niU1goZVN7j7mHV
+ woeCEANMbNB6d7i+nuQtacv2sdjuAyFKUOl0uhMe9TMhtQhFZN67EROfz g==;
+X-CSE-ConnectionGUID: QptswZA3QsaGRF524Rew9Q==
+X-CSE-MsgGUID: 80GQSDVhQa6SVQD+vZgenA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11820"; a="81736966"
+X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="81736966"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Jun 2026 07:17:40 -0700
-X-CSE-ConnectionGUID: OpGmmzS/QayLufNb8Qo1JQ==
-X-CSE-MsgGUID: HOxv8tbmQjmMOkzDn1TUGQ==
+ 18 Jun 2026 07:17:42 -0700
+X-CSE-ConnectionGUID: cW+hp6lRQTGikYvLGy+72g==
+X-CSE-MsgGUID: ssqnQs3oTAyCpjqiH7ixaw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="248457623"
+X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; d="scan'208";a="248457626"
 Received: from unknown (HELO localhost.igk.intel.com) ([10.123.235.20])
- by orviesa009.jf.intel.com with ESMTP; 18 Jun 2026 07:17:39 -0700
+ by orviesa009.jf.intel.com with ESMTP; 18 Jun 2026 07:17:41 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, david.marchand@redhat.com,
  Marek Kasiewicz <marek.kasiewicz@intel.com>,
  Dawid Wesierski <dawid.wesierski@intel.com>
-Subject: [PATCH v2 2/7] net/iavf: increase max ring descriptors to hardware
- limit
-Date: Thu, 18 Jun 2026 10:44:37 -0400
-Message-ID: <20260618144442.312844-3-dawid.wesierski@intel.com>
+Subject: [PATCH v2 3/7] net/iavf: allow runtime queue rate limit configuration
+Date: Thu, 18 Jun 2026 10:44:38 -0400
+Message-ID: <20260618144442.312844-4-dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260618144442.312844-1-dawid.wesierski@intel.com>
 References: <20260608164059.65420-1-dawid.wesierski@intel.com>
@@ -66,34 +65,59 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Marek Kasiewicz <marek.kasiewicz@intel.com>
 
-The Intel E810 hardware supports up to 8160 (8K - 32) descriptors per
-TX/RX ring, but IAVF_MAX_RING_DESC caps it at 4096. Applications that
-need deep descriptor rings for hardware rate-limited pacing (e.g.,
-ST2110 video with thousands of packets per frame) cannot queue enough
-packets before the pacing epoch begins.
+Allow per-queue bandwidth rate limiting to be configured without
+stopping the port when only a single TC node and single QoS element
+are involved. This enables dynamic session management where individual
+queue pacing rates can be changed while other queues continue
+transmitting.
 
-Increase IAVF_MAX_RING_DESC to the hardware maximum of 8160 to allow
-full utilization of the ring depth on E810 VFs.
+Also fix the queue ID assignment in the bandwidth configuration to
+use the actual TM node ID rather than a sequential counter index, and
+only mark the TM hierarchy as committed when the port is stopped to
+permit subsequent reconfiguration.
 
 Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
 Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
 ---
- drivers/net/intel/iavf/iavf_rxtx.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/intel/iavf/iavf_tm.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 8449236d4d..22ea415f44 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -16,7 +16,7 @@
- /* In QLEN must be whole number of 32 descriptors. */
- #define IAVF_ALIGN_RING_DESC      32
- #define IAVF_MIN_RING_DESC        64
--#define IAVF_MAX_RING_DESC        4096
-+#define IAVF_MAX_RING_DESC        (8192 - 32)
- #define IAVF_DMA_MEM_ALIGN        4096
- /* Base address of the HW descriptor ring should be 128B aligned. */
- #define IAVF_RING_BASE_ALIGN      128
+diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
+index 1cf7bfb106..43d7a44337 100644
+--- a/drivers/net/intel/iavf/iavf_tm.c
++++ b/drivers/net/intel/iavf/iavf_tm.c
+@@ -804,8 +804,10 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
+ 	int index = 0, node_committed = 0;
+ 	int i, ret_val = IAVF_SUCCESS;
+ 
+-	/* check if port is stopped */
+-	if (adapter->stopped != 1) {
++	/* check if port is stopped, except for setting queue bandwidth */
++	if (vf->tm_conf.nb_tc_node != 1 &&
++	    vf->qos_cap->num_elem != 1 &&
++	    adapter->stopped != 1) {
+ 		PMD_DRV_LOG(ERR, "Please stop port first");
+ 		ret_val = IAVF_ERR_NOT_READY;
+ 		goto err;
+@@ -856,7 +858,7 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
+ 		q_tc_mapping->tc[tm_node->tc].req.queue_count++;
+ 
+ 		if (tm_node->shaper_profile) {
+-			q_bw->cfg[node_committed].queue_id = node_committed;
++			q_bw->cfg[node_committed].queue_id = tm_node->id;
+ 			q_bw->cfg[node_committed].shaper.peak =
+ 			tm_node->shaper_profile->profile.peak.rate /
+ 			1000 * IAVF_BITS_PER_BYTE;
+@@ -900,7 +902,8 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
+ 		goto fail_clear;
+ 
+ 	vf->qtc_map = qtc_map;
+-	vf->tm_conf.committed = true;
++	if (adapter->stopped == 1)
++		vf->tm_conf.committed = true;
+ 	return ret_val;
+ 
+ fail_clear:
 -- 
 2.47.3
 
