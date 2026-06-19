@@ -2,70 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5C9CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 21:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C97CD98F6
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 22:04:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4DDE402B6;
-	Fri, 19 Jun 2026 23:43:42 +0200 (CEST)
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
- by mails.dpdk.org (Postfix) with ESMTP id A0D094028F
- for <dev@dpdk.org>; Fri, 19 Jun 2026 23:43:41 +0200 (CEST)
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-13986d61b4fso2966546c88.0
- for <dev@dpdk.org>; Fri, 19 Jun 2026 14:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781905420;
- x=1782510220; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=dvHgBkNAKwaJ8PdyPF7k7DhnIQAvSTb4mpbcBX2NksI=;
- b=yHgokFIbDDTluIDZwAVi7DkLYzJEiRKiVVws3qI4qw4I+UwkuJejwHw8aBp5hT/plA
- Rf6H5paPs5WhhrVuS3jwSJ+oWatO+ZwMwlmUAEnPwSJ3bJEodXOBu8YUm5F1aZ4pU6OV
- eBjrHWf5W1+GK88UthfTCm/8TR1bOJKZJfVzE2583M60Hm4qa6SltjHsJ+E09emR2K4V
- EU75Gp/K5w9ji0aU4RjQSIZpagqv29tXPgB/57mF2YIYM4PsM79OubsnGav2Tgdfk3Ha
- x9w4bsldFeyV4NfhxV62BNStptfvK0Y8wLHZEHn2n0hz3fRm9mI9g+SaRjkHqWFV2P5C
- B4ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781905420; x=1782510220;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=dvHgBkNAKwaJ8PdyPF7k7DhnIQAvSTb4mpbcBX2NksI=;
- b=hlADgERqlQGDtTf+Jx0ABXfFoYnB0gUeMFBfqlm1NXlbh3Kk5K8dmoY5KSgoZhV6PT
- n4a4/sHaIdoiovVrJHJmb+kQzOAOuMi/KXkvJf+ceDSQFfR7TbXslNoIDnq12IekZULq
- vnWhIchtQecNX6gRAUAkjZPA/yZr0FfQ9zPjTdP7Y1/2jHI5A18eMGMFyG9vzIVrKXTe
- RE/aeUVIrjh6DqrLFjnwDffBsswZhy2u9sep6AraIyyWoMfimUBXUci6dCXVG7xdwAFY
- HqFCfbDZOjS2Cwn4q9AdkCfLOjFbtCsCA+MVb69HEpi11SfbKLPDjkKrLHU74KPb+nf+
- 1BUA==
-X-Gm-Message-State: AOJu0Yzy3I15G/mIIxOG36zPxYhVjLtHO/n/4Oz1X2EQpJnpwssXVuq+
- bSTsPnDPz8VfxPcCMxdMzcD789ktHWHOv8sOddrHGNgLstZ4nSz9YpLxpnnXVKDHEj4=
-X-Gm-Gg: AfdE7clDyznZqyv1DXhhIclknY6MFROnRXsRH7SSWi3bo1jW694dCFHF0KjCUTFV00V
- nLYuRSu5disSK4oCzMiC2eo0opMY5/vH8PdFwGPZGTn4dB7z5q3X5Q0yE8tMFfQj15dntxgeRF0
- w5VHfajnlSBK4hBa4bY1bD5wQ6gHZdSnqnMnOg91PNK4cdNq+Tpp1h/9gMz2wbSmieTCjV3NiOU
- cdQhHz/KTK7oTdNp8m0ArwsUVpVHEpYZ14GP254jVTMU6HNlW8i+vwnK1PUXax33U/4IT+2TnbN
- YNSv/CsjyS6w4dyZL/ekTUbb2mStCIiKyIhtSA6T9JJC3sGuOS37ORAVFkHOBWzI9Qf9veQKjZ8
- gvhg+KrWLaGbqQcFs5hAq6gJEfjB/GviybCRKzovEScSJQfxsAtvsWbR3ycDVG3P0YFfLRuqBCN
- QxAx4NcYLji3TpylwcLutKlQT63Hsaf8iqI2nCRBYQUfnwccnZU3KOHg==
-X-Received: by 2002:a05:7022:e995:b0:137:fe07:8a2d with SMTP id
- a92af1059eb24-139a2035cf9mr2939586c88.6.1781905420141; 
- Fri, 19 Jun 2026 14:43:40 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-139adcc5f14sm642910c88.6.2026.06.19.14.43.38
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 19 Jun 2026 14:43:39 -0700 (PDT)
-Date: Fri, 19 Jun 2026 14:43:36 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gagandeep Singh <g.singh@nxp.com>
-Cc: dev@dpdk.org, hemant.agrawal@nxp.com
-Subject: Re: [PATCH 00/10] NXP ENETC driver related changes
-Message-ID: <20260619144336.1f9c46f2@phoenix.local>
-In-Reply-To: <20260619184427.522518-1-g.singh@nxp.com>
-References: <20260619184427.522518-1-g.singh@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4FBA44028D;
+	Sat, 20 Jun 2026 00:04:16 +0200 (CEST)
+Received: from SJ2PR03CU001.outbound.protection.outlook.com
+ (mail-westusazon11022126.outbound.protection.outlook.com [52.101.43.126])
+ by mails.dpdk.org (Postfix) with ESMTP id D561A4028A;
+ Sat, 20 Jun 2026 00:04:14 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KyFm/hf1hR73adXmVzVEyN2SQYEAWPTYuJbuwPylVqB3r4y30FLY9j0y9LvTkW7YGTjWBsHZLI634EKZpa4hmXMxG/E5V4TTE0r+qr9Tl6UUyRIXat8CkE23HBtS/50P1d9iZgPITM3at9goITL81J4nhu0yDVS4/99b8BSyazjiZ7zMDtiWy+ZBGy/4Rroy9MgKrojMVmtQPpsICQRpn/PQh5lXIMlsZk1XsB09lCASWx1XdiPo5rFDNA8p9lGOv6gbI/ce6BBSwy264cpRUd1Ml2NixmLM17IcrH/JjT6485hJRRtoDavd43Sx6DyncX9dW0+7eXAwCgSunnWIzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WTnpSqMQhxX5E9s6CStsFLZU8gIXsN7L1fT0JEfBFFw=;
+ b=p3HpSBO+T6VB2yOfffSimJLbLtPgVgelTqt3/JkcyjnKrHsXaTGhZR8bhKDekv56k0aVTC0EcK1l1LdIKsBLppZZ9hc80BqlXjN+YiKtIX5r5wSfDZfLOWgTTkAjEt+FKnR+r3m+HQAbHo+ovHtJRYaIbH53WwzQG0241bVZB+gKC8Ofq20wdgRon49Gt9X9bIXjBpOLGghvxLJUDHRR2Rti3saISftHAHBS/iTQ00gSXu8EYfJmiF0CGJf8D4WI9QUxg0krarhGsnxsf38dfyUEYPBY+QP7QaYykZhSXPK80E95DYb5b63sm67+g3LhLDfXH5c/Ti/TnagQKprYRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WTnpSqMQhxX5E9s6CStsFLZU8gIXsN7L1fT0JEfBFFw=;
+ b=XA7epwVm2bCCcqDO4L/tgVInA807ZYx3AqWgKYLWDXksYCxOqN5/Lwl3IOZs2lLrrRHk+AQp5+cYV8DVqhhtIeK3IWb2mytWr02vr20LCCQrq/3Rbc9LFErpo4ON7/TW4YIMs9NtmRZbiW642toumyo5O9tp4JvtYL32rlCLSKA=
+Received: from SA1PR21MB6683.namprd21.prod.outlook.com (2603:10b6:806:4a4::6)
+ by SA1PR21MB6584.namprd21.prod.outlook.com (2603:10b6:806:4a3::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.9; Fri, 19 Jun
+ 2026 22:04:11 +0000
+Received: from SA1PR21MB6683.namprd21.prod.outlook.com
+ ([fe80::8bad:6294:8a07:fe18]) by SA1PR21MB6683.namprd21.prod.outlook.com
+ ([fe80::8bad:6294:8a07:fe18%3]) with mapi id 15.21.0159.007; Fri, 19 Jun 2026
+ 22:04:11 +0000
+From: Long Li <longli@microsoft.com>
+To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "thomas@monjalon.net" <thomas@monjalon.net>, "stephen@networkplumber.org"
+ <stephen@networkplumber.org>, "bruce.richardson@intel.com"
+ <bruce.richardson@intel.com>, "fengchengwen@huawei.com"
+ <fengchengwen@huawei.com>, "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>, 
+ "stable@dpdk.org" <stable@dpdk.org>, Wei Hu <weh@microsoft.com>
+Subject: RE: [EXTERNAL] [PATCH v2 05/10] bus/vmbus: fix interrupt leak in
+ cleanup
+Thread-Topic: [EXTERNAL] [PATCH v2 05/10] bus/vmbus: fix interrupt leak in
+ cleanup
+Thread-Index: AQHc/zc05RyVgnkZpUWblvpJOkgOwrZGcJXw
+Date: Fri, 19 Jun 2026 22:04:10 +0000
+Message-ID: <SA1PR21MB668398E287F75969DDD60FF6CEE22@SA1PR21MB6683.namprd21.prod.outlook.com>
+References: <20260611094551.1514962-1-david.marchand@redhat.com>
+ <20260618152826.490569-1-david.marchand@redhat.com>
+ <20260618152826.490569-6-david.marchand@redhat.com>
+In-Reply-To: <20260618152826.490569-6-david.marchand@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=1be1113a-5201-47ec-8d92-63805eb871a9;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-06-19T22:03:49Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|SA1PR21MB6584:EE_
+x-ms-office365-filtering-correlation-id: e4d51fb2-74ca-457b-3115-08dece4eb14d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|1800799024|23010399003|366016|4143699003|56012099006|11063799006|18002099003|22082099003|38070700021;
+x-microsoft-antispam-message-info: 3IPjolDrfgzdjkE76ctNrP9Omz4ohKBB5t3YfGLko+N56uqoBPt8MCDBMbKj0Ra6hJinUG/QXhcJVWxYjMSF/xfHiWWd4/r4NkPgFhZuw35coovt/YV1p6IrJjeM+DItSyNhq2Y7DabALwqpXRn4QSgeKkqJoDwpfd/WIpK8BzLasVkudGj8bZ9WazKP0Zgad1Pr7A17qj8hoBSnvYvK+urxQSwGvoynuHSu/bHXOqcwwGDC3rt9GibaNxdjvJuYuSZ+ZtasAMmf+RWjzqxvmx1O+6NjKO3iLdygeRl+HopTQ+xvrBV/kLBIZF9tbwRFm49nSN4qWwdQ3LNoq36K+ltcw+E7LdaDJKzRndgFAteSMPPmTvJIsxxJc+c4yQXkNRaxbrVYUddjBV1+6Uqom8uNrHSBUaJzJWPuTZIs5pK9nZcaqCDgbZzaANVPrWL5kbTWMz/IVLS90J1U5dsavQD+6zowPbbHyM4qnCkVxyDzTe+VOlUXuKgx9nlADSPNbzo63F1BsM8dGjTLKGXOn0RjAEAPfJqwJrU/Mnqd9t/JMC8k7fQLNDDPe0FfmDmsADerR9d7gDdjg7wQnolFnbE5Gm2U8laXgPx0Tr6DGnLaSEfYtNH4Mh4gjdSIth3caTs9hpJy0QMExXk+VQPItzs3sV9lUuDBKIdrFHOc0YWywwjpk/01qS5SAu5/4J6R5HvUI8RLmUeg4aj4JCD2LMLdEvijSpKypxhfHQj5zek=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SA1PR21MB6683.namprd21.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(4143699003)(56012099006)(11063799006)(18002099003)(22082099003)(38070700021);
+ DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?zMprKxcbFUNlppcGgNSia/lTrjNE1Cvmok+0dE+u03jsDGkl5O95i11xT3MJ?=
+ =?us-ascii?Q?KtXmDVWI0si3yiSsCzfbfPc0+dKzIf4LcKeyDRM5FigEvMJp9wR+cGWGyFy/?=
+ =?us-ascii?Q?Brto3P5f4tjvnVnMramSIoI3xGc7to/m+JAg8ppUJoM4jpP0BLBJTTwcnbz2?=
+ =?us-ascii?Q?o24C7opz6NjCkQUux+eSM6dsO6yQ+66a+t9ozL+w/XoRc6GcAQf7loQoyUh9?=
+ =?us-ascii?Q?CefHfNlcN/+ILfCEpZXLzYjSjWjWD+cfYdoWvrTiOoobFtLXogzxyQ8KSFCd?=
+ =?us-ascii?Q?8VRhZMPSc+XyUeQ9kaixG/OdwxwW1hpAogjeXcFDMt5lA3fxF9nCO+ZWLPj6?=
+ =?us-ascii?Q?UjrCtajwkSVhZUoU2xvqeyiEF2L7HvqjFae43GD+Bj/Tv8kanwvv6K7ScfVn?=
+ =?us-ascii?Q?C3d8JHw3+FEftybXtgJ8dqkhF+FnTuDuEnz/MM0CtmATHcna0I2OEKek0eJK?=
+ =?us-ascii?Q?VJBtOahpU/Nvn74Od6h+sv9ldw9ScRnpogFTVCg62X+5SoauWOO+RvUY44Y4?=
+ =?us-ascii?Q?/Fh76/UY5DTP8XKePl5dDfk9YG/yeFaKc7sTqPPDnDe10nNi0T+NABn+++gj?=
+ =?us-ascii?Q?9IREjE9FX06sXMHnHLugdaVVSXzDwX8N4o3mBW2WkeULbzVe6ZvQRMDurRtJ?=
+ =?us-ascii?Q?sdqkl6wKyIWcAmugA15TjviG5udGWNK8wf17MkuLBj6EzIDm1F+iM8K48ZRd?=
+ =?us-ascii?Q?xVnVypAuhgyTrs0x9IqhyCOuqPwpEurWLXvvRBsAb5Wro5NWSxEnZW7a68+t?=
+ =?us-ascii?Q?0SSAaavAQZLJpTp/Knw/TPIlnKFY1jl+3iC1DgKGNrvo76kaWgTM+q6NLxtW?=
+ =?us-ascii?Q?amGtAmf760yN3q15pabiAygtSOiI0IWC0qsOs6r8jvtkh4OFgwe2KhxX0wBu?=
+ =?us-ascii?Q?EIwz6Hjv3JPKDamfmMVDs69ZYUzXdHh/cNp+WMhYW+7piON121kWJxGqAK7v?=
+ =?us-ascii?Q?Q5aLoJH2GNY7swLs1Iq9HKr9psXOEK5DDAQTQtHpWYaOQO5mfvjAUoUDkYYB?=
+ =?us-ascii?Q?+e0Jo8go1oDhx3xJrefAFkP/8IqzmaqQAlq0pgrCeC/8/xsV9zn+NqHsbfiH?=
+ =?us-ascii?Q?Luv5+Ia5ohZ5XdSOFAeSMpnZCrrtIPoJD9nsYMncTNB9MPNEY1770onliMOW?=
+ =?us-ascii?Q?y0sEPpoGhOLyJ+F+ZKh5NeRIojXCm0/nxacFgDVlMJaEKdiDXFQtYR0p8TnP?=
+ =?us-ascii?Q?tjKC7PDTF9MijZK0lZTsuSpRO6uZzVHRMjB/V3Y9omSH5/GF56RgSiUciJl9?=
+ =?us-ascii?Q?tqxURI2Q7lDgW3EFGWyKlt87sExzjGbgP50ebie8prFQfiHQWq0xjqdul3xK?=
+ =?us-ascii?Q?b9TujVnHA7pJWnqXuRxUg4UiJ2C3/pZmxhwDjWI/2RhHyCiKwiw+TDmLUGVQ?=
+ =?us-ascii?Q?7A4yPwgdbASVsTdtTsrGrffB/A88NDcftp+9RWZHDVnCrRoT1gPB6Y77fpP8?=
+ =?us-ascii?Q?l4ZZdhmrOeke+rcHzZ4uD2obdAIYq8dZ82YOb0d1xgha7EPY+gjBRIvQUJzg?=
+ =?us-ascii?Q?4s0vYj+vVcyIFP47qH+WHjuhcEell7GIVSLX19pIbeH7NxsxWsTJFQkhxV+r?=
+ =?us-ascii?Q?DleATCw92Pq/g8Fd5uhZTpj9qiEfA5g/mcsenTDlHDlRUwLxEzFuqIBiMMDv?=
+ =?us-ascii?Q?DUKwffWJocDIigQPHp4+/CIjKNlHnxcjqUDVZ8bK9hWMnI2xqxHnCavLHueZ?=
+ =?us-ascii?Q?H/t7FOpI/3CFx+bNGwP98v02Hx9Aal42dOLhFtMrK6CyvJXt?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB6683.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4d51fb2-74ca-457b-3115-08dece4eb14d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2026 22:04:11.0234 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hV8JY7XFGjZpCehzN66Uv4/VcbUPlTvRkD/UE+VSW1xO2/A0mcY+Yfb6guOtksYQkyeOO0NyHYnHZtjnf6uGrA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR21MB6584
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,144 +135,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 20 Jun 2026 00:14:17 +0530
-Gagandeep Singh <g.singh@nxp.com> wrote:
+> When calling this bus cleanup, interrupt handle was not released.
+>=20
+> Fixes: 65780eada9d9 ("bus/vmbus: support cleanup")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-> ENETC driver related changes series
-> 
-> Gagandeep Singh (8):
->   net/enetc: fix TX BD structure
->   net/enetc: fix TX BDs flag overwrite issue
->   net/enetc: fix queue initialization
->   net/enetc: support ESP packet type in packet parsing
->   net/enetc: update random MAC generation code
->   net/enetc: add option to disable VSI messaging
->   net/enetc: add devargs to control VSI-PSI timeout and delay
->   net/enetc4: add cacheable BD ring support with SW cache maintenance
-> 
-> Vanshika Shukla (2):
->   net/enetc: support scatter-gather
->   net/enetc: set user configurable priority to TX rings
-> 
->  drivers/net/enetc/base/enetc_hw.h |  13 +-
->  drivers/net/enetc/enetc.h         |  28 +-
->  drivers/net/enetc/enetc4_ethdev.c | 123 +++++++--
->  drivers/net/enetc/enetc4_vf.c     | 159 ++++++++++--
->  drivers/net/enetc/enetc_ethdev.c  |  26 +-
->  drivers/net/enetc/enetc_rxtx.c    | 411 ++++++++++++++++++++++++++----
->  6 files changed, 649 insertions(+), 111 deletions(-)
-> 
+Reviewed-by: Long Li <longli@microsoft.com>
 
-The AI review shows some thing that need to be addressed before merging.
+> ---
+>  drivers/bus/vmbus/vmbus_common.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/bus/vmbus/vmbus_common.c
+> b/drivers/bus/vmbus/vmbus_common.c
+> index 01573927ce..74c1ddff69 100644
+> --- a/drivers/bus/vmbus/vmbus_common.c
+> +++ b/drivers/bus/vmbus/vmbus_common.c
+> @@ -150,6 +150,7 @@ rte_vmbus_cleanup(void)
+>  			error =3D -1;
+>=20
+>  		rte_vmbus_unmap_device(dev);
+> +		rte_intr_instance_free(dev->intr_handle);
+>=20
+>  		dev->device.driver =3D NULL;
+>  		rte_bus_remove_device(&rte_vmbus_bus, &dev->device);
+> --
+> 2.53.0
 
-[PATCH 04/10] net/enetc: support ESP packet type
-
-Info: enetc_supported_ptypes_get() adds RTE_PTYPE_TUNNEL_ESP and a
-trailing RTE_PTYPE_UNKNOWN. *no_of_elements is RTE_DIM(ptypes), so the
-0 entry is counted (not used as a sentinel). It is filtered out by the
-mask test in rte_eth_dev_get_supported_ptypes(), so harmless, but the
-RTE_PTYPE_UNKNOWN line is unnecessary and should be dropped.
-
-
-[PATCH 06/10] net/enetc: support scatter-gather
-
-Warning: scatter Rx reassembly state (first_seg/cur_seg) is held in
-local variables and reset on every call. rx_frm_cnt only advances on
-the F bit, so work_limit won't cut a frame, but the
-"!(bd_status & LSTATUS_R)" break can exit mid-frame if HW has written
-the leading segments of a multi-segment frame but not yet the segment
-carrying F. On the next call first_seg is NULL again, next_to_clean has
-already advanced past the consumed leading segments, and those mbufs
-are leaked while the tail segments are mis-assembled as a new frame.
-Persist the partial chain across bursts in the ring (e.g.
-rx_ring->pkt_first_seg / pkt_last_seg) instead of locals. (Same pattern
-is reproduced in enetc_clean_rx_ring_cacheable in patch 10.)
-
-Warning: enetc4 now advertises RTE_ETH_RX_OFFLOAD_SCATTER and
-RTE_ETH_TX_OFFLOAD_MULTI_SEGS (VF) but doc/guides/nics/features/
-enetc4.ini is not updated (Scattered Rx / Multi segment rows).
-
-Info: the VF dev_info now advertises L3/L4 RX checksum offload, but
-enetc_dev_rx_parse() unconditionally sets
-RTE_MBUF_F_RX_IP_CKSUM_GOOD | RTE_MBUF_F_RX_L4_CKSUM_GOOD and never
-reports *_BAD. With the offload now advertised, an application relying
-on it will never see a bad-checksum indication.
-
-Info: dccivac(data + (data_len - 1)) / dcbf(data + (seg_len - 1))
-underflow to data-1 when the segment length is 0 (uint16_t promotes to
-int). The preceding loop already covers the final cache line, so the
-extra op is redundant as well as unsafe for len==0.
-
-
-[PATCH 07/10] net/enetc: add option to disable VSI messaging
-
-Warning: new devarg "enetc4_vsi_disable" is registered but not
-documented in doc/guides/nics/enetc.rst.
-
-
-[PATCH 08/10] net/enetc: add devargs to control VSI-PSI timeout/delay
-
-Warning: new devargs "enetc4_vsi_timeout" / "enetc4_vsi_delay" are not
-documented in doc/guides/nics/enetc.rst.
-
-
-[PATCH 09/10] net/enetc: set user configurable priority to TX rings
-
-Error: hw->txq_prior is allocated in parse_txq_prior() with
-rte_zmalloc() but never freed. It leaks on dev_close / re-probe. Free
-it in the close/uninit path (and note it is re-allocated every time the
-handler runs, so a repeated key would leak the prior allocation too).
-
-Warning: txq_prior is control-path, CPU-only data; rte_zmalloc()
-consumes hugepage memory unnecessarily. Use calloc()/malloc().
-
-Warning: the parsed value is OR'd straight into TBMR:
-	tx_en |= priv->hw.txq_prior[tx_ring->index];
-with no mask. ENETC_TBMR_EN is BIT(31) and there is no TBMR priority
-mask defined. A user value with high bits set can corrupt unrelated
-TBMR control bits. Mask the input to the valid TBMR priority field.
-
-Info: strdup(value) return is not checked; on failure
-strtok(input_str, "|") is called with a NULL first argument, which
-resumes from strtok's stale internal state rather than erroring.
-
-Warning: new devarg "enetc4_txq_prior" not documented in
-doc/guides/nics/enetc.rst.
-
-
-[PATCH 10/10] net/enetc4: add cacheable BD ring support with SW cache
-
-Warning: enetc4_dev_hw_init() switches rx_pkt_burst/tx_pkt_burst to the
-cache-maintenance variants unconditionally for every enetc4 device
-(PF and VF). The commit message scopes this to non-cache-coherent
-parts (i.MX95), but the code applies it everywhere, adding dcbf/dccivac
-cost on cache-coherent platforms that previously used the _nc fast
-path. Gate it on a devarg or coherency/platform check.
-
-Warning: the RX payload invalidation uses dccivac (dc civac =
-clean+invalidate). The comment justifies clean-then-invalidate for the
-BD ring (refill dcbf leaves BD lines clean), but payload buffers are
-not cleaned before being handed to HW. If a payload cache line is dirty
-(stale CPU data from a prior use of the mbuf), the clean phase writes
-it back over the HW-DMA'd data in DDR before invalidating -> silent RX
-corruption on a non-coherent part. Please confirm payload lines can
-never be dirty here, or use invalidate-only.
-
-Info: struct enetc_bdr gains "uint64_t bd_base_p" but it is never
-referenced anywhere. Remove the dead field.
-
-Info: the 64-bit BD fast copy
-	__uint128_t *dst128 = (__uint128_t *)&rxbd_temp;
-	*dst128 = *(const __uint128_t *)rxbd;
-takes the address of an 8-byte-aligned stack union (rxbd_temp) as
-__uint128_t*. That is an under-aligned 128-bit access (UB); aarch64
-tolerates it via ldp/stp but it is fragile. Force 16-byte alignment on
-rxbd_temp or copy as two u64.
-
-
-General (series-wide)
-
-Warning: no release notes. The series adds user-visible features
-(scatter-gather, cacheable BD ring support, four new devargs) with no
-entry in doc/guides/rel_notes/. New driver capabilities and devargs
-need release-note coverage.
