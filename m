@@ -2,37 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797F9CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 20:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC66CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 20:54:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 775B34028F;
-	Fri, 19 Jun 2026 22:25:43 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 11ECB40289
- for <dev@dpdk.org>; Fri, 19 Jun 2026 22:25:42 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A6142201E4;
- Fri, 19 Jun 2026 22:25:41 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Fri, 19 Jun 2026 22:25:33 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v2] graph: add optional profiling stats
-Date: Fri, 19 Jun 2026 20:25:32 +0000
-Message-ID: <20260619202532.2809261-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 4F3FF4028F;
+	Fri, 19 Jun 2026 22:54:37 +0200 (CEST)
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
+ [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id D135240289
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 22:54:36 +0200 (CEST)
+Received: by mail-dy1-f169.google.com with SMTP id
+ 5a478bee46e88-304f590dd91so2872120eec.0
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 13:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781902475;
+ x=1782507275; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=maoNopCDuhKJ5atT235OHxhT5bNrcPQeej27SyU612k=;
+ b=ENYY9H3UR6y1cCMuiHnryMHeO5TcsZyCNtYG2JLYbEzzg5wc1Ny2un3PEuFS/+fFhS
+ TDyBJYBSb38L7MR2rN9ySOR9tfl+aVqoSZ25fDJp+L5Egr8lBWZzr7+N7umUpAzw9tLd
+ mGLN4uDj1l3Qm2WKivn6kM3Ydz0cDQgKhxO0UWOZsvmCKqdtYDiMSW1KGzEOxz+vqFrp
+ luVooIv4+MEr80v78JvU0m8IA8Nq+CDjATIEZxRrbFE05NeuTZrHQmv7y1brreBKUGRh
+ pnTq7evJfG5C5HYQkXnOcC6njbO7vFR1eM3UyOJtK8XnU+mGWmo9+aDVTo3ILb5jqykn
+ 2l8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781902475; x=1782507275;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=maoNopCDuhKJ5atT235OHxhT5bNrcPQeej27SyU612k=;
+ b=DnFfg9Ah5ZGZMIqwCPxC2wiRP6hN9vHheMDYoELC42KkWmueDIgKtuIMGpvsJbPe7E
+ tsdJAuzot80I/xYbgjZLRw8G4MGOu/9i16Z5nPsJJxJ/EI+dTuTntdIqk4S7d3ptT1bg
+ irNc5cMUOWJR6ZTqAIC4A3acR7gr1r3Hr5lfwMjn9peCu9m/YlgsP8qpMfhHg7kMKua8
+ u2D0GkKWNfm49rPuRmjGnpjSSyiEiAH52doutU+xqYNDNeP/DFycpe4z+cVy+mor5mmz
+ SPodcjlDgdn5h3fC67mydhwTus5h9wLhhTtPdbRjHdOfrQLa8S6AMAs1+43lJ/z8IEDr
+ l/fw==
+X-Gm-Message-State: AOJu0Ywu8+yjuhHiZRF59JZLEvzK1yCV9sg54fkLnNMVXqjRGAt3y9Nl
+ cGHMcCPQ77QzWeMhpF3/aYuJhtuljVgvd9BEgqRwIVLJykKp0K8m6jZeatg1RkLuPU+INbpfuOs
+ gXDXr
+X-Gm-Gg: AfdE7cnFVAAXAppyhxFcvF/lIWxzzKMVh7wcuoL8UH9fFT+LzdKWjmR0krStYj09yGs
+ G3gc6uh91vMF7++tSUkbRonsIPjjY+G/xuEjx/zqdSAfUmHjAnwwaWklWJTZFbN1HpmwjecR1BN
+ qIQuR5DgJ6PZ7EFm/0yGaYrMv9aa8BUgaTeGsAmaFHfTPo9DaE+CbuTvnjyU+aM58MEWrseahES
+ xwK3LV3iZm2PNRP1z9fQULBm4GC36eNoIiGv1m7SxSPLcf6ei7LbmZg/n0pmhvg4py3gcBNoxEi
+ XyTUp7zMVHZbtdwL7EmJIodb2aqqYEPo7GxTY2LA6+1Kbb+5hAaXOHloHYyv60Zpau0mC5mJnBe
+ QMS5Uik/25vi3cN7dVAcQxYsuWRn+EZgkNO8joDJblzDRmY4VLVocY4cfL/wybwtl4f5KMWl6pf
+ ALi0OR+WLlMfuHvlBTd/qa6oWd5HUY3NKS2vfanLmOeT2DmKGNYlL13g==
+X-Received: by 2002:a05:7300:6423:b0:2f5:3fb3:4a76 with SMTP id
+ 5a478bee46e88-30c06e33471mr3176922eec.10.1781902475177; 
+ Fri, 19 Jun 2026 13:54:35 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-30c1be7eeb7sm888733eec.30.2026.06.19.13.54.34
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 19 Jun 2026 13:54:34 -0700 (PDT)
+Date: Fri, 19 Jun 2026 13:54:32 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: liujie5@linkdatatechnology.com
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v4 09/23] net/sxe2: support IPsec inline protocol offload
+Message-ID: <20260619135432.4357896e@phoenix.local>
+In-Reply-To: <20260619080812.1543972-1-liujie5@linkdatatechnology.com>
+References: <20260618082723.571054-21-liujie5@linkdatatechnology.com>
+ <20260619080812.1543972-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 19 Jun 2026 20:25:33.0998 (UTC)
- FILETIME=[C7FE64E0:01DD0029]
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,146 +81,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added graph node profiling stats, build time configurable by enabling
-RTE_GRAPH_PROFILE in rte_config.h.
+On Fri, 19 Jun 2026 16:08:12 +0800
+liujie5@linkdatatechnology.com wrote:
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
-v2:
-* Fix indentation.
----
- config/rte_config.h                 |  1 +
- lib/graph/graph_debug.c             | 29 ++++++++++++++++++++++++++++-
- lib/graph/node.c                    |  2 ++
- lib/graph/rte_graph_worker_common.h | 23 ++++++++++++++++++++---
- 4 files changed, 51 insertions(+), 4 deletions(-)
+> diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
+> index 19323ffcc4..7711e8e57d 100644
+> --- a/drivers/net/sxe2/sxe2_cmd_chnl.c
+> +++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
+> @@ -877,3 +877,200 @@ int32_t sxe2_drv_tm_commit(struct sxe2_adapter *adapter)
+>  l_end:
+...
 
-diff --git a/config/rte_config.h b/config/rte_config.h
-index 0447cdf2ad..1942c1b1ec 100644
---- a/config/rte_config.h
-+++ b/config/rte_config.h
-@@ -106,6 +106,7 @@
- /* rte_graph defines */
- #define RTE_GRAPH_BURST_SIZE 256
- #define RTE_LIBRTE_GRAPH_STATS 1
-+/* RTE_GRAPH_PROFILE is not set */
- 
- /****** driver defines ********/
- 
-diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
-index e3b8cccdc1..b1028f88ed 100644
---- a/lib/graph/graph_debug.c
-+++ b/lib/graph/graph_debug.c
-@@ -92,7 +92,34 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
- 			fprintf(f, "       total_sched_fail=%" PRId64 "\n",
- 				n->dispatch.total_sched_fail);
- 		}
--		fprintf(f, "       total_calls=%" PRId64 "\n", n->total_calls);
-+		fprintf(f, "       total_calls=%" PRIu64 "\n", n->total_calls);
-+		fprintf(f, "       total_cycles=%" PRIu64 "\n", n->total_cycles);
-+#ifdef RTE_GRAPH_PROFILE
-+		uint64_t calls_2_or_more = n->total_calls -
-+				(n->usage_stats[0].calls + n->usage_stats[1].calls);
-+		double avg_objs_2_or_more = calls_2_or_more == 0 ? (double)2 :
-+				(double)(n->total_objs - n->usage_stats[1].calls) /
-+				(double)calls_2_or_more;
-+		fprintf(f, "       calls_0=%" PRIu64 ", _1=%" PRIu64 ", _%.1f=%" PRIu64 "\n",
-+				n->usage_stats[0].calls,
-+				n->usage_stats[1].calls,
-+				avg_objs_2_or_more,
-+				calls_2_or_more);
-+		fprintf(f, "       cycles_0=%" PRIu64 ", _1=%" PRIu64 ", _%.1f=%" PRIu64 "\n",
-+				n->usage_stats[0].cycles,
-+				n->usage_stats[1].cycles,
-+				avg_objs_2_or_more,
-+				n->total_cycles -
-+				(n->usage_stats[0].cycles + n->usage_stats[1].cycles));
-+		fprintf(f, "       cycles_per_call_1=%.1f, _%.1f=%.1f\n",
-+				n->usage_stats[1].calls == 0 ? (double)0 :
-+				(double)n->usage_stats[1].cycles / (double)n->usage_stats[1].calls,
-+				avg_objs_2_or_more,
-+				calls_2_or_more == 0 ? (double)0 :
-+				(double)(n->total_cycles -
-+				(n->usage_stats[0].cycles + n->usage_stats[1].cycles)) /
-+				(double)calls_2_or_more);
-+#endif
- 		for (i = 0; i < n->nb_edges; i++)
- 			fprintf(f, "          edge[%d] <%s>\n", i,
- 				n->nodes[i]->name);
-diff --git a/lib/graph/node.c b/lib/graph/node.c
-index 1fce3e6632..19b38881ae 100644
---- a/lib/graph/node.c
-+++ b/lib/graph/node.c
-@@ -110,10 +110,12 @@ __rte_node_register(const struct rte_node_register *reg)
- 	rte_edge_t i;
- 	size_t sz;
- 
-+#ifndef RTE_GRAPH_PROFILE
- 	/* Limit Node specific metadata to one cacheline on 64B CL machine */
- 	RTE_BUILD_BUG_ON((offsetof(struct rte_node, nodes) -
- 			  offsetof(struct rte_node, ctx)) !=
- 			 RTE_CACHE_LINE_MIN_SIZE);
-+#endif
- 
- 	graph_spinlock_lock();
- 
-diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
-index 4ab53a533e..43ce23765b 100644
---- a/lib/graph/rte_graph_worker_common.h
-+++ b/lib/graph/rte_graph_worker_common.h
-@@ -144,12 +144,22 @@ struct __rte_cache_aligned rte_node {
- 			rte_node_process_t process; /**< Process function. */
- 			uint64_t process_u64;
- 		};
-+		/** Fast path area cache line 3. */
-+#ifdef RTE_GRAPH_PROFILE
-+		struct {
-+			uint64_t calls;
-+			uint64_t cycles;
-+		} usage_stats[2];	/**< Usage when this node processed 0 or 1 objects. */
-+		/** Fast path area cache line 4. */
-+#endif
- 		alignas(RTE_CACHE_LINE_MIN_SIZE) struct rte_node *nodes[]; /**< Next nodes. */
- 	};
- };
- 
-+#ifndef RTE_GRAPH_PROFILE
- static_assert(offsetof(struct rte_node, nodes) - offsetof(struct rte_node, ctx)
- 	== RTE_CACHE_LINE_MIN_SIZE, "rte_node fast path area must fit in 64 bytes");
-+#endif
- 
- /**
-  * @internal
-@@ -197,7 +207,7 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
- static __rte_always_inline void
- __rte_node_process(struct rte_graph *graph, struct rte_node *node)
- {
--	uint64_t start;
-+	uint64_t cycles;
- 	uint16_t rc;
- 	void **objs;
- 
-@@ -206,11 +216,18 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
- 	rte_prefetch0(objs);
- 
- 	if (rte_graph_has_stats_feature()) {
--		start = rte_rdtsc();
-+		cycles = -rte_rdtsc();
- 		rc = node->process(graph, node, objs, node->idx);
--		node->total_cycles += rte_rdtsc() - start;
-+		cycles += rte_rdtsc();
-+		node->total_cycles += cycles;
- 		node->total_calls++;
- 		node->total_objs += rc;
-+#ifdef RTE_GRAPH_PROFILE
-+		if (rc <= 1) {
-+			node->usage_stats[rc].calls++;
-+			node->usage_stats[rc].cycles += cycles;
-+		}
-+#endif
- 	} else {
- 		node->process(graph, node, objs, node->idx);
- 	}
--- 
-2.43.0
+> +int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
+> +					   uint16_t sa_id)
+> +{
+> +	struct sxe2_drv_ipsec_txsa_del_req req = { 0 };
+> +	struct sxe2_drv_cmd_params cmd             = { 0 };
+> +	struct sxe2_common_device *cdev = adapter->cdev;
+> +	int32_t ret                                 = -1;
+> +
+> +	req.sa_idx = rte_cpu_to_le_16(sa_id);
+> +	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_IPSEC_TXSA_DEL,
+> +				 &req, sizeof(req),
+> +				 NULL, 0);
+> +	ret = sxe2_drv_cmd_exec(cdev, &cmd);
+> +	if (ret)
+> +		PMD_DEV_LOG_ERR(adapter, DRV,
+> +				"Failed to delete tx sa, sa id: %u, ret: %d.",
+> +				sa_id, ret);
+> +
+> +	return ret;
+> +}
+> +
+
+git merge doesn't like extra blank lines at end of file.
+Applying: net/sxe2: support IPsec inline protocol offload
+/home/shemminger/DPDK/main/.git/worktrees/sxe2/rebase-apply/patch:236: new blank line at EOF.
++
+warning: 1 line adds whitespace errors.
 
