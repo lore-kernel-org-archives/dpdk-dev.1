@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD90BCD98F6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7090BCD98F2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F33AF40E5A;
-	Fri, 19 Jun 2026 14:29:46 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id A2BC640E1C
- for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:42 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 894CD200249;
- Fri, 19 Jun 2026 14:29:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D5E8840E2D;
+	Fri, 19 Jun 2026 14:29:47 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id C316240E49
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:43 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A8B3F1A025D;
+ Fri, 19 Jun 2026 14:29:43 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 53F1C200248;
- Fri, 19 Jun 2026 14:29:42 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 722D91A0257;
+ Fri, 19 Jun 2026 14:29:43 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id F11AB180004C;
- Fri, 19 Jun 2026 20:29:40 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0BF58180007B;
+ Fri, 19 Jun 2026 20:29:41 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Subject: [PATCH 10/18] net/dpaa: clean Tx confirmation FQ on device stop
-Date: Fri, 19 Jun 2026 17:59:10 +0530
-Message-Id: <20260619122922.3774666-14-hemant.agrawal@nxp.com>
+Subject: [PATCH 11/18] net/dpaa: remove redundant FQ shutdown from
+ rx_queue_setup
+Date: Fri, 19 Jun 2026 17:59:11 +0530
+Message-Id: <20260619122922.3774666-15-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
 References: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
@@ -47,46 +48,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Ensure the Tx confirmation FQ is also cleaned up during device
-stop, preventing stale FQ state on subsequent device restarts.
+Remove the redundant qman_shutdown_fq() call from dpaa_eth_rx_queue_setup().
+The FQ is shut down during device stop, so calling it again at queue setup
+time is unnecessary and may interfere with a clean queue initialization.
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/dpaa/dpaa_ethdev.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index e1856580b9..b427b1df13 100644
+index b427b1df13..3b66fbe18a 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -573,6 +573,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+@@ -1157,9 +1157,6 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	DPAA_PMD_INFO("Rx queue setup for queue index: %d fq_id (0x%x)",
+ 			queue_idx, rxq->fqid);
  
- 	/* release configuration memory */
- 	rte_free(dpaa_intf->fc_conf);
-+	dpaa_intf->fc_conf = NULL;
- 
- 	/** Release congestion Groups after releasing FQIDs*/
- 	/* Release RX congestion Groups */
-@@ -642,6 +643,10 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 
- 	rte_free(dpaa_intf->tx_queues);
- 	dpaa_intf->tx_queues = NULL;
-+
-+	rte_free(dpaa_intf->tx_conf_queues);
-+	dpaa_intf->tx_conf_queues = NULL;
-+
- 	if (dpaa_intf->port_handle) {
- 		ret = dpaa_fm_deconfig(dpaa_intf, fif);
- 		if (ret) {
-@@ -2537,6 +2542,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 	return 0;
- 
- free_tx:
-+	rte_free(dpaa_intf->tx_conf_queues);
-+	dpaa_intf->tx_conf_queues= NULL;
- 	rte_free(dpaa_intf->tx_queues);
- 	dpaa_intf->tx_queues = NULL;
- 	dpaa_intf->nb_tx_queues = 0;
+-	/* Shutdown FQ before configure */
+-	qman_shutdown_fq(rxq->fqid);
+-
+ 	if (!fif->num_profiles) {
+ 		if (dpaa_intf->bp_info && dpaa_intf->bp_info->bp &&
+ 			dpaa_intf->bp_info->mp != mp) {
 -- 
 2.25.1
 
