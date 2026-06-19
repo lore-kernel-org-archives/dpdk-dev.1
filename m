@@ -2,78 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E66CD98E6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 07:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFDDCD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 07:54:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A1C8C4027F;
-	Fri, 19 Jun 2026 09:30:13 +0200 (CEST)
-Received: from fhigh-b6-smtp.messagingengine.com
- (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mails.dpdk.org (Postfix) with ESMTP id 8D657400EF
- for <dev@dpdk.org>; Fri, 19 Jun 2026 09:30:12 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 940F27A0187;
- Fri, 19 Jun 2026 03:30:10 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-10.internal (MEProxy); Fri, 19 Jun 2026 03:30:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1781854210;
- x=1781940610; bh=u22f7t+SHuMYIAjr4C6PFoli/UCGMqFKLKki4r/R+eQ=; b=
- N6Q4k9Sc9MqvU5LhTYj06a3gP++pbopFSUacGz27MvQ4vdoZ5rDFBUK86yZAgS1+
- 4ROfuWO0vr2F5CAYHRi8QSebn4HrVwfDGcdYQ7CZFwo1brBVaAwmXeLrL8gVLy0z
- oRmASaS1kaRgZ0VYcG3TghGTeYZXM9xiiCrWNJyLQkATGC6upT74TdgoL2HVzwwO
- HkEdfppOvl3hY/nIHS6m/SAAY+ARiiNaD1S//NWXxh9jv4O1/c7+fladlbDjWNgs
- HxzWm7A+BS20fhWN411ls08fViRaWRUv+cXmAm4ainuAwgMVpIsceGYSRsdqoQWs
- MBIRndrWmYcW5k489I+OzA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781854210; x=
- 1781940610; bh=u22f7t+SHuMYIAjr4C6PFoli/UCGMqFKLKki4r/R+eQ=; b=Y
- 1il2AL/ao/0lSQeug+AsqQBAxLdjVrxiCn+RjIpNaCNvR1i7TS6h0UuMbzvdCbOI
- +R+BHRGfLdLSjltI9KrWgrGgq+Np7EJgLZUlnxApu5D+decDJVaaFtnENFMC+lk5
- 8DE1p01Ju9LBwJCEkKo7AF38R21KLsI2aClQZyx2q9sgL8xQH+rCaJgltYarnCEO
- rzkzcUD+sTo0qZnDs1+L0S2kCeL7qQnnqgptQvbHflwYx3OWYczBdxsIOrWoveFf
- XKxtOJS7bmZNlVY8Uz7NkADCFLIqopzLog662Fw5hv4Q+VYOqeJegTI5uB1OEU5N
- FLQpQ+ujIcymcMFEoObCw==
-X-ME-Sender: <xms:AvA0akBDv_IGLkZKMqQD03nakeOiLHGkGKI4bpcAgMV9L-ddNvFYBA>
- <xme:AvA0aq0Nc06o6NWpWrOE5Qk9EUBQAqPj1AIf2UH5LNFg8KSGNPSYRKZHcFO7DMi0S
- PY4IVtRC__rc6BminJULWObO5FjhEvdRFxIBtiq9iF25kQ_7Z5n9q0>
-X-ME-Received: <xmr:AvA0amvzVkJSkg9vsNgFkaSQVzWtb9aLKfc33KZ_QhWsUKGg57fyEasybhSDUpd10nGmAA2BHdg0X3ZZEgmf9XBr6w>
-X-ME-Proxy-Cause: dmFkZTEGE+YiwON8glP9sYJJlD12dJ1edc5MXaNx64A6PvoPDqm7S0kbLlFx4OF1UKpDyk
- q8aR7f/vHj6fcrmXsEZws7gTqM/cfe1zPkkbStQrE7NTuT2gKbP4iDUbH40+L8/7g7AXKS
- 7i/0VXda1QNB/TXyFKHx+YWfOpiAPlUhAPLTqw/FNGf02Jj1E4OPzy70Ps3novrRj2bjLH
- 1M7fq0+RFZL0r6FHPKDokXz1zVCvzZSFPWDQ+3FIomLgyQ+mrC46G3kpLnk/+eFaWhG1cs
- kc65hp4w3BpERGc7+iDiXkTfD6uQCZpkj5BYVA8hmdTXMxnXWqN6vUt1hXh1JsShrQFTmu
- HPmw/Cl+sUN0BE5am9oawdQL2DVX1EI7fQTC/ts1IZiPSKAAwlQY5eLJf6ebx6euKbV7HF
- u4juIpPsERYJPuZn1r0SVdxCvZmVShevoE7A5Vx+oa46cZAShzy+woheJWzP1LA8Ow3S7P
- BUCtRQFnCAdeQf3TBmMEptOdFe9107+Lbu8vqBU+HJsBFvpuZnkqgEpNyLJhL9u3W5wWOy
- uTVLuAYFyAl/zNnlZnNraMswQwaBzPDd8M2581e1Q1t2SlS2ifDvheFdjdhdp+5lyGc4FC
- Bd6nO/mqiKQWgqO+JuyhtnU4jej/NYgCYP4VCT07LMRWyEmWbdRvbrWlVItA
-X-ME-Proxy: <xmx:AvA0ai6-LUDoMeGRbehfeKxojSBVylFeCaqvrfsajLXK86xy8zMPyw>
- <xmx:AvA0avJVPdfQFYyfGmF2Jw13b_XqT9v9EoJyoaDJSbomg8rUL_uWaA>
- <xmx:AvA0aq6HN8DxufKNxedCa6_j2i6OilNCZ8mTjpRj3-C8H4w8AvZyJg>
- <xmx:AvA0aqyUVB4DdUk60kBRLtOcNEst4hJ7eXT9PnTWM_A-Wiz-9Vvd1w>
- <xmx:AvA0aqO2rJaeaVkzYNNxm5OrCfFLqKv_na6IrSoEnOakJNeZFmLqyN8z>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 19 Jun 2026 03:30:09 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Rajesh Kumar <rajesh3.kumar@intel.com>
-Subject: Re: [PATCH] examples/ptp_tap_relay_sw: forbid shadowed variables
-Date: Fri, 19 Jun 2026 09:30:07 +0200
-Message-ID: <ThFRyEjjSHK6mmXj3Zn1hA@monjalon.net>
-In-Reply-To: <20260618130554.616501bd@phoenix.local>
-References: <20260618142526.191340-1-thomas@monjalon.net>
- <20260618130554.616501bd@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id 1B0AC4028C;
+	Fri, 19 Jun 2026 09:54:58 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 7654F4027F
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 09:54:56 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 37EDC201E4;
+ Fri, 19 Jun 2026 09:54:56 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v1 0/5] prefix lcore role enum values
+Date: Fri, 19 Jun 2026 09:54:51 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65929@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <ApV03BBBSN-iQgiffDgXRg@monjalon.net>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v1 0/5] prefix lcore role enum values
+Thread-Index: Adz/vS4KqZF+uvxDTPGRZ+OT0cGXMAAAoy0w
+References: <20260617102834.2343356-1-lihuisong@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65917@smartserver.smartshare.dk>
+ <20260618190339.2fc76616@phoenix.local> <ApV03BBBSN-iQgiffDgXRg@monjalon.net>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Thomas Monjalon" <thomas@monjalon.net>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: "Huisong Li" <lihuisong@huawei.com>, <andrew.rybchenko@oktetlabs.ru>,
+ <dev@dpdk.org>, <zhanjie9@hisilicon.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,21 +50,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-18/06/2026 22:05, Stephen Hemminger:
-> On Thu, 18 Jun 2026 16:25:26 +0200
-> Thomas Monjalon <thomas@monjalon.net> wrote:
-> 
-> > By removing the compilation flag no_shadow_cflag,
-> > it becomes forbidden to shadow a variable.
-> > 
-> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> > ---
-> 
-> Thanks, example did not exist when the first pass was done.
-> 
-> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Applied
-
-
-
+PiBGcm9tOiBUaG9tYXMgTW9uamFsb24gW21haWx0bzp0aG9tYXNAbW9uamFsb24ubmV0XQ0KPiBT
+ZW50OiBGcmlkYXksIDE5IEp1bmUgMjAyNiAwOS4yOA0KPiANCj4gMTkvMDYvMjAyNiAwNDowMywg
+U3RlcGhlbiBIZW1taW5nZXI6DQo+ID4gT24gV2VkLCAxNyBKdW4gMjAyNiAxMzo0ODozNyArMDIw
+MA0KPiA+IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+IHdyb3RlOg0K
+PiA+DQo+ID4gPiA+IEZyb206IEh1aXNvbmcgTGkgW21haWx0bzpsaWh1aXNvbmdAaHVhd2VpLmNv
+bV0NCj4gPiA+ID4gU2VudDogV2VkbmVzZGF5LCAxNyBKdW5lIDIwMjYgMTIuMjgNCj4gPiA+ID4N
+Cj4gPiA+ID4gQWRkIHRoZSBSVEVfTENPUkVfIHByZWZpeCB0byB0aGUgbGNvcmUgcm9sZSBlbnVt
+IHZhbHVlcyBpbg0KPiA+ID4gPiBydGVfbGNvcmVfcm9sZV90DQo+ID4gPiA+IHRvIGZvbGxvdyBE
+UERLIG5hbWluZyBjb252ZW50aW9ucy4NCj4gPiA+ID4NCj4gPiA+ID4gLSBST0xFX1JURSAgICAg
+IC0+IFJURV9MQ09SRV9ST0xFX1JURQ0KPiA+ID4gPiAtIFJPTEVfT0ZGICAgICAgLT4gUlRFX0xD
+T1JFX1JPTEVfT0ZGDQo+ID4gPiA+IC0gUk9MRV9TRVJWSUNFICAtPiBSVEVfTENPUkVfUk9MRV9T
+RVJWSUNFDQo+ID4gPiA+IC0gUk9MRV9OT05fRUFMICAtPiBSVEVfTENPUkVfUk9MRV9OT05fRUFM
+DQo+ID4gPiA+DQo+ID4gPiA+IE9sZCBuYW1lcyBhcmUga2VwdCBhcyBtYWNyb3MgYWxpYXNpbmcg
+dG8gdGhlIG5ldyBuYW1lcyB0bw0KPiBwcmVzZXJ2ZQ0KPiA+ID4gPiBiYWNrd2FyZCBjb21wYXRp
+YmlsaXR5Lg0KPiA+ID4gPg0KPiA+ID4NCj4gPiA+IFNlcmllcy1BY2tlZC1ieTogTW9ydGVuIEJy
+w7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4gPiA+DQo+ID4NCj4gPiBUaGUgcHJv
+YmxlbSB3aXRoIHRoaXMgcGF0Y2ggaXQgY2F1c2VzIGJ1aWxkIGZhaWx1cmVzIG5vdyB3aXRoIGFi
+aQ0KPiBkaWZmLg0KPiANCj4gSXQgaXMgcHJvYmFibHkgYSBidWcgb2YgYW4gb2xkIHZlcnNpb24g
+b2YgYWJpZGlmZi4NCj4gSSByZWNvbW1lbmQgdXBkYXRpbmcuDQoNCldpdGggdGhlICNkZWZpbmUn
+cyB0aGUgQUJJIGhhcyBub3QgY2hhbmdlZC4gSXQncyBwcm9iYWJseSB0b28gaW5kaXJlY3QgZm9y
+IGFiaWRpZmYgdG8gdW5kZXJzdGFuZC4NCklmIHdlIGFic29sdXRlbHkgd2FudCB0byBwbGVhc2Ug
+YWJpZGlmZiwgd2UgY291bGQga2VlcCB0aGUgZXhpc3RpbmcgZW51bXMgYW5kICNkZWZpbmUgUlRF
+X0xDT1JFX1JPTEVfUlRFIFJPTEVfUlRFIGZvciBub3cuDQpCdXQgSSdtIGluIGZhdm9yIG9mIHdo
+YXQgd2FzIGRvbmUgYWxyZWFkeS4NCg0K
