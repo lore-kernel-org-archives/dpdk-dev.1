@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBF3CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 18:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B18CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 18:44:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 83E564068A;
-	Fri, 19 Jun 2026 20:44:35 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 589A940279
+	by mails.dpdk.org (Postfix) with ESMTP id 9262640A6D;
+	Fri, 19 Jun 2026 20:44:36 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 9D00340279
  for <dev@dpdk.org>; Fri, 19 Jun 2026 20:44:30 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3A41B20001E;
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 789291A0021;
  Fri, 19 Jun 2026 20:44:30 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 02C9A200004;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 412A41A0012;
  Fri, 19 Jun 2026 20:44:30 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3B59C1800088;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 79580180007B;
  Sat, 20 Jun 2026 02:44:29 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com
-Subject: [PATCH 04/10] net/enetc: support ESP packet type in packet parsing
-Date: Sat, 20 Jun 2026 00:14:21 +0530
-Message-Id: <20260619184427.522518-5-g.singh@nxp.com>
+Subject: [PATCH 05/10] net/enetc: update random MAC generation code
+Date: Sat, 20 Jun 2026 00:14:22 +0530
+Message-Id: <20260619184427.522518-6-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619184427.522518-1-g.singh@nxp.com>
 References: <20260619184427.522518-1-g.singh@nxp.com>
@@ -46,73 +46,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add ESP (Encapsulating Security Payload) packet type definitions and
-handling to the RX packet parsing path. Also update the supported
-ptypes array to advertise ESP tunnel type support.
+Use rte_eth_random_addr() instead of manual rte_rand() based MAC
+generation. Also handle VF path by writing to ENETC_SIPMAR0/1 instead
+of ENETC_PSIPMAR0/1 when running as a VF.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/net/enetc/base/enetc_hw.h |  4 ++++
- drivers/net/enetc/enetc_ethdev.c  |  4 +++-
- drivers/net/enetc/enetc_rxtx.c    | 10 ++++++++++
- 3 files changed, 17 insertions(+), 1 deletion(-)
+ drivers/net/enetc/enetc_ethdev.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
-index 19efadd..f79c950 100644
---- a/drivers/net/enetc/base/enetc_hw.h
-+++ b/drivers/net/enetc/base/enetc_hw.h
-@@ -226,6 +226,10 @@ enum enetc_bdr_type {TX, RX};
- 			(0x0003 | ENETC_PKT_TYPE_IPV4)
- #define ENETC_PKT_TYPE_IPV6_ICMP \
- 			(0x0003 | ENETC_PKT_TYPE_IPV6)
-+#define ENETC_PKT_TYPE_IPV4_ESP \
-+			(0x0005 | ENETC_PKT_TYPE_IPV4)
-+#define ENETC_PKT_TYPE_IPV6_ESP \
-+			(0x0005 | ENETC_PKT_TYPE_IPV6)
- 
- /* PCI device info */
- struct enetc_hw {
 diff --git a/drivers/net/enetc/enetc_ethdev.c b/drivers/net/enetc/enetc_ethdev.c
-index f41f3c1..407179f 100644
+index 407179f..427da87 100644
 --- a/drivers/net/enetc/enetc_ethdev.c
 +++ b/drivers/net/enetc/enetc_ethdev.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2024 NXP
-+ * Copyright 2018-2026 NXP
-  */
+@@ -196,20 +196,18 @@ enetc_hardware_init(struct enetc_eth_hw *hw)
+ 	}
  
- #include <stdbool.h>
-@@ -95,6 +95,8 @@ enetc_supported_ptypes_get(struct rte_eth_dev *dev __rte_unused,
- 		RTE_PTYPE_L4_UDP,
- 		RTE_PTYPE_L4_SCTP,
- 		RTE_PTYPE_L4_ICMP,
-+		RTE_PTYPE_TUNNEL_ESP,
-+		RTE_PTYPE_UNKNOWN,
- 	};
- 
- 	*no_of_elements = RTE_DIM(ptypes);
-diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
-index b44e6f3..c87349f 100644
---- a/drivers/net/enetc/enetc_rxtx.c
-+++ b/drivers/net/enetc/enetc_rxtx.c
-@@ -370,6 +370,16 @@ enetc_dev_rx_parse(struct rte_mbuf *m, uint16_t parse_results)
- 				 RTE_PTYPE_L3_IPV6 |
- 				 RTE_PTYPE_L4_UDP;
- 		return;
-+	case ENETC_PKT_TYPE_IPV4_ESP:
-+		m->packet_type = RTE_PTYPE_L2_ETHER |
-+				 RTE_PTYPE_L3_IPV4 |
-+				 RTE_PTYPE_TUNNEL_ESP;
-+		return;
-+	case ENETC_PKT_TYPE_IPV6_ESP:
-+		m->packet_type = RTE_PTYPE_L2_ETHER |
-+				 RTE_PTYPE_L3_IPV6 |
-+				 RTE_PTYPE_TUNNEL_ESP;
-+		return;
- 	case ENETC_PKT_TYPE_IPV4_SCTP:
- 		m->packet_type = RTE_PTYPE_L2_ETHER |
- 				 RTE_PTYPE_L3_IPV4 |
+ 	if ((high_mac | low_mac) == 0) {
+-		char *first_byte;
+-
+ 		ENETC_PMD_NOTICE("MAC is not available for this SI, "
+ 				"set random MAC");
+-		mac = (uint32_t *)hw->mac.addr;
+-		*mac = (uint32_t)rte_rand();
+-		first_byte = (char *)mac;
+-		*first_byte &= 0xfe;	/* clear multicast bit */
+-		*first_byte |= 0x02;	/* set local assignment bit (IEEE802) */
+-
+-		enetc_port_wr(enetc_hw, ENETC_PSIPMAR0(0), *mac);
+-		mac++;
+-		*mac = (uint16_t)rte_rand();
+-		enetc_port_wr(enetc_hw, ENETC_PSIPMAR1(0), *mac);
++		rte_eth_random_addr(hw->mac.addr);
++		high_mac = *(uint32_t *)hw->mac.addr;
++		low_mac = *(uint16_t *)(hw->mac.addr + 4);
++		if (hw->device_id == ENETC_DEV_ID_VF) {
++			enetc_wr(enetc_hw, ENETC_SIPMAR0, high_mac);
++			enetc_wr(enetc_hw, ENETC_SIPMAR1, low_mac);
++		} else {
++			enetc_port_wr(enetc_hw, ENETC_PSIPMAR0(0), high_mac);
++			enetc_port_wr(enetc_hw, ENETC_PSIPMAR1(0), low_mac);
++		}
+ 		enetc_print_ethaddr("New address: ",
+ 			      (const struct rte_ether_addr *)hw->mac.addr);
+ 	}
 -- 
 2.25.1
 
