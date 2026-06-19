@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75779CD98E6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 06:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A882ACD98F6
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 06:10:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4385A40E30;
-	Fri, 19 Jun 2026 08:09:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A7C740E35;
+	Fri, 19 Jun 2026 08:09:47 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 19F6640E1C;
+ by mails.dpdk.org (Postfix) with ESMTP id 71CC740E22;
  Fri, 19 Jun 2026 08:09:41 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E83D02001F3;
- Fri, 19 Jun 2026 08:09:40 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 56FC52001E6;
+ Fri, 19 Jun 2026 08:09:41 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B206E2001F0;
- Fri, 19 Jun 2026 08:09:40 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 20C6F2001EC;
+ Fri, 19 Jun 2026 08:09:41 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 59D8E1800087;
- Fri, 19 Jun 2026 14:09:38 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 8E9551800088;
+ Fri, 19 Jun 2026 14:09:39 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v2 14/18] net/dpaa: fix xstat string typos in BMI stats table
-Date: Fri, 19 Jun 2026 11:39:12 +0530
-Message-Id: <20260619060916.485258-15-hemant.agrawal@nxp.com>
+Subject: [PATCH v2 15/18] net/dpaa: remove duplicate ptype entries
+Date: Fri, 19 Jun 2026 11:39:13 +0530
+Message-Id: <20260619060916.485258-16-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619060916.485258-1-hemant.agrawal@nxp.com>
 References: <20260618141151.3990283-1-hemant.agrawal@nxp.com>
@@ -49,42 +49,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix three issues in the xstats name table:
-- 'rx_frame_discrad_count' is a misspelling, correct to
-  'rx_frame_discard_count'
-- 'rx_out_of_buffer_discard ' has a trailing space, remove it
-- 'rx_buf_diallocate' is a misspelling, correct to
-  'rx_buf_deallocate'
+RTE_PTYPE_L4_TCP and RTE_PTYPE_L4_UDP were listed twice in the
+supported ptypes array returned by dpaa_supported_ptypes_get().
+Remove the duplicate entries.
 
-Fixes: d2536b006d78 ("bus/dpaa: add port buffer manager stats")
+Fixes: ec503d8fa782 ("net/dpaa: update supported ptypes")
 Cc: stable@dpdk.org
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 3d3f2773a1..3d6405d5fa 100644
+index 3d6405d5fa..b7f3c4360b 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -135,13 +135,13 @@ static const struct rte_dpaa_xstats_name_off dpaa_xstats_strings[] = {
- 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rlfc)},
- 	{"rx_filter_frames_count",
- 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rffc)},
--	{"rx_frame_discrad_count",
-+	{"rx_frame_discard_count",
- 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rfdc)},
- 	{"rx_frame_list_dma_err_count",
- 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rfldec)},
--	{"rx_out_of_buffer_discard ",
-+	{"rx_out_of_buffer_discard",
- 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rodc)},
--	{"rx_buf_diallocate",
-+	{"rx_buf_deallocate",
- 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rbdc)},
- };
- 
+@@ -406,8 +406,6 @@ dpaa_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
+ 		RTE_PTYPE_L4_TCP,
+ 		RTE_PTYPE_L4_UDP,
+ 		RTE_PTYPE_L4_FRAG,
+-		RTE_PTYPE_L4_TCP,
+-		RTE_PTYPE_L4_UDP,
+ 		RTE_PTYPE_L4_SCTP,
+ 		RTE_PTYPE_TUNNEL_ESP,
+ 		RTE_PTYPE_TUNNEL_GRE,
 -- 
 2.43.0
 
