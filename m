@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 052A6CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 17:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 307D3CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 17:22:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 582A34029D;
-	Fri, 19 Jun 2026 19:01:31 +0200 (CEST)
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
- by mails.dpdk.org (Postfix) with ESMTP id EC58A40279
- for <dev@dpdk.org>; Fri, 19 Jun 2026 19:01:29 +0200 (CEST)
-Received: by mail-dl1-f47.google.com with SMTP id
- a92af1059eb24-13809223fd4so2563391c88.1
- for <dev@dpdk.org>; Fri, 19 Jun 2026 10:01:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1FD084027C;
+	Fri, 19 Jun 2026 19:22:06 +0200 (CEST)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
+ [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id AFA3140279
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 19:22:04 +0200 (CEST)
+Received: by mail-dy1-f180.google.com with SMTP id
+ 5a478bee46e88-30bf132969bso2807846eec.0
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 10:22:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781888488;
- x=1782493288; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781889723;
+ x=1782494523; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Pgx6BtAS/shrF4Gu+z1OF7lo62KtY0MrlHJKUevw5jQ=;
- b=N2Beo9NewzOlq+vNwLW4tMGwGzqH99aXUIN60xvOuiIjbzcrGNqkFExZENwh9BW+Ul
- T3TgU1NcG/YMpMzWw0iR3IStZhUy5uUEaBdmlNOlgn9DNjCdbIQDK4iDsqtS2w4/mgSb
- hns2PNkSxEXkqsJbBaEZtqM0gqs/slzgMwWkorjE8tFSJOcKaJ0oxLispOyK13GjkqJN
- rSOckBGnBeBGDYwz/SK1I/W+Er02I1QVWYYf4sC0cIfxWRgBrq2bZxvTr/WMW55vb1vF
- gs+dRey8PYLXWK3QF6Jt3inQMDtm9GXjEqXRr+q8qTDHbrfwsJo6I1FSxq5VYDrwMzqA
- k0Sw==
+ :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+ :reply-to; bh=1GIwK9H3MO2ke9VN6JRRSsVwjz+6ufHOPKXZhQOAc7k=;
+ b=zYbO3jo9McTtQbwcBF+PJcVjzPgsYbe91BeFCf2RCwHy02JeCZVGwIg8KGaaP5Maif
+ eHA9YrqV9tHzoiPygdAofh25TeYxhM93EQqXCs4tbQzgKGZD9MkVgijbmMW4jiGTKTG0
+ MJLIGW+kEmXXWqrVv5MagBJwYAghz3fWMwyegK9KgAB9xXEDkuUJD8tIws7y1GP0Ndcd
+ IVhbmmznrQmBYItd8QxK9BAd9JuMx/VjovUPMCq6SQAWfk3tVWK32ZCzPrUZadzVVBn6
+ AXAbnWgatgqEAzCSGJTJnbcoVm1YD6U4TagqqqcxYV+Hfv7K76+zrH3G8lmmN7NCYhjr
+ EajA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781888488; x=1782493288;
+ d=1e100.net; s=20251104; t=1781889723; x=1782494523;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=Pgx6BtAS/shrF4Gu+z1OF7lo62KtY0MrlHJKUevw5jQ=;
- b=dy1Y2ZVx4KnPXSPW6gV2GviOJcdbDW31HOxTJpk5uU5X7074/YbztpF4jWazSZ121M
- Q4yuArXqP8ZPdbaXA5keicPRJQeDPEbO9VIDaiVQt4YF4QSOdFiChVLCTrPzqBzkwzdz
- P0e1c7zIsI1EJAioERkzovn2m4dmi1m4u1hohGL1UxYVGVCxo3zo3fLC6qFJ8qfRF9ms
- 2A05dd0mQ3PlyHKiEFQId/wNucNfWh7ZOx+4H0GRfaHmnhSUp0DpZFo+o9T9d18lXSup
- g2n7JL+9mKMXI/orFXPBGFUqe+GG8n1nOkcIueJGauWzUdA/4gefSOjifjTQjcUOVuQX
- 6x1g==
-X-Gm-Message-State: AOJu0YxUgKM1UBCwZLVGLJkNhB/rWbQgvbmUHX7IDVq3fMJdRZYRm+/t
- imZR9+zaaxWja2UQSvXkejyphELQ7/dnHHWlzzPEW9032hEW0pCz3oE4+TN+7PDM/jI=
-X-Gm-Gg: AfdE7cnX/qDEMSvUakJ6rls5y19zLA1NqnYf2/sP4ZPtG4vMc47m8SH/+//ETop6qRX
- 4dySVzVH/fnbUudwXTNplomd0A0nurDV24UKtejlJneLHglzxRMT/aFDsAz+yItd7jrYWUkyPD+
- lLNwA6+jgWFDJQNhMCcUZ23AKiN30Mjx20pABC7fPEEIkQBb7p0mcYbCaxpDvOUOaGLePvMEtbB
- yY4rvoMzkLvr+S1R66vj19y4sSt77gsiYh9VJ7v+KntEyIL9fLPugv0zxii0YklbLzJaKKYC+gX
- mhx4jijlk1wX/0d2XEG3N51Rc+TjDEZMRXUprYBogU5Z8ioJJBgRBxSzaNZriFUAyXSv3cz+0bL
- 5ovDN3Ysq15wXTHyygNB65utL4r1rNHm5uuIZ6yyPDzh/Wy/WesoD0ob8dAlqet4AAcmjLkbUHp
- SrHGNachxDk8ONl/Ea9v8QfW1WY3EwLYqVCj44Z+Gjeu8O6RU6gIuwCNIVibF4Rv6Z
-X-Received: by 2002:a05:7022:f10d:b0:138:43a4:840a with SMTP id
- a92af1059eb24-139a3880d76mr1751328c88.28.1781888488157; 
- Fri, 19 Jun 2026 10:01:28 -0700 (PDT)
+ :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=1GIwK9H3MO2ke9VN6JRRSsVwjz+6ufHOPKXZhQOAc7k=;
+ b=qj2Byv07dqsM0+hB7qbxtlF8kkKxOmUvGHrtPoADnqlrDH8z6SeFdiTU6nF/qAsCMg
+ 29nzw1bc5HEUD1wuCe+tsmKctt7XKERt2Ogx//G4GO/4lpwG5/CplOtu8rtnbxIJpOo+
+ LGMOQaLK1u9zVzqYQ6blc7kn6ncSeX0b3sVkrJSKXGqzXShVJNLfI/KyyqKjABdZkOoZ
+ HqVamMCvrltbhg+CIlg9F02tZj8S/h9/A4LoOHzrtLdisM3P2GbFSI6CyM0bzITHATR6
+ QPF9KjIHWA2TIaVFFA7Gu4zjcWWaVyK/5b4/Rf284gG10kvZUHdJLYLMgtPAIXVFbvue
+ z3BA==
+X-Gm-Message-State: AOJu0YxM3+B0I9dKzAssge3NaHHRk7+rpWY9Xl4V4+etgC1udEDc5g05
+ Ulwz2NyAxcr67bWaaUtnWYxOLKic1oFCnjGSkJ00CAcqYtjHnxlcHwUMvpwm4XPzpS/rQ79FTv5
+ Q7r7n
+X-Gm-Gg: AfdE7ckOwJJnyLD4+BQ5OgIOti7Vwr/z+ByDPZbxiUKdq3L7/0KQ6kkJuMgZh6Zpscj
+ gFIMe24HF5sH4VUcchsfB4x3BEJH1O4kzX5XOcLqxRRvpDOrVTC41KDsqqATudNDc2PHs1891Ee
+ DTFsqIuerVmZQpVSgVcSG4xLVCSmYfAUGUkLGC0kyd0efbzze8XML6PxO8H2lI/GqeVZ8WxzWYw
+ wsF2n1oYWAvzLEfjBtg+qMGcm+GLSRoEnjmHPH2sxN7OYxnzP9LrROJlrqQJmtOe53AFbN2CzDu
+ w+82OmR/rEYQiHgSwGwBLw+AtcIte/3IoW4RQ+sCndm9zI3FNIrmLXRXgFTeY7N8evSqDcsKA7f
+ QsTV05I3QE8v696+vPKtjXtib+ar+6aKjj9KVv+JCkFM5aHmtaJx7uFLPTxvJnr+Gqf+Kbhh3mQ
+ NZRQm8Qb4bPRypC1ZaggXFmtGMhDleq9QrEfm1oknrzpa5QrHluzHauw==
+X-Received: by 2002:a05:7022:1b0f:b0:138:62a:270e with SMTP id
+ a92af1059eb24-139a20537b4mr2629744c88.11.1781889723051; 
+ Fri, 19 Jun 2026 10:22:03 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-139a364a83csm1777982c88.11.2026.06.19.10.01.27
+ a92af1059eb24-139adcc5f14sm3716c88.6.2026.06.19.10.22.02
+ for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 19 Jun 2026 10:01:27 -0700 (PDT)
-Date: Fri, 19 Jun 2026 10:01:24 -0700
+ Fri, 19 Jun 2026 10:22:02 -0700 (PDT)
+Date: Fri, 19 Jun 2026 10:22:00 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>, <stable@dpdk.org>, "Konstantin Ananyev"
- <konstantin.ananyev@huawei.com>
-Subject: Re: [PATCH 2/6] ip_frag: discard datagrams with overlapping fragments
-Message-ID: <20260619100124.655e5540@phoenix.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6592A@smartserver.smartshare.dk>
-References: <20260616210656.464062-1-stephen@networkplumber.org>
- <20260616210656.464062-3-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35F6592A@smartserver.smartshare.dk>
+To: dev@dpdk.org
+Subject: Re: [PATCH v2 0/4] net/bond: fixes and cleanup
+Message-ID: <20260619102200.01f00190@phoenix.local>
+In-Reply-To: <20260529000157.235931-1-stephen@networkplumber.org>
+References: <20260417165530.653328-1-stephen@networkplumber.org>
+ <20260529000157.235931-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,104 +80,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 19 Jun 2026 15:12:21 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+On Thu, 28 May 2026 16:59:12 -0700
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> > +		/*
-> > +		 * Overlap with an existing fragment. Per RFC 8200 section
-> > 4.5
-> > +		 * (and RFC 5722) the datagram must be discarded; the same
-> > is
-> > +		 * applied to IPv4. Free all collected fragments, drop this
-> > one,
-> > +		 * and invalidate the entry.
-> > +		 */
-> > +		if (ofs < fp->frags[i].ofs + fp->frags[i].len &&
-> > +				fp->frags[i].ofs < ofs + len) { =20
->=20
-> This only catches fragments that are smaller than existing fragments, i.e=
-. fit within one of the existing fragments.
-> It should be:
-> if ((ofs >=3D fp->frags[i].ofs &&
-> 		ofs < fp->frags[i].ofs + fp->frags[i].len) ||
-> 		(ofs + len >=3D fp->frags[i].ofs &&
-> 		ofs + len < fp->frags[i].ofs + fp->frags[i].len)) {
->=20
-> > +			ip_frag_free(fp, dr);
+> Automated analysis of the bonding found a few minor things.
+> The bug fix is in patch 3 for secondary process crash does rx/tx. 
+> 
+> The cleanups are in handling of 8023ad mode setting
+> and the logging macros.
+> 
+> v2 - feedback about the mode setting and log messages
+> 
+> Stephen Hemminger (4):
+>   net/bonding: make 8023ad enable function void
+>   net/bonding: check mode before setting dedicated queues
+>   net/bonding: prevent crash on Rx/Tx from secondary process
+>   net/bonding: remove redundant function names from log
+> 
+>  drivers/net/bonding/eth_bond_8023ad_private.h | 17 +----
+>  drivers/net/bonding/rte_eth_bond_8023ad.c     | 16 ++--
+>  drivers/net/bonding/rte_eth_bond_api.c        |  4 +-
+>  drivers/net/bonding/rte_eth_bond_pmd.c        | 73 ++++++++++++++-----
+>  4 files changed, 67 insertions(+), 43 deletions(-)
+> 
 
-The code here is comparing an incoming fragment N against existing fragment=
- E,
-using half-open ranges [start, end).
-
-The test in the patch is symmetric in N and E.
-       ofs < e.ofs + e.len && e.ofs < ofs + len
-
-The one you propose tests that either endpoint of N lands inside E.
-
-Take a fixed stored fragment E =3D [200, 400) and run several incoming frag=
-ments through both.
- N0 =3D ofs, N1 =3D ofs+len.
-
-N inside E: N =3D [250, 300)
-
-E:        |=3D=3D=3D=3D=3D=3D=3D=3D=3D|        (200..400)
-N:           |=3D=3D=3D|           (250..300)
-
-Patch: 250 < 400 && 200 < 300 =E2=86=92 T && T =E2=86=92 overlap.=20
-Proposed: (250=E2=89=A5200 && 250<400) =E2=86=92 T =E2=86=92 overlap.=20
-Both agree.
-
-N encloses E: N =3D [100, 500)
-
-E:        |=3D=3D=3D=3D=3D=3D=3D=3D=3D|        (200..400)
-N:      |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D|      (100..500)
-
-Patch: 100 < 400 && 200 < 500 =E2=86=92 T && T =E2=86=92 overlap.
-Proposed: (100=E2=89=A5200 && =E2=80=A6) =E2=86=92 F, (500=E2=89=A5200 && 5=
-00<400) =E2=86=92 T && F =E2=86=92 F, so F || F =E2=86=92 no overlap, MISSE=
-D.
-
-This is the case the new version version drops. Neither endpoint of N (100 =
-or 500) sits inside [200,400),=20
-because N straddles E completely, so new version endpoint-in-E check fails =
-even though the ranges clearly overlap.=20
-Patch version catches it because the interval test doesn't care which range=
- is larger.
-
-N partial on the left: N =3D [100, 300)
-
-E:        |=3D=3D=3D=3D=3D=3D=3D=3D=3D|        (200..400)
-N:      |=3D=3D=3D=3D=3D=3D|             (100..300)
-
-Patch: 100 < 400 && 200 < 300 =E2=86=92 T =E2=86=92 overlap.
-Proposed: (300=E2=89=A5200 && 300<400) =E2=86=92 T =E2=86=92 overlap.=20
-Agree.
-
-N partial on the right: N =3D [300, 500) =E2=80=94 symmetric to the above, =
-both catch it.
-
-So on the four genuine-overlap geometries, your suggestion catches all four=
- and his misses the enclosing one.=20
-That is not right since the enclosing overlap is a legitimate attack shape =
-(a big fragment overwriting a smaller stored one).
-
-There is another issue.
-The >=3D on the exclusive end produces a false positive on fragments that m=
-erely abut, which is the normal case.
-Take E already stored as [1400, 2800) and an in-order-but-late fragment N =
-=3D [0, 1400) arriving after it (ordinary out-of-order delivery):
-
-N:      |=3D=3D=3D=3D=3D=3D|             (0..1400)
-E:             |=3D=3D=3D=3D=3D=3D|      (1400..2800)
-
-These share no bytes; byte 1400 belongs only to E.=20
-Patch: 0 < 2800 && 1400 < 1400 =E2=86=92 T && F =E2=86=92 no overlap, corre=
-ct.=20
-Proposed: (1400=E2=89=A51400 && 1400<2800) =E2=86=92 T && T =E2=86=92 overl=
-ap, wrong.=20
-This test would discard a perfectly valid datagram whenever a left-abutting=
- fragment arrives after its neighbor.
-Adjacent fragments abutting is what fragmentation produces by design, so th=
-is would fire constantly under reordering.
-
-Bottom line: the patch was correct as far as I can tell.
+Applied to net-next, took Bruce's suggestion to split the first patch.
