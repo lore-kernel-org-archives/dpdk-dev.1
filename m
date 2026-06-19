@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7090BCD98F2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D125CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5E8840E2D;
-	Fri, 19 Jun 2026 14:29:47 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id C316240E49
- for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:43 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A8B3F1A025D;
- Fri, 19 Jun 2026 14:29:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D4B4A40ED1;
+	Fri, 19 Jun 2026 14:29:48 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id DEEDA40E40
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:44 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C657F200249;
+ Fri, 19 Jun 2026 14:29:44 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 722D91A0257;
- Fri, 19 Jun 2026 14:29:43 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 91271200248;
+ Fri, 19 Jun 2026 14:29:44 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0BF58180007B;
- Fri, 19 Jun 2026 20:29:41 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2666F180004C;
+ Fri, 19 Jun 2026 20:29:43 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Subject: [PATCH 11/18] net/dpaa: remove redundant FQ shutdown from
- rx_queue_setup
-Date: Fri, 19 Jun 2026 17:59:11 +0530
-Message-Id: <20260619122922.3774666-15-hemant.agrawal@nxp.com>
+Subject: [PATCH 11/18] net/dpaa: remove redundant FQ shutdown from Rx queue
+ setup
+Date: Fri, 19 Jun 2026 17:59:12 +0530
+Message-Id: <20260619122922.3774666-16-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
 References: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
@@ -48,9 +48,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove the redundant qman_shutdown_fq() call from dpaa_eth_rx_queue_setup().
-The FQ is shut down during device stop, so calling it again at queue setup
-time is unnecessary and may interfere with a clean queue initialization.
+Remove the redundant qman_shutdown_fq() call from
+dpaa_eth_rx_queue_setup(). The FQ is shut down during device stop,
+so calling it again at queue setup time is unnecessary and may
+interfere with a clean queue initialization.
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
