@@ -2,33 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D125CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E211ECD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D4B4A40ED1;
-	Fri, 19 Jun 2026 14:29:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D1A9D40EDB;
+	Fri, 19 Jun 2026 14:29:49 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id DEEDA40E40
- for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id ECD3340E48
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:45 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C657F200249;
- Fri, 19 Jun 2026 14:29:44 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D052F200248;
+ Fri, 19 Jun 2026 14:29:45 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 91271200248;
- Fri, 19 Jun 2026 14:29:44 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9AD0F200238;
+ Fri, 19 Jun 2026 14:29:45 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2666F180004C;
- Fri, 19 Jun 2026 20:29:43 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 436641800071;
+ Fri, 19 Jun 2026 20:29:44 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Subject: [PATCH 11/18] net/dpaa: remove redundant FQ shutdown from Rx queue
- setup
-Date: Fri, 19 Jun 2026 17:59:12 +0530
-Message-Id: <20260619122922.3774666-16-hemant.agrawal@nxp.com>
+Subject: [PATCH 12/18] net/dpaa: optimize fm_deconfig
+Date: Fri, 19 Jun 2026 17:59:13 +0530
+Message-Id: <20260619122922.3774666-17-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
 References: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
@@ -48,30 +47,105 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove the redundant qman_shutdown_fq() call from
-dpaa_eth_rx_queue_setup(). The FQ is shut down during device stop,
-so calling it again at queue setup time is unnecessary and may
-interfere with a clean queue initialization.
+Consolidate FM deconfiguration to avoid duplicate calls.
+Move the fm_deconfig call to a single location and remove
+redundant checks in the device close path.
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 37 +++++++++++++++++++++++++---------
+ drivers/net/dpaa/dpaa_flow.c   |  9 +++++----
+ 2 files changed, 32 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index b427b1df13..3b66fbe18a 100644
+index 3b66fbe18a..a223703421 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -1157,9 +1157,6 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 	DPAA_PMD_INFO("Rx queue setup for queue index: %d fq_id (0x%x)",
- 			queue_idx, rxq->fqid);
+@@ -526,10 +526,12 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
  
--	/* Shutdown FQ before configure */
--	qman_shutdown_fq(rxq->fqid);
--
- 	if (!fif->num_profiles) {
- 		if (dpaa_intf->bp_info && dpaa_intf->bp_info->bp &&
- 			dpaa_intf->bp_info->mp != mp) {
+ 	/* DPAA FM deconfig */
+ 	if (!(default_q || fmc_q)) {
+-		ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
+-		if (ret) {
+-			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
+-				dev->data->name, ret);
++		if (dpaa_intf->port_handle) {
++			ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
++			if (ret) {
++				DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
++					dev->data->name, ret);
++			}
+ 		}
+ 	}
+ 
+@@ -575,6 +577,23 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 	rte_free(dpaa_intf->fc_conf);
+ 	dpaa_intf->fc_conf = NULL;
+ 
++	/** For FMCLESS mode of share MAC, deconfig FM to direct
++	 * ingress traffic to kernel before fq shutdown.
++	 */
++	if (!(default_q || fmc_q)) {
++		ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
++		if (ret) {
++			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
++				dev->data->name, ret);
++		}
++	}
++	if (fif->num_profiles) {
++		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
++		if (ret) {
++			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
++				dev->data->name, ret);
++		}
++	}
+ 	/** Release congestion Groups after releasing FQIDs*/
+ 	/* Release RX congestion Groups */
+ 	if (dpaa_intf->cgr_rx) {
+@@ -647,12 +666,10 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 	rte_free(dpaa_intf->tx_conf_queues);
+ 	dpaa_intf->tx_conf_queues = NULL;
+ 
+-	if (dpaa_intf->port_handle) {
+-		ret = dpaa_fm_deconfig(dpaa_intf, fif);
+-		if (ret) {
+-			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
+-				dev->data->name, ret);
+-		}
++	ret = dpaa_fm_deconfig(dpaa_intf, fif);
++	if (ret) {
++		DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
++			dev->data->name, ret);
+ 	}
+ 	if (fif->num_profiles) {
+ 		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
+diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
+index f21950f64d..bfe294d21d 100644
+--- a/drivers/net/dpaa/dpaa_flow.c
++++ b/drivers/net/dpaa/dpaa_flow.c
+@@ -728,6 +728,9 @@ int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf,
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
++	if (!dpaa_intf->port_handle)
++		return 0;
++
+ 	/* FM PORT Disable */
+ 	ret = fm_port_disable(dpaa_intf->port_handle);
+ 	if (ret != E_OK) {
+@@ -787,10 +790,8 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
+ 	unsigned int i = 0;
+ 	PMD_INIT_FUNC_TRACE();
+ 
+-	if (dpaa_intf->port_handle) {
+-		if (dpaa_fm_deconfig(dpaa_intf, fif))
+-			DPAA_PMD_ERR("DPAA FM deconfig failed");
+-	}
++	if (dpaa_fm_deconfig(dpaa_intf, fif))
++		DPAA_PMD_ERR("DPAA FM deconfig failed");
+ 
+ 	if (!dev->data->nb_rx_queues)
+ 		return 0;
 -- 
 2.25.1
 
