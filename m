@@ -2,40 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 980F2CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 20:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D493CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 20:21:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4974E4028F;
-	Fri, 19 Jun 2026 22:11:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2CB614028F;
+	Fri, 19 Jun 2026 22:21:16 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 9262940289
- for <dev@dpdk.org>; Fri, 19 Jun 2026 22:11:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 31D6640289
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 22:21:15 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 4A8BF201E4;
- Fri, 19 Jun 2026 22:11:08 +0200 (CEST)
-Content-class: urn:content-classes:message
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 53C1F201E4;
+ Fri, 19 Jun 2026 22:21:14 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Fri, 19 Jun 2026 22:20:55 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH] graph: add optional profiling stats
+Date: Fri, 19 Jun 2026 20:20:47 +0000
+Message-ID: <20260619202047.2809165-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v1 0/5] prefix lcore role enum values
-Date: Fri, 19 Jun 2026 22:11:02 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6592C@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260619083934.510bd2d4@phoenix.local>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v1 0/5] prefix lcore role enum values
-Thread-Index: Ad0AAdiFb9ET7PU0SiOiJDk9j9K5KgAJY7Nw
-References: <20260617102834.2343356-1-lihuisong@huawei.com><98CBD80474FA8B44BF855DF32C47DC35F65917@smartserver.smartshare.dk><20260618190339.2fc76616@phoenix.local><ApV03BBBSN-iQgiffDgXRg@monjalon.net><98CBD80474FA8B44BF855DF32C47DC35F65929@smartserver.smartshare.dk>
- <20260619083934.510bd2d4@phoenix.local>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "Thomas Monjalon" <thomas@monjalon.net>,
- "Huisong Li" <lihuisong@huawei.com>, <andrew.rybchenko@oktetlabs.ru>,
- <dev@dpdk.org>, <zhanjie9@hisilicon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 19 Jun 2026 20:20:55.0890 (UTC)
+ FILETIME=[223A7B20:01DD0029]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,24 +46,143 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
-b3JnXQ0KPiBTZW50OiBGcmlkYXksIDE5IEp1bmUgMjAyNiAxNy40MA0KPiANCj4gT24gRnJpLCAx
-OSBKdW4gMjAyNiAwOTo1NDo1MSArMDIwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFy
-ZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gPiA+IFRoZSBwcm9ibGVtIHdpdGggdGhpcyBw
-YXRjaCBpdCBjYXVzZXMgYnVpbGQgZmFpbHVyZXMgbm93IHdpdGggYWJpDQo+ID4gPiBkaWZmLg0K
-PiA+ID4NCj4gPiA+IEl0IGlzIHByb2JhYmx5IGEgYnVnIG9mIGFuIG9sZCB2ZXJzaW9uIG9mIGFi
-aWRpZmYuDQo+ID4gPiBJIHJlY29tbWVuZCB1cGRhdGluZy4NCj4gPg0KPiA+IFdpdGggdGhlICNk
-ZWZpbmUncyB0aGUgQUJJIGhhcyBub3QgY2hhbmdlZC4gSXQncyBwcm9iYWJseSB0b28NCj4gaW5k
-aXJlY3QgZm9yIGFiaWRpZmYgdG8gdW5kZXJzdGFuZC4NCj4gPiBJZiB3ZSBhYnNvbHV0ZWx5IHdh
-bnQgdG8gcGxlYXNlIGFiaWRpZmYsIHdlIGNvdWxkIGtlZXAgdGhlIGV4aXN0aW5nDQo+IGVudW1z
-IGFuZCAjZGVmaW5lIFJURV9MQ09SRV9ST0xFX1JURSBST0xFX1JURSBmb3Igbm93Lg0KPiA+IEJ1
-dCBJJ20gaW4gZmF2b3Igb2Ygd2hhdCB3YXMgZG9uZSBhbHJlYWR5Lg0KPiANCj4gVGhlIGJ1aWxk
-IGZhaWx1cmVzIG9uIGdpdGh1Yiwgbm90IGluIG15IGxvY2FsIGJ1aWxkcy4NCj4gaHR0cHM6Ly9n
-aXRodWIuY29tL292c3JvYm90L2RwZGsvYWN0aW9ucy9ydW5zLzI3Nzg5ODg5MTcyL2pvYi84MjIz
-NTk2NTANCj4gOTANCj4gDQo+IEl0IG1ha2VzIGxvb2tpbmcgYXQgcGF0Y2h3b3JrIGRhc2hib2Fy
-ZCBkaWZmaWN1bHQsIGFsbCBwYXRjaGVzIHNob3cgdXANCj4gd2l0aCByZWQgbWFyaw0KDQpTbyBt
-YXliZSB3ZSBjYW4gY2hvb3NlIHRoZSBwYXRoIG9mIHBsZWFzaW5nIGFiaWRpZmYuLi4NCktlZXAg
-dGhlIGV4aXN0aW5nIGVudW1zLCBhbmQgI2RlZmluZSB0aGUgbmV3IFJURV9MQ09SRV8gcHJlZml4
-ZWQgdmFyaWFudHMsIGFuZCB1c2UgdGhvc2UgaW4gdGhlIGNvZGUuDQoNCkxhdGVyLCB3aXRoIGFu
-IEFCSSBicmVha2luZyByZWxlYXNlLCB3ZSBjYW4gc3dhcC4NCk9yIG1heWJlIHdlIGp1c3Qgd2Fp
-dCB1bnRpbCBhbiBBQkkgYnJlYWtpbmcgcmVsZWFzZSB0byBmaXggdGhpcy4NCg0K
+Added graph node profiling stats, build time configurable by enabling
+RTE_GRAPH_PROFILE in rte_config.h.
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ config/rte_config.h                 |  1 +
+ lib/graph/graph_debug.c             | 29 ++++++++++++++++++++++++++++-
+ lib/graph/node.c                    |  2 ++
+ lib/graph/rte_graph_worker_common.h | 23 ++++++++++++++++++++---
+ 4 files changed, 51 insertions(+), 4 deletions(-)
+
+diff --git a/config/rte_config.h b/config/rte_config.h
+index 0447cdf2ad..1942c1b1ec 100644
+--- a/config/rte_config.h
++++ b/config/rte_config.h
+@@ -106,6 +106,7 @@
+ /* rte_graph defines */
+ #define RTE_GRAPH_BURST_SIZE 256
+ #define RTE_LIBRTE_GRAPH_STATS 1
++/* RTE_GRAPH_PROFILE is not set */
+ 
+ /****** driver defines ********/
+ 
+diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
+index e3b8cccdc1..883e37707c 100644
+--- a/lib/graph/graph_debug.c
++++ b/lib/graph/graph_debug.c
+@@ -92,7 +92,34 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
+ 			fprintf(f, "       total_sched_fail=%" PRId64 "\n",
+ 				n->dispatch.total_sched_fail);
+ 		}
+-		fprintf(f, "       total_calls=%" PRId64 "\n", n->total_calls);
++		fprintf(f, "       total_calls=%" PRIu64 "\n", n->total_calls);
++		fprintf(f, "       total_cycles=%" PRIu64 "\n", n->total_cycles);
++#ifdef RTE_GRAPH_PROFILE
++		uint64_t calls_2_or_more = n->total_calls -
++				(n->usage_stats[0].calls + n->usage_stats[1].calls);
++		double avg_objs_2_or_more = calls_2_or_more == 0 ? (double)2 :
++				(double)(n->total_objs - n->usage_stats[1].calls) /
++				(double)calls_2_or_more;
++		fprintf(f, "       calls_0=%" PRIu64 ", _1=%" PRIu64 ", _%.1f=%" PRIu64 "\n",
++				n->usage_stats[0].calls,
++				n->usage_stats[1].calls,
++				avg_objs_2_or_more,
++				calls_2_or_more);
++		fprintf(f, "       cycles_0=%" PRIu64 ", _1=%" PRIu64 ", _%.1f=%" PRIu64 "\n",
++				n->usage_stats[0].cycles,
++				n->usage_stats[1].cycles,
++				avg_objs_2_or_more,
++				n->total_cycles -
++				(n->usage_stats[0].cycles + n->usage_stats[1].cycles));
++		fprintf(f, "       cycles_per_call_1=%.1f, _%.1f=%.1f\n",
++				n->usage_stats[1].calls == 0 ? (double)0 :
++				(double)n->usage_stats[1].cycles / (double)n->usage_stats[1].calls,
++				avg_objs_2_or_more,
++				calls_2_or_more == 0 ? (double)0 :
++				(double)(n->total_cycles -
++				(n->usage_stats[0].cycles + n->usage_stats[1].cycles)) /
++                (double)calls_2_or_more);
++#endif
+ 		for (i = 0; i < n->nb_edges; i++)
+ 			fprintf(f, "          edge[%d] <%s>\n", i,
+ 				n->nodes[i]->name);
+diff --git a/lib/graph/node.c b/lib/graph/node.c
+index 1fce3e6632..19b38881ae 100644
+--- a/lib/graph/node.c
++++ b/lib/graph/node.c
+@@ -110,10 +110,12 @@ __rte_node_register(const struct rte_node_register *reg)
+ 	rte_edge_t i;
+ 	size_t sz;
+ 
++#ifndef RTE_GRAPH_PROFILE
+ 	/* Limit Node specific metadata to one cacheline on 64B CL machine */
+ 	RTE_BUILD_BUG_ON((offsetof(struct rte_node, nodes) -
+ 			  offsetof(struct rte_node, ctx)) !=
+ 			 RTE_CACHE_LINE_MIN_SIZE);
++#endif
+ 
+ 	graph_spinlock_lock();
+ 
+diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
+index 4ab53a533e..43ce23765b 100644
+--- a/lib/graph/rte_graph_worker_common.h
++++ b/lib/graph/rte_graph_worker_common.h
+@@ -144,12 +144,22 @@ struct __rte_cache_aligned rte_node {
+ 			rte_node_process_t process; /**< Process function. */
+ 			uint64_t process_u64;
+ 		};
++		/** Fast path area cache line 3. */
++#ifdef RTE_GRAPH_PROFILE
++		struct {
++			uint64_t calls;
++			uint64_t cycles;
++		} usage_stats[2];	/**< Usage when this node processed 0 or 1 objects. */
++		/** Fast path area cache line 4. */
++#endif
+ 		alignas(RTE_CACHE_LINE_MIN_SIZE) struct rte_node *nodes[]; /**< Next nodes. */
+ 	};
+ };
+ 
++#ifndef RTE_GRAPH_PROFILE
+ static_assert(offsetof(struct rte_node, nodes) - offsetof(struct rte_node, ctx)
+ 	== RTE_CACHE_LINE_MIN_SIZE, "rte_node fast path area must fit in 64 bytes");
++#endif
+ 
+ /**
+  * @internal
+@@ -197,7 +207,7 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
+ static __rte_always_inline void
+ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+ {
+-	uint64_t start;
++	uint64_t cycles;
+ 	uint16_t rc;
+ 	void **objs;
+ 
+@@ -206,11 +216,18 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+ 	rte_prefetch0(objs);
+ 
+ 	if (rte_graph_has_stats_feature()) {
+-		start = rte_rdtsc();
++		cycles = -rte_rdtsc();
+ 		rc = node->process(graph, node, objs, node->idx);
+-		node->total_cycles += rte_rdtsc() - start;
++		cycles += rte_rdtsc();
++		node->total_cycles += cycles;
+ 		node->total_calls++;
+ 		node->total_objs += rc;
++#ifdef RTE_GRAPH_PROFILE
++		if (rc <= 1) {
++			node->usage_stats[rc].calls++;
++			node->usage_stats[rc].cycles += cycles;
++		}
++#endif
+ 	} else {
+ 		node->process(graph, node, objs, node->idx);
+ 	}
+-- 
+2.43.0
+
