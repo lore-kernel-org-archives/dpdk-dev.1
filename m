@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C26CD98F6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 06:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205D0CD98E6
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 06:10:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F4F240E11;
-	Fri, 19 Jun 2026 08:09:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A0C7B40E24;
+	Fri, 19 Jun 2026 08:09:41 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id E72BB4067D;
- Fri, 19 Jun 2026 08:09:34 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5526D40661;
+ Fri, 19 Jun 2026 08:09:36 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CB2B31A0224;
- Fri, 19 Jun 2026 08:09:34 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B6471A0204;
+ Fri, 19 Jun 2026 08:09:36 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 93D3D1A021B;
- Fri, 19 Jun 2026 08:09:34 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 047AD1A0203;
+ Fri, 19 Jun 2026 08:09:36 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D7C421800071;
- Fri, 19 Jun 2026 14:09:32 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 49C82180007B;
+ Fri, 19 Jun 2026 14:09:34 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
 Cc: stable@dpdk.org,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v2 10/18] net/dpaa: fix invalid check on interrupt unregister
-Date: Fri, 19 Jun 2026 11:39:08 +0530
-Message-Id: <20260619060916.485258-11-hemant.agrawal@nxp.com>
+	Vanshika Shukla <vanshika.shukla@nxp.com>
+Subject: [PATCH v2 11/18] net/dpaa: fix port_handle leak in fm_prev_cleanup
+Date: Fri, 19 Jun 2026 11:39:09 +0530
+Message-Id: <20260619060916.485258-12-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619060916.485258-1-hemant.agrawal@nxp.com>
 References: <20260618141151.3990283-1-hemant.agrawal@nxp.com>
@@ -50,34 +50,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gagandeep Singh <g.singh@nxp.com>
+From: Vanshika Shukla <vanshika.shukla@nxp.com>
 
-rte_intr_callback_unregister() returns the number of callbacks
-removed (>= 1) on success and a negative value on failure. The
-previous check 'if (ret)' logged a spurious warning on every
-successful unregister. Fix it to 'if (ret < 0)'.
+In fm_prev_cleanup(), the port_handle was not closed before being
+overwritten on each iteration, causing a resource leak. Add a null
+check and close the existing handle before opening a new one.
 
-Fixes: 2aa10990a8dd ("bus/dpaa: enable link state interrupt")
+Fixes: e498f3b51f38 ("net/dpaa: improve port cleanup")
 Cc: stable@dpdk.org
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/dpaa/dpaa_flow.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 9a9c5ee817..c143e66f77 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -559,7 +559,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 		}
- 		ret = rte_intr_callback_unregister(intr_handle,
- 			dpaa_interrupt_handler, (void *)dev);
--		if (ret) {
-+		if (ret < 0) {
- 			DPAA_PMD_WARN("%s: unregister interrupt failed(%d)",
- 				dev->data->name, ret);
- 		}
+diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
+index 417b9b6fbb..f21950f64d 100644
+--- a/drivers/net/dpaa/dpaa_flow.c
++++ b/drivers/net/dpaa/dpaa_flow.c
+@@ -81,6 +81,10 @@ static void fm_prev_cleanup(void)
+ 		devid = fm_model.device_order[i];
+ 		/* FM Port Open */
+ 		fm_model.fm_port_params[devid].h_fm = fm_info.fman_handle;
++		if (dpaa_intf.port_handle) {
++			fm_port_close(dpaa_intf.port_handle);
++			dpaa_intf.port_handle = NULL;
++		}
+ 		dpaa_intf.port_handle =
+ 				fm_port_open(&fm_model.fm_port_params[devid]);
+ 		dpaa_intf.scheme_handle[0] = create_device(fm_info.pcd_handle,
 -- 
 2.43.0
 
