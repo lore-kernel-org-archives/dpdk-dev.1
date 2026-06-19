@@ -2,31 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68AECD4F26
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 18:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6CACD98F2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 18:45:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A34340661;
-	Fri, 19 Jun 2026 20:44:37 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id C458A4028F
+	by mails.dpdk.org (Postfix) with ESMTP id 9DCB940B8C;
+	Fri, 19 Jun 2026 20:44:38 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id DE8EF40279
  for <dev@dpdk.org>; Fri, 19 Jun 2026 20:44:30 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AB4B31A0012;
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C082F200029;
  Fri, 19 Jun 2026 20:44:30 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 74FC71A0020;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 87F34200004;
  Fri, 19 Jun 2026 20:44:30 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0AA831800086;
- Sat, 20 Jun 2026 02:44:30 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B6E36180004C;
+ Sat, 20 Jun 2026 02:44:29 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com
-Subject: [PATCH 07/10] net/enetc: add option to disable VSI messaging
-Date: Sat, 20 Jun 2026 00:14:24 +0530
-Message-Id: <20260619184427.522518-8-g.singh@nxp.com>
+Cc: hemant.agrawal@nxp.com,
+	Vanshika Shukla <vanshika.shukla@nxp.com>
+Subject: [PATCH 06/10] net/enetc: support scatter-gather
+Date: Sat, 20 Jun 2026 00:14:23 +0530
+Message-Id: <20260619184427.522518-7-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619184427.522518-1-g.singh@nxp.com>
 References: <20260619184427.522518-1-g.singh@nxp.com>
@@ -46,129 +47,319 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add devarg 'enetc4_vsi_disable' to allow disabling features
-dependent on VSI-PSI messaging. This is useful for testing DPDK
-with a PF driver that does not support VSI-PSI messages.
+From: Vanshika Shukla <vanshika.shukla@nxp.com>
 
-When the devarg is present, a reduced ops table
-(enetc4_vf_ops_no_vsi_m) is used that replaces link_update with
-a no-op stub and omits MAC/VLAN filter ops that require VSI msgs.
+Add scatter-gather support for ENETC4 PMD:
+- Add ENETC_RXBD_LSTATUS_R/F bits for RX BD status
+- Add ENETC4_MAX_SEGS (63) for max segments per TX packet
+- Update enetc4_vf_dev_infos_get to fill nb_seg_max, offloads,
+  max queues and packet length
+- Extend enetc_xmit_pkts_nc to handle multi-segment mbufs
+- Extend enetc_clean_rx_ring_nc to chain scatter-gather segments
+  using LSTATUS_R/F bits
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- drivers/net/enetc/enetc4_vf.c | 61 +++++++++++++++++++++++++++++++++--
- 1 file changed, 58 insertions(+), 3 deletions(-)
+ drivers/net/enetc/base/enetc_hw.h |   2 +
+ drivers/net/enetc/enetc.h         |   4 +-
+ drivers/net/enetc/enetc4_vf.c     |  46 ++++++++---
+ drivers/net/enetc/enetc_rxtx.c    | 124 +++++++++++++++++++-----------
+ 4 files changed, 119 insertions(+), 57 deletions(-)
 
+diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
+index f79c950..6e96562 100644
+--- a/drivers/net/enetc/base/enetc_hw.h
++++ b/drivers/net/enetc/base/enetc_hw.h
+@@ -230,6 +230,8 @@ enum enetc_bdr_type {TX, RX};
+ 			(0x0005 | ENETC_PKT_TYPE_IPV4)
+ #define ENETC_PKT_TYPE_IPV6_ESP \
+ 			(0x0005 | ENETC_PKT_TYPE_IPV6)
++#define ENETC_RXBD_LSTATUS_R	BIT(30)
++#define ENETC_RXBD_LSTATUS_F	BIT(31)
+ 
+ /* PCI device info */
+ struct enetc_hw {
+diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
+index 4d99b5b..439d2d6 100644
+--- a/drivers/net/enetc/enetc.h
++++ b/drivers/net/enetc/enetc.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018-2019,2024 NXP
++ * Copyright 2018-2019,2024-2026 NXP
+  */
+ 
+ #ifndef _ENETC_H_
+@@ -28,6 +28,8 @@
+ #define MIN_BD_COUNT   32
+ /* BD ALIGN */
+ #define BD_ALIGN       8
++/* Max segments per ENETC4 TX packet (scatter-gather) */
++#define ENETC4_MAX_SEGS	63
+ 
+ /* minimum frame size supported */
+ #define ENETC_MAC_MINFRM_SIZE	68
 diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 9dc4e1d..44c0dc0 100644
+index bec7128..9dc4e1d 100644
 --- a/drivers/net/enetc/enetc4_vf.c
 +++ b/drivers/net/enetc/enetc4_vf.c
-@@ -3,11 +3,14 @@
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2024 NXP
++ * Copyright 2024-2026 NXP
   */
  
  #include <stdbool.h>
-+#include <rte_kvargs.h>
- #include <rte_random.h>
- #include <dpaax_iova_table.h>
- #include "enetc_logs.h"
- #include "enetc.h"
+@@ -18,8 +18,19 @@ uint16_t enetc_crc_table[ENETC_CRC_TABLE_SIZE];
+ bool enetc_crc_gen;
  
-+#define ENETC4_VSI_DISABLE		"enetc4_vsi_disable"
+ /* Supported Rx offloads */
+-static uint64_t dev_vf_rx_offloads_sup =
+-	RTE_ETH_RX_OFFLOAD_VLAN_FILTER;
++static uint64_t dev_rx_offloads_sup =
++	RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |
++	RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
++	RTE_ETH_RX_OFFLOAD_TCP_CKSUM |
++	RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
++	RTE_ETH_RX_OFFLOAD_SCATTER;
 +
- #define ENETC_CRC_TABLE_SIZE		256
- #define ENETC_POLY			0x1021
- #define ENETC_CRC_INIT			0xffff
-@@ -687,6 +690,13 @@ enetc4_vf_get_link_speed(struct rte_eth_dev *dev, struct enetc_psi_reply_msg *re
- 	return err;
- }
++/* Supported Tx offloads */
++static uint64_t dev_tx_offloads_sup =
++	RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
++	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
++	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
++	RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
  
-+static int
-+enetc4_vf_link_update_dummy(struct rte_eth_dev *dev __rte_unused,
-+			    int wait_to_complete __rte_unused)
-+{
-+	return 0;
-+}
-+
- static int
- enetc4_vf_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
+ static void
+ enetc_gen_crc_table(void)
+@@ -61,21 +72,38 @@ static int
+ enetc4_vf_dev_infos_get(struct rte_eth_dev *dev,
+ 			struct rte_eth_dev_info *dev_info)
  {
-@@ -1148,6 +1158,27 @@ static const struct rte_pci_id pci_vf_id_enetc4_map[] = {
- };
- 
- /* Features supported by this driver */
-+/* ops table used when VSI messaging is disabled */
-+static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
-+	.dev_configure        = enetc4_dev_configure,
-+	.dev_start            = enetc4_vf_dev_start,
-+	.dev_stop             = enetc4_vf_dev_stop,
-+	.dev_close            = enetc4_dev_close,
-+	.stats_get            = enetc4_vf_stats_get,
-+	.dev_infos_get        = enetc4_vf_dev_infos_get,
-+	.mtu_set              = enetc4_vf_mtu_set,
-+	.link_update	      = enetc4_vf_link_update_dummy,
-+	.rx_queue_setup       = enetc4_rx_queue_setup,
-+	.rx_queue_start       = enetc4_rx_queue_start,
-+	.rx_queue_stop        = enetc4_rx_queue_stop,
-+	.rx_queue_release     = enetc4_rx_queue_release,
-+	.tx_queue_setup       = enetc4_tx_queue_setup,
-+	.tx_queue_start       = enetc4_tx_queue_start,
-+	.tx_queue_stop        = enetc4_tx_queue_stop,
-+	.tx_queue_release     = enetc4_tx_queue_release,
-+	.dev_supported_ptypes_get = enetc4_supported_ptypes_get,
-+};
-+
- static const struct eth_dev_ops enetc4_vf_ops = {
- 	.dev_configure        = enetc4_dev_configure,
- 	.dev_start            = enetc4_vf_dev_start,
-@@ -1283,7 +1314,28 @@ enetc4_vf_dev_init(struct rte_eth_dev *eth_dev)
- 	struct enetc_hw *enetc_hw = &hw->hw;
+-	int ret = 0;
++	struct enetc_eth_hw *hw =
++		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
  
  	PMD_INIT_FUNC_TRACE();
--	eth_dev->dev_ops = &enetc4_vf_ops;
-+
-+	/* check if VSI messaging should be disabled via devarg */
-+	if (eth_dev->device->devargs) {
-+		struct rte_kvargs *kvlist;
-+
-+		kvlist = rte_kvargs_parse(eth_dev->device->devargs->args,
-+					  NULL);
-+		if (kvlist) {
-+			if (rte_kvargs_count(kvlist, ENETC4_VSI_DISABLE) != 0) {
-+				ENETC_PMD_NOTICE("VSI messaging disabled by devarg");
-+				eth_dev->dev_ops = &enetc4_vf_ops_no_vsi_m;
-+			} else {
-+				eth_dev->dev_ops = &enetc4_vf_ops;
-+			}
-+			rte_kvargs_free(kvlist);
-+		} else {
-+			eth_dev->dev_ops = &enetc4_vf_ops;
-+		}
-+	} else {
-+		eth_dev->dev_ops = &enetc4_vf_ops;
-+	}
-+
- 	enetc4_dev_hw_init(eth_dev);
  
- 	si_cap = enetc_rd(enetc_hw, ENETC_SICAPR0);
-@@ -1304,8 +1356,9 @@ enetc4_vf_dev_init(struct rte_eth_dev *eth_dev)
- 	ENETC_PMD_DEBUG("port_id %d vendorID=0x%x deviceID=0x%x",
- 			eth_dev->data->port_id, pci_dev->id.vendor_id,
- 			pci_dev->id.device_id);
--	/* update link */
--	enetc4_vf_link_update(eth_dev, 0);
-+	/* update link if VSI messaging is enabled */
-+	if (eth_dev->dev_ops == &enetc4_vf_ops)
-+		enetc4_vf_link_update(eth_dev, 0);
+-	ret = enetc4_dev_infos_get(dev, dev_info);
+-	if (ret)
+-		return ret;
+-
++	dev_info->rx_desc_lim = (struct rte_eth_desc_lim) {
++		.nb_max = MAX_BD_COUNT,
++		.nb_min = MIN_BD_COUNT,
++		.nb_align = BD_ALIGN,
++		.nb_seg_max = ENETC4_MAX_SEGS,
++		.nb_mtu_seg_max = ENETC4_MAX_SEGS,
++	};
++	dev_info->tx_desc_lim = (struct rte_eth_desc_lim) {
++		.nb_max = MAX_BD_COUNT,
++		.nb_min = MIN_BD_COUNT,
++		.nb_align = BD_ALIGN,
++		.nb_seg_max = ENETC4_MAX_SEGS,
++		.nb_mtu_seg_max = ENETC4_MAX_SEGS,
++	};
++	dev_info->max_rx_queues = hw->max_rx_queues;
++	dev_info->max_tx_queues = hw->max_tx_queues;
++	dev_info->max_rx_pktlen = ENETC4_MAC_MAXFRM_SIZE;
+ 	dev_info->max_mtu = dev_info->max_rx_pktlen - (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN);
+ 	dev_info->max_mac_addrs = ENETC4_MAC_ENTRIES;
+-	dev_info->rx_offload_capa |= dev_vf_rx_offloads_sup;
++	dev_info->rx_offload_capa = dev_rx_offloads_sup;
++	dev_info->tx_offload_capa = dev_tx_offloads_sup;
++	dev_info->flow_type_rss_offloads = ENETC_RSS_OFFLOAD_ALL;
  
  	return 0;
  }
-@@ -1389,4 +1442,6 @@ static struct rte_pci_driver rte_enetc4_vf_pmd = {
- RTE_PMD_REGISTER_PCI(net_enetc4_vf, rte_enetc4_vf_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_enetc4_vf, pci_vf_id_enetc4_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* igb_uio | uio_pci_generic");
-+RTE_PMD_REGISTER_PARAM_STRING(net_enetc4_vf,
-+			      ENETC4_VSI_DISABLE "=<any>");
- RTE_LOG_REGISTER_DEFAULT(enetc4_vf_logtype_pmd, NOTICE);
+ 
++
+ int
+ enetc4_vf_dev_stop(struct rte_eth_dev *dev __rte_unused)
+ {
+diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
+index c87349f..a37c835 100644
+--- a/drivers/net/enetc/enetc_rxtx.c
++++ b/drivers/net/enetc/enetc_rxtx.c
+@@ -149,54 +149,64 @@ enetc_xmit_pkts_nc(void *tx_queue,
+ 		struct rte_mbuf **tx_pkts,
+ 		uint16_t nb_pkts)
+ {
+-	struct enetc_swbd *tx_swbd;
+-	int i, start, bds_to_use;
+-	struct enetc_tx_bd *txbd;
+ 	struct enetc_bdr *tx_ring = (struct enetc_bdr *)tx_queue;
+-	unsigned int buflen, j;
++	int i, start, bds_to_use, bd_count;
++	struct enetc_tx_bd *txbd;
++	struct rte_mbuf *seg;
++	uint16_t seg_len, segs_per_pkt;
++	bool is_first_seg;
++	unsigned int j;
+ 	uint8_t *data;
+ 
+ 	i = tx_ring->next_to_use;
+-
+ 	bds_to_use = enetc_bd_unused(tx_ring);
+-	if (bds_to_use < nb_pkts)
+-		nb_pkts = bds_to_use;
+-
++	bd_count = tx_ring->bd_count;
+ 	start = 0;
+-	while (nb_pkts--) {
+-		tx_ring->q_swbd[i].buffer_addr = tx_pkts[start];
+ 
+-		buflen = rte_pktmbuf_pkt_len(tx_ring->q_swbd[i].buffer_addr);
+-		data = rte_pktmbuf_mtod(tx_ring->q_swbd[i].buffer_addr, void *);
+-		for (j = 0; j <= buflen; j += RTE_CACHE_LINE_SIZE)
+-			dcbf(data + j);
++	while (start < nb_pkts) {
++		seg = tx_pkts[start];
++		segs_per_pkt = seg->nb_segs;
+ 
+-		txbd = ENETC_TXBD(*tx_ring, i);
+-		txbd->flags = 0;
+-		if (tx_ring->q_swbd[i].buffer_addr->ol_flags & ENETC4_TX_CKSUM_OFFLOAD_MASK)
+-			enetc4_tx_offload_checksum(tx_ring->q_swbd[i].buffer_addr, txbd);
++		if (bds_to_use < segs_per_pkt)
++			break;
+ 
+-		tx_swbd = &tx_ring->q_swbd[i];
+-		txbd->frm_len = buflen;
+-		txbd->buf_len = txbd->frm_len;
+-		txbd->addr = (uint64_t)(uintptr_t)
+-		rte_cpu_to_le_64((size_t)tx_swbd->buffer_addr->buf_iova +
+-				 tx_swbd->buffer_addr->data_off);
++		is_first_seg = true;
++		while (seg) {
++			tx_ring->q_swbd[i].buffer_addr = NULL;
++			seg_len = rte_pktmbuf_data_len(seg);
++			data = rte_pktmbuf_mtod(seg, void *);
++
++			/* Flush payload to PoC so HW DMA reads the correct data. */
++			for (j = 0; j < seg_len; j += RTE_CACHE_LINE_SIZE)
++				dcbf(data + j);
++			/* Cover the last byte of an unaligned buffer. */
++			dcbf(data + (seg_len - 1));
++
++			txbd = ENETC_TXBD(*tx_ring, i);
++			txbd->flags = 0;
++			if (is_first_seg) {
++				tx_ring->q_swbd[i].buffer_addr = tx_pkts[start];
++				txbd->frm_len = rte_pktmbuf_pkt_len(seg);
++				if (seg->ol_flags & ENETC4_TX_CKSUM_OFFLOAD_MASK)
++					enetc4_tx_offload_checksum(seg, txbd);
++				is_first_seg = false;
++			}
++
++			txbd->buf_len = rte_cpu_to_le_16(seg_len);
++			txbd->addr = rte_cpu_to_le_64(rte_mbuf_data_iova(seg));
++			seg = seg->next;
++			i++;
++			bds_to_use--;
++			if (unlikely(i == bd_count))
++				i = 0;
++		}
++
++		/* Set the frame-last flag on the final BD of this packet. */
+ 		txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_F);
+-		i++;
+ 		start++;
+-		if (unlikely(i == tx_ring->bd_count))
+-			i = 0;
+ 	}
+ 
+-	/* we're only cleaning up the Tx ring here, on the assumption that
+-	 * software is slower than hardware and hardware completed sending
+-	 * older frames out by now.
+-	 * We're also cleaning up the ring before kicking off Tx for the new
+-	 * batch to minimize chances of contention on the Tx ring
+-	 */
+ 	enetc_clean_tx_ring(tx_ring);
+-
+ 	tx_ring->next_to_use = i;
+ 	enetc_wr_reg(tx_ring->tcir, i);
+ 	return start;
+@@ -501,38 +511,59 @@ enetc_clean_rx_ring_nc(struct enetc_bdr *rx_ring,
+ 	int cleaned_cnt, i;
+ 	struct enetc_swbd *rx_swbd;
+ 	union enetc_rx_bd *rxbd, rxbd_temp;
++	struct rte_mbuf *first_seg = NULL, *cur_seg = NULL;
+ 	uint32_t bd_status;
+ 	uint8_t *data;
+ 	uint32_t j;
++	struct rte_mbuf *seg;
++	uint16_t data_len;
+ 
+ 	/* next descriptor to process */
+ 	i = rx_ring->next_to_clean;
+-	/* next descriptor to process */
+ 	rxbd = ENETC_RXBD(*rx_ring, i);
+-
+ 	cleaned_cnt = enetc_bd_unused(rx_ring);
+ 	rx_swbd = &rx_ring->q_swbd[i];
+ 
+ 	while (likely(rx_frm_cnt < work_limit)) {
+ 		rxbd_temp = *rxbd;
+ 		bd_status = rte_le_to_cpu_32(rxbd_temp.r.lstatus);
+-		if (!bd_status)
++		/* LSTATUS_R indicates this BD has been written by HW */
++		if (!(bd_status & ENETC_RXBD_LSTATUS_R))
+ 			break;
+ 		if (rxbd_temp.r.error)
+ 			rx_ring->ierrors++;
+ 
+-		rx_swbd->buffer_addr->pkt_len = rxbd_temp.r.buf_len -
+-						rx_ring->crc_len;
+-		rx_swbd->buffer_addr->data_len = rx_swbd->buffer_addr->pkt_len;
+-		rx_swbd->buffer_addr->hash.rss = rxbd_temp.r.rss_hash;
+-		enetc_dev_rx_parse(rx_swbd->buffer_addr,
+-				   rxbd_temp.r.parse_summary);
++		seg = rx_swbd->buffer_addr;
++		data_len = rte_le_to_cpu_16(rxbd_temp.r.buf_len);
++		seg->data_len = data_len;
++
++		if (!first_seg) {
++			first_seg = seg;
++			cur_seg = seg;
++			first_seg->pkt_len = data_len;
++			enetc_dev_rx_parse(first_seg, rxbd_temp.r.parse_summary);
++			first_seg->hash.rss = rxbd_temp.r.rss_hash;
++		} else {
++			first_seg->pkt_len += data_len;
++			first_seg->nb_segs++;
++			cur_seg->next = seg;
++			cur_seg = seg;
++		}
+ 
+-		data = rte_pktmbuf_mtod(rx_swbd->buffer_addr, void *);
+-		for (j = 0; j <= rx_swbd->buffer_addr->pkt_len; j += RTE_CACHE_LINE_SIZE)
++		/* Invalidate packet data cache lines so CPU reads HW-written data. */
++		data = rte_pktmbuf_mtod(seg, void *);
++		for (j = 0; j < data_len; j += RTE_CACHE_LINE_SIZE)
+ 			dccivac(data + j);
++		dccivac(data + (data_len - 1));
++
++		if (bd_status & ENETC_RXBD_LSTATUS_F) {
++			seg->next = NULL;
++			first_seg->pkt_len -= rx_ring->crc_len;
++			rx_pkts[rx_frm_cnt] = first_seg;
++			rx_frm_cnt++;
++			first_seg = NULL;
++		}
+ 
+-		rx_pkts[rx_frm_cnt] = rx_swbd->buffer_addr;
+ 		cleaned_cnt++;
+ 		rx_swbd++;
+ 		i++;
+@@ -541,7 +572,6 @@ enetc_clean_rx_ring_nc(struct enetc_bdr *rx_ring,
+ 			rx_swbd = &rx_ring->q_swbd[i];
+ 		}
+ 		rxbd = ENETC_RXBD(*rx_ring, i);
+-		rx_frm_cnt++;
+ 	}
+ 
+ 	rx_ring->next_to_clean = i;
 -- 
 2.25.1
 
