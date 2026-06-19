@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 357AFCDB466
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 08:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 543F3CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 08:11:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8734340DD5;
-	Fri, 19 Jun 2026 10:11:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A1A6740280;
+	Fri, 19 Jun 2026 10:11:43 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 61BFE40664
- for <dev@dpdk.org>; Fri, 19 Jun 2026 10:11:14 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4FBAD40279
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 10:11:41 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowACX7dCf+TRq07o2FA--.10846S2;
- Fri, 19 Jun 2026 16:11:11 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAA3nN+6+TRqd742FA--.25860S2;
+ Fri, 19 Jun 2026 16:11:39 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v4 18/23] net/sxe2: support SFP module info and EEPROM access
-Date: Fri, 19 Jun 2026 16:11:09 +0800
-Message-ID: <20260619081109.1545900-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 19/23] net/sxe2: implement private dump info
+Date: Fri, 19 Jun 2026 16:11:37 +0800
+Message-ID: <20260619081137.1546177-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260618082723.571054-21-liujie5@linkdatatechnology.com>
 References: <20260618082723.571054-21-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowACX7dCf+TRq07o2FA--.10846S2
-X-Coremail-Antispam: 1UD129KBjvAXoW3uF1kZF1xuFykXF43GryUWrg_yoW8GFyDuo
- WIgr45X34fZr17C3y8Wr1Iqry7Z3yrCF4rGw4F9r4Dua13Cw1YkFy5tw43Za4qqF4qyF4U
- uws2kas2q39xJay8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: zQCowAA3nN+6+TRqd742FA--.25860S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfJw17Cw4DJw15AryxJw1xAFb_yoW8Jr47Wo
+ WxXr13Xr1xAryIvws5Arn7CFW3Z3ykWws5Cayaga98uanxtF4UAFWFgw43Z3Z8KF4rtFyY
+ 934FyF98JFZFqF1rn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
  AaLaJ3UjIYCTnIWjp_UUUYY7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
  x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWx
@@ -58,475 +58,391 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch implements 'get_module_info' and 'get_module_eeprom'
-ops for the sxe2 PMD. These interfaces allow applications to retrieve
-the type of the plugged-in optical module and read its internal
-EEPROM data.
+This patch implements the 'eth_dev_priv_dump' ops for the sxe2 PMD.
+This interface allows applications to dump driver-specific internal
+state and configuration information to a file stream.
 
-The implementation utilizes the shared SFP header definitions to
-parse the module ID, connector type, and encoding. It supports
-reading the standard 256-byte EEPROM maps (SFF-8472 for SFP and
-SFF-8636 for QSFP) via hardware-specific access commands.
-
-Key features:
-- Identify module types (SFP/SFP+/QSFP/QSFP28).
-- Support standard EEPROM data retrieval for diagnostic tools.
-- Add boundary checks to ensure safe I2C memory access.
+The output includes:
+- capabilities.
+- device base info.
+- device args info.
+- device filter info.
+- reprenstor info.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.c |  46 +++++
- drivers/net/sxe2/sxe2_cmd_chnl.h |   3 +
- drivers/net/sxe2/sxe2_drv_cmd.h  |  18 ++
- drivers/net/sxe2/sxe2_ethdev.c   | 298 +++++++++++++++++++++++++++++++
- drivers/net/sxe2/sxe2_ethdev.h   |   9 +
- 5 files changed, 374 insertions(+)
+ drivers/net/sxe2/meson.build        |   1 +
+ drivers/net/sxe2/sxe2_dump.c        | 287 ++++++++++++++++++++++++++++
+ drivers/net/sxe2/sxe2_dump.h        |  12 ++
+ drivers/net/sxe2/sxe2_ethdev.c      |   3 +
+ drivers/net/sxe2/sxe2_ethdev_repr.c |   3 +
+ 5 files changed, 306 insertions(+)
+ create mode 100644 drivers/net/sxe2/sxe2_dump.c
+ create mode 100644 drivers/net/sxe2/sxe2_dump.h
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index 926eaee062..43e8c59487 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -1833,3 +1833,49 @@ int32_t sxe2_drv_srcvsi_prune_config(struct sxe2_adapter *adapter,
- 
- 	return ret;
- }
+diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
+index 65286299aa..d653d071a9 100644
+--- a/drivers/net/sxe2/meson.build
++++ b/drivers/net/sxe2/meson.build
+@@ -77,4 +77,5 @@ sources += files(
+         'sxe2_flow_parse_action.c',
+         'sxe2_flow_parse_pattern.c',
+         'sxe2_flow_parse_engine.c',
++        'sxe2_dump.c',
+ )
+diff --git a/drivers/net/sxe2/sxe2_dump.c b/drivers/net/sxe2/sxe2_dump.c
+new file mode 100644
+index 0000000000..d43473e083
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_dump.c
+@@ -0,0 +1,287 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
 +
-+int32_t sxe2_drv_sfp_eeprom_read(struct sxe2_adapter *adapter, struct sxe2_sfp_read_info *sfp_info)
++#include <rte_malloc.h>
++#include <arpa/inet.h>
++
++#include "sxe2_common_log.h"
++#include "sxe2_ethdev.h"
++#include "sxe2_dump.h"
++#include "sxe2_stats.h"
++
++static void
++sxe2_dump_dev_feature_capability(FILE *file, struct rte_eth_dev *dev)
 +{
-+	int32_t ret = -1;
-+	struct sxe2_drv_sfp_req req = {0};
-+	struct sxe2_drv_sfp_resp *resp = NULL;
-+	struct sxe2_drv_cmd_params cmd = {0};
-+
-+	resp = rte_zmalloc("read sfp data", sizeof(*resp) + sfp_info->len, 0);
-+	if (!resp) {
-+		PMD_LOG_ERR(DRV, "Alloc memory failed");
-+		ret = -ENOMEM;
++	uint32_t i;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	const struct {
++		uint32_t cap_bit;
++		const char *name;
++	} caps_name[] = {
++		{SXE2_DEV_CAPS_OFFLOAD_L2, "L2"},
++		{SXE2_DEV_CAPS_OFFLOAD_VLAN, "VLAN"},
++		{SXE2_DEV_CAPS_OFFLOAD_IPSEC, "IPSEC"},
++		{SXE2_DEV_CAPS_OFFLOAD_RSS, "RSS"},
++		{SXE2_DEV_CAPS_OFFLOAD_FNAV, "FNAV"},
++		{SXE2_DEV_CAPS_OFFLOAD_TM, "TM"},
++		{SXE2_DEV_CAPS_OFFLOAD_PTP, "PTP"},
++	};
++	if (adapter->is_dev_repr)
 +		goto l_end;
++
++	fprintf(file, "  - Dev Capability:\n");
++	for (i = 0; i < RTE_DIM(caps_name); i++) {
++		fprintf(file, "\t  -- support %s: %s\n", caps_name[i].name,
++			(adapter->cap_flags & caps_name[i].cap_bit) ? "Yes" :
++									 "No");
++	}
++l_end:
++	return;
++}
++
++static void
++sxe2_dump_device_basic_info(FILE *file, struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++
++	fprintf(file,
++		"  - Device Base Info:\n"
++		"\t  -- name: %s\n"
++		"\t  -- pf_idx: %u port_idx: %u\n"
++		"\t  -- tx_mode_flags: 0x%x rx_mode_flags: 0x%x\n"
++		"\t  -- flow_isolate_cfg: 0x%x flow_isolated: 0x%x\n"
++		"\t  -- dev_type: 0x%x is_switchdev: 0x%x\n"
++		"\t  -- is_dev_repr: 0x%x dev_port_id: 0x%x\n"
++		"\t  -- dev_flags: 0x%x\n"
++		"\t  -- intr_conf lsc: %u rxq: %u rmv: %u\n",
++		dev->data->name,
++		adapter->pf_idx, adapter->port_idx,
++		adapter->tx_mode_flags, adapter->rx_mode_flags,
++		adapter->flow_isolate_cfg, adapter->flow_isolated,
++		adapter->dev_type, adapter->switchdev_info.is_switchdev,
++		adapter->is_dev_repr, adapter->dev_port_id,
++		dev->data->dev_flags,
++		dev->data->dev_conf.intr_conf.lsc,
++		dev->data->dev_conf.intr_conf.rxq,
++		dev->data->dev_conf.intr_conf.rmv);
++}
++
++static void
++sxe2_dump_dev_args_info(FILE *file, struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++
++	if (adapter->is_dev_repr)
++		goto l_end;
++
++	fprintf(file,
++		"  - Device Args Info:\n"
++		"\t  -- no_sched_mode: %s\n"
++		"\t  -- flow-duplicate-pattern: %u\n"
++		"\t  -- fnav-stat-type: %u\n"
++		"\t  -- sched_layer_mode: %u\n"
++		"\t  -- rx_low_latency: %s\n"
++		"\t  -- function-flow-direct: %s\n",
++		adapter->devargs.no_sched_mode ? "On" : "Off",
++		adapter->devargs.flow_dup_pattern_mode,
++		adapter->devargs.fnav_stat_type,
++		adapter->devargs.sched_layer_mode,
++		adapter->devargs.rx_low_latency ? "On" : "Off",
++		adapter->devargs.func_flow_direct_en ? "On" : "Off");
++l_end:
++	return;
++}
++
++static void sxe2_dump_filter_info(FILE *file, struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_mac_filter *mac_entry;
++	struct sxe2_mac_filter *next_mac_entry;
++	struct sxe2_vlan_filter *vlan_entry;
++	struct sxe2_vlan_filter *next_vlan_entry;
++
++	if (adapter->is_dev_repr)
++		goto l_end;
++
++	fprintf(file,
++		"  - Device Filter Info:\n"
++		"\t  -- cur_promisc:0x%x hw_promisc:0x%x\n"
++		"\t  -- unicast_num: %u multicast_num: %u\n"
++		"\t  -- vlan_num: %u filter_on: %u hw_filter_on: %u\n"
++		"\t  -- vlan max_cnt: %u cnt: %u\n"
++		"\t  -- tpid: 0x%x vid: 0x%x\n"
++		"\t  -- vlan_outer_insert: 0x%x vlan_outer_strip: 0x%x\n"
++		"\t  -- vlan_inner_insert: 0x%x vlan_inner_strip: 0x%x\n",
++		adapter->filter_ctxt.cur_promisc_flags,
++		adapter->filter_ctxt.hw_promisc_flags,
++		adapter->filter_ctxt.uc_num,
++		adapter->filter_ctxt.mc_num,
++		adapter->filter_ctxt.vlan_num,
++		adapter->filter_ctxt.vlan_info.filter_on,
++		adapter->filter_ctxt.vlan_info.hw_filter_on,
++		adapter->filter_ctxt.vlan_info.max_cnt,
++		adapter->filter_ctxt.vlan_info.cnt,
++		adapter->filter_ctxt.vlan_info.tpid,
++		adapter->filter_ctxt.vlan_info.vid,
++		adapter->filter_ctxt.vlan_info.outer_insert,
++		adapter->filter_ctxt.vlan_info.outer_strip,
++		adapter->filter_ctxt.vlan_info.inner_insert,
++		adapter->filter_ctxt.vlan_info.inner_strip);
++
++	if (adapter->filter_ctxt.uc_num > 0) {
++		fprintf(file,
++			"\t  -- Unicast entry:\n");
++		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.uc_list, next,
++				       next_mac_entry) {
++			fprintf(file,
++				"\t  -- addr: %02x:%02x:%02x:%02x:%02x:%02x hw status:%u "
++				"default:%u\n",
++				mac_entry->mac_addr.addr_bytes[0],
++				mac_entry->mac_addr.addr_bytes[1],
++				mac_entry->mac_addr.addr_bytes[2],
++				mac_entry->mac_addr.addr_bytes[3],
++				mac_entry->mac_addr.addr_bytes[4],
++				mac_entry->mac_addr.addr_bytes[5],
++				mac_entry->hw_config,
++				mac_entry->default_config);
++		}
 +	}
 +
-+	req.is_wr = false;
-+	req.is_qsfp = sfp_info->is_qsfp;
-+	req.page_cnt = rte_cpu_to_le_16(sfp_info->page_cnt);
-+	req.offset = rte_cpu_to_le_16(sfp_info->offset);
-+	req.data_len = rte_cpu_to_le_16(sfp_info->len);
-+	req.bus_addr = rte_cpu_to_le_16(sfp_info->bus_addr);
-+
-+	PMD_DEV_LOG_INFO(adapter, DRV, "is_qsfp=%u, page_cnt=%u, offset=%u, datalen=%u, "
-+			 "bus_addr=%u", sfp_info->is_qsfp, sfp_info->page_cnt, sfp_info->offset,
-+			 sfp_info->len, sfp_info->bus_addr);
-+
-+	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_OPT_EEP_GET,
-+				 &req, sizeof(req),
-+				 resp, sizeof(*resp) + sfp_info->len);
-+	ret = sxe2_drv_cmd_exec(adapter->cdev, &cmd);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to read sfp, ret=%d", ret);
-+		goto l_end;
++	if (adapter->filter_ctxt.mc_num > 0) {
++		fprintf(file,
++			"\t  -- Multicast entry:\n");
++		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.mc_list,
++				       next, next_mac_entry) {
++			fprintf(file,
++				"\t  -- addr: %02x:%02x:%02x:%02x:%02x:%02x "
++				"hw status:%u default:%u\n",
++				mac_entry->mac_addr.addr_bytes[0],
++				mac_entry->mac_addr.addr_bytes[1],
++				mac_entry->mac_addr.addr_bytes[2],
++				mac_entry->mac_addr.addr_bytes[3],
++				mac_entry->mac_addr.addr_bytes[4],
++				mac_entry->mac_addr.addr_bytes[5],
++				mac_entry->hw_config,
++				mac_entry->default_config);
++		}
 +	}
 +
-+	ret = 0;
-+	rte_memcpy(sfp_info->data, resp->data, sfp_info->len);
++	if (adapter->filter_ctxt.vlan_num > 0) {
++		fprintf(file,
++			"\t  -- Vlan entry:\n");
++		RTE_TAILQ_FOREACH_SAFE(vlan_entry, &adapter->filter_ctxt.vlan_list,
++			next, next_vlan_entry) {
++			fprintf(file,
++				"\t  -- vlan tpid:0x%04x vid:0x%04x prio:%d "
++				"hw status:%u default:%u\n",
++				vlan_entry->vlan_info.tpid,
++				vlan_entry->vlan_info.vid,
++				vlan_entry->vlan_info.prio,
++				vlan_entry->hw_config,
++				vlan_entry->default_config);
++		}
++	}
++l_end:
++	return;
++}
++
++static const char *sxe2_vsi_id_str(uint16_t vsi_id, char *buf, size_t len)
++{
++	if (vsi_id == SXE2_INVALID_VSI_ID)
++		return "NA";
++
++	snprintf(buf, len, "%u", vsi_id);
++	return buf;
++}
++
++static void
++sxe2_dump_switchdev_info(FILE *file, struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	uint32_t idx;
++	char k_vsi_buf[16];
++	char u_vsi_buf[16];
++
++	if (adapter->is_dev_repr && adapter->repr_priv_data) {
++		fprintf(file,
++			"  - Reprenstor Info:\n"
++			"\t  -- repr_id: %u\n"
++			"\t  -- repr_q_id: %u\n"
++			"\t  -- repr_pf_id: %u\n"
++			"\t  -- repr_vf_id: %u\n"
++			"\t  -- repr_vf_vsi_id: %u\n"
++			"\t  -- repr_vf_k_vsi_id: %s\n"
++			"\t  -- repr_vf_u_vsi_id: %s\n",
++			adapter->repr_priv_data->repr_id,
++			adapter->repr_priv_data->repr_q_id,
++			adapter->repr_priv_data->repr_pf_id,
++			adapter->repr_priv_data->repr_vf_id,
++			adapter->repr_priv_data->repr_vf_vsi_id,
++			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_k_vsi_id,
++					k_vsi_buf, sizeof(k_vsi_buf)),
++			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_u_vsi_id,
++					u_vsi_buf, sizeof(u_vsi_buf)));
++		goto l_end;
++	}
++	if (adapter->switchdev_info.is_switchdev) {
++		fprintf(file,
++			"  - Switchdev Info:\n"
++			"\t  -- primary:0x%x\n"
++			"\t  -- representor: 0x%x\n"
++			"\t  -- port_name_type: 0x%x\n"
++			"\t  -- nb_vf: %u nb_repr_vf: %u\n",
++			adapter->switchdev_info.primary,
++			adapter->switchdev_info.representor,
++			adapter->switchdev_info.port_name_type,
++			adapter->repr_ctxt.nb_vf,
++			adapter->repr_ctxt.nb_repr_vf);
++		if (adapter->repr_ctxt.nb_vf > 0) {
++			fprintf(file,
++				"\t  -- vf entry:\n");
++			for (idx = 0; idx < adapter->repr_ctxt.nb_vf; idx++) {
++				fprintf(file,
++					"\t  -- func_id:%u vsi_type:%u kernel_vsi_id:%u dpdk_vsi_id:%u\n",
++					adapter->repr_ctxt.repr_vf_id[idx].func_id,
++					adapter->repr_ctxt.repr_vf_id[idx].vsi_type,
++					adapter->repr_ctxt.repr_vf_id[idx].kernel_vsi_id,
++					adapter->repr_ctxt.repr_vf_id[idx].dpdk_vsi_id);
++			}
++		}
++	}
 +
 +l_end:
-+	if (resp) {
-+		rte_free(resp);
-+		resp = NULL;
++	return;
++}
++
++int32_t sxe2_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file)
++{
++	char *buf = NULL;
++	size_t size = 0;
++	FILE *str;
++	int32_t ret = -1;
++
++	str = open_memstream(&buf, &size);
++	if (!str) {
++		PMD_LOG_ERR(DRV, "fopen fail.");
++		goto l_end;
 +	}
 +
++	sxe2_dump_dev_feature_capability(str, dev);
++	sxe2_dump_device_basic_info(str, dev);
++	sxe2_dump_dev_args_info(str, dev);
++	sxe2_dump_filter_info(str, dev);
++	sxe2_dump_switchdev_info(str, dev);
++
++	(void)fflush(str);
++
++	(void)fwrite(buf, 1, size, file);
++	(void)fflush(file);
++
++	ret = 0;
++
++	(void)fclose(str);
++	free(buf);
++l_end:
 +	return ret;
 +}
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index 97007c7cfa..988d4b458b 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -167,4 +167,7 @@ int32_t sxe2_drv_flow_fnav_query_stat(struct sxe2_adapter *adapter,
- int32_t sxe2_drv_srcvsi_prune_config(struct sxe2_adapter *adapter,
- 		uint16_t *vsi_list, uint16_t vsi_cnt, bool set);
- 
-+int32_t sxe2_drv_sfp_eeprom_read(struct sxe2_adapter *adapter,
-+		struct sxe2_sfp_read_info *sfp_info);
+diff --git a/drivers/net/sxe2/sxe2_dump.h b/drivers/net/sxe2/sxe2_dump.h
+new file mode 100644
+index 0000000000..05d6db9b3d
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_dump.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
 +
- #endif /* SXE2_CMD_CHNL_H */
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index 3e0b70ab02..3fabf351af 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -633,6 +633,24 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_resp {
- 	uint8_t rsv;
- } __rte_packed_end;
- 
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
-+	uint8_t is_wr;
-+	uint8_t is_qsfp;
-+	uint16_t bus_addr;
-+	uint16_t page_cnt;
-+	uint16_t offset;
-+	uint16_t data_len;
-+	uint16_t rvd;
-+	uint8_t data[];
-+} __rte_packed_end;
++#ifndef __SXE2_DUMP_H__
++#define __SXE2_DUMP_H__
 +
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_resp {
-+	uint8_t is_wr;
-+	uint8_t is_qsfp;
-+	uint16_t data_len;
-+	uint8_t data[];
-+} __rte_packed_end;
++#include <ethdev_driver.h>
 +
- enum sxe2_drv_cmd_module {
- 	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
- 	SXE2_DRV_CMD_MODULE_DEV = 1,
++int32_t sxe2_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file);
++
++#endif /* __SXE2_DUMP_H__ */
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 493b720f0b..cadb926e5d 100644
+index cadb926e5d..6b60b6d75f 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -40,6 +40,7 @@
+@@ -37,6 +37,7 @@
+ #include "sxe2_host_regs.h"
+ #include "sxe2_switchdev.h"
+ #include "sxe2_ioctl_chnl_func.h"
++#include "sxe2_dump.h"
  #include "sxe2_ethdev_repr.h"
  #include "sxe2vf_regs.h"
  #include "sxe2_switchdev.h"
-+#include "sxe2_msg.h"
+@@ -195,6 +196,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
  
- #define SXE2_PCI_VENDOR_ID_1    0x1ff2
- #define SXE2_PCI_DEVICE_ID_PF_1 0x10b1
-@@ -123,6 +124,10 @@ static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
- 					struct rte_eth_udp_tunnel *tunnel_udp);
- static int32_t sxe2_fw_version_string_get(struct rte_eth_dev *dev,
- 				      char *fw_version, size_t fw_size);
-+static int32_t sxe2_get_module_info(struct rte_eth_dev *dev,
-+				struct rte_eth_dev_module_info *info);
-+static int32_t sxe2_get_module_eeprom(struct rte_eth_dev *dev,
-+				  struct rte_dev_eeprom_info *info);
- 
- static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.dev_configure              = sxe2_dev_configure,
-@@ -187,6 +192,9 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.fw_version_get             = sxe2_fw_version_string_get,
- 
- 	.get_monitor_addr           = sxe2_get_monitor_addr,
+ 	.get_module_info            = sxe2_get_module_info,
+ 	.get_module_eeprom          = sxe2_get_module_eeprom,
 +
-+	.get_module_info            = sxe2_get_module_info,
-+	.get_module_eeprom          = sxe2_get_module_eeprom,
++	.eth_dev_priv_dump          = sxe2_eth_dev_priv_dump,
  };
  
  static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-@@ -292,6 +300,296 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
- 	return ret;
- }
+diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
+index 15b839bb74..f32318b731 100644
+--- a/drivers/net/sxe2/sxe2_ethdev_repr.c
++++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
+@@ -11,6 +11,7 @@
+ #include "sxe2_txrx.h"
+ #include "sxe2_switchdev.h"
+ #include "sxe2_mp.h"
++#include "sxe2_dump.h"
+ #include "sxe2_stats.h"
+ #include "sxe2_flow.h"
  
-+static int32_t sxe2_sfp_type_get(struct sxe2_adapter *adapter, uint8_t *type)
-+{
-+	int32_t ret = -1;
-+	struct sxe2_sfp_read_info sfp_info;
-+
-+	memset(&sfp_info, 0, sizeof(sfp_info));
-+	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
-+	sfp_info.len = 1;
-+	sfp_info.data = type;
-+	sfp_info.offset = 0;
-+	sfp_info.page_cnt = 0;
-+	sfp_info.is_qsfp = false;
-+
-+	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
-+	if (ret)
-+		goto l_end;
-+
-+	ret = 0;
-+	PMD_LOG_INFO(DRV, "Get sfp type success, type=%u", *type);
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_sfp_module_info_get(struct sxe2_adapter *adapter,
-+						  struct rte_eth_dev_module_info *info)
-+{
-+	int32_t ret = -1;
-+	bool page_swap = false;
-+	uint8_t sff8472_rev = 0;
-+	uint8_t addr_mode = 0;
-+	struct sxe2_sfp_read_info sfp_info;
-+
-+	memset(&sfp_info, 0, sizeof(sfp_info));
-+	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
-+	sfp_info.is_qsfp = false;
-+	sfp_info.len = 1;
-+	sfp_info.data = &sff8472_rev;
-+	sfp_info.offset = SXE2_MODULE_SFF_8472_COMP;
-+	sfp_info.page_cnt = 0;
-+
-+	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read 8472 protocol, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	sfp_info.data = &addr_mode;
-+	sfp_info.offset = SXE2_MODULE_SFF_8472_SWAP;
-+
-+	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read A2 page, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	if (addr_mode & SXE2_MODULE_SFF_ADDR_MODE) {
-+		PMD_LOG_ERR(DRV, "address change required to access page 0xA2, "
-+			    "but not supported. please report the module "
-+			    "type to the driver maintainers.");
-+		page_swap = true;
-+	}
-+
-+	PMD_LOG_INFO(DRV, "Read sfp module info, sff_8472=%u, a2_page=%u, swap_page=%d",
-+		     sff8472_rev, addr_mode, page_swap);
-+
-+	if (sff8472_rev == SXE2_MODULE_SFF_8472_UNSUP ||
-+	    page_swap ||
-+	    !(addr_mode & SXE2_MODULE_SFF_DDM_IMPLEMENTED)) {
-+		info->type = SXE2_MODULE_SFF_8079;
-+		info->eeprom_len = SXE2_MODULE_SFF_8079_LEN;
-+	} else {
-+		info->type = SXE2_MODULE_SFF_8472;
-+		info->eeprom_len = SXE2_MODULE_SFF_8472_LEN;
-+	}
-+
-+	ret = 0;
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_qsfp_module_info_get(struct sxe2_adapter *adapter, struct rte_eth_dev_module_info *info)
-+{
-+	int32_t ret = -1;
-+	uint8_t sff8636_rev = 0;
-+	struct sxe2_sfp_read_info sfp_info;
-+
-+	memset(&sfp_info, 0, sizeof(sfp_info));
-+	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
-+	sfp_info.is_qsfp = true;
-+	sfp_info.len = 1;
-+	sfp_info.data = &sff8636_rev;
-+	sfp_info.offset = SXE2_MODULE_REVISION_ADDR;
-+	sfp_info.page_cnt = 0;
-+
-+	ret = sxe2_drv_sfp_eeprom_read(adapter, &sfp_info);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read 8636 protocol, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	if (sff8636_rev > 0x02) {
-+		info->type = SXE2_MODULE_SFF_8636;
-+		info->eeprom_len = SXE2_MODULE_SFF_8636_MAX_LEN;
-+	} else {
-+		info->type = SXE2_MODULE_SFF_8436;
-+		info->eeprom_len = SXE2_MODULE_SFF_8436_MAX_LEN;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_get_module_info(struct rte_eth_dev *dev, struct rte_eth_dev_module_info *info)
-+{
-+	int32_t ret = -1;
-+	uint8_t type = 0;
-+	struct sxe2_adapter *adapter = dev->data->dev_private;
-+
-+	ret = sxe2_sfp_type_get(adapter, &type);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read sfp type, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	switch (type) {
-+	case SXE2_MODULE_SFF_SFP_TYPE:
-+		ret = sxe2_sfp_module_info_get(adapter, info);
-+		if (ret)
-+			goto l_end;
-+		break;
-+	case SXE2_MODULE_TYPE_QSFP_PLUS:
-+	case SXE2_MODULE_TYPE_QSFP28:
-+		ret = sxe2_qsfp_module_info_get(adapter, info);
-+		if (ret)
-+			goto l_end;
-+		break;
-+	default:
-+		ret = -ENXIO;
-+		PMD_LOG_ERR(DRV, "Invalid sfp type, type=%d.", type);
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_INFO(DRV, "sfp eeprom type=%x, eeprom len=%d.", info->type, info->eeprom_len);
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_get_sfp_eeprom(struct sxe2_adapter *adapter, struct sxe2_sfp_read_info *sfp_info)
-+{
-+	int32_t ret = -1;
-+	uint16_t ori_len = sfp_info->len;
-+	uint16_t ori_offset = sfp_info->offset;
-+
-+	if ((ori_len + ori_offset) > SXE2_SFP_EEP_LEN_MAX) {
-+		sfp_info->len = (uint16_t)(SXE2_SFP_EEP_LEN_MAX - ori_offset);
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+		if (ret)
-+			goto l_end;
-+		sfp_info->bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR1;
-+		sfp_info->len = (uint16_t)(ori_len - (SXE2_SFP_EEP_LEN_MAX - ori_offset));
-+		sfp_info->data = (uint8_t *)(sfp_info->data) + (SXE2_SFP_EEP_LEN_MAX - ori_offset);
-+		sfp_info->offset = 0;
-+		sfp_info->page_cnt = 0;
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+	} else {
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+	}
-+
-+l_end:
-+	if (ret)
-+		PMD_LOG_ERR(DRV, "Failed to read sfp.");
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_get_qsfp_eeprom(struct sxe2_adapter *adapter,
-+					  struct sxe2_sfp_read_info *sfp_info)
-+{
-+	int32_t ret = -1;
-+	uint16_t ori_len = sfp_info->len;
-+	uint16_t ori_offset = sfp_info->offset;
-+	uint16_t read_len = 0;
-+	uint16_t remain_len = 0;
-+
-+	if ((ori_len + ori_offset) > SXE2_SFP_EEP_LEN_MAX) {
-+		sfp_info->len = (uint16_t)(SXE2_SFP_EEP_LEN_MAX - ori_offset);
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+		if (ret)
-+			goto l_end;
-+
-+		do {
-+			read_len = read_len + sfp_info->len;
-+			sfp_info->data = (uint8_t *)(sfp_info->data) + sfp_info->len;
-+			sfp_info->offset = SXE2_QSFP_PAGE_OFST_START;
-+			sfp_info->page_cnt++;
-+			remain_len = (uint16_t)(ori_len - read_len);
-+			sfp_info->len = (remain_len > SXE2_QSFP_PAGE_OFST_START) ?
-+					SXE2_QSFP_PAGE_OFST_START : remain_len;
-+			ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+			if (ret)
-+				goto l_end;
-+		} while (remain_len > SXE2_QSFP_PAGE_OFST_START);
-+	} else {
-+		ret = sxe2_drv_sfp_eeprom_read(adapter, sfp_info);
-+	}
-+
-+l_end:
-+	if (ret)
-+		PMD_LOG_ERR(DRV, "Failed to read sfp.");
-+	return ret;
-+}
-+
-+static int32_t
-+sxe2_get_module_eeprom(struct rte_eth_dev *dev, struct rte_dev_eeprom_info *info)
-+{
-+	int32_t ret = -1;
-+	uint8_t type = 0;
-+	struct sxe2_adapter *adapter = dev->data->dev_private;
-+	struct sxe2_sfp_read_info sfp_info;
-+
-+	memset(&sfp_info, 0, sizeof(sfp_info));
-+
-+	if (!info || !info->length || !info->data ||
-+			info->offset >= SXE2_SFP_EEP_LEN_MAX) {
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_INFO(DRV, "Dump sfp eeprom info offset=0x%x, len=0x%x.",
-+		     info->offset, info->length);
-+
-+	ret = sxe2_sfp_type_get(adapter, &type);
-+	if (ret) {
-+		ret = -EIO;
-+		PMD_LOG_ERR(DRV, "Failed to read sfp type, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	sfp_info.bus_addr = SXE2_SFP_E2P_I2C_7BIT_ADDR0;
-+	sfp_info.len = info->length;
-+	sfp_info.data = info->data;
-+	sfp_info.offset = info->offset;
-+	sfp_info.page_cnt = 0;
-+
-+	switch (type) {
-+	case SXE2_MODULE_SFF_SFP_TYPE:
-+		if (info->length > SXE2_SFP_EEP_LEN_MAX * 2) {
-+			ret = -EINVAL;
-+			PMD_LOG_ERR(DRV, "sfp read size[%u] > eeprom max size[%d], ret=%d",
-+				    info->length, SXE2_SFP_EEP_LEN_MAX * 2, ret);
-+			goto l_end;
-+		}
-+		sfp_info.is_qsfp = false;
-+		ret = sxe2_get_sfp_eeprom(adapter, &sfp_info);
-+		if (ret)
-+			goto l_end;
-+		break;
-+	case SXE2_MODULE_TYPE_QSFP_PLUS:
-+	case SXE2_MODULE_TYPE_QSFP28:
-+		if (info->length > SXE2_MODULE_SFF_8636_MAX_LEN) {
-+			ret = -EINVAL;
-+			PMD_LOG_ERR(DRV, "sfp read size[%u] > eeprom max size[%d], ret=%d",
-+				    info->length, SXE2_SFP_EEP_LEN_MAX * 2, ret);
-+			goto l_end;
-+		}
-+		sfp_info.is_qsfp = true;
-+		ret = sxe2_get_qsfp_eeprom(adapter, &sfp_info);
-+		if (ret)
-+			goto l_end;
-+		break;
-+	default:
-+		ret = -ENXIO;
-+		PMD_LOG_ERR(DRV, "Invalid sfp type, type=%d.", type);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
- static enum sxe2_udp_tunnel_protocol
- sxe2_udp_tunnel_type_rte_to_sxe2(enum rte_eth_tunnel_type rte_type)
- {
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index e2e002bdb2..b63238f423 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -274,6 +274,15 @@ struct sxe2_sched_hw_cap {
- 	uint8_t adj_lvl;
- };
+@@ -236,6 +237,8 @@ static const struct eth_dev_ops sxe2_switchdev_repr_dev_ops = {
+ 	.allmulticast_enable        = sxe2_repr_allmulti_enable,
+ 	.allmulticast_disable       = sxe2_repr_allmulti_disable,
  
-+struct sxe2_sfp_read_info {
-+	uint8_t *data;
-+	uint16_t offset;
-+	uint16_t len;
-+	uint16_t bus_addr;
-+	uint16_t page_cnt;
-+	bool is_qsfp;
-+};
++	.eth_dev_priv_dump          = sxe2_eth_dev_priv_dump,
 +
- struct sxe2_link_context {
- 	rte_spinlock_t link_lock;
- 	bool link_up;
+ 	.stats_get                  = sxe2_stats_info_get,
+ 	.stats_reset                = sxe2_stats_info_reset,
+ 	.xstats_get                 = sxe2_xstats_info_get,
 -- 
 2.52.0
 
