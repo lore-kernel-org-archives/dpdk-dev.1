@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F86CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5474CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4E3640E2B;
-	Fri, 19 Jun 2026 14:29:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B83B440E1F;
+	Fri, 19 Jun 2026 14:29:38 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 74C7740E17
- for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:34 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A4B8540E1E
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:35 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5842D200238;
- Fri, 19 Jun 2026 14:29:34 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8C51920024A;
+ Fri, 19 Jun 2026 14:29:35 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 214BF20024A;
- Fri, 19 Jun 2026 14:29:34 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 568D3200248;
+ Fri, 19 Jun 2026 14:29:35 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 98B1F180007B;
- Fri, 19 Jun 2026 20:29:32 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id CCD331800071;
+ Fri, 19 Jun 2026 20:29:33 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH 06/18] bus/dpaa: shutdown FQ by fq descriptor
-Date: Fri, 19 Jun 2026 17:59:03 +0530
-Message-Id: <20260619122922.3774666-7-hemant.agrawal@nxp.com>
+Subject: [PATCH 06/18] drivers: shutdown DPAA FQ by fq descriptor
+Date: Fri, 19 Jun 2026 17:59:04 +0530
+Message-Id: <20260619122922.3774666-8-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
 References: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
