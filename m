@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B1ACD4F26
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69765CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 12:30:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 016E040E34;
-	Fri, 19 Jun 2026 14:29:44 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 5FDB640E32
- for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:39 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 377111A025F;
- Fri, 19 Jun 2026 14:29:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0EF9240E4B;
+	Fri, 19 Jun 2026 14:29:45 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 8D99640E2E
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 14:29:40 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C30520024D;
+ Fri, 19 Jun 2026 14:29:40 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 016731A0253;
- Fri, 19 Jun 2026 14:29:39 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 35C9C200238;
+ Fri, 19 Jun 2026 14:29:40 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 78EB51800071;
- Fri, 19 Jun 2026 20:29:37 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id ACC15180007B;
+ Fri, 19 Jun 2026 20:29:38 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH 09/18] bus/dpaa: add cgrid cleanup support
-Date: Fri, 19 Jun 2026 17:59:07 +0530
-Message-Id: <20260619122922.3774666-11-hemant.agrawal@nxp.com>
+Subject: [PATCH 09/18] drivers: add DPAA cgrid cleanup support
+Date: Fri, 19 Jun 2026 17:59:08 +0530
+Message-Id: <20260619122922.3774666-12-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
 References: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
