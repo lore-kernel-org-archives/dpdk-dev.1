@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC547CD98F6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 06:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B37ACD98F6
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 06:10:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 86E2F40DD1;
-	Fri, 19 Jun 2026 08:09:37 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 2F3B840289;
- Fri, 19 Jun 2026 08:09:32 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0D1E21A0203;
- Fri, 19 Jun 2026 08:09:32 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D4A2F40DD6;
+	Fri, 19 Jun 2026 08:09:38 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 2EAAA40679;
+ Fri, 19 Jun 2026 08:09:33 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 100B22001E6;
+ Fri, 19 Jun 2026 08:09:33 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C7E621A0204;
- Fri, 19 Jun 2026 08:09:31 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CDE952001EC;
+ Fri, 19 Jun 2026 08:09:32 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 26540180004C;
- Fri, 19 Jun 2026 14:09:30 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7EE881800086;
+ Fri, 19 Jun 2026 14:09:31 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
 Cc: stable@dpdk.org,
 	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v2 08/18] bus/dpaa: fix device probe issue
-Date: Fri, 19 Jun 2026 11:39:06 +0530
-Message-Id: <20260619060916.485258-9-hemant.agrawal@nxp.com>
+Subject: [PATCH v2 09/18] net/dpaa: fix device remove
+Date: Fri, 19 Jun 2026 11:39:07 +0530
+Message-Id: <20260619060916.485258-10-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260619060916.485258-1-hemant.agrawal@nxp.com>
 References: <20260618141151.3990283-1-hemant.agrawal@nxp.com>
@@ -52,63 +52,55 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Gagandeep Singh <g.singh@nxp.com>
 
-Remove an unintended early return in the LS1043 SoC version check
-that was preventing device probing from completing successfully on
-LS1043A platforms.
+Add a check to avoid closing a device that is already closed,
+preventing a double-close condition during device removal.
 
-The early return did two things: set max_push_rxq_num = 0 and skip
-the DPAA_PUSH_QUEUES_NUMBER env-var override. With the return gone,
-the env-var could inadvertently re-enable push mode on LS1043A, which
-must remain disabled due to the FMAN push-mode errata handled in
-dpaa_rxtx.c. Guard the env-var override so it only applies to
-non-LS1043A SoCs.
+Note: this also removes the explicit dpaa_finish() call that was
+made at last-device remove time (!dpaa_valid_dev). dpaa_finish() is
+registered as RTE_FINI_PRIO(dpaa_finish, 103) and will still run at
+process exit, so for the normal run-then-exit path behaviour is
+unchanged. For a remove-all-then-re-probe scenario, is_global_init
+will remain set until exit; re-probe in a running process is not a
+supported use case for this driver.
 
-Fixes: 164e9e13e50f ("bus/dpaa: enhance SoC version")
+Fixes: 78ea4b4fcb52 ("bus/dpaa: improve cleanup")
 Cc: stable@dpdk.org
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/bus/dpaa/dpaa_bus.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index ee467b94d5..02a8c5882e 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- * Copyright 2017-2025 NXP
-+ * Copyright 2017-2026 NXP
-  *
-  */
- /* System headers */
-@@ -724,18 +724,17 @@ rte_dpaa_bus_scan(void)
- 			dpaa_bus.svr_ver);
- 	}
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 424458857e..9a9c5ee817 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -2674,18 +2674,19 @@ static int
+ rte_dpaa_remove(struct rte_dpaa_device *dpaa_dev)
+ {
+ 	struct rte_eth_dev *eth_dev;
+-	int ret;
++	int ret = 0;
  
--	/* Disabling the default push mode for LS1043A */
-+	/* Disabling the default push mode for LS1043A due to errata */
- 	if (dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
- 		dpaa_bus.max_push_rxq_num = 0;
--		return 0;
-+	} else {
-+		penv = getenv("DPAA_PUSH_QUEUES_NUMBER");
-+		if (penv)
-+			dpaa_bus.max_push_rxq_num = atoi(penv);
-+		if (dpaa_bus.max_push_rxq_num > DPAA_MAX_PUSH_MODE_QUEUE)
-+			dpaa_bus.max_push_rxq_num = DPAA_MAX_PUSH_MODE_QUEUE;
- 	}
+ 	PMD_INIT_FUNC_TRACE();
  
--	penv = getenv("DPAA_PUSH_QUEUES_NUMBER");
--	if (penv)
--		dpaa_bus.max_push_rxq_num = atoi(penv);
--	if (dpaa_bus.max_push_rxq_num > DPAA_MAX_PUSH_MODE_QUEUE)
--		dpaa_bus.max_push_rxq_num = DPAA_MAX_PUSH_MODE_QUEUE;
--
- 	/* Device list creation is only done once */
- 	if (!process_once) {
- 		rte_dpaa_bus_dev_build();
+ 	eth_dev = dpaa_dev->eth_dev;
+-	dpaa_eth_dev_close(eth_dev);
+-	ret = rte_eth_dev_release_port(eth_dev);
++	if (eth_dev->state !=  RTE_ETH_DEV_UNUSED) {
++		dpaa_eth_dev_close(eth_dev);
++		ret = rte_eth_dev_release_port(eth_dev);
++	}
+ 	dpaa_valid_dev--;
+-	if (!dpaa_valid_dev) {
++	if (!dpaa_valid_dev)
+ 		rte_mempool_free(dpaa_tx_sg_pool);
+-		dpaa_finish();
+-	}
++
+ 	return ret;
+ }
+ 
 -- 
 2.43.0
 
