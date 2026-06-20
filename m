@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B42CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Jun 2026 02:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF73CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Jun 2026 02:32:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AE7740611;
-	Sat, 20 Jun 2026 04:31:44 +0200 (CEST)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com
- [209.85.128.178])
- by mails.dpdk.org (Postfix) with ESMTP id 7199B4060C
- for <dev@dpdk.org>; Sat, 20 Jun 2026 04:31:41 +0200 (CEST)
-Received: by mail-yw1-f178.google.com with SMTP id
- 00721157ae682-7dd5a8dc8a2so20222317b3.0
- for <dev@dpdk.org>; Fri, 19 Jun 2026 19:31:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5DE574066E;
+	Sat, 20 Jun 2026 04:31:45 +0200 (CEST)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com
+ [209.85.128.181])
+ by mails.dpdk.org (Postfix) with ESMTP id EA6BE4025A
+ for <dev@dpdk.org>; Sat, 20 Jun 2026 04:31:42 +0200 (CEST)
+Received: by mail-yw1-f181.google.com with SMTP id
+ 00721157ae682-7fdbd0960b9so23159457b3.3
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 19:31:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781922701;
- x=1782527501; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781922702;
+ x=1782527502; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=l28ofkRJlxkvRH8FsGwDhU3UycbwfeVDOFSGQjuE/8Y=;
- b=iflx6kSJDaK7ANCaPsi5kHUNtOcHUtiLMLJyTR+2PxJsQllJ9tgJZJk5xwn2deVf0S
- IdqQlersizD9VuXbGaIWLO9oCTW8XLZycjHqIA8TExl5XooxSsqpSc/2ecAn7hJbI0fu
- cQCu5SJv6dcZjdOCSEZUfkz8eWqAGUF/06SrOoXiQfkimX8fqkbzWMa7yKMyOIoqunE5
- 7e3BgwWQpRhEueQl6lIhamzlw1ekH4XG8y1jwysDut0wZFnRC8PwP+uSJwRbQaxhU8wP
- lm9cI4cXZDNfNo2XfJfQlaJU7T8krcf71+WMNBKQtnl5rhfJr9ASAqyer/Osb3pyJ0T8
- YUrw==
+ bh=zFZDpG4eV0HCHZKgDiuGv3S4hmSfbHtRtepgmSaR2HI=;
+ b=nGlZ13nZKK/CJgUodeXFporsGXqxpzBLeWZWbOAbIq/Ka8R8Nhg0CzxW8YnHuIZh9l
+ zUCIVqApHR0MVtkdush4U2OaT7fkom413Ji+9dYWONQLD2hW09R3FzhTkQC5SbrF3wc4
+ AGtFJsDTt48GbQfVCjN9h++h/1Wd5XjSUPVcu/cxHb4MXDqmVly/JA8OxBKoF3vpV6CY
+ Uc+ZVVJEdSv3ko/Sw3DxG+vyop3soFjwJ2RV+Xnx0UEsCtboSZk0Zbeuix2aYfVuN00U
+ afDCYQxRT9HT37G8LpF4fXYGOEFtebjLnUDQNE/NgMrsO3rO7Kprqvc51BViXYkJEppj
+ CXbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781922701; x=1782527501;
+ d=1e100.net; s=20251104; t=1781922702; x=1782527502;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=l28ofkRJlxkvRH8FsGwDhU3UycbwfeVDOFSGQjuE/8Y=;
- b=MK5Oi+WH0mFb3s3oy4QOFfOPLPlKYxsHOLEwXGsoAbpfgWN9pYidAif1sKEvX6D4h1
- 5hMG8hT/YjGDVqxWmW7EaoP3KrS88W1p/uO1Ay4TAsa5OkplgY2IXVKCybP238BeQEhZ
- P0LxRLlwJHh/UmppeE7FlQqDLgWJ2MY4NRHGEd3J+tXbaDoXrRoX0mo47SWoJWg7Lh8y
- RoPLI4Pk2Mlg5J5tacCrHu7VqN0mgzPdEJGDWRUyrDsGIcJKhoEW3zbnMXUqcInawo89
- nhEkk8YyZrXMKInHlQA3jl6OLZCBGOa6XJg42mqAoCE1AQqahjrz/VCwpA2rUTuq10+5
- k2pw==
-X-Gm-Message-State: AOJu0YzIbY+mX6evbY4pjfhXUozf5L2k/0CzpQ5m6OzkaDWlYV6Jn/AV
- f4RFdHxQ0vlcEKCMW9Q9dut7joiV+tE1cS8UVj+1C9cTkzw/v1xUuPbyytTUwadzOowi/gGMMUJ
- EpwdH
-X-Gm-Gg: AfdE7cmr0ithUrpGnAgjlrm97XulqY1UhMVJX8rKI78//ItqC4Zl8knIldq8fq2OKXA
- GNzYBaDbjKEtzoKcPd/x4NH8j1/EIZdG6PfNx3UqvYro2pSQd0klPHGWIWvKWD4X91sGBUBnDHL
- hoG4vfhCXz52imekHyqkgSUjrx7oRBUESU5mllY8PISkf4UfONTXFYkGw3n6sFePotb59oXxlzg
- JZSbPnZFBPvFrgfOZebM8Z5yyGcTR8sp1YtWwT4AaXs4Y4ZZoS+8jBQ/RAILdGoesCj14MePWi7
- FQNo0L6MHt1BIsXzDbh2LRdMyAAIIxiXTn18x874thZsMjk5/lQg+GpNVUSYWXSZy4Cq0H6QBS0
- UCPk0BINJtLkULqgq2Vc5vfMdm5eMGvw3avjWLNMXnzB+OVRlv2SjBUsnWPT+JcGMKfHkZdoKkZ
- p/F36B2c641E5FbtruHt8ii1hsdJMY1yeBJiyolKhbjvBeNjZFOhE=
-X-Received: by 2002:a05:690c:6c8e:b0:7ff:83b:6ee6 with SMTP id
- 00721157ae682-8013237053fmr60514947b3.33.1781922700724; 
- Fri, 19 Jun 2026 19:31:40 -0700 (PDT)
+ bh=zFZDpG4eV0HCHZKgDiuGv3S4hmSfbHtRtepgmSaR2HI=;
+ b=sutt99lVg1l2YPF4ylv+/ZDZEdr3cRESh3xhw7Q2L9QSLiWTDm0I8eqYVD2CGsoKJ7
+ qqkHnvcR23zSuleG9zkhUTt+BigWh3TZmX7Jb4ELIQIMC1XUXtZGbC+LEqGTizZsGig6
+ opbdi1AKazk+MkLsC9MnKmTZWaviq2o7f+59lltKdOTfrDbDe7k+3js8KETa5ntpBpqx
+ Az/hRvUHFJCIead9w6CGt84c17iEYiYwmf8xKvsll8c+9IRtJ3zeE8eLymsK+T4IWO6B
+ 304BEp8oKImq1vw2mvLRob1XukRTXhPbPd6MVgmYLjaYGoKBcq+YZHP/X7HhDUoxTSPn
+ nLsw==
+X-Gm-Message-State: AOJu0Yy8YL+UxhxvzddcKqAk/9EKpLU1t0sROP/DBhGcHKGDAqOzcvpB
+ EOHewIP0oxo0aHQpIyuj81yFMXYZfS/ulOtIpZuI1ECekAg2k6YxtTbsyIjvQw0hwXkLzUzfcjv
+ UHts/
+X-Gm-Gg: AfdE7clpO9vGhWpaLVmIZaa/RhkV9UVIbjtjxDZatFc2TK3R0LJykExitlia9xYbc7F
+ EL5HR4IqjRD63yIx2QMh7tX2cxXd5m9nNM6WEdhp4ysJNJtOIszuT+NEK+dPyzHTkQU1cFep65u
+ MeMbL1CZYyQdu9ucmVkNbEbOviH0VixHVQ7u3IF956Y8FaFnpo1Hgks2zS2TjLY57o99EuAUm4q
+ QinGf6LnwTwqS+8xgr9Q8GIQehnUiRVfyb2Y6Q0b3rapqzZGRRAFIYTHMsJUyg/QHj4yX2etma+
+ Ot5Ai5vwsyLHYI2h3ar3prF8tONxRY5CT6hg9/PKcpetInMWfUnwzWXLPFMx1x3xRUmydTsvh0r
+ t208luQu9TmxJq+ax+QAcmiiZkaoDwD5fwh4rAXY/3nCb86HRTgd7dw3GrC/DEzza9EALX3F8IO
+ rzVyVTxm81uVcGq/8kyfxXaQLSeqF99dFjGGCLW/zoDE+eOyB9zJI=
+X-Received: by 2002:a05:690c:a87:b0:7ec:59e7:459d with SMTP id
+ 00721157ae682-8013833ccc3mr64282097b3.37.1781922702243; 
+ Fri, 19 Jun 2026 19:31:42 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 00721157ae682-8025c96ffd5sm6045897b3.9.2026.06.19.19.31.39
+ 00721157ae682-8025c96ffd5sm6045897b3.9.2026.06.19.19.31.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 19 Jun 2026 19:31:40 -0700 (PDT)
+ Fri, 19 Jun 2026 19:31:41 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>
-Subject: [PATCH v5 02/24] net/bonding: use stdatomic
-Date: Fri, 19 Jun 2026 19:28:27 -0700
-Message-ID: <20260620023134.42877-3-stephen@networkplumber.org>
+ Dimon Zhao <dimon.zhao@nebula-matrix.com>,
+ Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: [PATCH v5 03/24] net/nbl: remove unused rte_atomic16 field
+Date: Fri, 19 Jun 2026 19:28:28 -0700
+Message-ID: <20260620023134.42877-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260620023134.42877-1-stephen@networkplumber.org>
 References: <https://inbox.dpdk.org/dev/20260521042043.1590536-1-stephen@networkplumber.org>
@@ -83,129 +84,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The old rte_atomic16 and rte_atomic64 functions are deprecated.
-Replace with rte_stdatomic for managing warning and timer flags.
+The tx_current_queue was defined as rte_atomic16_t which
+is deprecated. Remove it since it was never used.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/bonding/eth_bond_8023ad_private.h |  6 ++--
- drivers/net/bonding/rte_eth_bond_8023ad.c     | 35 ++++++++-----------
- 2 files changed, 17 insertions(+), 24 deletions(-)
+ drivers/net/nbl/nbl_hw/nbl_resource.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/bonding/eth_bond_8023ad_private.h b/drivers/net/bonding/eth_bond_8023ad_private.h
-index ab7d15f81a..dd3cf3ed26 100644
---- a/drivers/net/bonding/eth_bond_8023ad_private.h
-+++ b/drivers/net/bonding/eth_bond_8023ad_private.h
-@@ -9,7 +9,7 @@
+diff --git a/drivers/net/nbl/nbl_hw/nbl_resource.h b/drivers/net/nbl/nbl_hw/nbl_resource.h
+index bf5a9461f5..f2182ba6bc 100644
+--- a/drivers/net/nbl/nbl_hw/nbl_resource.h
++++ b/drivers/net/nbl/nbl_hw/nbl_resource.h
+@@ -225,7 +225,6 @@ struct nbl_res_info {
+ 	u16 base_qid;
+ 	u16 lcore_max;
+ 	u16 *pf_qid_to_lcore_id;
+-	rte_atomic16_t tx_current_queue;
+ };
  
- #include <rte_ether.h>
- #include <rte_byteorder.h>
--#include <rte_atomic.h>
-+#include <rte_stdatomic.h>
- #include <rte_flow.h>
- 
- #include "rte_eth_bond_8023ad.h"
-@@ -140,10 +140,10 @@ struct port {
- 	/** Timer which is also used as mutex. If is 0 (not running) RX marker
- 	 * packet might be responded. Otherwise shall be dropped. It is zeroed in
- 	 * mode 4 callback function after expire. */
--	volatile uint64_t rx_marker_timer;
-+	RTE_ATOMIC(uint64_t) rx_marker_timer;
- 
- 	uint64_t warning_timer;
--	volatile uint16_t warnings_to_show;
-+	RTE_ATOMIC(uint16_t) warnings_to_show;
- 
- 	/** Memory pool used to allocate slow queues */
- 	struct rte_mempool *slow_pool;
-diff --git a/drivers/net/bonding/rte_eth_bond_8023ad.c b/drivers/net/bonding/rte_eth_bond_8023ad.c
-index ba88f6d261..cc7e4af2b9 100644
---- a/drivers/net/bonding/rte_eth_bond_8023ad.c
-+++ b/drivers/net/bonding/rte_eth_bond_8023ad.c
-@@ -171,27 +171,17 @@ timer_is_running(uint64_t *timer)
- static void
- set_warning_flags(struct port *port, uint16_t flags)
- {
--	int retval;
--	uint16_t old;
--	uint16_t new_flag = 0;
--
--	do {
--		old = port->warnings_to_show;
--		new_flag = old | flags;
--		retval = rte_atomic16_cmpset(&port->warnings_to_show, old, new_flag);
--	} while (unlikely(retval == 0));
-+	rte_atomic_fetch_or_explicit(&port->warnings_to_show, flags, rte_memory_order_relaxed);
- }
- 
- static void
- show_warnings(uint16_t member_id)
- {
- 	struct port *port = &bond_mode_8023ad_ports[member_id];
--	uint8_t warnings;
--
--	do {
--		warnings = port->warnings_to_show;
--	} while (rte_atomic16_cmpset(&port->warnings_to_show, warnings, 0) == 0);
-+	uint16_t warnings;
- 
-+	warnings = rte_atomic_exchange_explicit(&port->warnings_to_show, 0,
-+						rte_memory_order_relaxed);
- 	if (!warnings)
- 		return;
- 
-@@ -1337,7 +1327,6 @@ bond_mode_8023ad_handle_slow_pkt(struct bond_dev_private *internals,
- 	struct port *port = &bond_mode_8023ad_ports[member_id];
- 	struct marker_header *m_hdr;
- 	uint64_t marker_timer, old_marker_timer;
--	int retval;
- 	uint8_t wrn, subtype;
- 	/* If packet is a marker, we send response now by reusing given packet
- 	 * and update only source MAC, destination MAC is multicast so don't
-@@ -1354,17 +1343,19 @@ bond_mode_8023ad_handle_slow_pkt(struct bond_dev_private *internals,
- 		}
- 
- 		/* Setup marker timer. Do it in loop in case concurrent access. */
-+		old_marker_timer = rte_atomic_load_explicit(&port->rx_marker_timer,
-+							    rte_memory_order_relaxed);
- 		do {
--			old_marker_timer = port->rx_marker_timer;
- 			if (!timer_is_expired(&old_marker_timer)) {
- 				wrn = WRN_RX_MARKER_TO_FAST;
- 				goto free_out;
- 			}
- 
- 			timer_set(&marker_timer, mode4->rx_marker_timeout);
--			retval = rte_atomic64_cmpset(&port->rx_marker_timer,
--				old_marker_timer, marker_timer);
--		} while (unlikely(retval == 0));
-+
-+		} while (!rte_atomic_compare_exchange_weak_explicit(&port->rx_marker_timer,
-+					&old_marker_timer, marker_timer,
-+					rte_memory_order_seq_cst, rte_memory_order_relaxed));
- 
- 		m_hdr->marker.tlv_type_marker = MARKER_TLV_TYPE_RESP;
- 		rte_eth_macaddr_get(member_id, &m_hdr->eth_hdr.src_addr);
-@@ -1372,7 +1363,8 @@ bond_mode_8023ad_handle_slow_pkt(struct bond_dev_private *internals,
- 		if (internals->mode4.dedicated_queues.enabled == 0) {
- 			if (rte_ring_enqueue(port->tx_ring, pkt) != 0) {
- 				/* reset timer */
--				port->rx_marker_timer = 0;
-+				rte_atomic_store_explicit(&port->rx_marker_timer, 0,
-+							  rte_memory_order_release);
- 				wrn = WRN_TX_QUEUE_FULL;
- 				goto free_out;
- 			}
-@@ -1386,7 +1378,8 @@ bond_mode_8023ad_handle_slow_pkt(struct bond_dev_private *internals,
- 					&pkt, tx_count);
- 			if (tx_count != 1) {
- 				/* reset timer */
--				port->rx_marker_timer = 0;
-+				rte_atomic_store_explicit(&port->rx_marker_timer, 0,
-+							  rte_memory_order_release);
- 				wrn = WRN_TX_QUEUE_FULL;
- 				goto free_out;
- 			}
+ struct nbl_resource_mgt {
 -- 
 2.53.0
 
