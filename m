@@ -2,69 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4EECD98F2
-	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Jun 2026 02:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13680CD98F8
+	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Jun 2026 02:31:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1C5374027F;
-	Sat, 20 Jun 2026 04:31:40 +0200 (CEST)
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com
- [74.125.224.44]) by mails.dpdk.org (Postfix) with ESMTP id 3747D4025A
- for <dev@dpdk.org>; Sat, 20 Jun 2026 04:31:39 +0200 (CEST)
-Received: by mail-yx1-f44.google.com with SMTP id
- 956f58d0204a3-663167a3ba2so204381d50.3
- for <dev@dpdk.org>; Fri, 19 Jun 2026 19:31:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 163BA402B6;
+	Sat, 20 Jun 2026 04:31:41 +0200 (CEST)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com
+ [209.85.128.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 31F6C4028D
+ for <dev@dpdk.org>; Sat, 20 Jun 2026 04:31:40 +0200 (CEST)
+Received: by mail-yw1-f182.google.com with SMTP id
+ 00721157ae682-7e2fd65f968so27970187b3.3
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 19:31:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781922698;
- x=1782527498; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781922699;
+ x=1782527499; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JZD9V63lI5oeC9QKeYbgVKNAJdMIDLHXN4hWVgUMHME=;
- b=t6eOlc9b7LIeECYlwiBSxXIl+jboUN+d2qCGTRo7syFfwjYHRu6Bqhjzq7nqixK8UH
- Eev+wRHcALFvtgIcRZOjw6vG+MGLWY/6c11hyWkGHX+rNtQdUEmC2NPPSbzbMIymwrKd
- wj8KO4wIqSliVkar308ZIyvlfq4zAqI8WPwi0i6HecNS19YaucENERCCkiYSZQN49H+B
- NaGB0sWsLwnx3W/QwyZxrMgEdu7gHP2728uoF7gWUbplBeIgHjrlUuB97AwdinANIk/q
- PGcPhfMZxaSrYYJyspKeOdb15FZBihiH7xDuRTnxJcCj3MgRhjYyUzdYa1qzw+tzhQT5
- h2Pw==
+ bh=X1xHU9v/QTwgUnGZ5ALW+IdIfjG5Q9Eu1G3hYhO0PVs=;
+ b=uvMcBm/980ZIF2Fx92BfZV3TSuLDXXrGRsoHP5q5M0ve8tQdUpvWuWjhbjFEIcTcPj
+ t+ERRVhy7koPayS4rt+Q72BKiC/vsHFL9GLPEXp/Abuh4+gTyzB8w1ILR96pWbCbNCcJ
+ eWOnj58HbFx4/BHvSlqUYKbmdtEN6kRlATg13jZA9Yk6lCjXXI9jswNr1ya1NX5na3lh
+ 84U1fv2P2OOIDPBjbhYhf12l7v+rXYC2WXo6N7IRVxyR+kLcpYcmdmnT9D+f84PPzTNN
+ 2XA3UvM7owMu374gLKpb1uUF5kMrLB6dHCXE96762IW4VxL0LQzvEOAu8RRPVYbxHLBE
+ 3ZwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781922698; x=1782527498;
+ d=1e100.net; s=20251104; t=1781922699; x=1782527499;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=JZD9V63lI5oeC9QKeYbgVKNAJdMIDLHXN4hWVgUMHME=;
- b=Vs+sFBAWz4DqawidtQ71p+v4e2HRPMstbMLhI8m//3RBlX5f1OinYUNkqq6ZCxsLd4
- L9bNjRaitZxlGpIQxay1zhSRNkbtL6fDvHInWtjASVxqr0b4olPRyNdZwgQGzCdky3Iv
- RX5sVK3AhdGJg4h1tIrwq9bWtIeiACI+BAKY4Qh0PuXR3BS2WiamLHtGq5H9g+DWV+Lp
- fyjbnZcr1E5OyF6sUEvpvfiCxp/zDOownYQFrOB6txE7MuzpSOua/TMqGG2PEu63zA9x
- gMjr41Ut1Qb7eInJcT5bOlHHEY8Sgrad7EXPt4BHeWHJT7caabpbyhejroWPYNlrLygF
- 9TqQ==
-X-Gm-Message-State: AOJu0Yz0Ff1h4mGJ4h8CnlLR5C+J7DgJ5qQSGTo0GqGHBAMMgOU78y9L
- NP8l5nqZGgX9kprkk40zT7R3z2xiyew+Kg7/AycmvvPXjV4wL0WzHpnsiinKBec/rjg8MrHhmN0
- CXrwa
-X-Gm-Gg: AfdE7cnpAYkSqwPpDzdofOWCCBIFIRJklseSEwrn6B2NoT6ORQpE7qtwTzHzaHxPLBA
- orIb7N7zbaSkEjCExy4UnCpsDIuy+g806e4S/n9URBMKJPYFCcfSTvzOpxlX1A958W+cpqDx9Zm
- HNzc8e2wpjIjC3DE/gT794N3R+PR1eTgATxv3NQ80xnsDezyWQspeqdtJCQ0zGkdTZK1QuOcw2n
- NMms+NCeLVGp8wQiiynnKVeWxULI/+ooQ9AXUy81m/jbI62A9QIyMjCfyn5nJQVnQ1EBCcZPejB
- 9mjrFLG82RDmGEBn6gIxD/JGSG/Phl6hATDYmW3OrAlWnocNiP5A4M7BoOOVbBS2MKCVZUpsSH8
- Jd0XxDTmclcTZ8KvAqMRegcj3EP26WUH4oo/rsTMLV6N9IEmPvox1QhvNCAMhi47OJz7sg0xbAj
- bW0QV8IOpJE+wtJ/jaJQLb9MLa3UeV6qhZtj+/SxikfCLGXJkg2JU=
-X-Received: by 2002:a05:690e:1518:b0:660:9441:9e71 with SMTP id
- 956f58d0204a3-662ffed6ef0mr6339969d50.37.1781922698035; 
- Fri, 19 Jun 2026 19:31:38 -0700 (PDT)
+ bh=X1xHU9v/QTwgUnGZ5ALW+IdIfjG5Q9Eu1G3hYhO0PVs=;
+ b=ouurRxNBkXq0roATW1ez/5JbpmMGF3+aI+tU7uOcpkQR7a8gLfSWynp3Kc2B7+5Mj8
+ PumSPC/qzoBQlPHcBFAOgsxZI3TrxSw6jWV5hYxuRMhT4tkGaIycoe9Mpp3oWbRzrH07
+ awoG5PMnReH/V2yf2wUnGYZuzWW6+nQX02hIa8eGt5AjaHmL8FhhPTCCMPB5fAq0GFD4
+ qJ1FIrOq0OlXDr3IA7X5Be8kBL9A0UVFaZDxdIPegi7Fi7g0R8YwsUu1dJk0QUEfN28/
+ 9Nwt2w6v1zTk+6DR5hXfgMgdwz0c2wKhyrL2gPMNs1EE0IHlMmXaxLkDfyVfDuJJUeT8
+ 3Hpw==
+X-Gm-Message-State: AOJu0YwaTowGbPTLMkBUnc2iTiah4ynwogNLUMo2sWTQA8j5npqSGIDy
+ cL7UNQfiwOc6WFpd60VHtoBJ59XQ6qiFJu0z/NQ3GRgrXt6AIFQBrQpqddw0Ux9pp7jcrIBLrJz
+ OZlh1
+X-Gm-Gg: AfdE7ckX/Spq2GpiM8yQneTTgWqoUTNr1ERkvDiRntE2cIcFdG4JwJetnYzU9ZOvu1U
+ 6twhoLTWg2ULa7R0dWgoxa/oDXuBEMZB62KHNW2X0D62ph7u5ltVyeWiQ+6T+dteOLPuGY6aPd0
+ EnsXY/ipGeL46PGqZHocq2DJr5Br+FWbSYCyikvVCRBmvhFoucS5C5Noclq3yLLHYBpwK4EWCed
+ JmmID3jnUb2i+8BvkuSYcXcC5AT5bgtDHeUKopT88g0MY+6H9LObW40b7xtZ/1A6IDrWUnt5EP4
+ T+Yzafda70F2H0/x2j5cXElfCGLtj6bRqDc+nKJQZFKu56Lscp3hKZy4MmNBpIcYlMOlr69U92U
+ fsWv4ED0UQaEuK9n1Vk7Wd5tbWy5lDOxcadFQQsY7UvN7r0ZBDwdOzOXMLL1npAis+1aCm015Ok
+ eXqB7lwqEf0rcjhP8exSipcOFiac6BLzQBgwIRnOia9QiSNhxaJTc=
+X-Received: by 2002:a05:690c:d08:b0:7fe:1ab5:89f1 with SMTP id
+ 00721157ae682-802661640a6mr24907947b3.25.1781922699313; 
+ Fri, 19 Jun 2026 19:31:39 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 00721157ae682-8025c96ffd5sm6045897b3.9.2026.06.19.19.31.36
+ 00721157ae682-8025c96ffd5sm6045897b3.9.2026.06.19.19.31.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 19 Jun 2026 19:31:37 -0700 (PDT)
+ Fri, 19 Jun 2026 19:31:38 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 00/24] deprecate rte_atomic functions
-Date: Fri, 19 Jun 2026 19:28:25 -0700
-Message-ID: <20260620023134.42877-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Marat Khalili <marat.khalili@huawei.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v5 01/24] bpf: use C11 atomics in BPF_ST_ATOMIC_REG
+Date: Fri, 19 Jun 2026 19:28:26 -0700
+Message-ID: <20260620023134.42877-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <https://inbox.dpdk.org/dev/20260521042043.1590536-1-stephen@networkplumber.org>
+In-Reply-To: <20260620023134.42877-1-stephen@networkplumber.org>
 References: <https://inbox.dpdk.org/dev/20260521042043.1590536-1-stephen@networkplumber.org>
+ <20260620023134.42877-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,116 +84,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_atomicNN_* family was flagged for deprecation in 2021 by
-commit 3ec965b6de12 ("doc: update atomic operation deprecation")
-but enforcement never landed and in-tree usage continued to grow.
+The BPF_ST_ATOMIC_REG macro generated code with deprecated
+rte_atomicNN_add and rte_atomicNN_exchange.
 
-This series finishes converting every remaining in-tree caller to
-the C11-style rte_atomic_*_explicit() / RTE_ATOMIC() API, then
-marks the legacy functions __rte_deprecated so future in-tree and
-out-of-tree uses are caught at compile time.
+Replace this with the equivalent rte_stdatomic definitions.
+Use memory order seq_cst to preserve the previous behavior of
+rte_atomicNN_add() / rte_atomicNN_exchange() and matches
+the Linux kernel BPF interpreter for these opcodes.
 
-The goal of this series is to get driver writers to review and
-test each change.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Reviewed-by: Marat Khalili <marat.khalili@huawei.com>
+---
+ lib/bpf/bpf_exec.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-v5 - rebase now that ring changes are merged.
-   - drop the barrier (rte_smp_mb) patch not required.
-
-
-Stephen Hemminger (24):
-  bpf: use C11 atomics in BPF_ST_ATOMIC_REG
-  net/bonding: use stdatomic
-  net/nbl: remove unused rte_atomic16 field
-  net/ena: replace use of rte_atomicNN
-  net/failsafe: convert to stdatomic
-  net/enic: do not use deprecated rte_atomic64
-  net/pfe: use ethdev linkstatus helpers
-  net/sfc: replace rte_atomic with stdatomic
-  crypto/ccp: replace use of rte_atomic64 with stdatomic
-  bus/dpaa: replace rte_atomic16 with stdatomic
-  drivers: replace rte_atomic16 with stdatomic
-  net/netvsc: replace rte_atomic32 with stdatomic
-  event/sw: convert from rte_atomic32 to stdatomic
-  bus/vmbus: convert from rte_atomic to stdatomic
-  common/dpaax: use stdatomic instead of rte_atomic
-  net/bnx2x: convert from rte_atomic32 to stdatomic
-  bus/fslmc: replace rte_atomic32 with stdatomic
-  drivers/event: replace rte_atomic32 in selftests
-  net/hinic: replace rte_atomic32 with stdatomic
-  net/txgbe: replace rte_atomic32 with stdatomic
-  net/vhost: use stdatomic instead of rte_atomic32
-  vdpa/ifc: replace rte_atomic32 with stdatomic
-  test/atomic: suppress deprecation warnings for legacy APIs
-  eal: deprecate rte_atomicNN functions
-
- app/test/test_atomic.c                        |  12 +
- devtools/checkpatches.sh                      |   8 -
- doc/guides/rel_notes/deprecation.rst          |   4 +-
- doc/guides/rel_notes/release_26_07.rst        |   5 +
- drivers/bus/dpaa/base/qbman/qman.c            |   9 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c      |  10 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dpci.c      |  10 +-
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  12 +-
- drivers/bus/fslmc/portal/dpaa2_hw_pvt.h       |   8 +-
- drivers/bus/fslmc/qbman/include/compat.h      |  21 +-
- drivers/bus/vmbus/private.h                   |   2 +-
- drivers/bus/vmbus/vmbus_bufring.c             |  39 +--
- drivers/common/dpaax/compat.h                 |  21 +-
- drivers/crypto/ccp/ccp_crypto.c               |  11 +-
- drivers/crypto/ccp/ccp_crypto.h               |   2 +-
- drivers/crypto/ccp/ccp_dev.c                  |  10 +-
- drivers/crypto/ccp/ccp_dev.h                  |   4 +-
- drivers/event/dpaa2/dpaa2_eventdev_selftest.c |  26 +-
- drivers/event/dpaa2/dpaa2_hw_dpcon.c          |  11 +-
- drivers/event/octeontx/ssovf_evdev_selftest.c |  61 +++--
- drivers/event/sw/sw_evdev.c                   |   8 +-
- drivers/event/sw/sw_evdev.h                   |   4 +-
- drivers/event/sw/sw_evdev_worker.c            |  16 +-
- drivers/net/bnx2x/bnx2x.c                     |   6 +-
- drivers/net/bnx2x/bnx2x.h                     |   2 +-
- drivers/net/bnx2x/ecore_sp.c                  |   6 +-
- drivers/net/bonding/eth_bond_8023ad_private.h |   6 +-
- drivers/net/bonding/rte_eth_bond_8023ad.c     |  35 +--
- drivers/net/ena/base/ena_plat_dpdk.h          |  14 +-
- drivers/net/ena/ena_ethdev.c                  |  21 +-
- drivers/net/ena/ena_ethdev.h                  |   7 +-
- drivers/net/enic/enic.h                       |   6 +-
- drivers/net/enic/enic_compat.h                |   1 -
- drivers/net/enic/enic_main.c                  |  17 +-
- drivers/net/enic/enic_rxtx.c                  |  14 +-
- drivers/net/enic/enic_rxtx_vec_avx2.c         |   4 +-
- drivers/net/failsafe/failsafe_ops.c           |  12 +-
- drivers/net/failsafe/failsafe_private.h       |  29 ++-
- drivers/net/failsafe/failsafe_rxtx.c          |   2 +-
- drivers/net/hinic/base/hinic_compat.h         |   2 +-
- drivers/net/hinic/base/hinic_pmd_hwdev.c      |  24 +-
- drivers/net/hinic/base/hinic_pmd_hwdev.h      |   4 +-
- drivers/net/nbl/nbl_hw/nbl_resource.h         |   1 -
- drivers/net/netvsc/hn_rndis.c                 |  28 +-
- drivers/net/netvsc/hn_rxtx.c                  |  12 +-
- drivers/net/netvsc/hn_var.h                   |   6 +-
- drivers/net/pfe/pfe_ethdev.c                  |  32 +--
- drivers/net/sfc/sfc.c                         |   9 +-
- drivers/net/sfc/sfc.h                         |   4 +-
- drivers/net/sfc/sfc_port.c                    |   7 +-
- drivers/net/sfc/sfc_stats.h                   |   2 +-
- drivers/net/txgbe/base/txgbe_mng.c            |   4 +-
- drivers/net/txgbe/base/txgbe_type.h           |   2 +-
- drivers/net/vhost/rte_eth_vhost.c             | 103 +++++---
- drivers/vdpa/ifc/ifcvf_vdpa.c                 |  37 +--
- lib/bpf/bpf_exec.c                            |  13 +-
- lib/eal/arm/include/rte_atomic_32.h           |   4 -
- lib/eal/arm/include/rte_atomic_64.h           |   4 -
- lib/eal/include/generic/rte_atomic.h          | 243 +++++-------------
- lib/eal/include/rte_common.h                  |   2 +
- lib/eal/loongarch/include/rte_atomic.h        |   4 -
- lib/eal/ppc/include/rte_atomic.h              | 173 -------------
- lib/eal/riscv/include/rte_atomic.h            |   4 -
- lib/eal/x86/include/rte_atomic.h              | 172 -------------
- lib/eal/x86/include/rte_atomic_32.h           | 188 --------------
- lib/eal/x86/include/rte_atomic_64.h           | 157 -----------
- 66 files changed, 472 insertions(+), 1265 deletions(-)
-
+diff --git a/lib/bpf/bpf_exec.c b/lib/bpf/bpf_exec.c
+index 18013753b1..ee6ec7516f 100644
+--- a/lib/bpf/bpf_exec.c
++++ b/lib/bpf/bpf_exec.c
+@@ -10,6 +10,7 @@
+ #include <rte_log.h>
+ #include <rte_debug.h>
+ #include <rte_byteorder.h>
++#include <rte_stdatomic.h>
+ 
+ #include "bpf_impl.h"
+ 
+@@ -65,16 +66,16 @@
+ 		(type)(reg)[(ins)->src_reg])
+ 
+ #define BPF_ST_ATOMIC_REG(reg, ins, tp)	do { \
++	RTE_ATOMIC(uint##tp##_t) *dst = (RTE_ATOMIC(uint##tp##_t) *) \
++		(uintptr_t)((reg)[(ins)->dst_reg] + (ins)->off); \
+ 	switch (ins->imm) { \
+ 	case BPF_ATOMIC_ADD: \
+-		rte_atomic##tp##_add((rte_atomic##tp##_t *) \
+-			(uintptr_t)((reg)[(ins)->dst_reg] + (ins)->off), \
+-			(reg)[(ins)->src_reg]); \
++		rte_atomic_fetch_add_explicit(dst, \
++			(reg)[(ins)->src_reg], rte_memory_order_seq_cst); \
+ 		break; \
+ 	case BPF_ATOMIC_XCHG: \
+-		(reg)[(ins)->src_reg] = rte_atomic##tp##_exchange((uint##tp##_t *) \
+-			(uintptr_t)((reg)[(ins)->dst_reg] + (ins)->off), \
+-			(reg)[(ins)->src_reg]); \
++		(reg)[(ins)->src_reg] = rte_atomic_exchange_explicit(dst, \
++			(reg)[(ins)->src_reg], rte_memory_order_seq_cst); \
+ 		break; \
+ 	default: \
+ 		/* this should be caught by validator and never reach here */ \
 -- 
 2.53.0
 
