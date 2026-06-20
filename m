@@ -2,126 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0204ACD98F6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Jun 2026 22:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4EECD98F2
+	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Jun 2026 02:31:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8FD84028D;
-	Sat, 20 Jun 2026 00:05:13 +0200 (CEST)
-Received: from DM5PR21CU001.outbound.protection.outlook.com
- (mail-centralusazon11021080.outbound.protection.outlook.com [52.101.62.80])
- by mails.dpdk.org (Postfix) with ESMTP id 829AC4028A
- for <dev@dpdk.org>; Sat, 20 Jun 2026 00:05:12 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ksGVWUg6RNAX5zAD8OhOFhkM2AP3QymO+uXzdgpDk0xY2N4edVPMRdoXaaBd98+aLcvPBZ7MlVTU2wHtKJ5mVRiahvTMEKi3oftQ1q7N26a7WT3sWGjXNzpMOxbyURp8OoICBg74DB4OzlcBVlYsnHFsCFwKO2XBjOoqKRWZGhuGW0P6V2RefNNFurREHw4/1DX791/Mboixw3KOKuOJfBmyU/T0xIdA+dkCPsB48w0ZzLXxzboe2HmhXgHEj+TTdfdpBRDwFsKkMBy/UWMNVxqAnACJQjfkT2xX8uwLuZB9c27Mf+0d/AdLSs+4F9SlSgjrKJf9tkBVjWtcUxwIHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GvWSpxnmUR+L9Bw6uPVaKTiuZ/andGzAJM+77RnzdeU=;
- b=N7FlS/eU1XfeeT1OYd07Dm3o+OqyTZkA/aUCFRaO3aKiY+nqSDYFNxTwloYt40vZ+P+zWR2Xd8AcbZqsLNwZ+9qDPaqrAhZsa2G/AZNygzcPZ/3fEXVlPr3+OFPkWouYI+yQI6OBomJv8z+r9aKGYqp0brEx5U/wzQo6+BGK5vYYauJxvlP/b6zumxGFKwlQbMMKw9CCp1SFiI0qxr23WT4vIdqBvVy6u3Sm/U5G3P20B394wEoLSXr2VjqOz9CMB9D2RNbIlCcTMYKVbtoQHpE0gF+DYU/BAc4gJAjd9OzGv1foLY5BRpfA5sr8K6GeFurxE82EpD//AB+khqq/TA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GvWSpxnmUR+L9Bw6uPVaKTiuZ/andGzAJM+77RnzdeU=;
- b=S+o9F+PWM1xrf+bukO2QTm/7+Ch7M+10t6tlYeEUMFRktm7u2WAkPeaLxpVqk+cV6rDhFbyHWXM1bn7DSKw6QnYRbkQLwpnQlKP6lD403zeyJ/opwXYhsLnPnnwaw6tEEU1LPNnaXD+4mjcTleD+/eMo/g2WVMU3LXaH8INRS/0=
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com (2603:10b6:806:4a4::6)
- by SA1PR21MB6584.namprd21.prod.outlook.com (2603:10b6:806:4a3::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.9; Fri, 19 Jun
- 2026 22:05:09 +0000
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::8bad:6294:8a07:fe18]) by SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::8bad:6294:8a07:fe18%3]) with mapi id 15.21.0159.007; Fri, 19 Jun 2026
- 22:05:09 +0000
-From: Long Li <longli@microsoft.com>
-To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "thomas@monjalon.net" <thomas@monjalon.net>, "stephen@networkplumber.org"
- <stephen@networkplumber.org>, "bruce.richardson@intel.com"
- <bruce.richardson@intel.com>, "fengchengwen@huawei.com"
- <fengchengwen@huawei.com>, "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>, 
- Wei Hu <weh@microsoft.com>
-Subject: RE: [EXTERNAL] [PATCH v2 06/10] bus/vmbus: allocate interrupt during
- probing
-Thread-Topic: [EXTERNAL] [PATCH v2 06/10] bus/vmbus: allocate interrupt during
- probing
-Thread-Index: AQHc/zc3GvLaq1EISk+svgz0huw8tbZGcNeQ
-Date: Fri, 19 Jun 2026 22:05:09 +0000
-Message-ID: <SA1PR21MB66832AADF4D9CB5E99A63B75CEE22@SA1PR21MB6683.namprd21.prod.outlook.com>
-References: <20260611094551.1514962-1-david.marchand@redhat.com>
- <20260618152826.490569-1-david.marchand@redhat.com>
- <20260618152826.490569-7-david.marchand@redhat.com>
-In-Reply-To: <20260618152826.490569-7-david.marchand@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=6abb68a5-e0b1-4bab-8ac7-2437e1c17e3d;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-06-19T22:04:44Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|SA1PR21MB6584:EE_
-x-ms-office365-filtering-correlation-id: 96ceb277-bfbd-4c6a-3ea0-08dece4ed402
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|23010399003|366016|4143699003|56012099006|11063799006|18002099003|22082099003|38070700021;
-x-microsoft-antispam-message-info: zVFgK1QzLe+QAXqH8WmrfmTlnvVcPS/q2D9qLPBCd/XG1uE2BsBw0jF3lT3qmgHKdXhchA3MYg7K78Ly9vFJG6NNxskszOlFhM9b3PyqPOQ+MBESZfbpX00PByJRdvo87ADUt/H49TC84fu2cQKmEuwjCMZSvkrrp5xRuSKFiOqdGbYtdvD7H52/RarXgqwE0JlDplGgmI2y4v/qujtohF2kNLrSfgSVqrKayUfl2x/pOtSXgVUJDWDFi6+aQg5MP59is3A3O7OVIhhJRQW7Pf2vhAp0Sg3SwjHdfxd9QeohIfnteLMwPSZiSb3zvz7Pao/WU+7Lt7fxn1DC0DE2p2yU6PHacO8IFbktma0hxFfGCdI1Gj90fbt/0waJ0GjwORmW3tPEd5GFPMcMX6hMpe7NzmPcw7SdgeA4seF5Q7wF2chPVavLrIRkyNXJps+7GLdcBRLlqX/S99xzlKKJmRRo3LwO0/RzNxeTIfPZzs8Da2+ThM8Ho2GhzRClLRdqZTGkEBiZ5RAiMyKvezLJs0kKGk5mfQxWu2tKB8fbbSKWxMP06ee/MSgnpWyFBQZn+37Ui8BQh9TC/Uhs4yNhRQH73bau72XFsPtQmmpWGRkRp2rvHb3zEmOu3AAH2uAyUhNxmgM2QvCwsWgXJmvzm1A9XucZ+6lT4H3X1i6idpqSj2Yc8WVvwJB294U3pfiRyiUnlEeNl1I3z8cPnSBWXOImknYQtDIvoXdVAUDyrJE=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SA1PR21MB6683.namprd21.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(4143699003)(56012099006)(11063799006)(18002099003)(22082099003)(38070700021);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?D/Prpx7z6b510syYntQ7ufWTdWV3OzbsxmNUOlZaskpMAL2d4HahBcLRbQEG?=
- =?us-ascii?Q?qnyUk2OoQa2MFptGsUfac15Z1h/+SEg1MDCfchogQrfQfY6fQiCAo7iA3U7Y?=
- =?us-ascii?Q?yjTqPdvKNcttRhAS4yLhUfHdjLpNMvvR5moADqHL4fWtfDW1mMaObUw9togV?=
- =?us-ascii?Q?I86dwWGHE0h7aakIuSqkseLOse6IAvNqhAeWmABMSXwK9FcRIUhNrkM+yxCQ?=
- =?us-ascii?Q?9S4tNTe88ICJNc8vG6LQhKuYOkj35rDCgb/b+vJyW1v0Cf83yyCH00sd3XzH?=
- =?us-ascii?Q?J/PK8Phh5z6vYHJ7qVfIBgo+Cz8DZjQ+Qe974k8wi1lMIGYGQ1va2DsBnYGS?=
- =?us-ascii?Q?Ryo8ClYPOlHe/tNbVDLhgupH5dMMGpeFn5sLPS77O58eW6SJXEXpJAmjPJRQ?=
- =?us-ascii?Q?f3+Op5CZWHKbg11abu8w1DbO8H7CxNb6cgSCNSsyuxb0KrqfcGqHAAnD6XGp?=
- =?us-ascii?Q?MOB/MAsTOcnEuLgvv7BnhnDzbqk+s4jg0lTZGPdeC0kBRO+/1OqYFyRoiF5k?=
- =?us-ascii?Q?Tsdiz5XrjFxwOA3HjY/b3j3Z/8QMfi+EClMfLINKL6wgKex4qNzx2StEcKjM?=
- =?us-ascii?Q?D4mApoL1YFodoIYv+Pb2XxOqjJUBK5K62PSn6L1kYCgvmsPete3OmtjoLdrI?=
- =?us-ascii?Q?hjWhO9yEedQNsDEpREEmc6z/2THqVJlCHvthTQS/wJWD3ESLZadZvi4s4yoO?=
- =?us-ascii?Q?itv9EPe+jhmsZf2rZpPA5+zEFFoU+nge5UtJVU9u0QATeMWi8Fp6eAKc0q/k?=
- =?us-ascii?Q?cYQJbAL8CmJcMRXFBVl5QmQNLaJBHGrzVbkfmEboJuzA6QU2CeGsUmIQ7VBM?=
- =?us-ascii?Q?DDJeYlNPZZ6QrGyQfV3PeDB0z/z2hGSgXMDkvOtLL15rKFDeuWxyAJ05x27g?=
- =?us-ascii?Q?Gt+dvMuRj9JiY0DOrSbpYDYNnZ7VQL4vDCex492ijqWMTenHRs8r9TCWB0pq?=
- =?us-ascii?Q?/G2ZPRqMeqk8PO5avU6loYcC2j+JkjhPjRfxQcrJSnnaT3YuTKr9xAztmrty?=
- =?us-ascii?Q?pzx2uD9SLcOOZFHso+vZ4thZimL5I7ijvANRqVEsvBQ34hdFmsh6oJN83kqS?=
- =?us-ascii?Q?IFSoHshOd141K0dR7fXbi8WXwK47uOntx8WNCHEL0Zrb6z9qdzSm/9gvLMmi?=
- =?us-ascii?Q?x3VAmT2BBXB6uMe0MQexTgKpBiGYLXEU+pYRocR0kfQn3HTPMuPC3ue2UaZY?=
- =?us-ascii?Q?8sIncTMIJxGVOsgHx3s5PrBPzkl2/6t/JXikpa4o3n1bkemTeuew08MpRF6q?=
- =?us-ascii?Q?2mW1feTyzuMqgXtpmsXLl1F9/sUGkxBhuUb185frk4EMvG2biDaTUfFuPdJ4?=
- =?us-ascii?Q?pDzqKPu86GVm+im5aE7OGlyO+mYTL+kkGy0jOgI+F3QF1HzDt4LQNz8e5fDu?=
- =?us-ascii?Q?gSmfBtUmwXRxZ/zobpVTjD2dajZsCge7JHUWaj6mF5PqEIVHiRm5Giaje0lC?=
- =?us-ascii?Q?IHSRPton50i1Rm/AmoGSkys0dXLVb0hupVjTHP7a35Zoaf0+KNOWTsVKblRL?=
- =?us-ascii?Q?cXysS3PHMCNqHX+B6gVHNA9hstjHtkr4yW4szFLm/+sMLTqmwDUtY4wyGtHO?=
- =?us-ascii?Q?ZlIqgi5xmT9fm66JG2E2QE1npAGdQJcuJ7Ea2GslOPuXmTAZtw8HBMaBPCca?=
- =?us-ascii?Q?XGb8VpzS6ySubciLO14YxMP8FCBEoicok74qGtSjARF1JNdJMHn50/Qc++Ry?=
- =?us-ascii?Q?10jEki6Ir1UhzpcLUxjePUp1ZJZ0WDCjU4wCng7qkKMNQB6d?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 1C5374027F;
+	Sat, 20 Jun 2026 04:31:40 +0200 (CEST)
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com
+ [74.125.224.44]) by mails.dpdk.org (Postfix) with ESMTP id 3747D4025A
+ for <dev@dpdk.org>; Sat, 20 Jun 2026 04:31:39 +0200 (CEST)
+Received: by mail-yx1-f44.google.com with SMTP id
+ 956f58d0204a3-663167a3ba2so204381d50.3
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 19:31:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781922698;
+ x=1782527498; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=JZD9V63lI5oeC9QKeYbgVKNAJdMIDLHXN4hWVgUMHME=;
+ b=t6eOlc9b7LIeECYlwiBSxXIl+jboUN+d2qCGTRo7syFfwjYHRu6Bqhjzq7nqixK8UH
+ Eev+wRHcALFvtgIcRZOjw6vG+MGLWY/6c11hyWkGHX+rNtQdUEmC2NPPSbzbMIymwrKd
+ wj8KO4wIqSliVkar308ZIyvlfq4zAqI8WPwi0i6HecNS19YaucENERCCkiYSZQN49H+B
+ NaGB0sWsLwnx3W/QwyZxrMgEdu7gHP2728uoF7gWUbplBeIgHjrlUuB97AwdinANIk/q
+ PGcPhfMZxaSrYYJyspKeOdb15FZBihiH7xDuRTnxJcCj3MgRhjYyUzdYa1qzw+tzhQT5
+ h2Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1781922698; x=1782527498;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=JZD9V63lI5oeC9QKeYbgVKNAJdMIDLHXN4hWVgUMHME=;
+ b=Vs+sFBAWz4DqawidtQ71p+v4e2HRPMstbMLhI8m//3RBlX5f1OinYUNkqq6ZCxsLd4
+ L9bNjRaitZxlGpIQxay1zhSRNkbtL6fDvHInWtjASVxqr0b4olPRyNdZwgQGzCdky3Iv
+ RX5sVK3AhdGJg4h1tIrwq9bWtIeiACI+BAKY4Qh0PuXR3BS2WiamLHtGq5H9g+DWV+Lp
+ fyjbnZcr1E5OyF6sUEvpvfiCxp/zDOownYQFrOB6txE7MuzpSOua/TMqGG2PEu63zA9x
+ gMjr41Ut1Qb7eInJcT5bOlHHEY8Sgrad7EXPt4BHeWHJT7caabpbyhejroWPYNlrLygF
+ 9TqQ==
+X-Gm-Message-State: AOJu0Yz0Ff1h4mGJ4h8CnlLR5C+J7DgJ5qQSGTo0GqGHBAMMgOU78y9L
+ NP8l5nqZGgX9kprkk40zT7R3z2xiyew+Kg7/AycmvvPXjV4wL0WzHpnsiinKBec/rjg8MrHhmN0
+ CXrwa
+X-Gm-Gg: AfdE7cnpAYkSqwPpDzdofOWCCBIFIRJklseSEwrn6B2NoT6ORQpE7qtwTzHzaHxPLBA
+ orIb7N7zbaSkEjCExy4UnCpsDIuy+g806e4S/n9URBMKJPYFCcfSTvzOpxlX1A958W+cpqDx9Zm
+ HNzc8e2wpjIjC3DE/gT794N3R+PR1eTgATxv3NQ80xnsDezyWQspeqdtJCQ0zGkdTZK1QuOcw2n
+ NMms+NCeLVGp8wQiiynnKVeWxULI/+ooQ9AXUy81m/jbI62A9QIyMjCfyn5nJQVnQ1EBCcZPejB
+ 9mjrFLG82RDmGEBn6gIxD/JGSG/Phl6hATDYmW3OrAlWnocNiP5A4M7BoOOVbBS2MKCVZUpsSH8
+ Jd0XxDTmclcTZ8KvAqMRegcj3EP26WUH4oo/rsTMLV6N9IEmPvox1QhvNCAMhi47OJz7sg0xbAj
+ bW0QV8IOpJE+wtJ/jaJQLb9MLa3UeV6qhZtj+/SxikfCLGXJkg2JU=
+X-Received: by 2002:a05:690e:1518:b0:660:9441:9e71 with SMTP id
+ 956f58d0204a3-662ffed6ef0mr6339969d50.37.1781922698035; 
+ Fri, 19 Jun 2026 19:31:38 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 00721157ae682-8025c96ffd5sm6045897b3.9.2026.06.19.19.31.36
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 19 Jun 2026 19:31:37 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v5 00/24] deprecate rte_atomic functions
+Date: Fri, 19 Jun 2026 19:28:25 -0700
+Message-ID: <20260620023134.42877-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <https://inbox.dpdk.org/dev/20260521042043.1590536-1-stephen@networkplumber.org>
+References: <https://inbox.dpdk.org/dev/20260521042043.1590536-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB6683.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96ceb277-bfbd-4c6a-3ea0-08dece4ed402
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2026 22:05:09.2458 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7HcQPmwHV4DZOetJTEi4yDuYuEbMs1xXXHLMLCvQiIwmG+0ktGc2FoawCYFhas1ev6HaUu65D5sdr/zKEM8CAQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR21MB6584
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,85 +80,116 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Allocating the interrupt handle is a waste of memory if no device is prob=
-ed
-> later (like for example, if a allowlist is passed).
-> Instead, allocate this handle at the time probe_device is called.
->=20
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+The rte_atomicNN_* family was flagged for deprecation in 2021 by
+commit 3ec965b6de12 ("doc: update atomic operation deprecation")
+but enforcement never landed and in-tree usage continued to grow.
 
-Reviewed-by: Long Li <longli@microsoft.com>
+This series finishes converting every remaining in-tree caller to
+the C11-style rte_atomic_*_explicit() / RTE_ATOMIC() API, then
+marks the legacy functions __rte_deprecated so future in-tree and
+out-of-tree uses are caught at compile time.
+
+The goal of this series is to get driver writers to review and
+test each change.
+
+v5 - rebase now that ring changes are merged.
+   - drop the barrier (rte_smp_mb) patch not required.
 
 
-> ---
-> Changes since v1:
-> - fixed/reordered interrupt handle allocation,
->=20
-> ---
->  drivers/bus/vmbus/linux/vmbus_bus.c |  6 ------
->  drivers/bus/vmbus/vmbus_common.c    | 18 ++++++++++++++++--
->  2 files changed, 16 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/bus/vmbus/linux/vmbus_bus.c
-> b/drivers/bus/vmbus/linux/vmbus_bus.c
-> index 0af10f6a69..77d904ad6d 100644
-> --- a/drivers/bus/vmbus/linux/vmbus_bus.c
-> +++ b/drivers/bus/vmbus/linux/vmbus_bus.c
-> @@ -345,12 +345,6 @@ vmbus_scan_one(const char *name)
->  		}
->  	}
->=20
-> -	/* Allocate interrupt handle instance */
-> -	dev->intr_handle =3D
-> -		rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
-> -	if (dev->intr_handle =3D=3D NULL)
-> -		goto error;
-> -
->  	/* device is valid, add in list (sorted) */
->  	VMBUS_LOG(DEBUG, "Adding vmbus device %s", name);
->=20
-> diff --git a/drivers/bus/vmbus/vmbus_common.c
-> b/drivers/bus/vmbus/vmbus_common.c
-> index 74c1ddff69..bfb45e963c 100644
-> --- a/drivers/bus/vmbus/vmbus_common.c
-> +++ b/drivers/bus/vmbus/vmbus_common.c
-> @@ -100,10 +100,16 @@ vmbus_probe_device(struct rte_driver *drv, struct
-> rte_device *dev)
->  		return 1;
->  	}
->=20
-> +	/* allocate interrupt handle instance */
-> +	vmbus_dev->intr_handle =3D
-> +		rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
-> +	if (vmbus_dev->intr_handle =3D=3D NULL)
-> +		return -ENOMEM;
-> +
->  	/* map resources for device */
->  	ret =3D rte_vmbus_map_device(vmbus_dev);
->  	if (ret !=3D 0)
-> -		return ret;
-> +		goto free_intr;
->=20
->  	if (vmbus_dev->device.numa_node < 0 && rte_socket_count() > 1)
->  		VMBUS_LOG(INFO, "Device %s is not NUMA-aware", guid); @@
-> -112,7 +118,15 @@ vmbus_probe_device(struct rte_driver *drv, struct
-> rte_device *dev)
->  	VMBUS_LOG(INFO, "  probe driver: %s", vmbus_drv->driver.name);
->  	ret =3D vmbus_drv->probe(vmbus_drv, vmbus_dev);
->  	if (ret !=3D 0)
-> -		rte_vmbus_unmap_device(vmbus_dev);
-> +		goto unmap;
-> +
-> +	return 0;
-> +
-> +unmap:
-> +	rte_vmbus_unmap_device(vmbus_dev);
-> +free_intr:
-> +	rte_intr_instance_free(vmbus_dev->intr_handle);
-> +	vmbus_dev->intr_handle =3D NULL;
->=20
->  	return ret;
->  }
-> --
-> 2.53.0
+Stephen Hemminger (24):
+  bpf: use C11 atomics in BPF_ST_ATOMIC_REG
+  net/bonding: use stdatomic
+  net/nbl: remove unused rte_atomic16 field
+  net/ena: replace use of rte_atomicNN
+  net/failsafe: convert to stdatomic
+  net/enic: do not use deprecated rte_atomic64
+  net/pfe: use ethdev linkstatus helpers
+  net/sfc: replace rte_atomic with stdatomic
+  crypto/ccp: replace use of rte_atomic64 with stdatomic
+  bus/dpaa: replace rte_atomic16 with stdatomic
+  drivers: replace rte_atomic16 with stdatomic
+  net/netvsc: replace rte_atomic32 with stdatomic
+  event/sw: convert from rte_atomic32 to stdatomic
+  bus/vmbus: convert from rte_atomic to stdatomic
+  common/dpaax: use stdatomic instead of rte_atomic
+  net/bnx2x: convert from rte_atomic32 to stdatomic
+  bus/fslmc: replace rte_atomic32 with stdatomic
+  drivers/event: replace rte_atomic32 in selftests
+  net/hinic: replace rte_atomic32 with stdatomic
+  net/txgbe: replace rte_atomic32 with stdatomic
+  net/vhost: use stdatomic instead of rte_atomic32
+  vdpa/ifc: replace rte_atomic32 with stdatomic
+  test/atomic: suppress deprecation warnings for legacy APIs
+  eal: deprecate rte_atomicNN functions
+
+ app/test/test_atomic.c                        |  12 +
+ devtools/checkpatches.sh                      |   8 -
+ doc/guides/rel_notes/deprecation.rst          |   4 +-
+ doc/guides/rel_notes/release_26_07.rst        |   5 +
+ drivers/bus/dpaa/base/qbman/qman.c            |   9 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c      |  10 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpci.c      |  10 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  12 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h       |   8 +-
+ drivers/bus/fslmc/qbman/include/compat.h      |  21 +-
+ drivers/bus/vmbus/private.h                   |   2 +-
+ drivers/bus/vmbus/vmbus_bufring.c             |  39 +--
+ drivers/common/dpaax/compat.h                 |  21 +-
+ drivers/crypto/ccp/ccp_crypto.c               |  11 +-
+ drivers/crypto/ccp/ccp_crypto.h               |   2 +-
+ drivers/crypto/ccp/ccp_dev.c                  |  10 +-
+ drivers/crypto/ccp/ccp_dev.h                  |   4 +-
+ drivers/event/dpaa2/dpaa2_eventdev_selftest.c |  26 +-
+ drivers/event/dpaa2/dpaa2_hw_dpcon.c          |  11 +-
+ drivers/event/octeontx/ssovf_evdev_selftest.c |  61 +++--
+ drivers/event/sw/sw_evdev.c                   |   8 +-
+ drivers/event/sw/sw_evdev.h                   |   4 +-
+ drivers/event/sw/sw_evdev_worker.c            |  16 +-
+ drivers/net/bnx2x/bnx2x.c                     |   6 +-
+ drivers/net/bnx2x/bnx2x.h                     |   2 +-
+ drivers/net/bnx2x/ecore_sp.c                  |   6 +-
+ drivers/net/bonding/eth_bond_8023ad_private.h |   6 +-
+ drivers/net/bonding/rte_eth_bond_8023ad.c     |  35 +--
+ drivers/net/ena/base/ena_plat_dpdk.h          |  14 +-
+ drivers/net/ena/ena_ethdev.c                  |  21 +-
+ drivers/net/ena/ena_ethdev.h                  |   7 +-
+ drivers/net/enic/enic.h                       |   6 +-
+ drivers/net/enic/enic_compat.h                |   1 -
+ drivers/net/enic/enic_main.c                  |  17 +-
+ drivers/net/enic/enic_rxtx.c                  |  14 +-
+ drivers/net/enic/enic_rxtx_vec_avx2.c         |   4 +-
+ drivers/net/failsafe/failsafe_ops.c           |  12 +-
+ drivers/net/failsafe/failsafe_private.h       |  29 ++-
+ drivers/net/failsafe/failsafe_rxtx.c          |   2 +-
+ drivers/net/hinic/base/hinic_compat.h         |   2 +-
+ drivers/net/hinic/base/hinic_pmd_hwdev.c      |  24 +-
+ drivers/net/hinic/base/hinic_pmd_hwdev.h      |   4 +-
+ drivers/net/nbl/nbl_hw/nbl_resource.h         |   1 -
+ drivers/net/netvsc/hn_rndis.c                 |  28 +-
+ drivers/net/netvsc/hn_rxtx.c                  |  12 +-
+ drivers/net/netvsc/hn_var.h                   |   6 +-
+ drivers/net/pfe/pfe_ethdev.c                  |  32 +--
+ drivers/net/sfc/sfc.c                         |   9 +-
+ drivers/net/sfc/sfc.h                         |   4 +-
+ drivers/net/sfc/sfc_port.c                    |   7 +-
+ drivers/net/sfc/sfc_stats.h                   |   2 +-
+ drivers/net/txgbe/base/txgbe_mng.c            |   4 +-
+ drivers/net/txgbe/base/txgbe_type.h           |   2 +-
+ drivers/net/vhost/rte_eth_vhost.c             | 103 +++++---
+ drivers/vdpa/ifc/ifcvf_vdpa.c                 |  37 +--
+ lib/bpf/bpf_exec.c                            |  13 +-
+ lib/eal/arm/include/rte_atomic_32.h           |   4 -
+ lib/eal/arm/include/rte_atomic_64.h           |   4 -
+ lib/eal/include/generic/rte_atomic.h          | 243 +++++-------------
+ lib/eal/include/rte_common.h                  |   2 +
+ lib/eal/loongarch/include/rte_atomic.h        |   4 -
+ lib/eal/ppc/include/rte_atomic.h              | 173 -------------
+ lib/eal/riscv/include/rte_atomic.h            |   4 -
+ lib/eal/x86/include/rte_atomic.h              | 172 -------------
+ lib/eal/x86/include/rte_atomic_32.h           | 188 --------------
+ lib/eal/x86/include/rte_atomic_64.h           | 157 -----------
+ 66 files changed, 472 insertions(+), 1265 deletions(-)
+
+-- 
+2.53.0
 
