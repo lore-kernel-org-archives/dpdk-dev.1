@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7ADFCD98F8
-	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Jun 2026 02:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9977CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Jun 2026 02:32:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 562AB40B8C;
-	Sat, 20 Jun 2026 04:31:51 +0200 (CEST)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com
- [209.85.128.178])
- by mails.dpdk.org (Postfix) with ESMTP id A141E4068A
- for <dev@dpdk.org>; Sat, 20 Jun 2026 04:31:48 +0200 (CEST)
-Received: by mail-yw1-f178.google.com with SMTP id
- 00721157ae682-7fdb04d774aso30014147b3.2
- for <dev@dpdk.org>; Fri, 19 Jun 2026 19:31:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A04240DCE;
+	Sat, 20 Jun 2026 04:31:52 +0200 (CEST)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com
+ [209.85.128.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 253ED406BB
+ for <dev@dpdk.org>; Sat, 20 Jun 2026 04:31:50 +0200 (CEST)
+Received: by mail-yw1-f182.google.com with SMTP id
+ 00721157ae682-7e1916922b9so30517817b3.1
+ for <dev@dpdk.org>; Fri, 19 Jun 2026 19:31:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781922708;
- x=1782527508; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1781922709;
+ x=1782527509; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Wy0LWLsrRgN2Tir69nk6vc0zGehOJuqPUdF+aOw17wg=;
- b=aCrtcE1ohoE8E/MWN9pjeMwkU1eUTRYbMp1NTqm+FRWzm+sktit8CGxt+gy6F4sHFg
- pa3hhKTpRunvEH5FmiHA2ei9plsx25yUuYbtrDML0cDTL2OiDk2prqD0QN5I2TK+hwYz
- iqyk9DIF+p56xaCQNnU8wDbsEz0RvgYa94vx0FLF3ONAnuFPASTYPJe7J4fYzWe4j7On
- TevO8MsNT/X2miYn43OdDCjoy0c+sIRKJWfIoGtXQIsnuu+9zSxejxGRCn/oMcxXWKib
- 8GxIFV87ZNHJEuy+hvMJmTTsV5eEO/e+LvFezp0sfSj5JHvYebuKO15DE3oimy+o7Ex9
- BzbQ==
+ bh=meZv84HBVCG3SEoVR+k/c2p4PZ/X79dPa2/gmIJZU/E=;
+ b=fOz2HNv0mQk0oqu5NrpAl9qDAw0UN5QCeGkWpBd5sqBj1NfQmxi7w84bOEWL+pGMAL
+ Vd+3E/ysu9d378NEi1PZvSJILRc/GtVoP62tjNCIeFjhN45kF9WCsPsbNGVPZDq/xJkr
+ S32tsnoSTDihRK6r5X9PUD0GH6y2mve+bWMIhlxY2Zdecuz2stBmwTSLZeIpcPR5LBK+
+ E+nwrYrEMOesJTGGZJ25CaP92ETcV0WGcYsvAFhry1fwGOhn1KcH2yUvTWTLY500UY9E
+ kNS5T4xRLc4QW8Tx2GlN+zMEKWmud853TWRrJaSDLN45WVW7ijJefs45pLq2PWNZ98xn
+ KJAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781922708; x=1782527508;
+ d=1e100.net; s=20251104; t=1781922709; x=1782527509;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Wy0LWLsrRgN2Tir69nk6vc0zGehOJuqPUdF+aOw17wg=;
- b=QbdbA1ilfgAFuLGkeHNeNp8FDjdCrD2osQymtLoZinEaQlu90vDsL4lMc3vSGsVhll
- n8JGjeW69mvrRUgGfxuhYxzuo+WpY3Bnl2xc24ojyxBMXhwC9lnaiS5Y2tQ6g11CdyzN
- Gb4Ayc01zUcHxT+eGk6vV5VNtAkzCajFUVQ2Nh8AjwW48fLyS3A/ctAVghlSzqkDaGVC
- nW0Ebvn+vSyULFj2LLSxr8aELeSw4niZ/DIICRZNZgPCF+Je/zQwCljhH/vkLywm8aQU
- linwZh4W+IGCK7kUG+vGrGMfI7H4Z/b5Ns75PdkUizMJVlf3fEgjSHriX5xBCHMFSPhs
- zoJA==
-X-Gm-Message-State: AOJu0YxD0N1pjxwGURPhgVaNY2AkRW1jtZwvCN66azLe2MxBe5uCzKe8
- XheArbY6kys8gSQ14wwJjtPN22REpayjYqWSB4HVaMD8TTyEAxvlBWv20QAoBXqagbAo2A+MF6F
- 9t/xy
-X-Gm-Gg: AfdE7cm2WulBTEmPdZh2o9/tiYpgS5+kU8XxzIStA06CC2mAgM5VMYn6ocVwe7GXY1N
- S+JXIji2m66G215aWvZd6Ln4qzlM2GcLjw9qCQy6wxIuhTBy2FWi445IEdfTUn9UhFS7OMB0qK1
- Vh/5KmgnqiyipEbSMqkoMrW5Z5wvUwORqFsDmSziL/9Dw3fBE3hXhQ9WxyvRn2bhj+XEAsUSaZc
- tc2okZNfeK0B/D+swmitJvK3jwp9Xuamjrw1vQYRgPWnOtXx/t3pUqUiopjqKwvGkqFPoC+QHuZ
- h0YM+Af/gQZmR5tZtgDzAeye4UGwKwk5MRXXtns1IhiInaRNtkbh25FOCt7wJrdw/C6XozPFlfj
- tr9dkyipriguoc6TI4Q26R+yoYJvHUQoCduWyUGFlNzM3o/RvbprwXKWrlhLWaLLgVy8YpSbROX
- ndpMSBcVLP5rNUOTmAYcCfAgvYOD8/pRy0UzLLgaHlA5MBnWv+o3I=
-X-Received: by 2002:a05:690c:7403:b0:7dd:7dc9:c2c5 with SMTP id
- 00721157ae682-80263fc80ecmr26516197b3.4.1781922707963; 
- Fri, 19 Jun 2026 19:31:47 -0700 (PDT)
+ bh=meZv84HBVCG3SEoVR+k/c2p4PZ/X79dPa2/gmIJZU/E=;
+ b=jQrjb80uDhETx0tmkTyyHg2xWzby/zc56aEcR0uuPMaV2/+JdN0bGVeVL/I1YY0rgO
+ 7xg6NyHuGl5BWOyDKvdZFdaxwAZey+IoIWYdsCQZYWe7/2C/Tn0Ri1ZstlLVMjIz79HC
+ sxwQIFyS/7cXhO73THcecyBDv4DX3N2J1BnYMh8RWc2wJzMlWtdAtSsdtgpkfXyBnYQ6
+ OG/Gma3QRVTufuUJtmvhW/Gf8iejeCcMaZw944i2/gSTz/kW9eJ0SwqNMVWZXMN6fnZW
+ PrD7xJOGD2fbmIYJH/xKSI4qQTpy1a8Wkem7csjUUZdKgs19tFXPBqFgkjn5FSp7Pht0
+ Z90A==
+X-Gm-Message-State: AOJu0YwNzRGtHdJvsChWSwcbvd9/bfCXaxkP/IbdK3A4p14LyORSj839
+ I05ywogBiQAe4ucEEOqv6NYFT+B5rTy5lqtwi1Sn0VhD7QiwWklll4XYYHXfjYhO9w95W8ZByhi
+ Vu29a
+X-Gm-Gg: AfdE7cnVwOi9W794hOLfAxNZjBZUQSW7MEf4kJVjjX+U2/3YidNFJ0IWCgPail3OfEW
+ UWsUq201BHttGfNOXpQ4soUYDK15/GlAWE0DyRDgBl7twdq6ELIGo3Ns/oVc1Acejm9NL37krhy
+ xp9KXL6hkx7zDkbrnC/k/H/mOv1hXhWYD6Kcu+1PteE77CMqy9ssEsQSbNx4muUzR9bkqY3WhaK
+ iWqr3H9fCBuNUJnO7zgTB0cwZmr2BZMVeOL3QQ658RH9/uEGMz5DuxKpXjf0nLiIF9HJ8MH1C4Q
+ 0uMBDVApgoLfw7r9QkrloVp7dlN/yUTCgxxxqwD0syRtBWLT7NLZQYk5hbJqF4UnqU/jD8EQzea
+ nlIkDp4CV9c72KCZ+aDW2ufNUmgnrAPIiPLu9PY2+a6T7EHVSVe1v5M7jfWVc78QNEYpXbv0XXB
+ ApW6C4RhdLkxD+alLj21RLLTNoHxfQW4Pnam+T9AM7z4HFAzmbqehtTAt+PaWk/Q==
+X-Received: by 2002:a05:690c:c4ce:b0:7d1:9c6a:d60c with SMTP id
+ 00721157ae682-8013350505fmr67481317b3.18.1781922709285; 
+ Fri, 19 Jun 2026 19:31:49 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 00721157ae682-8025c96ffd5sm6045897b3.9.2026.06.19.19.31.47
+ 00721157ae682-8025c96ffd5sm6045897b3.9.2026.06.19.19.31.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 19 Jun 2026 19:31:47 -0700 (PDT)
+ Fri, 19 Jun 2026 19:31:48 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v5 07/24] net/pfe: use ethdev linkstatus helpers
-Date: Fri, 19 Jun 2026 19:28:32 -0700
-Message-ID: <20260620023134.42877-8-stephen@networkplumber.org>
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v5 08/24] net/sfc: replace rte_atomic with stdatomic
+Date: Fri, 19 Jun 2026 19:28:33 -0700
+Message-ID: <20260620023134.42877-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260620023134.42877-1-stephen@networkplumber.org>
 References: <https://inbox.dpdk.org/dev/20260521042043.1590536-1-stephen@networkplumber.org>
@@ -83,71 +83,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than open coding with deprecated rte_atomic64,
-use the existing ethdev helpers to get and set link status.
+The rte_atomicNN functions are deprecated and need to be replaced.
+Use stdatomic for the restart required flag.
+Use existing ethdev helper to set link status.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Reviewed-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 ---
- drivers/net/pfe/pfe_ethdev.c | 32 ++------------------------------
- 1 file changed, 2 insertions(+), 30 deletions(-)
+ drivers/net/sfc/sfc.c       | 9 +++++----
+ drivers/net/sfc/sfc.h       | 4 ++--
+ drivers/net/sfc/sfc_port.c  | 7 +------
+ drivers/net/sfc/sfc_stats.h | 2 +-
+ 4 files changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/pfe/pfe_ethdev.c b/drivers/net/pfe/pfe_ethdev.c
-index 1efa17539e..1b183ab1f3 100644
---- a/drivers/net/pfe/pfe_ethdev.c
-+++ b/drivers/net/pfe/pfe_ethdev.c
-@@ -531,34 +531,6 @@ pfe_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
- 	return NULL;
+diff --git a/drivers/net/sfc/sfc.c b/drivers/net/sfc/sfc.c
+index 39cd8d519a..f13c5e2460 100644
+--- a/drivers/net/sfc/sfc.c
++++ b/drivers/net/sfc/sfc.c
+@@ -670,8 +670,8 @@ sfc_restart_if_required(void *arg)
+ 	struct sfc_adapter *sa = arg;
+ 
+ 	/* If restart is scheduled, clear the flag and do it */
+-	if (rte_atomic32_cmpset((volatile uint32_t *)&sa->restart_required,
+-				1, 0)) {
++	if (rte_atomic_exchange_explicit(&sa->restart_required, false,
++					 rte_memory_order_seq_cst)) {
+ 		sfc_adapter_lock(sa);
+ 		if (sa->state == SFC_ETHDEV_STARTED)
+ 			(void)sfc_restart(sa);
+@@ -685,7 +685,8 @@ sfc_schedule_restart(struct sfc_adapter *sa)
+ 	int rc;
+ 
+ 	/* Schedule restart alarm if it is not scheduled yet */
+-	if (!rte_atomic32_test_and_set(&sa->restart_required))
++	if (rte_atomic_exchange_explicit(&sa->restart_required, true,
++					 rte_memory_order_seq_cst))
+ 		return;
+ 
+ 	rc = rte_eal_alarm_set(1, sfc_restart_if_required, sa);
+@@ -1292,7 +1293,7 @@ sfc_probe(struct sfc_adapter *sa)
+ 	SFC_ASSERT(sfc_adapter_is_locked(sa));
+ 
+ 	sa->socket_id = rte_socket_id();
+-	rte_atomic32_init(&sa->restart_required);
++	sa->restart_required = false;
+ 
+ 	sfc_log_init(sa, "get family");
+ 	rc = sfc_efx_family(pci_dev, &mem_ebrp, &sa->family);
+diff --git a/drivers/net/sfc/sfc.h b/drivers/net/sfc/sfc.h
+index 629578549f..515e1e708d 100644
+--- a/drivers/net/sfc/sfc.h
++++ b/drivers/net/sfc/sfc.h
+@@ -17,7 +17,7 @@
+ #include <ethdev_driver.h>
+ #include <rte_kvargs.h>
+ #include <rte_spinlock.h>
+-#include <rte_atomic.h>
++#include <rte_stdatomic.h>
+ 
+ #include "efx.h"
+ 
+@@ -239,7 +239,7 @@ struct sfc_adapter {
+ 	efx_family_t			family;
+ 	efx_nic_t			*nic;
+ 	rte_spinlock_t			nic_lock;
+-	rte_atomic32_t			restart_required;
++	RTE_ATOMIC(bool)		restart_required;
+ 
+ 	struct sfc_efx_mcdi		mcdi;
+ 	struct sfc_sriov		sriov;
+diff --git a/drivers/net/sfc/sfc_port.c b/drivers/net/sfc/sfc_port.c
+index 33b53f7ac8..d84648d454 100644
+--- a/drivers/net/sfc/sfc_port.c
++++ b/drivers/net/sfc/sfc_port.c
+@@ -121,7 +121,6 @@ sfc_port_reset_mac_stats(struct sfc_adapter *sa)
+ static int
+ sfc_port_init_dev_link(struct sfc_adapter *sa)
+ {
+-	struct rte_eth_link *dev_link = &sa->eth_dev->data->dev_link;
+ 	int rc;
+ 	efx_link_mode_t link_mode;
+ 	struct rte_eth_link current_link;
+@@ -132,11 +131,7 @@ sfc_port_init_dev_link(struct sfc_adapter *sa)
+ 
+ 	sfc_port_link_mode_to_info(link_mode, sa->port.phy_adv_cap,
+ 				   &current_link);
+-
+-	EFX_STATIC_ASSERT(sizeof(*dev_link) == sizeof(rte_atomic64_t));
+-	rte_atomic64_set((rte_atomic64_t *)dev_link,
+-			 *(uint64_t *)&current_link);
+-
++	rte_eth_linkstatus_set(sa->eth_dev, &current_link);
+ 	return 0;
  }
  
--static inline int
--pfe_eth_atomic_read_link_status(struct rte_eth_dev *dev,
--				struct rte_eth_link *link)
--{
--	struct rte_eth_link *dst = link;
--	struct rte_eth_link *src = &dev->data->dev_link;
--
--	if (rte_atomic64_cmpset((uint64_t *)dst, *(uint64_t *)dst,
--				*(uint64_t *)src) == 0)
--		return -1;
--
--	return 0;
--}
--
--static inline int
--pfe_eth_atomic_write_link_status(struct rte_eth_dev *dev,
--				 struct rte_eth_link *link)
--{
--	struct rte_eth_link *dst = &dev->data->dev_link;
--	struct rte_eth_link *src = link;
--
--	if (rte_atomic64_cmpset((uint64_t *)dst, *(uint64_t *)dst,
--				*(uint64_t *)src) == 0)
--		return -1;
--
--	return 0;
--}
--
- static int
- pfe_eth_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
- {
-@@ -570,7 +542,7 @@ pfe_eth_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
- 	memset(&old, 0, sizeof(old));
- 	memset(&link, 0, sizeof(struct rte_eth_link));
+diff --git a/drivers/net/sfc/sfc_stats.h b/drivers/net/sfc/sfc_stats.h
+index 597e14dab3..eaa2afd3fe 100644
+--- a/drivers/net/sfc/sfc_stats.h
++++ b/drivers/net/sfc/sfc_stats.h
+@@ -12,7 +12,7 @@
  
--	pfe_eth_atomic_read_link_status(dev, &old);
-+	rte_eth_linkstatus_get(dev, &old);
+ #include <stdint.h>
  
- 	/* Read from PFE CDEV, status of link, if file was successfully
- 	 * opened.
-@@ -601,7 +573,7 @@ pfe_eth_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
- 	link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
- 	link.link_autoneg = RTE_ETH_LINK_AUTONEG;
+-#include <rte_atomic.h>
++#include <rte_stdatomic.h>
  
--	pfe_eth_atomic_write_link_status(dev, &link);
-+	rte_eth_linkstatus_set(dev, &link);
+ #include "sfc_tweak.h"
  
- 	PFE_PMD_INFO("Port (%d) link is %s", dev->data->port_id,
- 		     link.link_status ? "up" : "down");
 -- 
 2.53.0
 
