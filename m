@@ -2,40 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D391FCD98F2
-	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 15:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D6ECD98F2
+	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 16:25:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A22BD406A2;
-	Sun, 21 Jun 2026 17:23:01 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 7022E40673
- for <dev@dpdk.org>; Sun, 21 Jun 2026 17:22:56 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5468C200248;
- Sun, 21 Jun 2026 17:22:56 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E7B3A200240;
- Sun, 21 Jun 2026 17:22:55 +0200 (CEST)
-Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
- [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 68A641800086;
- Sun, 21 Jun 2026 23:22:54 +0800 (+08)
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
-To: stephen@networkplumber.org,
-	david.marchand@redhat.com,
-	dev@dpdk.org
-Cc: Vanshika Shukla <vanshika.shukla@nxp.com>
-Subject: [PATCH v3 19/19] net/dpaa: add ONIC port checks
-Date: Sun, 21 Jun 2026 20:52:28 +0530
-Message-Id: <20260621152228.2777171-20-hemant.agrawal@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260621152228.2777171-1-hemant.agrawal@nxp.com>
-References: <20260621101651.1081425-1-hemant.agrawal@nxp.com>
- <20260621152228.2777171-1-hemant.agrawal@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6B3C64028A;
+	Sun, 21 Jun 2026 18:25:30 +0200 (CEST)
+Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+ by mails.dpdk.org (Postfix) with ESMTP id 21FB840270
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 18:25:29 +0200 (CEST)
+Received: by mail-dl1-f54.google.com with SMTP id
+ a92af1059eb24-139aff562e1so941912c88.1
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 09:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782059128;
+ x=1782663928; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Ro0OfsJ2KUOQcosIl//As+7W5NMhbL/E32BjrXxLF+M=;
+ b=m0Zw+elxaLjmpGya6dCZLMRaxc/o6zgvlvkrc7GW3Q2o0TffQJ8s5xixIkCmLZHoTv
+ GQLTAPxFpCHzbWeJ6s38Zv0M3/g1oDYrmxCbOb5j5YW32B1c1hOvGWeyfmBqys/mTQnx
+ QI/uBI1uEfwq3+xDUc8T2I5TfHUyk776VempgYESUroMK8pkpeHeje6zuqsdyiUixpIB
+ v2JGoIVDwJjiSp85oAzT1TfLZNB4R9iVXMFu3wAGfsjQKmyq8yNommXoQcgYS/uVB8S9
+ UIJtZD1oPeTXiNxXYM2f8rBbtDVpUsXophDqRViSQebaLxTzS1miPte9r3raqm0Uss9m
+ PO2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1782059128; x=1782663928;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=Ro0OfsJ2KUOQcosIl//As+7W5NMhbL/E32BjrXxLF+M=;
+ b=FxOVKw9HQIEY4V26mJWjO4vgLiPEy/LT02lKGmW97RqIvC95rUlH3/dALCm+PgKtrQ
+ GawczX1j0pHndvW9Q3G6ejQhuRaFBa0Y1Q2ak8b9k2Islo9TL6rOE3o+iizVLbwAcdF7
+ Xeun1n4qHlx1JwhMYQiVgg/buKOGkEEp+QBx6j9+0CLkHQ4tloJf0jZVl0xbcwS+nkwU
+ 5cmpQO+O0GTQeyeXhZ6om0MxjD/LWLVjFGCc/Hf3NhtxQOLfUXsNHzyBv11/Ng5OFUwJ
+ ff/C240Tt2YdKtMUvl6dqoydTppIY3cy10QL/woV4S8icWZJhZV0ua+oSqFxMwrhZlxt
+ 74fQ==
+X-Gm-Message-State: AOJu0Yzk23Gb0/DW7x+GonnDkXSihKAPgfbhVwN2dZtOTzcC3PiQh1D2
+ RjQS1AWnFBFZLDDmieU3PpvkgmsjFxlyx0GiJuTZ0O+ZqEIsBixBavy6SWitXpzxSKKK6uwzKgd
+ ul5mJo8A=
+X-Gm-Gg: AfdE7ckGtXDVTVQ2teCOg2SjA66fslfz876wsO51rS1gTHms81lAvhIl2bDsnP8wyf6
+ ffbomV6TwGQVq1p7j0c34PoYD6sPvjJM16mAVciFgWEquNW9yAoLOIVgpI64vNwg7G/hOBPpOy1
+ kF8wn6b6cnlqhPw7Nu9fM5bkPQrAJwXe3NxXyQ6bOJRDNxUCXXtwMrm4T+O4jVhpPSU29RaLLpD
+ YFFz6ZE0ks7mLPLaxsm6XQaZgP3fLKViQ6arXgYYvIkeB0HDO9n9gLt8ru6W/I/d47W81iHCOd6
+ mO+fXKVCHzuLKPZFlrIdZLv6yJDwhkrr190THorxdXCMiY+6Jg4cwWm1Y3rPmphDxtxJPf3sfaJ
+ y7KQ36BpYBXNKehPgQZD/4UBUJq3J3vOrfpJlAjlB732cCflF0CV9k3H6O38YjFFpoIF109UDDQ
+ 3kg7C6/QPKtfyy23KURBaeHGV8qUNkp1VCUVw9kfzMsPZqOqItTgI=
+X-Received: by 2002:a05:7022:490:b0:137:567:14c4 with SMTP id
+ a92af1059eb24-139a21526c7mr6182843c88.29.1782059127579; 
+ Sun, 21 Jun 2026 09:25:27 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-139add73a44sm5141593c88.13.2026.06.21.09.25.26
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 21 Jun 2026 09:25:26 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/6] bpf: JIT related bug fixes
+Date: Sun, 21 Jun 2026 09:23:53 -0700
+Message-ID: <20260621162524.82690-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260608203322.1116296-1-stephen@networkplumber.org>
+References: <20260608203322.1116296-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,407 +80,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vanshika Shukla <vanshika.shukla@nxp.com>
+While implementing JIT for packet capture ran into several issues:
+  1. x86 JIT had pre-existing bug which would crash
+  2. ARM64 BPF JIT was missing instructions for packet access.
+     Which had been discovered previously [1]
+  3. Tests related to JIT were not being run or missing coverage.
 
-Add get_tx_port_type() helper that maps fman MAC type to the correct FMC
-Tx port type. Handle fman_onic and fman_offline_internal MAC types as
-OH_OFFLINE_PARSING on the Tx path, consistent with existing Rx port type
-logic. Without this, ONIC ports used incorrect port type in flow
-configuration, leading to failed FMC operations.
+Fixed all of these. Patches are ordered so that most urgent fix
+is first, follwed by the test that should have caught the problem.
 
-Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
----
- drivers/net/dpaa/dpaa_ethdev.c |  26 +++---
- drivers/net/dpaa/dpaa_ethdev.h |  11 ++-
- drivers/net/dpaa/dpaa_flow.c   | 146 +++++++++++++++++++--------------
- drivers/net/dpaa/dpaa_flow.h   |   7 +-
- 4 files changed, 110 insertions(+), 80 deletions(-)
+The arm64 epilogue branch fix (patch 3) was originally posted by Christophe
+Fontaine [1]; that series stalled, so it is carried here with his
+authorship.
 
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 63a3c110d9..638d81d7e6 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -490,7 +490,7 @@ static int dpaa_eth_dev_stop(struct rte_eth_dev *dev)
- 	PMD_INIT_FUNC_TRACE();
- 	dev->data->dev_started = 0;
- 
--	if (!fif->is_shared_mac) {
-+	if (!fif->is_shared_mac && fif->mac_type != fman_onic) {
- 		fman_if_bmi_stats_disable(fif);
- 		fman_if_disable_rx(fif);
- 	}
-@@ -590,7 +590,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 		}
- 	}
- 	if (fif->num_profiles) {
--		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
-+		ret = dpaa_port_vsp_cleanup(dpaa_intf);
- 		if (ret) {
- 			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
- 				dev->data->name, ret);
-@@ -674,7 +674,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 			dev->data->name, ret);
- 	}
- 	if (fif->num_profiles) {
--		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
-+		ret = dpaa_port_vsp_cleanup(dpaa_intf);
- 		if (ret) {
- 			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
- 				dev->data->name, ret);
-@@ -1134,8 +1134,8 @@ static inline int dpaa_eth_rx_queue_bp_check(struct rte_eth_dev *dev,
- 			vsp_id = 0;
- 	}
- 
--	if (dpaa_intf->vsp_bpid[vsp_id] &&
--		bpid != dpaa_intf->vsp_bpid[vsp_id]) {
-+	if (dpaa_intf->vsp[vsp_id].vsp_bp[0] &&
-+		bpid != dpaa_intf->vsp[vsp_id].vsp_bp[0]->bpid) {
- 		DPAA_PMD_ERR("Various MPs are assigned to RXQs with same VSP");
- 
- 		return -1;
-@@ -1232,9 +1232,9 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 		int8_t vsp_id = rxq->vsp_id;
- 
- 		if (vsp_id >= 0) {
--			ret = dpaa_port_vsp_update(dpaa_intf, fmc_q, vsp_id,
--					DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid,
--					fif, buffsz + RTE_PKTMBUF_HEADROOM);
-+			dpaa_intf->vsp[vsp_id].vsp_bp[0] = DPAA_MEMPOOL_TO_POOL_INFO(mp);
-+			dpaa_intf->vsp[vsp_id].bp_num = 1;
-+			ret = dpaa_port_vsp_update(dpaa_intf, fmc_q, vsp_id, fif);
- 			if (ret) {
- 				DPAA_PMD_ERR("dpaa_port_vsp_update failed");
- 				return ret;
-@@ -1247,12 +1247,14 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 					     " to shared interface on DPDK.");
- 				return -EINVAL;
- 			}
--			dpaa_intf->vsp_bpid[fif->base_profile_id] =
--				DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid;
-+			dpaa_intf->vsp[fif->base_profile_id].vsp_bp[0] =
-+				DPAA_MEMPOOL_TO_POOL_INFO(mp);
-+			dpaa_intf->vsp[fif->base_profile_id].bp_num = 1;
- 		}
- 	} else {
--		dpaa_intf->vsp_bpid[0] =
--			DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid;
-+		dpaa_intf->vsp[0].vsp_bp[0] =
-+			DPAA_MEMPOOL_TO_POOL_INFO(mp);
-+		dpaa_intf->vsp[0].bp_num = 1;
- 	}
- 
- 	dpaa_intf->valid = 1;
-diff --git a/drivers/net/dpaa/dpaa_ethdev.h b/drivers/net/dpaa/dpaa_ethdev.h
-index d342d98f23..d3e005b556 100644
---- a/drivers/net/dpaa/dpaa_ethdev.h
-+++ b/drivers/net/dpaa/dpaa_ethdev.h
-@@ -118,6 +118,13 @@ enum {
- 
- #define FMC_FILE "/tmp/fmc.bin"
- 
-+struct dpaa_if_vsp {
-+	struct dpaa_bp_info *vsp_bp[FMAN_PORT_MAX_EXT_POOLS_NUM];
-+	uint8_t bp_num;
-+	uint32_t max_size;
-+	void *vsp_handle;
-+};
-+
- extern struct rte_mempool *dpaa_tx_sg_pool;
- 
- /* PMD related logs */
-@@ -164,8 +171,8 @@ struct dpaa_if {
- 	 */
- 	struct qman_fq *next_tx_conf_queue;
- 
--	void *vsp_handle[DPAA_VSP_PROFILE_MAX_NUM];
--	uint32_t vsp_bpid[DPAA_VSP_PROFILE_MAX_NUM];
-+	struct dpaa_if_vsp vsp[DPAA_VSP_PROFILE_MAX_NUM];
-+	uint8_t base_vsp;
- };
- 
- struct dpaa_if_stats {
-diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
-index 559850ced7..9f0611a3c7 100644
---- a/drivers/net/dpaa/dpaa_flow.c
-+++ b/drivers/net/dpaa/dpaa_flow.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017-2019,2021-2025 NXP
-+ * Copyright 2017-2019,2021-2026 NXP
-  */
- 
- /* System headers */
-@@ -8,6 +8,7 @@
- #include <unistd.h>
- #include <sys/types.h>
- 
-+#include <dpaa_mempool.h>
- #include <dpaa_ethdev.h>
- #include <dpaa_flow.h>
- #include <rte_dpaa_logs.h>
-@@ -669,6 +670,22 @@ static inline int get_rx_port_type(struct fman_if *fif)
- 	return e_FM_PORT_TYPE_DUMMY;
- }
- 
-+static inline int get_tx_port_type(struct fman_if *fif)
-+{
-+	if (fif->mac_type == fman_offline_internal ||
-+			fif->mac_type == fman_onic)
-+		return e_FM_PORT_TYPE_OH_OFFLINE_PARSING;
-+	else if (fif->mac_type == fman_mac_1g)
-+		return e_FM_PORT_TYPE_TX;
-+	else if (fif->mac_type == fman_mac_2_5g)
-+		return e_FM_PORT_TYPE_TX_2_5G;
-+	else if (fif->mac_type == fman_mac_10g)
-+		return e_FM_PORT_TYPE_TX_10G;
-+
-+	DPAA_PMD_ERR("MAC type unsupported");
-+	return e_FM_PORT_TYPE_DUMMY;
-+}
-+
- static inline int set_fm_port_handle(struct dpaa_if *dpaa_intf,
- 				     uint64_t req_dist_set,
- 				     struct fman_if *fif)
-@@ -724,9 +741,6 @@ int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf,
- 
- 	PMD_INIT_FUNC_TRACE();
- 
--	if (!dpaa_intf->port_handle)
--		return 0;
--
- 	/* FM PORT Disable */
- 	ret = fm_port_disable(dpaa_intf->port_handle);
- 	if (ret != E_OK) {
-@@ -786,8 +800,10 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
- 	unsigned int i = 0;
- 	PMD_INIT_FUNC_TRACE();
- 
--	if (dpaa_fm_deconfig(dpaa_intf, fif))
--		DPAA_PMD_ERR("DPAA FM deconfig failed");
-+	if (dpaa_intf->port_handle) {
-+		if (dpaa_fm_deconfig(dpaa_intf, fif))
-+			DPAA_PMD_ERR("DPAA FM deconfig failed");
-+	}
- 
- 	if (!dev->data->nb_rx_queues)
- 		return 0;
-@@ -806,8 +822,7 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
- 
- 	if (fif->num_profiles) {
- 		for (i = 0; i < dev->data->nb_rx_queues; i++)
--			dpaa_intf->rx_queues[i].vsp_id =
--				fm_default_vsp_id(fif);
-+			dpaa_intf->rx_queues[i].vsp_id = fm_default_vsp_id(fif);
- 
- 		i = 0;
- 	}
-@@ -939,27 +954,16 @@ int dpaa_fm_term(void)
- }
- 
- static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
--		uint8_t vsp_id, t_handle fman_handle,
--		struct fman_if *fif, u32 mbuf_data_room_size)
-+		uint8_t vsp_id, t_handle fman_handle, struct fman_if *fif)
- {
-+	struct dpaa_if_vsp *vsp;
- 	t_fm_vsp_params vsp_params;
- 	t_fm_buffer_prefix_content buf_prefix_cont;
--	uint8_t idx = mac_idx[fif->mac_idx];
-+	uint8_t idx = mac_idx[fif->mac_idx], i;
- 	int ret;
-+	struct t_fm_ext_pools *pools;
- 
--	if (vsp_id == fif->base_profile_id && fif->is_shared_mac) {
--		/* For shared interface, VSP of base
--		 * profile is default pool located in kernel.
--		 */
--		dpaa_intf->vsp_bpid[vsp_id] = 0;
--		return 0;
--	}
--
--	if (vsp_id >= DPAA_VSP_PROFILE_MAX_NUM) {
--		DPAA_PMD_ERR("VSP ID %d exceeds MAX number %d",
--			vsp_id, DPAA_VSP_PROFILE_MAX_NUM);
--		return -1;
--	}
-+	vsp = &dpaa_intf->vsp[vsp_id];
- 
- 	memset(&vsp_params, 0, sizeof(vsp_params));
- 	vsp_params.h_fm = fman_handle;
-@@ -973,17 +977,21 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
- 	vsp_params.port_params.port_type = get_rx_port_type(fif);
- 	if (vsp_params.port_params.port_type == e_FM_PORT_TYPE_DUMMY) {
- 		DPAA_PMD_ERR("Mac type %d error", fif->mac_type);
--		return -1;
-+		return -EINVAL;
- 	}
- 
--	vsp_params.ext_buf_pools.num_of_pools_used = 1;
--	vsp_params.ext_buf_pools.ext_buf_pool[0].id = dpaa_intf->vsp_bpid[vsp_id];
--	vsp_params.ext_buf_pools.ext_buf_pool[0].size = mbuf_data_room_size;
-+	pools = &vsp_params.ext_buf_pools;
- 
--	dpaa_intf->vsp_handle[vsp_id] = fm_vsp_config(&vsp_params);
--	if (!dpaa_intf->vsp_handle[vsp_id]) {
--		DPAA_PMD_ERR("fm_vsp_config error for profile %d", vsp_id);
--		return -EINVAL;
-+	pools->num_of_pools_used = vsp->bp_num;
-+	for (i = 0; i < vsp->bp_num; i++) {
-+		pools->ext_buf_pool[i].id = vsp->vsp_bp[i]->bpid;
-+		pools->ext_buf_pool[i].size = vsp->vsp_bp[i]->size;
-+	}
-+
-+	vsp->vsp_handle = fm_vsp_config(&vsp_params);
-+	if (!vsp->vsp_handle) {
-+		DPAA_PMD_ERR("Configure VSP[%d] failed!", vsp_id);
-+		return -EIO;
- 	}
- 
- 	/* configure the application buffer (structure, size and
-@@ -1001,19 +1009,18 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
- 	buf_prefix_cont.manip_ext_space =
- 		RTE_PKTMBUF_HEADROOM - DPAA_MBUF_HW_ANNOTATION;
- 
--	ret = fm_vsp_config_buffer_prefix_content(dpaa_intf->vsp_handle[vsp_id],
--					       &buf_prefix_cont);
-+	ret = fm_vsp_config_buffer_prefix_content(vsp->vsp_handle,
-+			&buf_prefix_cont);
- 	if (ret != E_OK) {
--		DPAA_PMD_ERR("fm_vsp_config_buffer_prefix_content error for profile %d err: %d",
--			     vsp_id, ret);
-+		DPAA_PMD_ERR("Configure VSP[%d]'s buffer prefix failed(%d)!",
-+			vsp_id, ret);
- 		return ret;
- 	}
- 
- 	/* initialize the FM VSP module */
--	ret = fm_vsp_init(dpaa_intf->vsp_handle[vsp_id]);
-+	ret = fm_vsp_init(vsp->vsp_handle);
- 	if (ret != E_OK) {
--		DPAA_PMD_ERR("fm_vsp_init error for profile %d err:%d",
--			 vsp_id, ret);
-+		DPAA_PMD_ERR("Init VSP[%d] failed(%d)!", vsp_id, ret);
- 		return ret;
- 	}
- 
-@@ -1021,29 +1028,44 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
- }
- 
- int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
--		bool fmc_mode, uint8_t vsp_id, uint32_t bpid,
--		struct fman_if *fif, u32 mbuf_data_room_size)
-+		bool fmc_mode, uint8_t vsp_id, struct fman_if *fif)
- {
- 	int ret = 0;
- 	t_handle fman_handle;
-+	struct dpaa_if_vsp *vsp;
- 
--	if (!fif->num_profiles)
--		return 0;
-+	if (!fif->num_profiles) {
-+		DPAA_PMD_ERR("%s: No multiple VSPs specified!",
-+			dpaa_intf->name);
-+		return -EINVAL;
-+	}
- 
--	if (vsp_id >= fif->num_profiles)
--		return 0;
-+	if (vsp_id >= (fif->base_profile_id + fif->num_profiles)) {
-+		DPAA_PMD_ERR("%s: Invalid VSP ID(%d) >= base(%d) + num(%d)",
-+			dpaa_intf->name, vsp_id, fif->base_profile_id,
-+			fif->num_profiles);
-+		return -EINVAL;
-+	}
- 
--	if (dpaa_intf->vsp_bpid[vsp_id] == bpid)
-+	if (vsp_id == fif->base_profile_id && fif->is_shared_mac) {
-+		/* For shared interface, VSP of base
-+		 * profile is default pool located in kernel.
-+		 */
-+		dpaa_intf->vsp[vsp_id].bp_num = 0;
-+		dpaa_intf->vsp[vsp_id].vsp_handle = NULL;
- 		return 0;
-+	}
-+
-+	vsp = &dpaa_intf->vsp[vsp_id];
- 
--	if (dpaa_intf->vsp_handle[vsp_id]) {
--		ret = fm_vsp_free(dpaa_intf->vsp_handle[vsp_id]);
-+	if (vsp->vsp_handle) {
-+		ret = fm_vsp_free(vsp->vsp_handle);
- 		if (ret != E_OK) {
--			DPAA_PMD_ERR("Error fm_vsp_free: err %d vsp_handle[%d]",
--				     ret, vsp_id);
-+			DPAA_PMD_ERR("Free VSP[%d]'s handle failed(%d)",
-+				vsp_id, ret);
- 			return ret;
- 		}
--		dpaa_intf->vsp_handle[vsp_id] = 0;
-+		vsp->vsp_handle = NULL;
- 	}
- 
- 	if (fmc_mode)
-@@ -1051,26 +1073,26 @@ int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
- 	else
- 		fman_handle = fm_info.fman_handle;
- 
--	dpaa_intf->vsp_bpid[vsp_id] = bpid;
--
--	return dpaa_port_vsp_configure(dpaa_intf, vsp_id, fman_handle, fif,
--				       mbuf_data_room_size);
-+	return dpaa_port_vsp_configure(dpaa_intf, vsp_id, fman_handle, fif);
- }
- 
--int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif)
-+int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf)
- {
--	int idx, ret;
-+	int ret;
-+	uint8_t idx;
- 
--	for (idx = 0; idx < (uint8_t)fif->num_profiles; idx++) {
--		if (dpaa_intf->vsp_handle[idx]) {
--			ret = fm_vsp_free(dpaa_intf->vsp_handle[idx]);
-+	for (idx = 0; idx < DPAA_VSP_PROFILE_MAX_NUM; idx++) {
-+		if (dpaa_intf->vsp[idx].vsp_handle) {
-+			ret = fm_vsp_free(dpaa_intf->vsp[idx].vsp_handle);
- 			if (ret != E_OK) {
--				DPAA_PMD_ERR("Error fm_vsp_free: err %d"
--					     " vsp_handle[%d]", ret, idx);
-+				DPAA_PMD_ERR("Free VSP[%d] failed(%d)",
-+					idx, ret);
- 				return ret;
- 			}
-+			dpaa_intf->vsp[idx].vsp_handle = NULL;
- 		}
- 	}
- 
- 	return E_OK;
- }
-+
-diff --git a/drivers/net/dpaa/dpaa_flow.h b/drivers/net/dpaa/dpaa_flow.h
-index 4742b8dd0a..6a949d6dd4 100644
---- a/drivers/net/dpaa/dpaa_flow.h
-+++ b/drivers/net/dpaa/dpaa_flow.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017,2019,2022 NXP
-+ * Copyright 2017,2019,2022,2026 NXP
-  */
- 
- #ifndef __DPAA_FLOW_H__
-@@ -11,9 +11,8 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set);
- int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf, struct fman_if *fif);
- void dpaa_write_fm_config_to_file(void);
- int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
--	bool fmc_mode, uint8_t vsp_id, uint32_t bpid, struct fman_if *fif,
--	u32 mbuf_data_room_size);
--int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif);
-+	bool fmc_mode, uint8_t vsp_id, struct fman_if *fif);
-+int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf);
- int dpaa_port_fmc_init(struct fman_if *fif,
- 		       uint32_t *fqids, int8_t *vspids, int max_nb_rxq);
- 
+Changes since v1:
+ - add x86 BPF_JSET encoding fix and a regression test (patches 1-2),
+   found once the convert test ran generated code through the JIT
+ - carry Christophe's arm64 epilogue fix with his sign-off (patch 3)
+ - convert test now runs the converted filters through the JIT, not just
+   loads them (patch 6)
+ - kept Marat's ack (patch 4)
+   Since tests change enough, decided to drop his ack for that part.
+
+[1] https://inbox.dpdk.org/dev/20260319114500.9757-2-cfontain@redhat.com/
+
+v3 -- found a couple similar places where x86 JIT was generating
+      invalid op codes.
+
+Christophe Fontaine (1):
+  bpf/arm64: fix offset type to allow a negative jump
+
+Stephen Hemminger (5):
+  bpf/x86: fix JIT encoding of BPF_JSET with immediate
+  test/bpf: add JSET test with small immediate
+  test/bpf: check that JIT was generated
+  bpf/arm64: add BPF_ABS/BPF_IND packet load support
+  test/bpf: check that bpf_convert can be JIT'd
+
+ app/test/test_bpf.c     | 184 ++++++++++++++++++++++++++++++++++++----
+ lib/bpf/bpf_jit_arm64.c | 153 ++++++++++++++++++++++++++++++++-
+ lib/bpf/bpf_jit_x86.c   |   6 +-
+ 3 files changed, 323 insertions(+), 20 deletions(-)
+
 -- 
-2.25.1
+2.53.0
 
