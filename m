@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11502CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 16:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB6ECD98F2
+	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 16:26:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84337402D9;
-	Sun, 21 Jun 2026 18:25:44 +0200 (CEST)
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
- by mails.dpdk.org (Postfix) with ESMTP id F1032402D3
- for <dev@dpdk.org>; Sun, 21 Jun 2026 18:25:34 +0200 (CEST)
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-139a71baa35so4619285c88.0
- for <dev@dpdk.org>; Sun, 21 Jun 2026 09:25:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A19C440649;
+	Sun, 21 Jun 2026 18:25:45 +0200 (CEST)
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+ by mails.dpdk.org (Postfix) with ESMTP id 49107402EB
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 18:25:36 +0200 (CEST)
+Received: by mail-dl1-f41.google.com with SMTP id
+ a92af1059eb24-137335bc3caso5476832c88.0
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 09:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782059134;
- x=1782663934; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782059135;
+ x=1782663935; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=A2dOx4jjpoyjHjF1nlYPvjqlz6WambqZdxrCH0U193c=;
- b=sWtxrEOAwxZy5uQzXEDQwtgEvV+kEjzKa2tfAtqMdtBQg2o+2Ddv9lqb/jDQ3Q8kOa
- srA2sayhN7ZRo6wAWDatiDJwZIPsCajslKvLEjQTvYxZFVKuquFHRyxn+Z+0KiTGNovS
- zcnxUIoSV4xG71IXTXPLa0l5UOEj/nn9Pc2y7J+y38TcTjIWAq+rGQjLRaHBruDnwMpW
- sdOezlY6nhfk+PSnHb8ZvSGJwK05ZkK7KQzHTny3kElNC6sQr8D5b7idXhjw1TutJTdQ
- cQOeLdpAspUoyfAy9rJ91rTp5qJPcaKz+LyEXFlJoyu1l33vDnih1pIBU0zBkuUuTWJ8
- TjMQ==
+ bh=VB05lMcqK+/LPMv8mlQm3J8QzOVyTDGw9AcQMktYIQw=;
+ b=uVBx1esQdNHW/WbW9LhppcvyN2R4ZXeFDxB5Hy4QXRic6+PXQcpO8Idtntv+0OI+6S
+ 0zD7r8vtmVFOh/csbSsqyuumTC+bk+StBjFFIYadFMFmmdEpKaqaEH5QKIa4j+IcfsBh
+ TZdP6fg8ZZ/hV7svg4t0W2RQk0kpXmFIcSmznexIoIN4+rFvtW+4XdkqMsLG4YNX9QUt
+ l9bhZ4YLb20BcEfHdSPTekcM+MsgM41HoaXbNdSxApJt+Nhq4g0Kkuq28cDQz2oC2bDL
+ ziqTzkqMjpCBBEHTKqeE3wB7CbPbUMw4f/TOuvpzew6T7mDdyCCfhn3Om7XENxVR/Ssn
+ 1wKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782059134; x=1782663934;
+ d=1e100.net; s=20251104; t=1782059135; x=1782663935;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=A2dOx4jjpoyjHjF1nlYPvjqlz6WambqZdxrCH0U193c=;
- b=FyoKxUsakykpKayjZcgNuzNv3lRfS1DyYHm2Kbl8wX+huqhNDd70IxJXrz6OymPO5C
- 9nJFeSK4Cp4DYy9Hc1bu8k+K6PBu5mh9WmS3NaFf8K1fcVPGpA4Qx3qs0QJyD2m5CukL
- 2qjN3EqQAmpkRmu1iLztewsTJrFZFh42KPaRUd/cOnBy5U+xHUixsmPJwf7S8SBjaMMN
- piI2fM6pt5lnOv+myoQznz+WjZQfIiR9pdrgAge80w9pEsPllYR4cMdvJxzrawlYzQ7i
- MIRrux9HS02LWkKmX0XBKa6h+YTDZaVNj72fapHFfHhVpa+sZQi1lIwD6/vzY9Vn/8Ku
- 5ZYw==
-X-Gm-Message-State: AOJu0YxWclsTpiIWrxUi1k/Z3Obxf8YKJiZlNtSfHnWW7U0egt9NANQ1
- h67VcNiUpxLB1eDqFmT5JSusUju1QHFqTxBRBFAykuPInpK/1FcZdj6X9Zdkik325e+G5Cc9PnR
- fcgjiedY=
-X-Gm-Gg: AfdE7clRKliFsk2taBIa5hAWGv+ZgELgIGhCEC+Jt23Kd/8FXy6J4glmzfmOHeKgJhE
- 5t0MsEKixYyXA06q6zy2yNN0m/UAnlCLvbFL+jDp6SPdux+aYsN+rLe2zEkSIOa7HeKEvGhf4t1
- XxVSKRsZduUEJzR81q/4TTe+fFCBI+CGYNrJCRbto0NQkQBWhfx3LqIsnlkPWKpFzkdguwlw+ly
- JcLY+SCeCrA4Wy8QFaNGs6KdD2b8NhN5h+kzIT7oa0Xnq85ch2XpSFLgykTOsXduMapx0jveMch
- Brx2GOEMdIQdv9QJKOSSsO8tPUGLEzn144kERM+gOHLPHqTrZ8khI2RHZsNVAS6RNGefVGdPaBL
- vyvXFrBJRGAlhuGNdGKMrlE15FZMCt4EP07CHfsYG2VUf6KlXNJUwXFQc0XidJouRSQHjS1yedo
- gNixBunB43u1+H8YMUEEFO1bwpGKO0vLoOKtMWstB3xFHqzclb26E=
-X-Received: by 2002:a05:7022:e13:b0:12b:ebb9:1c18 with SMTP id
- a92af1059eb24-139a36876d9mr7785997c88.31.1782059134056; 
- Sun, 21 Jun 2026 09:25:34 -0700 (PDT)
+ bh=VB05lMcqK+/LPMv8mlQm3J8QzOVyTDGw9AcQMktYIQw=;
+ b=mOIMf8BBYOamRy9RThRLgQL2+waJIi0FKigJ2snT/YXdfA1B4T+XMuT6JMTDpqLF3V
+ QMQR6a7gFu8WzrgECloC8W/SbSWwauLuvAUfolRmVVqxKsbCTdgAIDx02LqJ1MHGsz62
+ 0mCXDl1+yiN8R7VqPb6SKqaTUGBAQ2dD2Sc1BrkFkHyo1Q6dePtQIjfv93biFroIO4nS
+ +9Zz+aOAKiWrQVNyPa3i41JhK12T8UhdtwW/m1FZRLmFeWJOgH+9K4ndvipsD/0Rg27h
+ ZUU2I7pXVcEnh+A9UwAbJbgmQ7I7iBkmSZhKZYANn5cnyoJIs8bWSC0TAi6lC7VFOGNh
+ g9oA==
+X-Gm-Message-State: AOJu0YzDLzBHNZAfIvQC6lpkIBSAE/f+pd9g8gNhf/S/zkbBJ2W0+vsK
+ a4iGDyqX2JqdhSUdmOiuIADXKA1CFkGBFoc+JaKR9Y55oiGLhwqIfMvLLhbWXJJpt+aA9emX5fE
+ t4ZvqoJY=
+X-Gm-Gg: AfdE7clWd2MTUfCPmtCuiFsP4tcf8jXdwK7zPkR/DWy+tkfUlJdKh1bN/V0+LQkjaQy
+ U21Es1zlPe/k3VBmbsBKBQ+vjNL8Pme4ESJ+xPBCZTzXCyDqEJIhyD0fAJGWjjmw2id8+CqqfT+
+ 25c8/l5Ug3nt0VeS1WPKqXuvkQfet5mAvpUAp7EBLyvdj5E5BVxLhaPUXSnQdRUaGLaOg/IM//M
+ IE6YW28CtKA5v1yIGRYx0+Za/+Oozu4sonU5OZ3c638MjCinECR/o3HVLxf9LQ1Ipj1TN2MyB1S
+ OQEFRlzwPd6xwV7ciFO1PlTlJyxvce2AN8+CCHDh7XB9QR6R7iP9FbvZFOwVx3Xy0YMtJYNvFcT
+ lt9/8sFxVS4U2NNZi97J9IKooCPuQJy0hnlSEl7c5SmXp87wUG0E5slT6hHucF+IbKWPzTW2C/I
+ U9YR7SyNjwfhr0P9dEJNvS0MH/Ss8uWd53EL/fkQ5tltIPYseBWYc=
+X-Received: by 2002:a05:7022:e15:b0:139:85c2:d7b7 with SMTP id
+ a92af1059eb24-139a367e28dmr7584094c88.32.1782059135287; 
+ Sun, 21 Jun 2026 09:25:35 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-139add73a44sm5141593c88.13.2026.06.21.09.25.33
+ a92af1059eb24-139add73a44sm5141593c88.13.2026.06.21.09.25.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 21 Jun 2026 09:25:33 -0700 (PDT)
+ Sun, 21 Jun 2026 09:25:34 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>,
  Marat Khalili <marat.khalili@huawei.com>
-Subject: [PATCH v3 5/6] bpf/arm64: add BPF_ABS/BPF_IND packet load support
-Date: Sun, 21 Jun 2026 09:23:58 -0700
-Message-ID: <20260621162524.82690-6-stephen@networkplumber.org>
+Subject: [PATCH v3 6/6] test/bpf: check that bpf_convert can be JIT'd
+Date: Sun, 21 Jun 2026 09:23:59 -0700
+Message-ID: <20260621162524.82690-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260621162524.82690-1-stephen@networkplumber.org>
 References: <20260608203322.1116296-1-stephen@networkplumber.org>
@@ -84,203 +83,202 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The arm64 JIT rejected BPF_LD | BPF_ABS and BPF_LD | BPF_IND with
-"invalid opcode", so cBPF programs converted by rte_bpf_convert() could
-not be JITed. Add these opcodes, mirroring the x86 JIT: a fast path for
-data held in the first mbuf segment, and a __rte_pktmbuf_read() slow
-path for everything else.
+Add followup in bpf conversion tests to make sure resulting
+code was also run through JIT and that JIT produces
+same results as non-JIT.
 
-The forward branches over the call cannot use fixed distances:
-emit_call() materializes the helper address with a variable number of
-mov/movk instructions, so the block sizes are not known up front. Size
-the three blocks (fast path, slow path, common tail) in a dry run, then
-emit for real with the branches resolved from the measured offsets.
-
-Programs using these opcodes use the call register layout, since the
-slow path makes a function call.
-
-Bugzilla ID: 1427
+Reduce log output to make it easier to match which
+expression might be causing issues.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/bpf/bpf_jit_arm64.c | 149 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 148 insertions(+), 1 deletion(-)
+ app/test/test_bpf.c | 94 +++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 79 insertions(+), 15 deletions(-)
 
-diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
-index 67e42015de..3fc16fd984 100644
---- a/lib/bpf/bpf_jit_arm64.c
-+++ b/lib/bpf/bpf_jit_arm64.c
-@@ -1125,6 +1125,135 @@ emit_branch(struct a64_jit_ctx *ctx, uint8_t op, uint32_t i, int16_t off)
- 	emit_b_cond(ctx, ebpf_to_a64_cond(op), jump_offset_get(ctx, i, off));
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index 3a88434c3c..973dd7d659 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -8,6 +8,7 @@
+ #include <inttypes.h>
+ #include <unistd.h>
+ 
++#include <rte_byteorder.h>
+ #include <rte_memory.h>
+ #include <rte_debug.h>
+ #include <rte_hexdump.h>
+@@ -32,6 +33,7 @@ test_bpf(void)
+ #include <rte_bpf.h>
+ #include <rte_ether.h>
+ #include <rte_ip.h>
++#include <rte_udp.h>
+ 
+ 
+ /* Tests of most simple BPF programs (no instructions, one instruction etc.) */
+@@ -4529,6 +4531,7 @@ test_bpf_match(pcap_t *pcap, const char *str,
+ 	int ret = -1;
+ 	uint64_t rc;
+ 
++	printf("%s '%s'\n", __func__, str);
+ 	if (pcap_compile(pcap, &fcode, str, 1, PCAP_NETMASK_UNKNOWN)) {
+ 		printf("%s@%d: pcap_compile(\"%s\") failed: %s;\n",
+ 		       __func__, __LINE__,  str, pcap_geterr(pcap));
+@@ -4550,6 +4553,24 @@ test_bpf_match(pcap_t *pcap, const char *str,
+ 	}
+ 
+ 	rc = rte_bpf_exec(bpf, mb);
++#if defined(RTE_ARCH_X86_64) || defined(RTE_ARCH_ARM64)
++	{
++		struct rte_bpf_jit jit;
++
++		rte_bpf_get_jit(bpf, &jit);
++		if (jit.func == NULL) {
++			printf("%s@%d: no JIT generated\n", __func__, __LINE__);
++			goto error;
++		}
++
++		fflush(stdout);
++		uint64_t rc_jit = jit.func(mb);
++		if (rc_jit != rc) {
++			printf("%s@%d: JIT return code does not match\n", __func__, __LINE__);
++			goto error;
++		}
++	}
++#endif
+ 	/* The return code from bpf capture filter is non-zero if matched */
+ 	ret = (rc == 0);
+ error:
+@@ -4560,23 +4581,16 @@ test_bpf_match(pcap_t *pcap, const char *str,
+ 	return ret;
  }
  
-+/* LD_ABS/LD_IND code block offsets (in arm64 instructions) */
-+enum {
-+	LDMB_FAST_OFS, /* fast path */
-+	LDMB_SLOW_OFS, /* slow path */
-+	LDMB_FIN_OFS,  /* common tail */
-+	LDMB_OFS_NUM
-+};
-+
-+/*
-+ * Helper for emit_ld_mbuf(): fast path.
-+ * Compute the packet offset; if it lies inside the first segment leave the
-+ * data pointer in R0, otherwise branch to the slow path.
-+ */
+-/* Basic sanity test can we match a IP packet */
+-static int
+-test_bpf_filter_sanity(pcap_t *pcap)
++/* Setup mbuf for filter test */
 +static void
-+emit_ldmb_fast_path(struct a64_jit_ctx *ctx, uint8_t src, uint8_t mode,
-+		    uint32_t sz, int32_t imm, const uint32_t ofs[LDMB_OFS_NUM])
-+{
-+	uint8_t r0 = ebpf_to_a64_reg(ctx, EBPF_REG_0);
-+	uint8_t r6 = ebpf_to_a64_reg(ctx, EBPF_REG_6);
-+	uint8_t tmp1 = ebpf_to_a64_reg(ctx, TMP_REG_1);
-+	uint8_t tmp2 = ebpf_to_a64_reg(ctx, TMP_REG_2);
-+	uint8_t tmp3 = ebpf_to_a64_reg(ctx, TMP_REG_3);
-+
-+	/* off = imm (+ src for BPF_IND) */
-+	emit_mov_imm(ctx, 1, tmp1, imm);
-+	if (mode == BPF_IND)
-+		emit_add(ctx, 1, tmp1, src);
-+
-+	/* if ((int64_t)(mbuf->data_len - off) < sz) goto slow_path */
-+	emit_mov_imm(ctx, 1, tmp2, offsetof(struct rte_mbuf, data_len));
-+	emit_ldr(ctx, BPF_H, tmp2, r6, tmp2);
-+	emit_sub(ctx, 1, tmp2, tmp1);
-+	emit_mov_imm(ctx, 1, tmp3, sz);
-+	emit_cmp(ctx, 1, tmp2, tmp3);
-+	emit_b_cond(ctx, A64_LT, (int32_t)(ofs[LDMB_SLOW_OFS] - ctx->idx));
-+
-+	/* R0 = mbuf->buf_addr + mbuf->data_off + off */
-+	emit_mov_imm(ctx, 1, tmp2, offsetof(struct rte_mbuf, data_off));
-+	emit_ldr(ctx, BPF_H, tmp2, r6, tmp2);
-+	emit_mov_imm(ctx, 1, r0, offsetof(struct rte_mbuf, buf_addr));
-+	emit_ldr(ctx, EBPF_DW, r0, r6, r0);
-+	emit_add(ctx, 1, r0, tmp2);
-+	emit_add(ctx, 1, r0, tmp1);
-+
-+	emit_b(ctx, (int32_t)(ofs[LDMB_FIN_OFS] - ctx->idx));
-+}
-+
-+/*
-+ * Helper for emit_ld_mbuf(): slow path.
-+ * R0 = __rte_pktmbuf_read(mbuf, off, sz, buf); return 0 if NULL.
-+ * The scratch buffer is the space reserved by __rte_bpf_validate() at the
-+ * bottom of the eBPF stack frame, i.e. (frame_pointer - stack_ofs).
-+ */
-+static void
-+emit_ldmb_slow_path(struct a64_jit_ctx *ctx, uint32_t sz, uint32_t stack_ofs)
-+{
-+	uint8_t r0 = ebpf_to_a64_reg(ctx, EBPF_REG_0);
-+	uint8_t r6 = ebpf_to_a64_reg(ctx, EBPF_REG_6);
-+	uint8_t fp = ebpf_to_a64_reg(ctx, EBPF_FP);
-+	uint8_t tmp1 = ebpf_to_a64_reg(ctx, TMP_REG_1);
-+
-+	/* arguments of __rte_pktmbuf_read(mbuf, off, len, buf) */
-+	emit_mov_64(ctx, A64_R(1), tmp1);		/* off (held in tmp1) */
-+	emit_mov_64(ctx, A64_R(0), r6);			/* mbuf */
-+	emit_mov_imm(ctx, 0, A64_R(2), sz);		/* len */
-+	emit_sub_imm_64(ctx, A64_R(3), fp, stack_ofs);	/* buf */
-+
-+	emit_call(ctx, tmp1, (void *)(uintptr_t)__rte_pktmbuf_read);
-+	emit_return_zero_if_src_zero(ctx, 1, r0);
-+}
-+
-+/*
-+ * Helper for emit_ld_mbuf(): common tail.
-+ * Load the value pointed to by R0 and convert from network byte order.
-+ */
-+static void
-+emit_ldmb_fin(struct a64_jit_ctx *ctx, uint8_t opsz, uint32_t sz)
-+{
-+	uint8_t r0 = ebpf_to_a64_reg(ctx, EBPF_REG_0);
-+
-+	emit_ldr(ctx, opsz, r0, r0, A64_ZR);
-+	if (opsz != BPF_B)
-+		emit_be(ctx, r0, sz * 8);
-+}
-+
-+/*
-+ * emit code for BPF_ABS/BPF_IND load.
-+ * generates the following construction:
-+ * fast_path:
-+ *   off = src + imm
-+ *   if (mbuf->data_len - off < sz)
-+ *      goto slow_path;
-+ *   ptr = mbuf->buf_addr + mbuf->data_off + off;
-+ *   goto fin_part;
-+ * slow_path:
-+ *   typeof(sz) buf;  // scratch space reserved on the eBPF stack
-+ *   ptr = __rte_pktmbuf_read(mbuf, off, sz, &buf);
-+ *   if (ptr == NULL)
-+ *      return 0;
-+ * fin_part:
-+ *   res = *(typeof(sz))ptr;
-+ *   res = ntoh(res);
-+ */
-+static void
-+emit_ld_mbuf(struct a64_jit_ctx *ctx, uint8_t op, uint8_t src, int32_t imm,
-+	     uint32_t stack_ofs)
-+{
-+	uint8_t mode = BPF_MODE(op);
-+	uint8_t opsz = BPF_SIZE(op);
-+	uint32_t sz = bpf_size(opsz);
-+	uint32_t ofs[LDMB_OFS_NUM];
-+
-+	/* seed offsets so the dry-run branches stay in range */
-+	ofs[LDMB_FAST_OFS] = ofs[LDMB_SLOW_OFS] = ofs[LDMB_FIN_OFS] = ctx->idx;
-+
-+	/* dry run to record block offsets */
-+	emit_ldmb_fast_path(ctx, src, mode, sz, imm, ofs);
-+	ofs[LDMB_SLOW_OFS] = ctx->idx;
-+	emit_ldmb_slow_path(ctx, sz, stack_ofs);
-+	ofs[LDMB_FIN_OFS] = ctx->idx;
-+	emit_ldmb_fin(ctx, opsz, sz);
-+
-+	/* rewind and emit for real with resolved offsets */
-+	ctx->idx = ofs[LDMB_FAST_OFS];
-+	emit_ldmb_fast_path(ctx, src, mode, sz, imm, ofs);
-+	emit_ldmb_slow_path(ctx, sz, stack_ofs);
-+	emit_ldmb_fin(ctx, opsz, sz);
-+}
-+
- static void
- check_program_has_call(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
++dummy_ip_prep(void *data, uint16_t plen)
  {
-@@ -1137,8 +1266,17 @@ check_program_has_call(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
- 		op = ins->code;
+-	const uint32_t plen = 100;
+-	struct rte_mbuf mb, *m;
+-	uint8_t tbuf[RTE_MBUF_DEFAULT_BUF_SIZE];
+ 	struct {
+ 		struct rte_ether_hdr eth_hdr;
+ 		struct rte_ipv4_hdr ip_hdr;
+-	} *hdr;
++		struct rte_udp_hdr udp_hdr;
++	} *hdr = data;
  
- 		switch (op) {
--		/* Call imm */
-+		/*
-+		 * BPF_ABS/BPF_IND can fall through to __rte_pktmbuf_read(),
-+		 * so they need the call-clobbered register layout as well.
-+		 */
- 		case (BPF_JMP | EBPF_CALL):
-+		case (BPF_LD | BPF_ABS | BPF_B):
-+		case (BPF_LD | BPF_ABS | BPF_H):
-+		case (BPF_LD | BPF_ABS | BPF_W):
-+		case (BPF_LD | BPF_IND | BPF_B):
-+		case (BPF_LD | BPF_IND | BPF_H):
-+		case (BPF_LD | BPF_IND | BPF_W):
- 			ctx->foundcall = 1;
- 			return;
- 		}
-@@ -1340,6 +1478,15 @@ emit(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
- 			emit_mov_imm(ctx, 1, dst, u64);
- 			i++;
- 			break;
-+		/* R0 = ntoh(*(size *)(mbuf data + (src) + imm)) */
-+		case (BPF_LD | BPF_ABS | BPF_B):
-+		case (BPF_LD | BPF_ABS | BPF_H):
-+		case (BPF_LD | BPF_ABS | BPF_W):
-+		case (BPF_LD | BPF_IND | BPF_B):
-+		case (BPF_LD | BPF_IND | BPF_H):
-+		case (BPF_LD | BPF_IND | BPF_W):
-+			emit_ld_mbuf(ctx, op, src, imm, bpf->stack_sz);
-+			break;
- 		/* *(size *)(dst + off) = src */
- 		case (BPF_STX | BPF_MEM | BPF_B):
- 		case (BPF_STX | BPF_MEM | BPF_H):
+-	memset(&mb, 0, sizeof(mb));
+-	dummy_mbuf_prep(&mb, tbuf, sizeof(tbuf), plen);
+-	m = &mb;
+-
+-	hdr = rte_pktmbuf_mtod(m, typeof(hdr));
+ 	hdr->eth_hdr = (struct rte_ether_hdr) {
+ 		.dst_addr.addr_bytes = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
+ 		.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4),
+@@ -4589,13 +4603,32 @@ test_bpf_filter_sanity(pcap_t *pcap)
+ 		.src_addr = rte_cpu_to_be_32(RTE_IPV4_LOOPBACK),
+ 		.dst_addr = rte_cpu_to_be_32(RTE_IPV4_BROADCAST),
+ 	};
++	hdr->udp_hdr = (struct rte_udp_hdr) {
++		.src_port = rte_rand_max(UINT16_MAX),
++		.dst_port = rte_cpu_to_be_16(9),	/* discard port */
++		.dgram_len = rte_cpu_to_be_16(plen - sizeof(struct rte_ipv4_hdr)),
++		.dgram_cksum = 0,
++	};
++}
++
++
++/* Basic sanity test can we match a IP packet */
++static int
++test_bpf_filter_sanity(pcap_t *pcap)
++{
++	struct rte_mbuf mb = { 0 };
++	uint8_t tbuf[RTE_MBUF_DEFAULT_BUF_SIZE];
++	const uint32_t plen = 100;
++
++	dummy_mbuf_prep(&mb, tbuf, sizeof(tbuf), plen);
++	dummy_ip_prep(rte_pktmbuf_mtod(&mb, void *), plen);
+ 
+-	if (test_bpf_match(pcap, "ip", m) != 0) {
++	if (test_bpf_match(pcap, "ip", &mb) != 0) {
+ 		printf("%s@%d: filter \"ip\" doesn't match test data\n",
+ 		       __func__, __LINE__);
+ 		return -1;
+ 	}
+-	if (test_bpf_match(pcap, "not ip", m) == 0) {
++	if (test_bpf_match(pcap, "not ip", &mb) == 0) {
+ 		printf("%s@%d: filter \"not ip\" does match test data\n",
+ 		       __func__, __LINE__);
+ 		return -1;
+@@ -4648,10 +4681,15 @@ static const char * const sample_filters[] = {
+ static int
+ test_bpf_filter(pcap_t *pcap, const char *s)
+ {
++	struct rte_mbuf mb = { 0 };
++	uint8_t tbuf[RTE_MBUF_DEFAULT_BUF_SIZE];
++	const uint32_t plen = 100;
+ 	struct bpf_program fcode;
+ 	struct rte_bpf_prm *prm = NULL;
+ 	struct rte_bpf *bpf = NULL;
++	int ret = -1;
+ 
++	printf("%s '%s'\n", __func__, s);
+ 	if (pcap_compile(pcap, &fcode, s, 1, PCAP_NETMASK_UNKNOWN)) {
+ 		printf("%s@%d: pcap_compile('%s') failed: %s;\n",
+ 		       __func__, __LINE__, s, pcap_geterr(pcap));
+@@ -4665,8 +4703,10 @@ test_bpf_filter(pcap_t *pcap, const char *s)
+ 		goto error;
+ 	}
+ 
++#ifdef DEBUG
+ 	printf("bpf convert for \"%s\" produced:\n", s);
+ 	rte_bpf_dump(stdout, prm->ins, prm->nb_ins);
++#endif
+ 
+ 	bpf = rte_bpf_load(prm);
+ 	if (bpf == NULL) {
+@@ -4675,6 +4715,30 @@ test_bpf_filter(pcap_t *pcap, const char *s)
+ 		goto error;
+ 	}
+ 
++	dummy_mbuf_prep(&mb, tbuf, sizeof(tbuf), plen);
++	dummy_ip_prep(rte_pktmbuf_mtod(&mb, void *), plen);
++
++	uint64_t rc = rte_bpf_exec(bpf, &mb);
++#if defined(RTE_ARCH_X86_64) || defined(RTE_ARCH_ARM64)
++	{
++		struct rte_bpf_jit jit;
++
++		rte_bpf_get_jit(bpf, &jit);
++		if (jit.func == NULL) {
++			printf("%s@%d: no JIT generated\n", __func__, __LINE__);
++			goto error;
++		}
++
++		fflush(stdout);
++		uint64_t rc_jit = jit.func(&mb);
++		if (rc_jit != rc) {
++			printf("%s@%d: JIT return code does not match\n", __func__, __LINE__);
++			goto error;
++		}
++	}
++#endif
++	ret = 0;
++
+ error:
+ 	if (bpf)
+ 		rte_bpf_destroy(bpf);
+@@ -4685,7 +4749,7 @@ test_bpf_filter(pcap_t *pcap, const char *s)
+ 
+ 	rte_free(prm);
+ 	pcap_freecode(&fcode);
+-	return (bpf == NULL) ? -1 : 0;
++	return ret;
+ }
+ 
+ static int
 -- 
 2.53.0
 
