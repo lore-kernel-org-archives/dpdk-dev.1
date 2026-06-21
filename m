@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E079DCD98F0
-	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 15:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D391FCD98F2
+	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 15:24:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9D0734065B;
-	Sun, 21 Jun 2026 17:23:00 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 0FAE040685
- for <dev@dpdk.org>; Sun, 21 Jun 2026 17:22:55 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E94EC1A01C4;
- Sun, 21 Jun 2026 17:22:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A22BD406A2;
+	Sun, 21 Jun 2026 17:23:01 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 7022E40673
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 17:22:56 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5468C200248;
+ Sun, 21 Jun 2026 17:22:56 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B215D1A000C;
- Sun, 21 Jun 2026 17:22:54 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E7B3A200240;
+ Sun, 21 Jun 2026 17:22:55 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3416B180004C;
- Sun, 21 Jun 2026 23:22:53 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 68A641800086;
+ Sun, 21 Jun 2026 23:22:54 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v3 18/19] dma/dpaa: add SG data validation and ERR050757 fix
-Date: Sun, 21 Jun 2026 20:52:27 +0530
-Message-Id: <20260621152228.2777171-19-hemant.agrawal@nxp.com>
+Cc: Vanshika Shukla <vanshika.shukla@nxp.com>
+Subject: [PATCH v3 19/19] net/dpaa: add ONIC port checks
+Date: Sun, 21 Jun 2026 20:52:28 +0530
+Message-Id: <20260621152228.2777171-20-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260621152228.2777171-1-hemant.agrawal@nxp.com>
 References: <20260621101651.1081425-1-hemant.agrawal@nxp.com>
@@ -49,181 +49,407 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gagandeep Singh <g.singh@nxp.com>
+From: Vanshika Shukla <vanshika.shukla@nxp.com>
 
-Add scatter-gather (SG) support to the QDMA driver, enabled by default
-via the s_sg_enable flag. Add optional data validation mode controlled
-by the s_data_validation flag for debugging transfer correctness.
+Add get_tx_port_type() helper that maps fman MAC type to the correct FMC
+Tx port type. Handle fman_onic and fman_offline_internal MAC types as
+OH_OFFLINE_PARSING on the Tx path, consistent with existing Rx port type
+logic. Without this, ONIC ports used incorrect port type in flow
+configuration, leading to failed FMC operations.
 
-Add a workaround for hardware errata ERR050757: when
-RTE_DMA_DPAA_ERRATA_ERR050757 is defined, configure the source frame
-descriptor with stride settings (sss/ssd = FSL_QDMA_CMD_SS_ERR050757_LEN)
-to force PCI read transactions to stay within the errata-safe length
-limit, preventing data corruption on affected silicon.
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- drivers/dma/dpaa/dpaa_qdma.c | 99 +++++++++++++++++++++++++++---------
- 1 file changed, 75 insertions(+), 24 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c |  26 +++---
+ drivers/net/dpaa/dpaa_ethdev.h |  11 ++-
+ drivers/net/dpaa/dpaa_flow.c   | 146 +++++++++++++++++++--------------
+ drivers/net/dpaa/dpaa_flow.h   |   7 +-
+ 4 files changed, 110 insertions(+), 80 deletions(-)
 
-diff --git a/drivers/dma/dpaa/dpaa_qdma.c b/drivers/dma/dpaa/dpaa_qdma.c
-index 0ede9ee8b5..acac770c88 100644
---- a/drivers/dma/dpaa/dpaa_qdma.c
-+++ b/drivers/dma/dpaa/dpaa_qdma.c
-@@ -9,9 +9,14 @@
- #include "dpaa_qdma.h"
- #include "dpaa_qdma_logs.h"
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 63a3c110d9..638d81d7e6 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -490,7 +490,7 @@ static int dpaa_eth_dev_stop(struct rte_eth_dev *dev)
+ 	PMD_INIT_FUNC_TRACE();
+ 	dev->data->dev_started = 0;
  
-+static int s_data_validation;
-+static int s_hw_err_check;
-+static int s_sg_enable = 1;
- static uint32_t s_sg_max_entry_sz = 2000;
--static bool s_hw_err_check;
- 
-+#ifdef RTE_DMA_DPAA_ERRATA_ERR050757
-+static int s_pci_read = 1;
-+#endif
- #define DPAA_DMA_ERROR_CHECK "dpaa_dma_err_check"
- 
- static inline void
-@@ -112,7 +117,8 @@ dma_pool_alloc(char *nm, int size, int aligned, dma_addr_t *phy_addr)
- 	if (!virt_addr)
- 		return NULL;
- 
--	*phy_addr = rte_mem_virt2iova(virt_addr);
-+	if (phy_addr)
-+		*phy_addr = rte_mem_virt2iova(virt_addr);
- 
- 	return virt_addr;
- }
-@@ -392,6 +398,8 @@ fsl_qdma_data_validation(struct fsl_qdma_desc *desc[],
- 	char err_msg[512];
- 	int offset;
- 
-+	if (likely(!s_data_validation))
-+		return;
- 
- 	offset = sprintf(err_msg, "Fatal TC%d/queue%d: ",
- 		fsl_queue->block_id,
-@@ -716,19 +724,21 @@ fsl_qdma_enqueue_desc_single(struct fsl_qdma_queue *fsl_queue,
- 	ft = fsl_queue->ft[fsl_queue->ci];
- 
- #ifdef RTE_DMA_DPAA_ERRATA_ERR050757
--	sdf = &ft->df.sdf;
--	sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
-+	if (s_pci_read) {
-+		sdf = &ft->df.sdf;
-+		sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
- #ifdef RTE_DMA_DPAA_ERRATA_ERR050265
--	sdf->prefetch = 1;
-+		sdf->prefetch = 1;
- #endif
--	if (len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
--		sdf->ssen = 1;
--		sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
--		sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
--	} else {
--		sdf->ssen = 0;
--		sdf->sss = 0;
--		sdf->ssd = 0;
-+		if (len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
-+			sdf->ssen = 1;
-+			sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
-+			sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
-+		} else {
-+			sdf->ssen = 0;
-+			sdf->sss = 0;
-+			sdf->ssd = 0;
-+		}
+-	if (!fif->is_shared_mac) {
++	if (!fif->is_shared_mac && fif->mac_type != fman_onic) {
+ 		fman_if_bmi_stats_disable(fif);
+ 		fman_if_disable_rx(fif);
  	}
- #endif
- 	csgf_src = &ft->desc_sbuf;
-@@ -832,19 +842,21 @@ fsl_qdma_enqueue_desc_sg(struct fsl_qdma_queue *fsl_queue)
- 	csgf_src->length = total_len;
- 	csgf_dest->length = total_len;
- #ifdef RTE_DMA_DPAA_ERRATA_ERR050757
--	sdf = &ft->df.sdf;
--	sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
-+	if (s_pci_read) {
-+		sdf = &ft->df.sdf;
-+		sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
- #ifdef RTE_DMA_DPAA_ERRATA_ERR050265
--	sdf->prefetch = 1;
-+		sdf->prefetch = 1;
- #endif
--	if (total_len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
--		sdf->ssen = 1;
--		sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
--		sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
--	} else {
--		sdf->ssen = 0;
--		sdf->sss = 0;
--		sdf->ssd = 0;
-+		if (total_len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
-+			sdf->ssen = 1;
-+			sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
-+			sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
-+		} else {
-+			sdf->ssen = 0;
-+			sdf->sss = 0;
-+			sdf->ssd = 0;
-+		}
- 	}
- #endif
- 	ret = fsl_qdma_enqueue_desc_to_ring(fsl_queue, num);
-@@ -883,6 +895,25 @@ fsl_qdma_enqueue_desc(struct fsl_qdma_queue *fsl_queue)
- 			fsl_queue->pending_num = 0;
+@@ -590,7 +590,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
  		}
+ 	}
+ 	if (fif->num_profiles) {
+-		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
++		ret = dpaa_port_vsp_cleanup(dpaa_intf);
+ 		if (ret) {
+ 			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
+ 				dev->data->name, ret);
+@@ -674,7 +674,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 			dev->data->name, ret);
+ 	}
+ 	if (fif->num_profiles) {
+-		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
++		ret = dpaa_port_vsp_cleanup(dpaa_intf);
+ 		if (ret) {
+ 			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
+ 				dev->data->name, ret);
+@@ -1134,8 +1134,8 @@ static inline int dpaa_eth_rx_queue_bp_check(struct rte_eth_dev *dev,
+ 			vsp_id = 0;
+ 	}
+ 
+-	if (dpaa_intf->vsp_bpid[vsp_id] &&
+-		bpid != dpaa_intf->vsp_bpid[vsp_id]) {
++	if (dpaa_intf->vsp[vsp_id].vsp_bp[0] &&
++		bpid != dpaa_intf->vsp[vsp_id].vsp_bp[0]->bpid) {
+ 		DPAA_PMD_ERR("Various MPs are assigned to RXQs with same VSP");
+ 
+ 		return -1;
+@@ -1232,9 +1232,9 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		int8_t vsp_id = rxq->vsp_id;
+ 
+ 		if (vsp_id >= 0) {
+-			ret = dpaa_port_vsp_update(dpaa_intf, fmc_q, vsp_id,
+-					DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid,
+-					fif, buffsz + RTE_PKTMBUF_HEADROOM);
++			dpaa_intf->vsp[vsp_id].vsp_bp[0] = DPAA_MEMPOOL_TO_POOL_INFO(mp);
++			dpaa_intf->vsp[vsp_id].bp_num = 1;
++			ret = dpaa_port_vsp_update(dpaa_intf, fmc_q, vsp_id, fif);
+ 			if (ret) {
+ 				DPAA_PMD_ERR("dpaa_port_vsp_update failed");
+ 				return ret;
+@@ -1247,12 +1247,14 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 					     " to shared interface on DPDK.");
+ 				return -EINVAL;
+ 			}
+-			dpaa_intf->vsp_bpid[fif->base_profile_id] =
+-				DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid;
++			dpaa_intf->vsp[fif->base_profile_id].vsp_bp[0] =
++				DPAA_MEMPOOL_TO_POOL_INFO(mp);
++			dpaa_intf->vsp[fif->base_profile_id].bp_num = 1;
+ 		}
+ 	} else {
+-		dpaa_intf->vsp_bpid[0] =
+-			DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid;
++		dpaa_intf->vsp[0].vsp_bp[0] =
++			DPAA_MEMPOOL_TO_POOL_INFO(mp);
++		dpaa_intf->vsp[0].bp_num = 1;
+ 	}
+ 
+ 	dpaa_intf->valid = 1;
+diff --git a/drivers/net/dpaa/dpaa_ethdev.h b/drivers/net/dpaa/dpaa_ethdev.h
+index d342d98f23..d3e005b556 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.h
++++ b/drivers/net/dpaa/dpaa_ethdev.h
+@@ -118,6 +118,13 @@ enum {
+ 
+ #define FMC_FILE "/tmp/fmc.bin"
+ 
++struct dpaa_if_vsp {
++	struct dpaa_bp_info *vsp_bp[FMAN_PORT_MAX_EXT_POOLS_NUM];
++	uint8_t bp_num;
++	uint32_t max_size;
++	void *vsp_handle;
++};
++
+ extern struct rte_mempool *dpaa_tx_sg_pool;
+ 
+ /* PMD related logs */
+@@ -164,8 +171,8 @@ struct dpaa_if {
+ 	 */
+ 	struct qman_fq *next_tx_conf_queue;
+ 
+-	void *vsp_handle[DPAA_VSP_PROFILE_MAX_NUM];
+-	uint32_t vsp_bpid[DPAA_VSP_PROFILE_MAX_NUM];
++	struct dpaa_if_vsp vsp[DPAA_VSP_PROFILE_MAX_NUM];
++	uint8_t base_vsp;
+ };
+ 
+ struct dpaa_if_stats {
+diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
+index 559850ced7..9f0611a3c7 100644
+--- a/drivers/net/dpaa/dpaa_flow.c
++++ b/drivers/net/dpaa/dpaa_flow.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017-2019,2021-2025 NXP
++ * Copyright 2017-2019,2021-2026 NXP
+  */
+ 
+ /* System headers */
+@@ -8,6 +8,7 @@
+ #include <unistd.h>
+ #include <sys/types.h>
+ 
++#include <dpaa_mempool.h>
+ #include <dpaa_ethdev.h>
+ #include <dpaa_flow.h>
+ #include <rte_dpaa_logs.h>
+@@ -669,6 +670,22 @@ static inline int get_rx_port_type(struct fman_if *fif)
+ 	return e_FM_PORT_TYPE_DUMMY;
+ }
+ 
++static inline int get_tx_port_type(struct fman_if *fif)
++{
++	if (fif->mac_type == fman_offline_internal ||
++			fif->mac_type == fman_onic)
++		return e_FM_PORT_TYPE_OH_OFFLINE_PARSING;
++	else if (fif->mac_type == fman_mac_1g)
++		return e_FM_PORT_TYPE_TX;
++	else if (fif->mac_type == fman_mac_2_5g)
++		return e_FM_PORT_TYPE_TX_2_5G;
++	else if (fif->mac_type == fman_mac_10g)
++		return e_FM_PORT_TYPE_TX_10G;
++
++	DPAA_PMD_ERR("MAC type unsupported");
++	return e_FM_PORT_TYPE_DUMMY;
++}
++
+ static inline int set_fm_port_handle(struct dpaa_if *dpaa_intf,
+ 				     uint64_t req_dist_set,
+ 				     struct fman_if *fif)
+@@ -724,9 +741,6 @@ int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf,
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
+-	if (!dpaa_intf->port_handle)
+-		return 0;
+-
+ 	/* FM PORT Disable */
+ 	ret = fm_port_disable(dpaa_intf->port_handle);
+ 	if (ret != E_OK) {
+@@ -786,8 +800,10 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
+ 	unsigned int i = 0;
+ 	PMD_INIT_FUNC_TRACE();
+ 
+-	if (dpaa_fm_deconfig(dpaa_intf, fif))
+-		DPAA_PMD_ERR("DPAA FM deconfig failed");
++	if (dpaa_intf->port_handle) {
++		if (dpaa_fm_deconfig(dpaa_intf, fif))
++			DPAA_PMD_ERR("DPAA FM deconfig failed");
++	}
+ 
+ 	if (!dev->data->nb_rx_queues)
+ 		return 0;
+@@ -806,8 +822,7 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
+ 
+ 	if (fif->num_profiles) {
+ 		for (i = 0; i < dev->data->nb_rx_queues; i++)
+-			dpaa_intf->rx_queues[i].vsp_id =
+-				fm_default_vsp_id(fif);
++			dpaa_intf->rx_queues[i].vsp_id = fm_default_vsp_id(fif);
+ 
+ 		i = 0;
+ 	}
+@@ -939,27 +954,16 @@ int dpaa_fm_term(void)
+ }
+ 
+ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
+-		uint8_t vsp_id, t_handle fman_handle,
+-		struct fman_if *fif, u32 mbuf_data_room_size)
++		uint8_t vsp_id, t_handle fman_handle, struct fman_if *fif)
+ {
++	struct dpaa_if_vsp *vsp;
+ 	t_fm_vsp_params vsp_params;
+ 	t_fm_buffer_prefix_content buf_prefix_cont;
+-	uint8_t idx = mac_idx[fif->mac_idx];
++	uint8_t idx = mac_idx[fif->mac_idx], i;
+ 	int ret;
++	struct t_fm_ext_pools *pools;
+ 
+-	if (vsp_id == fif->base_profile_id && fif->is_shared_mac) {
+-		/* For shared interface, VSP of base
+-		 * profile is default pool located in kernel.
+-		 */
+-		dpaa_intf->vsp_bpid[vsp_id] = 0;
+-		return 0;
+-	}
+-
+-	if (vsp_id >= DPAA_VSP_PROFILE_MAX_NUM) {
+-		DPAA_PMD_ERR("VSP ID %d exceeds MAX number %d",
+-			vsp_id, DPAA_VSP_PROFILE_MAX_NUM);
+-		return -1;
+-	}
++	vsp = &dpaa_intf->vsp[vsp_id];
+ 
+ 	memset(&vsp_params, 0, sizeof(vsp_params));
+ 	vsp_params.h_fm = fman_handle;
+@@ -973,17 +977,21 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
+ 	vsp_params.port_params.port_type = get_rx_port_type(fif);
+ 	if (vsp_params.port_params.port_type == e_FM_PORT_TYPE_DUMMY) {
+ 		DPAA_PMD_ERR("Mac type %d error", fif->mac_type);
+-		return -1;
++		return -EINVAL;
+ 	}
+ 
+-	vsp_params.ext_buf_pools.num_of_pools_used = 1;
+-	vsp_params.ext_buf_pools.ext_buf_pool[0].id = dpaa_intf->vsp_bpid[vsp_id];
+-	vsp_params.ext_buf_pools.ext_buf_pool[0].size = mbuf_data_room_size;
++	pools = &vsp_params.ext_buf_pools;
+ 
+-	dpaa_intf->vsp_handle[vsp_id] = fm_vsp_config(&vsp_params);
+-	if (!dpaa_intf->vsp_handle[vsp_id]) {
+-		DPAA_PMD_ERR("fm_vsp_config error for profile %d", vsp_id);
+-		return -EINVAL;
++	pools->num_of_pools_used = vsp->bp_num;
++	for (i = 0; i < vsp->bp_num; i++) {
++		pools->ext_buf_pool[i].id = vsp->vsp_bp[i]->bpid;
++		pools->ext_buf_pool[i].size = vsp->vsp_bp[i]->size;
++	}
++
++	vsp->vsp_handle = fm_vsp_config(&vsp_params);
++	if (!vsp->vsp_handle) {
++		DPAA_PMD_ERR("Configure VSP[%d] failed!", vsp_id);
++		return -EIO;
+ 	}
+ 
+ 	/* configure the application buffer (structure, size and
+@@ -1001,19 +1009,18 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
+ 	buf_prefix_cont.manip_ext_space =
+ 		RTE_PKTMBUF_HEADROOM - DPAA_MBUF_HW_ANNOTATION;
+ 
+-	ret = fm_vsp_config_buffer_prefix_content(dpaa_intf->vsp_handle[vsp_id],
+-					       &buf_prefix_cont);
++	ret = fm_vsp_config_buffer_prefix_content(vsp->vsp_handle,
++			&buf_prefix_cont);
+ 	if (ret != E_OK) {
+-		DPAA_PMD_ERR("fm_vsp_config_buffer_prefix_content error for profile %d err: %d",
+-			     vsp_id, ret);
++		DPAA_PMD_ERR("Configure VSP[%d]'s buffer prefix failed(%d)!",
++			vsp_id, ret);
  		return ret;
-+	} else if (!s_sg_enable) {
-+		while (fsl_queue->pending_num > 0) {
-+			ret = fsl_qdma_enqueue_desc_single(fsl_queue,
-+				fsl_queue->pending_desc[start].dst,
-+				fsl_queue->pending_desc[start].src,
-+				fsl_queue->pending_desc[start].len);
-+			if (!ret) {
-+				start = (start + 1) &
-+					(fsl_queue->pending_max - 1);
-+				fsl_queue->pending_start = start;
-+				fsl_queue->pending_num--;
-+			} else {
-+				DPAA_QDMA_ERR("Eq pending desc failed(%d)",
-+					ret);
-+				return -EIO;
-+			}
-+		}
-+
-+		return 0;
  	}
  
- 	return fsl_qdma_enqueue_desc_sg(fsl_queue);
-@@ -1339,6 +1370,26 @@ dpaa_qdma_init(struct rte_dma_dev *dmadev)
- 		DPAA_QDMA_INFO("Enable DMA error checks");
+ 	/* initialize the FM VSP module */
+-	ret = fm_vsp_init(dpaa_intf->vsp_handle[vsp_id]);
++	ret = fm_vsp_init(vsp->vsp_handle);
+ 	if (ret != E_OK) {
+-		DPAA_PMD_ERR("fm_vsp_init error for profile %d err:%d",
+-			 vsp_id, ret);
++		DPAA_PMD_ERR("Init VSP[%d] failed(%d)!", vsp_id, ret);
+ 		return ret;
  	}
  
-+	if (getenv("DPAA_QDMA_DATA_VALIDATION"))
-+		s_data_validation = 1;
+@@ -1021,29 +1028,44 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
+ }
+ 
+ int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
+-		bool fmc_mode, uint8_t vsp_id, uint32_t bpid,
+-		struct fman_if *fif, u32 mbuf_data_room_size)
++		bool fmc_mode, uint8_t vsp_id, struct fman_if *fif)
+ {
+ 	int ret = 0;
+ 	t_handle fman_handle;
++	struct dpaa_if_vsp *vsp;
+ 
+-	if (!fif->num_profiles)
+-		return 0;
++	if (!fif->num_profiles) {
++		DPAA_PMD_ERR("%s: No multiple VSPs specified!",
++			dpaa_intf->name);
++		return -EINVAL;
++	}
+ 
+-	if (vsp_id >= fif->num_profiles)
+-		return 0;
++	if (vsp_id >= (fif->base_profile_id + fif->num_profiles)) {
++		DPAA_PMD_ERR("%s: Invalid VSP ID(%d) >= base(%d) + num(%d)",
++			dpaa_intf->name, vsp_id, fif->base_profile_id,
++			fif->num_profiles);
++		return -EINVAL;
++	}
+ 
+-	if (dpaa_intf->vsp_bpid[vsp_id] == bpid)
++	if (vsp_id == fif->base_profile_id && fif->is_shared_mac) {
++		/* For shared interface, VSP of base
++		 * profile is default pool located in kernel.
++		 */
++		dpaa_intf->vsp[vsp_id].bp_num = 0;
++		dpaa_intf->vsp[vsp_id].vsp_handle = NULL;
+ 		return 0;
++	}
 +
-+	if (getenv("DPAA_QDMA_HW_ERR_CHECK"))
-+		s_hw_err_check = 1;
++	vsp = &dpaa_intf->vsp[vsp_id];
+ 
+-	if (dpaa_intf->vsp_handle[vsp_id]) {
+-		ret = fm_vsp_free(dpaa_intf->vsp_handle[vsp_id]);
++	if (vsp->vsp_handle) {
++		ret = fm_vsp_free(vsp->vsp_handle);
+ 		if (ret != E_OK) {
+-			DPAA_PMD_ERR("Error fm_vsp_free: err %d vsp_handle[%d]",
+-				     ret, vsp_id);
++			DPAA_PMD_ERR("Free VSP[%d]'s handle failed(%d)",
++				vsp_id, ret);
+ 			return ret;
+ 		}
+-		dpaa_intf->vsp_handle[vsp_id] = 0;
++		vsp->vsp_handle = NULL;
+ 	}
+ 
+ 	if (fmc_mode)
+@@ -1051,26 +1073,26 @@ int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
+ 	else
+ 		fman_handle = fm_info.fman_handle;
+ 
+-	dpaa_intf->vsp_bpid[vsp_id] = bpid;
+-
+-	return dpaa_port_vsp_configure(dpaa_intf, vsp_id, fman_handle, fif,
+-				       mbuf_data_room_size);
++	return dpaa_port_vsp_configure(dpaa_intf, vsp_id, fman_handle, fif);
+ }
+ 
+-int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif)
++int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf)
+ {
+-	int idx, ret;
++	int ret;
++	uint8_t idx;
+ 
+-	for (idx = 0; idx < (uint8_t)fif->num_profiles; idx++) {
+-		if (dpaa_intf->vsp_handle[idx]) {
+-			ret = fm_vsp_free(dpaa_intf->vsp_handle[idx]);
++	for (idx = 0; idx < DPAA_VSP_PROFILE_MAX_NUM; idx++) {
++		if (dpaa_intf->vsp[idx].vsp_handle) {
++			ret = fm_vsp_free(dpaa_intf->vsp[idx].vsp_handle);
+ 			if (ret != E_OK) {
+-				DPAA_PMD_ERR("Error fm_vsp_free: err %d"
+-					     " vsp_handle[%d]", ret, idx);
++				DPAA_PMD_ERR("Free VSP[%d] failed(%d)",
++					idx, ret);
+ 				return ret;
+ 			}
++			dpaa_intf->vsp[idx].vsp_handle = NULL;
+ 		}
+ 	}
+ 
+ 	return E_OK;
+ }
 +
-+	penv = getenv("DPAA_QDMA_SG_ENABLE");
-+	if (penv)
-+		s_sg_enable = atoi(penv);
-+
-+	penv = getenv("DPAA_QDMA_SG_MAX_ENTRY_SIZE");
-+	if (penv)
-+		s_sg_max_entry_sz = atoi(penv);
-+
-+#ifdef RTE_DMA_DPAA_ERRATA_ERR050757
-+	penv = getenv("DPAA_QDMA_PCI_READ");
-+	if (penv)
-+		s_pci_read = atoi(penv);
-+#endif
-+
- 	fsl_qdma->n_queues = QDMA_QUEUES * QDMA_BLOCKS;
- 	fsl_qdma->num_blocks = QDMA_BLOCKS;
- 	fsl_qdma->block_offset = QDMA_BLOCK_OFFSET;
+diff --git a/drivers/net/dpaa/dpaa_flow.h b/drivers/net/dpaa/dpaa_flow.h
+index 4742b8dd0a..6a949d6dd4 100644
+--- a/drivers/net/dpaa/dpaa_flow.h
++++ b/drivers/net/dpaa/dpaa_flow.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017,2019,2022 NXP
++ * Copyright 2017,2019,2022,2026 NXP
+  */
+ 
+ #ifndef __DPAA_FLOW_H__
+@@ -11,9 +11,8 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set);
+ int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf, struct fman_if *fif);
+ void dpaa_write_fm_config_to_file(void);
+ int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
+-	bool fmc_mode, uint8_t vsp_id, uint32_t bpid, struct fman_if *fif,
+-	u32 mbuf_data_room_size);
+-int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif);
++	bool fmc_mode, uint8_t vsp_id, struct fman_if *fif);
++int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf);
+ int dpaa_port_fmc_init(struct fman_if *fif,
+ 		       uint32_t *fqids, int8_t *vspids, int max_nb_rxq);
+ 
 -- 
 2.25.1
 
