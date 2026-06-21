@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3236DCD98F2
-	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 10:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5570DCD98F2
+	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 10:17:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5454E40667;
-	Sun, 21 Jun 2026 12:17:10 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id B5C2B4060F
- for <dev@dpdk.org>; Sun, 21 Jun 2026 12:17:06 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9447D20021D;
- Sun, 21 Jun 2026 12:17:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0DC604066C;
+	Sun, 21 Jun 2026 12:17:11 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id E660440651
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 12:17:07 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CB50A1A0215;
+ Sun, 21 Jun 2026 12:17:07 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C59420019D;
- Sun, 21 Jun 2026 12:17:06 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9490A1A0212;
+ Sun, 21 Jun 2026 12:17:07 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D229F180007B;
- Sun, 21 Jun 2026 18:17:04 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 14A69180004C;
+ Sun, 21 Jun 2026 18:17:05 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v2 08/19] bus/dpaa: enhance DPAA FQ shutdown
-Date: Sun, 21 Jun 2026 15:46:40 +0530
-Message-Id: <20260621101651.1081425-9-hemant.agrawal@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v2 09/19] drivers: add DPAA cgrid cleanup support
+Date: Sun, 21 Jun 2026 15:46:41 +0530
+Message-Id: <20260621101651.1081425-10-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260621101651.1081425-1-hemant.agrawal@nxp.com>
 References: <20260619122922.3774666-1-hemant.agrawal@nxp.com>
@@ -49,163 +49,115 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gagandeep Singh <g.singh@nxp.com>
+From: Jun Yang <jun.yang@nxp.com>
 
-Improve the FQ shutdown sequence to handle edge cases more
-robustly, including better handling of ORL (Order Restoration
-List) presence and improved error recovery paths.
+Add qman_find_fq_by_cgid() to find frame queues associated with
+a given CGID. This allows the driver to verify that all FQs
+using a CGR are shut down before releasing the CGR ID, preventing
+use-after-free of CGR resources.
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c | 80 ++++++++++++++++++++++--------
- 1 file changed, 59 insertions(+), 21 deletions(-)
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c |  1 +
+ drivers/bus/dpaa/include/fsl_qman.h      |  3 +++
+ drivers/net/dpaa/dpaa_ethdev.c           | 29 ++++++++++++++++++++++--
+ 3 files changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index 42618c1ab4..ba7db78ca0 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-  *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017,2019-2025 NXP
-+ * Copyright 2017,2019-2026 NXP
-  *
-  */
- 
-@@ -2840,9 +2840,10 @@ qman_shutdown_fq(struct qman_fq *fq)
- 		}
- 		res = mcr->result; /* Make a copy as we reuse MCR below */
- 
--		if (res == QM_MCR_RESULT_OK) {
-+		if (res == QM_MCR_RESULT_OK)
- 			drain_mr_fqrni(&p->p);
--		} else if (res == QM_MCR_RESULT_PENDING) {
-+
-+		if (res == QM_MCR_RESULT_PENDING) {
- 			/*
- 			 * Need to wait for the FQRN in the message ring, which
- 			 * will only occur once the FQ has been drained.  In
-@@ -2850,28 +2851,29 @@ qman_shutdown_fq(struct qman_fq *fq)
- 			 * to dequeue from the channel the FQ is scheduled on
- 			 */
- 			int found_fqrn = 0;
--			const u16 pool_ch_start = dpaa_get_qm_channel_pool();
--			const u16 pool_ch_end = pool_ch_start + dpaa_get_qm_channel_pool_num();
--			u32 sdqcr = p->sdqcr;
- 
- 			/* Flag that we need to drain FQ */
- 			drain = 1;
- 
-+			const u16 pool_ch_start = dpaa_get_qm_channel_pool();
-+			const u16 pool_ch_end = pool_ch_start +
-+					dpaa_get_qm_channel_pool_num();
- 			if (channel >= pool_ch_start && channel < pool_ch_end) {
--				/* Pool channel, enable the bit in the portal */
-+				/* Pool channel - must use affine portal */
- 				if (p->config->channel != channel) {
--					DPAA_BUS_ERR("Portal affine channel(0x%04x) != wq channel(0x%04x)",
-+					DPAA_BUS_ERR("Portal ch(0x%04x) != FQ ch(0x%04x)",
- 						p->config->channel, channel);
- 					ret = -EINVAL;
- 					goto out;
- 				}
- 			} else if (channel < pool_ch_start) {
- 				/* Dedicated channel */
--				sdqcr = QM_SDQCR_TYPE_ACTIVE | QM_SDQCR_CHANNELS_DEDICATED;
--				qm_dqrr_sdqcr_set(&p->p, sdqcr);
-+				qm_dqrr_sdqcr_set(&p->p,
-+						  QM_SDQCR_TYPE_ACTIVE |
-+						  QM_SDQCR_CHANNELS_DEDICATED);
- 			} else {
--				DPAA_BUS_ERR("Can't recover FQ 0x%x, Invalid channel: 0x%x",
--					fqid, channel);
-+				DPAA_BUS_ERR("Invalid channel 0x%x for FQ 0x%x",
-+					channel, fqid);
- 				ret = -EBUSY;
- 				goto out;
- 			}
-@@ -2879,15 +2881,16 @@ qman_shutdown_fq(struct qman_fq *fq)
- 				/* Keep draining DQRR while checking the MR*/
- 				qm_dqrr_drain_nomatch(&p->p);
- 				/* Process message ring too */
--				found_fqrn = qm_mr_drain(&p->p,
--							FQRN);
-+				found_fqrn = qm_mr_drain(&p->p, FQRN);
- 				cpu_relax();
- 			} while (!found_fqrn);
--			/* Restore SDQCR */
--			if (sdqcr != p->sdqcr)
--				qm_dqrr_sdqcr_set(&p->p, p->sdqcr);
--		} else {
--			DPAA_BUS_ERR("retire_fq failed: FQ 0x%x, res=0x%x", fqid, res);
-+			qm_dqrr_sdqcr_set(&p->p, p->sdqcr);
-+
-+		}
-+		if (res != QM_MCR_RESULT_OK &&
-+		    res != QM_MCR_RESULT_PENDING) {
-+			DPAA_BUS_ERR("retire_fq failed: FQ 0x%x, res=0x%x",
-+				fqid, res);
- 			ret = -EIO;
- 			goto out;
- 		}
-@@ -2930,7 +2933,7 @@ qman_shutdown_fq(struct qman_fq *fq)
- 
- 		if (mcr->result != QM_MCR_RESULT_OK) {
- 			DPAA_BUS_ERR("OOS after drain fail: FQ 0x%x (0x%x)",
--				      fqid, mcr->result);
-+				fqid, mcr->result);
- 			ret = -EIO;
- 			goto out;
- 		}
-@@ -2949,7 +2952,7 @@ qman_shutdown_fq(struct qman_fq *fq)
- 
- 		if (mcr->result != QM_MCR_RESULT_OK) {
- 			DPAA_BUS_ERR("OOS fail: FQ 0x%x (0x%x)",
--				      fqid, mcr->result);
-+				fqid, mcr->result);
- 			ret = -EIO;
- 			goto out;
- 		}
-@@ -2966,3 +2969,38 @@ qman_shutdown_fq(struct qman_fq *fq)
- out:
- 	return ret;
+diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+index 52abec2b4c..514ab7b1f1 100644
+--- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
++++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+@@ -56,6 +56,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(qman_reserve_fqid_range)
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_alloc_pool_range)
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_alloc_cgrid_range)
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_release_cgrid_range)
++RTE_EXPORT_INTERNAL_SYMBOL(qman_find_fq_by_cgrid)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_enable)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_disable)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_ioctl_version_number)
+diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
+index bd46207232..20321ed355 100644
+--- a/drivers/bus/dpaa/include/fsl_qman.h
++++ b/drivers/bus/dpaa/include/fsl_qman.h
+@@ -1907,6 +1907,9 @@ static inline int qman_shutdown_fq_by_fqid(u32 fqid)
+ 	return qman_shutdown_fq(&fq);
  }
+ 
++__rte_internal
++int qman_find_fq_by_cgrid(u32 cgrid, u32 *fqid);
 +
-+int qman_find_fq_by_cgrid(u32 cgrid, u32 *fqid)
-+{
-+	struct qman_fq fq = {
-+		.fqid = 1
-+	};
-+	struct qm_mcr_queryfq_np np;
-+	struct qm_fqd fqd;
-+	int err;
-+
-+	do {
-+		err = qman_query_fq_np(&fq, &np);
-+		if (err == -ERANGE) {
-+			DPAA_BUS_INFO("No FQ found with cgrid(0x%x)", cgrid);
-+			return err;
-+		} else if (err) {
-+			DPAA_BUS_WARN("Failed(%d) to Query np FQ(fqid=0x%x)", err, fq.fqid);
-+			return err;
-+		}
-+		if ((np.state & QM_MCR_NP_STATE_MASK) != QM_MCR_NP_STATE_OOS) {
-+			err = qman_query_fq(&fq, &fqd);
-+			if (err) {
-+				DPAA_BUS_WARN("Failed(%d) to Query FQ(fqid=0x%x)", err, fq.fqid);
-+			} else if ((fqd.fq_ctrl & QM_FQCTRL_CGE) && fqd.cgid == cgrid) {
-+				if (fqid)
-+					*fqid = fq.fqid;
-+				return 0;
+ /**
+  * qman_reserve_fqid_range - Reserve the specified range of frame queue IDs
+  * @fqid: the base FQID of the range to deallocate
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 94758c2748..ab5a50e760 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -513,7 +513,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 	struct rte_eth_link *link = &dev->data->dev_link;
+ 	struct dpaa_if *dpaa_intf = dev->data->dev_private;
+ 	struct qman_fq *fq;
+-	int loop;
++	uint32_t fqid, loop;
+ 	int ret;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+@@ -576,28 +576,53 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 	/* release configuration memory */
+ 	rte_free(dpaa_intf->fc_conf);
+ 
++	/** Release congestion Groups after releasing FQIDs*/
+ 	/* Release RX congestion Groups */
+ 	if (dpaa_intf->cgr_rx) {
+ 		for (loop = 0; loop < dpaa_intf->nb_rx_queues; loop++) {
++			ret = qman_find_fq_by_cgrid(dpaa_intf->cgr_rx[loop].cgrid, &fqid);
++			if (!ret) {
++				/** Should be FQ not cleaned in previous program.*/
++				DPAA_PMD_DEBUG("FQ(fqid=0x%x) with rx cgid=%d is still alive?",
++					fqid, dpaa_intf->cgr_rx[loop].cgrid);
++				ret = qman_shutdown_fq_by_fqid(fqid);
++				if (ret) {
++					DPAA_PMD_WARN("Failed(%d) to shutdown fq(fqid=0x%x)",
++						ret, fqid);
++				}
 +			}
-+		}
-+		/* Move to the next FQID */
-+		fq.fqid++;
-+	} while (1);
-+
-+	return -ENODEV;
-+}
+ 			ret = qman_delete_cgr(&dpaa_intf->cgr_rx[loop]);
+ 			if (ret) {
+ 				DPAA_PMD_WARN("%s: delete rxq%d's cgr err(%d)",
+ 					dev->data->name, loop, ret);
+ 			}
+ 		}
++		qman_release_cgrid_range(dpaa_intf->cgr_rx[0].cgrid, dpaa_intf->nb_rx_queues);
+ 		rte_free(dpaa_intf->cgr_rx);
+ 		dpaa_intf->cgr_rx = NULL;
+ 	}
+ 
+ 	/* Release TX congestion Groups */
+ 	if (dpaa_intf->cgr_tx) {
+-		for (loop = 0; loop < MAX_DPAA_CORES; loop++) {
++		for (loop = 0; loop < dpaa_intf->nb_tx_queues; loop++) {
++			ret = qman_find_fq_by_cgrid(dpaa_intf->cgr_tx[loop].cgrid, &fqid);
++			if (!ret) {
++				/** Should be FQ not cleaned in previous program.*/
++				DPAA_PMD_DEBUG("FQ(fqid=0x%x) with tx cgid=%d is still alive?",
++					fqid, dpaa_intf->cgr_tx[loop].cgrid);
++				ret = qman_shutdown_fq_by_fqid(fqid);
++				if (ret) {
++					DPAA_PMD_WARN("Failed(%d) to shutdown fq(fqid=0x%x)",
++						ret, fqid);
++				}
++			}
+ 			ret = qman_delete_cgr(&dpaa_intf->cgr_tx[loop]);
+ 			if (ret) {
+ 				DPAA_PMD_WARN("%s: delete txq%d's cgr err(%d)",
+ 					dev->data->name, loop, ret);
+ 			}
+ 		}
++		qman_release_cgrid_range(dpaa_intf->cgr_tx[0].cgrid, dpaa_intf->nb_tx_queues);
+ 		rte_free(dpaa_intf->cgr_tx);
+ 		dpaa_intf->cgr_tx = NULL;
+ 	}
 -- 
 2.25.1
 
