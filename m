@@ -2,94 +2,122 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 920C5CD98E4
-	for <dpdk-dev@archiver.kernel.org>; Sat, 20 Jun 2026 20:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB45CD98F0
+	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 04:28:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E4C340144;
-	Sat, 20 Jun 2026 22:24:12 +0200 (CEST)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com
- [209.85.218.45]) by mails.dpdk.org (Postfix) with ESMTP id 2601C400D6
- for <dev@dpdk.org>; Sat, 20 Jun 2026 22:24:11 +0200 (CEST)
-Received: by mail-ej1-f45.google.com with SMTP id
- a640c23a62f3a-c07c67ad9f2so414325266b.0
- for <dev@dpdk.org>; Sat, 20 Jun 2026 13:24:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781987051; cv=none;
- d=google.com; s=arc-20240605;
- b=gF4+Jxa7JWKYoCTAuWAOfmNr4FtbF4x86fLucH0+VyUIQnsFlBf9kwYd1epOEtCLmL
- e3EVI0U/0DsAZ4igVZcW3INdq6ThVNEe4jf2l9UqwYaUl1nmQsqvgdXfE52spwMFFqe1
- vbwVwvNJjYelGWtjLiLelok004Tx3kPNXK9g560ylgMmPo+emvMqshfCnXKWdT7+a8lK
- /CH5zvZO8f16ldaBHwXV4KkZsBkIrQ2IbpxGtmAHYoDyOwAdO43pCju0vKdwG4OmvvLk
- aZuUdwW+l6NWD/mHQAM8cXFuoMKZGXgg4vqxjHnMWzb3pVmzRgI+7FCH3jYKjzYEq6zu
- V77w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=1KXJmVC8D10K93qx5m6Hs/h3kUGemj3uDkZW3DRzZ/0=;
- fh=6zkRVN8oQbVHdw70hwTQAhNg1B+n3pw5z6lIYHE8oC8=;
- b=cePdPAtYl35MVCSAU1/CvOeO69aUAXLhAih8jVzmb22fL/BL1reFR0dPS2wYdnq+rg
- zK2armUtSYLmuPfsVdjLJPIzp6cjSmeUy6V+lamtHUEr7+SAc49nUuPCC19Vb+w0tMNC
- xK19WQDY6XGg5w3Oia8hXQ3KdXM2PH6GGhrGrldIM6GiAGD9tZqH6f67v9jLfI5hZxmu
- 9KzB5ECLEOTIcNMleir7aNk9OoMaQnU6Bd5ScN4eV+ZSs8mQUY7C4trGzpKSj7cfHGe3
- huJqOtqPQt2Rpt6r4WdxFBPB14l22x6m3Z8gxBXnpNNbO/5jBpi74OMZ1mjSMOv5m82n
- zX2Q==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1781987051; x=1782591851; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=1KXJmVC8D10K93qx5m6Hs/h3kUGemj3uDkZW3DRzZ/0=;
- b=r4dTYQCTs75Sif4avBFVmYbzG1HU9hdWdpzGkvwlf1T/Ok1B4pG+Dceb6mujaq9rMP
- QA9ne1akfWB1i3ybWN3CEKiQLJ5WQdWP9jYdZndWcO1Aa99657eM5/T2FIMeV6fwa+yg
- U504hqbpT6kZ1ObWxZA6zXF7QllmUzcgIBUawUy2uRd82AKnSIWomEAm7ci4aksxVHwT
- J7X3d93ZKNq2XZl71etwirtWSB8W4eXAXDhvA7MhXur+CPuqtlHeP1MF+VJzh7HNrDnh
- gHnIQtEYmjU0SWulprfztNSVnMhQRNIMYcYFXpKhEpdMSnoz6ttNMq+wlPSlWhPLEeQ9
- RSvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1781987051; x=1782591851;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=1KXJmVC8D10K93qx5m6Hs/h3kUGemj3uDkZW3DRzZ/0=;
- b=suOEfjm/nM8bFYMl/Ren54QENlJ+rrEJ3Fc57/KbUd/xnJ6XopDCcEy7oKDQCBCATI
- SssY9FKvsmvEis7GluzmxxPUXuBlTd1d0a+yGCIQSLUWSOtiiUUHRDJPX+GjWIpSOpRi
- KFoNWm6xL0HgjhcmE002Ltp3KxJobddA/qxCZCCH8sAtZIAL6CfcewR35nemszzSdjl/
- XUiSHRtiZ3WqsNR9Efe3JgCubB+LxiQenBRz8VM2rhR9kpq+80rrZw6q4dxLRaJg+gb+
- 3Nzmsp8PupKE3P69fiuM+mAcVd1OGpzbYZq7DRnNUjXqojcIu/tPHa/6EZScoWrr43mt
- 1DUw==
-X-Forwarded-Encrypted: i=1;
- AFNElJ9Ssd8NzRejKffFiQWfbfe1P/gGIpxc/EbJXBnhst4DB/7+sT7+d6z6rY+69iuaCWZcGoQ=@dpdk.org
-X-Gm-Message-State: AOJu0YyOXPFRWdBDs9Cb/zZt7gcBEh947owO57kOTTMREJ3IB8fxtdz3
- lPgaswaZQDC1+kE+/WKHYmj5jq9lkNWAho4aWkMQRpSoN55M8LzFuQ/ndpi4WAZ2WQVAFUKyMMg
- km+Og3WEEonlffxjTQzV+9VnOvuMjcws=
-X-Gm-Gg: AfdE7ckzEAeh6PANKsk07VQtQMa3bgTXPMbZPrLIE5o1vP+RQt3UbYkLKug4VwJmT/i
- 6lAvjlh33pFq1HvSBPsv7LRIY+Gi2+uLY230n8JcttdRw6zidGxkQCt0Ul+00XQSuiuBqveBKlL
- omErQ/qmf2XVVSx/7x6KtBsv/g5EDCPFpNFNzrCP4+iF6IuBsgL6u1j4UAdRA0i7gtZSYBdIKbj
- w+gf+W9ut2EJRKq7f9HZl68yIEm3ONTSljDZUzW8Ix5aAVPbqx5d4rgKE0GlWOt+0ylw47HPgj4
- QXefPb5Z0ykS08kkFRMyAAmw2ZHvEwU=
-X-Received: by 2002:a17:906:8e14:b0:c08:7c60:9069 with SMTP id
- a640c23a62f3a-c09ba166c64mr363717766b.32.1781987050363; Sat, 20 Jun 2026
- 13:24:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AF8524013F;
+	Sun, 21 Jun 2026 06:28:11 +0200 (CEST)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com
+ (mail-northeuropeazon11010027.outbound.protection.outlook.com [52.101.84.27])
+ by mails.dpdk.org (Postfix) with ESMTP id 09B25400D6
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 06:28:09 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UQFNj37JPkJxt7qpOf5FW94USavMcEO3U/Mw+LLJAVcXogLDqZ0g86R5s8MCGGZhog+qWP9UZk4OkKNkTWaiiFSY72wMmIU163JXg1/SOv+1KaK+xNRXquG5KrhDtIbMQexsx9BH2y0yGF06kcSemWYmrmZExcLheZKxcqpMGmGTZwiCFXJULbd2RD8O5XYzvO8qsekyjUO4/FxuwuF1/8AvCBhuMqRwEYCaheomv/EhiUKt03GSIDYClQ+hNaE6BB62L0x3boz+C1ssU0YzKN9+BxBJQ/bIXfgaTiJRElB+Fk8pnc5wV21eeggNgxAs+AJlkSzhv06XHVrHNPSBVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xswR5TiYqlMF7HHozTDdiVWVxDlLxXbJYSU1Vwgm8cM=;
+ b=Fm3ejmu/9SHJ/5Wg2lEqHeih3CPzTr+1KCcvoa+aXLIGL4nWoM1/5LBae2LmQnVIZFNeWu/3olNl4iwFhRgrw+czrSdjlBP3cbHVjNTAjUisbaPJlK0iJdebe31PYBa5dr8lG8Xr5FeFUneI3pHJ4MEzWpK2DRKKh4HU1k73tv8qcSrOcia4+/NiG3tP7DAGD+N8YTQUDFkvVDi8gjxYTfM35NKSY7YSvngs6YiP+aAF2G4BEWwQYzqNZYnTFtUr8cVk1fSEGsxlBqq/M4KI2ihw/w/OkZMeoEet4iV0Y+3Mgnhk7JyccHFaoG3U9EtsUhVwlsgfckM+tCxL01vXrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xswR5TiYqlMF7HHozTDdiVWVxDlLxXbJYSU1Vwgm8cM=;
+ b=Zlei0t99JWJmLVQEDMaqVVR991HCYvvqj1gDeJhc/JARx07xiHHtaKF3ipAof/vfDl+BurWIi9V+ljHK99EHPbuiKlAyEuTe27cc9KNsn/UQk321r/eE/2WGLNb6kvVAlJhkoOzon+Pa6zt/9HKbohdbFqRQsBZE3fmYak5Er8tZ1RLWQPeoesRz/3OsO/9hdMs7ioKffYV313yZDKgHjeMMUGgWPaehpSy5sGB8lSy5KMGu050vCtCXWw1UoEZa5gfDoWP8y3pVj89ShXvYlY67c3HpzmNHOaF1XJB2YHg2O+ivOajhxLueRMSmm6QmPQ6wSPFR2uj30w6fLWN8pg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
+ (2603:10a6:150:212::14) by AM0PR04MB11855.eurprd04.prod.outlook.com
+ (2603:10a6:20b:6fd::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.18; Sun, 21 Jun
+ 2026 04:28:05 +0000
+Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
+ ([fe80::9985:c5d3:961:2003]) by GV1PR04MB10750.eurprd04.prod.outlook.com
+ ([fe80::9985:c5d3:961:2003%6]) with mapi id 15.21.0139.018; Sun, 21 Jun 2026
+ 04:28:05 +0000
+Message-ID: <86091477-d553-4ea1-879a-4c3f1753a130@oss.nxp.com>
+Date: Sun, 21 Jun 2026 09:57:51 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/24] deprecate rte_atomic functions
+To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+References: <https://inbox.dpdk.org/dev/20260521042043.1590536-1-stephen@networkplumber.org>
+ <20260620023134.42877-1-stephen@networkplumber.org>
+Content-Language: en-US
+From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
+In-Reply-To: <20260620023134.42877-1-stephen@networkplumber.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA5PR01CA0267.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:21c::9) To GV1PR04MB10750.eurprd04.prod.outlook.com
+ (2603:10a6:150:212::14)
 MIME-Version: 1.0
-References: <98CBD80474FA8B44BF855DF32C47DC35F658E5@smartserver.smartshare.dk>
- <GV1PR04MB10750E293DBDCCDF9FEEFE00289182@GV1PR04MB10750.eurprd04.prod.outlook.com>
- <09dbd9b1-f4a6-48e2-9424-546eafdfa01b@arm.com>
- <GV1PR04MB10750F8AC96BEFB29C1DD13BD89E32@GV1PR04MB10750.eurprd04.prod.outlook.com>
- <1eb241f5-3cef-4814-ab3c-13246a452513@arm.com>
-In-Reply-To: <1eb241f5-3cef-4814-ab3c-13246a452513@arm.com>
-From: saeed bishara <saeed.bishara.os@gmail.com>
-Date: Sat, 20 Jun 2026 23:23:59 +0300
-X-Gm-Features: AVVi8CclsN73r8C6HYmMUabHrr5KCuCK2D9NTkpGqZnn8V8325NuUy1kDQTvIqs
-Message-ID: <CAHfVqdXE53E2ykJFHM+HM8xd_zuz4Wt3XvoLMNzhw8Wdnn0pWg@mail.gmail.com>
-Subject: Re: ARM v8 rte_power_pause
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Cc: Hemant Agrawal <hemant.agrawal@nxp.com>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
- "dev@dpdk.org" <dev@dpdk.org>, Maxime Leroy <maxime@leroys.fr>,
- Gagandeep Singh <G.Singh@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR04MB10750:EE_|AM0PR04MB11855:EE_
+X-MS-Office365-Filtering-Correlation-Id: 426b19dd-c985-4ff7-8f1c-08decf4d7cf0
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|19092799006|23010399003|1800799024|366016|376014|6133799003|22082099003|18002099003|11063799006|56012099006|4143699003;
+X-Microsoft-Antispam-Message-Info: ydGgORxVCiIJmSrU4YjtEobj2+wjGrFsFJGZFPQUzJ5fnI7NcziMO4MP1ZHRLPxiNlq3cIoDlQ+3lMgzdfrINA8jUBlsNMNSRIz1KMHh8HPCVvfA3kHDQHhDSnaktke3mZ2IGWVxKftdsOLUCFY4lvh2Eor8eTcHP9GaMjykw97jX0wRsp8aOiw0sBvxwgty9a2yHqemKbfXR5gpOdBJZMvlpTJfJV1RccztNC753L95L5fwmGhy/g31nw1cXwRfF9Hjzu77BK3UJxXRhtEgGkn7Li4waLZN7WhfJc1bNv/Xq7XPrrIyTua+N+oXfrOQSxdktp84W4Orm6mY8bUj/bXo/vnmQSsAHU3/D0Sz0H0Xepxv9Y62YSHDPyZlrllpTIjYuH3DnQnoKMPC7MLEyolX5lknatyKdLFSVhDT3wVEnvv3dC+m4zxRiufalJezvdiTVsPLGMKQq0d8NfozG2BLNAH54338K7A94PLgPrbPPFUXpSUHm7JlIgToLqp4YT13Nj8UCyJ8bDvRlIqvJO6BIq7xQqka5bX1e9Inh8XQYDFtdj3gnKxTcTgJjFslNdqR0pIWQ8Oczj3IoAaRyQRkGC7nlGHLMvs8wfNNCcgoOCyc+Oj8XkzBu0OMayWp5ky1VVmigTT2QI858ryo+9diB4iCdkWR6ltrJmS/gtg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:GV1PR04MB10750.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(19092799006)(23010399003)(1800799024)(366016)(376014)(6133799003)(22082099003)(18002099003)(11063799006)(56012099006)(4143699003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dExRUWluV0VJWmJGOGgwM2xPQzduMkJtSFlHRzNlN2gyS0lBVng4SGJXelpB?=
+ =?utf-8?B?TGZySTBrWkRhc2NrMXdXQXZCTFFGdzRhaTBhM1pNNEoxUThENytOVGZXSm1w?=
+ =?utf-8?B?ejhZVEFTckp4bE9YY295ODEySUVIeTBKQ1lGT2pnUkc2VmUreHZNYlRUVUli?=
+ =?utf-8?B?ak1RSnVqYXRGYXM5YU9RUTZGWkk0aHRTRjc2Wk4xV3k3WVZ4T0o2QkZ0dDVl?=
+ =?utf-8?B?b082bzNhcHI4OGp3cHdrVXNEbHRXc1RSOTBCckZlbjZ3WERTbmpHdjJpaXhL?=
+ =?utf-8?B?T1JucVJkL2RNUnFkL1hJZjlyVjVRZ25Vb01vdjJUT0loTEFWS2ZyVUV5VEp2?=
+ =?utf-8?B?WTBLRTdlMnVZMVV0VDBMTUdobDAxNFpncTdHS2NZdzB1WXV1aFBZa0RwVi8z?=
+ =?utf-8?B?WVJUakludVVXTnFZWEZHa3RiNlp2U043ZU4zTm9sdDczTEthV3oxZDZ2V0J1?=
+ =?utf-8?B?dkNJNU1vdFdVQWNPVFVXZ1J3TVdmZWJBZjBScTlZVVMrWFIrS0UybXFXSUNi?=
+ =?utf-8?B?cEpZK1Q4SGlWOVQwOUhkbFlwK083aDlrUFZEVlBjcGsyaEEvdi8waTZNVUpG?=
+ =?utf-8?B?OHVJQmJyNDlUdFRQMVAzRGlQUS9zcDM2b1Ridis0akpNbjRGdS9HU1c3cnhq?=
+ =?utf-8?B?OXhwc1ZMbEdsNFFYMjVQd0N1WUw0VFFJZ2pGeng2L1pYVkFwbUY0cVRpMG8y?=
+ =?utf-8?B?a2kxZE8vZElYKzBVUWMrZmVxNWJWWUUzZk44QlNGdU9uc3FBYStHdTVIbjFN?=
+ =?utf-8?B?dXBGNVIxLzFKa3Q0U0h0NVpLTnVsTnIrUm8wRmxzMzBMb21ZYll3cVJPbnhK?=
+ =?utf-8?B?V1E3N04wSXp3ak1EMm8xT1FqSXRmSHBSeEZicEVuZ3FSYTFOZi9kVFF1cmhz?=
+ =?utf-8?B?RkYzUTk3LzNaaWNQMFlBdEZzVzM5VnBnZDdTWGk3bm5ReVJwQmVvZGhmNS9W?=
+ =?utf-8?B?YzFhMlJSMXVnZlRndHhMTk4yaGVtTGlsV2J6ZW9iWVlxZS9yeG9MVTBmV21Q?=
+ =?utf-8?B?L1NuczBtZzgxa1NPU3RmSDliYVZnS1FUTU1QajBBS0NWMDAzUnJ6cWwyM09V?=
+ =?utf-8?B?ZmREZE5tNGFiY0VxaGFCUWZFdmkxYzZqU1JBaVcvR1pSU1l4bVU4VFIzY3Bh?=
+ =?utf-8?B?YUNsV0pLdEdQbDdKZFV2c040Q0ZvdXNFWEhZSXVoY1BrcHBGOE9OZXNQc1JM?=
+ =?utf-8?B?WFV4S0ZpM2QzVGJhdWNGeGdEMjRSTVNPeDZyNkMveGo3V011WDlTaWRsQWZX?=
+ =?utf-8?B?Tm1sVTlUYXdCTnVZeGFBbEM1RGU3ekZmdDdWd3VNNGFyMXQrdmM1ZlRkTEJK?=
+ =?utf-8?B?TG4xVVZqUFUxV25nMVluL21LT0N6dGxyeGh3Z1owZDkzdVUxUUdjdVRoWXZr?=
+ =?utf-8?B?ZkcwWDM2ZFB2NkRaWGlhNVFGT0QrN1VnL2tNYndtL01hTHg1M3RVcC9iT1hx?=
+ =?utf-8?B?cDdEYTRwbERGREV2eFRrU2N4Z2FScTRhN0VxSWVscXV1SUxLdE1QVm9IRzVj?=
+ =?utf-8?B?b2M3RkRoNnZDL2lPL2wvYStSQkNKa0tzdHRzVEpoUXdUYURNaFRRUmNPMk41?=
+ =?utf-8?B?QXVDVDVsdXBTT2h2QnVJKzdWU1Z1c3BiNStzcmpuazgxV1NDS29EM3JleGgv?=
+ =?utf-8?B?NVJlcWUwNWFYYU5KYU8xUXFMMGd4M2o1UGdHeTRBbUV3SVg1Mi9QRkU0N1Iy?=
+ =?utf-8?B?ZGpDMk9DWjdtTE1LVFNPQ0tObm0zc0x3a3U4TThKZmp1b2tYeHFiN3pkVFR5?=
+ =?utf-8?B?SFhZdUNHU05IZDZ6NEtyWFl6YzRnYVhyZkYraTVqQThWQVB2NzJySlR2UFRx?=
+ =?utf-8?B?Rkk5WWhsMm5iMVlTRGpmci9BWHE2c0JnRUVpOGVZb3J5cDBrN3lQcTFCK1hp?=
+ =?utf-8?B?YmhId2ZKM045UTFzY0Q0ZlJvU3ZnWjVsRmVkcXdkNHI1WEgvWnpFWUNaUUtE?=
+ =?utf-8?B?bHE1YzlDMVNSc0RlS25PL2tDNEJrcWU2RkMzWS9lVGhUOGFNS3QrRDI2WW1G?=
+ =?utf-8?B?Sko0cVJaZ0ZHUDg4c3RMcnphRzZXcDVhbmVBL0swdzFUTkdGbzIxemxOOS9S?=
+ =?utf-8?B?Q3dNZTNpbWJyM1h3Z05aZHJCM3hkayt0SXJsSithcGFtY1AvRXZjR21DVlQy?=
+ =?utf-8?B?dlhmQkJ2ZndjeXpzUmRSUCsyZ1JtTDNEWklLVkJZdVlFb0g2MWxVREU2R252?=
+ =?utf-8?B?QzR2dnU0b3g0ai9QcnFQbjhPWHZVdkhVc0J5YWhCOFljQVVGV05icXJ3QUJC?=
+ =?utf-8?B?S0dIQWFTQS9QUTM1c29Ya3BZYW9hNjNXMzZjdzRJWHRKZ284TWF2SWFPUXhp?=
+ =?utf-8?B?ZDZmdUpsNFpFUjlCS3FLZitCaGJWcS81OFhibkdyR05OVXhhTEI2a2tnRlVv?=
+ =?utf-8?Q?WmqjpLpjHBghroCM=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 426b19dd-c985-4ff7-8f1c-08decf4d7cf0
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB10750.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2026 04:28:05.2026 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: h2syKyZS8A/mWffThA3QRuDE3fOjqqIDSgXmJxwQkh9YFKsWFRrV+wSJs8pwAXe70ZG4YOgwcll7CT4D95thuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB11855
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -103,142 +131,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-note that Event Stream periodically generates wakeup event for WFE,
-linux kernel enables it and configures it to 100Hz (10us).
-https://developer.arm.com/documentation/102379/0104/The-processor-timers/Ev=
-ent-stream
 
-saeed
+On 20-06-2026 07:58, Stephen Hemminger wrote:
+> The rte_atomicNN_* family was flagged for deprecation in 2021 by
+> commit 3ec965b6de12 ("doc: update atomic operation deprecation")
+> but enforcement never landed and in-tree usage continued to grow.
+>
+> This series finishes converting every remaining in-tree caller to
+> the C11-style rte_atomic_*_explicit() / RTE_ATOMIC() API, then
+> marks the legacy functions __rte_deprecated so future in-tree and
+> out-of-tree uses are caught at compile time.
+>
+> The goal of this series is to get driver writers to review and
+> test each change.
+>
+> v5 - rebase now that ring changes are merged.
+>     - drop the barrier (rte_smp_mb) patch not required.
+>
+>
+> Stephen Hemminger (24):
+>    bpf: use C11 atomics in BPF_ST_ATOMIC_REG
+>    net/bonding: use stdatomic
+>    net/nbl: remove unused rte_atomic16 field
+>    net/ena: replace use of rte_atomicNN
+>    net/failsafe: convert to stdatomic
+>    net/enic: do not use deprecated rte_atomic64
+>    net/pfe: use ethdev linkstatus helpers
+>    net/sfc: replace rte_atomic with stdatomic
+>    crypto/ccp: replace use of rte_atomic64 with stdatomic
+>    bus/dpaa: replace rte_atomic16 with stdatomic
+>    drivers: replace rte_atomic16 with stdatomic
+>    net/netvsc: replace rte_atomic32 with stdatomic
+>    event/sw: convert from rte_atomic32 to stdatomic
+>    bus/vmbus: convert from rte_atomic to stdatomic
+>    common/dpaax: use stdatomic instead of rte_atomic
+>    net/bnx2x: convert from rte_atomic32 to stdatomic
+>    bus/fslmc: replace rte_atomic32 with stdatomic
+>    drivers/event: replace rte_atomic32 in selftests
+>    net/hinic: replace rte_atomic32 with stdatomic
+>    net/txgbe: replace rte_atomic32 with stdatomic
+>    net/vhost: use stdatomic instead of rte_atomic32
+>    vdpa/ifc: replace rte_atomic32 with stdatomic
+>    test/atomic: suppress deprecation warnings for legacy APIs
+>    eal: deprecate rte_atomicNN functions
+>
+for dpaax/fslmc patches:
 
-On Sat, Jun 20, 2026 at 8:46=E2=80=AFPM Wathsala Vithanage
-<wathsala.vithanage@arm.com> wrote:
->
->
-> On 6/18/26 01:17, Hemant Agrawal wrote:
-> > Hi Watshala,
-> >       I think WFET is not available on A72 core.
-> > Can you update your answer w.r.t Cortex-A72/Arm v8.0 architecture?
->
-> WFET is not available on A72. We enabled it in DPDK selectively for this
-> reason.
->
-> >
-> > Regards
-> > Hemant
-> >
-> >
-> >> -----Original Message-----
-> >> From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-> >> Sent: 17 June 2026 17:27
-> >> To: Hemant Agrawal <hemant.agrawal@nxp.com>; Morten Br=C3=B8rup
-> >> <mb@smartsharesystems.com>
-> >> Cc: dev@dpdk.org; Maxime Leroy <maxime@leroys.fr>; Gagandeep Singh
-> >> <G.Singh@nxp.com>
-> >> Subject: Re: ARM v8 rte_power_pause
-> >> Importance: High
-> >>
-> >> Hi Morten and Hemant,
-> >>
-> >> YIELD is a NOP on non-SMT CPUs, such as Neoverse.
-> >>
-> >> WFE is universally available on AArch64, but it comes with a caveat: t=
-he CPU
-> >> can remain in a low-power state indefinitely unless an event is trigge=
-red. That
-> >> event can be generated explicitly via SEV/SEVL by a different CPU, or =
-implicitly
-> >> through address monitoring (LDAXR).
-> >>
-> >> WFET is the safer variant because it includes a timeout, so explicit o=
-r implicit
-> >> event-register manipulation is not required.
-> >>
-> >> --wathsala
-> >>
-> >> On 6/12/26 01:11, Hemant Agrawal wrote:
-> >>> Hi Morten,
-> >>> On Cortex=E2=80=91A72 (ARMv8), the only architectural primitives avai=
-lable are
-> >> YIELD, WFE, and WFI:
-> >>>     YIELD is the only deterministic, low-overhead option (pure CPU re=
-lax,
-> >> no entry into low-power state)
-> >>>     WFE can be used as a low-power idle hint, but it is event-driven =
-and
-> >> not time-based (it may return immediately)
-> >>>     WFI depends on interrupt wakeup and is therefore not suitable for
-> >>> tight latency loops
-> >>>
-> >>> For ~1 =C2=B5s latency targets, the practical approach is a hybrid st=
-rategy:
-> >>>
-> >>> Short waits =E2=86=92 spin using YIELD
-> >>> Slightly longer waits =E2=86=92 opportunistically use WFE for power r=
-eduction
-> >>>
-> >>> A simple implementation could look like (not tested):
-> >>>
-> >>> static inline void rte_armv8_pause(unsigned int iters) {
-> >>>     if (iters < 64) {
-> >>>             for (unsigned int i =3D 0; i < iters; i++)
-> >>>                     asm volatile("yield");
-> >>>     } else {
-> >>>             asm volatile("sevl");
-> >>>             asm volatile("wfe");
-> >>>     }
-> >>> }
-> >>>
-> >>> @Wathsala Vithanage =E2=80=94 would appreciate your thoughts, especia=
-lly if there
-> >> are any micro-architectural nuances we should consider.
-> >>> Regards,
-> >>> Hemant
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> >>>> Sent: 03 June 2026 17:26
-> >>>> To: Wathsala Vithanage <wathsala.vithanage@arm.com>; Hemant Agrawal
-> >>>> <hemant.agrawal@nxp.com>; Sachin Saxena (OSS)
-> >>>> <sachin.saxena@oss.nxp.com>
-> >>>> Cc: dev@dpdk.org; Maxime Leroy <maxime@leroys.fr>
-> >>>> Subject: ARM v8 rte_power_pause
-> >>>> Importance: High
-> >>>>
-> >>>> Hi Wathsala, Hemant and Sachin,
-> >>>>
-> >>>> Over at the Grout project, we are discussing power management in the
-> >>>> context of 100 Gbit/s latency deadlines [1].
-> >>>>
-> >>>> rte_power_pause() is not implemented for ARM v8 / Cortex-A72.
-> >>>> Syscalls such as nanosleep() have too much overhead, and cannot be u=
-sed.
-> >>>>
-> >>>> Any suggestions for a power-reducing method to make a CPU core "slee=
-p"
-> >> (i.e.
-> >>>> do nothing) for durations in the order of 1 microsecond?
-> >>>>
-> >>>> [1]:
-> >>>> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F=
-git
-> >>>>
-> >> hu%2F&data=3D05%7C02%7Chemant.agrawal%40nxp.com%7C06a651571db
-> >> 545d47d7a0
-> >> 8decc67908e%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C639
-> >> 172942353
-> >> 967617%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYi
-> >> OiIwLjAuMD
-> >> AwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7
-> >> C%7C&s
-> >> data=3D7NCh3%2BS3TAu1sRLYgqGNAaTwqdgwjqhAs2awPixIeEM%3D&reserve
-> >> d=3D0
-> >>>> b.com%2FDPDK%2Fgrout%2Fpull%2F624%23issuecomment-
-> >>>>
-> >> 4602036364&data=3D05%7C02%7Chemant.agrawal%40nxp.com%7Cdbff5f2e
-> >> 8db1406f0c4008dec1671791%7C686ea1d3bc2b4c6fa92cd99c5c301635%7
-> >> C0%7C0%7C639160845728472826%7CUnknown%7CTWFpbGZsb3d8eyJFb
-> >> XB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTW
-> >> FpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DDRpJWjm2yaF3Cnhk0b
-> >>>> bFFhmGbKRweOOiWdsWco2NbX0%3D&reserved=3D0
-> >>>>
-> >>>> -Morten
+Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+
+
