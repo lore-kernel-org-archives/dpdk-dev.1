@@ -2,81 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EF1CD98F0
-	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 10:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2444CD98F0
+	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 11:04:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E25C4028F;
-	Sun, 21 Jun 2026 12:39:36 +0200 (CEST)
-Received: from fhigh-a7-smtp.messagingengine.com
- (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id 26C084028A
- for <dev@dpdk.org>; Sun, 21 Jun 2026 12:39:34 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 7D90D1400068;
- Sun, 21 Jun 2026 06:39:33 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-10.internal (MEProxy); Sun, 21 Jun 2026 06:39:33 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id D2B234028F;
+	Sun, 21 Jun 2026 13:04:43 +0200 (CEST)
+Received: from fhigh-a3-smtp.messagingengine.com
+ (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C7974028A
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 13:04:42 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id C8F59140010E;
+ Sun, 21 Jun 2026 07:04:41 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Sun, 21 Jun 2026 07:04:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1782038373;
- x=1782124773; bh=ajefyeZJZqfH6TtAqWrvmkZvjkmvqy0VH4Rz2Z3SBIQ=; b=
- Ge6sidcH9MEG2wOoKbvBcLSq7/qxzQ0OdqjMC8vAJH6R2R2Ss4Lj8D8Kwm4QF0YU
- fA5hYq777gc3YEt91pRaqaYdpvtEAKferR7VURo8LTre5nJOTZ9k4Y1jqU6GAEyl
- DeiKq9/9BKxOw7EsJbW9U0Jf2X7Vw65Ypc+ivZvELHaQi9WkWdoB6Y9ttnjDC82R
- CJwaShxivjSBX0XdAykt914i7Z+iDp7t/UuyMqXpm3M2vfy44e/XvuIjA+SNyOPG
- Dng6cbYX2nw6nYKNZg1VdzAdXJ54eIe8xz5JBzXg/M2Nusnk1N2aD1J2+jbEmeiW
- w+H9B2fWx6vtAeOAeXEN+g==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1782039881;
+ x=1782126281; bh=Ud9VLmTfkIWv7XVS13Jznt2op7cPB8cAcPUKxUqJyII=; b=
+ IWQHvs7TtaG7UBVzqKagnS0iGFmNpXhwDdq1IZu1w3LsGuRIQnVTIoZM85ByysQI
+ BRJnX0FsViVSjYU2QiRfajmZvsJgadXGewZ4M4iyj4fNJFYtwhTwgm+X8H6ND8wF
+ Ky9tniC6vlYIuSOyf9H2UhHCH587/fZnLUrL+u0sHv4W5nN0TLsGkcfD601S3+CM
+ XWKlMVHbZSD2Tzl9i2UJGuDEAjSszkwzL5MAIDGH09cKQaB4ao5Ivt5IQt+6Nlcs
+ q4LqNiGty1n3P219nzWC2yEVu6LIClM0nCXmIV+wNsiCCX5SwYSnV95kVVrKmY8J
+ E6iNIaKc4F+RUse2XtkCPw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1782038373; x=
- 1782124773; bh=ajefyeZJZqfH6TtAqWrvmkZvjkmvqy0VH4Rz2Z3SBIQ=; b=g
- yAfje9NMNSei0QOqC8vfGJAXu7U+sQWk3qAHcB2bxbzOBKxhhenHZJbCZ+RHwxP/
- NLtWFj1Qj71DVLiH7FcSL6DZ4wmM38o9rIHhuQRFf/YjidhkVpiKj9VxGQcEmgO1
- mLL+TG2zv7PRmI3YdJkc2Y7e8xzf84RrnAsbiSqiv66I4J/niSKHTGA8tbEKNziz
- ttfRfNnU5kYScXK9kFLNSzu/Fq2/TLVCI8H/mffbG7FElJGRefLtzY7YjK7YzWKj
- Yh7QhCnkf+YkIi8lXCcNe1n89YExQEo8x7Ctb2LyyjStUnKJnkRVNEBqK9l9NKEE
- DoNg0i+JraaG7S6QLX3gA==
-X-ME-Sender: <xms:ZL83aj6tLgYKqn3XYvKMDft8EF8RawA2_l1badKzB4DbpGCS2htKgA>
- <xme:ZL83ak51ZesCqX7lsws2N1Q7Db0vKqE1vy6FodGpP_mL247js1WkImnAQ3yk7dp3P
- Ejf-xUkNJJFZUKQBBSdYzoB0R48B9m_X0TEoDbV2BULGi0OeipAeQ>
-X-ME-Received: <xmr:ZL83aspWQqww_OTjpjsjYDf6gSUoy7VNjUTvodyWytomYxq7GtSMKKuNc8G8dUZWXrKK9wKstp6tZKHv5MHUwqOdPQ>
-X-ME-Proxy-Cause: dmFkZTGJQQIlBWoZDRr5jus5WY89LB/9o/T0ktiepoU+IngbEgRpk1HWyzTQxspH+VmizF
- o8d18Cg0Cn0FLDEpvvpEzp3dFpiZnzixo1oxDMwwTziup3ht4Y2Idg6YUdhZ/OtQls9MkQ
- grM6dVasxwvmwiIydov72eF1wOHLf2obVX404QDV90Z5JpO/9ZcqV7hZa5VN6+gXABlJ9D
- z4KHRYYAzxCVlCOIJc7paB9cUZ9mcUZxIRoIqmdYz61mWskHKeTnbOpA1Ls85I41yiZToP
- JQQChkB9/IQcgZZPJh8n7B5IPPPzYKFDqRUgG43s4vDiubLJFpXn4q9JoebVfhZjwS1LQ6
- e9TyIfbZU7VRo7Mgk2rgfrOjLEMyCOU+Qf60DbYDOxqTsFCpPG68YwZXz2EO8Nnb9qqzy2
- woAUuUV7DR0IIkDLPtei2LxoVWKy3Gybkmt34rtr2yZigkp9G3DBplnx5E7zMQQeen3hsd
- mXaGzkiMF+YUnSJE3gMDkYkAFob1SaCmWtT5gWOrh4tncXAvrC126DvfIYGNcCXuPzmXk0
- YUPm2bmSdKXeC/J1btn4/N496ZTXHHM5t/eHOs/h0VSAccDcjQ8M0qRj6r/alIsGqrqwb+
- 9WClW+93pcg3xBcQbeQyCV2ZR1cPDTaAOa1HxdhfWZWjkyQR14FHZmgxjsRA
-X-ME-Proxy: <xmx:ZL83alNQJFNbUzYrfhL6h3I_8Jm9HDiPw8kXeC2bZHgJnqYA2mtBvQ>
- <xmx:ZL83ak2aQpQiryAXRv8JcRaiFF1KhBbqX34QS09JLM04ZVV5lmsBzA>
- <xmx:ZL83akCWhQkmy5Vrz3MP9unAbjE_zU6a6qsHA-ICvut9sgr4rLMV0w>
- <xmx:ZL83ahKpXpc5Q_6YInKK92_lCUSIJmtgbqaA046kMHPHsUplbIfcpA>
- <xmx:Zb83ali1tA2z7lWzlGyvPr06a2omXnAJ9Kcp2M749Lc_Bk62s_mFsEil>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1782039881; x=
+ 1782126281; bh=Ud9VLmTfkIWv7XVS13Jznt2op7cPB8cAcPUKxUqJyII=; b=i
+ Qx+4zwMi8p5D6Ld8UQoYBYgvIbzF2HFAHTxVK9gmUkkNXZ0RChhbwiugiaiDrFvC
+ HBZnGz0SU8xIOWkFVMQkHwy+Tj/qxY/cdBVNBiJlJ8UQc04cptI4D2K5BHAiIqfC
+ ScT4oeHRuLbNx9Kc6l7C7j4zbjAcHSeKT2cXzmulGXnNXYSV0EHoqf20rJE9XBhi
+ SsDWqSEBsNLH5vjAJVzNbiR2PvNJ4kIzgv3JfMrxxlsqUabcvmEu61laa9oDD1Rc
+ IucihCN+/EH8ZlQ7jXYxqITU7+5Jz4tyn4Ln/rxX35b8Hl1fTnuxGGAuly09tHXm
+ +UIl+Jlz+BOlc2h+aybpg==
+X-ME-Sender: <xms:SMU3amyonhd8D94cBlDPtBfuoxK3jSWrr7WRpXC38JxemjqTswWxFQ>
+ <xme:SMU3arMXa4kfzfqK2FoDDnGzak9QT4iuvuWnk7uDtCANc40Lg_VUySU5XVQn0E4KD
+ qYlTIScicJbyAOJUR-dnEiKcFJaz1DwpT_xIcPuaG5qXsedBe2ZcJc>
+X-ME-Received: <xmr:SMU3aj4xISO6vr6P6xaArMMOinWoRGgnYqO-JCHNJpVu-B9zXVcqcZtj-81LYNI5Kbd6WmkngqiS1DzkG3fni60Z-A>
+X-ME-Proxy-Cause: dmFkZTF9Fn0QpO4ki7bYanOVdez5KQ1fOTzx+5NPwWzg2W7sEy2amuGe2yCH9KIiHkqNVc
+ oG8wdgt3E53LaYI55IgezSTYrPRNMmq7CzALuT/TeQ+kwLcGm384cfXmONoT0sKUv7zaGF
+ etgmeCPaOgmkLiApzBgUmmH0CkIer6Rxx1w00txFXkHbW0PeaB2Ykj648ZXU4dz2QqXxUb
+ T8edlvUHwZLg0QxzceAlQFw5jcus/MG7EW5ArYNk/xUjxYh9mFqRRWREepJB1/PVFO3Ebj
+ iPbek78kvtkXP5lke/D+pmT1YO3P8BoBKvDGP5OOrA8wxoYuklAJLHVUyUDjGgB5jSKqW3
+ SAayqJ9HNp/V/2Ad/BK2K64A2YgOxibFTe62pKs9KINZ95fd33bhkl+I4HRR2yDbBWJJvC
+ LeLxx+Mm9Lfq9/wQLx1amrD+JNqMoqEB8YmZCSrhcK/lv08E/Za1iVHjZygUxFppq/Cu2t
+ NBT+sNJnev3Q3CuqXlHiimsG/nR0aYmpxOfxPKPKIcyfOeZhs9ca3M6DL3qeTcW6CjX9jJ
+ iiS+9461QsXZKpeVC+DlCA3+bJv7rX5p32bg9UTL2nvUwmKAZ+6V3b+1elU+yKY8AoNGe0
+ DVWC+7CNEUhJ44RzPQqtZdVFXUaGWtQ1RJDM/pxChr7dBkNyOJBVj9QNdVvg
+X-ME-Proxy: <xmx:SMU3asns-Oe45vJgGoDsigIiKHTeWHOr4uz4w5z-pldlSLKR1GmOTg>
+ <xmx:SMU3akTCyEn_02fTnKaeave4U2RHqa7KYTUmdMXRzB_YGg00RYLhyA>
+ <xmx:SMU3arE-obvj4KAd3G2e-CrpPrl5qPK_2SSVMMbXaAU2-t37u1IC5w>
+ <xmx:SMU3apGGnHGIhGI9yMCtCHKv5vIx2iFpKdA83U9hPPZp04sdqMFEkg>
+ <xmx:ScU3ajpVm4RZ44npvCRpIh52k7ix2DA5bfYwtZeGgl3GiKJ_ZJyRTjCy>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 21 Jun 2026 06:39:31 -0400 (EDT)
+ 21 Jun 2026 07:04:39 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>, Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH] eal: revert prefix of lcore roles
-Date: Sun, 21 Jun 2026 12:39:29 +0200
-Message-ID: <6XWoHn0mRd2qYPJYIrIkiQ@monjalon.net>
-In-Reply-To: <20260621101406.2776900-1-thomas@monjalon.net>
-References: <20260621101406.2776900-1-thomas@monjalon.net>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: Huisong Li <lihuisong@huawei.com>, andrew.rybchenko@oktetlabs.ru,
+ dev@dpdk.org, zhanjie9@hisilicon.com
+Subject: Re: [PATCH v1 0/5] prefix lcore role enum values
+Date: Sun, 21 Jun 2026 13:04:37 +0200
+Message-ID: <e6ViscOLTtCt9nQzc_qZSg@monjalon.net>
+In-Reply-To: <20260620094220.10047bf2@phoenix.local>
+References: <20260617102834.2343356-1-lihuisong@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6592C@smartserver.smartshare.dk>
+ <20260620094220.10047bf2@phoenix.local>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -91,17 +90,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-21/06/2026 12:14, Thomas Monjalon:
-> The CI is not ready to accept changing the prefix of an enum
-> because some warnings are raised by old versions of abidiff.
-> 
-> Let's revert for now and take time to update the CI labs.
-> 
-> Fixes: c3640830470b ("eal: prefix lcore role values")
-> 
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+20/06/2026 18:42, Stephen Hemminger:
+> On Fri, 19 Jun 2026 22:11:02 +0200
+> Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+>=20
+> > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > Sent: Friday, 19 June 2026 17.40
+> > >=20
+> > > On Fri, 19 Jun 2026 09:54:51 +0200
+> > > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+> > >  =20
+> > > > > > The problem with this patch it causes build failures now with a=
+bi =20
+> > > > > diff.
+> > > > >
+> > > > > It is probably a bug of an old version of abidiff.
+> > > > > I recommend updating. =20
+> > > >
+> > > > With the #define's the ABI has not changed. It's probably too =20
+> > > indirect for abidiff to understand. =20
+> > > > If we absolutely want to please abidiff, we could keep the existing=
+ =20
+> > > enums and #define RTE_LCORE_ROLE_RTE ROLE_RTE for now. =20
+> > > > But I'm in favor of what was done already. =20
+> > >=20
+> > > The build failures on github, not in my local builds.
+> > > https://github.com/ovsrobot/dpdk/actions/runs/27789889172/job/8223596=
+50
+> > > 90
+> > >=20
+> > > It makes looking at patchwork dashboard difficult, all patches show up
+> > > with red mark =20
+> >=20
+> > So maybe we can choose the path of pleasing abidiff...
+> > Keep the existing enums, and #define the new RTE_LCORE_ prefixed varian=
+ts, and use those in the code.
+> >=20
+> > Later, with an ABI breaking release, we can swap.
+> > Or maybe we just wait until an ABI breaking release to fix this.
+> >=20
+>=20
+> Since change is cosmetic, not functional. I think it should be reverted f=
+or 26.07
+> to get github CI to pass on all platforms.
+>=20
+> It can be added back in 26.11
 
-Quickly applied to resolve CI results.
-
+Yes I did the revert.
+Sorry for the inconvenience.
 
 
