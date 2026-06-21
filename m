@@ -2,33 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B21E1CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 15:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27645CD98F0
+	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 15:23:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C76034067E;
-	Sun, 21 Jun 2026 17:22:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D6ADA40678;
+	Sun, 21 Jun 2026 17:22:55 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 5190D4065A
- for <dev@dpdk.org>; Sun, 21 Jun 2026 17:22:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5F2BF40298
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 17:22:51 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 394E3200249;
- Sun, 21 Jun 2026 17:22:50 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 45310200248;
+ Sun, 21 Jun 2026 17:22:51 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0061A200240;
- Sun, 21 Jun 2026 17:22:50 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0D387200240;
+ Sun, 21 Jun 2026 17:22:51 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 747601800071;
- Sun, 21 Jun 2026 23:22:48 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A913A180007B;
+ Sun, 21 Jun 2026 23:22:49 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v3 14/19] net/dpaa: optimize FMC MAC type parsing
-Date: Sun, 21 Jun 2026 20:52:23 +0530
-Message-Id: <20260621152228.2777171-15-hemant.agrawal@nxp.com>
+Subject: [PATCH v3 15/19] net/dpaa: report error on using deferred start
+Date: Sun, 21 Jun 2026 20:52:24 +0530
+Message-Id: <20260621152228.2777171-16-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260621152228.2777171-1-hemant.agrawal@nxp.com>
 References: <20260621101651.1081425-1-hemant.agrawal@nxp.com>
@@ -49,127 +48,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+This patch add support to report on error
+for rx and tx deferred start config
 
-For ls104xa, MAC9 and MAC10's type could be either of 10G/2.5G/1G
-up to serdes configuration, MAC index should be identified by
-port name instead of parsing MAC type and port number.
-
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_fmc.c | 73 ++++++++++++++++++++++---------------
- 1 file changed, 44 insertions(+), 29 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/dpaa/dpaa_fmc.c b/drivers/net/dpaa/dpaa_fmc.c
-index 7dc42f6e23..3034f534a5 100644
---- a/drivers/net/dpaa/dpaa_fmc.c
-+++ b/drivers/net/dpaa/dpaa_fmc.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017-2023 NXP
-+ * Copyright 2017-2026 NXP
-  */
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index e0b94b9178..63a3c110d9 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -1172,6 +1172,12 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	rxq->nb_desc = UINT16_MAX;
+ 	rxq->offloads = rx_conf->offloads;
  
- /* System headers */
-@@ -204,6 +204,36 @@ struct fmc_model_t {
- 
- struct fmc_model_t *g_fmc_model;
- 
-+static int
-+dpaa_port_fmc_get_idx_from_name(const char *name)
-+{
-+	const char *found;
-+	int idx_str_start = -1, idx;
-+
-+#define FMC_PORT_NAME_MAC "MAC/"
-+#define FMC_PORT_NAME_OFFLINE "OFFLINE/"
-+
-+	found = strstr(name, FMC_PORT_NAME_MAC);
-+	if (!found) {
-+		found = strstr(name, FMC_PORT_NAME_OFFLINE);
-+		if (found)
-+			idx_str_start = strlen(FMC_PORT_NAME_OFFLINE);
-+	} else {
-+		idx_str_start = strlen(FMC_PORT_NAME_MAC);
-+	}
-+
-+	if (!found) {
-+		DPAA_PMD_ERR("Invalid fmc port name: %s", name);
++	/* Rx deferred start is not supported */
++	if (rx_conf->rx_deferred_start) {
++		DPAA_PMD_ERR("%p:Rx deferred start not supported", (void *)dev);
 +		return -EINVAL;
 +	}
 +
-+	idx = atoi(&found[idx_str_start]);
+ 	DPAA_PMD_INFO("Rx queue setup for queue index: %d fq_id (0x%x)",
+ 			queue_idx, rxq->fqid);
+ 
+@@ -1478,6 +1484,12 @@ int dpaa_eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	txq->nb_desc = UINT16_MAX;
+ 	txq->offloads = tx_conf->offloads;
+ 
++	/* Tx deferred start is not supported */
++	if (tx_conf->tx_deferred_start) {
++		DPAA_PMD_ERR("%p:Tx deferred start not supported", (void *)dev);
++		return -EINVAL;
++	}
 +
-+	DPAA_PMD_INFO("MAC index of %s is %d", name, idx);
-+
-+	return idx;
-+}
-+
- static int
- dpaa_port_fmc_port_parse(struct fman_if *fif,
- 	const struct fmc_model_t *fmc_model,
-@@ -211,7 +241,10 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
- {
- 	int current_port = fmc_model->apply_order[apply_idx].index;
- 	const fmc_port *pport = &fmc_model->port[current_port];
--	uint32_t num;
-+	int num = dpaa_port_fmc_get_idx_from_name(pport->name);
-+
-+	if (num < 0)
-+		return num;
- 
- 	if (pport->type == e_FM_PORT_TYPE_OH_OFFLINE_PARSING &&
- 	    pport->number == fif->mac_idx &&
-@@ -219,40 +252,22 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
- 	     fif->mac_type == fman_onic))
- 		return current_port;
- 
--	if (fif->mac_type == fman_mac_1g) {
--		if (pport->type != e_FM_PORT_TYPE_RX)
--			return -ENODEV;
--		num = pport->number + DPAA_1G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
--
-+	if (fif->mac_type == fman_mac_1g &&
-+		pport->type != e_FM_PORT_TYPE_RX)
- 		return -ENODEV;
--	}
--
--	if (fif->mac_type == fman_mac_2_5g) {
--		if (pport->type != e_FM_PORT_TYPE_RX_2_5G)
--			return -ENODEV;
--		num = pport->number + DPAA_2_5G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
- 
-+	if (fif->mac_type == fman_mac_2_5g &&
-+		pport->type != e_FM_PORT_TYPE_RX_2_5G)
- 		return -ENODEV;
--	}
--
--	if (fif->mac_type == fman_mac_10g) {
--		if (pport->type != e_FM_PORT_TYPE_RX_10G)
--			return -ENODEV;
--		num = pport->number + DPAA_10G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
- 
-+	if (fif->mac_type == fman_mac_10g &&
-+		pport->type != e_FM_PORT_TYPE_RX_10G)
- 		return -ENODEV;
--	}
- 
--	DPAA_PMD_ERR("Invalid MAC(mac_idx=%d) type(%d)",
--		fif->mac_idx, fif->mac_type);
-+	if (fif->mac_idx == num)
-+		return current_port;
- 
--	return -EINVAL;
-+	return -ENODEV;
- }
- 
- static int
+ 	if (queue_idx >= dev->data->nb_tx_queues) {
+ 		rte_errno = EOVERFLOW;
+ 		DPAA_PMD_ERR("%p: queue index out of range (%u >= %u)",
 -- 
 2.25.1
 
