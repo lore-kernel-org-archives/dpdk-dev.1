@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 936D9CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 15:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4FECD98F0
+	for <dpdk-dev@archiver.kernel.org>; Sun, 21 Jun 2026 15:24:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D7564068E;
-	Sun, 21 Jun 2026 17:22:58 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 9DB3A4066D
- for <dev@dpdk.org>; Sun, 21 Jun 2026 17:22:52 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 838F01A0198;
- Sun, 21 Jun 2026 17:22:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 29B3B40698;
+	Sun, 21 Jun 2026 17:22:59 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id D95F54067C
+ for <dev@dpdk.org>; Sun, 21 Jun 2026 17:22:53 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B402C200248;
+ Sun, 21 Jun 2026 17:22:53 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4D8921A000C;
- Sun, 21 Jun 2026 17:22:52 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7E5EB200240;
+ Sun, 21 Jun 2026 17:22:53 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B9006180004C;
- Sun, 21 Jun 2026 23:22:50 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id F3CBF1800071;
+ Sun, 21 Jun 2026 23:22:51 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v3 16/19] drivers: optimize DPAA multi-entry buffer pool
- operations
-Date: Sun, 21 Jun 2026 20:52:25 +0530
-Message-Id: <20260621152228.2777171-17-hemant.agrawal@nxp.com>
+Subject: [PATCH v3 17/19] drivers: release DPAA bpid on driver destructor
+Date: Sun, 21 Jun 2026 20:52:26 +0530
+Message-Id: <20260621152228.2777171-18-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260621152228.2777171-1-hemant.agrawal@nxp.com>
 References: <20260621101651.1081425-1-hemant.agrawal@nxp.com>
@@ -52,250 +51,211 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Replace the hardcoded buffer acquire count of 8 with the FSL_BM_BURST_MAX
-constant when acquiring buffers from the buffer pool. Use a single
-bm_hw_buf_desc structure for HW initialization of the first entry and copy
-it to remaining entries, ensuring consistent HW descriptor state across
-all entries in the pool.
+Track allocated BPIDs in a static per-BPID flag table and register a
+driver destructor that releases any BPIDs still marked as in use at
+process exit. This prevents BPID leaks when an application exits without
+calling rte_mempool_free(). Also tune the per-lcore mempool cache flush
+threshold to match the hardware bulk release size (DPAA_MBUF_MAX_ACQ_REL)
+so that buffers are returned to HW in optimal burst sizes.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/bman.c  | 51 +++++++----------------------
- drivers/bus/dpaa/include/fsl_bman.h | 46 +++++++++++++++++++++-----
- drivers/mempool/dpaa/dpaa_mempool.c |  8 ++---
- 3 files changed, 54 insertions(+), 51 deletions(-)
+ drivers/bus/dpaa/base/qbman/bman.c       |  8 +++
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c |  1 +
+ drivers/bus/dpaa/include/fsl_bman.h      |  3 ++
+ drivers/mempool/dpaa/dpaa_mempool.c      | 67 ++++++++++++++++++++++--
+ drivers/mempool/dpaa/dpaa_mempool.h      |  3 +-
+ 5 files changed, 78 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
-index ee4232d0a0..01357d6446 100644
+index 01357d6446..b69394b0cc 100644
 --- a/drivers/bus/dpaa/base/qbman/bman.c
 +++ b/drivers/bus/dpaa/base/qbman/bman.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-  *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017, 2024 NXP
-+ * Copyright 2017, 2024-2026 NXP
-  *
-  */
- #include <rte_memcpy.h>
-@@ -17,20 +17,6 @@
- #define IRQNAME		"BMan portal %d"
- #define MAX_IRQNAME	16	/* big enough for "BMan portal %d" */
- 
--
--#define MAX_U16 UINT16_MAX
--#define MAX_U32 UINT32_MAX
--#ifndef BIT_SIZE
--#define BIT_SIZE(t) (sizeof(t) * 8)
--#endif
--#define MAX_U48 \
--	((((uint64_t)MAX_U16) << BIT_SIZE(uint32_t)) | MAX_U32)
--#define HI16_OF_U48(x) \
--	(((x) >> BIT_SIZE(rte_be32_t)) & MAX_U16)
--#define LO32_OF_U48(x) ((x) & MAX_U32)
--#define U48_BY_HI16_LO32(hi, lo) \
--	(((hi) << BIT_SIZE(uint32_t)) | (lo))
--
- struct bman_portal {
- 	struct bm_portal p;
- 	/* 2-element array. pools[0] is mask, pools[1] is snapshot. */
-@@ -273,7 +259,7 @@ bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
- 	struct bm_rcr_entry *r;
- 	uint8_t i, avail;
- 	uint64_t bpid = pool->params.bpid;
--	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
-+	struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
- 
- #ifdef RTE_LIBRTE_DPAA_HWDEBUG
- 	if (!num || (num > FSL_BM_BURST_MAX))
-@@ -290,19 +276,17 @@ bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
- 	if (unlikely(!r))
- 		return -EBUSY;
- 
-+	bm_bufs[0].be_desc.bpid = bpid;
-+	for (i = 0; i < num; i++)
-+		bm_buffer_set64_to_be(&bm_bufs[i], bufs[i]);
- 	/*
- 	 * we can copy all but the first entry, as this can trigger badness
- 	 * with the valid-bit
- 	 */
--	bm_bufs[0].bpid = bpid;
--	bm_bufs[0].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[0]));
--	bm_bufs[0].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[0]));
--	for (i = 1; i < num; i++) {
--		bm_bufs[i].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[i]));
--		bm_bufs[i].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[i]));
--	}
--
--	memcpy(r->bufs, bm_bufs, sizeof(struct bm_buffer) * num);
-+	r->bufs[0].opaque = bm_bufs[0].opaque;
-+	if (num > 1)
-+		rte_memcpy(&r->bufs[1], &bm_bufs[1],
-+			sizeof(struct bm_buffer) * (num - 1));
- 
- 	bm_rcr_pvb_commit(&p->p, BM_RCR_VERB_CMD_BPID_SINGLE |
- 		(num & BM_RCR_VERB_BUFCOUNT_MASK));
-@@ -360,16 +344,6 @@ __rte_unused bman_extract_addr(struct bm_buffer *buf)
- 	return buf->addr;
+@@ -237,6 +237,14 @@ void bman_free_pool(struct bman_pool *pool)
+ 	kfree(pool);
  }
  
--static inline uint64_t
--bman_hw_extract_addr(struct bm_hw_buf_desc *buf)
--{
--	uint64_t hi, lo;
--
--	hi = be16_to_cpu(buf->hi_addr);
--	lo = be32_to_cpu(buf->lo_addr);
--	return U48_BY_HI16_LO32(hi, lo);
--}
--
- RTE_EXPORT_INTERNAL_SYMBOL(bman_acquire_fast)
- int
- bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
-@@ -378,7 +352,7 @@ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
- 	struct bm_mc_command *mcc;
- 	struct bm_mc_result *mcr;
- 	uint8_t i, rst;
--	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
-+	struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
- 
- #ifdef RTE_LIBRTE_DPAA_HWDEBUG
- 	if (!num || (num > FSL_BM_BURST_MAX))
-@@ -397,11 +371,10 @@ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
- 	if (unlikely(rst < 1 || rst > FSL_BM_BURST_MAX))
- 		return -EINVAL;
- 
--	rte_memcpy(bm_bufs, mcr->acquire.bufs,
--		sizeof(struct bm_buffer) * rst);
-+	rte_memcpy(bm_bufs, mcr->acquire.bufs, sizeof(struct bm_buffer) * rst);
- 
- 	for (i = 0; i < rst; i++)
--		bufs[i] = bman_hw_extract_addr(&bm_bufs[i]);
-+		bufs[i] = bm_buffer_get64_from_be(&bm_bufs[i]);
- 
- 	return rst;
- }
++void bman_free_bpid(u8 bpid, u32 flags)
++{
++	if (flags & BMAN_POOL_FLAG_THRESH)
++		bm_pool_set(bpid, zero_thresholds);
++	if (flags & BMAN_POOL_FLAG_DYNAMIC_BPID)
++		bman_release_bpid(bpid);
++}
++
+ const struct bman_pool_params *bman_get_params(const struct bman_pool *pool)
+ {
+ 	return &pool->params;
+diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+index 514ab7b1f1..8bd1a9bc6e 100644
+--- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
++++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+@@ -46,6 +46,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(netcfg_acquire)
+ RTE_EXPORT_INTERNAL_SYMBOL(netcfg_release)
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_new_pool)
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_free_pool)
++RTE_EXPORT_INTERNAL_SYMBOL(bman_free_bpid)
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_get_params)
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_release)
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_acquire)
 diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
-index 2d24b89889..67a7a09618 100644
+index 67a7a09618..6079eedff5 100644
 --- a/drivers/bus/dpaa/include/fsl_bman.h
 +++ b/drivers/bus/dpaa/include/fsl_bman.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-  *
-  * Copyright 2008-2012 Freescale Semiconductor, Inc.
-- * Copyright 2024 NXP
-+ * Copyright 2024-2026 NXP
-  *
-  */
+@@ -317,6 +317,9 @@ struct bman_pool *bman_new_pool(const struct bman_pool_params *params);
+ __rte_internal
+ void bman_free_pool(struct bman_pool *pool);
  
-@@ -42,6 +42,13 @@ struct bm_mc_result;	/* MC result */
-  * pool id specific to this buffer is needed (BM_RCR_VERB_CMD_BPID_MULTI,
-  * BM_MCC_VERB_ACQUIRE), the 'bpid' field is used.
-  */
-+struct __rte_packed_begin bm_hw_buf_desc {
-+	uint8_t rsv;
-+	uint8_t bpid;
-+	rte_be16_t hi; /* High 16-bits of 48-bit address */
-+	rte_be32_t lo; /* Low 32-bits of 48-bit address */
-+} __rte_packed_end;
++__rte_internal
++void bman_free_bpid(u8 bpid, u32 flags);
 +
- struct __rte_aligned(8) bm_buffer {
- 	union {
- 		struct {
-@@ -66,17 +73,11 @@ struct __rte_aligned(8) bm_buffer {
- 			u64 __notaddress:16;
- #endif
- 		};
-+		struct bm_hw_buf_desc be_desc;
- 		u64 opaque;
- 	};
- };
- 
--struct __rte_packed_begin bm_hw_buf_desc {
--	uint8_t rsv;
--	uint8_t bpid;
--	rte_be16_t hi_addr; /* High 16-bits of 48-bit address */
--	rte_be32_t lo_addr; /* Low 32-bits of 48-bit address */
--} __rte_packed_end;
--
- static inline u64 bm_buffer_get64(const struct bm_buffer *buf)
- {
- 	return buf->addr;
-@@ -87,6 +88,17 @@ static inline dma_addr_t bm_buf_addr(const struct bm_buffer *buf)
- 	return (dma_addr_t)buf->addr;
- }
- 
-+#ifndef BIT_SIZE
-+#define BIT_SIZE(t) (sizeof(t) * 8)
-+#endif
-+#define MAX_U48 \
-+	((((uint64_t)UINT16_MAX) << BIT_SIZE(uint32_t)) | UINT32_MAX)
-+#define HI16_OF_U48(x) \
-+	(((x) >> BIT_SIZE(uint32_t)) & UINT16_MAX)
-+#define LO32_OF_U48(x) ((x) & UINT32_MAX)
-+#define U48_BY_HI16_LO32(hi, lo) \
-+	(((hi) << BIT_SIZE(uint32_t)) | (lo))
-+
- #define bm_buffer_set64(buf, v) \
- 	do { \
- 		struct bm_buffer *__buf931 = (buf); \
-@@ -94,6 +106,24 @@ static inline dma_addr_t bm_buf_addr(const struct bm_buffer *buf)
- 		__buf931->lo = lower_32_bits(v); \
- 	} while (0)
- 
-+#define bm_buffer_set64_to_be(buf, v) \
-+	do { \
-+		struct bm_buffer *__buf931 = (buf); \
-+		\
-+		__buf931->be_desc.hi = cpu_to_be16(HI16_OF_U48(v)); \
-+		__buf931->be_desc.lo = cpu_to_be32(LO32_OF_U48(v)); \
-+	} while (0)
-+
-+#define bm_buffer_get64_from_be(buf) \
-+	({ \
-+		uint64_t hi, lo; \
-+		struct bm_buffer *__buf931 = (buf); \
-+		\
-+		hi = be16_to_cpu(__buf931->be_desc.hi); \
-+		lo = be32_to_cpu(__buf931->be_desc.lo); \
-+		U48_BY_HI16_LO32(hi, lo); \
-+	})
-+
- #define FSL_BM_BURST_MAX 8
- 
- /* See 1.5.3.5.4: "Release Command" */
+ /**
+  * bman_get_params - Returns a pool object's parameters.
+  * @pool: the pool object
 diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 2f8555a026..3fdbcba646 100644
+index 3fdbcba646..210ea3bcf9 100644
 --- a/drivers/mempool/dpaa/dpaa_mempool.c
 +++ b/drivers/mempool/dpaa/dpaa_mempool.c
+@@ -25,10 +25,22 @@
+ #include <rte_eal.h>
+ #include <rte_malloc.h>
+ #include <rte_ring.h>
++#include <rte_common.h>
+ 
+ #include <dpaa_mempool.h>
+ #include <dpaax_iova_table.h>
+ 
++struct dpaa_bpid_flag {
++	uint32_t flags;
++	int used;
++};
++
++/** Be referenced in destructor to release bpid allocated.
++ * Destructor can't access bman_pool from eal mem,
++ * we release ID with flag directly.
++ */
++static struct dpaa_bpid_flag s_dpaa_bpid_allocated_flag[DPAA_MAX_BPOOLS];
++
+ #define FMAN_ERRATA_BOUNDARY ((uint64_t)4096)
+ #define FMAN_ERRATA_BOUNDARY_MASK (~(FMAN_ERRATA_BOUNDARY - 1))
+ 
+@@ -58,6 +70,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 	struct bman_pool_params params = {
+ 		.flags = BMAN_POOL_FLAG_DYNAMIC_BPID
+ 	};
++	unsigned int lcore_id;
++	struct rte_mempool_cache *cache;
+ 
+ 	MEMPOOL_INIT_FUNC_TRACE();
+ 
+@@ -115,7 +129,7 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 	rte_dpaa_bpid_info[bpid].ptov_off = 0;
+ 	rte_dpaa_bpid_info[bpid].flags = 0;
+ 
+-	bp_info = rte_malloc(NULL,
++	bp_info = rte_zmalloc(NULL,
+ 			     sizeof(struct dpaa_bp_info),
+ 			     RTE_CACHE_LINE_SIZE);
+ 	if (!bp_info) {
+@@ -127,6 +141,20 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 	rte_memcpy(bp_info, (void *)&rte_dpaa_bpid_info[bpid],
+ 		   sizeof(struct dpaa_bp_info));
+ 	mp->pool_data = (void *)bp_info;
++	s_dpaa_bpid_allocated_flag[bpid].flags = params.flags;
++	s_dpaa_bpid_allocated_flag[bpid].used = true;
++	/* Update per core mempool cache threshold to optimal value which is
++	 * number of buffers that can be released to HW buffer pool in
++	 * a single API call.
++	 */
++	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
++		cache = &mp->local_cache[lcore_id];
++		DPAA_MEMPOOL_DEBUG("lCore %d: cache->flushthresh %d -> %d",
++			lcore_id, cache->flushthresh,
++			(uint32_t)(cache->size + DPAA_MBUF_MAX_ACQ_REL));
++		if (cache->flushthresh)
++			cache->flushthresh = cache->size + DPAA_MBUF_MAX_ACQ_REL;
++	}
+ 
+ 	DPAA_MEMPOOL_INFO("BMAN pool created for bpid =%d", bpid);
+ 	return 0;
+@@ -136,6 +164,7 @@ static void
+ dpaa_mbuf_free_pool(struct rte_mempool *mp)
+ {
+ 	struct dpaa_bp_info *bp_info = DPAA_MEMPOOL_TO_POOL_INFO(mp);
++	uint16_t i;
+ 
+ 	MEMPOOL_INIT_FUNC_TRACE();
+ 
+@@ -143,10 +172,25 @@ dpaa_mbuf_free_pool(struct rte_mempool *mp)
+ 		bman_free_pool(bp_info->bp);
+ 		DPAA_MEMPOOL_INFO("BMAN pool freed for bpid =%d",
+ 				  bp_info->bpid);
+-		rte_free(mp->pool_data);
+-		bp_info->bp = NULL;
++		rte_dpaa_bpid_info[bp_info->bpid].mp = NULL;
++		rte_dpaa_bpid_info[bp_info->bpid].bp = NULL;
++		s_dpaa_bpid_allocated_flag[bp_info->bpid].used = false;
++		rte_free(bp_info);
+ 		mp->pool_data = NULL;
+ 	}
++
++	if (!rte_dpaa_bpid_info)
++		return;
++
++	for (i = 0; i < DPAA_MAX_BPOOLS; i++) {
++		if (rte_dpaa_bpid_info[i].mp)
++			break;
++	}
++
++	if (i == DPAA_MAX_BPOOLS) {
++		rte_free(rte_dpaa_bpid_info);
++		rte_dpaa_bpid_info = NULL;
++	}
+ }
+ 
+ static int
+@@ -481,4 +525,21 @@ static const struct rte_mempool_ops dpaa_mpool_ops = {
+ 	.populate = dpaa_populate,
+ };
+ 
++#define RTE_PRIORITY_104 104
++
++RTE_FINI_PRIO(dpaa_mpool_finish, 104)
++{
++	uint16_t bpid;
++
++	for (bpid = 0; bpid < DPAA_MAX_BPOOLS; bpid++) {
++		if (s_dpaa_bpid_allocated_flag[bpid].used) {
++			bman_free_bpid(bpid, s_dpaa_bpid_allocated_flag[bpid].flags);
++			s_dpaa_bpid_allocated_flag[bpid].used = false;
++		}
++	}
++	/** The rte_dpaa_bpid_info and bman_pool from EAL mem have been released
++	 * with EAL mem pool being destroyed.
++	 */
++}
++
+ RTE_MEMPOOL_REGISTER_OPS(dpaa_mpool_ops);
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
+index 865b533b8f..d7ee49b557 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.h
++++ b/drivers/mempool/dpaa/dpaa_mempool.h
 @@ -1,6 +1,6 @@
  /* SPDX-License-Identifier: BSD-3-Clause
   *
-- *   Copyright 2017,2019,2023-2025 NXP
-+ *   Copyright 2017,2019,2023-2026 NXP
+- *   Copyright 2017,2019,2024 -2025 NXP
++ *   Copyright 2017,2019,2024 -2026 NXP
   *
   */
+ #ifndef __DPAA_MEMPOOL_H__
+@@ -24,6 +24,7 @@
  
-@@ -50,7 +50,7 @@ static int
- dpaa_mbuf_create_pool(struct rte_mempool *mp)
- {
- 	struct bman_pool *bp;
--	struct bm_buffer bufs[8];
-+	struct bm_buffer bufs[FSL_BM_BURST_MAX];
- 	struct dpaa_bp_info *bp_info;
- 	uint8_t bpid;
- 	int num_bufs = 0, ret = 0;
-@@ -83,8 +83,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 		 * then in 1s for the remainder.
- 		 */
- 		if (ret != 1)
--			ret = bman_acquire(bp, bufs, 8, 0);
--		if (ret < 8)
-+			ret = bman_acquire(bp, bufs, FSL_BM_BURST_MAX, 0);
-+		if (ret < FSL_BM_BURST_MAX)
- 			ret = bman_acquire(bp, bufs, 1, 0);
- 		if (ret > 0)
- 			num_bufs += ret;
+ /* total number of bpools on SoC */
+ #define DPAA_MAX_BPOOLS	256
++#define DPAA_INVALID_BPID DPAA_MAX_BPOOLS
+ 
+ /* Maximum release/acquire from BMAN */
+ #define DPAA_MBUF_MAX_ACQ_REL  FSL_BM_BURST_MAX
 -- 
 2.25.1
 
