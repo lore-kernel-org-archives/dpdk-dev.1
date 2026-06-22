@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CE4CDB46F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 11:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDEDCD98F2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 11:35:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A76E6402B8;
-	Mon, 22 Jun 2026 13:35:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B70D640648;
+	Mon, 22 Jun 2026 13:35:24 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 8D1FD40150
- for <dev@dpdk.org>; Mon, 22 Jun 2026 13:35:22 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C4DF4402AD;
+ Mon, 22 Jun 2026 13:35:22 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5DFF81A032E;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AB0961A032F;
  Mon, 22 Jun 2026 13:35:22 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 279711A031F;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7E5DF1A0326;
  Mon, 22 Jun 2026 13:35:22 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5DF4B180004C;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9978A1800071;
  Mon, 22 Jun 2026 19:35:21 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com
-Subject: [PATCH v2 0/9] ENETC driver related changes series
-Date: Mon, 22 Jun 2026 17:05:08 +0530
-Message-Id: <20260622113517.1616028-1-g.singh@nxp.com>
+Cc: hemant.agrawal@nxp.com, stable@dpdk.org, Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v2 1/9] net/enetc: fix TX BD structure
+Date: Mon, 22 Jun 2026 17:05:09 +0530
+Message-Id: <20260622113517.1616028-2-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260619184427.522518-1-g.singh@nxp.com>
+In-Reply-To: <20260622113517.1616028-1-g.singh@nxp.com>
 References: <20260619184427.522518-1-g.singh@nxp.com>
+ <20260622113517.1616028-1-g.singh@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
@@ -47,59 +47,105 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-V2 changes:
-  - Fixed an un-used variable compilation issue reported on fedora:43-gcc-minsize
-  - Fixed various AI reported issues:
-	- Release notes updated for all new devargs
-	- enect4.ini features doc updated for scattered RX.
-	- removed Not required RTE_PTYPE_UNKNOWN.
-	- Fixed mid-frame mbuf leak in SG case.
-	- Enabled SG for enetc4 PF also.
-	- move to calloc from rte_zmalloc in parse_txq_prior().
-	- added vaidation checks on strdup, strtoul.
-	- added NC devargs to use cacheable ops conditionally.
-	- removed dead code like bd_base_p etc.
-	- Fixed rte_cpu_to_le_16() conversion on flags and combined
-	  all flags related patches in one patch.
-	- Fixed memory leak issue due to TXQ priority patch.
-   - There were some false positives, I have ignored them:
-	Race condition on flags field:
-		clean_tx_ring only touches HW-completed BDs (next_to_clean→hwci),
-		never newly-submitted BDs; doorbell hasn't fired yet.
-	Missing dcbf in clean_tx_ring:
-		DPDK is single-threaded per queue; TX path always overwrites
-		flags completely before dcbf.
-	TX dcbf granularity with wrap:
-		Safe (AI admits it).
-	RX refill flush at wrap:
-		In-loop dcbf at i & mask == 0 already flushes aligned groups;
-		trailing flush only needed for partial groups.
-	RX reading before invalidate:
-		dccivac precedes the read for every group in the loop
+The flags field in struct enetc_tx_bd was declared as uint16_t but
+ENETC4 TX BDs only use an 8-bit flags byte. Fix the type to uint8_t
+to match the hardware descriptor layout.
 
-Gagandeep Singh (7):
-  net/enetc: fix TX BD structure
-  net/enetc: fix queue initialization
-  net/enetc: support ESP packet type in packet parsing
-  net/enetc: update random MAC generation code
-  net/enetc: add option to disable VSI messaging
-  net/enetc: add devargs to control VSI-PSI timeout and delay
-  net/enetc4: add cacheable BD ring support with SW cache maintenance
+Fixes: 696fa399d797 ("net/enetc: add PMD with basic operations")
+Cc: stable@dpdk.org
 
-Vanshika Shukla (2):
-  net/enetc: support scatter-gather
-  net/enetc: set user configurable priority to TX rings
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+---
+ drivers/net/enetc/base/enetc_hw.h |  7 +++----
+ drivers/net/enetc/enetc_rxtx.c    | 17 +++++++++--------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
- doc/guides/nics/features/enetc4.ini    |   1 +
- doc/guides/rel_notes/release_26_07.rst |  10 +
- drivers/net/enetc/base/enetc_hw.h      |  13 +-
- drivers/net/enetc/enetc.h              |  31 +-
- drivers/net/enetc/enetc4_ethdev.c      | 172 ++++++++--
- drivers/net/enetc/enetc4_vf.c          | 204 ++++++++++--
- drivers/net/enetc/enetc_ethdev.c       |  25 +-
- drivers/net/enetc/enetc_rxtx.c         | 430 ++++++++++++++++++++++---
- 8 files changed, 768 insertions(+), 118 deletions(-)
-
+diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
+index 173d677..19efadd 100644
+--- a/drivers/net/enetc/base/enetc_hw.h
++++ b/drivers/net/enetc/base/enetc_hw.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018-2024 NXP
++ * Copyright 2018-2026 NXP
+  */
+ 
+ #ifndef _ENETC_HW_H_
+@@ -198,8 +198,7 @@ enum enetc_bdr_type {TX, RX};
+ 
+ #define ENETC_TX_ADDR(txq, addr) ((void *)((txq)->enetc_txbdr + (addr)))
+ 
+-#define ENETC_TXBD_FLAGS_IE		BIT(13)
+-#define ENETC_TXBD_FLAGS_F		BIT(15)
++#define ENETC_TXBD_FLAGS_F		BIT(7)
+ 
+ /* ENETC Parsed values (Little Endian) */
+ #define ENETC_PARSE_ERROR		0x8000
+@@ -262,7 +261,7 @@ struct enetc_tx_bd {
+ 			uint8_t l3t:1;
+ 			uint8_t resv:5;
+ 			uint8_t l4t:3;
+-			uint16_t flags;
++			uint8_t flags;
+ 		};/* default layout */
+ 		uint32_t txstart;
+ 		uint32_t lstatus;
+diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
+index a2b8153..d3b98b3 100644
+--- a/drivers/net/enetc/enetc_rxtx.c
++++ b/drivers/net/enetc/enetc_rxtx.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018-2024 NXP
++ * Copyright 2018-2026 NXP
+  */
+ 
+ #include <stdbool.h>
+@@ -101,7 +101,7 @@ enetc_xmit_pkts(void *tx_queue,
+ 		tx_swbd = &tx_ring->q_swbd[i];
+ 		txbd->frm_len = tx_pkts[start]->pkt_len;
+ 		txbd->buf_len = txbd->frm_len;
+-		txbd->flags = rte_cpu_to_le_16(ENETC_TXBD_FLAGS_F);
++		txbd->flags = ENETC_TXBD_FLAGS_F;
+ 		txbd->addr = (uint64_t)(uintptr_t)
+ 		rte_cpu_to_le_64((size_t)tx_swbd->buffer_addr->buf_iova +
+ 				 tx_swbd->buffer_addr->data_off);
+@@ -133,13 +133,13 @@ enetc4_tx_offload_checksum(struct rte_mbuf *mbuf, struct enetc_tx_bd *txbd)
+ 		txbd->ipcs = ENETC4_TXBD_IPCS;
+ 		txbd->l3_start = mbuf->l2_len;
+ 		txbd->l3_hdr_size = mbuf->l3_len / 4;
+-		txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_L_TX_CKSUM);
++		txbd->flags |= ENETC4_TXBD_FLAGS_L_TX_CKSUM;
+ 		if ((mbuf->ol_flags & RTE_MBUF_F_TX_UDP_CKSUM) == RTE_MBUF_F_TX_UDP_CKSUM) {
+-			txbd->l4t = rte_cpu_to_le_16(ENETC4_TXBD_L4T_UDP);
+-			txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_L4CS);
++			txbd->l4t = ENETC4_TXBD_L4T_UDP;
++			txbd->flags |= ENETC4_TXBD_FLAGS_L4CS;
+ 		} else if ((mbuf->ol_flags & RTE_MBUF_F_TX_TCP_CKSUM) == RTE_MBUF_F_TX_TCP_CKSUM) {
+-			txbd->l4t = rte_cpu_to_le_16(ENETC4_TXBD_L4T_TCP);
+-			txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_L4CS);
++			txbd->l4t = ENETC4_TXBD_L4T_TCP;
++			txbd->flags |= ENETC4_TXBD_FLAGS_L4CS;
+ 		}
+ 	}
+ }
+@@ -172,7 +172,7 @@ enetc_xmit_pkts_nc(void *tx_queue,
+ 			dcbf(data + j);
+ 
+ 		txbd = ENETC_TXBD(*tx_ring, i);
+-		txbd->flags = rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_F);
++		txbd->flags = 0;
+ 		if (tx_ring->q_swbd[i].buffer_addr->ol_flags & ENETC4_TX_CKSUM_OFFLOAD_MASK)
+ 			enetc4_tx_offload_checksum(tx_ring->q_swbd[i].buffer_addr, txbd);
+ 
+@@ -182,6 +182,7 @@ enetc_xmit_pkts_nc(void *tx_queue,
+ 		txbd->addr = (uint64_t)(uintptr_t)
+ 		rte_cpu_to_le_64((size_t)tx_swbd->buffer_addr->buf_iova +
+ 				 tx_swbd->buffer_addr->data_off);
++		txbd->flags |= ENETC4_TXBD_FLAGS_F;
+ 		i++;
+ 		start++;
+ 		if (unlikely(i == tx_ring->bd_count))
 -- 
 2.25.1
 
