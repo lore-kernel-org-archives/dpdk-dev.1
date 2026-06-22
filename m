@@ -2,75 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EB6CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 14:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C16CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 15:01:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ED4D640150;
-	Mon, 22 Jun 2026 16:53:29 +0200 (CEST)
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
- by mails.dpdk.org (Postfix) with ESMTP id B146F40144
- for <dev@dpdk.org>; Mon, 22 Jun 2026 16:53:28 +0200 (CEST)
-Received: by mail-dl1-f52.google.com with SMTP id
- a92af1059eb24-1384ebe7a10so3251519c88.1
- for <dev@dpdk.org>; Mon, 22 Jun 2026 07:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782140007;
- x=1782744807; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=gt8OqIuCmTlWJdcKs2s8UBeTURaiBHStOWn2oMxePxs=;
- b=ObKj+EfC3SnB+18OJBEQk7zMED7YLrOEoujWbbgzWj+vi4iD/SrGzfWPmWmSqWmYjB
- 3CNcBa0YkhrhNjdlHOLaErIWEYsJfWmoWQoZkk4Ra3A09qG3lWSZO+4vSWL80wfeYJgX
- +Ck7FFJlG/u4ei6XGsLDHLRflfY3xzoc/jmoQLcpA+ug+BFRzkJyELAGA+CgOliPuThn
- QZK6CjY4bEL2IO/imtGFm1hBLC+CTRfbBC+aUkpRjea6hj07U1iP95DZ3inv78MWc+8E
- 3+zEPihkT10ApTZuJqa/lq9b1r0m3KYVwYPVQ95wh7eneHz7lrg4XT7rvePwk62jXNIP
- R5Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782140007; x=1782744807;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=gt8OqIuCmTlWJdcKs2s8UBeTURaiBHStOWn2oMxePxs=;
- b=T5N9M2rWaZHAIiFj8dZPdqxzgetGP+/JTsn/AqFai7Ma4nMj/cIiBXVMSwIHovEs+o
- eCMAO1gFD9FvjJ61CEk1CCnwY8SVnVD39k1ibGet/B52HqhGpUuSa48SOcHdgoSVHCvc
- hpbwrqD7G4lMWgL+9lIPp0bqza1UlfDHIz2m+Qh1aL87HQA0o+CZ4iK0LpgeLW1pOGgW
- CtnRs+XeB0yJr0pBG8X/zP8ItoCgzfWzF5jNV3V7OtKFLhwFMfcAqG+QXHsUlwaxEmbp
- uq8KBgMYSLlLhbB6jt4URV71dALU2IiL5I4V/JtdrqD5GWZqcdWmP2IS71bwv78WQFf9
- CKwA==
-X-Gm-Message-State: AOJu0YzJkVIJpswwJLoPHttv6j4kUAyopAS837GtLqV7YT3LamkMUVvl
- 9OqFECYNW3ONIeaUBcJ059H8E10cKwS8mbk2Sr/Waoz1Isp2o2zrQdjH+RrMb2y4OU60HcSg+Lj
- 4JNHt
-X-Gm-Gg: AfdE7ck3ipUeaIuZ7fa/xmY/Mg+SoeYzWZll5agk/ZbvMaGsBch2+istve+7PT8AjPA
- o9kFVaV9dpzkFlvjW81Z+zPLuOdnipjL+g/9jno8G9Q8/bBkBlk/s/uWyHPMYBmqb1o+s53HkqB
- Fp8Sh0XjV7akWjnaP1M/ro/Uk+QK7ZmdW2BWikIKaLSeH1MOFozxm5mE4SSLGBW2wu1D7JdVcvq
- UqOBNSu2baVSJEegdKtWkTUvIfpKO+02wZcDstPTNUnRoTgAkEI6iofbnL+/ISGB7ocMeEa2fko
- u7eCzhRPZosFxhZBgeSLVJwTVRr+BHgeInThN+fWOf1SclFq7TS4OCyg064t9opXxLEwXoSQ1NX
- hCtpNVtK1FkGiHnUMpFQrMdWOZCKPr6NyhGNIk54bpiSgr0yDQrQLb1usaAzT+6ayIUG6gMZukf
- N71qlscOAR8FOWMIcBkN4oKGJhJeYZobZ5tjcJvo36nDlOLtQrpfFvSA==
-X-Received: by 2002:a05:7022:20c:b0:138:37a4:fcc0 with SMTP id
- a92af1059eb24-139a4ecbd46mr9050335c88.12.1782140007205; 
- Mon, 22 Jun 2026 07:53:27 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-139c2f622d1sm212757c88.7.2026.06.22.07.53.26
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 22 Jun 2026 07:53:26 -0700 (PDT)
-Date: Mon, 22 Jun 2026 07:53:23 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [PATCH v8 12/21] net/txgbe: fix link stability for 25G NIC
-Message-ID: <20260622075323.276cb2de@phoenix.local>
-In-Reply-To: <006c01dd0237$9a737e60$cf5a7b20$@trustnetic.com>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
- <20260617081309.19124-1-zaiyuwang@trustnetic.com>
- <20260617081309.19124-13-zaiyuwang@trustnetic.com>
- <20260617085355.0a87d7ee@phoenix.local>
- <006c01dd0237$9a737e60$cf5a7b20$@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7C00340150;
+	Mon, 22 Jun 2026 17:01:23 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id C9D6840144;
+ Mon, 22 Jun 2026 17:01:21 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B95D020572;
+ Mon, 22 Jun 2026 17:01:20 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH 2/6] ip_frag: discard datagrams with overlapping fragments
+Date: Mon, 22 Jun 2026 17:01:18 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65934@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260619100124.655e5540@phoenix.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH 2/6] ip_frag: discard datagrams with overlapping fragments
+Thread-Index: Ad0ADUeM6xiQnGONTUyYYte5+rNzLACSmU5Q
+References: <20260616210656.464062-1-stephen@networkplumber.org><20260616210656.464062-3-stephen@networkplumber.org><98CBD80474FA8B44BF855DF32C47DC35F6592A@smartserver.smartshare.dk>
+ <20260619100124.655e5540@phoenix.local>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>, <stable@dpdk.org>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,25 +48,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 22 Jun 2026 19:09:32 +0800
-Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
-
-> > > +void
-> > > +set_fields_e56(unsigned int *src_data, unsigned int bit_high,
-> > > +	       unsigned int bit_low, unsigned int set_value) {  
-> > 
-> > Function could be static here?  
-> 
-> Hi Stephen,
-> Thanks for your time. This function is used in both txgbe_e56.c (for general PHY
-> configuration) and txgbe_e56_bp.c (for backplane mode configuration). Therefore, making it
-> static would not be feasible?
-> I have also fixed the other issues you pointed out, including the spelling corrections,
-> replacing tabs with spaces in log messages, and removing the term "master" from comments.
-> 
-> Best regards,
-> Zaiyu
-
-
-Why I noticed was that it is a global function not following naming conventions.
-Either make it inline in a header or rename.
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBGcmlkYXksIDE5IEp1bmUgMjAyNiAxOS4wMQ0KPiANCj4gT24gRnJpLCAx
+OSBKdW4gMjAyNiAxNToxMjoyMSArMDIwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFy
+ZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gPiArCQkvKg0KPiA+ID4gKwkJICogT3Zlcmxh
+cCB3aXRoIGFuIGV4aXN0aW5nIGZyYWdtZW50LiBQZXIgUkZDIDgyMDAgc2VjdGlvbg0KPiA+ID4g
+NC41DQo+ID4gPiArCQkgKiAoYW5kIFJGQyA1NzIyKSB0aGUgZGF0YWdyYW0gbXVzdCBiZSBkaXNj
+YXJkZWQ7IHRoZSBzYW1lDQo+ID4gPiBpcw0KPiA+ID4gKwkJICogYXBwbGllZCB0byBJUHY0LiBG
+cmVlIGFsbCBjb2xsZWN0ZWQgZnJhZ21lbnRzLCBkcm9wIHRoaXMNCj4gPiA+IG9uZSwNCj4gPiA+
+ICsJCSAqIGFuZCBpbnZhbGlkYXRlIHRoZSBlbnRyeS4NCj4gPiA+ICsJCSAqLw0KPiA+ID4gKwkJ
+aWYgKG9mcyA8IGZwLT5mcmFnc1tpXS5vZnMgKyBmcC0+ZnJhZ3NbaV0ubGVuICYmDQo+ID4gPiAr
+CQkJCWZwLT5mcmFnc1tpXS5vZnMgPCBvZnMgKyBsZW4pIHsNCj4gPg0KPiA+IFRoaXMgb25seSBj
+YXRjaGVzIGZyYWdtZW50cyB0aGF0IGFyZSBzbWFsbGVyIHRoYW4gZXhpc3RpbmcgZnJhZ21lbnRz
+LA0KPiBpLmUuIGZpdCB3aXRoaW4gb25lIG9mIHRoZSBleGlzdGluZyBmcmFnbWVudHMuDQo+ID4g
+SXQgc2hvdWxkIGJlOg0KPiA+IGlmICgob2ZzID49IGZwLT5mcmFnc1tpXS5vZnMgJiYNCj4gPiAJ
+CW9mcyA8IGZwLT5mcmFnc1tpXS5vZnMgKyBmcC0+ZnJhZ3NbaV0ubGVuKSB8fA0KPiA+IAkJKG9m
+cyArIGxlbiA+PSBmcC0+ZnJhZ3NbaV0ub2ZzICYmDQo+ID4gCQlvZnMgKyBsZW4gPCBmcC0+ZnJh
+Z3NbaV0ub2ZzICsgZnAtPmZyYWdzW2ldLmxlbikpIHsNCj4gPg0KPiA+ID4gKwkJCWlwX2ZyYWdf
+ZnJlZShmcCwgZHIpOw0KPiANCj4gVGhlIGNvZGUgaGVyZSBpcyBjb21wYXJpbmcgYW4gaW5jb21p
+bmcgZnJhZ21lbnQgTiBhZ2FpbnN0IGV4aXN0aW5nDQo+IGZyYWdtZW50IEUsDQo+IHVzaW5nIGhh
+bGYtb3BlbiByYW5nZXMgW3N0YXJ0LCBlbmQpLg0KPiANCj4gVGhlIHRlc3QgaW4gdGhlIHBhdGNo
+IGlzIHN5bW1ldHJpYyBpbiBOIGFuZCBFLg0KPiAgICAgICAgb2ZzIDwgZS5vZnMgKyBlLmxlbiAm
+JiBlLm9mcyA8IG9mcyArIGxlbg0KPiANCj4gVGhlIG9uZSB5b3UgcHJvcG9zZSB0ZXN0cyB0aGF0
+IGVpdGhlciBlbmRwb2ludCBvZiBOIGxhbmRzIGluc2lkZSBFLg0KPiANCj4gVGFrZSBhIGZpeGVk
+IHN0b3JlZCBmcmFnbWVudCBFID0gWzIwMCwgNDAwKSBhbmQgcnVuIHNldmVyYWwgaW5jb21pbmcN
+Cj4gZnJhZ21lbnRzIHRocm91Z2ggYm90aC4NCj4gIE4wID0gb2ZzLCBOMSA9IG9mcytsZW4uDQo+
+IA0KPiBOIGluc2lkZSBFOiBOID0gWzI1MCwgMzAwKQ0KPiANCj4gRTogICAgICAgIHw9PT09PT09
+PT18ICAgICAgICAoMjAwLi40MDApDQo+IE46ICAgICAgICAgICB8PT09fCAgICAgICAgICAgKDI1
+MC4uMzAwKQ0KPiANCj4gUGF0Y2g6IDI1MCA8IDQwMCAmJiAyMDAgPCAzMDAg4oaSIFQgJiYgVCDi
+hpIgb3ZlcmxhcC4NCj4gUHJvcG9zZWQ6ICgyNTDiiaUyMDAgJiYgMjUwPDQwMCkg4oaSIFQg4oaS
+IG92ZXJsYXAuDQo+IEJvdGggYWdyZWUuDQo+IA0KPiBOIGVuY2xvc2VzIEU6IE4gPSBbMTAwLCA1
+MDApDQo+IA0KPiBFOiAgICAgICAgfD09PT09PT09PXwgICAgICAgICgyMDAuLjQwMCkNCj4gTjog
+ICAgICB8PT09PT09PT09PT09PXwgICAgICAoMTAwLi41MDApDQo+IA0KPiBQYXRjaDogMTAwIDwg
+NDAwICYmIDIwMCA8IDUwMCDihpIgVCAmJiBUIOKGkiBvdmVybGFwLg0KPiBQcm9wb3NlZDogKDEw
+MOKJpTIwMCAmJiDigKYpIOKGkiBGLCAoNTAw4omlMjAwICYmIDUwMDw0MDApIOKGkiBUICYmIEYg
+4oaSIEYsIHNvIEYNCj4gfHwgRiDihpIgbm8gb3ZlcmxhcCwgTUlTU0VELg0KPiANCj4gVGhpcyBp
+cyB0aGUgY2FzZSB0aGUgbmV3IHZlcnNpb24gdmVyc2lvbiBkcm9wcy4gTmVpdGhlciBlbmRwb2lu
+dCBvZiBODQo+ICgxMDAgb3IgNTAwKSBzaXRzIGluc2lkZSBbMjAwLDQwMCksDQo+IGJlY2F1c2Ug
+TiBzdHJhZGRsZXMgRSBjb21wbGV0ZWx5LCBzbyBuZXcgdmVyc2lvbiBlbmRwb2ludC1pbi1FIGNo
+ZWNrDQo+IGZhaWxzIGV2ZW4gdGhvdWdoIHRoZSByYW5nZXMgY2xlYXJseSBvdmVybGFwLg0KPiBQ
+YXRjaCB2ZXJzaW9uIGNhdGNoZXMgaXQgYmVjYXVzZSB0aGUgaW50ZXJ2YWwgdGVzdCBkb2Vzbid0
+IGNhcmUgd2hpY2gNCj4gcmFuZ2UgaXMgbGFyZ2VyLg0KPiANCj4gTiBwYXJ0aWFsIG9uIHRoZSBs
+ZWZ0OiBOID0gWzEwMCwgMzAwKQ0KPiANCj4gRTogICAgICAgIHw9PT09PT09PT18ICAgICAgICAo
+MjAwLi40MDApDQo+IE46ICAgICAgfD09PT09PXwgICAgICAgICAgICAgKDEwMC4uMzAwKQ0KPiAN
+Cj4gUGF0Y2g6IDEwMCA8IDQwMCAmJiAyMDAgPCAzMDAg4oaSIFQg4oaSIG92ZXJsYXAuDQo+IFBy
+b3Bvc2VkOiAoMzAw4omlMjAwICYmIDMwMDw0MDApIOKGkiBUIOKGkiBvdmVybGFwLg0KPiBBZ3Jl
+ZS4NCj4gDQo+IE4gcGFydGlhbCBvbiB0aGUgcmlnaHQ6IE4gPSBbMzAwLCA1MDApIOKAlCBzeW1t
+ZXRyaWMgdG8gdGhlIGFib3ZlLCBib3RoDQo+IGNhdGNoIGl0Lg0KPiANCj4gU28gb24gdGhlIGZv
+dXIgZ2VudWluZS1vdmVybGFwIGdlb21ldHJpZXMsIHlvdXIgc3VnZ2VzdGlvbiBjYXRjaGVzIGFs
+bA0KPiBmb3VyIGFuZCBoaXMgbWlzc2VzIHRoZSBlbmNsb3Npbmcgb25lLg0KPiBUaGF0IGlzIG5v
+dCByaWdodCBzaW5jZSB0aGUgZW5jbG9zaW5nIG92ZXJsYXAgaXMgYSBsZWdpdGltYXRlIGF0dGFj
+aw0KPiBzaGFwZSAoYSBiaWcgZnJhZ21lbnQgb3ZlcndyaXRpbmcgYSBzbWFsbGVyIHN0b3JlZCBv
+bmUpLg0KPiANCj4gVGhlcmUgaXMgYW5vdGhlciBpc3N1ZS4NCj4gVGhlID49IG9uIHRoZSBleGNs
+dXNpdmUgZW5kIHByb2R1Y2VzIGEgZmFsc2UgcG9zaXRpdmUgb24gZnJhZ21lbnRzIHRoYXQNCj4g
+bWVyZWx5IGFidXQsIHdoaWNoIGlzIHRoZSBub3JtYWwgY2FzZS4NCj4gVGFrZSBFIGFscmVhZHkg
+c3RvcmVkIGFzIFsxNDAwLCAyODAwKSBhbmQgYW4gaW4tb3JkZXItYnV0LWxhdGUgZnJhZ21lbnQN
+Cj4gTiA9IFswLCAxNDAwKSBhcnJpdmluZyBhZnRlciBpdCAob3JkaW5hcnkgb3V0LW9mLW9yZGVy
+IGRlbGl2ZXJ5KToNCj4gDQo+IE46ICAgICAgfD09PT09PXwgICAgICAgICAgICAgKDAuLjE0MDAp
+DQo+IEU6ICAgICAgICAgICAgIHw9PT09PT18ICAgICAgKDE0MDAuLjI4MDApDQo+IA0KPiBUaGVz
+ZSBzaGFyZSBubyBieXRlczsgYnl0ZSAxNDAwIGJlbG9uZ3Mgb25seSB0byBFLg0KPiBQYXRjaDog
+MCA8IDI4MDAgJiYgMTQwMCA8IDE0MDAg4oaSIFQgJiYgRiDihpIgbm8gb3ZlcmxhcCwgY29ycmVj
+dC4NCj4gUHJvcG9zZWQ6ICgxNDAw4omlMTQwMCAmJiAxNDAwPDI4MDApIOKGkiBUICYmIFQg4oaS
+IG92ZXJsYXAsIHdyb25nLg0KPiBUaGlzIHRlc3Qgd291bGQgZGlzY2FyZCBhIHBlcmZlY3RseSB2
+YWxpZCBkYXRhZ3JhbSB3aGVuZXZlciBhIGxlZnQtDQo+IGFidXR0aW5nIGZyYWdtZW50IGFycml2
+ZXMgYWZ0ZXIgaXRzIG5laWdoYm9yLg0KPiBBZGphY2VudCBmcmFnbWVudHMgYWJ1dHRpbmcgaXMg
+d2hhdCBmcmFnbWVudGF0aW9uIHByb2R1Y2VzIGJ5IGRlc2lnbiwNCj4gc28gdGhpcyB3b3VsZCBm
+aXJlIGNvbnN0YW50bHkgdW5kZXIgcmVvcmRlcmluZy4NCj4gDQo+IEJvdHRvbSBsaW5lOiB0aGUg
+cGF0Y2ggd2FzIGNvcnJlY3QgYXMgZmFyIGFzIEkgY2FuIHRlbGwuDQoNClRoYW5rIHlvdSBmb3Ig
+dGhlIGRldGFpbGVkIGV4cGxhbmF0aW9uLCBTdGVwaGVuLg0KQWdyZWVkLCBhbmQgc29ycnkgYWJv
+dXQgdGhlIG5vaXNlLiA6LSkNCg0K
