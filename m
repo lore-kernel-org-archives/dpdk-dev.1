@@ -2,56 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5024CDB46F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 11:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F1ACDB46F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 11:13:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8194C40651;
-	Mon, 22 Jun 2026 13:13:06 +0200 (CEST)
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
- by mails.dpdk.org (Postfix) with ESMTP id 466634064A;
- Mon, 22 Jun 2026 13:13:05 +0200 (CEST)
-X-QQ-mid: esmtpsz18t1782126781t57f68939
-X-QQ-Originating-IP: FuCI0xolCdf3+KsnpIRnoPiUpr3nEduD376uouD0PtA=
+	by mails.dpdk.org (Postfix) with ESMTP id 9C0FA40689;
+	Mon, 22 Jun 2026 13:13:54 +0200 (CEST)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTP id 8578C4064A;
+ Mon, 22 Jun 2026 13:13:51 +0200 (CEST)
+X-QQ-mid: esmtpsz18t1782126827ta927e075
+X-QQ-Originating-IP: PRL8I7wQCmBhOHvWwXB4hl8KfPkpj4bBX8vR/zCJYqw=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.248.247])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 22 Jun 2026 19:12:29 +0800 (CST)
+ id ; Mon, 22 Jun 2026 19:13:02 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14889442145986611367
+X-BIZMAIL-ID: 9631636413923188032
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v9 20/21] net/txgbe: fix to enable Tx desc check
-Date: Mon, 22 Jun 2026 19:11:08 +0800
-Message-Id: <20260622111111.21024-21-zaiyuwang@trustnetic.com>
+Subject: [PATCH v9 21/21] net/txgbe: fix temperature track for AML NIC
+Date: Mon, 22 Jun 2026 19:11:09 +0800
+Message-Id: <20260622111111.21024-22-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260622111111.21024-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
  <20260622111111.21024-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NRYSeI3Ux+UP9K3VYLqtByBVYA6XcPDWhskfnPMuCKFJrB8sOhvEVu25
- +9sO0IOKrTqB/yNHHp6LgRUx8xgX7w1nra9VAeV8NczEkj3lJl0U/TM+44jXpzNQhVGtjza
- KkAqx4viQJOh/K31Skvd1j58NhFAgOhrpmFqifXJ04EMcIsyr9aSgoSdNnXDrPz7CONnW+U
- PyZdQJ2Prcn8Igy6W5i4+xAW4RKwkcYUIfwT8EJgyDZgthwDxSpLhycl6Tqvf66lF9ZLOvd
- BFU2vNafDaY73StKkjBIZHxh0VmPKbZV9e6fIi+KKwDaUmACKb+4a5sIBzoHwCUQti8/mIl
- uaWq/uFGqo9hIO9Hc2EL7jN4pa3J5xsnhdCoGo5+hp3JC83BYU5spYJtc6zSa36xuyWx+Yd
- yeJWQZ3nG8uNyVhgw7QHIX7u4sFb+jYVcSvsETMWCR5/LKYhde4zMYdNzJUr04BDY3A4/Rz
- h7YLW8NQZr9FDa5zCEHDLe3kiYxM69LAuzp/+/Km1kP4iNLYpxfr8L6UBX4/tMMDLJ4O+1W
- xeIBVjLWUtD3nvbVeDRsyo84x6dMoZSDEpySHZl0CKS3tTCnf4ZtbYvoaf8CVBmbul4uIoC
- ovYyvPWZ/m1wxQrfpcCLI6c6Z9fAcvHW3ThiEK37LXvkxPozd1mg4XMkXeaRG1cDSv1zmD+
- K3vCZTjtOWNZ1RKCTEcT0Sr9dPLYTDU3pXWIC8bYiVo5E4d3AEhEq6EP3SygiuwFHWKrJjb
- aylwkwyhSEH2D17vMXn2i7Z8r2wgrJ70q5MronTEI4MiBrNh7NmJizZar1b8qCWZoFf/RA9
- HzvzQyPGFQHoqF64XLLHdxqp2FsivWHedDVof8wwrctkPMzvw5ESknMW6i7kQKL2OtAFwCi
- QWk0gE7ITY9P+1J7ZxE/W/fhieAYpfPsRIiYSFRnRUni4v06ZCxpxJkLN48pEnw5LRaOja4
- GLnvAyd4udnQ6lU7M1wsMW87wF3ely8wLca+yeVHbllXpEscloM8LHvVn7T4zTzDpftKnyY
- gwh0iLlG7M1j3oTADYrZi7/vkGfs56ekGHanjpaLHOxU3QytutYbd5Agsk/toHDiXaBgoHU
- YcQRqv+S8TdksePXtvvgA7Ort7seQXHYg==
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-XMAILINFO: NMVVdJVMVI9X2nanhlC3s0jaL8srQsD4YgeS/UpMrV/pBHFYdnwTeI89
+ EPzugmZIOVFfyOjQSExXo8BowlZtKndASadbnRpLrH01iiI8gDVaYBndtU9E1NnSLW6crpf
+ eIfKXTTNwJiUDwmqwVRdfK8k7u47SRxGOd57eabM7B8RURE8T2We5bpLHbOfsv459xNvMxO
+ VBUZ8d9DAIXiKsXHyRMTVJFV61xaWmmxCAZk5b4cLnkX+qCAe32HpvVv+tGjlaiAy17rv7t
+ JPKhISDR2+X3Uma3J+modcApjNiH4ytvUAbEoW8JNovGrhojEeyLDu6HH2URDd8WSvdTR3w
+ nuXbE6Qt+l9/JTgGiD5pUxLqc0nALmxIpzwTzfWN8sfrcUTscaF0XxuGrGvtsVR9xy9YucC
+ HVV55Q+B/930oQl94fO8Y1K3v/gVrDmoM1XRr+FwPIz/QKqHw7um2Av6FGoa4J+GaociAaP
+ V7fto/gz7LCodFeaH0xAJSHNw4GP7XD4uVxLGfSD05hBUhz5wEJeov2CwnLdze1884JcGDN
+ s5RZWgojPmPbClaEw/OMPdcbeyRS4e1mT3qIE+w+lQFenKw/k4hZ4HPJmjtSQ/5uyY8+amt
+ sckq43sr3TdzdKcRVre5Fev5QY+Y/a+jHEh0+mv00jnfq6ebNOz3PTuJoZpjb1Db0rkZ495
+ u+lrEEQAjF9LK8ziij0neQMyT0+wEL4xo6PUhdrt3eQSlIoPJfDamYfORKUnNBEkLbzpOEm
+ blHbY9C6wP8Af7P5fK+AKXXi4d335T0eEIkOr7Y36Z+QAXXy+b7mx/1xwrkzKMl22xeso3x
+ CvBj2BnmFYKSrhq8cZGwN8TX/7h6yUWuf59IHLag2t9YaeD//T+s0XtPyfctiv2up0onV+N
+ g2zymeJFOnaJ6hM2h40Nfv1G5dLz8Z6XRj3fs7JQo+c0FshX2lliOn+jsUPSXa0U7cFJzOY
+ gE1urNPSU/K/ay+EsoSbdK5pWkRLelj1O87wPg1NA3RC9fqWmL3ETqSO1j6c3gWfi2aWtfD
+ FxTUmJzSsY6eT3zzg1GeSbjz/tNcmWZwJ1OBPJtAg421v1+dfbDiJCyf21MRN/O3gGnshkK
+ T6ELnN47DDvztOU53xSJvwPH8b5ev/HtQ==
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,47 +67,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Now lib security is enabled by default, and cannot be disabled if the
-driver is intended to be used. So Tdm_desc_chk is always unable to enable.
-Remove this restriction, and just enable the corresponding queue check.
+Previously, temperature tracking for the amlite NIC was handled by
+firmware together with the hardware setup. However, the firmware-based
+PHY configuration has proven to be unstable.
 
-Fixes: 0eabdfcd4af4 ("net/txgbe: enable Tx descriptor error interrupt")
+Re-add the temperature tracking function directly in the driver and
+invoke it periodically to ensure the PHY remains calibrated. According
+to the hardware recommendation, the tracking sequence should be run at
+least every 100 ms to keep temperature drift within 5 °C. Considering
+the software and hardware overhead, a 2-second interval is used as a
+practical trade-off that still meets stability requirements while
+minimizing performance impact.
+
+The periodic tracking is implemented using a timer in the driver, and
+the sequence itself is the same as the one originally performed during
+link setup.
+
+Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_rxtx.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/net/txgbe/txgbe_ethdev.c | 44 +++++++++++++++++++++++++++++++-
+ drivers/net/txgbe/txgbe_ethdev.h |  1 +
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
-index 0a9fc3ddfd..f51c6193a9 100644
---- a/drivers/net/txgbe/txgbe_rxtx.c
-+++ b/drivers/net/txgbe/txgbe_rxtx.c
-@@ -4761,6 +4761,12 @@ txgbe_dev_tx_init(struct rte_eth_dev *dev)
- 		wr32(hw, TXGBE_TXRP(txq->reg_idx), 0);
- 		wr32(hw, TXGBE_TXWP(txq->reg_idx), 0);
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 4691a562d8..308963b616 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -2011,8 +2011,10 @@ txgbe_dev_start(struct rte_eth_dev *dev)
+ 	txgbe_filter_restore(dev);
  
-+#ifdef RTE_LIB_SECURITY
-+		if (!txq->using_ipsec)
-+#endif
-+			wr32m(hw, TXGBE_TDM_DESC_CHK(txq->reg_idx / 32),
-+			      RTE_BIT32(txq->reg_idx % 32), RTE_BIT32(txq->reg_idx % 32));
-+
- 		if (txq->headwb_mem) {
- 			uint32_t txdctl;
+ 	hw->bp_event_interval = 100 * 1000;
+-	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
++	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
+ 		rte_eal_alarm_set(hw->bp_event_interval, txgbe_dev_e56_check_bp_event, dev);
++		rte_eal_alarm_set(1000 * 1000 * 2, txgbe_dev_check_aml_temp_event, dev);
++	}
  
-@@ -4778,11 +4784,6 @@ txgbe_dev_tx_init(struct rte_eth_dev *dev)
- 		}
+ 	if (tm_conf->root && !tm_conf->committed)
+ 		PMD_DRV_LOG(WARNING,
+@@ -2060,6 +2062,7 @@ txgbe_dev_stop(struct rte_eth_dev *dev)
+ 
+ 	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
+ 		rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
++		rte_eal_alarm_cancel(txgbe_dev_check_aml_temp_event, dev);
+ 		rte_eal_alarm_cancel(txgbe_dev_setup_link_alarm_handler_aml, hw);
  	}
  
--#ifndef RTE_LIB_SECURITY
--	for (i = 0; i < 4; i++)
--		wr32(hw, TXGBE_TDM_DESC_CHK(i), 0xFFFFFFFF);
--#endif
--
- 	/* Device configured with multiple TX queues. */
- 	txgbe_dev_mq_tx_configure(dev);
+@@ -2932,6 +2935,45 @@ txgbe_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
+ 	return NULL;
  }
+ 
++void txgbe_dev_check_aml_temp_event(void *param)
++{
++	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
++	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
++	uint32_t link_speed = 0, val = 0;
++	s32 status = 0;
++	int temp;
++
++	if (hw == NULL)
++		return;
++
++	status = txgbe_e56_get_temp(hw, &temp);
++	if (status)
++		temp = DEFAULT_TEMP;
++
++	if (!(temp - hw->temperature > 4 ||
++		hw->temperature - temp > 4))
++		goto out;
++
++	hw->temperature = temp;
++	val = rd32(hw, TXGBE_PORT);
++	if (val & TXGBE_AMLITE_LED_LINK_40G)
++		link_speed = TXGBE_LINK_SPEED_40GB_FULL;
++	else if (val & TXGBE_AMLITE_LED_LINK_25G)
++		link_speed = TXGBE_LINK_SPEED_25GB_FULL;
++	else
++		link_speed = TXGBE_LINK_SPEED_10GB_FULL;
++
++	rte_spinlock_lock(&hw->phy_lock);
++	if (hw->mac.type == txgbe_mac_aml)
++		txgbe_temp_track_seq(hw, link_speed);
++	else if (hw->mac.type == txgbe_mac_aml40)
++		txgbe_temp_track_seq_40g(hw, link_speed);
++	rte_spinlock_unlock(&hw->phy_lock);
++
++out:
++	rte_eal_alarm_set(1000 * 1000 * 2, txgbe_dev_check_aml_temp_event, dev);
++}
++
+ void txgbe_dev_e56_check_bp_event(void *param)
+ {
+ 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
+diff --git a/drivers/net/txgbe/txgbe_ethdev.h b/drivers/net/txgbe/txgbe_ethdev.h
+index 309db3bfe9..c32c61d8bf 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.h
++++ b/drivers/net/txgbe/txgbe_ethdev.h
+@@ -747,5 +747,6 @@ void txgbe_vlan_hw_strip_bitmap_set(struct rte_eth_dev *dev,
+ 		uint16_t queue, bool on);
+ void txgbe_config_vlan_strip_on_all_queues(struct rte_eth_dev *dev,
+ 						  int mask);
++void txgbe_dev_check_aml_temp_event(void *param);
+ void txgbe_dev_e56_check_bp_event(void *param);
+ #endif /* _TXGBE_ETHDEV_H_ */
 -- 
 2.21.0.windows.1
 
