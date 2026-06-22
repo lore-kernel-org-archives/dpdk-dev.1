@@ -2,58 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F1ACDB46F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 11:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81980CDB46F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 11:18:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9C0FA40689;
-	Mon, 22 Jun 2026 13:13:54 +0200 (CEST)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTP id 8578C4064A;
- Mon, 22 Jun 2026 13:13:51 +0200 (CEST)
-X-QQ-mid: esmtpsz18t1782126827ta927e075
-X-QQ-Originating-IP: PRL8I7wQCmBhOHvWwXB4hl8KfPkpj4bBX8vR/zCJYqw=
-Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.248.247])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 22 Jun 2026 19:13:02 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9631636413923188032
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A8EEA402E1;
+	Mon, 22 Jun 2026 13:18:43 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 80A7A4028B
+ for <dev@dpdk.org>; Mon, 22 Jun 2026 13:18:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782127121; x=1813663121;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=POOSq1lreebBdLSFHahD+rIcNTXkQyE62WKTsao3BC4=;
+ b=hbEoHf91H5DMXpZgC4JoCMZcO17mPKMvIgg2XXGtzxprP966C71OKDmM
+ nD9bb0RX2gGhTB/bdOrMlnU1gtDom1gYyndTqzJXpyMhcjLuBqPmA9pK7
+ rl5moLg9eUKG8QOAG/d5NaSJrzkrvKN/mW88PqpsoFXpLU4Ok99JAubHa
+ amakNaRUIc1xUc+F3dMhmHUUZuHyUznB/+kjJupH3WagG42lv8X4YHDf3
+ e/Ev0yZ0o7YEB3XS5euwxq7ggLw7A5mOkHuD1kOyP2Dg8lXPt8AeK4YBR
+ RmD3UmfTIRPmPMQu0B7e3vq90XSGHOaxaoAVaa3pNzQ+HRF8HWZ8VatKb w==;
+X-CSE-ConnectionGUID: wVrzxyVsS/K8pG49hYXoEw==
+X-CSE-MsgGUID: 0erFgndGSOGPxoy+xig98w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11824"; a="93219297"
+X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; d="scan'208";a="93219297"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Jun 2026 04:18:40 -0700
+X-CSE-ConnectionGUID: tm+veFXkQEiAxjrQ9nka1g==
+X-CSE-MsgGUID: s985/DyaQPyzacrm5B1VsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; d="scan'208";a="246883927"
+Received: from silpixa00401385.ir.intel.com (HELO
+ localhost.ger.corp.intel.com) ([10.20.224.226])
+ by fmviesa008.fm.intel.com with ESMTP; 22 Jun 2026 04:18:40 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v9 21/21] net/txgbe: fix temperature track for AML NIC
-Date: Mon, 22 Jun 2026 19:11:09 +0800
-Message-Id: <20260622111111.21024-22-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20260622111111.21024-1-zaiyuwang@trustnetic.com>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
- <20260622111111.21024-1-zaiyuwang@trustnetic.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH 0/3] Fixes for inline ipsec test cases
+Date: Mon, 22 Jun 2026 12:18:31 +0100
+Message-ID: <20260622111835.233554-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NMVVdJVMVI9X2nanhlC3s0jaL8srQsD4YgeS/UpMrV/pBHFYdnwTeI89
- EPzugmZIOVFfyOjQSExXo8BowlZtKndASadbnRpLrH01iiI8gDVaYBndtU9E1NnSLW6crpf
- eIfKXTTNwJiUDwmqwVRdfK8k7u47SRxGOd57eabM7B8RURE8T2We5bpLHbOfsv459xNvMxO
- VBUZ8d9DAIXiKsXHyRMTVJFV61xaWmmxCAZk5b4cLnkX+qCAe32HpvVv+tGjlaiAy17rv7t
- JPKhISDR2+X3Uma3J+modcApjNiH4ytvUAbEoW8JNovGrhojEeyLDu6HH2URDd8WSvdTR3w
- nuXbE6Qt+l9/JTgGiD5pUxLqc0nALmxIpzwTzfWN8sfrcUTscaF0XxuGrGvtsVR9xy9YucC
- HVV55Q+B/930oQl94fO8Y1K3v/gVrDmoM1XRr+FwPIz/QKqHw7um2Av6FGoa4J+GaociAaP
- V7fto/gz7LCodFeaH0xAJSHNw4GP7XD4uVxLGfSD05hBUhz5wEJeov2CwnLdze1884JcGDN
- s5RZWgojPmPbClaEw/OMPdcbeyRS4e1mT3qIE+w+lQFenKw/k4hZ4HPJmjtSQ/5uyY8+amt
- sckq43sr3TdzdKcRVre5Fev5QY+Y/a+jHEh0+mv00jnfq6ebNOz3PTuJoZpjb1Db0rkZ495
- u+lrEEQAjF9LK8ziij0neQMyT0+wEL4xo6PUhdrt3eQSlIoPJfDamYfORKUnNBEkLbzpOEm
- blHbY9C6wP8Af7P5fK+AKXXi4d335T0eEIkOr7Y36Z+QAXXy+b7mx/1xwrkzKMl22xeso3x
- CvBj2BnmFYKSrhq8cZGwN8TX/7h6yUWuf59IHLag2t9YaeD//T+s0XtPyfctiv2up0onV+N
- g2zymeJFOnaJ6hM2h40Nfv1G5dLz8Z6XRj3fs7JQo+c0FshX2lliOn+jsUPSXa0U7cFJzOY
- gE1urNPSU/K/ay+EsoSbdK5pWkRLelj1O87wPg1NA3RC9fqWmL3ETqSO1j6c3gWfi2aWtfD
- FxTUmJzSsY6eT3zzg1GeSbjz/tNcmWZwJ1OBPJtAg421v1+dfbDiJCyf21MRN/O3gGnshkK
- T6ELnN47DDvztOU53xSJvwPH8b5ev/HtQ==
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
-X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -67,112 +58,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Previously, temperature tracking for the amlite NIC was handled by
-firmware together with the hardware setup. However, the firmware-based
-PHY configuration has proven to be unstable.
+A series of small fixes for the inline ipsec test cases, with the third
+patch being the most significant - skipping tests where we don't have the
+necessary HW support to run the tests. Previously this was leading to test
+failures when the tests should never have been run due to missing HW
+capabilities.
 
-Re-add the temperature tracking function directly in the driver and
-invoke it periodically to ensure the PHY remains calibrated. According
-to the hardware recommendation, the tracking sequence should be run at
-least every 100 ms to keep temperature drift within 5 °C. Considering
-the software and hardware overhead, a 2-second interval is used as a
-practical trade-off that still meets stability requirements while
-minimizing performance impact.
+Bruce Richardson (3):
+  test/security_inline_proto: remove fast-free Tx flag
+  test/security_inline_proto: fix MTU calculation underflow
+  test/security_inline_proto: check for capabilities
 
-The periodic tracking is implemented using a timer in the driver, and
-the sequence itself is the same as the one originally performed during
-link setup.
+ app/test/test_security_inline_proto.c | 75 +++++++++++++++++++++++++--
+ 1 file changed, 70 insertions(+), 5 deletions(-)
 
-Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
-Cc: stable@dpdk.org
-
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
----
- drivers/net/txgbe/txgbe_ethdev.c | 44 +++++++++++++++++++++++++++++++-
- drivers/net/txgbe/txgbe_ethdev.h |  1 +
- 2 files changed, 44 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 4691a562d8..308963b616 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2011,8 +2011,10 @@ txgbe_dev_start(struct rte_eth_dev *dev)
- 	txgbe_filter_restore(dev);
- 
- 	hw->bp_event_interval = 100 * 1000;
--	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
- 		rte_eal_alarm_set(hw->bp_event_interval, txgbe_dev_e56_check_bp_event, dev);
-+		rte_eal_alarm_set(1000 * 1000 * 2, txgbe_dev_check_aml_temp_event, dev);
-+	}
- 
- 	if (tm_conf->root && !tm_conf->committed)
- 		PMD_DRV_LOG(WARNING,
-@@ -2060,6 +2062,7 @@ txgbe_dev_stop(struct rte_eth_dev *dev)
- 
- 	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
- 		rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
-+		rte_eal_alarm_cancel(txgbe_dev_check_aml_temp_event, dev);
- 		rte_eal_alarm_cancel(txgbe_dev_setup_link_alarm_handler_aml, hw);
- 	}
- 
-@@ -2932,6 +2935,45 @@ txgbe_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
- 	return NULL;
- }
- 
-+void txgbe_dev_check_aml_temp_event(void *param)
-+{
-+	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
-+	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
-+	uint32_t link_speed = 0, val = 0;
-+	s32 status = 0;
-+	int temp;
-+
-+	if (hw == NULL)
-+		return;
-+
-+	status = txgbe_e56_get_temp(hw, &temp);
-+	if (status)
-+		temp = DEFAULT_TEMP;
-+
-+	if (!(temp - hw->temperature > 4 ||
-+		hw->temperature - temp > 4))
-+		goto out;
-+
-+	hw->temperature = temp;
-+	val = rd32(hw, TXGBE_PORT);
-+	if (val & TXGBE_AMLITE_LED_LINK_40G)
-+		link_speed = TXGBE_LINK_SPEED_40GB_FULL;
-+	else if (val & TXGBE_AMLITE_LED_LINK_25G)
-+		link_speed = TXGBE_LINK_SPEED_25GB_FULL;
-+	else
-+		link_speed = TXGBE_LINK_SPEED_10GB_FULL;
-+
-+	rte_spinlock_lock(&hw->phy_lock);
-+	if (hw->mac.type == txgbe_mac_aml)
-+		txgbe_temp_track_seq(hw, link_speed);
-+	else if (hw->mac.type == txgbe_mac_aml40)
-+		txgbe_temp_track_seq_40g(hw, link_speed);
-+	rte_spinlock_unlock(&hw->phy_lock);
-+
-+out:
-+	rte_eal_alarm_set(1000 * 1000 * 2, txgbe_dev_check_aml_temp_event, dev);
-+}
-+
- void txgbe_dev_e56_check_bp_event(void *param)
- {
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
-diff --git a/drivers/net/txgbe/txgbe_ethdev.h b/drivers/net/txgbe/txgbe_ethdev.h
-index 309db3bfe9..c32c61d8bf 100644
---- a/drivers/net/txgbe/txgbe_ethdev.h
-+++ b/drivers/net/txgbe/txgbe_ethdev.h
-@@ -747,5 +747,6 @@ void txgbe_vlan_hw_strip_bitmap_set(struct rte_eth_dev *dev,
- 		uint16_t queue, bool on);
- void txgbe_config_vlan_strip_on_all_queues(struct rte_eth_dev *dev,
- 						  int mask);
-+void txgbe_dev_check_aml_temp_event(void *param);
- void txgbe_dev_e56_check_bp_event(void *param);
- #endif /* _TXGBE_ETHDEV_H_ */
--- 
-2.21.0.windows.1
+--
+2.53.0
 
