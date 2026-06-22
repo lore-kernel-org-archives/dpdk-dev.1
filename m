@@ -2,50 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A92CDB466
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 01:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D34E3CD98F0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 03:06:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E1B54021F;
-	Mon, 22 Jun 2026 03:22:45 +0200 (CEST)
-Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
- [113.46.200.227])
- by mails.dpdk.org (Postfix) with ESMTP id AA87840150
- for <dev@dpdk.org>; Mon, 22 Jun 2026 03:22:42 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=R+4gHq7lmflhIYJcUFn83CIm0i23FstCoN+RGD+oGgw=;
- b=Y/QOomvmvQauLroTgVM/OReAc417pUtsrnBQj/T4Vfi+pTcL00bkcMWDL27LIksU/CKZDDLnj
- raPpGftEmQakcozaYrLd7ShKZlSFn+knlTGV1ipeJt1vHGzJuXLKq1njrYuISvO+XivgMUINmgc
- UP8ERllP5BmAQ1SVA2fsa7I=
-Received: from mail.maildlp.com (unknown [172.19.163.214])
- by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4gk9FZ4rjnznTVr;
- Mon, 22 Jun 2026 09:13:54 +0800 (CST)
-Received: from kwepemo100005.china.huawei.com (unknown [7.202.195.212])
- by mail.maildlp.com (Postfix) with ESMTPS id DFB174056C;
- Mon, 22 Jun 2026 09:22:39 +0800 (CST)
-Received: from [10.67.121.59] (10.67.121.59) by kwepemo100005.china.huawei.com
- (7.202.195.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 22 Jun
- 2026 09:22:39 +0800
-Message-ID: <15b95ab5-af2e-40d2-8ea8-a5d14a52dfc0@huawei.com>
-Date: Mon, 22 Jun 2026 09:22:38 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 6020C4021F;
+	Mon, 22 Jun 2026 05:06:30 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 9621E40150
+ for <dev@dpdk.org>; Mon, 22 Jun 2026 05:06:28 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 65LNwHt3125115; Sun, 21 Jun 2026 20:06:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=rM5fzBGyv0iM49nioJfmNAJ
+ d+dtKYUXaOmA5SSJylnE=; b=VLKQoR3iYZ1OrKehLKYfWvFMrnogGBnbMdxAruE
+ DGUZFO3etvl6xubQqcdtEqaxfp1dOEmepyYzDdEmmJreuawITdPx/XZDEYwn1ASh
+ L+B3CcUfjuMKgUJ7087U3rDiaZp7uKhMA/mKrV0ocG8qg7EaY6AeFw6eJeaRyUGk
+ 7kINtdEbFRAOucqcMvCLBXIIchAnyLlvMGgOxrq1BL3JEWxI+4gleTa+ZAu6rjsH
+ FCjkLax99tog4nlZ5I7vdC0sH+MExrZseMmSIQulDCF5IMB5lmFgoLFKcG7YyS7Q
+ GWRwme9ny6TKHW2dtmMSvXqdVnnIKuagM+lW6kT7nj7ymrA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4exf48sgx2-3
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sun, 21 Jun 2026 20:06:27 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Sun, 21 Jun 2026 20:06:26 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Sun, 21 Jun 2026 20:06:26 -0700
+Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
+ by maili.marvell.com (Postfix) with ESMTP id 3A9133F704C;
+ Sun, 21 Jun 2026 20:06:23 -0700 (PDT)
+From: Tejasree Kondoj <ktejasree@marvell.com>
+To: Akhil Goyal <gakhil@marvell.com>, Chengwen Feng <fengchengwen@huawei.com>, 
+ Kevin Laatz <kevin.laatz@intel.com>, Bruce Richardson
+ <bruce.richardson@intel.com>
+CC: Vidya Sagar Velumuri <vvelumuri@marvell.com>, Anoob Joseph
+ <anoobj@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH 0/2] test/dma: improve dmadev tests
+Date: Mon, 22 Jun 2026 08:36:21 +0530
+Message-ID: <20260622030623.86094-1-ktejasree@marvell.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/5] prefix lcore role enum values
-To: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
- <thomas@monjalon.net>
-CC: <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>, <zhanjie9@hisilicon.com>
-References: <20260617102834.2343356-1-lihuisong@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65917@smartserver.smartshare.dk>
- <20260618190339.2fc76616@phoenix.local>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20260618190339.2fc76616@phoenix.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.59]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemo100005.china.huawei.com (7.202.195.212)
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: hHdGS0oEzaZ7QEisCGFiYcun6eSbWjpb
+X-Proofpoint-GUID: hHdGS0oEzaZ7QEisCGFiYcun6eSbWjpb
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIyMDAyOCBTYWx0ZWRfXxN3WHK8pRGe/
+ zNLTseLlQfhZQqVxUg7Knh4yhOzmzlreJKt51TM5DqJiERngLUFRiMUmD+UiaCd51BvGdIpPdGp
+ KRThRRu45a05W9IuPw1zE9FfGnpPfZ8=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIyMDAyOCBTYWx0ZWRfX7ovH7W/NUmcZ
+ gKycTPOp58SlEwowFkK2/Bvs3VB6zUv8/1BcPhfhQp/+M66F10i0D7tdeUQeR8XEjdH/GYMuETS
+ C+nSzFpEReA9jnhBbfwPzua2TQnuvXZ2Y239gs80nQuGRxll2efS+vnAXi76vlFmUVsmXJfqttv
+ XIvdaxN+eevGysJ1U2L8wmOQMyIVaIUNkrVYTdqVRvBerMFydp+VZ+f+MOLvjTTL5gSehdhb6Rw
+ o6PuiEQKiOp6bzQ6BMQj0r8Ng5JS6bWpg4CYeGDhS7slUWtwYBolNK0koOK1+DNWt4IZtcV07PY
+ 3thUq/oudHE18HwhBSk1Trk1UMQg6hyKMT4h0iRSixK2ttL+tAs6d4a7ByHg5YPqcJOMhYX9h26
+ qfg+SgEFkLfnez3dmrzix9UYuhaNJpIp9f0zwvLK2efVKBetCJZl64fvzXbnR0wl/JypMuUWb6k
+ Y+6E0C2qgbxj1+z98OA==
+X-Authority-Analysis: v=2.4 cv=J9uaKgnS c=1 sm=1 tr=0 ts=6a38a6b3 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=TtqV-g6YmW1Jfm2GSLaY:22 a=bVbIhm5BxSNEwZoTZ2EA:9 a=zZCYzV9kfG8A:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-21_02,2026-06-18_03,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,85 +83,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Extend dmadev tests for SG wrap-around and zero/one fill coverage.
 
-On 6/19/2026 10:03 AM, Stephen Hemminger wrote:
-> On Wed, 17 Jun 2026 13:48:37 +0200
-> Morten Brørup <mb@smartsharesystems.com> wrote:
->
->>> From: Huisong Li [mailto:lihuisong@huawei.com]
->>> Sent: Wednesday, 17 June 2026 12.28
->>>
->>> Add the RTE_LCORE_ prefix to the lcore role enum values in
->>> rte_lcore_role_t
->>> to follow DPDK naming conventions.
->>>
->>> - ROLE_RTE      -> RTE_LCORE_ROLE_RTE
->>> - ROLE_OFF      -> RTE_LCORE_ROLE_OFF
->>> - ROLE_SERVICE  -> RTE_LCORE_ROLE_SERVICE
->>> - ROLE_NON_EAL  -> RTE_LCORE_ROLE_NON_EAL
->>>
->>> Old names are kept as macros aliasing to the new names to preserve
->>> backward compatibility.
->>>    
->> Series-Acked-by: Morten Brørup <mb@smartsharesystems.com>
->>
-> The problem with this patch it causes build failures now with abi diff.
->
-> Example build log...
->
->
-> 2 functions with some indirect sub-type change:
->
->
->
->
->
->   [C] 'function rte_lcore_role_t rte_eal_lcore_role(unsigned int)' at eal_common_lcore.c:74:1 has some indirect sub-type changes:
->
->   return type changed:
->
->   type size hasn't changed
->
->   4 enumerator deletions:
->
->   'rte_lcore_role_t::ROLE_RTE' value '0'
->
->   'rte_lcore_role_t::ROLE_OFF' value '1'
->
->   'rte_lcore_role_t::ROLE_SERVICE' value '2'
->
->   'rte_lcore_role_t::ROLE_NON_EAL' value '3'
->
->   4 enumerator insertions:
->
->   'rte_lcore_role_t::RTE_LCORE_ROLE_RTE' value '0'
->
->   'rte_lcore_role_t::RTE_LCORE_ROLE_OFF' value '1'
->
->   'rte_lcore_role_t::RTE_LCORE_ROLE_SERVICE' value '2'
->
->   'rte_lcore_role_t::RTE_LCORE_ROLE_NON_EAL' value '3'
->
->
->
->
->
->   [C] 'function int rte_lcore_has_role(unsigned int, rte_lcore_role_t)' at eal_common_lcore.c:85:1 has some indirect sub-type changes:
->
->   parameter 2 of type 'enum rte_lcore_role_t' has sub-type changes:
->
->   enum type 'enum rte_lcore_role_t' changed at rte_lcore.h:33:1, as reported earlier
->
->
->
->
->
->
->
-> Error: ABI issue reported for abidiff --suppr /home/runner/work/dpdk/dpdk/devtools/libabigail.abignore --no-added-syms --headers-dir1 reference/usr/local/include --headers-dir2 install/usr/local/include reference/usr/local/lib/librte_eal.so.26.1 install/usr/local/lib/librte_eal.so.26.2
-We just came back from the Dragon Boat Festival.
-I also received this ABI change warning. But I didn't have any good 
-ideas yet.
-Thanks for helping to handle this.
-Sorry for the inconvenience.
+Tejasree Kondoj (2):
+  test/dma: update the sg test to verify wrap around case
+  test/dma: add functions to verify zero and one fill
 
+ app/test/test.h                |   4 ++
+ app/test/test_dmadev.c         | 102 +++++++++++++++++------------
+ app/test/test_dmadev_api.c     |   1 -
+ app/test/test_dmadev_api.h     |   2 ++
+ 4 files changed, 72 insertions(+), 25 deletions(-)
+
+-- 
+2.34.1
