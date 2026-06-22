@@ -2,49 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1F5CDB470
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 11:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E87CDB46F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 11:18:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DA414042F;
-	Mon, 22 Jun 2026 13:18:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CA292406BA;
+	Mon, 22 Jun 2026 13:18:47 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 87B524028B;
- Mon, 22 Jun 2026 13:18:42 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 011614042F;
+ Mon, 22 Jun 2026 13:18:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782127123; x=1813663123;
+ t=1782127124; x=1813663124;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=pyzCwC8qsII/dXcTzZiBdPF3oC+fnO2NjUW//KDXwjA=;
- b=JNLNzo6hlKT9f40FXJY8tL4V0eDsYcZxRn8CvZvYLRNGagY+EVyCkrBo
- teUaHmhn2dwNc7Y7x+Iq+/K/Gk1Y3UKa6sjq5tpbv4CzjUc/iUzsg1LM0
- 0b0hSAyR/a/N9FDfhjSTc1XN9FKIwaVmXoFW5x7RzDvQsLEQPK7EN19uQ
- UO8tngVwxjrGZ0FfnD9OPB4VY6U99TO5IonjOI+mRu1gDi0DVI1gJGkdO
- 7y3fi9E6hkdKJL+tmL9+PE9YYemcgSMW+EoFkzGZYT8AUjnLTCfbH0KAz
- 2dQcMbCQWCpcuF4UkqhfNQkFw8Eu0oYy4Q9x2VHLl7+YwuR2ojW7n4b0a Q==;
-X-CSE-ConnectionGUID: VEC3keYZQ+6USm0rr4q2mA==
-X-CSE-MsgGUID: p5YOOyRIRCaIjqxNdwB2hg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11824"; a="93219298"
-X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; d="scan'208";a="93219298"
+ bh=bXiVAmePNe7xS2SccDf/AP7+Lze0HR4vTltMuFql2iI=;
+ b=VdzFFkJmSgUQZIKq+D5kku6aaXCZxcD7GbuS9WgViI8ikSdWVjp8GMtN
+ fB7UHDrVRGH6An5UUK3hAvuz1flnpqy1D2gucSIw648jP+uwgxKtx2Nz7
+ LbwRez+vGYzX3Y6VC+F+fotHZxtJbF7K98w/AhLu5YH6Npy48za8RM3dn
+ OpAwzI/2tPgE9dqVgBoDUHtd72KTf89BTHePX5WhGhYedSkh0AGZbY9+n
+ oUBbEO6EfbeHfsvuDrY88qFBXojRBGCc3wNqWAUPW/IgbDCd03YkfaGtu
+ /lGn6y/MdGaPPlJL5XoSESEZBhVZpSCGln7Ptr/4zTt3ymt0weB2QCzN9 g==;
+X-CSE-ConnectionGUID: T3GrH+vaRT6DmQD0iqZjww==
+X-CSE-MsgGUID: XsDPdYLUSa+uGdlEa+6aHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11824"; a="93219301"
+X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; d="scan'208";a="93219301"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Jun 2026 04:18:42 -0700
-X-CSE-ConnectionGUID: 45Gz673wTlC9QH60LhICfg==
-X-CSE-MsgGUID: P0RjXlStRryX6KTyuEpgEA==
+ 22 Jun 2026 04:18:43 -0700
+X-CSE-ConnectionGUID: tEv4wJcZQA2FJm44QhAjZg==
+X-CSE-MsgGUID: Q237/7QyTyCtp6C+lhtvBw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; d="scan'208";a="246883933"
+X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; d="scan'208";a="246883938"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.224.226])
- by fmviesa008.fm.intel.com with ESMTP; 22 Jun 2026 04:18:41 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 22 Jun 2026 04:18:42 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
  Akhil Goyal <gakhil@marvell.com>, Anoob Joseph <anoobj@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Fan Zhang <fanzhang.oss@gmail.com>
-Subject: [PATCH 1/3] test/security_inline_proto: remove fast-free Tx flag
-Date: Mon, 22 Jun 2026 12:18:32 +0100
-Message-ID: <20260622111835.233554-2-bruce.richardson@intel.com>
+ Nithin Dabilpuram <ndabilpuram@marvell.com>
+Subject: [PATCH 2/3] test/security_inline_proto: fix MTU calculation underflow
+Date: Mon, 22 Jun 2026 12:18:33 +0100
+Message-ID: <20260622111835.233554-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260622111835.233554-1-bruce.richardson@intel.com>
 References: <20260622111835.233554-1-bruce.richardson@intel.com>
@@ -63,34 +62,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The FAST_FREE Tx offload flag is an optimization that may not be
-supported by all drivers, but the test unconditionally sets this as part
-of the Tx config. Since it's an optimization that should not affect test
-correctness, and since this is a unit test, not perf test, just remove
-the flag.
+When testing with some NICs it was observed that the max MTU calculation
+could underflow. Despite the RTE_MIN, due to integer promotion, this
+lead to the configuring of the port with an excessively large, invalid
+value. For example, if lim_nb_seg_max == 0, that meant that
+max_data_room - 256 is -256 for comparison purposes using standard
+integers (promoted from uint16_t). That is lower than the max mtu so the
+-256 value is chosen, which becomes >65000 when converted back to
+uint16_t.
 
-Fixes: 86e2487c5f2c ("test/security: add cases for inline IPsec offload")
+Fix this by a) checking for seg_max == 0 b) doing calculations using
+uint32_t and c) checking explicitly for underflow before subtracting.
+
+Fixes: 3edd1197a605 ("test/security: add multi-segment inline IPsec cases")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_security_inline_proto.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ app/test/test_security_inline_proto.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/app/test/test_security_inline_proto.c b/app/test/test_security_inline_proto.c
-index b0cce5ebd9..bc3ef54f71 100644
+index bc3ef54f71..81fce7364c 100644
 --- a/app/test/test_security_inline_proto.c
 +++ b/app/test/test_security_inline_proto.c
-@@ -94,8 +94,7 @@ static struct rte_eth_conf port_conf = {
- 	},
- 	.txmode = {
- 		.mq_mode = RTE_ETH_MQ_TX_NONE,
--		.offloads = RTE_ETH_TX_OFFLOAD_SECURITY |
--			    RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE,
-+		.offloads = RTE_ETH_TX_OFFLOAD_SECURITY,
- 	},
- 	.lpbk_mode = 1,  /* enable loopback */
- };
+@@ -2045,8 +2045,19 @@ inline_ipsec_testsuite_setup(void)
+ 	memcpy(&local_port_conf, &port_conf, sizeof(port_conf));
+ 	/* Add Multi seg flags */
+ 	if (sg_mode) {
+-		uint16_t max_data_room = RTE_MBUF_DEFAULT_DATAROOM *
+-			dev_info.rx_desc_lim.nb_seg_max;
++		uint32_t max_data_room;
++
++		if (dev_info.rx_desc_lim.nb_seg_max == 0) {
++			printf("SG mode unsupported: invalid max Rx segments (0)\n");
++			return TEST_SKIPPED;
++		}
++
++		max_data_room = RTE_MBUF_DEFAULT_DATAROOM * dev_info.rx_desc_lim.nb_seg_max;
++		if (max_data_room <= 256) {
++			printf("SG mode unsupported: max data room (%u) too small\n",
++				max_data_room);
++			return TEST_SKIPPED;
++		}
+ 
+ 		local_port_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_SCATTER;
+ 		local_port_conf.txmode.offloads |= RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
 -- 
 2.53.0
 
