@@ -2,105 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D691BCDB46B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 07:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 364A9CDB471
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 07:57:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A2E8E4021F;
-	Mon, 22 Jun 2026 09:54:54 +0200 (CEST)
-Received: from BN8PR05CU002.outbound.protection.outlook.com
- (mail-eastus2azon11011050.outbound.protection.outlook.com [52.101.57.50])
- by mails.dpdk.org (Postfix) with ESMTP id DD2E040150
- for <dev@dpdk.org>; Mon, 22 Jun 2026 09:54:52 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TzntEifGHuIBkST3SHEmsffJJ8xzU1AqFRxsPKB59IS4UemzD4AGolA5uzmBgrpiQdrF2s7GcoQVInmZ44bTxGlppVaCDaGe1oq/SfRttRFLnHnRTiPlwFAFBWCLpR4aEa6ZhVALr1YSJzWQVwPgmjcf3YMKpXhFGsJ2Jupg9zTHmVf15ll8xDS2hzZgRNsjrVjInNRtV5QenOMlgudTFRX080GqGfB15TgMSKB1xhARweN0RBWITyjdWlI4s7NeQlpkcpnDIR6WCgfx/w2u7UEJjLwyeZqBugr4KROSDU5iSpNcs4VfBJ2DOELrmIuZkSzI+KSUCEDsDThCX6xXKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qlacIX2HJ/zoYuhW5Sgb5wFMy5Pt5B+NqbvcbFV6gQc=;
- b=Q60GmEafnGZW0LdgOb0qTfo8YP1fkXb6Il23L9L5Sd87FJc+zrr4vlCIR9ZN0M5jq2tYf+5Uec41ojRqy7g3JnsJPdni3Gs1MplLBvNT8nvq3BaG4e8ME7UKDnErsSGZOIEm7gllTezxXvWrZZo1PGmu8JtD/poOsiLrLdKyu7bORmdN+OMa02iTHPMPYsRJ5eismXXqK2rzdKTmPlQystvTKD9AC2eVcpF40AW+k4j3+ELkRn6Ye6DJA8dZ8P6AqjivLf4u4EUTrdh8RnwIsQlTRfGr4YNTQgeITopl737aAdB0y6+HzrA+3gUerA3XHWFZ+AguWEuZ0ElADeVk3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qlacIX2HJ/zoYuhW5Sgb5wFMy5Pt5B+NqbvcbFV6gQc=;
- b=i67aU/A5/+iz0xRYl3J4gzjseXO8reBpXpAQXTz12oVKANZek4IkXaLP47+yrPBQti7cbm0WmH6ZrHt6HPu9mooy7S4Mqi+3tmurLEEMTt8mTT4BMmYHxU2wbIqSPChe6SRHcX287b3kU9DhSkdMncRZZbX9FywpSJuNIx6OAtEx0RtIasRJpuX1Ybp/EOtgtufrCmCl8Ne19b2GKB5P40K6FFh9aBSLJR41ClET8PzbKFYl2WtU0QJadJXNVSd4BsyUe1d4s7U09BhZuWBTUBJ6un4sAkqo2oxRyl8PI4vpzY6UZWxguD2bgJ8ZZnSNhuyGz4Ofkq3R7cf3+IShGA==
-Received: from SJ0PR05CA0096.namprd05.prod.outlook.com (2603:10b6:a03:334::11)
- by CH2PR12MB4168.namprd12.prod.outlook.com (2603:10b6:610:a8::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.20; Mon, 22 Jun
- 2026 07:54:43 +0000
-Received: from SJ5PEPF000001C9.namprd05.prod.outlook.com
- (2603:10b6:a03:334:cafe::26) by SJ0PR05CA0096.outlook.office365.com
- (2603:10b6:a03:334::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.139.11 via Frontend Transport; Mon,
- 22 Jun 2026 07:54:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SJ5PEPF000001C9.mail.protection.outlook.com (10.167.242.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.159.10 via Frontend Transport; Mon, 22 Jun 2026 07:54:25 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 22 Jun
- 2026 00:54:17 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Mon, 22 Jun 2026 00:54:16 -0700
-Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.126.190.180)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 22 Jun 2026 00:54:14 -0700
-From: Maayan Kashani <mkashani@nvidia.com>
-To: <dev@dpdk.org>
-CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, Viacheslav Ovsiienko
- <viacheslavo@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Bing
- Zhao" <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH v3] drivers: update relaxed ordering policy for mlx5 mkeys
-Date: Mon, 22 Jun 2026 10:54:10 +0300
-Message-ID: <20260622075410.38103-1-mkashani@nvidia.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20260616122355.39114-1-mkashani@nvidia.com>
-References: <20260616122355.39114-1-mkashani@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 14807402E5;
+	Mon, 22 Jun 2026 09:56:59 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id C120A4021F
+ for <dev@dpdk.org>; Mon, 22 Jun 2026 09:56:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782115017; x=1813651017;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=zNTqGhdWeL47n4SB4+204hqybo/tWWgNDfbF9FFvm64=;
+ b=KiOIenoWvW6YcwWheJIVMiXqzXjo9pgZmEgDS+NFRfeE3tUvsGZMYNeH
+ yuwKotbZmGG+MUVbwW4htDvikPcpvcd16dauVCFIj69ilVcaYe3JHAOYH
+ NLnfvybVTGCL44NY8n/jrm9Dy3zQHyjc2Gt5xrRX2j1h266RAgk+aD9h3
+ IOPvwTs7tudMJYy3e/u2IqsDNwgVg1MwzY6H/u/C1P+SrPz660leCu0TN
+ Ft02SmH4N5WMRPlGD6i18/tNicYVXmywjoYI4DIomNK3Y0UsgI/VSz1Ew
+ Zjd7CwNv8wvdBt3JK7cM+bq93rgeKNi2mfMl0wxksvWZdygILwkAmn7Ie A==;
+X-CSE-ConnectionGUID: m5vTknJ7RBKUdJOE1h+LFg==
+X-CSE-MsgGUID: NszAuWEFTCCuT4kZpwNtHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11824"; a="82707922"
+X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; d="scan'208";a="82707922"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Jun 2026 00:56:55 -0700
+X-CSE-ConnectionGUID: pDBwsJtiQBqtQc8LNXDMlA==
+X-CSE-MsgGUID: XpnkxUjMTg6jgon/iv4XSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; d="scan'208";a="242807830"
+Received: from silpixa00401454.ir.intel.com ([10.20.224.230])
+ by fmviesa009.fm.intel.com with ESMTP; 22 Jun 2026 00:56:54 -0700
+From: Emma Finn <emma.finn@intel.com>
+To: Kai Ji <kai.ji@intel.com>
+Cc: dev@dpdk.org,
+	Emma Finn <emma.finn@intel.com>
+Subject: [v3] crypto/qat: require IPsec MB for HMAC precomputes
+Date: Mon, 22 Jun 2026 07:56:51 +0000
+Message-ID: <20260622075651.1980461-1-emma.finn@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260619135330.1821985-1-emma.finn@intel.com>
+References: <20260619135330.1821985-1-emma.finn@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001C9:EE_|CH2PR12MB4168:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f07728f-9198-4e7f-684c-08ded0337aa8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700016|23010399003|82310400026|376014|1800799024|6133799003|22082099003|18002099003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info: obOpfArMmTxp9eQNhryQN/Gi9pFgQSgtLd/LU+iDX2WgrX6qCRJW6IkOd5zkKvXOKLlFqcCFmACaz+nuCsCTJBDkKX5u23A4peQoGf+9E9I4OHZTfEcYM23GET5vpRXAE8MTYZ3EQeronVAdqlehY4RhHKD1xyn+fI8y5sCuVKUeqIebp6168ZcecZFDBHi2klM6TsbUY7SMfXx/fiKw93xMAyh07JZFGv0OvU7+wKU0WLuGgSbpKNuG+jAsEWLcoGubiaM6UFj1fkzRrg7d+ygolp5YnsE+46RZCQYK103Zl0x/wvoRSPUyyEzYcOSFvA3ZoSQs7nE2thAPycKpFrcxxtW90ibmMgGQDBl10oqzUC8J/FvgpACq6wHolymj3y2phaf+OcPn0RCIb/++Hw6dEIgj8FcsGOj5YyBLgctgx4mbRCvbS82w7YLQEeyRuNPP/upilqLcgH3PqbGd+PZX8KCm92wjAcbbMCBZKrAYgrc8eOP4Mv9ooQJCGTnAoBCDRjuWiCBIWTkwBuK1ud6Be5v6EklxVfXB0IZtqB+Eb2TW+jNa2J9hPn7Lyc3c6uwH00yv9iVtrbJcX69qpkgQtt9W2f3KQTHTjeQmvWl0gSB6P24c2GAMRq/cJY9OyWp+w+vbMVnebRW4yEaFB3juolY6nGbTg/F01+DXzzurgISeN8SBiZ50FI3elQwS5ouKDy1f2ubIwMaPV7jeHg==
-X-Forefront-Antispam-Report: CIP:216.228.118.232; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc7edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700016)(23010399003)(82310400026)(376014)(1800799024)(6133799003)(22082099003)(18002099003)(56012099006)(11063799006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: DlhOk48S4PqtOQf6uX6hsT8YVBG0ch4pq++JjFEkaY+ws4XLWnBebxXhMYdNv2AteY05HLOsZjDWpv6oAlZvdXU2Lerybfd0D/tm5IO6k2RjWsg745kx+UfjF2qZL+Abe1n+dSebzLHEZzeGz8b/NhsK7GgaADhD1tlFhedysVJZXgAjnHdzxBrXR9+AqnCwhduU3v38hcwC6xpeOOTmeH9QPshsLC6rggPvdFOU8uHr5J08tNabCrEvb+TOvz+6RoyWz9oO2D+5wUHQmcpU/geGumzuubkskXeoWTEDDUxghBxeYsRWDFsFA3+QFwyRFpRHdCdblCepFWTx9yd51oc/NLOiTtbB7ERxFXiEzwkYHbJEOyRJIjPoOB5d0TZIFNGRgPOv/rJfN5S20FL350d80Do3X3oC3T8RoLEOOK4eGIfsGyOrbNUtvhItfYTF
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 07:54:25.2736 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f07728f-9198-4e7f-684c-08ded0337aa8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.118.232];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001C9.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4168
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,312 +60,794 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-New adapters expose additional ordering capabilities.
-Query the new caps and apply them when creating DevX mkeys via
-mlx5_devx_mkey_attr_set_ordering(), which sets PCI relaxed ordering
-and RAW=RO when relaxed order is supported.
-Use this helper on Windows (still gated by Haswell/Broadwell) and for
-Linux wrapped mkeys and crypto/regex/vdpa indirect mkeys when
-relaxed order only flag is set.
-Linux wrapped mkeys continue to use the legacy Haswell/Broadwell rule for
-IBV_ACCESS_RELAXED_ORDERING on the verbs MR.
-Upcoming FW will requires setting the correct ordering attributes,
-otherwise it fails to create the memory key.
+IPsec MB library (v1.4.0+) is now required for HMAC precomputes as
+OpenSSL 3.0 removed SHA*_Transform APIs. OpenSSL remains optional
+for DOCSIS BPI cipher fallback via EVP API.
 
-Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+On x86: IPsec MB required, OpenSSL optional (DOCSIS fallback)
+On ARM: IPsec MB required, OpenSSL required (DOCSIS support)
+
+Signed-off-by: Emma Finn <emma.finn@intel.com>
 ---
- drivers/common/mlx5/linux/mlx5_common_os.c   | 10 +++++++
- drivers/common/mlx5/mlx5_devx_cmds.c         | 31 ++++++++++++++++++++
- drivers/common/mlx5/mlx5_devx_cmds.h         |  9 ++++++
- drivers/common/mlx5/mlx5_prm.h               | 18 ++++++++++--
- drivers/common/mlx5/windows/mlx5_common_os.c |  8 ++---
- drivers/crypto/mlx5/mlx5_crypto.c            |  4 +++
- drivers/regex/mlx5/mlx5_regex_fastpath.c     |  5 ++++
- drivers/regex/mlx5/mlx5_rxp.c                |  4 +++
- drivers/vdpa/mlx5/mlx5_vdpa_mem.c            |  4 +++
- 9 files changed, 85 insertions(+), 8 deletions(-)
+v2:
+* Fix resource leak in ossl_legacy_provider_load()
+* Added release note
+v3:
+* Removed checks for openssl <= 3.0
+---
+ doc/guides/cryptodevs/qat.rst          |  28 +-
+ doc/guides/rel_notes/release_26_07.rst |   8 +
+ drivers/common/qat/meson.build         |  56 ++--
+ drivers/crypto/qat/qat_sym_session.c   | 448 ++-----------------------
+ 4 files changed, 97 insertions(+), 443 deletions(-)
 
-diff --git a/drivers/common/mlx5/linux/mlx5_common_os.c b/drivers/common/mlx5/linux/mlx5_common_os.c
-index e3db6c41245..3e9cd86062f 100644
---- a/drivers/common/mlx5/linux/mlx5_common_os.c
-+++ b/drivers/common/mlx5/linux/mlx5_common_os.c
-@@ -997,6 +997,7 @@ int
- mlx5_os_wrapped_mkey_create(void *ctx, void *pd, uint32_t pdn, void *addr,
- 			    size_t length, struct mlx5_pmd_wrapped_mr *pmd_mr)
+diff --git a/doc/guides/cryptodevs/qat.rst b/doc/guides/cryptodevs/qat.rst
+index 0c2b85444e..4e60e8343c 100644
+--- a/doc/guides/cryptodevs/qat.rst
++++ b/doc/guides/cryptodevs/qat.rst
+@@ -352,15 +352,25 @@ To use this feature the user must set the devarg on process start as a device ad
+  -a 03:01.1,qat_sym_cipher_crc_enable=1
+ 
+ 
+-Running QAT PMD with Intel IPsec MB library for symmetric precomputes function
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-
+-The QAT PMD uses Intel IPsec MB library for partial hash calculation
+-in symmetric precomputes function by default,
+-the minimum required version of IPsec MB library is v1.4.
+-If this version of IPsec is not met, it will fallback to use OpenSSL.
+-ARM will always default to using OpenSSL
+-as ARM IPsec MB does not support the necessary algorithms.
++Running QAT PMD with Intel IPsec MB library
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++The QAT PMD requires IPsec MB library for HMAC partial hash calculation
++in symmetric precomputes function. OpenSSL 3.0+ removed the low-level SHA*_Transform APIs
++that were previously used for HMAC precomputes.
++
++**On x86 platforms:**
++
++* Intel IPsec MB library (v1.4.0+) is required for HMAC precomputes
++* OpenSSL (3.0+) is optional for DOCSIS BPI cipher fallback
++
++**On ARM platforms:**
++
++* ARM IPsec MB library from ``gitlab.arm.com/arm-reference-solutions/ipsec-mb``
++  is required for HMAC precomputes.
++* OpenSSL (3.0+) is required for DOCSIS BPI cipher algorithms. ARM IPsec MB does not
++  implement CFB-one-byte cipher modes needed for DOCSIS. Without OpenSSL, DOCSIS
++  algorithms will not be available on ARM.
+ 
+ 
+ Device and driver naming
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index 34809a4850..809ec19d66 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -155,6 +155,14 @@ New Features
+   Added AGENTS.md file for AI review
+   and supporting scripts to review patches and documentation.
+ 
++* **Updated QAT PMD dependency requirements.**
++
++  The QAT crypto PMD now requires IPsec MB library (v1.4.0+) for HMAC precomputes
++  on all platforms. OpenSSL 3.0+ is now optional and used only for DOCSIS BPI cipher
++  fallback. Previously, QAT could build with OpenSSL-only on x86.
++
++  On ARM, both IPsec MB and OpenSSL are required for full functionality.
++
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/common/qat/meson.build b/drivers/common/qat/meson.build
+index 31e06f4376..969ff9e8ee 100644
+--- a/drivers/common/qat/meson.build
++++ b/drivers/common/qat/meson.build
+@@ -27,47 +27,61 @@ if disable_drivers.contains(qat_compress_path)
+             'Explicitly disabled via build config')
+ endif
+ 
+-libcrypto = dependency('libcrypto', required: false, method: 'pkg-config')
++# IPsec MB is REQUIRED for HMAC precomputes (no OpenSSL 3.0 alternative)
++# OpenSSL is OPTIONAL for DOCSIS BPI cipher fallback
++IMB_required_ver = '1.4.0'
+ 
+-if arch_subdir == 'arm'
+-    if libcrypto.found()
+-        ext_deps += libcrypto
+-        dpdk_conf.set('RTE_QAT_OPENSSL', true)
++# Only check IPsec MB if qat_crypto wasn't already disabled
++if qat_crypto
++    if arch_subdir == 'arm'
++        IMB_header = '#include<ipsec-mb.h>'
+     else
+-        qat_crypto = false
+-        dpdk_drvs_disabled += qat_crypto_path
+-        set_variable('drv_' + qat_crypto_path.underscorify() + '_disable_reason',
+-        'missing dependency for Arm, libcrypto')
++        IMB_header = '#include<intel-ipsec-mb.h>'
+     endif
+-else
+-    IMB_required_ver = '1.4.0'
+-    IMB_header = '#include<intel-ipsec-mb.h>'
++
++    # Check for IPsec MB library (required)
+     libipsecmb = cc.find_library('IPSec_MB', required: false)
+     if libipsecmb.found() and cc.links(
+             'int main(void) {return 0;}', dependencies: libipsecmb)
+-        # version comes with quotes, so we split based on " and take the middle
+         imb_ver = cc.get_define('IMB_VERSION_STR',
+             prefix : IMB_header).split('"')[1]
+ 
+         if (imb_ver.version_compare('>=' + IMB_required_ver))
+             ext_deps += libipsecmb
+-        elif libcrypto.found()
+-            ext_deps += libcrypto
+-            dpdk_conf.set('RTE_QAT_OPENSSL', true)
++            dpdk_conf.set('RTE_QAT_IPSECMB', true)
+         else
+             qat_crypto = false
+             dpdk_drvs_disabled += qat_crypto_path
+             set_variable('drv_' + qat_crypto_path.underscorify() + '_disable_reason',
+-                'missing dependency, libipsecmb or libcrypto')
++                'IPSec_MB version >= @0@ is required, found version @1@'.format(
++                    IMB_required_ver, imb_ver))
+         endif
+-    elif libcrypto.found()
+-        ext_deps += libcrypto
+-        dpdk_conf.set('RTE_QAT_OPENSSL', true)
+     else
+         qat_crypto = false
+         dpdk_drvs_disabled += qat_crypto_path
+         set_variable('drv_' + qat_crypto_path.underscorify() + '_disable_reason',
+-            'missing dependency, libipsecmb or libcrypto')
++            'missing required dependency, libIPSec_MB >= @0@'.format(IMB_required_ver))
++    endif
++endif
++
++# Check for OpenSSL (optional, for DOCSIS BPI cipher fallback)
++openssl_required_ver = '3.0.0'
++if qat_crypto
++    libcrypto = dependency('libcrypto', required: false, method: 'pkg-config', version: '>= ' + openssl_required_ver)
++    if libcrypto.found()
++        ext_deps += libcrypto
++        dpdk_conf.set('RTE_QAT_OPENSSL', true)
++        if arch_subdir == 'arm'
++            message('QAT: Using OpenSSL @0@ for DOCSIS on ARM'.format(libcrypto.version()))
++        else
++            message('QAT: OpenSSL @0@ available for DOCSIS fallback'.format(libcrypto.version()))
++        endif
++    else
++        if arch_subdir == 'arm'
++            warning('QAT: OpenSSL >= @0@ not found - DOCSIS algorithms will not be available on ARM'.format(openssl_required_ver))
++        else
++            message('QAT: OpenSSL >= @0@ not found - DOCSIS will use IPsec MB only'.format(openssl_required_ver))
++        endif
+     endif
+ endif
+ 
+diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
+index ff01db4372..486eb5b54a 100644
+--- a/drivers/crypto/qat/qat_sym_session.c
++++ b/drivers/crypto/qat/qat_sym_session.c
+@@ -2,19 +2,18 @@
+  * Copyright(c) 2015-2022 Intel Corporation
+  */
+ 
+-#define OPENSSL_API_COMPAT 0x10100000L
+-
+-#ifdef RTE_QAT_OPENSSL
+-#include <openssl/sha.h>	/* Needed to calculate pre-compute values */
+-#include <openssl/aes.h>	/* Needed to calculate pre-compute values */
+-#include <openssl/md5.h>	/* Needed to calculate pre-compute values */
+-#include <openssl/evp.h>	/* Needed for bpi runt block processing */
+-#endif
+-
+-#ifndef RTE_QAT_OPENSSL
+-#ifndef RTE_ARCH_ARM
++/* IPsec MB is required for HMAC precomputes (OpenSSL 3.0 removed Transform APIs)
++ * OpenSSL is optional for DOCSIS BPI cipher fallback
++ */
++#ifdef RTE_ARCH_ARM
++#include <ipsec-mb.h>
++#else
+ #include <intel-ipsec-mb.h>
+ #endif
++
++#ifdef RTE_QAT_OPENSSL
++#define OPENSSL_API_COMPAT 0x30000000L
++#include <openssl/evp.h>	/* For DOCSIS BPI cipher fallback */
+ #endif
+ 
+ #include <rte_memcpy.h>
+@@ -32,15 +31,13 @@
+ #include "qat_sym.h"
+ 
+ #ifdef RTE_QAT_OPENSSL
+-#if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+ #include <openssl/provider.h>
+ 
+ static OSSL_PROVIDER * legacy_lib;
+ static OSSL_PROVIDER *default_lib;
+ 
+-/* Some cryptographic algorithms such as MD and DES are now considered legacy
+- * and not enabled by default in OpenSSL 3.0. Load up lagacy provider as MD5
+- * DES are needed in QAT pre-computes and secure session creation.
++/* DES is considered legacy and not enabled by default in OpenSSL 3.0.
++ * Load legacy provider for DES-DOCSISBPI cipher fallback support.
+  */
+ static int ossl_legacy_provider_load(void)
  {
-+	struct mlx5_hca_attr hca_attr = { 0 };
- 	struct mlx5_klm klm = {
- 		.byte_count = length,
- 		.address = (uintptr_t)addr,
-@@ -1007,6 +1008,7 @@ mlx5_os_wrapped_mkey_create(void *ctx, void *pd, uint32_t pdn, void *addr,
- 		.klm_num = 1,
- 	};
- 	struct mlx5_devx_obj *mkey;
-+	int ret;
- 	struct ibv_mr *ibv_mr = mlx5_glue->reg_mr(pd, addr, length,
- 						  IBV_ACCESS_LOCAL_WRITE |
- 						  (mlx5_haswell_broadwell_cpu ? 0 :
-@@ -1019,6 +1021,14 @@ mlx5_os_wrapped_mkey_create(void *ctx, void *pd, uint32_t pdn, void *addr,
- 	klm.mkey = ibv_mr->lkey;
- 	mkey_attr.addr = (uintptr_t)addr;
- 	mkey_attr.size = length;
-+	ret = mlx5_devx_cmd_query_hca_attr(ctx, &hca_attr);
-+	if (ret != 0) {
-+		claim_zero(mlx5_glue->dereg_mr(ibv_mr));
-+		return ret;
+@@ -52,7 +49,8 @@ static int ossl_legacy_provider_load(void)
+ 	default_lib = OSSL_PROVIDER_load(NULL, "default");
+ 	if (default_lib == NULL) {
+ 		OSSL_PROVIDER_unload(legacy_lib);
+-		return  -EINVAL;
++		legacy_lib = NULL;
++		return -EINVAL;
+ 	}
+ 
+ 	return 0;
+@@ -60,11 +58,16 @@ static int ossl_legacy_provider_load(void)
+ 
+ static void ossl_legacy_provider_unload(void)
+ {
+-	OSSL_PROVIDER_unload(legacy_lib);
+-	OSSL_PROVIDER_unload(default_lib);
++	if (legacy_lib != NULL) {
++		OSSL_PROVIDER_unload(legacy_lib);
++		legacy_lib = NULL;
 +	}
-+	/* Apply MKC ordering when FW requires relaxed-order-only mode. */
-+	if (hca_attr.mkc_order_write_after_write_ro_only)
-+		mlx5_devx_mkey_attr_set_ordering(&mkey_attr, &hca_attr);
- 	mkey = mlx5_devx_cmd_mkey_create(ctx, &mkey_attr);
- 	if (!mkey) {
- 		claim_zero(mlx5_glue->dereg_mr(ibv_mr));
-diff --git a/drivers/common/mlx5/mlx5_devx_cmds.c b/drivers/common/mlx5/mlx5_devx_cmds.c
-index c4ac2aaceed..140b057ab47 100644
---- a/drivers/common/mlx5/mlx5_devx_cmds.c
-+++ b/drivers/common/mlx5/mlx5_devx_cmds.c
-@@ -331,6 +331,29 @@ mlx5_devx_cmd_flow_counter_query(struct mlx5_devx_obj *dcs,
++	if (default_lib != NULL) {
++		OSSL_PROVIDER_unload(default_lib);
++		default_lib = NULL;
++	}
+ }
+ #endif
+-#endif
+ 
+ #define ETH_CRC32_POLYNOMIAL    0x04c11db7
+ #define ETH_CRC32_INIT_VAL      0xffffffff
+@@ -634,9 +637,9 @@ qat_sym_session_configure(struct rte_cryptodev *dev,
+ 	int ret;
+ 
+ #ifdef RTE_QAT_OPENSSL
+-#if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+-	ossl_legacy_provider_load();
+-#endif
++	ret = ossl_legacy_provider_load();
++	if (ret != 0)
++		return ret;
+ #endif
+ 	ret = qat_sym_session_set_parameters(dev, xform,
+ 			CRYPTODEV_GET_SYM_SESS_PRIV(sess),
+@@ -644,15 +647,15 @@ qat_sym_session_configure(struct rte_cryptodev *dev,
+ 	if (ret != 0) {
+ 		QAT_LOG(ERR,
+ 		    "Crypto QAT PMD: failed to configure session parameters");
+-
++#ifdef RTE_QAT_OPENSSL
++		ossl_legacy_provider_unload();
++#endif
+ 		return ret;
+ 	}
+ 
+ #ifdef RTE_QAT_OPENSSL
+-# if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+ 	ossl_legacy_provider_unload();
+-# endif
+-# endif
++#endif
  	return 0;
  }
  
-+/**
-+ * Apply PCI relaxed-ordering and read-after-write ordering to mkey attributes.
-+ *
-+ * @param[in, out] mkey_attr
-+ *   Mkey attributes to update.
-+ * @param[in] hca_attr
-+ *   HCA capabilities from mlx5_devx_cmd_query_hca_attr().
-+ */
-+RTE_EXPORT_INTERNAL_SYMBOL(mlx5_devx_mkey_attr_set_ordering)
-+void
-+mlx5_devx_mkey_attr_set_ordering(struct mlx5_devx_mkey_attr *mkey_attr,
-+				 const struct mlx5_hca_attr *hca_attr)
-+{
-+	if (!mkey_attr || !hca_attr)
-+		return;
-+
-+	mkey_attr->relaxed_ordering_write = hca_attr->relaxed_ordering_write;
-+	mkey_attr->relaxed_ordering_read =
-+		hca_attr->relaxed_ordering_read || hca_attr->pci_relaxed_ordered_read;
-+	if (hca_attr->mkc_order_read_after_write)
-+		mkey_attr->read_after_write_ordering = MLX5_MKC_RAW_ORDERING_RO;
-+}
-+
- /**
-  * Create a new mkey.
-  *
-@@ -417,6 +440,8 @@ mlx5_devx_cmd_mkey_create(void *ctx,
- 	MLX5_SET(mkc, mkc, relaxed_ordering_write,
- 		 attr->relaxed_ordering_write);
- 	MLX5_SET(mkc, mkc, relaxed_ordering_read, attr->relaxed_ordering_read);
-+	MLX5_SET(mkc, mkc, order_read_after_write,
-+		 attr->read_after_write_ordering);
- 	MLX5_SET64(mkc, mkc, start_addr, attr->addr);
- 	MLX5_SET64(mkc, mkc, len, attr->size);
- 	MLX5_SET(mkc, mkc, crypto_en, attr->crypto_en);
-@@ -1003,6 +1028,12 @@ mlx5_devx_cmd_query_hca_attr(void *ctx,
- 						relaxed_ordering_write);
- 	attr->relaxed_ordering_read = MLX5_GET(cmd_hca_cap, hcattr,
- 					       relaxed_ordering_read);
-+	attr->pci_relaxed_ordered_read = MLX5_GET(cmd_hca_cap, hcattr,
-+						  pci_relaxed_ordered_read);
-+	attr->mkc_order_read_after_write = MLX5_GET(cmd_hca_cap, hcattr,
-+						    mkc_order_read_after_write);
-+	attr->mkc_order_write_after_write_ro_only = MLX5_GET(cmd_hca_cap, hcattr,
-+							     mkc_order_write_after_write_ro_only);
- 	attr->access_register_user = MLX5_GET(cmd_hca_cap, hcattr,
- 					      access_register_user);
- 	attr->eth_net_offloads = MLX5_GET(cmd_hca_cap, hcattr,
-diff --git a/drivers/common/mlx5/mlx5_devx_cmds.h b/drivers/common/mlx5/mlx5_devx_cmds.h
-index 82d949972bb..90beb2e9e6c 100644
---- a/drivers/common/mlx5/mlx5_devx_cmds.h
-+++ b/drivers/common/mlx5/mlx5_devx_cmds.h
-@@ -34,6 +34,7 @@ struct mlx5_devx_mkey_attr {
- 	uint32_t pg_access:1;
- 	uint32_t relaxed_ordering_write:1;
- 	uint32_t relaxed_ordering_read:1;
-+	uint32_t read_after_write_ordering:2;
- 	uint32_t umr_en:1;
- 	uint32_t crypto_en:2;
- 	uint32_t set_remote_rw:1;
-@@ -237,6 +238,9 @@ struct mlx5_hca_attr {
- 	uint32_t vhca_id:16;
- 	uint32_t relaxed_ordering_write:1;
- 	uint32_t relaxed_ordering_read:1;
-+	uint32_t pci_relaxed_ordered_read:1;
-+	uint32_t mkc_order_read_after_write:1;
-+	uint32_t mkc_order_write_after_write_ro_only:1;
- 	uint32_t access_register_user:1;
- 	uint32_t wqe_index_ignore:1;
- 	uint32_t cross_channel:1;
-@@ -748,6 +752,11 @@ int mlx5_devx_cmd_query_hca_attr(void *ctx,
- __rte_internal
- struct mlx5_devx_obj *mlx5_devx_cmd_mkey_create(void *ctx,
- 					      struct mlx5_devx_mkey_attr *attr);
-+
-+__rte_internal
-+void
-+mlx5_devx_mkey_attr_set_ordering(struct mlx5_devx_mkey_attr *mkey_attr,
-+				 const struct mlx5_hca_attr *hca_attr);
- __rte_internal
- int mlx5_devx_get_out_command_status(void *out);
- __rte_internal
-diff --git a/drivers/common/mlx5/mlx5_prm.h b/drivers/common/mlx5/mlx5_prm.h
-index 3bb072a7fec..c2810194f8e 100644
---- a/drivers/common/mlx5/mlx5_prm.h
-+++ b/drivers/common/mlx5/mlx5_prm.h
-@@ -1463,7 +1463,9 @@ struct mlx5_ifc_mkc_bits {
- 	u8 bsf_octword_size[0x20];
- 	u8 reserved_at_120[0x80];
- 	u8 translations_octword_size[0x20];
--	u8 reserved_at_1c0[0x19];
-+	u8 reserved_at_1c0[0x16];
-+	u8 order_read_after_write[0x2];
-+	u8 reserved_at_1d8[0x1];
- 	u8 relaxed_ordering_read[0x1];
- 	u8 reserved_at_1da[0x1];
- 	u8 log_page_size[0x5];
-@@ -1478,6 +1480,13 @@ enum {
- 	MLX5_MKEY_CRYPTO_ENABLED = 0x1,
- };
+@@ -1412,339 +1415,9 @@ static int qat_hash_get_block_size(enum icp_qat_hw_auth_algo qat_hash_alg)
+ #define HMAC_OPAD_VALUE	0x5c
+ #define HASH_XCBC_PRECOMP_KEY_NUM 3
  
-+/* MKC read_after_write_ordering field (2-bit, dword 0x38 bits 9:8). */
-+enum mlx5_mkc_raw_ordering {
-+	MLX5_MKC_RAW_ORDERING_SO = 0x0,
-+	MLX5_MKC_RAW_ORDERING_SAO = 0x1,
-+	MLX5_MKC_RAW_ORDERING_RO = 0x2,
-+};
-+
- struct mlx5_ifc_create_mkey_out_bits {
- 	u8 status[0x8];
- 	u8 reserved_at_8[0x18];
-@@ -1827,7 +1836,8 @@ struct mlx5_ifc_cmd_hca_cap_bits {
- 	u8 log_max_mcg[0x8];
- 	u8 reserved_at_320[0x3];
- 	u8 log_max_transport_domain[0x5];
--	u8 reserved_at_328[0x3];
-+	u8 reserved_at_328[0x2];
-+	u8 pci_relaxed_ordered_read[0x1];
- 	u8 log_max_pd[0x5];
- 	u8 reserved_at_330[0xb];
- 	u8 log_max_xrcd[0x5];
-@@ -1860,7 +1870,9 @@ struct mlx5_ifc_cmd_hca_cap_bits {
- 	u8 ext_stride_num_range[0x1];
- 	u8 reserved_at_3a1[0x2];
- 	u8 log_max_stride_sz_rq[0x5];
--	u8 reserved_at_3a8[0x3];
-+	u8 mkc_order_read_after_write[0x1];
-+	u8 mkc_order_write_after_write_ro_only[0x1];
-+	u8 reserved_at_3aa[0x1];
- 	u8 log_min_stride_sz_rq[0x5];
- 	u8 reserved_at_3b0[0x3];
- 	u8 log_max_stride_sz_sq[0x5];
-diff --git a/drivers/common/mlx5/windows/mlx5_common_os.c b/drivers/common/mlx5/windows/mlx5_common_os.c
-index c790c9a4aeb..bdafb95df98 100644
---- a/drivers/common/mlx5/windows/mlx5_common_os.c
-+++ b/drivers/common/mlx5/windows/mlx5_common_os.c
-@@ -384,7 +384,7 @@ mlx5_os_reg_mr(void *pd,
- {
- 	struct mlx5_devx_mkey_attr mkey_attr;
- 	struct mlx5_pd *mlx5_pd = (struct mlx5_pd *)pd;
--	struct mlx5_hca_attr attr;
-+	struct mlx5_hca_attr attr = { 0 };
- 	struct mlx5_devx_obj *mkey;
- 	void *obj;
- 
-@@ -403,10 +403,8 @@ mlx5_os_reg_mr(void *pd,
- 	mkey_attr.size = length;
- 	mkey_attr.umem_id = ((struct mlx5_devx_umem *)(obj))->umem_id;
- 	mkey_attr.pd = mlx5_pd->pdn;
--	if (!mlx5_haswell_broadwell_cpu) {
--		mkey_attr.relaxed_ordering_write = attr.relaxed_ordering_write;
--		mkey_attr.relaxed_ordering_read = attr.relaxed_ordering_read;
+-#ifdef RTE_QAT_OPENSSL
+-static int partial_hash_sha1(uint8_t *data_in, uint8_t *data_out)
+-{
+-	SHA_CTX ctx;
+-
+-	if (!SHA1_Init(&ctx))
+-		return -EFAULT;
+-	SHA1_Transform(&ctx, data_in);
+-	rte_memcpy(data_out, &ctx, SHA_DIGEST_LENGTH);
+-	return 0;
+-}
+-
+-static int partial_hash_sha224(uint8_t *data_in, uint8_t *data_out)
+-{
+-	SHA256_CTX ctx;
+-
+-	if (!SHA224_Init(&ctx))
+-		return -EFAULT;
+-	SHA256_Transform(&ctx, data_in);
+-	rte_memcpy(data_out, &ctx, SHA256_DIGEST_LENGTH);
+-	return 0;
+-}
+-
+-static int partial_hash_sha256(uint8_t *data_in, uint8_t *data_out)
+-{
+-	SHA256_CTX ctx;
+-
+-	if (!SHA256_Init(&ctx))
+-		return -EFAULT;
+-	SHA256_Transform(&ctx, data_in);
+-	rte_memcpy(data_out, &ctx, SHA256_DIGEST_LENGTH);
+-	return 0;
+-}
+-
+-static int partial_hash_sha384(uint8_t *data_in, uint8_t *data_out)
+-{
+-	SHA512_CTX ctx;
+-
+-	if (!SHA384_Init(&ctx))
+-		return -EFAULT;
+-	SHA512_Transform(&ctx, data_in);
+-	rte_memcpy(data_out, &ctx, SHA512_DIGEST_LENGTH);
+-	return 0;
+-}
+-
+-static int partial_hash_sha512(uint8_t *data_in, uint8_t *data_out)
+-{
+-	SHA512_CTX ctx;
+-
+-	if (!SHA512_Init(&ctx))
+-		return -EFAULT;
+-	SHA512_Transform(&ctx, data_in);
+-	rte_memcpy(data_out, &ctx, SHA512_DIGEST_LENGTH);
+-	return 0;
+-}
+-
+-static int partial_hash_md5(uint8_t *data_in, uint8_t *data_out)
+-{
+-	MD5_CTX ctx;
+-
+-	if (!MD5_Init(&ctx))
+-		return -EFAULT;
+-	MD5_Transform(&ctx, data_in);
+-	rte_memcpy(data_out, &ctx, MD5_DIGEST_LENGTH);
+-
+-	return 0;
+-}
+-
+-static void aes_cmac_key_derive(uint8_t *base, uint8_t *derived)
+-{
+-	int i;
+-
+-	derived[0] = base[0] << 1;
+-	for (i = 1; i < ICP_QAT_HW_AES_BLK_SZ ; i++) {
+-		derived[i] = base[i] << 1;
+-		derived[i - 1] |= base[i] >> 7;
 -	}
-+	if (!mlx5_haswell_broadwell_cpu)
-+		mlx5_devx_mkey_attr_set_ordering(&mkey_attr, &attr);
- 	mkey = mlx5_devx_cmd_mkey_create(mlx5_pd->devx_ctx, &mkey_attr);
- 	if (!mkey) {
- 		claim_zero(mlx5_os_umem_dereg(obj));
-diff --git a/drivers/crypto/mlx5/mlx5_crypto.c b/drivers/crypto/mlx5/mlx5_crypto.c
-index dd0aabb6d75..448dd0c5a4e 100644
---- a/drivers/crypto/mlx5/mlx5_crypto.c
-+++ b/drivers/crypto/mlx5/mlx5_crypto.c
-@@ -97,7 +97,11 @@ mlx5_crypto_indirect_mkeys_prepare(struct mlx5_crypto_priv *priv,
- 				   mlx5_crypto_mkey_update_t update_cb)
- {
- 	uint32_t i;
-+	struct mlx5_hca_attr *hca_attr = &priv->cdev->config.hca_attr;
+-
+-	if (base[0] & 0x80)
+-		derived[ICP_QAT_HW_AES_BLK_SZ - 1] ^= QAT_AES_CMAC_CONST_RB;
+-}
+-
+-static int
+-partial_hash_compute(enum icp_qat_hw_auth_algo hash_alg,
+-		uint8_t *data_in, uint8_t *data_out)
+-{
+-	int digest_size;
+-	uint8_t digest[qat_hash_get_digest_size(
+-			ICP_QAT_HW_AUTH_ALGO_DELIMITER)];
+-	uint32_t *hash_state_out_be32;
+-	uint64_t *hash_state_out_be64;
+-	int i;
+-
+-	/* Initialize to avoid gcc warning */
+-	memset(digest, 0, sizeof(digest));
+-
+-	digest_size = qat_hash_get_digest_size(hash_alg);
+-	if (digest_size <= 0)
+-		return -EFAULT;
+-
+-	hash_state_out_be32 = (uint32_t *)data_out;
+-	hash_state_out_be64 = (uint64_t *)data_out;
+-
+-	switch (hash_alg) {
+-	case ICP_QAT_HW_AUTH_ALGO_SHA1:
+-		if (partial_hash_sha1(data_in, digest))
+-			return -EFAULT;
+-		for (i = 0; i < digest_size >> 2; i++, hash_state_out_be32++)
+-			*hash_state_out_be32 =
+-				rte_bswap32(*(((uint32_t *)digest)+i));
+-		break;
+-	case ICP_QAT_HW_AUTH_ALGO_SHA224:
+-		if (partial_hash_sha224(data_in, digest))
+-			return -EFAULT;
+-		for (i = 0; i < digest_size >> 2; i++, hash_state_out_be32++)
+-			*hash_state_out_be32 =
+-				rte_bswap32(*(((uint32_t *)digest)+i));
+-		break;
+-	case ICP_QAT_HW_AUTH_ALGO_SHA256:
+-		if (partial_hash_sha256(data_in, digest))
+-			return -EFAULT;
+-		for (i = 0; i < digest_size >> 2; i++, hash_state_out_be32++)
+-			*hash_state_out_be32 =
+-				rte_bswap32(*(((uint32_t *)digest)+i));
+-		break;
+-	case ICP_QAT_HW_AUTH_ALGO_SHA384:
+-		if (partial_hash_sha384(data_in, digest))
+-			return -EFAULT;
+-		for (i = 0; i < digest_size >> 3; i++, hash_state_out_be64++)
+-			*hash_state_out_be64 =
+-				rte_bswap64(*(((uint64_t *)digest)+i));
+-		break;
+-	case ICP_QAT_HW_AUTH_ALGO_SHA512:
+-		if (partial_hash_sha512(data_in, digest))
+-			return -EFAULT;
+-		for (i = 0; i < digest_size >> 3; i++, hash_state_out_be64++)
+-			*hash_state_out_be64 =
+-				rte_bswap64(*(((uint64_t *)digest)+i));
+-		break;
+-	case ICP_QAT_HW_AUTH_ALGO_MD5:
+-		if (partial_hash_md5(data_in, data_out))
+-			return -EFAULT;
+-		break;
+-	default:
+-		QAT_LOG(ERR, "invalid hash alg %u", hash_alg);
+-		return -EFAULT;
+-	}
+-
+-	return 0;
+-}
+-
+-static const uint8_t AES_CMAC_SEED[ICP_QAT_HW_AES_128_KEY_SZ];
+-
+-static int qat_sym_do_precomputes(enum icp_qat_hw_auth_algo hash_alg,
+-				const uint8_t *auth_key,
+-				uint16_t auth_keylen,
+-				uint8_t *p_state_buf,
+-				uint16_t *p_state_len,
+-				uint8_t aes_cmac)
+-{
+-	int block_size;
+-	uint8_t ipad[qat_hash_get_block_size(ICP_QAT_HW_AUTH_ALGO_DELIMITER)];
+-	uint8_t opad[qat_hash_get_block_size(ICP_QAT_HW_AUTH_ALGO_DELIMITER)];
+-	int i;
+-
+-	if (hash_alg == ICP_QAT_HW_AUTH_ALGO_AES_XCBC_MAC) {
+-
+-		/* CMAC */
+-		if (aes_cmac) {
+-			AES_KEY enc_key;
+-			uint8_t *in = NULL;
+-			uint8_t k0[ICP_QAT_HW_AES_128_KEY_SZ];
+-			uint8_t *k1, *k2;
+-
+-			auth_keylen = ICP_QAT_HW_AES_128_KEY_SZ;
+-
+-			in = rte_zmalloc("AES CMAC K1",
+-					 ICP_QAT_HW_AES_128_KEY_SZ, 16);
+-
+-			if (in == NULL) {
+-				QAT_LOG(ERR, "Failed to alloc memory");
+-				return -ENOMEM;
+-			}
+-
+-			rte_memcpy(in, AES_CMAC_SEED,
+-				   ICP_QAT_HW_AES_128_KEY_SZ);
+-			rte_memcpy(p_state_buf, auth_key, auth_keylen);
+-
+-			if (AES_set_encrypt_key(auth_key, auth_keylen << 3,
+-				&enc_key) != 0) {
+-				rte_free_sensitive(in);
+-				return -EFAULT;
+-			}
+-
+-			AES_encrypt(in, k0, &enc_key);
+-
+-			k1 = p_state_buf + ICP_QAT_HW_AES_XCBC_MAC_STATE1_SZ;
+-			k2 = k1 + ICP_QAT_HW_AES_XCBC_MAC_STATE1_SZ;
+-
+-			aes_cmac_key_derive(k0, k1);
+-			aes_cmac_key_derive(k1, k2);
+-
+-			rte_memzero_explicit(k0, ICP_QAT_HW_AES_128_KEY_SZ);
+-			*p_state_len = ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ;
+-			rte_free_sensitive(in);
+-			goto out;
+-		} else {
+-			static uint8_t qat_aes_xcbc_key_seed[
+-					ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ] = {
+-				0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+-				0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+-				0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
+-				0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
+-				0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
+-				0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
+-			};
+-
+-			uint8_t *in = NULL;
+-			uint8_t *out = p_state_buf;
+-			int x;
+-			AES_KEY enc_key;
+-
+-			in = rte_zmalloc("working mem for key",
+-					ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ, 16);
+-			if (in == NULL) {
+-				QAT_LOG(ERR, "Failed to alloc memory");
+-				return -ENOMEM;
+-			}
+-
+-			rte_memcpy(in, qat_aes_xcbc_key_seed,
+-					ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ);
+-			for (x = 0; x < HASH_XCBC_PRECOMP_KEY_NUM; x++) {
+-				if (AES_set_encrypt_key(auth_key,
+-							auth_keylen << 3,
+-							&enc_key) != 0) {
+-					rte_free_sensitive(in -
+-							   (x * ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ));
+-					rte_memzero_explicit(out -
+-							     (x * ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ),
+-							     ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ);
+-					return -EFAULT;
+-				}
+-				AES_encrypt(in, out, &enc_key);
+-				in += ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ;
+-				out += ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ;
+-			}
+-			*p_state_len = ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ;
+-			rte_free_sensitive(in - x*ICP_QAT_HW_AES_XCBC_MAC_KEY_SZ);
+-			goto out;
+-		}
+-
+-	} else if ((hash_alg == ICP_QAT_HW_AUTH_ALGO_GALOIS_128) ||
+-		(hash_alg == ICP_QAT_HW_AUTH_ALGO_GALOIS_64)) {
+-		uint8_t *in = NULL;
+-		uint8_t *out = p_state_buf;
+-		AES_KEY enc_key;
+-
+-		memset(p_state_buf, 0, ICP_QAT_HW_GALOIS_H_SZ +
+-				ICP_QAT_HW_GALOIS_LEN_A_SZ +
+-				ICP_QAT_HW_GALOIS_E_CTR0_SZ);
+-		in = rte_zmalloc("working mem for key",
+-				ICP_QAT_HW_GALOIS_H_SZ, 16);
+-		if (in == NULL) {
+-			QAT_LOG(ERR, "Failed to alloc memory");
+-			return -ENOMEM;
+-		}
+-
+-		rte_memzero_explicit(in, ICP_QAT_HW_GALOIS_H_SZ);
+-		if (AES_set_encrypt_key(auth_key, auth_keylen << 3,
+-			&enc_key) != 0) {
+-			return -EFAULT;
+-		}
+-		AES_encrypt(in, out, &enc_key);
+-		*p_state_len = ICP_QAT_HW_GALOIS_H_SZ +
+-				ICP_QAT_HW_GALOIS_LEN_A_SZ +
+-				ICP_QAT_HW_GALOIS_E_CTR0_SZ;
+-		rte_free_sensitive(in);
+-		return 0;
+-	}
+-
+-	block_size = qat_hash_get_block_size(hash_alg);
+-	if (block_size < 0)
+-		return block_size;
+-	/* init ipad and opad from key and xor with fixed values */
+-	memset(ipad, 0, block_size);
+-	memset(opad, 0, block_size);
+-
+-	if (auth_keylen > (unsigned int)block_size) {
+-		QAT_LOG(ERR, "invalid keylen %u", auth_keylen);
+-		return -EFAULT;
+-	}
+-
+-	RTE_VERIFY(auth_keylen <= sizeof(ipad));
+-	RTE_VERIFY(auth_keylen <= sizeof(opad));
+-
+-	rte_memcpy(ipad, auth_key, auth_keylen);
+-	rte_memcpy(opad, auth_key, auth_keylen);
+-
+-	for (i = 0; i < block_size; i++) {
+-		uint8_t *ipad_ptr = ipad + i;
+-		uint8_t *opad_ptr = opad + i;
+-		*ipad_ptr ^= HMAC_IPAD_VALUE;
+-		*opad_ptr ^= HMAC_OPAD_VALUE;
+-	}
+-
+-	/* do partial hash of ipad and copy to state1 */
+-	if (partial_hash_compute(hash_alg, ipad, p_state_buf)) {
+-		rte_memzero_explicit(ipad, block_size);
+-		rte_memzero_explicit(opad, block_size);
+-		QAT_LOG(ERR, "ipad precompute failed");
+-		return -EFAULT;
+-	}
+-
+-	/*
+-	 * State len is a multiple of 8, so may be larger than the digest.
+-	 * Put the partial hash of opad state_len bytes after state1
+-	 */
+-	*p_state_len = qat_hash_get_state1_size(hash_alg);
+-	if (partial_hash_compute(hash_alg, opad, p_state_buf + *p_state_len)) {
+-		rte_memzero_explicit(ipad, block_size);
+-		rte_memzero_explicit(opad, block_size);
+-		QAT_LOG(ERR, "opad precompute failed");
+-		return -EFAULT;
+-	}
+-
+-	/*  don't leave data lying around */
+-	rte_memzero_explicit(ipad, block_size);
+-	rte_memzero_explicit(opad, block_size);
+-out:
+-	return 0;
+-}
+-
+-#else
++/* HMAC precomputes always use IPsec MB (OpenSSL 3.0 removed SHA*_Transform APIs)
++ * OpenSSL is only used for DOCSIS BPI cipher fallback (via EVP API)
++ */
  
-+	/* If only relaxed order is allowed. */
-+	if (hca_attr->mkc_order_write_after_write_ro_only)
-+		mlx5_devx_mkey_attr_set_ordering(attr, hca_attr);
- 	for (i = 0; i < qp->entries_n; i++) {
- 		attr->klm_array = update_cb(priv, qp, i);
- 		qp->mkey[i] = mlx5_devx_cmd_mkey_create(priv->cdev->ctx, attr);
-diff --git a/drivers/regex/mlx5/mlx5_regex_fastpath.c b/drivers/regex/mlx5/mlx5_regex_fastpath.c
-index 3207bcbc603..55f7411593a 100644
---- a/drivers/regex/mlx5/mlx5_regex_fastpath.c
-+++ b/drivers/regex/mlx5/mlx5_regex_fastpath.c
-@@ -755,9 +755,14 @@ mlx5_regexdev_setup_fastpath(struct mlx5_regex_priv *priv, uint32_t qp_id)
- 	setup_qps(priv, qp);
+ static int aes_ipsecmb_job(uint8_t *in, uint8_t *out, IMB_MGR *m,
+ 		const uint8_t *key, uint16_t auth_keylen)
+@@ -1992,7 +1665,6 @@ static int qat_sym_do_precomputes_ipsec_mb(enum icp_qat_hw_auth_algo hash_alg,
+ 	free_mb_mgr(m);
+ 	return ret;
+ }
+-#endif
  
- 	if (priv->has_umr) {
-+		struct mlx5_hca_attr *hca_attr = &priv->cdev->config.hca_attr;
-+
- #ifdef HAVE_IBV_FLOW_DV_SUPPORT
- 		attr.pd = priv->cdev->pdn;
+ static void
+ qat_sym_session_init_common_hdr(struct qat_sym_session *session)
+@@ -2482,16 +2154,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 			break;
+ 		}
+ 		/* SHA-1 HMAC */
+-#ifdef RTE_QAT_OPENSSL
+-		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA1, authkey,
+-			authkeylen, cdesc->cd_cur_ptr, &state1_size,
+-			cdesc->aes_cmac);
+-
+-#else
+ 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA1,
+ 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
+ 			cdesc->aes_cmac);
+-#endif
+ 
+ 		if (ret) {
+ 			QAT_LOG(ERR, "(SHA)precompute failed");
+@@ -2509,15 +2174,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 			break;
+ 		}
+ 		/* SHA-224 HMAC */
+-#ifdef RTE_QAT_OPENSSL
+-		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA224, authkey,
+-			authkeylen, cdesc->cd_cur_ptr, &state1_size,
+-			cdesc->aes_cmac);
+-#else
+ 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA224,
+ 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
+ 			cdesc->aes_cmac);
+-#endif
+ 		if (ret) {
+ 			QAT_LOG(ERR, "(SHA)precompute failed");
+ 			return -EFAULT;
+@@ -2534,15 +2193,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 			break;
+ 		}
+ 		/* SHA-256 HMAC */
+-#ifdef RTE_QAT_OPENSSL
+-		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA256, authkey,
+-			authkeylen, cdesc->cd_cur_ptr, &state1_size,
+-			cdesc->aes_cmac);
+-#else
+ 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA256,
+ 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
+ 			cdesc->aes_cmac);
+-#endif
+ 		if (ret) {
+ 			QAT_LOG(ERR, "(SHA)precompute failed");
+ 			return -EFAULT;
+@@ -2559,15 +2212,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 			break;
+ 		}
+ 		/* SHA-384 HMAC */
+-#ifdef RTE_QAT_OPENSSL
+-		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA384, authkey,
+-			authkeylen, cdesc->cd_cur_ptr, &state1_size,
+-			cdesc->aes_cmac);
+-#else
+ 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA384,
+ 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
+ 			cdesc->aes_cmac);
+-#endif
+ 		if (ret) {
+ 			QAT_LOG(ERR, "(SHA)precompute failed");
+ 			return -EFAULT;
+@@ -2584,15 +2231,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 			break;
+ 		}
+ 		/* SHA-512 HMAC */
+-#ifdef RTE_QAT_OPENSSL
+-		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_SHA512, authkey,
+-			authkeylen, cdesc->cd_cur_ptr, &state1_size,
+-			cdesc->aes_cmac);
+-#else
+ 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_SHA512,
+ 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
+ 			cdesc->aes_cmac);
+-#endif
+ 		if (ret) {
+ 			QAT_LOG(ERR, "(SHA)precompute failed");
+ 			return -EFAULT;
+@@ -2628,16 +2269,10 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 
+ 		if (cdesc->aes_cmac)
+ 			memset(cdesc->cd_cur_ptr, 0, state1_size);
+-#ifdef RTE_QAT_OPENSSL
+-		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_AES_XCBC_MAC,
+-			authkey, authkeylen, cdesc->cd_cur_ptr + state1_size,
+-			&state2_size, cdesc->aes_cmac);
+-#else
+ 		ret = qat_sym_do_precomputes_ipsec_mb(
+ 			ICP_QAT_HW_AUTH_ALGO_AES_XCBC_MAC,
+ 			authkey, authkeylen, cdesc->cd_cur_ptr + state1_size,
+ 			&state2_size, cdesc->aes_cmac);
+-#endif
+ 		if (ret) {
+ 			QAT_LOG(ERR, "(%s)precompute failed",
+ 				cdesc->aes_cmac ? "CMAC" : "XCBC");
+@@ -2654,15 +2289,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 	case ICP_QAT_HW_AUTH_ALGO_GALOIS_64:
+ 		cdesc->qat_proto_flag = QAT_CRYPTO_PROTO_FLAG_GCM;
+ 		state1_size = ICP_QAT_HW_GALOIS_128_STATE1_SZ;
+-#ifdef RTE_QAT_OPENSSL
+-		ret = qat_sym_do_precomputes(cdesc->qat_hash_alg, authkey,
+-			authkeylen, cdesc->cd_cur_ptr + state1_size,
+-			&state2_size, cdesc->aes_cmac);
+-#else
+ 		ret = qat_sym_do_precomputes_ipsec_mb(cdesc->qat_hash_alg, authkey,
+ 			authkeylen, cdesc->cd_cur_ptr + state1_size,
+ 			&state2_size, cdesc->aes_cmac);
+-#endif
+ 		if (ret) {
+ 			QAT_LOG(ERR, "(GCM)precompute failed");
+ 			return -EFAULT;
+@@ -2734,15 +2363,9 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 		auth_param->hash_state_sz = ICP_QAT_HW_ZUC_256_IV_SZ >> 3;
+ 		break;
+ 	case ICP_QAT_HW_AUTH_ALGO_MD5:
+-#ifdef RTE_QAT_OPENSSL
+-		ret = qat_sym_do_precomputes(ICP_QAT_HW_AUTH_ALGO_MD5, authkey,
+-			authkeylen, cdesc->cd_cur_ptr, &state1_size,
+-			cdesc->aes_cmac);
+-#else
+ 		ret = qat_sym_do_precomputes_ipsec_mb(ICP_QAT_HW_AUTH_ALGO_MD5,
+ 			authkey, authkeylen, cdesc->cd_cur_ptr, &state1_size,
+ 			cdesc->aes_cmac);
+-#endif
+ 		if (ret) {
+ 			QAT_LOG(ERR, "(MD5)precompute failed");
+ 			return -EFAULT;
+@@ -3188,22 +2811,21 @@ qat_security_session_create(void *dev,
+ 	}
+ 
+ #ifdef RTE_QAT_OPENSSL
+-#if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+ 	if (ossl_legacy_provider_load())
+ 		return -EINVAL;
+-#endif
  #endif
-+		/* If only relaxed order is allowed. */
-+		if (hca_attr->mkc_order_write_after_write_ro_only)
-+			mlx5_devx_mkey_attr_set_ordering(&attr, hca_attr);
- 		for (i = 0; i < qp->nb_desc; i++) {
- 			attr.klm_num = MLX5_REGEX_MAX_KLM_NUM;
- 			attr.klm_array = qp->jobs[i].imkey_array;
-diff --git a/drivers/regex/mlx5/mlx5_rxp.c b/drivers/regex/mlx5/mlx5_rxp.c
-index dda4a7fdb0b..b865c08b53c 100644
---- a/drivers/regex/mlx5/mlx5_rxp.c
-+++ b/drivers/regex/mlx5/mlx5_rxp.c
-@@ -54,6 +54,7 @@ rxp_create_mkey(struct mlx5_regex_priv *priv, void *ptr, size_t size,
- 	uint32_t access, struct mlx5_regex_mkey *mkey)
- {
- 	struct mlx5_devx_mkey_attr mkey_attr;
-+	struct mlx5_hca_attr *hca_attr = &priv->cdev->config.hca_attr;
+ 	ret = qat_sec_session_set_docsis_parameters(cdev, conf,
+ 			sess_private_data, SECURITY_GET_SESS_PRIV_IOVA(sess));
+ 	if (ret != 0) {
+ 		QAT_LOG(ERR, "Failed to configure session parameters");
++#ifdef RTE_QAT_OPENSSL
++		ossl_legacy_provider_unload();
++#endif
+ 		return ret;
+ 	}
  
- 	/* Register the memory. */
- 	mkey->umem = mlx5_glue->devx_umem_reg(priv->cdev->ctx, ptr, size, access);
-@@ -72,6 +73,9 @@ rxp_create_mkey(struct mlx5_regex_priv *priv, void *ptr, size_t size,
- #ifdef HAVE_IBV_FLOW_DV_SUPPORT
- 	mkey_attr.pd = priv->cdev->pdn;
+ #ifdef RTE_QAT_OPENSSL
+-#if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+ 	ossl_legacy_provider_unload();
+-#endif
  #endif
-+	/* If only relaxed order is allowed. */
-+	if (hca_attr->mkc_order_write_after_write_ro_only)
-+		mlx5_devx_mkey_attr_set_ordering(&mkey_attr, hca_attr);
- 	mkey->mkey = mlx5_devx_cmd_mkey_create(priv->cdev->ctx, &mkey_attr);
- 	if (!mkey->mkey) {
- 		DRV_LOG(ERR, "Failed to create direct mkey!");
-diff --git a/drivers/vdpa/mlx5/mlx5_vdpa_mem.c b/drivers/vdpa/mlx5/mlx5_vdpa_mem.c
-index 4dfe800b8fc..8c9d169d2a8 100644
---- a/drivers/vdpa/mlx5/mlx5_vdpa_mem.c
-+++ b/drivers/vdpa/mlx5/mlx5_vdpa_mem.c
-@@ -179,6 +179,7 @@ static int
- mlx5_vdpa_create_indirect_mkey(struct mlx5_vdpa_priv *priv)
- {
- 	struct mlx5_devx_mkey_attr mkey_attr;
-+	struct mlx5_hca_attr *hca_attr = &priv->cdev->config.hca_attr;
- 	struct mlx5_vdpa_query_mr *mrs =
- 		(struct mlx5_vdpa_query_mr *)priv->mrs;
- 	struct mlx5_vdpa_query_mr *entry;
-@@ -242,6 +243,9 @@ mlx5_vdpa_create_indirect_mkey(struct mlx5_vdpa_priv *priv)
- 	mkey_attr.pg_access = 0;
- 	mkey_attr.klm_array = klm_array;
- 	mkey_attr.klm_num = klm_index;
-+	/* If only relaxed order is allowed. */
-+	if (hca_attr->mkc_order_write_after_write_ro_only)
-+		mlx5_devx_mkey_attr_set_ordering(&mkey_attr, hca_attr);
- 	entry = &mrs[mem->nregions];
- 	entry->mkey = mlx5_devx_cmd_mkey_create(priv->cdev->ctx, &mkey_attr);
- 	if (!entry->mkey) {
+ 	return 0;
+ }
 -- 
-2.21.0
+2.43.0
 
