@@ -2,84 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 705CFCDB477
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 08:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A5DCDB471
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 08:19:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7985B4029D;
-	Mon, 22 Jun 2026 10:04:59 +0200 (CEST)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com
- [209.85.160.169])
- by mails.dpdk.org (Postfix) with ESMTP id 22ED04021F
- for <dev@dpdk.org>; Mon, 22 Jun 2026 10:04:59 +0200 (CEST)
-Received: by mail-qt1-f169.google.com with SMTP id
- d75a77b69052e-5177945a22eso28175991cf.1
- for <dev@dpdk.org>; Mon, 22 Jun 2026 01:04:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782115498; cv=none;
- d=google.com; s=arc-20240605;
- b=NdYG1+L+Z+A+O0aqGLHtG3QL1TlIuES6+Gv9fHb3bYO2hTHKSbodYKCQQOSFEzuuEN
- OHhmw7drGtohOXk2w6VwuqKFBb709X3HZNTWcC/GPmYGMBZkU5uLXPcIteJElee7mJTO
- Pljyl4GYjOpTaKLUI5/F6jwFZiL92U0Sqt4bWJiukqd7TQCnYRNi4IAOVqFgoJWn8diw
- laNQw9jjD7Yz3eldX1bf+13HlpusuLg7cAz8so2eUHhxaOCqF4fgkAoAzKYHPpsrXNld
- +syLimnWvxohwWZQj4f0UAXkdRyra5JQU/GiWdoUv8dPI1v1cNlSANqaP9RwleLycVBV
- YfCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=ZF0P/rUPzHygT6+l3F+qaeMQozg77ReLoehzGmHu0mA=;
- fh=NCdZfH2Otwhp2gcbwJCKUQDp3uaNU8cPlwArlGDOzdw=;
- b=ehyVyQ/WEiys7dr9qAVuyFuaoakNFAwTjBk9AXrzopidcmLpS8Pc7NZpHUki3vzPAM
- OtRm+dGJgNbvHGL7Je1gnxDMRGB6R2FOFu5l05svnp4KxhTJJhUh1DoF9MHJL48u8Ppl
- t2LHtnm/DnrppjKcb411jAxZ/29Nz4ud7zfr37EIL3T/9vcpDep8CF5oiXr4MyXYTA3P
- neN4Cd/ipCD/LuhYFKJ8ThZ0LZ1tXhgWcdC59BnCzdSsfIKhpgWUL+wv4lW8TFvVw/gl
- 4Ru2/slVQ80nqMEQOqB0mPg8b/muthvMJOIYdNFWWL+Z3NJGYIBevAE7xIyrYTllTAZz
- gGpw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782115498; x=1782720298; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ZF0P/rUPzHygT6+l3F+qaeMQozg77ReLoehzGmHu0mA=;
- b=GmlaBHCQUckjR2+2PN0klijG+Gp+dhLlhXluHVdsVhEEC9a0LBp1VU2vUbCgRvT6ZE
- hnEc4tqKwAKqlXGhgtuMeMfXDqWIWmn5XKV4jH6l7f7Jb60zBeSV57XwumkKFBcsQ2Lz
- exV/50BPqG/BdA/MdwN956g3YIkuue+ZsLfu4xUtxu2C65U/820/n/j96b6yi0Lo4mKZ
- 2mBR7BLahS/79KaAnIjPE9+uqAHkD1jLcDKWnFeCHRBgyKe7SMuCz25mkfK8RrMXRtuX
- Jx71+mzzk2g0Y2jx+xmkfa20wjeHU0kXv9JdxHaKTKqP4F6lzUNOwnYBSF7hRNBgx7YF
- Viiw==
+	by mails.dpdk.org (Postfix) with ESMTP id 94C354029D;
+	Mon, 22 Jun 2026 10:18:59 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B77AE4021F
+ for <dev@dpdk.org>; Mon, 22 Jun 2026 10:18:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1782116336;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=/S1hIoh4Or6+AbT2W7T9eJpwBrDVLuosVAyG5AzAHfU=;
+ b=blCrrA7rGP0gw3ezrsPrL2G00sgI5ip+Waat/u63691HL0aVcu2lLmR2XxpatVoFk288lj
+ +vqTRynsdQfV14nx5QFhmf9beU+AqImUfvu2PYai/TT7iLKn7LLdF3jIuT9OVPMEJKZP1I
+ aQn5yYvqRZspTeQE4WjfdHuDQe5UbXg=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-159-3ZdLViVTMGqe3BzUajnA9Q-1; Mon, 22 Jun 2026 04:18:55 -0400
+X-MC-Unique: 3ZdLViVTMGqe3BzUajnA9Q-1
+X-Mimecast-MFC-AGG-ID: 3ZdLViVTMGqe3BzUajnA9Q_1782116334
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-39987ae63b5so17022601fa.3
+ for <dev@dpdk.org>; Mon, 22 Jun 2026 01:18:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782115498; x=1782720298;
+ d=1e100.net; s=20251104; t=1782116334; x=1782721134;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ZF0P/rUPzHygT6+l3F+qaeMQozg77ReLoehzGmHu0mA=;
- b=EomtpT0rVPS8aahNS2sv3amJLh5cCMbbCqooFKM3JsofxLhZr3et95v3h8KHfGnVMt
- rjs6yFbg6WTGs4hzvyRjFaOXhl4oRd7KvvfEuLLMXKkk3h0lbpyWxZqwRjEyW5gxjAcK
- C8VUnSYEKgOCzrApox6WSB4Ma6J9YY46+e7SpgxnBnRY0FsV7aN44Xk9TJfbKGB93cod
- Q9uLjistcH4JViZIBAc94kdguDbLDk2XRLF0G/D2vm3sLUjippvPFFhuZrkMrBoRFj0u
- +icXQn2MZPj8aaVtLBQvWNF2uch+U9XeV4nFRtps01DygNvvOxHQHqrqtPUFOGtbF2AK
- AnTQ==
-X-Gm-Message-State: AOJu0YwnYhQ5GPHbITKcjAj0J4rpaz07wkAdv2KK1XQtddEIJ//Wo64N
- F9LhEzkcSrO2d/gxy6OVNUbpVgff1CkhJtTNOI70GWcU7lkEJAM+f7FLpkt3CgUQE3OTPsuzUIC
- j3NnWQV2knZkdSpVt5bLNhI7MsWesq5c=
-X-Gm-Gg: AfdE7cmUX8jVGSdtw/wEzOQyvL8bzZyJPXLuD+2KxRHi5UhJfKBGFsNwxrWEnNFASw0
- /A2mq/KFN/8O5VgCdi3+kDLqVTXVtLW2TQrzlJq/1eV79IRl/Om+m2OJ11AY1HXp3u4Wr2RcCdI
- 8a8fDf84C7kmhj2r3Fb9d5cIdFepEbgQ5iuo7n02fHXE76/JSDaaq7o6oFGtSXOvocBNJoGV2eE
- W9UyoXMA/v1H6eZFPIhFbTsFjQUbnciqX5LCK7+qDpiLUpBvoCLCMq34EnY5uFDYeV3
-X-Received: by 2002:ac8:6905:0:b0:516:e031:932e with SMTP id
- d75a77b69052e-519e4905c5cmr183795191cf.4.1782115498240; Mon, 22 Jun 2026
- 01:04:58 -0700 (PDT)
+ bh=/S1hIoh4Or6+AbT2W7T9eJpwBrDVLuosVAyG5AzAHfU=;
+ b=dmX7GqVlGmBCW+TNuOHsG9CnDAyEFefgdH7ksLpEJVBOXaZl/9QRWhyTK/Xe+YcsjU
+ UCO835T5Vqa9V8mY9H4DTa8+LnzDSA6kaCgeMESWKxmTW+h8duNBhUpUOdO4KYpeNAMM
+ LmpdenSgfAuMGCNnVrcOtgQdB5kaFp6pMMyQ8xi+f4bwd3zoYYcmYa6hi2tn+iR5h053
+ Ws78AMcqgK1l6UD2mRP7LgmfVoUjSeYhpmWIgDv25wgy/qvS7Pe45oEz8gIFUh5f3dUF
+ +6mwumnSLAGjt3CsOo4RULQTicr4qAWu3rnwy8uTevHBMNL+9hIxvK2rlmTA/KNpFi43
+ mJvg==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ/iyDuLu0SICCKBKfTD31aN6WhgwsulBqUjsIEk1pLQtW7h6xvVhmPIG3UNcRklQ/eNURA=@dpdk.org
+X-Gm-Message-State: AOJu0Yw+Cosa6g4gaWBvMjVGxLiiQoY7X47H6o7w9Ffuo3HzZucVA2iN
+ mVpESQ1KgAiiyV2c2C/gVDAYlafS4zW/HtazHpB/xXNIjp0qKZGeHKPOH3bvRXt1MplkWQIX8Px
+ 7oy20rAqs4uNWJ8U1YEOAj1FLZVPvm6nrnNSM6BqIlseVlGZYr7eMisy9e1TDQTu3gM0ZypknMU
+ 5XXm3LpnqkDM5dZ8dgzWk=
+X-Gm-Gg: AfdE7clvTkbYUGFkpXr+EEvo5JGfUYRUdx/qdkB5Z/r9Q0OpvFlC7En1gNwsQSf+cb+
+ LSiE1LBShSK1eVA566Gz+pHOO9A1Lmq5nvQrAcyT2Enh8ETkR9nFldPg+NOSoA+trtkKvxkgDud
+ /UrgFlpzk//yVt3YaLZw7xG/pMM+83fV2cYJh9J8YqKFcLoyy9ssuhMlcuLQn18KYnNTQoVzDd9
+ bN0B5p9acrg/KbJTr5oRqFOG1NgKwdkmCHnmBCidazWCLPTuH4pmMkvVHA=
+X-Received: by 2002:a2e:a9a9:0:b0:399:b07e:daa7 with SMTP id
+ 38308e7fff4ca-399b07edc53mr11159441fa.24.1782116333682; 
+ Mon, 22 Jun 2026 01:18:53 -0700 (PDT)
+X-Received: by 2002:a2e:a9a9:0:b0:399:b07e:daa7 with SMTP id
+ 38308e7fff4ca-399b07edc53mr11159371fa.24.1782116333102; Mon, 22 Jun 2026
+ 01:18:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260331085445.1105590-1-syalavarthi@marvell.com>
- <20260609035251.912771-1-syalavarthi@marvell.com>
-In-Reply-To: <20260609035251.912771-1-syalavarthi@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 22 Jun 2026 13:34:32 +0530
-X-Gm-Features: AVVi8CdPsXrcfldOYYVKV-2VtEqFOZGT--KwLioQZtJ3z8fC_lGP3fvuy7IPRSg
-Message-ID: <CALBAE1OaSiPNdS4V5thsiQYqLoa5DRjYiwpvfq2uLxxuNuperQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] ml/cnxk: fix overwriting layer name during load
-To: Srikanth Yalavarthi <syalavarthi@marvell.com>
-Cc: dev@dpdk.org, jerinj@marvell.com
+References: <20260617102834.2343356-1-lihuisong@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65917@smartserver.smartshare.dk>
+ <20260618190339.2fc76616@phoenix.local>
+ <15b95ab5-af2e-40d2-8ea8-a5d14a52dfc0@huawei.com>
+In-Reply-To: <15b95ab5-af2e-40d2-8ea8-a5d14a52dfc0@huawei.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 22 Jun 2026 10:18:41 +0200
+X-Gm-Features: AVVi8CdxqPkPMYmFn18aoNypnVNWXmBRvpHKhxk36PiU7VcG67tzGVJbzDizDZo
+Message-ID: <CAJFAV8yNsZ_SLcG-ukzmDTQXRXDsGVtf-9szwSc6T2GM+fhE_Q@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] prefix lcore role enum values
+To: "lihuisong (C)" <lihuisong@huawei.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
+ thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru, dev@dpdk.org, 
+ zhanjie9@hisilicon.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: EV7CtQvnRpPLmeNPT8SJesloNHGIGOl9hXOmEsG2OWw_1782116334
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -95,16 +92,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jun 9, 2026 at 9:31=E2=80=AFAM Srikanth Yalavarthi
-<syalavarthi@marvell.com> wrote:
->
-> Layer name is initialized during metadata fetch and parsing
-> stage and should not be overwritten during model load. Fix
-> overwriting the layer name during layer load.
->
-> Fixes: cc254869ae19 ("ml/cnxk: update model load/unload functions")
->
-> Signed-off-by: Srikanth Yalavarthi <syalavarthi@marvell.com>
-> ---
+Hello all,
 
-Applied to dpdk-next-net-mrvl/for-main. Thanks
+On Mon, 22 Jun 2026 at 03:23, lihuisong (C) <lihuisong@huawei.com> wrote:
+> On 6/19/2026 10:03 AM, Stephen Hemminger wrote:
+> > On Wed, 17 Jun 2026 13:48:37 +0200
+> > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+> >
+> >>> From: Huisong Li [mailto:lihuisong@huawei.com]
+> >>> Sent: Wednesday, 17 June 2026 12.28
+> >>>
+> >>> Add the RTE_LCORE_ prefix to the lcore role enum values in
+> >>> rte_lcore_role_t
+> >>> to follow DPDK naming conventions.
+> >>>
+> >>> - ROLE_RTE      -> RTE_LCORE_ROLE_RTE
+> >>> - ROLE_OFF      -> RTE_LCORE_ROLE_OFF
+> >>> - ROLE_SERVICE  -> RTE_LCORE_ROLE_SERVICE
+> >>> - ROLE_NON_EAL  -> RTE_LCORE_ROLE_NON_EAL
+> >>>
+> >>> Old names are kept as macros aliasing to the new names to preserve
+> >>> backward compatibility.
+> >>>
+> >> Series-Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> >>
+> > The problem with this patch it causes build failures now with abi diff.
+> >
+> > Example build log...
+> >
+> >
+> > 2 functions with some indirect sub-type change:
+> >
+> >
+> >
+> >
+> >
+> >   [C] 'function rte_lcore_role_t rte_eal_lcore_role(unsigned int)' at e=
+al_common_lcore.c:74:1 has some indirect sub-type changes:
+> >
+> >   return type changed:
+> >
+> >   type size hasn't changed
+> >
+> >   4 enumerator deletions:
+> >
+> >   'rte_lcore_role_t::ROLE_RTE' value '0'
+> >
+> >   'rte_lcore_role_t::ROLE_OFF' value '1'
+> >
+> >   'rte_lcore_role_t::ROLE_SERVICE' value '2'
+> >
+> >   'rte_lcore_role_t::ROLE_NON_EAL' value '3'
+> >
+> >   4 enumerator insertions:
+> >
+> >   'rte_lcore_role_t::RTE_LCORE_ROLE_RTE' value '0'
+> >
+> >   'rte_lcore_role_t::RTE_LCORE_ROLE_OFF' value '1'
+> >
+> >   'rte_lcore_role_t::RTE_LCORE_ROLE_SERVICE' value '2'
+> >
+> >   'rte_lcore_role_t::RTE_LCORE_ROLE_NON_EAL' value '3'
+> >
+> >
+> >
+> >
+> >
+> >   [C] 'function int rte_lcore_has_role(unsigned int, rte_lcore_role_t)'=
+ at eal_common_lcore.c:85:1 has some indirect sub-type changes:
+> >
+> >   parameter 2 of type 'enum rte_lcore_role_t' has sub-type changes:
+> >
+> >   enum type 'enum rte_lcore_role_t' changed at rte_lcore.h:33:1, as rep=
+orted earlier
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+> > Error: ABI issue reported for abidiff --suppr /home/runner/work/dpdk/dp=
+dk/devtools/libabigail.abignore --no-added-syms --headers-dir1 reference/us=
+r/local/include --headers-dir2 install/usr/local/include reference/usr/loca=
+l/lib/librte_eal.so.26.1 install/usr/local/lib/librte_eal.so.26.2
+> We just came back from the Dragon Boat Festival.
+> I also received this ABI change warning. But I didn't have any good
+> ideas yet.
+> Thanks for helping to handle this.
+> Sorry for the inconvenience.
+
+There is nothing broken from a ABI pov.
+This is a limitation in earlier versions of libabigail.
+I can't reproduce with libabigail 2.9 (update in progress as I see
+2.10 is available now).
+
+I think it was solved in libabigail 2.8
+(https://sourceware.org/git/?p=3Dlibabigail.git;a=3Dcommit;h=3D6f5f91564bdd=
+).
+
+If we want to go with the enum renaming before 26.11, bumping
+libabigail to 2.10 in the CI is an option (latest upstream version,
+and this is the version in f43 and f44).
+I tried it in GHA:
+https://github.com/david-marchand/dpdk/actions/runs/27937595115/job/8266295=
+3500
+
+
+--=20
+David Marchand
+
