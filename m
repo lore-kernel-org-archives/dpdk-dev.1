@@ -2,72 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1AFFCDB46F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 15:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B54CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 16:27:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C7BAF40150;
-	Mon, 22 Jun 2026 17:44:21 +0200 (CEST)
-Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
- by mails.dpdk.org (Postfix) with ESMTP id 37CF940144
- for <dev@dpdk.org>; Mon, 22 Jun 2026 17:44:20 +0200 (CEST)
-Received: by mail-dl1-f44.google.com with SMTP id
- a92af1059eb24-1397e093f90so815585c88.1
- for <dev@dpdk.org>; Mon, 22 Jun 2026 08:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782143059;
- x=1782747859; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=TxHw9FNXhs3WjoVuXdujkdpT0WKll9+MxvhTqcMgeeQ=;
- b=mLBRTuMVmW3xPcQtBBM72QShrcHVnBYJYG4gR+f+NVUv+fCJYdOVILc8AtgsiXwueb
- Ks0w9Q3WREBXn7X/qGsM9MdOjIwyu81dhCYvRZtUsa8u1rrOg+8QsFPivfznF2aFPeZm
- T7VTYVYVWHYejebN2l9W7+ne97iHx1pDS+lOHreUi/IAF7ex+vx7lWpMfhDjGhBwtfbk
- Ump0YnVlH5VexvquYSDEI0TeVT59HTK5szVOBl97gWL5N3adXtQwor/iVwEFuUxtK68r
- ZmXCfo2/EihCiK50jeFGQ8lgN4f7x7zPQs9DIsOgHi7PnfUKWs9pVXRwJ145IvSuchov
- LFrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782143059; x=1782747859;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=TxHw9FNXhs3WjoVuXdujkdpT0WKll9+MxvhTqcMgeeQ=;
- b=hG1DeN4awYbSgjzwu7DI7gDp4Kl/ckBF4A73PeCVyBJMKhTkiwfK5l4LgSR2SSZpFE
- uaLYLmsGY6z2691IGfQ3unEAe1Vr2iECEzsjW+Fg3bSkgWFGjD3k92ONA5ZZIne5FM39
- CLILKB65vd6IbUi0RRrcg8nDtV+3gVsP/cEQZWUUTlmOtzb1a5ZR4cnWb2XdPJY0hn4n
- u2RuqevE/EdhEwv8gS1YCgvJi/StBw9wlVgwzDGsvfSp6cPZom9btYPYik9G4WZuSjZS
- F+0TLV5mGyrphlkLskOwQfZTFgOwcD1LVc/eBvB050zCpbIR7IwtK7skjgEBx2SU7MDf
- ZXlg==
-X-Gm-Message-State: AOJu0YwAwdwRT1MAo0wkRFVeIrLoPd1E079z2OzCuvww0+8yJgrg14TU
- TDv0DDKOaD6i79gPfPGvU+HjRoYPwc95Mc52y1+hmKBUJk0FiH1yoWm7PB/icl1E2L8Y5aUwscj
- 9Gcl5
-X-Gm-Gg: AfdE7cn9Cts0CKHkZG5ElQc2Ding9iBABEB6ET3NmQ3wnKYQ1fZKp4WP9fq3ODsx0Lb
- IpKaaQq71DHPV/XbuZ/K5KiG+pe+Vpo1r8olCdw1py0YFMISLQkCH4UbThF77shcSA7lyf9uqra
- qhI+e1NzPv8ZCZZFvAMV8pvArATZFIy7tSa4qPNs1ObZRUk2HuiXoA6g209OTzlO4VftcVMH0p+
- JOmhlActP/W6YtVZgDG04p/s4RicpNFcR7WZ9LMLs5Au/ah2dnxqRsTeGw9kSDk6N8LHHbu6pOa
- k0eLqG1UmD1t1SrlIkW2OaDZn0q31MgTB/gia8qcZN60XrNsdclBUPmKvb+aKWkqN/GhtdEn7I/
- XGTLlWYS5GBB64KaZZ46GN9gfMyLHui467Ez4fwkv6AgXLBzfTLbryYtLCHs8LU+c8Hrlu6OWxN
- LndvO51dyQJIDU6i4YH077ZksGABR5kM2Fxs8knpmESghKZM6weH7yCA==
-X-Received: by 2002:a05:7022:98d:b0:138:35da:3cc3 with SMTP id
- a92af1059eb24-139a3686db5mr8880846c88.30.1782143058411; 
- Mon, 22 Jun 2026 08:44:18 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-139adcce488sm7516397c88.8.2026.06.22.08.44.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 22 Jun 2026 08:44:18 -0700 (PDT)
-Date: Mon, 22 Jun 2026 08:44:15 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: liujie5@linkdatatechnology.com
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v5 00/23] net/sxe2: added Linkdata sxe2 ethernet driver
-Message-ID: <20260622084415.4e25bdd6@phoenix.local>
-In-Reply-To: <20260622092324.3091185-1-liujie5@linkdatatechnology.com>
-References: <20260619081304.1546974-1-liujie5@linkdatatechnology.com>
- <20260622092324.3091185-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5E9D140611;
+	Mon, 22 Jun 2026 18:26:59 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id ADA0440150;
+ Mon, 22 Jun 2026 18:26:57 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gkYVW4JXZzHnGcV;
+ Tue, 23 Jun 2026 00:26:27 +0800 (CST)
+Received: from frapema500002.china.huawei.com (unknown [7.182.19.148])
+ by mail.maildlp.com (Postfix) with ESMTPS id 39B6C4058D;
+ Tue, 23 Jun 2026 00:26:56 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema500002.china.huawei.com (7.182.19.148) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 22 Jun 2026 18:26:56 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Mon, 22 Jun 2026 18:26:55 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: Christophe Fontaine <cfontain@redhat.com>, "stable@dpdk.org"
+ <stable@dpdk.org>, Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>, Jerin Jacob
+ <jerinj@marvell.com>
+Subject: RE: [PATCH v3 3/6] bpf/arm64: fix offset type to allow a negative jump
+Thread-Topic: [PATCH v3 3/6] bpf/arm64: fix offset type to allow a negative
+ jump
+Thread-Index: AQHdAZqZqr36ZKw+zk2bUklf5Dkle7ZKw9rw
+Date: Mon, 22 Jun 2026 16:26:55 +0000
+Message-ID: <6ba54fbca1fb4b4681174e001508fafa@huawei.com>
+References: <20260608203322.1116296-1-stephen@networkplumber.org>
+ <20260621162524.82690-1-stephen@networkplumber.org>
+ <20260621162524.82690-4-stephen@networkplumber.org>
+In-Reply-To: <20260621162524.82690-4-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,210 +62,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 22 Jun 2026 17:23:24 +0800
-liujie5@linkdatatechnology.com wrote:
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Sunday 21 June 2026 17:24
+> To: dev@dpdk.org
+> Cc: Christophe Fontaine <cfontain@redhat.com>; stable@dpdk.org; Stephen H=
+emminger
+> <stephen@networkplumber.org>; Wathsala Vithanage <wathsala.vithanage@arm.=
+com>; Konstantin Ananyev
+> <konstantin.ananyev@huawei.com>; Marat Khalili <marat.khalili@huawei.com>=
+; Jerin Jacob
+> <jerinj@marvell.com>
+> Subject: [PATCH v3 3/6] bpf/arm64: fix offset type to allow a negative ju=
+mp
+>=20
+> From: Christophe Fontaine <cfontain@redhat.com>
+>=20
+> The DPDK BPF JIT standalone test test_ld_mbuf1 fails on arm64.
+> It does:
+> 	r6 =3D r1                    // mbuf
+> 	r0 =3D *(u8 *)pkt[0]         // BPF_ABS
+> 	if ((r0 & 0xf0) =3D=3D 0x40)
+> 		goto parse
+> 	r0 =3D 0
+> 	exit                       // epilogue E0
+> parse:
+> 	r0 =3D *(u8 *)pkt[r0 + 3]    // BPF_IND
+> 	...
+> 	exit
+>=20
+> emit_return_zero_if_src_zero() returns 0 by branching to a function
+> epilogue. The target maybe a previous epilogue so branch
+> might be backwards; therefore the offset needs to be negative.
+>=20
+> The offset was stored in a uint16_t, so a negative value wrapped to a
+> large positive number; emit_b() then branched past the end of the
+> program and faulted at run time.
+>=20
+> Fixes: 111e2a747a4f ("bpf/arm: add basic arithmetic operations")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Christophe Fontaine <cfontain@redhat.com>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  lib/bpf/bpf_jit_arm64.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
+> index a04ef33a9c..67e42015de 100644
+> --- a/lib/bpf/bpf_jit_arm64.c
+> +++ b/lib/bpf/bpf_jit_arm64.c
+> @@ -957,10 +957,12 @@ static void
+>  emit_return_zero_if_src_zero(struct a64_jit_ctx *ctx, bool is64, uint8_t=
+ src)
+>  {
+>  	uint8_t r0 =3D ebpf_to_a64_reg(ctx, EBPF_REG_0);
+> -	uint16_t jump_to_epilogue;
+> +	int32_t jump_to_epilogue;
+>=20
+>  	emit_cbnz(ctx, is64, src, 3);
+>  	emit_mov_imm(ctx, is64, r0, 0);
+> +
+> +	/* maybe backwards branch to earlier epilogue */
+>  	jump_to_epilogue =3D (ctx->program_start + ctx->program_sz) - ctx->idx;
+>  	emit_b(ctx, jump_to_epilogue);
+>  }
+> --
+> 2.53.0
 
-> From: Jie Liu <liujie5@linkdatatechnology.com>
-> 
-> This patch set implements core functionality for the SXE2 PMD,
-> including basic driver framework, data path setup, and advanced
-> offload features (VLAN, RSS,TM, PTP etc.).
-> 
-> V5:
-> 	Refactored sxe2_ptype_tbl from adapter-indirection pattern (adapter->ptype_tbl[]) 
-> 	to extern const direct-access pattern, matching txgbe PMD convention
-> 
-> 	All vector/SIMD Rx paths (SSE, AVX2, AVX512, NEON) index sxe2_ptype_tbl[] directly without local pointer indirection
-> 
-> Jie Liu (23):
->   net/sxe2: remove software statistics devargs
->   net/sxe2: add Rx framework and packet types callback
->   net/sxe2: support AVX512 vectorized path for Rx and Tx
->   net/sxe2: add AVX2 vector data path for Rx and Tx
->   net/sxe2: add link update callback
->   net/sxe2: support L2 filtering and MAC config
->   drivers: support RSS feature
->   net/sxe2: support TM hierarchy and shaping
->   net/sxe2: support IPsec inline protocol offload
->   net/sxe2: support statistics and multi-process
->   drivers: interrupt handling
->   net/sxe2: add NEON vec Rx/Tx burst functions
->   drivers: add support for VF representors
->   net/sxe2: add support for custom UDP tunnel ports
->   net/sxe2: support firmware version reading
->   net/sxe2: implement get monitor address
->   common/sxe2: add shared SFP module definitions
->   net/sxe2: support SFP module info and EEPROM access
->   net/sxe2: implement private dump info
->   net/sxe2: add mbuf validation in Tx debug mode
->   common/sxe2: add callback for memory event handling
->   net/sxe2: add private devargs parsing
->   net/sxe2: update sxe2 feature matrix docs
-> 
->  doc/guides/nics/features/sxe2.ini          |   56 +
->  doc/guides/nics/sxe2.rst                   |  164 ++
->  drivers/common/sxe2/sxe2_common.c          |  156 ++
->  drivers/common/sxe2/sxe2_common.h          |    4 +
->  drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
->  drivers/common/sxe2/sxe2_ioctl_chnl.c      |  178 +-
->  drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
->  drivers/common/sxe2/sxe2_msg.h             |  118 ++
->  drivers/net/sxe2/meson.build               |   52 +
->  drivers/net/sxe2/sxe2_cmd_chnl.c           | 1587 +++++++++++++++-
->  drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
->  drivers/net/sxe2/sxe2_drv_cmd.h            |  523 +++++-
->  drivers/net/sxe2/sxe2_dump.c               |  302 +++
->  drivers/net/sxe2/sxe2_dump.h               |   12 +
->  drivers/net/sxe2/sxe2_ethdev.c             | 1511 ++++++++++++++-
->  drivers/net/sxe2/sxe2_ethdev.h             |  111 +-
->  drivers/net/sxe2/sxe2_ethdev_repr.c        |  609 ++++++
->  drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
->  drivers/net/sxe2/sxe2_filter.c             |  895 +++++++++
->  drivers/net/sxe2/sxe2_filter.h             |  100 +
->  drivers/net/sxe2/sxe2_flow.c               | 1394 ++++++++++++++
->  drivers/net/sxe2/sxe2_flow.h               |   30 +
->  drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
->  drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
->  drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
->  drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
->  drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
->  drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 +++++++++++++++++++
->  drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
->  drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
->  drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
->  drivers/net/sxe2/sxe2_irq.c                | 1026 ++++++++++
->  drivers/net/sxe2/sxe2_irq.h                |   25 +
->  drivers/net/sxe2/sxe2_mac.c                |  530 ++++++
->  drivers/net/sxe2/sxe2_mac.h                |   84 +
->  drivers/net/sxe2/sxe2_mp.c                 |  414 +++++
->  drivers/net/sxe2/sxe2_mp.h                 |   67 +
->  drivers/net/sxe2/sxe2_queue.c              |   17 +-
->  drivers/net/sxe2/sxe2_queue.h              |   15 +-
->  drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
->  drivers/net/sxe2/sxe2_rss.h                |   81 +
->  drivers/net/sxe2/sxe2_rx.c                 |   93 +-
->  drivers/net/sxe2/sxe2_rx.h                 |    2 +
->  drivers/net/sxe2/sxe2_security.c           |  335 ++++
->  drivers/net/sxe2/sxe2_security.h           |   77 +
->  drivers/net/sxe2/sxe2_stats.c              |  586 ++++++
->  drivers/net/sxe2/sxe2_stats.h              |   39 +
->  drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
->  drivers/net/sxe2/sxe2_switchdev.h          |   33 +
->  drivers/net/sxe2/sxe2_tm.c                 | 1151 ++++++++++++
->  drivers/net/sxe2/sxe2_tm.h                 |   76 +
->  drivers/net/sxe2/sxe2_tx.c                 |    7 +
->  drivers/net/sxe2/sxe2_txrx.c               | 1958 +++++++++++++++++++-
->  drivers/net/sxe2/sxe2_txrx.h               |    8 +
->  drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
->  drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
->  drivers/net/sxe2/sxe2_txrx_poll.c          |  284 ++-
->  drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
->  drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
->  drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  747 ++++++++
->  drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  867 +++++++++
->  drivers/net/sxe2/sxe2_txrx_vec_common.h    |   54 +-
->  drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  689 +++++++
->  drivers/net/sxe2/sxe2_txrx_vec_sse.c       |   38 +-
->  drivers/net/sxe2/sxe2_vsi.c                |  146 ++
->  drivers/net/sxe2/sxe2_vsi.h                |   12 +-
->  drivers/net/sxe2/sxe2vf_regs.h             |   85 +
->  67 files changed, 24798 insertions(+), 273 deletions(-)
->  create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
->  create mode 100644 drivers/common/sxe2/sxe2_msg.h
->  create mode 100644 drivers/net/sxe2/sxe2_dump.c
->  create mode 100644 drivers/net/sxe2/sxe2_dump.h
->  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
->  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
->  create mode 100644 drivers/net/sxe2/sxe2_filter.c
->  create mode 100644 drivers/net/sxe2/sxe2_filter.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
->  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
->  create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
->  create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
->  create mode 100644 drivers/net/sxe2/sxe2_irq.c
->  create mode 100644 drivers/net/sxe2/sxe2_mac.c
->  create mode 100644 drivers/net/sxe2/sxe2_mac.h
->  create mode 100644 drivers/net/sxe2/sxe2_mp.c
->  create mode 100644 drivers/net/sxe2/sxe2_mp.h
->  create mode 100644 drivers/net/sxe2/sxe2_rss.c
->  create mode 100644 drivers/net/sxe2/sxe2_rss.h
->  create mode 100644 drivers/net/sxe2/sxe2_security.c
->  create mode 100644 drivers/net/sxe2/sxe2_security.h
->  create mode 100644 drivers/net/sxe2/sxe2_stats.c
->  create mode 100644 drivers/net/sxe2/sxe2_stats.h
->  create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
->  create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
->  create mode 100644 drivers/net/sxe2/sxe2_tm.c
->  create mode 100644 drivers/net/sxe2/sxe2_tm.h
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
->  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
->  create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
-> 
+I still wish it was not called program_sz here, but the fix is not wrong, s=
+o
 
-Much better, still some AI review feedback items.
-I agree with AI on this; duplicate rules should be handled similar to other
-drivers.
-
-[PATCH v5 00/23] sxe2 driver feature additions
-
-v5 cleanly addresses the v4 follow-ups except flow-duplicate-pattern.
-
-Verified across the assembled tree:
-
-- All 23 commits build end-to-end. Bisect works. The structural
-  reorganization (Rx framework now precedes the vector paths instead of
-  the other way around) was non-trivial and could easily have
-  reintroduced the build-band problem; it didn't.
-
-- The v4 "subject does not match content" issue on 04/23 is resolved by
-  reshuffling: 02/23 ("net/sxe2: add Rx framework and packet types
-  callback") now correctly bundles the sxe2_txrx.c creation with the
-  ptype callback registration, AVX512 and AVX2 are layered on top as
-  separate patches (03/23, 04/23), and the old standalone "supported
-  packet types get callback" patch is absorbed into 02/23. The
-  ordering also makes more sense - frame, then vector specializations.
-
-- The ptype-table refactor is now complete: adapter->ptype_tbl field
-  removed from struct sxe2_adapter, sxe2_init_ptype_tbl() function
-  removed entirely, all readers (vec_avx2, vec_avx512, vec_sse, vec_neon,
-  poll) now reference the file-scope static const sxe2_ptype_tbl[]
-  directly. One indirection saved per packet in the inner loop, and
-  SXE2_MAX_PTYPE_NUM * 4 bytes saved per port.
-
-- The high_performance_mode local in sxe2_parse_no_sched_mode() is
-  renamed to no_sched_mode, matching the struct field and the devarg
-  string. The rename is now consistent throughout the series.
-
-- No regressions: full rescan for the usual high-value classes
-  (raw_free_bulk on mixed pools, volatile inter-thread flags, 64-bit
-  shifts, forbidden tokens, asm-generic, LLM placeholders) finds
-  nothing. All long-standing fixes from earlier rounds persist (atomics
-  removed from sw_stats, event_thread_run atomic, monitor DD_MASK,
-  Inline crypto matrix entry).
-
-One open design item:
-
-[PATCH v5 22/23] flow-duplicate-pattern still defaults to 1
-
-This was the only v4 item I considered design-blocking, and it isn't
-addressed in v5. The devarg still toggles whether rte_flow rules with
-identical patterns are accepted (value=1) or rejected with EEXIST
-(value=0), and 1 is the default. The behaviour of a standard API
-shouldn't vary per boot flag, and every other PMD rejects duplicates
-with EEXIST. Pick that policy, apply it unconditionally, and drop the
-devarg. The switch_pattern_dup_allow field on rule metadata can stay
-if the hardware/firmware path internally needs it - just don't expose
-the policy choice to userspace as a boot-time knob.
-
-With that one change, this is ready.
-
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
