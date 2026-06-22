@@ -2,39 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C16CD98F2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 15:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCEDCDB46F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Jun 2026 15:03:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C00340150;
-	Mon, 22 Jun 2026 17:01:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A35D140150;
+	Mon, 22 Jun 2026 17:03:49 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id C9D6840144;
- Mon, 22 Jun 2026 17:01:21 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C05B340144
+ for <dev@dpdk.org>; Mon, 22 Jun 2026 17:03:48 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B95D020572;
- Mon, 22 Jun 2026 17:01:20 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 8A9EC20572;
+ Mon, 22 Jun 2026 17:03:48 +0200 (CEST)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH 2/6] ip_frag: discard datagrams with overlapping fragments
-Date: Mon, 22 Jun 2026 17:01:18 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65934@smartserver.smartshare.dk>
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH 0/6] ip_frag: fix reassembly defects and add test
+Date: Mon, 22 Jun 2026 17:03:45 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65935@smartserver.smartshare.dk>
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20260619100124.655e5540@phoenix.local>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH 2/6] ip_frag: discard datagrams with overlapping fragments
-Thread-Index: Ad0ADUeM6xiQnGONTUyYYte5+rNzLACSmU5Q
-References: <20260616210656.464062-1-stephen@networkplumber.org><20260616210656.464062-3-stephen@networkplumber.org><98CBD80474FA8B44BF855DF32C47DC35F6592A@smartserver.smartshare.dk>
- <20260619100124.655e5540@phoenix.local>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>, <stable@dpdk.org>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
+Thread-Topic: [PATCH 0/6] ip_frag: fix reassembly defects and add test
+Thread-Index: Adz91BXz0A8rlNX9QA+F8h3SqxcBlQCGq/9AAJpQUDA=
+References: <20260616210656.464062-1-stephen@networkplumber.org> 
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>
+Cc: "Stephen Hemminger" <stephen@networkplumber.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,72 +45,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
-b3JnXQ0KPiBTZW50OiBGcmlkYXksIDE5IEp1bmUgMjAyNiAxOS4wMQ0KPiANCj4gT24gRnJpLCAx
-OSBKdW4gMjAyNiAxNToxMjoyMSArMDIwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFy
-ZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gPiArCQkvKg0KPiA+ID4gKwkJICogT3Zlcmxh
-cCB3aXRoIGFuIGV4aXN0aW5nIGZyYWdtZW50LiBQZXIgUkZDIDgyMDAgc2VjdGlvbg0KPiA+ID4g
-NC41DQo+ID4gPiArCQkgKiAoYW5kIFJGQyA1NzIyKSB0aGUgZGF0YWdyYW0gbXVzdCBiZSBkaXNj
-YXJkZWQ7IHRoZSBzYW1lDQo+ID4gPiBpcw0KPiA+ID4gKwkJICogYXBwbGllZCB0byBJUHY0LiBG
-cmVlIGFsbCBjb2xsZWN0ZWQgZnJhZ21lbnRzLCBkcm9wIHRoaXMNCj4gPiA+IG9uZSwNCj4gPiA+
-ICsJCSAqIGFuZCBpbnZhbGlkYXRlIHRoZSBlbnRyeS4NCj4gPiA+ICsJCSAqLw0KPiA+ID4gKwkJ
-aWYgKG9mcyA8IGZwLT5mcmFnc1tpXS5vZnMgKyBmcC0+ZnJhZ3NbaV0ubGVuICYmDQo+ID4gPiAr
-CQkJCWZwLT5mcmFnc1tpXS5vZnMgPCBvZnMgKyBsZW4pIHsNCj4gPg0KPiA+IFRoaXMgb25seSBj
-YXRjaGVzIGZyYWdtZW50cyB0aGF0IGFyZSBzbWFsbGVyIHRoYW4gZXhpc3RpbmcgZnJhZ21lbnRz
-LA0KPiBpLmUuIGZpdCB3aXRoaW4gb25lIG9mIHRoZSBleGlzdGluZyBmcmFnbWVudHMuDQo+ID4g
-SXQgc2hvdWxkIGJlOg0KPiA+IGlmICgob2ZzID49IGZwLT5mcmFnc1tpXS5vZnMgJiYNCj4gPiAJ
-CW9mcyA8IGZwLT5mcmFnc1tpXS5vZnMgKyBmcC0+ZnJhZ3NbaV0ubGVuKSB8fA0KPiA+IAkJKG9m
-cyArIGxlbiA+PSBmcC0+ZnJhZ3NbaV0ub2ZzICYmDQo+ID4gCQlvZnMgKyBsZW4gPCBmcC0+ZnJh
-Z3NbaV0ub2ZzICsgZnAtPmZyYWdzW2ldLmxlbikpIHsNCj4gPg0KPiA+ID4gKwkJCWlwX2ZyYWdf
-ZnJlZShmcCwgZHIpOw0KPiANCj4gVGhlIGNvZGUgaGVyZSBpcyBjb21wYXJpbmcgYW4gaW5jb21p
-bmcgZnJhZ21lbnQgTiBhZ2FpbnN0IGV4aXN0aW5nDQo+IGZyYWdtZW50IEUsDQo+IHVzaW5nIGhh
-bGYtb3BlbiByYW5nZXMgW3N0YXJ0LCBlbmQpLg0KPiANCj4gVGhlIHRlc3QgaW4gdGhlIHBhdGNo
-IGlzIHN5bW1ldHJpYyBpbiBOIGFuZCBFLg0KPiAgICAgICAgb2ZzIDwgZS5vZnMgKyBlLmxlbiAm
-JiBlLm9mcyA8IG9mcyArIGxlbg0KPiANCj4gVGhlIG9uZSB5b3UgcHJvcG9zZSB0ZXN0cyB0aGF0
-IGVpdGhlciBlbmRwb2ludCBvZiBOIGxhbmRzIGluc2lkZSBFLg0KPiANCj4gVGFrZSBhIGZpeGVk
-IHN0b3JlZCBmcmFnbWVudCBFID0gWzIwMCwgNDAwKSBhbmQgcnVuIHNldmVyYWwgaW5jb21pbmcN
-Cj4gZnJhZ21lbnRzIHRocm91Z2ggYm90aC4NCj4gIE4wID0gb2ZzLCBOMSA9IG9mcytsZW4uDQo+
-IA0KPiBOIGluc2lkZSBFOiBOID0gWzI1MCwgMzAwKQ0KPiANCj4gRTogICAgICAgIHw9PT09PT09
-PT18ICAgICAgICAoMjAwLi40MDApDQo+IE46ICAgICAgICAgICB8PT09fCAgICAgICAgICAgKDI1
-MC4uMzAwKQ0KPiANCj4gUGF0Y2g6IDI1MCA8IDQwMCAmJiAyMDAgPCAzMDAg4oaSIFQgJiYgVCDi
-hpIgb3ZlcmxhcC4NCj4gUHJvcG9zZWQ6ICgyNTDiiaUyMDAgJiYgMjUwPDQwMCkg4oaSIFQg4oaS
-IG92ZXJsYXAuDQo+IEJvdGggYWdyZWUuDQo+IA0KPiBOIGVuY2xvc2VzIEU6IE4gPSBbMTAwLCA1
-MDApDQo+IA0KPiBFOiAgICAgICAgfD09PT09PT09PXwgICAgICAgICgyMDAuLjQwMCkNCj4gTjog
-ICAgICB8PT09PT09PT09PT09PXwgICAgICAoMTAwLi41MDApDQo+IA0KPiBQYXRjaDogMTAwIDwg
-NDAwICYmIDIwMCA8IDUwMCDihpIgVCAmJiBUIOKGkiBvdmVybGFwLg0KPiBQcm9wb3NlZDogKDEw
-MOKJpTIwMCAmJiDigKYpIOKGkiBGLCAoNTAw4omlMjAwICYmIDUwMDw0MDApIOKGkiBUICYmIEYg
-4oaSIEYsIHNvIEYNCj4gfHwgRiDihpIgbm8gb3ZlcmxhcCwgTUlTU0VELg0KPiANCj4gVGhpcyBp
-cyB0aGUgY2FzZSB0aGUgbmV3IHZlcnNpb24gdmVyc2lvbiBkcm9wcy4gTmVpdGhlciBlbmRwb2lu
-dCBvZiBODQo+ICgxMDAgb3IgNTAwKSBzaXRzIGluc2lkZSBbMjAwLDQwMCksDQo+IGJlY2F1c2Ug
-TiBzdHJhZGRsZXMgRSBjb21wbGV0ZWx5LCBzbyBuZXcgdmVyc2lvbiBlbmRwb2ludC1pbi1FIGNo
-ZWNrDQo+IGZhaWxzIGV2ZW4gdGhvdWdoIHRoZSByYW5nZXMgY2xlYXJseSBvdmVybGFwLg0KPiBQ
-YXRjaCB2ZXJzaW9uIGNhdGNoZXMgaXQgYmVjYXVzZSB0aGUgaW50ZXJ2YWwgdGVzdCBkb2Vzbid0
-IGNhcmUgd2hpY2gNCj4gcmFuZ2UgaXMgbGFyZ2VyLg0KPiANCj4gTiBwYXJ0aWFsIG9uIHRoZSBs
-ZWZ0OiBOID0gWzEwMCwgMzAwKQ0KPiANCj4gRTogICAgICAgIHw9PT09PT09PT18ICAgICAgICAo
-MjAwLi40MDApDQo+IE46ICAgICAgfD09PT09PXwgICAgICAgICAgICAgKDEwMC4uMzAwKQ0KPiAN
-Cj4gUGF0Y2g6IDEwMCA8IDQwMCAmJiAyMDAgPCAzMDAg4oaSIFQg4oaSIG92ZXJsYXAuDQo+IFBy
-b3Bvc2VkOiAoMzAw4omlMjAwICYmIDMwMDw0MDApIOKGkiBUIOKGkiBvdmVybGFwLg0KPiBBZ3Jl
-ZS4NCj4gDQo+IE4gcGFydGlhbCBvbiB0aGUgcmlnaHQ6IE4gPSBbMzAwLCA1MDApIOKAlCBzeW1t
-ZXRyaWMgdG8gdGhlIGFib3ZlLCBib3RoDQo+IGNhdGNoIGl0Lg0KPiANCj4gU28gb24gdGhlIGZv
-dXIgZ2VudWluZS1vdmVybGFwIGdlb21ldHJpZXMsIHlvdXIgc3VnZ2VzdGlvbiBjYXRjaGVzIGFs
-bA0KPiBmb3VyIGFuZCBoaXMgbWlzc2VzIHRoZSBlbmNsb3Npbmcgb25lLg0KPiBUaGF0IGlzIG5v
-dCByaWdodCBzaW5jZSB0aGUgZW5jbG9zaW5nIG92ZXJsYXAgaXMgYSBsZWdpdGltYXRlIGF0dGFj
-aw0KPiBzaGFwZSAoYSBiaWcgZnJhZ21lbnQgb3ZlcndyaXRpbmcgYSBzbWFsbGVyIHN0b3JlZCBv
-bmUpLg0KPiANCj4gVGhlcmUgaXMgYW5vdGhlciBpc3N1ZS4NCj4gVGhlID49IG9uIHRoZSBleGNs
-dXNpdmUgZW5kIHByb2R1Y2VzIGEgZmFsc2UgcG9zaXRpdmUgb24gZnJhZ21lbnRzIHRoYXQNCj4g
-bWVyZWx5IGFidXQsIHdoaWNoIGlzIHRoZSBub3JtYWwgY2FzZS4NCj4gVGFrZSBFIGFscmVhZHkg
-c3RvcmVkIGFzIFsxNDAwLCAyODAwKSBhbmQgYW4gaW4tb3JkZXItYnV0LWxhdGUgZnJhZ21lbnQN
-Cj4gTiA9IFswLCAxNDAwKSBhcnJpdmluZyBhZnRlciBpdCAob3JkaW5hcnkgb3V0LW9mLW9yZGVy
-IGRlbGl2ZXJ5KToNCj4gDQo+IE46ICAgICAgfD09PT09PXwgICAgICAgICAgICAgKDAuLjE0MDAp
-DQo+IEU6ICAgICAgICAgICAgIHw9PT09PT18ICAgICAgKDE0MDAuLjI4MDApDQo+IA0KPiBUaGVz
-ZSBzaGFyZSBubyBieXRlczsgYnl0ZSAxNDAwIGJlbG9uZ3Mgb25seSB0byBFLg0KPiBQYXRjaDog
-MCA8IDI4MDAgJiYgMTQwMCA8IDE0MDAg4oaSIFQgJiYgRiDihpIgbm8gb3ZlcmxhcCwgY29ycmVj
-dC4NCj4gUHJvcG9zZWQ6ICgxNDAw4omlMTQwMCAmJiAxNDAwPDI4MDApIOKGkiBUICYmIFQg4oaS
-IG92ZXJsYXAsIHdyb25nLg0KPiBUaGlzIHRlc3Qgd291bGQgZGlzY2FyZCBhIHBlcmZlY3RseSB2
-YWxpZCBkYXRhZ3JhbSB3aGVuZXZlciBhIGxlZnQtDQo+IGFidXR0aW5nIGZyYWdtZW50IGFycml2
-ZXMgYWZ0ZXIgaXRzIG5laWdoYm9yLg0KPiBBZGphY2VudCBmcmFnbWVudHMgYWJ1dHRpbmcgaXMg
-d2hhdCBmcmFnbWVudGF0aW9uIHByb2R1Y2VzIGJ5IGRlc2lnbiwNCj4gc28gdGhpcyB3b3VsZCBm
-aXJlIGNvbnN0YW50bHkgdW5kZXIgcmVvcmRlcmluZy4NCj4gDQo+IEJvdHRvbSBsaW5lOiB0aGUg
-cGF0Y2ggd2FzIGNvcnJlY3QgYXMgZmFyIGFzIEkgY2FuIHRlbGwuDQoNClRoYW5rIHlvdSBmb3Ig
-dGhlIGRldGFpbGVkIGV4cGxhbmF0aW9uLCBTdGVwaGVuLg0KQWdyZWVkLCBhbmQgc29ycnkgYWJv
-dXQgdGhlIG5vaXNlLiA6LSkNCg0K
+> With patch 2/6 fixed,
+> Series-acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
+
+No bug in patch 2/6, so no fix required.
+Series-acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
+
+Ref: =
+https://inbox.dpdk.org/dev/98CBD80474FA8B44BF855DF32C47DC35F65934@smartse=
+rver.smartshare.dk/T/#u
+
