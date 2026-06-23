@@ -2,39 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9501CDB470
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 21:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33EBCDB471
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 21:30:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB950402A2;
-	Tue, 23 Jun 2026 23:30:26 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A824A40658;
+	Tue, 23 Jun 2026 23:30:29 +0200 (CEST)
 Received: from BYAPR05CU005.outbound.protection.outlook.com
  (mail-westusazon11020094.outbound.protection.outlook.com [52.101.85.94])
- by mails.dpdk.org (Postfix) with ESMTP id 5163B40293
+ by mails.dpdk.org (Postfix) with ESMTP id B324D40293
  for <dev@dpdk.org>; Tue, 23 Jun 2026 23:30:25 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YnArWrA7No/DXISHXd9f7HMb7UocLttHyTdRpWKppgdhTU2L5uLJZO5yz+oFxRgNla3kvokctdoiOG4gPnfT7DE2/y+/0+JbRwYzJVOyyWwUE0S5wx98q6vBh9YMmTd5MX7ccmdDUZMyFwHaLnaGowIZCE1EVF8P2kS41Y0f4ipr7N2oy13i/ItanH/O+KFdhhKyP7NaN+jVKuoGBdV1pAQMGprtw7JskryeBTlWwWOrXGatMPsZLoEmHGAL+POzYUym2ZONKihTU0jHN93x9MhEU9iaDqrm1WGeMaf6CCjN/mu9gpKhG46O3nYsm4k6wlOrlRf8E4jJr34ESIBv9w==
+ b=GGQfF/32yXZEl3SxoExszHNoUXPV3L7RiaOzfszl0a75GrWHsIFys6iGrk+UVjvvtSHpbFhjKX9DEoyaeLGKElAcsmV198SSrB+1mcga4AZdJqAEKPT8nxPyCuBrPmT1ttRovNpoVGHnN+PhSxLwjPbBeH2K6LJgpYs0sj0N5b5bmwX4S1gjMP/orJWdOKUwxqteUSqsMQyltvLqgOhZochgxukGLRFdAUzMmk5Zs4YozH7UTO++dQgdXGMPEiZ4fTdN2kgt+kpPcG1RUbBky+8fJOnww4oXGGQixlNq+x69m6hQ6L+qmMUpo+xKcuMWbDgpPclMc7HvAz6YMXgsqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qGyIjvWBoTkcSH13SHHKHm8XcZKTjP41R4Oae6jS5oQ=;
- b=pzLrwA9zusJoF5ZCXRzf9ewziCuhOtonnNu9THN5YLWGalipL8x5Dw0LpcDQfOd+mL/vl1eyiTQQWq8Sx4Zny42RtZB1fe1cjrsOT6yfyQyHUy3fZ2OgS867E1BAm7wHIxzOZ1t1/Hd/xkmJGx/5dB2WgxQdvkB20Y3NXOphJHFxzTJfx59inRqkCRzpDvZ4O3lNAFS8OfACYk1W4mzRkKelkIDfHGqUqG9MXRNHa/uLNbVZxFghEA56YiiI8RFMQ3I7jDfIA9KDm/0DKSEGv018v7pmfzOCl9rHIfj3wBDqq9QLHL5UA/JnFTrKG/mIymUf96fv/XtSz48+fydhug==
+ bh=mrx8K2W6mGurcKiBamJarnftCqk+088nOi03jJUGzuM=;
+ b=c78rayPWP6osmYVD6NRmgR19YvkGJ+f/qkBloTdc+U5yySZZoUp/GrPvxbLRhCeWiAKfpnixyGx21uJoI8iMAMh1PGrlPYEbg7wwE7iPd3k0ufJ2DuvhjsURAEFZzUONp+FYqYLsmTdxFzzwDCfmiqkmsSbVZCjjauxQIX2lOpGITiekLEHyWsx2LAbvacP89nguEN0IYE44v8t4YCR87of+kEp1jruhRHjsUXJUEzatE4+qzKqjDEvJN4J3o5rn2hcyne0Rz0x64LpP5chH0NCIHkfYt6rdYgSaCTfVBqceTNDpsf77/PQ2XG2CcDcWwu7jAzyXc5pGF+frzPZOkQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=microsoft.com; dmarc=pass action=none
  header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qGyIjvWBoTkcSH13SHHKHm8XcZKTjP41R4Oae6jS5oQ=;
- b=Gl7+9ZJGpBcVzfoIn5V0eBgK8Eu9rveNxlmClrtGjp8s7U7VfauFVARo3lH/GywZT7dCF1xlaPKqtYTukC45KVZ/pLQ7pGVjrHc0sirIaqIB/ERMJd11jIALo4p5OPnqAAVacyC0AysZREG9yK3q3Ls3comQFx5o/X4EXtCkOa4=
+ bh=mrx8K2W6mGurcKiBamJarnftCqk+088nOi03jJUGzuM=;
+ b=ReeycIek3MdMMlN2P73uSvKldncbXngLrvC805K3xkMwIFgCwuXzp8maBJcwGb+vnaOdRlNHsmkWryZKye6KLacvCKL4WmYYm8Wr/gLTnPRi6k39RlHMGZdtlngvfKVPQ2nzBE4+zbjVagPKOOawE2nNxhyNEtJQBq1iZU/8EE4=
 Received: from SA1PR21MB6683.namprd21.prod.outlook.com (2603:10b6:806:4a4::6)
  by DS2PR21MB5444.namprd21.prod.outlook.com (2603:10b6:8:2bb::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.3; Tue, 23 Jun
- 2026 21:30:21 +0000
+ 2026 21:30:22 +0000
 Received: from SA1PR21MB6683.namprd21.prod.outlook.com
  ([fe80::8bad:6294:8a07:fe18]) by SA1PR21MB6683.namprd21.prod.outlook.com
  ([fe80::8bad:6294:8a07:fe18%3]) with mapi id 15.21.0159.007; Tue, 23 Jun 2026
- 21:30:21 +0000
+ 21:30:22 +0000
 From: Long Li <longli@microsoft.com>
 To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
 CC: "thomas@monjalon.net" <thomas@monjalon.net>, "stephen@networkplumber.org"
@@ -42,85 +42,83 @@ CC: "thomas@monjalon.net" <thomas@monjalon.net>, "stephen@networkplumber.org"
  <bruce.richardson@intel.com>, "fengchengwen@huawei.com"
  <fengchengwen@huawei.com>, "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>, 
  Wei Hu <weh@microsoft.com>
-Subject: RE: [EXTERNAL] [PATCH v3 10/11] bus/vmbus: store name in bus specific
- device
-Thread-Topic: [EXTERNAL] [PATCH v3 10/11] bus/vmbus: store name in bus
- specific device
-Thread-Index: AQHdAv7bVZVpgC5d1Ua9z73+F4MaiLZMi+Gg
-Date: Tue, 23 Jun 2026 21:30:21 +0000
-Message-ID: <SA1PR21MB6683F6BDA4C7269377CB2C1BCEEE2@SA1PR21MB6683.namprd21.prod.outlook.com>
+Subject: RE: [EXTERNAL] [PATCH v3 11/11] bus/vmbus: support unplug
+Thread-Topic: [EXTERNAL] [PATCH v3 11/11] bus/vmbus: support unplug
+Thread-Index: AQHdAv7fXYh+8eN6rUaMuE/LSwQaRLZMkPYg
+Date: Tue, 23 Jun 2026 21:30:22 +0000
+Message-ID: <SA1PR21MB668399A4E3F2850F5F215D55CEEE2@SA1PR21MB6683.namprd21.prod.outlook.com>
 References: <20260611094551.1514962-1-david.marchand@redhat.com>
  <20260623105439.2144694-1-david.marchand@redhat.com>
- <20260623105439.2144694-11-david.marchand@redhat.com>
-In-Reply-To: <20260623105439.2144694-11-david.marchand@redhat.com>
+ <20260623105439.2144694-12-david.marchand@redhat.com>
+In-Reply-To: <20260623105439.2144694-12-david.marchand@redhat.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=7f5ea6e8-bf32-4c01-b680-dea1905d9c81;
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=8ffffc07-fca9-42f3-9ea0-9a32c7fe5f4d;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-06-23T19:46:07Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-06-23T20:04:19Z;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=microsoft.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|DS2PR21MB5444:EE_
-x-ms-office365-filtering-correlation-id: 59174ef6-cf52-4389-454c-08ded16ea16c
+x-ms-office365-filtering-correlation-id: 0f24eb77-5603-4d9a-22d9-08ded16ea1b8
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|23010399003|56012099006|18002099003|11063799006|22082099003|4143699003|38070700021;
-x-microsoft-antispam-message-info: Fi5E2zDjPbaBylsIETm+wKKlxlihnZ5EUzIpx4XRI7yvhn9i5jkV+jp6H8TBeJLEHposFmZCLLbHIfKPdpewTjmHvzEmyEkaoTWYOpZZybrSwX3NW2Q82QZ97qgP8iu9wN6IkOFC4/hIKmT2vdDhVwF0FR1Xl/OfP+EeDcoiLSrC2c7alLlELI5clTp+6eDk+XI4s331qSi4i7TPyHcHL+21yxa8EZGb4bgTz+VqfCA+HsXgofq3GBw6CL3eXp0xegw0AEd5yrRQKyjay1rKMxRU6ZcdSKwnRi0MEn4seKBp3zpi1P0AlAjNP6CvXoW2aCnLbk/DRv2gg0QyRPuDhqb5j9z34nmuZnIeC0ebufmlT6SpHW4ApZqcl3/45Tc/DFOB+PIrNjBZhr/juQCwQIt4wdYOOcVHWJRQQli62akUpXmT8IK5f04YBUZTjFRoXOX9tOV3J6BoCKYAuUTpmgOzGuK12Rp4Aw0Q6o5HKTu1K3F6AeXDtVZ/rcIIcOuaVyfvItK2SoXVg8OVh2QY3utyfjMCkLeKSdCuP8D+B4aLfqVkE34Ji5II31ggqA294Tms75uutNbHOAlGQc1UM7y/Ai+y8G2auxoUvrraEM/ftVqVp4WbOotRkqYVwoBiJX6gTm1z0zXrIIuxvR2rSqsu2quGBvD0aKN2Frvo0rzan/uWXAe1Jy4atmkA4ffJCGPbdwEDJkY5V6wwDOP+LX9+P5u8KFcx4tXOvrMok9w=
+ ARA:13230040|376014|1800799024|366016|23010399003|56012099006|18002099003|11063799006|22082099003|6133799003|4143699003|38070700021;
+x-microsoft-antispam-message-info: UQVVAb1OeDl4aTB2ablsmp2XlR9W2vP0+URmGDPByqp2gJ5ToieROqbxiHHy0CeTJxyl4A6J/DjSYmJHu4QIuT8L4kfp0MAU+IOfqRQK3Tn6OtPSqH4CcLUFHpDYHhWxz24IG6rIykzQNHkMVeIViPWOSsTZEjag0+z/e/82UbsgTcVOkcoNPFjxbyCX2mjm4EZeI6tcMv5Fio+2L6cT92kKC14g8pinnBsqKrHX18wvs0U8/hgpte7Tv97xQb67OiFq6Re4+Q6aQy4owdsebcvUSRSECikyuPYEPokYeTc5GOYMTzf66lFGer2ynz3BQUUwilTBZUr+fDxdn5BOsN+8gyHlaJ+OorGGJoxmcsbTs/PVx8DUaC6Ov+E18Dzf1877YuS7hLB2XPWcXtFmc0fR5chOAFKl4K7m2C0M6wBvEbKr+AoImziClF9U87qF3aTQPkCdcNWqoGsQsh6lhe0JWbqs7ncDX0HQuON1Ljt224pMFdATmKiq+L6eJze0TqYQDAb/yPaXev2jx7C53eukgYZ6FbPuR0XD+6KwVcIsKMErx1Tys/N8DOOMmnaY6IUXd5vQ8cSIK/T0pZI9EvBq4VAFdjRb5fI8R588nlkhmzJJvxRYf7At+ryLHqTIKKAtFoZiyZiani4g4Qx5EAzfc558rRhpps3LeFU93nl4CmiWWfgT44VAWGSJim/93sU8a28p23zU3Z6WtPzSzVp7D43ogR3FQGWN1r9WwCg=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SA1PR21MB6683.namprd21.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(56012099006)(18002099003)(11063799006)(22082099003)(4143699003)(38070700021);
+ SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(56012099006)(18002099003)(11063799006)(22082099003)(6133799003)(4143699003)(38070700021);
  DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?CUHwh3GfB5mKXnzOr1NZTsVrg7qNQ71KXDyN3GzWodR5Pb0jcdAx/qCNDzoc?=
- =?us-ascii?Q?Enhwmbebt9jLPxk7kdG48sCiFfAFmLRQ/Mb4wWFYq09K7QmxxkxzIkevB65s?=
- =?us-ascii?Q?mo6mbaE2dzjgBIB2nzWvEU9hEId+QMy7tkd0TWVFirQT7kkM+sjb/lIoEQVI?=
- =?us-ascii?Q?JvxZORqyRXtHgNATlIDmgpwNkQ7kydwbmNi+5S27GeMMEJYLkUtzeK60xssw?=
- =?us-ascii?Q?NFkyr5LBOL7LgX3XIYS9qSPZtxvZ3yCTOZUnDVGl9+nUjgTowJS7eezQdpoB?=
- =?us-ascii?Q?TT1npmrpc2Ba26iv7Ja8RDcrXzL1dXO3eDnWE7tsPoXUD90h0AX7vJFFx9Q2?=
- =?us-ascii?Q?VTWB3KEGHbi4AhaL1f/WvxCnRf1MXAuXH8+4q3lBow4oiwgJ4XHCurXZfP5e?=
- =?us-ascii?Q?Fin1mJrA7V71a1KibgvEdm1g6Sy7UBl3n4NSyGqm+8qRLxDjAewahbhL14GF?=
- =?us-ascii?Q?IIbORjmf7dCcYRM6CEA5BEs/aHazNYlLmFkYvX8O10wKqpGeFyErGQMsTLHN?=
- =?us-ascii?Q?8WBxPr/HDY77qHLOpQCjjXVHYVqYvIk6w1PEpDt94zb4NgTpcZtvxdS9ulil?=
- =?us-ascii?Q?o5fvnPtfEWAkZxqP38Of3+WtnHgLeLen2BMAuo9gqbRoQ/qXUdJts0Vjaa5F?=
- =?us-ascii?Q?Z89iCTLc3XO7sMu2VbC6LMWzn2rWWc+8blPb5CXIQ3Sn118LjgDhM4+bByxH?=
- =?us-ascii?Q?j+9OSubOQkE8icSXaPiS9yhHNN7EqKGfCBxyIB4C8H9WEX8rTpBBRa0bGgNC?=
- =?us-ascii?Q?yvjJgzOI9HOrDt/kE7bHYZM5BnLw1PI3+L48fAYM0z9Zzu8kEoEJhmAd+elK?=
- =?us-ascii?Q?eNo99Jb0mc+CTwv6khISEhDYX5I45ey5YXrBeBPYcu/l3hfsCXxElOeoc5Ux?=
- =?us-ascii?Q?1apbTOepESRy94U5xLl9fO/iuav1WxQMrbLNmt1r3E90NtEbHFW7JkJ9mUO1?=
- =?us-ascii?Q?0+ZZ11EyKjM7AhGf9LLp/NRLQYhgdgK8//WSwihDiYUKHhBucVqDzf5b0VYs?=
- =?us-ascii?Q?xw4nhpWFF6xQOYwvUt3+yVix/P6XiJqv3FTziKdPCaGcX1Bzh0sjjZP22J04?=
- =?us-ascii?Q?38I1IH490tJxYW8Sx58BdLH/tdHcj8DDw0OvnPCYT7BMzmfwYd06UwrpFjuY?=
- =?us-ascii?Q?PGNqBgyM7ZQbpncCswey+UzS84xggzen9rxTspFQ+9Km2VKBzV4AvgHgLmiR?=
- =?us-ascii?Q?gH9pGVyPZxhSmCqF+GGS7tdCz8enrAaiEQpp4XEPWgi8uQDm/TP90F+hMcth?=
- =?us-ascii?Q?uUIpasUsUG1q98nJXPiIcxDXuaaOPq6VvagtiXzNhPWcATw6gLFYHsJnoMcW?=
- =?us-ascii?Q?DgOerfLQB49wx3a89rL/icGzRKJtEwulVL456N2wWU/kVs6JbwtaqhNxS1FW?=
- =?us-ascii?Q?nuzjdn62Bk2pdxZpl0DACuD7OJAvkcWpdFr2/kiaxyJ4TsexX0Q20SOr//fm?=
- =?us-ascii?Q?dV+IlXtfYPi21mLXhoQ3uvTn0VhCbvUZOyc/7/wGtGYwGHXg7ob/p/z6xETL?=
- =?us-ascii?Q?94wOyllAi+XYwF+muRSJTCVBRRvN+1XxtMmD3ErfQa8Tf0/jMj7AX21ByVwA?=
- =?us-ascii?Q?nYisaeu/IOCOwsCABswAfR6YaeN3IhhXwy3OYxr75HTXSqTlCkmbXaNhE2F6?=
- =?us-ascii?Q?KelvmmxyFr478qi/2a/hZcCtTyU8focagxuIBSpvtX20sXZj2Jj0Pn9/3lIz?=
- =?us-ascii?Q?6L4rKBq0By4AsuXo/5nGaeUjKFtB1894Yz3oJx9ToOI5jkQX?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0JrP6rg9yh3J+agmC/qMR1ybY2PYoVT0W+qZU6wFtOhStrZpAYKaQxC32Uq/?=
+ =?us-ascii?Q?8ceD7l2JMToiol9na+nzQqAkMBc5tUTPPqUQqmhMhxtC3aKbofZxk2EQwutz?=
+ =?us-ascii?Q?RRV7ADfSCteDAIxEo+3L3Ak75MeDDDJn3vYialRdUh2TH3LnSCDJGdMRdWGP?=
+ =?us-ascii?Q?UflRxrrEE6YdSAY7JFkNFAWv6ZroSvToepWvMr0ni6XpqqNwQsTDIIT54wV7?=
+ =?us-ascii?Q?fWu1xt6MfX05ljCOJk/W1L0weBdx+e/09PnH3vlCxjHDpmkwiHSjfVAbMcHk?=
+ =?us-ascii?Q?IBSvR13m3WRjr7Hh8jydU0FygOI0k5M1HfKq5GejOMbD8hHq8ZMa5KtRkYBl?=
+ =?us-ascii?Q?T29TijmwfEhSjnLTgQjY6EOEIk9GxXJmg9E1mI5NlIgCO4t7nWs3CxRXtGAu?=
+ =?us-ascii?Q?rmIDNg/q2vGd8kpZ3CMBbDwVUfvfOZlMqzyg1NSkxSj2yEQ3rjxeHFgjGXKQ?=
+ =?us-ascii?Q?Ja/zTjjoGF3F3c8LDi3VCyVe4csGcF5K6IF860wolZUqCr6cWnQfNpBtuKb/?=
+ =?us-ascii?Q?5eq2FjPxSJOJk2kTbMn9+KvWp3Q3GMWoBUU6xg2StOL9Dgl+TJ4nFSMawlEQ?=
+ =?us-ascii?Q?5pdkq1/sP3DuqL+NfVv37IeMkz28PcWYjhbFYHbqfwV/0cYpGnl6ccNMl71W?=
+ =?us-ascii?Q?s4h6ezma5gEXuGtv6YbyJOWR834AnaqDE3sPg5wqaZ44POqc3lQMAj0y4zR3?=
+ =?us-ascii?Q?kY00QTukyZwWY3W6fTMw8q5Q86jXn93XYsiqiChYD9y3+zggfI0TN9pkFnGH?=
+ =?us-ascii?Q?e8HjgmY/2RMmky6U9IH+M1Q/vcXSv3o3ED5WUjwvtW6AIP1Y5D8A5+Exzjam?=
+ =?us-ascii?Q?InNF7FHygeCFpxzBuVSF8vPeH1X5oO7ocEMdkcYwe0urWlEimF0eP50L+P3I?=
+ =?us-ascii?Q?FB5XcBnTAqDS501KO+ofasOTCnx5BLtpAm/alIh++jYRFSehiycFMQrCfvOc?=
+ =?us-ascii?Q?orwZU4mIzCEKfcVgsj5o/oP2SmK1mALglqjbi1hmlsIkBFQIUoWfTnw+j8ho?=
+ =?us-ascii?Q?mz6WrG5vVeOtUyhc1Jw+5A1rdnT+GXVWP9i+IOzNVSZeUBJcHaHHIi8qbYuf?=
+ =?us-ascii?Q?JolAzH4udajDDTZ/YxTCnurrjtunfrB9YhPWFAz2IBj9bTX14opdNHpzdCGI?=
+ =?us-ascii?Q?QhmqfW3BZZSDdlKZkWr3tFPAvz72VW80xAp6BVUi5F6kHuoUGO/jfcP6pRdQ?=
+ =?us-ascii?Q?RBY8jopKxMqoFPP/Wh5/KwWL/irugcePQ+Sh62FUyJ+MLDNBRhLauwdYfLCF?=
+ =?us-ascii?Q?hYDdpUkirfPzu3irHCQkHH9ks6XysE3ANI6AARVEqJO8gVYjIZ7gE6F+17Y6?=
+ =?us-ascii?Q?LyJzX03rJ0Tq6XYwTtpSMg64Spm4PpC1uNegXrdEU8Uba13FnSapLTwt+jAv?=
+ =?us-ascii?Q?/2WsBqGvYNyoupL2ngwjRtmOz9acFC1oGMDrf3euqu+Y/tR3ICTdvuZkZH2r?=
+ =?us-ascii?Q?VDP7fmmlXPcNoaw9uFqR+seSifx+PbmEt9YEkfbDjYL2VphcDgarrLzUv2hQ?=
+ =?us-ascii?Q?6SSH5TU9apGJVyiyif0hhOPanQETxG+RWZ3FQvgVqlvCgBPKgA8KZm34klGt?=
+ =?us-ascii?Q?IMfma7f3Znh7E0pcWHy7keh3cc8nizzEDLwt4MVE6wGmtbIYT25of5jrhILa?=
+ =?us-ascii?Q?CHzznNfVBlMM6rFcGFJV2zxm8IAPx8Ziy0h3wA1QwV8IL+gD7pEoPqmiVEoA?=
+ =?us-ascii?Q?N+1NYDoo1sUaVeJoACWH/8/lEwxVuAvZFzgX2fE95we0Xoys?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB6683.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59174ef6-cf52-4389-454c-08ded16ea16c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jun 2026 21:30:21.7475 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f24eb77-5603-4d9a-22d9-08ded16ea1b8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jun 2026 21:30:22.2006 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lGm/YLII6o9/y0pgVo5LCgS+w/QeDFMnQFyM4UfbzXISyQ1j5eZYc8VcqahaZo1GsF+oyjEb5KF6DoNYQVvFQA==
+X-MS-Exchange-CrossTenant-userprincipalname: PN+d6HY8ZU6sFSuFKEoLUS/Gn8kPNRaRaHBRhkHoSUl/lAHBD+6k+R13uKF27HsaVO/bNyq/ps3Vr9K6YgRhkw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR21MB5444
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -135,103 +133,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> The device name is allocated with strdup() during scan and freed in sever=
-al
-> places. However, when this bus cleanup is converted to use the EAL generi=
-c
-> helper, freeing the device object will require a custom helper to also fr=
-ee the
-> device name (and for this, a cast will be needed).
+> Add .unplug callback to handle driver removal, device unmapping, and
+> interrupt cleanup. This enables use of the generic bus cleanup helper.
 >=20
-> Instead, add an embedded name array to rte_vmbus_device structure (char
-> name[RTE_DEV_NAME_MAX_LEN]) which is sufficient for all VMBUS device
-> names (UUID format: 36 characters, or shorter legacy format).
->=20
-> This simplifies the device freeing to a simple free() call.
+> The cleanup function was already performing these operations, so it seems
+> safe to expose them through the unplug operation.
 >=20
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
 Reviewed-by: Long Li <longli@microsoft.com>
 
 
 > ---
->  drivers/bus/vmbus/bus_vmbus_driver.h |  1 +
-> drivers/bus/vmbus/linux/vmbus_bus.c  | 10 +++-------
->  2 files changed, 4 insertions(+), 7 deletions(-)
+>  doc/guides/rel_notes/release_26_07.rst |  4 +++
+>  drivers/bus/vmbus/vmbus_common.c       | 41 ++++++++++++--------------
+>  2 files changed, 23 insertions(+), 22 deletions(-)
 >=20
-> diff --git a/drivers/bus/vmbus/bus_vmbus_driver.h
-> b/drivers/bus/vmbus/bus_vmbus_driver.h
-> index 888d856141..706ff1fcf5 100644
-> --- a/drivers/bus/vmbus/bus_vmbus_driver.h
-> +++ b/drivers/bus/vmbus/bus_vmbus_driver.h
-> @@ -38,6 +38,7 @@ enum hv_uio_map {
->   */
->  struct rte_vmbus_device {
->  	struct rte_device device;              /**< Inherit core device */
-> +	char name[RTE_DEV_NAME_MAX_LEN];       /**< VMBUS device name
-> */
->  	rte_uuid_t device_id;		       /**< VMBUS device id */
->  	rte_uuid_t class_id;		       /**< VMBUS device type */
->  	uint32_t relid;			       /**< id for primary */
-> diff --git a/drivers/bus/vmbus/linux/vmbus_bus.c
-> b/drivers/bus/vmbus/linux/vmbus_bus.c
-> index 77d904ad6d..779ea50b92 100644
-> --- a/drivers/bus/vmbus/linux/vmbus_bus.c
-> +++ b/drivers/bus/vmbus/linux/vmbus_bus.c
-> @@ -280,15 +280,14 @@ vmbus_scan_one(const char *name)
->  	char filename[PATH_MAX];
->  	char dirname[PATH_MAX];
->  	unsigned long tmp;
-> -	char *dev_name;
+> diff --git a/doc/guides/rel_notes/release_26_07.rst
+> b/doc/guides/rel_notes/release_26_07.rst
+> index 5d7aa8d1bf..55d3b44527 100644
+> --- a/doc/guides/rel_notes/release_26_07.rst
+> +++ b/doc/guides/rel_notes/release_26_07.rst
+> @@ -114,6 +114,10 @@ New Features
 >=20
->  	dev =3D calloc(1, sizeof(*dev));
->  	if (dev =3D=3D NULL)
->  		return -1;
+>    Added no-IOMMU mode for devices without or not enabling IOMMU/SVA.
 >=20
-> -	dev->device.name =3D dev_name =3D strdup(name);
-> -	if (!dev->device.name)
-> +	if (rte_strscpy(dev->name, name, sizeof(dev->name)) < 0)
->  		goto error;
-> +	dev->device.name =3D dev->name;
+> +* **Added unplug operation support to VMBUS bus.**
+> +
+> +  Implemented device unplug operation to allow runtime removal of VMBUS
+> devices.
+> +
+>  * **Added selective Rx in ethdev API.**
 >=20
->  	/* sysfs base directory
->  	 *   /sys/bus/vmbus/devices/7a08391f-f5a0-4ac0-9802-d13fd964f8df
-> @@ -305,7 +304,6 @@ vmbus_scan_one(const char *name)
+>    Some parts of packets may be discarded in Rx diff --git
+> a/drivers/bus/vmbus/vmbus_common.c
+> b/drivers/bus/vmbus/vmbus_common.c
+> index a6e3a24a7c..cd6e851e4c 100644
+> --- a/drivers/bus/vmbus/vmbus_common.c
+> +++ b/drivers/bus/vmbus/vmbus_common.c
+> @@ -144,34 +144,29 @@ rte_vmbus_probe(void)  }
 >=20
->  	/* skip non-network devices */
->  	if (rte_uuid_compare(dev->class_id, vmbus_nic_uuid) !=3D 0) {
-> -		free(dev_name);
->  		free(dev);
->  		return 0;
->  	}
-> @@ -330,7 +328,7 @@ vmbus_scan_one(const char *name)
->  		dev->monitor_id =3D UINT8_MAX;
->  	}
+>  static int
+> -rte_vmbus_cleanup(struct rte_bus *bus)
+> +vmbus_unplug_device(struct rte_device *rte_dev)
+>  {
+> -	struct rte_vmbus_device *dev;
+> -	int error =3D 0;
+> -
+> -	RTE_BUS_FOREACH_DEV(dev, bus) {
+> -		const struct rte_vmbus_driver *drv;
+> -		int ret;
+> -
+> -		if (!rte_dev_is_probed(&dev->device))
+> -			continue;
+> -		drv =3D RTE_BUS_DRIVER(dev->device.driver, *drv);
+> -		if (drv->remove =3D=3D NULL)
+> -			continue;
+> +	const struct rte_vmbus_driver *drv =3D RTE_BUS_DRIVER(rte_dev-
+> >driver, *drv);
+> +	struct rte_vmbus_device *dev =3D RTE_BUS_DEVICE(rte_dev, *dev);
+> +	int ret =3D 0;
 >=20
-> -	dev->device.devargs =3D rte_bus_find_devargs(&rte_vmbus_bus,
-> dev_name);
-> +	dev->device.devargs =3D rte_bus_find_devargs(&rte_vmbus_bus, dev-
-> >name);
+> +	if (drv->remove !=3D NULL) {
+>  		ret =3D drv->remove(dev);
+>  		if (ret < 0)
+> -			error =3D -1;
+> +			return ret;
+> +	}
 >=20
->  	dev->device.numa_node =3D SOCKET_ID_ANY;
->  	if (vmbus_use_numa(dev)) {
-> @@ -360,7 +358,6 @@ vmbus_scan_one(const char *name)
->  		} else { /* already registered */
->  			VMBUS_LOG(NOTICE,
->  				"%s already registered", name);
-> -			free(dev_name);
->  			free(dev);
->  		}
->  		return 0;
-> @@ -371,7 +368,6 @@ vmbus_scan_one(const char *name)
->  error:
->  	VMBUS_LOG(DEBUG, "failed");
+> -		rte_vmbus_unmap_device(dev);
+> -		rte_intr_instance_free(dev->intr_handle);
+> +	rte_vmbus_unmap_device(dev);
+> +	rte_intr_instance_free(dev->intr_handle);
+> +	dev->intr_handle =3D NULL;
 >=20
-> -	free(dev_name);
->  	free(dev);
->  	return -1;
+> -		dev->device.driver =3D NULL;
+> -		rte_bus_remove_device(bus, &dev->device);
+> -		free(dev);
+> -	}
+> +	return 0;
+> +}
+>=20
+> -	return error;
+> +static void
+> +vmbus_free_device(struct rte_device *dev) {
+> +	free(RTE_BUS_DEVICE(dev, struct rte_vmbus_device));
 >  }
+>=20
+>  static int
+> @@ -222,10 +217,12 @@ rte_vmbus_unregister(struct rte_vmbus_driver
+> *driver)  struct rte_bus rte_vmbus_bus =3D {
+>  	.scan =3D rte_vmbus_scan,
+>  	.probe =3D rte_bus_generic_probe,
+> -	.cleanup =3D rte_vmbus_cleanup,
+> +	.free_device =3D vmbus_free_device,
+> +	.cleanup =3D rte_bus_generic_cleanup,
+>  	.find_device =3D rte_bus_generic_find_device,
+>  	.match =3D vmbus_bus_match,
+>  	.probe_device =3D vmbus_probe_device,
+> +	.unplug_device =3D vmbus_unplug_device,
+>  	.parse =3D vmbus_parse,
+>  	.dev_compare =3D vmbus_dev_compare,
+>  };
 > --
 > 2.54.0
 
