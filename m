@@ -2,45 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EC4CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 07:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3097BCD4F26
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 07:11:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B0A040150;
-	Tue, 23 Jun 2026 09:10:27 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 798BA4014F
- for <dev@dpdk.org>; Tue, 23 Jun 2026 09:10:25 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 342A92024A;
- Tue, 23 Jun 2026 09:10:25 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 30F1140150;
+	Tue, 23 Jun 2026 09:11:11 +0200 (CEST)
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
+ [113.46.200.217])
+ by mails.dpdk.org (Postfix) with ESMTP id 21CC94014F
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 09:11:09 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=9XI78DnGu0/P9g3dYXjcC+Qg5H7GRHb1aXjvb17O9Fc=;
+ b=O+D79IFgptLhN9ew3BCXpWRA/PK2xIT/lMGqqnLMRZqBPs4LAwSbbwJtOejPUGlPJnCnPJZ7f
+ xoMl+0gwgODlbjP3MLkzRu7Wzk/2qapF4vRbfyBFPDDTYdPGdXYQjAvZzgN+hJaS4CuO60a87vq
+ CxUVQ6iuaEJQeHlIUPKaRmY=
+Received: from canpmsgout01.his.huawei.com (unknown [172.19.92.178])
+ by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4gkwxL4LznzcZyn;
+ Tue, 23 Jun 2026 15:02:30 +0800 (CST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=9XI78DnGu0/P9g3dYXjcC+Qg5H7GRHb1aXjvb17O9Fc=;
+ b=O+D79IFgptLhN9ew3BCXpWRA/PK2xIT/lMGqqnLMRZqBPs4LAwSbbwJtOejPUGlPJnCnPJZ7f
+ xoMl+0gwgODlbjP3MLkzRu7Wzk/2qapF4vRbfyBFPDDTYdPGdXYQjAvZzgN+hJaS4CuO60a87vq
+ CxUVQ6iuaEJQeHlIUPKaRmY=
+Received: from mail.maildlp.com (unknown [172.19.162.197])
+ by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4gkwxB45VNz1T4HG;
+ Tue, 23 Jun 2026 15:02:22 +0800 (CST)
+Received: from kwepemj100018.china.huawei.com (unknown [7.202.194.12])
+ by mail.maildlp.com (Postfix) with ESMTPS id D3A3240576;
+ Tue, 23 Jun 2026 15:11:01 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ kwepemj100018.china.huawei.com (7.202.194.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 23 Jun 2026 15:11:00 +0800
+Message-ID: <f6fdf5cf-fee2-053e-3c78-914450fe925a@huawei.com>
+Date: Tue, 23 Jun 2026 15:11:00 +0800
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v5] graph: add optional profiling stats
-Date: Tue, 23 Jun 2026 09:10:21 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65938@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <CALBAE1OZDXfH1FoVLJ=vXVqr=9hYPgqeCzN8h278wN8FbU+XaQ@mail.gmail.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5] graph: add optional profiling stats
-Thread-Index: Ad0C3YGnhPnN9tHSRJuTAsRw7DS6UwAASMHg
-References: <20260619202047.2809165-1-mb@smartsharesystems.com>
- <20260621184140.2878132-1-mb@smartsharesystems.com>
- <CALBAE1OCbZ9GB1oGYgR5hRtzjRmev2ZFOaSNndf02AZptihOcw@mail.gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65937@smartserver.smartshare.dk>
- <CALBAE1OZDXfH1FoVLJ=vXVqr=9hYPgqeCzN8h278wN8FbU+XaQ@mail.gmail.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Jerin Jacob" <jerinjacobk@gmail.com>, <thomas@monjalon.net>,
- <david.marchand@redhat.com>
-Cc: <dev@dpdk.org>, "Jerin Jacob" <jerinj@marvell.com>,
- "Kiran Kumar K" <kirankumark@marvell.com>,
- "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
- "Zhirun Yan" <yanzhirun_163@163.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH] common/mlx5: fix high SMMU TLB miss with mempool alignment
+Content-Language: en-CA
+From: yangxingui <yangxingui@huawei.com>
+To: <dev@dpdk.org>
+CC: <stephen@networkplumber.org>, <david.marchand@redhat.com>,
+ <thomas@monjalon.net>, <dsosnowski@nvidia.com>, <viacheslavo@nvidia.com>,
+ <bingz@nvidia.com>, <orika@nvidia.com>, <suanmingm@nvidia.com>,
+ <matan@nvidia.com>, <dmitry.kozliuk@gmail.com>, <fengchengwen@huawei.com>,
+ <yangshuaisong@h-partners.com>, <lihuisong@huawei.com>,
+ <liuyonglong@huawei.com>, <kangfenglong@huawei.com>
+References: <20260612071434.2722918-1-yangxingui@huawei.com>
+In-Reply-To: <20260612071434.2722918-1-yangxingui@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.120.108]
+X-ClientProxiedBy: kwepemh100016.china.huawei.com (7.202.181.102) To
+ kwepemj100018.china.huawei.com (7.202.194.12)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,100 +71,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-K1Rob21hcyBNb25qYWxvbiAmICtEYXZpZCBNYXJjaGFuZCwgYXMgaW50ZW5kZWQgYnkgSmVyaW4N
-Cg0KPiBGcm9tOiBKZXJpbiBKYWNvYiBbbWFpbHRvOmplcmluamFjb2JrQGdtYWlsLmNvbV0NCj4g
-U2VudDogVHVlc2RheSwgMjMgSnVuZSAyMDI2IDA4LjU3DQo+IA0KPiBPbiBUdWUsIEp1biAyMywg
-MjAyNiBhdCAxMjoxNeKAr1BNIE1vcnRlbiBCcsO4cnVwDQo+IDxtYkBzbWFydHNoYXJlc3lzdGVt
-cy5jb20+IHdyb3RlOg0KPiA+DQo+ID4gPiBGcm9tOiBKZXJpbiBKYWNvYiBbbWFpbHRvOmplcmlu
-amFjb2JrQGdtYWlsLmNvbV0NCj4gPiA+IFNlbnQ6IFR1ZXNkYXksIDIzIEp1bmUgMjAyNiAwNy4x
-Mw0KPiA+ID4NCj4gPiA+IE9uIE1vbiwgSnVuIDIyLCAyMDI2IGF0IDEyOjEx4oCvQU0gTW9ydGVu
-IEJyw7hydXANCj4gPiA+IDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+IHdyb3RlOg0KPiA+ID4g
-Pg0KPiA+ID4gPiBBZGRlZCBncmFwaCBub2RlIHByb2ZpbGluZyBzdGF0cywgYnVpbGQgdGltZSBj
-b25maWd1cmFibGUgYnkNCj4gZW5hYmxpbmcNCj4gPiA+ID4gUlRFX0dSQVBIX1BST0ZJTEUgaW4g
-cnRlX2NvbmZpZy5oLg0KPiA+ID4gPg0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLD
-uHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiA+ID4NCj4gPiA+IFBsZWFzZSB1cGRh
-dGUgYXBwL3Rlc3QvdGVzdF9ncmFwaC5jIHRvIHZhbGlkYXRlIHRoaXMgZmVhdHVlLg0KPiA+DQo+
-ID4gQWNrLg0KPiA+DQo+ID4gPiA+IEBAIC05Miw3ICs5Miw2MiBAQCBydGVfZ3JhcGhfb2JqX2R1
-bXAoRklMRSAqZiwgc3RydWN0IHJ0ZV9ncmFwaA0KPiAqZywNCj4gPiA+IGJvb2wgYWxsKQ0KPiA+
-ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICBmcHJpbnRmKGYsICIgICAgICAgdG90YWxfc2No
-ZWRfZmFpbD0lIg0KPiBQUklkNjQNCj4gPiA+ICJcbiIsDQo+ID4gPiA+ICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgbi0+ZGlzcGF0Y2gudG90YWxfc2NoZWRfZmFpbCk7DQo+ID4gPiA+
-ICAgICAgICAgICAgICAgICB9DQo+ID4gPiA+IC0gICAgICAgICAgICAgICBmcHJpbnRmKGYsICIg
-ICAgICAgdG90YWxfY2FsbHM9JSIgUFJJZDY0ICJcbiIsIG4tDQo+ID4gPiA+dG90YWxfY2FsbHMp
-Ow0KPiA+ID4gPiArICAgICAgICAgICAgICAgZnByaW50ZihmLCAiICAgICAgIHRvdGFsX2NhbGxz
-PSUiIFBSSXU2NCAiXG4iLCBuLQ0KPiA+ID4gPnRvdGFsX2NhbGxzKTsNCj4gPiA+ID4gKyAgICAg
-ICAgICAgICAgIGlmIChydGVfZ3JhcGhfaGFzX3N0YXRzX2ZlYXR1cmUoKSkgew0KPiA+ID4gPiAr
-ICAgICAgICAgICAgICAgICAgICAgICBmcHJpbnRmKGYsICIgICAgICAgdG90YWxfY3ljbGVzPSUi
-IFBSSXU2NA0KPiAiLA0KPiA+ID4gYXZnIGN5Y2xlcy9jYWxsPSUuMWZcbiIsDQo+ID4gPiA+ICsg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuLT50b3RhbF9jeWNsZXMsDQo+
-ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuLT50b3RhbF9j
-YWxscyA9PSAwID8NCj4gPiA+IChkb3VibGUpMCA6DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAoZG91YmxlKW4tPnRvdGFsX2N5Y2xlcyAvDQo+ID4gPiAo
-ZG91YmxlKW4tPnRvdGFsX2NhbGxzKTsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIH0NCj4gPiA+
-ID4gKyNpZmRlZiBSVEVfR1JBUEhfUFJPRklMRQ0KPiA+ID4NCj4gPiA+DQo+ID4gPiBQbGVhc2Ug
-aW50cm9kdWNlIHJ0ZV9ncmFwaF9oYXNfcHJvZmlsZV9mZWF0dWUoKSBzaW1pbGFyIHRvDQo+ID4g
-PiBydGVfZ3JhcGhfaGFzX3N0YXRzX2ZlYXR1cmUoKSB0byByZWR1Y2UgaWYgZGVmIGNsdXR0ZXIg
-YXMgcG9zc2libGUuDQo+ID4NCj4gPiBEaXNhZ3JlZSwgc2VlIGJlbG93Lg0KPiA+DQo+ID4gPg0K
-PiA+ID4gPiArICAgICAgICAgICAgICAgdWludDY0X3QgY2FsbHMgPSBuLT51c2FnZV9zdGF0c1sw
-XS5jYWxsczsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIGZwcmludGYoZiwgIiAgICAgICBvYmpz
-WzBdXG4iKTsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIGZwcmludGYoZiwgIiAgICAgICAgIGNh
-bGxzPSUiIFBSSXU2NCAiLCBjeWNsZXM9JSINCj4gPiA+IFBSSXU2NCAiLCBhdmcgY3ljbGVzL2Nh
-bGw9JS4xZlxuIiwNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjYWxs
-cywNCj4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IGRpZmYgLS1naXQgYS9saWIvZ3JhcGgvcnRlX2dy
-YXBoX3dvcmtlcl9jb21tb24uaA0KPiA+ID4gYi9saWIvZ3JhcGgvcnRlX2dyYXBoX3dvcmtlcl9j
-b21tb24uaA0KPiA+ID4gPiBpbmRleCA0YWI1M2E1MzNlLi4wZDgwMzk1NzVkIDEwMDY0NA0KPiA+
-ID4gPiAtLS0gYS9saWIvZ3JhcGgvcnRlX2dyYXBoX3dvcmtlcl9jb21tb24uaA0KPiA+ID4gPiAr
-KysgYi9saWIvZ3JhcGgvcnRlX2dyYXBoX3dvcmtlcl9jb21tb24uaA0KPiA+ID4gPiBAQCAtMTQ0
-LDEyICsxNDQsMjYgQEAgc3RydWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX25vZGUgew0KPiA+
-ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICBydGVfbm9kZV9wcm9jZXNzX3QgcHJvY2Vzczsg
-LyoqPCBQcm9jZXNzDQo+ID4gPiBmdW5jdGlvbi4gKi8NCj4gPiA+ID4gICAgICAgICAgICAgICAg
-ICAgICAgICAgdWludDY0X3QgcHJvY2Vzc191NjQ7DQo+ID4gPiA+ICAgICAgICAgICAgICAgICB9
-Ow0KPiA+ID4gPiArICAgICAgICAgICAgICAgLyoqIEZhc3QgcGF0aCBhcmVhIGNhY2hlIGxpbmUg
-My4gKi8NCj4gPiA+ID4gKyNpZmRlZiBSVEVfR1JBUEhfUFJPRklMRQ0KPiA+ID4gPiArICAgICAg
-ICAgICAgICAgc3RydWN0IHsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgdWludDY0
-X3QgY2FsbHM7ICAgICAvKio8IENhbGxzIHByb2Nlc3NpbmcNCj4gPiA+IHJlc3AuIDAgb3IgMSBv
-YmplY3RzLiAqLw0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICB1aW50NjRfdCBjeWNs
-ZXM7ICAgIC8qKjwgQ3ljbGVzIHNwZW50DQo+ID4gPiBwcm9jZXNzaW5nIHJlc3AuIDAgb3IgMSBv
-YmplY3RzLiAqLw0KPiA+ID4gPiArICAgICAgICAgICAgICAgfSB1c2FnZV9zdGF0c1syXTsgICAg
-ICAgLyoqPCBVc2FnZSB3aGVuIHRoaXMgbm9kZQ0KPiA+ID4gcHJvY2Vzc2VkIDAgb3IgMSBvYmpl
-Y3RzLiAqLw0KPiA+ID4gPiArICAgICAgICAgICAgICAgdWludDY0X3QgZnVsbF9idXJzdF9jYWxs
-czsgIC8qKjwgQ2FsbHMgcHJvY2Vzc2luZw0KPiBhDQo+ID4gPiBmdWxsIGJ1cnN0IG9mIG9iamVj
-dHMuICovDQo+ID4gPiA+ICsgICAgICAgICAgICAgICB1aW50NjRfdCBmdWxsX2J1cnN0X2N5Y2xl
-czsgLyoqPCBDeWNsZXMgc3BlbnQNCj4gPiA+IHByb2Nlc3NpbmcgYSBmdWxsIGJ1cnN0IG9mIG9i
-amVjdHMuICovDQo+ID4gPiA+ICsgICAgICAgICAgICAgICB1aW50NjRfdCBoYWxmX2J1cnN0X2Nh
-bGxzOyAgLyoqPCBDYWxscyBwcm9jZXNzaW5nDQo+IGENCj4gPiA+IGhhbGYgYnVyc3Qgb2Ygb2Jq
-ZWN0cy4gKi8NCj4gPiA+ID4gKyAgICAgICAgICAgICAgIHVpbnQ2NF90IGhhbGZfYnVyc3RfY3lj
-bGVzOyAvKio8IEN5Y2xlcyBzcGVudA0KPiA+ID4gcHJvY2Vzc2luZyBhIGhhbGYgYnVyc3Qgb2Yg
-b2JqZWN0cy4gKi8NCj4gPiA+ID4gKyAgICAgICAgICAgICAgIC8qKiBGYXN0IHBhdGggYXJlYSBj
-YWNoZSBsaW5lIDQuICovDQo+ID4gPiA+ICsjZW5kaWYNCj4gPiA+DQo+ID4gPiBJcyBpdCBhbiBB
-QkkgYnJlYWthZ2U/DQo+ID4NCj4gPiBOby4gVGhlIG1vZGlmaWNhdGlvbnMgYXJlIGVuY2xvc2Vk
-IGluICNpZmRlZiwgYW5kIGRpc2FibGVkIGJ5DQo+IGRlZmF1bHQuDQo+ID4gSXQgaXMgZ2VuZXJh
-bGx5IHJlcXVpcmVkIHRoYXQgd2hlbiBydGVfY29uZmlnLmggb3B0aW9ucyBhcmUgbW9kaWZpZWQs
-DQo+IGJvdGggdGhlIGFwcGxpY2F0aW9uIGFuZCBEUERLIGl0c2VsZiBhcmUgYnVpbHQgdG9nZXRo
-ZXI7IGFuZCB0aGVuDQo+IEFQSS9BQkkgYnJlYWthZ2UgYmVjb21lcyBpcnJlbGV2YW50Lg0KPiAN
-Cj4gDQo+IFllcy4gSSBkb24ndCBrbm93IHRoZSBjdXJyZW50IHBvbGljeSBmb3IgdGhpcy4gQWRk
-aW5nIEBUaG9tYXMgTW9uamFsb24NCj4gQERhdmlkIE1hcmNoYW5kDQo+IA0KPiANCj4gPg0KPiA+
-IElNTywgd2Ugc2hvdWxkIGtlZXAgb3VyIHN0cnVjdHVyZXMgbGVhbiBpbiByZWxlYXNlIGJ1aWxk
-cy4gVGhpcyBtZWFucw0KPiB0aGF0IGZpZWxkcyB1c2VkIGZvciBkZXRhaWxlZCBwcm9maWxpbmcs
-IGFkdmFuY2VkIGRlYnVnZ2luZywgY29va2llDQo+IHZhbGlkYXRpb24sIGV0Yy4gc2hvdWxkIHVz
-ZSB0aGUgI2lmZGVmIHBhdHRlcm4gcmF0aGVyIHRoYW4gdGhlDQo+IHJ0ZV9saWJfaGFzX3NvbWVf
-ZmVhdHVyZSgpIHBhdHRlcm47IGVzcGVjaWFsbHkgaWYgdGhleSBhZmZlY3QgdGhlIHNpemUNCj4g
-b2YgYSBzdHJ1Y3R1cmUuIEFuZCB3aGVuIHRob3NlIGZpZWxkcyBhcmUgbm90IHByZXNlbnQsIGFu
-eSBjb2RlDQo+IGFjY2Vzc2luZyB0aGVtIGNhbm5vdCB1c2UgdGhlIHJ0ZV9saWJfaGFzX3NvbWVf
-ZmVhdHVyZSgpIHBhdHRlcm4uDQo+ID4gVGhlIG1idWYgYW5kIG1lbXBvb2wgbGlicmFyaWVzIGFs
-c28gdXNlICNpZmRlZiBwYXR0ZXJuIGZvciBzaW1pbGFyDQo+IGZlYXR1cmVzLg0KPiANCj4gWWVz
-IGZvciB0aGUgc3RydWN0dXJlIGluY2x1c2lvbiB3ZSBjYW4gdXNlICNpZmRlZi4gQnV0IGluc2lk
-ZSB0aGUNCj4gZnVuY3Rpb24gd2UgY2FuIHVzZSBydGVfbGliX2hhc19zb21lX2ZlYXR1cmUoKSBz
-Y2hlbWUuIFJlYXNvbnMgYXJlIDoNCj4gMSlJdCB3aWxsIHJlbW92ZSB0aGUgaWZkZWYgY3VsdHRl
-cg0KPiAyKURldGVjdCB0aGUgY29tcGlsYXRpb24gaXNzdWUgZXZlbiBpZiB0aGUgZmVhdHVyZSBp
-cyBkaXNhYmxlZC4gVGhpcw0KPiB3aWxsIG1ha2Ugc3VyZSByZWR1Y2UgdGhlIGJ1aWxkIG9wdGlv
-bnMgdG8gZW5hYmxlIGJ1aWxkIHNhbml0eQ0KPiAzKSBDb21waWxlciBpcyBzbWFydCBlbm91Z2gg
-dG8gdW5kZXJzdGFuZCB0byBkaXNhYmxlIHRoZSBibG9jayBpZiB0aGUNCj4gZmVhdHVyZSBpcyBu
-b3QgZW5hYmxlZC4oSnVzdCBsaWtlICNpZmRlZikNCg0KSSBhZ3JlZSB3aXRoIHRoZXNlIGFkdmFu
-dGFnZXMuDQpCdXQgYSBmdW5jdGlvbiB1c2luZyBydGVfbGliX2hhc19zb21lX2ZlYXR1cmUoKSBj
-YW5ub3QgYWNjZXNzIG5vbi1leGlzdGluZyBmaWVsZHM6DQpodHRwczovL2dvZGJvbHQub3JnL3ov
-czNuS3g0NU1zDQoNClNvIHNvbWV0aW1lcyAjaWZkZWYgaXMgcmVxdWlyZWQgaW4gdGhlIGNvZGUg
-dG9vLg0KDQo+IA0KPiANCj4gDQo+ID4NCj4gPiA+DQo+ID4gPiA+ICAgICAgICAgICAgICAgICBh
-bGlnbmFzKFJURV9DQUNIRV9MSU5FX01JTl9TSVpFKSBzdHJ1Y3QgcnRlX25vZGUNCj4gPiA+ICpu
-b2Rlc1tdOyAvKio8IE5leHQgbm9kZXMuICovDQo+ID4gPiA+ICAgICAgICAgfTsNCj4gPiA+ID4g
-IH07DQo+ID4gPiA+DQo=
+Friendly ping...
+
+On 2026/6/12 15:14, Xingui Yang wrote:
+> From: Shuaisong Yang <yangshuaisong@h-partners.com>
+> 
+> On Kunpeng SoC with mlx CX7, dpdk-l3fwd with intra-NUMA core pinning
+> under SMMU nonstrict/strict mode shows about 30% performance degradation
+> compared to cross-NUMA pinning. With SMMU disabled or passthrough mode,
+> intra-NUMA performs as expected (slightly better than cross-NUMA).
+> 
+> CX7 in NUMA1
+> NUMA node0 CPU(s):    0-39
+> NUMA node1 CPU(s):    40-79
+> 
+> intra-NUMA:
+> dpdk-l3fwd -l 40-55 -n 4 -a 0000:17:00.1,mprq_en=1 -- -p 0x1 -P \
+>    --config='(0,0,40),(0,1,41),(0,2,42),(0,3,43),(0,4,44),\
+>              (0,5,45),(0,6,46),(0,7,47),(0,8,48),(0,9,49),\
+>              (0,10,50),(0,11,51),(0,12,52),(0,13,53),\
+>              (0,14,54),(0,15,55)' \
+>    --rx-queue-size=4096 --tx-queue-size=4096 --rx-burst=64
+> 
+> cross-NUMA:
+> dpdk-l3fwd -l 11-26 -n 4 -a 0000:17:00.1,mprq_en=1 -- -p 0x1 -P \
+>    --config='(0,0,11),(0,1,12),(0,2,13),(0,3,14),(0,4,15),\
+>              (0,5,16),(0,6,17),(0,7,18),(0,8,19),(0,9,20),\
+>              (0,10,21),(0,11,22),(0,12,23),(0,13,24),\
+>              (0,14,25),(0,15,26)' \
+>    --rx-queue-size=4096 --tx-queue-size=4096 --rx-burst=64
+> 
+> The root cause is that under SMMU enabled mode, the mempool allocated
+> for intra-NUMA pinning is aligned to system page size instead of
+> hugepage size, while cross-NUMA pinning correctly uses hugepage size
+> alignment. This causes high TLB miss rates under SMMU.
+> 
+> Align all memory ranges to hugepage boundaries during mempool
+> registration to ensure hugepage_sz alignment, thereby reducing TLB
+> misses and fixing the intra-NUMA performance degradation.
+> 
+> Fixes: 690b2a88c2f7 ("common/mlx5: add mempool registration facilities")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Shuaisong Yang <yangshuaisong@h-partners.com>
+> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+> ---
+>   .mailmap                             |  1 +
+>   drivers/common/mlx5/mlx5_common_mr.c | 53 +++++++++++++++++++---------
+>   2 files changed, 37 insertions(+), 17 deletions(-)
+> 
+> diff --git a/.mailmap b/.mailmap
+> index 4001e5fb0e..e13e88db1b 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1979,3 +1979,4 @@ Zongyu Wu <wuzongyu1@huawei.com>
+>   Zorik Machulsky <zorik@amazon.com>
+>   Zyta Szpak <zyta@marvell.com> <zr@semihalf.com>
+>   Zyta Szpak <zyta@marvell.com> <zyta.szpak@semihalf.com>
+> +Shuaisong Yang <yangshuaisong@h-partners.com>
+> diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
+> index aa2d5e88a4..aee037abb4 100644
+> --- a/drivers/common/mlx5/mlx5_common_mr.c
+> +++ b/drivers/common/mlx5/mlx5_common_mr.c
+> @@ -1524,7 +1524,9 @@ mlx5_get_mempool_ranges(struct rte_mempool *mp, bool is_extmem,
+>    * @param[in] is_extmem
+>    *   Whether the pool is contains only external pinned buffers.
+>    * @param[out] out
+> - *   Receives memory ranges to register, aligned to the system page size.
+> + *   Receives memory ranges to register. Aligned to the hugepage size
+> + *   if all ranges reside on hugepages of the same size,
+> + *   otherwise aligned to the system page size.
+>    *   The caller must release them with free().
+>    * @param[out] out_n
+>    *   Receives the number of @p out items.
+> @@ -1541,7 +1543,9 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp, bool is_extmem,
+>   {
+>   	struct mlx5_range *ranges = NULL;
+>   	unsigned int i, ranges_n = 0;
+> +	bool same_hugepage_sz = true;
+>   	struct rte_memseg_list *msl;
+> +	uint64_t hugepage_sz = 0;
+>   
+>   	if (mlx5_get_mempool_ranges(mp, is_extmem, &ranges, &ranges_n) < 0) {
+>   		DRV_LOG(ERR, "Cannot get address ranges for mempool %s",
+> @@ -1552,28 +1556,43 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp, bool is_extmem,
+>   	*share_hugepage = false;
+>   	msl = rte_mem_virt2memseg_list((void *)ranges[0].start);
+>   	if (msl != NULL) {
+> -		uint64_t hugepage_sz = 0;
+> +		hugepage_sz = msl->page_sz;
+>   
+>   		/* Check that all ranges are on pages of the same size. */
+>   		for (i = 0; i < ranges_n; i++) {
+> -			if (hugepage_sz != 0 && hugepage_sz != msl->page_sz)
+> +			struct rte_memseg_list *range_msl;
+> +			range_msl = rte_mem_virt2memseg_list(
+> +					(void *)ranges[i].start);
+> +			if (range_msl == NULL ||
+> +			    range_msl->page_sz != hugepage_sz) {
+> +				same_hugepage_sz = false;
+>   				break;
+> -			hugepage_sz = msl->page_sz;
+> +			}
+>   		}
+> -		if (i == ranges_n) {
+> -			/*
+> -			 * If the entire pool is within one hugepage,
+> -			 * combine all ranges into one of the hugepage size.
+> -			 */
+> -			uintptr_t reg_start = ranges[0].start;
+> -			uintptr_t reg_end = ranges[ranges_n - 1].end;
+> -			uintptr_t hugepage_start =
+> -				RTE_ALIGN_FLOOR(reg_start, hugepage_sz);
+> -			uintptr_t hugepage_end = hugepage_start + hugepage_sz;
+> -			if (reg_end < hugepage_end) {
+> -				ranges[0].start = hugepage_start;
+> +	}
+> +	if (same_hugepage_sz && hugepage_sz > 0) {
+> +		unsigned int orig_ranges_n = ranges_n;
+> +
+> +		for (i = 0; i < ranges_n; i++) {
+> +			ranges[i].start = RTE_ALIGN_FLOOR(ranges[i].start,
+> +							  hugepage_sz);
+> +			ranges[i].end = RTE_ALIGN_CEIL(ranges[i].end,
+> +							hugepage_sz);
+> +		}
+> +		ranges_n = 1;
+> +		for (i = 1; i < orig_ranges_n; i++) {
+> +			if (ranges[ranges_n - 1].end >= ranges[i].start)
+> +				ranges[ranges_n - 1].end =
+> +					RTE_MAX(ranges[ranges_n - 1].end,
+> +						ranges[i].end);
+> +			else
+> +				ranges[ranges_n++] = ranges[i];
+> +		}
+> +		if (ranges_n == 1) {
+> +			uintptr_t hugepage_end = ranges[0].start + hugepage_sz;
+> +
+> +			if (ranges[0].end <= hugepage_end) {
+>   				ranges[0].end = hugepage_end;
+> -				ranges_n = 1;
+>   				*share_hugepage = true;
+>   			}
+>   		}
+> 
