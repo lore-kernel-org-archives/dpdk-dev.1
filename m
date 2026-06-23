@@ -2,53 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A7CCDB46F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 11:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB24BCDB46F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 12:05:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 309D04042F;
-	Tue, 23 Jun 2026 13:52:47 +0200 (CEST)
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
- [113.46.200.222])
- by mails.dpdk.org (Postfix) with ESMTP id B691B402EB
- for <dev@dpdk.org>; Tue, 23 Jun 2026 13:52:45 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=nrCjH57lPiUGfchBBzDV5P2oXhcE6eW9MsXMEsMTL+I=;
- b=fvoumkbYlM3jJYvCVz1M0imm/Brotr8Xh9Ey80VcfVg6BnD2GiRo+wXfgmTe2b4CVKwCyJcW7
- 6iSV/YUGttE8NjA5J1bElwzEOCtTU8Iuc40jbTfSsSeBzdvDU13q9lg/8eMd1zEL4DOo0aWfFNH
- K8yGCx1yKXYaQzOVnCGeNu8=
-Received: from mail.maildlp.com (unknown [172.19.163.214])
- by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4gl39j1Y5SzLlSf;
- Tue, 23 Jun 2026 19:43:37 +0800 (CST)
-Received: from kwepemo100005.china.huawei.com (unknown [7.202.195.212])
- by mail.maildlp.com (Postfix) with ESMTPS id F31E940561;
- Tue, 23 Jun 2026 19:52:41 +0800 (CST)
-Received: from [10.67.121.59] (10.67.121.59) by kwepemo100005.china.huawei.com
- (7.202.195.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 23 Jun
- 2026 19:52:41 +0800
-Message-ID: <579549d9-1c7a-42ef-ac57-94710c37d143@huawei.com>
-Date: Tue, 23 Jun 2026 19:52:40 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id E98524042F;
+	Tue, 23 Jun 2026 14:05:05 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id CB61F402EB
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 14:05:03 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 9B4C72024A;
+ Tue, 23 Jun 2026 14:05:03 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/5] prefix lcore role enum values
-To: David Marchand <david.marchand@redhat.com>
-CC: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
- <thomas@monjalon.net>, <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>,
- <zhanjie9@hisilicon.com>
-References: <20260617102834.2343356-1-lihuisong@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65917@smartserver.smartshare.dk>
- <20260618190339.2fc76616@phoenix.local>
- <15b95ab5-af2e-40d2-8ea8-a5d14a52dfc0@huawei.com>
- <CAJFAV8yNsZ_SLcG-ukzmDTQXRXDsGVtf-9szwSc6T2GM+fhE_Q@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJFAV8yNsZ_SLcG-ukzmDTQXRXDsGVtf-9szwSc6T2GM+fhE_Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.59]
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemo100005.china.huawei.com (7.202.195.212)
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v5] graph: add optional profiling stats
+Date: Tue, 23 Jun 2026 14:04:58 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6593A@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <CAHfVqdWKoDqb0uD_HrF8e=GqadThPhZj0vZnRYDW=KMPei0mXQ@mail.gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v5] graph: add optional profiling stats
+Thread-Index: Ad0C6wxEgT+4eYwsR0OAjZOEYgVz/gAHPWFg
+References: <20260619202047.2809165-1-mb@smartsharesystems.com>
+ <20260621184140.2878132-1-mb@smartsharesystems.com>
+ <CALBAE1OCbZ9GB1oGYgR5hRtzjRmev2ZFOaSNndf02AZptihOcw@mail.gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65937@smartserver.smartshare.dk>
+ <CALBAE1OZDXfH1FoVLJ=vXVqr=9hYPgqeCzN8h278wN8FbU+XaQ@mail.gmail.com>
+ <CAHfVqdWKoDqb0uD_HrF8e=GqadThPhZj0vZnRYDW=KMPei0mXQ@mail.gmail.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "saeed bishara" <saeed.bishara.os@gmail.com>
+Cc: "Jerin Jacob" <jerinjacobk@gmail.com>, <dev@dpdk.org>,
+ "Jerin Jacob" <jerinj@marvell.com>,
+ "Kiran Kumar K" <kirankumark@marvell.com>,
+ "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
+ "Zhirun Yan" <yanzhirun_163@163.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,111 +55,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-On 6/22/2026 4:18 PM, David Marchand wrote:
-> Hello all,
->
-> On Mon, 22 Jun 2026 at 03:23, lihuisong (C) <lihuisong@huawei.com> wrote:
->> On 6/19/2026 10:03 AM, Stephen Hemminger wrote:
->>> On Wed, 17 Jun 2026 13:48:37 +0200
->>> Morten Brørup <mb@smartsharesystems.com> wrote:
->>>
->>>>> From: Huisong Li [mailto:lihuisong@huawei.com]
->>>>> Sent: Wednesday, 17 June 2026 12.28
->>>>>
->>>>> Add the RTE_LCORE_ prefix to the lcore role enum values in
->>>>> rte_lcore_role_t
->>>>> to follow DPDK naming conventions.
->>>>>
->>>>> - ROLE_RTE      -> RTE_LCORE_ROLE_RTE
->>>>> - ROLE_OFF      -> RTE_LCORE_ROLE_OFF
->>>>> - ROLE_SERVICE  -> RTE_LCORE_ROLE_SERVICE
->>>>> - ROLE_NON_EAL  -> RTE_LCORE_ROLE_NON_EAL
->>>>>
->>>>> Old names are kept as macros aliasing to the new names to preserve
->>>>> backward compatibility.
->>>>>
->>>> Series-Acked-by: Morten Brørup <mb@smartsharesystems.com>
->>>>
->>> The problem with this patch it causes build failures now with abi diff.
->>>
->>> Example build log...
->>>
->>>
->>> 2 functions with some indirect sub-type change:
->>>
->>>
->>>
->>>
->>>
->>>    [C] 'function rte_lcore_role_t rte_eal_lcore_role(unsigned int)' at eal_common_lcore.c:74:1 has some indirect sub-type changes:
->>>
->>>    return type changed:
->>>
->>>    type size hasn't changed
->>>
->>>    4 enumerator deletions:
->>>
->>>    'rte_lcore_role_t::ROLE_RTE' value '0'
->>>
->>>    'rte_lcore_role_t::ROLE_OFF' value '1'
->>>
->>>    'rte_lcore_role_t::ROLE_SERVICE' value '2'
->>>
->>>    'rte_lcore_role_t::ROLE_NON_EAL' value '3'
->>>
->>>    4 enumerator insertions:
->>>
->>>    'rte_lcore_role_t::RTE_LCORE_ROLE_RTE' value '0'
->>>
->>>    'rte_lcore_role_t::RTE_LCORE_ROLE_OFF' value '1'
->>>
->>>    'rte_lcore_role_t::RTE_LCORE_ROLE_SERVICE' value '2'
->>>
->>>    'rte_lcore_role_t::RTE_LCORE_ROLE_NON_EAL' value '3'
->>>
->>>
->>>
->>>
->>>
->>>    [C] 'function int rte_lcore_has_role(unsigned int, rte_lcore_role_t)' at eal_common_lcore.c:85:1 has some indirect sub-type changes:
->>>
->>>    parameter 2 of type 'enum rte_lcore_role_t' has sub-type changes:
->>>
->>>    enum type 'enum rte_lcore_role_t' changed at rte_lcore.h:33:1, as reported earlier
->>>
->>>
->>>
->>>
->>>
->>>
->>>
->>> Error: ABI issue reported for abidiff --suppr /home/runner/work/dpdk/dpdk/devtools/libabigail.abignore --no-added-syms --headers-dir1 reference/usr/local/include --headers-dir2 install/usr/local/include reference/usr/local/lib/librte_eal.so.26.1 install/usr/local/lib/librte_eal.so.26.2
->> We just came back from the Dragon Boat Festival.
->> I also received this ABI change warning. But I didn't have any good
->> ideas yet.
->> Thanks for helping to handle this.
->> Sorry for the inconvenience.
-> There is nothing broken from a ABI pov.
-> This is a limitation in earlier versions of libabigail.
-> I can't reproduce with libabigail 2.9 (update in progress as I see
-> 2.10 is available now).
->
-> I think it was solved in libabigail 2.8
-> (https://sourceware.org/git/?p=libabigail.git;a=commit;h=6f5f91564bdd).
-This seems to solve the problem.
->
-> If we want to go with the enum renaming before 26.11, bumping
-> libabigail to 2.10 in the CI is an option (latest upstream version,
-> and this is the version in f43 and f44).
-> I tried it in GHA:
-> https://github.com/david-marchand/dpdk/actions/runs/27937595115/job/82662953500
-I also tested it based on libabigail 2.9.0 version. No any warning.
--->
-abidiff build-ref/lib/librte_eal.so build-new/lib/librte_eal.so
-Functions changes summary: 0 Removed, 0 Changed (2 filtered out), 0 
-Added functions
-Variables changes summary: 0 Removed, 0 Changed, 0 Added variable
-
->
->
+PiBGcm9tOiBzYWVlZCBiaXNoYXJhIFttYWlsdG86c2FlZWQuYmlzaGFyYS5vc0BnbWFpbC5jb21d
+DQo+IFNlbnQ6IFR1ZXNkYXksIDIzIEp1bmUgMjAyNiAxMC4zNA0KPiANCj4gPiA+ID4gPiArICAg
+ICAgICAgICAgICAgLyoqIEZhc3QgcGF0aCBhcmVhIGNhY2hlIGxpbmUgMy4gKi8NCj4gPiA+ID4g
+PiArI2lmZGVmIFJURV9HUkFQSF9QUk9GSUxFDQo+ID4gPiA+ID4gKyAgICAgICAgICAgICAgIHN0
+cnVjdCB7DQo+ID4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgdWludDY0X3QgY2FsbHM7
+ICAgICAvKio8IENhbGxzDQo+IHByb2Nlc3NpbmcNCj4gPiA+ID4gcmVzcC4gMCBvciAxIG9iamVj
+dHMuICovDQo+ID4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgdWludDY0X3QgY3ljbGVz
+OyAgICAvKio8IEN5Y2xlcyBzcGVudA0KPiA+ID4gPiBwcm9jZXNzaW5nIHJlc3AuIDAgb3IgMSBv
+YmplY3RzLiAqLw0KPiA+ID4gPiA+ICsgICAgICAgICAgICAgICB9IHVzYWdlX3N0YXRzWzJdOyAg
+ICAgICAvKio8IFVzYWdlIHdoZW4gdGhpcw0KPiBub2RlDQo+ID4gPiA+IHByb2Nlc3NlZCAwIG9y
+IDEgb2JqZWN0cy4gKi8NCj4gPiA+ID4gPiArICAgICAgICAgICAgICAgdWludDY0X3QgZnVsbF9i
+dXJzdF9jYWxsczsgIC8qKjwgQ2FsbHMNCj4gcHJvY2Vzc2luZyBhDQo+ID4gPiA+IGZ1bGwgYnVy
+c3Qgb2Ygb2JqZWN0cy4gKi8NCj4gPiA+ID4gPiArICAgICAgICAgICAgICAgdWludDY0X3QgZnVs
+bF9idXJzdF9jeWNsZXM7IC8qKjwgQ3ljbGVzIHNwZW50DQo+ID4gPiA+IHByb2Nlc3NpbmcgYSBm
+dWxsIGJ1cnN0IG9mIG9iamVjdHMuICovDQo+ID4gPiA+ID4gKyAgICAgICAgICAgICAgIHVpbnQ2
+NF90IGhhbGZfYnVyc3RfY2FsbHM7ICAvKio8IENhbGxzDQo+IHByb2Nlc3NpbmcgYQ0KPiA+ID4g
+PiBoYWxmIGJ1cnN0IG9mIG9iamVjdHMuICovDQo+ID4gPiA+ID4gKyAgICAgICAgICAgICAgIHVp
+bnQ2NF90IGhhbGZfYnVyc3RfY3ljbGVzOyAvKio8IEN5Y2xlcyBzcGVudA0KPiA+ID4gPiBwcm9j
+ZXNzaW5nIGEgaGFsZiBidXJzdCBvZiBvYmplY3RzLiAqLw0KPiA+ID4gPiA+ICsgICAgICAgICAg
+ICAgICAvKiogRmFzdCBwYXRoIGFyZWEgY2FjaGUgbGluZSA0LiAqLw0KPiA+ID4gPiA+ICsjZW5k
+aWYNCj4gPiA+ID4NCj4gPiA+ID4gSXMgaXQgYW4gQUJJIGJyZWFrYWdlPw0KPiBDYW4geW91IGNv
+bnNpZGVyIG9uZSBhcnJheSBmb3IgYWxsIGNhc2VzPw0KDQpBY2suDQoNCj4gYWxzbywgaW5zdGVh
+ZCBvZiBhZGRpbmcgY2FjaGVsaW5lIGZvciB0aGlzIHByb2ZpbGluZyBkYXRhLCBjYW4gd2UNCj4g
+c2hhcmUgd2l0aCBsaW5lIDEgdGhhdCB1c2VkIHNvbGVseSBmb3IgeHN0YXRzPw0KDQpUaGlzIHBy
+b2ZpbGluZyBkYXRhIGlzIDQgaW5kZXhlcyAqIDIgdmFsdWVzICogOC1ieXRlIGZpZWxkcywgc28g
+b25lIGNhY2hlIGxpbmUgaW4gaXRzZWxmLg0KDQo=
