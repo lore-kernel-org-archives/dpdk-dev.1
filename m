@@ -2,47 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 567D4CDB471
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 16:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADC5CDB471
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 16:52:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4DADC402E5;
-	Tue, 23 Jun 2026 18:51:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 904CF4065B;
+	Tue, 23 Jun 2026 18:51:59 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 87D2E40150
- for <dev@dpdk.org>; Tue, 23 Jun 2026 18:51:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 24B3B40150;
+ Tue, 23 Jun 2026 18:51:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782233517; x=1813769517;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=YLqW2tqnP1eAQluNMeABvGWaEExFfBCLSyl9moch/HU=;
- b=HngSUNQTF0kSPOP1Sjy+5PYA1VcrfYNxoxFf9aN8adSpIZpnzbtw9NqY
- y6SKScUVEnH9/ri/w+R9nyWFL79bTDs3xYUYbEuFoMwbGeeWwn0vouLWL
- 3Pf1mFTmG9J3hPahko2GxO8wwLx/I0YodFADbqaPWS1PyyA4FjGqzn/IT
- 51LPXR0o+J5tn0l3Al84FojcOohGOYsv7rQKv3rmc0E7xejjALFebHRtj
- 43vieRF/twkwAw4HQROb/A4Avu67VD+a7ZjFU+hKSK5h/poDnHsm3ZXXV
- 06DOv96bd44ZKX7cHxRZCiSDhDukApkiSE+vTmlnrzpNu54QR0AKIFQ86 Q==;
-X-CSE-ConnectionGUID: gGOa9FmYRD676qyEkHgScA==
-X-CSE-MsgGUID: zcOPNJsQSeGA6iqT0JBMzA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="100534612"
-X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="100534612"
+ t=1782233519; x=1813769519;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=6dr8WHt9nl6oD+5WQbZyFqPKyt5cKCccCqY7VgBfxq0=;
+ b=ihzzBQhxKii5+FKUu8jhgCTceuMqKiY816oIsAe9apIf7tolZDP0WQ5G
+ pDcffvgmhEI5dMBJJUNnZzKsN4DtGFnXfN4pJJat9hTEbaON0k1Ns68vr
+ mMEzrUIIRAwTsNFHnWT7mYDo3Bf9pUP03xxfZlDd7n95VlMjXCGwVgqvW
+ HSJ1qIc+0J0Dmj0jk4BjB7COKzqwWdPFu1ZQnMPupnB1sEnVAwqiAo3qS
+ osgw/SSxgsK8xSEOMeFsoNMC3pRBTocEBgukPj/fGRwtViROTgylTbFiJ
+ yk/sjPvGavFPn4EK/YQb/lvaYltWYzN4VNpmkAOFkD+J6a4NffIXDmcyB A==;
+X-CSE-ConnectionGUID: pXIu6nJXROC9ScaQfWzCvw==
+X-CSE-MsgGUID: BE7XdwQCStuq4SVfWL0QpQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="100534614"
+X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="100534614"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jun 2026 09:51:56 -0700
-X-CSE-ConnectionGUID: 95/LE82tQ6ek7AQ3rF/usg==
-X-CSE-MsgGUID: 0XGBcGkORv22NiOlVvFYXw==
+ 23 Jun 2026 09:51:58 -0700
+X-CSE-ConnectionGUID: tAWDvS6BQRGyGwexlPSjYA==
+X-CSE-MsgGUID: 1T/J0W2rQmKgvv+Fj3eg+w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="253928274"
+X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="253928279"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.224.226])
- by orviesa004.jf.intel.com with ESMTP; 23 Jun 2026 09:51:54 -0700
+ by orviesa004.jf.intel.com with ESMTP; 23 Jun 2026 09:51:55 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 00/17] drivers: replace strncpy with strlcpy
-Date: Tue, 23 Jun 2026 17:51:30 +0100
-Message-ID: <20260623165150.765443-1-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+ Srikanth Yalavarthi <syalavarthi@marvell.com>,
+ Rakesh Kudurumalla <rkudurumalla@marvell.com>
+Subject: [PATCH 01/17] common/cnxk: replace strncpy with strlcpy
+Date: Tue, 23 Jun 2026 17:51:31 +0100
+Message-ID: <20260623165150.765443-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260623165150.765443-1-bruce.richardson@intel.com>
+References: <20260623165150.765443-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,56 +66,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Many uses of strncpy in DPDK drivers can be directly replaced by
-a call to strlcpy instead, which is safer in that it always null-
-terminates the string. This AI assisted patchset makes those
-simple replacements, adjusting lengths as appropriate.
+Replace strncpy() with safer strlcpy() which always null-terminates.
 
-After this set, there are still a number of drivers with strncpy calls
-in them, but those are not simple strncpy->strlcpy replacements, so
-left for later rework.
+Fixes: 014a9e222bac ("common/cnxk: add model init and IO handling API")
+Fixes: b315581c66dc ("common/cnxk: skip probing SoC environment for CN9K")
+Cc: stable@dpdk.org
 
-Bruce Richardson (17):
-  common/cnxk: replace strncpy with strlcpy
-  common/mlx5: replace strncpy with strlcpy
-  crypto/mvsam: replace strncpy with strlcpy
-  crypto/scheduler: replace strncpy with strlcpy
-  event/cnxk: replace strncpy with strlcpy
-  net/ark: replace strncpy with strlcpy
-  net/bnx2x: replace strncpy with strlcpy
-  net/cnxk: replace strncpy with strlcpy
-  net/dpaa: replace strncpy with strlcpy
-  net/ionic: replace strncpy with strlcpy
-  net/mlx4: replace strncpy with strlcpy
-  net/mlx5: replace strncpy with strlcpy
-  net/nfp: replace strncpy with strlcpy
-  net/qede: replace strncpy with strlcpy
-  net/softnic: replace strncpy with strlcpy
-  net/vhost: replace strncpy with strlcpy
-  net/virtio: replace strncpy with strlcpy
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/common/cnxk/roc_model.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
- drivers/common/cnxk/roc_model.c                   | 8 ++++----
- drivers/common/mlx5/linux/mlx5_common_os.c        | 2 +-
- drivers/crypto/mvsam/rte_mrvl_pmd.c               | 2 +-
- drivers/crypto/scheduler/scheduler_pmd.c          | 8 ++++----
- drivers/event/cnxk/cnxk_eventdev_stats.c          | 2 +-
- drivers/net/ark/ark_ethdev.c                      | 2 +-
- drivers/net/bnx2x/bnx2x.c                         | 2 +-
- drivers/net/bnx2x/bnx2x_vfpf.c                    | 2 +-
- drivers/net/cnxk/cnxk_eswitch.c                   | 4 ++--
- drivers/net/cnxk/cnxk_rep_msg.c                   | 2 +-
- drivers/net/dpaa/dpaa_ethdev.c                    | 2 +-
- drivers/net/ionic/ionic_main.c                    | 4 ++--
- drivers/net/mlx4/mlx4_ethdev.c                    | 2 +-
- drivers/net/mlx5/mlx5.c                           | 8 ++++----
- drivers/net/mlx5/windows/mlx5_ethdev_os.c         | 2 +-
- drivers/net/nfp/nfpcore/nfp_resource.c            | 2 +-
- drivers/net/qede/qede_ethdev.c                    | 2 +-
- drivers/net/softnic/conn.c                        | 4 ++--
- drivers/net/vhost/rte_eth_vhost.c                 | 2 +-
- drivers/net/virtio/virtio_user/vhost_kernel_tap.c | 2 +-
- 20 files changed, 32 insertions(+), 32 deletions(-)
-
---
+diff --git a/drivers/common/cnxk/roc_model.c b/drivers/common/cnxk/roc_model.c
+index f0312a5400..ddd7ee8634 100644
+--- a/drivers/common/cnxk/roc_model.c
++++ b/drivers/common/cnxk/roc_model.c
+@@ -211,15 +211,15 @@ populate_model(struct roc_model *model, uint32_t midr)
+ 		if (model_db[i].impl == impl && model_db[i].part == part &&
+ 		    model_db[i].major == major && model_db[i].minor == minor) {
+ 			model->flag = model_db[i].flag;
+-			strncpy(model->name, model_db[i].name,
+-				ROC_MODEL_STR_LEN_MAX - 1);
++			strlcpy(model->name, model_db[i].name,
++				ROC_MODEL_STR_LEN_MAX);
+ 			found = true;
+ 			break;
+ 		}
+ not_found:
+ 	if (!found) {
+ 		model->flag = 0;
+-		strncpy(model->name, "unknown", ROC_MODEL_STR_LEN_MAX - 1);
++		strlcpy(model->name, "unknown", ROC_MODEL_STR_LEN_MAX);
+ 		plt_err("Invalid RoC model (impl=0x%x, part=0x%x, major=0x%x, minor=0x%x)",
+ 			impl, part, major, minor);
+ 	}
+@@ -297,7 +297,7 @@ of_env_get(struct roc_model *model)
+ 	FILE *fp;
+ 
+ 	if (access(path, F_OK) != 0) {
+-		strncpy(model->env, "HW_PLATFORM", ROC_MODEL_STR_LEN_MAX - 1);
++		strlcpy(model->env, "HW_PLATFORM", ROC_MODEL_STR_LEN_MAX);
+ 		model->flag |= ROC_ENV_HW;
+ 		return;
+ 	}
+-- 
 2.53.0
 
