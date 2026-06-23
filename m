@@ -2,76 +2,94 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3A2CDB470
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 08:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB91CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 09:09:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64F39402A2;
-	Tue, 23 Jun 2026 10:55:44 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id A385040269;
- Tue, 23 Jun 2026 10:55:42 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 65N6grPG3389119; Tue, 23 Jun 2026 01:55:42 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=YlJ0vwng2Bd+io4oznq5cOS
- 7IFmW4qYkYCdyRqWlY/8=; b=AOh0Wz4TiIWng24AIc+UBTh1pMMpfxuBUTK8KzI
- ZTQRkxOr7XfuhhM2pFozkft6l36sTgyC6sMUbz8uYQtNsxWjSxp3Bf708DRqliaY
- TWDDDJd4PAKL9/VCtdSAPqzpwf5ETntAAJk1fQiAVil2FRgmI1RHkIpe6M5ptoqr
- bhKPyMgikNvocxWnvsSImEMd2pMkPDZFZD2ui9Ao3BgOYfgA0fC5274kXUBwOub4
- w+I05tvFiIMT+1lgcxTn0ARhr1b1y0A8dWFafCl3m/PD/y10+hDPV+Jf7g84jhXm
- uKFtNzyd9Vj5qKDrsY7GlkpHNpB6hLi6LA+Zkz8i22lgumA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4eyerdh7ec-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 23 Jun 2026 01:55:41 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 23 Jun 2026 01:55:40 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 23 Jun 2026 01:55:40 -0700
-Received: from cavium-System-Product-Name.. (unknown [10.28.40.118])
- by maili.marvell.com (Postfix) with ESMTP id A9D7C3F7058;
- Tue, 23 Jun 2026 01:55:37 -0700 (PDT)
-From: Aarnav JP <ajp@marvell.com>
-To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, "Rakesh
- Kudurumalla" <rkudurumalla@marvell.com>
-CC: <jerinj@marvell.com>, <rbhansali@marvell.com>, Aarnav JP
- <ajp@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH] common/cnxk: fix inline dev null dereference
-Date: Tue, 23 Jun 2026 14:24:33 +0530
-Message-ID: <20260623085433.3190541-1-ajp@marvell.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id A8F88402C6;
+	Tue, 23 Jun 2026 11:09:27 +0200 (CEST)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id E4C4B40269
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 11:09:26 +0200 (CEST)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-51788280e71so59335961cf.0
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 02:09:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782205766; cv=none;
+ d=google.com; s=arc-20240605;
+ b=G+VLKNtznpVdyOzyFWgccgOBPBiI5Ift7mJRCxqN0mkySQLz9d27e8jjDnsTgVOgu2
+ Ss0YMj2lM4xbTWTwUc4X87QHlXGVPlQi57/95J5+cF0YRjgtkz0MDQrGG0FdV0tMmvS8
+ P1s1+g6IU5LF4GWRXI52iZ7BzudnSZLqOLFkujUapzhZs4UsOGDXtZUc/QBMz+zibqH5
+ qOTNT51U9R1HZVucC2hmaG/GjU0qQFMgJgq+Mxdee+tyCP+8kzkaV5DQ74aW+LeHS/Gw
+ qze6tWgZkyURrlurqnncyuTvKOIpgpT6QztURz6z1Tm/RE7VyIFU5q11t33NxkFNZwA7
+ PX2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=j6dmOGjta8dGxXHTz1RbChsB6c6i2a1VRShGCsLcrX8=;
+ fh=03TrS5i56qbbYElB2Zm6Cfe6pynd/QlURPYVqMq/0zs=;
+ b=WpI1z8FhxtKdsI74coxQYZRbGfiEERVL2W3lunESvUKgBQfid/UJbuJK5s00ZZgEYD
+ QRiXIUSBWnlcnPF37R/xHZTOqO0xA+hyMKqR6XniRkmYcSMtUcBwQsUcbtBGEWb+X825
+ E4xbj0TPNRuZzQ8RnyvV0iNi2xSIDI992dxREUH8/2PFtPKdfNqbenWbWLw42fy0vGMW
+ C1fmHTr87kWjZdgq/zA2xDjRFdWM0JoPNTVXMs+ZJMOpraERMDKYHj/Dk+O1hxI5GFpL
+ iUZjvpPuLAoPGq+6MT3/HNWVlad8/YHoL3KWw/4q3c6NmLCOnJmVfmXbL0sP8tVYNzem
+ 5MWg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1782205766; x=1782810566; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=j6dmOGjta8dGxXHTz1RbChsB6c6i2a1VRShGCsLcrX8=;
+ b=UAT2/uEPVMfg+HYmiyn8dIQ/keJZaSubN9fjol/Wwm60Nt22FkFsXnViN/nrLJjY8n
+ quqxeuw3JI27f8fI4S65u897fVCd1wz9GjAfDe7jVDGyNvjjT6rPPsjzgXs/ACQcAHSj
+ oPALMqwas7vWMNqnRAIp1hZnOI04iGu/8Pi5Yr0yffQ7kna+fpBoXs+HwfNWNwBH7pQi
+ Z7BSumLjhuFUqMcyNppW51//E5kxi4GYvQ1+g4lRFR/QwqmCqzq85FzH7JDJeTqMy6PD
+ fwjFtzaUdluMFhYydMYLR+mJJ1jn60pNOj8CENyykF/cjGlh9onZKQT4pVX3YSm5l8ON
+ 8+bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1782205766; x=1782810566;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=j6dmOGjta8dGxXHTz1RbChsB6c6i2a1VRShGCsLcrX8=;
+ b=qDlZXP2LbUDozc8BpeZ3Yj1t3/sn8Yk6c/diqj+CULtF9IQkk39RgSI6QTwd64Ba6j
+ WnzIC6drSVmNHnDh+U0pv9gRUiUPsg0Mbs5QUfQ7Kk/2wV7ok9xKXzVE1NBP8OPwerAB
+ IeXkdD97wT8S3hbg/EX7WoHlBhRt2VPlqXs6WJAanvi1EzdddOqXSxrUSu37ViSRpIZd
+ W5JEHfyz0dnOVeRtWn/9tsq6jE1PUlz7oUyhLInP5YBHayB9Eix8wO9o1OzmVXvRZjAT
+ elqaimZSQOkZPchFLAddsSiqJffY+xu9n4UfVPFhm7EGHEYy3NL5vDm6GSwzyGN3IFnh
+ kClA==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ+2YNwsT5EPwjZ8p1kdjXEuvfdPyFrK/dASEIS2dhwRKyMOXMbUx9KZ7jyWZehCeJYn680=@dpdk.org
+X-Gm-Message-State: AOJu0YxRz/890iUkY0O+wNeErP7xRzSsaIIXHy8/cUTpl3ibJMiRKm7j
+ g8/F+yApjFcbBSrfsiqqy87mTzH/pliZFz2cGjhtMqvqhIY8lNnbh4KvHSMrWQfeOhIMISMmfwI
+ wZkS73JS1HIuPnlkXcmInoGzZpax0osg=
+X-Gm-Gg: AfdE7clHqX/g2lewYdIT3KeRh/JHMBVAy8fR14tw5O6Kmg+7PMeXuVXaCEnSGU02aCi
+ dhaCCKjY6zJHDJn5CVlhexPG7t+MGs+SFOIYykMVOh2mKiDqSY/rwkcYjJ2hgC2ZH4JwnqqE4FI
+ 3D6HBjc6uUW7OAY7rNcaQI6YRFjx/XKKHWIuO3cGyCpyltiyY7bR5m9hC6Nl6+7WwhIfgAyBWcE
+ dqhBq6zKkxEb8FTB0XmOrW7cw9dMhPYk26xCGFKiQeFbrSmqq/9/tdCAw2xcvWH/izw
+X-Received: by 2002:ac8:6906:0:b0:516:e974:6f72 with SMTP id
+ d75a77b69052e-51a06af44aemr224373321cf.50.1782205765952; Tue, 23 Jun 2026
+ 02:09:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=IvYutr/g c=1 sm=1 tr=0 ts=6a3a4a0d cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8
- a=PBtO6kZq_AsmdOXJb9gA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIzMDA3MSBTYWx0ZWRfX71Pd6VPp0jps
- r6R3gl+5JOHM5pOKwunjXtBH0oMzFViAxHRQUK/0GH6jlAaJSLIE6fmdGiGzWdp7D9QUKz6rGrf
- AVu5trmI6LJ+P5we2uwefq2qC1EyHUrDytIlAez9FBglOrYTRipuaW3LEX7UqKBxiSbkdMxW5Th
- FPc6aSLgFIMTuKIK12LHKg9VTtN3y+fkf/QcDDrafxhjc+HYAh6xkxExUzkgOCsBVelq1hZ2DVG
- txZY3aZ///MZp/ld9ubQT9XilmiUxqDs1s13u346/4E4EgFw5HDWmnxR33jXw9mzE/LfKaXFWiQ
- e4eIBvCWQ93kphSRdzHLTh3aUAkGvIR8b6OESCeP81e/vTOW7soLT3YZZESblTCKt56VFUaek+2
- +rzjPVmLvwuWkS6DbWRVLrgI15IOUUTHpMoQJe8tepCgx2QQ1utiLoMxtf2FS5xejw4ZQmyDhFj
- Oenmm8ks9xVTEcZe59Q==
-X-Proofpoint-GUID: WoBeo9sR5GOyujAba8qZzIbDwaQjTQ3H
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIzMDA3MSBTYWx0ZWRfX8tnuQ2Mpk93C
- tSVKh8OsM7XvPDY9k2VjQyn89vO6vx2Vr7B007bu9HdKLjFPP8GW5vToX/ppyEp+Ap/r1OI3qnO
- iKQC32GtdHVXqS2+za/duR4AdiPgkek=
-X-Proofpoint-ORIG-GUID: WoBeo9sR5GOyujAba8qZzIbDwaQjTQ3H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-23_02,2026-06-22_01,2025-10-01_01
+References: <20260619202047.2809165-1-mb@smartsharesystems.com>
+ <20260621184140.2878132-1-mb@smartsharesystems.com>
+ <CALBAE1OCbZ9GB1oGYgR5hRtzjRmev2ZFOaSNndf02AZptihOcw@mail.gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65937@smartserver.smartshare.dk>
+ <CALBAE1OZDXfH1FoVLJ=vXVqr=9hYPgqeCzN8h278wN8FbU+XaQ@mail.gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65938@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65938@smartserver.smartshare.dk>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 23 Jun 2026 14:38:59 +0530
+X-Gm-Features: AVVi8CevFtpU7KzxJtVvFT5yFAqn8MXx9CH-d1nyMvC_LEgBFM5vLpQa0G5gLys
+Message-ID: <CALBAE1N1czL9k0WwcNnC60F3m0XTnr4V_JpDcNr6Y3Qgc-co_A@mail.gmail.com>
+Subject: Re: [PATCH v5] graph: add optional profiling stats
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: thomas@monjalon.net, david.marchand@redhat.com, dev@dpdk.org, 
+ Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan <yanzhirun_163@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,52 +103,162 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-inl_dev is initialized to NULL and only assigned within the
-if (idev && idev->nix_inl_dev) block.
-Move inl_dev->res_addr_offset and inl_dev->cpt_cq_ena
-accesses inside this null-guarded block in
-nix_inl_inb_ipsec_sa_tbl_setup() and nix_inl_reass_inb_sa_tbl_setup()
-to avoid dereferencing a null pointer.
+On Tue, Jun 23, 2026 at 12:40=E2=80=AFPM Morten Br=C3=B8rup <mb@smartshares=
+ystems.com> wrote:
+>
+> +Thomas Monjalon & +David Marchand, as intended by Jerin
+>
+> > From: Jerin Jacob [mailto:jerinjacobk@gmail.com]
+> > Sent: Tuesday, 23 June 2026 08.57
+> >
+> > On Tue, Jun 23, 2026 at 12:15=E2=80=AFPM Morten Br=C3=B8rup
+> > <mb@smartsharesystems.com> wrote:
+> > >
+> > > > From: Jerin Jacob [mailto:jerinjacobk@gmail.com]
+> > > > Sent: Tuesday, 23 June 2026 07.13
+> > > >
+> > > > On Mon, Jun 22, 2026 at 12:11=E2=80=AFAM Morten Br=C3=B8rup
+> > > > <mb@smartsharesystems.com> wrote:
+> > > > >
+> > > > > Added graph node profiling stats, build time configurable by
+> > enabling
+> > > > > RTE_GRAPH_PROFILE in rte_config.h.
+> > > > >
+> > > > > Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> > > >
+> > > > Please update app/test/test_graph.c to validate this featue.
+> > >
+> > > Ack.
+> > >
+> > > > > @@ -92,7 +92,62 @@ rte_graph_obj_dump(FILE *f, struct rte_graph
+> > *g,
+> > > > bool all)
+> > > > >                         fprintf(f, "       total_sched_fail=3D%"
+> > PRId64
+> > > > "\n",
+> > > > >                                 n->dispatch.total_sched_fail);
+> > > > >                 }
+> > > > > -               fprintf(f, "       total_calls=3D%" PRId64 "\n", =
+n-
+> > > > >total_calls);
+> > > > > +               fprintf(f, "       total_calls=3D%" PRIu64 "\n", =
+n-
+> > > > >total_calls);
+> > > > > +               if (rte_graph_has_stats_feature()) {
+> > > > > +                       fprintf(f, "       total_cycles=3D%" PRIu=
+64
+> > ",
+> > > > avg cycles/call=3D%.1f\n",
+> > > > > +                                       n->total_cycles,
+> > > > > +                                       n->total_calls =3D=3D 0 ?
+> > > > (double)0 :
+> > > > > +                                       (double)n->total_cycles /
+> > > > (double)n->total_calls);
+> > > > > +               }
+> > > > > +#ifdef RTE_GRAPH_PROFILE
+> > > >
+> > > >
+> > > > Please introduce rte_graph_has_profile_featue() similar to
+> > > > rte_graph_has_stats_feature() to reduce if def clutter as possible.
+> > >
+> > > Disagree, see below.
+> > >
+> > > >
+> > > > > +               uint64_t calls =3D n->usage_stats[0].calls;
+> > > > > +               fprintf(f, "       objs[0]\n");
+> > > > > +               fprintf(f, "         calls=3D%" PRIu64 ", cycles=
+=3D%"
+> > > > PRIu64 ", avg cycles/call=3D%.1f\n",
+> > > > > +                               calls,
+> > > >
+> > > > >
+> > > > > diff --git a/lib/graph/rte_graph_worker_common.h
+> > > > b/lib/graph/rte_graph_worker_common.h
+> > > > > index 4ab53a533e..0d8039575d 100644
+> > > > > --- a/lib/graph/rte_graph_worker_common.h
+> > > > > +++ b/lib/graph/rte_graph_worker_common.h
+> > > > > @@ -144,12 +144,26 @@ struct __rte_cache_aligned rte_node {
+> > > > >                         rte_node_process_t process; /**< Process
+> > > > function. */
+> > > > >                         uint64_t process_u64;
+> > > > >                 };
+> > > > > +               /** Fast path area cache line 3. */
+> > > > > +#ifdef RTE_GRAPH_PROFILE
+> > > > > +               struct {
+> > > > > +                       uint64_t calls;     /**< Calls processing
+> > > > resp. 0 or 1 objects. */
+> > > > > +                       uint64_t cycles;    /**< Cycles spent
+> > > > processing resp. 0 or 1 objects. */
+> > > > > +               } usage_stats[2];       /**< Usage when this node
+> > > > processed 0 or 1 objects. */
+> > > > > +               uint64_t full_burst_calls;  /**< Calls processing
+> > a
+> > > > full burst of objects. */
+> > > > > +               uint64_t full_burst_cycles; /**< Cycles spent
+> > > > processing a full burst of objects. */
+> > > > > +               uint64_t half_burst_calls;  /**< Calls processing
+> > a
+> > > > half burst of objects. */
+> > > > > +               uint64_t half_burst_cycles; /**< Cycles spent
+> > > > processing a half burst of objects. */
+> > > > > +               /** Fast path area cache line 4. */
+> > > > > +#endif
+> > > >
+> > > > Is it an ABI breakage?
+> > >
+> > > No. The modifications are enclosed in #ifdef, and disabled by
+> > default.
+> > > It is generally required that when rte_config.h options are modified,
+> > both the application and DPDK itself are built together; and then
+> > API/ABI breakage becomes irrelevant.
+> >
+> >
+> > Yes. I don't know the current policy for this. Adding @Thomas Monjalon
+> > @David Marchand
+> >
+> >
+> > >
+> > > IMO, we should keep our structures lean in release builds. This means
+> > that fields used for detailed profiling, advanced debugging, cookie
+> > validation, etc. should use the #ifdef pattern rather than the
+> > rte_lib_has_some_feature() pattern; especially if they affect the size
+> > of a structure. And when those fields are not present, any code
+> > accessing them cannot use the rte_lib_has_some_feature() pattern.
+> > > The mbuf and mempool libraries also use #ifdef pattern for similar
+> > features.
+> >
+> > Yes for the structure inclusion we can use #ifdef. But inside the
+> > function we can use rte_lib_has_some_feature() scheme. Reasons are :
+> > 1)It will remove the ifdef cultter
+> > 2)Detect the compilation issue even if the feature is disabled. This
+> > will make sure reduce the build options to enable build sanity
+> > 3) Compiler is smart enough to understand to disable the block if the
+> > feature is not enabled.(Just like #ifdef)
+>
+> I agree with these advantages.
+> But a function using rte_lib_has_some_feature() cannot access non-existin=
+g fields:
+> https://godbolt.org/z/s3nKx45Ms
 
-Fixes: 3fdf3e53f3c4 ("common/cnxk: enable CPT CQ for inline IPsec inbound")
-Cc: stable@dpdk.org
 
-Signed-off-by: Aarnav JP <ajp@marvell.com>
----
- drivers/common/cnxk/roc_nix_inl.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+I missed that.
 
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index db101e71a5..935dd37778 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -409,7 +409,7 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
- 	struct nix_inl_dev *inl_dev = NULL;
- 	uint64_t max_sa, i, sa_pow2_sz;
- 	uint64_t sa_idx_w, lenm1_max;
--	uint64_t res_addr_offset;
-+	uint64_t res_addr_offset = 0;
- 	uint8_t profile_id = 0;
- 	struct mbox *mbox;
- 	size_t inb_sa_sz;
-@@ -503,13 +503,12 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
- 				def_cptq = 0;
- 			else
- 				def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
-+			res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
-+			if (res_addr_offset)
-+				res_addr_offset |= (1UL << 56);
-+			cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
- 		}
- 
--		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
--		if (res_addr_offset)
--			res_addr_offset |= (1UL << 56);
--
--		cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
- 		lf_cfg->enable = 1;
- 		lf_cfg->profile_id = profile_id; /* IPsec profile is 0th one */
- 		lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id] | cpt_cq_ena;
--- 
-2.43.0
+You can add these new struct updates in the slowpath area of rte_node.
+Above offsetof(struct rte_node, ctx)
 
+Use RTE_NEXT_ABI, Get around off, ABI breakge issue.
+
+
+>
+> So sometimes #ifdef is required in the code too.
+>
+> >
+> >
+> >
+> > >
+> > > >
+> > > > >                 alignas(RTE_CACHE_LINE_MIN_SIZE) struct rte_node
+> > > > *nodes[]; /**< Next nodes. */
+> > > > >         };
+> > > > >  };
+> > > > >
