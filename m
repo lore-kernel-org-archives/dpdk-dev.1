@@ -2,91 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66204CDB470
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 09:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB644CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 09:19:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F4B9402A2;
-	Tue, 23 Jun 2026 11:13:37 +0200 (CEST)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
- [209.85.160.178])
- by mails.dpdk.org (Postfix) with ESMTP id 6F15240269
- for <dev@dpdk.org>; Tue, 23 Jun 2026 11:13:36 +0200 (CEST)
-Received: by mail-qt1-f178.google.com with SMTP id
- d75a77b69052e-51a019e9ea9so38105771cf.2
- for <dev@dpdk.org>; Tue, 23 Jun 2026 02:13:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782206016; cv=none;
- d=google.com; s=arc-20240605;
- b=BoAsXQZM9/DB6eHbxp+6Xi++3tPA6o02FhAZwEwLsXybRJWSUSbO9/jlerrTaT1ceX
- E3I4sOmLR816rBZM1Q15/liver94DUYZueyowq7wF484bkSnJ2Y+I+ytY0rGyL9USVVP
- h1NENgKA7lzne/oH3iUdYLBaQH+PgwIi6Xqm/oHF/O2RZ2+1EC/AxqmyOdVuB9CZPwY4
- YWNRPZFJU8cFQbcBJ7O2/29Hz4KqfAcp/EUff7/SFWcJ62ceuzLT6XXD22pQt39GoXKc
- dn9mJlzAyGo5L2syJUU1jB09gQttLm+c498QQndg/ymYZG9UU8zyM4ueZhypS8DbS0Ze
- WQyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=TjK/zpROFrkpwlD5GFKLlcEhLGbaJxEPplxixofje7Q=;
- fh=UAhbHrKIlRPatncEeKTSPg1x7UbkReo/uRpYkz8//cw=;
- b=Q1UZHA0CqMHUZhmWHL4YOYvZvqxmAfylNEiqU9SiJeGQIKtBTANP+Elux3vNsctoWU
- 2VC/ylfZdEcpbzN9tR3jJtFF1PJuENEyNJNbL9bmvQM8VykKOVWzDUSuNWYj0znnCOV0
- 615P41L/0K/MsywvFbKMEgX9Z3FkM2KCA3ZA8xqXNnBiAkZfzZ5A+69VX63GzZkk35m1
- b5pY9XQtafAOQHSo82lPxCCsjuevFl70Qk35aOPoPuBdwPU1wC27+khjfaPM8OAasw6T
- m+266oqOkjtORXRRWZEDKTOtA9yBt4tgOA7E3vriQuzRqyOQo6ApT0xdWKaekjkgYjeA
- Pueg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782206016; x=1782810816; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=TjK/zpROFrkpwlD5GFKLlcEhLGbaJxEPplxixofje7Q=;
- b=XVoZ3/l3+UkHVKtbRNFpq9JpJrTSnOouLHS7NKt+dODzOM9sNZwVerH7baQSkUbLyK
- lLHkgozBAxFhaK8EmIlvEen3JaYeCljMfOAv3qJad+nPRnv89SavvKJBVlFld2KePx6z
- rY8y41VLzUrAhyRsfWflV/Gg0/fMPmLjDI7E7J5UoZfqukadHdOz+gBJmVxM1yATRwYw
- R0lQMLBz2V6+eHcIN/GTggrkjGvlIp/e9o6MU3uXmBI5htJhIAL58FaGxpSGopKB3fSw
- xGYnfBBacrzK++0khhuD8rJBO0yCe2MtdJNAjGEZzedIcdobYyMSKUBuCjyP6cVKS6Um
- Pe6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782206016; x=1782810816;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=TjK/zpROFrkpwlD5GFKLlcEhLGbaJxEPplxixofje7Q=;
- b=a+wZRY/y3zLRqZITcTkFgDaaFO+0EmMo2zj3WSICq0W55PYWPyIouxX3TAUDc6FSc0
- iuVRagNf8zNGhAM6YbzV52VruhxPAOl0198G59YUkmf1j/Ux0M+S4szzTB4hKIFi1fc8
- e+hBvzyQiv9ych1/KcRirMUOMprhyEq6LHiSfy3RelpgTiuySc0CTBpo999Xv0F4lOci
- +ev9eRruhe+4wzDclllr3FKmesEZO24SKsF1VkTFLhjTFH5Sj9SJMVKOuxcPtEVWjIIY
- Et6pJOHst7GlnEH43eh9qQ9/lwLXcGysycsH+6tUYQb37NkPDvzFKxwmev8ni5QB0Xru
- SPMg==
-X-Forwarded-Encrypted: i=1;
- AFNElJ9USn/9K3v6DFK0D63WU1x0h0Wo9S/yNOYbrgYulVFwr9+9iIX7CaUPnzby+5LD/UFPMao=@dpdk.org
-X-Gm-Message-State: AOJu0YwREqfG12aEs04AghDWTrfvdKx8j606+EMLks3Qj1mrZGZDGa7+
- kamTgXBSEbLEQpxOYyWWYysExovlCloDuHuLfaUDYS8e7qbJMAYQzD2Nq4oJJ9hzsMbQEuQPbmq
- 5JMFtyV/XME/wxOQf3FLdnr7eNwXq6Yg=
-X-Gm-Gg: AfdE7clUfcDw6p4fXO4JY7XVK0qqiJEM96xPORltrD6IqsMoAEGiOfS6nVbHkEPI5Zk
- QJmHekEbplj2Duc2ezv7Sx0j7aZwIVKa3rZViHMVm2Fx0c//4HUVHcryOW6tD4YnUzjsuFYAyoj
- G4pcfiGdiDZsAXaeTx7HDOTq7wxljfMoBOOmDgtUNRfCc+DU6eBIwttsqqx0hUnL+T1ib9rfreS
- +ud2pB4XwvKfPSmUTDBRBUOUf0PLqmEC9ZqZ4wLbDe8vMmWAQ8cwjeS/ds62T0bPnDq
-X-Received: by 2002:a05:622a:291:b0:517:5e32:f3ad with SMTP id
- d75a77b69052e-51a06937e84mr203396451cf.26.1782206015602; Tue, 23 Jun 2026
- 02:13:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F0CBF402A2;
+	Tue, 23 Jun 2026 11:19:21 +0200 (CEST)
+Received: from fout-a6-smtp.messagingengine.com
+ (fout-a6-smtp.messagingengine.com [103.168.172.149])
+ by mails.dpdk.org (Postfix) with ESMTP id 6BBBC40269
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 11:19:20 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.phl.internal (Postfix) with ESMTP id CAA71EC0202;
+ Tue, 23 Jun 2026 05:19:19 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-05.internal (MEProxy); Tue, 23 Jun 2026 05:19:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1782206359;
+ x=1782292759; bh=RXkk8VAx34C3HeeJdjGVl91oamA5R4mSjZWkHzF5itg=; b=
+ Rvrer62p/SMU27d1vR/NxjVb/Q4vzdD0NQLxJgsi+ofYW+58D4DuudB+eDgWh/l2
+ h7BfI+G6bvD7l0Vjb9nzK+heBnDh5Kd3wHvyGTDinyfiITssP1AvxOJrdJeacko4
+ 8oeVnLq+O1koE9eNnvcxXe5DV8pq9uyKXHUEVSBGLIKKoWAb3hMibwPAxN5JE0yL
+ XJYxMmwb8bmrb+I/PF44wqPZseyBC6Z5SXyCs2TdhJmXnZPrFcGesL4vWR6cHBDa
+ dH3MajxHzj7S/OCF0+IKDSF0RPQm4ytCyh9R9OMycZf4kl/2cdrMLeGOl4h2wJvJ
+ JraicoJxuVIBQdeiU3sjJA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1782206359; x=
+ 1782292759; bh=RXkk8VAx34C3HeeJdjGVl91oamA5R4mSjZWkHzF5itg=; b=A
+ H223OStub5u500Mbie/kcZq/pg+IaFCe5p5jJ0hZobFTgFfqn1140MJwQBI0orvD
+ xDP/nkWmG0pxyhgT6fVXIaGaU3Yu0fsBBlk7dJyrxTAQQLRnQvw4qImRwfks5EiG
+ 5/wGBA7Kb5khl0kwCtNu5LgUJYR0V/ejnDY9L1UVWTNetwBDd/eZscQ82r/nDSUt
+ l1ttDgTDkbkRswSVmZfFiBRzIkVKuALw79rQJySFHHqAcyX2f/001dqNXUYtCqLC
+ LQT9JfSTsKZCThpFvOqvKZFhcyBKrHqeRNEjWIoL0o9RK9SrrGQTRuDX/J3nMEqU
+ U9q2eCFfg4JIiO34jD0EQ==
+X-ME-Sender: <xms:lk86apmjJnYcAgWp6nxPkavSUzU2cs5ZjF05MwRE3zNrIR7JoW3ojQ>
+ <xme:lk86agRsEdNyqEV5uAi5hk1e72eR2dyLTRhCVAbCQ1tWu9fz2jYmxfs5gON3yZJuz
+ UdkUzKRR56d1eRCrnpz6kdMf2eN0M4gZOnssg5-C2uVwvYlHJQH9g>
+X-ME-Received: <xmr:lk86ajKpERkmSyROOJLKVYdOF5-tD9Y-lK1JH6OuuP4ER_a1TBvuVP0EOclnK7sJ9nYa2Cf8FAy3Dkc2t7PpmPnRDA>
+X-ME-Proxy-Cause: dmFkZTGb9MkrAmY+nIjHdRPTDHRcSlteO4W9/2lU19Er1d+sG/gVENgRAU6/iMLMPcnOB0
+ y8inDu3hjjtyW7VonLEZMlH62+mhbgkV9mUCWVXn8PjmLdiojjr7NV1mvijDkQ4Camvs3t
+ fKS15ZacKJe9LXwgpoglr9MFyVhzWDe9HiAfwKlkecSAI+zIIdiN6+9GWF8xOab1RgpR5g
+ Zs0Srf6DP3QjDiSPCBvvht4a5PpvPmey9yldvOozjgCCvCEdWmgPWWRsmoOBh6DS1JB/81
+ GHhsR0m1OrYxeZHpFPs/RjBI49MBpFPwLkAMEuUn0RKnsEHG43qi5eqhy4AcmxoypKhPDn
+ RGjnL2WD835IQWCUdUVlQVTTM4WWj1Zmf0kc6CgC6QB+SRytKHzvaqTVJzGoOcgFQWM5ZS
+ D9rT+aBFG3Q4GiWa99YuY6mVDp9SNeq1kDz4s3Pd0mNAMZmnfB3ZZ/JdGJ+MwEsYp8PgS4
+ 6E40UiugciBT70yP+wbelAaCaM7JZpEP9BIm8lGifQE6OMHGvuDtxa24/f2xkGYhOETFVE
+ eXDmPP5dEMrQuGTFsu06wYqyQe62gUaOSYAEp8Yy8iSyY9Q572BFDutOo5u4tQi0Awpd8d
+ N10BwAJVxn78YcePEaf5RRwFq+c4EgtsK1slXg/H4hkIu+JM5M3A2u04oC/w
+X-ME-Proxy: <xmx:lk86auDczPvv4EiNmUGyE3gOXYnL4UrnC5Wb0jYz-RtPU3TGMSlULg>
+ <xmx:lk86akDePcami-cqADqUTs9kZK_f-fKnAPnYncHiEJvCpvnBBcf9bA>
+ <xmx:lk86aoBLpubtmLPDHWhh7wT6DVF74Y3QgG6lkNi66dm-6n5Xjwrjzg>
+ <xmx:lk86anriuGtmPG_xkyTHAcYDFHqcY819GNWIkgK1CGTtFDYmhI5eJQ>
+ <xmx:l086auZ16bAUqhPSgH-p3HM3QTkZ77Dgi3wLiUhAhBBDeBXfGPxPU3K7>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 23 Jun 2026 05:19:17 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, david.marchand@redhat.com
+Subject: Re: [PATCH v6 00/11] bpf: introduce extensible load API
+Date: Tue, 23 Jun 2026 11:19:15 +0200
+Message-ID: <gTfrLmiGT7u60MQvaNOzmw@monjalon.net>
+In-Reply-To: <20260617194425.12690-1-marat.khalili@huawei.com>
+References: <20260612084219.38399-1-marat.khalili@huawei.com>
+ <20260617194425.12690-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
-References: <20260617054943.287815-1-rkudurumalla@marvell.com>
- <20260623054424.1943810-1-rkudurumalla@marvell.com>
-In-Reply-To: <20260623054424.1943810-1-rkudurumalla@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Tue, 23 Jun 2026 14:43:07 +0530
-X-Gm-Features: AVVi8Ce3f8mCGGircen_NifiD2EWGmg5xCuMuGFPNdRegOal-bjF2R-ZaOrrcnA
-Message-ID: <CALBAE1PCDvCJC88_f+w+TqRgSWKu1XB1QToKoVk+Sj_cTyEFnw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] common/cnxk: add bulk Rx queue enable/disable
-To: rkudurumalla <rkudurumalla@marvell.com>
-Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, 
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, 
- Harman Kalra <hkalra@marvell.com>, dev@dpdk.org, jerinj@marvell.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -100,228 +88,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jun 23, 2026 at 11:21=E2=80=AFAM rkudurumalla <rkudurumalla@marvell=
-.com> wrote:
->
-> From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
->
-> Add roc_nix_rq_multi_ena_dis() to batch RQ enable/disable mailbox
-> AQ operations and process them in a single mbox_process() call.
->
-> Skip mbox_process() when no messages were queued (e.g. all qid are
-> UINT16_MAX) by checking num_msgs and msg_size via mbox_nonempty_nolock().
->
-> Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+> Marat Khalili (11):
+>   bpf: make logging prefixes more consistent
+>   bpf: introduce extensible load API
+>   bpf: support up to 5 arguments
+>   bpf: add cBPF origin to rte_bpf_load_ex
+>   bpf: support rte_bpf_prm_ex with port callbacks
+>   bpf: support loading ELF files from memory
+>   test/bpf: test loading cBPF directly
+>   test/bpf: test loading ELF file from memory
+>   doc: add release notes for new extensible BPF API
+>   doc: add load API to BPF programmer's guide
+>   test/bpf: add tests for error handling contracts
+
+RTE_EXPORT_EXPERIMENTAL_SYMBOL(, 26.11)
+changed to
+RTE_EXPORT_EXPERIMENTAL_SYMBOL(, 26.07)
+
+Doc and tests split and squashed in relevant commits
+to have atomic changes.
+
+Applied
 
 
-Always add change diff. Also Cc: the commenter who commented on v1.
-Cc: @Stephen Hemminger
-
-Applied to dpdk-next-net-mrvl/for-main. Thanks
-
-
-> ---
->  drivers/common/cnxk/roc_mbox_priv.h           |   6 +-
->  drivers/common/cnxk/roc_nix.h                 |   2 +
->  drivers/common/cnxk/roc_nix_queue.c           | 102 ++++++++++++++++++
->  .../common/cnxk/roc_platform_base_symbols.c   |   1 +
->  4 files changed, 107 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/common/cnxk/roc_mbox_priv.h b/drivers/common/cnxk/ro=
-c_mbox_priv.h
-> index 354c8fa52a..e9da1959b6 100644
-> --- a/drivers/common/cnxk/roc_mbox_priv.h
-> +++ b/drivers/common/cnxk/roc_mbox_priv.h
-> @@ -113,14 +113,12 @@ mbox_rsp_init(uint16_t mbox_id, void *msghdr)
->  }
->
->  static inline bool
-> -mbox_nonempty(struct mbox *mbox, int devid)
-> +mbox_nonempty_nolock(struct mbox *mbox, int devid)
->  {
->         struct mbox_dev *mdev =3D &mbox->dev[devid];
->         bool ret;
->
-> -       plt_spinlock_lock(&mdev->mbox_lock);
-> -       ret =3D mdev->num_msgs !=3D 0;
-> -       plt_spinlock_unlock(&mdev->mbox_lock);
-> +       ret =3D mdev->num_msgs !=3D 0 && mdev->msg_size !=3D 0;
->
->         return ret;
->  }
-> diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.=
-h
-> index 8ba8b3e0b6..f495e2a5ad 100644
-> --- a/drivers/common/cnxk/roc_nix.h
-> +++ b/drivers/common/cnxk/roc_nix.h
-> @@ -1094,6 +1094,8 @@ int __roc_api roc_nix_rq_modify(struct roc_nix *roc=
-_nix, struct roc_nix_rq *rq,
->                                 bool ena);
->  int __roc_api roc_nix_rq_cman_config(struct roc_nix *roc_nix, struct roc=
-_nix_rq *rq);
->  int __roc_api roc_nix_rq_ena_dis(struct roc_nix_rq *rq, bool enable);
-> +int __roc_api roc_nix_rq_multi_ena_dis(struct roc_nix *roc_nix, struct r=
-oc_nix_rq *rqs,
-> +                                      int nb_rx_queues, bool enable);
->  int __roc_api roc_nix_rq_is_sso_enable(struct roc_nix *roc_nix, uint32_t=
- qid);
->  int __roc_api roc_nix_rq_fini(struct roc_nix_rq *rq);
->  int __roc_api roc_nix_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq=
- *cq);
-> diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/ro=
-c_nix_queue.c
-> index ef9b651022..075c9c1591 100644
-> --- a/drivers/common/cnxk/roc_nix_queue.c
-> +++ b/drivers/common/cnxk/roc_nix_queue.c
-> @@ -10,6 +10,49 @@
->  /* Default SQB slack per SQ */
->  #define ROC_NIX_SQB_SLACK_DFLT 24
->
-> +typedef void *(*nix_aq_enq_alloc_t)(struct mbox *mbox);
-> +
-> +static inline void
-> +nix_aq_enq_write_rq_ena(void *msg, uint16_t qid, bool enable)
-> +{
-> +       struct nix_aq_enq_req *aq =3D msg;
-> +
-> +       aq->qidx =3D qid;
-> +       aq->ctype =3D NIX_AQ_CTYPE_RQ;
-> +       aq->op =3D NIX_AQ_INSTOP_WRITE;
-> +       aq->rq.ena =3D enable;
-> +       aq->rq_mask.ena =3D ~(aq->rq_mask.ena);
-> +}
-> +
-> +static inline int
-> +nix_rq_bulk_ena_dis_fill(struct mbox *mbox, struct roc_nix_rq *rqs, int =
-nb_rx_queues,
-> +                        bool enable, nix_aq_enq_alloc_t alloc)
-> +{
-> +       int i;
-> +
-> +       for (i =3D 0; i < nb_rx_queues; i++) {
-> +               void *aq;
-> +               int rc;
-> +
-> +               if (rqs[i].qid =3D=3D UINT16_MAX)
-> +                       continue;
-> +
-> +               aq =3D alloc(mbox);
-> +               if (!aq) {
-> +                       rc =3D mbox_process(mbox);
-> +                       if (rc)
-> +                               return rc;
-> +                       aq =3D alloc(mbox);
-> +                       if (!aq)
-> +                               return -ENOSPC;
-> +               }
-> +
-> +               nix_aq_enq_write_rq_ena(aq, rqs[i].qid, enable);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static inline uint32_t
->  nix_qsize_to_val(enum nix_q_size qsize)
->  {
-> @@ -47,6 +90,28 @@ nix_rq_vwqe_flush(struct roc_nix_rq *rq, uint16_t vwqe=
-_interval)
->         }
->  }
->
-> +static int
-> +nix_rq_bulk_ena_dis(struct nix *nix, struct roc_nix_rq *rqs, int nb_rx_q=
-ueues, bool enable)
-> +{
-> +       struct mbox *mbox =3D mbox_get((&nix->dev)->mbox);
-> +       nix_aq_enq_alloc_t alloc;
-> +       int rc;
-> +
-> +       if (roc_model_is_cn9k())
-> +               alloc =3D (nix_aq_enq_alloc_t)mbox_alloc_msg_nix_aq_enq;
-> +       else if (roc_model_is_cn10k())
-> +               alloc =3D (nix_aq_enq_alloc_t)mbox_alloc_msg_nix_cn10k_aq=
-_enq;
-> +       else /* CN20K */
-> +               alloc =3D (nix_aq_enq_alloc_t)mbox_alloc_msg_nix_cn20k_aq=
-_enq;
-> +
-> +       rc =3D nix_rq_bulk_ena_dis_fill(mbox, rqs, nb_rx_queues, enable, =
-alloc);
-> +       if (!rc && mbox_nonempty_nolock(mbox, 0))
-> +               rc =3D mbox_process(mbox);
-> +
-> +       mbox_put(mbox);
-> +       return rc;
-> +}
-> +
->  int
->  nix_rq_ena_dis(struct dev *dev, struct roc_nix_rq *rq, bool enable)
->  {
-> @@ -126,6 +191,43 @@ roc_nix_sq_ena_dis(struct roc_nix_sq *sq, bool enabl=
-e)
->         return rc;
->  }
->
-> +int
-> +roc_nix_rq_multi_ena_dis(struct roc_nix *roc_nix, struct roc_nix_rq *rqs=
-, int nb_rx_queues,
-> +                        bool enable)
-> +{
-> +       struct nix *nix =3D roc_nix_to_nix_priv(roc_nix);
-> +       struct roc_nix_rq *rq;
-> +       int rc, i;
-> +
-> +       rc =3D nix_rq_bulk_ena_dis(nix, rqs, nb_rx_queues, enable);
-> +       if (rc) {
-> +               plt_err("Failed to %s Rx queues rc=3D%d pf=3D%d vf=3D%d n=
-b_rx_queues=3D%d",
-> +                       enable ? "enable" : "disable", rc, nix->dev.pf, n=
-ix->dev.vf,
-> +                       nb_rx_queues);
-> +               return rc;
-> +       }
-> +
-> +       for (i =3D 0; i < nb_rx_queues; i++) {
-> +               rq =3D &rqs[i];
-> +
-> +               if (rq->qid =3D=3D UINT16_MAX)
-> +                       continue;
-> +
-> +               nix_rq_vwqe_flush(rq, nix->vwqe_interval);
-> +
-> +               /* Check for meta aura if RQ is enabled */
-> +               if (enable && nix->need_meta_aura) {
-> +                       rc =3D roc_nix_inl_meta_aura_check(rq->roc_nix, r=
-q);
-> +                       if (rc) {
-> +                               plt_err("Failed meta aura check for rq=3D=
-%u rc=3D%d pf=3D%d vf=3D%d",
-> +                                       rq->qid, rc, nix->dev.pf, nix->de=
-v.vf);
-> +                               return rc;
-> +                       }
-> +               }
-> +       }
-> +       return 0;
-> +}
-> +
->  int
->  roc_nix_rq_ena_dis(struct roc_nix_rq *rq, bool enable)
->  {
-> diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/co=
-mmon/cnxk/roc_platform_base_symbols.c
-> index ed34d4b05b..08b2f4c6f8 100644
-> --- a/drivers/common/cnxk/roc_platform_base_symbols.c
-> +++ b/drivers/common/cnxk/roc_platform_base_symbols.c
-> @@ -353,6 +353,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_ena_dis)
->  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_is_sso_enable)
->  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_init)
->  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_modify)
-> +RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_multi_ena_dis)
->  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_cman_config)
->  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_fini)
->  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_cq_init)
-> --
-> 2.25.1
->
