@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D0BCD98F2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 14:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72978CD98F2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 14:19:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B3BA40611;
-	Tue, 23 Jun 2026 16:19:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C8A714066B;
+	Tue, 23 Jun 2026 16:19:52 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id B226140150;
- Tue, 23 Jun 2026 16:19:45 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E293E40150;
+ Tue, 23 Jun 2026 16:19:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782224386; x=1813760386;
+ t=1782224391; x=1813760391;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=uBqXz2Uasg4eaK7XHr+sUV2chxbSrqGB56PvI1qlAFY=;
- b=IAKrQakmMzrvyIfEk7xA1/Uf8jJoctzoFnVqqujgoD5vkHB41ldzf4Xm
- zeTa/lDPHcKG2ZV0WZ0YZIMgqe4vuJ2HH9RIAsDXWcm+Oz1itcujf6s12
- TB3VFWbons4qemynv7Bh2r0j6UwtDg+03sAiWEhuFd21xZYxt/U/0J6ng
- ATpnUVkO0xesTbe986XFoI2BgYcKwmXvQCE9y8l/wx5b1wNtJ+Fvi5fa2
- PPcfrQrhDEa/IhXC09HtlSTIs0Z6UpGEuGsu5FdlkhlA4gQyJWCQUgRl6
- M6qmgSviMy9jDCduP9hl3fnM6FZ2+jezHT1gvIB15luK5BVh+Dvfy2N9z w==;
-X-CSE-ConnectionGUID: hqy6OB55SEC6+EYbdiUFgQ==
-X-CSE-MsgGUID: h839zZ5VQ3OY8YtybtlOxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="82970473"
-X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="82970473"
+ bh=2c/ett4L4fiun5LFerxIzTNzEtdDJ1A9lxsDV5VKdg0=;
+ b=J9B1Nh7nl8pN0fdEs7/1nHOfY8kbo38ZK/YjFFNitoPkbEmtsK8h5tqp
+ ZQALM5f3wGDW2jFttNhpBqN6VhziJy8BLOsGb0qj5OCA1I0sqtL9YgyRX
+ kYvrNSTu+dwhLWB9468m3UGF7wWupzLXD/f6pnpZ0Do5eigt0fvzzBiKV
+ zzXZOdGT1iYbG0LNcwW4Xy1CYXxY3zZaEJVGnSdQiA0//PqBKC73/uBAp
+ c7AxY3sDyIIgAKmxesu2YD6tnGfS+YPcA9PRsb6p8j3n13vYzOPTczGF+
+ sihtTuszta+/OVBlbrIAAiiIJR/wgHroXr9MLYGHRUeYQ3KF1cpjXXfw7 w==;
+X-CSE-ConnectionGUID: srshXVxcQAK/xAZ9KbBJ8A==
+X-CSE-MsgGUID: KROB7zGvRXiqzOHm14VCIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="82970498"
+X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="82970498"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jun 2026 07:19:45 -0700
-X-CSE-ConnectionGUID: teJLZWiuRYqWIXJpqqgXzA==
-X-CSE-MsgGUID: bhT2X6YsRn2XWbbv9a6wFw==
+ 23 Jun 2026 07:19:50 -0700
+X-CSE-ConnectionGUID: 5DhqZbnXTAOSot0/k5qq8g==
+X-CSE-MsgGUID: jLE7ResgS9iCbXBrhun9DA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="253888647"
+X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="253888676"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.224.226])
- by orviesa004.jf.intel.com with ESMTP; 23 Jun 2026 07:19:43 -0700
+ by orviesa004.jf.intel.com with ESMTP; 23 Jun 2026 07:19:49 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Harman Kalra <hkalra@marvell.com>, Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: [PATCH 1/3] ethdev: remove use of strncpy
-Date: Tue, 23 Jun 2026 15:19:27 +0100
-Message-ID: <20260623141930.704771-2-bruce.richardson@intel.com>
+ Naga Harish K S V <s.v.naga.harish.k@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, Nikhil Rao <nikhil.rao@intel.com>
+Subject: [PATCH 2/3] eventdev: improve bounds checks for names in adapter
+ create
+Date: Tue, 23 Jun 2026 15:19:28 +0100
+Message-ID: <20260623141930.704771-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260623141930.704771-1-bruce.richardson@intel.com>
 References: <20260623141930.704771-1-bruce.richardson@intel.com>
@@ -63,45 +63,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The use of strncpy is not generally recommended, so replace it in code
-tokenizing the representor list. Since its use in the function is not
-involving null-terminated strings (we know that copied block will
-not involve a null value in it), we can replace strncpy with memcpy
-rather than a string function. This keeps the original intent of the
-code.
+The bounds checks for snprintf and then strncpy used different constant
+defines, which happened to resolve to the same value (32). Make this
+code more resilient by using sizeof() operator rather than the defines,
+and replace use of strncpy with the better strlcpy.
 
-For extra safety, also add in an explicit bounds check on the length
-value before doing the memcpy.
-
-Fixes: 9a9eb104edf6 ("ethdev: parse multiple representor devargs")
+Fixes: a3bbf2e09756 ("eventdev: add eth Tx adapter implementation")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/ethdev/ethdev_driver.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ lib/eventdev/rte_event_eth_tx_adapter.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
-index 70ddce5bfc..4043ce898f 100644
---- a/lib/ethdev/ethdev_driver.c
-+++ b/lib/ethdev/ethdev_driver.c
-@@ -583,10 +583,15 @@ eth_dev_tokenise_representor_list(char *p_val, struct rte_eth_devargs *eth_devar
- 		return devargs;
- 	}
+diff --git a/lib/eventdev/rte_event_eth_tx_adapter.c b/lib/eventdev/rte_event_eth_tx_adapter.c
+index 91c7be55c7..d531da5d69 100644
+--- a/lib/eventdev/rte_event_eth_tx_adapter.c
++++ b/lib/eventdev/rte_event_eth_tx_adapter.c
+@@ -748,7 +748,7 @@ txa_service_adapter_create_ext(uint8_t id, struct rte_eventdev *dev,
+ 		return -EINVAL;
  
-+	/* len - 2 strips the outer '[' and ']'; guard against underflow and overflow */
-+	if (len < 2 || (len - 2) >= BUFSIZ) {
-+		RTE_ETHDEV_LOG_LINE(ERR, "Representor list too long or malformed: %s", p_val);
-+		return -EINVAL;
-+	}
- 	memset(str, 0, BUFSIZ);
- 	memset(da_val, 0, BUFSIZ);
- 	/* Remove the exterior [] of the consolidated list */
--	strncpy(str, &p_val[1], len - 2);
-+	memcpy(str, &p_val[1], len - 2);
- 	while (1) {
- 		if (str[i] == '\0') {
- 			if (da_val[0] != '\0') {
+ 	socket_id = dev->data->socket_id;
+-	snprintf(mem_name, TXA_MEM_NAME_LEN,
++	snprintf(mem_name, sizeof(mem_name),
+ 		"rte_event_eth_txa_%d",
+ 		id);
+ 
+@@ -767,7 +767,7 @@ txa_service_adapter_create_ext(uint8_t id, struct rte_eventdev *dev,
+ 	txa->id = id;
+ 	txa->eventdev_id = dev->data->dev_id;
+ 	txa->socket_id = socket_id;
+-	strncpy(txa->mem_name, mem_name, TXA_SERVICE_NAME_LEN);
++	strlcpy(txa->mem_name, mem_name, sizeof(txa->mem_name));
+ 	txa->conf_cb = conf_cb;
+ 	txa->conf_arg = conf_arg;
+ 	txa->service_id = TXA_INVALID_SERVICE_ID;
 -- 
 2.53.0
 
