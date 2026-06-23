@@ -2,40 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B16CDB479
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 14:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178CDCDB46F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 14:51:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6413840DD2;
-	Tue, 23 Jun 2026 16:33:38 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 197894066E
- for <dev@dpdk.org>; Tue, 23 Jun 2026 16:33:03 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gl6wc3jXGzHnH6J
- for <dev@dpdk.org>; Tue, 23 Jun 2026 22:32:32 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id F01D140574
- for <dev@dpdk.org>; Tue, 23 Jun 2026 22:33:02 +0800 (CST)
-Received: from localhost.localdomain (10.220.239.45) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 23 Jun 2026 16:33:02 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: 
-CC: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v4 24/24] doc: add release notes for BPF validation fixes
-Date: Tue, 23 Jun 2026 15:32:11 +0100
-Message-ID: <20260623143215.95318-25-marat.khalili@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260623143215.95318-1-marat.khalili@huawei.com>
-References: <20260612104743.6465-1-marat.khalili@huawei.com>
- <20260623143215.95318-1-marat.khalili@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 28748402AD;
+	Tue, 23 Jun 2026 16:51:00 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id EA06740150;
+ Tue, 23 Jun 2026 16:50:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782226259; x=1813762259;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=FnMYmVfov29yelhhmjfypfX5v2CUlzq5Pxi9+x9qKk8=;
+ b=g2PhGc0yBL9HxF1y+UEK32SYHBShLzpbTKN8H4B4lc2L8RzSD7+Ij0UP
+ 9zxB1Rlo1B+Gc7bgAKIyIwQs+epOmyfZlxjKfYlCgcJe+w3B7Tulpg30w
+ X6JNThdrv8O8FEWn+ya+JGDOxxhWoBBcz0pnqMQmPhC0t9wopk7DmgYrP
+ NddhwIGXEHqJOYecvO7jjqvc2FzcfrQ1e7LFgJhvkz3OMUvq84IvEiDbN
+ T6Ye8IzcwQi9AhSKZEQcBqkDbOC+CYumJDIt8eyNaw5bjM1mIOPviwARx
+ /cYOIcgb3KINnnBZcNTrNINhWDDcHeF6nMjxP/yMJ8QFs/SX7GZo7BFm5 g==;
+X-CSE-ConnectionGUID: bOhKR7y1SLWhBo/PmFQeRA==
+X-CSE-MsgGUID: nNqiXLKpQrSfBmt77yjmyw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="85526446"
+X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="85526446"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Jun 2026 07:50:57 -0700
+X-CSE-ConnectionGUID: UNdY+N+oSaekEjen6xVTqQ==
+X-CSE-MsgGUID: y/BJq/dbRxuzUKpbSNg93A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="248650580"
+Received: from silpixa00401385.ir.intel.com (HELO
+ localhost.ger.corp.intel.com) ([10.20.224.226])
+ by orviesa010.jf.intel.com with ESMTP; 23 Jun 2026 07:50:52 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
+ Kai Ji <kai.ji@intel.com>, Cheng Jiang <honest.jiang@foxmail.com>,
+ Chengwen Feng <fengchengwen@huawei.com>, Jerin Jacob <jerinj@marvell.com>,
+ Ori Kam <orika@nvidia.com>, Aman Singh <aman.deep.singh@intel.com>,
+ Michal Kobylinski <michalx.kobylinski@intel.com>,
+ Piotr Azarewicz <piotr.azarewicz@intel.com>,
+ Marcin Kerlin <marcinx.kerlin@intel.com>,
+ Slawomir Mrozowicz <slawomirx.mrozowicz@intel.com>,
+ Declan Doherty <declan.doherty@intel.com>,
+ Aleksander Gajewski <aleksanderx.gajewski@intel.com>,
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>,
+ Guduri Prathyusha <gprathyusha@caviumnetworks.com>,
+ Harry van Haaren <harry.van.haaren@intel.com>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Jiayu Hu <hujiayu.hu@foxmail.com>, Yuan Wang <yuanx.wang@intel.com>,
+ Anoob Joseph <anoobj@marvell.com>, Xiaoyu Min <jackmin@nvidia.com>,
+ Xueming Li <xuemingl@nvidia.com>, Yuval Avnery <yuvalav@nvidia.com>
+Subject: [PATCH] app: remove use of strncpy
+Date: Tue, 23 Jun 2026 15:50:27 +0100
+Message-ID: <20260623145028.711712-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.220.239.45]
-X-ClientProxiedBy: frapema500003.china.huawei.com (7.182.19.114) To
- frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,38 +74,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Document hardening the BPF validator.
+Use of strncpy is not recommended, so replace it with strlcpy or memcpy
+as appropriate.
 
-Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Fixes: f8be1786b1b8 ("app/crypto-perf: introduce performance test application")
+Fixes: 8ecd4048ba5d ("app/crypto-perf: fix string not null terminated")
+Fixes: 0add6c27cd7c ("app/testeventdev: define the test options")
+Fixes: 623dc9364dc6 ("app/dma-perf: introduce DMA performance test")
+Fixes: 1e8a4e97b057 ("app/testpmd: add flow dump command")
+Fixes: de06137cb295 ("app/regex: add RegEx test application")
+Cc: stable@dpdk.org
+
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- doc/guides/rel_notes/release_26_07.rst | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ app/test-crypto-perf/cperf_options_parsing.c | 5 ++---
+ app/test-dma-perf/main.c                     | 2 +-
+ app/test-eventdev/evt_options.c              | 2 +-
+ app/test-pmd/cmdline_flow.c                  | 2 +-
+ app/test-regex/main.c                        | 9 ++-------
+ 5 files changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 8471966a4992..9376e7acad24 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -164,7 +164,7 @@ New Features
-     for installing already loaded BPF programs as port callbacks
-     (as opposed to loading them directly from ELF files).
+diff --git a/app/test-crypto-perf/cperf_options_parsing.c b/app/test-crypto-perf/cperf_options_parsing.c
+index 14e731586b..0951293adb 100644
+--- a/app/test-crypto-perf/cperf_options_parsing.c
++++ b/app/test-crypto-perf/cperf_options_parsing.c
+@@ -481,8 +481,7 @@ parse_device_type(struct cperf_options *opts, const char *arg)
+ 	if (strlen(arg) > (sizeof(opts->device_type) - 1))
+ 		return -1;
  
--* **Added BPF validation debugging API.**
-+* **Added BPF validation debugging API and hardened BPF validator.**
+-	strncpy(opts->device_type, arg, sizeof(opts->device_type) - 1);
+-	*(opts->device_type + sizeof(opts->device_type) - 1) = '\0';
++	strlcpy(opts->device_type, arg, sizeof(opts->device_type));
  
-   * Introduced a new set of APIs (prefixed with ``rte_bpf_validate_debug_``) to
-     introspect the BPF validator. This provides a mechanism to set breakpoints
-@@ -172,6 +172,10 @@ New Features
-     (such as tracked register bounds). This API is crucial primarily for writing
-     comprehensive tests for the validator, but also serves as a foundation for a
-     future interactive eBPF validation debugger.
-+  * Fixed numerous bugs in the BPF validator's abstract interpretation logic,
-+    including incorrect bounds tracking for jumps and arithmetic operations, as
-+    well as fixing several instances of undefined behavior (UB) when verifying
-+    malicious or corrupt programs.
+ 	return 0;
+ }
+@@ -1125,7 +1124,7 @@ cperf_options_default(struct cperf_options *opts)
+ 	opts->segment_sz = 0;
  
- * **Added AI review helpers.**
+ 	opts->imix_distribution_count = 0;
+-	strncpy(opts->device_type, "crypto_aesni_mb",
++	strlcpy(opts->device_type, "crypto_aesni_mb",
+ 			sizeof(opts->device_type));
+ 	opts->nb_qps = 1;
  
+diff --git a/app/test-dma-perf/main.c b/app/test-dma-perf/main.c
+index 4249dcfd3d..13bf07a764 100644
+--- a/app/test-dma-perf/main.c
++++ b/app/test-dma-perf/main.c
+@@ -220,7 +220,7 @@ parse_entry(const char *value, struct test_configure_entry *entry)
+ 	int args_nr = -1;
+ 	int ret;
+ 
+-	strncpy(input, value, 254);
++	strlcpy(input, value, sizeof(input));
+ 	if (*input == '\0')
+ 		goto out;
+ 
+diff --git a/app/test-eventdev/evt_options.c b/app/test-eventdev/evt_options.c
+index 0e70c971eb..1da0aba386 100644
+--- a/app/test-eventdev/evt_options.c
++++ b/app/test-eventdev/evt_options.c
+@@ -23,7 +23,7 @@ evt_options_default(struct evt_options *opt)
+ 	memset(opt, 0, sizeof(*opt));
+ 	opt->verbose_level = 1; /* Enable minimal prints */
+ 	opt->dev_id = 0;
+-	strncpy(opt->test_name, "order_queue", EVT_TEST_NAME_MAX_LEN);
++	strlcpy(opt->test_name, "order_queue", sizeof(opt->test_name));
+ 	opt->nb_flows = 1024;
+ 	opt->socket_id = SOCKET_ID_ANY;
+ 	opt->pool_sz = 16 * 1024;
+diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
+index 67f200f2e3..465396d2e5 100644
+--- a/app/test-pmd/cmdline_flow.c
++++ b/app/test-pmd/cmdline_flow.c
+@@ -11910,7 +11910,7 @@ parse_string0(struct context *ctx, const struct token *token __rte_unused,
+ 	if (!ctx->object)
+ 		return len;
+ 	buf = (uint8_t *)ctx->object + arg_data->offset;
+-	strncpy(buf, str, len);
++	memcpy(buf, str, len);
+ 	if (ctx->objmask)
+ 		memset((uint8_t *)ctx->objmask + arg_data->offset, 0xff, len);
+ 	return len;
+diff --git a/app/test-regex/main.c b/app/test-regex/main.c
+index acb834a8b4..81719f2e04 100644
+--- a/app/test-regex/main.c
++++ b/app/test-regex/main.c
+@@ -103,7 +103,6 @@ args_parse(int argc, char **argv, char *rules_file, char *data_file,
+ 	char **argvopt;
+ 	int opt;
+ 	int opt_idx;
+-	size_t len;
+ 	static struct option lgopts[] = {
+ 		{ "help",  0, 0, ARG_HELP},
+ 		/* Rules database file to load. */
+@@ -133,20 +132,16 @@ args_parse(int argc, char **argv, char *rules_file, char *data_file,
+ 				lgopts, &opt_idx)) != EOF) {
+ 		switch (opt) {
+ 		case ARG_RULES_FILE_NAME:
+-			len = strnlen(optarg, MAX_FILE_NAME - 1);
+-			if (len == MAX_FILE_NAME)
++			if (strlcpy(rules_file, optarg, MAX_FILE_NAME) >= MAX_FILE_NAME)
+ 				rte_exit(EXIT_FAILURE,
+ 					 "Rule file name to long max %d\n",
+ 					 MAX_FILE_NAME - 1);
+-			strncpy(rules_file, optarg, MAX_FILE_NAME - 1);
+ 			break;
+ 		case ARG_DATA_FILE_NAME:
+-			len = strnlen(optarg, MAX_FILE_NAME - 1);
+-			if (len == MAX_FILE_NAME)
++			if (strlcpy(data_file, optarg, MAX_FILE_NAME) >= MAX_FILE_NAME)
+ 				rte_exit(EXIT_FAILURE,
+ 					 "Data file name to long max %d\n",
+ 					 MAX_FILE_NAME - 1);
+-			strncpy(data_file, optarg, MAX_FILE_NAME - 1);
+ 			break;
+ 		case ARG_NUM_OF_JOBS:
+ 			*nb_jobs = atoi(optarg);
 -- 
-2.43.0
+2.53.0
 
