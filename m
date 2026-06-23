@@ -2,60 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AFACDB47C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 21:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13201CDB471
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 22:06:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D1F0402A2;
-	Tue, 23 Jun 2026 23:54:37 +0200 (CEST)
-Received: from mail-qt1-f202.google.com (mail-qt1-f202.google.com
- [209.85.160.202])
- by mails.dpdk.org (Postfix) with ESMTP id E455740293
- for <dev@dpdk.org>; Tue, 23 Jun 2026 23:54:35 +0200 (CEST)
-Received: by mail-qt1-f202.google.com with SMTP id
- d75a77b69052e-519899aa6bfso4548521cf.1
- for <dev@dpdk.org>; Tue, 23 Jun 2026 14:54:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 35A9B40299;
+	Wed, 24 Jun 2026 00:06:48 +0200 (CEST)
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com
+ [74.125.224.42]) by mails.dpdk.org (Postfix) with ESMTP id A5C9640293
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 00:06:47 +0200 (CEST)
+Received: by mail-yx1-f42.google.com with SMTP id
+ 956f58d0204a3-660e9ff0587so211685d50.0
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 15:06:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1782251675; x=1782856475; darn=dpdk.org;
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=qa0JsgajxRDLtzkgCmFAOFE/U9oiiF19A8Kt6D3rUEQ=;
- b=CXr5oY5WVGiKWX1icmNNjG1OcsPPlUU5QrrK1hFcLPx/3vm5TaPFCUgmIKkF7GLaTB
- MqQ2sXs/OMNKIBz7TyngAwFF2wL5/FwmxGYBtV+U9yrqdhfZuGoMGd8Nbo3d/KnHWGVT
- oNczfrS3c5cQnqI8oZ9h7JrY+zBPcfiEf/rp4kZpvDOTXokn1ctrdu5eIMhD4b6OF9wL
- zBrhzw4ZPoMr3RH+pYlTg8b89Kw6qSwifMhYdhaCImpoaeMhv3QxamJFncdidLNukx16
- XadohcVPQskVCKzg4MA8UjiOZNwvDMcIQ+EGz5pUb2pTwccVb61qsaoBILeFOqo0RKne
- p7pg==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782252406;
+ x=1782857206; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=oPX+RJGEXTHon36TZe3BbgOsnv5/bZBnlWj2fXBgTgA=;
+ b=Zl+DCB1l6g+jMMAuI5dxxD050CKjQC6luoWz264qXUp/n3Yk1rRLCgTAAfKUUEA27D
+ 2S4kzqBKJyUpVQNjaqBAl70MgxwQUKW0HlbkK7QGwz1RC0wj0YGrCBg4t0md5/Jc+/YG
+ LqunbB9cuzQxl37wwRZyN1JQZc3nlrFuPUXhU9RykM3WGnpM8844fedNZ5o5UL9hcuxE
+ C1VpR98WDURgO8Z/KYNqnoUdQe99u4Dc8Ob2twpf+P4d7SHd7ljNyQym6E+rBJgX0PQy
+ IWnvfwmSo5CMMvfeTej2CBkqOPbapbiDCU51orSAv8EA/tJeylIkzPcij748TJo/KP7o
+ EIFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782251675; x=1782856475;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=qa0JsgajxRDLtzkgCmFAOFE/U9oiiF19A8Kt6D3rUEQ=;
- b=rMLsSGjmiPgVEPMxWHdpWa73iCjP6E1cPvmP4lUNx8rKb2E6mrCedwgDHTA1YHvamO
- Gg3cVaBGSWVTE97M38mQtFXwpue9fBy8gJCI14uAGu+DBgrXfX/DlDLXVDzXEPDGxILx
- 4mdrHF9g4RW6GCOCBGzCCZQ4EGF6Nbvp92hRa3FbG3QbGvJi9HqGaKdZbwdlU06Ab72u
- gmOUBTU5M7I97YA64TU5+ZToxdkCOYdBDuy5ZSewE8Su+Xd3v+Gq/phBaMU29h5yLOuI
- 827kiff5cAemdABZ86T+yxB/Jm3fEuKs+fLdEoqFT6gHVCg3fDvG+/EHC1s1VCkJUoyA
- 3ZFA==
-X-Gm-Message-State: AOJu0YxqntgF17/Chl6nX+NeIOQdE5gpaRDWed2DyZ7tlobGAZqCsd1/
- x1Z4e2V1fn2EjYucfArkkIXgcyrqeFUtvRQNxCkg6tHep0yYHGzj+J7QjYzo64nhz6SYm1Zw11s
- M8wNDnG5kSka1kZDh+rCSUbjxwfQIV+TbUQZoxNofGT/ndW4BLWQs4kodPYwG9eh+ygp25yrqAD
- FJwrLbBySEglhqm0oTJLYrirE=
-X-Received: from qtnn9.prod.google.com ([2002:a05:622a:4649:b0:516:cb08:8941])
- (user=blasko job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:622a:487:b0:517:5e32:af23
- with SMTP id d75a77b69052e-51a61d7cee8mr13425121cf.23.1782251674743; Tue, 23
- Jun 2026 14:54:34 -0700 (PDT)
-Date: Tue, 23 Jun 2026 21:53:24 +0000
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.55.0.rc0.799.gd6f94ed593-goog
-Message-ID: <20260623215325.814776-1-blasko@google.com>
-Subject: [PATCH] net/af_xdp: add Rx metadata and dynamic timestamping support
-From: Mark Blasko <blasko@google.com>
-To: dev@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>, 
- Maryam Tahhan <mtahhan@redhat.com>
-Cc: Mark Blasko <blasko@google.com>, Joshua Washington <joshwash@google.com>, 
- "Jasper Tran O'Leary" <jtranoleary@google.com>
-Content-Type: text/plain; charset="UTF-8"
+ d=1e100.net; s=20251104; t=1782252406; x=1782857206;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=oPX+RJGEXTHon36TZe3BbgOsnv5/bZBnlWj2fXBgTgA=;
+ b=RhGTW54vF7WKkwuusJ0JuS7VLYAGTSou1MwfLDJppPUW2PLgAiaNj6+HKq0rI+BH4w
+ Sv0PGLKcgG7DR4v8kjlfQOPL4/IG3JpdY6ofEGFDG3dSk2kbBkJzm3+Puj8Dt5G+I15N
+ /CyoyWvd5SAtFOK5aUJkTAcoBZ0a/f9I6Dzdr2VDAuIHO0qJPr5DNKG2rw9iGdeP8Akd
+ q78Ws6N4H+PYgHxIciLKHpNIKEQevqlOWFJzcX7R0Y4ocZx1purUzgD0EEjPx561PXyr
+ pNBUo/WK2mcrgrhRgcFC3wyWbeXj/gArf2DRycok1IxBW6TKI5nh6ChzjEOFxtSlpcwI
+ TvXg==
+X-Gm-Message-State: AOJu0YwBHOUuGOGoqVI4SS7SQBmvn5I87e3ccu5iCmdecjDL2bURy2Og
+ 1HybJPZqOTTGyJD5n21MCPAVBNNGAOytRhyL24DmKAyjR/XPxu2TtK3ikyhZS6rIIDA=
+X-Gm-Gg: AfdE7ckwM+KRwBQH4x7u5/wU+Dcvh9oftWkHeC9rI8dcBzc4YEBzCqjBehdXD/8LoYh
+ D1aPfh5IYVY09JU9UIt1lZcaYdg1fXUlAhm+lJfx3NmmTVluv3zA2nVLvH4ctb2tHXwZFUNU43P
+ LI0bl73vRaY39L9LI1al+Btxgjeyf8L87fRNgeAXco3G7MTw1RqktmE2n6zW6/ZCGHmnlgQkoFX
+ JcSBu+FCqHOSMB6SigzzZWVi1MhfZvZEaqUje54GNtLbl7kXF1vw6UJKTH2BVwMHVqHoxjtOm5e
+ sd9vYucJwnxWiLNCJmlO6Wj0SbY3yYKiI8ICGKjVPUVC4cYDKROz5vRIb3/SPUXPb66QEzVYE0W
+ bmwjn2ifx2GaG9rA3S94uEW90mgfgIVLhy/EuBrXxssG5bl/UboN3qEPHIyGhKB9UvNzXeQRs/Y
+ iowShTGuv1CgnZDhCoZyKuObpn3BlAP0aJ9C6tf4IOirb1CYiaBtJ33puSNMqGFPDs
+X-Received: by 2002:a05:690e:1301:b0:660:580f:694 with SMTP id
+ 956f58d0204a3-6636e5dcc5cmr692287d50.44.1782252401741; 
+ Tue, 23 Jun 2026 15:06:41 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 956f58d0204a3-66314d8dc0asm5830091d50.17.2026.06.23.15.06.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 23 Jun 2026 15:06:41 -0700 (PDT)
+Date: Tue, 23 Jun 2026 15:06:38 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Mark Blasko <blasko@google.com>
+Cc: dev@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan
+ <mtahhan@redhat.com>, Joshua Washington <joshwash@google.com>, "Jasper Tran
+ O'Leary" <jtranoleary@google.com>
+Subject: Re: [PATCH] net/af_xdp: add Rx metadata and dynamic timestamping
+ support
+Message-ID: <20260623150638.266d8574@phoenix.local>
+In-Reply-To: <20260623215325.814776-1-blasko@google.com>
+References: <20260623215325.814776-1-blasko@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,143 +82,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enable dynamic RX timestamping in the AF_XDP Poll Mode Driver.
-This extracts the ingress timestamp prepended to the packet
-headroom by the XDP program and populates it in the mbuf.
+On Tue, 23 Jun 2026 21:53:24 +0000
+Mark Blasko <blasko@google.com> wrote:
 
-Signed-off-by: Mark Blasko <blasko@google.com>
-Reviewed-by: Joshua Washington <joshwash@google.com>
-Reviewed-by: Jasper Tran O'Leary <jtranoleary@google.com>
----
- doc/guides/rel_notes/release_26_07.rst |  5 +++
- drivers/net/af_xdp/rte_eth_af_xdp.c    | 56 +++++++++++++++++++++++++-
- 2 files changed, 60 insertions(+), 1 deletion(-)
+> +		if (rxq->rx_timestamp_enabled &&
+> +		    timestamp_dynfield_offset >= 0) {
+> +			struct af_xdp_rx_metadata *meta;
+> +
+> +			meta = (struct af_xdp_rx_metadata *)
+> +				((char *)rte_pktmbuf_mtod(bufs[i], void *) -
+> +				 sizeof(struct af_xdp_rx_metadata));
+> +			*RTE_MBUF_DYNFIELD(bufs[i],
+> +					   timestamp_dynfield_offset,
+> +					   uint64_t *) = meta->rx_timestamp;
+> +			bufs[i]->ol_flags |= timestamp_dynflag;
+> +		}
+> +
 
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 6eba91a5e9..727442258f 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -63,6 +63,11 @@ New Features
-     ``rte_eal_init`` and the application is responsible for probing each device,
-   * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
- 
-+* **Updated AF_XDP ethernet driver.**
-+
-+  * Added support for dynamic RX metadata and timestamping offload
-+    (``RTE_ETH_RX_OFFLOAD_TIMESTAMP``).
-+
- * **Added LinkData sxe2 ethernet driver.**
- 
-   Added network driver for the LinkData network adapters.
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 2cdb533276..c90e232d57 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -62,6 +62,13 @@
- #define PF_XDP AF_XDP
- #endif
- 
-+struct af_xdp_rx_metadata {
-+	uint64_t rx_timestamp;
-+};
-+
-+static int timestamp_dynfield_offset = -1;
-+static uint64_t timestamp_dynflag;
-+
- RTE_LOG_REGISTER_DEFAULT(af_xdp_logtype, NOTICE);
- #define RTE_LOGTYPE_NET_AF_XDP af_xdp_logtype
- 
-@@ -144,6 +151,7 @@ struct pkt_rx_queue {
- 	struct pollfd fds[1];
- 	int xsk_queue_idx;
- 	int busy_budget;
-+	bool rx_timestamp_enabled;
- };
- 
- struct tx_stats {
-@@ -398,6 +406,20 @@ af_xdp_rx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 
- 		rte_pktmbuf_pkt_len(bufs[i]) = len;
- 		rte_pktmbuf_data_len(bufs[i]) = len;
-+
-+		if (rxq->rx_timestamp_enabled &&
-+		    timestamp_dynfield_offset >= 0) {
-+			struct af_xdp_rx_metadata *meta;
-+
-+			meta = (struct af_xdp_rx_metadata *)
-+				((char *)rte_pktmbuf_mtod(bufs[i], void *) -
-+				 sizeof(struct af_xdp_rx_metadata));
-+			*RTE_MBUF_DYNFIELD(bufs[i],
-+					   timestamp_dynfield_offset,
-+					   uint64_t *) = meta->rx_timestamp;
-+			bufs[i]->ol_flags |= timestamp_dynflag;
-+		}
-+
- 		rx_bytes += len;
- 	}
- 
-@@ -457,6 +479,18 @@ af_xdp_rx_cp(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		len = desc->len;
- 		pkt = xsk_umem__get_data(rxq->umem->mz->addr, addr);
- 
-+		if (rxq->rx_timestamp_enabled &&
-+		    timestamp_dynfield_offset >= 0) {
-+			struct af_xdp_rx_metadata *meta;
-+
-+			meta = (struct af_xdp_rx_metadata *)((char *)pkt -
-+				sizeof(struct af_xdp_rx_metadata));
-+			*RTE_MBUF_DYNFIELD(mbufs[i],
-+					   timestamp_dynfield_offset,
-+					   uint64_t *) = meta->rx_timestamp;
-+			mbufs[i]->ol_flags |= timestamp_dynflag;
-+		}
-+
- 		rte_memcpy(rte_pktmbuf_mtod(mbufs[i], void *), pkt, len);
- 		rte_ring_enqueue(umem->buf_ring, (void *)addr);
- 		rte_pktmbuf_pkt_len(mbufs[i]) = len;
-@@ -743,6 +777,23 @@ eth_dev_start(struct rte_eth_dev *dev)
- {
- 	uint16_t i;
- 
-+	if (dev->data->dev_conf.rxmode.offloads &
-+	    RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
-+		int rc;
-+
-+		rc = rte_mbuf_dyn_rx_timestamp_register(
-+				&timestamp_dynfield_offset,
-+				&timestamp_dynflag);
-+		if (rc) {
-+			AF_XDP_LOG_LINE(ERR,
-+				"Failed to register mbuf timestamp field");
-+			return rc;
-+		}
-+		AF_XDP_LOG_LINE(INFO,
-+			"Registered mbuf timestamp field, offset: %d",
-+			timestamp_dynfield_offset);
-+	}
-+
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
- 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
- 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
-@@ -870,6 +921,8 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->max_rx_queues = internals->queue_cnt;
- 	dev_info->max_tx_queues = internals->queue_cnt;
- 
-+	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_TIMESTAMP;
-+
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
- #if defined(XDP_UMEM_UNALIGNED_CHUNK_FLAG)
- 	dev_info->max_rx_pktlen = getpagesize() -
-@@ -1873,7 +1926,8 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 	process_private->rxq_xsk_fds[rx_queue_id] = rxq->fds[0].fd;
- 
- 	rxq->port = dev->data->port_id;
--
-+	rxq->rx_timestamp_enabled = !!(dev->data->dev_conf.rxmode.offloads &
-+					RTE_ETH_RX_OFFLOAD_TIMESTAMP);
- 	dev->data->rx_queues[rx_queue_id] = rxq;
- 	return 0;
- 
--- 
-2.55.0.rc0.799.gd6f94ed593-goog
+Why does XDP time stamp need to be different than how other drivers
+already do timestamps. See AF_PACKET and TAP device?
 
+Should not be driver specific here.
