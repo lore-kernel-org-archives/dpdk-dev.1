@@ -2,40 +2,121 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F32CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 06:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED52CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 06:02:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E4D140684;
-	Tue, 23 Jun 2026 08:00:20 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id F27C64065B
- for <dev@dpdk.org>; Tue, 23 Jun 2026 08:00:12 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9A9D01A03D5;
- Tue, 23 Jun 2026 08:00:12 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 40A181A03C7;
- Tue, 23 Jun 2026 08:00:12 +0200 (CEST)
-Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
- [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A5B581800086;
- Tue, 23 Jun 2026 14:00:11 +0800 (+08)
-From: Gagandeep Singh <g.singh@nxp.com>
-To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v3 9/9] net/enetc4: add cacheable BD ring support with SW
- cache maintenance
-Date: Tue, 23 Jun 2026 11:30:04 +0530
-Message-Id: <20260623060004.2187716-10-g.singh@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260623060004.2187716-1-g.singh@nxp.com>
-References: <20260622113517.1616028-1-g.singh@nxp.com>
- <20260623060004.2187716-1-g.singh@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D284240652;
+	Tue, 23 Jun 2026 08:02:49 +0200 (CEST)
+Received: from PA4PR04CU001.outbound.protection.outlook.com
+ (mail-francecentralazon11013069.outbound.protection.outlook.com
+ [40.107.162.69]) by mails.dpdk.org (Postfix) with ESMTP id B940C402D5
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 08:02:45 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bb7EGCz8H7au73qv+MVwOE0UNAu8eaJ63Y05vZzj76a2NKCBo3uVONMt31cX01d4TifONGEvSF8AWoy/3M9s6kpuZhDPMY6batlIx9m6uAa7QHM2U3wJ/P8qs5fEOzjdY4Qh0wdVxkJCBuUGl9nSuMAImvsaGoV+sU9A7EMCJvk2I7XyjFzTLRxn28FYiRZeZfhmXLW7Jl+Q11ON9yD8bMRFyXs+cDc5yIpkhkIa4aveRLZVA2n84uZt8y8chhkMiwvC3zhJ67cz9rmEyyX4/b7+QdbxBYw9hgQ2lGBPyr84FJozHwFyAS/VIamkAg3EFWsjA3nGcyswOKSzSu4hBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bYQDKK/iwpcxD89/qOgG7VeTLWwxZKhg/YvAJNrqEc0=;
+ b=P1X4h3IJUvbMbjMAOK7ibnKIJRYy8y3OjWo6p5e+QbEqti+5+1D2BtEiNCrX5Q8pfnNSvXypHQGbrD8PQjIDcDvk23KG9Dn6vgO2q0/oTUz2taj2XmZ33Xdjk/xOYgEDfTUQELDqDueeDUHPzmfo0+UDops6xHk6C140yUdwMT14PWR2W4DYjmxYLQ9LTVBgyXHISBFAzziJG7ROZ+cbyYoXiEeK5dAq/zay4Cib8Y4YXMpeXVd4pBAgdQ1IoScQ5l1vHok4M/ucoywvbBfEz0xsr9uH5fZ2ff0vdCjWCZFKCag+oA2oUe1tb92q1AxCjXTB2iW7gbwwytO17NWfOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bYQDKK/iwpcxD89/qOgG7VeTLWwxZKhg/YvAJNrqEc0=;
+ b=PCKc1VrqSarx72mU1relfL1nbwx4ezmgi6hFjAWQgs3xaiIavtAPnLs0mZ4LXitAJitaQ4TvfpUUTC4303RA520Rgcfm3lB7Gs/YAOMMV+ZdeD2v5uK3CXvDZXUHDeA3IGxnJOQW6PQEkYF2GL+xgOdJrTS/HjLI4WEfr/6QmGT3ebAP4ZLz3YfL+bnRobE+4ZMwwNllVYLMlaXNU2y0ITiUS9vjlCIdwvbzdLfIIk1o2lUTNLT+IT5wdmTHcGch+c3uuMRbt5nqwzOGLxhO9LpYKrhqFThQ2NOF886NcJo2nJ5QI9unFSM3dovCjKfWpAo8acCOKAmUfov/hSgnHg==
+Received: from AMBPR04MB12281.eurprd04.prod.outlook.com
+ (2603:10a6:20b:725::21) by MRWPR04MB12046.eurprd04.prod.outlook.com
+ (2603:10a6:501:94::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.11; Tue, 23 Jun
+ 2026 06:02:42 +0000
+Received: from AMBPR04MB12281.eurprd04.prod.outlook.com
+ ([fe80::7fd7:1292:c69b:6cf]) by AMBPR04MB12281.eurprd04.prod.outlook.com
+ ([fe80::7fd7:1292:c69b:6cf%6]) with mapi id 15.21.0113.015; Tue, 23 Jun 2026
+ 06:02:42 +0000
+From: Gagandeep Singh <G.Singh@nxp.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: RE: [PATCH v2 0/9] ENETC driver related changes series
+Thread-Topic: [PATCH v2 0/9] ENETC driver related changes series
+Thread-Index: AQHdAjs8DORdesuAjECRu5kR/wiKKrZKrOCAgAD5z+A=
+Date: Tue, 23 Jun 2026 06:02:42 +0000
+Message-ID: <AMBPR04MB122813C16EB3A86F8BC7E932DE1EE2@AMBPR04MB12281.eurprd04.prod.outlook.com>
+References: <20260619184427.522518-1-g.singh@nxp.com>
+ <20260622113517.1616028-1-g.singh@nxp.com>
+ <20260622080615.6f397799@phoenix.local>
+In-Reply-To: <20260622080615.6f397799@phoenix.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AMBPR04MB12281:EE_|MRWPR04MB12046:EE_
+x-ms-office365-filtering-correlation-id: bdbfe10b-5e5f-4d8f-09dc-08ded0ed0a11
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|23010399003|1800799024|376014|366016|19092799006|4143699003|56012099006|11063799006|6133799003|38070700021|22082099003|18002099003;
+x-microsoft-antispam-message-info: 1UgTPFuN2GdssqTWuR/Vt5W+/AGcZGLpLyxO3Lbnqe0m6CLfG6tOPIisTs/Qklr00kG2PFH3mlNCSJJ+4RMaR1l7XvrQASZ33NlfWuGIuRyh20Hyl4lGc1iYPHy3qQFUhJ99OKDlQ7YZDKPqdbVYcLy57I/pLolX62XI3HGJK20CEEMdH0JLnhip2FLa8p6if09E2wAz7EElAEwmaFF/yyw46hUVRXk5K/jquLXd2dTzJmmlURWpXKV0nJUlNyu3xi2Cj96giZ8s+83gVMxbSqe9HMfsVnZqdvg53Kt2h/4s4XjV2XECJWAcRp4n+Ox+9ucQP3DLufnvbcZGN83mbYqV5VFebZwE/4mLZBqNArMdvWmNWcMDmZVCxAKJQjiWX99tBLxi8RW6avmJGVZwZsBwyElpqXAhPx1L3ZCW6+Cg9YxOpyNtsQ/STyU/CZC+A3oqtrSQX/ZWNFxjGTIISxDBvfo9ztWlUe/gT/Sfj4myAxMvOMVSvFd1lULLvVLlJc2bIb6hX0HWexsiNI7TaoLUNvAwG/bDGBiO3HZdV/bduThfaZGwrp0iMA5alF2z5LIyFFgYW2BTMb/BjUNog7nNKmybR0e3HuIjuYOUdlDMa91Wp0Iw5dbeZiHBX0+d6cc0BJBwPu9Vcq0BgCUWxdz9HC8rX75T2QR6g3MUulv1KsKH5natPMVMbNXPI/2UbIv9Qsp5u/GrBQa71g3akPPcXe9v6a+sZ6nfrbzyHhk=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:AMBPR04MB12281.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(19092799006)(4143699003)(56012099006)(11063799006)(6133799003)(38070700021)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?byttb1l0bG5MTTVlKzNVZGRmQlFEYVBvRmpqV3lYa2F6RGNaa1hxZXZNMXNY?=
+ =?utf-8?B?U2xPdHJzMVF6K2ZqL3FwNEQ1a1Q3ZjFqeTB4cTdHRlpTMlpTOXlMVDNSbU5Z?=
+ =?utf-8?B?WmQxL1ZWOWhoNThGQ3o0WENEeWNFcURDUC9ETzE0cHk2N09JWmFLLzdNTHBO?=
+ =?utf-8?B?VGNMdkxiTDNvaXQ1b2hmV2NIT3pxZk5SZytlekpJS2dMRjNORXJtdUtUMTdh?=
+ =?utf-8?B?MldkQWEya0l2R3lRM3VCZXJmaS84V0JNc3JBdWJxMHNhNGpIZUtpaGNhbnVS?=
+ =?utf-8?B?L2UzY1pQZ1VUMFFKdkE5TWs2M2pZdndrNGRRaUdQWC9wU1N6L0VxendGV2JH?=
+ =?utf-8?B?YjRYVUpIZ2k3dDJ3QW9VRlJDTEZ2aysyeWpDYW1wQTlxSndjK0VBQnd3bVZo?=
+ =?utf-8?B?VmVBR1RRWmxValJMekZTcUJ1Sk8zSFd5SURBSk9vSW9xSWZlRFNUR1dPNXBM?=
+ =?utf-8?B?SkZqUjNTVGs4TFdTZTRpbjZQODdFNGt2WUdwVHNNYjAwOVdkK0NhVVduL3ox?=
+ =?utf-8?B?dzdtcjF2ZWt2dmgybzdpUE1WemRocHRwbDhIc3MraWlhQXlIZDJMNlBFVUph?=
+ =?utf-8?B?cXpTaWpyQnNPZ0hiVXRtSVoxZmhZb3FMWmgzWmEyRGtjOFFQR3B0bHNETHdH?=
+ =?utf-8?B?VkVBenl1bWFockRvVzFIZUFOcnU2dTRGWUtYTisrVnFlTzhjZnlwR2Fkd1Zn?=
+ =?utf-8?B?WlIyRFk3VlQ3Z09yamVTS1BnQmhtb0JGVmw5S2VZZ1Y3UUpJc3RnNEZWSUZ5?=
+ =?utf-8?B?VndsUE5ETWIvKytNZjdJVVE1SXluQittbFgyUkJTdWV3a3g4U2ZNQnV4WDM1?=
+ =?utf-8?B?YU0vQi92UkM0YTRZMTYxS29DRFArbGlQN3lMRkx3aWdpcXhLL3kvMWtRLytV?=
+ =?utf-8?B?YlN1QjBaVER3WEtiSndYNEo2N0JTVTZ1RzR2OHBxaXN4MTZZZXhLRldzYVh4?=
+ =?utf-8?B?d3Q5VGR6ZmZmMnplWmY0a2ZMaFUrM3RZeFhoK2tldkl2MkZ1TVhQWnR3eGhz?=
+ =?utf-8?B?dnhiOGYweUFLUTB5RHN2RmhnN203cHQ4OStzSEV3WkEvL0U0emV5VFhCL3R4?=
+ =?utf-8?B?c3M2M29GTzNJclNSeFpuYVNnWVg4SWRQRXVDOE9YNk5FRjJuUFVaVElIcU1s?=
+ =?utf-8?B?enpLYmJqUWh1WHJuUmxVdzdsM1lEQlNTS0w3KzlCc0JvRzFTS0RmZU90R084?=
+ =?utf-8?B?NnFyUVlXNnIvUXBDVTFpd3czbC9RbGJjNVcrcjU3R0lXUi8vT0VHZHVieUtQ?=
+ =?utf-8?B?R3FQbEFHQ2VlMjBwdmRoZmpJQTltRjJuWkVUd2xqWkE3U0VIbkI1T2hYRUlU?=
+ =?utf-8?B?dko4ZU54cmlSQmV6L0RiclRMUmt3di9NTmdTV3lBRWZBdStkRjJsNitPbXVM?=
+ =?utf-8?B?SlhLZmQ1M09YRUlqbGYrVEFGTGE2OTd0NjhQaWVwdWNhWjFIZlJiMmI3TDNR?=
+ =?utf-8?B?a1hkTXFKZWExdmlwNUk1WFRucWZoZnR5UGYxd2o0UnZSQ3NlTnZJZVJNdk84?=
+ =?utf-8?B?amg0aUk2bHBwcEIrOFpmMHFYVS9zUS81WXJEWnhIVE1QcjR1eEpFUUV2TTlr?=
+ =?utf-8?B?SEN6M0xIZ1dxUDlQZHExQ3d6Wkd3K0J2KzhqYkxvTkoyYTh0OEhwM2NkRlBY?=
+ =?utf-8?B?WEgzaHQzdFU0aTJRRHFVQUljVVRKUVo2ejgwRkIyUC96MGtCUTdDTWFBaTY5?=
+ =?utf-8?B?L1BBcXdDbDgyUjh3ZUVzWUFWQWZPQ1NxUWNCWUlBUU43akVXaStubjlvRm5G?=
+ =?utf-8?B?cmwrZkVBak1WMWhJU3FBZzNCTWpnR2JJTTFwMFowTG9WVFRHTGU2S0tDVmls?=
+ =?utf-8?B?QTBYTlA4Uk9VZjg4WXpsUTJHbjZIWkhITFVZckxEMER5ZGRVeHJzWGV3VmRs?=
+ =?utf-8?B?QUkvMmNuLzkvTFpRYjFxaTZQNXlrRXVuVVJoV2V1a3B4cWo2T0hseWZibUpv?=
+ =?utf-8?B?OSt0VUZPYUVITVJ6L3pHMWx2Z05NVFU3YUxNQmpYazkzU1JRQXNqUFBDcVlz?=
+ =?utf-8?B?Vm02UkxqZU1kcHZtT2FvaWdPM0dmREQ1VURHRzJJcUtLZkUzZG1vMCt0ZVVW?=
+ =?utf-8?B?bEEvcmlQUXp4K1VIQ2xub2Rtd2ZEY2sxQUM0a0E4eXBGdmlneHEzdkxPcGtV?=
+ =?utf-8?B?NWUvdVFkQ1gwcXVFdnFxQnp4TmlpYTY2VlQ2V3h0d1ZzMTlhR1FYOWUyZEJH?=
+ =?utf-8?B?TmtkaXBmTEVrMTJuRHpnK0hOOGZycVF6eW9IUEk2TGpLUWRTVU1hczFaRVN3?=
+ =?utf-8?B?MzExMVNoRy9qcXdCbytUSFh4cjhGVldpQys0aEU4Yks5RXJuZjhKUEJSWTNC?=
+ =?utf-8?Q?wHYJWS5e0K2m3qyMMD?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AMBPR04MB12281.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bdbfe10b-5e5f-4d8f-09dc-08ded0ed0a11
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jun 2026 06:02:42.7319 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yfnmSgRxpEe0VEuZ+zlfpCRBg9O7xILVqZj01H8k6VZ+A+n0sq2mAylfm5boBXlE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRWPR04MB12046
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,676 +130,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On non-cache-coherent platforms such as i.MX95, the BD ring memory
-may be mapped as cacheable (normal memory) while the ENETC hardware
-DMA engine writes and reads descriptors without CPU cache snooping.
-SW must therefore perform explicit cache maintenance to keep CPU
-caches and DDR coherent.
-
-TX path (enetc_xmit_pkts_cacheable):
-  - Flush each segment's payload cache lines to PoC (dcbf) before
-    the BD is handed to HW, so HW DMA reads the correct data.
-  - After all BDs for a burst are written, flush the BD cache lines
-    (dcbf, one per 64-byte group of 4 BDs) so HW can read the
-    updated descriptors.
-
-RX refill (enetc_refill_rx_ring):
-  - After writing each full 4-BD cache-line group, dcbf that group
-    so HW sees the buffer addresses and cleared lstatus fields.
-  - Flush any partial trailing group before updating the ring tail.
-
-RX receive (enetc_recv_pkts_cacheable via enetc_clean_rx_ring_cacheable):
-  - Before reading BD status, dccivac the current BD cache line so
-    stale CPU-cached BD data is discarded and fresh HW-written
-    content is fetched from DDR.
-  - After a BD is consumed, dccivac each payload cache line so the
-    CPU reads the DMA'd packet data, not stale cached bytes.
-
-Add a new devarg 'nc=1' that allows selecting the non-cacheable
-RX/TX ops.
-When nc=1 is specified:
-  eth_dev->rx_pkt_burst = &enetc_recv_pkts_nc;
-  eth_dev->tx_pkt_burst = &enetc_xmit_pkts_nc;
-
-The default (nc not set or nc=0) keeps the cacheable path with
-SW cache maintenance (dccivac/dcbf):
-  eth_dev->rx_pkt_burst = &enetc_recv_pkts_cacheable;
-  eth_dev->tx_pkt_burst = &enetc_xmit_pkts_cacheable;
-
-Usage:
-  --allow 0000:00:01.0,nc=1
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
----
- doc/guides/nics/enetc4.rst             |  10 +
- doc/guides/rel_notes/release_26_07.rst |   1 +
- drivers/net/enetc/enetc.h              |  21 ++
- drivers/net/enetc/enetc4_ethdev.c      |  71 +++++--
- drivers/net/enetc/enetc4_vf.c          |  35 +++-
- drivers/net/enetc/enetc_rxtx.c         | 278 ++++++++++++++++++++++++-
- 6 files changed, 398 insertions(+), 18 deletions(-)
-
-diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
-index 844b290..16b1ba6 100644
---- a/doc/guides/nics/enetc4.rst
-+++ b/doc/guides/nics/enetc4.rst
-@@ -140,3 +140,13 @@ PF/Common devargs
-   Usage example::
- 
-     dpdk-testpmd -a 0000:00:00.0,enetc4_txq_prior=1|2|3 -- -i
-+
-+``nc``
-+  Select non-cacheable RX/TX ops (BD rings mapped as non-cacheable memory).
-+  Set to ``1`` to use non-cacheable descriptor ring operations.
-+  By default, cacheable BD rings with software cache maintenance are used.
-+  Applies to both PF and VF.
-+
-+  Usage example::
-+
-+    dpdk-testpmd -a 0000:00:00.0,nc=1 -- -i
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 495eba0..b208229 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -196,6 +196,7 @@ New Features
-   * Added devargs options ``enetc4_vsi_timeout`` and ``enetc4_vsi_delay``
-     for VSI-PSI messaging timeout and delay.
-   * Added devargs option ``enetc4_txq_prior`` to set TX queues priorities.
-+  * Added devargs option ``nc`` to select non-cacheable RX/TX ops.
- 
- Removed Items
- -------------
-diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index c12597b..d3a8b8e 100644
---- a/drivers/net/enetc/enetc.h
-+++ b/drivers/net/enetc/enetc.h
-@@ -115,6 +115,7 @@ struct enetc_eth_hw {
- 	uint32_t vsi_timeout; /* VSI-PSI message wait timeout (iterations) */
- 	uint32_t vsi_delay;   /* VSI-PSI message wait delay (us) */
- 	uint32_t *txq_prior;  /* per-queue TX priority (TBMR priority bits) */
-+	uint8_t nc_mode;      /* 1 = non-cacheable BD memory, use _nc ops */
- };
- 
- /*
-@@ -315,8 +316,28 @@ uint16_t enetc_recv_pkts(void *rxq, struct rte_mbuf **rx_pkts,
- 		uint16_t nb_pkts);
- uint16_t enetc_recv_pkts_nc(void *rxq, struct rte_mbuf **rx_pkts,
- 		uint16_t nb_pkts);
-+uint16_t enetc_xmit_pkts_cacheable(void *txq, struct rte_mbuf **tx_pkts,
-+		uint16_t nb_pkts);
-+uint16_t enetc_recv_pkts_cacheable(void *rxq, struct rte_mbuf **rx_pkts,
-+		uint16_t nb_pkts);
- 
- int enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt);
-+
-+/*
-+ * Cache-maintenance constants for cacheable BD ring mode.
-+ *
-+ * BD = 16 bytes, cache line = 64 bytes => 4 BDs per cache line.
-+ * Every dcbf in enetc_refill_rx_ring() flushes a full 64-byte cache line.
-+ * To ensure each dcbf covers only fully-written BDs the caller
-+ * must pass a count rounded DOWN to a multiple of ENETC_BD_PER_CL so that
-+ * the last partial group is left in cache to be completed and flushed in
-+ * the next call.
-+ */
-+#define ENETC_BD_PER_CL		(RTE_CACHE_LINE_SIZE / sizeof(union enetc_rx_bd))
-+#define ENETC_BD_PER_CL_MASK	(ENETC_BD_PER_CL - 1)
-+/* Round n DOWN to the nearest multiple of ENETC_BD_PER_CL. */
-+#define ENETC_BD_ALIGN_DOWN(n)	((n) & ~(unsigned int)ENETC_BD_PER_CL_MASK)
-+
- void enetc4_dev_hw_init(struct rte_eth_dev *eth_dev);
- void enetc_print_ethaddr(const char *name, const struct rte_ether_addr *eth_addr);
- 
-diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index 7e2d665..2ddd63d 100644
---- a/drivers/net/enetc/enetc4_ethdev.c
-+++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -12,6 +12,7 @@
- #include "enetc.h"
- 
- #define ENETC4_TXQ_PRIORITIES	"enetc4_txq_prior"
-+#define ENETC4_NC_MEMORY	"nc"
- 
- static int
- parse_txq_prior(const char *key __rte_unused, const char *value, void *opaque)
-@@ -42,6 +43,19 @@ parse_txq_prior(const char *key __rte_unused, const char *value, void *opaque)
- 	return 0;
- }
- 
-+static int
-+parse_nc(const char *key __rte_unused, const char *value, void *extra_args)
-+{
-+	struct rte_eth_dev *dev = extra_args;
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+
-+	if (value && atoi(value) == 1)
-+		hw->nc_mode = 1;
-+
-+	return 0;
-+}
-+
- static int
- enetc4_get_devargs(struct rte_eth_dev *dev, const char *key)
- {
-@@ -67,6 +81,13 @@ enetc4_get_devargs(struct rte_eth_dev *dev, const char *key)
- 			return 0;
- 		}
- 	}
-+	if (!strcmp(key, ENETC4_NC_MEMORY)) {
-+		if (rte_kvargs_process(kvlist, key,
-+				       parse_nc, (void *)dev) < 0) {
-+			rte_kvargs_free(kvlist);
-+			return 0;
-+		}
-+	}
- 
- 	rte_kvargs_free(kvlist);
- 	return 0;
-@@ -289,12 +310,14 @@ enetc4_alloc_txbdr(struct enetc_bdr *txr, uint16_t nb_desc)
- 	int size;
- 
- 	size = nb_desc * sizeof(struct enetc_swbd);
--	txr->q_swbd = rte_malloc(NULL, size, ENETC_BD_RING_ALIGN);
-+	/* Zero q_swbd so buffer_addr is NULL for all uninitialized slots. */
-+	txr->q_swbd = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
- 	if (txr->q_swbd == NULL)
- 		return -ENOMEM;
- 
--	size = nb_desc * sizeof(struct enetc_bdr);
--	txr->bd_base = rte_malloc(NULL, size, ENETC_BD_RING_ALIGN);
-+	/* Allocate the TX BD ring: each BD is struct enetc_tx_bd (16 bytes). */
-+	size = nb_desc * sizeof(struct enetc_tx_bd);
-+	txr->bd_base = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
- 	if (txr->bd_base == NULL) {
- 		rte_free(txr->q_swbd);
- 		txr->q_swbd = NULL;
-@@ -449,12 +472,14 @@ enetc4_alloc_rxbdr(struct enetc_bdr *rxr, uint16_t nb_desc)
- 	int size;
- 
- 	size = nb_desc * sizeof(struct enetc_swbd);
--	rxr->q_swbd = rte_malloc(NULL, size, ENETC_BD_RING_ALIGN);
-+	/* Zero q_swbd so buffer_addr is NULL for all uninitialized slots. */
-+	rxr->q_swbd = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
- 	if (rxr->q_swbd == NULL)
- 		return -ENOMEM;
- 
--	size = nb_desc * sizeof(struct enetc_bdr);
--	rxr->bd_base = rte_malloc(NULL, size, ENETC_BD_RING_ALIGN);
-+	/* Allocate the RX BD ring: each BD is union enetc_rx_bd (16 bytes). */
-+	size = nb_desc * sizeof(union enetc_rx_bd);
-+	rxr->bd_base = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
- 	if (rxr->bd_base == NULL) {
- 		rte_free(rxr->q_swbd);
- 		rxr->q_swbd = NULL;
-@@ -489,7 +514,7 @@ enetc4_setup_rxbdr(struct enetc_hw *hw, struct enetc_bdr *rx_ring,
- 	rx_ring->mb_pool = mb_pool;
- 	rx_ring->rcir = (void *)((size_t)hw->reg +
- 			ENETC_BDR(RX, idx, ENETC_RBCIR));
--	enetc_refill_rx_ring(rx_ring, (enetc_bd_unused(rx_ring)));
-+	enetc_refill_rx_ring(rx_ring, ENETC_BD_ALIGN_DOWN(enetc_bd_unused(rx_ring)));
- 	buf_size = (uint16_t)(rte_pktmbuf_data_room_size(rx_ring->mb_pool) -
- 		   RTE_PKTMBUF_HEADROOM);
- 	enetc4_rxbdr_wr(hw, idx, ENETC_RBBSR, buf_size);
-@@ -751,12 +776,17 @@ enetc4_dev_configure(struct rte_eth_dev *dev)
- 
- 	PMD_INIT_FUNC_TRACE();
- 
--	max_len = dev->data->dev_conf.rxmode.mtu + RTE_ETHER_HDR_LEN +
--		  RTE_ETHER_CRC_LEN;
--	enetc4_port_wr(enetc_hw, ENETC4_PM_MAXFRM(0), ENETC_SET_MAXFRM(max_len));
-+	/* Port-level register writes are PF-only; skip for VF devices */
-+	if (hw->device_id != ENETC4_DEV_ID_VF) {
-+		max_len = dev->data->dev_conf.rxmode.mtu + RTE_ETHER_HDR_LEN +
-+			  RTE_ETHER_CRC_LEN;
-+		enetc4_port_wr(enetc_hw, ENETC4_PM_MAXFRM(0),
-+			       ENETC_SET_MAXFRM(max_len));
- 
--	val = ENETC4_MAC_MAXFRM_SIZE | SDU_TYPE_MPDU;
--	enetc4_port_wr(enetc_hw, ENETC4_PTCTMSDUR(0), val | SDU_TYPE_MPDU);
-+		val = ENETC4_MAC_MAXFRM_SIZE | SDU_TYPE_MPDU;
-+		enetc4_port_wr(enetc_hw, ENETC4_PTCTMSDUR(0),
-+			       val | SDU_TYPE_MPDU);
-+	}
- 
- 	/* Rx offloads which are enabled by default */
- 	if (dev_rx_offloads_sup & ~rx_offloads) {
-@@ -778,7 +808,8 @@ enetc4_dev_configure(struct rte_eth_dev *dev)
- 	if (rx_offloads & (RTE_ETH_RX_OFFLOAD_UDP_CKSUM | RTE_ETH_RX_OFFLOAD_TCP_CKSUM))
- 		checksum &= ~L4_CKSUM;
- 
--	enetc4_port_wr(enetc_hw, ENETC4_PARCSCR, checksum);
-+	if (hw->device_id != ENETC4_DEV_ID_VF)
-+		enetc4_port_wr(enetc_hw, ENETC4_PARCSCR, checksum);
- 
- 	/* Enable interrupts */
- 	if (hw->device_id == ENETC4_DEV_ID_VF) {
-@@ -1041,8 +1072,8 @@ enetc4_dev_hw_init(struct rte_eth_dev *eth_dev)
- 		ENETC_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
- 	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(eth_dev, *pci_dev);
- 
--	eth_dev->rx_pkt_burst = &enetc_recv_pkts_nc;
--	eth_dev->tx_pkt_burst = &enetc_xmit_pkts_nc;
-+	eth_dev->rx_pkt_burst = &enetc_recv_pkts_cacheable;
-+	eth_dev->tx_pkt_burst = &enetc_xmit_pkts_cacheable;
- 
- 	/* Retrieving and storing the HW base address of device */
- 	hw->hw.reg = (void *)pci_dev->mem_resource[0].addr;
-@@ -1082,7 +1113,14 @@ enetc4_dev_init(struct rte_eth_dev *eth_dev)
- 	hw->max_tx_queues = si_cap & ENETC_SICAPR0_BDR_MASK;
- 	hw->max_rx_queues = (si_cap >> 16) & ENETC_SICAPR0_BDR_MASK;
- 
-+	hw->nc_mode = 0;
- 	enetc4_get_devargs(eth_dev, ENETC4_TXQ_PRIORITIES);
-+	enetc4_get_devargs(eth_dev, ENETC4_NC_MEMORY);
-+	if (hw->nc_mode) {
-+		eth_dev->rx_pkt_burst = &enetc_recv_pkts_nc;
-+		eth_dev->tx_pkt_burst = &enetc_xmit_pkts_nc;
-+		ENETC_PMD_LOG(INFO, "nc=1: using non-cacheable BD ops (_nc)");
-+	}
- 
- 	ENETC_PMD_DEBUG("Max RX queues = %d Max TX queues = %d",
- 			hw->max_rx_queues, hw->max_tx_queues);
-@@ -1149,5 +1187,6 @@ RTE_PMD_REGISTER_PCI(net_enetc4, rte_enetc4_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_enetc4, pci_id_enetc4_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_enetc4, "* vfio-pci");
- RTE_PMD_REGISTER_PARAM_STRING(net_enetc4,
--			      ENETC4_TXQ_PRIORITIES "=<string>");
-+			      ENETC4_TXQ_PRIORITIES "=<string> "
-+			      ENETC4_NC_MEMORY "=<int>");
- RTE_LOG_REGISTER_DEFAULT(enetc4_logtype_pmd, NOTICE);
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 62206d7..ef5f1e6 100644
---- a/drivers/net/enetc/enetc4_vf.c
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -12,6 +12,30 @@
- #define ENETC4_VSI_DISABLE		"enetc4_vsi_disable"
- #define ENETC4_VSI_TIMEOUT		"enetc4_vsi_timeout"
- #define ENETC4_VSI_DELAY		"enetc4_vsi_delay"
-+#define ENETC4_NC_MEMORY		"nc"
-+
-+static void
-+enetc4_vf_get_devarg_nc(struct rte_eth_dev *dev)
-+{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct rte_devargs *devargs = dev->device->devargs;
-+	struct rte_kvargs *kvlist;
-+	const char *val;
-+
-+	if (!devargs)
-+		return;
-+
-+	kvlist = rte_kvargs_parse(devargs->args, NULL);
-+	if (!kvlist)
-+		return;
-+
-+	val = rte_kvargs_get(kvlist, ENETC4_NC_MEMORY);
-+	if (val && atoi(val) == 1)
-+		hw->nc_mode = 1;
-+
-+	rte_kvargs_free(kvlist);
-+}
- 
- #define ENETC_CRC_TABLE_SIZE		256
- #define ENETC_POLY			0x1021
-@@ -1370,6 +1394,14 @@ enetc4_vf_dev_init(struct rte_eth_dev *eth_dev)
- 
- 	enetc4_dev_hw_init(eth_dev);
- 
-+	hw->nc_mode = 0;
-+	enetc4_vf_get_devarg_nc(eth_dev);
-+	if (hw->nc_mode) {
-+		eth_dev->rx_pkt_burst = &enetc_recv_pkts_nc;
-+		eth_dev->tx_pkt_burst = &enetc_xmit_pkts_nc;
-+		ENETC_PMD_LOG(INFO, "nc=1: using non-cacheable BD ops (_nc)");
-+	}
-+
- 	si_cap = enetc_rd(enetc_hw, ENETC_SICAPR0);
- 	hw->max_tx_queues = si_cap & ENETC_SICAPR0_BDR_MASK;
- 	hw->max_rx_queues = (si_cap >> 16) & ENETC_SICAPR0_BDR_MASK;
-@@ -1477,5 +1509,6 @@ RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* igb_uio | uio_pci_generic");
- RTE_PMD_REGISTER_PARAM_STRING(net_enetc4_vf,
- 			      ENETC4_VSI_DISABLE "=<any> "
- 			      ENETC4_VSI_TIMEOUT "=<uint> "
--			      ENETC4_VSI_DELAY "=<uint>");
-+			      ENETC4_VSI_DELAY "=<uint> "
-+			      ENETC4_NC_MEMORY "=<int>");
- RTE_LOG_REGISTER_DEFAULT(enetc4_vf_logtype_pmd, NOTICE);
-diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
-index e4f5608..2cd74f5 100644
---- a/drivers/net/enetc/enetc_rxtx.c
-+++ b/drivers/net/enetc/enetc_rxtx.c
-@@ -26,6 +26,7 @@ enetc_clean_tx_ring(struct enetc_bdr *tx_ring)
- 	struct enetc_swbd *tx_swbd, *tx_swbd_base;
- 	int i, hwci, bd_count;
- 	struct rte_mbuf *m[ENETC_RXBD_BUNDLE];
-+	struct enetc_tx_bd *txbd;
- 
- 	/* we don't need barriers here, we just want a relatively current value
- 	 * from HW.
-@@ -51,6 +52,13 @@ enetc_clean_tx_ring(struct enetc_bdr *tx_ring)
- 		/* It seems calling rte_pktmbuf_free is wasting a lot of cycles,
- 		 * make a list and call _free when it's done.
- 		 */
-+		/* Clear flags on the reclaimed BD so that dcbf in the
-+		 * cacheable TX path never flushes a stale flags_F to memory
-+		 * before the new BD fields are fully written.
-+		 */
-+		txbd = ENETC_TXBD(*tx_ring, i);
-+		txbd->flags = 0;
-+
- 		if (tx_frm_cnt == ENETC_RXBD_BUNDLE) {
- 			rte_pktmbuf_free_bulk(m, tx_frm_cnt);
- 			tx_frm_cnt = 0;
-@@ -202,7 +210,8 @@ enetc_xmit_pkts_nc(void *tx_queue,
- 		}
- 
- 		/* Set the frame-last flag on the final BD of this packet. */
--		txbd->flags |= ENETC4_TXBD_FLAGS_F;
-+		if (likely(txbd))
-+			txbd->flags |= ENETC4_TXBD_FLAGS_F;
- 		start++;
- 	}
- 
-@@ -217,6 +226,7 @@ enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt)
- {
- 	struct enetc_swbd *rx_swbd;
- 	union enetc_rx_bd *rxbd;
-+	union enetc_rx_bd *grp_start_rxbd;
- 	int i, j, k = ENETC_RXBD_BUNDLE;
- 	struct rte_mbuf *m[ENETC_RXBD_BUNDLE];
- 	struct rte_mempool *mb_pool;
-@@ -225,6 +235,7 @@ enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt)
- 	mb_pool = rx_ring->mb_pool;
- 	rx_swbd = &rx_ring->q_swbd[i];
- 	rxbd = ENETC_RXBD(*rx_ring, i);
-+	grp_start_rxbd = rxbd;
- 	for (j = 0; j < buff_cnt; j++) {
- 		/* bulk alloc for the next up to 8 BDs */
- 		if (k == ENETC_RXBD_BUNDLE) {
-@@ -246,12 +257,29 @@ enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt)
- 		i++;
- 		k++;
- 		if (unlikely(i == rx_ring->bd_count)) {
-+			/*
-+			 * Ring wrap: flush the current partial or full group
-+			 * before resetting the pointer to index 0.
-+			 */
-+			dcbf((void *)grp_start_rxbd);
- 			i = 0;
- 			rxbd = ENETC_RXBD(*rx_ring, i);
- 			rx_swbd = &rx_ring->q_swbd[i];
-+			grp_start_rxbd = rxbd;
-+		} else if ((i & ENETC_BD_PER_CL_MASK) == 0) {
-+			/*
-+			 * Completed a full 4-BD group (one cache line).
-+			 * Flush it to PoC so HW sees the updated descriptors.
-+			 */
-+			dcbf((void *)grp_start_rxbd);
-+			grp_start_rxbd = rxbd;
- 		}
- 	}
- 
-+	/* Flush any remaining partial group at the end of the fill. */
-+	if (j && (i & ENETC_BD_PER_CL_MASK) != 0)
-+		dcbf((void *)grp_start_rxbd);
-+
- 	if (likely(j)) {
- 		rx_ring->next_to_alloc = i;
- 		rx_ring->next_to_use = i;
-@@ -604,3 +632,251 @@ enetc_recv_pkts(void *rxq, struct rte_mbuf **rx_pkts,
- 
- 	return enetc_clean_rx_ring(rx_ring, rx_pkts, nb_pkts);
- }
-+
-+/* --- Cacheable BD ring TX path with SW cache maintenance (dcbf) --- */
-+
-+uint16_t
-+enetc_xmit_pkts_cacheable(void *tx_queue,
-+		struct rte_mbuf **tx_pkts,
-+		uint16_t nb_pkts)
-+{
-+	int i, start, bds_to_use;
-+	struct enetc_tx_bd *txbd;
-+	struct enetc_bdr *tx_ring = (struct enetc_bdr *)tx_queue;
-+	unsigned int j;
-+	uint8_t *data;
-+	struct rte_mbuf *seg;
-+	uint16_t seg_len, segs_per_pkt;
-+	bool is_first_seg;
-+	int first_bd_idx, bd_count;
-+
-+	i = tx_ring->next_to_use;
-+	bds_to_use = enetc_bd_unused(tx_ring);
-+	bd_count = tx_ring->bd_count;
-+	start = 0;
-+
-+	/*
-+	 * Remember the first BD index of this batch so we can flush the
-+	 * BD cache lines to PoC after all descriptors are written.
-+	 */
-+	first_bd_idx = i;
-+
-+	while (start < nb_pkts) {
-+		seg = tx_pkts[start];
-+		segs_per_pkt = seg->nb_segs;
-+
-+		if (bds_to_use < segs_per_pkt)
-+			break;
-+
-+		is_first_seg = true;
-+		while (seg) {
-+			tx_ring->q_swbd[i].buffer_addr = NULL;
-+			seg_len = rte_pktmbuf_data_len(seg);
-+			data = rte_pktmbuf_mtod(seg, void *);
-+
-+			/*
-+			 * Flush packet data cache lines to PoC so HW DMA
-+			 * reads the correct payload from memory.
-+			 */
-+			for (j = 0; j < seg_len; j += RTE_CACHE_LINE_SIZE)
-+				dcbf(data + j);
-+
-+			/*
-+			 * Cover the last byte of an unaligned buffer to
-+			 * ensure the full payload is clean to the Point of
-+			 * Coherency.
-+			 */
-+			dcbf(data + (seg_len - 1));
-+			txbd = ENETC_TXBD(*tx_ring, i);
-+			txbd->flags = 0;
-+			if (is_first_seg) {
-+				tx_ring->q_swbd[i].buffer_addr = seg;
-+				txbd->frm_len = rte_pktmbuf_pkt_len(seg);
-+				if (seg->ol_flags & ENETC4_TX_CKSUM_OFFLOAD_MASK)
-+					enetc4_tx_offload_checksum(seg, txbd);
-+				is_first_seg = false;
-+			}
-+
-+			txbd->buf_len = rte_cpu_to_le_16(seg_len);
-+			txbd->addr = rte_cpu_to_le_64(rte_mbuf_data_iova(seg));
-+			seg = seg->next;
-+			i++;
-+			bds_to_use--;
-+
-+			if (unlikely(i == bd_count))
-+				i = 0;
-+		}
-+
-+		/*
-+		 * Set the frame-last flag on the final BD of this packet.
-+		 * This is the last write to the BD group; the cache flush
-+		 * below will push all BDs to memory afterwards.
-+		 */
-+		if (likely(txbd))
-+			txbd->flags |= ENETC4_TXBD_FLAGS_F;
-+		start++;
-+	}
-+
-+	/*
-+	 * Flush TX BDs to PoC so HW (non-cache-coherent i.MX95) can read
-+	 * the descriptors from memory.  TX BDs are 16 B each; 4 BDs share
-+	 * one 64-byte cache line.  Walk from the cache-line-aligned start
-+	 * of first_bd_idx to just past the last written BD, one dcbf per
-+	 * cache line.
-+	 *
-+	 * The flush must happen AFTER all BD fields (including flags_F) are
-+	 * written, so HW never sees a partial descriptor.
-+	 */
-+	if (likely(start > 0)) {
-+		int n = first_bd_idx & ~ENETC_BD_PER_CL_MASK;
-+		int written = (i - n + bd_count) % bd_count;
-+
-+		if (written == 0)
-+			written = bd_count;
-+		written = (written + ENETC_BD_PER_CL_MASK) & ~ENETC_BD_PER_CL_MASK;
-+
-+		while (written > 0) {
-+			dcbf((void *)ENETC_TXBD(*tx_ring, n));
-+			n = (n + ENETC_BD_PER_CL) % bd_count;
-+			written -= ENETC_BD_PER_CL;
-+		}
-+	}
-+
-+	enetc_clean_tx_ring(tx_ring);
-+	tx_ring->next_to_use = i;
-+	enetc_wr_reg(tx_ring->tcir, i);
-+
-+	return start;
-+}
-+
-+/* --- Cacheable BD ring RX path with SW cache maintenance (dccivac) --- */
-+
-+static int
-+enetc_clean_rx_ring_cacheable(struct enetc_bdr *rx_ring,
-+		struct rte_mbuf **rx_pkts,
-+		int work_limit)
-+{
-+	int rx_frm_cnt = 0;
-+	int cleaned_cnt, i;
-+	struct enetc_swbd *rx_swbd;
-+	union enetc_rx_bd *rxbd;
-+	struct rte_mbuf *first_seg, *cur_seg;
-+	uint32_t bd_status;
-+	uint8_t *data;
-+	uint32_t j;
-+	struct rte_mbuf *seg;
-+	uint16_t data_len;
-+
-+	i = rx_ring->next_to_clean;
-+	rxbd = ENETC_RXBD(*rx_ring, i);
-+	cleaned_cnt = enetc_bd_unused(rx_ring);
-+	rx_swbd = &rx_ring->q_swbd[i];
-+
-+	/* Restore partial multi-segment chain from a previous burst. */
-+	first_seg = rx_ring->pkt_first_seg;
-+	cur_seg = rx_ring->pkt_last_seg;
-+
-+	/*
-+	 * On i.MX95 the BD ring is in cacheable hugepage memory but the
-+	 * platform is non-cache-coherent.  HW writes RX BDs to DDR
-+	 * without snooping the CPU cache, so stale cached copies of BD
-+	 * status fields must be discarded before the CPU reads them.
-+	 *
-+	 * Ideal instruction: DC IVAC (invalidate only, no writeback).
-+	 * ARM64 constraint: DC IVAC requires EL1 privilege; executing it
-+	 * from EL0 (DPDK userspace) raises a fault.  The only EL0-safe
-+	 * cache maintenance instruction that invalidates is DC CIVAC
-+	 * (clean + invalidate, dccivac).
-+	 *
-+	 * Safety of using dccivac here:
-+	 * enetc_refill_rx_ring() issues dcbf() on every BD group before
-+	 * returning ownership to HW.  After dcbf the CPU cache lines are
-+	 * marked clean (no dirty data).  When dccivac runs, the "clean"
-+	 * phase finds nothing dirty to write back, so it behaves as a
-+	 * pure invalidate - exactly what we need.
-+	 *
-+	 * Granularity: BD = 16 B, cache line = 64 B, so one dccivac
-+	 * covers exactly 4 BDs.  Invalidate at each 4-BD boundary.
-+	 */
-+	dccivac((void *)ENETC_RXBD(*rx_ring,
-+			(i & ~(int)ENETC_BD_PER_CL_MASK)));
-+
-+	while (likely(rx_frm_cnt < work_limit)) {
-+		bd_status = rte_le_to_cpu_32(rxbd->r.lstatus);
-+
-+		if (!(bd_status & ENETC_RXBD_LSTATUS_R))
-+			break;
-+		if (rxbd->r.error)
-+			rx_ring->ierrors++;
-+
-+		seg = rx_swbd->buffer_addr;
-+		data_len = rte_le_to_cpu_16(rxbd->r.buf_len);
-+		seg->data_len = data_len;
-+		if (!first_seg) {
-+			first_seg = seg;
-+			cur_seg = seg;
-+			first_seg->pkt_len = data_len;
-+			enetc_dev_rx_parse(first_seg,
-+					   rxbd->r.parse_summary);
-+			first_seg->hash.rss = rxbd->r.rss_hash;
-+		} else {
-+			first_seg->pkt_len += data_len;
-+			first_seg->nb_segs++;
-+			cur_seg->next = seg;
-+			cur_seg = seg;
-+		}
-+
-+		/*
-+		 * Invalidate packet data cache lines so the CPU reads the
-+		 * payload that HW DMA'd into memory, not stale cached bytes.
-+		 */
-+		data = rte_pktmbuf_mtod(seg, void *);
-+		for (j = 0; j < data_len; j += RTE_CACHE_LINE_SIZE)
-+			dccivac(data + j);
-+		/* Cover the last byte of an unaligned buffer. */
-+		dccivac(data + (data_len - 1));
-+
-+		if (bd_status & ENETC_RXBD_LSTATUS_F) {
-+			seg->next = NULL;
-+			first_seg->pkt_len -= rx_ring->crc_len;
-+			rx_pkts[rx_frm_cnt] = first_seg;
-+			rx_frm_cnt++;
-+			first_seg = NULL;
-+		}
-+
-+		cleaned_cnt++;
-+		rx_swbd++;
-+		i++;
-+		if (unlikely(i == rx_ring->bd_count)) {
-+			i = 0;
-+			rx_swbd = &rx_ring->q_swbd[i];
-+		}
-+		rxbd = ENETC_RXBD(*rx_ring, i);
-+
-+		/*
-+		 * Crossed a 4-BD (cache-line) boundary: invalidate the new
-+		 * group so the next four status reads fetch fresh DDR data
-+		 * written by HW.
-+		 */
-+		if ((i & ENETC_BD_PER_CL_MASK) == 0 &&
-+		    likely(rx_frm_cnt < work_limit))
-+			dccivac((void *)rxbd);
-+	}
-+
-+	/* Save partial chain for the next burst if frame is incomplete. */
-+	rx_ring->pkt_first_seg = first_seg;
-+	rx_ring->pkt_last_seg = cur_seg;
-+	rx_ring->next_to_clean = i;
-+	enetc_refill_rx_ring(rx_ring, ENETC_BD_ALIGN_DOWN(cleaned_cnt));
-+
-+	return rx_frm_cnt;
-+}
-+
-+uint16_t
-+enetc_recv_pkts_cacheable(void *rxq, struct rte_mbuf **rx_pkts,
-+		uint16_t nb_pkts)
-+{
-+	struct enetc_bdr *rx_ring = (struct enetc_bdr *)rxq;
-+
-+	return enetc_clean_rx_ring_cacheable(rx_ring, rx_pkts, nb_pkts);
-+}
--- 
-2.25.1
-
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3RlcGhlbiBIZW1t
+aW5nZXIgPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPg0KPiBTZW50OiBNb25kYXksIEp1bmUg
+MjIsIDIwMjYgODozNiBQTQ0KPiBUbzogR2FnYW5kZWVwIFNpbmdoIDxHLlNpbmdoQG54cC5jb20+
+DQo+IENjOiBkZXZAZHBkay5vcmc7IEhlbWFudCBBZ3Jhd2FsIDxoZW1hbnQuYWdyYXdhbEBueHAu
+Y29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDAvOV0gRU5FVEMgZHJpdmVyIHJlbGF0ZWQg
+Y2hhbmdlcyBzZXJpZXMNCj4gDQo+IE9uIE1vbiwgMjIgSnVuIDIwMjYgMTc6MDU6MDggKzA1MzAN
+Cj4gR2FnYW5kZWVwIFNpbmdoIDxnLnNpbmdoQG54cC5jb20+IHdyb3RlOg0KPiANCj4gPiBWMiBj
+aGFuZ2VzOg0KPiA+ICAgLSBGaXhlZCBhbiB1bi11c2VkIHZhcmlhYmxlIGNvbXBpbGF0aW9uIGlz
+c3VlIHJlcG9ydGVkIG9uIGZlZG9yYTo0My1nY2MtDQo+IG1pbnNpemUNCj4gPiAgIC0gRml4ZWQg
+dmFyaW91cyBBSSByZXBvcnRlZCBpc3N1ZXM6DQo+ID4gCS0gUmVsZWFzZSBub3RlcyB1cGRhdGVk
+IGZvciBhbGwgbmV3IGRldmFyZ3MNCj4gPiAJLSBlbmVjdDQuaW5pIGZlYXR1cmVzIGRvYyB1cGRh
+dGVkIGZvciBzY2F0dGVyZWQgUlguDQo+ID4gCS0gcmVtb3ZlZCBOb3QgcmVxdWlyZWQgUlRFX1BU
+WVBFX1VOS05PV04uDQo+ID4gCS0gRml4ZWQgbWlkLWZyYW1lIG1idWYgbGVhayBpbiBTRyBjYXNl
+Lg0KPiA+IAktIEVuYWJsZWQgU0cgZm9yIGVuZXRjNCBQRiBhbHNvLg0KPiA+IAktIG1vdmUgdG8g
+Y2FsbG9jIGZyb20gcnRlX3ptYWxsb2MgaW4gcGFyc2VfdHhxX3ByaW9yKCkuDQo+ID4gCS0gYWRk
+ZWQgdmFpZGF0aW9uIGNoZWNrcyBvbiBzdHJkdXAsIHN0cnRvdWwuDQo+ID4gCS0gYWRkZWQgTkMg
+ZGV2YXJncyB0byB1c2UgY2FjaGVhYmxlIG9wcyBjb25kaXRpb25hbGx5Lg0KPiA+IAktIHJlbW92
+ZWQgZGVhZCBjb2RlIGxpa2UgYmRfYmFzZV9wIGV0Yy4NCj4gPiAJLSBGaXhlZCBydGVfY3B1X3Rv
+X2xlXzE2KCkgY29udmVyc2lvbiBvbiBmbGFncyBhbmQgY29tYmluZWQNCj4gPiAJICBhbGwgZmxh
+Z3MgcmVsYXRlZCBwYXRjaGVzIGluIG9uZSBwYXRjaC4NCj4gPiAJLSBGaXhlZCBtZW1vcnkgbGVh
+ayBpc3N1ZSBkdWUgdG8gVFhRIHByaW9yaXR5IHBhdGNoLg0KPiA+ICAgIC0gVGhlcmUgd2VyZSBz
+b21lIGZhbHNlIHBvc2l0aXZlcywgSSBoYXZlIGlnbm9yZWQgdGhlbToNCj4gPiAJUmFjZSBjb25k
+aXRpb24gb24gZmxhZ3MgZmllbGQ6DQo+ID4gCQljbGVhbl90eF9yaW5nIG9ubHkgdG91Y2hlcyBI
+Vy1jb21wbGV0ZWQgQkRzDQo+IChuZXh0X3RvX2NsZWFu4oaSaHdjaSksDQo+ID4gCQluZXZlciBu
+ZXdseS1zdWJtaXR0ZWQgQkRzOyBkb29yYmVsbCBoYXNuJ3QgZmlyZWQgeWV0Lg0KPiA+IAlNaXNz
+aW5nIGRjYmYgaW4gY2xlYW5fdHhfcmluZzoNCj4gPiAJCURQREsgaXMgc2luZ2xlLXRocmVhZGVk
+IHBlciBxdWV1ZTsgVFggcGF0aCBhbHdheXMgb3ZlcndyaXRlcw0KPiA+IAkJZmxhZ3MgY29tcGxl
+dGVseSBiZWZvcmUgZGNiZi4NCj4gPiAJVFggZGNiZiBncmFudWxhcml0eSB3aXRoIHdyYXA6DQo+
+ID4gCQlTYWZlIChBSSBhZG1pdHMgaXQpLg0KPiA+IAlSWCByZWZpbGwgZmx1c2ggYXQgd3JhcDoN
+Cj4gPiAJCUluLWxvb3AgZGNiZiBhdCBpICYgbWFzayA9PSAwIGFscmVhZHkgZmx1c2hlcyBhbGln
+bmVkIGdyb3VwczsNCj4gPiAJCXRyYWlsaW5nIGZsdXNoIG9ubHkgbmVlZGVkIGZvciBwYXJ0aWFs
+IGdyb3Vwcy4NCj4gPiAJUlggcmVhZGluZyBiZWZvcmUgaW52YWxpZGF0ZToNCj4gPiAJCWRjY2l2
+YWMgcHJlY2VkZXMgdGhlIHJlYWQgZm9yIGV2ZXJ5IGdyb3VwIGluIHRoZSBsb29wDQo+ID4NCj4g
+PiBHYWdhbmRlZXAgU2luZ2ggKDcpOg0KPiA+ICAgbmV0L2VuZXRjOiBmaXggVFggQkQgc3RydWN0
+dXJlDQo+ID4gICBuZXQvZW5ldGM6IGZpeCBxdWV1ZSBpbml0aWFsaXphdGlvbg0KPiA+ICAgbmV0
+L2VuZXRjOiBzdXBwb3J0IEVTUCBwYWNrZXQgdHlwZSBpbiBwYWNrZXQgcGFyc2luZw0KPiA+ICAg
+bmV0L2VuZXRjOiB1cGRhdGUgcmFuZG9tIE1BQyBnZW5lcmF0aW9uIGNvZGUNCj4gPiAgIG5ldC9l
+bmV0YzogYWRkIG9wdGlvbiB0byBkaXNhYmxlIFZTSSBtZXNzYWdpbmcNCj4gPiAgIG5ldC9lbmV0
+YzogYWRkIGRldmFyZ3MgdG8gY29udHJvbCBWU0ktUFNJIHRpbWVvdXQgYW5kIGRlbGF5DQo+ID4g
+ICBuZXQvZW5ldGM0OiBhZGQgY2FjaGVhYmxlIEJEIHJpbmcgc3VwcG9ydCB3aXRoIFNXIGNhY2hl
+IG1haW50ZW5hbmNlDQo+ID4NCj4gPiBWYW5zaGlrYSBTaHVrbGEgKDIpOg0KPiA+ICAgbmV0L2Vu
+ZXRjOiBzdXBwb3J0IHNjYXR0ZXItZ2F0aGVyDQo+ID4gICBuZXQvZW5ldGM6IHNldCB1c2VyIGNv
+bmZpZ3VyYWJsZSBwcmlvcml0eSB0byBUWCByaW5ncw0KPiA+DQo+ID4gIGRvYy9ndWlkZXMvbmlj
+cy9mZWF0dXJlcy9lbmV0YzQuaW5pICAgIHwgICAxICsNCj4gPiAgZG9jL2d1aWRlcy9yZWxfbm90
+ZXMvcmVsZWFzZV8yNl8wNy5yc3QgfCAgMTAgKw0KPiA+ICBkcml2ZXJzL25ldC9lbmV0Yy9iYXNl
+L2VuZXRjX2h3LmggICAgICB8ICAxMyArLQ0KPiA+ICBkcml2ZXJzL25ldC9lbmV0Yy9lbmV0Yy5o
+ICAgICAgICAgICAgICB8ICAzMSArLQ0KPiA+ICBkcml2ZXJzL25ldC9lbmV0Yy9lbmV0YzRfZXRo
+ZGV2LmMgICAgICB8IDE3MiArKysrKysrKy0tDQo+ID4gIGRyaXZlcnMvbmV0L2VuZXRjL2VuZXRj
+NF92Zi5jICAgICAgICAgIHwgMjA0ICsrKysrKysrKystLQ0KPiA+ICBkcml2ZXJzL25ldC9lbmV0
+Yy9lbmV0Y19ldGhkZXYuYyAgICAgICB8ICAyNSArLQ0KPiA+ICBkcml2ZXJzL25ldC9lbmV0Yy9l
+bmV0Y19yeHR4LmMgICAgICAgICB8IDQzMCArKysrKysrKysrKysrKysrKysrKysrLS0tDQo+ID4g
+IDggZmlsZXMgY2hhbmdlZCwgNzY4IGluc2VydGlvbnMoKyksIDExOCBkZWxldGlvbnMoLSkNCj4g
+Pg0KPiANCj4gQmV0dGVyIGJ1dCBzdGlsbCBoYWQgc29tZSBBSSBmZWVkYmFjayBpZiBJIGFza2Vk
+IGl0IGZvciBtb3JlIGNvbXBsZXRlIHJldmlldy4NCj4gQWdyZWUgdGhhdCBwdXR0aW5nIG5ldyBk
+ZXZhcmdzIGluIGRvYyBpcyBuZWVkZWQuDQo+IA0KPiBFcnJvcg0KPiA9PT09PQ0KPiANCj4gW1BB
+VENIIHYyIDcvOV0gbmV0L2VuZXRjOiBhZGQgZGV2YXJncyB0byBjb250cm9sIFZTSS1QU0kgdGlt
+ZW91dCBhbmQgZGVsYXkNCj4gDQo+IGRyaXZlcnMvbmV0L2VuZXRjL2VuZXRjNF92Zi5jLCBlbmV0
+YzRfdmZfZGV2X2luaXQoKQ0KPiANCj4gICBrdmxpc3QgaXMgbGVha2VkIG9uIHRoZSB0d28gaW52
+YWxpZC12YWx1ZSBlcnJvciBwYXRocy4gSXQgaXMNCj4gICBhbGxvY2F0ZWQgYnkgcnRlX2t2YXJn
+c19wYXJzZSgpIChsaW5lIDEzNDcpIGFuZCBvbmx5IGZyZWVkIGF0DQo+ICAgbGluZSAxMzg1LCBi
+dXQgYm90aA0KPiANCj4gICAgICAgcmV0dXJuIC0xOyAgIC8qIGludmFsaWQgVlNJIFRpbWVvdXQs
+IGxpbmUgMTM2NyAqLw0KPiAgICAgICByZXR1cm4gLTE7ICAgLyogaW52YWxpZCBWU0kgRGVsYXks
+ICAgbGluZSAxMzgwICovDQo+IA0KPiAgIHJldHVybiBiZWZvcmUgdGhhdCBmcmVlLiBBIG1hbGZv
+cm1lZCBlbmV0YzRfdnNpX3RpbWVvdXQ9IG9yDQo+ICAgZW5ldGM0X3ZzaV9kZWxheT0gbGVha3Mg
+dGhlIGt2YXJncyBzdHJ1Y3R1cmUgb24gZXZlcnkgcHJvYmUuDQo+IA0KPiAgIEZyZWUgYmVmb3Jl
+IHJldHVybmluZywgZS5nLjoNCj4gDQo+ICAgICAgIGlmIChlcnJubyAhPSAwIHx8IGh3LT52c2lf
+dGltZW91dCA9PSAwKSB7DQo+ICAgICAgICAgICAgICAgRU5FVENfUE1EX0VSUigiSW52YWxpZCBW
+U0kgVGltZW91dCB2YWx1ZSA9ICV1IiwNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+aHctPnZzaV90aW1lb3V0KTsNCj4gICAgICAgICAgICAgICBydGVfa3ZhcmdzX2ZyZWUoa3ZsaXN0
+KTsNCj4gICAgICAgICAgICAgICByZXR1cm4gLTE7DQo+ICAgICAgIH0NCj4gDQo+ICAgKHNhbWUg
+Zm9yIHRoZSBkZWxheSBwYXRoKSwgb3IgcmVzdHJ1Y3R1cmUgd2l0aCBhIGdvdG8uDQo+IA0KPiAN
+CkZpeGVkIGluIHYzLg0KDQo+IFdhcm5pbmcNCj4gPT09PT09PQ0KPiANCj4gU2VyaWVzIChwYXRj
+aGVzIDYtOSkNCj4gDQo+ICAgVGhlIG5ldyBydW50aW1lIGRldmFyZ3MgLSBlbmV0YzRfdnNpX2Rp
+c2FibGUsIGVuZXRjNF92c2lfdGltZW91dCwNCj4gICBlbmV0YzRfdnNpX2RlbGF5LCBlbmV0YzRf
+dHhxX3ByaW9yLCBhbmQgbmMgLSBhcmUgcmVnaXN0ZXJlZCB2aWENCj4gICBSVEVfUE1EX1JFR0lT
+VEVSX1BBUkFNX1NUUklORyBhbmQgbm90ZWQgaW4gdGhlIHJlbGVhc2Ugbm90ZXMsIGJ1dA0KPiAg
+IGRvYy9ndWlkZXMvbmljcy9lbmV0YzQucnN0IGhhcyBubyBSdW50aW1lIENvbmZpZ3VyYXRpb24g
+c2VjdGlvbg0KPiAgIGRlc2NyaWJpbmcgdGhlbS4gQ29udmVudGlvbiBpcyB0byBkb2N1bWVudCBk
+ZXZhcmdzIGluIHRoZSBOSUMgZ3VpZGUNCj4gICBzbyB1c2VycyBjYW4gZmluZCB0aGUgc3ludGF4
+IChlLmcuIHRoZSBuYz0xIC8gJ2F8YnxjJyBwcmlvcml0eSBsaXN0DQo+ICAgZm9ybWF0cyBhcmUg
+bm9uLW9idmlvdXMpLg0KPiANCkRvY3VtZW50YXRpb24gaXMgZG9uZSBpbiB2Mw0KDQo+IEluZm8N
+Cj4gPT09PQ0KPiANCj4gW1BBVENIIHYyIDUvOV0gYW5kIFtQQVRDSCB2MiA5LzldIC0gUlggbXVs
+dGktc2VnbWVudCByZWFzc2VtYmx5DQo+IA0KPiAgIEluIGVuZXRjX2NsZWFuX3J4X3JpbmdfbmMo
+KSBhbmQgZW5ldGNfY2xlYW5fcnhfcmluZ19jYWNoZWFibGUoKSwNCj4gICBvbiB0aGUgZnJhbWUt
+bGFzdCBCRDoNCj4gDQo+ICAgICAgIGZpcnN0X3NlZy0+cGt0X2xlbiAtPSByeF9yaW5nLT5jcmNf
+bGVuOw0KPiANCj4gICByZWR1Y2VzIHBrdF9sZW4gYnV0IGxlYXZlcyB0aGUgZmluYWwgc2VnbWVu
+dCdzIGRhdGFfbGVuIHVuY2hhbmdlZCwNCj4gICBzbyBwa3RfbGVuICE9IHN1bShkYXRhX2xlbikg
+d2hlbiBjcmNfbGVuIGlzIG5vbi16ZXJvLiBUaGUgb2xkDQo+ICAgc2luZ2xlLXNlZ21lbnQgcGF0
+aCBrZXB0IHRoZW0gZXF1YWwgKHBrdF9sZW4gPSBkYXRhX2xlbiA9IGJ1Zl9sZW4NCj4gICAtIGNy
+Y19sZW4pLg0KPiANCj4gICBUaGlzIGlzIGN1cnJlbnRseSB1bnJlYWNoYWJsZTogZW5ldGM0IGRv
+ZXMgbm90IGFkdmVydGlzZQ0KPiAgIFJURV9FVEhfUlhfT0ZGTE9BRF9LRUVQX0NSQywgc28gY3Jj
+X2xlbiBpcyBhbHdheXMgMCBhbmQgdGhlDQo+ICAgc3VidHJhY3Rpb24gaXMgYSBuby1vcC4gRmxh
+Z2dpbmcgb25seSBzbyB0aGUgYXN5bW1ldHJ5IGlzIG9uIHJlY29yZA0KPiAgIGlmIEtFRVBfQ1JD
+IGlzIGV2ZXIgYWRkZWQgLSBhdCB0aGF0IHBvaW50IHRoZSBsYXN0IHNlZ21lbnQncw0KPiAgIGRh
+dGFfbGVuIHdvdWxkIG5lZWQgdGhlIHNhbWUgYWRqdXN0bWVudCAoYW5kIHRoZSBDUkMgbWF5IHN0
+cmFkZGxlDQo+ICAgdGhlIGxhc3QgdHdvIHNlZ21lbnRzKS4NCkkgaGF2ZSBub3RlZCBpdCBkb3du
+LCB3aWxsIHN1Ym1pdCB0aGUgY2hhbmdlcyBhcyBhIHNlcGFyYXRlIHBhdGNoIHdoZW4NCldlIHdp
+bGwgc3VwcG9ydCBLRUVQX0NSQyBpbiBlbmV0YzQuIA0KDQo=
