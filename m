@@ -2,79 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB644CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 09:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B202DCDB470
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 10:11:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F0CBF402A2;
-	Tue, 23 Jun 2026 11:19:21 +0200 (CEST)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTP id 6BBBC40269
- for <dev@dpdk.org>; Tue, 23 Jun 2026 11:19:20 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id CAA71EC0202;
- Tue, 23 Jun 2026 05:19:19 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Tue, 23 Jun 2026 05:19:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1782206359;
- x=1782292759; bh=RXkk8VAx34C3HeeJdjGVl91oamA5R4mSjZWkHzF5itg=; b=
- Rvrer62p/SMU27d1vR/NxjVb/Q4vzdD0NQLxJgsi+ofYW+58D4DuudB+eDgWh/l2
- h7BfI+G6bvD7l0Vjb9nzK+heBnDh5Kd3wHvyGTDinyfiITssP1AvxOJrdJeacko4
- 8oeVnLq+O1koE9eNnvcxXe5DV8pq9uyKXHUEVSBGLIKKoWAb3hMibwPAxN5JE0yL
- XJYxMmwb8bmrb+I/PF44wqPZseyBC6Z5SXyCs2TdhJmXnZPrFcGesL4vWR6cHBDa
- dH3MajxHzj7S/OCF0+IKDSF0RPQm4ytCyh9R9OMycZf4kl/2cdrMLeGOl4h2wJvJ
- JraicoJxuVIBQdeiU3sjJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1782206359; x=
- 1782292759; bh=RXkk8VAx34C3HeeJdjGVl91oamA5R4mSjZWkHzF5itg=; b=A
- H223OStub5u500Mbie/kcZq/pg+IaFCe5p5jJ0hZobFTgFfqn1140MJwQBI0orvD
- xDP/nkWmG0pxyhgT6fVXIaGaU3Yu0fsBBlk7dJyrxTAQQLRnQvw4qImRwfks5EiG
- 5/wGBA7Kb5khl0kwCtNu5LgUJYR0V/ejnDY9L1UVWTNetwBDd/eZscQ82r/nDSUt
- l1ttDgTDkbkRswSVmZfFiBRzIkVKuALw79rQJySFHHqAcyX2f/001dqNXUYtCqLC
- LQT9JfSTsKZCThpFvOqvKZFhcyBKrHqeRNEjWIoL0o9RK9SrrGQTRuDX/J3nMEqU
- U9q2eCFfg4JIiO34jD0EQ==
-X-ME-Sender: <xms:lk86apmjJnYcAgWp6nxPkavSUzU2cs5ZjF05MwRE3zNrIR7JoW3ojQ>
- <xme:lk86agRsEdNyqEV5uAi5hk1e72eR2dyLTRhCVAbCQ1tWu9fz2jYmxfs5gON3yZJuz
- UdkUzKRR56d1eRCrnpz6kdMf2eN0M4gZOnssg5-C2uVwvYlHJQH9g>
-X-ME-Received: <xmr:lk86ajKpERkmSyROOJLKVYdOF5-tD9Y-lK1JH6OuuP4ER_a1TBvuVP0EOclnK7sJ9nYa2Cf8FAy3Dkc2t7PpmPnRDA>
-X-ME-Proxy-Cause: dmFkZTGb9MkrAmY+nIjHdRPTDHRcSlteO4W9/2lU19Er1d+sG/gVENgRAU6/iMLMPcnOB0
- y8inDu3hjjtyW7VonLEZMlH62+mhbgkV9mUCWVXn8PjmLdiojjr7NV1mvijDkQ4Camvs3t
- fKS15ZacKJe9LXwgpoglr9MFyVhzWDe9HiAfwKlkecSAI+zIIdiN6+9GWF8xOab1RgpR5g
- Zs0Srf6DP3QjDiSPCBvvht4a5PpvPmey9yldvOozjgCCvCEdWmgPWWRsmoOBh6DS1JB/81
- GHhsR0m1OrYxeZHpFPs/RjBI49MBpFPwLkAMEuUn0RKnsEHG43qi5eqhy4AcmxoypKhPDn
- RGjnL2WD835IQWCUdUVlQVTTM4WWj1Zmf0kc6CgC6QB+SRytKHzvaqTVJzGoOcgFQWM5ZS
- D9rT+aBFG3Q4GiWa99YuY6mVDp9SNeq1kDz4s3Pd0mNAMZmnfB3ZZ/JdGJ+MwEsYp8PgS4
- 6E40UiugciBT70yP+wbelAaCaM7JZpEP9BIm8lGifQE6OMHGvuDtxa24/f2xkGYhOETFVE
- eXDmPP5dEMrQuGTFsu06wYqyQe62gUaOSYAEp8Yy8iSyY9Q572BFDutOo5u4tQi0Awpd8d
- N10BwAJVxn78YcePEaf5RRwFq+c4EgtsK1slXg/H4hkIu+JM5M3A2u04oC/w
-X-ME-Proxy: <xmx:lk86auDczPvv4EiNmUGyE3gOXYnL4UrnC5Wb0jYz-RtPU3TGMSlULg>
- <xmx:lk86akDePcami-cqADqUTs9kZK_f-fKnAPnYncHiEJvCpvnBBcf9bA>
- <xmx:lk86aoBLpubtmLPDHWhh7wT6DVF74Y3QgG6lkNi66dm-6n5Xjwrjzg>
- <xmx:lk86anriuGtmPG_xkyTHAcYDFHqcY819GNWIkgK1CGTtFDYmhI5eJQ>
- <xmx:l086auZ16bAUqhPSgH-p3HM3QTkZ77Dgi3wLiUhAhBBDeBXfGPxPU3K7>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 23 Jun 2026 05:19:17 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Stephen Hemminger <stephen@networkplumber.org>, david.marchand@redhat.com
-Subject: Re: [PATCH v6 00/11] bpf: introduce extensible load API
-Date: Tue, 23 Jun 2026 11:19:15 +0200
-Message-ID: <gTfrLmiGT7u60MQvaNOzmw@monjalon.net>
-In-Reply-To: <20260617194425.12690-1-marat.khalili@huawei.com>
-References: <20260612084219.38399-1-marat.khalili@huawei.com>
- <20260617194425.12690-1-marat.khalili@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D8DFA402A2;
+	Tue, 23 Jun 2026 12:11:28 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 0DC9C40269;
+ Tue, 23 Jun 2026 12:11:27 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gl16b6S8tzJ46Dv;
+ Tue, 23 Jun 2026 18:10:47 +0800 (CST)
+Received: from frapema100002.china.huawei.com (unknown [7.182.19.63])
+ by mail.maildlp.com (Postfix) with ESMTPS id AD2F740572;
+ Tue, 23 Jun 2026 18:11:22 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema100002.china.huawei.com (7.182.19.63) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 23 Jun 2026 12:11:22 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Tue, 23 Jun 2026 12:11:22 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: RE: [PATCH v3 1/6] bpf/x86: fix JIT encoding of BPF_JSET with
+ immediate
+Thread-Topic: [PATCH v3 1/6] bpf/x86: fix JIT encoding of BPF_JSET with
+ immediate
+Thread-Index: AQHdAZqZbIfnycILz0C32/nH6hBbQLZL6bwA
+Date: Tue, 23 Jun 2026 10:11:22 +0000
+Message-ID: <c29d854b938c462b9ef028a9dabc8b9a@huawei.com>
+References: <20260608203322.1116296-1-stephen@networkplumber.org>
+ <20260621162524.82690-1-stephen@networkplumber.org>
+ <20260621162524.82690-2-stephen@networkplumber.org>
+In-Reply-To: <20260621162524.82690-2-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,26 +61,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Marat Khalili (11):
->   bpf: make logging prefixes more consistent
->   bpf: introduce extensible load API
->   bpf: support up to 5 arguments
->   bpf: add cBPF origin to rte_bpf_load_ex
->   bpf: support rte_bpf_prm_ex with port callbacks
->   bpf: support loading ELF files from memory
->   test/bpf: test loading cBPF directly
->   test/bpf: test loading ELF file from memory
->   doc: add release notes for new extensible BPF API
->   doc: add load API to BPF programmer's guide
->   test/bpf: add tests for error handling contracts
+With the condition that the commit message is proofread,
 
-RTE_EXPORT_EXPERIMENTAL_SYMBOL(, 26.11)
-changed to
-RTE_EXPORT_EXPERIMENTAL_SYMBOL(, 26.07)
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 
-Doc and tests split and squashed in relevant commits
-to have atomic changes.
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Sunday 21 June 2026 17:24
+> To: dev@dpdk.org
+> Cc: Stephen Hemminger <stephen@networkplumber.org>; stable@dpdk.org; Kons=
+tantin Ananyev
+> <konstantin.ananyev@huawei.com>; Marat Khalili <marat.khalili@huawei.com>=
+; Ferruh Yigit
+> <ferruh.yigit@amd.com>
+> Subject: [PATCH v3 1/6] bpf/x86: fix JIT encoding of BPF_JSET with immedi=
+ate
+>=20
+> Several place in x86 JIT code, it assumes that for small immediate
+> values the instruction size is one byte; but it is not.
+>=20
+> The immddiate form of the instruction takes a 32 bit value.
+> The broken version of emit_tst_imm() emits TEST (0xF7 /0)
+> but sized the immediate with imm_size(), which can return 1 byte.
+>=20
+> A small mask like BPF_JSET | BPF_K #0x1 then produced a
+> 4-byte instruction the CPU decodes as 7,
+> swallowing the following Jcc and crashing.
+>=20
+> Always emit a 32-bit immediate for TEST, ROR and SHIFT.
 
-Applied
+The commit message needs to be LLMed for typos and factual mistakes.
 
+>=20
+> Bugzilla ID: 1959
+> Fixes: cc752e43e079 ("bpf: add JIT compilation for x86_64 ISA")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  lib/bpf/bpf_jit_x86.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/lib/bpf/bpf_jit_x86.c b/lib/bpf/bpf_jit_x86.c
+> index 88b1b5aeab..b14a574703 100644
+> --- a/lib/bpf/bpf_jit_x86.c
+> +++ b/lib/bpf/bpf_jit_x86.c
+> @@ -300,7 +300,7 @@ emit_ror_imm(struct bpf_jit_state *st, uint32_t dreg,=
+ uint32_t imm)
+>  	emit_rex(st, BPF_ALU, 0, dreg);
+>  	emit_bytes(st, &ops, sizeof(ops));
+>  	emit_modregrm(st, MOD_DIRECT, mods, dreg);
+> -	emit_imm(st, imm, imm_size(imm));
+> +	emit_imm(st, imm, sizeof(uint8_t));
+
+The fix appears to be correct, although this function was only ever called =
+with
+imm =3D=3D 8, so the problem was not reproducible.
+
+>  }
+>=20
+>  /*
+> @@ -441,7 +441,7 @@ emit_shift_imm(struct bpf_jit_state *st, uint32_t op,=
+ uint32_t dreg,
+>  	uint32_t imm)
+>  {
+>  	emit_shift(st, op, dreg);
+> -	emit_imm(st, imm, imm_size(imm));
+> +	emit_imm(st, imm, sizeof(uint8_t));
+
+The fix appears to be correct, I would welcome a test reproducing the probl=
+em.
+
+>  }
+>=20
+>  /*
+> @@ -921,7 +921,7 @@ emit_tst_imm(struct bpf_jit_state *st, uint32_t op, u=
+int32_t dreg, uint32_t imm)
+>  	emit_rex(st, op, 0, dreg);
+>  	emit_bytes(st, &ops, sizeof(ops));
+>  	emit_modregrm(st, MOD_DIRECT, mods, dreg);
+> -	emit_imm(st, imm, imm_size(imm));
+> +	emit_imm(st, imm, sizeof(int32_t));
+
+The fix appears to be correct.
+
+>  }
+>=20
+>  static void
+> --
+> 2.53.0
 
