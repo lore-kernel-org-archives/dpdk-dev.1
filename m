@@ -2,42 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4802ECDB470
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 06:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 011F2CDB470
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 06:57:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 121EB40150;
-	Tue, 23 Jun 2026 08:45:59 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 22BAC4014F
- for <dev@dpdk.org>; Tue, 23 Jun 2026 08:45:57 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0FAF72024A;
- Tue, 23 Jun 2026 08:45:56 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 202E740150;
+	Tue, 23 Jun 2026 08:57:07 +0200 (CEST)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com
+ [209.85.160.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 1B0854014F
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 08:57:05 +0200 (CEST)
+Received: by mail-qt1-f176.google.com with SMTP id
+ d75a77b69052e-5176ca6bab1so8079691cf.0
+ for <dev@dpdk.org>; Mon, 22 Jun 2026 23:57:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782197824; cv=none;
+ d=google.com; s=arc-20240605;
+ b=HEQUOHhPVNXsNvIM5LKWUIuBFXDIHfgTZDM1Wua13G7NV+rdEoSDtqphOoFDW/Pgb9
+ FqX+OmSEWTBQTQ9pNJlLEyjyG7Ybof5uSzyBYI0hq7io+3JzLxtfcTxAMaXjL3/q+fZB
+ 1O5hqmkYb4dMo68xHGrZhVZSMFaZpSMflMICA8u6+Xv9c5sNl1s9124uBZLUgw7l43su
+ BZXNlKC5+tmXf6jlqZ73Ve/vP6MkD2R7ivRqJ1h8aMbQufPGYcZA3mVWkEFU+4AAjbG/
+ Zy28OwgfAgPwNYQeZGokligf1C30p5iHon7CHrtX6eCp3H9GKHpGc1VYL4itx+czK51Q
+ Gn8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=4yuVfgAsUlGFSWmuyun7NhwXUHkD6UM84OwtrJCzw2g=;
+ fh=JUruITkHmm9WOEqXVGAxfUeC/dKwGe9fpiGCN0yWOn8=;
+ b=isEE5HxkiLwAxTldpPFZmpHyDeaP5Pyxc3Z0FhVxeDvY80+2RsS+QcxyG41agWT4jU
+ 7LcRjTaleIsAcXE0PGJ6bKLXK5O4YhW60/BiQnui12jnCXL22A+ypvX6CZB0TQJ332+U
+ DSJEBTyb8otgWhQDizYJ+zXpWXS316efY0pJBzscsdoXKyROwrXOXQy08NREX2oDgTdK
+ 5Rjl5c2eFKShURuhVfK6BpyZZ5Rp9VvuqNDJElmV5ylhmocOff7FKDzW4ZO8HTix+W5m
+ vQRcdvQz0W9Rd1IZMe1qZtxFsd+Ry1c1+MMavd/gzWK0tIsXBUWwwFompT1uvNMh7qXv
+ n56w==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1782197824; x=1782802624; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=4yuVfgAsUlGFSWmuyun7NhwXUHkD6UM84OwtrJCzw2g=;
+ b=E/mI9/sA7hr+IRxPuqbIxCz2+dwuCEeIJ6XeGfUOenRqSYsJNKjWIv3pAdLIgKdjIM
+ B2iM4SZXhyqJgJ4Hx2EIe8EL1E+YqHrvOPGqHCrPldigxprrZzpuQ0Axnx0OnqSvQ3XH
+ Jo870LKYx0S1FyHiGD4cEI8rytLZyxoEO6zx1EnBF4If3nKDa2xUA/4TiulqJ9Ai2Zh9
+ rJvLG2RriiH5tRKp5mkfP32hH1LpcOEpIKaHxZOs7I4hOjl7eXOQrPHf6fE7UKea3HSC
+ TgmaRktrsbIUJyaqDGFmpgjz/OFVWlVWm+1M3IERHYjfp5UIk7yvJ0VjdVcAdw8AnAXO
+ nk0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1782197824; x=1782802624;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=4yuVfgAsUlGFSWmuyun7NhwXUHkD6UM84OwtrJCzw2g=;
+ b=P/kgRKKw6hPVZh7Gsdr1D6Kf0zTB1hybhxWVv6wPYWkm88gsiOHsD2RPfV1MJg1E5t
+ EoVbSCxchjSXejm2v4NtnTof3xkEE9bKjGA2yo0BH47mVjj0NWWqK8je/yIcSBoCs7ts
+ 2FkOfrunH7d/2BWbY+CFs1cSzukZEwu0ORY8jxT8zIDY6C9XVvPHFiosAH3gfz/TgUTf
+ idg+BqTqg7wKJyxqTbcGE3mg790qTxYKO9OHu3lU5gclVKDT4s4jQbb834t7pyFjflPI
+ oXyXNi/TKquZ50g9jfn2lX05S7n5MxC/LozBowi5+NNfdQnqLNyp854ZxC6jLoIeZg2Z
+ uILg==
+X-Gm-Message-State: AOJu0Yw6pavfHgaLgdYXXkQrlXMeFKt/NmohWWeGPQVFIU0YjncdM+rx
+ aYqU1hToGiwUtKL8R1LQQtPtPcnuViPbbm6deyiZ7zH8m6RMCkSjHfYkrQzDAnasttUKtffukBW
+ one9fHiKkJ3hRnDytQF9vsAUJoMVrRTIEiTX3
+X-Gm-Gg: AfdE7ckfIFsy3gg+9b/ZauUv1IEaKfs9bfdzXvvHMzsWjCaGYllV8WohGsvLuhsCbgX
+ jWdHHgZStHOHzdhPjgzfJurel6u9YCgbUnHaDTKV0FqOZ3Be/FOgy5keHUnxacUM3YXH5/+QsdL
+ /KbL+rPKt3TDufaL/zbR11YxkNGA2xFPnNWxvcsNO1PeN9E7mJNjVLXf5ayE8DXB1HhQ8hL7wqD
+ wIg3DukiToDjfBnnGaqek43GyfnwYaBD3tbWVPZWEaiJmJ/p8iXP5EdLD9OKp+hqeIr
+X-Received: by 2002:a05:622a:250:b0:517:68a3:d9a1 with SMTP id
+ d75a77b69052e-51a51abed11mr35736271cf.13.1782197824280; Mon, 22 Jun 2026
+ 23:57:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v5] graph: add optional profiling stats
-Date: Tue, 23 Jun 2026 08:45:52 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65937@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <CALBAE1OCbZ9GB1oGYgR5hRtzjRmev2ZFOaSNndf02AZptihOcw@mail.gmail.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5] graph: add optional profiling stats
-Thread-Index: Ad0CzxN1hUja6yDASXmcn47xlxhh6QABkkPA
 References: <20260619202047.2809165-1-mb@smartsharesystems.com>
  <20260621184140.2878132-1-mb@smartsharesystems.com>
  <CALBAE1OCbZ9GB1oGYgR5hRtzjRmev2ZFOaSNndf02AZptihOcw@mail.gmail.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Jerin Jacob" <jerinjacobk@gmail.com>
-Cc: <dev@dpdk.org>, "Jerin Jacob" <jerinj@marvell.com>,
- "Kiran Kumar K" <kirankumark@marvell.com>,
- "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
- "Zhirun Yan" <yanzhirun_163@163.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65937@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65937@smartserver.smartshare.dk>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 23 Jun 2026 12:26:37 +0530
+X-Gm-Features: AVVi8CcGY0fd1-08aYHxqLHWIaUNhTTqm8qowYHYdOPgpdyBmb6Qj2gDQrLjsJs
+Message-ID: <CALBAE1OZDXfH1FoVLJ=vXVqr=9hYPgqeCzN8h278wN8FbU+XaQ@mail.gmail.com>
+Subject: Re: [PATCH v5] graph: add optional profiling stats
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Zhirun Yan <yanzhirun_163@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,75 +100,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBKZXJpbiBKYWNvYiBbbWFpbHRvOmplcmluamFjb2JrQGdtYWlsLmNvbV0NCj4gU2Vu
-dDogVHVlc2RheSwgMjMgSnVuZSAyMDI2IDA3LjEzDQo+IA0KPiBPbiBNb24sIEp1biAyMiwgMjAy
-NiBhdCAxMjoxMeKAr0FNIE1vcnRlbiBCcsO4cnVwDQo+IDxtYkBzbWFydHNoYXJlc3lzdGVtcy5j
-b20+IHdyb3RlOg0KPiA+DQo+ID4gQWRkZWQgZ3JhcGggbm9kZSBwcm9maWxpbmcgc3RhdHMsIGJ1
-aWxkIHRpbWUgY29uZmlndXJhYmxlIGJ5IGVuYWJsaW5nDQo+ID4gUlRFX0dSQVBIX1BST0ZJTEUg
-aW4gcnRlX2NvbmZpZy5oLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTW9ydGVuIEJyw7hydXAg
-PG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4gDQo+IFBsZWFzZSB1cGRhdGUgYXBwL3Rlc3Qv
-dGVzdF9ncmFwaC5jIHRvIHZhbGlkYXRlIHRoaXMgZmVhdHVlLg0KDQpBY2suDQoNCj4gPiBAQCAt
-OTIsNyArOTIsNjIgQEAgcnRlX2dyYXBoX29ial9kdW1wKEZJTEUgKmYsIHN0cnVjdCBydGVfZ3Jh
-cGggKmcsDQo+IGJvb2wgYWxsKQ0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIGZwcmludGYo
-ZiwgIiAgICAgICB0b3RhbF9zY2hlZF9mYWlsPSUiIFBSSWQ2NA0KPiAiXG4iLA0KPiA+ICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgbi0+ZGlzcGF0Y2gudG90YWxfc2NoZWRfZmFpbCk7
-DQo+ID4gICAgICAgICAgICAgICAgIH0NCj4gPiAtICAgICAgICAgICAgICAgZnByaW50ZihmLCAi
-ICAgICAgIHRvdGFsX2NhbGxzPSUiIFBSSWQ2NCAiXG4iLCBuLQ0KPiA+dG90YWxfY2FsbHMpOw0K
-PiA+ICsgICAgICAgICAgICAgICBmcHJpbnRmKGYsICIgICAgICAgdG90YWxfY2FsbHM9JSIgUFJJ
-dTY0ICJcbiIsIG4tDQo+ID50b3RhbF9jYWxscyk7DQo+ID4gKyAgICAgICAgICAgICAgIGlmIChy
-dGVfZ3JhcGhfaGFzX3N0YXRzX2ZlYXR1cmUoKSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgIGZwcmludGYoZiwgIiAgICAgICB0b3RhbF9jeWNsZXM9JSIgUFJJdTY0ICIsDQo+IGF2ZyBj
-eWNsZXMvY2FsbD0lLjFmXG4iLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBuLT50b3RhbF9jeWNsZXMsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIG4tPnRvdGFsX2NhbGxzID09IDAgPw0KPiAoZG91YmxlKTAgOg0KPiA+ICsg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAoZG91YmxlKW4tPnRvdGFsX2N5
-Y2xlcyAvDQo+IChkb3VibGUpbi0+dG90YWxfY2FsbHMpOw0KPiA+ICsgICAgICAgICAgICAgICB9
-DQo+ID4gKyNpZmRlZiBSVEVfR1JBUEhfUFJPRklMRQ0KPiANCj4gDQo+IFBsZWFzZSBpbnRyb2R1
-Y2UgcnRlX2dyYXBoX2hhc19wcm9maWxlX2ZlYXR1ZSgpIHNpbWlsYXIgdG8NCj4gcnRlX2dyYXBo
-X2hhc19zdGF0c19mZWF0dXJlKCkgdG8gcmVkdWNlIGlmIGRlZiBjbHV0dGVyIGFzIHBvc3NpYmxl
-Lg0KDQpEaXNhZ3JlZSwgc2VlIGJlbG93Lg0KDQo+IA0KPiA+ICsgICAgICAgICAgICAgICB1aW50
-NjRfdCBjYWxscyA9IG4tPnVzYWdlX3N0YXRzWzBdLmNhbGxzOw0KPiA+ICsgICAgICAgICAgICAg
-ICBmcHJpbnRmKGYsICIgICAgICAgb2Jqc1swXVxuIik7DQo+ID4gKyAgICAgICAgICAgICAgIGZw
-cmludGYoZiwgIiAgICAgICAgIGNhbGxzPSUiIFBSSXU2NCAiLCBjeWNsZXM9JSINCj4gUFJJdTY0
-ICIsIGF2ZyBjeWNsZXMvY2FsbD0lLjFmXG4iLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgY2FsbHMsDQo+IA0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2xpYi9ncmFwaC9ydGVf
-Z3JhcGhfd29ya2VyX2NvbW1vbi5oDQo+IGIvbGliL2dyYXBoL3J0ZV9ncmFwaF93b3JrZXJfY29t
-bW9uLmgNCj4gPiBpbmRleCA0YWI1M2E1MzNlLi4wZDgwMzk1NzVkIDEwMDY0NA0KPiA+IC0tLSBh
-L2xpYi9ncmFwaC9ydGVfZ3JhcGhfd29ya2VyX2NvbW1vbi5oDQo+ID4gKysrIGIvbGliL2dyYXBo
-L3J0ZV9ncmFwaF93b3JrZXJfY29tbW9uLmgNCj4gPiBAQCAtMTQ0LDEyICsxNDQsMjYgQEAgc3Ry
-dWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX25vZGUgew0KPiA+ICAgICAgICAgICAgICAgICAg
-ICAgICAgIHJ0ZV9ub2RlX3Byb2Nlc3NfdCBwcm9jZXNzOyAvKio8IFByb2Nlc3MNCj4gZnVuY3Rp
-b24uICovDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgdWludDY0X3QgcHJvY2Vzc191NjQ7
-DQo+ID4gICAgICAgICAgICAgICAgIH07DQo+ID4gKyAgICAgICAgICAgICAgIC8qKiBGYXN0IHBh
-dGggYXJlYSBjYWNoZSBsaW5lIDMuICovDQo+ID4gKyNpZmRlZiBSVEVfR1JBUEhfUFJPRklMRQ0K
-PiA+ICsgICAgICAgICAgICAgICBzdHJ1Y3Qgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-IHVpbnQ2NF90IGNhbGxzOyAgICAgLyoqPCBDYWxscyBwcm9jZXNzaW5nDQo+IHJlc3AuIDAgb3Ig
-MSBvYmplY3RzLiAqLw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHVpbnQ2NF90IGN5Y2xl
-czsgICAgLyoqPCBDeWNsZXMgc3BlbnQNCj4gcHJvY2Vzc2luZyByZXNwLiAwIG9yIDEgb2JqZWN0
-cy4gKi8NCj4gPiArICAgICAgICAgICAgICAgfSB1c2FnZV9zdGF0c1syXTsgICAgICAgLyoqPCBV
-c2FnZSB3aGVuIHRoaXMgbm9kZQ0KPiBwcm9jZXNzZWQgMCBvciAxIG9iamVjdHMuICovDQo+ID4g
-KyAgICAgICAgICAgICAgIHVpbnQ2NF90IGZ1bGxfYnVyc3RfY2FsbHM7ICAvKio8IENhbGxzIHBy
-b2Nlc3NpbmcgYQ0KPiBmdWxsIGJ1cnN0IG9mIG9iamVjdHMuICovDQo+ID4gKyAgICAgICAgICAg
-ICAgIHVpbnQ2NF90IGZ1bGxfYnVyc3RfY3ljbGVzOyAvKio8IEN5Y2xlcyBzcGVudA0KPiBwcm9j
-ZXNzaW5nIGEgZnVsbCBidXJzdCBvZiBvYmplY3RzLiAqLw0KPiA+ICsgICAgICAgICAgICAgICB1
-aW50NjRfdCBoYWxmX2J1cnN0X2NhbGxzOyAgLyoqPCBDYWxscyBwcm9jZXNzaW5nIGENCj4gaGFs
-ZiBidXJzdCBvZiBvYmplY3RzLiAqLw0KPiA+ICsgICAgICAgICAgICAgICB1aW50NjRfdCBoYWxm
-X2J1cnN0X2N5Y2xlczsgLyoqPCBDeWNsZXMgc3BlbnQNCj4gcHJvY2Vzc2luZyBhIGhhbGYgYnVy
-c3Qgb2Ygb2JqZWN0cy4gKi8NCj4gPiArICAgICAgICAgICAgICAgLyoqIEZhc3QgcGF0aCBhcmVh
-IGNhY2hlIGxpbmUgNC4gKi8NCj4gPiArI2VuZGlmDQo+IA0KPiBJcyBpdCBhbiBBQkkgYnJlYWth
-Z2U/DQoNCk5vLiBUaGUgbW9kaWZpY2F0aW9ucyBhcmUgZW5jbG9zZWQgaW4gI2lmZGVmLCBhbmQg
-ZGlzYWJsZWQgYnkgZGVmYXVsdC4NCkl0IGlzIGdlbmVyYWxseSByZXF1aXJlZCB0aGF0IHdoZW4g
-cnRlX2NvbmZpZy5oIG9wdGlvbnMgYXJlIG1vZGlmaWVkLCBib3RoIHRoZSBhcHBsaWNhdGlvbiBh
-bmQgRFBESyBpdHNlbGYgYXJlIGJ1aWx0IHRvZ2V0aGVyOyBhbmQgdGhlbiBBUEkvQUJJIGJyZWFr
-YWdlIGJlY29tZXMgaXJyZWxldmFudC4NCg0KSU1PLCB3ZSBzaG91bGQga2VlcCBvdXIgc3RydWN0
-dXJlcyBsZWFuIGluIHJlbGVhc2UgYnVpbGRzLiBUaGlzIG1lYW5zIHRoYXQgZmllbGRzIHVzZWQg
-Zm9yIGRldGFpbGVkIHByb2ZpbGluZywgYWR2YW5jZWQgZGVidWdnaW5nLCBjb29raWUgdmFsaWRh
-dGlvbiwgZXRjLiBzaG91bGQgdXNlIHRoZSAjaWZkZWYgcGF0dGVybiByYXRoZXIgdGhhbiB0aGUg
-cnRlX2xpYl9oYXNfc29tZV9mZWF0dXJlKCkgcGF0dGVybjsgZXNwZWNpYWxseSBpZiB0aGV5IGFm
-ZmVjdCB0aGUgc2l6ZSBvZiBhIHN0cnVjdHVyZS4gQW5kIHdoZW4gdGhvc2UgZmllbGRzIGFyZSBu
-b3QgcHJlc2VudCwgYW55IGNvZGUgYWNjZXNzaW5nIHRoZW0gY2Fubm90IHVzZSB0aGUgcnRlX2xp
-Yl9oYXNfc29tZV9mZWF0dXJlKCkgcGF0dGVybi4NClRoZSBtYnVmIGFuZCBtZW1wb29sIGxpYnJh
-cmllcyBhbHNvIHVzZSAjaWZkZWYgcGF0dGVybiBmb3Igc2ltaWxhciBmZWF0dXJlcy4NCg0KPiAN
-Cj4gPiAgICAgICAgICAgICAgICAgYWxpZ25hcyhSVEVfQ0FDSEVfTElORV9NSU5fU0laRSkgc3Ry
-dWN0IHJ0ZV9ub2RlDQo+ICpub2Rlc1tdOyAvKio8IE5leHQgbm9kZXMuICovDQo+ID4gICAgICAg
-ICB9Ow0KPiA+ICB9Ow0KPiA+DQo=
+On Tue, Jun 23, 2026 at 12:15=E2=80=AFPM Morten Br=C3=B8rup <mb@smartshares=
+ystems.com> wrote:
+>
+> > From: Jerin Jacob [mailto:jerinjacobk@gmail.com]
+> > Sent: Tuesday, 23 June 2026 07.13
+> >
+> > On Mon, Jun 22, 2026 at 12:11=E2=80=AFAM Morten Br=C3=B8rup
+> > <mb@smartsharesystems.com> wrote:
+> > >
+> > > Added graph node profiling stats, build time configurable by enabling
+> > > RTE_GRAPH_PROFILE in rte_config.h.
+> > >
+> > > Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> >
+> > Please update app/test/test_graph.c to validate this featue.
+>
+> Ack.
+>
+> > > @@ -92,7 +92,62 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g,
+> > bool all)
+> > >                         fprintf(f, "       total_sched_fail=3D%" PRId=
+64
+> > "\n",
+> > >                                 n->dispatch.total_sched_fail);
+> > >                 }
+> > > -               fprintf(f, "       total_calls=3D%" PRId64 "\n", n-
+> > >total_calls);
+> > > +               fprintf(f, "       total_calls=3D%" PRIu64 "\n", n-
+> > >total_calls);
+> > > +               if (rte_graph_has_stats_feature()) {
+> > > +                       fprintf(f, "       total_cycles=3D%" PRIu64 "=
+,
+> > avg cycles/call=3D%.1f\n",
+> > > +                                       n->total_cycles,
+> > > +                                       n->total_calls =3D=3D 0 ?
+> > (double)0 :
+> > > +                                       (double)n->total_cycles /
+> > (double)n->total_calls);
+> > > +               }
+> > > +#ifdef RTE_GRAPH_PROFILE
+> >
+> >
+> > Please introduce rte_graph_has_profile_featue() similar to
+> > rte_graph_has_stats_feature() to reduce if def clutter as possible.
+>
+> Disagree, see below.
+>
+> >
+> > > +               uint64_t calls =3D n->usage_stats[0].calls;
+> > > +               fprintf(f, "       objs[0]\n");
+> > > +               fprintf(f, "         calls=3D%" PRIu64 ", cycles=3D%"
+> > PRIu64 ", avg cycles/call=3D%.1f\n",
+> > > +                               calls,
+> >
+> > >
+> > > diff --git a/lib/graph/rte_graph_worker_common.h
+> > b/lib/graph/rte_graph_worker_common.h
+> > > index 4ab53a533e..0d8039575d 100644
+> > > --- a/lib/graph/rte_graph_worker_common.h
+> > > +++ b/lib/graph/rte_graph_worker_common.h
+> > > @@ -144,12 +144,26 @@ struct __rte_cache_aligned rte_node {
+> > >                         rte_node_process_t process; /**< Process
+> > function. */
+> > >                         uint64_t process_u64;
+> > >                 };
+> > > +               /** Fast path area cache line 3. */
+> > > +#ifdef RTE_GRAPH_PROFILE
+> > > +               struct {
+> > > +                       uint64_t calls;     /**< Calls processing
+> > resp. 0 or 1 objects. */
+> > > +                       uint64_t cycles;    /**< Cycles spent
+> > processing resp. 0 or 1 objects. */
+> > > +               } usage_stats[2];       /**< Usage when this node
+> > processed 0 or 1 objects. */
+> > > +               uint64_t full_burst_calls;  /**< Calls processing a
+> > full burst of objects. */
+> > > +               uint64_t full_burst_cycles; /**< Cycles spent
+> > processing a full burst of objects. */
+> > > +               uint64_t half_burst_calls;  /**< Calls processing a
+> > half burst of objects. */
+> > > +               uint64_t half_burst_cycles; /**< Cycles spent
+> > processing a half burst of objects. */
+> > > +               /** Fast path area cache line 4. */
+> > > +#endif
+> >
+> > Is it an ABI breakage?
+>
+> No. The modifications are enclosed in #ifdef, and disabled by default.
+> It is generally required that when rte_config.h options are modified, bot=
+h the application and DPDK itself are built together; and then API/ABI brea=
+kage becomes irrelevant.
+
+
+Yes. I don't know the current policy for this. Adding @Thomas Monjalon
+@David Marchand
+
+
+>
+> IMO, we should keep our structures lean in release builds. This means tha=
+t fields used for detailed profiling, advanced debugging, cookie validation=
+, etc. should use the #ifdef pattern rather than the rte_lib_has_some_featu=
+re() pattern; especially if they affect the size of a structure. And when t=
+hose fields are not present, any code accessing them cannot use the rte_lib=
+_has_some_feature() pattern.
+> The mbuf and mempool libraries also use #ifdef pattern for similar featur=
+es.
+
+Yes for the structure inclusion we can use #ifdef. But inside the
+function we can use rte_lib_has_some_feature() scheme. Reasons are :
+1)It will remove the ifdef cultter
+2)Detect the compilation issue even if the feature is disabled. This
+will make sure reduce the build options to enable build sanity
+3) Compiler is smart enough to understand to disable the block if the
+feature is not enabled.(Just like #ifdef)
+
+
+
+>
+> >
+> > >                 alignas(RTE_CACHE_LINE_MIN_SIZE) struct rte_node
+> > *nodes[]; /**< Next nodes. */
+> > >         };
+> > >  };
+> > >
