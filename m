@@ -2,92 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C28CCD4F26
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 08:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3A2CDB470
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 08:55:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 959E840150;
-	Tue, 23 Jun 2026 10:34:03 +0200 (CEST)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com
- [209.85.208.48]) by mails.dpdk.org (Postfix) with ESMTP id 4EF764014F
- for <dev@dpdk.org>; Tue, 23 Jun 2026 10:34:02 +0200 (CEST)
-Received: by mail-ed1-f48.google.com with SMTP id
- 4fb4d7f45d1cf-68bd9fce347so9919017a12.2
- for <dev@dpdk.org>; Tue, 23 Jun 2026 01:34:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782203641; cv=none;
- d=google.com; s=arc-20240605;
- b=TLLj8gXdp+3Qh4T8wV55RMazxet+Vancdif2w9K/4W7XZ+jvv8l5xJwv0zQzN9FuLL
- wouhcXsGCw7R4speLaOPdy4NE+bBhbhkfg7S3hNeJ7JYwZWHpQJahKElaizM5nYlbX+z
- YeQGnE4ALpQLaR/AZ6bNnB88u11APpYW0A37elxvOpwNCB5BTz5rcPD75yUVVoOr6PBJ
- yyuEHMAeBMEMG9vKEU23xXYY/EfN0w6ZD6xPh1h7LBU18JFoTUr3DtxhncR8O83auUNt
- eZiZclegjAa7B66gHuuwEKV+xoTJGPDiev78y6R5JGwVZ6OnShnEY5XNKTw1QFbr4saN
- jtmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=8oMF1Z7YrMuaFcPxv/TCn9oHOLDDVhii6rSRoLoF65Q=;
- fh=ie/XjKJ+CY0y2o4RKE+mx4xWqUX8MkWmfapd6+Lg4cg=;
- b=NjyurkVsNWVd1Y31c/sBwqI0Gr/VTjmwBhXxYdHL0tOzCUhUkoS5dkt1A6UOWmuupO
- Gmr+pbI1CoH3bvaGTDlI9KVu0Xusbie9fYDg3i9+4Gkdve+tyF4gtS1O31ZuSdTXy4bg
- zZqCcKZhTDMyU2ncD9tOlS2lmq4PkK6QGdFouEXJDugqB+ufvbk2vyxx8i+Eh49RA7kQ
- Rn5/jQgIWDn/+Tu0MPgHRyNkfZoCLUjPgkscIvOwDSYmLx8zMX9iedaC4g/HF0KHFwKJ
- 96Gq+/z/eZTxH7DIbMUDA2VASjegjxmBFZ8oEYDMsoK3/ppQJqSUpOYAAo3fleHmC5Qu
- wUWQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782203641; x=1782808441; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=8oMF1Z7YrMuaFcPxv/TCn9oHOLDDVhii6rSRoLoF65Q=;
- b=m1EUOaIN3eHIsdDZs7PQC8+i65MFmQ0j10yC9OitZXqcghBgPzjOYgwYVWT6qXn+IY
- AzkxJJU2ycN3iocRFEOIPenXHNgOUsE7IFkQs0775hL1LS59nyU60n2/oiEtbU69vF3X
- 8N5i586l3xixqrqI4Tw3jsi96n1lRVNdIaXhN7KGgjIiGDQFi8Nf1ml6eYKfNLkzoeRt
- dYBxqm/cJO38GSXjoVhLr6BP93Wqp3D7LzYHTzDPDzaI3SlFmS8Fm+JKvXxlpXLJAdIc
- q915zbWIMAIIhRc6jdcyUo2EJusMGTawlo2A9NTSL3qOVJRGMt4YQkMMPCTlGOfML0So
- YESA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782203641; x=1782808441;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=8oMF1Z7YrMuaFcPxv/TCn9oHOLDDVhii6rSRoLoF65Q=;
- b=FcWBaN82gP2m0ynvX+X3131VojR9eTK4M2rNS3cwcoadMPY3uFqOaGMrFTal3v6fgD
- d7pVLJ7z0ieOyZIGJm64RHCr5rCLCcRn9WWWxSJFYNWoBy4CSAik138tCmLroWlZl3m6
- 2mSZqVQqDDXRyU6mH0OeWVkB12CB+YXwoPilTaAsWQtP1fyLkSyruqvlDf4Eci4POWAP
- mMYAt4RQWbJbU15WCjBXOm9wBzKPlF9uw1ralZh+8jR4JLYICgxN/wC2XsbIZne6t9Yb
- WTD9VrO16oBw73NPxMLxZthuaAuFBxdpwHJ/iJd3CoRxYsf4cEXt2DuqJL+m6pCMiOAb
- /Ydw==
-X-Forwarded-Encrypted: i=1;
- AFNElJ9kyyj/X8MiAOdA+FAFPDSnyMrVetC2zbvkqs4rf5UxjLLxN6RtMKNpbi3/SIkRW8qE4O8=@dpdk.org
-X-Gm-Message-State: AOJu0YxnaIApaMeP+LdoBWuWei/2HXxdo0sSSpgXNLPW42gHdsxmLFXI
- Nemw4DxxlKgKs3yFw1opCppS/FsrtXsyCetG9/8xTYdmE8fvNFESuWtQ8wgeo0DCVph3HDQnW7Q
- NW125Ngfgj2zOZsca2s5D9Efdp/SLDl0=
-X-Gm-Gg: AfdE7cmqMycRFzVA2IfrcrziY+tBW0MCs7QDbBCh0rnrMG7kLx1hCfoHMg8uUbJrWOe
- V5o5yo+sGE0phN5ofMhLzTb+ipZJ5ONit9St7+cB108JhM0zktsywxxBi5XRzJNK3Bzke4IBnGt
- qgJTGF3imhhHuhc0cvY2jRCuJytMmOLr1QTjSGtfeSwNfSCXVUP1EsbFu9FeA8Oy0g4Qwa645k3
- XML6LLL85YZ5JdcHkCAIZisaOUR5EyKCkJU4pnukL+JHNDYLXKtJnpc8PEN6Ov4xm56dS9NLnAd
- S6j0BffrdOJNmKwmpzf/gR4UaUBRk8w=
-X-Received: by 2002:a05:6402:2552:b0:697:8326:40c9 with SMTP id
- 4fb4d7f45d1cf-69783265562mr5052480a12.2.1782203641301; Tue, 23 Jun 2026
- 01:34:01 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 64F39402A2;
+	Tue, 23 Jun 2026 10:55:44 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id A385040269;
+ Tue, 23 Jun 2026 10:55:42 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 65N6grPG3389119; Tue, 23 Jun 2026 01:55:42 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=YlJ0vwng2Bd+io4oznq5cOS
+ 7IFmW4qYkYCdyRqWlY/8=; b=AOh0Wz4TiIWng24AIc+UBTh1pMMpfxuBUTK8KzI
+ ZTQRkxOr7XfuhhM2pFozkft6l36sTgyC6sMUbz8uYQtNsxWjSxp3Bf708DRqliaY
+ TWDDDJd4PAKL9/VCtdSAPqzpwf5ETntAAJk1fQiAVil2FRgmI1RHkIpe6M5ptoqr
+ bhKPyMgikNvocxWnvsSImEMd2pMkPDZFZD2ui9Ao3BgOYfgA0fC5274kXUBwOub4
+ w+I05tvFiIMT+1lgcxTn0ARhr1b1y0A8dWFafCl3m/PD/y10+hDPV+Jf7g84jhXm
+ uKFtNzyd9Vj5qKDrsY7GlkpHNpB6hLi6LA+Zkz8i22lgumA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4eyerdh7ec-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 23 Jun 2026 01:55:41 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 23 Jun 2026 01:55:40 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 23 Jun 2026 01:55:40 -0700
+Received: from cavium-System-Product-Name.. (unknown [10.28.40.118])
+ by maili.marvell.com (Postfix) with ESMTP id A9D7C3F7058;
+ Tue, 23 Jun 2026 01:55:37 -0700 (PDT)
+From: Aarnav JP <ajp@marvell.com>
+To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, "Rakesh
+ Kudurumalla" <rkudurumalla@marvell.com>
+CC: <jerinj@marvell.com>, <rbhansali@marvell.com>, Aarnav JP
+ <ajp@marvell.com>, <stable@dpdk.org>
+Subject: [PATCH] common/cnxk: fix inline dev null dereference
+Date: Tue, 23 Jun 2026 14:24:33 +0530
+Message-ID: <20260623085433.3190541-1-ajp@marvell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-References: <20260619202047.2809165-1-mb@smartsharesystems.com>
- <20260621184140.2878132-1-mb@smartsharesystems.com>
- <CALBAE1OCbZ9GB1oGYgR5hRtzjRmev2ZFOaSNndf02AZptihOcw@mail.gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65937@smartserver.smartshare.dk>
- <CALBAE1OZDXfH1FoVLJ=vXVqr=9hYPgqeCzN8h278wN8FbU+XaQ@mail.gmail.com>
-In-Reply-To: <CALBAE1OZDXfH1FoVLJ=vXVqr=9hYPgqeCzN8h278wN8FbU+XaQ@mail.gmail.com>
-From: saeed bishara <saeed.bishara.os@gmail.com>
-Date: Tue, 23 Jun 2026 11:33:50 +0300
-X-Gm-Features: AVVi8Cdw0CRWVWOSnTMhXAMNPeSE1E_1TvVnb-lBRzn0tY-gQbeG0xx7xK6OPyw
-Message-ID: <CAHfVqdWKoDqb0uD_HrF8e=GqadThPhZj0vZnRYDW=KMPei0mXQ@mail.gmail.com>
-Subject: Re: [PATCH v5] graph: add optional profiling stats
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: Jerin Jacob <jerinjacobk@gmail.com>, dev@dpdk.org,
- Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>, 
- Zhirun Yan <yanzhirun_163@163.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=IvYutr/g c=1 sm=1 tr=0 ts=6a3a4a0d cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=qit2iCtTFQkLgVSMPQTB:22 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8
+ a=PBtO6kZq_AsmdOXJb9gA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIzMDA3MSBTYWx0ZWRfX71Pd6VPp0jps
+ r6R3gl+5JOHM5pOKwunjXtBH0oMzFViAxHRQUK/0GH6jlAaJSLIE6fmdGiGzWdp7D9QUKz6rGrf
+ AVu5trmI6LJ+P5we2uwefq2qC1EyHUrDytIlAez9FBglOrYTRipuaW3LEX7UqKBxiSbkdMxW5Th
+ FPc6aSLgFIMTuKIK12LHKg9VTtN3y+fkf/QcDDrafxhjc+HYAh6xkxExUzkgOCsBVelq1hZ2DVG
+ txZY3aZ///MZp/ld9ubQT9XilmiUxqDs1s13u346/4E4EgFw5HDWmnxR33jXw9mzE/LfKaXFWiQ
+ e4eIBvCWQ93kphSRdzHLTh3aUAkGvIR8b6OESCeP81e/vTOW7soLT3YZZESblTCKt56VFUaek+2
+ +rzjPVmLvwuWkS6DbWRVLrgI15IOUUTHpMoQJe8tepCgx2QQ1utiLoMxtf2FS5xejw4ZQmyDhFj
+ Oenmm8ks9xVTEcZe59Q==
+X-Proofpoint-GUID: WoBeo9sR5GOyujAba8qZzIbDwaQjTQ3H
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIzMDA3MSBTYWx0ZWRfX8tnuQ2Mpk93C
+ tSVKh8OsM7XvPDY9k2VjQyn89vO6vx2Vr7B007bu9HdKLjFPP8GW5vToX/ppyEp+Ap/r1OI3qnO
+ iKQC32GtdHVXqS2+za/duR4AdiPgkek=
+X-Proofpoint-ORIG-GUID: WoBeo9sR5GOyujAba8qZzIbDwaQjTQ3H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-23_02,2026-06-22_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -101,27 +85,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > > > +               /** Fast path area cache line 3. */
-> > > > +#ifdef RTE_GRAPH_PROFILE
-> > > > +               struct {
-> > > > +                       uint64_t calls;     /**< Calls processing
-> > > resp. 0 or 1 objects. */
-> > > > +                       uint64_t cycles;    /**< Cycles spent
-> > > processing resp. 0 or 1 objects. */
-> > > > +               } usage_stats[2];       /**< Usage when this node
-> > > processed 0 or 1 objects. */
-> > > > +               uint64_t full_burst_calls;  /**< Calls processing a
-> > > full burst of objects. */
-> > > > +               uint64_t full_burst_cycles; /**< Cycles spent
-> > > processing a full burst of objects. */
-> > > > +               uint64_t half_burst_calls;  /**< Calls processing a
-> > > half burst of objects. */
-> > > > +               uint64_t half_burst_cycles; /**< Cycles spent
-> > > processing a half burst of objects. */
-> > > > +               /** Fast path area cache line 4. */
-> > > > +#endif
-> > >
-> > > Is it an ABI breakage?
-Can you consider one array for all cases?
-also, instead of adding cacheline for this profiling data, can we
-share with line 1 that used solely for xstats?
+inl_dev is initialized to NULL and only assigned within the
+if (idev && idev->nix_inl_dev) block.
+Move inl_dev->res_addr_offset and inl_dev->cpt_cq_ena
+accesses inside this null-guarded block in
+nix_inl_inb_ipsec_sa_tbl_setup() and nix_inl_reass_inb_sa_tbl_setup()
+to avoid dereferencing a null pointer.
+
+Fixes: 3fdf3e53f3c4 ("common/cnxk: enable CPT CQ for inline IPsec inbound")
+Cc: stable@dpdk.org
+
+Signed-off-by: Aarnav JP <ajp@marvell.com>
+---
+ drivers/common/cnxk/roc_nix_inl.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index db101e71a5..935dd37778 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -409,7 +409,7 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
+ 	struct nix_inl_dev *inl_dev = NULL;
+ 	uint64_t max_sa, i, sa_pow2_sz;
+ 	uint64_t sa_idx_w, lenm1_max;
+-	uint64_t res_addr_offset;
++	uint64_t res_addr_offset = 0;
+ 	uint8_t profile_id = 0;
+ 	struct mbox *mbox;
+ 	size_t inb_sa_sz;
+@@ -503,13 +503,12 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
+ 				def_cptq = 0;
+ 			else
+ 				def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
++			res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
++			if (res_addr_offset)
++				res_addr_offset |= (1UL << 56);
++			cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
+ 		}
+ 
+-		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
+-		if (res_addr_offset)
+-			res_addr_offset |= (1UL << 56);
+-
+-		cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
+ 		lf_cfg->enable = 1;
+ 		lf_cfg->profile_id = profile_id; /* IPsec profile is 0th one */
+ 		lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id] | cpt_cq_ena;
+-- 
+2.43.0
+
