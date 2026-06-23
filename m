@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7C5CDB470
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 18:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCEFCDB470
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 18:49:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 309B6402B0;
-	Tue, 23 Jun 2026 20:14:55 +0200 (CEST)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com
- [209.85.222.181])
- by mails.dpdk.org (Postfix) with ESMTP id B3644402A2
- for <dev@dpdk.org>; Tue, 23 Jun 2026 20:14:53 +0200 (CEST)
-Received: by mail-qk1-f181.google.com with SMTP id
- af79cd13be357-922951391d6so8470185a.0
- for <dev@dpdk.org>; Tue, 23 Jun 2026 11:14:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 55C69402A2;
+	Tue, 23 Jun 2026 20:49:15 +0200 (CEST)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
+ [209.85.222.169])
+ by mails.dpdk.org (Postfix) with ESMTP id EC2654029D
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 20:49:13 +0200 (CEST)
+Received: by mail-qk1-f169.google.com with SMTP id
+ af79cd13be357-920fbdffa31so7134385a.3
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 11:49:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1782238493; x=1782843293; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1782240547; x=1782845347; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=YCFyQSMZ6n2bkSaxDKGRzPBC4ETg0tXyYyy0LKVgBNU=;
- b=Q+YWNX+ccvUByZkgeFSAAeU1Q2U3SE/+bTrlGwEbwFeTc4PnufNL0NEtbkbBh8j+AL
- j9yi7w6EZBdkdgU/0TWx8twMgMtOdt6l5Ou1VcI3zV6GlRK/IAU5COhcnlHmEXHcl96J
- EA2VmYA7e5e9+749osIU3f0DVHSOWTm04P6CE=
+ bh=5Dz0zM0yBFY/F1N4YJLlBI/vwTaZ6QDyLlCUnIlJ7lY=;
+ b=L4fS0pBw2oBL9Lu58mdBrTOhnqzZFSyxU2pm4V/j2Lui+Mt7tVHWMJRYejElPNV3vu
+ ZGEtDNF2AKM/h33C32f4RUVgVZ8NlVjOaRHz1MHHsRMgCshnNYdLIYP+Z6eLbGs/WbjP
+ MTl0sdP5XwibV3AT2gnHTfbn5DgdSvbYJGXfU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782238493; x=1782843293;
+ d=1e100.net; s=20251104; t=1782240547; x=1782845347;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=YCFyQSMZ6n2bkSaxDKGRzPBC4ETg0tXyYyy0LKVgBNU=;
- b=C91pA9dNxXk5vbLiVjE4nNcTGC8gQF3cjTly+IWBV+jBCLQy2w/4r8oG697bupHYAo
- 8b9mG4oRQ3CCs/lH7uD/VOGtN3SeiAhckaUjweMmorS6molC+eUOfusV4CT4s9p9p/2S
- MTZbYM13AV5OAF8WuBR48iAYKNaa87UfT7BZp3eQYq5hNxPPrHWqz7dSSo4O692BFlLH
- AU/s9x5z/7ej1C17VZVCVr8HV7OQ8q5Wrzdb4LIJ44oP7iHK39MccmFJe5c+T3MeoRhJ
- 6CnjGvnZgsGZk4ewjfOvsf51kKcFuEH+7gWzpJQdC9cqs0CsApsERgb0bqSxD5ZVhpvF
- zZiQ==
-X-Gm-Message-State: AOJu0YwOgi7CoQ1yih2TDPNXVXjR5sG8L6vdWNeRX7nYOiCGn6CGRB71
- gBmSnDHuJXrKYoDsEMUQqdywsw5xJEvpK3KD6nUPibWr82/4RBysLuMd5eDKbc61FYg=
-X-Gm-Gg: AfdE7cnuw6hnXMTszdt5KMLTCwh/V6jHsE9TmNtl8+dMky75wanAkCxPHqwG2zo+sH4
- ACylWF6zSBruV0xU4s0RM8Okwdl5lPesIf260sGF3NPDESBq01hpjjYCs/2U+EmrTxzW11btgUe
- FFV4k/UtMAFjKeOSrgXxUvjaeHMwhMc3RLPCYUzgwkPu6ILeLJfH/eAbM+BEQ6/kOJ0rz0qQbyr
- IXyxEgszcyK9rPIE+kR9BHH4AT7Vgym8CZH5SXT2Zv8NqVWs9U1Qsr776y+bxothf7jXQ61ZXev
- sLV++oTuMW8hXfu1Nj4+aDy/ivBy5ioqS6fYp9wXKv9DD2sIJpzzfFKQE17x/QxGmEoHgzA27os
- 8Wqd+azbp3E6DSH59ARF9/Hcl3KpV4SVh7Eyn7ataoy0OyaIrQH7XiPhApvW1FEYtWcMg6Y5tTy
- irbZqJ5xk3GXaajKn8Mw5QGPwdt7bLlNcnU460J3CwkYE6NsBw7TVeX0Msp9eoMMzlE/5zFmZv8
- DKu7Y+yrUX8GyKDtvO61doguOvB/1BPgmYZmV0XAu/qREwDjcsfwjfvzBzFyddWMuLXBtAomnH4
- 1qC9CSWW6hbEsQ==
-X-Received: by 2002:a05:620a:4729:b0:915:cb40:f76a with SMTP id
- af79cd13be357-9278086b791mr27828985a.39.1782238492747; 
- Tue, 23 Jun 2026 11:14:52 -0700 (PDT)
+ bh=5Dz0zM0yBFY/F1N4YJLlBI/vwTaZ6QDyLlCUnIlJ7lY=;
+ b=BfVLfQZPYxIQ0bx/PdIJUEs2HsNsllQMYoB0ARw/PA7cvu37JUVzTn3L5sG3Yk1mV5
+ ILATgk47TEM0E6xog05lEAMLX4TE2vc5akwqaabIeTEuTs6ZBLJXXx4pHI0nrxon7fAK
+ 3Nv9WZGTedB4E1/PIoK42/toCVs8G0ET7xEZf/KIpO9AtY+BdhiDqzkoahcsLWTsjKm0
+ 6LaywaeHNU9rzQeh3qyuaqrWLlPw33CCGY4Mlg7ClKiUgr5f9R6f4QoXRT2pyEysU1DU
+ /BrOpkrFXB285leS+AA17ID9B3Gx58AsaCtInfs1v5IQcxGRq5eQQbyXjW/pHcsqSESE
+ C/Kg==
+X-Gm-Message-State: AOJu0YyaxJ2B48K7RRThvllqtLX84ADFLIoM0yeQi1OQIkFx66JQ58qf
+ RDb91Mk4tqLmftMyF0sO1VKF6dUJOgX2U15EwOlv+E11ziGWVm3Nczjl2AiZRqp5oO0=
+X-Gm-Gg: AfdE7ck/4S0gQMggCxOjK575raJjjBDvh0n24eDVUVU7p6VRL5cXdHXW6HXLHnHYWRG
+ T/8zUn+v8i56R2u3drCdCyK9Sv0JgMNOLsZfosa4PdD82/N2EIgPNad941NAbVDX03S/8qCXdFQ
+ UD9Y8cDEJB0gipcakH3d3ROub52t74dYAURbdLomFgq3JbYvxlYTkKO88/cDcCrPB/urFval3oJ
+ BHirIYXWW53kYdF3rgrxInsL+jIJYeWUxtqCwpoNP9uYdp7QnPzjNu2S0BxvLsm9sN2hwfl0LgG
+ UcifaR3Rf4eLvrqZlv2mnvadrM/as3iWgfhVYJN0zELLeSGFg/A5L3p57n82qnGn8MgKUO+aoed
+ hP56dGqlgMwbh0IM7SHakbREoP/T2fwDsy8XWN3OFpJ5ks62y9FBSMdNyMF/9BOKYfjDAAfdjLX
+ KLExgyCGeOqkz8pMZhZXr8+O9jct/dZ0MS4zgsVORQoXQk9Wq6WVTOxu5lBivJyj2Z4i+g/YN07
+ HtUq4AVfWC+DJbjl0FkT7veheldxm4QIOo+QUHl33x2A4+/ibWoHtKGLWqywRa6Zz7RPfO7wCj+
+ UrQ5DFag64cl3w==
+X-Received: by 2002:a05:620a:2545:b0:915:d443:e6db with SMTP id
+ af79cd13be357-92644cf5954mr705821085a.20.1782240547402; 
+ Tue, 23 Jun 2026 11:49:07 -0700 (PDT)
 Received: from d122166.iol.unh.edu ([2606:4100:3880:1220:ff12:f4a1:a541:db45])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-925fd39106asm327479185a.7.2026.06.23.11.14.52
+ af79cd13be357-92600b83658sm344401785a.43.2026.06.23.11.49.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 23 Jun 2026 11:14:52 -0700 (PDT)
+ Tue, 23 Jun 2026 11:49:07 -0700 (PDT)
 From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
 To: luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
 Cc: dev@dpdk.org, abailey@iol.unh.edu, ahassick@iol.unh.edu,
  lylavoie@iol.unh.edu, Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-Subject: [PATCH v2] dts: report dut/NIC info during DTS run
-Date: Tue, 23 Jun 2026 14:14:43 -0400
-Message-ID: <20260623181443.1624584-1-knimoji@iol.unh.edu>
+Subject: [PATCH v3] dts: report dut/NIC info during DTS run
+Date: Tue, 23 Jun 2026 14:49:02 -0400
+Message-ID: <20260623184902.1657251-1-knimoji@iol.unh.edu>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260602163647.101815-1-knimoji@iol.unh.edu>
 References: <20260602163647.101815-1-knimoji@iol.unh.edu>
@@ -88,11 +88,14 @@ Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
 ---
 v2:
     *Resolved merge conflicts
+v3:
+    *Fixed an issue with retrieving
+     the NIC's hardware version    
 ---
  dts/framework/test_run.py                    | 10 +++
- dts/framework/testbed_model/linux_session.py | 75 ++++++++++++++++++++
- dts/framework/testbed_model/os_session.py    | 11 +++
- 3 files changed, 96 insertions(+)
+ dts/framework/testbed_model/linux_session.py | 64 ++++++++++++++++++++
+ dts/framework/testbed_model/os_session.py    | 11 ++++
+ 3 files changed, 85 insertions(+)
 
 diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
 index 94dc6023a7..eebea280d7 100644
@@ -123,10 +126,10 @@ index 94dc6023a7..eebea280d7 100644
  
      def on_error(self, ex: BaseException) -> State | None:
 diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/testbed_model/linux_session.py
-index 30c89ad70d..5f4b78cf1c 100644
+index 30c89ad70d..67eba33ce8 100644
 --- a/dts/framework/testbed_model/linux_session.py
 +++ b/dts/framework/testbed_model/linux_session.py
-@@ -197,6 +197,81 @@ def unbind_ports(self, ports: list[Port]):
+@@ -197,6 +197,70 @@ def unbind_ports(self, ports: list[Port]):
          if self._lshw_net_info:
              del self._lshw_net_info
  
@@ -166,17 +169,6 @@ index 30c89ad70d..5f4b78cf1c 100644
 +                    f"Configuration info for port {pci_addr} could not be found on the node."
 +                )
 +
-+            command_result = self.send_command(
-+                f"sudo lspci -vv -s {pci_addr} | grep 'Engineering changes'"
-+            )
-+            hardware_version = (
-+                command_result.stdout.split(":")[-1].strip()
-+                if command_result.return_code == 0 and command_result.stdout
-+                else None
-+            )
-+            if hardware_version is None:
-+                self._logger.error(f"Unable to get hardware version for NIC: {pci_addr}")
-+
 +            nic_name = nic_port.get("logicalname")
 +            nic_speed = None
 +            if nic_name is not None:
@@ -194,7 +186,7 @@ index 30c89ad70d..5f4b78cf1c 100644
 +            dut_json = {
 +                "make": nic_port.get("vendor"),
 +                "model": nic_port.get("product"),
-+                "hardware version": hardware_version or "Unknown",
++                "hardware version": nic_port.get("version") or "Unknown",
 +                "firmware version": config.get("firmware"),
 +                "deviceBusType": bus_type,
 +                "deviceId": nic_port.get("serial"),
