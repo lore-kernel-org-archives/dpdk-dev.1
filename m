@@ -2,89 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB11BCDB471
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 22:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89979CDB471
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 22:44:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98796402EE;
-	Wed, 24 Jun 2026 00:35:05 +0200 (CEST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com
- [209.85.208.169])
- by mails.dpdk.org (Postfix) with ESMTP id 0448B40299
- for <dev@dpdk.org>; Wed, 24 Jun 2026 00:35:04 +0200 (CEST)
-Received: by mail-lj1-f169.google.com with SMTP id
- 38308e7fff4ca-39657d28132so2847541fa.3
- for <dev@dpdk.org>; Tue, 23 Jun 2026 15:35:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782254103; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 8503840299;
+	Wed, 24 Jun 2026 00:44:26 +0200 (CEST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com
+ [209.85.208.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 70CE440293
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 00:44:25 +0200 (CEST)
+Received: by mail-lj1-f178.google.com with SMTP id
+ 38308e7fff4ca-3996c9eeebeso3171921fa.1
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 15:44:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782254665; cv=none;
  d=google.com; s=arc-20240605;
- b=Rde5oMka5DBPIM153YE+4ffGQRliGcyx83F6dv7WN7OElT+UTKeSZwdNtNR/Tu76J0
- DcAjEzbnkWaRkiL/50efacIhjo2yIoydZpohF2EdRXQ/UtYJQs31XNqcaYhPSnyIEUIJ
- MZiiFRNfLFYNPBcBWVjYf5rPrXvYYLfzDiu47N6yfhQwItV4jnqW5Gno+XF4TNJy6ibU
- W86wsPBr/Z+xeLYH0FJzePDDHhgiERzpN5CWe6PPXyYH7nGmnf6UjKfBbxNDlmP8hPyN
- PAOHHwmhvhqEAIZDqkCeyQbEOH0np8ThmwD480F24BZUmT0bIiQll7YW6pfByANVqk74
- hBWw==
+ b=IQPUwZx14yrVvNoCHeIQ9dqvo+HTMjAL3f5YiW5DmuE20+ooCwcm2CKpjNuhe2Nd6D
+ vAahws0ATAAmfFsmtjiRobsjajmKSQkAU6wTcMGLy9upbXxibRQGOyNXzUSdCNTfHX3y
+ uO83ZjFuP2iUnXtHtkxoM3emUyf9fFnKs+fXtZB0eGFhu/TaSzupqaAfCTnwiRpKJ/NK
+ cPqxYTySFa+KkhWV49IR0f26nekUE1gzF0uhr3a1lhJyhTcV5BghVB5puxEPiSaNewJG
+ YEKLnMbFVimxKVB9uSdXgHxIW8o4onMtqNjwP6taoTg1DY80NRLgt/6A1EofBqzrJXZS
+ X3+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:dkim-signature;
- bh=Er0C6/PEeeI1PRFEU5ubw1Ipgqc7uFMzIS0Wi21Uu34=;
- fh=RloalQ24cM4nIOD0e9Pbj/lgWMY/LLP51wfmqJiIYlU=;
- b=aM1/VMDVrRGVn0qM1J9ltQUspdQ+6iRRcsi3zi4DehitZ41VF99ohjZhqCO+a6CRkx
- rbtfrXRHJhs22vTAbdCgTMIWjzBRCsgLzOyM9M7FuZr4aC04SMKi76UIykRGPBDlGpbW
- z4T7ycE+99utBbRysxrut3LXYBZLd19uihjOE5WXLVRqkmEI32SYgY7EHnV0dsO3EAI4
- dF63ibDprIPq4KZ2bNj9JZv5GnzzEIVBh3lpfkgTACcBvc6GRj3vJ3htwOkQzzeFgX+x
- k5IZfU2W+5UdsYMs94gSdHaZI9rVZx4Eteox7NTJDcVZ/mkxOUTN2lVbVH26rWb7yIsw
- paxw==; darn=dpdk.org
+ bh=Do7g1R4h2+UsONnI+WGYKFanySRFagTkC2dT4pBQ+O8=;
+ fh=V50KIVGK7lASsqoxKiZbaCBQVLUvwhecs5hnpFGAqJs=;
+ b=bOc5g3ouZOI44yYOker7K8AUoikaEgx6aKuIOdgGd5UofgNVKMHN1bMUvL78lmeg4p
+ 56LL1kJPYXkhxM8ZPFDyO2v9kNlPn5LDFLxCcd8fks2EcN5q1+Wp6mM6cIt9a3mHbxsO
+ +0aIkmeV0/rQRvd7BrGEQWEcinTyFcfcxuRfnHPGw8r84rSkw4YMun9SA3ErVFhRo/WG
+ sUfQ7uIA9m8R+pVR3JKHwzr65rsHDymqV5nYtZemB6vS37bRFTHQkAdKtoJeKz5Eagkw
+ ueTQ0QHJJwg7OCVcRd3mGQ93CV20sQ7LhWUAPfNHIMriWMT/ksgcQenvKbSmXy1AfCgq
+ RFDw==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782254103; x=1782858903; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1782254665; x=1782859465; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=Er0C6/PEeeI1PRFEU5ubw1Ipgqc7uFMzIS0Wi21Uu34=;
- b=N/v2oNoLfl1UQzfUZXDjM/fmBBbRmfe7UcTukLvsmu/7l+QVy8rDttrjdecSP4qF+k
- 0+8/pul4ait5owfY+Y2t7Oc2Lt4dVv8XGBCkxuDOMGwSDam/tYNLZugQCkYyj8WHlkx6
- /lYisAo6VkqOvN6Zj4NiGlNCFcCl7LqWcJOGlwjQxtJBY6FR2wf2khGs+vmMdyt3e1K9
- knBrIDf9+15zBDB89b7WoydzsdgUF/JTbjTRm5UZ4QxsAYjFIvTxmQ+D89cUz7YXgsg1
- QrneYK6dBN/NSUBbZTTPTf5hdsvjUKXhS0hPSgAkywPceCF0Q3fusWDBz1lReEyTSldU
- F2kw==
+ bh=Do7g1R4h2+UsONnI+WGYKFanySRFagTkC2dT4pBQ+O8=;
+ b=ONGGxZjKM7AxgT4V7Z6DBvC2wXB4jUFM1vY8Dr9TiUVZWxRN7S/7gAxd23mhcForr3
+ PDQry0mgEeJR2QF1k+UOBHN4EtFjZ8id9x0D95vuk+IyRLYGdh3vHdbhPCiN6HEQwEE1
+ wS+VC+z+FtgW/GCy8HBtOL3KFQ2hNSaR/hoqOemH+bv+p/fyRmBV47aFOylKB/8J3RfJ
+ Ufm2ZVtbF+7E+KvzU27hBIhjnN7LlNLkMJd/B7aHMHUDnzQJ9ZXU4RbeFVu/yckHHnnJ
+ HOC+0IboRl5wICHqBBITZ0iSkw9iaJtqcKAZ1GnzE1pjtY0gzMQ97X47Fg/c4pcBH0UY
+ ynKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782254103; x=1782858903;
+ d=1e100.net; s=20251104; t=1782254665; x=1782859465;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Er0C6/PEeeI1PRFEU5ubw1Ipgqc7uFMzIS0Wi21Uu34=;
- b=IHYneTcRMcxlZslBkTnkc6XyoME0W2GOMHOiPSjFYbBSzttwmJ8NxOrAtsYqCoUcIG
- g1gsIcXaEZqLB8UqnEVqpYFddCY84XGIqqP59q8yQuy0OcOLOUBiljG37aCKpFFg7QGe
- ZGMU/HDvQl/unUhgQREnuoHyN4jdIqeI9bqCRbhgU9M/hlmTdQ1WzqPeXDeyiMx/sy5W
- 2VgG7NI8YubLBXlxLeF4AtT8pWNisWkE8Z+RNKtoMpBcCytCLaQ5bD0vVH33y3LPzXhH
- cjn2ITSPw2C31lgI14zr+YbfJLAIRsbJ7nmCgNh0XbDT76q5VK3Ds+GkDdJ3JAxuluZT
- ewew==
+ bh=Do7g1R4h2+UsONnI+WGYKFanySRFagTkC2dT4pBQ+O8=;
+ b=gVK54/bRa7hBZF6oQCokv8I7b9cKwC661UGl1LhagU6hjJhhLHfTLR7zAJh9OH0H/H
+ 5+WjB525PiNsxB1Ejx7Cl6wEc6Ec9qjBSqwHYCpsh4w7OK4GlMGeTmtqaxxb1RMdy2/q
+ aZQElwjSPGhwGKVUx4tNr2M09H0HhO25xAf8DKfSy3DUaQgDQoQ7Q6msLsHV5CclvRzb
+ ErEVOHnCHUJImAYMc8vIH1UDODYv5nJAC9B8iE+0EfONnmxjWr4WZ6okKItsNL+mTgEl
+ svhE1F71IjhOV5xrSOlFoYdU+XcoazES1ODfKj+408Gqk9MPqXtRMIIdG3+nieudtWZT
+ 4ZZA==
 X-Forwarded-Encrypted: i=1;
- AFNElJ9dy3p4SxF2J5hEZfBz9dkaTZ3svLKx4uyx54DFv0Gb3dquz7NpDereaX6ekUg8CpUWpgQ=@dpdk.org
-X-Gm-Message-State: AOJu0Yw7KvY30FWXu5E6pTH35GfdEk+u22qrMEIZQnPgf1hvhkgG0gnP
- 0vg/sdiTgRZ9Cbne7bCN3nZAJ9Aqc7feKJ+WAenT6qlmP60fP+SW5c7d1BtcADWE1K8RudL6cGf
- AKFz/hmMW+b8m56QzPzz1WtTfNGgYvLg=
-X-Gm-Gg: AfdE7ck1DaWM/3VuQlJeKovKzRMkgC73HvxSRhA/91Cfep4Q93/c1G3z19VrIZFDQ8w
- wV8bsOmfjtsQGa5h5XLznxANbaxspprStquZjfgVnXWj4R9P8v4T3w8yyPZXNUQe4+nMXXO4xlX
- W7kGKX2B8e/yiFs7zzAGc84hfZ/39uTy6uQm2PZcSHdZvygjiQfDQ6dnv9Qu3uzT/5oS06Qj95e
- I/cjEoApGQLo5s0cuuackV92EBT9i190GpyyokmVo9X1GqyO7j7h5auoJjbmqZ+74aNzCbSMxg2
- MOb/LZNUm7LRd8X6Q8oa0nQwvcAwQA==
-X-Received: by 2002:a2e:bc0b:0:b0:38e:36c2:9bd1 with SMTP id
- 38308e7fff4ca-39aba16c376mr1259851fa.11.1782254102983; Tue, 23 Jun 2026
- 15:35:02 -0700 (PDT)
+ AFNElJ83VCOYyzTNBySRVBxYWColNQD0tAUxEPg0wcgmCAvInmQTkWitU1VYgH2T+JpAM49FsOo=@dpdk.org
+X-Gm-Message-State: AOJu0YxIfefpwvujefuFKte5J6FNCF+Zu4e72R9+lHUYHKIlt4dkLocV
+ /JgsjPHUJGNDDB9xPZga9RC4EMyU2swW1vEo3xEndyaOh4hTKR6pkkXjclo730hGEKyziBpiKnh
+ AaaUUEs32ybtsH+2xLSp5cFqNmjQdF1E=
+X-Gm-Gg: AfdE7ckGi7J4H4qZTAwLWaArIbs9Hcw6ZVx3n948jmUBDwuiRpTA+Hy0NAUOp6apoOZ
+ 8CoVqtfBettv2318PuwSHwkB7hQItT9oZhVJ9DqjqPDNk3JaGLKRwRTj4O0NXIHFHse0LiiqLRP
+ eTQARcdxg/tAiM4r5I9DFzBzEkbpwJgNrc6hny3DsqITpVWtHlk1DB34RvbUrU0Z14ZnnJeOcg0
+ Ar9vNxGWDKZflZOHFFtdfng8tw87IfFM7CM7j3vlQi5dCeohWRsqs4BpKj6o0MyfvLhWTAE6HvP
+ 0zPA5jKT+RIlaklO3MY8YCYpNWjj9g==
+X-Received: by 2002:a05:651c:2115:b0:396:b398:5918 with SMTP id
+ 38308e7fff4ca-39aba031be9mr1296761fa.1.1782254664607; Tue, 23 Jun 2026
+ 15:44:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260609144501.1441468-1-knimoji@iol.unh.edu>
- <20260618204525.1010218-1-knimoji@iol.unh.edu>
-In-Reply-To: <20260618204525.1010218-1-knimoji@iol.unh.edu>
+References: <20260428181501.72434-1-abailey@iol.unh.edu>
+ <20260513152715.133381-1-abailey@iol.unh.edu>
+In-Reply-To: <20260513152715.133381-1-abailey@iol.unh.edu>
 From: Patrick Robb <patrickrobb1997@gmail.com>
-Date: Tue, 23 Jun 2026 18:34:51 -0400
-X-Gm-Features: AVVi8CcEpGMbZXvqQGLd9JtU0jn-96rOiVzAyTiQtdhEyWDj9_McMAg147UkAh8
-Message-ID: <CAK6Duxs-o_OcgjM9_dm-oBFTU7zKjk1g1X0bvbS=gtgwFSd0=Q@mail.gmail.com>
-Subject: Re: [PATCH v2] dts: update dts check format script and resolve errors
-To: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, dev@dpdk.org, abailey@iol.unh.edu, 
- ahassick@iol.unh.edu, lylavoie@iol.unh.edu, 
- NBU-Contact-Thomas Monjalon <thomas@monjalon.net>
-Content-Type: multipart/alternative; boundary="000000000000b538720654f35e7b"
+Date: Tue, 23 Jun 2026 18:44:13 -0400
+X-Gm-Features: AVVi8CehoFHWHYB1fFL7HuORvkgtnUi0i3h6DETYT5hR8-ja_a3dnPfRD3_IrWk
+Message-ID: <CAK6DuxufT4kzQUJj1ii5BPBLBnWZWsgL+TbaQN+VBnO7zHLgMw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dts: update parsing for cryptodev latency
+To: Andrew Bailey <abailey@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, dev@dpdk.org, lylavoie@iol.unh.edu, 
+ ahassick@iol.unh.edu, knimoji@iol.unh.edu
+Content-Type: multipart/alternative; boundary="0000000000002eedcf0654f380e2"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,68 +97,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000b538720654f35e7b
+--0000000000002eedcf0654f380e2
 Content-Type: text/plain; charset="UTF-8"
 
-Looks like your patch is failing some of the checks on patchwork, including
-doc build: https://github.com/ovsrobot/dpdk/actions/runs/27789008643
+Reviewed-by: Patrick Robb <patrickrobb1997@gmail.com>
 
-Remember to run a doc build locally before sending any patches:
-
-meson setup build
-ninja -C build doc
-
-Otherwise, please provide a little more info regarding your info. So, you
-have updated some of the dependencies used in the dts check format script.
-I think what I see from a quick look that is relevant is:
-
--mypy = "^1.13.0"
-+mypy = "^2.1.0"
- toml = "^0.10.2"
--ruff = "^0.8.1"
--types-paramiko = "^3.5.0.20240928"
-+ruff = "^0.15.16"
-+types-paramiko = "^4.0.0.20260518"
- types-invoke = "^2.0.0.10"
--types-pyyaml = "^6.0.12.20240917"
-+types-pyyaml = "^6.0.12.20260518"
-
-What is being done broadly? All dependencies covered by poetry are being
-updated? or just the subset included in format checks? Are dependencies
-being brought to current latest or something different?
-
-I remember Thomas mentioning that DTS was not checking the
-dts-check-format.sh at DPDK Summit and that confused me. Perhaps he is
-running DTS and dts-check-format.sh outside of poetry (which we have said
-is okay to do) and he is on newer versions of the formatting dependencies
-than what we currently have committed to the poetry.lock.
-
---000000000000b538720654f35e7b
+--0000000000002eedcf0654f380e2
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">Looks like your patch is failing some of the checks on pat=
-chwork, including doc build:=C2=A0<a href=3D"https://github.com/ovsrobot/dp=
-dk/actions/runs/27789008643">https://github.com/ovsrobot/dpdk/actions/runs/=
-27789008643</a><div><br></div><div>Remember to run a doc build locally befo=
-re sending any patches:</div><div><br></div><div>meson setup build</div><di=
-v>ninja -C build doc</div><div><br></div><div>Otherwise, please provide a l=
-ittle more info regarding your info. So, you have updated some of the depen=
-dencies used in the dts check format script. I think what I see from a quic=
-k look that is relevant is:</div><div><br></div><div>-mypy =3D &quot;^1.13.=
-0&quot;<br>+mypy =3D &quot;^2.1.0&quot;<br>=C2=A0toml =3D &quot;^0.10.2&quo=
-t;<br>-ruff =3D &quot;^0.8.1&quot;<br>-types-paramiko =3D &quot;^3.5.0.2024=
-0928&quot;<br>+ruff =3D &quot;^0.15.16&quot;<br>+types-paramiko =3D &quot;^=
-4.0.0.20260518&quot;<br>=C2=A0types-invoke =3D &quot;^2.0.0.10&quot;<br>-ty=
-pes-pyyaml =3D &quot;^6.0.12.20240917&quot;<br>+types-pyyaml =3D &quot;^6.0=
-.12.20260518&quot;</div><div><br></div><div>What is being done broadly? All=
- dependencies covered by poetry are being updated? or just the subset inclu=
-ded in format checks? Are dependencies being brought to current latest or s=
-omething different?</div><div><br></div><div>I remember Thomas mentioning t=
-hat DTS was not checking the dts-check-format.sh at DPDK Summit and that co=
-nfused me. Perhaps he is running DTS and dts-check-format.sh outside of poe=
-try (which we have said is okay to do) and he is on newer versions of the f=
-ormatting dependencies than what we currently have committed to the poetry.=
-lock.</div></div>
+<div dir="ltr">Reviewed-by: Patrick Robb &lt;<a href="mailto:patrickrobb1997@gmail.com">patrickrobb1997@gmail.com</a>&gt;</div>
 
---000000000000b538720654f35e7b--
+--0000000000002eedcf0654f380e2--
