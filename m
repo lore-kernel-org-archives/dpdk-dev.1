@@ -2,60 +2,106 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C1ECDB46F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 15:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A810CDB46F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 15:44:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B56C94029D;
-	Tue, 23 Jun 2026 17:41:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id 1D74140150;
- Tue, 23 Jun 2026 17:41:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782229281; x=1813765281;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=yH8GQ2VK22JAcDCkCDftGjdGQ+iIvSMmdMi7rqGkERs=;
- b=hM7Isa/sToIClwSfP0M756x/Agi54tx8ic6zxMyvHmSxzICRqKkHWrpU
- 0xqIbXFhlSZROZRfVUjlVva3hVpvi/PvbWBQXqh4YxxzhUdFC+4zc6DII
- 4NiOeaqJq/MqWGOhtmYZybPOS++2Km5haGHmIl8VrZh9XnXd+brdE72TX
- DcE5N60cJDhGfLqwXfhk/2qW4IZaNO+wfR10uGROvH2Sm1aZ9j/xTA5JB
- Kuh4Ug7oXXD2RUYM+iMvB9Vnx8wafoYrXyoCqzPETdDvjYoQRvAle5ljo
- r+745wQNX10zHqiZM97ECNFqZaVe1MiU9Fc7zqULJ+GoR3WECCHoPb+GU A==;
-X-CSE-ConnectionGUID: BHeCWOBcSRWQyNr1RpQDVQ==
-X-CSE-MsgGUID: mobeHGVORwKlRzgIB5ZcBw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="83066892"
-X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="83066892"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jun 2026 08:41:19 -0700
-X-CSE-ConnectionGUID: HjhPQ+KuS1mTh669FXHtWQ==
-X-CSE-MsgGUID: W290WdrQQXqsd1h05dD5fA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="287685495"
-Received: from silpixa00401385.ir.intel.com (HELO
- localhost.ger.corp.intel.com) ([10.20.224.226])
- by orviesa001.jf.intel.com with ESMTP; 23 Jun 2026 08:41:16 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>,
- Fan Zhang <fanzhang.oss@gmail.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Sivaprasad Tummala <sivaprasad.tummala@amd.com>,
- Jasvinder Singh <jasvinder.singh@intel.com>,
- Sergio Gonzalez Monroy <sergio.gonzalez.monroy@intel.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>,
- Declan Doherty <declan.doherty@intel.com>,
- Alan Carew <alan.carew@intel.com>
-Subject: [PATCH] examples: use strlcpy and strlcat
-Date: Tue, 23 Jun 2026 16:41:08 +0100
-Message-ID: <20260623154109.722441-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id 3A668402E5;
+	Tue, 23 Jun 2026 17:44:10 +0200 (CEST)
+Received: from MW6PR02CU001.outbound.protection.outlook.com
+ (mail-westus2azon11012004.outbound.protection.outlook.com [52.101.48.4])
+ by mails.dpdk.org (Postfix) with ESMTP id 61FEA40150;
+ Tue, 23 Jun 2026 17:44:08 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=asfgMY/iI173Hsz62vii1uXa621U8foegj6wgnd9unakeyD8vXQqCHX23FkT8Kb17xMePg4MMsVhjNM9GJVSxZpt4xdbsJgi4XF1860o/pqoLOFej5WrFvGgIC1ptzbUZ2jHM64KXghlLEoxRwkRGRvau/ks9JUYyLYeFZ4tFqbQ2ec9gA1rWebwujq50jhqr372aeW7gah14IEageLny6RXbn3GNBCm4cDIS8mEeUZONQVl8980/gsEdaR8fas5tGfSg6ZTExvFTT/uQtx3oVHgsODr7MNLx6S00sKlLAOlBjjYbQbGAcLFyIMQUcWAv7gScVvFCGoWvbovykmAxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bc2E5Juch5htLjS+DUHfP2U4BkpO8yFbsi6T+sAXcGg=;
+ b=RIGsf5Gv0Q6D7S7Vt5X5heP7+xh1iz1Wk84Qp4uywy7FccLN3sThgf6N4q0XDSglw7WGagqbJololWyrts2nqJaUqNxsag2inFfGE4e62sdJZZlps/bFq3TPj8VOnvrBePkMwkivL7nP9v5CzKxBzpDEW9AE1TTY0rKPKhoCkQsuTSD8zqcU90NodxHJW5GrBlmoKhi4kU927gThK/9KaXpKKZjyGGr8Ima8b0byft984LjmJW62EazBrELaqv0AQ2NXf300fZk65lcO7TEC1+ike/RtGRg6UFvvec9M+geK7s5XvpKuh/wtnvhJhu77t3ibpOFHV/vQBN8NCNgpZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bc2E5Juch5htLjS+DUHfP2U4BkpO8yFbsi6T+sAXcGg=;
+ b=BCBjeY2aGfJNUIRwUtEczDvMViCjBGjecZw1nofltgYhciuB+xqB1ulGOSK3iqn4wr/d+QiVGocaLWeRBhdAHqxo2pf95LLdXU9xrIaRehOeK0X9pWAB82aA5z3eQHQYppoRqyEH0rV6S6prM+a2+cFRv9QwEVY3FRzj8ESzt32kSYLh3HkPI5y+nxx9E2Q/nevzLDTgyAE6BCIGo1y1cSDFJq5vWb6PiFRW161zqZ53YUzwVp4l18G3/53LFqprtMNIQJAj0pEznE79jAjgFQe2pp+vJ0/mKMOSIrFJh1mFaexGfz/orzYEmyCmTaJeKerAlbsK9hcwIeNXLnTQXA==
+Received: from SJ0PR13CA0161.namprd13.prod.outlook.com (2603:10b6:a03:2c7::16)
+ by IA1PR12MB9500.namprd12.prod.outlook.com (2603:10b6:208:596::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.12; Tue, 23 Jun
+ 2026 15:44:05 +0000
+Received: from MWH0EPF000C618E.namprd02.prod.outlook.com
+ (2603:10b6:a03:2c7:cafe::7e) by SJ0PR13CA0161.outlook.office365.com
+ (2603:10b6:a03:2c7::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.159.11 via Frontend Transport; Tue,
+ 23 Jun 2026 15:44:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MWH0EPF000C618E.mail.protection.outlook.com (10.167.249.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.159.10 via Frontend Transport; Tue, 23 Jun 2026 15:44:04 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 23 Jun
+ 2026 08:43:37 -0700
+Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 23 Jun
+ 2026 08:43:36 -0700
+Date: Tue, 23 Jun 2026 17:43:15 +0200
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: Thomas Monjalon <thomas@monjalon.net>, dpdk-techboard
+ <techboard@dpdk.org>, Bruce Richardson <bruce.richardson@intel.com>, "Andrew
+ Rybchenko" <andrew.rybchenko@oktetlabs.ru>, Viacheslav Ovsiienko
+ <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>, <dev@dpdk.org>
+Subject: Re: [PATCH 0/5] add versioned symbols for recently stabilized APIs
+Message-ID: <m7s3jl2566kibbapr2mfa2ic2opuc6b4ok2g67j3il5dgduzih@cz5wcdstb75n>
+References: <20260623113752.1100072-1-dsosnowski@nvidia.com>
+ <CAJFAV8yS6dLM2EUDgdG13U1Zdt208nmk2T3F8DYwT97U1coF3Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAJFAV8yS6dLM2EUDgdG13U1Zdt208nmk2T3F8DYwT97U1coF3Q@mail.gmail.com>
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000C618E:EE_|IA1PR12MB9500:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed1a1000-a314-4f5f-f511-08ded13e4141
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|82310400026|23010399003|36860700016|18002099003|22082099003|56012099006|4143699003|11063799006|6133799003;
+X-Microsoft-Antispam-Message-Info: jjolIF76drZDz+j2b0q+FGl598fAy9uZd0FyWh2WGhWesHPIk3Yza093Aaok0mQIVEAK78wjcfrv3kQ2Kz95VUX+C2iZbpSEsC8SyzRsWlvWodpKbX8b5tIEzObT6J+wkbw5Evv0e+5JcBAFXxLDufNRlcIAejMqOVbmT2wWXIgmDuxaLqU6Bt5MHlW5Bx0XvpuaUK8Stiu3KD/f9q9aFxbtIVCx3xCW3gILC5bZkmS3gw3lNyBghd/uAWmHvO4nvubjURCF1TLGS+qxW9uPIrx2ty0HScO+SB5dza9feL6emGIac1BBbiLQUGe+bDU4iOT7q/Sh1JLXZTI28zmC8tMn891DEFHrjbanvdKKKOT+JEcRQ1aQPI9eW4MFUtodHxoW3p9N8p3sMT0LyWFTxz+vvWndJbKO+ZkbuMEKyHKxEDlMWyPqrbXkxPbBjwXhvtTz5xZb84GWoyfZgwm3D8qF2LmC307APy7oZHxO9OrvYY8goMFGXCrIjlMlOXvEC0aTYHij7D9Z9ZazW4ZHkB1KInM24tklt7aXKs8otl6q3L8dpKCwO35dNU/qNO+jh8UbDaQdy2f+pwyp3p3gCFZISZ+13bf5dWzxUTttmosct2zV7OiR5poSytmrG0xMisPpkj1pXZi5PSv1sWdr4uCM3VdkLSm1TwA4M74Y7o7ZOPiTjy/Okr9wnHr2jxdAoSBVsvXyFNjou05jOGqH9Q==
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(82310400026)(23010399003)(36860700016)(18002099003)(22082099003)(56012099006)(4143699003)(11063799006)(6133799003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: rWh2uOtlTLGkKme9B5xsEYxAl9q1RpBwjydEJn4gCtEvQo0zOpVUsYDuW5TKPNZj2xANF94bDhHPE/E6FyUfjtDht4z2q33dvSCSj9abiZgzPQr2/S9Ed6sUjyI6Y5dFpz9F/bBsawWezzluPPEZTNR2Vd4D9BPAFii26Km/Ns+c2qCrmZwqOnI8QIfHZE5MujvO3xMGKZqIOhi6aH0yrguv4h5OgijdCHQDegOqlxRVPNq29n4tnA86ZebnMt6wBU527AtDA40mGKNUavA07hnwfnWYp4odZkzMLORXa7qm43lHqDSQE+5ud7QjkbGSb3wAluSD8hIMxOw8vJaSXk/d44FLWyz7sDpoDb1PSmpgQZzYZVuCbu+kueZNQSA8TJAZjIrvDWawp/bgcw9vcxW3w9dOi7dD9ZW+yFNqSccZIPuGf7GqtURv2WH6VYnE
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2026 15:44:04.4793 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed1a1000-a314-4f5f-f511-08ded13e4141
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: MWH0EPF000C618E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9500
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,138 +115,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace strncpy and other unbounded string functions, e.g. strcpy,
-strcat, with the safer alternatives strlcpy and strlcat, so that we can
-guarantee null termination of strings.
+On Tue, Jun 23, 2026 at 03:50:52PM +0200, David Marchand wrote:
+> Hello Dariusz,
+> 
+> On Tue, 23 Jun 2026 at 13:38, Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
+> >
+> > Main goal of this patchset is to address https://bugs.dpdk.org/show_bug.cgi?id=1957
+> 
+> It is expected that experimental symbols may disappear overnight, and
+> this bug could also be closed as NOTABUG.
+> 
+> On the other hand, we do state in the doc that compatibility could be
+> provided when stabilising an experimental API, so ok.. let's try.
+> 
+> > but it also handles other recently stabilized symbols and has some minor fixes:
+> >
+> > - Patch 1 - Fix RTE_VERSION_EXPERIMENTAL_SYMBOL macro on clang.
+> 
+> Ouch... /me hides.
+> 
+> 
+> > - Patch 2 - Allow function versioning inside drivers.
+> > - Patch 3 - Version the function symbols stabilized in
+> >   https://git.dpdk.org/dpdk/commit/?id=e8cab133645f5466ef75e511629add43b68a5027
+> > - Patch 4 - Introduce versioning macros for global variable symbols.
+> > - Patch 5 - Version the function and variable symbols stabilized in
+> >   https://git.dpdk.org/dpdk/commit/?id=4ee2f5c1cedf9ee7f39afa667f71b07f4004ba5c
+> >
+> > Issue is still not fully fixed for stabilized global variables:
+> > rte_flow_dynf_metadata_offs and rte_flow_dynf_metadata_mask.
+> 
+> Well, symbol versioning is not something for variables.
+> Exposing global variables was a mistake from the start...
 
-Fixes: 4bbf8e30aa5e ("examples/ip_pipeline: add CLI interface")
-Fixes: 5f657a7fbe86 ("examples/pipeline: add message passing mechanism")
-Fixes: 83f58a7b7b0a ("examples/pipeline: add commands for direct registers")
-Fixes: 0d547ed03717 ("examples/ipsec-secgw: support configuration file")
-Fixes: 63e8c07c7245 ("examples/ipsec-secgw: fix configuration parsing")
-Fixes: 41e97c2ea9e6 ("examples/l2fwd-crypto: extend crypto information")
-Fixes: e8ae9b662506 ("examples/vm_power: channel manager and monitor in host")
-Cc: stable@dpdk.org
+After fighting with this issue for some time,
+I am coming to the similar conclusion :)
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- examples/ip_pipeline/conn.c                 |  4 ++--
- examples/ipsec-secgw/sa.c                   |  4 ++--
- examples/l2fwd-crypto/main.c                | 12 ++++++------
- examples/pipeline/cli.c                     |  4 ++--
- examples/pipeline/conn.c                    |  4 ++--
- examples/vm_power_manager/channel_manager.c |  3 +--
- 6 files changed, 15 insertions(+), 16 deletions(-)
+> Those were exported for "performance" reasons as those are accessed
+> via inline helpers (but I am not sure there were benchmarks showing
+> the benefits).
+> 
+> I am for forbidding exports of global variables from now, unless some
+> really good performance benchmark is provided (@techboard for info).
 
-diff --git a/examples/ip_pipeline/conn.c b/examples/ip_pipeline/conn.c
-index 30fca80c14..9f347fd1c2 100644
---- a/examples/ip_pipeline/conn.c
-+++ b/examples/ip_pipeline/conn.c
-@@ -115,8 +115,8 @@ conn_init(struct conn_params *p)
- 	}
- 
- 	/* Fill in */
--	strncpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX);
--	strncpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX);
-+	strlcpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX + 1);
-+	strlcpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX + 1);
- 	conn->buf_size = p->buf_size;
- 	conn->msg_in_len_max = p->msg_in_len_max;
- 	conn->msg_out_len_max = p->msg_out_len_max;
-diff --git a/examples/ipsec-secgw/sa.c b/examples/ipsec-secgw/sa.c
-index 866ba04b86..b5068765b6 100644
---- a/examples/ipsec-secgw/sa.c
-+++ b/examples/ipsec-secgw/sa.c
-@@ -338,12 +338,12 @@ parse_key_string(const char *key_str, uint8_t *key)
- 		if (pt_end == NULL) {
- 			if (strlen(pt_start) > 2)
- 				return 0;
--			strncpy(sub_str, pt_start, 2);
-+			memcpy(sub_str, pt_start, 2);
- 		} else {
- 			if (pt_end - pt_start > 2)
- 				return 0;
- 
--			strncpy(sub_str, pt_start, pt_end - pt_start);
-+			memcpy(sub_str, pt_start, pt_end - pt_start);
- 			pt_start = pt_end + 1;
- 		}
- 
-diff --git a/examples/l2fwd-crypto/main.c b/examples/l2fwd-crypto/main.c
-index ff189b5fab..22ad825c91 100644
---- a/examples/l2fwd-crypto/main.c
-+++ b/examples/l2fwd-crypto/main.c
-@@ -1576,19 +1576,19 @@ l2fwd_crypto_options_print(struct l2fwd_crypto_options *options)
- 	char string_aead_op[MAX_STR_LEN];
- 
- 	if (options->cipher_xform.cipher.op == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--		strcpy(string_cipher_op, "Encrypt");
-+		strlcpy(string_cipher_op, "Encrypt", sizeof(string_cipher_op));
- 	else
--		strcpy(string_cipher_op, "Decrypt");
-+		strlcpy(string_cipher_op, "Decrypt", sizeof(string_cipher_op));
- 
- 	if (options->auth_xform.auth.op == RTE_CRYPTO_AUTH_OP_GENERATE)
--		strcpy(string_auth_op, "Auth generate");
-+		strlcpy(string_auth_op, "Auth generate", sizeof(string_auth_op));
- 	else
--		strcpy(string_auth_op, "Auth verify");
-+		strlcpy(string_auth_op, "Auth verify", sizeof(string_auth_op));
- 
- 	if (options->aead_xform.aead.op == RTE_CRYPTO_AEAD_OP_ENCRYPT)
--		strcpy(string_aead_op, "Authenticated encryption");
-+		strlcpy(string_aead_op, "Authenticated encryption", sizeof(string_aead_op));
- 	else
--		strcpy(string_aead_op, "Authenticated decryption");
-+		strlcpy(string_aead_op, "Authenticated decryption", sizeof(string_aead_op));
- 
- 
- 	printf("Options:-\nn");
-diff --git a/examples/pipeline/cli.c b/examples/pipeline/cli.c
-index 215b4061d5..901706fab9 100644
---- a/examples/pipeline/cli.c
-+++ b/examples/pipeline/cli.c
-@@ -172,9 +172,9 @@ parse_table_entry(struct rte_swx_ctl_pipeline *p,
- 	line[0] = 0;
- 	for (i = 0; i < n_tokens; i++) {
- 		if (i)
--			strcat(line, " ");
-+			strlcat(line, " ", MAX_LINE_SIZE);
- 
--		strcat(line, tokens[i]);
-+		strlcat(line, tokens[i], MAX_LINE_SIZE);
- 	}
- 
- 	/* Read the table entry from the input buffer. */
-diff --git a/examples/pipeline/conn.c b/examples/pipeline/conn.c
-index e168c4ddaa..257f3c9f78 100644
---- a/examples/pipeline/conn.c
-+++ b/examples/pipeline/conn.c
-@@ -116,8 +116,8 @@ conn_init(struct conn_params *p)
- 	}
- 
- 	/* Fill in */
--	strncpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX);
--	strncpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX);
-+	strlcpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX + 1);
-+	strlcpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX + 1);
- 	conn->buf_size = p->buf_size;
- 	conn->msg_in_len_max = p->msg_in_len_max;
- 	conn->msg_out_len_max = p->msg_out_len_max;
-diff --git a/examples/vm_power_manager/channel_manager.c b/examples/vm_power_manager/channel_manager.c
-index b69449c61d..339c7fbb93 100644
---- a/examples/vm_power_manager/channel_manager.c
-+++ b/examples/vm_power_manager/channel_manager.c
-@@ -875,8 +875,7 @@ add_vm(const char *vm_name)
- 		rte_free(new_domain);
- 		return -1;
- 	}
--	strncpy(new_domain->name, vm_name, sizeof(new_domain->name));
--	new_domain->name[sizeof(new_domain->name) - 1] = '\0';
-+	strlcpy(new_domain->name, vm_name, sizeof(new_domain->name));
- 	memset(new_domain->channel_mask, 0, RTE_MAX_LCORE);
- 	new_domain->num_channels = 0;
- 
--- 
-2.53.0
+Sounds like a good proposal IMO.
+Especially since, from a quick glance, almost all existing variables
+expose values not expected to change frequently at runtime.
+For example, like here, mbuf dynamic field offset.
+These could be retrieved once and stored somewhere locally
+(Rx/Tx queue context for example).
 
+> 
+> 
+> Now, in practice for your issue, rather than reintroducing symbol
+> aliases (technical solution that I dropped when refactoring the
+> macros), I think we can do with some middle ground approach:
+> - leaving the inline helpers as "stable" (not __rte_experimental),
+> - restoring the EXPERIMENTAL version on the global variables, this
+> will restore the location of those symbols from the previous ABI pov,
+> and the checks won't catch this discrepancy anyway,
+> - during 26.11, drop the EXPERIMENTAL version on those variables,
+> 
+> 
+> In other words, stopping at your patch 3 of the series, then adding:
+> 
+> $ git diff
+> diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
+> index ec0fe08355..8bd21ccd31 100644
+> --- a/lib/ethdev/rte_flow.c
+> +++ b/lib/ethdev/rte_flow.c
+> @@ -23,11 +23,11 @@
+>  #define FLOW_LOG RTE_ETHDEV_LOG_LINE
+> 
+>  /* Mbuf dynamic field name for metadata. */
+> -RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_offs)
+> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_flow_dynf_metadata_offs, 19.11)
+>  int32_t rte_flow_dynf_metadata_offs = -1;
+> 
+>  /* Mbuf dynamic field flag bit number for metadata. */
+> -RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_mask)
+> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_flow_dynf_metadata_mask, 19.11)
+>  uint64_t rte_flow_dynf_metadata_mask;
+> 
+>  /**
+
+Thank you for the suggestion.
+That looks good to me.
+I'll prepare a v2.
+
+> 
+> > Patch 4 and 5 address the bug for these global variables,
+> > by providing a single storage for both EXPERIMENTAL and
+> > DPDK_26 variable symbol versions.
+> > This is achieved through symbol aliasing.
+> > But this solution is limited only to executables compiled with clang.
+> >
+> > clang and gcc have a different default behavior regarding relocations
+> > of global variables exposed by shared libraries.
+> >
+> 
+> Yeah... not even thinking about adding MSVC in the list...
+> 
+> 
+> -- 
+> David Marchand
+> 
