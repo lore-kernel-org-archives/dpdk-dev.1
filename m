@@ -2,60 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E32FCCDB46F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 10:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 155F1CDB479
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 11:22:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BCACE4065D;
-	Tue, 23 Jun 2026 12:55:56 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 76A6E40269
- for <dev@dpdk.org>; Tue, 23 Jun 2026 12:55:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782212155;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=yF6g+ayAZDaO9lf2ExgnEM0tiLED59LPNXLvWv0u0xI=;
- b=dhOF1y0sNF0PRfGgIW7jyPW6aJkSxhhrcp05NsOOIbV3LAhdoBXVA0vGrAejMhoPRuFoJi
- VhFirZuqMMlAe3VuNZ0ToCnFY9iYnEDyszqey2cNj4C/EOhMTGvVkVk+wn/y4zTutDlC2K
- yLJfB9tsuYHomEo+AAlvKB2MKI44OcM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-642-nmD4ZndyNtCfmFdBHzDiBw-1; Tue,
- 23 Jun 2026 06:55:51 -0400
-X-MC-Unique: nmD4ZndyNtCfmFdBHzDiBw-1
-X-Mimecast-MFC-AGG-ID: nmD4ZndyNtCfmFdBHzDiBw_1782212150
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8661C1956044; Tue, 23 Jun 2026 10:55:50 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.48.202])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 1840B1800348; Tue, 23 Jun 2026 10:55:47 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1F95B40648;
+	Tue, 23 Jun 2026 13:22:42 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 27E9740611;
+ Tue, 23 Jun 2026 13:22:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782213760; x=1813749760;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=8dDS9/7nKE+j6EQi/UXi9y9vI+9CkiTrhiRSl/QzVO4=;
+ b=HUuk0q5LCZbVZSECm5ccaod5v8R7aRhCnyw/xWgeqAemjZOZOx44Q0Ft
+ /N7iePL2D4Yyqn2jlxQWyDxPS+qyy0bg+NS06mBIc8azyOch4Hud4Mkzz
+ x1ZKzeDR9hzDfFKDJvUlGC+LTUvBs3C3P/Dtfpiw2xknIh4qDXiiT7JiO
+ T0OWxhnjxS7Sw3JL18YqAAdtQXPlh+unHXT9KoXPwlWNbyy9rmUWoCBjU
+ A7MkLNuxO15j2naFhgFo8sTlcWp/CntrwSxv/6zlGUXAYn6OH4bnZZvFW
+ S76IzhbdhekVfuE8uyLqaaT/T+EJmvGeck5I7jOi/h3FXoPIpQmhr5V65 Q==;
+X-CSE-ConnectionGUID: 3k8Ie1uHQEaPi6Er3xA+iw==
+X-CSE-MsgGUID: XR4a+a1aTP2Ax/coBQ2mYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11825"; a="85509465"
+X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="85509465"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Jun 2026 04:22:39 -0700
+X-CSE-ConnectionGUID: +EqUCEspQb6rBjdiXCFojg==
+X-CSE-MsgGUID: M8o8/X1RRcGy86cMGXHGlA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; d="scan'208";a="273546215"
+Received: from silpixa00401385.ir.intel.com (HELO
+ localhost.ger.corp.intel.com) ([10.20.224.226])
+ by fmviesa001.fm.intel.com with ESMTP; 23 Jun 2026 04:22:37 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: thomas@monjalon.net, stephen@networkplumber.org,
- bruce.richardson@intel.com, fengchengwen@huawei.com, longli@microsoft.com,
- hemant.agrawal@nxp.com, Wei Hu <weh@microsoft.com>
-Subject: [PATCH v3 11/11] bus/vmbus: support unplug
-Date: Tue, 23 Jun 2026 12:54:38 +0200
-Message-ID: <20260623105439.2144694-12-david.marchand@redhat.com>
-In-Reply-To: <20260623105439.2144694-1-david.marchand@redhat.com>
-References: <20260611094551.1514962-1-david.marchand@redhat.com>
- <20260623105439.2144694-1-david.marchand@redhat.com>
+Cc: Praveen Shetty <praveen.shetty@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Shaiq Wani <shaiq.wani@intel.com>, Ciara Loftus <ciara.loftus@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org
+Subject: [PATCH] net/intel: fix use of non-recommended string functions
+Date: Tue, 23 Jun 2026 12:22:21 +0100
+Message-ID: <20260623112221.677931-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Tcf-naSTJV_cBsTBbLJ2nSDLg0ThkVHjMPb3DYaxfsk_1782212150
-X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,102 +62,211 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add .unplug callback to handle driver removal, device unmapping, and
-interrupt cleanup. This enables use of the generic bus cleanup helper.
+Replace use of the strncpy and strcpy functions with the safer strlcpy
+alternative, which both bounds-checks and guarantees null termination.
+In the process also replace instances of strcat with strlcat where
+appropriate.
 
-The cleanup function was already performing these operations, so it
-seems safe to expose them through the unplug operation.
+Fixes: 2d823ecd671c ("net/cpfl: support device initialization")
+Fixes: c4c59ae62793 ("net/cpfl: refactor flow parser")
+Fixes: c10881d3ee74 ("net/cpfl: support flow prog action")
+Fixes: 9481b0902efe ("net/ice: send driver version to firmware")
+Fixes: 7f7cbf80bdb7 ("net/ice: factorize firmware loading")
+Fixes: 549343c25db8 ("net/idpf: support device initialization")
+Fixes: 484f8e407a94 ("net/igb: support xstats by ID")
+Fixes: fca82a8accf9 ("net/ixgbe: support xstats by ID")
+Fixes: e163c18a15b0 ("net/i40e: update ptype and pctype info")
+Cc: stable@dpdk.org
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- doc/guides/rel_notes/release_26_07.rst |  4 +++
- drivers/bus/vmbus/vmbus_common.c       | 41 ++++++++++++--------------
- 2 files changed, 23 insertions(+), 22 deletions(-)
+ drivers/net/intel/cpfl/cpfl_ethdev.c      |  2 +-
+ drivers/net/intel/cpfl/cpfl_flow_parser.c | 16 +++++++---------
+ drivers/net/intel/e1000/igb_ethdev.c      |  5 +++--
+ drivers/net/intel/i40e/i40e_ethdev.c      |  3 +--
+ drivers/net/intel/ice/ice_ethdev.c        | 16 +++++++---------
+ drivers/net/intel/idpf/idpf_ethdev.c      |  2 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c    |  5 +++--
+ 7 files changed, 23 insertions(+), 26 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 5d7aa8d1bf..55d3b44527 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -114,6 +114,10 @@ New Features
+diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
+index 7ac8797490..4315adb68c 100644
+--- a/drivers/net/intel/cpfl/cpfl_ethdev.c
++++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
+@@ -2534,7 +2534,7 @@ cpfl_adapter_ext_init(struct rte_pci_device *pci_dev, struct cpfl_adapter_ext *a
+ 	hw->subsystem_vendor_id = pci_dev->id.subsystem_vendor_id;
+ 	adapter->host_id = get_running_host_id();
  
-   Added no-IOMMU mode for devices without or not enabling IOMMU/SVA.
+-	strncpy(adapter->name, pci_dev->device.name, PCI_PRI_STR_SIZE);
++	strlcpy(adapter->name, pci_dev->device.name, sizeof(adapter->name));
  
-+* **Added unplug operation support to VMBUS bus.**
-+
-+  Implemented device unplug operation to allow runtime removal of VMBUS devices.
-+
- * **Added selective Rx in ethdev API.**
+ 	memcpy(&base->caps, &req_caps, sizeof(struct virtchnl2_get_capabilities));
  
-   Some parts of packets may be discarded in Rx
-diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index a6e3a24a7c..cd6e851e4c 100644
---- a/drivers/bus/vmbus/vmbus_common.c
-+++ b/drivers/bus/vmbus/vmbus_common.c
-@@ -144,34 +144,29 @@ rte_vmbus_probe(void)
+diff --git a/drivers/net/intel/cpfl/cpfl_flow_parser.c b/drivers/net/intel/cpfl/cpfl_flow_parser.c
+index dfaddc9ec5..b1d06725e9 100644
+--- a/drivers/net/intel/cpfl/cpfl_flow_parser.c
++++ b/drivers/net/intel/cpfl/cpfl_flow_parser.c
+@@ -211,7 +211,7 @@ cpfl_flow_js_pattern_key_proto_field(json_t *ob_fields,
+ 			PMD_DRV_LOG(ERR, "The 'name' is too long.");
+ 			goto err;
+ 		}
+-		strncpy(js_field->fields[i].name, name, CPFL_JS_STR_SIZE - 1);
++		strlcpy(js_field->fields[i].name, name, CPFL_JS_STR_SIZE);
+ 
+ 		if (js_field->type == RTE_FLOW_ITEM_TYPE_ETH ||
+ 		    js_field->type == RTE_FLOW_ITEM_TYPE_IPV4) {
+@@ -716,8 +716,7 @@ cpfl_flow_js_mr_key(json_t *ob_mr_keys, struct cpfl_flow_js_mr_key *js_mr_key)
+ 					PMD_DRV_LOG(ERR, "The 'name' is too long.");
+ 					goto err;
+ 				}
+-				strncpy(js_mr_key->actions[i].prog.name, name,
+-					CPFL_JS_STR_SIZE - 1);
++				strlcpy(js_mr_key->actions[i].prog.name, name, CPFL_JS_STR_SIZE);
+ 			}
+ 
+ 			ob_param = json_object_get(object, "parameters");
+@@ -742,8 +741,8 @@ cpfl_flow_js_mr_key(json_t *ob_mr_keys, struct cpfl_flow_js_mr_key *js_mr_key)
+ 						PMD_DRV_LOG(ERR, "The 'name' is too long.");
+ 						goto err;
+ 					}
+-					strncpy(js_mr_key->actions[i].prog.params[j].name, name,
+-						CPFL_JS_STR_SIZE - 1);
++					strlcpy(js_mr_key->actions[i].prog.params[j].name, name,
++						CPFL_JS_STR_SIZE);
+ 				}
+ 				ret = cpfl_json_t_to_uint16(subobject, "size", &value);
+ 				if (ret < 0) {
+@@ -810,7 +809,7 @@ cpfl_flow_js_mr_layout(json_t *ob_layouts, struct cpfl_flow_js_mr_action_mod *js
+ 			PMD_DRV_LOG(ERR, "The 'hint' is too long.");
+ 			goto err;
+ 		}
+-		strncpy(js_mod->layout[i].hint, hint, CPFL_JS_STR_SIZE - 1);
++		strlcpy(js_mod->layout[i].hint, hint, CPFL_JS_STR_SIZE);
+ 	}
+ 
+ 	return 0;
+@@ -856,7 +855,7 @@ cpfl_flow_js_mr_content(json_t *ob_content, struct cpfl_flow_js_mr_action_mod *j
+ 			PMD_DRV_LOG(ERR, "The 'type' is too long.");
+ 			goto err;
+ 		}
+-		strncpy(js_mod->content.fields[i].type, type, CPFL_JS_STR_SIZE - 1);
++		strlcpy(js_mod->content.fields[i].type, type, CPFL_JS_STR_SIZE);
+ 		ret = cpfl_json_t_to_uint16(object, "start", &start);
+ 		if (ret < 0) {
+ 			PMD_DRV_LOG(ERR, "Can not parse 'start'.");
+@@ -1806,8 +1805,7 @@ cpfl_parse_check_prog_action(struct cpfl_flow_js_mr_key_action *key_act,
+ 			return -EINVAL;
+ 		if (param->has_name) {
+ 			mr_key_prog->has_name = TRUE;
+-			strncpy(mr_key_prog->name[param->index], param->name,
+-				CPFL_JS_STR_SIZE - 1);
++			strlcpy(mr_key_prog->name[param->index], param->name, CPFL_JS_STR_SIZE);
+ 		}
+ 	}
+ 
+diff --git a/drivers/net/intel/e1000/igb_ethdev.c b/drivers/net/intel/e1000/igb_ethdev.c
+index a4370fe32b..524c030be6 100644
+--- a/drivers/net/intel/e1000/igb_ethdev.c
++++ b/drivers/net/intel/e1000/igb_ethdev.c
+@@ -2047,8 +2047,9 @@ static int eth_igb_xstats_get_names_by_id(struct rte_eth_dev *dev,
+ 				PMD_INIT_LOG(ERR, "id value isn't valid");
+ 				return -1;
+ 			}
+-			strcpy(xstats_names[i].name,
+-					xstats_names_copy[ids[i]].name);
++			strlcpy(xstats_names[i].name,
++					xstats_names_copy[ids[i]].name,
++					sizeof(xstats_names[i].name));
+ 		}
+ 		return limit;
+ 	}
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index 1370db68f3..b2694cd33a 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -11916,8 +11916,7 @@ i40e_update_customized_ptype(struct rte_eth_dev *dev, uint8_t *pkg,
+ 			for (n = 0; n < proto_num; n++) {
+ 				if (proto[n].proto_id != proto_id)
+ 					continue;
+-				memset(name, 0, sizeof(name));
+-				strcpy(name, proto[n].name);
++				strlcpy(name, proto[n].name, sizeof(name));
+ 				PMD_DRV_LOG(INFO, "name = %s", name);
+ 				if (!strncasecmp(name, "PPPOE", 5))
+ 					ptype_mapping[i].sw_ptype |=
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index ad9c49b339..99305b604b 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -1897,7 +1897,7 @@ ice_send_driver_ver(struct ice_hw *hw)
+ 	dv.minor_ver = 0;
+ 	dv.build_ver = 0;
+ 	dv.subbuild_ver = 0;
+-	strncpy((char *)dv.driver_string, "dpdk", sizeof(dv.driver_string));
++	strlcpy((char *)dv.driver_string, "dpdk", sizeof(dv.driver_string));
+ 
+ 	return ice_aq_send_driver_ver(hw, &dv, NULL);
  }
+@@ -2054,24 +2054,22 @@ int ice_load_pkg(struct ice_adapter *adapter, bool use_dsn, uint64_t dsn)
+ 	if (!use_dsn)
+ 		goto no_dsn;
  
- static int
--rte_vmbus_cleanup(struct rte_bus *bus)
-+vmbus_unplug_device(struct rte_device *rte_dev)
- {
--	struct rte_vmbus_device *dev;
--	int error = 0;
--
--	RTE_BUS_FOREACH_DEV(dev, bus) {
--		const struct rte_vmbus_driver *drv;
--		int ret;
--
--		if (!rte_dev_is_probed(&dev->device))
--			continue;
--		drv = RTE_BUS_DRIVER(dev->device.driver, *drv);
--		if (drv->remove == NULL)
--			continue;
-+	const struct rte_vmbus_driver *drv = RTE_BUS_DRIVER(rte_dev->driver, *drv);
-+	struct rte_vmbus_device *dev = RTE_BUS_DEVICE(rte_dev, *dev);
-+	int ret = 0;
+-	strncpy(pkg_file, ICE_PKG_FILE_SEARCH_PATH_UPDATES,
+-		ICE_MAX_PKG_FILENAME_SIZE);
+-	strcat(pkg_file, opt_ddp_filename);
++	strlcpy(pkg_file, ICE_PKG_FILE_SEARCH_PATH_UPDATES, ICE_MAX_PKG_FILENAME_SIZE);
++	strlcat(pkg_file, opt_ddp_filename, ICE_MAX_PKG_FILENAME_SIZE);
+ 	if (ice_firmware_read(pkg_file, &buf, &bufsz) == 0)
+ 		goto load_fw;
  
-+	if (drv->remove != NULL) {
- 		ret = drv->remove(dev);
- 		if (ret < 0)
--			error = -1;
-+			return ret;
-+	}
+-	strncpy(pkg_file, ICE_PKG_FILE_SEARCH_PATH_DEFAULT,
+-		ICE_MAX_PKG_FILENAME_SIZE);
+-	strcat(pkg_file, opt_ddp_filename);
++	strlcpy(pkg_file, ICE_PKG_FILE_SEARCH_PATH_DEFAULT, ICE_MAX_PKG_FILENAME_SIZE);
++	strlcat(pkg_file, opt_ddp_filename, ICE_MAX_PKG_FILENAME_SIZE);
+ 	if (ice_firmware_read(pkg_file, &buf, &bufsz) == 0)
+ 		goto load_fw;
  
--		rte_vmbus_unmap_device(dev);
--		rte_intr_instance_free(dev->intr_handle);
-+	rte_vmbus_unmap_device(dev);
-+	rte_intr_instance_free(dev->intr_handle);
-+	dev->intr_handle = NULL;
+ no_dsn:
+-	strncpy(pkg_file, ICE_PKG_FILE_UPDATES, ICE_MAX_PKG_FILENAME_SIZE);
++	strlcpy(pkg_file, ICE_PKG_FILE_UPDATES, ICE_MAX_PKG_FILENAME_SIZE);
+ 	if (ice_firmware_read(pkg_file, &buf, &bufsz) == 0)
+ 		goto load_fw;
  
--		dev->device.driver = NULL;
--		rte_bus_remove_device(bus, &dev->device);
--		free(dev);
--	}
-+	return 0;
-+}
+-	strncpy(pkg_file, ICE_PKG_FILE_DEFAULT, ICE_MAX_PKG_FILENAME_SIZE);
++	strlcpy(pkg_file, ICE_PKG_FILE_DEFAULT, ICE_MAX_PKG_FILENAME_SIZE);
+ 	if (ice_firmware_read(pkg_file, &buf, &bufsz) < 0) {
+ 		PMD_INIT_LOG(ERR, "Failed to load default DDP package " ICE_PKG_FILE_DEFAULT);
+ 		return -1;
+diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
+index fc761c6094..c13505416a 100644
+--- a/drivers/net/intel/idpf/idpf_ethdev.c
++++ b/drivers/net/intel/idpf/idpf_ethdev.c
+@@ -1497,7 +1497,7 @@ idpf_adapter_ext_init(struct rte_pci_device *pci_dev, struct idpf_adapter_ext *a
+ 	hw->device_id = pci_dev->id.device_id;
+ 	hw->subsystem_vendor_id = pci_dev->id.subsystem_vendor_id;
  
--	return error;
-+static void
-+vmbus_free_device(struct rte_device *dev)
-+{
-+	free(RTE_BUS_DEVICE(dev, struct rte_vmbus_device));
+-	strncpy(adapter->name, pci_dev->device.name, PCI_PRI_STR_SIZE);
++	strlcpy(adapter->name, pci_dev->device.name, sizeof(adapter->name));
+ 
+ 	memcpy(&base->caps, &req_caps, sizeof(struct virtchnl2_get_capabilities));
+ 
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index f9de95e4fc..b36867d18d 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -3635,8 +3635,9 @@ static int ixgbe_dev_xstats_get_names_by_id(
+ 			PMD_INIT_LOG(ERR, "id value isn't valid");
+ 			return -1;
+ 		}
+-		strcpy(xstats_names[i].name,
+-				xstats_names_copy[ids[i]].name);
++		strlcpy(xstats_names[i].name,
++				xstats_names_copy[ids[i]].name,
++				sizeof(xstats_names[i].name));
+ 	}
+ 	return limit;
  }
- 
- static int
-@@ -222,10 +217,12 @@ rte_vmbus_unregister(struct rte_vmbus_driver *driver)
- struct rte_bus rte_vmbus_bus = {
- 	.scan = rte_vmbus_scan,
- 	.probe = rte_bus_generic_probe,
--	.cleanup = rte_vmbus_cleanup,
-+	.free_device = vmbus_free_device,
-+	.cleanup = rte_bus_generic_cleanup,
- 	.find_device = rte_bus_generic_find_device,
- 	.match = vmbus_bus_match,
- 	.probe_device = vmbus_probe_device,
-+	.unplug_device = vmbus_unplug_device,
- 	.parse = vmbus_parse,
- 	.dev_compare = vmbus_dev_compare,
- };
 -- 
-2.54.0
+2.53.0
 
