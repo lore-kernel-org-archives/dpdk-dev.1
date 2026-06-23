@@ -2,52 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADC5CDB471
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 16:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E19CDB471
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 16:52:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 904CF4065B;
-	Tue, 23 Jun 2026 18:51:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C5855402AD;
+	Tue, 23 Jun 2026 18:52:01 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 24B3B40150;
- Tue, 23 Jun 2026 18:51:58 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4BBC44065F;
+ Tue, 23 Jun 2026 18:52:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782233519; x=1813769519;
+ t=1782233521; x=1813769521;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=6dr8WHt9nl6oD+5WQbZyFqPKyt5cKCccCqY7VgBfxq0=;
- b=ihzzBQhxKii5+FKUu8jhgCTceuMqKiY816oIsAe9apIf7tolZDP0WQ5G
- pDcffvgmhEI5dMBJJUNnZzKsN4DtGFnXfN4pJJat9hTEbaON0k1Ns68vr
- mMEzrUIIRAwTsNFHnWT7mYDo3Bf9pUP03xxfZlDd7n95VlMjXCGwVgqvW
- HSJ1qIc+0J0Dmj0jk4BjB7COKzqwWdPFu1ZQnMPupnB1sEnVAwqiAo3qS
- osgw/SSxgsK8xSEOMeFsoNMC3pRBTocEBgukPj/fGRwtViROTgylTbFiJ
- yk/sjPvGavFPn4EK/YQb/lvaYltWYzN4VNpmkAOFkD+J6a4NffIXDmcyB A==;
-X-CSE-ConnectionGUID: pXIu6nJXROC9ScaQfWzCvw==
-X-CSE-MsgGUID: BE7XdwQCStuq4SVfWL0QpQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="100534614"
-X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="100534614"
+ bh=VQXecjmkp7v/H3jK7M7jiMob2r4LVZTk0m9A8k1UNPM=;
+ b=kmcQvcWvpLQo8gdIU8PWQ9+PpGcRhtwj9UJLBmm0/iPKqS8q6X81yA2g
+ /lKaniIw/HUBmQ56nkE0d5mmmakUEycnT7MCeTfq78pc2SVelxPOE3yPc
+ ouvXj2HMRmGp+BLbjrpYK7EhtZPxZrtTHDi94VZAnPyQcxynu6wHkCzMl
+ t5k4TTfz0ACOYHkFsnsaUn+TMMWcUb36J+f91J967v61obJqmcPfueV3d
+ r1tRoh+aTkRpsI2UBGfzzuSNKsR4Xo7v64CsZby3qpKFT3szpcRFXQuou
+ Bv+RFP7bblnvVzUU/iuTCQbDzV6evBu44w6FGRKsgWExG/0bk5lOZrQGU g==;
+X-CSE-ConnectionGUID: F5bOp9/qQx28S967xMxiZA==
+X-CSE-MsgGUID: +LMpQLlbSzK1szI3R4tZrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="100534620"
+X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="100534620"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jun 2026 09:51:58 -0700
-X-CSE-ConnectionGUID: tAWDvS6BQRGyGwexlPSjYA==
-X-CSE-MsgGUID: 1T/J0W2rQmKgvv+Fj3eg+w==
+ 23 Jun 2026 09:52:00 -0700
+X-CSE-ConnectionGUID: QqLz55Y7To2NPVJXghe3lg==
+X-CSE-MsgGUID: TGjXDD4bRl+bArKkeRS6qA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="253928279"
+X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="253928284"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.224.226])
- by orviesa004.jf.intel.com with ESMTP; 23 Jun 2026 09:51:55 -0700
+ by orviesa004.jf.intel.com with ESMTP; 23 Jun 2026 09:51:58 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
- Srikanth Yalavarthi <syalavarthi@marvell.com>,
- Rakesh Kudurumalla <rkudurumalla@marvell.com>
-Subject: [PATCH 01/17] common/cnxk: replace strncpy with strlcpy
-Date: Tue, 23 Jun 2026 17:51:31 +0100
-Message-ID: <20260623165150.765443-2-bruce.richardson@intel.com>
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: [PATCH 02/17] common/mlx5: replace strncpy with strlcpy
+Date: Tue, 23 Jun 2026 17:51:32 +0100
+Message-ID: <20260623165150.765443-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260623165150.765443-1-bruce.richardson@intel.com>
 References: <20260623165150.765443-1-bruce.richardson@intel.com>
@@ -68,47 +67,27 @@ Errors-To: dev-bounces@dpdk.org
 
 Replace strncpy() with safer strlcpy() which always null-terminates.
 
-Fixes: 014a9e222bac ("common/cnxk: add model init and IO handling API")
-Fixes: b315581c66dc ("common/cnxk: skip probing SoC environment for CN9K")
+Fixes: aec086c9f1c8 ("common/mlx5: share kernel interface name getter")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/common/cnxk/roc_model.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/common/mlx5/linux/mlx5_common_os.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/common/cnxk/roc_model.c b/drivers/common/cnxk/roc_model.c
-index f0312a5400..ddd7ee8634 100644
---- a/drivers/common/cnxk/roc_model.c
-+++ b/drivers/common/cnxk/roc_model.c
-@@ -211,15 +211,15 @@ populate_model(struct roc_model *model, uint32_t midr)
- 		if (model_db[i].impl == impl && model_db[i].part == part &&
- 		    model_db[i].major == major && model_db[i].minor == minor) {
- 			model->flag = model_db[i].flag;
--			strncpy(model->name, model_db[i].name,
--				ROC_MODEL_STR_LEN_MAX - 1);
-+			strlcpy(model->name, model_db[i].name,
-+				ROC_MODEL_STR_LEN_MAX);
- 			found = true;
- 			break;
- 		}
- not_found:
- 	if (!found) {
- 		model->flag = 0;
--		strncpy(model->name, "unknown", ROC_MODEL_STR_LEN_MAX - 1);
-+		strlcpy(model->name, "unknown", ROC_MODEL_STR_LEN_MAX);
- 		plt_err("Invalid RoC model (impl=0x%x, part=0x%x, major=0x%x, minor=0x%x)",
- 			impl, part, major, minor);
+diff --git a/drivers/common/mlx5/linux/mlx5_common_os.c b/drivers/common/mlx5/linux/mlx5_common_os.c
+index e3db6c4124..53bcc9b844 100644
+--- a/drivers/common/mlx5/linux/mlx5_common_os.c
++++ b/drivers/common/mlx5/linux/mlx5_common_os.c
+@@ -231,7 +231,7 @@ mlx5_get_ifname_sysfs(const char *ibdev_path, char *ifname)
+ 		rte_errno = ENOENT;
+ 		return -rte_errno;
  	}
-@@ -297,7 +297,7 @@ of_env_get(struct roc_model *model)
- 	FILE *fp;
+-	strncpy(ifname, match, IF_NAMESIZE);
++	strlcpy(ifname, match, IF_NAMESIZE);
+ 	return 0;
+ }
  
- 	if (access(path, F_OK) != 0) {
--		strncpy(model->env, "HW_PLATFORM", ROC_MODEL_STR_LEN_MAX - 1);
-+		strlcpy(model->env, "HW_PLATFORM", ROC_MODEL_STR_LEN_MAX);
- 		model->flag |= ROC_ENV_HW;
- 		return;
- 	}
 -- 
 2.53.0
 
