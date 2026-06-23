@@ -2,49 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C20BCDB46F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 10:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32821CDB46F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 10:54:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 427FC402A2;
-	Tue, 23 Jun 2026 12:30:03 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 30C4D40269
- for <dev@dpdk.org>; Tue, 23 Jun 2026 12:30:01 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gl1X43bT2zJ46d6;
- Tue, 23 Jun 2026 18:29:24 +0800 (CST)
-Received: from frapema500002.china.huawei.com (unknown [7.182.19.148])
- by mail.maildlp.com (Postfix) with ESMTPS id 50B4340584;
- Tue, 23 Jun 2026 18:29:59 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500002.china.huawei.com (7.182.19.148) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 23 Jun 2026 12:29:59 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Tue, 23 Jun 2026 12:29:59 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Thomas Monjalon <thomas@monjalon.net>
-CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: RE: [PATCH v3 05/25] bpf/validate: introduce debugging interface
-Thread-Topic: [PATCH v3 05/25] bpf/validate: introduce debugging interface
-Thread-Index: AQHc+lkWXE6IMRotik+EWsdt3Z9C1LZL3RYAgAAiGhA=
-Date: Tue, 23 Jun 2026 10:29:58 +0000
-Message-ID: <84ce7f7669404239864c61819267d9b6@huawei.com>
-References: <20260519093131.52022-1-marat.khalili@huawei.com>
- <20260612104743.6465-1-marat.khalili@huawei.com>
- <20260612104743.6465-6-marat.khalili@huawei.com>
- <3BbIFKkFSyOqZrm3k570og@monjalon.net>
-In-Reply-To: <3BbIFKkFSyOqZrm3k570og@monjalon.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.78]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id EFBA2402A2;
+	Tue, 23 Jun 2026 12:54:54 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 63B9D40269
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 12:54:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1782212092;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=/xOivN0tZuAJEht9zDTiOLK2mpav2JvWis7DB6U32XI=;
+ b=eWm0DWNSsPZdRclK+dbDKrWEiudkfuFrY9f1VsiQvr55uuNILV0WqI2Pp1Q/0J48perqwH
+ I7cgTLBL1tN+BNsYllUukDlXfRXWKVmPT/pXi+/ciCZW7hSi1LgobIkhzcUJJJvWeWy4/v
+ hXUCBwg7798XNXfN6JmRm8I1kfrsB+c=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-197-Qg-5BkISPgy5qSr0f1OJ8w-1; Tue,
+ 23 Jun 2026 06:54:47 -0400
+X-MC-Unique: Qg-5BkISPgy5qSr0f1OJ8w-1
+X-Mimecast-MFC-AGG-ID: Qg-5BkISPgy5qSr0f1OJ8w_1782212086
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 936C81805A0E; Tue, 23 Jun 2026 10:54:45 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.48.202])
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id CA4283000B50; Tue, 23 Jun 2026 10:54:42 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, stephen@networkplumber.org,
+ bruce.richardson@intel.com, fengchengwen@huawei.com, longli@microsoft.com,
+ hemant.agrawal@nxp.com
+Subject: [PATCH v3 00/11] Bus cleanup infrastructure and fixes
+Date: Tue, 23 Jun 2026 12:54:27 +0200
+Message-ID: <20260623105439.2144694-1-david.marchand@redhat.com>
+In-Reply-To: <20260611094551.1514962-1-david.marchand@redhat.com>
+References: <20260611094551.1514962-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: g28FSnkLKjRs4kRmz3dd2p4NvFMqSMo8-ABUFwLwTNo_1782212086
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,30 +68,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBUaG9tYXMgTW9uamFsb24gPHRo
-b21hc0Btb25qYWxvbi5uZXQ+DQo+IFNlbnQ6IFR1ZXNkYXkgMjMgSnVuZSAyMDI2IDExOjE5DQo+
-IFRvOiBNYXJhdCBLaGFsaWxpIDxtYXJhdC5raGFsaWxpQGh1YXdlaS5jb20+DQo+IENjOiBLb25z
-dGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPjsgZGV2QGRwZGsu
-b3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgMDUvMjVdIGJwZi92YWxpZGF0ZTogaW50cm9k
-dWNlIGRlYnVnZ2luZyBpbnRlcmZhY2UNCj4gDQo+IDEyLzA2LzIwMjYgMTI6NDcsIE1hcmF0IEto
-YWxpbGk6DQo+ID4gKyNpZm5kZWYgTElTVF9GT1JFQUNIX1NBRkUNCj4gPiArLyogV2UgbmVlZCB0
-aGlzIG1hY3JvIHdoaWNoIG5laXRoZXIgTGludXggbm9yIEVBTCBmb3IgTGludXggaW5jbHVkZSB5
-ZXQuICovDQo+ID4gKyNkZWZpbmUgICAgICAgIExJU1RfRk9SRUFDSF9TQUZFKHZhciwgaGVhZCwg
-ZmllbGQsIHR2YXIpICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgICBmb3IgKCh2
-YXIpID0gTElTVF9GSVJTVCgoaGVhZCkpOyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-XA0KPiA+ICsgICAgICAgICAgICh2YXIpICYmICgodHZhcikgPSBMSVNUX05FWFQoKHZhciksIGZp
-ZWxkKSwgMSk7ICAgICAgICAgICAgIFwNCj4gPiArICAgICAgICAgICAodmFyKSA9ICh0dmFyKSkN
-Cj4gPiArI2Vsc2UNCj4gPiArI2lmZGVmIFJURV9FWEVDX0VOVl9MSU5VWA0KPiA+ICsjZXJyb3Ig
-IkRvbid0IG5lZWQgTElTVF9GT1JFQUNIX1NBRkUgaW4gdGhpcyB2ZXJzaW9uIG9mIERQREsgYW55
-bW9yZSwgcmVtb3ZlIGl0LiINCj4gPiArI2VuZGlmDQo+ID4gKyNlbmRpZg0KPiANCj4gSXQgZmFp
-bHMgb24gQWxwaW5lIExpbnV4Lg0KPiBXaHkgYWRkaW5nIHRoaXMgI2Vycm9yPw0KPiANCg0KVGhp
-cyBpcyBpbnRlcmVzdGluZy4gTXkgbWVudGFsIG1vZGVsIHdhcyB0aGF0IExpbnV4IGlzIG5ldmVy
-IGdvaW5nIHRvIGhhdmUNCkxJU1RfRk9SRUFDSF9TQUZFLCBidXQgRFBESyB3aWxsIGV2ZW50dWFs
-bHkgZ2FpbiBpdHMgb3duIHBvbHlmaWxsLiBJIHdhcw0KYWN0dWFsbHkgZXhwZWN0aW5nIGl0IHRv
-IGhhcHBlbiBiZWZvcmUgbXkgcGF0Y2ggaXMgcHVibGlzaGVkLCBzbyB0aGlzIHdhcyBhDQpyZW1p
-bmRlciB0byByZW1vdmUgbXkgb3duIGRlZmluaXRpb24gc2luY2UgaXQgY2xlYXJseSBiZWxvbmdz
-IHRvIHNvbWUgY29tbW9uDQpsaWJyYXJ5LiBUdXJucyBvdXQgSSB3YXMgd3Jvbmcgb24gYm90aCBh
-Y2NvdW50czogdGhlcmUgYXJlIExpbnV4ZXMgdGhhdCBkZWZpbmUNCkxJU1RfRk9SRUFDSF9TQUZF
-LCBhbmQgSSBtYW5hZ2VkIHRvIHN1Ym1pdCBmYXN0ZXIuIEFwYXJ0IGZyb20gdGhlc2UNCm9yZ2Fu
-aXphdGlvbmFsIGlzc3VlcyB0aGUgd2hvbGUgZWxzZSBicmFuY2ggY2FuIGJlIHNhZmVseSByZW1v
-dmVkLiBEbyB5b3Ugd2FudA0KbWUgdG8gc3VibWl0IGFuIHVwZGF0ZWQgdmVyc2lvbj8NCg==
+This is a followup of the previous bus refactoring.
+See https://inbox.dpdk.org/dev/CAJFAV8zvFpLwz8SY8DUUezyJyM43eRZ17Yj30ex808eHC4ZE=g@mail.gmail.com/.
+
+This series refactors the bus cleanup infrastructure to reduce code
+duplication and fix resource leaks in several bus drivers.
+It should address the leak Thomas pointed at.
+
+The first part of the series (patches 1-6) addresses several bugs and
+inconsistencies:
+- Documentation and log message inconsistencies from earlier bus
+  refactoring
+- Device list management issues in dma/idxd and bus/vdev
+- Resource leaks in PCI and VMBUS bus cleanup (mappings and interrupts)
+- Deferred interrupt allocation to probe time (VMBUS)
+
+The core infrastructure changes (patches 7-8) introduce the generic
+cleanup framework:
+- Refactors unplug operations to be the counterpart of probe_device
+- Implements rte_bus_generic_cleanup() to centralize cleanup logic
+- Adds .free_device operation to struct rte_bus
+
+The final patches (9-10) convert the VMBUS bus to use the generic
+cleanup helper.
+
+After this series, most buses use the generic cleanup helper, eliminating
+duplicated code and ensuring consistent cleanup behavior across the
+codebase.
+
+NXP bus drivers require more (leak) fixes and refactoring and
+are left untouched.
+
+
+-- 
+David Marchand
+
+Changes since v2:
+- moved ifpga interruption allocation,
+
+Changes since v1:
+- dropped all changes on DPAA and FSLMC bus,
+- added one more cleanup on the first patch,
+- changed coding style in rte_vdev_init,
+- implemented explicit .free_device instead of hack for calling free(),
+- reordered interrupt handle allocation in VMBUS bus,
+
+David Marchand (11):
+  bus: fix reference to plug callback
+  dma/idxd: remove next pointer in bus specific device
+  bus/vdev: remove driver setting in probe
+  bus/pci: fix mapping leak in bus cleanup
+  bus/vmbus: fix interrupt leak in cleanup
+  bus/vmbus: allocate interrupt during probing
+  bus/ifpga: allocate interrupt during probing
+  bus: align unplug with device probe
+  bus: implement cleanup in EAL
+  bus/vmbus: store name in bus specific device
+  bus/vmbus: support unplug
+
+ doc/guides/prog_guide/device_hotplug.rst | 20 +++---
+ doc/guides/rel_notes/release_26_07.rst   |  4 ++
+ drivers/bus/auxiliary/auxiliary_common.c | 54 +++------------
+ drivers/bus/cdx/cdx.c                    | 29 ++------
+ drivers/bus/dpaa/dpaa_bus.c              |  4 +-
+ drivers/bus/fslmc/fslmc_bus.c            |  9 +--
+ drivers/bus/ifpga/ifpga_bus.c            | 88 ++++++++----------------
+ drivers/bus/pci/pci_common.c             | 68 +++---------------
+ drivers/bus/platform/platform.c          | 26 ++-----
+ drivers/bus/uacce/uacce.c                | 59 +++-------------
+ drivers/bus/vdev/vdev.c                  | 76 ++++++++------------
+ drivers/bus/vmbus/bus_vmbus_driver.h     |  1 +
+ drivers/bus/vmbus/linux/vmbus_bus.c      | 16 +----
+ drivers/bus/vmbus/vmbus_common.c         | 58 +++++++++-------
+ drivers/dma/idxd/idxd_bus.c              |  1 -
+ lib/eal/common/eal_common_bus.c          | 33 ++++++++-
+ lib/eal/common/eal_common_dev.c          | 10 +--
+ lib/eal/include/bus_driver.h             | 51 +++++++++-----
+ 18 files changed, 234 insertions(+), 373 deletions(-)
+
+-- 
+2.54.0
+
