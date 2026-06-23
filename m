@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EECCD4F26
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 23:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248B3CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 23:26:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30E1F402F0;
-	Wed, 24 Jun 2026 01:25:36 +0200 (CEST)
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
- by mails.dpdk.org (Postfix) with ESMTP id 0AACE4065B
- for <dev@dpdk.org>; Wed, 24 Jun 2026 01:25:31 +0200 (CEST)
-Received: by mail-dl1-f52.google.com with SMTP id
- a92af1059eb24-13809223fd4so471798c88.1
- for <dev@dpdk.org>; Tue, 23 Jun 2026 16:25:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 82FD040689;
+	Wed, 24 Jun 2026 01:25:37 +0200 (CEST)
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
+ [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 2F35A40663
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 01:25:32 +0200 (CEST)
+Received: by mail-dy1-f182.google.com with SMTP id
+ 5a478bee46e88-30bf132969bso533227eec.0
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 16:25:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782257130;
- x=1782861930; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782257131;
+ x=1782861931; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=O4TFPXuIcAq+K8UjaPMwJCwoN99kYXQSkJ/PrA8jo0Y=;
- b=zu9cD7artqjRfnbrQMtppQ0ZP95a4dfRUGH9MG4ahWMyiq2Bzw3B+7qX4gnmq+byD7
- z7aiLhwcuQVLnIOHh0IRO5gKLXNem5Fyni523cYPmwLRhcPvZyZtHRI6kR0Q31yvv0Cg
- Jm8qTBscd5eb5/+b+trJKoSuox9m0MS7oB8q5a38FzkuCpKPN7dazZD75cfi3cz6V7lD
- MWdQEj4SIUiZFaSTnTbuGAP2viv6DGyVma1vUnKa6em84H6NgKyRmyXSY1pL0dQFM9rj
- rPdSN0tG2vrlGFkwDy3gB06R0AoyXlWdLEoiiqLRWXGwc1E6r6Cf4yTQBsVyw87z7aja
- dEKg==
+ bh=p+5khoGkRjFUAF4oGoTstncIY5BnGcLJYvfQnndowQw=;
+ b=zXpVZszXMeMGL4AVF96yihvR3QaS5VYeG3yKBcY/Lvarv1BnUgJxRVkuBuuBABunuH
+ nuEFp5GwW2l8dwMxdo00HUGREu+iDRh4/qteTy9vUCw3kl10wQIlrCafgRUI6rSYPxA3
+ 023xRFuFQyDFfk/uFHPdLUNNSTPKN2argBIy1LBCRr29V4Yeoo45Z9wzhhteaoKij1Zs
+ SkeYSyxkQfganErB1Rx4p82JrLQ/O66i7N1I1pV3ptvEo97e8CJwUd+Ox9zjPrr4KRVC
+ jRzvlGthwRRZgDfQKIvE+35IrGp84FIbaVI+4ZFQsHdCJze/LyMF92mnHrTN8ZWKj6Uk
+ JMfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782257130; x=1782861930;
+ d=1e100.net; s=20251104; t=1782257131; x=1782861931;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=O4TFPXuIcAq+K8UjaPMwJCwoN99kYXQSkJ/PrA8jo0Y=;
- b=ix5dqsRIf6d0XQUcL9a/G500kcgvULXrvGdLIUzFceMlyvIgk8eTDH1gcMl7EYCQo2
- mI//CmYOyQq3zMqup57ch0ajiarw+0jpthP3TpvdoxR7aSebfD7A7X3lQNIW3XusUDT/
- uWFbtj/M/iYsDSDC+PYKYjWGt9evFMp+v2Z98My5daiGhzbGxQMGAmf0rSrA5Bg+ggQG
- NnHjAwBJV2kUr1s6LMIlrMzOl5tOA6RDXEwQHt9edWThL+8O8rM3ZizZ0Z4X0hhgRvKl
- LRrgwQtnC9j1nsrVSyu8A0wgq8vaFBqib/xoosn5Ei94LSyDbjHxIPts+2n+ito6Jsga
- 3WEA==
-X-Gm-Message-State: AOJu0YxnXFB1A3GFgkT52M7MGWMqKTdfvW7/DicJlYofQdxzwPxUNSe8
- CEtcMSwMsJrvggpsEstiaF55kpRQjr++obO5G+6gOEt5AgVZTL5Hz0xC62MiuWlHQThDwwYTVNZ
- zDmoT
-X-Gm-Gg: AfdE7ck4TtxeV7iYYBxyOr1Dq1sTwR/jyEMp9lrN9A5FYLJPQCRDPHcLxxENuHWLEhJ
- F75qO2Fln6ve5dLZ1t/V0KIahJdM/PhbncAQ/T5HhPHLHJpTiRKyItiimxzQG2JwzBzHVf1xXBy
- /zXUzlBWCZbmYg8XuvuA7XxYzjPzbYlgrbZWybPVCIf45/5F6JDzoH0H6RakmlCSUijJ1CTlN+h
- s6EudytQyvEaHr5q0RK+/BB4Bz7WRGP4qZge91JX6qs3mMzwJpzPDVzEhPrwl/fXSAX80RBPkxC
- RvfekRJcMDkbV+pOYvAjLY+ufIqYMi85dWVqlIQKtfhAuNie0SZukCL3gnEZ60RtMixSm4NGwJF
- UVJBY8TjWSjYk7KGDzLlJWKWM0gB107GRYG0hXUJ+PwlT1hB9OHUuLxLY6gBGqRqAaTZc7W1yjr
- B7HnbhqLQ6iwWtUYj/PlRMY7sWQCsx8t19jzrWZc0Y1A643RTHo7Q=
-X-Received: by 2002:a05:7300:7313:b0:30c:544f:a861 with SMTP id
- 5a478bee46e88-30c69345fe4mr1199225eec.20.1782257130084; 
- Tue, 23 Jun 2026 16:25:30 -0700 (PDT)
+ bh=p+5khoGkRjFUAF4oGoTstncIY5BnGcLJYvfQnndowQw=;
+ b=YBmqM4Q8NxV4tBzto3h5UwMLCFALGk/ZOVseszp6GeblfEcI/GA21HIffjZqTfU9ZJ
+ peSVD93hCBN4fdb33vQ+S3S47ju/g4XZA1ylXZYf4E4VqgAfR2/YVLu4pe/E4hhk4Rr9
+ 9hSoGo4gzIz9dLnkaJ6k9+ywR7+CmakwT1d0lHL1S1Ot2qZ23LeYWLh5Clt864q7mhlk
+ 2zPJxz9E7anIWZS1Ic3PjQQI6Hr6aEWVrVMcbNCh4PZMRhvs+LfK7pKfiaXi2Zd6+Uf4
+ PxYld/OuFvEvEOcxEKFFNAnNftqSUnOT9gurcFKSv+7WT8alG/UiH+OzsVsDEs8SprRb
+ PLNg==
+X-Gm-Message-State: AOJu0Ywws46BiZerbDDmD9ivT5RuVARCX4UG6nQ/gk5toeBiWVrchDzt
+ 3GKwhayiUmaVrhzYOQS2tuKcjidBX5C+i3p8x0JRllJj/YfsC/qGq9/KVg+OlQAPoQJesnJapln
+ HYPWy
+X-Gm-Gg: AfdE7cmmPzJUmyTidHNd8GXOFFKfqq2O9UGjRQm/KUNSwz6lXTikSD1+t3rNGPZr8nn
+ Vsm9+G3S6eDtVwJdO0BdMKTtk5qe2UCjmKkx2IWU9hpSSUtp1PDTkTebVvIbma0b0T6ZSsh/lrH
+ kY8Lu3Skv68KF2DGJv0EF4LyKndyHbtajBYUZKl4KXX++IZ0ZmO1KW+K4m6SaeCLkhEQ1+Iuobn
+ rtZKUAVlXiw0mHKh7yaI6EG2bm9aUxK9qvGJJV8XMKp7jnAyeW7hDAprt6LqaOIRSEJlCZcDZvZ
+ e2z/rHndu++tW79F1Te/sA3iKf80cU//LhVf2BS7tqmNLi/wusRQoNvS9v5KHJ8V7p/7JpZRaNn
+ i7q1LSLHNe1eacT/O+aKw/AGZb0WaKBpzNgjUWjWm6d1JbjQugIR16aUX91o+7aYxIFqcdVD4Tz
+ B5q4LcCV61WBAW516If1b+OAr2h3Ig60mD95gPxqjqNFReDtwMX6w=
+X-Received: by 2002:a05:7300:d518:b0:30c:2432:7d7d with SMTP id
+ 5a478bee46e88-30c68de9503mr1227041eec.23.1782257131197; 
+ Tue, 23 Jun 2026 16:25:31 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30c1ba635d8sm21263443eec.10.2026.06.23.16.25.29
+ 5a478bee46e88-30c1ba635d8sm21263443eec.10.2026.06.23.16.25.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 23 Jun 2026 16:25:29 -0700 (PDT)
+ Tue, 23 Jun 2026 16:25:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Christophe Fontaine <cfontain@redhat.com>, stable@dpdk.org,
- Stephen Hemminger <stephen@networkplumber.org>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Marat Khalili <marat.khalili@huawei.com>, Jerin Jacob <jerinj@marvell.com>
-Subject: [PATCH v4 4/7] bpf/arm64: fix offset type to allow a negative jump
-Date: Tue, 23 Jun 2026 16:23:15 -0700
-Message-ID: <20260623232522.257208-5-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Marat Khalili <marat.khalili@huawei.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v4 5/7] test/bpf: check that JIT was generated
+Date: Tue, 23 Jun 2026 16:23:16 -0700
+Message-ID: <20260623232522.257208-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260623232522.257208-1-stephen@networkplumber.org>
 References: <20260608203322.1116296-1-stephen@networkplumber.org>
@@ -85,56 +83,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Christophe Fontaine <cfontain@redhat.com>
+Avoid silently ignoring JIT failures. The test cases should
+all succeed JIT compilation; if not it is a bug in the JIT
+implementation and should be reported.
 
-The DPDK BPF JIT standalone test test_ld_mbuf1 fails on arm64.
-It does:
-	r6 = r1                    // mbuf
-	r0 = *(u8 *)pkt[0]         // BPF_ABS
-	if ((r0 & 0xf0) == 0x40)
-		goto parse
-	r0 = 0
-	exit                       // epilogue E0
-parse:
-	r0 = *(u8 *)pkt[r0 + 3]    // BPF_IND
-	...
-	exit
+Introduce a configuration setting RTE_BPF_JIT_SUPPORTED
+which is cleaner that adding ARCH specific #ifdef.
 
-emit_return_zero_if_src_zero() returns 0 by branching to a function
-epilogue. The target maybe a previous epilogue so branch
-might be backwards; therefore the offset needs to be negative.
-
-The offset was stored in a uint16_t, so a negative value wrapped to a
-large positive number; emit_b() then branched past the end of the
-program and faulted at run time.
-
-Fixes: 111e2a747a4f ("bpf/arm: add basic arithmetic operations")
-Cc: stable@dpdk.org
-
-Signed-off-by: Christophe Fontaine <cfontain@redhat.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- lib/bpf/bpf_jit_arm64.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ app/test/test_bpf.c | 8 ++++++++
+ lib/bpf/meson.build | 2 ++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
-index ba7ae4d680..776d7c8e97 100644
---- a/lib/bpf/bpf_jit_arm64.c
-+++ b/lib/bpf/bpf_jit_arm64.c
-@@ -957,10 +957,12 @@ static void
- emit_return_zero_if_src_zero(struct a64_jit_ctx *ctx, bool is64, uint8_t src)
- {
- 	uint8_t r0 = ebpf_to_a64_reg(ctx, EBPF_REG_0);
--	uint16_t jump_to_epilogue;
-+	int32_t jump_to_epilogue;
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index b54e36910b..9adffcce64 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -3656,6 +3656,14 @@ run_test(const struct bpf_test *tst)
+ 				rv, strerror(rv));
+ 		}
+ 	}
++#ifdef RTE_BPF_JIT_SUPPORTED
++	else {
++		/* a JIT backend exists for this arch, so it must compile */
++		printf("%s@%d: %s: no JIT code generated;\n",
++			__func__, __LINE__, tst->name);
++		ret = -1;
++	}
++#endif
  
- 	emit_cbnz(ctx, is64, src, 3);
- 	emit_mov_imm(ctx, is64, r0, 0);
-+
-+	/* maybe backwards branch to earlier epilogue */
- 	jump_to_epilogue = (ctx->program_start + ctx->program_sz) - ctx->idx;
- 	emit_b(ctx, jump_to_epilogue);
- }
+ 	rte_bpf_destroy(bpf);
+ 	return ret;
+diff --git a/lib/bpf/meson.build b/lib/bpf/meson.build
+index 7e8a300e3f..04ede96689 100644
+--- a/lib/bpf/meson.build
++++ b/lib/bpf/meson.build
+@@ -27,8 +27,10 @@ sources = files(
+ )
+ 
+ if arch_subdir == 'x86' and dpdk_conf.get('RTE_ARCH_64')
++    dpdk_conf.set('RTE_BPF_JIT_SUPPORTED', 1)
+     sources += files('bpf_jit_x86.c')
+ elif dpdk_conf.has('RTE_ARCH_ARM64')
++    dpdk_conf.set('RTE_BPF_JIT_SUPPORTED', 1)
+     sources += files('bpf_jit_arm64.c')
+ endif
+ 
 -- 
 2.53.0
 
