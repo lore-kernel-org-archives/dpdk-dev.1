@@ -2,49 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7793FCDB471
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 16:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E07F6CDB471
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 16:52:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2003B406BC;
-	Tue, 23 Jun 2026 18:52:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id ADE6240A4B;
+	Tue, 23 Jun 2026 18:52:13 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 7F0724066D;
- Tue, 23 Jun 2026 18:52:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 71FE240677;
+ Tue, 23 Jun 2026 18:52:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782233529; x=1813769529;
+ t=1782233531; x=1813769531;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ARFScWF1SpsR5RK5gRktBKOXfw/aZYJlk7N+Rz0uTIs=;
- b=SbQyPUVnmo6BNLis00z57zWjVhRgkkLM8F2d4gKMi3/2JTKf/hZTBdZ0
- bzOjieUCv5NIaJrYALEt0qmVwXD32hNQsI5V8HeelQlNWQdfmV7az59Gx
- PLITKaOPfjQfcnxcbM6jFOdR/0C3bf3PTIgrGkoGHeAEzTqUOtEVfZhug
- f4hiqP27J3/sHl7wxLxdfudJ+JUl1SGN/yfFnjc0C9aSQpwwbK4z+r5BY
- KDqiIAy5GvJaPKOIgIkS9EAZMPtszn67gHoOcfsaCBwJcPEMz69b1VVV/
- 1BJBIdou8V9/uTcBVsEjLTiIITFyi+DtBhjkdaf7cXEoc2vWmJHPwH34w Q==;
-X-CSE-ConnectionGUID: ITkSXiK/Re6yyMojjsrM4A==
-X-CSE-MsgGUID: LjJo4lulTf22jWcqG8bpiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="100534642"
-X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="100534642"
+ bh=18rWuEqVrwewCqZk42347WMp8ZQrw63Ljxm4aresZJE=;
+ b=hRpEM3jrTF2W2Gf/ejP2aUBLoU/QxPYUQw44W6DNVc8HiBNP0HILPEZn
+ Ujyir+XS4zpNQdk8yJoN3AWJbohLH0v4oFZKykYly14xqyxrkXMXIcqsY
+ 6NTViXADR9Vvqca1Kkm2pbvR/22beGCaK6b0Qa9eCEijP9ZCA0MFV5ebg
+ z4H7klZjT7yTsjAZZ2HTIA4obYN+8+ynriqaslyfbc2jM6o+QaS0oYR6b
+ bj5fhmgiAIt/SaMi5vW6AodLLdCCG9oTMi/2I49IN+4cvb/KvXG4NRU5r
+ zOKCvL7IVmkHzmbre4eoLJ1suoiQa5ZrnHlfg4yu+hmVlPpLlzkfOnyCy A==;
+X-CSE-ConnectionGUID: /3s1h961RpiLX+8/sYQIbg==
+X-CSE-MsgGUID: 9Rxh79PgShWDIYMq4yE3Rw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="100534647"
+X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="100534647"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jun 2026 09:52:08 -0700
-X-CSE-ConnectionGUID: yeOWJL2cR0KibebQ9xs3sw==
-X-CSE-MsgGUID: FHvlB8TjT1+IY8rWyGPIKA==
+ 23 Jun 2026 09:52:10 -0700
+X-CSE-ConnectionGUID: 6wm7Df0QT/qWNPF0AkONkA==
+X-CSE-MsgGUID: n06CHvGxT/WhBRaP873jiQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="253928321"
+X-IronPort-AV: E=Sophos;i="6.24,221,1774335600"; d="scan'208";a="253928329"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.224.226])
- by orviesa004.jf.intel.com with ESMTP; 23 Jun 2026 09:52:06 -0700
+ by orviesa004.jf.intel.com with ESMTP; 23 Jun 2026 09:52:08 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Julien Aube <julien_dpdk@jaube.fr>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Harish Patil <harish.patil@cavium.com>
-Subject: [PATCH 07/17] net/bnx2x: replace strncpy with strlcpy
-Date: Tue, 23 Jun 2026 17:51:37 +0100
-Message-ID: <20260623165150.765443-8-bruce.richardson@intel.com>
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>
+Subject: [PATCH 08/17] net/cnxk: replace strncpy with strlcpy
+Date: Tue, 23 Jun 2026 17:51:38 +0100
+Message-ID: <20260623165150.765443-9-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260623165150.765443-1-bruce.richardson@intel.com>
 References: <20260623165150.765443-1-bruce.richardson@intel.com>
@@ -65,41 +66,43 @@ Errors-To: dev-bounces@dpdk.org
 
 Replace strncpy() with safer strlcpy() which always null-terminates.
 
-Fixes: 540a211084a7 ("bnx2x: driver core")
+Fixes: 804c585658ea ("net/cnxk: add representor control plane")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/bnx2x/bnx2x.c      | 2 +-
- drivers/net/bnx2x/bnx2x_vfpf.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/cnxk/cnxk_eswitch.c | 4 ++--
+ drivers/net/cnxk/cnxk_rep_msg.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/bnx2x/bnx2x.c b/drivers/net/bnx2x/bnx2x.c
-index 8790c858d5..1a3956b224 100644
---- a/drivers/net/bnx2x/bnx2x.c
-+++ b/drivers/net/bnx2x/bnx2x.c
-@@ -3596,7 +3596,7 @@ static void bnx2x_drv_info_ether_stat(struct bnx2x_softc *sc)
- {
- 	struct eth_stats_info *ether_stat = &sc->sp->drv_info_to_mcp.ether_stat;
+diff --git a/drivers/net/cnxk/cnxk_eswitch.c b/drivers/net/cnxk/cnxk_eswitch.c
+index e45c7dfd07..50c3e54109 100644
+--- a/drivers/net/cnxk/cnxk_eswitch.c
++++ b/drivers/net/cnxk/cnxk_eswitch.c
+@@ -124,8 +124,8 @@ cnxk_eswitch_dev_remove(struct rte_pci_device *pci_dev)
+ 				}
+ 				sun.sun_family = AF_UNIX;
+ 				sunlen = sizeof(struct sockaddr_un);
+-				strncpy(sun.sun_path, CNXK_ESWITCH_CTRL_MSG_SOCK_PATH,
+-					sizeof(sun.sun_path) - 1);
++				strlcpy(sun.sun_path, CNXK_ESWITCH_CTRL_MSG_SOCK_PATH,
++					sizeof(sun.sun_path));
  
--	strncpy(ether_stat->version, BNX2X_DRIVER_VERSION,
-+	strlcpy(ether_stat->version, BNX2X_DRIVER_VERSION,
- 		ETH_STAT_INFO_VERSION_LEN);
+ 				if (connect(sock_fd, (struct sockaddr *)&sun, sunlen) < 0) {
+ 					plt_err("Failed to connect socket: %s, err %d",
+diff --git a/drivers/net/cnxk/cnxk_rep_msg.c b/drivers/net/cnxk/cnxk_rep_msg.c
+index a222e2b5cd..7b92e7a5f7 100644
+--- a/drivers/net/cnxk/cnxk_rep_msg.c
++++ b/drivers/net/cnxk/cnxk_rep_msg.c
+@@ -138,7 +138,7 @@ open_socket_ctrl_channel(void)
  
- 	sc->sp_objs[0].mac_obj.get_n_elements(sc, &sc->sp_objs[0].mac_obj,
-diff --git a/drivers/net/bnx2x/bnx2x_vfpf.c b/drivers/net/bnx2x/bnx2x_vfpf.c
-index 5411df3a38..23f576877f 100644
---- a/drivers/net/bnx2x/bnx2x_vfpf.c
-+++ b/drivers/net/bnx2x/bnx2x_vfpf.c
-@@ -303,7 +303,7 @@ int bnx2x_vf_get_resources(struct bnx2x_softc *sc, uint8_t tx_count, uint8_t rx_
+ 	memset(&un, 0, sizeof(struct sockaddr_un));
+ 	un.sun_family = AF_UNIX;
+-	strncpy(un.sun_path, CNXK_ESWITCH_CTRL_MSG_SOCK_PATH, sizeof(un.sun_path) - 1);
++	strlcpy(un.sun_path, CNXK_ESWITCH_CTRL_MSG_SOCK_PATH, sizeof(un.sun_path));
  
- 	PMD_DRV_LOG(DEBUG, sc, "status block count = %d, base status block = %x",
- 		sc->igu_sb_cnt, sc->igu_base_sb);
--	strncpy(sc->fw_ver, sc_resp.fw_ver, sizeof(sc->fw_ver));
-+	strlcpy(sc->fw_ver, sc_resp.fw_ver, sizeof(sc->fw_ver));
- 
- 	if (rte_is_valid_assigned_ether_addr(&sc_resp.resc.current_mac_addr))
- 		rte_ether_addr_copy(&sc_resp.resc.current_mac_addr,
+ 	if (bind(sock_fd, (struct sockaddr *)&un, sizeof(un)) < 0) {
+ 		plt_err("Failed to bind %s: %s", un.sun_path, strerror(errno));
 -- 
 2.53.0
 
