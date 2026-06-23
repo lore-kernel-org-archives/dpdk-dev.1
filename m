@@ -2,33 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDECCD4F26
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 06:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A1CCD4F26
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 06:00:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C71240674;
-	Tue, 23 Jun 2026 08:00:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 830BD4067B;
+	Tue, 23 Jun 2026 08:00:19 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id EC07040648
- for <dev@dpdk.org>; Tue, 23 Jun 2026 08:00:11 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 616D740648
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 08:00:12 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CF35F1A03E7;
- Tue, 23 Jun 2026 08:00:11 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B21D1A03C0;
+ Tue, 23 Jun 2026 08:00:12 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 880E91A03C7;
- Tue, 23 Jun 2026 08:00:11 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 050201A0125;
+ Tue, 23 Jun 2026 08:00:12 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 13938180007B;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5D1251800088;
  Tue, 23 Jun 2026 14:00:11 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v3 7/9] net/enetc: add devargs to control VSI-PSI timeout and
- delay
-Date: Tue, 23 Jun 2026 11:30:02 +0530
-Message-Id: <20260623060004.2187716-8-g.singh@nxp.com>
+	Vanshika Shukla <vanshika.shukla@nxp.com>
+Subject: [PATCH v3 8/9] net/enetc: set user configurable priority to TX rings
+Date: Tue, 23 Jun 2026 11:30:03 +0530
+Message-Id: <20260623060004.2187716-9-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260623060004.2187716-1-g.singh@nxp.com>
 References: <20260622113517.1616028-1-g.singh@nxp.com>
@@ -49,271 +48,199 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add two new devargs for ENETC4 VF:
-- enetc4_vsi_timeout: VSI-PSI message wait timeout (iteration count)
-- enetc4_vsi_delay: VSI-PSI message wait delay in microseconds
+From: Vanshika Shukla <vanshika.shukla@nxp.com>
 
-Store the values in struct enetc_eth_hw and use them in
-enetc4_msg_vsi_send() instead of the hardcoded defaults.
-Fall back to ENETC4_DEF_VSI_WAIT_TIMEOUT_UPDATE /
-ENETC4_DEF_VSI_WAIT_DELAY_UPDATE when not set.
+Add devarg 'enetc4_txq_prior' to allow per-queue TX ring priority
+configuration. The value is a '|'-separated list of TBMR priority
+bits, one per TX queue (e.g. 'enetc4_txq_prior=1|2|3').
+The configuration accepts values only up to the maximum supported
+TX queues. Any additional values beyond this supported range
+are discarded.
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Store the parsed priorities in hw->txq_prior and apply them in
+enetc4_tx_queue_setup() when enabling the ring.
+
+Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- doc/guides/nics/enetc4.rst             | 18 +++++++
- doc/guides/rel_notes/release_26_07.rst |  2 +
- drivers/net/enetc/enetc.h              |  2 +
- drivers/net/enetc/enetc4_vf.c          | 68 +++++++++++++++++++-------
- 4 files changed, 73 insertions(+), 17 deletions(-)
+ doc/guides/nics/enetc4.rst             | 12 ++++
+ doc/guides/rel_notes/release_26_07.rst |  1 +
+ drivers/net/enetc/enetc.h              |  1 +
+ drivers/net/enetc/enetc4_ethdev.c      | 81 +++++++++++++++++++++++++-
+ 4 files changed, 94 insertions(+), 1 deletion(-)
 
 diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
-index 7b94941..3c4af22 100644
+index 3c4af22..844b290 100644
 --- a/doc/guides/nics/enetc4.rst
 +++ b/doc/guides/nics/enetc4.rst
-@@ -110,3 +110,21 @@ VF-specific devargs
+@@ -128,3 +128,15 @@ VF-specific devargs
    Usage example::
  
-     dpdk-testpmd -a 0000:00:01.0,enetc4_vsi_disable -- -i
+     dpdk-testpmd -a 0000:00:01.0,enetc4_vsi_delay=10 -- -i
 +
-+``enetc4_vsi_timeout``
-+  Set the VSI-PSI message wait timeout as an iteration count.
-+  Controls how many polling iterations the driver waits for a VSI-PSI
-+  response before timing out.
-+  Defaults to ``ENETC4_DEF_VSI_WAIT_TIMEOUT_UPDATE`` when not set.
++PF/Common devargs
++~~~~~~~~~~~~~~~~~
 +
-+  Usage example::
-+
-+    dpdk-testpmd -a 0000:00:01.0,enetc4_vsi_timeout=200 -- -i
-+
-+``enetc4_vsi_delay``
-+  Set the VSI-PSI message wait delay in microseconds between polling iterations.
-+  Defaults to ``ENETC4_DEF_VSI_WAIT_DELAY_UPDATE`` when not set.
++``enetc4_txq_prior``
++  Set per-queue TX ring priority (TBMR bits).
++  The value is a ``|``-separated list of priority values, one per TX queue.
++  Values beyond the maximum supported TX queue count are discarded.
 +
 +  Usage example::
 +
-+    dpdk-testpmd -a 0000:00:01.0,enetc4_vsi_delay=10 -- -i
++    dpdk-testpmd -a 0000:00:00.0,enetc4_txq_prior=1|2|3 -- -i
 diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 783ad16..192623d 100644
+index 192623d..495eba0 100644
 --- a/doc/guides/rel_notes/release_26_07.rst
 +++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -193,6 +193,8 @@ New Features
-   * Added scatter-gather support for ENETC4 PFs and VFs.
-   * Added devargs option ``enetc4_vsi_disable`` to disable VSI-PSI
+@@ -195,6 +195,7 @@ New Features
      messaging.
-+  * Added devargs options ``enetc4_vsi_timeout`` and ``enetc4_vsi_delay``
-+    for VSI-PSI messaging timeout and delay.
+   * Added devargs options ``enetc4_vsi_timeout`` and ``enetc4_vsi_delay``
+     for VSI-PSI messaging timeout and delay.
++  * Added devargs option ``enetc4_txq_prior`` to set TX queues priorities.
  
  Removed Items
  -------------
 diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index 01da898..80844e9 100644
+index 80844e9..c12597b 100644
 --- a/drivers/net/enetc/enetc.h
 +++ b/drivers/net/enetc/enetc.h
-@@ -112,6 +112,8 @@ struct enetc_eth_hw {
- 	uint32_t num_rss;
- 	uint32_t max_rx_queues;
+@@ -114,6 +114,7 @@ struct enetc_eth_hw {
  	uint32_t max_tx_queues;
-+	uint32_t vsi_timeout; /* VSI-PSI message wait timeout (iterations) */
-+	uint32_t vsi_delay;   /* VSI-PSI message wait delay (us) */
+ 	uint32_t vsi_timeout; /* VSI-PSI message wait timeout (iterations) */
+ 	uint32_t vsi_delay;   /* VSI-PSI message wait delay (us) */
++	uint32_t *txq_prior;  /* per-queue TX priority (TBMR priority bits) */
  };
  
  /*
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 44c0dc0..62206d7 100644
---- a/drivers/net/enetc/enetc4_vf.c
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -10,6 +10,8 @@
+diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
+index ad1ef4d..7e2d665 100644
+--- a/drivers/net/enetc/enetc4_ethdev.c
++++ b/drivers/net/enetc/enetc4_ethdev.c
+@@ -3,6 +3,7 @@
+  */
+ 
+ #include <stdbool.h>
++#include <rte_kvargs.h>
+ #include <rte_random.h>
+ #include <dpaax_iova_table.h>
+ 
+@@ -10,6 +11,67 @@
+ #include "enetc_logs.h"
  #include "enetc.h"
  
- #define ENETC4_VSI_DISABLE		"enetc4_vsi_disable"
-+#define ENETC4_VSI_TIMEOUT		"enetc4_vsi_timeout"
-+#define ENETC4_VSI_DELAY		"enetc4_vsi_delay"
++#define ENETC4_TXQ_PRIORITIES	"enetc4_txq_prior"
++
++static int
++parse_txq_prior(const char *key __rte_unused, const char *value, void *opaque)
++{
++	struct rte_eth_dev *dev = (struct rte_eth_dev *)opaque;
++	struct enetc_eth_hw *hw =
++		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	char *input_str = strdup(value);
++	char *str;
++	uint32_t i = 0;
++
++	if (!input_str)
++		return -ENOMEM;
++
++	hw->txq_prior = calloc(hw->max_tx_queues, sizeof(uint32_t));
++	if (!hw->txq_prior) {
++		free(input_str);
++		return -ENOMEM;
++	}
++
++	str = strtok(input_str, "|");
++	while (str != NULL && i < hw->max_tx_queues) {
++		hw->txq_prior[i++] = (uint32_t)atoi(str);
++		str = strtok(NULL, "|");
++	}
++
++	free(input_str);
++	return 0;
++}
++
++static int
++enetc4_get_devargs(struct rte_eth_dev *dev, const char *key)
++{
++	struct rte_devargs *devargs = dev->device->devargs;
++	struct rte_kvargs *kvlist;
++
++	if (!devargs)
++		return 0;
++
++	kvlist = rte_kvargs_parse(devargs->args, NULL);
++	if (!kvlist)
++		return 0;
++
++	if (!rte_kvargs_count(kvlist, key)) {
++		rte_kvargs_free(kvlist);
++		return 0;
++	}
++
++	if (!strcmp(key, ENETC4_TXQ_PRIORITIES)) {
++		if (rte_kvargs_process(kvlist, key,
++				       parse_txq_prior, (void *)dev) < 0) {
++			rte_kvargs_free(kvlist);
++			return 0;
++		}
++	}
++
++	rte_kvargs_free(kvlist);
++	return 0;
++}
++
+ /* Supported Rx offloads */
+ static uint64_t dev_rx_offloads_sup =
+ 	RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |
+@@ -316,9 +378,14 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
+ 	data->tx_queues[queue_idx] = tx_ring;
+ 	tx_ring->tx_deferred_start = tx_conf->tx_deferred_start;
+ 	if (!tx_conf->tx_deferred_start) {
++		uint32_t tx_en = ENETC_TBMR_EN;
++
++		/* apply TX queue priority if configured */
++		if (priv->hw.txq_prior)
++			tx_en |= priv->hw.txq_prior[tx_ring->index];
+ 		/* enable ring */
+ 		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index,
+-			       ENETC_TBMR, ENETC_TBMR_EN);
++			       ENETC_TBMR, tx_en);
+ 		dev->data->tx_queue_state[tx_ring->index] =
+ 			       RTE_ETH_QUEUE_STATE_STARTED;
+ 	} else {
+@@ -1015,6 +1082,8 @@ enetc4_dev_init(struct rte_eth_dev *eth_dev)
+ 	hw->max_tx_queues = si_cap & ENETC_SICAPR0_BDR_MASK;
+ 	hw->max_rx_queues = (si_cap >> 16) & ENETC_SICAPR0_BDR_MASK;
  
- #define ENETC_CRC_TABLE_SIZE		256
- #define ENETC_POLY			0x1021
-@@ -262,10 +264,13 @@ enetc4_process_psi_msg(struct rte_eth_dev *eth_dev, struct enetc_hw *enetc_hw)
++	enetc4_get_devargs(eth_dev, ENETC4_TXQ_PRIORITIES);
++
+ 	ENETC_PMD_DEBUG("Max RX queues = %d Max TX queues = %d",
+ 			hw->max_rx_queues, hw->max_tx_queues);
+ 	error = enetc4_mac_init(hw, eth_dev);
+@@ -1041,8 +1110,16 @@ enetc4_dev_init(struct rte_eth_dev *eth_dev)
+ static int
+ enetc4_dev_uninit(struct rte_eth_dev *eth_dev)
+ {
++	struct enetc_eth_hw *hw =
++		ENETC_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
++
+ 	PMD_INIT_FUNC_TRACE();
+ 
++	if (hw->txq_prior) {
++		free(hw->txq_prior);
++		hw->txq_prior = NULL;
++	}
++
+ 	return enetc4_dev_close(eth_dev);
  }
  
- static int
--enetc4_msg_vsi_send(struct enetc_hw *enetc_hw, struct enetc_msg_swbd *msg)
-+enetc4_msg_vsi_send(struct enetc_eth_hw *hw, struct enetc_msg_swbd *msg)
- {
--	int timeout = ENETC4_DEF_VSI_WAIT_TIMEOUT_UPDATE;
--	int delay_us = ENETC4_DEF_VSI_WAIT_DELAY_UPDATE;
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	int timeout = hw->vsi_timeout ? (int)hw->vsi_timeout :
-+					ENETC4_DEF_VSI_WAIT_TIMEOUT_UPDATE;
-+	int delay_us = hw->vsi_delay ? (int)hw->vsi_delay :
-+				       ENETC4_DEF_VSI_WAIT_DELAY_UPDATE;
- 	uint8_t class_id = 0;
- 	int err = 0;
- 	int vsimsgsr;
-@@ -382,7 +387,7 @@ enetc4_vf_set_mac_addr(struct rte_eth_dev *dev, struct rte_ether_addr *addr)
- 					ENETC_CMD_ID_SET_PRIMARY_MAC, 0, 0, 0);
- 
- 	/* send the command and wait */
--	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	err = enetc4_msg_vsi_send(hw, msg);
- 	if (err) {
- 		ENETC_PMD_ERR("VSI message send error");
- 		goto end;
-@@ -426,7 +431,6 @@ static int
- enetc4_vf_promisc_send_message(struct rte_eth_dev *dev, bool promisc_en)
- {
- 	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	struct enetc_hw *enetc_hw = &hw->hw;
- 	struct enetc_msg_cmd_set_promisc *cmd;
- 	struct enetc_msg_swbd *msg;
- 	uint32_t msg_size;
-@@ -466,7 +470,7 @@ enetc4_vf_promisc_send_message(struct rte_eth_dev *dev, bool promisc_en)
- 				ENETC_CMD_ID_SET_MAC_PROMISCUOUS, 0, 0, 0);
- 
- 	/* send the command and wait */
--	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	err = enetc4_msg_vsi_send(hw, msg);
- 	if (err) {
- 		ENETC_PMD_ERR("VSI message send error");
- 		goto end;
-@@ -483,7 +487,6 @@ static int
- enetc4_vf_allmulti_send_message(struct rte_eth_dev *dev, bool mc_promisc)
- {
- 	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	struct enetc_hw *enetc_hw = &hw->hw;
- 	struct enetc_msg_cmd_set_promisc *cmd;
- 	struct enetc_msg_swbd *msg;
- 	uint32_t msg_size;
-@@ -524,7 +527,7 @@ enetc4_vf_allmulti_send_message(struct rte_eth_dev *dev, bool mc_promisc)
- 				ENETC_CMD_ID_SET_MAC_PROMISCUOUS, 0, 0, 0);
- 
- 	/* send the command and wait */
--	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	err = enetc4_msg_vsi_send(hw, msg);
- 	if (err) {
- 		ENETC_PMD_ERR("VSI message send error");
- 		goto end;
-@@ -630,7 +633,7 @@ enetc4_vf_get_link_status(struct rte_eth_dev *dev, struct enetc_psi_reply_msg *r
- 			ENETC_CMD_ID_GET_LINK_STATUS, 0, 0, 0);
- 
- 	/* send the command and wait */
--	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	err = enetc4_msg_vsi_send(hw, msg);
- 	if (err) {
- 		ENETC_PMD_ERR("VSI message send error");
- 		goto end;
-@@ -676,7 +679,7 @@ enetc4_vf_get_link_speed(struct rte_eth_dev *dev, struct enetc_psi_reply_msg *re
- 			ENETC_CMD_ID_GET_LINK_SPEED, 0, 0, 0);
- 
- 	/* send the command and wait */
--	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	err = enetc4_msg_vsi_send(hw, msg);
- 	if (err) {
- 		ENETC_PMD_ERR("VSI message send error");
- 		goto end;
-@@ -819,7 +822,6 @@ static int
- enetc4_vf_vlan_promisc(struct rte_eth_dev *dev, bool promisc_en)
- {
- 	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	struct enetc_hw *enetc_hw = &hw->hw;
- 	struct enetc_msg_cmd_set_vlan_promisc *cmd;
- 	struct enetc_msg_swbd *msg;
- 	uint32_t msg_size;
-@@ -858,7 +860,7 @@ enetc4_vf_vlan_promisc(struct rte_eth_dev *dev, bool promisc_en)
- 				ENETC_CMD_ID_SET_VLAN_PROMISCUOUS, 0, 0, 0);
- 
- 	/* send the command and wait */
--	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	err = enetc4_msg_vsi_send(hw, msg);
- 	if (err) {
- 		ENETC_PMD_ERR("VSI message send error");
- 		goto end;
-@@ -921,7 +923,7 @@ enetc4_vf_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *addr,
- 			ENETC_MSG_ADD_EXACT_MAC_ENTRIES, 0, 0, 0);
- 
- 	/* send the command and wait */
--	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	err = enetc4_msg_vsi_send(hw, msg);
- 	if (err) {
- 		ENETC_PMD_ERR("VSI message send error");
- 		goto end;
-@@ -1021,7 +1023,7 @@ static int enetc4_vf_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id,
- 	}
- 
- 	/* send the command and wait */
--	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	err = enetc4_msg_vsi_send(hw, msg);
- 	if (err) {
- 		ENETC_PMD_ERR("VSI message send error");
- 		goto end;
-@@ -1104,7 +1106,6 @@ static int
- enetc4_vf_link_register_notif(struct rte_eth_dev *dev, bool enable)
- {
- 	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	struct enetc_hw *enetc_hw = &hw->hw;
- 	struct enetc_msg_swbd *msg;
- 	struct rte_eth_link link;
- 	uint32_t msg_size;
-@@ -1138,7 +1139,7 @@ enetc4_vf_link_register_notif(struct rte_eth_dev *dev, bool enable)
- 			cmd, 0, 0, 0);
- 
- 	/* send the command and wait */
--	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	err = enetc4_msg_vsi_send(hw, msg);
- 	if (err)
- 		ENETC_PMD_ERR("VSI msg error for link status notification");
- 
-@@ -1322,12 +1323,43 @@ enetc4_vf_dev_init(struct rte_eth_dev *eth_dev)
- 		kvlist = rte_kvargs_parse(eth_dev->device->devargs->args,
- 					  NULL);
- 		if (kvlist) {
-+			const char *val;
-+
- 			if (rte_kvargs_count(kvlist, ENETC4_VSI_DISABLE) != 0) {
- 				ENETC_PMD_NOTICE("VSI messaging disabled by devarg");
- 				eth_dev->dev_ops = &enetc4_vf_ops_no_vsi_m;
- 			} else {
- 				eth_dev->dev_ops = &enetc4_vf_ops;
- 			}
-+
-+			/* parse optional VSI-PSI timeout devarg */
-+			val = rte_kvargs_get(kvlist, ENETC4_VSI_TIMEOUT);
-+			if (val) {
-+				errno = 0;
-+				hw->vsi_timeout = (uint32_t)strtoul(val, NULL, 0);
-+				if (errno != 0 || hw->vsi_timeout == 0) {
-+					ENETC_PMD_ERR("Invalid VSI Timeout value = %u",
-+							hw->vsi_timeout);
-+					rte_kvargs_free(kvlist);
-+					return -1;
-+				}
-+				ENETC_PMD_NOTICE("VSI timeout set to %u", hw->vsi_timeout);
-+			}
-+
-+			/* parse optional VSI-PSI delay devarg */
-+			val = rte_kvargs_get(kvlist, ENETC4_VSI_DELAY);
-+			if (val) {
-+				errno = 0;
-+				hw->vsi_delay = (uint32_t)strtoul(val, NULL, 0);
-+				if (errno != 0 || hw->vsi_delay == 0) {
-+					ENETC_PMD_ERR("Invalid VSI Delay value = %u",
-+							hw->vsi_delay);
-+					rte_kvargs_free(kvlist);
-+					return -1;
-+				}
-+				ENETC_PMD_NOTICE("VSI delay set to %u us", hw->vsi_delay);
-+			}
-+
- 			rte_kvargs_free(kvlist);
- 		} else {
- 			eth_dev->dev_ops = &enetc4_vf_ops;
-@@ -1443,5 +1475,7 @@ RTE_PMD_REGISTER_PCI(net_enetc4_vf, rte_enetc4_vf_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_enetc4_vf, pci_vf_id_enetc4_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* igb_uio | uio_pci_generic");
- RTE_PMD_REGISTER_PARAM_STRING(net_enetc4_vf,
--			      ENETC4_VSI_DISABLE "=<any>");
-+			      ENETC4_VSI_DISABLE "=<any> "
-+			      ENETC4_VSI_TIMEOUT "=<uint> "
-+			      ENETC4_VSI_DELAY "=<uint>");
- RTE_LOG_REGISTER_DEFAULT(enetc4_vf_logtype_pmd, NOTICE);
+@@ -1071,4 +1148,6 @@ static struct rte_pci_driver rte_enetc4_pmd = {
+ RTE_PMD_REGISTER_PCI(net_enetc4, rte_enetc4_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(net_enetc4, pci_id_enetc4_map);
+ RTE_PMD_REGISTER_KMOD_DEP(net_enetc4, "* vfio-pci");
++RTE_PMD_REGISTER_PARAM_STRING(net_enetc4,
++			      ENETC4_TXQ_PRIORITIES "=<string>");
+ RTE_LOG_REGISTER_DEFAULT(enetc4_logtype_pmd, NOTICE);
 -- 
 2.25.1
 
