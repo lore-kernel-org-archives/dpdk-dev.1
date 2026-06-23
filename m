@@ -2,92 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB91CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 09:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66204CDB470
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 09:13:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A8F88402C6;
-	Tue, 23 Jun 2026 11:09:27 +0200 (CEST)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
- [209.85.160.171])
- by mails.dpdk.org (Postfix) with ESMTP id E4C4B40269
- for <dev@dpdk.org>; Tue, 23 Jun 2026 11:09:26 +0200 (CEST)
-Received: by mail-qt1-f171.google.com with SMTP id
- d75a77b69052e-51788280e71so59335961cf.0
- for <dev@dpdk.org>; Tue, 23 Jun 2026 02:09:26 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782205766; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 7F4B9402A2;
+	Tue, 23 Jun 2026 11:13:37 +0200 (CEST)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
+ [209.85.160.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 6F15240269
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 11:13:36 +0200 (CEST)
+Received: by mail-qt1-f178.google.com with SMTP id
+ d75a77b69052e-51a019e9ea9so38105771cf.2
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 02:13:36 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782206016; cv=none;
  d=google.com; s=arc-20240605;
- b=G+VLKNtznpVdyOzyFWgccgOBPBiI5Ift7mJRCxqN0mkySQLz9d27e8jjDnsTgVOgu2
- Ss0YMj2lM4xbTWTwUc4X87QHlXGVPlQi57/95J5+cF0YRjgtkz0MDQrGG0FdV0tMmvS8
- P1s1+g6IU5LF4GWRXI52iZ7BzudnSZLqOLFkujUapzhZs4UsOGDXtZUc/QBMz+zibqH5
- qOTNT51U9R1HZVucC2hmaG/GjU0qQFMgJgq+Mxdee+tyCP+8kzkaV5DQ74aW+LeHS/Gw
- qze6tWgZkyURrlurqnncyuTvKOIpgpT6QztURz6z1Tm/RE7VyIFU5q11t33NxkFNZwA7
- PX2Q==
+ b=BoAsXQZM9/DB6eHbxp+6Xi++3tPA6o02FhAZwEwLsXybRJWSUSbO9/jlerrTaT1ceX
+ E3I4sOmLR816rBZM1Q15/liver94DUYZueyowq7wF484bkSnJ2Y+I+ytY0rGyL9USVVP
+ h1NENgKA7lzne/oH3iUdYLBaQH+PgwIi6Xqm/oHF/O2RZ2+1EC/AxqmyOdVuB9CZPwY4
+ YWNRPZFJU8cFQbcBJ7O2/29Hz4KqfAcp/EUff7/SFWcJ62ceuzLT6XXD22pQt39GoXKc
+ dn9mJlzAyGo5L2syJUU1jB09gQttLm+c498QQndg/ymYZG9UU8zyM4ueZhypS8DbS0Ze
+ WQyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:dkim-signature;
- bh=j6dmOGjta8dGxXHTz1RbChsB6c6i2a1VRShGCsLcrX8=;
- fh=03TrS5i56qbbYElB2Zm6Cfe6pynd/QlURPYVqMq/0zs=;
- b=WpI1z8FhxtKdsI74coxQYZRbGfiEERVL2W3lunESvUKgBQfid/UJbuJK5s00ZZgEYD
- QRiXIUSBWnlcnPF37R/xHZTOqO0xA+hyMKqR6XniRkmYcSMtUcBwQsUcbtBGEWb+X825
- E4xbj0TPNRuZzQ8RnyvV0iNi2xSIDI992dxREUH8/2PFtPKdfNqbenWbWLw42fy0vGMW
- C1fmHTr87kWjZdgq/zA2xDjRFdWM0JoPNTVXMs+ZJMOpraERMDKYHj/Dk+O1hxI5GFpL
- iUZjvpPuLAoPGq+6MT3/HNWVlad8/YHoL3KWw/4q3c6NmLCOnJmVfmXbL0sP8tVYNzem
- 5MWg==; darn=dpdk.org
+ bh=TjK/zpROFrkpwlD5GFKLlcEhLGbaJxEPplxixofje7Q=;
+ fh=UAhbHrKIlRPatncEeKTSPg1x7UbkReo/uRpYkz8//cw=;
+ b=Q1UZHA0CqMHUZhmWHL4YOYvZvqxmAfylNEiqU9SiJeGQIKtBTANP+Elux3vNsctoWU
+ 2VC/ylfZdEcpbzN9tR3jJtFF1PJuENEyNJNbL9bmvQM8VykKOVWzDUSuNWYj0znnCOV0
+ 615P41L/0K/MsywvFbKMEgX9Z3FkM2KCA3ZA8xqXNnBiAkZfzZ5A+69VX63GzZkk35m1
+ b5pY9XQtafAOQHSo82lPxCCsjuevFl70Qk35aOPoPuBdwPU1wC27+khjfaPM8OAasw6T
+ m+266oqOkjtORXRRWZEDKTOtA9yBt4tgOA7E3vriQuzRqyOQo6ApT0xdWKaekjkgYjeA
+ Pueg==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782205766; x=1782810566; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1782206016; x=1782810816; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=j6dmOGjta8dGxXHTz1RbChsB6c6i2a1VRShGCsLcrX8=;
- b=UAT2/uEPVMfg+HYmiyn8dIQ/keJZaSubN9fjol/Wwm60Nt22FkFsXnViN/nrLJjY8n
- quqxeuw3JI27f8fI4S65u897fVCd1wz9GjAfDe7jVDGyNvjjT6rPPsjzgXs/ACQcAHSj
- oPALMqwas7vWMNqnRAIp1hZnOI04iGu/8Pi5Yr0yffQ7kna+fpBoXs+HwfNWNwBH7pQi
- Z7BSumLjhuFUqMcyNppW51//E5kxi4GYvQ1+g4lRFR/QwqmCqzq85FzH7JDJeTqMy6PD
- fwjFtzaUdluMFhYydMYLR+mJJ1jn60pNOj8CENyykF/cjGlh9onZKQT4pVX3YSm5l8ON
- 8+bg==
+ bh=TjK/zpROFrkpwlD5GFKLlcEhLGbaJxEPplxixofje7Q=;
+ b=XVoZ3/l3+UkHVKtbRNFpq9JpJrTSnOouLHS7NKt+dODzOM9sNZwVerH7baQSkUbLyK
+ lLHkgozBAxFhaK8EmIlvEen3JaYeCljMfOAv3qJad+nPRnv89SavvKJBVlFld2KePx6z
+ rY8y41VLzUrAhyRsfWflV/Gg0/fMPmLjDI7E7J5UoZfqukadHdOz+gBJmVxM1yATRwYw
+ R0lQMLBz2V6+eHcIN/GTggrkjGvlIp/e9o6MU3uXmBI5htJhIAL58FaGxpSGopKB3fSw
+ xGYnfBBacrzK++0khhuD8rJBO0yCe2MtdJNAjGEZzedIcdobYyMSKUBuCjyP6cVKS6Um
+ Pe6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782205766; x=1782810566;
+ d=1e100.net; s=20251104; t=1782206016; x=1782810816;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=j6dmOGjta8dGxXHTz1RbChsB6c6i2a1VRShGCsLcrX8=;
- b=qDlZXP2LbUDozc8BpeZ3Yj1t3/sn8Yk6c/diqj+CULtF9IQkk39RgSI6QTwd64Ba6j
- WnzIC6drSVmNHnDh+U0pv9gRUiUPsg0Mbs5QUfQ7Kk/2wV7ok9xKXzVE1NBP8OPwerAB
- IeXkdD97wT8S3hbg/EX7WoHlBhRt2VPlqXs6WJAanvi1EzdddOqXSxrUSu37ViSRpIZd
- W5JEHfyz0dnOVeRtWn/9tsq6jE1PUlz7oUyhLInP5YBHayB9Eix8wO9o1OzmVXvRZjAT
- elqaimZSQOkZPchFLAddsSiqJffY+xu9n4UfVPFhm7EGHEYy3NL5vDm6GSwzyGN3IFnh
- kClA==
+ bh=TjK/zpROFrkpwlD5GFKLlcEhLGbaJxEPplxixofje7Q=;
+ b=a+wZRY/y3zLRqZITcTkFgDaaFO+0EmMo2zj3WSICq0W55PYWPyIouxX3TAUDc6FSc0
+ iuVRagNf8zNGhAM6YbzV52VruhxPAOl0198G59YUkmf1j/Ux0M+S4szzTB4hKIFi1fc8
+ e+hBvzyQiv9ych1/KcRirMUOMprhyEq6LHiSfy3RelpgTiuySc0CTBpo999Xv0F4lOci
+ +ev9eRruhe+4wzDclllr3FKmesEZO24SKsF1VkTFLhjTFH5Sj9SJMVKOuxcPtEVWjIIY
+ Et6pJOHst7GlnEH43eh9qQ9/lwLXcGysycsH+6tUYQb37NkPDvzFKxwmev8ni5QB0Xru
+ SPMg==
 X-Forwarded-Encrypted: i=1;
- AFNElJ+2YNwsT5EPwjZ8p1kdjXEuvfdPyFrK/dASEIS2dhwRKyMOXMbUx9KZ7jyWZehCeJYn680=@dpdk.org
-X-Gm-Message-State: AOJu0YxRz/890iUkY0O+wNeErP7xRzSsaIIXHy8/cUTpl3ibJMiRKm7j
- g8/F+yApjFcbBSrfsiqqy87mTzH/pliZFz2cGjhtMqvqhIY8lNnbh4KvHSMrWQfeOhIMISMmfwI
- wZkS73JS1HIuPnlkXcmInoGzZpax0osg=
-X-Gm-Gg: AfdE7clHqX/g2lewYdIT3KeRh/JHMBVAy8fR14tw5O6Kmg+7PMeXuVXaCEnSGU02aCi
- dhaCCKjY6zJHDJn5CVlhexPG7t+MGs+SFOIYykMVOh2mKiDqSY/rwkcYjJ2hgC2ZH4JwnqqE4FI
- 3D6HBjc6uUW7OAY7rNcaQI6YRFjx/XKKHWIuO3cGyCpyltiyY7bR5m9hC6Nl6+7WwhIfgAyBWcE
- dqhBq6zKkxEb8FTB0XmOrW7cw9dMhPYk26xCGFKiQeFbrSmqq/9/tdCAw2xcvWH/izw
-X-Received: by 2002:ac8:6906:0:b0:516:e974:6f72 with SMTP id
- d75a77b69052e-51a06af44aemr224373321cf.50.1782205765952; Tue, 23 Jun 2026
- 02:09:25 -0700 (PDT)
+ AFNElJ9USn/9K3v6DFK0D63WU1x0h0Wo9S/yNOYbrgYulVFwr9+9iIX7CaUPnzby+5LD/UFPMao=@dpdk.org
+X-Gm-Message-State: AOJu0YwREqfG12aEs04AghDWTrfvdKx8j606+EMLks3Qj1mrZGZDGa7+
+ kamTgXBSEbLEQpxOYyWWYysExovlCloDuHuLfaUDYS8e7qbJMAYQzD2Nq4oJJ9hzsMbQEuQPbmq
+ 5JMFtyV/XME/wxOQf3FLdnr7eNwXq6Yg=
+X-Gm-Gg: AfdE7clUfcDw6p4fXO4JY7XVK0qqiJEM96xPORltrD6IqsMoAEGiOfS6nVbHkEPI5Zk
+ QJmHekEbplj2Duc2ezv7Sx0j7aZwIVKa3rZViHMVm2Fx0c//4HUVHcryOW6tD4YnUzjsuFYAyoj
+ G4pcfiGdiDZsAXaeTx7HDOTq7wxljfMoBOOmDgtUNRfCc+DU6eBIwttsqqx0hUnL+T1ib9rfreS
+ +ud2pB4XwvKfPSmUTDBRBUOUf0PLqmEC9ZqZ4wLbDe8vMmWAQ8cwjeS/ds62T0bPnDq
+X-Received: by 2002:a05:622a:291:b0:517:5e32:f3ad with SMTP id
+ d75a77b69052e-51a06937e84mr203396451cf.26.1782206015602; Tue, 23 Jun 2026
+ 02:13:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260619202047.2809165-1-mb@smartsharesystems.com>
- <20260621184140.2878132-1-mb@smartsharesystems.com>
- <CALBAE1OCbZ9GB1oGYgR5hRtzjRmev2ZFOaSNndf02AZptihOcw@mail.gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65937@smartserver.smartshare.dk>
- <CALBAE1OZDXfH1FoVLJ=vXVqr=9hYPgqeCzN8h278wN8FbU+XaQ@mail.gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65938@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65938@smartserver.smartshare.dk>
+References: <20260617054943.287815-1-rkudurumalla@marvell.com>
+ <20260623054424.1943810-1-rkudurumalla@marvell.com>
+In-Reply-To: <20260623054424.1943810-1-rkudurumalla@marvell.com>
 From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Tue, 23 Jun 2026 14:38:59 +0530
-X-Gm-Features: AVVi8CevFtpU7KzxJtVvFT5yFAqn8MXx9CH-d1nyMvC_LEgBFM5vLpQa0G5gLys
-Message-ID: <CALBAE1N1czL9k0WwcNnC60F3m0XTnr4V_JpDcNr6Y3Qgc-co_A@mail.gmail.com>
-Subject: Re: [PATCH v5] graph: add optional profiling stats
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: thomas@monjalon.net, david.marchand@redhat.com, dev@dpdk.org, 
- Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
- Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan <yanzhirun_163@163.com>
+Date: Tue, 23 Jun 2026 14:43:07 +0530
+X-Gm-Features: AVVi8Ce3f8mCGGircen_NifiD2EWGmg5xCuMuGFPNdRegOal-bjF2R-ZaOrrcnA
+Message-ID: <CALBAE1PCDvCJC88_f+w+TqRgSWKu1XB1QToKoVk+Sj_cTyEFnw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] common/cnxk: add bulk Rx queue enable/disable
+To: rkudurumalla <rkudurumalla@marvell.com>
+Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>, 
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, 
+ Harman Kalra <hkalra@marvell.com>, dev@dpdk.org, jerinj@marvell.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -103,162 +100,228 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jun 23, 2026 at 12:40=E2=80=AFPM Morten Br=C3=B8rup <mb@smartshares=
-ystems.com> wrote:
+On Tue, Jun 23, 2026 at 11:21=E2=80=AFAM rkudurumalla <rkudurumalla@marvell=
+.com> wrote:
 >
-> +Thomas Monjalon & +David Marchand, as intended by Jerin
+> From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 >
-> > From: Jerin Jacob [mailto:jerinjacobk@gmail.com]
-> > Sent: Tuesday, 23 June 2026 08.57
-> >
-> > On Tue, Jun 23, 2026 at 12:15=E2=80=AFPM Morten Br=C3=B8rup
-> > <mb@smartsharesystems.com> wrote:
-> > >
-> > > > From: Jerin Jacob [mailto:jerinjacobk@gmail.com]
-> > > > Sent: Tuesday, 23 June 2026 07.13
-> > > >
-> > > > On Mon, Jun 22, 2026 at 12:11=E2=80=AFAM Morten Br=C3=B8rup
-> > > > <mb@smartsharesystems.com> wrote:
-> > > > >
-> > > > > Added graph node profiling stats, build time configurable by
-> > enabling
-> > > > > RTE_GRAPH_PROFILE in rte_config.h.
-> > > > >
-> > > > > Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> > > >
-> > > > Please update app/test/test_graph.c to validate this featue.
-> > >
-> > > Ack.
-> > >
-> > > > > @@ -92,7 +92,62 @@ rte_graph_obj_dump(FILE *f, struct rte_graph
-> > *g,
-> > > > bool all)
-> > > > >                         fprintf(f, "       total_sched_fail=3D%"
-> > PRId64
-> > > > "\n",
-> > > > >                                 n->dispatch.total_sched_fail);
-> > > > >                 }
-> > > > > -               fprintf(f, "       total_calls=3D%" PRId64 "\n", =
-n-
-> > > > >total_calls);
-> > > > > +               fprintf(f, "       total_calls=3D%" PRIu64 "\n", =
-n-
-> > > > >total_calls);
-> > > > > +               if (rte_graph_has_stats_feature()) {
-> > > > > +                       fprintf(f, "       total_cycles=3D%" PRIu=
-64
-> > ",
-> > > > avg cycles/call=3D%.1f\n",
-> > > > > +                                       n->total_cycles,
-> > > > > +                                       n->total_calls =3D=3D 0 ?
-> > > > (double)0 :
-> > > > > +                                       (double)n->total_cycles /
-> > > > (double)n->total_calls);
-> > > > > +               }
-> > > > > +#ifdef RTE_GRAPH_PROFILE
-> > > >
-> > > >
-> > > > Please introduce rte_graph_has_profile_featue() similar to
-> > > > rte_graph_has_stats_feature() to reduce if def clutter as possible.
-> > >
-> > > Disagree, see below.
-> > >
-> > > >
-> > > > > +               uint64_t calls =3D n->usage_stats[0].calls;
-> > > > > +               fprintf(f, "       objs[0]\n");
-> > > > > +               fprintf(f, "         calls=3D%" PRIu64 ", cycles=
-=3D%"
-> > > > PRIu64 ", avg cycles/call=3D%.1f\n",
-> > > > > +                               calls,
-> > > >
-> > > > >
-> > > > > diff --git a/lib/graph/rte_graph_worker_common.h
-> > > > b/lib/graph/rte_graph_worker_common.h
-> > > > > index 4ab53a533e..0d8039575d 100644
-> > > > > --- a/lib/graph/rte_graph_worker_common.h
-> > > > > +++ b/lib/graph/rte_graph_worker_common.h
-> > > > > @@ -144,12 +144,26 @@ struct __rte_cache_aligned rte_node {
-> > > > >                         rte_node_process_t process; /**< Process
-> > > > function. */
-> > > > >                         uint64_t process_u64;
-> > > > >                 };
-> > > > > +               /** Fast path area cache line 3. */
-> > > > > +#ifdef RTE_GRAPH_PROFILE
-> > > > > +               struct {
-> > > > > +                       uint64_t calls;     /**< Calls processing
-> > > > resp. 0 or 1 objects. */
-> > > > > +                       uint64_t cycles;    /**< Cycles spent
-> > > > processing resp. 0 or 1 objects. */
-> > > > > +               } usage_stats[2];       /**< Usage when this node
-> > > > processed 0 or 1 objects. */
-> > > > > +               uint64_t full_burst_calls;  /**< Calls processing
-> > a
-> > > > full burst of objects. */
-> > > > > +               uint64_t full_burst_cycles; /**< Cycles spent
-> > > > processing a full burst of objects. */
-> > > > > +               uint64_t half_burst_calls;  /**< Calls processing
-> > a
-> > > > half burst of objects. */
-> > > > > +               uint64_t half_burst_cycles; /**< Cycles spent
-> > > > processing a half burst of objects. */
-> > > > > +               /** Fast path area cache line 4. */
-> > > > > +#endif
-> > > >
-> > > > Is it an ABI breakage?
-> > >
-> > > No. The modifications are enclosed in #ifdef, and disabled by
-> > default.
-> > > It is generally required that when rte_config.h options are modified,
-> > both the application and DPDK itself are built together; and then
-> > API/ABI breakage becomes irrelevant.
-> >
-> >
-> > Yes. I don't know the current policy for this. Adding @Thomas Monjalon
-> > @David Marchand
-> >
-> >
-> > >
-> > > IMO, we should keep our structures lean in release builds. This means
-> > that fields used for detailed profiling, advanced debugging, cookie
-> > validation, etc. should use the #ifdef pattern rather than the
-> > rte_lib_has_some_feature() pattern; especially if they affect the size
-> > of a structure. And when those fields are not present, any code
-> > accessing them cannot use the rte_lib_has_some_feature() pattern.
-> > > The mbuf and mempool libraries also use #ifdef pattern for similar
-> > features.
-> >
-> > Yes for the structure inclusion we can use #ifdef. But inside the
-> > function we can use rte_lib_has_some_feature() scheme. Reasons are :
-> > 1)It will remove the ifdef cultter
-> > 2)Detect the compilation issue even if the feature is disabled. This
-> > will make sure reduce the build options to enable build sanity
-> > 3) Compiler is smart enough to understand to disable the block if the
-> > feature is not enabled.(Just like #ifdef)
+> Add roc_nix_rq_multi_ena_dis() to batch RQ enable/disable mailbox
+> AQ operations and process them in a single mbox_process() call.
 >
-> I agree with these advantages.
-> But a function using rte_lib_has_some_feature() cannot access non-existin=
-g fields:
-> https://godbolt.org/z/s3nKx45Ms
-
-
-I missed that.
-
-You can add these new struct updates in the slowpath area of rte_node.
-Above offsetof(struct rte_node, ctx)
-
-Use RTE_NEXT_ABI, Get around off, ABI breakge issue.
-
-
+> Skip mbox_process() when no messages were queued (e.g. all qid are
+> UINT16_MAX) by checking num_msgs and msg_size via mbox_nonempty_nolock().
 >
-> So sometimes #ifdef is required in the code too.
+> Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+
+
+Always add change diff. Also Cc: the commenter who commented on v1.
+Cc: @Stephen Hemminger
+
+Applied to dpdk-next-net-mrvl/for-main. Thanks
+
+
+> ---
+>  drivers/common/cnxk/roc_mbox_priv.h           |   6 +-
+>  drivers/common/cnxk/roc_nix.h                 |   2 +
+>  drivers/common/cnxk/roc_nix_queue.c           | 102 ++++++++++++++++++
+>  .../common/cnxk/roc_platform_base_symbols.c   |   1 +
+>  4 files changed, 107 insertions(+), 4 deletions(-)
 >
-> >
-> >
-> >
-> > >
-> > > >
-> > > > >                 alignas(RTE_CACHE_LINE_MIN_SIZE) struct rte_node
-> > > > *nodes[]; /**< Next nodes. */
-> > > > >         };
-> > > > >  };
-> > > > >
+> diff --git a/drivers/common/cnxk/roc_mbox_priv.h b/drivers/common/cnxk/ro=
+c_mbox_priv.h
+> index 354c8fa52a..e9da1959b6 100644
+> --- a/drivers/common/cnxk/roc_mbox_priv.h
+> +++ b/drivers/common/cnxk/roc_mbox_priv.h
+> @@ -113,14 +113,12 @@ mbox_rsp_init(uint16_t mbox_id, void *msghdr)
+>  }
+>
+>  static inline bool
+> -mbox_nonempty(struct mbox *mbox, int devid)
+> +mbox_nonempty_nolock(struct mbox *mbox, int devid)
+>  {
+>         struct mbox_dev *mdev =3D &mbox->dev[devid];
+>         bool ret;
+>
+> -       plt_spinlock_lock(&mdev->mbox_lock);
+> -       ret =3D mdev->num_msgs !=3D 0;
+> -       plt_spinlock_unlock(&mdev->mbox_lock);
+> +       ret =3D mdev->num_msgs !=3D 0 && mdev->msg_size !=3D 0;
+>
+>         return ret;
+>  }
+> diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.=
+h
+> index 8ba8b3e0b6..f495e2a5ad 100644
+> --- a/drivers/common/cnxk/roc_nix.h
+> +++ b/drivers/common/cnxk/roc_nix.h
+> @@ -1094,6 +1094,8 @@ int __roc_api roc_nix_rq_modify(struct roc_nix *roc=
+_nix, struct roc_nix_rq *rq,
+>                                 bool ena);
+>  int __roc_api roc_nix_rq_cman_config(struct roc_nix *roc_nix, struct roc=
+_nix_rq *rq);
+>  int __roc_api roc_nix_rq_ena_dis(struct roc_nix_rq *rq, bool enable);
+> +int __roc_api roc_nix_rq_multi_ena_dis(struct roc_nix *roc_nix, struct r=
+oc_nix_rq *rqs,
+> +                                      int nb_rx_queues, bool enable);
+>  int __roc_api roc_nix_rq_is_sso_enable(struct roc_nix *roc_nix, uint32_t=
+ qid);
+>  int __roc_api roc_nix_rq_fini(struct roc_nix_rq *rq);
+>  int __roc_api roc_nix_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq=
+ *cq);
+> diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/ro=
+c_nix_queue.c
+> index ef9b651022..075c9c1591 100644
+> --- a/drivers/common/cnxk/roc_nix_queue.c
+> +++ b/drivers/common/cnxk/roc_nix_queue.c
+> @@ -10,6 +10,49 @@
+>  /* Default SQB slack per SQ */
+>  #define ROC_NIX_SQB_SLACK_DFLT 24
+>
+> +typedef void *(*nix_aq_enq_alloc_t)(struct mbox *mbox);
+> +
+> +static inline void
+> +nix_aq_enq_write_rq_ena(void *msg, uint16_t qid, bool enable)
+> +{
+> +       struct nix_aq_enq_req *aq =3D msg;
+> +
+> +       aq->qidx =3D qid;
+> +       aq->ctype =3D NIX_AQ_CTYPE_RQ;
+> +       aq->op =3D NIX_AQ_INSTOP_WRITE;
+> +       aq->rq.ena =3D enable;
+> +       aq->rq_mask.ena =3D ~(aq->rq_mask.ena);
+> +}
+> +
+> +static inline int
+> +nix_rq_bulk_ena_dis_fill(struct mbox *mbox, struct roc_nix_rq *rqs, int =
+nb_rx_queues,
+> +                        bool enable, nix_aq_enq_alloc_t alloc)
+> +{
+> +       int i;
+> +
+> +       for (i =3D 0; i < nb_rx_queues; i++) {
+> +               void *aq;
+> +               int rc;
+> +
+> +               if (rqs[i].qid =3D=3D UINT16_MAX)
+> +                       continue;
+> +
+> +               aq =3D alloc(mbox);
+> +               if (!aq) {
+> +                       rc =3D mbox_process(mbox);
+> +                       if (rc)
+> +                               return rc;
+> +                       aq =3D alloc(mbox);
+> +                       if (!aq)
+> +                               return -ENOSPC;
+> +               }
+> +
+> +               nix_aq_enq_write_rq_ena(aq, rqs[i].qid, enable);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static inline uint32_t
+>  nix_qsize_to_val(enum nix_q_size qsize)
+>  {
+> @@ -47,6 +90,28 @@ nix_rq_vwqe_flush(struct roc_nix_rq *rq, uint16_t vwqe=
+_interval)
+>         }
+>  }
+>
+> +static int
+> +nix_rq_bulk_ena_dis(struct nix *nix, struct roc_nix_rq *rqs, int nb_rx_q=
+ueues, bool enable)
+> +{
+> +       struct mbox *mbox =3D mbox_get((&nix->dev)->mbox);
+> +       nix_aq_enq_alloc_t alloc;
+> +       int rc;
+> +
+> +       if (roc_model_is_cn9k())
+> +               alloc =3D (nix_aq_enq_alloc_t)mbox_alloc_msg_nix_aq_enq;
+> +       else if (roc_model_is_cn10k())
+> +               alloc =3D (nix_aq_enq_alloc_t)mbox_alloc_msg_nix_cn10k_aq=
+_enq;
+> +       else /* CN20K */
+> +               alloc =3D (nix_aq_enq_alloc_t)mbox_alloc_msg_nix_cn20k_aq=
+_enq;
+> +
+> +       rc =3D nix_rq_bulk_ena_dis_fill(mbox, rqs, nb_rx_queues, enable, =
+alloc);
+> +       if (!rc && mbox_nonempty_nolock(mbox, 0))
+> +               rc =3D mbox_process(mbox);
+> +
+> +       mbox_put(mbox);
+> +       return rc;
+> +}
+> +
+>  int
+>  nix_rq_ena_dis(struct dev *dev, struct roc_nix_rq *rq, bool enable)
+>  {
+> @@ -126,6 +191,43 @@ roc_nix_sq_ena_dis(struct roc_nix_sq *sq, bool enabl=
+e)
+>         return rc;
+>  }
+>
+> +int
+> +roc_nix_rq_multi_ena_dis(struct roc_nix *roc_nix, struct roc_nix_rq *rqs=
+, int nb_rx_queues,
+> +                        bool enable)
+> +{
+> +       struct nix *nix =3D roc_nix_to_nix_priv(roc_nix);
+> +       struct roc_nix_rq *rq;
+> +       int rc, i;
+> +
+> +       rc =3D nix_rq_bulk_ena_dis(nix, rqs, nb_rx_queues, enable);
+> +       if (rc) {
+> +               plt_err("Failed to %s Rx queues rc=3D%d pf=3D%d vf=3D%d n=
+b_rx_queues=3D%d",
+> +                       enable ? "enable" : "disable", rc, nix->dev.pf, n=
+ix->dev.vf,
+> +                       nb_rx_queues);
+> +               return rc;
+> +       }
+> +
+> +       for (i =3D 0; i < nb_rx_queues; i++) {
+> +               rq =3D &rqs[i];
+> +
+> +               if (rq->qid =3D=3D UINT16_MAX)
+> +                       continue;
+> +
+> +               nix_rq_vwqe_flush(rq, nix->vwqe_interval);
+> +
+> +               /* Check for meta aura if RQ is enabled */
+> +               if (enable && nix->need_meta_aura) {
+> +                       rc =3D roc_nix_inl_meta_aura_check(rq->roc_nix, r=
+q);
+> +                       if (rc) {
+> +                               plt_err("Failed meta aura check for rq=3D=
+%u rc=3D%d pf=3D%d vf=3D%d",
+> +                                       rq->qid, rc, nix->dev.pf, nix->de=
+v.vf);
+> +                               return rc;
+> +                       }
+> +               }
+> +       }
+> +       return 0;
+> +}
+> +
+>  int
+>  roc_nix_rq_ena_dis(struct roc_nix_rq *rq, bool enable)
+>  {
+> diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/co=
+mmon/cnxk/roc_platform_base_symbols.c
+> index ed34d4b05b..08b2f4c6f8 100644
+> --- a/drivers/common/cnxk/roc_platform_base_symbols.c
+> +++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+> @@ -353,6 +353,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_ena_dis)
+>  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_is_sso_enable)
+>  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_init)
+>  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_modify)
+> +RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_multi_ena_dis)
+>  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_cman_config)
+>  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_fini)
+>  RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_cq_init)
+> --
+> 2.25.1
+>
