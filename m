@@ -2,79 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF01CDB470
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 10:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C20BCDB46F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 10:30:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E24DB402A2;
-	Tue, 23 Jun 2026 12:18:42 +0200 (CEST)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id 670AF40269
- for <dev@dpdk.org>; Tue, 23 Jun 2026 12:18:42 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id C02ECEC0209;
- Tue, 23 Jun 2026 06:18:41 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Tue, 23 Jun 2026 06:18:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1782209921;
- x=1782296321; bh=hMZWXaz6W640sXKwfsRr/ZQRxRNDzlw6hlltGjuanJ0=; b=
- r5FNIGW7Z8A7BhY+FXQNfn6lULSAbgtkYA9TRK8pmmpJjopXF0DT2LHFUWHEkZSs
- ls7k/ieIMi5bYBeIPScWfMSRDdbefT4Jjwva0exp+Z1dZbX+B16/G8/4m18gpeN9
- GGubx1sUvL6aTE7YMJzxEdeUNuipcKgzxm3oXFRAs23Muceh6mKaly7m9AYdiIKj
- CvaL4BJecLu5odUZmuE8OnPJ3b3ULiGDAqppZ0vQ0ueTMMXT5ukVDiiYAUB5VK6L
- Uh+QmZ2MnzcJ4asGmJ3Cx4HZ/ZOy0g4T4aR8XIuq+eL+0r6hOecedERB1B0ukAVg
- 3/9G3UKbKuuLk0X5QRrHlg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1782209921; x=
- 1782296321; bh=hMZWXaz6W640sXKwfsRr/ZQRxRNDzlw6hlltGjuanJ0=; b=h
- ByPKr01vyH8H9hyL9UcQelovrGPwvXR65nsBg/fmjNfwoZ3BOHsj3KyHd5+h+ZH1
- SpDxJc2PsKr/+yIa2YjDhR9T8f08zAztUW8RpPbJISOl4MNm5rZLXX/fFY64PTYk
- ARP5WPBsGCBkbhcIY5u8zCZQMdaKIaidveghEQV55HCItnNH+IJOClfEJSRbK8ZZ
- Cim1w2NeV0VTuoIJ0AWPKb1kOgtKWowfopnyA8oTtMrlbiGonFoklgabn7UvTr8V
- v7QIIf7/VT4wnGKx4Dhbqi6ZYzy6o8tL4f1sc5wmzR6N3dygM3MDZLaNhp9Uvv1v
- O8jNllfNc0mxw2RTVN7qw==
-X-ME-Sender: <xms:gV06atevBDl0ydViyhcg_xFCRU8dUnFfIx1rLUBatY9clwFtzuxR_Q>
- <xme:gV06avjzxaaKcBWw54KmjgrqoR7Z84JujVzolqX9GOglTr9HFINihDx-Ilo5ROgHQ
- flRNwaOnt2IhYilUYMSlNAdFvvpG_7XwJAaEvoC9x2E1Jtpcl8d2A>
-X-ME-Received: <xmr:gV06alpjrq9icqcurYhHcKGeAcTbl-tecB-TrB0wfy88mPaTsJ-w1v2F_KfaGPpc3uOOqB5oS4fKgQAbKvuimuJidw>
-X-ME-Proxy-Cause: dmFkZTGKAJK9lu141NUmLj49iZ/qPkr/rni8qNRDi2DwZcDSNcQTRY8G0hPuQvUDwNEfNM
- BsQ2RB3ypLKpJ9aUbRJDHeUqcGmfgyLMDKAm8bNsLctvrY1k46nSefE4Xf8xrU5PjaiJb/
- zOjkpt4wDDy9b2tW3592Iz/ZoDQ0ms6CQBiEYvCVVuoRDHMd/zF3kl7fshO0Hoa/a+WsLH
- nIwZCJWTWEig0Wvhdztopu/AeloC+GZTS/kEXE4svaNz92vz48+OFx3y8txWIwz26hpW+6
- AWwzUweqC85u6QYIHv/KhLgMh2nclpXoQWK2x7p3aHxClQRaletXhRM/JYL9OvgGTsceJs
- ul7GwmwkzeHlUysWevevcBbrQnoNW1v5/UXoiXMuKM65bPO60K51WOelcZgI8jUdVw7ybn
- Cfgksb/Asdl6T7f350nchByZnqu/cIev13D5x2sOb66pwq+rRCzR25RepzQM0wRmtUSTC3
- Lk3gAglibWnHLQYEH9x2adEZf+0rzXtHcmBD2lH06MDpgBE4rkeNpHC5z9XwOcxgw91Q5e
- voVGUhXL5i/EoNVB2icWkkLDFJxuz68Bersbyy/b4xjivWAO5Yh7+pvmFDUXtuSLlN2w3C
- cVFvZknKjMvgvZLblI0SMeBmPY2fev2yxG7BNkQL2cTnOisy4Mk7H+tYYq4g
-X-ME-Proxy: <xmx:gV06avEgTc-Jvs3CNA1nt9M5kmDF4okKX-68JEetvEqKgeAu5-yDBQ>
- <xmx:gV06avmUGSDB68vHtHTg2S6lz92tWyELQnUugbW2JsAEwTg_iy2lUQ>
- <xmx:gV06aqmnEtONnrBMP_m32U2efRZZiQzd0GAkeBicX3yOLG8go8PejA>
- <xmx:gV06aou0wCn2kaaNEcuVhcuH1QQbKuZ6ugX_-Vv0yH6IwRz0L1x_HQ>
- <xmx:gV06ansow54ZK3pIJbcbUJKxxQuM38M3bEvNeU0XVmhRSazIEszzMQdz>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 23 Jun 2026 06:18:40 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, dev@dpdk.org
-Subject: Re: [PATCH v3 05/25] bpf/validate: introduce debugging interface
-Date: Tue, 23 Jun 2026 12:18:38 +0200
-Message-ID: <3BbIFKkFSyOqZrm3k570og@monjalon.net>
-In-Reply-To: <20260612104743.6465-6-marat.khalili@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 427FC402A2;
+	Tue, 23 Jun 2026 12:30:03 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 30C4D40269
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 12:30:01 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gl1X43bT2zJ46d6;
+ Tue, 23 Jun 2026 18:29:24 +0800 (CST)
+Received: from frapema500002.china.huawei.com (unknown [7.182.19.148])
+ by mail.maildlp.com (Postfix) with ESMTPS id 50B4340584;
+ Tue, 23 Jun 2026 18:29:59 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema500002.china.huawei.com (7.182.19.148) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 23 Jun 2026 12:29:59 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Tue, 23 Jun 2026 12:29:59 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Thomas Monjalon <thomas@monjalon.net>
+CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: RE: [PATCH v3 05/25] bpf/validate: introduce debugging interface
+Thread-Topic: [PATCH v3 05/25] bpf/validate: introduce debugging interface
+Thread-Index: AQHc+lkWXE6IMRotik+EWsdt3Z9C1LZL3RYAgAAiGhA=
+Date: Tue, 23 Jun 2026 10:29:58 +0000
+Message-ID: <84ce7f7669404239864c61819267d9b6@huawei.com>
 References: <20260519093131.52022-1-marat.khalili@huawei.com>
  <20260612104743.6465-1-marat.khalili@huawei.com>
  <20260612104743.6465-6-marat.khalili@huawei.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+ <3BbIFKkFSyOqZrm3k570og@monjalon.net>
+In-Reply-To: <3BbIFKkFSyOqZrm3k570og@monjalon.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,20 +58,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-12/06/2026 12:47, Marat Khalili:
-> +#ifndef LIST_FOREACH_SAFE
-> +/* We need this macro which neither Linux nor EAL for Linux include yet. */
-> +#define        LIST_FOREACH_SAFE(var, head, field, tvar)                       \
-> +       for ((var) = LIST_FIRST((head));                                \
-> +           (var) && ((tvar) = LIST_NEXT((var), field), 1);             \
-> +           (var) = (tvar))
-> +#else
-> +#ifdef RTE_EXEC_ENV_LINUX
-> +#error "Don't need LIST_FOREACH_SAFE in this version of DPDK anymore, remove it."
-> +#endif
-> +#endif
-
-It fails on Alpine Linux.
-Why adding this #error?
-
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBUaG9tYXMgTW9uamFsb24gPHRo
+b21hc0Btb25qYWxvbi5uZXQ+DQo+IFNlbnQ6IFR1ZXNkYXkgMjMgSnVuZSAyMDI2IDExOjE5DQo+
+IFRvOiBNYXJhdCBLaGFsaWxpIDxtYXJhdC5raGFsaWxpQGh1YXdlaS5jb20+DQo+IENjOiBLb25z
+dGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPjsgZGV2QGRwZGsu
+b3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgMDUvMjVdIGJwZi92YWxpZGF0ZTogaW50cm9k
+dWNlIGRlYnVnZ2luZyBpbnRlcmZhY2UNCj4gDQo+IDEyLzA2LzIwMjYgMTI6NDcsIE1hcmF0IEto
+YWxpbGk6DQo+ID4gKyNpZm5kZWYgTElTVF9GT1JFQUNIX1NBRkUNCj4gPiArLyogV2UgbmVlZCB0
+aGlzIG1hY3JvIHdoaWNoIG5laXRoZXIgTGludXggbm9yIEVBTCBmb3IgTGludXggaW5jbHVkZSB5
+ZXQuICovDQo+ID4gKyNkZWZpbmUgICAgICAgIExJU1RfRk9SRUFDSF9TQUZFKHZhciwgaGVhZCwg
+ZmllbGQsIHR2YXIpICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgICBmb3IgKCh2
+YXIpID0gTElTVF9GSVJTVCgoaGVhZCkpOyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+XA0KPiA+ICsgICAgICAgICAgICh2YXIpICYmICgodHZhcikgPSBMSVNUX05FWFQoKHZhciksIGZp
+ZWxkKSwgMSk7ICAgICAgICAgICAgIFwNCj4gPiArICAgICAgICAgICAodmFyKSA9ICh0dmFyKSkN
+Cj4gPiArI2Vsc2UNCj4gPiArI2lmZGVmIFJURV9FWEVDX0VOVl9MSU5VWA0KPiA+ICsjZXJyb3Ig
+IkRvbid0IG5lZWQgTElTVF9GT1JFQUNIX1NBRkUgaW4gdGhpcyB2ZXJzaW9uIG9mIERQREsgYW55
+bW9yZSwgcmVtb3ZlIGl0LiINCj4gPiArI2VuZGlmDQo+ID4gKyNlbmRpZg0KPiANCj4gSXQgZmFp
+bHMgb24gQWxwaW5lIExpbnV4Lg0KPiBXaHkgYWRkaW5nIHRoaXMgI2Vycm9yPw0KPiANCg0KVGhp
+cyBpcyBpbnRlcmVzdGluZy4gTXkgbWVudGFsIG1vZGVsIHdhcyB0aGF0IExpbnV4IGlzIG5ldmVy
+IGdvaW5nIHRvIGhhdmUNCkxJU1RfRk9SRUFDSF9TQUZFLCBidXQgRFBESyB3aWxsIGV2ZW50dWFs
+bHkgZ2FpbiBpdHMgb3duIHBvbHlmaWxsLiBJIHdhcw0KYWN0dWFsbHkgZXhwZWN0aW5nIGl0IHRv
+IGhhcHBlbiBiZWZvcmUgbXkgcGF0Y2ggaXMgcHVibGlzaGVkLCBzbyB0aGlzIHdhcyBhDQpyZW1p
+bmRlciB0byByZW1vdmUgbXkgb3duIGRlZmluaXRpb24gc2luY2UgaXQgY2xlYXJseSBiZWxvbmdz
+IHRvIHNvbWUgY29tbW9uDQpsaWJyYXJ5LiBUdXJucyBvdXQgSSB3YXMgd3Jvbmcgb24gYm90aCBh
+Y2NvdW50czogdGhlcmUgYXJlIExpbnV4ZXMgdGhhdCBkZWZpbmUNCkxJU1RfRk9SRUFDSF9TQUZF
+LCBhbmQgSSBtYW5hZ2VkIHRvIHN1Ym1pdCBmYXN0ZXIuIEFwYXJ0IGZyb20gdGhlc2UNCm9yZ2Fu
+aXphdGlvbmFsIGlzc3VlcyB0aGUgd2hvbGUgZWxzZSBicmFuY2ggY2FuIGJlIHNhZmVseSByZW1v
+dmVkLiBEbyB5b3Ugd2FudA0KbWUgdG8gc3VibWl0IGFuIHVwZGF0ZWQgdmVyc2lvbj8NCg==
