@@ -2,72 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63787CDB46F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 13:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0555FCDB46F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Jun 2026 13:57:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6935E4065C;
-	Tue, 23 Jun 2026 15:53:45 +0200 (CEST)
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
- [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id AFF4C402D5
- for <dev@dpdk.org>; Tue, 23 Jun 2026 15:53:44 +0200 (CEST)
-Received: by mail-dy1-f177.google.com with SMTP id
- 5a478bee46e88-30bbe98c3f0so10942145eec.0
- for <dev@dpdk.org>; Tue, 23 Jun 2026 06:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782222824;
- x=1782827624; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=mqJ/yPjUjwYhLBLkjBKxyByAbo0Ojy+7WTfihAzO5d0=;
- b=mLFYFdufRLJvYS0XZ+MldRXXvOiwCaF5iXbvlkr7adM8DsQeJawYlvKU0CXMjW56ym
- F+AA/N5P8Lhi5RyJi5kApLh31oOZ0UUD7F/7wJWA6FL0hpYz7zOFbm5jLGy1/S1SNSrd
- GI9IReT0ITEK6HaWZ3UoC6X4zKsjUCcZoavIvUF+eUBctpcLW/DdDctdIDnqL/7biL3r
- PxeXPE7tdlZRqlO4g2MAiQ2qkLHD+6uPPr074m/nDew594mgXV3+1MADwEGo1mgcPRsv
- lHfo8rBuYOX+ELMBTIjpjgb3A+Ooby30xBQpKCysQVd/9DMkOjSUD/hsqc2NeGbZUkuH
- w/8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782222824; x=1782827624;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=mqJ/yPjUjwYhLBLkjBKxyByAbo0Ojy+7WTfihAzO5d0=;
- b=Nnva/7teH2tiPad518RKhu8Bj9cg85VtC33tHDI83OSZQMebw4o7vmi9M5DDqMj+Gt
- zzOZs+OR/kpAgPFldulVeVPRGrlBjF4FSgWm6sd0OHWoyVA5Nhspv6HdFK0OIOcQTBO/
- fnK6opRoxXV3HugaR1RL/lYe3h8AEmNCFmlBHu76G0chNEvfSZQTMhmU8V+aYZleDsgq
- D2NJXr8NRrTgk+CMBZAA4d9TMkw7PWQZVJO+siI3VVarLRnODzzeqlaDyIm2tsYsk8Ft
- s32jilZOub6/xrKiXMPC3qMLUanENU8yYa+2cfuVJEhduku5ea2okKuO0Ibbn9MlyUW3
- 2VLg==
-X-Gm-Message-State: AOJu0YxRav9hpFDz8HCW2lmmUJ7AOTvnUry6odpB0/mCVoXTaxK8oysd
- uedTIDOoysoKm1ylqi4/f/Q5KibJDmYxJUiAdlC4ynklzS15hUP6+shVFWduriZeVGU=
-X-Gm-Gg: AfdE7clIVpfibZBA/iJF5zLM6NJh6obKoGAnMXdwHAcV43mQYbVWWlEoz3gZo6tmwYN
- UC8GBepp3Tn1XnbLXYw0YTXSLlDEmzuFkMtyQlOy0SDwK1CebRoEhN0rNOEG8bLj3Je+jJ20xJN
- cxU1aevtv/7ZquBIvtdQpj2B8u0kJbbteHKSKJQ733NB6TCmHRi9Khxq88Uq00R693h2R36LEXG
- 6GZ43hl+HF468zyF0P34JCi0XKJM9LB+wXcyi+GU0z7u32Ze4Jl2xeI2wtUcs0EgGH4hLSjB2fi
- 7eWnHMWIlbH47BL/wVIm7g3u9ekKvLkbGaDcHfcOrGCULyNPx94+TCW4z1KOGLmOgO+JJK+nhOF
- uRZqhoEyobXWzBEhi/gWs6v8rkLcs+XcsQWhojY8k3327LZ+C1+7jL5AwZO23gY6Wmo1VwY0rqf
- KyAvZSQB+ws+nQ5ZQ8hf75LZaYk8CVgC7rBmkcW9hTTvnYzdoOEDpclLhg4FIExNHI
-X-Received: by 2002:a05:7300:cb82:b0:30a:e531:3141 with SMTP id
- 5a478bee46e88-30c58b5e612mr2523139eec.17.1782222823544; 
- Tue, 23 Jun 2026 06:53:43 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30c5af35cccsm4195493eec.30.2026.06.23.06.53.42
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 23 Jun 2026 06:53:43 -0700 (PDT)
-Date: Tue, 23 Jun 2026 06:53:40 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dawid Wesierski <dawid.wesierski@intel.com>
-Cc: dev@dpdk.org, mb@smartsharesystems.com, Marek Kasiewicz
- <marek.kasiewicz@intel.com>
-Subject: Re: [PATCH v4] pcapng: add user-supplied timestamp support
-Message-ID: <20260623065340.15e4f1a5@phoenix.local>
-In-Reply-To: <20260623141302.486601-1-dawid.wesierski@intel.com>
-References: <20260618143819.310046-1-dawid.wesierski@intel.com>
- <20260623141302.486601-1-dawid.wesierski@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0EFB840648;
+	Tue, 23 Jun 2026 15:57:58 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id C1D72402D5
+ for <dev@dpdk.org>; Tue, 23 Jun 2026 15:57:56 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gl67z3bs4zJ46ZM;
+ Tue, 23 Jun 2026 21:57:19 +0800 (CST)
+Received: from frapema100002.china.huawei.com (unknown [7.182.19.63])
+ by mail.maildlp.com (Postfix) with ESMTPS id 8A4BC40590;
+ Tue, 23 Jun 2026 21:57:54 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema100002.china.huawei.com (7.182.19.63) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 23 Jun 2026 15:57:36 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Tue, 23 Jun 2026 15:57:36 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: RE: [PATCH v3 6/6] test/bpf: check that bpf_convert can be JIT'd
+Thread-Topic: [PATCH v3 6/6] test/bpf: check that bpf_convert can be JIT'd
+Thread-Index: AQHdAZqcViEEbvJHlUCL5465AG3cnbZMI4AA
+Date: Tue, 23 Jun 2026 13:57:35 +0000
+Message-ID: <c510bf24a3cd492693fc54f0b558656f@huawei.com>
+References: <20260608203322.1116296-1-stephen@networkplumber.org>
+ <20260621162524.82690-1-stephen@networkplumber.org>
+ <20260621162524.82690-7-stephen@networkplumber.org>
+In-Reply-To: <20260621162524.82690-7-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,38 +57,240 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 23 Jun 2026 10:10:11 -0400
-Dawid Wesierski <dawid.wesierski@intel.com> wrote:
+Thank you for working on this, please see some comments inline.
 
-> +/*
-> + * Compatibility wrapper: captures current TSC (converted at write time).
-> + * Equivalent to rte_pcapng_copy_ts(..., 0).
-> + */
-> +RTE_EXPORT_SYMBOL(rte_pcapng_copy)
-> +struct rte_mbuf *
-> +rte_pcapng_copy(uint16_t port_id, uint32_t queue,
-> +		const struct rte_mbuf *md,
-> +		struct rte_mempool *mp,
-> +		uint32_t length,
-> +		enum rte_pcapng_direction direction,
-> +		const char *comment)
-> +{
-> +	return rte_pcapng_copy_ts(port_id, queue, md, mp, length, direction,
-> +				  comment, 0);
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Sunday 21 June 2026 17:24
+> To: dev@dpdk.org
+> Cc: Stephen Hemminger <stephen@networkplumber.org>; Konstantin Ananyev <k=
+onstantin.ananyev@huawei.com>;
+> Marat Khalili <marat.khalili@huawei.com>
+> Subject: [PATCH v3 6/6] test/bpf: check that bpf_convert can be JIT'd
+>=20
+> Add followup in bpf conversion tests to make sure resulting
+> code was also run through JIT and that JIT produces
+> same results as non-JIT.
+>=20
+> Reduce log output to make it easier to match which
+> expression might be causing issues.
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  app/test/test_bpf.c | 94 +++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 79 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+> index 3a88434c3c..973dd7d659 100644
+> --- a/app/test/test_bpf.c
+> +++ b/app/test/test_bpf.c
+> @@ -8,6 +8,7 @@
+>  #include <inttypes.h>
+>  #include <unistd.h>
+>=20
+> +#include <rte_byteorder.h>
+>  #include <rte_memory.h>
+>  #include <rte_debug.h>
+>  #include <rte_hexdump.h>
+> @@ -32,6 +33,7 @@ test_bpf(void)
+>  #include <rte_bpf.h>
+>  #include <rte_ether.h>
+>  #include <rte_ip.h>
+> +#include <rte_udp.h>
+>=20
+>=20
+>  /* Tests of most simple BPF programs (no instructions, one instruction e=
+tc.) */
+> @@ -4529,6 +4531,7 @@ test_bpf_match(pcap_t *pcap, const char *str,
+>  	int ret =3D -1;
+>  	uint64_t rc;
+>=20
+> +	printf("%s '%s'\n", __func__, str);
+>  	if (pcap_compile(pcap, &fcode, str, 1, PCAP_NETMASK_UNKNOWN)) {
+>  		printf("%s@%d: pcap_compile(\"%s\") failed: %s;\n",
+>  		       __func__, __LINE__,  str, pcap_geterr(pcap));
+> @@ -4550,6 +4553,24 @@ test_bpf_match(pcap_t *pcap, const char *str,
+>  	}
+>=20
+>  	rc =3D rte_bpf_exec(bpf, mb);
+> +#if defined(RTE_ARCH_X86_64) || defined(RTE_ARCH_ARM64)
+
+We are going to have a few of these lines, I think something like
+RTE_BPF_JIT_SUPPORTED is warranted.
+
+> +	{
+> +		struct rte_bpf_jit jit;
+> +
+> +		rte_bpf_get_jit(bpf, &jit);
+
+Out of abundance of caution I would also prefill jit with zeroes and check =
+the
+return code here.
+
+> +		if (jit.func =3D=3D NULL) {
+> +			printf("%s@%d: no JIT generated\n", __func__, __LINE__);
+> +			goto error;
+> +		}
+> +
+> +		fflush(stdout);
+> +		uint64_t rc_jit =3D jit.func(mb);
+> +		if (rc_jit !=3D rc) {
+> +			printf("%s@%d: JIT return code does not match\n", __func__, __LINE__)=
+;
+> +			goto error;
+> +		}
+> +	}
+> +#endif
+>  	/* The return code from bpf capture filter is non-zero if matched */
+>  	ret =3D (rc =3D=3D 0);
+>  error:
+> @@ -4560,23 +4581,16 @@ test_bpf_match(pcap_t *pcap, const char *str,
+>  	return ret;
+>  }
+>=20
+> -/* Basic sanity test can we match a IP packet */
+> -static int
+> -test_bpf_filter_sanity(pcap_t *pcap)
+> +/* Setup mbuf for filter test */
+> +static void
+> +dummy_ip_prep(void *data, uint16_t plen)
+>  {
+> -	const uint32_t plen =3D 100;
+> -	struct rte_mbuf mb, *m;
+> -	uint8_t tbuf[RTE_MBUF_DEFAULT_BUF_SIZE];
+>  	struct {
+>  		struct rte_ether_hdr eth_hdr;
+>  		struct rte_ipv4_hdr ip_hdr;
+> -	} *hdr;
+> +		struct rte_udp_hdr udp_hdr;
+> +	} *hdr =3D data;
+>=20
+> -	memset(&mb, 0, sizeof(mb));
+> -	dummy_mbuf_prep(&mb, tbuf, sizeof(tbuf), plen);
+> -	m =3D &mb;
+> -
+> -	hdr =3D rte_pktmbuf_mtod(m, typeof(hdr));
+>  	hdr->eth_hdr =3D (struct rte_ether_hdr) {
+>  		.dst_addr.addr_bytes =3D { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
+>  		.ether_type =3D rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4),
+> @@ -4589,13 +4603,32 @@ test_bpf_filter_sanity(pcap_t *pcap)
+>  		.src_addr =3D rte_cpu_to_be_32(RTE_IPV4_LOOPBACK),
+>  		.dst_addr =3D rte_cpu_to_be_32(RTE_IPV4_BROADCAST),
+>  	};
+> +	hdr->udp_hdr =3D (struct rte_udp_hdr) {
+> +		.src_port =3D rte_rand_max(UINT16_MAX),
+> +		.dst_port =3D rte_cpu_to_be_16(9),	/* discard port */
+> +		.dgram_len =3D rte_cpu_to_be_16(plen - sizeof(struct rte_ipv4_hdr)),
+> +		.dgram_cksum =3D 0,
+> +	};
 > +}
 > +
-> +/*
-> + * Convert a TSC value to nanoseconds since the Unix epoch using the
-> + * calibrated clock of the capture file. Uses the same pre-computed
-> + * reciprocal multiplier as the internal write path (no integer division).
-> + */
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pcapng_tsc_to_ns, 26.07)
-> +uint64_t
-> +rte_pcapng_tsc_to_ns(const rte_pcapng_t *self, uint64_t tsc)
+> +
+> +/* Basic sanity test can we match a IP packet */
+> +static int
+> +test_bpf_filter_sanity(pcap_t *pcap)
 > +{
-> +	return tsc_to_ns_epoch(&self->clock, tsc);
-> +}
+> +	struct rte_mbuf mb =3D { 0 };
+> +	uint8_t tbuf[RTE_MBUF_DEFAULT_BUF_SIZE];
+> +	const uint32_t plen =3D 100;
+> +
+> +	dummy_mbuf_prep(&mb, tbuf, sizeof(tbuf), plen);
+> +	dummy_ip_prep(rte_pktmbuf_mtod(&mb, void *), plen);
+>=20
+> -	if (test_bpf_match(pcap, "ip", m) !=3D 0) {
+> +	if (test_bpf_match(pcap, "ip", &mb) !=3D 0) {
+>  		printf("%s@%d: filter \"ip\" doesn't match test data\n",
+>  		       __func__, __LINE__);
+>  		return -1;
+>  	}
+> -	if (test_bpf_match(pcap, "not ip", m) =3D=3D 0) {
+> +	if (test_bpf_match(pcap, "not ip", &mb) =3D=3D 0) {
 
-Why not just use function versioning on rte_pcapng_copy() to add new parameter?
+Not a new bug, but this condition should be for non-positive, not just zero=
+.
 
-Also should add a coverage test app/test/test_pcapng.c
+>  		printf("%s@%d: filter \"not ip\" does match test data\n",
+>  		       __func__, __LINE__);
+>  		return -1;
+> @@ -4648,10 +4681,15 @@ static const char * const sample_filters[] =3D {
+>  static int
+>  test_bpf_filter(pcap_t *pcap, const char *s)
+>  {
+> +	struct rte_mbuf mb =3D { 0 };
+> +	uint8_t tbuf[RTE_MBUF_DEFAULT_BUF_SIZE];
+> +	const uint32_t plen =3D 100;
+>  	struct bpf_program fcode;
+>  	struct rte_bpf_prm *prm =3D NULL;
+>  	struct rte_bpf *bpf =3D NULL;
+> +	int ret =3D -1;
+>=20
+> +	printf("%s '%s'\n", __func__, s);
+>  	if (pcap_compile(pcap, &fcode, s, 1, PCAP_NETMASK_UNKNOWN)) {
+>  		printf("%s@%d: pcap_compile('%s') failed: %s;\n",
+>  		       __func__, __LINE__, s, pcap_geterr(pcap));
+> @@ -4665,8 +4703,10 @@ test_bpf_filter(pcap_t *pcap, const char *s)
+>  		goto error;
+>  	}
+>=20
+> +#ifdef DEBUG
+>  	printf("bpf convert for \"%s\" produced:\n", s);
+>  	rte_bpf_dump(stdout, prm->ins, prm->nb_ins);
+> +#endif
+>=20
+>  	bpf =3D rte_bpf_load(prm);
+>  	if (bpf =3D=3D NULL) {
+> @@ -4675,6 +4715,30 @@ test_bpf_filter(pcap_t *pcap, const char *s)
+>  		goto error;
+>  	}
+>=20
+> +	dummy_mbuf_prep(&mb, tbuf, sizeof(tbuf), plen);
+> +	dummy_ip_prep(rte_pktmbuf_mtod(&mb, void *), plen);
+> +
+> +	uint64_t rc =3D rte_bpf_exec(bpf, &mb);
+
+Would it be hard to check the result against a known correct answer?
+
+> +#if defined(RTE_ARCH_X86_64) || defined(RTE_ARCH_ARM64)
+> +	{
+> +		struct rte_bpf_jit jit;
+> +
+> +		rte_bpf_get_jit(bpf, &jit);
+
+Same suggestion regarding zeroing jit and check return code here.
+
+> +		if (jit.func =3D=3D NULL) {
+> +			printf("%s@%d: no JIT generated\n", __func__, __LINE__);
+> +			goto error;
+> +		}
+> +
+> +		fflush(stdout);
+> +		uint64_t rc_jit =3D jit.func(&mb);
+> +		if (rc_jit !=3D rc) {
+> +			printf("%s@%d: JIT return code does not match\n", __func__, __LINE__)=
+;
+> +			goto error;
+> +		}
+> +	}
+> +#endif
+> +	ret =3D 0;
+> +
+
+Are `test_bpf_filter` and `test_bpf_filter_sanity` substantially different =
+any
+more, or could they just be merged?
+
+>  error:
+>  	if (bpf)
+>  		rte_bpf_destroy(bpf);
+> @@ -4685,7 +4749,7 @@ test_bpf_filter(pcap_t *pcap, const char *s)
+>=20
+>  	rte_free(prm);
+>  	pcap_freecode(&fcode);
+> -	return (bpf =3D=3D NULL) ? -1 : 0;
+> +	return ret;
+>  }
+>=20
+>  static int
+> --
+> 2.53.0
+
