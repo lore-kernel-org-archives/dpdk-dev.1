@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE21CDB479
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 22:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D20CDB479
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 23:07:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BECAC40279;
-	Thu, 25 Jun 2026 00:17:14 +0200 (CEST)
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
- [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id 07EFD4025E
- for <dev@dpdk.org>; Thu, 25 Jun 2026 00:17:13 +0200 (CEST)
-Received: by mail-dy1-f171.google.com with SMTP id
- 5a478bee46e88-30b6dad2382so2806695eec.0
- for <dev@dpdk.org>; Wed, 24 Jun 2026 15:17:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782339432;
- x=1782944232; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=jFJL6iD33aqDwl/f3G2GjFyVRXAVXKODdQDERUyhBxM=;
- b=KPuvwRWoaIuKppImw+19UT8zV55PrTY3bKongCcflofHQl0Gc1zmLQkF+rQGR8y7a4
- bJ+6WMzZqJAdAypoOEwB3sGg+cbNcr5J7D/t3NkNDZCJvTZwJZOyz69kbvrCx/PRIOVy
- CAi9amHzzcYKnQ6EVaMxSa7G+G1UfQr61Nw0IoD/iWGqTcomLZbNDmpsv0nTgnnJ7Bdi
- SOmP5of4E+aKcoU0NRjFxLMP87DrzHQPBJsrYqrosADyn6+4GS0y+4ZrCExFjklefV5R
- roAd621etGC9fX3Lfowuj0JzhDyL+cbgklRHkqQ22/8u2SmhQ+IwDlbWe+PH9190SycJ
- EfNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782339432; x=1782944232;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=jFJL6iD33aqDwl/f3G2GjFyVRXAVXKODdQDERUyhBxM=;
- b=MzXzvU3VXEnuk5P74/ln6kJmt/WYuAGWtOVsvL6a6AuGunqhrgKOWIlkYq5uigFjpa
- bE+GqWIgYeEGoZ6/VJHI17gOuy6YHaNbuW6GwWIfujruJSk5yYj/FonUxVDh0dI8bpE2
- 1sVLjtScBd+8ipTslY436umj5JSVBWkqJrSrIR7YwE6w4V030UPqpLka5/bo24ecOdaz
- Ihx8UY03M3lblXlK+IqCpie7Z2YYySsCRSXoBxUu9ZlmISyRcieFmAQWSaRNjH2RsEQd
- cqrR7xxGrkOyrzr3wbVLWm2zW8myArlCK+tCvkDDTZ17yli2EHpQjw9dokb6U1wpKOnx
- /+hA==
-X-Gm-Message-State: AOJu0YyY9/cU02k4IrWBCaXluT4WtfxGr2PKV+AntaUzPlhRmjBLKc+x
- ZOUvnkyvbKbsVBGs+y86Vj7KmB2lf/mPZWY/KW625hKWCHpp+OcWfwQ6tcm770S12zI=
-X-Gm-Gg: AfdE7cmMDM2INNemVmtB0XCCZyVBa3iIsvbHdX/aL97v5lq9k7l9ciUNscTkRzL7Zm1
- 3XZqvPYF60U92PgvhCxbdkImg5iOPwA/fRl8FKbZJuxi1FLAROQ6gQYxWWAcf6izVBfSXX6gPgv
- RyeV6eIoBT8VhBIGzqHjXP4ru0nM1wNLVmYSfFGo7iV9yaEjOvrfuxu6IC3ncLEdOFNCbjj5miu
- 6esSafq8ttrdHxXbyFcmDpcEbFHX34npZiSYQJ7L/jJKMWyNat390SY77S+auha2u36O6XOCm46
- a8wfgVB6IJgwoLz02ANpB8fAaqEqapYKeElnLw11UycxsdEFwTIrAAA+OGjfWU6UtuZVxBKr/lz
- RAKZu/0ht4nKXigrJc7bZUy1+HvwKNX1T6zmoUCGcndWihNpCl53TKuDNrN5h2cbpbJ8FxpOt0A
- nt6RB2KbLayuXS4+oTY7tUixQKgjDDT4zflKmeFOIZKBlsrT1w0+qTLQ==
-X-Received: by 2002:a05:7301:fa04:b0:2e2:4979:ec7 with SMTP id
- 5a478bee46e88-30c84b64e8cmr89350eec.10.1782339431970; 
- Wed, 24 Jun 2026 15:17:11 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30c7c9f166dsm1767430eec.22.2026.06.24.15.17.11
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 24 Jun 2026 15:17:11 -0700 (PDT)
-Date: Wed, 24 Jun 2026 15:17:09 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dawid Wesierski <dawid.wesierski@intel.com>
-Cc: dev@dpdk.org, marek.kasiewicz@intel.com, thomas@monjalon.net,
- mb@smartsharesystems.com
-Subject: Re: [PATCH v5] pcapng: add user-supplied timestamp support
-Message-ID: <20260624151709.6c9b02e9@phoenix.local>
-In-Reply-To: <20260624215858.710217-1-dawid.wesierski@intel.com>
-References: <20260623141302.486601-1-dawid.wesierski@intel.com>
- <20260624215858.710217-1-dawid.wesierski@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A77E440279;
+	Thu, 25 Jun 2026 01:07:12 +0200 (CEST)
+Received: from fhigh-b8-smtp.messagingengine.com
+ (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 499374025E
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 01:07:11 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 868667A007E;
+ Wed, 24 Jun 2026 19:07:10 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Wed, 24 Jun 2026 19:07:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm1; t=1782342430; x=1782428830; bh=UaWv4wQIUZoQ6xqMaE0g4
+ BDGBEscgQefjoX8tUwINag=; b=WsDUlEoSmsNUFftYpLUF1rQfseQCXeT+e47Eh
+ P3Rz27QsBoN2mG9YrefkXt/FlNdmg1v69XP5xlKNvi17OBn0ElUA65gOa5cXn5VL
+ kwbDHXF+Yyd04ivohAIwYMmanZiMKrBb669IIEGhTTUwZhG1uf+sJvJQVzddzrdp
+ nKZzVvRdI7ATKZa2JVFMFoBGnpTPITccCCRvQyqMF21YlD8AGQtyNzmqhFJdeefM
+ Tsu0X+tsFwqvHj35EGaK0f8TH+KhMrx+uKNraVPCZOHXdWLd3HuxCpb1Dbtp3EUc
+ aZuPdIjkTaq9X11QQcDjP+3ckWqg+te2TsmGhI01lScpYSozA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+ 1782342430; x=1782428830; bh=UaWv4wQIUZoQ6xqMaE0g4BDGBEscgQefjoX
+ 8tUwINag=; b=BulwAk8yKGQyAYS7Umqbd6seAACbDA7MUHYbwZxOzReVTP0Y8HQ
+ JtKZctfE1dG5HtxZ6yWKDYhOwEj2Pl9uvJEbO3C+BYz34L8ia85Lvcug3GoGZTnb
+ nzDjI+gacMf+MaPWeeQZCz1rXSjHiP+MHKLKDg6vul1eSxRNZ9QbH1qTGfT2FJtF
+ 4FCYU3U0DswmDsrmAMqgtI8SoiwT+C73YwvYjZBn4bLD0YYzJarGAEczmR7iU/S6
+ N0xNHRqDmtLnXaWKPGLZP+CEpsxfmP+bCawizZmdTpjauMwi0yR6gU7wqlnON5LB
+ UlaOL5hNYIjOSRFZdGiDOBxZsQWSNBZmp6g==
+X-ME-Sender: <xms:HWM8ajyDIQUAl8fPsqag2rdA_izrLrz9WIXEIxH0Pds00wEq13_HGg>
+ <xme:HWM8anm1JxA7hF9MWt59InuuTYdA7V4sX76BP4pCRQp8b3xdjvBf8GMEWP2aWNt7O
+ O2gQAsjVkXKiNO7jGipm4lkZJMt-GFCU2kEatQSF7OldJVY3WTjXQ>
+X-ME-Received: <xmr:HWM8agEEftam9tL2t9qx0VsbHCIcxxNt6U_Hgv0Pr1aBLVEvXI6h2Lj8sn5GP41RjEdadJbjpTPpIwy0JTfIWOY1rVRV_gI>
+X-ME-Proxy-Cause: dmFkZTE49odpMrU1zo8vbwznlDTF/fThwy/e20XDk83AV0CZcdCdaAgLUj7eCRz7Q2I7qd
+ ZjYG6AvhvXggJap6ohqD7o5l3YwRcmcQCn0nl2BVnx5b3y2BH//Ypfk0G+MR74TXMBz4bx
+ 6IWO6HwkV5RpJecal3HKbxgQQ19mGL1DCv+hxD9/DD6TejAiRzn2g4/ZqBSPPIldxpRC4G
+ /6HS47+Wb/KHRi2Q20l32oMFr6gAz2nRiVlMjPt7OTbjfa2BX8d3I/3Ycob/6OzNSer/AV
+ C2shkfxOW0s1VVTfxTavHdH0uBWswRbXr0dhUB3sAg+fnfCRJ6jefXztQqCuRj4OX5tJXh
+ MuJqgSBD1Qk8FlMR6E7i2yhkbnH//OmpnZ+ub97E8Z983Tc491ywJzkEOv29WLtqu360Ba
+ 7l4sOk4ENkePxrgUnm5LHeJfpGTiL+MVkC6Tj8C6lZozLUCjfujm/AfCVDurDdYiOy5d/Z
+ HlD61jFDAgUATxUgM51msjZgbvBFW61WubiOtH62COqPlvU2EnpTRob1lO7iRxqXsM8c4w
+ J8wNvJgzth0MrtXt6Ikjeonaw14DCCGRLieT+F9/nXXpoqctGfZVTGNOo+hsumH99yrUX+
+ 2nEw7MbwD9QE9qdKmq1OHxiPY/rJLw517WTLUK/36bVsncbw4w2WzgeUekqw
+X-ME-Proxy: <xmx:HWM8avU5wPL0R0pAAkDn-QMeq1QHcYD2BZsTNalIHotCLRvSMQr2NQ>
+ <xmx:HWM8anzBDygJYFJz17Leo1QJ0bPNwe--vB8D5VvYsxHn_xRKjCk2tQ>
+ <xmx:HWM8atMStUTyiW4HyFcLceQgGaG8nTEsI_dqlfxGe3owepAyyorvjA>
+ <xmx:HWM8ao4TTS6qIwcC8hUsCCcd0J1unY0TS_9XeHV-u4gyNeJn0UR-qA>
+ <xmx:HmM8aiaP4ILcRjBp4GjXyoqdvUowU6IEUGViY2tvB0l9AFddWbuacJas>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 24 Jun 2026 19:07:09 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: Song Jiale <songx.jiale@intel.com>
+Subject: [PATCH 0/2] fix Rx split in testpmd
+Date: Thu, 25 Jun 2026 01:03:21 +0200
+Message-ID: <20260624230656.2172633-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.54.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,29 +82,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 24 Jun 2026 17:57:01 -0400
-Dawid Wesierski <dawid.wesierski@intel.com> wrote:
+Adding selective Rx in DPDK 26.07-rc1
+introduced a regression when configuring Rx split
+at runtime with mempools defined on start.
 
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pcapng_copy_ts, 26.07)
-> +struct rte_mbuf *
-> +rte_pcapng_copy_ts(uint16_t port_id, uint32_t queue,
-> +		const struct rte_mbuf *md,
-> +		struct rte_mempool *mp,
-> +		uint32_t length,
-> +		enum rte_pcapng_direction direction,
-> +		const char *comment,
-> +		uint64_t timestamp)
->  {
+While fixing it, a test is added in DTS,
+and a refactoring in DTS is added as first patch
+to make the second change smaller.
 
-I don't think you understood previous feedback.
-  - use API versioning to provide additional argument to rte_pcapng_copy
-  - do not introduce another function
+Thomas Monjalon (2):
+  dts: simplify packet check in Rx split
+  app/testpmd: fix runtime config of Rx split
 
-The whole adjustment stuff just exists because the scaling parameters
-are not available in rte_pcapng_copy() which is stateless and doesn't
-want to have to lookup something in callback pdump_copy_burst.
+ app/test-pmd/testpmd.c          |  3 +-
+ dts/tests/TestSuite_rx_split.py | 59 +++++++++++++++++++++++----------
+ 2 files changed, 43 insertions(+), 19 deletions(-)
 
-Would like to have a more generic mechanism in future where timestamp
-comes from hardware if available on rx. Then would need to have per-port
-scaling conversion function.
+-- 
+2.54.0
+
