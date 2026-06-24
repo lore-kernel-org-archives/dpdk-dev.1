@@ -2,74 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C92CDB479
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 17:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95844CDB479
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 18:44:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7181A40A70;
-	Wed, 24 Jun 2026 19:58:37 +0200 (CEST)
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
- [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id 2F7AD402BC
- for <dev@dpdk.org>; Wed, 24 Jun 2026 19:58:30 +0200 (CEST)
-Received: by mail-dy1-f169.google.com with SMTP id
- 5a478bee46e88-30bc871ecdfso1500846eec.1
- for <dev@dpdk.org>; Wed, 24 Jun 2026 10:58:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AD2BF402D2;
+	Wed, 24 Jun 2026 20:44:20 +0200 (CEST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
+ [209.85.208.52]) by mails.dpdk.org (Postfix) with ESMTP id A7E09402C6
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 20:44:19 +0200 (CEST)
+Received: by mail-ed1-f52.google.com with SMTP id
+ 4fb4d7f45d1cf-697564cb69eso1181888a12.0
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 11:44:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782326659; cv=none;
+ d=google.com; s=arc-20240605;
+ b=AkzybQLZX8C2hDBGFBIvn17WzjEogSm0vwpRPkRJDZKoLb0i+1NX+hs2nOrVtfDbZn
+ p53emsB3xASGYhP0YUfL9pCRJ8BcaBKXIxs7jHiMULESg7xXrCMwGP3YaUTFM8zd67mK
+ L/yojd4WBMJBvSWrawT452A6oFHGyVHC+w3EjEPwNRePIYOUvmpEURsiWL/jP2nOBUfw
+ nIEDUi5zMyUIJG6DROy94QOSu8GEACtpEKGo4Dl6CHzkz/qoN7rNL5rVeEwfSiyOYBnP
+ TzdeGrfMDXMAiWMWkAXkbaF70UcrzmBrlylAWfMX47MdsQvSFEQnQhNZuxw8XocN3Tx8
+ RaFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=ZzU8T2vbhB9HsxHA+9YE1Sl4cYJxw6WoOtJq8/Afc7Y=;
+ fh=4hsYhFnr6DLNNV+hMod8lIxg+OS0iQbpQroj08RThkA=;
+ b=T2NZj8Wg6PpJLlzspsK61v6cbBz/1W5KXW4LpAYSulDWf/TLA2j1/wnIJKRj7PmpEx
+ Tc4fWy4REsD/+rt2yZJvxtqDipGe5GTkzNAOwjpnADbfsEfRPJ0bRNX6BgBu2tZLzBLn
+ N3yIkh1UeeAwr7CdvKbPWOrV8JmsywxgDBaOLlel3jzVSHMoAM6F3DQ/7W/HUk2PA4l1
+ pZtpqZ+TPuk0u9P4RzcryTSSuRkqHQ2wUiAWSXh6jyWs8uLMFQe/nnZdhssGZvY4GnVr
+ MMutUiNQQBxOdUNbZmFMXzvkKcZ7urRUWJWpbFWNQqFqVORnxWheKN4mub0Xy9A8yn8T
+ q7mg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782323909;
- x=1782928709; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=1PJZ3zpdeHjljf9GQFMB/0f5Mx/DJN8kt7zNyU9Eu08=;
- b=QAZDSaH9d7s6+5MqL5PluUpwx1Uj2oHs0jwhUD4Cu2Qj1AyT/GgJoYWW2bJc6D1/Wz
- UWJwVh1uIrWJCbNe70/YE4CFyBDJ2R/PcsTTUWbX/ubO3IG+RRe36HAmJcU+HN6apPKN
- LE2hQthcwnVqlzTE/Nxh50xs9gKqjXETgzinplEzyfXWqIY5UPMnNvqa4mFxFItwXJXZ
- 8atZkwcw3BXdbU6KMiDU8f40hM++9kWCzB1UohF1l4QsWTR+S1LrE0IAR77qjM/ltCbc
- 6h+b73qEUhPUxFttfEBcUeFgR/xoWncJOv4VqJ7PPC98589sJR1aShdK/rAp62Vpb0b3
- 3noQ==
+ d=iol.unh.edu; s=unh-iol; t=1782326659; x=1782931459; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=ZzU8T2vbhB9HsxHA+9YE1Sl4cYJxw6WoOtJq8/Afc7Y=;
+ b=fDlJffTZugpk0OmvLsv5+U461hbxz2WUiUYqt9Xq7s3oXpQhwIEzJxszs5VlRQXmG7
+ b3xHnxcCupAMiXbEoV2cJVMwLqaSsbqhHQTKte/bx9BU/Zsvb9Hsrn0KzMKT+mGpi9gs
+ tOnuhimdisD8VMiHExtkhJrMj4zo08bPeJKzo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782323909; x=1782928709;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=1PJZ3zpdeHjljf9GQFMB/0f5Mx/DJN8kt7zNyU9Eu08=;
- b=Jj8HDmTTTPoulu3AQoRi4qKxGA1yhEf9mNTQiQECGCsOkaL411fsmTh0u0bsRl5R1v
- +SokGFgY49K8j3ZueIUtVEjg2iscR8luIyeeW4yNhYP+BGebdhro/VWwzKYjfhhem1Ge
- S1/qdDAYRzIkDoT9ktIcWUydGw+V3LKU7ujgghZ1nFWxHg8UmrtMDsZ9iByWtDyb67yF
- GioRQsa/KIN09Awf8csPhvhc9tAU8bb6Q0+wcZKW6eiaqGCcE99LNFxgLCPm2pK0k8+9
- UEYPcf/jltbaZC4pmJf6UQRvjfRxF2s6kxXMAeivdBXhC9WZtfrLtq1eOS0xKTWXWKUw
- V+Dw==
-X-Gm-Message-State: AOJu0Yw2lx2MAx9r9Mz6WIGCFie3zrFd74/sfQa5FschsITg6oU9ZnNv
- sVpYqj0Xk4Zuh54eoNwFbsJw/qycQ7155qIWlLwP6INjWJLl6BtnYNL2og6eluuCjrO0S2oaxDu
- adfBS
-X-Gm-Gg: AfdE7cnuyXIe78noLoAa2snaQN7QWkd1O+aJji8maa1SUhGxLhQk5KJWpd8GzwDcUBa
- aRtv7qorMOrNxT0PI51LaS//rmzWz8Q7ILFoZsxHLIPC+bHq6bRmNUOJ0178aZ41sK4FB8eeiRX
- SHxE9KdLjyNsBYAH3fol1IVGpSjUx05e9+hQopSPH0eV9+GkBQHU59vFuwnj6yNhJwRz3/vdSGC
- G3+6nBfJ6cUX2c9JsrAsUM6KofQqbA03H/YxlDCPwcR/tsOx3Gpqh4A9hXPqeW58cDrIthh5VeD
- d3UMfC7n17e5TwDxLpBStI/kc/x8zzd9OZEsCSG0EXORs7fnfbMDWiwdJIupMX6T7v51Iu9i/jq
- lPuZUXEHxWM3Ny4Vu72O/31TSwuFg5PvwXa3d3Xmbei3beLfx9jYiXvWX7CKD6d1ppeWQVQUZOg
- 2irYvCpDRa3KigIZo7/C88HnRrBH4pxb72zFfrymHOrig5lffFWlY=
-X-Received: by 2002:a05:7300:72ce:b0:30c:6458:5566 with SMTP id
- 5a478bee46e88-30c69389e80mr3931818eec.26.1782323909139; 
- Wed, 24 Jun 2026 10:58:29 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30c7cab08c2sm696325eec.29.2026.06.24.10.58.28
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 24 Jun 2026 10:58:28 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Marat Khalili <marat.khalili@huawei.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v5 9/9] test/bpf: check that bpf_convert can be JIT'd
-Date: Wed, 24 Jun 2026 10:55:08 -0700
-Message-ID: <20260624175815.673064-10-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260624175815.673064-1-stephen@networkplumber.org>
-References: <20260608203322.1116296-1-stephen@networkplumber.org>
- <20260624175815.673064-1-stephen@networkplumber.org>
+ d=1e100.net; s=20251104; t=1782326659; x=1782931459;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=ZzU8T2vbhB9HsxHA+9YE1Sl4cYJxw6WoOtJq8/Afc7Y=;
+ b=k0iB2FkARiBVw21fto74VBQcqYYCLdw3b4+4cpVNddnwQgis69DDNaCEC4vLAA7egp
+ Iar5FTzsTCfeCV82ko8DSzzLePSzo9J7bRInpM7Q1I92ie28pXd2w1r/hB/Vl+uOhgRp
+ I7UaeG5qMhMRRjYHGrbr4NEPxDWoQs0LqGGoLTLl9UKXil/FHA+k+KtSGUk8bV/4TMGS
+ jNWxQVmMT/591POWh+xiIEm0QsVopCFYfP0XPTXjKr6S+CSiXctBlv9EqNyL2M/pij8A
+ KNIvf00g12K/PT85BepHPcTpWSQVCUIer7gvqbjriCvRw8ozki2Xajeqeeq6z8AQy3x2
+ m/Vg==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RpYeFRTxJ6YTpGUdXW7HX6tOvR5J/7lP5SJyClZYlmacJfYm2grIZ3XZ4cf7AWKYAGUh0A=@dpdk.org
+X-Gm-Message-State: AOJu0YzEgOGUOSfah06Vbows/ub99lbUEPakHn08vIwSs5CI6C0b3rnf
+ gv7BqsyYhgvXF1qM8GFQJrutUcc/Lwzy48E6kVuBWdZ8RP9GTKOphFNonFK3AJC9SgBZdCvIhrh
+ qKtOLzdKTgvCSXCC02XgAbmdgxnN7TTI2z0KF2Soc1g==
+X-Gm-Gg: AfdE7claw6xTik6RkXKBGM6iWf0+XKfbvmE8KMQQSll7IO4YlMr4TjVi6SttjCI6spc
+ ECZK+tUyyvHbWcqfGKIZja8ERP4vmVqEI4p6ZPOcn4fCAFBU1twKrVe2Q8uKBFAoyzZ2+VRsQKS
+ 9G3BDCDmZMSgap5UtsfJkMGXziZYtaKK3MzSMNXuW5m++OD406+z1m4rZKELY95cqis8hxSa6bT
+ ocmyPACg0ec6WKs7itoz2il7uFrP+hz2YUekNE26waRsHcWejEKPqgNGzcucmER35ujofplgNMr
+ B45q9xDnBU0ToWRKuTk8M0YkEC/3Wfs=
+X-Received: by 2002:a05:6402:4502:b0:697:7f68:4340 with SMTP id
+ 4fb4d7f45d1cf-697f3aabe70mr2155912a12.20.1782326658287; Wed, 24 Jun 2026
+ 11:44:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260602163647.101815-1-knimoji@iol.unh.edu>
+ <20260623184902.1657251-1-knimoji@iol.unh.edu>
+In-Reply-To: <20260623184902.1657251-1-knimoji@iol.unh.edu>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Wed, 24 Jun 2026 14:44:07 -0400
+X-Gm-Features: AVVi8CdT8JkO-emzL8WI9OwtpzsyWGGbP7sO20UCLWPKZZuTSoYtzkBnyWqz8Ak
+Message-ID: <CABJ3N2VBum7rVAB9hYUkXszH3-fvdjTdtVo=7VarS8SZOVsM0Q@mail.gmail.com>
+Subject: Re: [PATCH v3] dts: report dut/NIC info during DTS run
+To: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, patrickrobb1997@gmail.com, dev@dpdk.org, 
+ ahassick@iol.unh.edu, lylavoie@iol.unh.edu
+Content-Type: multipart/alternative; boundary="00000000000057614706550443af"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,287 +93,339 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Run each converted filter through both the interpreter and the JIT and
-check they agree, catching JIT miscompiles.
+--00000000000057614706550443af
+Content-Type: text/plain; charset="UTF-8"
 
-test_bpf_filter and test_bpf_match did nearly the same thing: compile,
-load and run a filter against the dummy packet. Combine them into
-test_bpf_match, which now builds the packet itself and returns whether
-the filter matched. Callers run it for both load methods.
+>
+> +
+> +        used_nic_info: list[dict[str, object]] = (
+> +            self.test_run.ctx.sut_node.main_session.get_nic_info()
+> +        )
+> +        with open(f"{SETTINGS.output_dir}/dut_info.json", "w") as file:
+> +            json.dump(used_nic_info, file, indent=3)
+> +            file.close()
+>
 
-The dummy packet is a UDP packet to a fixed destination MAC, source
-and destination ports, so the filter results are deterministic. None
-of the sample filters should match it, so assert that; a convert or
-JIT bug that flips a result is then caught. The destination MAC and
-source port are chosen so the negative ethernet and port filters do
-not match, and "port not 53 and not arp" is dropped as it matches
-any non-ARP packet that lacks port 53.
+file.close() is redundant and can be removed.
+More importantly, the info is gathered after the dut nics have been bound
+to the dpdk driver. This is an issue if a driver is bound to vfio-pci since
+it has limited visibility from the commands used to gather info. I tested
+this with broadcom cards which showed various info fields that were empty
+or None. This is resolved by moving this snippet before the DUT ports are
+bound. Keep in mind to test your patches against multiple NICs,
+preferably with different drivers.
 
-Reduce log output to make it easier to match which expression might be
-causing issues.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
----
- app/test/test_bpf.c | 171 ++++++++++++++++++++++++++------------------
- 1 file changed, 100 insertions(+), 71 deletions(-)
+> +        self.logger.info(f"DUT NIC info written to:
+> {SETTINGS.output_dir}/dut_info.json")
+> +
+>          return TestRunExecution(test_run, self.result)
+>
+>      def on_error(self, ex: BaseException) -> State | None:
+> diff --git a/dts/framework/testbed_model/linux_session.py
+> b/dts/framework/testbed_model/linux_session.py
+> index 30c89ad70d..67eba33ce8 100644
+> --- a/dts/framework/testbed_model/linux_session.py
+> +++ b/dts/framework/testbed_model/linux_session.py
+> @@ -197,6 +197,70 @@ def unbind_ports(self, ports: list[Port]):
+>          if self._lshw_net_info:
+>              del self._lshw_net_info
+>
+> +    def get_nic_info(self) -> list[dict[str, object]]:
+>
 
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index 16a1004e51..f56f6c7d7e 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -32,6 +32,7 @@ test_bpf(void)
- #include <rte_bpf.h>
- #include <rte_ether.h>
- #include <rte_ip.h>
-+#include <rte_udp.h>
- 
- 
- /* Tests of most simple BPF programs (no instructions, one instruction etc.) */
-@@ -4756,11 +4757,13 @@ load_cbpf_program_convert(struct bpf_program *cbpf_program, const char *str)
- 		return NULL;
- 	}
- 
-+#ifdef DEBUG
- 	printf("bpf convert(\"%s\") produced:\n", str);
- 	rte_bpf_dump(stdout, prm->ins, prm->nb_ins);
- 
- 	printf("%s \"%s\"\n", __func__, str);
- 	test_bpf_dump(cbpf_program, prm);
-+#endif
- 
- 	bpf = rte_bpf_load(prm);
- 	rte_free(prm);
-@@ -4785,18 +4788,65 @@ load_cbpf_program_direct(struct bpf_program *cbpf_program, const char *str __rte
- 	});
- }
- 
-+static const load_cbpf_program_t cbpf_program_loaders[] = {
-+	load_cbpf_program_convert,
-+	load_cbpf_program_direct,
-+};
-+
-+/* Setup Ethernet/IP/UDP headers in a dummy packet buffer for filter tests */
-+static void
-+dummy_ip_prep(void *data, uint16_t plen)
-+{
-+	struct {
-+		struct rte_ether_hdr eth_hdr;
-+		struct rte_ipv4_hdr ip_hdr;
-+		struct rte_udp_hdr udp_hdr;
-+	} *hdr = data;
-+
-+	hdr->eth_hdr = (struct rte_ether_hdr) {
-+		.dst_addr.addr_bytes = { 0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e },
-+		.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4),
-+	};
-+	hdr->ip_hdr = (struct rte_ipv4_hdr) {
-+		.version_ihl = RTE_IPV4_VHL_DEF,
-+		.total_length = rte_cpu_to_be_16(plen),
-+		.time_to_live = IPDEFTTL,
-+		.next_proto_id = IPPROTO_UDP,
-+		.src_addr = rte_cpu_to_be_32(RTE_IPV4_LOOPBACK),
-+		.dst_addr = rte_cpu_to_be_32(RTE_IPV4_BROADCAST),
-+	};
-+	hdr->udp_hdr = (struct rte_udp_hdr) {
-+		.src_port = rte_cpu_to_be_16(49152),	/* fixed, avoids filter ports */
-+		.dst_port = rte_cpu_to_be_16(9),	/* discard port */
-+		.dgram_len = rte_cpu_to_be_16(plen - sizeof(struct rte_ipv4_hdr)),
-+		.dgram_cksum = 0,
-+	};
-+}
-+
-+/*
-+ * Compile a pcap filter, load it with the given loader, then run it against
-+ * a standard dummy packet with both the interpreter and (when available) the
-+ * JIT, checking the two agree.
-+ *
-+ * Returns 1 if the filter matched, 0 if it did not, and -1 on any error
-+ * (compile, load, or interpreter/JIT mismatch).
-+ */
- static int
--test_bpf_match(pcap_t *pcap, const char *str, struct rte_mbuf *mb,
-+test_bpf_match(pcap_t *pcap, const char *str,
- 	load_cbpf_program_t load_cbpf_program)
- {
-+	uint8_t tbuf[RTE_MBUF_DEFAULT_BUF_SIZE];
-+	const uint32_t plen = 100;
- 	struct bpf_program fcode;
--	struct rte_bpf *bpf;
-+	struct rte_mbuf mb = { 0 };
-+	struct rte_bpf *bpf = NULL;
- 	int ret = -1;
- 	uint64_t rc;
- 
-+	printf("%s '%s'\n", __func__, str);
- 	if (pcap_compile(pcap, &fcode, str, 1, PCAP_NETMASK_UNKNOWN)) {
- 		printf("%s@%d: pcap_compile(\"%s\") failed: %s;\n",
--		       __func__, __LINE__,  str, pcap_geterr(pcap));
-+		       __func__, __LINE__, str, pcap_geterr(pcap));
- 		return -1;
- 	}
- 
-@@ -4804,15 +4854,41 @@ test_bpf_match(pcap_t *pcap, const char *str, struct rte_mbuf *mb,
- 	if (bpf == NULL) {
- 		printf("%s@%d: failed to load cbpf program for \"%s\", error=%d(%s);\n",
- 			__func__, __LINE__, str, rte_errno, strerror(rte_errno));
-+		test_bpf_dump(&fcode, NULL);
- 		goto error;
- 	}
- 
--	rc = rte_bpf_exec(bpf, mb);
--	/* The return code from bpf capture filter is non-zero if matched */
--	ret = (rc == 0);
-+	dummy_mbuf_prep(&mb, tbuf, sizeof(tbuf), plen);
-+	dummy_ip_prep(rte_pktmbuf_mtod(&mb, void *), plen);
-+
-+	rc = rte_bpf_exec(bpf, &mb);
-+
-+	/* Verify the JIT, when available, produces the same result. */
-+	{
-+		struct rte_bpf_jit jit;
-+
-+		rte_bpf_get_jit(bpf, &jit);
-+		if (jit.func != NULL) {
-+			fflush(stdout);
-+			if (jit.func(&mb) != rc) {
-+				printf("%s@%d: JIT return code does not match\n",
-+				       __func__, __LINE__);
-+				goto error;
-+			}
-+		}
-+#ifdef RTE_BPF_JIT_SUPPORTED
-+		else {
-+			printf("%s@%d: no JIT code generated\n",
-+			       __func__, __LINE__);
-+			goto error;
-+		}
-+#endif
-+	}
-+
-+	/* The return code from a bpf capture filter is non-zero if matched. */
-+	ret = (rc != 0);
- error:
--	if (bpf)
--		rte_bpf_destroy(bpf);
-+	rte_bpf_destroy(bpf);
- 	pcap_freecode(&fcode);
- 	return ret;
- }
-@@ -4821,44 +4897,13 @@ test_bpf_match(pcap_t *pcap, const char *str, struct rte_mbuf *mb,
- static int
- test_bpf_filter_sanity(pcap_t *pcap)
- {
--	static const load_cbpf_program_t cbpf_program_loaders[] = {
--		load_cbpf_program_convert,
--		load_cbpf_program_direct,
--	};
--
--	const uint32_t plen = 100;
--	struct rte_mbuf mb, *m;
--	uint8_t tbuf[RTE_MBUF_DEFAULT_BUF_SIZE];
--	struct {
--		struct rte_ether_hdr eth_hdr;
--		struct rte_ipv4_hdr ip_hdr;
--	} *hdr;
--
--	memset(&mb, 0, sizeof(mb));
--	dummy_mbuf_prep(&mb, tbuf, sizeof(tbuf), plen);
--	m = &mb;
--
--	hdr = rte_pktmbuf_mtod(m, typeof(hdr));
--	hdr->eth_hdr = (struct rte_ether_hdr) {
--		.dst_addr.addr_bytes = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
--		.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4),
--	};
--	hdr->ip_hdr = (struct rte_ipv4_hdr) {
--		.version_ihl = RTE_IPV4_VHL_DEF,
--		.total_length = rte_cpu_to_be_16(plen),
--		.time_to_live = IPDEFTTL,
--		.next_proto_id = IPPROTO_RAW,
--		.src_addr = rte_cpu_to_be_32(RTE_IPV4_LOOPBACK),
--		.dst_addr = rte_cpu_to_be_32(RTE_IPV4_BROADCAST),
--	};
--
--	for (int li = 0; li != RTE_DIM(cbpf_program_loaders); ++li) {
--		if (test_bpf_match(pcap, "ip", m, cbpf_program_loaders[li]) != 0) {
-+	for (unsigned int li = 0; li != RTE_DIM(cbpf_program_loaders); ++li) {
-+		if (test_bpf_match(pcap, "ip", cbpf_program_loaders[li]) != 1) {
- 			printf("%s@%d: filter \"ip\" doesn't match test data\n",
- 			       __func__, __LINE__);
- 			return -1;
- 		}
--		if (test_bpf_match(pcap, "not ip", m, cbpf_program_loaders[li]) == 0) {
-+		if (test_bpf_match(pcap, "not ip", cbpf_program_loaders[li]) != 0) {
- 			printf("%s@%d: filter \"not ip\" does match test data\n",
- 			       __func__, __LINE__);
- 			return -1;
-@@ -4882,7 +4927,6 @@ static const char * const sample_filters[] = {
- 	"port 53",
- 	"host 192.0.2.1 and not (port 80 or port 25)",
- 	"host 2001:4b98:db0::8 and not port 80 and not port 25",
--	"port not 53 and not arp",
- 	"(tcp[0:2] > 1500 and tcp[0:2] < 1550) or (tcp[2:2] > 1500 and tcp[2:2] < 1550)",
- 	"ether proto 0x888e",
- 	"ether[0] & 1 = 0 and ip[16] >= 224",
-@@ -4909,35 +4953,10 @@ static const char * const sample_filters[] = {
- 	"or host 192.0.2.1 or host 192.0.2.100 or host 192.0.2.200"),
- };
- 
--static int
--test_bpf_filter(pcap_t *pcap, const char *s, load_cbpf_program_t load_cbpf_program)
--{
--	struct bpf_program fcode;
--	struct rte_bpf *bpf;
--
--	if (pcap_compile(pcap, &fcode, s, 1, PCAP_NETMASK_UNKNOWN)) {
--		printf("%s@%d: pcap_compile(\"%s\") failed: %s;\n",
--		       __func__, __LINE__, s, pcap_geterr(pcap));
--		return -1;
--	}
--
--	bpf = load_cbpf_program(&fcode, s);
--	if (bpf == NULL) {
--		printf("%s@%d: failed to load cbpf program for \"%s\", error=%d(%s);\n",
--			__func__, __LINE__, s, rte_errno, strerror(rte_errno));
--		test_bpf_dump(&fcode, NULL);
--	}
--
--	rte_bpf_destroy(bpf);
--
--	pcap_freecode(&fcode);
--	return (bpf == NULL) ? -1 : 0;
--}
--
- static int
- test_bpf_convert(void)
- {
--	unsigned int i;
-+	unsigned int i, li;
- 	pcap_t *pcap;
- 	int rc;
- 
-@@ -4949,8 +4968,18 @@ test_bpf_convert(void)
- 
- 	rc = test_bpf_filter_sanity(pcap);
- 	for (i = 0; i < RTE_DIM(sample_filters); i++) {
--		rc |= test_bpf_filter(pcap, sample_filters[i], load_cbpf_program_convert);
--		rc |= test_bpf_filter(pcap, sample_filters[i], load_cbpf_program_direct);
-+		for (li = 0; li < RTE_DIM(cbpf_program_loaders); li++) {
-+			int m = test_bpf_match(pcap, sample_filters[i],
-+					       cbpf_program_loaders[li]);
-+
-+			/* None of the sample filters match the dummy packet. */
-+			if (m != 0) {
-+				if (m > 0)
-+					printf("%s@%d: filter \"%s\" unexpectedly matched\n",
-+					       __func__, __LINE__, sample_filters[i]);
-+				rc = -1;
-+			}
-+		}
- 	}
- 
- 	pcap_close(pcap);
--- 
-2.53.0
+object may be too generic, are there issues tightening the type hinting on
+this signature?
 
+
+> +        """Overrides :meth`~.os_session.OSSession.get_nic_info`.
+> +
+> +        Raises:
+> +            ConfigurationError: If the NIC info could not be found.
+> +        """
+> +        port_data = {
+> +            port.get("businfo"): port for port in self._lshw_net_info if
+> port.get("businfo")
+> +        }
+> +
+> +        all_nic_info = []
+>
+
+all_nic_info should be type hinted
+
+
+> +        for port in self._config.ports:
+> +            pci_addr = port.pci
+> +
+> +            command_result = self.send_command(
+> +                f"sudo lshw -c network -businfo | grep '{pci_addr}' | cut
+> -d'@' -f1"
+> +            )
+>
+
+
+
+> +            bus_type = (
+> +                command_result.stdout
+> +                if command_result.return_code == 0 and
+> command_result.stdout
+> +                else None
+> +            )
+> +            if bus_type is None:
+> +                raise ConfigurationError(f"Unable to get bus type for
+> port {pci_addr}.")
+>
+
+There is a redundant check on setting the variable and then verifying.
+Since you are throwing an exception if there is no valid value, you could
+do a check once and throw an error and then set the variable after with no
+further checks required. This makes it more readable in my opinion but let
+me know if you disagree, for example...
+
+ if command.code != 0 or command.stdout == '':
+     raise ConfigurationError()
+bus_type = command.stdout
+
++            bus_info = f"{bus_type}@{pci_addr}"
+> +
+> +            nic_port: LshwOutput | None = port_data.get(bus_info)
+> +            if nic_port is None:
+> +                raise ConfigurationError(f"Port {pci_addr} could not be
+> found on the node.")
+> +
+> +            config: LshwConfigurationOutput | None =
+> nic_port.get("configuration")
+> +            if config is None:
+> +                raise ConfigurationError(
+> +                    f"Configuration info for port {pci_addr} could not be
+> found on the node."
+> +                )
+> +
+> +            nic_name = nic_port.get("logicalname")
+> +            nic_speed = None
+> +            if nic_name is not None:
+> +                command_result = self.send_command(
+> +                    f"ethtool {nic_name} | grep 'Speed:' | awk '{{print
+> $2}}'"
+> +                )
+> +                nic_speed = (
+> +                    command_result.stdout
+> +                    if command_result.return_code == 0 and
+> command_result.stdout
+> +                    else None
+> +                )
+> +            if nic_speed is None:
+> +                self._logger.error(f"Unable to get speed for NIC:
+> {pci_addr}")
+>
+
+this code can be condensed as well, redundant check but logic is good.
+
+If the intention is to report unknown in this case, it should be mentioned
+in this log message.
+Also I'm not sure if this has a logger level error if everything runs fine
+in this case.
+Maybe info or warning level is sufficient.
+
+
+> +
+
++            dut_json = {
+> +                "make": nic_port.get("vendor"),
+> +                "model": nic_port.get("product"),
+> +                "hardware version": nic_port.get("version") or "Unknown",
+> +                "firmware version": config.get("firmware"),
+> +                "deviceBusType": bus_type,
+> +                "deviceId": nic_port.get("serial"),
+> +                "pmd": config.get("driver"),
+> +                "speed": nic_speed or "Unknown",
+> +            }
+> +            all_nic_info.append(dut_json)
+> +
+> +        return all_nic_info
+> +
+>      def bind_ports_to_driver(self, ports: list[Port], driver_name: str)
+> -> None:
+>          """Overrides :meth:`~.os_session.OSSession.bind_ports_to_driver
+>
+>
+
+--00000000000057614706550443af
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_quote gmail_quote_container"><blockquo=
+te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
+solid rgb(204,204,204);padding-left:1ex">+<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 used_nic_info: list[dict[str, object]] =3D (<b=
+r>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.test_run.ctx.sut_node.main_=
+session.get_nic_info()<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 with open(f&quot;{SETTINGS.output_dir}/dut_inf=
+o.json&quot;, &quot;w&quot;) as file:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 json.dump(used_nic_info, file, i=
+ndent=3D3)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 file.close()<br></blockquote><di=
+v>=C2=A0</div><div>file.close() is redundant and can be removed.<br>More im=
+portantly, the info is gathered after the dut nics have been bound to the d=
+pdk driver. This is an issue if a driver is bound to vfio-pci since it has =
+limited visibility from the commands used to gather info. I tested this wit=
+h broadcom cards which showed various info fields that were empty or None. =
+This is resolved by moving this snippet before the DUT ports are bound. Kee=
+p in mind to test your patches against multiple NICs, preferably=C2=A0with =
+different drivers.=C2=A0<br>=C2=A0</div><blockquote class=3D"gmail_quote" s=
+tyle=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);pad=
+ding-left:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"http://self.logger.info" rel=3D"nor=
+eferrer" target=3D"_blank">self.logger.info</a>(f&quot;DUT NIC info written=
+ to: {SETTINGS.output_dir}/dut_info.json&quot;)<br>
++<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return TestRunExecution(test_run, self.re=
+sult)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0def on_error(self, ex: BaseException) -&gt; State | Non=
+e:<br>
+diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/t=
+estbed_model/linux_session.py<br>
+index 30c89ad70d..67eba33ce8 100644<br>
+--- a/dts/framework/testbed_model/linux_session.py<br>
++++ b/dts/framework/testbed_model/linux_session.py<br>
+@@ -197,6 +197,70 @@ def unbind_ports(self, ports: list[Port]):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if self._lshw_net_info:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0del self._lshw_net_info<br>
+<br>
++=C2=A0 =C2=A0 def get_nic_info(self) -&gt; list[dict[str, object]]:<br></b=
+lockquote><div><br>object may be too generic, are there issues tightening t=
+he type hinting on this signature?<br>=C2=A0</div><blockquote class=3D"gmai=
+l_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,20=
+4,204);padding-left:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Overrides :meth`~.os_session=
+.OSSession.get_nic_info`.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Raises:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ConfigurationError: If the NIC i=
+nfo could not be found.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 port_data =3D {<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 port.get(&quot;businfo&quot;): p=
+ort for port in self._lshw_net_info if port.get(&quot;businfo&quot;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 all_nic_info =3D []<br></blockquote><div>=C2=
+=A0</div><div>all_nic_info should be type hinted<br>=C2=A0</div><blockquote=
+ class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px so=
+lid rgb(204,204,204);padding-left:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 for port in self._config.ports:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pci_addr =3D port.pci<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 command_result =3D self.send_com=
+mand(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&quot;sudo lshw -=
+c network -businfo | grep &#39;{pci_addr}&#39; | cut -d&#39;@&#39; -f1&quot=
+;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br></blockquote><div><br>=C2=
+=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 bus_type =3D (<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 command_result.std=
+out<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if command_result.=
+return_code =3D=3D 0 and command_result.stdout<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 else None<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if bus_type is None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 raise Configuratio=
+nError(f&quot;Unable to get bus type for port {pci_addr}.&quot;)<br></block=
+quote><div><br>There is a redundant=C2=A0check on setting the variable and =
+then verifying. Since you are throwing an exception if there is no valid va=
+lue, you could do a check once and throw an error and then set the variable=
+ after with no further checks required. This makes it more readable in my o=
+pinion but let me know if you disagree,=C2=A0for example...<br><br>=C2=A0<s=
+pan style=3D"background-color:transparent">if command.code !=3D 0 or comman=
+d.stdout =3D=3D &#39;&#39;:</span></div>=C2=A0 =C2=A0 =C2=A0raise Configura=
+tionError()<br>bus_type =3D command.stdout<br><br><blockquote class=3D"gmai=
+l_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,20=
+4,204);padding-left:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 bus_info =3D f&quot;{bus_type}@{=
+pci_addr}&quot;<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 nic_port: LshwOutput | None =3D =
+port_data.get(bus_info)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if nic_port is None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 raise Configuratio=
+nError(f&quot;Port {pci_addr} could not be found on the node.&quot;)<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 config: LshwConfigurationOutput =
+| None =3D nic_port.get(&quot;configuration&quot;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if config is None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 raise Configuratio=
+nError(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&qu=
+ot;Configuration info for port {pci_addr} could not be found on the node.&q=
+uot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 nic_name =3D nic_port.get(&quot;=
+logicalname&quot;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 nic_speed =3D None<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if nic_name is not None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 command_result =3D=
+ self.send_command(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&qu=
+ot;ethtool {nic_name} | grep &#39;Speed:&#39; | awk &#39;{{print $2}}&#39;&=
+quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 nic_speed =3D (<br=
+>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 comm=
+and_result.stdout<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if c=
+ommand_result.return_code =3D=3D 0 and command_result.stdout<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 else=
+ None<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if nic_speed is None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._logger.error=
+(f&quot;Unable to get speed for NIC: {pci_addr}&quot;)<br></blockquote><div=
+><br></div><div>this code can be condensed as well, redundant check but log=
+ic is good.=C2=A0<br><br>If the intention is to report unknown in this case=
+, it should be mentioned in this log message.<br>Also I&#39;m not sure if t=
+his has a logger level error if everything runs fine in this case. <br>Mayb=
+e info or warning level is sufficient.<br>=C2=A0</div><blockquote class=3D"=
+gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(20=
+4,204,204);padding-left:1ex">
++<span style=3D"background-color:transparent">=C2=A0</span></blockquote><bl=
+ockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-lef=
+t:1px solid rgb(204,204,204);padding-left:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dut_json =3D {<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;make&quot;: =
+nic_port.get(&quot;vendor&quot;),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;model&quot;:=
+ nic_port.get(&quot;product&quot;),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;hardware ver=
+sion&quot;: nic_port.get(&quot;version&quot;) or &quot;Unknown&quot;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;firmware ver=
+sion&quot;: config.get(&quot;firmware&quot;),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;deviceBusTyp=
+e&quot;: bus_type,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;deviceId&quo=
+t;: nic_port.get(&quot;serial&quot;),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;pmd&quot;: c=
+onfig.get(&quot;driver&quot;),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;speed&quot;:=
+ nic_speed or &quot;Unknown&quot;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 all_nic_info.append(dut_json)<br=
+>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return all_nic_info<br>
++<br>
+=C2=A0 =C2=A0 =C2=A0def bind_ports_to_driver(self, ports: list[Port], drive=
+r_name: str) -&gt; None:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Overrides :meth:`~.os_s=
+ession.OSSession.bind_ports_to_driver<br>
+<br>
+</blockquote></div></div>
+
+--00000000000057614706550443af--
