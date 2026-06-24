@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754B4CDB481
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 12:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E16FCDB471
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 12:21:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7AEC640E20;
-	Wed, 24 Jun 2026 14:19:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E10940E25;
+	Wed, 24 Jun 2026 14:19:39 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 3D96E40676;
- Wed, 24 Jun 2026 14:18:48 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4glgv73kmKzJ46C6;
- Wed, 24 Jun 2026 20:18:11 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id DB76E4065F
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 14:18:48 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4glgvD3cwWzHnH2n
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 20:18:16 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 1E83C40577;
- Wed, 24 Jun 2026 20:18:48 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id BE1CE4058E
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 20:18:48 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 24 Jun 2026 14:18:47 +0200
+ 15.2.1544.11; Wed, 24 Jun 2026 14:18:48 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, Claudia Cauli <claudiacauli@gmail.com>
-Subject: [PATCH v5 23/24] bpf/validate: prevent overflow when building graph
-Date: Wed, 24 Jun 2026 13:17:56 +0100
-Message-ID: <20260624121800.40635-24-marat.khalili@huawei.com>
+To: 
+CC: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v5 24/24] doc: add release notes for BPF validation fixes
+Date: Wed, 24 Jun 2026 13:17:57 +0100
+Message-ID: <20260624121800.40635-25-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260624121800.40635-1-marat.khalili@huawei.com>
 References: <20260623143215.95318-1-marat.khalili@huawei.com>
@@ -50,38 +49,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Function `evst_pool_init` for malicious or corrupt BPF program with
-number of conditional jumps exceeding a third of UINT32_MAX could cause
-arithmetic and buffer overflows when working with the program graph.
+Document hardening the BPF validator.
 
-Fix the issue by limiting maximum number of conditional jumps supported
-by UINT32_MAX / 4, or more than 1 billion.
-
-Fixes: 8021917293d0 ("bpf: add extra validation for input BPF program")
-Cc: stable@dpdk.org
-
-Reported-by: Claudia Cauli <claudiacauli@gmail.com>
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/bpf/bpf_validate.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ doc/guides/rel_notes/release_26_07.rst | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-index 03c590c75377..f9960088a285 100644
---- a/lib/bpf/bpf_validate.c
-+++ b/lib/bpf/bpf_validate.c
-@@ -2662,6 +2662,10 @@ evst_pool_init(struct bpf_verifier *bvf)
- {
- 	uint32_t k, n;
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index 8471966a4992..9376e7acad24 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -164,7 +164,7 @@ New Features
+     for installing already loaded BPF programs as port callbacks
+     (as opposed to loading them directly from ELF files).
  
-+	if (bvf->nb_jcc_nodes > UINT32_MAX / 4)
-+		/* Calculations that follow may overflow. */
-+		return -E2BIG;
-+
- 	/*
- 	 * We need nb_jcc_nodes + 1 for save_cur/restore_cur
- 	 * remaining ones will be used for state tracking/pruning.
+-* **Added BPF validation debugging API.**
++* **Added BPF validation debugging API and hardened BPF validator.**
+ 
+   * Introduced a new set of APIs (prefixed with ``rte_bpf_validate_debug_``) to
+     introspect the BPF validator. This provides a mechanism to set breakpoints
+@@ -172,6 +172,10 @@ New Features
+     (such as tracked register bounds). This API is crucial primarily for writing
+     comprehensive tests for the validator, but also serves as a foundation for a
+     future interactive eBPF validation debugger.
++  * Fixed numerous bugs in the BPF validator's abstract interpretation logic,
++    including incorrect bounds tracking for jumps and arithmetic operations, as
++    well as fixing several instances of undefined behavior (UB) when verifying
++    malicious or corrupt programs.
+ 
+ * **Added AI review helpers.**
+ 
 -- 
 2.43.0
 
