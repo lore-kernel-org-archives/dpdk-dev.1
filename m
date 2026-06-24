@@ -2,145 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9FFCDB47F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 12:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48EAFCDB47F
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 12:54:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79046402D2;
-	Wed, 24 Jun 2026 14:33:25 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 967F6400EF;
- Wed, 24 Jun 2026 14:33:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782304404; x=1813840404;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=r75U0bmkL4rzKDX/X0JTqm2d5O0WHedX1qa1Gqra+BA=;
- b=idvHsIE9aJBsZKXysBeMsKN/a/x+yCpirOze9Os9PSxp2gqlL3R04q3E
- hU1TNGF5P07WRCxRRQ7RJmDGTfrHCtRbBnayRi1yV8XX72Sh+x6Rp0RDn
- 3dDrwt/pYD1pjheZT9J8uEqAlT3C3ER55EaucbuOKlHfq/kw5fJ7HvFKA
- om609KN3zOCKDYNPhmGU/vVUyIOmDZZa6bfSscTnYfwABgOMJc66nJCSH
- O+AZJD80GEK364cT9Ewlh4Lr+ZdWAsZ5DS6bDOT96Ut1D2BJA2XTPf99I
- wj6BvZnkkvyLSR9g1Br0PXTN6Yn5OcRpClsx8S26U/L3TClBMrD9iXXum g==;
-X-CSE-ConnectionGUID: EJK0e007QT6TUCb26tvChA==
-X-CSE-MsgGUID: jryv2yaFTt6++l4wN9fJMA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="70572750"
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="70572750"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Jun 2026 05:33:22 -0700
-X-CSE-ConnectionGUID: VHXQN1fCRNmxgOE4meP0Ow==
-X-CSE-MsgGUID: SGPZk1blQmSYXTeG6GGu5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="245730017"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Jun 2026 05:33:22 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 24 Jun 2026 05:33:22 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 24 Jun 2026 05:33:22 -0700
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.7) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 24 Jun 2026 05:33:20 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bYWU9Ubm/9Xz3GseAVq/3ySglVLHaynCwX5CLBPMwjfzAtewzR7yEVODlJR3Bfly9eRzNV8VZQn1tfmfCtnT8HSb5tJNAp1hRtvLAZmwJNA6dP8qg2z1zoawwQVZcbuo81AdROOijYphY37Hf1BN8BzCAmzFRDx1wNy6nq0utl0/KGPyGJQ8SYt5G0WJpGeO54FWuzkoCrW8oc402AxAIi2TfUWVPuCRrixLgXvybXgLq6H3fVa0TQuu8dYk4yGggNrwIwQiA5GkHQaykJWEWCtdEgdsbPTW6no5Rgk4r/0pyf6ZrX8ibuGtgFlY3kMOsfpqDdcbJcAXeKWogGBowg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bAHTBeSb/DWcdu/beyYV60nzPjx6zdUM6t+IinwFRCE=;
- b=D9XJ2o2Xb2Oz/RmSD9HueaCIOfRmq1S2P67hbxVZV+gthMiuBG8d3kFm22WHXyO/OqkyP6IDukezkZtNwqI4NqbWEkU3hWubsVRb+6c3lCJL8ftel3wie+5WvGMks/Jc0CDJ96fplfCth6rFV74k8tEWkxp3bG7iKbYgcrzWBct7YnHaX/zv+3ewQ2KeyckOqeNeHM/BeEaoQUfU/XpUFWW5MSDprntsXoAjTPJWZk43OyMNH6zPeV3ONMK8Yi+62/5Vw06YPy7vVu6XZAiz5reLJia0dHILCCMt8oDFXXITon4D209zBg/0RJTnjXmelkAvEtZvW9sb3wrAQDG5Tg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
- by DM3PPFB0F355549.namprd11.prod.outlook.com (2603:10b6:f:fc00::f45)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.13; Wed, 24 Jun
- 2026 12:33:13 +0000
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0159.014; Wed, 24 Jun 2026
- 12:33:13 +0000
-Date: Wed, 24 Jun 2026 13:33:08 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: "Loftus, Ciara" <ciara.loftus@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "Shetty, Praveen"
- <praveen.shetty@intel.com>, "Burakov, Anatoly" <anatoly.burakov@intel.com>,
- "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>, "Wani, Shaiq"
- <shaiq.wani@intel.com>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: Re: [PATCH] net/intel: fix use of non-recommended string functions
-Message-ID: <ajvOhJ8mYMKQ0AUI@bricha3-mobl1.ger.corp.intel.com>
-References: <20260623112221.677931-1-bruce.richardson@intel.com>
- <IA4PR11MB92788919362D4E5CF700DACA8EED2@IA4PR11MB9278.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <IA4PR11MB92788919362D4E5CF700DACA8EED2@IA4PR11MB9278.namprd11.prod.outlook.com>
-X-ClientProxiedBy: DU2PR04CA0066.eurprd04.prod.outlook.com
- (2603:10a6:10:232::11) To IA3PR11MB9421.namprd11.prod.outlook.com
- (2603:10b6:208:578::9)
+	by mails.dpdk.org (Postfix) with ESMTP id 03D3D402B5;
+	Wed, 24 Jun 2026 14:54:02 +0200 (CEST)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
+ [209.85.210.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 7B469400EF
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 10:57:55 +0200 (CEST)
+Received: by mail-pf1-f180.google.com with SMTP id
+ d2e1a72fcca58-84536e2857eso570327b3a.0
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 01:57:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1782291474; x=1782896274; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=RlbwDIO6ktiQATJ76Pv9xnQ38iK49OMu8/KOpUnK1uM=;
+ b=YT9O+cZ7NV/Yhdb2AktnmesXZyPc0631DOvURG1Z3km7viK7dvko1wTGfLI53I1OGJ
+ lUFhEh9FSWKfEFfYx6DxmUqISaj6NEeLslwJXusQH/Yp9DqfjKYYzUJLnMmXIiMLAk5O
+ TX/lIbymB8J1M6TLt5kS+s/MSxVAgDnmOlN+RyPU1mtwg4QcO/+/WCLdkMX74ZyVrm6G
+ 1nHtJofD3DszN8U6lQRj8dzZ2h/6leK5V3H4l1HE+nvuLxyjMYc7sO0F0DL9Tg2m1rRf
+ jenncMPaM8xj/IchvD4mH0JFkJwwk/MrF42NBpLRSzlNR9elBp3NXKJmL+ZQrlkb5PBp
+ n9aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1782291474; x=1782896274;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=RlbwDIO6ktiQATJ76Pv9xnQ38iK49OMu8/KOpUnK1uM=;
+ b=Kra/3OcyRv58/W7ZHvNtXtUv+C1UtH2DY3EWy7akQ7LXiUBcolh+X+/lgKcSDUGrg7
+ 1ns7FN89nzgiHgw+oFBQYRqMtWY1vbV40YiFqSnDKoATcy5R8fD6z7Kn+TWhRVVATy7F
+ Q1W8UDowG55BMiw+fB9oUNr6CMXTKgEiO21vfZWvEitvnAqeOOx0HnWWfgZDmlv6MHce
+ huloKY6ZRxTMoDGhM4aN8qMfIaOXwKalSlq/HO+24idbP2viAlWhO0tps6IUwuPzIOyY
+ 7igicWjuM80sNNv3hXGrLYoJkdZuKqf+G9U4MffCJo6W+oUhE4rDUfc4fq0QRec2zrl0
+ yOuw==
+X-Gm-Message-State: AOJu0Yzad+PPaJotjOPYd0bHvp9v4t3IReKFN69z6b928bp5A/qmmY6B
+ ALFJ56T2g8we/GBb94zF2PsphvNnzvEMPuTh8gQ9NcmUJFDoKTwv4eAcHfceEY4Z
+X-Gm-Gg: AfdE7cmHeaTI0ovDdo+HaGj7tELdwyrcrFAJ0NlgJXYa9sMqBDno5Kfv3PslQQ6YpCz
+ cKxhjWMqieetOzJUO7Sfzm0hRtodOEoQPr+SaY0RcRaKX7yJNU7LpNR+NlWVa23qs/sEH7JN8bC
+ JdoBIrshwgNf9q6TbTww6Oj7slQy2UMOnDTIFWlf5zz5KP6+OYX1/h8BxWNdMyiFc79UWW43g/7
+ H8qu6ugNsB2st4fp4ZSHHl3KVQAJNwnIAsD99mANfPHg5PayahKlgkKJkF4N4FZI2uLGnFX6oo4
+ NP+VOLTAu4HL+g7S8Bbj2KctShc4o+WredhrXCDYERSE6kdb18Jgbwo+6f/7uBUZChJsjZH/POq
+ 3YVzf/+r89u+m/KuJWgvL4aL2qCzcWNh7XBlx+T6n1DbUKE0Kddzj0kUst0C1XCTcxhysGnxm9w
+ znPku84+D4+ZZpl6Lo8IR9GpIO
+X-Received: by 2002:a05:6a00:3916:b0:842:5b63:6114 with SMTP id
+ d2e1a72fcca58-845a2a97e28mr3296278b3a.13.1782291474383; 
+ Wed, 24 Jun 2026 01:57:54 -0700 (PDT)
+Received: from dev-template-2404.. ([192.19.252.250])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-845a40d1b0fsm1649572b3a.28.2026.06.24.01.57.51
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 24 Jun 2026 01:57:53 -0700 (PDT)
+From: Samar Yadav <samaryadav5@gmail.com>
+To: dev@dpdk.org
+Cc: maxime.coquelin@redhat.com, chenbox@nvidia.com,
+ Samar Yadav <samaryadav5@gmail.com>, tiwei.bie@intel.com, stable@dpdk.org
+Subject: [PATCH] net/virtio-user: fix eventfd sharing in secondary process
+Date: Wed, 24 Jun 2026 08:57:41 +0000
+Message-ID: <20260624085741.2195573-1-samaryadav5@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|DM3PPFB0F355549:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e4946bf-76ae-425d-8de9-08ded1ecc233
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|23010399003|376014|6133799003|22082099003|18002099003|11063799006|56012099006|4143699003;
-X-Microsoft-Antispam-Message-Info: zayqlCNx3XfO6UHqz6hDSRNYsYwJroXrgMOcEZvauhqnnZ/LMH8ndQYdEqBtIOmcRroK7N0II9+CtCsZ85ohu7/RZerHmsBo6JjVl0lhkOkOV5q8gWjvdPggJaItNSGtjFQeuKSZo+VUdR9bZTCuDwEXxCo+/4LitDusfqFIw5gSJekanH/xNxv6u9LApjjo3kuctt7D/uuubFzCKvHEp54orfn3YYDPl9vaRkyvTgsCfI8Bq7jj/eldRVkLh2JQBPgRRIqaFvFZqqqjrL7AOY9gnU8uTnd0gD7cUzVScJ8NbKhTFpTIYHVEqwztnLtB/Gb6UudQSGGmyrT+CzbaJtL0jwuXE+LABtL+/lHHQVh36TeUCzWd3x/EMat9codvvVxDqla64IK/kjJVQKILKJV5ooG8VHXbFxBEJMxJF9rwDX3NDktGGPYIRVwn0H2Mgy+BT7kVJlPPdxIqoS2eTTTc+ZqBqzPt67AB5mJdjIod2LVNahWCRS2wWqsMhaADwYhdpzaw6McEVqUoFzuADaIKvM+/Pacvn41llifG+g1jrhITf8M6LCcHmrESV9Y+iaZGY5B+u1KHkMGh5ao6EB0UvCkvQDoDjvRUh+BSOKOalZx5+s+6queWklvO5sXOenVPYdKQSddA6FyEKucVdKl6RGbE58ZE/o8mx5e2+EM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(6133799003)(22082099003)(18002099003)(11063799006)(56012099006)(4143699003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3Hq2IE8+fVSouTJba6dCfSJcuKLqHSb+7cSmB00ALtw/NOUH8J5CAzkhk+0R?=
- =?us-ascii?Q?hbCGSE1/KHSWCg7304Xy4xteTydORfn0FimggB7rXmbjtfEEIljCnt0DqqSF?=
- =?us-ascii?Q?zJZh4jBgzVWPvwC7BlqqHOW2qj2KJmes3FzmmT1ulp+UawtNOB5HFAfSImHb?=
- =?us-ascii?Q?zbeC6ufb46yAH0v7hbH8icULC7y3gfaK0t51F3t6pS8HRp2WAzpAX4kCTfbW?=
- =?us-ascii?Q?ugl84pESjqI6iXGM3QEZFfbeyxvthc7Qn+HJFamDtLLv+Fvm+X3kPOks50eJ?=
- =?us-ascii?Q?OKEtHfMqD2VkpouF/FBdnDkgnb+2GIVBZszo8dceqhLjY2u3hk2WAbFdKasB?=
- =?us-ascii?Q?PaE+VA00zNP5b5rsxgf8uXmFpfrSTN3h9WtcJBVdC8tp6QAey+MMnF5mdUDJ?=
- =?us-ascii?Q?mSo5loANdr8uSWvPazom/HjLpC6evEMbpNN2uMXuQmx5IOujAtILKcmKT1l2?=
- =?us-ascii?Q?Dozm9suk6YT4kW7T1fKBTtfPljv8/scjEvLRiK1szGgD8wryKa4vdnF5TvEW?=
- =?us-ascii?Q?QmwoRLNIT4m6v9DjgrpSpGhmyAEkhOSJi4jF3duppIYNRakVWW9fO2vnAjua?=
- =?us-ascii?Q?pyZKfMns/OzTUQ4LF540YWN4glc1HElItpubva45gNfxgcmc1bUYj05s6sgh?=
- =?us-ascii?Q?fNmO9RcJj9UcFK5QoVOTV3puLS1MEI6DPiFRfQM/jHwqJEolsQJDW/j+yLYp?=
- =?us-ascii?Q?bH8rfwF8UtAI63/rT/6OUtsSyLBLwVV/UJ1m6JqAXKXnnFwWDTA1k+PXc3Iz?=
- =?us-ascii?Q?jdQNT8/gteq5pW6GhAbiWLktjqDmweRMJk3l4wuiidNPECwuYLmrzNL6H/V0?=
- =?us-ascii?Q?iIr0SRPd1aXRWzlR3XiWUWsyZpXSFh+ft9y2iBwjTcKB7rQJy4Tpph38aAWi?=
- =?us-ascii?Q?w61I7ST/yOGSgOWoHIguWLe2GsW+qIPev6a0/BA+5aEg6oPRVAncmEz7KfG1?=
- =?us-ascii?Q?dj6oIhsAutJ2G/9pnDslYhu9LAi3CKeDUw+loJX8qw4Yl4rZ5Twve8K2YNZy?=
- =?us-ascii?Q?3GIGbnjeIEwfceWK4cxPABPWxCVOnwuYYjei8QhyvcEi8OHa4oUrD9DQkxgR?=
- =?us-ascii?Q?3lirkkAHtB7iuxJt0Vxd84ior8hWew1iysmoE+Bz7/TQMHrA7uRagotY157B?=
- =?us-ascii?Q?riWNroa7v1bShi0SYlwFJh7y0ld9Xw12xXrLZeh9muU9qXG9DZLDligX5vW4?=
- =?us-ascii?Q?kuPnK08az/8X0c2xXZLy8zGFpl/JEJZjp8IW4D4pokafXELAawqvVIcgR8ur?=
- =?us-ascii?Q?+7oC0Puo2rPajhvQySjHykMYx1gZNLxmbFCXvN59ILByqp/BTVeg8Ilwbax7?=
- =?us-ascii?Q?1fNh/TNaOl3zDKI4gjRPzkROLoucewuv38FmLCdrx+Ss1fm0Z20YzAPn4flp?=
- =?us-ascii?Q?9/6qRuPcgV+ZXCDuldo9rlUXaZ+9r82Hcv8QnNi0qpOHEVD8sMrb8JRpE7/B?=
- =?us-ascii?Q?l4k7TaXIhkUYwkEvFLZS2xylE2CRHC10/XFHs8yyDKTQJgJHCXoevye4VuVy?=
- =?us-ascii?Q?U4QHjZjrVNGMcK4paLeJEWuD5HG6wFX7m7FOrvFEIYcZtG5mPnQC+2s+MPw/?=
- =?us-ascii?Q?II0QwV4p1FzxhzEPNVrKxjXg1imCt0yOKnLN1S4tfwKoHzA7U2lZUGs2RTzO?=
- =?us-ascii?Q?58pQ2/Dw1qsbJ4Bendwqdktm6MRslL9NJ1feFDQBZBWkcdofsZIzWA9jQ7Ek?=
- =?us-ascii?Q?7oOmUcFruFPWO0H3YGIO7xMC7xeRgrdsV1MO/CT+W6UN1hmpcSLGvx1Eh+xJ?=
- =?us-ascii?Q?FkGgpl4qN8gSluRSze3lkrQeM+yilsM=3D?=
-X-Exchange-RoutingPolicyChecked: scNX8LaCVhz3qnXm880vq62iIxefAXvk3M/c+cvGmN47o8AEjvDk97yIPauJJgex1t//qD9vulu3v0j+9iVSIA24B44uCoLRFnlNX44F+DGe97Qq5jEkBl4dHEazM2Jni1ENnHBEK+3ib8DCrHIAiHjTv6QLRL3atFu3IbpUtU8SDoVi/bnlyRHF+JrxrRimkgWhw0yWFkg81y9HWdjMO1yxITFboWNOIEteyGx7dONyo3aaMLcFT4Jw554DeCtMywfzKvFJT2hFscGWLfVEOxE/A9sEknYu1oJC6/WUfGLyZEAsKLYyat7hWMXEFfoFtkaS4zwGIzz8anokDxJK9A==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e4946bf-76ae-425d-8de9-08ded1ecc233
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2026 12:33:13.5532 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +n124JwVgeRncsMhy/ghsCVb3B45wIftRnndxfImteXHLsTsxQWOSLGgrYrsXe4vLg4mETi8hX4pp//Bzucc5AoqFoBhlaTdMYKTgoVEhS4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFB0F355549
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-Mailman-Approved-At: Wed, 24 Jun 2026 14:54:01 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -154,29 +78,474 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jun 24, 2026 at 10:51:11AM +0100, Loftus, Ciara wrote:
-> > Subject: [PATCH] net/intel: fix use of non-recommended string functions
-> > 
-> > Replace use of the strncpy and strcpy functions with the safer strlcpy
-> > alternative, which both bounds-checks and guarantees null termination.
-> > In the process also replace instances of strcat with strlcat where
-> > appropriate.
-> > 
-> > Fixes: 2d823ecd671c ("net/cpfl: support device initialization")
-> > Fixes: c4c59ae62793 ("net/cpfl: refactor flow parser")
-> > Fixes: c10881d3ee74 ("net/cpfl: support flow prog action")
-> > Fixes: 9481b0902efe ("net/ice: send driver version to firmware")
-> > Fixes: 7f7cbf80bdb7 ("net/ice: factorize firmware loading")
-> > Fixes: 549343c25db8 ("net/idpf: support device initialization")
-> > Fixes: 484f8e407a94 ("net/igb: support xstats by ID")
-> > Fixes: fca82a8accf9 ("net/ixgbe: support xstats by ID")
-> > Fixes: e163c18a15b0 ("net/i40e: update ptype and pctype info")
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> 
-> Acked-by: Ciara Loftus <ciara.loftus@intel.com>
-> 
-Applied to dpdk-next-net-intel.
+virtio_user secondary processes cannot communicate with the vhost
+backend: the kick/call eventfds are opened by the primary and never
+shared, so a secondary's queue notification writes to an invalid fd
+and traffic stalls.
 
-/Bruce
+Share the fds over a dedicated virtio-user multiprocess channel. The
+primary registers a process-wide MP action that returns a port's
+kick/call fds (looked up by port name); a secondary requests them at
+probe time, before the port is announced.
+
+The received fds are stored in eth_dev->process_private, which is
+per-process, instead of the primary-owned shared dev->kickfds and
+dev->callfds arrays; the secondary data path notifies the backend using
+its own kickfd. In the primary, the MP handler reads the fd arrays under
+dev->mutex, and the teardown path takes the same lock while closing and
+freeing them, so the two cannot race.
+
+Fixes: 1c8489da561b ("net/virtio-user: fix multi-process support")
+Cc: tiwei.bie@intel.com
+Cc: stable@dpdk.org
+
+Signed-off-by: Samar Yadav <samaryadav5@gmail.com>
+---
+ .mailmap                                      |   1 +
+ .../net/virtio/virtio_user/virtio_user_dev.c  |  56 +++-
+ .../net/virtio/virtio_user/virtio_user_dev.h  |  20 ++
+ drivers/net/virtio/virtio_user_ethdev.c       | 260 +++++++++++++++++-
+ 4 files changed, 333 insertions(+), 4 deletions(-)
+
+diff --git a/.mailmap b/.mailmap
+index 4001e5fb0e70..8f921d4b9f46 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1448,6 +1448,7 @@ Salem Sol <salems@nvidia.com>
+ Sam Andrew <samandrew@microsoft.com>
+ Sam Chen <sam.chen@nebula-matrix.com>
+ Sam Grove <sam.grove@sifive.com>
++Samar Yadav <samaryadav5@gmail.com> <samar.yadav@broadcom.com>
+ Sameer Vaze <svaze@qti.qualcomm.com>
+ Sameh Gobriel <sameh.gobriel@intel.com>
+ Samik Gupta <samik.gupta@broadcom.com>
+diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+index f3df73c1f0ca..5e431ebc6511 100644
+--- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
++++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+@@ -34,6 +34,54 @@ const char * const virtio_user_backend_strings[] = {
+ 	[VIRTIO_USER_BACKEND_VHOST_VDPA] = "VHOST_VDPA",
+ };
+ 
++/*
++ * Collect the primary device's kick/call fds (interleaved kick,call per queue)
++ * for sharing with a secondary process. Caller must serialize against the
++ * control path (dev->mutex) so the fd arrays are not freed concurrently.
++ */
++int
++virtio_user_get_eventfds_from_dev(struct virtio_user_dev *dev,
++				  int fds[VIRTIO_USER_MAX_EVENTFDS])
++{
++	uint32_t max_queues;
++	int i, total_fds = 0;
++	int kickfd, callfd;
++
++	if (dev == NULL || fds == NULL)
++		return -EINVAL;
++
++	if (dev->kickfds == NULL || dev->callfds == NULL) {
++		PMD_INIT_LOG(ERR, "Device eventfd arrays not initialized");
++		return -EINVAL;
++	}
++
++	max_queues = dev->max_queue_pairs * 2;
++	if (dev->hw_cvq)
++		max_queues += 1;
++
++	/* each queue contributes a kick and a call fd */
++	if (max_queues * 2 > VIRTIO_USER_MAX_EVENTFDS) {
++		PMD_INIT_LOG(ERR,
++			     "Device needs %u eventfds, exceeds MP limit %d",
++			     max_queues * 2, VIRTIO_USER_MAX_EVENTFDS);
++		return -E2BIG;
++	}
++
++	for (i = 0; i < (int)max_queues; i++) {
++		kickfd = dev->kickfds[i];
++		callfd = dev->callfds[i];
++		if (kickfd < 0 || callfd < 0) {
++			PMD_INIT_LOG(ERR, "Queue %d has invalid fds (kick=%d call=%d)",
++				     i, kickfd, callfd);
++			return -EINVAL;
++		}
++		fds[total_fds++] = kickfd;
++		fds[total_fds++] = callfd;
++	}
++
++	return total_fds;
++}
++
+ static int
+ virtio_user_uninit_notify_queue(struct virtio_user_dev *dev, uint32_t queue_sel)
+ {
+@@ -865,9 +913,15 @@ virtio_user_dev_uninit(struct virtio_user_dev *dev)
+ 
+ 	rte_mem_event_callback_unregister(VIRTIO_USER_MEM_EVENT_CLB_NAME, dev);
+ 
++	/*
++	 * Serialize closing/freeing the kick/call fd arrays against the MP
++	 * handler, which reads them under the same lock to share them with
++	 * secondary processes.
++	 */
++	pthread_mutex_lock(&dev->mutex);
+ 	virtio_user_dev_uninit_notify(dev);
+-
+ 	virtio_user_free_vrings(dev);
++	pthread_mutex_unlock(&dev->mutex);
+ 
+ 	free(dev->ifname);
+ 
+diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.h b/drivers/net/virtio/virtio_user/virtio_user_dev.h
+index 66400b3b6295..c00297c79ed8 100644
+--- a/drivers/net/virtio/virtio_user/virtio_user_dev.h
++++ b/drivers/net/virtio/virtio_user/virtio_user_dev.h
+@@ -11,6 +11,11 @@
+ #include "../virtio.h"
+ #include "../virtio_ring.h"
+ 
++#include <rte_eal.h>
++
++/* Max eventfds shareable over the MP channel (bounded by SCM_RIGHTS). */
++#define VIRTIO_USER_MAX_EVENTFDS RTE_MP_MAX_FD_NUM
++
+ enum virtio_user_backend_type {
+ 	VIRTIO_USER_BACKEND_UNKNOWN,
+ 	VIRTIO_USER_BACKEND_VHOST_USER,
+@@ -89,5 +94,20 @@ int virtio_user_dev_get_rss_config(struct virtio_user_dev *dev, void *dst, size_
+ 				   int length);
+ void virtio_user_dev_delayed_disconnect_handler(void *param);
+ int virtio_user_dev_server_reconnect(struct virtio_user_dev *dev);
++
++/**
++ * Collect a primary device's kick/call eventfds for sharing with a
++ * secondary process over the multiprocess channel.
++ *
++ * @param dev
++ *   Pointer to the virtio_user device (primary).
++ * @param fds
++ *   Output array, must hold at least VIRTIO_USER_MAX_EVENTFDS elements.
++ * @return
++ *   Number of fds written on success, negative errno on error.
++ */
++int virtio_user_get_eventfds_from_dev(struct virtio_user_dev *dev,
++				      int fds[VIRTIO_USER_MAX_EVENTFDS]);
++
+ extern const char * const virtio_user_backend_strings[];
+ #endif
+diff --git a/drivers/net/virtio/virtio_user_ethdev.c b/drivers/net/virtio/virtio_user_ethdev.c
+index 747dddeb2eba..1c724ad59ea6 100644
+--- a/drivers/net/virtio/virtio_user_ethdev.c
++++ b/drivers/net/virtio/virtio_user_ethdev.c
+@@ -27,6 +27,35 @@
+ #include "virtio_rxtx.h"
+ #include "virtio_user/virtio_user_dev.h"
+ #include "virtio_user/vhost.h"
++#include <errno.h>
++#include <rte_errno.h>
++#include <rte_string_fns.h>
++#include <rte_spinlock.h>
++
++/* Virtio-user multiprocess communication channel */
++#define VIRTIO_USER_MP_NAME "virtio_user_mp"
++
++struct virtio_user_mp_param {
++	char port_name[RTE_DEV_NAME_MAX_LEN];
++};
++
++/*
++ * Per-process private data, referenced by eth_dev->process_private which (unlike
++ * dev_private) is NOT shared between primary and secondary processes. A secondary
++ * stores the kick/call fds it receives from the primary here, so it never mutates
++ * the primary-owned shared dev->kickfds/dev->callfds arrays. callfds are kept for
++ * a complete per-process view of the backend fds; only kickfds are used by the
++ * secondary data path today.
++ */
++struct virtio_user_proc_priv {
++	uint32_t nr_queues;
++	int *kickfds;
++	int *callfds;
++};
++
++/* Guards one-time registration of the process-wide MP action. */
++static rte_spinlock_t virtio_user_mp_lock = RTE_SPINLOCK_INITIALIZER;
++static bool virtio_user_mp_registered;
+ 
+ #define virtio_user_get_dev(hwp) container_of(hwp, struct virtio_user_dev, hw)
+ 
+@@ -269,6 +298,26 @@ virtio_user_del_queue(struct virtio_hw *hw, struct virtqueue *vq)
+ 		virtio_user_dev_destroy_shadow_cvq(dev);
+ }
+ 
++/*
++ * Return the kick fd to notify the backend for a queue in the running process.
++ * The secondary uses its own fds (process_private); the primary owns dev->kickfds.
++ */
++static int
++virtio_user_get_kickfd(struct virtio_hw *hw, struct virtio_user_dev *dev,
++		       uint16_t queue_idx)
++{
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
++		struct rte_eth_dev *eth_dev = &rte_eth_devices[hw->port_id];
++		struct virtio_user_proc_priv *pp = eth_dev->process_private;
++
++		if (pp == NULL || queue_idx >= pp->nr_queues)
++			return -1;
++		return pp->kickfds[queue_idx];
++	}
++
++	return dev->kickfds[queue_idx];
++}
++
+ static void
+ virtio_user_notify_queue(struct virtio_hw *hw, struct virtqueue *vq)
+ {
+@@ -282,8 +331,10 @@ virtio_user_notify_queue(struct virtio_hw *hw, struct virtqueue *vq)
+ 	}
+ 
+ 	if (!dev->notify_area) {
+-		if (write(dev->kickfds[vq->vq_queue_index], &notify_data,
+-			  sizeof(notify_data)) < 0)
++		int kickfd = virtio_user_get_kickfd(hw, dev, vq->vq_queue_index);
++
++		if (kickfd < 0 || write(kickfd, &notify_data,
++				sizeof(notify_data)) < 0)
+ 			PMD_DRV_LOG(ERR, "failed to kick backend: %s",
+ 				    strerror(errno));
+ 		return;
+@@ -495,6 +546,166 @@ virtio_user_eth_dev_free(struct rte_eth_dev *eth_dev)
+ 	rte_eth_dev_release_port(eth_dev);
+ }
+ 
++/* Close and free a secondary's per-process eventfd storage. */
++static void
++virtio_user_free_proc_priv(struct rte_eth_dev *eth_dev)
++{
++	struct virtio_user_proc_priv *pp = eth_dev->process_private;
++	uint32_t i;
++
++	if (pp == NULL)
++		return;
++
++	for (i = 0; i < pp->nr_queues; i++) {
++		if (pp->kickfds != NULL && pp->kickfds[i] >= 0)
++			close(pp->kickfds[i]);
++		if (pp->callfds != NULL && pp->callfds[i] >= 0)
++			close(pp->callfds[i]);
++	}
++
++	rte_free(pp->kickfds);
++	rte_free(pp->callfds);
++	rte_free(pp);
++	eth_dev->process_private = NULL;
++}
++
++/*
++ * Primary-side MP handler: reply with this port's kick/call eventfds so the
++ * requesting secondary can talk to the vhost backend. Always sends a reply
++ * (num_fds == 0 on error) so the secondary fails fast instead of timing out.
++ */
++static int
++virtio_user_mp_primary_handler(const struct rte_mp_msg *msg, const void *peer)
++{
++	const struct virtio_user_mp_param *param =
++		(const struct virtio_user_mp_param *)msg->param;
++	int eventfds[VIRTIO_USER_MAX_EVENTFDS];
++	struct rte_eth_dev *eth_dev;
++	struct virtio_user_dev *dev;
++	struct rte_mp_msg reply;
++	int num_fds;
++	int i;
++
++	memset(&reply, 0, sizeof(reply));
++	strlcpy(reply.name, msg->name, sizeof(reply.name));
++	reply.len_param = 0;
++	reply.num_fds = 0;
++
++	eth_dev = rte_eth_dev_get_by_name(param->port_name);
++	if (eth_dev == NULL || eth_dev->data->dev_private == NULL) {
++		PMD_INIT_LOG(ERR, "Failed to find virtio_user port: %s",
++			     param->port_name);
++		return rte_mp_reply(&reply, peer);
++	}
++
++	dev = eth_dev->data->dev_private;
++
++	/* serialize against control-path changes to the fd arrays */
++	pthread_mutex_lock(&dev->mutex);
++	num_fds = virtio_user_get_eventfds_from_dev(dev, eventfds);
++	if (num_fds >= 0 && num_fds <= RTE_MP_MAX_FD_NUM) {
++		reply.num_fds = num_fds;
++		for (i = 0; i < num_fds; i++)
++			reply.fds[i] = eventfds[i];
++	} else {
++		PMD_INIT_LOG(ERR, "Cannot share eventfds for %s (ret=%d)",
++			     param->port_name, num_fds);
++	}
++	pthread_mutex_unlock(&dev->mutex);
++
++	return rte_mp_reply(&reply, peer);
++}
++
++/*
++ * Secondary-side: request the primary's kick/call eventfds and store them in
++ * this process's eth_dev->process_private. The shared dev->kickfds/dev->callfds
++ * arrays (owned by the primary) are never touched.
++ */
++static int
++virtio_user_sync_eventfds(struct rte_eth_dev *eth_dev, struct virtio_user_dev *dev)
++{
++	struct rte_mp_msg mp_req, *mp_rep;
++	struct rte_mp_reply mp_reply = {0};
++	struct virtio_user_mp_param *req_param;
++	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
++	struct virtio_user_proc_priv *pp;
++	uint32_t total_queues, i;
++	int nr_fds, ret = 0;
++
++	if (dev == NULL)
++		return -EINVAL;
++
++	if (rte_eal_process_type() != RTE_PROC_SECONDARY)
++		return -EINVAL;
++
++	total_queues = dev->max_queue_pairs * 2 + (dev->hw_cvq ? 1 : 0);
++
++	pp = rte_zmalloc("virtio_user_proc_priv", sizeof(*pp), 0);
++	if (pp == NULL)
++		return -ENOMEM;
++
++	pp->kickfds = rte_malloc("virtio_user_proc_priv",
++				 total_queues * sizeof(int), 0);
++	pp->callfds = rte_malloc("virtio_user_proc_priv",
++				 total_queues * sizeof(int), 0);
++	if (pp->kickfds == NULL || pp->callfds == NULL) {
++		ret = -ENOMEM;
++		goto err_free;
++	}
++	for (i = 0; i < total_queues; i++) {
++		pp->kickfds[i] = -1;
++		pp->callfds[i] = -1;
++	}
++
++	memset(&mp_req, 0, sizeof(mp_req));
++	req_param = (struct virtio_user_mp_param *)mp_req.param;
++	strlcpy(req_param->port_name, eth_dev->data->name,
++		sizeof(req_param->port_name));
++	strlcpy(mp_req.name, VIRTIO_USER_MP_NAME, RTE_MP_MAX_NAME_LEN);
++	mp_req.len_param = sizeof(*req_param);
++	mp_req.num_fds = 0;
++
++	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) < 0 ||
++	    mp_reply.nb_received != 1) {
++		PMD_INIT_LOG(ERR, "Failed to request eventfds from primary");
++		free(mp_reply.msgs);
++		ret = -EIO;
++		goto err_free;
++	}
++
++	mp_rep = &mp_reply.msgs[0];
++	nr_fds = mp_rep->num_fds;
++
++	/* a partially-synced device cannot work: treat any mismatch as fatal */
++	if (nr_fds != (int)total_queues * 2) {
++		PMD_INIT_LOG(ERR, "Expected %u eventfds, received %d",
++			     total_queues * 2, nr_fds);
++		for (i = 0; i < (uint32_t)nr_fds; i++)
++			close(mp_rep->fds[i]);
++		free(mp_reply.msgs);
++		ret = -EPROTO;
++		goto err_free;
++	}
++
++	for (i = 0; i < total_queues; i++) {
++		pp->kickfds[i] = mp_rep->fds[i * 2];
++		pp->callfds[i] = mp_rep->fds[i * 2 + 1];
++	}
++	pp->nr_queues = total_queues;
++	free(mp_reply.msgs);
++
++	eth_dev->process_private = pp;
++	PMD_INIT_LOG(DEBUG, "Synced %u queue eventfds for secondary port %s",
++		     total_queues, eth_dev->data->name);
++	return 0;
++
++err_free:
++	rte_free(pp->kickfds);
++	rte_free(pp->callfds);
++	rte_free(pp);
++	return ret;
++}
++
+ /* Dev initialization routine. Invoked once for each virtio vdev at
+  * EAL init time, see rte_bus_probe().
+  * Returns 0 on success.
+@@ -542,6 +753,17 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
+ 
+ 		eth_dev->dev_ops = &virtio_user_secondary_eth_dev_ops;
+ 		eth_dev->device = &vdev->device;
++
++		/* populate this process's eventfds before announcing the port */
++		ret = virtio_user_sync_eventfds(eth_dev, dev);
++		if (ret < 0) {
++			PMD_INIT_LOG(ERR,
++				     "Failed to sync eventfds in secondary: %d",
++				     ret);
++			rte_eth_dev_release_port(eth_dev);
++			return ret;
++		}
++
+ 		rte_eth_dev_probing_finish(eth_dev);
+ 		return 0;
+ 	}
+@@ -722,6 +944,36 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
+ 		}
+ 	}
+ 
++	/*
++	 * Register the process-wide MP action once so secondaries can fetch a
++	 * port's eventfds by name. It is intentionally left registered for the
++	 * lifetime of the process (cleaned up at exit): unregistering per device
++	 * cannot drain handler calls already dispatched on the EAL MP thread.
++	 */
++	rte_spinlock_lock(&virtio_user_mp_lock);
++	if (!virtio_user_mp_registered) {
++		ret = rte_mp_action_register(VIRTIO_USER_MP_NAME,
++					     virtio_user_mp_primary_handler);
++		if (ret < 0 && rte_errno != EEXIST) {
++			rte_spinlock_unlock(&virtio_user_mp_lock);
++			if (rte_errno == ENOTSUP) {
++				PMD_INIT_LOG(WARNING,
++					"MP unsupported, secondary eventfd sharing disabled");
++				rte_eth_dev_probing_finish(eth_dev);
++				ret = 0;
++				goto end;
++			}
++			PMD_INIT_LOG(ERR, "Failed to register MP handler: %s",
++				     strerror(rte_errno));
++			virtio_user_dev_uninit(dev);
++			virtio_user_eth_dev_free(eth_dev);
++			ret = -1;
++			goto end;
++		}
++		virtio_user_mp_registered = true;
++	}
++	rte_spinlock_unlock(&virtio_user_mp_lock);
++
+ 	rte_eth_dev_probing_finish(eth_dev);
+ 	ret = 0;
+ 
+@@ -749,8 +1001,10 @@ virtio_user_pmd_remove(struct rte_vdev_device *vdev)
+ 	if (!eth_dev)
+ 		return 0;
+ 
+-	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
++		virtio_user_free_proc_priv(eth_dev);
+ 		return rte_eth_dev_release_port(eth_dev);
++	}
+ 
+ 	/* make sure the device is stopped, queues freed */
+ 	return rte_eth_dev_close(eth_dev->data->port_id);
+-- 
+2.52.0
+
