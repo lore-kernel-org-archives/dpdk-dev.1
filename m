@@ -2,51 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524E4CDB47C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 10:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97D1CDB47C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 10:37:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10A194066B;
-	Wed, 24 Jun 2026 12:37:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 996D440665;
+	Wed, 24 Jun 2026 12:37:13 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 6B8FC40659;
- Wed, 24 Jun 2026 12:37:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0284B40669;
+ Wed, 24 Jun 2026 12:37:09 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782297429; x=1813833429;
+ t=1782297430; x=1813833430;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=VQXecjmkp7v/H3jK7M7jiMob2r4LVZTk0m9A8k1UNPM=;
- b=BfTV6MV1ub0rvOADuT6YAs35LIxX46bfIi/WE7/4g2ofAhSJkXhtcEOw
- XTTZwRUjkTJ5e2+Js45squeG3+mllFuQA/tQOjbXhjP7xWhv84f/dI2OF
- ZET2cwSxQqxE30SRg5HvmH8hLOZceyKIsay0OvUKpzUys1zL8EcKX6O+z
- nP6iQ7dMPSFI7+vMYnDXWzUlDPC6yO9OC1t6ahtjS5QaekdNjcOuS3Obm
- wlCcWLS1Njr8kKRChDXDsN+j919gmilsLtPSXygMkd4tF7Ud9l0TeUJul
- 4vww1R2N85AI5pzyxKm+A+htCJhLkbd/9aEdYtS0qYapVbtYwFfaRsa1x g==;
-X-CSE-ConnectionGUID: Y7l24SKBSCyt8C0vkSqesA==
-X-CSE-MsgGUID: RLrcT7PrQ+6078rsiUUJxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="93652336"
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="93652336"
+ bh=mDYeNcC1YsLWgNVlck/wrwh1+znbkaBg4IhxPHriRDU=;
+ b=k6mCLdy9cX3PsXZuEibCnSGDEfa8f6kotLZkHxYkhdDY4KKnLGhSBvn2
+ UBgsnryr7K0WJuqPbT3KMgor5g1ihnpP4K65clJh2K8gDO3gnbUEsCx+1
+ m5rGZIhX9CHYJKIoCUt6PJ44UZiwc510QiyS6UhugUTbtQw3KIy7CqCVB
+ /cTziigF/HRGr5StFTOjL/GX+8InNTPJWAMl8lxD8fharWY8ma1NCbB0m
+ ZML2zyWsDqr7MKskCxW02uJe2qAMFrkDR2k6gMnktN9ViZydULECjgyfA
+ fDT2S1Gx/MkNLWGJG5QnNvVyI7foXCkVl9IYL7SYtQJ8BrhJDeewI8+gU Q==;
+X-CSE-ConnectionGUID: YjH6iCmDQZyEdfF5ALWhOA==
+X-CSE-MsgGUID: vSv6kjfYQPGE28u5N2s5aA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="93652339"
+X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="93652339"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Jun 2026 03:37:08 -0700
-X-CSE-ConnectionGUID: zv9BWB4OQ7OpMI5zUKxrnQ==
-X-CSE-MsgGUID: MCTrvpcXTXyEwyNlQxKkTg==
+ 24 Jun 2026 03:37:10 -0700
+X-CSE-ConnectionGUID: YPUQpULOQZKy8YUY16N15w==
+X-CSE-MsgGUID: zbDWov/ZSAWigxFzjPg7UQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="245459991"
+X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="245460006"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.224.226])
- by fmviesa006.fm.intel.com with ESMTP; 24 Jun 2026 03:37:06 -0700
+ by fmviesa006.fm.intel.com with ESMTP; 24 Jun 2026 03:37:08 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: [PATCH v2 02/17] common/mlx5: replace strncpy with strlcpy
-Date: Wed, 24 Jun 2026 11:36:41 +0100
-Message-ID: <20260624103658.792750-3-bruce.richardson@intel.com>
+ Michael Shamis <michaelsh@marvell.com>, Liron Himi <lironh@marvell.com>,
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>,
+ Tomasz Duszynski <tduszynski@marvell.com>
+Subject: [PATCH v2 03/17] crypto/mvsam: replace strncpy with strlcpy
+Date: Wed, 24 Jun 2026 11:36:42 +0100
+Message-ID: <20260624103658.792750-4-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260624103658.792750-1-bruce.richardson@intel.com>
 References: <20260623165150.765443-1-bruce.richardson@intel.com>
@@ -68,27 +66,27 @@ Errors-To: dev-bounces@dpdk.org
 
 Replace strncpy() with safer strlcpy() which always null-terminates.
 
-Fixes: aec086c9f1c8 ("common/mlx5: share kernel interface name getter")
+Fixes: 25b05a1c806b ("crypto/mvsam: parse max number of sessions")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/common/mlx5/linux/mlx5_common_os.c | 2 +-
+ drivers/crypto/mvsam/rte_mrvl_pmd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/common/mlx5/linux/mlx5_common_os.c b/drivers/common/mlx5/linux/mlx5_common_os.c
-index e3db6c4124..53bcc9b844 100644
---- a/drivers/common/mlx5/linux/mlx5_common_os.c
-+++ b/drivers/common/mlx5/linux/mlx5_common_os.c
-@@ -231,7 +231,7 @@ mlx5_get_ifname_sysfs(const char *ibdev_path, char *ifname)
- 		rte_errno = ENOENT;
- 		return -rte_errno;
+diff --git a/drivers/crypto/mvsam/rte_mrvl_pmd.c b/drivers/crypto/mvsam/rte_mrvl_pmd.c
+index a824719fb0..65a63c9d62 100644
+--- a/drivers/crypto/mvsam/rte_mrvl_pmd.c
++++ b/drivers/crypto/mvsam/rte_mrvl_pmd.c
+@@ -1146,7 +1146,7 @@ parse_name_arg(const char *key __rte_unused,
+ 		return -EINVAL;
  	}
--	strncpy(ifname, match, IF_NAMESIZE);
-+	strlcpy(ifname, match, IF_NAMESIZE);
+ 
+-	strncpy(params->name, value, RTE_CRYPTODEV_NAME_MAX_LEN);
++	strlcpy(params->name, value, RTE_CRYPTODEV_NAME_MAX_LEN);
+ 
  	return 0;
  }
- 
 -- 
 2.53.0
 
