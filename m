@@ -2,50 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C94CDE000
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 10:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDFBCDB47C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 10:37:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3F6CA40150;
-	Wed, 24 Jun 2026 12:27:54 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 7C2B5400EF;
- Wed, 24 Jun 2026 12:27:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4015F402E7;
+	Wed, 24 Jun 2026 12:37:07 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 14C29400EF
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 12:37:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782296873; x=1813832873;
+ t=1782297425; x=1813833425;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=8MwrGRDD3TIOqRmoJYJqiNgrDa8SAoq6RvCH0Z04saA=;
- b=NCED9nLYKCRy40D/3+K3kp4D5ceX3L3covpqudk183CEHtOrYfzxOLcC
- yD25ruN5nb7wcbgJGAe2LqePvRa0nmcshP73cgUG09se5qoXLOTP5m10X
- J+wF0rO8HJHpd2ODMJ5uKyfYY8CKe8vieXo13E8cTg2s8e8Sg/kiXjAGv
- on2KIZzGV3cGPThV8NBTHNRmSLJmx/5XVkavuSFnuBzdPkIT/iUPLtfyI
- IGDABRSppficiKcM6hFgWDP5AVjrAABDeuW3OaHPcFTqQT5TzPCLxKFLD
- EEKOXrhh7LDj+FDktR4R0pd6GPxT72dl9tg1pvFlCGyeesvofooE5iasy A==;
-X-CSE-ConnectionGUID: TfcfTi27Tt2g+rkFQ9eZEA==
-X-CSE-MsgGUID: pbi8Ku0TR2Kqrsjb4GsRIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="100478583"
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="100478583"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Jun 2026 03:27:50 -0700
-X-CSE-ConnectionGUID: dq02aisPQ6i6oWQjqq0DSA==
-X-CSE-MsgGUID: xBUKbBZBRUayf92Sw8dNCw==
+ bh=4sUl22c9mzyxj185Fpf5zb+us+yc5Ve0sgBXydQOcQY=;
+ b=d1gUySyHR3PuN9T6i+M5lrx8ELwJ0PM2DtqkT7I7WqTuq3VF/43hQ1+l
+ oFNnWOYd5FirUklUrn5B1I3nEK8rrT4Zz6QiS42T92R6jQzpE5dmRNTN7
+ OHEG7BnmcZGIOxXjLhkWLeVMhf8jMSFIl27Ei3oPnuvjEX5gXDUtV6ePS
+ 3X0uV0hhCvFgTILO5NANFtdNzwiQxelP02DHHMCskYV/4+pLHRGeZu11h
+ Lu4wAr5DibfmQL1PThAN4y7pU5VmnRlticMScXGqDWVaUjt932SOH0P+b
+ JYfmoqfX01oRcZKA8XK7mhaN1jSq8XEQBdbHw31VsVxuC8vcJGdU1tvvH A==;
+X-CSE-ConnectionGUID: K/9lv4TeS/ScK9PiP9R2DA==
+X-CSE-MsgGUID: BivMUpotSWm4fRkyd6ir/g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="93652327"
+X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="93652327"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Jun 2026 03:37:04 -0700
+X-CSE-ConnectionGUID: bYlwHE8zQj2wYfBt7lONiw==
+X-CSE-MsgGUID: oN7WPGa1S+e56n+koXbshA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="273490450"
+X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="245459970"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.224.226])
- by fmviesa002.fm.intel.com with ESMTP; 24 Jun 2026 03:27:49 -0700
+ by fmviesa006.fm.intel.com with ESMTP; 24 Jun 2026 03:37:03 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Radu Nicolau <radu.nicolau@intel.com>
-Subject: [PATCH v2] examples: use strlcpy and strlcat
-Date: Wed, 24 Jun 2026 11:27:34 +0100
-Message-ID: <20260624102734.789631-1-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 00/17] drivers: replace strncpy with strlcpy
+Date: Wed, 24 Jun 2026 11:36:39 +0100
+Message-ID: <20260624103658.792750-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260623154109.722441-1-bruce.richardson@intel.com>
-References: <20260623154109.722441-1-bruce.richardson@intel.com>
+In-Reply-To: <20260623165150.765443-1-bruce.richardson@intel.com>
+References: <20260623165150.765443-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,160 +60,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace strncpy and other unbounded string functions, e.g. strcpy,
-strcat, with the safer alternatives strlcpy and strlcat, so that we can
-guarantee null termination of strings.
+Many uses of strncpy in DPDK drivers can be directly replaced by
+a call to strlcpy instead, which is safer in that it always null-
+terminates the string. This AI assisted patchset makes those
+simple replacements, adjusting lengths as appropriate.
 
-Fixes: 4bbf8e30aa5e ("examples/ip_pipeline: add CLI interface")
-Fixes: 5f657a7fbe86 ("examples/pipeline: add message passing mechanism")
-Fixes: 83f58a7b7b0a ("examples/pipeline: add commands for direct registers")
-Fixes: 0d547ed03717 ("examples/ipsec-secgw: support configuration file")
-Fixes: 63e8c07c7245 ("examples/ipsec-secgw: fix configuration parsing")
-Fixes: 41e97c2ea9e6 ("examples/l2fwd-crypto: extend crypto information")
-Fixes: e8ae9b662506 ("examples/vm_power: channel manager and monitor in host")
-Cc: stable@dpdk.org
+After this set, there are still a number of drivers with strncpy calls
+in them, but those are not simple strncpy->strlcpy replacements, so
+left for later rework.
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Radu Nicolau <radu.nicolau@intel.com>
----
-V2: add string_fns.h header to two pipeline and ip_pipeline examples, to
-    fix builds on older distros without a built-in strlcpy fn.
----
- examples/ip_pipeline/conn.c                 |  6 ++++--
- examples/ipsec-secgw/sa.c                   |  4 ++--
- examples/l2fwd-crypto/main.c                | 12 ++++++------
- examples/pipeline/cli.c                     |  4 ++--
- examples/pipeline/conn.c                    |  6 ++++--
- examples/vm_power_manager/channel_manager.c |  3 +--
- 6 files changed, 19 insertions(+), 16 deletions(-)
+v2:
+* fix incorrect commit ids for fixlines.
+* fix build errors due to missing rte_string_fns.h header include
 
-diff --git a/examples/ip_pipeline/conn.c b/examples/ip_pipeline/conn.c
-index 30fca80c14..b2406b7af1 100644
---- a/examples/ip_pipeline/conn.c
-+++ b/examples/ip_pipeline/conn.c
-@@ -15,6 +15,8 @@
- #include <arpa/inet.h>
- #include <errno.h>
- 
-+#include <rte_string_fns.h>
-+
- #include "conn.h"
- 
- #define MSG_CMD_TOO_LONG "Command too long."
-@@ -115,8 +117,8 @@ conn_init(struct conn_params *p)
- 	}
- 
- 	/* Fill in */
--	strncpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX);
--	strncpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX);
-+	strlcpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX + 1);
-+	strlcpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX + 1);
- 	conn->buf_size = p->buf_size;
- 	conn->msg_in_len_max = p->msg_in_len_max;
- 	conn->msg_out_len_max = p->msg_out_len_max;
-diff --git a/examples/ipsec-secgw/sa.c b/examples/ipsec-secgw/sa.c
-index 866ba04b86..b5068765b6 100644
---- a/examples/ipsec-secgw/sa.c
-+++ b/examples/ipsec-secgw/sa.c
-@@ -338,12 +338,12 @@ parse_key_string(const char *key_str, uint8_t *key)
- 		if (pt_end == NULL) {
- 			if (strlen(pt_start) > 2)
- 				return 0;
--			strncpy(sub_str, pt_start, 2);
-+			memcpy(sub_str, pt_start, 2);
- 		} else {
- 			if (pt_end - pt_start > 2)
- 				return 0;
- 
--			strncpy(sub_str, pt_start, pt_end - pt_start);
-+			memcpy(sub_str, pt_start, pt_end - pt_start);
- 			pt_start = pt_end + 1;
- 		}
- 
-diff --git a/examples/l2fwd-crypto/main.c b/examples/l2fwd-crypto/main.c
-index ff189b5fab..22ad825c91 100644
---- a/examples/l2fwd-crypto/main.c
-+++ b/examples/l2fwd-crypto/main.c
-@@ -1576,19 +1576,19 @@ l2fwd_crypto_options_print(struct l2fwd_crypto_options *options)
- 	char string_aead_op[MAX_STR_LEN];
- 
- 	if (options->cipher_xform.cipher.op == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--		strcpy(string_cipher_op, "Encrypt");
-+		strlcpy(string_cipher_op, "Encrypt", sizeof(string_cipher_op));
- 	else
--		strcpy(string_cipher_op, "Decrypt");
-+		strlcpy(string_cipher_op, "Decrypt", sizeof(string_cipher_op));
- 
- 	if (options->auth_xform.auth.op == RTE_CRYPTO_AUTH_OP_GENERATE)
--		strcpy(string_auth_op, "Auth generate");
-+		strlcpy(string_auth_op, "Auth generate", sizeof(string_auth_op));
- 	else
--		strcpy(string_auth_op, "Auth verify");
-+		strlcpy(string_auth_op, "Auth verify", sizeof(string_auth_op));
- 
- 	if (options->aead_xform.aead.op == RTE_CRYPTO_AEAD_OP_ENCRYPT)
--		strcpy(string_aead_op, "Authenticated encryption");
-+		strlcpy(string_aead_op, "Authenticated encryption", sizeof(string_aead_op));
- 	else
--		strcpy(string_aead_op, "Authenticated decryption");
-+		strlcpy(string_aead_op, "Authenticated decryption", sizeof(string_aead_op));
- 
- 
- 	printf("Options:-\nn");
-diff --git a/examples/pipeline/cli.c b/examples/pipeline/cli.c
-index 215b4061d5..901706fab9 100644
---- a/examples/pipeline/cli.c
-+++ b/examples/pipeline/cli.c
-@@ -172,9 +172,9 @@ parse_table_entry(struct rte_swx_ctl_pipeline *p,
- 	line[0] = 0;
- 	for (i = 0; i < n_tokens; i++) {
- 		if (i)
--			strcat(line, " ");
-+			strlcat(line, " ", MAX_LINE_SIZE);
- 
--		strcat(line, tokens[i]);
-+		strlcat(line, tokens[i], MAX_LINE_SIZE);
- 	}
- 
- 	/* Read the table entry from the input buffer. */
-diff --git a/examples/pipeline/conn.c b/examples/pipeline/conn.c
-index e168c4ddaa..5fb033904f 100644
---- a/examples/pipeline/conn.c
-+++ b/examples/pipeline/conn.c
-@@ -15,6 +15,8 @@
- #include <arpa/inet.h>
- #include <errno.h>
- 
-+#include <rte_string_fns.h>
-+
- #include "conn.h"
- 
- #define MSG_CMD_TOO_LONG "Command too long."
-@@ -116,8 +118,8 @@ conn_init(struct conn_params *p)
- 	}
- 
- 	/* Fill in */
--	strncpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX);
--	strncpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX);
-+	strlcpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX + 1);
-+	strlcpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX + 1);
- 	conn->buf_size = p->buf_size;
- 	conn->msg_in_len_max = p->msg_in_len_max;
- 	conn->msg_out_len_max = p->msg_out_len_max;
-diff --git a/examples/vm_power_manager/channel_manager.c b/examples/vm_power_manager/channel_manager.c
-index b69449c61d..339c7fbb93 100644
---- a/examples/vm_power_manager/channel_manager.c
-+++ b/examples/vm_power_manager/channel_manager.c
-@@ -875,8 +875,7 @@ add_vm(const char *vm_name)
- 		rte_free(new_domain);
- 		return -1;
- 	}
--	strncpy(new_domain->name, vm_name, sizeof(new_domain->name));
--	new_domain->name[sizeof(new_domain->name) - 1] = '\0';
-+	strlcpy(new_domain->name, vm_name, sizeof(new_domain->name));
- 	memset(new_domain->channel_mask, 0, RTE_MAX_LCORE);
- 	new_domain->num_channels = 0;
- 
--- 
+Bruce Richardson (17):
+  common/cnxk: replace strncpy with strlcpy
+  common/mlx5: replace strncpy with strlcpy
+  crypto/mvsam: replace strncpy with strlcpy
+  crypto/scheduler: replace strncpy with strlcpy
+  event/cnxk: replace strncpy with strlcpy
+  net/ark: replace strncpy with strlcpy
+  net/bnx2x: replace strncpy with strlcpy
+  net/cnxk: replace strncpy with strlcpy
+  net/dpaa: replace strncpy with strlcpy
+  net/ionic: replace strncpy with strlcpy
+  net/mlx4: replace strncpy with strlcpy
+  net/mlx5: replace strncpy with strlcpy
+  net/nfp: replace strncpy with strlcpy
+  net/qede: replace strncpy with strlcpy
+  net/softnic: replace strncpy with strlcpy
+  net/vhost: replace strncpy with strlcpy
+  net/virtio: replace strncpy with strlcpy
+
+ drivers/common/cnxk/roc_model.c                   | 8 ++++----
+ drivers/common/mlx5/linux/mlx5_common_os.c        | 2 +-
+ drivers/crypto/mvsam/rte_mrvl_pmd.c               | 2 +-
+ drivers/crypto/scheduler/scheduler_pmd.c          | 8 ++++----
+ drivers/event/cnxk/cnxk_eventdev_stats.c          | 2 +-
+ drivers/net/ark/ark_ethdev.c                      | 2 +-
+ drivers/net/bnx2x/bnx2x.c                         | 2 +-
+ drivers/net/bnx2x/bnx2x_vfpf.c                    | 2 +-
+ drivers/net/cnxk/cnxk_eswitch.c                   | 4 ++--
+ drivers/net/cnxk/cnxk_rep_msg.c                   | 2 +-
+ drivers/net/dpaa/dpaa_ethdev.c                    | 2 +-
+ drivers/net/ionic/ionic_main.c                    | 4 ++--
+ drivers/net/mlx4/mlx4_ethdev.c                    | 2 +-
+ drivers/net/mlx5/mlx5.c                           | 8 ++++----
+ drivers/net/mlx5/windows/mlx5_ethdev_os.c         | 2 +-
+ drivers/net/nfp/nfpcore/nfp_resource.c            | 2 +-
+ drivers/net/qede/qede_ethdev.c                    | 2 +-
+ drivers/net/softnic/conn.c                        | 6 ++++--
+ drivers/net/vhost/rte_eth_vhost.c                 | 2 +-
+ drivers/net/virtio/virtio_user/vhost_kernel_tap.c | 2 +-
+ 20 files changed, 34 insertions(+), 32 deletions(-)
+
+--
 2.53.0
 
