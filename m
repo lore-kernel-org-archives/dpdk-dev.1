@@ -2,60 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C043CDB479
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 10:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA54CDB471
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 11:36:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7721840B91;
-	Wed, 24 Jun 2026 12:44:48 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 728894066F
- for <dev@dpdk.org>; Wed, 24 Jun 2026 12:44:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782297887;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=4aGUtR0VfHs5JXoTbOsSFukSDYy+ZXGGJlHCxZjKk3k=;
- b=WxKeaUT6UKw4LPCR92M/weC0Y2CYvLXfBKjbzLqPn6QvGebsrP/mNlqs2DX6VHq/GOj0tY
- D5CA3AGI0rRUfg+YKqRQeX1neIYyySSfyJ6012ZVEqHlwZ59pa6aLyReXEON0vUb76mCE9
- YnZF1jBroBWWzcl2ul30u/5kYovLLlM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-544-PcQCintNMtSxYIU97wvUVg-1; Wed,
- 24 Jun 2026 06:44:43 -0400
-X-MC-Unique: PcQCintNMtSxYIU97wvUVg-1
-X-Mimecast-MFC-AGG-ID: PcQCintNMtSxYIU97wvUVg_1782297882
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1EDFC1956076; Wed, 24 Jun 2026 10:44:42 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.48.202])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 99145180049F; Wed, 24 Jun 2026 10:44:39 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 23F744025E;
+	Wed, 24 Jun 2026 13:35:59 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 3102B400EF
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 13:35:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782300958; x=1813836958;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=auWVVcSpHa7Q5sgjN2lfKVBPcrabj5NBVDsfXSIyKOg=;
+ b=B9mnpBR44FdFkt/VtSn6r09xez2ePs3NCWXS8xsy0FPFngxosGZf65fi
+ FrkeOHE1NUxpGlrCTO1+HPJEibXb2uOgOtGx2b04AutHtu94OxonGV19S
+ 3WSLgUNnXFrPsi53Lbdtvr0iRBu1qdaFrZNEotBEUzHY0/EYtNUihx7xW
+ PycyZVTs0uHyTZ+nnaLR+AW37duaIhJBMIAhn78cVQaIhHuDJpVahH1zA
+ Q+4hL5giZ1Nh6CDOHv+1TqK4ila6AnrERlRbNBA0KZnZ8rptCAjMwbjB6
+ Q3/lNErSqzrq90deUAxe1kavixPEQVLeHJx8c3z8ELEbUDL6nZjaAOx3V Q==;
+X-CSE-ConnectionGUID: iNF0KNJBTe+INPnkEepLkA==
+X-CSE-MsgGUID: wFYg+AKSQ2WODveZ9kyPxg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="83154157"
+X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="83154157"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Jun 2026 04:35:57 -0700
+X-CSE-ConnectionGUID: clX8KK7uQGyvhdJUTIVAmA==
+X-CSE-MsgGUID: pV/BY2EEQ2CjdivRndmnxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="251762991"
+Received: from silpixa00401385.ir.intel.com (HELO
+ localhost.ger.corp.intel.com) ([10.20.224.226])
+ by fmviesa004.fm.intel.com with ESMTP; 24 Jun 2026 04:35:56 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: thomas@monjalon.net, stephen@networkplumber.org,
- bruce.richardson@intel.com, fengchengwen@huawei.com, longli@microsoft.com,
- hemant.agrawal@nxp.com, Wei Hu <weh@microsoft.com>
-Subject: [PATCH v4 12/12] bus/vmbus: support unplug
-Date: Wed, 24 Jun 2026 12:43:23 +0200
-Message-ID: <20260624104324.3576408-13-david.marchand@redhat.com>
-In-Reply-To: <20260624104324.3576408-1-david.marchand@redhat.com>
-References: <20260611094551.1514962-1-david.marchand@redhat.com>
- <20260624104324.3576408-1-david.marchand@redhat.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] build: use native Linux strlcpy when available
+Date: Wed, 24 Jun 2026 12:35:49 +0100
+Message-ID: <20260624113550.821516-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -ZE4xWb-pmGbVc53nGvU--X4JnfVCrjFmFOboEcddcI_1782297882
-X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,103 +58,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add .unplug callback to handle driver removal, device unmapping, and
-interrupt cleanup. This enables use of the generic bus cleanup helper.
+Glibc added the strlcpy and strlcat functions to version 2.38, meaning
+they are natively available in modern linux distros without having to
+use libbsd, or a dpdk-specific fallback. Therefore, we adjust our
+fallback detection logic to have meson check for the presence of these
+functions before checking if we actually need libbsd. Then in
+rte_string_fns.h we rework our macros a little for setting the fallback:
 
-The cleanup function was already performing these operations, so it
-seems safe to expose them through the unplug operation.
+1. If libbsd is to be used, just always include it as a standalone
+   block. With new meson logic, we only use it if we have to, even if
+   present.
+2. For BSD, configure fallback functions only if __BSD_VISIBLE is not
+   defined, otherwise just use native fns.
+3. Otherwise for Linux and Windows, configure the fallback functions if
+   meson has not set RTE_HAS_STRLCPY.
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
-Reviewed-by: Long Li <longli@microsoft.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- doc/guides/rel_notes/release_26_07.rst |  4 +++
- drivers/bus/vmbus/vmbus_common.c       | 41 ++++++++++++--------------
- 2 files changed, 23 insertions(+), 22 deletions(-)
+ config/meson.build               | 14 ++++++++++----
+ lib/eal/include/rte_string_fns.h | 18 +++++++-----------
+ 2 files changed, 17 insertions(+), 15 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 5d7aa8d1bf..55d3b44527 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -114,6 +114,10 @@ New Features
+diff --git a/config/meson.build b/config/meson.build
+index d7f5e55c18..0049cd3807 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -266,10 +266,16 @@ if libarchive.found()
+     dpdk_conf.set('RTE_HAS_LIBARCHIVE', 1)
+ endif
  
-   Added no-IOMMU mode for devices without or not enabling IOMMU/SVA.
+-# check for libbsd
+-libbsd = dependency('libbsd', required: false, method: 'pkg-config')
+-if libbsd.found()
+-    dpdk_conf.set('RTE_USE_LIBBSD', 1)
++# check for strlcpy: first in native libc, then via libbsd as fallback
++if cc.has_function('strlcpy', prefix: '#include <string.h>')
++    dpdk_conf.set('RTE_HAS_STRLCPY', 1)
++    libbsd = dependency('', required: false)  # empty not-found dependency
++else
++    libbsd = dependency('libbsd', required: false, method: 'pkg-config')
++    if libbsd.found()
++        dpdk_conf.set('RTE_USE_LIBBSD', 1)
++        dpdk_conf.set('RTE_HAS_STRLCPY', 1)
++    endif
+ endif
  
-+* **Added unplug operation support to VMBUS bus.**
-+
-+  Implemented device unplug operation to allow runtime removal of VMBUS devices.
-+
- * **Added selective Rx in ethdev API.**
+ jansson_dep = dependency('jansson', required: false, method: 'pkg-config')
+diff --git a/lib/eal/include/rte_string_fns.h b/lib/eal/include/rte_string_fns.h
+index 3713c94acb..4fb2a6c1ce 100644
+--- a/lib/eal/include/rte_string_fns.h
++++ b/lib/eal/include/rte_string_fns.h
+@@ -14,6 +14,9 @@
+ #include <ctype.h>
+ #include <stdio.h>
+ #include <string.h>
++#ifdef RTE_USE_LIBBSD
++#include <bsd/string.h>
++#endif
  
-   Some parts of packets may be discarded in Rx
-diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index a6e3a24a7c..cd6e851e4c 100644
---- a/drivers/bus/vmbus/vmbus_common.c
-+++ b/drivers/bus/vmbus/vmbus_common.c
-@@ -144,34 +144,29 @@ rte_vmbus_probe(void)
+ #include <rte_common.h>
+ #include <rte_compat.h>
+@@ -81,23 +84,16 @@ rte_strlcat(char *dst, const char *src, size_t size)
  }
+ #endif
  
- static int
--rte_vmbus_cleanup(struct rte_bus *bus)
-+vmbus_unplug_device(struct rte_device *rte_dev)
- {
--	struct rte_vmbus_device *dev;
--	int error = 0;
+-/* pull in a strlcpy function */
++/* provide strlcpy/strlcat aliases where not natively available */
+ #ifdef RTE_EXEC_ENV_FREEBSD
+ #ifndef __BSD_VISIBLE /* non-standard functions are hidden */
+ #define strlcpy(dst, src, size) rte_strlcpy(dst, src, size)
+ #define strlcat(dst, src, size) rte_strlcat(dst, src, size)
+-#endif
 -
--	RTE_BUS_FOREACH_DEV(dev, bus) {
--		const struct rte_vmbus_driver *drv;
--		int ret;
+-#else /* non-BSD platforms */
+-#ifdef RTE_USE_LIBBSD
+-#include <bsd/string.h>
 -
--		if (!rte_dev_is_probed(&dev->device))
--			continue;
--		drv = RTE_BUS_DRIVER(dev->device.driver, *drv);
--		if (drv->remove == NULL)
--			continue;
-+	const struct rte_vmbus_driver *drv = RTE_BUS_DRIVER(rte_dev->driver, *drv);
-+	struct rte_vmbus_device *dev = RTE_BUS_DEVICE(rte_dev, *dev);
-+	int ret = 0;
+-#else /* no BSD header files, create own */
++#endif /* __BSD_VISIBLE */
++#elif !defined(RTE_HAS_STRLCPY)
+ #define strlcpy(dst, src, size) rte_strlcpy(dst, src, size)
+ #define strlcat(dst, src, size) rte_strlcat(dst, src, size)
+-
+-#endif /* RTE_USE_LIBBSD */
+-#endif /* FREEBSD */
++#endif /* RTE_EXEC_ENV_FREEBSD */
  
-+	if (drv->remove != NULL) {
- 		ret = drv->remove(dev);
- 		if (ret < 0)
--			error = -1;
-+			return ret;
-+	}
- 
--		rte_vmbus_unmap_device(dev);
--		rte_intr_instance_free(dev->intr_handle);
-+	rte_vmbus_unmap_device(dev);
-+	rte_intr_instance_free(dev->intr_handle);
-+	dev->intr_handle = NULL;
- 
--		dev->device.driver = NULL;
--		rte_bus_remove_device(bus, &dev->device);
--		free(dev);
--	}
-+	return 0;
-+}
- 
--	return error;
-+static void
-+vmbus_free_device(struct rte_device *dev)
-+{
-+	free(RTE_BUS_DEVICE(dev, struct rte_vmbus_device));
- }
- 
- static int
-@@ -222,10 +217,12 @@ rte_vmbus_unregister(struct rte_vmbus_driver *driver)
- struct rte_bus rte_vmbus_bus = {
- 	.scan = rte_vmbus_scan,
- 	.probe = rte_bus_generic_probe,
--	.cleanup = rte_vmbus_cleanup,
-+	.free_device = vmbus_free_device,
-+	.cleanup = rte_bus_generic_cleanup,
- 	.find_device = rte_bus_generic_find_device,
- 	.match = vmbus_bus_match,
- 	.probe_device = vmbus_probe_device,
-+	.unplug_device = vmbus_unplug_device,
- 	.parse = vmbus_parse,
- 	.dev_compare = vmbus_dev_compare,
- };
+ #ifdef __cplusplus
+ extern "C" {
 -- 
-2.54.0
+2.53.0
 
