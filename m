@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75625CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 02:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EE0CDB479
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 02:04:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A1FCE40A80;
-	Wed, 24 Jun 2026 04:03:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 904484069F;
+	Wed, 24 Jun 2026 04:03:12 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 570E54067E
- for <dev@dpdk.org>; Wed, 24 Jun 2026 04:02:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 042D940677
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 04:02:46 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAD32+LCOjtq44WoFQ--.21303S2;
- Wed, 24 Jun 2026 10:02:42 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowADnyqHAOjtqvIWoFQ--.21214S2;
+ Wed, 24 Jun 2026 10:02:40 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v6 14/23] net/sxe2: add support for custom UDP tunnel ports
-Date: Wed, 24 Jun 2026 10:02:42 +0800
-Message-ID: <20260624020242.3687273-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v6 12/23] net/sxe2: add NEON vec Rx/Tx burst functions
+Date: Wed, 24 Jun 2026 10:02:40 +0800
+Message-ID: <20260624020240.3687245-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260622092731.3092201-1-liujie5@linkdatatechnology.com>
 References: <20260622092731.3092201-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAD32+LCOjtq44WoFQ--.21303S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfAFWxGr4ftF15Ar1fGw1rWFg_yoW5WF4UCo
- WxGrWrX3WfA342vay8Xry8CrW7J3y5Wwn3Kwsaga1DWasrA34jkF93Xw17XanrWF4SkFn8
- u3Wxu397Kr47Wr98n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: rQCowADnyqHAOjtqvIWoFQ--.21214S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfuF4xJrWfuryfuFyUGr4fuFg_yoW5Cr48Jo
+ Wxur4rJr47Jr18Aw4Dur1xZFyUtw4UZ34UCayF9Fnru3WkCF1Yka43t3WayFy7Wr4ftFs0
+ ga4Iy393trZ3XrWxn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
  AaLaJ3UjIYCTnIWjp_UUUYe7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
  x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
@@ -58,792 +58,883 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch enables the configuration of custom UDP port numbers for
-tunneling protocols in the SXE2 PMD.
+- Implement sxe2_recv_pkts_vec_neon for bulk packet receiving.
+- Implement sxe2_xmit_pkts_vec_neon for bulk packet transmission.
+- Added logic to select the vectorized path based on runtime config
+  and CPU flags (RTE_ARCH_ARM64).
 
-The change includes:
-- Adding a new entry in the tunnel port lookup table.
-- Updating the hardware profile to recognize
-  the custom UDP port as a tunnel type.
-- Enabling inner header parsing for packets arriving on these ports.
-
-This allows the Switch module to correctly apply recipes based on
-inner packet fields (e.g., inner MAC or IP).
+Vectorized path improves throughput for small packets by processing
+multiple descriptors simultaneously using SIMD instructions.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.c           |  96 ++++++++++
- drivers/net/sxe2/sxe2_cmd_chnl.h           |  17 ++
- drivers/net/sxe2/sxe2_drv_cmd.h            |  16 ++
- drivers/net/sxe2/sxe2_ethdev.c             | 200 ++++++++++++++++++++-
- drivers/net/sxe2/sxe2_ethdev.h             |   9 +
- drivers/net/sxe2/sxe2_flow.c               |  54 ++++++
- drivers/net/sxe2/sxe2_flow.h               |   3 +-
- drivers/net/sxe2/sxe2_flow_define.h        |   1 +
- drivers/net/sxe2/sxe2_flow_parse_pattern.c | 113 ++++++++++++
- drivers/net/sxe2/sxe2_flow_parse_pattern.h |   6 +
- drivers/net/sxe2/sxe2_txrx_poll.c          |  46 ++++-
- 11 files changed, 557 insertions(+), 4 deletions(-)
+ drivers/net/sxe2/meson.build            |   2 +
+ drivers/net/sxe2/sxe2_txrx.c            |  39 +-
+ drivers/net/sxe2/sxe2_txrx_vec.h        |  16 +-
+ drivers/net/sxe2/sxe2_txrx_vec_common.h |   1 +
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c   | 689 ++++++++++++++++++++++++
+ 5 files changed, 742 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index 6e2dd139a5..926eaee062 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -1455,6 +1455,102 @@ int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
- 	return ret;
- }
+diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
+index fc4466556b..4565046eae 100644
+--- a/drivers/net/sxe2/meson.build
++++ b/drivers/net/sxe2/meson.build
+@@ -48,6 +48,8 @@ if arch_subdir == 'x86'
+                 include_directories: includes,
+                 c_args: [cflags, '-mavx2'])
+         objs += sxe2_avx2_lib.extract_objects('sxe2_txrx_vec_avx2.c')
++elif arch_subdir == 'arm'
++        sources += files('sxe2_txrx_vec_neon.c')
+ endif
  
-+int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
-+			    enum sxe2_udp_tunnel_protocol tunnel_proto,
-+			    uint16_t udp_port)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_udp_tunnel_req req = {};
-+	struct sxe2_drv_cmd_params cmd = {};
-+	int32_t ret = -1;
-+
-+	req.type = tunnel_proto;
-+	req.port = udp_port;
-+	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_UDPTUNNEL_ADD,
-+				 &req, sizeof(req),
-+				 NULL, 0);
-+	ret = sxe2_drv_cmd_exec(cdev, &cmd);
-+	if (ret)
-+		PMD_LOG_ERR(DRV, "Failed to add udp proto %d port %d, ret=%d",
-+				tunnel_proto, udp_port, ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_udp_tunnel_del(struct sxe2_adapter *adapter,
-+			    enum sxe2_udp_tunnel_protocol tunnel_proto,
-+			    uint16_t udp_port)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_udp_tunnel_req req = {};
-+	struct sxe2_drv_cmd_params cmd = {};
-+	int32_t ret = -1;
-+
-+	req.type = tunnel_proto;
-+	req.port = udp_port;
-+	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_UDPTUNNEL_DEL,
-+				 &req, sizeof(req),
-+				 NULL, 0);
-+	ret = sxe2_drv_cmd_exec(cdev, &cmd);
-+	if (ret)
-+		PMD_LOG_ERR(DRV, "Failed to del udp proto %d port %d, ret=%d",
-+				tunnel_proto, udp_port, ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
-+				 enum sxe2_flow_udp_tunnel_protocol proto,
-+				 uint16_t *port)
-+{
-+	int32_t ret = 0;
-+	static const uint16_t flow_proto_to_udp_tunnel_proto[SXE2_FLOW_UDP_TUNNEL_MAX] = {
-+		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN] = SXE2_UDP_TUNNEL_PROTOCOL_VXLAN,
-+		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN_GPE] = SXE2_UDP_TUNNEL_PROTOCOL_VXLAN_GPE,
-+		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GENEVE] = SXE2_UDP_TUNNEL_PROTOCOL_GENEVE,
-+		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GTP_U] = SXE2_UDP_TUNNEL_PROTOCOL_GTP_U,
-+		[SXE2_FLOW_UDP_TUNNEL_PROTOCOL_NVGRE] = SXE2_UDP_TUNNEL_PROTOCOL_NVGRE,
-+	};
-+	struct sxe2_udp_tunnel_cfg tunnel_config = {};
-+
-+	tunnel_config.protocol = flow_proto_to_udp_tunnel_proto[proto];
-+	ret = sxe2_drv_udp_tunnel_get(adapter, &tunnel_config);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to get udp tunnel port, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	*port = tunnel_config.fw_port;
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_udp_tunnel_get(struct sxe2_adapter *adapter,
-+			    struct sxe2_udp_tunnel_cfg *tunnel_config)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_udp_tunnel_req req = {};
-+	struct sxe2_drv_udp_tunnel_resp resp = {};
-+	struct sxe2_drv_cmd_params cmd = {};
-+	int32_t ret = -1;
-+
-+	req.type = tunnel_config->protocol;
-+	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_UDPTUNNEL_GET,
-+				 &req, sizeof(req),
-+				 &resp, sizeof(resp));
-+	ret = sxe2_drv_cmd_exec(cdev, &cmd);
-+	if (ret)
-+		PMD_LOG_ERR(DRV, "Failed to get udp proto %d port, ret=%d", req.type, ret);
-+
-+	tunnel_config->fw_port   = resp.port;
-+	tunnel_config->fw_status = resp.enable;
-+	tunnel_config->fw_dst_en = resp.dst;
-+	tunnel_config->fw_src_en = resp.src;
-+	tunnel_config->fw_used   = resp.fw_used;
-+
-+	return ret;
-+}
-+
- int32_t sxe2_drv_queue_info_get_update(struct sxe2_adapter *adapter, struct eth_queue_stats *qstats)
- {
- 	struct sxe2_drv_cmd_params param = {0};
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index 52cd9922ad..97007c7cfa 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -67,6 +67,23 @@ int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
+ sources += files(
+diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
+index 00307f2fcc..798863dad9 100644
+--- a/drivers/net/sxe2/sxe2_txrx.c
++++ b/drivers/net/sxe2/sxe2_txrx.c
+@@ -175,6 +175,9 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
  
- int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
- 
-+int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
-+			    enum sxe2_udp_tunnel_protocol tunnel_proto,
-+			    uint16_t udp_port);
-+
-+int32_t sxe2_drv_udp_tunnel_del(struct sxe2_adapter *adapter,
-+			    enum sxe2_udp_tunnel_protocol tunnel_proto,
-+			    uint16_t udp_port);
-+
-+int32_t sxe2_drv_udp_tunnel_get(struct sxe2_adapter *adapter,
-+			    struct sxe2_udp_tunnel_cfg *tunnel_config);
-+
-+int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
-+				 enum sxe2_flow_udp_tunnel_protocol proto,
-+				 uint16_t *port);
-+
-+int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
-+
- int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
- 
- int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index dba4e85789..3e0b70ab02 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -617,6 +617,22 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_flow_fnav_query_stat_resp {
- 	uint64_t stat_bytes;
- } __rte_packed_end;
- 
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_req {
-+	uint8_t type;
-+	uint8_t rsv;
-+	uint16_t port;
-+} __rte_packed_end;
-+
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_resp {
-+	uint8_t type;
-+	uint8_t enable;
-+	uint8_t dst;
-+	uint8_t src;
-+	uint16_t port;
-+	uint8_t fw_used;
-+	uint8_t rsv;
-+} __rte_packed_end;
-+
- enum sxe2_drv_cmd_module {
- 	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
- 	SXE2_DRV_CMD_MODULE_DEV = 1,
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 389bbdab51..9bff741961 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -39,10 +39,11 @@
- #include "sxe2_ioctl_chnl_func.h"
- #include "sxe2_ethdev_repr.h"
- #include "sxe2vf_regs.h"
-+#include "sxe2_switchdev.h"
- 
- #define SXE2_PCI_VENDOR_ID_1    0x1ff2
- #define SXE2_PCI_DEVICE_ID_PF_1 0x10b1
--#define SXE2_PCI_DEVICE_ID_VF_1 0x10b2
-+#define SXE2_PCI_DEVICE_ID_VF_1 0x10b
- 
- #define SXE2_PCI_VENDOR_ID_2    0x1d94
- #define SXE2_PCI_DEVICE_ID_PF_2 0x1260
-@@ -114,6 +115,11 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev);
- static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info);
- static const uint32_t *sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev
- 				__rte_unused, size_t *no_of_elements __rte_unused);
-+static int32_t sxe2_udp_tunnel_port_add(struct rte_eth_dev *dev,
-+					struct rte_eth_udp_tunnel *tunnel_udp);
-+static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
-+					struct rte_eth_udp_tunnel *tunnel_udp);
-+
- 
- static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.dev_configure              = sxe2_dev_configure,
-@@ -161,6 +167,9 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.rss_hash_update            = sxe2_dev_rss_hash_update,
- 	.rss_hash_conf_get          = sxe2_dev_rss_hash_conf_get,
- 
-+	.udp_tunnel_port_add        = sxe2_udp_tunnel_port_add,
-+	.udp_tunnel_port_del        = sxe2_udp_tunnel_port_del,
-+
- 	.flow_ops_get               = sxe2_flow_ops_get,
- 	.tm_ops_get                 = sxe2_tm_ops_get,
- 
-@@ -225,6 +234,12 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
- 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
- 	PMD_INIT_FUNC_TRACE();
- 
-+	ret = sxe2_flow_init_udp_tunnel_port(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(DRV, "Failed to init udp tunnel port, ret: %d.", ret);
-+		goto l_end;
-+	}
-+
- 	ret = sxe2_queues_init(dev);
- 	if (ret) {
- 		PMD_LOG_ERR(INIT, "Failed to init queues.");
-@@ -270,6 +285,182 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
- 	return ret;
- }
- 
-+static enum sxe2_udp_tunnel_protocol
-+sxe2_udp_tunnel_type_rte_to_sxe2(enum rte_eth_tunnel_type rte_type)
-+{
-+	static enum sxe2_udp_tunnel_protocol sxe2_udp_proto_map[RTE_ETH_TUNNEL_TYPE_MAX] = {
-+		[RTE_ETH_TUNNEL_TYPE_NONE] = SXE2_UDP_TUNNEL_MAX,
-+		[RTE_ETH_TUNNEL_TYPE_VXLAN] = SXE2_UDP_TUNNEL_PROTOCOL_VXLAN,
-+		[RTE_ETH_TUNNEL_TYPE_GENEVE] = SXE2_UDP_TUNNEL_PROTOCOL_GENEVE,
-+		[RTE_ETH_TUNNEL_TYPE_TEREDO] = SXE2_UDP_TUNNEL_PROTOCOL_TEREDO,
-+		[RTE_ETH_TUNNEL_TYPE_NVGRE] = SXE2_UDP_TUNNEL_PROTOCOL_NVGRE,
-+		[RTE_ETH_TUNNEL_TYPE_IP_IN_GRE] = SXE2_UDP_TUNNEL_MAX,
-+		[RTE_ETH_L2_TUNNEL_TYPE_E_TAG] = SXE2_UDP_TUNNEL_MAX,
-+		[RTE_ETH_TUNNEL_TYPE_VXLAN_GPE] = SXE2_UDP_TUNNEL_PROTOCOL_VXLAN_GPE,
-+		[RTE_ETH_TUNNEL_TYPE_ECPRI]  = SXE2_UDP_TUNNEL_PROTOCOL_ECPRI
-+	};
-+
-+	if (rte_type >= RTE_ETH_TUNNEL_TYPE_MAX) {
-+		PMD_LOG_ERR(DRV, "Invalid rte_eth_tunnel_type %d!", rte_type);
-+		rte_type = RTE_ETH_TUNNEL_TYPE_NONE;
-+	}
-+
-+	return sxe2_udp_proto_map[rte_type];
-+}
-+
-+int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
-+				    enum sxe2_udp_tunnel_protocol tunnel_proto,
-+				    uint16_t udp_port)
-+{
-+	struct sxe2_udp_tunnel_cfg *tunnel_config;
-+	int32_t ret = -1;
-+
-+	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
-+
-+	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
-+
-+	if (tunnel_config->dev_status == SXE2_UDP_TUNNEL_ENABLE) {
-+		if (udp_port == tunnel_config->dev_port &&
-+			tunnel_config->dev_ref_cnt < 0xFFFFU) {
-+			tunnel_config->dev_ref_cnt++;
-+			ret = 0;
-+			goto l_unlock_end;
-+		} else {
-+			PMD_LOG_ERR(DRV, "Adding multiple ports to the same protocol "
-+				    "is not supported!");
-+			ret = -EINVAL;
-+			goto l_unlock_end;
-+		}
-+	} else {
-+		ret = sxe2_drv_udp_tunnel_add(ad, tunnel_proto, udp_port);
-+		if (ret != 0)
-+			goto l_unlock_end;
-+
-+		tunnel_config->protocol = tunnel_proto;
-+		tunnel_config->dev_port = udp_port;
-+		tunnel_config->dev_status  = SXE2_UDP_TUNNEL_ENABLE;
-+		tunnel_config->dev_ref_cnt++;
-+	}
-+
-+l_unlock_end:
-+	rte_spinlock_unlock(&ad->udp_tunnel_ctx.lock);
-+	return ret;
-+}
-+
-+int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
-+				    enum sxe2_udp_tunnel_protocol tunnel_proto,
-+				    uint16_t udp_port)
-+{
-+	struct sxe2_udp_tunnel_cfg *tunnel_config;
-+	int32_t ret = -1;
-+
-+	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
-+	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
-+
-+	if (tunnel_config->dev_status == SXE2_UDP_TUNNEL_ENABLE &&
-+		udp_port == tunnel_config->dev_port) {
-+		if (tunnel_config->dev_ref_cnt > 1) {
-+			tunnel_config->dev_ref_cnt--;
-+			ret = 0;
-+			goto l_unlock_end;
-+		} else {
-+			ret = sxe2_drv_udp_tunnel_del(ad, tunnel_proto, udp_port);
-+			if (ret != 0)
-+				goto l_unlock_end;
-+
-+			tunnel_config->dev_status  = SXE2_UDP_TUNNEL_DISABLE;
-+			tunnel_config->dev_ref_cnt = 0;
-+		}
-+		goto l_unlock_end;
-+	}
-+
-+	ret = -EINVAL;
-+
-+l_unlock_end:
-+	rte_spinlock_unlock(&ad->udp_tunnel_ctx.lock);
-+	return ret;
-+}
-+
-+static int32_t sxe2_udp_tunnel_port_clear(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *ad = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_udp_tunnel_cfg *tunnel_config;
-+	int32_t ret = 0;
-+	uint16_t tunnel_proto = 0;
-+
-+	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
-+
-+	for (tunnel_proto = 0; tunnel_proto < SXE2_UDP_TUNNEL_MAX; tunnel_proto++) {
-+		tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
-+		if (tunnel_config->dev_status == SXE2_UDP_TUNNEL_ENABLE) {
-+			ret = sxe2_drv_udp_tunnel_del(ad, tunnel_config->protocol,
-+					tunnel_config->dev_port);
-+			if (ret) {
-+				PMD_LOG_ERR(DRV, "Failed to delete udp tunnel port %d, proto %d",
-+					    tunnel_config->dev_port, tunnel_config->protocol);
-+				goto l_unlock_end;
-+			}
-+
-+			tunnel_config->dev_status  = SXE2_UDP_TUNNEL_DISABLE;
-+			tunnel_config->dev_ref_cnt = 0;
-+		}
-+	}
-+l_unlock_end:
-+	rte_spinlock_unlock(&ad->udp_tunnel_ctx.lock);
-+	return ret;
-+}
-+
-+static int32_t sxe2_udp_tunnel_port_add(struct rte_eth_dev *dev,
-+			struct rte_eth_udp_tunnel *tunnel_udp)
-+{
-+	int32_t ret = 0;
-+	enum sxe2_udp_tunnel_protocol tunnel_proto;
-+	struct sxe2_adapter *ad = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+
-+	if (tunnel_udp->udp_port == 0) {
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	tunnel_proto = sxe2_udp_tunnel_type_rte_to_sxe2(tunnel_udp->prot_type);
-+	if (tunnel_proto >= SXE2_UDP_TUNNEL_MAX) {
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_udp_tunnel_port_add_common(ad, tunnel_proto, tunnel_udp->udp_port);
-+	if (ret) {
-+		PMD_LOG_ERR(DRV, "Add tunnel port failed, ret = %d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
-+			struct rte_eth_udp_tunnel *tunnel_udp)
-+{
-+	int32_t ret = 0;
-+	enum sxe2_udp_tunnel_protocol tunnel_proto;
-+	struct sxe2_adapter *ad = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+
-+	tunnel_proto = sxe2_udp_tunnel_type_rte_to_sxe2(tunnel_udp->prot_type);
-+	if (tunnel_proto >= SXE2_UDP_TUNNEL_MAX) {
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_udp_tunnel_port_del_common(ad, tunnel_proto, tunnel_udp->udp_port);
-+	if (ret) {
-+		PMD_LOG_ERR(DRV, "Delete tunnel port failed, ret = %d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
- static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
- 			struct rte_eth_dev_info *dev_info)
- {
-@@ -1287,15 +1478,20 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
- 	(void)sxe2_dev_stop(dev);
- 	(void)sxe2_queues_release(dev);
- 	sxe2_mp_uninit(dev);
--	(void)sxe2_rss_disable(dev);
- 	(void)sxe2_sched_uinit(dev);
-+	(void)sxe2_rss_disable(dev);
-+	(void)sxe2_flow_uninit(dev);
-+	(void)sxe2_udp_tunnel_port_clear(dev);
- 	sxe2_vsi_uninit(dev);
- 	sxe2_security_uinit(dev);
- 	sxe2_intr_uninit(dev);
- 	(void)sxe2_switchdev_uninit(dev);
- 	sxe2_sw_uninit(dev);
-+	(void)sxe2_switchdev_uninit(dev);
-+	sxe2_dev_pci_map_uinit(dev);
- 	sxe2_eth_uinit(dev);
- 	sxe2_dev_pci_map_uinit(dev);
-+	sxe2_free_repr_info(dev);
- 
- l_end:
- 	return 0;
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index 06adbf448f..0c7fc56ec5 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -318,6 +318,7 @@ struct sxe2_adapter {
- 	struct sxe2_sched_hw_cap      sched_ctxt;
- 	struct sxe2_tm_context        tm_ctxt;
- 	struct sxe2_devargs           devargs;
-+	struct sxe2_udp_tunnel_ctx    udp_tunnel_ctx;
- 	struct sxe2_security_ctx      security_ctx;
- 	struct sxe2_repr_context      repr_ctxt;
- 	struct sxe2_switchdev_info    switchdev_info;
-@@ -369,6 +370,14 @@ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
- 
- int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
- 
-+void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
-+
-+int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
-+		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
-+
-+int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
-+		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
-+
- void sxe2_dev_pci_map_uinit(struct rte_eth_dev *dev);
- 
- void sxe2_eth_uinit(struct rte_eth_dev *dev);
-diff --git a/drivers/net/sxe2/sxe2_flow.c b/drivers/net/sxe2/sxe2_flow.c
-index 3b3a9e45e0..187ad95166 100644
---- a/drivers/net/sxe2/sxe2_flow.c
-+++ b/drivers/net/sxe2/sxe2_flow.c
-@@ -520,6 +520,51 @@ static int32_t sxe2_flow_adjust_action(struct rte_eth_dev *dev __rte_unused,
- 	return ret;
- }
- 
-+int32_t sxe2_flow_init_udp_tunnel_port(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+	uint16_t i = 0;
-+	uint16_t *flow_udp_tunnel_port = NULL;
-+
-+	memset(adapter->flow_ctxt.tunnel_port_list, 0,
-+	       sizeof(adapter->flow_ctxt.tunnel_port_list));
-+
-+	flow_udp_tunnel_port = adapter->flow_ctxt.tunnel_port_list;
-+	for (i = 0; i < SXE2_FLOW_UDP_TUNNEL_MAX; i++) {
-+		if (flow_udp_tunnel_port[i] == 0) {
-+			ret = sxe2_drv_get_udp_tunnel_port(adapter, i,
-+							   &flow_udp_tunnel_port[i]);
-+			if (ret != 0) {
-+				PMD_LOG_ERR(DRV, "Failed to get udp tunnel port, proto: %d,"
-+					    "ret: %d", i, ret);
-+				goto l_end;
-+			}
-+		}
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_flowlist_add_tunnel_port(struct rte_eth_dev *dev,
-+			struct rte_flow *flow_list,
-+			struct rte_flow_error *error)
-+{
-+	struct sxe2_flow_list_t *sxe2_flow_list = &flow_list->sxe2_flow_list;
-+	struct sxe2_flow *flow = TAILQ_FIRST(sxe2_flow_list);
-+	enum sxe2_flow_tunnel_type tunnel_type = flow->meta.tunnel_type;
-+	DECLARE_BITMAP(flow_type, SXE2_EXPANSION_MAX);
-+	sxe2_bitmap_zero(flow_type, SXE2_EXPANSION_MAX);
-+	sxe2_bitmap_copy(flow_type, flow->flow_type, SXE2_EXPANSION_MAX);
-+	int32_t ret = 0;
-+
-+	if (flow->engine_type == SXE2_FLOW_ENGINE_FNAV)
-+		return sxe2_flow_add_tunnel_port(dev, error, flow, flow_type, tunnel_type);
-+
-+	return ret;
-+}
-+
- static int32_t sxe2_flow_check_item_empty(uint8_t *item, uint16_t size)
- {
- 	uint16_t i = 0;
-@@ -676,6 +721,10 @@ static int32_t sxe2_flow_post_proc(struct rte_eth_dev *dev,
- {
- 	int32_t ret = 0;
- 
-+	ret = sxe2_flowlist_add_tunnel_port(dev, flow_list, error);
-+	if (ret)
-+		goto l_end;
-+
- 	ret = sxe2_flowlist_add_proto_type(dev, flow_list, error);
- 	if (ret)
- 		goto l_end;
-@@ -1305,6 +1354,11 @@ int32_t sxe2_flow_init(struct rte_eth_dev *dev)
- 
- 	adapter->flow_ctxt.fnav_inited = 1;
- 	rte_spinlock_init(&adapter->flow_ctxt.flow_list_lock);
-+
-+	ret = sxe2_flow_init_udp_tunnel_port(dev);
-+	if (ret)
-+		PMD_LOG_ERR(DRV, "Failed to init udp tunnel port, ret: %d.", ret);
-+
- 	return ret;
- }
- 
-diff --git a/drivers/net/sxe2/sxe2_flow.h b/drivers/net/sxe2/sxe2_flow.h
-index 9970fddcf0..daaeedd4dc 100644
---- a/drivers/net/sxe2/sxe2_flow.h
-+++ b/drivers/net/sxe2/sxe2_flow.h
-@@ -8,7 +8,6 @@
- #include "sxe2_osal.h"
- #include "sxe2_common.h"
- 
--
- int32_t sxe2_flow_ops_get(struct rte_eth_dev *dev, const struct rte_flow_ops **ops);
- 
- int32_t sxe2_flow_init(struct rte_eth_dev *dev);
-@@ -26,4 +25,6 @@ int32_t sxe2_flow_query_mgr(struct sxe2_adapter *adapter,
- 			struct sxe2_flow *flow,
- 			struct sxe2_fnav_cid_mgr **mgr_ptr,
- 			struct rte_flow_error *error);
-+
-+int32_t sxe2_flow_init_udp_tunnel_port(struct rte_eth_dev *dev);
- #endif /* __SXE2_FLOW_H__ */
-diff --git a/drivers/net/sxe2/sxe2_flow_define.h b/drivers/net/sxe2/sxe2_flow_define.h
-index d2f6000efa..263a573f04 100644
---- a/drivers/net/sxe2/sxe2_flow_define.h
-+++ b/drivers/net/sxe2/sxe2_flow_define.h
-@@ -119,6 +119,7 @@ struct sxe2_flow_context {
- 	struct rte_flow_list_t rte_flow_list;
- 	rte_spinlock_t flow_list_lock;
- 	struct sxe2_fnav_count_resource hw_res;
-+	uint16_t tunnel_port_list[SXE2_FLOW_UDP_TUNNEL_MAX];
- 	uint32_t fnav_inited;
- };
- #define SXE2_INVALID_RSS_ATTR	\
-diff --git a/drivers/net/sxe2/sxe2_flow_parse_pattern.c b/drivers/net/sxe2/sxe2_flow_parse_pattern.c
-index 189abb1a33..f5bf8922c6 100644
---- a/drivers/net/sxe2/sxe2_flow_parse_pattern.c
-+++ b/drivers/net/sxe2/sxe2_flow_parse_pattern.c
-@@ -1637,6 +1637,119 @@ static int32_t sxe2_flow_parse_pattern_vxlan_gpe(const struct rte_flow_item *ite
- 	return ret;
- }
- 
-+static int32_t sxe2_flow_parse_pattern_ipip(struct sxe2_flow *flow, BITMAP_TYPE *flow_type)
-+{
-+	sxe2_set_bit(SXE2_EXPANSION_IPIP, flow_type);
-+	if (sxe2_test_bit(SXE2_EXPANSION_OUTER_IPV4, flow_type)) {
-+		sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV4_PROT, flow->pattern_outer.map_spec);
-+		if (sxe2_test_bit(SXE2_EXPANSION_IPV4, flow_type))
-+			flow->pattern_outer.item_spec.ipv4.protocol = SXE2_FLOW_IP_PROTOCOL_IPV4;
-+		if (sxe2_test_bit(SXE2_EXPANSION_IPV6, flow_type))
-+			flow->pattern_outer.item_spec.ipv4.protocol = SXE2_FLOW_IP_PROTOCOL_IPV6;
-+	}
-+	if (sxe2_test_bit(SXE2_EXPANSION_OUTER_IPV6, flow_type)) {
-+		sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV6_PROT, flow->pattern_outer.map_spec);
-+		if (sxe2_test_bit(SXE2_EXPANSION_ETH, flow_type)) {
-+			flow->pattern_outer.item_spec.ipv6.nexthdr = SXE2_FLOW_IP_PROTOCOL_ETH;
-+		} else {
-+			if (sxe2_test_bit(SXE2_EXPANSION_IPV4, flow_type))
-+				flow->pattern_outer.item_spec.ipv6.nexthdr =
-+					SXE2_FLOW_IP_PROTOCOL_IPV4;
-+			if (sxe2_test_bit(SXE2_EXPANSION_IPV6, flow_type))
-+				flow->pattern_outer.item_spec.ipv6.nexthdr =
-+					SXE2_FLOW_IP_PROTOCOL_IPV6;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int32_t sxe2_flow_add_udp_tunnel_port(struct sxe2_adapter *adapter,
-+					 enum sxe2_flow_udp_tunnel_protocol proto,
-+					 struct sxe2_flow *flow,
-+					 BITMAP_TYPE *flow_type)
-+{
-+	int32_t ret = 0;
-+	uint16_t tun_port;
-+
-+	tun_port = adapter->flow_ctxt.tunnel_port_list[proto];
-+	if (tun_port == 0xffff || tun_port == 0) {
-+		ret = -EINVAL;
-+		PMD_LOG_ERR(DRV, "UDP tunnel port not initialized, proto: %d", proto);
-+		goto l_end;
-+	}
-+	if (!sxe2_test_bit(SXE2_EXPANSION_OUTER_UDP, flow_type)) {
-+		ret = -EINVAL;
-+		PMD_LOG_ERR(DRV, "UDP must be over tunnel");
-+		goto l_end;
-+	}
-+	sxe2_set_bit(SXE2_FLOW_FLD_ID_UDP_DST_PORT, flow->pattern_outer.map_spec);
-+	flow->pattern_outer.item_spec.udp.dest = rte_cpu_to_be_16(tun_port);
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_flow_add_tunnel_port(struct rte_eth_dev *dev,
-+			struct rte_flow_error *error,
-+			struct sxe2_flow *flow, BITMAP_TYPE *flow_type,
-+			enum sxe2_flow_tunnel_type tunnel_type)
-+{
-+	int32_t ret = 0;
-+	enum sxe2_flow_udp_tunnel_protocol proto = SXE2_FLOW_UDP_TUNNEL_MAX;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_flow_pattern *pattern = &flow->pattern_outer;
-+	switch (tunnel_type) {
-+	case SXE2_FLOW_TUNNEL_TYPE_VXLAN:
-+		if (sxe2_test_bit(SXE2_EXPANSION_ETH, flow_type)) {
-+			proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN;
-+		} else if (sxe2_test_bit(SXE2_EXPANSION_IPV4, flow_type) ||
-+			sxe2_test_bit(SXE2_EXPANSION_IPV6, flow_type)) {
-+			proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_VXLAN_GPE;
-+		}
-+		break;
-+	case SXE2_FLOW_TUNNEL_TYPE_GTPU:
-+		proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GTP_U;
-+		break;
-+	case SXE2_FLOW_TUNNEL_TYPE_GENEVE:
-+		proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_GENEVE;
-+		break;
-+	case SXE2_FLOW_TUNNEL_TYPE_GRE:
-+		if (sxe2_test_bit(SXE2_EXPANSION_OUTER_UDP, flow_type)) {
-+			proto = SXE2_FLOW_UDP_TUNNEL_PROTOCOL_NVGRE;
-+		} else {
-+			if (sxe2_test_bit(SXE2_EXPANSION_OUTER_IPV4, flow_type)) {
-+				pattern->item_spec.ipv4.protocol = SXE2_FLOW_IP_PROTOCOL_GRE;
-+				sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV4_PROT, pattern->map_spec);
-+			}
-+			if (sxe2_test_bit(SXE2_EXPANSION_OUTER_IPV6, flow_type)) {
-+				pattern->item_spec.ipv6.nexthdr = SXE2_FLOW_IP_PROTOCOL_GRE;
-+				sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV6_PROT, pattern->map_spec);
-+			}
-+		}
-+		break;
-+	case SXE2_FLOW_TUNNEL_TYPE_IPIP:
-+		ret = sxe2_flow_parse_pattern_ipip(flow, flow_type);
-+		break;
-+	default:
-+		break;
-+	}
-+	if (proto != SXE2_FLOW_UDP_TUNNEL_MAX) {
-+		ret = sxe2_flow_add_udp_tunnel_port(adapter, proto, flow, flow_type);
-+		if (ret != 0) {
-+			rte_flow_error_set(error, EINVAL,
-+					RTE_FLOW_ERROR_TYPE_ITEM,
-+					NULL, "Failed to add udp port for tunnel.");
-+			PMD_LOG_ERR(DRV, "Failed to add udp port for tunnel, ret %d.", ret);
-+			goto l_end;
-+		}
-+	}
-+	if (tunnel_type != SXE2_FLOW_TUNNEL_TYPE_NONE) {
-+		if (!sxe2_test_bit(SXE2_EXPANSION_OUTER_UDP, flow_type))
-+			sxe2_set_bit(SXE2_FLOW_HDR_IPV_OTHER, pattern->hdrs);
-+	}
-+l_end:
-+	return ret;
-+}
-+
- struct sxe2_flow_parse_pattern_ops sxe2_flow_parse_pattern_list[] = {
- 	[SXE2_EXPANSION_OUTER_ETH] = {
- 		.is_inner = false,
-diff --git a/drivers/net/sxe2/sxe2_flow_parse_pattern.h b/drivers/net/sxe2/sxe2_flow_parse_pattern.h
-index 69d83a6ea6..8442c35cae 100644
---- a/drivers/net/sxe2/sxe2_flow_parse_pattern.h
-+++ b/drivers/net/sxe2/sxe2_flow_parse_pattern.h
-@@ -37,4 +37,10 @@ int32_t sxe2_flow_parse_pattern(struct rte_eth_dev *dev,
- 			    struct rte_flow_error *error,
- 			    struct sxe2_flow *flow);
- 
-+int32_t sxe2_flow_add_tunnel_port(struct rte_eth_dev *dev,
-+			      struct rte_flow_error *error,
-+			      struct sxe2_flow *flow,
-+			      BITMAP_TYPE *flow_type,
-+			      enum sxe2_flow_tunnel_type tunnel_type);
-+
- #endif /* SXE2_FLOW_PARSE_PATTERN_H_ */
-diff --git a/drivers/net/sxe2/sxe2_txrx_poll.c b/drivers/net/sxe2/sxe2_txrx_poll.c
-index a662bb4375..21925f1cd4 100644
---- a/drivers/net/sxe2/sxe2_txrx_poll.c
-+++ b/drivers/net/sxe2/sxe2_txrx_poll.c
-@@ -234,6 +234,44 @@ sxe2_tx_pkt_data_desc_count(struct rte_mbuf *tx_pkt)
- 	return count;
- }
- 
-+static __rte_always_inline void sxe2_tx_desc_tunneling_params_fill(uint64_t offloads,
-+					union sxe2_tx_offload_info ol_info,
-+					uint32_t *desc_tunneling_params)
-+{
-+	if (offloads & RTE_MBUF_F_TX_OUTER_IP_CKSUM)
-+		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_EIPT_IPV4;
-+	else if (offloads & RTE_MBUF_F_TX_OUTER_IPV4)
-+		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_EIPT_IPV4_NO_CSUM;
-+	else if (offloads & RTE_MBUF_F_TX_OUTER_IPV6)
-+		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_EIPT_IPV6;
-+
-+	*desc_tunneling_params |=
-+			SXE2_TX_CTXT_DESC_EIPLEN_VAL(ol_info.outer_l3_len);
-+	switch (offloads & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+	case RTE_MBUF_F_TX_TUNNEL_IPIP:
-+		break;
-+	case RTE_MBUF_F_TX_TUNNEL_VXLAN:
-+	case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
-+	case RTE_MBUF_F_TX_TUNNEL_GTP:
-+	case RTE_MBUF_F_TX_TUNNEL_GENEVE:
-+		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_UDP_TUNNE;
-+		break;
-+	case RTE_MBUF_F_TX_TUNNEL_GRE:
-+		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_GRE_TUNNE;
-+		break;
-+	default:
-+		PMD_LOG_ERR(TX, "Tunnel type [0x%" PRIx64 "] is not supported.",
-+			    (uint64_t)(offloads & RTE_MBUF_F_TX_TUNNEL_MASK));
-+		return;
-+	}
-+	*desc_tunneling_params |= SXE2_TX_CTXT_DESC_NATLEN_VAL(ol_info.l2_len);
-+	if (!(*desc_tunneling_params & SXE2_TX_CTXT_DESC_EIPT_NONE) &&
-+			(*desc_tunneling_params & SXE2_TX_CTXT_DESC_UDP_TUNNE) &&
-+			(offloads & RTE_MBUF_F_TX_OUTER_UDP_CKSUM)) {
-+		*desc_tunneling_params |= SXE2_TX_CTXT_DESC_L4T_CS_MASK;
-+	}
-+}
-+
- static __rte_always_inline void
- sxe2_tx_desc_checksum_fill(uint64_t offloads, uint32_t *desc_cmd, uint32_t *desc_offset,
- 		union sxe2_tx_offload_info ol_info)
-@@ -414,7 +452,13 @@ uint16_t sxe2_tx_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkt
+ 			if ((0 == (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK)))
+ 				tx_mode_flags |=  SXE2_TX_MODE_VEC_SSE;
++#elif defined(RTE_ARCH_ARM64)
++			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1)
++				tx_mode_flags |= (vec_flags | SXE2_TX_MODE_VEC_NEON);
+ #endif
+ 			if (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) {
+ 				ret = sxe2_tx_queues_vec_prepare(dev);
+@@ -218,8 +221,15 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
+ 				dev->tx_pkt_burst = sxe2_tx_pkts_vec_sse_simple;
  			}
  		}
- 
--		desc_offset |= SXE2_TX_DATA_DESC_MACLEN_VAL(ol_info.l2_len);
-+		if ((offloads & RTE_MBUF_F_TX_TUNNEL_MASK) && ctxt_desc_num) {
-+			desc_offset |= SXE2_TX_DATA_DESC_MACLEN_VAL(ol_info.outer_l2_len);
-+			sxe2_tx_desc_tunneling_params_fill(offloads, ol_info,
-+						&desc_tunneling_params);
+-	} else {
++#elif defined(RTE_ARCH_ARM64)
++		if (tx_mode_flags & SXE2_TX_MODE_VEC_NEON) {
++			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
++			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon;
 +		} else {
-+			desc_offset |= SXE2_TX_DATA_DESC_MACLEN_VAL(ol_info.l2_len);
++			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon_simple;
 +		}
+ #endif
++	} else {
+ 		if (tx_mode_flags & SXE2_TX_MODE_SIMPLE_BATCH) {
+ 			dev->tx_pkt_prepare = NULL;
+ 			dev->tx_pkt_burst = sxe2_tx_pkts_simple;
+@@ -227,9 +237,7 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
+ 			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
+ 			dev->tx_pkt_burst = sxe2_tx_pkts;
+ 		}
+-#ifdef RTE_ARCH_X86
+ 	}
+-#endif
+ }
  
- 		if (offloads & SXE2_TX_OFFLOAD_CKSUM_MASK) {
- 			sxe2_tx_desc_checksum_fill(offloads, &desc_cmd,
+ static const struct {
+@@ -253,6 +261,12 @@ static const struct {
+ 	{ sxe2_tx_pkts_vec_sse_simple,
+ 	      "Vector SSE Simple" },
+ #endif
++#ifdef RTE_ARCH_ARM64
++	{ sxe2_tx_pkts_vec_neon,
++	  "Vector NEON" },
++	{ sxe2_tx_pkts_vec_neon_simple,
++	  "Vector NEON Simple" },
++#endif
+ };
+ 
+ int32_t sxe2_tx_burst_mode_get(struct rte_eth_dev *dev,
+@@ -356,6 +370,11 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
+ 			if (((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0) &&
+ 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
+ 				rx_mode_flags |= SXE2_RX_MODE_VEC_SSE;
++
++#elif defined(RTE_ARCH_ARM64)
++			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1) {
++				rx_mode_flags |= (vec_flags | SXE2_RX_MODE_VEC_NEON);
++			}
+ #endif
+ 			if ((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) != 0) {
+ 				ret = sxe2_rx_queues_vec_prepare(dev);
+@@ -387,6 +406,14 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
+ 		}
+ 		return;
+ 	}
++#elif defined(RTE_ARCH_ARM64)
++	if (rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) {
++		if (rx_mode_flags & SXE2_RX_MODE_VEC_OFFLOAD)
++			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_neon_offload;
++		else
++			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_neon;
++		return;
++	}
+ #endif
+ 	if (sxe2_rx_offload_en_check(dev, RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT))
+ 		dev->rx_pkt_burst = sxe2_rx_pkts_scattered_split;
+@@ -416,6 +443,12 @@ static const struct {
+ 	{ sxe2_rx_pkts_scattered_vec_sse_offload,
+ 	      "Vector SSE Scattered" },
+ #endif
++#ifdef RTE_ARCH_ARM64
++	{ sxe2_rx_pkts_scattered_vec_neon,
++	  "Vector NEON Scattered" },
++	{ sxe2_rx_pkts_scattered_vec_neon_offload,
++	  "Offload Vector NEON Scattered" },
++#endif
+ };
+ 
+ int32_t sxe2_rx_burst_mode_get(struct rte_eth_dev *dev,
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec.h b/drivers/net/sxe2/sxe2_txrx_vec.h
+index 369777606f..c139aed776 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec.h
++++ b/drivers/net/sxe2/sxe2_txrx_vec.h
+@@ -13,19 +13,23 @@
+ #define SXE2_RX_MODE_VEC_SSE       RTE_BIT32(2)
+ #define SXE2_RX_MODE_VEC_AVX2      RTE_BIT32(3)
+ #define SXE2_RX_MODE_VEC_AVX512    RTE_BIT32(4)
++#define SXE2_RX_MODE_VEC_NEON      RTE_BIT32(5)
+ #define SXE2_RX_MODE_BATCH_ALLOC   RTE_BIT32(10)
+ #define SXE2_RX_MODE_VEC_SET_MASK	(SXE2_RX_MODE_VEC_SIMPLE | \
+ 			SXE2_RX_MODE_VEC_OFFLOAD | SXE2_RX_MODE_VEC_SSE | \
+-			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512)
++			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512 | \
++			SXE2_RX_MODE_VEC_NEON)
+ #define SXE2_TX_MODE_VEC_SIMPLE   RTE_BIT32(0)
+ #define SXE2_TX_MODE_VEC_OFFLOAD  RTE_BIT32(1)
+ #define SXE2_TX_MODE_VEC_SSE      RTE_BIT32(2)
+ #define SXE2_TX_MODE_VEC_AVX2     RTE_BIT32(3)
+ #define SXE2_TX_MODE_VEC_AVX512   RTE_BIT32(4)
++#define SXE2_TX_MODE_VEC_NEON     RTE_BIT32(5)
+ #define SXE2_TX_MODE_SIMPLE_BATCH RTE_BIT32(10)
+ #define SXE2_TX_MODE_VEC_SET_MASK	(SXE2_TX_MODE_VEC_SIMPLE | \
+ 			SXE2_TX_MODE_VEC_OFFLOAD | SXE2_TX_MODE_VEC_SSE | \
+-			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512)
++			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512 | \
++			SXE2_TX_MODE_VEC_NEON)
+ #define SXE2_TX_VEC_NO_SUPPORT_OFFLOAD (		  \
+ 			RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		  \
+ 			RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	  \
+@@ -76,6 +80,14 @@ uint16_t sxe2_rx_pkts_scattered_vec_avx2(void *rx_queue,
+ 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ uint16_t sxe2_rx_pkts_scattered_vec_avx2_offload(void *rx_queue,
+ 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
++
++#elif defined(RTE_ARCH_ARM64)
++uint16_t sxe2_rx_pkts_scattered_vec_neon(void *rx_queue, struct rte_mbuf **rx_pkts,
++					 uint16_t nb_pkts);
++uint16_t sxe2_rx_pkts_scattered_vec_neon_offload(void *rx_queue, struct rte_mbuf **rx_pkts,
++						 uint16_t nb_pkts);
++uint16_t sxe2_tx_pkts_vec_neon_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
++uint16_t sxe2_tx_pkts_vec_neon(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ #endif
+ int32_t __rte_cold sxe2_tx_vec_support_check(struct rte_eth_dev *dev, uint32_t *vec_flags);
+ int32_t __rte_cold sxe2_tx_queues_vec_prepare(struct rte_eth_dev *dev);
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec_common.h b/drivers/net/sxe2/sxe2_txrx_vec_common.h
+index f004970949..9ac99cf0fa 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec_common.h
++++ b/drivers/net/sxe2/sxe2_txrx_vec_common.h
+@@ -2,6 +2,7 @@
+  * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
+  */
+ 
++
+ #ifndef SXE2_TXRX_VEC_COMMON_H
+ #define SXE2_TXRX_VEC_COMMON_H
+ 
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec_neon.c b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
+new file mode 100644
+index 0000000000..4e5cb87cd5
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
+@@ -0,0 +1,689 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#ifdef RTE_ARCH_ARM64
++#include <arm_neon.h>
++#include <rte_vect.h>
++
++#include "sxe2_txrx_vec_common.h"
++#include "sxe2_txrx_vec.h"
++#include "sxe2_common_log.h"
++
++#define PKTLEN_SHIFT     10
++#define SXE2_UINT16_BIT (CHAR_BIT * sizeof(uint16_t))
++
++static __rte_always_inline void
++sxe2_tx_desc_fill_one_neon(volatile union sxe2_tx_data_desc *desc,
++			struct rte_mbuf *pkt, uint64_t desc_cmd, bool with_offloads)
++{
++	uint64_t desc_qw1;
++	uint32_t desc_offset;
++
++	desc_qw1 = (SXE2_TX_DESC_DTYPE_DATA |
++				((uint64_t)desc_cmd) << SXE2_TX_DATA_DESC_CMD_SHIFT |
++				((uint64_t)pkt->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
++
++	desc_offset = SXE2_TX_DATA_DESC_MACLEN_VAL(pkt->l2_len);
++	desc_qw1 |= ((uint64_t)desc_offset) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
++	if (with_offloads)
++		sxe2_tx_desc_fill_offloads(pkt, &desc_qw1);
++
++	uint64x2_t data_desc = { rte_pktmbuf_iova(pkt), desc_qw1 };
++
++	vst1q_u64(RTE_CAST_PTR(uint64_t *, desc), data_desc);
++}
++
++static __rte_always_inline uint16_t
++sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
++			uint16_t nb_pkts, bool with_offloads)
++{
++	volatile union sxe2_tx_data_desc *desc;
++	struct sxe2_tx_buffer *buffer;
++	uint16_t next_use;
++	uint16_t res_num;
++	uint16_t tx_num;
++	uint16_t i;
++
++	if (txq->desc_free_num < txq->free_thresh)
++		(void)sxe2_tx_bufs_free_vec(txq);
++
++	nb_pkts = RTE_MIN(txq->desc_free_num, nb_pkts);
++	if (unlikely(nb_pkts == 0)) {
++		PMD_LOG_DEBUG(TX, "Tx pkts neon batch: may not enough free desc, "
++				"free_desc=%u, need_tx_pkts=%u",
++				txq->desc_free_num, nb_pkts);
++		goto l_end;
++	}
++	tx_num = nb_pkts;
++
++	next_use = txq->next_use;
++	desc     = &txq->desc_ring[next_use];
++	buffer   = &txq->buffer_ring[next_use];
++
++	txq->desc_free_num -= nb_pkts;
++
++	res_num = txq->ring_depth - txq->next_use;
++
++	if (tx_num >= res_num) {
++		sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, res_num);
++
++		for (i = 0; i < res_num - 1; ++i, ++tx_pkts, ++desc) {
++			sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++					SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++		}
++
++		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts++,
++					(SXE2_TX_DATA_DESC_CMD_EOP | SXE2_TX_DATA_DESC_CMD_RS),
++					with_offloads);
++
++		tx_num -= res_num;
++
++		next_use     = 0;
++		txq->next_rs = txq->rs_thresh - 1;
++		desc         = &txq->desc_ring[next_use];
++		buffer       = &txq->buffer_ring[next_use];
++	}
++
++	sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, tx_num);
++
++	for (i = 0; i < tx_num; ++i, ++tx_pkts, ++desc) {
++		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++				SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++	}
++
++	next_use += tx_num;
++	if (next_use > txq->next_rs) {
++		txq->desc_ring[txq->next_rs].read.type_cmd_off_bsz_l2t |=
++			rte_cpu_to_le_64(SXE2_TX_DATA_DESC_CMD_RS_MASK);
++
++		txq->next_rs += txq->rs_thresh;
++	}
++	txq->next_use = next_use;
++
++	SXE2_PCI_REG_WRITE_WC(txq->tdt_reg_addr, txq->next_use);
++
++l_end:
++	return nb_pkts;
++}
++
++static __rte_always_inline uint16_t
++sxe2_tx_pkts_vec_neon_common(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
++			uint16_t nb_pkts, bool with_offloads)
++{
++	uint16_t tx_done_num = 0;
++	uint16_t tx_once_num;
++	uint16_t tx_need_num;
++
++	while (nb_pkts) {
++		tx_need_num = RTE_MIN(nb_pkts, txq->rs_thresh);
++		tx_once_num = sxe2_tx_pkts_vec_neon_batch(txq,
++					tx_pkts + tx_done_num,
++					tx_need_num, with_offloads);
++
++		nb_pkts     -= tx_once_num;
++		tx_done_num += tx_once_num;
++
++		if (tx_once_num < tx_need_num)
++			break;
++	}
++
++	PMD_LOG_DEBUG(TX, "Tx pkts neon: port_id=%u, queue_id=%u, "
++			"nb_pkts=%u, tx_done_num=%u with_offloads=%u",
++			txq->port_id, txq->idx_in_func, nb_pkts, tx_done_num, with_offloads);
++
++	return tx_done_num;
++}
++
++uint16_t sxe2_tx_pkts_vec_neon_simple(void *tx_queue,
++			struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	return sxe2_tx_pkts_vec_neon_common((struct sxe2_tx_queue *)tx_queue,
++				tx_pkts, nb_pkts, false);
++}
++
++uint16_t sxe2_tx_pkts_vec_neon(void *tx_queue,
++			struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	return sxe2_tx_pkts_vec_neon_common((struct sxe2_tx_queue *)tx_queue,
++				tx_pkts, nb_pkts, true);
++}
++
++static __rte_always_inline void
++sxe2_rx_desc_ptype_fill_neon(uint16x8_t staterr, struct rte_mbuf **__rte_restrict rx_pkts)
++{
++	uint16x8_t ptype_mask = {
++		0, 0x3FFULL,
++		0, 0x3FFULL,
++		0, 0x3FFULL,
++		0, 0x3FFULL,
++	};
++	uint16x8_t ptype_all;
++
++	ptype_all = vandq_u16(staterr, ptype_mask);
++
++	rx_pkts[3]->packet_type = sxe2_ptype_tbl[vgetq_lane_u16(ptype_all, 3)];
++	rx_pkts[2]->packet_type = sxe2_ptype_tbl[vgetq_lane_u16(ptype_all, 7)];
++	rx_pkts[1]->packet_type = sxe2_ptype_tbl[vgetq_lane_u16(ptype_all, 1)];
++	rx_pkts[0]->packet_type = sxe2_ptype_tbl[vgetq_lane_u16(ptype_all, 5)];
++}
++
++static __rte_always_inline uint32x4_t
++sxe2_rx_desc_fnav_flags_neon(uint64x2_t descs_arr[4])
++{
++	uint32x4_t descs_tmp1, descs_tmp2;
++	uint32x4_t descs_fnav_vld;
++	uint32x4_t v_zeros, v_ffff, v_u32_one;
++	uint32x4_t m_flags;
++
++	const uint32x4_t fdir_flags = vdupq_n_u32(RTE_MBUF_F_RX_FDIR |
++						  RTE_MBUF_F_RX_FDIR_ID);
++
++	uint32x4_t d0 = vreinterpretq_u32_u64(descs_arr[0]);
++	uint32x4_t d1 = vreinterpretq_u32_u64(descs_arr[1]);
++	uint32x4_t d2 = vreinterpretq_u32_u64(descs_arr[2]);
++	uint32x4_t d3 = vreinterpretq_u32_u64(descs_arr[3]);
++
++	descs_tmp1 = vzip1q_u32(d1, d0);
++	descs_tmp2 = vzip1q_u32(d3, d2);
++
++	uint64x2_t a = vreinterpretq_u64_u32(descs_tmp1);
++	uint64x2_t b = vreinterpretq_u64_u32(descs_tmp2);
++
++	descs_fnav_vld = vreinterpretq_u32_u64(vcombine_u64(vget_low_u64(a), vget_low_u64(b)));
++
++	descs_fnav_vld = vshlq_n_u32(descs_fnav_vld, 26);
++	descs_fnav_vld = vshrq_n_u32(descs_fnav_vld, 31);
++
++	v_zeros = vdupq_n_u32(0);
++	v_ffff = vceqq_u32(v_zeros, v_zeros);
++	v_u32_one = vshrq_n_u32(v_ffff, 31);
++
++	m_flags = vceqq_u32(descs_fnav_vld, v_u32_one);
++
++	m_flags = vandq_u32(m_flags, fdir_flags);
++	return m_flags;
++}
++
++static __rte_always_inline void
++sxe2_rx_desc_offloads_para_fill_neon(struct sxe2_rx_queue *rxq,
++			volatile union sxe2_rx_desc *desc,
++			uint64x2_t descs[4], struct rte_mbuf **rx_pkts)
++{
++	uint32x4_t desc_lo, desc_hi, flags, tmp_flags;
++	const uint64x2_t mbuf_init = {rxq->mbuf_init_value, 0};
++	uint64x2_t rearm0, rearm1, rearm2, rearm3;
++
++	const uint32x4_t desc_msk = {
++		0x00001C04, 0x00001C04, 0x00001C04, 0x00001C04};
++
++	const uint32x4_t rss_msk = {
++		0x20000000, 0x20000000, 0x20000000, 0x20000000};
++
++	const uint32x4_t vlan_msk = {
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED
++	};
++	const uint8x16_t vlan_flags = {
++		0, 0, 0, 0,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED, 0, 0, 0,
++		0, 0, 0, 0,
++		0, 0, 0, 0
++	};
++
++	const uint8x16_t rss_flags = {
++		0, 0, 0, 0,
++		RTE_MBUF_F_RX_RSS_HASH, 0, 0, 0,
++		0, 0, 0, 0,
++		0, 0, 0, 0
++	};
++
++	const uint32x4_t cksum_mask = {
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++	};
++
++	const uint8x16_t cksum_flags = {
++		((RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		((RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++			RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++			RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++			RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++			RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		0, 0, 0, 0, 0, 0, 0, 0
++	};
++
++	{
++		uint32x4_t d0 = vreinterpretq_u32_u64(descs[0]);
++		uint32x4_t d1 = vreinterpretq_u32_u64(descs[1]);
++		uint32x4_t d2 = vreinterpretq_u32_u64(descs[2]);
++		uint32x4_t d3 = vreinterpretq_u32_u64(descs[3]);
++		uint64x2_t f64, t64;
++
++		flags = vzip2q_u32(d1, d0);
++		tmp_flags = vzip2q_u32(d3, d2);
++		f64 = vreinterpretq_u64_u32(flags);
++		t64 = vreinterpretq_u64_u32(tmp_flags);
++		desc_lo = vreinterpretq_u32_u64(vcombine_u64(vget_low_u64(f64),
++							     vget_low_u64(t64)));
++		desc_hi = vreinterpretq_u32_u64(vcombine_u64(vget_high_u64(f64),
++							     vget_high_u64(t64)));
++	}
++
++	desc_lo = vandq_u32(desc_lo, desc_msk);
++	desc_hi = vandq_u32(desc_hi, rss_msk);
++
++	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(vlan_flags,
++						vreinterpretq_u8_u32(desc_lo)));
++	flags = vandq_u32(tmp_flags, vlan_msk);
++
++	desc_lo = vshrq_n_u32(desc_lo, 10);
++	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(cksum_flags,
++					 vreinterpretq_u8_u32(desc_lo)));
++	tmp_flags = vshlq_n_u32(tmp_flags, 1);
++	tmp_flags = vandq_u32(tmp_flags, cksum_mask);
++	flags = vorrq_u32(flags, tmp_flags);
++
++	desc_hi = vshrq_n_u32(desc_hi, 27);
++	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(rss_flags,
++					 vreinterpretq_u8_u32(desc_hi)));
++	flags = vorrq_u32(flags, tmp_flags);
++
++#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
++	if (rxq->fnav_enable) {
++		uint32x4_t tmp_fnav_flags = sxe2_rx_desc_fnav_flags_neon(descs);
++		flags = vorrq_u32(flags, tmp_fnav_flags);
++
++		rx_pkts[0]->hash.fdir.hi = desc[0].wb.fd_filter_id;
++		rx_pkts[1]->hash.fdir.hi = desc[1].wb.fd_filter_id;
++		rx_pkts[2]->hash.fdir.hi = desc[2].wb.fd_filter_id;
++		rx_pkts[3]->hash.fdir.hi = desc[3].wb.fd_filter_id;
++	}
++#endif
++
++	rearm0 = vsetq_lane_u64(vgetq_lane_u32(flags, 0), mbuf_init, 1);
++	rearm1 = vsetq_lane_u64(vgetq_lane_u32(flags, 1), mbuf_init, 1);
++	rearm2 = vsetq_lane_u64(vgetq_lane_u32(flags, 2), mbuf_init, 1);
++	rearm3 = vsetq_lane_u64(vgetq_lane_u32(flags, 3), mbuf_init, 1);
++
++	vst1q_u64((uint64_t *)&rx_pkts[0]->rearm_data, rearm0);
++	vst1q_u64((uint64_t *)&rx_pkts[1]->rearm_data, rearm1);
++	vst1q_u64((uint64_t *)&rx_pkts[2]->rearm_data, rearm2);
++	vst1q_u64((uint64_t *)&rx_pkts[3]->rearm_data, rearm3);
++}
++
++static inline void sxe2_rx_queue_rearm_neon(struct sxe2_rx_queue *rxq)
++{
++	volatile union sxe2_rx_desc *desc;
++	struct rte_mbuf **buffer;
++	struct rte_mbuf *mbuf0, *mbuf1;
++	uint64x2_t dma_addr0, dma_addr1;
++	uint64x2_t zero = vdupq_n_u64(0);
++	uint64x2_t virt_addr0, virt_addr1;
++	uint64x2_t hdr_room = vdupq_n_u64(RTE_PKTMBUF_HEADROOM);
++	int32_t ret;
++	uint16_t i;
++	uint16_t new_tail;
++
++	buffer = &rxq->buffer_ring[rxq->realloc_start];
++	desc = &rxq->desc_ring[rxq->realloc_start];
++
++	ret = rte_mempool_get_bulk(rxq->mb_pool, (void *)buffer,
++			SXE2_RX_REARM_THRESH_VEC);
++	if (ret != 0) {
++		PMD_LOG_INFO(RX, "Rx mbuf vec alloc failed port_id=%u "
++				"queue_id=%u", rxq->port_id, rxq->idx_in_func);
++
++		if ((rxq->realloc_num + SXE2_RX_REARM_THRESH_VEC) >= rxq->ring_depth) {
++			for (i = 0; i < SXE2_RX_NUM_PER_LOOP_NEON; ++i) {
++				buffer[i] = &rxq->fake_mbuf;
++				vst1q_u64(RTE_CAST_PTR(uint64_t *, &desc[i].read), zero);
++			}
++		}
++
++		rxq->vsi->adapter->dev_info.dev_data->rx_mbuf_alloc_failed +=
++				SXE2_RX_REARM_THRESH_VEC;
++		goto l_end;
++	}
++
++	for (i = 0; i < SXE2_RX_REARM_THRESH_VEC; i += 2, buffer += 2) {
++		mbuf0 = buffer[0];
++		mbuf1 = buffer[1];
++#if RTE_IOVA_IN_MBUF
++		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
++				 offsetof(struct rte_mbuf, buf_addr) + 8);
++#endif
++		virt_addr0 = vld1q_u64((uint64_t *)&mbuf0->buf_addr);
++		virt_addr1 = vld1q_u64((uint64_t *)&mbuf1->buf_addr);
++
++#if RTE_IOVA_IN_MBUF
++		dma_addr0 = vdupq_n_u64((uint64_t)vget_high_u64(virt_addr0));
++		dma_addr1 = vdupq_n_u64((uint64_t)vget_high_u64(virt_addr1));
++#else
++		dma_addr0 = vdupq_n_u64((uint64_t)vget_low_u64(virt_addr0));
++		dma_addr1 = vdupq_n_u64((uint64_t)vget_low_u64(virt_addr1));
++#endif
++		dma_addr0 = vaddq_u64(dma_addr0, hdr_room);
++		dma_addr1 = vaddq_u64(dma_addr1, hdr_room);
++
++		vst1q_u64(RTE_CAST_PTR(uint64_t *, &desc++->read), dma_addr0);
++		vst1q_u64(RTE_CAST_PTR(uint64_t *, &desc++->read), dma_addr1);
++	}
++
++	rxq->realloc_start += SXE2_RX_REARM_THRESH_VEC;
++	if (rxq->realloc_start >= rxq->ring_depth)
++		rxq->realloc_start = 0;
++	rxq->realloc_num -= SXE2_RX_REARM_THRESH_VEC;
++
++	new_tail = (rxq->realloc_start == 0) ?
++		(rxq->ring_depth - 1) : (rxq->realloc_start - 1);
++
++	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, new_tail);
++
++l_end:
++	return;
++}
++
++static __rte_always_inline uint16_t
++sxe2_rx_pkts_common_vec_neon(struct sxe2_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++		uint16_t nb_pkts, uint8_t *split_rxe_flags, uint8_t *umbcast_flags,
++		bool do_offload)
++{
++	volatile union sxe2_rx_desc *desc;
++	struct rte_mbuf **buffer;
++	uint32_t i;
++	uint16_t done_num = 0;
++
++	uint8x16_t rvp_shuf_mask = {
++		0xFF, 0xFF, 0xFF, 0xFF,
++		12, 13, 0xFF, 0xFF,
++		12, 13,
++		2, 3,
++		4, 5, 6, 7
++	};
++
++	uint16x8_t crc_adjust = {
++		0, 0,
++		rxq->crc_len,
++		0, rxq->crc_len,
++		0, 0, 0
++	};
++
++	desc = &rxq->desc_ring[rxq->processing_idx];
++	rte_prefetch0(desc);
++
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, SXE2_RX_NUM_PER_LOOP_NEON);
++
++	if (rxq->realloc_num > SXE2_RX_REARM_THRESH_VEC)
++		sxe2_rx_queue_rearm_neon(rxq);
++
++	if ((rte_le_to_cpu_64(desc->wb.status_err_ptype_len) &
++			SXE2_RX_DESC_STATUS_DD_MASK) == 0) {
++		goto l_end;
++	}
++
++	buffer = &rxq->buffer_ring[rxq->processing_idx];
++	for (i = 0; i < nb_pkts; i += SXE2_RX_NUM_PER_LOOP_NEON,
++				desc += SXE2_RX_NUM_PER_LOOP_NEON) {
++		uint64x2_t descs[SXE2_RX_NUM_PER_LOOP_NEON];
++		uint8x16_t pkt_mb1, pkt_mb2, pkt_mb3, pkt_mb4;
++		uint64x2_t mbp1, mbp2;
++		uint16x8_t staterr;
++		uint16x8_t tmp;
++		uint16_t bit_num;
++
++		descs[3] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc + 3));
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		descs[2] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc + 2));
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		descs[1] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc + 1));
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		descs[0] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc));
++
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++
++		descs[3] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc + 3), descs[3], 0);
++		descs[2] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc + 2), descs[2], 0);
++		descs[1] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc + 1), descs[1], 0);
++		descs[0] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc), descs[0], 0);
++
++		mbp1 = vld1q_u64((uint64_t *)&buffer[i]);
++		mbp2 = vld1q_u64((uint64_t *)&buffer[i + 2]);
++
++		vst1q_u64((uint64_t *)&rx_pkts[i], mbp1);
++		vst1q_u64((uint64_t *)&rx_pkts[i + 2], mbp2);
++
++		if (split_rxe_flags) {
++			rte_mbuf_prefetch_part2(rx_pkts[i]);
++			rte_mbuf_prefetch_part2(rx_pkts[i + 1]);
++			rte_mbuf_prefetch_part2(rx_pkts[i + 2]);
++			rte_mbuf_prefetch_part2(rx_pkts[i + 3]);
++		}
++
++		pkt_mb4 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[3]), rvp_shuf_mask);
++		pkt_mb3 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[2]), rvp_shuf_mask);
++		pkt_mb2 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[1]), rvp_shuf_mask);
++		pkt_mb1 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[0]), rvp_shuf_mask);
++
++		if (do_offload) {
++			sxe2_rx_desc_offloads_para_fill_neon(rxq, desc, descs, &rx_pkts[i]);
++		} else {
++			const uint64x2_t mbuf_init = {
++				rxq->mbuf_init_value,
++				0,
++			};
++
++			vst1q_u64((uint64_t *)&rx_pkts[i]->rearm_data, mbuf_init);
++			vst1q_u64((uint64_t *)&rx_pkts[i + 1]->rearm_data, mbuf_init);
++			vst1q_u64((uint64_t *)&rx_pkts[i + 2]->rearm_data, mbuf_init);
++			vst1q_u64((uint64_t *)&rx_pkts[i + 3]->rearm_data, mbuf_init);
++		}
++
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb4), crc_adjust);
++		pkt_mb4 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb3), crc_adjust);
++		pkt_mb3 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb2), crc_adjust);
++		pkt_mb2 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb1), crc_adjust);
++		pkt_mb1 = vreinterpretq_u8_u16(tmp);
++
++		vst1q_u8((void *)&rx_pkts[i + 3]->rx_descriptor_fields1,
++				pkt_mb4);
++		vst1q_u8((void *)&rx_pkts[i + 2]->rx_descriptor_fields1,
++				pkt_mb3);
++		vst1q_u8((void *)&rx_pkts[i + 1]->rx_descriptor_fields1,
++				pkt_mb2);
++		vst1q_u8((void *)&rx_pkts[i]->rx_descriptor_fields1,
++				pkt_mb1);
++
++		if (likely(i + SXE2_RX_NUM_PER_LOOP_NEON < nb_pkts))
++			rte_prefetch_non_temporal(desc + SXE2_RX_NUM_PER_LOOP_NEON);
++
++		{
++			uint32x4_t d0 = vreinterpretq_u32_u64(descs[0]);
++			uint32x4_t d1 = vreinterpretq_u32_u64(descs[1]);
++			uint32x4_t d2 = vreinterpretq_u32_u64(descs[2]);
++			uint32x4_t d3 = vreinterpretq_u32_u64(descs[3]);
++			uint32x4_t sterr_tmp1 = vzip2q_u32(d1, d0);
++			uint32x4_t sterr_tmp2 = vzip2q_u32(d3, d2);
++			uint32x4_t sterr_u32 = vzip1q_u32(sterr_tmp1, sterr_tmp2);
++
++			staterr = vreinterpretq_u16_u32(sterr_u32);
++		}
++
++		sxe2_rx_desc_ptype_fill_neon(staterr, &rx_pkts[i]);
++
++		if (umbcast_flags != NULL) {
++			uint32x4_t umbcast_mask = {
++				SXE2_RX_DESC_STATUS_UMBCAST_MASK, SXE2_RX_DESC_STATUS_UMBCAST_MASK,
++				SXE2_RX_DESC_STATUS_UMBCAST_MASK, SXE2_RX_DESC_STATUS_UMBCAST_MASK,
++			};
++
++			uint8x16_t umbcast_shuf_mask = {
++				0x0B, 0x03, 0x0F, 0x07,
++				0xFF, 0xFF, 0xFF, 0xFF,
++				0xFF, 0xFF, 0xFF, 0xFF,
++				0xFF, 0xFF, 0xFF, 0xFF,
++			};
++			uint8x16_t umbcast_bits =
++				vreinterpretq_u8_u32(vandq_u32(vreinterpretq_u32_u16(staterr),
++							       umbcast_mask));
++
++			umbcast_bits = vqtbl1q_u8(umbcast_bits, umbcast_shuf_mask);
++			vst1q_lane_u32((uint32_t *)umbcast_flags,
++					vreinterpretq_u32_u8(umbcast_bits), 0);
++			umbcast_flags += SXE2_RX_NUM_PER_LOOP_NEON;
++		}
++
++		if (split_rxe_flags) {
++			uint8x16_t eop_shuf_mask = {
++					0x08, 0x00, 0x0C, 0x04,
++					0xFF, 0xFF, 0xFF, 0xFF,
++					0xFF, 0xFF, 0xFF, 0xFF,
++					0xFF, 0xFF, 0xFF, 0xFF};
++			uint8x16_t eop_bits;
++			uint32x4_t rxe_mask = {
++				0x2080, 0x2080, 0x2080, 0x2080
++			};
++			uint32x4_t rxe_bits;
++			uint32x4_t eop_mask;
++
++			eop_mask = vshlq_n_u32(vdupq_n_u32(1), SXE2_RX_DESC_STATUS_EOP_SHIFT);
++			eop_bits = vandq_u8(vmvnq_u8(vreinterpretq_u8_u16(staterr)),
++					vreinterpretq_u8_u32(eop_mask));
++
++			rxe_bits = vandq_u32(vreinterpretq_u32_u16(staterr), rxe_mask);
++			rxe_bits = vshrq_n_u32(rxe_bits, 7);
++
++			eop_bits = vorrq_u8(eop_bits, vreinterpretq_u8_u32(rxe_bits));
++
++			eop_bits = vqtbl1q_u8(eop_bits, eop_shuf_mask);
++
++			vst1q_lane_u32((uint32_t *)split_rxe_flags,
++				       vreinterpretq_u32_u8(eop_bits), 0);
++			split_rxe_flags += SXE2_RX_NUM_PER_LOOP_NEON;
++
++#ifdef RTE_IOVA_IN_MBUF
++			rx_pkts[i]->next = NULL;
++			rx_pkts[i + 1]->next = NULL;
++			rx_pkts[i + 2]->next = NULL;
++			rx_pkts[i + 3]->next = NULL;
++#endif
++		}
++
++		{
++			uint32x4_t dd_mask = vdupq_n_u32(1);
++			uint32x4_t sterr_dd = vandq_u32(vreinterpretq_u32_u16(staterr), dd_mask);
++			uint16x4_t packed_lo = vmovn_u32(sterr_dd);
++			uint64_t dd64 = vget_lane_u64(vreinterpret_u64_u16(packed_lo), 0);
++
++			bit_num = (uint16_t)rte_popcount64(dd64);
++		}
++		done_num += bit_num;
++		if (likely(bit_num != SXE2_RX_NUM_PER_LOOP_NEON))
++			break;
++	}
++
++	rxq->processing_idx += done_num;
++	rxq->processing_idx &= (rxq->ring_depth - 1);
++	rxq->realloc_num    += done_num;
++
++l_end:
++	return done_num;
++}
++
++static __rte_always_inline uint16_t
++sxe2_rx_pkts_scattered_batch_vec_neon(struct sxe2_rx_queue *rxq,
++		struct rte_mbuf **rx_pkts, uint16_t nb_pkts, bool do_offload)
++{
++	uint8_t split_rxe_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
++	uint8_t umbcast_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
++	uint16_t rx_done_num;
++	uint16_t rx_pkt_done_num;
++
++	rx_pkt_done_num = 0;
++
++	rx_done_num = sxe2_rx_pkts_common_vec_neon((struct sxe2_rx_queue *)rxq,
++				rx_pkts, nb_pkts, split_rxe_flags, umbcast_flags,
++				do_offload);
++
++	if (rx_done_num == 0)
++		goto l_end;
++
++	rx_pkt_done_num += sxe2_rx_pkts_refactor(rxq, &rx_pkts[rx_pkt_done_num],
++			rx_done_num - rx_pkt_done_num, &split_rxe_flags[rx_pkt_done_num],
++			&umbcast_flags[rx_pkt_done_num]);
++
++l_end:
++	return rx_pkt_done_num;
++}
++
++uint16_t sxe2_rx_pkts_scattered_vec_neon_offload(void *rx_queue,
++			struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	uint16_t done_num = 0;
++	uint16_t once_num;
++
++	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM_VEC) {
++		once_num = sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++								 rx_pkts + done_num,
++								 SXE2_RX_PKTS_BURST_BATCH_NUM_VEC,
++								 true);
++
++		done_num += once_num;
++		nb_pkts  -= once_num;
++
++		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM_VEC)
++			goto l_end;
++	}
++
++	done_num += sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++							  rx_pkts + done_num,
++							  nb_pkts,
++							  true);
++l_end:
++	return done_num;
++}
++
++uint16_t sxe2_rx_pkts_scattered_vec_neon(void *rx_queue,
++			struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	uint16_t done_num = 0;
++	uint16_t once_num;
++
++	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM_VEC) {
++		once_num = sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++								 rx_pkts + done_num,
++								 SXE2_RX_PKTS_BURST_BATCH_NUM_VEC,
++								 false);
++
++		done_num += once_num;
++		nb_pkts  -= once_num;
++
++		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM_VEC)
++			goto l_end;
++	}
++
++	done_num += sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++							  rx_pkts + done_num,
++							  nb_pkts,
++							  false);
++l_end:
++	return done_num;
++}
++#endif
 -- 
 2.52.0
 
