@@ -2,49 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA54CDB471
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 11:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85681CDB471
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 11:47:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 23F744025E;
-	Wed, 24 Jun 2026 13:35:59 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id 3102B400EF
- for <dev@dpdk.org>; Wed, 24 Jun 2026 13:35:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782300958; x=1813836958;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=auWVVcSpHa7Q5sgjN2lfKVBPcrabj5NBVDsfXSIyKOg=;
- b=B9mnpBR44FdFkt/VtSn6r09xez2ePs3NCWXS8xsy0FPFngxosGZf65fi
- FrkeOHE1NUxpGlrCTO1+HPJEibXb2uOgOtGx2b04AutHtu94OxonGV19S
- 3WSLgUNnXFrPsi53Lbdtvr0iRBu1qdaFrZNEotBEUzHY0/EYtNUihx7xW
- PycyZVTs0uHyTZ+nnaLR+AW37duaIhJBMIAhn78cVQaIhHuDJpVahH1zA
- Q+4hL5giZ1Nh6CDOHv+1TqK4ila6AnrERlRbNBA0KZnZ8rptCAjMwbjB6
- Q3/lNErSqzrq90deUAxe1kavixPEQVLeHJx8c3z8ELEbUDL6nZjaAOx3V Q==;
-X-CSE-ConnectionGUID: iNF0KNJBTe+INPnkEepLkA==
-X-CSE-MsgGUID: wFYg+AKSQ2WODveZ9kyPxg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="83154157"
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="83154157"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Jun 2026 04:35:57 -0700
-X-CSE-ConnectionGUID: clX8KK7uQGyvhdJUTIVAmA==
-X-CSE-MsgGUID: pV/BY2EEQ2CjdivRndmnxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="251762991"
-Received: from silpixa00401385.ir.intel.com (HELO
- localhost.ger.corp.intel.com) ([10.20.224.226])
- by fmviesa004.fm.intel.com with ESMTP; 24 Jun 2026 04:35:56 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH] build: use native Linux strlcpy when available
-Date: Wed, 24 Jun 2026 12:35:49 +0100
-Message-ID: <20260624113550.821516-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id 4648F4025E;
+	Wed, 24 Jun 2026 13:47:39 +0200 (CEST)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+ by mails.dpdk.org (Postfix) with ESMTP id EC175400EF
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 13:47:36 +0200 (CEST)
+X-QQ-mid: Yeas8t1782301650t342t15798
+Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
+ [115.204.248.247])
+X-QQ-SSF: 0000000000000000000000000000000
+From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
+X-BIZMAIL-ID: 4911648651565492015
+To: "'Stephen Hemminger'" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
+ <20260622111111.21024-1-zaiyuwang@trustnetic.com>
+ <20260622111111.21024-8-zaiyuwang@trustnetic.com>
+ <20260623095047.7d12d5d4@phoenix.local>
+In-Reply-To: <20260623095047.7d12d5d4@phoenix.local>
+Subject: RE: [PATCH v9 07/21] net/txgbe: fix Tx desc free logic
+Date: Wed, 24 Jun 2026 19:47:28 +0800
+Message-ID: <002001dd03cf$3c271210$b4753630$@trustnetic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwHXiZW4AdwdvwYCkVl8PLVvLKXQ
+Content-Language: zh-cn
+X-QQ-SENDSIZE: 520
+Feedback-ID: Yeas:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: MRUyyTndl9c1Isuq7O4KCLL5UVLIWUg7ONWMMLVIKbOM5zdpGwLpoR3R
+ NR7I93F2a+WMbX96s8qZkaTG+dEi4vA1DTIw8nthx3Vl8dhRQ51eCoL5JuzmguacJs9BB4p
+ 3sjO3QSjkU/vpIucnIBiXqiNg3f1lskcZ42sd1ENoRgTp9w5bA5nme7OMdWtqMcbNgfQPdb
+ 8R5wJhnJ8z0FZ0nLSLHBpVAstXR04WiNqUjO8w6FtpGY0aeiX298YeBvl5LIWs6FuDearOF
+ 22m+ai4tNi7yP4kwFLCIAfTdk2F8dCIUPKXPoC9RMiAd58VKSHV0nio0FEEUjWcSIHZ8+qK
+ xZdgf0PiWMUr/w/qmzDx8kWSzUJNoDRSsluxsdEF7FuUKwE0n4Zk6fdpDXqjoenqNcvp5LS
+ uSVHFligFNeOO+Kt6+RjaAGFtM9DmUX0duQ4MchKHtNavwNPjfksUr2PHwYVso+xP4Jw1bA
+ VfNDnC4XeQopJX9o5kyrKkOBIigwTzk6uiWXt22hdyLymDyHsUOnjhVDvLDfQ4Q+HCgqLOe
+ lvZjfjSMJApFuOYMiDTefP/vSPIIPiwTKG+TbX/78ya1EyRM7A3U0SbpObi45nRs7su4SnY
+ KI89kLQk5hLsu6npMwWbCPlrEKpUmtx07i/E8vkwlrDxVhJwrceI0jk/dpq7hbyutrv6VYb
+ v4XFR5aBSWrklZnJ+uW1TmBQDhjW/3k5wcZCG3zSrc6KtiZwrePdOre5L14hqBibcNsuvKe
+ sK0KpXoZcvgsiFCGJNHEOxhakZ2rFhVHN2Wy2Nr3PjoLjqbNryOE86n4qYQueKbrq7I8kNa
+ hZeJJE45zvsUtdhQeaZ/p02Tg7Y6cQG5iOJVs2zWxp2OUWsGqBMBw06kI6osfQ90aEGddBG
+ JsINrcp/roOvHrhJRBIkp7Hlj14EUbv3lRXjBHTPjeLo0KFBm5hT8/J+ysEenBnPq9iZe3n
+ JOBbbjtw8xVb59JSWOgkuAxamcy9gy4cu2MWG0HrHnqBLKTvWqI7MZl5aOHbDH6QpvgNiU+
+ mra+HJSZ4IDodbbeJRGWhoz39WbuHVW8Kjgx7/DVhABuybq/wI5MXe3D2XUBo=
+X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,94 +66,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Glibc added the strlcpy and strlcat functions to version 2.38, meaning
-they are natively available in modern linux distros without having to
-use libbsd, or a dpdk-specific fallback. Therefore, we adjust our
-fallback detection logic to have meson check for the presence of these
-functions before checking if we actually need libbsd. Then in
-rte_string_fns.h we rework our macros a little for setting the fallback:
 
-1. If libbsd is to be used, just always include it as a standalone
-   block. With new meson logic, we only use it if we have to, even if
-   present.
-2. For BSD, configure fallback functions only if __BSD_VISIBLE is not
-   defined, otherwise just use native fns.
-3. Otherwise for Linux and Windows, configure the fallback functions if
-   meson has not set RTE_HAS_STRLCPY.
+> This will fail build on clang since txq->headwb_mem is declared as volatile not _Atomic
+type.
+> 
+> Please fix, and resubmit both patch series.
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- config/meson.build               | 14 ++++++++++----
- lib/eal/include/rte_string_fns.h | 18 +++++++-----------
- 2 files changed, 17 insertions(+), 15 deletions(-)
+Hi Stephen,
 
-diff --git a/config/meson.build b/config/meson.build
-index d7f5e55c18..0049cd3807 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -266,10 +266,16 @@ if libarchive.found()
-     dpdk_conf.set('RTE_HAS_LIBARCHIVE', 1)
- endif
+Thank you for pointing this out. I apologize for the oversight - I failed to pay proper
+attention to the failure from ci/github-robot: build, and mistakenly focused only on the
+ci/Intel-compilation and others.
+
+This error has been fixed in v10. Additionally, the unprefixed symbols that did not meet
+the naming conventions have been renamed with the txgbe_ prefix.
+
+Our other patch series will be resubmitted later. The code for VF sensing PF down differs
+from our OOT driver, and its functionality requires further validation before submission.
  
--# check for libbsd
--libbsd = dependency('libbsd', required: false, method: 'pkg-config')
--if libbsd.found()
--    dpdk_conf.set('RTE_USE_LIBBSD', 1)
-+# check for strlcpy: first in native libc, then via libbsd as fallback
-+if cc.has_function('strlcpy', prefix: '#include <string.h>')
-+    dpdk_conf.set('RTE_HAS_STRLCPY', 1)
-+    libbsd = dependency('', required: false)  # empty not-found dependency
-+else
-+    libbsd = dependency('libbsd', required: false, method: 'pkg-config')
-+    if libbsd.found()
-+        dpdk_conf.set('RTE_USE_LIBBSD', 1)
-+        dpdk_conf.set('RTE_HAS_STRLCPY', 1)
-+    endif
- endif
- 
- jansson_dep = dependency('jansson', required: false, method: 'pkg-config')
-diff --git a/lib/eal/include/rte_string_fns.h b/lib/eal/include/rte_string_fns.h
-index 3713c94acb..4fb2a6c1ce 100644
---- a/lib/eal/include/rte_string_fns.h
-+++ b/lib/eal/include/rte_string_fns.h
-@@ -14,6 +14,9 @@
- #include <ctype.h>
- #include <stdio.h>
- #include <string.h>
-+#ifdef RTE_USE_LIBBSD
-+#include <bsd/string.h>
-+#endif
- 
- #include <rte_common.h>
- #include <rte_compat.h>
-@@ -81,23 +84,16 @@ rte_strlcat(char *dst, const char *src, size_t size)
- }
- #endif
- 
--/* pull in a strlcpy function */
-+/* provide strlcpy/strlcat aliases where not natively available */
- #ifdef RTE_EXEC_ENV_FREEBSD
- #ifndef __BSD_VISIBLE /* non-standard functions are hidden */
- #define strlcpy(dst, src, size) rte_strlcpy(dst, src, size)
- #define strlcat(dst, src, size) rte_strlcat(dst, src, size)
--#endif
--
--#else /* non-BSD platforms */
--#ifdef RTE_USE_LIBBSD
--#include <bsd/string.h>
--
--#else /* no BSD header files, create own */
-+#endif /* __BSD_VISIBLE */
-+#elif !defined(RTE_HAS_STRLCPY)
- #define strlcpy(dst, src, size) rte_strlcpy(dst, src, size)
- #define strlcat(dst, src, size) rte_strlcat(dst, src, size)
--
--#endif /* RTE_USE_LIBBSD */
--#endif /* FREEBSD */
-+#endif /* RTE_EXEC_ENV_FREEBSD */
- 
- #ifdef __cplusplus
- extern "C" {
--- 
-2.53.0
 
