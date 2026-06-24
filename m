@@ -2,49 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C97D1CDB47C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 10:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB61CDE002
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 10:37:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 996D440665;
-	Wed, 24 Jun 2026 12:37:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B5034067C;
+	Wed, 24 Jun 2026 12:37:16 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 0284B40669;
- Wed, 24 Jun 2026 12:37:09 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6AB584066D;
+ Wed, 24 Jun 2026 12:37:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782297430; x=1813833430;
+ t=1782297432; x=1813833432;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=mDYeNcC1YsLWgNVlck/wrwh1+znbkaBg4IhxPHriRDU=;
- b=k6mCLdy9cX3PsXZuEibCnSGDEfa8f6kotLZkHxYkhdDY4KKnLGhSBvn2
- UBgsnryr7K0WJuqPbT3KMgor5g1ihnpP4K65clJh2K8gDO3gnbUEsCx+1
- m5rGZIhX9CHYJKIoCUt6PJ44UZiwc510QiyS6UhugUTbtQw3KIy7CqCVB
- /cTziigF/HRGr5StFTOjL/GX+8InNTPJWAMl8lxD8fharWY8ma1NCbB0m
- ZML2zyWsDqr7MKskCxW02uJe2qAMFrkDR2k6gMnktN9ViZydULECjgyfA
- fDT2S1Gx/MkNLWGJG5QnNvVyI7foXCkVl9IYL7SYtQJ8BrhJDeewI8+gU Q==;
-X-CSE-ConnectionGUID: YjH6iCmDQZyEdfF5ALWhOA==
-X-CSE-MsgGUID: vSv6kjfYQPGE28u5N2s5aA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="93652339"
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="93652339"
+ bh=bGk4GoiR+C1V2jaBq8XCP1O3DrOWUB4rmDgQse8Pi9o=;
+ b=iNpqzZL2AC9xXNCZyd45qLhrceSZhYPmsNinv3yfczqKTcsNLlQkgb3g
+ lYv2rvmP/HZyOapuL6b4+R0p/F+LT28uovCAyLAZEB/KDXHZT4p01z1uJ
+ om2YxQV6D8iW4I8Djb5Gi5MJYNLWg86WFUNmyFzPvaXBSSbmEQDssU+SS
+ EGTk50ULVbGMDm/IROlB6SABSYrxxijO1RwUtkQe4fZ7KRI2oW1YkLHSB
+ TLm/KZ68UXAbdcGD8Z/VRC8sH7HiP1LFtJVDSMoIaRibd3DCTVcUdVA4i
+ Ik84KD//Yg4ANeaj/VM6/brKUABZGUkMECVXOebCzb5HAB1uxQ065HAjj Q==;
+X-CSE-ConnectionGUID: tzt+PKLsSDaVX6FaPpc1mQ==
+X-CSE-MsgGUID: dqrJD2hTTxmbHOC5Dws4UA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11826"; a="93652343"
+X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="93652343"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Jun 2026 03:37:10 -0700
-X-CSE-ConnectionGUID: YPUQpULOQZKy8YUY16N15w==
-X-CSE-MsgGUID: zbDWov/ZSAWigxFzjPg7UQ==
+ 24 Jun 2026 03:37:11 -0700
+X-CSE-ConnectionGUID: Dt2rjRcJQHSdm7F9aaUtCA==
+X-CSE-MsgGUID: FZ9qFv45TOW1mFcwHwyVXg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="245460006"
+X-IronPort-AV: E=Sophos;i="6.24,222,1774335600"; d="scan'208";a="245460015"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.224.226])
- by fmviesa006.fm.intel.com with ESMTP; 24 Jun 2026 03:37:08 -0700
+ by fmviesa006.fm.intel.com with ESMTP; 24 Jun 2026 03:37:10 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Michael Shamis <michaelsh@marvell.com>, Liron Himi <lironh@marvell.com>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>,
- Tomasz Duszynski <tduszynski@marvell.com>
-Subject: [PATCH v2 03/17] crypto/mvsam: replace strncpy with strlcpy
-Date: Wed, 24 Jun 2026 11:36:42 +0100
-Message-ID: <20260624103658.792750-4-bruce.richardson@intel.com>
+ Kai Ji <kai.ji@intel.com>, Fan Zhang <fanzhang.oss@gmail.com>,
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>
+Subject: [PATCH v2 04/17] crypto/scheduler: replace strncpy with strlcpy
+Date: Wed, 24 Jun 2026 11:36:43 +0100
+Message-ID: <20260624103658.792750-5-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260624103658.792750-1-bruce.richardson@intel.com>
 References: <20260623165150.765443-1-bruce.richardson@intel.com>
@@ -66,24 +65,39 @@ Errors-To: dev-bounces@dpdk.org
 
 Replace strncpy() with safer strlcpy() which always null-terminates.
 
-Fixes: 25b05a1c806b ("crypto/mvsam: parse max number of sessions")
+Fixes: 50e14527b9d1 ("crypto/scheduler: improve parameters parsing")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/crypto/mvsam/rte_mrvl_pmd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/scheduler/scheduler_pmd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/crypto/mvsam/rte_mrvl_pmd.c b/drivers/crypto/mvsam/rte_mrvl_pmd.c
-index a824719fb0..65a63c9d62 100644
---- a/drivers/crypto/mvsam/rte_mrvl_pmd.c
-+++ b/drivers/crypto/mvsam/rte_mrvl_pmd.c
-@@ -1146,7 +1146,7 @@ parse_name_arg(const char *key __rte_unused,
- 		return -EINVAL;
+diff --git a/drivers/crypto/scheduler/scheduler_pmd.c b/drivers/crypto/scheduler/scheduler_pmd.c
+index 95ce893f05..ceaefa329b 100644
+--- a/drivers/crypto/scheduler/scheduler_pmd.c
++++ b/drivers/crypto/scheduler/scheduler_pmd.c
+@@ -229,10 +229,10 @@ cryptodev_scheduler_create(const char *name,
+ 			return -ENOMEM;
+ 		}
+ 
+-		strncpy(sched_ctx->init_worker_names[
++		strlcpy(sched_ctx->init_worker_names[
+ 					sched_ctx->nb_init_workers],
+ 				init_params->worker_names[i],
+-				RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN - 1);
++				RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN);
+ 
+ 		sched_ctx->nb_init_workers++;
+ 	}
+@@ -443,8 +443,8 @@ parse_worker_arg(const char *key __rte_unused,
+ 		return -ENOMEM;
  	}
  
--	strncpy(params->name, value, RTE_CRYPTODEV_NAME_MAX_LEN);
-+	strlcpy(params->name, value, RTE_CRYPTODEV_NAME_MAX_LEN);
+-	strncpy(param->worker_names[param->nb_workers++], value,
+-			RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN - 1);
++	strlcpy(param->worker_names[param->nb_workers++], value,
++			RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN);
  
  	return 0;
  }
