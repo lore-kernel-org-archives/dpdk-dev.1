@@ -2,49 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E99CDB479
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 02:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D1CCDB479
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 03:24:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9070040E1E;
-	Wed, 24 Jun 2026 04:03:23 +0200 (CEST)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 36A2B4068E
- for <dev@dpdk.org>; Wed, 24 Jun 2026 04:02:58 +0200 (CEST)
-Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAD32+LJOjtqf4aoFQ--.21305S2;
- Wed, 24 Jun 2026 10:02:49 +0800 (CST)
-From: liujie5@linkdatatechnology.com
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v6 23/23] net/sxe2: update sxe2 feature matrix docs
-Date: Wed, 24 Jun 2026 10:02:49 +0800
-Message-ID: <20260624020249.3687380-1-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260622092731.3092201-1-liujie5@linkdatatechnology.com>
-References: <20260622092731.3092201-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B762240299;
+	Wed, 24 Jun 2026 05:24:08 +0200 (CEST)
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
+ [113.46.200.219])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E32A40150
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 05:24:05 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=/ue1XNzo5RP0K11boBGc6YisajtN8BUs49g+HT2HIuk=;
+ b=AOe144QfIUm8C183aMA2W53rgSqZckxvt2MUyd+pgd/9ZWrvWMEGYRBJHOvlzkR6AtARJWNDg
+ WI785+zlOqc33w9oVC4y5X7XuLuHKerl250Nd82CSB6TlWPZUs4OkCqMEZQAVBzon8RTl80CNYk
+ LerYWKxkun2HUlXX4vFqbRQ=
+Received: from mail.maildlp.com (unknown [172.19.162.197])
+ by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4glRrH34FHz1prN5;
+ Wed, 24 Jun 2026 11:14:55 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+ by mail.maildlp.com (Postfix) with ESMTPS id 8F07D40569;
+ Wed, 24 Jun 2026 11:24:02 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Wed, 24 Jun 2026 11:24:02 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>, <stephen@networkplumber.org>
+CC: <dev@dpdk.org>
+Subject: [PATCH v2] examples/l3fwd: dynamic NUMA-aware alloc lcore_conf
+Date: Wed, 24 Jun 2026 11:23:57 +0800
+Message-ID: <20260624032357.2153-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20260623032301.17570-1-fengchengwen@huawei.com>
+References: <20260623032301.17570-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAD32+LJOjtqf4aoFQ--.21305S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XFyUCFy3WrWxWFWrKrW8Crg_yoWfAFWDpa
- yUZ34rtFWkJr1aq3srAa18Grn5Zwsay343CryDGa4aqan8GryFvw47Ka45Ka9rCa4UA34j
- vr1j9347ua1DZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
- 6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
- 1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
- 7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
- 1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0
- F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
- WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI
- 7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F
- 4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
- IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjwID7UUUU
- U==
-X-Originating-IP: [118.112.177.181]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,250 +54,288 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jie Liu <liujie5@linkdatatechnology.com>
+Currently lcore_conf is a global static array. When multiple
+ports/lcores are distributed across different NUMA nodes, datapath
+suffers from severe cross-NUMA memory access penalty.
 
-Update the sxe2.ini feature sheet to accurately reflect the recently
-implemented hardware capabilities in the sxe2 PMD.
+On Kunpeng platform, sizeof(struct lcore_conf) reaches 133760 bytes.
+Such a huge per-lcore structure significantly amplifies cross-NUMA
+overhead in multi-port multi-NUMA deployment scenarios.
 
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+This commit refactors lcore_conf to pointer array and implements
+per-lcore NUMA-aware hugepage allocation, allocating each lcore's
+configuration on its local socket to eliminate remote memory access.
+
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+
 ---
- doc/guides/nics/features/sxe2.ini |  56 ++++++++++++
- doc/guides/nics/sxe2.rst          | 147 ++++++++++++++++++++++++++++++
- 2 files changed, 203 insertions(+)
+v2: Fix AI review comment: add cleanup when init lcore-conf fail
 
-diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
-index 09ba2f558c..3c1e6a8a39 100644
---- a/doc/guides/nics/features/sxe2.ini
-+++ b/doc/guides/nics/features/sxe2.ini
-@@ -7,17 +7,73 @@
- ; is selected.
- ;
- [Features]
-+Speed capabilities   = Y
-+Link status          = Y
-+Link status event    = Y
-+Rx interrupt         = Y
- Fast mbuf free       = P
- Free Tx mbuf on demand = Y
- Burst mode info      = Y
- Queue start/stop     = Y
-+Power mgmt address monitor = Y
- Buffer split on Rx   = P
- Scattered Rx         = Y
-+Traffic manager      = Y
- CRC offload          = Y
-+VLAN offload         = Y
-+QinQ offload         = P
- L3 checksum offload  = Y
- L4 checksum offload  = Y
-+Timestamp offload    = P
-+Inner L3 checksum    = P
-+Inner L4 checksum    = P
- Rx descriptor status = Y
- Tx descriptor status = Y
-+MTU update           = Y
-+TSO                  = P
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+Inline crypto        = Y
-+Packet type parsing  = Y
-+Timesync             = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+FW version           = Y
-+Module EEPROM dump   = Y
-+Multiprocess aware   = Y
- Linux                = Y
- x86-32               = Y
- x86-64               = Y
+---
+ examples/l3fwd/l3fwd.h     |  2 +-
+ examples/l3fwd/l3fwd_acl.c |  2 +-
+ examples/l3fwd/l3fwd_em.c  |  8 +++---
+ examples/l3fwd/l3fwd_fib.c |  6 ++---
+ examples/l3fwd/l3fwd_lpm.c |  8 +++---
+ examples/l3fwd/main.c      | 52 +++++++++++++++++++++++++++++++-------
+ 6 files changed, 56 insertions(+), 22 deletions(-)
+
+diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
+index 349fc37c79..20c457ee7f 100644
+--- a/examples/l3fwd/l3fwd.h
++++ b/examples/l3fwd/l3fwd.h
+@@ -104,7 +104,7 @@ extern uint32_t hash_entry_number;
+ 
+ extern xmm_t val_eth[RTE_MAX_ETHPORTS];
+ 
+-extern struct lcore_conf lcore_conf[RTE_MAX_LCORE];
++extern struct lcore_conf *lcore_conf[RTE_MAX_LCORE];
+ 
+ extern struct parm_cfg parm_config;
+ 
+diff --git a/examples/l3fwd/l3fwd_acl.c b/examples/l3fwd/l3fwd_acl.c
+index 4ee3411d2a..0605f6feb9 100644
+--- a/examples/l3fwd/l3fwd_acl.c
++++ b/examples/l3fwd/l3fwd_acl.c
+@@ -1090,7 +1090,7 @@ acl_main_loop(__rte_unused void *dummy)
+ 
+ 	prev_tsc = 0;
+ 	lcore_id = rte_lcore_id();
+-	qconf = &lcore_conf[lcore_id];
++	qconf = lcore_conf[lcore_id];
+ 	socketid = rte_lcore_to_socket_id(lcore_id);
+ 
+ 	if (qconf->n_rx_queue == 0) {
+diff --git a/examples/l3fwd/l3fwd_em.c b/examples/l3fwd/l3fwd_em.c
+index d8748a0edd..9aa23759d3 100644
+--- a/examples/l3fwd/l3fwd_em.c
++++ b/examples/l3fwd/l3fwd_em.c
+@@ -597,7 +597,7 @@ em_main_loop(__rte_unused void *dummy)
+ 		US_PER_S * BURST_TX_DRAIN_US;
+ 
+ 	lcore_id = rte_lcore_id();
+-	qconf = &lcore_conf[lcore_id];
++	qconf = lcore_conf[lcore_id];
+ 
+ 	const uint16_t n_rx_q = qconf->n_rx_queue;
+ 	const uint16_t n_tx_p = qconf->n_tx_port;
+@@ -685,7 +685,7 @@ em_event_loop_single(struct l3fwd_event_resources *evt_rsrc,
+ 		return;
+ 
+ 	lcore_id = rte_lcore_id();
+-	lconf = &lcore_conf[lcore_id];
++	lconf = lcore_conf[lcore_id];
+ 
+ 	RTE_LOG(INFO, L3FWD, "entering %s on lcore %u\n", __func__, lcore_id);
+ 	while (!force_quit) {
+@@ -747,7 +747,7 @@ em_event_loop_burst(struct l3fwd_event_resources *evt_rsrc,
+ 
+ 	lcore_id = rte_lcore_id();
+ 
+-	lconf = &lcore_conf[lcore_id];
++	lconf = lcore_conf[lcore_id];
+ 
+ 	RTE_LOG(INFO, L3FWD, "entering %s on lcore %u\n", __func__, lcore_id);
+ 
+@@ -877,7 +877,7 @@ em_event_loop_vector(struct l3fwd_event_resources *evt_rsrc,
+ 	if (dst_ports == NULL)
+ 		return;
+ 	lcore_id = rte_lcore_id();
+-	lconf = &lcore_conf[lcore_id];
++	lconf = lcore_conf[lcore_id];
+ 
+ 	RTE_LOG(INFO, L3FWD, "entering %s on lcore %u\n", __func__, lcore_id);
+ 
+diff --git a/examples/l3fwd/l3fwd_fib.c b/examples/l3fwd/l3fwd_fib.c
+index 4fc6bf90d5..32c8847130 100644
+--- a/examples/l3fwd/l3fwd_fib.c
++++ b/examples/l3fwd/l3fwd_fib.c
+@@ -192,7 +192,7 @@ fib_main_loop(__rte_unused void *dummy)
+ 			US_PER_S * BURST_TX_DRAIN_US;
+ 
+ 	lcore_id = rte_lcore_id();
+-	qconf = &lcore_conf[lcore_id];
++	qconf = lcore_conf[lcore_id];
+ 
+ 	const uint16_t n_rx_q = qconf->n_rx_queue;
+ 	const uint16_t n_tx_p = qconf->n_tx_port;
+@@ -282,7 +282,7 @@ fib_event_loop(struct l3fwd_event_resources *evt_rsrc,
+ 
+ 	lcore_id = rte_lcore_id();
+ 
+-	lconf = &lcore_conf[lcore_id];
++	lconf = lcore_conf[lcore_id];
+ 
+ 	RTE_LOG(INFO, L3FWD, "entering %s on lcore %u\n", __func__, lcore_id);
+ 
+@@ -446,7 +446,7 @@ fib_process_event_vector(struct rte_event_vector *vec, uint8_t *type_arr,
+ 	uint16_t nh;
+ 	int i;
+ 
+-	lconf = &lcore_conf[rte_lcore_id()];
++	lconf = lcore_conf[rte_lcore_id()];
+ 
+ 	/* Reset counters. */
+ 	ipv4_cnt = 0;
+diff --git a/examples/l3fwd/l3fwd_lpm.c b/examples/l3fwd/l3fwd_lpm.c
+index 2d2651e750..77701503f7 100644
+--- a/examples/l3fwd/l3fwd_lpm.c
++++ b/examples/l3fwd/l3fwd_lpm.c
+@@ -154,7 +154,7 @@ lpm_main_loop(__rte_unused void *dummy)
+ 		US_PER_S * BURST_TX_DRAIN_US;
+ 
+ 	lcore_id = rte_lcore_id();
+-	qconf = &lcore_conf[lcore_id];
++	qconf = lcore_conf[lcore_id];
+ 
+ 	const uint16_t n_rx_q = qconf->n_rx_queue;
+ 	const uint16_t n_tx_p = qconf->n_tx_port;
+@@ -270,7 +270,7 @@ lpm_event_loop_single(struct l3fwd_event_resources *evt_rsrc,
+ 		return;
+ 
+ 	lcore_id = rte_lcore_id();
+-	lconf = &lcore_conf[lcore_id];
++	lconf = lcore_conf[lcore_id];
+ 
+ 	RTE_LOG(INFO, L3FWD, "entering %s on lcore %u\n", __func__, lcore_id);
+ 	while (!force_quit) {
+@@ -324,7 +324,7 @@ lpm_event_loop_burst(struct l3fwd_event_resources *evt_rsrc,
+ 
+ 	lcore_id = rte_lcore_id();
+ 
+-	lconf = &lcore_conf[lcore_id];
++	lconf = lcore_conf[lcore_id];
+ 
+ 	RTE_LOG(INFO, L3FWD, "entering %s on lcore %u\n", __func__, lcore_id);
+ 
+@@ -468,7 +468,7 @@ lpm_event_loop_vector(struct l3fwd_event_resources *evt_rsrc,
+ 		return;
+ 
+ 	lcore_id = rte_lcore_id();
+-	lconf = &lcore_conf[lcore_id];
++	lconf = lcore_conf[lcore_id];
+ 	dst_port_list =
+ 		rte_zmalloc("", sizeof(uint16_t) * evt_rsrc->vector_size,
+ 			    RTE_CACHE_LINE_SIZE);
+diff --git a/examples/l3fwd/main.c b/examples/l3fwd/main.c
+index df035b508c..af863407d0 100644
+--- a/examples/l3fwd/main.c
++++ b/examples/l3fwd/main.c
+@@ -96,7 +96,7 @@ uint32_t enabled_port_mask;
+ /* Used only in exact match mode. */
+ bool ipv6_enabled; /**< ipv6 is false by default. */
+ 
+-struct lcore_conf lcore_conf[RTE_MAX_LCORE];
++struct lcore_conf *lcore_conf[RTE_MAX_LCORE];
+ 
+ struct parm_cfg parm_config;
+ 
+@@ -368,17 +368,17 @@ init_lcore_rx_queues(void)
+ 
+ 	for (i = 0; i < nb_lcore_params; ++i) {
+ 		lcore = lcore_params[i].lcore_id;
+-		nb_rx_queue = lcore_conf[lcore].n_rx_queue;
++		nb_rx_queue = lcore_conf[lcore]->n_rx_queue;
+ 		if (nb_rx_queue >= MAX_RX_QUEUE_PER_LCORE) {
+ 			printf("error: too many queues (%u) for lcore: %u\n",
+ 				(unsigned int)nb_rx_queue + 1, lcore);
+ 			return -1;
+ 		} else {
+-			lcore_conf[lcore].rx_queue_list[nb_rx_queue].port_id =
++			lcore_conf[lcore]->rx_queue_list[nb_rx_queue].port_id =
+ 				lcore_params[i].port_id;
+-			lcore_conf[lcore].rx_queue_list[nb_rx_queue].queue_id =
++			lcore_conf[lcore]->rx_queue_list[nb_rx_queue].queue_id =
+ 				lcore_params[i].queue_id;
+-			lcore_conf[lcore].n_rx_queue++;
++			lcore_conf[lcore]->n_rx_queue++;
+ 		}
+ 	}
+ 	return 0;
+@@ -1118,6 +1118,36 @@ print_ethaddr(const char *name, const struct rte_ether_addr *eth_addr)
+ 	printf("%s%s", name, buf);
+ }
+ 
++static int
++init_lcore_conf(void)
++{
++	unsigned int lcore_id;
++	int socketid;
 +
-+[rte_flow items]
-+eth                  = P
-+geneve               = Y
-+gre                  = Y
-+gtpu                 = Y
-+ipv4                 = Y
-+ipv6                 = Y
-+ipv6_frag_ext        = Y
-+nvgre                = Y
-+sctp                 = Y
-+tcp                  = Y
-+udp                  = Y
-+vlan                 = P
-+vxlan                = Y
-+vxlan_gpe            = Y
++	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
++		if (rte_lcore_is_enabled(lcore_id) == 0)
++			continue;
 +
-+[rte_flow actions]
-+count                = Y
-+drop                 = Y
-+mark                 = Y
-+passthru             = Y
-+port_representor     = Y
-+queue                = Y
-+represented_port     = Y
-+rss                  = Y
-+send_to_kernel       = Y
-+port_id              = Y
-diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
-index 539072b076..6cf1b825a1 100644
---- a/doc/guides/nics/sxe2.rst
-+++ b/doc/guides/nics/sxe2.rst
-@@ -35,3 +35,150 @@ preventing unauthorized access to random physical memory.
- This capability allows the PMD to coexist with kernel network interfaces
- which remain functional, although they stop receiving unicast packets
- as long as they share the same MAC address.
++		socketid = rte_lcore_to_socket_id(lcore_id);
++		lcore_conf[lcore_id] = rte_zmalloc_socket(NULL, sizeof(struct lcore_conf),
++							  RTE_CACHE_LINE_SIZE, socketid);
++		if (lcore_conf[lcore_id] == NULL)
++			goto cleanup;
++	}
 +
-+Configuration
-+-------------
++	return 0;
 +
-+Runtime Configuration
-+~~~~~~~~~~~~~~~~~~~~~
++cleanup:
++	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
++		if (lcore_conf[lcore_id] != NULL) {
++			rte_free(lcore_conf[lcore_id]);
++			lcore_conf[lcore_id] = NULL;
++		}
++	}
 +
-+- ``Traffic Management Scheduling Levels``
++	return -ENOMEM;
++}
 +
-+  The DPDK Traffic Management (rte_tm) APIs can be used to configure the Tx scheduler on the NIC.
-+  The ``sched-layer-mode`` parameter can be used to set the number of scheduling levels
-+  in the transmit scheduling hierarchy.
-+  The provided value must be between 0 and 3.
-+  If the value provided is greater than the number of levels supported by the HW,
-+  the driver will use the hardware maximum value.
+ int
+ init_mem(uint16_t portid, unsigned int nb_mbuf)
+ {
+@@ -1189,7 +1219,7 @@ init_mem(uint16_t portid, unsigned int nb_mbuf)
+ 		}
+ #endif
+ 
+-		qconf = &lcore_conf[lcore_id];
++		qconf = lcore_conf[lcore_id];
+ 		qconf->ipv4_lookup_struct =
+ 			l3fwd_lkp.get_ipv4_lookup_struct(socketid);
+ 		qconf->ipv6_lookup_struct =
+@@ -1492,7 +1522,7 @@ l3fwd_poll_resource_setup(void)
+ 					"rte_eth_tx_queue_setup: err=%d, "
+ 					"port=%d\n", ret, portid);
+ 
+-			qconf = &lcore_conf[lcore_id];
++			qconf = lcore_conf[lcore_id];
+ 			qconf->tx_queue_id[portid] = queueid;
+ 			queueid++;
+ 
+@@ -1505,7 +1535,7 @@ l3fwd_poll_resource_setup(void)
+ 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
+ 		if (rte_lcore_is_enabled(lcore_id) == 0)
+ 			continue;
+-		qconf = &lcore_conf[lcore_id];
++		qconf = lcore_conf[lcore_id];
+ 		printf("\nInitializing rx queues on lcore %u ... ", lcore_id );
+ 		fflush(stdout);
+ 		/* init RX queues */
+@@ -1667,6 +1697,10 @@ main(int argc, char **argv)
+ 	argc -= ret;
+ 	argv += ret;
+ 
++	ret = init_lcore_conf();
++	if (ret)
++		rte_exit(EXIT_FAILURE, "Init lcore conf failed!\n");
 +
-+- ``fnav-stat-type`` parameter [int]
-+
-+  This parameter controls the Fnav flow engine statistics type used
-+  for flow rule hit counting (via ``rte_flow_query``).
-+
-+  - 1: Only count the number of packets.
-+  - 2: Only count the number of bytes.
-+  - 3: Count both packets and bytes (default).
-+
-+  Default value is 3 (count both packets and bytes).
-+
-+- ``drv-sw-stats`` parameter [int]
-+
-+  This parameter controls whether per-packet software statistics
-+  (SW stats) are collected in the Rx data path.
-+
-+  Hardware packet statistic counters may be inaccurate for certain
-+  packet types due to hardware design limitations.
-+  When accuracy of Rx packet classification statistics is critical,
-+  enabling this parameter allows the driver to accumulate statistics
-+  in software as packets are received, providing an alternative
-+  statistical path that bypasses hardware counter inaccuracies.
-+
-+  - 0: Disable software statistics collection (default).
-+    The basic port statistics (``ipackets``, ``ibytes``) are reported
-+    from the hardware counters.
-+  - 1: Enable software statistics collection.
-+    Per-packet software statistics are accumulated for unicast,
-+    multicast, broadcast, and dropped packets in the Rx data path.
-+
-+  When enabled, the following extended statistics (xstats) are available:
-+  ``rx_sw_unicast_packets``, ``rx_sw_multicast_packets``,
-+  ``rx_sw_broadcast_packets``, ``rx_sw_drop_packets``,
-+  and ``rx_sw_drop_bytes``.
-+
-+- ``no-sched-mode`` parameter [int]
-+
-+  This parameter enables non-scheduling mode (no-sched mode).
-+  When enabled, the transmit path bypasses the hardware scheduling module
-+  and packets are sent directly out through the port.
-+  This results in lower transmit latency and higher throughput,
-+  but Traffic Management (rte_tm) APIs are not supported in this mode.
-+
-+  - 0: Disable non-scheduling mode (default).
-+    The transmit path goes through the hardware scheduling hierarchy.
-+    Traffic Management (rte_tm) APIs can be used to configure the Tx scheduler.
-+  - 1: Enable non-scheduling mode.
-+    The transmit path bypasses the hardware scheduling module.
-+    Packets are sent directly from the port at full speed without scheduling.
-+    Traffic Management (rte_tm) APIs are not available in this mode.
-+
-+- ``rx-low-latency`` parameter [int]
-+
-+  This parameter controls the interrupt throttling (ITR) interval
-+  for Rx queue interrupts.
-+
-+  When enabled, the driver sets a shorter interrupt coalescing timeout
-+  (``SXE2_ITR_INTERVAL_LOW``, approximately 1 μs),
-+  reducing the time between packet arrival and interrupt delivery to the CPU.
-+  This lowers receive latency at the cost of increased CPU interrupt rate.
-+
-+  When disabled (default), the driver uses the normal interrupt throttling
-+  interval (``SXE2_ITR_INTERVAL_NORMAL``, approximately 20 μs),
-+  which reduces the CPU interrupt rate at the expense of higher receive latency.
-+
-+  - 0: Disable Rx low latency (default).
-+    Normal interrupt throttling interval (~20 μs) is used.
-+  - 1: Enable Rx low latency.
-+    Low interrupt throttling interval (~1 μs) is used
-+    for reduced receive latency.
-+
-+- ``function-flow-direct`` parameter [int]
-+
-+  This parameter controls whether flow rules from different functional units
-+  (DPDK vs kernel driver) are isolated or combined when both drivers
-+  control the same physical port.
-+
-+  When the DPDK PMD and the kernel network driver coexist on the same port,
-+  flow rules may originate from either driver.
-+  This parameter determines how the source VSI (Virtual Switch Interface)
-+  of each flow rule is handled during hardware programming.
-+
-+  - 0 (default): Isolate flow rules between DPDK and kernel.
-+    When ``flow_isolated`` is enabled (``rte_flow_isolate()`` called),
-+    kernel-side flow rules take priority and DPDK-side flow rules are suppressed.
-+    When ``flow_isolated`` is disabled, DPDK-side flow rules take priority
-+    and kernel-side flow rules are suppressed.
-+    Only one functional unit's flows are active at a time.
-+
-+  - 1: Allow direct flow rules from both DPDK and kernel simultaneously.
-+    Both DPDK and kernel source VSIs are preserved in the hardware flow table.
-+    Flow rules from both sides are programmed without isolation.
-+
-+  This option only applies to FNAV and ACL flow engine types
-+  and does not apply to PF bond devices.
-+
-+Extended Statistics (xstats)
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The PMD provides the following extended statistics (xstats) for detailed
-+monitoring of receive-side packet classification and software-level accounting.
-+The software statistics path is provided as a workaround for hardware
-+counter inaccuracies on certain packet types --- it accumulates per-packet
-+statistics directly in the Rx data path, ensuring that unicast, multicast,
-+broadcast, and drop counts reflect the actual packets processed by the driver.
-+
-+Receive Software Statistics
-+  These counters are collected in the Rx data path when ``drv-sw-stats=1``
-+  is configured (see the ``drv-sw-stats`` devarg above).
-+  When ``drv-sw-stats`` is disabled (default), these xstats report zero.
-+
-+  - ``rx_sw_unicast_packets``: Number of unicast packets received.
-+  - ``rx_sw_multicast_packets``: Number of multicast packets received.
-+  - ``rx_sw_broadcast_packets``: Number of broadcast packets received.
-+  - ``rx_sw_drop_packets``: Number of packets dropped in the Rx data path.
-+  - ``rx_sw_drop_bytes``: Number of bytes dropped in the Rx data path.
-+
-+  When ``drv-sw-stats`` is enabled, the basic counters ``ipackets`` and
-+  ``ibytes`` (from ``rte_eth_stats``) also reflect the software-accumulated
-+  packet and byte counts. Otherwise, they are reported from hardware counters.
-+
-+Fnav Flow Engine Statistics
-+  The Fnav flow engine statistics type is controlled by the ``fnav-stat-type``
-+  devarg (see above). Depending on the configuration:
-+
-+  - ``fnav-stat-type=1``: Only packet count is available.
-+  - ``fnav-stat-type=2``: Only byte count is available.
-+  - ``fnav-stat-type=3`` (default): Both packet and byte counts are available.
-+
-+  Flow query results (via ``rte_flow_query``) expose these per-flow counters
-+  through the query API, not via xstats.
+ 	force_quit = false;
+ 	signal(SIGINT, signal_handler);
+ 	signal(SIGTERM, signal_handler);
+@@ -1749,7 +1783,7 @@ main(int argc, char **argv)
+ 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
+ 		if (rte_lcore_is_enabled(lcore_id) == 0)
+ 			continue;
+-		qconf = &lcore_conf[lcore_id];
++		qconf = lcore_conf[lcore_id];
+ 		for (queue = 0; queue < qconf->n_rx_queue; ++queue) {
+ 			portid = qconf->rx_queue_list[queue].port_id;
+ 			queueid = qconf->rx_queue_list[queue].queue_id;
 -- 
-2.52.0
+2.17.1
 
