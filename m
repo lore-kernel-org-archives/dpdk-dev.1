@@ -2,52 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8938DCDB479
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 21:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A510ECDE000
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 21:33:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1313640279;
-	Wed, 24 Jun 2026 23:32:19 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id 3D6684025E
- for <dev@dpdk.org>; Wed, 24 Jun 2026 23:32:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782336736; x=1813872736;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=DZc2MbqJhYnqobWunUH9zccjRI8DvdeNmiHMilKcy58=;
- b=cM4M0AfZyNVFbcmxXp4Z394GNeRvxMp0LMbJ67cqbsh1tjxw+XsLe7hr
- 3Q3Qzltc41ef0IdIlVVAtI/OWKn2kIaEx1yzsMHvPPI9DPzaxQTQK2QCe
- yWy1guKsIPFrR5He8AF43qckA+psMCoxCI1lq9B7GY8UxG4d12la0l8k5
- wEvcoIAghzlphFknElfs7qy7RQew83X5MyomzIi0/kDi0SalwID+H3/cS
- wMV9VO2EBL0Vnrf7ffE/GtZDHxvI9PhaBB7QOZ/eXj3K/XawfjeaQ1vGw
- aL4dgKfhh3G/nNk2OrSdCMAVLGU+XFIPEcA5SCvXBmI+FrJRzxzPcvPtC w==;
-X-CSE-ConnectionGUID: beIhrkKTQZq/bIyi/xGx2g==
-X-CSE-MsgGUID: G8pXvo7bQlylwHs1GwvYVw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11827"; a="94229216"
-X-IronPort-AV: E=Sophos;i="6.24,223,1774335600"; d="scan'208";a="94229216"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Jun 2026 14:32:15 -0700
-X-CSE-ConnectionGUID: r45xb8sxTHSGdOU+CmUK3A==
-X-CSE-MsgGUID: rCrMJbFcQgqcCoNolL0vMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,223,1774335600"; d="scan'208";a="253979520"
-Received: from unknown (HELO localhost.igk.intel.com) ([10.123.235.20])
- by orviesa003.jf.intel.com with ESMTP; 24 Jun 2026 14:32:13 -0700
-From: Dawid Wesierski <dawid.wesierski@intel.com>
-To: dev@dpdk.org
-Cc: dawid.wesierski@intel.com, marek.kasiewicz@intel.com, thomas@monjalon.net,
- stephen@networkplumber.org, mb@smartsharesystems.com
-Subject: [PATCH v5] pcapng: add user-supplied timestamp support
-Date: Wed, 24 Jun 2026 17:57:01 -0400
-Message-ID: <20260624215858.710217-1-dawid.wesierski@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260623141302.486601-1-dawid.wesierski@intel.com>
-References: <20260623141302.486601-1-dawid.wesierski@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7423C40279;
+	Wed, 24 Jun 2026 23:33:46 +0200 (CEST)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
+ [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id CB5DC4025E
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 23:33:45 +0200 (CEST)
+Received: by mail-qv1-f43.google.com with SMTP id
+ 6a1803df08f44-8de88d06509so3154136d6.0
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 14:33:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1782336825; x=1782941625; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=6WqsR+SCWuhfUPxo70rBbp11zVfDK4aWZX0fxAsUpww=;
+ b=hl6VmTTWkdH+HLcJp4Jg7ef/CrkswOfuaB0+aPO/0N9k/cLlaYzrdYwpEMtYUDRDOd
+ tMMg61iLDN5UTTkN1PCEV6VFMl00nn5ZCSCIPJck0QeeZR6NfJmOXD05Li8zovqcmxJL
+ 63pX1DynhXjsdIwkrBIp4+temKDgIzwMpThmQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1782336825; x=1782941625;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=6WqsR+SCWuhfUPxo70rBbp11zVfDK4aWZX0fxAsUpww=;
+ b=bnMNp0PL0OCzKr6dGD9MIXf6omXWA5pby831okEDoLrkcnunfJLoVwOPWXllvA7zhC
+ wqLBGKLR6BGrmsUlFmi2P6cr4bKFp7kaoS/+i0Hych95D53kMy2q+cFiZH0zsk53XySt
+ mxjQk+OUxeRICuVQkgZVHVQdz2mee9i9Qz5dWeQQfcWCQUXUOUVTbdZ6pF6rgn6UymIh
+ AtaaM0T9NbQnS1SL2XwUFWNth2WyPPoMI8Kszk8z3m5ktdOGowYEBm1noSOsFSunSL69
+ EN9TNiUxGfstBAQx24m/xETvw6bCvZQtB8sfXpgL40sa2KOORVFjrAyE62WmXi3izZnq
+ z9WQ==
+X-Gm-Message-State: AOJu0Yys1Z8L2JSEJv/LFe/GZpIz1hCtYNYSwMdt+9sBYPXEaB1B3Wvi
+ 6+JBSs3SjesH7UGfpCH5QO2z2DGnOjhlRG94CkJ35YWqV+RDrahyOK9wJ/SX1FayCtk=
+X-Gm-Gg: AfdE7clAiRmN4MRb2BrbOI4Hf4M1qyS1lwA7r9ebHj+Mx9KKgxY2FHtfyjx6TCcfDB7
+ CbHzUp32r/IWudww8IkhvbLLjt0KDJsmysn50wIs97PCzxRZ0HL4ttFtEbd1nlVtJqyHVi6hAh8
+ Cm+9n1BOVzSJI45qBxS2a3aCLC3cpbqAZOwUwgIL9GQnKIYfH8CEwR0ECPC9O5osKwGOVl4omeq
+ HwjtmwOtwHUAZq4RPRkmi7InnFlGnDfBstEM3vy+9VpSSCZMsblS4+NQo3TbrgMrE5C+kbxWFTk
+ DW77L6j0YseK7XTb8zIiFmyUqX8Bm5x4XwG4lIOUYkyWAc7Ucd+RzFY8n3ImHqUNkX7jT1wltNN
+ wJWluP+KB9n6pKp5YLJCVDaigb03/YSDHb1IAxtudK5MRyUvWIbvkQZ/aCquamfuNvx0tfGShRY
+ 0u+Cqm1z5VUSYzfJvXrSE8OhPgpUgKhgkRt0fT2GSOzjtlI39VHGqeRiIKgJpKmDZDAKEITLIbN
+ 75Rwj5Qlp0b8KWqzIijM5XlMalwzzhEkJPxnj+oNXAFxppnlbsB4+TOaBNUkIDU09EYWEJ/WcOU
+ rnJ3QWiDhJnSEw==
+X-Received: by 2002:a05:6214:410a:b0:89c:8353:1fa0 with SMTP id
+ 6a1803df08f44-8e3b44478dfmr158931336d6.4.1782336824866; 
+ Wed, 24 Jun 2026 14:33:44 -0700 (PDT)
+Received: from d122166.iol.unh.edu ([2606:4100:3880:1220:ff12:f4a1:a541:db45])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-8df81cde9ecsm165494326d6.24.2026.06.24.14.33.44
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 24 Jun 2026 14:33:44 -0700 (PDT)
+From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+To: luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: dev@dpdk.org, abailey@iol.unh.edu, ahassick@iol.unh.edu,
+ lylavoie@iol.unh.edu, Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Subject: [PATCH v4] dts: report dut/NIC info during DTS run
+Date: Wed, 24 Jun 2026 17:33:07 -0400
+Message-ID: <20260624213307.2095056-1-knimoji@iol.unh.edu>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260602163647.101815-1-knimoji@iol.unh.edu>
+References: <20260602163647.101815-1-knimoji@iol.unh.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,210 +79,180 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SW50cm9kdWNlIHJ0ZV9wY2FwbmdfY29weV90cygpIGFsb25nc2lkZSB0aGUgZXhpc3RpbmcgcnRl
-X3BjYXBuZ19jb3B5KCkKc28gdGhhdCBjYWxsZXJzIHdpdGggYSBoYXJkd2FyZSBQVFAgb3IgcHJl
-LWNhcHR1cmVkIHRpbWVzdGFtcCBjYW4gaW5qZWN0CmFuIGV4YWN0IGVwb2NoLW5zIHZhbHVlIGRp
-cmVjdGx5IGludG8gdGhlIHBhY2tldCByZWNvcmQuCgpUaW1lc3RhbXAgaGFuZGxpbmcgaW4gcnRl
-X3BjYXBuZ19jb3B5X3RzKCk6CiAtIHRzICE9IDA6IGNhbGxlci1zdXBwbGllZCBuYW5vc2Vjb25k
-cyBzaW5jZSB0aGUgVW5peCBlcG9jaCwgc3RvcmVkIGFzLWlzLgogLSB0cyA9PSAwOiBUU0MgY2Fw
-dHVyZWQgYXQgY29weSB0aW1lIHdpdGggYml0IDYzIHNldCBhcyBhIHNlbnRpbmVsLgogICBydGVf
-cGNhcG5nX3dyaXRlX3BhY2tldHMoKSBkZXRlY3RzIHRoZSBzZW50aW5lbCBhbmQgY29udmVydHMg
-dGhlIFRTQyB0bwogICBlcG9jaCBucyB1c2luZyB0aGUgZmlsZSdzIGNhbGlicmF0ZWQgY2xvY2su
-ICBUaGUgVFNDIHdpbGwgbm90IHJlYWNoCiAgIGJpdCA2MyBmb3IgY2VudHVyaWVzLCBhbmQgZXBv
-Y2gtbnMgdmFsdWVzIHN0YXkgYmVsb3cgYml0IDYzIHVudGlsIDI1NTQsCiAgIHNvIHRoZSBiaXQg
-aXMgc2FmZSB0byB1c2UgYXMgYSBkaXNhbWJpZ3VhdGlvbiBmbGFnLgoKcnRlX3BjYXBuZ19jb3B5
-KCkgaXMgcmV0YWluZWQgYXMgYSByZWFsIGV4cG9ydGVkIGZ1bmN0aW9uIChub3QgYW4gaW5saW5l
-CndyYXBwZXIpIHNvIHRoZSBzdGFibGUgQUJJIHN5bWJvbCBpcyBwcmVzZXJ2ZWQuICBJdCBzaW1w
-bHkgY2FsbHMKcnRlX3BjYXBuZ19jb3B5X3RzKC4uLiwgMCkgdG8gY2FwdHVyZSB0aGUgY3VycmVu
-dCBUU0MuCgpydGVfcGNhcG5nX3RzY190b19ucygpIGlzIGFkZGVkIGFzIGEgbmV3IGV4cGVyaW1l
-bnRhbCBoZWxwZXIgKGFkZHJlc3NpbmcKcmV2aWV3IHJlcXVlc3RzIGZyb20gU3RlcGhlbiBIZW1t
-aW5nZXIgYW5kIE1vcnRlbiBCcsO4cnVwKS4gIEl0IGV4cG9zZXMgdGhlCnNhbWUgY2FsaWJyYXRl
-ZCwgZHJpZnQtY29tcGVuc2F0ZWQsIGRpdmlkZS1mcmVlIFRTQy10by1lcG9jaC1ucyBjb252ZXJz
-aW9uCnVzZWQgaW50ZXJuYWxseSBieSBydGVfcGNhcG5nX3dyaXRlX3BhY2tldHMoKSwgYWxsb3dp
-bmcgY2FsbGVycyB0byBjb252ZXJ0CmEgVFNDIGNhcHR1cmVkIGF0IHBhY2tldCBhcnJpdmFsIHRp
-bWUgYmVmb3JlIHBhc3NpbmcgaXQgdG8KcnRlX3BjYXBuZ19jb3B5X3RzKCkuCgpTaWduZWQtb2Zm
-LWJ5OiBNYXJlayBLYXNpZXdpY3ogPG1hcmVrLmthc2lld2ljekBpbnRlbC5jb20+ClNpZ25lZC1v
-ZmYtYnk6IERhd2lkIFdlc2llcnNraSA8ZGF3aWQud2VzaWVyc2tpQGludGVsLmNvbT4KLS0tCgpI
-aSBTdGVwaGVuLCBNb3J0ZW4sClRoYW5rIHlvdSBmb3IgdGhlIGZlZWRiYWNrIG9uIHRoZSBwcmV2
-aW91cyB2ZXJzaW9ucywKSW4gdGhpcyB2ZXJzaW9uIGkgYWRkZWQgdW5pdCBUZXN0cyB0ZXN0IGNh
-c2UgaW4gYXBwL3Rlc3QvdGVzdF9wY2FwbmcuYyB0bwp2ZXJpZnkgdGhlIFRTQy10by1OUyBjb252
-ZXJzaW9uIGFuZCB0aGUgY3VzdG9tIHRpbWVzdGFtcCBpbmplY3Rpb24uCgoKUmVnYXJkcywKRGF3
-aWQgV8SZc2llcnNraQoKIC5tYWlsbWFwICAgICAgICAgICAgICAgIHwgICAyICsKIGFwcC90ZXN0
-L3Rlc3RfcGNhcG5nLmMgIHwgMTA4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysKIGxpYi9wY2FwbmcvcnRlX3BjYXBuZy5jIHwgIDQyICsrKysrKysrKysrKystLS0KIGxp
-Yi9wY2FwbmcvcnRlX3BjYXBuZy5oIHwgIDUzICsrKysrKysrKysrKysrKysrKysrCiA0IGZpbGVz
-IGNoYW5nZWQsIDE5OSBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBh
-Ly5tYWlsbWFwIGIvLm1haWxtYXAKaW5kZXggNDAwMWU1ZmIwZS4uYTdkOTdhNjMxZSAxMDA2NDQK
-LS0tIGEvLm1haWxtYXAKKysrIGIvLm1haWxtYXAKQEAgLTM2Niw2ICszNjYsNyBAQCBEYXZpZCBa
-ZW5nIDx6ZW5neGhzaEBjbi5pYm0uY29tPgogRGF2aWRlIENhcmF0dGkgPGRjYXJhdHRpQHJlZGhh
-dC5jb20+CiBEYXdpZCBHb3JlY2tpIDxkZ3JAc2VtaWhhbGYuY29tPgogRGF3aWQgSnVyY3phayA8
-ZGF3aWRfanVyZWtAdnAucGw+CitEYXdpZCBXZXNpZXJza2kgPGRhd2lkLndlc2llcnNraUBpbnRl
-bC5jb20+IFdlc2llcnNraSwgRGF3aWQgPGRhd2lkLndlc2llcnNraUBpbnRlbC5jb20+CiBEYXdp
-ZCBaaWVsaW5za2kgPGRhd2lkLnppZWxpbnNraUBpbnRlbC5jb20+CiBEYXdpZCDFgXVrd2nFhHNr
-aSA8ZGF3aWQubHVrd2luc2tpQGludGVsLmNvbT4KIERheHVlIEdhbyA8ZGF4dWV4Lmdhb0BpbnRl
-bC5jb20+CkBAIC0xMDE0LDYgKzEwMTUsNyBAQCBNYXJjaW4gV2lsayA8bWFyY2luLndpbGtAY2F2
-aXVtbmV0d29ya3MuY29tPgogTWFyY2luIFdvanRhcyA8bXdAc2VtaWhhbGYuY29tPgogTWFyY2lu
-IFphcG9sc2tpIDxtYXJjaW54LmEuemFwb2xza2lAaW50ZWwuY29tPgogTWFyY28gVmFybGVzZSA8
-bXZhcmxlc2VAc3VzZS5kZT4KK01hcmVrIEthc2lld2ljeiA8bWFyZWsua2FzaWV3aWN6QGludGVs
-LmNvbT4KIE1hcmVrIE1pY2FsIDxtYXJla3gubWljYWxAaW50ZWwuY29tPgogTWFyZWsgWmFsZnJl
-c3NvLWp1bmR6aWxsbyA8bWFyZWt4LnphbGZyZXNzby1qdW5kemlsbG9AaW50ZWwuY29tPgogTWFy
-aWEgTGluZ2VtYXJrIDxtYXJpYS5saW5nZW1hcmtAZXJpY3Nzb24uY29tPgpkaWZmIC0tZ2l0IGEv
-YXBwL3Rlc3QvdGVzdF9wY2FwbmcuYyBiL2FwcC90ZXN0L3Rlc3RfcGNhcG5nLmMKaW5kZXggMjk4
-YmNiZDMxZi4uMDU1NGMzMzM2OSAxMDA2NDQKLS0tIGEvYXBwL3Rlc3QvdGVzdF9wY2FwbmcuYwor
-KysgYi9hcHAvdGVzdC90ZXN0X3BjYXBuZy5jCkBAIC02NzIsNiArNjcyLDExMyBAQCB0ZXN0X3dy
-aXRlX2JlZm9yZV9vcGVuKHZvaWQpCiAJcmV0dXJuIC0xOwogfQogCitzdGF0aWMgaW50Cit0ZXN0
-X3BjYXBuZ190aW1lc3RhbXAodm9pZCkKK3sKKwljaGFyIGZpbGVfbmFtZVtQQVRIX01BWF0gPSAi
-L3RtcC9wY2FwbmdfdGVzdF9YWFhYWFgucGNhcG5nIjsKKwlydGVfcGNhcG5nX3QgKnBjYXBuZyA9
-IE5VTEw7CisJaW50IHJldCwgdG1wX2ZkOworCXN0cnVjdCBkdW1teV9tYnVmIG1iZnM7CisJc3Ry
-dWN0IHJ0ZV9tYnVmICpvcmlnLCAqbWM7CisJdWludDY0X3Qgbm93X25zLCB0c2MsIG5zX2Zyb21f
-dHNjLCBwY2FwX3RzOworCisJdG1wX2ZkID0gbWtzdGVtcHMoZmlsZV9uYW1lLCBzdHJsZW4oIi5w
-Y2FwbmciKSk7CisJaWYgKHRtcF9mZCA9PSAtMSkgeworCQlwZXJyb3IoIm1rc3RlbXBzKCkgZmFp
-bHVyZSIpOworCQlnb3RvIGZhaWw7CisJfQorCisJcGNhcG5nID0gcnRlX3BjYXBuZ19mZG9wZW4o
-dG1wX2ZkLCBOVUxMLCBOVUxMLCAicGNhcG5nX3RzX3Rlc3QiLCBOVUxMKTsKKwlpZiAocGNhcG5n
-ID09IE5VTEwpIHsKKwkJcHJpbnRmKCJydGVfcGNhcG5nX2Zkb3BlbiBmYWlsZWRcbiIpOworCQlj
-bG9zZSh0bXBfZmQpOworCQlnb3RvIGZhaWw7CisJfQorCisJcmV0ID0gcnRlX3BjYXBuZ19hZGRf
-aW50ZXJmYWNlKHBjYXBuZywgcG9ydF9pZCwgRExUX0VOMTBNQiwgTlVMTCwgTlVMTCwgTlVMTCk7
-CisJaWYgKHJldCA8IDApIHsKKwkJcHJpbnRmKCJjYW4gbm90IGFkZCBwb3J0ICV1XG4iLCBwb3J0
-X2lkKTsKKwkJZ290byBmYWlsOworCX0KKworCS8qIFRlc3QgMTogcnRlX3BjYXBuZ190c2NfdG9f
-bnMgKi8KKwl0c2MgPSBydGVfZ2V0X3RzY19jeWNsZXMoKTsKKwlub3dfbnMgPSBjdXJyZW50X3Rp
-bWVzdGFtcCgpOworCW5zX2Zyb21fdHNjID0gcnRlX3BjYXBuZ190c2NfdG9fbnMocGNhcG5nLCB0
-c2MpOworCisJLyogQ2hlY2sgaWYgVFNDLWRlcml2ZWQgTlMgaXMgcmVhc29uYWJseSBjbG9zZSB0
-byB3YWxsIGNsb2NrIE5TICh3aXRoaW4gMTAwbXMpICovCisJaWYgKG5zX2Zyb21fdHNjID4gbm93
-X25zICsgMTAwMDAwMDAwIHx8IG5zX2Zyb21fdHNjIDwgbm93X25zIC0gMTAwMDAwMDAwKSB7CisJ
-CXByaW50ZigiVFNDIHRvIE5TIGNvbnZlcnNpb24gZmFpbGVkOiB0c2M9JSJQUkl1NjQKKwkJICAg
-ICAgICIgbnNfZnJvbV90c2M9JSJQUkl1NjQiIG5vd19ucz0lIlBSSXU2NCJcbiIsCisJCSAgICAg
-ICB0c2MsIG5zX2Zyb21fdHNjLCBub3dfbnMpOworCQlnb3RvIGZhaWw7CisJfQorCisJLyogVGVz
-dCAyOiBydGVfcGNhcG5nX2NvcHlfdHMgd2l0aCBleHBsaWNpdCB0aW1lc3RhbXAgKi8KKwltYnVm
-MV9wcmVwYXJlKCZtYmZzKTsKKwlvcmlnID0gJm1iZnMubWJbMF07CisJcGNhcF90cyA9IG5vd19u
-cyArIDEwMDAwMDAwMDA7IC8qIDEgc2Vjb25kIGluIGZ1dHVyZSB0byBiZSBkaXN0aW5jdCAqLwor
-CisJbWMgPSBydGVfcGNhcG5nX2NvcHlfdHMocG9ydF9pZCwgMCwgb3JpZywgbXAsIHJ0ZV9wa3Rt
-YnVmX3BrdF9sZW4ob3JpZyksCisJCQkJUlRFX1BDQVBOR19ESVJFQ1RJT05fSU4sICJjdXN0b21f
-dHMiLCBwY2FwX3RzKTsKKwlpZiAobWMgPT0gTlVMTCkgeworCQlwcmludGYoInJ0ZV9wY2Fwbmdf
-Y29weV90cyBmYWlsZWRcbiIpOworCQlnb3RvIGZhaWw7CisJfQorCisJLyogV3JpdGUgaXQgKi8K
-KwlyZXQgPSBydGVfcGNhcG5nX3dyaXRlX3BhY2tldHMocGNhcG5nLCAmbWMsIDEpOworCXJ0ZV9w
-a3RtYnVmX2ZyZWUobWMpOworCWlmIChyZXQgPD0gMCkgeworCQlwcmludGYoIldyaXRlIG9mIGN1
-c3RvbSB0aW1lc3RhbXAgcGFja2V0IGZhaWxlZFxuIik7CisJCWdvdG8gZmFpbDsKKwl9CisKKwly
-dGVfcGNhcG5nX2Nsb3NlKHBjYXBuZyk7CisKKwkvKiBWYWxpZGF0ZSB0aGUgZmlsZSB1c2luZyBs
-aWJwY2FwICovCisJLyogV2UgZXhwZWN0IDEgcGFja2V0IHdpdGggdGltZXN0YW1wIGV4YWN0bHkg
-cGNhcF90cyAqLworCXsKKwkJY2hhciBlcnJidWZbUENBUF9FUlJCVUZfU0laRV07CisJCXBjYXBf
-dCAqcGNhcDsKKwkJc3RydWN0IHBjYXBfcGt0aGRyIGg7CisJCWNvbnN0IHVfY2hhciAqYnl0ZXM7
-CisJCXVpbnQ2NF90IG5zOworCisJCXBjYXAgPSBwY2FwX29wZW5fb2ZmbGluZV93aXRoX3RzdGFt
-cF9wcmVjaXNpb24oZmlsZV9uYW1lLAorCQkJCQkJCSAgICAgICBQQ0FQX1RTVEFNUF9QUkVDSVNJ
-T05fTkFOTywKKwkJCQkJCQkgICAgICAgZXJyYnVmKTsKKwkJaWYgKHBjYXAgPT0gTlVMTCkgewor
-CQkJcHJpbnRmKCJwY2FwX29wZW5fb2ZmbGluZSBmYWlsZWQ6ICVzXG4iLCBlcnJidWYpOworCQkJ
-Z290byBmYWlsOworCQl9CisKKwkJYnl0ZXMgPSBwY2FwX25leHQocGNhcCwgJmgpOworCQlpZiAo
-Ynl0ZXMgPT0gTlVMTCkgeworCQkJcHJpbnRmKCJObyBwYWNrZXRzIGluIGZpbGVcbiIpOworCQkJ
-cGNhcF9jbG9zZShwY2FwKTsKKwkJCWdvdG8gZmFpbDsKKwkJfQorCisJCW5zID0gKHVpbnQ2NF90
-KWgudHMudHZfc2VjICogTlNfUEVSX1MgKyBoLnRzLnR2X3VzZWM7CisJCWlmIChucyAhPSBwY2Fw
-X3RzKSB7CisJCQlwcmludGYoIlRpbWVzdGFtcCBtaXNtYXRjaDogZXhwZWN0ZWQgJSJQUkl1NjQi
-IGdvdCAlIlBSSXU2NCJcbiIsCisJCQkgICAgICAgcGNhcF90cywgbnMpOworCQkJcGNhcF9jbG9z
-ZShwY2FwKTsKKwkJCWdvdG8gZmFpbDsKKwkJfQorCQlwY2FwX2Nsb3NlKHBjYXApOworCX0KKwor
-CXJlbW92ZShmaWxlX25hbWUpOworCXJldHVybiAwOworCitmYWlsOgorCWlmIChwY2FwbmcpCisJ
-CXJ0ZV9wY2FwbmdfY2xvc2UocGNhcG5nKTsKKwlyZXR1cm4gLTE7Cit9CisKIHN0YXRpYyB2b2lk
-CiB0ZXN0X2NsZWFudXAodm9pZCkKIHsKQEAgLTY4OCw2ICs3OTUsNyBAQCB1bml0X3Rlc3Rfc3Vp
-dGUgdGVzdF9wY2Fwbmdfc3VpdGUgID0gewogCQlURVNUX0NBU0UodGVzdF9hZGRfaW50ZXJmYWNl
-KSwKIAkJVEVTVF9DQVNFKHRlc3Rfd3JpdGVfcGFja2V0cyksCiAJCVRFU1RfQ0FTRSh0ZXN0X3dy
-aXRlX2JlZm9yZV9vcGVuKSwKKwkJVEVTVF9DQVNFKHRlc3RfcGNhcG5nX3RpbWVzdGFtcCksCiAJ
-CVRFU1RfQ0FTRVNfRU5EKCkKIAl9CiB9OwpkaWZmIC0tZ2l0IGEvbGliL3BjYXBuZy9ydGVfcGNh
-cG5nLmMgYi9saWIvcGNhcG5nL3J0ZV9wY2FwbmcuYwppbmRleCBiNWQxMDI2ODkxLi44NGM0Mjdm
-YjJkIDEwMDY0NAotLS0gYS9saWIvcGNhcG5nL3J0ZV9wY2FwbmcuYworKysgYi9saWIvcGNhcG5n
-L3J0ZV9wY2FwbmcuYwpAQCAtMzcsNiArMzcsOSBAQAogLyogdXBwZXIgYm91bmQgZm9yIHN0cmlu
-Z3MgaW4gcGNhcG5nIG9wdGlvbiBkYXRhICovCiAjZGVmaW5lIFBDQVBOR19TVFJfTUFYCVVJTlQx
-Nl9NQVgKIAorLyogRmxhZyB0byBpbmRpY2F0ZSB0aW1lc3RhbXAgaXMgaW4gVFNDIGN5Y2xlcyAo
-Yml0IDYzKSAqLworI2RlZmluZSBQQ0FQTkdfVFNDX0ZMQUcJKDFVTEwgPDwgNjMpCisKIC8qCiAg
-KiBDb252ZXJ0ZXIgZnJvbSBUU0MgdmFsdWVzIHRvIG5hbm9zZWNvbmRzIHNpbmNlIFVuaXggZXBv
-Y2guCiAgKiBVc2VzIHJlY2lwcm9jYWwgbXVsdGlwbHkgdG8gYXZvaWQgcnVudGltZSBkaXZpc2lv
-bi4KQEAgLTQ4MCw2ICs0ODMsMTMgQEAgcnRlX3BjYXBuZ19tYnVmX3NpemUodWludDMyX3QgbGVu
-Z3RoKQogCQkrIHNpemVvZih1aW50MzJfdCk7CQkgIC8qICBsZW5ndGggKi8KIH0KIAorUlRFX0VY
-UE9SVF9FWFBFUklNRU5UQUxfU1lNQk9MKHJ0ZV9wY2FwbmdfdHNjX3RvX25zLCAyNi4wNykKK3Vp
-bnQ2NF90CitydGVfcGNhcG5nX3RzY190b19ucyhjb25zdCBydGVfcGNhcG5nX3QgKnNlbGYsIHVp
-bnQ2NF90IHRzYykKK3sKKwlyZXR1cm4gdHNjX3RvX25zX2Vwb2NoKCZzZWxmLT5jbG9jaywgdHNj
-KTsKK30KKwogLyogTW9yZSBnZW5lcmFsaXplZCB2ZXJzaW9uIHJ0ZV92bGFuX2luc2VydCgpICov
-CiBzdGF0aWMgaW50CiBwY2Fwbmdfdmxhbl9pbnNlcnQoc3RydWN0IHJ0ZV9tYnVmICptLCB1aW50
-MTZfdCBldGhlcl90eXBlLCB1aW50MTZfdCB0Y2kpCkBAIC01NTQsMTEgKzU2NCwyNCBAQCBydGVf
-cGNhcG5nX2NvcHkodWludDE2X3QgcG9ydF9pZCwgdWludDMyX3QgcXVldWUsCiAJCXVpbnQzMl90
-IGxlbmd0aCwKIAkJZW51bSBydGVfcGNhcG5nX2RpcmVjdGlvbiBkaXJlY3Rpb24sCiAJCWNvbnN0
-IGNoYXIgKmNvbW1lbnQpCit7CisJcmV0dXJuIHJ0ZV9wY2FwbmdfY29weV90cyhwb3J0X2lkLCBx
-dWV1ZSwgbWQsIG1wLCBsZW5ndGgsIGRpcmVjdGlvbiwKKwkJCQkgIGNvbW1lbnQsIDApOworfQor
-CitSVEVfRVhQT1JUX0VYUEVSSU1FTlRBTF9TWU1CT0wocnRlX3BjYXBuZ19jb3B5X3RzLCAyNi4w
-NykKK3N0cnVjdCBydGVfbWJ1ZiAqCitydGVfcGNhcG5nX2NvcHlfdHModWludDE2X3QgcG9ydF9p
-ZCwgdWludDMyX3QgcXVldWUsCisJCWNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAqbWQsCisJCXN0cnVj
-dCBydGVfbWVtcG9vbCAqbXAsCisJCXVpbnQzMl90IGxlbmd0aCwKKwkJZW51bSBydGVfcGNhcG5n
-X2RpcmVjdGlvbiBkaXJlY3Rpb24sCisJCWNvbnN0IGNoYXIgKmNvbW1lbnQsCisJCXVpbnQ2NF90
-IHRpbWVzdGFtcCkKIHsKIAlzdHJ1Y3QgcGNhcG5nX2VuaGFuY2VfcGFja2V0X2Jsb2NrICplcGI7
-CiAJdWludDMyX3Qgb3JpZ19sZW4sIHBrdF9sZW4sIHBhZGRpbmcsIGZsYWdzOwogCXN0cnVjdCBw
-Y2Fwbmdfb3B0aW9uICpvcHQ7Ci0JdWludDY0X3QgdGltZXN0YW1wOwogCXVpbnQxNl90IG9wdGxl
-bjsKIAlzdHJ1Y3QgcnRlX21idWYgKm1jOwogCWJvb2wgcnNzX2hhc2g7CkBAIC02OTAsOCArNzEz
-LDEzIEBAIHJ0ZV9wY2FwbmdfY29weSh1aW50MTZfdCBwb3J0X2lkLCB1aW50MzJfdCBxdWV1ZSwK
-IAkvKiBJbnRlcmZhY2UgaW5kZXggaXMgZmlsbGVkIGluIGxhdGVyIGR1cmluZyB3cml0ZSAqLwog
-CW1jLT5wb3J0ID0gcG9ydF9pZDsKIAotCS8qIFB1dCB0aW1lc3RhbXAgaW4gY3ljbGVzIGhlcmUg
-LSBhZGp1c3QgaW4gcGFja2V0IHdyaXRlICovCi0JdGltZXN0YW1wID0gcnRlX2dldF90c2NfY3lj
-bGVzKCk7CisJLyoKKwkgKiBVc2UgY2FsbGVyIHByb3ZpZGVkIHRpbWVzdGFtcC4KKwkgKiBJZiBu
-b25lIHByb3ZpZGVkLCB1c2UgY3VycmVudCBUU0MgYW5kIHNldCBmbGFnLgorCSAqLworCWlmICh0
-aW1lc3RhbXAgPT0gMCkKKwkJdGltZXN0YW1wID0gcnRlX2dldF90c2NfY3ljbGVzKCkgfCBQQ0FQ
-TkdfVFNDX0ZMQUc7CisKIAllcGItPnRpbWVzdGFtcF9oaSA9IHRpbWVzdGFtcCA+PiAzMjsKIAll
-cGItPnRpbWVzdGFtcF9sbyA9ICh1aW50MzJfdCl0aW1lc3RhbXA7CiAJZXBiLT5jYXB0dXJlX2xl
-bmd0aCA9IHBrdF9sZW47CkBAIC03NDMsOSArNzcxLDExIEBAIHJ0ZV9wY2Fwbmdfd3JpdGVfcGFj
-a2V0cyhydGVfcGNhcG5nX3QgKnNlbGYsCiAJCSAqLwogCQljeWNsZXMgPSAodWludDY0X3QpZXBi
-LT50aW1lc3RhbXBfaGkgPDwgMzI7CiAJCWN5Y2xlcyArPSBlcGItPnRpbWVzdGFtcF9sbzsKLQkJ
-dGltZXN0YW1wID0gdHNjX3RvX25zX2Vwb2NoKCZzZWxmLT5jbG9jaywgY3ljbGVzKTsKLQkJZXBi
-LT50aW1lc3RhbXBfaGkgPSB0aW1lc3RhbXAgPj4gMzI7Ci0JCWVwYi0+dGltZXN0YW1wX2xvID0g
-KHVpbnQzMl90KXRpbWVzdGFtcDsKKwkJaWYgKGN5Y2xlcyAmIFBDQVBOR19UU0NfRkxBRykgewor
-CQkJdGltZXN0YW1wID0gdHNjX3RvX25zX2Vwb2NoKCZzZWxmLT5jbG9jaywgY3ljbGVzICYgflBD
-QVBOR19UU0NfRkxBRyk7CisJCQllcGItPnRpbWVzdGFtcF9oaSA9IHRpbWVzdGFtcCA+PiAzMjsK
-KwkJCWVwYi0+dGltZXN0YW1wX2xvID0gKHVpbnQzMl90KXRpbWVzdGFtcDsKKwkJfQogCiAJCS8q
-CiAJCSAqIEhhbmRsZSBjYXNlIG9mIGhpZ2hseSBmcmFnbWVudGVkIGFuZCBsYXJnZSBidXJzdCBz
-aXplCmRpZmYgLS1naXQgYS9saWIvcGNhcG5nL3J0ZV9wY2FwbmcuaCBiL2xpYi9wY2FwbmcvcnRl
-X3BjYXBuZy5oCmluZGV4IGQ4ZDMyOGY3MTAuLjQyYzQyY2E2MGMgMTAwNjQ0Ci0tLSBhL2xpYi9w
-Y2FwbmcvcnRlX3BjYXBuZy5oCisrKyBiL2xpYi9wY2FwbmcvcnRlX3BjYXBuZy5oCkBAIC0xNDAs
-NiArMTQwLDU5IEBAIHJ0ZV9wY2FwbmdfY29weSh1aW50MTZfdCBwb3J0X2lkLCB1aW50MzJfdCBx
-dWV1ZSwKIAkJdWludDMyX3QgbGVuZ3RoLAogCQllbnVtIHJ0ZV9wY2FwbmdfZGlyZWN0aW9uIGRp
-cmVjdGlvbiwgY29uc3QgY2hhciAqY29tbWVudCk7CiAKKy8qKgorICogRm9ybWF0IGFuIG1idWYg
-Zm9yIHdyaXRpbmcgdG8gZmlsZSB3aXRoIGEgY3VzdG9tIHRpbWVzdGFtcC4KKyAqCisgKiBAcGFy
-YW0gcG9ydF9pZAorICogICBUaGUgRXRoZXJuZXQgcG9ydCBvbiB3aGljaCBwYWNrZXQgd2FzIHJl
-Y2VpdmVkCisgKiAgIG9yIGlzIGdvaW5nIHRvIGJlIHRyYW5zbWl0dGVkLgorICogQHBhcmFtIHF1
-ZXVlCisgKiAgIFRoZSBxdWV1ZSBvbiB0aGUgRXRoZXJuZXQgcG9ydCB3aGVyZSBwYWNrZXQgd2Fz
-IHJlY2VpdmVkCisgKiAgIG9yIGlzIGdvaW5nIHRvIGJlIHRyYW5zbWl0dGVkLgorICogQHBhcmFt
-IG1wCisgKiAgIFRoZSBtZW1wb29sIGZyb20gd2hpY2ggdGhlICJjbG9uZSIgbWJ1ZnMgYXJlIGFs
-bG9jYXRlZC4KKyAqIEBwYXJhbSBtCisgKiAgIFRoZSBtYnVmIHRvIGNvcHkKKyAqIEBwYXJhbSBs
-ZW5ndGgKKyAqICAgVGhlIHVwcGVyIGxpbWl0IG9uIGJ5dGVzIHRvIGNvcHkuICBQYXNzaW5nIFVJ
-TlQzMl9NQVgKKyAqICAgbWVhbnMgYWxsIGRhdGEgKGFmdGVyIG9mZnNldCkuCisgKiBAcGFyYW0g
-ZGlyZWN0aW9uCisgKiAgIFRoZSBkaXJlY3Rpb24gb2YgdGhlIHBhY2tlcjogcmVjZWl2ZSwgdHJh
-bnNtaXQgb3IgdW5rbm93bi4KKyAqIEBwYXJhbSBjb21tZW50CisgKiAgIE9wdGlvbmFsIHBlciBw
-YWNrZXQgY29tbWVudC4KKyAqICAgVHJ1bmNhdGVkIHRvIFVJTlQxNl9NQVggY2hhcmFjdGVycy4K
-KyAqIEBwYXJhbSB0aW1lc3RhbXAKKyAqICAgTmFub3NlY29uZHMgc2luY2UgdGhlIFVuaXggZXBv
-Y2guIElmIHplcm8sIFRTQyBpcyBjYXB0dXJlZCBhbmQKKyAqICAgY29udmVydGVkIGF0IHdyaXRl
-IHRpbWUuCisgKgorICogQHJldHVybgorICogICAtIFRoZSBwb2ludGVyIHRvIHRoZSBuZXcgbWJ1
-ZiBmb3JtYXR0ZWQgZm9yIHBjYXBuZ193cml0ZQorICogICAtIE5VTEwgb24gZXJyb3Igc3VjaCBh
-cyBpbnZhbGlkIHBvcnQgb3Igb3V0IG9mIG1lbW9yeS4KKyAqLworX19ydGVfZXhwZXJpbWVudGFs
-CitzdHJ1Y3QgcnRlX21idWYgKgorcnRlX3BjYXBuZ19jb3B5X3RzKHVpbnQxNl90IHBvcnRfaWQs
-IHVpbnQzMl90IHF1ZXVlLAorCQljb25zdCBzdHJ1Y3QgcnRlX21idWYgKm0sIHN0cnVjdCBydGVf
-bWVtcG9vbCAqbXAsCisJCXVpbnQzMl90IGxlbmd0aCwKKwkJZW51bSBydGVfcGNhcG5nX2RpcmVj
-dGlvbiBkaXJlY3Rpb24sCisJCWNvbnN0IGNoYXIgKmNvbW1lbnQsIHVpbnQ2NF90IHRpbWVzdGFt
-cCk7CisKKy8qKgorICogQ29udmVydCBhIFRTQyB2YWx1ZSB0byBuYW5vc2Vjb25kcyBzaW5jZSB0
-aGUgVW5peCBlcG9jaC4KKyAqCisgKiBVc2VzIHRoZSBjYWxpYnJhdGVkIGNsb2NrIG9mIHRoZSBj
-YXB0dXJlIGZpbGUuCisgKgorICogQHBhcmFtIHNlbGYKKyAqICBUaGUgaGFuZGxlIHRvIHRoZSBw
-YWNrZXQgY2FwdHVyZSBmaWxlCisgKiBAcGFyYW0gdHNjCisgKiAgVGhlIFRTQyB2YWx1ZSB0byBj
-b252ZXJ0CisgKiBAcmV0dXJuCisgKiAgTmFub3NlY29uZHMgc2luY2UgVW5peCBlcG9jaAorICov
-CitfX3J0ZV9leHBlcmltZW50YWwKK3VpbnQ2NF90CitydGVfcGNhcG5nX3RzY190b19ucyhjb25z
-dCBydGVfcGNhcG5nX3QgKnNlbGYsIHVpbnQ2NF90IHRzYyk7CisKIAogLyoqCiAgKiBEZXRlcm1p
-bmUgb3B0aW11bSBtYnVmIGRhdGEgc2l6ZS4KLS0gCjIuNDcuMwoKLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkludGVs
-IFRlY2hub2xvZ3kgUG9sYW5kIHNwLiB6IG8uby4KdWwuIFNsb3dhY2tpZWdvIDE3MyB8IDgwLTI5
-OCBHZGFuc2sgfCBTYWQgUmVqb25vd3kgR2RhbnNrIFBvbG5vYyB8IFZJSSBXeWR6aWFsIEdvc3Bv
-ZGFyY3p5IEtyYWpvd2VnbyBSZWplc3RydSBTYWRvd2VnbyAtIEtSUyAxMDE4ODIgfCBOSVAgOTU3
-LTA3LTUyLTMxNiB8IEthcGl0YWwgemFrbGFkb3d5IDIwMC4wMDAgUExOLgpTcG9sa2Egb3N3aWFk
-Y3phLCB6ZSBwb3NpYWRhIHN0YXR1cyBkdXplZ28gcHJ6ZWRzaWViaW9yY3kgdyByb3p1bWllbml1
-IHVzdGF3eSB6IGRuaWEgOCBtYXJjYSAyMDEzIHIuIG8gcHJ6ZWNpd2R6aWFsYW5pdSBuYWRtaWVy
-bnltIG9wb3puaWVuaW9tIHcgdHJhbnNha2NqYWNoIGhhbmRsb3d5Y2guCgpUYSB3aWFkb21vc2Mg
-d3JheiB6IHphbGFjem5pa2FtaSBqZXN0IHByemV6bmFjem9uYSBkbGEgb2tyZXNsb25lZ28gYWRy
-ZXNhdGEgaSBtb3plIHphd2llcmFjIGluZm9ybWFjamUgcG91Zm5lLiBXIHJhemllIHByenlwYWRr
-b3dlZ28gb3RyenltYW5pYSB0ZWogd2lhZG9tb3NjaSwgcHJvc2lteSBvIHBvd2lhZG9taWVuaWUg
-bmFkYXdjeSBvcmF6IHRyd2FsZSBqZWogdXN1bmllY2llOyBqYWtpZWtvbHdpZWsgcHJ6ZWdsYWRh
-bmllIGx1YiByb3pwb3dzemVjaG5pYW5pZSBqZXN0IHphYnJvbmlvbmUuClRoaXMgZS1tYWlsIGFu
-ZCBhbnkgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG1hdGVyaWFsIGZvciB0
-aGUgc29sZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJlY2lwaWVudChzKS4gSWYgeW91IGFyZSBub3Qg
-dGhlIGludGVuZGVkIHJlY2lwaWVudCwgcGxlYXNlIGNvbnRhY3QgdGhlIHNlbmRlciBhbmQgZGVs
-ZXRlIGFsbCBjb3BpZXM7IGFueSByZXZpZXcgb3IgZGlzdHJpYnV0aW9uIGJ5IG90aGVycyBpcyBz
-dHJpY3RseSBwcm9oaWJpdGVkLgo=
+This patch gathers NIC info during a DTS run and writes it to an output
+json file. This allows the json file to be used when reporting results
+on the DTS results dashboard.
+
+Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+---
+v2:
+    *Resolved merge conflicts
+v3:
+    *Fixed an issue with retrieving
+     the NIC's hardware version   
+v4:
+    *Moved nic info gathering step before the nics get
+     binded to their respective drivers 
+    *Condensed some areas of code in order to make them
+     more readable
+    *Removed redundant None checks and added some where
+     required
+    *Fixed LshwOutput class to better reflect the lshw
+     command output
+---
+ dts/framework/test_run.py                    |  8 +++
+ dts/framework/testbed_model/linux_session.py | 68 ++++++++++++++++++++
+ dts/framework/testbed_model/os_session.py    | 11 ++++
+ 3 files changed, 87 insertions(+)
+
+diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+index 94dc6023a7..c92fe90f2e 100644
+--- a/dts/framework/test_run.py
++++ b/dts/framework/test_run.py
+@@ -98,6 +98,7 @@
+         "InternalError" -> "exit":ew
+ """
+ 
++import json
+ import random
+ from collections import deque
+ from collections.abc import Iterable
+@@ -347,6 +348,12 @@ def next(self) -> State | None:
+         test_run.ctx.dpdk.setup()
+         test_run.ctx.topology.setup()
+ 
++        used_nic_info: list[dict[str, str]] = self.test_run.ctx.sut_node.main_session.get_nic_info()
++        with open(f"{SETTINGS.output_dir}/dut_info.json", "w") as file:
++            json.dump(used_nic_info, file, indent=3)
++
++        self.logger.info(f"DUT NIC info written to: {SETTINGS.output_dir}/dut_info.json")
++
+         if test_run.config.use_virtual_functions:
+             test_run.ctx.topology.instantiate_vf_ports()
+         if test_run.ctx.sut_node.cryptodevs and test_run.config.crypto:
+@@ -370,6 +377,7 @@ def next(self) -> State | None:
+         test_run.supported_capabilities = get_supported_capabilities(
+             test_run.ctx.sut_node, test_run.ctx.topology, test_run.required_capabilities
+         )
++
+         return TestRunExecution(test_run, self.result)
+ 
+     def on_error(self, ex: BaseException) -> State | None:
+diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/testbed_model/linux_session.py
+index 3a6e97974b..9e9146c372 100644
+--- a/dts/framework/testbed_model/linux_session.py
++++ b/dts/framework/testbed_model/linux_session.py
+@@ -38,6 +38,8 @@ class LshwConfigurationOutput(TypedDict):
+     driver: str
+     #:
+     link: str
++    #:
++    firmware: str
+ 
+ 
+ class LshwOutput(TypedDict):
+@@ -61,6 +63,12 @@ class LshwOutput(TypedDict):
+             ...
+     """
+ 
++    #:
++    vendor: NotRequired[str]
++    #:
++    product: NotRequired[str]
++    #:
++    version: NotRequired[str]
+     #:
+     businfo: str
+     #:
+@@ -197,6 +205,66 @@ def unbind_ports(self, ports: list[Port]):
+         if self._lshw_net_info:
+             del self._lshw_net_info
+ 
++    def get_nic_info(self) -> list[dict[str, str]]:
++        """Overrides :meth`~.os_session.OSSession.get_nic_info`.
++
++        Raises:
++            ConfigurationError: If the NIC info could not be found.
++        """
++        port_data = {
++            port.get("businfo"): port for port in self._lshw_net_info if port.get("businfo")
++        }
++
++        all_nic_info: list[dict[str, str]] = []
++        for port in self._config.ports:
++            pci_addr = port.pci
++
++            command_result = self.send_command(
++                f"sudo lshw -c network -businfo | grep '{pci_addr}' | cut -d'@' -f1"
++            )
++            if command_result.return_code != 0 and command_result.stdout == "":
++                raise ConfigurationError(f"Unable to get bus type for port {pci_addr}.")
++            bus_type = command_result.stdout
++
++            bus_info = f"{bus_type}@{pci_addr}"
++            nic_port: LshwOutput | None = port_data[bus_info]
++            if nic_port is None:
++                raise ConfigurationError(f"Port {pci_addr} could not be found on the node.")
++
++            config: LshwConfigurationOutput | None = nic_port["configuration"]
++            if config is None:
++                raise ConfigurationError(
++                    f"Configuration info for port {pci_addr} could not be found on the node."
++                )
++
++            if "logicalname" not in nic_port:
++                raise ConfigurationError(
++                    f"Logical name for port {pci_addr} could not be found on the node."
++                )
++
++            command_result = self.send_command(
++                f"ethtool {nic_port['logicalname']} | grep 'Speed:' | awk '{{print $2}}'"
++            )
++            if command_result.return_code == 0 and command_result.stdout:
++                nic_speed = command_result.stdout
++            else:
++                self._logger.error(f"Unable to get speed for NIC: {pci_addr}")
++                nic_speed = None
++
++            dut_json = {
++                "make": nic_port["vendor"] if "vendor" in nic_port else "Unknown",
++                "model": nic_port["product"] if "product" in nic_port else "Unknown",
++                "hardware version": nic_port["version"] if "version" in nic_port else "Unknown",
++                "firmware version": config["firmware"] if "firmware" in config else "Unknown",
++                "deviceBusType": bus_type,
++                "deviceId": nic_port["serial"] if "serial" in nic_port else "Unknown",
++                "pmd": config["driver"] if "driver" in config else "Unknown",
++                "speed": nic_speed or "Unknown",
++            }
++            all_nic_info.append(dut_json)
++
++        return all_nic_info
++
+     def bind_ports_to_driver(self, ports: list[Port], driver_name: str) -> None:
+         """Overrides :meth:`~.os_session.OSSession.bind_ports_to_driver`.
+ 
+diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/testbed_model/os_session.py
+index f2dc9b20a9..f88427a53d 100644
+--- a/dts/framework/testbed_model/os_session.py
++++ b/dts/framework/testbed_model/os_session.py
+@@ -581,6 +581,17 @@ def unbind_ports(self, ports: list[Port]) -> None:
+             ports: The list of ports to unbind.
+         """
+ 
++    @abstractmethod
++    def get_nic_info(self) -> list[dict[str, str]]:
++        """Get NIC information.
++
++        Returns:
++            NIC info as a list of dictionaries.
++
++        Raises:
++            ConfigurationError: If the NIC info could not be found.
++        """
++
+     @abstractmethod
+     def bind_ports_to_driver(self, ports: list[Port], driver_name: str) -> None:
+         """Bind `ports` to the given `driver_name`.
+-- 
+2.54.0
 
