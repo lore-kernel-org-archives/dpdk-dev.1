@@ -2,43 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DE7CDB479
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 02:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E99CDB479
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 02:05:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 240EB40DDA;
-	Wed, 24 Jun 2026 04:03:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9070040E1E;
+	Wed, 24 Jun 2026 04:03:23 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id EAEA4406B6
- for <dev@dpdk.org>; Wed, 24 Jun 2026 04:02:52 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 36A2B4068E
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 04:02:58 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowABnPJPGOjtqMYaoFQ--.11867S2;
- Wed, 24 Jun 2026 10:02:46 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowAD32+LJOjtqf4aoFQ--.21305S2;
+ Wed, 24 Jun 2026 10:02:49 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v6 19/23] net/sxe2: implement private dump info
-Date: Wed, 24 Jun 2026 10:02:46 +0800
-Message-ID: <20260624020246.3687334-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v6 23/23] net/sxe2: update sxe2 feature matrix docs
+Date: Wed, 24 Jun 2026 10:02:49 +0800
+Message-ID: <20260624020249.3687380-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260622092731.3092201-1-liujie5@linkdatatechnology.com>
 References: <20260622092731.3092201-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowABnPJPGOjtqMYaoFQ--.11867S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfJw17Cw4DJw15AryxJw1xAFb_yoW8Jr47Wo
- WxXr13Xr1xAryIvws5Arn7CFW3Z3ykWws5Cayaga98uanxtF4UAFWFgw43Z3Z8KF4rtFyY
- 934FyF98JFZFqF1rn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUYO7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
- j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
- x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWx
- JVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
- 4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+X-CM-TRANSID: rQCowAD32+LJOjtqf4aoFQ--.21305S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XFyUCFy3WrWxWFWrKrW8Crg_yoWfAFWDpa
+ yUZ34rtFWkJr1aq3srAa18Grn5Zwsay343CryDGa4aqan8GryFvw47Ka45Ka9rCa4UA34j
+ vr1j9347ua1DZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+ 6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+ 1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
  7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
  1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0
  F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
  WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI
- 7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F
+ 7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F
  4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
  IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjwID7UUUU
  U==
@@ -59,391 +60,248 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch implements the 'eth_dev_priv_dump' ops for the sxe2 PMD.
-This interface allows applications to dump driver-specific internal
-state and configuration information to a file stream.
-
-The output includes:
-- capabilities.
-- device base info.
-- device args info.
-- device filter info.
-- reprenstor info.
+Update the sxe2.ini feature sheet to accurately reflect the recently
+implemented hardware capabilities in the sxe2 PMD.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/meson.build        |   1 +
- drivers/net/sxe2/sxe2_dump.c        | 287 ++++++++++++++++++++++++++++
- drivers/net/sxe2/sxe2_dump.h        |  12 ++
- drivers/net/sxe2/sxe2_ethdev.c      |   3 +
- drivers/net/sxe2/sxe2_ethdev_repr.c |   3 +
- 5 files changed, 306 insertions(+)
- create mode 100644 drivers/net/sxe2/sxe2_dump.c
- create mode 100644 drivers/net/sxe2/sxe2_dump.h
+ doc/guides/nics/features/sxe2.ini |  56 ++++++++++++
+ doc/guides/nics/sxe2.rst          | 147 ++++++++++++++++++++++++++++++
+ 2 files changed, 203 insertions(+)
 
-diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index 65286299aa..d653d071a9 100644
---- a/drivers/net/sxe2/meson.build
-+++ b/drivers/net/sxe2/meson.build
-@@ -77,4 +77,5 @@ sources += files(
-         'sxe2_flow_parse_action.c',
-         'sxe2_flow_parse_pattern.c',
-         'sxe2_flow_parse_engine.c',
-+        'sxe2_dump.c',
- )
-diff --git a/drivers/net/sxe2/sxe2_dump.c b/drivers/net/sxe2/sxe2_dump.c
-new file mode 100644
-index 0000000000..d43473e083
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_dump.c
-@@ -0,0 +1,287 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
+diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
+index 09ba2f558c..3c1e6a8a39 100644
+--- a/doc/guides/nics/features/sxe2.ini
++++ b/doc/guides/nics/features/sxe2.ini
+@@ -7,17 +7,73 @@
+ ; is selected.
+ ;
+ [Features]
++Speed capabilities   = Y
++Link status          = Y
++Link status event    = Y
++Rx interrupt         = Y
+ Fast mbuf free       = P
+ Free Tx mbuf on demand = Y
+ Burst mode info      = Y
+ Queue start/stop     = Y
++Power mgmt address monitor = Y
+ Buffer split on Rx   = P
+ Scattered Rx         = Y
++Traffic manager      = Y
+ CRC offload          = Y
++VLAN offload         = Y
++QinQ offload         = P
+ L3 checksum offload  = Y
+ L4 checksum offload  = Y
++Timestamp offload    = P
++Inner L3 checksum    = P
++Inner L4 checksum    = P
+ Rx descriptor status = Y
+ Tx descriptor status = Y
++MTU update           = Y
++TSO                  = P
++Promiscuous mode     = Y
++Allmulticast mode    = Y
++Unicast MAC filter   = Y
++RSS hash             = Y
++RSS key update       = Y
++RSS reta update      = Y
++VLAN filter          = Y
++Inline crypto        = Y
++Packet type parsing  = Y
++Timesync             = Y
++Basic stats          = Y
++Extended stats       = Y
++FW version           = Y
++Module EEPROM dump   = Y
++Multiprocess aware   = Y
+ Linux                = Y
+ x86-32               = Y
+ x86-64               = Y
 +
-+#include <rte_malloc.h>
-+#include <arpa/inet.h>
++[rte_flow items]
++eth                  = P
++geneve               = Y
++gre                  = Y
++gtpu                 = Y
++ipv4                 = Y
++ipv6                 = Y
++ipv6_frag_ext        = Y
++nvgre                = Y
++sctp                 = Y
++tcp                  = Y
++udp                  = Y
++vlan                 = P
++vxlan                = Y
++vxlan_gpe            = Y
 +
-+#include "sxe2_common_log.h"
-+#include "sxe2_ethdev.h"
-+#include "sxe2_dump.h"
-+#include "sxe2_stats.h"
++[rte_flow actions]
++count                = Y
++drop                 = Y
++mark                 = Y
++passthru             = Y
++port_representor     = Y
++queue                = Y
++represented_port     = Y
++rss                  = Y
++send_to_kernel       = Y
++port_id              = Y
+diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
+index 539072b076..6cf1b825a1 100644
+--- a/doc/guides/nics/sxe2.rst
++++ b/doc/guides/nics/sxe2.rst
+@@ -35,3 +35,150 @@ preventing unauthorized access to random physical memory.
+ This capability allows the PMD to coexist with kernel network interfaces
+ which remain functional, although they stop receiving unicast packets
+ as long as they share the same MAC address.
 +
-+static void
-+sxe2_dump_dev_feature_capability(FILE *file, struct rte_eth_dev *dev)
-+{
-+	uint32_t i;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	const struct {
-+		uint32_t cap_bit;
-+		const char *name;
-+	} caps_name[] = {
-+		{SXE2_DEV_CAPS_OFFLOAD_L2, "L2"},
-+		{SXE2_DEV_CAPS_OFFLOAD_VLAN, "VLAN"},
-+		{SXE2_DEV_CAPS_OFFLOAD_IPSEC, "IPSEC"},
-+		{SXE2_DEV_CAPS_OFFLOAD_RSS, "RSS"},
-+		{SXE2_DEV_CAPS_OFFLOAD_FNAV, "FNAV"},
-+		{SXE2_DEV_CAPS_OFFLOAD_TM, "TM"},
-+		{SXE2_DEV_CAPS_OFFLOAD_PTP, "PTP"},
-+	};
-+	if (adapter->is_dev_repr)
-+		goto l_end;
++Configuration
++-------------
 +
-+	fprintf(file, "  - Dev Capability:\n");
-+	for (i = 0; i < RTE_DIM(caps_name); i++) {
-+		fprintf(file, "\t  -- support %s: %s\n", caps_name[i].name,
-+			(adapter->cap_flags & caps_name[i].cap_bit) ? "Yes" :
-+									 "No");
-+	}
-+l_end:
-+	return;
-+}
++Runtime Configuration
++~~~~~~~~~~~~~~~~~~~~~
 +
-+static void
-+sxe2_dump_device_basic_info(FILE *file, struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++- ``Traffic Management Scheduling Levels``
 +
-+	fprintf(file,
-+		"  - Device Base Info:\n"
-+		"\t  -- name: %s\n"
-+		"\t  -- pf_idx: %u port_idx: %u\n"
-+		"\t  -- tx_mode_flags: 0x%x rx_mode_flags: 0x%x\n"
-+		"\t  -- flow_isolate_cfg: 0x%x flow_isolated: 0x%x\n"
-+		"\t  -- dev_type: 0x%x is_switchdev: 0x%x\n"
-+		"\t  -- is_dev_repr: 0x%x dev_port_id: 0x%x\n"
-+		"\t  -- dev_flags: 0x%x\n"
-+		"\t  -- intr_conf lsc: %u rxq: %u rmv: %u\n",
-+		dev->data->name,
-+		adapter->pf_idx, adapter->port_idx,
-+		adapter->tx_mode_flags, adapter->rx_mode_flags,
-+		adapter->flow_isolate_cfg, adapter->flow_isolated,
-+		adapter->dev_type, adapter->switchdev_info.is_switchdev,
-+		adapter->is_dev_repr, adapter->dev_port_id,
-+		dev->data->dev_flags,
-+		dev->data->dev_conf.intr_conf.lsc,
-+		dev->data->dev_conf.intr_conf.rxq,
-+		dev->data->dev_conf.intr_conf.rmv);
-+}
++  The DPDK Traffic Management (rte_tm) APIs can be used to configure the Tx scheduler on the NIC.
++  The ``sched-layer-mode`` parameter can be used to set the number of scheduling levels
++  in the transmit scheduling hierarchy.
++  The provided value must be between 0 and 3.
++  If the value provided is greater than the number of levels supported by the HW,
++  the driver will use the hardware maximum value.
 +
-+static void
-+sxe2_dump_dev_args_info(FILE *file, struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++- ``fnav-stat-type`` parameter [int]
 +
-+	if (adapter->is_dev_repr)
-+		goto l_end;
++  This parameter controls the Fnav flow engine statistics type used
++  for flow rule hit counting (via ``rte_flow_query``).
 +
-+	fprintf(file,
-+		"  - Device Args Info:\n"
-+		"\t  -- no_sched_mode: %s\n"
-+		"\t  -- flow-duplicate-pattern: %u\n"
-+		"\t  -- fnav-stat-type: %u\n"
-+		"\t  -- sched_layer_mode: %u\n"
-+		"\t  -- rx_low_latency: %s\n"
-+		"\t  -- function-flow-direct: %s\n",
-+		adapter->devargs.no_sched_mode ? "On" : "Off",
-+		adapter->devargs.flow_dup_pattern_mode,
-+		adapter->devargs.fnav_stat_type,
-+		adapter->devargs.sched_layer_mode,
-+		adapter->devargs.rx_low_latency ? "On" : "Off",
-+		adapter->devargs.func_flow_direct_en ? "On" : "Off");
-+l_end:
-+	return;
-+}
++  - 1: Only count the number of packets.
++  - 2: Only count the number of bytes.
++  - 3: Count both packets and bytes (default).
 +
-+static void sxe2_dump_filter_info(FILE *file, struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_mac_filter *mac_entry;
-+	struct sxe2_mac_filter *next_mac_entry;
-+	struct sxe2_vlan_filter *vlan_entry;
-+	struct sxe2_vlan_filter *next_vlan_entry;
++  Default value is 3 (count both packets and bytes).
 +
-+	if (adapter->is_dev_repr)
-+		goto l_end;
++- ``drv-sw-stats`` parameter [int]
 +
-+	fprintf(file,
-+		"  - Device Filter Info:\n"
-+		"\t  -- cur_promisc:0x%x hw_promisc:0x%x\n"
-+		"\t  -- unicast_num: %u multicast_num: %u\n"
-+		"\t  -- vlan_num: %u filter_on: %u hw_filter_on: %u\n"
-+		"\t  -- vlan max_cnt: %u cnt: %u\n"
-+		"\t  -- tpid: 0x%x vid: 0x%x\n"
-+		"\t  -- vlan_outer_insert: 0x%x vlan_outer_strip: 0x%x\n"
-+		"\t  -- vlan_inner_insert: 0x%x vlan_inner_strip: 0x%x\n",
-+		adapter->filter_ctxt.cur_promisc_flags,
-+		adapter->filter_ctxt.hw_promisc_flags,
-+		adapter->filter_ctxt.uc_num,
-+		adapter->filter_ctxt.mc_num,
-+		adapter->filter_ctxt.vlan_num,
-+		adapter->filter_ctxt.vlan_info.filter_on,
-+		adapter->filter_ctxt.vlan_info.hw_filter_on,
-+		adapter->filter_ctxt.vlan_info.max_cnt,
-+		adapter->filter_ctxt.vlan_info.cnt,
-+		adapter->filter_ctxt.vlan_info.tpid,
-+		adapter->filter_ctxt.vlan_info.vid,
-+		adapter->filter_ctxt.vlan_info.outer_insert,
-+		adapter->filter_ctxt.vlan_info.outer_strip,
-+		adapter->filter_ctxt.vlan_info.inner_insert,
-+		adapter->filter_ctxt.vlan_info.inner_strip);
++  This parameter controls whether per-packet software statistics
++  (SW stats) are collected in the Rx data path.
 +
-+	if (adapter->filter_ctxt.uc_num > 0) {
-+		fprintf(file,
-+			"\t  -- Unicast entry:\n");
-+		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.uc_list, next,
-+				       next_mac_entry) {
-+			fprintf(file,
-+				"\t  -- addr: %02x:%02x:%02x:%02x:%02x:%02x hw status:%u "
-+				"default:%u\n",
-+				mac_entry->mac_addr.addr_bytes[0],
-+				mac_entry->mac_addr.addr_bytes[1],
-+				mac_entry->mac_addr.addr_bytes[2],
-+				mac_entry->mac_addr.addr_bytes[3],
-+				mac_entry->mac_addr.addr_bytes[4],
-+				mac_entry->mac_addr.addr_bytes[5],
-+				mac_entry->hw_config,
-+				mac_entry->default_config);
-+		}
-+	}
++  Hardware packet statistic counters may be inaccurate for certain
++  packet types due to hardware design limitations.
++  When accuracy of Rx packet classification statistics is critical,
++  enabling this parameter allows the driver to accumulate statistics
++  in software as packets are received, providing an alternative
++  statistical path that bypasses hardware counter inaccuracies.
 +
-+	if (adapter->filter_ctxt.mc_num > 0) {
-+		fprintf(file,
-+			"\t  -- Multicast entry:\n");
-+		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.mc_list,
-+				       next, next_mac_entry) {
-+			fprintf(file,
-+				"\t  -- addr: %02x:%02x:%02x:%02x:%02x:%02x "
-+				"hw status:%u default:%u\n",
-+				mac_entry->mac_addr.addr_bytes[0],
-+				mac_entry->mac_addr.addr_bytes[1],
-+				mac_entry->mac_addr.addr_bytes[2],
-+				mac_entry->mac_addr.addr_bytes[3],
-+				mac_entry->mac_addr.addr_bytes[4],
-+				mac_entry->mac_addr.addr_bytes[5],
-+				mac_entry->hw_config,
-+				mac_entry->default_config);
-+		}
-+	}
++  - 0: Disable software statistics collection (default).
++    The basic port statistics (``ipackets``, ``ibytes``) are reported
++    from the hardware counters.
++  - 1: Enable software statistics collection.
++    Per-packet software statistics are accumulated for unicast,
++    multicast, broadcast, and dropped packets in the Rx data path.
 +
-+	if (adapter->filter_ctxt.vlan_num > 0) {
-+		fprintf(file,
-+			"\t  -- Vlan entry:\n");
-+		RTE_TAILQ_FOREACH_SAFE(vlan_entry, &adapter->filter_ctxt.vlan_list,
-+			next, next_vlan_entry) {
-+			fprintf(file,
-+				"\t  -- vlan tpid:0x%04x vid:0x%04x prio:%d "
-+				"hw status:%u default:%u\n",
-+				vlan_entry->vlan_info.tpid,
-+				vlan_entry->vlan_info.vid,
-+				vlan_entry->vlan_info.prio,
-+				vlan_entry->hw_config,
-+				vlan_entry->default_config);
-+		}
-+	}
-+l_end:
-+	return;
-+}
++  When enabled, the following extended statistics (xstats) are available:
++  ``rx_sw_unicast_packets``, ``rx_sw_multicast_packets``,
++  ``rx_sw_broadcast_packets``, ``rx_sw_drop_packets``,
++  and ``rx_sw_drop_bytes``.
 +
-+static const char *sxe2_vsi_id_str(uint16_t vsi_id, char *buf, size_t len)
-+{
-+	if (vsi_id == SXE2_INVALID_VSI_ID)
-+		return "NA";
++- ``no-sched-mode`` parameter [int]
 +
-+	snprintf(buf, len, "%u", vsi_id);
-+	return buf;
-+}
++  This parameter enables non-scheduling mode (no-sched mode).
++  When enabled, the transmit path bypasses the hardware scheduling module
++  and packets are sent directly out through the port.
++  This results in lower transmit latency and higher throughput,
++  but Traffic Management (rte_tm) APIs are not supported in this mode.
 +
-+static void
-+sxe2_dump_switchdev_info(FILE *file, struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	uint32_t idx;
-+	char k_vsi_buf[16];
-+	char u_vsi_buf[16];
++  - 0: Disable non-scheduling mode (default).
++    The transmit path goes through the hardware scheduling hierarchy.
++    Traffic Management (rte_tm) APIs can be used to configure the Tx scheduler.
++  - 1: Enable non-scheduling mode.
++    The transmit path bypasses the hardware scheduling module.
++    Packets are sent directly from the port at full speed without scheduling.
++    Traffic Management (rte_tm) APIs are not available in this mode.
 +
-+	if (adapter->is_dev_repr && adapter->repr_priv_data) {
-+		fprintf(file,
-+			"  - Reprenstor Info:\n"
-+			"\t  -- repr_id: %u\n"
-+			"\t  -- repr_q_id: %u\n"
-+			"\t  -- repr_pf_id: %u\n"
-+			"\t  -- repr_vf_id: %u\n"
-+			"\t  -- repr_vf_vsi_id: %u\n"
-+			"\t  -- repr_vf_k_vsi_id: %s\n"
-+			"\t  -- repr_vf_u_vsi_id: %s\n",
-+			adapter->repr_priv_data->repr_id,
-+			adapter->repr_priv_data->repr_q_id,
-+			adapter->repr_priv_data->repr_pf_id,
-+			adapter->repr_priv_data->repr_vf_id,
-+			adapter->repr_priv_data->repr_vf_vsi_id,
-+			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_k_vsi_id,
-+					k_vsi_buf, sizeof(k_vsi_buf)),
-+			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_u_vsi_id,
-+					u_vsi_buf, sizeof(u_vsi_buf)));
-+		goto l_end;
-+	}
-+	if (adapter->switchdev_info.is_switchdev) {
-+		fprintf(file,
-+			"  - Switchdev Info:\n"
-+			"\t  -- primary:0x%x\n"
-+			"\t  -- representor: 0x%x\n"
-+			"\t  -- port_name_type: 0x%x\n"
-+			"\t  -- nb_vf: %u nb_repr_vf: %u\n",
-+			adapter->switchdev_info.primary,
-+			adapter->switchdev_info.representor,
-+			adapter->switchdev_info.port_name_type,
-+			adapter->repr_ctxt.nb_vf,
-+			adapter->repr_ctxt.nb_repr_vf);
-+		if (adapter->repr_ctxt.nb_vf > 0) {
-+			fprintf(file,
-+				"\t  -- vf entry:\n");
-+			for (idx = 0; idx < adapter->repr_ctxt.nb_vf; idx++) {
-+				fprintf(file,
-+					"\t  -- func_id:%u vsi_type:%u kernel_vsi_id:%u dpdk_vsi_id:%u\n",
-+					adapter->repr_ctxt.repr_vf_id[idx].func_id,
-+					adapter->repr_ctxt.repr_vf_id[idx].vsi_type,
-+					adapter->repr_ctxt.repr_vf_id[idx].kernel_vsi_id,
-+					adapter->repr_ctxt.repr_vf_id[idx].dpdk_vsi_id);
-+			}
-+		}
-+	}
++- ``rx-low-latency`` parameter [int]
 +
-+l_end:
-+	return;
-+}
++  This parameter controls the interrupt throttling (ITR) interval
++  for Rx queue interrupts.
 +
-+int32_t sxe2_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file)
-+{
-+	char *buf = NULL;
-+	size_t size = 0;
-+	FILE *str;
-+	int32_t ret = -1;
++  When enabled, the driver sets a shorter interrupt coalescing timeout
++  (``SXE2_ITR_INTERVAL_LOW``, approximately 1 μs),
++  reducing the time between packet arrival and interrupt delivery to the CPU.
++  This lowers receive latency at the cost of increased CPU interrupt rate.
 +
-+	str = open_memstream(&buf, &size);
-+	if (!str) {
-+		PMD_LOG_ERR(DRV, "fopen fail.");
-+		goto l_end;
-+	}
++  When disabled (default), the driver uses the normal interrupt throttling
++  interval (``SXE2_ITR_INTERVAL_NORMAL``, approximately 20 μs),
++  which reduces the CPU interrupt rate at the expense of higher receive latency.
 +
-+	sxe2_dump_dev_feature_capability(str, dev);
-+	sxe2_dump_device_basic_info(str, dev);
-+	sxe2_dump_dev_args_info(str, dev);
-+	sxe2_dump_filter_info(str, dev);
-+	sxe2_dump_switchdev_info(str, dev);
++  - 0: Disable Rx low latency (default).
++    Normal interrupt throttling interval (~20 μs) is used.
++  - 1: Enable Rx low latency.
++    Low interrupt throttling interval (~1 μs) is used
++    for reduced receive latency.
 +
-+	(void)fflush(str);
++- ``function-flow-direct`` parameter [int]
 +
-+	(void)fwrite(buf, 1, size, file);
-+	(void)fflush(file);
++  This parameter controls whether flow rules from different functional units
++  (DPDK vs kernel driver) are isolated or combined when both drivers
++  control the same physical port.
 +
-+	ret = 0;
++  When the DPDK PMD and the kernel network driver coexist on the same port,
++  flow rules may originate from either driver.
++  This parameter determines how the source VSI (Virtual Switch Interface)
++  of each flow rule is handled during hardware programming.
 +
-+	(void)fclose(str);
-+	free(buf);
-+l_end:
-+	return ret;
-+}
-diff --git a/drivers/net/sxe2/sxe2_dump.h b/drivers/net/sxe2/sxe2_dump.h
-new file mode 100644
-index 0000000000..05d6db9b3d
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_dump.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
++  - 0 (default): Isolate flow rules between DPDK and kernel.
++    When ``flow_isolated`` is enabled (``rte_flow_isolate()`` called),
++    kernel-side flow rules take priority and DPDK-side flow rules are suppressed.
++    When ``flow_isolated`` is disabled, DPDK-side flow rules take priority
++    and kernel-side flow rules are suppressed.
++    Only one functional unit's flows are active at a time.
 +
-+#ifndef __SXE2_DUMP_H__
-+#define __SXE2_DUMP_H__
++  - 1: Allow direct flow rules from both DPDK and kernel simultaneously.
++    Both DPDK and kernel source VSIs are preserved in the hardware flow table.
++    Flow rules from both sides are programmed without isolation.
 +
-+#include <ethdev_driver.h>
++  This option only applies to FNAV and ACL flow engine types
++  and does not apply to PF bond devices.
 +
-+int32_t sxe2_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file);
++Extended Statistics (xstats)
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +
-+#endif /* __SXE2_DUMP_H__ */
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index e881cc2af6..6267f0499d 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -37,6 +37,7 @@
- #include "sxe2_host_regs.h"
- #include "sxe2_switchdev.h"
- #include "sxe2_ioctl_chnl_func.h"
-+#include "sxe2_dump.h"
- #include "sxe2_ethdev_repr.h"
- #include "sxe2vf_regs.h"
- #include "sxe2_switchdev.h"
-@@ -193,6 +194,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 
- 	.get_module_info            = sxe2_get_module_info,
- 	.get_module_eeprom          = sxe2_get_module_eeprom,
++The PMD provides the following extended statistics (xstats) for detailed
++monitoring of receive-side packet classification and software-level accounting.
++The software statistics path is provided as a workaround for hardware
++counter inaccuracies on certain packet types --- it accumulates per-packet
++statistics directly in the Rx data path, ensuring that unicast, multicast,
++broadcast, and drop counts reflect the actual packets processed by the driver.
 +
-+	.eth_dev_priv_dump          = sxe2_eth_dev_priv_dump,
- };
- 
- static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
-index 15b839bb74..f32318b731 100644
---- a/drivers/net/sxe2/sxe2_ethdev_repr.c
-+++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
-@@ -11,6 +11,7 @@
- #include "sxe2_txrx.h"
- #include "sxe2_switchdev.h"
- #include "sxe2_mp.h"
-+#include "sxe2_dump.h"
- #include "sxe2_stats.h"
- #include "sxe2_flow.h"
- 
-@@ -236,6 +237,8 @@ static const struct eth_dev_ops sxe2_switchdev_repr_dev_ops = {
- 	.allmulticast_enable        = sxe2_repr_allmulti_enable,
- 	.allmulticast_disable       = sxe2_repr_allmulti_disable,
- 
-+	.eth_dev_priv_dump          = sxe2_eth_dev_priv_dump,
++Receive Software Statistics
++  These counters are collected in the Rx data path when ``drv-sw-stats=1``
++  is configured (see the ``drv-sw-stats`` devarg above).
++  When ``drv-sw-stats`` is disabled (default), these xstats report zero.
 +
- 	.stats_get                  = sxe2_stats_info_get,
- 	.stats_reset                = sxe2_stats_info_reset,
- 	.xstats_get                 = sxe2_xstats_info_get,
++  - ``rx_sw_unicast_packets``: Number of unicast packets received.
++  - ``rx_sw_multicast_packets``: Number of multicast packets received.
++  - ``rx_sw_broadcast_packets``: Number of broadcast packets received.
++  - ``rx_sw_drop_packets``: Number of packets dropped in the Rx data path.
++  - ``rx_sw_drop_bytes``: Number of bytes dropped in the Rx data path.
++
++  When ``drv-sw-stats`` is enabled, the basic counters ``ipackets`` and
++  ``ibytes`` (from ``rte_eth_stats``) also reflect the software-accumulated
++  packet and byte counts. Otherwise, they are reported from hardware counters.
++
++Fnav Flow Engine Statistics
++  The Fnav flow engine statistics type is controlled by the ``fnav-stat-type``
++  devarg (see above). Depending on the configuration:
++
++  - ``fnav-stat-type=1``: Only packet count is available.
++  - ``fnav-stat-type=2``: Only byte count is available.
++  - ``fnav-stat-type=3`` (default): Both packet and byte counts are available.
++
++  Flow query results (via ``rte_flow_query``) expose these per-flow counters
++  through the query API, not via xstats.
 -- 
 2.52.0
 
