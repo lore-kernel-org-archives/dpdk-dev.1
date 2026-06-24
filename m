@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C38CDB479
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 02:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED52CCD4F26
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 02:04:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 704F240B94;
-	Wed, 24 Jun 2026 04:03:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6174F40B98;
+	Wed, 24 Jun 2026 04:03:16 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id A834F406A2
- for <dev@dpdk.org>; Wed, 24 Jun 2026 04:02:49 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E95C240698
+ for <dev@dpdk.org>; Wed, 24 Jun 2026 04:02:50 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowABHG5LDOjtqAYaoFQ--.62546S2;
- Wed, 24 Jun 2026 10:02:44 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowAAnKL_HOjtqWYaoFQ--.21202S2;
+ Wed, 24 Jun 2026 10:02:48 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v6 16/23] net/sxe2: implement get monitor address
-Date: Wed, 24 Jun 2026 10:02:43 +0800
-Message-ID: <20260624020243.3687295-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v6 21/23] common/sxe2: add callback for memory event handling
+Date: Wed, 24 Jun 2026 10:02:47 +0800
+Message-ID: <20260624020247.3687357-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260622092731.3092201-1-liujie5@linkdatatechnology.com>
 References: <20260622092731.3092201-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowABHG5LDOjtqAYaoFQ--.62546S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFW8AF1fWF1kZFW3Ww15urg_yoW5Xw4kpF
- 4kX34fZF1rJa17Ww1fGa1fuF1YgF4xtFyjkryIk34fuF1kJF1UAFZ8tFyYy3WYyryUGF1S
- vFsrArsrGay5ur7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: rQCowAAnKL_HOjtqWYaoFQ--.21202S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3WFWxZF45Cr1fGw45JF4ruFg_yoW7ZFWrpF
+ 48uFyYqFy5Ja17Ww13t3WDZ34rKwsYg3yDCFWxKasak3Wqqry8Zw4kKa43tr1rCrW3JF1v
+ yFsIyFy5Gw48JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+ 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
  6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
  0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
  6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
  0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC
  0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
  1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij
- 64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr
+ 64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr
  0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
  42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8KsjUUUUU
 X-Originating-IP: [118.112.177.181]
@@ -58,77 +58,190 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch implements the 'get_monitor_addr' ethdev ops in the sxe2
-PMD. This interface allows the Ethernet device to provide the
-address of the next expected Rx descriptor to the power management
-library.
+During memory hotplug events, the SXE2 driver needs to track memory
+segment layout changes to maintain internal DMA mappings. However,
+existing memseg walk functions (rte_memseg_walk) acquire memory locks
+and cannot be called from within memory event callbacks, leading to
+potential deadlocks.
 
-The implementation calculates the address of the next Rx descriptor
-based on the receive queue's current hardware ring position and
-descriptor size. Applications can then use this address with
-rte_power_monitor() to put the CPU into a low-power state until
-new packets are written to the descriptor by the hardware.
+The implementation follows the standard rte_memseg_walk_t prototype,
+processing each memseg to update driver-specific data structures.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c |  2 ++
- drivers/net/sxe2/sxe2_rx.c     | 21 +++++++++++++++++++++
- drivers/net/sxe2/sxe2_rx.h     |  2 ++
- 3 files changed, 25 insertions(+)
+ drivers/common/sxe2/sxe2_common.c     | 110 ++++++++++++++++++++++++++
+ drivers/common/sxe2/sxe2_common.h     |   2 +
+ drivers/common/sxe2/sxe2_ioctl_chnl.c |   2 +-
+ 3 files changed, 113 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 02ff6be322..d6efab239c 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -183,6 +183,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.queue_stats_mapping_set    = sxe2_queue_stats_mapping_set,
+diff --git a/drivers/common/sxe2/sxe2_common.c b/drivers/common/sxe2/sxe2_common.c
+index c000a55cd0..5c5db85f29 100644
+--- a/drivers/common/sxe2/sxe2_common.c
++++ b/drivers/common/sxe2/sxe2_common.c
+@@ -196,6 +196,102 @@ static int32_t sxe2_parse_representor(const char *key, const char *value, void *
  
- 	.fw_version_get             = sxe2_fw_version_string_get,
+ 	PMD_LOG_INFO(COM, "representor arg %s: \"%s\".", key, value);
+ 
++l_end:
++	return ret;
++}
++static int32_t sxe2_dma_mem_map(struct sxe2_common_device *cdev,
++				const void *addr, size_t len, bool do_map)
++{
++	struct rte_memseg_list *msl;
++	struct rte_memseg *ms;
++	size_t cur_len = 0;
++	int32_t ret = 0;
 +
-+	.get_monitor_addr           = sxe2_get_monitor_addr,
- };
- 
- static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
-index 2495ab3ab7..820d4f0620 100644
---- a/drivers/net/sxe2/sxe2_rx.c
-+++ b/drivers/net/sxe2/sxe2_rx.c
-@@ -534,3 +534,24 @@ void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev)
- 		}
- 	}
++	msl = rte_mem_virt2memseg_list(addr);
++	if (msl == NULL) {
++		ret = -EINVAL;
++		PMD_LOG_ERR(COM, "Invalid virt addr=%p.", addr);
++		goto l_end;
++	}
++
++	if ((uintptr_t)addr != RTE_ALIGN((uintptr_t)addr, msl->page_sz) ||
++		(len != RTE_ALIGN(len, msl->page_sz))) {
++		ret = -EINVAL;
++		PMD_LOG_ERR(COM, "Addr=%p and len=%zu not align page size=%" PRIu64 ".",
++			    addr, len, msl->page_sz);
++		goto l_end;
++	}
++
++	/* memsegs are contiguous in memory */
++	ms = rte_mem_virt2memseg(addr, msl);
++	while (cur_len < len) {
++		/* some memory segments may have invalid IOVA */
++		if (ms->iova == RTE_BAD_IOVA) {
++			PMD_LOG_WARN(COM, "Memory segment at %p has bad IOVA, skipping.",
++					ms->addr);
++			goto next;
++		}
++		if (do_map)
++			sxe2_drv_dev_dma_map(cdev, ms->addr_64,
++					ms->iova, ms->len);
++		else
++			sxe2_drv_dev_dma_unmap(cdev, ms->iova);
++
++next:
++		cur_len += ms->len;
++		++ms;
++	}
++
++l_end:
++	return ret;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(sxe2_common_mem_event_cb)
++void
++sxe2_common_mem_event_cb(enum rte_mem_event type,
++		const void *addr, size_t size, void *arg __rte_unused)
++{
++	struct sxe2_common_device *cdev = NULL;
++
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		goto l_end;
++
++	pthread_mutex_lock(&sxe2_common_devices_list_lock);
++	switch (type) {
++	case RTE_MEM_EVENT_FREE:
++		TAILQ_FOREACH(cdev, &sxe2_common_devices_list, next)
++			(void)sxe2_dma_mem_map(cdev, addr, size, 0);
++		break;
++	case RTE_MEM_EVENT_ALLOC:
++		TAILQ_FOREACH(cdev, &sxe2_common_devices_list, next)
++			(void)sxe2_dma_mem_map(cdev, addr, size, 1);
++		break;
++	default:
++		break;
++	}
++	pthread_mutex_unlock(&sxe2_common_devices_list_lock);
++l_end:
++	return;
++}
++
++static int32_t sxe2_memseg_walk_cb(const struct rte_memseg_list *msl,
++				   const struct rte_memseg *ms, void *arg)
++{
++	struct sxe2_common_device *cdev = arg;
++	int32_t ret = 0;
++
++	if (msl->external && !msl->heap)
++		goto l_end;
++
++	if (ms->iova == RTE_BAD_IOVA)
++		goto l_end;
++
++	ret = sxe2_drv_dev_dma_map(cdev, ms->addr_64, ms->iova, ms->len);
++	if (ret != 0) {
++		PMD_LOG_ERR(COM, "Fail to memseg dma map.");
++		goto l_end;
++	}
++
+ l_end:
+ 	return ret;
  }
-+
-+static int32_t sxe2_monitor_callback(const uint64_t value,
-+				 const uint64_t arg[RTE_POWER_MONITOR_OPAQUE_SZ] __rte_unused)
-+{
-+	const uint64_t dd_state = rte_cpu_to_le_64(SXE2_RX_DESC_STATUS_DD_MASK);
-+	return (value & dd_state) == dd_state ? -1 : 0;
-+}
-+
-+int32_t sxe2_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc)
-+{
-+	volatile union sxe2_rx_desc *rxdp;
-+	struct sxe2_rx_queue *rxq = (struct sxe2_rx_queue *)rx_queue;
-+
-+	rxdp = &rxq->desc_ring[rxq->processing_idx];
-+
-+	pmc->addr = &rxdp->wb.status_err_ptype_len;
-+	pmc->fn   = sxe2_monitor_callback;
-+	pmc->size = sizeof(uint16_t);
-+
-+	return 0;
-+}
-diff --git a/drivers/net/sxe2/sxe2_rx.h b/drivers/net/sxe2/sxe2_rx.h
-index 295d9005e0..c2582bc571 100644
---- a/drivers/net/sxe2/sxe2_rx.h
-+++ b/drivers/net/sxe2/sxe2_rx.h
-@@ -29,4 +29,6 @@ int32_t __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev);
+@@ -220,6 +316,18 @@ static int32_t sxe2_common_device_setup(struct sxe2_common_device *cdev)
+ 		goto l_close_dev;
+ 	}
  
- void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev);
- 
-+int32_t sxe2_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
++	rte_mcfg_mem_read_lock();
++	ret = rte_memseg_walk_thread_unsafe(sxe2_memseg_walk_cb, cdev);
++	if (ret) {
++		PMD_LOG_ERR(COM, "Fail to walk memseg, ret=%d", ret);
++		rte_mcfg_mem_read_unlock();
++		goto l_close_dev;
++	}
++	rte_mcfg_mem_read_unlock();
 +
- #endif /* SXE2_RX_H */
++	(void)rte_mem_event_callback_register("SXE2_MEM_EVENT_CB",
++			sxe2_common_mem_event_cb, NULL);
++
+ 	goto l_end;
+ 
+ l_close_dev:
+@@ -251,6 +359,7 @@ static struct sxe2_common_device *sxe2_common_device_alloc(
+ 	}
+ 	cdev->dev = rte_dev;
+ 	cdev->class_type = class_type;
++	cdev->config.cmd_fd = SXE2_CMD_FD_INVALID;
+ 	cdev->config.kernel_reset = false;
+ 	pthread_mutex_init(&cdev->config.lock, NULL);
+ 
+@@ -631,6 +740,7 @@ static int32_t sxe2_common_pci_id_table_update(const struct rte_pci_id *id_table
+ 
+ 	updated_table = calloc(num_ids, sizeof(*updated_table));
+ 	if (!updated_table) {
++		ret = -ENOMEM;
+ 		PMD_LOG_ERR(COM, "Failed to allocate memory for PCI ID table");
+ 		goto l_end;
+ 	}
+diff --git a/drivers/common/sxe2/sxe2_common.h b/drivers/common/sxe2/sxe2_common.h
+index b02b6317da..efc8d3585a 100644
+--- a/drivers/common/sxe2/sxe2_common.h
++++ b/drivers/common/sxe2/sxe2_common.h
+@@ -14,6 +14,8 @@
+ 
+ #define SXE2_COMMON_PCI_DRIVER_NAME "sxe2_pci"
+ 
++#define SXE2_CMD_FD_INVALID (-1)
++
+ #define SXE2_CDEV_TO_CMD_FD(cdev) \
+ 	((cdev)->config.cmd_fd)
+ 
+diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+index 173d8d57ae..a233a78136 100644
+--- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
++++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+@@ -110,7 +110,7 @@ sxe2_drv_dev_close(struct sxe2_common_device *cdev)
+ 	if (fd >= 0)
+ 		close(fd);
+ 	PMD_LOG_INFO(COM, "closed device fd=%d", fd);
+-	SXE2_CDEV_TO_CMD_FD(cdev) = -1;
++	SXE2_CDEV_TO_CMD_FD(cdev) = SXE2_CMD_FD_INVALID;
+ }
+ 
+ RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_handshake)
 -- 
 2.52.0
 
