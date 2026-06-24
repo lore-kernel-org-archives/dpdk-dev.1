@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B9FCDB47F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 11:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0119CDB47F
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 11:53:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 48E5140A6B;
-	Wed, 24 Jun 2026 13:53:18 +0200 (CEST)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
- by mails.dpdk.org (Postfix) with ESMTP id D2A6040665;
- Wed, 24 Jun 2026 13:53:11 +0200 (CEST)
-X-QQ-mid: esmtpgz10t1782301988te7eeb591
-X-QQ-Originating-IP: 3eJwwmNDQsLUxGKn4iGEbAbUqqcRJB36+05Rq7HsQqw=
+	by mails.dpdk.org (Postfix) with ESMTP id 7ECDA4069D;
+	Wed, 24 Jun 2026 13:53:19 +0200 (CEST)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+ by mails.dpdk.org (Postfix) with ESMTP id 8A8DA40668;
+ Wed, 24 Jun 2026 13:53:14 +0200 (CEST)
+X-QQ-mid: esmtpgz10t1782301992t61ae4eec
+X-QQ-Originating-IP: k9RGKhvlkEUlEioZ23DEe5NcU1cUtI/8ZFKKJppgN3E=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.248.247])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 24 Jun 2026 19:53:07 +0800 (CST)
+ id ; Wed, 24 Jun 2026 19:53:11 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14636224960280344702
+X-BIZMAIL-ID: 15355808688701682308
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v10 04/21] net/ngbe: fix VF promiscuous and allmulticast
-Date: Wed, 24 Jun 2026 19:52:36 +0800
-Message-Id: <20260624115254.20348-5-zaiyuwang@trustnetic.com>
+Subject: [PATCH v10 06/21] net/txgbe: fix link status check condition
+Date: Wed, 24 Jun 2026 19:52:38 +0800
+Message-Id: <20260624115254.20348-7-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260624115254.20348-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: M9t1NOw+1P4GlsRJL1AjMeAKWeyheZgxTGy096hN2GslBg7MvO3NaX6L
- uUKSpMr0WvmdPJpUC88UXuvtBdGqlvL7/iAQEDYwXuqyx8tjB5WBu+N8UZv+gxHCSbaUjw4
- QOuskmlo39IY8iFv3JFNfLMF+8fevqWLnyZpK/ZC8z/JtCh2t/bGIOHtlEsbTvbiFiF2byP
- nI20dHhR10tZbp0Ak+04RA7mw7G0SN6n2njoFrechIfLE9El1NB3a5IzHSgPNqVeQNx6vfF
- jbNUHSfY4eXg5jOBi5rI/u83IgMkN4RQbvbVrtOPqsmSu9khgSnL461wnQ2ollYwSoixi9n
- at/lkL5EqhrddWjTlbgbhXownontdWC4ju0DNFK+bD5I1gQEtEFZG9nZegNUQYJOMiPh38U
- ISVQCZTRhse3Lo58c0Ql6ydE+SGftnUSUSfomOfp3C59WiizHT13YUd2yIbBAKE9H1PCtnm
- z76AQPzhkehV30nNryatW7L+3J43ACHVXEvjUi16XXkWj4cYzrAcB6e0M++VHBxNoF2FhHp
- 3MQQYjBYj6EfkB5gasdf+x2YX/S7/J7KD3HkMtV9nF1c4jkkrYc/O7Nt8gS7H8tv+CAkUHC
- 3QMMc/fuocohdP4S5DQ/xlMKCf6Zo89P0m/DZPiy+HqElyRUyWrp/y4Lrt3e4RnDsWAVyjL
- 1n1p3pdy5JeI7EAn8DUlCejGT6EEEBWtkxNsSN7iw3an3nvbk2hCBoZwzmqyRn2ZXll/Afz
- KqDN7N3fF9kXVjVfKhCtXl5GFBCc9VUTx5pPM8kn0fI63UiHUWM0ckukf/VCtqBBroeKTHb
- dg+2EtmhbHIjd0wWnpKmmVQtZcZfC2uFj7MZDKYtsQjL0h0nSBS942hfZ80wabbd3yKqH7C
- 4ZKKunyp+9I4OVPL9EnCvWgUf9JpndJfXTqbj0dyVnZq9cVzCKxg+cVeFbQ0tGWRWfimP1R
- O2QUyOa1jdx1ZCKPJSAU0TRGhx3jA1RkvPWCxlkjBadHTNhRJ+3rovehywjr+Vrlm89GdPh
- JMHZmIzjQy7J7FmRg6/5XZZBSqPjnZxmo+NyZ5q3F4JmWXH79tdwZyQgMWJ9hQFL/JtmW5v
- jguGIh2spI/
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
+X-QQ-XMAILINFO: NQ1SesBsQjVtsh/LHfr0jdGu0RGzdSpaGJp1hI/OAMMk+46Xr2BYQa6h
+ qMLlLoaw3pbGcJ35i1wJmCqQg2S1CxBiulrush1Ki/D08Z9EV+o8bC5wp5/cNrX4zK/G6z8
+ DAceEKuNARYPCsx45d0t7EZ21tDipjaMnK6JFke5fE3KKhVxoxl+TAswr2SyZAGgXVdJykg
+ BPsbx/PFlJ8gIzyxj8ec5WCU5dr9alHhpEGJ/QFArJZbRWldt5ThiwJ71BaOcYzQanSv+Ov
+ YIDTVbWZ36hjtuwfN0ShAdeuFCxC6tgHe2AQiwVIDz2FK8HqQWDxIpJxHLrAA9MFDcGHog1
+ ivIa3EZvpxKAdWIre1k+eyTXt+qcpY4hj3xbijJTP1Jw3RNFIxt5NhYE1MdLN9m2vwan1ZI
+ APE7UAvmXjVveOOQTweabVxHEkiTfH1Z8Wm8pOZTLBNKKb6AJjihgJS8NHUGwlsvgmo3/bE
+ d4/S+5QkwoJYpmnV9u7xLm1swm/A30ZIrkPJynxR/UYcEkpSCiKM6J90uU8XQGfCIsCS2fi
+ kCp62/FFXktVqFHkMfFQXvNShIHy1/x8SIXHqa6Q5QBZZUDQCP4dcG5bVgyUHFNo9xYSU8W
+ uGF7RmyvqFYgTOEiNhsLCdMP6MLyNRaLgmX7uG8uIP85wdRBmFf+1WSj3CyWOXL5McHm/JM
+ iKGXaW3HDIEXc4vw7kPrE1jfrElyaxaCICQr2ab6oQRIeg1mySlVcGPpmceWNRIMzufOx9U
+ WmZAK44Yf5rs+KWOsEI5DNQOVo5iLIg7VSR3LdpsT+YyvP/AVEnD+xl8x4p8pwus/kYhKmX
+ GQG8jXlqoxI/mhf+d/nMhgDx4/8b64Stg+3LDi8JA7tWtzRcqf9eKYCI8xrEbaxduxEd01J
+ HWzfpITAvlo0e8f534j7o+B8bsZwifBRP9oviSzv6DlJzc0toJfS3K7HYESI9oVGQFYLqJg
+ VeWzhKqQsmHqrql5aGkrPKimm6UiyDdY6cHHcCIFlAmulPvtX3LKnIKvEs6xxyTI8bH7nDi
+ Ti3WXJdr+iYmSwkwVZ1EWMY55nCdCY8s++pjNax/qN5ITctbdW+KcfYMpDegZS/EoTokCbY
+ Wmh5PC7Ye4y
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,61 +66,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The configuration of allmulti and promiscuous modes conflicts
-together. For instance, if we enable promiscuous mode, then enable and
-disable allmulti, then the promiscuous mode is wrongly disabled.
+The original code incorrectly used 'if (link_up)' instead of
+'if (*link_up)', causing the condition to always evaluate to true
+because the pointer itself is non-NULL. This led to incorrect speed
+assignment.
 
-To resolve this, the following changes are made:
-- do nothing when we set/unset allmulti if promiscuous mode is on
-- restore the proper mode (none or allmulti) when we disable
-  promiscuous mode
-
-Fixes: 7744e90805b5 ("net/ngbe: add promiscuous and allmulticast ops for VF device")
+Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/ngbe/ngbe_ethdev_vf.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/base/txgbe_aml.c   | 2 +-
+ drivers/net/txgbe/base/txgbe_aml40.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ngbe/ngbe_ethdev_vf.c b/drivers/net/ngbe/ngbe_ethdev_vf.c
-index ea3a988df6..c440e02369 100644
---- a/drivers/net/ngbe/ngbe_ethdev_vf.c
-+++ b/drivers/net/ngbe/ngbe_ethdev_vf.c
-@@ -1196,9 +1196,13 @@ static int
- ngbevf_dev_promiscuous_disable(struct rte_eth_dev *dev)
- {
- 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
-+	int mode = NGBEVF_XCAST_MODE_NONE;
- 	int ret;
+diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
+index b376eca5b5..de9a1b1c93 100644
+--- a/drivers/net/txgbe/base/txgbe_aml.c
++++ b/drivers/net/txgbe/base/txgbe_aml.c
+@@ -67,7 +67,7 @@ s32 txgbe_check_mac_link_aml(struct txgbe_hw *hw, u32 *speed,
+ 			*link_up = false;
+ 	}
  
--	switch (hw->mac.update_xcast_mode(hw, NGBEVF_XCAST_MODE_NONE)) {
-+	if (dev->data->all_multicast)
-+		mode = NGBEVF_XCAST_MODE_ALLMULTI;
-+
-+	switch (hw->mac.update_xcast_mode(hw, mode)) {
- 	case 0:
- 		ret = 0;
- 		break;
-@@ -1219,7 +1223,7 @@ ngbevf_dev_allmulticast_enable(struct rte_eth_dev *dev)
- 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
- 	int ret;
+-	if (link_up) {
++	if (*link_up) {
+ 		switch (links_reg & TXGBE_CFG_PORT_ST_AML_LINK_MASK) {
+ 		case TXGBE_CFG_PORT_ST_AML_LINK_25G:
+ 			*speed = TXGBE_LINK_SPEED_25GB_FULL;
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 733bbac13a..eefd7119fd 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -68,7 +68,7 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
+ 			*link_up = false;
+ 	}
  
--	if (dev->data->promiscuous == 1)
-+	if (dev->data->promiscuous)
- 		return 0;
- 
- 	switch (hw->mac.update_xcast_mode(hw, NGBEVF_XCAST_MODE_ALLMULTI)) {
-@@ -1243,6 +1247,9 @@ ngbevf_dev_allmulticast_disable(struct rte_eth_dev *dev)
- 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
- 	int ret;
- 
-+	if (dev->data->promiscuous)
-+		return 0;
-+
- 	switch (hw->mac.update_xcast_mode(hw, NGBEVF_XCAST_MODE_MULTI)) {
- 	case 0:
- 		ret = 0;
+-	if (link_up) {
++	if (*link_up) {
+ 		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
+ 			TXGBE_CFG_PORT_ST_AML_LINK_40G)
+ 			*speed = TXGBE_LINK_SPEED_40GB_FULL;
 -- 
 2.21.0.windows.1
 
