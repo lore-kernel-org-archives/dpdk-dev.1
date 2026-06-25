@@ -2,98 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C9DCDE000
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 18:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ACACDE00C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 22:42:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7092140665;
-	Thu, 25 Jun 2026 20:48:12 +0200 (CEST)
-Received: from MW6PR02CU001.outbound.protection.outlook.com
- (mail-westus2azon11012016.outbound.protection.outlook.com [52.101.48.16])
- by mails.dpdk.org (Postfix) with ESMTP id 00CD840650
- for <dev@dpdk.org>; Thu, 25 Jun 2026 20:48:10 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XR7G4UyOS/TD+9AUTwpx5Q0jm3Vcc851CLL3ICvKqxUhyms4vhpVPm9G10qStRNbMUt3v2AKeN4PitUk7tFQZoNnFG3xfHBg2MINBOIa6XPv8GHcQCIhoIAJxqr0LerzHQkZwh03a2ePfL083GESdwRnVaD4azIWcJPUURqUuB+XH8VqdEsKgfqh1AbKCnjvIAGQHhMWywR4w44cpJHT5l+PrKQ1SONO7TuhHNGdJw/k6Qw62Rd7UEtHwiG91T8z5PuUuv3O2H6Cz10k1nmqV5keE4cX4RmJLzqrmDefLEXbXfkLJTvfKeboobekOEToYNEUMLP8rDLrgIoa1LFJTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hvpVlAgKRMs2uhiVMaT3gqQJ6BJas/wrArOkbm43pHs=;
- b=xTnsVVGkQr/6ciSZzqCwVy/G1IkwQGd4KfWoMugDRe0m+JoBp7Stou9iKXp1oQz46QkuXhAHH9utjKSJXPy/GB0mbeyw2M+rfKtlQ7of3ZerRwcySKb8epYfvLix1BAuv6hIRLEVo5UQXNiSIROqQ68v8B6l3GIfu65D1Bc69Xm/KV5EKnRksa6Y2hN/DesjD5rC25gMW9X/6becaKqcIC7y7VmJWepyk69nLyLuEzsIKEkjpWCY5EVs3YUD9YXJWMbbZ5/dvEPIlPuJB7D+OS3VPrWspIddbUOG1YsxyjQTjXJzhV1qfh7o0RKmZ373/9S53lLlUhaRXSqtvZOT4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hvpVlAgKRMs2uhiVMaT3gqQJ6BJas/wrArOkbm43pHs=;
- b=5I/mdzBv1ox27GnZIvR0ByCV5e1V3xI8bFfjupes+1pmoR1+7BzLpeBFuysqXSKcCvxrD8ndrTOFecoOsDhSqyF10a0uXny6y+Qd31Hl7ujygxu/kvxz1jMcToVHyyJSyOAVeJ4Mgoo2UW1UPjwv3JLGE9b7fzEZ9bX4QVDU/14=
-Received: from DS1PR02CA0027.namprd02.prod.outlook.com (2603:10b6:8:44a::7) by
- IA1PR12MB6579.namprd12.prod.outlook.com (2603:10b6:208:3a1::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.17; Thu, 25 Jun
- 2026 18:48:03 +0000
-Received: from DS3PEPF0000C37F.namprd04.prod.outlook.com
- (2603:10b6:8:44a:cafe::6) by DS1PR02CA0027.outlook.office365.com
- (2603:10b6:8:44a::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.159.17 via Frontend Transport; Thu,
- 25 Jun 2026 18:48:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS3PEPF0000C37F.mail.protection.outlook.com (10.167.23.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Thu, 25 Jun 2026 18:48:02 +0000
-Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Thu, 25 Jun
- 2026 13:47:59 -0500
-From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-To: <dev@dpdk.org>
-CC: <david.marchand@redhat.com>, <bruce.richardson@intel.com>,
- <fengchengwen@huawei.com>, <Selwin.Sebastian@amd.com>,
- <bhagyada.modali@amd.com>, <rjarry@redhat.com>, <thomas@monjalon.net>,
- Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-Subject: [PATCH v3 3/3] dma/ae4dma: add data path operations
-Date: Fri, 26 Jun 2026 00:17:28 +0530
-Message-ID: <20260625184728.1678328-4-raghavendra.ningoji@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260625184728.1678328-1-raghavendra.ningoji@amd.com>
-References: <20260525184244.1758825-1-raghavendra.ningoji@amd.com>
- <20260625184728.1678328-1-raghavendra.ningoji@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 961D840278;
+	Fri, 26 Jun 2026 00:42:10 +0200 (CEST)
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
+ [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id 0FDF140272
+ for <dev@dpdk.org>; Fri, 26 Jun 2026 00:42:08 +0200 (CEST)
+Received: by mail-dy1-f181.google.com with SMTP id
+ 5a478bee46e88-30c713f37c2so1317885eec.0
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 15:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782427328;
+ x=1783032128; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=RyZhPCLaJ1ibm/OqCC4Sss4TusNQJoM/B/hDQRZpW+U=;
+ b=zBvAJq5/qLPv5Vpd3g+Cu7AbWZpgNfgtPUzDwm9drJnRnnwhQ8vucsvvN1+3t2EpKX
+ hr++DUJ55u+veVtyRvpFlt0CKFUhcUZFb/AdOORW56KqGXMU4WfstmYyvMEoZ9ytdwap
+ 6DAm6CW7d1PTUMPztbG7HCDMYpHUGSmXpEWyFUIvadEOIT3Ey7TU0q7iD3KQKDF4FuLC
+ PhhWwkRNYctnCyq0Ix/5AQh78or7pfh96lFPr1CA9jZz42gHV7hJCPQb3QKHXhMGoeVm
+ 4tFAc4hvOXolDK4qxWKkqtzsjM8JXsQIddb/2p8gS65XaN/pG5eW0xEdcjnvmS9IeBHt
+ s1OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1782427328; x=1783032128;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=RyZhPCLaJ1ibm/OqCC4Sss4TusNQJoM/B/hDQRZpW+U=;
+ b=adC031An6IA5cN/04rYkfJMHkAl9tQa3wKqN9AhgZazIC+1Dnm9UVvjWt7o0flnyyQ
+ ABKbF9oQ/sy5bLOtm7yd95P+FhX+zHsj4//PAODel1GkxDuWQaC2OMP8KtitqrpbRWg3
+ 5hqj4fvs408o/4AcD3jod/5/wUN5BrfGbOiW5zaHPaLrgGqV8lKJZiJG0ONBnaF2xdp2
+ 1PsKDCLp/EqPkwOJgHS+mItP/7TyBbL1v8lE828lxdsj0Qx/Cwj7InP2Ad9CttfA+TFx
+ cXiHIF9FAiGRutOAwcdQoI/HabPX0eXHQLnD4wuUc/nwy5oIZcCBY9RvIeTdsfhiyh3k
+ u5nw==
+X-Gm-Message-State: AOJu0YwRPGj4WtKsT+o+pBS1bQr8CNDAWmQbBkGe/fEg5lSiimwvSFkV
+ /+izA9ijNQwRp0Pk9ma/wUi6206QdhzmHnMVdn78PkUeDiqIVxEirx51WYjVNewrE2c=
+X-Gm-Gg: AfdE7clS14D6RTKiwg0SuNB0NrbgygliUD8Lhdfamq2yclQQOgYiuBCyAf5jXP7Gv20
+ ZfMjCeEHp2zv9DsGE+7/mC1HaHv1mHPvEb7Zv0UywSXCsCfitfuVslJLMODga7Z9gJRSTvEZVDR
+ Cdo7AutF9u4yCdTI5AYU724eo/HL//2v74457wN2k5gLVneAgWxaDRx8scltGyO6ryTFJCaMAFA
+ Vdq6mSOU3RdBSO7U3mVnE9KaSaXEOhD4qwqWpZSA59p9Z8v7bmf7hvrGJLVU4BTnnVANDv5mhB/
+ S/5GfxgKYBYVYUcCCJ8pNWlWkRD8kc7nDGc7JrQtBUenbg+XGqyXZyqkDIJP2GoBcLdMX0OfGOT
+ zJA5z7JwUNtb3L9gHvUlnHJnujixYf3dSTrfpPPGOSD5Brl9xzmo9Oqjtn5jVI3z8Bc42ppGr0a
+ WAQq21vsXSXVurJZPoy2id4LUcRrgsESul8nfIbT0CGPbx1PE1aGh8uw==
+X-Received: by 2002:a05:7300:8191:b0:304:ddc3:2c35 with SMTP id
+ 5a478bee46e88-30c85a603a0mr4175783eec.10.1782427327749; 
+ Thu, 25 Jun 2026 15:42:07 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-30c7c8b1a75sm11391345eec.19.2026.06.25.15.42.07
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 25 Jun 2026 15:42:07 -0700 (PDT)
+Date: Thu, 25 Jun 2026 15:42:03 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Junlong Wang <wang.junlong1@zte.com.cn>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v8 0/4] net/zxdh: optimize Rx/Tx path performance
+Message-ID: <20260625154203.1d16769b@phoenix.local>
+In-Reply-To: <20260625120317.211780-1-wang.junlong1@zte.com.cn>
+References: <20260623060909.97023-1-wang.junlong1@zte.com.cn>
+ <20260625120317.211780-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37F:EE_|IA1PR12MB6579:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9fb64eef-42f5-448e-3e52-08ded2ea4923
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700016|82310400026|376014|1800799024|23010399003|18002099003|22082099003|4143699003|5023799004|11063799006|56012099006|6133799003;
-X-Microsoft-Antispam-Message-Info: SL9ofNH5jvjXczCyYvA7+xAeH+QRoUKcuaxEMPQtpJ0bJ6DgAoX1ekbq2OoPEuQRRi6XOOTEpmuNkS5Hrxj38zZYq2UJhLc5Ue+OGGMzLo0pVS1QZNqlKoxsj1khz9UjFSJXkUjebbNeZfhE3msvfPu/620Mu95uG/2f07E6+angF4cM4IQ1l9eHxVyOCJgJLwA5O4eH9WUEUw7dBDh3wcbro15yqWdjLQCgYYbtVz9sxgRE4+73lhXIFCjGlplFKZ2hNrtYsnVBjsqGLD6H65MqpJpUUd9Zk5yViDcnov5e16EP2hXkB/6o/lU/2vNDz9uvM6MucyZTgwgwg0b6xBAMNl8+bXY0DwFUmAgs/FrRYzUyXaVqsCuuoWe/eQnBCqCt+QZ2nbu9heJkb2ezWtDsbtGVrnX38/RbjOEybnjcFCMPJHYm0fbdG4bNCZB41w3iBLz07Pizc3Qz3h5q7NyzMfwGLn0mSUkZX/XtpSZLsyfET7wp5dLuEcrvSOzEMcqByXqSZDSXdjAo9/P1WUByeT5AIMzAR8zHT1PiV3tDeMgd2g31KKaOJPeMYDXh5rYY4SP9SqwVff69lKL527NdCwfNVQ6nHl0ECI52F3NCJqyW7p9CjGy3lLLpvpeE6XLV+bIPQA4nML13vIixYBJp7nAZ8QAY5LeFAl6Au/uhuqSDNII65Ol+zWFl6zAY
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(36860700016)(82310400026)(376014)(1800799024)(23010399003)(18002099003)(22082099003)(4143699003)(5023799004)(11063799006)(56012099006)(6133799003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: OiqMSzoFEtuxSqp+oBQFO7nmJhYekjEzCdsJjUshRN5KAijLCJ0+64cE4D73TzqNt2o1oTduajxuPLD/xHbIRlVuuONIcUAKQS9wjrDPUFA+/MAbHytFbSJ9MUuNPzrbh+Cji6USZ0jouRUWpbFApfrZMciM4l1dZWZ+FeKUHdZ6PWiNSDO03OTsXKiA5398QpFWLS8X0WPUUhN3h2TNmpuMozH5Jq22dBNlEdI+tKslUXszz7Z42sHR7D+3ApXrBIkwPpmGclkwDLHklRkbJ4Z40KO9FF0qnaSxtTB/rIlOV/vw7xSpv3zRl5at51c/rbjXG4LAdNZiUhSBkLdE3lrcCpCMTtEY3YfP9SoKKmz6KgsiRw4Hbs8Z8AYMPGoHxH4GvteV/Hhvok5SsvDzO2/xuum1chWu6oLzna4bpNp86xQTddBrKjC3uSOGSGvB
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2026 18:48:02.3557 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fb64eef-42f5-448e-3e52-08ded2ea4923
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF0000C37F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6579
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -107,376 +80,229 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement the dmadev fast path for the AMD AE4DMA PMD.
+On Thu, 25 Jun 2026 20:03:12 +0800
+Junlong Wang <wang.junlong1@zte.com.cn> wrote:
 
-This commit adds:
- - copy enqueue (rte_dma_copy): write an AE4DMA descriptor for a
-   memory-to-memory transfer; on RTE_DMA_OP_FLAG_SUBMIT the doorbell
-   is rung immediately.
- - submit (rte_dma_submit): advance the per-queue write_idx
-   register to expose pending descriptors to the hardware.
- - completion (rte_dma_completed / rte_dma_completed_status):
-   completion is detected via the hardware's per-queue read_idx
-   register, which the engine advances as it processes descriptors.
-   The descriptor status / err_code bytes are read only to classify
-   each drained slot as success or failure, and HW error codes are
-   translated to the dmadev RTE_DMA_STATUS_* enumeration.
- - burst capacity (rte_dma_burst_capacity): report the number of
-   free descriptor slots, taking into account the one slot reserved
-   to distinguish full from empty on the power-of-two ring.
+> v8:
+>   - Add checked the size of ZXDH_DL_NET_HDR_SIZE and RTE_PKTMBUF_HEADROOM=
+ in
+>     zxdh_xmit_pkts_simple() before submitting. Add static_assert to rejec=
+t builds with insufficient
+>     default headroom at compile time.
+>=20
+> v7:
+>   - Add a new xmit prepare func for xmit_pkts_simple, which will checked =
+the size of
+>     ZXDH_DL_NET_HDR_SIZE and RTE_PKTMBUF_HEADROOM.
+>=20
+> v6:
+>   - Remove unnecessary error checking code in submit_to_backend_simple() =
+and
+>     pkt_padding(). Since as the max dl_net_hdr_len is always less than
+>     RTE_PKTMBUF_HEADROOM, rte_pktmbuf_prepend() cannot fail in the
+>     simple path (single-segment mbufs).
+> v5:
+>   - Reorganize patch series, placing interrupt fix as the first patch
+>     and fix condition check to properly enable interrupts.
+>   - Fix zxdh_recv_single_pkts() not compacting rcv_pkts[] on failure,
+>     which could cause use-after-free and mbuf leak.
+>   - Fix tx_bunch() and tx1() missing store barrier before setting AVAIL f=
+lag,
+>     preventing data race on weakly-ordered architectures.
+>   - Fix submit_to_backend_simple() writing descriptors for packets that
+>     failed pkt_padding(), causing mbuf leak.
+> v4:
+>   - fix some AI review issues.
+>   - fix queue enable intr bug.
+> v3:
+>   - remove unnecessary NULL check in zxdh_init_queue.
+>   - Split Ring: Bit[31] is unused and reserved, zxdh_queue_notify(): remo=
+ving the
+>     zxdh_pci_with_feature(hw, ZXDH_F_RING_PACKED) check;
+>   - remove unnecessary double-free in in zxdh_recv_single_pkts();
+>   - used rte_pktmbuf_mtod();
+>   - remove rxq_get_vq(q) macro, use q->vq and apply it consistently;
+>   - Refactoring scatter and mtu check logic in zxdh_dev_mtu_set();
+>   - set txdp->id =3D avail_idx + i in tx_bunch/tx1.
+>   - add comment documenting zxdh_xmit_enqueue_append() now sets dxp->cook=
+ie =3D NULL for
+>     the head slot and stores cookies per descriptor via dep[idx].cookie.
+>   - add one-line comment noting tx_bunch() is the simple path handles sin=
+gle-segment.
+>   - remove unnecessary Extra initialization and the uint32_t cast.
+> v2:
+>   - zxdh_rxtx.c, pkt_padding(): modifyed the return value of pkt_padding(=
+);
+>   - zxdh_rxtx.c, zxdh_recv_single_pkts(): modifyed When zxdh_init_mbuf() =
+fails
+>     the loop does "continue" and free mbufs;
+>   - zxdh_rxtx.c, refill_desc_unwrap(): Add rte_io_wmb() before writing fl=
+ags
+>     in the refill_que_descs();
+>   - zxdh_queue.h, zxdh_queue_enable_intr(): Remove unnecessary function o=
+f zxdh_queue_enable_intr;
+>   - zxdh_ethdev.c, zxdh_init_queue(): changed the hdr_mz NULL check logic;
+>   - zxdh_rxtx.c, zxdh_xmit_pkts_simple()=E3=80=81zxdh_recv_single_pkts():=
+ add stats.bytes count;
+>   - zxdh_rxtx.c, zxdh_init_mbuf():remove  rte_pktmbuf_dump(stdout, rxm, 4=
+0);
+>   - zxdh_ethdev.c, zxdh_dev_free_mbufs(): using rte_pktmbuf_free() to fre=
+e mbufs;
+>   - Splitting into separate patches, structure reorganization and sw_ring=
+ removal=E3=80=81
+>     RX recv optimize=E3=80=81Tx xmit optimize=E3=80=81Tx;
+> v1:
+>   This patch optimizes the ZXDH PMD's receive and transmit path for better
+>   performance through several improvements:
+> - Add simple TX/RX burst functions (zxdh_xmit_pkts_simple and
+>   zxdh_recv_single_pkts) for single-segment packet scenarios.
+> - Remove RX software ring (sw_ring) to reduce memory allocation and
+>   copy.
+> - Optimize descriptor management with prefetching and simplified
+>   cleanup.
+> - Reorganize structure fields for better cache locality.
+>=20
+>   These changes reduce CPU cycles and memory bandwidth consumption,
+>   resulting in improved packet processing throughput.
+>=20
+> Junlong Wang (4):
+>   net/zxdh: fix queue enable intr issues
+>   net/zxdh: optimize queue structure to improve performance
+>   net/zxdh: optimize Rx recv pkts performance
+>   net/zxdh: optimize Tx xmit pkts performance
+>=20
+>  drivers/net/zxdh/zxdh_ethdev.c     |  83 ++--
+>  drivers/net/zxdh/zxdh_ethdev_ops.c |  23 +-
+>  drivers/net/zxdh/zxdh_ethdev_ops.h |   4 +
+>  drivers/net/zxdh/zxdh_pci.c        |   2 +-
+>  drivers/net/zxdh/zxdh_queue.c      |  11 +-
+>  drivers/net/zxdh/zxdh_queue.h      | 122 +++---
+>  drivers/net/zxdh/zxdh_rxtx.c       | 591 +++++++++++++++++++++++------
+>  drivers/net/zxdh/zxdh_rxtx.h       |  29 +-
+>  8 files changed, 604 insertions(+), 261 deletions(-)
+>=20
 
-The fast path entry points are wired through fp_obj in
-ae4dma_dmadev_create(). The fill capability is not advertised;
-fp_obj->fill is left zero-initialised.
+AI spotted one bug but it under valued how serious the issue is.
+AI also gave bad advice about this earlier. Here is my analysis
+followed by buggy AI review, then what it said after I pointed out
+its mistake. Sorry, I need to not trust AI; its good until it isn't
 
-Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
----
- doc/guides/dmadevs/ae4dma.rst      |  22 +++
- drivers/dma/ae4dma/ae4dma_dmadev.c | 287 +++++++++++++++++++++++++++++
- 2 files changed, 309 insertions(+)
+The semantics of how DPDK drivers are supposed to handle bad packets
+in transmit is not well documented. The correct way to handle a packet
+that can not be sent is for the driver to consume (free in tx_burst)
+and increment an error counter, and keep going. Suppose application
+gave a single buggy mbuf (index 3) in a burst of 16 packets (assuming
+there was space in the transmit ring).
+The driver should return with 16 (all packets consumed) but the
+statistics should reflect what happened: 15 packets transmitted, 1 tx error.
 
-diff --git a/doc/guides/dmadevs/ae4dma.rst b/doc/guides/dmadevs/ae4dma.rst
-index a85c1d92ca..37a2096ccf 100644
---- a/doc/guides/dmadevs/ae4dma.rst
-+++ b/doc/guides/dmadevs/ae4dma.rst
-@@ -51,3 +51,25 @@ On probe the PMD performs the following steps for each PCI function:
-   IOVA-contiguous memory, programs the queue base address and ring
-   depth into the per-queue registers, and enables the queue.
- * Interrupts are masked; completion is polled by the application.
-+
-+Usage
-+-----
-+
-+Once a dmadev has been started, copies are submitted with
-+``rte_dma_copy()`` and completions are reaped with ``rte_dma_completed()``
-+or ``rte_dma_completed_status()``. See the
-+:ref:`Enqueue / Dequeue API <dmadev_enqueue_dequeue>` section of the
-+dmadev library documentation for details.
-+
-+Limitations
-+-----------
-+
-+* Only memory-to-memory copies are supported. Fill, scatter-gather and
-+  any other operation types are not advertised in
-+  ``rte_dma_info::dev_capa``.
-+* The maximum number of descriptors per virtual channel is fixed by
-+  hardware at 32. The PMD rounds the requested ring size up to a
-+  power of two and clamps it to 32.
-+* Only a single virtual channel per dmadev is supported; use the 16
-+  per-PCI-function dmadevs to obtain channel-level parallelism.
-+* Interrupt-driven completion is not supported.
-diff --git a/drivers/dma/ae4dma/ae4dma_dmadev.c b/drivers/dma/ae4dma/ae4dma_dmadev.c
-index 607f288623..da3ec42233 100644
---- a/drivers/dma/ae4dma/ae4dma_dmadev.c
-+++ b/drivers/dma/ae4dma/ae4dma_dmadev.c
-@@ -158,6 +158,72 @@ ae4dma_dev_close(struct rte_dma_dev *dev)
- 	return 0;
- }
- 
-+/* trigger h/w to process enqued desc:doorbell - by next_write */
-+static inline void
-+__submit(struct ae4dma_dmadev *ae4dma)
-+{
-+	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+	uint16_t write_idx = cmd_q->next_write;
-+	uint16_t nb = cmd_q->qcfg.nb_desc;
-+
-+	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->write_idx, write_idx);
-+	if (nb != 0)
-+		cmd_q->stats.submitted += (uint16_t)((cmd_q->next_write - cmd_q->last_write +
-+				nb) % nb);
-+	cmd_q->last_write = cmd_q->next_write;
-+}
-+
-+static int
-+ae4dma_submit(void *dev_private, uint16_t vchan __rte_unused)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev_private;
-+
-+	__submit(ae4dma);
-+	return 0;
-+}
-+
-+/* Write descriptor for enqueue (copy only). */
-+static inline int
-+__write_desc_copy(void *dev_private, rte_iova_t src, rte_iova_t dst,
-+		uint32_t len, uint64_t flags)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev_private;
-+	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+	struct ae4dma_desc *dma_desc;
-+	uint16_t ret;
-+	uint16_t nb = cmd_q->qcfg.nb_desc;
-+	uint16_t write = cmd_q->next_write;
-+
-+	if (nb == 0)
-+		return -EINVAL;
-+
-+	/* Reserve one slot to distinguish full from empty (power-of-two ring). */
-+	if ((uint32_t)cmd_q->ring_buff_count >= (uint32_t)(nb - 1))
-+		return -ENOSPC;
-+
-+	dma_desc = &cmd_q->qbase_desc[write];
-+	memset(dma_desc, 0, sizeof(*dma_desc));
-+	dma_desc->length = len;
-+	dma_desc->src_hi = upper_32_bits(src);
-+	dma_desc->src_lo = lower_32_bits(src);
-+	dma_desc->dst_hi = upper_32_bits(dst);
-+	dma_desc->dst_lo = lower_32_bits(dst);
-+	cmd_q->ring_buff_count++;
-+	cmd_q->next_write = (uint16_t)((write + 1) % nb);
-+	ret = write;
-+	if (flags & RTE_DMA_OP_FLAG_SUBMIT)
-+		__submit(ae4dma);
-+	return ret;
-+}
-+
-+/* Enqueue a copy operation onto the ae4dma device. */
-+static int
-+ae4dma_enqueue_copy(void *dev_private, uint16_t vchan __rte_unused,
-+		rte_iova_t src, rte_iova_t dst, uint32_t length, uint64_t flags)
-+{
-+	return __write_desc_copy(dev_private, src, dst, length, flags);
-+}
-+
- static int
- ae4dma_dev_dump(const struct rte_dma_dev *dev, FILE *f)
- {
-@@ -187,6 +253,220 @@ ae4dma_dev_dump(const struct rte_dma_dev *dev, FILE *f)
- 		cmd_q->stats.errors);
- 	return 0;
- }
-+
-+/* Translates AE4DMA ChanERRs to DMA error codes. */
-+static inline enum rte_dma_status_code
-+__translate_status_ae4dma_to_dma(enum ae4dma_dma_err status)
-+{
-+	AE4DMA_PMD_DEBUG("ae4dma desc status = %d", status);
-+
-+	switch (status) {
-+	case AE4DMA_DMA_ERR_NO_ERR:
-+		return RTE_DMA_STATUS_SUCCESSFUL;
-+	case AE4DMA_DMA_ERR_INV_LEN:
-+		return RTE_DMA_STATUS_INVALID_LENGTH;
-+	case AE4DMA_DMA_ERR_INV_SRC:
-+		return RTE_DMA_STATUS_INVALID_SRC_ADDR;
-+	case AE4DMA_DMA_ERR_INV_DST:
-+		return RTE_DMA_STATUS_INVALID_DST_ADDR;
-+	case AE4DMA_DMA_ERR_INV_ALIGN:
-+		/* Name matches DPDK public enum spelling. */
-+		return RTE_DMA_STATUS_DATA_POISION;
-+	case AE4DMA_DMA_ERR_INV_HEADER:
-+	case AE4DMA_DMA_ERR_INV_STATUS:
-+		return RTE_DMA_STATUS_ERROR_UNKNOWN;
-+	default:
-+		return RTE_DMA_STATUS_ERROR_UNKNOWN;
-+	}
-+}
-+
-+/*
-+ * Scan HW queue for completed descriptors (non-blocking).
-+ *
-+ * The AE4DMA engine signals completion by advancing the per-queue
-+ * `read_idx` register; it does not (reliably) write a status value
-+ * back into the descriptor. We therefore use the HW `read_idx`
-+ * register as the source of truth and only inspect the descriptor's
-+ * `dw1.err_code` byte to classify each completion as success or
-+ * failure.
-+ *
-+ * @param cmd_q
-+ *   The AE4DMA command queue.
-+ * @param max_ops
-+ *   Maximum descriptors to process this call.
-+ * @param[out] failed_count
-+ *   Number of completed descriptors that did not report success.
-+ * @return
-+ *   Number of descriptors completed (success + failure), <= max_ops.
-+ */
-+static inline uint16_t
-+ae4dma_scan_hwq(struct ae4dma_cmd_queue *cmd_q, uint16_t max_ops,
-+		uint16_t *failed_count)
-+{
-+	volatile struct ae4dma_desc *hw_desc;
-+	uint16_t events_count = 0, fails = 0;
-+	uint16_t tail;
-+	uint16_t nb = cmd_q->qcfg.nb_desc;
-+	uint16_t mask;
-+	uint16_t hw_read_idx;
-+	uint16_t in_flight;
-+	uint16_t scan_cap;
-+
-+	if (nb == 0 || cmd_q->ring_buff_count == 0) {
-+		*failed_count = 0;
-+		return 0;
-+	}
-+	mask = nb - 1;
-+
-+	hw_read_idx = (uint16_t)(AE4DMA_READ_REG(&cmd_q->hwq_regs->read_idx) & mask);
-+	tail = cmd_q->next_read;
-+
-+	/*
-+	 * Descriptors completed since our last visit live in the
-+	 * half-open ring range [tail, hw_read_idx). If HW hasn't
-+	 * moved we have nothing to do.
-+	 */
-+	in_flight = (uint16_t)((hw_read_idx - tail) & mask);
-+	if (in_flight == 0) {
-+		*failed_count = 0;
-+		return 0;
-+	}
-+
-+	scan_cap = max_ops;
-+	if (scan_cap > AE4DMA_DESCRIPTORS_PER_CMDQ)
-+		scan_cap = AE4DMA_DESCRIPTORS_PER_CMDQ;
-+	if (scan_cap > in_flight)
-+		scan_cap = in_flight;
-+	if (scan_cap > cmd_q->ring_buff_count)
-+		scan_cap = (uint16_t)cmd_q->ring_buff_count;
-+
-+	while (events_count < scan_cap) {
-+		uint8_t hw_status;
-+		uint8_t hw_err;
-+
-+		hw_desc = &cmd_q->qbase_desc[tail];
-+		hw_status = hw_desc->dw1.status;
-+		hw_err = hw_desc->dw1.err_code;
-+
-+		/*
-+		 * read_idx advancing is the definitive completion
-+		 * signal. The per-descriptor status byte is informational
-+		 * and may not yet be written when we observe it:
-+		 *
-+		 *   AE4DMA_DMA_DESC_ERROR (4)
-+		 *     Hard failure - err_code names the precise cause.
-+		 *   AE4DMA_DMA_DESC_COMPLETED (3) or 0
-+		 *     Success.
-+		 *   AE4DMA_DMA_DESC_VALIDATED (1) / _PROCESSED (2)
-+		 *     Benign race: HW had not finished updating the
-+		 *     status byte at the instant we read it. Since
-+		 *     read_idx has moved past this slot, treat it as
-+		 *     success unless err_code says otherwise.
-+		 *
-+		 * A non-zero err_code is treated as a failure regardless
-+		 * of the observed status value.
-+		 */
-+		if (hw_status == AE4DMA_DMA_DESC_ERROR ||
-+				hw_err != AE4DMA_DMA_ERR_NO_ERR) {
-+			fails++;
-+			AE4DMA_PMD_WARN("Desc failed: status=%u err=%u",
-+					hw_status, hw_err);
-+		}
-+		cmd_q->status[events_count] = (enum ae4dma_dma_err)hw_err;
-+		cmd_q->ring_buff_count--;
-+		events_count++;
-+		tail = (tail + 1) & mask;
-+	}
-+
-+	cmd_q->stats.completed += events_count;
-+	cmd_q->stats.errors += fails;
-+	cmd_q->next_read = tail;
-+	*failed_count = fails;
-+	return events_count;
-+}
-+
-+/* Returns successful operations count and sets error flag if any errors. */
-+static uint16_t
-+ae4dma_completed(void *dev_private, uint16_t vchan __rte_unused,
-+		const uint16_t max_ops, uint16_t *last_idx, bool *has_error)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev_private;
-+	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+	uint16_t cpl_count, sl_count;
-+	uint16_t err_count = 0;
-+	uint16_t nb = cmd_q->qcfg.nb_desc;
-+
-+	*has_error = false;
-+
-+	cpl_count = ae4dma_scan_hwq(cmd_q, max_ops, &err_count);
-+
-+	if (cpl_count > max_ops)
-+		cpl_count = max_ops;
-+
-+	if (cpl_count > 0 && last_idx != NULL)
-+		*last_idx = (uint16_t)((cmd_q->next_read - 1 + nb) % nb);
-+
-+	sl_count = cpl_count - err_count;
-+	if (err_count)
-+		*has_error = true;
-+
-+	return sl_count;
-+}
-+
-+static uint16_t
-+ae4dma_completed_status(void *dev_private, uint16_t vchan __rte_unused,
-+		uint16_t max_ops, uint16_t *last_idx,
-+		enum rte_dma_status_code *status)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev_private;
-+	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+	uint16_t cpl_count;
-+	uint16_t i;
-+	uint16_t err_count = 0;
-+	uint16_t nb = cmd_q->qcfg.nb_desc;
-+
-+	cpl_count = ae4dma_scan_hwq(cmd_q, max_ops, &err_count);
-+
-+	if (cpl_count > max_ops)
-+		cpl_count = max_ops;
-+
-+	if (cpl_count > 0 && last_idx != NULL)
-+		*last_idx = (uint16_t)((cmd_q->next_read - 1 + nb) % nb);
-+
-+	if (likely(err_count == 0)) {
-+		for (i = 0; i < cpl_count; i++)
-+			status[i] = RTE_DMA_STATUS_SUCCESSFUL;
-+	} else {
-+		for (i = 0; i < cpl_count; i++)
-+			status[i] = __translate_status_ae4dma_to_dma(cmd_q->status[i]);
-+	}
-+
-+	return cpl_count;
-+}
-+
-+/* Get the remaining capacity of the ring. */
-+static uint16_t
-+ae4dma_burst_capacity(const void *dev_private, uint16_t vchan __rte_unused)
-+{
-+	const struct ae4dma_dmadev *ae4dma = dev_private;
-+	const struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+	uint16_t nb = cmd_q->qcfg.nb_desc;
-+	uint16_t mask;
-+	uint16_t read_idx = cmd_q->next_read;
-+	uint16_t write_idx = cmd_q->next_write;
-+	uint16_t used;
-+
-+	if (nb < 2 || !rte_is_power_of_2(nb))
-+		return 0;
-+
-+	mask = nb - 1;
-+	used = (uint16_t)((write_idx - read_idx) & mask);
-+	/* One slot reserved (same rule as enqueue). */
-+	if (used >= nb - 1)
-+		return 0;
-+	return (uint16_t)(nb - 1 - used);
-+}
-+
- static int
- ae4dma_stats_get(const struct rte_dma_dev *dev, uint16_t vchan __rte_unused,
- 		struct rte_dma_stats *rte_stats, uint32_t size)
-@@ -342,6 +622,13 @@ ae4dma_dmadev_create(const char *name, struct rte_pci_device *dev, uint8_t qn)
- 	dmadev->fp_obj->dev_private = dmadev->data->dev_private;
- 	dmadev->dev_ops = &ae4dma_dmadev_ops;
- 
-+	dmadev->fp_obj->burst_capacity = ae4dma_burst_capacity;
-+	dmadev->fp_obj->completed = ae4dma_completed;
-+	dmadev->fp_obj->completed_status = ae4dma_completed_status;
-+	dmadev->fp_obj->copy = ae4dma_enqueue_copy;
-+	dmadev->fp_obj->submit = ae4dma_submit;
-+	/* fill capability not advertised: leave fp_obj->fill as zero-initialised. */
-+
- 	ae4dma = dmadev->data->dev_private;
- 
- 	if (ae4dma_add_queue(ae4dma, dev, qn, name) != 0)
--- 
-2.34.1
+The problem with should return is that the application can not tell
+the difference between backpressure (transmit ring full) and a bad packet.
+An application may think it see back pressure and retransmit the bad packet.
 
+--- AI review (buggy) ---
+
+Series review: net/zxdh Rx/Tx optimization (v8)
+
+The v7 issue is resolved. The simple Tx burst no longer depends on the
+optional tx_prepare for memory safety: zxdh_xmit_pkts_simple() now
+filters mbufs with data_off < hw->dl_net_hdr_len before any packet
+reaches pkt_padding(), stopping at the first short-headroom packet and
+returning the count enqueued so far, so the caller keeps ownership of
+the rest. The threshold matches exactly what pkt_padding() prepends,
+and submit_to_backend_simple()/pkt_padding() are only reachable through
+that filter, so the open-coded prepend can no longer underflow data_off
+or write before buf_addr. The build-time backstop
+
+	static_assert(RTE_PKTMBUF_HEADROOM >=3D ZXDH_DL_NET_HDR_SIZE, ...)
+
+is also in place (static_assert resolves via rte_common.h).
+
+Patches 1-3 are unchanged from v7 and remain correct: the enable_intr
+fix is first in the series against the original field name so it
+backports cleanly; the Tx AVAIL flag is published through
+zxdh_queue_store_flags_packed() (rte_io_wmb); multi-segment Tx frees
+each segment once via free_seg with the head descriptor's NULL cookie
+holding the hardware header; and zxdh_recv_single_pkts() compacts
+surviving mbufs.
+
+
+Info (non-blocking, no need to respin):
+
+In the new headroom filter, the whole returned tail is counted as
+errors:
+
+	if (unlikely(tx_pkts[i]->data_off < hdr_len)) {
+		txvq->stats.errors +=3D nb_pkts - i;
+		nb_pkts =3D i;
+		break;
+	}
+
+Only tx_pkts[i] is known to be short; the packets after it are not
+examined, just deferred, and the application will resubmit them on the
+next burst. Counting the entire tail as errors inflates the error stat
+(and a packet that is eventually sent fine can be counted as an error
+on an earlier burst where it sat behind a short-headroom packet).
+Counting only the rejected packet, or tracking the deferred tail
+separately from errors, would be more accurate. Not worth a respin on
+its own.
+
+
+-- AI review (corrected) ---
+
+Series review: net/zxdh Rx/Tx optimization (v8)
+
+The v6/v7 out-of-bounds write is fixed: zxdh_xmit_pkts_simple() now
+checks data_off < hw->dl_net_hdr_len before any packet reaches the
+open-coded prepend in pkt_padding(), and the static_assert backstop is
+in place. Memory safety is no longer the issue. How the unsendable
+packet is handled is.
+
+Patches 1-3 are unchanged from v7 and remain correct.
+
+
+[PATCH v8 4/4] net/zxdh: optimize Tx xmit pkts performance
+
+Error: the simple Tx burst signals a bad packet with a short return,
+which the application cannot distinguish from backpressure.
+
+	for (i =3D 0; i < nb_pkts; i++) {
+		rte_prefetch0(tx_pkts[i]);
+		if (unlikely(tx_pkts[i]->data_off < hdr_len)) {
+			txvq->stats.errors +=3D nb_pkts - i;
+			nb_pkts =3D i;
+			break;
+		}
+	}
+
+A short return from tx_burst is the backpressure signal (transmit ring
+full, retry later). Here it is also used to mean "packet i is bad",
+and the bad mbuf is left owned by the caller. The application has no
+way to tell the two apart: the usual
+
+	for (sent =3D 0; sent < n; )
+		sent +=3D rte_eth_tx_burst(port, q, &pkts[sent], n - sent);
+
+loop treats the short return as backpressure and resubmits pkts[i],
+which fails again every time -- head-of-line blocking, and the good
+packets after i (which had ring space) never go out.
+
+A packet that cannot be sent must be consumed by the driver, not
+handed back. Free it in tx_burst, increment the tx error counter, and
+continue with the rest of the burst. For a burst of 16 where only
+index 3 is bad and the ring has room, tx_burst should return 16, with
+stats showing 15 transmitted and 1 tx error. A short return is then
+reserved for the one case the application is entitled to retry: ring
+full.
+
+Concretely for the simple path: walk the burst, and for a packet with
+data_off < hdr_len free it and bump the error counter rather than
+breaking; compact the survivors (as zxdh_recv_single_pkts() already
+does on Rx) and submit the compacted run. Reserve the short return for
+the vq_free_cnt limit.
+
+Better still, avoid dropping the packet at all: route a short-headroom
+mbuf through the append path the packed burst already uses
+(zxdh_xmit_enqueue_append copies the header into the reserved txr
+region) instead of prepending in place. Then nothing is lost and the
+simple path matches the packed path's handling.
