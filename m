@@ -2,51 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A67BCDE001
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 15:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDD1CDB479
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 15:47:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 28D1A40A6C;
-	Thu, 25 Jun 2026 17:40:44 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id E9B304067D;
- Thu, 25 Jun 2026 17:40:42 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gmNKZ5BJzzJ467Y;
- Thu, 25 Jun 2026 23:40:02 +0800 (CST)
-Received: from frapema500002.china.huawei.com (unknown [7.182.19.148])
- by mail.maildlp.com (Postfix) with ESMTPS id 3708240572;
- Thu, 25 Jun 2026 23:40:41 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500002.china.huawei.com (7.182.19.148) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 25 Jun 2026 17:40:41 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Thu, 25 Jun 2026 17:40:41 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, Jerin Jacob <jerinj@marvell.com>
-Subject: RE: [PATCH v5 4/9] bpf/arm64: mask shift count per RFC 9669
-Thread-Topic: [PATCH v5 4/9] bpf/arm64: mask shift count per RFC 9669
-Thread-Index: AQHdBAMSLNElA7oGn0akDH9DCOe4k7ZPadcg
-Date: Thu, 25 Jun 2026 15:40:40 +0000
-Message-ID: <183afa6fd48f491d9b53bce512ae7615@huawei.com>
-References: <20260608203322.1116296-1-stephen@networkplumber.org>
- <20260624175815.673064-1-stephen@networkplumber.org>
- <20260624175815.673064-5-stephen@networkplumber.org>
-In-Reply-To: <20260624175815.673064-5-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.78]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id A708540616;
+	Thu, 25 Jun 2026 17:47:57 +0200 (CEST)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com
+ [209.85.222.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 9243A40430
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 17:47:55 +0200 (CEST)
+Received: by mail-qk1-f180.google.com with SMTP id
+ af79cd13be357-91563abd6a9so1778585a.3
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 08:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1782402475; x=1783007275; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=nSN67rq0QzhmNegrYAuLuM9hvmbDntg1PoLh/BGE6fQ=;
+ b=BH4iL1l2WGzTVYNhB23Ht/8Uwigw2fIXjGsGRTmuwlnuK5Euzqzxlzj85rQoRvxbMe
+ x/0cHbLRftanneQNRab19JXxrZz8Vh9AVQ2KOEH5HklvKfV8bzNFC45JivGWmLc5v3nZ
+ xbNXXsOi9dZuYORlDYemPbixbRSS74GD4SNxg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1782402475; x=1783007275;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=nSN67rq0QzhmNegrYAuLuM9hvmbDntg1PoLh/BGE6fQ=;
+ b=FMvxYOMSUyFSSCrtGKwYHgm2pPmlPSvd2BghPlCyfqn/nWpP5B7sqLkdwkSLptl+ci
+ E/z/b0rhWRqFjqt9+vopYuc9TbTvpE0/wv1H34AG1elzGAoJT84/RP9e7n0vS9sf2ipW
+ 4BiKBHUneUg7EcxOwa5Z4yIlJfpPcW5dt8pV+2tM/JL4XBBRqrrRbeJMs089xQwL3AJ1
+ 6BDKaFTeazMXaC70LmB/QoCdtzSXOu5+3ZG5KFZboG82IQKk3BelOzFTBv6SOEKk9Pd0
+ tRThepmdJYcki3f3CUreUyk/3gtmbslTe7ZQswi5GqbuAFj7wgDljZf563+BMDxwZSn4
+ 7+3w==
+X-Gm-Message-State: AOJu0YwB/zR5fFEtrFTPEeISreYcBsWRsDvwBgOn9iQL8dr249W+TEoT
+ lJyBFn9ul6/6QCFYPYZBUjSWbhiVYoSKDwPLwh24XTxJyddXR1PjLxcShvi4Wv9PtOQ=
+X-Gm-Gg: AfdE7cm+69ckkUYVyTXdEGSN2DX3g9+Be0d4ZBOLIrbol/Eh1y1mJX3sV83EZU4kpz+
+ 2FYWueotkLCfqseG9vV1PD8g5zOR/7ZLw7IdYLXnR9rIsnfbLkAHgmnvvyoPsOgupyPMCGYPLlw
+ Wzq4LfbSXmyYgwbpkVlJd2rwmFIsp7xL/IyMlNuXlMpJNEQ3n7SgAFGihysQ4OK+FaoA0pxZjlc
+ TdSr715eRV0LR+VfvgO2kHwk4vamvveDWrpJUC0+jKNPalLvb6kJKiyNAahA+h39/XulHheg8W0
+ YKRbsehi4KEScp/KgmQph1SFvFyv/MT+MyXnh0Qc4SnvHg8NAl8XqwxJHRLEX09v2/VG7ksxfEC
+ XhroFlUToecq8vDFUwcdhAOew5QWoBXXMkG8DZCF45bfHKSApe2u62uYWIogtbh5O3f/yGMhjSg
+ /FsayUIFZja+tOVaymv3l0IXk7cFTgGe2iqYQmT+i74PaoHMVyjiYTHeKtx5S/vfR5NqrwMEbsY
+ MkcHjo4Qwhk7oRclXRreHMEGvZ+g51SiJwXcrgMXB7Sh84kOXDbCRf/te1zY16nww8SADO+lbN1
+ lXeHGs8cXYiRqw==
+X-Received: by 2002:a05:620a:17ab:b0:922:f2c6:b79a with SMTP id
+ af79cd13be357-9293dfc7fe7mr468342585a.48.1782402474731; 
+ Thu, 25 Jun 2026 08:47:54 -0700 (PDT)
+Received: from d122166.iol.unh.edu ([2606:4100:3880:1220:ff12:f4a1:a541:db45])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-8df82692bddsm183183096d6.43.2026.06.25.08.47.54
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 25 Jun 2026 08:47:54 -0700 (PDT)
+From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+To: luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: dev@dpdk.org, abailey@iol.unh.edu, ahassick@iol.unh.edu,
+ lylavoie@iol.unh.edu, Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Subject: [PATCH v5] dts: report dut/NIC info during DTS run
+Date: Thu, 25 Jun 2026 11:47:12 -0400
+Message-ID: <20260625154712.2255474-1-knimoji@iol.unh.edu>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260602163647.101815-1-knimoji@iol.unh.edu>
+References: <20260602163647.101815-1-knimoji@iol.unh.edu>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,76 +80,184 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Wednesday 24 June 2026 18:55
-> To: dev@dpdk.org
-> Cc: Stephen Hemminger <stephen@networkplumber.org>; stable@dpdk.org; Wath=
-sala Vithanage
-> <wathsala.vithanage@arm.com>; Konstantin Ananyev <konstantin.ananyev@huaw=
-ei.com>; Marat Khalili
-> <marat.khalili@huawei.com>; Jerin Jacob <jerinj@marvell.com>
-> Subject: [PATCH v5 4/9] bpf/arm64: mask shift count per RFC 9669
->=20
-> The ARM JIT was not masking the shift count as required by RFC 9669
-> (0x3f for 64-bit, 0x1f for 32-bit), so large immediate shift counts
-> overflowed the UBFM/SBFM encoding and failed the JIT. Mask the
-> immediate in emit_lsl/emit_lsr/emit_asr.
->=20
-> Fixes: 9f4469d9e83a ("bpf/arm: add logical operations")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+This patch gathers NIC info during a DTS run and writes it to an output
+json file. This allows the json file to be used when reporting results
+on the DTS results dashboard.
 
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
+Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+---
+v2:
+    *Resolved merge conflicts
+v3:
+    *Fixed an issue with retrieving
+     the NIC's hardware version   
+v4:
+    *Moved nic info gathering step before the nics get
+     binded to their respective drivers
+    *Condensed some areas of code in order to make them
+     more readable
+    *Removed redundant None checks and added some where
+     required
+    *Fixed LshwOutput class to better reflect the lshw
+     command output
+v5:
+    *Changed variable names for code readability     
+---
+ dts/framework/test_run.py                    | 10 +++
+ dts/framework/testbed_model/linux_session.py | 68 ++++++++++++++++++++
+ dts/framework/testbed_model/os_session.py    | 11 ++++
+ 3 files changed, 89 insertions(+)
 
-> ---
->  lib/bpf/bpf_jit_arm64.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->=20
-> diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
-> index ba7ae4d680..7582370062 100644
-> --- a/lib/bpf/bpf_jit_arm64.c
-> +++ b/lib/bpf/bpf_jit_arm64.c
-> @@ -545,12 +545,14 @@ emit_bitfield(struct a64_jit_ctx *ctx, bool is64, u=
-int8_t rd, uint8_t rn,
->  	emit_insn(ctx, insn, check_reg(rd) || check_reg(rn) ||
->  		  check_immr_imms(is64, immr, imms));
->  }
-> +
->  static void
->  emit_lsl(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t imm)
->  {
->  	const unsigned int width =3D is64 ? 64 : 32;
->  	uint8_t imms, immr;
->=20
-> +	imm &=3D width - 1;
->  	immr =3D (width - imm) & (width - 1);
->  	imms =3D width - 1 - imm;
->=20
-> @@ -560,13 +562,19 @@ emit_lsl(struct a64_jit_ctx *ctx, bool is64, uint8_=
-t rd, uint8_t imm)
->  static void
->  emit_lsr(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t imm)
->  {
-> -	emit_bitfield(ctx, is64, rd, rd, imm, is64 ? 63 : 31, A64_UBFM);
-> +	const unsigned int width =3D is64 ? 64 : 32;
-> +
-> +	imm &=3D width - 1;
-> +	emit_bitfield(ctx, is64, rd, rd, imm, width - 1, A64_UBFM);
->  }
->=20
->  static void
->  emit_asr(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t imm)
->  {
-> -	emit_bitfield(ctx, is64, rd, rd, imm, is64 ? 63 : 31, A64_SBFM);
-> +	const unsigned int width =3D is64 ? 64 : 32;
-> +
-> +	imm &=3D width - 1;
-> +	emit_bitfield(ctx, is64, rd, rd, imm, width - 1, A64_SBFM);
->  }
->=20
->  #define A64_AND 0
-> --
-> 2.53.0
+diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+index 94dc6023a7..fea1b52e44 100644
+--- a/dts/framework/test_run.py
++++ b/dts/framework/test_run.py
+@@ -98,6 +98,7 @@
+         "InternalError" -> "exit":ew
+ """
+ 
++import json
+ import random
+ from collections import deque
+ from collections.abc import Iterable
+@@ -347,6 +348,14 @@ def next(self) -> State | None:
+         test_run.ctx.dpdk.setup()
+         test_run.ctx.topology.setup()
+ 
++        testrun_nic_info: list[dict[str, str]] = (
++            self.test_run.ctx.sut_node.main_session.get_nic_info()
++        )
++        with open(f"{SETTINGS.output_dir}/dut_info.json", "w") as file:
++            json.dump(testrun_nic_info, file, indent=3)
++
++        self.logger.info(f"DUT NIC info written to: {SETTINGS.output_dir}/dut_info.json")
++
+         if test_run.config.use_virtual_functions:
+             test_run.ctx.topology.instantiate_vf_ports()
+         if test_run.ctx.sut_node.cryptodevs and test_run.config.crypto:
+@@ -370,6 +379,7 @@ def next(self) -> State | None:
+         test_run.supported_capabilities = get_supported_capabilities(
+             test_run.ctx.sut_node, test_run.ctx.topology, test_run.required_capabilities
+         )
++
+         return TestRunExecution(test_run, self.result)
+ 
+     def on_error(self, ex: BaseException) -> State | None:
+diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/testbed_model/linux_session.py
+index 3a6e97974b..b8836effbe 100644
+--- a/dts/framework/testbed_model/linux_session.py
++++ b/dts/framework/testbed_model/linux_session.py
+@@ -38,6 +38,8 @@ class LshwConfigurationOutput(TypedDict):
+     driver: str
+     #:
+     link: str
++    #:
++    firmware: str
+ 
+ 
+ class LshwOutput(TypedDict):
+@@ -61,6 +63,12 @@ class LshwOutput(TypedDict):
+             ...
+     """
+ 
++    #:
++    vendor: NotRequired[str]
++    #:
++    product: NotRequired[str]
++    #:
++    version: NotRequired[str]
+     #:
+     businfo: str
+     #:
+@@ -197,6 +205,66 @@ def unbind_ports(self, ports: list[Port]):
+         if self._lshw_net_info:
+             del self._lshw_net_info
+ 
++    def get_nic_info(self) -> list[dict[str, str]]:
++        """Overrides :meth`~.os_session.OSSession.get_nic_info`.
++
++        Raises:
++            ConfigurationError: If the NIC info could not be found.
++        """
++        port_data = {
++            port.get("businfo"): port for port in self._lshw_net_info if port.get("businfo")
++        }
++
++        all_nic_info: list[dict[str, str]] = []
++        for port in self._config.ports:
++            pci_addr = port.pci
++
++            lshw_result = self.send_command(
++                f"sudo lshw -c network -businfo | grep '{pci_addr}' | cut -d'@' -f1"
++            )
++            if lshw_result.return_code != 0 and lshw_result.stdout == "":
++                raise ConfigurationError(f"Unable to get bus type for port {pci_addr}.")
++            bus_type = lshw_result.stdout
++
++            bus_info = f"{bus_type}@{pci_addr}"
++            nic_port: LshwOutput | None = port_data[bus_info]
++            if nic_port is None:
++                raise ConfigurationError(f"Port {pci_addr} could not be found on the node.")
++
++            config: LshwConfigurationOutput | None = nic_port["configuration"]
++            if config is None:
++                raise ConfigurationError(
++                    f"Configuration info for port {pci_addr} could not be found on the node."
++                )
++
++            if "logicalname" not in nic_port:
++                raise ConfigurationError(
++                    f"Logical name for port {pci_addr} could not be found on the node."
++                )
++
++            ethtool_result = self.send_command(
++                f"ethtool {nic_port['logicalname']} | grep 'Speed:' | awk '{{print $2}}'"
++            )
++            if ethtool_result.return_code == 0 and ethtool_result.stdout:
++                nic_speed = ethtool_result.stdout
++            else:
++                self._logger.error(f"Unable to get speed for NIC: {pci_addr}")
++                nic_speed = None
++
++            dut_json = {
++                "make": nic_port["vendor"] if "vendor" in nic_port else "Unknown",
++                "model": nic_port["product"] if "product" in nic_port else "Unknown",
++                "hardware version": nic_port["version"] if "version" in nic_port else "Unknown",
++                "firmware version": config["firmware"] if "firmware" in config else "Unknown",
++                "deviceBusType": bus_type,
++                "deviceId": nic_port["serial"] if "serial" in nic_port else "Unknown",
++                "pmd": config["driver"] if "driver" in config else "Unknown",
++                "speed": nic_speed or "Unknown",
++            }
++            all_nic_info.append(dut_json)
++
++        return all_nic_info
++
+     def bind_ports_to_driver(self, ports: list[Port], driver_name: str) -> None:
+         """Overrides :meth:`~.os_session.OSSession.bind_ports_to_driver`.
+ 
+diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/testbed_model/os_session.py
+index f2dc9b20a9..f88427a53d 100644
+--- a/dts/framework/testbed_model/os_session.py
++++ b/dts/framework/testbed_model/os_session.py
+@@ -581,6 +581,17 @@ def unbind_ports(self, ports: list[Port]) -> None:
+             ports: The list of ports to unbind.
+         """
+ 
++    @abstractmethod
++    def get_nic_info(self) -> list[dict[str, str]]:
++        """Get NIC information.
++
++        Returns:
++            NIC info as a list of dictionaries.
++
++        Raises:
++            ConfigurationError: If the NIC info could not be found.
++        """
++
+     @abstractmethod
+     def bind_ports_to_driver(self, ports: list[Port], driver_name: str) -> None:
+         """Bind `ports` to the given `driver_name`.
+-- 
+2.54.0
 
