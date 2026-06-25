@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B93A3CDE001
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 16:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A2BCDE001
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 16:08:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26BA340DCF;
-	Thu, 25 Jun 2026 18:08:19 +0200 (CEST)
-Received: from CH1PR05CU001.outbound.protection.outlook.com
- (mail-northcentralusazon11010069.outbound.protection.outlook.com
- [52.101.193.69]) by mails.dpdk.org (Postfix) with ESMTP id 33C1540B9D
- for <dev@dpdk.org>; Thu, 25 Jun 2026 18:08:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6390140616;
+	Thu, 25 Jun 2026 18:08:30 +0200 (CEST)
+Received: from PH7PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11010036.outbound.protection.outlook.com [52.101.201.36])
+ by mails.dpdk.org (Postfix) with ESMTP id 39C3F40DD8
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 18:08:29 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m0IibbVAfO8CfjEY3N2IIOjMOdgHIHrpk0A7EaH+JN+OEChxtKkqk2hSGXIZ29cj5ogEYjd5H12cWLV7aRjrj9sxsci4z5eWX/7q71SPUKp3sGNJS38BnAzpNT7Lb76V3RHRF+Mg7BT+zs1EZzrYyzMtDzkCb3QyVJ70a3hB+b87IbdBi//ZnLHYy+YRxZFJyR8/tSbwEbKSUGZpiBE6PGe+qTFtTPMShGKTakfaNRG/7pcCWOCjfr8Q7N2QDSlfl69geEgEqjG6CEgM5TyU+r+nRNBOqLOU0WZ4NlGMm4aZg7I8YySnCPWhEAWUHaQOYp3CDJ0kNqJ001dbGLNBlA==
+ b=D4q1U4VkXGeyElG4NlD7VWOqsm59viiFBWrq9CKoxckWVlxgCQ+LdLzoqje7hJ6l1rJtFWIVcvE9VHo0qI/UCVbrRKAAJHiY/U+8D7NWgOV0jPq2coTswxhcpDYI0qEpqW2NHwack2BDB4Og1nKYmGWyLVkC2J1zlmVsycR8uEH1cXI0VaTA4Cjef0LiLrJs42epFI4UwdQ7V4ynpaChvuyCp8NzlRwgbOk/E+sSxhjIaEYcx1yCZEmCjODDDLKt/Ag8k10+F2V2oGHK7SEWB66LT1XO+U5qYVrEDnM4kSKHu3z6vOuxsEaSAlTAEBz9wYimCuYpp6FEhqeX5eJUow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n1AGb9yFQobsTQhj5bOLjwE4CuSzyIWI6d3T+BhqBdg=;
- b=x+8Fq2ac0XV+XsL7GZnuL3Kkgo+iCd5jgye1tArZq4Y53Vr4POguN7YdRG+aWco5yKat6RrhIykvtchL7b180M6Uy3toXArDhtUjQWdPIfg5AumxrYvD86Ocg2Rn0fEWKK8ex3ILzCIVJ2Fum75R8/7ZOwC8LaVigu2Ah84StoMNnriPXNMFRG9AWXxXtwe1qQHIz+up1E2dD0nkw0VxbLx1vy0sPFEjz9H1KHUU6IbpntDiMFJYFwUGCOjlH+TQjiCY8lzObqzD6jWQ0765A40grxQ8NMiZqBl0XRZVtpFkIW9ASfvv1TAZHbbRloR2/bngildw0aO4NtEUNWFJ+Q==
+ bh=IBq8wsg1r6AsWO5Ar8tPQjA4cvZ+wGRx68AvGdQO7es=;
+ b=S9vg66bBtjS6rBfE7d4vcHSgIVOxvgpNU4y+2HA6NYPwTcZhIFnyhHGG8Di9P+mgLL7ZRIruEDM+4tpEgUkXek7ZQTU6nER5Dj4CkN7hFl2IFCvT4jGw8nTRVK4/anoYM57OgdpM864KEtQfXBTqq3igl5KwkyinoQnLBv7e5sGa8ykjtTT3XjQ3WiYN0tkoqAOU5IfrAxWmiBelmuc92RTx1Vso5WT25pB8YOrO/DdfxhCN3QnifYPhDKa2HqBay9HyDB7t/cpdw21mn7UBeUAMFhMJ10epjceL70tdteAbvDo04gWqfZdHTF2I9Ta9y+xtgHoeT/OW6OHyrl3+Rg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n1AGb9yFQobsTQhj5bOLjwE4CuSzyIWI6d3T+BhqBdg=;
- b=b0aLj5geBs4XN8WWEBAe779Azz28B9kI4NJ3ltHmIpZtCb7DGB7o+MRiYhVv9Mlr/glQAaIDgJX2EeaaJsz+jAA+9yTX9tFBxnz5BYuJtDyP31XIx8tiHE2tyRq1pMHFBo+QXzNhQB4H4piRvMvypIzl/Sr+OJf8YiTfCplr9ONv9AM0nnFCi6k6bx6XHKmCG1P0BDEG/dqvyx9XrFvfPFekI6VA9Dhk90OxmUmqc0U0i4VGWInscB8kc0zlAfAJrAvJo50xqeBX84B4oSo2AT9RI85enI2r3e84B9z2WRQTbGNhgkQHY2WpEsQ89LInxu9G6BJhqSoNymT6HyuDpA==
-Received: from DS0PR17CA0014.namprd17.prod.outlook.com (2603:10b6:8:191::10)
- by IA1PR12MB6186.namprd12.prod.outlook.com (2603:10b6:208:3e6::5) with
+ bh=IBq8wsg1r6AsWO5Ar8tPQjA4cvZ+wGRx68AvGdQO7es=;
+ b=suA0B31CNAcbFA1CSKM8B87T/H67a4vPdofrW2RKSZQ04VbYE0JXSEBZFGnKWtSD0LF4/L/jCMqkwKjpCicLt2h7jivA6S4LAw0n+EVzkgNbRvEQRZDmIHQn8FibtiFE4AdFc6AdRWOmV4omiJfPVmRsGQO8ehg7HIWP65G/IzfCL1+X1MiGDuRD0ExXNjnmSKZyUspo7TzGW6xmB4gKI7ceescp+FEkESkod2rF/oSw9c6LVM/KQKps2ckafm/7DOkb8ERXS84QxrHPn+SBqcT60wIt/CdVVGnnpVQ7Y6QX8OWa9DeARjrEx4utpJFlpCgurupZ5hJE/672bx+xmg==
+Received: from SJ0P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::7)
+ by MN0PR12MB5809.namprd12.prod.outlook.com (2603:10b6:208:375::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.13; Thu, 25 Jun
- 2026 16:08:06 +0000
-Received: from DS1PEPF00017095.namprd03.prod.outlook.com
- (2603:10b6:8:191:cafe::5d) by DS0PR17CA0014.outlook.office365.com
- (2603:10b6:8:191::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.159.17 via Frontend Transport; Thu,
- 25 Jun 2026 16:08:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ 2026 16:08:21 +0000
+Received: from CO1PEPF000075EF.namprd03.prod.outlook.com
+ (2603:10b6:a03:41b:cafe::a3) by SJ0P220CA0001.outlook.office365.com
+ (2603:10b6:a03:41b::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.159.15 via Frontend Transport; Thu,
+ 25 Jun 2026 16:08:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DS1PEPF00017095.mail.protection.outlook.com (10.167.17.138) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000075EF.mail.protection.outlook.com (10.167.249.38) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Thu, 25 Jun 2026 16:08:05 +0000
+ 15.21.181.6 via Frontend Transport; Thu, 25 Jun 2026 16:08:18 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 25 Jun
- 2026 09:07:43 -0700
+ 2026 09:07:49 -0700
 Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 25 Jun
- 2026 09:07:41 -0700
+ 2026 09:07:47 -0700
 From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 To: David Marchand <david.marchand@redhat.com>, Bruce Richardson
- <bruce.richardson@intel.com>
+ <bruce.richardson@intel.com>, Thomas Monjalon <thomas@monjalon.net>, "Andrew
+ Rybchenko" <andrew.rybchenko@oktetlabs.ru>, Ori Kam <orika@nvidia.com>
 CC: <dev@dpdk.org>, Yu Jiang <yux.jiang@intel.com>
-Subject: [PATCH v4 2/4] build: support function versioning for drivers
-Date: Thu, 25 Jun 2026 18:06:41 +0200
-Message-ID: <20260625160645.1341914-3-dsosnowski@nvidia.com>
+Subject: [PATCH v4 4/4] ethdev: fix promoted flow metadata symbols
+Date: Thu, 25 Jun 2026 18:06:43 +0200
+Message-ID: <20260625160645.1341914-5-dsosnowski@nvidia.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260625160645.1341914-1-dsosnowski@nvidia.com>
 References: <20260625133311.1299705-1-dsosnowski@nvidia.com>
@@ -75,29 +76,30 @@ X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017095:EE_|IA1PR12MB6186:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70100907-2fc9-43e9-b3a9-08ded2d3f114
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075EF:EE_|MN0PR12MB5809:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74fdc4ca-2c0c-4c47-f89d-08ded2d3f8e5
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|23010399003|36860700016|82310400026|376014|10062099007|11063799006|18002099003|22082099003|4143699003|56012099006;
-X-Microsoft-Antispam-Message-Info: iTZm3tTtHj38TqoUIHra6uUNLAb0x59EstdvAmlzz0l7x3kNVbhjRYD/3eNM2WNJLZo8yFxXbV4zQwLD1vq2BVCb7t2KtwB8+60ZsVH7UrHilVXf+Sn293QupUJxBfNteCQ0saHtGNnxer8cEfApnfrYJp3LvLfjKsIvZAtn985V17KykfOd4IH4MPGYusYOalzqaEbpmKdrt6tf+SxaN9frgE0kTPU2cwewi6TBlztFYHbSiUgio+RCuxMbuDiBXoQs3joeT1MW6l5xntHro8/qjgeENqnoOG0cxkk34RDu84qWCeL41D4COIW5AuszV0rAicum4jXGZMKfd1UogwFPgCr1b7y1aIdTCipE11ckQ9ingzgr+XWa0OS4tEG0UDfEbzcVYJweFA/0KMnCbZ7EjclN2U+t5e/ikk21fWmWmfOqnvtleA8P5AedYu3i5UHFG/EcUVSQniUhv9Th4B7vJP129ecfsOeI/qtgnDaZ95tE4CMEH6W3VSRJpG5I4CJy8keX4El7eiHAHpg1QOauivilouEpCWhZ0EedoiIjiQ0/R+QJY1Kwv3bXloXYOte0rybZ41mgj3bwGo9f8LBJ+i8GW8lUqdeR/lRZbVohtLXq7fGRdwFZp9uTc8LtHEuubZvtVGg+tDbu0CHfk8gRCKQ2VhhTcq84eqObcTAswpBgTfpqSvZ/k8nVKtN3AE8yIqFuqyFGdF+ubgM14w==
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(23010399003)(36860700016)(82310400026)(376014)(10062099007)(11063799006)(18002099003)(22082099003)(4143699003)(56012099006);
+ ARA:13230040|376014|82310400026|23010399003|1800799024|36860700016|4143699003|11063799006|56012099006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: En3+pSEyjB07oAUsgbpoeqZxhBxHA0WOpnPH+Dq+GLrwd1Lqb+619oL8IZ9neBNE3c+aHi4efSe1g12eJDaPFXJBHpKSAnLfuepvuGUbVblVc+sna/UTUFwtz5ZijQzHtAQnMhC+8tEJSGOirWz5nt4efU8NYrj55ZmmxWhuJEYhU1WcmP6HsRaLckVPCsrxprarhbFxIwP/Z8zDyNyWDecNr46RDWp5vIbKC+b3vl9Opt6Uf/fVymugWVls192EKKtW77FOuQcXSnLU8nL2mM0KnmYTsIHRy8vqJ5+ntXvHdTLPK4rlFUqFuISIidLjZk6/uWwAlQ5Skv3MJpdaFpjsD+PWydTylEsGKZPpCNiu6i6KfeMjCFjKMNdVBn/8u4KD5oZyQOJ2Er/u1LqsSWVJwzgOdvTDajVHYTaxbd/L/ec6esJROPdu8t6hRJXPAdW6oIfI/EICId4E5a0WgEvQbf9CfuTzkBtnEPaUEAb3NfNVg6cYUgBPQVEh3kra1ZIL9lUucNlyGlwvgkVpjLGiYflYDZBGFHgdxlPsk6mqBG1mV1of3smbH6X0DQX3aojaBJn3sqisJEiFcoiAz+vMiQziMfnAMt5LFPx68KRkAaOBC8GbGHHQwu9QjLU3C8AYt9Lk0mJvsP6SPXbQm5i/+sk8YllMujGfImjMScGJCdWRqBTy/UGeQr3ge9Sart4G7oerVpcAKiQooW8l8Q==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(82310400026)(23010399003)(1800799024)(36860700016)(4143699003)(11063799006)(56012099006)(18002099003)(22082099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: ggIRljKQa6bB/m6dsPSlYWGe5WKlIkIQhkhTyMhOgnj8JTyHJsL3PEJhVI4xlMcU0wKj+dv7HkX/T237mCYlX16NZThm3u21fGaRfR6tv4kvUEQvaLx12BcPfoqkDu+utkZjTSkEmBOxKuzc1wFVSKEBMOV0vc8JIPhedS6J3/MFYE1FW4YtwD/TuF/0kaRbM/Z+tTddB2rGM4xg9HSZLUERocxa148yU6mcDWiolGZ/5Ojzg0jzLWz0e2dgo26Rvc4BkWHlfd3neYkJaKNH0YpRMys1okC5CSVAYSzoZ3LNI6CdJv9ubHtiT5MRyZU7R2V1F89JT5E0mg68YJU3sF7MDTgZPq9OMtPdyZkaKZPhH4xQwXXFzttUBC+uDKBzBZNUbyo5iiged2z8vByYUF5BpGyKIwMZ2UPVesZ6qC0gmOtfBN/hKiNL4aIy7Tn5
+X-MS-Exchange-AntiSpam-MessageData-0: vIARUY9PSqerBtZh9yBlF9BBYIrs2sk8K0glakenZlTbhidUGx9VApV9w0vDtz1PhsCF+sfa4szpdyPSnq/WDnJStj52lMXEfeIMtLDjt89TfRzCPucQ1ScljO4s78kZL5+zfpoKXLLLlZUgeGRoZr1oBse9Qu5zNYV+J1jris/TCe6b9TJqIX9ed7iUfC9ikeofidQCDVmBawKXNSVMx5VqvWIOY8pkbqdeAaDmtfTMYzcKBLlIuFfO05ECoBp8/nOIaUEmofvJf4ZOEBogHulhCbJEAuAGuvVwjVk6nG0qeWmfUbem+VgIT829/MAQsj9BQX8W3KoGLuuY+dn64nV+YGTOLQjmd7Y7kSXHRoZCjUcPJwgtRog4zO1twtdJJuJas0+dbSsStgJ9SVC/HY8ebpAPaxnykSrkS2tYuxwPHjMte3lgJwnECyftDRvs
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2026 16:08:05.6326 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70100907-2fc9-43e9-b3a9-08ded2d3f114
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2026 16:08:18.7503 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74fdc4ca-2c0c-4c47-f89d-08ded2d3f8e5
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS1PEPF00017095.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000075EF.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6186
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5809
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,61 +113,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for enabling function versioning
-(through use_function_versioning meson variable) for drivers,
-similar to libraries.
+Offending commit stabilized the following symbols
+related to flow metadata:
 
+- 1 function symbol:
+    - rte_flow_dynf_metadata_register
+- 2 variable symbols:
+    - rte_flow_dynf_metadata_offs
+    - rte_flow_dynf_metadata_mask
+
+Any application using experimental flow metadata symbols,
+which was linked dynamically against 25.11 version of ethdev
+library and using current version of ethdev library
+would fail to start on symbol lookup error:
+
+/tmp/dpdk-25.11/usr/local/bin/dpdk-testpmd:
+  symbol lookup error: /tmp/dpdk-25.11/usr/local/bin/dpdk-testpmd:
+    undefined symbol: rte_flow_dynf_metadata_offs, version EXPERIMENTAL
+
+This patch addresses that issue by restoring EXPERIMENTAL version
+on the global variables to keep ABI compatibility [1].
+Related inline helpers and variable declarations are kept as stable
+(i.e., no __rte_experimental marker).
+EXPERIMENTAL version will be removed from these global variables
+in 26.11 release cycle on next ABI version bump.
+
+Standard function symbol versioning is also applied on
+rte_flow_dynf_metadata_register() function.
+
+[1]: https://inbox.dpdk.org/dev/m7s3jl2566kibbapr2mfa2ic2opuc6b4ok2g67j3il5dgduzih@cz5wcdstb75n/
+
+Bugzilla ID: 1957
+Fixes: 4ee2f5c1cedf ("ethdev: promote flow metadata API to stable")
+
+Reported-by: Yu Jiang <yux.jiang@intel.com>
 Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Acked-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/meson.build | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ lib/ethdev/meson.build |  2 ++
+ lib/ethdev/rte_flow.c  | 13 ++++++++-----
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/meson.build b/drivers/meson.build
-index 4d95604ecd..79c215a7c8 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -171,6 +171,7 @@ foreach subpath:subdirs
-         pkgconfig_extra_libs = []
-         testpmd_sources = []
-         require_iova_in_mbuf = true
-+        use_function_versioning = false
-         # for handling base code files which may need extra cflags
-         base_sources = []
-         base_cflags = []
-@@ -273,6 +274,13 @@ foreach subpath:subdirs
-         endif
-         dpdk_conf.set(lib_name.to_upper(), 1)
+diff --git a/lib/ethdev/meson.build b/lib/ethdev/meson.build
+index 8ba6c708a2..63fd866af9 100644
+--- a/lib/ethdev/meson.build
++++ b/lib/ethdev/meson.build
+@@ -1,6 +1,8 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017 Intel Corporation
  
-+        if developer_mode and is_windows and use_function_versioning
-+            message('@0@: Function versioning is not supported by Windows.'.format(name))
-+        endif
-+        if use_function_versioning
-+            cflags += '-DRTE_USE_FUNCTION_VERSIONING'
-+        endif
++use_function_versioning = true
 +
-         dpdk_extra_ldflags += pkgconfig_extra_libs
+ sources = files(
+         'ethdev_driver.c',
+         'ethdev_private.c',
+diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
+index ec0fe08355..24eb5a95b0 100644
+--- a/lib/ethdev/rte_flow.c
++++ b/lib/ethdev/rte_flow.c
+@@ -23,11 +23,11 @@
+ #define FLOW_LOG RTE_ETHDEV_LOG_LINE
  
-         dpdk_headers += headers
-@@ -363,7 +371,18 @@ foreach subpath:subdirs
-                     depends: [version_map])
-         endif
+ /* Mbuf dynamic field name for metadata. */
+-RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_offs)
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_flow_dynf_metadata_offs, 19.11)
+ int32_t rte_flow_dynf_metadata_offs = -1;
  
--        shared_lib = shared_library(lib_name, sources_pmd_info,
-+        if not use_function_versioning or is_windows
-+            # Use pre-built objects and pmdinfo sources to build shared library.
-+            shared_sources = [sources_pmd_info]
-+        else
-+            # For compat we need to rebuild with RTE_BUILD_SHARED_LIB defined.
-+            # Use original sources and pmdinfo sources.
-+            cflags += '-DRTE_BUILD_SHARED_LIB'
-+            shared_sources = sources + [sources_pmd_info]
-+            objs = []
-+        endif
+ /* Mbuf dynamic field flag bit number for metadata. */
+-RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_mask)
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_flow_dynf_metadata_mask, 19.11)
+ uint64_t rte_flow_dynf_metadata_mask;
+ 
+ /**
+@@ -281,9 +281,7 @@ static const struct rte_flow_desc_data rte_flow_desc_action[] = {
+ 	MK_FLOW_ACTION(JUMP_TO_TABLE_INDEX, sizeof(struct rte_flow_action_jump_to_table_index)),
+ };
+ 
+-RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_register)
+-int
+-rte_flow_dynf_metadata_register(void)
++RTE_DEFAULT_SYMBOL(26, int, rte_flow_dynf_metadata_register, (void))
+ {
+ 	int offset;
+ 	int flag;
+@@ -316,6 +314,11 @@ rte_flow_dynf_metadata_register(void)
+ 	return -rte_errno;
+ }
+ 
++RTE_VERSION_EXPERIMENTAL_SYMBOL(int, rte_flow_dynf_metadata_register, (void))
++{
++	return rte_flow_dynf_metadata_register();
++}
 +
-+        shared_lib = shared_library(lib_name, shared_sources,
-                 objects: objs,
-                 include_directories: includes,
-                 dependencies: shared_deps,
+ static inline void
+ fts_enter(struct rte_eth_dev *dev)
+ {
 -- 
 2.47.3
 
