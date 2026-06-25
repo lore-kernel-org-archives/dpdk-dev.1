@@ -2,80 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69247CDE000
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Jun 2026 23:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7C0CDB479
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 01:44:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 019F640655;
-	Thu, 25 Jun 2026 01:07:23 +0200 (CEST)
-Received: from fout-b2-smtp.messagingengine.com
- (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id 9A3F24025E
- for <dev@dpdk.org>; Thu, 25 Jun 2026 01:07:21 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfout.stl.internal (Postfix) with ESMTP id D1FE51D000AE;
- Wed, 24 Jun 2026 19:07:20 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-10.internal (MEProxy); Wed, 24 Jun 2026 19:07:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm1; t=1782342440; x=
- 1782428840; bh=vu/6ghP6bigRR4J/8LEh2Ey1abXB3uSr/DuOha8PPXw=; b=o
- tTvDfW0WwU4Y96yEQLT88HngvHqnGoH/0ikEuL8yWyUEyND7w8ZGJ2JauhgXuyib
- bLCCTEw1GI7iy+WVom+vonD9VS7DESyTkctt9C0BSPUUWRUowkZomVAEbC09rhQ9
- 8ZlxfKD9384XqPkGkiotXLG8RGLa7JUQXwwjCRDrljUdejNT3+i/imgl5Cm/9Td4
- FiSbCSe6a6FbngnfjNyO9+SSlqE+1zumW0X3Si1cBjAGb8MEDtEjc+B6ACACoNRg
- 3+oRZQ46PLHyYvnI8ALvhQz2vPUTFaosMIZ9NCReXi8G0hPJaGl0ze147lPHCl8G
- q5L//1HN6CO/7vxaHXpQw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm1; t=1782342440; x=1782428840; bh=v
- u/6ghP6bigRR4J/8LEh2Ey1abXB3uSr/DuOha8PPXw=; b=eZHV+urIC5XEJpMo7
- 8JYzG9m2BEKYoHQB16zsMnfd9EQCEOiRDeu557trxyezKEnxobSn/b8NAfPdKkBy
- I7t0fuDsvaaSzXDfAnAfjIZKxAbTc+Sx6cmel6D9/GhXZm2URS7NEj4EVjaloNWg
- Oy8jx5bQ4YS1kmGjcjVSwqjAlXn67/AGspW8kL1aGXMAHyhwjp+diI8McGC5WAvl
- 2vW+1VL5JaydeYrRrEmx/fKf71YB5zCE8SlXsno+8J3DlBRaUhUECzMMDD7gfUHk
- s1e7RYkK5FVzEe9iBh+bwqtAuh7vICLq3g/ej/uyHwewrDwTHxiXw1HyBMr4U/K/
- UZE/A==
-X-ME-Sender: <xms:KGM8arkuzQrwojNKEcbz5pGhMft4l2hDkxdu0LFLLIfFxGwEbI1TsQ>
- <xme:KGM8anx033UgEPVOtioMEYH919CHjfA0AIpNZ0MEth_C-UD6apC1pbZEC1yNummEh
- 9sBkbzM4csxVyuWr_ReKtbfRSDxPb5CnxFWtrQYz9azRlmJiCHL>
-X-ME-Received: <xmr:KGM8atNIVTOLOTEa7H2D6aBTlRtJW4kWm50-Pf4t5YVeKq0LAN3xjkMhYhItepuDlv8Fj24l2NxMAwyNQgSyoDdKvlqEjh0>
-X-ME-Proxy-Cause: dmFkZTEhtg9UVCRFiDadGp4ugRj4DMu/xn9UOxrUO+lpLbS9jBVyxa0tFeOMNFYZb/pm5M
- qRv15y6qVC5FBFMWXcYNP9gEDFTf32AP3O+0GZLevrE8FDXBBAwvLCfxRLAl6uDIbw5FHn
- tAqiqmwUZ1S3nx45aKt8ia2Ulu084gmbEUjFfzPgawFkhtvhxluih6m5wHQuSKakFu/+K1
- vNHwiL1a2YfL04jGKDjrKz4bGViIvt3kiWX3/qiMWsOyJDJWP/Cz3WQVuXeYckI1hNxvPK
- qfCNuEUusEApGWFrbQcvNiIW/Yk4vB3q2FjiQY4Z3fh308e63Y0m0KAL8xXGAwN6c2wTXU
- RmnM1hR10M2pJ+AKqMmRUPlOcBS+qB4ekFHuV1ik4pVULs7TaG/RvHCnQMYRmwcIITwXy1
- EG7C0HjSg1dRZjVJcSBLXJsv4JgJngkVFOu1vpM0qyPZOLM+ASqjZ2bXHSETDbeiKgOBdl
- eY5OcHmSNt+w6PKadDfKesIN8IKRjysfR+ie+xxClTpCWpLwdiaTUoMqWb6CRM0d9itEk2
- D+AnRkN+ntWU+u5OVDVnFSZ0dzKe9shXqHBK7KWtexrtQGti9v0WvhJI+B9vtHO5jgPMTQ
- wHfsUVQpN342SYUm/J8S/yMH3X6A4xbF1qdwYlKEkhq7POG1ObvicmEIEEOw
-X-ME-Proxy: <xmx:KGM8ajrVso4dGXSk4LVV_jY242GQ6AbVJy4QwU1WOCGFSwYwL3656A>
- <xmx:KGM8amFA8pOv1iywOMDJo3Aia_tXnEsA7Jw_APNwmhW5seiV0q61lw>
- <xmx:KGM8agr_Vf-1VW-M_aTnFlwu8XQ51NOCRyuB-qxNghww0xGM5J91xA>
- <xmx:KGM8anZibirZrwYHYAxQKwD7TszMO5ULBunOFOvAUtB5-jXo8U-b4Q>
- <xmx:KGM8auRMoJGqB_FSsVfuX6UWqpFdNeCUkOEI1as8YHeu8hX_ca4MhFHX>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Jun 2026 19:07:19 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Song Jiale <songx.jiale@intel.com>, Aman Singh <aman.deep.singh@intel.com>,
- Luca Vizzarro <luca.vizzarro@arm.com>,
- Patrick Robb <patrickrobb1997@gmail.com>,
- Gregory Etelson <getelson@nvidia.com>
-Subject: [PATCH 2/2] app/testpmd: fix runtime config of Rx split
-Date: Thu, 25 Jun 2026 01:03:23 +0200
-Message-ID: <20260624230656.2172633-3-thomas@monjalon.net>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260624230656.2172633-1-thomas@monjalon.net>
-References: <20260624230656.2172633-1-thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 6CB97402D1;
+	Thu, 25 Jun 2026 03:44:17 +0200 (CEST)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+ by mails.dpdk.org (Postfix) with ESMTP id B702540279;
+ Thu, 25 Jun 2026 03:44:14 +0200 (CEST)
+X-QQ-mid: tivesync3t1782351848te9d00f85
+Received: from 3DB253DBDE8942B29385B9DFB0B7E889 (jiawenwu@trustnetic.com
+ [115.204.248.247])
+X-QQ-SSF: 0000000000000000000000000000000
+From: =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
+X-BIZMAIL-ID: 16251941582676748098
+To: "'Stephen Hemminger'" <stephen@networkplumber.org>,
+ "'Zaiyu Wang'" <zaiyuwang@trustnetic.com>
+Cc: <dev@dpdk.org>,
+	<stable@dpdk.org>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260624115254.20348-1-zaiyuwang@trustnetic.com>	<20260624115254.20348-14-zaiyuwang@trustnetic.com>
+ <20260624091858.20289fc8@phoenix.local>
+In-Reply-To: <20260624091858.20289fc8@phoenix.local>
+Subject: RE: [PATCH v10 13/21] net/txgbe: fix link stability for 40G NIC
+Date: Thu, 25 Jun 2026 09:44:07 +0800
+Message-ID: <05c401dd0444$1c9a3ba0$55ceb2e0$@trustnetic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: zh-cn
+Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwHs7/skAWH4+AwBYZ8GJrV8zcmQ
+X-QQ-SENDSIZE: 520
+Feedback-ID: tivesync:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: Nw9C1WBu09hPV/cxSOhTvIB/6Ma3bluicGnVz/rckPPRs6uHpbVXEWQj
+ Wwncaoen1m8F7008hmBkWNKdzBFfSpAG8hluHekXO2acwj8eSVzopnHeFfeIp8MmES6Ku4d
+ mv1z8gU9kFU15JKYcA8aUabL9b/gshGKDaZLXaHhCU9TfFCwDxMeEQniBTik/4Qw/h+46Uo
+ HbchzNxEYMitoYCtmmuxRgK2K3m0W2SLiqT1IAGr8IjwMiOt2O/JUSRUpDEk8DK7AFFgJCC
+ ph6r3BLdC8/qYF0wPv/qEoVgzM9SeltjcJgWwtYAB68b8Wln8eqdErkUEHoLkN2awrUowv7
+ MLN19k2YZAXUWXWDv+n9xgPZspcHbW5or8hb0NOmkgXsmVFsmoCTYesvYVzOItXjKfW7xES
+ RvqI/AJBGy9NWRuD7JwQbNI5YDka2hFxU1CTftRYcUbq+FY2K/wVuQeSgpjTwOviOtszbAy
+ 8blRX5SrFWWotL0FueJd0bREeEaopEmrzBX+GxqdpyfzNmukWyfRpYvTYnYSZlv9kZhO065
+ in0Gt9DehLK1Hzcfo8PpNI9PDjWiJ4k5PNPbEBMk26SlzmNwxnPUmif6FDKFMBRjdMlLrXQ
+ Tfq9Be5lGo9UcxSXDzgsZBgpdnZr/Saga2WQcQXYTXokgbCML1rfmmn3HMIbtcKCFYqfN9V
+ VZe8FBMzcLnTDubY24y8OfKYAjsi+AhgOUhsvJugJ4ix+CbeAxgKz3FjBVMctdKLjPdcln6
+ 3ybFxI00ZTRkQzzIkMibb9QzWUGR4QdkIEfarsM2i7hivecQknFXpO9IpJkeKRzvJU17pxJ
+ kjnhJpv4aqqVRugnZd0LAMLqSF6GrGZRpIM2sYtblscKgIzWZQCxKSIfpsHBa6Hh98KA/Bc
+ EpCedQ3fpNGzdvb5Y4d3hmCpqeONz2JgE9JtGQ5mtYTx7tahKwVuWXwrPOkWTUQuOE2Wlj1
+ YIjFnViqVw4qFw3K1xqN/rl/gb/UCNvPOi8NySkrSnUvb1BPqShbniX++NYamsEYsFXb54X
+ VkDyXvVMC/sl10RveM/dsgQ4bpprwR+03+0Pbm3YYWHh3cNP7M
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,80 +66,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When adding selective Rx, it was assumed that the queue configuration
-was set when starting testpmd via the command line options.
-But it should be possible to configure mempools with --mbuf-size,
-start Rx, stop, and configure later a split in the testpmd CLI.
-In such a scenario, a regression prevented to start
-with more than 1 mempool without configuring a split:
+> > +void txgbe_e56_rx_rd_second_code_40g(struct txgbe_hw *hw, int *SECOND_CODE, int lane)
+> > +{
+> > +	int i, median;
+> > +	unsigned int rdata;
+> > +	u32 addr;
+> > +	int RXS_BBCDR_SECOND_ORDER_ST[RXS_READ_COUNT];
+> > +
+> > +	/* Set ovrd_en=0 to read ASIC value */
+> > +	addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (lane *  E56PHY_RXS_OFFSET);
+> > +	rdata = rd32_ephy(hw, addr);
+> > +	EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_int_cstm_i) = 0;
+> > +	wr32_ephy(hw, addr, rdata);
+> > +
+> > +	/*
+> > +	 * As status update from RXS hardware is asynchronous to read status of SECOND_ORDER,
+> > +	 * follow sequence mentioned below.
+> > +	 */
+> > +	for (i = 0; i < RXS_READ_COUNT; i = i + 1) {
+> > +		addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (lane *  E56PHY_RXS_OFFSET);
+> > +		rdata = rd32_ephy(hw, addr);
+> > +		RXS_BBCDR_SECOND_ORDER_ST[i] = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
+> > +							 ana_bbcdr_int_cstm_i);
+> > +		usec_delay(100);
+> > +	}
+> > +
+> > +	/* sort array RXS_BBCDR_SECOND_ORDER_ST[i] */
+> > +	qsort(RXS_BBCDR_SECOND_ORDER_ST, RXS_READ_COUNT, sizeof(int), txgbe_e56_int_cmp);
+> > +
+> > +	median = ((RXS_READ_COUNT + 1) / 2) - 1;
+> > +	*SECOND_CODE = RXS_BBCDR_SECOND_ORDER_ST[median];
+> > +
+> > +	return;
+> > +}
+> 
+> These extra returns are causing extra checkpatch warnings.
+> I know this is base code but if possible could you remove them.
+> 
+> 
+> WARNING:RETURN_VOID: void function return statements are not generally useful
+> #707: FILE: drivers/net/txgbe/base/txgbe_e56.c:1806:
+> +	return;
+> +}
+> 
+> WARNING:RETURN_VOID: void function return statements are not generally useful
+> #736: FILE: drivers/net/txgbe/base/txgbe_e56.c:1835:
+> +	return;
+> +}
 
-	Configuring Port 0 (socket 0)
-	ETHDEV: No Rx segmentation offload configured
-	Fail to configure port 0 rx queues
+Alternatively, it can be declared as a static function. It is only invoked in this .c file.
 
-It is fixed by considering having multiple mempools
-is not a condition to trigger Rx split.
-
-A test is added in DTS to validate this use case.
-
-Bugzilla ID: 1956
-Fixes: 0be0ad196b52 ("app/testpmd: support selective Rx")
-
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- app/test-pmd/testpmd.c          |  3 +--
- dts/tests/TestSuite_rx_split.py | 24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+), 2 deletions(-)
-
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index fcd8a90967..b241a7025b 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -2750,8 +2750,7 @@ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
- 	uint32_t prev_hdrs = 0;
- 	int ret;
- 
--	if (multi_rx_mempool == 0 &&
--	    (rx_pkt_nb_segs > 1 || mbuf_data_size_n > 1)) {
-+	if (multi_rx_mempool == 0 && rx_pkt_nb_segs > 1) {
- 		unsigned int nb_segs = RTE_MAX(rx_pkt_nb_segs, (uint8_t)mbuf_data_size_n);
- 
- 		/* multi-segment configuration */
-diff --git a/dts/tests/TestSuite_rx_split.py b/dts/tests/TestSuite_rx_split.py
-index 633ba0bf1e..5117a569e2 100644
---- a/dts/tests/TestSuite_rx_split.py
-+++ b/dts/tests/TestSuite_rx_split.py
-@@ -210,6 +210,30 @@ def expected(packet: bytes) -> bytes:
- 
-             self._start_and_verify(testpmd, expected)
- 
-+    @func_test
-+    def selective_rx_runtime_config(self) -> None:
-+        """Configure selective Rx at runtime after initial startup.
-+
-+        Steps:
-+            Start testpmd with two mbuf-size pools but no rxpkts/rxhdrs.
-+            Stop ports, configure buffer split offload, set rxpkts, restart ports.
-+            Send an Ether/IP/payload packet.
-+
-+        Verify:
-+            Initial startup succeeds without error.
-+            Received packet has Ether + IP headers only after runtime config.
-+            Port stats show expected rx_packets and rx_bytes.
-+        """
-+        with self._create_testpmd(
-+            mbuf_size=[512, 0],
-+        ) as testpmd:
-+            self._start_and_verify(testpmd)
-+            testpmd.stop()
-+            testpmd.stop_all_ports()
-+            testpmd.send_command("port config 0 rx_offload buffer_split on")
-+            testpmd.send_command(f"set rxpkts {ETHER_IP_HDR_LEN},0")
-+            self._start_and_verify(testpmd, ETHER_IP_HDR_LEN)
-+
-     @func_test
-     def selective_rx_no_offload(self) -> None:
-         """Configure selective Rx with buffer split disabled.
--- 
-2.54.0
 
