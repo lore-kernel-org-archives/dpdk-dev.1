@@ -2,58 +2,124 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F01CDB479
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 12:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05527CDB479
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 12:35:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B67340430;
-	Thu, 25 Jun 2026 14:32:51 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 455D540280
- for <dev@dpdk.org>; Thu, 25 Jun 2026 14:32:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782390768;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=WcK7BuqWcjyEZhVfUbfSzRTknQO1UKXCZ4cvB8mhve4=;
- b=Wsrsyc684zmVFCkNqenAvy6pXOqOHPHniAONvCicE7WQy++kTrQqnKZ1HZNoxfzURjztus
- MbnOoYz2MF5VV3M/jyQG5wu+yXxe2U7G5T6GR709rXyfW3n23nPRn4OhzDCvwKBF9Lq/mb
- NKJeLrha+iaZU5WwqOpgWzGpPHnoiKk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-463-C0-cob0iPiqC6HnbRJ2L6A-1; Thu,
- 25 Jun 2026 08:32:45 -0400
-X-MC-Unique: C0-cob0iPiqC6HnbRJ2L6A-1
-X-Mimecast-MFC-AGG-ID: C0-cob0iPiqC6HnbRJ2L6A_1782390764
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id F1AB5195F16B; Thu, 25 Jun 2026 12:32:43 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.48.202])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id EE79E3189; Thu, 25 Jun 2026 12:32:41 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: thomas@monjalon.net, Stephen Hemminger <stephen@networkplumber.org>,
- Aaron Conole <aconole@redhat.com>
-Subject: [PATCH v3] devtools: add Vertex AI to review scripts
-Date: Thu, 25 Jun 2026 14:32:36 +0200
-Message-ID: <20260625123237.832480-1-david.marchand@redhat.com>
-In-Reply-To: <20260601132402.1125588-1-david.marchand@redhat.com>
-References: <20260601132402.1125588-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DCC5F40430;
+	Thu, 25 Jun 2026 14:35:09 +0200 (CEST)
+Received: from PH0PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11011013.outbound.protection.outlook.com [40.107.208.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 879B040280
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 14:35:08 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jaFMOshFReXdqVkulsEjo8MlheIYkvzAHoGQupt9zpxTqhnunsnM1vMPjpMviUUZ+RzndnCYgRxsY66FVjaS0IxFf97I5Z4cJq6mghGO2N03o27K8WmdZQQ6nsv7zGi0nkLZkEydLsZ76HeaHKz5mDrvBTvXjSSHh/hDgmWsja60ZU5sl7jPZ//37ycyY0ug00vBlkvABhqnUh5VVASXxuTbev0JXPbcskBmmc/9/A7KAS/6ChqZxMO0DjJ+E2jfNAFXV6zIhffgABn0S/BqpSqRwlLTOFa7W0E4IPa7LASnHmLLpOuMskREwR+kbg62TqWD7sxvgdyWeBDuVOD06Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ainf9tDMaQCMnFLD1AUZq4a7Ag5mkum/8yxHdwmlBZk=;
+ b=WZy2iBZc3Zx7M2YJTgwXm02UCvFqNEPUMAPHJztHr7Hw9t7pHC+thLiEM58Wd8jHxJidodqTtTSHuSra2GpNOj32wSWOSLL1jgfSbux/C88k/oapCJnpPkiWNOWUlt/skzJrwM5K3rgZomQqzkqQkSN7SLseCvA7R2GKHOm9KlQJ3HXO8ur6evMHHQIjtRgjuEoMnj17uw2dn7pDsjjZFe7w0iS42yHhvRX1NyYhYBwWcQbpW9O06+uu/Jl9cAfKE7G1b0sXbVQITFEhNzbqxyAvAIjzGMQACMW5W+tzFHPuxLZm4icasfUibTxXvEc0woMitdoByxgTwEX2AhOADQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ainf9tDMaQCMnFLD1AUZq4a7Ag5mkum/8yxHdwmlBZk=;
+ b=fvTvuhKdhpleC/Cki2K06ijg/8XdiLOFdBItOVGVAjzpW2Mt5CtzzxHmYkqP3NndQOEpELcadheM/eQAWT/JhdYuPoVh6+/sXlMWE11++UQreBvci3z2V+pDXV1VaOtGWjnQWCnpaiZK4J06hnfZQTi8Sl1ac566PvldiJzcCstzPpwok7RpXoXn6SJQZquV6Y9v/7ykbHf/2DRFqDhWr5W03w6BFxH8uihJru+M6xJDaVXX2E0XjGEU3Zm+gGB/oSnnm28tSeYdAehgtiq+335t3VfIaN3O9UXS2lANk+HINrDl91Z+c4zSeCFrnmu9FjZ2Wa7YYb0PLRXzL7OX9Q==
+Received: from PH0PR12MB7077.namprd12.prod.outlook.com (2603:10b6:510:21d::7)
+ by IA0PR12MB8748.namprd12.prod.outlook.com (2603:10b6:208:482::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.14; Thu, 25 Jun
+ 2026 12:35:02 +0000
+Received: from PH0PR12MB7077.namprd12.prod.outlook.com
+ ([fe80::af33:9226:1e78:5033]) by PH0PR12MB7077.namprd12.prod.outlook.com
+ ([fe80::af33:9226:1e78:5033%5]) with mapi id 15.21.0159.016; Thu, 25 Jun 2026
+ 12:35:02 +0000
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: David Marchand <david.marchand@redhat.com>, Bruce Richardson
+ <bruce.richardson@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Yu Jiang <yux.jiang@intel.com>
+Subject: RE: [PATCH v2 2/4] build: support function versioning for drivers
+Thread-Topic: [PATCH v2 2/4] build: support function versioning for drivers
+Thread-Index: AQHdA9uCj7/85xa/pkmZQif+HeMCZbZO45KAgAAdDSA=
+Date: Thu, 25 Jun 2026 12:35:02 +0000
+Message-ID: <PH0PR12MB70776A69D0A4D78AFC3A33ACA4EC2@PH0PR12MB7077.namprd12.prod.outlook.com>
+References: <20260623113752.1100072-1-dsosnowski@nvidia.com>
+ <20260624131337.1127323-1-dsosnowski@nvidia.com>
+ <20260624131337.1127323-3-dsosnowski@nvidia.com>
+ <CAJFAV8xDOvg_DSLj8Ah1agTGSLxk1sn12_cw_7wbCv86J4KvUA@mail.gmail.com>
+In-Reply-To: <CAJFAV8xDOvg_DSLj8Ah1agTGSLxk1sn12_cw_7wbCv86J4KvUA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR12MB7077:EE_|IA0PR12MB8748:EE_
+x-ms-office365-filtering-correlation-id: 38943e55-da46-4afa-55be-08ded2b62d79
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|366016|23010399003|376014|38070700021|10062099007|18002099003|22082099003|4143699003|11063799006|56012099006;
+x-microsoft-antispam-message-info: wFsAu9fbVgD4RWeJtWLqX+cZlnCqtj3189OIRSpwxYH2eqSRikzm89QH+bf0EW0hVuXmDMD85r4CXm+tP48hYuFJuZRp7NooJZyzJrCRE+5LfOry4MUaSp89Fudn9q6uFx8y2eUVcxUU6KT/kavOUTfwLdZtS7z8DL21kPweLsnDSRGGShyy2z4wOC2HP9kWA7A2b2bhzUXqxNnbNMZo7QA1vSrJp2TIjeXn1lrCKRS+H+1UE9nWwVI9TVDkhiKhW8t9UBDErgvYhaorcTPLy3gQXF3pswJViqeN7V11Uv+IRGLHObqRv4zsWuDjY46Kz6mGBkLfPTW3Xek4b4uqp9Ofoz0QRdJoPaMs/YHsRL/J9yRHTuewEFBgYP04LmeUBbeIo8zlvj82c7fP5VTclJm9PNo36AhJCrUJDKM5qBB4INbqP3DJXZAf+z2WZ1hDnxbH/VgtEzddVeZO9z0zcHCfVsGaA+Phv9m2JS2UIsUV1y0SGTGkKDsr3Dwfn4fzvU9z2s+MXsoHueVRgSr0ahpb58XtutKujNJYVd9yhZbdOkrjDjDLTmcSk0nmGkgtS1DO9ucIv4NidnHqLh8cGhUzPKhaeVszlAwIvo4++LBC76/9hwPwT+xfNz/zAQoWR2zpwkN7n7dju2bh5mnvu1fz6S1HiFfziia3+Dme5Y/vfF6t3Z2S9y+ylI03jfbUBOAq9fZYayLC2nYcHK6ivKlGCH3TMws0gYmTvYAqHJI=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH0PR12MB7077.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(38070700021)(10062099007)(18002099003)(22082099003)(4143699003)(11063799006)(56012099006);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?S2FBaHF3WVhMODBoZEJsTTVkWUF4VFppUlBMN1IrTm8yUkNKSlVoY2Z1bjBt?=
+ =?utf-8?B?V2p2M2xMZDZaZFNXZUMxa0hITllWRjVraXVoQkhjbisvV3o1ZEFIUm9JamlZ?=
+ =?utf-8?B?VXJlclpWbWZvbUJDZmpzVEhSK1hWTVlUWkdJdTZVcUJ2NFhtRTNxVXJ0OGhQ?=
+ =?utf-8?B?M204blZITjRraEtTazlsQmlvQUFNT0szak1VbHg1SmJ2aTJVQ3RVY1htZVBD?=
+ =?utf-8?B?cGNlb3JxNE1TUThpQ052SllGS1JGbllUSkgwcnoycG84eHJzNFVadCsyWFhJ?=
+ =?utf-8?B?b3RFNklvQ0d4eUNCeFZ5cUtUVGRnMmFDU0oxZlJwOHJWaUEyUnF4RDlXVFJJ?=
+ =?utf-8?B?UXVzMXZCMWUvdHlBTGRsQWV3YmwwZXFjZkpENzF3d0I1bEo0akNlbld3azcv?=
+ =?utf-8?B?a1FxUldMcmV3QWx5NlVvcXFDMFkxRXBxUnZubzJXRmE0OHZqNVI0SFJOaDIw?=
+ =?utf-8?B?Wm5odzgvYXV4MVhhRk9EYXB2UGk0akQ2RnRqRDg1bmJreFFML3lVWlBzK0tk?=
+ =?utf-8?B?MWRQb0srRWxjQWlJVTlrSXovaVpBRTV2a1l2QkJUZkM4YTZZL3loQ1o1UXhv?=
+ =?utf-8?B?MytaTHpRRmU2WGc0MHRLRlhST2VhUStzN29ZTCtUbVZUL2krNTZycitNNlls?=
+ =?utf-8?B?cStyYWVkeXBMcjlmelhSanUwV3BSamJjYWVnbkZpc2pBeEluQTNQNTh6RHIy?=
+ =?utf-8?B?aXhXR3FOelk1OUhTZ2Z0YjBBb1pkeXhXRUV5MHhOUzJiM3hEM1lkNXVBUjI3?=
+ =?utf-8?B?M0xsUkdFQ1REYW1TS0xqeE82azhFMzRlaEVmQ1BsZ0IyZjV0MDVMelI1dVhN?=
+ =?utf-8?B?aEsyaGRFdENnNE1sb05ZRGl5YkxFd1VkMEpxZUF1dCtvcllac0VkeFo3dEk3?=
+ =?utf-8?B?d29TcGpUTGYzcGU0UXpCSXVRUXRJeEJBVm82L1dtU0s3WVBCMWFaU1RFanls?=
+ =?utf-8?B?M2lGV2RPOU5hOGFaVEhYaGdEdjJtSlhSZmR2YS9PdGlnWXFFbXhkeFVCdy9J?=
+ =?utf-8?B?SThucWlSQm0xK0VRU0RGc2pYcVk5UXpTbU9tcjlnem1ZNzlVNmdlUHlJajN3?=
+ =?utf-8?B?SWltUGJEeDJrOWFUR25kMTJ0M0FYL1NxbGtUMHQwT3ZlN25uRlNCeERMUEV5?=
+ =?utf-8?B?SEdiYWF5SnNiejd0aHh5TEpsRnBrWFZJZmM3clBJUkgrbmNMYk5UTWFpRVl1?=
+ =?utf-8?B?b2tDVVlXUEJqRlZ1S3EzaEFycE9IZUpUSk82ZU1CZDl3ZXhPRGkwdGI1K04z?=
+ =?utf-8?B?eW1qVUVtRlZ4eHhJUGV4cVBuYUhmektMdnoraklUdi9XSHNyeUVaOHV1U3VG?=
+ =?utf-8?B?dFpmdTNjRjZZOUNnZmlSZUtZOE5JR3hhYm9xYWphZE9vQUhDY1hzQlNkN1JF?=
+ =?utf-8?B?NTRkY2Z4MjVYWDA3cmVndXdMcERyN3NrVU9XWEJsN01pdVVKNlNQRGZoMUZm?=
+ =?utf-8?B?N2FteTVGRHp3bXpPSHBsaC9RVUhBMEJpRjlFemhieGd3dkJIQkxOMUlnai95?=
+ =?utf-8?B?MXVMRHd5SVlqQW1ZSnNSWHFVYTRqWklVMG5qcmEzQ3hyaENOK09WcTVhQW9U?=
+ =?utf-8?B?YlA2M0lOcEw2V1JCejJqeHJ6MjVsc0MvOUFJK2VVSVI0aWpudzN4cG5HTDdH?=
+ =?utf-8?B?MkZrdmN5dmhhVGNBL2VTZ3hwVEJYSzhzRmJhdm1oVjlWSmFnWDNMQ2cwc2Fk?=
+ =?utf-8?B?b1M0SzVZMEg3KzV1YUFNUndHZEZRcHMwbnVIVlhsaGZJVVBYaWEzVk9pakpV?=
+ =?utf-8?B?V2FXZk1NWm4zalFKSGJyaUU2RHNVZjZDTThBRXlZT3lyNHNaZVlSNmNPWEtY?=
+ =?utf-8?B?c1Fna3hCZVE3VGhrTWNxbXNOaEVERWZZKzBrNkt0WU1Mb0NTSkRYakk0U3Np?=
+ =?utf-8?B?a0FVWFJ5a2s0MlhuQ2Qwc2J6eFUrNGNTclZTN3N6YUpQbEpJN25Hd2NEeko0?=
+ =?utf-8?B?WVdiVTFJZVlJTUR4Q0RjbDFOaThMSkhUU3FUbThXbGRGYXJOZ0JXa1BrcDBn?=
+ =?utf-8?B?RUFlV3pIbmlVcVBlcXFibXhWTnJTKzg1UTg1L3grcytJMXZCRWpCeEQreFdO?=
+ =?utf-8?B?ZHFmVC8wK2ZGdy9lTkRpVFdWQndvMDkxVzN2SDE5czJmRnlNRFhlYno2NFhT?=
+ =?utf-8?B?V0h3RVM2ZXQxdVdHNVdCSlR1NWFiek9acW8yVVBqLzNKeHdkMURGWGVwc2lT?=
+ =?utf-8?B?dE51dUt0U296d1N2WlFGT1EzOEVCeHlBcGxmVDFTVHJORzZUN0VOVGVabkFG?=
+ =?utf-8?B?Y1ZZQ1c3ejZnS2kydWJKOUpFRXZ5WjRUTHBzWUtuUEt5ZTFNRURVdDVpWDM1?=
+ =?utf-8?Q?rCnZQ3zX7/pN1A6irO?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: fDY4fklvU-VqF9on5LVql5BMcLewp5e5m2AMD-hzwgw_1782390764
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7077.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38943e55-da46-4afa-55be-08ded2b62d79
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2026 12:35:02.1206 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7eeoBXsJMmJhKNJgFICzTdx9bo5eEWojY3zy7rEukRrs2MwjmPaY4n95b1omCfkZXfRqzB5FrOQCGdUsJrDC7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8748
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -67,676 +133,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for Google Vertex AI authentication as an alternative to
-direct API key authentication. All four providers (Anthropic, Google,
-OpenAI, xAI) can now use Vertex AI with Application Default Credentials.
-
-This requires a python dependency google-auth but it is left as
-optional.
-
-Key features:
-- Auto-detection of authentication method based on environment
-- Manual override via --auth flag (auto, direct, vertex)
-- Automatic model name translation for Vertex format
-- Support for both global and regional Vertex endpoints
-- Proper error handling for Vertex API responses
-
-Provider-specific implementations:
-- Anthropic: Uses /publishers/anthropic/models/{model}:rawPredict
-  with model name format claude-sonnet-4-5@20250929
-- Google: Uses /publishers/google/models/{model}:generateContent
-- OpenAI/xAI: Use /endpoints/openapi/chat/completions
-  with publisher prefix (e.g., openai/gpt-oss-120b-maas)
-
-Authentication detection logic:
-- Vertex: Requires google-auth library and ADC configured
-- Direct: Falls back to API key from environment variables
-
-Available models on Vertex AI:
-- Anthropic: All Claude models
-- Google: All Gemini models
-- OpenAI: gpt-oss-120b-maas, gpt-oss-20b-maas (open-weight only)
-- xAI: grok-4.20-*, grok-4.1-fast-* variants
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
-Note: I only tested Vertex.
-I have no API key to double check the "direct" method is still working.
-
-Changes since v2:
-- added --auth to compare-patch-reviews.sh,
-- fixed too long lines,
-- moved project validation to get_vertex_credentials(),
-- fixed various AI complaints on exception handling,
-
-Changes since v1:
-- factorized auth string generation,
-- enhanced -l option (offlist comment from Maxime),
-- fixed some pylint warnings introduced by changes,
-
----
- devtools/ai/_common.py               | 217 ++++++++++++++++++++++++---
- devtools/ai/compare-patch-reviews.sh |  22 ++-
- devtools/ai/review-doc.py            |  26 ++--
- devtools/ai/review-patch.py          |  30 ++--
- 4 files changed, 245 insertions(+), 50 deletions(-)
-
-diff --git a/devtools/ai/_common.py b/devtools/ai/_common.py
-index 69982cbda5..07a0411aaf 100644
---- a/devtools/ai/_common.py
-+++ b/devtools/ai/_common.py
-@@ -6,6 +6,7 @@
- 
- import argparse
- import json
-+import os
- import subprocess
- import sys
- from dataclasses import dataclass
-@@ -13,6 +14,15 @@
- from urllib.error import HTTPError, URLError
- from urllib.request import Request, urlopen
- 
-+# Optional dependency for Vertex AI
-+try:
-+    from google.auth import default as google_auth_default
-+    from google.auth.exceptions import GoogleAuthError
-+    from google.auth.transport.requests import Request as GoogleAuthRequest
-+    VERTEX_AI_AVAILABLE = True
-+except ImportError:
-+    VERTEX_AI_AVAILABLE = False
-+
- # Provider configurations (model defaults; override with --model).
- PROVIDERS: dict[str, dict[str, str]] = {
-     "anthropic": {
-@@ -65,10 +75,14 @@ def get_git_config(key: str) -> str | None:
- def list_providers() -> NoReturn:
-     """Print available providers and exit."""
-     print("Available AI Providers:\n")
--    print(f"{'Provider':<12} {'Default Model':<30} {'API Key Variable'}")
--    print(f"{'--------':<12} {'-------------':<30} {'----------------'}")
-+    print(f"{'Provider':<12} {'Default Model':<30} {'API Key (Direct Auth)'}")
-+    print(f"{'--------':<12} {'-------------':<30} {'---------------------'}")
-     for name, config in PROVIDERS.items():
-         print(f"{name:<12} {config['default_model']:<30} {config['env_var']}")
-+    if VERTEX_AI_AVAILABLE:
-+        print("\nVertex AI authentication is available (use --auth vertex)")
-+    else:
-+        print("\nVertex AI authentication requires: pip install google-auth")
-     sys.exit(0)
- 
- 
-@@ -128,25 +142,174 @@ def print_token_summary(
-     print(format_token_summary(usage, provider, model), file=sys.stderr)
- 
- 
-+def get_vertex_credentials() -> tuple[str, str]:
-+    """Get Google Cloud access token and project for Vertex AI.
-+
-+    Uses Application Default Credentials (ADC).
-+    Requires: gcloud auth application-default login
-+
-+    Returns: (access_token, project_id)
-+    """
-+    credentials, project = google_auth_default()
-+
-+    # Refresh credentials to get access token
-+    auth_request = GoogleAuthRequest()
-+    credentials.refresh(auth_request)
-+
-+    project = (os.environ.get("GOOGLE_CLOUD_PROJECT")
-+               or os.environ.get("GCP_PROJECT")
-+               or project)
-+
-+    if not project:
-+        error("Could not detect GCP project. "
-+              "Set GOOGLE_CLOUD_PROJECT environment variable "
-+              "or run: gcloud config set project PROJECT_ID")
-+
-+    return credentials.token, project
-+
-+
-+def model_to_vertex(model: str, provider: str) -> str:
-+    """Convert model name to Vertex AI format.
-+
-+    Anthropic models use @ for version dates:
-+    - API format: claude-sonnet-4-5-20250929
-+    - Vertex format: claude-sonnet-4-5@20250929
-+
-+    OpenAI/xAI models need publisher prefix:
-+    - Vertex requires: openai/gpt-oss-120b-maas
-+
-+    Other providers use the same format for both.
-+    """
-+    if provider == "anthropic":
-+        # Match pattern: ends with -YYYYMMDD (8 digits)
-+        if model.count('-') >= 3:
-+            parts = model.rsplit('-', 1)
-+            if len(parts) == 2 and len(parts[1]) == 8 and parts[1].isdigit():
-+                return f"{parts[0]}@{parts[1]}"
-+    elif provider in ("openai", "xai"):
-+        # Add publisher prefix if not already present
-+        if "/" not in model:
-+            return f"{provider}/{model}"
-+    return model
-+
-+
-+def detect_auth_method(provider: str) -> str:
-+    """Detect authentication method for a provider.
-+
-+    Args:
-+        provider: The provider name (e.g., "anthropic", "openai")
-+
-+    Returns:
-+        "direct" or "vertex"
-+    """
-+    env_var = PROVIDERS[provider]["env_var"]
-+    if os.environ.get(env_var):
-+        return "direct"
-+    if VERTEX_AI_AVAILABLE:
-+        try:
-+            credentials, project = google_auth_default()
-+            if credentials and project:
-+                return "vertex"
-+        except GoogleAuthError:
-+            pass
-+    return "direct"
-+
-+
-+def get_auth_string(auth_choice: str, provider: str) -> str:
-+    """Get authentication string for API requests.
-+
-+    Args:
-+        auth_choice: User's auth choice ("auto", "direct", or "vertex")
-+        provider: Provider name
-+
-+    Returns:
-+        Authentication string - either "vertex" or "direct:<api_key>"
-+    """
-+    config = PROVIDERS[provider]
-+
-+    # Determine actual auth method
-+    if auth_choice == "auto":
-+        auth_method = detect_auth_method(provider)
-+    else:
-+        auth_method = auth_choice
-+
-+    # Build auth string based on method
-+    if auth_method == "vertex":
-+        if not VERTEX_AI_AVAILABLE:
-+            error("Vertex AI support requires 'google-auth' library. "
-+                  "Install with: pip install google-auth")
-+        return "vertex"
-+
-+    api_key = os.environ.get(config["env_var"])
-+    if not api_key:
-+        error(f"{config['env_var']} environment variable not set")
-+    return f"direct:{api_key}"
-+
-+
- def _build_request_meta(
--    provider: str, api_key: str, model: str
--) -> tuple[str, dict[str, str]]:
--    """Return (url, headers) for a provider request."""
-+    provider: str, auth: str, model: str, request_data: dict[str, Any]
-+) -> tuple[str, dict[str, str], dict[str, Any]]:
-+    """Return (url, headers, request_data) for a provider request.
-+
-+    Args:
-+        provider: Provider name
-+        auth: Authentication string - either "direct:<api_key>" or "vertex"
-+        model: Model identifier
-+        request_data: The request payload (may be modified for Vertex)
-+
-+    Returns:
-+        Tuple of (url, headers, modified_request_data)
-+    """
-     config = PROVIDERS[provider]
--    if provider == "anthropic":
-+
-+    if auth.startswith("direct:"):
-+        api_key = auth[7:]
-+        if provider == "anthropic":
-+            request_data["model"] = model
-+            return config["endpoint"], {
-+                "Content-Type": "application/json",
-+                "x-api-key": api_key,
-+                "anthropic-version": "2023-06-01",
-+            }, request_data
-+        if provider == "google":
-+            url = f"{config['endpoint']}/{model}:generateContent?key={api_key}"
-+            return url, {"Content-Type": "application/json"}, request_data
-+        # openai, xai
-+        request_data["model"] = model
-         return config["endpoint"], {
-             "Content-Type": "application/json",
--            "x-api-key": api_key,
--            "anthropic-version": "2023-06-01",
--        }
--    if provider == "google":
--        url = f"{config['endpoint']}/{model}:generateContent?key={api_key}"
--        return url, {"Content-Type": "application/json"}
--    # openai, xai
--    return config["endpoint"], {
-+            "Authorization": f"Bearer {api_key}",
-+        }, request_data
-+
-+    # Vertex AI authentication
-+    if auth != "vertex":
-+        error(f"Invalid auth format: {auth}")
-+
-+    access_token, project_id = get_vertex_credentials()
-+    location = os.environ.get("CLOUD_ML_REGION", "global")
-+
-+    if location == "global":
-+        vertex_base = "https://aiplatform.googleapis.com"
-+    else:
-+        vertex_base = f"https://{location}-aiplatform.googleapis.com"
-+    vertex_base += f"/v1/projects/{project_id}/locations/{location}"
-+
-+    headers = {
-         "Content-Type": "application/json",
--        "Authorization": f"Bearer {api_key}",
-+        "Authorization": f"Bearer {access_token}",
-     }
-+    vertex_model = model_to_vertex(model, provider)
-+
-+    if provider == "anthropic":
-+        request_data["anthropic_version"] = "vertex-2023-10-16"
-+        url = f"{vertex_base}/publishers/anthropic/models/{vertex_model}:rawPredict"
-+    elif provider == "google":
-+        url = f"{vertex_base}/publishers/google/models/{vertex_model}:generateContent"
-+    else:  # openai, xai
-+        request_data["model"] = vertex_model
-+        url = f"{vertex_base}/endpoints/openapi/chat/completions"
-+
-+    return url, headers, request_data
- 
- 
- def _extract_usage(provider: str, result: dict[str, Any]) -> TokenUsage:
-@@ -208,7 +371,7 @@ def _print_verbose_usage(usage: TokenUsage) -> None:
- 
- def send_request(
-     provider: str,
--    api_key: str,
-+    auth: str,
-     model: str,
-     request_data: dict[str, Any],
-     *,
-@@ -220,8 +383,19 @@ def send_request(
-     The caller assembles the provider-specific request body via its own
-     build_*_request helpers (the prompts differ per script). This function
-     handles transport, error reporting, and token-usage extraction.
-+
-+    Args:
-+        provider: Provider name (anthropic, openai, xai, google)
-+        auth: Authentication string - either "direct:<api_key>" or "vertex"
-+        model: Model identifier
-+        request_data: Provider-specific request payload
-+        timeout: Request timeout in seconds
-+        verbose: Show detailed token usage
-+
-+    Returns:
-+        Tuple of (response_text, token_usage)
-     """
--    url, headers = _build_request_meta(provider, api_key, model)
-+    url, headers, request_data = _build_request_meta(provider, auth, model, request_data)
-     body = json.dumps(request_data).encode("utf-8")
-     req = Request(url, data=body, headers=headers)
- 
-@@ -232,13 +406,20 @@ def send_request(
-         error_body = e.read().decode("utf-8")
-         try:
-             error_data = json.loads(error_body)
--            error(f"API error: {error_data.get('error', error_body)}")
-+            if isinstance(error_data, list) and error_data:
-+                error_data = error_data[0]
-+            if isinstance(error_data, dict):
-+                error(f"API error: {error_data.get('error', error_body)}")
-+            else:
-+                error(f"API error: {error_body}")
-         except json.JSONDecodeError:
-             error(f"API error ({e.code}): {error_body}")
-     except URLError as e:
-         if isinstance(e.reason, TimeoutError):
-             error(f"Request timed out after {timeout} seconds")
-         error(f"Connection error: {e.reason}")
-+    except TimeoutError:
-+        error(f"Request timed out after {timeout} seconds")
- 
-     usage = _extract_usage(provider, result)
-     if verbose:
-diff --git a/devtools/ai/compare-patch-reviews.sh b/devtools/ai/compare-patch-reviews.sh
-index a1686f4cc7..edf784fba0 100755
---- a/devtools/ai/compare-patch-reviews.sh
-+++ b/devtools/ai/compare-patch-reviews.sh
-@@ -14,6 +14,7 @@ OUTPUT_DIR=""
- PROVIDERS=""
- FORMAT="text"
- VERBOSE=""
-+AUTH=""
- EXTRA_ARGS=()
- 
- usage() {
-@@ -37,12 +38,14 @@ Options:
-     --large-file MODE      Handle large files: error, truncate, chunk,
-                            commits-only, summary
-     --max-tokens N         Max input tokens
-+    --auth METHOD          Authentication: auto, direct, vertex (default: auto)
-     -v, --verbose          Show verbose output from each provider
-     -h, --help             Show this help message
- 
--Environment Variables:
--    Set API keys for providers you want to use:
--    ANTHROPIC_API_KEY, OPENAI_API_KEY, XAI_API_KEY, GOOGLE_API_KEY
-+Authentication:
-+    Direct: Set API keys for providers you want to use:
-+        ANTHROPIC_API_KEY, OPENAI_API_KEY, XAI_API_KEY, GOOGLE_API_KEY
-+    Vertex AI: Use --auth vertex with Google Cloud credentials
- 
- Examples:
-     $(basename "$0") my-patch.patch
-@@ -149,6 +152,11 @@ while [[ $# -gt 0 ]]; do
-             EXTRA_ARGS+=("--max-tokens" "$2")
-             shift 2
-             ;;
-+        --auth)
-+            [[ -z "${2:-}" || "$2" == -* ]] && error "$1 requires an argument"
-+            AUTH="$2"
-+            shift 2
-+            ;;
-         -v|--verbose)
-             VERBOSE="-v"
-             shift
-@@ -193,7 +201,11 @@ esac
- 
- # Get providers to use
- if [[ -z "$PROVIDERS" ]]; then
--    PROVIDERS=$(get_available_providers)
-+    if [[ "$AUTH" == "vertex" ]]; then
-+        PROVIDERS="anthropic,openai,xai,google"
-+    else
-+        PROVIDERS=$(get_available_providers)
-+    fi
- fi
- 
- if [[ -z "$PROVIDERS" ]]; then
-@@ -241,6 +253,7 @@ for provider in "${PROVIDER_LIST[@]}"; do
-             -a "$AGENTS_FILE" \
-             -f "$FORMAT" \
-             ${VERBOSE:+"$VERBOSE"} \
-+            ${AUTH:+--auth "$AUTH"} \
-             "${EXTRA_ARGS[@]}" \
-             "$PATCH_FILE" | tee "$OUTPUT_FILE"
-         rc=${PIPESTATUS[0]}
-@@ -250,6 +263,7 @@ for provider in "${PROVIDER_LIST[@]}"; do
-             -a "$AGENTS_FILE" \
-             -f "$FORMAT" \
-             ${VERBOSE:+"$VERBOSE"} \
-+            ${AUTH:+--auth "$AUTH"} \
-             "${EXTRA_ARGS[@]}" \
-             "$PATCH_FILE"
-         rc=$?
-diff --git a/devtools/ai/review-doc.py b/devtools/ai/review-doc.py
-index 24e70ae06b..e01be077fe 100755
---- a/devtools/ai/review-doc.py
-+++ b/devtools/ai/review-doc.py
-@@ -27,6 +27,7 @@
-     TokenUsage,
-     add_token_args,
-     error,
-+    get_auth_string,
-     get_git_config,
-     list_providers,
-     print_token_summary,
-@@ -259,7 +260,6 @@ def build_user_prompt(
- 
- 
- def build_anthropic_request(
--    model: str,
-     max_tokens: int,
-     agents_content: str,
-     doc_content: str,
-@@ -273,7 +273,6 @@ def build_anthropic_request(
-         doc_file, commit_prefix, output_format, include_diff_markers
-     )
-     return {
--        "model": model,
-         "max_tokens": max_tokens,
-         "system": [
-             {"type": "text", "text": SYSTEM_PROMPT},
-@@ -293,7 +292,6 @@ def build_anthropic_request(
- 
- 
- def build_openai_request(
--    model: str,
-     max_tokens: int,
-     agents_content: str,
-     doc_content: str,
-@@ -307,7 +305,6 @@ def build_openai_request(
-         doc_file, commit_prefix, output_format, include_diff_markers
-     )
-     return {
--        "model": model,
-         "max_tokens": max_tokens,
-         "messages": [
-             {"role": "system", "content": SYSTEM_PROMPT},
-@@ -352,7 +349,7 @@ def build_google_request(
- 
- def call_api(
-     provider: str,
--    api_key: str,
-+    auth: str,
-     model: str,
-     max_tokens: int,
-     agents_content: str,
-@@ -367,7 +364,6 @@ def call_api(
-     """Build the per-provider request body and dispatch via _common."""
-     if provider == "anthropic":
-         request_data = build_anthropic_request(
--            model,
-             max_tokens,
-             agents_content,
-             doc_content,
-@@ -388,7 +384,6 @@ def call_api(
-         )
-     else:  # openai, xai
-         request_data = build_openai_request(
--            model,
-             max_tokens,
-             agents_content,
-             doc_content,
-@@ -399,7 +394,7 @@ def call_api(
-         )
-     return send_request(
-         provider,
--        api_key,
-+        auth,
-         model,
-         request_data,
-         timeout=timeout,
-@@ -631,6 +626,12 @@ def main() -> None:
-         help="Show API request details",
-     )
-     add_token_args(parser)
-+    parser.add_argument(
-+        "--auth",
-+        choices=["auto", "direct", "vertex"],
-+        default="auto",
-+        help="Authentication method: auto (default), direct (API key), vertex (Google Cloud)",
-+    )
-     parser.add_argument(
-         "-q",
-         "--quiet",
-@@ -709,10 +710,8 @@ def main() -> None:
-     config = PROVIDERS[args.provider]
-     model = args.model or config["default_model"]
- 
--    # Get API key
--    api_key = os.environ.get(config["env_var"])
--    if not api_key:
--        error(f"{config['env_var']} environment variable not set")
-+    # Get authentication string
-+    auth = get_auth_string(args.auth, args.provider)
- 
-     # Validate files
-     agents_path = Path(args.agents)
-@@ -783,6 +782,7 @@ def main() -> None:
-         if args.verbose:
-             print("=== Request ===", file=sys.stderr)
-             print(f"Provider: {args.provider}", file=sys.stderr)
-+            print(f"Auth method: {'vertex' if auth == 'vertex' else 'direct'}", file=sys.stderr)
-             print(f"Model: {model}", file=sys.stderr)
-             print(f"Output format: {args.output_format}", file=sys.stderr)
-             print(f"AGENTS file: {args.agents}", file=sys.stderr)
-@@ -800,7 +800,7 @@ def main() -> None:
-         # Call API
-         review_text, call_usage = call_api(
-             args.provider,
--            api_key,
-+            auth,
-             model,
-             args.tokens,
-             agents_content,
-diff --git a/devtools/ai/review-patch.py b/devtools/ai/review-patch.py
-index 52601ac156..9ac227000e 100755
---- a/devtools/ai/review-patch.py
-+++ b/devtools/ai/review-patch.py
-@@ -25,6 +25,7 @@
-     TokenUsage,
-     add_token_args,
-     error,
-+    get_auth_string,
-     get_git_config,
-     list_providers,
-     print_token_summary,
-@@ -460,7 +461,6 @@ def build_system_prompt(review_date: str, release: str | None) -> str:
- 
- 
- def build_anthropic_request(
--    model: str,
-     max_tokens: int,
-     system_prompt: str,
-     agents_content: str,
-@@ -474,7 +474,6 @@ def build_anthropic_request(
-         patch_name=patch_name, format_instruction=format_instruction
-     )
-     return {
--        "model": model,
-         "max_tokens": max_tokens,
-         "system": [
-             {"type": "text", "text": system_prompt},
-@@ -494,7 +493,6 @@ def build_anthropic_request(
- 
- 
- def build_openai_request(
--    model: str,
-     max_tokens: int,
-     system_prompt: str,
-     agents_content: str,
-@@ -508,7 +506,6 @@ def build_openai_request(
-         patch_name=patch_name, format_instruction=format_instruction
-     )
-     return {
--        "model": model,
-         "max_tokens": max_tokens,
-         "messages": [
-             {"role": "system", "content": system_prompt},
-@@ -553,7 +550,7 @@ def build_google_request(
- 
- def call_api(
-     provider: str,
--    api_key: str,
-+    auth: str,
-     model: str,
-     max_tokens: int,
-     system_prompt: str,
-@@ -567,7 +564,6 @@ def call_api(
-     """Build the per-provider request body and dispatch via _common."""
-     if provider == "anthropic":
-         request_data = build_anthropic_request(
--            model,
-             max_tokens,
-             system_prompt,
-             agents_content,
-@@ -586,7 +582,6 @@ def call_api(
-         )
-     else:  # openai, xai
-         request_data = build_openai_request(
--            model,
-             max_tokens,
-             system_prompt,
-             agents_content,
-@@ -596,7 +591,7 @@ def call_api(
-         )
-     return send_request(
-         provider,
--        api_key,
-+        auth,
-         model,
-         request_data,
-         timeout=timeout,
-@@ -813,6 +808,12 @@ def main() -> None:
-         help="Show API request details",
-     )
-     add_token_args(parser)
-+    parser.add_argument(
-+        "--auth",
-+        choices=["auto", "direct", "vertex"],
-+        default="auto",
-+        help="Authentication method: auto (default), direct (API key), vertex (Google Cloud)",
-+    )
-     parser.add_argument(
-         "-f",
-         "--format",
-@@ -930,10 +931,8 @@ def main() -> None:
-     config = PROVIDERS[args.provider]
-     model = args.model or config["default_model"]
- 
--    # Get API key
--    api_key = os.environ.get(config["env_var"])
--    if not api_key:
--        error(f"{config['env_var']} environment variable not set")
-+    # Get authentication string
-+    auth = get_auth_string(args.auth, args.provider)
- 
-     # Validate files
-     agents_path = Path(args.agents)
-@@ -1041,7 +1040,7 @@ def main() -> None:
- 
-                 review_text, call_usage = call_api(
-                     args.provider,
--                    api_key,
-+                    auth,
-                     model,
-                     args.tokens,
-                     system_prompt,
-@@ -1111,7 +1110,7 @@ def main() -> None:
- 
-                 review_text, call_usage = call_api(
-                     args.provider,
--                    api_key,
-+                    auth,
-                     model,
-                     args.tokens,
-                     system_prompt,
-@@ -1136,6 +1135,7 @@ def main() -> None:
-     if args.verbose:
-         print("=== Request ===", file=sys.stderr)
-         print(f"Provider: {args.provider}", file=sys.stderr)
-+        print(f"Auth method: {'vertex' if auth == 'vertex' else 'direct'}", file=sys.stderr)
-         print(f"Model: {model}", file=sys.stderr)
-         print(f"Review date: {review_date}", file=sys.stderr)
-         if args.release:
-@@ -1164,7 +1164,7 @@ def main() -> None:
-     if estimated_tokens > 0:  # Not already processed
-         review_text, call_usage = call_api(
-             args.provider,
--            api_key,
-+            auth,
-             model,
-             args.tokens,
-             system_prompt,
--- 
-2.54.0
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRGF2aWQgTWFyY2hhbmQg
+PGRhdmlkLm1hcmNoYW5kQHJlZGhhdC5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDI1LCAy
+MDI2IDk6MzkgQU0NCj4gVG86IERhcml1c3ogU29zbm93c2tpIDxkc29zbm93c2tpQG52aWRpYS5j
+b20+OyBCcnVjZSBSaWNoYXJkc29uDQo+IDxicnVjZS5yaWNoYXJkc29uQGludGVsLmNvbT4NCj4g
+Q2M6IGRldkBkcGRrLm9yZzsgWXUgSmlhbmcgPHl1eC5qaWFuZ0BpbnRlbC5jb20+DQo+IFN1Ympl
+Y3Q6IFJlOiBbUEFUQ0ggdjIgMi80XSBidWlsZDogc3VwcG9ydCBmdW5jdGlvbiB2ZXJzaW9uaW5n
+IGZvciBkcml2ZXJzDQo+IA0KPiBFeHRlcm5hbCBlbWFpbDogVXNlIGNhdXRpb24gb3BlbmluZyBs
+aW5rcyBvciBhdHRhY2htZW50cw0KPiANCj4gDQo+IE9uIFdlZCwgMjQgSnVuIDIwMjYgYXQgMTU6
+MTUsIERhcml1c3ogU29zbm93c2tpIDxkc29zbm93c2tpQG52aWRpYS5jb20+DQo+IHdyb3RlOg0K
+PiA+DQo+ID4gQWRkIHN1cHBvcnQgZm9yIGVuYWJsaW5nIGZ1bmN0aW9uIHZlcnNpb25pbmcgKHRo
+cm91Z2gNCj4gPiB1c2VfZnVuY3Rpb25fdmVyc2lvbmluZyBtZXNvbiB2YXJpYWJsZSkgZm9yIGRy
+aXZlcnMsIHNpbWlsYXIgdG8NCj4gPiBsaWJyYXJpZXMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5
+OiBEYXJpdXN6IFNvc25vd3NraSA8ZHNvc25vd3NraUBudmlkaWEuY29tPg0KPiA+IC0tLQ0KPiA+
+ICBkcml2ZXJzL21lc29uLmJ1aWxkIHwgOCArKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwg
+OCBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZXNvbi5idWls
+ZCBiL2RyaXZlcnMvbWVzb24uYnVpbGQgaW5kZXgNCj4gPiA0ZDk1NjA0ZWNkLi5hNjNkOTMzNzJh
+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbWVzb24uYnVpbGQNCj4gPiArKysgYi9kcml2ZXJz
+L21lc29uLmJ1aWxkDQo+ID4gQEAgLTE3MSw2ICsxNzEsNyBAQCBmb3JlYWNoIHN1YnBhdGg6c3Vi
+ZGlycw0KPiA+ICAgICAgICAgIHBrZ2NvbmZpZ19leHRyYV9saWJzID0gW10NCj4gPiAgICAgICAg
+ICB0ZXN0cG1kX3NvdXJjZXMgPSBbXQ0KPiA+ICAgICAgICAgIHJlcXVpcmVfaW92YV9pbl9tYnVm
+ID0gdHJ1ZQ0KPiA+ICsgICAgICAgIHVzZV9mdW5jdGlvbl92ZXJzaW9uaW5nID0gZmFsc2UNCj4g
+PiAgICAgICAgICAjIGZvciBoYW5kbGluZyBiYXNlIGNvZGUgZmlsZXMgd2hpY2ggbWF5IG5lZWQg
+ZXh0cmEgY2ZsYWdzDQo+ID4gICAgICAgICAgYmFzZV9zb3VyY2VzID0gW10NCj4gPiAgICAgICAg
+ICBiYXNlX2NmbGFncyA9IFtdDQo+ID4gQEAgLTI3Myw2ICsyNzQsMTMgQEAgZm9yZWFjaCBzdWJw
+YXRoOnN1YmRpcnMNCj4gPiAgICAgICAgICBlbmRpZg0KPiA+ICAgICAgICAgIGRwZGtfY29uZi5z
+ZXQobGliX25hbWUudG9fdXBwZXIoKSwgMSkNCj4gPg0KPiA+ICsgICAgICAgIGlmIGRldmVsb3Bl
+cl9tb2RlIGFuZCBpc193aW5kb3dzIGFuZCB1c2VfZnVuY3Rpb25fdmVyc2lvbmluZw0KPiA+ICsg
+ICAgICAgICAgICBtZXNzYWdlKCdAMEA6IEZ1bmN0aW9uIHZlcnNpb25pbmcgaXMgbm90IHN1cHBv
+cnRlZCBieQ0KPiBXaW5kb3dzLicuZm9ybWF0KG5hbWUpKQ0KPiA+ICsgICAgICAgIGVuZGlmDQo+
+ID4gKyAgICAgICAgaWYgdXNlX2Z1bmN0aW9uX3ZlcnNpb25pbmcNCj4gPiArICAgICAgICAgICAg
+Y2ZsYWdzICs9ICctRFJURV9VU0VfRlVOQ1RJT05fVkVSU0lPTklORycNCj4gPiArICAgICAgICBl
+bmRpZg0KPiA+ICsNCj4gPiAgICAgICAgICBkcGRrX2V4dHJhX2xkZmxhZ3MgKz0gcGtnY29uZmln
+X2V4dHJhX2xpYnMNCj4gPg0KPiA+ICAgICAgICAgIGRwZGtfaGVhZGVycyArPSBoZWFkZXJzDQo+
+IA0KPiBEb24ndCB3ZSBuZWVkIHRvIGJ1aWxkIHdpdGggUlRFX0JVSUxEX1NIQVJFRF9MSUIgZm9y
+IHRoZSBzaGFyZWQgbGlicmFyeQ0KPiBvYmplY3RzPw0KDQpDb3JyZWN0LCBpdCBpcyBuZWVkZWQu
+IEknbGwgdXBkYXRlIGluIHYzLg0KDQpCZXN0IHJlZ2FyZHMsDQpEYXJpdXN6IFNvc25vd3NraQ0K
