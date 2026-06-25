@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D07B1CDE000
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 17:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE745CDE000
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 17:32:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37EFC4042F;
-	Thu, 25 Jun 2026 19:32:41 +0200 (CEST)
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
- [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id 07165402E1
- for <dev@dpdk.org>; Thu, 25 Jun 2026 19:32:36 +0200 (CEST)
-Received: by mail-dy1-f179.google.com with SMTP id
- 5a478bee46e88-30c6836fea9so881192eec.1
- for <dev@dpdk.org>; Thu, 25 Jun 2026 10:32:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6E71E40651;
+	Thu, 25 Jun 2026 19:32:47 +0200 (CEST)
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+ by mails.dpdk.org (Postfix) with ESMTP id B7A0440651
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 19:32:37 +0200 (CEST)
+Received: by mail-dl1-f42.google.com with SMTP id
+ a92af1059eb24-139a5f4ca15so150349c88.1
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 10:32:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782408756;
- x=1783013556; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782408757;
+ x=1783013557; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=zuo8WfWDTaZ8UjGSGfkg4+5VDcRGKlAj0SZ4VJ0wdnU=;
- b=ycdrV664WevGgF/MtuHal7ouYpUL4pvIhNO/dF9BE8s4RmjRFBqgD5nu/VnQEuaw5O
- /lRiQms+252pkcId2YvK3XCAuLYer0W09wOk4BrEo3DGFFgyPve2+mqyjxHgrpcBSgwb
- SbeodzwrtIRaBqBOND+Kn1284l/fDc0/X/+vU1SYq52Pb4n/elTRd7ccMm5uCzNt1SyY
- 4iIipW8XY/T6fhr/9htt0MKoR1vC1hxOKK5Ct+ulzXZSdncZLiLFopfRk4/CnhjQHkz5
- fOlcIsHEIsl8ts4KL/YWl2meu8iBuA1XeD2iu+YPvL8kqPAT2G59wY8mCkohZz+uAIj4
- kWeQ==
+ bh=mAThRL6TTvmjP8V+IxMMZv1yOjoqt4suLh6BDU3qx3U=;
+ b=toPANQNGubJfUZFCPyOAYkoBBhthMZluT3vyketrB7fNqrlM0aGzkhpKkYkT0dC4PQ
+ YvL7YUkeqDzj6u2dViPBcryN/pX72wetTgIftXtCnzgWXODaXkQuLsE9XTIUHvJ6ZaSt
+ R4FNtEHm47jLufX9FOciSfz0aT+z81bQIXz0wBJsSkQ+yMcp6Mn0I9CG9/Aa02dtep1s
+ OPjX+wzpJigW9BKPFQYKKiWdF9+HGo++hTWoADvrIn0gWjjBRGar4jG6+gwVGcHZEivK
+ lRQwGDOhVaPFTkLZ3J+encl/6zxrNJO9L5G3mvKp4UD7iffa6ENYjUZsaS8Ma85vcldO
+ 3rbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782408756; x=1783013556;
+ d=1e100.net; s=20251104; t=1782408757; x=1783013557;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=zuo8WfWDTaZ8UjGSGfkg4+5VDcRGKlAj0SZ4VJ0wdnU=;
- b=nuiJ9ugR8o2s0IwttppqMUoiEKlRoLALw/6raiU1mckz/HC9MItxdD1XEJwenieqaX
- S3i38DKNzwEdO9HmR4VpPRcbErmBK5swOClZLjVzOVIFc7O+pgnt/btSmdVCqFDZHkvd
- U+YxzcPlLe8Z4wlCB++QPmhviRp7/deq7Xcyf7OSUS898T+VbAAJq8nHUBt8l18JIKGK
- KNJS8cYaAerwtk0By9N991jn6z/CtkUUqY0dya93EN4TuVW9aN1uCq+KWj0mCAIRAEly
- jEdnyNZT9VFOIQq5LiEVdEDlq4y6wGy0yt4cuStU+dsRlC1adHaHvD0gawdC1bZ/DV2N
- 0OtA==
-X-Gm-Message-State: AOJu0Yy2sBWN20GiJf73fGbilJw1LiXFeoV0bW1gHTPsk2iw7ZCa6HIg
- +m5QfPtQNxjao1bLWANHq2Q+bmbhNsZ+tA2zFQoufFSwvQpwnLjShtewKTMHd/obQfANK8UFiaM
- u34Gb
-X-Gm-Gg: AfdE7cn7O/g7m7wLflnVNqTZkuV6IdgNXokDd4b9+ziVyrHGE4grwph7VzL5Jy/aCFT
- 4RWaY/WTrreahROhM7jHTVslzC+CoM1XyBpPGW5fpX9CHKxuFvl8kF7MTKWnlL7dZxujy68CGx7
- 6SgDy0bD+Pcl4S0/QMaDXxwZL2fQ2fKGbEWrknaAXP7CIQqBSzZFantIVGDUrTdmJ+eKOA5GcVw
- 4FZlz9h8+9M6OkNPn4hPA5GKFTILkvIVEUCwLSJz8mZP23H1zH8dA6Nld/S5z6sMDJ4WtvyoM2r
- fSzhWblFKwkh0kx1ojJr9X7dufh22u308PRcFJVGIgLeOkYI12UZ9hINpaEcHJSGSb6FlR1ojrm
- HZ8pd8z58B04wn6DS031B/Q2pFirReevdCqDc56lgW+PeAhIYtx9kPS/KGRY3dxhWILUvFB5LOf
- xAELOqhU+UA87Eo9ompqJBIJDTjK7la5E5P/MIxQZ4vKAEXKQGF/inVlF9MiiUJw==
-X-Received: by 2002:a05:7022:6612:b0:123:3c24:b15 with SMTP id
- a92af1059eb24-139c3cdd5femr8918523c88.19.1782408755670; 
- Thu, 25 Jun 2026 10:32:35 -0700 (PDT)
+ bh=mAThRL6TTvmjP8V+IxMMZv1yOjoqt4suLh6BDU3qx3U=;
+ b=h84ltyHZvn7iTfwPPwjNcKylUzslle6DzkMTB0UzoXLZKKlwUtXtF3sMTzg4Wl4VGn
+ CN/jf9hs1hVldfsHolhFX3hNrp2+k2dNCOsCHTV5o57Wiq9icBpLZ83aqhyDJnfPoNLn
+ hFjLEwVpLg4n/6MKM4qcWA792Ez6Zltl8se9ZhGnUh/PHSTm6B8h3kChks54YdQr81iq
+ VGv/jFwqd9Lv3eh5lVC8a1Xe/DQQ2faxJtjVALYW77EWbBJtSYiLfRZl729uc/dxqGmn
+ /uQKFWpV+nnIByYq+k37qmPbSaHaX7hGw6Q5IXnzWj1BgEp/JBPgvOxCKITUGo0wR32T
+ pmWQ==
+X-Gm-Message-State: AOJu0Yz5PZqafBc2DSCZbBjMiESh0tSAui2EamdUcS55XYMJtWKdHfDt
+ X7yxOYzHISk4KbX8jKtq9DZhH8xfslurpV9EdbPw9wDJ0MQGeFWAxPnH2n3BPdOY8qy+Ft+Hfrg
+ mP337
+X-Gm-Gg: AfdE7ckVEXxXnhdduCJhjCH4szgBLBdrv2Fpdaj9rDk66ygeX9hVPFB9ik8JXNdCrqU
+ OIUTDhTd34xPCeq8C9f3/i5VvU2PG1womISpItg28APWQ9as2f7V+MWuu4rwLA3NIafVJP6LYt/
+ vlb0rcOgdfSmU/sKntqm1PLoRMbPe2TFpZostWyCyXNaXuTh1HY/M00BMqTbFQeRIXg+jRbmI/v
+ jkALPMebf8hFHTLEfnTlL8MPwZhxcQCXrAu4rv05h1z5h4ig+mH78I/MupojahUToYr++d/dKbZ
+ al1x+Jc4PNOF6+hGEyXA3N/aLFEWgWitoq/LxXDNmwWjXYMzLdSuUDoB0yp/8PnwLQgyei5R3pl
+ E0vABJtWeO3+9NYY43o6X7b59ypQMG0WMlWU6u45UEaVz1o4o7e7gLuCDOF7O9oOrd2OZPQB6Px
+ ccu6VRFJ43cHoqSSg7iRzkhAelV/B23JEXE895GTCW7UbaTtF8iBs=
+X-Received: by 2002:a05:7022:788:b0:136:c443:80e5 with SMTP id
+ a92af1059eb24-139db9f6888mr3215479c88.6.1782408756778; 
+ Thu, 25 Jun 2026 10:32:36 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-139d8f6acf9sm10218165c88.6.2026.06.25.10.32.34
+ a92af1059eb24-139d8f6acf9sm10218165c88.6.2026.06.25.10.32.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 25 Jun 2026 10:32:35 -0700 (PDT)
+ Thu, 25 Jun 2026 10:32:36 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
  Marat Khalili <marat.khalili@huawei.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v6 2/9] test/bpf: add JSET test with small immediate
-Date: Thu, 25 Jun 2026 10:30:12 -0700
-Message-ID: <20260625173231.216074-3-stephen@networkplumber.org>
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v6 3/9] bpf: mask shift count in interpreter per RFC 9669
+Date: Thu, 25 Jun 2026 10:30:13 -0700
+Message-ID: <20260625173231.216074-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260625173231.216074-1-stephen@networkplumber.org>
 References: <20260608203322.1116296-1-stephen@networkplumber.org>
@@ -83,111 +84,109 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The existing jump test only used a 32-bit JSET mask,
-so the broken imm8 encoding of TEST in the x86 JIT was never exercised.
-Add a case with a byte-sized mask;
-run_test() runs it through the interpreter and the JIT.
+The interpreter shifted by the raw immediate or register value, which
+is undefined behavior in C when the count is >= the operand width and
+trips UBSan. RFC 9669 masks shift counts (0x3f for 64-bit, 0x1f for
+32-bit); mask the count in the LSH/RSH/ARSH cases.
+
+Fixes: 94972f35a02e ("bpf: add BPF loading and execution framework")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- app/test/test_bpf.c | 82 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ lib/bpf/bpf_exec.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
 
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index 6b07e72295..232e9e2a98 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -3158,7 +3158,89 @@ static const struct ebpf_insn test_ld_mbuf3_prog[] = {
- };
+diff --git a/lib/bpf/bpf_exec.c b/lib/bpf/bpf_exec.c
+index d423ef28f5..bb03c9cc2c 100644
+--- a/lib/bpf/bpf_exec.c
++++ b/lib/bpf/bpf_exec.c
+@@ -4,6 +4,7 @@
  
- /* all bpf test cases */
-+/*
-+ * JSET with a byte-sized mask: exercises the imm8 path of the TEST
-+ * encoding in the x86 JIT (a 32-bit mask takes a different path).
-+ */
-+static const struct ebpf_insn test_jset1_prog[] = {
-+	{
-+		.code = (BPF_ALU | EBPF_MOV | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 0,
-+	},
-+	{
-+		.code = (BPF_LDX | BPF_MEM | BPF_B),
-+		.dst_reg = EBPF_REG_2,
-+		.src_reg = EBPF_REG_1,
-+		.off = offsetof(struct dummy_offset, u8),
-+	},
-+	/* bit 0 is set in the input: branch is taken */
-+	{
-+		.code = (BPF_JMP | BPF_JSET | BPF_K),
-+		.dst_reg = EBPF_REG_2,
-+		.imm = 0x1,
-+		.off = 1,
-+	},
-+	{
-+		.code = (BPF_JMP | BPF_JA),
-+		.off = 1,
-+	},
-+	{
-+		.code = (EBPF_ALU64 | BPF_OR | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 0x1,
-+	},
-+	/* bit 1 is clear in the input: branch is not taken */
-+	{
-+		.code = (BPF_JMP | BPF_JSET | BPF_K),
-+		.dst_reg = EBPF_REG_2,
-+		.imm = 0x2,
-+		.off = 1,
-+	},
-+	{
-+		.code = (BPF_JMP | BPF_JA),
-+		.off = 1,
-+	},
-+	{
-+		.code = (EBPF_ALU64 | BPF_OR | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 0x2,
-+	},
-+	{
-+		.code = (BPF_JMP | EBPF_EXIT),
-+	},
-+};
+ #include <stdio.h>
+ #include <stdint.h>
++#include <limits.h>
+ 
+ #include <eal_export.h>
+ #include <rte_common.h>
+@@ -43,6 +44,16 @@
+ 	((reg)[(ins)->dst_reg] = \
+ 		(type)(reg)[(ins)->dst_reg] op (type)(ins)->imm)
+ 
++#define BPF_OP_SHIFT_IMM(reg, ins, op, type)	\
++	((reg)[(ins)->dst_reg] =		\
++		(type)(reg)[(ins)->dst_reg] op	\
++		((ins)->imm & (sizeof(type) * CHAR_BIT - 1)))
 +
-+static void
-+test_jset1_prepare(void *arg)
-+{
-+	struct dummy_offset *df = arg;
++#define BPF_OP_SHIFT_REG(reg, ins, op, type)	\
++	((reg)[(ins)->dst_reg] =		\
++		(type)(reg)[(ins)->dst_reg] op	\
++		((reg)[(ins)->src_reg] & (sizeof(type) * CHAR_BIT - 1)))
 +
-+	memset(df, 0, sizeof(*df));
-+	df->u8 = 0x1;	/* bit 0 set, bit 1 clear */
-+}
-+
-+static int
-+test_jset1_check(uint64_t rc, const void *arg)
-+{
-+	return cmp_res(__func__, 0x1, rc, arg, arg, 0);
-+}
-+
- static const struct bpf_test tests[] = {
-+	{
-+		.name = "test_jset1",
-+		.arg_sz = sizeof(struct dummy_offset),
-+		.prm = {
-+			.ins = test_jset1_prog,
-+			.nb_ins = RTE_DIM(test_jset1_prog),
-+			.prog_arg = {
-+				.type = RTE_BPF_ARG_PTR,
-+				.size = sizeof(struct dummy_offset),
-+			},
-+		},
-+		.prepare = test_jset1_prepare,
-+		.check_result = test_jset1_check,
-+	},
- 	{
- 		.name = "test_store1",
- 		.arg_sz = sizeof(struct dummy_offset),
+ #define BPF_DIV_ZERO_CHECK(bpf, reg, ins, type) do { \
+ 	if ((type)(reg)[(ins)->src_reg] == 0) { \
+ 		RTE_BPF_LOG_LINE(ERR, \
+@@ -183,10 +194,10 @@ bpf_exec(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM])
+ 			BPF_OP_ALU_IMM(reg, ins, |, uint32_t);
+ 			break;
+ 		case (BPF_ALU | BPF_LSH | BPF_K):
+-			BPF_OP_ALU_IMM(reg, ins, <<, uint32_t);
++			BPF_OP_SHIFT_IMM(reg, ins, <<, uint32_t);
+ 			break;
+ 		case (BPF_ALU | BPF_RSH | BPF_K):
+-			BPF_OP_ALU_IMM(reg, ins, >>, uint32_t);
++			BPF_OP_SHIFT_IMM(reg, ins, >>, uint32_t);
+ 			break;
+ 		case (BPF_ALU | BPF_XOR | BPF_K):
+ 			BPF_OP_ALU_IMM(reg, ins, ^, uint32_t);
+@@ -217,10 +228,10 @@ bpf_exec(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM])
+ 			BPF_OP_ALU_REG(reg, ins, |, uint32_t);
+ 			break;
+ 		case (BPF_ALU | BPF_LSH | BPF_X):
+-			BPF_OP_ALU_REG(reg, ins, <<, uint32_t);
++			BPF_OP_SHIFT_REG(reg, ins, <<, uint32_t);
+ 			break;
+ 		case (BPF_ALU | BPF_RSH | BPF_X):
+-			BPF_OP_ALU_REG(reg, ins, >>, uint32_t);
++			BPF_OP_SHIFT_REG(reg, ins, >>, uint32_t);
+ 			break;
+ 		case (BPF_ALU | BPF_XOR | BPF_X):
+ 			BPF_OP_ALU_REG(reg, ins, ^, uint32_t);
+@@ -262,13 +273,13 @@ bpf_exec(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM])
+ 			BPF_OP_ALU_IMM(reg, ins, |, uint64_t);
+ 			break;
+ 		case (EBPF_ALU64 | BPF_LSH | BPF_K):
+-			BPF_OP_ALU_IMM(reg, ins, <<, uint64_t);
++			BPF_OP_SHIFT_IMM(reg, ins, <<, uint64_t);
+ 			break;
+ 		case (EBPF_ALU64 | BPF_RSH | BPF_K):
+-			BPF_OP_ALU_IMM(reg, ins, >>, uint64_t);
++			BPF_OP_SHIFT_IMM(reg, ins, >>, uint64_t);
+ 			break;
+ 		case (EBPF_ALU64 | EBPF_ARSH | BPF_K):
+-			BPF_OP_ALU_IMM(reg, ins, >>, int64_t);
++			BPF_OP_SHIFT_IMM(reg, ins, >>, int64_t);
+ 			break;
+ 		case (EBPF_ALU64 | BPF_XOR | BPF_K):
+ 			BPF_OP_ALU_IMM(reg, ins, ^, uint64_t);
+@@ -299,13 +310,13 @@ bpf_exec(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM])
+ 			BPF_OP_ALU_REG(reg, ins, |, uint64_t);
+ 			break;
+ 		case (EBPF_ALU64 | BPF_LSH | BPF_X):
+-			BPF_OP_ALU_REG(reg, ins, <<, uint64_t);
++			BPF_OP_SHIFT_REG(reg, ins, <<, uint64_t);
+ 			break;
+ 		case (EBPF_ALU64 | BPF_RSH | BPF_X):
+-			BPF_OP_ALU_REG(reg, ins, >>, uint64_t);
++			BPF_OP_SHIFT_REG(reg, ins, >>, uint64_t);
+ 			break;
+ 		case (EBPF_ALU64 | EBPF_ARSH | BPF_X):
+-			BPF_OP_ALU_REG(reg, ins, >>, int64_t);
++			BPF_OP_SHIFT_REG(reg, ins, >>, int64_t);
+ 			break;
+ 		case (EBPF_ALU64 | BPF_XOR | BPF_X):
+ 			BPF_OP_ALU_REG(reg, ins, ^, uint64_t);
 -- 
 2.53.0
 
