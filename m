@@ -2,71 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ACACDE00C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 22:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B8DCDE00C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 22:50:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 961D840278;
-	Fri, 26 Jun 2026 00:42:10 +0200 (CEST)
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
- [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id 0FDF140272
- for <dev@dpdk.org>; Fri, 26 Jun 2026 00:42:08 +0200 (CEST)
-Received: by mail-dy1-f181.google.com with SMTP id
- 5a478bee46e88-30c713f37c2so1317885eec.0
- for <dev@dpdk.org>; Thu, 25 Jun 2026 15:42:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0FED140278;
+	Fri, 26 Jun 2026 00:50:42 +0200 (CEST)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
+ [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 8FB9040272
+ for <dev@dpdk.org>; Fri, 26 Jun 2026 00:50:40 +0200 (CEST)
+Received: by mail-dy1-f174.google.com with SMTP id
+ 5a478bee46e88-30c591fb1cbso592599eec.1
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 15:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782427328;
- x=1783032128; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782427839;
+ x=1783032639; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=RyZhPCLaJ1ibm/OqCC4Sss4TusNQJoM/B/hDQRZpW+U=;
- b=zBvAJq5/qLPv5Vpd3g+Cu7AbWZpgNfgtPUzDwm9drJnRnnwhQ8vucsvvN1+3t2EpKX
- hr++DUJ55u+veVtyRvpFlt0CKFUhcUZFb/AdOORW56KqGXMU4WfstmYyvMEoZ9ytdwap
- 6DAm6CW7d1PTUMPztbG7HCDMYpHUGSmXpEWyFUIvadEOIT3Ey7TU0q7iD3KQKDF4FuLC
- PhhWwkRNYctnCyq0Ix/5AQh78or7pfh96lFPr1CA9jZz42gHV7hJCPQb3QKHXhMGoeVm
- 4tFAc4hvOXolDK4qxWKkqtzsjM8JXsQIddb/2p8gS65XaN/pG5eW0xEdcjnvmS9IeBHt
- s1OA==
+ bh=MfSGkt5a4RLH3W0czr21jZH/XnhQjlKAy4tY3MHhJOU=;
+ b=sTuYC2IO5xoAO9NxO+N3pItpAYHg7AkcBLGgfMFaS8rXrszUoRpuzF0sBadQWQhUNF
+ rYY+WLUGhWEo0X4mT8P2t0+UxYmgo2OvcKm29vD0Ik4A+Z/4A64pPpy5lFnxOWzAa+8y
+ 5sL3PXGde3cUi/NcyF5poJWzKvB2ualg9okaKwKbNGAMp5HdOsjfjyJaI+OBJqvqKb8j
+ Z6UFs3MTvejS8Dsowz5/gfqS9/6rcCG1eJxWwz8xaUaXdCcs4b1dhdIIIwRHmZl3v+oo
+ q4SUCcu/Zyqjm9pWKtz2WW9AN/C8hE+QwFsvopCaF/wW2u7hqjjRo+S7w5bDAINDMie2
+ l5gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782427328; x=1783032128;
+ d=1e100.net; s=20251104; t=1782427839; x=1783032639;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=RyZhPCLaJ1ibm/OqCC4Sss4TusNQJoM/B/hDQRZpW+U=;
- b=adC031An6IA5cN/04rYkfJMHkAl9tQa3wKqN9AhgZazIC+1Dnm9UVvjWt7o0flnyyQ
- ABKbF9oQ/sy5bLOtm7yd95P+FhX+zHsj4//PAODel1GkxDuWQaC2OMP8KtitqrpbRWg3
- 5hqj4fvs408o/4AcD3jod/5/wUN5BrfGbOiW5zaHPaLrgGqV8lKJZiJG0ONBnaF2xdp2
- 1PsKDCLp/EqPkwOJgHS+mItP/7TyBbL1v8lE828lxdsj0Qx/Cwj7InP2Ad9CttfA+TFx
- cXiHIF9FAiGRutOAwcdQoI/HabPX0eXHQLnD4wuUc/nwy5oIZcCBY9RvIeTdsfhiyh3k
- u5nw==
-X-Gm-Message-State: AOJu0YwRPGj4WtKsT+o+pBS1bQr8CNDAWmQbBkGe/fEg5lSiimwvSFkV
- /+izA9ijNQwRp0Pk9ma/wUi6206QdhzmHnMVdn78PkUeDiqIVxEirx51WYjVNewrE2c=
-X-Gm-Gg: AfdE7clS14D6RTKiwg0SuNB0NrbgygliUD8Lhdfamq2yclQQOgYiuBCyAf5jXP7Gv20
- ZfMjCeEHp2zv9DsGE+7/mC1HaHv1mHPvEb7Zv0UywSXCsCfitfuVslJLMODga7Z9gJRSTvEZVDR
- Cdo7AutF9u4yCdTI5AYU724eo/HL//2v74457wN2k5gLVneAgWxaDRx8scltGyO6ryTFJCaMAFA
- Vdq6mSOU3RdBSO7U3mVnE9KaSaXEOhD4qwqWpZSA59p9Z8v7bmf7hvrGJLVU4BTnnVANDv5mhB/
- S/5GfxgKYBYVYUcCCJ8pNWlWkRD8kc7nDGc7JrQtBUenbg+XGqyXZyqkDIJP2GoBcLdMX0OfGOT
- zJA5z7JwUNtb3L9gHvUlnHJnujixYf3dSTrfpPPGOSD5Brl9xzmo9Oqjtn5jVI3z8Bc42ppGr0a
- WAQq21vsXSXVurJZPoy2id4LUcRrgsESul8nfIbT0CGPbx1PE1aGh8uw==
-X-Received: by 2002:a05:7300:8191:b0:304:ddc3:2c35 with SMTP id
- 5a478bee46e88-30c85a603a0mr4175783eec.10.1782427327749; 
- Thu, 25 Jun 2026 15:42:07 -0700 (PDT)
+ bh=MfSGkt5a4RLH3W0czr21jZH/XnhQjlKAy4tY3MHhJOU=;
+ b=kVbUJtYvHqZT1O3LlBKKPHRYcGnXm1mnSbtkW/ScpB6qKmr+e+dwXshOHKhvGAxoVy
+ kG2GXHDscopmQUMnR7FYoHpNf7CUMASo5N8ZrTvD5rpxbSakEo1Mf4LyO9vF665wYbtV
+ Vc/VlKc/9q2MMn+l0rAnYjY1bze2GRLj7fqSdFjFj3/m7xwvZS5hy7o5ueYi+shVnRKb
+ sG5atU3llhm9Zc2a0Qm5a+h9zqYAAslXIJdzROvwwki5XCQENbOwTbMjov8HkP2G8vJt
+ oO7nGv3aCPhPsH4GJAZmSywU2ttPK1CE+/dSHeUamOK1re/JnMKIZj4q1UECG8ZVzifb
+ qvsA==
+X-Gm-Message-State: AOJu0YzBinc+kscDEH8O1QZZuM3AzdvrY/f1EFVwcvBIS85tsc61sqAY
+ 5fYCqEBoES1qvrQxadLpcBZeFucbeWY/v3kFE32HiOYQ42rEht6CPGrvL6b+MokZT/ZGf45lvgO
+ unZtN
+X-Gm-Gg: AfdE7ckMyn5Jtb3UH55ABwFYNqEJa+Ubw5Lyig3K6HFZ6fcnwbGqhv+VNRaqO3RyXKC
+ feh0UKQSiz3FQZvxoHKEd4XFR2MgkLONEkbo/sYDqBRDehnqm82dMzAuICrQpTnCb/lYWgil1kW
+ ynFE67EmkNuGnH/ygH4jW9zaKHkVQaon9noYG6uOoeMq3t0pRehYe5tZ4TkAQ1R61IQwqs2P0MV
+ 1YpKpyvjw7wW48g/a7hmOCyPRI11o3yq1vAp0wt8c7aLN2llerdiB9Yt9gqnGNtQHEVPGiZjuTG
+ X6EyRye6N7o1oTiKkG7r9xnlr76/N7FrqPppWS0elsH6BJAMYVNzZ2Btpt3VRREBrFkk3yuEBnC
+ FcCmAUzqzRYcmr6I0fcxU4FyObRYhuWWfbrLoW3H/Mm/TTd9OBwIzeqApdBIlBa43XmE7wQl+vP
+ 4XIzMjhHb6NzJStIgrYEmqitPJNzABug11VsLAerzFSmB0PMT3nkn+Ew==
+X-Received: by 2002:a05:7300:7b8a:b0:2ea:4228:ab11 with SMTP id
+ 5a478bee46e88-30c84b1df71mr3960240eec.3.1782427839243; 
+ Thu, 25 Jun 2026 15:50:39 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30c7c8b1a75sm11391345eec.19.2026.06.25.15.42.07
+ 5a478bee46e88-30c7c4c9dafsm15156505eec.1.2026.06.25.15.50.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 25 Jun 2026 15:42:07 -0700 (PDT)
-Date: Thu, 25 Jun 2026 15:42:03 -0700
+ Thu, 25 Jun 2026 15:50:39 -0700 (PDT)
+Date: Thu, 25 Jun 2026 15:50:36 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Junlong Wang <wang.junlong1@zte.com.cn>
+To: liujie5@linkdatatechnology.com
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v8 0/4] net/zxdh: optimize Rx/Tx path performance
-Message-ID: <20260625154203.1d16769b@phoenix.local>
-In-Reply-To: <20260625120317.211780-1-wang.junlong1@zte.com.cn>
-References: <20260623060909.97023-1-wang.junlong1@zte.com.cn>
- <20260625120317.211780-1-wang.junlong1@zte.com.cn>
+Subject: Re: [PATCH v8 00/23] net/sxe2: added Linkdata sxe2 ethernet driver
+Message-ID: <20260625155036.25f856aa@phoenix.local>
+In-Reply-To: <20260625131936.205040-1-liujie5@linkdatatechnology.com>
+References: <20260625055021.63243-1-liujie5@linkdatatechnology.com>
+ <20260625131936.205040-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,229 +81,250 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 25 Jun 2026 20:03:12 +0800
-Junlong Wang <wang.junlong1@zte.com.cn> wrote:
+On Thu, 25 Jun 2026 21:19:36 +0800
+liujie5@linkdatatechnology.com wrote:
 
+> From: Jie Liu <liujie5@linkdatatechnology.com>
+> 
+> This patch set implements core functionality for the SXE2 PMD,
+> including basic driver framework, data path setup, and advanced
+> offload features (VLAN, RSS,TM, PTP etc.).
+> 
 > v8:
->   - Add checked the size of ZXDH_DL_NET_HDR_SIZE and RTE_PKTMBUF_HEADROOM=
- in
->     zxdh_xmit_pkts_simple() before submitting. Add static_assert to rejec=
-t builds with insufficient
->     default headroom at compile time.
->=20
-> v7:
->   - Add a new xmit prepare func for xmit_pkts_simple, which will checked =
-the size of
->     ZXDH_DL_NET_HDR_SIZE and RTE_PKTMBUF_HEADROOM.
->=20
-> v6:
->   - Remove unnecessary error checking code in submit_to_backend_simple() =
-and
->     pkt_padding(). Since as the max dl_net_hdr_len is always less than
->     RTE_PKTMBUF_HEADROOM, rte_pktmbuf_prepend() cannot fail in the
->     simple path (single-segment mbufs).
-> v5:
->   - Reorganize patch series, placing interrupt fix as the first patch
->     and fix condition check to properly enable interrupts.
->   - Fix zxdh_recv_single_pkts() not compacting rcv_pkts[] on failure,
->     which could cause use-after-free and mbuf leak.
->   - Fix tx_bunch() and tx1() missing store barrier before setting AVAIL f=
-lag,
->     preventing data race on weakly-ordered architectures.
->   - Fix submit_to_backend_simple() writing descriptors for packets that
->     failed pkt_padding(), causing mbuf leak.
-> v4:
->   - fix some AI review issues.
->   - fix queue enable intr bug.
-> v3:
->   - remove unnecessary NULL check in zxdh_init_queue.
->   - Split Ring: Bit[31] is unused and reserved, zxdh_queue_notify(): remo=
-ving the
->     zxdh_pci_with_feature(hw, ZXDH_F_RING_PACKED) check;
->   - remove unnecessary double-free in in zxdh_recv_single_pkts();
->   - used rte_pktmbuf_mtod();
->   - remove rxq_get_vq(q) macro, use q->vq and apply it consistently;
->   - Refactoring scatter and mtu check logic in zxdh_dev_mtu_set();
->   - set txdp->id =3D avail_idx + i in tx_bunch/tx1.
->   - add comment documenting zxdh_xmit_enqueue_append() now sets dxp->cook=
-ie =3D NULL for
->     the head slot and stores cookies per descriptor via dep[idx].cookie.
->   - add one-line comment noting tx_bunch() is the simple path handles sin=
-gle-segment.
->   - remove unnecessary Extra initialization and the uint32_t cast.
-> v2:
->   - zxdh_rxtx.c, pkt_padding(): modifyed the return value of pkt_padding(=
-);
->   - zxdh_rxtx.c, zxdh_recv_single_pkts(): modifyed When zxdh_init_mbuf() =
-fails
->     the loop does "continue" and free mbufs;
->   - zxdh_rxtx.c, refill_desc_unwrap(): Add rte_io_wmb() before writing fl=
-ags
->     in the refill_que_descs();
->   - zxdh_queue.h, zxdh_queue_enable_intr(): Remove unnecessary function o=
-f zxdh_queue_enable_intr;
->   - zxdh_ethdev.c, zxdh_init_queue(): changed the hdr_mz NULL check logic;
->   - zxdh_rxtx.c, zxdh_xmit_pkts_simple()=E3=80=81zxdh_recv_single_pkts():=
- add stats.bytes count;
->   - zxdh_rxtx.c, zxdh_init_mbuf():remove  rte_pktmbuf_dump(stdout, rxm, 4=
-0);
->   - zxdh_ethdev.c, zxdh_dev_free_mbufs(): using rte_pktmbuf_free() to fre=
-e mbufs;
->   - Splitting into separate patches, structure reorganization and sw_ring=
- removal=E3=80=81
->     RX recv optimize=E3=80=81Tx xmit optimize=E3=80=81Tx;
-> v1:
->   This patch optimizes the ZXDH PMD's receive and transmit path for better
->   performance through several improvements:
-> - Add simple TX/RX burst functions (zxdh_xmit_pkts_simple and
->   zxdh_recv_single_pkts) for single-segment packet scenarios.
-> - Remove RX software ring (sw_ring) to reduce memory allocation and
->   copy.
-> - Optimize descriptor management with prefetching and simplified
->   cleanup.
-> - Reorganize structure fields for better cache locality.
->=20
->   These changes reduce CPU cycles and memory bandwidth consumption,
->   resulting in improved packet processing throughput.
->=20
-> Junlong Wang (4):
->   net/zxdh: fix queue enable intr issues
->   net/zxdh: optimize queue structure to improve performance
->   net/zxdh: optimize Rx recv pkts performance
->   net/zxdh: optimize Tx xmit pkts performance
->=20
->  drivers/net/zxdh/zxdh_ethdev.c     |  83 ++--
->  drivers/net/zxdh/zxdh_ethdev_ops.c |  23 +-
->  drivers/net/zxdh/zxdh_ethdev_ops.h |   4 +
->  drivers/net/zxdh/zxdh_pci.c        |   2 +-
->  drivers/net/zxdh/zxdh_queue.c      |  11 +-
->  drivers/net/zxdh/zxdh_queue.h      | 122 +++---
->  drivers/net/zxdh/zxdh_rxtx.c       | 591 +++++++++++++++++++++++------
->  drivers/net/zxdh/zxdh_rxtx.h       |  29 +-
->  8 files changed, 604 insertions(+), 261 deletions(-)
->=20
+> 	Restore the flow-duplicate-pattern parameter
+> 
+> Jie Liu (23):
+>   net/sxe2: remove software statistics devargs
+>   net/sxe2: add Rx framework and packet types callback
+>   net/sxe2: support AVX512 vectorized path for Rx and Tx
+>   net/sxe2: add AVX2 vector data path for Rx and Tx
+>   net/sxe2: add link update callback
+>   net/sxe2: support L2 filtering and MAC config
+>   drivers: support RSS feature
+>   net/sxe2: support TM hierarchy and shaping
+>   net/sxe2: support IPsec inline protocol offload
+>   net/sxe2: support statistics and multi-process
+>   drivers: interrupt handling
+>   net/sxe2: add NEON vec Rx/Tx burst functions
+>   drivers: add support for VF representors
+>   net/sxe2: add support for custom UDP tunnel ports
+>   net/sxe2: support firmware version reading
+>   net/sxe2: implement get monitor address
+>   common/sxe2: add shared SFP module definitions
+>   net/sxe2: support SFP module info and EEPROM access
+>   net/sxe2: add mbuf validation in Tx debug mode
+>   common/sxe2: add callback for memory event handling
+>   net/sxe2: add private devargs parsing
+>   net/sxe2: implement private dump info
+>   net/sxe2: update sxe2 feature matrix docs
+> 
+>  doc/guides/nics/features/sxe2.ini          |   56 +
+>  doc/guides/nics/sxe2.rst                   |  168 ++
+>  drivers/common/sxe2/sxe2_common.c          |  156 ++
+>  drivers/common/sxe2/sxe2_common.h          |    4 +
+>  drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
+>  drivers/common/sxe2/sxe2_ioctl_chnl.c      |  178 +-
+>  drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
+>  drivers/common/sxe2/sxe2_msg.h             |  118 ++
+>  drivers/net/sxe2/meson.build               |   52 +
+>  drivers/net/sxe2/sxe2_cmd_chnl.c           | 1587 +++++++++++++++-
+>  drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
+>  drivers/net/sxe2/sxe2_drv_cmd.h            |  523 +++++-
+>  drivers/net/sxe2/sxe2_dump.c               |  287 +++
+>  drivers/net/sxe2/sxe2_dump.h               |   12 +
+>  drivers/net/sxe2/sxe2_ethdev.c             | 1486 ++++++++++++++-
+>  drivers/net/sxe2/sxe2_ethdev.h             |  111 +-
+>  drivers/net/sxe2/sxe2_ethdev_repr.c        |  609 ++++++
+>  drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
+>  drivers/net/sxe2/sxe2_filter.c             |  895 +++++++++
+>  drivers/net/sxe2/sxe2_filter.h             |  100 +
+>  drivers/net/sxe2/sxe2_flow.c               | 1394 ++++++++++++++
+>  drivers/net/sxe2/sxe2_flow.h               |   30 +
+>  drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
+>  drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
+>  drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
+>  drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
+>  drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
+>  drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 +++++++++++++++++++
+>  drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
+>  drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
+>  drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
+>  drivers/net/sxe2/sxe2_irq.c                | 1026 ++++++++++
+>  drivers/net/sxe2/sxe2_irq.h                |   25 +
+>  drivers/net/sxe2/sxe2_mac.c                |  530 ++++++
+>  drivers/net/sxe2/sxe2_mac.h                |   84 +
+>  drivers/net/sxe2/sxe2_mp.c                 |  414 +++++
+>  drivers/net/sxe2/sxe2_mp.h                 |   67 +
+>  drivers/net/sxe2/sxe2_queue.c              |   17 +-
+>  drivers/net/sxe2/sxe2_queue.h              |   15 +-
+>  drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
+>  drivers/net/sxe2/sxe2_rss.h                |   81 +
+>  drivers/net/sxe2/sxe2_rx.c                 |   93 +-
+>  drivers/net/sxe2/sxe2_rx.h                 |    2 +
+>  drivers/net/sxe2/sxe2_security.c           |  335 ++++
+>  drivers/net/sxe2/sxe2_security.h           |   77 +
+>  drivers/net/sxe2/sxe2_stats.c              |  586 ++++++
+>  drivers/net/sxe2/sxe2_stats.h              |   39 +
+>  drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
+>  drivers/net/sxe2/sxe2_switchdev.h          |   33 +
+>  drivers/net/sxe2/sxe2_tm.c                 | 1151 ++++++++++++
+>  drivers/net/sxe2/sxe2_tm.h                 |   76 +
+>  drivers/net/sxe2/sxe2_tx.c                 |    7 +
+>  drivers/net/sxe2/sxe2_txrx.c               | 1958 +++++++++++++++++++-
+>  drivers/net/sxe2/sxe2_txrx.h               |    8 +
+>  drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
+>  drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
+>  drivers/net/sxe2/sxe2_txrx_poll.c          |  284 ++-
+>  drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
+>  drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
+>  drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  747 ++++++++
+>  drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  867 +++++++++
+>  drivers/net/sxe2/sxe2_txrx_vec_common.h    |   54 +-
+>  drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  689 +++++++
+>  drivers/net/sxe2/sxe2_txrx_vec_sse.c       |   38 +-
+>  drivers/net/sxe2/sxe2_vsi.c                |  146 ++
+>  drivers/net/sxe2/sxe2_vsi.h                |   12 +-
+>  drivers/net/sxe2/sxe2vf_regs.h             |   85 +
+>  67 files changed, 24762 insertions(+), 273 deletions(-)
+>  create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
+>  create mode 100644 drivers/common/sxe2/sxe2_msg.h
+>  create mode 100644 drivers/net/sxe2/sxe2_dump.c
+>  create mode 100644 drivers/net/sxe2/sxe2_dump.h
+>  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
+>  create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
+>  create mode 100644 drivers/net/sxe2/sxe2_filter.c
+>  create mode 100644 drivers/net/sxe2/sxe2_filter.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow.c
+>  create mode 100644 drivers/net/sxe2/sxe2_flow.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
+>  create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
+>  create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
+>  create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
+>  create mode 100644 drivers/net/sxe2/sxe2_irq.c
+>  create mode 100644 drivers/net/sxe2/sxe2_mac.c
+>  create mode 100644 drivers/net/sxe2/sxe2_mac.h
+>  create mode 100644 drivers/net/sxe2/sxe2_mp.c
+>  create mode 100644 drivers/net/sxe2/sxe2_mp.h
+>  create mode 100644 drivers/net/sxe2/sxe2_rss.c
+>  create mode 100644 drivers/net/sxe2/sxe2_rss.h
+>  create mode 100644 drivers/net/sxe2/sxe2_security.c
+>  create mode 100644 drivers/net/sxe2/sxe2_security.h
+>  create mode 100644 drivers/net/sxe2/sxe2_stats.c
+>  create mode 100644 drivers/net/sxe2/sxe2_stats.h
+>  create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
+>  create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
+>  create mode 100644 drivers/net/sxe2/sxe2_tm.c
+>  create mode 100644 drivers/net/sxe2/sxe2_tm.h
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+>  create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
+>  create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
 
-AI spotted one bug but it under valued how serious the issue is.
-AI also gave bad advice about this earlier. Here is my analysis
-followed by buggy AI review, then what it said after I pointed out
-its mistake. Sorry, I need to not trust AI; its good until it isn't
+Overall this is close, I don't think the flow duplicate flag you
+added matches mlx5 as close as you think. Adding a new variant makes
+sense, but try to keep original values matching other driver.
+My intent here is to have drivers diverge as little as possible;
+it makes it simpler for real world applications.
 
-The semantics of how DPDK drivers are supposed to handle bad packets
-in transmit is not well documented. The correct way to handle a packet
-that can not be sent is for the driver to consume (free in tx_burst)
-and increment an error counter, and keep going. Suppose application
-gave a single buggy mbuf (index 3) in a burst of 16 packets (assuming
-there was space in the transmit ring).
-The driver should return with 16 (all packets consumed) but the
-statistics should reflect what happened: 15 packets transmitted, 1 tx error.
+The AI chat review showed:
 
-The problem with should return is that the application can not tell
-the difference between backpressure (transmit ring full) and a bad packet.
-An application may think it see back pressure and retransmit the bad packet.
+[PATCH v8 00/23] sxe2 driver feature additions
 
---- AI review (buggy) ---
+The v6 issues are resolved cleanly, except the flow-duplicate-pattern
+alignment didn't go in the direction your "align with mlx5" guidance
+intended.
 
-Series review: net/zxdh Rx/Tx optimization (v8)
+Resolved from v6:
 
-The v7 issue is resolved. The simple Tx burst no longer depends on the
-optional tx_prepare for memory safety: zxdh_xmit_pkts_simple() now
-filters mbufs with data_off < hw->dl_net_hdr_len before any packet
-reaches pkt_padding(), stopping at the first short-headroom packet and
-returning the count enqueued so far, so the caller keeps ownership of
-the rest. The threshold matches exactly what pkt_padding() prepends,
-and submit_to_backend_simple()/pkt_padding() are only reachable through
-that filter, so the open-coded prepend can no longer underflow data_off
-or write before buf_addr. The build-time backstop
+- The mbox is now in correct numeric order (06 before 07). git am
+  bundle.mbox applies cleanly. The v6 bundle-order break is gone.
 
-	static_assert(RTE_PKTMBUF_HEADROOM >=3D ZXDH_DL_NET_HDR_SIZE, ...)
+- All 23 commits build end-to-end at every commit. The dump-info patch
+  was moved from position 19 to 22 - it now runs after devargs parsing,
+  which makes its references to devargs fields consistent. sxe2_dump_fc_state()
+  also correctly moved out of the devargs patch into the dump-info patch
+  where it belongs.
 
-is also in place (static_assert resolves via rte_common.h).
+- The v6 flow_dup_pattern_mode orphan situation is fixed. The field is
+  now actually written by the new sxe2_parse_flow_dup_pattern_mode()
+  parser, properly defaulted to SXE2_FLOW_SW_PATTERN_LAST in init, and
+  read at sxe2_flow.c:310 to populate switch_pattern_dup_allow in flow
+  metadata. The struct field, its writer, its reader, and its hardware-
+  programming path are all consistent now.
 
-Patches 1-3 are unchanged from v7 and remain correct: the enable_intr
-fix is first in the series against the original field name so it
-backports cleanly; the Tx AVAIL flag is published through
-zxdh_queue_store_flags_packed() (rte_io_wmb); multi-segment Tx frees
-each segment once via free_seg with the head descriptor's NULL cookie
-holding the hardware header; and zxdh_recv_single_pkts() compacts
-surviving mbufs.
+- sxe2_parse_no_sched_mode was simplified to call the existing
+  sxe2_parse_bool helper instead of duplicating strtoul boilerplate. Nice
+  cleanup.
 
+The flow-duplicate-pattern semantics:
 
-Info (non-blocking, no need to respin):
+This is the v8 redesign in response to "align to mlx5". What it does:
 
-In the new headroom filter, the whole returned tail is counted as
-errors:
+  doc/guides/nics/sxe2.rst, the option:
+    0 = reject duplicates with EEXIST
+    1 = allow; last-added rule active (LIFO)        <-- default
+    2 = allow; first-added rule active (FIFO)
 
-	if (unlikely(tx_pkts[i]->data_off < hdr_len)) {
-		txvq->stats.errors +=3D nb_pkts - i;
-		nb_pkts =3D i;
-		break;
-	}
+mlx5's equivalent allow_duplicate_pattern is a {0,1} boolean. Its
+value=1 means "all rules are inserted but only the first rule takes
+effect, the next rule takes effect only if the previous rules are
+deleted." That is FIFO. So:
 
-Only tx_pkts[i] is known to be short; the packets after it are not
-examined, just deferred, and the application will resubmit them on the
-next burst. Counting the entire tail as errors inflates the error stat
-(and a packet that is eventually sent fine can be counted as an error
-on an earlier burst where it sat behind a short-headroom packet).
-Counting only the rejected packet, or tracking the deferred tail
-separately from errors, would be more accurate. Not worth a respin on
-its own.
+  mlx5 allow_duplicate_pattern=0  ==  sxe2 flow-duplicate-pattern=0
+  mlx5 allow_duplicate_pattern=1  ==  sxe2 flow-duplicate-pattern=2 (FIFO)
+  (no mlx5 equivalent)            ==  sxe2 flow-duplicate-pattern=1 (LIFO)
 
+This is the worst possible alignment: sxe2 picked the same value range
+{0,1} mlx5 has, picked the same name root, picked similar documentation
+wording, and made the same value 1 mean the opposite hardware behaviour.
+A user who runs the same `-a 0000:xx:xx.x,flow-duplicate-pattern=1` on
+both PMDs gets FIFO on mlx5 and LIFO on sxe2 - inverted semantics under
+identical names.
 
--- AI review (corrected) ---
+If the hardware genuinely supports both LIFO and FIFO and exposing both
+is valuable, then naming and defaults should not visually parallel mlx5.
+Suggested resolutions, in order of preference:
 
-Series review: net/zxdh Rx/Tx optimization (v8)
+  (a) Drop LIFO. Document and implement only the two modes mlx5 has:
+      0 = reject, 1 = FIFO (mlx5's value=1 semantic). Default 1. The
+      name allow_duplicate_pattern (mlx5's spelling) becomes valid -
+      same parameter, same values, same defaults across PMDs.
 
-The v6/v7 out-of-bounds write is fixed: zxdh_xmit_pkts_simple() now
-checks data_off < hw->dl_net_hdr_len before any packet reaches the
-open-coded prepend in pkt_padding(), and the static_assert backstop is
-in place. Memory safety is no longer the issue. How the unsendable
-packet is handled is.
+  (b) Keep both modes, but rename to make the meaning explicit and
+      non-overlapping with mlx5:
+        flow-duplicate-policy=reject|fifo|lifo  (string-valued)
+      with reject as default. mlx5 keeps its short boolean; sxe2 has
+      its own tri-state with non-aliasing values. This is clear but
+      slightly more typing for users.
 
-Patches 1-3 are unchanged from v7 and remain correct.
+  (c) Keep current name and values but make value=1 mean FIFO (matching
+      mlx5) and value=2 mean LIFO. The name's spelling still differs
+      from mlx5's, but at least the integer-to-semantic mapping matches.
 
+Personal preference is (a). The LIFO mode is unusual enough that I would
+want to see a concrete use case before accepting it into a public
+devarg. If the hardware queues rules in an order applications can
+observe, that ordering is an rte_flow priority concern; the devarg layer
+shouldn't be encoding it.
 
-[PATCH v8 4/4] net/zxdh: optimize Tx xmit pkts performance
+A separate small issue in the error-message ternary - sxe2_flow.c:809
+prints "Duplicate flow pattern." when mode is non-zero and "Duplicate
+flow pattern is not allowed." when mode is zero. But the EEXIST error
+path should only fire when the policy is to reject, which is exactly
+mode 0. In modes 1 and 2, the hardware accepts the duplicate as a
+shadow/active rule; this error path should be unreachable. Either the
+ternary's first branch is dead code (in which case remove it and the
+ternary; print only the rejection message), or the rejection can
+happen in modes 1/2 too (in which case the message must explain why -
+table full, action conflict, etc - and the current wording is wrong
+in both branches).
 
-Error: the simple Tx burst signals a bad packet with a short return,
-which the application cannot distinguish from backpressure.
-
-	for (i =3D 0; i < nb_pkts; i++) {
-		rte_prefetch0(tx_pkts[i]);
-		if (unlikely(tx_pkts[i]->data_off < hdr_len)) {
-			txvq->stats.errors +=3D nb_pkts - i;
-			nb_pkts =3D i;
-			break;
-		}
-	}
-
-A short return from tx_burst is the backpressure signal (transmit ring
-full, retry later). Here it is also used to mean "packet i is bad",
-and the bad mbuf is left owned by the caller. The application has no
-way to tell the two apart: the usual
-
-	for (sent =3D 0; sent < n; )
-		sent +=3D rte_eth_tx_burst(port, q, &pkts[sent], n - sent);
-
-loop treats the short return as backpressure and resubmits pkts[i],
-which fails again every time -- head-of-line blocking, and the good
-packets after i (which had ring space) never go out.
-
-A packet that cannot be sent must be consumed by the driver, not
-handed back. Free it in tx_burst, increment the tx error counter, and
-continue with the rest of the burst. For a burst of 16 where only
-index 3 is bad and the ring has room, tx_burst should return 16, with
-stats showing 15 transmitted and 1 tx error. A short return is then
-reserved for the one case the application is entitled to retry: ring
-full.
-
-Concretely for the simple path: walk the burst, and for a packet with
-data_off < hdr_len free it and bump the error counter rather than
-breaking; compact the survivors (as zxdh_recv_single_pkts() already
-does on Rx) and submit the compacted run. Reserve the short return for
-the vq_free_cnt limit.
-
-Better still, avoid dropping the packet at all: route a short-headroom
-mbuf through the append path the packed burst already uses
-(zxdh_xmit_enqueue_append copies the header into the reserved txr
-region) instead of prepending in place. Then nothing is lost and the
-simple path matches the packed path's handling.
+Otherwise this revision is in good shape. Once flow-duplicate-pattern
+alignment lands one way or another, ready to merge.
