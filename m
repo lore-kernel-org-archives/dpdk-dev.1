@@ -2,74 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E951CDB466
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 07:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E4BCDB47F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 07:42:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 08C3740280;
-	Thu, 25 Jun 2026 09:39:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 31A6540280;
+	Thu, 25 Jun 2026 09:42:14 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3D7174025F
- for <dev@dpdk.org>; Thu, 25 Jun 2026 09:38:58 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B68EA4025F
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 09:42:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782373137;
+ s=mimecast20190719; t=1782373332;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=ZuTxCze+QjjQI97OeLbWBVsqHUD+XV7olBbzfHz5Y7A=;
- b=KeKoyCzMUhIb+q7EFszkSN5Rl29WVQHVH63ui1H0xVCaxKzqfv9aKSQlncHq+Ln7Z4KOFt
- k51I9L+WLZ8vMV3W79wA6l27Snt8iuyiKiwgVSMYWlyW5T692lwbcpxl+y/pM/qjT7ZhYy
- jmRLCW8DJOg++hSMx5N3XyO5LRhG5UY=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=JNoJKtORcdw62FaJTYRYWTGQ9kGBE9Q8XWUdNd+TaaM=;
+ b=SrEIXUZLMiB+X/Q1OCKHYtOZodOmlE/CBnEJcj8FMpY4KyjyU5iZiuySAHIdF4f3leBR74
+ 2D8ZeqJ/6kxf0Tq3aDZDhgaFqTIBo0ewRARx7eoKtBEBZ/x0DBMer5l5/s460OWtNFmAgg
+ 9MADzOAExm76f99c4DKNhkcxyz94Tu8=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-149-2z8_b_ZnN8yMjAdpn0Z16w-1; Thu, 25 Jun 2026 03:38:56 -0400
-X-MC-Unique: 2z8_b_ZnN8yMjAdpn0Z16w-1
-X-Mimecast-MFC-AGG-ID: 2z8_b_ZnN8yMjAdpn0Z16w_1782373134
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-5ad62ce7c15so1045951e87.0
- for <dev@dpdk.org>; Thu, 25 Jun 2026 00:38:55 -0700 (PDT)
+ us-mta-101-UdNrv9K5PZ6oxDnTb77FSw-1; Thu, 25 Jun 2026 03:42:09 -0400
+X-MC-Unique: UdNrv9K5PZ6oxDnTb77FSw-1
+X-Mimecast-MFC-AGG-ID: UdNrv9K5PZ6oxDnTb77FSw_1782373328
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-3997b56afe0so9465701fa.3
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 00:42:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782373134; x=1782977934;
+ d=1e100.net; s=20251104; t=1782373328; x=1782978128;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZuTxCze+QjjQI97OeLbWBVsqHUD+XV7olBbzfHz5Y7A=;
- b=pSULowax/RcmhnsQPd6FHvmqJeyclyPG0MUbV/YcWaGwH4yjdIGXuj25N1JncqTTLP
- FOPKxwTSgoJ807B8xtqi6dGxNJTSL+dvBtzdl8eByRYGY6yL4BWDFA9lVFV679wnt0AT
- q2Vm5iWCq50CiqbeNbPLi7JVxJRGrTvC0AqaJn0Z4pXDjnpCPHlbz0urfzBuhaH6RkE0
- oAKNnbojFY3N0QF40rValrE7evQN07iBff0OTt/YulA8MmqPG1kj2LkOctq+IuRGz+gu
- QQkttYdZaprhOqxGvkRjeegm4xEvYEYPl1X+wiGFAT4necTXC6zht6zLbPGk4BndQHNQ
- hYug==
-X-Gm-Message-State: AOJu0YyRuZcZtFYluK2Mf1tTbSLd5y9Bt7znKIs57TFUfogA1rT4bC04
- QvWdS9N5NWnbnz54Z0rbI+M1oAJJWoe9du4mt1YDiOeGlT/PhT23vzpWw6oxZP9iqlvH8duXGHb
- RaPL1F9/78siIxP4UqI4JPyrCavlqVeIRb4qtfBP3e+CzthKsNrLYCGEqaZBjGfimZVE1ck2tKR
- kaZdfAeRx/IdKvmuBXjFU=
-X-Gm-Gg: AfdE7cm8uVWhBb21iAFJI5MTblx0DmtCZ3t6NHXHZWJpy6YbmVHjFD9dr2xxhmp6GCZ
- jYOnel3pHPXcwcVYObWc9CoKur867GAj3lLuz4dmNqMmHPBC3LZGhkA69o/3OwEEJk8Olq15hp7
- ZCP9okp5s18O7jl/gJLcQgeuehoW5PCQTi6h1OxFdD0Bwmcex10RONQmHiYFCp7zty2a3a+VW7X
- I/LliG5aAZAwZiSyD0+HxTtCgyNFXxYpcLbdxwTClNrpLVIu5iGcqpumVE=
-X-Received: by 2002:a05:6512:a8d:b0:5aa:6641:c45c with SMTP id
- 2adb3069b0e04-5aea1f2ed68mr458533e87.18.1782373134413; 
- Thu, 25 Jun 2026 00:38:54 -0700 (PDT)
-X-Received: by 2002:a05:6512:a8d:b0:5aa:6641:c45c with SMTP id
- 2adb3069b0e04-5aea1f2ed68mr458521e87.18.1782373133885; Thu, 25 Jun 2026
- 00:38:53 -0700 (PDT)
+ bh=JNoJKtORcdw62FaJTYRYWTGQ9kGBE9Q8XWUdNd+TaaM=;
+ b=lQ3+KIpeOFOVJ/UBL+6RESvXnMQ+7WPp8YZxp8zLlrQBMLwhFC5npfivDmgvSn+/r2
+ j2OPmuR5sNOJHAac6tv67ClRZxSUf7WqBG6+1k/WYYK1qmSqaFN9bV/KBGfxyvX9J0sd
+ pB8D8a5qGJfWobKpUXeQx3W22fLA7zXMe3XgaOuUN4vtQaXqyLE8TsWVYhBjhuoVQZgg
+ csPUknhsbEtZpb3vwaAhGHwIrjGsgOcTrIeODxfdB/1gfQlMuPjapLPfUmDa0dqrhOCn
+ KRD16CW4gWhy5aBadg8w3Mpku48vx6Zlqs2FZ5Q6mr7nqHHLDAPHi/CDdOAa7lHLIZpj
+ DDmw==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RppC+57tjbb0/9ZRc5azNPttodITfcoePT42Ng56Uo02yqzf8L+Kgy+PZADMXVCzBM4eLY=@dpdk.org
+X-Gm-Message-State: AOJu0YyqVf2KaDz7qKVosuRRy6oEEUZO5reQ0qq1NUNSIqYacIIMmBiu
+ qPk05S9GqWyriw/MawJTnq04XEhezYRn5+wIsqxIJJxnOUcmuAOlAYy5pNRD8fVnMgfwDKuhrJt
+ PIRh0vaOouRNMBLu1lxkaqEXB1Gwr32ymHSCaAtash8sbckX/RpWcXgRlVgXoosWx2xHzqDFESL
+ IdJNHpTXvIWbVPErFvxzo=
+X-Gm-Gg: AfdE7cn7/W8euCyoMSTONn3N9ZNDDA49Uz6KRhT6mOQvfCsJTlWnvXTsDsi3D2rcCfw
+ +c4TGCBT9fAefWUf5vvj0BRV9gWSZqJ44DkTphnXHNOg6n0wMfomPXFrbKkwPL+sV5gmNulfWjT
+ /1wfV+T85KuKgAb9jWZ6byYcEhsokRlol3WCljfQeR9aTyiZJq2HL5wQ9v4PBrdbAKF1LrHRZdj
+ nhvtqTTMzFLNXGbO2vb3ldIEiGO/Y7mGX4FpklZvTR/xsOtjVuy9bdmPbY=
+X-Received: by 2002:a2e:ab18:0:b0:396:8029:e2e5 with SMTP id
+ 38308e7fff4ca-39acb69fa18mr3366911fa.18.1782373327986; 
+ Thu, 25 Jun 2026 00:42:07 -0700 (PDT)
+X-Received: by 2002:a2e:ab18:0:b0:396:8029:e2e5 with SMTP id
+ 38308e7fff4ca-39acb69fa18mr3366821fa.18.1782373327529; Thu, 25 Jun 2026
+ 00:42:07 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260623113752.1100072-1-dsosnowski@nvidia.com>
  <20260624131337.1127323-1-dsosnowski@nvidia.com>
- <20260624131337.1127323-3-dsosnowski@nvidia.com>
-In-Reply-To: <20260624131337.1127323-3-dsosnowski@nvidia.com>
+ <20260624131337.1127323-4-dsosnowski@nvidia.com>
+In-Reply-To: <20260624131337.1127323-4-dsosnowski@nvidia.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 25 Jun 2026 09:38:41 +0200
-X-Gm-Features: AVVi8Cd9BDgY6gmFw0ymShdNHgeYjZ5LeaUEtWZkUIKiaGgguN3iAJpTCUHQ1F0
-Message-ID: <CAJFAV8xDOvg_DSLj8Ah1agTGSLxk1sn12_cw_7wbCv86J4KvUA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] build: support function versioning for drivers
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Yu Jiang <yux.jiang@intel.com>
+Date: Thu, 25 Jun 2026 09:41:55 +0200
+X-Gm-Features: AVVi8CfPgoJWe4GeVnVmD27pC4Snu52hqxGeEk-de__O1h7hVX3hdXWQcXBY8cU
+Message-ID: <CAJFAV8xxo9DvN=pfvk8Oetvd8OgOe_EekY_FE5tZuPMmsAKDKg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] net/mlx5: fix stabilized function versions
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, 
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, 
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ dev@dpdk.org, Yu Jiang <yux.jiang@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 8mvaQ45dvg2VP-u1ozR8bIG2Mpbu0uGBq7fM4rPymzo_1782373134
+X-Mimecast-MFC-PROC-ID: J481LPHGzRqVB0XQHsnwZhWJlhdcP7u5fxgGp4PgHy4_1782373328
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -87,43 +92,25 @@ Errors-To: dev-bounces@dpdk.org
 
 On Wed, 24 Jun 2026 at 15:15, Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
 >
-> Add support for enabling function versioning
-> (through use_function_versioning meson variable) for drivers,
-> similar to libraries.
+> Offending patch stabilized the following function symbols:
+>
+> - rte_pmd_mlx5_driver_event_cb_register
+> - rte_pmd_mlx5_driver_event_cb_unregister
+> - rte_pmd_mlx5_enable_steering
+> - rte_pmd_mlx5_disable_steering
+>
+> These function symbols were introduced in 25.11.
+> Any application using these functions, linked against 25.11 version,
+> would fail when used with 26.07 libraries, because only DPDK_26 versions
+> of these symbols were exported.
+>
+> This patch fixes that by adding proper function symbol versioning
+> to these symbols.
+>
+> Fixes: e8cab133645f ("net/mlx5: promote some private API to stable")
 >
 > Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> ---
->  drivers/meson.build | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/meson.build b/drivers/meson.build
-> index 4d95604ecd..a63d93372a 100644
-> --- a/drivers/meson.build
-> +++ b/drivers/meson.build
-> @@ -171,6 +171,7 @@ foreach subpath:subdirs
->          pkgconfig_extra_libs = []
->          testpmd_sources = []
->          require_iova_in_mbuf = true
-> +        use_function_versioning = false
->          # for handling base code files which may need extra cflags
->          base_sources = []
->          base_cflags = []
-> @@ -273,6 +274,13 @@ foreach subpath:subdirs
->          endif
->          dpdk_conf.set(lib_name.to_upper(), 1)
->
-> +        if developer_mode and is_windows and use_function_versioning
-> +            message('@0@: Function versioning is not supported by Windows.'.format(name))
-> +        endif
-> +        if use_function_versioning
-> +            cflags += '-DRTE_USE_FUNCTION_VERSIONING'
-> +        endif
-> +
->          dpdk_extra_ldflags += pkgconfig_extra_libs
->
->          dpdk_headers += headers
-
-Don't we need to build with RTE_BUILD_SHARED_LIB for the shared library objects?
+Acked-by: David Marchand <david.marchand@redhat.com>
 
 
 -- 
