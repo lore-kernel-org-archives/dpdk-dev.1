@@ -2,49 +2,106 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FCCCDE007
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 13:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91A3CDB479
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 13:34:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 85DAF40DCE;
-	Thu, 25 Jun 2026 15:31:44 +0200 (CEST)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 415FB40A6C
- for <dev@dpdk.org>; Thu, 25 Jun 2026 15:31:42 +0200 (CEST)
-Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowACXjbS7LT1qrDfSFQ--.9188S2;
- Thu, 25 Jun 2026 21:31:40 +0800 (CST)
-From: liujie5@linkdatatechnology.com
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v8 23/23] net/sxe2: update sxe2 feature matrix docs
-Date: Thu, 25 Jun 2026 21:31:39 +0800
-Message-ID: <20260625133139.207632-1-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260625055021.63243-1-liujie5@linkdatatechnology.com>
-References: <20260625055021.63243-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F018C40698;
+	Thu, 25 Jun 2026 15:34:38 +0200 (CEST)
+Received: from CH1PR05CU001.outbound.protection.outlook.com
+ (mail-northcentralusazon11010034.outbound.protection.outlook.com
+ [52.101.193.34]) by mails.dpdk.org (Postfix) with ESMTP id A3AA940689
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 15:34:37 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eJp6/Xr4haUpUnPJN2gGFtw5rlGzzBeeb5lO1c9cBiPw1B2+IH6c69B+0aqN8OJMrtZ2QIis9/6xaRJ+DX8seV1GWWn7JW/TzVVEBp0/NBVJzBU8FsB+iaDm7/b2lnCfwPf7Vj8civSc1YbOPL18Fs08gPOkgbLkMX94F+2xE2EVy9FYeHQVmax3ceuVht4J831r+0C32Ha9/rU1l/9Il94//LhntgQGDSV6EiSQE+bW94ulDajIlPK5yN5+AXFG5g6xdMMcwUDxhPayM0ZDdJNUl18dH6EWov4Nf4HJShHXsNEQouitzCn+oka+w0Fq5GyBLVFSo4ZjrjNByDiqCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GnyLZSGwS88cW1Lp4nX5f1me2YXsNmCX7lQHop6LBPI=;
+ b=ZB1QO9nVLLaBOE4BbaKW4V2HRmbX1J5cSXti99VZGouMJadk3iRgf1rhTl3pHJ7G19QYWdj/W26nQt/+SBuP7eQYD78PcdO7KDOQVtRvg1rLtfu3X/thDhFbrUtEen5/nsmQPw+o50r7OLIOE3Ceee6prbbN/bfwf8JkZpkTKBWfu4l4wfqedMj85Ng5+Q35LchJ2mAVidHnCTXaDeD/2hQBv9VUCsgEtPeEOifJC5MAJ5rsj93WdGjsiwxBaA/yUFhrVlBTFCso1sYO9uKaYZz/dXb92emnEfchsrdP7O37HyUJxPKTxa7tN9Ca/C5EIFUuk+WYpOeaDuyyAnS9eQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GnyLZSGwS88cW1Lp4nX5f1me2YXsNmCX7lQHop6LBPI=;
+ b=cuJ3AwZX5iVEOuZUcfK5YD15ml18Ua0hsfm5Om31lM20Xz6SqSPa7HCoLT6xNJtF+hN5sOomXfu8wT5V+7oNVf8xDdo7B7cj0pNcwdl07Z9E96164VbuU8DmqhpO0YW9LA3hNrwO0SBwg5T2v+Hwx9HCkh469UyolAHIXLlJ24816qPUJKr1WIeP46n0qj2p9Qzjkrzt/qvE+1fbUjSQQtSKGLCrjMLs4hlUrUtUxgpHfAvmtIRiR47fgDBWM8vF+1N15uEuAUDFmZMYr45/Vc13Gv6eNVRY8Rg2xhvPEjF0ZqlrPLgkp3ZKeuiJX07n5KbzvRVX8e1lWSOemHNV7w==
+Received: from CY5PR15CA0186.namprd15.prod.outlook.com (2603:10b6:930:81::28)
+ by SA1PR12MB7150.namprd12.prod.outlook.com (2603:10b6:806:2b4::6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.13; Thu, 25 Jun
+ 2026 13:34:33 +0000
+Received: from CH2PEPF00000141.namprd02.prod.outlook.com
+ (2603:10b6:930:81:cafe::af) by CY5PR15CA0186.outlook.office365.com
+ (2603:10b6:930:81::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.159.17 via Frontend Transport; Thu,
+ 25 Jun 2026 13:34:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.181.6 via Frontend Transport; Thu, 25 Jun 2026 13:34:33 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 25 Jun
+ 2026 06:34:07 -0700
+Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 25 Jun
+ 2026 06:34:04 -0700
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: David Marchand <david.marchand@redhat.com>, Bruce Richardson
+ <bruce.richardson@intel.com>, Thomas Monjalon <thomas@monjalon.net>, "Andrew
+ Rybchenko" <andrew.rybchenko@oktetlabs.ru>, Viacheslav Ovsiienko
+ <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+CC: <dev@dpdk.org>, Yu Jiang <yux.jiang@intel.com>
+Subject: [PATCH v3 0/4] add versioned symbols for recently stabilized APIs
+Date: Thu, 25 Jun 2026 15:33:06 +0200
+Message-ID: <20260625133311.1299705-1-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260624131337.1127323-1-dsosnowski@nvidia.com>
+References: <20260624131337.1127323-1-dsosnowski@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACXjbS7LT1qrDfSFQ--.9188S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ww48Ar4kWr4UAF15Cw4Uurg_yoWDGF1kpa
- yUZ34rta97Jr13t3srZ3W8Wr1rZwsay343CryDGa4avan8GryFv3y7KayUKFZruFy5A34j
- vr1jvry7ua1DZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkE14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
- 6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
- 4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
- Yx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7
- v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40E
- w7xC0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
- v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkG
- c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI
- 0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWxJVW8
- Jr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmsj
- UUUUUU=
-X-Originating-IP: [118.112.177.181]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|SA1PR12MB7150:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e87fcb4-925c-4519-76e6-08ded2be7e3c
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|23010399003|376014|82310400026|36860700016|18002099003|22082099003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info: 6OgHBGuYeSLOj720Dd5HlOchNOAw/dSagnZxblbtYH3pNggZCbP0uS+JwguI0QPtuctaMbUOrcTP32OZA59UlpnT0CK8Af3eGIXIdSOAeMrg1362a5Ffl0cm8oC4dphLCLOvRzeonhJtRHMEo4dBXMIv9pfFJ+TBbhud4I/LAZ8l2EvldLeJ22k4JiJxhp4LUvLU7HGYXzrMqSGzoD74wdWwzN/iwzM2vRhyzVi4zKh2+bqdNkdlgMUUICln30CCZjYA94YuMM1IbEkgu1LiyvH9OSSddk3MZSl5OaFvkEMMZQMzfKP4EfyqWGu1HO+yjRV/x+A5+FcDcGirq2CheITjdv34PLHX9vXBFCELTIU/I3mbq3JPpOrES//NV8vT/WSivgdPO2hc7rARtJXp1rK9O7ToGF50Ts4FTJ/DpKHwOOZeLuYfWJn+1FSEaoxSCyPX0Mf/NLezvXiTZGTO102mHC4JKJkewHxKwGqfzsM0vehlk4sxrtUORDbBaGMx+vZjZevDq2kbfPyrqMoX1WYGmxRCxl4T4xhwfavg3GyYJz8eOrRf/eotZC3JqDXBaR67q92ojbl5GI5ZrnaOeT9XjOzDPawkAihaHC2Zp9sL/iCihUFKSgqw4JCYpnxu2SI7sTU0iQY3sQ8ca4exICPxCol3LTp3tgSepY7dgv3KpS+ugeiDvLqkCWixSoc1JRb3EGpygJCkAbVKXAsvxg==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(23010399003)(376014)(82310400026)(36860700016)(18002099003)(22082099003)(56012099006)(11063799006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: +1nn8+DLTt/n8rJwf2Yoj6lo/xqJZAWs2rJJoI+gku59RZzef28BbMCsWPn+c6mwqyJr8aN0YutSmt+0alHAG7EgL5iQ1qgYEXOgZO6zjoR+ZEggxD5XajTcqco3vL3zSSrP22xKbGMsnBGU5PHpib3L932Mx5N1mQDemrNTPpnJUq4VSoLhPp8pH4SOCgyLQFFtfCWt0yBraibCVhuVM10X7kIoE10CyjdDb0DnuiTyIIzPDMYyabMYxpRS5e2Yy5kq73ujwsM+g9JpbCdaqnQqW+5qUsHb8YtT7Vda6ZgU8th/hGcMRffKcNwh4Vj694rtL6ksJxeGe7SmG8R8IFybFoId0CsAqYOBi/dIfzjBLYpM0h8XbPYHfeCpsxgO0I5UeEeGb1SnbGaX1Dsqu06gD5g52HlPgWPXYzca9FH76/D7JD6JsweW9sG0Qi16
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2026 13:34:33.5152 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e87fcb4-925c-4519-76e6-08ded2be7e3c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH2PEPF00000141.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7150
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,271 +115,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jie Liu <liujie5@linkdatatechnology.com>
+Main goal of this patchset is to address https://bugs.dpdk.org/show_bug.cgi?id=1957
+but it also handles other recently stabilized symbols and has some minor fixes:
 
-Update the sxe2.ini feature sheet to accurately reflect the recently
-implemented hardware capabilities in the sxe2 PMD.
+- Patch 1 - Fix RTE_VERSION_EXPERIMENTAL_SYMBOL macro on clang.
+- Patch 2 - Allow function versioning inside drivers.
+- Patch 3 - Version the function symbols stabilized in
+  https://git.dpdk.org/dpdk/commit/?id=e8cab133645f5466ef75e511629add43b68a5027
+- Patch 4 - Version the rte_flow_dynf_metadata_register() function stabilized in
+  https://git.dpdk.org/dpdk/commit/?id=4ee2f5c1cedf9ee7f39afa667f71b07f4004ba5c
+  Restore EXPERIMENTAL version on global variable symbols
+  rte_flow_dynf_metadata_offs and rte_flow_dynf_metadata_mask.
 
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
----
- doc/guides/nics/features/sxe2.ini |  56 ++++++++++
- doc/guides/nics/sxe2.rst          | 168 ++++++++++++++++++++++++++++++
- 2 files changed, 224 insertions(+)
+v3:
+- Added rebuilding of drivers with -DRTE_BUILD_SHARED_LIB
+  whenever function versioning is enabled.
 
-diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
-index 09ba2f558c..3c1e6a8a39 100644
---- a/doc/guides/nics/features/sxe2.ini
-+++ b/doc/guides/nics/features/sxe2.ini
-@@ -7,17 +7,73 @@
- ; is selected.
- ;
- [Features]
-+Speed capabilities   = Y
-+Link status          = Y
-+Link status event    = Y
-+Rx interrupt         = Y
- Fast mbuf free       = P
- Free Tx mbuf on demand = Y
- Burst mode info      = Y
- Queue start/stop     = Y
-+Power mgmt address monitor = Y
- Buffer split on Rx   = P
- Scattered Rx         = Y
-+Traffic manager      = Y
- CRC offload          = Y
-+VLAN offload         = Y
-+QinQ offload         = P
- L3 checksum offload  = Y
- L4 checksum offload  = Y
-+Timestamp offload    = P
-+Inner L3 checksum    = P
-+Inner L4 checksum    = P
- Rx descriptor status = Y
- Tx descriptor status = Y
-+MTU update           = Y
-+TSO                  = P
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+Inline crypto        = Y
-+Packet type parsing  = Y
-+Timesync             = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+FW version           = Y
-+Module EEPROM dump   = Y
-+Multiprocess aware   = Y
- Linux                = Y
- x86-32               = Y
- x86-64               = Y
-+
-+[rte_flow items]
-+eth                  = P
-+geneve               = Y
-+gre                  = Y
-+gtpu                 = Y
-+ipv4                 = Y
-+ipv6                 = Y
-+ipv6_frag_ext        = Y
-+nvgre                = Y
-+sctp                 = Y
-+tcp                  = Y
-+udp                  = Y
-+vlan                 = P
-+vxlan                = Y
-+vxlan_gpe            = Y
-+
-+[rte_flow actions]
-+count                = Y
-+drop                 = Y
-+mark                 = Y
-+passthru             = Y
-+port_representor     = Y
-+queue                = Y
-+represented_port     = Y
-+rss                  = Y
-+send_to_kernel       = Y
-+port_id              = Y
-diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
-index 539072b076..51110629d8 100644
---- a/doc/guides/nics/sxe2.rst
-+++ b/doc/guides/nics/sxe2.rst
-@@ -35,3 +35,171 @@ preventing unauthorized access to random physical memory.
- This capability allows the PMD to coexist with kernel network interfaces
- which remain functional, although they stop receiving unicast packets
- as long as they share the same MAC address.
-+
-+Configuration
-+-------------
-+
-+Runtime Configuration
-+~~~~~~~~~~~~~~~~~~~~~
-+
-+- ``Traffic Management Scheduling Levels``
-+
-+  The DPDK Traffic Management (rte_tm) APIs can be used to configure the Tx scheduler on the NIC.
-+  The ``sched-layer-mode`` parameter can be used to set the number of scheduling levels
-+  in the transmit scheduling hierarchy.
-+  The provided value must be between 0 and 3.
-+  If the value provided is greater than the number of levels supported by the HW,
-+  the driver will use the hardware maximum value.
-+
-+- ``flow-duplicate-pattern`` parameter [int]
-+
-+  There are three options to choose:
-+
-+  - 0. Prevent insertion of flow rules with the same pattern items.
-+    In this case, duplicate rules are rejected and error code EEXIST is returned.
-+
-+  - 1. Allow duplicate rules with the same pattern items.
-+    The last added rule takes effect.
-+    If the current active rule is deleted, the second-to-last added rule takes effect, and so on.
-+
-+  - 2. Allow duplicate rules with the same pattern items.
-+    The first added rule takes effect.
-+    If the current active rule is deleted, the second added rule takes effect, and so on.
-+
-+  This option only applies to the switch engine flow type.
-+  For the Fnav flow engine type, duplicate rules are always rejected.
-+
-+  By default, the PMD will set this value to 1 (last added rule takes effect).
-+
-+
-+- ``fnav-stat-type`` parameter [int]
-+
-+  This parameter controls the Fnav flow engine statistics type used
-+  for flow rule hit counting (via ``rte_flow_query``).
-+
-+  - 1: Only count the number of packets.
-+  - 2: Only count the number of bytes.
-+  - 3: Count both packets and bytes (default).
-+
-+  Default value is 3 (count both packets and bytes).
-+
-+- ``drv-sw-stats`` parameter [int]
-+
-+  This parameter controls whether per-packet software statistics
-+  (SW stats) are collected in the Rx data path.
-+
-+  Hardware packet statistic counters may be inaccurate for certain
-+  packet types due to hardware design limitations.
-+  When accuracy of Rx packet classification statistics is critical,
-+  enabling this parameter allows the driver to accumulate statistics
-+  in software as packets are received, providing an alternative
-+  statistical path that bypasses hardware counter inaccuracies.
-+
-+  - 0: Disable software statistics collection (default).
-+    The basic port statistics (``ipackets``, ``ibytes``) are reported
-+    from the hardware counters.
-+  - 1: Enable software statistics collection.
-+    Per-packet software statistics are accumulated for unicast,
-+    multicast, broadcast, and dropped packets in the Rx data path.
-+
-+  When enabled, the following extended statistics (xstats) are available:
-+  ``rx_sw_unicast_packets``, ``rx_sw_multicast_packets``,
-+  ``rx_sw_broadcast_packets``, ``rx_sw_drop_packets``,
-+  and ``rx_sw_drop_bytes``.
-+
-+- ``no-sched-mode`` parameter [int]
-+
-+  This parameter enables non-scheduling mode (no-sched mode).
-+  When enabled, the transmit path bypasses the hardware scheduling module
-+  and packets are sent directly out through the port.
-+  This results in lower transmit latency and higher throughput,
-+  but Traffic Management (rte_tm) APIs are not supported in this mode.
-+
-+  - 0: Disable non-scheduling mode (default).
-+    The transmit path goes through the hardware scheduling hierarchy.
-+    Traffic Management (rte_tm) APIs can be used to configure the Tx scheduler.
-+  - 1: Enable non-scheduling mode.
-+    The transmit path bypasses the hardware scheduling module.
-+    Packets are sent directly from the port at full speed without scheduling.
-+    Traffic Management (rte_tm) APIs are not available in this mode.
-+
-+- ``rx-low-latency`` parameter [int]
-+
-+  This parameter controls the interrupt throttling (ITR) interval
-+  for Rx queue interrupts.
-+
-+  When enabled, the driver sets a shorter interrupt coalescing timeout
-+  (``SXE2_ITR_INTERVAL_LOW``, approximately 1 μs),
-+  reducing the time between packet arrival and interrupt delivery to the CPU.
-+  This lowers receive latency at the cost of increased CPU interrupt rate.
-+
-+  When disabled (default), the driver uses the normal interrupt throttling
-+  interval (``SXE2_ITR_INTERVAL_NORMAL``, approximately 20 μs),
-+  which reduces the CPU interrupt rate at the expense of higher receive latency.
-+
-+  - 0: Disable Rx low latency (default).
-+    Normal interrupt throttling interval (~20 μs) is used.
-+  - 1: Enable Rx low latency.
-+    Low interrupt throttling interval (~1 μs) is used
-+    for reduced receive latency.
-+
-+- ``function-flow-direct`` parameter [int]
-+
-+  This parameter controls whether flow rules from different functional units
-+  (DPDK vs kernel driver) are isolated or combined when both drivers
-+  control the same physical port.
-+
-+  When the DPDK PMD and the kernel network driver coexist on the same port,
-+  flow rules may originate from either driver.
-+  This parameter determines how the source VSI (Virtual Switch Interface)
-+  of each flow rule is handled during hardware programming.
-+
-+  - 0 (default): Isolate flow rules between DPDK and kernel.
-+    When ``flow_isolated`` is enabled (``rte_flow_isolate()`` called),
-+    kernel-side flow rules take priority and DPDK-side flow rules are suppressed.
-+    When ``flow_isolated`` is disabled, DPDK-side flow rules take priority
-+    and kernel-side flow rules are suppressed.
-+    Only one functional unit's flows are active at a time.
-+
-+  - 1: Allow direct flow rules from both DPDK and kernel simultaneously.
-+    Both DPDK and kernel source VSIs are preserved in the hardware flow table.
-+    Flow rules from both sides are programmed without isolation.
-+
-+  This option only applies to FNAV and ACL flow engine types
-+  and does not apply to PF bond devices.
-+
-+Extended Statistics (xstats)
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The PMD provides the following extended statistics (xstats) for detailed
-+monitoring of receive-side packet classification and software-level accounting.
-+The software statistics path is provided as a workaround for hardware
-+counter inaccuracies on certain packet types --- it accumulates per-packet
-+statistics directly in the Rx data path, ensuring that unicast, multicast,
-+broadcast, and drop counts reflect the actual packets processed by the driver.
-+
-+Receive Software Statistics
-+  These counters are collected in the Rx data path when ``drv-sw-stats=1``
-+  is configured (see the ``drv-sw-stats`` devarg above).
-+  When ``drv-sw-stats`` is disabled (default), these xstats report zero.
-+
-+  - ``rx_sw_unicast_packets``: Number of unicast packets received.
-+  - ``rx_sw_multicast_packets``: Number of multicast packets received.
-+  - ``rx_sw_broadcast_packets``: Number of broadcast packets received.
-+  - ``rx_sw_drop_packets``: Number of packets dropped in the Rx data path.
-+  - ``rx_sw_drop_bytes``: Number of bytes dropped in the Rx data path.
-+
-+  When ``drv-sw-stats`` is enabled, the basic counters ``ipackets`` and
-+  ``ibytes`` (from ``rte_eth_stats``) also reflect the software-accumulated
-+  packet and byte counts. Otherwise, they are reported from hardware counters.
-+
-+Fnav Flow Engine Statistics
-+  The Fnav flow engine statistics type is controlled by the ``fnav-stat-type``
-+  devarg (see above). Depending on the configuration:
-+
-+  - ``fnav-stat-type=1``: Only packet count is available.
-+  - ``fnav-stat-type=2``: Only byte count is available.
-+  - ``fnav-stat-type=3`` (default): Both packet and byte counts are available.
-+
-+  Flow query results (via ``rte_flow_query``) expose these per-flow counters
-+  through the query API, not via xstats.
--- 
-2.52.0
+v2:
+- https://inbox.dpdk.org/dev/20260624131337.1127323-1-dsosnowski@nvidia.com/
+- Drop patches introducing versioning macros for symbol aliases
+  and their usage (patch 4 and 5 from v1)
+- EXPERIMENTAL version on global variable symbols
+  rte_flow_dynf_metadata_offs and rte_flow_dynf_metadata_mask,
+  as discussed under v1.
+- Change commit title prefix in patch (2) from "drivers" to "build".
+
+v1: https://inbox.dpdk.org/dev/20260623113752.1100072-1-dsosnowski@nvidia.com/
+
+Dariusz Sosnowski (4):
+  eal: fix macro for versioned experimental symbol
+  build: support function versioning for drivers
+  net/mlx5: fix stabilized function versions
+  ethdev: fix promoted flow metadata symbols
+
+ drivers/meson.build                  | 21 ++++++++++++++++++++-
+ drivers/net/mlx5/meson.build         |  2 ++
+ drivers/net/mlx5/mlx5_driver_event.c | 22 ++++++++++++++++------
+ drivers/net/mlx5/mlx5_flow.c         | 18 ++++++++++++------
+ lib/eal/common/eal_export.h          |  2 +-
+ lib/ethdev/meson.build               |  2 ++
+ lib/ethdev/rte_flow.c                | 13 ++++++++-----
+ 7 files changed, 61 insertions(+), 19 deletions(-)
+
+--
+2.47.3
 
