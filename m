@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF18CDB47F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 05:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DAFCDB47F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 05:48:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3940B406BC;
-	Thu, 25 Jun 2026 07:47:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 50EFC406B4;
+	Thu, 25 Jun 2026 07:48:00 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 15635402BC
- for <dev@dpdk.org>; Thu, 25 Jun 2026 07:47:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BE997402BC
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 07:47:58 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAD3bfH3wDxqxbcnFQ--.8406S2;
- Thu, 25 Jun 2026 13:47:35 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowABnus0MwTxqL7onFQ--.18591S2;
+ Thu, 25 Jun 2026 13:47:56 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v7 15/23] net/sxe2: support firmware version reading
-Date: Thu, 25 Jun 2026 13:47:35 +0800
-Message-ID: <20260625054735.60536-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v7 16/23] net/sxe2: implement get monitor address
+Date: Thu, 25 Jun 2026 13:47:56 +0800
+Message-ID: <20260625054756.60748-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260624020249.3687380-1-liujie5@linkdatatechnology.com>
 References: <20260624020249.3687380-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAD3bfH3wDxqxbcnFQ--.8406S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1rGw1UJF1UWw1DtFy7Jrb_yoW8Kry8pF
- 4Yqa45uFWUJF1fWw4fAws5uF1agr4xKrykKr9Igw1fCasrJ347AFyDtFyYvw1rAryxAF1r
- Kan7ZF1DGa18Wr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowABnus0MwTxqL7onFQ--.18591S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFW8AF1fWF1kZFW3Ww15urg_yoW5Xw4kpF
+ 4kX34fZF1rJa17Ww1fGa1fuF1YgF4xtFyjkryIk34fuF1kJF1UAFZ8tFyYy3WYyryUGF1S
+ vFsrArsrGay5ur7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+ 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
  6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
  1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
  7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
@@ -59,76 +59,77 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch implements the logic to retrieve the firmware version and
-Build ID from the hardware during device initialization.
+This patch implements the 'get_monitor_addr' ethdev ops in the sxe2
+PMD. This interface allows the Ethernet device to provide the
+address of the next expected Rx descriptor to the power management
+library.
 
-The version is exposed to applications through the dev_info_get API.
+The implementation calculates the address of the next Rx descriptor
+based on the receive queue's current hardware ring position and
+descriptor size. Applications can then use this address with
+rte_power_monitor() to put the CPU into a low-power state until
+new packets are written to the descriptor by the hardware.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 35 +++++++++++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
+ drivers/net/sxe2/sxe2_ethdev.c |  2 ++
+ drivers/net/sxe2/sxe2_rx.c     | 21 +++++++++++++++++++++
+ drivers/net/sxe2/sxe2_rx.h     |  2 ++
+ 3 files changed, 25 insertions(+)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 9bff741961..02ff6be322 100644
+index 02ff6be322..d6efab239c 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -119,7 +119,8 @@ static int32_t sxe2_udp_tunnel_port_add(struct rte_eth_dev *dev,
- 					struct rte_eth_udp_tunnel *tunnel_udp);
- static int32_t sxe2_udp_tunnel_port_del(struct rte_eth_dev *dev,
- 					struct rte_eth_udp_tunnel *tunnel_udp);
--
-+static int32_t sxe2_fw_version_string_get(struct rte_eth_dev *dev,
-+				      char *fw_version, size_t fw_size);
- 
- static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.dev_configure              = sxe2_dev_configure,
-@@ -180,6 +181,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.xstats_reset               = sxe2_stats_info_reset,
- 
+@@ -183,6 +183,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
  	.queue_stats_mapping_set    = sxe2_queue_stats_mapping_set,
+ 
+ 	.fw_version_get             = sxe2_fw_version_string_get,
 +
-+	.fw_version_get             = sxe2_fw_version_string_get,
++	.get_monitor_addr           = sxe2_get_monitor_addr,
  };
  
  static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-@@ -1556,6 +1559,36 @@ static int32_t sxe2_eth_pmd_remove(struct sxe2_common_device *cdev)
- 	return ret;
+diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
+index 2495ab3ab7..820d4f0620 100644
+--- a/drivers/net/sxe2/sxe2_rx.c
++++ b/drivers/net/sxe2/sxe2_rx.c
+@@ -534,3 +534,24 @@ void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev)
+ 		}
+ 	}
  }
- 
-+static int32_t sxe2_fw_version_string_get(struct rte_eth_dev *dev, char *fw_version, size_t fw_size)
++
++static int32_t sxe2_monitor_callback(const uint64_t value,
++				 const uint64_t arg[RTE_POWER_MONITOR_OPAQUE_SZ] __rte_unused)
 +{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_fw_info *fw_info = &adapter->dev_info.fw;
-+	int32_t ret_len;
-+	int32_t ret;
-+
-+	ret_len = snprintf(fw_version, fw_size,
-+			   "%u.%u.%u.%u",
-+			   fw_info->main_version_id,
-+			   fw_info->sub_version_id,
-+			   fw_info->fix_version_id,
-+			   fw_info->build_id);
-+
-+	if (ret_len < 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	ret_len += 1;
-+	if (fw_size < (size_t)ret_len)
-+		ret = -EINVAL;
-+	else
-+		ret = 0;
-+
-+out:
-+	return ret;
++	const uint64_t dd_state = rte_cpu_to_le_64(SXE2_RX_DESC_STATUS_DD_MASK);
++	return (value & dd_state) == dd_state ? -1 : 0;
 +}
 +
- static uint16_t sxe2_switchdev_repr_id_encode_get(struct sxe2_switchdev_info *switchdev_info)
- {
- 	enum rte_eth_representor_type type;
++int32_t sxe2_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc)
++{
++	volatile union sxe2_rx_desc *rxdp;
++	struct sxe2_rx_queue *rxq = (struct sxe2_rx_queue *)rx_queue;
++
++	rxdp = &rxq->desc_ring[rxq->processing_idx];
++
++	pmc->addr = &rxdp->wb.status_err_ptype_len;
++	pmc->fn   = sxe2_monitor_callback;
++	pmc->size = sizeof(uint16_t);
++
++	return 0;
++}
+diff --git a/drivers/net/sxe2/sxe2_rx.h b/drivers/net/sxe2/sxe2_rx.h
+index 295d9005e0..c2582bc571 100644
+--- a/drivers/net/sxe2/sxe2_rx.h
++++ b/drivers/net/sxe2/sxe2_rx.h
+@@ -29,4 +29,6 @@ int32_t __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev);
+ 
+ void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev);
+ 
++int32_t sxe2_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
++
+ #endif /* SXE2_RX_H */
 -- 
 2.52.0
 
