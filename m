@@ -2,69 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13110CDE001
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 17:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0E6CDE001
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 17:32:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4BE5740299;
-	Thu, 25 Jun 2026 19:32:36 +0200 (CEST)
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
- by mails.dpdk.org (Postfix) with ESMTP id 4C2F84025F
+	by mails.dpdk.org (Postfix) with ESMTP id 41E9B40616;
+	Thu, 25 Jun 2026 19:32:37 +0200 (CEST)
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+ by mails.dpdk.org (Postfix) with ESMTP id C0FDA40299
  for <dev@dpdk.org>; Thu, 25 Jun 2026 19:32:35 +0200 (CEST)
-Received: by mail-dl1-f45.google.com with SMTP id
- a92af1059eb24-139aff562e1so164242c88.1
+Received: by mail-dl1-f48.google.com with SMTP id
+ a92af1059eb24-13986d61b4eso256343c88.0
  for <dev@dpdk.org>; Thu, 25 Jun 2026 10:32:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782408754;
- x=1783013554; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782408755;
+ x=1783013555; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cs0HU9lcVGiuC8LyoEJBfIoJQaQJYOygtK7C+2sMaI0=;
- b=yumXM6torimOWbLnb/9vbqp7M147Wv1rXVVLvowCChzLEUP+gFZeoB+ayrrpYNxRC6
- 92OfoIboGanXXkN9Jc2b2jcbhi90Tirewp4r6+k5iUp/opEZRBqD2eAMwkzQeopMfyYC
- /msh85It87N8pSBawWEFISkp36Iohwl1YuPTMBN9nJLPMHcBEoH5eIWh3SmOUVgl3hse
- U1+9v2uoHH7cdvqXXPyeAcMjpXZKR73Ag3tUKVab+c87HmimdDMRz/TbzdDM68qLDDpU
- KYw5HeV2nw84meoBP7S3fwmQnDByCzfDGCB9VK+6EGa3r99tpyM/VTetHHE7/N+0/6A/
- vYxg==
+ bh=OVZXj4Da8zuZORYUV6JCjRQs299jvrO74WvVjL+F1U4=;
+ b=K/+qntwS84SBrRRCBGpz/0U9GMToFHJI3DvP2D3SmVZVpIiSHi90+NSQY1vidjtaYS
+ xM2EalEu+YWdUpT2BjRN3qUHQ/nHZ75138yDRJ7y+BzqbuytuzSQp+txPw/afj2TWNRz
+ twgE3jxintwMSX1K0uWEX40r/m37NMpDZFRREDAd/VLEpvKggMxsq221JsbLqs4c5nls
+ s73ec4sxvuGzxxf8MUYwLcokWmk5SIqamEFyD2kaTFne5wFYOx9qMueLyxTYoNBS2KBG
+ Ea7+VUw0LG4iHVUuipYlUPhl9qkMY22lB2VZaYNJiDEGEGu4T+BFc/7c8pSD6/YoVGN0
+ jRKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782408754; x=1783013554;
+ d=1e100.net; s=20251104; t=1782408755; x=1783013555;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=cs0HU9lcVGiuC8LyoEJBfIoJQaQJYOygtK7C+2sMaI0=;
- b=hiXZK4fmeOj5N6udQ7O9TtUbE0nKbiXb1cN9gacs6kNGVeL+CfGyIOQEZw/ZjGT7ok
- 6zWzlauOzx3zsmQuIdSdBpYaQM1qvoHGDF84HcQrFJVtyOp8mtgNFoRay6/JGYCsU3n+
- qS2lbjKB3rBuXsIvmuOypteTaGl9WUNIzh0o8icjeGeoRG8HnGHNjhj4VhxvAJK83Kbt
- J5F/9YX5aeou2uPjVWXNpRINDlM+z3bJnpm/SNr2QRGze0Olhm969pw7tGjY0FLnunrL
- MNF9BSMHXB5hWXknCSqBYtvARhWy0HX02dKjKRaetAI3HvT8X1dKQ1IPo6ZBGyNHVnSN
- qLnw==
-X-Gm-Message-State: AOJu0YwXcuQNIqXHmtazL9Mtc2Jq8JACwCI/0oRMjVvKgeJ2xTbvEUCT
- gToGhzbautEDD4xoxYXWezCxojwU27jMVONWr2qGgIQSqjw+Tjqh5Bkh9MPbM43Nns290v9gUNH
- SJG/Y
-X-Gm-Gg: AfdE7clhgJAC10r6gKbCQwT83TjlZb0aV0EBwW9aVvX/YiOog2tYI2WBdfTdfmTBLXu
- VqU0TAWW9C5RiGYuYAD+Kb8l7WuB73fMITnt8An+cSHycdL6Et5WBWe3CQItGtCekG6fGlEJkbV
- 3+zJzUO47CTaWU6ZsHEpWzUDNiARVyKba1HXwKfslhToYaiXG61UWIyRfR21TpjuA71iB1mFYDO
- SNsHPu/74paUq+RHFHW5KvW5GDZS3GlE2h8lRWphoYYVr+JbkvN9QeAdQavmyKfgLP/OAE4MNR0
- 9CSlbtwzASBDV3jfT/yNQA7sw5RS9+KOEE8ozt1fCHaT7Sq1tuKEdSdZE/kCV3DP3+yv5kNuOfe
- iISKIf9DJhG3HimBRlQjEGrBl+nq2oDOovImLpk1NRjEl+L3WuIyL6b8QmO/1H/EzjEFs771Quc
- GcVL5wNpgImniiE+8BSD9vBTgDyI39a2PojATQLQbVfcfawZyIM5A=
-X-Received: by 2002:a05:7022:117:b0:138:407c:1d17 with SMTP id
- a92af1059eb24-139dbac81f5mr3206641c88.33.1782408753525; 
- Thu, 25 Jun 2026 10:32:33 -0700 (PDT)
+ bh=OVZXj4Da8zuZORYUV6JCjRQs299jvrO74WvVjL+F1U4=;
+ b=c404Gz6VwLCO/h6HnDzm/Dp8W8gQlvQ2u8ViM/LjDlcuvJ9U3kh3joi7p1YyeRBqzX
+ DC2dNcP+qU9prP540+bT0PLqmfng2mcDEj5XdSSUXUx5LpeEpZN7FGbG7rcIWMBldDTd
+ QPp5uaPZ5Pps+SylFJe/ZPocPvvmuJTtZpQeH/8QpmrUeihC9PZauFUaw4z14OQ4R7Ig
+ Q6IASZZ6FVjW3Ntd0sA9yK3+9mvkagTGrPFtloYtWNi/Cnw0/sQCex6XR5a/d40fVCDi
+ 0dKcJ+JWkiTFu0EwjQ+no5vB3SDhh0lr+lVbEyow0jYC0zFZoAVw74OISZQ8QiGZkLid
+ Zo2w==
+X-Gm-Message-State: AOJu0YxxOvJMnW6M3VpDbXgvaV2TSlj96BrNyeRaZboGc8bHW5vglgC6
+ 7o6Ilonq/iknDkym4r7VnrbyGMjZIa9WYZ/MBj8KOZJ0r+SRZic/kjTSfLk574Lz104rxCLTnCR
+ 482jZ
+X-Gm-Gg: AfdE7cn4BAWMYVusTfc4dnBbI7oe1vbP1GcYzhZwIz0xSkX4iEVfQF1X/uOutHclmXJ
+ yQZyqMU1irYAiZhIsQU7L6ppnUoY/AcQVDHyEU0KKQo0fWWeAMSSiVWGxfDZi/xySmvrvLnUk7+
+ VCbm8RWzteebVdqTnodzKB9n1LdXTkXoNc0/FGCecjaPpxOjxhpbeHcUvhS/nnQRa5Nj7o62WQs
+ wuv41KCs2pHujA6wImISHXsulumA+cew3Agpb2abanApJ3spQoFjydzWe2BhTxNeb2ne2daf0Dh
+ q9Rs1zMbtaDfPO3qIhiWSkT8CCHXo8zGsJ5YlmxjPJD1nzfCJaYT0VEkfPsbqNBahmTyJjiFoBC
+ lJRbFZJEQ39dizwDHhtJO2zFDEX1+gzlA+zfgnPVTD1/pEW4eJ330rUyC9c0ARQbkdXlXRGPg/4
+ ZypO0ne6npez/JZqY2NQn3NVS6lFvwRncg6lfsjt9ZJsqqPHUgkyA=
+X-Received: by 2002:a05:7022:61a1:b0:139:d923:f8f7 with SMTP id
+ a92af1059eb24-139dbaae32bmr3037188c88.4.1782408754656; 
+ Thu, 25 Jun 2026 10:32:34 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-139d8f6acf9sm10218165c88.6.2026.06.25.10.32.32
+ a92af1059eb24-139d8f6acf9sm10218165c88.6.2026.06.25.10.32.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 25 Jun 2026 10:32:33 -0700 (PDT)
+ Thu, 25 Jun 2026 10:32:34 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v6 0/9] bpf: JIT related bug fixes
-Date: Thu, 25 Jun 2026 10:30:10 -0700
-Message-ID: <20260625173231.216074-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Marat Khalili <marat.khalili@huawei.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v6 1/9] bpf/x86: fix JIT encoding of fixed-width immediates
+Date: Thu, 25 Jun 2026 10:30:11 -0700
+Message-ID: <20260625173231.216074-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260608203322.1116296-1-stephen@networkplumber.org>
+In-Reply-To: <20260625173231.216074-1-stephen@networkplumber.org>
 References: <20260608203322.1116296-1-stephen@networkplumber.org>
+ <20260625173231.216074-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,51 +84,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-While implementing JIT for packet capture ran into several issues:
-  1. x86 JIT had a pre-existing bug which would crash.
-  2. The arm64 JIT was missing the packet-access instructions, found
-     previously [1].
-  3. Shift counts were not masked to the operand width as RFC 9669
-     requires: undefined behavior in the interpreter and an encoding
-     failure in the arm64 JIT.
-  4. Tests related to JIT were not being run or were missing coverage.
+Several places in the x86 JIT size an immediate with imm_size(), which
+returns 1 or 4 bytes depending on the value. That is wrong for opcodes
+whose immediate width is fixed by the encoding, and it breaks in both
+directions.
 
-Fixed all of these. Patches are ordered with the most urgent fix (the
-x86 crash) first, each fix followed by the test that exercises it. The
-arm64 packet-load support is kept ahead of the "check JIT was generated"
-patch so the series bisects cleanly on arm64.
+TEST (0xF7 /0, used for BPF_JSET) has no imm8 form; the immediate is
+always 32 bits. For a small mask such as BPF_JSET | BPF_K #0x1,
+imm_size() returns 1, so the JIT emits a 1-byte immediate. The CPU
+still consumes 4, swallowing 3 bytes of the following Jcc. The
+instruction stream desyncs and the program crashes.
 
-The arm64 epilogue branch fix (patch 6) was originally posted by
-Christophe Fontaine [1]; that series stalled, so it is carried here with
-his authorship.
+ROR and the shifts (0xC1 group) have the opposite problem: their
+immediate is always imm8. For a count >= 128, imm_size() returns 4 and
+the JIT emits 3 stray bytes, again desyncing the stream.
 
-[1] https://inbox.dpdk.org/dev/20260319114500.9757-2-cfontain@redhat.com/
+Size each immediate by its encoding: 32 bits for TEST, 8 bits for ROR
+and the shifts.
 
-v6:
- - address Marat's review ARM64 JIT of LD IND instructions
-   need to handle offsets outside of 32 bit range.
+Bugzilla ID: 1959
+Fixes: cc752e43e079 ("bpf: add JIT compilation for x86_64 ISA")
+Cc: stable@dpdk.org
 
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
+---
+ lib/bpf/bpf_jit_x86.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Christophe Fontaine (1):
-  bpf/arm64: fix offset type to allow a negative jump
-
-Stephen Hemminger (8):
-  bpf/x86: fix JIT encoding of fixed-width immediates
-  test/bpf: add JSET test with small immediate
-  bpf: mask shift count in interpreter per RFC 9669
-  bpf/arm64: mask shift count per RFC 9669
-  test/bpf: add test for large shift
-  bpf/arm64: add BPF_ABS/BPF_IND packet load support
-  test/bpf: check that JIT was generated
-  test/bpf: check that bpf_convert can be JIT'd
-
- app/test/test_bpf.c     | 320 +++++++++++++++++++++++++++++++---------
- lib/bpf/bpf_exec.c      |  31 ++--
- lib/bpf/bpf_jit_arm64.c | 185 ++++++++++++++++++++++-
- lib/bpf/bpf_jit_x86.c   |   6 +-
- lib/bpf/meson.build     |   2 +
- 5 files changed, 456 insertions(+), 88 deletions(-)
-
+diff --git a/lib/bpf/bpf_jit_x86.c b/lib/bpf/bpf_jit_x86.c
+index 54eb279643..912d3f69bc 100644
+--- a/lib/bpf/bpf_jit_x86.c
++++ b/lib/bpf/bpf_jit_x86.c
+@@ -300,7 +300,7 @@ emit_ror_imm(struct bpf_jit_state *st, uint32_t dreg, uint32_t imm)
+ 	emit_rex(st, BPF_ALU, 0, dreg);
+ 	emit_bytes(st, &ops, sizeof(ops));
+ 	emit_modregrm(st, MOD_DIRECT, mods, dreg);
+-	emit_imm(st, imm, imm_size(imm));
++	emit_imm(st, imm, sizeof(uint8_t));
+ }
+ 
+ /*
+@@ -441,7 +441,7 @@ emit_shift_imm(struct bpf_jit_state *st, uint32_t op, uint32_t dreg,
+ 	uint32_t imm)
+ {
+ 	emit_shift(st, op, dreg);
+-	emit_imm(st, imm, imm_size(imm));
++	emit_imm(st, imm, sizeof(uint8_t));
+ }
+ 
+ /*
+@@ -921,7 +921,7 @@ emit_tst_imm(struct bpf_jit_state *st, uint32_t op, uint32_t dreg, uint32_t imm)
+ 	emit_rex(st, op, 0, dreg);
+ 	emit_bytes(st, &ops, sizeof(ops));
+ 	emit_modregrm(st, MOD_DIRECT, mods, dreg);
+-	emit_imm(st, imm, imm_size(imm));
++	emit_imm(st, imm, sizeof(int32_t));
+ }
+ 
+ static void
 -- 
 2.53.0
 
