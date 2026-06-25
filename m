@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E15CDB479
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 14:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 811A9CDB479
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 14:02:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6841140B8F;
-	Thu, 25 Jun 2026 16:01:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5421740B95;
+	Thu, 25 Jun 2026 16:01:59 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id EEFEF40652
- for <dev@dpdk.org>; Thu, 25 Jun 2026 16:01:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 251D640A6E
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 16:01:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782396115; x=1813932115;
+ t=1782396116; x=1813932116;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=0fY6JnDtrODSM7nVyRIDxczWTIsvOYYq7dWRPso+niU=;
- b=TjUX7eMk6MA+D0ejxbEtrzm5i5hhE+SwZ32eCxH+aS9ONAR71c1J30kq
- /9tm4VLm4WlnwRLq+SgGNI1eUhd7y/771fxGGnd1tRcmbkbhnliyYSCrb
- Yg+9s59GaGr0XTvL6x4MYb7el504RaSGY7w/r1FTSmbJEt2tJwSlC4rNk
- 6UUxdemIxRzYlvtRvLkIfgdoWBmgRiGZZWYQtClLJVL2uumet+YhjzGIg
- 7+UtUZNh/8hErwEjf1XaRAVeGOCZry9AIJvOBIkt4hBKfX3oQO3ly8tLf
- 0fckVxKFRFh+qsLcn9iTtJ+dIe3P69V9+e1TcNtxbmypoxEo+bKm/As2m Q==;
-X-CSE-ConnectionGUID: 0sipV2XeREi0tJw21kPYcw==
-X-CSE-MsgGUID: lTzShE02RbWFPuZ0RgUnOg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11827"; a="83225260"
-X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="83225260"
+ bh=WdDAPK+xkbuMs+tDrCGKIPHYoSUoD4tygYl/y2QY+iA=;
+ b=ZGYumFcsfwVLo1YRG5/j84xUULJD8TPcM5iTFh5lfWA+tc9xlMXcv1G2
+ Ryl7i4aTBKRVwQK1tJem1/lKS42SeKb8bNWVRti5oaGXqDogzvlBllZlf
+ f23ZtjvRLAC3qYLk8LQm82RCOdSmoTZ5tWcLpcaS029cGJak98cOPfq3c
+ HLN1S56yMXNwbKJfpKUEpBvycO+IbkJnZwHuTOkvZ8k8ILNFqKS89zovg
+ HUWlwaiDlAfa+btbcchfybIQpX/zWRuT5nGad4WqKT2Z0z1Az0eVFZz5s
+ TpCa+F+tiPsVReXZJIys8isMg/gfhRHsWXa/9xUZXJV8BVSQjbJ5LJJjI A==;
+X-CSE-ConnectionGUID: iveJFtfeRgKZG7647oxUDg==
+X-CSE-MsgGUID: r+vZn0C1RLiIXUlHFZRtlw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11827"; a="83225263"
+X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="83225263"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Jun 2026 07:01:55 -0700
-X-CSE-ConnectionGUID: FjA3Az1EQKyyZ7HpIPcJKQ==
-X-CSE-MsgGUID: EsQbLyYxQj2JVui2JlV8aw==
+ 25 Jun 2026 07:01:56 -0700
+X-CSE-ConnectionGUID: rjpXLYg+SOaik6XIeUYHIg==
+X-CSE-MsgGUID: lnf83vxFS3C/NKoyLHSu6w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="280908076"
+X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="280908097"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa002.jf.intel.com with ESMTP; 25 Jun 2026 07:01:54 -0700
+ by orviesa002.jf.intel.com with ESMTP; 25 Jun 2026 07:01:55 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Jianfeng Tan <jianfeng.tan@intel.com>
-Subject: [PATCH v6 3/6] eal: avoid deadlock in async IPC alarm callback
-Date: Thu, 25 Jun 2026 15:01:45 +0100
-Message-ID: <d3fa44b1e6eb4415342a7f5edffbba3a61135754.1782395581.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 4/6] eal: fix async IPC memory leaks on partial failure
+Date: Thu, 25 Jun 2026 15:01:46 +0100
+Message-ID: <b6948ee12ab8dee7e12976478ce6642b69ce0200.1782395581.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1782395581.git.anatoly.burakov@intel.com>
  <cover.1782395581.git.anatoly.burakov@intel.com>
@@ -60,48 +60,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-async_reply_handle_thread_unsafe() can run while holding
-pending_requests.lock and currently calls rte_eal_alarm_cancel().
+When rte_mp_request_async() fails to send requests to all peers,
+copy and param can lose ownership and leak.
 
-rte_eal_alarm_cancel() may spin-wait for an executing callback, which can
-deadlock if that callback is blocked on the same lock.
+However, we cannot simply free them unconditionally, as "partial failure"
+means some requests were already queued and thus still reference `copy` and
+`param`, so freeing them directly on the error path can cause
+use-after-free when those requests are later handled by the async timeout.
 
-Remove callback-side alarm cancellation. It is safe to do so, because any
-callback triggered without a pending request becomes a noop due to the
-async request lookup now using numerical ID.
+Fix this by rolling back queued requests from the current batch, and reset
+nb_sent to 0. Freeing the requests is now safe even if some requests were
+sent, as any responses or timeouts will not find the request ID in the
+queue and will safely exit without doing anything.
 
-Fixes: daf9bfca717e ("ipc: remove thread for async requests")
+Coverity issue: 501503
+Fixes: f05e26051c15 ("eal: add IPC asynchronous request")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/eal/common/eal_common_proc.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ lib/eal/common/eal_common_proc.c | 34 +++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
 diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
-index 3e32ee5027..869ce99bf9 100644
+index 869ce99bf9..5cd1bb8d13 100644
 --- a/lib/eal/common/eal_common_proc.c
 +++ b/lib/eal/common/eal_common_proc.c
-@@ -549,19 +549,6 @@ async_reply_handle_thread_unsafe(struct pending_request *req)
+@@ -1242,7 +1242,34 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
+ 		} else if (mp_request_async(path, copy, param, ts))
+ 			ret = -1;
+ 	}
+-	/* if we didn't send anything, put dummy request on the queue */
++
++	/*
++	 * On partial failure, roll back all queued requests. We hold the lock
++	 * so no one else touches the queue. All requests in this batch share
++	 * the same param pointer. Stale alarms will fire and harmlessly find
++	 * nothing via ID-based lookup.
++	 */
++	if (ret != 0 && reply->nb_sent > 0) {
++		struct pending_request *r, *next;
++
++		for (r = TAILQ_FIRST(&pending_requests.requests);
++				r != NULL; r = next) {
++			next = TAILQ_NEXT(r, next);
++			if (r->type == REQUEST_TYPE_ASYNC &&
++					r->async.param == param) {
++				TAILQ_REMOVE(&pending_requests.requests,
++						r, next);
++				free(r->reply);
++				/* r->request == copy, freed below after the loop */
++				free(r);
++			}
++		}
++		reply->nb_sent = 0;
++	}
++
++	/* if we didn't send anything, put dummy request on the queue
++	 * and set a minimum-delay alarm so the callback fires immediately.
++	 */
+ 	if (ret == 0 && reply->nb_sent == 0) {
+ 		TAILQ_INSERT_HEAD(&pending_requests.requests, dummy, next);
+ 		dummy_used = true;
+@@ -1260,6 +1287,11 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
+ 	/* if dummy was unused, free it */
+ 	if (!dummy_used)
+ 		free(dummy);
++	/* if nothing was sent, nobody owns copy/param */
++	if (ret != 0) {
++		free(param);
++		free(copy);
++	}
  
- 	TAILQ_REMOVE(&pending_requests.requests, req, next);
- 
--	if (rte_eal_alarm_cancel(async_reply_handle,
--			(void *)(uintptr_t)req->id) < 0) {
--		/* if we failed to cancel the alarm because it's already in
--		 * progress, don't proceed because otherwise we will end up
--		 * handling the same message twice.
--		 */
--		if (rte_errno == EINPROGRESS) {
--			EAL_LOG(DEBUG, "Request handling is already in progress");
--			goto no_trigger;
--		}
--		EAL_LOG(ERR, "Failed to cancel alarm");
--	}
--
- 	if (action == ACTION_TRIGGER)
- 		return req;
- no_trigger:
+ 	return ret;
+ closedir_fail:
 -- 
 2.47.3
 
