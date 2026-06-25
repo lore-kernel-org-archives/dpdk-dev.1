@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 244CFCDB479
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 15:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD70CDB479
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 15:48:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC36540B9C;
-	Thu, 25 Jun 2026 17:48:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B9DD840DCF;
+	Thu, 25 Jun 2026 17:48:25 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id A61A54068A
- for <dev@dpdk.org>; Thu, 25 Jun 2026 17:48:18 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A703940B9B
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 17:48:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782402499; x=1813938499;
+ t=1782402501; x=1813938501;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=N3f5LxnEQ5oa2FyJbzEoLhJAOBqf2lyqSEaSryqNZlo=;
- b=cjgz5KGv1PU9Jbd44jsg5kCw6TrGhMW6BuDky3gbg2KNYXyos2UTddTg
- 2gcfrjrl6xpWGSmKUIeejlg87kpDa6NDx7bK8fVpn1Fz3Ulf32qooDBRd
- +tiXlry+/yz0pnngR3lp/YUQzhmCwe/NmJPeGpx9S4PPen0LvwsUR/Kos
- eVXw7Dft0m+XJyzWpWW5z+7FPSO0lcTwZwPdo68KJ4HruY9lW2DikE8+s
- Y9fm3kFRGm1lFCvXaoqvgzd8iGj8hz06IGcTrALU37IlCZpLxsoqe298j
- eAxl8ImnmWXPFuoYZqkBRrLEIQAk1qIz1Vg4RYJ/gyVbnglox7EeqJAmD w==;
-X-CSE-ConnectionGUID: gE0+cyhpSiqD04lopVLLmg==
-X-CSE-MsgGUID: 0InT5fYxTQqgO/iDiAhQAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11828"; a="83279879"
-X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="83279879"
+ bh=xQWVbgi/7v0UWFaB+fYWzmmck7L+3foxRoVSe5vE/c0=;
+ b=lqsYTk1E7tyLKc1F0+lqbM09u3C+MmALin1fg0hpC5K2tThFiDQAXjKw
+ EIzKyg/2hNrCSAHXlF/h5udQ90mo6Y9bIqssTG0xIFF/JfhSYFvdO9BEL
+ 9/aXXC930CNLSUPA6WK7pVUUsjwOgRdv/HYQ+v6MW2oixwCfagWSQoR2G
+ MOgMpwLCdMXjbE1+Oww6DwAtktwMQv1MBxVO+RkurSuBwImQ9w0yf1rke
+ nfxLsWh3gSByDDK6KHFuD6j2jGj9gb3hYSTUtYXzsDAZJmzU8kboWoGjI
+ JLFteqBEZjj/8vvzzQKNB9jxN78gcRE/wbumJEyK4Z9yID3bZRF8qQ1ih Q==;
+X-CSE-ConnectionGUID: vT+lXQZIQVekJq/8JFETcA==
+X-CSE-MsgGUID: tDliU9tUQDG7uBIHf0bApw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11828"; a="83279881"
+X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="83279881"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Jun 2026 08:48:18 -0700
-X-CSE-ConnectionGUID: 9MPWdjm0Qru0zJCaSWxwEA==
-X-CSE-MsgGUID: +F9SQv+OS5uCv9IbNeIXRw==
+ 25 Jun 2026 08:48:20 -0700
+X-CSE-ConnectionGUID: X//ipGwjR0+2cMBwgfTP8Q==
+X-CSE-MsgGUID: eT0P7udcTp2FB1g0GS4fkw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="247571025"
+X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="247571052"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa007.fm.intel.com with ESMTP; 25 Jun 2026 08:48:17 -0700
+ by fmviesa007.fm.intel.com with ESMTP; 25 Jun 2026 08:48:19 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v1 3/4] net/i40e: fix potential NULL dereference
-Date: Thu, 25 Jun 2026 16:48:12 +0100
-Message-ID: <6dc186c05567cdbfd0c993c6001400151e168feb.1782402484.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v1 4/4] net/iavf: fix potential NULL dereference
+Date: Thu, 25 Jun 2026 16:48:13 +0100
+Message-ID: <1a5ce2f876f5f707fd36eb3117486d326e6ce827.1782402484.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <c42d6f4efb83f4962ea096a702ed320a3d0a5eed.1782402484.git.anatoly.burakov@intel.com>
 References: 
@@ -59,48 +59,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Static analysis reports that a rule dump may trigger NULL dereference when
-rule pointer is NULL. This should not happen under normal circumstances as
-0 sized rule would not dereference the rule data pointer due to chunking,
-but it's a good defensive check, so add it.
+Static analysis reports that a rule might have a valid engine but invalid
+rule pointer while having a valid rule size. This should not happen in
+normal operation, but it's a good defensive check, so fix the potential
+issue by checking for the problematic condition before dumping flow memory.
 
-Coverity issue: 503771
+Coverity issue: 503764
 
-Fixes: ffaddd0fa935 ("net/i40e: support flow dump")
+Fixes: 32251f047e92 ("net/iavf: support flow dump")
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_flow.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/net/intel/iavf/iavf_generic_flow.c | 23 ++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
-index 1051c99fba..142cfb5150 100644
---- a/drivers/net/intel/i40e/i40e_flow.c
-+++ b/drivers/net/intel/i40e/i40e_flow.c
-@@ -1276,11 +1276,19 @@ i40e_flow_dev_dump(struct rte_eth_dev *dev,
- 		if (flow != NULL && p_flow != flow)
+diff --git a/drivers/net/intel/iavf/iavf_generic_flow.c b/drivers/net/intel/iavf/iavf_generic_flow.c
+index 8bd874c32a..84bb161bd1 100644
+--- a/drivers/net/intel/iavf/iavf_generic_flow.c
++++ b/drivers/net/intel/iavf/iavf_generic_flow.c
+@@ -2414,18 +2414,21 @@ iavf_flow_dev_dump(struct rte_eth_dev *dev,
+ 		if (flow != NULL && f != flow)
  			continue;
  
-+		/* should not happen */
-+		if (p_flow->rule == NULL) {
-+			PMD_DRV_LOG(DEBUG, "Invalid flow rule");
++		/* this should not happen */
++		if (f->engine == NULL || f->rule == NULL) {
++			PMD_DRV_LOG(DEBUG, "Invalid flow");
 +			continue;
 +		}
 +
-+		rule_size = i40e_flow_rule_size(p_flow->filter_type);
-+		/* should not happen either */
-+		if (rule_size == 0)
-+			continue;
-+
  		found = true;
--		if (p_flow->rule != NULL) {
--			rule_size = i40e_flow_rule_size(p_flow->filter_type);
--			rule_data = p_flow->rule;
+-		if (f->engine != NULL) {
+-			rule_size = f->engine->rule_size;
+-			if (f->rule != NULL)
+-				rule_data = f->rule;
 -		}
-+		rule_data = p_flow->rule;
- 		i40e_flow_dump_blob(file,
- 			i40e_flow_rule_name(p_flow->filter_type),
- 			rule_data, rule_size);
+ 
+-		if (f->engine != NULL)
+-			iavf_flow_dump_blob(file,
+-				f->engine->name != NULL ?
+-					f->engine->name : "unknown",
+-				rule_data, rule_size);
++		rule_size = f->engine->rule_size;
++		rule_data = f->rule;
++
++		iavf_flow_dump_blob(file,
++			f->engine->name != NULL ?
++				f->engine->name : "unknown",
++			rule_data, rule_size);
+ 	}
+ 	rte_spinlock_unlock(&vf->flow_ops_lock);
+ 
 -- 
 2.47.3
 
