@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 548B0CDE000
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 13:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB00CDE000
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 13:22:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9116240615;
-	Thu, 25 Jun 2026 15:21:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0A62940615;
+	Thu, 25 Jun 2026 15:22:29 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 3A37F40430
- for <dev@dpdk.org>; Thu, 25 Jun 2026 15:21:55 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 960DC40685
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 15:22:26 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAD3FNxxKz1qKgPSFQ--.9083S2;
- Thu, 25 Jun 2026 21:21:53 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowABXatGQKz1qewbSFQ--.9208S2;
+ Thu, 25 Jun 2026 21:22:24 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v8 04/23] net/sxe2: add AVX2 vector data path for Rx and Tx
-Date: Thu, 25 Jun 2026 21:21:53 +0800
-Message-ID: <20260625132153.206090-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 05/23] net/sxe2: add link update callback
+Date: Thu, 25 Jun 2026 21:22:24 +0800
+Message-ID: <20260625132224.206297-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260625055021.63243-1-liujie5@linkdatatechnology.com>
 References: <20260625055021.63243-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAD3FNxxKz1qKgPSFQ--.9083S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfCr45Zr1UXF1xXw48Cw1kGrg_yoW5tF1fJo
- Wxur1fXr4kXr1DZ395Ww18ZFy8tw4S934UAayS9F1fWa17CFy5ZasFk3W3AF17Xr1FgF4D
- Wa4xJa9Iy393JrZrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: rQCowABXatGQKz1qewbSFQ--.9208S2
+X-Coremail-Antispam: 1UD129KBjvAXoW3tw43Kr18WFW5Jr1xtF47urg_yoW8Ar45Xo
+ W7Kry7ZF13Jrn7C3yDXrs7CFW5Z3y8Gr4rAa1S9rs8u3W3J345JFyxKw17XF1qg3Z3tr12
+ 9w1kA3yIyw47WrWkn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
  AaLaJ3UjIYCTnIWjp_UUUYo7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
- x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+ x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
  JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
  4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
  Yx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbV
  WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAK
  j4xxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
  0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y
- 0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+ 0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
  W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
  IxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUsF4_UUU
  UU=
@@ -59,921 +59,521 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Added AVX256 vectorized versions of Rx and Tx data path functions to
-improve packet processing performance.
-
-The vector path uses AVX2 SIMD instructions to process multiple
-descriptors per loop, significantly reducing the per-packet overhead.
+Implement dev_link_update ethdev callback for sxe2 PMD.
+The driver reads the link status, speed, and duplex mode from the
+hardware registers and updates the ethdev link status using the
+appropriate atomic operations.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
-
-net/sxe2: support AVX512 vectorized path for Rx and Tx
 ---
- drivers/net/sxe2/meson.build          |   9 +
- drivers/net/sxe2/sxe2_txrx.c          |  38 +-
- drivers/net/sxe2/sxe2_txrx_vec.h      |  12 +-
- drivers/net/sxe2/sxe2_txrx_vec_avx2.c | 747 ++++++++++++++++++++++++++
- 4 files changed, 801 insertions(+), 5 deletions(-)
- create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+ drivers/net/sxe2/meson.build     |   1 +
+ drivers/net/sxe2/sxe2_cmd_chnl.c |  22 +++++
+ drivers/net/sxe2/sxe2_cmd_chnl.h |   2 +
+ drivers/net/sxe2/sxe2_drv_cmd.h  |   6 ++
+ drivers/net/sxe2/sxe2_ethdev.c   | 158 +++++++++++++++++++++++++------
+ drivers/net/sxe2/sxe2_ethdev.h   |  19 ++--
+ drivers/net/sxe2/sxe2_mac.c      |  98 +++++++++++++++++++
+ drivers/net/sxe2/sxe2_mac.h      |  50 ++++++++++
+ 8 files changed, 316 insertions(+), 40 deletions(-)
+ create mode 100644 drivers/net/sxe2/sxe2_mac.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.h
 
 diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index 7bd0d8120c..c225dd7cd8 100644
+index c225dd7cd8..b14b5120c1 100644
 --- a/drivers/net/sxe2/meson.build
 +++ b/drivers/net/sxe2/meson.build
-@@ -39,6 +39,15 @@ if arch_subdir == 'x86'
-                         c_args: avx512_args)
-                 objs += sxe2_avx512_lib.extract_objects('sxe2_txrx_vec_avx512.c')
-         endif
-+        sxe2_avx2_lib = static_library('sxe2_avx2_lib',
-+                'sxe2_txrx_vec_avx2.c',
-+                dependencies: [static_rte_ethdev,
-+                        static_rte_kvargs, static_rte_hash,
-+                        static_rte_security, static_rte_cryptodev,
-+                        static_rte_bus_pci],
-+                include_directories: includes,
-+                c_args: [cflags, '-mavx2'])
-+        objs += sxe2_avx2_lib.extract_objects('sxe2_txrx_vec_avx2.c')
- endif
+@@ -60,4 +60,5 @@ sources += files(
+         'sxe2_txrx_poll.c',
+         'sxe2_txrx.c',
+         'sxe2_txrx_vec.c',
++        'sxe2_mac.c',
+ )
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
+index d16b6528d0..07eeb7f38c 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.c
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
+@@ -321,3 +321,25 @@ int32_t sxe2_drv_txq_switch(struct sxe2_adapter *adapter, struct sxe2_tx_queue *
  
- sources += files(
-diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
-index 14179b87a4..00307f2fcc 100644
---- a/drivers/net/sxe2/sxe2_txrx.c
-+++ b/drivers/net/sxe2/sxe2_txrx.c
-@@ -167,8 +167,14 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
- 				PMD_LOG_INFO(TX, "AVX512 is not supported in build env.");
- #endif
- 			}
--			if ((tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) == 0)
--				tx_mode_flags |= SXE2_TX_MODE_VEC_SSE;
-+			if (((tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) == 0) &&
-+			    ((rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1) ||
-+			    (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1)) &&
-+			    (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256))
-+				tx_mode_flags |= SXE2_TX_MODE_VEC_AVX2;
+ 	return ret;
+ }
 +
-+			if ((0 == (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK)))
-+				tx_mode_flags |=  SXE2_TX_MODE_VEC_SSE;
- #endif
- 			if (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) {
- 				ret = sxe2_tx_queues_vec_prepare(dev);
-@@ -197,6 +203,13 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
- 				dev->tx_pkt_burst = sxe2_tx_pkts_vec_avx512_simple;
- 			}
- #endif
-+		} else if (tx_mode_flags & SXE2_TX_MODE_VEC_AVX2) {
-+			if (tx_mode_flags & SXE2_TX_MODE_VEC_OFFLOAD) {
-+				dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
-+				dev->tx_pkt_burst = sxe2_tx_pkts_vec_avx2;
-+			} else {
-+				dev->tx_pkt_burst = sxe2_tx_pkts_vec_avx2_simple;
-+			}
- 		} else {
- 			if (tx_mode_flags & SXE2_TX_MODE_VEC_OFFLOAD) {
- 				dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
-@@ -231,6 +244,10 @@ static const struct {
- 	{ sxe2_tx_pkts_vec_avx512_simple,
- 	      "Vector AVX512 Simple" },
- #endif
-+	{ sxe2_tx_pkts_vec_avx2,
-+	      "Vector AVX2" },
-+	{ sxe2_tx_pkts_vec_avx2_simple,
-+	      "Vector AVX2 Simple" },
- 	{ sxe2_tx_pkts_vec_sse,
- 	      "Vector SSE" },
- 	{ sxe2_tx_pkts_vec_sse_simple,
-@@ -330,7 +347,13 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
- 				PMD_LOG_INFO(RX, "AVX512 support detected but not enabled");
- #endif
- 			}
--			if ((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0 &&
-+			if (((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0) &&
-+				((rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1) ||
-+				(rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1)) &&
-+				(rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256))
-+				rx_mode_flags |= SXE2_RX_MODE_VEC_AVX2;
++int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter)
++{
++	int32_t ret = 0;
++	struct sxe2_common_device *cdev = adapter->cdev;
++	struct sxe2_drv_cmd_params param = {0};
++	struct sxe2_drv_link_info_resp resp = {0};
 +
-+			if (((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0) &&
- 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
- 				rx_mode_flags |= SXE2_RX_MODE_VEC_SSE;
- #endif
-@@ -354,6 +377,11 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
- 			else
- 				dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_avx512;
- #endif
-+		} else if (rx_mode_flags & SXE2_RX_MODE_VEC_AVX2) {
-+			if (rx_mode_flags & SXE2_RX_MODE_VEC_OFFLOAD)
-+				dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_avx2_offload;
-+			else
-+				dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_avx2;
- 		} else {
- 			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_sse_offload;
- 		}
-@@ -381,6 +409,10 @@ static const struct {
- 	{ sxe2_rx_pkts_scattered_vec_avx512_offload,
- 	      "Offload Vector AVX512 Scattered" },
- #endif
-+	{ sxe2_rx_pkts_scattered_vec_avx2,
-+	      "Vector AVX2 Scattered" },
-+	{ sxe2_rx_pkts_scattered_vec_avx2_offload,
-+	      "Offload Vector AVX2 Scattered" },
- 	{ sxe2_rx_pkts_scattered_vec_sse_offload,
- 	      "Vector SSE Scattered" },
- #endif
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec.h b/drivers/net/sxe2/sxe2_txrx_vec.h
-index af7c8d12b2..369777606f 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec.h
-+++ b/drivers/net/sxe2/sxe2_txrx_vec.h
-@@ -11,19 +11,21 @@
- #define SXE2_RX_MODE_VEC_SIMPLE    RTE_BIT32(0)
- #define SXE2_RX_MODE_VEC_OFFLOAD   RTE_BIT32(1)
- #define SXE2_RX_MODE_VEC_SSE       RTE_BIT32(2)
-+#define SXE2_RX_MODE_VEC_AVX2      RTE_BIT32(3)
- #define SXE2_RX_MODE_VEC_AVX512    RTE_BIT32(4)
- #define SXE2_RX_MODE_BATCH_ALLOC   RTE_BIT32(10)
- #define SXE2_RX_MODE_VEC_SET_MASK	(SXE2_RX_MODE_VEC_SIMPLE | \
- 			SXE2_RX_MODE_VEC_OFFLOAD | SXE2_RX_MODE_VEC_SSE | \
--			SXE2_RX_MODE_VEC_AVX512)
-+			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512)
- #define SXE2_TX_MODE_VEC_SIMPLE   RTE_BIT32(0)
- #define SXE2_TX_MODE_VEC_OFFLOAD  RTE_BIT32(1)
- #define SXE2_TX_MODE_VEC_SSE      RTE_BIT32(2)
-+#define SXE2_TX_MODE_VEC_AVX2     RTE_BIT32(3)
- #define SXE2_TX_MODE_VEC_AVX512   RTE_BIT32(4)
- #define SXE2_TX_MODE_SIMPLE_BATCH RTE_BIT32(10)
- #define SXE2_TX_MODE_VEC_SET_MASK	(SXE2_TX_MODE_VEC_SIMPLE | \
- 			SXE2_TX_MODE_VEC_OFFLOAD | SXE2_TX_MODE_VEC_SSE | \
--			SXE2_TX_MODE_VEC_AVX512)
-+			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512)
- #define SXE2_TX_VEC_NO_SUPPORT_OFFLOAD (		  \
- 			RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		  \
- 			RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	  \
-@@ -68,6 +70,12 @@ uint16_t sxe2_rx_pkts_scattered_vec_avx512(void *rx_queue,
- 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- uint16_t sxe2_rx_pkts_scattered_vec_avx512_offload(void *rx_queue,
- 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
-+uint16_t sxe2_tx_pkts_vec_avx2_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
-+uint16_t sxe2_tx_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
-+uint16_t sxe2_rx_pkts_scattered_vec_avx2(void *rx_queue,
-+		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
-+uint16_t sxe2_rx_pkts_scattered_vec_avx2_offload(void *rx_queue,
-+		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- #endif
- int32_t __rte_cold sxe2_tx_vec_support_check(struct rte_eth_dev *dev, uint32_t *vec_flags);
- int32_t __rte_cold sxe2_tx_queues_vec_prepare(struct rte_eth_dev *dev);
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_avx2.c b/drivers/net/sxe2/sxe2_txrx_vec_avx2.c
++	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_LINK_STATUS_GET,
++				 NULL, 0,
++				 &resp, sizeof(resp));
++	ret = sxe2_drv_cmd_exec(cdev, &param);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "link status get failed, ret=%d", ret);
++		goto l_end;
++	}
++	adapter->link_ctxt.speed = resp.speed;
++	adapter->link_ctxt.link_up = resp.status;
++
++l_end:
++	return ret;
++}
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
+index ed5e842346..cda676ed97 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.h
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
+@@ -34,4 +34,6 @@ int32_t sxe2_drv_txq_ctxt_cfg(struct sxe2_adapter *adapter,
+ 			      struct sxe2_tx_queue *txq,
+ 			      uint16_t txq_cnt);
+ 
++int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
++
+ #endif /* SXE2_CMD_CHNL_H */
+diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
+index ccc9c20ef4..a0f08b5184 100644
+--- a/drivers/net/sxe2/sxe2_drv_cmd.h
++++ b/drivers/net/sxe2/sxe2_drv_cmd.h
+@@ -227,6 +227,12 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_vsi_info_get_resp {
+ 	struct sxe2_drv_msix_caps used_msix;
+ } __rte_packed_end;
+ 
++struct __rte_aligned(4) __rte_packed_begin sxe2_drv_link_info_resp {
++	uint32_t speed;
++	uint8_t status;
++	uint8_t rsv[3];
++} __rte_packed_end;
++
+ enum sxe2_drv_cmd_module {
+ 	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
+ 	SXE2_DRV_CMD_MODULE_DEV = 1,
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index 066e1faf7e..c00569f05b 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -27,6 +27,7 @@
+ #include "sxe2_tx.h"
+ #include "sxe2_rx.h"
+ #include "sxe2_txrx.h"
++#include "sxe2_mac.h"
+ #include "sxe2_common.h"
+ #include "sxe2_common_log.h"
+ #include "sxe2_host_regs.h"
+@@ -78,6 +79,41 @@ static struct sxe2_pci_map_addr_info sxe2_net_map_addr_info_pf[SXE2_PCI_MAP_RES_
+ 				      .reg_width = 10},
+ };
+ 
++static int32_t sxe2_dev_configure(struct rte_eth_dev *dev);
++static int32_t sxe2_dev_start(struct rte_eth_dev *dev);
++static int32_t sxe2_dev_stop(struct rte_eth_dev *dev);
++static int32_t sxe2_dev_close(struct rte_eth_dev *dev);
++static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info);
++static const uint32_t *sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev
++				__rte_unused, size_t *no_of_elements __rte_unused);
++
++static const struct eth_dev_ops sxe2_eth_dev_ops = {
++	.dev_configure              = sxe2_dev_configure,
++	.dev_start                  = sxe2_dev_start,
++	.dev_stop                   = sxe2_dev_stop,
++	.dev_close                  = sxe2_dev_close,
++	.dev_infos_get              = sxe2_dev_infos_get,
++	.dev_supported_ptypes_get   = sxe2_dev_supported_ptypes_get,
++	.link_update                = sxe2_link_update,
++
++	.rx_queue_start             = sxe2_rx_queue_start,
++	.rx_queue_stop              = sxe2_rx_queue_stop,
++	.tx_queue_start             = sxe2_tx_queue_start,
++	.tx_queue_stop              = sxe2_tx_queue_stop,
++	.rx_queue_setup             = sxe2_rx_queue_setup,
++	.rx_queue_release           = sxe2_rx_queue_release,
++	.tx_queue_setup             = sxe2_tx_queue_setup,
++	.tx_queue_release           = sxe2_tx_queue_release,
++	.rxq_info_get               = sxe2_rx_queue_info_get,
++	.txq_info_get               = sxe2_tx_queue_info_get,
++	.rx_burst_mode_get          = sxe2_rx_burst_mode_get,
++	.tx_burst_mode_get          = sxe2_tx_burst_mode_get,
++	.tx_done_cleanup            = sxe2_tx_done_cleanup,
++
++	.mtu_set                    = sxe2_mtu_set,
++	.buffer_split_supported_hdr_ptypes_get = sxe2_buffer_split_supported_hdr_ptypes_get,
++};
++
+ static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
+ {
+ 	int32_t ret = 0;
+@@ -122,6 +158,12 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
+ 	sxe2_rx_mode_func_set(dev);
+ 	sxe2_tx_mode_func_set(dev);
+ 
++	ret = sxe2_link_update_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize link update, ret:%d", ret);
++		goto l_end;
++	}
++
+ 	ret = sxe2_queues_start(dev);
+ 	if (ret) {
+ 		PMD_LOG_ERR(INIT, "enable queues failed");
+@@ -136,16 +178,6 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
+ 	return ret;
+ }
+ 
+-static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
+-{
+-	(void)sxe2_dev_stop(dev);
+-	(void)sxe2_queues_release(dev);
+-	sxe2_vsi_uninit(dev);
+-	sxe2_dev_pci_map_uinit(dev);
+-
+-	return 0;
+-}
+-
+ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 			struct rte_eth_dev_info *dev_info)
+ {
+@@ -270,28 +302,49 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 	return 0;
+ }
+ 
+-static const struct eth_dev_ops sxe2_eth_dev_ops = {
+-	.dev_configure              = sxe2_dev_configure,
+-	.dev_start                  = sxe2_dev_start,
+-	.dev_stop                   = sxe2_dev_stop,
+-	.dev_close                  = sxe2_dev_close,
+-	.dev_infos_get              = sxe2_dev_infos_get,
+-
+-	.rx_queue_start             = sxe2_rx_queue_start,
+-	.rx_queue_stop              = sxe2_rx_queue_stop,
+-	.tx_queue_start             = sxe2_tx_queue_start,
+-	.tx_queue_stop              = sxe2_tx_queue_stop,
+-	.rx_queue_setup             = sxe2_rx_queue_setup,
+-	.rx_queue_release           = sxe2_rx_queue_release,
+-	.tx_queue_setup             = sxe2_tx_queue_setup,
+-	.tx_queue_release           = sxe2_tx_queue_release,
++static const uint32_t *
++sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev __rte_unused,
++					   size_t *no_of_elements __rte_unused)
++{
++	static const uint32_t ptypes[] = {
++		RTE_PTYPE_L2_ETHER,
++		RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN,
++		RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_L4_UDP,
++		RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_L4_TCP,
++		RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_L4_SCTP,
++		RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN,
++		RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_L4_UDP,
++		RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_L4_TCP,
++		RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_L4_SCTP,
++
++		RTE_PTYPE_TUNNEL_GRENAT,
++
++		RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER,
++
++		RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++			RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN,
++		RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++			RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN,
++
++		RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++			RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_UDP,
++		RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++			RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP,
++		RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++			RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_SCTP,
++
++		RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++			RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_UDP,
++		RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++			RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP,
++		RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++			RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_SCTP,
++
++		RTE_PTYPE_UNKNOWN
++	};
+ 
+-	.rxq_info_get               = sxe2_rx_queue_info_get,
+-	.txq_info_get               = sxe2_tx_queue_info_get,
+-	.rx_burst_mode_get          = sxe2_rx_burst_mode_get,
+-	.tx_burst_mode_get          = sxe2_tx_burst_mode_get,
+-	.tx_done_cleanup            = sxe2_tx_done_cleanup,
+-};
++	return ptypes;
++}
+ 
+ struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter,
+ 						    enum sxe2_pci_map_resource res_type)
+@@ -360,6 +413,29 @@ void *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
+ 	return addr;
+ }
+ 
++static int32_t sxe2_eth_init(struct rte_eth_dev *dev)
++{
++	int32_t ret = 0;
++
++	ret = sxe2_link_update_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize link update, ret:%d", ret);
++		goto l_end;
++	}
++
++	ret = sxe2_mtu_set(dev, dev->data->mtu);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to set mtu, ret=%d", ret);
++		goto l_end;
++	}
++l_end:
++	return ret;
++}
++
++static void sxe2_eth_uinit(struct rte_eth_dev *dev __rte_unused)
++{
++}
++
+ static void sxe2_drv_dev_caps_set(struct sxe2_adapter *adapter,
+ 			struct sxe2_drv_dev_caps_resp *dev_caps)
+ {
+@@ -789,18 +865,38 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ 		goto init_dev_info_err;
+ 	}
+ 
++	ret = sxe2_eth_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize eth parameters, ret=%d", ret);
++		goto init_eth_err;
++	}
++
+ 	goto l_end;
+ 
++init_eth_err:
+ init_dev_info_err:
+ 	sxe2_vsi_uninit(dev);
+ init_vsi_err:
++	sxe2_dev_pci_map_uinit(dev);
+ l_end:
+ 	return ret;
+ }
+ 
++static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
++{
++	(void)sxe2_dev_stop(dev);
++	(void)sxe2_queues_release(dev);
++	sxe2_vsi_uninit(dev);
++	sxe2_dev_pci_map_uinit(dev);
++	sxe2_eth_uinit(dev);
++
++	return 0;
++}
++
+ static int32_t sxe2_dev_uninit(struct rte_eth_dev *dev)
+ {
+ 	int32_t ret = 0;
++
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+ 		goto l_end;
+ 
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index 97d1d1fe14..4193603306 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -120,12 +120,6 @@ enum {
+ 	SXE2_FLAGS_NBITS
+ };
+ 
+-struct sxe2_link_context {
+-	rte_spinlock_t link_lock;
+-	bool link_up;
+-	uint32_t  speed;
+-};
+-
+ struct sxe2_devargs {
+ 	uint8_t flow_dup_pattern_mode;
+ 	uint8_t func_flow_direct_en;
+@@ -266,6 +260,12 @@ struct sxe2_sched_hw_cap {
+ 	uint8_t adj_lvl;
+ };
+ 
++struct sxe2_link_context {
++	rte_spinlock_t link_lock;
++	bool link_up;
++	uint32_t  speed;
++};
++
+ struct sxe2_adapter {
+ 	struct sxe2_common_device      *cdev;
+ 	struct sxe2_dev_info            dev_info;
+@@ -275,9 +275,10 @@ struct sxe2_adapter {
+ 	struct sxe2_irq_context       irq_ctxt;
+ 	struct sxe2_queue_context     q_ctxt;
+ 	struct sxe2_vsi_context       vsi_ctxt;
+-	struct sxe2_devargs			  devargs;
+-	uint16_t                           dev_port_id;
+-	uint64_t                           cap_flags;
++	struct sxe2_link_context      link_ctxt;
++	struct sxe2_devargs           devargs;
++	uint16_t                      dev_port_id;
++	uint64_t                      cap_flags;
+ 	enum sxe2_dev_type            dev_type;
+ 	struct rte_ether_addr           mac_addr;
+ 	uint8_t                              port_idx;
+diff --git a/drivers/net/sxe2/sxe2_mac.c b/drivers/net/sxe2/sxe2_mac.c
 new file mode 100644
-index 0000000000..0618e6d988
+index 0000000000..027e831c97
 --- /dev/null
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_avx2.c
-@@ -0,0 +1,747 @@
++++ b/drivers/net/sxe2/sxe2_mac.c
+@@ -0,0 +1,98 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
 + */
 +
-+#include <rte_vect.h>
-+
-+#include "sxe2_ethdev.h"
++#include <rte_os.h>
++#include "sxe2_osal.h"
++#include "sxe2_mac.h"
 +#include "sxe2_common_log.h"
-+#include "sxe2_queue.h"
-+#include "sxe2_txrx_vec.h"
-+#include "sxe2_txrx_vec_common.h"
-+#include "sxe2_vsi.h"
++#include "sxe2_ethdev.h"
++#include "sxe2_cmd_chnl.h"
++#include "sxe2_host_regs.h"
 +
-+static inline void
-+sxe2_tx_desc_fill_one_avx2(volatile union sxe2_tx_data_desc *desc, struct rte_mbuf *pkt,
-+			   uint64_t desc_cmd, bool with_offloads)
++int32_t sxe2_link_update_init(struct rte_eth_dev *dev)
 +{
-+	__m128i data_desc;
-+	uint64_t desc_qw1;
-+	uint32_t desc_offset;
-+
-+	desc_qw1 = (SXE2_TX_DESC_DTYPE_DATA |
-+		   ((uint64_t)desc_cmd) << SXE2_TX_DATA_DESC_CMD_SHIFT |
-+		   ((uint64_t)pkt->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
-+
-+	desc_offset = SXE2_TX_DATA_DESC_MACLEN_VAL(pkt->l2_len);
-+	desc_qw1 |= ((uint64_t)desc_offset) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
-+	if (with_offloads)
-+		sxe2_tx_desc_fill_offloads(pkt, &desc_qw1);
-+
-+	data_desc = _mm_set_epi64x(desc_qw1, rte_pktmbuf_iova(pkt));
-+	_mm_store_si128(RTE_CAST_PTR(__m128i *, desc), data_desc);
-+}
-+
-+static __rte_always_inline void
-+sxe2_tx_desc_fill_avx2(volatile union sxe2_tx_data_desc *desc, struct rte_mbuf **pkts,
-+		       uint16_t pkts_num, uint64_t desc_cmd, bool with_offloads)
-+{
-+	__m256i desc_group0;
-+	__m256i desc_group1;
-+	uint64_t desc0_qw1;
-+	uint64_t desc1_qw1;
-+	uint64_t desc2_qw1;
-+	uint64_t desc3_qw1;
-+
-+	const uint64_t desc_qw1_com = (SXE2_TX_DESC_DTYPE_DATA |
-+					((uint64_t)desc_cmd) << SXE2_TX_DATA_DESC_CMD_SHIFT);
-+	uint32_t desc_offset[4] = {0};
-+
-+	if (((uint64_t)desc & 0x1F) != 0 && pkts_num != 0) {
-+		sxe2_tx_desc_fill_one_avx2(desc, *pkts, desc_cmd, with_offloads);
-+		pkts_num--;
-+		desc++;
-+		pkts++;
-+	}
-+
-+	while (pkts_num > 3) {
-+		desc3_qw1 = (desc_qw1_com |
-+					((uint64_t)pkts[3]->data_len)
-+					<< SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
-+
-+		desc_offset[3] = SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[3]->l2_len);
-+		desc3_qw1 |= ((uint64_t)desc_offset[3]) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
-+		if (with_offloads)
-+			sxe2_tx_desc_fill_offloads(pkts[3], &desc3_qw1);
-+
-+		desc2_qw1 = (desc_qw1_com |
-+					((uint64_t)pkts[2]->data_len)
-+					<< SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
-+		desc_offset[2] = SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[2]->l2_len);
-+		desc2_qw1 |= ((uint64_t)desc_offset[2]) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
-+		if (with_offloads)
-+			sxe2_tx_desc_fill_offloads(pkts[2], &desc2_qw1);
-+
-+		desc1_qw1 = (desc_qw1_com |
-+					((uint64_t)pkts[1]->data_len)
-+					<< SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
-+		desc_offset[1] = SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[1]->l2_len);
-+		desc1_qw1 |= ((uint64_t)desc_offset[1]) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
-+		if (with_offloads)
-+			sxe2_tx_desc_fill_offloads(pkts[1], &desc1_qw1);
-+
-+		desc0_qw1 = (desc_qw1_com |
-+					((uint64_t)pkts[0]->data_len)
-+					<< SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
-+		desc_offset[0] = SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[0]->l2_len);
-+		desc0_qw1 |= ((uint64_t)desc_offset[0]) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
-+		if (with_offloads)
-+			sxe2_tx_desc_fill_offloads(pkts[0], &desc0_qw1);
-+
-+		desc_group1 = _mm256_set_epi64x(desc3_qw1, rte_pktmbuf_iova(pkts[3]),
-+					desc2_qw1, rte_pktmbuf_iova(pkts[2]));
-+
-+		desc_group0 = _mm256_set_epi64x(desc1_qw1, rte_pktmbuf_iova(pkts[1]),
-+					desc0_qw1, rte_pktmbuf_iova(pkts[0]));
-+
-+		_mm256_store_si256(RTE_CAST_PTR(__m256i *, desc + 2), desc_group1);
-+		_mm256_store_si256(RTE_CAST_PTR(__m256i *, desc), desc_group0);
-+
-+		pkts_num -= 4;
-+		desc     += 4;
-+		pkts     += 4;
-+	}
-+
-+	while (pkts_num) {
-+		sxe2_tx_desc_fill_one_avx2(desc, *pkts, desc_cmd, with_offloads);
-+		pkts_num--;
-+		desc++;
-+		pkts++;
-+	}
-+}
-+
-+static __rte_always_inline uint16_t
-+sxe2_tx_pkts_vec_avx2_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
-+			    uint16_t nb_pkts, bool with_offloads)
-+{
-+	volatile union sxe2_tx_data_desc *desc;
-+	struct sxe2_tx_buffer *buffer;
-+	uint16_t next_use;
-+	uint16_t res_num;
-+	uint16_t tx_num;
-+
-+	if (txq->desc_free_num < txq->free_thresh)
-+		(void)sxe2_tx_bufs_free_vec(txq);
-+
-+	nb_pkts = RTE_MIN(txq->desc_free_num, nb_pkts);
-+	if (unlikely(nb_pkts == 0)) {
-+		PMD_LOG_DEBUG(TX, "Tx pkts avx2 batch: may not enough free desc, "
-+				"free_desc=%u, need_tx_pkts=%u",
-+				txq->desc_free_num, nb_pkts);
-+		goto l_end;
-+	}
-+	tx_num = nb_pkts;
-+
-+	next_use = txq->next_use;
-+	desc     = &txq->desc_ring[next_use];
-+	buffer   = &txq->buffer_ring[next_use];
-+
-+	txq->desc_free_num -= nb_pkts;
-+
-+	res_num = txq->ring_depth - txq->next_use;
-+
-+	if (tx_num >= res_num) {
-+		sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, res_num);
-+
-+		sxe2_tx_desc_fill_avx2(desc, tx_pkts, res_num,
-+				SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
-+		tx_pkts += (res_num - 1);
-+		desc    += (res_num - 1);
-+
-+		sxe2_tx_desc_fill_one_avx2(desc, *tx_pkts++,
-+				(SXE2_TX_DATA_DESC_CMD_EOP | SXE2_TX_DATA_DESC_CMD_RS),
-+				with_offloads);
-+
-+		tx_num -= res_num;
-+
-+		next_use     = 0;
-+		txq->next_rs = txq->rs_thresh - 1;
-+		desc         = &txq->desc_ring[next_use];
-+		buffer       = &txq->buffer_ring[next_use];
-+	}
-+
-+	sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, tx_num);
-+
-+	sxe2_tx_desc_fill_avx2(desc, tx_pkts, tx_num,
-+			SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
-+
-+	next_use += tx_num;
-+	if (next_use > txq->next_rs) {
-+		txq->desc_ring[txq->next_rs].read.type_cmd_off_bsz_l2t |=
-+			rte_cpu_to_le_64(SXE2_TX_DATA_DESC_CMD_RS_MASK);
-+
-+		txq->next_rs += txq->rs_thresh;
-+	}
-+	txq->next_use = next_use;
-+	SXE2_PCI_REG_WRITE_WC(txq->tdt_reg_addr, next_use);
-+	PMD_LOG_DEBUG(TX, "port_id=%u queue_id=%u next_use=%u send_pkts=%u",
-+			txq->port_id, txq->queue_id, next_use, nb_pkts);
-+l_end:
-+	return nb_pkts;
-+}
-+
-+static __rte_always_inline uint16_t
-+sxe2_tx_pkts_vec_avx2_common(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
-+			     uint16_t nb_pkts, bool with_offloads)
-+{
-+	uint16_t tx_done_num = 0;
-+	uint16_t tx_once_num;
-+	uint16_t tx_need_num;
-+
-+	while (nb_pkts) {
-+		tx_need_num = RTE_MIN(nb_pkts, txq->rs_thresh);
-+		tx_once_num = sxe2_tx_pkts_vec_avx2_batch(txq,
-+					tx_pkts + tx_done_num, tx_need_num, with_offloads);
-+
-+		nb_pkts     -= tx_once_num;
-+		tx_done_num += tx_once_num;
-+
-+		if (tx_once_num < tx_need_num)
-+			break;
-+	}
-+	return tx_done_num;
-+}
-+
-+uint16_t sxe2_tx_pkts_vec_avx2_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	return sxe2_tx_pkts_vec_avx2_common(tx_queue, tx_pkts, nb_pkts, false);
-+}
-+
-+uint16_t sxe2_tx_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	return sxe2_tx_pkts_vec_avx2_common(tx_queue, tx_pkts, nb_pkts, true);
-+}
-+
-+static inline void sxe2_rx_queue_rearm_avx2(struct sxe2_rx_queue *rxq)
-+{
-+	volatile union sxe2_rx_desc *desc;
-+	struct rte_mbuf **buffer;
-+	struct rte_mbuf *mbuf0, *mbuf1;
-+	__m128i dma_addr0, dma_addr1;
-+	__m128i virt_addr0, virt_addr1;
-+	__m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM, RTE_PKTMBUF_HEADROOM);
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
 +	int32_t ret;
-+	uint16_t i;
-+	uint16_t new_tail;
 +
-+	buffer = &rxq->buffer_ring[rxq->realloc_start];
-+	desc   = &rxq->desc_ring[rxq->realloc_start];
++	PMD_INIT_FUNC_TRACE();
 +
-+	ret = rte_mempool_get_bulk(rxq->mb_pool, (void *)buffer, SXE2_RX_REARM_THRESH_VEC);
-+	if (ret != 0) {
-+		if ((rxq->realloc_num + SXE2_RX_REARM_THRESH_VEC) >= rxq->ring_depth) {
-+			dma_addr0 = _mm_setzero_si128();
-+			for (i = 0; i < SXE2_RX_NUM_PER_LOOP_AVX; ++i) {
-+				buffer[i] = &rxq->fake_mbuf;
-+				_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc[i].read), dma_addr0);
-+			}
-+		}
++	rte_spinlock_init(&adapter->link_ctxt.link_lock);
 +
-+		rxq->vsi->adapter->dev_info.dev_data->rx_mbuf_alloc_failed +=
-+				SXE2_RX_REARM_THRESH_VEC;
-+		return;
-+	}
-+
-+	for (i = 0; i < SXE2_RX_REARM_THRESH_VEC; i += 2, buffer += 2) {
-+		mbuf0 = buffer[0];
-+		mbuf1 = buffer[1];
-+#if RTE_IOVA_IN_MBUF
-+
-+		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-+				 offsetof(struct rte_mbuf, buf_addr) + 8);
-+#endif
-+		virt_addr0 = _mm_loadu_si128((__m128i *)&mbuf0->buf_addr);
-+		virt_addr1 = _mm_loadu_si128((__m128i *)&mbuf1->buf_addr);
-+
-+#if RTE_IOVA_IN_MBUF
-+
-+		dma_addr0 = _mm_unpackhi_epi64(virt_addr0, virt_addr0);
-+		dma_addr1 = _mm_unpackhi_epi64(virt_addr1, virt_addr1);
-+#else
-+
-+		dma_addr0 = _mm_unpacklo_epi64(virt_addr0, virt_addr0);
-+		dma_addr1 = _mm_unpacklo_epi64(virt_addr1, virt_addr1);
-+#endif
-+
-+		dma_addr0 = _mm_add_epi64(dma_addr0, hdr_room);
-+		dma_addr1 = _mm_add_epi64(dma_addr1, hdr_room);
-+
-+		_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc++->read), dma_addr0);
-+		_mm_store_si128(RTE_CAST_PTR(__m128i *, &desc++->read), dma_addr1);
-+	}
-+
-+	rxq->realloc_start += SXE2_RX_REARM_THRESH_VEC;
-+	if (rxq->realloc_start >= rxq->ring_depth)
-+		rxq->realloc_start = 0;
-+	rxq->realloc_num -= SXE2_RX_REARM_THRESH_VEC;
-+
-+	new_tail = (rxq->realloc_start == 0) ?
-+		(rxq->ring_depth - 1) : (rxq->realloc_start - 1);
-+	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, new_tail);
-+}
-+
-+static __rte_always_inline uint16_t
-+sxe2_rx_pkts_common_vec_avx2(struct sxe2_rx_queue *rxq,
-+			     struct rte_mbuf **rx_pkts, uint16_t nb_pkts, uint8_t *split_rxe_flags,
-+			     uint8_t *umbcast_flags, bool do_offload)
-+{
-+	const __m256i mbuf_init   = _mm256_set_epi64x(0, 0, 0, rxq->mbuf_init_value);
-+	struct rte_mbuf **buffer;
-+	volatile union sxe2_rx_desc *desc;
-+	__m256i mbufs6_7, mbufs4_5, mbufs2_3, mbufs0_1;
-+	uint32_t bit_num;
-+	uint16_t done_num;
-+	uint16_t i = 0;
-+	uint16_t j = 0;
-+
-+	buffer   = &rxq->buffer_ring[rxq->processing_idx];
-+	desc     = &rxq->desc_ring[rxq->processing_idx];
-+	done_num = 0;
-+
-+	rte_prefetch0(desc);
-+
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, SXE2_RX_NUM_PER_LOOP_AVX);
-+
-+	if (rxq->realloc_num > SXE2_RX_REARM_THRESH_VEC)
-+		sxe2_rx_queue_rearm_avx2(rxq);
-+
-+	if (0 == (rte_le_to_cpu_64(desc->wb.status_err_ptype_len) &
-+				SXE2_RX_DESC_STATUS_DD_MASK))
++	ret = sxe2_drv_mac_link_status_get(adapter);
++	if (ret) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to get link status, ret=%d", ret);
 +		goto l_end;
-+
-+	const __m256i crc_adjust =
-+		_mm256_set_epi16(0, 0, 0, -rxq->crc_len,
-+				 0, -rxq->crc_len, 0,
-+				 0, 0, 0, 0,
-+				 -rxq->crc_len, 0, -rxq->crc_len, 0, 0);
-+
-+	const __m256i dd_mask = _mm256_set1_epi32(1);
-+	const __m256i rvp_shuf_mask =
-+		_mm256_set_epi8(7, 6, 5, 4,
-+				3, 2, 13, 12,
-+				0xFF, 0xFF, 13, 12,
-+				0xFF, 0xFF, 0xFF, 0xFF,
-+				7, 6, 5, 4,
-+				3, 2, 13, 12,
-+				0xFF, 0xFF, 13, 12,
-+				0xFF, 0xFF, 0xFF, 0xFF);
-+
-+	const __m128i eop_shuf_mask =
-+		_mm_set_epi8(0xFF, 0xFF, 0xFF, 0xFF,
-+			     0xFF, 0xFF, 0xFF, 0xFF,
-+			     8, 0, 10, 2,
-+			     12, 4, 14, 6);
-+
-+	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, pkt_len) !=
-+			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 4);
-+	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, data_len) !=
-+			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 8);
-+	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, vlan_tci) !=
-+			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 10);
-+	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, hash) !=
-+			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 12);
-+
-+	for (i = 0; i < nb_pkts; i += SXE2_RX_NUM_PER_LOOP_AVX,
-+				desc += SXE2_RX_NUM_PER_LOOP_AVX) {
-+		_mm256_storeu_si256((void *)&rx_pkts[i],
-+					_mm256_loadu_si256((void *)&buffer[i]));
-+#ifdef RTE_ARCH_X86_64
-+		_mm256_storeu_si256((void *)&rx_pkts[i + 4],
-+					_mm256_loadu_si256((void *)&buffer[i + 4]));
-+#endif
-+
-+		const __m128i desc7 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 7));
-+		rte_compiler_barrier();
-+		const __m128i desc6 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 6));
-+		rte_compiler_barrier();
-+		const __m128i desc5 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 5));
-+		rte_compiler_barrier();
-+		const __m128i desc4 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 4));
-+		rte_compiler_barrier();
-+		const __m128i desc3 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 3));
-+		rte_compiler_barrier();
-+		const __m128i desc2 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 2));
-+		rte_compiler_barrier();
-+		const __m128i desc1 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 1));
-+		rte_compiler_barrier();
-+		const __m128i desc0 = _mm_loadu_si128(RTE_CAST_PTR(const __m128i *, desc + 0));
-+
-+		const __m256i descs6_7 =
-+			_mm256_inserti128_si256(_mm256_castsi128_si256(desc6), desc7, 1);
-+		const __m256i descs4_5 =
-+			_mm256_inserti128_si256(_mm256_castsi128_si256(desc4), desc5, 1);
-+		const __m256i descs2_3 =
-+			_mm256_inserti128_si256(_mm256_castsi128_si256(desc2), desc3, 1);
-+		const __m256i descs0_1 =
-+			_mm256_inserti128_si256(_mm256_castsi128_si256(desc0), desc1, 1);
-+
-+		if (split_rxe_flags) {
-+			for (j = 0; j < SXE2_RX_NUM_PER_LOOP_AVX; j++)
-+				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
-+		}
-+
-+		mbufs6_7 = _mm256_shuffle_epi8(descs6_7, rvp_shuf_mask);
-+		mbufs4_5 = _mm256_shuffle_epi8(descs4_5, rvp_shuf_mask);
-+
-+		mbufs6_7 = _mm256_add_epi16(mbufs6_7, crc_adjust);
-+		mbufs4_5 = _mm256_add_epi16(mbufs4_5, crc_adjust);
-+
-+		const __m256i ptype_mask = _mm256_set1_epi32(SXE2_RX_DESC_PTYPE_MASK);
-+
-+		const __m256i staterrs4_7 = _mm256_unpackhi_epi32(descs6_7, descs4_5);
-+
-+		__m256i ptypes4_7 = _mm256_and_si256(staterrs4_7, ptype_mask);
-+
-+		const uint16_t ptype7 = _mm256_extract_epi16(ptypes4_7, 9);
-+		const uint16_t ptype6 = _mm256_extract_epi16(ptypes4_7, 1);
-+		const uint16_t ptype5 = _mm256_extract_epi16(ptypes4_7, 11);
-+		const uint16_t ptype4 = _mm256_extract_epi16(ptypes4_7, 3);
-+
-+		mbufs6_7 = _mm256_insert_epi32(mbufs6_7, sxe2_ptype_tbl[ptype7], 4);
-+		mbufs6_7 = _mm256_insert_epi32(mbufs6_7, sxe2_ptype_tbl[ptype6], 0);
-+		mbufs4_5 = _mm256_insert_epi32(mbufs4_5, sxe2_ptype_tbl[ptype5], 4);
-+		mbufs4_5 = _mm256_insert_epi32(mbufs4_5, sxe2_ptype_tbl[ptype4], 0);
-+
-+		mbufs2_3 = _mm256_shuffle_epi8(descs2_3, rvp_shuf_mask);
-+		mbufs0_1 = _mm256_shuffle_epi8(descs0_1, rvp_shuf_mask);
-+
-+		mbufs2_3 = _mm256_add_epi16(mbufs2_3, crc_adjust);
-+		mbufs0_1 = _mm256_add_epi16(mbufs0_1, crc_adjust);
-+
-+		const __m256i staterrs0_3 = _mm256_unpackhi_epi32(descs2_3, descs0_1);
-+
-+		__m256i ptypes0_3 = _mm256_and_si256(staterrs0_3, ptype_mask);
-+
-+		const uint16_t ptype3 = _mm256_extract_epi16(ptypes0_3, 9);
-+		const uint16_t ptype2 = _mm256_extract_epi16(ptypes0_3, 1);
-+		const uint16_t ptype1 = _mm256_extract_epi16(ptypes0_3, 11);
-+		const uint16_t ptype0 = _mm256_extract_epi16(ptypes0_3, 3);
-+
-+		mbufs2_3 = _mm256_insert_epi32(mbufs2_3, sxe2_ptype_tbl[ptype3], 4);
-+		mbufs2_3 = _mm256_insert_epi32(mbufs2_3, sxe2_ptype_tbl[ptype2], 0);
-+		mbufs0_1 = _mm256_insert_epi32(mbufs0_1, sxe2_ptype_tbl[ptype1], 4);
-+		mbufs0_1 = _mm256_insert_epi32(mbufs0_1, sxe2_ptype_tbl[ptype0], 0);
-+
-+		__m256i staterrs0_7 = _mm256_unpacklo_epi64(staterrs4_7, staterrs0_3);
-+
-+		__m256i stu_len0_7 = _mm256_unpackhi_epi64(staterrs4_7, staterrs0_3);
-+		__m256i mbuf_flags = _mm256_setzero_si256();
-+
-+		if (do_offload) {
-+			const __m256i desc_flags_mask = _mm256_set1_epi32(0x00001C04);
-+			const __m256i desc_flags_rss_mask = _mm256_set1_epi32(0x20000000);
-+			const __m256i vlan_flags =
-+				_mm256_set_epi8
-+				(0, 0, 0, 0, 0, 0, 0, 0,
-+				 0, 0, 0,
-+				 RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
-+				 0, 0, 0, 0,
-+				 0, 0, 0, 0, 0, 0, 0, 0,
-+				 0, 0, 0,
-+				 RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
-+				 0, 0, 0, 0);
-+
-+			const __m256i rss_flags =
-+				_mm256_set_epi8
-+				(0, 0, 0, 0, 0, 0, 0, 0,
-+				 0, 0, 0, RTE_MBUF_F_RX_RSS_HASH, 0, 0, 0, 0,
-+				 0, 0, 0, 0, 0, 0, 0, 0,
-+				 0, 0, 0, RTE_MBUF_F_RX_RSS_HASH, 0, 0, 0, 0);
-+
-+			const __m256i cksum_flags =
-+				_mm256_set_epi8
-+				(0, 0, 0, 0, 0, 0, 0, 0,
-+				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+					RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+					RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+					RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+					RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+				 ((RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+				 ((RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+				 ((RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+				 ((RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+
-+				 0, 0, 0, 0, 0, 0, 0, 0,
-+				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+					RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+					RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+					RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+				 ((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
-+					RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+				 ((RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+				 ((RTE_MBUF_F_RX_L4_CKSUM_BAD |
-+					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
-+				 ((RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+					RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
-+				 ((RTE_MBUF_F_RX_L4_CKSUM_GOOD |
-+					RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1));
-+
-+			const __m256i cksum_mask =
-+				_mm256_set1_epi32
-+				(RTE_MBUF_F_RX_IP_CKSUM_MASK |
-+				RTE_MBUF_F_RX_L4_CKSUM_MASK |
-+				RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK |
-+				RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD);
-+			const __m256i vlan_mask =
-+				_mm256_set1_epi32
-+				(RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED);
-+
-+			__m256i tmp_flags;
-+			__m256i descs_flags = _mm256_and_si256(staterrs0_7, desc_flags_mask);
-+			stu_len0_7 = _mm256_and_si256(stu_len0_7, desc_flags_rss_mask);
-+
-+			tmp_flags = _mm256_shuffle_epi8(vlan_flags, descs_flags);
-+			mbuf_flags = _mm256_and_si256(tmp_flags, vlan_mask);
-+
-+			descs_flags = _mm256_srli_epi32(descs_flags, 10);
-+			tmp_flags = _mm256_shuffle_epi8(cksum_flags, descs_flags);
-+			tmp_flags = _mm256_slli_epi32(tmp_flags, 1);
-+			tmp_flags = _mm256_and_si256(tmp_flags, cksum_mask);
-+			mbuf_flags = _mm256_or_si256(mbuf_flags, tmp_flags);
-+
-+			descs_flags = _mm256_srli_epi32(stu_len0_7, 27);
-+			tmp_flags = _mm256_shuffle_epi8(rss_flags, descs_flags);
-+			mbuf_flags = _mm256_or_si256(mbuf_flags, tmp_flags);
-+
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+
-+			if (rxq->fnav_enable) {
-+				__m256i fnav_vld0_3, fnav_vld4_7;
-+				__m256i fnav_vld0_7;
-+				__m256i v_zeros, v_ffff, v_u32_one;
-+				const __m256i fdir_flags =
-+					_mm256_set1_epi32
-+					(RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID);
-+				fnav_vld0_3 = _mm256_unpacklo_epi32(descs2_3, descs0_1);
-+				fnav_vld4_7 = _mm256_unpacklo_epi32(descs6_7, descs4_5);
-+
-+				fnav_vld0_7 = _mm256_unpacklo_epi64(fnav_vld4_7, fnav_vld0_3);
-+
-+				fnav_vld0_7 = _mm256_slli_epi32(fnav_vld0_7, 26);
-+				fnav_vld0_7 = _mm256_srli_epi32(fnav_vld0_7, 31);
-+
-+				v_zeros = _mm256_setzero_si256();
-+				v_ffff = _mm256_cmpeq_epi32(v_zeros, v_zeros);
-+				v_u32_one = _mm256_srli_epi32(v_ffff, 31);
-+
-+				tmp_flags = _mm256_cmpeq_epi32(fnav_vld0_7, v_u32_one);
-+
-+				tmp_flags = _mm256_and_si256(tmp_flags, fdir_flags);
-+
-+				mbuf_flags = _mm256_or_si256(mbuf_flags, tmp_flags);
-+
-+				rx_pkts[i + 0]->hash.fdir.hi = desc[0].wb.fd_filter_id;
-+				rx_pkts[i + 1]->hash.fdir.hi = desc[1].wb.fd_filter_id;
-+				rx_pkts[i + 2]->hash.fdir.hi = desc[2].wb.fd_filter_id;
-+				rx_pkts[i + 3]->hash.fdir.hi = desc[3].wb.fd_filter_id;
-+				rx_pkts[i + 4]->hash.fdir.hi = desc[4].wb.fd_filter_id;
-+				rx_pkts[i + 5]->hash.fdir.hi = desc[5].wb.fd_filter_id;
-+				rx_pkts[i + 6]->hash.fdir.hi = desc[6].wb.fd_filter_id;
-+				rx_pkts[i + 7]->hash.fdir.hi = desc[7].wb.fd_filter_id;
-+			}
-+#endif
-+		}
-+
-+		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, ol_flags) !=
-+				 offsetof(struct rte_mbuf, rearm_data) + 8);
-+		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, rx_descriptor_fields1) !=
-+				 offsetof(struct rte_mbuf, rearm_data) + 16);
-+		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, rearm_data) !=
-+				 RTE_ALIGN(offsetof(struct rte_mbuf, rearm_data), 16));
-+
-+		__m256i rearm_arr[8];
-+
-+		rearm_arr[6] = _mm256_blend_epi32(mbuf_init, _mm256_slli_si256(mbuf_flags, 8), 4);
-+		rearm_arr[4] = _mm256_blend_epi32(mbuf_init, _mm256_slli_si256(mbuf_flags, 4), 4);
-+		rearm_arr[2] = _mm256_blend_epi32(mbuf_init, mbuf_flags, 4);
-+		rearm_arr[0] = _mm256_blend_epi32(mbuf_init, _mm256_srli_si256(mbuf_flags, 4), 4);
-+
-+		rearm_arr[6] = _mm256_permute2f128_si256(rearm_arr[6], mbufs6_7, 0x20);
-+		rearm_arr[4] = _mm256_permute2f128_si256(rearm_arr[4], mbufs4_5, 0x20);
-+		rearm_arr[2] = _mm256_permute2f128_si256(rearm_arr[2], mbufs2_3, 0x20);
-+		rearm_arr[0] = _mm256_permute2f128_si256(rearm_arr[0], mbufs0_1, 0x20);
-+
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 6]->rearm_data, rearm_arr[6]);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 4]->rearm_data, rearm_arr[4]);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 2]->rearm_data, rearm_arr[2]);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 0]->rearm_data, rearm_arr[0]);
-+
-+		const __m256i tmp_mbuf_flags =
-+			_mm256_castsi128_si256(_mm256_extracti128_si256(mbuf_flags, 1));
-+
-+		rearm_arr[7] =
-+			_mm256_blend_epi32(mbuf_init, _mm256_slli_si256(tmp_mbuf_flags, 8), 4);
-+		rearm_arr[5] =
-+			_mm256_blend_epi32(mbuf_init, _mm256_slli_si256(tmp_mbuf_flags, 4), 4);
-+		rearm_arr[3] =
-+			_mm256_blend_epi32(mbuf_init, tmp_mbuf_flags, 4);
-+		rearm_arr[1] =
-+			_mm256_blend_epi32(mbuf_init, _mm256_srli_si256(tmp_mbuf_flags, 4), 4);
-+
-+		rearm_arr[7] = _mm256_blend_epi32(rearm_arr[7], mbufs6_7, 0XF0);
-+		rearm_arr[5] = _mm256_blend_epi32(rearm_arr[5], mbufs4_5, 0XF0);
-+		rearm_arr[3] = _mm256_blend_epi32(rearm_arr[3], mbufs2_3, 0XF0);
-+		rearm_arr[1] = _mm256_blend_epi32(rearm_arr[1], mbufs0_1, 0XF0);
-+
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 7]->rearm_data, rearm_arr[7]);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 5]->rearm_data, rearm_arr[5]);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 3]->rearm_data, rearm_arr[3]);
-+		_mm256_storeu_si256((__m256i *)&rx_pkts[i + 1]->rearm_data, rearm_arr[1]);
-+
-+		if (umbcast_flags != NULL) {
-+			const __m256i umbcast_mask =
-+					_mm256_set1_epi32(SXE2_RX_DESC_STATUS_UMBCAST_MASK);
-+			__m256i umbcast_bits_256 = _mm256_and_si256(staterrs0_7,
-+								    umbcast_mask);
-+
-+			umbcast_bits_256 = _mm256_srli_epi32(umbcast_bits_256, 24);
-+
-+			__m128i umbcast_bits_128 = _mm_packs_epi32
-+							(_mm256_castsi256_si128(umbcast_bits_256),
-+							 _mm256_extractf128_si256
-+								(umbcast_bits_256, 1));
-+
-+			umbcast_bits_128 = _mm_shuffle_epi8(umbcast_bits_128, eop_shuf_mask);
-+
-+			*(uint64_t *)umbcast_flags = _mm_cvtsi128_si64(umbcast_bits_128);
-+			umbcast_flags += SXE2_RX_NUM_PER_LOOP_AVX;
-+		}
-+
-+		if (split_rxe_flags != NULL) {
-+			const __m256i eop_rxe_mask = _mm256_set1_epi32
-+							(SXE2_RX_DESC_STATUS_EOP_MASK |
-+							 SXE2_RX_DESC_ERROR_RXE_MASK |
-+							 SXE2_RX_DESC_ERROR_OVERSIZE_MASK);
-+
-+			const __m128i eop_mask_128 = _mm_set1_epi16(SXE2_RX_DESC_STATUS_EOP_MASK);
-+			const __m128i rxe_mask_128 = _mm_set1_epi16(SXE2_RX_DESC_ERROR_RXE_MASK |
-+					SXE2_RX_DESC_ERROR_OVERSIZE_MASK);
-+
-+			const __m256i tmp_stats = _mm256_and_si256(staterrs0_7, eop_rxe_mask);
-+
-+			const __m128i eop_rxe_bits = _mm_packs_epi32
-+							(_mm256_castsi256_si128(tmp_stats),
-+							 _mm256_extractf128_si256(tmp_stats, 1));
-+
-+			__m128i not_eop_bits = _mm_andnot_si128(eop_rxe_bits, eop_mask_128);
-+
-+			not_eop_bits = _mm_or_si128
-+					(not_eop_bits,
-+					 _mm_srli_epi16
-+					(_mm_and_si128(eop_rxe_bits, rxe_mask_128),
-+					7));
-+
-+			not_eop_bits = _mm_shuffle_epi8(not_eop_bits, eop_shuf_mask);
-+
-+			*(uint64_t *)split_rxe_flags = _mm_cvtsi128_si64(not_eop_bits);
-+			split_rxe_flags += SXE2_RX_NUM_PER_LOOP_AVX;
-+		}
-+
-+		staterrs0_7 = _mm256_and_si256(staterrs0_7, dd_mask);
-+
-+		staterrs0_7 = _mm256_packs_epi32(staterrs0_7, _mm256_setzero_si256());
-+		bit_num = rte_popcount64
-+				(_mm_cvtsi128_si64(_mm256_extracti128_si256(staterrs0_7, 1)));
-+		bit_num += rte_popcount64
-+				(_mm_cvtsi128_si64(_mm256_castsi256_si128(staterrs0_7)));
-+
-+		done_num += bit_num;
-+
-+		if (bit_num != SXE2_RX_NUM_PER_LOOP_AVX)
-+			break;
 +	}
 +
-+	rxq->processing_idx += done_num;
-+	rxq->processing_idx &= (rxq->ring_depth - 1);
-+	if ((1 == (rxq->processing_idx & 1)) && done_num > 1) {
-+		rxq->processing_idx--;
-+		done_num--;
-+	}
-+	rxq->realloc_num     += done_num;
++	(void)sxe2_link_update(dev, 0);
 +
 +l_end:
-+	PMD_LOG_DEBUG(RX, "port_id=%u queue_id=%u last_id=%u recv_pkts=%d",
-+		rxq->port_id, rxq->queue_id, rxq->processing_idx, done_num);
-+	return done_num;
++	return ret;
 +}
-+
-+static __rte_always_inline uint16_t
-+sxe2_rx_pkts_scattered_batch_vec_avx2(struct sxe2_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-+		uint16_t nb_pkts, bool do_offload)
++int32_t sxe2_link_update(struct rte_eth_dev *dev, __rte_unused int32_t wait_to_complete)
 +{
-+	uint8_t split_rxe_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
-+	uint8_t umbcast_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
-+	uint16_t rx_done_num;
-+	uint16_t rx_pkt_done_num;
++	struct rte_eth_link new_link;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
 +
-+	rx_pkt_done_num = 0;
++	memset(&new_link, 0, sizeof(new_link));
 +
-+	rx_done_num = sxe2_rx_pkts_common_vec_avx2(rxq, rx_pkts, nb_pkts,
-+			split_rxe_flags, umbcast_flags, do_offload);
-+	if (rx_done_num == 0)
-+		goto l_end;
-+
-+	rx_pkt_done_num += sxe2_rx_pkts_refactor(rxq, &rx_pkts[rx_pkt_done_num],
-+			rx_done_num - rx_pkt_done_num, &split_rxe_flags[rx_pkt_done_num],
-+			&umbcast_flags[rx_pkt_done_num]);
-+
-+l_end:
-+	return rx_pkt_done_num;
-+}
-+
-+static __rte_always_inline uint16_t
-+sxe2_rx_pkts_scattered_common_vec_avx2(struct sxe2_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-+		uint16_t nb_pkts, bool do_offload)
-+{
-+	uint16_t done_num = 0;
-+	uint16_t once_num;
-+
-+	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM) {
-+		once_num =
-+		sxe2_rx_pkts_scattered_batch_vec_avx2(rxq,
-+						      rx_pkts + done_num,
-+						      SXE2_RX_PKTS_BURST_BATCH_NUM,
-+						      do_offload);
-+		done_num += once_num;
-+		nb_pkts -= once_num;
-+		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM)
-+			goto l_end;
++	switch (adapter->link_ctxt.speed) {
++	case 0:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
++		break;
++	case 10:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_10M;
++		break;
++	case 100:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_100M;
++		break;
++	case 1000:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_1G;
++		break;
++	case 10000:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_10G;
++		break;
++	case 20000:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_20G;
++		break;
++	case 25000:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_25G;
++		break;
++	case 40000:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_40G;
++		break;
++	case 50000:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_50G;
++		break;
++	case 100000:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_100G;
++		break;
++	default:
++		new_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
++		break;
 +	}
 +
-+	done_num += sxe2_rx_pkts_scattered_batch_vec_avx2(rxq,
-+			rx_pkts + done_num, nb_pkts, do_offload);
-+l_end:
-+	return done_num;
++	new_link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++	new_link.link_status = adapter->link_ctxt.link_up ? RTE_ETH_LINK_UP :
++					     RTE_ETH_LINK_DOWN;
++	new_link.link_autoneg = !(dev->data->dev_conf.link_speeds &
++				RTE_ETH_LINK_SPEED_FIXED);
++
++	return rte_eth_linkstatus_set(dev, &new_link);
 +}
 +
-+uint16_t sxe2_rx_pkts_scattered_vec_avx2(void *rx_queue,
-+		struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++int32_t sxe2_mtu_set(struct rte_eth_dev *dev, uint16_t mtu __rte_unused)
 +{
-+	return sxe2_rx_pkts_scattered_common_vec_avx2(rx_queue,
-+			rx_pkts, nb_pkts, false);
-+}
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
 +
-+uint16_t sxe2_rx_pkts_scattered_vec_avx2_offload(void *rx_queue,
-+		struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
-+{
-+	return sxe2_rx_pkts_scattered_common_vec_avx2(rx_queue,
-+			rx_pkts, nb_pkts, true);
++	PMD_INIT_FUNC_TRACE();
++
++	if (dev->data->dev_started != 0) {
++		PMD_DEV_LOG_ERR(adapter, DRV, "port %d must be stopped before configuration",
++				dev->data->port_id);
++		return -EBUSY;
++	}
++
++	return 0;
 +}
+diff --git a/drivers/net/sxe2/sxe2_mac.h b/drivers/net/sxe2/sxe2_mac.h
+new file mode 100644
+index 0000000000..f2f3edaeff
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_mac.h
+@@ -0,0 +1,50 @@
++
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#ifndef __SXE2_MAC_H__
++#define __SXE2_MAC_H__
++#include <ethdev_driver.h>
++#include "sxe2_host_regs.h"
++
++#define SXE2_NUM_MACADDR_MAX   64
++
++#define SXE2_DPDK_OFFLOAD_OUTER_INSERT_8021Q SXE2_VSI_L2TAGSTXVALID_ID_OUT_VLAN1
++#define SXE2_DPDK_OFFLOAD_OUTER_INSERT_8021AD SXE2_VSI_L2TAGSTXVALID_ID_STAG
++#define SXE2_DPDK_OFFLOAD_OUTER_INSERT_QINQ1 SXE2_VSI_L2TAGSTXVALID_ID_OUT_VLAN2
++#define SXE2_DPDK_OFFLOAD_OUTER_INSERT_VLAN  SXE2_VSI_L2TAGSTXVALID_ID_VLAN
++
++#define SXE2_DPDK_OFFLOAD_OUTER_INSERT_ENABLE SXE2_VSI_L2TAGSTXVALID_L2TAG1_VALID
++
++#define SXE2_DPDK_OFFLOAD_OUTER_STRIP_8021Q SXE2_VSI_TSR_ID_OUT_VLAN1
++#define SXE2_DPDK_OFFLOAD_OUTER_STRIP_8021AD SXE2_VSI_TSR_ID_STAG
++#define SXE2_DPDK_OFFLOAD_OUTER_STRIP_QINQ1 SXE2_VSI_TSR_ID_OUT_VLAN2
++
++#define SXE2_DPDK_OFFLOAD_INNER_INSERT_QINQ1  SXE2_VSI_L2TAGSTXVALID_ID_VLAN
++#define SXE2_DPDK_OFFLOAD_INNER_INSERT_ENABLE SXE2_VSI_L2TAGSTXVALID_L2TAG2_VALID
++
++#define SXE2_DPDK_OFFLOAD_INNER_STRIP_QINQ1 SXE2_VSI_TSR_ID_VLAN
++
++#define SXE2_DPDK_OFFLOAD_FIELD                (0X0F)
++#define SXE2_DPDK_OFFLOAD_TAGID_FIELD          (0X07)
++
++#define SXE2_DPDK_OFFLOAD_OUTER_STRIP_MASK (SXE2_DPDK_OFFLOAD_OUTER_STRIP_8021Q | \
++					SXE2_DPDK_OFFLOAD_OUTER_STRIP_8021AD | \
++					SXE2_DPDK_OFFLOAD_OUTER_STRIP_QINQ1)
++#define SXE2_DPDK_OFFLOAD_STRIP_OFFSET SXE2_VSI_TSR_SHOW_TAG_S
++
++#define SXE2_DPDK_OFFLOAD_INSERT_ENABLE (RTE_BIT32(3))
++
++struct sxe2_mac_mc_list {
++	uint32_t count;
++	struct rte_ether_addr addr[SXE2_NUM_MACADDR_MAX];
++};
++
++int32_t sxe2_link_update_init(struct rte_eth_dev *dev);
++
++int32_t sxe2_link_update(struct rte_eth_dev *dev, __rte_unused int32_t wait_to_complete);
++
++int32_t sxe2_mtu_set(struct rte_eth_dev *dev, uint16_t mtu);
++
++#endif /* __SXE2_MAC_H__ */
 -- 
 2.52.0
 
