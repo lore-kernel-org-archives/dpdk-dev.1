@@ -2,48 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E911CDB479
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 14:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71572CDB479
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 14:01:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 945C840430;
-	Thu, 25 Jun 2026 15:59:59 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 79781402B0
- for <dev@dpdk.org>; Thu, 25 Jun 2026 15:59:57 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gmL5L3t5RzHnGjV;
- Thu, 25 Jun 2026 21:59:18 +0800 (CST)
-Received: from frapema100001.china.huawei.com (unknown [7.182.19.23])
- by mail.maildlp.com (Postfix) with ESMTPS id E605140569;
- Thu, 25 Jun 2026 21:59:52 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema100001.china.huawei.com (7.182.19.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Thu, 25 Jun 2026 15:59:52 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Thu, 25 Jun 2026 15:59:52 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: Wathsala Vithanage <wathsala.vithanage@arm.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v5 7/9] bpf/arm64: add BPF_ABS/BPF_IND packet load support
-Thread-Topic: [PATCH v5 7/9] bpf/arm64: add BPF_ABS/BPF_IND packet load support
-Thread-Index: AQHdBAMS8DBu9x4KNEKCz+aS9fVLkbZPPNmw
-Date: Thu, 25 Jun 2026 13:59:52 +0000
-Message-ID: <42ae97d2d2754ea69025a6f6cc6c057d@huawei.com>
-References: <20260608203322.1116296-1-stephen@networkplumber.org>
- <20260624175815.673064-1-stephen@networkplumber.org>
- <20260624175815.673064-8-stephen@networkplumber.org>
-In-Reply-To: <20260624175815.673064-8-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.78]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id B0B90402B0;
+	Thu, 25 Jun 2026 16:01:54 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 770DA402B0
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 16:01:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782396113; x=1813932113;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=BSYVt3Ii69eUb0yYlESy4XJyVcUBTX9RzxZo7DtlOy0=;
+ b=bzU0Ftl04LhfDT2cyBwhxVCjPi3DJ5g5DR8TE832Y4NgbNrbTvihNBz6
+ vaK3yashNfIgz9Rrlkf4fe7jmpSS1Cfzix3BQ/HhM4H6zIegUZ61M0zZu
+ cbSoA4ZnGXyempVSWsbq1T8qcNxxHDf3AiKoMZE2lbDbcAA/AkMoIjtjZ
+ 57wYmsCIWCK7zpURtJFDxX2zFIZHIWlF4Clb/kuloXyvVhfHini6SJBaG
+ 43oLV47CNygJUJZM73u3VX9jZ/G1SwUgLLVSQINtc+gnM+AWV0cwZHq1z
+ jrvFVH4NdWIRDWHgJyBKzMBbQhEHujKrIiOcN7yh7E+eAbtL9g2YXvI85 Q==;
+X-CSE-ConnectionGUID: FQG7ndMCScS+XLVGmKNKVA==
+X-CSE-MsgGUID: FYN7bf8DQ5ilwdwFtxj9Jg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11827"; a="83225253"
+X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="83225253"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Jun 2026 07:01:52 -0700
+X-CSE-ConnectionGUID: VXZ8aWpWSUWc8y8bl8sdiQ==
+X-CSE-MsgGUID: cSDm9i5bQ5S9YJ5neCK6qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="280908016"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa002.jf.intel.com with ESMTP; 25 Jun 2026 07:01:51 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v6 0/6] IPC fixes
+Date: Thu, 25 Jun 2026 15:01:42 +0100
+Message-ID: <cover.1782395581.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <740b39c5098b4d40cafb9881ad70865a3c889012.1773936429.git.anatoly.burakov@intel.com>
+References: <740b39c5098b4d40cafb9881ad70865a3c889012.1773936429.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,71 +58,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Below is what gdb shows actually generated for instruction 15 of
-test_ld_mbuf1_prog (with minimal changes and comments for readability). I
-suggest adding this to the comments or (if we don't feel like keeping it
-updated) the commit message, it helps analyzing the code a bit.
+Coverity has reported (issue ID 501503) a memory leak, but there
+actually were a few more problems with IPC than that. This patchset
+addresses said problems.
 
-(Also, stack drawings in the file do not include the buffer we use here.)
+1. Using pointer as async request identity is unsafe
 
-     0: 0x92800069      mov     x9, #-4         // mov x9, <imm>
-     1: 0x8b150129      add     x9, x9, x21     // add x9, src_reg
-     2: 0xd280050a      mov     x10, #40        // mov x9, <&::data_len>
-     3: 0x786a6a6a      ldrh    w10, [x19, x10]
-     4: 0xcb09014a      sub     x10, x10, x9
-     5: 0xd280008b      mov     x11, #4         // mov x11, <sz>
-     6: 0xeb0b014f      subs    x15, x10, x11
-     7: 0x5400010b      b.lt    +8              // b.lt slow
-     8: 0xd280020a      mov     x10, #16        // mov x10, <&::data_off>
-     9: 0x786a6a6a      ldrh    w10, [x19, x10]
-    10: 0xd2800007      mov     x7, #0          // mov x7, <&::buf_addr>
-    11: 0xf8676a67      ldr     x7, [x19, x7]
-    12: 0x8b0a00e7      add     x7, x7, x10
-    13: 0x8b0900e7      add     x7, x7, x9
-    14: 0x1400000c      b       +12             // b load
-                        slow:
-    15: 0x91000121      add     x1, x9, #0      // mov x1, x9
-    16: 0x91000260      add     x0, x19, #0     // mov x0, x19
-    17: 0x52800082      mov     w2, #4          // mov w2, <sz>
-    18: 0xd1002323      sub     x3, x25, #8     // sub x3, x25, <stack_ofs>
-    19: 0xd2a04d49      mov     x9, #0x26a0000  // mov x9,
-    20: 0xf29d3409      movk    x9, #0xe9a0     //   __rte_pktmbuf_read
-    21: 0xd63f0120      blr     x9
-    22: 0x91000007      add     x7, x0, #0      // mov x7, x0
-    23: 0xb5000067      cbnz    x7, +3          // cbnz load
-    24: 0xd2800007      mov     x7, #0x0
-    25: 0x17ffff88      b       -120            // b epilogue
-                        load:
-    26: 0xb87f68e7      ldr     w7, [x7, xzr]
-    27: 0xdac008e7      rev32   x7, x7
+Because asynchronous requests can fail at arbitrary points while
+having arbitrary number of requests or alarms already in flight,
+using pointer as request identity can create use-after-free risks.
+Patchset replaces this with using numeric request ID instead.
 
-Opcode variations:
-* Instruction 1 is omitted for BPF_ABS.
-* Instruction 26 varies depending on sz.
-* Instruction 27 varies or is omitted depending on sz.
+2. Alarm cancel can deadlock
 
-Some benign nits:
-* Instruction 6 should probably be `subs xzr, x10, x11`, a slight 1-bit err=
-or in
-  the existing code, though x15 is unused.
-* Instructions 5 and 17 use different encoding for the same operation, woul=
-d be
-  nice to keep them consistent, though operand never exceeds INT32_MAX.
-* Instruction 10 is redundant.
+Async request handler may attempt to cancel the alarm, but an alarm
+might have already been in progress blocking on the same lock that
+is held by async request, leading to a deadlock. Patchset removes
+the alarm cancel call, and allows the alarm to fire. This is fine,
+because due to fix #1 the worst that can happen from calling stale
+alarm is a noop, as request ID would not be found.
 
-I see two problems:
-* We never check that x9 is non-negative. We could either add one more chec=
-k,
-  or rearrange the code and use unsigned comparison at 7: (currently b.lt).
-  (There was some discussion previously regarding the special meaning of
-  negative BPF_ABS immediate, but I believe this is out of scope of this pa=
-tch,
-  here we should just fail on negative _effective_ offset regardless of opc=
-ode.)
-* Second argument of __rte_pktmbuf_read is `uint32_t off`, and we are tryin=
-g to
-  pass 64-bit offset in x1. We need a check that it does not exceed UINT32_=
-MAX.
+3. Memory leaks
 
-Otherwise looks good to me.
+There are a couple of memory leaks in failure paths. Patchset fixes
+those.
+
+4. Zero-peer async request does not trigger alarm
+
+When async requests are performed but no peers exist, we created
+a dummy request and put it on the queue, but we never set the
+dummy alarm that is supposed to handle that request. Patchset adds
+the alarm set in dummy paths where none was present before.
+
+v6:
+
+Moved pieces around, namely:
+
+1) apply request ID refactor first as a standalone patch
+2) fix the deadlock immediately after
+3) fix memory leaks next
+4) add missing callback as a final step
+
+Contents of the patchset remain the same.
+
+Anatoly Burakov (6):
+  eal: fix wrong log message in async IPC request
+  eal: use request ID instead of pointers
+  eal: avoid deadlock in async IPC alarm callback
+  eal: fix async IPC memory leaks on partial failure
+  eal: fix memory leak in async IPC secondary path
+  eal: fix async IPC callback not fired when no peers
+
+ lib/eal/common/eal_common_proc.c | 133 +++++++++++++++++++++++--------
+ 1 file changed, 99 insertions(+), 34 deletions(-)
+
+-- 
+2.47.3
 
