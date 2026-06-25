@@ -2,51 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AD5CDB479
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 13:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACC5CDB479
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 13:19:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4782D40615;
-	Thu, 25 Jun 2026 15:08:23 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 0391440430
- for <dev@dpdk.org>; Thu, 25 Jun 2026 15:08:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782392901; x=1813928901;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=cOWPXNpyrOjcmX13xJD7K19zIUJ7/82sl5zPNiaemoo=;
- b=BjTsr7PvvwCbd/ac3rlVzLw5iDFJUK1a/tTVTR+R0hZHVjeX/0kq6IIa
- prIAHtQIb2OPieJD+zfCtjDt/EcYHD0aMkdI6+G/5m8p9nMMNhNT83iBY
- vhJPqD00W8g+TX+LkXCRhRcLX6D4WyDKSluaMek2gQ947MG3KdJaS4EAy
- WVdF/wH2A+yBFBa+Cw62n9zTE5e5NV17fQ/BRaxnb8gS+x8MHYKXpZCPh
- R1wbwHMp4U+/GyVhFgXpSewO8Ddo8lh4MWw9Ub3tvEcl3oyBxFWRZl+yk
- OdJahKORvlG0Hs3Euy7aqy4wyZW8IcwDYHq8G+pBqBxrB5LUCob5A0KdT Q==;
-X-CSE-ConnectionGUID: HeTM/7cFRLOP1b8tgKwkHg==
-X-CSE-MsgGUID: NS0G6y/5TPWF5dFo06VdCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11827"; a="82288447"
-X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="82288447"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Jun 2026 06:08:20 -0700
-X-CSE-ConnectionGUID: 37qsaTjkQpSr5u7RxvqFAw==
-X-CSE-MsgGUID: l9ZbxHOKQyireP/lDBeFFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,224,1774335600"; d="scan'208";a="280863354"
-Received: from silpixa00401385.ir.intel.com (HELO
- localhost.ger.corp.intel.com) ([10.20.224.226])
- by orviesa002.jf.intel.com with ESMTP; 25 Jun 2026 06:08:19 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2] build: drop dependency on libbsd
-Date: Thu, 25 Jun 2026 14:08:12 +0100
-Message-ID: <20260625130813.1527333-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260624113550.821516-1-bruce.richardson@intel.com>
-References: <20260624113550.821516-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4068240615;
+	Thu, 25 Jun 2026 15:19:50 +0200 (CEST)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTP id 8875140430
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 15:19:48 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-03 (Coremail) with SMTP id rQCowABXPOPxKj1q3PbRFQ--.9135S2;
+ Thu, 25 Jun 2026 21:19:46 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 00/23] net/sxe2: added Linkdata sxe2 ethernet driver
+Date: Thu, 25 Jun 2026 21:19:36 +0800
+Message-ID: <20260625131936.205040-1-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260625055021.63243-1-liujie5@linkdatatechnology.com>
+References: <20260625055021.63243-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: rQCowABXPOPxKj1q3PbRFQ--.9135S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww1DWr17ZF1kGw1kCr18AFb_yoWxuFWUpF
+ 48ZryfZr13JFW3Gw4fJa1fZFyYg3WxJryjkrWa9a4fXFykAFyUCrs0gFy5CwnFyr13JF1S
+ vrZIyr1UGan5Aw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+ 6r4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+ 1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+ 7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
+ 1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0
+ F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+ WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI
+ 7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+ 1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
+ 42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU05l1UUUUU
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,192 +56,149 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Glibc added the strlcpy and strlcat functions to version 2.38, released
-in 2023, meaning they are natively available in modern linux distros. At
-this point, the value of having the libbsd provided versions of these
-functions is reduced, so let's simplify the code options here by
-providing just two options for strlcpy rather than three:
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-1. native implementation for BSD and recent Linux
-2. DPDK-specific fallbacks using snprintf
+This patch set implements core functionality for the SXE2 PMD,
+including basic driver framework, data path setup, and advanced
+offload features (VLAN, RSS,TM, PTP etc.).
 
-Since the strlcpy and strlcat functions are the only two items used from
-libbsd, we can then drop completely any DPDK dependency on libbsd.
+v8:
+	Restore the flow-duplicate-pattern parameter
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Jie Liu (23):
+  net/sxe2: remove software statistics devargs
+  net/sxe2: add Rx framework and packet types callback
+  net/sxe2: support AVX512 vectorized path for Rx and Tx
+  net/sxe2: add AVX2 vector data path for Rx and Tx
+  net/sxe2: add link update callback
+  net/sxe2: support L2 filtering and MAC config
+  drivers: support RSS feature
+  net/sxe2: support TM hierarchy and shaping
+  net/sxe2: support IPsec inline protocol offload
+  net/sxe2: support statistics and multi-process
+  drivers: interrupt handling
+  net/sxe2: add NEON vec Rx/Tx burst functions
+  drivers: add support for VF representors
+  net/sxe2: add support for custom UDP tunnel ports
+  net/sxe2: support firmware version reading
+  net/sxe2: implement get monitor address
+  common/sxe2: add shared SFP module definitions
+  net/sxe2: support SFP module info and EEPROM access
+  net/sxe2: add mbuf validation in Tx debug mode
+  common/sxe2: add callback for memory event handling
+  net/sxe2: add private devargs parsing
+  net/sxe2: implement private dump info
+  net/sxe2: update sxe2 feature matrix docs
 
----
-V2:
-* took the work further than v1, dropping libbsd dependency entirely.
-  Now DPDK just supports native strlcpy or it's own fallback version.
----
- app/test/test_string_fns.c        |  4 ++--
- buildtools/pkg-config/meson.build |  3 +--
- config/meson.build                |  7 +++----
- lib/eal/include/rte_string_fns.h  | 21 +++++----------------
- lib/eal/meson.build               |  4 +---
- lib/telemetry/telemetry.c         |  2 --
- lib/telemetry/telemetry_data.c    |  1 -
- lib/telemetry/telemetry_legacy.c  |  2 --
- 8 files changed, 12 insertions(+), 32 deletions(-)
+ doc/guides/nics/features/sxe2.ini          |   56 +
+ doc/guides/nics/sxe2.rst                   |  168 ++
+ drivers/common/sxe2/sxe2_common.c          |  156 ++
+ drivers/common/sxe2/sxe2_common.h          |    4 +
+ drivers/common/sxe2/sxe2_flow_public.h     |  633 +++++++
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      |  178 +-
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   18 +
+ drivers/common/sxe2/sxe2_msg.h             |  118 ++
+ drivers/net/sxe2/meson.build               |   52 +
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 1587 +++++++++++++++-
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  139 ++
+ drivers/net/sxe2/sxe2_drv_cmd.h            |  523 +++++-
+ drivers/net/sxe2/sxe2_dump.c               |  287 +++
+ drivers/net/sxe2/sxe2_dump.h               |   12 +
+ drivers/net/sxe2/sxe2_ethdev.c             | 1486 ++++++++++++++-
+ drivers/net/sxe2/sxe2_ethdev.h             |  111 +-
+ drivers/net/sxe2/sxe2_ethdev_repr.c        |  609 ++++++
+ drivers/net/sxe2/sxe2_ethdev_repr.h        |   32 +
+ drivers/net/sxe2/sxe2_filter.c             |  895 +++++++++
+ drivers/net/sxe2/sxe2_filter.h             |  100 +
+ drivers/net/sxe2/sxe2_flow.c               | 1394 ++++++++++++++
+ drivers/net/sxe2/sxe2_flow.h               |   30 +
+ drivers/net/sxe2/sxe2_flow_define.h        |  144 ++
+ drivers/net/sxe2/sxe2_flow_parse_action.c  | 1182 ++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_action.h  |   23 +
+ drivers/net/sxe2/sxe2_flow_parse_engine.c  |  106 ++
+ drivers/net/sxe2/sxe2_flow_parse_engine.h  |   13 +
+ drivers/net/sxe2/sxe2_flow_parse_pattern.c | 1935 +++++++++++++++++++
+ drivers/net/sxe2/sxe2_flow_parse_pattern.h |   46 +
+ drivers/net/sxe2/sxe2_ipsec.c              | 1565 ++++++++++++++++
+ drivers/net/sxe2/sxe2_ipsec.h              |  254 +++
+ drivers/net/sxe2/sxe2_irq.c                | 1026 ++++++++++
+ drivers/net/sxe2/sxe2_irq.h                |   25 +
+ drivers/net/sxe2/sxe2_mac.c                |  530 ++++++
+ drivers/net/sxe2/sxe2_mac.h                |   84 +
+ drivers/net/sxe2/sxe2_mp.c                 |  414 +++++
+ drivers/net/sxe2/sxe2_mp.h                 |   67 +
+ drivers/net/sxe2/sxe2_queue.c              |   17 +-
+ drivers/net/sxe2/sxe2_queue.h              |   15 +-
+ drivers/net/sxe2/sxe2_rss.c                |  584 ++++++
+ drivers/net/sxe2/sxe2_rss.h                |   81 +
+ drivers/net/sxe2/sxe2_rx.c                 |   93 +-
+ drivers/net/sxe2/sxe2_rx.h                 |    2 +
+ drivers/net/sxe2/sxe2_security.c           |  335 ++++
+ drivers/net/sxe2/sxe2_security.h           |   77 +
+ drivers/net/sxe2/sxe2_stats.c              |  586 ++++++
+ drivers/net/sxe2/sxe2_stats.h              |   39 +
+ drivers/net/sxe2/sxe2_switchdev.c          |  332 ++++
+ drivers/net/sxe2/sxe2_switchdev.h          |   33 +
+ drivers/net/sxe2/sxe2_tm.c                 | 1151 ++++++++++++
+ drivers/net/sxe2/sxe2_tm.h                 |   76 +
+ drivers/net/sxe2/sxe2_tx.c                 |    7 +
+ drivers/net/sxe2/sxe2_txrx.c               | 1958 +++++++++++++++++++-
+ drivers/net/sxe2/sxe2_txrx.h               |    8 +
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.c    |  595 ++++++
+ drivers/net/sxe2/sxe2_txrx_check_mbuf.h    |   38 +
+ drivers/net/sxe2/sxe2_txrx_poll.c          |  284 ++-
+ drivers/net/sxe2/sxe2_txrx_vec.c           |   46 +-
+ drivers/net/sxe2/sxe2_txrx_vec.h           |   38 +-
+ drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  747 ++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_avx512.c    |  867 +++++++++
+ drivers/net/sxe2/sxe2_txrx_vec_common.h    |   54 +-
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c      |  689 +++++++
+ drivers/net/sxe2/sxe2_txrx_vec_sse.c       |   38 +-
+ drivers/net/sxe2/sxe2_vsi.c                |  146 ++
+ drivers/net/sxe2/sxe2_vsi.h                |   12 +-
+ drivers/net/sxe2/sxe2vf_regs.h             |   85 +
+ 67 files changed, 24762 insertions(+), 273 deletions(-)
+ create mode 100644 drivers/common/sxe2/sxe2_flow_public.h
+ create mode 100644 drivers/common/sxe2/sxe2_msg.h
+ create mode 100644 drivers/net/sxe2/sxe2_dump.c
+ create mode 100644 drivers/net/sxe2/sxe2_dump.h
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.c
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev_repr.h
+ create mode 100644 drivers/net/sxe2/sxe2_filter.c
+ create mode 100644 drivers/net/sxe2/sxe2_filter.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_define.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_action.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_engine.h
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.c
+ create mode 100644 drivers/net/sxe2/sxe2_flow_parse_pattern.h
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.c
+ create mode 100644 drivers/net/sxe2/sxe2_ipsec.h
+ create mode 100644 drivers/net/sxe2/sxe2_irq.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.c
+ create mode 100644 drivers/net/sxe2/sxe2_mac.h
+ create mode 100644 drivers/net/sxe2/sxe2_mp.c
+ create mode 100644 drivers/net/sxe2/sxe2_mp.h
+ create mode 100644 drivers/net/sxe2/sxe2_rss.c
+ create mode 100644 drivers/net/sxe2/sxe2_rss.h
+ create mode 100644 drivers/net/sxe2/sxe2_security.c
+ create mode 100644 drivers/net/sxe2/sxe2_security.h
+ create mode 100644 drivers/net/sxe2/sxe2_stats.c
+ create mode 100644 drivers/net/sxe2/sxe2_stats.h
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.c
+ create mode 100644 drivers/net/sxe2/sxe2_switchdev.h
+ create mode 100644 drivers/net/sxe2/sxe2_tm.c
+ create mode 100644 drivers/net/sxe2/sxe2_tm.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_check_mbuf.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx2.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
+ create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
 
-diff --git a/app/test/test_string_fns.c b/app/test/test_string_fns.c
-index 697cb7ed15..213a9312ea 100644
---- a/app/test/test_string_fns.c
-+++ b/app/test/test_string_fns.c
-@@ -134,7 +134,7 @@ static int
- test_rte_strlcat(void)
- {
- 	/* only run actual unit tests if we have system-provided strlcat */
--#if defined(__BSD_VISIBLE) || defined(RTE_USE_LIBBSD)
-+#ifdef RTE_HAS_STRLCPY
- #define BUF_LEN 32
- 	const char dst[BUF_LEN] = "Test string";
- 	const char src[] = " appended";
-@@ -168,7 +168,7 @@ test_rte_strlcat(void)
- 	}
- 	LOG("Checked %zu combinations\n", i);
- #undef BUF_LEN
--#endif /* defined(__BSD_VISIBLE) || defined(RTE_USE_LIBBSD) */
-+#endif /* RTE_HAS_STRLCPY */
- 
- 	return 0;
- }
-diff --git a/buildtools/pkg-config/meson.build b/buildtools/pkg-config/meson.build
-index b36add17e3..a0a265ad92 100644
---- a/buildtools/pkg-config/meson.build
-+++ b/buildtools/pkg-config/meson.build
-@@ -47,8 +47,7 @@ pkg.generate(name: 'DPDK', # main DPDK pkgconfig file
-         description: '''The Data Plane Development Kit (DPDK).
- Note that CFLAGS might contain an -march flag higher than typical baseline.
- This is required for a number of static inline functions in the public headers.''',
--        requires: ['libdpdk-libs', libbsd], # may need libbsd for string funcs
--                      # if libbsd is not enabled, then this is blank
-+        requires: ['libdpdk-libs'],
-         libraries_private: ['-Wl,--whole-archive'] +
-             dpdk_drivers + dpdk_static_libraries +
-             ['-Wl,--no-whole-archive'] + platform_flags
-diff --git a/config/meson.build b/config/meson.build
-index d7f5e55c18..237e747eec 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -266,10 +266,9 @@ if libarchive.found()
-     dpdk_conf.set('RTE_HAS_LIBARCHIVE', 1)
- endif
- 
--# check for libbsd
--libbsd = dependency('libbsd', required: false, method: 'pkg-config')
--if libbsd.found()
--    dpdk_conf.set('RTE_USE_LIBBSD', 1)
-+# check for strlcpy/strlcat in native libc, otherwise use DPDK fallback
-+if cc.has_function('strlcpy', prefix: '#include <string.h>')
-+    dpdk_conf.set('RTE_HAS_STRLCPY', 1)
- endif
- 
- jansson_dep = dependency('jansson', required: false, method: 'pkg-config')
-diff --git a/lib/eal/include/rte_string_fns.h b/lib/eal/include/rte_string_fns.h
-index 3713c94acb..4b2323fc34 100644
---- a/lib/eal/include/rte_string_fns.h
-+++ b/lib/eal/include/rte_string_fns.h
-@@ -55,7 +55,7 @@ rte_strsplit(char *string, int stringlen,
- /**
-  * @internal
-  * DPDK-specific version of strlcpy for systems without
-- * libc or libbsd copies of the function
-+ * a native libc copy of the function
-  */
- static inline size_t
- rte_strlcpy(char *dst, const char *src, size_t size)
-@@ -66,7 +66,7 @@ rte_strlcpy(char *dst, const char *src, size_t size)
- /**
-  * @internal
-  * DPDK-specific version of strlcat for systems without
-- * libc or libbsd copies of the function
-+ * a native libc copy of the function
-  */
- static inline size_t
- rte_strlcat(char *dst, const char *src, size_t size)
-@@ -81,24 +81,13 @@ rte_strlcat(char *dst, const char *src, size_t size)
- }
- #endif
- 
--/* pull in a strlcpy function */
--#ifdef RTE_EXEC_ENV_FREEBSD
--#ifndef __BSD_VISIBLE /* non-standard functions are hidden */
-+/* provide strlcpy/strlcat aliases where not natively available */
-+#if !defined(RTE_HAS_STRLCPY) || \
-+	(defined(RTE_EXEC_ENV_FREEBSD) && !defined(__BSD_VISIBLE))
- #define strlcpy(dst, src, size) rte_strlcpy(dst, src, size)
- #define strlcat(dst, src, size) rte_strlcat(dst, src, size)
- #endif
- 
--#else /* non-BSD platforms */
--#ifdef RTE_USE_LIBBSD
--#include <bsd/string.h>
--
--#else /* no BSD header files, create own */
--#define strlcpy(dst, src, size) rte_strlcpy(dst, src, size)
--#define strlcat(dst, src, size) rte_strlcat(dst, src, size)
--
--#endif /* RTE_USE_LIBBSD */
--#endif /* FREEBSD */
--
- #ifdef __cplusplus
- extern "C" {
- #endif
-diff --git a/lib/eal/meson.build b/lib/eal/meson.build
-index f9fcee24ee..092f5c5261 100644
---- a/lib/eal/meson.build
-+++ b/lib/eal/meson.build
-@@ -18,9 +18,7 @@ deps += ['argparse', 'kvargs']
- if not is_windows
-     deps += ['telemetry']
- endif
--if dpdk_conf.has('RTE_USE_LIBBSD')
--    ext_deps += libbsd
--endif
-+
- if dpdk_conf.has('RTE_HAS_LIBARCHIVE')
-     ext_deps += libarchive
- endif
-diff --git a/lib/telemetry/telemetry.c b/lib/telemetry/telemetry.c
-index e591c1e283..f863445798 100644
---- a/lib/telemetry/telemetry.c
-+++ b/lib/telemetry/telemetry.c
-@@ -13,8 +13,6 @@
- #include <sys/stat.h>
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--/* we won't link against libbsd, so just always use DPDKs-specific strlcpy */
--#undef RTE_USE_LIBBSD
- #include <eal_export.h>
- #include <rte_string_fns.h>
- #include <rte_common.h>
-diff --git a/lib/telemetry/telemetry_data.c b/lib/telemetry/telemetry_data.c
-index 0a006559ab..08bdc4ea36 100644
---- a/lib/telemetry/telemetry_data.c
-+++ b/lib/telemetry/telemetry_data.c
-@@ -7,7 +7,6 @@
- #include <stdlib.h>
- #include <inttypes.h>
- 
--#undef RTE_USE_LIBBSD
- #include <stdbool.h>
- 
- #include <eal_export.h>
-diff --git a/lib/telemetry/telemetry_legacy.c b/lib/telemetry/telemetry_legacy.c
-index 1d73282ba8..af497a594a 100644
---- a/lib/telemetry/telemetry_legacy.c
-+++ b/lib/telemetry/telemetry_legacy.c
-@@ -10,8 +10,6 @@
- #include <pthread.h>
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--/* we won't link against libbsd, so just always use DPDKs-specific strlcpy */
--#undef RTE_USE_LIBBSD
- #include <eal_export.h>
- #include <rte_string_fns.h>
- #include <rte_common.h>
 -- 
-2.53.0
+2.52.0
 
