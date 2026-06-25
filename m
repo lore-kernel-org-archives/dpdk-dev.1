@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 905FCCDB47F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 05:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EBDCDB47F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Jun 2026 06:01:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C3EF740663;
-	Thu, 25 Jun 2026 07:56:45 +0200 (CEST)
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 1ACC14025F
- for <dev@dpdk.org>; Thu, 25 Jun 2026 07:56:43 +0200 (CEST)
-Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAAXnP8SwzxqCxkoFQ--.35910S2;
- Thu, 25 Jun 2026 13:56:35 +0800 (CST)
-From: liujie5@linkdatatechnology.com
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v7 16/23] net/sxe2: implement get monitor address
-Date: Thu, 25 Jun 2026 13:56:30 +0800
-Message-ID: <20260625055630.66106-1-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260624020249.3687380-1-liujie5@linkdatatechnology.com>
-References: <20260624020249.3687380-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0C15640663;
+	Thu, 25 Jun 2026 08:01:24 +0200 (CEST)
+Received: from mailgw1.hygon.cn (unknown [101.204.27.37])
+ by mails.dpdk.org (Postfix) with ESMTP id 8C6034025F
+ for <dev@dpdk.org>; Thu, 25 Jun 2026 08:01:22 +0200 (CEST)
+Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
+ by mailgw1.hygon.cn (Postfix) with ESMTP id 4gm7Tr59h2z1b0Rh;
+ Thu, 25 Jun 2026 14:01:20 +0800 (CST)
+Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
+ by mailgw1.hygon.cn (Postfix) with ESMTP id 4gm7Tn58yrz1b0Rh;
+ Thu, 25 Jun 2026 14:01:17 +0800 (CST)
+Received: from cncheex03.Hygon.cn (unknown [172.23.18.113])
+ by maildlp1.hygon.cn (Postfix) with ESMTPS id C287891FE;
+ Thu, 25 Jun 2026 14:01:09 +0800 (CST)
+Received: from cncheex04.Hygon.cn (172.23.18.114) by cncheex03.Hygon.cn
+ (172.23.18.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 25 Jun
+ 2026 14:01:17 +0800
+Received: from cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d]) by
+ cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d%10]) with mapi id
+ 15.02.1544.036; Thu, 25 Jun 2026 14:01:17 +0800
+From: Liangxing Wang <wangliangxing@hygon.cn>
+To: "thomas@monjalon.net" <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>, fengchengwen <fengchengwen@huawei.com>
+Subject: RE: [PATCH v3 0/2] Extend NUMA nodes limit
+Thread-Topic: [PATCH v3 0/2] Extend NUMA nodes limit
+Thread-Index: AQHcpi2EBfMTEG03Y0KYWGG/jeVVW7WTt9gAgChS8rCAk3in8A==
+Date: Thu, 25 Jun 2026 06:01:17 +0000
+Message-ID: <446f513ff01b4355aa5aa61b3011c865@hygon.cn>
+References: <20260225080419.727470-1-wangliangxing@hygon.cn>
+ <ac35b365-8efe-4930-99ee-1d68a92cc972@huawei.com> 
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.19.25.208]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAAXnP8SwzxqCxkoFQ--.35910S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFW8AF1fWF1kZFW3Ww15urg_yoW5Xw4kpF
- 4kX34fZF1rJa17Ww1fGa1fuF1YgF4xtFyjkryIk34fuF1kJF1UAFZ8tFyYy3WYyryUGF1S
- vFsrArsrGay5ur7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUvC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
- 6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
- 1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
- 7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
- 1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0
- F24lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
- 0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
- 17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcV
- C0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
- cVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
- nxnUUI43ZEXa7VUUK0PDUUUUU==
-X-Originating-IP: [118.112.177.181]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,79 +57,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jie Liu <liujie5@linkdatatechnology.com>
-
-This patch implements the 'get_monitor_addr' ethdev ops in the sxe2
-PMD. This interface allows the Ethernet device to provide the
-address of the next expected Rx descriptor to the power management
-library.
-
-The implementation calculates the address of the next Rx descriptor
-based on the receive queue's current hardware ring position and
-descriptor size. Applications can then use this address with
-rte_power_monitor() to put the CPU into a low-power state until
-new packets are written to the descriptor by the hardware.
-
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
----
- drivers/net/sxe2/sxe2_ethdev.c |  2 ++
- drivers/net/sxe2/sxe2_rx.c     | 21 +++++++++++++++++++++
- drivers/net/sxe2/sxe2_rx.h     |  2 ++
- 3 files changed, 25 insertions(+)
-
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 02ff6be322..d6efab239c 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -183,6 +183,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.queue_stats_mapping_set    = sxe2_queue_stats_mapping_set,
- 
- 	.fw_version_get             = sxe2_fw_version_string_get,
-+
-+	.get_monitor_addr           = sxe2_get_monitor_addr,
- };
- 
- static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
-diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
-index 2495ab3ab7..820d4f0620 100644
---- a/drivers/net/sxe2/sxe2_rx.c
-+++ b/drivers/net/sxe2/sxe2_rx.c
-@@ -534,3 +534,24 @@ void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev)
- 		}
- 	}
- }
-+
-+static int32_t sxe2_monitor_callback(const uint64_t value,
-+				 const uint64_t arg[RTE_POWER_MONITOR_OPAQUE_SZ] __rte_unused)
-+{
-+	const uint64_t dd_state = rte_cpu_to_le_64(SXE2_RX_DESC_STATUS_DD_MASK);
-+	return (value & dd_state) == dd_state ? -1 : 0;
-+}
-+
-+int32_t sxe2_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc)
-+{
-+	volatile union sxe2_rx_desc *rxdp;
-+	struct sxe2_rx_queue *rxq = (struct sxe2_rx_queue *)rx_queue;
-+
-+	rxdp = &rxq->desc_ring[rxq->processing_idx];
-+
-+	pmc->addr = &rxdp->wb.status_err_ptype_len;
-+	pmc->fn   = sxe2_monitor_callback;
-+	pmc->size = sizeof(uint16_t);
-+
-+	return 0;
-+}
-diff --git a/drivers/net/sxe2/sxe2_rx.h b/drivers/net/sxe2/sxe2_rx.h
-index 295d9005e0..c2582bc571 100644
---- a/drivers/net/sxe2/sxe2_rx.h
-+++ b/drivers/net/sxe2/sxe2_rx.h
-@@ -29,4 +29,6 @@ int32_t __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev);
- 
- void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev);
- 
-+int32_t sxe2_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
-+
- #endif /* SXE2_RX_H */
--- 
-2.52.0
+SGkgVGhvbWFzLA0KDQpGcmllbmRseSBwaW5nIGZvciByZXZpZXcvdXBzdHJlYW0sIHRoYW5rcy4N
+Cg0KUmVnYXJkcywNCkxpYW5neGluZw0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
+IEZyb206IExpYW5neGluZyBXYW5nDQo+IFNlbnQ6IDIwMjblubQz5pyIMjPml6UgMTg6MDENCj4g
+VG86ICdmZW5nY2hlbmd3ZW4nIDxmZW5nY2hlbmd3ZW5AaHVhd2VpLmNvbT47IHRob21hc0Btb25q
+YWxvbi5uZXQNCj4gQ2M6IGRldkBkcGRrLm9yZw0KPiBTdWJqZWN0OiBSRTogW1BBVENIIHYzIDAv
+Ml0gRXh0ZW5kIE5VTUEgbm9kZXMgbGltaXQNCj4gDQo+IEhpIFRob21hcywNCj4gDQo+IEZyaWVu
+ZGx5IHBpbmcgZm9yIHJldmlldy91cHN0cmVhbS4NCj4gDQo+IFJlZ2FyZHMsDQo+IExpYW5neGlu
+Zw0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+IEZyb206IGZlbmdjaGVu
+Z3dlbiA8ZmVuZ2NoZW5nd2VuQGh1YXdlaS5jb20+DQo+ID4gU2VudDogMjAyNuW5tDLmnIgyNuaX
+pSAxMDoxMQ0KPiA+IFRvOiBMaWFuZ3hpbmcgV2FuZyA8d2FuZ2xpYW5neGluZ0BoeWdvbi5jbj47
+IHRob21hc0Btb25qYWxvbi5uZXQ7DQo+ID4gc3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmcNCj4g
+PiBDYzogZGV2QGRwZGsub3JnDQo+ID4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAwLzJdIEV4dGVu
+ZCBOVU1BIG5vZGVzIGxpbWl0DQo+ID4NCj4gPiBTZXJpZXMtYWNrZWQtYnk6IENoZW5nd2VuIEZl
+bmcgPGZlbmdjaGVuZ3dlbkBodWF3ZWkuY29tPg0KPiA+DQo+ID4gT24gMi8yNS8yMDI2IDQ6MDQg
+UE0sIExpYW5neGluZyBXYW5nIHdyb3RlOg0KPiA+ID4gVGhpcyBwYXRjaHNldCB1c2UgUlRFX01B
+WF9OVU1BX05PREVTIGluc3RlYWQgb2YgaGFyZGNvZGVkIHZhbHVlcyB0bw0KPiA+ID4gZXh0ZW5k
+IE5VTUEgbm9kZXMgbGltaXQgZm9yIHNvbWUgZXhhbXBsZXMgYW5kIHRlc3QgYXBwLiBBbHNvIHJl
+bW92ZQ0KPiA+ID4gdW51c2VkIE5CX1NPQ0tFVFMgbWFjcm8gZm9yIGlwX3JlYXNzZW1ibHkgZXhh
+bXBsZSBhbmQgZ3JhcGggYXBwLg0KPiA+ID4NCj4gPiA+IExpYW5neGluZyBXYW5nICgyKToNCj4g
+PiA+ICAgZXhhbXBsZXM6IGV4dGVuZCBOVU1BIG5vZGVzIGxpbWl0DQo+ID4gPiAgIGFwcDogZXh0
+ZW5kIE5VTUEgbm9kZXMgbGltaXQNCj4gPiA+DQo+ID4gPiAgYXBwL2dyYXBoL2V0aGRldl9yeF9w
+cml2LmggICAgICAgICB8IDEgLQ0KPiA+ID4gIGFwcC90ZXN0L3Rlc3RfcG1kX3BlcmYuYyAgICAg
+ICAgICAgfCAyICstDQo+ID4gPiAgZXhhbXBsZXMvaXBfcmVhc3NlbWJseS9tYWluLmMgICAgICB8
+IDIgLS0NCj4gPiA+ICBleGFtcGxlcy9pcHNlYy1zZWNndy9pcHNlYy1zZWNndy5oIHwgMiArLQ0K
+PiA+ID4gIGV4YW1wbGVzL2wzZndkLWdyYXBoL21haW4uYyAgICAgICAgfCAyICstDQo+ID4gPiAg
+ZXhhbXBsZXMvbDNmd2QtcG93ZXIvbWFpbi5jICAgICAgICB8IDIgKy0NCj4gPiA+ICBleGFtcGxl
+cy9sM2Z3ZC9sM2Z3ZC5oICAgICAgICAgICAgIHwgMiArLQ0KPiA+ID4gIGV4YW1wbGVzL3Zob3N0
+X2NyeXB0by9tYWluLmMgICAgICAgfCAyICstDQo+ID4gPiAgOCBmaWxlcyBjaGFuZ2VkLCA2IGlu
+c2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pDQo+ID4gPg0KPiA+DQoNCg==
 
