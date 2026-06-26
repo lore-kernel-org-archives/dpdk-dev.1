@@ -2,53 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CB8C43458
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 13:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D97FC43458
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 14:25:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 66FCF40264;
-	Fri, 26 Jun 2026 15:44:54 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 068BE4025F;
- Fri, 26 Jun 2026 15:44:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A8B5E40272;
+	Fri, 26 Jun 2026 16:25:58 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id EBA5440264
+ for <dev@dpdk.org>; Fri, 26 Jun 2026 16:25:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782481492; x=1814017492;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=vrYcD88Abls8Ljm6FRxuuzHPG5GViLRzPsmjeHOGig8=;
- b=B4CQek6QZZsrKNb77xCgpHh8Ob4nKDSPtLAX72WibKibz+rowQ4F/kNo
- c1HTsmaEV39DJh7Y2zeTfkEN0CJYwaNd8Avzqzkxo9n1Q3qB+pE8ySP2J
- JZmdC+AFaLGJKUGQlJ91L2M/xl3FuQp1lCd7tWlak47RTZgMqZhNGopeY
- qlKquDOgEXNikGWgO5xmVPdbf21LiFJEY274Ppp+fQHuABI/YxVCEugwy
- pciFZWorIiBqncFJ344XSJOXnLVz7QQhfsusORWBWrUxNQOaalSY/grCC
- iZ2ADz1BGHpBFuw8TWPZJNLXPoNy5VGuQo62TQ/4MhxlW32LZvHlVkwFi w==;
-X-CSE-ConnectionGUID: zaZ3Oe3VS/yET0KDYZJUzA==
-X-CSE-MsgGUID: TQ9MU/ZtTCC/1MLPTqJLZg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11829"; a="100822304"
-X-IronPort-AV: E=Sophos;i="6.24,226,1774335600"; d="scan'208";a="100822304"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Jun 2026 06:44:51 -0700
-X-CSE-ConnectionGUID: aR0BvSWbTaSWpgYtSQdvMQ==
-X-CSE-MsgGUID: RCh1kaqGTxWihN5IPR1zbg==
+ t=1782483958; x=1814019958;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=9t8cIps5SD01Mcuyhs5Wh4Z7GPYm+awxl/wMtesHRkk=;
+ b=HFe2e7srEw48AVNuuMl4lm1ei431o659puR2wgmbtp8LsK37tsLxNAmO
+ exhHnwlFDGT4eG2iSwnMOxTZIGYjW9NjKCll3NsKhK1QcyVqivXQTE0YS
+ k6WlgGJAyYFWWaHnVcr9gJLXcEpycATNFiY7frQ3piSGXhHInFkddZdP4
+ U9dYV3dpA+d+ZNDH6yAjmNn+cArG5V2lF5HA7hs9W1x9u1nP4D9tdomI1
+ Usnedw2NPV4+7ezqTgwoCGItpkqhXUEcYgiB1HYQLP09JtjY5zlTvSci4
+ yUPq/nzKAHhjuxGXs0kzevm8AD/c2QvsL0XQWuCBxQAAU4l+TMqF/lz1/ g==;
+X-CSE-ConnectionGUID: v3SfoWxsQ9W0Qs0DpU3xfg==
+X-CSE-MsgGUID: w/PrteqSRSuvsDuSZ9Bzxg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11829"; a="93630167"
+X-IronPort-AV: E=Sophos;i="6.24,226,1774335600"; d="scan'208";a="93630167"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Jun 2026 07:25:57 -0700
+X-CSE-ConnectionGUID: 0UFcGakpR7KUgMJKICw7QQ==
+X-CSE-MsgGUID: nUWwpQgNTSKjgbbNIox59g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,226,1774335600"; d="scan'208";a="249663454"
-Received: from silpixa00401385.ir.intel.com (HELO
- localhost.ger.corp.intel.com) ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 26 Jun 2026 06:44:49 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: anatoly.burakov@intel.com, Bruce Richardson <bruce.richardson@intel.com>,
- stable@dpdk.org, Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>,
- Xiaoyun Li <xiaoyun.li@intel.com>, Beilei Xing <beilei.xing@intel.com>,
- Junfeng Guo <junfengg@nvidia.com>
-Subject: [PATCH] net/idpf: fix Tx of large mbuf segments
-Date: Fri, 26 Jun 2026 14:43:37 +0100
-Message-ID: <20260626134440.2108591-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260303150026.1601461-1-bruce.richardson@intel.com>
-References: <20260303150026.1601461-1-bruce.richardson@intel.com>
+X-IronPort-AV: E=Sophos;i="6.24,226,1774335600"; d="scan'208";a="256238387"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa005.fm.intel.com with ESMTP; 26 Jun 2026 07:25:56 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v1 1/1] net/iavf: workaround for IRQ map size mismatch
+Date: Fri, 26 Jun 2026 15:25:54 +0100
+Message-ID: <e6169c680b13cffce0ae58a4c14a90d860b63df1.1782483946.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -64,81 +57,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When TSO is enabled, and we get a packet to transmit where an individual
-mbuf segment is longer than 16k, we need to split that segment across
-multiple Tx descriptors. This support is present in the single-queue
-mode of idpf - since it shares common code with the other Intel drivers
--  but was missing from the splitq path.
+Some out-of-tree ICE kernel driver versions have a known issue where they
+expect size of IRQ queue vector map command to be bigger than needed, and
+because the driver rejects the correct size as invalid, a workaround is
+needed to send down a "wrong" size and configure the IRQ maps.
 
-This patch adds the proper data path handling. Previous work ensured
-that the descriptor count calculation took over-sized segments into
-account but the actual descriptor writing part was overlooked.
-
-Fixes: 770f4dfe0f79 ("net/idpf: support basic Tx data path")
-Fixes: 2904020f8313 ("net/intel: add common function to calculate needed descs")
-Cc: stable@dpdk.org
-
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
-v2: rework implementation based on changes to the idpf driver
-    since v1 was submitted.
----
- drivers/net/intel/idpf/idpf_common_rxtx.c | 37 ++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 5 deletions(-)
+ drivers/net/intel/iavf/iavf_vchnl.c | 30 ++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index a123d969ee..8aa61a2af4 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -994,16 +994,43 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		uint16_t first_sw_id = sw_id;
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index 0643a835d5..408ff31aa5 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -1566,7 +1566,8 @@ iavf_config_irq_map(struct iavf_adapter *adapter)
+ static int
+ iavf_config_irq_map_lv_chunk(struct iavf_adapter *adapter,
+ 		uint16_t chunk_sz,
+-		uint16_t chunk_start)
++		uint16_t chunk_start,
++		bool wrong_size)
+ {
+ 	struct {
+ 		struct virtchnl_queue_vector_maps map_info;
+@@ -1593,9 +1594,19 @@ iavf_config_irq_map_lv_chunk(struct iavf_adapter *adapter,
+ 		qv_maps->vector_id = vf->qv_map[chunk_start + i].vector_id;
+ 	}
  
- 		do {
-+			uint16_t slen = tx_pkt->data_len;
-+			rte_iova_t buf_dma_addr = rte_mbuf_data_iova(tx_pkt);
-+
-+			/* Split segment across multiple descriptors if needed
-+			 * for TSO packets where segment exceeds max buf size.
-+			 */
-+			while ((ol_flags & RTE_MBUF_F_TX_TCP_SEG) &&
-+					unlikely(slen > CI_MAX_DATA_PER_TXD)) {
-+				txd = &txr[tx_id];
-+				txn = &sw_ring[txe->next_id];
-+				txe->mbuf = NULL;
-+
-+				txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
-+				txd->qw1.cmd_dtype = cmd_dtype |
-+					IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
-+				txd->qw1.rxr_bufsize = CI_MAX_DATA_PER_TXD;
-+				txd->qw1.compl_tag = sw_id;
-+
-+				buf_dma_addr += CI_MAX_DATA_PER_TXD;
-+				slen -= CI_MAX_DATA_PER_TXD;
-+
-+				tx_id++;
-+				if (tx_id == txq->nb_tx_desc)
-+					tx_id = 0;
-+				sw_id = txe->next_id;
-+				txe = txn;
+-	/* for some reason PF side checks for buffer being too big, so adjust it down */
+-	buf_len = sizeof(struct virtchnl_queue_vector_maps) +
+-		  sizeof(struct virtchnl_queue_vector) * (chunk_sz - 1);
++	/*
++	 * in out-of-tree kernel driver versions 2.6.4 and 2.6.6 there is a
++	 * known issue where the PF side expects the buffer size to be bigger
++	 * than necessary. this is a workaround for that issue.
++	 */
++	if (wrong_size)
++		/* send N+1 instead of N to workaround PF side bug */
++		buf_len = sizeof(struct virtchnl_queue_vector_maps) +
++			sizeof(struct virtchnl_queue_vector) * (chunk_sz);
++	else
++		/* virtchnl_queue_vector_maps already contains 1 queue_vector */
++		buf_len = sizeof(struct virtchnl_queue_vector_maps) +
++			sizeof(struct virtchnl_queue_vector) * (chunk_sz - 1);
+ 
+ 	args.ops = VIRTCHNL_OP_MAP_QUEUE_VECTOR;
+ 	args.in_args = (u8 *)map_info;
+@@ -1609,12 +1620,21 @@ iavf_config_irq_map_lv_chunk(struct iavf_adapter *adapter,
+ int
+ iavf_config_irq_map_lv(struct iavf_adapter *adapter, uint16_t num)
+ {
++	static bool wrong_size;
+ 	uint16_t c;
+ 	int err;
+ 
+ 	for (c = 0; c < num; c += IAVF_CFG_Q_NUM_PER_BUF) {
+ 		uint16_t chunk_sz = RTE_MIN(num - c, IAVF_CFG_Q_NUM_PER_BUF);
+-		err = iavf_config_irq_map_lv_chunk(adapter, chunk_sz, c);
++		err = iavf_config_irq_map_lv_chunk(adapter, chunk_sz, c, wrong_size);
++		if (err) {
++			/* try workaround for a known issue */
++			err = iavf_config_irq_map_lv_chunk(adapter, chunk_sz, c, true);
++			if (err == 0) {
++				PMD_DRV_LOG(DEBUG, "Using workaround for IRQ map");
++				wrong_size = true;
 +			}
-+
- 			txd = &txr[tx_id];
- 			txn = &sw_ring[txe->next_id];
- 			txe->mbuf = tx_pkt;
- 
- 			/* Setup TX descriptor */
--			txd->buf_addr =
--				rte_cpu_to_le_64(rte_mbuf_data_iova(tx_pkt));
--			cmd_dtype |= IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
--			txd->qw1.cmd_dtype = cmd_dtype;
--			txd->qw1.rxr_bufsize = tx_pkt->data_len;
-+			txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
-+			txd->qw1.cmd_dtype = cmd_dtype |
-+				IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
-+			txd->qw1.rxr_bufsize = slen;
- 			txd->qw1.compl_tag = sw_id;
- 			tx_id++;
- 			if (tx_id == txq->nb_tx_desc)
++		}
+ 		if (err) {
+ 			PMD_DRV_LOG(ERR, "Failed to configure irq map chunk [%u, %u)",
+ 					c, c + chunk_sz);
 -- 
-2.53.0
+2.47.3
 
