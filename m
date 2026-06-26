@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E056CDE008
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 06:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2891CDE008
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 06:44:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA5C040272;
-	Fri, 26 Jun 2026 08:43:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 31C4840272;
+	Fri, 26 Jun 2026 08:44:21 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id EF4E640264
- for <dev@dpdk.org>; Fri, 26 Jun 2026 08:43:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 425B040264
+ for <dev@dpdk.org>; Fri, 26 Jun 2026 08:44:19 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAAnIbihHz5qLP7mFQ--.42144S2;
- Fri, 26 Jun 2026 14:43:45 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowABXLJO_Hz5qXQDnFQ--.5783S2;
+ Fri, 26 Jun 2026 14:44:16 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v9 11/23] drivers: interrupt handling
-Date: Fri, 26 Jun 2026 14:43:44 +0800
-Message-ID: <20260626064344.360894-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v9 12/23] net/sxe2: add NEON vec Rx/Tx burst functions
+Date: Fri, 26 Jun 2026 14:44:15 +0800
+Message-ID: <20260626064415.360975-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <220260625133139.207632-1-liujie5@linkdatatechnology.com>
 References: <220260625133139.207632-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAAnIbihHz5qLP7mFQ--.42144S2
-X-Coremail-Antispam: 1UD129KBjvAXoWDAr4Duw17Jw47Zr15uFW5Awb_yoW7Jw4xAo
- WxWrsxX3WrW34Ik3yxXr4kGFy7Zw48Ww45ta1SgFs8uwnxG34Yga43Xr1DX3WqgFs5tF9F
- grn2vrZ7KFsxJrWrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: rQCowABXLJO_Hz5qXQDnFQ--.5783S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfuF4xJrWfuryfuFyUGr4fuFg_yoW5Cr48Jo
+ Wxur4rJr47Jr18Aw4Dur1xZFyUtw4UZ34UCayF9Fnru3WkCF1Yka43t3WayFy7Wr4ftFs0
+ ga4Iy393trZ3XrWxn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
  AaLaJ3UjIYCTnIWjp_UUUYY7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
  x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
@@ -58,1633 +58,883 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch includes:
-- MSI-X vector allocation and mapping logic.
-- Support for rx_queue_intr_enable and rx_queue_intr_disable ops.
-- Interrupt handler to process admin and queue events.
-- Integration with EAL interrupt framework.
+- Implement sxe2_recv_pkts_vec_neon for bulk packet receiving.
+- Implement sxe2_xmit_pkts_vec_neon for bulk packet transmission.
+- Added logic to select the vectorized path based on runtime config
+  and CPU flags (RTE_ARCH_ARM64).
 
-RX queue interrupts allow applications to use rte_eth_dev_rx_intr_wait()
-for power-efficient packet processing.
+Vectorized path improves throughput for small packets by processing
+multiple descriptors simultaneously using SIMD instructions.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/common/sxe2/sxe2_ioctl_chnl.c      | 176 +++-
- drivers/common/sxe2/sxe2_ioctl_chnl_func.h |  18 +
- drivers/net/sxe2/meson.build               |   1 +
- drivers/net/sxe2/sxe2_cmd_chnl.c           |  42 +
- drivers/net/sxe2/sxe2_cmd_chnl.h           |   4 +
- drivers/net/sxe2/sxe2_drv_cmd.h            |   8 +
- drivers/net/sxe2/sxe2_ethdev.c             |  93 +-
- drivers/net/sxe2/sxe2_ethdev.h             |   6 +
- drivers/net/sxe2/sxe2_irq.c                | 942 +++++++++++++++++++++
- drivers/net/sxe2/sxe2_irq.h                |  21 +
- drivers/net/sxe2/sxe2vf_regs.h             |  85 ++
- 11 files changed, 1393 insertions(+), 3 deletions(-)
- create mode 100644 drivers/net/sxe2/sxe2_irq.c
- create mode 100644 drivers/net/sxe2/sxe2vf_regs.h
+ drivers/net/sxe2/meson.build            |   2 +
+ drivers/net/sxe2/sxe2_txrx.c            |  39 +-
+ drivers/net/sxe2/sxe2_txrx_vec.h        |  16 +-
+ drivers/net/sxe2/sxe2_txrx_vec_common.h |   1 +
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c   | 689 ++++++++++++++++++++++++
+ 5 files changed, 742 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_neon.c
 
-diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-index 51aea327e5..173d8d57ae 100644
---- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
-+++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-@@ -67,6 +67,7 @@ sxe2_drv_cmd_exec(struct sxe2_common_device *cdev,
- 	return ret;
- }
- 
-+
- RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_open)
- int32_t
- sxe2_drv_dev_open(struct sxe2_common_device *cdev, struct rte_pci_device *pci_dev)
-@@ -87,7 +88,7 @@ sxe2_drv_dev_open(struct sxe2_common_device *cdev, struct rte_pci_device *pci_de
- 	if (fd < 0) {
- 		ret = -EBADF;
- 		PMD_LOG_ERR(COM, "Fail to open device:%s, ret=%d, err:%s",
--				drv_name, ret, strerror(errno));
-+			    drv_name, ret, strerror(errno));
- 		goto l_end;
- 	}
- 
-@@ -159,6 +160,177 @@ sxe2_drv_dev_handshake(struct sxe2_common_device *cdev)
- 	return ret;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_rxq_irq_set)
-+int32_t
-+sxe2_drv_dev_rxq_irq_set(struct sxe2_common_device *cdev,
-+		       uint16_t base_irq, int32_t *efd, uint16_t nb_irq)
-+{
-+	struct sxe2_ioctl_irq_set cmd_params;
-+	int32_t ret = 0;
-+	int32_t cmd_fd = 0;
-+
-+	if (cdev->config.kernel_reset) {
-+		ret = -EPERM;
-+		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
-+		goto l_end;
-+	}
-+
-+	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
-+	if (cmd_fd < 0) {
-+		ret = -EBADF;
-+		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_DEBUG(COM, "Open fd=%d to set rxq irq, base_queue=%d, efds=%p, nb_irq=%d",
-+		cmd_fd, base_irq, efd, nb_irq);
-+
-+	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_irq_set));
-+	cmd_params.base_irq_in_com = base_irq;
-+	cmd_params.cnt = nb_irq;
-+	cmd_params.event_fd = efd;
-+
-+	pthread_mutex_lock(&cdev->config.lock);
-+	ret = ioctl(cmd_fd, SXE2_COM_CMD_IO_IRQS_REQ, &cmd_params);
-+	if (ret < 0) {
-+		PMD_LOG_ERR(COM, "Failed to set io irqs, fd=%d, ret=%d, err:%s",
-+			    cmd_fd, ret, strerror(errno));
-+		pthread_mutex_unlock(&cdev->config.lock);
-+		goto l_end;
-+	}
-+	pthread_mutex_unlock(&cdev->config.lock);
-+
-+l_end:
-+	return ret;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_other_irq_set)
-+int32_t
-+sxe2_drv_dev_other_irq_set(struct sxe2_common_device *cdev,
-+			int32_t efd, uint64_t event)
-+{
-+	int32_t ret = 0;
-+	int32_t cmd_fd = 0;
-+	struct sxe2_ioctl_other_evt_set cmd_params;
-+
-+	if (cdev->config.kernel_reset) {
-+		ret = -EPERM;
-+		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
-+		goto l_end;
-+	}
-+
-+	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
-+	if (cmd_fd < 0) {
-+		ret = -EBADF;
-+		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_DEBUG(COM, "Open fd=%d to set other irq, efd=%d, event=%"PRIu64"",
-+		cmd_fd, efd, event);
-+
-+	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_other_evt_set));
-+	cmd_params.eventfd = efd;
-+	cmd_params.filter_table = event;
-+
-+	pthread_mutex_lock(&cdev->config.lock);
-+	ret = ioctl(cmd_fd, SXE2_COM_CMD_EVT_IRQ_REQ, &cmd_params);
-+	if (ret < 0) {
-+		PMD_LOG_ERR(COM, "Failed to set others evt, fd=%d, ret=%d, err:%s",
-+			   cmd_fd, ret, strerror(errno));
-+		ret = -EIO;
-+		pthread_mutex_unlock(&cdev->config.lock);
-+		goto l_end;
-+	}
-+	pthread_mutex_unlock(&cdev->config.lock);
-+
-+l_end:
-+	return ret;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_other_irq_get)
-+int32_t
-+sxe2_drv_dev_other_irq_get(struct sxe2_common_device *cdev, uint64_t *event)
-+{
-+	int32_t ret = 0;
-+	int32_t cmd_fd = 0;
-+	struct sxe2_ioctl_other_evt_get cmd_params;
-+
-+	if (cdev->config.kernel_reset) {
-+		ret = -EPERM;
-+		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
-+		goto l_end;
-+	}
-+
-+	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
-+	if (cmd_fd < 0) {
-+		ret = -EBADF;
-+		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_DEBUG(COM, "Open fd=%d to get other irq", cmd_fd);
-+
-+	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_other_evt_get));
-+
-+	pthread_mutex_lock(&cdev->config.lock);
-+	ret = ioctl(cmd_fd, SXE2_COM_CMD_EVT_CAUSE_GET, &cmd_params);
-+	if (ret < 0) {
-+		PMD_LOG_ERR(COM, "Failed to set others evt, fd=%d, ret=%d, err:%s",
-+			   cmd_fd, ret, strerror(errno));
-+		ret = -EIO;
-+		pthread_mutex_unlock(&cdev->config.lock);
-+		goto l_end;
-+	}
-+	pthread_mutex_unlock(&cdev->config.lock);
-+	*event = cmd_params.evt_cause;
-+
-+l_end:
-+	return ret;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_reset_irq_set)
-+int32_t
-+sxe2_drv_dev_reset_irq_set(struct sxe2_common_device *cdev, int32_t efd)
-+{
-+	int32_t ret = 0;
-+	int32_t cmd_fd = 0;
-+	struct sxe2_ioctl_reset_sub_set cmd_params;
-+
-+	if (cdev->config.kernel_reset) {
-+		ret = -EPERM;
-+		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
-+		goto l_end;
-+	}
-+
-+	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
-+	if (cmd_fd < 0) {
-+		ret = -EBADF;
-+		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_DEBUG(COM, "Open fd=%d to set reset irq, efd=%d",
-+		cmd_fd, efd);
-+
-+	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_reset_sub_set));
-+	cmd_params.eventfd = efd;
-+
-+	pthread_mutex_lock(&cdev->config.lock);
-+	ret = ioctl(cmd_fd, SXE2_COM_CMD_RST_IRQ_REQ, &cmd_params);
-+	if (ret < 0) {
-+		PMD_LOG_ERR(COM, "Failed to set reset irqs, fd=%d, ret=%d, err:%s",
-+			   cmd_fd, ret, strerror(errno));
-+		ret = -EIO;
-+		pthread_mutex_unlock(&cdev->config.lock);
-+		goto l_end;
-+	}
-+	pthread_mutex_unlock(&cdev->config.lock);
-+
-+l_end:
-+	return ret;
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_mmap)
- void
- *sxe2_drv_dev_mmap(struct sxe2_common_device *cdev, uint8_t bar_idx, uint64_t len, uint64_t offset)
-@@ -223,7 +395,7 @@ sxe2_drv_dev_munmap(struct sxe2_common_device *cdev, void *virt, uint64_t len)
- RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_dma_map)
- int32_t
- sxe2_drv_dev_dma_map(struct sxe2_common_device *cdev, uint64_t vaddr,
--			uint64_t iova, uint64_t size)
-+		     uint64_t iova, uint64_t size)
- {
- 	struct sxe2_ioctl_iommu_dma_map cmd_params;
- 	enum rte_iova_mode iova_mode;
-diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl_func.h b/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
-index e5d8cad1e0..368be16d4f 100644
---- a/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
-+++ b/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
-@@ -29,6 +29,7 @@ int32_t
- sxe2_drv_dev_open(struct sxe2_common_device *cdev,
- 		struct rte_pci_device *pci_dev);
- 
-+
- __rte_internal
- void
- sxe2_drv_dev_close(struct sxe2_common_device *cdev);
-@@ -37,6 +38,23 @@ __rte_internal
- int32_t
- sxe2_drv_dev_handshake(struct sxe2_common_device *cdev);
- 
-+__rte_internal
-+int32_t
-+sxe2_drv_dev_rxq_irq_set(struct sxe2_common_device *cdev, uint16_t base_irq,
-+			 int32_t *efd, uint16_t nb_irq);
-+
-+__rte_internal
-+int32_t
-+sxe2_drv_dev_other_irq_set(struct sxe2_common_device *cdev, int32_t efd, uint64_t event);
-+
-+__rte_internal
-+int32_t
-+sxe2_drv_dev_other_irq_get(struct sxe2_common_device *cdev, uint64_t *event);
-+
-+__rte_internal
-+int32_t
-+sxe2_drv_dev_reset_irq_set(struct sxe2_common_device *cdev, int32_t fd);
-+
- __rte_internal
- void
- *sxe2_drv_dev_mmap(struct sxe2_common_device *cdev, uint8_t bar_idx,
 diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index 8c8f16863e..fc4466556b 100644
+index fc4466556b..4565046eae 100644
 --- a/drivers/net/sxe2/meson.build
 +++ b/drivers/net/sxe2/meson.build
-@@ -68,4 +68,5 @@ sources += files(
-         'sxe2_security.c',
-         'sxe2_mp.c',
-         'sxe2_stats.c',
-+        'sxe2_irq.c',
- )
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index a1fc8a50e3..d1f15084ed 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -348,6 +348,48 @@ int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter)
- 	return ret;
- }
+@@ -48,6 +48,8 @@ if arch_subdir == 'x86'
+                 include_directories: includes,
+                 c_args: [cflags, '-mavx2'])
+         objs += sxe2_avx2_lib.extract_objects('sxe2_txrx_vec_avx2.c')
++elif arch_subdir == 'arm'
++        sources += files('sxe2_txrx_vec_neon.c')
+ endif
  
-+int32_t sxe2_drv_rxq_bind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx, uint16_t msix_idx)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_drv_queue_irq_bind_req req = {0};
-+	int32_t ret = 0;
-+
-+	req.msix_idx = msix_idx;
-+	req.q_idx = rxq_idx;
-+	req.itr_idx = 0;
-+	req.bind = true;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_EVT_IRQ_BAND_RXQ,
-+				 &req, sizeof(req),
-+				 NULL, 0);
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "rxq bind irq failed, ret=%d", ret);
-+
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_rxq_unbind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx)
-+{
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_drv_queue_irq_bind_req req = {0};
-+	int32_t ret = 0;
-+
-+	req.bind = false;
-+	req.q_idx = rxq_idx;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_EVT_IRQ_BAND_RXQ,
-+				 &req, sizeof(req),
-+				 NULL, 0);
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, DRV, "rxq unbind irq failed, ret=%d", ret);
-+
-+	return ret;
-+}
-+
- int32_t sxe2_drv_get_mac_stats(struct sxe2_adapter *adapter)
- {
- 	int32_t ret = 0;
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index 80ad10ac00..3eb30078e1 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -118,4 +118,8 @@ int32_t sxe2_drv_rss_hf_clear(struct sxe2_adapter *adapter);
+ sources += files(
+diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
+index 00307f2fcc..798863dad9 100644
+--- a/drivers/net/sxe2/sxe2_txrx.c
++++ b/drivers/net/sxe2/sxe2_txrx.c
+@@ -175,6 +175,9 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
  
- int32_t sxe2_drv_ptp_gettime(struct sxe2_adapter *adapter, struct sxe2_rx_queue *rxq);
- 
-+int32_t sxe2_drv_rxq_bind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx, uint16_t msix_idx);
-+
-+int32_t sxe2_drv_rxq_unbind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx);
-+
- #endif /* SXE2_CMD_CHNL_H */
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index 5cd59723e0..d7822c6498 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -556,6 +556,14 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_tx_map_req {
- 	uint8_t pool_idx;
- } __rte_packed_end;
- 
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_queue_irq_bind_req {
-+	uint16_t q_idx;
-+	uint16_t msix_idx;
-+	uint8_t itr_idx;
-+	uint8_t bind;
-+	uint8_t rsv[2];
-+} __rte_packed_end;
-+
- enum sxe2_drv_cmd_module {
- 	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
- 	SXE2_DRV_CMD_MODULE_DEV = 1,
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index f0cc2b2708..89c6f28adc 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -22,6 +22,7 @@
- #include <rte_eal_paging.h>
- 
- #include "sxe2_ethdev.h"
-+#include "sxe2_irq.h"
- #include "sxe2_drv_cmd.h"
- #include "sxe2_cmd_chnl.h"
- #include "sxe2_tx.h"
-@@ -106,6 +107,9 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.rx_queue_release           = sxe2_rx_queue_release,
- 	.tx_queue_setup             = sxe2_tx_queue_setup,
- 	.tx_queue_release           = sxe2_tx_queue_release,
-+	.rx_queue_intr_enable       = sxe2_rx_queue_intr_enable,
-+	.rx_queue_intr_disable      = sxe2_rx_queue_intr_disable,
-+
- 	.rxq_info_get               = sxe2_rx_queue_info_get,
- 	.txq_info_get               = sxe2_tx_queue_info_get,
- 	.rx_burst_mode_get          = sxe2_rx_burst_mode_get,
-@@ -176,6 +180,8 @@ static int32_t sxe2_dev_stop(struct rte_eth_dev *dev)
- 	if (adapter->started == 0)
- 		goto l_end;
- 
-+	sxe2_rxq_intr_disable(dev);
-+
- 	sxe2_txqs_all_stop(dev);
- 	sxe2_rxqs_all_stop(dev);
- 
-@@ -214,6 +220,12 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
- 		goto l_end;
- 	}
- 
-+	ret = sxe2_rxq_intr_enable(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to enable rx queue intr");
-+		goto l_rxq_intr_err;
-+	}
-+
- 	ret = sxe2_queues_start(dev);
- 	if (ret) {
- 		PMD_LOG_ERR(INIT, "enable queues failed");
-@@ -223,7 +235,10 @@ static int32_t sxe2_dev_start(struct rte_eth_dev *dev)
- 	dev->data->dev_started = 1;
- 	adapter->started = 1;
- 	goto l_end;
-+
- l_start_queues_err:
-+	(void)sxe2_rxq_intr_disable(dev);
-+l_rxq_intr_err:
- 	(void)sxe2_filter_rule_stop(dev);
- l_end:
- 	return ret;
-@@ -604,6 +619,8 @@ static int32_t sxe2_func_caps_get(struct sxe2_adapter *adapter)
- 
- 	sxe2_sw_queue_ctx_hw_cap_set(adapter, &dev_caps.queue_caps);
- 
-+	sxe2_sw_irq_ctx_hw_cap_set(adapter, &dev_caps.msix_caps);
-+
- 	sxe2_sw_rss_ctx_hw_cap_set(adapter, &dev_caps.rss_hash_caps);
- 
- 	sxe2_sw_vsi_ctx_hw_cap_set(adapter, &dev_caps.vsi_caps);
-@@ -625,6 +642,41 @@ static int32_t sxe2_dev_caps_get(struct sxe2_adapter *adapter)
- 	return ret;
- }
- 
-+uint32_t sxe2_pci_map_read_reg(struct sxe2_adapter *adapter,
-+		enum sxe2_pci_map_resource res_type, uint16_t idx_in_func)
-+{
-+	void *reg_addr;
-+	uint32_t value;
-+
-+	reg_addr = sxe2_pci_map_addr_get(adapter, res_type, idx_in_func);
-+	if (unlikely(reg_addr == NULL)) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "reg addr:0x%p is error.", reg_addr);
-+		value = SXE2_PCI_MAP_INVALID_VAL;
-+		goto l_ret;
-+	}
-+
-+	value = SXE2_PCI_REG_READ(reg_addr);
-+
-+l_ret:
-+	return value;
-+}
-+
-+void sxe2_pci_map_write_reg(struct sxe2_adapter *adapter,
-+		enum sxe2_pci_map_resource res_type, uint16_t idx_in_func, uint32_t value)
-+{
-+	void *reg_addr;
-+
-+	reg_addr = sxe2_pci_map_addr_get(adapter, res_type, idx_in_func);
-+	if (unlikely(reg_addr == NULL)) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "reg addr:0x%p is error.", reg_addr);
-+		goto l_ret;
-+	}
-+
-+	SXE2_PCI_REG_WRITE_WC(reg_addr, value);
-+l_ret:
-+	return;
-+}
-+
- int32_t sxe2_dev_pci_seg_map(struct sxe2_adapter *adapter,
- 			     enum sxe2_pci_map_resource res_type,
- 			     uint64_t org_len,
-@@ -704,6 +756,27 @@ static int32_t sxe2_hw_init(struct rte_eth_dev *dev)
- 	return ret;
- }
- 
-+static int32_t sxe2_sw_init(struct rte_eth_dev *dev)
-+{
-+	int32_t ret = -1;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	ret = sxe2_sw_irq_ctxt_init(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to sw irq ctxt init, ret=[%d]", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_sw_uninit(struct rte_eth_dev *dev)
-+{
-+	sxe2_sw_irq_ctxt_uninit(dev);
-+}
-+
- int32_t sxe2_dev_pci_res_seg_map(struct sxe2_adapter *adapter,
- 				 uint32_t res_type,
- 				 uint32_t item_cnt,
-@@ -1052,6 +1125,18 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
- 		goto init_dev_info_err;
- 	}
- 
-+	ret = sxe2_sw_init(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to initialize sw parameters, ret=[%d]", ret);
-+		goto init_sw_err;
-+	}
-+
-+	ret = sxe2_intr_init(dev);
-+	if (ret != 0) {
-+		PMD_LOG_ERR(INIT, "Failed to initialize interrupt, ret:%d", ret);
-+		goto init_irq_err;
-+	}
-+
- 	ret = sxe2_eth_init(dev);
- 	if (ret) {
- 		PMD_LOG_ERR(INIT, "Failed to initialize eth parameters, ret=%d", ret);
-@@ -1096,6 +1181,10 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
- init_rss_err:
- 	sxe2_security_uinit(dev);
- init_security_err:
-+	sxe2_intr_uninit(dev);
-+init_irq_err:
-+	sxe2_sw_uninit(dev);
-+init_sw_err:
- 	sxe2_eth_uinit(dev);
- init_eth_err:
- init_dev_info_err:
-@@ -1119,8 +1208,10 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
- 	(void)sxe2_sched_uinit(dev);
- 	sxe2_vsi_uninit(dev);
- 	sxe2_security_uinit(dev);
--	sxe2_dev_pci_map_uinit(dev);
-+	sxe2_intr_uninit(dev);
-+	sxe2_sw_uninit(dev);
- 	sxe2_eth_uinit(dev);
-+	sxe2_dev_pci_map_uinit(dev);
- 
- l_end:
- 	return 0;
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index 0407c2c449..0734c10059 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -350,6 +350,12 @@ int32_t sxe2_dev_pci_res_seg_map(struct sxe2_adapter *adapter,
- 				 uint32_t item_cnt,
- 				 uint32_t item_base);
- 
-+void sxe2_pci_map_write_reg(struct sxe2_adapter *adapter,
-+		enum sxe2_pci_map_resource res_type, uint16_t idx_in_func, uint32_t value);
-+
-+uint32_t sxe2_pci_map_read_reg(struct sxe2_adapter *adapter,
-+		enum sxe2_pci_map_resource res_type, uint16_t idx_in_func);
-+
- void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
- 
- int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
-diff --git a/drivers/net/sxe2/sxe2_irq.c b/drivers/net/sxe2/sxe2_irq.c
-new file mode 100644
-index 0000000000..6dab2f8cd8
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_irq.c
-@@ -0,0 +1,942 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#include <stdint.h>
-+#include <sys/eventfd.h>
-+#include <unistd.h>
-+#include <ethdev_pci.h>
-+#include <ethdev_driver.h>
-+#include <rte_alarm.h>
-+#include <fcntl.h>
-+#include <rte_stdatomic.h>
-+
-+#include "sxe2_ethdev.h"
-+#include "sxe2_irq.h"
-+#include "sxe2_common_log.h"
-+#include "sxe2_queue.h"
-+#include "sxe2_drv_cmd.h"
-+#include "sxe2_ioctl_chnl_func.h"
-+#include "sxe2vf_regs.h"
-+#include "sxe2_host_regs.h"
-+#include "sxe2_cmd_chnl.h"
-+
-+#define SXE2_INT_EVENT_OICR_ALL (SXE2_PF_INT_OICR_SWINT | \
-+					SXE2_PF_INT_OICR_LAN_TX_ERR | \
-+					SXE2_PF_INT_OICR_LAN_RX_ERR | \
-+					SXE2_PF_INT_OICR_FW)
-+
-+#define MAX_EVENT_PENDING (16)
-+
-+struct sxe2_event_element {
-+	TAILQ_ENTRY(sxe2_event_element) next;
-+	struct rte_eth_dev *dev;
-+};
-+
-+struct sxe2_event_handler {
-+	RTE_ATOMIC(uint16_t)ndev;
-+	rte_thread_t tid;
-+	int32_t fd[2];
-+	rte_spinlock_t  lock;
-+	TAILQ_HEAD(event_list, sxe2_event_element) pending;
-+};
-+static struct sxe2_event_handler event_handler = {
-+	.fd = {-1, -1},
-+};
-+
-+static RTE_ATOMIC(uint32_t)event_thread_run;
-+
-+
-+static void sxe2_event_irq_common_handler(struct sxe2_adapter *adapter, uint64_t oicr)
-+{
-+	struct rte_eth_dev *dev = &rte_eth_devices[adapter->dev_info.dev_data->port_id];
-+
-+	if (oicr & RTE_BIT32(SXE2_COM_EC_LINK_CHG)) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "OICR=%" PRIu64, oicr);
-+		(void)sxe2_drv_mac_link_status_get(adapter);
-+		if (rte_eal_process_type() == RTE_PROC_PRIMARY)
-+			rte_eth_dev_callback_process(dev,
-+						     RTE_ETH_EVENT_INTR_LSC,
-+						     NULL);
-+	}
-+}
-+
-+static uint32_t sxe2_event_intr_handle(void *param __rte_unused)
-+{
-+	struct sxe2_event_handler *handler = &event_handler;
-+	struct sxe2_adapter *adapter;
-+	struct sxe2_event_element *pos;
-+	struct sxe2_event_element *tmp;
-+	int32_t ret = 0;
-+	uint64_t oicr = 0;
-+	TAILQ_HEAD(event_list, sxe2_event_element) pending;
-+	int8_t unused[MAX_EVENT_PENDING];
-+	ssize_t nr;
-+
-+	while (rte_atomic_load_explicit(&event_thread_run, rte_memory_order_relaxed)) {
-+		nr = read(handler->fd[0], &unused, sizeof(unused));
-+		if (nr <= 0)
-+			break;
-+
-+		rte_spinlock_lock(&handler->lock);
-+		TAILQ_INIT(&pending);
-+		TAILQ_CONCAT(&pending, &handler->pending, next);
-+		rte_spinlock_unlock(&handler->lock);
-+
-+		TAILQ_FOREACH_SAFE(pos, &pending, next, tmp) {
-+			TAILQ_REMOVE(&pending, pos, next);
-+			adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(pos->dev);
-+
-+			ret = sxe2_drv_dev_other_irq_get(adapter->cdev, &oicr);
-+			sxe2_event_irq_common_handler(adapter, oicr);
-+
-+			rte_free(pos);
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int32_t sxe2_event_intr_handler_init(void)
-+{
-+	struct sxe2_event_handler *handler = &event_handler;
-+	int32_t ret = 0;
-+	int err = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+	if (rte_atomic_fetch_add_explicit(&handler->ndev, 1, rte_memory_order_acq_rel) >= 1) {
-+		ret = 0;
-+		PMD_LOG_DEBUG(INIT, "%s: ndev > 1", __func__);
-+		goto l_end;
-+	}
-+
-+#if defined(RTE_EXEC_ENV_IS_WINDOWS) && RTE_EXEC_ENV_IS_WINDOWS != 0
-+	err = _pipe(handler->fd, MAX_EVENT_PENDING, O_BINARY);
-+#else
-+	err = pipe(handler->fd);
-+#endif
-+	if (err != 0) {
-+		ret = -ECHILD;
-+		rte_atomic_fetch_sub_explicit(&handler->ndev, 1, rte_memory_order_release);
-+		PMD_LOG_ERR(INIT, "%s: pipe failed", __func__);
-+		goto l_end;
-+	}
-+
-+	rte_atomic_store_explicit(&event_thread_run, 1, rte_memory_order_relaxed);
-+
-+	TAILQ_INIT(&handler->pending);
-+	rte_spinlock_init(&handler->lock);
-+
-+	if (rte_thread_create_internal_control(&handler->tid, "sxe2-event",
-+				sxe2_event_intr_handle, NULL)) {
-+		PMD_LOG_ERR(INIT, "%s: thread create failed", __func__);
-+		rte_atomic_fetch_sub_explicit(&handler->ndev, 1, rte_memory_order_release);
-+		ret = -ECHILD;
-+		goto l_end;
-+	}
-+	ret = 0;
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_event_intr_handler_uinit(void)
-+{
-+	struct sxe2_event_handler *handler = &event_handler;
-+	struct sxe2_event_element *pos;
-+	struct sxe2_event_element *tmp;
-+	ssize_t nw = 0;
-+	int8_t notify_byte = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+	if (rte_atomic_fetch_sub_explicit(&handler->ndev, 1, rte_memory_order_acq_rel) > 1) {
-+		PMD_LOG_DEBUG(INIT, "event handler uinit, ndev > 0");
-+		return;
-+	}
-+
-+	rte_atomic_store_explicit(&event_thread_run, 0, rte_memory_order_relaxed);
-+	nw = write(handler->fd[1], &notify_byte, 1);
-+	RTE_SET_USED(nw);
-+
-+	(void)rte_thread_join(handler->tid, NULL);
-+
-+	if (handler->fd[0] != -1) {
-+		close(handler->fd[0]);
-+		handler->fd[0] = -1;
-+	}
-+	if (handler->fd[1] != -1) {
-+		close(handler->fd[1]);
-+		handler->fd[1] = -1;
-+	}
-+
-+	rte_spinlock_lock(&handler->lock);
-+	TAILQ_FOREACH_SAFE(pos, &handler->pending, next, tmp) {
-+		TAILQ_REMOVE(&handler->pending, pos, next);
-+		rte_free(pos);
-+	}
-+	rte_spinlock_unlock(&handler->lock);
-+}
-+
-+static void sxe2_event_intr_post(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_event_handler *handler = &event_handler;
-+	struct sxe2_event_element *elem = rte_malloc(NULL, sizeof(struct sxe2_event_element), 0);
-+	int8_t notify_byte = 0;
-+	ssize_t nw = 0;
-+
-+	if (!elem)
-+		goto l_end;
-+
-+	elem->dev = dev;
-+
-+	rte_spinlock_lock(&handler->lock);
-+	TAILQ_INSERT_TAIL(&handler->pending, elem, next);
-+	rte_spinlock_unlock(&handler->lock);
-+
-+	nw = write(handler->fd[1], &notify_byte, 1);
-+	RTE_SET_USED(nw);
-+
-+l_end:
-+	return;
-+}
-+
-+static void sxe2_interrupt_handler_other(void *arg)
-+{
-+	struct rte_eth_dev *dev = (struct rte_eth_dev *)arg;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t eventfd = adapter->irq_ctxt.other_event_fd;
-+	int32_t ret = 0;
-+	uint64_t buf = 0;
-+
-+	ret = read(eventfd, &buf, sizeof(buf));
-+	if (ret != sizeof(buf)) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "read eventfd[%d] failed, ret:%d, errno:%d.",
-+				eventfd, ret, errno);
-+	}
-+
-+	sxe2_event_intr_post(dev);
-+}
-+
-+static void sxe2_interrupt_handler_reset(void *arg)
-+{
-+	struct rte_eth_dev *dev = (struct rte_eth_dev *)arg;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t resetfd = adapter->irq_ctxt.reset_event_fd;
-+	int32_t ret = 0;
-+	uint64_t buf = 0;
-+
-+	ret = read(resetfd, &buf, sizeof(buf));
-+	if (ret != sizeof(buf)) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "read resetfd[%d] failed, ret:%d, errno:%d.",
-+				resetfd, ret, errno);
-+	}
-+
-+	sxe2_drv_cmd_close(adapter->cdev);
-+
-+	rte_eth_dev_callback_process(dev, RTE_ETH_EVENT_INTR_RMV, NULL);
-+}
-+
-+int32_t sxe2_sw_irq_ctxt_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
-+	int32_t ret = 0;
-+
-+	irq_ctxt->rxq_avail_cnt = irq_ctxt->max_cnt_hw;
-+	irq_ctxt->rxq_base_idx_in_pf = irq_ctxt->base_idx_in_func;
-+	irq_ctxt->reset_event_fd = -1;
-+	irq_ctxt->other_event_fd = -1;
-+
-+	return ret;
-+}
-+
-+void sxe2_sw_irq_ctxt_uninit(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+
-+	memset(&adapter->irq_ctxt, 0, sizeof(adapter->irq_ctxt));
-+	adapter->irq_ctxt.reset_event_fd = -1;
-+	adapter->irq_ctxt.other_event_fd = -1;
-+}
-+
-+void sxe2_sw_irq_ctx_hw_cap_set(struct sxe2_adapter *adapter,
-+				struct sxe2_drv_msix_caps *msix_caps)
-+{
-+	adapter->irq_ctxt.max_cnt_hw = msix_caps->msix_vectors_cnt;
-+	adapter->irq_ctxt.base_idx_in_func = msix_caps->base_idx_in_func;
-+}
-+
-+static int32_t sxe2_intr_handler_cfg(struct rte_intr_handle *handle,
-+		int32_t fd, rte_intr_callback_fn cb, void *cb_arg)
-+{
-+	int32_t ret = 0;
-+
-+	ret = rte_intr_fd_set(handle, fd);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to set intr_handle->fd, error %i (%s)",
-+			errno, strerror(errno));
-+		goto err;
-+	}
-+
-+	ret = rte_intr_type_set(handle, RTE_INTR_HANDLE_EXT);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to set intr_handle->type, error %i (%s)",
-+			errno, strerror(errno));
-+		goto err;
-+	}
-+
-+	ret = rte_intr_callback_register(handle, cb, cb_arg);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to initialize register intr callback, ret=%d", ret);
-+		goto err;
-+	}
-+err:
-+	return ret;
-+}
-+
-+static struct rte_intr_handle *
-+sxe2_intr_handler_create(int32_t fd, rte_intr_callback_fn cb, void *cb_arg)
-+{
-+	struct rte_intr_handle *tmp_intr_handle = NULL;
-+	int32_t ret = 0;
-+
-+	tmp_intr_handle = rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
-+	if (!tmp_intr_handle) {
-+		PMD_LOG_ERR(INIT, "Failed to alloc memory for intr_handler, error %i (%s)",
-+			errno, strerror(errno));
-+		goto err;
-+	}
-+
-+	ret = rte_intr_fd_set(tmp_intr_handle, fd);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to set intr_handle->fd, error %i (%s)",
-+				errno, strerror(errno));
-+		goto err;
-+	}
-+
-+	ret = rte_intr_type_set(tmp_intr_handle, RTE_INTR_HANDLE_EXT);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to set intr_handle->type, error %i (%s)",
-+				errno, strerror(errno));
-+		goto err;
-+	}
-+
-+	ret = rte_intr_callback_register(tmp_intr_handle, cb, cb_arg);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to initialize register intr callback, ret=%d", ret);
-+		goto err;
-+	}
-+
-+	return tmp_intr_handle;
-+err:
-+	rte_intr_instance_free(tmp_intr_handle);
-+	return NULL;
-+}
-+
-+static void sxe2_intr_handler_destroy(struct rte_intr_handle *intr_handle,
-+				  rte_intr_callback_fn cb, void *cb_arg)
-+{
-+	if (!intr_handle)
-+		return;
-+
-+	if (rte_intr_fd_get(intr_handle) >= 0)
-+		(void)rte_intr_callback_unregister(intr_handle, cb, cb_arg);
-+	rte_intr_instance_free(intr_handle);
-+}
-+
-+static int32_t sxe2_event_intr_fd_create(void)
-+{
-+	int32_t fd = 0;
-+
-+	fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-+	if (fd < 0) {
-+		PMD_LOG_ERR(INIT, "Can't setup eventfd, error %i (%s)",
-+			errno, strerror(errno));
-+		goto err;
-+	}
-+
-+	return fd;
-+err:
-+	return -EBADF;
-+}
-+
-+static void sxe2_event_intr_fd_destroy(int32_t fd)
-+{
-+	if (fd >= 0)
-+		close(fd);
-+}
-+
-+static int32_t sxe2_other_intr_register(struct rte_eth_dev *dev, int32_t fd)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+	uint64_t event = RTE_BIT32(SXE2_COM_EC_LINK_CHG) |
-+				RTE_BIT32(SXE2_COM_SW_MODE_LEGACY) |
-+				RTE_BIT32(SXE2_COM_SW_MODE_SWITCHDEV) |
-+				RTE_BIT32(SXE2_COM_FC_ST_CHANGE);
-+
-+	ret = sxe2_drv_dev_other_irq_set(adapter->cdev, fd, event);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set other irq, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_other_intr_unregister(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+
-+	ret = sxe2_drv_dev_other_irq_set(adapter->cdev, -1, 0);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set other irq, ret=%d", ret);
-+}
-+
-+static int32_t sxe2_reset_intr_register(struct rte_eth_dev *dev, int32_t fd)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+
-+	ret = sxe2_drv_dev_reset_irq_set(adapter->cdev, fd);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set reset irq, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_reset_intr_unregister(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+
-+	ret = sxe2_drv_dev_reset_irq_set(adapter->cdev, -1);
-+	if (ret)
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set reset irq, ret=%d", ret);
-+}
-+
-+int32_t sxe2_intr_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct rte_pci_device *pci_dev = container_of(dev->device, struct rte_pci_device, device);
-+	struct rte_intr_handle *reset_handle = NULL;
-+	int32_t ofd = -1;
-+	int32_t rfd = -1;
-+	int32_t ret = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	ofd = sxe2_event_intr_fd_create();
-+	if (ofd < 0) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to create event intr fd");
-+		ret = -EBADF;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_intr_handler_cfg(pci_dev->intr_handle,
-+			ofd, sxe2_interrupt_handler_other, dev);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to create intr handler");
-+		goto l_err_create_other_handler;
-+	}
-+
-+	ret = sxe2_event_intr_handler_init();
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Event handler init failed, ret=%d", ret);
-+		goto l_err_event_intr_handler_init;
-+	}
-+
-+	ret = sxe2_other_intr_register(dev, ofd);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to register other intr, ret=%d", ret);
-+		goto l_err_register_other_intr;
-+	}
-+	adapter->irq_ctxt.other_event_fd = ofd;
-+
-+	rfd = sxe2_event_intr_fd_create();
-+	if (rfd < 0) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to create event intr fd");
-+		ret = -EBADF;
-+		goto l_err_create_reset_fd;
-+	}
-+
-+	reset_handle = sxe2_intr_handler_create(rfd, sxe2_interrupt_handler_reset, dev);
-+	if (!reset_handle) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to create intr handler");
-+		ret = -ENOMEM;
-+		goto l_err_create_reset_handler;
-+	}
-+	adapter->irq_ctxt.reset_handle = reset_handle;
-+
-+	ret = sxe2_reset_intr_register(dev, rfd);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to register reset intr, ret=%d", ret);
-+		goto l_err_register_reset_intr;
-+	}
-+	adapter->irq_ctxt.reset_event_fd = rfd;
-+
-+	goto l_end;
-+l_err_register_reset_intr:
-+	sxe2_intr_handler_destroy(reset_handle, sxe2_interrupt_handler_reset, dev);
-+	adapter->irq_ctxt.reset_handle = NULL;
-+l_err_create_reset_handler:
-+	sxe2_event_intr_fd_destroy(rfd);
-+l_err_create_reset_fd:
-+	sxe2_other_intr_unregister(dev);
-+	adapter->irq_ctxt.other_event_fd = -1;
-+l_err_register_other_intr:
-+	sxe2_event_intr_handler_uinit();
-+l_err_event_intr_handler_init:
-+	sxe2_intr_handler_destroy(pci_dev->intr_handle,
-+			sxe2_interrupt_handler_other, dev);
-+	pci_dev->intr_handle = NULL;
-+l_err_create_other_handler:
-+	sxe2_event_intr_fd_destroy(ofd);
-+l_end:
-+	return ret;
-+}
-+
-+void sxe2_intr_uninit(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct rte_pci_device *pci_dev = container_of(dev->device, struct rte_pci_device, device);
-+
-+	sxe2_reset_intr_unregister(dev);
-+	sxe2_intr_handler_destroy(adapter->irq_ctxt.reset_handle,
-+				sxe2_interrupt_handler_reset, dev);
-+	sxe2_event_intr_fd_destroy(adapter->irq_ctxt.reset_event_fd);
-+	sxe2_other_intr_unregister(dev);
-+	sxe2_event_intr_handler_uinit();
-+	sxe2_intr_handler_destroy(pci_dev->intr_handle,
-+				sxe2_interrupt_handler_other, dev);
-+	sxe2_event_intr_fd_destroy(adapter->irq_ctxt.other_event_fd);
-+
-+	adapter->irq_ctxt.other_event_fd = -1;
-+	adapter->irq_ctxt.reset_event_fd = -1;
-+	pci_dev->intr_handle = NULL;
-+	adapter->irq_ctxt.reset_handle = NULL;
-+}
-+
-+static int32_t sxe2_rxq_intr_efd_alloc(struct rte_eth_dev *dev, int32_t *efd)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+	int32_t fd = 0;
-+
-+	fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-+	if (fd < 0) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Can't setup eventfd, error %i (%s)",
-+			errno, strerror(errno));
-+		ret = -EBADF;
-+		goto l_end;
-+	}
-+
-+	*efd = fd;
-+
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_rxq_intr_efd_free(int32_t efd)
-+{
-+	close(efd);
-+}
-+
-+static void sxe2_pci_hw_int_itr_set(struct sxe2_adapter *adapter, uint16_t msix_idx, uint16_t itr)
-+{
-+	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_ITR, msix_idx, itr);
-+}
-+
-+static void sxe2_pci_hw_irq_disable(struct sxe2_adapter *adapter, uint16_t irq_idx)
-+{
-+	uint32_t value = (SXE2_ITR_IDX_NONE << SXE2_VF_DYN_CTL_ITR_IDX_S);
-+
-+	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx, value);
-+}
-+
-+static void sxe2_pci_hw_irq_enable(struct sxe2_adapter *adapter, uint16_t irq_idx)
-+{
-+	uint32_t value = SXE2_VF_DYN_CTL_INTENABLE |
-+		SXE2_VF_DYN_CTL_CLEARPBA |
-+			(SXE2_ITR_IDX_NONE << SXE2_VF_DYN_CTL_ITR_IDX_S);
-+
-+	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx, value);
-+}
-+
-+static uint32_t sxe2_pci_hw_irq_dyn_ctl_read(struct sxe2_adapter *adapter, uint16_t irq_idx)
-+{
-+	return sxe2_pci_map_read_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx);
-+}
-+
-+static void sxe2_pci_hw_msix_disable(struct sxe2_adapter *adapter, uint16_t irq_idx)
-+{
-+	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_MSIX,
-+			irq_idx, SXE2VF_BAR4_MSIX_DISABLE);
-+}
-+
-+static void sxe2_pci_hw_msix_enable(struct sxe2_adapter *adapter, uint16_t irq_idx)
-+{
-+	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_MSIX,
-+			irq_idx, SXE2VF_BAR4_MSIX_ENABLE);
-+}
-+
-+static void sxe2_pci_hw_irq_trigger(struct sxe2_adapter *adapter, uint16_t irq_idx)
-+{
-+	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx,
-+			(SXE2VF_ITR_IDX_NONE << SXE2VF_DYN_CTL_ITR_IDX_SHIFT) |
-+			SXE2VF_DYN_CTL_SWINT_TRIG | SXE2VF_DYN_CTL_INTENABLE_MSK);
-+}
-+
-+static void sxe2_pci_hw_irq_clear_pba(struct sxe2_adapter *adapter, uint16_t irq_idx)
-+{
-+	sxe2_pci_map_write_reg(adapter, SXE2_PCI_MAP_RES_IRQ_DYN, irq_idx,
-+		(SXE2VF_ITR_IDX_NONE << SXE2VF_DYN_CTL_ITR_IDX_SHIFT) |
-+		SXE2VF_DYN_CTL_CLEARPBA | SXE2VF_DYN_CTL_INTENABLE_MSK);
-+}
-+
-+static void sxe2_rxq_msix_cfg_unmap(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
-+	uint16_t rxq_cnt = adapter->q_ctxt.qp_cnt_assign;
-+	uint16_t i = 0;
-+
-+	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++)
-+		sxe2_pci_hw_irq_disable(adapter, irq_ctxt->rxq_msix_idx[i]);
-+
-+	for (i = 0; i < rxq_cnt; i++)
-+		(void)sxe2_drv_rxq_unbind_irq(adapter, i);
-+}
-+
-+static int32_t sxe2_rxq_msix_cfg_map(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
-+	int32_t ret = 0;
-+	uint32_t val;
-+	uint16_t rxq_cnt = dev->data->nb_rx_queues;
-+	uint16_t i = 0;
-+	uint8_t rx_low_latency = adapter->devargs.rx_low_latency;
-+
-+	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++) {
-+		sxe2_pci_hw_irq_disable(adapter, irq_ctxt->rxq_msix_idx[i]);
-+		if (rx_low_latency) {
-+			sxe2_pci_hw_int_itr_set(adapter, irq_ctxt->rxq_msix_idx[i],
-+					SXE2_ITR_INTERVAL_LOW);
+ 			if ((0 == (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK)))
+ 				tx_mode_flags |=  SXE2_TX_MODE_VEC_SSE;
++#elif defined(RTE_ARCH_ARM64)
++			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1)
++				tx_mode_flags |= (vec_flags | SXE2_TX_MODE_VEC_NEON);
+ #endif
+ 			if (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) {
+ 				ret = sxe2_tx_queues_vec_prepare(dev);
+@@ -218,8 +221,15 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
+ 				dev->tx_pkt_burst = sxe2_tx_pkts_vec_sse_simple;
+ 			}
+ 		}
+-	} else {
++#elif defined(RTE_ARCH_ARM64)
++		if (tx_mode_flags & SXE2_TX_MODE_VEC_NEON) {
++			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
++			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon;
 +		} else {
-+			sxe2_pci_hw_int_itr_set(adapter, irq_ctxt->rxq_msix_idx[i],
-+					SXE2_ITR_INTERVAL_NORMAL);
++			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon_simple;
 +		}
-+	}
-+
-+	for (i = 0; i < rxq_cnt; i++) {
-+		ret = sxe2_drv_rxq_bind_irq(adapter, i, irq_ctxt->rxq_msix_idx[i]);
-+		if (ret != 0) {
-+			PMD_DEV_LOG_ERR(adapter, INIT, "RXQ[%u] bind IRQ[%u] failed.",
-+				i, irq_ctxt->rxq_msix_idx[i]);
-+			goto l_end;
-+		}
-+	}
-+
-+	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++)
-+		sxe2_pci_hw_irq_enable(adapter, irq_ctxt->rxq_msix_idx[i]);
-+
-+	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++) {
-+		val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, i);
-+		if ((val & SXE2VF_DYN_CTL_INTENABLE) == 0)
-+			continue;
-+
-+		sxe2_pci_hw_msix_disable(adapter, i);
-+		sxe2_pci_hw_irq_trigger(adapter, i);
-+		val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, i);
-+		sxe2_pci_hw_irq_clear_pba(adapter, i);
-+		val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, i);
-+		sxe2_pci_hw_msix_enable(adapter, i);
-+	}
-+
-+l_end:
-+	if (ret != 0)
-+		sxe2_rxq_msix_cfg_unmap(dev);
-+	return ret;
-+}
-+
-+static int32_t sxe2_rxq_map_msix_intr(struct rte_eth_dev *dev,
-+		uint16_t msix_base __rte_unused, uint16_t nb_msix,
-+		uint16_t base_queue, uint16_t nb_queue)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
-+	uint32_t *msix_tbl = NULL;
-+	int32_t ret = 0;
-+	uint16_t i;
-+
-+	if (!nb_queue || !nb_msix || nb_queue < nb_msix) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Queue num[%u] or msix num[%u] is invalid.",
-+				nb_queue, nb_msix);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	msix_tbl = rte_zmalloc(NULL, sizeof(uint32_t) * nb_queue, 0);
-+	if (!msix_tbl) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to alloc msix_tbl memory.");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+	for (i = 0; i < nb_queue; i++) {
-+		msix_tbl[i] = i % nb_msix;
-+		PMD_DEV_LOG_INFO(adapter, INIT, "Queue %u is binding to vect %u",
-+				base_queue + i, msix_tbl[i]);
-+	}
-+
-+	irq_ctxt->rxq_irq_cnt = nb_msix;
-+	irq_ctxt->rxq_msix_idx = msix_tbl;
-+
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_rxq_unmap_msix_intr(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
-+
-+	rte_free(irq_ctxt->rxq_msix_idx);
-+	irq_ctxt->rxq_msix_idx = NULL;
-+	irq_ctxt->rxq_irq_cnt = 0;
-+}
-+
-+static int32_t sxe2_rxq_intr_register(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
-+	struct rte_intr_handle *intr_handle = dev->intr_handle;
-+	int32_t *efd_tbl = NULL;
-+	uint16_t rxq_cnt = dev->data->nb_rx_queues;
-+	uint16_t nb_msix = irq_ctxt->rxq_irq_cnt;
-+	uint16_t i;
-+	int32_t ret = 0;
-+
-+	if (rte_intr_type_set(intr_handle, RTE_INTR_HANDLE_EXT)) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set intr_handle->type, error %i (%s)",
-+				errno, strerror(errno));
-+		ret = -EPERM;
-+		goto l_end;
-+	}
-+
-+	efd_tbl = rte_zmalloc(NULL, sizeof(int32_t) * nb_msix, 0);
-+	if (!efd_tbl) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to alloc efd_tbl memory.");
-+		ret = -ENOMEM;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < nb_msix; i++) {
-+		ret = sxe2_rxq_intr_efd_alloc(dev, &efd_tbl[i]);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to alloc efd_tbl, ret=%d", ret);
-+			goto l_free_efd_tbl;
-+		}
-+	}
-+
-+	if (rte_intr_vec_list_alloc(intr_handle, "sxe2 rxq int", rxq_cnt)) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to allocate %d rx_queues intr_vec",
-+				rxq_cnt);
-+		ret = -ENOMEM;
-+		goto l_free_efd_tbl;
-+	}
-+
-+	for	(i = 0; i < rxq_cnt; i++) {
-+		ret = rte_intr_vec_list_index_set(intr_handle, i,
-+				irq_ctxt->rxq_msix_idx[i] + RTE_INTR_VEC_RXTX_OFFSET);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set msix_tbl, ret=%d", ret);
-+			goto l_free_efd_tbl;
-+		}
-+	}
-+
-+	for (i = 0; i < irq_ctxt->rxq_irq_cnt; i++) {
-+		ret = rte_intr_efds_index_set(intr_handle, i, efd_tbl[i]);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set efd_tbl, ret=%d", ret);
-+			goto l_free_efd_tbl;
-+		}
-+	}
-+
-+	if (rte_intr_nb_efd_set(intr_handle, rxq_cnt)) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Set intr nb efd failed, error %i (%s)",
-+			errno, strerror(errno));
-+		ret = -EPERM;
-+		goto l_free_efd_tbl;
-+	}
-+
-+	ret = sxe2_drv_dev_rxq_irq_set(adapter->cdev, 0, efd_tbl, nb_msix);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to set rxq irq, ret=%d", ret);
-+		goto l_free_efd_tbl;
-+	}
-+	irq_ctxt->rxq_event_fd = efd_tbl;
-+
-+	goto l_end;
-+
-+l_free_efd_tbl:
-+	if (efd_tbl) {
-+		for (i = 0; i < nb_msix; i++)
-+			if (efd_tbl[i] >= 0)
-+				sxe2_rxq_intr_efd_free(efd_tbl[i]);
-+		rte_free(efd_tbl);
-+	}
-+	irq_ctxt->rxq_event_fd = NULL;
-+
-+	rte_intr_vec_list_free(intr_handle);
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_rxq_intr_unregister(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
-+	struct rte_intr_handle *intr_handle = dev->intr_handle;
-+	int32_t efd = -1;
-+	uint16_t msix_cnt = irq_ctxt->rxq_irq_cnt;
-+	uint16_t i;
-+
-+	if (irq_ctxt->rxq_event_fd) {
-+		for (i = 0; i < msix_cnt; i++) {
-+			(void)sxe2_drv_dev_rxq_irq_set(adapter->cdev, i, &efd, 1);
-+			sxe2_rxq_intr_efd_free(irq_ctxt->rxq_event_fd[i]);
-+		}
-+	}
-+	rte_free(irq_ctxt->rxq_event_fd);
-+	irq_ctxt->rxq_event_fd = NULL;
-+
-+	rte_intr_vec_list_free(intr_handle);
-+
-+	rte_intr_nb_efd_set(intr_handle, 0);
-+	rte_intr_max_intr_set(intr_handle, 0);
-+}
-+
-+int32_t sxe2_rxq_intr_enable(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	uint16_t msix_vect = adapter->irq_ctxt.rxq_base_idx_in_pf;
-+	uint16_t msix_cnt = adapter->irq_ctxt.rxq_avail_cnt;
-+	uint16_t rxq_cnt = dev->data->nb_rx_queues;
-+	uint16_t rxq_base = adapter->q_ctxt.base_idx_in_pf;
-+	int32_t ret = 0;
-+
-+	if (!rxq_cnt)
-+		goto l_end;
-+
-+	msix_cnt = RTE_MIN(msix_cnt, rxq_cnt);
-+
-+	ret = sxe2_rxq_map_msix_intr(dev, msix_vect, msix_cnt, rxq_base, rxq_cnt);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to rxq[%d] map msix[%d] intr, cnt=%d, ret=%d",
-+					rxq_base, msix_vect, rxq_cnt, ret);
-+		goto l_end;
-+	}
-+
-+	if (dev->data->dev_conf.intr_conf.rxq) {
-+		ret = sxe2_rxq_intr_register(dev);
-+		if (ret) {
-+			PMD_DEV_LOG_ERR(adapter, INIT, "Failed to register rxq[%d] intr, ret=%d",
-+					rxq_base, ret);
-+			goto l_err_unmap;
-+		}
-+	}
-+
-+	ret = sxe2_rxq_msix_cfg_map(dev);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to rxq[%d] map msix[%d] intr, ret=%d",
-+					rxq_base, msix_vect, ret);
-+		goto l_err_unregister;
-+	}
-+
-+	goto l_end;
-+l_err_unregister:
-+	if (dev->data->dev_conf.intr_conf.rxq)
-+		sxe2_rxq_intr_unregister(dev);
-+l_err_unmap:
-+	sxe2_rxq_unmap_msix_intr(dev);
-+l_end:
-+	return ret;
-+}
-+
-+void sxe2_rxq_intr_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
-+
-+	if (!irq_ctxt->rxq_irq_cnt)
-+		goto l_end;
-+
-+	sxe2_rxq_msix_cfg_unmap(dev);
-+
-+	if (dev->data->dev_conf.intr_conf.rxq)
-+		sxe2_rxq_intr_unregister(dev);
-+
-+	sxe2_rxq_unmap_msix_intr(dev);
-+
-+l_end:
-+	return;
-+}
-+
-+int32_t sxe2_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_irq_context *irq_ctxt = &adapter->irq_ctxt;
-+	uint64_t buf;
-+	uint16_t irq_idx = irq_ctxt->rxq_msix_idx[queue_id];
-+	size_t read_ret;
-+
-+	read_ret = read(irq_ctxt->rxq_event_fd[irq_idx], &buf, sizeof(buf));
-+	(void)read_ret;
-+	sxe2_pci_hw_irq_enable(adapter, irq_idx);
-+	return 0;
-+}
-+
-+int32_t sxe2_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	uint32_t val;
-+	int32_t ret = 0;
-+	uint16_t irq_idx = adapter->irq_ctxt.rxq_msix_idx[queue_id];
-+
-+	val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, irq_idx);
-+	if ((val & SXE2VF_DYN_CTL_INTENABLE) == 0) {
-+		PMD_DEV_LOG_DEBUG(adapter, INIT, "rxq [%d] interrupt is disabled.", queue_id);
-+		goto l_end;
-+	}
-+
-+	sxe2_pci_hw_msix_disable(adapter, irq_idx);
-+	sxe2_pci_hw_irq_trigger(adapter, irq_idx);
-+	val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, irq_idx);
-+	sxe2_pci_hw_irq_clear_pba(adapter, irq_idx);
-+	val = sxe2_pci_hw_irq_dyn_ctl_read(adapter, irq_idx);
-+	sxe2_pci_hw_msix_enable(adapter, irq_idx);
-+l_end:
-+	return ret;
-+}
-diff --git a/drivers/net/sxe2/sxe2_irq.h b/drivers/net/sxe2/sxe2_irq.h
-index 4ca2118b92..31216240e6 100644
---- a/drivers/net/sxe2/sxe2_irq.h
-+++ b/drivers/net/sxe2/sxe2_irq.h
-@@ -45,4 +45,25 @@ struct sxe2_irq_context {
- 	int32_t *rxq_event_fd;
+ #endif
++	} else {
+ 		if (tx_mode_flags & SXE2_TX_MODE_SIMPLE_BATCH) {
+ 			dev->tx_pkt_prepare = NULL;
+ 			dev->tx_pkt_burst = sxe2_tx_pkts_simple;
+@@ -227,9 +237,7 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
+ 			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
+ 			dev->tx_pkt_burst = sxe2_tx_pkts;
+ 		}
+-#ifdef RTE_ARCH_X86
+ 	}
+-#endif
+ }
+ 
+ static const struct {
+@@ -253,6 +261,12 @@ static const struct {
+ 	{ sxe2_tx_pkts_vec_sse_simple,
+ 	      "Vector SSE Simple" },
+ #endif
++#ifdef RTE_ARCH_ARM64
++	{ sxe2_tx_pkts_vec_neon,
++	  "Vector NEON" },
++	{ sxe2_tx_pkts_vec_neon_simple,
++	  "Vector NEON Simple" },
++#endif
  };
  
-+uint32_t sxe2_drv_dev_other_cause_get(struct sxe2_adapter *adapter);
+ int32_t sxe2_tx_burst_mode_get(struct rte_eth_dev *dev,
+@@ -356,6 +370,11 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
+ 			if (((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0) &&
+ 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
+ 				rx_mode_flags |= SXE2_RX_MODE_VEC_SSE;
 +
-+int32_t sxe2_intr_init(struct rte_eth_dev *dev);
++#elif defined(RTE_ARCH_ARM64)
++			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1) {
++				rx_mode_flags |= (vec_flags | SXE2_RX_MODE_VEC_NEON);
++			}
+ #endif
+ 			if ((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) != 0) {
+ 				ret = sxe2_rx_queues_vec_prepare(dev);
+@@ -387,6 +406,14 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
+ 		}
+ 		return;
+ 	}
++#elif defined(RTE_ARCH_ARM64)
++	if (rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) {
++		if (rx_mode_flags & SXE2_RX_MODE_VEC_OFFLOAD)
++			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_neon_offload;
++		else
++			dev->rx_pkt_burst = sxe2_rx_pkts_scattered_vec_neon;
++		return;
++	}
+ #endif
+ 	if (sxe2_rx_offload_en_check(dev, RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT))
+ 		dev->rx_pkt_burst = sxe2_rx_pkts_scattered_split;
+@@ -416,6 +443,12 @@ static const struct {
+ 	{ sxe2_rx_pkts_scattered_vec_sse_offload,
+ 	      "Vector SSE Scattered" },
+ #endif
++#ifdef RTE_ARCH_ARM64
++	{ sxe2_rx_pkts_scattered_vec_neon,
++	  "Vector NEON Scattered" },
++	{ sxe2_rx_pkts_scattered_vec_neon_offload,
++	  "Offload Vector NEON Scattered" },
++#endif
+ };
+ 
+ int32_t sxe2_rx_burst_mode_get(struct rte_eth_dev *dev,
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec.h b/drivers/net/sxe2/sxe2_txrx_vec.h
+index 369777606f..c139aed776 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec.h
++++ b/drivers/net/sxe2/sxe2_txrx_vec.h
+@@ -13,19 +13,23 @@
+ #define SXE2_RX_MODE_VEC_SSE       RTE_BIT32(2)
+ #define SXE2_RX_MODE_VEC_AVX2      RTE_BIT32(3)
+ #define SXE2_RX_MODE_VEC_AVX512    RTE_BIT32(4)
++#define SXE2_RX_MODE_VEC_NEON      RTE_BIT32(5)
+ #define SXE2_RX_MODE_BATCH_ALLOC   RTE_BIT32(10)
+ #define SXE2_RX_MODE_VEC_SET_MASK	(SXE2_RX_MODE_VEC_SIMPLE | \
+ 			SXE2_RX_MODE_VEC_OFFLOAD | SXE2_RX_MODE_VEC_SSE | \
+-			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512)
++			SXE2_RX_MODE_VEC_AVX2 | SXE2_RX_MODE_VEC_AVX512 | \
++			SXE2_RX_MODE_VEC_NEON)
+ #define SXE2_TX_MODE_VEC_SIMPLE   RTE_BIT32(0)
+ #define SXE2_TX_MODE_VEC_OFFLOAD  RTE_BIT32(1)
+ #define SXE2_TX_MODE_VEC_SSE      RTE_BIT32(2)
+ #define SXE2_TX_MODE_VEC_AVX2     RTE_BIT32(3)
+ #define SXE2_TX_MODE_VEC_AVX512   RTE_BIT32(4)
++#define SXE2_TX_MODE_VEC_NEON     RTE_BIT32(5)
+ #define SXE2_TX_MODE_SIMPLE_BATCH RTE_BIT32(10)
+ #define SXE2_TX_MODE_VEC_SET_MASK	(SXE2_TX_MODE_VEC_SIMPLE | \
+ 			SXE2_TX_MODE_VEC_OFFLOAD | SXE2_TX_MODE_VEC_SSE | \
+-			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512)
++			SXE2_TX_MODE_VEC_AVX2 | SXE2_TX_MODE_VEC_AVX512 | \
++			SXE2_TX_MODE_VEC_NEON)
+ #define SXE2_TX_VEC_NO_SUPPORT_OFFLOAD (		  \
+ 			RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		  \
+ 			RTE_ETH_TX_OFFLOAD_QINQ_INSERT |	  \
+@@ -76,6 +80,14 @@ uint16_t sxe2_rx_pkts_scattered_vec_avx2(void *rx_queue,
+ 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ uint16_t sxe2_rx_pkts_scattered_vec_avx2_offload(void *rx_queue,
+ 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
 +
-+void sxe2_intr_uninit(struct rte_eth_dev *dev);
++#elif defined(RTE_ARCH_ARM64)
++uint16_t sxe2_rx_pkts_scattered_vec_neon(void *rx_queue, struct rte_mbuf **rx_pkts,
++					 uint16_t nb_pkts);
++uint16_t sxe2_rx_pkts_scattered_vec_neon_offload(void *rx_queue, struct rte_mbuf **rx_pkts,
++						 uint16_t nb_pkts);
++uint16_t sxe2_tx_pkts_vec_neon_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
++uint16_t sxe2_tx_pkts_vec_neon(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ #endif
+ int32_t __rte_cold sxe2_tx_vec_support_check(struct rte_eth_dev *dev, uint32_t *vec_flags);
+ int32_t __rte_cold sxe2_tx_queues_vec_prepare(struct rte_eth_dev *dev);
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec_common.h b/drivers/net/sxe2/sxe2_txrx_vec_common.h
+index f004970949..9ac99cf0fa 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec_common.h
++++ b/drivers/net/sxe2/sxe2_txrx_vec_common.h
+@@ -2,6 +2,7 @@
+  * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
+  */
+ 
 +
-+int32_t sxe2_sw_irq_ctxt_init(struct rte_eth_dev *dev);
-+
-+void sxe2_sw_irq_ctxt_uninit(struct rte_eth_dev *dev);
-+
-+void sxe2_sw_irq_ctx_hw_cap_set(struct sxe2_adapter *adapter,
-+		struct sxe2_drv_msix_caps *msix_caps);
-+
-+int32_t sxe2_rxq_intr_enable(struct rte_eth_dev *dev);
-+
-+void sxe2_rxq_intr_disable(struct rte_eth_dev *dev);
-+
-+int32_t sxe2_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id);
-+
-+int32_t sxe2_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id);
-+
- #endif /* SXE2_IRQ_H */
-diff --git a/drivers/net/sxe2/sxe2vf_regs.h b/drivers/net/sxe2/sxe2vf_regs.h
+ #ifndef SXE2_TXRX_VEC_COMMON_H
+ #define SXE2_TXRX_VEC_COMMON_H
+ 
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec_neon.c b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
 new file mode 100644
-index 0000000000..854f1d3ae8
+index 0000000000..4e5cb87cd5
 --- /dev/null
-+++ b/drivers/net/sxe2/sxe2vf_regs.h
-@@ -0,0 +1,85 @@
++++ b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
+@@ -0,0 +1,689 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
 + */
 +
-+#ifndef __SXE2VF_REGS_H__
-+#define __SXE2VF_REGS_H__
++#ifdef RTE_ARCH_ARM64
++#include <arm_neon.h>
++#include <rte_vect.h>
 +
-+#define SXE2VF_MBX_Q_LEN_M      0x3FF
-+#define SXE2VF_MBX_Q_LEN_VFE_M  RTE_BIT32(28)
++#include "sxe2_txrx_vec_common.h"
++#include "sxe2_txrx_vec.h"
++#include "sxe2_common_log.h"
 +
-+#define SXE2VF_MBX_Q_LEN_OVFL_M RTE_BIT32(29)
-+#define SXE2VF_MBX_Q_LEN_CRIT_M RTE_BIT32(30)
-+#define SXE2VF_MBX_Q_LEN_ENA_M  RTE_BIT32(31)
++#define PKTLEN_SHIFT     10
++#define SXE2_UINT16_BIT (CHAR_BIT * sizeof(uint16_t))
 +
-+#define SXE2VF_MBX_RQ_HEAD      (0x00008000)
-+#define SXE2VF_MBX_RQ_TAIL      (0x00008400)
-+#define SXE2VF_MBX_RQ_LEN       (0x00007C00)
-+#define SXE2VF_MBX_RQ_BAH       (0x00007800)
-+#define SXE2VF_MBX_RQ_BAL       (0x00007400)
++static __rte_always_inline void
++sxe2_tx_desc_fill_one_neon(volatile union sxe2_tx_data_desc *desc,
++			struct rte_mbuf *pkt, uint64_t desc_cmd, bool with_offloads)
++{
++	uint64_t desc_qw1;
++	uint32_t desc_offset;
 +
-+#define SXE2VF_MBX_TQ_HEAD      (0x00006C00)
-+#define SXE2VF_MBX_TQ_TAIL      (0x00007000)
-+#define SXE2VF_MBX_TQ_LEN       (0x00006800)
-+#define SXE2VF_MBX_TQ_BAH       (0x00006400)
-+#define SXE2VF_MBX_TQ_BAL       (0x00006000)
++	desc_qw1 = (SXE2_TX_DESC_DTYPE_DATA |
++				((uint64_t)desc_cmd) << SXE2_TX_DATA_DESC_CMD_SHIFT |
++				((uint64_t)pkt->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT);
 +
-+#define SXE2VF_RXQ_TAIL(_QRX)                 (0x2000 + ((_QRX) * 4))
-+#define SXE2VF_TXQ_TAIL(_QRX)                 (0x1000 + ((_QRX) * 4))
++	desc_offset = SXE2_TX_DATA_DESC_MACLEN_VAL(pkt->l2_len);
++	desc_qw1 |= ((uint64_t)desc_offset) << SXE2_TX_DATA_DESC_OFFSET_SHIFT;
++	if (with_offloads)
++		sxe2_tx_desc_fill_offloads(pkt, &desc_qw1);
 +
-+#define SXE2VF_INT_BASE 0x00002800
++	uint64x2_t data_desc = { rte_pktmbuf_iova(pkt), desc_qw1 };
 +
-+#define SXE2VF_DYN_CTL0 (SXE2VF_INT_BASE + 0x0)
++	vst1q_u64(RTE_CAST_PTR(uint64_t *, desc), data_desc);
++}
 +
-+#define SXE2VF_DYN_CTL(_idx) (SXE2VF_INT_BASE + 0x4 + ((_idx) * 4))
-+#define SXE2VF_VF_DYN_CTL(_idx) (SXE2VF_INT_BASE + ((_idx) * 4))
++static __rte_always_inline uint16_t
++sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
++			uint16_t nb_pkts, bool with_offloads)
++{
++	volatile union sxe2_tx_data_desc *desc;
++	struct sxe2_tx_buffer *buffer;
++	uint16_t next_use;
++	uint16_t res_num;
++	uint16_t tx_num;
++	uint16_t i;
 +
-+#define SXE2VF_BAR4_MSIX_BASE 0
-+#define SXE2VF_BAR4_MSIX_CTL(_idx) (SXE2VF_BAR4_MSIX_BASE + 0xC + ((_idx) * 0x10))
-+#define SXE2VF_BAR4_MSIX_ENABLE 0
-+#define SXE2VF_BAR4_MSIX_DISABLE 1
++	if (txq->desc_free_num < txq->free_thresh)
++		(void)sxe2_tx_bufs_free_vec(txq);
 +
-+#define SXE2VF_DYN_CTL_INTENABLE RTE_BIT32(0)
-+#define SXE2VF_DYN_CTL_CLEARPBA   RTE_BIT32(1)
-+#define SXE2VF_DYN_CTL_SWINT_TRIG RTE_BIT32(2)
-+#define SXE2VF_DYN_CTL_SW_ITR_IDX_ENABLE RTE_BIT32(24)
++	nb_pkts = RTE_MIN(txq->desc_free_num, nb_pkts);
++	if (unlikely(nb_pkts == 0)) {
++		PMD_LOG_DEBUG(TX, "Tx pkts neon batch: may not enough free desc, "
++				"free_desc=%u, need_tx_pkts=%u",
++				txq->desc_free_num, nb_pkts);
++		goto l_end;
++	}
++	tx_num = nb_pkts;
 +
-+#define SXE2VF_DYN_CTL_INTENABLE_MSK \
-+	RTE_BIT32(31)
++	next_use = txq->next_use;
++	desc     = &txq->desc_ring[next_use];
++	buffer   = &txq->buffer_ring[next_use];
 +
-+#define SXE2VF_DYN_CTL_ITR_IDX_SHIFT 3
++	txq->desc_free_num -= nb_pkts;
 +
-+enum sxe2vf_itr_idx {
-+	SXE2VF_ITR_IDX_0 = 0,
-+	SXE2VF_ITR_IDX_1,
-+	SXE2VF_ITR_IDX_2,
-+	SXE2VF_ITR_IDX_NONE,
-+};
++	res_num = txq->ring_depth - txq->next_use;
 +
-+#define SXE2VF_INT_ITR0   (0x00002800 + 65 * 0x4)
-+#define SXE2VF_INT_ITR(_i, _irq_idx) (SXE2VF_INT_ITR0 + \
-+			0x4 + (_i) * 0x104 + ((_irq_idx) * 4))
-+#define SXE2VF_VF_INT_ITR(_itr_idx, _irq_idx) (0x00002800 + \
-+			(0x104 * (_itr_idx)) + ((_irq_idx) * 4))
-+#define SXE2VF_PFG_INT_CTL_ITR_GRAN_0    (2)
++	if (tx_num >= res_num) {
++		sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, res_num);
 +
-+#define SXE2VF_PCIE_SYS_READY              0x38c
-+#define SXE2VF_PCIE_SYS_READY_CORER_ASSERT RTE_BIT32(0)
-+#define SXE2VF_PCIE_SYS_READY_STOP_DROP_DONE RTE_BIT32(2)
-+#define SXE2VF_PCIE_SYS_READY_R5        RTE_BIT32(3)
-+#define SXE2VF_PCIE_SYS_READY_STOP_DROP RTE_BIT32(16)
++		for (i = 0; i < res_num - 1; ++i, ++tx_pkts, ++desc) {
++			sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++					SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++		}
 +
-+#define SXE2VF_PCIE_DEV_CTRL_DEV_STATUS               0x78
-+#define SXE2VF_PCIE_DEV_CTRL_DEV_STATUS_TRANS_PENDING RTE_BIT32(21)
++		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts++,
++					(SXE2_TX_DATA_DESC_CMD_EOP | SXE2_TX_DATA_DESC_CMD_RS),
++					with_offloads);
 +
-+#define SXE2VF_VF_VRC_VFGEN_RSTAT             (0x5800)
-+#define SXE2VF_VF_VRC_VFGEN_VFRSTAT           GENMASK(1, 0)
-+#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_VFR       (0)
-+#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_COMPLETE  (RTE_BIT32(0))
-+#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_VF_ACTIVE (RTE_BIT32(1))
++		tx_num -= res_num;
 +
-+#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_FORVF_VFR (1)
-+#define SXE2VF_VF_VRC_VFGEN_VFRSTAT_FORVF_MASK \
-+	(RTE_BIT32(10))
++		next_use     = 0;
++		txq->next_rs = txq->rs_thresh - 1;
++		desc         = &txq->desc_ring[next_use];
++		buffer       = &txq->buffer_ring[next_use];
++	}
 +
-+#endif /* SXE2VF_VF_INT_ITR */
++	sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, tx_num);
++
++	for (i = 0; i < tx_num; ++i, ++tx_pkts, ++desc) {
++		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++				SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++	}
++
++	next_use += tx_num;
++	if (next_use > txq->next_rs) {
++		txq->desc_ring[txq->next_rs].read.type_cmd_off_bsz_l2t |=
++			rte_cpu_to_le_64(SXE2_TX_DATA_DESC_CMD_RS_MASK);
++
++		txq->next_rs += txq->rs_thresh;
++	}
++	txq->next_use = next_use;
++
++	SXE2_PCI_REG_WRITE_WC(txq->tdt_reg_addr, txq->next_use);
++
++l_end:
++	return nb_pkts;
++}
++
++static __rte_always_inline uint16_t
++sxe2_tx_pkts_vec_neon_common(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
++			uint16_t nb_pkts, bool with_offloads)
++{
++	uint16_t tx_done_num = 0;
++	uint16_t tx_once_num;
++	uint16_t tx_need_num;
++
++	while (nb_pkts) {
++		tx_need_num = RTE_MIN(nb_pkts, txq->rs_thresh);
++		tx_once_num = sxe2_tx_pkts_vec_neon_batch(txq,
++					tx_pkts + tx_done_num,
++					tx_need_num, with_offloads);
++
++		nb_pkts     -= tx_once_num;
++		tx_done_num += tx_once_num;
++
++		if (tx_once_num < tx_need_num)
++			break;
++	}
++
++	PMD_LOG_DEBUG(TX, "Tx pkts neon: port_id=%u, queue_id=%u, "
++			"nb_pkts=%u, tx_done_num=%u with_offloads=%u",
++			txq->port_id, txq->idx_in_func, nb_pkts, tx_done_num, with_offloads);
++
++	return tx_done_num;
++}
++
++uint16_t sxe2_tx_pkts_vec_neon_simple(void *tx_queue,
++			struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	return sxe2_tx_pkts_vec_neon_common((struct sxe2_tx_queue *)tx_queue,
++				tx_pkts, nb_pkts, false);
++}
++
++uint16_t sxe2_tx_pkts_vec_neon(void *tx_queue,
++			struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	return sxe2_tx_pkts_vec_neon_common((struct sxe2_tx_queue *)tx_queue,
++				tx_pkts, nb_pkts, true);
++}
++
++static __rte_always_inline void
++sxe2_rx_desc_ptype_fill_neon(uint16x8_t staterr, struct rte_mbuf **__rte_restrict rx_pkts)
++{
++	uint16x8_t ptype_mask = {
++		0, 0x3FFULL,
++		0, 0x3FFULL,
++		0, 0x3FFULL,
++		0, 0x3FFULL,
++	};
++	uint16x8_t ptype_all;
++
++	ptype_all = vandq_u16(staterr, ptype_mask);
++
++	rx_pkts[3]->packet_type = sxe2_ptype_tbl[vgetq_lane_u16(ptype_all, 3)];
++	rx_pkts[2]->packet_type = sxe2_ptype_tbl[vgetq_lane_u16(ptype_all, 7)];
++	rx_pkts[1]->packet_type = sxe2_ptype_tbl[vgetq_lane_u16(ptype_all, 1)];
++	rx_pkts[0]->packet_type = sxe2_ptype_tbl[vgetq_lane_u16(ptype_all, 5)];
++}
++
++static __rte_always_inline uint32x4_t
++sxe2_rx_desc_fnav_flags_neon(uint64x2_t descs_arr[4])
++{
++	uint32x4_t descs_tmp1, descs_tmp2;
++	uint32x4_t descs_fnav_vld;
++	uint32x4_t v_zeros, v_ffff, v_u32_one;
++	uint32x4_t m_flags;
++
++	const uint32x4_t fdir_flags = vdupq_n_u32(RTE_MBUF_F_RX_FDIR |
++						  RTE_MBUF_F_RX_FDIR_ID);
++
++	uint32x4_t d0 = vreinterpretq_u32_u64(descs_arr[0]);
++	uint32x4_t d1 = vreinterpretq_u32_u64(descs_arr[1]);
++	uint32x4_t d2 = vreinterpretq_u32_u64(descs_arr[2]);
++	uint32x4_t d3 = vreinterpretq_u32_u64(descs_arr[3]);
++
++	descs_tmp1 = vzip1q_u32(d1, d0);
++	descs_tmp2 = vzip1q_u32(d3, d2);
++
++	uint64x2_t a = vreinterpretq_u64_u32(descs_tmp1);
++	uint64x2_t b = vreinterpretq_u64_u32(descs_tmp2);
++
++	descs_fnav_vld = vreinterpretq_u32_u64(vcombine_u64(vget_low_u64(a), vget_low_u64(b)));
++
++	descs_fnav_vld = vshlq_n_u32(descs_fnav_vld, 26);
++	descs_fnav_vld = vshrq_n_u32(descs_fnav_vld, 31);
++
++	v_zeros = vdupq_n_u32(0);
++	v_ffff = vceqq_u32(v_zeros, v_zeros);
++	v_u32_one = vshrq_n_u32(v_ffff, 31);
++
++	m_flags = vceqq_u32(descs_fnav_vld, v_u32_one);
++
++	m_flags = vandq_u32(m_flags, fdir_flags);
++	return m_flags;
++}
++
++static __rte_always_inline void
++sxe2_rx_desc_offloads_para_fill_neon(struct sxe2_rx_queue *rxq,
++			volatile union sxe2_rx_desc *desc,
++			uint64x2_t descs[4], struct rte_mbuf **rx_pkts)
++{
++	uint32x4_t desc_lo, desc_hi, flags, tmp_flags;
++	const uint64x2_t mbuf_init = {rxq->mbuf_init_value, 0};
++	uint64x2_t rearm0, rearm1, rearm2, rearm3;
++
++	const uint32x4_t desc_msk = {
++		0x00001C04, 0x00001C04, 0x00001C04, 0x00001C04};
++
++	const uint32x4_t rss_msk = {
++		0x20000000, 0x20000000, 0x20000000, 0x20000000};
++
++	const uint32x4_t vlan_msk = {
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED
++	};
++	const uint8x16_t vlan_flags = {
++		0, 0, 0, 0,
++		RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED, 0, 0, 0,
++		0, 0, 0, 0,
++		0, 0, 0, 0
++	};
++
++	const uint8x16_t rss_flags = {
++		0, 0, 0, 0,
++		RTE_MBUF_F_RX_RSS_HASH, 0, 0, 0,
++		0, 0, 0, 0,
++		0, 0, 0, 0
++	};
++
++	const uint32x4_t cksum_mask = {
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++	};
++
++	const uint8x16_t cksum_flags = {
++		((RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		((RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++			RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++			RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++			RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1),
++		((RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++			RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1),
++		0, 0, 0, 0, 0, 0, 0, 0
++	};
++
++	{
++		uint32x4_t d0 = vreinterpretq_u32_u64(descs[0]);
++		uint32x4_t d1 = vreinterpretq_u32_u64(descs[1]);
++		uint32x4_t d2 = vreinterpretq_u32_u64(descs[2]);
++		uint32x4_t d3 = vreinterpretq_u32_u64(descs[3]);
++		uint64x2_t f64, t64;
++
++		flags = vzip2q_u32(d1, d0);
++		tmp_flags = vzip2q_u32(d3, d2);
++		f64 = vreinterpretq_u64_u32(flags);
++		t64 = vreinterpretq_u64_u32(tmp_flags);
++		desc_lo = vreinterpretq_u32_u64(vcombine_u64(vget_low_u64(f64),
++							     vget_low_u64(t64)));
++		desc_hi = vreinterpretq_u32_u64(vcombine_u64(vget_high_u64(f64),
++							     vget_high_u64(t64)));
++	}
++
++	desc_lo = vandq_u32(desc_lo, desc_msk);
++	desc_hi = vandq_u32(desc_hi, rss_msk);
++
++	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(vlan_flags,
++						vreinterpretq_u8_u32(desc_lo)));
++	flags = vandq_u32(tmp_flags, vlan_msk);
++
++	desc_lo = vshrq_n_u32(desc_lo, 10);
++	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(cksum_flags,
++					 vreinterpretq_u8_u32(desc_lo)));
++	tmp_flags = vshlq_n_u32(tmp_flags, 1);
++	tmp_flags = vandq_u32(tmp_flags, cksum_mask);
++	flags = vorrq_u32(flags, tmp_flags);
++
++	desc_hi = vshrq_n_u32(desc_hi, 27);
++	tmp_flags = vreinterpretq_u32_u8(vqtbl1q_u8(rss_flags,
++					 vreinterpretq_u8_u32(desc_hi)));
++	flags = vorrq_u32(flags, tmp_flags);
++
++#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
++	if (rxq->fnav_enable) {
++		uint32x4_t tmp_fnav_flags = sxe2_rx_desc_fnav_flags_neon(descs);
++		flags = vorrq_u32(flags, tmp_fnav_flags);
++
++		rx_pkts[0]->hash.fdir.hi = desc[0].wb.fd_filter_id;
++		rx_pkts[1]->hash.fdir.hi = desc[1].wb.fd_filter_id;
++		rx_pkts[2]->hash.fdir.hi = desc[2].wb.fd_filter_id;
++		rx_pkts[3]->hash.fdir.hi = desc[3].wb.fd_filter_id;
++	}
++#endif
++
++	rearm0 = vsetq_lane_u64(vgetq_lane_u32(flags, 0), mbuf_init, 1);
++	rearm1 = vsetq_lane_u64(vgetq_lane_u32(flags, 1), mbuf_init, 1);
++	rearm2 = vsetq_lane_u64(vgetq_lane_u32(flags, 2), mbuf_init, 1);
++	rearm3 = vsetq_lane_u64(vgetq_lane_u32(flags, 3), mbuf_init, 1);
++
++	vst1q_u64((uint64_t *)&rx_pkts[0]->rearm_data, rearm0);
++	vst1q_u64((uint64_t *)&rx_pkts[1]->rearm_data, rearm1);
++	vst1q_u64((uint64_t *)&rx_pkts[2]->rearm_data, rearm2);
++	vst1q_u64((uint64_t *)&rx_pkts[3]->rearm_data, rearm3);
++}
++
++static inline void sxe2_rx_queue_rearm_neon(struct sxe2_rx_queue *rxq)
++{
++	volatile union sxe2_rx_desc *desc;
++	struct rte_mbuf **buffer;
++	struct rte_mbuf *mbuf0, *mbuf1;
++	uint64x2_t dma_addr0, dma_addr1;
++	uint64x2_t zero = vdupq_n_u64(0);
++	uint64x2_t virt_addr0, virt_addr1;
++	uint64x2_t hdr_room = vdupq_n_u64(RTE_PKTMBUF_HEADROOM);
++	int32_t ret;
++	uint16_t i;
++	uint16_t new_tail;
++
++	buffer = &rxq->buffer_ring[rxq->realloc_start];
++	desc = &rxq->desc_ring[rxq->realloc_start];
++
++	ret = rte_mempool_get_bulk(rxq->mb_pool, (void *)buffer,
++			SXE2_RX_REARM_THRESH_VEC);
++	if (ret != 0) {
++		PMD_LOG_INFO(RX, "Rx mbuf vec alloc failed port_id=%u "
++				"queue_id=%u", rxq->port_id, rxq->idx_in_func);
++
++		if ((rxq->realloc_num + SXE2_RX_REARM_THRESH_VEC) >= rxq->ring_depth) {
++			for (i = 0; i < SXE2_RX_NUM_PER_LOOP_NEON; ++i) {
++				buffer[i] = &rxq->fake_mbuf;
++				vst1q_u64(RTE_CAST_PTR(uint64_t *, &desc[i].read), zero);
++			}
++		}
++
++		rxq->vsi->adapter->dev_info.dev_data->rx_mbuf_alloc_failed +=
++				SXE2_RX_REARM_THRESH_VEC;
++		goto l_end;
++	}
++
++	for (i = 0; i < SXE2_RX_REARM_THRESH_VEC; i += 2, buffer += 2) {
++		mbuf0 = buffer[0];
++		mbuf1 = buffer[1];
++#if RTE_IOVA_IN_MBUF
++		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
++				 offsetof(struct rte_mbuf, buf_addr) + 8);
++#endif
++		virt_addr0 = vld1q_u64((uint64_t *)&mbuf0->buf_addr);
++		virt_addr1 = vld1q_u64((uint64_t *)&mbuf1->buf_addr);
++
++#if RTE_IOVA_IN_MBUF
++		dma_addr0 = vdupq_n_u64((uint64_t)vget_high_u64(virt_addr0));
++		dma_addr1 = vdupq_n_u64((uint64_t)vget_high_u64(virt_addr1));
++#else
++		dma_addr0 = vdupq_n_u64((uint64_t)vget_low_u64(virt_addr0));
++		dma_addr1 = vdupq_n_u64((uint64_t)vget_low_u64(virt_addr1));
++#endif
++		dma_addr0 = vaddq_u64(dma_addr0, hdr_room);
++		dma_addr1 = vaddq_u64(dma_addr1, hdr_room);
++
++		vst1q_u64(RTE_CAST_PTR(uint64_t *, &desc++->read), dma_addr0);
++		vst1q_u64(RTE_CAST_PTR(uint64_t *, &desc++->read), dma_addr1);
++	}
++
++	rxq->realloc_start += SXE2_RX_REARM_THRESH_VEC;
++	if (rxq->realloc_start >= rxq->ring_depth)
++		rxq->realloc_start = 0;
++	rxq->realloc_num -= SXE2_RX_REARM_THRESH_VEC;
++
++	new_tail = (rxq->realloc_start == 0) ?
++		(rxq->ring_depth - 1) : (rxq->realloc_start - 1);
++
++	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, new_tail);
++
++l_end:
++	return;
++}
++
++static __rte_always_inline uint16_t
++sxe2_rx_pkts_common_vec_neon(struct sxe2_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++		uint16_t nb_pkts, uint8_t *split_rxe_flags, uint8_t *umbcast_flags,
++		bool do_offload)
++{
++	volatile union sxe2_rx_desc *desc;
++	struct rte_mbuf **buffer;
++	uint32_t i;
++	uint16_t done_num = 0;
++
++	uint8x16_t rvp_shuf_mask = {
++		0xFF, 0xFF, 0xFF, 0xFF,
++		12, 13, 0xFF, 0xFF,
++		12, 13,
++		2, 3,
++		4, 5, 6, 7
++	};
++
++	uint16x8_t crc_adjust = {
++		0, 0,
++		rxq->crc_len,
++		0, rxq->crc_len,
++		0, 0, 0
++	};
++
++	desc = &rxq->desc_ring[rxq->processing_idx];
++	rte_prefetch0(desc);
++
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, SXE2_RX_NUM_PER_LOOP_NEON);
++
++	if (rxq->realloc_num > SXE2_RX_REARM_THRESH_VEC)
++		sxe2_rx_queue_rearm_neon(rxq);
++
++	if ((rte_le_to_cpu_64(desc->wb.status_err_ptype_len) &
++			SXE2_RX_DESC_STATUS_DD_MASK) == 0) {
++		goto l_end;
++	}
++
++	buffer = &rxq->buffer_ring[rxq->processing_idx];
++	for (i = 0; i < nb_pkts; i += SXE2_RX_NUM_PER_LOOP_NEON,
++				desc += SXE2_RX_NUM_PER_LOOP_NEON) {
++		uint64x2_t descs[SXE2_RX_NUM_PER_LOOP_NEON];
++		uint8x16_t pkt_mb1, pkt_mb2, pkt_mb3, pkt_mb4;
++		uint64x2_t mbp1, mbp2;
++		uint16x8_t staterr;
++		uint16x8_t tmp;
++		uint16_t bit_num;
++
++		descs[3] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc + 3));
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		descs[2] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc + 2));
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		descs[1] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc + 1));
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		descs[0] = vld1q_u64(RTE_CAST_PTR(uint64_t *, desc));
++
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++
++		descs[3] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc + 3), descs[3], 0);
++		descs[2] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc + 2), descs[2], 0);
++		descs[1] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc + 1), descs[1], 0);
++		descs[0] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, desc), descs[0], 0);
++
++		mbp1 = vld1q_u64((uint64_t *)&buffer[i]);
++		mbp2 = vld1q_u64((uint64_t *)&buffer[i + 2]);
++
++		vst1q_u64((uint64_t *)&rx_pkts[i], mbp1);
++		vst1q_u64((uint64_t *)&rx_pkts[i + 2], mbp2);
++
++		if (split_rxe_flags) {
++			rte_mbuf_prefetch_part2(rx_pkts[i]);
++			rte_mbuf_prefetch_part2(rx_pkts[i + 1]);
++			rte_mbuf_prefetch_part2(rx_pkts[i + 2]);
++			rte_mbuf_prefetch_part2(rx_pkts[i + 3]);
++		}
++
++		pkt_mb4 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[3]), rvp_shuf_mask);
++		pkt_mb3 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[2]), rvp_shuf_mask);
++		pkt_mb2 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[1]), rvp_shuf_mask);
++		pkt_mb1 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[0]), rvp_shuf_mask);
++
++		if (do_offload) {
++			sxe2_rx_desc_offloads_para_fill_neon(rxq, desc, descs, &rx_pkts[i]);
++		} else {
++			const uint64x2_t mbuf_init = {
++				rxq->mbuf_init_value,
++				0,
++			};
++
++			vst1q_u64((uint64_t *)&rx_pkts[i]->rearm_data, mbuf_init);
++			vst1q_u64((uint64_t *)&rx_pkts[i + 1]->rearm_data, mbuf_init);
++			vst1q_u64((uint64_t *)&rx_pkts[i + 2]->rearm_data, mbuf_init);
++			vst1q_u64((uint64_t *)&rx_pkts[i + 3]->rearm_data, mbuf_init);
++		}
++
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb4), crc_adjust);
++		pkt_mb4 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb3), crc_adjust);
++		pkt_mb3 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb2), crc_adjust);
++		pkt_mb2 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb1), crc_adjust);
++		pkt_mb1 = vreinterpretq_u8_u16(tmp);
++
++		vst1q_u8((void *)&rx_pkts[i + 3]->rx_descriptor_fields1,
++				pkt_mb4);
++		vst1q_u8((void *)&rx_pkts[i + 2]->rx_descriptor_fields1,
++				pkt_mb3);
++		vst1q_u8((void *)&rx_pkts[i + 1]->rx_descriptor_fields1,
++				pkt_mb2);
++		vst1q_u8((void *)&rx_pkts[i]->rx_descriptor_fields1,
++				pkt_mb1);
++
++		if (likely(i + SXE2_RX_NUM_PER_LOOP_NEON < nb_pkts))
++			rte_prefetch_non_temporal(desc + SXE2_RX_NUM_PER_LOOP_NEON);
++
++		{
++			uint32x4_t d0 = vreinterpretq_u32_u64(descs[0]);
++			uint32x4_t d1 = vreinterpretq_u32_u64(descs[1]);
++			uint32x4_t d2 = vreinterpretq_u32_u64(descs[2]);
++			uint32x4_t d3 = vreinterpretq_u32_u64(descs[3]);
++			uint32x4_t sterr_tmp1 = vzip2q_u32(d1, d0);
++			uint32x4_t sterr_tmp2 = vzip2q_u32(d3, d2);
++			uint32x4_t sterr_u32 = vzip1q_u32(sterr_tmp1, sterr_tmp2);
++
++			staterr = vreinterpretq_u16_u32(sterr_u32);
++		}
++
++		sxe2_rx_desc_ptype_fill_neon(staterr, &rx_pkts[i]);
++
++		if (umbcast_flags != NULL) {
++			uint32x4_t umbcast_mask = {
++				SXE2_RX_DESC_STATUS_UMBCAST_MASK, SXE2_RX_DESC_STATUS_UMBCAST_MASK,
++				SXE2_RX_DESC_STATUS_UMBCAST_MASK, SXE2_RX_DESC_STATUS_UMBCAST_MASK,
++			};
++
++			uint8x16_t umbcast_shuf_mask = {
++				0x0B, 0x03, 0x0F, 0x07,
++				0xFF, 0xFF, 0xFF, 0xFF,
++				0xFF, 0xFF, 0xFF, 0xFF,
++				0xFF, 0xFF, 0xFF, 0xFF,
++			};
++			uint8x16_t umbcast_bits =
++				vreinterpretq_u8_u32(vandq_u32(vreinterpretq_u32_u16(staterr),
++							       umbcast_mask));
++
++			umbcast_bits = vqtbl1q_u8(umbcast_bits, umbcast_shuf_mask);
++			vst1q_lane_u32((uint32_t *)umbcast_flags,
++					vreinterpretq_u32_u8(umbcast_bits), 0);
++			umbcast_flags += SXE2_RX_NUM_PER_LOOP_NEON;
++		}
++
++		if (split_rxe_flags) {
++			uint8x16_t eop_shuf_mask = {
++					0x08, 0x00, 0x0C, 0x04,
++					0xFF, 0xFF, 0xFF, 0xFF,
++					0xFF, 0xFF, 0xFF, 0xFF,
++					0xFF, 0xFF, 0xFF, 0xFF};
++			uint8x16_t eop_bits;
++			uint32x4_t rxe_mask = {
++				0x2080, 0x2080, 0x2080, 0x2080
++			};
++			uint32x4_t rxe_bits;
++			uint32x4_t eop_mask;
++
++			eop_mask = vshlq_n_u32(vdupq_n_u32(1), SXE2_RX_DESC_STATUS_EOP_SHIFT);
++			eop_bits = vandq_u8(vmvnq_u8(vreinterpretq_u8_u16(staterr)),
++					vreinterpretq_u8_u32(eop_mask));
++
++			rxe_bits = vandq_u32(vreinterpretq_u32_u16(staterr), rxe_mask);
++			rxe_bits = vshrq_n_u32(rxe_bits, 7);
++
++			eop_bits = vorrq_u8(eop_bits, vreinterpretq_u8_u32(rxe_bits));
++
++			eop_bits = vqtbl1q_u8(eop_bits, eop_shuf_mask);
++
++			vst1q_lane_u32((uint32_t *)split_rxe_flags,
++				       vreinterpretq_u32_u8(eop_bits), 0);
++			split_rxe_flags += SXE2_RX_NUM_PER_LOOP_NEON;
++
++#ifdef RTE_IOVA_IN_MBUF
++			rx_pkts[i]->next = NULL;
++			rx_pkts[i + 1]->next = NULL;
++			rx_pkts[i + 2]->next = NULL;
++			rx_pkts[i + 3]->next = NULL;
++#endif
++		}
++
++		{
++			uint32x4_t dd_mask = vdupq_n_u32(1);
++			uint32x4_t sterr_dd = vandq_u32(vreinterpretq_u32_u16(staterr), dd_mask);
++			uint16x4_t packed_lo = vmovn_u32(sterr_dd);
++			uint64_t dd64 = vget_lane_u64(vreinterpret_u64_u16(packed_lo), 0);
++
++			bit_num = (uint16_t)rte_popcount64(dd64);
++		}
++		done_num += bit_num;
++		if (likely(bit_num != SXE2_RX_NUM_PER_LOOP_NEON))
++			break;
++	}
++
++	rxq->processing_idx += done_num;
++	rxq->processing_idx &= (rxq->ring_depth - 1);
++	rxq->realloc_num    += done_num;
++
++l_end:
++	return done_num;
++}
++
++static __rte_always_inline uint16_t
++sxe2_rx_pkts_scattered_batch_vec_neon(struct sxe2_rx_queue *rxq,
++		struct rte_mbuf **rx_pkts, uint16_t nb_pkts, bool do_offload)
++{
++	uint8_t split_rxe_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
++	uint8_t umbcast_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
++	uint16_t rx_done_num;
++	uint16_t rx_pkt_done_num;
++
++	rx_pkt_done_num = 0;
++
++	rx_done_num = sxe2_rx_pkts_common_vec_neon((struct sxe2_rx_queue *)rxq,
++				rx_pkts, nb_pkts, split_rxe_flags, umbcast_flags,
++				do_offload);
++
++	if (rx_done_num == 0)
++		goto l_end;
++
++	rx_pkt_done_num += sxe2_rx_pkts_refactor(rxq, &rx_pkts[rx_pkt_done_num],
++			rx_done_num - rx_pkt_done_num, &split_rxe_flags[rx_pkt_done_num],
++			&umbcast_flags[rx_pkt_done_num]);
++
++l_end:
++	return rx_pkt_done_num;
++}
++
++uint16_t sxe2_rx_pkts_scattered_vec_neon_offload(void *rx_queue,
++			struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	uint16_t done_num = 0;
++	uint16_t once_num;
++
++	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM_VEC) {
++		once_num = sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++								 rx_pkts + done_num,
++								 SXE2_RX_PKTS_BURST_BATCH_NUM_VEC,
++								 true);
++
++		done_num += once_num;
++		nb_pkts  -= once_num;
++
++		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM_VEC)
++			goto l_end;
++	}
++
++	done_num += sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++							  rx_pkts + done_num,
++							  nb_pkts,
++							  true);
++l_end:
++	return done_num;
++}
++
++uint16_t sxe2_rx_pkts_scattered_vec_neon(void *rx_queue,
++			struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	uint16_t done_num = 0;
++	uint16_t once_num;
++
++	while (nb_pkts > SXE2_RX_PKTS_BURST_BATCH_NUM_VEC) {
++		once_num = sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++								 rx_pkts + done_num,
++								 SXE2_RX_PKTS_BURST_BATCH_NUM_VEC,
++								 false);
++
++		done_num += once_num;
++		nb_pkts  -= once_num;
++
++		if (once_num < SXE2_RX_PKTS_BURST_BATCH_NUM_VEC)
++			goto l_end;
++	}
++
++	done_num += sxe2_rx_pkts_scattered_batch_vec_neon((struct sxe2_rx_queue *)rx_queue,
++							  rx_pkts + done_num,
++							  nb_pkts,
++							  false);
++l_end:
++	return done_num;
++}
++#endif
 -- 
 2.52.0
 
