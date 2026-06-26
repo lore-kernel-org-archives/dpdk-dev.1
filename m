@@ -2,40 +2,140 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1984DCDE008
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 07:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F97CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 08:47:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9FD6640A7D;
-	Fri, 26 Jun 2026 09:29:03 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 838C5402C6
- for <dev@dpdk.org>; Fri, 26 Jun 2026 09:28:50 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 28B0D1A1B6D;
- Fri, 26 Jun 2026 09:28:50 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4CEEF1A20EA;
- Fri, 26 Jun 2026 08:57:23 +0200 (CEST)
-Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
- [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7C574180004C;
- Fri, 26 Jun 2026 14:57:21 +0800 (+08)
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
-To: stephen@networkplumber.org,
-	david.marchand@redhat.com,
-	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v5 17/19] drivers: release DPAA bpid on driver destructor
-Date: Fri, 26 Jun 2026 12:26:53 +0530
-Message-Id: <20260626065655.279742-18-hemant.agrawal@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260626065655.279742-1-hemant.agrawal@nxp.com>
-References: <20260621172731.2916346-1-hemant.agrawal@nxp.com>
- <20260626065655.279742-1-hemant.agrawal@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 61F5D4025F;
+	Fri, 26 Jun 2026 10:47:12 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 26D56400D6
+ for <dev@dpdk.org>; Fri, 26 Jun 2026 10:47:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782463631; x=1813999631;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=O+ZsllNf9LQN9S7x6mehVnNvBo4jcIQ6yhK1psSqp3A=;
+ b=anZHBly3ElBgQHV9bRSw+sRt1dZvYvDjlXi3yF5vjiaybEdUJ7Kweb+D
+ ksVGhIvFu9RIJdwy+8G1+pBlU0/uoFYhVVCWgXt7FnRcUcNTGlJf0qQH0
+ MMz4BToarXdw30uzupxhOYkSxeYeS19KIHI9zFmU4X6Ay804Cmq+U+Dgv
+ 5iMknqns3S3fqj/4qxlbaVOlawSkfxANTGdJ3bR+4ZODZd7RKyPxU0OSN
+ HUOESgORmrmhPwJ/e7UsciZlMafFPmsx0kkWjA+1Q3OfvS3thfgjvTeEC
+ i8SxvBCNpVU3N15j68u9JneDBTxzfDbPJVMwg6OBoJj4QqgPn4VAa4W6y w==;
+X-CSE-ConnectionGUID: WKEjYDI+QEm+5GQZe/lUnw==
+X-CSE-MsgGUID: QuqazeT/S06JKskj1wuiqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11828"; a="87102432"
+X-IronPort-AV: E=Sophos;i="6.24,226,1774335600"; d="scan'208";a="87102432"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Jun 2026 01:47:10 -0700
+X-CSE-ConnectionGUID: KXoHh3LOR/2Gu4MupkP50Q==
+X-CSE-MsgGUID: YTOYntDeQo6YKK9E4ZZq8Q==
+X-ExtLoop1: 1
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Jun 2026 01:47:10 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Fri, 26 Jun 2026 01:47:09 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Fri, 26 Jun 2026 01:47:09 -0700
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.10) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Fri, 26 Jun 2026 01:47:09 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b1ohaCd8C0IjBbPOZVi4MgPKoDJ+5ROg0/CABFCGpjaoxbY0gx423rM1vkS9iVr0AKclSFSVTtASiiulq2V0nGt27Lz32i8xb+IzLOBhrlOKBoILZYMQhKqSjjB8cmsACXH4u2hM2/4/ZlQ6JNsYID0OnauBs0FM7qy5z3pWeRodt7ty+AJkg6a2szpj7MnqRi6h55lVIKnvYTMCKPyBAjjRTuAHBpeB68WNH2zMQghlLpgWtM5VQiXqT/erOWzsk+9GnzDeMBfoAU1gw+bWiOXnghzzGCq2RGM6lTAft60E7zEVAZnLVDZb6TrU9XqO/plS0Om4sknxHHXi3+dKuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SBfQXYV0o5iNSCJ0auPXsHAgYIuXzqasa6DGnz6JahI=;
+ b=DIn48zq5wGlk0ZWkR0RkOAWh5vmNUbCtumWzzmF1H2kZNuI1ErfQlEen+XmAz5TjhS4Ofe7e3XSAR8cxuIvYIr0/DhO1JGopqLI/bkM/pwlUq3ORS9qcXwScKABLUs45pUjZjuEffV4Afc+26bSBMePQJD1uY9vtgCOq8Cru14lYLEr73ho+mW5PAU9+hpSP3ajcmv+veFeWQrkXPPvmbOdSV368IgQcs+TG19lHFMHK4BueAw+wqe1u0yJ6+KDFYHQSYCW8idXdiX+npKEnwCiAiaGUMd7Ojrdm/M4OLjANEaWxjTb48l2w3otZgSDqG+Rp8nU9gUXdpeXNvl9ROg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by SA2PR11MB5051.namprd11.prod.outlook.com (2603:10b6:806:11f::9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.17; Fri, 26 Jun
+ 2026 08:47:02 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0159.016; Fri, 26 Jun 2026
+ 08:47:02 +0000
+Date: Fri, 26 Jun 2026 09:46:58 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Ciara Loftus <ciara.loftus@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH 0/3] net/intel: fix potential rx stats underflow
+Message-ID: <aj48giiB0U5rfUkP@bricha3-mobl1.ger.corp.intel.com>
+References: <20260625093619.726471-1-ciara.loftus@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260625093619.726471-1-ciara.loftus@intel.com>
+X-ClientProxiedBy: DUZPR01CA0057.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::6) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|SA2PR11MB5051:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b5278bd-cb62-4028-2624-08ded35f7e04
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|366016|23010399003|1800799024|18002099003|22082099003|11063799006|56012099006|5023799004;
+X-Microsoft-Antispam-Message-Info: QyEe2uonwI2cqgNi8HSKcy/KFUzP0WnyEjltXdrAE0msE2hkR6BEgxc6XhFhaeBjNpYCOr7SGbe27OpgGC18foTnEvnrOl2SJ7D6DWHSGL8vjyGX94pFy6OTEjhlT+sOo92pQeWmCwhekBYR2nhlq/+6mJXHbzvwL56aIXfJncaKVM9im0lk+ExJ4bCakBAxXfCVSWneFufBlFHFDrn1hANPXSUzCsIHvHu81WxZvrdKyrL+SfvpfJoE1OK0CnMHNJFY6gps6JlftBowD8Dk1KHPJh1E5ds8zDalMCPKALoYs11+mjAYAKaVNUDHdnGyIHLvHAso/GdjweKyPoBNnt+J5C+mfcgCmYHjmHKKGeb4SAhSjdX+ykppa8oxK3NNQB53RU0d27HhQEsrGHBzIss+TCd+t5ugOXcll3rDoZI7YppRrfFma4Xs7KnCKAhfALR+OtmeYZyGJwJMUs0SujZ6BJRYRmCa8SMX/2Tw+xgkF8UdZodEoKxqjhEQhoMiz2/soodXVq6SOP7XxOsSxfUYDshSAA+7lG88XsGQAoCAo8/yUv68de5IMx2yrg/HxeH6ENmcVf/B9DGpaBAfulaVZJf2XbaeUzi24ro821ajloUoCccukRmDdHafV8nSQMRcmXq3q/uekrf5zIlWJ6UrGbI47DQA5NZnGrfk5eo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(18002099003)(22082099003)(11063799006)(56012099006)(5023799004);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pH1duKL5YliOTxtNvsS5+UutOsihs4PkLGGcR89akpUEOIh6Pt+9Cut4ujTN?=
+ =?us-ascii?Q?1UK8tHL6IED7lS+FwFdi8KM+/0gSmug3AeWDZvdxjHjaMMIXMD3ELqNfd+O8?=
+ =?us-ascii?Q?/uuN3bOVZLQH4gIFTWpmX7bvvw6nVJ60q2FaL5KklguPXedkas+o+7G9RAxD?=
+ =?us-ascii?Q?cfvlcu4MOMFi5vT1VVghgwef+4ym7OV/3HJuS1r6vc45UCf8oykM7CH6GclP?=
+ =?us-ascii?Q?4TOwN9pFBV5nEN5m7ctYZCyRF6Cfw27oBvYE33Pshu9G1VWD4WF1amXcuI7f?=
+ =?us-ascii?Q?IUq5zO2kEKwCfQaOsbiShAdP3TE6THK4ml7zDHIKK+2CKwP3ASoePh0TQR4q?=
+ =?us-ascii?Q?etuemU/oUOxStBX/Al3VflMcdy4zvAskJTTQsbh47upIdqINcUiP5STmcJ9k?=
+ =?us-ascii?Q?AQo2tT1MpZugnGjfQKu0aD6QHAAcecfJJBibbIx1u+dVS0A2HMGf9G3rqLwB?=
+ =?us-ascii?Q?cuAflBbezqeOz67sALCFACpQByWLI+hGJWv8pRYHJxtiQL29QszCPvWBkIlx?=
+ =?us-ascii?Q?stdVKnqtvq0qGJQgLqAj22EdjOO5/bZnWg6BYnENHX5+Tk7Kq2SBWHhmja5/?=
+ =?us-ascii?Q?SALLowGgQD2zqCZoyBrIC0ZsKgkrxJx30Do+6TGyju2FVaXxzppTP2jPdM5H?=
+ =?us-ascii?Q?sjTt570cBOIdQaX+0hmmcSKeGa/X/O2IubhqdYtMLpfLg49gEuDLNuMEWsyc?=
+ =?us-ascii?Q?cXMC5QizkFWz2fwWSDvbrXct/uSj19NLHbiERI8czjOrzRzkT+c1nA63wcJE?=
+ =?us-ascii?Q?8x3waUHLLNrm3DpmSIGFUrGp72GXvzfReekdu82ZmI3GSdrd5qKCSVKrt80z?=
+ =?us-ascii?Q?LMN1QI3M64il+oZ/CL1QJcxMchF/KtT4qoeYiFNCiTh6S6So+Vr7VQg4PpnA?=
+ =?us-ascii?Q?8JVoYG+D0i9Yrg8iH9iAcVfCL0RjGsT1It+oszUM1geA2lULiq8hoojQ3f/9?=
+ =?us-ascii?Q?3+ZONsfwETCDCHMU3n1JirIYaSXzLqi4ya8zVnmfFafWZUJZOe7MqjKN33nH?=
+ =?us-ascii?Q?27WzDobSLNiDRp+uAB698CarHuop9nHk714CVz1uVn1oauSotSZF2k0xKLQo?=
+ =?us-ascii?Q?qHTR8B/ep1fNTTi/pQtS8cXxofrl3Ex7JC4/dTIFGBiI22WZbIauu7O16oVB?=
+ =?us-ascii?Q?uM/PJ+SUD5AE0fwvouyaprE8Upb7Gfc6z/uL2PQfZDpjbFB5Ti5v4d0eE6t/?=
+ =?us-ascii?Q?eRlmcJdxl9qRzLYO3stQPT9YAaYYDlH507/znearRJKRbIgoZ0tW8WvM6h5e?=
+ =?us-ascii?Q?2eIhweBdG5DNuWmKahQB48fCBdARpnWOz62f9Q5oxsjonMkqvEdSUJi5bbb5?=
+ =?us-ascii?Q?ueeo2D4PaJ75LPn5iUm4UNa0CJcbTSF9jkkg2mAbzXLw1DAwRysOE6Sb28NV?=
+ =?us-ascii?Q?wPyoUM8oON2oNFQ2pOmZLG7S/AtUNKzb5FZDkrUUGLzKOHrE9LTaZ4ibAMIs?=
+ =?us-ascii?Q?ypo+C0G7uq4DkCfLRWeK+dHMup7AKWZIqfcbL3vkmJGF/KOd02ESLvRNun1O?=
+ =?us-ascii?Q?tM5a4eej1dvuzwjq74sSzWekmZSvIdrXJN14riQtdihAsCXUyzywBIk+JXEM?=
+ =?us-ascii?Q?J/CkM0p6370juOq8Ni23Vak0A4xE1SfiPn5UfQbmQ8GRkGr4O0GuxD7mD2Q/?=
+ =?us-ascii?Q?HB1/W0Tz1Uyl91QlPOcUstZP2webYbEqCoKXmPcBAaF6Y5ouCRJoaFRDpZ4e?=
+ =?us-ascii?Q?OiRXQmopH44jBX8/Z0YvNQOqE2qZWr5wJQRw4nIfwpACaGreEmfbn8LVD61g?=
+ =?us-ascii?Q?U37/9hN7exM9eC4nGOHur7LWHdIxjOg=3D?=
+X-Exchange-RoutingPolicyChecked: isGhJ/VvGTe2l2A9e4t88nsozL1en/qDh0SE9UgklZwzb93I/KqWIywA/VprgaZx3wziNLenB1rfUihfMh4PzvdcHI1DJz8j7iDHO0kwOlElIk9FcqgdL/qu1uTc4EEQ1wpn9biQXwV0pAg6OESH9T8v6ME9Y7oTkKw7tDGwTo0Ys09L0CD1BIK5I1xFHsE/2RIMiPB660MkLHc5f6uEnCdCANHXPkBm4400evT9Z8oInh4O0RODGlIgFPvVITVsVk5V9eDKhbbUo4WbFrQXIfxCSyBSd/WadzQnxLPV+KtVm8ZGFcassqEjUGP+aB8PcQZxItWQhucaQRXdxmjrrw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b5278bd-cb62-4028-2624-08ded35f7e04
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2026 08:47:02.4657 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EJm9AHjU3CvlhSjA6np9RR0ZTKShsOyd34cN3GU7viQ+SWfkBlINp86asDCBE+bN0r65hJJNO31BKRr2HY/wcGmz6KzUMtMWuIJsw8u3+8w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5051
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,213 +149,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+On Thu, Jun 25, 2026 at 09:36:16AM +0000, Ciara Loftus wrote:
+> The Rx packet count reported by ice, ice DCF and iavf can momentarily
+> jump to an enormous invalid value under load. ipackets is derived by
+> subtracting the discarded packet count from the sum of the unicast,
+> multicast and broadcast counters. That sum already includes the
+> discarded packets, so the result is the number actually delivered. The
+> inputs are sampled from separate sources at slightly different instants,
+> so the discard count can briefly exceed the measured sum. Because the
+> arithmetic is unsigned, the subtraction wraps to a huge value and is
+> reported as a hugely incorrect packet count and rate.
+> 
+> All three share the bug but not the fix, because they differ in how
+> much control they have over the sampling.
+> 
+> The ice PF reads its counters directly from hardware registers, so the
+> order is under the driver's control. Reading the discard register before
+> the other three, combined with the fact that the counters only ever
+> increase and the delivered-packet sum always includes the discards,
+> makes it impossible for the discard count to exceed the later sum. No
+> clamping is needed and the subtraction can never underflow.
+> 
+> ice DCF and iavf receive their counters from the PF in a single virtchnl
+> message and cannot influence the order in which the PF sampled them.
+> There a reorder is not available, so the subtraction is made saturating:
+> when the discard count exceeds the sum, essentially nothing was delivered,
+> so zero is reported instead of underflowing.
+> 
+> Ciara Loftus (3):
+>   net/ice: fix Rx packets statistics underflow
+>   net/ice: fix DCF Rx packets statistics underflow
+>   net/iavf: fix Rx packets statistics underflow
+> 
+Series applied to dpdk-next-net-intel. I was tempted to squash into one
+patch, but kept them as three because the fix is not identical in all cases
+(iavf being different).
 
-Track allocated BPIDs in a static per-BPID flag table and register a
-driver destructor that releases any BPIDs still marked as in use at
-process exit. This prevents BPID leaks when an application exits without
-calling rte_mempool_free(). Also tune the per-lcore mempool cache flush
-threshold to match the hardware bulk release size (DPAA_MBUF_MAX_ACQ_REL)
-so that buffers are returned to HW in optimal burst sizes.
-
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
----
- drivers/bus/dpaa/base/qbman/bman.c       |  8 +++
- drivers/bus/dpaa/dpaa_bus_base_symbols.c |  1 +
- drivers/bus/dpaa/include/fsl_bman.h      |  3 ++
- drivers/mempool/dpaa/dpaa_mempool.c      | 67 ++++++++++++++++++++++--
- drivers/mempool/dpaa/dpaa_mempool.h      |  3 +-
- 5 files changed, 78 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
-index 01357d6446..b69394b0cc 100644
---- a/drivers/bus/dpaa/base/qbman/bman.c
-+++ b/drivers/bus/dpaa/base/qbman/bman.c
-@@ -237,6 +237,14 @@ void bman_free_pool(struct bman_pool *pool)
- 	kfree(pool);
- }
- 
-+void bman_free_bpid(u8 bpid, u32 flags)
-+{
-+	if (flags & BMAN_POOL_FLAG_THRESH)
-+		bm_pool_set(bpid, zero_thresholds);
-+	if (flags & BMAN_POOL_FLAG_DYNAMIC_BPID)
-+		bman_release_bpid(bpid);
-+}
-+
- const struct bman_pool_params *bman_get_params(const struct bman_pool *pool)
- {
- 	return &pool->params;
-diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-index 514ab7b1f1..8bd1a9bc6e 100644
---- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-+++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-@@ -46,6 +46,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(netcfg_acquire)
- RTE_EXPORT_INTERNAL_SYMBOL(netcfg_release)
- RTE_EXPORT_INTERNAL_SYMBOL(bman_new_pool)
- RTE_EXPORT_INTERNAL_SYMBOL(bman_free_pool)
-+RTE_EXPORT_INTERNAL_SYMBOL(bman_free_bpid)
- RTE_EXPORT_INTERNAL_SYMBOL(bman_get_params)
- RTE_EXPORT_INTERNAL_SYMBOL(bman_release)
- RTE_EXPORT_INTERNAL_SYMBOL(bman_acquire)
-diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
-index 67a7a09618..6079eedff5 100644
---- a/drivers/bus/dpaa/include/fsl_bman.h
-+++ b/drivers/bus/dpaa/include/fsl_bman.h
-@@ -317,6 +317,9 @@ struct bman_pool *bman_new_pool(const struct bman_pool_params *params);
- __rte_internal
- void bman_free_pool(struct bman_pool *pool);
- 
-+__rte_internal
-+void bman_free_bpid(u8 bpid, u32 flags);
-+
- /**
-  * bman_get_params - Returns a pool object's parameters.
-  * @pool: the pool object
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 3fdbcba646..210ea3bcf9 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -25,10 +25,22 @@
- #include <rte_eal.h>
- #include <rte_malloc.h>
- #include <rte_ring.h>
-+#include <rte_common.h>
- 
- #include <dpaa_mempool.h>
- #include <dpaax_iova_table.h>
- 
-+struct dpaa_bpid_flag {
-+	uint32_t flags;
-+	int used;
-+};
-+
-+/** Be referenced in destructor to release bpid allocated.
-+ * Destructor can't access bman_pool from eal mem,
-+ * we release ID with flag directly.
-+ */
-+static struct dpaa_bpid_flag s_dpaa_bpid_allocated_flag[DPAA_MAX_BPOOLS];
-+
- #define FMAN_ERRATA_BOUNDARY ((uint64_t)4096)
- #define FMAN_ERRATA_BOUNDARY_MASK (~(FMAN_ERRATA_BOUNDARY - 1))
- 
-@@ -58,6 +70,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	struct bman_pool_params params = {
- 		.flags = BMAN_POOL_FLAG_DYNAMIC_BPID
- 	};
-+	unsigned int lcore_id;
-+	struct rte_mempool_cache *cache;
- 
- 	MEMPOOL_INIT_FUNC_TRACE();
- 
-@@ -115,7 +129,7 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	rte_dpaa_bpid_info[bpid].ptov_off = 0;
- 	rte_dpaa_bpid_info[bpid].flags = 0;
- 
--	bp_info = rte_malloc(NULL,
-+	bp_info = rte_zmalloc(NULL,
- 			     sizeof(struct dpaa_bp_info),
- 			     RTE_CACHE_LINE_SIZE);
- 	if (!bp_info) {
-@@ -127,6 +141,20 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	rte_memcpy(bp_info, (void *)&rte_dpaa_bpid_info[bpid],
- 		   sizeof(struct dpaa_bp_info));
- 	mp->pool_data = (void *)bp_info;
-+	s_dpaa_bpid_allocated_flag[bpid].flags = params.flags;
-+	s_dpaa_bpid_allocated_flag[bpid].used = true;
-+	/* Update per core mempool cache threshold to optimal value which is
-+	 * number of buffers that can be released to HW buffer pool in
-+	 * a single API call.
-+	 */
-+	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
-+		cache = &mp->local_cache[lcore_id];
-+		DPAA_MEMPOOL_DEBUG("lCore %d: cache->flushthresh %d -> %d",
-+			lcore_id, cache->flushthresh,
-+			(uint32_t)(cache->size + DPAA_MBUF_MAX_ACQ_REL));
-+		if (cache->flushthresh)
-+			cache->flushthresh = cache->size + DPAA_MBUF_MAX_ACQ_REL;
-+	}
- 
- 	DPAA_MEMPOOL_INFO("BMAN pool created for bpid =%d", bpid);
- 	return 0;
-@@ -136,6 +164,7 @@ static void
- dpaa_mbuf_free_pool(struct rte_mempool *mp)
- {
- 	struct dpaa_bp_info *bp_info = DPAA_MEMPOOL_TO_POOL_INFO(mp);
-+	uint16_t i;
- 
- 	MEMPOOL_INIT_FUNC_TRACE();
- 
-@@ -143,10 +172,25 @@ dpaa_mbuf_free_pool(struct rte_mempool *mp)
- 		bman_free_pool(bp_info->bp);
- 		DPAA_MEMPOOL_INFO("BMAN pool freed for bpid =%d",
- 				  bp_info->bpid);
--		rte_free(mp->pool_data);
--		bp_info->bp = NULL;
-+		rte_dpaa_bpid_info[bp_info->bpid].mp = NULL;
-+		rte_dpaa_bpid_info[bp_info->bpid].bp = NULL;
-+		s_dpaa_bpid_allocated_flag[bp_info->bpid].used = false;
-+		rte_free(bp_info);
- 		mp->pool_data = NULL;
- 	}
-+
-+	if (!rte_dpaa_bpid_info)
-+		return;
-+
-+	for (i = 0; i < DPAA_MAX_BPOOLS; i++) {
-+		if (rte_dpaa_bpid_info[i].mp)
-+			break;
-+	}
-+
-+	if (i == DPAA_MAX_BPOOLS) {
-+		rte_free(rte_dpaa_bpid_info);
-+		rte_dpaa_bpid_info = NULL;
-+	}
- }
- 
- static int
-@@ -481,4 +525,21 @@ static const struct rte_mempool_ops dpaa_mpool_ops = {
- 	.populate = dpaa_populate,
- };
- 
-+#define RTE_PRIORITY_104 104
-+
-+RTE_FINI_PRIO(dpaa_mpool_finish, 104)
-+{
-+	uint16_t bpid;
-+
-+	for (bpid = 0; bpid < DPAA_MAX_BPOOLS; bpid++) {
-+		if (s_dpaa_bpid_allocated_flag[bpid].used) {
-+			bman_free_bpid(bpid, s_dpaa_bpid_allocated_flag[bpid].flags);
-+			s_dpaa_bpid_allocated_flag[bpid].used = false;
-+		}
-+	}
-+	/** The rte_dpaa_bpid_info and bman_pool from EAL mem have been released
-+	 * with EAL mem pool being destroyed.
-+	 */
-+}
-+
- RTE_MEMPOOL_REGISTER_OPS(dpaa_mpool_ops);
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
-index 865b533b8f..d7ee49b557 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.h
-+++ b/drivers/mempool/dpaa/dpaa_mempool.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2017,2019,2024 -2025 NXP
-+ *   Copyright 2017,2019,2024 -2026 NXP
-  *
-  */
- #ifndef __DPAA_MEMPOOL_H__
-@@ -24,6 +24,7 @@
- 
- /* total number of bpools on SoC */
- #define DPAA_MAX_BPOOLS	256
-+#define DPAA_INVALID_BPID DPAA_MAX_BPOOLS
- 
- /* Maximum release/acquire from BMAN */
- #define DPAA_MBUF_MAX_ACQ_REL  FSL_BM_BURST_MAX
--- 
-2.25.1
-
+Thanks,
+/Bruce
