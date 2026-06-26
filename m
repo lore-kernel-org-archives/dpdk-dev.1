@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B229BCD4F26
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 07:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1498CD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 07:28:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E6D68402C6;
-	Fri, 26 Jun 2026 09:28:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D5CAA4065A;
+	Fri, 26 Jun 2026 09:28:51 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 6A6DC40264
+ by mails.dpdk.org (Postfix) with ESMTP id BAA48402C6
  for <dev@dpdk.org>; Fri, 26 Jun 2026 09:28:49 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 343FA1A17C1;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 680711A1C0E;
  Fri, 26 Jun 2026 09:28:49 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7E32E1A1B61;
- Fri, 26 Jun 2026 08:57:03 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4E5CE1A2093;
+ Fri, 26 Jun 2026 08:57:11 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id EF2F2180007B;
- Fri, 26 Jun 2026 14:57:01 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 158CA180007B;
+ Fri, 26 Jun 2026 14:57:09 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v5 02/19] bus/dpaa: scan max BPID from DTS
-Date: Fri, 26 Jun 2026 12:26:38 +0530
-Message-Id: <20260626065655.279742-3-hemant.agrawal@nxp.com>
+Cc: Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v5 08/19] bus/dpaa: enhance DPAA FQ shutdown
+Date: Fri, 26 Jun 2026 12:26:44 +0530
+Message-Id: <20260626065655.279742-9-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260626065655.279742-1-hemant.agrawal@nxp.com>
 References: <20260621172731.2916346-1-hemant.agrawal@nxp.com>
@@ -49,107 +49,163 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+From: Gagandeep Singh <g.singh@nxp.com>
 
-Calculate the maximum BPID dynamically from the device tree
-configuration instead of using a hardcoded value. This ensures
-correct operation across different DPAA hardware configurations.
+Improve the FQ shutdown sequence to handle edge cases more
+robustly, including better handling of ORL (Order Restoration
+List) presence and improved error recovery paths.
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/bman_driver.c | 48 ++++++++++++++++-------
- 1 file changed, 33 insertions(+), 15 deletions(-)
+ drivers/bus/dpaa/base/qbman/qman.c | 80 ++++++++++++++++++++++--------
+ 1 file changed, 59 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/bman_driver.c b/drivers/bus/dpaa/base/qbman/bman_driver.c
-index 23e44ac10b..85575192bf 100644
---- a/drivers/bus/dpaa/base/qbman/bman_driver.c
-+++ b/drivers/bus/dpaa/base/qbman/bman_driver.c
+diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
+index 42618c1ab4..ba7db78ca0 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.c
++++ b/drivers/bus/dpaa/base/qbman/qman.c
 @@ -1,7 +1,7 @@
  /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
   *
   * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017 NXP
-+ * Copyright 2017,2026 NXP
+- * Copyright 2017,2019-2025 NXP
++ * Copyright 2017,2019-2026 NXP
   *
   */
  
-@@ -182,7 +182,12 @@ int bman_init_ccsr(const struct device_node *node)
- int bman_global_init(void)
- {
- 	const struct device_node *dt_node;
-+	const rte_be32_t *range;
-+	uint32_t start, count;
-+	int ret;
- 	static int done;
-+#define BPID_RANGE_START_INDEX 0
-+#define BPID_RANGE_COUNT_INDEX 1
+@@ -2840,9 +2840,10 @@ qman_shutdown_fq(struct qman_fq *fq)
+ 		}
+ 		res = mcr->result; /* Make a copy as we reuse MCR below */
  
- 	if (done)
- 		return -EBUSY;
-@@ -197,36 +202,49 @@ int bman_global_init(void)
- 	if (of_device_is_compatible(dt_node, "fsl,bman-portal-1.0") ||
- 	    of_device_is_compatible(dt_node, "fsl,bman-portal-1.0.0")) {
- 		bman_ip_rev = BMAN_REV10;
--		bman_pool_max = 64;
- 	} else if (of_device_is_compatible(dt_node, "fsl,bman-portal-2.0") ||
- 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.0.8")) {
- 		bman_ip_rev = BMAN_REV20;
--		bman_pool_max = 8;
- 	} else if (of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.0") ||
- 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.1") ||
- 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.2") ||
- 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.3")) {
- 		bman_ip_rev = BMAN_REV21;
--		bman_pool_max = 64;
- 	} else {
--		pr_warn("unknown BMan version in portal node,default "
--			"to rev1.0");
-+		pr_warn("unknown BMan version in portal node, default to rev1.0");
- 		bman_ip_rev = BMAN_REV10;
--		bman_pool_max = 64;
- 	}
+-		if (res == QM_MCR_RESULT_OK) {
++		if (res == QM_MCR_RESULT_OK)
+ 			drain_mr_fqrni(&p->p);
+-		} else if (res == QM_MCR_RESULT_PENDING) {
++
++		if (res == QM_MCR_RESULT_PENDING) {
+ 			/*
+ 			 * Need to wait for the FQRN in the message ring, which
+ 			 * will only occur once the FQ has been drained.  In
+@@ -2850,28 +2851,29 @@ qman_shutdown_fq(struct qman_fq *fq)
+ 			 * to dequeue from the channel the FQ is scheduled on
+ 			 */
+ 			int found_fqrn = 0;
+-			const u16 pool_ch_start = dpaa_get_qm_channel_pool();
+-			const u16 pool_ch_end = pool_ch_start + dpaa_get_qm_channel_pool_num();
+-			u32 sdqcr = p->sdqcr;
  
- 	if (!bman_ip_rev) {
- 		pr_err("Unknown bman portal version\n");
- 		return -ENODEV;
- 	}
--	{
--		const struct device_node *dn = of_find_compatible_node(NULL,
--							NULL, "fsl,bman");
--		if (!dn)
--			pr_err("No bman device node available");
--
--		if (bman_init_ccsr(dn))
--			pr_err("BMan CCSR map failed.");
-+
-+	for_each_compatible_node(dt_node, NULL, "fsl,bpid-range") {
-+		range = of_get_property(dt_node, "fsl,bpid-range", NULL);
-+		if (!range)
-+			continue;
-+		start = rte_be_to_cpu_32(range[BPID_RANGE_START_INDEX]);
-+		count = rte_be_to_cpu_32(range[BPID_RANGE_COUNT_INDEX]);
-+		bman_pool_max = start + count;
-+		pr_info("Max BPID: %d, fixed BPID < %d", bman_pool_max, start);
-+		break;
-+	}
-+	if (!bman_pool_max) {
-+		pr_err("No BPID range found");
-+		return -ENODEV;
-+	}
-+
-+	dt_node = of_find_compatible_node(NULL, NULL, "fsl,bman");
-+	if (!dt_node) {
-+		pr_err("No bman device node available");
-+		return -ENODEV;
-+	}
-+
-+	ret = bman_init_ccsr(dt_node);
-+	if (ret) {
-+		pr_err("Failed(%d) to init bman ccsr", ret);
-+		return ret;
- 	}
+ 			/* Flag that we need to drain FQ */
+ 			drain = 1;
  
- 	done = 1;
++			const u16 pool_ch_start = dpaa_get_qm_channel_pool();
++			const u16 pool_ch_end = pool_ch_start +
++					dpaa_get_qm_channel_pool_num();
+ 			if (channel >= pool_ch_start && channel < pool_ch_end) {
+-				/* Pool channel, enable the bit in the portal */
++				/* Pool channel - must use affine portal */
+ 				if (p->config->channel != channel) {
+-					DPAA_BUS_ERR("Portal affine channel(0x%04x) != wq channel(0x%04x)",
++					DPAA_BUS_ERR("Portal ch(0x%04x) != FQ ch(0x%04x)",
+ 						p->config->channel, channel);
+ 					ret = -EINVAL;
+ 					goto out;
+ 				}
+ 			} else if (channel < pool_ch_start) {
+ 				/* Dedicated channel */
+-				sdqcr = QM_SDQCR_TYPE_ACTIVE | QM_SDQCR_CHANNELS_DEDICATED;
+-				qm_dqrr_sdqcr_set(&p->p, sdqcr);
++				qm_dqrr_sdqcr_set(&p->p,
++						  QM_SDQCR_TYPE_ACTIVE |
++						  QM_SDQCR_CHANNELS_DEDICATED);
+ 			} else {
+-				DPAA_BUS_ERR("Can't recover FQ 0x%x, Invalid channel: 0x%x",
+-					fqid, channel);
++				DPAA_BUS_ERR("Invalid channel 0x%x for FQ 0x%x",
++					channel, fqid);
+ 				ret = -EBUSY;
+ 				goto out;
+ 			}
+@@ -2879,15 +2881,16 @@ qman_shutdown_fq(struct qman_fq *fq)
+ 				/* Keep draining DQRR while checking the MR*/
+ 				qm_dqrr_drain_nomatch(&p->p);
+ 				/* Process message ring too */
+-				found_fqrn = qm_mr_drain(&p->p,
+-							FQRN);
++				found_fqrn = qm_mr_drain(&p->p, FQRN);
+ 				cpu_relax();
+ 			} while (!found_fqrn);
+-			/* Restore SDQCR */
+-			if (sdqcr != p->sdqcr)
+-				qm_dqrr_sdqcr_set(&p->p, p->sdqcr);
+-		} else {
+-			DPAA_BUS_ERR("retire_fq failed: FQ 0x%x, res=0x%x", fqid, res);
++			qm_dqrr_sdqcr_set(&p->p, p->sdqcr);
++
++		}
++		if (res != QM_MCR_RESULT_OK &&
++		    res != QM_MCR_RESULT_PENDING) {
++			DPAA_BUS_ERR("retire_fq failed: FQ 0x%x, res=0x%x",
++				fqid, res);
+ 			ret = -EIO;
+ 			goto out;
+ 		}
+@@ -2930,7 +2933,7 @@ qman_shutdown_fq(struct qman_fq *fq)
+ 
+ 		if (mcr->result != QM_MCR_RESULT_OK) {
+ 			DPAA_BUS_ERR("OOS after drain fail: FQ 0x%x (0x%x)",
+-				      fqid, mcr->result);
++				fqid, mcr->result);
+ 			ret = -EIO;
+ 			goto out;
+ 		}
+@@ -2949,7 +2952,7 @@ qman_shutdown_fq(struct qman_fq *fq)
+ 
+ 		if (mcr->result != QM_MCR_RESULT_OK) {
+ 			DPAA_BUS_ERR("OOS fail: FQ 0x%x (0x%x)",
+-				      fqid, mcr->result);
++				fqid, mcr->result);
+ 			ret = -EIO;
+ 			goto out;
+ 		}
+@@ -2966,3 +2969,38 @@ qman_shutdown_fq(struct qman_fq *fq)
+ out:
+ 	return ret;
+ }
++
++int qman_find_fq_by_cgrid(u32 cgrid, u32 *fqid)
++{
++	struct qman_fq fq = {
++		.fqid = 1
++	};
++	struct qm_mcr_queryfq_np np;
++	struct qm_fqd fqd;
++	int err;
++
++	do {
++		err = qman_query_fq_np(&fq, &np);
++		if (err == -ERANGE) {
++			DPAA_BUS_INFO("No FQ found with cgrid(0x%x)", cgrid);
++			return err;
++		} else if (err) {
++			DPAA_BUS_WARN("Failed(%d) to Query np FQ(fqid=0x%x)", err, fq.fqid);
++			return err;
++		}
++		if ((np.state & QM_MCR_NP_STATE_MASK) != QM_MCR_NP_STATE_OOS) {
++			err = qman_query_fq(&fq, &fqd);
++			if (err) {
++				DPAA_BUS_WARN("Failed(%d) to Query FQ(fqid=0x%x)", err, fq.fqid);
++			} else if ((fqd.fq_ctrl & QM_FQCTRL_CGE) && fqd.cgid == cgrid) {
++				if (fqid)
++					*fqid = fq.fqid;
++				return 0;
++			}
++		}
++		/* Move to the next FQID */
++		fq.fqid++;
++	} while (1);
++
++	return -ENODEV;
++}
 -- 
 2.25.1
 
