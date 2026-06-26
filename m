@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E583FC43211
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 15:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C54C43327
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 15:04:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A49DD4026D;
-	Fri, 26 Jun 2026 17:01:52 +0200 (CEST)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 450D940264
- for <dev@dpdk.org>; Fri, 26 Jun 2026 17:01:51 +0200 (CEST)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-3078e0dcd67so1805339eec.0
- for <dev@dpdk.org>; Fri, 26 Jun 2026 08:01:51 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DCE6B402E7;
+	Fri, 26 Jun 2026 17:04:06 +0200 (CEST)
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
+ [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id 0E500402E2
+ for <dev@dpdk.org>; Fri, 26 Jun 2026 17:04:04 +0200 (CEST)
+Received: by mail-dy1-f171.google.com with SMTP id
+ 5a478bee46e88-30bf8b2bd20so2428151eec.0
+ for <dev@dpdk.org>; Fri, 26 Jun 2026 08:04:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782486110;
- x=1783090910; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782486244;
+ x=1783091044; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=FrauLUJSeUoiiyk0e+mDBD0JybzFwcGp/ic3/FUbgh4=;
- b=ZFAr6rljMnCDlVIhEL6cca+fuoIW4vUPbe6KtaoFtYL2Kz/Vd2iZaF9Ab9yO6YDu8r
- ugyax+eZtb8Vae7azTK6FLriWCYPoybqMX0kPnNkhObg+YwAtYDs0S4y+JIwu2WXJnMS
- nY6J4EX95swkf49a8D9cQYmDmphb+2rcRc2xxfvPNLnDrCatBowC9pomCZJNRht3TMEX
- IFEiKqBHTbsBk6U5C4Wu1/16tWc//Cy6SFgFdr2BP5tPh3TXROp5DTmJzPurXSgZ8ftH
- hRv+JLswzdbPt+p5A8rNWaf2VohuIqMIEGStYWCEGUnKHaDM4ba/vgFzrQnfdrbMNmTV
- O+Sw==
+ bh=6Yh5xV/GGuGVtjZ1uaniWzFtbM2vUKNBTKzo1jI3DnE=;
+ b=H2o6MA1Eui6wsFC0BHAdsihQKymfZILaYVkBjjmxV/KbEfj1qGo7CbJh/IP141qS9u
+ c7c8rX/+fAVIByv9wG4TUJRj+Zth1Eb0ABaKVpSsvhRnIgbIvalQXG+4uaMYhDLtWXom
+ EZah5yMTA3cyqMDtWsTYQTY2dzmGdndNiGfIQbBkOvUAJTDfOg+QayHXLw0Ad3tVTXfL
+ POOqAUdjL+6E2ZtdPw/BVmtoKCSGmn8FbDaPiwsrUSK2HSDwQUwcJS0JTVVG8zhrRNsS
+ LM+2j0yzomRhMBjHAv9TZUxvwqt5I49KCMrUjWro8ufM9HKA4fgG39s+T02JjILdh8AX
+ 12PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782486110; x=1783090910;
+ d=1e100.net; s=20251104; t=1782486244; x=1783091044;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=FrauLUJSeUoiiyk0e+mDBD0JybzFwcGp/ic3/FUbgh4=;
- b=Cb5KmxoNMcT4NzqiV0OoPSqU5+I11tnymRz/lTWOtOlcm9fVEP6koMaLkPRYDtfTst
- T6lguPcAx2+A2t3clcdoWPZCZ1d7RNW/d9KtME06Pk4MFUKJKo8Jdf0mbhjCdJbrMNaz
- SO5NxVDGO4gY0Yy1D/zkW5iCS21hhplbQAubjvsDzyl1dQsOOkmTL+eQ6O0X2E66TRY8
- Jz8ifqUgCHgwxs7Jqr4+QxBo5MWwBsmilXC8oWxhT6/SEPRzmRAHEQPPFuHI9rhXrl/v
- 3qeL6qlS9jK5mnFCk6iq0+5RzEJU8Zrj1DoduH8ViZefH2pMzO9ESE3GAFx7uKFcWmEd
- mSPg==
-X-Gm-Message-State: AOJu0YyV3kyZrot8hYptiVKhneo26Y5Z9yD9adDu+vIWJrNdhQpj61g2
- zTAfkIoAd20NMsdyevVETrndKpsWWoPaOizhUZT+IfUqx/EknsoMPAKvTmE7e5qqUY0=
-X-Gm-Gg: AfdE7ck+v98mTjov9fzgiIcCqLCnLlcSfmg9ysQZmZ2ufoGavL1+cfW/532ydH5Mn2a
- nGEVJiyXggvtfhqJWPulHdUmCtRzhe1E6WbcQ2UeXWhSC5EUm7UWOqjkqJxTX+6ChzP5iws3r2T
- 0cQ5hArhravxiT/7ttEy0JQzo1hD4J5ps6HgbpzQzPzWXKEWqXyBAnhZkhluE/Cw8FN3/l1O6/P
- m8cu3wILyLKMcQ2uyeZigUSg+/xVBmiW7ra3vRMac/U8CbRaPmXHzk1xCWWOPZtdTkQHpBE63YH
- kUe88iHXZSJs5ALq/fxBcYyzNY5sidXcEKVSPcNLPKrd27R1w0xewEx6GUm8j7QBia2goKEXmlp
- /z7696PmP22FC4H2JagGrIodoWNhjeIsQsawPEftVqOhHtPH0Fqwhdl4dvBnNS81CPf9v/K+JCF
- rgNP8t3sm2GZ/p+AzIXHdATlg7o9bqMwrLrI0OazUXsAZN+RI3FCrd9vil3Rr9In4q
-X-Received: by 2002:a05:7300:caa:b0:30c:ab4d:3820 with SMTP id
- 5a478bee46e88-30cab4d3e2dmr592091eec.44.1782486109697; 
- Fri, 26 Jun 2026 08:01:49 -0700 (PDT)
+ bh=6Yh5xV/GGuGVtjZ1uaniWzFtbM2vUKNBTKzo1jI3DnE=;
+ b=gzvtOGIRZKkekvgYsDd5FhWOjOHUwuroVuvolt6pmqkz7979j9DgOj0HpJA/32dTEo
+ 1sqhbMa82UTX96w2fa+aB+xjHkgwoIMjcNzGHNTIldszQ5efXIDMsCUf/aOXl6vmOsp5
+ FsT8IGF4iLb/wu7IHn/AoDHYr1kdwewKEtox5rJBSjYXeduKr2PoktUp6obJuvX21tgu
+ tIfQt5zYMQjJJXdP3l++e5quHJTz9SOsLKSwdas88K5B/6QNnAt2ctrr+i24Sm2SNr5p
+ e5VFtyUaqGwF8dxKlAWv7+ZsAO2w0r5FgUBeTxvkoIjuF8aXxn0kZTjqOORqaSpuH8QH
+ d54Q==
+X-Gm-Message-State: AOJu0YwF2OrZDFTDehVCUtxFbKLEuawDwnF00ZrpTTjSRFoMy48cQmIz
+ qvs1o83umdgN9M9I66VvGtA1xe6r+VWno1K178FRXwf7y/zJ0+9Z8J5n81LDKrRczt8OUzgApKB
+ uDILJ
+X-Gm-Gg: AfdE7ckAKzdXloZMpjVj5Wvg/2EntX/DZNNvJX4mRCY9/7qtTgXjbpGR5L2H4gsNpfy
+ nvKJ2v8S4rvldq4OT+1PpqoMIVMutL5EX/VafsVC6dKKKITGGyKJ6AhYPoouS0JRJY4yw0OFDDV
+ ejencu0z1HMXZA9jk5kUoNWosaSpM8a33vdOQG5M98O5pchZzGCcQZhW47HjuPYLQOhg4uwVOVf
+ gPpvYwMZgI6cXcXcgwuJ7GRpBNcuWeNPKIrhi/O/fsH3/YysOAv8CKa+SLGZgo9vTz93P5k4wb+
+ fVpPeaf7SctEihzo970R6BgERJrnqgXNhH/J1FAYFg1KkN5ZscC013X5OcZuiQ8mlUHnggHxVeZ
+ ZykZ46eXFukgBglwl6IvijKy1ZLjAEIPrBmRt5tWcSMhSg4JfZgJYfbGO064LZNx9LhJ7ckncFt
+ c3FrM0d6vc5DvGjXOcG/7V2uWzXVuLMgRJzW9pcrdrzB9KCEtru3zwDg==
+X-Received: by 2002:a05:7300:8621:b0:30c:ab97:d7ab with SMTP id
+ 5a478bee46e88-30cab97dc16mr430763eec.37.1782486243721; 
+ Fri, 26 Jun 2026 08:04:03 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30c7c8b1ae5sm21164813eec.16.2026.06.26.08.01.48
+ 5a478bee46e88-30c7c8b1a75sm18359919eec.19.2026.06.26.08.04.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 26 Jun 2026 08:01:49 -0700 (PDT)
-Date: Fri, 26 Jun 2026 08:01:46 -0700
+ Fri, 26 Jun 2026 08:04:03 -0700 (PDT)
+Date: Fri, 26 Jun 2026 08:04:00 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH v6 0/9] bpf: JIT related bug fixes
-Message-ID: <20260626080146.5b24006b@phoenix.local>
-In-Reply-To: <cf0e1f65fc574f2a9ffebd5fac7ca60c@huawei.com>
-References: <20260608203322.1116296-1-stephen@networkplumber.org>
- <20260625173231.216074-1-stephen@networkplumber.org>
- <cf0e1f65fc574f2a9ffebd5fac7ca60c@huawei.com>
+To: Dawid Wesierski <dawid.wesierski@intel.com>
+Cc: dev@dpdk.org, marek.kasiewicz@intel.com, thomas@monjalon.net,
+ mb@smartsharesystems.com
+Subject: Re: [v5] pcapng: add user-supplied timestamp support
+Message-ID: <20260626080400.42180308@phoenix.local>
+In-Reply-To: <20260626102213.776257-1-dawid.wesierski@intel.com>
+References: <20260624215858.710217-1-dawid.wesierski@intel.com>
+ <20260626102213.776257-1-dawid.wesierski@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,12 +82,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 26 Jun 2026 10:35:47 +0000
-Marat Khalili <marat.khalili@huawei.com> wrote:
+On Fri, 26 Jun 2026 06:22:04 -0400
+Dawid Wesierski <dawid.wesierski@intel.com> wrote:
 
-> Series-tested-by: Marat Khalili <marat.khalili@huawei.com>
+> Thanks again for the review,
 > 
-> (Maybe it actually deserves a release note at this point?)
+> For v6 I have added the input validation we ccheck if the timestamp
+> PCAPNG_TSC_FLAG is not set on caller-provided input.
+> 
+> Regarding API versioning my concern is around source-level compatibility.
+> Any application that calls rte_pcapng_copy() would need to be updated to
+> pass the additional timestamp argument right?
+> 
+> Is breaking source-level compatibility for existing callers of
+> rte_pcapng_copy() acceptable here?
 
-Maybe just a single release note about BPF enhancements/fixes
-and add sub bullets for your loader and verifier changes.
+DPDK does not guarantee API compatibility across releases; only ABI.
+As long as there is a release note this is fine.
+At this point, might have to wait for 26.11 release anyway.
+
+Also, this is not an API that is commonly used by applications.
