@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 843FACDE008
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 07:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389CFCDE008
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 07:26:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D2684066F;
-	Fri, 26 Jun 2026 09:26:12 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4965140677;
+	Fri, 26 Jun 2026 09:26:13 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 44BE1402E7
+ by mails.dpdk.org (Postfix) with ESMTP id 45EA0402F0
  for <dev@dpdk.org>; Fri, 26 Jun 2026 09:26:06 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 290F02024BF;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0D447201252;
  Fri, 26 Jun 2026 09:26:06 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A94E7202796;
- Fri, 26 Jun 2026 08:57:16 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 07E60202793;
+ Fri, 26 Jun 2026 08:57:09 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2F56F1800087;
- Fri, 26 Jun 2026 14:57:15 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6219D1800071;
+ Fri, 26 Jun 2026 14:57:07 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Subject: [PATCH v5 12/19] net/dpaa: optimize FM deconfig
-Date: Fri, 26 Jun 2026 12:26:48 +0530
-Message-Id: <20260626065655.279742-13-hemant.agrawal@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v5 06/19] drivers: shutdown DPAA FQ by fq descriptor
+Date: Fri, 26 Jun 2026 12:26:42 +0530
+Message-Id: <20260626065655.279742-7-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260626065655.279742-1-hemant.agrawal@nxp.com>
 References: <20260621172731.2916346-1-hemant.agrawal@nxp.com>
@@ -48,88 +49,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Consolidate FM deconfiguration to avoid duplicate calls.
-Move the fm_deconfig call to a single location and remove
-redundant checks in the device close path.
+From: Jun Yang <jun.yang@nxp.com>
 
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Pass the full FQ descriptor to qman_shutdown_fq() instead of
+just the fqid, so that channel-affine portals can be correctly
+accessed when shutting down push-mode Rx queues.
+
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 27 +++++++++++++++++++++++----
- drivers/net/dpaa/dpaa_flow.c   |  9 +++++----
- 2 files changed, 28 insertions(+), 8 deletions(-)
+ drivers/bus/dpaa/base/qbman/qman.c  |  9 +++++----
+ drivers/bus/dpaa/include/fsl_qman.h | 11 ++++++++++-
+ drivers/net/dpaa/dpaa_ethdev.c      |  7 +++++++
+ 3 files changed, 22 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
+index c9a8ec34a5..dc8aeaa568 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.c
++++ b/drivers/bus/dpaa/base/qbman/qman.c
+@@ -2781,18 +2781,19 @@ qm_mc_result_timeout(struct qm_portal *portal,
+ 
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_shutdown_fq)
+ int
+-qman_shutdown_fq(u32 fqid)
++qman_shutdown_fq(struct qman_fq *fq)
+ {
+-	struct qman_portal *p;
++	struct qman_portal *p = fq->qp;
+ 	struct qm_mc_command *mcc;
+ 	struct qm_mc_result *mcr;
+ 	int orl_empty, drain = 0, ret = 0;
+-	u32 res;
++	u32 res, fqid = fq->fqid;
+ 	u8 state;
+ 	u32 channel, wq;
+ 
+ 	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
+-	p = get_affine_portal();
++	if (!p)
++		p = get_affine_portal();
+ 	/* Determine the state of the FQID */
+ 	mcc = qm_mc_start(&p->p);
+ 	mcc->queryfq_np.fqid = cpu_to_be32(fqid);
+diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
+index 82269cdf99..673859ed2e 100644
+--- a/drivers/bus/dpaa/include/fsl_qman.h
++++ b/drivers/bus/dpaa/include/fsl_qman.h
+@@ -1896,7 +1896,16 @@ static inline void qman_release_fqid(u32 fqid)
+ void qman_seed_fqid_range(u32 fqid, unsigned int count);
+ 
+ __rte_internal
+-int qman_shutdown_fq(u32 fqid);
++int qman_shutdown_fq(struct qman_fq *fq);
++
++static inline int qman_shutdown_fq_by_fqid(u32 fqid)
++{
++	struct qman_fq fq;
++
++	memset(&fq, 0, sizeof(struct qman_fq));
++	fq.fqid = fqid;
++	return qman_shutdown_fq(&fq);
++}
+ 
+ /**
+  * qman_reserve_fqid_range - Reserve the specified range of frame queue IDs
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 9beced37a0..20c198406b 100644
+index 8b58e16ec5..8d54e022a3 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -528,10 +528,12 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+@@ -2364,6 +2364,13 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
  
- 	/* DPAA FM deconfig */
- 	if (!(default_q || fmc_q)) {
--		ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
--		if (ret) {
--			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
--				dev->data->name, ret);
-+		if (dpaa_intf->port_handle) {
-+			ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
-+			if (ret) {
-+				DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
-+					dev->data->name, ret);
-+			}
- 		}
- 	}
+ 		vsp_id = dev_vspids[loop];
  
-@@ -577,6 +579,23 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 	rte_free(dpaa_intf->fc_conf);
- 	dpaa_intf->fc_conf = NULL;
- 
-+	/** For FMCLESS mode of share MAC, deconfig FM to direct
-+	 * ingress traffic to kernel before fq shutdown.
-+	 */
-+	if (!(default_q || fmc_q) && dpaa_intf->port_handle) {
-+		ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
-+		if (ret) {
-+			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
-+				dev->data->name, ret);
++		/* Shutdown FQ before configure to clean the queue */
++		ret = qman_shutdown_fq_by_fqid(fqid);
++		if (ret < 0) {
++			DPAA_PMD_ERR("Failed shutdown %s:rxq-%d-fqid = 0x%08x",
++				dpaa_intf->name, loop, fqid);
 +		}
-+	}
-+	if (fif->num_profiles) {
-+		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
-+		if (ret) {
-+			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
-+				dev->data->name, ret);
-+		}
-+	}
- 	/** Release congestion Groups after releasing FQIDs*/
- 	/* Release RX congestion Groups */
- 	if (dpaa_intf->cgr_rx) {
-diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
-index 417b9b6fbb..559850ced7 100644
---- a/drivers/net/dpaa/dpaa_flow.c
-+++ b/drivers/net/dpaa/dpaa_flow.c
-@@ -724,6 +724,9 @@ int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf,
- 
- 	PMD_INIT_FUNC_TRACE();
- 
-+	if (!dpaa_intf->port_handle)
-+		return 0;
 +
- 	/* FM PORT Disable */
- 	ret = fm_port_disable(dpaa_intf->port_handle);
- 	if (ret != E_OK) {
-@@ -783,10 +786,8 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
- 	unsigned int i = 0;
- 	PMD_INIT_FUNC_TRACE();
+ 		if (dpaa_intf->cgr_rx)
+ 			dpaa_intf->cgr_rx[loop].cgrid = cgrid[loop];
  
--	if (dpaa_intf->port_handle) {
--		if (dpaa_fm_deconfig(dpaa_intf, fif))
--			DPAA_PMD_ERR("DPAA FM deconfig failed");
--	}
-+	if (dpaa_fm_deconfig(dpaa_intf, fif))
-+		DPAA_PMD_ERR("DPAA FM deconfig failed");
- 
- 	if (!dev->data->nb_rx_queues)
- 		return 0;
 -- 
 2.25.1
 
