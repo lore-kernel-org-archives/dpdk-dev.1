@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A63F6CDE008
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 06:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9687DCDE008
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 06:49:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EACB740278;
-	Fri, 26 Jun 2026 08:49:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DB7B440663;
+	Fri, 26 Jun 2026 08:49:29 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 6FA1D40264
- for <dev@dpdk.org>; Fri, 26 Jun 2026 08:48:59 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3172D40264
+ for <dev@dpdk.org>; Fri, 26 Jun 2026 08:49:27 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowACnkKfVID5qxRnnFQ--.16759S2;
- Fri, 26 Jun 2026 14:48:53 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowACHerH0ID5q9hznFQ--.16902S2;
+ Fri, 26 Jun 2026 14:49:24 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v9 21/23] net/sxe2: add private devargs parsing
-Date: Fri, 26 Jun 2026 14:48:53 +0800
-Message-ID: <20260626064853.361610-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v9 22/23] net/sxe2: implement private dump info
+Date: Fri, 26 Jun 2026 14:49:24 +0800
+Message-ID: <20260626064924.361699-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <220260625133139.207632-1-liujie5@linkdatatechnology.com>
 References: <220260625133139.207632-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACnkKfVID5qxRnnFQ--.16759S2
-X-Coremail-Antispam: 1UD129KBjvAXoW3Aw45Gw47Kw1fAFy8CF45ZFb_yoW8WFW8Jo
- WIgrW3Xa4fZ34Ig3y8Jr1kC3y2vw48Cw15Ja1S9F4Du3y3Gw15KFnIqr13XF1DWFsYqFnr
- C3Z2y3s7tr4kJ3W8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: rQCowACHerH0ID5q9hznFQ--.16902S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfJw17Cw4DJw15AryxJw1xAFb_yoW8Jr47Go
+ WxXr13Xr1xAryIvws5Arn7CFW3Z3ykWws5Cayaga98uanxtF4UAFWFgw43Z3Z8KF4rtFy5
+ u34Fyas8JFZFqF1rn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
  AaLaJ3UjIYCTnIWjp_UUUYo7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
  x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWx
@@ -59,525 +59,391 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Introduce runtime private device arguments (devargs) support for the
-sxe2 PMD. This allows users to customize driver behavior at startup
-without recompiling the source code.
+This patch implements the 'eth_dev_priv_dump' ops for the sxe2 PMD.
+This interface allows applications to dump driver-specific internal
+state and configuration information to a file stream.
 
-The parameters are parsed using the standard 'rte_kvargs' library during
-the PCI/vdev probing phase. Documentation for these parameters is also
-updated.
+The output includes:
+- capabilities.
+- device base info.
+- device args info.
+- device filter info.
+- reprenstor info.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.c |  21 +++
- drivers/net/sxe2/sxe2_cmd_chnl.h |   3 +
- drivers/net/sxe2/sxe2_drv_cmd.h  |  17 +++
- drivers/net/sxe2/sxe2_ethdev.c   | 251 +++++++++++++++++++++++++++++++
- drivers/net/sxe2/sxe2_ethdev.h   |   6 +
- drivers/net/sxe2/sxe2_irq.c      |  30 ++++
- drivers/net/sxe2/sxe2_rx.c       |  12 ++
- 7 files changed, 340 insertions(+)
+ drivers/net/sxe2/meson.build        |   1 +
+ drivers/net/sxe2/sxe2_dump.c        | 287 ++++++++++++++++++++++++++++
+ drivers/net/sxe2/sxe2_dump.h        |  12 ++
+ drivers/net/sxe2/sxe2_ethdev.c      |   3 +
+ drivers/net/sxe2/sxe2_ethdev_repr.c |   3 +
+ 5 files changed, 306 insertions(+)
+ create mode 100644 drivers/net/sxe2/sxe2_dump.c
+ create mode 100644 drivers/net/sxe2/sxe2_dump.h
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index 43e8c59487..b09989fe50 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -99,6 +99,27 @@ int32_t sxe2_drv_dev_info_get(struct sxe2_adapter *adapter,
- 	return ret;
- }
- 
-+int32_t sxe2_drv_fc_state_get(struct sxe2_adapter *adapter,
-+			      struct sxe2_drv_vsi_fc_get_resp *dev_fc_state_resp)
-+{
-+	int32_t ret = 0;
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	struct sxe2_drv_cmd_params param = {0};
-+	struct sxe2_drv_vsi_fc_get_req req = {0};
+diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
+index a172bb2867..01366c5378 100644
+--- a/drivers/net/sxe2/meson.build
++++ b/drivers/net/sxe2/meson.build
+@@ -78,4 +78,5 @@ sources += files(
+         'sxe2_flow_parse_pattern.c',
+         'sxe2_flow_parse_engine.c',
+         'sxe2_txrx_check_mbuf.c',
++        'sxe2_dump.c',
+ )
+diff --git a/drivers/net/sxe2/sxe2_dump.c b/drivers/net/sxe2/sxe2_dump.c
+new file mode 100644
+index 0000000000..d43473e083
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_dump.c
+@@ -0,0 +1,287 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
 +
-+	req.vsi_id = adapter->vsi_ctxt.main_vsi->vsi_id;
-+	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_VSI_FC_GET,
-+				&req, sizeof(req),
-+				dev_fc_state_resp,
-+				sizeof(*dev_fc_state_resp));
-+	ret = sxe2_drv_cmd_exec(cdev, &param);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "get fc state failed, ret=%d", ret);
-+		ret = -EIO;
++#include <rte_malloc.h>
++#include <arpa/inet.h>
++
++#include "sxe2_common_log.h"
++#include "sxe2_ethdev.h"
++#include "sxe2_dump.h"
++#include "sxe2_stats.h"
++
++static void
++sxe2_dump_dev_feature_capability(FILE *file, struct rte_eth_dev *dev)
++{
++	uint32_t i;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	const struct {
++		uint32_t cap_bit;
++		const char *name;
++	} caps_name[] = {
++		{SXE2_DEV_CAPS_OFFLOAD_L2, "L2"},
++		{SXE2_DEV_CAPS_OFFLOAD_VLAN, "VLAN"},
++		{SXE2_DEV_CAPS_OFFLOAD_IPSEC, "IPSEC"},
++		{SXE2_DEV_CAPS_OFFLOAD_RSS, "RSS"},
++		{SXE2_DEV_CAPS_OFFLOAD_FNAV, "FNAV"},
++		{SXE2_DEV_CAPS_OFFLOAD_TM, "TM"},
++		{SXE2_DEV_CAPS_OFFLOAD_PTP, "PTP"},
++	};
++	if (adapter->is_dev_repr)
++		goto l_end;
++
++	fprintf(file, "  - Dev Capability:\n");
++	for (i = 0; i < RTE_DIM(caps_name); i++) {
++		fprintf(file, "\t  -- support %s: %s\n", caps_name[i].name,
++			(adapter->cap_flags & caps_name[i].cap_bit) ? "Yes" :
++									 "No");
 +	}
-+	return ret;
++l_end:
++	return;
 +}
 +
- int32_t sxe2_drv_dev_fw_info_get(struct sxe2_adapter *adapter,
- 				struct sxe2_drv_dev_fw_info_resp *dev_fw_info_resp)
- {
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index 988d4b458b..d63caad526 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -99,6 +99,9 @@ int32_t sxe2_drv_vsi_stats_reset(struct sxe2_adapter *adapter);
- int32_t sxe2_drv_queue_info_get_update(struct sxe2_adapter *adapter,
- 				       struct eth_queue_stats *qstats);
- 
-+int32_t sxe2_drv_fc_state_get(struct sxe2_adapter *adapter,
-+			      struct sxe2_drv_vsi_fc_get_resp *dev_fc_state_resp);
++static void
++sxe2_dump_device_basic_info(FILE *file, struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
 +
- int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
- 
- int32_t sxe2_drv_txq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index 3fabf351af..03ef3b315d 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -651,6 +651,23 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_resp {
- 	uint8_t data[];
- } __rte_packed_end;
- 
-+enum sxe2_fc_type {
-+	SXE2_FC_T_DIS = 0,
-+	SXE2_FC_T_LFC,
-+	SXE2_FC_T_PFC,
-+	SXE2_FC_T_UNKNOWN = 255,
-+};
++	fprintf(file,
++		"  - Device Base Info:\n"
++		"\t  -- name: %s\n"
++		"\t  -- pf_idx: %u port_idx: %u\n"
++		"\t  -- tx_mode_flags: 0x%x rx_mode_flags: 0x%x\n"
++		"\t  -- flow_isolate_cfg: 0x%x flow_isolated: 0x%x\n"
++		"\t  -- dev_type: 0x%x is_switchdev: 0x%x\n"
++		"\t  -- is_dev_repr: 0x%x dev_port_id: 0x%x\n"
++		"\t  -- dev_flags: 0x%x\n"
++		"\t  -- intr_conf lsc: %u rxq: %u rmv: %u\n",
++		dev->data->name,
++		adapter->pf_idx, adapter->port_idx,
++		adapter->tx_mode_flags, adapter->rx_mode_flags,
++		adapter->flow_isolate_cfg, adapter->flow_isolated,
++		adapter->dev_type, adapter->switchdev_info.is_switchdev,
++		adapter->is_dev_repr, adapter->dev_port_id,
++		dev->data->dev_flags,
++		dev->data->dev_conf.intr_conf.lsc,
++		dev->data->dev_conf.intr_conf.rxq,
++		dev->data->dev_conf.intr_conf.rmv);
++}
 +
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_vsi_fc_get_req {
-+	uint16_t vsi_id;
-+	uint8_t rsv[2];
-+} __rte_packed_end;
++static void
++sxe2_dump_dev_args_info(FILE *file, struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
 +
-+struct __rte_aligned(4) __rte_packed_begin sxe2_drv_vsi_fc_get_resp {
-+	uint8_t fc_enable;
-+	uint8_t rsv[3];
-+} __rte_packed_end;
++	if (adapter->is_dev_repr)
++		goto l_end;
 +
- enum sxe2_drv_cmd_module {
- 	SXE2_DRV_CMD_MODULE_HANDSHAKE = 0,
- 	SXE2_DRV_CMD_MODULE_DEV = 1,
++	fprintf(file,
++		"  - Device Args Info:\n"
++		"\t  -- no_sched_mode: %s\n"
++		"\t  -- flow-duplicate-pattern: %u\n"
++		"\t  -- fnav-stat-type: %u\n"
++		"\t  -- sched_layer_mode: %u\n"
++		"\t  -- rx_low_latency: %s\n"
++		"\t  -- function-flow-direct: %s\n",
++		adapter->devargs.no_sched_mode ? "On" : "Off",
++		adapter->devargs.flow_dup_pattern_mode,
++		adapter->devargs.fnav_stat_type,
++		adapter->devargs.sched_layer_mode,
++		adapter->devargs.rx_low_latency ? "On" : "Off",
++		adapter->devargs.func_flow_direct_en ? "On" : "Off");
++l_end:
++	return;
++}
++
++static void sxe2_dump_filter_info(FILE *file, struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_mac_filter *mac_entry;
++	struct sxe2_mac_filter *next_mac_entry;
++	struct sxe2_vlan_filter *vlan_entry;
++	struct sxe2_vlan_filter *next_vlan_entry;
++
++	if (adapter->is_dev_repr)
++		goto l_end;
++
++	fprintf(file,
++		"  - Device Filter Info:\n"
++		"\t  -- cur_promisc:0x%x hw_promisc:0x%x\n"
++		"\t  -- unicast_num: %u multicast_num: %u\n"
++		"\t  -- vlan_num: %u filter_on: %u hw_filter_on: %u\n"
++		"\t  -- vlan max_cnt: %u cnt: %u\n"
++		"\t  -- tpid: 0x%x vid: 0x%x\n"
++		"\t  -- vlan_outer_insert: 0x%x vlan_outer_strip: 0x%x\n"
++		"\t  -- vlan_inner_insert: 0x%x vlan_inner_strip: 0x%x\n",
++		adapter->filter_ctxt.cur_promisc_flags,
++		adapter->filter_ctxt.hw_promisc_flags,
++		adapter->filter_ctxt.uc_num,
++		adapter->filter_ctxt.mc_num,
++		adapter->filter_ctxt.vlan_num,
++		adapter->filter_ctxt.vlan_info.filter_on,
++		adapter->filter_ctxt.vlan_info.hw_filter_on,
++		adapter->filter_ctxt.vlan_info.max_cnt,
++		adapter->filter_ctxt.vlan_info.cnt,
++		adapter->filter_ctxt.vlan_info.tpid,
++		adapter->filter_ctxt.vlan_info.vid,
++		adapter->filter_ctxt.vlan_info.outer_insert,
++		adapter->filter_ctxt.vlan_info.outer_strip,
++		adapter->filter_ctxt.vlan_info.inner_insert,
++		adapter->filter_ctxt.vlan_info.inner_strip);
++
++	if (adapter->filter_ctxt.uc_num > 0) {
++		fprintf(file,
++			"\t  -- Unicast entry:\n");
++		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.uc_list, next,
++				       next_mac_entry) {
++			fprintf(file,
++				"\t  -- addr: %02x:%02x:%02x:%02x:%02x:%02x hw status:%u "
++				"default:%u\n",
++				mac_entry->mac_addr.addr_bytes[0],
++				mac_entry->mac_addr.addr_bytes[1],
++				mac_entry->mac_addr.addr_bytes[2],
++				mac_entry->mac_addr.addr_bytes[3],
++				mac_entry->mac_addr.addr_bytes[4],
++				mac_entry->mac_addr.addr_bytes[5],
++				mac_entry->hw_config,
++				mac_entry->default_config);
++		}
++	}
++
++	if (adapter->filter_ctxt.mc_num > 0) {
++		fprintf(file,
++			"\t  -- Multicast entry:\n");
++		RTE_TAILQ_FOREACH_SAFE(mac_entry, &adapter->filter_ctxt.mc_list,
++				       next, next_mac_entry) {
++			fprintf(file,
++				"\t  -- addr: %02x:%02x:%02x:%02x:%02x:%02x "
++				"hw status:%u default:%u\n",
++				mac_entry->mac_addr.addr_bytes[0],
++				mac_entry->mac_addr.addr_bytes[1],
++				mac_entry->mac_addr.addr_bytes[2],
++				mac_entry->mac_addr.addr_bytes[3],
++				mac_entry->mac_addr.addr_bytes[4],
++				mac_entry->mac_addr.addr_bytes[5],
++				mac_entry->hw_config,
++				mac_entry->default_config);
++		}
++	}
++
++	if (adapter->filter_ctxt.vlan_num > 0) {
++		fprintf(file,
++			"\t  -- Vlan entry:\n");
++		RTE_TAILQ_FOREACH_SAFE(vlan_entry, &adapter->filter_ctxt.vlan_list,
++			next, next_vlan_entry) {
++			fprintf(file,
++				"\t  -- vlan tpid:0x%04x vid:0x%04x prio:%d "
++				"hw status:%u default:%u\n",
++				vlan_entry->vlan_info.tpid,
++				vlan_entry->vlan_info.vid,
++				vlan_entry->vlan_info.prio,
++				vlan_entry->hw_config,
++				vlan_entry->default_config);
++		}
++	}
++l_end:
++	return;
++}
++
++static const char *sxe2_vsi_id_str(uint16_t vsi_id, char *buf, size_t len)
++{
++	if (vsi_id == SXE2_INVALID_VSI_ID)
++		return "NA";
++
++	snprintf(buf, len, "%u", vsi_id);
++	return buf;
++}
++
++static void
++sxe2_dump_switchdev_info(FILE *file, struct rte_eth_dev *dev)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	uint32_t idx;
++	char k_vsi_buf[16];
++	char u_vsi_buf[16];
++
++	if (adapter->is_dev_repr && adapter->repr_priv_data) {
++		fprintf(file,
++			"  - Reprenstor Info:\n"
++			"\t  -- repr_id: %u\n"
++			"\t  -- repr_q_id: %u\n"
++			"\t  -- repr_pf_id: %u\n"
++			"\t  -- repr_vf_id: %u\n"
++			"\t  -- repr_vf_vsi_id: %u\n"
++			"\t  -- repr_vf_k_vsi_id: %s\n"
++			"\t  -- repr_vf_u_vsi_id: %s\n",
++			adapter->repr_priv_data->repr_id,
++			adapter->repr_priv_data->repr_q_id,
++			adapter->repr_priv_data->repr_pf_id,
++			adapter->repr_priv_data->repr_vf_id,
++			adapter->repr_priv_data->repr_vf_vsi_id,
++			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_k_vsi_id,
++					k_vsi_buf, sizeof(k_vsi_buf)),
++			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_u_vsi_id,
++					u_vsi_buf, sizeof(u_vsi_buf)));
++		goto l_end;
++	}
++	if (adapter->switchdev_info.is_switchdev) {
++		fprintf(file,
++			"  - Switchdev Info:\n"
++			"\t  -- primary:0x%x\n"
++			"\t  -- representor: 0x%x\n"
++			"\t  -- port_name_type: 0x%x\n"
++			"\t  -- nb_vf: %u nb_repr_vf: %u\n",
++			adapter->switchdev_info.primary,
++			adapter->switchdev_info.representor,
++			adapter->switchdev_info.port_name_type,
++			adapter->repr_ctxt.nb_vf,
++			adapter->repr_ctxt.nb_repr_vf);
++		if (adapter->repr_ctxt.nb_vf > 0) {
++			fprintf(file,
++				"\t  -- vf entry:\n");
++			for (idx = 0; idx < adapter->repr_ctxt.nb_vf; idx++) {
++				fprintf(file,
++					"\t  -- func_id:%u vsi_type:%u kernel_vsi_id:%u dpdk_vsi_id:%u\n",
++					adapter->repr_ctxt.repr_vf_id[idx].func_id,
++					adapter->repr_ctxt.repr_vf_id[idx].vsi_type,
++					adapter->repr_ctxt.repr_vf_id[idx].kernel_vsi_id,
++					adapter->repr_ctxt.repr_vf_id[idx].dpdk_vsi_id);
++			}
++		}
++	}
++
++l_end:
++	return;
++}
++
++int32_t sxe2_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file)
++{
++	char *buf = NULL;
++	size_t size = 0;
++	FILE *str;
++	int32_t ret = -1;
++
++	str = open_memstream(&buf, &size);
++	if (!str) {
++		PMD_LOG_ERR(DRV, "fopen fail.");
++		goto l_end;
++	}
++
++	sxe2_dump_dev_feature_capability(str, dev);
++	sxe2_dump_device_basic_info(str, dev);
++	sxe2_dump_dev_args_info(str, dev);
++	sxe2_dump_filter_info(str, dev);
++	sxe2_dump_switchdev_info(str, dev);
++
++	(void)fflush(str);
++
++	(void)fwrite(buf, 1, size, file);
++	(void)fflush(file);
++
++	ret = 0;
++
++	(void)fclose(str);
++	free(buf);
++l_end:
++	return ret;
++}
+diff --git a/drivers/net/sxe2/sxe2_dump.h b/drivers/net/sxe2/sxe2_dump.h
+new file mode 100644
+index 0000000000..05d6db9b3d
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_dump.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#ifndef __SXE2_DUMP_H__
++#define __SXE2_DUMP_H__
++
++#include <ethdev_driver.h>
++
++int32_t sxe2_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file);
++
++#endif /* __SXE2_DUMP_H__ */
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index e881cc2af6..38eb6ab803 100644
+index 38eb6ab803..7678d991d0 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -67,6 +67,15 @@ static const struct rte_pci_id pci_id_sxe2_tbl[] = {
- 	{ .vendor_id = 0, },
+@@ -37,6 +37,7 @@
+ #include "sxe2_host_regs.h"
+ #include "sxe2_switchdev.h"
+ #include "sxe2_ioctl_chnl_func.h"
++#include "sxe2_dump.h"
+ #include "sxe2_ethdev_repr.h"
+ #include "sxe2vf_regs.h"
+ #include "sxe2_switchdev.h"
+@@ -202,6 +203,8 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 
+ 	.get_module_info            = sxe2_get_module_info,
+ 	.get_module_eeprom          = sxe2_get_module_eeprom,
++
++	.eth_dev_priv_dump          = sxe2_eth_dev_priv_dump,
  };
  
-+#define SXE2_TXSCH_NODE_ADJ_LVL_MAX 3
-+
-+#define SXE2_DEVARG_FLOW_DUP_PATTERN_MODE "flow-duplicate-pattern"
-+#define SXE2_DEVARG_FUNC_FLOW_DIRCT "function-flow-direct"
-+#define SXE2_DEVARG_FNAV_STAT_TYPE "fnav-stat-type"
-+#define SXE2_DEVARG_NO_SCHED_MODE "no-sched-mode"
-+#define SXE2_DEVARG_SCHED_LAYER_MODE "sched-layer-mode"
-+#define SXE2_DEVARG_RX_LOW_LATENCY "rx-low-latency"
-+
- static struct sxe2_pci_map_addr_info sxe2_net_map_addr_info_pf[SXE2_PCI_MAP_RES_MAX_COUNT] = {
- 	[SXE2_PCI_MAP_RES_INVALID] = {.addr_base = 0,
- 				      .bar_idx = 0,
-@@ -960,6 +969,134 @@ sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev __rte_unused,
- 	return ptypes;
- }
+ static int32_t sxe2_dev_configure(struct rte_eth_dev *dev)
+diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
+index 15b839bb74..f32318b731 100644
+--- a/drivers/net/sxe2/sxe2_ethdev_repr.c
++++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
+@@ -11,6 +11,7 @@
+ #include "sxe2_txrx.h"
+ #include "sxe2_switchdev.h"
+ #include "sxe2_mp.h"
++#include "sxe2_dump.h"
+ #include "sxe2_stats.h"
+ #include "sxe2_flow.h"
  
-+static int32_t sxe2_parse_fnav_stat_type(const char *key, const char *value, void *args)
-+{
-+	int32_t ret = -EINVAL;
-+	uint8_t *num = (uint8_t *)args;
-+	unsigned long fnav_stat_type;
-+	char *endptr = NULL;
-+
-+	if (value == NULL || args == NULL) {
-+		ret = 0;
-+		goto l_end;
-+	}
-+	errno = 0;
-+	fnav_stat_type = strtoul(value, &endptr, 10);
-+	if (errno != 0 || endptr == value || *endptr != '\0') {
-+		PMD_LOG_WARN(INIT, "%s: \"%s\" is not a valid int value.",
-+			key, value);
-+		goto l_end;
-+	}
-+	if (fnav_stat_type > SXE2_FNAV_STAT_ENA_ALL ||
-+		fnav_stat_type == SXE2_FNAV_STAT_ENA_NONE) {
-+		PMD_LOG_ERR(INIT, "%s: \"%s\" out of range [1-3].",
-+			key, value);
-+		goto l_end;
-+	}
-+	*num = (uint8_t)fnav_stat_type;
-+	ret = 0;
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_parse_sched_layer_mode(const char *key, const char *value, void *args)
-+{
-+	int32_t ret = -EINVAL;
-+	uint8_t *num = (uint8_t *)args;
-+	unsigned long sched_layer_mode;
-+	char *endptr = NULL;
-+
-+	if (value == NULL || args == NULL) {
-+		ret = 0;
-+		goto l_end;
-+	}
-+	errno = 0;
-+	sched_layer_mode = strtoul(value, &endptr, 10);
-+	if (errno != 0 || endptr == value || *endptr != '\0') {
-+		PMD_LOG_WARN(INIT, "%s: \"%s\" is not a valid int value.",
-+			key, value);
-+		goto l_end;
-+	}
-+	if (sched_layer_mode > SXE2_TXSCH_NODE_ADJ_LVL_MAX) {
-+		PMD_LOG_ERR(INIT, "%s: \"%s\" > 3.",
-+			key, value);
-+		goto l_end;
-+	}
-+	*num = (uint8_t)sched_layer_mode;
-+	ret = 0;
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_parse_flow_dup_pattern_mode(const char *key, const char *value, void *args)
-+{
-+	uint8_t *num = (uint8_t *)args;
-+	char *end;
-+	unsigned long val;
-+	int32_t ret = -EINVAL;
-+
-+	if (value == NULL || args == NULL) {
-+		ret = 0;
-+		goto l_end;
-+	}
-+	errno = 0;
-+	val = strtoul(value, &end, 10);
-+	if (errno != 0 || end == value || *end != '\0') {
-+		PMD_LOG_ERR(INIT, "Invalid 8-bit integer value for key %s: %s", key, value);
-+		goto l_end;
-+	}
-+
-+	if (val >= SXE2_FLOW_SW_PATTERN_MAX) {
-+		PMD_LOG_ERR(INIT, "%s: \"%s\" out of range [0-%u].",
-+			key, value, SXE2_FLOW_SW_PATTERN_MAX - 1);
-+		goto l_end;
-+	}
-+
-+	/* Convert user values to internal enum:
-+	 *   user 0 (reject) -> SXE2_FLOW_SW_PATTERN_ONLY (0)
-+	 *   user 1 (FIFO)   -> SXE2_FLOW_SW_PATTERN_FIRST (2)
-+	 *   user 2 (LIFO)   -> SXE2_FLOW_SW_PATTERN_LAST (1)
-+	 */
-+	static const uint8_t udc_tbl[] = {
-+		SXE2_FLOW_SW_PATTERN_ONLY,
-+		SXE2_FLOW_SW_PATTERN_FIRST,
-+		SXE2_FLOW_SW_PATTERN_LAST,
-+	};
-+	*num = udc_tbl[val];
-+	ret = 0;
-+l_end:
-+	return ret;
-+}
-+
-+static int32_t sxe2_parse_bool(const char *key, const char *value, void *args)
-+{
-+	int32_t ret = -EINVAL;
-+	uint8_t *num = (uint8_t *)args;
-+	unsigned long bool_val;
-+	char *endptr = NULL;
-+
-+	if (value == NULL || args == NULL) {
-+		ret = 0;
-+		goto l_end;
-+	}
-+	errno = 0;
-+	bool_val = strtoul(value, &endptr, 10);
-+	if (errno != 0 || endptr == value || *endptr != '\0') {
-+		PMD_LOG_WARN(INIT, "%s: \"%s\" is not a valid int value.",
-+			key, value);
-+		goto l_end;
-+	}
-+	if (bool_val != 0 && bool_val != 1) {
-+		PMD_LOG_ERR(INIT, "%s: \"%s\" out of range [0|1].",
-+			key, value);
-+		goto l_end;
-+	}
-+	*num = (uint8_t)bool_val;
-+	ret = 0;
-+l_end:
-+	return ret;
-+}
-+
- struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter,
- 						    enum sxe2_pci_map_resource res_type)
- {
-@@ -1027,6 +1164,67 @@ void *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
- 	return addr;
- }
+@@ -236,6 +237,8 @@ static const struct eth_dev_ops sxe2_switchdev_repr_dev_ops = {
+ 	.allmulticast_enable        = sxe2_repr_allmulti_enable,
+ 	.allmulticast_disable       = sxe2_repr_allmulti_disable,
  
-+static int32_t sxe2_args_parse(struct rte_eth_dev *dev, struct sxe2_dev_kvargs_info *kvargs)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	int32_t ret = 0;
-+	PMD_INIT_FUNC_TRACE();
++	.eth_dev_priv_dump          = sxe2_eth_dev_priv_dump,
 +
-+	adapter->devargs.flow_dup_pattern_mode = SXE2_FLOW_SW_PATTERN_FIRST;
-+
-+	if (kvargs == NULL)
-+		goto l_end;
-+	ret = sxe2_kvargs_process(kvargs, SXE2_DEVARG_FNAV_STAT_TYPE,
-+				 &sxe2_parse_fnav_stat_type,
-+				 &adapter->devargs.fnav_stat_type);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to parse fnav stat type, ret:%d", ret);
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_kvargs_process(kvargs, SXE2_DEVARG_NO_SCHED_MODE,
-+				 &sxe2_parse_bool,
-+				 &adapter->devargs.no_sched_mode);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to parse no sched mode, ret:%d", ret);
-+		goto l_end;
-+	}
-+	ret = sxe2_kvargs_process(kvargs, SXE2_DEVARG_SCHED_LAYER_MODE,
-+				 &sxe2_parse_sched_layer_mode,
-+				 &adapter->devargs.sched_layer_mode);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to parse sched layer mode, ret:%d", ret);
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_kvargs_process(kvargs, SXE2_DEVARG_FLOW_DUP_PATTERN_MODE,
-+				 &sxe2_parse_flow_dup_pattern_mode,
-+				 &adapter->devargs.flow_dup_pattern_mode);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to parse flow dup pattern mode, ret:%d",
-+				ret);
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_kvargs_process(kvargs, SXE2_DEVARG_FUNC_FLOW_DIRCT,
-+				 &sxe2_parse_bool,
-+				 &adapter->devargs.func_flow_direct_en);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to parse function flow rule enable,"
-+				"ret:%d", ret);
-+		goto l_end;
-+	}
-+	ret = sxe2_kvargs_process(kvargs, SXE2_DEVARG_RX_LOW_LATENCY,
-+				 &sxe2_parse_bool,
-+				 &adapter->devargs.rx_low_latency);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to parse rx low latency, ret:%d", ret);
-+		goto l_end;
-+	}
-+l_end:
-+	return ret;
-+}
-+
- static int32_t sxe2_eth_init(struct rte_eth_dev *dev)
- {
- 	int32_t ret = 0;
-@@ -1579,6 +1777,37 @@ void sxe2_dev_pci_map_uinit(struct rte_eth_dev *dev)
- 	adapter->dev_info.dev_data = NULL;
- }
- 
-+static int32_t sxe2_fc_state_init(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_drv_vsi_fc_get_resp fc_resp = {0};
-+	int32_t ret;
-+
-+	if (!(adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_FC_STATE)) {
-+		adapter->fc_state_ctx.cfg_state = 0;
-+		adapter->fc_state_ctx.curr_state = 0;
-+		ret = 0;
-+		goto l_end;
-+	}
-+	ret = sxe2_drv_fc_state_get(adapter, &fc_resp);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to get fc state, ret=[%d]", ret);
-+		goto l_end;
-+	}
-+	adapter->fc_state_ctx.cfg_state = fc_resp.fc_enable;
-+	adapter->fc_state_ctx.curr_state = 0;
-+l_end:
-+	return ret;
-+}
-+static void sxe2_fc_state_uinit(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter =
-+		SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	adapter->fc_state_ctx.cfg_state = 0;
-+	adapter->fc_state_ctx.curr_state = 0;
-+}
-+
- uint32_t sxe2_sched_mode_get(struct sxe2_adapter *adapter)
- {
- 	uint32_t ret_mode = SXE2_SCHED_MODE_INVALID;
-@@ -1661,6 +1890,12 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
- 		goto l_end;
- 	}
- 
-+	ret = sxe2_args_parse(dev, kvargs);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to parse devargs, ret=%d", ret);
-+		goto l_end;
-+	}
-+
- 	ret = sxe2_hw_init(dev);
- 	if (ret) {
- 		PMD_LOG_ERR(INIT, "Failed to initialize hw, ret=[%d]", ret);
-@@ -1727,6 +1962,12 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
- 		goto init_flow_err;
- 	}
- 
-+	ret = sxe2_fc_state_init(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to init fc state, ret=%d", ret);
-+		goto init_fc_state_err;
-+	}
-+
- 	ret = sxe2_sched_init(dev);
- 	if (ret) {
- 		PMD_LOG_ERR(INIT, "Failed to init sched, ret=%d", ret);
-@@ -1750,6 +1991,8 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
- init_xstats_err:
- 	(void)sxe2_sched_uinit(dev);
- init_sched_err:
-+	sxe2_fc_state_uinit(dev);
-+init_fc_state_err:
- 	(void)sxe2_flow_uninit(dev);
- init_flow_err:
- init_rss_err:
-@@ -1795,6 +2038,7 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
- 	sxe2_eth_uinit(dev);
- 	sxe2_dev_pci_map_uinit(dev);
- 	sxe2_free_repr_info(dev);
-+	sxe2_fc_state_uinit(dev);
- 
- l_end:
- 	return 0;
-@@ -2100,6 +2344,13 @@ RTE_INIT(rte_sxe2_pmd_init)
- RTE_PMD_EXPORT_NAME(net_sxe2);
- RTE_PMD_REGISTER_PCI_TABLE(net_sxe2, pci_id_sxe2_tbl);
- RTE_PMD_REGISTER_KMOD_DEP(net_sxe2, "* sxe2");
-+RTE_PMD_REGISTER_PARAM_STRING(net_sxe2,
-+	"flow-duplicate-pattern=<0|1|2> "
-+	"function-flow-direct=<0|1> "
-+	"fnav-stat-type=<1|2|3> "
-+	"no-sched-mode=<0|1> "
-+	"sched-layer-mode=<0-3> "
-+	"rx-low-latency=<0|1>");
- 
- RTE_LOG_REGISTER_SUFFIX(sxe2_log_init, init, NOTICE);
- RTE_LOG_REGISTER_SUFFIX(sxe2_log_driver, driver, NOTICE);
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index a68b95c0d0..c54e8a435e 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -310,6 +310,11 @@ struct sxe2_filter_context {
- 	bool cur_l2_config;
- };
- 
-+struct sxe2_fc_state_ctxt {
-+	uint8_t curr_state;
-+	uint8_t cfg_state;
-+};
-+
- struct sxe2_adapter {
- 	struct sxe2_common_device      *cdev;
- 	struct sxe2_dev_info            dev_info;
-@@ -331,6 +336,7 @@ struct sxe2_adapter {
- 	struct sxe2_security_ctx      security_ctx;
- 	struct sxe2_repr_context      repr_ctxt;
- 	struct sxe2_switchdev_info    switchdev_info;
-+	struct sxe2_fc_state_ctxt     fc_state_ctx;
- 	bool                          rule_started;
- 	bool                          flow_isolated;
- 	bool                          flow_isolate_cfg;
-diff --git a/drivers/net/sxe2/sxe2_irq.c b/drivers/net/sxe2/sxe2_irq.c
-index d8e0b19463..3306504761 100644
---- a/drivers/net/sxe2/sxe2_irq.c
-+++ b/drivers/net/sxe2/sxe2_irq.c
-@@ -10,6 +10,7 @@
- #include <rte_alarm.h>
- #include <fcntl.h>
- #include <rte_stdatomic.h>
-+#include <rte_common.h>
- 
- #include "sxe2_ethdev.h"
- #include "sxe2_irq.h"
-@@ -47,6 +48,31 @@ static struct sxe2_event_handler event_handler = {
- 
- static RTE_ATOMIC(uint32_t)event_thread_run;
- 
-+static int32_t sxe2_fc_state_callback(struct rte_eth_dev *dev)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_drv_vsi_fc_get_resp fc_resp = {0};
-+	int32_t ret;
-+
-+	if (!(adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_FC_STATE)) {
-+		ret = 0;
-+		goto l_end;
-+	}
-+	ret = sxe2_drv_fc_state_get(adapter, &fc_resp);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to get fc state, ret=[%d]", ret);
-+		goto l_end;
-+	}
-+	adapter->fc_state_ctx.cfg_state = fc_resp.fc_enable;
-+	if (dev->data->dev_started) {
-+		PMD_LOG_NOTICE(DRV, "Interrupt event: FC status changed."
-+			       "cfg_state:%u curr_state:%u",
-+				adapter->fc_state_ctx.cfg_state,
-+				adapter->fc_state_ctx.curr_state);
-+	}
-+l_end:
-+	return ret;
-+}
- 
- static void sxe2_event_irq_common_handler(struct sxe2_adapter *adapter, uint64_t oicr)
- {
-@@ -68,6 +94,10 @@ static void sxe2_event_irq_common_handler(struct sxe2_adapter *adapter, uint64_t
- 		PMD_DEV_LOG_INFO(adapter, DRV, "event notify legacy");
- 		(void)sxe2_switchdev_notify_callback(adapter, false);
- 	}
-+	if (oicr & RTE_BIT32(SXE2_COM_FC_ST_CHANGE)) {
-+		PMD_DEV_LOG_INFO(adapter, DRV, "fc event notify legacy");
-+		(void)sxe2_fc_state_callback(dev);
-+	}
- }
- 
- static uint32_t sxe2_event_intr_handle(void *param __rte_unused)
-diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
-index 820d4f0620..d700c60083 100644
---- a/drivers/net/sxe2/sxe2_rx.c
-+++ b/drivers/net/sxe2/sxe2_rx.c
-@@ -467,12 +467,24 @@ int32_t __rte_cold sxe2_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queu
- int32_t __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev)
- {
- 	struct rte_eth_dev_data *data = dev->data;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_drv_vsi_fc_get_resp fc_resp = {0};
- 	struct sxe2_rx_queue *rxq;
- 	uint16_t nb_rxq;
- 	uint16_t nb_started_rxq;
- 	int32_t ret;
- 	PMD_INIT_FUNC_TRACE();
- 
-+	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_FC_STATE) {
-+		ret = sxe2_drv_fc_state_get(adapter, &fc_resp);
-+		if (ret) {
-+			PMD_LOG_ERR(RX, "Failed to get fc state, ret=[%d]", ret);
-+			goto l_end;
-+		}
-+		adapter->fc_state_ctx.cfg_state = fc_resp.fc_enable;
-+		adapter->fc_state_ctx.curr_state = adapter->fc_state_ctx.cfg_state;
-+	}
-+
- 	for (nb_rxq = 0; nb_rxq < data->nb_rx_queues; nb_rxq++) {
- 		rxq = dev->data->rx_queues[nb_rxq];
- 		if (!rxq || rxq->rx_deferred_start)
+ 	.stats_get                  = sxe2_stats_info_get,
+ 	.stats_reset                = sxe2_stats_info_reset,
+ 	.xstats_get                 = sxe2_xstats_info_get,
 -- 
 2.52.0
 
