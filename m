@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520A8CDE008
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 06:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A1BCD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 06:39:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70CCF40278;
-	Fri, 26 Jun 2026 08:38:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 69C1740272;
+	Fri, 26 Jun 2026 08:39:14 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 13C34402C6
- for <dev@dpdk.org>; Fri, 26 Jun 2026 08:38:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5EDAF40264
+ for <dev@dpdk.org>; Fri, 26 Jun 2026 08:39:11 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAAnMslrHj5qxODmFQ--.42237S2;
- Fri, 26 Jun 2026 14:38:35 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowACHf7aJHj5qOeTmFQ--.16916S2;
+ Fri, 26 Jun 2026 14:39:06 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v9 01/23] net/sxe2: remove software statistics devargs
-Date: Fri, 26 Jun 2026 14:38:34 +0800
-Message-ID: <20260626063834.359582-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v9 02/23] net/sxe2: add Rx framework and packet types callback
+Date: Fri, 26 Jun 2026 14:39:05 +0800
+Message-ID: <20260626063905.360132-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <220260625133139.207632-1-liujie5@linkdatatechnology.com>
 References: <220260625133139.207632-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAAnMslrHj5qxODmFQ--.42237S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfGFy5Cw45Jr1fuw4DKr45Jrb_yoW8XF4xCo
- WxZr4UAa45urnrGrs09F1ruFyDXw4DZwnrJayfJF909a92kF4UXF97Gw13Jrn8tw1rJFWD
- uFyvv3ZIgrs3tw4fn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUYe7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
- j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
- x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWU
- JVW8JwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
- 0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
- 6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
- 0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC
- 0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
- 1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij
- 64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
- 0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
- 0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUb92-5UUUUU==
+X-CM-TRANSID: rQCowACHf7aJHj5qOeTmFQ--.16916S2
+X-Coremail-Antispam: 1UD129KBjvkXoW8WFWUAF1rJry5WFy8ZoXrpFW5CF4kp3WxAF
+ nxG3ZrWFW0vw15tF97u3s7Kw1rJFsrCan3Grn8XFWjqrn8Xa1Dta4kuF1kJay5Ja97t34f
+ GF4xKr15KwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy29KBj
+ DU0xBIdaVrnRJUUUkq14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWr
+ JVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84
+ ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4U
+ M28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8JVW8Jr
+ 1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+ cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+ ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xxMxAI
+ w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+ 4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxG
+ rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
+ CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2
+ z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbOBMtUUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -59,379 +58,1895 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Remove the optional drv-sw-stats device argument and make software
-statistics always-on. Per-queue software statistics are point-in-time
-measurements used for accumulation at queue stop/dump, so atomic
-operations with rte_memory_order_relaxed add unnecessary overhead
-without correctness benefit.
-
-Also rename high_performance_mode field to no_sched_mode to match
-the devargs string definition.
-
-Changes:
-- Remove sw_stats_en field from struct sxe2_devargs
-- Remove RTE_ATOMIC qualifiers from sxe2_rxq_sw_stats fields
-- Replace rte_atomic_fetch_add_explicit(relaxed) with plain addition
-- Replace rte_atomic_store/load_explicit(relaxed) with plain assignment
-- Remove sw_stats_en conditional checks in Rx fast path
-- Always pass umbcast_flags to vec Rx functions
-- Remove unused #include <rte_stdatomic.h>
-- Rename high_performance_mode → no_sched_mode in devargs struct
-- Fix int → int32_t for return type in sxe2_parse_eth_devargs
+Implement dev_supported_ptypes_get ethdev callback for sxe2 PMD.
+This allows applications to query the packet types the driver
+is capable of identifying, such as L2, L3 (IPv4/IPv6), and
+L4 (TCP/UDP/SCTP) layers.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c          |  2 +-
- drivers/net/sxe2/sxe2_ethdev.h          |  3 +-
- drivers/net/sxe2/sxe2_queue.h           | 15 ++++---
- drivers/net/sxe2/sxe2_rx.c              | 55 +++++++------------------
- drivers/net/sxe2/sxe2_txrx_poll.c       | 38 ++++++-----------
- drivers/net/sxe2/sxe2_txrx_vec_common.h | 52 ++++++++++-------------
- drivers/net/sxe2/sxe2_txrx_vec_sse.c    | 29 +------------
- 7 files changed, 61 insertions(+), 133 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.h          |    1 -
+ drivers/net/sxe2/sxe2_txrx.c            | 1782 +++++++++++++++++++++++
+ drivers/net/sxe2/sxe2_txrx.h            |    5 +
+ drivers/net/sxe2/sxe2_txrx_poll.c       |    3 +-
+ drivers/net/sxe2/sxe2_txrx_vec_common.h |    1 +
+ drivers/net/sxe2/sxe2_txrx_vec_sse.c    |    9 +-
+ 6 files changed, 1793 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index b6cc8703a7..066e1faf7e 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -891,7 +891,7 @@ static int32_t sxe2_eth_pmd_probe_pf(struct sxe2_common_device *cdev,
- static int32_t sxe2_parse_eth_devargs(struct rte_device *dev,
- 			  struct rte_eth_devargs *eth_da)
- {
--	int ret = 0;
-+	int32_t ret = 0;
- 
- 	if (dev->devargs == NULL)
- 		return 0;
 diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index a3706945e8..8015d9a064 100644
+index 8015d9a064..97d1d1fe14 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.h
 +++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -130,9 +130,8 @@ struct sxe2_devargs {
- 	uint8_t flow_dup_pattern_mode;
- 	uint8_t func_flow_direct_en;
- 	uint8_t fnav_stat_type;
--	uint8_t high_performance_mode;
-+	uint8_t no_sched_mode;
- 	uint8_t sched_layer_mode;
--	uint8_t sw_stats_en;
- 	uint8_t rx_low_latency;
- };
- 
-diff --git a/drivers/net/sxe2/sxe2_queue.h b/drivers/net/sxe2/sxe2_queue.h
-index adb4be1214..a300b66771 100644
---- a/drivers/net/sxe2/sxe2_queue.h
-+++ b/drivers/net/sxe2/sxe2_queue.h
-@@ -7,7 +7,6 @@
- 
- #include <rte_ethdev.h>
- #include <rte_io.h>
--#include <rte_stdatomic.h>
- #include <ethdev_driver.h>
- 
- #include "sxe2_drv_cmd.h"
-@@ -123,13 +122,13 @@ struct sxe2_rxq_stats {
- };
- 
- struct sxe2_rxq_sw_stats {
--	RTE_ATOMIC(uint64_t)pkts;
--	RTE_ATOMIC(uint64_t)bytes;
--	RTE_ATOMIC(uint64_t)drop_pkts;
--	RTE_ATOMIC(uint64_t)drop_bytes;
--	RTE_ATOMIC(uint64_t)unicast_pkts;
--	RTE_ATOMIC(uint64_t)multicast_pkts;
--	RTE_ATOMIC(uint64_t)broadcast_pkts;
-+	uint64_t pkts;
-+	uint64_t bytes;
-+	uint64_t drop_pkts;
-+	uint64_t drop_bytes;
-+	uint64_t unicast_pkts;
-+	uint64_t multicast_pkts;
-+	uint64_t broadcast_pkts;
- };
- 
- struct sxe2_rx_queue {
-diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
-index 28832d5f71..543d825166 100644
---- a/drivers/net/sxe2/sxe2_rx.c
-+++ b/drivers/net/sxe2/sxe2_rx.c
-@@ -479,20 +479,13 @@ int32_t __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev)
- 			goto l_free_started_queue;
- 		}
- 
--		rte_atomic_store_explicit(&rxq->sw_stats.pkts, 0,
--			rte_memory_order_relaxed);
--		rte_atomic_store_explicit(&rxq->sw_stats.bytes, 0,
--			rte_memory_order_relaxed);
--		rte_atomic_store_explicit(&rxq->sw_stats.drop_pkts, 0,
--			rte_memory_order_relaxed);
--		rte_atomic_store_explicit(&rxq->sw_stats.drop_bytes, 0,
--			rte_memory_order_relaxed);
--		rte_atomic_store_explicit(&rxq->sw_stats.unicast_pkts, 0,
--			rte_memory_order_relaxed);
--		rte_atomic_store_explicit(&rxq->sw_stats.broadcast_pkts, 0,
--			rte_memory_order_relaxed);
--		rte_atomic_store_explicit(&rxq->sw_stats.multicast_pkts, 0,
--			rte_memory_order_relaxed);
-+		rxq->sw_stats.pkts = 0;
-+		rxq->sw_stats.bytes = 0;
-+		rxq->sw_stats.drop_pkts = 0;
-+		rxq->sw_stats.drop_bytes = 0;
-+		rxq->sw_stats.unicast_pkts = 0;
-+		rxq->sw_stats.broadcast_pkts = 0;
-+		rxq->sw_stats.multicast_pkts = 0;
- 	}
- 	ret = 0;
- 	goto l_end;
-@@ -524,31 +517,15 @@ void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev)
- 
- 		rxq = dev->data->rx_queues[nb_rxq];
- 		if (rxq) {
--			sw_stats_prev->ipackets +=
--				rte_atomic_load_explicit(&rxq->sw_stats.pkts,
--					rte_memory_order_relaxed);
--			sw_stats_prev->ierrors +=
--				rte_atomic_load_explicit(&rxq->sw_stats.drop_pkts,
--					rte_memory_order_relaxed);
--			sw_stats_prev->ibytes +=
--				rte_atomic_load_explicit(&rxq->sw_stats.bytes,
--					rte_memory_order_relaxed);
--
--			sw_stats_prev->rx_sw_unicast_packets +=
--				rte_atomic_load_explicit(&rxq->sw_stats.unicast_pkts,
--					rte_memory_order_relaxed);
--			sw_stats_prev->rx_sw_broadcast_packets +=
--				rte_atomic_load_explicit(&rxq->sw_stats.broadcast_pkts,
--					rte_memory_order_relaxed);
--			sw_stats_prev->rx_sw_multicast_packets +=
--				rte_atomic_load_explicit(&rxq->sw_stats.multicast_pkts,
--					rte_memory_order_relaxed);
--			sw_stats_prev->rx_sw_drop_packets +=
--				rte_atomic_load_explicit(&rxq->sw_stats.drop_pkts,
--					rte_memory_order_relaxed);
--			sw_stats_prev->rx_sw_drop_bytes +=
--				rte_atomic_load_explicit(&rxq->sw_stats.drop_bytes,
--					rte_memory_order_relaxed);
-+			sw_stats_prev->ipackets += rxq->sw_stats.pkts;
-+			sw_stats_prev->ierrors += rxq->sw_stats.drop_pkts;
-+			sw_stats_prev->ibytes += rxq->sw_stats.bytes;
-+
-+			sw_stats_prev->rx_sw_unicast_packets += rxq->sw_stats.unicast_pkts;
-+			sw_stats_prev->rx_sw_broadcast_packets += rxq->sw_stats.broadcast_pkts;
-+			sw_stats_prev->rx_sw_multicast_packets += rxq->sw_stats.multicast_pkts;
-+			sw_stats_prev->rx_sw_drop_packets += rxq->sw_stats.drop_pkts;
-+			sw_stats_prev->rx_sw_drop_bytes += rxq->sw_stats.drop_bytes;
- 		}
- 	}
+@@ -279,7 +279,6 @@ struct sxe2_adapter {
+ 	uint16_t                           dev_port_id;
+ 	uint64_t                           cap_flags;
+ 	enum sxe2_dev_type            dev_type;
+-	uint32_t    ptype_tbl[SXE2_MAX_PTYPE_NUM];
+ 	struct rte_ether_addr           mac_addr;
+ 	uint8_t                              port_idx;
+ 	uint8_t                              pf_idx;
+diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
+index 8d17535301..fe4b79352d 100644
+--- a/drivers/net/sxe2/sxe2_txrx.c
++++ b/drivers/net/sxe2/sxe2_txrx.c
+@@ -349,3 +349,1785 @@ void sxe2_set_common_function(struct rte_eth_dev *dev)
+ 	dev->tx_descriptor_status = sxe2_tx_descriptor_status;
+ 	dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
  }
++
++const alignas(RTE_CACHE_LINE_SIZE) uint32_t sxe2_ptype_tbl[SXE2_MAX_PTYPE_NUM] = {
++	/* [0] reserved */
++	[1] = RTE_PTYPE_L2_ETHER,
++	[2] = RTE_PTYPE_L2_ETHER_TIMESYNC,
++	/* [3] - [5] reserved */
++	[6] = RTE_PTYPE_L2_ETHER_LLDP,
++	/* ECP */
++	[7] = RTE_PTYPE_UNKNOWN,
++	/* [8] - [9] reserved */
++	/* EAPol */
++	[10] = RTE_PTYPE_UNKNOWN,
++	[11] = RTE_PTYPE_L2_ETHER_ARP,
++	/* [12] - [21] reserved */
++
++	/* Non tunneled IPv4 */
++	[22] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_FRAG,
++	[23] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[24] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	/* [25] reserved */
++	[26] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_TCP,
++	[27] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_SCTP,
++	[28] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_ICMP,
++
++	/* IPv4 --> IPv4 */
++	[29] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[30] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[31] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [32] reserved */
++	[33] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[34] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[35] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 --> IPv6 */
++	[36] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[37] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[38] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [39] reserved */
++	[40] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[41] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[42] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 --> GRE/GENEVE/VXLAN */
++	[43] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT,
++
++	/* IPv4 --> GRE/GENEVE/VXLAN --> IPv4 */
++	[44] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[45] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[46] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [47] reserved */
++	[48] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[49] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[50] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 --> GRE/GENEVE/VXLAN --> IPv6 */
++	[51] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[52] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[53] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [54] reserved */
++	[55] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[56] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[57] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 --> GRE/GENEVE/VXLAN --> MAC */
++	[58] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER,
++
++	/* IPv4 --> GRE/GENEVE/VXLAN --> MAC --> IPv4 */
++	[59] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[60] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[61] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [62] reserved */
++	[63] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[64] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[65] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 --> GRE/GENEVE/VXLAN --> MAC --> IPv6 */
++	[66] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[67] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[68] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [69] reserved */
++	[70] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[71] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[72] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv4 --> GRE/GENEVE/VXLAN --> MAC/VLAN */
++	[73] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN,
++	/* IPv4 --> GRE/GENEVE/VXLAN --> MAC/VLAN --> IPv4 */
++	[74] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[75] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[76] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_UDP,
++	/* [77] reserved */
++	[78] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP,
++	[79] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_SCTP,
++	[80] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv4 --> GRE/GENEVE/VXLAN --> MAC/VLAN --> IPv6 */
++	[81] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_FRAG,
++	[82] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[83] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_UDP,
++	/* [64] reserved */
++	[85] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP,
++	[86] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_SCTP,
++	[87] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_ICMP,
++	/* Non tunneled IPv6 */
++	[88] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_FRAG,
++	[89] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[90] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	/* [91] reserved */
++	[92] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_TCP,
++	[93] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_SCTP,
++	[94] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_ICMP,
++
++	/* IPv6 --> IPv4 */
++	[95] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[96] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[97] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [98] reserved */
++	[99] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[100] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[101] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 --> IPv6 */
++	[102] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[103] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[104] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [105] reserved */
++	[106] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[107] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[108] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_IP |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 --> GRE/GENEVE/VXLAN */
++	[109] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT,
++
++	/* IPv6 --> GRE/GENEVE/VXLAN --> IPv4 */
++	[110] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[111] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[112] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [113] reserved */
++	[114] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[115] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[116] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 --> GRE/GENEVE/VXLAN --> IPv6 */
++	[117] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[118] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[119] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [120] reserved */
++	[121] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[122] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[123] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 --> GRE/GENEVE/VXLAN --> MAC */
++	[124] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER,
++
++	/* IPv6 --> GRE/GENEVE/VXLAN --> MAC --> IPv4 */
++	[125] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[126] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[127] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [128] reserved */
++	[129] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[130] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[131] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 --> GRE/GENEVE/VXLAN --> MAC --> IPv6 */
++	[132] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[133] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[134] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	/* [135] reserved */
++	[136] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[137] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[138] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 --> GRE/GENEVE/VXLAN --> MAC/VLAN */
++	[139] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN,
++
++	/* IPv6 --> GRE/GENEVE/VXLAN --> MAC/VLAN --> IPv4 */
++	[140] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[141] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[142] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_UDP,
++	/* [143] reserved */
++	[144] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP,
++	[145] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_SCTP,
++	[146] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 --> GRE/GENEVE/VXLAN --> MAC/VLAN --> IPv6 */
++	[147] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[148] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[149] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_UDP,
++	/* [150] reserved */
++	[151] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP,
++	[152] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_SCTP,
++	[153] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_ICMP,
++	/* [154] - [159] reserved */
++	/* IPSec */
++	[160] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_ESP,
++	[161] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_ESP,
++	/* AH */
++	[162] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[163] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* NAT-T-ESP */
++	[164] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_ESP,
++	[165] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_ESP,
++	/* SDN-ESP */
++	[166] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_ESP,
++	[167] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_ESP,
++	/* [168] - [271] reserved */
++	/* IPV4 --> VRRP */
++	[272] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* IPV4 --> OSPF */
++	[273] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* IPV6 --> VRRP */
++	[274] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* IPV6 --> VRRP */
++	[275] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* ATAoE */
++	[276] = RTE_PTYPE_UNKNOWN,
++	/* Control */
++	[278] = RTE_PTYPE_UNKNOWN,
++	/* [279] - [324] reserved */
++	/* GTP */
++	[325] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPC,
++	[326] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPC,
++	[327] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPC,
++	[328] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPC,
++	[329] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU,
++	[330] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU,
++	[331] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_FRAG,
++	[332] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_NONFRAG,
++	[333] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[334] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_TCP,
++	[335] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_ICMP,
++	[336] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_FRAG,
++	[337] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_NONFRAG,
++	[338] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[339] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_TCP,
++	[340] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_ICMP,
++	[341] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_FRAG,
++	[342] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_NONFRAG,
++	[343] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[344] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_TCP,
++	[345] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_ICMP,
++	[346] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_FRAG,
++	[347] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_NONFRAG,
++	[348] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[349] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_TCP,
++	[350] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_GTPU |
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_ICMP,
++	/* PFCP */
++	[351] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP,
++	[352] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP,
++	[353] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP,
++	[354] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP,
++	/* [355] - [359] reserved */
++	/* L2TPv3 */
++	[360] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_L2TP,
++	[361] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_L2TP,
++	/* [362] - [370] reserved */
++	/* eCPRI */
++	[371] = RTE_PTYPE_UNKNOWN,
++	[381] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[391] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[396] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv4, IGMP */
++	[397] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv4, EIGRP */
++	[398] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv4, EIGRP */
++	[399] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv4, PIM */
++	[400] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv4, PIM */
++	[401] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv6, IGMP */
++	[402] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv6, IGMP */
++	[403] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv6, EIGRP */
++	[404] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv6, EIGRP */
++	[405] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv6, PIM */
++	[406] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv6, PIM */
++	[407] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv4, VRRP */
++	[408] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv4, VRRP */
++	[409] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv6, VRRP */
++	[410] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv6, VRRP */
++	[411] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv4, OSPF */
++	[412] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv4, OSPF */
++	[413] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv6, OSPF */
++	[414] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv6, OSPF */
++	[415] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv4, L2_TP_V3 */
++	[416] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv4, L2_TP_V3 */
++	[417] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv6, L2_TP_V3 */
++	[418] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv6, L2_TP_V3 */
++	[419] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv4, AH */
++	[420] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv4, AH */
++	[421] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv6, AH */
++	[422] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv6, AH */
++	[423] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv4, ESP */
++	[424] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv4, ESP */
++	[425] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv4, UDP, TUN, MAC, IPv6, ESP */
++	[426] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* MAC, IPv6, UDP, TUN, MAC, IPv6, ESP */
++	[427] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	/* TP-TUN GTPU */
++	[450] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[451] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[452] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[453] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[454] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[455] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[456] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[457] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[458] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[459] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[460] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[461] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[462] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[463] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[464] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[465] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[466] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[467] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[468] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[469] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[470] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[471] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[472] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[473] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[474] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[475] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[476] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[477] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[478] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[479] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[480] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[481] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[482] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[483] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[484] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[485] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[486] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[487] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[488] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[489] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[490] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[491] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[492] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[493] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[494] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[495] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[496] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	[497] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_TUNNEL_IP | RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_INNER_L4_UDP,
++	/* [498] - [767] reserved */
++	/* L2(NETWORK CPU) */
++	/* ISIS */
++	[768] = RTE_PTYPE_UNKNOWN,
++	/* SDF */
++	[769] = RTE_PTYPE_UNKNOWN,
++	/* PPoE_NEGO */
++	[770] = RTE_PTYPE_L2_ETHER_PPPOE,
++	/* PPoE_PROTOCOL */
++	[771] = RTE_PTYPE_L2_ETHER_PPPOE,
++	[772] = RTE_PTYPE_L2_ETHER_PPPOE,
++	/* LACP */
++	[773] = RTE_PTYPE_UNKNOWN,
++	/* [774] - [775] reserved */
++	/* IPv4 L3(NETWORK CPU) */
++	[776] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_IGMP,
++	/* EIGRP */
++	[777] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* PIM */
++	[778] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[779] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_L2TP,
++	[780] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_L2TP,
++	[781] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_L2TP,
++	/* [782] - [783] reserved */
++	/* IPv6 L3(NETWORK CPU) */
++	[784] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_IGMP,
++	/* EIGRP */
++	[785] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* PIM */
++	[786] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[787] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_L2TP,
++	[788] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_L2TP,
++	[789] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP | RTE_PTYPE_TUNNEL_L2TP,
++	/* [790] - [791] reserved */
++	/* IPv4 L4(NETWORK CPU) */
++	[792] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_TCP,
++	[793] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_TCP,
++	[794] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[795] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[796] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[797] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP,
++	[798] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[799] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[800] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[801] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	/* [802] - [807] reserved */
++	/* IPv6 L4(NETWORK CPU) */
++	[808] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_TCP,
++	[809] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_TCP,
++	[810] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[811] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[812] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++		RTE_PTYPE_L4_UDP,
++	[813] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[814] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[815] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[816] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	[817] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_UDP,
++	/* [818] - [819] reserved */
++	/* IPv6 -> MAC */
++	[820] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* IPv6 -> MAC -> IPv4*/
++	[821] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[822] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[823] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[824] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[825] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[826] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* IPv6 -> MAC -> IPv4*/
++	[827] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[828] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[829] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[830] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[831] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[832] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* [833] - [834] reserved */
++	/* IPv6 -> MAC/VLAN */
++	[835] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* IPv6 -> MAC/VLAN -> IPv4 */
++	[836] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[837] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[838] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[839] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[840] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[841] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	/* IPv6 -> MAC/VLAN -> IPv6 */
++	[842] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[843] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[844] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[845] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[846] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++	[847] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_L4_NONFRAG,
++
++	/* IPv6 -> UDP -> VXLAN/GENEVE -> PAY */
++	[878] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT,
++
++	/* IPv6 -> UDP -> VXLAN/GENEVE -> IPv4 */
++	[877] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[876] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[879] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[880] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[875] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[874] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 -> UDP -> VXLAN/GENEVE -> IPv6 */
++	[871] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[870] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[872] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[873] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[869] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[868] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 -> UDP -> VXLAN/GENEVE -> PAY */
++	[891] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT,
++	/* IPv4 -> UDP -> VXLAN/GENEVE -> IPv4 */
++	[890] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[889] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[892] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[893] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[888] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[887] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv4 -> UDP -> VXLAN/GENEVE -> IPv6 */
++	[884] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[883] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[885] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[886] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[882] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[881] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 -> UDP -> GRE -> PAY */
++	[904] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT,
++	/* IPv6 -> UDP -> GRE -> IPv4 */
++	[903] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[902] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[905] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[906] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[901] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[900] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv6 -> UDP -> GRE -> IPv6 */
++	[897] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[896] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[898] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[899] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[895] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[894] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 -> UDP -> GRE -> PAY */
++	[917] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT,
++	/* IPv4 -> UDP -> GRE -> IPv4 */
++	[916] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[915] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[918] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[919] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[914] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[913] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv4 -> UDP -> GRE -> IPv6 */
++	[910] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[909] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[911] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[912] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[908] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[907] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 -> UDP -> VXLAN/GENEVE -> MACVLAN -> PAY */
++	[930] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN,
++
++	/* IPv6 -> UDP -> VXLAN/GENEVE -> MACVLAN -> IPv4 */
++	[929] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[928] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[931] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[932] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[927] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[926] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 -> UDP -> VXLAN/GENEVE -> MACVLAN -> IPv6 */
++	[923] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[922] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[924] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[925] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[921] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[920] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 -> UDP -> VXLAN/GENEVE -> MACVLAN -> PAY */
++	[943] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN,
++	/* IPv4 -> UDP -> VXLAN/GENEVE -> MACVLAN -> IPv4 */
++	[942] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[941] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[944] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[945] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[940] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[939] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv4 -> UDP -> VXLAN/GENEVE -> MACVLAN -> IPv6 */
++	[936] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[935] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[937] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[938] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[934] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[933] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 > UDP -> GRE -> MACVLAN -> PAY */
++	[956] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN,
++	/* IPv6 -> UDP -> GRE -> MACVLAN -> IPv4 */
++	[955] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[954] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[957] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[958] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[953] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[952] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv6 -> UDP -> GRE -> MACVLAN -> IPv6 */
++	[949] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[948] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[950] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[951] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[947] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[946] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 -> UDP -> GRE -> MACVLAN -> PAY */
++	[969] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN,
++	/* IPv4 -> UDP -> GRE -> MACVLAN -> IPv4 */
++	[968] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[967] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[970] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[971] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[966] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[965] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv4 -> UDP -> GRE -> MACVLAN -> IPv6 */
++	[962] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[961] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[963] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[964] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[960] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[959] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER_VLAN |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 -> UDP -> VXLAN/GENEVE -> MAC -> PAY */
++	[982] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER,
++
++	/* IPv6 -> UDP -> VXLAN/GENEVE -> MAC -> IPv4 */
++	[981] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[980] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[983] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[984] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[979] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[978] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 -> UDP -> VXLAN/GENEVE -> MAC -> IPv6 */
++	[975] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[974] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[976] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[977] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[973] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[972] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 -> UDP -> VXLAN/GENEVE -> MAC -> PAY */
++	[995] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER,
++	/* IPv4 -> UDP -> VXLAN/GENEVE -> MAC -> IPv4 */
++	[994] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[993] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[996] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[997] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[992] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[991] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv4 -> UDP -> VXLAN/GENEVE -> MAC -> IPv6 */
++	[988] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[987] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[989] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[990] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[986] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[985] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv6 > UDP -> GRE -> MAC -> PAY */
++	[1008] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER,
++	/* IPv6 -> UDP -> GRE -> MAC -> IPv4 */
++	[1007] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[1006] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[1009] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[1010] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[1005] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[1004] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv6 -> UDP -> GRE -> MAC -> IPv6 */
++	[1001] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[1000] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[1002] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[1003] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[999] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[998] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++
++	/* IPv4 -> UDP -> GRE -> MAC -> PAY */
++	[1021] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER,
++	/* IPv4 -> UDP -> GRE -> MAC -> IPv4 */
++	[1020] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[1019] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[1022] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[1023] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[1018] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[1017] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++	/* IPv4 -> UDP -> GRE -> MAC -> IPv6 */
++	[1014] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_FRAG,
++	[1013] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_NONFRAG,
++	[1015] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_UDP,
++	[1016] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_TCP,
++	[1012] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_SCTP,
++	[1011] = RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT_UNKNOWN |
++				RTE_PTYPE_TUNNEL_GRENAT | RTE_PTYPE_INNER_L2_ETHER |
++				RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN |
++				RTE_PTYPE_INNER_L4_ICMP,
++};
++const uint32_t *
++sxe2_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
++{
++	const uint32_t *ret = NULL;
++
++	static const uint32_t ptypes[] = {
++		RTE_PTYPE_L2_ETHER,
++		RTE_PTYPE_L2_ETHER_TIMESYNC,
++		RTE_PTYPE_L2_ETHER_LLDP,
++		RTE_PTYPE_L2_ETHER_ARP,
++		RTE_PTYPE_L3_IPV4_EXT_UNKNOWN,
++		RTE_PTYPE_L3_IPV6_EXT_UNKNOWN,
++		RTE_PTYPE_L4_FRAG,
++		RTE_PTYPE_L4_ICMP,
++		RTE_PTYPE_L4_NONFRAG,
++		RTE_PTYPE_L4_SCTP,
++		RTE_PTYPE_L4_TCP,
++		RTE_PTYPE_L4_UDP,
++		RTE_PTYPE_TUNNEL_GRENAT,
++		RTE_PTYPE_TUNNEL_IP,
++		RTE_PTYPE_INNER_L2_ETHER,
++		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN,
++		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN,
++		RTE_PTYPE_INNER_L4_FRAG,
++		RTE_PTYPE_INNER_L4_ICMP,
++		RTE_PTYPE_INNER_L4_NONFRAG,
++		RTE_PTYPE_INNER_L4_SCTP,
++		RTE_PTYPE_INNER_L4_TCP,
++		RTE_PTYPE_INNER_L4_UDP,
++		RTE_PTYPE_UNKNOWN
++	};
++
++	if (dev->rx_pkt_burst != NULL) {
++		*no_of_elements = RTE_DIM(ptypes);
++		ret = ptypes;
++	} else {
++		ret = NULL;
++	}
++
++	return ret;
++}
+diff --git a/drivers/net/sxe2/sxe2_txrx.h b/drivers/net/sxe2/sxe2_txrx.h
+index 6f6ff3e3d1..1fa8f34bb2 100644
+--- a/drivers/net/sxe2/sxe2_txrx.h
++++ b/drivers/net/sxe2/sxe2_txrx.h
+@@ -23,4 +23,9 @@ int32_t sxe2_tx_burst_mode_get(struct rte_eth_dev *dev,
+ int32_t sxe2_rx_burst_mode_get(struct rte_eth_dev *dev,
+ 			__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
+ 
++extern const uint32_t sxe2_ptype_tbl[];
++
++const uint32_t *sxe2_dev_supported_ptypes_get(struct rte_eth_dev *dev,
++					      size_t *no_of_elements);
++
+ #endif /* SXE2_TXRX_H */
 diff --git a/drivers/net/sxe2/sxe2_txrx_poll.c b/drivers/net/sxe2/sxe2_txrx_poll.c
-index b9d34afb31..947a5247ed 100644
+index 947a5247ed..241e47e02c 100644
 --- a/drivers/net/sxe2/sxe2_txrx_poll.c
 +++ b/drivers/net/sxe2/sxe2_txrx_poll.c
-@@ -682,23 +682,17 @@ sxe2_rx_sw_stats_update(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf,
+@@ -664,13 +664,12 @@ static __rte_always_inline void
+ sxe2_rx_mbuf_common_fields_fill(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf,
  		union sxe2_rx_desc *rxd)
  {
- 	uint64_t qword1 = rte_le_to_cpu_64(rxd->wb.status_err_ptype_len);
--	rte_atomic_fetch_add_explicit(&rxq->sw_stats.pkts, 1,
--		rte_memory_order_relaxed);
--	rte_atomic_fetch_add_explicit(&rxq->sw_stats.bytes,
--			mbuf->pkt_len + RTE_ETHER_CRC_LEN,
--			rte_memory_order_relaxed);
-+	rxq->sw_stats.pkts += 1;
-+	rxq->sw_stats.bytes += mbuf->pkt_len + RTE_ETHER_CRC_LEN;
- 	switch (SXE2_RX_DESC_STATUS_UMBCAST_VAL_GET(qword1)) {
- 	case SXE2_RX_DESC_STATUS_UNICAST:
--		rte_atomic_fetch_add_explicit(&rxq->sw_stats.unicast_pkts, 1,
--			rte_memory_order_relaxed);
-+		rxq->sw_stats.unicast_pkts += 1;
- 		break;
- 	case SXE2_RX_DESC_STATUS_MULTICAST:
--		rte_atomic_fetch_add_explicit(&rxq->sw_stats.multicast_pkts, 1,
--			rte_memory_order_relaxed);
-+		rxq->sw_stats.multicast_pkts += 1;
- 		break;
- 	case SXE2_RX_DESC_STATUS_BROADCAST:
--		rte_atomic_fetch_add_explicit(&rxq->sw_stats.broadcast_pkts, 1,
--			rte_memory_order_relaxed);
-+		rxq->sw_stats.broadcast_pkts += 1;
- 		break;
- 	default:
- 		break;
-@@ -787,11 +781,9 @@ uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint1
+-	uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
+ 	uint64_t qword1;
+ 	uint64_t pkt_flags;
+ 	qword1 = rte_le_to_cpu_64(rxd->wb.status_err_ptype_len);
  
- 		if (unlikely(qword1 & SXE2_RX_DESC_ERROR_RXE_MASK) ||
- 			unlikely(qword1 & SXE2_RX_DESC_ERROR_OVERSIZE_MASK)) {
--			rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_pkts, 1,
--				rte_memory_order_relaxed);
--			rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_bytes,
--				first_seg->pkt_len - rxq->crc_len + RTE_ETHER_CRC_LEN,
--				rte_memory_order_relaxed);
-+			rxq->sw_stats.drop_pkts += 1;
-+			rxq->sw_stats.drop_bytes +=
-+				first_seg->pkt_len - rxq->crc_len + RTE_ETHER_CRC_LEN;
- 			rte_pktmbuf_free(first_seg);
- 			first_seg = NULL;
- 			continue;
-@@ -822,8 +814,7 @@ uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint1
+ 	mbuf->ol_flags = 0;
+-	mbuf->packet_type = ptype_tbl[SXE2_RX_DESC_PTYPE_VAL_GET(qword1)];
++	mbuf->packet_type = sxe2_ptype_tbl[SXE2_RX_DESC_PTYPE_VAL_GET(qword1)];
  
- 		sxe2_rx_mbuf_common_fields_fill(rxq, first_seg, &desc_tmp);
- 
--		if (rxq->vsi->adapter->devargs.sw_stats_en)
--			sxe2_rx_sw_stats_update(rxq, first_seg, &desc_tmp);
-+		sxe2_rx_sw_stats_update(rxq, first_seg, &desc_tmp);
- 
- 		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr, first_seg->data_off));
- 
-@@ -990,11 +981,9 @@ uint16_t sxe2_rx_pkts_scattered_split(void *rx_queue, struct rte_mbuf **rx_pkts,
- 
- 		if (unlikely(qword1 & SXE2_RX_DESC_ERROR_RXE_MASK) ||
- 			unlikely(qword1 & SXE2_RX_DESC_ERROR_OVERSIZE_MASK)) {
--			rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_pkts, 1,
--				rte_memory_order_relaxed);
--			rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_bytes,
--				first_seg->pkt_len - rxq->crc_len + RTE_ETHER_CRC_LEN,
--				rte_memory_order_relaxed);
-+			rxq->sw_stats.drop_pkts += 1;
-+			rxq->sw_stats.drop_bytes +=
-+				first_seg->pkt_len - rxq->crc_len + RTE_ETHER_CRC_LEN;
- 			rte_pktmbuf_free(first_seg);
- 			first_seg = NULL;
- 			continue;
-@@ -1023,8 +1012,7 @@ uint16_t sxe2_rx_pkts_scattered_split(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		first_seg->port = rxq->port_id;
- 		sxe2_rx_mbuf_common_fields_fill(rxq, first_seg, &desc_tmp);
- 
--		if (rxq->vsi->adapter->devargs.sw_stats_en)
--			sxe2_rx_sw_stats_update(rxq, first_seg, &desc_tmp);
-+		sxe2_rx_sw_stats_update(rxq, first_seg, &desc_tmp);
- 
- 		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr, first_seg->data_off));
+ 	pkt_flags = sxe2_rx_desc_error_para(rxq, rxd);
  
 diff --git a/drivers/net/sxe2/sxe2_txrx_vec_common.h b/drivers/net/sxe2/sxe2_txrx_vec_common.h
-index 6b1649c390..cc74f6e582 100644
+index cc74f6e582..f004970949 100644
 --- a/drivers/net/sxe2/sxe2_txrx_vec_common.h
 +++ b/drivers/net/sxe2/sxe2_txrx_vec_common.h
-@@ -130,27 +130,20 @@ sxe2_tx_desc_fill_offloads(struct rte_mbuf *mbuf, uint64_t *desc_qw1)
- static inline void sxe2_vf_rx_vec_sw_stats_cnt(struct sxe2_rx_queue *rxq,
- 		struct rte_mbuf *mbuf, uint8_t umbcast_flag)
- {
--	if (rxq->vsi->adapter->devargs.sw_stats_en) {
--		rte_atomic_fetch_add_explicit(&rxq->sw_stats.pkts, 1,
--					rte_memory_order_relaxed);
--		rte_atomic_fetch_add_explicit(&rxq->sw_stats.bytes,
--				 mbuf->pkt_len + RTE_ETHER_CRC_LEN, rte_memory_order_relaxed);
--		switch (SXE2_RX_UMBCAST_FLAGS_VAL_GET(umbcast_flag)) {
--		case SXE2_RX_DESC_STATUS_UNICAST:
--			rte_atomic_fetch_add_explicit(&rxq->sw_stats.unicast_pkts, 1,
--					rte_memory_order_relaxed);
--			break;
--		case SXE2_RX_DESC_STATUS_MULTICAST:
--			rte_atomic_fetch_add_explicit(&rxq->sw_stats.multicast_pkts, 1,
--					rte_memory_order_relaxed);
--			break;
--		case SXE2_RX_DESC_STATUS_BROADCAST:
--			rte_atomic_fetch_add_explicit(&rxq->sw_stats.broadcast_pkts, 1,
--					rte_memory_order_relaxed);
--			break;
--		default:
--			break;
--		}
-+	rxq->sw_stats.pkts += 1;
-+	rxq->sw_stats.bytes += mbuf->pkt_len + RTE_ETHER_CRC_LEN;
-+	switch (SXE2_RX_UMBCAST_FLAGS_VAL_GET(umbcast_flag)) {
-+	case SXE2_RX_DESC_STATUS_UNICAST:
-+		rxq->sw_stats.unicast_pkts += 1;
-+		break;
-+	case SXE2_RX_DESC_STATUS_MULTICAST:
-+		rxq->sw_stats.multicast_pkts += 1;
-+		break;
-+	case SXE2_RX_DESC_STATUS_BROADCAST:
-+		rxq->sw_stats.broadcast_pkts += 1;
-+		break;
-+	default:
-+		break;
- 	}
- }
- 
-@@ -196,11 +189,9 @@ sxe2_rx_pkts_refactor(struct sxe2_rx_queue *rxq,
- 			} else if (split_rxe_flags[buf_idx] & SXE2_RX_DESC_STATUS_EOP_MASK) {
- 				continue;
- 			} else {
--				rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_pkts, 1,
--					rte_memory_order_relaxed);
--				rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_bytes,
--				 first_seg->pkt_len - rxq->crc_len + RTE_ETHER_CRC_LEN,
--				 rte_memory_order_relaxed);
-+				rxq->sw_stats.drop_pkts += 1;
-+				rxq->sw_stats.drop_bytes +=
-+					first_seg->pkt_len - rxq->crc_len + RTE_ETHER_CRC_LEN;
- 				rte_pktmbuf_free(first_seg);
- 				first_seg = NULL;
- 				last_seg  = NULL;
-@@ -218,11 +209,10 @@ sxe2_rx_pkts_refactor(struct sxe2_rx_queue *rxq,
- 				mbuf_bufs[buf_idx]->data_len += rxq->crc_len;
- 				mbuf_bufs[buf_idx]->pkt_len  += rxq->crc_len;
- 			} else {
--				rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_pkts, 1,
--					rte_memory_order_relaxed);
--				rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_bytes,
--				 mbuf_bufs[buf_idx]->pkt_len - rxq->crc_len + RTE_ETHER_CRC_LEN,
--				 rte_memory_order_relaxed);
-+				rxq->sw_stats.drop_pkts += 1;
-+				rxq->sw_stats.drop_bytes +=
-+					mbuf_bufs[buf_idx]->pkt_len - rxq->crc_len +
-+					RTE_ETHER_CRC_LEN;
- 				rte_pktmbuf_free_seg(mbuf_bufs[buf_idx]);
- 				continue;
- 			}
+@@ -12,6 +12,7 @@
+ #include "sxe2_rx.h"
+ #include "sxe2_queue.h"
+ #include "sxe2_tx.h"
++#include "sxe2_txrx.h"
+ #include "sxe2_vsi.h"
+ #include "sxe2_ethdev.h"
+ #define SXE2_RX_NUM_PER_LOOP_SSE    4
 diff --git a/drivers/net/sxe2/sxe2_txrx_vec_sse.c b/drivers/net/sxe2/sxe2_txrx_vec_sse.c
-index f6e3f45937..182a7dfc17 100644
+index 182a7dfc17..c3e8a2983b 100644
 --- a/drivers/net/sxe2/sxe2_txrx_vec_sse.c
 +++ b/drivers/net/sxe2/sxe2_txrx_vec_sse.c
-@@ -483,41 +483,16 @@ static __rte_always_inline uint16_t
- sxe2_rx_pkts_scattered_batch_vec_sse(struct sxe2_rx_queue *rxq,
- 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- {
--	const uint64_t *split_rxe_flags64;
- 	uint8_t split_rxe_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
- 	uint8_t umbcast_flags[SXE2_RX_PKTS_BURST_BATCH_NUM_VEC] = {0};
- 	uint16_t rx_done_num;
- 	uint16_t rx_pkt_done_num;
- 	rx_pkt_done_num = 0;
- 
--	if (rxq->vsi->adapter->devargs.sw_stats_en) {
--		rx_done_num = sxe2_rx_pkts_common_vec_sse(rxq, rx_pkts,
--				nb_pkts, split_rxe_flags, umbcast_flags);
--	} else {
--		rx_done_num = sxe2_rx_pkts_common_vec_sse(rxq, rx_pkts,
--				nb_pkts, split_rxe_flags, NULL);
--	}
-+	rx_done_num = sxe2_rx_pkts_common_vec_sse(rxq, rx_pkts,
-+			nb_pkts, split_rxe_flags, umbcast_flags);
- 	if (rx_done_num == 0)
- 		goto l_end;
--	if (!rxq->vsi->adapter->devargs.sw_stats_en) {
--		split_rxe_flags64 = (uint64_t *)split_rxe_flags;
--		if (rxq->pkt_first_seg == NULL &&
--			split_rxe_flags64[0] == 0 &&
--			split_rxe_flags64[1] == 0 &&
--			split_rxe_flags64[2] == 0 &&
--			split_rxe_flags64[3] == 0) {
--			rx_pkt_done_num = rx_done_num;
--			goto l_end;
--		}
--		if (rxq->pkt_first_seg == NULL) {
--			while (rx_pkt_done_num < rx_done_num &&
--			       split_rxe_flags[rx_pkt_done_num] == 0)
--				rx_pkt_done_num++;
--			if (rx_pkt_done_num == rx_done_num)
--				goto l_end;
--			rxq->pkt_first_seg = rx_pkts[rx_pkt_done_num];
--		}
--	}
- 	rx_pkt_done_num += sxe2_rx_pkts_refactor(rxq, &rx_pkts[rx_pkt_done_num],
- 			rx_done_num - rx_pkt_done_num, &split_rxe_flags[rx_pkt_done_num],
- 			&umbcast_flags[rx_pkt_done_num]);
+@@ -338,7 +338,6 @@ sxe2_rx_pkts_common_vec_sse(struct sxe2_rx_queue *rxq,
+ 	uint32_t i;
+ 	uint32_t bit_num;
+ 	uint16_t done_num = 0;
+-	const uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
+ 	const __m128i crc_adjust =
+ 			_mm_set_epi16(0, 0, 0,
+ 				      -rxq->crc_len,
+@@ -461,10 +460,10 @@ sxe2_rx_pkts_common_vec_sse(struct sxe2_rx_queue *rxq,
+ 					mbuf_arr[1]);
+ 		_mm_storeu_si128((void *)&rx_pkts[i]->rx_descriptor_fields1,
+ 					mbuf_arr[0]);
+-		rx_pkts[i + 3]->packet_type = ptype_tbl[_mm_extract_epi16(ptype_all, 3)];
+-		rx_pkts[i + 2]->packet_type = ptype_tbl[_mm_extract_epi16(ptype_all, 7)];
+-		rx_pkts[i + 1]->packet_type = ptype_tbl[_mm_extract_epi16(ptype_all, 1)];
+-		rx_pkts[i]->packet_type     = ptype_tbl[_mm_extract_epi16(ptype_all, 5)];
++		rx_pkts[i + 3]->packet_type = sxe2_ptype_tbl[_mm_extract_epi16(ptype_all, 3)];
++		rx_pkts[i + 2]->packet_type = sxe2_ptype_tbl[_mm_extract_epi16(ptype_all, 7)];
++		rx_pkts[i + 1]->packet_type = sxe2_ptype_tbl[_mm_extract_epi16(ptype_all, 1)];
++		rx_pkts[i]->packet_type     = sxe2_ptype_tbl[_mm_extract_epi16(ptype_all, 5)];
+ 		bit_num = rte_popcount64(_mm_cvtsi128_si64(staterr));
+ 		done_num += bit_num;
+ 		if (likely(bit_num != SXE2_RX_NUM_PER_LOOP_SSE))
 -- 
 2.52.0
 
