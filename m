@@ -2,46 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E198BCDE008
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 10:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F06CCDE008
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 10:56:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B5C840265;
-	Fri, 26 Jun 2026 12:35:55 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 306FF40264
- for <dev@dpdk.org>; Fri, 26 Jun 2026 12:35:53 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gmsWM5p5FzHnH55;
- Fri, 26 Jun 2026 18:35:11 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id E087040569;
- Fri, 26 Jun 2026 18:35:47 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 26 Jun 2026 12:35:47 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Fri, 26 Jun 2026 12:35:47 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: RE: [PATCH v6 0/9] bpf: JIT related bug fixes
-Thread-Topic: [PATCH v6 0/9] bpf: JIT related bug fixes
-Thread-Index: AQHdBMivmFTxyeVss0CLqiAqVyp+uLZQpSsg
-Date: Fri, 26 Jun 2026 10:35:47 +0000
-Message-ID: <cf0e1f65fc574f2a9ffebd5fac7ca60c@huawei.com>
-References: <20260608203322.1116296-1-stephen@networkplumber.org>
- <20260625173231.216074-1-stephen@networkplumber.org>
-In-Reply-To: <20260625173231.216074-1-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.16]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 8859040264;
+	Fri, 26 Jun 2026 12:56:33 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id CAA854025F;
+ Fri, 26 Jun 2026 12:56:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782471377; x=1814007377;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=QDJPkpP+Ij6QnXO5vCELOx9eVC0qlodQpirKaTnib8k=;
+ b=myS/T+rELrjhgZ33Oz4JNZEL5pRFUGEqh7A3JXBwsKfSkOZrE9w0b81G
+ /ttR3CgpwDEweSEbAZprvDS/HWtMBYvbWZWp3dvuGzmuSxPyk9tJRdHOT
+ LDbkSP841XyLbOJFlNYQHGmeZBriMGO55ym2RUd8So+JftQ6y4UwQJGTj
+ wy3tKI6qLzcW3HoM1PRiKCDIE5irgot0l00MasN1/B7X6BadUdSRCjNK2
+ k30e3jTZ75D7Kq1aNPmnoVr4kXGqA1BZqFJ/PZqNKkzl5RFXqbwwWNYd3
+ Vre1HMUgh8WqhL8CbEdgRaiYluytyOIDTRwgBscj1/xv0VBMfCqGdwwgA w==;
+X-CSE-ConnectionGUID: 7aM1BxbGRKy2yobFETU9BA==
+X-CSE-MsgGUID: 5ABXugCSQOSnniY6V1ZuoA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11828"; a="83142722"
+X-IronPort-AV: E=Sophos;i="6.24,226,1774335600"; d="scan'208";a="83142722"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Jun 2026 03:56:16 -0700
+X-CSE-ConnectionGUID: a6K5+XHISlKrgvZ7qP2EKQ==
+X-CSE-MsgGUID: 7Ob9pCadQYKM+fKpns6nEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,226,1774335600"; d="scan'208";a="244904722"
+Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
+ by fmviesa009.fm.intel.com with ESMTP; 26 Jun 2026 03:56:14 -0700
+From: Radu Nicolau <radu.nicolau@intel.com>
+To: dev@dpdk.org
+Cc: david.marchand@redhat.com, Radu Nicolau <radu.nicolau@intel.com>,
+ stable@dpdk.org, Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Jay Zhou <jianjay.zhou@huawei.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [PATCH v2] vhost/crypto: fix segfault
+Date: Fri, 26 Jun 2026 10:55:39 +0000
+Message-ID: <20260626105611.1563794-1-radu.nicolau@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260624142023.1525497-1-radu.nicolau@intel.com>
+References: <20260624142023.1525497-1-radu.nicolau@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,61 +62,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Thursday 25 June 2026 18:30
-> To: dev@dpdk.org
-> Cc: Stephen Hemminger <stephen@networkplumber.org>
-> Subject: [PATCH v6 0/9] bpf: JIT related bug fixes
->=20
-> While implementing JIT for packet capture ran into several issues:
->   1. x86 JIT had a pre-existing bug which would crash.
->   2. The arm64 JIT was missing the packet-access instructions, found
->      previously [1].
->   3. Shift counts were not masked to the operand width as RFC 9669
->      requires: undefined behavior in the interpreter and an encoding
->      failure in the arm64 JIT.
->   4. Tests related to JIT were not being run or were missing coverage.
->=20
-> Fixed all of these. Patches are ordered with the most urgent fix (the
-> x86 crash) first, each fix followed by the test that exercises it. The
-> arm64 packet-load support is kept ahead of the "check JIT was generated"
-> patch so the series bisects cleanly on arm64.
->=20
-> The arm64 epilogue branch fix (patch 6) was originally posted by
-> Christophe Fontaine [1]; that series stalled, so it is carried here with
-> his authorship.
->=20
-> [1] https://inbox.dpdk.org/dev/20260319114500.9757-2-cfontain@redhat.com/
->=20
-> v6:
->  - address Marat's review ARM64 JIT of LD IND instructions
->    need to handle offsets outside of 32 bit range.
->=20
->=20
-> Christophe Fontaine (1):
->   bpf/arm64: fix offset type to allow a negative jump
->=20
-> Stephen Hemminger (8):
->   bpf/x86: fix JIT encoding of fixed-width immediates
->   test/bpf: add JSET test with small immediate
->   bpf: mask shift count in interpreter per RFC 9669
->   bpf/arm64: mask shift count per RFC 9669
->   test/bpf: add test for large shift
->   bpf/arm64: add BPF_ABS/BPF_IND packet load support
->   test/bpf: check that JIT was generated
->   test/bpf: check that bpf_convert can be JIT'd
->=20
->  app/test/test_bpf.c     | 320 +++++++++++++++++++++++++++++++---------
->  lib/bpf/bpf_exec.c      |  31 ++--
->  lib/bpf/bpf_jit_arm64.c | 185 ++++++++++++++++++++++-
->  lib/bpf/bpf_jit_x86.c   |   6 +-
->  lib/bpf/meson.build     |   2 +
->  5 files changed, 456 insertions(+), 88 deletions(-)
->=20
-> --
-> 2.53.0
+Fix potential call with dev->mem uninitialized, one common usecase
+example being running the autotest with more than one device.
 
-Series-tested-by: Marat Khalili <marat.khalili@huawei.com>
+Fixes: 3bb595ecd682 ("vhost/crypto: add request handler")
+Cc: stable@dpdk.org
 
-(Maybe it actually deserves a release note at this point?)
+Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+---
+v2: removed unncessary ()
+
+ lib/vhost/vhost_crypto.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lib/vhost/vhost_crypto.c b/lib/vhost/vhost_crypto.c
+index 648e2d731b..a19cdd61cc 100644
+--- a/lib/vhost/vhost_crypto.c
++++ b/lib/vhost/vhost_crypto.c
+@@ -1512,6 +1512,10 @@ vhost_crypto_process_one_req(struct vhost_crypto *vcrypto,
+ 		VC_LOG_ERR("Invalid descriptor");
+ 		return -1;
+ 	}
++	if (unlikely(vc_req->dev->mem == NULL)) {
++		VC_LOG_ERR("Uninitialized vhost device");
++		return -1;
++	}
+ 
+ 	dlen = head->len;
+ 	src_desc = IOVA_TO_VVA(struct vring_desc *, vc_req->dev, vq,
+-- 
+2.52.0
+
