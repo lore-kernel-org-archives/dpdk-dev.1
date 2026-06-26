@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE33CDE008
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 07:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEFECDE008
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 07:26:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1317540264;
+	by mails.dpdk.org (Postfix) with ESMTP id 002B54065A;
 	Fri, 26 Jun 2026 09:26:10 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 315B4402D5
+ by mails.dpdk.org (Postfix) with ESMTP id 42C87400D6
  for <dev@dpdk.org>; Fri, 26 Jun 2026 09:26:06 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E75202024BA;
- Fri, 26 Jun 2026 09:26:05 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 166A32024C6;
+ Fri, 26 Jun 2026 09:26:06 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E7B6A202786;
- Fri, 26 Jun 2026 08:57:04 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EFB1820125D;
+ Fri, 26 Jun 2026 08:57:12 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 418CF1800071;
- Fri, 26 Jun 2026 14:57:03 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 58F041800086;
+ Fri, 26 Jun 2026 14:57:11 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v5 03/19] drivers: add BMI Tx statistics
-Date: Fri, 26 Jun 2026 12:26:39 +0530
-Message-Id: <20260626065655.279742-4-hemant.agrawal@nxp.com>
+Subject: [PATCH v5 09/19] drivers: add DPAA cgrid cleanup support
+Date: Fri, 26 Jun 2026 12:26:45 +0530
+Message-Id: <20260626065655.279742-10-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260626065655.279742-1-hemant.agrawal@nxp.com>
 References: <20260621172731.2916346-1-hemant.agrawal@nxp.com>
@@ -51,144 +51,113 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Add support for BMI (Buffer Manager Interface) Tx statistics
-counters. Extend fman_hw to read Tx BMI registers and expose
-them through the xstats interface.
+Add qman_find_fq_by_cgid() to find frame queues associated with
+a given CGID. This allows the driver to verify that all FQs
+using a CGR are shut down before releasing the CGR ID, preventing
+use-after-free of CGR resources.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/base/fman/fman_hw.c |  2 --
- drivers/bus/dpaa/include/fman.h      | 24 ++++++++++++++++++++++++
- drivers/net/dpaa/dpaa_ethdev.c       | 10 +++++++++-
- drivers/net/dpaa/dpaa_ethdev.h       | 11 +++++++++--
- 4 files changed, 42 insertions(+), 5 deletions(-)
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c |  1 +
+ drivers/bus/dpaa/include/fsl_qman.h      |  3 +++
+ drivers/net/dpaa/dpaa_ethdev.c           | 29 ++++++++++++++++++++++--
+ 3 files changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/fman/fman_hw.c b/drivers/bus/dpaa/base/fman/fman_hw.c
-index ce68581555..aab04bf76a 100644
---- a/drivers/bus/dpaa/base/fman/fman_hw.c
-+++ b/drivers/bus/dpaa/base/fman/fman_hw.c
-@@ -301,7 +301,6 @@ fman_if_bmi_stats_enable(struct fman_if *p)
- 	uint32_t tmp;
+diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+index 52abec2b4c..514ab7b1f1 100644
+--- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
++++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+@@ -56,6 +56,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(qman_reserve_fqid_range)
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_alloc_pool_range)
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_alloc_cgrid_range)
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_release_cgrid_range)
++RTE_EXPORT_INTERNAL_SYMBOL(qman_find_fq_by_cgrid)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_enable)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_disable)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_ioctl_version_number)
+diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
+index bd46207232..20321ed355 100644
+--- a/drivers/bus/dpaa/include/fsl_qman.h
++++ b/drivers/bus/dpaa/include/fsl_qman.h
+@@ -1907,6 +1907,9 @@ static inline int qman_shutdown_fq_by_fqid(u32 fqid)
+ 	return qman_shutdown_fq(&fq);
+ }
  
- 	tmp = in_be32(&regs->fmbm_rstc);
--
- 	tmp |= FMAN_BMI_COUNTERS_EN;
- 
- 	out_be32(&regs->fmbm_rstc, tmp);
-@@ -315,7 +314,6 @@ fman_if_bmi_stats_disable(struct fman_if *p)
- 	uint32_t tmp;
- 
- 	tmp = in_be32(&regs->fmbm_rstc);
--
- 	tmp &= ~FMAN_BMI_COUNTERS_EN;
- 
- 	out_be32(&regs->fmbm_rstc, tmp);
-diff --git a/drivers/bus/dpaa/include/fman.h b/drivers/bus/dpaa/include/fman.h
-index a248edf4d8..2bddf489b8 100644
---- a/drivers/bus/dpaa/include/fman.h
-+++ b/drivers/bus/dpaa/include/fman.h
-@@ -306,6 +306,21 @@ struct tx_bmi_regs {
- 	uint32_t fmbm_tfene;		/**< Tx Frame Enqueue Next Engine*/
- 	uint32_t fmbm_trlmts;		/**< Tx Rate Limiter Scale*/
- 	uint32_t fmbm_trlmt;		/**< Tx Rate Limiter*/
-+	uint32_t reserved0034[0x73];/**< (0x0034 0x01FF) */
-+	uint32_t fmbm_tstc;		/**< Tx Statistics Counters*/
-+	uint32_t fmbm_tfrc;		/**< Tx Frame Counter*/
-+	uint32_t fmbm_tfdc;		/**< Tx Frames Discard Counter*/
-+	uint32_t fmbm_tfledc;	/**< Tx Frames Length Error Discard*/
-+	uint32_t fmbm_tfufdc;	/**< Tx Frames Unsupported Format*/
-+	uint32_t fmbm_tbdc;		/**< Tx Buffers Deallocate Counter */
-+	uint32_t reserved0218[0x1a];/**< (0x0218 0x027F) */
-+	uint32_t fmbm_tpc;		/**< Tx Performance Counters*/
-+	uint32_t fmbm_tpcp;		/**< Tx Performance Count Parameters */
-+	uint32_t fmbm_tccn;		/**< Tx Cycle Counter*/
-+	uint32_t fmbm_ttuc;		/**< Tx Tasks Utilization Counter */
-+	uint32_t fmbm_ttcquc;	/**< Tx Transmit Confirm Queue Utilization Counter*/
-+	uint32_t fmbm_tduc;		/**< Tx DMA Utilization Counter */
-+	uint32_t fmbm_tfuc;		/**< Tx FIFO Utilization Counter */
- };
- 
- /* Description FM RTC timer alarm */
-@@ -468,6 +483,15 @@ struct __fman_if {
- 	void *qmi_map;
- };
- 
-+#define MEMMAC_REG_OFFSET(reg) offsetof(struct memac_regs, reg)
-+#define BMI_RX_REG_OFFSET(reg) offsetof(struct rx_bmi_regs, reg)
-+#define BMI_TX_REG_OFFSET(reg) offsetof(struct tx_bmi_regs, reg)
++__rte_internal
++int qman_find_fq_by_cgrid(u32 cgrid, u32 *fqid);
 +
-+#define FMAN_IF_BMI_RX_STAT_OFFSET_START BMI_RX_REG_OFFSET(fmbm_rfrc)
-+#define FMAN_IF_BMI_RX_STAT_OFFSET_END BMI_RX_REG_OFFSET(fmbm_rbdc)
-+#define FMAN_IF_BMI_TX_STAT_OFFSET_START BMI_TX_REG_OFFSET(fmbm_tfrc)
-+#define FMAN_IF_BMI_TX_STAT_OFFSET_END BMI_TX_REG_OFFSET(fmbm_tbdc)
-+
- /* And this is the base list node that the interfaces are added to. (See
-  * fman_if_enable_all_rx() below for an example of its use.)
-  */
+ /**
+  * qman_reserve_fqid_range - Reserve the specified range of frame queue IDs
+  * @fqid: the base FQID of the range to deallocate
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 967e814b5d..b8d1ec8cbb 100644
+index 8d54e022a3..df6bcdce95 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-  *   Copyright 2016 Freescale Semiconductor, Inc. All rights reserved.
-- *   Copyright 2017-2020,2022-2025 NXP
-+ *   Copyright 2017-2020,2022-2026 NXP
-  *
-  */
- /* System headers */
-@@ -143,6 +143,14 @@ static const struct rte_dpaa_xstats_name_off dpaa_xstats_strings[] = {
- 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rodc)},
- 	{"rx_buf_diallocate",
- 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rbdc)},
-+	{"tx_bad_frames_count",
-+		offsetof(struct dpaa_if_tx_bmi_stats, fmbm_tfdc)},
-+	{"tx_frame_length_discard",
-+		offsetof(struct dpaa_if_tx_bmi_stats, fmbm_tfledc)},
-+	{"tx_frames_unsupported_format",
-+		offsetof(struct dpaa_if_tx_bmi_stats, fmbm_tfufdc)},
-+	{"tx_buf_diallocate",
-+		offsetof(struct dpaa_if_tx_bmi_stats, fmbm_tbdc)},
- };
+@@ -513,7 +513,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 	struct rte_eth_link *link = &dev->data->dev_link;
+ 	struct dpaa_if *dpaa_intf = dev->data->dev_private;
+ 	struct qman_fq *fq;
+-	int loop;
++	uint32_t fqid, loop;
+ 	int ret;
  
- static struct rte_dpaa_driver rte_dpaa_pmd;
-diff --git a/drivers/net/dpaa/dpaa_ethdev.h b/drivers/net/dpaa/dpaa_ethdev.h
-index f400030a5c..d342d98f23 100644
---- a/drivers/net/dpaa/dpaa_ethdev.h
-+++ b/drivers/net/dpaa/dpaa_ethdev.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-  *   Copyright (c) 2014-2016 Freescale Semiconductor, Inc. All rights reserved.
-- *   Copyright 2017-2024 NXP
-+ *   Copyright 2017-2026 NXP
-  *
-  */
- #ifndef __DPAA_ETHDEV_H__
-@@ -234,7 +234,6 @@ dpaa_rx_cb_atomic(void *event,
- 		  void **bufs);
+ 	PMD_INIT_FUNC_TRACE();
+@@ -576,28 +576,53 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 	/* release configuration memory */
+ 	rte_free(dpaa_intf->fc_conf);
  
- struct dpaa_if_rx_bmi_stats {
--	uint32_t fmbm_rstc;		/**< Rx Statistics Counters*/
- 	uint32_t fmbm_rfrc;		/**< Rx Frame Counter*/
- 	uint32_t fmbm_rfbc;		/**< Rx Bad Frames Counter*/
- 	uint32_t fmbm_rlfc;		/**< Rx Large Frames Counter*/
-@@ -245,6 +244,14 @@ struct dpaa_if_rx_bmi_stats {
- 	uint32_t fmbm_rbdc;		/**< Rx Buffers Deallocate Counter*/
- };
++	/** Release congestion Groups after releasing FQIDs*/
+ 	/* Release RX congestion Groups */
+ 	if (dpaa_intf->cgr_rx) {
+ 		for (loop = 0; loop < dpaa_intf->nb_rx_queues; loop++) {
++			ret = qman_find_fq_by_cgrid(dpaa_intf->cgr_rx[loop].cgrid, &fqid);
++			if (!ret) {
++				/** Should be FQ not cleaned in previous program.*/
++				DPAA_PMD_DEBUG("FQ(fqid=0x%x) with rx cgid=%d is still alive?",
++					fqid, dpaa_intf->cgr_rx[loop].cgrid);
++				ret = qman_shutdown_fq_by_fqid(fqid);
++				if (ret) {
++					DPAA_PMD_WARN("Failed(%d) to shutdown fq(fqid=0x%x)",
++						ret, fqid);
++				}
++			}
+ 			ret = qman_delete_cgr(&dpaa_intf->cgr_rx[loop]);
+ 			if (ret) {
+ 				DPAA_PMD_WARN("%s: delete rxq%d's cgr err(%d)",
+ 					dev->data->name, loop, ret);
+ 			}
+ 		}
++		qman_release_cgrid_range(dpaa_intf->cgr_rx[0].cgrid, dpaa_intf->nb_rx_queues);
+ 		rte_free(dpaa_intf->cgr_rx);
+ 		dpaa_intf->cgr_rx = NULL;
+ 	}
  
-+struct dpaa_if_tx_bmi_stats {
-+	uint32_t fmbm_tfrc;		/**< Tx Frame Counter*/
-+	uint32_t fmbm_tfdc;		/**< Tx Frames Discard Counter*/
-+	uint32_t fmbm_tfledc;	/**< Tx Frames Length Error Discard*/
-+	uint32_t fmbm_tfufdc;	/**< Tx Frames Unsupported Format*/
-+	uint32_t fmbm_tbdc;		/**< Tx Buffers Deallocate Counter */
-+};
-+
- int
- dpaa_tx_conf_queue_init(struct qman_fq *fq);
- 
+ 	/* Release TX congestion Groups */
+ 	if (dpaa_intf->cgr_tx) {
+-		for (loop = 0; loop < MAX_DPAA_CORES; loop++) {
++		for (loop = 0; loop < dpaa_intf->nb_tx_queues; loop++) {
++			ret = qman_find_fq_by_cgrid(dpaa_intf->cgr_tx[loop].cgrid, &fqid);
++			if (!ret) {
++				/** Should be FQ not cleaned in previous program.*/
++				DPAA_PMD_DEBUG("FQ(fqid=0x%x) with tx cgid=%d is still alive?",
++					fqid, dpaa_intf->cgr_tx[loop].cgrid);
++				ret = qman_shutdown_fq_by_fqid(fqid);
++				if (ret) {
++					DPAA_PMD_WARN("Failed(%d) to shutdown fq(fqid=0x%x)",
++						ret, fqid);
++				}
++			}
+ 			ret = qman_delete_cgr(&dpaa_intf->cgr_tx[loop]);
+ 			if (ret) {
+ 				DPAA_PMD_WARN("%s: delete txq%d's cgr err(%d)",
+ 					dev->data->name, loop, ret);
+ 			}
+ 		}
++		qman_release_cgrid_range(dpaa_intf->cgr_tx[0].cgrid, dpaa_intf->nb_tx_queues);
+ 		rte_free(dpaa_intf->cgr_tx);
+ 		dpaa_intf->cgr_tx = NULL;
+ 	}
 -- 
 2.25.1
 
