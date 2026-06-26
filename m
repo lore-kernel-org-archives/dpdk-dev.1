@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE76CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 07:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C92DCD4F26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 07:29:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ABC534067B;
-	Fri, 26 Jun 2026 09:28:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E55B40689;
+	Fri, 26 Jun 2026 09:28:54 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id CB701402E7
+ by mails.dpdk.org (Postfix) with ESMTP id E21FF40264
  for <dev@dpdk.org>; Fri, 26 Jun 2026 09:28:49 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 659B81A0A0D;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BB41F1A1B26;
  Fri, 26 Jun 2026 09:28:49 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 55BA61A20B3;
- Fri, 26 Jun 2026 08:57:07 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6AF931A20B6;
+ Fri, 26 Jun 2026 08:57:15 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 112AC180007B;
- Fri, 26 Jun 2026 14:57:05 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E2EE8180007B;
+ Fri, 26 Jun 2026 14:57:13 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v5 05/19] bus/dpaa: define helpers for qman channel and wq
-Date: Fri, 26 Jun 2026 12:26:41 +0530
-Message-Id: <20260626065655.279742-6-hemant.agrawal@nxp.com>
+Subject: [PATCH v5 11/19] net/dpaa: remove redundant FQ shutdown from Rx queue
+ setup
+Date: Fri, 26 Jun 2026 12:26:47 +0530
+Message-Id: <20260626065655.279742-12-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260626065655.279742-1-hemant.agrawal@nxp.com>
 References: <20260621172731.2916346-1-hemant.agrawal@nxp.com>
@@ -49,107 +49,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+Remove the redundant qman_shutdown_fq() call from
+dpaa_eth_rx_queue_setup(). The FQ is shut down during device stop,
+so calling it again at queue setup time is unnecessary and may
+interfere with a clean queue initialization.
 
-Add inline helper functions to extract channel and work queue
-from a frame queue descriptor, replacing open-coded bit
-manipulation throughout the driver.
-
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c | 14 ++------------
- drivers/bus/dpaa/base/qbman/qman.h | 23 ++++++++++++++++++++++-
- 2 files changed, 24 insertions(+), 13 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index 5534e1846c..c9a8ec34a5 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -2704,14 +2704,6 @@ int qman_delete_cgr(struct qman_cgr *cgr)
- 	return ret;
- }
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 45bf2b8e59..9beced37a0 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -1158,9 +1158,6 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	DPAA_PMD_INFO("Rx queue setup for queue index: %d fq_id (0x%x)",
+ 			queue_idx, rxq->fqid);
  
--#define GENMASK(h, l) \
--	(((~0U) >> (sizeof(unsigned int) * 8 - ((h) - (l) + 1))) << (l))
+-	/* Shutdown FQ before configure */
+-	qman_shutdown_fq(rxq->fqid);
 -
--/* 'fqid' is a 24-bit field in every h/w descriptor */
--#define QM_FQID_MASK    GENMASK(23, 0)
--#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
--#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
--
- static int
- _qm_mr_consume_and_match_verb(struct qm_portal *p, int v)
- {
-@@ -2798,7 +2790,6 @@ qman_shutdown_fq(u32 fqid)
- 	u32 res;
- 	u8 state;
- 	u32 channel, wq;
--	u16 dest_wq;
- 
- 	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
- 	p = get_affine_portal();
-@@ -2828,9 +2819,8 @@ qman_shutdown_fq(u32 fqid)
- 	}
- 
- 	/* Need to store these since the MCR gets reused */
--	dest_wq = be16_to_cpu(mcr->queryfq.fqd.dest_wq);
--	channel = dest_wq & 0x7;
--	wq = dest_wq >> 3;
-+	channel = qm_fqd_get_chan(&mcr->queryfq.fqd);
-+	wq = qm_fqd_get_wq(&mcr->queryfq.fqd);
- 
- 	switch (state) {
- 	case QM_MCR_NP_STATE_TEN_SCHED:
-diff --git a/drivers/bus/dpaa/base/qbman/qman.h b/drivers/bus/dpaa/base/qbman/qman.h
-index 43a16d1e3b..bd97689a91 100644
---- a/drivers/bus/dpaa/base/qbman/qman.h
-+++ b/drivers/bus/dpaa/base/qbman/qman.h
-@@ -1,12 +1,15 @@
- /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-  *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017 NXP
-+ * Copyright 2017,2026 NXP
-  *
-  */
- 
- #include "qman_priv.h"
- 
-+#define GENMASK(h, l) \
-+	(((~0U) >> (sizeof(u32) * 8 - ((h) - (l) + 1))) << (l))
-+
- /***************************/
- /* Portal register assists */
- /***************************/
-@@ -42,6 +45,14 @@
- #define QM_CL_RR0		0x3900
- #define QM_CL_RR1		0x3940
- 
-+#define QM_FQD_CHAN_OFF                3
-+#define QM_FQD_WQ_MASK         GENMASK(2, 0)
-+/* 'fqid' is a 24-bit field in every h/w descriptor */
-+#define QM_FQID_MASK    GENMASK(23, 0)
-+
-+#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
-+#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
-+
- /* BTW, the drivers (and h/w programming model) already obtain the required
-  * synchronisation for portal accesses via lwsync(), hwsync(), and
-  * data-dependencies. Use of barrier()s or other order-preserving primitives
-@@ -911,3 +922,13 @@ static inline void __qm_isr_write(struct qm_portal *portal, enum qm_isr_reg n,
- 	__qm_out(&portal->addr, QM_REG_ISR + (n << 2), val);
- #endif
- }
-+
-+static inline int qm_fqd_get_chan(const struct qm_fqd *fqd)
-+{
-+	return be16_to_cpu(fqd->dest_wq) >> QM_FQD_CHAN_OFF;
-+}
-+
-+static inline int qm_fqd_get_wq(const struct qm_fqd *fqd)
-+{
-+	return be16_to_cpu(fqd->dest_wq) & QM_FQD_WQ_MASK;
-+}
+ 	if (!fif->num_profiles) {
+ 		if (dpaa_intf->bp_info && dpaa_intf->bp_info->bp &&
+ 			dpaa_intf->bp_info->mp != mp) {
 -- 
 2.25.1
 
