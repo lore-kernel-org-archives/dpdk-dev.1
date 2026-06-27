@@ -2,48 +2,162 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC180C43211
-	for <dpdk-dev@archiver.kernel.org>; Sat, 27 Jun 2026 04:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B2EC43458
+	for <dpdk-dev@archiver.kernel.org>; Sat, 27 Jun 2026 16:24:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 18E71409FA;
-	Sat, 27 Jun 2026 06:16:57 +0200 (CEST)
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 07CDC40272
- for <dev@dpdk.org>; Sat, 27 Jun 2026 06:16:54 +0200 (CEST)
-Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowACX_uG0Tj9qwnyGFQ--.17759S2;
- Sat, 27 Jun 2026 12:16:53 +0800 (CST)
-From: liujie5@linkdatatechnology.com
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v10 23/23] net/sxe2: update sxe2 feature matrix docs
-Date: Sat, 27 Jun 2026 12:16:52 +0800
-Message-ID: <20260627041652.847113-1-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260626064954.361771-1-liujie5@linkdatatechnology.com>
-References: <20260626064954.361771-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 97406402D5;
+	Sat, 27 Jun 2026 18:24:32 +0200 (CEST)
+Received: from mx0a-007b0c01.pphosted.com (mx0a-007b0c01.pphosted.com
+ [205.220.165.71])
+ by mails.dpdk.org (Postfix) with ESMTP id 1857C40144;
+ Sat, 27 Jun 2026 18:24:30 +0200 (CEST)
+Received: from pps.filterd (m0316041.ppops.net [127.0.0.1])
+ by mx0a-007b0c01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 65RDYnJp1504739; Sat, 27 Jun 2026 11:24:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wisc.edu; h=cc
+ :content-type:date:from:in-reply-to:message-id:mime-version
+ :references:subject:to; s=pps1; bh=WuGOJVjBULPynv7QrvBha6OBSy/Dj
+ m92G2TAyQNiuXo=; b=onFQWSN80lfyto9wqz86B8h0GHTjOS5f4rEheywiBc5Ww
+ gObQkP3KWLSyiq4vxlKXgYwatMQF2OHUCKNSlNoKNBIXOsX/9ZBcrzcZnCJJ7VmU
+ xAVnOOcSVEHrFj2iVSqm1KuxVODfdmE8uZyIxVE9UefoVI0GyOzbuQq9NPTmStdo
+ +r9xIBSrD6+jWNRrZHRFIiJvXoAEANaZfYSRFJqE1l3R8R/sVWlYFLzGrFQPFBvD
+ J7Ks8mrAOwZyrYqwz4cJcP+Tnx9y/USE5gZ1out5K4ghQP8ltHjT+DeG/uUqSY6g
+ yU+53VzUINNsbejmWqIWQXnGXEi76o+0LQ+ydiWLw==
+Received: from ch4pr04cu002.outbound.protection.outlook.com
+ (mail-northcentralusazon11013036.outbound.protection.outlook.com
+ [40.107.201.36])
+ by mx0a-007b0c01.pphosted.com (PPS) with ESMTPS id 4f26h7ak1r-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+ Sat, 27 Jun 2026 11:24:29 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B7HFicwa+QqWlU+WT+3hh9UzuXnfM6wIi7MUhEP285RyedN7jEisIZ8mNrJ/Syx2CMpLkfWHlMKSGCizRNS6abXzFGJA0RCorLDYvgFOo44FFlj/0Rx2qGbl3CDidY0qNIaFl+qPu7+ipDG4Hcmg9srsjIl+dnDb5/gXq1OsGCmuGwS+jfQ/gLJ83pcOys8u01DC8sQ5elyt8bntkZD7J9iPiO0Ha27VhXPmeI3vYIqTD4bZEoJLzXpO1MHSl2NwVDsua3uBK5ptSftf98JmgbbwcvPMoIbdErEt43OrYsXcx2ETdwUqJ0xxsYhGz8w4pnyFu6BUbWzOcds03Dof9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WuGOJVjBULPynv7QrvBha6OBSy/Djm92G2TAyQNiuXo=;
+ b=jp93TT1fi6pDolE7SQ/lzNLtxYeRkv3y5ENzu7FydLVxZ0tb04JNVchkjP1hj3KTVK8c4PR0b/GNRywXpGEZ9hytRESHkWzFqvLYpPyndPxEe7KI7ohR0oe31L3undIHJS6M/L6Cb7IMInrdBg0VbtBi7Al4S7+hJ2bALkphCJQaAgfqoCzFDCTq8TfmNTumR7VXCYvaTtRqsH1B3BFAq1qQyl+NWr2e9mvYbmKDC4VS1MJW8JplW+w6i/S83xGsmG+ZEqf6skZnWK+OxHA338VYYiAxsYm7FweHxCjV1ct9S3BUrYx9ewBJjwoE0nL50FvV2t35+2JsUxg/PFK9Zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wisc.edu; dmarc=pass action=none header.from=wisc.edu;
+ dkim=pass header.d=wisc.edu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wisc.edu; s=selector2; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WuGOJVjBULPynv7QrvBha6OBSy/Djm92G2TAyQNiuXo=;
+ b=kxbhBIGxsnZMjNrCG3LLZ06EP2+b9GAgphw8HH9OsSq1Sd40fd+eXvvi42+juAUa0/rQi7r3DBs9qkP7QPr8WbUNb88WqQs6uuKSrV/ZoJVHBaCE8BOD/v/5TWefuPVIb4EuSsOsUcSgZCSMoSicS98CegAwCQCPbzsAkfhf0DgyCBlUJNXErM+GrA2uEtb5SgXQ1pRYsyvBTx8vadDhYOoyFKazeMNq3puo9rFTPmDTz5Me3ndaPDUwIoqBggw78Zki/fKocroCcJHtSXok7SHk4Bb6ZWxKQ6/GVg9qYNUnBP+sOuZ8Bax7G18m2WzrV7BHwkUql/QlW52w5msSQw==
+Received: from SJ0PR06MB7520.namprd06.prod.outlook.com (2603:10b6:a03:322::10)
+ by SN7PR06MB7167.namprd06.prod.outlook.com (2603:10b6:806:10f::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.18; Sat, 27 Jun
+ 2026 16:24:25 +0000
+Received: from SJ0PR06MB7520.namprd06.prod.outlook.com
+ ([fe80::7939:c6c2:1587:2e54]) by SJ0PR06MB7520.namprd06.prod.outlook.com
+ ([fe80::7939:c6c2:1587:2e54%4]) with mapi id 15.21.0159.018; Sat, 27 Jun 2026
+ 16:24:25 +0000
+From: Weijun Pan <wpan36@wisc.edu>
+To: Thomas Monjalon <thomas@monjalon.net>, Hemant Agrawal
+ <hemant.agrawal@nxp.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Sachin Saxena <sachin.saxena@nxp.com>, Jun
+ Yang <jun.yang@nxp.com>, "stable@dpdk.org" <stable@dpdk.org>, Stephen
+ Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH] bus/fslmc: fix shadowed variables in queue storage macros
+Thread-Topic: [PATCH] bus/fslmc: fix shadowed variables in queue storage macros
+Thread-Index: AQHcxFc646lmTXcaqU+Ob27NXLcLZbXTp7WAgGSW5ICAGtthTw==
+Date: Sat, 27 Jun 2026 16:24:25 +0000
+Message-ID: <SJ0PR06MB7520F391592C5D90C5DDA5FCA3EA2@SJ0PR06MB7520.namprd06.prod.outlook.com>
+References: <20260404171912.48947-1-wpan36@wisc.edu>
+ <20260407070940.225de771@phoenix.local> <2S2V_VmSTBa7oGRJ0YAQqg@monjalon.net>
+In-Reply-To: <2S2V_VmSTBa7oGRJ0YAQqg@monjalon.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR06MB7520:EE_|SN7PR06MB7167:EE_
+x-ms-office365-filtering-correlation-id: 7c039d20-0d93-4cc5-95cb-08ded4688de4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|23010399003|786006|41320700013|366016|1800799024|38070700021|6133799003|56012099006|4143699003|22082099003|18002099003|8096899003;
+x-microsoft-antispam-message-info: i8R5vJu+VwyTUaiiSiyxo6KFQlHRzJ28eNFhmgD4Sxr3ijieeAdZAXlixvj/bnuK24kButyVeRiN0JgJk7D0r2OP4rg9EAP1Ucas9lGkMCOZ0GPt4AAyGKYYN6DWUwB1FeTJYZjFJlrto/DRa3LF0oPthKGRHeu21gyXm6gY/qbHor3/woKdkfsQBPsEzQJtNgcpXdO2tPuge/qsy9WHdQcEFJl24Xy/W+3LfNuTth7qzOgBZVTDYyz8h9zJEEySSusuqJfITdS0bbZpSlzk8Y/fiMhpq4XecHf1ZJAsn3Q/nTFzmNZnbaLZogZfDxoOa1W63oLmA/6apCMh+3tplmqYpWiIqKaqZKSZ1xsSkd9v7yK29dASp8Jqp6UiEepSVnFo0GvI8DBaD2TkMTUhUAKDNwU/P65pYpcGERwoN9JjyqveIPlvVgChOF4kbqT8n1h5DmT7j5HL7pNddHi4S5HICFpRQjtjDHez32+FMwRrUIT2dn5HZ7XRu0HbVBu0L6wAYbcIu50WffiF6UJaP5R2+OpsRY6tMmzLHgwEUmTnsCZzt9bN0EM6UOSna+K+hVITon7deazTZEYxQXXjV7gCT+RMO85wBo5H5Sb6I9TcAAYaY2qmwQbgobjgkLgBudXrmF9z/WVUkMT2e+u0qXe/TpfUTmzRNX1qcYeG+46t/XQu2W/LcnOA2EXt1VQ3gEMHNaywwl2PzLOIrEsn8Q==
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SJ0PR06MB7520.namprd06.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(786006)(41320700013)(366016)(1800799024)(38070700021)(6133799003)(56012099006)(4143699003)(22082099003)(18002099003)(8096899003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?fCkenN97x5X+IeUWst6/1yxknFi43OHc77XeLL9Su79VgA5c3dSXnwJcflk5?=
+ =?us-ascii?Q?ys7ZMHaQyqoITpl8vNfDy/rEVVksOxkuMFyy4EBGhtL4QGuCcC9TpO/IFzwZ?=
+ =?us-ascii?Q?8k1LiqnmxmbqdHKP3fdYGWT4PiHJwVcWxbinGU9uGSEDpHJ2pOfSkRa86slV?=
+ =?us-ascii?Q?KcJxsZOJQxeLnYpfA48xxFa2aAfPOszZLz+fUYgsvKWSqrGOGRJHMw/Fx7p9?=
+ =?us-ascii?Q?qYuJWp1x2ZL5brZhk7NHj6n7G9bJQYeo5Q48BrL4p0yLgBwnXk8SXlf/zuvK?=
+ =?us-ascii?Q?+jJqT1Bx4AV5IP1SiNlDYy16BCXX9g52NxLaOjJ2DdxjLPnGWNCv+X9nmr+B?=
+ =?us-ascii?Q?iej96LREaYxlZR/T2x/fpIAQT7NdLmd3ruEloN0JGsrwJP1y0Rgw/ns+N0DX?=
+ =?us-ascii?Q?XVPaHvrRxOlNw2O1t8lbLe0Tkh6sk4f8OL+m35WaR8XovhwcK3ReUHKlzmiQ?=
+ =?us-ascii?Q?zHDOTdcByGyVQWKgGV0mh2Bar/Y0uItOIF1FbmPwdtQJzl0ZptLS7VbF5sp7?=
+ =?us-ascii?Q?6cleR5NNqs0sFAAWvPVchOvY9gWpPlYtsULQTGIXp283uvu5lcHucxHYdTPR?=
+ =?us-ascii?Q?+a/fPaVgnAtrUNIKUTMrrI1lpK5oGy5uFrc7+MsFKzOGw+iWTQ0geWdB7/WF?=
+ =?us-ascii?Q?pazF4p3USp+Z4543Q0mAAHIz5ZAb5vr559iMC+HY37KJ/XHAbynmM2WSojSs?=
+ =?us-ascii?Q?25cVVmR/jCzGLBkVU6J4etx0uUqA6qzaD4mvd5fy7kzlbZR6InITbdBF5bLU?=
+ =?us-ascii?Q?ePxnimw33WtC8hMHlC585IvH3FoJFPijJi4no99PBVRtjrgRkpo9pwNWR3F8?=
+ =?us-ascii?Q?eARAzFgV3twJUet4WAdStHnKbFJ92g0orHynjjGymdustoJv1CClZMBsuh4K?=
+ =?us-ascii?Q?90zxtFWPrqnolwt5ngwjw8OuMCoGBMt27A5/rPHBz8313/6+WrS5EVjx+jUV?=
+ =?us-ascii?Q?C5+WUMwsGCJOa8NOBVelJEEvKQwH6Sxl7p7bBS97t7i1o3r7d1DffZWVIjKj?=
+ =?us-ascii?Q?JqDVSwUVGDVaKX9FoZzeFiQ8xkKPwaEVs7nUYIFepb6Gd1OUGdRopWulMkPL?=
+ =?us-ascii?Q?KZgWCZ2EmhHuCjOkooMcGwkpra+TaQHA3MdJ5TNhHnFtC0PQL/AVjc8wqwQ+?=
+ =?us-ascii?Q?Tzc7n4Fk6Esl8pYS4cvg2pisdiMPhzjm1g2BhlMOdsd/GNYFejGlrPCNVaga?=
+ =?us-ascii?Q?Nu1TyoXdsjsdqg2s997xPV9XhO/oZiECa1W/hXciXlWMwNGKKbHyRGd3XjsQ?=
+ =?us-ascii?Q?9GUi77dd64AlOQ/Jpc3a0gj9IF+VaTA3LdCYsDwvPLum1MDG2J73ZpB/0E+n?=
+ =?us-ascii?Q?7B6sxRQtg9qt+TBO6affhJICez+rvCWebhuW31iGC4Wc3x1iWJEDYzPhN8Ur?=
+ =?us-ascii?Q?bUDTQxqJ32Y/1JAM1E7nTHhr5Z8t7ytHKYzQ1rK1fj+nDXei6J4y+SKhn/ZF?=
+ =?us-ascii?Q?8dncHZ935U0337T5Z7XX4ahoWhchTZ7ev/cEfJwm+CKLVAW3oCvbvGfcF5OW?=
+ =?us-ascii?Q?7cvX3oFC0clmw7Ue2f8pmIEaFCB5tOtr6Hf3KB15EdPFtovjt7sWQJqZC0Ki?=
+ =?us-ascii?Q?VEElkk7izZfdkfrwI/WBT7ABfcnmuUcHDxIodb+UY4xmr7o0JrZxHIN8Quif?=
+ =?us-ascii?Q?wbhyv0kKt68A24X1NNk6Pv8RaCZnD1nvdjlsaX1eDKLENwryVCVqvwcPz3s3?=
+ =?us-ascii?Q?EnuBY/jMGIu4l2l8SzVlj+zFX1I=3D?=
+Content-Type: multipart/alternative;
+ boundary="_000_SJ0PR06MB7520F391592C5D90C5DDA5FCA3EA2SJ0PR06MB7520namp_"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowACX_uG0Tj9qwnyGFQ--.17759S2
-X-Coremail-Antispam: 1UD129KBjvJXoWfJw4rArWDCrW5Jr4kWF4Durg_yoWDtrykpa
- y8Z3yFyaykJr1Yy3srAw48Wrn5Zanay3sxCryDG342van8GryFvrW7Ka4rKFZrCry5A34Y
- vr1jvry7ua1DZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
- 6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
- 0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
- 6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
- 0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC
- 0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
- 1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij
- 64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr
- 0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
- 42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8KsjUUUUU
-X-Originating-IP: [118.112.177.181]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
+X-Exchange-RoutingPolicyChecked: PV3ZR1go97TGiLjsWmquVptYvzhILDuQhXsOSPK2T3WK33+hntNVmEBW9sAyjriQAB0XiWILmMLJE9w+SzymaGjt5SVZ88XxEAjpdRLl4tCWbZn1vfd7h2R6JuzEBHAber3LyleKllVEIFIlxYuUFCH0pu50mbLj5prMPTdq4q5kz2sf0BGmFKrJCWyEfgw/x4xVAkoU4OKeHopZNNSGtsDH3dbPKbUtyCbjY0GZ+y9Di37Xjv0n4XlwalqdwcX299RyuH/YL69Ar7Y5ivNSk4Yl9wtv0xspLKjqX1GrjQjwj6rNLyKyZ0DNUxzKfxxhOOn8qPduwrIPPr47JA+N7w==
+X-OriginatorOrg: wisc.edu
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR06MB7520.namprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c039d20-0d93-4cc5-95cb-08ded4688de4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2026 16:24:25.4831 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 2ca68321-0eda-4908-88b2-424a8cb4b0f9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uz+sniFlaghfK8GBemXbJ0g8pfixR9vr5mdJUJZnMJX5bSc5L4AoPAqVSA7O+RhH
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR06MB7167
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI3MDE0MyBTYWx0ZWRfX6RAYm1RHEKrp
+ lneLy2HLzX/oHNAo+vAVbRwZ6/cuWRrYx8uZLuN6xHdOxgcrFQCefZR67RZvQsvtAZI8lNWQkPt
+ HqMobAZMWrXoz2WVFSs/0eC2t8PKp5d9AvYQTESDkCf4pF/mWMkf9ltkp9YPDl74ZGl0ZTi46d2
+ jQ0eN3GfInkjPTAtR7/MXvoaN2bsEJpT4djOg766hnlZtWSS9rVhYxyJ2XqNJ8VZa57yTTtGToE
+ gOICYF5WCnR5AsJEhRM2RQV+dNKtVVAdA7/F1mzxJ2/DUGCa1AvqgHbphG4uoz8Q8VNgywR/Rbb
+ MuDylJ5SOk0ugkPkC07htigNM4xetUFuubP8LiRWvKKejhlhXZepbVZF0EhX/z8M3GNjKho/Y90
+ TLKrhAf/AMxXGSzj83J5ZXx6l7oY98N2AoVMl+EmXHahwDoAnFrmxG8Qiw50T2s+re1laIBD96M
+ dWxkbghbtHRiSILsgdg==
+X-Proofpoint-ORIG-GUID: aE8RHz3apo-IPCE_arOIsKvoAcL1gF4r
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI3MDE0MyBTYWx0ZWRfX9618iR3b15cR
+ 3fIttqW+7QgtynyzrhcLBGla9d9RWyYRcOzj9VyqVz1pozFvEpzpBcnMbLT3QcEtCNVK+HvENXN
+ ptHcOpIqMirahUzcO7yeFC9kuNTa9HI=
+X-Authority-Analysis: v=2.4 cv=HbokiCE8 c=1 sm=1 tr=0 ts=6a3ff93d cx=c_pps
+ a=0RQO2klDQ5fyV1VIsLBujQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=FelO9ux0wxsA:10
+ a=x7bEGLp0ZPQA:10 a=U-hppK1rdbEA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=ZyELlZqCvD1aXIDzc3I-:22 a=V1W4X-Ggv1dYrz-VoV9h:22 a=bt5KbKNvAAAA:8
+ a=pGLkceISAAAA:8 a=8AirrxEcAAAA:8 a=8rWy6zfcAAAA:8 a=jZVsG21pAAAA:8
+ a=-sF5885x1Q3Y4D_gKFoA:9 a=CjuIK1q_8ugA:10 a=BahOTcCT51kjrIqT:21
+ a=frz4AuCg-hUA:10 a=_W_S_7VecoQA:10 a=a-zEBD5cKgE7DNtTSb7C:22
+ a=ST-jHhOKWsTCqRlWije3:22 a=YjdVzJdQTyZRADMV7wFX:22 a=3Sh2lD0sZASs_lUdrUhf:22
+X-Proofpoint-GUID: aE8RHz3apo-IPCE_arOIsKvoAcL1gF4r
+X-Wisc_ValidFrom: true
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-27_02,2026-06-26_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
+ phishscore=0 clxscore=1011 priorityscore=1501 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606270143
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,289 +171,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jie Liu <liujie5@linkdatatechnology.com>
+--_000_SJ0PR06MB7520F391592C5D90C5DDA5FCA3EA2SJ0PR06MB7520namp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-Update the sxe2.ini feature sheet to accurately reflect the recently
-implemented hardware capabilities in the sxe2 PMD.
+Thanks for the feedback.
+I will prepare a v2 for this patch. For the queue storage helpers, I will r=
+eplace the macros with static inline functions, based on Stephen's suggesti=
+on.
+Thanks,
+Weijun
 
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
----
- doc/guides/nics/features/sxe2.ini |  56 +++++++++
- doc/guides/nics/sxe2.rst          | 186 ++++++++++++++++++++++++++++++
- 2 files changed, 242 insertions(+)
+________________________________
+From: Thomas Monjalon <thomas@monjalon.net>
+Sent: Wednesday, June 10, 2026 9:15 AM
+To: Weijun Pan <wpan3636@gmail.com>; Hemant Agrawal <hemant.agrawal@nxp.com=
+>; Weijun Pan <wpan36@wisc.edu>
+Cc: dev@dpdk.org <dev@dpdk.org>; Sachin Saxena <sachin.saxena@nxp.com>; Jun=
+ Yang <jun.yang@nxp.com>; stable@dpdk.org <stable@dpdk.org>; Stephen Hemmin=
+ger <stephen@networkplumber.org>
+Subject: Re: [PATCH] bus/fslmc: fix shadowed variables in queue storage mac=
+ros
 
-diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
-index 09ba2f558c..3c1e6a8a39 100644
---- a/doc/guides/nics/features/sxe2.ini
-+++ b/doc/guides/nics/features/sxe2.ini
-@@ -7,17 +7,73 @@
- ; is selected.
- ;
- [Features]
-+Speed capabilities   = Y
-+Link status          = Y
-+Link status event    = Y
-+Rx interrupt         = Y
- Fast mbuf free       = P
- Free Tx mbuf on demand = Y
- Burst mode info      = Y
- Queue start/stop     = Y
-+Power mgmt address monitor = Y
- Buffer split on Rx   = P
- Scattered Rx         = Y
-+Traffic manager      = Y
- CRC offload          = Y
-+VLAN offload         = Y
-+QinQ offload         = P
- L3 checksum offload  = Y
- L4 checksum offload  = Y
-+Timestamp offload    = P
-+Inner L3 checksum    = P
-+Inner L4 checksum    = P
- Rx descriptor status = Y
- Tx descriptor status = Y
-+MTU update           = Y
-+TSO                  = P
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+Inline crypto        = Y
-+Packet type parsing  = Y
-+Timesync             = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+FW version           = Y
-+Module EEPROM dump   = Y
-+Multiprocess aware   = Y
- Linux                = Y
- x86-32               = Y
- x86-64               = Y
-+
-+[rte_flow items]
-+eth                  = P
-+geneve               = Y
-+gre                  = Y
-+gtpu                 = Y
-+ipv4                 = Y
-+ipv6                 = Y
-+ipv6_frag_ext        = Y
-+nvgre                = Y
-+sctp                 = Y
-+tcp                  = Y
-+udp                  = Y
-+vlan                 = P
-+vxlan                = Y
-+vxlan_gpe            = Y
-+
-+[rte_flow actions]
-+count                = Y
-+drop                 = Y
-+mark                 = Y
-+passthru             = Y
-+port_representor     = Y
-+queue                = Y
-+represented_port     = Y
-+rss                  = Y
-+send_to_kernel       = Y
-+port_id              = Y
-diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
-index 539072b076..270556037b 100644
---- a/doc/guides/nics/sxe2.rst
-+++ b/doc/guides/nics/sxe2.rst
-@@ -35,3 +35,189 @@ preventing unauthorized access to random physical memory.
- This capability allows the PMD to coexist with kernel network interfaces
- which remain functional, although they stop receiving unicast packets
- as long as they share the same MAC address.
-+
-+Configuration
-+-------------
-+
-+Runtime Configuration
-+~~~~~~~~~~~~~~~~~~~~~
-+
-+- ``Traffic Management Scheduling Levels``
-+
-+  The DPDK Traffic Management (rte_tm) APIs can be used to configure the Tx scheduler on the NIC.
-+  The ``sched-layer-mode`` parameter can be used to set the number of scheduling levels
-+  in the transmit scheduling hierarchy.
-+  The provided value must be between 0 and 3.
-+  If the value provided is greater than the number of levels supported by the HW,
-+  the driver will use the hardware maximum value.
-+
-+- ``flow-duplicate-pattern`` parameter [int]
-+
-+  This parameter controls whether duplicate flow rules (rules with the same pattern items)
-+  are allowed on the switch engine flow type.
-+  Value ``0`` rejects duplicates; values ``1`` and ``2`` allow duplicates
-+  but differ in which rule takes effect when multiple identical rules exist.
-+
-+  There are three options to choose:
-+
-+  - 0. Prevent insertion of rules with the same pattern items.
-+    In this case, only the first rule is inserted and the following
-+    rules are rejected and error code EEXIST is returned.
-+
-+  - 1. Allow insertion of rules with the same pattern items.
-+    In this case, all rules are inserted but only the first rule
-+    takes effect, the next rule takes effect only if the previous
-+    rules are deleted.
-+
-+  - 2. Allow insertion of rules with the same pattern items.
-+    In this case, all rules are inserted but only the last rule
-+    takes effect, the previous rule takes effect only if the last
-+    rule is deleted.
-+
-+  This option only applies to the switch engine flow type.
-+  For the Fnav flow engine type, duplicate rules are always rejected.
-+
-+  When multiple PFs and VFs are bound to the driver, the same-priority
-+  pattern can be applied to different ports (PF or VF).
-+  This parameter controls whether duplicate rules across ports are
-+  allowed and which rule takes effect when multiple identical rules
-+  exist.
-+
-+  When only a single PF or VF is present (one port), sending an
-+  identical pattern on the same port always returns error code EEXIST,
-+  regardless of the parameter value.
-+
-+  By default, the PMD will set this value to 1 (allow duplicates,
-+  first-added takes effect).
-+
-+- ``fnav-stat-type`` parameter [int]
-+
-+  This parameter controls the Fnav flow engine statistics type used
-+  for flow rule hit counting (via ``rte_flow_query``).
-+
-+  - 1: Only count the number of packets.
-+  - 2: Only count the number of bytes.
-+  - 3: Count both packets and bytes (default).
-+
-+  Default value is 3 (count both packets and bytes).
-+
-+- ``drv-sw-stats`` parameter [int]
-+
-+  This parameter controls whether per-packet software statistics
-+  (SW stats) are collected in the Rx data path.
-+
-+  Hardware packet statistic counters may be inaccurate for certain
-+  packet types due to hardware design limitations.
-+  When accuracy of Rx packet classification statistics is critical,
-+  enabling this parameter allows the driver to accumulate statistics
-+  in software as packets are received, providing an alternative
-+  statistical path that bypasses hardware counter inaccuracies.
-+
-+  - 0: Disable software statistics collection (default).
-+    The basic port statistics (``ipackets``, ``ibytes``) are reported
-+    from the hardware counters.
-+  - 1: Enable software statistics collection.
-+    Per-packet software statistics are accumulated for unicast,
-+    multicast, broadcast, and dropped packets in the Rx data path.
-+
-+  When enabled, the following extended statistics (xstats) are available:
-+  ``rx_sw_unicast_packets``, ``rx_sw_multicast_packets``,
-+  ``rx_sw_broadcast_packets``, ``rx_sw_drop_packets``,
-+  and ``rx_sw_drop_bytes``.
-+
-+- ``no-sched-mode`` parameter [int]
-+
-+  This parameter enables non-scheduling mode (no-sched mode).
-+  When enabled, the transmit path bypasses the hardware scheduling module
-+  and packets are sent directly out through the port.
-+  This results in lower transmit latency and higher throughput,
-+  but Traffic Management (rte_tm) APIs are not supported in this mode.
-+
-+  - 0: Disable non-scheduling mode (default).
-+    The transmit path goes through the hardware scheduling hierarchy.
-+    Traffic Management (rte_tm) APIs can be used to configure the Tx scheduler.
-+  - 1: Enable non-scheduling mode.
-+    The transmit path bypasses the hardware scheduling module.
-+    Packets are sent directly from the port at full speed without scheduling.
-+    Traffic Management (rte_tm) APIs are not available in this mode.
-+
-+- ``rx-low-latency`` parameter [int]
-+
-+  This parameter controls the interrupt throttling (ITR) interval
-+  for Rx queue interrupts.
-+
-+  When enabled, the driver sets a shorter interrupt coalescing timeout
-+  (``SXE2_ITR_INTERVAL_LOW``, approximately 1 μs),
-+  reducing the time between packet arrival and interrupt delivery to the CPU.
-+  This lowers receive latency at the cost of increased CPU interrupt rate.
-+
-+  When disabled (default), the driver uses the normal interrupt throttling
-+  interval (``SXE2_ITR_INTERVAL_NORMAL``, approximately 20 μs),
-+  which reduces the CPU interrupt rate at the expense of higher receive latency.
-+
-+  - 0: Disable Rx low latency (default).
-+    Normal interrupt throttling interval (~20 μs) is used.
-+  - 1: Enable Rx low latency.
-+    Low interrupt throttling interval (~1 μs) is used
-+    for reduced receive latency.
-+
-+- ``function-flow-direct`` parameter [int]
-+
-+  This parameter controls whether flow rules from different functional units
-+  (DPDK vs kernel driver) are isolated or combined when both drivers
-+  control the same physical port.
-+
-+  When the DPDK PMD and the kernel network driver coexist on the same port,
-+  flow rules may originate from either driver.
-+  This parameter determines how the source VSI (Virtual Switch Interface)
-+  of each flow rule is handled during hardware programming.
-+
-+  - 0 (default): Isolate flow rules between DPDK and kernel.
-+    When ``flow_isolated`` is enabled (``rte_flow_isolate()`` called),
-+    kernel-side flow rules take priority and DPDK-side flow rules are suppressed.
-+    When ``flow_isolated`` is disabled, DPDK-side flow rules take priority
-+    and kernel-side flow rules are suppressed.
-+    Only one functional unit's flows are active at a time.
-+
-+  - 1: Allow direct flow rules from both DPDK and kernel simultaneously.
-+    Both DPDK and kernel source VSIs are preserved in the hardware flow table.
-+    Flow rules from both sides are programmed without isolation.
-+
-+  This option only applies to FNAV and ACL flow engine types
-+  and does not apply to PF bond devices.
-+
-+Extended Statistics (xstats)
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The PMD provides the following extended statistics (xstats) for detailed
-+monitoring of receive-side packet classification and software-level accounting.
-+The software statistics path is provided as a workaround for hardware
-+counter inaccuracies on certain packet types --- it accumulates per-packet
-+statistics directly in the Rx data path, ensuring that unicast, multicast,
-+broadcast, and drop counts reflect the actual packets processed by the driver.
-+
-+Receive Software Statistics
-+  These counters are collected in the Rx data path when ``drv-sw-stats=1``
-+  is configured (see the ``drv-sw-stats`` devarg above).
-+  When ``drv-sw-stats`` is disabled (default), these xstats report zero.
-+
-+  - ``rx_sw_unicast_packets``: Number of unicast packets received.
-+  - ``rx_sw_multicast_packets``: Number of multicast packets received.
-+  - ``rx_sw_broadcast_packets``: Number of broadcast packets received.
-+  - ``rx_sw_drop_packets``: Number of packets dropped in the Rx data path.
-+  - ``rx_sw_drop_bytes``: Number of bytes dropped in the Rx data path.
-+
-+  When ``drv-sw-stats`` is enabled, the basic counters ``ipackets`` and
-+  ``ibytes`` (from ``rte_eth_stats``) also reflect the software-accumulated
-+  packet and byte counts. Otherwise, they are reported from hardware counters.
-+
-+Fnav Flow Engine Statistics
-+  The Fnav flow engine statistics type is controlled by the ``fnav-stat-type``
-+  devarg (see above). Depending on the configuration:
-+
-+  - ``fnav-stat-type=1``: Only packet count is available.
-+  - ``fnav-stat-type=2``: Only byte count is available.
-+  - ``fnav-stat-type=3`` (default): Both packet and byte counts are available.
-+
-+  Flow query results (via ``rte_flow_query``) expose these per-flow counters
-+  through the query API, not via xstats.
--- 
-2.52.0
+07/04/2026 16:09, Stephen Hemminger:
+> Why are these not inline functions.
+> Macros with lower case names are likely place fore confusion like this?
 
+Hemant, Sachin, Weijun, please could you consider this comment?
+
+
+
+--_000_SJ0PR06MB7520F391592C5D90C5DDA5FCA3EA2SJ0PR06MB7520namp_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
+ font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helv=
+etica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Thanks for the feedback.</div>
+<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
+ font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helv=
+etica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+I will prepare a v2 for this patch. For the queue storage helpers, I will r=
+eplace the macros with static inline functions, based on Stephen's suggesti=
+on.</div>
+<div class=3D"elementToProof" style=3D"margin-top: 1em; margin-bottom: 1em;=
+ font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helv=
+etica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Thanks,<br>
+Weijun</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Thomas Monjalon &lt;t=
+homas@monjalon.net&gt;<br>
+<b>Sent:</b> Wednesday, June 10, 2026 9:15 AM<br>
+<b>To:</b> Weijun Pan &lt;wpan3636@gmail.com&gt;; Hemant Agrawal &lt;hemant=
+.agrawal@nxp.com&gt;; Weijun Pan &lt;wpan36@wisc.edu&gt;<br>
+<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; Sachin Saxena &lt;sachin.saxe=
+na@nxp.com&gt;; Jun Yang &lt;jun.yang@nxp.com&gt;; stable@dpdk.org &lt;stab=
+le@dpdk.org&gt;; Stephen Hemminger &lt;stephen@networkplumber.org&gt;<br>
+<b>Subject:</b> Re: [PATCH] bus/fslmc: fix shadowed variables in queue stor=
+age macros</font>
+<div>&nbsp;</div>
+</div>
+<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
+">
+<div class=3D"PlainText">07/04/2026 16:09, Stephen Hemminger:<br>
+&gt; Why are these not inline functions.<br>
+&gt; Macros with lower case names are likely place fore confusion like this=
+?<br>
+<br>
+Hemant, Sachin, Weijun, please could you consider this comment?<br>
+<br>
+<br>
+</div>
+</span></font></div>
+</body>
+</html>
+
+--_000_SJ0PR06MB7520F391592C5D90C5DDA5FCA3EA2SJ0PR06MB7520namp_--
