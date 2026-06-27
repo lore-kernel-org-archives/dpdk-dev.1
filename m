@@ -2,93 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FA5C43458
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Jun 2026 18:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CAAC43458
+	for <dpdk-dev@archiver.kernel.org>; Sat, 27 Jun 2026 00:01:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90C43402D1;
-	Fri, 26 Jun 2026 20:47:04 +0200 (CEST)
-Received: from mail-oo1-f67.google.com (mail-oo1-f67.google.com
- [209.85.161.67]) by mails.dpdk.org (Postfix) with ESMTP id 07BAB4026D
- for <dev@dpdk.org>; Fri, 26 Jun 2026 20:47:03 +0200 (CEST)
-Received: by mail-oo1-f67.google.com with SMTP id
- 006d021491bc7-6a0eb989530so545222eaf.0
- for <dev@dpdk.org>; Fri, 26 Jun 2026 11:47:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782499622; cv=none;
- d=google.com; s=arc-20260327;
- b=MKdNUVtRleLfzQesgkBw8b0Pr1pgCd8VLXKFu/EiItpjbI05buhW/QDYkITVcmiB7W
- RgMLHBrGbUjCRetGunUxuFeqXrgHjibQnQQjNtlCGbdVHVhI4cSBHkdj7+416tUkRBlE
- izDMzdBJbilP5Chz3GNy0oq/hTb9ft7aqLqcYD/dotQNkqvHOSCSJTCIQharZaA7LR2X
- EtUBmJnTJYQjcEgrdcchBf+A+8CEkXb9o/7t84/60dcNA3+cxKSisAqMT1q/6BLvMEwh
- SZlmCaTlN/ZIEtgIPNUQ6dvlyGkHuthg3QpBY5TC7kHf8PdSfBL5n7Rq8N5YgdR+oIZ7
- 0w0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=sAqxdpqZcwGVb/lNstMVlhv37SIugyXSX8LwDrXy/BU=;
- fh=1sy3FI9FHZuYJIwl4q0afklsASxZZjqGoM2+TS8GYjE=;
- b=ENvYMFd/0tkxIHbPQp6sdMIWHTMg+wTBaWPzony9SHJ3Wrey5V5Ogy1kqtEpWAW5rp
- nrtb/PP6OwaC1zTarpBbnXBsVI7Io5YkKUuJyIMvwW5Yercrp4AAgm3cagpx0XIph+De
- GaUJc0qSLjUiMhTPwhEDcw+s6aL2Djcf/XFVUhyp5525mzbBuESqLFdJQLXA04DGhAM8
- QZeyi57rz86ULU7TNGmBSiZLhsBOLSigSgvcu9/4nfZdocMcadWkxhLup/VrakkG5hMF
- tEXjr2DAulmNDc8++k8OsKvG67bJTGFmXXbH3uLPwgvE/ciOS0NKA9GATaAoB17mUys8
- Jdsw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782499622; x=1783104422; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=sAqxdpqZcwGVb/lNstMVlhv37SIugyXSX8LwDrXy/BU=;
- b=EOQ/DIJt58xsXMnhGS7zmd/NG5aHl6TNig6SCV52i7hHgMenZh6RXFkhg/lnkYsdKx
- cxTlJYQEMdIy44GOeTFcuDsl15Gr7+y876i/VQlhzElggvjcJ+Aoq6xxOAJUWAAQGxNO
- /orkjDl7hJ8knBb/vcjj8Wp9c64RVOik2D4yGZlCS/ngwDzMoNY4fZJ2Gp16Ko02i5cc
- saO1kzslLu6BxuzAgfrhqpUan80unm9MNUwF42SFKN9WnA2Zwxo4rWBrxWHawo76QazI
- 3Onrejc54T5s8vhBMHEpR6gzzyLXI4Bo3BL364KqPLZjEWU1cWAYgLyzy5kY79uuc7Nl
- aR2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782499622; x=1783104422;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=sAqxdpqZcwGVb/lNstMVlhv37SIugyXSX8LwDrXy/BU=;
- b=Tq95s2K4u/P9x3yI3GUvjhl272Tpr2NzkG5LWc60sVoK+TUaKNiYWKvAcf1fn9iQQN
- 071F1aqSbx/o65E7uby6up/Iwc5aoOnP0Gnn7pwKwqaMbJMaYURLG5SE8fSRcRsIgIV8
- fE/Ub1yqCQchgms1sF0wq9bTPhTQWDbgJL/0DfFrKPVY+bUg5pJ0Big7Ngd4FIFnkjzl
- mPCVL4r3WC0lxb1q1LErHhdLXNAslAQd6WEBk/tiPlirZJu3r1xV+UhQZpWfHiRSj1AU
- kGuLCUX01lpf5ncsU3xlNW24sd5B6Sv23jM474ig+UyvYEZHTGOTvOyRKypdCwIVfa6n
- ayyQ==
-X-Forwarded-Encrypted: i=1;
- AFNElJ9jnmsvcAdbs+e1yG28N7KAtq/WjAY1H1TTUiwc6LTVrJaUAOyDSJhjEe7hUkLjB2u6mIc=@dpdk.org
-X-Gm-Message-State: AOJu0Ywjxk6KkxblIvMxstJ5l0BSbRR5QJoFDl42wuLFKs2uueJEso4T
- Lm5wh54iri+nd+qdk/bqINwqgsCVFI9hz0gulSmChB8+plAcAz0yLZheSK+4zm+6SB4b2C5sEF9
- do+vqNwHQYEwwKwqWxmYwpgDUsPPyvv4=
-X-Gm-Gg: AfdE7cma0l/lLgG9CJ74z6+ks7LcTrgD9Ba+rpVaTBzb4QvnpWBuoqBxhvbXl2vANp9
- Lx7XCbm94RdJr28MxyiYIi9bzOj0gHxldVMSw94Yf3aL/JRShV1QDp3hLrsrh+BoDG69tBUKumC
- +1FR9um2aKTd8skoa7cjDsJGFcGpBG4O5AAbkvaA3x4DyS67VtFCfchA5+JX0FO+lWZbQfgixPc
- 8dn6EtOm6EHCHXrQ6a+iXWVBwvAxisCp/ydAk+ppHFXfE0cqP/5FV0gBPXQtCBFtXOUJngzSNQC
- hfGG47/+EtZAq2ytlshuUyg7gA==
-X-Received: by 2002:a05:6820:4b0a:b0:6a1:50e7:5c1c with SMTP id
- 006d021491bc7-6a150e75d4dmr931780eaf.71.1782499622174; Fri, 26 Jun 2026
- 11:47:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5F6C340272;
+	Sat, 27 Jun 2026 02:01:50 +0200 (CEST)
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
+ [113.46.200.218])
+ by mails.dpdk.org (Postfix) with ESMTP id 5A41B40265
+ for <dev@dpdk.org>; Sat, 27 Jun 2026 02:01:48 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=cV2uQ2J/VV8JqeyojPHN+bAFOoeSTp+s5m9WpCd+PgQ=;
+ b=SALNUZPj0zn2l2TH4usXCBWbwxlB5eWlL6sw/WFeIKgXJ15YHryrtGIs03pjJtAa/nGx+HGxd
+ 7ybiXIXderic1It1zTTGWae/n3NJDzNYqVsj5h2xx28YZ95+qahaAQWBBz3lOALnOierSLmX71F
+ cHvcxONMJLH3kFA+0fC7DkQ=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+ by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4gnCDL6ghmzpSvt;
+ Sat, 27 Jun 2026 07:53:22 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+ by mail.maildlp.com (Postfix) with ESMTPS id EF2C140571;
+ Sat, 27 Jun 2026 08:01:42 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Sat, 27 Jun 2026 08:01:42 +0800
+Message-ID: <f1079307-3483-4d0d-9a93-2f30f54fe40b@huawei.com>
+Date: Sat, 27 Jun 2026 08:01:41 +0800
 MIME-Version: 1.0
-References: <20260528190449.66254-1-giveback4fun@gmail.com>
- <ahlH3peE5oTV3qEz@bricha3-mobl1.ger.corp.intel.com>
- <20260529082324.00a5f096@phoenix.local>
- <ahm4Qr5gLBf6sxof@bricha3-mobl1.ger.corp.intel.com>
- <CADggw7J2CUQOD5AAF3Uv6kTK25_OV2q3xQfS3zKsSMdSO0R0FA@mail.gmail.com>
-In-Reply-To: <CADggw7J2CUQOD5AAF3Uv6kTK25_OV2q3xQfS3zKsSMdSO0R0FA@mail.gmail.com>
-From: Sudheendra S <giveback4fun@gmail.com>
-Date: Fri, 26 Jun 2026 11:46:51 -0700
-X-Gm-Features: AVVi8CcO_KCxzv0Jz_7PZQiYpLOo8YMK06K5H60ZWSc4_Kj83eUonKHhmDowEBs
-Message-ID: <CADggw7J2xYD388UtfLALGRytUCmrQRexU=b6aXmpoa5Ht3dkVA@mail.gmail.com>
-Subject: Re: [PATCH] examples: Fix vm_power_manager scratch area to
- /run/dpdk/powermonitor
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- "dev@dpdk.org" <dev@dpdk.org>, 
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-Content-Type: multipart/alternative; boundary="000000000000cac37506552c8800"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dma/ae4dma: introduce AMD AE4DMA DMA PMD
+To: Raghavendra Ningoji <raghavendra.ningoji@amd.com>, <dev@dpdk.org>
+CC: <david.marchand@redhat.com>, <bruce.richardson@intel.com>,
+ <Selwin.Sebastian@amd.com>, <bhagyada.modali@amd.com>, <rjarry@redhat.com>,
+ <thomas@monjalon.net>
+References: <20260525184244.1758825-1-raghavendra.ningoji@amd.com>
+ <20260625184728.1678328-1-raghavendra.ningoji@amd.com>
+ <20260625184728.1678328-2-raghavendra.ningoji@amd.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20260625184728.1678328-2-raghavendra.ningoji@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -102,293 +60,733 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000cac37506552c8800
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 6/26/2026 2:47 AM, Raghavendra Ningoji wrote:
+> Add the skeleton of a new dmadev poll-mode driver for the AMD AE4DMA
+> hardware DMA engine, providing only PCI probe/remove and per-queue
+> hardware initialisation. An AE4DMA engine exposes 16 hardware command
+> queues, each with a 32-entry descriptor ring; the PMD maps each
+> hardware channel to its own dmadev with a single virtual channel,
+> so a PCI function appears as 16 dmadevs named "<pci-bdf>-ch0" ..
+> "<pci-bdf>-ch15".
+> 
+> This patch only registers the PCI driver, allocates the dmadev
+> objects, reserves the per-queue descriptor rings and programs the
+> hardware queue base addresses. Control and data path operations are
+> added in subsequent patches.
+> 
+> Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
+> ---
+>  .mailmap                               |   1 +
+>  MAINTAINERS                            |   5 +
+>  doc/guides/dmadevs/ae4dma.rst          |  53 ++++++
+>  doc/guides/dmadevs/index.rst           |   1 +
+>  doc/guides/rel_notes/release_26_07.rst |   7 +
+>  drivers/dma/ae4dma/ae4dma_dmadev.c     | 220 +++++++++++++++++++++++++
+>  drivers/dma/ae4dma/ae4dma_hw_defs.h    | 154 +++++++++++++++++
+>  drivers/dma/ae4dma/ae4dma_internal.h   |  97 +++++++++++
+>  drivers/dma/ae4dma/meson.build         |   7 +
+>  drivers/dma/meson.build                |   1 +
+>  usertools/dpdk-devbind.py              |   5 +-
+>  11 files changed, 550 insertions(+), 1 deletion(-)
+>  create mode 100644 doc/guides/dmadevs/ae4dma.rst
+>  create mode 100644 drivers/dma/ae4dma/ae4dma_dmadev.c
+>  create mode 100644 drivers/dma/ae4dma/ae4dma_hw_defs.h
+>  create mode 100644 drivers/dma/ae4dma/ae4dma_internal.h
+>  create mode 100644 drivers/dma/ae4dma/meson.build
+> 
+> diff --git a/.mailmap b/.mailmap
+> index 89ba6ffccc..71a62564fa 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1329,6 +1329,7 @@ Radu Bulie <radu-andrei.bulie@nxp.com>
+>  Radu Nicolau <radu.nicolau@intel.com>
+>  Rafael Ávila de Espíndola <espindola@scylladb.com>
+>  Rafal Kozik <rk@semihalf.com>
+> +Raghavendra Ningoji <raghavendra.ningoji@amd.com>
+>  Ragothaman Jayaraman <rjayaraman@caviumnetworks.com>
+>  Rahul Bhansali <rbhansali@marvell.com>
+>  Rahul Gupta <rahul.gupta@broadcom.com>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9143d028bc..2e27af49f4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1361,6 +1361,11 @@ F: doc/guides/compressdevs/features/zsda.ini
+>  DMAdev Drivers
+>  --------------
+>  
+> +AMD AE4DMA
+> +M: Bhagyada Modali <bhagyada.modali@amd.com>
+> +F: drivers/dma/ae4dma/
+> +F: doc/guides/dmadevs/ae4dma.rst
+> +
+>  Intel IDXD - EXPERIMENTAL
+>  M: Bruce Richardson <bruce.richardson@intel.com>
+>  M: Kevin Laatz <kevin.laatz@intel.com>
+> diff --git a/doc/guides/dmadevs/ae4dma.rst b/doc/guides/dmadevs/ae4dma.rst
+> new file mode 100644
+> index 0000000000..a85c1d92ca
+> --- /dev/null
+> +++ b/doc/guides/dmadevs/ae4dma.rst
+> @@ -0,0 +1,53 @@
+> +..  SPDX-License-Identifier: BSD-3-Clause
+> +    Copyright(c) 2025 Advanced Micro Devices, Inc.
 
-Hi Stephen,
+2025 -> 2026?
 
-I appreciate any feedback so that I can make changes and send out the patch=
-.
+> +
+> +.. include:: <isonum.txt>
+> +
+> +AMD AE4DMA DMA Device Driver
+> +============================
+> +
+> +The ``ae4dma`` dmadev driver is a poll-mode driver (PMD) for the
+> +AMD AE4DMA hardware DMA engine. The engine exposes 16 independent
+> +hardware command queues, each with a ring of 32 descriptors. The PMD
+> +maps each hardware command queue to a separate DPDK dmadev with a
+> +single virtual channel, so a single PCI function appears as 16 dmadevs
+> +named ``<pci-bdf>-ch0`` through ``<pci-bdf>-ch15``.
+> +
+> +The driver supports memory-to-memory copy operations only.
+> +
+> +Hardware Requirements
+> +---------------------
+> +
+> +The ``dpdk-devbind.py`` script can be used to list AE4DMA devices on
+> +the system::
+> +
+> +   dpdk-devbind.py --status-dev dma
+> +
+> +AE4DMA devices appear with vendor ID ``0x1022`` and device ID
+> +``0x149b``.
+> +
+> +Compilation
+> +-----------
+> +
+> +The driver is built as part of the standard DPDK build on x86 platforms
+> +using ``meson`` and ``ninja``; no extra configuration is required.
+> +
+> +Device Setup
+> +------------
+> +
+> +The AE4DMA device must be bound to a DPDK-compatible kernel module such
+> +as ``vfio-pci`` before it can be used::
+> +
+> +   dpdk-devbind.py -b vfio-pci <pci-bdf>
+> +
+> +Initialization
+> +~~~~~~~~~~~~~~
+> +
+> +On probe the PMD performs the following steps for each PCI function:
+> +
+> +* Reads BAR0 and programs the common configuration register with the
+> +  number of hardware queues to enable (16).
+> +* For each hardware queue it allocates a 32-entry descriptor ring in
+> +  IOVA-contiguous memory, programs the queue base address and ring
+> +  depth into the per-queue registers, and enables the queue.
+> +* Interrupts are masked; completion is polled by the application.
+> diff --git a/doc/guides/dmadevs/index.rst b/doc/guides/dmadevs/index.rst
+> index 56beb1733f..97399590f6 100644
+> --- a/doc/guides/dmadevs/index.rst
+> +++ b/doc/guides/dmadevs/index.rst
+> @@ -11,6 +11,7 @@ an application through DMA API.
+>     :maxdepth: 1
+>     :numbered:
+>  
+> +   ae4dma
+>     cnxk
+>     dpaa
+>     dpaa2
+> diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+> index f012d47a4b..9a78a7ef62 100644
+> --- a/doc/guides/rel_notes/release_26_07.rst
+> +++ b/doc/guides/rel_notes/release_26_07.rst
+> @@ -63,6 +63,13 @@ New Features
+>      ``rte_eal_init`` and the application is responsible for probing each device,
+>    * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
+>  
+> +* **Added AMD AE4DMA DMA PMD.**
+> +
+> +  Added a new ``dma/ae4dma`` driver for the AMD AE4DMA hardware DMA engine.
+> +  Each PCI function exposes 16 hardware command queues; the PMD registers one
+> +  dmadev per channel with a single virtual channel and supports
+> +  memory-to-memory copy operations.
+> +
+>  
+>  Removed Items
+>  -------------
+> diff --git a/drivers/dma/ae4dma/ae4dma_dmadev.c b/drivers/dma/ae4dma/ae4dma_dmadev.c
+> new file mode 100644
+> index 0000000000..3d82f86906
+> --- /dev/null
+> +++ b/drivers/dma/ae4dma/ae4dma_dmadev.c
+> @@ -0,0 +1,220 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright(c) 2026 Advanced Micro Devices, Inc. All rights reserved.
+> + */
+> +
+> +#include <errno.h>
+> +#include <inttypes.h>
+> +#include <stdio.h>
+> +#include <string.h>
+> +
+> +#include <rte_bus_pci.h>
+> +#include <bus_pci_driver.h>
+> +#include <rte_dmadev_pmd.h>
+> +#include <rte_malloc.h>
+> +
+> +#include "ae4dma_internal.h"
+> +
+> +/*
+> + * One dmadev per AE4DMA hardware channel; each dmadev has exactly one
+> + * virtual channel. The HW's per-queue register block must be densely
+> + * packed right after the engine-common config register at BAR0+0; the
+> + * build-time check below catches an accidental layout change.
+> + */
+> +static_assert(sizeof(struct ae4dma_hwq_regs) == 32,
+> +		"ae4dma_hwq_regs stride changed; per-queue offset math will break");
+> +
+> +RTE_LOG_REGISTER_DEFAULT(ae4dma_pmd_logtype, INFO);
+> +
+> +#define AE4DMA_PMD_NAME dmadev_ae4dma
+> +
+> +static const struct rte_memzone *
+> +ae4dma_queue_dma_zone_reserve(const char *queue_name,
+> +		uint32_t queue_size, int socket_id)
+> +{
+> +	const struct rte_memzone *mz;
+> +
+> +	mz = rte_memzone_lookup(queue_name);
+> +	if (mz != NULL) {
+> +		if (((size_t)queue_size <= mz->len) &&
+> +				((socket_id == SOCKET_ID_ANY) ||
+> +				 (socket_id == mz->socket_id))) {
+> +			AE4DMA_PMD_INFO("reuse memzone already "
+> +					"allocated for %s", queue_name);
+> +			return mz;
+> +		}
+> +		AE4DMA_PMD_ERR("Incompatible memzone already "
+> +				"allocated %s, size %u, socket %d. "
+> +				"Requested size %u, socket %u",
+> +				queue_name, (uint32_t)mz->len,
+> +				mz->socket_id, queue_size, socket_id);
+> +		return NULL;
+> +	}
+> +	return rte_memzone_reserve_aligned(queue_name, queue_size,
+> +			socket_id, RTE_MEMZONE_IOVA_CONTIG, queue_size);
 
-Thanks
+No need to do such reuse, and this resource could setup in vchan_setup ops,
+but your dmadev has max 32 descriptors and only 1 vchan per-dmadev, so I think
+it's ok to setup in the probe.
 
-On Thu, Jun 18, 2026 at 12:24=E2=80=AFPM Sudheendra S <giveback4fun@gmail.c=
-om>
-wrote:
+> +}
+> +
+> +static int
+> +ae4dma_add_queue(struct ae4dma_dmadev *dev, struct rte_pci_device *pci,
+> +		uint8_t qn, const char *pci_name)
+> +{
+> +	uint32_t dma_addr_lo, dma_addr_hi;
+> +	struct ae4dma_cmd_queue *cmd_q;
+> +	const struct rte_memzone *q_mz;
+> +
+> +	dev->io_regs = pci->mem_resource[AE4DMA_PCIE_BAR].addr;
+> +
+> +	cmd_q = &dev->cmd_q;
+> +	cmd_q->id = qn;
+> +	cmd_q->qidx = 0;
+> +	cmd_q->qsize = AE4DMA_QUEUE_SIZE(AE4DMA_QUEUE_DESC_SIZE);
+> +	cmd_q->hwq_regs = (volatile struct ae4dma_hwq_regs *)dev->io_regs + (qn + 1);
+> +
+> +	/*
+> +	 * Memzone name must be globally unique. Embed PCI BDF so multiple
+> +	 * PCI functions probed concurrently don't collide.
+> +	 */
+> +	snprintf(cmd_q->memz_name, sizeof(cmd_q->memz_name),
+> +			"ae4dma_%s_q%u", pci_name, (unsigned int)qn);
+> +
+> +	q_mz = ae4dma_queue_dma_zone_reserve(cmd_q->memz_name,
+> +			cmd_q->qsize, rte_socket_id());
+> +	if (q_mz == NULL) {
+> +		AE4DMA_PMD_ERR("memzone reserve failed for %s", cmd_q->memz_name);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	cmd_q->mz = q_mz;
+> +	cmd_q->qbase_addr = q_mz->addr;
+> +	cmd_q->qbase_desc = q_mz->addr;
+> +	cmd_q->qbase_phys_addr = q_mz->iova;
+> +
+> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->max_idx, AE4DMA_DESCRIPTORS_PER_CMDQ);
+> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->control_reg.control_raw,
+> +			AE4DMA_CMD_QUEUE_ENABLE);
+> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->intr_status_reg.intr_status_raw,
+> +			AE4DMA_DISABLE_INTR);
+> +	cmd_q->next_write = AE4DMA_READ_REG(&cmd_q->hwq_regs->write_idx);
+> +	cmd_q->next_read = AE4DMA_READ_REG(&cmd_q->hwq_regs->read_idx);
+> +	cmd_q->ring_buff_count = 0;
+> +
+> +	dma_addr_lo = lower_32_bits(cmd_q->qbase_phys_addr);
+> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->qbase_lo, dma_addr_lo);
+> +	dma_addr_hi = upper_32_bits(cmd_q->qbase_phys_addr);
+> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->qbase_hi, dma_addr_hi);
+> +
+> +	return 0;
+> +}
+> +
+> +static void
+> +ae4dma_channel_dev_name(char *out, size_t outlen, const char *pci_name,
+> +		unsigned int ch)
+> +{
+> +	snprintf(out, outlen, "%s-ch%u", pci_name, ch);
+> +}
+> +
+> +static int
+> +ae4dma_dmadev_create(const char *name, struct rte_pci_device *dev, uint8_t qn)
+> +{
+> +	struct rte_dma_dev *dmadev;
+> +	struct ae4dma_dmadev *ae4dma;
+> +	char hwq_dev_name[RTE_DEV_NAME_MAX_LEN];
 
-> *Note:  Changed subject line from /run/dpdk/powermanager ->
-> /run/dpdk/powermonitor*
->
-> Hi All,
->
-> Apologies for the delay.
->
-> So, I am following the above thread and below are what I understand are
-> the changes that are needed :
->
->
->    1. I see that rte_eal_get_runtime_dir() is RTE_EXPORTED_SYMBOL.  I
->    will verify that channel_manager has access to this symbol.
->    2. Upon successful creation of /run/dpdk, I can mkdir
->    CHANNEL_MGR_SOCKET_PATH (/var/run/dpdk/powermonitor) and opendir() tha=
-t for
->    subsequent processing.
->    3. Fixup the documentation to reflect correct powermonitor path
->
-> Please let me know if I am missing anything or if I misinterpreting any
-> part of the email exchange.
->
-> Thanks for all your help and support.
->
-> -Sudheendra G Sampath
->
-> On Fri, May 29, 2026 at 9:01=E2=80=AFAM Bruce Richardson <
-> bruce.richardson@intel.com> wrote:
->
->> On Fri, May 29, 2026 at 08:23:24AM -0700, Stephen Hemminger wrote:
->> > On Fri, 29 May 2026 09:01:34 +0100
->> > Bruce Richardson <bruce.richardson@intel.com> wrote:
->> >
->> > > On Thu, May 28, 2026 at 07:04:48PM +0000, Sudheendra Sampath wrote:
->> > > > This patch for bug 1832 will do the following:
->> > > > 1.  If /run/dpdk is not present, it will create it first with and
->> > > >     then create powermanager directory underneath it.
->> > > > 2.  If /run/dpdk is present, it will verify it is actually a
->> directory
->> > > >     before creating subdirectory, powermanager.
->> > > >
->> > > I would suggest using $XDG_RUNTIME_DIR for the directory path, rathe=
-r
->> than
->> > > hardcoding it by default. If XDG_RUNTIME_DIR is not set, then maybe
->> > > consider using /run/dpdk. However, rather than /run/dpdk, I'd sugges=
-t
->> using
->> > > the normal runtime dir path on most distros as the default:
->> > > /run/user/<uid>.
->> > >
->> > > /Bruce
->> >
->> > The login in EAL is a little more detailed.
->> > The choice is from systemd conventions which follows filesystem
->> hierarchy.
->> >
->> >
->> > int eal_create_runtime_dir(void)
->> > {
->> >       const char *directory;
->> >       char run_dir[PATH_MAX];
->> >       char tmp[PATH_MAX];
->> >       int ret;
->> >
->> >       /* from RuntimeDirectory=3D see systemd.exec */
->> >       directory =3D getenv("RUNTIME_DIRECTORY");
->> >       if (directory =3D=3D NULL) {
->> >               /*
->> >                * Used standard convention defined in
->> >                * XDG Base Directory Specification and
->> >                * Filesystem Hierarchy Standard.
->> >                */
->> >               if (getuid() =3D=3D 0)
->> >                       directory =3D "/var/run";
->> >               else
->> >                       directory =3D getenv("XDG_RUNTIME_DIR") ? : "/tm=
-p";
->> >       }
->> >
->> >       /* create DPDK subdirectory under runtime dir */
->> >       ret =3D snprintf(tmp, sizeof(tmp), "%s/dpdk", directory);
->> >       if (ret < 0 || ret =3D=3D sizeof(tmp)) {
->> >               EAL_LOG(ERR, "Error creating DPDK runtime path name");
->> >               return -1;
->> >       }
->> >
->> >       /* create prefix-specific subdirectory under DPDK runtime dir */
->> >       ret =3D snprintf(run_dir, sizeof(run_dir), "%s/%s",
->> >                       tmp, eal_get_hugefile_prefix());
->> >       if (ret < 0 || ret =3D=3D sizeof(run_dir)) {
->> >               EAL_LOG(ERR, "Error creating prefix-specific runtime pat=
-h
->> name");
->> >               return -1;
->> >       }
->> >
->> >       /* create the path if it doesn't exist. no "mkdir -p" here, so d=
-o
->> it
->> >        * step by step.
->> >        */
->> >       ret =3D mkdir(tmp, 0700);
->> >       if (ret < 0 && errno !=3D EEXIST) {
->> >               EAL_LOG(ERR, "Error creating '%s': %s",
->> >                       tmp, strerror(errno));
->> >               return -1;
->> >       }
->> >
->> >       ret =3D mkdir(run_dir, 0700);
->> >       if (ret < 0 && errno !=3D EEXIST) {
->> >               EAL_LOG(ERR, "Error creating '%s': %s",
->> >                       run_dir, strerror(errno));
->> >               return -1;
->> >       }
->>
->> Yes. Can the power manager call the rte_eal_get_runtime_dir() API and us=
-e
->> that as a basis for its working directory? Save duplicating all this
->> logic.
->>
->> /Bruce
->>
->
+Please define local variables in a descending order, with longer ones
+placed at the front. It is recommended to modify the entire driver in
+this way.
 
---000000000000cac37506552c8800
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> +
+> +	memset(hwq_dev_name, 0, sizeof(hwq_dev_name));
 
-<div dir=3D"ltr">Hi Stephen,<div><br></div><div>I appreciate any feedback s=
-o that I can make changes and send out the patch.</div><div><br></div><div>=
-Thanks=C2=A0</div></div><br><div class=3D"gmail_quote gmail_quote_container=
-"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Jun 18, 2026 at 12:24=E2=80=
-=AFPM Sudheendra S &lt;<a href=3D"mailto:giveback4fun@gmail.com">giveback4f=
-un@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" styl=
-e=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddin=
-g-left:1ex"><div dir=3D"ltr"><div><b>Note:=C2=A0 Changed subject line from =
-/run/dpdk/powermanager -&gt; /run/dpdk/powermonitor</b></div><div><br></div=
-><div dir=3D"ltr">Hi All,<div><br></div><div>Apologies for the delay.</div>=
-<div><br></div><div>So, I am following the above thread and below are what =
-I understand are the changes that are needed :</div><div><br></div><div><ol=
-><li>I see that rte_eal_get_runtime_dir() is RTE_EXPORTED_SYMBOL.=C2=A0 I w=
-ill verify that channel_manager has access to this symbol.</li><li>Upon suc=
-cessful creation of /run/dpdk, I can mkdir CHANNEL_MGR_SOCKET_PATH (/var/ru=
-n/dpdk/powermonitor) and opendir() that for subsequent processing.</li><li>=
-Fixup the documentation to reflect correct powermonitor path</li></ol><div>=
-Please let me know if I am missing anything or if I misinterpreting any par=
-t of the email exchange.</div></div><div><br></div><div>Thanks for all your=
- help and support.</div><div><br></div><div>-Sudheendra G Sampath</div></di=
-v><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On F=
-ri, May 29, 2026 at 9:01=E2=80=AFAM Bruce Richardson &lt;<a href=3D"mailto:=
-bruce.richardson@intel.com" target=3D"_blank">bruce.richardson@intel.com</a=
->&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px=
- 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">On =
-Fri, May 29, 2026 at 08:23:24AM -0700, Stephen Hemminger wrote:<br>
-&gt; On Fri, 29 May 2026 09:01:34 +0100<br>
-&gt; Bruce Richardson &lt;<a href=3D"mailto:bruce.richardson@intel.com" tar=
-get=3D"_blank">bruce.richardson@intel.com</a>&gt; wrote:<br>
-&gt; <br>
-&gt; &gt; On Thu, May 28, 2026 at 07:04:48PM +0000, Sudheendra Sampath wrot=
-e:<br>
-&gt; &gt; &gt; This patch for bug 1832 will do the following:<br>
-&gt; &gt; &gt; 1.=C2=A0 If /run/dpdk is not present, it will create it firs=
-t with and<br>
-&gt; &gt; &gt;=C2=A0 =C2=A0 =C2=A0then create powermanager directory undern=
-eath it.<br>
-&gt; &gt; &gt; 2.=C2=A0 If /run/dpdk is present, it will verify it is actua=
-lly a directory<br>
-&gt; &gt; &gt;=C2=A0 =C2=A0 =C2=A0before creating subdirectory, powermanage=
-r.<br>
-&gt; &gt; &gt;=C2=A0 =C2=A0<br>
-&gt; &gt; I would suggest using $XDG_RUNTIME_DIR for the directory path, ra=
-ther than<br>
-&gt; &gt; hardcoding it by default. If XDG_RUNTIME_DIR is not set, then may=
-be<br>
-&gt; &gt; consider using /run/dpdk. However, rather than /run/dpdk, I&#39;d=
- suggest using<br>
-&gt; &gt; the normal runtime dir path on most distros as the default:<br>
-&gt; &gt; /run/user/&lt;uid&gt;.<br>
-&gt; &gt; <br>
-&gt; &gt; /Bruce<br>
-&gt; <br>
-&gt; The login in EAL is a little more detailed.<br>
-&gt; The choice is from systemd conventions which follows filesystem hierar=
-chy.<br>
-&gt; <br>
-&gt; <br>
-&gt; int eal_create_runtime_dir(void)<br>
-&gt; {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0const char *directory;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0char run_dir[PATH_MAX];<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0char tmp[PATH_MAX];<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0int ret;<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0/* from RuntimeDirectory=3D see systemd.exec=
- */<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0directory =3D getenv(&quot;RUNTIME_DIRECTORY=
-&quot;);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (directory =3D=3D NULL) {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/*<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Used standard=
- convention defined in<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * XDG Base Dire=
-ctory Specification and<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Filesystem Hi=
-erarchy Standard.<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 */<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (getuid() =3D=
-=3D 0)<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0directory =3D &quot;/var/run&quot;;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0else<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0directory =3D getenv(&quot;XDG_RUNTIME_DIR&quot;) ? : &quot;/t=
-mp&quot;;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0/* create DPDK subdirectory under runtime di=
-r */<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D snprintf(tmp, sizeof(tmp), &quot;%s/=
-dpdk&quot;, directory);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret &lt; 0 || ret =3D=3D sizeof(tmp)) {<=
-br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0EAL_LOG(ERR, &qu=
-ot;Error creating DPDK runtime path name&quot;);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -1;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0/* create prefix-specific subdirectory under=
- DPDK runtime dir */<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D snprintf(run_dir, sizeof(run_dir), &=
-quot;%s/%s&quot;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0tmp, eal_get_hugefile_prefix());<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret &lt; 0 || ret =3D=3D sizeof(run_dir)=
-) {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0EAL_LOG(ERR, &qu=
-ot;Error creating prefix-specific runtime path name&quot;);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -1;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0/* create the path if it doesn&#39;t exist. =
-no &quot;mkdir -p&quot; here, so do it<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 * step by step.<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 */<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D mkdir(tmp, 0700);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret &lt; 0 &amp;&amp; errno !=3D EEXIST)=
- {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0EAL_LOG(ERR, &qu=
-ot;Error creating &#39;%s&#39;: %s&quot;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0tmp, strerror(errno));<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -1;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D mkdir(run_dir, 0700);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret &lt; 0 &amp;&amp; errno !=3D EEXIST)=
- {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0EAL_LOG(ERR, &qu=
-ot;Error creating &#39;%s&#39;: %s&quot;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0run_dir, strerror(errno));<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -1;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-<br>
-Yes. Can the power manager call the rte_eal_get_runtime_dir() API and use<b=
-r>
-that as a basis for its working directory? Save duplicating all this logic.=
-<br>
-<br>
-/Bruce<br>
-</blockquote></div></div>
-</blockquote></div>
+why not char hwq_dev_name[RTE_DEV_NAME_MAX_LEN] = {0};
 
---000000000000cac37506552c8800--
+> +	ae4dma_channel_dev_name(hwq_dev_name, sizeof(hwq_dev_name), name, qn);
+> +
+> +	dmadev = rte_dma_pmd_allocate(hwq_dev_name, dev->device.numa_node,
+> +			sizeof(struct ae4dma_dmadev));
+> +	if (dmadev == NULL) {
+> +		AE4DMA_PMD_ERR("Unable to allocate dma device");
+> +		return -ENOMEM;
+> +	}
+> +	dmadev->device = &dev->device;
+> +	dmadev->fp_obj->dev_private = dmadev->data->dev_private;
+> +
+> +	ae4dma = dmadev->data->dev_private;
+> +
+> +	if (ae4dma_add_queue(ae4dma, dev, qn, name) != 0)
+> +		goto init_error;
+> +	return 0;
+> +
+> +init_error:
+> +	AE4DMA_PMD_ERR("failed");
+
+why not add more info, e.g. Probe failed!
+
+> +	rte_dma_pmd_release(hwq_dev_name);
+> +	return -ENOMEM;
+> +}
+> +
+> +static int
+> +ae4dma_dmadev_probe(struct rte_pci_driver *drv __rte_unused,
+> +		struct rte_pci_device *dev)
+> +{
+> +	char name[32];
+> +	char chname[RTE_DEV_NAME_MAX_LEN];
+> +	void *mmio_base;
+> +	uint32_t q_per_eng;
+> +	int ret = 0;
+> +	uint8_t i;
+> +
+> +	rte_pci_device_name(&dev->addr, name, sizeof(name));
+> +	AE4DMA_PMD_INFO("Init %s on NUMA node %d", name, dev->device.numa_node);
+> +
+> +	mmio_base = dev->mem_resource[AE4DMA_PCIE_BAR].addr;
+> +	if (mmio_base == NULL) {
+> +		AE4DMA_PMD_ERR("%s: BAR%d not mapped", name, AE4DMA_PCIE_BAR);
+> +		return -ENODEV;
+> +	}
+> +
+> +	/* Program the per-engine HW queue count once. */
+> +	AE4DMA_WRITE_REG_OFFSET(mmio_base, AE4DMA_COMMON_CONFIG_OFFSET,
+> +			AE4DMA_MAX_HW_QUEUES);
+> +	q_per_eng = AE4DMA_READ_REG_OFFSET(mmio_base, AE4DMA_COMMON_CONFIG_OFFSET);
+> +	AE4DMA_PMD_INFO("%s: AE4DMA queues per engine = %u", name, q_per_eng);
+> +
+> +	for (i = 0; i < AE4DMA_MAX_HW_QUEUES; i++) {
+> +		ret = ae4dma_dmadev_create(name, dev, i);
+> +		if (ret != 0) {
+> +			AE4DMA_PMD_ERR("%s create dmadev %u failed!", name, i);
+> +			while (i > 0) {
+> +				i--;
+> +				ae4dma_channel_dev_name(chname, sizeof(chname), name, i);
+> +				rte_dma_pmd_release(chname);
+> +			}
+> +			break;
+> +		}
+> +	}
+> +	return ret;
+> +}
+> +
+> +static int
+> +ae4dma_dmadev_remove(struct rte_pci_device *dev)
+> +{
+> +	char name[32];
+> +	char chname[RTE_DEV_NAME_MAX_LEN];
+> +	unsigned int i;
+> +
+> +	rte_pci_device_name(&dev->addr, name, sizeof(name));
+> +
+> +	AE4DMA_PMD_INFO("Closing %s on NUMA node %d",
+> +			name, dev->device.numa_node);
+> +
+> +	for (i = 0; i < AE4DMA_MAX_HW_QUEUES; i++) {
+> +		ae4dma_channel_dev_name(chname, sizeof(chname), name, i);
+> +		rte_dma_pmd_release(chname);
+> +	}
+> +	return 0;
+> +}
+> +
+> +static const struct rte_pci_id pci_id_ae4dma_map[] = {
+> +	{ RTE_PCI_DEVICE(AMD_VENDOR_ID, AE4DMA_DEVICE_ID) },
+> +	{ .vendor_id = 0, /* sentinel */ },
+> +};
+> +
+> +static struct rte_pci_driver ae4dma_pmd_drv = {
+> +	.id_table = pci_id_ae4dma_map,
+> +	.drv_flags = RTE_PCI_DRV_NEED_MAPPING,
+> +	.probe = ae4dma_dmadev_probe,
+> +	.remove = ae4dma_dmadev_remove,
+> +};
+> +
+> +RTE_PMD_REGISTER_PCI(AE4DMA_PMD_NAME, ae4dma_pmd_drv);
+> +RTE_PMD_REGISTER_PCI_TABLE(AE4DMA_PMD_NAME, pci_id_ae4dma_map);
+> +RTE_PMD_REGISTER_KMOD_DEP(AE4DMA_PMD_NAME, "* igb_uio | uio_pci_generic | vfio-pci");
+> diff --git a/drivers/dma/ae4dma/ae4dma_hw_defs.h b/drivers/dma/ae4dma/ae4dma_hw_defs.h
+> new file mode 100644
+> index 0000000000..e7798be09b
+> --- /dev/null
+> +++ b/drivers/dma/ae4dma/ae4dma_hw_defs.h
+> @@ -0,0 +1,154 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright(c) 2026 Advanced Micro Devices, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef __AE4DMA_HW_DEFS_H__
+> +#define __AE4DMA_HW_DEFS_H__
+> +
+> +#include <stdint.h>
+> +
+> +#include <rte_bus_pci.h>
+> +#include <rte_byteorder.h>
+> +#include <rte_io.h>
+> +#include <rte_pci.h>
+> +#include <rte_memzone.h>
+
+Some of the include file are not need for this head-file.
+
+> +
+> +#define AE4DMA_BIT(nr)			(1UL << (nr))
+> +
+> +/* ae4dma device details */
+> +#define AMD_VENDOR_ID	0x1022
+> +#define AE4DMA_DEVICE_ID	0x149b
+> +#define AE4DMA_PCIE_BAR 0
+> +
+> +/*
+> + * An AE4DMA engine has 16 DMA queues. Each queue supports 32 descriptors.
+> + */
+> +#define AE4DMA_MAX_HW_QUEUES        16
+> +#define AE4DMA_QUEUE_START_INDEX    0
+> +#define AE4DMA_CMD_QUEUE_ENABLE		0x1
+> +#define AE4DMA_CMD_QUEUE_DISABLE	0x0
+> +
+> +/* Common to all queues */
+> +#define AE4DMA_COMMON_CONFIG_OFFSET 0x00
+> +
+> +#define AE4DMA_DISABLE_INTR 0x01
+> +
+> +/* Descriptor status */
+> +enum ae4dma_dma_status {
+> +	AE4DMA_DMA_DESC_SUBMITTED = 0,
+> +	AE4DMA_DMA_DESC_VALIDATED = 1,
+> +	AE4DMA_DMA_DESC_PROCESSED = 2,
+> +	AE4DMA_DMA_DESC_COMPLETED = 3,
+> +	AE4DMA_DMA_DESC_ERROR = 4,
+> +};
+> +
+> +/* Descriptor error-code */
+> +enum ae4dma_dma_err {
+> +	AE4DMA_DMA_ERR_NO_ERR = 0,
+> +	AE4DMA_DMA_ERR_INV_HEADER = 1,
+> +	AE4DMA_DMA_ERR_INV_STATUS = 2,
+> +	AE4DMA_DMA_ERR_INV_LEN = 3,
+> +	AE4DMA_DMA_ERR_INV_SRC = 4,
+> +	AE4DMA_DMA_ERR_INV_DST = 5,
+> +	AE4DMA_DMA_ERR_INV_ALIGN = 6,
+> +	AE4DMA_DMA_ERR_UNKNOWN = 7,
+> +};
+> +
+> +/* HW Queue status */
+> +enum ae4dma_hwqueue_status {
+> +	AE4DMA_HWQUEUE_EMPTY = 0,
+> +	AE4DMA_HWQUEUE_FULL = 1,
+> +	AE4DMA_HWQUEUE_NOT_EMPTY = 4,
+> +};
+> +/*
+> + * descriptor for AE4DMA commands
+> + * 8 32-bit words:
+> + * word 0: source memory type; destination memory type ; control bits
+> + * word 1: desc_id; error code; status
+> + * word 2: length
+> + * word 3: reserved
+> + * word 4: upper 32 bits of source pointer
+> + * word 5: low 32 bits of source pointer
+> + * word 6: upper 32 bits of destination pointer
+> + * word 7: low 32 bits of destination pointer
+> + */
+> +
+> +/* AE4DMA Descriptor - DWORD0 - Controls bits: Reserved for future use */
+> +#define AE4DMA_DWORD0_STOP_ON_COMPLETION	AE4DMA_BIT(0)
+> +#define AE4DMA_DWORD0_INTERRUPT_ON_COMPLETION	AE4DMA_BIT(1)
+> +#define AE4DMA_DWORD0_START_OF_MESSAGE		AE4DMA_BIT(3)
+> +#define AE4DMA_DWORD0_END_OF_MESSAGE		AE4DMA_BIT(4)
+> +#define AE4DMA_DWORD0_DESTINATION_MEMORY_TYPE	RTE_GENMASK64(5, 4)
+> +#define AE4DMA_DWORD0_SOURCE_MEMEORY_TYPE	RTE_GENMASK64(7, 6)
+> +
+> +#define AE4DMA_DWORD0_DESTINATION_MEMORY_TYPE_MEMORY    (0x0)
+> +#define AE4DMA_DWORD0_DESTINATION_MEMORY_TYPE_IOMEMORY  (1<<4)
+> +#define AE4DMA_DWORD0_SOURCE_MEMEORY_TYPE_MEMORY    (0x0)
+> +#define AE4DMA_DWORD0_SOURCE_MEMEORY_TYPE_IOMEMORY  (1<<6)
+> +
+> +struct ae4dma_desc_dword0 {
+> +	uint8_t byte0;
+> +	uint8_t byte1;
+> +	uint16_t timestamp;
+> +};
+> +
+> +struct ae4dma_desc_dword1 {
+> +	uint8_t status;
+> +	uint8_t err_code;
+> +	uint16_t desc_id;
+> +};
+> +
+> +struct ae4dma_desc {
+> +	struct ae4dma_desc_dword0 dw0;
+> +	struct ae4dma_desc_dword1 dw1;
+> +	uint32_t length;
+> +	uint32_t reserved;
+> +	uint32_t src_lo;
+> +	uint32_t src_hi;
+> +	uint32_t dst_lo;
+> +	uint32_t dst_hi;
+> +};
+> +
+> +/*
+> + * Registers for each queue :4 bytes length
+> + * Effective address : offset + reg
+> + */
+> +struct ae4dma_hwq_regs {
+> +	union {
+> +		uint32_t control_raw;
+> +		struct {
+> +			uint32_t queue_enable: 1;
+> +			uint32_t reserved_internal: 31;
+> +		} control;
+> +	} control_reg;
+> +
+> +	union {
+> +		uint32_t status_raw;
+> +		struct {
+> +			uint32_t reserved0: 1;
+> +			/* 0–empty, 1–full, 2–stopped, 3–error , 4–Not Empty */
+> +			uint32_t queue_status: 2;
+> +			uint32_t reserved1: 21;
+> +			uint32_t interrupt_type: 4;
+> +			uint32_t reserved2: 4;
+> +		} status;
+> +	} status_reg;
+> +
+> +	uint32_t max_idx;
+> +	uint32_t read_idx;
+> +	uint32_t write_idx;
+> +
+> +	union {
+> +		uint32_t intr_status_raw;
+> +		struct {
+> +			uint32_t intr_status: 1;
+> +			uint32_t reserved: 31;
+> +		} intr_status;
+> +	} intr_status_reg;
+> +
+> +	uint32_t qbase_lo;
+> +	uint32_t qbase_hi;
+> +
+> +};
+> +
+> +#endif /* AE4DMA_HW_DEFS_H */
+> diff --git a/drivers/dma/ae4dma/ae4dma_internal.h b/drivers/dma/ae4dma/ae4dma_internal.h
+> new file mode 100644
+> index 0000000000..7f149c97b5
+> --- /dev/null
+> +++ b/drivers/dma/ae4dma/ae4dma_internal.h
+> @@ -0,0 +1,97 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright(c) 2026 Advanced Micro Devices, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _AE4DMA_INTERNAL_H_
+> +#define _AE4DMA_INTERNAL_H_
+> +
+> +#include <stdint.h>
+> +
+> +#include "ae4dma_hw_defs.h"
+> +
+> +/* Return bits 32-63 of a 64-bit number. */
+> +#define upper_32_bits(n) ((uint32_t)(((n) >> 16) >> 16))
+> +
+> +/* Return bits 0-31 of a 64-bit number. */
+> +#define lower_32_bits(n) ((uint32_t)((n) & 0xffffffff))
+> +
+> +/* Hardware ring depth (slots per queue); must be power of two. */
+> +#define AE4DMA_DESCRIPTORS_PER_CMDQ	32
+> +#define AE4DMA_QUEUE_DESC_SIZE		sizeof(struct ae4dma_desc)
+> +#define AE4DMA_QUEUE_SIZE(n)		(AE4DMA_DESCRIPTORS_PER_CMDQ * (n))
+> +
+
+two blank lines
+
+> +
+> +/* AE4DMA registers Write/Read */
+> +static inline void ae4dma_pci_reg_write(void *base, int offset,
+> +		uint32_t value)
+> +{
+> +	volatile void *reg_addr = ((uint8_t *)base + offset);
+> +
+> +	rte_write32((rte_cpu_to_le_32(value)), reg_addr);
+> +}
+> +
+> +static inline uint32_t ae4dma_pci_reg_read(void *base, int offset)
+> +{
+> +	volatile void *reg_addr = ((uint8_t *)base + offset);
+> +
+> +	return rte_le_to_cpu_32(rte_read32(reg_addr));
+> +}
+> +
+> +#define AE4DMA_READ_REG_OFFSET(hw_addr, reg_offset) \
+> +	ae4dma_pci_reg_read(hw_addr, reg_offset)
+> +
+> +#define AE4DMA_WRITE_REG_OFFSET(hw_addr, reg_offset, value) \
+> +	ae4dma_pci_reg_write(hw_addr, reg_offset, value)
+> +
+> +
+
+two blank lines
+
+> +#define AE4DMA_READ_REG(hw_addr) \
+> +	ae4dma_pci_reg_read((void *)(uintptr_t)(hw_addr), 0)
+> +
+> +#define AE4DMA_WRITE_REG(hw_addr, value) \
+> +	ae4dma_pci_reg_write((void *)(uintptr_t)(hw_addr), 0, value)
+> +
+> +/* A structure describing an AE4DMA command queue. */
+> +struct __rte_cache_aligned ae4dma_cmd_queue {
+> +	char memz_name[RTE_MEMZONE_NAMESIZE];
+> +	const struct rte_memzone *mz;
+> +	volatile struct ae4dma_hwq_regs *hwq_regs;
+> +
+> +	struct rte_dma_vchan_conf qcfg;
+> +	struct rte_dma_stats stats;
+> +	/* Queue address */
+> +	struct ae4dma_desc *qbase_desc;
+> +	void *qbase_addr;
+> +	rte_iova_t qbase_phys_addr;
+> +	enum ae4dma_dma_err status[AE4DMA_DESCRIPTORS_PER_CMDQ];
+> +	/* Queue identifier */
+> +	uint64_t id;    /* queue id */
+> +	uint64_t qidx;  /* queue index */
+> +	uint64_t qsize; /* queue size */
+> +	uint32_t ring_buff_count;
+> +	uint16_t next_read;
+> +	uint16_t next_write;
+> +	uint16_t last_write; /* Used to compute submitted count. */
+> +};
+> +
+> +/*
+> + * One dmadev per AE4DMA hardware channel: probe creates AE4DMA_MAX_HW_QUEUES
+> + * dmadevs per PCI function, each owning a single HW command queue.
+> + */
+> +struct ae4dma_dmadev {
+> +	void *io_regs;
+> +	struct ae4dma_cmd_queue cmd_q; /* single HW queue owned by this dmadev */
+> +};
+> +
+> +
+
+two blank line
+
+> +extern int ae4dma_pmd_logtype;
+> +#define RTE_LOGTYPE_AE4DMA_PMD ae4dma_pmd_logtype
+> +
+> +#define AE4DMA_PMD_LOG(level, ...) \
+> +	RTE_LOG_LINE_PREFIX(level, AE4DMA_PMD, "%s(): ", __func__, __VA_ARGS__)
+> +
+> +#define AE4DMA_PMD_DEBUG(...)  AE4DMA_PMD_LOG(DEBUG, __VA_ARGS__)
+> +#define AE4DMA_PMD_INFO(...)   AE4DMA_PMD_LOG(INFO, __VA_ARGS__)
+> +#define AE4DMA_PMD_ERR(...)    AE4DMA_PMD_LOG(ERR, __VA_ARGS__)
+> +#define AE4DMA_PMD_WARN(...)   AE4DMA_PMD_LOG(WARNING, __VA_ARGS__)
+> +
+> +#endif /* _AE4DMA_INTERNAL_H_ */
+> diff --git a/drivers/dma/ae4dma/meson.build b/drivers/dma/ae4dma/meson.build
+> new file mode 100644
+> index 0000000000..e48ab0d561
+> --- /dev/null
+> +++ b/drivers/dma/ae4dma/meson.build
+> @@ -0,0 +1,7 @@
+> +# SPDX-License-Identifier: BSD-3-Clause
+> +# Copyright 2024 Advanced Micro Devices, Inc. All rights reserved.
+
+2024 -> 2026
+
+Does this also support run BSD or Windows, if not please add following instruments:
+if not is_linux
+    build = false
+    reason = 'only supported on Linux'
+    subdir_done()
+endif
+
+> +
+> +build = dpdk_conf.has('RTE_ARCH_X86')
+> +reason = 'only supported on x86'
+> +sources = files('ae4dma_dmadev.c')
+> +deps += ['bus_pci', 'dmadev']
+> diff --git a/drivers/dma/meson.build b/drivers/dma/meson.build
+> index e0d94db967..c230ac5a06 100644
+> --- a/drivers/dma/meson.build
+> +++ b/drivers/dma/meson.build
+> @@ -2,6 +2,7 @@
+>  # Copyright 2021 HiSilicon Limited
+>  
+>  drivers = [
+> +        'ae4dma',
+>          'cnxk',
+>          'dpaa',
+>          'dpaa2',
+> diff --git a/usertools/dpdk-devbind.py b/usertools/dpdk-devbind.py
+> index 93f2383dff..7d09f155de 100755
+> --- a/usertools/dpdk-devbind.py
+> +++ b/usertools/dpdk-devbind.py
+> @@ -86,6 +86,9 @@
+>  cn9k_ree = {'Class': '08', 'Vendor': '177d', 'Device': 'a0f4',
+>              'SVendor': None, 'SDevice': None}
+>  
+> +amd_ae4dma = {'Class': '08', 'Vendor': '1022', 'Device': '149b',
+> +              'SVendor': None, 'SDevice': None}
+> +
+>  virtio_blk = {'Class': '01', 'Vendor': "1af4", 'Device': '1001,1042',
+>                'SVendor': None, 'SDevice': None}
+>  
+> @@ -95,7 +98,7 @@
+>  network_devices = [network_class, cavium_pkx, avp_vnic, ifpga_class]
+>  baseband_devices = [acceleration_class]
+>  crypto_devices = [encryption_class, intel_processor_class]
+> -dma_devices = [cnxk_dma, hisilicon_dma,
+> +dma_devices = [amd_ae4dma, cnxk_dma, hisilicon_dma,
+>                 intel_idxd_gnrd, intel_idxd_dmr, intel_idxd_spr,
+>                 intel_ioat_bdw, intel_ioat_icx, intel_ioat_skx,
+>                 odm_dma]
+
