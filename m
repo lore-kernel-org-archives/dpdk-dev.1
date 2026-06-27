@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CAAC43458
-	for <dpdk-dev@archiver.kernel.org>; Sat, 27 Jun 2026 00:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD68C43458
+	for <dpdk-dev@archiver.kernel.org>; Sat, 27 Jun 2026 00:09:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5F6C340272;
-	Sat, 27 Jun 2026 02:01:50 +0200 (CEST)
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
- [113.46.200.218])
- by mails.dpdk.org (Postfix) with ESMTP id 5A41B40265
- for <dev@dpdk.org>; Sat, 27 Jun 2026 02:01:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6028440272;
+	Sat, 27 Jun 2026 02:09:15 +0200 (CEST)
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com
+ [113.46.200.216])
+ by mails.dpdk.org (Postfix) with ESMTP id 4042740265
+ for <dev@dpdk.org>; Sat, 27 Jun 2026 02:09:13 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=cV2uQ2J/VV8JqeyojPHN+bAFOoeSTp+s5m9WpCd+PgQ=;
- b=SALNUZPj0zn2l2TH4usXCBWbwxlB5eWlL6sw/WFeIKgXJ15YHryrtGIs03pjJtAa/nGx+HGxd
- 7ybiXIXderic1It1zTTGWae/n3NJDzNYqVsj5h2xx28YZ95+qahaAQWBBz3lOALnOierSLmX71F
- cHvcxONMJLH3kFA+0fC7DkQ=
+ bh=i1dKGPwj3P6W51Jp7r5ykRZRdYTDvurYKjGRPsw6rgM=;
+ b=yZpp0pJrXfT378q1Ua4JhYasmRbC+J7HU6osWnvZ91E9SW16NAkEvp0Q76Ypv3Q051OJ+i7eD
+ 4Kmghq57dp3jgWIYP57ROAnkkhmyAgjJ+w/p5uPQgGR/l/MHmKZU7udVmQY0hE7ogcqI9N+5hre
+ bdObtwGGvQ8WQ8unHMB0xMQ=
 Received: from mail.maildlp.com (unknown [172.19.162.223])
- by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4gnCDL6ghmzpSvt;
- Sat, 27 Jun 2026 07:53:22 +0800 (CST)
+ by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4gnCNT69XLz1T4Ff;
+ Sat, 27 Jun 2026 08:00:25 +0800 (CST)
 Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id EF2C140571;
- Sat, 27 Jun 2026 08:01:42 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 5FE8540561;
+ Sat, 27 Jun 2026 08:09:10 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Sat, 27 Jun 2026 08:01:42 +0800
-Message-ID: <f1079307-3483-4d0d-9a93-2f30f54fe40b@huawei.com>
-Date: Sat, 27 Jun 2026 08:01:41 +0800
+ 15.2.1544.36; Sat, 27 Jun 2026 08:09:09 +0800
+Message-ID: <6db5bccd-f82a-4a31-ab4c-b3addbcbcc94@huawei.com>
+Date: Sat, 27 Jun 2026 08:09:09 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dma/ae4dma: introduce AMD AE4DMA DMA PMD
+Subject: Re: [PATCH v3 2/3] dma/ae4dma: add control path operations
 To: Raghavendra Ningoji <raghavendra.ningoji@amd.com>, <dev@dpdk.org>
 CC: <david.marchand@redhat.com>, <bruce.richardson@intel.com>,
  <Selwin.Sebastian@amd.com>, <bhagyada.modali@amd.com>, <rjarry@redhat.com>,
  <thomas@monjalon.net>
 References: <20260525184244.1758825-1-raghavendra.ningoji@amd.com>
  <20260625184728.1678328-1-raghavendra.ningoji@amd.com>
- <20260625184728.1678328-2-raghavendra.ningoji@amd.com>
+ <20260625184728.1678328-3-raghavendra.ningoji@amd.com>
 Content-Language: en-US
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260625184728.1678328-2-raghavendra.ningoji@amd.com>
+In-Reply-To: <20260625184728.1678328-3-raghavendra.ningoji@amd.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
 X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
  kwepemo500009.china.huawei.com (7.202.194.199)
@@ -61,732 +61,290 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 On 6/26/2026 2:47 AM, Raghavendra Ningoji wrote:
-> Add the skeleton of a new dmadev poll-mode driver for the AMD AE4DMA
-> hardware DMA engine, providing only PCI probe/remove and per-queue
-> hardware initialisation. An AE4DMA engine exposes 16 hardware command
-> queues, each with a 32-entry descriptor ring; the PMD maps each
-> hardware channel to its own dmadev with a single virtual channel,
-> so a PCI function appears as 16 dmadevs named "<pci-bdf>-ch0" ..
-> "<pci-bdf>-ch15".
+> Implement the dmadev control path for the AMD AE4DMA PMD.
 > 
-> This patch only registers the PCI driver, allocates the dmadev
-> objects, reserves the per-queue descriptor rings and programs the
-> hardware queue base addresses. Control and data path operations are
-> added in subsequent patches.
+> This commit adds:
+>  - dev_configure / vchan_setup: accept a single virtual channel per
+>    dmadev and clamp the requested ring size to the hardware maximum
+>    of 32 descriptors (rounded up to a power of two).
+>  - dev_start / dev_stop / dev_close: program the per-queue control
+>    register to enable/disable the hardware queue and release the
+>    descriptor ring memzone on close.
+>  - dev_info_get: advertise RTE_DMA_CAPA_MEM_TO_MEM and the fixed
+>    ring depth.
+
+It seemed declare support 2~32 depth, not fixed
+
+>  - dev_dump: print the queue identifiers, ring layout and software
+>    completion counters.
+>  - stats_get / stats_reset: expose submitted / completed / errors
+>    counters maintained by the driver.
+>  - vchan_status: report IDLE / ACTIVE based on hardware read_idx vs
+>    write_idx, and HALTED_ERROR when the queue is not enabled.
+> 
+> The dmadev framework is wired through dev_ops in ae4dma_dmadev_create().
 > 
 > Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 > ---
->  .mailmap                               |   1 +
->  MAINTAINERS                            |   5 +
->  doc/guides/dmadevs/ae4dma.rst          |  53 ++++++
->  doc/guides/dmadevs/index.rst           |   1 +
->  doc/guides/rel_notes/release_26_07.rst |   7 +
->  drivers/dma/ae4dma/ae4dma_dmadev.c     | 220 +++++++++++++++++++++++++
->  drivers/dma/ae4dma/ae4dma_hw_defs.h    | 154 +++++++++++++++++
->  drivers/dma/ae4dma/ae4dma_internal.h   |  97 +++++++++++
->  drivers/dma/ae4dma/meson.build         |   7 +
->  drivers/dma/meson.build                |   1 +
->  usertools/dpdk-devbind.py              |   5 +-
->  11 files changed, 550 insertions(+), 1 deletion(-)
->  create mode 100644 doc/guides/dmadevs/ae4dma.rst
->  create mode 100644 drivers/dma/ae4dma/ae4dma_dmadev.c
->  create mode 100644 drivers/dma/ae4dma/ae4dma_hw_defs.h
->  create mode 100644 drivers/dma/ae4dma/ae4dma_internal.h
->  create mode 100644 drivers/dma/ae4dma/meson.build
+>  drivers/dma/ae4dma/ae4dma_dmadev.c | 211 +++++++++++++++++++++++++++++
+>  1 file changed, 211 insertions(+)
 > 
-> diff --git a/.mailmap b/.mailmap
-> index 89ba6ffccc..71a62564fa 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -1329,6 +1329,7 @@ Radu Bulie <radu-andrei.bulie@nxp.com>
->  Radu Nicolau <radu.nicolau@intel.com>
->  Rafael Ávila de Espíndola <espindola@scylladb.com>
->  Rafal Kozik <rk@semihalf.com>
-> +Raghavendra Ningoji <raghavendra.ningoji@amd.com>
->  Ragothaman Jayaraman <rjayaraman@caviumnetworks.com>
->  Rahul Bhansali <rbhansali@marvell.com>
->  Rahul Gupta <rahul.gupta@broadcom.com>
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9143d028bc..2e27af49f4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1361,6 +1361,11 @@ F: doc/guides/compressdevs/features/zsda.ini
->  DMAdev Drivers
->  --------------
->  
-> +AMD AE4DMA
-> +M: Bhagyada Modali <bhagyada.modali@amd.com>
-> +F: drivers/dma/ae4dma/
-> +F: doc/guides/dmadevs/ae4dma.rst
-> +
->  Intel IDXD - EXPERIMENTAL
->  M: Bruce Richardson <bruce.richardson@intel.com>
->  M: Kevin Laatz <kevin.laatz@intel.com>
-> diff --git a/doc/guides/dmadevs/ae4dma.rst b/doc/guides/dmadevs/ae4dma.rst
-> new file mode 100644
-> index 0000000000..a85c1d92ca
-> --- /dev/null
-> +++ b/doc/guides/dmadevs/ae4dma.rst
-> @@ -0,0 +1,53 @@
-> +..  SPDX-License-Identifier: BSD-3-Clause
-> +    Copyright(c) 2025 Advanced Micro Devices, Inc.
-
-2025 -> 2026?
-
-> +
-> +.. include:: <isonum.txt>
-> +
-> +AMD AE4DMA DMA Device Driver
-> +============================
-> +
-> +The ``ae4dma`` dmadev driver is a poll-mode driver (PMD) for the
-> +AMD AE4DMA hardware DMA engine. The engine exposes 16 independent
-> +hardware command queues, each with a ring of 32 descriptors. The PMD
-> +maps each hardware command queue to a separate DPDK dmadev with a
-> +single virtual channel, so a single PCI function appears as 16 dmadevs
-> +named ``<pci-bdf>-ch0`` through ``<pci-bdf>-ch15``.
-> +
-> +The driver supports memory-to-memory copy operations only.
-> +
-> +Hardware Requirements
-> +---------------------
-> +
-> +The ``dpdk-devbind.py`` script can be used to list AE4DMA devices on
-> +the system::
-> +
-> +   dpdk-devbind.py --status-dev dma
-> +
-> +AE4DMA devices appear with vendor ID ``0x1022`` and device ID
-> +``0x149b``.
-> +
-> +Compilation
-> +-----------
-> +
-> +The driver is built as part of the standard DPDK build on x86 platforms
-> +using ``meson`` and ``ninja``; no extra configuration is required.
-> +
-> +Device Setup
-> +------------
-> +
-> +The AE4DMA device must be bound to a DPDK-compatible kernel module such
-> +as ``vfio-pci`` before it can be used::
-> +
-> +   dpdk-devbind.py -b vfio-pci <pci-bdf>
-> +
-> +Initialization
-> +~~~~~~~~~~~~~~
-> +
-> +On probe the PMD performs the following steps for each PCI function:
-> +
-> +* Reads BAR0 and programs the common configuration register with the
-> +  number of hardware queues to enable (16).
-> +* For each hardware queue it allocates a 32-entry descriptor ring in
-> +  IOVA-contiguous memory, programs the queue base address and ring
-> +  depth into the per-queue registers, and enables the queue.
-> +* Interrupts are masked; completion is polled by the application.
-> diff --git a/doc/guides/dmadevs/index.rst b/doc/guides/dmadevs/index.rst
-> index 56beb1733f..97399590f6 100644
-> --- a/doc/guides/dmadevs/index.rst
-> +++ b/doc/guides/dmadevs/index.rst
-> @@ -11,6 +11,7 @@ an application through DMA API.
->     :maxdepth: 1
->     :numbered:
->  
-> +   ae4dma
->     cnxk
->     dpaa
->     dpaa2
-> diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-> index f012d47a4b..9a78a7ef62 100644
-> --- a/doc/guides/rel_notes/release_26_07.rst
-> +++ b/doc/guides/rel_notes/release_26_07.rst
-> @@ -63,6 +63,13 @@ New Features
->      ``rte_eal_init`` and the application is responsible for probing each device,
->    * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
->  
-> +* **Added AMD AE4DMA DMA PMD.**
-> +
-> +  Added a new ``dma/ae4dma`` driver for the AMD AE4DMA hardware DMA engine.
-> +  Each PCI function exposes 16 hardware command queues; the PMD registers one
-> +  dmadev per channel with a single virtual channel and supports
-> +  memory-to-memory copy operations.
-> +
->  
->  Removed Items
->  -------------
 > diff --git a/drivers/dma/ae4dma/ae4dma_dmadev.c b/drivers/dma/ae4dma/ae4dma_dmadev.c
-> new file mode 100644
-> index 0000000000..3d82f86906
-> --- /dev/null
+> index 3d82f86906..607f288623 100644
+> --- a/drivers/dma/ae4dma/ae4dma_dmadev.c
 > +++ b/drivers/dma/ae4dma/ae4dma_dmadev.c
-> @@ -0,0 +1,220 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2026 Advanced Micro Devices, Inc. All rights reserved.
-> + */
-> +
-> +#include <errno.h>
-> +#include <inttypes.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +
-> +#include <rte_bus_pci.h>
-> +#include <bus_pci_driver.h>
-> +#include <rte_dmadev_pmd.h>
-> +#include <rte_malloc.h>
-> +
-> +#include "ae4dma_internal.h"
-> +
-> +/*
-> + * One dmadev per AE4DMA hardware channel; each dmadev has exactly one
-> + * virtual channel. The HW's per-queue register block must be densely
-> + * packed right after the engine-common config register at BAR0+0; the
-> + * build-time check below catches an accidental layout change.
-> + */
-> +static_assert(sizeof(struct ae4dma_hwq_regs) == 32,
-> +		"ae4dma_hwq_regs stride changed; per-queue offset math will break");
-> +
-> +RTE_LOG_REGISTER_DEFAULT(ae4dma_pmd_logtype, INFO);
-> +
-> +#define AE4DMA_PMD_NAME dmadev_ae4dma
-> +
-> +static const struct rte_memzone *
-> +ae4dma_queue_dma_zone_reserve(const char *queue_name,
-> +		uint32_t queue_size, int socket_id)
+> @@ -53,6 +53,203 @@ ae4dma_queue_dma_zone_reserve(const char *queue_name,
+>  			socket_id, RTE_MEMZONE_IOVA_CONTIG, queue_size);
+>  }
+>  
+> +static int
+> +ae4dma_dev_configure(struct rte_dma_dev *dev __rte_unused,
+> +		const struct rte_dma_conf *dev_conf,
+> +		uint32_t conf_sz)
 > +{
-> +	const struct rte_memzone *mz;
+> +	if (sizeof(struct rte_dma_conf) != conf_sz)
+> +		return -EINVAL;
+
+This may break ABI compatible
+
 > +
-> +	mz = rte_memzone_lookup(queue_name);
-> +	if (mz != NULL) {
-> +		if (((size_t)queue_size <= mz->len) &&
-> +				((socket_id == SOCKET_ID_ANY) ||
-> +				 (socket_id == mz->socket_id))) {
-> +			AE4DMA_PMD_INFO("reuse memzone already "
-> +					"allocated for %s", queue_name);
-> +			return mz;
-> +		}
-> +		AE4DMA_PMD_ERR("Incompatible memzone already "
-> +				"allocated %s, size %u, socket %d. "
-> +				"Requested size %u, socket %u",
-> +				queue_name, (uint32_t)mz->len,
-> +				mz->socket_id, queue_size, socket_id);
-> +		return NULL;
+> +	if (dev_conf->nb_vchans != 1)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +/* Setup a virtual channel for AE4DMA, only 1 vchan is supported per dmadev. */
+> +static int
+> +ae4dma_vchan_setup(struct rte_dma_dev *dev, uint16_t vchan __rte_unused,
+> +		const struct rte_dma_vchan_conf *qconf, uint32_t qconf_sz)
+> +{
+> +	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
+> +	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
+> +	uint16_t max_desc = qconf->nb_desc;
+> +
+> +	if (sizeof(struct rte_dma_vchan_conf) != qconf_sz)
+> +		return -EINVAL;
+
+This may break ABI compatible
+
+> +
+> +	if (max_desc < 2)
+> +		return -EINVAL;
+
+No need to do this because rte_dma_vchan_setup already do it.
+
+> +
+> +	if (!rte_is_power_of_2(max_desc))
+> +		max_desc = rte_align32pow2(max_desc);
+> +
+> +	if (max_desc > AE4DMA_DESCRIPTORS_PER_CMDQ) {
+> +		AE4DMA_PMD_DEBUG("DMA dev %u nb_desc clamped to %u",
+> +				dev->data->dev_id, AE4DMA_DESCRIPTORS_PER_CMDQ);
+> +		max_desc = AE4DMA_DESCRIPTORS_PER_CMDQ;
 > +	}
-> +	return rte_memzone_reserve_aligned(queue_name, queue_size,
-> +			socket_id, RTE_MEMZONE_IOVA_CONTIG, queue_size);
 
-No need to do such reuse, and this resource could setup in vchan_setup ops,
-but your dmadev has max 32 descriptors and only 1 vchan per-dmadev, so I think
-it's ok to setup in the probe.
+No need to do this because rte_dma_vchan_setup already do it.
 
+> +
+> +	cmd_q->qcfg = *qconf;
+> +	cmd_q->qcfg.nb_desc = max_desc;
+> +
+> +	/* Ensure all counters are reset, if reconfiguring/restarting device. */
+> +	memset(&cmd_q->stats, 0, sizeof(cmd_q->stats));
+> +	return 0;
 > +}
 > +
 > +static int
-> +ae4dma_add_queue(struct ae4dma_dmadev *dev, struct rte_pci_device *pci,
-> +		uint8_t qn, const char *pci_name)
+> +ae4dma_dev_start(struct rte_dma_dev *dev)
 > +{
-> +	uint32_t dma_addr_lo, dma_addr_hi;
+> +	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
+> +	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
+> +	uint16_t nb = cmd_q->qcfg.nb_desc;
+> +
+> +	if (nb == 0)
+> +		return -EBUSY;
+> +
+> +	/* Program ring depth expected by hardware. */
+> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->max_idx, nb);
+> +	return 0;
+> +}
+> +
+> +static int
+> +ae4dma_dev_stop(struct rte_dma_dev *dev)
+> +{
+> +	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
+> +	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
+> +
+> +	if (cmd_q->hwq_regs != NULL)
+> +		AE4DMA_WRITE_REG(&cmd_q->hwq_regs->control_reg.control_raw,
+> +				AE4DMA_CMD_QUEUE_DISABLE);
+> +	return 0;
+> +}
+> +
+> +static int
+> +ae4dma_dev_info_get(const struct rte_dma_dev *dev __rte_unused,
+> +		struct rte_dma_info *info, uint32_t size)
+> +{
+> +	if (size < sizeof(*info))
+> +		return -EINVAL;
+> +	info->dev_capa = RTE_DMA_CAPA_MEM_TO_MEM;
+
+You need also decalre support RTE_DMA_CAP_OPS_COPY, please use dpdk-test dmadev_autotest
+to test it.
+
+The dpdk-dma-perf could also test dmadev.
+
+> +	info->max_vchans = 1;
+> +	info->min_desc = 2;
+> +	info->max_desc = AE4DMA_DESCRIPTORS_PER_CMDQ;
+> +	info->nb_vchans = 1;
+> +	return 0;
+> +}
+> +
+> +static int
+> +ae4dma_dev_close(struct rte_dma_dev *dev)
+> +{
+> +	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
+> +	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
+> +
+> +	if (cmd_q->hwq_regs != NULL)
+> +		AE4DMA_WRITE_REG(&cmd_q->hwq_regs->control_reg.control_raw,
+> +				AE4DMA_CMD_QUEUE_DISABLE);
+> +
+> +	rte_memzone_free(cmd_q->mz);
+> +	cmd_q->mz = NULL;
+> +	cmd_q->qbase_desc = NULL;
+> +	cmd_q->qbase_addr = NULL;
+> +	cmd_q->qbase_phys_addr = 0;
+> +	return 0;
+> +}
+> +
+> +static int
+> +ae4dma_dev_dump(const struct rte_dma_dev *dev, FILE *f)
+> +{
+> +	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
 > +	struct ae4dma_cmd_queue *cmd_q;
-> +	const struct rte_memzone *q_mz;
+> +	void *ae4dma_mmio_base_addr = (uint8_t *)ae4dma->io_regs;
 > +
-> +	dev->io_regs = pci->mem_resource[AE4DMA_PCIE_BAR].addr;
+> +	cmd_q = &ae4dma->cmd_q;
+> +	fprintf(f, "cmd_q->id              = %" PRIx64 "\n", cmd_q->id);
+> +	fprintf(f, "cmd_q->qidx            = %" PRIx64 "\n", cmd_q->qidx);
+> +	fprintf(f, "cmd_q->qsize           = %" PRIx64 "\n", cmd_q->qsize);
+> +	fprintf(f, "mmio_base_addr	= %p\n", ae4dma_mmio_base_addr);
+> +	fprintf(f, "queues per ae4dma engine     = %d\n", AE4DMA_READ_REG_OFFSET(
+> +				ae4dma_mmio_base_addr, AE4DMA_COMMON_CONFIG_OFFSET));
+> +	fprintf(f, "== Private Data ==\n");
+> +	fprintf(f, "  Config: { ring_size: %u }\n", cmd_q->qcfg.nb_desc);
+> +	fprintf(f, "  Ring virt: %p\tphys: %#" PRIx64 "\n",
+> +			(void *)cmd_q->qbase_desc,
+> +			(uint64_t)cmd_q->qbase_phys_addr);
+> +	fprintf(f, "  Next write: %u\n", cmd_q->next_write);
+> +	fprintf(f, "  Next read: %u\n", cmd_q->next_read);
+> +	fprintf(f, "  current queue depth: %u\n", cmd_q->ring_buff_count);
+> +	fprintf(f, "  }\n");
+> +	fprintf(f, "  Key Stats { submitted: %" PRIu64 ", comp: %" PRIu64 ", failed: %" PRIu64 " }\n",
+> +		cmd_q->stats.submitted,
+> +		cmd_q->stats.completed,
+> +		cmd_q->stats.errors);
+> +	return 0;
+> +}
+> +static int
+> +ae4dma_stats_get(const struct rte_dma_dev *dev, uint16_t vchan __rte_unused,
+> +		struct rte_dma_stats *rte_stats, uint32_t size)
+> +{
+> +	const struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
+> +	const struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
+> +	const struct rte_dma_stats *stats = &cmd_q->stats;
 > +
-> +	cmd_q = &dev->cmd_q;
-> +	cmd_q->id = qn;
-> +	cmd_q->qidx = 0;
-> +	cmd_q->qsize = AE4DMA_QUEUE_SIZE(AE4DMA_QUEUE_DESC_SIZE);
-> +	cmd_q->hwq_regs = (volatile struct ae4dma_hwq_regs *)dev->io_regs + (qn + 1);
+> +	if (size < sizeof(*rte_stats))
+> +		return -EINVAL;
+> +	if (rte_stats == NULL)
+> +		return -EINVAL;
+
+No need to do this check because rte_dma_stats_get already check it
+Please make such check on other ops.
+
 > +
-> +	/*
-> +	 * Memzone name must be globally unique. Embed PCI BDF so multiple
-> +	 * PCI functions probed concurrently don't collide.
-> +	 */
-> +	snprintf(cmd_q->memz_name, sizeof(cmd_q->memz_name),
-> +			"ae4dma_%s_q%u", pci_name, (unsigned int)qn);
-> +
-> +	q_mz = ae4dma_queue_dma_zone_reserve(cmd_q->memz_name,
-> +			cmd_q->qsize, rte_socket_id());
-> +	if (q_mz == NULL) {
-> +		AE4DMA_PMD_ERR("memzone reserve failed for %s", cmd_q->memz_name);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	cmd_q->mz = q_mz;
-> +	cmd_q->qbase_addr = q_mz->addr;
-> +	cmd_q->qbase_desc = q_mz->addr;
-> +	cmd_q->qbase_phys_addr = q_mz->iova;
-> +
-> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->max_idx, AE4DMA_DESCRIPTORS_PER_CMDQ);
-> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->control_reg.control_raw,
-> +			AE4DMA_CMD_QUEUE_ENABLE);
-> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->intr_status_reg.intr_status_raw,
-> +			AE4DMA_DISABLE_INTR);
-> +	cmd_q->next_write = AE4DMA_READ_REG(&cmd_q->hwq_regs->write_idx);
-> +	cmd_q->next_read = AE4DMA_READ_REG(&cmd_q->hwq_regs->read_idx);
-> +	cmd_q->ring_buff_count = 0;
-> +
-> +	dma_addr_lo = lower_32_bits(cmd_q->qbase_phys_addr);
-> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->qbase_lo, dma_addr_lo);
-> +	dma_addr_hi = upper_32_bits(cmd_q->qbase_phys_addr);
-> +	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->qbase_hi, dma_addr_hi);
-> +
+> +	*rte_stats = *stats;
 > +	return 0;
 > +}
 > +
-> +static void
-> +ae4dma_channel_dev_name(char *out, size_t outlen, const char *pci_name,
-> +		unsigned int ch)
-> +{
-> +	snprintf(out, outlen, "%s-ch%u", pci_name, ch);
-> +}
-> +
 > +static int
-> +ae4dma_dmadev_create(const char *name, struct rte_pci_device *dev, uint8_t qn)
+> +ae4dma_stats_reset(struct rte_dma_dev *dev, uint16_t vchan __rte_unused)
 > +{
-> +	struct rte_dma_dev *dmadev;
-> +	struct ae4dma_dmadev *ae4dma;
-> +	char hwq_dev_name[RTE_DEV_NAME_MAX_LEN];
-
-Please define local variables in a descending order, with longer ones
-placed at the front. It is recommended to modify the entire driver in
-this way.
-
+> +	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
+> +	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
 > +
-> +	memset(hwq_dev_name, 0, sizeof(hwq_dev_name));
-
-why not char hwq_dev_name[RTE_DEV_NAME_MAX_LEN] = {0};
-
-> +	ae4dma_channel_dev_name(hwq_dev_name, sizeof(hwq_dev_name), name, qn);
-> +
-> +	dmadev = rte_dma_pmd_allocate(hwq_dev_name, dev->device.numa_node,
-> +			sizeof(struct ae4dma_dmadev));
-> +	if (dmadev == NULL) {
-> +		AE4DMA_PMD_ERR("Unable to allocate dma device");
-> +		return -ENOMEM;
-> +	}
-> +	dmadev->device = &dev->device;
-> +	dmadev->fp_obj->dev_private = dmadev->data->dev_private;
-> +
-> +	ae4dma = dmadev->data->dev_private;
-> +
-> +	if (ae4dma_add_queue(ae4dma, dev, qn, name) != 0)
-> +		goto init_error;
-> +	return 0;
-> +
-> +init_error:
-> +	AE4DMA_PMD_ERR("failed");
-
-why not add more info, e.g. Probe failed!
-
-> +	rte_dma_pmd_release(hwq_dev_name);
-> +	return -ENOMEM;
-> +}
-> +
-> +static int
-> +ae4dma_dmadev_probe(struct rte_pci_driver *drv __rte_unused,
-> +		struct rte_pci_device *dev)
-> +{
-> +	char name[32];
-> +	char chname[RTE_DEV_NAME_MAX_LEN];
-> +	void *mmio_base;
-> +	uint32_t q_per_eng;
-> +	int ret = 0;
-> +	uint8_t i;
-> +
-> +	rte_pci_device_name(&dev->addr, name, sizeof(name));
-> +	AE4DMA_PMD_INFO("Init %s on NUMA node %d", name, dev->device.numa_node);
-> +
-> +	mmio_base = dev->mem_resource[AE4DMA_PCIE_BAR].addr;
-> +	if (mmio_base == NULL) {
-> +		AE4DMA_PMD_ERR("%s: BAR%d not mapped", name, AE4DMA_PCIE_BAR);
-> +		return -ENODEV;
-> +	}
-> +
-> +	/* Program the per-engine HW queue count once. */
-> +	AE4DMA_WRITE_REG_OFFSET(mmio_base, AE4DMA_COMMON_CONFIG_OFFSET,
-> +			AE4DMA_MAX_HW_QUEUES);
-> +	q_per_eng = AE4DMA_READ_REG_OFFSET(mmio_base, AE4DMA_COMMON_CONFIG_OFFSET);
-> +	AE4DMA_PMD_INFO("%s: AE4DMA queues per engine = %u", name, q_per_eng);
-> +
-> +	for (i = 0; i < AE4DMA_MAX_HW_QUEUES; i++) {
-> +		ret = ae4dma_dmadev_create(name, dev, i);
-> +		if (ret != 0) {
-> +			AE4DMA_PMD_ERR("%s create dmadev %u failed!", name, i);
-> +			while (i > 0) {
-> +				i--;
-> +				ae4dma_channel_dev_name(chname, sizeof(chname), name, i);
-> +				rte_dma_pmd_release(chname);
-> +			}
-> +			break;
-> +		}
-> +	}
-> +	return ret;
-> +}
-> +
-> +static int
-> +ae4dma_dmadev_remove(struct rte_pci_device *dev)
-> +{
-> +	char name[32];
-> +	char chname[RTE_DEV_NAME_MAX_LEN];
-> +	unsigned int i;
-> +
-> +	rte_pci_device_name(&dev->addr, name, sizeof(name));
-> +
-> +	AE4DMA_PMD_INFO("Closing %s on NUMA node %d",
-> +			name, dev->device.numa_node);
-> +
-> +	for (i = 0; i < AE4DMA_MAX_HW_QUEUES; i++) {
-> +		ae4dma_channel_dev_name(chname, sizeof(chname), name, i);
-> +		rte_dma_pmd_release(chname);
-> +	}
+> +	memset(&cmd_q->stats, 0, sizeof(cmd_q->stats));
 > +	return 0;
 > +}
 > +
-> +static const struct rte_pci_id pci_id_ae4dma_map[] = {
-> +	{ RTE_PCI_DEVICE(AMD_VENDOR_ID, AE4DMA_DEVICE_ID) },
-> +	{ .vendor_id = 0, /* sentinel */ },
-> +};
-> +
-> +static struct rte_pci_driver ae4dma_pmd_drv = {
-> +	.id_table = pci_id_ae4dma_map,
-> +	.drv_flags = RTE_PCI_DRV_NEED_MAPPING,
-> +	.probe = ae4dma_dmadev_probe,
-> +	.remove = ae4dma_dmadev_remove,
-> +};
-> +
-> +RTE_PMD_REGISTER_PCI(AE4DMA_PMD_NAME, ae4dma_pmd_drv);
-> +RTE_PMD_REGISTER_PCI_TABLE(AE4DMA_PMD_NAME, pci_id_ae4dma_map);
-> +RTE_PMD_REGISTER_KMOD_DEP(AE4DMA_PMD_NAME, "* igb_uio | uio_pci_generic | vfio-pci");
-> diff --git a/drivers/dma/ae4dma/ae4dma_hw_defs.h b/drivers/dma/ae4dma/ae4dma_hw_defs.h
-> new file mode 100644
-> index 0000000000..e7798be09b
-> --- /dev/null
-> +++ b/drivers/dma/ae4dma/ae4dma_hw_defs.h
-> @@ -0,0 +1,154 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2026 Advanced Micro Devices, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef __AE4DMA_HW_DEFS_H__
-> +#define __AE4DMA_HW_DEFS_H__
-> +
-> +#include <stdint.h>
-> +
-> +#include <rte_bus_pci.h>
-> +#include <rte_byteorder.h>
-> +#include <rte_io.h>
-> +#include <rte_pci.h>
-> +#include <rte_memzone.h>
-
-Some of the include file are not need for this head-file.
-
-> +
-> +#define AE4DMA_BIT(nr)			(1UL << (nr))
-> +
-> +/* ae4dma device details */
-> +#define AMD_VENDOR_ID	0x1022
-> +#define AE4DMA_DEVICE_ID	0x149b
-> +#define AE4DMA_PCIE_BAR 0
-> +
 > +/*
-> + * An AE4DMA engine has 16 DMA queues. Each queue supports 32 descriptors.
+> + * Report channel state to the dmadev framework.
+> + *
+> + *   RTE_DMA_VCHAN_HALTED_ERROR - HW queue is disabled (never started, or
+> + *                                stopped via dev_stop()).
+> + *   RTE_DMA_VCHAN_IDLE         - HW has caught up: read_idx == write_idx,
+> + *                                no descriptors in flight.
+> + *   RTE_DMA_VCHAN_ACTIVE       - HW still has descriptors to process.
 > + */
-> +#define AE4DMA_MAX_HW_QUEUES        16
-> +#define AE4DMA_QUEUE_START_INDEX    0
-> +#define AE4DMA_CMD_QUEUE_ENABLE		0x1
-> +#define AE4DMA_CMD_QUEUE_DISABLE	0x0
-> +
-> +/* Common to all queues */
-> +#define AE4DMA_COMMON_CONFIG_OFFSET 0x00
-> +
-> +#define AE4DMA_DISABLE_INTR 0x01
-> +
-> +/* Descriptor status */
-> +enum ae4dma_dma_status {
-> +	AE4DMA_DMA_DESC_SUBMITTED = 0,
-> +	AE4DMA_DMA_DESC_VALIDATED = 1,
-> +	AE4DMA_DMA_DESC_PROCESSED = 2,
-> +	AE4DMA_DMA_DESC_COMPLETED = 3,
-> +	AE4DMA_DMA_DESC_ERROR = 4,
-> +};
-> +
-> +/* Descriptor error-code */
-> +enum ae4dma_dma_err {
-> +	AE4DMA_DMA_ERR_NO_ERR = 0,
-> +	AE4DMA_DMA_ERR_INV_HEADER = 1,
-> +	AE4DMA_DMA_ERR_INV_STATUS = 2,
-> +	AE4DMA_DMA_ERR_INV_LEN = 3,
-> +	AE4DMA_DMA_ERR_INV_SRC = 4,
-> +	AE4DMA_DMA_ERR_INV_DST = 5,
-> +	AE4DMA_DMA_ERR_INV_ALIGN = 6,
-> +	AE4DMA_DMA_ERR_UNKNOWN = 7,
-> +};
-> +
-> +/* HW Queue status */
-> +enum ae4dma_hwqueue_status {
-> +	AE4DMA_HWQUEUE_EMPTY = 0,
-> +	AE4DMA_HWQUEUE_FULL = 1,
-> +	AE4DMA_HWQUEUE_NOT_EMPTY = 4,
-> +};
-> +/*
-> + * descriptor for AE4DMA commands
-> + * 8 32-bit words:
-> + * word 0: source memory type; destination memory type ; control bits
-> + * word 1: desc_id; error code; status
-> + * word 2: length
-> + * word 3: reserved
-> + * word 4: upper 32 bits of source pointer
-> + * word 5: low 32 bits of source pointer
-> + * word 6: upper 32 bits of destination pointer
-> + * word 7: low 32 bits of destination pointer
-> + */
-> +
-> +/* AE4DMA Descriptor - DWORD0 - Controls bits: Reserved for future use */
-> +#define AE4DMA_DWORD0_STOP_ON_COMPLETION	AE4DMA_BIT(0)
-> +#define AE4DMA_DWORD0_INTERRUPT_ON_COMPLETION	AE4DMA_BIT(1)
-> +#define AE4DMA_DWORD0_START_OF_MESSAGE		AE4DMA_BIT(3)
-> +#define AE4DMA_DWORD0_END_OF_MESSAGE		AE4DMA_BIT(4)
-> +#define AE4DMA_DWORD0_DESTINATION_MEMORY_TYPE	RTE_GENMASK64(5, 4)
-> +#define AE4DMA_DWORD0_SOURCE_MEMEORY_TYPE	RTE_GENMASK64(7, 6)
-> +
-> +#define AE4DMA_DWORD0_DESTINATION_MEMORY_TYPE_MEMORY    (0x0)
-> +#define AE4DMA_DWORD0_DESTINATION_MEMORY_TYPE_IOMEMORY  (1<<4)
-> +#define AE4DMA_DWORD0_SOURCE_MEMEORY_TYPE_MEMORY    (0x0)
-> +#define AE4DMA_DWORD0_SOURCE_MEMEORY_TYPE_IOMEMORY  (1<<6)
-> +
-> +struct ae4dma_desc_dword0 {
-> +	uint8_t byte0;
-> +	uint8_t byte1;
-> +	uint16_t timestamp;
-> +};
-> +
-> +struct ae4dma_desc_dword1 {
-> +	uint8_t status;
-> +	uint8_t err_code;
-> +	uint16_t desc_id;
-> +};
-> +
-> +struct ae4dma_desc {
-> +	struct ae4dma_desc_dword0 dw0;
-> +	struct ae4dma_desc_dword1 dw1;
-> +	uint32_t length;
-> +	uint32_t reserved;
-> +	uint32_t src_lo;
-> +	uint32_t src_hi;
-> +	uint32_t dst_lo;
-> +	uint32_t dst_hi;
-> +};
-> +
-> +/*
-> + * Registers for each queue :4 bytes length
-> + * Effective address : offset + reg
-> + */
-> +struct ae4dma_hwq_regs {
-> +	union {
-> +		uint32_t control_raw;
-> +		struct {
-> +			uint32_t queue_enable: 1;
-> +			uint32_t reserved_internal: 31;
-> +		} control;
-> +	} control_reg;
-> +
-> +	union {
-> +		uint32_t status_raw;
-> +		struct {
-> +			uint32_t reserved0: 1;
-> +			/* 0–empty, 1–full, 2–stopped, 3–error , 4–Not Empty */
-> +			uint32_t queue_status: 2;
-> +			uint32_t reserved1: 21;
-> +			uint32_t interrupt_type: 4;
-> +			uint32_t reserved2: 4;
-> +		} status;
-> +	} status_reg;
-> +
-> +	uint32_t max_idx;
-> +	uint32_t read_idx;
-> +	uint32_t write_idx;
-> +
-> +	union {
-> +		uint32_t intr_status_raw;
-> +		struct {
-> +			uint32_t intr_status: 1;
-> +			uint32_t reserved: 31;
-> +		} intr_status;
-> +	} intr_status_reg;
-> +
-> +	uint32_t qbase_lo;
-> +	uint32_t qbase_hi;
-> +
-> +};
-> +
-> +#endif /* AE4DMA_HW_DEFS_H */
-> diff --git a/drivers/dma/ae4dma/ae4dma_internal.h b/drivers/dma/ae4dma/ae4dma_internal.h
-> new file mode 100644
-> index 0000000000..7f149c97b5
-> --- /dev/null
-> +++ b/drivers/dma/ae4dma/ae4dma_internal.h
-> @@ -0,0 +1,97 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2026 Advanced Micro Devices, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef _AE4DMA_INTERNAL_H_
-> +#define _AE4DMA_INTERNAL_H_
-> +
-> +#include <stdint.h>
-> +
-> +#include "ae4dma_hw_defs.h"
-> +
-> +/* Return bits 32-63 of a 64-bit number. */
-> +#define upper_32_bits(n) ((uint32_t)(((n) >> 16) >> 16))
-> +
-> +/* Return bits 0-31 of a 64-bit number. */
-> +#define lower_32_bits(n) ((uint32_t)((n) & 0xffffffff))
-> +
-> +/* Hardware ring depth (slots per queue); must be power of two. */
-> +#define AE4DMA_DESCRIPTORS_PER_CMDQ	32
-> +#define AE4DMA_QUEUE_DESC_SIZE		sizeof(struct ae4dma_desc)
-> +#define AE4DMA_QUEUE_SIZE(n)		(AE4DMA_DESCRIPTORS_PER_CMDQ * (n))
-> +
-
-two blank lines
-
-> +
-> +/* AE4DMA registers Write/Read */
-> +static inline void ae4dma_pci_reg_write(void *base, int offset,
-> +		uint32_t value)
+> +static int
+> +ae4dma_vchan_status(const struct rte_dma_dev *dev, uint16_t vchan __rte_unused,
+> +		enum rte_dma_vchan_status *status)
 > +{
-> +	volatile void *reg_addr = ((uint8_t *)base + offset);
+> +	const struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
+> +	const struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
+> +	uint32_t ctrl, hw_read, hw_write;
 > +
-> +	rte_write32((rte_cpu_to_le_32(value)), reg_addr);
+> +	if (cmd_q->hwq_regs == NULL) {
+> +		*status = RTE_DMA_VCHAN_HALTED_ERROR;
+> +		return 0;
+> +	}
+> +
+> +	ctrl = AE4DMA_READ_REG(&cmd_q->hwq_regs->control_reg.control_raw);
+> +	if ((ctrl & AE4DMA_CMD_QUEUE_ENABLE) == 0) {
+> +		*status = RTE_DMA_VCHAN_HALTED_ERROR;
+> +		return 0;
+> +	}
+> +
+> +	hw_read  = AE4DMA_READ_REG(&cmd_q->hwq_regs->read_idx);
+> +	hw_write = AE4DMA_READ_REG(&cmd_q->hwq_regs->write_idx);
+> +
+> +	*status = (hw_read == hw_write) ? RTE_DMA_VCHAN_IDLE
+> +					: RTE_DMA_VCHAN_ACTIVE;
+> +	return 0;
 > +}
 > +
-> +static inline uint32_t ae4dma_pci_reg_read(void *base, int offset)
-> +{
-> +	volatile void *reg_addr = ((uint8_t *)base + offset);
+>  static int
+>  ae4dma_add_queue(struct ae4dma_dmadev *dev, struct rte_pci_device *pci,
+>  		uint8_t qn, const char *pci_name)
+> @@ -115,6 +312,19 @@ ae4dma_channel_dev_name(char *out, size_t outlen, const char *pci_name,
+>  static int
+>  ae4dma_dmadev_create(const char *name, struct rte_pci_device *dev, uint8_t qn)
+>  {
+> +	static const struct rte_dma_dev_ops ae4dma_dmadev_ops = {
+> +		.dev_close = ae4dma_dev_close,
+> +		.dev_configure = ae4dma_dev_configure,
+> +		.dev_dump = ae4dma_dev_dump,
+> +		.dev_info_get = ae4dma_dev_info_get,
+> +		.dev_start = ae4dma_dev_start,
+> +		.dev_stop = ae4dma_dev_stop,
+> +		.stats_get = ae4dma_stats_get,
+> +		.stats_reset = ae4dma_stats_reset,
+> +		.vchan_status = ae4dma_vchan_status,
+> +		.vchan_setup = ae4dma_vchan_setup,
+> +	};
 > +
-> +	return rte_le_to_cpu_32(rte_read32(reg_addr));
-> +}
-> +
-> +#define AE4DMA_READ_REG_OFFSET(hw_addr, reg_offset) \
-> +	ae4dma_pci_reg_read(hw_addr, reg_offset)
-> +
-> +#define AE4DMA_WRITE_REG_OFFSET(hw_addr, reg_offset, value) \
-> +	ae4dma_pci_reg_write(hw_addr, reg_offset, value)
-> +
-> +
-
-two blank lines
-
-> +#define AE4DMA_READ_REG(hw_addr) \
-> +	ae4dma_pci_reg_read((void *)(uintptr_t)(hw_addr), 0)
-> +
-> +#define AE4DMA_WRITE_REG(hw_addr, value) \
-> +	ae4dma_pci_reg_write((void *)(uintptr_t)(hw_addr), 0, value)
-> +
-> +/* A structure describing an AE4DMA command queue. */
-> +struct __rte_cache_aligned ae4dma_cmd_queue {
-> +	char memz_name[RTE_MEMZONE_NAMESIZE];
-> +	const struct rte_memzone *mz;
-> +	volatile struct ae4dma_hwq_regs *hwq_regs;
-> +
-> +	struct rte_dma_vchan_conf qcfg;
-> +	struct rte_dma_stats stats;
-> +	/* Queue address */
-> +	struct ae4dma_desc *qbase_desc;
-> +	void *qbase_addr;
-> +	rte_iova_t qbase_phys_addr;
-> +	enum ae4dma_dma_err status[AE4DMA_DESCRIPTORS_PER_CMDQ];
-> +	/* Queue identifier */
-> +	uint64_t id;    /* queue id */
-> +	uint64_t qidx;  /* queue index */
-> +	uint64_t qsize; /* queue size */
-> +	uint32_t ring_buff_count;
-> +	uint16_t next_read;
-> +	uint16_t next_write;
-> +	uint16_t last_write; /* Used to compute submitted count. */
-> +};
-> +
-> +/*
-> + * One dmadev per AE4DMA hardware channel: probe creates AE4DMA_MAX_HW_QUEUES
-> + * dmadevs per PCI function, each owning a single HW command queue.
-> + */
-> +struct ae4dma_dmadev {
-> +	void *io_regs;
-> +	struct ae4dma_cmd_queue cmd_q; /* single HW queue owned by this dmadev */
-> +};
-> +
-> +
-
-two blank line
-
-> +extern int ae4dma_pmd_logtype;
-> +#define RTE_LOGTYPE_AE4DMA_PMD ae4dma_pmd_logtype
-> +
-> +#define AE4DMA_PMD_LOG(level, ...) \
-> +	RTE_LOG_LINE_PREFIX(level, AE4DMA_PMD, "%s(): ", __func__, __VA_ARGS__)
-> +
-> +#define AE4DMA_PMD_DEBUG(...)  AE4DMA_PMD_LOG(DEBUG, __VA_ARGS__)
-> +#define AE4DMA_PMD_INFO(...)   AE4DMA_PMD_LOG(INFO, __VA_ARGS__)
-> +#define AE4DMA_PMD_ERR(...)    AE4DMA_PMD_LOG(ERR, __VA_ARGS__)
-> +#define AE4DMA_PMD_WARN(...)   AE4DMA_PMD_LOG(WARNING, __VA_ARGS__)
-> +
-> +#endif /* _AE4DMA_INTERNAL_H_ */
-> diff --git a/drivers/dma/ae4dma/meson.build b/drivers/dma/ae4dma/meson.build
-> new file mode 100644
-> index 0000000000..e48ab0d561
-> --- /dev/null
-> +++ b/drivers/dma/ae4dma/meson.build
-> @@ -0,0 +1,7 @@
-> +# SPDX-License-Identifier: BSD-3-Clause
-> +# Copyright 2024 Advanced Micro Devices, Inc. All rights reserved.
-
-2024 -> 2026
-
-Does this also support run BSD or Windows, if not please add following instruments:
-if not is_linux
-    build = false
-    reason = 'only supported on Linux'
-    subdir_done()
-endif
-
-> +
-> +build = dpdk_conf.has('RTE_ARCH_X86')
-> +reason = 'only supported on x86'
-> +sources = files('ae4dma_dmadev.c')
-> +deps += ['bus_pci', 'dmadev']
-> diff --git a/drivers/dma/meson.build b/drivers/dma/meson.build
-> index e0d94db967..c230ac5a06 100644
-> --- a/drivers/dma/meson.build
-> +++ b/drivers/dma/meson.build
-> @@ -2,6 +2,7 @@
->  # Copyright 2021 HiSilicon Limited
+>  	struct rte_dma_dev *dmadev;
+>  	struct ae4dma_dmadev *ae4dma;
+>  	char hwq_dev_name[RTE_DEV_NAME_MAX_LEN];
+> @@ -130,6 +340,7 @@ ae4dma_dmadev_create(const char *name, struct rte_pci_device *dev, uint8_t qn)
+>  	}
+>  	dmadev->device = &dev->device;
+>  	dmadev->fp_obj->dev_private = dmadev->data->dev_private;
+> +	dmadev->dev_ops = &ae4dma_dmadev_ops;
 >  
->  drivers = [
-> +        'ae4dma',
->          'cnxk',
->          'dpaa',
->          'dpaa2',
-> diff --git a/usertools/dpdk-devbind.py b/usertools/dpdk-devbind.py
-> index 93f2383dff..7d09f155de 100755
-> --- a/usertools/dpdk-devbind.py
-> +++ b/usertools/dpdk-devbind.py
-> @@ -86,6 +86,9 @@
->  cn9k_ree = {'Class': '08', 'Vendor': '177d', 'Device': 'a0f4',
->              'SVendor': None, 'SDevice': None}
+>  	ae4dma = dmadev->data->dev_private;
 >  
-> +amd_ae4dma = {'Class': '08', 'Vendor': '1022', 'Device': '149b',
-> +              'SVendor': None, 'SDevice': None}
-> +
->  virtio_blk = {'Class': '01', 'Vendor': "1af4", 'Device': '1001,1042',
->                'SVendor': None, 'SDevice': None}
->  
-> @@ -95,7 +98,7 @@
->  network_devices = [network_class, cavium_pkx, avp_vnic, ifpga_class]
->  baseband_devices = [acceleration_class]
->  crypto_devices = [encryption_class, intel_processor_class]
-> -dma_devices = [cnxk_dma, hisilicon_dma,
-> +dma_devices = [amd_ae4dma, cnxk_dma, hisilicon_dma,
->                 intel_idxd_gnrd, intel_idxd_dmr, intel_idxd_spr,
->                 intel_ioat_bdw, intel_ioat_icx, intel_ioat_skx,
->                 odm_dma]
 
