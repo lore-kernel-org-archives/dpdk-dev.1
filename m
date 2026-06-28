@@ -2,70 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C8EC43458
-	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Jun 2026 15:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC0CC43458
+	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Jun 2026 16:04:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D586E40278;
-	Sun, 28 Jun 2026 17:27:50 +0200 (CEST)
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com
- [209.85.210.54]) by mails.dpdk.org (Postfix) with ESMTP id 95DC6400D7
- for <dev@dpdk.org>; Sun, 28 Jun 2026 17:27:49 +0200 (CEST)
-Received: by mail-ot1-f54.google.com with SMTP id
- 46e09a7af769-7e9784666b3so1850254a34.1
- for <dev@dpdk.org>; Sun, 28 Jun 2026 08:27:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 927C140278;
+	Sun, 28 Jun 2026 18:04:57 +0200 (CEST)
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
+ [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id 74FCC400D7
+ for <dev@dpdk.org>; Sun, 28 Jun 2026 18:04:56 +0200 (CEST)
+Received: by mail-dy1-f181.google.com with SMTP id
+ 5a478bee46e88-30e18c3e0b8so1025767eec.0
+ for <dev@dpdk.org>; Sun, 28 Jun 2026 09:04:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782660469; x=1783265269; darn=dpdk.org;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782662695;
+ x=1783267495; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Wxsa1ilpK4hJidKV/W3syf/q++AddPdH8ThIupsJ6Wo=;
- b=GAqG6eJkPZH2e4d5JYHzaCLOOsn5viCjrK85U+ibsA2wRq40xTP11xoXlVkza/+jK9
- OLm7jKS+YAFM1N8rjsf+3aG2QmX3ammt1foKH4lXgDswac3W2YMn+PvtlYMGIRAUzRQS
- 6saBvXxmZMTxs/kku1VeA8uTybcZLyYzeVGDN7mGMTYAkzzKptZ2xJjUCkkCPHAq9n2y
- bK9FKGIEQ76ceBNUOO82FoCBomwkGVZcfHNAekMpppvVjUTw6zgc/yPG+4D4AFCyWicW
- gzSsaAorQ37XiW8nDZ21rg1+ZGV4lo3IaqJLkHomlA3f8pVgI3YT6rQ1uC38mDpBQf8h
- mpcw==
+ bh=dAtPcTZY/gZtp3r1wa1Lnu0PKXG9hHcvJRwclUiPfok=;
+ b=faFRZ8Ud9oBQk4jvy1f98u+cVkmd+PEARLYbQoOMEZ5f0AbiHbL/J+L4f7j+f1cq3L
+ 4k1t02PByf5T3wuBwcN60K1qg9Ch2Rv2UdsMBopNhSLC/Z+YiIvaFIsjOyZ1pxovuoYS
+ Y4HBOai6pcuV2rK8vO9J8Mg8WmAJc5/Hebikb3smb7T+3E3IO7TjOZfAkvtR8ULwWo+n
+ CKA7eC9R36sN8loKu6RVNLpZvITAlNXEhDIioJzgBU2l8GiBn5zKOnklWETFYD1kR1MT
+ MCMaSYtigTALJorvkr/H4qI2UETY5GF4j7jGy0vm+gDZFaViqelRgGr8qCBb0lQbPd3P
+ LLpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782660469; x=1783265269;
+ d=1e100.net; s=20251104; t=1782662695; x=1783267495;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Wxsa1ilpK4hJidKV/W3syf/q++AddPdH8ThIupsJ6Wo=;
- b=DMfVPidyBlzqpU9tBwcAa7asn+GlxztcEpN9Qca7S6CCXzSP9QUxtC7aVrvZcDeZuv
- 1ITnlza9LYrb5CBFNEICo85eP4E6uOSg7XiorVctstx+0FyeRLjnH4bN4QmBymkfGM+9
- yPVLDtlEZaDdbMt7yRnfXqwt8BRjKk9QcDrFapXZdoYK4YZj8qAhXLH5ht8Ius0eYHOJ
- O6sZDWS5wEr0gF48dWJHheVyL31VOiADWlJFgWMpZbVKmi9OAp8nnQkJkJ9s20hqxl7X
- ULh7b89+d5L9psBDgQ4fKg+SH1ef//eXVNPvSD3e3hbMp/8NthgfXmmhTAJ3NsITZHbF
- R+Qw==
-X-Gm-Message-State: AOJu0YzYFMx7CTAQxCpUBZ8osg05PWZRWQVrXkAFA75cGxgX0kaLtZdH
- yKcEywixBBoKx65q6dU6wtlR6uIlb8tdHOWU6Jxg/7KymzaKe/PfWd7xuRe6Y3Z5
-X-Gm-Gg: AfdE7clmVyjgT8bNOMJe37xQFUiGjpEczk+1NRTluwIFoTRFeMtMP/GRo8juX7ooINI
- UzOwkMl6lvlYKKLvfkZzi3mGMOaePQfCPcF+eaAiZFmcBF+PdlEtfRnQsQGv1j31+/sT7kf19Ci
- 4scU/sL+/ruH6CTMdrOojq+uVMs1WAHWaaHYiZ5nAL6/LeNejwsUHaAXjhWzGl5Xsa0xByoTwyE
- 91Lfv4De4IDFcbA1tpTPf612yG/N3gjlLzOGRBbamamsj+ClAuG2JrlUWvdho4McWRkAQpM2dnY
- oraB7D9kVqN7r6UAQzLRrQOvQWPFzPcakmxT4nP4oito4AkHigR2NMSoDkS447UqpA2J6E/SLjt
- sgGBD/+w/cgxjz7mV1mUIpCB8quvg/kZv3mM2QYTyaWy2zOQBAnyAAmnU6bQhWj9FRepzzOu02D
- KaATH/pQ==
-X-Received: by 2002:a05:6830:6aee:b0:7e6:ee6d:cb1f with SMTP id
- 46e09a7af769-7e9b4bf274dmr5971296a34.0.1782660468722; 
- Sun, 28 Jun 2026 08:27:48 -0700 (PDT)
-Received: from gmail.com ([50.93.222.110]) by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7e9bf499043sm3883076a34.9.2026.06.28.08.27.47
+ bh=dAtPcTZY/gZtp3r1wa1Lnu0PKXG9hHcvJRwclUiPfok=;
+ b=Lec2vH+SPE1HMQ/JwjjG4U/c8pUAwc0QkBuKJuvNG1Ipk57cYbggnmqV6spBrY+UNR
+ ODPbuH7NFUcA0oH4fp4ps20fZuLmgFVRxFnQs0bAfsLuU+/mwhZuY9d14w7LZcVFU370
+ rKfccBB4xGtwkY5fhOq1JccXdqlQ/eRNjcejk3vmJ96+TZVwJBJ8c6uPbkWVbTvepTTN
+ fNinNZVBvw7xAULhJgDKuW1It8ouJZx3XmEnIKPmsOD8Cxc4L8N4JNfeIPwJqzzF2JEK
+ GsGjPagJEvHFMUgAnlqXtsXW9mjEIAEhUvTdN62KfhInkYZ5pul00TeQ0gXoIncKJMrV
+ z7NA==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RpZmOIowy/c/ymjXJAl/eXL+L8agzDaKfbRCMGmqepjExmhBBDC9JJu3wNVqjR9BYRv2e8=@dpdk.org
+X-Gm-Message-State: AOJu0Yy0ETOLCbPUXivq+fNWC+mkbngV33rMv4XMOqxPFkF3I5Sy4BJY
+ +Kr1dKDnXf6jUrtB46/T8CHPK90+fivhj++v1bHB3YycejkcwPVpq5Mv7wcQa+HRO/g=
+X-Gm-Gg: AfdE7cnRXzs9B08lvxS8WUvAwwwfiArmSp4Uk3iERJR4V7RIGy3l7YY3eI1Cno0V/Yx
+ bddeBcHCOYDG5bH4SReSUCgzT33PojjHcUUzfhnm6RWoVT7qdPAD730uvUA+UKA4PggEMpWIspr
+ tLzBIfRTcfX+L/DeagHEaHdSQNpsRcErvYk47Bv9btMJRNtjwNY3+FEPtqXaylRCIppLQVidmhI
+ FfZ/CP2Qx/jeGCsavbfXkuydUGW0cvuQXylQh8JZGgchVjZFUPTWLu1Qb26+JIvafE6hUDqIQS9
+ wzWNhzRHr9Ag89DBKVYVDq5ADIdD68bFcD6fFafdQ3NudVitDTiBYGIEo1K0AkMkg98K0mnXelg
+ zYJljOvA5Lz/Z59+EADIpfxaLaeJ9liIcpnYgUplfk8Z5nrUJKwENo3EZfw7lv11ggWucHHY+GR
+ Ob/wOBjT9kWjwdUscJxwPKgxtOeGxh/3UR4yBlZWXdi21ZJC/3fkFD0w==
+X-Received: by 2002:a05:7300:3b2c:b0:30c:50cd:840c with SMTP id
+ 5a478bee46e88-30c84db3032mr13217527eec.11.1782662695067; 
+ Sun, 28 Jun 2026 09:04:55 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-139d90e95c6sm54053139c88.11.2026.06.28.09.04.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 28 Jun 2026 08:27:48 -0700 (PDT)
-From: Weijun Pan <wpan3636@gmail.com>
-To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com, sachin.saxena@nxp.com, jun.yang@nxp.com,
- stable@dpdk.org, stephen@networkplumber.org, thomas@monjalon.net,
- david.marchand@redhat.com, Weijun Pan <wpan36@wisc.edu>
-Subject: [PATCH v2] bus/fslmc: convert queue storage macros to inline functions
-Date: Sun, 28 Jun 2026 10:25:53 -0500
-Message-Id: <20260628152553.46342-1-wpan3636@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260407141928.9426-1-wpan36@wisc.edu>
-References: <20260407141928.9426-1-wpan36@wisc.edu>
+ Sun, 28 Jun 2026 09:04:54 -0700 (PDT)
+Date: Sun, 28 Jun 2026 09:04:51 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: fengchengwen <fengchengwen@huawei.com>
+Cc: Raghavendra Ningoji <raghavendra.ningoji@amd.com>, <dev@dpdk.org>,
+ <david.marchand@redhat.com>, <bruce.richardson@intel.com>,
+ <Selwin.Sebastian@amd.com>, <bhagyada.modali@amd.com>, <rjarry@redhat.com>,
+ <thomas@monjalon.net>
+Subject: Re: [PATCH v3 2/3] dma/ae4dma: add control path operations
+Message-ID: <20260628090451.19970403@phoenix.local>
+In-Reply-To: <6db5bccd-f82a-4a31-ab4c-b3addbcbcc94@huawei.com>
+References: <20260525184244.1758825-1-raghavendra.ningoji@amd.com>
+ <20260625184728.1678328-1-raghavendra.ningoji@amd.com>
+ <20260625184728.1678328-3-raghavendra.ningoji@amd.com>
+ <6db5bccd-f82a-4a31-ab4c-b3addbcbcc94@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,111 +87,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Weijun Pan <wpan36@wisc.edu>
+On Sat, 27 Jun 2026 08:09:09 +0800
+fengchengwen <fengchengwen@huawei.com> wrote:
 
-The queue storage allocation and free helpers are implemented as macros
-which declare local variables in the caller scope. This can cause shadow
-warnings when -Wshadow is enabled.
+> >  
+> > +static int
+> > +ae4dma_dev_configure(struct rte_dma_dev *dev __rte_unused,
+> > +		const struct rte_dma_conf *dev_conf,
+> > +		uint32_t conf_sz)
+> > +{
+> > +	if (sizeof(struct rte_dma_conf) != conf_sz)
+> > +		return -EINVAL;  
+> 
+> This may break ABI compatible
 
-Convert them to static inline functions to avoid macro-local variable
-scope issues without changing behavior.
+Ignore that suggestion. This is a reasonable way to handle new configuration
+functions. You need/want a minimal set of values. If rte_dma_conf grows in size
+then the code can add compatability; by requiring a minimum set of values
+and then setting the rest to zero.
 
-Bugzilla ID: 1744
-Fixes: 12d98eceb8ac ("bus/fslmc: enhance QBMAN DQ storage logic")
-Cc: jun.yang@nxp.com
-Cc: stable@dpdk.org
+Something like
 
-Signed-off-by: Weijun Pan <wpan36@wisc.edu>
----
- drivers/bus/fslmc/portal/dpaa2_hw_pvt.h | 75 ++++++++++++++-----------
- 1 file changed, 42 insertions(+), 33 deletions(-)
+static int
+ae4dma_dev_configure(struct rte_dma_dev *dev __rte_unused,
+		const struct rte_dma_conf *dev_conf,
+		size_t conf_sz)
+{
+	if (conf_sz < sizeof(struct orig_rte_dma_conf))
+		return -EINVAL;
 
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-index e625a5c035..d09dd5d1f9 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-@@ -202,39 +202,48 @@ struct swp_active_dqs {
- 	uint64_t reserved[7];
- };
- 
--#define dpaa2_queue_storage_alloc(q, num) \
--({ \
--	int ret = 0, i; \
--	\
--	for (i = 0; i < (num); i++) { \
--		(q)->q_storage[i] = rte_zmalloc(NULL, \
--			sizeof(struct queue_storage_info_t), \
--			RTE_CACHE_LINE_SIZE); \
--		if (!(q)->q_storage[i]) { \
--			ret = -ENOBUFS; \
--			break; \
--		} \
--		ret = dpaa2_alloc_dq_storage((q)->q_storage[i]); \
--		if (ret) \
--			break; \
--	} \
--	ret; \
--})
--
--#define dpaa2_queue_storage_free(q, num) \
--({ \
--	if (q) { \
--		int i; \
--		\
--		for (i = 0; i < (num); i++) { \
--			if ((q)->q_storage[i]) { \
--				dpaa2_free_dq_storage((q)->q_storage[i]); \
--				rte_free((q)->q_storage[i]); \
--				(q)->q_storage[i] = NULL; \
--			} \
--		} \
--	} \
--})
-+int dpaa2_alloc_dq_storage(struct queue_storage_info_t *q_storage);
-+void dpaa2_free_dq_storage(struct queue_storage_info_t *q_storage);
-+
-+static inline int
-+dpaa2_queue_storage_alloc(struct dpaa2_queue *q, int num)
-+{
-+	int ret = 0, i;
-+
-+	for (i = 0; i < num; i++) {
-+		q->q_storage[i] = rte_zmalloc(NULL,
-+			sizeof(struct queue_storage_info_t),
-+			RTE_CACHE_LINE_SIZE);
-+		if (!q->q_storage[i]) {
-+			ret = -ENOBUFS;
-+			break;
-+		}
-+
-+		ret = dpaa2_alloc_dq_storage(q->q_storage[i]);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
-+static inline void
-+dpaa2_queue_storage_free(struct dpaa2_queue *q, int num)
-+{
-+	int i;
-+
-+	if (!q)
-+		return;
-+
-+	for (i = 0; i < num; i++) {
-+		if (q->q_storage[i]) {
-+			dpaa2_free_dq_storage(q->q_storage[i]);
-+			rte_free(q->q_storage[i]);
-+			q->q_storage[i] = NULL;
-+		}
-+	}
-+}
-+
- 
- #define NUM_MAX_SWP 64
- 
--- 
-2.34.1
+	struct rte_dma_conf conf;
+	memcpy(&conf, dev_conf, RTE_MIN(conf_sz, sizeof(conf)));
+        dev_conf = &conf;
 
+Looking at rte_dma_conf the structure has holes and dmadev lib
+doesn't validate undefined flags, so it already has future ABI problems.
