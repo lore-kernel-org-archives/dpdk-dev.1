@@ -2,80 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE62C43458
-	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Jun 2026 13:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB0BC43458
+	for <dpdk-dev@archiver.kernel.org>; Sun, 28 Jun 2026 14:03:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 24A1240278;
-	Sun, 28 Jun 2026 15:57:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E0AE740278;
+	Sun, 28 Jun 2026 16:03:06 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 86B6D400D7
- for <dev@dpdk.org>; Sun, 28 Jun 2026 15:57:29 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 365A3400D7
+ for <dev@dpdk.org>; Sun, 28 Jun 2026 16:03:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782655048;
+ s=mimecast20190719; t=1782655384;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=MXm4+VvdumLe9GrbAcbnGGVd6V3N1TwHilo1h6xYf1U=;
- b=Ldt2Tu4gEAyX/NcpqXbtwCrcPUl7eHiIFJEU0pckMLfck7vA6P3C4uJ9P0xi+9+dALn2vN
- mcOCMCGdyYMr9miBGVVyFWFeCRE/6ukN83EFzQ7maXVdptCBmL+x5mun1di1NI35JEsg6P
- 0LxoxkXqFnDFAT0WWZBn51bSdIdsvp8=
+ bh=Ge5oTA9KsMx58+38MPHS1nNuFhpwnSdRORKQSodRn3o=;
+ b=EN3cNYxevO/m3dzhDqCo3wDfUIz2HD1bZgMY+3gUr18uw53NC8EdFogLxlTe/iXm0SMMA+
+ FwHK64khpfpG8a5eLoU5uXZVjB4Izoq60irHu69Gv62vKfPOa3u6Uct3vNzxAnPzTQgYxS
+ ZQ8x+P3tiVo30U2LRYzVRULyNoMMUEA=
 Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
  [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-534-gbq05OPcNNmM2FS3F29RJg-1; Sun, 28 Jun 2026 09:57:27 -0400
-X-MC-Unique: gbq05OPcNNmM2FS3F29RJg-1
-X-Mimecast-MFC-AGG-ID: gbq05OPcNNmM2FS3F29RJg_1782655046
+ us-mta-146-ARQxM7prNP2HZQUXlV_daA-1; Sun, 28 Jun 2026 10:03:03 -0400
+X-MC-Unique: ARQxM7prNP2HZQUXlV_daA-1
+X-Mimecast-MFC-AGG-ID: ARQxM7prNP2HZQUXlV_daA_1782655381
 Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-39afa7cbccaso1941771fa.1
- for <dev@dpdk.org>; Sun, 28 Jun 2026 06:57:27 -0700 (PDT)
+ 38308e7fff4ca-399c5ee9eeeso13071351fa.3
+ for <dev@dpdk.org>; Sun, 28 Jun 2026 07:03:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782655046; x=1783259846;
+ d=1e100.net; s=20251104; t=1782655381; x=1783260181;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=MXm4+VvdumLe9GrbAcbnGGVd6V3N1TwHilo1h6xYf1U=;
- b=sdgnyLKttkPUeCERrmUYqjemBUA3joUYYx4mBHNgJNb7OXxcdbWvD44ffUjXxeWSju
- Y/ilJcrilnWinAF3HLhj7bAsyMwSIRkZ2rWKrhhnUCmVzpALa+Dg1n3F3kA51AYMTid8
- lzduwUH+lDnOB/JFsHSo7JL1WZbnzRyQQsDirhvuJJYtFSb7rr1rcDfmvuTR4X2laAr1
- 77pYDqdh8P5tp2kUx84mB0U6sUUkk/hAqv7ZTsfZazNVzEdu1nPHVW0P+t4QUjM0I41x
- lWc6eEQT4n61wqmKJ4WSOJcDWS9bTJdS++v/OTcXiELGHckQlGhBunE9bAuczfe8L43p
- Xgzg==
-X-Forwarded-Encrypted: i=1;
- AHgh+Rpe7F2kaMyPrzeS3ULJXghNfvO/ms6AE5REO+Sh/vRLkasw5daAZkKChYLd8TcNjf7PtTw=@dpdk.org
-X-Gm-Message-State: AOJu0YzdfXmX9miPDnE4A6KMPpUsglbmAFiRGiu0zrp5JG/MrgEPZRh2
- samwil513oRCm4BSbFTDWnC5nPIwvzPnTJdY1zw0EnqS3V0bGBtFyWDVfd44oBmS0ADD/TxnKOL
- 2q+sBfO6yz7FOenHbS4jUCoddnrif4rcmlqmYQRWAsBRT0hD9RrEVgHFA8QQgj84XujVPdy2SGk
- PoEwS1sBoojEXZ3K5kUT4=
-X-Gm-Gg: AfdE7cm0pVJ1/pjXlqqdvNrUm8PsU8UBFnE+35/U6GCl/7JZZhlE0iFPHtR8zPLIsAC
- pwcR5ZmaCUejraxw/sMy9DZ/tYB7VMezxb9yf4PY/LWbknDFSuha+WE4Pyg6rgHv1boLRGHXmiY
- 7ShtDX96ZA+WrhBDIyr7LLTEHfwoaME/7nHjmqYjUycIOxuvrsFLIRNNZ5W5rMAwP3bVbDmkCNv
- a2EcE+NcvPjeHlQaQzqYzXTR6n8Z4sX/Z1IEebO88/BA7xFh5BaGmR92k8=
-X-Received: by 2002:a05:651c:2209:b0:39a:fc4b:ac15 with SMTP id
- 38308e7fff4ca-39afc4bc89amr5968061fa.26.1782655045874; 
- Sun, 28 Jun 2026 06:57:25 -0700 (PDT)
-X-Received: by 2002:a05:651c:2209:b0:39a:fc4b:ac15 with SMTP id
- 38308e7fff4ca-39afc4bc89amr5967941fa.26.1782655045339; Sun, 28 Jun 2026
- 06:57:25 -0700 (PDT)
+ bh=Ge5oTA9KsMx58+38MPHS1nNuFhpwnSdRORKQSodRn3o=;
+ b=Tw64WDoq3N0eh73VOH5uvL1k56L9Hd6EaiOfIiphQA5077/nnka7h0hGTh4onfA3bR
+ orjeH8RqW8mtKIyCY2lGPs5delo2tDL6EAbX/VU5/lEmEm8taI55xNe4EZPWE0NLK503
+ WfbxEWyEQLBIAX602S12gEkHa1Gmpn1GUZSPqLiKlaOhCTZ9LEDy6q3i3ZMPKdf1t/89
+ S1xsb7+YhL/aP7Qkh4Ol+1YRVx8NoweKH/bBHFDNNzgfYi9Ql3h/lMKX1etIFhdZ8jxB
+ X6AbtLgFco3DmvsPJp6DIY1gQ/sh1LGvn/DfU97H/KUHjovuWszB83AHFHqopy5u0CPS
+ SmzQ==
+X-Gm-Message-State: AOJu0YzoHH+zz4zyt4gJeNyaZ/MBtU3KIDlpsn8HsAx1GJiEUjwgV8aH
+ FIQM70aD1qgE+3vaA6giEeXRaBhlZT7yXEHp2dJ3oSZ5QhhgxN3RjJn5Cq46IK1+adR13EJW//Z
+ ryXiDLURLRTIFC6bm8BDRV5Drb53qVJCNL8VfkLmj09OI4Xb31PAT2Qp+ifs7a8P6vGJSkN12JR
+ +kknWxE5U6L+9lFg6WhyvoAvu+RqU=
+X-Gm-Gg: AfdE7cmWaA/GL6SFH7/Fcx5ElgroY4YE+SXw6OdJ3NpRLQcqBxDQ+Cv0XJ1Gd76Srtq
+ jOZ/h9Wctl67JHi3qWaBIqdFWEVKznUenB3jqIhKvtwRyEjTbO0XTTvbE2mNAufUZbaj8ut17OU
+ KNQczxNqzAFhhiiMctz2hOlYD6sulMVXYg0t69LqT95KHtSHFwT/kDLVAOl8e4jZoDDMw8YBwjN
+ TURXOts8Isk5JdPZlkGMNpP3Bs3WHh0w6hIy4+hUrW+psepQvq4L/iHVS0=
+X-Received: by 2002:a05:651c:169c:b0:394:1236:ccb9 with SMTP id
+ 38308e7fff4ca-39ae13de99emr9440311fa.5.1782655381370; 
+ Sun, 28 Jun 2026 07:03:01 -0700 (PDT)
+X-Received: by 2002:a05:651c:169c:b0:394:1236:ccb9 with SMTP id
+ 38308e7fff4ca-39ae13de99emr9440251fa.5.1782655380595; Sun, 28 Jun 2026
+ 07:03:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260625133311.1299705-1-dsosnowski@nvidia.com>
- <20260625160645.1341914-1-dsosnowski@nvidia.com>
-In-Reply-To: <20260625160645.1341914-1-dsosnowski@nvidia.com>
+References: <20260625072254.4190227-1-david.marchand@redhat.com>
+ <SA1PR21MB66832482A8C80E279EAAAB7DCEEB2@SA1PR21MB6683.namprd21.prod.outlook.com>
+In-Reply-To: <SA1PR21MB66832482A8C80E279EAAAB7DCEEB2@SA1PR21MB6683.namprd21.prod.outlook.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Sun, 28 Jun 2026 15:57:13 +0200
-X-Gm-Features: AVVi8CfVmT4aBrexKEO42VBkKzBdc8isFEhFNVYrVm38Sbtzj7Kg-ULKwp83E0M
-Message-ID: <CAJFAV8zwKcABUr5kWV429+k_r=Wr=eSkGTLDymogtysobXMAwQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] add versioned symbols for recently stabilized APIs
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>, 
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
- Ori Kam <orika@nvidia.com>, 
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- dev@dpdk.org, Yu Jiang <yux.jiang@intel.com>
+Date: Sun, 28 Jun 2026 16:02:48 +0200
+X-Gm-Features: AVVi8Ccr6Qt-K97QfvX2DnTHL1a_HReK8WI8J9G8f-i9ANOVTW2SP9gZlJtrXXg
+Message-ID: <CAJFAV8w7YNf0O6ueb8vp6mntZ20+arzLtoJM3GYJj+8RRjt_Cw@mail.gmail.com>
+Subject: Re: [EXTERNAL] [PATCH] dev: skip multi-process in hotplug
+To: Long Li <longli@microsoft.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -1vlw5MF69NbdN7gqXg6wKatMH6bSa1o-GbzNgZ7K_I_1782655046
+X-Mimecast-MFC-PROC-ID: RvjNTlJGX1XDR4Nvb-_f0Qa_ZSPm-g01IMQUzKfwLfM_1782655381
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -91,60 +83,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Dariusz,
+On Fri, 26 Jun 2026 at 20:10, Long Li <longli@microsoft.com> wrote:
+> > @@ -418,6 +434,9 @@ rte_dev_remove(struct rte_device *dev)
+> >       if (ret != 0)
+> >               return ret;
+> >
+> > +     if (!do_mp)
+> > +             goto skip_mp_req;
+> > +
+>
+> Need to call free(devargs) as it no longer used.
 
-On Thu, 25 Jun 2026 at 18:08, Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
->
-> Main goal of this patchset is to address https://bugs.dpdk.org/show_bug.cgi?id=1957
-> but it also handles other recently stabilized symbols and has some minor fixes:
->
-> - Patch 1 - Fix RTE_VERSION_EXPERIMENTAL_SYMBOL macro on clang.
-> - Patch 2 - Allow function versioning inside drivers.
-> - Patch 3 - Version the function symbols stabilized in
->   https://git.dpdk.org/dpdk/commit/?id=e8cab133645f5466ef75e511629add43b68a5027
-> - Patch 4 - Version the rte_flow_dynf_metadata_register() function stabilized in
->   https://git.dpdk.org/dpdk/commit/?id=4ee2f5c1cedf9ee7f39afa667f71b07f4004ba5c
->   Restore EXPERIMENTAL version on global variable symbols
->   rte_flow_dynf_metadata_offs and rte_flow_dynf_metadata_mask.
->
-> v4:
-> - Fixed build with older meson versions.
->
-> v3:
-> - https://inbox.dpdk.org/dev/20260625133311.1299705-1-dsosnowski@nvidia.com/
-> - Added rebuilding of drivers with -DRTE_BUILD_SHARED_LIB
->   whenever function versioning is enabled.
->
-> v2:
-> - https://inbox.dpdk.org/dev/20260624131337.1127323-1-dsosnowski@nvidia.com/
-> - Drop patches introducing versioning macros for symbol aliases
->   and their usage (patch 4 and 5 from v1)
-> - EXPERIMENTAL version on global variable symbols
->   rte_flow_dynf_metadata_offs and rte_flow_dynf_metadata_mask,
->   as discussed under v1.
-> - Change commit title prefix in patch (2) from "drivers" to "build".
->
-> v1: https://inbox.dpdk.org/dev/20260623113752.1100072-1-dsosnowski@nvidia.com/
->
-> Dariusz Sosnowski (4):
->   eal: fix macro for versioned experimental symbol
->   build: support function versioning for drivers
->   net/mlx5: fix stabilized function versions
->   ethdev: fix promoted flow metadata symbols
->
->  drivers/meson.build                  | 21 ++++++++++++++++++++-
->  drivers/net/mlx5/meson.build         |  2 ++
->  drivers/net/mlx5/mlx5_driver_event.c | 22 ++++++++++++++++------
->  drivers/net/mlx5/mlx5_flow.c         | 18 ++++++++++++------
->  lib/eal/common/eal_export.h          |  2 +-
->  lib/ethdev/meson.build               |  2 ++
->  lib/ethdev/rte_flow.c                | 13 ++++++++-----
->  7 files changed, 61 insertions(+), 19 deletions(-)
+Yes good catch, but I'd rather not build this devargs at all.
+I will send a v2.
 
-LGTM.
-Series applied, thanks Dariusz.
 
-Please send the patch to drop this compat in 26.11.
+>
+>
+> >       memset(&req, 0, sizeof(req));
+> >       req.t = EAL_DEV_REQ_TYPE_DETACH;
+> >       strlcpy(req.devargs, devargs, EAL_DEV_MP_DEV_ARGS_MAX_LEN);
 
 
 -- 
