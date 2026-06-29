@@ -2,37 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD9EC43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 05:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC853C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 05:22:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1773D40647;
-	Mon, 29 Jun 2026 07:22:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1D59040655;
+	Mon, 29 Jun 2026 07:22:16 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 9596640650
+ by mails.dpdk.org (Postfix) with ESMTP id 8A591402D5
  for <dev@dpdk.org>; Mon, 29 Jun 2026 07:22:13 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 799D61A0482;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6507D1A0475;
  Mon, 29 Jun 2026 07:22:13 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E9FBC1A0CC6;
- Mon, 29 Jun 2026 07:18:21 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E5FB21A0CC3;
+ Mon, 29 Jun 2026 07:18:20 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 207AD1800088;
- Mon, 29 Jun 2026 13:18:21 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 24246180004C;
+ Mon, 29 Jun 2026 13:18:20 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v4 3/9] net/enetc: support ESP packet type in packet parsing
-Date: Mon, 29 Jun 2026 10:48:13 +0530
-Message-Id: <20260629051819.989176-4-g.singh@nxp.com>
+Cc: hemant.agrawal@nxp.com
+Subject: [PATCH v4 0/9] ENETC driver related changes series
+Date: Mon, 29 Jun 2026 10:48:10 +0530
+Message-Id: <20260629051819.989176-1-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260629051819.989176-1-g.singh@nxp.com>
+In-Reply-To: <20260623060004.2187716-1-g.singh@nxp.com>
 References: <20260623060004.2187716-1-g.singh@nxp.com>
- <20260629051819.989176-1-g.singh@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
@@ -48,87 +47,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add ESP (Encapsulating Security Payload) packet type definitions and
-handling to the RX packet parsing path. Also update the supported
-ptypes array to advertise ESP tunnel type support.
+V4 changes:
+  - Fixed a compilation issue: "txbd may be used uninitialized"
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
----
- doc/guides/rel_notes/release_26_07.rst |  3 +++
- drivers/net/enetc/base/enetc_hw.h      |  4 ++++
- drivers/net/enetc/enetc_ethdev.c       |  3 ++-
- drivers/net/enetc/enetc_rxtx.c         | 10 ++++++++++
- 4 files changed, 19 insertions(+), 1 deletion(-)
+V3 changes:
+  - Added documentation for all devargs in enetc4.rst.
+  - Fixed kvlist memory leak issue.
 
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index fc6e144..35476c2 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -187,6 +187,9 @@ New Features
-   ``RTE_ETH_EVENT_RECOVERY_FAILED``) to notify upper layers of the
-   reset lifecycle.
- 
-+* **Updated NXP ENETC ethernet driver.**
-+
-+  * Added support for ESP packet type in packet parsing
- 
- Removed Items
- -------------
-diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
-index 19efadd..f79c950 100644
---- a/drivers/net/enetc/base/enetc_hw.h
-+++ b/drivers/net/enetc/base/enetc_hw.h
-@@ -226,6 +226,10 @@ enum enetc_bdr_type {TX, RX};
- 			(0x0003 | ENETC_PKT_TYPE_IPV4)
- #define ENETC_PKT_TYPE_IPV6_ICMP \
- 			(0x0003 | ENETC_PKT_TYPE_IPV6)
-+#define ENETC_PKT_TYPE_IPV4_ESP \
-+			(0x0005 | ENETC_PKT_TYPE_IPV4)
-+#define ENETC_PKT_TYPE_IPV6_ESP \
-+			(0x0005 | ENETC_PKT_TYPE_IPV6)
- 
- /* PCI device info */
- struct enetc_hw {
-diff --git a/drivers/net/enetc/enetc_ethdev.c b/drivers/net/enetc/enetc_ethdev.c
-index f41f3c1..8196377 100644
---- a/drivers/net/enetc/enetc_ethdev.c
-+++ b/drivers/net/enetc/enetc_ethdev.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2024 NXP
-+ * Copyright 2018-2026 NXP
-  */
- 
- #include <stdbool.h>
-@@ -95,6 +95,7 @@ enetc_supported_ptypes_get(struct rte_eth_dev *dev __rte_unused,
- 		RTE_PTYPE_L4_UDP,
- 		RTE_PTYPE_L4_SCTP,
- 		RTE_PTYPE_L4_ICMP,
-+		RTE_PTYPE_TUNNEL_ESP
- 	};
- 
- 	*no_of_elements = RTE_DIM(ptypes);
-diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
-index d3b98b3..94177bb 100644
---- a/drivers/net/enetc/enetc_rxtx.c
-+++ b/drivers/net/enetc/enetc_rxtx.c
-@@ -370,6 +370,16 @@ enetc_dev_rx_parse(struct rte_mbuf *m, uint16_t parse_results)
- 				 RTE_PTYPE_L3_IPV6 |
- 				 RTE_PTYPE_L4_UDP;
- 		return;
-+	case ENETC_PKT_TYPE_IPV4_ESP:
-+		m->packet_type = RTE_PTYPE_L2_ETHER |
-+				 RTE_PTYPE_L3_IPV4 |
-+				 RTE_PTYPE_TUNNEL_ESP;
-+		return;
-+	case ENETC_PKT_TYPE_IPV6_ESP:
-+		m->packet_type = RTE_PTYPE_L2_ETHER |
-+				 RTE_PTYPE_L3_IPV6 |
-+				 RTE_PTYPE_TUNNEL_ESP;
-+		return;
- 	case ENETC_PKT_TYPE_IPV4_SCTP:
- 		m->packet_type = RTE_PTYPE_L2_ETHER |
- 				 RTE_PTYPE_L3_IPV4 |
+V2 changes:
+  - Fixed an un-used variable compilation issue reported on fedora:43-gcc-minsize
+  - Fixed various AI reported issues:
+	- Release notes updated for all new devargs
+	- enect4.ini features doc updated for scattered RX.
+	- removed Not required RTE_PTYPE_UNKNOWN.
+	- Fixed mid-frame mbuf leak in SG case.
+	- Enabled SG for enetc4 PF also.
+	- move to calloc from rte_zmalloc in parse_txq_prior().
+	- added vaidation checks on strdup, strtoul.
+	- added NC devargs to use cacheable ops conditionally.
+	- removed dead code like bd_base_p etc.
+	- Fixed rte_cpu_to_le_16() conversion on flags and combined
+	  all flags related patches in one patch.
+	- Fixed memory leak issue due to TXQ priority patch.
+  - There were some false positives, I have ignored them:
+	Race condition on flags field:
+		clean_tx_ring only touches HW-completed BDs (next_to_clean→hwci),
+		never newly-submitted BDs; doorbell hasn't fired yet.
+	Missing dcbf in clean_tx_ring:
+		DPDK is single-threaded per queue; TX path always overwrites
+		flags completely before dcbf.
+	TX dcbf granularity with wrap:
+		Safe (AI admits it).
+	RX refill flush at wrap:
+		In-loop dcbf at i & mask == 0 already flushes aligned groups;
+		trailing flush only needed for partial groups.
+	RX reading before invalidate:
+		dccivac precedes the read for every group in the loop
+
+Gagandeep Singh (7):
+  net/enetc: fix TX BD structure
+  net/enetc: fix queue initialization
+  net/enetc: support ESP packet type in packet parsing
+  net/enetc: update random MAC generation code
+  net/enetc: add option to disable VSI messaging
+  net/enetc: add devargs to control VSI-PSI timeout and delay
+  net/enetc4: add cacheable BD ring support with SW cache maintenance
+
+Vanshika Shukla (2):
+  net/enetc: support scatter-gather
+  net/enetc: set user configurable priority to TX rings
+
+ doc/guides/nics/enetc4.rst             |  62 +++-
+ doc/guides/nics/features/enetc4.ini    |   1 +
+ doc/guides/rel_notes/release_26_07.rst |  10 +
+ drivers/net/enetc/base/enetc_hw.h      |  13 +-
+ drivers/net/enetc/enetc.h              |  31 +-
+ drivers/net/enetc/enetc4_ethdev.c      | 172 ++++++++--
+ drivers/net/enetc/enetc4_vf.c          | 206 ++++++++++--
+ drivers/net/enetc/enetc_ethdev.c       |  25 +-
+ drivers/net/enetc/enetc_rxtx.c         | 430 ++++++++++++++++++++++---
+ 9 files changed, 831 insertions(+), 119 deletions(-)
+
 -- 
 2.25.1
 
