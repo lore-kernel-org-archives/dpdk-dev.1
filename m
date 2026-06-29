@@ -2,71 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F49AC43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 04:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E9DC43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 05:18:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A22554064E;
-	Mon, 29 Jun 2026 06:55:30 +0200 (CEST)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 09FB7400D7
- for <dev@dpdk.org>; Mon, 29 Jun 2026 06:55:29 +0200 (CEST)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-37cb36ca63bso1164237a91.0
- for <dev@dpdk.org>; Sun, 28 Jun 2026 21:55:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782708928; x=1783313728; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=AMVXB12AJDDUpURQmMV1/jhMZr5SF/x+6YFX5meT8bQ=;
- b=Q/WmrfzJi3fWbqtqEMvsEu7KZRTanEjdkw1570l1m58Jw6z7G15Rg9lBt7AyjOCkP1
- Ess2+LhGuMGVu3TbxjQpzzlCIzZDaLz8xwck0730+p1ShiW/cGd8li6IRRtdxq4DGyXa
- 6RFlnMOjWfAGD+UT85aBOO7llvOKizQPTqLGdS1oyxy+zCG7QL93dhckQpgJNz3Tix7n
- uSTzTjgcRYdW9E1vtWuKR9jWwqid+NMH7dhLL+DDNEzkZpOeOaER/hnFBw4ilMR3//SB
- E8RLTbYIgCXvzOE8IC11FzFAr7WQglb0ur2bQK1NBnFPM/xQHAkNdDGO3EEpg0yDlC9b
- TzuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782708928; x=1783313728;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=AMVXB12AJDDUpURQmMV1/jhMZr5SF/x+6YFX5meT8bQ=;
- b=j4CxYV+RTiZbKJTfmI2WcJ0Kr8PAM3DzSB0dtddUIZBoBVYnjcJb8LTvqF0zOWUvuP
- URSnLmFfbyjY7zd5mhZtTXPsMUs5u2XwDR1uBh4Bs6PRK2tsE4xTLGGb8l53x8q+8/WT
- JH3kmMzRPy1EnBwTzB5NZp7pkfidpGlBds76KWp8Wc3FZBD2dnuraJ0nWWUDJPuRqvoB
- qvL7gt4uoKb5WpEzXB/+w1ZAKGQmNlOjMOhelioX1M8c9r23nZpIccc6sk+CuNX05vZi
- Bcz/EO1/M71g5dqrouysjNo8VQ9ggK6P7zD1ZfxaO7Pr7p3hrwSI3dV1nEgfBT5zUftY
- y5tQ==
-X-Gm-Message-State: AOJu0YyyqTIfrVGk4bSvOvVsY3G4qIKDVgJfbGzvFDQdPne9gQqlySeX
- PEL19/ecZ7VJ0UxTEnv2cm0U3FQIru2YxugDbRaOpWJdiYGj8kb4eEtY
-X-Gm-Gg: AfdE7cnDAShp59CWAGvJndD0szcJFVFqBvozusB418v/chRDCDVHjQHl5uuBDOQulje
- K5N/wghpK6zU0MqF1d9shAQoRH8ZsywEQ707aHSD2zcXq6q76h9ZHKZfScQhZId38NRj6k1aykf
- sPo5nB3VZf+gflPNGI7Ri4JABr4vXOnIRD2U6FX9zUVUslWJ863ZnNnyFUQjtWSRdWS7DdC2tsY
- W7mqaTbHlK/0fIDGpdjSwFx4UngPb5QWhSSfnVm+0rNVMbpyycQ8J8nktBX8XijYcmDbGj5V04e
- 9aRrfniSHKm55EOyXjr4c02eOMbsq+91+s+UyLchhIRBjcNtuvEzBE4tzAsFRwxSAxRIxjG0JCO
- lbH5Svf8erf0iB5dFBdvLFMmL8wMAs3hJbnKMowxSCBLaIi+t5XSTIdv4XjAkHyesNzoPpeRV/2
- jc07fBYAV6Hg==
-X-Received: by 2002:a17:90a:c885:b0:37f:9ce0:af35 with SMTP id
- 98e67ed59e1d1-37f9ce0afa9mr6475832a91.32.1782708927993; 
- Sun, 28 Jun 2026 21:55:27 -0700 (PDT)
-Received: from peach.. ([240f:6d:285c:1:c9e8:4a97:ed9d:4714])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c99f2905e76sm1079533a12.10.2026.06.28.21.55.26
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 28 Jun 2026 21:55:27 -0700 (PDT)
-From: Shuzo Ichiyoshi <deadcafe.beef@gmail.com>
-To: David Zage <david.zage@intel.com>,
- Song Yoong Siang <yoong.siang.song@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Shuzo Ichiyoshi <deadcafe.beef@gmail.com>, stable@dpdk.org
-Subject: [PATCH 2/2] net/e1000: fix igc Tx descriptor ring wrap
-Date: Mon, 29 Jun 2026 13:51:14 +0900
-Message-ID: <20260629045511.473850-2-deadcafe.beef@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260629045511.473850-1-deadcafe.beef@gmail.com>
-References: <20260629045511.473850-1-deadcafe.beef@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0CF434021E;
+	Mon, 29 Jun 2026 07:18:23 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id AEA10400D7;
+ Mon, 29 Jun 2026 07:18:21 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7BA6E200002;
+ Mon, 29 Jun 2026 07:18:21 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 43DE4200007;
+ Mon, 29 Jun 2026 07:18:21 +0200 (CEST)
+Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
+ [92.120.147.250])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 65A771800071;
+ Mon, 29 Jun 2026 13:18:20 +0800 (+08)
+From: Gagandeep Singh <g.singh@nxp.com>
+To: dev@dpdk.org
+Cc: hemant.agrawal@nxp.com, stable@dpdk.org, Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v4 1/9] net/enetc: fix TX BD structure
+Date: Mon, 29 Jun 2026 10:48:11 +0530
+Message-Id: <20260629051819.989176-2-g.singh@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260629051819.989176-1-g.singh@nxp.com>
+References: <20260623060004.2187716-1-g.singh@nxp.com>
+ <20260629051819.989176-1-g.singh@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,38 +47,105 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-igc_xmit_pkts() reserves two extra descriptors for launch time.
-It indexed sw_ring[tx_last + 2] without wrapping the descriptor
-index first.
+The flags field in struct enetc_tx_bd was declared as uint16_t but
+ENETC4 TX BDs only use an 8-bit flags byte. Fix the type to uint8_t
+to match the hardware descriptor layout.
 
-If tx_last is one of the last two descriptors in the ring, this
-reads past the software ring. Wrap the index before looking up
-last_id.
-
-Fixes: 2e79349dcd07 ("net/e1000: fix igc launch time calculation")
+Fixes: 696fa399d797 ("net/enetc: add PMD with basic operations")
 Cc: stable@dpdk.org
-Signed-off-by: Shuzo Ichiyoshi <deadcafe.beef@gmail.com>
----
- drivers/net/intel/e1000/igc_txrx.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/e1000/igc_txrx.c b/drivers/net/intel/e1000/igc_txrx.c
-index 1ab8f2079d..d61fdb33a8 100644
---- a/drivers/net/intel/e1000/igc_txrx.c
-+++ b/drivers/net/intel/e1000/igc_txrx.c
-@@ -1834,7 +1834,11 @@ igc_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		 * The "last descriptor" of the previously sent packet, if any,
- 		 * which used the last descriptor to allocate.
- 		 */
--		tx_end = sw_ring[tx_last + 2].last_id;
-+		tx_end = (uint16_t)(tx_last + 2);
-+		if (tx_end >= txq->nb_tx_desc)
-+			tx_end = (uint16_t)(tx_end - txq->nb_tx_desc);
-+
-+		tx_end = sw_ring[tx_end].last_id;
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+---
+ drivers/net/enetc/base/enetc_hw.h |  7 +++----
+ drivers/net/enetc/enetc_rxtx.c    | 17 +++++++++--------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
+index 173d677..19efadd 100644
+--- a/drivers/net/enetc/base/enetc_hw.h
++++ b/drivers/net/enetc/base/enetc_hw.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018-2024 NXP
++ * Copyright 2018-2026 NXP
+  */
  
- 		/*
- 		 * The next descriptor following that "last descriptor" in the
+ #ifndef _ENETC_HW_H_
+@@ -198,8 +198,7 @@ enum enetc_bdr_type {TX, RX};
+ 
+ #define ENETC_TX_ADDR(txq, addr) ((void *)((txq)->enetc_txbdr + (addr)))
+ 
+-#define ENETC_TXBD_FLAGS_IE		BIT(13)
+-#define ENETC_TXBD_FLAGS_F		BIT(15)
++#define ENETC_TXBD_FLAGS_F		BIT(7)
+ 
+ /* ENETC Parsed values (Little Endian) */
+ #define ENETC_PARSE_ERROR		0x8000
+@@ -262,7 +261,7 @@ struct enetc_tx_bd {
+ 			uint8_t l3t:1;
+ 			uint8_t resv:5;
+ 			uint8_t l4t:3;
+-			uint16_t flags;
++			uint8_t flags;
+ 		};/* default layout */
+ 		uint32_t txstart;
+ 		uint32_t lstatus;
+diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
+index a2b8153..d3b98b3 100644
+--- a/drivers/net/enetc/enetc_rxtx.c
++++ b/drivers/net/enetc/enetc_rxtx.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018-2024 NXP
++ * Copyright 2018-2026 NXP
+  */
+ 
+ #include <stdbool.h>
+@@ -101,7 +101,7 @@ enetc_xmit_pkts(void *tx_queue,
+ 		tx_swbd = &tx_ring->q_swbd[i];
+ 		txbd->frm_len = tx_pkts[start]->pkt_len;
+ 		txbd->buf_len = txbd->frm_len;
+-		txbd->flags = rte_cpu_to_le_16(ENETC_TXBD_FLAGS_F);
++		txbd->flags = ENETC_TXBD_FLAGS_F;
+ 		txbd->addr = (uint64_t)(uintptr_t)
+ 		rte_cpu_to_le_64((size_t)tx_swbd->buffer_addr->buf_iova +
+ 				 tx_swbd->buffer_addr->data_off);
+@@ -133,13 +133,13 @@ enetc4_tx_offload_checksum(struct rte_mbuf *mbuf, struct enetc_tx_bd *txbd)
+ 		txbd->ipcs = ENETC4_TXBD_IPCS;
+ 		txbd->l3_start = mbuf->l2_len;
+ 		txbd->l3_hdr_size = mbuf->l3_len / 4;
+-		txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_L_TX_CKSUM);
++		txbd->flags |= ENETC4_TXBD_FLAGS_L_TX_CKSUM;
+ 		if ((mbuf->ol_flags & RTE_MBUF_F_TX_UDP_CKSUM) == RTE_MBUF_F_TX_UDP_CKSUM) {
+-			txbd->l4t = rte_cpu_to_le_16(ENETC4_TXBD_L4T_UDP);
+-			txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_L4CS);
++			txbd->l4t = ENETC4_TXBD_L4T_UDP;
++			txbd->flags |= ENETC4_TXBD_FLAGS_L4CS;
+ 		} else if ((mbuf->ol_flags & RTE_MBUF_F_TX_TCP_CKSUM) == RTE_MBUF_F_TX_TCP_CKSUM) {
+-			txbd->l4t = rte_cpu_to_le_16(ENETC4_TXBD_L4T_TCP);
+-			txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_L4CS);
++			txbd->l4t = ENETC4_TXBD_L4T_TCP;
++			txbd->flags |= ENETC4_TXBD_FLAGS_L4CS;
+ 		}
+ 	}
+ }
+@@ -172,7 +172,7 @@ enetc_xmit_pkts_nc(void *tx_queue,
+ 			dcbf(data + j);
+ 
+ 		txbd = ENETC_TXBD(*tx_ring, i);
+-		txbd->flags = rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_F);
++		txbd->flags = 0;
+ 		if (tx_ring->q_swbd[i].buffer_addr->ol_flags & ENETC4_TX_CKSUM_OFFLOAD_MASK)
+ 			enetc4_tx_offload_checksum(tx_ring->q_swbd[i].buffer_addr, txbd);
+ 
+@@ -182,6 +182,7 @@ enetc_xmit_pkts_nc(void *tx_queue,
+ 		txbd->addr = (uint64_t)(uintptr_t)
+ 		rte_cpu_to_le_64((size_t)tx_swbd->buffer_addr->buf_iova +
+ 				 tx_swbd->buffer_addr->data_off);
++		txbd->flags |= ENETC4_TXBD_FLAGS_F;
+ 		i++;
+ 		start++;
+ 		if (unlikely(i == tx_ring->bd_count))
 -- 
-2.43.0
+2.25.1
 
