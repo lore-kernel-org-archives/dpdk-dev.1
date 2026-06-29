@@ -2,54 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3E6C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 06:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63583C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 06:22:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B2B3B40654;
-	Mon, 29 Jun 2026 08:19:29 +0200 (CEST)
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com
- [162.62.57.87])
- by mails.dpdk.org (Postfix) with UTF8SMTP id C05CF402C6
- for <dev@dpdk.org>; Mon, 29 Jun 2026 08:19:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
- t=1782713963; bh=y7WVaGwg71+jw9w6M4fkEXJvA16/cFygu9EeszQa0Hk=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=KhnPGR5ooTndyV68TIu91Fkf+1gbmRMhQsmSvcthuGlD8cqSRU5dSZsc/fQnkvTOX
- CRg+2vfSrfsHslL93MRSTQdBIFqzLbCWN3IQenReHwQ3H4gbx6FvDSdXsPDHMWsyQO
- MOUTQ818CSc69xIDf+hZP4/3RZA51G4877H1X99Q=
-Received: from fedora.tail0f0cf3.ts.net ([139.159.170.83])
- by newxmesmtplogicsvrsza63-0.qq.com (NewEsmtp) with SMTP
- id 4D416624; Mon, 29 Jun 2026 14:19:20 +0800
-X-QQ-mid: xmsmtpt1782713961txafjkb01
-Message-ID: <tencent_331EFDF3B22AB74F9B4BE703E59DAFC44008@qq.com>
-X-QQ-XMAILINFO: OenRjd0v1BXMPZNLuQUnWcKQfBfXjvl+ACehl4zUYM3nwISbU2f6JUpxWaNwW0
- U5gFaT09ONlUiIHjRVKLRAAL8vT+r1PBb0Seeu++6mKNt6Tm+usioiSVSyfjY57rdDlX3gyTlVW6
- 4mq6QUcRv0zPrafpm3cDBi+K/Wf3JagtHxCynNXvrQCMTl4iF07CdyAWLEVsJez/iw/AYmWLpoyv
- Z5ze+Iw+cSI2SK5FRLwylsJl6RvWGEU2qmkalI8Jl87eVinggovjEO+4hslLwE0CwI2WPitcFbZU
- 8pWUoPm4XCFlhjqmc0catcdXqV+sU7ML4xxFYUVzJF/q590HuDVD2QF3IkRFdlEcXbD6g9pOmTxD
- mcPgNKX0yloDqKzSbpDGGGVk1pINLIPpdskyXmFKnGq30eb+ypkwYdHIhYedivnAX8ZLst3uykrs
- HZoEKYFWFGCiqFd09jLas7BmT3DvP0e5QKM2QohpozcDWXeWnlTVosSzcVFD3asn8KZDrCIw/V+w
- 4FRfuFqwd0qXpdj86Pk03jQI3N2kyZVE0afBJexMf6domkHQIShZTgoZiyZO7LRwPhzO4KGop9Bc
- +fW/+BS1eMYK/Mq44EXzaiU3RHYPAkGW9fDzX2rYjTT/LSpqiHOtfYIuKSWyfh/bYOl4FYatGBlQ
- MXykbP/LNJU+B1CGSI2OD8XTDOwt1JBtkMg3xsg9kVQn9N9ntThKCo3Hbe1OMUqyhuCjb/YoJKKw
- uKdK6vgQtvtZgr6CwQ+1PiyvuzgbbnVA8MIbwjHt+1hjIFaL1eO5lVVnYLEltC5Y55mbDD8Joq7k
- cf+4OdGVsPjpNhkf/wB0fHEspsy8UGExN4Mp/dxtmfAVnNP/V9Mw5vIWsVejiFTThbTJBl9r18wj
- dL9vO/flbI6gaUoAVpHvw6a44RceJBip9XP0ElWoL/zAq8WelEtWqhegS9mN2GdxV9uzfx2sL7A6
- 3+iJWVlaeAnnFIzPzOVdwYJn0uV7FDcLDd2lUrTx5bShWQZ8Swf8/wI9fPdJVSd4vc1sDvShfT2W
- mtwLRvJbRKhhpgSblI2faG29stLGm/+aT7RYKJxiAwLG80gQ2TYix6hbbEDnmrp57LmpwY8BFPTs
- spabeb
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
-From: datshan@qq.com
-To: thomas@monjalon.net
-Cc: dev@dpdk.org
-Subject: [PATCH 2/2] test/dmadev: add config and vchan validation tests
-Date: Mon, 29 Jun 2026 14:19:17 +0800
-X-OQ-MSGID: <20260629061917.321374-3-datshan@qq.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260629061917.321374-1-datshan@qq.com>
-References: <20260629061917.321374-1-datshan@qq.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4460E40299;
+	Mon, 29 Jun 2026 08:22:31 +0200 (CEST)
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
+ [113.46.200.219])
+ by mails.dpdk.org (Postfix) with ESMTP id B289A4021F
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 08:22:29 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=xTbkg+1yI+2CxD1MDeG26YlfKaVydzsXeAQQZbp38fo=;
+ b=O4cp0LeuAdfJN5pfAeLn7rddebB9yHiUutaj/ce8kibeBbJrz2bdZJ1JYUzqNMqceicePLgZG
+ 7mGf0oad5kVRajre4QiD/daZIK33oxljJBhDw9r1nyMtee8muQC2xxGFU7a0fH6Y4mGlFj5oQk1
+ lGfJU18OSwQnawvqqCpT9s4=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4gpbYn2zMJz1prKM;
+ Mon, 29 Jun 2026 14:13:17 +0800 (CST)
+Received: from kwepemo100005.china.huawei.com (unknown [7.202.195.212])
+ by mail.maildlp.com (Postfix) with ESMTPS id BA0D44056D;
+ Mon, 29 Jun 2026 14:22:27 +0800 (CST)
+Received: from [10.67.121.59] (10.67.121.59) by kwepemo100005.china.huawei.com
+ (7.202.195.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 29 Jun
+ 2026 14:22:27 +0800
+Message-ID: <97fdf334-7ec7-4bb4-88d3-1887744afc8b@huawei.com>
+Date: Mon, 29 Jun 2026 14:22:26 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/9] power: centralize lcore ID validation
+To: <thomas@monjalon.net>, <anatoly.burakov@intel.com>,
+ <sivaprasad.tummala@amd.com>
+CC: <dev@dpdk.org>, <stephen@networkplumber.org>, <fengchengwen@huawei.com>,
+ <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>
+References: <20260615073050.1996063-1-lihuisong@huawei.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20260615073050.1996063-1-lihuisong@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.121.59]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemo100005.china.huawei.com (7.202.195.212)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,254 +57,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Chengwen Feng <fengchengwen@huawei.com>
+Kindly ping for review.
 
-Add negative-case tests for new checks in rte_dma_configure()
-(undefined flags, capa-unaware flags/priority) and in
-rte_dma_vchan_setup() (enum values, reserved fields, domain
-mismatch, capability enforcement).
-
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test/test_dmadev_api.c | 186 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 174 insertions(+), 12 deletions(-)
-
-diff --git a/app/test/test_dmadev_api.c b/app/test/test_dmadev_api.c
-index 1ba053696b..fb2a1afcaa 100644
---- a/app/test/test_dmadev_api.c
-+++ b/app/test/test_dmadev_api.c
-@@ -130,6 +130,55 @@ test_dma_info_get(void)
- 	return TEST_SUCCESS;
- }
- 
-+static int
-+check_configure_extra(struct rte_dma_info *info)
-+{
-+	struct rte_dma_conf conf = { 0 };
-+	int ret;
-+
-+	/* Check undefined flags */
-+	for (int i = 2; i < 64; i++) {
-+		memset(&conf, 0, sizeof(conf));
-+		conf.nb_vchans = info->max_vchans;
-+		conf.flags = RTE_BIT64(i);
-+		ret = rte_dma_configure(test_dev_id, &conf);
-+		RTE_TEST_ASSERT(ret == -EINVAL,
-+			"Expected -EINVAL for undefined flag bit %d, %d", i, ret);
-+	}
-+
-+	/* Check enable silent mode without support */
-+	if (!(info->dev_capa & RTE_DMA_CAPA_SILENT)) {
-+		memset(&conf, 0, sizeof(conf));
-+		conf.nb_vchans = info->max_vchans;
-+		conf.flags = RTE_DMA_CFG_FLAG_SILENT;
-+		ret = rte_dma_configure(test_dev_id, &conf);
-+		RTE_TEST_ASSERT(ret == -EINVAL,
-+			"Expected -EINVAL for SILENT without capa, %d", ret);
-+	}
-+
-+	/* Check enable enqueue/dequeue mode without support */
-+	if (!(info->dev_capa & RTE_DMA_CAPA_OPS_ENQ_DEQ)) {
-+		memset(&conf, 0, sizeof(conf));
-+		conf.nb_vchans = info->max_vchans;
-+		conf.flags = RTE_DMA_CFG_FLAG_ENQ_DEQ;
-+		ret = rte_dma_configure(test_dev_id, &conf);
-+		RTE_TEST_ASSERT(ret == -EINVAL,
-+			"Expected -EINVAL for ENQ_DEQ without capa, %d", ret);
-+	}
-+
-+	/* Check non-zero priority without SP capability */
-+	if (!(info->dev_capa & RTE_DMA_CAPA_PRI_POLICY_SP)) {
-+		memset(&conf, 0, sizeof(conf));
-+		conf.nb_vchans = info->max_vchans;
-+		conf.priority = 1;
-+		ret = rte_dma_configure(test_dev_id, &conf);
-+		RTE_TEST_ASSERT(ret == -EINVAL,
-+			"Expected -EINVAL for non-zero priority without SP, %d", ret);
-+	}
-+
-+	return 0;
-+}
-+
- static int
- test_dma_configure(void)
- {
-@@ -156,12 +205,9 @@ test_dma_configure(void)
- 	ret = rte_dma_configure(test_dev_id, &conf);
- 	RTE_TEST_ASSERT(ret == -EINVAL, "Expected -EINVAL, %d", ret);
- 
--	/* Check enable silent mode */
--	memset(&conf, 0, sizeof(conf));
--	conf.nb_vchans = info.max_vchans;
--	conf.flags = RTE_DMA_CFG_FLAG_SILENT;
--	ret = rte_dma_configure(test_dev_id, &conf);
--	RTE_TEST_ASSERT(ret == -EINVAL, "Expected -EINVAL, %d", ret);
-+	/* Check flags, priority extra validations */
-+	ret = check_configure_extra(&info);
-+	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to check configure extra");
- 
- 	/* Configure success */
- 	memset(&conf, 0, sizeof(conf));
-@@ -209,12 +255,21 @@ check_direction(void)
- }
- 
- static int
--check_port_type(struct rte_dma_info *dev_info)
-+check_vchan_port(struct rte_dma_info *dev_info)
- {
- 	struct rte_dma_vchan_conf vchan_conf;
- 	int ret;
- 
--	/* Check src port type validation */
-+	/* Check invalid port_type enum values */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.src_port.port_type = RTE_DMA_PORT_PCIE + 1;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for invalid port_type, %d", ret);
-+
-+	/* Check src port type vs direction mismatch */
- 	memset(&vchan_conf, 0, sizeof(vchan_conf));
- 	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
- 	vchan_conf.nb_desc = dev_info->min_desc;
-@@ -222,7 +277,7 @@ check_port_type(struct rte_dma_info *dev_info)
- 	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
- 	RTE_TEST_ASSERT(ret == -EINVAL, "Expected -EINVAL, %d", ret);
- 
--	/* Check dst port type validation */
-+	/* Check dst port type vs direction mismatch */
- 	memset(&vchan_conf, 0, sizeof(vchan_conf));
- 	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
- 	vchan_conf.nb_desc = dev_info->min_desc;
-@@ -230,6 +285,105 @@ check_port_type(struct rte_dma_info *dev_info)
- 	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
- 	RTE_TEST_ASSERT(ret == -EINVAL, "Expected -EINVAL, %d", ret);
- 
-+	/* Check non-zero reserved fields in src_port */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.src_port.reserved[0] = 1;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for non-zero src_port.reserved, %d", ret);
-+
-+	/* Check non-zero reserved fields in dst_port */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.dst_port.reserved[0] = 1;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for non-zero dst_port.reserved, %d", ret);
-+
-+	return 0;
-+}
-+
-+static int
-+check_vchan_domain(struct rte_dma_info *dev_info)
-+{
-+	struct rte_dma_vchan_conf vchan_conf;
-+	int ret;
-+
-+	/* Check invalid domain type enum */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.domain.type = RTE_DMA_INTER_OS_DOMAIN + 1;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for invalid domain type, %d", ret);
-+
-+	/* Check non-zero domain.reserved */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.domain.reserved[0] = 1;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for non-zero domain.reserved, %d", ret);
-+
-+	/* Check inter-domain type without MEM_TO_MEM direction */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_DEV;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.domain.type = RTE_DMA_INTER_PROCESS_DOMAIN;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for inter-domain non-MEM_TO_MEM, %d", ret);
-+
-+	/* Check domain INTER_PROCESS without capability */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.domain.type = RTE_DMA_INTER_PROCESS_DOMAIN;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for INTER_PROCESS without capa, %d", ret);
-+
-+	/* Check domain INTER_OS without capability */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.domain.type = RTE_DMA_INTER_OS_DOMAIN;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for INTER_OS without capa, %d", ret);
-+
-+	return 0;
-+}
-+
-+static int
-+check_auto_free_conf(struct rte_dma_info *dev_info)
-+{
-+	struct rte_dma_vchan_conf vchan_conf;
-+	int ret;
-+
-+	/* Check non-zero reserved fields in auto_free */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.auto_free.reserved[0] = 1;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for non-zero auto_free.reserved, %d", ret);
-+
-+	/* Check auto_free.m2d.pool without M2D auto-free capability */
-+	memset(&vchan_conf, 0, sizeof(vchan_conf));
-+	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	vchan_conf.nb_desc = dev_info->min_desc;
-+	vchan_conf.auto_free.m2d.pool = (struct rte_mempool *)(uintptr_t)0x1;
-+	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
-+	RTE_TEST_ASSERT(ret == -EINVAL,
-+		"Expected -EINVAL for auto_free without M2D capa, %d", ret);
-+
- 	return 0;
- }
- 
-@@ -274,9 +428,17 @@ test_dma_vchan_setup(void)
- 	ret = rte_dma_vchan_setup(test_dev_id, 0, &vchan_conf);
- 	RTE_TEST_ASSERT(ret == -EINVAL, "Expected -EINVAL, %d", ret);
- 
--	/* Check port type */
--	ret = check_port_type(&dev_info);
--	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to check port type");
-+	/* Check port type and reserved fields */
-+	ret = check_vchan_port(&dev_info);
-+	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to check vchan port");
-+
-+	/* Check domain param validation */
-+	ret = check_vchan_domain(&dev_info);
-+	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to check vchan domain");
-+
-+	/* Check auto_free config validation */
-+	ret = check_auto_free_conf(&dev_info);
-+	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to check auto_free conf");
- 
- 	/* Check vchan setup success */
- 	memset(&vchan_conf, 0, sizeof(vchan_conf));
--- 
-2.54.0
-
+On 6/15/2026 3:30 PM, Huisong Li wrote:
+> This series centralizes the lcore ID verification in the power cpufreq
+> framework, replacing the per-driver range checks with a common validation.
+>
+> Background
+> ----------
+> Currently, various cpufreq drivers implement their own lcore ID checks,
+> which are limited to simple range validation against RTE_MAX_LCORE and
+> involve significant code duplication across 12+ functions per driver.
+> The checks are duplicated across all drivers — any change requires
+> updating 5+ drivers identically. Moreover, these checks do not verify
+> whether the lcore is actually managed by the application. So it is better
+> to verify lcore ID in cpufreq core.
+>
+> For cpufreq-related APIs, although service cores do not typically invoke
+> these APIs, they may operate in polling modes where power management is
+> required. To maintain compatibility with applications using service cores,
+> the validation logic now explicitly accepts both ROLE_RTE and ROLE_SERVICE.
+>
+> The usage of power QoS APIs are similar to that of cpufreq. They also can
+> accepts ROLE_RTE and ROLE_SERVICE.
+>
+> For PMD power management APIs, the lcore must be ROLE_RTE because these
+> are used together with the data plane of ethdev PMD. Hence,
+> rte_lcore_is_enabled() is used for validation.
+>
+> Key Changes:
+> ------------
+> Patch 1: Adds a common macro (RTE_POWER_VALID_LCOREID_OR_ERR_RET)
+>           that accepts both roles.
+> Patch 2: Adds the validation to the cpufreq framework layer.
+> Patches 3-7: Remove the now-redundant per-driver RTE_MAX_LCORE checks.
+> Patch 8: Update power QoS to use the new validation, allowing
+>           service cores to configure QoS parameters.
+> Patch 9: Add lcore validation to PMD management functions.
+>
+> Changes:
+> --------
+> v4: remove the patch that add the helper function rte_lcore_is_eal_managed.
+>
+> v3:
+>   - update release note.
+>   - add __rte_experimental for new helper function.
+>   - restructure this patch set to facilitate review.
+>
+> v2:
+>   - allow the service cores to set power API.
+>
+> ----
+>
+> Huisong Li (9):
+>    power: add a common macro to verify lcore ID
+>    power/cpufreq: add the lcore ID verification to framework
+>    power/acpi: remove redundant lcore ID checks
+>    power/amd_pstate: remove redundant lcore ID checks
+>    power/cppc: remove redundant lcore ID checks
+>    power/intel_pstate: remove redundant lcore ID checks
+>    power/kvm_vm: remove redundant lcore ID checks
+>    power: allow the service core to config power QoS
+>    power: add lcore ID check for PMD mgmt
+>
+>   doc/guides/rel_notes/release_26_07.rst        |  7 ++
+>   drivers/power/acpi/acpi_cpufreq.c             | 65 -------------------
+>   drivers/power/amd_pstate/amd_pstate_cpufreq.c | 65 -------------------
+>   drivers/power/cppc/cppc_cpufreq.c             | 65 -------------------
+>   .../power/intel_pstate/intel_pstate_cpufreq.c | 65 -------------------
+>   drivers/power/kvm_vm/guest_channel.c          | 22 -------
+>   drivers/power/kvm_vm/kvm_vm.c                 | 10 ---
+>   lib/power/power_common.h                      |  8 +++
+>   lib/power/rte_power_cpufreq.c                 | 13 ++++
+>   lib/power/rte_power_pmd_mgmt.c                | 21 +++---
+>   lib/power/rte_power_qos.c                     | 10 +--
+>   11 files changed, 41 insertions(+), 310 deletions(-)
+>
