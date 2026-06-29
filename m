@@ -2,74 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1057C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 19:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3DCC43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 19:01:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6F1134067A;
-	Mon, 29 Jun 2026 21:00:47 +0200 (CEST)
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com
- [74.125.224.41]) by mails.dpdk.org (Postfix) with ESMTP id E8E8240663
- for <dev@dpdk.org>; Mon, 29 Jun 2026 21:00:45 +0200 (CEST)
-Received: by mail-yx1-f41.google.com with SMTP id
- 956f58d0204a3-664b2c00e12so2799029d50.2
- for <dev@dpdk.org>; Mon, 29 Jun 2026 12:00:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 63CF3402DD;
+	Mon, 29 Jun 2026 21:01:06 +0200 (CEST)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com
+ [209.85.128.178])
+ by mails.dpdk.org (Postfix) with ESMTP id F22DB402D7
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 21:01:04 +0200 (CEST)
+Received: by mail-yw1-f178.google.com with SMTP id
+ 00721157ae682-80e46c00f3bso11115987b3.2
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 12:01:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782759645;
- x=1783364445; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782759664;
+ x=1783364464; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=L/NYGAv1/ne+KJJ6SDOnyGBDbCsxpzkW2lIjGUNntVE=;
- b=mHqhwANFPTD1RKyEhlW4XPQjyXOBYSqqSUTiih0dLSMUaX/J0dZJwIi6L2dDe2IBze
- fqIkRBRahJaD2IyRwm1sQ/+LFx2v9Rff47UOvihae/nWivYjpxdGpnEAJfWx0+DH6DfT
- 5vqxJuVJSxr5EMSsao6GOSw5AiZ7xG/j6ZAKJP2TPfPNS8cPK/DmV+VnC3ZJtcYCPd2a
- PxTFscckr5IdV64IXuiFxH0ud1cG12qnuln75EhqLjhwsDqnXaIaqRmzJn2OA/XTtlne
- Sv0MZP1NyCjPYT9FZ3ITVkAzugL87aJL5FOQ6zF/+5GN0ZB89CQZ3mnZGFyFw9ZKo7dd
- bhHg==
+ bh=SM9tMiu+4j0OIoWKDwaOQ2dHPxu+KbYHsmMk67qwxTA=;
+ b=GtCJBA0WZbpcl8cZ+Q9LO775mG0QmjSn7VSf3fgyMhdAcvT91SYtmUSha/O5kjj+Nj
+ DUrbQQq6/VHfgqd4LnBpxLotPabeExzkxWz0e/dpmw4f/BZr3A3FKLRBYSig5wP7Rs3S
+ 4hcZPFzOoWJkKR3zlaTpnDgGAJ1ab8sg2Unt4ieujbBj8tWo73ZoDeS8pYo5NV49ZlWd
+ +mDQF+aP+f4bOf5QnLT95JT/CeqLTAO+rGD7Z7lNC7O0VY/hZS59CK8wuZml3VkE1min
+ 6wH/xopPozbNUM4DanTEKgH3quhDwR50alBxaiLHDZlTgGegzjiTPHbQ20y+uWl9pBUJ
+ qPSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782759645; x=1783364445;
+ d=1e100.net; s=20251104; t=1782759664; x=1783364464;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=L/NYGAv1/ne+KJJ6SDOnyGBDbCsxpzkW2lIjGUNntVE=;
- b=XanqyVu/4wBEQj0TUS8ZScSlqzUGQ/pouts9Ihvo7Ud/7KAQjHrfPfiN8QjM6j/rPZ
- gYCSC1I0m0aCoqcihN5TfRd+JPYSGNZ9zBnSspVbhg/FQIaYl6FarG6BTuwNZjsCK5dp
- yV0AVPUeRMZdI677hDvM4rgceXYuPYloZhskYgM9/wxm8zW0eScuJW7VW1pATRLF0jiQ
- 1xtnPY+iba1ptU+x2XXtpirGccO2rxHVljcAHGuZaDh9CxXnc5dITxZzbIbYMOsBjQcl
- YIfKFsFc0+rOqWrbBMnxk/g5kBWDJyEmYiis2SKlgN2WlCfRAEiA6Q7MmX33IJsiKXgo
- SdVA==
-X-Gm-Message-State: AOJu0Yz94t2x4FN3BXAys+hPDZRhSjxvql6fC0vSp6T7uVqJ/2hWbgAl
- fSynud5eRF3Sry+hBsK9RubzLVAC42i4nGw1kcZ/2ohhX8iBSs53yKVTO9obACVUxE3do2a4unz
- xne+y
-X-Gm-Gg: AfdE7cnoZgU9rZwT6i5Rb+yTaRrx5n4W2jXAhcm0VBQwzaQu2bYzRtM84+iMmWK59WV
- 5/dPiULg48U71TicTWKz5wu9K5J9NDcVZZn0L4ZliGtW3mAZN/hE5/D7KGmE81jWPEisMSyN0Yd
- uHqOUJTBtWJegtWZ020TVVAtODDyDiH/fQAPOe0aEPyYfFMgaH7dptpeMBV4lMgwbiDIIZ5pZ9A
- LfiK2ob33AHPODzA9BcWIEpqBiuvHvqDsxHhZl3HG3w/Ct4rtJSfmCHESEazMwER4psGHE72QGh
- 6EBkZJgDDF88SyfNLPW/gCKk3fcq5dTiligmwsqCCCZDKopP4l4NcFXPay0EWYPEi6ejoxWRFn9
- U7UmMFbxYi4C9o+j/+gmAoH7YMTVo33bI8P9BJs64KPD3JtyhCdFScaZAtlz3sbM6JrnZ5hNUQS
- TNRKvyxE/jp2s+xBlZrG/neoGzO6xxEoyaVdg46mgFy6RQNQ0Ds+TkbS2bpI1gXg==
-X-Received: by 2002:a05:690c:490d:b0:80a:9ff6:c43 with SMTP id
- 00721157ae682-810da80b671mr8380657b3.55.1782759640477; 
- Mon, 29 Jun 2026 12:00:40 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=SM9tMiu+4j0OIoWKDwaOQ2dHPxu+KbYHsmMk67qwxTA=;
+ b=PTFXX2E1XUIlOgTMAtsXInIPzZ83190uBBEUWLdh9a0/smW/btt7loi1q4/cHHOuR4
+ JI14YTqgHlvPWPUKIjxyGSFJcjcpIbbY6MESwVuUPfFHmLPdS+/zv7jczGFjU/i4VmMC
+ p00icWTJQI7rUcY/hCJJyhg22hV8bF2fMgBfRJ1izTQs3Zp+kX3PXXut9SuP8niRkLbM
+ kADzrtLPCbv5dVD54qlwfQoTIVZJGBqLWQWX7Ywa8QAnleyizBUn1Z2NpjPWtIifaNs+
+ YqfqJ2KCmAplvxTs8plBAvi9QGuC/Bo7Dfhr50N6RxchjJJQqNKzInCRfhVo+4f4ADLf
+ tLzg==
+X-Gm-Message-State: AOJu0YyKNfBIBtDrngJLAJQ6BrAqxouQYBtVHTbWghZ2mOmt0Uk3jq5k
+ pvBvnAPb4b+xSSI1WUFm78Mabx0/vcV1nGBwnnwXHcZG3x+4UtBXCIkcT96V16bjurwnMECknWE
+ ZPTqK
+X-Gm-Gg: AfdE7cmyo2/Av2+oYUovXa5hNuawXHN8U/GXDPE24VXFVQIisTwSxZ6wc2XKKgf58cl
+ 6Xq6/uprO2iI8JhHTFIfgOybEGNxavnrGiGMmn2K5fBHvWJ/9+kDOfe9FoZNy9WegBJUUgRw5cK
+ DxOa+MLbTiuL/yxKmAgaLGh5HtD91z7oUMOlECLXF4b1TTFyI620c1hBNklzm9IPOUqPotYwgMK
+ FkfC+OUXrFwu1L9jNQQzU0IndkQsGPDk327uxX8cijjOc6mH0V5lhGuIXjV6X47uws4r+upGl09
+ oVXo0Ny6RIkYYGQl+sjrnxzAUpf+1Wx2JQYbFt4qdMpFzM0D0NXCXW4DQjnb7SzcRwQYXW7Md2D
+ 4Yr6qw9WlwZgEJzmf7FOhjp4E4TFxtKLeoS+1t2vJ43NkheavKsBSvWTWItzItL5sM4jlzHvfC8
+ ZvXze5jbv2ateDOP9/xBYhXTncyyNq/WnZn0nBkQ9VBJmags82J3dmLQ==
+X-Received: by 2002:a05:690c:6d0a:b0:806:e2ad:534d with SMTP id
+ 00721157ae682-810d778b0e2mr8840097b3.7.1782759664138; 
+ Mon, 29 Jun 2026 12:01:04 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 00721157ae682-810e728a009sm1747287b3.5.2026.06.29.12.00.39
+ 00721157ae682-810e728652esm1606737b3.10.2026.06.29.12.01.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 29 Jun 2026 12:00:40 -0700 (PDT)
+ Mon, 29 Jun 2026 12:01:03 -0700 (PDT)
+Date: Mon, 29 Jun 2026 12:00:59 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Anoob Joseph <anoobj@marvell.com>
-Subject: [PATCH v2 6/6] crypto/octeontx: use timing-safe RSA signature
- verification
-Date: Mon, 29 Jun 2026 11:59:29 -0700
-Message-ID: <20260629190027.2071745-7-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260629190027.2071745-1-stephen@networkplumber.org>
-References: <20260625160200.24170-1-stephen@networkplumber.org>
- <20260629190027.2071745-1-stephen@networkplumber.org>
+To: Gagandeep Singh <g.singh@nxp.com>
+Cc: dev@dpdk.org, hemant.agrawal@nxp.com
+Subject: Re: [PATCH v4 0/9] ENETC driver related changes series
+Message-ID: <20260629120059.68eb89f9@phoenix.local>
+In-Reply-To: <20260629051819.989176-1-g.singh@nxp.com>
+References: <20260623060004.2187716-1-g.singh@nxp.com>
+ <20260629051819.989176-1-g.singh@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,40 +82,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace memcmp() with rte_memeq_timingsafe() when verifying
-RSA signatures to prevent timing-based side-channel attacks.
+On Mon, 29 Jun 2026 10:48:10 +0530
+Gagandeep Singh <g.singh@nxp.com> wrote:
 
-The comparison at drivers/crypto/octeontx/otx_cryptodev_ops.c:742
-is used to verify RSA signed data against expected message content.
-Using regular memcmp() for cryptographic verification can leak
-information about the compared data through timing differences.
+> V4 changes:
+>   - Fixed a compilation issue: "txbd may be used uninitialized"
+>=20
+> V3 changes:
+>   - Added documentation for all devargs in enetc4.rst.
+>   - Fixed kvlist memory leak issue.
+>=20
+> V2 changes:
+>   - Fixed an un-used variable compilation issue reported on fedora:43-gcc=
+-minsize
+>   - Fixed various AI reported issues:
+> 	- Release notes updated for all new devargs
+> 	- enect4.ini features doc updated for scattered RX.
+> 	- removed Not required RTE_PTYPE_UNKNOWN.
+> 	- Fixed mid-frame mbuf leak in SG case.
+> 	- Enabled SG for enetc4 PF also.
+> 	- move to calloc from rte_zmalloc in parse_txq_prior().
+> 	- added vaidation checks on strdup, strtoul.
+> 	- added NC devargs to use cacheable ops conditionally.
+> 	- removed dead code like bd_base_p etc.
+> 	- Fixed rte_cpu_to_le_16() conversion on flags and combined
+> 	  all flags related patches in one patch.
+> 	- Fixed memory leak issue due to TXQ priority patch.
+>   - There were some false positives, I have ignored them:
+> 	Race condition on flags field:
+> 		clean_tx_ring only touches HW-completed BDs (next_to_clean=E2=86=92hwci=
+),
+> 		never newly-submitted BDs; doorbell hasn't fired yet.
+> 	Missing dcbf in clean_tx_ring:
+> 		DPDK is single-threaded per queue; TX path always overwrites
+> 		flags completely before dcbf.
+> 	TX dcbf granularity with wrap:
+> 		Safe (AI admits it).
+> 	RX refill flush at wrap:
+> 		In-loop dcbf at i & mask =3D=3D 0 already flushes aligned groups;
+> 		trailing flush only needed for partial groups.
+> 	RX reading before invalidate:
+> 		dccivac precedes the read for every group in the loop
+>=20
+> Gagandeep Singh (7):
+>   net/enetc: fix TX BD structure
+>   net/enetc: fix queue initialization
+>   net/enetc: support ESP packet type in packet parsing
+>   net/enetc: update random MAC generation code
+>   net/enetc: add option to disable VSI messaging
+>   net/enetc: add devargs to control VSI-PSI timeout and delay
+>   net/enetc4: add cacheable BD ring support with SW cache maintenance
+>=20
+> Vanshika Shukla (2):
+>   net/enetc: support scatter-gather
+>   net/enetc: set user configurable priority to TX rings
+>=20
+>  doc/guides/nics/enetc4.rst             |  62 +++-
+>  doc/guides/nics/features/enetc4.ini    |   1 +
+>  doc/guides/rel_notes/release_26_07.rst |  10 +
+>  drivers/net/enetc/base/enetc_hw.h      |  13 +-
+>  drivers/net/enetc/enetc.h              |  31 +-
+>  drivers/net/enetc/enetc4_ethdev.c      | 172 ++++++++--
+>  drivers/net/enetc/enetc4_vf.c          | 206 ++++++++++--
+>  drivers/net/enetc/enetc_ethdev.c       |  25 +-
+>  drivers/net/enetc/enetc_rxtx.c         | 430 ++++++++++++++++++++++---
+>  9 files changed, 831 insertions(+), 119 deletions(-)
+>=20
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/crypto/octeontx/otx_cryptodev_ops.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/octeontx/otx_cryptodev_ops.c b/drivers/crypto/octeontx/otx_cryptodev_ops.c
-index d6d1b2cea9..40f565cd78 100644
---- a/drivers/crypto/octeontx/otx_cryptodev_ops.c
-+++ b/drivers/crypto/octeontx/otx_cryptodev_ops.c
-@@ -12,6 +12,7 @@
- #include <rte_errno.h>
- #include <rte_malloc.h>
- #include <rte_mempool.h>
-+#include <rte_memory.h>
- 
- #include "otx_cryptodev.h"
- #include "otx_cryptodev_capabilities.h"
-@@ -739,7 +740,7 @@ otx_cpt_asym_rsa_op(struct rte_crypto_op *cop, struct cpt_request_info *req,
- 		}
- 		memcpy(rsa->sign.data, req->rptr, rsa->sign.length);
- 
--		if (memcmp(rsa->sign.data, rsa->message.data,
-+		if (!rte_memeq_timingsafe(rsa->sign.data, rsa->message.data,
- 			   rsa->message.length)) {
- 			CPT_LOG_DP_ERR("RSA verification failed");
- 			cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
--- 
-2.53.0
-
+Applied to net-next with minor rewording of git commit message
+to conform with check-git-log requirements.
