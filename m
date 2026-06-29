@@ -2,31 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E9DC43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 05:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51436C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 05:18:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CF434021E;
-	Mon, 29 Jun 2026 07:18:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 47B3F402D5;
+	Mon, 29 Jun 2026 07:18:27 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id AEA10400D7;
- Mon, 29 Jun 2026 07:18:21 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9D4AF400D7
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 07:18:22 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7BA6E200002;
- Mon, 29 Jun 2026 07:18:21 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 764BF200004;
+ Mon, 29 Jun 2026 07:18:22 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 43DE4200007;
- Mon, 29 Jun 2026 07:18:21 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 40215200003;
+ Mon, 29 Jun 2026 07:18:22 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 65A771800071;
- Mon, 29 Jun 2026 13:18:20 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6CDA81800086;
+ Mon, 29 Jun 2026 13:18:21 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com, stable@dpdk.org, Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v4 1/9] net/enetc: fix TX BD structure
-Date: Mon, 29 Jun 2026 10:48:11 +0530
-Message-Id: <20260629051819.989176-2-g.singh@nxp.com>
+Cc: hemant.agrawal@nxp.com,
+	Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v4 4/9] net/enetc: update random MAC generation code
+Date: Mon, 29 Jun 2026 10:48:14 +0530
+Message-Id: <20260629051819.989176-5-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260629051819.989176-1-g.singh@nxp.com>
 References: <20260623060004.2187716-1-g.singh@nxp.com>
@@ -47,105 +48,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The flags field in struct enetc_tx_bd was declared as uint16_t but
-ENETC4 TX BDs only use an 8-bit flags byte. Fix the type to uint8_t
-to match the hardware descriptor layout.
-
-Fixes: 696fa399d797 ("net/enetc: add PMD with basic operations")
-Cc: stable@dpdk.org
+Use rte_eth_random_addr() instead of manual rte_rand() based MAC
+generation. Also handle VF path by writing to ENETC_SIPMAR0/1 instead
+of ENETC_PSIPMAR0/1 when running as a VF.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/net/enetc/base/enetc_hw.h |  7 +++----
- drivers/net/enetc/enetc_rxtx.c    | 17 +++++++++--------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/net/enetc/enetc_ethdev.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
-index 173d677..19efadd 100644
---- a/drivers/net/enetc/base/enetc_hw.h
-+++ b/drivers/net/enetc/base/enetc_hw.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2024 NXP
-+ * Copyright 2018-2026 NXP
-  */
- 
- #ifndef _ENETC_HW_H_
-@@ -198,8 +198,7 @@ enum enetc_bdr_type {TX, RX};
- 
- #define ENETC_TX_ADDR(txq, addr) ((void *)((txq)->enetc_txbdr + (addr)))
- 
--#define ENETC_TXBD_FLAGS_IE		BIT(13)
--#define ENETC_TXBD_FLAGS_F		BIT(15)
-+#define ENETC_TXBD_FLAGS_F		BIT(7)
- 
- /* ENETC Parsed values (Little Endian) */
- #define ENETC_PARSE_ERROR		0x8000
-@@ -262,7 +261,7 @@ struct enetc_tx_bd {
- 			uint8_t l3t:1;
- 			uint8_t resv:5;
- 			uint8_t l4t:3;
--			uint16_t flags;
-+			uint8_t flags;
- 		};/* default layout */
- 		uint32_t txstart;
- 		uint32_t lstatus;
-diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
-index a2b8153..d3b98b3 100644
---- a/drivers/net/enetc/enetc_rxtx.c
-+++ b/drivers/net/enetc/enetc_rxtx.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2024 NXP
-+ * Copyright 2018-2026 NXP
-  */
- 
- #include <stdbool.h>
-@@ -101,7 +101,7 @@ enetc_xmit_pkts(void *tx_queue,
- 		tx_swbd = &tx_ring->q_swbd[i];
- 		txbd->frm_len = tx_pkts[start]->pkt_len;
- 		txbd->buf_len = txbd->frm_len;
--		txbd->flags = rte_cpu_to_le_16(ENETC_TXBD_FLAGS_F);
-+		txbd->flags = ENETC_TXBD_FLAGS_F;
- 		txbd->addr = (uint64_t)(uintptr_t)
- 		rte_cpu_to_le_64((size_t)tx_swbd->buffer_addr->buf_iova +
- 				 tx_swbd->buffer_addr->data_off);
-@@ -133,13 +133,13 @@ enetc4_tx_offload_checksum(struct rte_mbuf *mbuf, struct enetc_tx_bd *txbd)
- 		txbd->ipcs = ENETC4_TXBD_IPCS;
- 		txbd->l3_start = mbuf->l2_len;
- 		txbd->l3_hdr_size = mbuf->l3_len / 4;
--		txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_L_TX_CKSUM);
-+		txbd->flags |= ENETC4_TXBD_FLAGS_L_TX_CKSUM;
- 		if ((mbuf->ol_flags & RTE_MBUF_F_TX_UDP_CKSUM) == RTE_MBUF_F_TX_UDP_CKSUM) {
--			txbd->l4t = rte_cpu_to_le_16(ENETC4_TXBD_L4T_UDP);
--			txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_L4CS);
-+			txbd->l4t = ENETC4_TXBD_L4T_UDP;
-+			txbd->flags |= ENETC4_TXBD_FLAGS_L4CS;
- 		} else if ((mbuf->ol_flags & RTE_MBUF_F_TX_TCP_CKSUM) == RTE_MBUF_F_TX_TCP_CKSUM) {
--			txbd->l4t = rte_cpu_to_le_16(ENETC4_TXBD_L4T_TCP);
--			txbd->flags |= rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_L4CS);
-+			txbd->l4t = ENETC4_TXBD_L4T_TCP;
-+			txbd->flags |= ENETC4_TXBD_FLAGS_L4CS;
- 		}
+diff --git a/drivers/net/enetc/enetc_ethdev.c b/drivers/net/enetc/enetc_ethdev.c
+index 8196377..55b0e0b 100644
+--- a/drivers/net/enetc/enetc_ethdev.c
++++ b/drivers/net/enetc/enetc_ethdev.c
+@@ -195,20 +195,18 @@ enetc_hardware_init(struct enetc_eth_hw *hw)
  	}
- }
-@@ -172,7 +172,7 @@ enetc_xmit_pkts_nc(void *tx_queue,
- 			dcbf(data + j);
  
- 		txbd = ENETC_TXBD(*tx_ring, i);
--		txbd->flags = rte_cpu_to_le_16(ENETC4_TXBD_FLAGS_F);
-+		txbd->flags = 0;
- 		if (tx_ring->q_swbd[i].buffer_addr->ol_flags & ENETC4_TX_CKSUM_OFFLOAD_MASK)
- 			enetc4_tx_offload_checksum(tx_ring->q_swbd[i].buffer_addr, txbd);
- 
-@@ -182,6 +182,7 @@ enetc_xmit_pkts_nc(void *tx_queue,
- 		txbd->addr = (uint64_t)(uintptr_t)
- 		rte_cpu_to_le_64((size_t)tx_swbd->buffer_addr->buf_iova +
- 				 tx_swbd->buffer_addr->data_off);
-+		txbd->flags |= ENETC4_TXBD_FLAGS_F;
- 		i++;
- 		start++;
- 		if (unlikely(i == tx_ring->bd_count))
+ 	if ((high_mac | low_mac) == 0) {
+-		char *first_byte;
+-
+ 		ENETC_PMD_NOTICE("MAC is not available for this SI, "
+ 				"set random MAC");
+-		mac = (uint32_t *)hw->mac.addr;
+-		*mac = (uint32_t)rte_rand();
+-		first_byte = (char *)mac;
+-		*first_byte &= 0xfe;	/* clear multicast bit */
+-		*first_byte |= 0x02;	/* set local assignment bit (IEEE802) */
+-
+-		enetc_port_wr(enetc_hw, ENETC_PSIPMAR0(0), *mac);
+-		mac++;
+-		*mac = (uint16_t)rte_rand();
+-		enetc_port_wr(enetc_hw, ENETC_PSIPMAR1(0), *mac);
++		rte_eth_random_addr(hw->mac.addr);
++		high_mac = *(uint32_t *)hw->mac.addr;
++		low_mac = *(uint16_t *)(hw->mac.addr + 4);
++		if (hw->device_id == ENETC_DEV_ID_VF) {
++			enetc_wr(enetc_hw, ENETC_SIPMAR0, high_mac);
++			enetc_wr(enetc_hw, ENETC_SIPMAR1, low_mac);
++		} else {
++			enetc_port_wr(enetc_hw, ENETC_PSIPMAR0(0), high_mac);
++			enetc_port_wr(enetc_hw, ENETC_PSIPMAR1(0), low_mac);
++		}
+ 		enetc_print_ethaddr("New address: ",
+ 			      (const struct rte_ether_addr *)hw->mac.addr);
+ 	}
 -- 
 2.25.1
 
