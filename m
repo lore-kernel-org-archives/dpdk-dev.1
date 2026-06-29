@@ -2,77 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95947C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 11:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FCFC43327
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 12:59:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AEA740299;
-	Mon, 29 Jun 2026 13:56:17 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 82E804021F
- for <dev@dpdk.org>; Mon, 29 Jun 2026 13:56:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782734175;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=H2SLjYsr6ryXw5IpW38UJZCr9mtAmahNMoOR43hZtf8=;
- b=EkNPLEW9OosPyHhxB4ZxBF2Vhyvn+0OXdfmmpX2n31skCwrjiVBzpNn3PHb7HZFCnRrOrf
- RXng5dSIHZmoO0HJIEkG8SFyAzuLUwVWCXIVk9ZGwrUf6/bVPzK2A4x8/lVY5Bvauz7Ezf
- 4/cCHQxQsBcaO/Snc7MyPHjGv/J+sE0=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-500-WQh6CUHdO1ypHb-a-0UE-A-1; Mon, 29 Jun 2026 07:56:13 -0400
-X-MC-Unique: WQh6CUHdO1ypHb-a-0UE-A-1
-X-Mimecast-MFC-AGG-ID: WQh6CUHdO1ypHb-a-0UE-A_1782734172
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-39ae216b900so9316301fa.3
- for <dev@dpdk.org>; Mon, 29 Jun 2026 04:56:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782734172; x=1783338972;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=H2SLjYsr6ryXw5IpW38UJZCr9mtAmahNMoOR43hZtf8=;
- b=o+0Nw/bqt2DwJwnJRCjQoksDDvogmcKsmiXlWoQwJiSy1EsN4muKidDUHPNaTdKCrj
- TTdHsmH72W+tpK5saJvyiEhvEXfoDEkztRLc4lU8ecuasUiOcWW3UBL24xGjM2omUtL7
- fERYdBPHDn/PB/iyaditivAIdbVozhA0JfnSCNVK4+XDzunrObRco0/KeydrsR6LJu51
- xHkUF7vDvr7pTbfSY+QAHC8LDfkLLNduJNfnC9ZRrrJd62tU7aWGPajkTABGx/4MrkBI
- AiSr75gcvT0pIu2WxKge55mx8uJi2DSpcR7S5Hq/AuWr27SLc6LyOKCUU3ujRdp9jtD0
- vnpQ==
-X-Gm-Message-State: AOJu0YwQkRL50it2JcdjgScB61Visnb6lcDwmWvTLaxmiPAW9bmNT46x
- iA09w39jyHJxW3dkCY3Yg9jOZqRsiPAn/RTt2RExYstYm57kPF1jB45k7vkvVFgF2L3qfPEG7LT
- gfSp5q4zxyOwaYTWMtPlJ+9IE0oVgVYSmPUJ1HAtuoxhGepHHOxuOIbCKTR6Nb0SBvRk5QCGWEu
- xw+p2qQ1biVgP+50ThbII=
-X-Gm-Gg: AfdE7cnr2xtLOlWj4saDHD3vLE68o2VVVs3cK23yfCQ20YyyGJyZrVWcJiqrlYPhsTB
- VZWBfRSudu8A17o1OuAefWmgrMYcWisd5ddoAZUflspI+qecwpghDWwhzdKbtR2Sq0ohKXgvkR4
- mzL8ce5mzgxvcb1xnDxVhy7CUp0kQjKiIHWIwUsr/DOEhzBFAdMV/CGeUW6Da4mBWepaR7rqBNw
- bYaCJnS/U0QLEv1fRaAOPp1Dr0yVXN80XCo5L0DLr+WBSa75Wd7BdZI+b0=
-X-Received: by 2002:a05:651c:20cd:10b0:399:87c9:4573 with SMTP id
- 38308e7fff4ca-39acb69a85amr27952661fa.22.1782734171798; 
- Mon, 29 Jun 2026 04:56:11 -0700 (PDT)
-X-Received: by 2002:a05:651c:20cd:10b0:399:87c9:4573 with SMTP id
- 38308e7fff4ca-39acb69a85amr27952501fa.22.1782734171190; Mon, 29 Jun 2026
- 04:56:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 680E740299;
+	Mon, 29 Jun 2026 14:59:43 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 2F82E4021F
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 14:59:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782737982; x=1814273982;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=Nd9kUAX8rOnsCnXInXFe/RndR5+js1w+eiENxC9SgDk=;
+ b=bJdrHeWu1RFUIw1amOT5l+iZD99ndwBmf2lcyf0QcX+kZfG2Y2nf3uGW
+ ThMgMkHs2DFfjD3enK2o7ZiWHcA6x5LtOzFMyVUePyO0yNg3Z12Wn0b8U
+ 4lWIcn/jczl3R0dq+e7gJo4t3ZRbEfLZ38zJyFZ1EofLLRsVio7e6Xbgi
+ JwqyrHBdAYl+0vChU438edMYf3VYTKMN5lfOjpE0BxNe1fbBRxZUa9Hlq
+ ouaVP5bJ5gPO5dSQc4L8Uo/exTj7p0yA9GThy3n74+RnEa+eSt+IobpOM
+ PHheyNZAGJyQabDMwUVKq9EsMcyzpkPVPGyYTiq504E2Pb1akiOZGDfrr g==;
+X-CSE-ConnectionGUID: C/gbuqpFQoO8q4KRv2+pwA==
+X-CSE-MsgGUID: a1cQRJnATZqEHpCPvkKMUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11831"; a="87332482"
+X-IronPort-AV: E=Sophos;i="6.24,231,1774335600"; d="scan'208";a="87332482"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Jun 2026 05:59:40 -0700
+X-CSE-ConnectionGUID: xnP4ltRJTYSpj41RUz74aw==
+X-CSE-MsgGUID: H3JnDhV+Tdegb9Ym/yMkHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,232,1774335600"; d="scan'208";a="249322951"
+Received: from silpixa00401385.ir.intel.com (HELO
+ localhost.ger.corp.intel.com) ([10.20.224.226])
+ by fmviesa008.fm.intel.com with ESMTP; 29 Jun 2026 05:59:35 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] usertools/dpdk-devbind: improve query performance on BSD
+Date: Mon, 29 Jun 2026 13:59:29 +0100
+Message-ID: <20260629125929.2331943-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-References: <20260624113550.821516-1-bruce.richardson@intel.com>
- <20260625130813.1527333-1-bruce.richardson@intel.com>
- <CAJFAV8yP-Mp75so4qoKqOHUzbgWqBi-e8JDLY6yZDpjhodU-tA@mail.gmail.com>
- <akJcdJ9beQ560Opd@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <akJcdJ9beQ560Opd@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 29 Jun 2026 13:55:57 +0200
-X-Gm-Features: AVVi8Cc_ZZH8BQoJvdQKxUuMKXKjAKcI8gg9sKnC15Bw05hd7VrRHhUYgMWq6Bo
-Message-ID: <CAJFAV8yDzrhj7KVYYiXXQuP6xn_ooZvwpocd0-Ms-VptD3pnfA@mail.gmail.com>
-Subject: Re: [PATCH v2] build: drop dependency on libbsd
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- Stephen Hemminger <stephen@networkplumber.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: kDyzmorV5gt7WANsSFtqJYPnn1qduRu1l_48UHmRh8Q_1782734172
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,58 +58,165 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 29 Jun 2026 at 13:52, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Mon, Jun 29, 2026 at 01:30:32PM +0200, David Marchand wrote:
-> > On Thu, 25 Jun 2026 at 15:08, Bruce Richardson
-> > <bruce.richardson@intel.com> wrote:
-> > >
-> > > Glibc added the strlcpy and strlcat functions to version 2.38, released
-> > > in 2023, meaning they are natively available in modern linux distros. At
-> > > this point, the value of having the libbsd provided versions of these
-> > > functions is reduced, so let's simplify the code options here by
-> > > providing just two options for strlcpy rather than three:
-> > >
-> > > 1. native implementation for BSD and recent Linux
-> > > 2. DPDK-specific fallbacks using snprintf
-> > >
-> > > Since the strlcpy and strlcat functions are the only two items used from
-> > > libbsd, we can then drop completely any DPDK dependency on libbsd.
-> > >
-> > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > >
-> > > ---
-> > > V2:
-> > > * took the work further than v1, dropping libbsd dependency entirely.
-> > >   Now DPDK just supports native strlcpy or it's own fallback version.
-> >
-> > We still have some references:
-> >
-> > $ git grep -i libbsd
-> > .github/workflows/build.yml:        libbsd-dev \
-> > .github/workflows/build.yml:        libbsd-devel \
-> > devtools/process-iwyu.py:def uses_libbsd(builddir):
-> > devtools/process-iwyu.py:    "return whether the build uses libbsd or not"
-> > devtools/process-iwyu.py:    return bool(get_build_config(builddir,
-> > lambda ln: 'RTE_USE_LIBBSD' in ln))
-> > devtools/process-iwyu.py:    keep_str_fns = uses_libbsd(build_dir)  #
-> > check for libbsd
-> > devtools/process-iwyu.py:        print("Warning: libbsd is present,
-> > build will fail to detect incorrect removal of rte_string_fns.h",
-> > doc/guides/howto/af_xdp_dp.rst:          libbsd-devel \
-> >
->
-> Sure, will respin and try and clean these up a bit. I assume from the
-> detailed feedback that there is no issue with the high-level approach here?
+The time taken on FreeBSD to run the status command from dpdk-devbind
+was exceptionally long. When run on a real system with lots of
+devices, the original code took over 80 seconds in some cases to produce
+the output of "dpdk-devbind.py -s". (Time on BSD VMs is quicker as they
+tend not to have so many hardware devices, which is why this may not
+have been noticed before.)
 
-Consumers of dpdk may have been relying on the libbsd dependency (and
-RTE_USE_LIBBSD config...) but I think we should proceed with this
-removal.
+Rework the processing to avoid doing so many subprocess calls to
+pciconf; use one call to get info on all devices rather than an
+individual call per-device. On the same HW as before, it now takes a
+fraction of a second, rather than >80 seconds.
 
-https://xkcd.com/1172/
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ usertools/dpdk-devbind.py | 111 ++++++++++++++++++++++++++++----------
+ 1 file changed, 84 insertions(+), 27 deletions(-)
 
-
+diff --git a/usertools/dpdk-devbind.py b/usertools/dpdk-devbind.py
+index 93f2383dff..e72f238aba 100755
+--- a/usertools/dpdk-devbind.py
++++ b/usertools/dpdk-devbind.py
+@@ -111,6 +111,9 @@
+ # global dict ethernet devices present. Dictionary indexed by PCI address.
+ # Each device within this is itself a dictionary of device properties
+ devices = {}
++# for bsd, cache of all devices with ifconfig info merged in. populated once on first call.
++devices_cache = None
++
+ # list of supported DPDK drivers
+ dpdk_drivers = ["igb_uio", "vfio-pci", "uio_pci_generic"] if is_linux else ["nic_uio"]
+ # list of currently loaded kernel modules
+@@ -220,7 +223,10 @@ def get_pci_device_details(dev_id, probe_lspci):
+ def clear_data():
+     '''This function clears any old data'''
+     global devices
++    global devices_cache
+     devices = {}
++    if is_bsd:
++        devices_cache = None
+ 
+ 
+ def get_basic_devinfo_linux(devices_type):
+@@ -253,38 +259,89 @@ def get_basic_devinfo_linux(devices_type):
+             dev[name.rstrip(":")] = value_list[len(value_list) - 1] \
+                 .rstrip("]").lstrip("[")
+ 
++def init_devices_cache_bsd():
++    '''Initialize the devices cache by parsing pciconf -lv and ifconfig -a once.
++    Returns a list of device dictionaries with ifconfig data merged in.'''
++    global devices_cache
++
++    if devices_cache is not None:
++        return devices_cache
++
++    # Get all PCI device info in one call
++    pciconf_output = subprocess.check_output(["pciconf", "-lv"]).decode("utf8")
++    # Get all network interface info in one call
++    ifconfig_output = subprocess.check_output(["ifconfig", "-a"]).decode("utf8").splitlines()
++
++    devices_cache = []
++    current_dev = None
++
++    # Parse pciconf -lv output
++    for line in pciconf_output.splitlines():
++        # Main device line: none0@pci0:0:0:0: class=0x088000 rev=0x04 hdr=0x00 vendor=0x8086 device=0x09a2
++        if line and '@pci' in line:
++            # Save previous device if any
++            if current_dev:
++                devices_cache.append(current_dev)
++
++            # Parse slot/address from first part
++            name_addr, fields = line.split(maxsplit=1)
++            devname, addr = name_addr.split('@')
++            # Remove trailing colon from address
++            addr = addr.rstrip(':')
++
++            current_dev = {}
++            current_dev["Slot"] = addr
++            current_dev["Slot_str"] = addr
++
++            # Extract driver base name from device name (e.g., "nic_uio2" -> "nic_uio", "ixl0" -> "ixl")
++            # Device name format is like: "nic_uio2", "ioat0", "em0", "ixl1", "none0", etc.
++            current_dev["Driver_str"] = devname.rstrip('0123456789')
++
++            # Parse class/vendor/device from rest of line
++            fields_list = fields.split()
++            for field in fields_list:
++                if '=' in field:
++                    name, value = field.split("=")
++                    name = name.title()
++                    if name.startswith("Sub"):
++                        name = "S" + name[3:].title()
++                    # For class code, extract only first 2 hex digits (class part)
++                    if name == "Class" and value.startswith("0x") and len(value) > 4:
++                        current_dev[name + "_str"] = value
++                        current_dev[name] = value[2:4]  # Extract just class code (e.g., "02" from "0x020000")
++                    else:
++                        current_dev[name + "_str"] = value
++                        current_dev[name] = value[2:] if value.startswith("0x") else value
++
++            # Check if this is a network device and attach interface info
++            if "Class" in current_dev:
++                class_code = current_dev.get("Class", "")
++                if class_code == "02":  # Network controller
++                    iflines = [ln for ln in ifconfig_output if ln.startswith(f"{devname}:")]
++                    if iflines:
++                        current_dev["Interface"] = devname
++
++        # Device description line: device = 'Intel 82576 Gigabit Network Connection'
++        elif current_dev and "device" in line.lower() and "=" in line:
++            current_dev["Device_str"] = line.split("=")[1].strip().strip("'")
++
++    # Add the last device
++    if current_dev:
++        devices_cache.append(current_dev)
++
++    return devices_cache
+ 
+ def get_basic_devinfo_bsd(devices_type):
++    '''Filter the pre-cached device list by device type and populate devices dict.'''
+     global devices
+ 
+-    dev_lines = subprocess.check_output(["pciconf", "-l"]).decode("utf8").splitlines()
+-    netifs = subprocess.check_output(["ifconfig", "-a"]).decode("utf8").splitlines()
+-    for dev_line in dev_lines:
+-        dev = {}
+-        name_addr, fields = dev_line.split(maxsplit=1)
+-        devname, addr = name_addr.split('@')
+-        dev["Slot"] = addr
+-        dev["Slot_str"] = addr
+-        dev["Driver_str"] = devname[:-1]
+-        if devices_type == network_devices:
+-            iflines = [ln for ln in netifs if ln.startswith(f"{devname}:")]
+-            if iflines:
+-                dev["Interface"] = devname
+-        fields = fields.split()
+-        for field in fields:
+-            name, value = field.split("=")
+-            name = name.title()
+-            if name.startswith("Sub"):
+-                name = "S" + name[3:].title()
+-            dev[name + "_str"] = value
+-            dev[name] = value[2:] if value.startswith("0x") else value
+-        # explicitly query the device name string
+-        devdetails = subprocess.check_output(["pciconf", "-lv", addr]).decode("utf8")
+-        for devline in devdetails.splitlines():
+-            if devline.lstrip().startswith("device") and "=" in devline:
+-                dev["Device_str"] = devline.split("=")[1].strip().strip("'")
++    # Initialize cache on first call (subsequent calls return cached data)
++    all_devices = init_devices_cache_bsd()
++
++    # Filter by device type and add to devices dict
++    for dev in all_devices:
+         if device_type_match(dev, devices_type):
+-            devices[addr] = dict(dev)
++            devices[dev["Slot"]] = dict(dev)
+ 
+ 
+ def get_device_details(devices_type):
 -- 
-David Marchand
+2.53.0
 
