@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8671FC43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 19:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1057C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 19:01:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B5F940677;
-	Mon, 29 Jun 2026 21:00:44 +0200 (CEST)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com
- [209.85.128.181])
- by mails.dpdk.org (Postfix) with ESMTP id EE44C40669
- for <dev@dpdk.org>; Mon, 29 Jun 2026 21:00:39 +0200 (CEST)
-Received: by mail-yw1-f181.google.com with SMTP id
- 00721157ae682-804239c418bso36184537b3.0
- for <dev@dpdk.org>; Mon, 29 Jun 2026 12:00:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6F1134067A;
+	Mon, 29 Jun 2026 21:00:47 +0200 (CEST)
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com
+ [74.125.224.41]) by mails.dpdk.org (Postfix) with ESMTP id E8E8240663
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 21:00:45 +0200 (CEST)
+Received: by mail-yx1-f41.google.com with SMTP id
+ 956f58d0204a3-664b2c00e12so2799029d50.2
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 12:00:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782759639;
- x=1783364439; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782759645;
+ x=1783364445; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=uSYK64bIQcItSEuRTKDJO21majhyBZY9162ihL8mVVs=;
- b=YEQ5kSbG+HvslluWQNb7ufRiRHQPZOLx156IxPVti2O8vsexSe8uwjQln+D2aiM/N9
- t8oLv/aYF7J4KkcsbW4ypdlUH3u0OV+uy41P4Jf6OW7cbia8ut6M4f+0NoaxTdWMHrFK
- FHlfn53ZHyrBvyBxP8cxFZnUAYmI2Sa9pAZu9sWq6cdQme5V0FS0lPEyPcg8V0RAyLly
- hA9tQTQHApnkOK/4Kw2VScJm2qk1AbeXILzG9KnNFeL9w4hEIjjG5syo28eWydlL2GWW
- lJ0dFb/9JkOHUi6voYsN60wakV6yRbRVXVUHNlxMu2pW+hAPU2YcASn/o3UsquUKOd8P
- wxPQ==
+ bh=L/NYGAv1/ne+KJJ6SDOnyGBDbCsxpzkW2lIjGUNntVE=;
+ b=mHqhwANFPTD1RKyEhlW4XPQjyXOBYSqqSUTiih0dLSMUaX/J0dZJwIi6L2dDe2IBze
+ fqIkRBRahJaD2IyRwm1sQ/+LFx2v9Rff47UOvihae/nWivYjpxdGpnEAJfWx0+DH6DfT
+ 5vqxJuVJSxr5EMSsao6GOSw5AiZ7xG/j6ZAKJP2TPfPNS8cPK/DmV+VnC3ZJtcYCPd2a
+ PxTFscckr5IdV64IXuiFxH0ud1cG12qnuln75EhqLjhwsDqnXaIaqRmzJn2OA/XTtlne
+ Sv0MZP1NyCjPYT9FZ3ITVkAzugL87aJL5FOQ6zF/+5GN0ZB89CQZ3mnZGFyFw9ZKo7dd
+ bhHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782759639; x=1783364439;
+ d=1e100.net; s=20251104; t=1782759645; x=1783364445;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=uSYK64bIQcItSEuRTKDJO21majhyBZY9162ihL8mVVs=;
- b=O/LGrMTKMhUPJFcq/jHPTVTnhbYj25CwQAlExPJ4nCkahlHNPnpy0PJXsFmvHVUldL
- Z4D4Na3cU3FH1XHIHWFLwPTjAnueHEE5to/hvHSauK0VvBEMOJR+BUGVfSsDbcIJFzFc
- kyGmYBjtvNsSAq5nY/Ky6/oDBCmpLnmf/d+Nxsv+fTzxV01sfdTUyWtkALSfDJIgHxJq
- 8I0JmBAhL1gVwdvSheBPermyaMxDpNNqqwgMFYJQWju8k+4womjf/UtmOZW6NBzLutLN
- qGKMpnGjxKUAx3q/DfGlExiPaF6A+9rL89ehoQ6l2vbErpqbRir53tmf+Zd68vTUIysr
- vqAQ==
-X-Gm-Message-State: AOJu0YyV+w1UrW5gws1TXi8A0oCe9xBh2hrJU2motyx7yI2S9Konwbfo
- Zn6+LLFT23vKI769AhO9yE6R3ktAOUSmyoi7lud7WIaSlVsImV+PKS5CLGF17agOVmmYoFIRVce
- 1PA+3
-X-Gm-Gg: AfdE7clJQ6mwCNC3ZSmmjHXEw7Wly/6DWiQaEtotL7Gsj2uWauIFwnmHmkQjcXEFN80
- iFBgng2JM5kzWMEZc/vxUWi96Q05jdKWfdKX386CZ/xqp9WSgA2CeIA0ZUkRxhTnWJgBYvY3G3T
- 2JqrqIe/Bn5fGVKyrW1GYfnuYbTszexiWA011vU/7ConKWU5UDErr/n0U6iBVzh+VDbgVSFVCnK
- bQNsPUI8ZVCiQJrtX02qSXkJu+4JYUTZHEAhj7bynQBUdj48bYK4V04LXNNzmOYng61uXnYftLd
- fXD2WjPNh6YpcOdqxtUVoSGD8BImNhDUXEF/YUYWO02JvDZ0uMNaQB/B6lNU0QENvXI6Ttb9BBE
- WcUbbu5c1uSd6hVSewRhSwRY1lbRscS3uiq6ISxmPueQC/YGcmdezfmjZ5F6ovkFdBFW3PvPGFY
- eZOFf0CVXnUxjXNybw1aECZcPs+5/aGzc/Lc4KhvO2agnLeVwBXaI=
-X-Received: by 2002:a05:690c:b03:b0:7fd:4ef9:e5a4 with SMTP id
- 00721157ae682-810d83e06ecmr8682637b3.29.1782759639285; 
- Mon, 29 Jun 2026 12:00:39 -0700 (PDT)
+ bh=L/NYGAv1/ne+KJJ6SDOnyGBDbCsxpzkW2lIjGUNntVE=;
+ b=XanqyVu/4wBEQj0TUS8ZScSlqzUGQ/pouts9Ihvo7Ud/7KAQjHrfPfiN8QjM6j/rPZ
+ gYCSC1I0m0aCoqcihN5TfRd+JPYSGNZ9zBnSspVbhg/FQIaYl6FarG6BTuwNZjsCK5dp
+ yV0AVPUeRMZdI677hDvM4rgceXYuPYloZhskYgM9/wxm8zW0eScuJW7VW1pATRLF0jiQ
+ 1xtnPY+iba1ptU+x2XXtpirGccO2rxHVljcAHGuZaDh9CxXnc5dITxZzbIbYMOsBjQcl
+ YIfKFsFc0+rOqWrbBMnxk/g5kBWDJyEmYiis2SKlgN2WlCfRAEiA6Q7MmX33IJsiKXgo
+ SdVA==
+X-Gm-Message-State: AOJu0Yz94t2x4FN3BXAys+hPDZRhSjxvql6fC0vSp6T7uVqJ/2hWbgAl
+ fSynud5eRF3Sry+hBsK9RubzLVAC42i4nGw1kcZ/2ohhX8iBSs53yKVTO9obACVUxE3do2a4unz
+ xne+y
+X-Gm-Gg: AfdE7cnoZgU9rZwT6i5Rb+yTaRrx5n4W2jXAhcm0VBQwzaQu2bYzRtM84+iMmWK59WV
+ 5/dPiULg48U71TicTWKz5wu9K5J9NDcVZZn0L4ZliGtW3mAZN/hE5/D7KGmE81jWPEisMSyN0Yd
+ uHqOUJTBtWJegtWZ020TVVAtODDyDiH/fQAPOe0aEPyYfFMgaH7dptpeMBV4lMgwbiDIIZ5pZ9A
+ LfiK2ob33AHPODzA9BcWIEpqBiuvHvqDsxHhZl3HG3w/Ct4rtJSfmCHESEazMwER4psGHE72QGh
+ 6EBkZJgDDF88SyfNLPW/gCKk3fcq5dTiligmwsqCCCZDKopP4l4NcFXPay0EWYPEi6ejoxWRFn9
+ U7UmMFbxYi4C9o+j/+gmAoH7YMTVo33bI8P9BJs64KPD3JtyhCdFScaZAtlz3sbM6JrnZ5hNUQS
+ TNRKvyxE/jp2s+xBlZrG/neoGzO6xxEoyaVdg46mgFy6RQNQ0Ds+TkbS2bpI1gXg==
+X-Received: by 2002:a05:690c:490d:b0:80a:9ff6:c43 with SMTP id
+ 00721157ae682-810da80b671mr8380657b3.55.1782759640477; 
+ Mon, 29 Jun 2026 12:00:40 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 00721157ae682-810e728a009sm1747287b3.5.2026.06.29.12.00.37
+ 00721157ae682-810e728a009sm1747287b3.5.2026.06.29.12.00.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 29 Jun 2026 12:00:38 -0700 (PDT)
+ Mon, 29 Jun 2026 12:00:40 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Tejasree Kondoj <ktejasree@marvell.com>,
- Ankur Dwivedi <adwivedi@marvell.com>, Anoob Joseph <anoobj@marvell.com>,
- Akhil Goyal <gakhil@marvell.com>, Archana Muniganti <marchana@marvell.com>
-Subject: [PATCH v2 5/6] crypto/cnxk: use timing-safe digest comparison
-Date: Mon, 29 Jun 2026 11:59:28 -0700
-Message-ID: <20260629190027.2071745-6-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Anoob Joseph <anoobj@marvell.com>
+Subject: [PATCH v2 6/6] crypto/octeontx: use timing-safe RSA signature
+ verification
+Date: Mon, 29 Jun 2026 11:59:29 -0700
+Message-ID: <20260629190027.2071745-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260629190027.2071745-1-stephen@networkplumber.org>
 References: <20260625160200.24170-1-stephen@networkplumber.org>
@@ -85,58 +83,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-compl_auth_verify() compared the generated and received MAC with
-memcmp(), which returns early on the first differing byte and leaks
-the number of matching leading bytes through timing.
+Replace memcmp() with rte_memeq_timingsafe() when verifying
+RSA signatures to prevent timing-based side-channel attacks.
 
-Use rte_memeq_timingsafe() for the verify comparison.
-
-Bugzilla ID: 1773
-Fixes: 786963fdcf3e ("crypto/cnxk: add digest support")
-Cc: stable@dpdk.org
+The comparison at drivers/crypto/octeontx/otx_cryptodev_ops.c:742
+is used to verify RSA signed data against expected message content.
+Using regular memcmp() for cryptographic verification can leak
+information about the compared data through timing differences.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Tejasree Kondoj <ktejasree@marvell.com>
 ---
- drivers/crypto/cnxk/cnxk_ae.h | 4 +++-
- drivers/crypto/cnxk/cnxk_se.h | 2 +-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/crypto/octeontx/otx_cryptodev_ops.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/cnxk/cnxk_ae.h b/drivers/crypto/cnxk/cnxk_ae.h
-index 691f9bfce5..f2aa5d5a2e 100644
---- a/drivers/crypto/cnxk/cnxk_ae.h
-+++ b/drivers/crypto/cnxk/cnxk_ae.h
-@@ -8,6 +8,7 @@
- #include <rte_common.h>
- #include <rte_crypto_asym.h>
+diff --git a/drivers/crypto/octeontx/otx_cryptodev_ops.c b/drivers/crypto/octeontx/otx_cryptodev_ops.c
+index d6d1b2cea9..40f565cd78 100644
+--- a/drivers/crypto/octeontx/otx_cryptodev_ops.c
++++ b/drivers/crypto/octeontx/otx_cryptodev_ops.c
+@@ -12,6 +12,7 @@
+ #include <rte_errno.h>
  #include <rte_malloc.h>
+ #include <rte_mempool.h>
 +#include <rte_memory.h>
  
- #include "roc_ae.h"
- #include "roc_re.h"
-@@ -1921,7 +1922,8 @@ cnxk_ae_dequeue_rsa_op(struct rte_crypto_op *cop, uint8_t *rptr,
- 			 * Offset output data pointer by length field
- 			 * (2 bytes) and compare signed data.
- 			 */
--			if (memcmp(rptr + 2, rsa->message.data, rsa->message.length))
-+			if (!rte_memeq_timingsafe(rptr + 2,
-+						  rsa->message.data, rsa->message.length))
- 				cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
+ #include "otx_cryptodev.h"
+ #include "otx_cryptodev_capabilities.h"
+@@ -739,7 +740,7 @@ otx_cpt_asym_rsa_op(struct rte_crypto_op *cop, struct cpt_request_info *req,
  		}
- 		break;
-diff --git a/drivers/crypto/cnxk/cnxk_se.h b/drivers/crypto/cnxk/cnxk_se.h
-index 09d9d1e0e3..3ed32f7ddd 100644
---- a/drivers/crypto/cnxk/cnxk_se.h
-+++ b/drivers/crypto/cnxk/cnxk_se.h
-@@ -3362,7 +3362,7 @@ compl_auth_verify(struct rte_crypto_op *op, uint8_t *gen_mac, uint64_t mac_len)
- 		return;
- 	}
+ 		memcpy(rsa->sign.data, req->rptr, rsa->sign.length);
  
--	if (memcmp(mac, gen_mac, mac_len))
-+	if (!rte_memeq_timingsafe(mac, gen_mac, mac_len))
- 		op->status = RTE_CRYPTO_OP_STATUS_AUTH_FAILED;
- 	else
- 		op->status = RTE_CRYPTO_OP_STATUS_SUCCESS;
+-		if (memcmp(rsa->sign.data, rsa->message.data,
++		if (!rte_memeq_timingsafe(rsa->sign.data, rsa->message.data,
+ 			   rsa->message.length)) {
+ 			CPT_LOG_DP_ERR("RSA verification failed");
+ 			cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
 -- 
 2.53.0
 
