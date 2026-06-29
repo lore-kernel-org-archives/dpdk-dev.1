@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DC2C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 10:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7278C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 11:05:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD9AF4064C;
-	Mon, 29 Jun 2026 12:42:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A4D9840299;
+	Mon, 29 Jun 2026 13:05:18 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 158434021F
- for <dev@dpdk.org>; Mon, 29 Jun 2026 12:42:05 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B2F164021F
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 13:05:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782729725;
+ s=mimecast20190719; t=1782731116;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=KuDxi3dmO+jqzCH3/YbmZdm25y/eoKbv8C8qUKrju4Y=;
- b=DzDKBGF0lw5ml4BKdBWq7I02h3+n9NPYtAKKU5JmKFEfD3h32xUBRdUtBbYqTrdUS/+AGL
- wPSJWMIiXNMMMEmbHxPeqxZSqLjGBcPz2Ub7HDbm52d4fYisMZuW+yGK+Bn/0ApjmhZl1M
- ui1i3foLIol/9TIZZPkaorJ/RrhoJ8Y=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=4aUyLUPp2KqylTcCy2HWaP/0gc/PTbP9pRqHsNEIdxw=;
+ b=KXI8WYbMrBZkWkkIDfIiTWMyb2s84cBAypkDfJNyOIWwAia14YK8z5He4+wR1uWqvatbTI
+ 1X93fBw/KZzHRc7HK4Vjxxgq9lpZi3HsrBxlmoqnY93uA9nWGQUG65JRKPOUh/rsMfDwuX
+ AW2oDmQEhTX3PTN9LFDYH5LAYLtySV0=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-563-UyJq9sa2N5GgPfbg1asZNw-1; Mon, 29 Jun 2026 06:42:02 -0400
-X-MC-Unique: UyJq9sa2N5GgPfbg1asZNw-1
-X-Mimecast-MFC-AGG-ID: UyJq9sa2N5GgPfbg1asZNw_1782729721
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-39afdaa25e5so3229511fa.0
- for <dev@dpdk.org>; Mon, 29 Jun 2026 03:42:01 -0700 (PDT)
+ us-mta-304-vVw26DtNMwiOL-lvrBMa3g-1; Mon, 29 Jun 2026 07:05:14 -0400
+X-MC-Unique: vVw26DtNMwiOL-lvrBMa3g-1
+X-Mimecast-MFC-AGG-ID: vVw26DtNMwiOL-lvrBMa3g_1782731113
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-39af889f409so5488111fa.1
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 04:05:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782729720; x=1783334520;
+ d=1e100.net; s=20251104; t=1782731113; x=1783335913;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KuDxi3dmO+jqzCH3/YbmZdm25y/eoKbv8C8qUKrju4Y=;
- b=A3MV+lDJoRAYdxntDXGX7ZPIZUfsIcIdq/zqSYlTpoDtLaUS5a85h2siD1TDv4xk52
- ZjQxCjlPv/P8TUpuryNVjpBwTOi4Y67Wg4ccFl8a5QdX+24tUIhMFjKzVV543bx1nXGD
- ONQbF642661poT1B/+KK2OSWvSDSfk7VmOg85A1t31v1lmJ8TlPA412OGXMx58jVsIqA
- LOQmrFapCYwMixY4HlAR4woabsSIyhS6A20p4eSRirrN/md9ErYCfs0Hgip+I7u7ZQcw
- YGgj+aNCQXOWFMN7JXL1EE99HyDR6anCr0UD99xXySxNaw2t793pEGE7CkmyYi+8hmKv
- /sNg==
-X-Gm-Message-State: AOJu0YxllpdwzHBOdlx40gtQjXMiP0VWnKLsbZx+kVJbsG8Uh8OwOrMq
- kLBKhNLV3Lz36k74eLmSgr6ejDoQvpc/F/DTW+6kgBMfFoVUJdK7LM37wGIr8LV8oriVUNnJZzV
- xpGP024NYwb2BbZcf8lteTXaQQ7XenyyvuAItgnuTf4+g1k4KxWMdhZeMg5GtdsS2yqWChRRR/U
- 2uEaVoBqKHJS7lEoerwis=
-X-Gm-Gg: AfdE7cnoe6Gje0TotYlAIPIRUW9vRsQr8jbktdX5M6dooHtisvxYUykO8/Qn5T8OrzT
- 5ud3nbDcYdLUDFt3m5o9dTKrpkACjmddWLpfmE7XaRGBeN3EQLMGNj4Mo4c09oDJQmhnxwquX7I
- WeRq2Irhl7K9zog9yh2jUfIRMD27ddM75WQgOK3dVb6r7wOjXFWmtBBV/DFRkHY22rfcyzirmqr
- QztUqFYqwBWsKVKPUFiYjb7VztNCf3FNX1d8/HEWyub2BkneWJg1aFN1T4=
-X-Received: by 2002:a05:651c:c91:b0:39b:695:32a3 with SMTP id
- 38308e7fff4ca-39b0695466cmr10327091fa.13.1782729720624; 
- Mon, 29 Jun 2026 03:42:00 -0700 (PDT)
-X-Received: by 2002:a05:651c:c91:b0:39b:695:32a3 with SMTP id
- 38308e7fff4ca-39b0695466cmr10326971fa.13.1782729720128; Mon, 29 Jun 2026
- 03:42:00 -0700 (PDT)
+ bh=4aUyLUPp2KqylTcCy2HWaP/0gc/PTbP9pRqHsNEIdxw=;
+ b=Ty3lF/4zyfcX6yR2aEwyskmSaOcLUF5Wzs/GFQZ2AsvpZfcDP6sp+IdfSwY7Wg5O6k
+ KYyBw3liMx3uh4dAhu5Bay5mL4duYiPMkfGi3y5EBaL0Dck0lAiElBiZhDajNF+UnDWV
+ wflkta7E+962mp/ir2XUw3skQLSZ3TXCkzuONnF4hBCNQryZuUpvCiMBpMsdQltyHRjJ
+ 80GaLLu4yYKzYcsxtRRLoIawNh8agzN1T4j2ARSvhvfi1RGQUOjN1KZ25S/PkrjLDjP2
+ +cVNF8N42cPUocpaJrD0V4rXo6DEZf872fxQPo+T3N1nEWY8oSDP1mlmtYe+oNKkAwXL
+ fWNQ==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RoeWX8QnebIZBBMiQCVRA3y4mwPWghNwENiDy4fuWtKhf0qSkf/FysmbOr/kFY1vB2nMaE=@dpdk.org
+X-Gm-Message-State: AOJu0YyEIkkfX/7nrvoKcq4bx+mIR1/9ut0gMRpNE+zkNvuX682WBx3G
+ RcF0HsfafErYYrEHle5wN5j87UO51+RcSbCHl4d9QtFm24Qo7gyrMfmpU8oksKzWjQZt/z7bWFK
+ gguF6LySXzgVNU8fWKg2hE/SsGeqlTAuAq2FvlqM8RNuEXLDIC3mdWdXCe5+cQTasj1grGEFEeB
+ yW8amukREjpzWKCNS1les=
+X-Gm-Gg: AfdE7cmYl6NfqqhC5qPxQ7K6ZysgVFUK7Ahu6Vynz2CpJFq3vVoqhunmWO81G/MUE8r
+ MF4KmsEH3fVuIAffL/106ZnYHHlZqhHvW7j58vUmMrIVkJDTXbvsMs5ezlW+SbeF/OR/2p2QyXt
+ 0tCFQVoGgBUYCuAX7pDKcJhYGQ8n3aL72MmX1F5NCKkvNt8VcUEAlqEFaG2tUSd1xApdMkn2yLe
+ U3Na9vUbtpCN8hh9uk69FMQrAVErVAed7QmaP6Lfe0tTF65IrBdpaKuwYo=
+X-Received: by 2002:a2e:b88a:0:b0:39b:d04:b783 with SMTP id
+ 38308e7fff4ca-39b0d04bef5mr5871521fa.20.1782731112859; 
+ Mon, 29 Jun 2026 04:05:12 -0700 (PDT)
+X-Received: by 2002:a2e:b88a:0:b0:39b:d04:b783 with SMTP id
+ 38308e7fff4ca-39b0d04bef5mr5871461fa.20.1782731112373; Mon, 29 Jun 2026
+ 04:05:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260407141928.9426-1-wpan36@wisc.edu>
- <20260628152553.46342-1-wpan3636@gmail.com>
-In-Reply-To: <20260628152553.46342-1-wpan3636@gmail.com>
+References: <20260609050020.995268-1-syalavarthi@marvell.com>
+In-Reply-To: <20260609050020.995268-1-syalavarthi@marvell.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 29 Jun 2026 12:41:48 +0200
-X-Gm-Features: AVVi8CdF5SB2L24PemwnAVJ-nEe8zuKxgBNTLoN6H5hNKv2fljj4swbo4O43Wx4
-Message-ID: <CAJFAV8y79ZOcbdZH95XO7P-qrdC+O3EVo329xPL6cEFs972kew@mail.gmail.com>
-Subject: Re: [PATCH v2] bus/fslmc: convert queue storage macros to inline
- functions
-To: Weijun Pan <wpan3636@gmail.com>, hemant.agrawal@nxp.com
-Cc: dev@dpdk.org, sachin.saxena@nxp.com, jun.yang@nxp.com, stable@dpdk.org, 
- stephen@networkplumber.org, thomas@monjalon.net, Weijun Pan <wpan36@wisc.edu>
+Date: Mon, 29 Jun 2026 13:04:59 +0200
+X-Gm-Features: AVVi8CcfYvlQZcsitIAQFmeZXlo0-jVLy56mYamATHvCfNjeNiSqMEEoIJM-Gck
+Message-ID: <CAJFAV8zof1hwMGJfzWCUYsr+oPwtfbKwub+ORPj9GSbqdiZncg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mldev: fix incorrect captions for model_ops
+To: Srikanth Yalavarthi <syalavarthi@marvell.com>
+Cc: Anup Prabhu <aprabhu@marvell.com>, dev@dpdk.org, jerinj@marvell.com, 
+ sshankarnara@marvell.com, ptakkar@marvell.com
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 1ae4nSf91JGHHpAsXvEuFEeyGiS3uqY1LCD8leXX104_1782729721
+X-Mimecast-MFC-PROC-ID: qFdTuOuTZhQrGb-FlO-eah8vgP_qFouOlaRPuEBDgL0_1782731113
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -85,43 +85,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-Thanks for working on this issue.
-
-On Sun, 28 Jun 2026 at 17:27, Weijun Pan <wpan3636@gmail.com> wrote:
+On Tue, 9 Jun 2026 at 07:01, Srikanth Yalavarthi
+<syalavarthi@marvell.com> wrote:
 >
-> From: Weijun Pan <wpan36@wisc.edu>
+> Fixed incorrect captions in images depecting the
+> model_ops test flows.
 >
-> The queue storage allocation and free helpers are implemented as macros
-> which declare local variables in the caller scope. This can cause shadow
-> warnings when -Wshadow is enabled.
+> Fixes: f6661e6d9a3a ("app/mldev: validate model operations")
 >
-> Convert them to static inline functions to avoid macro-local variable
-> scope issues without changing behavior.
->
-> Bugzilla ID: 1744
+> Signed-off-by: Srikanth Yalavarthi <syalavarthi@marvell.com>
 
-This bugzilla is about compiling with -Wshadow.
-
-The proposed fix is partial.
-As I reported in my previous mail, enabling -Wshadow after the current
-patch still shows many build warnings in
-drivers/bus/fslmc/qbman/qbman_portal.c.
-https://inbox.dpdk.org/dev/CAJFAV8w-VQJb6jM0KgAVP1rJKyUUwiBA6_seOCDwMX47rZmYyA@mail.gmail.com/
-
-Could you work on a complete fix so the bz can be closed?
-
-
-> Fixes: 12d98eceb8ac ("bus/fslmc: enhance QBMAN DQ storage logic")
-> Cc: jun.yang@nxp.com
-> Cc: stable@dpdk.org
-
-Afaics, nothing is broken in the current code, why do we *need* to
-backport the change?
-
-
-> Signed-off-by: Weijun Pan <wpan36@wisc.edu>
+Applied, thanks.
 
 
 -- 
