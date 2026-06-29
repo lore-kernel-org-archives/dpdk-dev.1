@@ -2,49 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27825C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 00:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A042C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 00:42:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2E4E4021E;
-	Mon, 29 Jun 2026 02:36:37 +0200 (CEST)
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com
- [113.46.200.216])
- by mails.dpdk.org (Postfix) with ESMTP id B6647400D7
- for <dev@dpdk.org>; Mon, 29 Jun 2026 02:36:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 406724021E;
+	Mon, 29 Jun 2026 02:42:49 +0200 (CEST)
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
+ [113.46.200.226])
+ by mails.dpdk.org (Postfix) with ESMTP id E2336400D7
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 02:42:47 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=oFRXix7OH0HF+lvqznQJ8RzkVNbbR018OLeEhx/MG4M=;
- b=08VtKQX/jhj26uO9RERKUtTwLfycLU7QWLrPl6vydsa6Aef3M4pur46uxnFcu8Vj0c1uk3Th9
- BluwWDDJWHEONB3JqkdWKim9r1kw5GOykEIPPz9YJ7jeMx3vpe9l7bhLDv3Bm3CtmN2rF5QtByi
- Jwlg3eA0dzq85BrTi8/RXm8=
-Received: from mail.maildlp.com (unknown [172.19.162.197])
- by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4gpRv62TxWz1T566;
- Mon, 29 Jun 2026 08:27:46 +0800 (CST)
+ bh=hbKz5FpkGO2UrErpzVmGfrP6n3aT5/CTo29XHST27WE=;
+ b=G/W0ZFZibsS7WFVzDXTq+IX2nQ/tr5cuJoR/YlJKJYs4h+Do4XScCLNCDL+36HhLnBAfLpZ4W
+ 1rxLQD2xEjRShQOo51qWpoegGxYv4+J5HpJOOK8/haNrIZ/HoltmVpzyTDdVMuQI7E6wnkUkm4c
+ d/3QYjiad+MNoMAmGPcZJW8=
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+ by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gpS1p6vGczKm4l;
+ Mon, 29 Jun 2026 08:33:34 +0800 (CST)
 Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id B81884057D;
- Mon, 29 Jun 2026 08:36:33 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id AABD940574;
+ Mon, 29 Jun 2026 08:42:45 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Mon, 29 Jun 2026 08:36:33 +0800
-Message-ID: <b44debc5-6b7b-453e-b871-bc010cd7fc81@huawei.com>
-Date: Mon, 29 Jun 2026 08:36:32 +0800
+ 15.2.1544.36; Mon, 29 Jun 2026 08:42:45 +0800
+Message-ID: <94368ef9-ab61-44b1-b56a-6a1d263230b8@huawei.com>
+Date: Mon, 29 Jun 2026 08:42:44 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] dma/ae4dma: add control path operations
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: Raghavendra Ningoji <raghavendra.ningoji@amd.com>, <dev@dpdk.org>,
- <david.marchand@redhat.com>, <bruce.richardson@intel.com>,
- <Selwin.Sebastian@amd.com>, <bhagyada.modali@amd.com>, <rjarry@redhat.com>,
- <thomas@monjalon.net>
-References: <20260525184244.1758825-1-raghavendra.ningoji@amd.com>
- <20260625184728.1678328-1-raghavendra.ningoji@amd.com>
- <20260625184728.1678328-3-raghavendra.ningoji@amd.com>
- <6db5bccd-f82a-4a31-ab4c-b3addbcbcc94@huawei.com>
- <20260628090451.19970403@phoenix.local>
+Subject: Re: [PATCH v2] dev: skip multi-process in hotplug
+To: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>
+CC: <longli@microsoft.com>
+References: <20260625072254.4190227-1-david.marchand@redhat.com>
+ <20260628140557.1718861-1-david.marchand@redhat.com>
 Content-Language: en-US
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260628090451.19970403@phoenix.local>
+In-Reply-To: <20260628140557.1718861-1-david.marchand@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
@@ -63,44 +57,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 6/29/2026 12:04 AM, Stephen Hemminger wrote:
-> On Sat, 27 Jun 2026 08:09:09 +0800
-> fengchengwen <fengchengwen@huawei.com> wrote:
-> 
->>>  
->>> +static int
->>> +ae4dma_dev_configure(struct rte_dma_dev *dev __rte_unused,
->>> +		const struct rte_dma_conf *dev_conf,
->>> +		uint32_t conf_sz)
->>> +{
->>> +	if (sizeof(struct rte_dma_conf) != conf_sz)
->>> +		return -EINVAL;  
->>
->> This may break ABI compatible
-> 
-> Ignore that suggestion. This is a reasonable way to handle new configuration
-> functions. You need/want a minimal set of values. If rte_dma_conf grows in size
-> then the code can add compatability; by requiring a minimum set of values
-> and then setting the rest to zero.
-> 
-> Something like
-> 
-> static int
-> ae4dma_dev_configure(struct rte_dma_dev *dev __rte_unused,
-> 		const struct rte_dma_conf *dev_conf,
-> 		size_t conf_sz)
-> {
-> 	if (conf_sz < sizeof(struct orig_rte_dma_conf))
-> 		return -EINVAL;
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
-+1 for this
+Minor suggestion: how about replace "bool do_mp = internal_conf->no_shconf == 0;" to "bool do_mp = !!internal_conf->no_shconf;" or bool do_mp = internal_conf->no_shconf;"
 
-> 
-> 	struct rte_dma_conf conf;
-> 	memcpy(&conf, dev_conf, RTE_MIN(conf_sz, sizeof(conf)));
->         dev_conf = &conf;
-> 
-> Looking at rte_dma_conf the structure has holes and dmadev lib
-> doesn't validate undefined flags, so it already has future ABI problems.
+the no_shconf's prototype is "volatile unsigned", most of invokation is some like "if (internal_conf->no_shconf)"
 
-Yes, it indeed
+
+On 6/28/2026 10:05 PM, David Marchand wrote:
+> If multi-process is disabled (--no-shconf/--in-memory),
+> there is no need to build a multi-process message.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+>  lib/eal/common/eal_common_dev.c | 46 ++++++++++++++++++++++++---------
+>  1 file changed, 34 insertions(+), 12 deletions(-)
+> 
+> diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
+> index 762ed09e21..47fc45aa3e 100644
+> --- a/lib/eal/common/eal_common_dev.c
+> +++ b/lib/eal/common/eal_common_dev.c
+> @@ -267,10 +267,16 @@ RTE_EXPORT_SYMBOL(rte_dev_probe)
+>  int
+>  rte_dev_probe(const char *devargs)
+>  {
+> +	const struct internal_config *internal_conf =
+> +		eal_get_internal_configuration();
+> +	bool do_mp = internal_conf->no_shconf == 0;
+>  	struct eal_dev_mp_req req;
+>  	struct rte_device *dev;
+>  	int ret;
+>  
+> +	if (!do_mp)
+> +		goto skip_mp_req;
+> +
+>  	memset(&req, 0, sizeof(req));
+>  	req.t = EAL_DEV_REQ_TYPE_ATTACH;
+>  	strlcpy(req.devargs, devargs, EAL_DEV_MP_DEV_ARGS_MAX_LEN);
+> @@ -294,6 +300,7 @@ rte_dev_probe(const char *devargs)
+>  
+>  	/* attach a shared device from primary start from here: */
+>  
+> +skip_mp_req:
+>  	/* primary attach the new device itself. */
+>  	ret = local_dev_probe(devargs, &dev);
+>  
+> @@ -311,6 +318,9 @@ rte_dev_probe(const char *devargs)
+>  			return ret;
+>  	}
+>  
+> +	if (!do_mp)
+> +		goto skip_mp_notify;
+> +
+>  	/* primary send attach sync request to secondary. */
+>  	ret = eal_dev_hotplug_request_to_secondary(&req);
+>  
+> @@ -337,16 +347,19 @@ rte_dev_probe(const char *devargs)
+>  		goto rollback;
+>  	}
+>  
+> +skip_mp_notify:
+>  	return 0;
+>  
+>  rollback:
+> -	req.t = EAL_DEV_REQ_TYPE_ATTACH_ROLLBACK;
+> +	if (do_mp) {
+> +		req.t = EAL_DEV_REQ_TYPE_ATTACH_ROLLBACK;
+>  
+> -	/* primary send rollback request to secondary. */
+> -	if (eal_dev_hotplug_request_to_secondary(&req) != 0)
+> -		EAL_LOG(WARNING,
+> -			"Failed to rollback device attach on secondary."
+> -			"Devices in secondary may not sync with primary");
+> +		/* primary send rollback request to secondary. */
+> +		if (eal_dev_hotplug_request_to_secondary(&req) != 0)
+> +			EAL_LOG(WARNING,
+> +				"Failed to rollback device attach on secondary."
+> +				"Devices in secondary may not sync with primary");
+> +	}
+>  
+>  	/* primary rollback itself. */
+>  	if (local_dev_remove(dev) != 0)
+> @@ -407,6 +420,9 @@ RTE_EXPORT_SYMBOL(rte_dev_remove)
+>  int
+>  rte_dev_remove(struct rte_device *dev)
+>  {
+> +	const struct internal_config *internal_conf =
+> +		eal_get_internal_configuration();
+> +	bool do_mp = internal_conf->no_shconf == 0;
+>  	struct eal_dev_mp_req req;
+>  	char *devargs;
+>  	int ret;
+> @@ -416,6 +432,9 @@ rte_dev_remove(struct rte_device *dev)
+>  		return -ENOENT;
+>  	}
+>  
+> +	if (!do_mp)
+> +		goto skip_mp_req;
+> +
+>  	ret = build_devargs(dev->bus->name, dev->name, "", &devargs);
+>  	if (ret != 0)
+>  		return ret;
+> @@ -474,6 +493,7 @@ rte_dev_remove(struct rte_device *dev)
+>  			goto rollback;
+>  	}
+>  
+> +skip_mp_req:
+>  	/* primary detach the device itself. */
+>  	ret = local_dev_remove(dev);
+>  
+> @@ -490,13 +510,15 @@ rte_dev_remove(struct rte_device *dev)
+>  	return 0;
+>  
+>  rollback:
+> -	req.t = EAL_DEV_REQ_TYPE_DETACH_ROLLBACK;
+> +	if (do_mp) {
+> +		req.t = EAL_DEV_REQ_TYPE_DETACH_ROLLBACK;
+>  
+> -	/* primary send rollback request to secondary. */
+> -	if (eal_dev_hotplug_request_to_secondary(&req) != 0)
+> -		EAL_LOG(WARNING,
+> -			"Failed to rollback device detach on secondary."
+> -			"Devices in secondary may not sync with primary");
+> +		/* primary send rollback request to secondary. */
+> +		if (eal_dev_hotplug_request_to_secondary(&req) != 0)
+> +			EAL_LOG(WARNING,
+> +				"Failed to rollback device detach on secondary."
+> +				"Devices in secondary may not sync with primary");
+> +	}
+>  
+>  	return ret;
+>  }
+
