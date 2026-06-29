@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9732C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 19:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 658C7C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 19:01:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 319BC40666;
-	Mon, 29 Jun 2026 21:00:39 +0200 (CEST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com
- [209.85.128.174])
- by mails.dpdk.org (Postfix) with ESMTP id AED0540650
- for <dev@dpdk.org>; Mon, 29 Jun 2026 21:00:36 +0200 (CEST)
-Received: by mail-yw1-f174.google.com with SMTP id
- 00721157ae682-80dd4766206so12358127b3.3
- for <dev@dpdk.org>; Mon, 29 Jun 2026 12:00:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 66D154065B;
+	Mon, 29 Jun 2026 21:00:43 +0200 (CEST)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com
+ [209.85.128.171])
+ by mails.dpdk.org (Postfix) with ESMTP id AEC01402DD
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 21:00:37 +0200 (CEST)
+Received: by mail-yw1-f171.google.com with SMTP id
+ 00721157ae682-80bb41f7f3cso35800857b3.2
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 12:00:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782759636;
- x=1783364436; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782759637;
+ x=1783364437; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HZIWio0g7WMfdlvq7gyOJe/gw3uf6N549Z/CPUTels0=;
- b=Isqpfd+8ydAfvHDcghBsTOeAyegAgTBvtgWtjDFUEPUSJW9T9r5+jjGWkBUU417R5n
- uqZDMzMf1f23BXyOrWFRLHFKxB7bPXAgCPQEcZ6yvlqOEzwXhxcoPyz8xq0zlHN5Hjkd
- deMpdNEkgwxztLqKU4j78W5xUzA3o1YcYTiFyMa41XV5+zzxQ+fAUOVLKL6/ZZYLQVpM
- QCmClGJ5fuYpR/owsD2HtdapEBSwXsUcj02wkKEET+ciHPbQyy4VyEyz0uGQIlzaKNaZ
- s2sBW3iRZlMUQFW/VH5pQvF9889V6kx2UJdUCLeWi2JRPbI2obXRk2+s6oxattmUMDQc
- 8MuQ==
+ bh=8whq3tWfRyuJCTTzNADPHzH9AURJAa8R2qISyrqPPKo=;
+ b=JXwL+w7B2ztBYqgtlMoTZ3wvxGdmkfW7XTnWIDEl4RWKqtHXi7ado7wabO1ARwzkoo
+ gxnwvpDnNRR7ZRi4aNCKz2/8T5tWtoDG14UPbAfYvCROhYy3hf0hhOui074eUlZbmqQL
+ /RFQnpcOBBmc/bO657TQTKp4GOQd3YjrOKTgs6TANg5WV20m4rQ9Zajyzv+Tr5EUzYtD
+ wXNNbtVuJhbRbq3YR1qQpdfDXYnYfZyBJEQ5TKw29cv0VfiAQ6BIJa9sVly1xed2aSHZ
+ rnr5xeSloQoqMUdwyJJLU/qov4A0beZuuXzb+INR9RrOm4nZkHJ1V4G7jkc6cqFKZBeu
+ W6Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782759636; x=1783364436;
+ d=1e100.net; s=20251104; t=1782759637; x=1783364437;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=HZIWio0g7WMfdlvq7gyOJe/gw3uf6N549Z/CPUTels0=;
- b=LAL7XJIut8hl8Yw5JRs4KkHqCpM/zW1KUwZFUwzycG5ZVTX7lkbIJgeBsbcrm3s9uY
- xXvE9uTLxS+uIR9fOJoMWN5AmrXJLjAqLQJRVYuqC0UrbsduIYFt7LKVG+tubm5fJnD7
- xr5CsCnGrt7UZDK8az2OGnLRoEQqOMqZ3o9UBygsMpQ1H60loT5NQx7u34InNzZ8bLU8
- W4xgrH6lbc3/ocLcMC2Vc56qFniCkIJUmPTE0YA1wS3EnPxoemE86grghBUv+L4pPaf9
- wzfe5Cucvq4/dqrapD8XwLHhL/HKDrzQgXTOKBpHQqzxOBlF82kqohc6M1X0aYzNZdOd
- Kgiw==
-X-Gm-Message-State: AOJu0YwRXGa6UOZB+W2p4oTUnQ/QTYVon/ZETPxVJRWqvYlz8kQ3GRJ/
- 5BD0nOsU7n1lIy30wpjK485oR4FsxqDgVz6SIU0aYvQ8R1lpTlYTV2eI8CKWKK6eAroU3MMVqfL
- OxA6G
-X-Gm-Gg: AfdE7cnyKdbFg+bT4we2490DCV+Mq7O3E55ABDTIJusm/MLUFLlEHDyfT3We9B83reJ
- M6s8u2uCX1MGQnihZj0ILhkUo19ahrSHO/M4+hLLj54GWCIqozqD0ByPtzlKpw44944XKiUB3QR
- no7HhrpaSWozIgM7vkrZ0+dXZ+6vfwxcBZLUceFOu+/gA/E11JPAmTMy69pelb6AhybM5pj/Vc3
- oz0gE/BujdYX/VAgjjy+Cl1SOZj56KKksgvdBXFuWB7TPbONvTQGfH+vJpjZ+JmWSmJqHBBL9if
- MMZuKleX1yXXMeGMRriN8FndiNkt1hzFGs0LcEaNLl4inER1b7Bx2cl2ArGaS9OPB2/eO09EXUH
- Ogh6L4/iDEejT5nrGoOf1ZY8hjsQY7ED0hQv+k6gcxXNEivumv4HsoEjQ4Qas0FWtPwRhwkXeUf
- UT6q5/zPUXo6ER2Qk2wipIDyLxmCnbyqwozuC2eOMHeJ67Pu8xUmQ=
-X-Received: by 2002:a05:690c:3383:b0:806:b6ab:a410 with SMTP id
- 00721157ae682-810d4d79da3mr9263947b3.0.1782759635424; 
- Mon, 29 Jun 2026 12:00:35 -0700 (PDT)
+ bh=8whq3tWfRyuJCTTzNADPHzH9AURJAa8R2qISyrqPPKo=;
+ b=sMoFgHo7M1y3YknqcHLSzq7PSHBaUuk77RCLRyIeCRXF9yoWpIftCT2uOvAe1oAnOa
+ dximcJo1W/GxoTYY6qKUvinhUZNGVuvBUBRtP2UgHq3V9c0JgeWtrbCGBI1d+NgV57B8
+ 36lhAMdB9BqqXibKA/K484QhDWnYWEEi+OkfLE4R+YUHlYR/c5FSDhaHoqrC5iSuZsun
+ V+c40iDkW3M2Sdt8gdV90UTGmzhyC3QudVcs3auj71TKJn2ZiVjmuvD2wOm+v7zb0tRe
+ IujHwJdKYxUtJvxhshRu9QmY6sQQZSDBfMLUI1mpUvkzQXOg5ptwarem9EHRP1W7kjTP
+ ypzA==
+X-Gm-Message-State: AOJu0YwIVLNds9wjW1DADtUma1ThEva8LIXituUryzgmxGUkoVqLbHJY
+ B8z8nsKNhi/3K6euDQAtlOyXMSv9sC8g0U47Vn5UiNonJJs9I7cj6nLa5az3amftsVXtpIIsIcn
+ C2Kb2
+X-Gm-Gg: AfdE7cl/69fp9mO2v3T3Njnvq2N+/GouWx4PH68UFb23BJLWFHyAbXreOmFb72JpLDC
+ zKujCu9g4DWyNkMHUTxtlTswQH3t6AzZH6TDwaz3qFqZEHx9lMrFdcSKLbkSEIue9r3klCMsIhL
+ PU0FxWvVCSwbqr+g3eASop0611onmVq5SfrcD7cIYCzwONIK6Z8C8/P3gxl4V0IZXv8Z/mSWU00
+ kCxRffIkyuiyzI9VryDo3ZigEnFQRGGdz3uiieBJThMwuukxGbvEgNiSIaxIbXvk8OU5/uKKUQU
+ wgWYqKWyl3kFhsM3wMdBuycQxvQidcnwkMzjiLFct+GnPmHfx1myMBKRn6brgsFsxpDdzF+cj6I
+ rl15zd8dmilEuZxPGg9r/tW1xe2eyoUjvNC436fLSQYk3IQnQDUjqRa1Btsz1yYt9RRR2+cucsI
+ H6ZkdviwO83hZukx6h/qJSYSyHiG4HDi5BtC6vZr+nzxU3Ae59+DU=
+X-Received: by 2002:a05:690c:4b01:b0:80c:85e5:8740 with SMTP id
+ 00721157ae682-810da814031mr7406727b3.62.1782759637035; 
+ Mon, 29 Jun 2026 12:00:37 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 00721157ae682-810e728a009sm1747287b3.5.2026.06.29.12.00.33
+ 00721157ae682-810e728a009sm1747287b3.5.2026.06.29.12.00.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 29 Jun 2026 12:00:34 -0700 (PDT)
+ Mon, 29 Jun 2026 12:00:36 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
  Siraj Luthfi Ananda <sirajluthfi@gmail.com>,
- Sunil Uttarwar <sunilprakashrao.uttarwar@amd.com>,
- Ravi Kumar <ravi1.kumar@amd.com>
-Subject: [PATCH v2 3/6] crypto/ccp: use timing-safe digest comparison
-Date: Mon, 29 Jun 2026 11:59:26 -0700
-Message-ID: <20260629190027.2071745-4-stephen@networkplumber.org>
+ Jack Bond-Preston <jack.bond-preston@foss.arm.com>,
+ Jerin Jacob <jerinj@marvell.com>,
+ Zbigniew Bodek <zbigniew.bodek@caviumnetworks.com>
+Subject: [PATCH v2 4/6] crypto/armv8: use timing-safe digest comparison
+Date: Mon, 29 Jun 2026 11:59:27 -0700
+Message-ID: <20260629190027.2071745-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260629190027.2071745-1-stephen@networkplumber.org>
 References: <20260625160200.24170-1-stephen@networkplumber.org>
@@ -85,50 +86,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Both the CPU HMAC verify path and the offload digest verify path
-compared the computed and expected MAC with memcmp(), which short
-circuits on the first mismatching byte and leaks the number of
-matching leading bytes through timing.
+The chained-op verify path compared the computed and expected MAC
+with memcmp(), whose run time depends on the number of matching
+leading bytes and can leak the digest to an attacker submitting
+forged values.
 
-Use rte_memeq_timingsafe() for both verify comparisons.
+Use rte_memeq_timingsafe() for the verify comparison.
 
 Bugzilla ID: 1773
-Fixes: 6c561b03b54c ("crypto/ccp: support CPU based MD5 and SHA2 family")
-Fixes: 70f0f8a8d78c ("crypto/ccp: support burst enqueue/dequeue")
+Fixes: 169ca3db550c ("crypto/armv8: add PMD optimized for ARMv8 processors")
 Cc: stable@dpdk.org
 
 Reported-by: Siraj Luthfi Ananda <sirajluthfi@gmail.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
 ---
- drivers/crypto/ccp/ccp_crypto.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/crypto/armv8/rte_armv8_pmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/ccp/ccp_crypto.c b/drivers/crypto/ccp/ccp_crypto.c
-index 5899d83bae..b07a786d8e 100644
---- a/drivers/crypto/ccp/ccp_crypto.c
-+++ b/drivers/crypto/ccp/ccp_crypto.c
-@@ -1490,8 +1490,8 @@ static int cpu_crypto_auth(struct ccp_qp *qp,
- 	}
- 
- 	if (sess->auth.op == CCP_AUTH_OP_VERIFY) {
--		if (memcmp(dst, op->sym->auth.digest.data,
--			   sess->auth.digest_length) != 0) {
-+		if (!rte_memeq_timingsafe(dst, op->sym->auth.digest.data,
-+					  sess->auth.digest_length)) {
- 			op->status = RTE_CRYPTO_OP_STATUS_AUTH_FAILED;
- 		} else {
- 			op->status = RTE_CRYPTO_OP_STATUS_SUCCESS;
-@@ -2801,8 +2801,8 @@ static inline void ccp_auth_dq_prepare(struct rte_crypto_op *op)
+diff --git a/drivers/crypto/armv8/rte_armv8_pmd.c b/drivers/crypto/armv8/rte_armv8_pmd.c
+index 320e2d4b3b..a7caac186d 100644
+--- a/drivers/crypto/armv8/rte_armv8_pmd.c
++++ b/drivers/crypto/armv8/rte_armv8_pmd.c
+@@ -631,8 +631,8 @@ process_armv8_chained_op(struct armv8_crypto_qp *qp, struct rte_crypto_op *op,
  
  	op->status = RTE_CRYPTO_OP_STATUS_SUCCESS;
- 	if (session->auth.op == CCP_AUTH_OP_VERIFY) {
--		if (memcmp(addr + offset, digest_data,
--			   session->auth.digest_length) != 0)
-+		if (!rte_memeq_timingsafe(addr + offset, digest_data,
-+					  session->auth.digest_length))
+ 	if (sess->auth.operation == RTE_CRYPTO_AUTH_OP_VERIFY) {
+-		if (memcmp(adst, op->sym->auth.digest.data,
+-				sess->auth.digest_length) != 0) {
++		if (!rte_memeq_timingsafe(adst, op->sym->auth.digest.data,
++					  sess->auth.digest_length)) {
  			op->status = RTE_CRYPTO_OP_STATUS_AUTH_FAILED;
- 
- 	} else {
+ 		}
+ 	}
 -- 
 2.53.0
 
