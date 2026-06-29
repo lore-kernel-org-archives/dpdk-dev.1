@@ -2,79 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA15C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 20:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB84BC43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 22:37:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2A5D640150;
-	Mon, 29 Jun 2026 22:03:36 +0200 (CEST)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id B6A5D400D5
- for <dev@dpdk.org>; Mon, 29 Jun 2026 22:03:34 +0200 (CEST)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-139b914bab6so5090590c88.1
- for <dev@dpdk.org>; Mon, 29 Jun 2026 13:03:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B5E524021E;
+	Tue, 30 Jun 2026 00:37:43 +0200 (CEST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com
+ [209.85.208.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 0731C40150
+ for <dev@dpdk.org>; Tue, 30 Jun 2026 00:37:42 +0200 (CEST)
+Received: by mail-lj1-f182.google.com with SMTP id
+ 38308e7fff4ca-39af6402933so24681951fa.2
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 15:37:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782772661; cv=none;
+ d=google.com; s=arc-20260327;
+ b=nOdBTKGZkohtVSwsjPhLDxQw7okUcTGsVlNy4bH30LGR88qx9BkDACN87asETthKk2
+ +P49N8RBGrHKnlG++lxCjJHw7QhQMbanv6qalMvUxhVYER+RTG8h3UxM01Gi36REc8QY
+ GRzNFskIwVz1SXNJ2x/iRd7YSuruwHg2hQCtiZiuQDLs62MWMY1AQ9CUQ//zm8HzoqwW
+ GrJEinDMPiRK9DbHK7zZzyoKEiZyqWfbz/KV3T7ue+vDEnSTqD54SYHBYZJ1xptn0bzw
+ S8Wzh21+JOIZ1x86f8KWvHmUVhFrDANL9ydJ0A7/NZ5K/zZ/YkrOIalbQJj4lARFNYOW
+ EOfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=Tgcv+dEPFQ9v9aQHxcNL2bSct/znVcyhlaKal+2qFiI=;
+ fh=eC58ciQJhlecYYmRkc2O8kfbktZq72tvkOSI38KrRgg=;
+ b=PZLKD2b8svhgIf3NNnDtsGkDHOxuvYefU+W/9ljHd9ckkwFVhY7We6e+4dd26JmEX7
+ YAPW9jD0ivzghL3aVTS1yP/B1faJg6OLXbmo9Yrq+ndXM0V+Zxnw5xiFC9V8uyvi83tC
+ ubtkPgAJ/toPfN7un5SU8BTjT+18LkvKK55xXLRoeHFb1Dy9GSbav5Qh1q71kQmMtu52
+ YHOkNZx33w3XrLqG2G0bljfJbgm0OIOLXRLDgwRyUWEHWJDHw5eNc50XCZGCVP3+Cu18
+ vajz4eWpZC+H4SeFj70s+4F0WRpacG42TFTrP+Z4/f8B2XXR0BHsI7Bs3JZHCURRkyjr
+ 632w==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782763414;
- x=1783368214; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=b+HrPqQuyZye8l+l0MYTPA5OJ+zxkTAW0YoWaeqEmtQ=;
- b=uTyVqUe/q1Vs/pDlkXShsDPl+OURHDGFlFT8dU8tFBPuTUBaLZRKqeQRHrYDx08Gc0
- PaSJ8tLXj0nb75qYhB3Gn5lt2ag3U6OYYI3wBaIoviAc6W45KM18uWD0kr1F6iQmEh6j
- hluiL8CXvJ6+NU8+RAITc0y9t5elEHhBw7jL/R4LUC3UrFYWuK5mUDSR/AgGOtSrMt9+
- Lq5KTmBxcKs5qgH2E6cgUzHuaZbbG2Cmr6Q5f/ZHbNyZiM+15aplaE/K81mZsqjOZffT
- mvjI2xfo7V96J9WKu28VyM5rxNzGNwmbUncnGhpLE7FOT4zapYeCSkS9cPdS/94A6lwl
- BTRQ==
+ d=gmail.com; s=20251104; t=1782772661; x=1783377461; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=Tgcv+dEPFQ9v9aQHxcNL2bSct/znVcyhlaKal+2qFiI=;
+ b=TXesY66rsy8oPlZBu5ZYSnY/KNBz3q9WxVwfOR6DsTrB/5cClgK/WsL3ERN7vSGX4C
+ 8a0i1vu22an/nYk6UvBpjmzB3jV+u65g0mkp/ahhdYZoMHU5awRoyTTtLW9v0wSowiK6
+ pDSOZAM5pc8x+R0iseqygwDDnnEtJv54AxfOU2XNvHI5Lw2bizUgEqVVoyY1z0exmpmh
+ E/3kFs0+FOrEdhV0VhPYZLfCnC7AidCV63U+NwkLWgq0QL/5/bnij84DuREfoAQqczSu
+ zIPZqTImKiX1kxQgaDfsk/23vYZSgLkcDRR7+PvRagmY7ZnypFcyR9aCO12yh8/8Z/dO
+ VCzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782763414; x=1783368214;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=b+HrPqQuyZye8l+l0MYTPA5OJ+zxkTAW0YoWaeqEmtQ=;
- b=LftU3I9a2v68mr3KJINuMsnVcHHXwG2EkStI3JqVA/nmjseA7cpexo3gIIwaelbGFp
- FjpQL5JNEcOJc7OrRIXGpFvDiJMlysOUdhw7pdYxj8y6GUMDKQLDyLOmhWz1nX9jrQuf
- Cba77rHFY4sV8sZdm+48PSP2HjUbv+NdpShfP7+ji/q6YlTSVqDGPK8czbFQhKDS9ltz
- /fW6+ZfVndcBvI4Cb0ipLVoD0+urJQNVGGHjIqQ3OogJNE0ekL8v3gt4gBus+MssOSYh
- mZur6KDFgpiUPSkksxWitBxblD6GgWk5zC62TAP58L7uFmvWeFYLoZpwWuTCjGdJ34TB
- BQ8w==
+ d=1e100.net; s=20251104; t=1782772661; x=1783377461;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=Tgcv+dEPFQ9v9aQHxcNL2bSct/znVcyhlaKal+2qFiI=;
+ b=Z+pDtFOQSiSGeLzVsj7cfG+AEedKRpI4KNam0tEWmREHICcm9aICSO1d1XiBDLfG4g
+ YNP2otAeKwofmO11zqEFG03Pp4xFer+HK/823NTu/iBvPIOzGeR8V42iLw9amR01/kqm
+ q/W90/HXDqhbD53vr7VxdLBZ1RLXlF1dmvmcBYB3RJ4/uPFSaLZ4tiVDZT5qYkbMG1fP
+ RqGZ4PkIdFtiVJ7+B1yy7ecI/JKTXDa5gg1LACE35rXwjzT2HbcZv+oidvFArrTnIbLk
+ fqJUroBDD7xCvwY5YydNedeVINZ6aY25i3n8AHEjOGr7oVF8o5OfVHh+psShI/R0Bxxo
+ KnZw==
 X-Forwarded-Encrypted: i=1;
- AFNElJ8ks0DNIpvxYgjbOHzcci75qYTlP/saUlAFDktlWLMh4LEAEqxrFMKnJXCfYR8vYkcbq7g=@dpdk.org
-X-Gm-Message-State: AOJu0Yy8iEtXjRsmoCpPpSwHAlKKi4sW+Wkx54EVvjGHbhYTCM8S9ljV
- w2lkILggLTpYnKJ30F5PUN+I1XYVp8a7DfBbeJ2CX2lyj19swK9kcn2xQd5Yde5JJoQ=
-X-Gm-Gg: AfdE7ck2GY2K+/87lCjNWoJqIQ0tRd3oIdp6c8ckhBTamZYQzJVsxRHf2OaPyly2251
- szK9kbW3NhwqWMAe5rIHs5Jh6pzWP9P31aXupje+D+IHIYATEr2SUNdSSVR5hdg1IcXvpet5v6t
- 14uXscdjbd0M22t1y8s1kEail2/Lafepg0otjS0nZm/wB6pI1gkG50FJwHOcODoFUMRT/W5Dtp3
- 5UEMhEHA3NJq4Oneoa4IfyrTh81U7kXlOGIiBcOvp1pHyzFYVcMCTmIXMDGXp3YcjNi253A2bwE
- g9HgwIN8zgUOmcpzmH3iaYA8tnhbuWLzvdPULGMcn07yw5SMbAflIQzD/SyMuRb/bydJ1jGcpM/
- Yff878FIvllan/Txx5SzoeItE9WV+iPLdQB/fgLfOxfxUvJVszLqQAGMWRlHnuHaN10GiNleQjV
- hVnh5D851Lf3bReZ7bkFZxxTzoLAIP3jYky/hE9O6L0dtdW47Qdmqy6w==
-X-Received: by 2002:a05:7022:688e:b0:128:cf80:deea with SMTP id
- a92af1059eb24-13b2a13f5ebmr542256c88.1.1782763413483; 
- Mon, 29 Jun 2026 13:03:33 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13b2ab2e0e3sm710586c88.7.2026.06.29.13.03.32
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 29 Jun 2026 13:03:32 -0700 (PDT)
-Date: Mon, 29 Jun 2026 13:03:30 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Joshua Washington <joshwash@google.com>
-Cc: Mark Blasko <blasko@google.com>, dev@dpdk.org, Ciara Loftus
- <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>, "Jasper Tran
- O'Leary" <jtranoleary@google.com>
-Subject: Re: [PATCH] net/af_xdp: add Rx metadata and dynamic timestamping
- support
-Message-ID: <20260629130330.2bd6a3cf@phoenix.local>
-In-Reply-To: <CALuQH+W4wPA5ygZ63pcQrCD-Uz_K1AsN9n+fzX+ESarmaHnmrA@mail.gmail.com>
-References: <20260623215325.814776-1-blasko@google.com>
- <20260623150638.266d8574@phoenix.local>
- <CANULgnK9-P5dQtTPayiFD7PLor=1qV=7du-AtRuWGPd4F5SmAQ@mail.gmail.com>
- <20260629103804.3d4154bb@phoenix.local>
- <CALuQH+W4wPA5ygZ63pcQrCD-Uz_K1AsN9n+fzX+ESarmaHnmrA@mail.gmail.com>
+ AHgh+Ro6M657FL1jQRiPVdQC9lBEM5NHQq8sjAKAsdRTELXEbSCUf6tnai0HaYvC1PCh+jaULwU=@dpdk.org
+X-Gm-Message-State: AOJu0YwmyOXtoH4U1TOHF9sIYsFkfeyh9XHp8AOE1P6cJOhuETJnnOje
+ pygPMAiOt4JxTHMjUPCA1BPv/mEXIe9HvGS8KiBRJPgiaEON9t+z2JkhjJg9w9TCro8kok+vqtL
+ 484sn+WOrt18mEgVkO53ED3+NDHxPT1Q=
+X-Gm-Gg: AfdE7clnKrDIGV/EtxOjH0VciRf49nVQTPS2jQ0R2CiNzj+dD0xSjInQ5uNEwYJ7obG
+ MqxtU6SU4tcAf03i4bYCezLsLlmoMApW1gND77Z5o7JXETUZ21iTuqr2Ph/dK2bzOkAyBFnShzb
+ Z6yd872sVTq/dY4V1Pq0VDAtUlj4bM4pTeEaWA1iCsasXNF38WXO3FXutERmHVcYiHX1MNOVQX5
+ Fc5J9pwsXlIGbUszt1PIWo/FjUEhwNlD5eRkZVQvPLYR8CLtBNETz+b90I6JUaxXCXiCXPoFMBi
+ BFBZ9pS0G+/b1GCqToWd4BfQn/rw6DRwam2B+kKa
+X-Received: by 2002:a05:651c:1544:b0:393:4e44:63ba with SMTP id
+ 38308e7fff4ca-39b1de3ef20mr2146731fa.29.1782772661180; Mon, 29 Jun 2026
+ 15:37:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20260609142330.1423729-1-knimoji@iol.unh.edu>
+ <20260625172233.2288663-1-knimoji@iol.unh.edu>
+In-Reply-To: <20260625172233.2288663-1-knimoji@iol.unh.edu>
+From: Patrick Robb <patrickrobb1997@gmail.com>
+Date: Mon, 29 Jun 2026 18:37:29 -0400
+X-Gm-Features: AVVi8CdlbN8YwWLuxSHExzddxAA1RVNut6yc_aRlWv6poYvVFTATmheRqOolcxY
+Message-ID: <CAK6Duxvkpxh8XzwvmMaX2y=Am2ePXD092JwX61H5EizDv5f2Gg@mail.gmail.com>
+Subject: Re: [PATCH v3] dts: update dts check format script and resolve errors
+To: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, dev@dpdk.org, abailey@iol.unh.edu, 
+ ahassick@iol.unh.edu, lylavoie@iol.unh.edu
+Content-Type: multipart/alternative; boundary="0000000000002f5ec006556c1b59"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,129 +97,141 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 29 Jun 2026 12:10:27 -0700
-Joshua Washington <joshwash@google.com> wrote:
+--0000000000002f5ec006556c1b59
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Jun 29, 2026 at 10:38=E2=80=AFAM Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
-> >
-> > On Sun, 28 Jun 2026 17:50:03 -0700
-> > Mark Blasko <blasko@google.com> wrote:
-> > =20
-> > > In AF_PACKET, the PMD reads the timestamp from socket ring headers
-> > > because the kernel stack processes the packet and allocates a socket
-> > > buffer. Since the kernel stack and socket buffer allocation are bypas=
-sed
-> > > in AF_XDP, UMEM frames are given directly to the PMD, which
-> > > means the kernel never generates these socket headers. Also, it
-> > > looks like the TAP PMD doesn't support RX timestamps.
-> > >
-> > > Since the location of metadata in the UMEM headroom is determined
-> > > by the XDP program, the current driver implementation is coupled to
-> > > a specific XDP program layout. As an alternative, we could just
-> > > plumb the entire metadata headroom to the DPDK application and let
-> > > the application parse it based on whatever XDP program is in use.
-> > > That would couple the application and the XDP program, but would
-> > > at least decouple the driver and the XDP program. =20
-> >
-> >
-> > Sorry if I was not clear enough before.
-> > The DPDK PMD provides an abstraction to applications to avoid exposing
-> > as many details as possible. Whenever possible a PMD should follow
-> > precedent and implement functions in a manner similar to other drivers.
-> >
-> > The method of expressing received timestamps was never well described
-> > in DPDK documentation. The convention is:
-> >   - A dynamic field in mbuf is used for the timestamp.
-> >   - All drivers using timestamp should register the same field
-> >     using rte_mbuf_dyn_rx_timestamp_register.
-> >   - The mbuf field is filled inside the rx_burst processing.
-> >   - The timestamp dynamic field is a 64 bit unsigned number rolling
-> >     clock value.
-> >   - A PMD providing timestamp, must also define a readclock ethdev dev =
-ops
-> >     so that application can compute the number of ticks in timestamp per
-> >     time interval.
-> >   - A PMD providing timestamp must advertise that in offload flags.
-> >   - Timestamp should only be inserted if the Rx timestamp offload flag
-> >     is set during configuration. =20
->=20
-> These are all very good points for ensuring an airtight abstraction.
-> However, I'd like to note that neither of the kernel-bound PMD
-> interfaces (pcap, AF_PACKET) have support for the `read_clock` op. I
-> am not certain of the reason for this, but I suspect it's because
-> ethtool IOCTLs already cover that functionality. This patch's
-> implementation follows the other implementations pretty closely,
-> differing only in how the timestamp is extracted.
->=20
-> >
-> > When I read this was a little confused about meta data in mbuf.
-> > Would have been clearer with a simple helper:
-> >
-> > static inline void
-> > af_xdp_rx_timestamp(struct rte_mbuf *m)
-> > {
-> >         const struct af_xdp_rx_metadata *meta
-> >                 =3D rte_pktmbuf_mtod_offset(m, struct af_xdp_rx_metadat=
-a, -(int)sizeof(*meta));
-> >
-> >         *RTE_MBUF_DYNFIELD(m, timestamp_dynfield_offset, uint64_t *) =
-=3D meta->rx_timestamp;
-> >         m->ol_flags |=3D timestamp_dynflag;
-> > }
-> >
-> > If you are going to do Rx timestamp then a simple readclock ethdev op
-> > is also needed to tell the application what the units are.
-> >
-> > But there are bigger issues with this patch:
-> > 1. The patch assumes metadata is always present in XDP receive but devi=
-ce
-> > used by XDP may not implement it. There is no capability checking.
-> > The DPDK PMD ends up advertising RTE_ETH_RX_OFFLOAD_TIMESTAMP
-> > unconditionally even if underling kernel device doesn't do it. =20
->=20
-> The patch as submitted is incorrect; my apologies for that. I missed
-> it in review. The layout of XDP metadata is something which is
-> determined by the XDP program and consumed by an AF_XDP application
-> tailor-made for the XDP program. This means that the PMD itself would
-> not be able to process the RX timestamp from an XDP program on its
-> own; that functionality would have to be handled by the DPDK
-> application.
->=20
-> >
-> > 2. The format of metadata is not a documented contract between kernel
-> > device implementing XDP and the DPDK. =20
->=20
-> This is true. The contract lies between the XDP program and the AF_XDP
-> application, which can both be controlled by the DPDK application and
-> its invocation.
->=20
-> >
-> > 3. The XDP documentation says you need to check for metadata
-> > in each frame.
-> >
-> > 4. There are no head bounds checks; must check that there is
-> > packet headroom is configured with enough space for metadata.
-> >
-> > I am sure AI will find several more things but need fixing
-> > before ready to merge.
-> > =20
->=20
-> Unfortunately, I think that some amount of abstraction leakage is
-> unavoidable by the very nature of AF_XDP. What I propose is as
-> follows:
->=20
-> Introduce a new PMD capability for processing XDP metadata. The mbuf
-> dyn_fields can store a pointer to the metadata and the size of the
-> metadata. The DPDK application processes the metadata as it sees fit.
-> As mentioned before, both the reader and the writer of the XDP
-> metadata are both controllable, and this would add the flexiblity for
-> one to use pre-existing DPDK mbuf infrastructure with minor
-> modifications to support this functionality, rather than introducing a
-> full rewrite using an AF_XDP application.
->=20
-> Would this be acceptable?
+In the UNH jenkins repo, please read the jenkinsfile for running the
+dts-check-format script, check which image it is pulling, and check how it
+meets dependencies. I can't remember if the dependencies are met at runtime
+or build time, or even if it uses poetry or not. So, there is a risk that
+the checks in CI could continue to run with older dependency versions even
+after this patch hits main. Let me know if you have questions.
 
-There needs to be an API that XDP PMD can call to check if underlying
-driver will add metadata; and another API to check that buffer has
-valid timestamp
+On Thu, Jun 25, 2026 at 1:22=E2=80=AFPM Koushik Bhargav Nimoji <knimoji@iol=
+.unh.edu>
+wrote:
+
+>
+>
+> +Tar_modes: TypeAlias =3D Literal["w:gz", "w:bz2", "w:xz", "w:tar"]
+> +
+>
+
+Should this be tar_modes (snake case)?
+
+
+>
+>  def expand_range(range_str: str) -> list[int]:
+>      """Process `range_str` into a list of integers.
+> @@ -154,7 +156,11 @@ def extension(self) -> str:
+>          For other compression formats, the extension will be in the form=
+at
+>          'tar.{compression format}'.
+>          """
+> -        return f"{self.value}" if self =3D=3D self.none else
+> f"{type(self).none.value}.{self.value}"
+> +        return (
+> +            f"{self.value}"
+> +            if self =3D=3D self.none
+> +            else f"{TarCompressionFormat.none.value}.{self.value}"
+> +        )
+>
+>
+>  def convert_to_list_of_string(value: Any | list[Any]) -> list[str]:
+> @@ -207,7 +213,8 @@ def filter_func(tarinfo: tarfile.TarInfo) ->
+> tarfile.TarInfo | None:
+>          return None
+>
+>      target_tarball_path =3D
+> dir_path.with_suffix(f".{compress_format.extension}")
+> -    with tarfile.open(target_tarball_path, f"w:{compress_format.value}")
+> as tar:
+> +    tarball_mode =3D cast(Tar_modes, f"w:{compress_format.value}")
+> +    with tarfile.open(target_tarball_path, tarball_mode) as tar:
+>
+
+Have you completed a testrun which flexes create_tarball(), i.e. running a
+DTS testrun which copies over a normal DPDK dir (instead of defining a
+tarball in test_run.yaml you define a normal dpdk dir source) to the SUT,
+i.e. it actually has to create the tarball?
+
+
+>          tar.add(dir_path, arcname=3Ddir_path.name,
+> filter=3Dcreate_filter_function(exclude))
+>
+>
+Thanks, let me know about the questions above but the patch looks good.
+I'll do a testrun and then merge to next-dts.
+
+Reviewed-by: Patrick Robb <patrickrobb1997@gmail.com>
+
+--0000000000002f5ec006556c1b59
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>In the UNH jenkins repo, please read the jenkinsfile =
+for running the dts-check-format script, check which image it is pulling, a=
+nd check how it meets dependencies. I can&#39;t remember if the dependencie=
+s are met at runtime or build time, or even if it uses poetry or not. So, t=
+here is a risk that the checks in CI could continue to run with older depen=
+dency versions even after this patch hits main. Let me know if you have que=
+stions.</div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=
+=3D"ltr" class=3D"gmail_attr">On Thu, Jun 25, 2026 at 1:22=E2=80=AFPM Koush=
+ik Bhargav Nimoji &lt;<a href=3D"mailto:knimoji@iol.unh.edu">knimoji@iol.un=
+h.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"ma=
+rgin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:=
+1ex"><br>
+<br>
++Tar_modes: TypeAlias =3D Literal[&quot;w:gz&quot;, &quot;w:bz2&quot;, &quo=
+t;w:xz&quot;, &quot;w:tar&quot;]<br>
++<br></blockquote><div><br></div><div>Should this be tar_modes (snake case)=
+?</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0=
+px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+<br>
+=C2=A0def expand_range(range_str: str) -&gt; list[int]:<br>
+=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Process `range_str` into a list of in=
+tegers.<br>
+@@ -154,7 +156,11 @@ def extension(self) -&gt; str:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0For other compression formats, the extens=
+ion will be in the format<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&#39;tar.{compression format}&#39;.<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 return f&quot;{self.value}&quot; if self =3D=
+=3D self.none else f&quot;{type(self).none.value}.{self.value}&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return (<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&quot;{self.value}&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if self =3D=3D self.none<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 else f&quot;{TarCompressionForma=
+t.none.value}.{self.value}&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
+<br>
+<br>
+=C2=A0def convert_to_list_of_string(value: Any | list[Any]) -&gt; list[str]=
+:<br>
+@@ -207,7 +213,8 @@ def filter_func(tarinfo: tarfile.TarInfo) -&gt; tarfile=
+.TarInfo | None:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return None<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0target_tarball_path =3D dir_path.with_suffix(f&quot;.{c=
+ompress_format.extension}&quot;)<br>
+-=C2=A0 =C2=A0 with tarfile.open(target_tarball_path, f&quot;w:{compress_fo=
+rmat.value}&quot;) as tar:<br>
++=C2=A0 =C2=A0 tarball_mode =3D cast(Tar_modes, f&quot;w:{compress_format.v=
+alue}&quot;)<br>
++=C2=A0 =C2=A0 with tarfile.open(target_tarball_path, tarball_mode) as tar:=
+<br></blockquote><div><br></div><div>Have you completed a testrun which fle=
+xes create_tarball(), i.e. running a DTS testrun which copies over a normal=
+ DPDK dir (instead of defining a tarball in test_run.yaml you define a norm=
+al dpdk dir source) to the SUT, i.e. it actually has to create the tarball?=
+</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0p=
+x 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tar.add(dir_path, arcname=3D<a href=3D"ht=
+tp://dir_path.name" rel=3D"noreferrer" target=3D"_blank">dir_path.name</a>,=
+ filter=3Dcreate_filter_function(exclude))<br><br></blockquote><div><br></d=
+iv><div>Thanks, let me know about the questions above but the patch looks g=
+ood. I&#39;ll do a testrun and then merge to next-dts.</div><div><br></div>=
+<div>Reviewed-by: Patrick Robb &lt;<a href=3D"mailto:patrickrobb1997@gmail.=
+com">patrickrobb1997@gmail.com</a>&gt;=C2=A0</div></div></div>
+
+--0000000000002f5ec006556c1b59--
