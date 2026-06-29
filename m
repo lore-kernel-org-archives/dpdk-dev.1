@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC853C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 05:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E07BC43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 05:22:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D59040655;
-	Mon, 29 Jun 2026 07:22:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4CA0A40663;
+	Mon, 29 Jun 2026 07:22:17 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 8A591402D5
- for <dev@dpdk.org>; Mon, 29 Jun 2026 07:22:13 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 93D3740647;
+ Mon, 29 Jun 2026 07:22:13 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6507D1A0475;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 735E31A07E3;
  Mon, 29 Jun 2026 07:22:13 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E5FB21A0CC3;
- Mon, 29 Jun 2026 07:18:20 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9E22F1A0CA9;
+ Mon, 29 Jun 2026 07:18:21 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 24246180004C;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BC02A180007B;
  Mon, 29 Jun 2026 13:18:20 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com
-Subject: [PATCH v4 0/9] ENETC driver related changes series
-Date: Mon, 29 Jun 2026 10:48:10 +0530
-Message-Id: <20260629051819.989176-1-g.singh@nxp.com>
+Cc: hemant.agrawal@nxp.com, stable@dpdk.org, Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v4 2/9] net/enetc: fix queue initialization
+Date: Mon, 29 Jun 2026 10:48:12 +0530
+Message-Id: <20260629051819.989176-3-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260623060004.2187716-1-g.singh@nxp.com>
+In-Reply-To: <20260629051819.989176-1-g.singh@nxp.com>
 References: <20260623060004.2187716-1-g.singh@nxp.com>
+ <20260629051819.989176-1-g.singh@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
@@ -47,67 +47,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-V4 changes:
-  - Fixed a compilation issue: "txbd may be used uninitialized"
+Hardware can misbehave if the user tries to reset the consumer and
+producer indexes without resetting the ring.
 
-V3 changes:
-  - Added documentation for all devargs in enetc4.rst.
-  - Fixed kvlist memory leak issue.
+This patch adds the ring reset step before resetting the indexes.
 
-V2 changes:
-  - Fixed an un-used variable compilation issue reported on fedora:43-gcc-minsize
-  - Fixed various AI reported issues:
-	- Release notes updated for all new devargs
-	- enect4.ini features doc updated for scattered RX.
-	- removed Not required RTE_PTYPE_UNKNOWN.
-	- Fixed mid-frame mbuf leak in SG case.
-	- Enabled SG for enetc4 PF also.
-	- move to calloc from rte_zmalloc in parse_txq_prior().
-	- added vaidation checks on strdup, strtoul.
-	- added NC devargs to use cacheable ops conditionally.
-	- removed dead code like bd_base_p etc.
-	- Fixed rte_cpu_to_le_16() conversion on flags and combined
-	  all flags related patches in one patch.
-	- Fixed memory leak issue due to TXQ priority patch.
-  - There were some false positives, I have ignored them:
-	Race condition on flags field:
-		clean_tx_ring only touches HW-completed BDs (next_to_clean→hwci),
-		never newly-submitted BDs; doorbell hasn't fired yet.
-	Missing dcbf in clean_tx_ring:
-		DPDK is single-threaded per queue; TX path always overwrites
-		flags completely before dcbf.
-	TX dcbf granularity with wrap:
-		Safe (AI admits it).
-	RX refill flush at wrap:
-		In-loop dcbf at i & mask == 0 already flushes aligned groups;
-		trailing flush only needed for partial groups.
-	RX reading before invalidate:
-		dccivac precedes the read for every group in the loop
+Fixes: 6c9c5aadc0e0 ("net/enetc: support ENETC4 queue API")
+Cc: stable@dpdk.org
 
-Gagandeep Singh (7):
-  net/enetc: fix TX BD structure
-  net/enetc: fix queue initialization
-  net/enetc: support ESP packet type in packet parsing
-  net/enetc: update random MAC generation code
-  net/enetc: add option to disable VSI messaging
-  net/enetc: add devargs to control VSI-PSI timeout and delay
-  net/enetc4: add cacheable BD ring support with SW cache maintenance
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+---
+ drivers/net/enetc/enetc4_ethdev.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Vanshika Shukla (2):
-  net/enetc: support scatter-gather
-  net/enetc: set user configurable priority to TX rings
-
- doc/guides/nics/enetc4.rst             |  62 +++-
- doc/guides/nics/features/enetc4.ini    |   1 +
- doc/guides/rel_notes/release_26_07.rst |  10 +
- drivers/net/enetc/base/enetc_hw.h      |  13 +-
- drivers/net/enetc/enetc.h              |  31 +-
- drivers/net/enetc/enetc4_ethdev.c      | 172 ++++++++--
- drivers/net/enetc/enetc4_vf.c          | 206 ++++++++++--
- drivers/net/enetc/enetc_ethdev.c       |  25 +-
- drivers/net/enetc/enetc_rxtx.c         | 430 ++++++++++++++++++++++---
- 9 files changed, 831 insertions(+), 119 deletions(-)
-
+diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
+index 78eba70..154fc09 100644
+--- a/drivers/net/enetc/enetc4_ethdev.c
++++ b/drivers/net/enetc/enetc4_ethdev.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2024 NXP
++ * Copyright 2024-2026 NXP
+  */
+ 
+ #include <stdbool.h>
+@@ -279,6 +279,7 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
+ 		     const struct rte_eth_txconf *tx_conf)
+ {
+ 	int err;
++	uint32_t tx_data;
+ 	struct enetc_bdr *tx_ring;
+ 	struct rte_eth_dev_data *data = dev->data;
+ 	struct enetc_eth_adapter *priv =
+@@ -301,6 +302,10 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
+ 		goto fail;
+ 
+ 	tx_ring->ndev = dev;
++	/* reset queue */
++	tx_data = enetc4_txbdr_rd(&priv->hw.hw, tx_ring->index, ENETC_TBMR);
++	tx_data &= ~ENETC_TBMR_EN;
++	enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index, ENETC_TBMR, tx_data);
+ 	enetc4_setup_txbdr(&priv->hw.hw, tx_ring);
+ 	data->tx_queues[queue_idx] = tx_ring;
+ 	tx_ring->tx_deferred_start = tx_conf->tx_deferred_start;
+@@ -427,6 +432,7 @@ enetc4_rx_queue_setup(struct rte_eth_dev *dev,
+ 		     struct rte_mempool *mb_pool)
+ {
+ 	int err = 0;
++	uint32_t rx_enable;
+ 	struct enetc_bdr *rx_ring;
+ 	struct rte_eth_dev_data *data =  dev->data;
+ 	struct enetc_eth_adapter *adapter =
+@@ -450,6 +456,10 @@ enetc4_rx_queue_setup(struct rte_eth_dev *dev,
+ 		goto fail;
+ 
+ 	rx_ring->ndev = dev;
++	/* reset queue */
++	rx_enable = enetc4_rxbdr_rd(&adapter->hw.hw, rx_ring->index, ENETC_RBMR);
++	rx_enable &= ~ENETC_RBMR_EN;
++	enetc4_rxbdr_wr(&adapter->hw.hw, rx_ring->index, ENETC_RBMR, rx_enable);
+ 	enetc4_setup_rxbdr(&adapter->hw.hw, rx_ring, mb_pool);
+ 	data->rx_queues[rx_queue_id] = rx_ring;
+ 	rx_ring->rx_deferred_start = rx_conf->rx_deferred_start;
 -- 
 2.25.1
 
