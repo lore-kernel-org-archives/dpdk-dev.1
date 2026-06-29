@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32ADCC43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 09:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DC2C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Jun 2026 10:42:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7101140653;
-	Mon, 29 Jun 2026 11:30:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BD9AF4064C;
+	Mon, 29 Jun 2026 12:42:07 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 4F33D40299
- for <dev@dpdk.org>; Mon, 29 Jun 2026 11:30:49 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 158434021F
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 12:42:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782725448;
+ s=mimecast20190719; t=1782729725;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=b0dT/p2jtXmVjx56K8CbRYt2Jr6psI8bAiRYvlCRwts=;
- b=H2ro+2/h5q3dh7A+C1Oageqaj0OIDAZPsTsQLaeXJzfcEizDvyzFlI7pHgxJw+ROuNHsk+
- q4XTdxlTHwjL3e2er4GJ/6QvSkLT/BdicUGGwLDcyyOIgecOQxObFSK41ysKqj0fX5tgHf
- TXQYT6SR2J3LfxpQfKuUlg3O9wchNpw=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=KuDxi3dmO+jqzCH3/YbmZdm25y/eoKbv8C8qUKrju4Y=;
+ b=DzDKBGF0lw5ml4BKdBWq7I02h3+n9NPYtAKKU5JmKFEfD3h32xUBRdUtBbYqTrdUS/+AGL
+ wPSJWMIiXNMMMEmbHxPeqxZSqLjGBcPz2Ub7HDbm52d4fYisMZuW+yGK+Bn/0ApjmhZl1M
+ ui1i3foLIol/9TIZZPkaorJ/RrhoJ8Y=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-VjLOJDb-NPCaTRUBZX3-Bg-1; Mon, 29 Jun 2026 05:30:47 -0400
-X-MC-Unique: VjLOJDb-NPCaTRUBZX3-Bg-1
-X-Mimecast-MFC-AGG-ID: VjLOJDb-NPCaTRUBZX3-Bg_1782725446
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-5aeba222aa2so334888e87.1
- for <dev@dpdk.org>; Mon, 29 Jun 2026 02:30:46 -0700 (PDT)
+ us-mta-563-UyJq9sa2N5GgPfbg1asZNw-1; Mon, 29 Jun 2026 06:42:02 -0400
+X-MC-Unique: UyJq9sa2N5GgPfbg1asZNw-1
+X-Mimecast-MFC-AGG-ID: UyJq9sa2N5GgPfbg1asZNw_1782729721
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-39afdaa25e5so3229511fa.0
+ for <dev@dpdk.org>; Mon, 29 Jun 2026 03:42:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782725445; x=1783330245;
+ d=1e100.net; s=20251104; t=1782729720; x=1783334520;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=b0dT/p2jtXmVjx56K8CbRYt2Jr6psI8bAiRYvlCRwts=;
- b=e/drnYvn5lgymbSZ3GJl+lVHWQ0ywUDJTE6ASLL4Y371Gb5tpUGIQvfFRasfOLotUW
- 2lpwsXn3k873Ca8hZ6fnZW16euBbhjtuoip9KFtd9541fIFuTaJjaQWQb17DfhdoVAZq
- EJlBQDr8KrzpVG2FWAoWPNNzJe+K9v/ha8mD/iUub+8WbVyE7N2CPD4tmjveVieve8T+
- M/NpVdESV6RPS+FKigMfNZfEhibBXexzpWNczfa+sp+VefvsO6yrPTAuFkc4rCcwQ1W4
- Tv0OlqJTKcqoLSSbhJxH+6gafbqCCgV4HHSjLh9NifkReONf8RJrpIbJsny5MErbbdJd
- 89/w==
-X-Gm-Message-State: AOJu0Yw1fGODWFWfQcj7v2/BqA9bLE0s3NN1vkNmQPus9I659naBJ4NF
- H/JB7yqF5dHCVTl3uYnDxcqH54N93RES3rNFRg2vaDfgz1bwjWxBmTwWg2FrabNmeDev7jJW0Mg
- FaU5NB0Na0uA4RvHbWc4UHh0+77+6pUq9pCFRMyjaSjNhYy54gHa9Gmj+HE+RfVTy6YvOgzmj42
- 24WqRZW1nPHVJbR4ajVFuBaMY6v4Q=
-X-Gm-Gg: AfdE7cmOQLu/hQbm2BOYLm3cOUjEbObZ2VSKBwiQa0tUQw+WBEaNdl6JqLY+WTlYj5i
- mhE6xyuLsgkE7kPNBWDVDNblLU6EzgZGgZA9sipCnnZaGHHvwjILfufxO4qqE+RRdir7hVo4DnD
- NmiJvSVVsym4MZMndjajpYKlneUroYzuJCoblbozbPlP8oxPY+Z1FaAAYUCLXv48aNBClJCgtZN
- FC6Cm12h3Z7nnGdApIU4474GjjfwyNBo5GbTLY1iriy6XKn70SIbOIQ+8k=
-X-Received: by 2002:a05:6512:12ca:b0:5ae:bcc1:e05a with SMTP id
- 2adb3069b0e04-5aebcc1e6d5mr68746e87.40.1782725445598; 
- Mon, 29 Jun 2026 02:30:45 -0700 (PDT)
-X-Received: by 2002:a05:6512:12ca:b0:5ae:bcc1:e05a with SMTP id
- 2adb3069b0e04-5aebcc1e6d5mr68735e87.40.1782725445117; Mon, 29 Jun 2026
- 02:30:45 -0700 (PDT)
+ bh=KuDxi3dmO+jqzCH3/YbmZdm25y/eoKbv8C8qUKrju4Y=;
+ b=A3MV+lDJoRAYdxntDXGX7ZPIZUfsIcIdq/zqSYlTpoDtLaUS5a85h2siD1TDv4xk52
+ ZjQxCjlPv/P8TUpuryNVjpBwTOi4Y67Wg4ccFl8a5QdX+24tUIhMFjKzVV543bx1nXGD
+ ONQbF642661poT1B/+KK2OSWvSDSfk7VmOg85A1t31v1lmJ8TlPA412OGXMx58jVsIqA
+ LOQmrFapCYwMixY4HlAR4woabsSIyhS6A20p4eSRirrN/md9ErYCfs0Hgip+I7u7ZQcw
+ YGgj+aNCQXOWFMN7JXL1EE99HyDR6anCr0UD99xXySxNaw2t793pEGE7CkmyYi+8hmKv
+ /sNg==
+X-Gm-Message-State: AOJu0YxllpdwzHBOdlx40gtQjXMiP0VWnKLsbZx+kVJbsG8Uh8OwOrMq
+ kLBKhNLV3Lz36k74eLmSgr6ejDoQvpc/F/DTW+6kgBMfFoVUJdK7LM37wGIr8LV8oriVUNnJZzV
+ xpGP024NYwb2BbZcf8lteTXaQQ7XenyyvuAItgnuTf4+g1k4KxWMdhZeMg5GtdsS2yqWChRRR/U
+ 2uEaVoBqKHJS7lEoerwis=
+X-Gm-Gg: AfdE7cnoe6Gje0TotYlAIPIRUW9vRsQr8jbktdX5M6dooHtisvxYUykO8/Qn5T8OrzT
+ 5ud3nbDcYdLUDFt3m5o9dTKrpkACjmddWLpfmE7XaRGBeN3EQLMGNj4Mo4c09oDJQmhnxwquX7I
+ WeRq2Irhl7K9zog9yh2jUfIRMD27ddM75WQgOK3dVb6r7wOjXFWmtBBV/DFRkHY22rfcyzirmqr
+ QztUqFYqwBWsKVKPUFiYjb7VztNCf3FNX1d8/HEWyub2BkneWJg1aFN1T4=
+X-Received: by 2002:a05:651c:c91:b0:39b:695:32a3 with SMTP id
+ 38308e7fff4ca-39b0695466cmr10327091fa.13.1782729720624; 
+ Mon, 29 Jun 2026 03:42:00 -0700 (PDT)
+X-Received: by 2002:a05:651c:c91:b0:39b:695:32a3 with SMTP id
+ 38308e7fff4ca-39b0695466cmr10326971fa.13.1782729720128; Mon, 29 Jun 2026
+ 03:42:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260325014506.1866374-1-longli@microsoft.com>
- <20260624000531.1562655-1-longli@microsoft.com>
-In-Reply-To: <20260624000531.1562655-1-longli@microsoft.com>
+References: <20260407141928.9426-1-wpan36@wisc.edu>
+ <20260628152553.46342-1-wpan3636@gmail.com>
+In-Reply-To: <20260628152553.46342-1-wpan3636@gmail.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 29 Jun 2026 11:30:33 +0200
-X-Gm-Features: AVVi8Cd_Th0QkEMZhiqvwldyUNYCbKcaISZDkTWanrl7VlmT4BPLigA1ggcfozY
-Message-ID: <CAJFAV8wV0jNVSD5hBH7t5bQZLBuCfkwO8aeU-n2bKji1+dZzUg@mail.gmail.com>
-Subject: Re: [PATCH v2] eal: return error on devargs truncation in hotplug MP
- messages
-To: Long Li <longli@microsoft.com>
-Cc: dev@dpdk.org, stable@dpdk.org
+Date: Mon, 29 Jun 2026 12:41:48 +0200
+X-Gm-Features: AVVi8CdF5SB2L24PemwnAVJ-nEe8zuKxgBNTLoN6H5hNKv2fljj4swbo4O43Wx4
+Message-ID: <CAJFAV8y79ZOcbdZH95XO7P-qrdC+O3EVo329xPL6cEFs972kew@mail.gmail.com>
+Subject: Re: [PATCH v2] bus/fslmc: convert queue storage macros to inline
+ functions
+To: Weijun Pan <wpan3636@gmail.com>, hemant.agrawal@nxp.com
+Cc: dev@dpdk.org, sachin.saxena@nxp.com, jun.yang@nxp.com, stable@dpdk.org, 
+ stephen@networkplumber.org, thomas@monjalon.net, Weijun Pan <wpan36@wisc.edu>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: RiJqx-Wdt6fJsUcKnKYidnXQ3x7p0BMFCeO1HkeG5lk_1782725446
+X-Mimecast-MFC-PROC-ID: 1ae4nSf91JGHHpAsXvEuFEeyGiS3uqY1LCD8leXX104_1782729721
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -84,34 +85,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 24 Jun 2026 at 02:11, Long Li <longli@microsoft.com> wrote:
->
-> The EAL hotplug multi-process messaging uses a fixed-size buffer
-> (EAL_DEV_MP_DEV_ARGS_MAX_LEN, 128 bytes) for device arguments.
-> When devargs exceeds this limit, strlcpy silently truncates the
-> string. This causes secondary processes to receive incomplete
-> devargs during hotplug re-add, leading to failed port
-> re-initialization.
->
-> For example, a MANA PCI device with 6 mac= arguments:
->
->   mac=AA:BB:CC:DD:EE:01,mac=AA:BB:CC:DD:EE:02,
->   mac=AA:BB:CC:DD:EE:03,mac=AA:BB:CC:DD:EE:04,
->   mac=AA:BB:CC:DD:EE:05,mac=AA:BB:CC:DD:EE:06
->
-> produces a 131-byte devargs string that gets silently truncated
-> to 127 bytes, losing the last MAC address.
->
-> Return -E2BIG from rte_dev_probe() when devargs would be truncated,
-> instead of silently corrupting data. rte_dev_remove() does not need
-> the same check because the length was already validated at probe time.
->
-> Fixes: 244d5130719c ("eal: enable hotplug on multi-process")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Long Li <longli@microsoft.com>
+Hello,
 
-Applied, thanks for the fix.
+Thanks for working on this issue.
+
+On Sun, 28 Jun 2026 at 17:27, Weijun Pan <wpan3636@gmail.com> wrote:
+>
+> From: Weijun Pan <wpan36@wisc.edu>
+>
+> The queue storage allocation and free helpers are implemented as macros
+> which declare local variables in the caller scope. This can cause shadow
+> warnings when -Wshadow is enabled.
+>
+> Convert them to static inline functions to avoid macro-local variable
+> scope issues without changing behavior.
+>
+> Bugzilla ID: 1744
+
+This bugzilla is about compiling with -Wshadow.
+
+The proposed fix is partial.
+As I reported in my previous mail, enabling -Wshadow after the current
+patch still shows many build warnings in
+drivers/bus/fslmc/qbman/qbman_portal.c.
+https://inbox.dpdk.org/dev/CAJFAV8w-VQJb6jM0KgAVP1rJKyUUwiBA6_seOCDwMX47rZmYyA@mail.gmail.com/
+
+Could you work on a complete fix so the bz can be closed?
+
+
+> Fixes: 12d98eceb8ac ("bus/fslmc: enhance QBMAN DQ storage logic")
+> Cc: jun.yang@nxp.com
+> Cc: stable@dpdk.org
+
+Afaics, nothing is broken in the current code, why do we *need* to
+backport the change?
+
+
+> Signed-off-by: Weijun Pan <wpan36@wisc.edu>
 
 
 -- 
