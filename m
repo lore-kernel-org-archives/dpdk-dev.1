@@ -2,52 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DC9C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 11:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413D5C43327
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 11:40:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CB129402BE;
-	Tue, 30 Jun 2026 13:40:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B017E40652;
+	Tue, 30 Jun 2026 13:40:22 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 1852840278
- for <dev@dpdk.org>; Tue, 30 Jun 2026 13:40:19 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B8EF540278
+ for <dev@dpdk.org>; Tue, 30 Jun 2026 13:40:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782819620; x=1814355620;
+ t=1782819621; x=1814355621;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=2Qd4369EJcJxKqd4IqEDbtds7EG5zMRSG0cQYwHY/l4=;
- b=hShe8BCLTRZdrkjMeR7ZgW5wa4Y5KdrHKihkZEDzpgixikR3lnqtjmV5
- 6oeaUCaukn9UBhFX5CFv5KoI3QPIX2uRQr6KnUendgeA9RJVRofLurX8X
- 4biIvpbjnOUAKBMUv6R/wmPzV1VjtT68TQgC1O+IAZ00L6g5HTQwsuZwl
- 9z7TbDW2SHUFdlC6ZYHrlVvhKlFuq4FayWb31DUlq5grsdtPVhovAAXLm
- K6cOTwVgeKNa0G6j4J0lVqT+LJrphrP7OFziIrXGZgeXugECT/FlOE6KG
- Au3nDJSuxm16PIqInYB0emEA2CRhAjrY7xV/gZ6HJRYksGKs9UL2/upK1 A==;
-X-CSE-ConnectionGUID: BBgzgQ5SSTOndkJBvmJG9Q==
-X-CSE-MsgGUID: romVxiCdSr6FXJbQYN6MzA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11832"; a="82643703"
-X-IronPort-AV: E=Sophos;i="6.24,233,1774335600"; d="scan'208";a="82643703"
+ bh=ykV2nT+fVUE2TKguqhvN/gJi5FLPIs5hSSx4PznoTX8=;
+ b=BNx6PU1m+tWPQAEBaamMiX03Y7Rq7UxvbFZxi7GtujopqfoJdaZaVns+
+ TX1eoIOqCMojONEWT8UgkhKGTwaEYY2CUVgza7VMJJIAWhnb+gco0vYce
+ mkUabqtCgM0QBmDydlb4CMOezlytiR1+7aCOL0bjblRcdXfrZup8XReRu
+ OKle5ZfwsYoWjhID7kTW/7Foy4J79Xwf0lwvKsp0/E6Ni5fG59s1BOkTe
+ ZaMVZOhHQhiTAazL4TQaq/CAPMy8pfKqdl4zNNkxS1zpUDGqm3wPumuf4
+ X6gYilQGN3+VbHewSmo6qLptHt+xYQoEJNFZzsCGMpP+evn9IJl6F9elM A==;
+X-CSE-ConnectionGUID: pW47M6PAQk2BGAkv+3oy8A==
+X-CSE-MsgGUID: qaPgCevcROmd+abLoTKuew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11832"; a="82643716"
+X-IronPort-AV: E=Sophos;i="6.24,233,1774335600"; d="scan'208";a="82643716"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Jun 2026 04:40:19 -0700
-X-CSE-ConnectionGUID: Ryelq0pFRjGk9aWS+zcr/g==
-X-CSE-MsgGUID: CWngwjkzRV+5xudZZAAT+w==
+ 30 Jun 2026 04:40:20 -0700
+X-CSE-ConnectionGUID: kLsRGKfYSSSOcttZJS5IeQ==
+X-CSE-MsgGUID: 3oPwhDz2TPGwp4VR/ce1uQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,233,1774335600"; d="scan'208";a="245891126"
+X-IronPort-AV: E=Sophos;i="6.24,233,1774335600"; d="scan'208";a="245891133"
 Received: from unknown (HELO localhost.igk.intel.com) ([10.123.235.20])
- by fmviesa009.fm.intel.com with ESMTP; 30 Jun 2026 04:40:17 -0700
+ by fmviesa009.fm.intel.com with ESMTP; 30 Jun 2026 04:40:19 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, stephen@networkplumber.org, marek.kasiewicz@intel.com,
  Dawid Wesierski <dawid.wesierski@intel.com>
-Subject: [PATCH v3 0/6] Intel network drivers enhancements
-Date: Tue, 30 Jun 2026 08:06:50 -0400
-Message-ID: <20260630120657.1046588-1-dawid.wesierski@intel.com>
+Subject: [PATCH v3 1/6] net/iavf: increase max ring descriptors to hardware
+ limit
+Date: Tue, 30 Jun 2026 08:06:51 -0400
+Message-ID: <20260630120657.1046588-2-dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260618144442.312844-8-dawid.wesierski@intel.com>
+In-Reply-To: <20260630120657.1046588-1-dawid.wesierski@intel.com>
 References: <20260618144442.312844-8-dawid.wesierski@intel.com>
+ <20260630120657.1046588-1-dawid.wesierski@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,71 +63,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series collects Intel E810 iavf and ice driver enhancements developed
-for the Media Transport Library (MTL) to support high-performance SMPTE
-ST 2110 media streaming workflows.
-
-The "new code" in this series (specifically the testpmd enhancement in
-patch 6) demonstrates how the standard DPDK buffer-split offload can be
-orchestrated with pinned external-buffer mempools
-(RTE_PKTMBUF_POOL_F_PINNED_EXT_BUF) to achieve this. By pinning mbufs to
-contiguous hugepages, the NIC DMAs RTP payloads directly into application-
-owned memory. This eliminates the need for the header-split.
-
-Documentation and a concrete configuration example for this workflow are
-included in the testpmd user guide (patch 6/6). The new 'create pinned-rxpool'
-command serves as both a test vehicle and a reference implementation for
-integrators.
-
-In this series:
-- iavf maximum ring descriptor count to raised 4096 (HW limit).
-- iavf queue rate limit enabled reconfiguration at runtime.
-- Added opt-in "rl_burst_size" ice devarg for tighter packet spacing (jitter reduction).
-- Enabled PTP timestamping for all packets on ice.
-- Added opt-in "no_runtime_queue_setup" iavf devarg to restore strict
-  initialization semantics when required.
-
-- Dropped the ethdev and net/intel "header-split mbuf callback" API
-- Replaced the out-of-tree approach with a testpmd demonstration (patch 6)
-  of the standard, upstream-preferred pinned-external-buffer workflow.
-- Fixed iavf error propagation and committed-state logic (Stephen Hemminger).
-- Converted the ice scheduler burst reduction and iavf runtime-config
-  disabling into opt-in devargs to preserve default behavior.
-- Updated documentation, commit messages, and .mailmap.
-
-Dawid Wesierski (1):
-  app/testpmd: add pinned external-buffer Rx pool command
-
-Marek Kasiewicz (5):
-  net/iavf: increase max ring descriptors to hardware limit
-  net/iavf: allow runtime queue rate limit configuration
-  net/ice: add scheduler rate-limiter burst size devarg
-  net/ice: timestamp all received packets when PTP is enabled
-  net/iavf: disable runtime queue setup capability
-
- .mailmap                                    |   2 +
- app/test-pmd/cmdline.c                      | 123 ++++++++++++++++++++
- doc/guides/nics/ice.rst                     |  12 ++
- doc/guides/nics/intel_vf.rst                |   9 ++
- doc/guides/rel_notes/release_26_07.rst      |   7 ++
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  82 +++++++++++++
- drivers/net/intel/iavf/iavf.h               |   1 +
- drivers/net/intel/iavf/iavf_ethdev.c        |  22 +++-
- drivers/net/intel/iavf/iavf_rxtx.h          |   2 +-
- drivers/net/intel/iavf/iavf_tm.c            |  25 ++--
- drivers/net/intel/ice/ice_ethdev.c          |  46 ++++++++
- drivers/net/intel/ice/ice_ethdev.h          |   1 +
- drivers/net/intel/ice/ice_rxtx.c            |   9 +-
- 13 files changed, 321 insertions(+), 20 deletions(-)
-
--- 
-2.47.3
-
----------------------------------------------------------------------
-Intel Technology Poland sp. z o.o.
-ul. Slowackiego 173 | 80-298 Gdansk | Sad Rejonowy Gdansk Polnoc | VII Wydzial Gospodarczy Krajowego Rejestru Sadowego - KRS 101882 | NIP 957-07-52-316 | Kapital zakladowy 200.000 PLN.
-Spolka oswiadcza, ze posiada status duzego przedsiebiorcy w rozumieniu ustawy z dnia 8 marca 2013 r. o przeciwdzialaniu nadmiernym opoznieniom w transakcjach handlowych.
-
-Ta wiadomosc wraz z zalacznikami jest przeznaczona dla okreslonego adresata i moze zawierac informacje poufne. W razie przypadkowego otrzymania tej wiadomosci, prosimy o powiadomienie nadawcy oraz trwale jej usuniecie; jakiekolwiek przegladanie lub rozpowszechnianie jest zabronione.
-This e-mail and any attachments may contain confidential material for the sole use of the intended recipient(s). If you are not the intended recipient, please contact the sender and delete all copies; any review or distribution by others is strictly prohibited.
+RnJvbTogTWFyZWsgS2FzaWV3aWN6IDxtYXJlay5rYXNpZXdpY3pAaW50ZWwuY29tPgoKVGhlIElu
+dGVsIEU4MTAgaGFyZHdhcmUgc3VwcG9ydHMgdXAgdG8gODE2MCAoOEsgLSAzMikgZGVzY3JpcHRv
+cnMgcGVyClRYL1JYIHJpbmcsIGJ1dCBJQVZGX01BWF9SSU5HX0RFU0MgY2FwcyBpdCBhdCA0MDk2
+LiBBcHBsaWNhdGlvbnMgdGhhdApuZWVkIGRlZXAgZGVzY3JpcHRvciByaW5ncyBmb3IgaGFyZHdh
+cmUgcmF0ZS1saW1pdGVkIHBhY2luZyAoZS5nLiwKU1QyMTEwIHZpZGVvIHdpdGggdGhvdXNhbmRz
+IG9mIHBhY2tldHMgcGVyIGZyYW1lKSBjYW5ub3QgcXVldWUgZW5vdWdoCnBhY2tldHMgYmVmb3Jl
+IHRoZSBwYWNpbmcgZXBvY2ggYmVnaW5zLgoKSW5jcmVhc2UgSUFWRl9NQVhfUklOR19ERVNDIHRv
+IHRoZSBoYXJkd2FyZSBtYXhpbXVtIG9mIDgxNjAgdG8gYWxsb3cKZnVsbCB1dGlsaXphdGlvbiBv
+ZiB0aGUgcmluZyBkZXB0aCBvbiBFODEwIFZGcy4KClNpZ25lZC1vZmYtYnk6IE1hcmVrIEthc2ll
+d2ljeiA8bWFyZWsua2FzaWV3aWN6QGludGVsLmNvbT4KU2lnbmVkLW9mZi1ieTogRGF3aWQgV2Vz
+aWVyc2tpIDxkYXdpZC53ZXNpZXJza2lAaW50ZWwuY29tPgotLS0KIC5tYWlsbWFwICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgfCAyICsrCiBkcml2ZXJzL25ldC9pbnRlbC9pYXZmL2lhdmZfcnh0
+eC5oIHwgMiArLQogMiBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24o
+LSkKCmRpZmYgLS1naXQgYS8ubWFpbG1hcCBiLy5tYWlsbWFwCmluZGV4IDQwMDFlNWZiMGUuLmQ3
+YjE3NWRlMmEgMTAwNjQ0Ci0tLSBhLy5tYWlsbWFwCisrKyBiLy5tYWlsbWFwCkBAIC0zNjYsNiAr
+MzY2LDcgQEAgRGF2aWQgWmVuZyA8emVuZ3hoc2hAY24uaWJtLmNvbT4KIERhdmlkZSBDYXJhdHRp
+IDxkY2FyYXR0aUByZWRoYXQuY29tPgogRGF3aWQgR29yZWNraSA8ZGdyQHNlbWloYWxmLmNvbT4K
+IERhd2lkIEp1cmN6YWsgPGRhd2lkX2p1cmVrQHZwLnBsPgorRGF3aWQgV2VzaWVyc2tpIDxkYXdp
+ZC53ZXNpZXJza2lAaW50ZWwuY29tPgogRGF3aWQgWmllbGluc2tpIDxkYXdpZC56aWVsaW5za2lA
+aW50ZWwuY29tPgogRGF3aWQgxYF1a3dpxYRza2kgPGRhd2lkLmx1a3dpbnNraUBpbnRlbC5jb20+
+CiBEYXh1ZSBHYW8gPGRheHVleC5nYW9AaW50ZWwuY29tPgpAQCAtMTAxNCw2ICsxMDE1LDcgQEAg
+TWFyY2luIFdpbGsgPG1hcmNpbi53aWxrQGNhdml1bW5ldHdvcmtzLmNvbT4KIE1hcmNpbiBXb2p0
+YXMgPG13QHNlbWloYWxmLmNvbT4KIE1hcmNpbiBaYXBvbHNraSA8bWFyY2lueC5hLnphcG9sc2tp
+QGludGVsLmNvbT4KIE1hcmNvIFZhcmxlc2UgPG12YXJsZXNlQHN1c2UuZGU+CitNYXJlayBLYXNp
+ZXdpY3ogPG1hcmVrLmthc2lld2ljekBpbnRlbC5jb20+CiBNYXJlayBNaWNhbCA8bWFyZWt4Lm1p
+Y2FsQGludGVsLmNvbT4KIE1hcmVrIFphbGZyZXNzby1qdW5kemlsbG8gPG1hcmVreC56YWxmcmVz
+c28tanVuZHppbGxvQGludGVsLmNvbT4KIE1hcmlhIExpbmdlbWFyayA8bWFyaWEubGluZ2VtYXJr
+QGVyaWNzc29uLmNvbT4KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2ludGVsL2lhdmYvaWF2Zl9y
+eHR4LmggYi9kcml2ZXJzL25ldC9pbnRlbC9pYXZmL2lhdmZfcnh0eC5oCmluZGV4IDg0NDkyMzZk
+NGQuLjIyZWE0MTVmNDQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbmV0L2ludGVsL2lhdmYvaWF2Zl9y
+eHR4LmgKKysrIGIvZHJpdmVycy9uZXQvaW50ZWwvaWF2Zi9pYXZmX3J4dHguaApAQCAtMTYsNyAr
+MTYsNyBAQAogLyogSW4gUUxFTiBtdXN0IGJlIHdob2xlIG51bWJlciBvZiAzMiBkZXNjcmlwdG9y
+cy4gKi8KICNkZWZpbmUgSUFWRl9BTElHTl9SSU5HX0RFU0MgICAgICAzMgogI2RlZmluZSBJQVZG
+X01JTl9SSU5HX0RFU0MgICAgICAgIDY0Ci0jZGVmaW5lIElBVkZfTUFYX1JJTkdfREVTQyAgICAg
+ICAgNDA5NgorI2RlZmluZSBJQVZGX01BWF9SSU5HX0RFU0MgICAgICAgICg4MTkyIC0gMzIpCiAj
+ZGVmaW5lIElBVkZfRE1BX01FTV9BTElHTiAgICAgICAgNDA5NgogLyogQmFzZSBhZGRyZXNzIG9m
+IHRoZSBIVyBkZXNjcmlwdG9yIHJpbmcgc2hvdWxkIGJlIDEyOEIgYWxpZ25lZC4gKi8KICNkZWZp
+bmUgSUFWRl9SSU5HX0JBU0VfQUxJR04gICAgICAxMjgKLS0gCjIuNDcuMwoKLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+CkludGVsIFRlY2hub2xvZ3kgUG9sYW5kIHNwLiB6IG8uby4KdWwuIFNsb3dhY2tpZWdvIDE3MyB8
+IDgwLTI5OCBHZGFuc2sgfCBTYWQgUmVqb25vd3kgR2RhbnNrIFBvbG5vYyB8IFZJSSBXeWR6aWFs
+IEdvc3BvZGFyY3p5IEtyYWpvd2VnbyBSZWplc3RydSBTYWRvd2VnbyAtIEtSUyAxMDE4ODIgfCBO
+SVAgOTU3LTA3LTUyLTMxNiB8IEthcGl0YWwgemFrbGFkb3d5IDIwMC4wMDAgUExOLgpTcG9sa2Eg
+b3N3aWFkY3phLCB6ZSBwb3NpYWRhIHN0YXR1cyBkdXplZ28gcHJ6ZWRzaWViaW9yY3kgdyByb3p1
+bWllbml1IHVzdGF3eSB6IGRuaWEgOCBtYXJjYSAyMDEzIHIuIG8gcHJ6ZWNpd2R6aWFsYW5pdSBu
+YWRtaWVybnltIG9wb3puaWVuaW9tIHcgdHJhbnNha2NqYWNoIGhhbmRsb3d5Y2guCgpUYSB3aWFk
+b21vc2Mgd3JheiB6IHphbGFjem5pa2FtaSBqZXN0IHByemV6bmFjem9uYSBkbGEgb2tyZXNsb25l
+Z28gYWRyZXNhdGEgaSBtb3plIHphd2llcmFjIGluZm9ybWFjamUgcG91Zm5lLiBXIHJhemllIHBy
+enlwYWRrb3dlZ28gb3RyenltYW5pYSB0ZWogd2lhZG9tb3NjaSwgcHJvc2lteSBvIHBvd2lhZG9t
+aWVuaWUgbmFkYXdjeSBvcmF6IHRyd2FsZSBqZWogdXN1bmllY2llOyBqYWtpZWtvbHdpZWsgcHJ6
+ZWdsYWRhbmllIGx1YiByb3pwb3dzemVjaG5pYW5pZSBqZXN0IHphYnJvbmlvbmUuClRoaXMgZS1t
+YWlsIGFuZCBhbnkgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG1hdGVyaWFs
+IGZvciB0aGUgc29sZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJlY2lwaWVudChzKS4gSWYgeW91IGFy
+ZSBub3QgdGhlIGludGVuZGVkIHJlY2lwaWVudCwgcGxlYXNlIGNvbnRhY3QgdGhlIHNlbmRlciBh
+bmQgZGVsZXRlIGFsbCBjb3BpZXM7IGFueSByZXZpZXcgb3IgZGlzdHJpYnV0aW9uIGJ5IG90aGVy
+cyBpcyBzdHJpY3RseSBwcm9oaWJpdGVkLgo=
 
