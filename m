@@ -2,53 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF194C43327
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 11:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A830DC43458
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 11:16:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB7C7402BE;
-	Tue, 30 Jun 2026 13:16:23 +0200 (CEST)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id B337540278
- for <dev@dpdk.org>; Tue, 30 Jun 2026 13:16:20 +0200 (CEST)
-X-QQ-mid: zesmtpsz7t1782818176tef6b565a
-X-QQ-Originating-IP: BJs2ABMCOeETh+hXie1Meq0hBvFj508YPe+/2fbYm24=
+	by mails.dpdk.org (Postfix) with ESMTP id BE61E40652;
+	Tue, 30 Jun 2026 13:16:38 +0200 (CEST)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTP id 1B97E40278;
+ Tue, 30 Jun 2026 13:16:34 +0200 (CEST)
+X-QQ-mid: zesmtpsz7t1782818190tef95ee94
+X-QQ-Originating-IP: pfYr+tPrRMgr/Xhgdg4fH0gcFoDWxmKDjaMA0H4i38c=
 Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.190.76])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 30 Jun 2026 19:16:13 +0800 (CST)
+ id ; Tue, 30 Jun 2026 19:16:17 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 10326304201680299975
-EX-QQ-RecipientCnt: 2
+X-BIZMAIL-ID: 6055009643262683373
+EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH v4 0/4] Wangxun fixes and new features
-Date: Tue, 30 Jun 2026 19:16:00 +0800
-Message-Id: <20260630111608.22196-1-zaiyuwang@trustnetic.com>
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
+ Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH v4 1/4] net/ngbe: implement USO support
+Date: Tue, 30 Jun 2026 19:16:01 +0800
+Message-Id: <20260630111608.22196-2-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20260617105959.10764-1-zaiyuwang@trustnetic.om>
+In-Reply-To: <20260630111608.22196-1-zaiyuwang@trustnetic.com>
 References: <20260617105959.10764-1-zaiyuwang@trustnetic.om>
+ <20260630111608.22196-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: Mp1EL4S+EMGramXmzcrOecjkw3xqLm6MO013gYtHk0KHRFm54aj8HIVe
- Dxx6TPaEsJrOroyx/1aj58CJ2zm8g92Z8BIWKPV22dOaweOEN2UXE3/r9pQ2El2wjOlqrdk
- Xhyn6axnCPDN+zCOGqgy80393LfaaHG0g2eoKE1KfCfjMpAiP1pJ2O9ABhT2hUZvp9NVYFS
- xoDeZAA6ApCGLlN++neahwNf5Zv4Ga/hNOXAHNBzcR6wnhKqhK5ayAUiioDcc/rDv+M89jJ
- lJl/lhaaUbiapn5xl+bIIp0vBHc42zX06fadvmhske6qtb98Mqb6DkAd99lW6F0F+vwScnw
- 7D4AHA56qAI+4Hjc+1F6jcPmx8DhCoUfcAMKiVOoLHXdh54kGDtcou0/VgUaqa/FQ74i0qi
- eD1zwREpTgal3JmG/nV1PZiI0BUAaOSQRlsH1qxVWzStr6ld1wIa/SMgdyE1tf7EtfRyDOD
- EVhNaVoveOIa1AxfDdt7brQTL56RjwN8oE3eue6dvZnBtWxqTQUudnI2zaMlXbZ9t57EiPb
- T6NGnCVVtnUegEdPryDXZjSR03Z/VoVTz6+ciTspQM9IYTosNeJApy/cHuanIBL7ksSZO7s
- 4WauS4XNcOsAJ+h3ZNMGjp8/Bs73d0dB3uMKQWgwMuWseapAItH55mbnnabpSH2lTg9Hc9e
- esdnO4tUOL5yhS6cA2QHsvqSUK3hSOFanFxYnaXOGuhBFha5Am5MJbPeYp7mVgw7DDWiAKl
- DR6/qm1yPN2tHCUGc1clStVbypHvdnT2+rPFMIsYNbLPX5pfmojYgDmxmk/I6T6+GxMXz3/
- GegISxhJLupReBhnbhy+MWvc+Zky/izISXxLfWUUiSmSwb1irLB74a4bD0JocF+TuqtXwQE
- DL/Otl7gXn87RXYUShInV/vIlhnWjmqrMgulM5PGkqgxpBQOB5yX1RwsMZTcK7Ff4WuYWrQ
- MgvlJgic6E4rVe90gGU6wX0CltTtJWP8q5DgcvC62re3hQlr+lCvGhIUgjxgZ4CZyf25Ijf
- XM4hOtDMicfibWAO8Er61yskXFeVA=
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+X-QQ-XMAILINFO: MJGq/3UMnf82ylulzY60Enx8UpRoJWkifAfCeN93/UxGCIlBIZLEWSIo
+ OB0zmNvvdo8ZrknKA8JS0n/GpKVsoNbLm/J9mFepWkmULF2buQ4BSDkXf2UU3IhAb59YRlE
+ Wt8WfImgWradXrvjprVvE1AvZBMdGBBawAYWpAlzKmR7pwlvYbo8qoGpVGDJNdpO3oVtRUR
+ FuoN2aX4/ch6op9deDtozH1ULxyq+V42A7nj3GGbzqN7SgN399J2/1CRjN2fOORq84nHJal
+ mFFSXLRSgFpiocWR4N/7cl/uwYpJR0/V7UO1qsUQDTR86SZIH7WJbrUyo5VbPsd4yBtXANa
+ qtTUTjvm134md9DVGfnWTcNSHdAAyktFHkOl4xZ3GKfCPwD9ljqr5k/OF+IP5IeXqhmvpga
+ xbr1pQxqUV3tAbB4rfWWhjolk2ku3O+ehF3k1MqgjJ3rtl1gQceEq7NXlzRxU37ev9Rpkhg
+ f8lNWo84HIF1LbMYjnPd3To9H7UEYtVU0Ex/DfIsf57iESmbw4IG7yClXJbL+apBh7fJpB1
+ A8oAsKbhYxK0rRnMFlHF7dhLzhiJSPPkO1qZvtJEFk9YQY8kJIHfjsIxUkyElXtpbeak+A5
+ 8McFaO9cDlt6kt+CE92vcBfJWJ0fyjDfeCEBKzMXZpN/CjzpBQ8JUEC/Xhg1wBtpG1Vfbp7
+ BZp8M/F3d+9tvKwysegTe+VBnaCBSsNdwr/BrtwnH2LsHHYdDR11V0aVf5ID5tal0QeTWsD
+ K3poBe30TYEmkozv8ljqDY0XBWCGIr2i7GxB/DTWqjhuC0j6HiQA5c9QhhAfUNJwq/95cEM
+ MvEFhYLZ+01Idn6yX5+ul/+s1GQhwWRqKN6DnFsI1YZW7GsYFcZUmbO7TYb3RDu65GvEEjC
+ JgcnSI3k6EEoN410b8YB6BreTLm6DRkgNRe5Ja+xuzB/DhqlIrEzMlTjFrfqTmaIxKmDuMu
+ SRMoO5Je/oDbIbzjS63n+m6y75iUJOgkaglyGALMEgv/fbak7NdYJbtb0bvOIbQSdcQTsmd
+ ARGVTp4vtSUrlCYK51lDrGfLT+1LmeNmoIsPlTc+me7hijFKR7C+qjHpoo/FB1J1OPsKttX
+ eNuAvxa49pInb3tUCB5sAAx1CAAeNkNZKewgLZzqWNC
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -63,59 +66,114 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset introduces three new features and critical fixes for our
-recent release cycle.
+USO (UDP Segmentation Offload), also known as UFO (UDP Fragmentation
+Offload), is a hardware offload rarely seen in DPDK. Its implementation
+is similar to TSO (TCP Segmentation Offload), so the driver enables
+USO based on existing TSO support.
 
-Patches 1-2 add support for UDP Segmentation Offload (USO) to improve
-large-packet transmission performance for UDP workloads.
+The driver has advertised RTE_ETH_TX_OFFLOAD_UDP_TSO in tx_offload_capa
+since its initial integration, but the data path never implemented the
+actual segmentation support. This commit fills that gap by enabling USO
+in the transmit path, making the advertised capability fully functional.
 
-Patch 3 enables VFs to sense PF ifconfig down/up events, allowing
-better fault tolerance and fast recovery in virtualized environments.
+Note:
+USO segments UDP packets, requiring hardware to recalculate both IP
+and UDP checksums due to length change. Thus, USO implicitly requires
+IP and UDP checksum offloads, same as TSO.
 
-Patch 4 adds the missing VF support for the Amber-Lite 40G NICs, which
-was previously omitted in the initial integration.
+Fixes: 9f3206140274 ("net/ngbe: support TSO")
+Cc: stable@dpdk.org
+
+Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
-v4:
-- Patches 1-4: add release notes
-- Patch 3: consume the mailbox message before checking the CTS flag;
-           separate CTS validation from link status processing by
-	   returning early after handling a CTS-less control message;
-	   make pf_running atomic.
----
-v3:
-- Patches 1-2: change from new feature to bug fix.
-- Patch 3: fix link status update in txgbevf_get_pf_link_status();
-           extend speed mask from 0xFFF0 to 0x1FFFFE for 40G speed;
-           reduce msgbuf array to a single u32 variable;
-           correct commit message.
-- Patch 4: add a cleanup note in commit message for dropping the
-           redundant mac type check in txgbevf_check_mac_link_vf();
-	   remove a redundant blank line in txgbe_reset_hw_vf().
----
-v2:
-- Rebased on top of commit 72fdcb7bd19d to resolve conflict in
-  drivers/net/txgbe/base/txgbe_type.h.
-- No code changes compared to v1.
----
+ doc/guides/rel_notes/release_26_07.rst |  7 +++++++
+ drivers/net/ngbe/ngbe_rxtx.c           | 13 ++++++++-----
+ 2 files changed, 15 insertions(+), 5 deletions(-)
 
-Zaiyu Wang (4):
-  net/ngbe: implement USO support
-  net/txgbe: implement USO support
-  net/txgbe: add support for VF sensing PF down
-  net/txgbe: add VF support for Amber-Lite 40G NIC
-
- doc/guides/rel_notes/release_26_07.rst | 21 ++++++
- drivers/net/ngbe/ngbe_rxtx.c           | 13 ++--
- drivers/net/txgbe/base/txgbe_devids.h  |  2 +
- drivers/net/txgbe/base/txgbe_hw.c      |  7 ++
- drivers/net/txgbe/base/txgbe_regs.h    |  7 +-
- drivers/net/txgbe/base/txgbe_type.h    |  2 +
- drivers/net/txgbe/base/txgbe_vf.c      |  6 +-
- drivers/net/txgbe/txgbe_ethdev.c       |  5 +-
- drivers/net/txgbe/txgbe_ethdev_vf.c    | 88 ++++++++++++++++++++++----
- drivers/net/txgbe/txgbe_rxtx.c         | 13 ++--
- 10 files changed, 136 insertions(+), 28 deletions(-)
-
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index 4ca0a9ac77..c5a168fdc9 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -177,6 +177,13 @@ New Features
+   Added AGENTS.md file for AI review
+   and supporting scripts to review patches and documentation.
+ 
++* **Updated Wangxun ngbe driver.**
++
++  * Implemented UDP Segmentation Offload (USO) in the transmit path.
++    The ``RTE_ETH_TX_OFFLOAD_UDP_TSO`` capability was advertised since the
++    driver's initial integration but the data path was missing; it is now
++    functional.
++
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/net/ngbe/ngbe_rxtx.c b/drivers/net/ngbe/ngbe_rxtx.c
+index 91e215694c..a1389de9c0 100644
+--- a/drivers/net/ngbe/ngbe_rxtx.c
++++ b/drivers/net/ngbe/ngbe_rxtx.c
+@@ -30,6 +30,7 @@ static const u64 NGBE_TX_OFFLOAD_MASK = (RTE_MBUF_F_TX_IP_CKSUM |
+ 		RTE_MBUF_F_TX_VLAN |
+ 		RTE_MBUF_F_TX_L4_MASK |
+ 		RTE_MBUF_F_TX_TCP_SEG |
++		RTE_MBUF_F_TX_UDP_SEG |
+ 		NGBE_TX_IEEE1588_TMST);
+ 
+ #define NGBE_TX_OFFLOAD_NOTSUP_MASK \
+@@ -317,7 +318,7 @@ ngbe_set_xmit_ctx(struct ngbe_tx_queue *txq,
+ 	type_tucmd_mlhl |= NGBE_TXD_PTID(tx_offload.ptid);
+ 
+ 	/* check if TCP segmentation required for this packet */
+-	if (ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
++	if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG)) {
+ 		tx_offload_mask.l2_len |= ~0;
+ 		tx_offload_mask.l3_len |= ~0;
+ 		tx_offload_mask.l4_len |= ~0;
+@@ -427,7 +428,7 @@ tx_desc_cksum_flags_to_olinfo(uint64_t ol_flags)
+ 		tmp |= NGBE_TXD_CC;
+ 		tmp |= NGBE_TXD_EIPCS;
+ 	}
+-	if (ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
++	if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG)) {
+ 		tmp |= NGBE_TXD_CC;
+ 		/* implies IPv4 cksum */
+ 		if (ol_flags & RTE_MBUF_F_TX_IPV4)
+@@ -447,7 +448,7 @@ tx_desc_ol_flags_to_cmdtype(uint64_t ol_flags)
+ 
+ 	if (ol_flags & RTE_MBUF_F_TX_VLAN)
+ 		cmdtype |= NGBE_TXD_VLE;
+-	if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
++	if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+ 		cmdtype |= NGBE_TXD_TSE;
+ 	return cmdtype;
+ }
+@@ -483,6 +484,8 @@ tx_desc_ol_flags_to_ptype(uint64_t oflags)
+ 
+ 	if (oflags & RTE_MBUF_F_TX_TCP_SEG)
+ 		ptype |= RTE_PTYPE_L4_TCP;
++	else if (oflags & RTE_MBUF_F_TX_UDP_SEG)
++		ptype |= RTE_PTYPE_L4_UDP;
+ 
+ 	return ptype;
+ }
+@@ -764,7 +767,7 @@ ngbe_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 
+ 		olinfo_status = 0;
+ 		if (tx_ol_req) {
+-			if (ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
++			if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG)) {
+ 				/* when TSO is on, paylen in descriptor is the
+ 				 * not the packet len but the tcp payload len
+ 				 */
+@@ -1991,7 +1994,7 @@ ngbe_get_tx_port_offloads(struct rte_eth_dev *dev)
+ 		RTE_ETH_TX_OFFLOAD_TCP_CKSUM   |
+ 		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM  |
+ 		RTE_ETH_TX_OFFLOAD_TCP_TSO     |
+-		RTE_ETH_TX_OFFLOAD_UDP_TSO	   |
++		RTE_ETH_TX_OFFLOAD_UDP_TSO     |
+ 		RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
+ 
+ 	if (hw->is_pf)
 -- 
 2.21.0.windows.1
 
