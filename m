@@ -2,77 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31597C43602
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 16:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7255EC43458
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 16:16:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07EE140655;
-	Tue, 30 Jun 2026 18:11:06 +0200 (CEST)
-Received: from fout-b3-smtp.messagingengine.com
- (fout-b3-smtp.messagingengine.com [202.12.124.146])
- by mails.dpdk.org (Postfix) with ESMTP id 82ABF40611
- for <dev@dpdk.org>; Tue, 30 Jun 2026 18:11:04 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.stl.internal (Postfix) with ESMTP id 30A1E1D000DB;
- Tue, 30 Jun 2026 12:11:03 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Tue, 30 Jun 2026 12:11:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1782835863;
- x=1782922263; bh=l9zqaBxayq4X8AEVqZ1gbAp/5WE+zDvalEgb3NsCZqM=; b=
- uFqX47h5lvRit9ixgh//85lajegfoTV1CMWtiS35z3PeBvfHPKAiOMiFDvobe5sA
- Zok+kNjq+O5H+sCTUJq1I5Hjyw0TQWCdl9W4vSHgyvDOvna6PwVSMhE5ZZTbRX19
- ZdQIbMWvg07/n+7nAEKXajQvx7/aGqIfcRs5oWvPAPwUN0apISayDQqGbY3Pf3Kg
- loJRD51k+oeEhl4jR8ZQKfQCvfPvcf4BQoT06otWBiTeGuDbOph2TSEhGXZ9L06d
- oDk4E/eewzNVTSE/5h+MEhw4qonpitXj4NCMKTgbOURk+xJOUk05gjgMGdxlavs2
- NE+lsJ1GYhaC3EUO5ysqUA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1782835863; x=
- 1782922263; bh=l9zqaBxayq4X8AEVqZ1gbAp/5WE+zDvalEgb3NsCZqM=; b=T
- kl1UZX5EtxDKTIdxgDcHscyf2Ub9dXLAxPyOrjNAi9do9vfhXfgOEK+LISCU80sN
- ithZwVzOqCFTo2jtd0YubmgtEdnafYd8THoFRMlDDEfDLKij8juvqjc/ie1XAU8S
- gPOTK2QZlDPWB+xNEeQwf77DkJ5e7zVYMKC8sEmigdBFIYJkTISvEK4OZmGykVbE
- zIPOf3T7Brekmvch0ooY7nv4dCJhyBxvHiV2LXfg+o8EwTWd91fAcmbcpdgJ4ON5
- Zabmfqi6jfW6zujp8l/OgF0k+aPu7X1ILbW6trdX6oOsNO2uwlWXlhhdyhg9Q5Of
- ELuTl9Z+daLahINxC68dw==
-X-ME-Sender: <xms:lupDaj7zoItMotJ7aGlBfh3k1ZxtZ4ZAvRSJaAsc913GuzyTfL-6dQ>
- <xme:lupDalMy5NAscHWMVqKqZukSN95TaYOBqaKUi_Iid-vYiTrVWdYWNx5GFUSPRb51i
- TrQcUroS8GtruSBOM_PrWjtq9y-yYVB_9gWp4Aq6bIkTtujU0-P>
-X-ME-Received: <xmr:lupDatMI42MYyxVMzyYyPcLkAMXpM9U2FO2iMnA1EgNzHhJMDTnnbAua0kQySzubRXTWMB9JuMUvSZuOcYykQrEF3A>
-X-ME-Proxy-Cause: dmFkZTFS15ohObmckQ0auIekp4lWDIKMyYpJnAdqCvsLhRbCJ5C5OqThZRmOcOG5Mltruk
- bAofoGQNwnGbw9/6kDF9sIpuRNL74td9lH5iRqiQ2CroW2uAqdiFtI+zrR5vvf4ztx8YzF
- Zum8uM/qGhzMoYz4B+96jdU8eJ6KcklhJmnlSRSu71ljJOCrXJ8fZgp4+hHfjfecXthZPT
- T1Vap6wc5IgsWwVhWHT5wDBj974r44o2sga1yTdRYEiEc/TfzzPaoxCTlnaZFwxJ7jILle
- ywDEkIYrQcMAQTL5iNEB8lFMiMQiF98CTRmSq+8L1kRYXZu/w4ME5dEY6QNbPmgWQwYnsH
- iYsMPHG7O5T4t9vIA5N1hU4BJgno4fRnEaD+AjVkkuRbbRyOmNBKzoQGMryMbQVEzQRt0q
- H+7alQSIapji5h8N13AueOjHm5EYIJ0yZpCkzyWpaqCGjBQAIyITTy0ugBksIXLo8ddGkU
- doLeKp0b3l5PLaWqnPxkTQ+R1SldOXE7OqgxE+D0vhUoGsFLaTFZAHoxSeElfGYYr1sQWn
- dcdhVhxlGJQ+AbfxHxbo55ax8iJHIZckWv4luME3dQfOYF0bauCg/W2DEaoSLSCEMyyUG4
- sihGGZh49PFApWeOjTlJ5Tzsm9BSuC66Fqcv52s89hlb+qleNaAO4oA+GK+w
-X-ME-Proxy: <xmx:lupDal_zr3YT_MDEzcLWwlnqkTOlSJ9ZU3vlyhi3Fko_m9Wg5Nngcg>
- <xmx:lupDap7vbo-AkF-UsGxoutN7XFtzV6MgQdcCndnVjUhTI0pRtZOM2Q>
- <xmx:lupDak1DBs8Qa2lM9zxQWrE3U7rbQBWFkJcU3CT6_ruwY8TEjUV2tw>
- <xmx:lupDaoBT5ICJS990O_jL5k-9CWDiCOE-LC4ab11GFfYTbW0lHD87ew>
- <xmx:l-pDagplb67FvXSTJ5KSTAg2ko08ayKk6yhYBdruABmsqRjOs99hFwvp>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 30 Jun 2026 12:11:02 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [RFC] doc: updating doxy-api-index.md and doxy-api.conf.in
-Date: Tue, 30 Jun 2026 18:10:59 +0200
-Message-ID: <cesJxiasRY6aqEM1iZ_leA@monjalon.net>
-In-Reply-To: <f0e4ffa90e57467cb292d7888caa697e@huawei.com>
-References: <f0e4ffa90e57467cb292d7888caa697e@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7B7F640655;
+	Tue, 30 Jun 2026 18:16:52 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id ECD2840611
+ for <dev@dpdk.org>; Tue, 30 Jun 2026 18:16:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782836211; x=1814372211;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=hmbbHD0PSKX8FYuGpiM90C8mTKcR3uUx9cB9VMlU7l0=;
+ b=GEQBKFn8KWLLkW273NIXW+fxWslipmRhNQ1EZ6hWMlp3CN0Q/1MIE8Hz
+ qO4O1LTaOh71MsTT781IqKYqULDe40P/pJc6azARQzBFOagcllOYzGClo
+ GJy0/qe+yFUhW2hS+I4mWsbGxOLTzZ7pf9tVUo3iYavRY6Y1vq05/XgJy
+ SKvvRGWVYX0zHpYDyDqk9CIimijraU4haYMIqVbOFpeT1DcVdknwXc30Z
+ Pz5zKTZ4JkI7lIachB/sQC5GIgzcuCSPaMaZv8dYk1AcvtPWGaspdkBqZ
+ 4NuHUfjPTT6jrJI3gIOJeiPvPqgSeoBezdzHnMV3i9+tW4T+yZCj3X0Hv Q==;
+X-CSE-ConnectionGUID: gRlVBb81SnKwpgjsVPoLpA==
+X-CSE-MsgGUID: pdgMwQ5rQ6anaBigcqr0CA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="71081137"
+X-IronPort-AV: E=Sophos;i="6.24,234,1774335600"; d="scan'208";a="71081137"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 30 Jun 2026 09:16:50 -0700
+X-CSE-ConnectionGUID: MlVUdGkUQJOOc4ejPLWXqw==
+X-CSE-MsgGUID: jj+nAwjMQfWuxEIzx9luxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,234,1774335600"; d="scan'208";a="275535963"
+Received: from silpixa00401385.ir.intel.com (HELO
+ localhost.ger.corp.intel.com) ([10.20.224.226])
+ by fmviesa002.fm.intel.com with ESMTP; 30 Jun 2026 09:16:49 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] net/e1000: align device IDs with base code
+Date: Tue, 30 Jun 2026 17:16:23 +0100
+Message-ID: <20260630161623.3131518-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,22 +58,96 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+The e1000 base header lists multiple PCI device IDs in e1000_hw.h that
+are not present in the em PCI ID table. Add the missing IDs so DPDK can
+probe all e1000 devices defined by the shared base code.
 
-30/06/2026 11:03, Marat Khalili:
-> I noticed that a few header files contain docstring-like comments but are not
-> present in doc/api/doxy-api-index.md and/or (fewer) in doc/api/doxy-api.conf.in
-> There seem to be no checks anywhere in the process that would make sure these
-> index files are updated. Do we even care, or is it unsupported legacy? If we do
-> care, would a check or an automatic generation fix be more promising?
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/net/intel/e1000/em_ethdev.c | 70 +++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-Some internal files have doxygen comments, not sure why,
-probably to run Doxygen manually on these files.
-
-In the scope of our public documentation,
-the goal was to document all and only public API.
-
-If you see some public API not referenced, it is a bug.
-And yes a script to check this may be useful.
-
+diff --git a/drivers/net/intel/e1000/em_ethdev.c b/drivers/net/intel/e1000/em_ethdev.c
+index 62ab57268f..c02d09e500 100644
+--- a/drivers/net/intel/e1000/em_ethdev.c
++++ b/drivers/net/intel/e1000/em_ethdev.c
+@@ -187,6 +187,76 @@ static const struct rte_pci_id pci_id_em_map[] = {
+ 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_RPL_I219_V23) },
+ 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ARL_I219_LM24) },
+ 	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ARL_I219_V24) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_PTP_I219_LM25) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_PTP_I219_V25) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_WCL_I219_LM27) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_WCL_I219_V27) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_NVL_I219_LM29) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_NVL_I219_V29) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_80003ES2LAN_COPPER_DPT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_80003ES2LAN_COPPER_SPT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_80003ES2LAN_SERDES_DPT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_80003ES2LAN_SERDES_SPT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82540EM_LOM) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82540EP) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82540EP_LOM) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82540EP_LP) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541EI) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541EI_MOBILE) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541ER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541ER_LOM) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541GI) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541GI_LF) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541GI_MOBILE) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82542) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82543GC_COPPER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82543GC_FIBER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82544EI_COPPER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82544EI_FIBER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82544GC_COPPER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82544GC_LOM) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82545GM_COPPER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82545GM_FIBER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82545GM_SERDES) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_COPPER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_FIBER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_PCIE) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_QUAD_COPPER) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_QUAD_COPPER_KSP3) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_SERDES) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82547EI) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82547EI_MOBILE) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82547GI) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82573E) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82573E_IAMT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_D_BM_LF) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_D_BM_LM) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_D_BM_V) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_R_BM_LF) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_R_BM_LM) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_R_BM_V) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_82567V_3) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IFE) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IFE_G) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IFE_GT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IGP_AMT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IGP_C) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IGP_M) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IGP_M_AMT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_BM) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IFE) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IFE_G) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IFE_GT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_AMT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_C) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_M) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_M_AMT) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_M_V) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH2_LV_V) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_D_HV_DC) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_D_HV_DM) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_M_HV_LC) },
++	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_M_HV_LM) },
+ 	{ .vendor_id = 0, /* sentinel */ },
+ };
+ 
+-- 
+2.53.0
 
