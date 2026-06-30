@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AA1C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 14:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 286BEC43458
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 14:44:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 410A240698;
-	Tue, 30 Jun 2026 16:43:46 +0200 (CEST)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com
- [209.85.221.46]) by mails.dpdk.org (Postfix) with ESMTP id 5A2C6406A2
- for <dev@dpdk.org>; Tue, 30 Jun 2026 16:43:42 +0200 (CEST)
-Received: by mail-wr1-f46.google.com with SMTP id
- ffacd0b85a97d-473ba028d46so2184604f8f.1
- for <dev@dpdk.org>; Tue, 30 Jun 2026 07:43:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2C41740A6C;
+	Tue, 30 Jun 2026 16:43:47 +0200 (CEST)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id 9FE6C406B7
+ for <dev@dpdk.org>; Tue, 30 Jun 2026 16:43:44 +0200 (CEST)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-475881b9a4bso1132561f8f.3
+ for <dev@dpdk.org>; Tue, 30 Jun 2026 07:43:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782830622; x=1783435422; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1782830624; x=1783435424; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
- :message-id:reply-to;
- bh=OdbsarOu2QCMGMnyZjNk5ccu2jIdwuiuZqDEnvhGRVQ=;
- b=ePTo+7tT2oI9QxQGNouZ4tg8DbCwzlo3ySiBna67pgcDtubWhPCwAUjmLIR3xRJZaK
- 41PVJT8ImKUKBBZj5jJuVFr+as/zeP+5KrJaFHeBZEGW49tLrSJc5fC6oOjPwh5ANUoO
- dcc8hRRw44eEiCLusrUTF3XjoxWOTFkFSXDOVVbETVwC/1WQEoa+ibbXk/+CrvMYd/iw
- JkDpkCF7UboLmIYt6no8QwQAWRUdjrYzMpUj9LxC1aaADiKwmn4ufjsdhv1GX4yzvevB
- 3J6y4ZsSdQc2mK5oZ47Qb874c0xUtsXWSt1qH71SkvAn9A5DzD8ub5mM/EU2Q9mUbsZG
- KBcg==
+ :message-id:reply-to:content-type;
+ bh=mty1A3SbpUullxVbRqTJ7zDraSz/y2xl5NenBc0Uqbk=;
+ b=mwzUnrHsg1Gp9YheUadw+i+XF+zybb6/Unj22qke3dAN3wUn+MJmkU2A6euFf5qHRD
+ FQuux2XKYVRtpN47vRTCrAX6b4LsU+zmrCFSt3obCuf+mXJPIrTR4tRg3XcWMbgubeOD
+ B2bdR9hztFWZlMlFxZ3c8ctK+irOM520lhP4f9yWsPpUrQpHkTuzgHm8xwBjaI384H34
+ J7s5cZ32TK1FUAqAhXVRNBRe1RUBUF1D+oa9KkQy+bS0JJGp8xDcFiD/pHWUwtND/xMo
+ bEa4GhmRX0WyudsJkO3Jk1aXSDG/dytMsuSNbqIGtwPlq+3WdaL6ueKudmEQ2wF/CaJd
+ nzLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782830622; x=1783435422;
+ d=1e100.net; s=20251104; t=1782830624; x=1783435424;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=OdbsarOu2QCMGMnyZjNk5ccu2jIdwuiuZqDEnvhGRVQ=;
- b=GWvV1pPNYA81G6m0tKmGM7tLeO2/AwvWHY2bre3MuCObp/gCNdmovpWE7dI4rwjcju
- WKNTKfxCktuDsMIrZm5ra9BIW4wyDkxcpFMzfJ1lvD3mtFYPtN52YOStP8b8hK6rCdLN
- GWKiz4ECop3o4Nver57u0jqL6GhAs2JSrPDx3NO9qbZpKAQXbeWfRjmFRzqUuERKLviU
- NvcCKZHmPEXVSS54EZzzIIXu6iOg+2ImZIwXC54ESJtFtzmxd2BMvR7Dzpeusd7rHii7
- reVkJSun3oX5om7aAHxS7ORL3epvrFhB3P/ytbr4qTeQTqxgmsdsdXQvCkQzhTinwxsX
- ut7A==
-X-Gm-Message-State: AOJu0YzZRJJ6Sqybh+unmOuKGK8Fx5d2Dqf3eH8LWoBTztoZMTE6nu4b
- RODzCKIHPlIeDdkjSBKLibE3AJcX0U8pAWx0wNSUoXHYsVaMzbnLV/+64m38DUn0
-X-Gm-Gg: AfdE7ck3515hwqfATD7hhKYv+uFsOMQ56ZGU/93B2Jep96dSpgvqdgy10+TSXfogeNE
- IXs8MbMlJQKu/OuiZjjI1pCod+cSR4cYvQCdSO8bqYAfjPixaDeRNYeKJiZA/IQkD1siILCw/2Y
- JowfQ5/i695rUZRiQOh0vxnDSzOkWklQgzooaBu+qc4Aqe8LFwlF5stU93E3zEShbe+UPDXxBG5
- PfGp0cefrCTc4hTaVwIwKFDpq2sVyUVg72N3+6U4vUc+6dVkCdq+IT7P/rVp7RHJus4m2D5nfPn
- 8e1MpZIikORDGhOyVcvobc4YDN+grT0Eta0tU7sfrA+T57DpDKRGSlxymQ+EdZPVash1xOv5zYQ
- 5ttQ8piiervHNecs/8dL8++CaLwT/sJUE1rTQOImHVfKY3g4I3xsDQdx9zQDfhQOl3MxwoZEkdZ
- Dfpu1KIWn2fcSY43Kt8v3C2wlNfyV9lnjrepMICPPRk/TMik3DDqSh/8M=
-X-Received: by 2002:adf:e785:0:b0:475:a05c:c642 with SMTP id
- ffacd0b85a97d-476587c91d6mr1054267f8f.19.1782830621864; 
- Tue, 30 Jun 2026 07:43:41 -0700 (PDT)
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=mty1A3SbpUullxVbRqTJ7zDraSz/y2xl5NenBc0Uqbk=;
+ b=VOXPDXr662xroX5GLqjz71yKq+uK02g/0Ia45i99coOLY3wpd+2o9LVgf/1H7vo1qk
+ vPNesvZXaGMkdm5A77TIsKAj7vGkZhzisBzy8MKoY8NVsDsaesKHR5GS+UObUOWDid+M
+ vOxEW4Yda+g2Cl9h1J10qpDzV5+YTGgfZNDo+Mf2ZMtZ++6C/aLOGY14Lr9SeXZMa+SN
+ JtlCNRN/+N/DQegRi82JqrAeSEu1VLOgUAceaelUiheGCIn8l7hRzW5KrYBlmqi6dMg+
+ MupY0A/V6VaLav6aA2WuZ9n05CEinK+Mn1HkdB6pGio44GEkYrbRlN6ohLa77UMXK+Qk
+ vDDA==
+X-Gm-Message-State: AOJu0YyLhX1xacsSth4AwrMThfgWBcjnU2VJju6CvEFQi50OX7l9zoCc
+ kf3yqD7rqY3bGn3kHOIeAnD9aHaWqeNgOglfIm2aqTQ5er9X67Zf2V37bhG4+t6+
+X-Gm-Gg: AfdE7cmX6HuS9HTc8V7c39QcQun8AaQ5NTzDD5TntsCCe/Uitfa8sQAKHL2xrGh1Dtj
+ dsNywmxRyO9pQKhI/OVSxf2Iq5uoSGYdedmCPMbeaapHo4t5WgY14UXG6qjKWL2oOfRMKWa3cLc
+ KRnXonRz5YIdRw6nhoWuwa1tTapIaLGxzmFp3zqNZdwxZ6+oVawjdqgJ3pBRi6cZSdbGlKi5Y2D
+ wX8yaqMeG2/7pSF2gdO86fG6nihZMpOYTElwNU+/3pPhCYELaM6NbcUr5F34/SEA4dkS0+8wORm
+ qTCEmS2ZQSE8+WzE1odBE+w7xh91hbTx+N8ntrqk2tUVfrKShHelfy/pze86SWM8xDZQmxqW482
+ u7ws/IWIg1Hdr7K7wKL4yv/8elPWWy1w8KQZgGMU9cv70K6GjN1i67LdlfGJpIMUTH4Pb5MrKlb
+ OCWxYZYN4nMPlV6a28UyjWJn854MDYZXmM0zXF4JtV9afq
+X-Received: by 2002:a05:6000:29d3:b0:473:1706:7efe with SMTP id
+ ffacd0b85a97d-475523b364fmr3450380f8f.24.1782830623961; 
+ Tue, 30 Jun 2026 07:43:43 -0700 (PDT)
 Received: from localhost.localdomain (free-mobile.vlq16.iliad.fr.
  [213.36.7.11]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4756636cf98sm6256399f8f.22.2026.06.30.07.43.41
+ ffacd0b85a97d-47563d194bbsm7507080f8f.3.2026.06.30.07.43.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 30 Jun 2026 07:43:41 -0700 (PDT)
+ Tue, 30 Jun 2026 07:43:43 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com, sachin.saxena@nxp.com, david.marchand@redhat.com,
  Maxime Leroy <maxime@leroys.fr>
-Subject: [PATCH v3 3/6] bus/fslmc/dpio: make the portal DQRI epoll optional
-Date: Tue, 30 Jun 2026 16:43:26 +0200
-Message-ID: <20260630144329.457643-4-maxime@leroys.fr>
+Subject: [PATCH v3 4/6] bus/fslmc/mc: implement dpcon_set_notification
+Date: Tue, 30 Jun 2026 16:43:27 +0200
+Message-ID: <20260630144329.457643-5-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260630144329.457643-1-maxime@leroys.fr>
 References: <20260616102727.708948-1-maxime@leroys.fr>
@@ -81,100 +82,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-dpaa2_dpio_intr_init() builds a private epoll instance the event PMD
-sleeps on. The upcoming net rx-queue-interrupt path waits on the
-application's own epoll instead, so that instance would be built but
-never used.
-
-Add a build_epoll parameter: pass true to build it (event PMD), false
-to skip the epoll_create/epoll_ctl. epoll_fd is set to -1 when none is
-built and closed in intr_deinit only when valid. The sole caller passes
-true: no functional change.
+The DPCON_CMDID_SET_NOTIFICATION command id and its wire struct were
+already present in the flib, but the dpcon_set_notification() function and
+the public dpcon_notification_cfg were never implemented. Add them so a
+DPCON channel can be pointed at a DPIO for CDAN delivery, which the
+net/dpaa2 Rx-queue-interrupt path needs.
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c | 40 +++++++++++++++++-------
- 1 file changed, 28 insertions(+), 12 deletions(-)
+ drivers/bus/fslmc/mc/dpcon.c     | 31 +++++++++++++++++++++++++++++++
+ drivers/bus/fslmc/mc/fsl_dpcon.h | 18 ++++++++++++++++++
+ 2 files changed, 49 insertions(+)
 
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-index 2a9e519668..f0b843e3a3 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-@@ -205,13 +205,12 @@ dpaa2_affine_dpio_intr_to_respective_core(int32_t dpio_id, int cpu_id)
- 	fclose(file);
- }
- 
--static int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev)
-+static int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, bool build_epoll)
- {
- 	struct epoll_event epoll_ev;
- 	int eventfd, dpio_epoll_fd, ret;
- 	int threshold = 0x3, timeout = 0xFF;
- 
--	dpio_epoll_fd = epoll_create(1);
- 	ret = rte_dpaa2_intr_enable(dpio_dev->intr_handle, 0);
- 	if (ret) {
- 		DPAA2_BUS_ERR("Interrupt registration failed");
-@@ -231,16 +230,30 @@ static int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev)
- 	qbman_swp_dqrr_thrshld_write(dpio_dev->sw_portal, threshold);
- 	qbman_swp_intr_timeout_write(dpio_dev->sw_portal, timeout);
- 
--	eventfd = rte_intr_fd_get(dpio_dev->intr_handle);
--	epoll_ev.events = EPOLLIN | EPOLLPRI | EPOLLET;
--	epoll_ev.data.fd = eventfd;
-+	dpio_dev->epoll_fd = -1;
- 
--	ret = epoll_ctl(dpio_epoll_fd, EPOLL_CTL_ADD, eventfd, &epoll_ev);
--	if (ret < 0) {
--		DPAA2_BUS_ERR("epoll_ctl failed");
--		return -1;
-+	/* private epoll for the event PMD; the net rx-intr path uses the app's */
-+	if (build_epoll) {
-+		dpio_epoll_fd = epoll_create1(EPOLL_CLOEXEC);
-+		if (dpio_epoll_fd < 0) {
-+			DPAA2_BUS_ERR("epoll_create failed");
-+			rte_dpaa2_intr_disable(dpio_dev->intr_handle, 0);
-+			return -1;
-+		}
-+
-+		eventfd = rte_intr_fd_get(dpio_dev->intr_handle);
-+		epoll_ev.events = EPOLLIN | EPOLLPRI | EPOLLET;
-+		epoll_ev.data.fd = eventfd;
-+
-+		ret = epoll_ctl(dpio_epoll_fd, EPOLL_CTL_ADD, eventfd, &epoll_ev);
-+		if (ret < 0) {
-+			DPAA2_BUS_ERR("epoll_ctl failed");
-+			rte_dpaa2_intr_disable(dpio_dev->intr_handle, 0);
-+			close(dpio_epoll_fd);
-+			return -1;
-+		}
-+		dpio_dev->epoll_fd = dpio_epoll_fd;
- 	}
--	dpio_dev->epoll_fd = dpio_epoll_fd;
+diff --git a/drivers/bus/fslmc/mc/dpcon.c b/drivers/bus/fslmc/mc/dpcon.c
+index cd909fcac4..3ab2a12637 100644
+--- a/drivers/bus/fslmc/mc/dpcon.c
++++ b/drivers/bus/fslmc/mc/dpcon.c
+@@ -338,3 +338,34 @@ int dpcon_get_api_version(struct fsl_mc_io *mc_io,
  
  	return 0;
  }
-@@ -253,7 +266,10 @@ static void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
- 	if (ret)
- 		DPAA2_BUS_ERR("DPIO interrupt disable failed");
++
++/**
++ * dpcon_set_notification() - Set the DPCON notification destination
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPCON object
++ * @cfg:	Notification parameters (DPIO, priority, user context)
++ *
++ * Return:	'0' on Success; Error code otherwise
++ */
++RTE_EXPORT_INTERNAL_SYMBOL(dpcon_set_notification)
++int dpcon_set_notification(struct fsl_mc_io *mc_io,
++			   uint32_t cmd_flags,
++			   uint16_t token,
++			   const struct dpcon_notification_cfg *cfg)
++{
++	struct dpcon_cmd_set_notification *dpcon_cmd;
++	struct mc_command cmd = { 0 };
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPCON_CMDID_SET_NOTIFICATION,
++					  cmd_flags,
++					  token);
++	dpcon_cmd = (struct dpcon_cmd_set_notification *)cmd.params;
++	dpcon_cmd->dpio_id = cpu_to_le32(cfg->dpio_id);
++	dpcon_cmd->priority = cfg->priority;
++	dpcon_cmd->user_ctx = cpu_to_le64(cfg->user_ctx);
++
++	/* send command to mc*/
++	return mc_send_command(mc_io, &cmd);
++}
+diff --git a/drivers/bus/fslmc/mc/fsl_dpcon.h b/drivers/bus/fslmc/mc/fsl_dpcon.h
+index f2668da1b1..3bef97f6f5 100644
+--- a/drivers/bus/fslmc/mc/fsl_dpcon.h
++++ b/drivers/bus/fslmc/mc/fsl_dpcon.h
+@@ -95,4 +95,22 @@ int dpcon_get_api_version(struct fsl_mc_io *mc_io,
+ 			  uint16_t *major_ver,
+ 			  uint16_t *minor_ver);
  
--	close(dpio_dev->epoll_fd);
-+	if (dpio_dev->epoll_fd >= 0) {
-+		close(dpio_dev->epoll_fd);
-+		dpio_dev->epoll_fd = -1;
-+	}
- }
- #endif
- 
-@@ -277,7 +293,7 @@ dpaa2_configure_stashing(struct dpaa2_dpio_dev *dpio_dev, int cpu_id)
- 	}
- 
- #ifdef RTE_EVENT_DPAA2
--	if (dpaa2_dpio_intr_init(dpio_dev)) {
-+	if (dpaa2_dpio_intr_init(dpio_dev, true)) {
- 		DPAA2_BUS_ERR("Interrupt registration failed for dpio");
- 		return -1;
- 	}
++/**
++ * struct dpcon_notification_cfg - Notification parameters
++ * @dpio_id:	DPIO object id that receives the channel's CDAN
++ * @priority:	Priority within the DPIO channel (0-7)
++ * @user_ctx:	User context provided with each CDAN message
++ */
++struct dpcon_notification_cfg {
++	int dpio_id;
++	uint8_t priority;
++	uint64_t user_ctx;
++};
++
++__rte_internal
++int dpcon_set_notification(struct fsl_mc_io *mc_io,
++			   uint32_t cmd_flags,
++			   uint16_t token,
++			   const struct dpcon_notification_cfg *cfg);
++
+ #endif /* __FSL_DPCON_H */
 -- 
 2.43.0
 
