@@ -2,41 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABF5C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 08:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163B9C43458
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 08:16:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77EE44025E;
-	Tue, 30 Jun 2026 10:08:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 07B694025E;
+	Tue, 30 Jun 2026 10:16:13 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
  [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id CB1D44021E;
- Tue, 30 Jun 2026 10:08:54 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gqG3m0Z98zHnH6y;
- Tue, 30 Jun 2026 16:08:04 +0800 (CST)
-Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
- by mail.maildlp.com (Postfix) with ESMTPS id D990C40574;
- Tue, 30 Jun 2026 16:08:47 +0800 (CST)
+ by mails.dpdk.org (Postfix) with ESMTP id 61E8F4021E;
+ Tue, 30 Jun 2026 10:16:11 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gqGDG17VRzHnGkc;
+ Tue, 30 Jun 2026 16:15:26 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id 025A740569;
+ Tue, 30 Jun 2026 16:16:10 +0800 (CST)
 Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 30 Jun 2026 09:08:47 +0100
+ 15.2.1544.11; Tue, 30 Jun 2026 09:16:09 +0100
 Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
  dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Tue, 30 Jun 2026 09:08:47 +0100
+ Tue, 30 Jun 2026 09:16:09 +0100
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
  <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, Samyak Jain
- <samyak.jain@amantyatech.com>
-Subject: RE: [PATCH 1/6] ip_frag: tolerate duplicate fragments
-Thread-Topic: [PATCH 1/6] ip_frag: tolerate duplicate fragments
-Thread-Index: AQHc/dQXCJHC/a+41keDiKQUm7EsYLZW0gIA
-Date: Tue, 30 Jun 2026 08:08:46 +0000
-Message-ID: <de2ff0a594104b9b9cb4575f0ff4f8ed@huawei.com>
+CC: "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH 2/6] ip_frag: discard datagrams with overlapping fragments
+Thread-Topic: [PATCH 2/6] ip_frag: discard datagrams with overlapping fragments
+Thread-Index: AQHc/dQYaYafot5oKUKAtrHWOERKlrZW0/CQ
+Date: Tue, 30 Jun 2026 08:16:09 +0000
+Message-ID: <7d4437055c204f48b956a075e1c5dba3@huawei.com>
 References: <20260616210656.464062-1-stephen@networkplumber.org>
- <20260616210656.464062-2-stephen@networkplumber.org>
-In-Reply-To: <20260616210656.464062-2-stephen@networkplumber.org>
+ <20260616210656.464062-3-stephen@networkplumber.org>
+In-Reply-To: <20260616210656.464062-3-stephen@networkplumber.org>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -60,77 +59,87 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-> The reassembly code tracked only a running byte total and reserved slots
-> for the first and last fragments, with no check for a fragment
-> duplicating data already received. A single duplicate could destroy a
-> recoverable datagram:
->  - a duplicate first or last fragment collided with the reserved slot and
->    sent the whole entry down the error path, freeing every collected
->    fragment;
->  - a duplicate intermediate fragment was appended to a new slot, inflatin=
-g
->    frag_size past total_size so reassembly never completed.
+> Existing code does not handle overlapping fragments.
 >=20
-> RFC 791 reassembly tolerates duplicates: a fragment covering bytes
-> already present carries no new information. Check for an exact duplicate
-> (stored fragment with the same offset and length) and drop only that
-> mbuf, before frag_size is updated, leaving the entry's accounting
-> unchanged.
+> RFC 8200 (IPv6) requires that on overlap all reassembly is abandoned
+> andall received fragments are dropped. RFC 791 (IPv4) originally called
+> fortrimming and rewriting, but Linux discards for IPv4 as well, since
+> overlap has no legitimate use and is a known attack vector.
+
+Spaces are missing in a few places in the sentence above:
+'andall' . "fortrimming'.
+
 >=20
-> Overlapping fragments with differing bounds are a separate issue
-> addressed in the next patch.
+> Depends on the duplicate-tolerance change so that an exact duplicate is
+> dropped on its own rather than discarding the whole datagram.
 >=20
 > Fixes: cc8f4d020c0b ("examples/ip_reassembly: initial import")
 > Cc: stable@dpdk.org
-
-I am not sure it is a bug and needs to be propagated into the stable releas=
-es.
-To me it is more like feature improvement.
-BTW, as this and next patch does change the behavior and probably overall
-performance numbers, - it probably worth to add a line in the release notes=
-.
-As another thought - it might be squashed with next patch in the series
-(ip_frag: discard datagrams with overlapping fragments).
-Apart from that:
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-
-> Reported-by: Samyak Jain <samyak.jain@amantyatech.com>
+>=20
 > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 > ---
->  lib/ip_frag/ip_frag_internal.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
+>  lib/ip_frag/ip_frag_internal.c | 34 ++++++++++++++++++++++++++--------
+>  1 file changed, 26 insertions(+), 8 deletions(-)
 >=20
 > diff --git a/lib/ip_frag/ip_frag_internal.c b/lib/ip_frag/ip_frag_interna=
 l.c
-> index 382f42d0e1..9a03ef995a 100644
+> index 9a03ef995a..2505314a29 100644
 > --- a/lib/ip_frag/ip_frag_internal.c
 > +++ b/lib/ip_frag/ip_frag_internal.c
-> @@ -89,7 +89,23 @@ struct rte_mbuf *
->  ip_frag_process(struct ip_frag_pkt *fp, struct rte_ip_frag_death_row *dr=
-,
->  	struct rte_mbuf *mb, uint16_t ofs, uint16_t len, uint16_t more_frags)
->  {
-> -	uint32_t idx;
-> +	uint32_t i, idx;
+> @@ -92,16 +92,34 @@ ip_frag_process(struct ip_frag_pkt *fp, struct
+> rte_ip_frag_death_row *dr,
+>  	uint32_t i, idx;
+>=20
+>  	/*
+> -	 * Discard an exact duplicate fragment. If a previously stored fragment
+> -	 * already covers the same offset and length, this fragment carries no
+> -	 * new data. Reassembly is tolerant of duplicates (RFC 791), so drop
+> -	 * only this mbuf and keep the reassembly entry intact rather than
+> -	 * treating it as an error. Fragments overlapping an existing one with
+> -	 * different bounds are not handled here.
+> +	 * Scan the fragments already collected for this datagram before
+> +	 * storing the new one. The stored set is kept free of duplicates and
+> +	 * overlaps, so a single pass is sufficient.
+>  	 */
+>  	for (i =3D 0; i !=3D fp->last_idx; i++) {
+> -		if (fp->frags[i].mb !=3D NULL && fp->frags[i].ofs =3D=3D ofs &&
+> -				fp->frags[i].len =3D=3D len) {
+> +		if (fp->frags[i].mb =3D=3D NULL)
+> +			continue;
 > +
-> +	/*
-> +	 * Discard an exact duplicate fragment. If a previously stored fragment
-> +	 * already covers the same offset and length, this fragment carries no
-> +	 * new data. Reassembly is tolerant of duplicates (RFC 791), so drop
-> +	 * only this mbuf and keep the reassembly entry intact rather than
-> +	 * treating it as an error. Fragments overlapping an existing one with
-> +	 * different bounds are not handled here.
-> +	 */
-> +	for (i =3D 0; i !=3D fp->last_idx; i++) {
-> +		if (fp->frags[i].mb !=3D NULL && fp->frags[i].ofs =3D=3D ofs &&
-> +				fp->frags[i].len =3D=3D len) {
+> +		/*
+> +		 * Exact duplicate: carries no new data. Reassembly tolerates
+> +		 * duplicates (RFC 791), so drop only this mbuf and keep the
+> +		 * entry.
+> +		 */
+> +		if (fp->frags[i].ofs =3D=3D ofs && fp->frags[i].len =3D=3D len) {
 > +			IP_FRAG_MBUF2DR(dr, mb);
 > +			return NULL;
 > +		}
-> +	}
->=20
->  	fp->frag_size +=3D len;
->=20
+> +
+> +		/*
+> +		 * Overlap with an existing fragment. Per RFC 8200 section 4.5
+> +		 * (and RFC 5722) the datagram must be discarded; the same is
+> +		 * applied to IPv4. Free all collected fragments, drop this one,
+> +		 * and invalidate the entry.
+> +		 */
+> +		if (ofs < fp->frags[i].ofs + fp->frags[i].len &&
+> +				fp->frags[i].ofs < ofs + len) {
+> +			ip_frag_free(fp, dr);
+> +			ip_frag_key_invalidate(&fp->key);
+>  			IP_FRAG_MBUF2DR(dr, mb);
+>  			return NULL;
+
+Usually that function does some logging IP_FRAG_LOG(...) in case
+invalid fragments were detected (see function body below these changes).
+Probably worth to keep same here:
+Might be a new helper function that will report an error and free table ent=
+ry,
+that can be used across all places in that function.
+Apart from that:
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>=20
+
+>  		}
 > --
 > 2.53.0
 
