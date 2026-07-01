@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4C8C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 10:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CB6C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 10:28:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B105402E0;
-	Wed,  1 Jul 2026 12:09:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2F52E402E0;
+	Wed,  1 Jul 2026 12:28:05 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E067940278
- for <dev@dpdk.org>; Wed,  1 Jul 2026 12:09:22 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F61A40278
+ for <dev@dpdk.org>; Wed,  1 Jul 2026 12:28:03 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782900562;
+ s=mimecast20190719; t=1782901682;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=QY+jeIeBljXM4bcGPgIjVh4a2H61lEMTJKpfALu8knE=;
- b=V1oBBlkoFmBqTYVPzzlxjhvP7rAjUxhg8w0c9/C/A7Bu7u8I1BtVXNUdUZN87FMKJ2KlJa
- ntS3HZwwg5VJ/BOxiMwWtG91pp7H7A79kW/BIDvBu9VlcdjXyWNoxVYMzBOqxlyqpvZPT1
- x9oIathF7IGt8VkQDCtYm45KX29h4MU=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=W0JZGnCFhWqiUSr6ctIxtMDU7ZyI0M44SwVaYwJFvPQ=;
+ b=WnFsZZsjkyB1MjJ5jbYkJm5EXA/YHHmPWJzvBlV58YRpw+qgIo3AUYDEea75J5DrNO84/k
+ l6s75QM41mvgPCT83kMR5qJcAlv7gfu/ba7pSracBlcOmLNls1e6FKcjEVrAlL3xqgYv+8
+ bqXTjw0kkxBypaPpFZA1m3aYN+QWqC0=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-344-GImE4LP5PLKtZ1scKteqqg-1; Wed, 01 Jul 2026 06:09:21 -0400
-X-MC-Unique: GImE4LP5PLKtZ1scKteqqg-1
-X-Mimecast-MFC-AGG-ID: GImE4LP5PLKtZ1scKteqqg_1782900560
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5aeb55ce6adso351454e87.0
- for <dev@dpdk.org>; Wed, 01 Jul 2026 03:09:20 -0700 (PDT)
+ us-mta-125-Apn0I6HfNKiMaKbyzUZTFA-1; Wed, 01 Jul 2026 06:28:01 -0400
+X-MC-Unique: Apn0I6HfNKiMaKbyzUZTFA-1
+X-Mimecast-MFC-AGG-ID: Apn0I6HfNKiMaKbyzUZTFA_1782901680
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-39ae216b900so2981131fa.3
+ for <dev@dpdk.org>; Wed, 01 Jul 2026 03:28:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782900560; x=1783505360;
+ d=1e100.net; s=20251104; t=1782901680; x=1783506480;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=QY+jeIeBljXM4bcGPgIjVh4a2H61lEMTJKpfALu8knE=;
- b=EFTyIPHoMf2PxVHlKD7+8N3VRaDOPLSrgLjHZkBuy5/OxpD8n/nLEcRpCAWdy2Ys8E
- 5BlqGh2HyGn7OlOQFHRbZbCxRLR0+Ad6Int9zjDQu3otrIdaYfYX6Nz/Ofgr9yOpH1VZ
- KediAmEYAeIj7IyAZf04Ffar/F0uFlf+5UYeDWO7xhI1BMcV7oLs7Z7F3ZZxMqBiHasG
- C0CmwgM6lmjv7mFSOKBeXrf+iIlYg0FRZxmOkHG+QohE2wsPRHVAC3TyEy4jNVKrtZAn
- 4+2sMWkFJjZIU2jP9CQcifJDNGJNwwjllERbVAy98kqxH1bzqgQKJrxZuNPM6G7lMevd
- 7aHw==
-X-Gm-Message-State: AOJu0Yy9YC0hQzuAZDjWoaqTGCx2xHxhIfqbovFac1tL+DewNMbufuGq
- C31wreRhmbfyAeiiED446SYLZ/LKMFpw6OEEQ98jPIaEcV04SzjzJbhrRhpiGxG6dNbxVDrrltb
- j0PKt8le6YuaBZ31fE2vvHUew9MMYtSBELyUHBWgIlafvpDXxpDg6sE3ydV7y3ALNH1ZasxnYok
- uzeWwNJYi+55GsZ5m5hTY=
-X-Gm-Gg: AfdE7ckN9HWbKoQGYWeD/de3e9g7/jA4HgqS43cWhQSGbuk0nCItaxUpYxPjWlty9hU
- C4u2OzzIOFvgu1B30a2uy90gaSUDUf3kI3QbFo55oIxKXvYhGyOZXfQypoZkUsoMkEQDfmbstuh
- Y3vkbcoBLvAOjqllHx4u+ElQTxAUaX8gfeumNN2boBQEi4UzxTb7xQjEwTv6AO8CY/+Afy0UAc1
- 5J8vVUoQ4VkLaHzMymko/beap6ijSTWfBnpRqPB4FQkVTFTmJPa+ELHCRs=
-X-Received: by 2002:a05:6512:1556:b0:5ae:bfa0:54f1 with SMTP id
- 2adb3069b0e04-5aec743317amr196882e87.59.1782900559625; 
- Wed, 01 Jul 2026 03:09:19 -0700 (PDT)
-X-Received: by 2002:a05:6512:1556:b0:5ae:bfa0:54f1 with SMTP id
- 2adb3069b0e04-5aec743317amr196864e87.59.1782900559016; Wed, 01 Jul 2026
- 03:09:19 -0700 (PDT)
+ bh=W0JZGnCFhWqiUSr6ctIxtMDU7ZyI0M44SwVaYwJFvPQ=;
+ b=rqR1i/ofOdMEbAOpeYggbGf1rb5+735oLBntmENsGYPQ04liE+7C5RC7yuO6Ms24yE
+ kQatTrwwcGhwakjkfEk+rlydOE0ZlNHEMNLifQB1SX6cUsY696IwYZqqTYye4jA9Z+jC
+ ukxuvAFuHVnw/bGWNQaeKMRLAIMSx8UYjFTaDBgvAHCUosLgftQTlZjSghe/0w6Baro1
+ TaSvi7UMrITh9kEEvpIS2mpiGOCRA8kj0uZzgyrt8eNwUkq0NQ4QFgyhL9ZmZPPxl+W/
+ oDy/pdl3cvppXST0RrpJPGjmAl35u40tcfBE9suvD/nFy6XSrwmz57m3W3XejoSRnkYc
+ kBRQ==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RqfNfnBra6qN9rxDN2JMI5xgOFRL15DG3VeZ9BCXtxVN8ZYKw8bkBZdn+BtScZIsln57hI=@dpdk.org
+X-Gm-Message-State: AOJu0YwRJcUZRIjmFmTIJXC6yAQystsU1fLDAX7ybhBVpDf2sCU7LWO0
+ +qhR921rhmlS3oX77lvGYTTM1lV0wPSr4SjytTrwssW7MaIeH4F9vZLPnCcgvf4dhZE4hLqHQ1Q
+ lP8LJxwZhCfSH28GtRzvjscr4emjt5XOKt/dJCY7Q65s+sNbnSYnPJF28CjMohoOLfc76f55xyc
+ jOxa9aZZpMcyipI1DyuAg=
+X-Gm-Gg: AfdE7cmXSFZmEbjd66gY7vTVzhinA6qcExAa16TsIxWQLewP+gwL//QDCSk/S8XOSR3
+ B4Zpd1G8pKDBdzIXc1ekjrgbcD8LyXOJdVL6t6PbnjrmPmeRIqcVjn0ynA2FDd9MFe9iWM+mptB
+ PVSiqAZ/PmFT8kSGs1CqFHyFWn5tkQNFjYOiZSDEwqHjiT8Gehz/G2Ufvg1KB6xHVBeZZXh8Rgy
+ oO8n3wQLPZJjz++e3MD5QGZRIcWsfznurA2hQeifA5+q8sdDOe/ISX/GAs=
+X-Received: by 2002:a05:651c:50f:b0:39a:e29b:78fc with SMTP id
+ 38308e7fff4ca-39b34133cb8mr2256681fa.40.1782901679941; 
+ Wed, 01 Jul 2026 03:27:59 -0700 (PDT)
+X-Received: by 2002:a05:651c:50f:b0:39a:e29b:78fc with SMTP id
+ 38308e7fff4ca-39b34133cb8mr2256581fa.40.1782901679372; Wed, 01 Jul 2026
+ 03:27:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <740b39c5098b4d40cafb9881ad70865a3c889012.1773936429.git.anatoly.burakov@intel.com>
- <cover.1782469943.git.anatoly.burakov@intel.com>
-In-Reply-To: <cover.1782469943.git.anatoly.burakov@intel.com>
+References: <20260522145855.1748406-1-maxime@leroys.fr>
+ <20260617082400.142129-1-maxime@leroys.fr>
+In-Reply-To: <20260617082400.142129-1-maxime@leroys.fr>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 1 Jul 2026 12:09:05 +0200
-X-Gm-Features: AVVi8CejJKMt5Ak1jlPNnSh0sSrMDRCPZEAcOU7tngpqfod-wC_UasA7NIRX2OI
-Message-ID: <CAJFAV8zbxOxNZpC7bSDowmLGHrGEcrs+rJXNrMPy2kfUdbkuig@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] IPC fixes
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, 
- Thomas Monjalon <thomas@monjalon.net>
+Date: Wed, 1 Jul 2026 12:27:47 +0200
+X-Gm-Features: AVVi8CfH9iRkz_PZbMP-T5pxGvtvgZ3OTp1Izkx6tutzge4gTdNQ1UrZNTLnByw
+Message-ID: <CAJFAV8wtofuPBLvM+GJPjC15VEyxCLLHEe820AQZWfee-VdHFg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] fib6: fix tbl8 reservation drift
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>, dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: YmaCXEHZMhoGl0Mx0ZaXHXcG7O3XVR5D4PNsc7ghtrQ_1782900560
+X-Mimecast-MFC-PROC-ID: 1YPO65JKzT95mkW49WxqBdgRUISh57lhT7E1yKH9i1A_1782901680
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -84,73 +85,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Anatoly,
+Hello Maxime,
 
-On Fri, 26 Jun 2026 at 12:34, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+On Wed, 17 Jun 2026 at 10:24, Maxime Leroy <maxime@leroys.fr> wrote:
 >
-> Coverity has reported (issue ID 501503) a memory leak, but there
-> actually were a few more problems with IPC than that. This patchset
-> addresses said problems.
+> trie_modify() maintained rsvd_tbl8s by computing a depth_diff from the
+> current RIB topology at both ADD and DEL. The two values diverge when
+> the RIB changes between an ADD and its later DEL (a covering parent
+> added or removed), so rsvd_tbl8s eventually wraps to UINT32_MAX and
+> rejects all subsequent /25+ ADDs with -ENOSPC. A zebra-kill /
+> reconverge cycle on a live BGP router reproduces it.
 >
-> 1. Using pointer as async request identity is unsafe
+> The fix computes the reservation from the RIB node shape:
+> count_empty_levels() returns the number of byte boundaries between the
+> prefix and its covering parent that no other prefix occupies
+> (has_children + parent depth), in O(1). It is the count of tbl8 levels
+> the current route set needs, so ADD/DEL accounting stays consistent and
+> cannot drift.
 >
-> Because asynchronous requests can fail at arbitrary points while
-> having arbitrary number of requests or alarms already in flight,
-> using pointer as request identity can create use-after-free risks.
-> Patchset replaces this with using numeric request ID instead.
+> Patch 1 is the minimal self-contained fix (Fixes: + Cc: stable).
+> Patches 2-3 add the reproducer and extended regression tests.
 >
-> 2. Alarm cancel can deadlock
+> Validated on a live BGP router (grout + FRR, 128 IPv6 prefixes):
+> RSVD_TBL8 returned to its pre-cycle value (70) after a zebra-kill /
+> reconverge cycle.
 >
-> Async request handler may attempt to cancel the alarm, but an alarm
-> might have already been in progress blocking on the same lock that
-> is held by async request, leading to a deadlock. Patchset removes
-> the alarm cancel call, and allows the alarm to fire. This is fine,
-> because due to fix #1 the worst that can happen from calling stale
-> alarm is a noop, as request ID would not be found.
+> Maxime Leroy (3):
+>   fib6: fix tbl8 reservation drift in trie
+>   test/fib6: add reproducer for tbl8 reservation drift
+>   test/fib6: extended drift test cases
 >
-> 3. Memory leaks
+>  app/test/test_fib6.c    | 335 ++++++++++++++++++++++++++++++++++++++++
+>  lib/fib/trie.c          |  83 +++++-----
+>  lib/rib/rib6_internal.h |  22 +++
+>  lib/rib/rte_rib6.c      |  15 ++
+>  4 files changed, 415 insertions(+), 40 deletions(-)
+>  create mode 100644 lib/rib/rib6_internal.h
 >
-> There are a couple of memory leaks in failure paths. Patchset fixes
-> those.
+> ---
+> v2:
+> * Compute the empty-level count directly from the RIB node
+>   (rte_rib6_node_has_children + rte_rib6_get_parent, O(1)) instead of
+>   the v1 multi-level supernet scan over byte boundaries.
+> * Drop v1 patches 4-5 (valid_descendants counter + single-descent
+>   helper): no longer needed, the node-based count is already O(1), so
+>   rte_rib6 needs no new per-node accounting field.
 >
-> 4. Zero-peer async request does not trigger alarm
+> v1:
+> * Keep rsvd_tbl8s; recompute it via topology-stable empty-supernet
+>   count (dir24_8 pattern at 13 levels) instead of RIB-derived
+>   depth_diff.
+> * Drop RFC patch 3/3 (no longer needed).
+> * Add extended regression tests.
+> * Add patches 4-5: RIB valid_descendants + single-descent helper
+>   (optional perf optimization; not for stable).
+> * Production-validated on a live BGP router.
 >
-> When async requests are performed but no peers exist, we created
-> a dummy request and put it on the queue, but we never set the
-> dummy alarm that is supposed to handle that request. Patchset adds
-> the alarm set in dummy paths where none was present before.
+> --
+> 2.43.0
 >
-> v7:
-> - Moved request ID reservation till after allocation
-> - Added build check for request ID size matching pointer size
-> - Moved comment about minimum delay alarm from patch 4 to patch 6
->
-> Note: AI review had a bunch of false positive "errors", all of them
-> looked at and verified as such.
->
-> v6:
->
-> Moved pieces around, namely:
->
-> 1) apply request ID refactor first as a standalone patch
-> 2) fix the deadlock immediately after
-> 3) fix memory leaks next
-> 4) add missing callback as a final step
->
-> Contents of the patchset remain the same.
->
-> Anatoly Burakov (6):
->   eal: fix wrong log message in async IPC request
->   eal: use request ID instead of pointers
->   eal: avoid deadlock in async IPC alarm callback
->   eal: fix async IPC memory leaks on partial failure
->   eal: fix memory leak in async IPC secondary path
->   eal: fix async IPC callback not fired when no peers
->
->  lib/eal/common/eal_common_proc.c | 137 +++++++++++++++++++++++--------
->  1 file changed, 103 insertions(+), 34 deletions(-)
 
-Series applied with my suggestion on patch 4, thanks for the fixes.
+Series applied, thanks.
 
 
 -- 
