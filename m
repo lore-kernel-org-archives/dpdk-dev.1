@@ -2,68 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D98C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 22:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664B8C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 23:09:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4A9540285;
-	Thu,  2 Jul 2026 00:37:07 +0200 (CEST)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com
- [209.85.128.171])
- by mails.dpdk.org (Postfix) with ESMTP id 8774640279
- for <dev@dpdk.org>; Thu,  2 Jul 2026 00:37:06 +0200 (CEST)
-Received: by mail-yw1-f171.google.com with SMTP id
- 00721157ae682-8000e21f014so17403937b3.2
- for <dev@dpdk.org>; Wed, 01 Jul 2026 15:37:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782945426;
- x=1783550226; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=X4dGOK17LFySI3T9SsMz+f6pEUALx8dP/Je0nL1y/pA=;
- b=C6j4kNQMR2uo8c47U6ZkRUYacOLQtwTyQks4o18hkkeJvpfrqVhxH/eWf7C4g2M7p0
- VtQD4JeYnnFmRUmD7YBCHi/yiVFHmw40MvmrAmiPmfOIxMim+xUdHopblZ0hLBH7AASt
- AU/q4gKyOzYnYTXaAJ9/ZswgJt+p209mXKhLdj0o93pBFLhAWzz5+qubLBgZxx744+pk
- RyXlF42eg34+u2DrJSrbtXrS6QTRRMm28uUzPoET/I0dikXrUYpuTi3m6hXptzyUAr9O
- sKMKFYP/dlfoWCHiSQX3T8Oa1IULe+JhChStj3k+RFrsbQAD1UHNRuaUjKI6FPKFCNrz
- rZrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782945426; x=1783550226;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=X4dGOK17LFySI3T9SsMz+f6pEUALx8dP/Je0nL1y/pA=;
- b=qviLUfv4Sp6TAfbFr8V8ElxYqLV8VI4r6/JvW9DL+0BRxPXrGi8PpMG3U0Ituz5Rjs
- a5c2dtLbJlOegV0DRuBJCAG+co7qoKwe2QAV9X8R1myhxg/wz1OAR/8XzCSmFobWhlJy
- nQpjhElORt74b/ZOtJS4rkoakkwIfA/0c5muVY1Cs6rXepxXRuzvU97VF646b8nUD+kq
- PhXjJBrT5OvBwlbygBdfggdn/M/aoLg44XcygRVAE9dOy6EkD0Hx1JeFcXAaDMsHX3NE
- t5XgZvDfls72gOv9cMKXRWwunfXWUprlIWqh6fXW5vvTRWyBw3lDfnDHVmq2fTq6KJ7S
- EA4w==
-X-Gm-Message-State: AOJu0YzeCeSgiiHJMuXxFf7jW7Sb2PxcFynIyI91CbA/b5ZnCm9kjVv7
- bY0Kmb4nXd0tZ1r4xKzO37TAfN7u5fJ28nHnupYorJNDO0p35xYlBTGBycr/paIfPcUs1BKzVAC
- F/kWy
-X-Gm-Gg: AfdE7cl/Ggx4uOz+ilqVPS20OroVtSssRbWymyCujtXjmY/NvKOk0AVNJrEWJwa1auC
- WmrP64g6ntnTnfdzJY0C1vL0LKs8GWbvZR9W94q7OgjmVIDvNawtYUDyR4NDrLKaeTLXHbji8vB
- w96ey9FuziUOijY9e3hePDNd0NV7/1lNrro+1erjzrFZsluexxVxK32b/6gSvub8oJzanPOVCU+
- cqWVz9MnXt5l8wMq91sFgPMzvgp5Z3gDtplWmrQiXz4P8YmWNnMMC13iTB4t+m6H1wcpXQVMClQ
- x2/jsKhPsIkLIkaKMVi3EmtjO/L+ggMoWvyad+hRg80lNiS/g6m1pFr5P+1e0NgsggruslMrQiV
- ZyIrDhn/UT27sJ7LaQcnh96OnXZnyw1+eDDcGrO+XE8qCZcTAZnogegdZH6+O2f/RUgfava5aoc
- SADYrrTfXwUnO4inw3SMC9T9ljvcq+LVl25oIqIzsVBeU5UCWTS84=
-X-Received: by 2002:a05:690c:4d47:b0:80c:85c6:8993 with SMTP id
- 00721157ae682-812ebe614b6mr43275717b3.66.1782945425839; 
- Wed, 01 Jul 2026 15:37:05 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 00721157ae682-8144af52027sm5530707b3.25.2026.07.01.15.37.04
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 01 Jul 2026 15:37:05 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id A321F4064A;
+	Thu,  2 Jul 2026 01:09:05 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 2850440279;
+ Thu,  2 Jul 2026 01:09:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782947345; x=1814483345;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=YQa5UVG/I6ldVDA7fUnD3FQ10Z3rIVUoC+/kreTObog=;
+ b=eLBR8SudDSrzCRpzoB2o8cqiDPuPtxMoBI/KlyeXGiw725kJ541q1Zau
+ rYxfG4eqHKqaM1Wpih86MDJHA2peAfbQzuCcODTbMYLNdw9f6sdqCB8ws
+ FkiOmLQfPGXcXdKk2Rnak2AX3cbwFU2YGsM3X6dLIC2FVKyN4do07sGbu
+ DNe1rnFveNOjbRxq1U7w82yYLv84gxakCCOKtBEdDmBa95nZVD7sl1ZX6
+ jnrFWU0vbhkFLyqJOL8vjNVEDAH3aNMC3JCO2Cu1o9zBbu99+CQGh+UDd
+ ct5EQRsg/fhKpe71QkZKqBgkiIsiiq2v7o9LNtG+9UQz6Sycn5gw0v58F A==;
+X-CSE-ConnectionGUID: 5rquPfkMR1i8pkhPGCZboQ==
+X-CSE-MsgGUID: 5/Q45ARTRNiVxxIfu1S9HA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11834"; a="82807558"
+X-IronPort-AV: E=Sophos;i="6.25,142,1779174000"; d="scan'208";a="82807558"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 16:09:03 -0700
+X-CSE-ConnectionGUID: vFmEmFz3QxaAeMt8B5OWNw==
+X-CSE-MsgGUID: 9mocDnj3RzqpS4btQhlM8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,142,1779174000"; d="scan'208";a="250972243"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by orviesa006.jf.intel.com with ESMTP; 01 Jul 2026 16:09:01 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH] test/pcapng: add some leeway to timestamp test
-Date: Wed,  1 Jul 2026 15:37:02 -0700
-Message-ID: <20260701223702.105995-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
+ Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
+Subject: [PATCH] net/iavf: fix QinQ handling when only inner VLAN capability
+ is supported
+Date: Wed,  1 Jul 2026 23:08:58 +0000
+Message-Id: <20260701230858.436510-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -79,28 +59,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The timestamp test sometimes fails on busy or emulated CPU's
-add additional slop to allow timestamp to be up to 1 second
-after capture was stopped.
+While adding support for QinQ stripping and insertion
+operations, it was assumed that Single VLAN
+operations are always reported through outer VLAN
+capabilities by the hardware.
+However, it seems that Single VLAN operations can
+also be reported through only inner VLAN capabilities
+as well by the hardware.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+This patches fixes the same for QinQ operations.
+
+Fixes: 8599d7604e0a ("net/iavf: support QinQ strip")
+Fixes: 7ce1363b424f ("net/iavf: support QinQ insertion")
+Cc: stable@dpdk.org
+
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- app/test/test_pcapng.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/intel/iavf/iavf_vchnl.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/app/test/test_pcapng.c b/app/test/test_pcapng.c
-index 298bcbd31f..d14ea84f0d 100644
---- a/app/test/test_pcapng.c
-+++ b/app/test/test_pcapng.c
-@@ -440,7 +440,7 @@ valid_pcapng_file(const char *file_name, uint64_t started, unsigned int expected
- 	int ret;
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index 0643a835d5..0c5b0f8ff1 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -904,13 +904,14 @@ iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable)
+ 	stripping_caps = &vf->vlan_v2_caps.offloads.stripping_support;
  
- 	ctx.start_ns = started;
--	ctx.end_ns = current_timestamp();
-+	ctx.end_ns = current_timestamp() + NS_PER_S;
- 
- 	ctx.pcap = pcap_open_offline_with_tstamp_precision(file_name,
- 							   PCAP_TSTAMP_PRECISION_NANO,
+ 	/* When VLAN extend is disabled, Single VLAN mode which is Outer VLAN
+-	 * When VLAN extend is enabled, QinQ mode, this API works only on
+-	 * Inner VLAN strip which is always 0x8100.
++	 * When VLAN extend is enabled i.e. DVM mode or when hardware reports
++	 * Single VLAN capability through inner stripping_caps, this API
++	 * works only on Inner VLAN strip which is always 0x8100.
+ 	 */
+ 	if (!qinq && (stripping_caps->outer & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
+ 	    (stripping_caps->outer & VIRTCHNL_VLAN_TOGGLE))
+ 		ethertype = &vlan_strip.outer_ethertype_setting;
+-	else if (qinq && (stripping_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
++	else if ((stripping_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
+ 		 (stripping_caps->inner & VIRTCHNL_VLAN_TOGGLE))
+ 		ethertype = &vlan_strip.inner_ethertype_setting;
+ 	else
+@@ -1003,7 +1004,7 @@ iavf_config_vlan_insert_v2(struct iavf_adapter *adapter, bool enable)
+ 	if (!qinq && (insertion_caps->outer & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
+ 	    (insertion_caps->outer & VIRTCHNL_VLAN_TOGGLE))
+ 		ethertype = &vlan_insert.outer_ethertype_setting;
+-	else if (qinq && (insertion_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
++	else if ((insertion_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
+ 		 (insertion_caps->inner & VIRTCHNL_VLAN_TOGGLE))
+ 		ethertype = &vlan_insert.inner_ethertype_setting;
+ 	else
 -- 
-2.53.0
+2.34.1
 
