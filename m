@@ -2,50 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18730C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 10:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5735AC43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 11:07:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B50D402E0;
-	Wed,  1 Jul 2026 12:56:00 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 5A89C40278
- for <dev@dpdk.org>; Wed,  1 Jul 2026 12:32:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C190B4068A;
+	Wed,  1 Jul 2026 13:07:25 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id A79F540278;
+ Wed,  1 Jul 2026 13:07:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782901936; x=1814437936;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=C758pFEK9OAbc6iAytg/CbbvmyynLoHZmmyatcUJUCg=;
- b=IBmegvZEuPt4pAJBVSTn/MgjWb76+X0xK40gSx+shISb7A85RugWggqu
- KAqyrQfKs/SICuNWqF+ZumnQByBi3yxdjjwYnqLx7gahUPRGphNm6FumB
- FV1+09AIA0Ul+Zp4aYUWVPN80g5/KsLkCQol8JK2U7Bgwf6kloyxCQqy/
- 3hVa4IPiWe+TOFg5RhYpoje6X9cqaGYXAf/uSUL6ueJ1dVZIbNULlsLkt
- BKErEinsI1ugOwczb30kbZ1dtaUyCoefqk2Zt1l9tybq1jt1yJ36xdIeh
- GyOfZGYUKrWF8JcwWz6e/9eDrgySh4jd5tde9QrmplcIntIgYfsY/FiPv g==;
-X-CSE-ConnectionGUID: SBgLHVgySLqQyU0DZi/FpA==
-X-CSE-MsgGUID: +f7lNhR0RFK8XdKSazgpMQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="87465651"
-X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; d="scan'208";a="87465651"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Jul 2026 03:32:15 -0700
-X-CSE-ConnectionGUID: sl+c7XEQRF+c+WEdHeaqMg==
-X-CSE-MsgGUID: vOaM1mMxTFatqbK+k9opJQ==
+ t=1782904045; x=1814440045;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=I/zvw7+3XuUar9rTe6hpEF34I4BwSssS4b9kpAERLro=;
+ b=AJ9dkBUzeK4wFlGT0KnKeVNj8YN+2t6okV9FfQwyCbWuTcfGNJqeolC8
+ tsm9BhVxritjxoisnjDW61usFQgAcJlA9/NxT8Wb3EBV05MRP3V4xNEys
+ W+YubvW8f8scpcsS8KEPhYP00Xk8rBtIbHxJMjUOSTP330DRy9xBdp5KG
+ x+h2gUexrVPRNJyuRFGyp5f0DR0EbwfwT57Hfu3vh5TvQ2fSO9xfl1LNj
+ j7seYuM7OoYhCu4cKswOZhecaS99qYxFQXji1dh1kyesv3jKSGHmGrmfO
+ 2cUhpN5mocfzN6AAK7iaDxziXr/jaKdLXajMxyGZwTSE0dxLr2Q5Eky6y g==;
+X-CSE-ConnectionGUID: jLE95UE1Tw2LUmm9Ho3Bhg==
+X-CSE-MsgGUID: BAJNFltZRDa1ehMFYmsqPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="87546000"
+X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; d="scan'208";a="87546000"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 04:07:23 -0700
+X-CSE-ConnectionGUID: rG4YJP7zSRyrQ6jMRj+T7g==
+X-CSE-MsgGUID: jYTSIxU1QfCgXtpSeEgFhQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; d="scan'208";a="250809437"
-Received: from unknown (HELO spr4..) ([10.138.182.169])
- by orviesa006.jf.intel.com with ESMTP; 01 Jul 2026 03:32:13 -0700
-From: Dhananjay Shukla <dhananjay.shukla@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH] net/intel: add MMG device support
-Date: Wed,  1 Jul 2026 15:59:48 +0530
-Message-Id: <20260701102948.3333550-1-dhananjay.shukla@intel.com>
-X-Mailer: git-send-email 2.34.1
+X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; d="scan'208";a="248562817"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 04:07:22 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Wed, 1 Jul 2026 04:07:22 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43 via Frontend Transport; Wed, 1 Jul 2026 04:07:22 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.31) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Wed, 1 Jul 2026 04:07:21 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MR47eklN3hFYKdwkOJ8wGJPszs5PlcAPpcyTO2p3ua05Gc5Kw3ugu6f7B/d9+2l2h3qZC9nK8zaWl2yvlkxMKHwD2Kd6CFv7y9JCg827+CUzdvgnVjns9DcXUk0e9YYdZoS/Hmc8p1+IQlEN3uw23kaOLgMQSt27PJaKOpIl3Ap6qnsRZV/LHf/CugxaqEcqtZiEVw7dHZxCndRW6yrnbc8dNGqSEi1pmIjo3skwiSlNVPqulLGCVUzZHPTZtFkfB3vFUf/4CmjaJwX+Mj3fgZBe4isGW67LKY8esnd+uPn3AJZjFfAAawS8rKXEvFB73FRtqW6zCTH6fSAFBi6Rmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b1OfXLWW1EX2RqhwKCx9lusJ4NKh66G6lrX6VNouOOI=;
+ b=PGV/rp+c5fj9Rk1rI37JMMZId3Xw6+vCwFR21fomAlVMuA7FDlrRlNHaS7shu4hjH77AHBJ34LGpI3aYxNh84Z6eMhyfxIJzoyKp8+ezZk2OEQ+5YtrugGNXBwgI8taCYY7+x7JvPbF3FQUDFyzNNHLSAquGNsrSweqESULwCKSx8IC1HjO4koHI5w0wE/aW3Btar9sEltxAi4zWy9kDWzFJpoRWc6IDtnuwd+2RhL7mSe9boUNds1v4PwIgljODTy1QW4Iz4UtAl8mKcm40yqi6MrFamyDUy54HbRvokFWDHqdHXPsKwu43DuYYFwWq0J4gaAMTgKrDDSycKFelgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by DS0PR11MB7622.namprd11.prod.outlook.com (2603:10b6:8:144::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Wed, 1 Jul 2026
+ 11:07:19 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0159.018; Wed, 1 Jul 2026
+ 11:07:19 +0000
+Date: Wed, 1 Jul 2026 12:07:15 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Mingjin Ye <mingjinx.ye@intel.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, Anatoly Burakov
+ <anatoly.burakov@intel.com>, Vladimir Medvedkin
+ <vladimir.medvedkin@intel.com>
+Subject: Re: [PATCH] net/ixgbe: fix EEPROM read failure on copper media
+Message-ID: <akT04-VmdQR0IvXr@bricha3-mobl1.ger.corp.intel.com>
+References: <20260701090703.107264-1-mingjinx.ye@intel.com>
+ <akTv-wISOVqvd8XD@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <akTv-wISOVqvd8XD@bricha3-mobl1.ger.corp.intel.com>
+X-ClientProxiedBy: DU7P190CA0027.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:10:550::13) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Wed, 01 Jul 2026 12:55:59 +0200
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|DS0PR11MB7622:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32d301e1-1ed1-4ee0-cca5-08ded760eafb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|1800799024|376014|366016|18002099003|22082099003|11063799006|4143699003|56012099006|6133799003;
+X-Microsoft-Antispam-Message-Info: 8oQr5A62ZMr846JlHXsbx+Jgl48CWUD+g2joRCbVgKkkLEuYWIoXJIgvmgYRW/QeQ/yVonMlsh065+DD4NPRKepziktzKsvfdjytQa9kq3rN9IWm2IYU/O4R04C9vbCwyRsA5nQly/UWsOrV/F43DRLruC6uk7wRP5HtJ4UppmHvejFc9cPCQj5zovrtZLqODb5gRsn9lDKG8xeSN/RaOinwR+Ot+iunpU6X5qi2ykn3lopKh40r0+lP1qaKDuDnnIsgrhxP8qO8k/4/f/zsOtoJROvPiLlRnhqtSrsmN6jSImneLt/sd/GciiU0Ht1kkSdSmce/1VUiqgpZmZ+jCNudA5WU6TcKJIOCsbUk9vGShnUrEFD77TAlEGNAypZvoaRn43wG8nOTaEyuSj5P4NjsbPFbfAJNpRXCudHgyRt0nMltPAQqQ0GEYshqoes+5Jjc1uUn4ka93G+eS//AQMaYndZbLGzxOCkWglKY/xO5uR0BJhVjzYy3yP+uQuHGAIlqX/AARpeecZoMeURNh6GrHzRP02kGvERp3A+OjQnhUSuGUDg/CbohfiOAt/QMf0EGi1Ij+QVjKLzCXaYYX7rFkebF9hSW59h+2ze4eR96dpTPIADGz6QO6+HxGoanAHHK7tZNBmlVvQJCtoskpgkp20WBRrIqFwYRnlqhKak=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(18002099003)(22082099003)(11063799006)(4143699003)(56012099006)(6133799003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wxrxQR9e0BjrWgBD6CBSuNsKJFZuT4lhWQ23XXcflFj4knsNqM4uHCUc8wDs?=
+ =?us-ascii?Q?cUQ/95HwA0aFWSXYpBk/i71rLs3aWDVHtEjj7wizRSkDoeqAbZgHVKAoipOU?=
+ =?us-ascii?Q?hkJpRP5+0RlU/QOrKhUBF1jFnefxXZ9DfmFG3t2UlNW0YaAdFs0z0+f9DiAd?=
+ =?us-ascii?Q?cOyr6Fpd6Z5X6dMuIvaMt5rEp1lpbvhqfnDLxXxe97BWEIC8FNxNxFs2griF?=
+ =?us-ascii?Q?XDCcKux3vRZ0s+Y+UvH8aNH3+/QUT/phJ/tpsP5c+O4WgT4QzZHfalptNXfd?=
+ =?us-ascii?Q?f+wIpM9bXGX1dSbm4iDt0wa00FLGVA4NKXPCZ7RaTyBFeAKmx+snCFqqgVXg?=
+ =?us-ascii?Q?it9Uvxe71dlRpGuYHA4VzU0d2/hn6dWGfshzB0uQON7aNDAp9VeNLnETUIHp?=
+ =?us-ascii?Q?KG4VKvpzBhvkudC1lVu2WSy6g6iGs7Djk5yxFVBquGqOq7VwJ7SqImaE8WSB?=
+ =?us-ascii?Q?xjKi90NL1QPJbtvmAsi/kGhghPkNbzv1TOd22uEjlScMkv+lOLRCwyOKJN2U?=
+ =?us-ascii?Q?b/VfJHM2C7vPDtFatuHybMQRaf6GpGCNDwoZLcl0U5SYx+qA1c1Tn6mPGnUJ?=
+ =?us-ascii?Q?yuBuuk/BBgS2NyNIjdBlj6iwvd/EFT2K0tjUEV6Qb1xQo8SAvfJ4DxR7rRmn?=
+ =?us-ascii?Q?n3MLNBpNFRqg8DJ2wEQAuIOmmHu847v69MSRJ+3KR42Q0VaUkilpPMFz6JAY?=
+ =?us-ascii?Q?0wxfiaEUmvcU4GVpgHcV0jFLfQwSalR//aXe5SccQLQ6DEq4CZqYkS//OSAD?=
+ =?us-ascii?Q?+Z8ityIKZxw4phu3ZNBu6UOYcFg/VLaGLFLCXy+7Cg97ISttkIaOggHV7KbO?=
+ =?us-ascii?Q?uJfAPakuv8rYFAUl3ctSstzSrSxRCVHnEF/8Ih8y3ZFLZWfTkIyU5Gec+u0F?=
+ =?us-ascii?Q?kiJbXgrPf6aIDsFRqmWIX5XLguTYyVZa/683bRXcnUVX+tKyyi5v0UG6SRCm?=
+ =?us-ascii?Q?clwKtMpMCDK4Wa9LDyDKgeSCOGl3l0TZEeZVatoNcKOoZhO14vUq47eJZpt1?=
+ =?us-ascii?Q?qkqkMN30U+lXXa8m9kRMDrpcr3QXaWqelqnAX5iOCN12zcaBq6l61A5Lo5o/?=
+ =?us-ascii?Q?nigbsIDHpD0DMazHc5KFou3ktmbWX8rSMftynUu5L0M8DI/UJdm7kXyLowSs?=
+ =?us-ascii?Q?yWBdKYcSEE+QP6BKpYw8zDVpeUO6ktcvxAOSwqhiYB5LCJxy8IoZoGGb9ijy?=
+ =?us-ascii?Q?/Z3K/ydlqjJIbTMMWjtFVef7txlPJG7c10iGfbzX97H6X/81UNfHClJD3eOW?=
+ =?us-ascii?Q?euzEkVqHwzjodNoVc+SmSJrjh18HQMpDFv6vrQw8U3BIwF5YD0rp953HZBY0?=
+ =?us-ascii?Q?FszlcH8OOKTzw8iFE5EWjbX9bOse60mNT778w/siYhzLl0HhG3GWRT6DxKT6?=
+ =?us-ascii?Q?q0mVYpDdgpyT97EyltEY2uLCgch6qmU+jczTtFOV+nAcWIcqBwPYseQ1UvDC?=
+ =?us-ascii?Q?Zxp+t1Y0jtx30yYxXQ5Hoa8W1xySnav4KDO4zKu1zohRZaKDFkHBwfLZGxep?=
+ =?us-ascii?Q?GEVqW5pvFqwUDq+Ji8WPkX/ScvdFbDAf1vDSjzVsUw2Ra1yNqz7cwnyvauhB?=
+ =?us-ascii?Q?a5C6z7l1dbFvTdtNGcqWJTZP3qNTWOoaNQfXdFjfGK94yAggo00YK2umJMDW?=
+ =?us-ascii?Q?aU1516HUkZKEUVCe0EwfVp411T0iKQ5VqiluRDQoNpn4AV2fQF8ZiNN8ukg9?=
+ =?us-ascii?Q?2zAUTFKgFH4X3q0KGh5C3lyI2A/fGTY3w6VBfKEiRucGqr8RVoTcbcfN0hs5?=
+ =?us-ascii?Q?l9L0l7dOWZKp8CIc/Z5jT6JeBQ/QACo=3D?=
+X-Exchange-RoutingPolicyChecked: g2Z2Q5NcPp1hHzw5+vscWUvVf1v9LRbvUVmUM1ARgpPBdO2cLK5BqjVi0acVbagiJsJpY+ghwQaR8ll+sh1pG5qFDsXSqK08X8s2FGwA1PK+M7wtNaWEg3CPGmBMPYu5WRh0639NJLvR1kw5eYZ2DItwcHEZ3BikhZbBcgClaUSq4tacI7slDd4qJ12P6wEM4F2Y9ZHqxaymjQ+XDgSvtAERGUbjjijrfpZr0u82spOajqd+sstk1gbjPNyZHdINdrorNk747VQ7GybyD9me5EuvI819FkFTJ23mqRxb6FqHVH/39N4zelW7vsn3ooZGegsV+Gd1PZdUbx4IJJ0CoA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32d301e1-1ed1-4ee0-cca5-08ded760eafb
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2026 11:07:19.3559 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9yLda47nFxxJXSeMSBzY+CY7QgpI3feu4vTV8K4ljE7nRhA+EL0XEZpeuxR+07VWssDmEcMrdC1+PYafP54o/vzyFjJe87Bg7c/9bNXale4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7622
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,303 +153,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for MMG device initialization in the CPFL PMD by
-replacing direct device_id comparisons against CPFL_DEV_ID_MEV and
-IXD_DEV_ID_VCPF with the idpf_is_vf_device() helper. This
-centralizes VF/PF detection logic in the control path open and makes
-the code handle MMG and future device IDs without requiring changes
-at every call site.
-
-Additionally:
-- Export idpf_is_vf_device() as an internal symbol so it can be
-  called from the CPFL driver.
-- Skip VIRTCHNL2_OP_GET_STATS in cpfl_dev_stats_reset() for VF
-  devices which do not support this virtchannel operation.
-- Skip idpf_vc_rss_hash_set() in idpf_vport_rss_config() for VF
-  devices which do not support setting RSS hash via virtchannel.
-
-Signed-off-by: Dhananjay Shukla <dhananjay.shukla@intel.com>
----
- drivers/net/intel/cpfl/cpfl_ethdev.c        | 34 ++++++++++++---------
- drivers/net/intel/cpfl/cpfl_ethdev.h        |  6 ++--
- drivers/net/intel/cpfl/cpfl_vchnl.c         | 10 +++---
- drivers/net/intel/idpf/idpf_common_device.c | 13 +++++---
- drivers/net/intel/idpf/idpf_common_device.h |  1 +
- 5 files changed, 38 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
-index 7ac8797490..e8cb7b71e8 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.c
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-@@ -369,6 +369,12 @@ cpfl_dev_stats_reset(struct rte_eth_dev *dev)
- 	struct virtchnl2_vport_stats *pstats = NULL;
- 	int ret;
- 
-+	/* VF devices do not support VIRTCHNL2_OP_GET_STATS */
-+	if (idpf_is_vf_device(&vport->adapter->hw)) {
-+		cpfl_reset_mbuf_alloc_failed_stats(dev);
-+		return 0;
-+	}
-+
- 	ret = idpf_vc_stats_query(vport, &pstats);
- 	if (ret != 0)
- 		return ret;
-@@ -1703,7 +1709,7 @@ cpfl_handle_vchnl_event_msg(struct cpfl_adapter_ext *adapter, uint8_t *msg, uint
- 	}
- 
- 	/* ignore if it is ctrl vport */
--	if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV &&
-+	if (!idpf_is_vf_device(&adapter->base.hw) &&
- 			adapter->ctrl_vport.base.vport_id == vc_event->vport_id)
- 		return;
- 
-@@ -1946,7 +1952,7 @@ cpfl_stop_cfgqs(struct cpfl_adapter_ext *adapter)
- 	int i, ret;
- 
- 	for (i = 0; i < adapter->num_tx_cfgq; i++) {
--		if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+		if (idpf_is_vf_device(&adapter->base.hw))
- 			ret = idpf_vc_ena_dis_one_queue_vcpf(&adapter->base,
- 					adapter->cfgq_info[0].id,
- 					VIRTCHNL2_QUEUE_TYPE_CONFIG_TX, false);
-@@ -1961,7 +1967,7 @@ cpfl_stop_cfgqs(struct cpfl_adapter_ext *adapter)
- 	}
- 
- 	for (i = 0; i < adapter->num_rx_cfgq; i++) {
--		if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+		if (idpf_is_vf_device(&adapter->base.hw))
- 			ret = idpf_vc_ena_dis_one_queue_vcpf(&adapter->base,
- 					adapter->cfgq_info[1].id,
- 					VIRTCHNL2_QUEUE_TYPE_CONFIG_RX, false);
-@@ -1997,7 +2003,7 @@ cpfl_start_cfgqs(struct cpfl_adapter_ext *adapter)
- 	}
- 
- 	for (i = 0; i < adapter->num_tx_cfgq; i++) {
--		if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+		if (idpf_is_vf_device(&adapter->base.hw))
- 			ret = idpf_vc_ena_dis_one_queue_vcpf(&adapter->base,
- 					adapter->cfgq_info[0].id,
- 					VIRTCHNL2_QUEUE_TYPE_CONFIG_TX, true);
-@@ -2011,7 +2017,7 @@ cpfl_start_cfgqs(struct cpfl_adapter_ext *adapter)
- 	}
- 
- 	for (i = 0; i < adapter->num_rx_cfgq; i++) {
--		if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+		if (idpf_is_vf_device(&adapter->base.hw))
- 			ret = idpf_vc_ena_dis_one_queue_vcpf(&adapter->base,
- 					adapter->cfgq_info[1].id,
- 					VIRTCHNL2_QUEUE_TYPE_CONFIG_RX, true);
-@@ -2185,7 +2191,7 @@ cpfl_cfgq_setup(struct cpfl_adapter_ext *adapter)
- 	for (i = 0; i < adapter->num_cfgq; i++) {
- 		if (i % 2 == 0) {
- 		/* Setup Tx config queue */
--			if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+			if (idpf_is_vf_device(&adapter->base.hw))
- 				create_cfgq_info[i].id = cfgq_info->cfgq[i].qid;
- 			else
- 				create_cfgq_info[i].id = vport->base.chunks_info.tx_start_qid +
-@@ -2195,7 +2201,7 @@ cpfl_cfgq_setup(struct cpfl_adapter_ext *adapter)
- 			create_cfgq_info[i].len = CPFL_CFGQ_RING_SIZE;
- 			create_cfgq_info[i].buf_size = CPFL_CFGQ_BUFFER_SIZE;
- 			memset(&create_cfgq_info[i].reg, 0, sizeof(struct idpf_ctlq_reg));
--			if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+			if (idpf_is_vf_device(&adapter->base.hw))
- 				create_cfgq_info[i].reg.tail = cfgq_info->cfgq[i].qtail_reg_start;
- 			else
- 				create_cfgq_info[i].reg.tail = tx_qtail_start +
-@@ -2203,7 +2209,7 @@ cpfl_cfgq_setup(struct cpfl_adapter_ext *adapter)
- 
- 		} else {
- 		/* Setup Rx config queue */
--			if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+			if (idpf_is_vf_device(&adapter->base.hw))
- 				create_cfgq_info[i].id = cfgq_info->cfgq[i].qid;
- 			else
- 				create_cfgq_info[i].id = vport->base.chunks_info.rx_start_qid +
-@@ -2213,7 +2219,7 @@ cpfl_cfgq_setup(struct cpfl_adapter_ext *adapter)
- 			create_cfgq_info[i].len = CPFL_CFGQ_RING_SIZE;
- 			create_cfgq_info[i].buf_size = CPFL_CFGQ_BUFFER_SIZE;
- 			memset(&create_cfgq_info[i].reg, 0, sizeof(struct idpf_ctlq_reg));
--			if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+			if (idpf_is_vf_device(&adapter->base.hw))
- 				create_cfgq_info[i].reg.tail = cfgq_info->cfgq[i].qtail_reg_start;
- 			else
- 				create_cfgq_info[i].reg.tail = rx_qtail_start +
-@@ -2289,7 +2295,7 @@ cpfl_ctrl_path_close(struct cpfl_adapter_ext *adapter)
- {
- 	cpfl_stop_cfgqs(adapter);
- 	cpfl_remove_cfgqs(adapter);
--	if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV)
-+	if (!idpf_is_vf_device(&adapter->base.hw))
- 		idpf_vc_vport_destroy(&adapter->ctrl_vport.base);
- 	else
- 		vcpf_del_queues(adapter);
-@@ -2300,7 +2306,7 @@ cpfl_ctrl_path_open(struct cpfl_adapter_ext *adapter)
- {
- 	int ret;
- 
--	if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV) {
-+	if (!idpf_is_vf_device(&adapter->base.hw)) {
- 		ret = cpfl_vc_create_ctrl_vport(adapter);
- 		if (ret) {
- 			PMD_INIT_LOG(ERR, "Failed to create control vport");
-@@ -2329,7 +2335,7 @@ cpfl_ctrl_path_open(struct cpfl_adapter_ext *adapter)
- 	ret = cpfl_cfgq_setup(adapter);
- 	if (ret) {
- 		PMD_INIT_LOG(ERR, "Failed to setup control queues");
--		if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV)
-+		if (!idpf_is_vf_device(&adapter->base.hw))
- 			goto err_cfgq_setup;
- 		else
- 			goto err_del_cfg;
-@@ -2355,7 +2361,7 @@ cpfl_ctrl_path_open(struct cpfl_adapter_ext *adapter)
- 	cpfl_remove_cfgqs(adapter);
- err_cfgq_setup:
- err_init_ctrl_vport:
--	if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV)
-+	if (!idpf_is_vf_device(&adapter->base.hw))
- 		idpf_vc_vport_destroy(&adapter->ctrl_vport.base);
- err_del_cfg:
- 	vcpf_del_queues(adapter);
-@@ -2835,7 +2841,7 @@ cpfl_dev_vport_init(struct rte_eth_dev *dev, void *init_params)
- 		}
- 	}
- 	/* get the vport info */
--	if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF) {
-+	if (idpf_is_vf_device(&adapter->base.hw)) {
- 		pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
- 		vi.func_type = VCPF_CPCHNL2_FTYPE_LAN_VF;
- 		vi.pf_id = CPFL_HOST0_CPF_ID;
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.h b/drivers/net/intel/cpfl/cpfl_ethdev.h
-index d41aa93191..31c9d7f1a7 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.h
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.h
-@@ -340,7 +340,7 @@ cpfl_get_vsi_id(struct cpfl_itf *itf)
- 
- 		return repr->vport_info->vport.info.vsi_id;
- 	} else if (itf->type == CPFL_ITF_TYPE_VPORT) {
--		if (itf->adapter->base.hw.device_id == CPFL_DEV_ID_MEV) {
-+		if (!idpf_is_vf_device(&itf->adapter->base.hw)) {
- 			vport_id = ((struct cpfl_vport *)itf)->base.vport_id;
- 
- 			vport_identity.func_type = CPCHNL2_FTYPE_LAN_PF;
-@@ -359,7 +359,7 @@ cpfl_get_vsi_id(struct cpfl_itf *itf)
- 
- 			vsi_id = info->vport.info.vsi_id;
- 		} else {
--			if (itf->adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+			if (idpf_is_vf_device(&itf->adapter->base.hw))
- 				vsi_id = (uint16_t)((struct cpfl_vport *)itf)->vport_info.vsi_id;
- 		}
- 	}
-@@ -402,7 +402,7 @@ vcpf_get_abs_qid(uint16_t port_id,  uint32_t queue_type)
- 		return CPFL_INVALID_HW_ID;
- 	if (itf->type == CPFL_ITF_TYPE_VPORT) {
- 		vport = (void *)itf;
--		if (itf->adapter->base.hw.device_id == IXD_DEV_ID_VCPF) {
-+		if (idpf_is_vf_device(&itf->adapter->base.hw)) {
- 			switch (queue_type) {
- 			case VIRTCHNL2_QUEUE_TYPE_TX:
- 				return vport->vport_info.abs_start_txq_id;
-diff --git a/drivers/net/intel/cpfl/cpfl_vchnl.c b/drivers/net/intel/cpfl/cpfl_vchnl.c
-index c9d122d2c3..593516f700 100644
---- a/drivers/net/intel/cpfl/cpfl_vchnl.c
-+++ b/drivers/net/intel/cpfl/cpfl_vchnl.c
-@@ -216,7 +216,7 @@ cpfl_config_ctlq_rx(struct cpfl_adapter_ext *adapter)
- 	uint16_t num_qs;
- 	int size, err, i;
- 
--	if (adapter->base.hw.device_id != IXD_DEV_ID_VCPF) {
-+	if (!idpf_is_vf_device(&adapter->base.hw)) {
- 		if (vport->base.rxq_model != VIRTCHNL2_QUEUE_MODEL_SINGLE) {
- 			PMD_DRV_LOG(ERR, "This rxq model isn't supported.");
- 			err = -EINVAL;
-@@ -235,7 +235,7 @@ cpfl_config_ctlq_rx(struct cpfl_adapter_ext *adapter)
- 		return err;
- 	}
- 
--	if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+	if (idpf_is_vf_device(&adapter->base.hw))
- 		vc_rxqs->vport_id = rte_cpu_to_le_32(VCPF_CFGQ_VPORT_ID);
- 	else
- 		vc_rxqs->vport_id = vport->base.vport_id;
-@@ -249,7 +249,7 @@ cpfl_config_ctlq_rx(struct cpfl_adapter_ext *adapter)
- 		rxq_info->queue_id = adapter->cfgq_info[2 * i + 1].id;
- 		rxq_info->model = VIRTCHNL2_QUEUE_MODEL_SINGLE;
- 		rxq_info->data_buffer_size = adapter->cfgq_info[2 * i + 1].buf_size;
--		if (adapter->base.hw.device_id != IXD_DEV_ID_VCPF)
-+		if (!idpf_is_vf_device(&adapter->base.hw))
- 			rxq_info->max_pkt_size = vport->base.max_pkt_len;
- 		rxq_info->desc_ids = VIRTCHNL2_RXDID_2_FLEX_SQ_NIC_M;
- 		rxq_info->qflags |= VIRTCHNL2_RX_DESC_SIZE_32BYTE;
-@@ -281,7 +281,7 @@ cpfl_config_ctlq_tx(struct cpfl_adapter_ext *adapter)
- 	uint16_t num_qs;
- 	int size, err, i;
- 
--	if (adapter->base.hw.device_id != IXD_DEV_ID_VCPF) {
-+	if (!idpf_is_vf_device(&adapter->base.hw)) {
- 		if (vport->base.txq_model != VIRTCHNL2_QUEUE_MODEL_SINGLE) {
- 			PMD_DRV_LOG(ERR, "This txq model isn't supported.");
- 			err = -EINVAL;
-@@ -300,7 +300,7 @@ cpfl_config_ctlq_tx(struct cpfl_adapter_ext *adapter)
- 		return err;
- 	}
- 
--	if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+	if (idpf_is_vf_device(&adapter->base.hw))
- 		vc_txqs->vport_id = rte_cpu_to_le_32(VCPF_CFGQ_VPORT_ID);
- 	else
- 		vc_txqs->vport_id = vport->base.vport_id;
-diff --git a/drivers/net/intel/idpf/idpf_common_device.c b/drivers/net/intel/idpf/idpf_common_device.c
-index f27a911977..1586dae96c 100644
---- a/drivers/net/intel/idpf/idpf_common_device.c
-+++ b/drivers/net/intel/idpf/idpf_common_device.c
-@@ -451,6 +451,7 @@ idpf_adapter_init(struct idpf_adapter *adapter)
-  *
-  * Return: 1 for VF device, 0 for PF device.
-  */
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_is_vf_device)
- bool idpf_is_vf_device(struct idpf_hw *hw)
- {
- 	if (hw->device_id == IDPF_DEV_ID_SRIOV  || hw->device_id == IXD_DEV_ID_VCPF)
-@@ -608,6 +609,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(idpf_vport_rss_config)
- int
- idpf_vport_rss_config(struct idpf_vport *vport)
- {
-+	struct idpf_hw *hw = &vport->adapter->hw;
- 	int ret;
- 
- 	ret = idpf_vc_rss_key_set(vport);
-@@ -622,10 +624,13 @@ idpf_vport_rss_config(struct idpf_vport *vport)
- 		return ret;
- 	}
- 
--	ret = idpf_vc_rss_hash_set(vport);
--	if (ret != 0) {
--		DRV_LOG(ERR, "Failed to configure RSS hash");
--		return ret;
-+	/* VF devices do not support setting RSS hash */
-+	if (!idpf_is_vf_device(hw)) {
-+		ret = idpf_vc_rss_hash_set(vport);
-+		if (ret != 0) {
-+			DRV_LOG(ERR, "Failed to configure RSS hash");
-+			return ret;
-+		}
- 	}
- 
- 	return ret;
-diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
-index aee3cd317c..f4c7f1b2d1 100644
---- a/drivers/net/intel/idpf/idpf_common_device.h
-+++ b/drivers/net/intel/idpf/idpf_common_device.h
-@@ -63,6 +63,7 @@
- (PCI_BASE_CLASS_NETWORK_ETHERNET << 16 | PCI_SUB_BASE_CLASS_NETWORK_ETHERNET << 8 |  \
- IDPF_NETWORK_ETHERNET_PROGIF)
- 
-+__rte_internal
- bool idpf_is_vf_device(struct idpf_hw *hw);
- 
- enum idpf_rx_func_type {
--- 
-2.34.1
-
+On Wed, Jul 01, 2026 at 11:46:19AM +0100, Bruce Richardson wrote:
+> On Wed, Jul 01, 2026 at 09:07:03AM +0000, Mingjin Ye wrote:
+> > The ixgbe_get_module_info() and ixgbe_get_module_eeprom() functions
+> > attempt to read SFF EEPROM data for all port types. However, copper
+> > media ports do not have SFF EEPROMs, causing invalid I2C operations
+> > and generating error logs.
+> > 
+> > This patch adds a media type check at the beginning of both functions.
+> > If the media type is ixgbe_media_type_copper, return -ENOTSUP to
+> > safely skip the EEPROM read.
+> > 
+> > Fixes: b74d0cd43e37 ("net/ixgbe: add module EEPROM callbacks for ixgbe")
+> > Cc: stable@dpdk.org
+> > 
+> > Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
+> > ---
+> >  drivers/net/intel/ixgbe/ixgbe_ethdev.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> > 
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> 
+Patch applied to dpdk-next-net-intel.
+Thanks,
+/Bruce
