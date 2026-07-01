@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB4AC43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 16:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB0CC43327
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 16:22:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21C2240A84;
-	Wed,  1 Jul 2026 18:21:41 +0200 (CEST)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
- [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id 1E5F240693
+	by mails.dpdk.org (Postfix) with ESMTP id 485FD40B92;
+	Wed,  1 Jul 2026 18:21:42 +0200 (CEST)
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
+ [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id DC34740A6E
  for <dev@dpdk.org>; Wed,  1 Jul 2026 18:21:38 +0200 (CEST)
-Received: by mail-pj1-f45.google.com with SMTP id
- 98e67ed59e1d1-37fc01881f2so785971a91.1
+Received: by mail-pj1-f50.google.com with SMTP id
+ 98e67ed59e1d1-380cda7f00cso126259a91.0
  for <dev@dpdk.org>; Wed, 01 Jul 2026 09:21:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782922897;
- x=1783527697; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782922898;
+ x=1783527698; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qTY9Z+25lOu5AOfuzl+tQSUUOi8o6p4dfnzVIH38ndo=;
- b=psC6huk+npGHofJ8b6BNiVjnrQwgHrMK+qUEzipJptPoc9kSP4f5P6uqad9aTti6YR
- y05jnO82MMJXCIqSHiOlFm/3CDYKx5y4XePsSh90XdtJyzmVWkat9msjr2zbHffuIW7K
- IrQIWJYKg7LTErq3IOa+AHXWq64+MgS3vUE5WOfeUMmDEErTxfFfoHY9E2a3o+N5OYZP
- cPlFsJ4a00OvdaojXaS1i6dcE8OzhVsGMa8MJu0TEd8dPjV1a3SLsUPfgpnrVvL8+rxZ
- mXXVnj7VMF7iGrw0qH372j7pSF06zey/kEwJkIxsaUbk7JM+UMDB6cGKvwqNS1hdQcBu
- z4fQ==
+ bh=mqLNxSzV5lOiyNJqZ3u2GTh2HDlPuHygR6PnC2klQZ8=;
+ b=bUsOCnZOIY9rPSBgIjS6CtziHyKeEc1oEOA9BY/N+I+cZWN2VJiKwrF8j+QV6tFtW4
+ Lj7u4cZcB/ORm7eC94Z0U9LPKqURg9lAYmPLLzeJcurCpJrbnki593QJ8N8NUTDGvhR7
+ oAnrKxy0jqh8ClW1qAeWXChAwHrbie5/PsnRcSPOxW/j/07XKCU+6b3l6POIO4zNl84I
+ 8r9GIRx+0pFs2Kit8hv6I49VilJqJpGSyiV1Nfa8W0lYhPm+e+NbXw/Zeu5jZnglsSEg
+ +VOHCm0EX76exj4BzbKzfiVhRO6kOkGNEWNxRcr+jqGzyNcnJOXBd5Z69aZl8ASod2fq
+ A3dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782922897; x=1783527697;
+ d=1e100.net; s=20251104; t=1782922898; x=1783527698;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=qTY9Z+25lOu5AOfuzl+tQSUUOi8o6p4dfnzVIH38ndo=;
- b=kTsXIfKlh1iHUKI6b6yxoJrHU6Af9DEARgW5s3/92lXTDbZD1mGpIwFxVikTrmmkNX
- Im7BPxbyxDDEMgMgzO2JHIa2lPZCdrLQIrjFYefFKFhxEOVCPzQn9z8Bw38fkyMKz562
- iGJn7WPfyIR03BaFhcwSqF2CPo6A+KBdROT+8e2dgPLUwlli1Qzjwuo9Crk26GIKpAq0
- SbxelXpPJ1CqzKbp+R0PfJ0OdM4ffebqcahVgGVB8uplGBuQjzM+Va5kKdHgXP+NPFnd
- aIr/vdkUPEDm4NkOL9FbqoZX1eVq6QSNzIK1P1Y8x7vuNAApu71Nm4lFnULaA5wbBuq4
- 9o7Q==
-X-Gm-Message-State: AOJu0YwWbUdIVTlqrTumqnxP2yXoFDMF/p6o4oSSlQLXNizd5015IsDg
- 1UszqKe+8ypE8zUFLPOKz4wF5oilCp4drp/BhQwVqXIS833OFB/XvGhUBlatFuH14+0gcfzrrSX
- FmJI6
-X-Gm-Gg: AfdE7cmARlL0kNTkCk2D6Q4QvN3p+HJytHE2K/GNCS1Lc91+WMbZ/dWfS24TVQaLURZ
- QAQdeIYc+ljMcCegnjPUjOciV3x+dfOGQKjIGkxqqMMVmQrQu8RTBHx1KDXP+ei2H+O4FLFNokE
- YzOxgn7LHxGM3AJeui/Apg8kEtE3VF8spCNpeIgKu94zSkRNd/ChGjBYB3awIEYRuljIkkjIsgD
- Y5mrfKbOF4kUIkxG53+Ohk89Gcp6Ghwknpo7Gk4oa/bxjmgMcs6JG6qG288auZytyIJdrXSJi6M
- QTVt2GW64lxN1jUtr0JyIXDaXAGwa1pEgxkC7FmF/dNmPNoMXUEXy5Ziu0cvoC1Z+TjR2e/0u/y
- Gx6YKGgPnrBIjB91aoVc1hAOf4Zj4sgDjscPAXT22WrzrK8TtqWLKzUE64WcD3GX5ZknR/XDKPP
- zpsiS9fx5v7aOw2wTO6iCkdktrmB84gggfXjsYQJ75vnmQ3y3hmH4=
-X-Received: by 2002:a17:90b:534e:b0:37f:a94e:10b0 with SMTP id
- 98e67ed59e1d1-380ba966cd9mr1417988a91.24.1782922897240; 
- Wed, 01 Jul 2026 09:21:37 -0700 (PDT)
+ bh=mqLNxSzV5lOiyNJqZ3u2GTh2HDlPuHygR6PnC2klQZ8=;
+ b=o3YBYOzeyoHRE4f6JtZ/JBBWwUhV9bBECrVznIAq8S/jN40Je0v8i7pcF0bx30CDSy
+ 7W2VjD0mRG53vYvCNYDm+KntuS1C6NVOTlzB36fFhYg0ihdK7utVLm0YQVwQV/HSA7ML
+ f11TzGs7AXrfu4rFlONWW5oRD8ZQu25unoL/7zcHTf520LzkqE9H6a1O/f3i9ZNBuhiI
+ 7FRaK/vFXjH86k0XvM0TgUr0jx8WWtUjDafEFFVDM1ORywpga3eY9hfVxg81Ev2Ghvoe
+ zywj9DMnfNuhzUo5GhXFVvBCGo1zTQ0MSA45APbtXZdPB5YGmf4ZDIb1LYXo8bVoIcCw
+ rqog==
+X-Gm-Message-State: AOJu0YxddxpItgibN41xQi5cIcOiS4jtQV22fiR7nBmpD+Gx5IbuPI9G
+ aguT5PxXQkvvTayJhSIThq3kuTvigcPf2/kxAbxMLBRw8u3M+jNPefo/oCHYQ2ygeo5XYXf3Y/s
+ vy1k0
+X-Gm-Gg: AfdE7cmp3EBdF6E3KhwBWhA7Mc3eM/lwhc18hP+dGLmARQAQL1Ea6RkKcNRD57T0I1+
+ yBxc7gHDYRUirIvxlxWQO5e3PNkEXe7srLUnrFh1L/FwW3Fh10dFtXM/GZqQ1lJl86DgBc4Crst
+ cl9cN2ySyyWvzb0mea8vn6HEUJ8KbfhfNOCOhoCxV8eo3J7B4vPSZCD8zDbA66dV7dxB12lNZdD
+ tCVEgMRp2Gv/bbBwnRqYAXWmlhjbFZSjpwg2lGXV0Haphuyv6+LZcR+h+9yxfrMhcxIBiAtFBCg
+ 0aQn3I4kExcKOxox3m6qd/m/lZBFrz7zQ+fHSGajFLsWCuz7tbQrUnhJYYAdLi84ro/eP3bEKVg
+ QvM5EVXKMjQ+xH+mGlmnniRGhTIIhSfTFoHIclYLdoO4qP4iK89GChuL9yTaOl79EVuGd3nl9f6
+ 7funTTSAmzGR/2j00+R0QxCezgCWAe5IUK/ZYBuaTErGncA3K6YAM=
+X-Received: by 2002:a17:90a:d005:b0:380:8b14:d8e1 with SMTP id
+ 98e67ed59e1d1-380baa8dc8dmr1454566a91.24.1782922898069; 
+ Wed, 01 Jul 2026 09:21:38 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30ee32519aesm22039877eec.27.2026.07.01.09.21.36
+ 5a478bee46e88-30ee32519aesm22039877eec.27.2026.07.01.09.21.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 01 Jul 2026 09:21:36 -0700 (PDT)
+ Wed, 01 Jul 2026 09:21:37 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 7/8] ip_frag: remove use of rte_memcpy
-Date: Wed,  1 Jul 2026 09:20:32 -0700
-Message-ID: <20260701162127.207318-8-stephen@networkplumber.org>
+Subject: [PATCH v3 8/8] doc: add release note about ip_frag changes
+Date: Wed,  1 Jul 2026 09:20:33 -0700
+Message-ID: <20260701162127.207318-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260701162127.207318-1-stephen@networkplumber.org>
 References: <20260616210656.464062-1-stephen@networkplumber.org>
@@ -81,59 +81,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace rte_memcpy with assignment or plain memcpy to
-get more static checking.
+These changes maybe surprising and need some documentation.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/ip_frag/rte_ipv6_fragmentation.c | 3 +--
- lib/ip_frag/rte_ipv6_reassembly.c    | 5 ++---
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ doc/guides/rel_notes/release_26_07.rst | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/lib/ip_frag/rte_ipv6_fragmentation.c b/lib/ip_frag/rte_ipv6_fragmentation.c
-index c81f2402e3..86dd2e65ce 100644
---- a/lib/ip_frag/rte_ipv6_fragmentation.c
-+++ b/lib/ip_frag/rte_ipv6_fragmentation.c
-@@ -6,7 +6,6 @@
- #include <errno.h>
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index 4ca0a9ac77..4918cb59ed 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -241,6 +241,16 @@ API Changes
+   - ``rte_pmd_mlx5_enable_steering``
+   - ``rte_pmd_mlx5_disable_steering``
  
- #include <eal_export.h>
--#include <rte_memcpy.h>
++* **ip_frag: changed handling of malformed fragments.**
++
++  - Duplicate fragments are tolerated instead of failing reassembly.
++  - Overlapping fragments are rejected on arrival rather than during reassembly.
++  - Oversized fragments (reassembled length over 65535) are rejected.
++  - For IPv6, fragments with per-fragment extension headers are rejected.
++
++  Overlap and oversize are now detected on arrival, which adds a scan of the
++  already received fragments per fragment and may affect throughput.
++
  
- #include "ip_frag_common.h"
- 
-@@ -24,7 +23,7 @@ __fill_ipv6hdr_frag(struct rte_ipv6_hdr *dst,
- {
- 	struct rte_ipv6_fragment_ext *fh;
- 
--	rte_memcpy(dst, src, sizeof(*dst));
-+	*dst = *src;
- 	dst->payload_len = rte_cpu_to_be_16(len);
- 	dst->proto = IPPROTO_FRAGMENT;
- 
-diff --git a/lib/ip_frag/rte_ipv6_reassembly.c b/lib/ip_frag/rte_ipv6_reassembly.c
-index 9aa2f2d08b..cae4266f97 100644
---- a/lib/ip_frag/rte_ipv6_reassembly.c
-+++ b/lib/ip_frag/rte_ipv6_reassembly.c
-@@ -5,7 +5,6 @@
- #include <stddef.h>
- 
- #include <eal_export.h>
--#include <rte_memcpy.h>
- 
- #include "ip_frag_common.h"
- 
-@@ -145,8 +144,8 @@ rte_ipv6_frag_reassemble_packet(struct rte_ip_frag_tbl *tbl,
- 	int32_t ip_len;
- 	int32_t trim;
- 
--	rte_memcpy(&key.src_dst[0], &ip_hdr->src_addr, 16);
--	rte_memcpy(&key.src_dst[2], &ip_hdr->dst_addr, 16);
-+	memcpy(&key.src_dst[0], &ip_hdr->src_addr, 16);
-+	memcpy(&key.src_dst[2], &ip_hdr->dst_addr, 16);
- 
- 	key.id = frag_hdr->id;
- 	key.key_len = IPV6_KEYLEN;
+ ABI Changes
+ -----------
 -- 
 2.53.0
 
