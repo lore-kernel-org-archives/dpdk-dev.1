@@ -2,60 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDA7C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 18:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 988C7C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 18:36:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0EB2140A71;
-	Wed,  1 Jul 2026 20:35:43 +0200 (CEST)
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com
- [209.85.215.201])
- by mails.dpdk.org (Postfix) with ESMTP id 93C2340697
- for <dev@dpdk.org>; Wed,  1 Jul 2026 20:35:41 +0200 (CEST)
-Received: by mail-pg1-f201.google.com with SMTP id
- 41be03b00d2f7-c892143db7fso624991a12.1
- for <dev@dpdk.org>; Wed, 01 Jul 2026 11:35:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A48F40A7A;
+	Wed,  1 Jul 2026 20:35:45 +0200 (CEST)
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com
+ [209.85.216.74]) by mails.dpdk.org (Postfix) with ESMTP id 9706040A77
+ for <dev@dpdk.org>; Wed,  1 Jul 2026 20:35:43 +0200 (CEST)
+Received: by mail-pj1-f74.google.com with SMTP id
+ 98e67ed59e1d1-380a0925d7bso921446a91.2
+ for <dev@dpdk.org>; Wed, 01 Jul 2026 11:35:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1782930941; x=1783535741; darn=dpdk.org;
+ d=google.com; s=20251104; t=1782930943; x=1783535743; darn=dpdk.org;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=Rj4KCs8B3o4jz+ud9hwdG0BppzIfIi5ePThlnHYXGwA=;
- b=p6vX7SoIY08WNNG9ADrX6JNxnDHSF2qUlBV254Pppt3Rb0TSBacJVgYLA1FKq8yqpp
- i8h5ujwVwMpxXAoUlSgpC0BYEMheF52jMlXwiX8TwTbwJQnKtF29ToFTQ5mvYm9dwJzb
- Vmibk3pbXuV1YgNbXqed80ARc/EkE1Im/6mZ3zl3KW+/XiMx8HRrZ7Qd4xyrEZgwEjus
- H0hfk9HkPYPtOotil3B7XXXmmb+aCWGjXCmMWjdmYkSHOQrPYydxUEJ5+Q15oLKf9Fy1
- SmPp1CDdswpYKkmGYwvByOmVqDH4p7GJD1c6FpszahH621X4NuzFjwPHjx8ctkwtiqP6
- 6y1Q==
+ bh=MZ55g7MoRrFsBPiBM/eSYTGS/5048Ftti28zXggoNWc=;
+ b=rr6PtvaPHiLXR2DIbGaBbtw2niHI10MqVC2LIETDlsvCcuvpOwFAlb1sf5I+485lbp
+ NoIGZX/iMsqge/wu0+5lP9UyfIQ+FONsN3waH8k3kbSPTHkWeJEErgA+T5HlkA/xYs5K
+ hoR4mRDYnDju4smYopkY5rx4HxqDn7p9JeQ72GQeIBnYdmI/ZRKFA7aLWIOXNB2DhIma
+ KePyLWxSjz5FZ8Cnu3Z1nVTo6TY7ppxpO/CJRiFuQyphxQ7/KkHUVzgxO0bNMlR0M8n3
+ 43KGhlgvyJri2g573b05USJ5bJxf9fO0IjlwOpB4Axv3PBDrsMKvTpla9F54bfJB+L5U
+ MkAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782930941; x=1783535741;
+ d=1e100.net; s=20251104; t=1782930943; x=1783535743;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=Rj4KCs8B3o4jz+ud9hwdG0BppzIfIi5ePThlnHYXGwA=;
- b=giN8JNvjIiPYlm978dY3MkJnuVUwjmoP3gLbcfCCeV6fGEazbpz1pQy1eno7jMs/8v
- KOk6fwvXLkQzpwsDy84B3YybNd0GkcWbvEmD+yS7G2tl9gzwN04vNrxSrWY/j9jRIwhu
- H6GnhZkGePFXW15vKmRGKo/8dAAxrgYK8ZsLg7rs0WzbSGi+Fq9qhaghTyvgYngT/Zo9
- MJHRvjQ1dy3QUd2anR+t5EOc6y5/nC74Ng2ikAuMxc82ZMXKV/FF9uGVi41HHEaVVFtC
- kEgw6Ngz13PS1vfRiLRe5p/nkcTF6hyPYlnKkEnzMYYHgJvsAN8KNqota2Y297qy0f2+
- jzGA==
-X-Gm-Message-State: AOJu0YxMuel3GoRlTFdL5ulgLd4DHNCg9HePpvBhf9qP43P4Lj3tO9OZ
- kfk7x3xKqHhzQCbB9D9LZoO6DTCLx/q9+1Jdx3pHw3v2WP2wAOh7l2ay1V1h3X7rR61XZnP5yV1
- WVvwFKMKxpmCkuw==
-X-Received: from pgjp1.prod.google.com ([2002:a63:e641:0:b0:c99:aff5:7085])
+ bh=MZ55g7MoRrFsBPiBM/eSYTGS/5048Ftti28zXggoNWc=;
+ b=ncKGdyOHheIv4Bal7Vy++5n/Eqmlm185mXjYwX1NdvGekc3xVY8gb5D5SN3Vhhd3Z4
+ XX9kQUFnZDJFoEROczexW6ATWItww2Vs6ftcxEYD9vm6uVgIbfP+MTxtosb+Pw0Ks3aO
+ qMmF7cOVS78NDlsJ2++bXdYxxvHQ4sU70keS4lF2gvfD60HWIXcLvBHNDxuEXnQnEIOk
+ KxjotrzfMUthU52ZBotdx9Mvlo2VNfBvOelNJz0jYcaMFowDCBl1WyxYSFztvOHxTGG0
+ 85MLQ9GHbCLnYeW9YXBoBxvlYKL/Hmwmyxm/tHSQUAjWysW80IEClKD+EEPb1bSfkuML
+ K/6w==
+X-Gm-Message-State: AOJu0YxO/BRsXQLF/CIZ1rEqTpz7j4fYEbYRRuUFy8eohYhBFdyF65wO
+ InZ9h/wX2g8U55EqyJO2QU+yiQy+dLQPIWZgDfkf4N1EpMLdmVx9HWzGbNTdD6UdnZTV9OknVs1
+ WGke2kH0IHI8ptQ==
+X-Received: from pjblj3.prod.google.com ([2002:a17:90b:3443:b0:37c:a0c9:c61f])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:a123:b0:3a3:327:c5c8 with SMTP id
- adf61e73a8af0-3bff3c57934mr2212545637.0.1782930940524; 
- Wed, 01 Jul 2026 11:35:40 -0700 (PDT)
-Date: Wed,  1 Jul 2026 11:35:23 -0700
+ 2002:a17:90b:4d88:b0:37f:bfd6:8b40 with SMTP id
+ 98e67ed59e1d1-380aa0952c0mr2399478a91.5.1782930942370; 
+ Wed, 01 Jul 2026 11:35:42 -0700 (PDT)
+Date: Wed,  1 Jul 2026 11:35:24 -0700
 In-Reply-To: <20260701183528.2443032-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20260701183528.2443032-1-joshwash@google.com>
 X-Mailer: git-send-email 2.55.0.rc0.799.gd6f94ed593-goog
-Message-ID: <20260701183528.2443032-6-joshwash@google.com>
-Subject: [PATCH 5/9] net/gve: set mbuf to null in software ring after use
+Message-ID: <20260701183528.2443032-7-joshwash@google.com>
+Subject: [PATCH 6/9] net/gve: free ctx mbuf if packet dropped after first
+ segment
 From: Joshua Washington <joshwash@google.com>
 To: Jeroen de Borst <jeroendb@google.com>,
  Joshua Washington <joshwash@google.com>, 
- Xiaoyun Li <xiaoyun.li@intel.com>, Junfeng Guo <junfengg@nvidia.com>, 
- Rushil Gupta <rushilg@google.com>
+ Junfeng Guo <junfengg@nvidia.com>, Rushil Gupta <rushilg@google.com>
 Cc: dev@dpdk.org, stable@dpdk.org, 
  "Jasper Tran O'Leary" <jtranoleary@google.com>
 Content-Type: text/plain; charset="UTF-8"
@@ -72,49 +71,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, it is possible for mbufs to be uncleared in the sw_ring after
-being returned to the application. This causes an erroneous
-dual-ownership over the buffer until GVE cleans the buffer queue and
-posts new mbufs, overwriting the older pointers. It is possible in such
-a case for a double free to occur while tearing down rings, as both
-the application and the driver could attempt to free the same mbuf.
-Release ownership of the mbuf from the sw_ring as soon as appropriate to
-avoid such a scenario.
+GVE GQ has support for multi-descriptor RX. It is possible for a packet
+to be dropped after the first descriptor has been processed and an mbuf
+has been added to the context. In such a case, the mbuf head should be
+freed before clearing the context so that mbufs aren't leaked.
 
-Fixes: a46583cf43c8 ("net/gve: support Rx/Tx")
-Fixes: 45da16b5b181 ("net/gve: support basic Rx data path for DQO")
+Fixes: 496d4d2c8b54 ("net/gve: support jumbo frame for GQI")
 Cc: stable@dpdk.org
 Signed-off-by: Joshua Washington <joshwash@google.com>
 Reviewed-by: Jasper Tran O'Leary <jtranoleary@google.com>
 ---
- drivers/net/gve/gve_rx.c     | 1 +
- drivers/net/gve/gve_rx_dqo.c | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/net/gve/gve_rx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/net/gve/gve_rx.c b/drivers/net/gve/gve_rx.c
-index 625649cdcf..cda87af294 100644
+index cda87af294..567b82d020 100644
 --- a/drivers/net/gve/gve_rx.c
 +++ b/drivers/net/gve/gve_rx.c
-@@ -152,6 +152,7 @@ gve_rx(struct gve_rx_queue *rxq, volatile struct gve_rx_desc *rxd, uint16_t rx_i
-
- 	rxe = rxq->sw_ring[rx_id];
- 	gve_rx_mbuf(rxq, rxe, frag_size, rx_id);
-+	rxq->sw_ring[rx_id] = NULL;
- 	rxq->stats.bytes += frag_size;
-
- 	if (is_first_frag) {
-diff --git a/drivers/net/gve/gve_rx_dqo.c b/drivers/net/gve/gve_rx_dqo.c
-index c4e2d32067..3665d9e4cd 100644
---- a/drivers/net/gve/gve_rx_dqo.c
-+++ b/drivers/net/gve/gve_rx_dqo.c
-@@ -207,6 +207,7 @@ gve_rx_burst_dqo(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
-
- 		rxm = rxq->sw_ring[rx_buf_id];
- 		gve_completed_buf_list_push(rxq, rx_buf_id);
-+		rxq->sw_ring[rx_buf_id] = NULL;
-
- 		/* Free buffer and report error. */
- 		if (unlikely(rx_desc->rx_error)) {
+@@ -205,6 +205,8 @@ gve_rx_burst(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 		if (gve_rx(rxq, rxd, rx_id)) {
+ 			if (!ctx->drop_pkt)
+ 				rx_pkts[nb_rx++] = ctx->mbuf_head;
++			else if (ctx->mbuf_head != NULL)
++				rte_pktmbuf_free(ctx->mbuf_head);
+ 			rxq->nb_avail += ctx->total_frags;
+ 			gve_rx_ctx_clear(ctx);
+ 		}
 --
 2.55.0.rc0.799.gd6f94ed593-goog
 
