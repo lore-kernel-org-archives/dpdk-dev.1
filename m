@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE71C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 08:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A24C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 08:45:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E595C402E0;
-	Wed,  1 Jul 2026 10:45:11 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id EB16040278;
- Wed,  1 Jul 2026 10:45:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 09140402E0;
+	Wed,  1 Jul 2026 10:45:59 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id DDBBA40278
+ for <dev@dpdk.org>; Wed,  1 Jul 2026 10:45:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782895511; x=1814431511;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=BUa0WQisyAMccuJVecatdZqowdRg28oVn8XPAvvpdM4=;
- b=Rz3fgbPqt2tE1SJhhRpCTXda6bFx8qYYS2AP5t+dlVNv2NMOkBdxF1Ou
- ESiONu/p4MuLsqNtLMsUdSTne/dvpTcwdP+jaglWiFq3enCyRsovi2H8/
- yLCqmZ7ODpIhyOix+DEvW296YcEAGFKx6x+bX6S8lawpCQPTxTDEdmy2z
- rX/Szz79E1yCPerbQSjmJryeZyNI84kXZen40HExP/VHhcK/os9xvNiSN
- aw4MhSyo/IeaGJfo32dzR1fjdu5bglqIkboXV2w5Xhg46OLRPUdMl5cQS
- oYr/npvt28puJeS39NNtriXVnyZNj5PSFj9ej6AnwxsBJaxCwoFLycxo/ A==;
-X-CSE-ConnectionGUID: rjEEKvhpQoi/c85UEc72iA==
-X-CSE-MsgGUID: bPTDAVySQjqrOLpMBSPxxQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="82739353"
-X-IronPort-AV: E=Sophos;i="6.24,235,1774335600"; d="scan'208";a="82739353"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Jul 2026 01:45:10 -0700
-X-CSE-ConnectionGUID: bKePUws5QwesgTvA40QVaA==
-X-CSE-MsgGUID: rNyrCqnlQmW0f9Zhk908Gg==
+ t=1782895558; x=1814431558;
+ h=message-id:date:subject:to:references:from:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=yZuzXJ4Dg2ke7VOFsBvpFS6sOmUu1KT5Kom98FJp+4c=;
+ b=N0YpGDsX5/ZgnV/1gTAPHUG+qiwVetiggShK9c6+K9zJiAzkZRCj/fxc
+ dCRd59QFp2Z70dKk2v/yivMhMa7/XarjqPyGQVtXMusKlEa+ClDGLUmAE
+ fm02KtM7TGxND9ig6+fIFMP5vGPriYV2i40FjjIylSiTfhG9JimJyR8us
+ LuF6KZhY3K+JAqdxXNT7ZOXDYpz7BFWY32pMTMx2NiKf6YacKMMjbz3JY
+ 8k9bYSqSkzXHex39/T6hndmr5RcWKVTWGO+pUNjolTIU3gdN/Lu9lzjZu
+ bujzzBwx+M4HvwtgnvL+UZdt4VFIaJ9x9E/a8KhAqYwOurTMq+CFPjXxe g==;
+X-CSE-ConnectionGUID: AguMx4DVT+qNAKsuxZQb1w==
+X-CSE-MsgGUID: 1byEOO3WQ3aciLQLbmfEFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="71144699"
+X-IronPort-AV: E=Sophos;i="6.24,235,1774335600"; d="scan'208";a="71144699"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 01:45:57 -0700
+X-CSE-ConnectionGUID: 8jtb4kOOSLyOpWYw1eB5UA==
+X-CSE-MsgGUID: wOqfVQtVRI+hgjGmEdMHYg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,235,1774335600"; d="scan'208";a="282577907"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Jul 2026 01:45:09 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.24,235,1774335600"; d="scan'208";a="253149952"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 01:45:57 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 1 Jul 2026 01:45:09 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ 15.2.2562.43; Wed, 1 Jul 2026 01:45:56 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43 via Frontend Transport; Wed, 1 Jul 2026 01:45:09 -0700
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.6) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ 15.2.2562.43 via Frontend Transport; Wed, 1 Jul 2026 01:45:56 -0700
+Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.51) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 1 Jul 2026 01:45:08 -0700
+ 15.2.2562.43; Wed, 1 Jul 2026 01:45:56 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y+/EOU+49XkKf+y9CduqBBbeyUZ2wVS5RKMMWUaHy0zRaGEbgUI8ITnJib7rmakRA5C+2PXABgom7i7q2Y+c7M/FdbBHQsPyyKVRxzxnbZyPH8IyZA2GMUs2ZbQS4iq/I6Ey5C3EV/fo+JngaF46Tlkpg4l69ew0sa8T9LaGlcRJdm8wH3O+6k3WnXYNDCkyQ88PHIOnUJzvhs7NPg+aiD4dFXkkjSXeG2D6/xrwREOfU8QjKFqLUKIN2JVYxKKnhJSj0Rs8sFwQaSeYztbhQ3kmdDfi/2eA/9KtjqHZ8xbhOkTqz+0bBipjPh5NLgPlWSlTswoAcnXbmKj2tHaO5w==
+ b=MGoILLqRK8sgkd9b2Vr/89rP4sDuNSFJ7RzQB6cNw5UFq9fPaOf+5Jygn1JDUUvmey0iBySqGvDzb77WyHpwro6qUW1Rn89JeBDdwTjg0Y3GHBcYrVqcJtrnLvAyxr4fdzo+vQ70snif+BWdhaZ2hm15XvK8/OBKC3SGJNSyOKVLPMQjmvJNAToO5J4VO+E0vTuAEy1E+3zWngl6wOAou/ooDmj9cOOrEZacx6p8l1LWZyGm8FjBea3Tdg2J9c7x+1kyxu9aA6AqJmTIrXIstg6Ko4qSBEMLMrES67ArQ3u0iLN3xXK3Zl7HLHvaVF0zACzD8FikK4eSyGgjiwdbKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0L1ahjSK0ijjeoBVjkDyIm+sA2Q1uXkzPoMkfNql9HA=;
- b=ty9RgzaBxsEAQUW6YxRyyih6uOLYyYTt54iqB5SuBAhxM2sNJPGl4M6KyTsj+6AFlweRdqguQKw/5zBuEMNUuezB27zdc2OZ6fP3OHb1jtE9t967NKFBesnjgispt0lWjVZyg5AZUpfJOoi0VUHHLlRDSw5zMTexJIdRyRJVHks2HB2VcCbcxNvqrO1XRBfmhcrMe/OdoyxXV134vpVbCnl9awq15OGhstbNDFnoX1M9It4fXXOtIqCO2ajkOyTeProoppMiW3krOwksisbWmUnzfNxMrFo5X1teVXmzDE3rxL9g8iciwGXnrXVqdPzUNZ2mtcY7Gfozt29DbLf2Sg==
+ bh=2dvEQ6VdpUSny7y9kUi+1FiK6iaSBv1//N6/Orb24eY=;
+ b=Rgicp+h9ZxAisIZOdGVXUWt790CHsJVYN44RA3GBS+SqyOJTTn6nVJbLiG0HaG2ujtwChB+SJp2llo68INuQfitSa0YAIwTAIrlGbA6WaZo92yhMEkR0zE4cbeWbeIMAQwdBgA1h4QqffkBfgoDoyZrG0H9TYpXD1uCTC/qOOGct7/nHq8mSzxpWyTZL79YRBb5QDYWEU8cVZtEcWaqKI0uKNHCvGr86W6+lruFzVwQB0s1fO/210eNr47EGXvuEuyN19eAu7tOD0V00hIH0hZWbXqKkMeHSvTyT8M1rE6EjlfG9ZbJPmqI9kVYPgv7oXpy7iPxw69YxCfQs3EOn2Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -64,90 +64,88 @@ Received: from BL0PR11MB2993.namprd11.prod.outlook.com (2603:10b6:208:75::28)
  by BY1PR11MB8005.namprd11.prod.outlook.com (2603:10b6:a03:523::18)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Wed, 1 Jul
- 2026 08:45:01 +0000
+ 2026 08:45:48 +0000
 Received: from BL0PR11MB2993.namprd11.prod.outlook.com
  ([fe80::5877:2021:3cf1:1046]) by BL0PR11MB2993.namprd11.prod.outlook.com
  ([fe80::5877:2021:3cf1:1046%6]) with mapi id 15.21.0159.018; Wed, 1 Jul 2026
- 08:44:54 +0000
-Message-ID: <838a36a9-654f-4b32-b3d4-3457dd024b58@intel.com>
-Date: Wed, 1 Jul 2026 09:44:52 +0100
+ 08:45:48 +0000
+Message-ID: <845b63eb-a2d3-4605-98c0-76c8173ee522@intel.com>
+Date: Wed, 1 Jul 2026 09:45:45 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net/idpf: fix Tx of large mbuf segments
+Subject: Re: [PATCH] net/e1000: align device IDs with base code
 To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
-CC: <stable@dpdk.org>
-References: <20260626134440.2108591-1-bruce.richardson@intel.com>
- <20260701082337.3176970-1-bruce.richardson@intel.com>
+References: <20260630161623.3131518-1-bruce.richardson@intel.com>
 Content-Language: en-US
 From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-In-Reply-To: <20260701082337.3176970-1-bruce.richardson@intel.com>
+In-Reply-To: <20260630161623.3131518-1-bruce.richardson@intel.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0087.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46a::18) To BL0PR11MB2993.namprd11.prod.outlook.com
+X-ClientProxiedBy: DUZPR01CA0082.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46a::10) To BL0PR11MB2993.namprd11.prod.outlook.com
  (2603:10b6:208:75::28)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BL0PR11MB2993:EE_|BY1PR11MB8005:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b137c23-e8c3-44ec-cdb7-08ded74d0617
+X-MS-Office365-Filtering-Correlation-Id: 50b226d9-7c68-4cb0-fdd4-08ded74d25ef
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|23010399003|22082099003|18002099003|11063799006|56012099006|4143699003;
-X-Microsoft-Antispam-Message-Info: Zr5fr5J2qX1q32xQ4vGMysuDd5D7lBy/5ceVrfwYciSEm/Zfekwb6UHC+2xVeoEYlPwFqAhmKoZQ/HAp7JHm7Umng5DVtJVHh3n5bbQiT+CGTkLstuOx6OnRDktXi0T+aYe5tQ/LLeMZ9q6Y3d2mMwKPm1r3vj3fjoCiXZ0Gl6hsK8Q10zhiw7KG+gAhuD3X7WN34riXnqul4kuojDs0OB1MrBkFu+FxlfruSpFzOu106QjU7wJXf7h7DG8br6nTdoqAVJiuf75g50qszcnXJwGC15RkWK2Gi0Muk8WKt1YS9U4hQciw9fgnUd8e1JzP3YUGIzptvMJ8dGC7uHlQMkonBTyZFPxY3IGYOPZag1P9378PBUSRoPcMjR6jANlaMYVVwb8wVcwCW4QqPG1xb8yqJ7Uw3R3OS8gdBLcG7wD4+was03KMmUOZdjtXhgxRLn4pgg043TuLBGGnxEhsbWXtKq4I84gYCTtK4E2R3JmIJeyCusv1ZD1TA66Lycd8UhFlXvqaM8MjuicL9g1wssPa7V5CM+7OYWbnKqdcJ4fAHR3eYvHhOBr3PCTKcGPP5pSN0o0PBIvKwAAXjco2NDrZh77jmk+6JjX/5XWuArlU4kO8IfsKW3N+85SjwievOm1gCGhZkGC714L1ARwG4JCphES2eSjpnwAWASRUACs=
+ ARA:13230040|376014|366016|1800799024|23010399003|22082099003|18002099003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info: 0YD7eZb8lDFhork/Bk1QOtpGGMn7sOwFAV8U6qQg+uFerzbF7eqdmUBU8gLXvhlRnDgxkuEUbCFEnTWI9i6KxQT9xGCvnsiCTSBOiZwZ9vt6jh48+72kTwphK8v1nPkhhzn3AS67ZhpKHM9cYLf6vHen1AXhO0NUbdrC5QIodLGwSevKK30ks2o2hZU1COe7YlWLZys3Iu/oAfvz+40FwI28YWQKBw8SIKqrEyTVEQUMtrbfREPwD/Dsiau20GI+lKaIAnQfqVp4T7oiZrg6AO+2gA/aPJdWmeUI/q1E7gvqQwF09WXF8NnoiFn/2KxSS7mAyYsLrjD+Fbh/DOybKYAY7F8REoFCbY+HmhmqocZNJSI4lploozv6upQ8g++1el3X1Azj7gKthVOtIU8kBMWy1Q0VcKlmUaGdDOgb66NmfLM4i/qyhcUMoRLGbKqjjW+Ny+w0+1Ama085HYspfSGeIMUhfjFqMIVUoOx7XKpc0/1EdQ/aIxjwh2+jB135L+kpzf3CAo7w3cS9n8MWdPE+MdsFZ5f9+yYf++v63xOOq4AReGkV82J47GgmjsViYljcQZGs8p6lWXOT6qzPYfJRwlwK5kKE/w8VmkkimK5AYvMXmAJbuB4x/plqWEA3aGg/RhHOhViqvUEYAmptrqbyFviqQiTOC9e8CneB21c=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:BL0PR11MB2993.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(22082099003)(18002099003)(11063799006)(56012099006)(4143699003);
+ SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(22082099003)(18002099003)(11063799006)(56012099006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TXFaTHlmNkMyaWg0U3kyWFU0KzZZOUJCWWhuREsyVHZ2aEhOZFNUWHYzMEZk?=
- =?utf-8?B?UE1RRzd2ZHZpdlVXb2pSblFuKzh4aEpQaThNWWFEMVg4UG5TbnlndmRrNHJu?=
- =?utf-8?B?WTJjbTdsQmpVMXF1dHI0ZGEramtsTDBBSC9KMzEzNjAwSElKVVZIZW9KNFFI?=
- =?utf-8?B?SkEyM3B6KzFEZllmMjJVbldNWDRzbVIzTmFjRENVQWtldkdlc1NHa25seFRG?=
- =?utf-8?B?bjkvbFdDMkh3K0ovWWZURGFYU20zbDNKUkRmUjJSRzhOVXN2LzV1Q2VFS29t?=
- =?utf-8?B?cW5oM1lKWU1pQlpudE13azBRT0JNUm8yL2F2eW1ZSUpCaXI2V0VnVEpYTWQ1?=
- =?utf-8?B?MFZhWXpyN3R2YVgrMHNCVnQ1cmtlekx0Tml2T1pEL3M5ZzZTVFdvVExDNmdV?=
- =?utf-8?B?ZVNIQzNIdS9aZGtsVXZpUXgzSGd2aWZwRW1oL2RuVE43S24rVE9VVHdCMEhk?=
- =?utf-8?B?cmdFWVZ1aWFadWF1cWo2MFpxUWViVHFWd2NtL2k5Y05sK1RxOGlFTjJ1T3Z2?=
- =?utf-8?B?MzBtMnprYkh6cjIzeDM4QWdrdm81ckJwUG5TZXA1NmtMdXlIWTlsVjNObGxm?=
- =?utf-8?B?L1pvai9FdU9qQzZzNFRjYnYwUGZXTzVaa0ZnbjJCUVA4dEZISVh0NlhzekVD?=
- =?utf-8?B?Z3NOd0NLUzVDZkpBRWZWdEdIZkxRekxFUjZNRlM2U3RldHZpeDNrOUhtNE0w?=
- =?utf-8?B?MzJ1aWRneE5acG1QcTJCRGtNV2hTZlArc1pGa0FRLzVDUGNCK2lVUmQwa21D?=
- =?utf-8?B?alhEOTZEclFmY3o3aDlOeTQxUHBEaFc1c1FtVlFiUHMvbTNiaXNPYnNBOTJH?=
- =?utf-8?B?azF4T0FINUU2U0pvSDU1V1lHQ0xOY280ZjlpbnJ2M2t1RTJPeTBvc2VLY0Ey?=
- =?utf-8?B?RnZWV2FTQ3pRdmozUTBPdjhiMjhBWmU3YVpHWGMxY0tQMFlpU1N5WVY5S2ZQ?=
- =?utf-8?B?cmFyOTMwSzJNcFVkdkk5eVJFdW5tOXRlT1dVMUFBQ2I1dndRdTM0QUFvWFEy?=
- =?utf-8?B?R1paR1pELys3VElSS0tQc3h5bmNGZDU0N3dNTW1XUERYV2UvOGNHdXZscmNi?=
- =?utf-8?B?UWpVUFJ3WmRNUndHUHNHVGhtVlc1WUF4VmFwSi93NDg3QWI0dzZFZ1cwV0xa?=
- =?utf-8?B?eWV2aHdNZ0xudjdMdVF0cHROTlF4djlzNzNJSThteGtSVlltbVNkQ2t5RFk0?=
- =?utf-8?B?L0pMVHFUMVo4dW5aSlVqdUp1L2x6Q2Zwd2ozQUdOYzNDenhpTWlnV3lpZHZX?=
- =?utf-8?B?WERJT29pb2dQaStGaHF3ZUNmaXU0V0VYM2tUaU5VTGdVV3IzNUp6ekxTdVZH?=
- =?utf-8?B?T3ZkOWlGYUtlRVpwWEpVZ0hXQ1F2VThaeUZIOGxIS2g2V001SkFldDI3MGFk?=
- =?utf-8?B?SGJOMHJTUmpSQXpCekkrQUVZR3VxVnljS3VPb3BRdE1jMk8vZkdnbmtFc2N0?=
- =?utf-8?B?V0d0YlM2cTVqTHluMWtrN2pQL0hjRFp1RS93TjVkVytFNmI1UFJURitBeFM2?=
- =?utf-8?B?VXlhVExSOGNkallSWWc1NnN3MXJPRGFJVXpySjdHSUtYcDBsNzBZODdVZncx?=
- =?utf-8?B?R1ZLa3VwNG9oeURBWjRUbnpVdVczRGNTd240dVhYV243TXY4QWVYZVZsZUpZ?=
- =?utf-8?B?R3B4UzZiMmNLNGg5K2V6M29HQkFVR0YwWFVnVG9BQmtmRHh2MmxyeXhra25z?=
- =?utf-8?B?MmRueTcwYnNHdHhoKzY1eGtHcC9rdmw4VHpXQ2J2YkQ4S3h6bEMzOXlidU9i?=
- =?utf-8?B?Sks5YjREKzk1RlRkcjVWR1UwaFhwV1A4VWRrcGIvSEk4bGIyMHFZNVRCblg5?=
- =?utf-8?B?aGRkVHJlSUlOTHVIZXZQM1lYVlpnWmtqcVFraU5GbXE4dU1HTlk4b1NNKzQ3?=
- =?utf-8?B?NUovWGw0V2FFS28ycDBCMzI3T2V6azR3cWRRWXBjdG1oMGhScFpqUEJMSUN4?=
- =?utf-8?B?WDN0S2lxaVYrQTZGTlg4a0ZyNTlkK0NNTDRSbE9RSGE2ZGVZeTRZVmsrSTRi?=
- =?utf-8?B?ZDJEaDE1Y0VYeUdVYWg3NjdBTW5BWEZkOVJuWHNUQlM0a1g5N25KTzRLeEND?=
- =?utf-8?B?dFd0YWo2SWEzaXEzK2M4RXJvMWhvbzBmcHJEdEdZa0JDT3gvWmpaZmZzQzJz?=
- =?utf-8?B?V3UzZGdsT0FScDRRRFY5Y2gza3ZIQi9MZ3QvWHR0VXNoRDYyRGthbVd1aE50?=
- =?utf-8?B?SUFBbkR2ZFlJT0J3YW0vcXBrRzEwamtKS2dQVWF6TUxWZU8xYzdRTmNpczh1?=
- =?utf-8?B?akdQWGFwRzVtL2p0Z0RMelpkK0FyZk1MNWRORFRHZjFDN2RIemF0Tkp0L2h2?=
- =?utf-8?B?elhla2dpNFZhUmNoL1gxZUIvekRDV2pPdzZKQmZKK1ZBaWlnZk1PWFJqaFgw?=
- =?utf-8?Q?al007JBmzf5q8JPU=3D?=
-X-Exchange-RoutingPolicyChecked: DDkrtFp/4lef7Me7F9gdpegFtiysvaKZxRsWfZzeZNnTee5f0zkcmTWbcW4l4ZNVyR0oNb9L+pkl1/oDCybSp5VE8I4QYfBG9dyKfEC/wRTuBMnYJ3C246wXReOOdYGs4BvVqFkiXKLP8lQ96kbMYteQbMdO+QG9aY+W7Vvdp0CyTvXj9esyeAlhpNY5LNppHtJTsikwjoCA07D9cTVlXfiR+Bu8DZX6n+xl3WAx69AVGlw+zit9NO58GZ/4llmzEDYG1wNgjlAbkprbCjf1qsmruZYRDwZOW/9akAqHMujy3AXyBQ+jTl9LHONdnfa2TgEp2aCmxa/f0ba3+A3vcg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b137c23-e8c3-44ec-cdb7-08ded74d0617
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ejgxYTZha003NitYTjBETWw5TmFyVHFzc0lEL0pRdTlGZ294RGJSb28xV3py?=
+ =?utf-8?B?OGNtK0V0MFhiMHRBd1FleHhJUTI5TFNLbThHenJ6V1c3aGpqZDBMb0g2UUk5?=
+ =?utf-8?B?U3BTYUJKYU1rd0lyZ2d3cGJ1MzRHSWtXZUpJc3lETHhNYmg2VGRVR0ZZTWRl?=
+ =?utf-8?B?clhTb0JnMVh0M1FpN3Jacnhwb1ByWEc0N3pvWGxEclljSC9jNFc0MXFVZDFY?=
+ =?utf-8?B?b05CcWlhTXNoRVRTOHhSTkpvOU9HbTRLdVo2KzVBYTdRb2RiZVNBekZ0Znkz?=
+ =?utf-8?B?VnlCZW1BWGtWSms0bDlNdy9QMlFZdUNhaDZEZlY1SlBuOCs1Zlo2SXpHSUNX?=
+ =?utf-8?B?Rm9MMmR6WVRTTjdOVzRzSzl6eDJFRlJWeDVMc1lIUUgwSVlZUXZhWFo4K1Yx?=
+ =?utf-8?B?SHhZenpsU0QyNmt0MGNreU05elpENjkxYld5Ri8yQ1JETjl2bHpqUUliOFZz?=
+ =?utf-8?B?R1luaWRSdHRNakNHWW9BS1k3dHVhbmtBRG1pMS9KL3UzTHJoQm1INzVZSGY3?=
+ =?utf-8?B?WmszbVdYRVFrbnExUUFmeDlkZ2l0NHNobFA0bW0raFFPbGMzbjRWajZ2S3F4?=
+ =?utf-8?B?ZC9abExncWI2NkRpWnFBVFd4Wno0RFpBZjkzWWFueStsV3FkdllCRzE4MWZI?=
+ =?utf-8?B?dzBRa2xxRzZCYTVFSFRKOWlBYnJmMGlnaDJ5TEtLblhmMk1NY2VJZnc3WEQz?=
+ =?utf-8?B?RmFPcE5lcnNwSVF3U25oOXlqWTlOS05uSHNVVTliRk0rWk1zaVpKVk42SzNR?=
+ =?utf-8?B?OGo3YVNCMWNTSXE5ak9ET2kzSVMvM0MzcWw4RnBCQlN5WUpKZGlBVm1rMHlY?=
+ =?utf-8?B?Nm1UdTJrRlgzNWJkU1ZaRVdKcW9xUEpXVkNvM0hEL0NXSWo4SFhJK2xENXgv?=
+ =?utf-8?B?dk1MNUxCWXh6RmtQQ3Q2aTIzbG1QekNXVGVDaHNKOHhlbU1UV1N3L1R6cW1U?=
+ =?utf-8?B?OE4zTDJHdm5RWDZMeTcrandZeHpsNWZJM1h1elFhWkJGRXpTTldteWt4Z0Z0?=
+ =?utf-8?B?bklkbUI4MDFRNzk0ZlRjS1MyWGFYYlhpSzNYTGszVG9BUTR3VUltbU1KbVF0?=
+ =?utf-8?B?V3JTeGJhMGJOWFVnWnphemYvc0JiK1IwM0hIZVJJcGs3SHVIeVJ4NTU1TE9r?=
+ =?utf-8?B?bFArRTdpNjhFQUc4N1pSbElHYzhZcUZYajJOWldGU2x1TnZxZTlpK3kySHdK?=
+ =?utf-8?B?cWpuSGtBSDF6Q2VaU21XWlJPOEtna1dabmRydGFBRW4waksrd1M0dmdrVm40?=
+ =?utf-8?B?bTQvS2R1aWpNcFJrclNQM2o1UERiWGpHV0IvM0NNRWdtQnVZR1lmUWcyQ2hY?=
+ =?utf-8?B?djltd05Ja2FxejN2SFBuUEMxZGcxZXZXdUNVUDRvQVFTL1NKVnlCRUE2eTdz?=
+ =?utf-8?B?aTV6amVkdW43UC9TLzhIS2tCeXVHanVYaVRDc2RtajhKaVdOQ3RuZVo2VkxU?=
+ =?utf-8?B?Nit1QVF0Q3pyWkhpemNxNy9Sa0h3WGcvOVdjQkc0RHZYY1Boa2IwamVEeVQr?=
+ =?utf-8?B?aExlZlNOZ3oycU5rWVhlVjNzZEJEdHRCTmd0ZHl6TFRoRjhsVHFOM1ZiSCty?=
+ =?utf-8?B?TGFJd1dsb3oxRVJHT0FyTHRaM3Y1cEdUeEdoM1dRNnc0ejZmVGdWcXJHNG80?=
+ =?utf-8?B?cUZ1cmRvUkoxdmFrUWFQenFaVUk3T2tXWEs4eU4wd2RSSTN6cGFQc0s4Mnlp?=
+ =?utf-8?B?NlIyMjZxRUpucWFmK2xRalR4RzNPUWE0eXJlaVpnandrL0xOQzNpTjJvN0Zz?=
+ =?utf-8?B?Mi9TcWx1b1dIZDBzQWk4U3RlSEZXT0xEYWxCMFo4SWFuQ080eVJab0lLWTZu?=
+ =?utf-8?B?TmRrUUZLVHFHaDJTRXdLM1Vqc0xtRng0cGR6RnZFQWdCMk5KMFNTQURwYzg1?=
+ =?utf-8?B?VVcyaUtzNnpuMVI0ZEU1MjM0SkhaWUttenZCa01sVHA5T2ozZGtHelJWM3cy?=
+ =?utf-8?B?cGdTeUxqbTdaby84WnZxSE1zTE50UVN4alFjVjlHVE9VUjlXMEFDSCtWbWw3?=
+ =?utf-8?B?YkRZZ2xQOVdQcU1pWTcvdXZwOCtFWHZJNEg4NVFlTnAvbTlKWTRtUDU3TG1h?=
+ =?utf-8?B?N2NEUzF4TjlYUlE3UlhtVFJSOXJ6Q2RIb2dDWU41c25XdDhHVXNDdGxuTVlH?=
+ =?utf-8?B?LzUxY3pKSjVCQWJyU0V4ZzVTa25nSGN3RVF1WkpHbzJZUVVMb0ZRUGp6R0cv?=
+ =?utf-8?B?eXJuMUZSVlI0aVVYMGxBK1R1T2xZMERwc0JqaFF6amRuNmk0anlmc0p4dlY3?=
+ =?utf-8?B?OEdzZFNaMHNnNUVxaFYyMVUwSW9ueld6ZmwwN3A0Z0dWZTltTmdOeXkyR0Ir?=
+ =?utf-8?B?NFBMalZQUkl3TTBpbmE0cjFtOEt1VzNXZmpyQnN0WUlwbGpmTmlwbE84NTZu?=
+ =?utf-8?Q?gEj3aBU29Lw36Jj8=3D?=
+X-Exchange-RoutingPolicyChecked: X6W+IuFYBM2+FpSmNFRM1nDa1gY1v0uF9gNWw3JLcdZsHLMsLuLFYjBryP0l1idNKhHvYpLys1Kgh9VFDPBviLE6TRZ9/2Ps5bI5L+zxKqbdhPvlBh++i+t+0MFGqngjjwIiJZRXLPdntGHyUOcHoSESu/djofBOMwa6RIDr5lAcAzJB5RgIc9G9/QDLUxVIsQlxLAfy497Hs/mTtcsBoWMDMz0aBLMF8JEqRg/55dfLVqcsHaOr+4g4mSSO63v4TgXe56votyUZcX5BfX89GIjC7ZwLkKn/DQ8N37jeuKlYKhZWEuM5mdkSGVYFl6rcwayK2FUKS6qMecIS6VENLw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50b226d9-7c68-4cb0-fdd4-08ded74d25ef
 X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB2993.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2026 08:44:54.9338 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2026 08:45:48.4978 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /sGwppTpYFWXbORWEgROEEGp3SU4ouXxCa0qXj26TeRlrTFaWghqc6f7Nh5yOPtRutq0EWxBB+y/RCJjuDkhxTjjT1eejtZAtomRrISn29c=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0a5fx07B1a6lQeR5nByhfWyOuAtt/0ZotdyG20CIvO2+wAUvOalWvlY4wU5YFjvcfa5MCd61Mj2rp2G8NdPoaf2kwsVyFt8SKLmD+9UIqb0=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8005
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -165,102 +163,97 @@ Errors-To: dev-bounces@dpdk.org
 
 Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 
-On 7/1/2026 9:23 AM, Bruce Richardson wrote:
-> When TSO is enabled, and we get a packet to transmit where an individual
-> mbuf segment is longer than 16k, we need to split that segment across
-> multiple Tx descriptors. This support is present in the single-queue
-> mode of idpf - since it shares common code with the other Intel drivers
-> -  but was missing from the splitq path.
->
-> This patch adds the proper data path handling. Previous work ensured
-> that the descriptor count calculation took over-sized segments into
-> account but the actual descriptor writing part was overlooked.
->
-> Fixes: 770f4dfe0f79 ("net/idpf: support basic Tx data path")
-> Fixes: 2904020f8313 ("net/intel: add common function to calculate needed descs")
-> Cc: stable@dpdk.org
+On 6/30/2026 5:16 PM, Bruce Richardson wrote:
+> The e1000 base header lists multiple PCI device IDs in e1000_hw.h that
+> are not present in the em PCI ID table. Add the missing IDs so DPDK can
+> probe all e1000 devices defined by the shared base code.
 >
 > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
-> V2: change check for number of free descriptor slots to use the correct
->      count, rather than just the number of mbuf segments passed
-> ---
->   drivers/net/intel/idpf/idpf_common_rxtx.c | 43 ++++++++++++++++++-----
->   1 file changed, 35 insertions(+), 8 deletions(-)
+>   drivers/net/intel/e1000/em_ethdev.c | 70 +++++++++++++++++++++++++++++
+>   1 file changed, 70 insertions(+)
 >
-> diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-> index a123d969ee..2c87e02c98 100644
-> --- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-> +++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-> @@ -952,9 +952,6 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
->   				idpf_split_tx_free(txq->complq);
->   		}
+> diff --git a/drivers/net/intel/e1000/em_ethdev.c b/drivers/net/intel/e1000/em_ethdev.c
+> index 62ab57268f..c02d09e500 100644
+> --- a/drivers/net/intel/e1000/em_ethdev.c
+> +++ b/drivers/net/intel/e1000/em_ethdev.c
+> @@ -187,6 +187,76 @@ static const struct rte_pci_id pci_id_em_map[] = {
+>   	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_RPL_I219_V23) },
+>   	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ARL_I219_LM24) },
+>   	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_ARL_I219_V24) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_PTP_I219_LM25) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_PTP_I219_V25) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_WCL_I219_LM27) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_WCL_I219_V27) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_NVL_I219_LM29) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_NVL_I219_V29) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_80003ES2LAN_COPPER_DPT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_80003ES2LAN_COPPER_SPT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_80003ES2LAN_SERDES_DPT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_80003ES2LAN_SERDES_SPT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82540EM_LOM) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82540EP) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82540EP_LOM) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82540EP_LP) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541EI) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541EI_MOBILE) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541ER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541ER_LOM) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541GI) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541GI_LF) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82541GI_MOBILE) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82542) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82543GC_COPPER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82543GC_FIBER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82544EI_COPPER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82544EI_FIBER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82544GC_COPPER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82544GC_LOM) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82545GM_COPPER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82545GM_FIBER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82545GM_SERDES) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_COPPER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_FIBER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_PCIE) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_QUAD_COPPER) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_QUAD_COPPER_KSP3) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82546GB_SERDES) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82547EI) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82547EI_MOBILE) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82547GI) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82573E) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_82573E_IAMT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_D_BM_LF) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_D_BM_LM) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_D_BM_V) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_R_BM_LF) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_R_BM_LM) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH10_R_BM_V) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_82567V_3) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IFE) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IFE_G) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IFE_GT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IGP_AMT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IGP_C) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IGP_M) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH8_IGP_M_AMT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_BM) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IFE) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IFE_G) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IFE_GT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_AMT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_C) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_M) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_M_AMT) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_ICH9_IGP_M_V) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH2_LV_V) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_D_HV_DC) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_D_HV_DM) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_M_HV_LC) },
+> +	{ RTE_PCI_DEVICE(E1000_INTEL_VENDOR_ID, E1000_DEV_ID_PCH_M_HV_LM) },
+>   	{ .vendor_id = 0, /* sentinel */ },
+>   };
 >   
-> -		if (txq->nb_tx_free < tx_pkt->nb_segs)
-> -			break;
-> -
->   		cmd_dtype = 0;
->   		ol_flags = tx_pkt->ol_flags;
->   		tx_offload.l2_len = tx_pkt->l2_len;
-> @@ -976,6 +973,9 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
->   		else
->   			nb_used = tx_pkt->nb_segs + nb_ctx;
->   
-> +		if (txq->nb_tx_free < nb_used)
-> +			break;
-> +
->   		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
->   			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
->   
-> @@ -994,16 +994,43 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
->   		uint16_t first_sw_id = sw_id;
->   
->   		do {
-> +			uint16_t slen = tx_pkt->data_len;
-> +			rte_iova_t buf_dma_addr = rte_mbuf_data_iova(tx_pkt);
-> +
-> +			/* Split segment across multiple descriptors if needed
-> +			 * for TSO packets where segment exceeds max buf size.
-> +			 */
-> +			while ((ol_flags & RTE_MBUF_F_TX_TCP_SEG) &&
-> +					unlikely(slen > CI_MAX_DATA_PER_TXD)) {
-> +				txd = &txr[tx_id];
-> +				txn = &sw_ring[txe->next_id];
-> +				txe->mbuf = NULL;
-> +
-> +				txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
-> +				txd->qw1.cmd_dtype = cmd_dtype |
-> +					IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
-> +				txd->qw1.rxr_bufsize = CI_MAX_DATA_PER_TXD;
-> +				txd->qw1.compl_tag = sw_id;
-> +
-> +				buf_dma_addr += CI_MAX_DATA_PER_TXD;
-> +				slen -= CI_MAX_DATA_PER_TXD;
-> +
-> +				tx_id++;
-> +				if (tx_id == txq->nb_tx_desc)
-> +					tx_id = 0;
-> +				sw_id = txe->next_id;
-> +				txe = txn;
-> +			}
-> +
->   			txd = &txr[tx_id];
->   			txn = &sw_ring[txe->next_id];
->   			txe->mbuf = tx_pkt;
->   
->   			/* Setup TX descriptor */
-> -			txd->buf_addr =
-> -				rte_cpu_to_le_64(rte_mbuf_data_iova(tx_pkt));
-> -			cmd_dtype |= IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
-> -			txd->qw1.cmd_dtype = cmd_dtype;
-> -			txd->qw1.rxr_bufsize = tx_pkt->data_len;
-> +			txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
-> +			txd->qw1.cmd_dtype = cmd_dtype |
-> +				IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
-> +			txd->qw1.rxr_bufsize = slen;
->   			txd->qw1.compl_tag = sw_id;
->   			tx_id++;
->   			if (tx_id == txq->nb_tx_desc)
 
 -- 
 Regards,
