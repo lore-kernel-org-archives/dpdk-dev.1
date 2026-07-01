@@ -2,47 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767AAC43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 08:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6462C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 08:23:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9CDA5402E0;
-	Wed,  1 Jul 2026 10:22:16 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id DAB8040278
- for <dev@dpdk.org>; Wed,  1 Jul 2026 10:22:15 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gqtJm2mwtzHnGjg;
- Wed,  1 Jul 2026 16:21:28 +0800 (CST)
-Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
- by mail.maildlp.com (Postfix) with ESMTPS id 3B68A4058D;
- Wed,  1 Jul 2026 16:22:14 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 1 Jul 2026 09:22:13 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Wed, 1 Jul 2026 09:22:13 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: RE: [PATCH v2 8/8] doc: add release note about ip_frag changes
-Thread-Topic: [PATCH v2 8/8] doc: add release note about ip_frag changes
-Thread-Index: AQHdCKZ9eNxHI/x6WkyztoP/EaJUf7ZYUbDA
-Date: Wed, 1 Jul 2026 08:22:13 +0000
-Message-ID: <a4b12d72a06b447f83eda11742d0d801@huawei.com>
-References: <20260616210656.464062-1-stephen@networkplumber.org>
- <20260630153723.525167-1-stephen@networkplumber.org>
- <20260630153723.525167-9-stephen@networkplumber.org>
-In-Reply-To: <20260630153723.525167-9-stephen@networkplumber.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.45.146.116]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id EB372402E0;
+	Wed,  1 Jul 2026 10:23:45 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 93BC040278;
+ Wed,  1 Jul 2026 10:23:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782894224; x=1814430224;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=kSENlYEnLHkDLuBxkNLNKNRq9ZyxxSgVqIioSuuxM3I=;
+ b=cz/j2nBn7A78GTqJDrrxaBGkOdAxeQsuzYfMlurrCujVRjObRBZbu3w+
+ 0oUoxBBVB73tMzPPAXpueD8C+ujeqAapqvHWx0twxzvFF/YPWVmPKF1fY
+ cWkvoXpxmhhj3WvkcOdbRSYvb8tUSyNZ5hm39YrrT4sPj6S/H6k0Hxt5E
+ kgGHLpEBPqksxEPocK0klzKTxFBhWYUJszIiONwX5RpRKw641rBQno+2p
+ freDpMK+DUhBDCZb2MezUheFYoClM6zEcqlvVYUJEGYRxmRoV6vgSmWzP
+ BkR2Xth1GPxQIl6jAd6Dwb5lmrlH/A29G2NxrJ5fgEh3vzTWnJXV18fk+ w==;
+X-CSE-ConnectionGUID: OmgGvNieTuSDqCnxnNI25g==
+X-CSE-MsgGUID: ErTUxadWQRCXTi5uaeG2Ug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="83491674"
+X-IronPort-AV: E=Sophos;i="6.24,235,1774335600"; d="scan'208";a="83491674"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 01:23:43 -0700
+X-CSE-ConnectionGUID: Pw0KjAESQDGUaJlue8qbUQ==
+X-CSE-MsgGUID: q+lXUqaBTqGnovJikvM4MQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,235,1774335600"; d="scan'208";a="257405308"
+Received: from silpixa00401385.ir.intel.com (HELO
+ localhost.ger.corp.intel.com) ([10.20.224.226])
+ by fmviesa005.fm.intel.com with ESMTP; 01 Jul 2026 01:23:42 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: vladimir.medvedkin@intel.com,
+ Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org
+Subject: [PATCH v2] net/idpf: fix Tx of large mbuf segments
+Date: Wed,  1 Jul 2026 09:23:37 +0100
+Message-ID: <20260701082337.3176970-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260626134440.2108591-1-bruce.richardson@intel.com>
+References: <20260626134440.2108591-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,52 +61,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+When TSO is enabled, and we get a packet to transmit where an individual
+mbuf segment is longer than 16k, we need to split that segment across
+multiple Tx descriptors. This support is present in the single-queue
+mode of idpf - since it shares common code with the other Intel drivers
+-  but was missing from the splitq path.
 
+This patch adds the proper data path handling. Previous work ensured
+that the descriptor count calculation took over-sized segments into
+account but the actual descriptor writing part was overlooked.
 
-> The changes to ip_frag might impact some conformance or
-> performance tests.
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  doc/guides/rel_notes/release_26_07.rst | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/doc/guides/rel_notes/release_26_07.rst
-> b/doc/guides/rel_notes/release_26_07.rst
-> index 4ca0a9ac77..a419803401 100644
-> --- a/doc/guides/rel_notes/release_26_07.rst
-> +++ b/doc/guides/rel_notes/release_26_07.rst
-> @@ -241,6 +241,12 @@ API Changes
->    - ``rte_pmd_mlx5_enable_steering``
->    - ``rte_pmd_mlx5_disable_steering``
->=20
-> +* **ip_frag: hardened IP reassembly against malformed fragments.**
-> +
-> +  Duplicate, overlapping, oversized, and (for IPv6) per-fragment-header
-> +  fragments are now rejected rather than mis-reassembled. This changes w=
-hich
-> +  fragment streams reassemble and may affect throughput.
+Fixes: 770f4dfe0f79 ("net/idpf: support basic Tx data path")
+Fixes: 2904020f8313 ("net/intel: add common function to calculate needed descs")
+Cc: stable@dpdk.org
 
-That doesn't look entirely correct:
-Current implementation doesn't allow both duplicate or overlapping fragment=
-s either,
-though it postpones it's detection till reassembly stage.
-Might be something like that:
-**ip_frag: hardened IP reassembly against malformed fragments.**
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+V2: change check for number of free descriptor slots to use the correct
+    count, rather than just the number of mbuf segments passed
+---
+ drivers/net/intel/idpf/idpf_common_rxtx.c | 43 ++++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 8 deletions(-)
 
-* Tolerate packets with duplicate fragments,
-* Determine duplicate overlapping and oversized fragments at arrival. That =
-change
-   can cause multiple extra scans over already received fragments and might=
- affect
-   overall system throughput. =20
-?
-=20
-
-> +
->=20
->  ABI Changes
->  -----------
-> --
-> 2.53.0
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+index a123d969ee..2c87e02c98 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+@@ -952,9 +952,6 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				idpf_split_tx_free(txq->complq);
+ 		}
+ 
+-		if (txq->nb_tx_free < tx_pkt->nb_segs)
+-			break;
+-
+ 		cmd_dtype = 0;
+ 		ol_flags = tx_pkt->ol_flags;
+ 		tx_offload.l2_len = tx_pkt->l2_len;
+@@ -976,6 +973,9 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		else
+ 			nb_used = tx_pkt->nb_segs + nb_ctx;
+ 
++		if (txq->nb_tx_free < nb_used)
++			break;
++
+ 		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
+ 			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
+ 
+@@ -994,16 +994,43 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		uint16_t first_sw_id = sw_id;
+ 
+ 		do {
++			uint16_t slen = tx_pkt->data_len;
++			rte_iova_t buf_dma_addr = rte_mbuf_data_iova(tx_pkt);
++
++			/* Split segment across multiple descriptors if needed
++			 * for TSO packets where segment exceeds max buf size.
++			 */
++			while ((ol_flags & RTE_MBUF_F_TX_TCP_SEG) &&
++					unlikely(slen > CI_MAX_DATA_PER_TXD)) {
++				txd = &txr[tx_id];
++				txn = &sw_ring[txe->next_id];
++				txe->mbuf = NULL;
++
++				txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
++				txd->qw1.cmd_dtype = cmd_dtype |
++					IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
++				txd->qw1.rxr_bufsize = CI_MAX_DATA_PER_TXD;
++				txd->qw1.compl_tag = sw_id;
++
++				buf_dma_addr += CI_MAX_DATA_PER_TXD;
++				slen -= CI_MAX_DATA_PER_TXD;
++
++				tx_id++;
++				if (tx_id == txq->nb_tx_desc)
++					tx_id = 0;
++				sw_id = txe->next_id;
++				txe = txn;
++			}
++
+ 			txd = &txr[tx_id];
+ 			txn = &sw_ring[txe->next_id];
+ 			txe->mbuf = tx_pkt;
+ 
+ 			/* Setup TX descriptor */
+-			txd->buf_addr =
+-				rte_cpu_to_le_64(rte_mbuf_data_iova(tx_pkt));
+-			cmd_dtype |= IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
+-			txd->qw1.cmd_dtype = cmd_dtype;
+-			txd->qw1.rxr_bufsize = tx_pkt->data_len;
++			txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
++			txd->qw1.cmd_dtype = cmd_dtype |
++				IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
++			txd->qw1.rxr_bufsize = slen;
+ 			txd->qw1.compl_tag = sw_id;
+ 			tx_id++;
+ 			if (tx_id == txq->nb_tx_desc)
+-- 
+2.53.0
 
