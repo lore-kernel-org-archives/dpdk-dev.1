@@ -2,147 +2,141 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC39C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 11:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FE0C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 11:26:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F0F0940647;
-	Wed,  1 Jul 2026 13:18:16 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 44911402E0;
- Wed,  1 Jul 2026 13:18:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5372440647;
+	Wed,  1 Jul 2026 13:26:36 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id BC749402E0;
+ Wed,  1 Jul 2026 13:26:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782904695; x=1814440695;
- h=from:to:cc:subject:date:message-id:references:
+ t=1782905194; x=1814441194;
+ h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=hP0oSU2eVq6/R6bvA+bavNsqBTBsUqHMXVRY6a1yZkM=;
- b=DKGWf89rzJV1/CveCCLiFjLZcD2mLDBhT5yfa6wdkQWkIdUOUUlmr107
- TxM0KMIzZJJdWVSU1J+PKuv7pzLShA3XLOzVIbd8GrmNBiXkVKonSmnhv
- QG7dqdjf3PCVeE7G/HZ7cG3/McUSBSfMCQdahHxJ6w+eF04MYBA/SO/hQ
- wbmkWX25icOtli8h5XWUX4cM0Rl7CuISPmhjhq4jgqJ2imfAkj/RFcAIE
- sHQadOWRz0N9l9TVnX+3MSBth8Wbm5PRBf3rq+dJ1qduQL7jiwTTnI0lP
- mb5w6P+EsJq+znrFUOtTuwb+OXJCoY9BP0fLbaNe+6OLKgd0UlpyZC50B A==;
-X-CSE-ConnectionGUID: y6u6YxuGRB6CvxKCu3t2ag==
-X-CSE-MsgGUID: dSMU6R4wRnW+ZPGg+87kmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="101176861"
-X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; 
- d="scan'208,217";a="101176861"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Jul 2026 04:18:14 -0700
-X-CSE-ConnectionGUID: McZw8yMaTf+DOpgnJZ0kmg==
-X-CSE-MsgGUID: ukCoN8XnTAumWjTicrrh8A==
+ bh=6T7lMxRMfgJ5u2/lYHqWghSMYPrmwOmTPS6rLnDTGFU=;
+ b=BkqUKlswpfgeOSV5BnmyOU8o8jIcAyLgdvlRY42CFOdfG/Fs7wTCy5MA
+ rDjBCcxaxW3R5p8/smlqOoHdqegN/D/n8shGjiqF3lB175if1vl9NxpLS
+ Wr0y4vHVfrf+D0iroAZ+E7yrfLAIV1mBrgN5Zwei5m3RRsmJD01U+xzih
+ UivKjPzgo3BykXKC37LJaq8auBxxmBAMnJud5mE/3OF0mnOZA0AYklHvP
+ Kn2GbA2/lg3s/mMzvoAu2s8oB4TDTdDJMfRK8N0VJdSebSjKjIevdeiE3
+ 1x9pYgS9TuPtR/akiPTmbtt2ZzqGl9iH0xEyGo0fVDaEn+2j04ZIDb8yL w==;
+X-CSE-ConnectionGUID: yPEBCi8fSKqZUpNNTMPA9g==
+X-CSE-MsgGUID: SWVY8avRSZqjeYncmSSsyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="83833599"
+X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; d="scan'208";a="83833599"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 04:26:33 -0700
+X-CSE-ConnectionGUID: I3EBfI/hQciN5W/etjYIsw==
+X-CSE-MsgGUID: 2f3WdhctQCis0AlrPLz2iw==
 X-ExtLoop1: 1
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Jul 2026 04:18:14 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; d="scan'208";a="256125021"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 04:26:33 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 1 Jul 2026 04:18:13 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ 15.2.2562.43; Wed, 1 Jul 2026 04:26:32 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43 via Frontend Transport; Wed, 1 Jul 2026 04:18:13 -0700
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.32) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.43 via Frontend Transport; Wed, 1 Jul 2026 04:26:32 -0700
+Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.48) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 1 Jul 2026 04:18:12 -0700
+ 15.2.2562.43; Wed, 1 Jul 2026 04:26:32 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p0z4DS+ej7f1FaGMEyIR5Cp7lGH8b8HzoesQ5r/EFFoNstxcJ2Cs0b5Gwifldct2bVxyjAxRaA+KjgI+DRdQ0QWEwXK7Z+lgZWYz+hRoAuql1RyTIr7VYDCovkLu+UKEcHV4lf24m8Om0pagOi6LqebeXKrsvw5wSpJeQNS8QrHRQzwfpGSuRyaeoeejc8LSQvaqZlqcA69K71xJwrytm4b8P1i4xLMnoM/Kn6kSmlt/UBfCW+9WkzbfNGowAJwNCA3NsJZPxxEj4bVi/ste9GWBnWL/jbAITCSmIhCMILFUyZTv0mrWcRSTtxTSlMgMK0nGyKVHA31MM6wBu2S2Cg==
+ b=FkkvvqZMuj1oh1V92TsTw0/I3ADQgm8ByKGVwPObQBj/Em9qRSVOoPvv8n6WMSrGDs3PTURHP7O29pQBWXT26KybP/NSeaSMgcNK1swB0K/UEKi5MsYgEr/vXYUkmKkjbzVBN8swDZY3eyN9//vdWaVmUdj6kcLAYfyBBjPpvqVIDUZw5F8aAswdgohjkVAdbD+gycSN/oOClopWfLWs/quTdgk3u0XzwssZ0SBBVZab1ppwOZFwu4a42vVL1S1XRPIn4PLEkL5itiAjFBn0DlqueS1bCD72rOAxf7fNUrqaBJUxKbG8i8W1wJMhy/Al0MEkEVzQCcXXQXbYMXxQsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Sj/1l4dJfqwptQyBx8hhh8cVLbdhprP9Yi62nTxUFLU=;
- b=MoJgE2hkeulBe15MHpslrd72XZxxjpaHE278rItk+am2SzbqCVfJJEUmte2OzAzn7r+VD++jz7KbzWAFO9i0v0q0uKlpJQL+i0qL3u99F3dLeK2mAO0v06m+BG8MSQQr52zVTljaG+2XshFAnXUYH+3trnDN3C4VemqkLzJ8ArDDUGX1iyyJOZ/z1P5Yg7EF6yOC59osu69gEnxpn8Yh2w+wtZyf9Vc/7czlRtknLA6wsdF/6JYjZebG3uIzkITIkVgrzzlTigvOgDBhV2mtwjMaNnO15SfEhXIsZairOBjhIL0sFlWo44LSmH1WvAoR6ON9y3VxmKz0gS52sFyElg==
+ bh=LBtMXcNXgQJH6iep6/5QJeeBFOUDbR5GKVd80IVD+Ss=;
+ b=W2X2zcsOIahbVsLkQObN+CvmiQQTuiLZ6Wrcc2rtgGQ7kBMfFIkGYK0TOvj5oRQFs1SWfrtqpwHZYEpj1spv8wHSLjN0mgZwqepD4sl/x18N408oZRem8WGFTPcRnVTc08wg8xei3p/tZSVm7xLTMTsHfbNwEftY0iapCbkFvFzlmmDRgG8cn+OTqiTGYKgC8W5T809GxOXxjl8SfW9unwCDMXpU/ia3bD9hUm6uSUI92spgbdKtVVObUb0Hvu0E+vWYZQWzZlCeVgEOqQ+9ZOgBWFi3nxK/mQ6Uu/gTKJ+6nYlKAnhC9XD75NuZm/PADjpR0nMWlGmSCSzHEFQarw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from LV2PR11MB6045.namprd11.prod.outlook.com (2603:10b6:408:17b::20)
- by DM4PR11MB6525.namprd11.prod.outlook.com (2603:10b6:8:8c::13) with
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by DM6PR11MB4642.namprd11.prod.outlook.com (2603:10b6:5:2a2::24) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Wed, 1 Jul 2026
- 11:18:09 +0000
-Received: from LV2PR11MB6045.namprd11.prod.outlook.com
- ([fe80::1f72:3d49:b6ba:91ae]) by LV2PR11MB6045.namprd11.prod.outlook.com
- ([fe80::1f72:3d49:b6ba:91ae%4]) with mapi id 15.21.0181.008; Wed, 1 Jul 2026
- 11:18:08 +0000
-From: "Ji, Kai" <kai.ji@intel.com>
-To: "Richardson, Bruce" <bruce.richardson@intel.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, Fan Zhang <fanzhang.oss@gmail.com>,
- "De Lara Guarch, Pablo" <pablo.de.lara.guarch@intel.com>
-Subject: Re: [PATCH v2 04/17] crypto/scheduler: replace strncpy with strlcpy
-Thread-Topic: [PATCH v2 04/17] crypto/scheduler: replace strncpy with strlcpy
-Thread-Index: AQHdA8VwkYqWNfdPFEGqAiEyLABKQbZYju4P
-Date: Wed, 1 Jul 2026 11:18:08 +0000
-Message-ID: <LV2PR11MB6045737F673A142D419F858C81F62@LV2PR11MB6045.namprd11.prod.outlook.com>
-References: <20260623165150.765443-1-bruce.richardson@intel.com>
- <20260624103658.792750-1-bruce.richardson@intel.com>
- <20260624103658.792750-5-bruce.richardson@intel.com>
-In-Reply-To: <20260624103658.792750-5-bruce.richardson@intel.com>
-Accept-Language: en-GB, en-US, en-IE
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV2PR11MB6045:EE_|DM4PR11MB6525:EE_
-x-ms-office365-filtering-correlation-id: d9371a52-920a-40dc-dd92-08ded7626e32
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|23010399003|42112799006|376014|366016|1800799024|38070700021|11063799006|56012099006|4143699003|18002099003|22082099003|3023799007|8096899003;
-x-microsoft-antispam-message-info: lo6Ji3wgE1V8X2nIDzBv6bo5TgcY6OQe857J8auk8K1ogX946qMITt66rVqLUkTywlPoR0BBHQcBxn/+B1ZghEBuwmsqxd3YC/sqx75+kODxw4S+iE4zsgRy9h/O9JkZO6HGqWjMie6YOk/lOn+bra+eu8CakNHI0w+HX6IfKRjR3wLRRdUaS6hGYicOpStUk/3Zw6V6JJCMdsYmmY8KI5SAu2oNSjLj0xjYUDBbF+9pUfDyUXXhHWNapvcXKAKWfj+blNGU5WF75qQNPiqn21k3z3ehHWtSAyujKup7jNKMZQCEIGdyCYA6JtzAAd1Uy3Q57rB6tfWVAlCtFkf030NKD5DZjJiSGpSETr7Pr92ffigGq5GLFuufSV6sGxP5W1d6uoKa/PHDcL2a/VUBmjD16wbI7I9/XSqNKBOXEBjq0453Pco9YdqmtFOazXTKSN17SFza0ZDg0cvRWkNnTHw1720bQDbd8js+Vrc/xA+hP7sgrjg3Daai1YbkrfWgRnkj5dIUFH0OpxOipts3mcYlVd1Ok1WbZ6+NgK6HpKt4SnKrq1sBh4kWeqa85WWpOoVEjrOPgDQ9aLP0LgMjNyCSVMehBkodJ14WHPbyLSYEjXPHeqG/hZDbkRariisLAm5uOHiYvB4wkzWSZif8DqD3P3IgtiED1NvfgJNNZ2PzmVBsR80JW2nP7P0O2ELHcNNj4OHhAStJ3eA8QTtdYs8R0VuDRyWLAxufNtkTa40=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:LV2PR11MB6045.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(42112799006)(376014)(366016)(1800799024)(38070700021)(11063799006)(56012099006)(4143699003)(18002099003)(22082099003)(3023799007)(8096899003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ZK4ftTQkiT35AnV0/BeHMWYEsp7+KMC+cZEtdmLYjhRuT41KO2j+CM1Qbjz9?=
- =?us-ascii?Q?Io+Oj5yCZix87P+GeDeXxB4Msk40RF4t4/r3vOlFRqrdX10DyIag+pfCrSgD?=
- =?us-ascii?Q?vc1bhxpbZoH6OV3SA4jn0oUIc/axVyCbX6EfyPcUrxqXbsW6gho0ZFn/oCjC?=
- =?us-ascii?Q?lOTfHVS6W3tTB6RBMboz4ESMXyxJxv55QheHB+QPJ1nKM/qkTrP4R/BLY3ip?=
- =?us-ascii?Q?FBHRCLlCzEJlSAr9fH/EsX9Ar7NJsv/EL5CKFeLOyOF1Oioy+LTKk9SVMo/q?=
- =?us-ascii?Q?ghZdx9821RJWT36U8zTGGpM4ZwebnTFmpwkQAxZyy9FaP8EiYyGzxRqJ/cft?=
- =?us-ascii?Q?NP45Qc2x3pJFhEka87o3m7WhmD0GgTVjQuVPjanBs4z5jLE88sOFrMT3TlED?=
- =?us-ascii?Q?r14tBEGhDUlOVufHhfgRETr20emHV0UoOybfkhKDUqoIJpnLL1WgTd8jUNL5?=
- =?us-ascii?Q?/ByRRfsY/5MHchSOqVZ3L1Owk/fstiOfOi+oQk+JoGagDhPsaK02I0z0s7j6?=
- =?us-ascii?Q?kmfT4Wxx2niaAtQ26mC221EHxyw4lz/AGN/UUuQRLToNcgjeJlB883VtpmjW?=
- =?us-ascii?Q?YqBPGAixMLMhniiEGZiU0P57JprArEz0Qi2bzQBK5hd22dMUWLw3aNLBqsWl?=
- =?us-ascii?Q?Segr61H12ImIx1cDEPzJ3cuh3Z+3s6ojP3vkKhyl6VU+j06/QEVfaGLasICv?=
- =?us-ascii?Q?SM2grTs4fr0tlPiShZbi9T3xoQR/4NaHjg46N2MwrM2UN/nCIwzIl3L3CUfQ?=
- =?us-ascii?Q?zWo9+sqx5bifuuq6K8voKSh2suUGhLQh4HfBmoWAzv6xqf7oN34T10G5idnu?=
- =?us-ascii?Q?0Bqy9Neo9SUfC/DkcBssk2M8LDMxr9YooAgPDSNWX0/SC+9ZOUpiDkCPXTeQ?=
- =?us-ascii?Q?sAtCdutc2T/zoU+dYobQ3YBVDfD8Q1VghZiVNEab+jiqZbMy/hsUbTLMFXOS?=
- =?us-ascii?Q?ATgU+Vfh6ALQoLxFB+kYqM4nf25HOmScS3M3H0OsSNeCBh+jaIA/tK/657g3?=
- =?us-ascii?Q?uXp/zADQTXmT+pr/dewFbH+xAP33sVDo/ygNEC7dc9zVyECFBATHejMl4J8e?=
- =?us-ascii?Q?uSanJhlpv1dVHQFbjeC7ro6gKdG9DuxTkMH2SVRiAI7Ius6Q/fs1MAccIUR0?=
- =?us-ascii?Q?EqRSU1LapD2p1iVGzvd6eoWAexsm0CxOdez9xPUH2UZWMT5KUBL/hDym5bk/?=
- =?us-ascii?Q?5PDUVkqPVKb8UplNTqUB6FqIko7rjDkVLCPd5NtI9aKA1KNQP9j+oU4NcDuq?=
- =?us-ascii?Q?GFybic9cM15XMEGuCMjyG54gCnYx4cJP2tdRUACMbQ3/NowC9Y53q0tUCqQb?=
- =?us-ascii?Q?hzc4Y+5EjKNh1eA2Ub1XP21xe0ADj4SOV4DL7R5VMx5hSd6/zOSAARi6wPoU?=
- =?us-ascii?Q?LrZgemUrRGHCdk5H5iNLMEI9CPsd2EZ431A6ttrhb7rCrmgzlrCxxX5AsBuo?=
- =?us-ascii?Q?WsNtwp5PXrFUV3bPfkAr17Dl39Mjeq7sm5LywcCLy2Sd1bM0lmrbzm/SOUad?=
- =?us-ascii?Q?4MZYpnrLu7v3J5HCCTCF1z2XPwXvf1Epx2n6BlbxR/lwDZtVrQ9tpwltbNl/?=
- =?us-ascii?Q?dU0E6x1uoVMzhSWW1NYihkjDglge0j9AgVY7pqZyG1dU7dPTJJvdg94sfu36?=
- =?us-ascii?Q?UsATqw8jD3A2aIax5iemrwjYNawYY0uXQ9nfM8RylzOwXHM5XszTWcC3wBN3?=
- =?us-ascii?Q?9R2E7cpGdUixyyjTWxvuSqLX6Hejgm8+ek3y5EvwswCW3ODX?=
-Content-Type: multipart/alternative;
- boundary="_000_LV2PR11MB6045737F673A142D419F858C81F62LV2PR11MB6045namp_"
+ 11:26:30 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0159.018; Wed, 1 Jul 2026
+ 11:26:30 +0000
+Date: Wed, 1 Jul 2026 12:26:25 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Ciara Loftus <ciara.loftus@intel.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: Re: [PATCH 1/2] net/ice: poll AdminQ if interrupt delivery unavailable
+Message-ID: <akT5YUCBeqqcDxie@bricha3-mobl1.ger.corp.intel.com>
+References: <20260630141627.1035420-1-ciara.loftus@intel.com>
+ <20260630141627.1035420-2-ciara.loftus@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260630141627.1035420-2-ciara.loftus@intel.com>
+X-ClientProxiedBy: DU6P191CA0070.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:53e::18) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: gkF84LDwe8TnysdS1E7JnaC7Z0LkGGBQW9AUy1gr010LNGqnbHH8u/+7gu0BfKLA+CSfzQ0ZuCVDGPvF9igftLhn66tRq2cmnBLpbDKJ6Dn41LY21Uqy+NJovPu16fB4uneKHkYKGqUlI+2Fp7mPoOum846ZWBFiytdjeB4mMiq9dirMtoSKEPHOGME32wQBXlaa/G95qoPjjjC95oSPRNpX1Bt0VwQzUHqIWJe+oHNaduSDmA/+NrYR7pjWXUp1wxvwBeqr4bk2bi42Xrbn5/Li6wpWcnN9nbbuIvoBW6u431Eaxe1IWhOxpwijTHJI7KEQlzbQ2KShu/wFtn0//A==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|DM6PR11MB4642:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0bd91022-00a9-4ca7-07a2-08ded7639906
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|1800799024|376014|366016|18002099003|22082099003|5023799004|11063799006|4143699003|56012099006|6133799003;
+X-Microsoft-Antispam-Message-Info: Nwx3K8xBJ67ibhH2HZr/OZ8ECoBIQLQ83vvyBNX0lmxJrYbfAc+LYNxdFyYLg3E7SPWbrY8aZ5Wss2Fmx/8DaFyeaK9UdrMhZTUIduBz8SLYM/a4Osr8tRK8i1Vm8Gq7autqCOiK+Dv7VJRdM5cQI1ZVDlZLYP7827EZKeEdS7RsQdfWPWgrzVWj55w7u2fLgb+auBCSuGo7cFoE0VxI5LvYZIA80vS79XmDYKxU/yUUWUu9GCDar/GtPH1XO+3W7UFpLy0jk7jftn+XhSuJwUOEGIgfw7yd6v1oUXlgbf3w0OmfNjGT4I1SfJCz46XA0uEXL1AzS+5y6hzU4ohJYLN1mGnBA75LybZaAYrRGXOR3qFQ4vwJbLHwctsXc45nt3PWSUpc/PW1yjc+cy61ghvu+RFDyCjMNS68JDSHkIhuOmEXyR0jhKPBLi9AZYM/7xI4SBZhWVGWPSuPR7+szMGyMDnL+iE9F9VxScbi/DPimh1BzFmUU/3e1BAYf4OLBgrGOEppWuKHgw5e8bYXDsRiTnBL0e+eB+oaSjCOW/37Pc/r2CJGuMZqdTFLZaSWYKVDTVQXogjFC89wUnWeXcRnjF4rLuFvwmYA3e1Nugafseevyjkpraq+IbQJ2PzYSU7e3H5LeOQ5QdFYT2Mk2u0DzZYM/K1J7pZsGJOTN3s=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(18002099003)(22082099003)(5023799004)(11063799006)(4143699003)(56012099006)(6133799003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JeeATMG0qyAQOfOIlHv/5bvTQKpdaltagEV0fkS/xb4NkjQUxiNLZmkiRsHp?=
+ =?us-ascii?Q?ZlA9RqU1uV+6AHMVV9S1xnlAWunYta6+E+tYIV+tVQhq3CI7kprct93oxYoe?=
+ =?us-ascii?Q?YGGioIONzDlCG8hqOOn9jFBgzldEzp8dJobKc98K2Q752VmvaPs2k0gqvW1A?=
+ =?us-ascii?Q?0ooPdtciN/ZL8EuK/vcH019Q8FnXMUgkK91zm/WeWr2KTYYTgk5oxO8nu9FT?=
+ =?us-ascii?Q?YEyg2Or7CB/ihyWcwjAFgax9sucHjrY89fdwgdpUsyzRjlkrOlBqfH6Kbwus?=
+ =?us-ascii?Q?FXS4J657lu0qPUkQsiT2kSDk9JZI3tSPhP+7qnYFDvvF2mbCPioC5Ry4Chb9?=
+ =?us-ascii?Q?GZmI5Nuok+urygC4gdFvnVY1myL+Ab/zGnEDwiZPNhKbKnHgRJljY0/ocLDD?=
+ =?us-ascii?Q?TlDAA2X7bbXUR7iYLlHoJp3Xx+0+P8OdB/WVK9F+pmTeI5GSYUJ0UJ1hxZVF?=
+ =?us-ascii?Q?v9pRe5+cqrBiED9dKtMz/9r99mHu82SCj3qmuCaZnr7W3Tsz6uYxTLctRk+9?=
+ =?us-ascii?Q?twyAdT/FMgMO6bsAMIIuFnue++Tl6Wm0G8EhZYqtzkoR8o3jqpBhoJDgA8Bb?=
+ =?us-ascii?Q?AS43ThPNmBWEu4Wfv/oDSj2zotZsAlgKRAQOzhRN7fIfYirw/xkVybo6W+7l?=
+ =?us-ascii?Q?6JRIYFPKIcuqiNZr1imRAz50B2MvUtFnPcocGdoUXlR8bGB6iSLmbPVrbj+z?=
+ =?us-ascii?Q?LP/ifukFZ36u0i2SpzvPPYG2ARCi9cf39CDuuASyG5D8xea6P/ZSVeV0TZgz?=
+ =?us-ascii?Q?POxgc0B/xX+AIEYrSXmVcKHu2oDLSYsiYhHX/RRb6Zl1Hp0Pgt7X3QlvPj1o?=
+ =?us-ascii?Q?Yue4ogRTOT5ZzAN6bPyKaEuDCNektFEV/ntGgoaxTwjkG7kVzoAL8NAgQG9n?=
+ =?us-ascii?Q?kROiI5xz1XQHPd5pCrIYNU6uVKSYEA7D/HQRNDe1/vVpGGQ4JzO5UtWbUULe?=
+ =?us-ascii?Q?tXULXiV2h538xSl7bMvCgx0Ojg2t32cdcxkoVEQiae9qmGVOiehegTmfxo/t?=
+ =?us-ascii?Q?HAGoHzPMLMsTGQdWlCgy1Pc7yTTG9a7qwngBd3mvV/EqnmIR8xjvUhHHavYJ?=
+ =?us-ascii?Q?6wbv3jkbabVrixmQKjHWjb5npXmeMbwccSOFvNQbIvnXy+qYrfWsmftpRFL2?=
+ =?us-ascii?Q?7hNMqtOuFTPeykVXZltesBUP4unrg6mfjigPG0w1c3JNlB6x1EPQbT3/juv9?=
+ =?us-ascii?Q?xdloXVe0CH4m0HBLn8zwhzkvprNn77ZdqA1f8150MOGF7G6NV7W5PkFjP3pn?=
+ =?us-ascii?Q?qr+d4CeASz3E32JafrECj/bHOLNC7dDtN+u6OOR6QuyNbS0j4SRSDtOfAS/z?=
+ =?us-ascii?Q?22l+sRrzwm3q4TvF/eIkjtGH+L85rnUXbstGcHaQenK35Wec1FUS8KO82GFL?=
+ =?us-ascii?Q?v2Yuv6yh+RtvtZj6txjKRqPy5fBIY+QssJDlz8F4ID98+vMKgpbsC7jnbgBy?=
+ =?us-ascii?Q?/Af2Zg/yuQgTPQLYELrDOwoSVMTE/6aTbBRHkVGgvg2oj/A40+L0DBAPdVgQ?=
+ =?us-ascii?Q?XBSOlhd1r4We0rJAw6O/Aovw8WIVeIccUNHX71CP+ABaPZU0RLsHIlQsEIiD?=
+ =?us-ascii?Q?Lc1qFzsmpqPth+6p9k8EXfJlUWqzL+NZVRXUI7rXtdlGLT3G4p+RlZltMvJj?=
+ =?us-ascii?Q?zCz/7RTnA91GN9qs1kp7w39jSGwI9kH9FS3uv1JWBI6bPFAnJ51aRRSP0Mkr?=
+ =?us-ascii?Q?HSjBAkQQebbqzxX8Dje7bcFwSKRZT+mhjdDg3QYnj3XcRwHkE/fmpX7ztKW0?=
+ =?us-ascii?Q?4G9y7vpLTeR24EHePket3qXAYYHHsn8=3D?=
+X-Exchange-RoutingPolicyChecked: sem1YPg5pYzZ+I+Jb7Ta2wslY1TS0QJmv431UvJF/2YUKU4OYK2Ez6oNiMMp/SuFg/BkKsxDDGZABHTwwpwX6EVdZ9S8WXCAilj/hRvCxsdK8lL4L0odrVDyPmXAHT0AWJ9i79SesI441KrC6tg8ufItqTgsTl9C4qBYJukxLcQ2ccmFTIqFmV9ebC6Gpq1sjQnfMOWuxOZd5JF+moJMar5G/joJNG2jaNEpCs/Jjn7f7FU141r6YyxIl5kI8q0mnGrBofrRQ8x6RPl9HF/psx6BDHceCvJ9kX/RIiL5KyokrQUfl53gU1uZeUt2miefHZGWzwm3YDegb6ylh8zhTQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bd91022-00a9-4ca7-07a2-08ded7639906
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6045.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9371a52-920a-40dc-dd92-08ded7626e32
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2026 11:18:08.8532 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MiNviCIXwOdt8cN2ozn7kRuC4b79kaTUimdT3A5mawZusEcjq/XnrKmj8ubc/EuGdSVBClcxRuWfEmPo5wGYEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6525
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2026 11:26:30.4015 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DgWKGDJ0NmDhPiWGHJA+prSaNu1KdVEdR0j+1bEAwba+NPSV1KPMSQa1cJvdxNQmPjUY3sPeQ0ck2vWRZQCejxRXL/ExwhZQrTvT2o01c0E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4642
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -157,166 +151,173 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_LV2PR11MB6045737F673A142D419F858C81F62LV2PR11MB6045namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 30, 2026 at 02:16:26PM +0000, Ciara Loftus wrote:
+> If interrupt registration fails eg. on FreeBSD with nic_uio, the ice
+> interrupt handler is never called and AdminQ messages, including
+> unsolicited link state notifications, are never processed.
+> 
+> This gap has always existed but was partially masked by the blocking link
+> status poll in the ice dev_start function, which would delay some time
+> until the link was up before returning. In this case, the link status was
+> typically correct after dev_start. However after that delay was removed in
+> 2dd7e99855 ("net/ice: revert fix link up when starting device"), the link
+> status was often wrong after dev_start, and there was no mechanism to
+> self-correct.
+> 
+> Rather than restoring the blocking wait removed by that commit which
+> would re-impose a startup delay on every platform, instead activate a
+> periodic alarm that drains the AdminQ on a 50ms interval, replicating the
+> role of the interrupt handler on platforms where interrupt delivery is not
+> supported.
+> 
+> Fixes: 2dd7e99855 ("net/ice: revert fix link up when starting device")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+> ---
 
-Acked-by: Kai Ji <kai.ji@intel.com>
-________________________________
-From: Richardson, Bruce <bruce.richardson@intel.com>
-Sent: 24 June 2026 18:36
-To: dev@dpdk.org <dev@dpdk.org>
-Cc: Richardson, Bruce <bruce.richardson@intel.com>; stable@dpdk.org <stable=
-@dpdk.org>; Ji, Kai <kai.ji@intel.com>; Fan Zhang <fanzhang.oss@gmail.com>;=
- De Lara Guarch, Pablo <pablo.de.lara.guarch@intel.com>
-Subject: [PATCH v2 04/17] crypto/scheduler: replace strncpy with strlcpy
+This solution seems reasonable. Some thoughts and comments inline below.
 
-Replace strncpy() with safer strlcpy() which always null-terminates.
+/Bruce
 
-Fixes: 50e14527b9d1 ("crypto/scheduler: improve parameters parsing")
-Cc: stable@dpdk.org
+>  drivers/net/intel/ice/ice_ethdev.c | 45 +++++++++++++++++++++++++++++-
+>  drivers/net/intel/ice/ice_ethdev.h |  1 +
+>  2 files changed, 45 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+> index 022d92a2f6..447742ff8d 100644
+> --- a/drivers/net/intel/ice/ice_ethdev.c
+> +++ b/drivers/net/intel/ice/ice_ethdev.c
+> @@ -3,6 +3,7 @@
+>   */
+>  
+>  #include <rte_string_fns.h>
+> +#include <rte_alarm.h>
+>  #include <ethdev_pci.h>
+>  
+>  #include <ctype.h>
+> @@ -108,7 +109,11 @@ enum ice_link_state_on_close {
+>  
+>  #define ICE_RSS_LUT_GLOBAL_QUEUE_NB	64
+>  
+> +/* Polling interval used when the interrupt path is unavailable */
+> +#define ICE_AQ_ALARM_INTERVAL 50000 /* us */
+> +
+>  static int ice_dev_configure(struct rte_eth_dev *dev);
+> +static void ice_aq_alarm_handler(void *param);
+>  static int ice_dev_start(struct rte_eth_dev *dev);
+>  static int ice_dev_stop(struct rte_eth_dev *dev);
+>  static int ice_dev_close(struct rte_eth_dev *dev);
+> @@ -1473,6 +1478,28 @@ ice_handle_aq_msg(struct rte_eth_dev *dev)
+>  	}
+>  }
+>  
+> +/*
+> + * Alarm-based AdminQ polling handler that drains the AdminQ to process
+> + * async events, then re-arms itself.
+> + *
+> + * @param param
+> + *  The address of parameter (struct rte_eth_dev *) registered before.
+> + *
+> + * @return
+> + *  void
+> + */
+> +static void
+> +ice_aq_alarm_handler(void *param)
+> +{
+> +	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
+> +	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+> +
+> +	if (!pf->adapter_stopped) {
+> +		ice_handle_aq_msg(dev);
+> +		rte_eal_alarm_set(ICE_AQ_ALARM_INTERVAL, ice_aq_alarm_handler, dev);
+> +	}
+> +}
+> +
+>  /**
+>   * Interrupt handler triggered by NIC for handling
+>   * specific interrupt.
+> @@ -2913,6 +2940,11 @@ ice_dev_stop(struct rte_eth_dev *dev)
+>  	rte_intr_efd_disable(intr_handle);
+>  	rte_intr_vec_list_free(intr_handle);
+>  
+> +	if (pf->use_aq_polling) {
+> +		rte_eal_alarm_cancel(ice_aq_alarm_handler, dev);
+> +		pf->use_aq_polling = false;
+> +	}
+> +
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- drivers/crypto/scheduler/scheduler_pmd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Do we actually need to cancel the timer here? Since the callback itself
+only rearms on started devices, we can let the timer expire and become a
+no-op, rather than needing to explicitly cancel it here.
 
-diff --git a/drivers/crypto/scheduler/scheduler_pmd.c b/drivers/crypto/sche=
-duler/scheduler_pmd.c
-index 95ce893f05..ceaefa329b 100644
---- a/drivers/crypto/scheduler/scheduler_pmd.c
-+++ b/drivers/crypto/scheduler/scheduler_pmd.c
-@@ -229,10 +229,10 @@ cryptodev_scheduler_create(const char *name,
-                         return -ENOMEM;
-                 }
+If so, and based on other suggestions I have below, we may be able to
+remove this block from stop function entirely.
 
--               strncpy(sched_ctx->init_worker_names[
-+               strlcpy(sched_ctx->init_worker_names[
-                                         sched_ctx->nb_init_workers],
-                                 init_params->worker_names[i],
--                               RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN - 1);
-+                               RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN);
+>  	pf->adapter_stopped = true;
+>  	dev->data->dev_started = 0;
+>  
+> @@ -4434,7 +4466,13 @@ ice_dev_start(struct rte_eth_dev *dev)
+>  	if (ice_rxq_intr_setup(dev))
+>  		return -EIO;
+>  
+> -	rte_intr_enable(pci_dev->intr_handle);
+> +	/* Fall back to polling the AdminQ via an alarm on platforms where
+> +	 * interrupt delivery is unavailable.
+> +	 */
+> +	if (rte_intr_enable(pci_dev->intr_handle) != 0) {
+> +		pf->use_aq_polling = true;
+> +		rte_eal_alarm_set(ICE_AQ_ALARM_INTERVAL, ice_aq_alarm_handler, dev);
+> +	}
 
-                 sched_ctx->nb_init_workers++;
-         }
-@@ -443,8 +443,8 @@ parse_worker_arg(const char *key __rte_unused,
-                 return -ENOMEM;
-         }
+If alarm set fails, we should at least emit a warning, even if there is
+nothing we can really do about it.
 
--       strncpy(param->worker_names[param->nb_workers++], value,
--                       RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN - 1);
-+       strlcpy(param->worker_names[param->nb_workers++], value,
-+                       RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN);
+Also, I don't think we need to track use_aq_polling at all. Its only use is
+to cancel the timer, but all places where we cancel the timer are places
+where we mark the port as stopped (with one exception, which I believe is a
+separate error in the code), so the timer will self-cancel at next timeout
+expiry.
 
-         return 0;
- }
---
-2.53.0
+>  
+>  	/* Enable receiving broadcast packets and transmitting packets */
+>  	ice_set_bit(ICE_PROMISC_BCAST_RX, pmask);
+> @@ -4497,6 +4535,11 @@ ice_dev_start(struct rte_eth_dev *dev)
+>  	for (i = 0; i < nb_txq; i++)
+>  		ice_tx_queue_stop(dev, i);
+>  
+> +	if (pf->use_aq_polling) {
+> +		rte_eal_alarm_cancel(ice_aq_alarm_handler, dev);
+> +		pf->use_aq_polling = false;
+> +	}
+> +
 
+As explained above, I don't think we need this block either. If we have an
+error on start, then the port should be marked as stopped and the timer
+won't rearm itself after it expires.
 
---_000_LV2PR11MB6045737F673A142D419F858C81F62LV2PR11MB6045namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+NOTE: there is an unrelated bug in the code here - at line 4550 in start,
+we set "adapter_stopped = false", but there is still error handling at line
+4564 which causes us to jump to rx_err and stop all the rx and tx queues
+again, but neglecting to reset adapter_stopped back to true. I think we
+need to either reset it immediately after the rx_err label, or move the
+assignment down till after all potential rollback points are passed.
 
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: &quot;IntelOne Text&quo=
-t;; font-size: 10pt; color: rgb(0, 0, 0);">
-Acked-by: Kai Ji &lt;kai.ji@intel.com&gt;</div>
-<div id=3D"appendonsend"></div>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Richardson, Bruce &lt=
-;bruce.richardson@intel.com&gt;<br>
-<b>Sent:</b> 24 June 2026 18:36<br>
-<b>To:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
-<b>Cc:</b> Richardson, Bruce &lt;bruce.richardson@intel.com&gt;; stable@dpd=
-k.org &lt;stable@dpdk.org&gt;; Ji, Kai &lt;kai.ji@intel.com&gt;; Fan Zhang =
-&lt;fanzhang.oss@gmail.com&gt;; De Lara Guarch, Pablo &lt;pablo.de.lara.gua=
-rch@intel.com&gt;<br>
-<b>Subject:</b> [PATCH v2 04/17] crypto/scheduler: replace strncpy with str=
-lcpy</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">Replace strncpy() with safer strlcpy() which alway=
-s null-terminates.<br>
-<br>
-Fixes: 50e14527b9d1 (&quot;crypto/scheduler: improve parameters parsing&quo=
-t;)<br>
-Cc: stable@dpdk.org<br>
-<br>
-Signed-off-by: Bruce Richardson &lt;bruce.richardson@intel.com&gt;<br>
----<br>
-&nbsp;drivers/crypto/scheduler/scheduler_pmd.c | 8 ++++----<br>
-&nbsp;1 file changed, 4 insertions(+), 4 deletions(-)<br>
-<br>
-diff --git a/drivers/crypto/scheduler/scheduler_pmd.c b/drivers/crypto/sche=
-duler/scheduler_pmd.c<br>
-index 95ce893f05..ceaefa329b 100644<br>
---- a/drivers/crypto/scheduler/scheduler_pmd.c<br>
-+++ b/drivers/crypto/scheduler/scheduler_pmd.c<br>
-@@ -229,10 +229,10 @@ cryptodev_scheduler_create(const char *name,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; retur=
-n -ENOMEM;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; strncpy(sched_ctx-&gt;init_worker_names[<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; strlcpy(sched_ctx-&gt;init_worker_names[<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp; sched_ctx-&gt;nb_init_workers],<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; init_params-&gt;worker_names[i],=
-<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN - 1);<=
-br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_CRYPTODEV_SCHEDULER_NAME_MAX_LEN);<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; sched_ctx-&gt;nb_init_workers++;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-@@ -443,8 +443,8 @@ parse_worker_arg(const char *key __rte_unused,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -ENOMEM;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; strncpy(param-&gt;worker_names[param-=
-&gt;nb_workers++], value,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_CRYPTODEV_SC=
-HEDULER_NAME_MAX_LEN - 1);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; strlcpy(param-&gt;worker_names[param-=
-&gt;nb_workers++], value,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_CRYPTODEV_SC=
-HEDULER_NAME_MAX_LEN);<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;<br>
-&nbsp;}<br>
--- <br>
-2.53.0<br>
-<br>
-</div>
-</span></font></div>
-</body>
-</html>
-
---_000_LV2PR11MB6045737F673A142D419F858C81F62LV2PR11MB6045namp_--
+>  	return -EIO;
+>  }
+>  
+> diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
+> index 20e8a13fe9..86b256fc3f 100644
+> --- a/drivers/net/intel/ice/ice_ethdev.h
+> +++ b/drivers/net/intel/ice/ice_ethdev.h
+> @@ -599,6 +599,7 @@ struct ice_pf {
+>  	struct ice_eth_stats internal_stats;
+>  	bool offset_loaded;
+>  	bool adapter_stopped;
+> +	bool use_aq_polling; /* true when interrupt path unavailable */
+>  	struct ice_flow_list flow_list;
+>  	rte_spinlock_t flow_ops_lock;
+>  	bool init_link_up;
+> -- 
+> 2.43.0
+> 
