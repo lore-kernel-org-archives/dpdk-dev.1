@@ -2,75 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5158C43327
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 08:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF13FC43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 08:13:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B12D3402E0;
-	Wed,  1 Jul 2026 10:11:51 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8342E40278
- for <dev@dpdk.org>; Wed,  1 Jul 2026 10:11:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782893509;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=1Pyadb3Re1hcOxsWJpREiK6bYT38cKRGeF5Qe7wX6rU=;
- b=inB/xuOM9sJdL3DxR6T/Fb8JlXVNWhLVKTz0nV41BLBqg/bJn6JAEClhrJDOYs3RHY/kph
- EDnzdKycZEoiOupRDyWMu9VCCGMyyipvEvABF9y73S+s/8/H/e7RB+7z4KOz/wxUNiAIh4
- yXj6b/JATxPVA5p6ZQ21BdF2Wr3cEPI=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-517-WcjLa4UDP96jtyGxPOEgVg-1; Wed, 01 Jul 2026 04:11:48 -0400
-X-MC-Unique: WcjLa4UDP96jtyGxPOEgVg-1
-X-Mimecast-MFC-AGG-ID: WcjLa4UDP96jtyGxPOEgVg_1782893507
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-3998d89ef9eso1693151fa.1
- for <dev@dpdk.org>; Wed, 01 Jul 2026 01:11:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782893506; x=1783498306;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=1Pyadb3Re1hcOxsWJpREiK6bYT38cKRGeF5Qe7wX6rU=;
- b=qz3aLcrMUfJlDzy9d9+odFHWW+cBpGAb7BijFyMgQbAq9YTAYVvwEj3ofyQPXGrwEM
- hXpf0RqxrUzX4wW2M7goghA2Hf/thqIUwQfxuci0VV4OrrpJ7140H0mPGJLicst95R6C
- WoOg5t0YnRIUyt/pHLayLmdOATeqrN1c3t5kPQkV0r8CHlgdO4PW+aLNivCw2no8+VoP
- OGm+VTgRexHOzLJf/pQVEJb3XfZgvFTsERgxhBm4Msd4Wzl7azWcjEQLXKhQxMFmJq3H
- C3ldzdNy4raMVDGb+Z/r5Uz6Izf6yIBCFqd1KXWS7mh0ay4MPWzo+b35bPS3bReDGJgC
- OjxQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+Rouo+Y2CL3gB04ptEghTy+4WIcw9UtBKkmjbOTTFb/xj5y0aOqVJnNIN3sOF/iU8Dy3gaY=@dpdk.org
-X-Gm-Message-State: AOJu0YwrEMDG7DiKhhrj112+h7AJC7uNd5N+wl436K9PRO+lUARNUisa
- 3j1yBeDzWbYR6PVEb88wcXDUf6i8KCvHPGFxq1hwQASfQNtZ85e4T1WDDTf6eGT0bA8ZEwtEfwS
- vsmqzjaDLDLndkGJLPzJnzaaO1Wk29ceC6C2JshrSh/upMeZvGIGihaL4g6ZIvW9L/V2JJPEKvZ
- f8Snr2tWlkkv4WeqLaiIES/pG01AbQow==
-X-Gm-Gg: AfdE7clOBgGATuBqgpvQpkb4P9QfbcFpiuxxssquTdoy738AzTadLd7FeT12aKAsF2B
- ToPAngYvEcDXXt5tSJo3GHZMy2xLiyT78l0ixzWX3crxaAYNHeEz2dPJNrMGKtiNzURBOZjBkcH
- 8H9g7/OvKznpmsrrFMOMUXf9C13DuRW0EGjfkgO87FKd5jwFgHhjMAr5pK1rsoUKXsTQN3dreJu
- p4nseHcRShhuQEJlZD6E2bzNtFgEygrsAXVE20LPrtnVHPTXajTvlJ1TTo=
-X-Received: by 2002:a2e:9203:0:b0:39a:fc1d:46fb with SMTP id
- 38308e7fff4ca-39b340712b5mr1062921fa.24.1782893506548; 
- Wed, 01 Jul 2026 01:11:46 -0700 (PDT)
-X-Received: by 2002:a2e:9203:0:b0:39a:fc1d:46fb with SMTP id
- 38308e7fff4ca-39b340712b5mr1062881fa.24.1782893506051; Wed, 01 Jul 2026
- 01:11:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C1036402E0;
+	Wed,  1 Jul 2026 10:13:25 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 1A03640278;
+ Wed,  1 Jul 2026 10:13:25 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gqt6V2FKMzJ46XJ;
+ Wed,  1 Jul 2026 16:12:34 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (unknown [7.214.147.241])
+ by mail.maildlp.com (Postfix) with ESMTPS id 32F7E40572;
+ Wed,  1 Jul 2026 16:13:22 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml500001.china.huawei.com (7.214.147.241) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 1 Jul 2026 09:13:21 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Wed, 1 Jul 2026 09:13:21 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH v2 2/8] ip_frag: discard datagrams with overlapping
+ fragments
+Thread-Topic: [PATCH v2 2/8] ip_frag: discard datagrams with overlapping
+ fragments
+Thread-Index: AQHdCKZfAbPKRbTp1E+3K/nP8uTcFLZYUWqw
+Date: Wed, 1 Jul 2026 08:13:21 +0000
+Message-ID: <0ab67622237b45768b07d27dbdaced40@huawei.com>
+References: <20260616210656.464062-1-stephen@networkplumber.org>
+ <20260630153723.525167-1-stephen@networkplumber.org>
+ <20260630153723.525167-3-stephen@networkplumber.org>
+In-Reply-To: <20260630153723.525167-3-stephen@networkplumber.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.45.146.116]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <tencent_FD79B9DBEB2FD074BFAAACCC6DD7A6EBB906@qq.com>
-In-Reply-To: <tencent_FD79B9DBEB2FD074BFAAACCC6DD7A6EBB906@qq.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 1 Jul 2026 10:11:33 +0200
-X-Gm-Features: AVVi8Ccj7GBFLXwszlcbdMyz2-7qDL9mNrFeH1FuiaKFPl9iAsqbcxyqKlQdvVc
-Message-ID: <CAJFAV8wOpRcDPip62f4EuAv_HDK_PuoGf75ZdqiKX3Er14OQXA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fix dmadev incomplete ABI validation
-To: datshan@qq.com
-Cc: thomas@monjalon.net, dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: gEMSalcpeIjzdToBJIdUKOvJRoaIIpHfHZIRH2wV9Ko_1782893507
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,36 +60,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-On Tue, 30 Jun 2026 at 15:24, <datshan@qq.com> wrote:
->
-> From: datshan <datshan@qq.com>
->
-> Fix dmadev incomplete ABI validation.
->
-> Chengwen Feng (2):
->   dmadev: fix incomplete configuration validation
->   test/dmadev: add config and vchan validation tests
->
->  app/test/test_dmadev_api.c | 186 ++++++++++++++++++++++++++++++++++---
->  lib/dmadev/rte_dmadev.c    | 156 +++++++++++++++++++++----------
->  2 files changed, 283 insertions(+), 59 deletions(-)
->
-
-This series is not versionned, but I guess this is a new revision.
-Don't forget to flag your submissions with a version number in the future.
-I marked the previous patches as superseded in patchwork.
-
-Also provide a high level summary of the differences between versions.
-
-All of those steps are listed in the contributing guide, I suggest
-(re-)reading the whole guide, with a highlight on:
-https://doc.dpdk.org/guides/contributing/patches.html#steps-to-getting-your-patch-merged
-
-Thanks, I'll try to find some time to review this week.
 
 
--- 
-David Marchand
+> Existing code does not handle overlapping fragments.
+>=20
+> RFC 8200 (IPv6) requires that on overlap all reassembly is abandoned
+> and all received fragments are dropped. RFC 791 (IPv4) originally called
+> for trimming and rewriting, but Linux discards for IPv4 as well, since
+> overlap has no legitimate use and is a known attack vector.
+>=20
+> Depends on the duplicate-tolerance change so that an exact duplicate is
+> dropped on its own rather than discarding the whole datagram.
+>=20
+> Fixes: cc8f4d020c0b ("examples/ip_reassembly: initial import")
+> Cc: stable@dpdk.org
+
+I think you forgot to remove cc; stable.
+
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+> ---
+>  lib/ip_frag/ip_frag_internal.c | 38 +++++++++++++++++++++++++++-------
+>  1 file changed, 30 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/lib/ip_frag/ip_frag_internal.c b/lib/ip_frag/ip_frag_interna=
+l.c
+> index 9a03ef995a..55fc4e9343 100644
+> --- a/lib/ip_frag/ip_frag_internal.c
+> +++ b/lib/ip_frag/ip_frag_internal.c
+> @@ -92,16 +92,38 @@ ip_frag_process(struct ip_frag_pkt *fp, struct
+> rte_ip_frag_death_row *dr,
+>  	uint32_t i, idx;
+>=20
+>  	/*
+> -	 * Discard an exact duplicate fragment. If a previously stored fragment
+> -	 * already covers the same offset and length, this fragment carries no
+> -	 * new data. Reassembly is tolerant of duplicates (RFC 791), so drop
+> -	 * only this mbuf and keep the reassembly entry intact rather than
+> -	 * treating it as an error. Fragments overlapping an existing one with
+> -	 * different bounds are not handled here.
+> +	 * Scan the fragments already collected for this datagram before
+> +	 * storing the new one. The stored set is kept free of duplicates and
+> +	 * overlaps, so a single pass is sufficient.
+>  	 */
+>  	for (i =3D 0; i !=3D fp->last_idx; i++) {
+> -		if (fp->frags[i].mb !=3D NULL && fp->frags[i].ofs =3D=3D ofs &&
+> -				fp->frags[i].len =3D=3D len) {
+> +		if (fp->frags[i].mb =3D=3D NULL)
+> +			continue;
+> +
+> +		/*
+> +		 * Exact duplicate: carries no new data. Reassembly tolerates
+> +		 * duplicates (RFC 791), so drop only this mbuf and keep the
+> +		 * entry.
+> +		 */
+> +		if (fp->frags[i].ofs =3D=3D ofs && fp->frags[i].len =3D=3D len) {
+> +			IP_FRAG_MBUF2DR(dr, mb);
+> +			return NULL;
+> +		}
+> +
+> +		/*
+> +		 * Overlap with an existing fragment. Per RFC 8200 section 4.5
+> +		 * (and RFC 5722) the datagram must be discarded; the same is
+> +		 * applied to IPv4. Free all collected fragments, drop this one,
+> +		 * and invalidate the entry.
+> +		 */
+> +		if (ofs < fp->frags[i].ofs + fp->frags[i].len && fp->frags[i].ofs < of=
+s +
+> len) {
+> +			IP_FRAG_LOG(DEBUG,
+> +				    "%s:%d overlap ofs: %u len: %u\n"
+> +				    "fragment: %p ofs: %u len %u\n\n",
+> +				    __func__, __LINE__, ofs, len,
+> +				    fp, fp->frags[i].ofs, fp->frags[i].len);
+> +			ip_frag_free(fp, dr);
+> +			ip_frag_key_invalidate(&fp->key);
+>  			IP_FRAG_MBUF2DR(dr, mb);
+>  			return NULL;
+>  		}
+> --
+> 2.53.0
 
