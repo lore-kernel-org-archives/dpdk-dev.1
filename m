@@ -2,72 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BD8C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Jun 2026 19:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B79E1C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 02:08:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 954594064C;
-	Tue, 30 Jun 2026 21:19:22 +0200 (CEST)
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com
- [74.125.224.50]) by mails.dpdk.org (Postfix) with ESMTP id 80BC2402E2
- for <dev@dpdk.org>; Tue, 30 Jun 2026 21:19:21 +0200 (CEST)
-Received: by mail-yx1-f50.google.com with SMTP id
- 956f58d0204a3-664c7dc6830so2070753d50.0
- for <dev@dpdk.org>; Tue, 30 Jun 2026 12:19:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1782847161;
- x=1783451961; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
- :reply-to; bh=8c3DajdsNVNOFykexz4qtDmiH0mSbzxcKMufU4DUIP0=;
- b=BeQARPsOPmJtXOL1Y2qzjh614FPx3yTexGYqAMbzyej40zqaL2hMtz4vTATycn1kK1
- TcvKy6pGarrXUQwa6SHfUaWoZTigCvpr8VDJVWa3K11LpTHtNx+tfJ6cuvHF3rKI3XbE
- NKmwr9q4jvF/kPfVL2VfN7QEukeguX3DWrh88ClHl4TBcg6gqwUi5Wypp9pbSe9ikXkO
- wvr7+P6AnbWdPC9Ew5RlBG1sCm1Ae8EZBFHc9Opszrvzg7kjJW1HPdsFtE+w2r6ET83j
- M+mZihHUQW4d9snyyrBjVy7OrR2KejP/JTh0EXKxuhW3JNzc7HQybhRTGEcUODNm9C83
- dPvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782847161; x=1783451961;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
- :cc:subject:date:message-id:reply-to;
- bh=8c3DajdsNVNOFykexz4qtDmiH0mSbzxcKMufU4DUIP0=;
- b=HfhE0bZWWQTa/1z7T3QGyuMhaOHyPv+L76WBUhDfctw4acN0luMkH3Y8IcR+sACAJ7
- SGF8ZJ226OntIEqbYX8rT8sjNR4o6zQgSEskYjJ0/IulDUA9hv5TPlOR4CXCZMqnkwpn
- BjF8NYwDdQFFakwdY3Tz9Dr491v+V5FKWrMwQq6NyIXJ/5Sg7hqPRfIZ2TszAZGY3kMi
- niSpQkG/TQVN7vw3PyO/CWqmBugVGdlIhj1aJFulSfk321PgxclRmmVE+edeV9maOHm2
- GTlONa1wgxE+B/L8nlC8qLnMfui6PdOTMRz3bw4tDUCwyvHHbA7widoRNXB+LlAFiaKZ
- du0g==
-X-Gm-Message-State: AOJu0YwyqSZNSkdKXiy9G03fxPhNzULlOfAKY66ybXrJdOqr/Z+pb4Zf
- jEEaRLjWGKLEmDip1uTDh+cTgdyTaHpYV1tcclHDXWg0c4vLlifD2qy4CBpkPOptFphEREcw4Uj
- RPfu2
-X-Gm-Gg: AfdE7cm92KVc7YK32BvP/KtJ77pnoz9RsCqBNXQp0kcEyF+YN3s4HH3ul06DNeYkreQ
- eER0VSV9qq8s1gViXCUYNHjXSQM4XGbKGmqJm6ox2dhNbhop/yHhCdS+ViEUhktdn7xl2E3RnwX
- DTsO4i8blwzn9eb4FnyW0Ywdu1BqnGTm6K8i5/9NxOhlwC/xuUP5KYDNvMza9+I8I27NvrxfP3n
- 1gJyzLlrNEPsosr6jJUxj5lEuUxuGntNHQFzeZRl3MHu5l1Ad6Se6XIF9nlxWsY3BSSh1avJPd/
- NxLyAfoI+gaGYUolwXYfAPbqBpVvphHM7MUYMbP8d5aIdO5c1LDJdYBMddJ0BMv5eFq9e++F42h
- 6lRL981N7dvBKk/CgHdCgDFNaGOZ5Hz7vm6vbiXK/2DDe/Kc02q6DBttDDpH0OCNBhRGugtv9gx
- xUQSOn7S8bXXgdlnWo3k7llTH5G9PRbssp4RFqnoKAAI8ofse4dStKJA==
-X-Received: by 2002:a05:690e:d48:b0:664:b27c:2b40 with SMTP id
- 956f58d0204a3-664f96ea0d9mr4629887d50.19.1782847160554; 
- Tue, 30 Jun 2026 12:19:20 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 956f58d0204a3-66500677dd8sm1321193d50.7.2026.06.30.12.19.19
- for <dev@dpdk.org>
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 30 Jun 2026 12:19:20 -0700 (PDT)
-Date: Tue, 30 Jun 2026 12:19:17 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Subject: Re: [PATCH v2 8/8] doc: add release note about ip_frag changes
-Message-ID: <20260630121917.09548c26@phoenix.local>
-In-Reply-To: <20260630153723.525167-9-stephen@networkplumber.org>
-References: <20260616210656.464062-1-stephen@networkplumber.org>
- <20260630153723.525167-1-stephen@networkplumber.org>
- <20260630153723.525167-9-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 8E408402E0;
+	Wed,  1 Jul 2026 04:08:30 +0200 (CEST)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+ by mails.dpdk.org (Postfix) with ESMTP id 85ABF40278
+ for <dev@dpdk.org>; Wed,  1 Jul 2026 04:08:27 +0200 (CEST)
+X-QQ-mid: tivesync4t1782871702tac65ab88
+Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
+ [36.24.190.76])
+X-QQ-SSF: 0000000000000000000000000000000
+From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
+X-BIZMAIL-ID: 14127012211826772614
+To: "'Stephen Hemminger'" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>
+References: <20260617105959.10764-1-zaiyuwang@trustnetic.om>	<20260630111608.22196-1-zaiyuwang@trustnetic.com>
+ <20260630071555.0b0287b6@phoenix.local>
+In-Reply-To: <20260630071555.0b0287b6@phoenix.local>
+Subject: RE: [PATCH v4 0/4] Wangxun fixes and new features
+Date: Wed, 1 Jul 2026 10:08:21 +0800
+Message-ID: <005601dd08fe$7defb600$79cf2200$@trustnetic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQINDEWtZfIg/XY4yPx5+dI8/7RKoQJbwG8eAqFlo8C1z/oDQA==
+Content-Language: zh-cn
+X-QQ-SENDSIZE: 520
+Feedback-ID: tivesync:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: M//muKyjQOU4/nA/ZXVjCP3ccBUmdKOXZZF/o2fDkK8sN789dUNCbA0e
+ m5OITD0pxHwTe/dbrMLu+odAJ/PmBQsc56iFI+xL+LZkei/zJXy8EYEk09mPFWS4V0DrKlx
+ thN+c6NvYoFDX0gY4aoRxvnlC5uC1k0TRw+cjNcfzXCKSj8JsiU+g1vsmozHx6qVovSNRoZ
+ fNhtINLog7uujYB3k9uCwX3bi5hpsIz2tKSIscMi1dHAKf7qQJr1J0AnpUgN4rhoj1Ojtn4
+ XjJbH04VrkIqEOS6PWshMYR2IbgJ/rk73tPv/TgD7CXGI4NDRN4nRPq9QdzHrqIxAnG6PI9
+ DBZc4FCD55yn6kOGGgQQ317b+hbSXvAebiviGeMM8NrHhGuOYEAzisF6alRWOujha6VfQYl
+ UZnS66N6RYr0fNQVxPzx8+S5KXJY3PxCyMXcLKcyerrdgFWVjpJr+YJhW7y7pba/l3FIdDc
+ SbGKPvCFnSuG1VGRrQMPOsP9hVhfWVdpyCQ4WFzk4FXciT1TgyF7A0kwHmsidfmZEbXLEiV
+ 3eHO3PFIj3/CNTy3Aw9Wxwh2TCSHH2c2+7ATMT4r6R6s/5OcHE+Dyx3PLGBITWl3P4bwOpy
+ PJnaAYaaY0DKDNTjo/ylG/C+3NmnsqV/N0vAktyTTtQSLBQn5R6VnhROmcPYgJxn1Pds07Z
+ iU/3Z7GC+84UJtLOlY5UtmeS2PbxtRJN/amC6JhgYFi5MR+2blHbPcZ0D0Ff2fGO3V3TYCI
+ FBxceq/3+mgUjUtRCEyMe9Vg2QDuLsy2nc9rBf733fKm7+YaftSODOzI7Z2Z6S8trwQEdzz
+ 6nYJ59cJlJ+1ZDXsOJE0eiXfGAIQ/ZPEJG1qUMVPV5mcl/NKqmp71zqWh5YnGxO+NDyf3J8
+ 2rTvDS2DQ9EsNRQm197MZ6YgaZ64V7iY0JZ8s7nEU9/q1vg+EqHdcRBU9ZsNkgReO9hVxF0
+ 5XsO9OjkoCAkOmpMRXdEqNNeq+usJRiRAIPswT7U9Qne25cbYU9uSgfpgU7eiEnoQs3PB/+
+ xbvejy/R6Offz0UJGi
+X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,13 +64,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 30 Jun 2026 08:36:20 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
-
-> The changes to ip_frag might impact some conformance or
-> performance tests.
+> On Tue, 30 Jun 2026 19:16:00 +0800
+> Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
+> > This patchset introduces three new features and critical fixes for our
+> > recent release cycle.
+> >
+> > Patches 1-2 add support for UDP Segmentation Offload (USO) to improve
+> > large-packet transmission performance for UDP workloads.
+> >
+> > Patch 3 enables VFs to sense PF ifconfig down/up events, allowing
+> > better fault tolerance and fast recovery in virtualized environments.
+> >
+> > Patch 4 adds the missing VF support for the Amber-Lite 40G NICs, which
+> > was previously omitted in the initial integration.
+> 
+> Applied to net-next. Had to resolve a code merge conflict from earlier
+> changes in net-next and also release note conflicts.
+> 
+Thanks.
 
-Recheck-request: github-robot: build
