@@ -2,76 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CB6C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 10:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FE6C43327
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 10:43:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F52E402E0;
-	Wed,  1 Jul 2026 12:28:05 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5F61A40278
- for <dev@dpdk.org>; Wed,  1 Jul 2026 12:28:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1782901682;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=W0JZGnCFhWqiUSr6ctIxtMDU7ZyI0M44SwVaYwJFvPQ=;
- b=WnFsZZsjkyB1MjJ5jbYkJm5EXA/YHHmPWJzvBlV58YRpw+qgIo3AUYDEea75J5DrNO84/k
- l6s75QM41mvgPCT83kMR5qJcAlv7gfu/ba7pSracBlcOmLNls1e6FKcjEVrAlL3xqgYv+8
- bqXTjw0kkxBypaPpFZA1m3aYN+QWqC0=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-125-Apn0I6HfNKiMaKbyzUZTFA-1; Wed, 01 Jul 2026 06:28:01 -0400
-X-MC-Unique: Apn0I6HfNKiMaKbyzUZTFA-1
-X-Mimecast-MFC-AGG-ID: Apn0I6HfNKiMaKbyzUZTFA_1782901680
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-39ae216b900so2981131fa.3
- for <dev@dpdk.org>; Wed, 01 Jul 2026 03:28:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782901680; x=1783506480;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=W0JZGnCFhWqiUSr6ctIxtMDU7ZyI0M44SwVaYwJFvPQ=;
- b=rqR1i/ofOdMEbAOpeYggbGf1rb5+735oLBntmENsGYPQ04liE+7C5RC7yuO6Ms24yE
- kQatTrwwcGhwakjkfEk+rlydOE0ZlNHEMNLifQB1SX6cUsY696IwYZqqTYye4jA9Z+jC
- ukxuvAFuHVnw/bGWNQaeKMRLAIMSx8UYjFTaDBgvAHCUosLgftQTlZjSghe/0w6Baro1
- TaSvi7UMrITh9kEEvpIS2mpiGOCRA8kj0uZzgyrt8eNwUkq0NQ4QFgyhL9ZmZPPxl+W/
- oDy/pdl3cvppXST0RrpJPGjmAl35u40tcfBE9suvD/nFy6XSrwmz57m3W3XejoSRnkYc
- kBRQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+RqfNfnBra6qN9rxDN2JMI5xgOFRL15DG3VeZ9BCXtxVN8ZYKw8bkBZdn+BtScZIsln57hI=@dpdk.org
-X-Gm-Message-State: AOJu0YwRJcUZRIjmFmTIJXC6yAQystsU1fLDAX7ybhBVpDf2sCU7LWO0
- +qhR921rhmlS3oX77lvGYTTM1lV0wPSr4SjytTrwssW7MaIeH4F9vZLPnCcgvf4dhZE4hLqHQ1Q
- lP8LJxwZhCfSH28GtRzvjscr4emjt5XOKt/dJCY7Q65s+sNbnSYnPJF28CjMohoOLfc76f55xyc
- jOxa9aZZpMcyipI1DyuAg=
-X-Gm-Gg: AfdE7cmXSFZmEbjd66gY7vTVzhinA6qcExAa16TsIxWQLewP+gwL//QDCSk/S8XOSR3
- B4Zpd1G8pKDBdzIXc1ekjrgbcD8LyXOJdVL6t6PbnjrmPmeRIqcVjn0ynA2FDd9MFe9iWM+mptB
- PVSiqAZ/PmFT8kSGs1CqFHyFWn5tkQNFjYOiZSDEwqHjiT8Gehz/G2Ufvg1KB6xHVBeZZXh8Rgy
- oO8n3wQLPZJjz++e3MD5QGZRIcWsfznurA2hQeifA5+q8sdDOe/ISX/GAs=
-X-Received: by 2002:a05:651c:50f:b0:39a:e29b:78fc with SMTP id
- 38308e7fff4ca-39b34133cb8mr2256681fa.40.1782901679941; 
- Wed, 01 Jul 2026 03:27:59 -0700 (PDT)
-X-Received: by 2002:a05:651c:50f:b0:39a:e29b:78fc with SMTP id
- 38308e7fff4ca-39b34133cb8mr2256581fa.40.1782901679372; Wed, 01 Jul 2026
- 03:27:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9419A402E0;
+	Wed,  1 Jul 2026 12:43:10 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 618BA40278
+ for <dev@dpdk.org>; Wed,  1 Jul 2026 12:43:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782902588; x=1814438588;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=FiXw/xaH8/kAvrJ02HlqljOlDy0LO4Thi5fkko+4CDE=;
+ b=G34JE515wjywL8HBYxuuM8nfAWACgbkbrznsNd23HV838qmSSOlxH1XU
+ GE3EZ+exhgvhF+k55YWsjfGGtk/n8sFJIk40XRpk4dsW/UtbKxTGsAhMn
+ N4BRR6KR7aFusyBMtDMb4aKusi4eevtt/VmHY8NQ1CQl1dv+UAJz2tnjg
+ yxnlzvm9ihxxs6+9eFT0gtqPg8x8hFh+oB8ribPuT4d9nga9sudFfwJ0y
+ TQGKMd4cAlCP1QpXGWEhTSkefkzmK5DP0E60BaJLtzgPnorfWYI4QRj36
+ y+OQ+gBFrvrhrbLAWJQIn6tmQfv1AixrYw9dJg4u8DZoTNVYxtK/NzeG6 g==;
+X-CSE-ConnectionGUID: gRyxFJAdQY60QWWPaBoSvw==
+X-CSE-MsgGUID: eE0MIf3HRRmTKKJEGs2Vkg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="109179253"
+X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; d="scan'208";a="109179253"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 03:43:07 -0700
+X-CSE-ConnectionGUID: keF/X1bzQ7GHbuGAcQw+zg==
+X-CSE-MsgGUID: pBQikadKT0KDvjtzPDiqHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; d="scan'208";a="253177197"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2026 03:43:07 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Wed, 1 Jul 2026 03:43:06 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43 via Frontend Transport; Wed, 1 Jul 2026 03:43:06 -0700
+Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.55) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Wed, 1 Jul 2026 03:43:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VBl5pDkQftN2vXQwfasnvutnuMm8X1Xh7uOb4AOWeFp4NCkKzcOECV6L0fo9iKZy665Kx08lvHjIuaB8Q1VB8nB/Diz82erHJ51KEiMJdQ7j1qWIf1c2FmBi5+V5TPJX1gif2CxnnIo+jOoDv03kUi2HPEKHFml0KbGilqzxl2yXZ+k4UXjMvYWdaKcA5Qc/VxcHMiMkZbopU/brlKFEPRCFq7Z/GIgILqeynK/VIKz/hTH4td7/3y4LhFqQRGiMRNiVWbVoBhJL3mG/s2efg2DPv8RbNzku+ycG18WU6sRX3l118j29tyTQNSrXthJhw5C9MW7zGXdk2pDk/OFybw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TbBNh7bXDAPVKtT/3+dNYOLeBpMoGoTunvRzDgEfPt0=;
+ b=CVsZkWIT/F8tI8QsRPTzY7s+1eIjc6q/H3/VjAnbiaxcTJf93rjpOvliogrpY+354giK+c086kykVEqz1TJrCM+LnbPgRo8180o4FpHIcPa/nmSY40Oq3Kj1ewBgULZD+4ZXmATGZPUkRdphMgKPY0ZM33K/i2LzMy8rpSc5o1LscG4fnd3bAnfSIlfzaQV9qvpQaAiANAZS3q86eWtY9kqY5U8GsoWRDf2n02sQ/djc4+vkN+USNWtABNaRQ9BCUrmfqdH0igW1HCfCCsl9zcRONgVlEU87JrGPN31QlMLczIlEGI7W3lhESq6MW2hB56q7uT8n2Ivil7jF0YMqkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by SJ1PR11MB6081.namprd11.prod.outlook.com (2603:10b6:a03:48c::5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Wed, 1 Jul 2026
+ 10:42:56 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0159.018; Wed, 1 Jul 2026
+ 10:42:50 +0000
+Date: Wed, 1 Jul 2026 11:42:46 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Dawid Wesierski <dawid.wesierski@intel.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
+ <marek.kasiewicz@intel.com>
+Subject: Re: [PATCH v3 0/6] Intel network drivers enhancements
+Message-ID: <akTvJnWSTs1Mxi2Q@bricha3-mobl1.ger.corp.intel.com>
+References: <20260618144442.312844-8-dawid.wesierski@intel.com>
+ <20260630120657.1046588-1-dawid.wesierski@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260630120657.1046588-1-dawid.wesierski@intel.com>
+X-ClientProxiedBy: DUZPR01CA0260.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b9::8) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-References: <20260522145855.1748406-1-maxime@leroys.fr>
- <20260617082400.142129-1-maxime@leroys.fr>
-In-Reply-To: <20260617082400.142129-1-maxime@leroys.fr>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 1 Jul 2026 12:27:47 +0200
-X-Gm-Features: AVVi8CfH9iRkz_PZbMP-T5pxGvtvgZ3OTp1Izkx6tutzge4gTdNQ1UrZNTLnByw
-Message-ID: <CAJFAV8wtofuPBLvM+GJPjC15VEyxCLLHEe820AQZWfee-VdHFg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] fib6: fix tbl8 reservation drift
-To: Maxime Leroy <maxime@leroys.fr>
-Cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>, dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 1YPO65JKzT95mkW49WxqBdgRUISh57lhT7E1yKH9i1A_1782901680
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|SJ1PR11MB6081:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a3aaad6-db4a-49fc-dd44-08ded75d7f9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|366016|23010399003|56012099006|11063799006|4143699003|18002099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info: bc2Zs1B7koYBLtliYOYD95Kd/Zp1MIaUcIe6VQYwQeIRYZq3QVQe2kfrdNIonsi84JlAfnwRvbx86XAftvsMDlbXTk7eeMZEWmlTqKI73hZFlXSPHwmWlk2wftRPjZhu9zGqR3q6EQVePia6KcW/grOzuX3GPdpG9da2lhAZlCfBQGUop7BPYxCgBQ2wNUe/coDnkTHWday4Bdf5sGvKJVMjjEdZKxRxuN0/av9kb27DRotNwSDKP6vZ70ID8FIfxoDAdu3NdnclOxr1ZkfrIEbfgTNMNl5nopI9x70gKsnMyrUbXoYqWL8TTI39szbqpj0SXwlOwv4hjyERKC/Yp/jbIMs4UrDS1bPh8CwcUAoGBt5o425nun0htsF2sgNUf4pE5bY08AFPgzBEEl1NYkBTZeL6Li0sjpP5gBT96HDPweMlvqdeHp68MxDBYHVIcUDVezAXnaLCyhogWdZvspq227/TbkyvIel82lplZbupzSIVnesInH+Cvc/Yc5emw2qqbsRoFMpa71+vsqNa7kOj7FORhNxfiXmNwxgN4WtIzKIqdiPk4a8VDA7O+4Zo0DebClubnqp9hqsLK11Q+Q5bOhwWxYhsYoxuqN7ZIDK205iPSQtgb9eMBka/okhUvFqb/efmxHon7R3Os1QsG+J892Bosxv5gFdrSVFQ12E=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(23010399003)(56012099006)(11063799006)(4143699003)(18002099003)(22082099003)(6133799003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?eDL8JgcHdMYnvi9GKt5O8DszZbN8v5ZUR8ZK4GeFq9BKum+hwoyDfv/KfTR0?=
+ =?us-ascii?Q?emqOgmJ9jEZpoObwTUZ4L/In6eHUKPJ7wO3UUXSI79Oinok3JqfnF5+XSY1j?=
+ =?us-ascii?Q?ha21V8tG8ajaqq/dOOuu5UFIE5ZSppv5S9eSrYxHHCgKLpmLSm0KQVgPuAHl?=
+ =?us-ascii?Q?cOEAZEER1lGN05SmWk3VLRYMC1+IUatZAX5kG1/q4vgk3xHG5GBbdaoSI2BD?=
+ =?us-ascii?Q?PNf4DlZT8NbtI6uIew0Lf/nb5MDBXpfIXHB4JX4oDPwLCTXRyvqehi9Ters3?=
+ =?us-ascii?Q?quCIazwl22xuMZjITC5iNCOUY1/xI/yle7xVkGYQsKrl95iNkio+ebDJgoDc?=
+ =?us-ascii?Q?sYsUM2SNLXsRFp58CeAzDFl94uqVLzNA9BgWPaVwqSrXgbzOTrnDD2VRB4Q5?=
+ =?us-ascii?Q?idQ8Vx5wfIGYspT0d1g/tfXm2TjWXkqzuVVVNTdmH+XaSln2+m3rYj4E8LQ8?=
+ =?us-ascii?Q?moXvqPrSEBjOSk2VMSug3vu4+R1IDph5FC22nE1byWwIRmc+f8o9ohKdUjR/?=
+ =?us-ascii?Q?lzthPEfJXMfvz0V/PbYHoLhVhzQ73u5Fa+g0g1FxI9RmLYiwoUjf6sBBy4ES?=
+ =?us-ascii?Q?avw9pqbGg4c/tUBlPOBN8wOYBwa8e6ClFGQdhwhTBMaqq+zU2MAf593We6ts?=
+ =?us-ascii?Q?PvEvx2ED9lJuSOBuHxeUIAgWQ0qJDrVjQvIej2ccQQNzNT1D8+/STT4jd7N2?=
+ =?us-ascii?Q?lDbcNVbiWHM8kvm3IijtX117RXLDqon84jEKT7D0OLIFpWP1bqp4bSWW6dnO?=
+ =?us-ascii?Q?3yiLTu2tOha3mOX0N4KusX+PYQPEwAOOuA1tlZH+E4bbK17MX5BLv2CxeX2A?=
+ =?us-ascii?Q?IsMUjcVFrPRDh6VIDjOYykSK/ojDk/jaYTJmmQSDTzWiU/sOvW3A6KpfiAd9?=
+ =?us-ascii?Q?mYAJbUXJrI0K8HOOV0ZJHGx5g9k5XkX733BYvrlrqU9Qy4fGpDp69eXzb5te?=
+ =?us-ascii?Q?TLGoaSqZL2eUt4SH6OQYBG8RHKN/QWOHrIZ9whfV5pP0DfL4SYeuly6vTInm?=
+ =?us-ascii?Q?VeNKxiZp7S8CchHfMYePQF8feDj3y3h+7EfAolCx05lj+6avK02NjJ63jMFo?=
+ =?us-ascii?Q?sLrCIFsTVMieYc5asKXCRIAYPdTLNkcF5poMzFd41lHCdQNipkdMjhFsgQ1q?=
+ =?us-ascii?Q?EOOQuTfE1c1asp0LRSjCV7QrM5QrAicrMFPmLMWdFkx1QaI3NEQRUkE3oQgQ?=
+ =?us-ascii?Q?WyNQVbL+ePvu0nHnxda0q0ty/9HoitGilQIQn2mq4g0iU4CnSnMGLh0BdBUN?=
+ =?us-ascii?Q?+sqOPslfnAHmazeb7e4TGo+x+abbyNEkw7L7G9PPkOub5z883HEY4VRFgY/e?=
+ =?us-ascii?Q?47KfreCIjsyduNY6v8Wo6qhSLyhrD5kf198wyfJQTQGpDdgtHpr43t4EPOAQ?=
+ =?us-ascii?Q?Hq3dUoHEvCA6TUP+dGSLnki8N1WQw8aLCu94NNqOQf21IGxjxZvZ9u+gL+95?=
+ =?us-ascii?Q?w8JGgiKmN10dUo7VulSsSa49Pb4pBATPTpGpFLyE5v6o+g1h/br5j5jLRSBR?=
+ =?us-ascii?Q?YIRQW4o+11WbM6aVGfZqWzVHpHLW+V2+ZGEvrnYp0ZAHUNCaOz52wCzwoFpi?=
+ =?us-ascii?Q?IiHCwq3X9REiR/VfhXy+o4i8jXZZ0y1vyvMrd00QWKaMNLvYVB1vIeb0crRq?=
+ =?us-ascii?Q?wss9OOA319VXSxnnk3CNaReWHv35tEk4vSKGaV/TjM/VGfytCBhf8DCqMzVW?=
+ =?us-ascii?Q?r4t4qaQiWsThZpY04PEVa9NoWnUgsxIapsqKz/BxF1RJxp4hDg2Bj5EawgZw?=
+ =?us-ascii?Q?DdzaEJhXs6u1FDjkFCjEjiuQnbbDAgo=3D?=
+X-Exchange-RoutingPolicyChecked: e/rdkhcjJM5sg6XEJleWVCRP82UplRza88Mk+dc8FTQ2PdNGn8urUrBvnz4n36iyKy3mqbQtqEkU3datmJNqyLzbBaFbm5zVsbAT24RVj5Sq6E5WIM9YQWXiJP8kDND+huyEaNZXxrdxhCcsSZ2qivSsO+vPjpaiZbYo52CXFHmrfCJcphDyxvVGbm+gE/6K/R+IVR6r/0ji/Isgw+oLB1tODrnoz2+2OfolTbvm6WVZiRVDnXgKZUcYyc7jfvnqrPzV1seKF29f0RxK7Sesa7AcPXqNczlP7sCSp5qwcKNTi/Bde5yzIvXM1/dn4nYn30fShnEffi7eHZ3kbpMNVA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a3aaad6-db4a-49fc-dd44-08ded75d7f9f
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2026 10:42:50.8573 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cmzYUcJuznjBbdgzqhLerygSGEq/Jqv5MJ+YXcon+BmOJw4l34y2uShYoVBIO/WYaS7mgEQ7sOl9U/RQ6iD66P0DDwiM0dWDSkjnEqhUUm4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6081
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,69 +152,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Maxime,
+On Tue, Jun 30, 2026 at 08:06:50AM -0400, Dawid Wesierski wrote:
+> This series collects Intel E810 iavf and ice driver enhancements developed
+> for the Media Transport Library (MTL) to support high-performance SMPTE
+> ST 2110 media streaming workflows.
+> 
+> The "new code" in this series (specifically the testpmd enhancement in
+> patch 6) demonstrates how the standard DPDK buffer-split offload can be
+> orchestrated with pinned external-buffer mempools
+> (RTE_PKTMBUF_POOL_F_PINNED_EXT_BUF) to achieve this. By pinning mbufs to
+> contiguous hugepages, the NIC DMAs RTP payloads directly into application-
+> owned memory. This eliminates the need for the header-split.
+> 
+> Documentation and a concrete configuration example for this workflow are
+> included in the testpmd user guide (patch 6/6). The new 'create pinned-rxpool'
+> command serves as both a test vehicle and a reference implementation for
+> integrators.
+> 
+> In this series:
+> - iavf maximum ring descriptor count to raised 4096 (HW limit).
+> - iavf queue rate limit enabled reconfiguration at runtime.
+> - Added opt-in "rl_burst_size" ice devarg for tighter packet spacing (jitter reduction).
+> - Enabled PTP timestamping for all packets on ice.
+> - Added opt-in "no_runtime_queue_setup" iavf devarg to restore strict
+>   initialization semantics when required.
+> 
+> - Dropped the ethdev and net/intel "header-split mbuf callback" API
+> - Replaced the out-of-tree approach with a testpmd demonstration (patch 6)
+>   of the standard, upstream-preferred pinned-external-buffer workflow.
+> - Fixed iavf error propagation and committed-state logic (Stephen Hemminger).
+> - Converted the ice scheduler burst reduction and iavf runtime-config
+>   disabling into opt-in devargs to preserve default behavior.
+> - Updated documentation, commit messages, and .mailmap.
+> 
+> Dawid Wesierski (1):
+>   app/testpmd: add pinned external-buffer Rx pool command
+> 
+> Marek Kasiewicz (5):
+>   net/iavf: increase max ring descriptors to hardware limit
+>   net/iavf: allow runtime queue rate limit configuration
+>   net/ice: add scheduler rate-limiter burst size devarg
+>   net/ice: timestamp all received packets when PTP is enabled
+>   net/iavf: disable runtime queue setup capability
+> 
+Since RC2 is fast approaching, I've taken the first 3 patches of this
+series into next-net-intel.
 
-On Wed, 17 Jun 2026 at 10:24, Maxime Leroy <maxime@leroys.fr> wrote:
->
-> trie_modify() maintained rsvd_tbl8s by computing a depth_diff from the
-> current RIB topology at both ADD and DEL. The two values diverge when
-> the RIB changes between an ADD and its later DEL (a covering parent
-> added or removed), so rsvd_tbl8s eventually wraps to UINT32_MAX and
-> rejects all subsequent /25+ ADDs with -ENOSPC. A zebra-kill /
-> reconverge cycle on a live BGP router reproduces it.
->
-> The fix computes the reservation from the RIB node shape:
-> count_empty_levels() returns the number of byte boundaries between the
-> prefix and its covering parent that no other prefix occupies
-> (has_children + parent depth), in O(1). It is the count of tbl8 levels
-> the current route set needs, so ADD/DEL accounting stays consistent and
-> cannot drift.
->
-> Patch 1 is the minimal self-contained fix (Fixes: + Cc: stable).
-> Patches 2-3 add the reproducer and extended regression tests.
->
-> Validated on a live BGP router (grout + FRR, 128 IPv6 prefixes):
-> RSVD_TBL8 returned to its pre-cycle value (70) after a zebra-kill /
-> reconverge cycle.
->
-> Maxime Leroy (3):
->   fib6: fix tbl8 reservation drift in trie
->   test/fib6: add reproducer for tbl8 reservation drift
->   test/fib6: extended drift test cases
->
->  app/test/test_fib6.c    | 335 ++++++++++++++++++++++++++++++++++++++++
->  lib/fib/trie.c          |  83 +++++-----
->  lib/rib/rib6_internal.h |  22 +++
->  lib/rib/rte_rib6.c      |  15 ++
->  4 files changed, 415 insertions(+), 40 deletions(-)
->  create mode 100644 lib/rib/rib6_internal.h
->
-> ---
-> v2:
-> * Compute the empty-level count directly from the RIB node
->   (rte_rib6_node_has_children + rte_rib6_get_parent, O(1)) instead of
->   the v1 multi-level supernet scan over byte boundaries.
-> * Drop v1 patches 4-5 (valid_descendants counter + single-descent
->   helper): no longer needed, the node-based count is already O(1), so
->   rte_rib6 needs no new per-node accounting field.
->
-> v1:
-> * Keep rsvd_tbl8s; recompute it via topology-stable empty-supernet
->   count (dir24_8 pattern at 13 levels) instead of RIB-derived
->   depth_diff.
-> * Drop RFC patch 3/3 (no longer needed).
-> * Add extended regression tests.
-> * Add patches 4-5: RIB valid_descendants + single-descent helper
->   (optional perf optimization; not for stable).
-> * Production-validated on a live BGP router.
->
-> --
-> 2.43.0
->
+For the remaining 3 patches, the two driver patches need some more
+discussion and probably rework. The final patch, for test-pmd, goes in a
+different tree (not next-net-intel), so please send it as a separate
+standalone patch.
 
-Series applied, thanks.
-
-
--- 
-David Marchand
-
+Thanks,
+/Bruce
