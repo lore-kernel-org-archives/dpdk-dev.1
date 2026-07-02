@@ -2,75 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 101D3C43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 20:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 222EBC43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 21:08:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B51D3402D1;
-	Thu,  2 Jul 2026 22:55:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0036C402D1;
+	Thu,  2 Jul 2026 23:08:09 +0200 (CEST)
 Received: from fout-a1-smtp.messagingengine.com
  (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 35F4440041
- for <dev@dpdk.org>; Thu,  2 Jul 2026 22:55:27 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7658440041
+ for <dev@dpdk.org>; Thu,  2 Jul 2026 23:08:08 +0200 (CEST)
 Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.phl.internal (Postfix) with ESMTP id 95BCDEC010C;
- Thu,  2 Jul 2026 16:55:26 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Thu, 02 Jul 2026 16:55:26 -0400
+ by mailfout.phl.internal (Postfix) with ESMTP id 0181FEC0109;
+ Thu,  2 Jul 2026 17:08:08 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Thu, 02 Jul 2026 17:08:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1783025726;
- x=1783112126; bh=0yFTdqU5fRclMs/Rq6+GkmqigsusgqQT/Q+U2k+oFew=; b=
- JNQ8W7IqjZmI/gkAVbOIkCzAEp6AtTVu/x2Oj7nt9Io3FJp0AhlIAHccx7JZpAoV
- OKBFilcSTutnKyC8t54I0WyAvKw0bYs85/GZ2Yzn1e+9ttZPM2wuHSabaQrSFEQ4
- GVADfOyOO/NdnPTn6PXzV0NYm02Z4InY8X7m+pbWeRPxkXqYtuX2MIRUtyeNypqc
- lUObqTrFjzlQMxcCAIopNc8pBTxU9k6ft55ENqFe/KGJ+xt9Sw/fDWYZqbHDvw5L
- wh31Bico5RdRElm/DsJRaYjdYDel31YeYIiXvCcfsZ966pCQPYO6lBY6PhwcfihB
- ERIZtsEH51UQmhKtTr6Afg==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1783026487;
+ x=1783112887; bh=SW6NCVkVMlYqh+Odlmrq2BDz7moreUZ7tW1M/VNFMfA=; b=
+ b7pxivwfUSuzfMseq9b/sl/Y36ZRcy434p31vpZ02kn4hPAr9EznztX8Wpk7WoyV
+ OVQyzLQOkC7GEb7QgA8+RFGeXjh2Zq0W8Vb7qv3snT64SbyTcDKSIv1/1mruruf3
+ WGXLFulMsOtHgD8TRklpYvdgkUibYeR0apc3Y1gFhbqtwPMKHXcOlyalbOdofrGs
+ 0iI+v0sXGstkmzm4vCkZDQcEsj7YdREtnZzCRQKSQJi8chXln9KIkrCGWwJ/jcx/
+ vRj2Kb15nVW2d/5uM8ba9mJDK2yFCXUJytrZfm3bQcTOzRwXfkPyp3DcALM2Evp0
+ i0L3iyqlMTb54DH3H0FvHQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783025726; x=
- 1783112126; bh=0yFTdqU5fRclMs/Rq6+GkmqigsusgqQT/Q+U2k+oFew=; b=o
- 3CVddfqIF38kyqfQDeemvMClKat2OYwnHXQ1ReMmpyoPdb9XjmAh1ps9uNUvBcjf
- mL4R811ceuq7jwbVo7EAaRmpAUYn4DH1WerosXppZMkmzjQ5L63gZZScDjyqVkGW
- Fl37hdtNATVAnoyWzvjUBPb1VcYrrQSuuJIJAOvsMNMCr1QGJjMri/8bbNUWlmoz
- lQusPSLsQbRKxOmFqtPJ2uS69es/sOGVY3dco1Yc0dRp6ZgIsbHVzGNTJDrSqICF
- Y7K8QGvEXL0W0CSUYt+IXtO8jlK7AW/8pfSSUuhnKODamjSVxdLxYRTfbuPc3etP
- rvWTf1sPYz0hsucYwndbA==
-X-ME-Sender: <xms:PdBGaor35Te3zsHobTK4GUAZVPpr5qq30Ce8nXe30u1nifZOiff_Mw>
- <xme:PdBGaq9OMworbZONu89k5w66P4fwHFBN1y-GIjpfZ6FQ6jGRX1fqrkvuD2GUwpJpA
- 1gKzjkImNEamkgPSWGf1E0r4v-ZsfgHgEmQ61-yVilzch-8rS6_FA>
-X-ME-Received: <xmr:PdBGav_D3Mp3baSEYQUlWJUBKOM44Dl-vBoSF173zA05EwYWUreP92i-xfeBCB841MsZQ6l9seP9-M0_GPeO-FIbzg>
-X-ME-Proxy-Cause: dmFkZTFNecJprlx1dKWhxdkuE6hIcwS3OoUT/3fg3JoOXS3KDCaXoqLawJG7FzUX26J23+
- cud71EdLhC6uGDjsyofduoDaHqFWvjJ7ZW2riUUzluqwqAD0mqEH2xXafcLwlQ+YGze2zt
- AGszT6i/cU79zmYwKiA94XsWafAD6Tu7HGRJB6+KFROlO7EqlJbkRPzHWkdJC8RwjLSzeT
- 6cHAeZUKLTFrknEGy0W/8RHVngbNV7nsyXgtMIdAMBOGtwcuONFBZFhme1PvmSDVRRQy2T
- +Lk6yfUw6+oSpTVP8iW6g5pjzd2/U5DbUifiX6Ai2nDDrhA+h8L/NYXeaZ3Fi41hDR94at
- 0vKMmFP7exZnKykddFyPHsy22XoVzwhbbwWX5d1hL3LFi8lHhO84xiz00X3tid6y1RDXap
- CIOa2qvvTnAdVIVAZGAxsCBtb/12jeQBgHDwOcQuC7gwTwAw5OIyIs6fN7Ab+YfuNOx/j7
- aF2CkTh8JGdefXJ7Sp/WwIae4fF08Ttr1YQVKfSx0MieTt3WKd5XuZIkZgdKyqZvzly6CH
- gD7BEju9FigndZ6mzqMlfFMRfbeyY5K9c5FBznavdLvWGp3EZ9I+eaRqs8/1vG4C6J12Nb
- w4pLLdq8nfsgYnqss34lrQ9HEVENlB53sH9PjTieWKbXZ0b3BU7XlA3yIlJQ
-X-ME-Proxy: <xmx:PdBGahstvmEu9Q0F3poN9qGTPT1vNIoLSWv7HziN_sKl4aKaGiStaA>
- <xmx:PdBGaqpsrK1MgOstoJkMk94pidNVHC9VzCURfbiULd8Tya6D8cuY3Q>
- <xmx:PdBGamlJnZyDydmJZxwRRY_wiD_Roai1cTcbfFGj5a_mZgFXqHkeCQ>
- <xmx:PdBGamwVf6MV5l84PJZIqKq7nbpmHxx36l_FWfXpIY5k4caPtBOlOA>
- <xmx:PtBGahpfw2JO6d2tnRgVw_1GNeZ1-IEz074pnxq-kVzu-CT46LTqC992>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783026487; x=
+ 1783112887; bh=SW6NCVkVMlYqh+Odlmrq2BDz7moreUZ7tW1M/VNFMfA=; b=G
+ hpY3VXgPhUFF11tlYLSh6elmFSGF+6zUv4pGQlFBHLB8jOW574K0t7C2XV7BlUyG
+ vDPgFJ/qZn2iAVAtfrsfxGtxKzNppiEZLDNb/wlc+c2bwFfGbqGTJbyiecdS/oHs
+ Lfc6qxkn0Z2XBL7BNbBOHc5qHZ7TpJ3kZ2C3F0K+dmX+VmsyAoRqec1mJuxOFkL6
+ XODlwMcUIvWdKq7xU8ai7QYjX7RFaXEjl61DHbotKtKLmJ+Pp8mlkVGktGz5984e
+ BvH7xmQ42QM0LQRckBQ1bLTsl5L6bYN4vbrgELtM1YF4fLPb3YgZXn2zTc4qLGr9
+ 3Ze7l5OoN76Wb5Znijktw==
+X-ME-Sender: <xms:N9NGatIy4nV-T922BjeqlYOxFUNi_gyPbWB8ZFMYbgWL7qv28EKupA>
+ <xme:N9NGatc6KP6PMbUr9GSZs4Y-cL0IT1kzbPz13edd4sJPxGJqJ7YZTWa0n_REjuNk5
+ SBfEJr3y9t1kCHvITOcdbJdNcnpWP8_Nsln4eDdFvAsZbFfuhhCTQ>
+X-ME-Received: <xmr:N9NGak3qxufVasd_juO4-0tuPezkE3Iex7oG3IVpqw7YvioouejUBFkdPiw1xnLAxzms8OQc8U67uxLW_RwbxTXV0g>
+X-ME-Proxy-Cause: dmFkZTGqKZgH3CCMHiztReY8WAgonMEDL3p4dKB0w4siZ7zXNLb0a3rnhykqfAKhMzRT3J
+ eVI23XgYt44mgjVzKkP/vcFfjxM4mGYWl4ILojwdhhe+9RrAxdf0U8AOZPP/ECdHC6Uvrz
+ 8qWfX4Jz+8THNQdm7+rNKfFJGWL7gOB7s/MduVxE6xPiZsiAD34FaLAgIOZR1kOAGizUEs
+ 7LfhQnF3IoiuPs8NRnetqhVvngfRinxXxHvIbWaeyZdb38d/FCk3OQOg7rcKYd6lDZnbmD
+ iflmKsGmiw0AN50etZ7dc3/K1I9zLRmEi+qBhaT6B25g75J58tNXqgYdEEBoipjvYhGccP
+ b1g1jMJSIzUWsZArrnAewUTOdaL99Q1BGzgeyPMShdELq0X6fd+p3Pal1Dx3KoLpjyaq2w
+ asQDpREogEmhLrNP9hOAAyjSIAk4OzjrfDQSsVtPp48YSVJecx0Lm6heUCASDCDG454X9w
+ AlV9oepWJVpl/2Jk3FGknmshwK6MdXCFvPnHaTryDYQH43JbjjfPcToPOOxyHckUX9vqi4
+ 4tZnTD5pUCSbZ8k50ams6PDf5Dsvgrr1XTa/5iNTnZf23vm19gpjLzjg40MFkAMX5/V3+x
+ lu0mp/bh2Won9Of97FKFEMuHsZPZsU0jke6kk2uNAmjOt+QSibbkU8j2A+sg
+X-ME-Proxy: <xmx:N9NGamjoAN2XbDF-T37ny-ZbE6ulAt_scJ5GG7ujk4d62FtjcLCTPA>
+ <xmx:N9NGaqRsjo6XlSwkcYtGEQvglJiuEfIkAk5zm2YG7IFsMkBHl5GqVA>
+ <xmx:N9NGangdOvADYf7FHPwV1_Rw2cdSt2FP3Ee_k2OQTFR1uM6YhP-NVw>
+ <xmx:N9NGaq7XOSQRBeKZBiboysPCPS8nFNi9XJNpofjAW7-x04Y0UrtJvQ>
+ <xmx:N9NGat2qXVAHZA8EE8pJ3H2oDRoO7BSBtXpl848THmjcLvmi2mBazOvH>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 2 Jul 2026 16:55:25 -0400 (EDT)
+ 2 Jul 2026 17:08:07 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v3 0/8] ip_frag: fix reassembly defects and add test
-Date: Thu, 02 Jul 2026 22:55:23 +0200
-Message-ID: <HoCNbjCqTvOfwEV3R0L75g@monjalon.net>
-In-Reply-To: <20260701162127.207318-1-stephen@networkplumber.org>
-References: <20260616210656.464062-1-stephen@networkplumber.org>
- <20260701162127.207318-1-stephen@networkplumber.org>
+Cc: dev@dpdk.org, Reshma Pattan <reshma.pattan@intel.com>
+Subject: Re: [PATCH] test/pcapng: add some leeway to timestamp test
+Date: Thu, 02 Jul 2026 23:08:05 +0200
+Message-ID: <aJNiDZd6TG2RYMG2NiwY4Q@monjalon.net>
+In-Reply-To: <20260701223702.105995-1-stephen@networkplumber.org>
+References: <20260701223702.105995-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,36 +86,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-01/07/2026 18:20, Stephen Hemminger:
-> The IP reassembly library tracks only a running byte total and reserved
-> slots for the first and last fragments, with no coverage map. As a result
-> it mishandles duplicate, overlapping, oversized, and misheadered
-> fragments, and the IPv4 key is missing a field RFC 791 requires. There
-> was also no functional test to catch any of it.
+02/07/2026 00:37, Stephen Hemminger:
+> The timestamp test sometimes fails on busy or emulated CPU's
+> add additional slop to allow timestamp to be up to 1 second
+> after capture was stopped.
 > 
-> These came out of reviewing a duplicate-fragment report on the list.
-> 
-> Patches 1 and 2 are interdependent: the overlap discard relies on the
-> duplicate handling so an exact duplicate is dropped on its own rather
-> than discarding the whole datagram. The rest are independent.
-> 
-> Patch 6 adds a functional test modeled on the Linux selftest ip_defrag.c.
-> It passes on this series; with any single fix reverted the matching case
-> fails.
-> 
-> v3 - drop stable from one patch and reword release note
-> 
-> Stephen Hemminger (8):
->   ip_frag: tolerate duplicate fragments
->   ip_frag: discard datagrams with overlapping fragments
->   ip_frag: include protocol in IPv4 reassembly key
->   ip_frag: drop IPv6 fragments with per-fragment headers
->   ip_frag: reject oversized reassembled datagrams
->   app/test: add test for IP reassembly
->   ip_frag: remove use of rte_memcpy
->   doc: add release note about ip_frag changes
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-doc squashed in relevant commits atomically,
-applied, thanks.
+Applied, thanks.
+
 
 
