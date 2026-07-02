@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 664B8C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Jul 2026 23:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCCCC43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 01:35:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A321F4064A;
-	Thu,  2 Jul 2026 01:09:05 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 2850440279;
- Thu,  2 Jul 2026 01:09:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1782947345; x=1814483345;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=YQa5UVG/I6ldVDA7fUnD3FQ10Z3rIVUoC+/kreTObog=;
- b=eLBR8SudDSrzCRpzoB2o8cqiDPuPtxMoBI/KlyeXGiw725kJ541q1Zau
- rYxfG4eqHKqaM1Wpih86MDJHA2peAfbQzuCcODTbMYLNdw9f6sdqCB8ws
- FkiOmLQfPGXcXdKk2Rnak2AX3cbwFU2YGsM3X6dLIC2FVKyN4do07sGbu
- DNe1rnFveNOjbRxq1U7w82yYLv84gxakCCOKtBEdDmBa95nZVD7sl1ZX6
- jnrFWU0vbhkFLyqJOL8vjNVEDAH3aNMC3JCO2Cu1o9zBbu99+CQGh+UDd
- ct5EQRsg/fhKpe71QkZKqBgkiIsiiq2v7o9LNtG+9UQz6Sycn5gw0v58F A==;
-X-CSE-ConnectionGUID: 5rquPfkMR1i8pkhPGCZboQ==
-X-CSE-MsgGUID: 5/Q45ARTRNiVxxIfu1S9HA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11834"; a="82807558"
-X-IronPort-AV: E=Sophos;i="6.25,142,1779174000"; d="scan'208";a="82807558"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Jul 2026 16:09:03 -0700
-X-CSE-ConnectionGUID: vFmEmFz3QxaAeMt8B5OWNw==
-X-CSE-MsgGUID: 9mocDnj3RzqpS4btQhlM8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,142,1779174000"; d="scan'208";a="250972243"
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by orviesa006.jf.intel.com with ESMTP; 01 Jul 2026 16:09:01 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
-Subject: [PATCH] net/iavf: fix QinQ handling when only inner VLAN capability
- is supported
-Date: Wed,  1 Jul 2026 23:08:58 +0000
-Message-Id: <20260701230858.436510-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 52190402D1;
+	Thu,  2 Jul 2026 03:35:41 +0200 (CEST)
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
+ [113.46.200.227])
+ by mails.dpdk.org (Postfix) with ESMTP id B435240285
+ for <dev@dpdk.org>; Thu,  2 Jul 2026 03:35:39 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=zG0wrjtgnA6HJAMO/K/NP2HOY1JB90PSIi43YlVKE1Y=;
+ b=57U8it4cixi3DxnlvLC5oQ0NdKdRSq1QqeQkQzO8PGjBcL3OkZkaH+i39t+uBnS1sgrDhpOI3
+ cyypZPZPLYP17THi4/XurEFlcfYQdPcn27Qc2m6GAtcgHshWQt+NZdgHKYIofV49sXBGWfUpHCD
+ hO0kcritPBdxNgMsK2t0c98=
+Received: from mail.maildlp.com (unknown [172.19.163.214])
+ by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4grK3x0P87znTVw;
+ Thu,  2 Jul 2026 09:26:53 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+ by mail.maildlp.com (Postfix) with ESMTPS id A1D344058B;
+ Thu,  2 Jul 2026 09:35:32 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Thu, 2 Jul 2026 09:35:32 +0800
+Message-ID: <257fb8fd-2850-4b31-aa9f-c1ef42897e7b@huawei.com>
+Date: Thu, 2 Jul 2026 09:35:31 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fix dmadev incomplete ABI validation
+To: David Marchand <david.marchand@redhat.com>, <datshan@qq.com>
+CC: <thomas@monjalon.net>, <dev@dpdk.org>, Stephen Hemminger
+ <stephen@networkplumber.org>, Bruce Richardson <bruce.richardson@intel.com>
+References: <tencent_FD79B9DBEB2FD074BFAAACCC6DD7A6EBB906@qq.com>
+ <CAJFAV8wOpRcDPip62f4EuAv_HDK_PuoGf75ZdqiKX3Er14OQXA@mail.gmail.com>
+ <CAJFAV8z1qo-C7jvoUAWSuaysiB-7Lud+XkPgUEED_uAMGGAuuw@mail.gmail.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <CAJFAV8z1qo-C7jvoUAWSuaysiB-7Lud+XkPgUEED_uAMGGAuuw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,56 +59,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-While adding support for QinQ stripping and insertion
-operations, it was assumed that Single VLAN
-operations are always reported through outer VLAN
-capabilities by the hardware.
-However, it seems that Single VLAN operations can
-also be reported through only inner VLAN capabilities
-as well by the hardware.
+On 7/2/2026 1:01 AM, David Marchand wrote:
+> On Wed, 1 Jul 2026 at 10:11, David Marchand <david.marchand@redhat.com> wrote:
+>> On Tue, 30 Jun 2026 at 15:24, <datshan@qq.com> wrote:
+>>>
+>>> From: datshan <datshan@qq.com>
+>>>
+>>> Fix dmadev incomplete ABI validation.
+>>>
+>>> Chengwen Feng (2):
+>>>   dmadev: fix incomplete configuration validation
+>>>   test/dmadev: add config and vchan validation tests
+>>>
+>>>  app/test/test_dmadev_api.c | 186 ++++++++++++++++++++++++++++++++++---
+>>>  lib/dmadev/rte_dmadev.c    | 156 +++++++++++++++++++++----------
+>>>  2 files changed, 283 insertions(+), 59 deletions(-)
+>>>
+>>
+>> This series is not versionned, but I guess this is a new revision.
+>> Don't forget to flag your submissions with a version number in the future.
+>> I marked the previous patches as superseded in patchwork.
+>>
+>> Also provide a high level summary of the differences between versions.
+>>
+>> All of those steps are listed in the contributing guide, I suggest
+>> (re-)reading the whole guide, with a highlight on:
+>> https://doc.dpdk.org/guides/contributing/patches.html#steps-to-getting-your-patch-merged
+>>
+>> Thanks, I'll try to find some time to review this week.
+> 
+> Well, enforcing *now* that some fields are 0 is actually breaking ABI
+> for existing applications.
+> This change should be deferred to 26.11, and backporting to a LTS is
+> not possible.
 
-This patches fixes the same for QinQ operations.
+OK
+BTW: Should I submit another version in 26.11 cycle or do nothing?
 
-Fixes: 8599d7604e0a ("net/iavf: support QinQ strip")
-Fixes: 7ce1363b424f ("net/iavf: support QinQ insertion")
-Cc: stable@dpdk.org
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
- drivers/net/intel/iavf/iavf_vchnl.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 0643a835d5..0c5b0f8ff1 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -904,13 +904,14 @@ iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable)
- 	stripping_caps = &vf->vlan_v2_caps.offloads.stripping_support;
- 
- 	/* When VLAN extend is disabled, Single VLAN mode which is Outer VLAN
--	 * When VLAN extend is enabled, QinQ mode, this API works only on
--	 * Inner VLAN strip which is always 0x8100.
-+	 * When VLAN extend is enabled i.e. DVM mode or when hardware reports
-+	 * Single VLAN capability through inner stripping_caps, this API
-+	 * works only on Inner VLAN strip which is always 0x8100.
- 	 */
- 	if (!qinq && (stripping_caps->outer & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
- 	    (stripping_caps->outer & VIRTCHNL_VLAN_TOGGLE))
- 		ethertype = &vlan_strip.outer_ethertype_setting;
--	else if (qinq && (stripping_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
-+	else if ((stripping_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
- 		 (stripping_caps->inner & VIRTCHNL_VLAN_TOGGLE))
- 		ethertype = &vlan_strip.inner_ethertype_setting;
- 	else
-@@ -1003,7 +1004,7 @@ iavf_config_vlan_insert_v2(struct iavf_adapter *adapter, bool enable)
- 	if (!qinq && (insertion_caps->outer & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
- 	    (insertion_caps->outer & VIRTCHNL_VLAN_TOGGLE))
- 		ethertype = &vlan_insert.outer_ethertype_setting;
--	else if (qinq && (insertion_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
-+	else if ((insertion_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
- 		 (insertion_caps->inner & VIRTCHNL_VLAN_TOGGLE))
- 		ethertype = &vlan_insert.inner_ethertype_setting;
- 	else
--- 
-2.34.1
+> 
+> Opinions?
+> 
+> 
 
