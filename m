@@ -2,72 +2,157 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3BDC43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 08:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A37C43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 11:07:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D7AB402C5;
-	Thu,  2 Jul 2026 10:57:46 +0200 (CEST)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com
- [209.85.208.42]) by mails.dpdk.org (Postfix) with ESMTP id DB8F340265
- for <dev@dpdk.org>; Thu,  2 Jul 2026 10:57:44 +0200 (CEST)
-Received: by mail-ed1-f42.google.com with SMTP id
- 4fb4d7f45d1cf-697564cb69eso3353759a12.0
- for <dev@dpdk.org>; Thu, 02 Jul 2026 01:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1782982664; x=1783587464; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=rKy3JKwadC3J1LwaEaH9KPcZsVF8AXCIVMuNV5q5KhE=;
- b=d3On2tncasfoPa5+jNV436zPkN7Eau1GZdqyNJFPrDXYCXi72AXZRseTr61bIA4aJN
- XBHtwxMUJb8v6PespYgNYk7ioHJZBppw0JTF1PuCSDYIcq9qVZbYVf2Q+jP1ldLWOVKB
- 8SprTT+1v7FHDbXqam+myiY0sSerGK6zsx8lY++TcgAB17bfZ1R7BFrrQjpilLYaMiXC
- RvPYx5X74hZB2FFbXrDI9y0MRnS1dVXh3riEVoDfW1RFEOhLnLocRFI8NIxZK53Irs+K
- 5vATXOMfvrEE3RBDm80TcStVmM7rjov/7RwiX6j1UFfmH81aOlMPZ6UlHDMOHm7U5ZmG
- zxIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1782982664; x=1783587464;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=rKy3JKwadC3J1LwaEaH9KPcZsVF8AXCIVMuNV5q5KhE=;
- b=CUhYX87tm4zH8BNACdAqZfiNgSHEYlho2Z/BCAaGi1mCZwkopZmYe+eKrV6qrxIuO4
- NYKmadoDjMelzRzFyWCDMDOW48HdZ91N2kx6V3GaZpeM0dOci+nu20Ki+g+lnvDl6YLp
- qvYbJiiokNcot7TL+ICYc9tAYD5dWlZ6R1oGnHBqGpXwOt0j8seOnllGqkSl/QBQhB35
- qUnJ3xyEY6CWEPMfYnXqrXtY38sW4mnsiRZ+MTtRSjTcyRM5KceS3/ODx5C6AxVuznhI
- rWoU3Utf6U7CeHHipFQWBKQ34v2IbHQ7pcm+8bmFxVkAs3ZOrzRhViNbF4PlL4jI/2Fc
- fePQ==
-X-Gm-Message-State: AOJu0YzYJBDmsNDjjDnH8ORDr6EY7JIEcL+FXKGv5pRv5Caq4TMO8xuz
- WO7h1PeI5Zye567DY0b6rLNekXtb9kHbuEcF7OdRvTGcx1796ojGo2H+
-X-Gm-Gg: AfdE7clZxEd7UkL76AfwaMEK6q8wgp1Lg4h04cSQlqqfmNe3qPEn7+JjgZ+qJRWHBGj
- YRxPYvasyP0KtRODhT1ttaim0aOjSP5Sh9NyflM+ykXxRe06IW05fkAw6ikjxmJhC+YsXB1/6JF
- zCjh187grlcxzUvmka0q6UXjnyClbyYBmeHBptYqOqZXjb0U4lG8Xv5cD+vvuO2pHCAVo2TZr02
- 3631nW19GmMnfXVpiYH7gDvXSmNe4elUkqTi7HXeaGDUkkDd7FaZQUTJbqOm7QuaZ5Qj8TASiTI
- peq+S6uBm+dK1u3NPl+8KEyPUkjtruFchCfJ+8Z0T0bNuuNesBgjFmZ9jxoZoAGANEJRhkd0oQW
- 9ouikbOurxQlUFXZEXvW8BJZClNqbo/1cA5t/N74Dr5HbWGHLHGBgvCmumXNGSUVb5D4MlEp9MX
- 0mUaLiheJDfSfj0IG1Etan0wScQUt96ZOvWFAkgR7xvZdlSV5WzjEKJSUX5tJDRplEpTbrejK+
-X-Received: by 2002:a05:6402:50ce:b0:696:565:a9e7 with SMTP id
- 4fb4d7f45d1cf-698a2c6d238mr1814459a12.9.1782982664043; 
- Thu, 02 Jul 2026 01:57:44 -0700 (PDT)
-Received: from halsandi-l-pw05wngr.cisco.com
- ([2001:420:44f5:1250:f092:b1ed:acff:4627])
- by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-698ace163adsm641829a12.4.2026.07.02.01.57.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 02 Jul 2026 01:57:43 -0700 (PDT)
-From: Hadi Sandid <hadisandid@gmail.com>
-To: wisamm@nvidia.com
-Cc: dev@dpdk.org,
-	Hadi Sandid <hadisandid@gmail.com>
-Subject: [PATCH v2] app/flow-perf: add represented-port/port-representor
- actions
-Date: Thu,  2 Jul 2026 10:56:26 +0200
-Message-ID: <20260702085626.465075-1-hadisandid@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260701150422.57359-1-hadisandid@gmail.com>
-References: <20260701150422.57359-1-hadisandid@gmail.com>
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id 3A479402C5;
+	Thu,  2 Jul 2026 13:07:06 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id AC95140265
+ for <dev@dpdk.org>; Thu,  2 Jul 2026 13:07:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1782990425; x=1814526425;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=lMcoqlLuR31E6TtVQgCj5GARfuZve0p8dLnwZB8KBnM=;
+ b=ACpuH/YyX4g7uQbqT+nm3T+uiFnynpZDWIzHqNNXhamOd7BP0tEVb8LI
+ v/dLfdew4SWzfPZZC2MgjfXRgGcpzk0Pb/Q2kAMMs0e+buINV0sOoTN0H
+ sDJE4cRW4ySrRA2u5L6OOoG2kWyp3VrqA4VxbyjFRU25LGFvVBXu1G236
+ aM00sFsqB1RqZBy7g+b6CyeATTOUZu9zYyyOdbQx8BwYWgMZL2m8Jmoi7
+ PdEPKNW30oJKjpqwmbpIS5RxNpDTh450Ou2AA1YAqt3k2WjFh+YyIW8jK
+ 04kPOKufTLhiIcTkSDz7reIYmiaZwH1/CvmAzAvLmtcvoginnTeHqDzbn w==;
+X-CSE-ConnectionGUID: bNVq8/S1QymY0OWxfmQmOQ==
+X-CSE-MsgGUID: MzhsdFKuS5GNgJSS0Gvo7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11834"; a="83831353"
+X-IronPort-AV: E=Sophos;i="6.25,143,1779174000"; d="scan'208";a="83831353"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Jul 2026 04:07:04 -0700
+X-CSE-ConnectionGUID: OkorHyg2Tm6jrlVd5/3pLQ==
+X-CSE-MsgGUID: Lca15oGqQI6x8Y1CTlUXKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,143,1779174000"; d="scan'208";a="277158718"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Jul 2026 04:07:03 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Thu, 2 Jul 2026 04:07:02 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43 via Frontend Transport; Thu, 2 Jul 2026 04:07:02 -0700
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.66) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Thu, 2 Jul 2026 04:06:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vS9D7Vm1xsoi2PmfAjXj8GFNBdaAb8yd/2wpL5HSYl73PlJVl9KAIRjbBN2q9QgbbmOianoyTHOuxHLLs2Nn/s3rgu5WuTgtEErCDV0FqUbUkc6fQ41ogHB/tUPQ0tRkTfpBiHqzrYVKfwtwGNrJ9OSmggvN5jso8zmg+CsYWgoTNNIjSJG5XKXmsMFahmeOm2lXeJxFGfC7ntHpBDQUcsGT/UiWNqgaV4s5PFjQzZmkQX7SSyc34Q03d6Hrxz1C0ItjFNiNAFYqOpds/QLjurHsaVAOgHs/JB7CpmCVfUqNvBU2HczlRo5+17WoYKqRDlEyXRHVqbtkhH4tYyc0fQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oFq2pmQdKjrLAnEKC+kFIpFd5KOmIZPl209DCnesRjw=;
+ b=MetQSN0EcWRKqkoQXNLtTCLki/EZtGv4zYAlf5w2iYYKPZmqYqntQqtTPlxCMsppQyHDd99/WNbqTGt/Zv0agRqoeem4YrQLXZmbQLvmni2U+qDoqVVcIPLoM6o4Omd+FBxWKaSaFxn78/195x7KSdraJkl4IY2vfYT4ky2LwXv3Hw+plaw3DXArMHQ6OENeXeHH6qbUl2it71g/eGwxwbCGJi5x7qISJg+cMORIKuThm8pYMjjDbgvRm59nJzWpnNTKuB+CWlxcqtVAsd6h6glr3KqjuqcWalW+teYmIxzHsZyDNJq3Ew8+wg2hgDT9vttA/9I8MdLLPd4O38V99Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY8PR11MB7897.namprd11.prod.outlook.com (2603:10b6:930:7d::9)
+ by SA1PR11MB300021.namprd11.prod.outlook.com (2603:10b6:806:51a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Thu, 2 Jul
+ 2026 11:06:53 +0000
+Received: from CY8PR11MB7897.namprd11.prod.outlook.com
+ ([fe80::159a:3f92:c266:4ec]) by CY8PR11MB7897.namprd11.prod.outlook.com
+ ([fe80::159a:3f92:c266:4ec%4]) with mapi id 15.21.0181.008; Thu, 2 Jul 2026
+ 11:06:53 +0000
+Message-ID: <6df97f76-27d7-49f2-8d23-30601c12ca0a@intel.com>
+Date: Thu, 2 Jul 2026 12:06:49 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] examples/l3fwd-power: fix uncore deinit for
+ non-legacy
+To: Huisong Li <lihuisong@huawei.com>, <anatoly.burakov@intel.com>,
+ <sivaprasad.tummala@amd.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
+ <fengchengwen@huawei.com>, <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, 
+ <john.mcnamara@intel.com>
+References: <20260526081138.1434947-1-lihuisong@huawei.com>
+ <20260526081138.1434947-2-lihuisong@huawei.com>
+Content-Language: en-US
+From: "Macnamara, Chris" <chris.macnamara@intel.com>
+In-Reply-To: <20260526081138.1434947-2-lihuisong@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DU2PR04CA0072.eurprd04.prod.outlook.com
+ (2603:10a6:10:232::17) To CY8PR11MB7897.namprd11.prod.outlook.com
+ (2603:10b6:930:7d::9)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR11MB7897:EE_|SA1PR11MB300021:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0673cc1b-4f84-4ea8-7cd7-08ded82a05f3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|23010399003|22082099003|18002099003|4143699003|6133799003|5023799004|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info: oPwrFkGEwhn9zXRhli/jQMp6ldy8Bgi13WmFcOWAHAM3VJwwKDlQmDw8thy3cH2QOIInJOr+hLeKydGodn5ZC7tssxlnnAa+3ZoGZvEprde8fgodjvMefLU5b+SoGIeqcZr2GfCO16olWe70W1itg1droAKXuPE6hhwhIxKq5y3iBKIauxPO2B1Jt9aJ3TRvh4pGJhOpkCeA2rhCKAKssV9BoAc0hsZkIlgA28vbzZwKTDltSog2CDoHT+tNn+T0GMGZSPEPCeJyzqKRiQgUBF9ggvCYwd1Gj+i40UYJaSSqR7Fkkvt1XSNfVu3e1jxtCbW30GeQ4LuCKlmghUPOCV1QQBmWsOtfybylZMAXm8nwDVtTtu3N/3+00IBgdvn37S11eIRPN4ESCf0YiWtJuWe5guqMcQbyBqz5nDywQXRzjGBWb8rWSCsQjPZdC6AUxnSW6sb2xLLxunPSSHRn+w1/tUug37Ajja9itD5TWS1FCfqHiYO7H0QP1/Bo6zXykxV4vGvveERw1SN/ZwjMb8MO11e4htHlvqLqDgRLMQsP36qryDGRw3ud+UIou6/QKzMlMfJK9Ylxvpe/ZkPjRYabb4TexQSpf0qty/zKZYTxoMoB7X8A/yiOY1Wqiotsmuvq/ntkLASEwxnLR/747TUGP+z0E4OfhwqR+J/O4u4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CY8PR11MB7897.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(22082099003)(18002099003)(4143699003)(6133799003)(5023799004)(11063799006)(56012099006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?b3IzY2ltMXpYUlBPejVzelgyaG1OYWRacENUNmhYRWIwRWZscUE4ZkNtaDd4?=
+ =?utf-8?B?UFNRR2JCQThWL2JvL1pUYnJ3NHVubFo0elVXSXp4R0tWdjF5MjM5aTdIQXo0?=
+ =?utf-8?B?bFIwQlNlUFZ6aXA1UnRUYmp5cCs4c1Z0TlFabjVKZWcvZlo3cDJQTVNtclhr?=
+ =?utf-8?B?OU9JV241TUNZTlVZZGk5Zmtxb2RndGRnNThSTGNnT1ZSMVR0LzZpSjVWY2lp?=
+ =?utf-8?B?L3BTWVdDL2QvbEdPRDVQZEgxSmgrRmdJSmtsaHIxUlFhU29FWHlpZVQxb21y?=
+ =?utf-8?B?andpUjVNMlA4MnBOMWpWN21KYk1mcnFha2kwR3ZVWlYwM1BuUmZDMTUzZ1pu?=
+ =?utf-8?B?RC9uOHY2aHNNdngyZTYzN1VBdEZHWVAvNU1mQkUyNTNKRDRxa2U3blB6UEhS?=
+ =?utf-8?B?SzB5dHc4VmpRNlpjdERYQXRwUE5QYkF4TTZtSWZ4ZUpnYUZqSXhtV0FZbjRt?=
+ =?utf-8?B?VGttdDhwV0ZSajc4angveHdpUXNENzBOckpMalk1dGJhdWxuRDFYUURCMUpq?=
+ =?utf-8?B?dG9SeCtTeUlCVEZ0bmFxTDNMS0RlVGdORXNRVGFqTXprb0lHWlFXVVhPWWJn?=
+ =?utf-8?B?elUxY05Wa0pBZHA4Y3VJVlBsbGpwR1orakdSdXhpd3dMc1JycFplVmVDbm1k?=
+ =?utf-8?B?WU9lWXNsdW5IdytGTE1jYzBhYUQyaTJ3cDdYbS93bXBjYmdFRFFkMXlQUGpW?=
+ =?utf-8?B?UEZyWnFENGk1Qy9mc0p5WUN5UmZlSWY0RlJwUTlHQXd5RHNvZ0QvTzNneGRC?=
+ =?utf-8?B?QmhoK0FZb3hhNWlocE9lZVI1U2l6dDV6Slk2bTl5REVLYzdPSjlBY3YybFN4?=
+ =?utf-8?B?Qml1Mm5Pb25FUmU2SmlpTTQ1SzJTQUNhNWthZUFQVXdibnVtL3lsMWphUlZl?=
+ =?utf-8?B?WCtzb2lac2ozYXBoNkw2NS9pcnQrUC9URktnK1VyZ3k3ZUJ3bjloZE5sbHkw?=
+ =?utf-8?B?NUhhRjlxbDV3bTRzcG82TG1BR0EybmgxOHY3emYrNGN2ZmtNSUhhSFNHSWxz?=
+ =?utf-8?B?SDZCRUM4VWl5UllHenAyYnBDRGFuVDl0MVRmT25qRG03V05GbDdxcWZQTTBh?=
+ =?utf-8?B?NDhRK0gxT2JRQzVSMXJHTTZrQ05FRDZUK3VJM21FNzk4YnVkREJvUU93YVpa?=
+ =?utf-8?B?QVFpTmFSMUlVRHZNSHN5dlpsRDBBZ09IYU1DYTlQUEx3S2Q5V3RvUlZQTFc5?=
+ =?utf-8?B?aXZqeG1ZeFVPR2pxU1JoMWc1SGdlbHhCWXBlemxnNDU4R0Z0L0crNGtleWFs?=
+ =?utf-8?B?ejRpQ2RrRWZ6aUpBbGxQZ1B4dG0vckRZc2dXdm5GR3psakZqa0c0cU1Xb3g4?=
+ =?utf-8?B?UmNlUmtDem03dmwwQXQyN3BJS29XemhOMUduekg5dWhMWnpvMVY0ZGI3RGE3?=
+ =?utf-8?B?bzFVczdqTHE2a3poY2RuekdvTWRTTEVBK3g2bXV4bkpxeSs1SkJ0UlZHaTlQ?=
+ =?utf-8?B?cDR1UUw0R3NjeEF2NkJLQ3FZOWlxdGVFZ3hKbjVLbXZKWmJtbWdBMEVTZExI?=
+ =?utf-8?B?NVliZ0pNWC9DeHZlc1IxUnhaOE9telQxZ0hKdncrZDJyNmpvMy9GSE92cHJs?=
+ =?utf-8?B?ZlBrVktmVHdqa3VJcVRkS2duNFFrK1I1ZTdaVTRLeFI2UEF4SGNmbDU3UWUz?=
+ =?utf-8?B?Z0N3bG9GR01HM0dPU2l2NmZPSGxKZmNySC9hR1c1S0I1S3NxYmZRSlhwT2RW?=
+ =?utf-8?B?eXB5bjdPeEJ6SEk5WGFQN3BTN2NrY25EWldTOGNnT2lzZlRGaTdqSG0rSlhr?=
+ =?utf-8?B?QnluQm1ldFBxVTQvczZHeFNjMk43MTduZWFHWllZc2JhOW5iazl4cmVWUFJ6?=
+ =?utf-8?B?YkJZQVVrOXNGOVhJMCtyUWQxMWRXT0d4TmxSdkdkOVVNZ3V5Tmg3WDFHejht?=
+ =?utf-8?B?YTNHQi84SHE0RElhTWoydzRON3VnZVg1WS9vYVBzbFBwNFNsaTl2QmdCR3hs?=
+ =?utf-8?B?bjZrMGhSZm9zdHZFSWtIeFFsakRGNjlSUFd4Unlyc2s3eGhDTVJBaml5ZFBY?=
+ =?utf-8?B?RU1LbjZkQjZtdFdFQlBvSk9Ibm9yMmpRYWRwS2xWTE9TVHdpS2JCV3NpY0ZV?=
+ =?utf-8?B?UGVsUC9tTXZxMURLdVpwOFIvL1VzdjNJWnkrVzg4Tk8rVlh0MW5ZNXhyNHJq?=
+ =?utf-8?B?UDJwWGZUSEk4a2JTY0t4WDhwVjhiZ2crNlpNS2ZiakJnU2VKTHl5NkovK0c5?=
+ =?utf-8?B?T3B6WC8yYVNXSW9hMVNYeE1ySXcveTlhblJjb3RWY1l3S1dHdVAzVDlndFdj?=
+ =?utf-8?B?SWJSV3ZxS2RVTmRhendnT29TVlN6cTlTckttdkdqbk92UmxKSG5RNmRrcFJl?=
+ =?utf-8?B?WjdVV1hUVSt1VWljbklTS1ZnMFpTVGNlL09qclVMR2VwbFdoaFdwdz09?=
+X-Exchange-RoutingPolicyChecked: Oz/v0/L1uGWQPVwLs0Z6ccFq01CP/8gsGV5t4TtAnc3lNzXZLThePpfAWbKNOaMSZ/AeVfBeTW5+scepYRwEETPPb94UV38sfgfjXs2bZW+MK1mdG+mUb9uk/C1l3C9uPlZ42VOazBDnlormjKt64ZmdcQ+XVi8lwfmftDsn23Vd54k40JRlXaG5URTuV7Yvv0zof4wPxZSFPFrODg6pIqIa/I7imtRk7BufkNCA0bSkjbujO2cjFb2O8P9duw+n1DdCDwRmCk6EOtKzr4eNXEufkyIU+tKdkG1oMV9LptI5mSBAY4BWPmqh9QAKRJO34NeJ3AOrOQA27Bw8lRnH3g==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0673cc1b-4f84-4ea8-7cd7-08ded82a05f3
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7897.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2026 11:06:53.4865 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MJfynYel6LdFwI34t4pn5DjLszO0XZvaeCapXreuxZquZuuTNRmxrw/BEfSeUqK6QHP0j/f26320sjKkAqSDg6WamrzCDUHGmzPKtkc9iTk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB300021
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,217 +166,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add 'represented-port' and 'port-representor' action support,
-and update documentation.
+> Uncore resources were not being deinitialized in non-legacy modes (such
+> as pmd-mgmt), causing the uncore frequency not to return to its original
+> value after the application exited.
+>
+> The root cause is that uncore initialization can be performed for all
+> modes, whereas the deinitialization logic is incorrectly restricted
+> to legacy mode only. So do the deinitialization of uncore on all app
+> modes.
+>
+> Fixes: 10db2a5b8724 ("examples/l3fwd-power: add options for uncore frequency")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>   examples/l3fwd-power/main.c | 66 ++++++++++++++++++++-----------------
+>   1 file changed, 35 insertions(+), 31 deletions(-)
+>
+> diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
+> index 02ec17d799..1122aeb930 100644
+> --- a/examples/l3fwd-power/main.c
+> +++ b/examples/l3fwd-power/main.c
+> @@ -2271,28 +2271,31 @@ init_power_library(void)
+>   	unsigned int lcore_id;
+>   	int ret = 0;
+>   
+> -	RTE_LCORE_FOREACH(lcore_id) {
+> -		/* init power management library */
+> -		ret = rte_power_init(lcore_id);
+> -		if (ret) {
+> -			RTE_LOG(ERR, L3FWD_POWER,
+> -				"Library initialization failed on core %u\n",
+> -				lcore_id);
+> -			return ret;
+> -		}
+> -		/* we're not supporting the VM channel mode */
+> -		env = rte_power_get_env();
+> -		if (env != PM_ENV_ACPI_CPUFREQ &&
+> -				env != PM_ENV_PSTATE_CPUFREQ &&
+> -				env != PM_ENV_AMD_PSTATE_CPUFREQ &&
+> -				env != PM_ENV_CPPC_CPUFREQ) {
+> -			RTE_LOG(ERR, L3FWD_POWER,
+> -				"Only ACPI and PSTATE mode are supported\n");
+> -			return -1;
+> +	/* only legacy mode relies on the initialization of cpufreq library */
+> +	if (app_mode == APP_MODE_LEGACY) {
+> +		RTE_LCORE_FOREACH(lcore_id) {
+> +			/* init power management library */
+> +			ret = rte_power_init(lcore_id);
+> +			if (ret) {
+> +				RTE_LOG(ERR, L3FWD_POWER,
+> +					"Library initialization failed on core %u\n",
+> +					lcore_id);
+> +				return ret;
+> +			}
+> +			/* we're not supporting the VM channel mode */
+> +			env = rte_power_get_env();
+> +			if (env != PM_ENV_ACPI_CPUFREQ &&
+> +					env != PM_ENV_PSTATE_CPUFREQ &&
+> +					env != PM_ENV_AMD_PSTATE_CPUFREQ &&
+> +					env != PM_ENV_CPPC_CPUFREQ) {
+> +				RTE_LOG(ERR, L3FWD_POWER,
+> +					"Only ACPI and PSTATE mode are supported\n");
+> +				return -1;
+> +			}
+>   		}
+>   	}
+>   
+> -	if (cpu_resume_latency != -1) {
+> +	if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
+>   		RTE_LCORE_FOREACH(lcore_id) {
+>   			/* Back old CPU resume latency. */
+>   			ret = rte_power_qos_get_cpu_resume_latency(lcore_id);
+> @@ -2329,14 +2332,16 @@ deinit_power_library(void)
+>   	unsigned int lcore_id, max_pkg, max_die, die, pkg;
+>   	int ret = 0;
+>   
+> -	RTE_LCORE_FOREACH(lcore_id) {
+> -		/* deinit power management library */
+> -		ret = rte_power_exit(lcore_id);
+> -		if (ret) {
+> -			RTE_LOG(ERR, L3FWD_POWER,
+> -				"Library deinitialization failed on core %u\n",
+> -				lcore_id);
+> -			return ret;
+> +	if (app_mode == APP_MODE_LEGACY) {
+> +		RTE_LCORE_FOREACH(lcore_id) {
+> +			/* deinit power management library */
+> +			ret = rte_power_exit(lcore_id);
+> +			if (ret) {
+> +				RTE_LOG(ERR, L3FWD_POWER,
+> +					"Library deinitialization failed on core %u\n",
+> +					lcore_id);
+> +				return ret;
+> +			}
+>   		}
+>   	}
+>   
+> @@ -2360,7 +2365,7 @@ deinit_power_library(void)
+>   		}
+>   	}
+>   
+> -	if (cpu_resume_latency != -1) {
+> +	if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
+>   		RTE_LCORE_FOREACH(lcore_id) {
+>   			/* Restore the original value. */
+>   			rte_power_qos_set_cpu_resume_latency(lcore_id,
 
-Signed-off-by: Hadi Sandid <hadisandid@gmail.com>
----
-v2:
-  - use per-lcore port-action configurations during concurrent flow creation
-  - clarify port redirection actions and destination option handling
+Agree there is an issue with uncore deinit.
 
- .mailmap                         |  1 +
- app/test-flow-perf/actions_gen.c | 46 ++++++++++++++++++++++++++++----
- app/test-flow-perf/main.c        | 31 ++++++++++++++++-----
- doc/guides/tools/flow-perf.rst   | 42 ++++++++++++++++++++++++-----
- 4 files changed, 102 insertions(+), 18 deletions(-)
+cpu_resume_latency & init_power_library: After this patch, 
+cpu_resume_latency (for C-state PM QoS control) is gated behind 
+APP_MODE_LEGACY even though it's orthogonal to the cpufreq library, so 
+it's silently ignored in pmd-mgmt/interrupt modes. It’s used for C state 
+management which applies in other modes such as interrupt mode.
 
-diff --git a/.mailmap b/.mailmap
-index c5bc728fae..c51b14fbda 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -557,6 +557,7 @@ Guruprasad Rao <guruprasadx.rao@intel.com>
- Guy Kaneti <guyk@marvell.com>
- Guy Tzalik <gtzalik@amazon.com>
- H. Peter Anvin <hpa@linux.intel.com>
-+Hadi Sandid <hadisandid@gmail.com>
- Haggai Eran <haggaie@nvidia.com>
- Haifei Luo <haifeil@nvidia.com>
- Haifeng Gao <gaohaifeng.gao@huawei.com>
-diff --git a/app/test-flow-perf/actions_gen.c b/app/test-flow-perf/actions_gen.c
-index 9d102e3af4..2a1fca9d7a 100644
---- a/app/test-flow-perf/actions_gen.c
-+++ b/app/test-flow-perf/actions_gen.c
-@@ -178,13 +178,41 @@ add_port_id(struct rte_flow_action *actions,
- 	uint8_t actions_counter,
- 	struct additional_para para)
- {
--	static struct rte_flow_action_port_id port_id = {
--		.id = PORT_ID_DST,
--	};
-+	static alignas(RTE_CACHE_LINE_SIZE)
-+	    struct rte_flow_action_port_id port_ids[RTE_MAX_LCORE];
-+	uint8_t ti = para.core_idx;
- 
--	port_id.id = para.dst_port;
-+	port_ids[ti].id = para.dst_port;
- 	actions[actions_counter].type = RTE_FLOW_ACTION_TYPE_PORT_ID;
--	actions[actions_counter].conf = &port_id;
-+	actions[actions_counter].conf = &port_ids[ti];
-+}
-+
-+static void
-+add_represented_port(struct rte_flow_action *actions,
-+	uint8_t actions_counter,
-+	struct additional_para para)
-+{
-+	static alignas(RTE_CACHE_LINE_SIZE)
-+	    struct rte_flow_action_ethdev represented_ports[RTE_MAX_LCORE];
-+	uint8_t ti = para.core_idx;
-+
-+	represented_ports[ti].port_id = para.dst_port;
-+	actions[actions_counter].type = RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT;
-+	actions[actions_counter].conf = &represented_ports[ti];
-+}
-+
-+static void
-+add_port_representor(struct rte_flow_action *actions,
-+	uint8_t actions_counter,
-+	struct additional_para para)
-+{
-+	static alignas(RTE_CACHE_LINE_SIZE)
-+	    struct rte_flow_action_ethdev port_representors[RTE_MAX_LCORE];
-+	uint8_t ti = para.core_idx;
-+
-+	port_representors[ti].port_id = para.dst_port;
-+	actions[actions_counter].type = RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR;
-+	actions[actions_counter].conf = &port_representors[ti];
- }
- 
- static void
-@@ -1102,6 +1130,14 @@ fill_actions(struct rte_flow_action *actions, uint64_t *flow_actions,
- 			.mask = FLOW_ACTION_MASK(RTE_FLOW_ACTION_TYPE_PORT_ID),
- 			.funct = add_port_id
- 		},
-+		{
-+			.mask = FLOW_ACTION_MASK(RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT),
-+			.funct = add_represented_port,
-+		},
-+		{
-+			.mask = FLOW_ACTION_MASK(RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR),
-+			.funct = add_port_representor,
-+		},
- 		{
- 			.mask = FLOW_ACTION_MASK(RTE_FLOW_ACTION_TYPE_DROP),
- 			.funct = add_drop,
-diff --git a/app/test-flow-perf/main.c b/app/test-flow-perf/main.c
-index 6636d1517f..646caccfda 100644
---- a/app/test-flow-perf/main.c
-+++ b/app/test-flow-perf/main.c
-@@ -267,6 +267,18 @@ static const struct option_dict {
- 		.map = &flow_actions[0],
- 		.map_idx = &actions_idx
- 	},
-+	{
-+		.str = "represented-port",
-+		.mask = FLOW_ACTION_MASK(RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT),
-+		.map = &flow_actions[0],
-+		.map_idx = &actions_idx
-+	},
-+	{
-+		.str = "port-representor",
-+		.mask = FLOW_ACTION_MASK(RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR),
-+		.map = &flow_actions[0],
-+		.map_idx = &actions_idx
-+	},
- 	{
- 		.str = "rss",
- 		.mask = FLOW_ACTION_MASK(RTE_FLOW_ACTION_TYPE_RSS),
-@@ -542,6 +554,8 @@ usage(char *progname)
- 
- 	printf("To set flow actions:\n");
- 	printf("  --port-id: add port-id action in flow actions\n");
-+	printf("  --represented-port: add represented-port action in flow actions\n");
-+	printf("  --port-representor: add port-representor action in flow actions\n");
- 	printf("  --rss: add rss action in flow actions\n");
- 	printf("  --queue: add queue action in flow actions\n");
- 	printf("  --jump: add jump action in flow actions\n");
-@@ -699,6 +713,8 @@ args_parse(int argc, char **argv)
- 		{ "icmpv6",                     0, 0, 0 },
- 		/* Actions */
- 		{ "port-id",                    2, 0, 0 },
-+		{ "represented-port",           2, 0, 0 },
-+		{ "port-representor",           2, 0, 0 },
- 		{ "rss",                        0, 0, 0 },
- 		{ "queue",                      0, 0, 0 },
- 		{ "jump",                       0, 0, 0 },
-@@ -913,14 +929,17 @@ args_parse(int argc, char **argv)
- 					rte_exit(EXIT_FAILURE, "Invalid hairpin config mask\n");
- 				hairpin_conf_mask = hp_conf;
- 			}
--			if (strcmp(lgopts[opt_idx].name,
--					"port-id") == 0) {
-+			if (strcmp(lgopts[opt_idx].name, "port-id") == 0 ||
-+			    strcmp(lgopts[opt_idx].name, "represented-port") == 0 ||
-+			    strcmp(lgopts[opt_idx].name, "port-representor") == 0) {
- 				uint16_t port_idx = 0;
- 
--				token = strtok(optarg, ",");
--				while (token != NULL) {
--					dst_ports[port_idx++] = atoi(token);
--					token = strtok(NULL, ",");
-+				if (optarg != NULL) {
-+					token = strtok(optarg, ",");
-+					while (token != NULL) {
-+						dst_ports[port_idx++] = atoi(token);
-+						token = strtok(NULL, ",");
-+					}
- 				}
- 			}
- 			if (strcmp(lgopts[opt_idx].name, "rxq") == 0) {
-diff --git a/doc/guides/tools/flow-perf.rst b/doc/guides/tools/flow-perf.rst
-index 657f06fec7..aecbb846e3 100644
---- a/doc/guides/tools/flow-perf.rst
-+++ b/doc/guides/tools/flow-perf.rst
-@@ -240,13 +240,41 @@ Items:
- Actions:
- 
- *	``--port-id``
--	Add port redirection action to all flows actions.
--	Port redirection destination is defined in user_parameters.h
--	under PORT_ID_DST, default value = 1.
--
--       It can also has optional parameter like --port-id=N[,M] to
--       specify the destination port, the number of values should be
--       the same with number of set bits in portmask.
-+	Add an action that redirects matching traffic to a DPDK port ID.
-+	As this action is deprecated; prefer ``--represented-port`` or
-+	``--port-representor`` for embedded-switch flows when supported by
-+	the PMD.
-+	Port redirection destination is defined in config.h under
-+	PORT_ID_DST, default value = 1.
-+
-+       Without an argument, ``PORT_ID_DST`` is used for each source port.
-+       With ``--port-id=N[,M]``, the values override the destination for
-+       enabled source ports in ``--portmask`` order; provide one value for
-+       each set bit in the port mask.
-+
-+*	``--represented-port``
-+	At the embedded-switch level, add an action that redirects matching
-+	traffic to the entity represented by the specified ethdev. Use this
-+	action when the destination is the represented entity.
-+	Port redirection destination is defined in config.h under
-+	PORT_ID_DST, default value = 1.
-+
-+		Without an argument, ``PORT_ID_DST`` is used for each source port.
-+		With ``--represented-port=N[,M]``, the values override the destination
-+		for enabled source ports in ``--portmask`` order; provide one value
-+		for each set bit in the port mask.
-+
-+*	``--port-representor``
-+	At the embedded-switch level, add an action that redirects matching
-+	traffic to the specified ethdev. Use this action when the destination
-+	is the ethdev rather than the entity it represents.
-+	Port redirection destination is defined in config.h under
-+	PORT_ID_DST, default value = 1.
-+
-+		Without an argument, ``PORT_ID_DST`` is used for each source port.
-+		With ``--port-representor=N[,M]``, the values override the destination
-+		for enabled source ports in ``--portmask`` order; provide one value
-+		for each set bit in the port mask.
- 
- *	``--rss``
- 	Add RSS action to all flows actions,
--- 
-2.43.0
+Also init_power_library() now has both its blocks legacy-guarded 
+internally, the newly-unconditional call by removing APP_MODE_LEGACY to 
+it is a no-op in non-legacy modes. This leaves the two functions 
+inconsistent: init_power_library() does nothing outside legacy mode, 
+whereas deinit_power_library() still has real work to do in every mode 
+because of the uncore cleanup.
+
+Consider, keep the APP_MODE_LEGACY guard at the init call site as the 
+init is truly legacy only or split the uncore teardown into its own 
+deinit_uncore() so that deinit_power_library() stays strictly about 
+cpufreq.
 
