@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8654C43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 20:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E04D3C43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 20:01:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 68B594068A;
-	Thu,  2 Jul 2026 22:01:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4DC0E4069F;
+	Thu,  2 Jul 2026 22:01:23 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id C63E7402F2
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id C75634067A
  for <dev@dpdk.org>; Thu,  2 Jul 2026 22:01:19 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4grnmr3N77zHnGd8;
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4grnmr69xhzHnGdh;
  Fri,  3 Jul 2026 04:00:28 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 4BD6D4058B;
+ by mail.maildlp.com (Postfix) with ESMTPS id AC7B840572;
  Fri,  3 Jul 2026 04:01:17 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1544.11; Thu, 2 Jul 2026 22:01:17 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>
-Subject: [PATCH 1/7] doc: detect ignored public headers
-Date: Thu, 2 Jul 2026 21:00:43 +0100
-Message-ID: <20260702200050.88710-2-marat.khalili@huawei.com>
+To: 
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>
+Subject: [PATCH 2/7] doc: document rte_os.h
+Date: Thu, 2 Jul 2026 21:00:44 +0100
+Message-ID: <20260702200050.88710-3-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260702200050.88710-1-marat.khalili@huawei.com>
 References: <f0e4ffa90e57467cb292d7888caa697e@huawei.com>
@@ -49,110 +49,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some public headers were omitted from doc/api/doxy-api-index.md and/or
-doc/api/doxy-api.conf.in. Add checks to meson configuration detecting
-and warning about these.
+File rte_os.h did not previously have a generic version to generate
+documentation from, but its OS-specific version was installed. Since it
+is now verified that documentation is generated for all public headers,
+add a generic stub containing description of this file.
 
-Suggested-by: Bruce Richardson <bruce.richardson@intel.com>
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- drivers/meson.build | 17 +++++++++++++++++
- lib/meson.build     | 23 +++++++++++++++++++++++
- meson.build         | 19 +++++++++++++++++++
- 3 files changed, 59 insertions(+)
+ lib/eal/include/generic/rte_os.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 lib/eal/include/generic/rte_os.h
 
-diff --git a/drivers/meson.build b/drivers/meson.build
-index 102a8262e588..09c063660291 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -287,6 +287,23 @@ foreach subpath:subdirs
-         dpdk_headers += headers
-         dpdk_drivers_headers += driver_sdk_headers
- 
-+        if check_docs and headers.length() > 0
-+            foreach h:headers
-+                hname = fs.name(h)
-+                if not hname.startswith('rte_')
-+                    warning('public header @0@ name does not start with "rte_"'.format(h))
-+                endif
-+                if hname not in doc_indexed_headers
-+                    warning('public header @0@ is not listed in @1@'.format(h, doc_index_path))
-+                endif
-+            endforeach
-+            doc_dir = 'drivers/' + drv_path
-+            if doc_dir not in doc_built_dirs
-+                warning('public header directory @0@ is not listed in @1@'.format(doc_dir,
-+                    doc_build_path))
-+            endif
-+        endif
+diff --git a/lib/eal/include/generic/rte_os.h b/lib/eal/include/generic/rte_os.h
+new file mode 100644
+index 000000000000..aa96321aefc4
+--- /dev/null
++++ b/lib/eal/include/generic/rte_os.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2010-2019 Intel Corporation
++ */
 +
-         if headers.length() > 0
-             dpdk_includes += include_directories(drv_path)
-         endif
-diff --git a/lib/meson.build b/lib/meson.build
-index af5c160cb800..ff5c474d2cc3 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -209,6 +209,29 @@ foreach l:libraries
-     dpdk_indirect_headers += indirect_headers
-     dpdk_drivers_headers += driver_sdk_headers
- 
-+    if check_docs and headers.length() > 0
-+        foreach h:headers
-+            hname = fs.name(h)
-+            if not (hname.startswith('rte_') or hname.startswith('cmdline'))
-+                warning('public header @0@ name does not start with "rte_" or "cmdline"'.format(h))
-+            endif
-+            if hname not in doc_indexed_headers
-+                warning('public header @0@ is not listed in @1@'.format(h, doc_index_path))
-+            endif
-+        endforeach
-+        if l == 'eal'
-+            doc_dirs = ['lib/eal/include', 'lib/eal/include/generic']
-+        else
-+            doc_dirs = ['lib/' + l]
-+        endif
-+        foreach d:doc_dirs
-+            if d not in doc_built_dirs
-+                warning('public header directory @0@ is not listed in @1@'.format(doc_dir,
-+                    doc_build_path))
-+            endif
-+        endforeach
-+    endif
++#ifndef _RTE_OS_H_
++#define _RTE_OS_H_
 +
-     libname = 'rte_' + name
-     includes += include_directories(l)
-     dpdk_includes += include_directories(l)
-diff --git a/meson.build b/meson.build
-index b01010ffa076..87666f1f81f4 100644
---- a/meson.build
-+++ b/meson.build
-@@ -88,6 +88,25 @@ if is_linux
-     global_inc += include_directories('kernel/linux')
- endif
- 
-+# on linux, try to check that documentation sources are correctly built and indexed
-+check_docs = is_linux and meson.version().version_compare('>= 0.60.0')
++/**
++ * This header should contain any definition
++ * which is not supported natively or named differently in the local OS.
++ */
 +
-+if check_docs
-+    doc_build_path = 'doc/api/doxy-api.conf.in'
-+    doc_build_file = dpdk_source_root / doc_build_path
-+    doc_built_dirs = run_command('sed', '--regexp-extended', '--quiet',
-+        # Extract and print the file path immediately following @TOPDIR@/ .
-+        's#^(INPUT *=)? *@TOPDIR@/([^ ]*)( .*|\\\\|)$#\\2#p',
-+        doc_build_file, check: true).stdout().splitlines()
-+
-+    doc_index_path = 'doc/api/doxy-api-index.md'
-+    doc_index_file = dpdk_source_root / doc_index_path
-+    doc_indexed_headers = run_command('sed', '--regexp-extended', '--quiet',
-+        # Extract and print the (@ref ...) contents.
-+        's#^.*\\(@ref ([^)]*)\\).*$#\\1#p',
-+        doc_index_file, check: true).stdout().splitlines()
-+endif
-+
- # build libs and drivers
- subdir('lib')
- subdir('drivers')
++#endif /* _RTE_OS_H_ */
 -- 
 2.43.0
 
