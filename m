@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4212BC43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 20:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D20C43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 20:01:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2505640A4B;
-	Thu,  2 Jul 2026 22:01:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F8D640A70;
+	Thu,  2 Jul 2026 22:01:26 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id CB1074067C
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id CF6F04067D
  for <dev@dpdk.org>; Thu,  2 Jul 2026 22:01:19 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4grnmt47XpzHnGfl;
- Fri,  3 Jul 2026 04:00:30 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4grnmq5Ls5zJ46Bm;
+ Fri,  3 Jul 2026 04:00:27 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 6557D40575;
- Fri,  3 Jul 2026 04:01:19 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 2116A4058D;
+ Fri,  3 Jul 2026 04:01:18 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 2 Jul 2026 22:01:19 +0200
+ 15.2.1544.11; Thu, 2 Jul 2026 22:01:17 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: 
+To: Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>
-Subject: [PATCH 6/7] doc: add missing drivers to doxy-api.conf.in
-Date: Thu, 2 Jul 2026 21:00:48 +0100
-Message-ID: <20260702200050.88710-7-marat.khalili@huawei.com>
+Subject: [PATCH 3/7] doc: fix typos in rte_bus_pci.h
+Date: Thu, 2 Jul 2026 21:00:45 +0100
+Message-ID: <20260702200050.88710-4-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260702200050.88710-1-marat.khalili@huawei.com>
 References: <f0e4ffa90e57467cb292d7888caa697e@huawei.com>
@@ -49,61 +49,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Make sure all drivers declaring public headers are added to
-`doxy-api.conf.in` to trigger documentation generation. Sort them.
+This file contained a couple of doxygen typos that prevented successful
+documentation build. It was not discovered previously because the driver
+despite the presence of public headers was not included in the
+documentation build.
 
-The only driver still omitted is cnxk_bphy since it needs writing
-multiple new doxygen descriptions which could not be done on the spot
-(tracked by bug 1962 in bugzilla).
+Fix doxygen typos (replace `@bar` with `@p bar`).
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- doc/api/doxy-api.conf.in | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/bus/pci/rte_bus_pci.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/doc/api/doxy-api.conf.in b/doc/api/doxy-api.conf.in
-index 2cb152d6db98..1620027215a9 100644
---- a/doc/api/doxy-api.conf.in
-+++ b/doc/api/doxy-api.conf.in
-@@ -5,15 +5,20 @@ PROJECT_NAME            = DPDK
- PROJECT_NUMBER          = @VERSION@
- USE_MDFILE_AS_MAINPAGE  = @TOPDIR@/doc/api/doxy-api-index.md
- INPUT                   = @TOPDIR@/doc/api/doxy-api-index.md \
-+                          @TOPDIR@/drivers/baseband/acc \
-+                          @TOPDIR@/drivers/baseband/fpga_5gnr_fec \
-+                          @TOPDIR@/drivers/bus/pci \
-                           @TOPDIR@/drivers/bus/vdev \
-+                          @TOPDIR@/drivers/bus/vmbus \
-                           @TOPDIR@/drivers/common/dpaax \
-                           @TOPDIR@/drivers/crypto/cnxk \
-                           @TOPDIR@/drivers/crypto/scheduler \
--                          @TOPDIR@/drivers/event/dlb2 \
-                           @TOPDIR@/drivers/event/cnxk \
-+                          @TOPDIR@/drivers/event/dlb2 \
-                           @TOPDIR@/drivers/mempool/cnxk \
-                           @TOPDIR@/drivers/mempool/dpaa2 \
-                           @TOPDIR@/drivers/net/ark \
-+                          @TOPDIR@/drivers/net/avp \
-                           @TOPDIR@/drivers/net/bnxt \
-                           @TOPDIR@/drivers/net/bonding \
-                           @TOPDIR@/drivers/net/cnxk \
-@@ -23,9 +28,16 @@ INPUT                   = @TOPDIR@/doc/api/doxy-api-index.md \
-                           @TOPDIR@/drivers/net/intel/iavf \
-                           @TOPDIR@/drivers/net/intel/ixgbe \
-                           @TOPDIR@/drivers/net/mlx5 \
-+                          @TOPDIR@/drivers/net/ntnic \
-+                          @TOPDIR@/drivers/net/ring \
-                           @TOPDIR@/drivers/net/softnic \
-+                          @TOPDIR@/drivers/net/txgbe \
-+                          @TOPDIR@/drivers/net/vhost \
-+                          @TOPDIR@/drivers/power/kvm_vm \
-+                          @TOPDIR@/drivers/raw/cnxk_gpio \
-                           @TOPDIR@/drivers/raw/dpaa2_cmdif \
-                           @TOPDIR@/drivers/raw/ifpga \
-+                          @TOPDIR@/drivers/raw/ntb \
-                           @TOPDIR@/lib/eal/include \
-                           @TOPDIR@/lib/eal/include/generic \
-                           @TOPDIR@/lib/acl \
+diff --git a/drivers/bus/pci/rte_bus_pci.h b/drivers/bus/pci/rte_bus_pci.h
+index 19a7b15b99fd..22a7beb1fc4c 100644
+--- a/drivers/bus/pci/rte_bus_pci.h
++++ b/drivers/bus/pci/rte_bus_pci.h
+@@ -222,7 +222,7 @@ int rte_pci_write_config(const struct rte_pci_device *device,
+  * @param len
+  *   The length of the data buffer.
+  * @param offset
+- *   The offset into MMIO space described by @bar.
++ *   The offset into MMIO space described by @p bar.
+  * @return
+  *   Number of bytes read on success, negative on error.
+  */
+@@ -246,7 +246,7 @@ int rte_pci_mmio_read(const struct rte_pci_device *device, int bar,
+  * @param len
+  *   The length of the data buffer.
+  * @param offset
+- *   The offset into MMIO space described by @bar.
++ *   The offset into MMIO space described by @p bar.
+  * @return
+  *   Number of bytes written on success, negative on error.
+  */
 -- 
 2.43.0
 
