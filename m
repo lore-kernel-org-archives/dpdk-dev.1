@@ -2,125 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD10C43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 05:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478DBC43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 06:53:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 066134068E;
-	Thu,  2 Jul 2026 07:34:46 +0200 (CEST)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11012020.outbound.protection.outlook.com [52.101.66.20])
- by mails.dpdk.org (Postfix) with ESMTP id B13D3402C5
- for <dev@dpdk.org>; Thu,  2 Jul 2026 07:34:44 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xo4GEKPZY17rMWcStLuYALnqlXexqiZG9ruJj+fi8dalGp0wUnU724VhWsSibmUOG7iuBKxrLuc1GS2AsLn1oVq+oilvJE7hSa6p3d34YdAW5LRqqLxDe/k31oqtbAQfKCZZVepVboWL4p4GBxicBClHzIi6yekmg5iueYEG0OL0/rBWhoOB/HZGwe7Dk/OCkFiOJ6LmDlc7draej1GcOMQ4fJw6slSxjpGfyhPTFkN33ei6GZlhXs69HIXgMqZO9IYoFHjmYW+0sls9/6qkQnSJcqqv2odSvfpULx2/8x84LcFrjSNyTCc69gmqjoKgg64SXOK9379GrYickh2t7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h/blCT+EbBm2jHK2p2muc7UWsQXr6D3bj2eQS+xlzcs=;
- b=Lx79zMNOhskk9UVZjtXeugevyUph6sewkeJgtk1bsSB9R1QyRR/x35BxMtL3RwA8Pj1rPZHL/zM927ZQsB2x2UZFB0qnqWDqNkQP4UMnWsjm6zpm2wPNkiwyNXxH1hSDZyAJHM2Dkot4DiveUgSuO0GU1gjnWE5OJRGvknYJPhx+Rx53AZpW2Vb3X07mo3vdyikOHD1ILvFCYe9QI+KgduZ+LLmoNK5tFVbxTBYg/asSFU/KNua9slBysUjKSjIG20KpknybkMonLUVJt0ziFfJcE5xz3vd0AjiJmnLGLxmhZEtjtP9xkydiWpQME/1I+VAs5vUwwT88r6kywMCRLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h/blCT+EbBm2jHK2p2muc7UWsQXr6D3bj2eQS+xlzcs=;
- b=eH3gcWbqIShG34RguxXdHL3oDBJeM08Hz7KRjjkImVc3XhIeJXwSyOJ9kf4iJddSI9f/KSreFJD4B336RO4Gnxjk/zcXztx/sQiKGygvGqFdPzZ6AvrXz9JeEOWFnzlAQeb8d5VWlWB+srHm0rhlpX5jvPgfBxUeWvQj2T8RgA6IMd7CkLATZAosZUL9tgdF73syUbWf1GehVrAxeYef9FLj5mv+p04qF/rm8CzsTSEJRJheIe54n68uTmhOkW179i/hINjPVB+dYNmtlPkxacivJJJYcfiEdn85C7q+iRUylUzu+LXAH8p3EK4ezzhnRxkAIBIqnRGT30jQM1vFmA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- (2603:10a6:150:212::14) by GV1PR04MB9181.eurprd04.prod.outlook.com
- (2603:10a6:150:25::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Thu, 2 Jul
- 2026 05:34:38 +0000
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003]) by GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003%6]) with mapi id 15.21.0181.008; Thu, 2 Jul 2026
- 05:34:38 +0000
-Message-ID: <3d72bdcc-0f9c-4e61-a363-dcd294aed090@oss.nxp.com>
-Date: Thu, 2 Jul 2026 11:04:30 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 17/19] drivers: release DPAA bpid on driver destructor
-To: Stephen Hemminger <stephen@networkplumber.org>,
- Hemant Agrawal <hemant.agrawal@nxp.com>
-Cc: david.marchand@redhat.com, dev@dpdk.org, Jun Yang <jun.yang@nxp.com>
-References: <20260621172731.2916346-1-hemant.agrawal@nxp.com>
- <20260626065655.279742-1-hemant.agrawal@nxp.com>
- <20260626065655.279742-18-hemant.agrawal@nxp.com>
- <20260626095901.5bef5e05@phoenix.local>
-Content-Language: en-US
-From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
-In-Reply-To: <20260626095901.5bef5e05@phoenix.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA5P287CA0227.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:1b4::8) To GV1PR04MB10750.eurprd04.prod.outlook.com
- (2603:10a6:150:212::14)
+	by mails.dpdk.org (Postfix) with ESMTP id 0CFAD402C5;
+	Thu,  2 Jul 2026 08:53:19 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5958E402A3
+ for <dev@dpdk.org>; Thu,  2 Jul 2026 08:53:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1782975196;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=nY4yiPa+/eHu1uIxX0EbMYmwxqk/nxKDe/85/lfuswE=;
+ b=MCoHLOl6YSjfiXI5KFEvdZzoBaRhtO55ELII2cx+Tij1cta4Pa7qwGkyv75EFdaSuDCNn5
+ CDgjjH9ZUH/NU+1jtpmx5SVIUQyb9gLIat7bd01O37p5DMskIVvycAHeqn4UN0qAKh4T28
+ K0QOmbCTCdTlaycsn2NqlGXKDm8uXAg=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-417-xlk3LforNeCWGeSTzvEjcw-1; Thu, 02 Jul 2026 02:53:13 -0400
+X-MC-Unique: xlk3LforNeCWGeSTzvEjcw-1
+X-Mimecast-MFC-AGG-ID: xlk3LforNeCWGeSTzvEjcw_1782975192
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-39987ae63b5so6534221fa.3
+ for <dev@dpdk.org>; Wed, 01 Jul 2026 23:53:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1782975191; x=1783579991;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=nY4yiPa+/eHu1uIxX0EbMYmwxqk/nxKDe/85/lfuswE=;
+ b=IzqtWCVsElvElLx2kzJ2QtrZCS3sFhYsjaLUbRFYNebu+sxTOiTJfY1U7SMGZOo2bS
+ KcA+g10QAik5qzuBrCyl9gVtnGw8Huir5DH8yY+GzqwO9kBipGtw2dRBD3e73I0/iUZV
+ guNbS8elu+ehMCN4X2D54yIUAFmiYkRyUxwq3uUz0DdpS/liERgs4PB9CoaXqb0ojZC9
+ BgjjLDUaPYFLIM5kW6hRCshbHjPmNo3uhVG+xMJf6Tjm8Ya5M2pXBFoycJexfaDX1oFT
+ f6ry+RxGoxYI/93wRrr8h2Dj5qJG14jfRIscWxZdjrY+fHo7G+010LMONx2pri+8hwiG
+ Thdg==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RqMoJqfbGOFG0kIzW7kLgbMW91vZPb5KS3230b0Lw/h8i8X7RMoC1BBeY0N68KgTwPuzq8=@dpdk.org
+X-Gm-Message-State: AOJu0YyujWXWUjvloANDErxhdhK+MRR9zV2DHnzbiLkQx0RQ/btLzGUm
+ wR4rnFNgEdBMwpnmK0w4JPtW816vcWIpjAt1irHEVNSFiRIE5sjZqSIx7orFcyjQVfVens3KH5r
+ d4n2JtqaUjaX2i8EmbOTKcfFFW3LwRUuZ+8VRpsuA85HaulEgH6WJe4aLTbhteJw0tS9sZuAMDT
+ kcNpTVZ32YRV/6FQb0c2c=
+X-Gm-Gg: AfdE7cnV9kJHt+vuidrjiOZnVzOS+3oQbjxAVkSkM3hhMfoZCIGpED0HotK0cUXdnc4
+ RVQASk6YL9B0lh+lCj6h8i5HMYhV2PzjwgJiiWcCTL7keTin4IHbxqUOwHiZwBtU9BIOIpjL1Lv
+ x5dEHlO82jVC9o3zrghClrNlJGDv0meNNEqrCHQRJuTCqPt+VUmjnkxpYFNze9mWD9qJPIBaST6
+ aZnfv82u+n0g436Fec3H8VEMJuAsnt/RqmuErcAKmnd4QT3PBD8ogGaigQ=
+X-Received: by 2002:a05:651c:25cf:20b0:39b:1c5:521c with SMTP id
+ 38308e7fff4ca-39b36f89c63mr6481031fa.35.1782975191582; 
+ Wed, 01 Jul 2026 23:53:11 -0700 (PDT)
+X-Received: by 2002:a05:651c:25cf:20b0:39b:1c5:521c with SMTP id
+ 38308e7fff4ca-39b36f89c63mr6480911fa.35.1782975191049; Wed, 01 Jul 2026
+ 23:53:11 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV1PR04MB10750:EE_|GV1PR04MB9181:EE_
-X-MS-Office365-Filtering-Correlation-Id: 534ea084-1279-4b85-2129-08ded7fb9b97
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|1800799024|366016|19092799006|56012099006|11063799006|4143699003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: tZEEGeLJoesLcjQPjUJjzNcVv3oCVw1sYVmviyB3CiQuJ64fIyvOvViLt2ut4pupZhC1F3gYX+ZM0G5jWEfyYgg6CN1Mt5R6SQwxqnBu5kSaxqdWdm3yhF64B4yLmVdwci65qvBl7XfPX99KeWLeFYA4Qow+5rrG3P0lZ6I+Ub4Ckus2LejXQroVthHlZsXkiZQAaroh4uOPxr/8EM4CrLSzBZLg8UTz+4/aOHBu2A0GSgyjMPp8+/be0YtddEOS9gg++Nru2RePxPYwYlibJ6D6llJoftRJcV4lnHB+qHfXyHyDEXqqQDtmnw0pFIL5Ecv1C/5KEmT2QUIHvnV1R94Uz0ZegoNDu2txstAwF6bh4vF4uQfCW3H81O1dqOQ9/FiwbF4aLmFTXLICyW/jXo5yC1elgrCYnOIIuyaJZ+1slEPe1TGhOvNb5wS4GdlKEsX92yLB0/S5tD/aPSpt6vIJBsnHHhSzZ1/OP45cXh5sPQcJbAQQfpb4oxlk5KG72Bpp/wvIEnVqfsS1m2kHatJ4p4EGU5g28zJ7yuTKhzPtDwE5OKIIfn4gveS5ftnRwGU5l/Dv/KXV7Tdb0FHIfWSPEagu2ln8NpO+PlbwmyiDvglYPENFYjC3iqx30SEIqgOlvJS3iYmzMmer4pSFuyJT2Yci+OLok0x1v4xFwG4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:GV1PR04MB10750.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(19092799006)(56012099006)(11063799006)(4143699003)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?enM3V29NVmtRUzVxUUFqZk4zSzVtUERIZFUxK0orOFNqQ2VnbkxqSDFRNGEz?=
- =?utf-8?B?OFJ2dzBQeUFhSUFWT2s1ZVRFdVNrZnJIT3dCQkF5bHc1WTlKNnJydTF5MWYx?=
- =?utf-8?B?QnluODhlNXh4ckZsVGZBaXdUWHpQeVMrbHRKSnJYdzgwcUZhandCdkltMk11?=
- =?utf-8?B?VERJWlhXZUlqZkNGM3g0ZWhERm1NS1BUK0plV1hmZ20wd21HUFRrQjYrenJX?=
- =?utf-8?B?YmFveHk0OHJ3ZnlFa1Nta3dZYWlzSG5uK2JpRmZiSUFoLzFac1F2dTdHdjFU?=
- =?utf-8?B?Sk1KcEg3ZTlrMERvMzFPcDZZNy9ocC9qd25SMVk4OHZpalRGTnZkQVJzYjRY?=
- =?utf-8?B?ekJkWW9iUGxsbXc4NCtEYW9BbGtVOTYrZ1BEME1QNzFEU2xLQTEybE1kMy91?=
- =?utf-8?B?T1FVcVBibngwSENRci9MY0dTRG9OYXN1NUZNbGFqQmJPUG14eWZRK1BpNXEw?=
- =?utf-8?B?MFY4c0hPMmE4czVhZjdzd2NaRlRXdEUwSGl2d0tjVHcrZDBzY2E0K2N6a0RQ?=
- =?utf-8?B?TWUzb3BUVXQ0MzcvQVhiZ3RMdlpLT0V2UDhjdnFOOHF6UjBQQlM3QmhqSE1w?=
- =?utf-8?B?VDA2c3J2U2JVWWZkek1yR3RlTW0vQ0VkY3dIMVhPT2xvakgwNEtUZDlXcGx0?=
- =?utf-8?B?enJDYlJEdEhuWWt0U2hpYW9BUkxwVi84ekZoRzh3bFpqWlBiWEVtNUYxS3Vj?=
- =?utf-8?B?azQxT3lnU1QvTkVBMVcvRHh2Q2kwZ0pXUDlHR2RkZTFqS1ozQlRuS3VsRDM3?=
- =?utf-8?B?V2J2L20rZUI1NFV0SFZiYUMveFlIK2thZzVaVnc0ZFZhM0FYcEdMSUhKY0hs?=
- =?utf-8?B?cTgveXE1TEhqNDlhSjdiOENuVHEwYUN6WEk5amE1UTZYL25ZY25uaUZNY09Y?=
- =?utf-8?B?ZWpkVGpKN1ZuUlpsTW1sUWZJSktseXBYQ2p2eTZKemRIVjBIeUg2eFI0RUE4?=
- =?utf-8?B?eFQ2VDVNMnVTWVV5UzJyZGxWVU0xMFM4R0JENjF6U041Ym5BdG9TcmwzYUNr?=
- =?utf-8?B?aFhFK1VxV3RnS2M4TU9IdzN1eS9oL2Y3dkJueG1yK2hBaldnZFUwWmEzZEhU?=
- =?utf-8?B?VXcwZ29tQ1B3RGNvSElSK01Ec2x0eU45YlpmdFhta1ZiYUUrR2hnbFFyZW0v?=
- =?utf-8?B?K1IyUEg2eWN5b2QrMEVqckp2bVR6enZXMmpnanJQUlR6anlMMnpjbTUzM3JP?=
- =?utf-8?B?ZllFK0xnZnJVSGdRQWFvbUxiOTBxQmxobDZqVUxJd0w3bTlRWFZ4ZklRMk5r?=
- =?utf-8?B?TldPa1VFdjZrQ3pjb0N5QjZzTFd4eTRjSGR0S3JFUEpvT0MwWWVqSFJZaFA3?=
- =?utf-8?B?ZGNYdm9hRHVQU05nWVA4eHA1UDlMK2d1bVlRUy9YOUV1Y21kbW5GeVZxcmlV?=
- =?utf-8?B?UHpnZVUwaVViM3VRRTJiUFdiTW9lUm1EdmNGRWJWYVU5UFg1dzd5NWwrUWVQ?=
- =?utf-8?B?OWhHNmVmOWdJVWQ3VnNLSjVKUGRIUHR0YzZpaVRxb0pmcDBFeE1vUUZocGU2?=
- =?utf-8?B?TEtNTEprRGZQMzEzS3hkUUZHQnNtNm02eDJ3UTlmNjM3VWtEZHRwQnBuc2V3?=
- =?utf-8?B?bitoUWt4WSsyK2xCWXVXNTJ3cDIvNU5vY1lHVk1jY2RXUTMxVTZORlU2U1dk?=
- =?utf-8?B?YjFQL3FVRmtteXFJTEI5OE96elo5RnpSdExSZ1VvenRUWTVVTCs3Rjk1dTht?=
- =?utf-8?B?ZFVxRVRZT0VneDN0T2JaeHJ3eVRCSldhRTdjRW5COUozdEg1YU5QMTdySjVJ?=
- =?utf-8?B?OER5eHdtQVAyYk9HMVl0TnBXQzNha2tOWFpFU00zVjJMQldKSC9YUHFQRUtI?=
- =?utf-8?B?M0ozb3JjejBpOFFlbXlrbWIrNnoxUzBvSy9jdmVOekhNdUhUeGhoM1Zib3VI?=
- =?utf-8?B?NjBpeVBQR3g3b0c2cXVJWW94UDhwSWk4NGFWN0NCYXpvUGg1MGgva0MySytS?=
- =?utf-8?B?TWFVV09yVy9zNkRCSkJhczdMUGJlS0oxTEtrNTZQY2twUy9EcjkvaGpicGRO?=
- =?utf-8?B?cEVEdFArL2ZtUWdibk14dzNSUWNEM1R1eHdEQ1daV0FIUW5sN0dGaE1pMTdT?=
- =?utf-8?B?TEpmRGNDRzhSZGhwN1FYb3pXQW90TFpnZEdEdHJ0UGFMNHUyU1l3MXVIUkcr?=
- =?utf-8?B?QmloSTZOeU5SZ2NaUnFMR0szdU82UFNkS0hyN1RQUkhsREIvRjRFR3dlMVhC?=
- =?utf-8?B?dkE4cWVrU2dSdkVFdFdKRVA1WFRwdDl5TVZPVlJNZ2lUTDdDbEFFQlNUemZy?=
- =?utf-8?B?L3NRK1NJazNEZ1UrRVRUYnkvQjAzUGhZdG1zV0xNcVdDTnl4eDd6MGhlVlc2?=
- =?utf-8?B?Y29LSWJlMGtYNmVraXpoTmZtMmdKaHR3SHVORy9wdjhSM25hV2tWQT09?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 534ea084-1279-4b85-2129-08ded7fb9b97
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB10750.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2026 05:34:38.3846 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3QscSH/wCDYw+tZNk1E99SGSCAh9PPNe/CDHntb753wU9a2FSG2Iug69lig1/5yeNMaNTqXjisbSdw43PCfrew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9181
+References: <tencent_FD79B9DBEB2FD074BFAAACCC6DD7A6EBB906@qq.com>
+ <CAJFAV8wOpRcDPip62f4EuAv_HDK_PuoGf75ZdqiKX3Er14OQXA@mail.gmail.com>
+ <CAJFAV8z1qo-C7jvoUAWSuaysiB-7Lud+XkPgUEED_uAMGGAuuw@mail.gmail.com>
+ <257fb8fd-2850-4b31-aa9f-c1ef42897e7b@huawei.com>
+In-Reply-To: <257fb8fd-2850-4b31-aa9f-c1ef42897e7b@huawei.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 2 Jul 2026 08:52:59 +0200
+X-Gm-Features: AVVi8Cd2NhNEHg7QLc8GL2Fcy-tjOxg4mrM2URyt9Q8j_DT9pizvIqqfQ8OxVAQ
+Message-ID: <CAJFAV8ytRF4jjsM=Euoij3=76BgRCCZPk-7MX7iCWv4zetz6yg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fix dmadev incomplete ABI validation
+To: fengchengwen <fengchengwen@huawei.com>
+Cc: datshan@qq.com, thomas@monjalon.net, dev@dpdk.org, 
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: NCN_DN6Hu0AYd7M4MraGIuba3supMIfkHfLEJ4u-SvY_1782975192
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,32 +89,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-On 26-06-2026 22:29, Stephen Hemminger wrote:
-> On Fri, 26 Jun 2026 12:26:53 +0530
-> Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
+On Thu, 2 Jul 2026 at 03:35, fengchengwen <fengchengwen@huawei.com> wrote:
 >
->> From: Jun Yang <jun.yang@nxp.com>
->>
->> Track allocated BPIDs in a static per-BPID flag table and register a
->> driver destructor that releases any BPIDs still marked as in use at
->> process exit. This prevents BPID leaks when an application exits without
->> calling rte_mempool_free(). Also tune the per-lcore mempool cache flush
->> threshold to match the hardware bulk release size (DPAA_MBUF_MAX_ACQ_REL)
->> so that buffers are returned to HW in optimal burst sizes.
->>
->> Signed-off-by: Jun Yang <jun.yang@nxp.com>
->> ---
-> Build with ASAN fails with this patch.
-> Simple fix is usually replacing all use of rte_memcpy with memcpy.
-> Rte_memcpy on x86 confuses ASAN and it thinks certain sizes reference past
-> end of buffer. I would just do a global replace of rte_memcpy with memcpy
-> across all of drivers/bus/dpaa none of this is performance critical on old
-> versions of Gcc which is the only reason rte_memcpy still exists.
+> On 7/2/2026 1:01 AM, David Marchand wrote:
+> > On Wed, 1 Jul 2026 at 10:11, David Marchand <david.marchand@redhat.com> wrote:
+> >> On Tue, 30 Jun 2026 at 15:24, <datshan@qq.com> wrote:
+> >>>
+> >>> From: datshan <datshan@qq.com>
+> >>>
+> >>> Fix dmadev incomplete ABI validation.
+> >>>
+> >>> Chengwen Feng (2):
+> >>>   dmadev: fix incomplete configuration validation
+> >>>   test/dmadev: add config and vchan validation tests
+> >>>
+> >>>  app/test/test_dmadev_api.c | 186 ++++++++++++++++++++++++++++++++++---
+> >>>  lib/dmadev/rte_dmadev.c    | 156 +++++++++++++++++++++----------
+> >>>  2 files changed, 283 insertions(+), 59 deletions(-)
+> >>>
+> >>
+> >> This series is not versionned, but I guess this is a new revision.
+> >> Don't forget to flag your submissions with a version number in the future.
+> >> I marked the previous patches as superseded in patchwork.
+> >>
+> >> Also provide a high level summary of the differences between versions.
+> >>
+> >> All of those steps are listed in the contributing guide, I suggest
+> >> (re-)reading the whole guide, with a highlight on:
+> >> https://doc.dpdk.org/guides/contributing/patches.html#steps-to-getting-your-patch-merged
+> >>
+> >> Thanks, I'll try to find some time to review this week.
+> >
+> > Well, enforcing *now* that some fields are 0 is actually breaking ABI
+> > for existing applications.
+> > This change should be deferred to 26.11, and backporting to a LTS is
+> > not possible.
 >
-> This needs to be fixed before merging.
+> OK
+> BTW: Should I submit another version in 26.11 cycle or do nothing?
 
-for now, I have fixed the affected patch. replaced it with memcpy.
+I'll mark those patches as Deferred in patchwork.
+That's enough, I will apply them after 26.11-rc0.
 
 
+-- 
+David Marchand
 
