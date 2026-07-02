@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04D3C43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 20:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDEDC43327
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 20:01:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4DC0E4069F;
-	Thu,  2 Jul 2026 22:01:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 303F5406BA;
+	Thu,  2 Jul 2026 22:01:24 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id C75634067A
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id C8F764067B
  for <dev@dpdk.org>; Thu,  2 Jul 2026 22:01:19 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4grnmr69xhzHnGdh;
- Fri,  3 Jul 2026 04:00:28 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4grnmp3ZqXzJ46BG;
+ Fri,  3 Jul 2026 04:00:26 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id AC7B840572;
- Fri,  3 Jul 2026 04:01:17 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id D81E94057A;
+ Fri,  3 Jul 2026 04:01:16 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 2 Jul 2026 22:01:17 +0200
+ 15.2.1544.11; Thu, 2 Jul 2026 22:01:16 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
 To: 
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>
-Subject: [PATCH 2/7] doc: document rte_os.h
-Date: Thu, 2 Jul 2026 21:00:44 +0100
-Message-ID: <20260702200050.88710-3-marat.khalili@huawei.com>
+Subject: [PATCH 0/7] doc: build for all public headers
+Date: Thu, 2 Jul 2026 21:00:42 +0100
+Message-ID: <20260702200050.88710-1-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260702200050.88710-1-marat.khalili@huawei.com>
+In-Reply-To: <f0e4ffa90e57467cb292d7888caa697e@huawei.com>
 References: <f0e4ffa90e57467cb292d7888caa697e@huawei.com>
- <20260702200050.88710-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -49,36 +48,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-File rte_os.h did not previously have a generic version to generate
-documentation from, but its OS-specific version was installed. Since it
-is now verified that documentation is generated for all public headers,
-add a generic stub containing description of this file.
+It was noticed that not all public headers were included in the doxygen
+build, and once built not all files were listed in the index file
+serving as a point of entry for the HTML version.
 
-Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
----
- lib/eal/include/generic/rte_os.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Bruce Richardson provided an idea and a draft implementation of the
+configuration-time check, which I optimized to avoid repeat grep calls
+and expanded to include indexing check.
+
+After all drivers and public headers were included, multiple small
+problems have surfaced fixes for which (with one exception covered by
+bug 1962) are also included in this patch set.
+
+Marat Khalili (7):
+  doc: detect ignored public headers
+  doc: document rte_os.h
+  doc: fix typos in rte_bus_pci.h
+  doc: fix typos in rte_bus_vmbus.h
+  doc: add missing globs to doxy-api.conf.in
+  doc: add missing drivers to doxy-api.conf.in
+  doc: add missing headers to doxy-api-index.md
+
+ doc/api/doxy-api-index.md         | 116 ++++++++++++++++++++++++++----
+ doc/api/doxy-api.conf.in          |  17 ++++-
+ drivers/bus/pci/rte_bus_pci.h     |   4 +-
+ drivers/bus/vmbus/rte_bus_vmbus.h |  33 +++++----
+ drivers/meson.build               |  17 +++++
+ lib/eal/include/generic/rte_os.h  |  13 ++++
+ lib/meson.build                   |  23 ++++++
+ meson.build                       |  19 +++++
+ 8 files changed, 211 insertions(+), 31 deletions(-)
  create mode 100644 lib/eal/include/generic/rte_os.h
 
-diff --git a/lib/eal/include/generic/rte_os.h b/lib/eal/include/generic/rte_os.h
-new file mode 100644
-index 000000000000..aa96321aefc4
---- /dev/null
-+++ b/lib/eal/include/generic/rte_os.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2010-2019 Intel Corporation
-+ */
-+
-+#ifndef _RTE_OS_H_
-+#define _RTE_OS_H_
-+
-+/**
-+ * This header should contain any definition
-+ * which is not supported natively or named differently in the local OS.
-+ */
-+
-+#endif /* _RTE_OS_H_ */
 -- 
 2.43.0
 
