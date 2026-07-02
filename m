@@ -2,40 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9B1C43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 05:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD10C43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Jul 2026 05:35:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AB6640DCB;
-	Thu,  2 Jul 2026 07:34:29 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 4AEAE40DD1
- for <dev@dpdk.org>; Thu,  2 Jul 2026 07:34:27 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C8A7200462;
- Thu,  2 Jul 2026 07:34:27 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E5FD220029D;
- Thu,  2 Jul 2026 07:34:26 +0200 (CEST)
-Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
- [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6755A1800071;
- Thu,  2 Jul 2026 13:34:25 +0800 (+08)
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
-To: stephen@networkplumber.org,
-	david.marchand@redhat.com,
-	dev@dpdk.org
-Cc: Vanshika Shukla <vanshika.shukla@nxp.com>
-Subject: [PATCH v6 19/19] net/dpaa: add ONIC port checks
-Date: Thu,  2 Jul 2026 11:03:59 +0530
-Message-Id: <20260702053359.3243907-20-hemant.agrawal@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260702053359.3243907-1-hemant.agrawal@nxp.com>
-References: <20260626065655.279742-1-hemant.agrawal@nxp.com>
- <20260702053359.3243907-1-hemant.agrawal@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 066134068E;
+	Thu,  2 Jul 2026 07:34:46 +0200 (CEST)
+Received: from DUZPR83CU001.outbound.protection.outlook.com
+ (mail-northeuropeazon11012020.outbound.protection.outlook.com [52.101.66.20])
+ by mails.dpdk.org (Postfix) with ESMTP id B13D3402C5
+ for <dev@dpdk.org>; Thu,  2 Jul 2026 07:34:44 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xo4GEKPZY17rMWcStLuYALnqlXexqiZG9ruJj+fi8dalGp0wUnU724VhWsSibmUOG7iuBKxrLuc1GS2AsLn1oVq+oilvJE7hSa6p3d34YdAW5LRqqLxDe/k31oqtbAQfKCZZVepVboWL4p4GBxicBClHzIi6yekmg5iueYEG0OL0/rBWhoOB/HZGwe7Dk/OCkFiOJ6LmDlc7draej1GcOMQ4fJw6slSxjpGfyhPTFkN33ei6GZlhXs69HIXgMqZO9IYoFHjmYW+0sls9/6qkQnSJcqqv2odSvfpULx2/8x84LcFrjSNyTCc69gmqjoKgg64SXOK9379GrYickh2t7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h/blCT+EbBm2jHK2p2muc7UWsQXr6D3bj2eQS+xlzcs=;
+ b=Lx79zMNOhskk9UVZjtXeugevyUph6sewkeJgtk1bsSB9R1QyRR/x35BxMtL3RwA8Pj1rPZHL/zM927ZQsB2x2UZFB0qnqWDqNkQP4UMnWsjm6zpm2wPNkiwyNXxH1hSDZyAJHM2Dkot4DiveUgSuO0GU1gjnWE5OJRGvknYJPhx+Rx53AZpW2Vb3X07mo3vdyikOHD1ILvFCYe9QI+KgduZ+LLmoNK5tFVbxTBYg/asSFU/KNua9slBysUjKSjIG20KpknybkMonLUVJt0ziFfJcE5xz3vd0AjiJmnLGLxmhZEtjtP9xkydiWpQME/1I+VAs5vUwwT88r6kywMCRLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h/blCT+EbBm2jHK2p2muc7UWsQXr6D3bj2eQS+xlzcs=;
+ b=eH3gcWbqIShG34RguxXdHL3oDBJeM08Hz7KRjjkImVc3XhIeJXwSyOJ9kf4iJddSI9f/KSreFJD4B336RO4Gnxjk/zcXztx/sQiKGygvGqFdPzZ6AvrXz9JeEOWFnzlAQeb8d5VWlWB+srHm0rhlpX5jvPgfBxUeWvQj2T8RgA6IMd7CkLATZAosZUL9tgdF73syUbWf1GehVrAxeYef9FLj5mv+p04qF/rm8CzsTSEJRJheIe54n68uTmhOkW179i/hINjPVB+dYNmtlPkxacivJJJYcfiEdn85C7q+iRUylUzu+LXAH8p3EK4ezzhnRxkAIBIqnRGT30jQM1vFmA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
+ (2603:10a6:150:212::14) by GV1PR04MB9181.eurprd04.prod.outlook.com
+ (2603:10a6:150:25::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Thu, 2 Jul
+ 2026 05:34:38 +0000
+Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
+ ([fe80::9985:c5d3:961:2003]) by GV1PR04MB10750.eurprd04.prod.outlook.com
+ ([fe80::9985:c5d3:961:2003%6]) with mapi id 15.21.0181.008; Thu, 2 Jul 2026
+ 05:34:38 +0000
+Message-ID: <3d72bdcc-0f9c-4e61-a363-dcd294aed090@oss.nxp.com>
+Date: Thu, 2 Jul 2026 11:04:30 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 17/19] drivers: release DPAA bpid on driver destructor
+To: Stephen Hemminger <stephen@networkplumber.org>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>
+Cc: david.marchand@redhat.com, dev@dpdk.org, Jun Yang <jun.yang@nxp.com>
+References: <20260621172731.2916346-1-hemant.agrawal@nxp.com>
+ <20260626065655.279742-1-hemant.agrawal@nxp.com>
+ <20260626065655.279742-18-hemant.agrawal@nxp.com>
+ <20260626095901.5bef5e05@phoenix.local>
+Content-Language: en-US
+From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
+In-Reply-To: <20260626095901.5bef5e05@phoenix.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA5P287CA0227.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:1b4::8) To GV1PR04MB10750.eurprd04.prod.outlook.com
+ (2603:10a6:150:212::14)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR04MB10750:EE_|GV1PR04MB9181:EE_
+X-MS-Office365-Filtering-Correlation-Id: 534ea084-1279-4b85-2129-08ded7fb9b97
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|376014|1800799024|366016|19092799006|56012099006|11063799006|4143699003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: tZEEGeLJoesLcjQPjUJjzNcVv3oCVw1sYVmviyB3CiQuJ64fIyvOvViLt2ut4pupZhC1F3gYX+ZM0G5jWEfyYgg6CN1Mt5R6SQwxqnBu5kSaxqdWdm3yhF64B4yLmVdwci65qvBl7XfPX99KeWLeFYA4Qow+5rrG3P0lZ6I+Ub4Ckus2LejXQroVthHlZsXkiZQAaroh4uOPxr/8EM4CrLSzBZLg8UTz+4/aOHBu2A0GSgyjMPp8+/be0YtddEOS9gg++Nru2RePxPYwYlibJ6D6llJoftRJcV4lnHB+qHfXyHyDEXqqQDtmnw0pFIL5Ecv1C/5KEmT2QUIHvnV1R94Uz0ZegoNDu2txstAwF6bh4vF4uQfCW3H81O1dqOQ9/FiwbF4aLmFTXLICyW/jXo5yC1elgrCYnOIIuyaJZ+1slEPe1TGhOvNb5wS4GdlKEsX92yLB0/S5tD/aPSpt6vIJBsnHHhSzZ1/OP45cXh5sPQcJbAQQfpb4oxlk5KG72Bpp/wvIEnVqfsS1m2kHatJ4p4EGU5g28zJ7yuTKhzPtDwE5OKIIfn4gveS5ftnRwGU5l/Dv/KXV7Tdb0FHIfWSPEagu2ln8NpO+PlbwmyiDvglYPENFYjC3iqx30SEIqgOlvJS3iYmzMmer4pSFuyJT2Yci+OLok0x1v4xFwG4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:GV1PR04MB10750.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(19092799006)(56012099006)(11063799006)(4143699003)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?enM3V29NVmtRUzVxUUFqZk4zSzVtUERIZFUxK0orOFNqQ2VnbkxqSDFRNGEz?=
+ =?utf-8?B?OFJ2dzBQeUFhSUFWT2s1ZVRFdVNrZnJIT3dCQkF5bHc1WTlKNnJydTF5MWYx?=
+ =?utf-8?B?QnluODhlNXh4ckZsVGZBaXdUWHpQeVMrbHRKSnJYdzgwcUZhandCdkltMk11?=
+ =?utf-8?B?VERJWlhXZUlqZkNGM3g0ZWhERm1NS1BUK0plV1hmZ20wd21HUFRrQjYrenJX?=
+ =?utf-8?B?YmFveHk0OHJ3ZnlFa1Nta3dZYWlzSG5uK2JpRmZiSUFoLzFac1F2dTdHdjFU?=
+ =?utf-8?B?Sk1KcEg3ZTlrMERvMzFPcDZZNy9ocC9qd25SMVk4OHZpalRGTnZkQVJzYjRY?=
+ =?utf-8?B?ekJkWW9iUGxsbXc4NCtEYW9BbGtVOTYrZ1BEME1QNzFEU2xLQTEybE1kMy91?=
+ =?utf-8?B?T1FVcVBibngwSENRci9MY0dTRG9OYXN1NUZNbGFqQmJPUG14eWZRK1BpNXEw?=
+ =?utf-8?B?MFY4c0hPMmE4czVhZjdzd2NaRlRXdEUwSGl2d0tjVHcrZDBzY2E0K2N6a0RQ?=
+ =?utf-8?B?TWUzb3BUVXQ0MzcvQVhiZ3RMdlpLT0V2UDhjdnFOOHF6UjBQQlM3QmhqSE1w?=
+ =?utf-8?B?VDA2c3J2U2JVWWZkek1yR3RlTW0vQ0VkY3dIMVhPT2xvakgwNEtUZDlXcGx0?=
+ =?utf-8?B?enJDYlJEdEhuWWt0U2hpYW9BUkxwVi84ekZoRzh3bFpqWlBiWEVtNUYxS3Vj?=
+ =?utf-8?B?azQxT3lnU1QvTkVBMVcvRHh2Q2kwZ0pXUDlHR2RkZTFqS1ozQlRuS3VsRDM3?=
+ =?utf-8?B?V2J2L20rZUI1NFV0SFZiYUMveFlIK2thZzVaVnc0ZFZhM0FYcEdMSUhKY0hs?=
+ =?utf-8?B?cTgveXE1TEhqNDlhSjdiOENuVHEwYUN6WEk5amE1UTZYL25ZY25uaUZNY09Y?=
+ =?utf-8?B?ZWpkVGpKN1ZuUlpsTW1sUWZJSktseXBYQ2p2eTZKemRIVjBIeUg2eFI0RUE4?=
+ =?utf-8?B?eFQ2VDVNMnVTWVV5UzJyZGxWVU0xMFM4R0JENjF6U041Ym5BdG9TcmwzYUNr?=
+ =?utf-8?B?aFhFK1VxV3RnS2M4TU9IdzN1eS9oL2Y3dkJueG1yK2hBaldnZFUwWmEzZEhU?=
+ =?utf-8?B?VXcwZ29tQ1B3RGNvSElSK01Ec2x0eU45YlpmdFhta1ZiYUUrR2hnbFFyZW0v?=
+ =?utf-8?B?K1IyUEg2eWN5b2QrMEVqckp2bVR6enZXMmpnanJQUlR6anlMMnpjbTUzM3JP?=
+ =?utf-8?B?ZllFK0xnZnJVSGdRQWFvbUxiOTBxQmxobDZqVUxJd0w3bTlRWFZ4ZklRMk5r?=
+ =?utf-8?B?TldPa1VFdjZrQ3pjb0N5QjZzTFd4eTRjSGR0S3JFUEpvT0MwWWVqSFJZaFA3?=
+ =?utf-8?B?ZGNYdm9hRHVQU05nWVA4eHA1UDlMK2d1bVlRUy9YOUV1Y21kbW5GeVZxcmlV?=
+ =?utf-8?B?UHpnZVUwaVViM3VRRTJiUFdiTW9lUm1EdmNGRWJWYVU5UFg1dzd5NWwrUWVQ?=
+ =?utf-8?B?OWhHNmVmOWdJVWQ3VnNLSjVKUGRIUHR0YzZpaVRxb0pmcDBFeE1vUUZocGU2?=
+ =?utf-8?B?TEtNTEprRGZQMzEzS3hkUUZHQnNtNm02eDJ3UTlmNjM3VWtEZHRwQnBuc2V3?=
+ =?utf-8?B?bitoUWt4WSsyK2xCWXVXNTJ3cDIvNU5vY1lHVk1jY2RXUTMxVTZORlU2U1dk?=
+ =?utf-8?B?YjFQL3FVRmtteXFJTEI5OE96elo5RnpSdExSZ1VvenRUWTVVTCs3Rjk1dTht?=
+ =?utf-8?B?ZFVxRVRZT0VneDN0T2JaeHJ3eVRCSldhRTdjRW5COUozdEg1YU5QMTdySjVJ?=
+ =?utf-8?B?OER5eHdtQVAyYk9HMVl0TnBXQzNha2tOWFpFU00zVjJMQldKSC9YUHFQRUtI?=
+ =?utf-8?B?M0ozb3JjejBpOFFlbXlrbWIrNnoxUzBvSy9jdmVOekhNdUhUeGhoM1Zib3VI?=
+ =?utf-8?B?NjBpeVBQR3g3b0c2cXVJWW94UDhwSWk4NGFWN0NCYXpvUGg1MGgva0MySytS?=
+ =?utf-8?B?TWFVV09yVy9zNkRCSkJhczdMUGJlS0oxTEtrNTZQY2twUy9EcjkvaGpicGRO?=
+ =?utf-8?B?cEVEdFArL2ZtUWdibk14dzNSUWNEM1R1eHdEQ1daV0FIUW5sN0dGaE1pMTdT?=
+ =?utf-8?B?TEpmRGNDRzhSZGhwN1FYb3pXQW90TFpnZEdEdHJ0UGFMNHUyU1l3MXVIUkcr?=
+ =?utf-8?B?QmloSTZOeU5SZ2NaUnFMR0szdU82UFNkS0hyN1RQUkhsREIvRjRFR3dlMVhC?=
+ =?utf-8?B?dkE4cWVrU2dSdkVFdFdKRVA1WFRwdDl5TVZPVlJNZ2lUTDdDbEFFQlNUemZy?=
+ =?utf-8?B?L3NRK1NJazNEZ1UrRVRUYnkvQjAzUGhZdG1zV0xNcVdDTnl4eDd6MGhlVlc2?=
+ =?utf-8?B?Y29LSWJlMGtYNmVraXpoTmZtMmdKaHR3SHVORy9wdjhSM25hV2tWQT09?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 534ea084-1279-4b85-2129-08ded7fb9b97
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB10750.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2026 05:34:38.3846 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3QscSH/wCDYw+tZNk1E99SGSCAh9PPNe/CDHntb753wU9a2FSG2Iug69lig1/5yeNMaNTqXjisbSdw43PCfrew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9181
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,381 +134,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vanshika Shukla <vanshika.shukla@nxp.com>
 
-Add fman_onic MAC type handling to get_rx_port_type() so that ONIC
-and offline-internal ports are mapped to OH_OFFLINE_PARSING, consistent
-with how the VSP port configuration handles these types. Without this,
-ONIC ports used an incorrect port type in flow configuration, leading
-to failed FMC operations.
+On 26-06-2026 22:29, Stephen Hemminger wrote:
+> On Fri, 26 Jun 2026 12:26:53 +0530
+> Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
+>
+>> From: Jun Yang <jun.yang@nxp.com>
+>>
+>> Track allocated BPIDs in a static per-BPID flag table and register a
+>> driver destructor that releases any BPIDs still marked as in use at
+>> process exit. This prevents BPID leaks when an application exits without
+>> calling rte_mempool_free(). Also tune the per-lcore mempool cache flush
+>> threshold to match the hardware bulk release size (DPAA_MBUF_MAX_ACQ_REL)
+>> so that buffers are returned to HW in optimal burst sizes.
+>>
+>> Signed-off-by: Jun Yang <jun.yang@nxp.com>
+>> ---
+> Build with ASAN fails with this patch.
+> Simple fix is usually replacing all use of rte_memcpy with memcpy.
+> Rte_memcpy on x86 confuses ASAN and it thinks certain sizes reference past
+> end of buffer. I would just do a global replace of rte_memcpy with memcpy
+> across all of drivers/bus/dpaa none of this is performance critical on old
+> versions of Gcc which is the only reason rte_memcpy still exists.
+>
+> This needs to be fixed before merging.
 
-Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
----
- drivers/net/dpaa/dpaa_ethdev.c |  26 ++++---
- drivers/net/dpaa/dpaa_ethdev.h |  11 ++-
- drivers/net/dpaa/dpaa_flow.c   | 129 +++++++++++++++++----------------
- drivers/net/dpaa/dpaa_flow.h   |   7 +-
- 4 files changed, 93 insertions(+), 80 deletions(-)
+for now, I have fixed the affected patch. replaced it with memcpy.
 
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 30dfaa95d6..f285b35cbc 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -490,7 +490,7 @@ static int dpaa_eth_dev_stop(struct rte_eth_dev *dev)
- 	PMD_INIT_FUNC_TRACE();
- 	dev->data->dev_started = 0;
- 
--	if (!fif->is_shared_mac) {
-+	if (!fif->is_shared_mac && fif->mac_type != fman_onic) {
- 		fman_if_bmi_stats_disable(fif);
- 		fman_if_disable_rx(fif);
- 	}
-@@ -590,7 +590,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 		}
- 	}
- 	if (fif->num_profiles) {
--		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
-+		ret = dpaa_port_vsp_cleanup(dpaa_intf);
- 		if (ret) {
- 			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
- 				dev->data->name, ret);
-@@ -676,7 +676,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 		}
- 	}
- 	if (fif->num_profiles) {
--		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
-+		ret = dpaa_port_vsp_cleanup(dpaa_intf);
- 		if (ret) {
- 			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
- 				dev->data->name, ret);
-@@ -1136,8 +1136,8 @@ static inline int dpaa_eth_rx_queue_bp_check(struct rte_eth_dev *dev,
- 			vsp_id = 0;
- 	}
- 
--	if (dpaa_intf->vsp_bpid[vsp_id] &&
--		bpid != dpaa_intf->vsp_bpid[vsp_id]) {
-+	if (dpaa_intf->vsp[vsp_id].vsp_bp[0] &&
-+		bpid != dpaa_intf->vsp[vsp_id].vsp_bp[0]->bpid) {
- 		DPAA_PMD_ERR("Various MPs are assigned to RXQs with same VSP");
- 
- 		return -1;
-@@ -1234,9 +1234,9 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 		int8_t vsp_id = rxq->vsp_id;
- 
- 		if (vsp_id >= 0) {
--			ret = dpaa_port_vsp_update(dpaa_intf, fmc_q, vsp_id,
--					DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid,
--					fif, buffsz + RTE_PKTMBUF_HEADROOM);
-+			dpaa_intf->vsp[vsp_id].vsp_bp[0] = DPAA_MEMPOOL_TO_POOL_INFO(mp);
-+			dpaa_intf->vsp[vsp_id].bp_num = 1;
-+			ret = dpaa_port_vsp_update(dpaa_intf, fmc_q, vsp_id, fif);
- 			if (ret) {
- 				DPAA_PMD_ERR("dpaa_port_vsp_update failed");
- 				return ret;
-@@ -1249,12 +1249,14 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 					     " to shared interface on DPDK.");
- 				return -EINVAL;
- 			}
--			dpaa_intf->vsp_bpid[fif->base_profile_id] =
--				DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid;
-+			dpaa_intf->vsp[fif->base_profile_id].vsp_bp[0] =
-+				DPAA_MEMPOOL_TO_POOL_INFO(mp);
-+			dpaa_intf->vsp[fif->base_profile_id].bp_num = 1;
- 		}
- 	} else {
--		dpaa_intf->vsp_bpid[0] =
--			DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid;
-+		dpaa_intf->vsp[0].vsp_bp[0] =
-+			DPAA_MEMPOOL_TO_POOL_INFO(mp);
-+		dpaa_intf->vsp[0].bp_num = 1;
- 	}
- 
- 	dpaa_intf->valid = 1;
-diff --git a/drivers/net/dpaa/dpaa_ethdev.h b/drivers/net/dpaa/dpaa_ethdev.h
-index d342d98f23..d3e005b556 100644
---- a/drivers/net/dpaa/dpaa_ethdev.h
-+++ b/drivers/net/dpaa/dpaa_ethdev.h
-@@ -118,6 +118,13 @@ enum {
- 
- #define FMC_FILE "/tmp/fmc.bin"
- 
-+struct dpaa_if_vsp {
-+	struct dpaa_bp_info *vsp_bp[FMAN_PORT_MAX_EXT_POOLS_NUM];
-+	uint8_t bp_num;
-+	uint32_t max_size;
-+	void *vsp_handle;
-+};
-+
- extern struct rte_mempool *dpaa_tx_sg_pool;
- 
- /* PMD related logs */
-@@ -164,8 +171,8 @@ struct dpaa_if {
- 	 */
- 	struct qman_fq *next_tx_conf_queue;
- 
--	void *vsp_handle[DPAA_VSP_PROFILE_MAX_NUM];
--	uint32_t vsp_bpid[DPAA_VSP_PROFILE_MAX_NUM];
-+	struct dpaa_if_vsp vsp[DPAA_VSP_PROFILE_MAX_NUM];
-+	uint8_t base_vsp;
- };
- 
- struct dpaa_if_stats {
-diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
-index 559850ced7..a10ca0cb56 100644
---- a/drivers/net/dpaa/dpaa_flow.c
-+++ b/drivers/net/dpaa/dpaa_flow.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017-2019,2021-2025 NXP
-+ * Copyright 2017-2019,2021-2026 NXP
-  */
- 
- /* System headers */
-@@ -8,6 +8,7 @@
- #include <unistd.h>
- #include <sys/types.h>
- 
-+#include <dpaa_mempool.h>
- #include <dpaa_ethdev.h>
- #include <dpaa_flow.h>
- #include <rte_dpaa_logs.h>
-@@ -724,9 +725,6 @@ int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf,
- 
- 	PMD_INIT_FUNC_TRACE();
- 
--	if (!dpaa_intf->port_handle)
--		return 0;
--
- 	/* FM PORT Disable */
- 	ret = fm_port_disable(dpaa_intf->port_handle);
- 	if (ret != E_OK) {
-@@ -786,8 +784,10 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
- 	unsigned int i = 0;
- 	PMD_INIT_FUNC_TRACE();
- 
--	if (dpaa_fm_deconfig(dpaa_intf, fif))
--		DPAA_PMD_ERR("DPAA FM deconfig failed");
-+	if (dpaa_intf->port_handle) {
-+		if (dpaa_fm_deconfig(dpaa_intf, fif))
-+			DPAA_PMD_ERR("DPAA FM deconfig failed");
-+	}
- 
- 	if (!dev->data->nb_rx_queues)
- 		return 0;
-@@ -806,8 +806,7 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
- 
- 	if (fif->num_profiles) {
- 		for (i = 0; i < dev->data->nb_rx_queues; i++)
--			dpaa_intf->rx_queues[i].vsp_id =
--				fm_default_vsp_id(fif);
-+			dpaa_intf->rx_queues[i].vsp_id = fm_default_vsp_id(fif);
- 
- 		i = 0;
- 	}
-@@ -939,27 +938,16 @@ int dpaa_fm_term(void)
- }
- 
- static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
--		uint8_t vsp_id, t_handle fman_handle,
--		struct fman_if *fif, u32 mbuf_data_room_size)
-+		uint8_t vsp_id, t_handle fman_handle, struct fman_if *fif)
- {
-+	struct dpaa_if_vsp *vsp;
- 	t_fm_vsp_params vsp_params;
- 	t_fm_buffer_prefix_content buf_prefix_cont;
--	uint8_t idx = mac_idx[fif->mac_idx];
-+	uint8_t idx = mac_idx[fif->mac_idx], i;
- 	int ret;
-+	struct t_fm_ext_pools *pools;
- 
--	if (vsp_id == fif->base_profile_id && fif->is_shared_mac) {
--		/* For shared interface, VSP of base
--		 * profile is default pool located in kernel.
--		 */
--		dpaa_intf->vsp_bpid[vsp_id] = 0;
--		return 0;
--	}
--
--	if (vsp_id >= DPAA_VSP_PROFILE_MAX_NUM) {
--		DPAA_PMD_ERR("VSP ID %d exceeds MAX number %d",
--			vsp_id, DPAA_VSP_PROFILE_MAX_NUM);
--		return -1;
--	}
-+	vsp = &dpaa_intf->vsp[vsp_id];
- 
- 	memset(&vsp_params, 0, sizeof(vsp_params));
- 	vsp_params.h_fm = fman_handle;
-@@ -973,17 +961,21 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
- 	vsp_params.port_params.port_type = get_rx_port_type(fif);
- 	if (vsp_params.port_params.port_type == e_FM_PORT_TYPE_DUMMY) {
- 		DPAA_PMD_ERR("Mac type %d error", fif->mac_type);
--		return -1;
-+		return -EINVAL;
- 	}
- 
--	vsp_params.ext_buf_pools.num_of_pools_used = 1;
--	vsp_params.ext_buf_pools.ext_buf_pool[0].id = dpaa_intf->vsp_bpid[vsp_id];
--	vsp_params.ext_buf_pools.ext_buf_pool[0].size = mbuf_data_room_size;
-+	pools = &vsp_params.ext_buf_pools;
- 
--	dpaa_intf->vsp_handle[vsp_id] = fm_vsp_config(&vsp_params);
--	if (!dpaa_intf->vsp_handle[vsp_id]) {
--		DPAA_PMD_ERR("fm_vsp_config error for profile %d", vsp_id);
--		return -EINVAL;
-+	pools->num_of_pools_used = vsp->bp_num;
-+	for (i = 0; i < vsp->bp_num; i++) {
-+		pools->ext_buf_pool[i].id = vsp->vsp_bp[i]->bpid;
-+		pools->ext_buf_pool[i].size = vsp->vsp_bp[i]->size;
-+	}
-+
-+	vsp->vsp_handle = fm_vsp_config(&vsp_params);
-+	if (!vsp->vsp_handle) {
-+		DPAA_PMD_ERR("Configure VSP[%d] failed!", vsp_id);
-+		return -EIO;
- 	}
- 
- 	/* configure the application buffer (structure, size and
-@@ -1001,19 +993,18 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
- 	buf_prefix_cont.manip_ext_space =
- 		RTE_PKTMBUF_HEADROOM - DPAA_MBUF_HW_ANNOTATION;
- 
--	ret = fm_vsp_config_buffer_prefix_content(dpaa_intf->vsp_handle[vsp_id],
--					       &buf_prefix_cont);
-+	ret = fm_vsp_config_buffer_prefix_content(vsp->vsp_handle,
-+			&buf_prefix_cont);
- 	if (ret != E_OK) {
--		DPAA_PMD_ERR("fm_vsp_config_buffer_prefix_content error for profile %d err: %d",
--			     vsp_id, ret);
-+		DPAA_PMD_ERR("Configure VSP[%d]'s buffer prefix failed(%d)!",
-+			vsp_id, ret);
- 		return ret;
- 	}
- 
- 	/* initialize the FM VSP module */
--	ret = fm_vsp_init(dpaa_intf->vsp_handle[vsp_id]);
-+	ret = fm_vsp_init(vsp->vsp_handle);
- 	if (ret != E_OK) {
--		DPAA_PMD_ERR("fm_vsp_init error for profile %d err:%d",
--			 vsp_id, ret);
-+		DPAA_PMD_ERR("Init VSP[%d] failed(%d)!", vsp_id, ret);
- 		return ret;
- 	}
- 
-@@ -1021,29 +1012,44 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
- }
- 
- int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
--		bool fmc_mode, uint8_t vsp_id, uint32_t bpid,
--		struct fman_if *fif, u32 mbuf_data_room_size)
-+		bool fmc_mode, uint8_t vsp_id, struct fman_if *fif)
- {
- 	int ret = 0;
- 	t_handle fman_handle;
-+	struct dpaa_if_vsp *vsp;
- 
--	if (!fif->num_profiles)
--		return 0;
-+	if (!fif->num_profiles) {
-+		DPAA_PMD_ERR("%s: No multiple VSPs specified!",
-+			dpaa_intf->name);
-+		return -EINVAL;
-+	}
- 
--	if (vsp_id >= fif->num_profiles)
--		return 0;
-+	if (vsp_id >= (fif->base_profile_id + fif->num_profiles)) {
-+		DPAA_PMD_ERR("%s: Invalid VSP ID(%d) >= base(%d) + num(%d)",
-+			dpaa_intf->name, vsp_id, fif->base_profile_id,
-+			fif->num_profiles);
-+		return -EINVAL;
-+	}
- 
--	if (dpaa_intf->vsp_bpid[vsp_id] == bpid)
-+	if (vsp_id == fif->base_profile_id && fif->is_shared_mac) {
-+		/* For shared interface, VSP of base
-+		 * profile is default pool located in kernel.
-+		 */
-+		dpaa_intf->vsp[vsp_id].bp_num = 0;
-+		dpaa_intf->vsp[vsp_id].vsp_handle = NULL;
- 		return 0;
-+	}
-+
-+	vsp = &dpaa_intf->vsp[vsp_id];
- 
--	if (dpaa_intf->vsp_handle[vsp_id]) {
--		ret = fm_vsp_free(dpaa_intf->vsp_handle[vsp_id]);
-+	if (vsp->vsp_handle) {
-+		ret = fm_vsp_free(vsp->vsp_handle);
- 		if (ret != E_OK) {
--			DPAA_PMD_ERR("Error fm_vsp_free: err %d vsp_handle[%d]",
--				     ret, vsp_id);
-+			DPAA_PMD_ERR("Free VSP[%d]'s handle failed(%d)",
-+				vsp_id, ret);
- 			return ret;
- 		}
--		dpaa_intf->vsp_handle[vsp_id] = 0;
-+		vsp->vsp_handle = NULL;
- 	}
- 
- 	if (fmc_mode)
-@@ -1051,24 +1057,23 @@ int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
- 	else
- 		fman_handle = fm_info.fman_handle;
- 
--	dpaa_intf->vsp_bpid[vsp_id] = bpid;
--
--	return dpaa_port_vsp_configure(dpaa_intf, vsp_id, fman_handle, fif,
--				       mbuf_data_room_size);
-+	return dpaa_port_vsp_configure(dpaa_intf, vsp_id, fman_handle, fif);
- }
- 
--int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif)
-+int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf)
- {
--	int idx, ret;
-+	int ret;
-+	uint8_t idx;
- 
--	for (idx = 0; idx < (uint8_t)fif->num_profiles; idx++) {
--		if (dpaa_intf->vsp_handle[idx]) {
--			ret = fm_vsp_free(dpaa_intf->vsp_handle[idx]);
-+	for (idx = 0; idx < DPAA_VSP_PROFILE_MAX_NUM; idx++) {
-+		if (dpaa_intf->vsp[idx].vsp_handle) {
-+			ret = fm_vsp_free(dpaa_intf->vsp[idx].vsp_handle);
- 			if (ret != E_OK) {
--				DPAA_PMD_ERR("Error fm_vsp_free: err %d"
--					     " vsp_handle[%d]", ret, idx);
-+				DPAA_PMD_ERR("Free VSP[%d] failed(%d)",
-+					idx, ret);
- 				return ret;
- 			}
-+			dpaa_intf->vsp[idx].vsp_handle = NULL;
- 		}
- 	}
- 
-diff --git a/drivers/net/dpaa/dpaa_flow.h b/drivers/net/dpaa/dpaa_flow.h
-index 4742b8dd0a..6a949d6dd4 100644
---- a/drivers/net/dpaa/dpaa_flow.h
-+++ b/drivers/net/dpaa/dpaa_flow.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017,2019,2022 NXP
-+ * Copyright 2017,2019,2022,2026 NXP
-  */
- 
- #ifndef __DPAA_FLOW_H__
-@@ -11,9 +11,8 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set);
- int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf, struct fman_if *fif);
- void dpaa_write_fm_config_to_file(void);
- int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
--	bool fmc_mode, uint8_t vsp_id, uint32_t bpid, struct fman_if *fif,
--	u32 mbuf_data_room_size);
--int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif);
-+	bool fmc_mode, uint8_t vsp_id, struct fman_if *fif);
-+int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf);
- int dpaa_port_fmc_init(struct fman_if *fif,
- 		       uint32_t *fqids, int8_t *vspids, int max_nb_rxq);
- 
--- 
-2.25.1
+
 
