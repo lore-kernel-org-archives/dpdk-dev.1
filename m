@@ -2,73 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663EFC43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 15:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 369D6C43458
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 15:44:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 515274026F;
-	Fri,  3 Jul 2026 17:37:45 +0200 (CEST)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
- [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id DF8904003C
- for <dev@dpdk.org>; Fri,  3 Jul 2026 17:37:43 +0200 (CEST)
-Received: by mail-pj1-f47.google.com with SMTP id
- 98e67ed59e1d1-381c51fde6bso330254a91.2
- for <dev@dpdk.org>; Fri, 03 Jul 2026 08:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1783093063;
- x=1783697863; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=bP1+v0+iiH4l1kjuXCYZxbYvXXjNzcGoC2S5MaVxCnY=;
- b=IT/bne/NGKBDOb+YwLzCXeJXkqGwZZnQMLswKc1QeASjIz0OxWBqpulvchXKKTcj7k
- Yugg4ohRgR95qj7VrU6PJu8tGYe+kGwEYl2vYhVkGIOXVxd3y9rJwSIPis0YwC5FM3pv
- YlXPgoayAlwHyAdlaqYS72aRnFNECWFjEkhF0HE+b+W2snp+/z10fvMx9OAQSnGl84yG
- 6YGG1tdadd5VMXNPvGw6bdb33guJicZQ2MApVs/coN01OmyBZ20D0Lo1pwcl+F6WTR57
- 2LWoNE3U6w38WflE9XOHu7YsRdO16030r2lSyvqdsliWa9qWzKZb5ioiDoKopTz5vEue
- Gg6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783093063; x=1783697863;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=bP1+v0+iiH4l1kjuXCYZxbYvXXjNzcGoC2S5MaVxCnY=;
- b=RdUaho8tQd4vl/fZzP8Ita6zOi7DbeRGe9uwkg1kq0heLR0k5h+ZZlHiCacvo0okBx
- vG7ZkIBImPH+WiatK65PC9Oyt6iV1+BJcw2usnF2rt5ON2WHHvfKGLn87sUVoIQ6rTkI
- lIgSHVOkH86sgcPJ2QOOIsO2DCxNivqucTUsBT6n2uBGO3Gpuw73k6YkijAGBLGKxcAr
- S63Jp9UbWoTwlaP7J+uYFIhz2hmnnERhZsB2s4pBzlq9aQZSA4ICJshI1d0MLQkkZ4ko
- 3eo2S/7W+VZ9Y//LwWuaSwHPEdALdkT4BqDa6Jlxn55O+gKKYAhwHPD2wJqAeYRpxl1K
- Ki7w==
-X-Forwarded-Encrypted: i=1;
- AHgh+RrxFbds92uHapS65XnCYgqKgNLNGB1zJxbZck7Il5HLeY6s1HK8pfCvjruGis1fiN5h5fw=@dpdk.org
-X-Gm-Message-State: AOJu0YwoKi2Dl8fZM+vFLo+1Z9DV5WX3goImVjJ2Nfy0xEbgJPjJ9AMD
- MDUz/SDCylcfIb10O3BjHCD3mfkkXk/Hf9Q3C8hwB/VbNMh5X9aMhrdqs2NMwcMxk2k=
-X-Gm-Gg: AfdE7clRYDShFFO+xkug/R9sCIDilMroNB5gYEfVc1dLsYJBw6rLTL/wCYF9O6dR9sq
- KgCdfzR5HrCoSEO7gTj3xfO9HVLrDXYA06RXVI8xZU8xezQ7vY4BklxRn6dUlXOcdpjleqpyllV
- Z/ki8WJGlcYVxjl8108EHUW6lJ2bIfVKqwq0CcIW6oCIiMf+Ate3GjMv3KVZL7XeHSn2+yosK3P
- dHOEBrq1G6WYEeuBeKWif4+eYC6XqNIkkqSybK8ksy+QFIqHxF6YpSeg4JK+Sm0DaX4byS26RwM
- YfyRLHXdKXJQMXG70dk/bD74g3whtujC37QMk5+Zp2zQpspgod47jMJqcVWXaoW9WSa4NW85yax
- NFWIT0mSbdsDEJcpD/V5UEzgbacy5TlICePp1jwP4gUqP1Zp7ndnB1QQNzYkpW/aft6HPCIIBhf
- 9NVyuAmoRAWOw595H6h+mST+5Yn9ePa/0/EneAQRLZpIQByPjHVXQ5kUzXJBc7f61Y
-X-Received: by 2002:a17:90b:3508:b0:37f:9ce1:cdb1 with SMTP id
- 98e67ed59e1d1-3829fdd997cmr32627a91.31.1783093062882; 
- Fri, 03 Jul 2026 08:37:42 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30f3b252222sm2127294eec.23.2026.07.03.08.37.42
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 03 Jul 2026 08:37:42 -0700 (PDT)
-Date: Fri, 3 Jul 2026 08:37:39 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
- <thomas@monjalon.net>
-Subject: Re: [PATCH] test/bpf_validate: use unit_test_suite_runner
-Message-ID: <20260703083739.5aa77dbf@phoenix.local>
-In-Reply-To: <20260703152910.80285-1-marat.khalili@huawei.com>
-References: <20260703152910.80285-1-marat.khalili@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1390C4026F;
+	Fri,  3 Jul 2026 17:44:08 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id B5BD94003C
+ for <dev@dpdk.org>; Fri,  3 Jul 2026 17:44:06 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 8908F205F2;
+ Fri,  3 Jul 2026 17:44:06 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Fri, 3 Jul 2026 17:44:06 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>,
+ Saeed Bishara <saeed.bishara.os@gmail.com>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v9] graph: add optional profiling stats
+Date: Fri,  3 Jul 2026 15:43:57 +0000
+Message-ID: <20260703154357.3068739-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260619202047.2809165-1-mb@smartsharesystems.com>
+References: <20260619202047.2809165-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 03 Jul 2026 15:44:06.0253 (UTC)
+ FILETIME=[C7E581D0:01DD0B02]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,14 +49,248 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 3 Jul 2026 16:29:09 +0100
-Marat Khalili <marat.khalili@huawei.com> wrote:
+graph: add optional profiling stats
 
-> Due to github CI running out of tmpfs space after adding 29 new BPF
-> validate tests they were temporarily disabled. Restore them as a single
-> test using unit_test_suite_runner.
-> 
-> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-> ---
+Added graph node profiling stats, build time configurable by enabling
+RTE_GRAPH_PROFILE in rte_config.h.
 
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+v9:
+* Fixed comment still mentioning 32 objects.
+* Moved sample size array outside loop. (AI)
+* Added release note. (AI)
+v8:
+* Added static const array as local variable, instead of indexing directly
+  into const array. (AI)
+  This also eliminates the space required between "} [idx];" weirdness.
+* Added build time configurable RTE_GRAPH_PROFILE_BURST_SIZE to replace
+  the hardcoded burst size of 32. (AI)
+v7:
+* Use RTE_DIM() in histogram for loop.
+* Added static_assert for histogram index values.
+* Minor details to please checkpatch.
+  Although I disagree with requiring a space when indexing into
+  a constant array "(const type []){values} [idx];",
+  I have changed the code to comply.
+v6:
+* Consolidate the four histogram entries into one array. (Saeed Bishara)
+* Sample at 32 objs instead of a half burst. (Saeed Bishara)
+* Moved stats to different location in rte_node structure. (Jerin)
+* Minor details to please checkpatch.
+v5:
+* Added stats for a half burst and a full burst.
+v4:
+* Added documentation. (AI)
+* Added more comments. (AI)
+* Improved dump. (AI)
+* Debug shows both cycles/call and cycles/obj.
+v3:
+* Debug shows cycles/obj instead of cycles/call.
+* Fixed missing --in-reply-to.
+v2:
+* Fixed indentation.
+---
+ config/rte_config.h                    |  2 ++
+ doc/guides/prog_guide/graph_lib.rst    |  3 ++
+ doc/guides/rel_notes/release_26_07.rst |  7 ++++
+ lib/graph/graph_debug.c                | 50 ++++++++++++++++++++++++++
+ lib/graph/node.c                       |  2 ++
+ lib/graph/rte_graph_worker_common.h    | 32 +++++++++++++++--
+ 6 files changed, 93 insertions(+), 3 deletions(-)
+
+diff --git a/config/rte_config.h b/config/rte_config.h
+index 0447cdf2ad..7703a6325b 100644
+--- a/config/rte_config.h
++++ b/config/rte_config.h
+@@ -106,6 +106,8 @@
+ /* rte_graph defines */
+ #define RTE_GRAPH_BURST_SIZE 256
+ #define RTE_LIBRTE_GRAPH_STATS 1
++/* RTE_GRAPH_PROFILE is not set */
++#define RTE_GRAPH_PROFILE_BURST_SIZE 32
+ 
+ /****** driver defines ********/
+ 
+diff --git a/doc/guides/prog_guide/graph_lib.rst b/doc/guides/prog_guide/graph_lib.rst
+index 8dd49c19d2..4311c37cc2 100644
+--- a/doc/guides/prog_guide/graph_lib.rst
++++ b/doc/guides/prog_guide/graph_lib.rst
+@@ -49,6 +49,9 @@ Performance tuning parameters
+   RTE_GRAPH_BURST_SIZE config option.
+   The testing shows, on x86 and arm64 servers, The sweet spot is 256 burst
+   size. While on arm64 embedded SoCs, it is either 64 or 128.
++- Enable the ``RTE_GRAPH_PROFILE`` config option for more profiling details.
++  Set the ``RTE_GRAPH_PROFILE_BURST_SIZE`` config option to sample a specific
++  burst size.
+ - Disable node statistics (using ``RTE_LIBRTE_GRAPH_STATS`` config option)
+   if not needed.
+ 
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index 8b1bdada1a..cb7d48eeac 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -83,6 +83,13 @@ New Features
+   * The size of the ``struct rte_mempool_cache`` was kept
+     for API/ABI compatibility purposes.
+ 
++* **Added optional graph profiling statistics.**
++
++  Added build-time configurable graph node profiling statistics via
++  ``RTE_GRAPH_PROFILE`` in ``rte_config.h``. When enabled, tracks cycles
++  spent processing bursts of 0, 1, ``RTE_GRAPH_PROFILE_BURST_SIZE``,
++  and ``RTE_GRAPH_BURST_SIZE`` objects per node.
++
+ * **Added RISC-V vector paths.**
+ 
+   * Increased the default SIMD bitwidth to allow using the vector extension.
+diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
+index e3b8cccdc1..b999fa4140 100644
+--- a/lib/graph/graph_debug.c
++++ b/lib/graph/graph_debug.c
+@@ -93,6 +93,56 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
+ 				n->dispatch.total_sched_fail);
+ 		}
+ 		fprintf(f, "       total_calls=%" PRId64 "\n", n->total_calls);
++		if (rte_graph_has_stats_feature())
++			fprintf(f, "       total_cycles=%" PRIu64 ", avg cycles/call=%.1f\n",
++					n->total_cycles,
++					n->total_calls == 0 ? 0.0 :
++					(double)n->total_cycles / (double)n->total_calls);
++#ifdef RTE_GRAPH_PROFILE
++		static const uint16_t profile_sample_sizes[] = {
++				0, 1, RTE_GRAPH_PROFILE_BURST_SIZE, RTE_GRAPH_BURST_SIZE};
++		static_assert(RTE_DIM(profile_sample_sizes) == RTE_DIM(n->usage_stats),
++				"usage_stats array size mismatch");
++		int64_t calls_other = n->total_calls;
++		int64_t cycles_other = n->total_cycles;
++		int64_t objs_other = n->total_objs;
++		for (int idx = 0; idx < RTE_DIM(n->usage_stats) + 1; idx++) {
++			uint64_t calls;
++			uint64_t cycles;
++			double objs_per_call;
++			if (idx < RTE_DIM(n->usage_stats)) {
++				uint16_t idx_objs = profile_sample_sizes[idx];
++				fprintf(f, "       objs[%u]\n", idx_objs);
++				calls = n->usage_stats[idx].calls;
++				cycles = n->usage_stats[idx].cycles;
++				objs_per_call = (double)idx_objs;
++				calls_other -= calls;
++				cycles_other -= cycles;
++				objs_other -= idx_objs * calls;
++			} else {
++				fprintf(f, "       objs[other]\n");
++				if (calls_other > 0 && cycles_other > 0 && objs_other > 0) {
++					calls = calls_other;
++					cycles = cycles_other;
++					objs_per_call = (double)objs_other / (double)calls_other;
++					fprintf(f, "         avg objs/call=%.1f\n", objs_per_call);
++				} else {
++					calls = 0;
++					cycles = 0;
++					objs_per_call = 0.0;
++				}
++			}
++			fprintf(f, "         calls=%" PRIu64, calls);
++			if (calls != 0)
++				fprintf(f, ", cycles=%" PRIu64 ", avg cycles/call=%.1f",
++						cycles,
++						(double)cycles / (double)calls);
++			if (calls != 0 && objs_per_call != 0.0)
++				fprintf(f, ", avg cycles/obj=%.1f",
++						(double)cycles / (double)calls / objs_per_call);
++			fprintf(f, "\n");
++		}
++#endif
+ 		for (i = 0; i < n->nb_edges; i++)
+ 			fprintf(f, "          edge[%d] <%s>\n", i,
+ 				n->nodes[i]->name);
+diff --git a/lib/graph/node.c b/lib/graph/node.c
+index 1fce3e6632..19b38881ae 100644
+--- a/lib/graph/node.c
++++ b/lib/graph/node.c
+@@ -110,10 +110,12 @@ __rte_node_register(const struct rte_node_register *reg)
+ 	rte_edge_t i;
+ 	size_t sz;
+ 
++#ifndef RTE_GRAPH_PROFILE
+ 	/* Limit Node specific metadata to one cacheline on 64B CL machine */
+ 	RTE_BUILD_BUG_ON((offsetof(struct rte_node, nodes) -
+ 			  offsetof(struct rte_node, ctx)) !=
+ 			 RTE_CACHE_LINE_MIN_SIZE);
++#endif
+ 
+ 	graph_spinlock_lock();
+ 
+diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
+index 4ab53a533e..00e8f5859d 100644
+--- a/lib/graph/rte_graph_worker_common.h
++++ b/lib/graph/rte_graph_worker_common.h
+@@ -121,6 +121,17 @@ struct __rte_cache_aligned rte_node {
+ 	rte_graph_off_t xstat_off; /**< Offset to xstat counters. */
+ 
+ 	/** Fast path area cache line 2. */
++#ifdef RTE_GRAPH_PROFILE
++	/**
++	 * Usage when this node processed 0, 1, RTE_GRAPH_PROFILE_BURST_SIZE,
++	 * or RTE_GRAPH_BURST_SIZE objects.
++	 */
++	struct __rte_cache_aligned {
++		uint64_t calls;     /**< Calls done. */
++		uint64_t cycles;    /**< Cycles spent. */
++	} usage_stats[4];
++	/** Fast path area cache line 3. */
++#endif
+ 	__extension__ struct __rte_cache_aligned {
+ #define RTE_NODE_CTX_SZ 16
+ 		union {
+@@ -148,8 +159,10 @@ struct __rte_cache_aligned rte_node {
+ 	};
+ };
+ 
++#ifndef RTE_GRAPH_PROFILE
+ static_assert(offsetof(struct rte_node, nodes) - offsetof(struct rte_node, ctx)
+ 	== RTE_CACHE_LINE_MIN_SIZE, "rte_node fast path area must fit in 64 bytes");
++#endif
+ 
+ /**
+  * @internal
+@@ -197,7 +210,7 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
+ static __rte_always_inline void
+ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+ {
+-	uint64_t start;
++	uint64_t cycles;
+ 	uint16_t rc;
+ 	void **objs;
+ 
+@@ -206,11 +219,24 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+ 	rte_prefetch0(objs);
+ 
+ 	if (rte_graph_has_stats_feature()) {
+-		start = rte_rdtsc();
++		cycles = -rte_rdtsc();
+ 		rc = node->process(graph, node, objs, node->idx);
+-		node->total_cycles += rte_rdtsc() - start;
++		cycles += rte_rdtsc();
++		node->total_cycles += cycles;
+ 		node->total_calls++;
+ 		node->total_objs += rc;
++#ifdef RTE_GRAPH_PROFILE
++		if (rc <= 1) {
++			node->usage_stats[rc].calls++;
++			node->usage_stats[rc].cycles += cycles;
++		} else if (rc == RTE_GRAPH_PROFILE_BURST_SIZE) {
++			node->usage_stats[2].calls++;
++			node->usage_stats[2].cycles += cycles;
++		} else if (rc == RTE_GRAPH_BURST_SIZE) {
++			node->usage_stats[3].calls++;
++			node->usage_stats[3].cycles += cycles;
++		}
++#endif
+ 	} else {
+ 		node->process(graph, node, objs, node->idx);
+ 	}
+-- 
+2.43.0
+
