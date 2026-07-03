@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F24C43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 15:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C0BC43458
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 16:03:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 14A664026F;
-	Fri,  3 Jul 2026 17:52:36 +0200 (CEST)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
- [209.85.210.181])
- by mails.dpdk.org (Postfix) with ESMTP id AFBC84003C
- for <dev@dpdk.org>; Fri,  3 Jul 2026 17:52:34 +0200 (CEST)
-Received: by mail-pf1-f181.google.com with SMTP id
- d2e1a72fcca58-8478fe07f0fso694579b3a.0
- for <dev@dpdk.org>; Fri, 03 Jul 2026 08:52:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6C7464026F;
+	Fri,  3 Jul 2026 18:03:56 +0200 (CEST)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
+ [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id A54004026A
+ for <dev@dpdk.org>; Fri,  3 Jul 2026 18:03:54 +0200 (CEST)
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-3804e42ad5fso794587a91.2
+ for <dev@dpdk.org>; Fri, 03 Jul 2026 09:03:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1783093954;
- x=1783698754; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=VcSla4EbviSS8Vc0jmoLxHAOt0wojeaquoB1oFFP8Qg=;
- b=r+BaFM4NKS8SQ9PqjhIPk19L+w+TZN4r+uGYBh+9+8lp8UyoC+SUhIVuW7Vc67JUws
- KRtYSR1orhbQVe8NQPpEW/IBhh1wpXGh1DvDRVjcztfWZxy5NyzQZpZJIUCxBHV/VFdS
- zrzJUEo43qs7EK3TOol5Q2CB+Q9H1VBMiCe3lC4T1XMzAXG1L1KJPENO3Ok+J5DcvLMf
- 7WscNMGyKJgIr7YbTpkFQdmjwqiM0V3k9y5+VdVljR4YYU5UNvObbPWcPoju9uAdNaEB
- 43ltKMaS6K0xOlWky5jvcr87o4QkVOR4SWOuHRo7wiOF/5PVT72miDPPMjLaArCiSc4R
- HMXQ==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1783094628;
+ x=1783699428; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=6R10nls4JJ2Q0KuxpbOXtwOFkbKtQK0iDgSIJSxnMFU=;
+ b=CN9wSXTXeqjTTQMf22fAJ1H8RgX2wJZizR94Uk+Td/HDxtWXMqwKXQp0rw6NHtECC4
+ BfyAohcz7Krrh02d6KiB4cSr9U/ijAoNxStsC5Q7KniMOSp4hS3aSW/CPY0NxUIMB1n+
+ KDM8w5aypncqobrDIgLYEvirqAm5gjc9mUJDYeoywZR35/8Nmt3jBVkxQjKfKT6fOjTJ
+ aUHSlJJgL8rw7254y6sblU2Kfb8B0dZEfquZsNTVyoQ/sSoHVwhGeYjWmzYukOpFCFs5
+ OrdkerRg80uv9Ac+tiFQaBGaw3gsnD3x9ppsO3Td7rjaiW5kj2KRUXkaCdw28qvTcaPn
+ 27zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783093954; x=1783698754;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=VcSla4EbviSS8Vc0jmoLxHAOt0wojeaquoB1oFFP8Qg=;
- b=ftV5K7bYucqclbhUnYvgjGjYeb05zID6ZjxPFof9Im7CuFzQI2pxWCyuYTjAhAO2GE
- DHtn9LSAKpjGWfrfubkLDCaEo79LNtoifGNpBk7PG2Y7oR/vkroNBXa0Z7KKV9INvqnp
- E4e6NgoXzCuUqGrMUwT3SrC+rQ6JdDBJvqhPOPxD0Dy5ekspgA0CMxMv436xmyc2BKd1
- S77QW/fVc5BYZZ3mkFXESU6eFnp755SsadHHQZ9vKh+AdRwJaNR0tsej0R9slW0kMWku
- 1Xh4qW15FKSWKo0nzhL1Sitqse0zIms79GSSMLMOn/4a5kQ7gnc5qgVWs7MPccPTENmQ
- lh7Q==
-X-Gm-Message-State: AOJu0YxmQ2hSIIxTXErM86iBfjKDwsqpK5H7DG2NKvWXd1w6Vd5cYsY4
- XDghzfEOqX+JGRcJ/tFdxQNkQSYSjp89rgJJlvlyTEf2PqpcVLDQqL2e4jHeQxXq0MQ=
-X-Gm-Gg: AfdE7ckNJwUZzYbCqSqA9LgDI/Nm+FM9zjmXmHiWsKQptqO/VuNeLpf56QVfnKD+c2v
- 0OdsoqnupbyrStmqJEp/EVuDWnnYDBFiFow7/oeqQ8fJ5z/9y+hkI4+UpZelSpMSWy9Ubk34re9
- Kq1Lb1shY8CiqjY8GT6UJpzUodVG2zxOSL9BJHLpDjBpqAHYY/EA4xif/NEh5ffL5jY9MqPrXlz
- wVrKhWXxCwAl9JqFeVH8yNDGDxhZ3K3kYZ4pNrUsblOtTNMVbOSb8qEh4D+qEXenqCOnqmY7D+B
- 7NOQ+WfzmBtOqWLBIFmx6N7Pe7zA/jw0cuCEZsZ7/EzV3Wxtyh8etW3AhdPUN/rYrK2j8p9WRNR
- GGIF55FRUWNUv34RBRqbIDngX2ikUDOgg2fLsOdKBD+aDKkl4F9bw1E9AzuyfBv0rMC5xfj6yd1
- Yxc7XSOeRpmShX48bZydEq9KMWmgEHHPu7f4QAHraLKaj5J9kdYDQeoA==
-X-Received: by 2002:a05:6a21:a393:b0:3b7:99af:2d22 with SMTP id
- adf61e73a8af0-3c03e2933edmr3509637.19.1783093953816; 
- Fri, 03 Jul 2026 08:52:33 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1783094628; x=1783699428;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=6R10nls4JJ2Q0KuxpbOXtwOFkbKtQK0iDgSIJSxnMFU=;
+ b=tBgUEkn9O6x3TFHwWoh7gX+jFZPsnUUrPKh/udw0wwXJnV/9lsxQKXLMNGKQWxA99+
+ 8rGLuvVPfnhbEwQttsX0khY9Gaxg34aGB8jxGkUPUsiaHMnfgJqJ2zbttF7C3eT55iZk
+ ZVZvDtuk0pgL/tIljGfOQxt/wHlqWCGv0BOhhk6hs2iNKKC6+IIj6xw2I0b9kEGGUnhJ
+ 9ey6h3SZwS3joltIhOafc5F72OGsttdzWi/nWWD/u3q30R7o/bhMwqjnfPzMXain5txD
+ v5grL/qnk4R4FpFcIgfgbck2TSIxAN79o07gYfg9asF7xCnxPZwU6G746juIfFIE+Ly6
+ +nkQ==
+X-Gm-Message-State: AOJu0YyOw7xt05F0AtwcqY9wRYwSk12lhT8vF3LdAdTBQWrfN280e3j4
+ 7CKpKGQKr0xbefzne9PKcTuGmAu5FxPRjvnaAwiv8We9K3f7lVqsNesW4iygT9Q5nsc=
+X-Gm-Gg: AfdE7cm5Cl/hB2sb6ytDc9gHM1InPHDJqA2/BxqJIjii36sHe4+w0od29jFKLEgPZZr
+ T1fKkGyjCKnl4E2Vj8lB3Y10RNbJiAT1X7722WC146W4dngJfnw2xzsFf8E/9weTNQFZyU/5zHa
+ i61HEJtRZr16MeIwmVUW/PsN3ZI17W4pN5Sm4FEORc12Q10wemcgfozMfjK3k1PKbauHPBWHQZK
+ qvtAAxIlujMxEOvKTVo33aR93hLoOXQuzWgbMwYjDS9uas82nSMkWYMfpSAdEIVq93GFDHPmOOj
+ BqnbxfIV1rFoLt6BfvMbfSTyjyOmJAuLS2CpVtomlmpHyNDif+uskOLkO9Z9Gsj43lWtiMLBlvf
+ emPmrqvST1tXF/dcPfJUDS/9a7x1IERASsd57m4gg3hnVPPQar6cWhOFMdeUtGt0Z+Ifg2lTF3u
+ 32k5E0E6fuyFbw8/rRYPNp7AEiSD+kyw6j0aVxU6x7E+UDfWQBCPHEgr9dTmut1RjE
+X-Received: by 2002:a17:90b:17c1:b0:366:52fe:e749 with SMTP id
+ 98e67ed59e1d1-382802beab6mr159347a91.5.1783094628560; 
+ Fri, 03 Jul 2026 09:03:48 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30f31e7a2a8sm6199973eec.25.2026.07.03.08.52.32
+ 5a478bee46e88-30f0bc2e119sm21322403eec.28.2026.07.03.09.03.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 03 Jul 2026 08:52:33 -0700 (PDT)
-Date: Fri, 3 Jul 2026 08:52:31 -0700
+ Fri, 03 Jul 2026 09:03:47 -0700 (PDT)
+Date: Fri, 3 Jul 2026 09:03:45 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Pushpendra Kumar <pushpendra1x.kumar@intel.com>
-Cc: dev@dpdk.org, pushpendra.kumar@tieto.com, reshma.pattan@intel.com,
- stable@dpdk.org
-Subject: Re: [PATCH] pdump: fix request timeout on unresponsive secondary
-Message-ID: <20260703085231.67faa7ea@phoenix.local>
-In-Reply-To: <20260701060257.562895-1-pushpendra1x.kumar@intel.com>
-References: <20260701060257.562895-1-pushpendra1x.kumar@intel.com>
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: dev@dpdk.org, hemant.agrawal@nxp.com, sachin.saxena@nxp.com,
+ david.marchand@redhat.com
+Subject: Re: [PATCH v3 0/6] net/dpaa2: NAPI-style Rx queue interrupts
+Message-ID: <20260703090345.3e4099cd@phoenix.local>
+In-Reply-To: <20260630144329.457643-1-maxime@leroys.fr>
+References: <20260616102727.708948-1-maxime@leroys.fr>
+ <20260630144329.457643-1-maxime@leroys.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,93 +82,110 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  1 Jul 2026 11:32:57 +0530
-Pushpendra Kumar <pushpendra1x.kumar@intel.com> wrote:
+On Tue, 30 Jun 2026 16:43:23 +0200
+Maxime Leroy <maxime@leroys.fr> wrote:
 
-> When a primary handles a pdump enable/disable request from a secondary
-> (e.g. dpdk-dumpcap), it applies the callbacks locally and forwards the
-> request to the other secondaries before replying. The forward used
-> rte_mp_request_sync(), blocking up to MP_TIMEOUT_S for every secondary
-> to acknowledge.
->=20
-> A secondary that is attached but has not called rte_pdump_init() never
-> registers the mp_pdump action and silently drops the message (logging
-> only "Cannot find action: mp_pdump"). Commit c3ceb8742295 ("pdump:
-> forward callback enable to secondary process"), which added this
-> broadcast, appears to assume every secondary calls rte_pdump_init();
-> when one does not, the primary cannot tell it from a slow or dead peer
-> and blocks for the full timeout. That delay pushes the reply past the
-> requester's own timeout, so dpdk-dumpcap reports "Packet dump enable
-> ... failed Connection timed out".
->=20
-> Forward the request asynchronously with rte_mp_request_async() so an
-> unresponsive secondary can no longer block the reply; a callback logs a
-> warning if not all secondaries acknowledge. The forward is still issued
-> before the requester reply, preserving the ordering from commit
-> 928f43e3f9c1 ("pdump: fix race in disabling").
->=20
-> This slightly weakens the happens-before guarantee: the sync call was a
-> full-acknowledgement barrier, whereas the async path relies on AF_UNIX
-> SOCK_DGRAM FIFO ordering and the single mp_handle thread processing the
-> forward before the reply that triggers teardown. This suffices for the
-> disable race fixed by 928f43e3f9c1, but reviewers should confirm they
-> are comfortable with the weaker guarantee.
->=20
-> Fixes: c3ceb8742295 ("pdump: forward callback enable to secondary process=
-")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Pushpendra Kumar <pushpendra1x.kumar@intel.com>
-> ---
+> This series lets a dpaa2 worker sleep on a queue's data-availability
+> notification instead of busy-polling, exposed through the generic
+> rte_eth_dev_rx_intr_* API (NAPI-style: poll while frames keep coming,
+> arm the interrupt and sleep when the queue runs dry).
+> 
+> Why it is not a trivial .rx_queue_intr_enable
+> ----------------------------------------------
+> A worker wakes on its software portal's DQRI, which fires when the
+> portal's DQRR holds frames. The default dpaa2 Rx burst pulls frames
+> from the FQ with a volatile dequeue and cannot be interrupt-driven; to
+> wake on the DQRI the FQ must instead be pushed to the portal's DQRR.
+> 
+> The natural dpni_set_queue with a notification destination would have to
+> target the worker's portal, but that portal is only known once a worker
+> affines, after dev_start, and that MC command holds the global MC lock
+> long enough to wedge the firmware while traffic runs. So the bind cannot
+> be done late, against the polling lcore.
+> 
+> Design
+> ------
+> Each Rx FQ is bound to its own DPCON channel, statically, at dev_start
+> while the dpni is still disabled (no knowledge of the polling lcore). A
+> worker later subscribes its own ethrx portal to the channel and arms the
+> DQRI in rx_queue_intr_enable, a one-shot per-portal op, never the wedging
+> set_queue. On a wakeup the worker drains each of its queues by a volatile
+> dequeue on the queue's own DPCON channel (one FQ per channel, so no
+> per-frame demux); it polls all its queues, the same scheduling contract
+> as plain DPDK polling. A queue can be re-homed to another lcore at
+> runtime with no set_queue and no port stop.
+> 
+> This reuses the event PMD's pushed/DQRR model but with one DPCON per FQ
+> and static affinity (no QBMan scheduling), so the DPCON allocator is
+> moved from the event driver to the fslmc bus and shared.
+> 
+> Patch 1 disables the DPCON channel before closing it, an event/dpaa2 fix
+> the shared allocator depends on. Patches 2 to 4 move the DPCON allocator
+> to the fslmc bus, make the portal DQRI epoll optional, and add the
+> dpcon_set_notification MC command. Patch 5 adds the interrupt support
+> proper; patch 6 pins each DPIO's MSI to the lcore that arms it, a latency
+> optimisation.
+> 
+> Tested on LX2160A (lx2160acex7).
+> 
+> v3:
+> - Reworked the Rx drain. Both versions bind one DPCON per FQ, but v2
+>   drained the shared portal DQRR and demuxed frames to their FQ by
+>   fqd_ctx, stashing foreign frames in a per-queue FIFO. v3 drains each
+>   queue with a volatile dequeue on its own channel (one FQ per channel),
+>   which drops the demux and stash code.
+> - Dropped the rx_queue_count fix; it is applied to main.
+> - Dropped the software VLAN strip patch; an independent net/dpaa2 cleanup,
+>   sent standalone and now applied to next-net.
+> - Dropped the Depends-on: the ethdev fast-path ops fix is now in main.
+> - Split the dpcon_set_notification MC command into its own patch.
+> - Added an event/dpaa2 fix to disable the DPCON channel before close,
+>   needed once the allocator is shared.
+> - Dropped the DQRI holdoff-tuning patch; the immediate-DQRI holdoff is now
+>   set inline in the arm path.
+> - Added a patch reusing the event driver's MSI-affinity helper (exposed
+>   from its RTE_EVENT_DPAA2 guard) to pin the portal MSI to the lcore that
+>   arms it, so a CDAN wake lands on the worker's own core.
+> 
+> v2:
+> - Dropped the RSS RETA patch, an independent net/dpaa2 change the
+>   interrupt path does not require; it will be sent as its own series.
+> - Dropped the ethdev fast-path ops fix; it is now a standalone series.
+> - Dropped the eal/interrupts -EEXIST fix, applied to main by David
+>   Marchand.
+> - Declared qbman_swp_interrupt_set_inhibit and qbman_swp_dqrr_size
+>   __rte_internal (David Marchand).
+> - Minor formatting cleanup in the Rx interrupt setup.
+> 
+> Maxime Leroy (6):
+>   event/dpaa2: disable channel before closing it
+>   bus/fslmc: move DPCON management from event driver to bus
+>   bus/fslmc/dpio: make the portal DQRI epoll optional
+>   bus/fslmc/mc: implement dpcon_set_notification
+>   net/dpaa2: support Rx queue interrupts
+>   net/dpaa2: pin Rx queue interrupt to the polling core
+> 
+>  doc/guides/nics/dpaa2.rst                     |  21 +
+>  doc/guides/nics/features/dpaa2.ini            |   1 +
+>  doc/guides/rel_notes/release_26_07.rst        |   1 +
+>  drivers/bus/fslmc/mc/dpcon.c                  |  31 ++
+>  drivers/bus/fslmc/mc/fsl_dpcon.h              |  18 +
+>  drivers/bus/fslmc/meson.build                 |   1 +
+>  .../fslmc/portal}/dpaa2_hw_dpcon.c            |  17 +-
+>  drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      | 112 ++++--
+>  drivers/bus/fslmc/portal/dpaa2_hw_dpio.h      |  12 +
+>  drivers/bus/fslmc/portal/dpaa2_hw_pvt.h       |  12 +
+>  .../fslmc/qbman/include/fsl_qbman_portal.h    |   5 +
+>  drivers/bus/fslmc/qbman/qbman_portal.c        |   5 +
+>  drivers/event/dpaa2/dpaa2_eventdev.h          |   3 -
+>  drivers/event/dpaa2/meson.build               |   1 -
+>  drivers/net/dpaa2/dpaa2_ethdev.c              | 372 +++++++++++++++++-
+>  drivers/net/dpaa2/dpaa2_ethdev.h              |   4 +
+>  drivers/net/dpaa2/dpaa2_rxtx.c                | 104 +++--
+>  17 files changed, 649 insertions(+), 71 deletions(-)
+>  rename drivers/{event/dpaa2 => bus/fslmc/portal}/dpaa2_hw_dpcon.c (88%)
+> 
+> 
+> base-commit: 030328f5f920a87dabde54dacd4f5ac411ddcac9
 
-Yes this looks like a real problem but not sure if this the right fix.
-
-More detailed AI review says:
-
-Review =E2=80=94 pdump: fix request timeout on unresponsive secondary
-
-Warning: async forward drops the acknowledgement barrier that
-928f43e3f9c1 depends on.
-The fix in 928f43e3f9c1 was ordering: forward to secondaries
-before replying to the requester. But the safety came from
-rte_mp_request_sync() being a full-acknowledgement barrier, not
-from send order alone. The primary blocked until every secondary
-(dumpcap included, since the broadcast walks the whole mp socket
-dir) had actually processed the forward and replied =E2=80=94 only then
-was the disable response sent back to dumpcap.
-rte_mp_request_async() only guarantees the forward is sent
-before the reply, not processed. And the two messages reach
-dumpcap on different paths handled by different threads:
-
-the disable response wakes the thread blocked in
-pdump_prepare_client_request()'s rte_mp_request_sync();
-the broadcast is handled by dumpcap's separate mp_handle
-thread via pdump_handle_primary_request().
-
-Nothing forces mp_handle to run the broadcast before the blocked
-thread wakes and tears down. So on disable, dumpcap can free its
-ring / drop the mp_pdump action before it processes the forwarded
-request =E2=80=94 which is exactly the "Cannot find action: mp_pdump" /
-missing-response window 928f43e3f9c1 closed. The commit message's
-appeal to "AF_UNIX SOCK_DGRAM FIFO ordering" doesn't hold here:
-the reply and the forward travel on distinct sockets to distinct
-consumers, so there is no FIFO relationship between them.
-For enable this is harmless (callbacks are being added, ring
-already exists). It's disable where losing the barrier reopens
-the race.
-
-Info: the underlying problem is enable vs disable asymmetry.
-The timeout bug you're fixing bites hardest on disable (dumpcap
-^C), which is also the one path that still needs the barrier =E2=80=94 so
-"async for enable, keep sync for disable" doesn't fully solve it.
-Worth deciding whether the right fix is at the mp layer instead:
-the root cause per c3ceb8742295 is a secondary that attached but
-never called rte_pdump_init(), so the primary can't distinguish
-"didn't register" from "slow/dead." Broadcasting only to
-processes that registered the action, or a disable-side handshake
-that doesn't block on non-participants, would fix the timeout
-without weakening teardown safety.
-
-Info: the "reviewers should confirm they are comfortable with the
-weaker guarantee" paragraph reads like an RFC note; it shouldn't
-survive into the permanent commit log if this is applied as-is.
+Looks good, applied to net-next
