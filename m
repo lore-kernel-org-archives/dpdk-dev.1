@@ -2,40 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FCDC43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 13:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6063EC43458
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 14:12:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC363402D4;
-	Fri,  3 Jul 2026 15:53:05 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 432224026F
- for <dev@dpdk.org>; Fri,  3 Jul 2026 15:53:04 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C8852205F2;
- Fri,  3 Jul 2026 15:53:03 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Fri, 3 Jul 2026 15:53:03 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>,
- Saeed Bishara <saeed.bishara.os@gmail.com>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v7] graph: add optional profiling stats
-Date: Fri,  3 Jul 2026 13:53:01 +0000
-Message-ID: <20260703135301.3040663-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260619202047.2809165-1-mb@smartsharesystems.com>
-References: <20260619202047.2809165-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2CB86402C5;
+	Fri,  3 Jul 2026 16:12:50 +0200 (CEST)
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
+ [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id 811F84026F
+ for <dev@dpdk.org>; Fri,  3 Jul 2026 16:12:48 +0200 (CEST)
+Received: by mail-pj1-f50.google.com with SMTP id
+ 98e67ed59e1d1-38125cebfdaso672926a91.1
+ for <dev@dpdk.org>; Fri, 03 Jul 2026 07:12:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1783087967;
+ x=1783692767; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=rHHGsX+NvLBRPkAD5YWvToqk18b6NhrQnQQ21FWLzVI=;
+ b=u88PfYPR62XSe40QfHZMhFnpB1czE1u53kUay4mHsno2fDGDXfikjbl+np8kVbKjCN
+ DFITqTomkl7oqAaREMoj7Yj6DdS23kJHwt+HGZdunBkdP7R0b5htfAkKwbLfqvdgpJuO
+ X9vYyKsDP1/ZFp4WG+szrvfA5DiDqFrjbzzCk9oFFu9zhU8mRstjzcjFPAZVKPl9rqBD
+ vZBjC0wizrqx61424dowo+xKBE+XliLTbX9oIlkAPX1Hnmu3H8e56Klk5hbtgT5+be0X
+ hJEsz0hQRGIpnZfG0Yow/TVv8sAhwceJSDMQZE+/WQ5gxvgQShGOD9OxyfMoXinZ1Ij7
+ rcvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783087967; x=1783692767;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=rHHGsX+NvLBRPkAD5YWvToqk18b6NhrQnQQ21FWLzVI=;
+ b=NBW8RcSmNxhXvC+89tjrm1fhlUlVrtKo3miNtG39K5G+Vnpr+Jv3H7wBMGuum5Z72w
+ uh8a3v7WAKzr42qYmk2w4hDm/sY3MOMtTxYedzW7r1eUw5xJMbM0/EGJXaDPF9DctayI
+ EZ6iICiZz88vnLpO9UqqTNny+eftmVl7RdqTX1lVsN0ykz/VrMPDzUhhITX1jvRYe3KF
+ eirv54Z3fvCg0t0Wl0tyRYNgnrJspkOQmD0wxU2jSJWdD6NgcPw4d+VlGsYGZvhxHvFf
+ PK5T/RZutRQAEwpLE7tuAgDQerjGA7dOTPxMoHDACYFFp56fU0YyI1jdbzPGbV8zUUr7
+ YmQw==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RoQHRCVmekU61fwTiDP+v3OOLbokVW4pbO1S/m9+I3fU5m2gvbVCMfwvH6HYuso2HlBhzo=@dpdk.org
+X-Gm-Message-State: AOJu0Yz4z1q/aU2Yes5Rf85RcmFsIoTVAXhaqwl2c4tQYjr9Nu/z3WH0
+ 9uwh+rnFHTmGzPc/3VDp2qVkU13sYz33gxcDoCZAZv06s0MExPOe5NV4oASNiy0LwEI=
+X-Gm-Gg: AfdE7cl6Cy87cLO0MO7o5mYb07dDv/0xsE8L8MG/qYAC8blvYoVCGVkdLsxV49aVRwY
+ L1iTMb92rVpR2agvyUqy6nTbvgLqYLFt4UH8Gc3LG7TogSL6vvXJfaPIcOLyuEfLTGKFHJ2JY/Y
+ qCwp7eixNlIXHr5f5Lh+dSeCJf8cYopV4zl5RpnzZPqukLWucUruDS8YnD1927ex8mtAhogpPl1
+ SWpUiDurVd/qYH2o7eztpg38DuwWy34JptdFCNXwTndmFRkdpp1pOrEKdIpXcZ7WfkdTzxZ91pg
+ itAzxusz/vHOIGrs6HsI2nZ+VkUYqpUL/O97RdzBBp/iPRF50te3X35PMcFlpCLd7CoBCqYrj9Z
+ lGvk/shNdP9hMuVoQ3idOJddlBvsvfZfJ5YBE+GLYCvGBfKeX2IspXVA6IfWGgjjbf4YeHw7OiU
+ 6M8uzCUvdSsDXyOWsFFXazij20MCBNULz56fP+nfXvxe4zCQzv2LOXNw==
+X-Received: by 2002:a17:90b:3890:b0:36d:b424:4f17 with SMTP id
+ 98e67ed59e1d1-380ba84bdd8mr9906759a91.1.1783087967394; 
+ Fri, 03 Jul 2026 07:12:47 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-30f3c8b19c7sm289064eec.4.2026.07.03.07.12.46
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 03 Jul 2026 07:12:47 -0700 (PDT)
+Date: Fri, 3 Jul 2026 07:12:44 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: Thomas Monjalon <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: Re: [PATCH] test/bpf: remove validation tests from CI
+Message-ID: <20260703071244.4c6fd3c3@phoenix.local>
+In-Reply-To: <2751fd1fa6d648a9b7f95797f13ef28b@huawei.com>
+References: <20260703022738.2574548-1-thomas@monjalon.net>
+ <2751fd1fa6d648a9b7f95797f13ef28b@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 03 Jul 2026 13:53:03.0470 (UTC)
- FILETIME=[449180E0:01DD0AF3]
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,211 +84,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-graph: add optional profiling stats
+On Fri, 3 Jul 2026 08:48:33 +0000
+Marat Khalili <marat.khalili@huawei.com> wrote:
 
-Added graph node profiling stats, build time configurable by enabling
-RTE_GRAPH_PROFILE in rte_config.h.
+> > The new tests for BPF validation are triggering a strange issue
+> > in GitHub Action: the last tests are killed by signal 7 SIGBUS.
+> > 
+> > The series fixing a lot of BPF issues was merged
+> > but the related test has to be removed from the fast tests suite
+> > which runs in some CI jobs.
+> > 
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>  
+> 
+> I think I know the issue, it's tmpfs exhaustion. After some recent changes each
+> test consumes 25MB in the --file-prefix directory independently, easily driving
+> small VMs out of space. My ~30 new tests were the last drop for the CI.
+> 
+> I will try to prepare a fix today, of course please do everything that's
+> needed for the CI stability meanwhile.
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
-v7:
-* Use RTE_DIM() in histogram for loop.
-* Added static_assert for histogram index values.
-* Minor details to please checkpatch.
-  Although I disagree with requiring a space when indexing into
-  a constant array "(const type []){values} [idx];",
-  I have changed the code to comply.
-v6:
-* Consolidate the four histogram entries into one array. (Saeed Bishara)
-* Sample at 32 objs instead of a half burst. (Saeed Bishara)
-* Moved stats to different location in rte_node structure. (Jerin)
-* Minor details to please checkpatch.
-v5:
-* Added stats for a half burst and a full burst.
-v4:
-* Added documentation. (AI)
-* Added more comments. (AI)
-* Improved dump. (AI)
-* Debug shows both cycles/call and cycles/obj.
-v3:
-* Debug shows cycles/obj instead of cycles/call.
-* Fixed missing --in-reply-to.
-v2:
-* Fixed indentation.
----
- config/rte_config.h                 |  1 +
- doc/guides/prog_guide/graph_lib.rst |  1 +
- lib/graph/graph_debug.c             | 48 +++++++++++++++++++++++++++++
- lib/graph/node.c                    |  2 ++
- lib/graph/rte_graph_worker_common.h | 29 +++++++++++++++--
- 5 files changed, 78 insertions(+), 3 deletions(-)
-
-diff --git a/config/rte_config.h b/config/rte_config.h
-index 0447cdf2ad..1942c1b1ec 100644
---- a/config/rte_config.h
-+++ b/config/rte_config.h
-@@ -106,6 +106,7 @@
- /* rte_graph defines */
- #define RTE_GRAPH_BURST_SIZE 256
- #define RTE_LIBRTE_GRAPH_STATS 1
-+/* RTE_GRAPH_PROFILE is not set */
- 
- /****** driver defines ********/
- 
-diff --git a/doc/guides/prog_guide/graph_lib.rst b/doc/guides/prog_guide/graph_lib.rst
-index 8dd49c19d2..bc36042296 100644
---- a/doc/guides/prog_guide/graph_lib.rst
-+++ b/doc/guides/prog_guide/graph_lib.rst
-@@ -49,6 +49,7 @@ Performance tuning parameters
-   RTE_GRAPH_BURST_SIZE config option.
-   The testing shows, on x86 and arm64 servers, The sweet spot is 256 burst
-   size. While on arm64 embedded SoCs, it is either 64 or 128.
-+- Enable the ``RTE_GRAPH_PROFILE`` config option for more profiling details.
- - Disable node statistics (using ``RTE_LIBRTE_GRAPH_STATS`` config option)
-   if not needed.
- 
-diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
-index e3b8cccdc1..427c6a6e77 100644
---- a/lib/graph/graph_debug.c
-+++ b/lib/graph/graph_debug.c
-@@ -93,6 +93,54 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
- 				n->dispatch.total_sched_fail);
- 		}
- 		fprintf(f, "       total_calls=%" PRId64 "\n", n->total_calls);
-+		if (rte_graph_has_stats_feature())
-+			fprintf(f, "       total_cycles=%" PRIu64 ", avg cycles/call=%.1f\n",
-+					n->total_cycles,
-+					n->total_calls == 0 ? 0.0 :
-+					(double)n->total_cycles / (double)n->total_calls);
-+#ifdef RTE_GRAPH_PROFILE
-+		int64_t calls_other = n->total_calls;
-+		int64_t cycles_other = n->total_cycles;
-+		int64_t objs_other = n->total_objs;
-+		for (int idx = 0; idx < RTE_DIM(n->usage_stats) + 1; idx++) {
-+			uint64_t calls;
-+			uint64_t cycles;
-+			double objs_per_call;
-+			if (idx < RTE_DIM(n->usage_stats)) {
-+				static_assert(RTE_DIM(n->usage_stats) == 4);
-+				uint16_t idx_objs = (const uint16_t []){0, 1, 32,
-+						RTE_GRAPH_BURST_SIZE} [idx];
-+				fprintf(f, "       objs[%u]\n", idx_objs);
-+				calls = n->usage_stats[idx].calls;
-+				cycles = n->usage_stats[idx].cycles;
-+				objs_per_call = (double)idx_objs;
-+				calls_other -= calls;
-+				cycles_other -= cycles;
-+				objs_other -= idx_objs * calls;
-+			} else {
-+				fprintf(f, "       objs[other]\n");
-+				if (calls_other > 0 && cycles_other > 0 && objs_other > 0) {
-+					calls = calls_other;
-+					cycles = cycles_other;
-+					objs_per_call = (double)objs_other / (double)calls_other;
-+					fprintf(f, "         avg objs/call=%.1f\n", objs_per_call);
-+				} else {
-+					calls = 0;
-+					cycles = 0;
-+					objs_per_call = 0.0;
-+				}
-+			}
-+			fprintf(f, "         calls=%" PRIu64, calls);
-+			if (calls != 0)
-+				fprintf(f, ", cycles=%" PRIu64 ", avg cycles/call=%.1f",
-+						cycles,
-+						(double)cycles / (double)calls);
-+			if (calls != 0 && objs_per_call != 0.0)
-+				fprintf(f, ", avg cycles/obj=%.1f",
-+						(double)cycles / (double)calls / objs_per_call);
-+			fprintf(f, "\n");
-+		}
-+#endif
- 		for (i = 0; i < n->nb_edges; i++)
- 			fprintf(f, "          edge[%d] <%s>\n", i,
- 				n->nodes[i]->name);
-diff --git a/lib/graph/node.c b/lib/graph/node.c
-index 1fce3e6632..19b38881ae 100644
---- a/lib/graph/node.c
-+++ b/lib/graph/node.c
-@@ -110,10 +110,12 @@ __rte_node_register(const struct rte_node_register *reg)
- 	rte_edge_t i;
- 	size_t sz;
- 
-+#ifndef RTE_GRAPH_PROFILE
- 	/* Limit Node specific metadata to one cacheline on 64B CL machine */
- 	RTE_BUILD_BUG_ON((offsetof(struct rte_node, nodes) -
- 			  offsetof(struct rte_node, ctx)) !=
- 			 RTE_CACHE_LINE_MIN_SIZE);
-+#endif
- 
- 	graph_spinlock_lock();
- 
-diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
-index 4ab53a533e..bac0fc534e 100644
---- a/lib/graph/rte_graph_worker_common.h
-+++ b/lib/graph/rte_graph_worker_common.h
-@@ -121,6 +121,14 @@ struct __rte_cache_aligned rte_node {
- 	rte_graph_off_t xstat_off; /**< Offset to xstat counters. */
- 
- 	/** Fast path area cache line 2. */
-+#ifdef RTE_GRAPH_PROFILE
-+	/** Usage when this node processed 0, 1, 32 or a full burst of objects. */
-+	struct __rte_cache_aligned {
-+		uint64_t calls;     /**< Calls done. */
-+		uint64_t cycles;    /**< Cycles spent. */
-+	} usage_stats[4];
-+	/** Fast path area cache line 3. */
-+#endif
- 	__extension__ struct __rte_cache_aligned {
- #define RTE_NODE_CTX_SZ 16
- 		union {
-@@ -148,8 +156,10 @@ struct __rte_cache_aligned rte_node {
- 	};
- };
- 
-+#ifndef RTE_GRAPH_PROFILE
- static_assert(offsetof(struct rte_node, nodes) - offsetof(struct rte_node, ctx)
- 	== RTE_CACHE_LINE_MIN_SIZE, "rte_node fast path area must fit in 64 bytes");
-+#endif
- 
- /**
-  * @internal
-@@ -197,7 +207,7 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
- static __rte_always_inline void
- __rte_node_process(struct rte_graph *graph, struct rte_node *node)
- {
--	uint64_t start;
-+	uint64_t cycles;
- 	uint16_t rc;
- 	void **objs;
- 
-@@ -206,11 +216,24 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
- 	rte_prefetch0(objs);
- 
- 	if (rte_graph_has_stats_feature()) {
--		start = rte_rdtsc();
-+		cycles = -rte_rdtsc();
- 		rc = node->process(graph, node, objs, node->idx);
--		node->total_cycles += rte_rdtsc() - start;
-+		cycles += rte_rdtsc();
-+		node->total_cycles += cycles;
- 		node->total_calls++;
- 		node->total_objs += rc;
-+#ifdef RTE_GRAPH_PROFILE
-+		if (rc <= 1) {
-+			node->usage_stats[rc].calls++;
-+			node->usage_stats[rc].cycles += cycles;
-+		} else if (rc == 32) {
-+			node->usage_stats[2].calls++;
-+			node->usage_stats[2].cycles += cycles;
-+		} else if (rc == RTE_GRAPH_BURST_SIZE) {
-+			node->usage_stats[3].calls++;
-+			node->usage_stats[3].cycles += cycles;
-+		}
-+#endif
- 	} else {
- 		node->process(graph, node, objs, node->idx);
- 	}
--- 
-2.43.0
-
+The BPF tests should be using unit_test_suite_runner instead of separate tests.
+That would help.
