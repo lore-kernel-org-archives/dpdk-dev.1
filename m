@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64FAC43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 15:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F24C43458
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 15:52:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B5454026F;
-	Fri,  3 Jul 2026 17:49:44 +0200 (CEST)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 93F1A4003C
- for <dev@dpdk.org>; Fri,  3 Jul 2026 17:49:42 +0200 (CEST)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-380cda7f00cso633765a91.0
- for <dev@dpdk.org>; Fri, 03 Jul 2026 08:49:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 14A664026F;
+	Fri,  3 Jul 2026 17:52:36 +0200 (CEST)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
+ [209.85.210.181])
+ by mails.dpdk.org (Postfix) with ESMTP id AFBC84003C
+ for <dev@dpdk.org>; Fri,  3 Jul 2026 17:52:34 +0200 (CEST)
+Received: by mail-pf1-f181.google.com with SMTP id
+ d2e1a72fcca58-8478fe07f0fso694579b3a.0
+ for <dev@dpdk.org>; Fri, 03 Jul 2026 08:52:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1783093781;
- x=1783698581; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=QBej8OCJOwyuOebhssR6JlgOD193q8iu0yJLVVAbuAU=;
- b=l16hxQmz7Zzu9tEal1B7ecJKhCUQ5s4KdXXZBlc/UhRi1WbNQuQEfdZvaUhVmAqKZT
- I34N5xNlGPxfrVTJFiauGSyHmELJH3oKM9AapexfHFCVTkXxnbZ8vtEsMJb5vPQa/G3n
- botlnC8SiOx3wl/Jeq5MoRJ434IFxOwCYkLI9dbjYs1v/3nVkSPHhV2yLg5xFzOFoXJ6
- 9CFf6jF3K/7b0nU4bzP4qKupFqfkTbPF/5weyzNwHfoUQMCxSJqHQYjYKjJuFogSr4BL
- SUHnSPD6BVA7sU6z7ovk2WF9neWzXTbmr+2FrqEqxV12rCt0f7DCz9oC3JwpuZK3X4eK
- yvNQ==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1783093954;
+ x=1783698754; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=VcSla4EbviSS8Vc0jmoLxHAOt0wojeaquoB1oFFP8Qg=;
+ b=r+BaFM4NKS8SQ9PqjhIPk19L+w+TZN4r+uGYBh+9+8lp8UyoC+SUhIVuW7Vc67JUws
+ KRtYSR1orhbQVe8NQPpEW/IBhh1wpXGh1DvDRVjcztfWZxy5NyzQZpZJIUCxBHV/VFdS
+ zrzJUEo43qs7EK3TOol5Q2CB+Q9H1VBMiCe3lC4T1XMzAXG1L1KJPENO3Ok+J5DcvLMf
+ 7WscNMGyKJgIr7YbTpkFQdmjwqiM0V3k9y5+VdVljR4YYU5UNvObbPWcPoju9uAdNaEB
+ 43ltKMaS6K0xOlWky5jvcr87o4QkVOR4SWOuHRo7wiOF/5PVT72miDPPMjLaArCiSc4R
+ HMXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783093781; x=1783698581;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=QBej8OCJOwyuOebhssR6JlgOD193q8iu0yJLVVAbuAU=;
- b=HaLeQRZto06eADReiJ8jSxozZA4gFVQYuXUTTTCSHJcQ3vVG5s2CULJaZ8PYZrqQLN
- 3txODQs41RKnx7lLMrrUwz/03NdtkhqkSmI5uDL4Z5ozbo5xc0zPFUvrjHh6bVIoYq5x
- qJNV0himyghDjHk3vansXa97tUXa88r6yt/tUQbkqq2rxnP0aaBIn1A/qUZKRRZ/3eDI
- qa6YIHL3uVetvBBKi1uA2Jk3liySAVCLVHelIRVf2tV/gMB24K/KujvPAV0cbji6SPCe
- cNZL/g6pTh+OnDOSdWYaJGLKDpHwXpQDwc4oYmh2EluPH+Fy7oi7bqjRm4zodf/jJAUX
- 2gwQ==
-X-Gm-Message-State: AOJu0YwlgsgQmJjbfNkQSRPOnAkyeI57jAGJ6mPc9Hkc6P7GvOUyb7nQ
- j5jYJoH5qeQNJ+cmU+hR9iq4J/WQjkv1sNsrIFMARKZCrZbVsseaJxMj+j+t4sXi82qA+bYT4+Q
- IYpWd
-X-Gm-Gg: AfdE7ckH/kAoRqVHVmYbvsSSLokjak7Xs8WlhevMB+LCZ7uvKr+YkYThyz2BLwNHxK2
- 6xZLReykJZMIToO5Pk7n8i1eR63seXYKYF8vJG71g65GOY1a3elVsKKi2aXTA6l0ePOm/sE42jC
- jdP9D7cE4JlZO95itADdvB/D9Z0P73bYrd97/aMTZG0MOrvqRX26P5Ib86plrtqBdxxs7GUjGmP
- eZcfETnSn+0pjI3Cq8cVZL8lpKbhlt5o6Dg4qz0q3lCh7kJ4CDJuHOuVgOFLrrt6rwtTdnW+7gS
- MD4iYI57NfqJeqAypiFWdrx7K+fV8kQt4o4yE+sVcoEMNY/V5c/49O35+s7EX4Pe8CqnxcbqsaB
- c3gdWBGeQSBq6Umca++FeF6Nk+5ugfEpZlZdt64RgEOy+BV9hmrGjpk49uPn7bvczl2a6wdrd0C
- SEz+ug1KuwFqHBEZAX3tdfqemhAHFcEVLHewzrZdNkdCYhaOT4YeNIa3g4LEicBjBI
-X-Received: by 2002:a17:90a:d40b:b0:381:e93b:f740 with SMTP id
- 98e67ed59e1d1-38280d93ab1mr89235a91.15.1783093781510; 
- Fri, 03 Jul 2026 08:49:41 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1783093954; x=1783698754;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=VcSla4EbviSS8Vc0jmoLxHAOt0wojeaquoB1oFFP8Qg=;
+ b=ftV5K7bYucqclbhUnYvgjGjYeb05zID6ZjxPFof9Im7CuFzQI2pxWCyuYTjAhAO2GE
+ DHtn9LSAKpjGWfrfubkLDCaEo79LNtoifGNpBk7PG2Y7oR/vkroNBXa0Z7KKV9INvqnp
+ E4e6NgoXzCuUqGrMUwT3SrC+rQ6JdDBJvqhPOPxD0Dy5ekspgA0CMxMv436xmyc2BKd1
+ S77QW/fVc5BYZZ3mkFXESU6eFnp755SsadHHQZ9vKh+AdRwJaNR0tsej0R9slW0kMWku
+ 1Xh4qW15FKSWKo0nzhL1Sitqse0zIms79GSSMLMOn/4a5kQ7gnc5qgVWs7MPccPTENmQ
+ lh7Q==
+X-Gm-Message-State: AOJu0YxmQ2hSIIxTXErM86iBfjKDwsqpK5H7DG2NKvWXd1w6Vd5cYsY4
+ XDghzfEOqX+JGRcJ/tFdxQNkQSYSjp89rgJJlvlyTEf2PqpcVLDQqL2e4jHeQxXq0MQ=
+X-Gm-Gg: AfdE7ckNJwUZzYbCqSqA9LgDI/Nm+FM9zjmXmHiWsKQptqO/VuNeLpf56QVfnKD+c2v
+ 0OdsoqnupbyrStmqJEp/EVuDWnnYDBFiFow7/oeqQ8fJ5z/9y+hkI4+UpZelSpMSWy9Ubk34re9
+ Kq1Lb1shY8CiqjY8GT6UJpzUodVG2zxOSL9BJHLpDjBpqAHYY/EA4xif/NEh5ffL5jY9MqPrXlz
+ wVrKhWXxCwAl9JqFeVH8yNDGDxhZ3K3kYZ4pNrUsblOtTNMVbOSb8qEh4D+qEXenqCOnqmY7D+B
+ 7NOQ+WfzmBtOqWLBIFmx6N7Pe7zA/jw0cuCEZsZ7/EzV3Wxtyh8etW3AhdPUN/rYrK2j8p9WRNR
+ GGIF55FRUWNUv34RBRqbIDngX2ikUDOgg2fLsOdKBD+aDKkl4F9bw1E9AzuyfBv0rMC5xfj6yd1
+ Yxc7XSOeRpmShX48bZydEq9KMWmgEHHPu7f4QAHraLKaj5J9kdYDQeoA==
+X-Received: by 2002:a05:6a21:a393:b0:3b7:99af:2d22 with SMTP id
+ adf61e73a8af0-3c03e2933edmr3509637.19.1783093953816; 
+ Fri, 03 Jul 2026 08:52:33 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-30f1cbfc285sm12849422eec.5.2026.07.03.08.49.40
+ 5a478bee46e88-30f31e7a2a8sm6199973eec.25.2026.07.03.08.52.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 03 Jul 2026 08:49:41 -0700 (PDT)
-Date: Fri, 3 Jul 2026 08:49:39 -0700
+ Fri, 03 Jul 2026 08:52:33 -0700 (PDT)
+Date: Fri, 3 Jul 2026 08:52:31 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: <dev@dpdk.org>, <thomas@monjalon.net>
-Subject: Re: [PATCH] test/suites: clean up per-test directories
-Message-ID: <20260703084939.0a1d0591@phoenix.local>
-In-Reply-To: <20260703144216.43804-1-marat.khalili@huawei.com>
-References: <20260703144216.43804-1-marat.khalili@huawei.com>
+To: Pushpendra Kumar <pushpendra1x.kumar@intel.com>
+Cc: dev@dpdk.org, pushpendra.kumar@tieto.com, reshma.pattan@intel.com,
+ stable@dpdk.org
+Subject: Re: [PATCH] pdump: fix request timeout on unresponsive secondary
+Message-ID: <20260703085231.67faa7ea@phoenix.local>
+In-Reply-To: <20260701060257.562895-1-pushpendra1x.kumar@intel.com>
+References: <20260701060257.562895-1-pushpendra1x.kumar@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,67 +81,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 3 Jul 2026 15:42:16 +0100
-Marat Khalili <marat.khalili@huawei.com> wrote:
+On Wed,  1 Jul 2026 11:32:57 +0530
+Pushpendra Kumar <pushpendra1x.kumar@intel.com> wrote:
 
-> After commit 5ef166838394 ("test: add file-prefix for all fast-tests on
-> Linux") each test within a suite has its own --file-prefix filled with
-> the test name to enable parallel execution. It brought a couple of
-> drawbacks though:
-> * Solution only applied to one test suite.
-> * Each working directory occupied ~25MB, with hundreds of tests this
->   easily overfilled /run filesystems of small VMs. Currently executing
->   fast-tests suite consumes 2.8GB of RAM, and adding more tests created
->   problems for github CI.
-> * While it enabled parallel execution of tests within a single build
->   directory, --file-prefix argument could no longer be specified
->   externally (caused duplicate argument error). Specifying custom
->   --file-prefix was necessary when multiple builds ran in the same
->   environment, so the corresponding workflow became broken.
+> When a primary handles a pdump enable/disable request from a secondary
+> (e.g. dpdk-dumpcap), it applies the callbacks locally and forwards the
+> request to the other secondaries before replying. The forward used
+> rte_mp_request_sync(), blocking up to MP_TIMEOUT_S for every secondary
+> to acknowledge.
 >=20
-> Move --file-prefix logic into a separate shell script, preserving
-> existing argument and cleaning the work directory after the test.
-> Apply it uniformly to all tests.
+> A secondary that is attached but has not called rte_pdump_init() never
+> registers the mp_pdump action and silently drops the message (logging
+> only "Cannot find action: mp_pdump"). Commit c3ceb8742295 ("pdump:
+> forward callback enable to secondary process"), which added this
+> broadcast, appears to assume every secondary calls rte_pdump_init();
+> when one does not, the primary cannot tell it from a slow or dead peer
+> and blocks for the full timeout. That delay pushes the reply past the
+> requester's own timeout, so dpdk-dumpcap reports "Packet dump enable
+> ... failed Connection timed out".
 >=20
-> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> Forward the request asynchronously with rte_mp_request_async() so an
+> unresponsive secondary can no longer block the reply; a callback logs a
+> warning if not all secondaries acknowledge. The forward is still issued
+> before the requester reply, preserving the ordering from commit
+> 928f43e3f9c1 ("pdump: fix race in disabling").
+>=20
+> This slightly weakens the happens-before guarantee: the sync call was a
+> full-acknowledgement barrier, whereas the async path relies on AF_UNIX
+> SOCK_DGRAM FIFO ordering and the single mp_handle thread processing the
+> forward before the reply that triggers teardown. This suffices for the
+> disable race fixed by 928f43e3f9c1, but reviewers should confirm they
+> are comfortable with the weaker guarantee.
+>=20
+> Fixes: c3ceb8742295 ("pdump: forward callback enable to secondary process=
+")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Pushpendra Kumar <pushpendra1x.kumar@intel.com>
 > ---
 
-AI review run manually shows:
+Yes this looks like a real problem but not sure if this the right fix.
 
+More detailed AI review says:
 
+Review =E2=80=94 pdump: fix request timeout on unresponsive secondary
 
-Error =E2=80=94 app/test/suites/meson.build, dump/debug-tests loop
+Warning: async forward drops the acknowledgement barrier that
+928f43e3f9c1 depends on.
+The fix in 928f43e3f9c1 was ordering: forward to secondaries
+before replying to the requester. But the safety came from
+rte_mp_request_sync() being a full-acknowledgement barrier, not
+from send order alone. The primary blocked until every secondary
+(dumpcap included, since the broadcast walks the whole mp socket
+dir) had actually processed the forward and replied =E2=80=94 only then
+was the disable response sent back to dumpcap.
+rte_mp_request_async() only guarantees the forward is sent
+before the reply, not processed. And the two messages reach
+dumpcap on different paths handled by different threads:
 
-The loop was changed to pass args : test_args, but test_args at that point =
-is leftover state from the telemetry block above ([dpdk_test_as_arg] + test=
-_no_huge_args + --vdev=3D... + '-a 0000:00:00.0') =E2=80=94 or, if RTE_LIB_=
-TELEMETRY is disabled, whatever the last fast-test iteration happened to le=
-ave in it. The debug tests previously ran with no extra args. Every other s=
-imple loop correctly uses test_args_prefix; this one should as well.
+the disable response wakes the thread blocked in
+pdump_prepare_client_request()'s rte_mp_request_sync();
+the broadcast is handled by dumpcap's separate mp_handle
+thread via pdump_handle_primary_request().
 
-On Linux the effect is worse than just wrong EAL args: test_args begins wit=
-h dpdk_test_as_arg (the wrapper's own path), so meson invokes the wrapper w=
-ith the wrapper path as its first argument. The wrapper then re-execs itsel=
-f before finally running the real binary =E2=80=94 with --no-huge, the skel=
-eton --vdev set, and -a 0000:00:00.0 that were only meant for telemetry_all.
+Nothing forces mp_handle to run the broadcast before the blocked
+thread wakes and tears down. So on disable, dumpcap can free its
+ring / drop the mp_pdump action before it processes the forwarded
+request =E2=80=94 which is exactly the "Cannot find action: mp_pdump" /
+missing-response window 928f43e3f9c1 closed. The commit message's
+appeal to "AF_UNIX SOCK_DGRAM FIFO ordering" doesn't hold here:
+the reply and the forward travel on distinct sockets to distinct
+consumers, so there is no FIFO relationship between them.
+For enable this is harmless (callbacks are being added, ring
+already exists). It's disable where losing the barrier reopens
+the race.
 
-Fix:
+Info: the underlying problem is enable vs disable asymmetry.
+The timeout bug you're fixing bites hardest on disable (dumpcap
+^C), which is also the one path that still needs the barrier =E2=80=94 so
+"async for enable, keep sync for disable" doesn't fully solve it.
+Worth deciding whether the right fix is at the mp layer instead:
+the root cause per c3ceb8742295 is a secondary that attached but
+never called rte_pdump_init(), so the primary can't distinguish
+"didn't register" from "slow/dead." Broadcasting only to
+processes that registered the action, or a disable-side handshake
+that doesn't block on non-participants, would fix the timeout
+without weakening teardown safety.
 
-foreach arg : dump_test_names
-    test(arg, dpdk_test,
-                args : test_args_prefix,
-                env : ['DPDK_TEST=3D' + arg],
-                ...
-
-On Windows test_args_prefix is [], which also restores the original no-args=
- behavior there.
-
-Info =E2=80=94 uid check diverges from the algorithm it cites. eal_filesyst=
-em.c keys the /var/run vs XDG_RUNTIME_DIR choice on getuid() (real uid); th=
-e script tests $EUID (effective). These only differ under setuid / sudo-wit=
-h-preserved-ruid, which won't happen in normal CI, but if the goal is to ma=
-tch EAL exactly, use $UID (or id -ru).
-
-Info =E2=80=94 mixed indentation in the wrapper: the two runtime_directory=
-=3D... assignments inside the root check use tab-plus-spaces, while the res=
-t of the script uses hard tabs.
+Info: the "reviewers should confirm they are comfortable with the
+weaker guarantee" paragraph reads like an RFC note; it shouldn't
+survive into the permanent commit log if this is applied as-is.
