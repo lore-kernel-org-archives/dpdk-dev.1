@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8484DC43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 12:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144DFC43458
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 12:51:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D3C240B91;
+	by mails.dpdk.org (Postfix) with ESMTP id EA1C140BA3;
 	Fri,  3 Jul 2026 14:50:14 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 840FF40B9F
- for <dev@dpdk.org>; Fri,  3 Jul 2026 14:50:11 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AF18740DC9
+ for <dev@dpdk.org>; Fri,  3 Jul 2026 14:50:12 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 69BE5200017;
- Fri,  3 Jul 2026 14:50:11 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8FF53200011;
+ Fri,  3 Jul 2026 14:50:12 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 33F58200006;
- Fri,  3 Jul 2026 14:50:11 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 642BB200035;
+ Fri,  3 Jul 2026 14:50:12 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id AE63D180007B;
- Fri,  3 Jul 2026 20:50:09 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DF3BD1800071;
+ Fri,  3 Jul 2026 20:50:10 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v7 13/16] net/dpaa: optimize FMC MAC type parsing
-Date: Fri,  3 Jul 2026 18:19:47 +0530
-Message-Id: <20260703124950.1895871-14-hemant.agrawal@nxp.com>
+Subject: [PATCH v7 14/16] drivers: optimize DPAA multi-entry buffer pool
+ operations
+Date: Fri,  3 Jul 2026 18:19:48 +0530
+Message-Id: <20260703124950.1895871-15-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260703124950.1895871-1-hemant.agrawal@nxp.com>
 References: <20260702053359.3243907-1-hemant.agrawal@nxp.com>
@@ -51,125 +52,250 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-For ls104xa, MAC9 and MAC10's type could be either of 10G/2.5G/1G
-up to serdes configuration, MAC index should be identified by
-port name instead of parsing MAC type and port number.
+Replace the hardcoded buffer acquire count of 8 with the FSL_BM_BURST_MAX
+constant when acquiring buffers from the buffer pool. Use a single
+bm_hw_buf_desc structure for HW initialization of the first entry and copy
+it to remaining entries, ensuring consistent HW descriptor state across
+all entries in the pool.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/net/dpaa/dpaa_fmc.c | 73 ++++++++++++++++++++++---------------
- 1 file changed, 44 insertions(+), 29 deletions(-)
+ drivers/bus/dpaa/base/qbman/bman.c  | 51 +++++++----------------------
+ drivers/bus/dpaa/include/fsl_bman.h | 46 +++++++++++++++++++++-----
+ drivers/mempool/dpaa/dpaa_mempool.c |  8 ++---
+ 3 files changed, 54 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/net/dpaa/dpaa_fmc.c b/drivers/net/dpaa/dpaa_fmc.c
-index 7dc42f6e23..3034f534a5 100644
---- a/drivers/net/dpaa/dpaa_fmc.c
-+++ b/drivers/net/dpaa/dpaa_fmc.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017-2023 NXP
-+ * Copyright 2017-2026 NXP
+diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
+index ee4232d0a0..225a8a9fd7 100644
+--- a/drivers/bus/dpaa/base/qbman/bman.c
++++ b/drivers/bus/dpaa/base/qbman/bman.c
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+  *
+  * Copyright 2008-2016 Freescale Semiconductor Inc.
+- * Copyright 2017, 2024 NXP
++ * Copyright 2017, 2024-2026 NXP
+  *
   */
+ #include <rte_memcpy.h>
+@@ -17,20 +17,6 @@
+ #define IRQNAME		"BMan portal %d"
+ #define MAX_IRQNAME	16	/* big enough for "BMan portal %d" */
  
- /* System headers */
-@@ -204,6 +204,36 @@ struct fmc_model_t {
- 
- struct fmc_model_t *g_fmc_model;
- 
-+static int
-+dpaa_port_fmc_get_idx_from_name(const char *name)
-+{
-+	const char *found;
-+	int idx_str_start = -1, idx;
-+
-+#define FMC_PORT_NAME_MAC "MAC/"
-+#define FMC_PORT_NAME_OFFLINE "OFFLINE/"
-+
-+	found = strstr(name, FMC_PORT_NAME_MAC);
-+	if (!found) {
-+		found = strstr(name, FMC_PORT_NAME_OFFLINE);
-+		if (found)
-+			idx_str_start = strlen(FMC_PORT_NAME_OFFLINE);
-+	} else {
-+		idx_str_start = strlen(FMC_PORT_NAME_MAC);
-+	}
-+
-+	if (!found) {
-+		DPAA_PMD_ERR("Invalid fmc port name: %s", name);
-+		return -EINVAL;
-+	}
-+
-+	idx = atoi(&found[idx_str_start]);
-+
-+	DPAA_PMD_INFO("MAC index of %s is %d", name, idx);
-+
-+	return idx;
-+}
-+
- static int
- dpaa_port_fmc_port_parse(struct fman_if *fif,
- 	const struct fmc_model_t *fmc_model,
-@@ -211,7 +241,10 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
- {
- 	int current_port = fmc_model->apply_order[apply_idx].index;
- 	const fmc_port *pport = &fmc_model->port[current_port];
--	uint32_t num;
-+	int num = dpaa_port_fmc_get_idx_from_name(pport->name);
-+
-+	if (num < 0)
-+		return num;
- 
- 	if (pport->type == e_FM_PORT_TYPE_OH_OFFLINE_PARSING &&
- 	    pport->number == fif->mac_idx &&
-@@ -219,40 +252,22 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
- 	     fif->mac_type == fman_onic))
- 		return current_port;
- 
--	if (fif->mac_type == fman_mac_1g) {
--		if (pport->type != e_FM_PORT_TYPE_RX)
--			return -ENODEV;
--		num = pport->number + DPAA_1G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
 -
-+	if (fif->mac_type == fman_mac_1g &&
-+		pport->type != e_FM_PORT_TYPE_RX)
- 		return -ENODEV;
+-#define MAX_U16 UINT16_MAX
+-#define MAX_U32 UINT32_MAX
+-#ifndef BIT_SIZE
+-#define BIT_SIZE(t) (sizeof(t) * 8)
+-#endif
+-#define MAX_U48 \
+-	((((uint64_t)MAX_U16) << BIT_SIZE(uint32_t)) | MAX_U32)
+-#define HI16_OF_U48(x) \
+-	(((x) >> BIT_SIZE(rte_be32_t)) & MAX_U16)
+-#define LO32_OF_U48(x) ((x) & MAX_U32)
+-#define U48_BY_HI16_LO32(hi, lo) \
+-	(((hi) << BIT_SIZE(uint32_t)) | (lo))
+-
+ struct bman_portal {
+ 	struct bm_portal p;
+ 	/* 2-element array. pools[0] is mask, pools[1] is snapshot. */
+@@ -273,7 +259,7 @@ bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
+ 	struct bm_rcr_entry *r;
+ 	uint8_t i, avail;
+ 	uint64_t bpid = pool->params.bpid;
+-	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
++	struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
+ 
+ #ifdef RTE_LIBRTE_DPAA_HWDEBUG
+ 	if (!num || (num > FSL_BM_BURST_MAX))
+@@ -290,19 +276,17 @@ bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
+ 	if (unlikely(!r))
+ 		return -EBUSY;
+ 
++	bm_bufs[0].be_desc.bpid = bpid;
++	for (i = 0; i < num; i++)
++		bm_buffer_set64_to_be(&bm_bufs[i], bufs[i]);
+ 	/*
+ 	 * we can copy all but the first entry, as this can trigger badness
+ 	 * with the valid-bit
+ 	 */
+-	bm_bufs[0].bpid = bpid;
+-	bm_bufs[0].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[0]));
+-	bm_bufs[0].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[0]));
+-	for (i = 1; i < num; i++) {
+-		bm_bufs[i].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[i]));
+-		bm_bufs[i].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[i]));
 -	}
 -
--	if (fif->mac_type == fman_mac_2_5g) {
--		if (pport->type != e_FM_PORT_TYPE_RX_2_5G)
--			return -ENODEV;
--		num = pport->number + DPAA_2_5G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
+-	memcpy(r->bufs, bm_bufs, sizeof(struct bm_buffer) * num);
++	r->bufs[0].opaque = bm_bufs[0].opaque;
++	if (num > 1)
++		memcpy(&r->bufs[1], &bm_bufs[1],
++			sizeof(struct bm_buffer) * (num - 1));
  
-+	if (fif->mac_type == fman_mac_2_5g &&
-+		pport->type != e_FM_PORT_TYPE_RX_2_5G)
- 		return -ENODEV;
--	}
--
--	if (fif->mac_type == fman_mac_10g) {
--		if (pport->type != e_FM_PORT_TYPE_RX_10G)
--			return -ENODEV;
--		num = pport->number + DPAA_10G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
- 
-+	if (fif->mac_type == fman_mac_10g &&
-+		pport->type != e_FM_PORT_TYPE_RX_10G)
- 		return -ENODEV;
--	}
- 
--	DPAA_PMD_ERR("Invalid MAC(mac_idx=%d) type(%d)",
--		fif->mac_idx, fif->mac_type);
-+	if (fif->mac_idx == num)
-+		return current_port;
- 
--	return -EINVAL;
-+	return -ENODEV;
+ 	bm_rcr_pvb_commit(&p->p, BM_RCR_VERB_CMD_BPID_SINGLE |
+ 		(num & BM_RCR_VERB_BUFCOUNT_MASK));
+@@ -360,16 +344,6 @@ __rte_unused bman_extract_addr(struct bm_buffer *buf)
+ 	return buf->addr;
  }
  
- static int
+-static inline uint64_t
+-bman_hw_extract_addr(struct bm_hw_buf_desc *buf)
+-{
+-	uint64_t hi, lo;
+-
+-	hi = be16_to_cpu(buf->hi_addr);
+-	lo = be32_to_cpu(buf->lo_addr);
+-	return U48_BY_HI16_LO32(hi, lo);
+-}
+-
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_acquire_fast)
+ int
+ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
+@@ -378,7 +352,7 @@ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
+ 	struct bm_mc_command *mcc;
+ 	struct bm_mc_result *mcr;
+ 	uint8_t i, rst;
+-	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
++	struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
+ 
+ #ifdef RTE_LIBRTE_DPAA_HWDEBUG
+ 	if (!num || (num > FSL_BM_BURST_MAX))
+@@ -397,11 +371,10 @@ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
+ 	if (unlikely(rst < 1 || rst > FSL_BM_BURST_MAX))
+ 		return -EINVAL;
+ 
+-	rte_memcpy(bm_bufs, mcr->acquire.bufs,
+-		sizeof(struct bm_buffer) * rst);
++	rte_memcpy(bm_bufs, mcr->acquire.bufs, sizeof(struct bm_buffer) * rst);
+ 
+ 	for (i = 0; i < rst; i++)
+-		bufs[i] = bman_hw_extract_addr(&bm_bufs[i]);
++		bufs[i] = bm_buffer_get64_from_be(&bm_bufs[i]);
+ 
+ 	return rst;
+ }
+diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
+index 2d24b89889..67a7a09618 100644
+--- a/drivers/bus/dpaa/include/fsl_bman.h
++++ b/drivers/bus/dpaa/include/fsl_bman.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+  *
+  * Copyright 2008-2012 Freescale Semiconductor, Inc.
+- * Copyright 2024 NXP
++ * Copyright 2024-2026 NXP
+  *
+  */
+ 
+@@ -42,6 +42,13 @@ struct bm_mc_result;	/* MC result */
+  * pool id specific to this buffer is needed (BM_RCR_VERB_CMD_BPID_MULTI,
+  * BM_MCC_VERB_ACQUIRE), the 'bpid' field is used.
+  */
++struct __rte_packed_begin bm_hw_buf_desc {
++	uint8_t rsv;
++	uint8_t bpid;
++	rte_be16_t hi; /* High 16-bits of 48-bit address */
++	rte_be32_t lo; /* Low 32-bits of 48-bit address */
++} __rte_packed_end;
++
+ struct __rte_aligned(8) bm_buffer {
+ 	union {
+ 		struct {
+@@ -66,17 +73,11 @@ struct __rte_aligned(8) bm_buffer {
+ 			u64 __notaddress:16;
+ #endif
+ 		};
++		struct bm_hw_buf_desc be_desc;
+ 		u64 opaque;
+ 	};
+ };
+ 
+-struct __rte_packed_begin bm_hw_buf_desc {
+-	uint8_t rsv;
+-	uint8_t bpid;
+-	rte_be16_t hi_addr; /* High 16-bits of 48-bit address */
+-	rte_be32_t lo_addr; /* Low 32-bits of 48-bit address */
+-} __rte_packed_end;
+-
+ static inline u64 bm_buffer_get64(const struct bm_buffer *buf)
+ {
+ 	return buf->addr;
+@@ -87,6 +88,17 @@ static inline dma_addr_t bm_buf_addr(const struct bm_buffer *buf)
+ 	return (dma_addr_t)buf->addr;
+ }
+ 
++#ifndef BIT_SIZE
++#define BIT_SIZE(t) (sizeof(t) * 8)
++#endif
++#define MAX_U48 \
++	((((uint64_t)UINT16_MAX) << BIT_SIZE(uint32_t)) | UINT32_MAX)
++#define HI16_OF_U48(x) \
++	(((x) >> BIT_SIZE(uint32_t)) & UINT16_MAX)
++#define LO32_OF_U48(x) ((x) & UINT32_MAX)
++#define U48_BY_HI16_LO32(hi, lo) \
++	(((hi) << BIT_SIZE(uint32_t)) | (lo))
++
+ #define bm_buffer_set64(buf, v) \
+ 	do { \
+ 		struct bm_buffer *__buf931 = (buf); \
+@@ -94,6 +106,24 @@ static inline dma_addr_t bm_buf_addr(const struct bm_buffer *buf)
+ 		__buf931->lo = lower_32_bits(v); \
+ 	} while (0)
+ 
++#define bm_buffer_set64_to_be(buf, v) \
++	do { \
++		struct bm_buffer *__buf931 = (buf); \
++		\
++		__buf931->be_desc.hi = cpu_to_be16(HI16_OF_U48(v)); \
++		__buf931->be_desc.lo = cpu_to_be32(LO32_OF_U48(v)); \
++	} while (0)
++
++#define bm_buffer_get64_from_be(buf) \
++	({ \
++		uint64_t hi, lo; \
++		struct bm_buffer *__buf931 = (buf); \
++		\
++		hi = be16_to_cpu(__buf931->be_desc.hi); \
++		lo = be32_to_cpu(__buf931->be_desc.lo); \
++		U48_BY_HI16_LO32(hi, lo); \
++	})
++
+ #define FSL_BM_BURST_MAX 8
+ 
+ /* See 1.5.3.5.4: "Release Command" */
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
+index 2f8555a026..3fdbcba646 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.c
++++ b/drivers/mempool/dpaa/dpaa_mempool.c
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+- *   Copyright 2017,2019,2023-2025 NXP
++ *   Copyright 2017,2019,2023-2026 NXP
+  *
+  */
+ 
+@@ -50,7 +50,7 @@ static int
+ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ {
+ 	struct bman_pool *bp;
+-	struct bm_buffer bufs[8];
++	struct bm_buffer bufs[FSL_BM_BURST_MAX];
+ 	struct dpaa_bp_info *bp_info;
+ 	uint8_t bpid;
+ 	int num_bufs = 0, ret = 0;
+@@ -83,8 +83,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 		 * then in 1s for the remainder.
+ 		 */
+ 		if (ret != 1)
+-			ret = bman_acquire(bp, bufs, 8, 0);
+-		if (ret < 8)
++			ret = bman_acquire(bp, bufs, FSL_BM_BURST_MAX, 0);
++		if (ret < FSL_BM_BURST_MAX)
+ 			ret = bman_acquire(bp, bufs, 1, 0);
+ 		if (ret > 0)
+ 			num_bufs += ret;
 -- 
 2.25.1
 
