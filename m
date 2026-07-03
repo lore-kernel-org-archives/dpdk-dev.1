@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3E0C43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 12:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D5EC43458
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 12:50:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D4F5406B8;
-	Fri,  3 Jul 2026 14:50:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 578C840647;
+	Fri,  3 Jul 2026 14:50:02 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 6021A4069F
+ by mails.dpdk.org (Postfix) with ESMTP id AF93E406B6
  for <dev@dpdk.org>; Fri,  3 Jul 2026 14:50:00 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 44455200046;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 93A0E200019;
  Fri,  3 Jul 2026 14:50:00 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0812A200017;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6985320006D;
  Fri,  3 Jul 2026 14:50:00 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id AF93F180007B;
- Fri,  3 Jul 2026 20:49:57 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E06131800087;
+ Fri,  3 Jul 2026 20:49:58 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Cc: Prashant Gupta <prashant.gupta_3@nxp.com>
-Subject: [PATCH v7 03/16] drivers: add process-type guards for secondary
- process
-Date: Fri,  3 Jul 2026 18:19:37 +0530
-Message-Id: <20260703124950.1895871-4-hemant.agrawal@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v7 04/16] bus/dpaa: define helpers for qman channel and wq
+Date: Fri,  3 Jul 2026 18:19:38 +0530
+Message-Id: <20260703124950.1895871-5-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260703124950.1895871-1-hemant.agrawal@nxp.com>
 References: <20260702053359.3243907-1-hemant.agrawal@nxp.com>
@@ -50,89 +49,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
+From: Jun Yang <jun.yang@nxp.com>
 
-Add RTE_PROC_PRIMARY checks in device initialization paths for
-net/dpaa, crypto/dpaa_sec and dma/dpaa drivers. Secondary
-processes should skip hardware initialization to prevent
-segfaults when accessing hardware registers that are only
-mapped in the primary process.
+Add inline helper functions to extract channel and work queue
+from a frame queue descriptor, replacing open-coded bit
+manipulation throughout the driver.
 
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/crypto/dpaa_sec/dpaa_sec.c |  3 ---
- drivers/dma/dpaa/dpaa_qdma.c       | 31 +++++++++++++++++++++++++++++-
- 2 files changed, 30 insertions(+), 4 deletions(-)
+ drivers/bus/dpaa/base/qbman/qman.c | 14 ++------------
+ drivers/bus/dpaa/base/qbman/qman.h | 23 ++++++++++++++++++++++-
+ 2 files changed, 24 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/crypto/dpaa_sec/dpaa_sec.c b/drivers/crypto/dpaa_sec/dpaa_sec.c
-index c53ee70853..5caf6b18dc 100644
---- a/drivers/crypto/dpaa_sec/dpaa_sec.c
-+++ b/drivers/crypto/dpaa_sec/dpaa_sec.c
-@@ -3782,9 +3782,6 @@ cryptodev_dpaa_sec_probe(struct rte_dpaa_driver *dpaa_drv __rte_unused,
- 			RTE_DPAA_MAX_NB_SEC_QPS,
- 	};
+diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
+index 5534e1846c..c9a8ec34a5 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.c
++++ b/drivers/bus/dpaa/base/qbman/qman.c
+@@ -2704,14 +2704,6 @@ int qman_delete_cgr(struct qman_cgr *cgr)
+ 	return ret;
+ }
  
--	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
--		return 0;
+-#define GENMASK(h, l) \
+-	(((~0U) >> (sizeof(unsigned int) * 8 - ((h) - (l) + 1))) << (l))
 -
- 	cryptodev = rte_cryptodev_pmd_create(dpaa_dev->name, &dpaa_dev->device, &init_params);
- 	if (cryptodev == NULL) {
- 		DPAA_SEC_ERR("failed to create cryptodev vdev");
-diff --git a/drivers/dma/dpaa/dpaa_qdma.c b/drivers/dma/dpaa/dpaa_qdma.c
-index a695f58bc5..6a4022c652 100644
---- a/drivers/dma/dpaa/dpaa_qdma.c
-+++ b/drivers/dma/dpaa/dpaa_qdma.c
-@@ -9,8 +9,14 @@
- #include "dpaa_qdma.h"
- #include "dpaa_qdma_logs.h"
+-/* 'fqid' is a 24-bit field in every h/w descriptor */
+-#define QM_FQID_MASK    GENMASK(23, 0)
+-#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
+-#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
+-
+ static int
+ _qm_mr_consume_and_match_verb(struct qm_portal *p, int v)
+ {
+@@ -2798,7 +2790,6 @@ qman_shutdown_fq(u32 fqid)
+ 	u32 res;
+ 	u8 state;
+ 	u32 channel, wq;
+-	u16 dest_wq;
  
--static uint32_t s_sg_max_entry_sz = 2000;
-+static int s_data_validation;
- static bool s_hw_err_check;
-+static int s_sg_enable = 1;
-+static uint32_t s_sg_max_entry_sz = 2000;
-+
-+#ifdef RTE_DMA_DPAA_ERRATA_ERR050757
-+static int s_pci_read = 1;
-+#endif
- 
- #define DPAA_DMA_ERROR_CHECK "dpaa_dma_err_check"
- 
-@@ -1346,11 +1352,34 @@ dpaa_qdma_init(struct rte_dma_dev *dmadev)
- 	int ret;
- 	uint32_t i, j, k;
- 
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return -ENOTSUP;
-+
- 	if (dpaa_get_devargs(dmadev->device->devargs, DPAA_DMA_ERROR_CHECK)) {
- 		s_hw_err_check = true;
- 		DPAA_QDMA_INFO("Enable DMA error checks");
+ 	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
+ 	p = get_affine_portal();
+@@ -2828,9 +2819,8 @@ qman_shutdown_fq(u32 fqid)
  	}
  
-+	if (getenv("DPAA_QDMA_DATA_VALIDATION"))
-+		s_data_validation = 1;
+ 	/* Need to store these since the MCR gets reused */
+-	dest_wq = be16_to_cpu(mcr->queryfq.fqd.dest_wq);
+-	channel = dest_wq & 0x7;
+-	wq = dest_wq >> 3;
++	channel = qm_fqd_get_chan(&mcr->queryfq.fqd);
++	wq = qm_fqd_get_wq(&mcr->queryfq.fqd);
+ 
+ 	switch (state) {
+ 	case QM_MCR_NP_STATE_TEN_SCHED:
+diff --git a/drivers/bus/dpaa/base/qbman/qman.h b/drivers/bus/dpaa/base/qbman/qman.h
+index 43a16d1e3b..bd97689a91 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.h
++++ b/drivers/bus/dpaa/base/qbman/qman.h
+@@ -1,12 +1,15 @@
+ /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+  *
+  * Copyright 2008-2016 Freescale Semiconductor Inc.
+- * Copyright 2017 NXP
++ * Copyright 2017,2026 NXP
+  *
+  */
+ 
+ #include "qman_priv.h"
+ 
++#define GENMASK(h, l) \
++	(((~0U) >> (sizeof(u32) * 8 - ((h) - (l) + 1))) << (l))
 +
-+	if (getenv("DPAA_QDMA_HW_ERR_CHECK"))
-+		s_hw_err_check = 1;
+ /***************************/
+ /* Portal register assists */
+ /***************************/
+@@ -42,6 +45,14 @@
+ #define QM_CL_RR0		0x3900
+ #define QM_CL_RR1		0x3940
+ 
++#define QM_FQD_CHAN_OFF                3
++#define QM_FQD_WQ_MASK         GENMASK(2, 0)
++/* 'fqid' is a 24-bit field in every h/w descriptor */
++#define QM_FQID_MASK    GENMASK(23, 0)
 +
-+	char *penv = getenv("DPAA_QDMA_SG_ENABLE");
-+	if (penv)
-+		s_sg_enable = atoi(penv);
++#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
++#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
 +
-+	penv = getenv("DPAA_QDMA_SG_MAX_ENTRY_SIZE");
-+	if (penv)
-+		s_sg_max_entry_sz = atoi(penv);
+ /* BTW, the drivers (and h/w programming model) already obtain the required
+  * synchronisation for portal accesses via lwsync(), hwsync(), and
+  * data-dependencies. Use of barrier()s or other order-preserving primitives
+@@ -911,3 +922,13 @@ static inline void __qm_isr_write(struct qm_portal *portal, enum qm_isr_reg n,
+ 	__qm_out(&portal->addr, QM_REG_ISR + (n << 2), val);
+ #endif
+ }
 +
-+#ifdef RTE_DMA_DPAA_ERRATA_ERR050757
-+	penv = getenv("DPAA_QDMA_PCI_READ");
-+	if (penv)
-+		s_pci_read = atoi(penv);
-+#endif
++static inline int qm_fqd_get_chan(const struct qm_fqd *fqd)
++{
++	return be16_to_cpu(fqd->dest_wq) >> QM_FQD_CHAN_OFF;
++}
 +
- 	fsl_qdma->n_queues = QDMA_QUEUES * QDMA_BLOCKS;
- 	fsl_qdma->num_blocks = QDMA_BLOCKS;
- 	fsl_qdma->block_offset = QDMA_BLOCK_OFFSET;
++static inline int qm_fqd_get_wq(const struct qm_fqd *fqd)
++{
++	return be16_to_cpu(fqd->dest_wq) & QM_FQD_WQ_MASK;
++}
 -- 
 2.25.1
 
