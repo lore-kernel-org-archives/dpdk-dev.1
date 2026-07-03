@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B9EC43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 13:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2054BC43602
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 13:20:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2892B40A6E;
-	Fri,  3 Jul 2026 15:19:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B5A340A76;
+	Fri,  3 Jul 2026 15:19:54 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 60AE14067A;
- Fri,  3 Jul 2026 15:19:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0910B409FA;
+ Fri,  3 Jul 2026 15:19:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783084791; x=1814620791;
+ t=1783084792; x=1814620792;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ljrLJKtdvtHWCjijudFWthD+xu+Nh97jYPFeIjJtcPQ=;
- b=Nr3i6AF7dVYpon0XciKfj8CR2fqrPTziW2SuwovRTWKUODk6RpSGcU9L
- alrQ0eFxfjrAlghUhkBGzZ7akbwe6eQ8a08EfegDtR4oAZ6bB6zuHoXYD
- wSdHTjt3sGhjoy+449U/hxUOIChUXpJihD1Se2n4AqdP4NS4py/2KWIox
- bLQAbPfxVQYsLJTuMU/S8oMYQzQ7Lg1vnHd/AflLq9qwh7r09pSn/bgnr
- 4QjYTPor2B2H/Cu3cZmsREc/nQLUYS3GhuPL35VAEsea2oriU5t6HfodD
- dswImRW2GL9U0XOCDInVqrILIKNrx2j8mHkyUKZoBoscNQzLHzFBSgHLa g==;
-X-CSE-ConnectionGUID: CB6W7skeQduXBDIJBzOuMQ==
-X-CSE-MsgGUID: d2gSyNyjQcWiLjdeNy6Q6w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11835"; a="94486672"
-X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; d="scan'208";a="94486672"
+ bh=I0ZT7MgMG1o4/fa69hzq8cs6NKzCqE2M9ucILbnL41g=;
+ b=jXIHfMecWsopSV2Dpa649bfSdFaxLLYJrNQauwXhJggeBaNLuyOVMQK7
+ zJ5wRj02CfL4GCRugONt7lOpoCAHE90jb6/KZC8GDCopudCjnM2/kWiTO
+ 5m/SBtAyUIZDXy4wc+CV6lyo+HQjsn+ZDhwBUK/IVo++IXvnBx2p2R95+
+ ZOeslR0LoPBvZMbfgtabT6JDubeFeMr9kbMB0+u/AXJTsB+/OnmmjC+x3
+ U/mBnAh+aL343WLXY4U8jV2FMbEdNg1Qnf7eGnhcZ3tQlhzS9GEuUXfJ4
+ zr+4/nJfaRCccP8/2FzJ2VuVgbm7Ipm43a8EhjPZIhpJ5cftBG90VQQLq g==;
+X-CSE-ConnectionGUID: t4H9cicbTe+6V/DJwi0HgQ==
+X-CSE-MsgGUID: nbqUMLEORJKefIr7+fOArg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11835"; a="94486674"
+X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; d="scan'208";a="94486674"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Jul 2026 06:19:50 -0700
-X-CSE-ConnectionGUID: 6MevDxk7Qc2PCJgMrK/7Yw==
-X-CSE-MsgGUID: nqYsGqUdRJu34xgISJ+wTQ==
+ 03 Jul 2026 06:19:51 -0700
+X-CSE-ConnectionGUID: AJ2zcEMxSDuCy7Y3Jw2hTA==
+X-CSE-MsgGUID: 14kmCvuGTFS/eLrdp+jdvg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; d="scan'208";a="257439850"
+X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; d="scan'208";a="257439857"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.224.226])
- by orviesa005.jf.intel.com with ESMTP; 03 Jul 2026 06:19:48 -0700
+ by orviesa005.jf.intel.com with ESMTP; 03 Jul 2026 06:19:50 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Qi Zhang <qi.z.zhang@intel.com>, Ting Xu <ting.xu@intel.com>
-Subject: [PATCH v2 2/6] net/iavf: fix leak of queue to traffic class mapping
- data
-Date: Fri,  3 Jul 2026 14:19:16 +0100
-Message-ID: <20260703131921.4102325-3-bruce.richardson@intel.com>
+ Qiming Yang <qiming.yang@intel.com>, Qi Zhang <qi.z.zhang@intel.com>
+Subject: [PATCH v2 3/6] net/iavf: fix memory leak on error when adding flow
+ parser
+Date: Fri,  3 Jul 2026 14:19:17 +0100
+Message-ID: <20260703131921.4102325-4-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260703131921.4102325-1-bruce.richardson@intel.com>
 References: <20260703083335.4058936-1-bruce.richardson@intel.com>
@@ -64,87 +64,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On iavf TM hierarchy commit, the queue to traffic class mapping is
-generated and stored in a pointer from the VF structure. However, that
-data is never later freed. The data is also unnecessarily allocated from
-hugepage memory.
+In iavf_register_flow_parser, the final "else" branch is an error leg
+which returns immediately, without adding the newly allocated
+parser_node to a TAILQ. Add a free call for that parser_node in the
+error case to avoid leaking memory.
 
-Fix these issues by replacing rte_zmalloc with calloc, and then
-appropriately freeing the memory at a) uninit of the device, b) at
-failure of apply of the new settings and c) replacement of old data by
-new.
-
-Fixes: 3fd32df381f8 ("net/iavf: check Tx packet with correct UP and queue")
+Fixes: ff2d0c345c3b ("net/iavf: support generic flow API")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/iavf/iavf_ethdev.c |  2 ++
- drivers/net/intel/iavf/iavf_tm.c     | 11 ++++++++---
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ drivers/net/intel/iavf/iavf_generic_flow.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 80e740ef29..1cd8c88384 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -2755,6 +2755,8 @@ iavf_uninit_vf(struct rte_eth_dev *dev)
- 
- 	rte_free(vf->qos_cap);
- 	vf->qos_cap = NULL;
-+	free(vf->qtc_map);
-+	vf->qtc_map = NULL;
- 
- 	rte_free(vf->rss_lut);
- 	vf->rss_lut = NULL;
-diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
-index 5f888d654f..faa2d4b8a0 100644
---- a/drivers/net/intel/iavf/iavf_tm.c
-+++ b/drivers/net/intel/iavf/iavf_tm.c
-@@ -97,6 +97,9 @@ iavf_tm_conf_uninit(struct rte_eth_dev *dev)
- 			     shaper_profile, node);
- 		rte_free(shaper_profile);
+diff --git a/drivers/net/intel/iavf/iavf_generic_flow.c b/drivers/net/intel/iavf/iavf_generic_flow.c
+index 84bb161bd1..92ca20031c 100644
+--- a/drivers/net/intel/iavf/iavf_generic_flow.c
++++ b/drivers/net/intel/iavf/iavf_generic_flow.c
+@@ -1911,6 +1911,7 @@ iavf_register_parser(struct iavf_flow_parser *parser,
+ 		list = &vf->dist_parser_list;
+ 		TAILQ_INSERT_HEAD(list, parser_node, node);
+ 	} else {
++		rte_free(parser_node);
+ 		return -EINVAL;
  	}
-+
-+	free(vf->qtc_map);
-+	vf->qtc_map = NULL;
- }
  
- static inline struct iavf_tm_node *
-@@ -801,7 +804,8 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
- 	struct virtchnl_queues_bw_cfg *q_bw = NULL;
- 	struct iavf_tm_node_list *queue_list = &vf->tm_conf.queue_list;
- 	struct iavf_tm_node *tm_node;
--	struct iavf_qtc_map *qtc_map;
-+	struct iavf_qtc_map *qtc_map = NULL;
-+	struct iavf_qtc_map *old_qtc_map = vf->qtc_map; /* to free memory if new map assigned */
- 	uint16_t size, size_q;
- 	int index = 0, node_committed = 0;
- 	int i, ret_val = IAVF_SUCCESS;
-@@ -889,8 +893,7 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
- 		goto fail_clear;
- 
- 	/* store the queue TC mapping info */
--	qtc_map = rte_zmalloc("qtc_map",
--		sizeof(struct iavf_qtc_map) * q_tc_mapping->num_tc, 0);
-+	qtc_map = calloc(q_tc_mapping->num_tc, sizeof(struct iavf_qtc_map));
- 	if (!qtc_map) {
- 		ret_val = IAVF_ERR_NO_MEMORY;
- 		goto fail_clear;
-@@ -910,6 +913,7 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
- 		goto fail_clear;
- 
- 	vf->qtc_map = qtc_map;
-+	free(old_qtc_map);
- 	if (adapter->stopped == 1)
- 		vf->tm_conf.committed = true;
- 	free(q_bw);
-@@ -925,5 +929,6 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
- err:
- 	free(q_bw);
- 	free(q_tc_mapping);
-+	free(qtc_map);
- 	return ret_val;
- }
 -- 
 2.53.0
 
