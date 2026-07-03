@@ -2,54 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F65C43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 11:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C132C43602
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 12:49:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F4A94069F;
-	Fri,  3 Jul 2026 13:53:35 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id C5DA1406FF
- for <dev@dpdk.org>; Fri,  3 Jul 2026 13:53:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783079613; x=1814615613;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=PVcD/eD0zTFgqDVIxDx+sEN8ZsOjV1aKU2UQbVGURL4=;
- b=T8fVSQVGlwzsCcWs+pfwRbhRIG+r9NvHnzTKhtpsqLhIn7DR991RDVMi
- j/lxgZOWxkYaaTc0T87Ko4vDqzIxumIIs1glnhQy4IhaOb3DTc3tAt42W
- NixpZpuJ5hEYvsdhIeo1EFxQt20izHNb0/sZG/GDocVanTrqsXXGKk41l
- 44VKWQ4/mKTe49nY49HjFmY1PkzoiHRf+Xn9lcemTe9D+5AEIUXNwVG5B
- YBLd2qwzav9QC4TA4bQutjhAy9woKuCLQoQXTAMob3k6DiPBrGqEcqCzz
- xccpi+pwpRm3OdU9fdoIXQtcZ/258U6Cw34i9OAaBx7hDQO5n6D7tJI2j A==;
-X-CSE-ConnectionGUID: QzNzVzRxRtm5SMxaXrIXQQ==
-X-CSE-MsgGUID: hZaGJ2OvTTiHzR4dtdEVVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11835"; a="101253823"
-X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; d="scan'208";a="101253823"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Jul 2026 04:53:33 -0700
-X-CSE-ConnectionGUID: BYvj2AS4SKKy1vZTPC+FFA==
-X-CSE-MsgGUID: D8eRD7a9Tj68vh2MrB4sTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; d="scan'208";a="291240282"
-Received: from unknown (HELO localhost.igk.intel.com) ([10.123.235.20])
- by orviesa001.jf.intel.com with ESMTP; 03 Jul 2026 04:53:30 -0700
-From: Dawid Wesierski <dawid.wesierski@intel.com>
-To: dev@dpdk.org
-Cc: thomas@monjalon.net, stephen@networkplumber.org,
- bruce.richardson@intel.com, marek.kasiewicz@intel.com,
- Dawid Wesierski <dawid.wesierski@intel.com>
-Subject: [PATCH v4 5/5] app/testpmd: add pinned external-buffer Rx pool command
-Date: Fri,  3 Jul 2026 08:19:52 -0400
-Message-ID: <20260703121952.1277387-6-dawid.wesierski@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260703121952.1277387-1-dawid.wesierski@intel.com>
-References: <20260630120657.1046588-1-dawid.wesierski@intel.com>
- <20260703121952.1277387-1-dawid.wesierski@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2D728402C5;
+	Fri,  3 Jul 2026 14:49:58 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 046AF4026F
+ for <dev@dpdk.org>; Fri,  3 Jul 2026 14:49:55 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A95FC1A001F;
+ Fri,  3 Jul 2026 14:49:55 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 73FDA1A0004;
+ Fri,  3 Jul 2026 14:49:55 +0200 (CEST)
+Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
+ [92.120.146.12])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1BE85180004C;
+ Fri,  3 Jul 2026 20:49:53 +0800 (+08)
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: stephen@networkplumber.org,
+	david.marchand@redhat.com,
+	dev@dpdk.org
+Subject: [PATCH v7 00/16] DPAA bus/net/mempool/DMA driver fixes and
+ improvements
+Date: Fri,  3 Jul 2026 18:19:34 +0530
+Message-Id: <20260703124950.1895871-1-hemant.agrawal@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260702053359.3243907-1-hemant.agrawal@nxp.com>
+References: <20260702053359.3243907-1-hemant.agrawal@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,203 +48,124 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-QWRkIHRoZSAnY3JlYXRlIHBpbm5lZC1yeHBvb2wgPHNlZy1pZHg+IDxjb3VudD4gPGVsdC1zaXpl
-PicgdGVzdHBtZApjb21tYW5kIHRvIGRlbW9uc3RyYXRlIHplcm8tY29weSBoZWFkZXIvcGF5bG9h
-ZCBzcGxpdCByZWNlaXZlIHVzaW5nCnBpbm5lZCBleHRlcm5hbC1idWZmZXIgbWVtcG9vbHMgKFJU
-RV9QS1RNQlVGX1BPT0xfRl9QSU5ORURfRVhUX0JVRikuCgpNb3RpdmF0aW9uOiB0aGUgRFBESyBi
-dWZmZXItc3BsaXQgb2ZmbG9hZCAoUlRFX0VUSF9SWF9PRkZMT0FEX0JVRkZFUl9TUExJVCkKd2l0
-aCB0d28gUnggc2VnbWVudHMgYWxsb3dzIGFuIGFwcGxpY2F0aW9uIHRvIGRpcmVjdCB0aGUgTklD
-IHRvIHBsYWNlCnRoZSBwcm90b2NvbCBoZWFkZXIgYW5kIHRoZSBwYXlsb2FkIGludG8gc2VwYXJh
-dGUgbWJ1ZnMuIENvbWJpbmluZyBpdAp3aXRoIGEgcGlubmVkIGV4dGVybmFsLWJ1ZmZlciBwb29s
-IGZvciB0aGUgcGF5bG9hZCBzZWdtZW50IGxldHMgdGhlIE5JQwpETUEgdGhlIHBheWxvYWQgZGly
-ZWN0bHkgaW50byBhcHBsaWNhdGlvbi1vd25lZCBodWdlcGFnZSBtZW1vcnkgd2l0aG91dAphbnkg
-ZXh0cmEgY29weSBvciBuZXcgZXRoZGV2IEFQSS4KClRoaXMgaXMgdGhlIG1lY2hhbmlzbSBuZWVk
-ZWQgYnkgc3RyZWFtaW5nIGFwcGxpY2F0aW9ucyBzdWNoIGFzIHRoZQpNZWRpYSBUcmFuc3BvcnQg
-TGlicmFyeSAoTVRMKSBmb3IgU01QVEUgU1QgMjExMC0yMSB2aWRlbyByZWNlcHRpb24sCndoZXJl
-IDEyNjAtYnl0ZSBSVFAgcGF5bG9hZCBjaHVua3MgbXVzdCBsYW5kIHplcm8tY29weSBpbiBwcmUt
-YWxsb2NhdGVkCnBlci1mcmFtZSB2aWRlbyBidWZmZXJzLiBUaGUgZXhpc3RpbmcgcnRlX3BrdG1i
-dWZfcG9vbF9jcmVhdGVfZXh0YnVmKCkKQVBJIGNvdmVycyB0aGlzIHVzZSBjYXNlOyBubyBuZXcg
-Y2FsbGJhY2sgb3Igb3V0LW9mLXRyZWUgUE1EIGhvb2sgaXMKcmVxdWlyZWQuCgpUaGUgY29tbWFu
-ZCBhbGxvY2F0ZXMgYSBodWdlcGFnZSByZWdpb24gdmlhIHJ0ZV96bWFsbG9jX3NvY2tldCgpLApj
-cmVhdGVzIGEgcGlubmVkIHBvb2wgb3ZlciBpdCB3aXRoIHJ0ZV9wa3RtYnVmX3Bvb2xfY3JlYXRl
-X2V4dGJ1ZigpLAphbmQgcmVnaXN0ZXJzIHRoZSBwb29sIHdpdGggdGVzdHBtZCdzIHBvb2wgaW5k
-ZXggc28gdGhhdApyeF9xdWV1ZV9zZXR1cCgpIGF1dG9tYXRpY2FsbHkgc2VsZWN0cyBpdCBmb3Ig
-dGhlIGNvbmZpZ3VyZWQgc3BsaXQKc2VnbWVudC4gVGhlIGNvbXBsZXRlIHdvcmtmbG93IGFuZCBh
-IHdvcmtlZCB2aWRlby1zdHJlYW1pbmcgZXhhbXBsZSBhcmUKZG9jdW1lbnRlZCBpbiBkb2MvZ3Vp
-ZGVzL3Rlc3RwbWRfYXBwX3VnL3Rlc3RwbWRfZnVuY3MucnN0LgoKU2lnbmVkLW9mZi1ieTogRGF3
-aWQgV2VzaWVyc2tpIDxkYXdpZC53ZXNpZXJza2lAaW50ZWwuY29tPgpTaWduZWQtb2ZmLWJ5OiBN
-YXJlayBLYXNpZXdpY3ogPG1hcmVrLmthc2lld2ljekBpbnRlbC5jb20+Ci0tLQogYXBwL3Rlc3Qt
-cG1kL2NtZGxpbmUuYyAgICAgICAgICAgICAgICAgICAgICB8IDEyMyArKysrKysrKysrKysrKysr
-KysrKwogZG9jL2d1aWRlcy90ZXN0cG1kX2FwcF91Zy90ZXN0cG1kX2Z1bmNzLnJzdCB8ICA4MiAr
-KysrKysrKysrKysrCiAyIGZpbGVzIGNoYW5nZWQsIDIwNSBpbnNlcnRpb25zKCspCgpkaWZmIC0t
-Z2l0IGEvYXBwL3Rlc3QtcG1kL2NtZGxpbmUuYyBiL2FwcC90ZXN0LXBtZC9jbWRsaW5lLmMKaW5k
-ZXggM2MzOWUyN2FhOC4uODNlYTZkMmNkMiAxMDA2NDQKLS0tIGEvYXBwL3Rlc3QtcG1kL2NtZGxp
-bmUuYworKysgYi9hcHAvdGVzdC1wbWQvY21kbGluZS5jCkBAIC0zNzEsNiArMzcxLDExIEBAIHN0
-YXRpYyB2b2lkIGNtZF9oZWxwX2xvbmdfcGFyc2VkKHZvaWQgKnBhcnNlZF9yZXN1bHQsCiAJCQki
-aW5uZXItaXB2Ni10Y3B8aW5uZXItaXB2NC11ZHB8aW5uZXItaXB2Ni11ZHB8IgogCQkJImlubmVy
-LWlwdjQtc2N0cHxpbm5lci1pcHY2LXNjdHBcblxuIgogCisJCQkiY3JlYXRlIHBpbm5lZC1yeHBv
-b2wgKHNlZy1pZHgpIChjb3VudCkgKGVsdC1zaXplKVxuIgorCQkJIiAgICBDcmVhdGUgYSBwaW5u
-ZWQgZXh0ZXJuYWwtYnVmZmVyIFJ4IG1lbXBvb2wgZm9yIgorCQkJIiBidWZmZXItc3BsaXQgc2Vn
-bWVudCA8c2VnLWlkeD4uIFBheWxvYWRzIERNQSBkaXJlY3RseSIKKwkJCSIgaW50byBhcHBsaWNh
-dGlvbi1vd25lZCBodWdlcGFnZSBtZW1vcnkgd2l0aG91dCBjb3B5LlxuXG4iCisKIAkJCSJzZXQg
-dHhwa3RzICh4Wyx5XSopXG4iCiAJCQkiICAgIFNldCB0aGUgbGVuZ3RoIG9mIGVhY2ggc2VnbWVu
-dCBvZiBUWE9OTFkiCiAJCQkiIGFuZCBvcHRpb25hbGx5IENTVU0gcGFja2V0cy5cblxuIgpAQCAt
-NDQ4Myw2ICs0NDg4LDEyMyBAQCBzdGF0aWMgY21kbGluZV9wYXJzZV9pbnN0X3QgY21kX3NldF9y
-eGhkcnMgPSB7CiAJfSwKIH07CiAKKy8qICoqKiBDUkVBVEUgUElOTkVEIEVYVEVSTkFMIEJVRkZF
-UiBQT09MIEZPUiBSWCBTUExJVCBTRUdNRU5UICoqKiAqLworc3RydWN0IGNtZF9jcmVhdGVfcGlu
-bmVkX3J4cG9vbF9yZXN1bHQgeworCWNtZGxpbmVfZml4ZWRfc3RyaW5nX3QgY3JlYXRlOworCWNt
-ZGxpbmVfZml4ZWRfc3RyaW5nX3QgcGlubmVkX3J4cG9vbDsKKwl1aW50MTZfdCBzZWdfaWR4Owor
-CXVpbnQzMl90IGNvdW50OworCXVpbnQxNl90IGVsdF9zaXplOworfTsKKworc3RhdGljIHZvaWQK
-K2NtZF9jcmVhdGVfcGlubmVkX3J4cG9vbF9wYXJzZWQodm9pZCAqcGFyc2VkX3Jlc3VsdCwKKwkJ
-CQlfX3J0ZV91bnVzZWQgc3RydWN0IGNtZGxpbmUgKmNsLAorCQkJCV9fcnRlX3VudXNlZCB2b2lk
-ICpkYXRhKQoreworCXN0cnVjdCBjbWRfY3JlYXRlX3Bpbm5lZF9yeHBvb2xfcmVzdWx0ICpyZXMg
-PSBwYXJzZWRfcmVzdWx0OworCWNoYXIgcG9vbF9uYW1lW1JURV9NRU1QT09MX05BTUVTSVpFXTsK
-KwlzdHJ1Y3QgcnRlX3BrdG1idWZfZXh0bWVtIGV4dF9tZW07CisJc3RydWN0IHJ0ZV9tZW1wb29s
-ICptcDsKKwl1bnNpZ25lZCBpbnQgc29ja2V0X2lkOworCXNpemVfdCBtZW1fc2l6ZTsKKwl2b2lk
-ICpmcmFtZXM7CisKKwlpZiAocmVzLT5zZWdfaWR4ID49IE1BWF9TRUdTX0JVRkZFUl9TUExJVCkg
-eworCQlmcHJpbnRmKHN0ZGVyciwgInNlZy1pZHggbXVzdCBiZSBsZXNzIHRoYW4gJXVcbiIsCisJ
-CQlNQVhfU0VHU19CVUZGRVJfU1BMSVQpOworCQlyZXR1cm47CisJfQorCisJc29ja2V0X2lkID0g
-KG51bV9zb2NrZXRzID4gMCkgPyAodW5zaWduZWQgaW50KXNvY2tldF9pZHNbMF0gOiAwOworCW1i
-dWZfcG9vbG5hbWVfYnVpbGQoc29ja2V0X2lkLCBwb29sX25hbWUsIHNpemVvZihwb29sX25hbWUp
-LAorCQkJICAgIHJlcy0+c2VnX2lkeCk7CisKKwlpZiAobWJ1Zl9wb29sX2ZpbmQoc29ja2V0X2lk
-LCByZXMtPnNlZ19pZHgpICE9IE5VTEwpIHsKKwkJZnByaW50ZihzdGRlcnIsCisJCQkiUG9vbCAn
-JXMnIGFscmVhZHkgZXhpc3RzOyBzdG9wL2Nsb3NlIHBvcnQgYmVmb3JlIHJlY3JlYXRpbmdcbiIs
-CisJCQlwb29sX25hbWUpOworCQlyZXR1cm47CisJfQorCisJbWVtX3NpemUgPSAoc2l6ZV90KXJl
-cy0+Y291bnQgKiByZXMtPmVsdF9zaXplOworCWZyYW1lcyA9IHJ0ZV96bWFsbG9jX3NvY2tldCgi
-cGlubmVkX3J4cG9vbF9tZW0iLCBtZW1fc2l6ZSwKKwkJCQkgICAgUlRFX0NBQ0hFX0xJTkVfU0la
-RSwgc29ja2V0X2lkKTsKKwlpZiAoZnJhbWVzID09IE5VTEwpIHsKKwkJZnByaW50ZihzdGRlcnIs
-CisJCQkiRmFpbGVkIHRvIGFsbG9jYXRlICV6dSBieXRlcyBmb3IgcGlubmVkIHBvb2xcbiIsCisJ
-CQltZW1fc2l6ZSk7CisJCXJldHVybjsKKwl9CisKKwlleHRfbWVtLmJ1Zl9wdHIgID0gZnJhbWVz
-OworCWV4dF9tZW0uYnVmX2lvdmEgPSBydGVfbWFsbG9jX3ZpcnQyaW92YShmcmFtZXMpOworCWlm
-IChleHRfbWVtLmJ1Zl9pb3ZhID09IFJURV9CQURfSU9WQSkgeworCQlmcHJpbnRmKHN0ZGVyciwK
-KwkJCSJObyBJT1ZBIG1hcHBpbmcgZm9yIHBpbm5lZCBwb29sIChWRklPL0lPTU1VIHJlcXVpcmVk
-KVxuIik7CisJCXJ0ZV9mcmVlKGZyYW1lcyk7CisJCXJldHVybjsKKwl9CisJZXh0X21lbS5idWZf
-bGVuICA9IG1lbV9zaXplOworCWV4dF9tZW0uZWx0X3NpemUgPSByZXMtPmVsdF9zaXplOworCisJ
-bXAgPSBydGVfcGt0bWJ1Zl9wb29sX2NyZWF0ZV9leHRidWYocG9vbF9uYW1lLCByZXMtPmNvdW50
-LAorCQkJCQkgICAgMCwgMCwgcmVzLT5lbHRfc2l6ZSwKKwkJCQkJICAgIHNvY2tldF9pZCwgJmV4
-dF9tZW0sIDEpOworCWlmIChtcCA9PSBOVUxMKSB7CisJCWZwcmludGYoc3RkZXJyLCAiRmFpbGVk
-IHRvIGNyZWF0ZSBwaW5uZWQgcG9vbCAnJXMnOiAlc1xuIiwKKwkJCXBvb2xfbmFtZSwgcnRlX3N0
-cmVycm9yKHJ0ZV9lcnJubykpOworCQlydGVfZnJlZShmcmFtZXMpOworCQlyZXR1cm47CisJfQor
-CisJLyogUmVnaXN0ZXIgd2l0aCB0ZXN0cG1kIHNvIHJ4X3F1ZXVlX3NldHVwKCkgdXNlcyB0aGlz
-IHBvb2wgZm9yCisJICogc2VnbWVudCA8c2VnX2lkeD4gd2hlbiBidWZmZXItc3BsaXQgaXMgY29u
-ZmlndXJlZC4KKwkgKi8KKwltYnVmX2RhdGFfc2l6ZVtyZXMtPnNlZ19pZHhdID0gcmVzLT5lbHRf
-c2l6ZTsKKwlpZiAoKHVpbnQzMl90KShyZXMtPnNlZ19pZHggKyAxKSA+IG1idWZfZGF0YV9zaXpl
-X24pCisJCW1idWZfZGF0YV9zaXplX24gPSByZXMtPnNlZ19pZHggKyAxOworCisJcHJpbnRmKCJD
-cmVhdGVkIHBpbm5lZCBleHQtYnVmIHBvb2wgJyVzJzpcbiIKKwkgICAgICAgIiAgc29ja2V0PSV1
-IHNlZy1pZHg9JXUgY291bnQ9JXUgZWx0LXNpemU9JXUgIgorCSAgICAgICAibWVtPSVwIGlvdmE9
-MHglIiBQUkl4NjQgIlxuIiwKKwkgICAgICAgcG9vbF9uYW1lLCBzb2NrZXRfaWQsIHJlcy0+c2Vn
-X2lkeCwgcmVzLT5jb3VudCwKKwkgICAgICAgcmVzLT5lbHRfc2l6ZSwgZnJhbWVzLCBleHRfbWVt
-LmJ1Zl9pb3ZhKTsKK30KKworc3RhdGljIGNtZGxpbmVfcGFyc2VfdG9rZW5fc3RyaW5nX3QgY21k
-X2NyZWF0ZV9waW5uZWRfcnhwb29sX2NyZWF0ZSA9CisJVE9LRU5fU1RSSU5HX0lOSVRJQUxJWkVS
-KHN0cnVjdCBjbWRfY3JlYXRlX3Bpbm5lZF9yeHBvb2xfcmVzdWx0LAorCQkJCSBjcmVhdGUsICJj
-cmVhdGUiKTsKK3N0YXRpYyBjbWRsaW5lX3BhcnNlX3Rva2VuX3N0cmluZ190IGNtZF9jcmVhdGVf
-cGlubmVkX3J4cG9vbF9rdyA9CisJVE9LRU5fU1RSSU5HX0lOSVRJQUxJWkVSKHN0cnVjdCBjbWRf
-Y3JlYXRlX3Bpbm5lZF9yeHBvb2xfcmVzdWx0LAorCQkJCSBwaW5uZWRfcnhwb29sLCAicGlubmVk
-LXJ4cG9vbCIpOworc3RhdGljIGNtZGxpbmVfcGFyc2VfdG9rZW5fbnVtX3QgY21kX2NyZWF0ZV9w
-aW5uZWRfcnhwb29sX3NlZ19pZHggPQorCVRPS0VOX05VTV9JTklUSUFMSVpFUihzdHJ1Y3QgY21k
-X2NyZWF0ZV9waW5uZWRfcnhwb29sX3Jlc3VsdCwKKwkJCSAgICAgIHNlZ19pZHgsIFJURV9VSU5U
-MTYpOworc3RhdGljIGNtZGxpbmVfcGFyc2VfdG9rZW5fbnVtX3QgY21kX2NyZWF0ZV9waW5uZWRf
-cnhwb29sX2NvdW50ID0KKwlUT0tFTl9OVU1fSU5JVElBTElaRVIoc3RydWN0IGNtZF9jcmVhdGVf
-cGlubmVkX3J4cG9vbF9yZXN1bHQsCisJCQkgICAgICBjb3VudCwgUlRFX1VJTlQzMik7CitzdGF0
-aWMgY21kbGluZV9wYXJzZV90b2tlbl9udW1fdCBjbWRfY3JlYXRlX3Bpbm5lZF9yeHBvb2xfZWx0
-X3NpemUgPQorCVRPS0VOX05VTV9JTklUSUFMSVpFUihzdHJ1Y3QgY21kX2NyZWF0ZV9waW5uZWRf
-cnhwb29sX3Jlc3VsdCwKKwkJCSAgICAgIGVsdF9zaXplLCBSVEVfVUlOVDE2KTsKKworc3RhdGlj
-IGNtZGxpbmVfcGFyc2VfaW5zdF90IGNtZF9jcmVhdGVfcGlubmVkX3J4cG9vbCA9IHsKKwkuZiA9
-IGNtZF9jcmVhdGVfcGlubmVkX3J4cG9vbF9wYXJzZWQsCisJLmRhdGEgPSBOVUxMLAorCS5oZWxw
-X3N0ciA9ICJjcmVhdGUgcGlubmVkLXJ4cG9vbCA8c2VnLWlkeD4gPGNvdW50PiA8ZWx0LXNpemU+
-OiAiCisJCSAgICAiY3JlYXRlIGEgcGlubmVkIGV4dGVybmFsLWJ1ZmZlciBSeCBtZW1wb29sIGZv
-ciBzcGxpdCAiCisJCSAgICAic2VnbWVudCA8c2VnLWlkeD47IHBheWxvYWRzIERNQSBkaXJlY3Rs
-eSBpbnRvIGh1Z2VwYWdlICIKKwkJICAgICJtZW1vcnkgb3duZWQgYnkgdGhlIGFwcGxpY2F0aW9u
-IHdpdGhvdXQgYW4gZXh0cmEgY29weSIsCisJLnRva2VucyA9IHsKKwkJKHZvaWQgKikmY21kX2Ny
-ZWF0ZV9waW5uZWRfcnhwb29sX2NyZWF0ZSwKKwkJKHZvaWQgKikmY21kX2NyZWF0ZV9waW5uZWRf
-cnhwb29sX2t3LAorCQkodm9pZCAqKSZjbWRfY3JlYXRlX3Bpbm5lZF9yeHBvb2xfc2VnX2lkeCwK
-KwkJKHZvaWQgKikmY21kX2NyZWF0ZV9waW5uZWRfcnhwb29sX2NvdW50LAorCQkodm9pZCAqKSZj
-bWRfY3JlYXRlX3Bpbm5lZF9yeHBvb2xfZWx0X3NpemUsCisJCU5VTEwsCisJfSwKK307CisKIC8q
-ICoqKiBTRVQgU0VHTUVOVCBMRU5HVEhTIE9GIFRYT05MWSBQQUNLRVRTICoqKiAqLwogCiBzdHJ1
-Y3QgY21kX3NldF90eHBrdHNfcmVzdWx0IHsKQEAgLTE0MjM4LDYgKzE0MzYwLDcgQEAgc3RhdGlj
-IGNtZGxpbmVfcGFyc2VfY3R4X3QgYnVpbHRpbl9jdHhbXSA9IHsKIAkmY21kX3NldF9yeG9mZnMs
-CiAJJmNtZF9zZXRfcnhwa3RzLAogCSZjbWRfc2V0X3J4aGRycywKKwkmY21kX2NyZWF0ZV9waW5u
-ZWRfcnhwb29sLAogCSZjbWRfc2V0X3R4Zmxvd3MsCiAJJmNtZF9zZXRfdHhwa3RzLAogCSZjbWRf
-c2V0X3R4c3BsaXQsCmRpZmYgLS1naXQgYS9kb2MvZ3VpZGVzL3Rlc3RwbWRfYXBwX3VnL3Rlc3Rw
-bWRfZnVuY3MucnN0IGIvZG9jL2d1aWRlcy90ZXN0cG1kX2FwcF91Zy90ZXN0cG1kX2Z1bmNzLnJz
-dAppbmRleCBmMGYyYjA3NThiLi4wY2EyNjNjYzRlIDEwMDY0NAotLS0gYS9kb2MvZ3VpZGVzL3Rl
-c3RwbWRfYXBwX3VnL3Rlc3RwbWRfZnVuY3MucnN0CisrKyBiL2RvYy9ndWlkZXMvdGVzdHBtZF9h
-cHBfdWcvdGVzdHBtZF9mdW5jcy5yc3QKQEAgLTg2Nyw2ICs4NjcsODggQEAgV2hlcmUgZXRoWyxp
-cHY0XSogcmVwcmVzZW50cyBhIENTViBsaXN0IG9mIHZhbHVlcywgd2l0aG91dCB3aGl0ZSBzcGFj
-ZS4KIElmIHRoZSBsaXN0IG9mIG9mZnNldHMgaXMgc2hvcnRlciB0aGFuIHRoZSBsaXN0IG9mIHNl
-Z21lbnRzLAogemVybyBvZmZzZXRzIHdpbGwgYmUgdXNlZCBmb3IgdGhlIHJlbWFpbmluZyBzZWdt
-ZW50cy4KIAorY3JlYXRlIHBpbm5lZC1yeHBvb2wKK35+fn5+fn5+fn5+fn5+fn5+fn5+CisKK0Ny
-ZWF0ZSBhIHBpbm5lZCBleHRlcm5hbC1idWZmZXIgUnggbWVtcG9vbCBmb3IgYSBidWZmZXItc3Bs
-aXQgcGF5bG9hZAorc2VnbWVudC4gRWFjaCBtYnVmIGluIHRoZSBwb29sIGlzIHBlcm1hbmVudGx5
-IGJvdW5kIHRvIGEgZml4ZWQgc2xvdCBpbgorYSBjb250aWd1b3VzIGh1Z2VwYWdlIHJlZ2lvbiBh
-bGxvY2F0ZWQgYnkgdGVzdHBtZC4gV2hlbiB0aGUgTklDCitwZXJmb3JtcyBhIGJ1ZmZlci1zcGxp
-dCByZWNlaXZlLCB0aGUgcGF5bG9hZCBETUEtd3JpdGVzIGRpcmVjdGx5IGludG8KK3RoYXQgaHVn
-ZXBhZ2UgbWVtb3J5IHdpdGhvdXQgYW55IGV4dHJhIGNvcHkgZnJvbSBhIG5vcm1hbCBtYnVmLgor
-CisuLiBjb2RlLWJsb2NrOjogbm9uZQorCisgICB0ZXN0cG1kPiBjcmVhdGUgcGlubmVkLXJ4cG9v
-bCAoc2VnLWlkeCkgKGNvdW50KSAoZWx0LXNpemUpCisKK1doZXJlOgorCitzZWctaWR4CisgICBJ
-bmRleCBvZiB0aGUgUnggc3BsaXQgc2VnbWVudCB0aGF0IHdpbGwgdXNlIHRoZSBwaW5uZWQgcG9v
-bC4KKyAgIDAgaXMgdGhlIGhlYWRlciBzZWdtZW50ICh1c3VhbGx5IGxlZnQgYXMgdGhlIGRlZmF1
-bHQgcG9vbCk7CisgICAxIGlzIHRoZSBmaXJzdCBwYXlsb2FkIHNlZ21lbnQgYW5kIGlzIHRoZSB0
-eXBpY2FsIHRhcmdldC4KKworY291bnQKKyAgIE51bWJlciBvZiBtYnVmcyBpbiB0aGUgcG9vbC4g
-U2hvdWxkIGJlIGF0IGxlYXN0IGFzIGxhcmdlIGFzIHRoZQorICAgbnVtYmVyIG9mIFJ4IGRlc2Ny
-aXB0b3JzIG9uIGFsbCBxdWV1ZXMgdXNpbmcgdGhpcyBwb29sLCBwbHVzIGEKKyAgIHNhZmV0eSBt
-YXJnaW4gKGUuZy4gYGBuYl9yeGQgKiBuYl9yeHEgKiAyYGApLgorCitlbHQtc2l6ZQorICAgU2l6
-ZSBvZiBlYWNoIHBvb2wgZWxlbWVudCBpbiBieXRlcy4gVGhpcyBpcyB0aGUgdG90YWwgc2xvdCBz
-dHJpZGUsCisgICBpbmNsdWRpbmcgYGBSVEVfUEtUTUJVRl9IRUFEUk9PTWBgIChkZWZhdWx0IDEy
-OCBCKS4gRm9yIGV4YW1wbGUsCisgICB0byBob2xkIDEyNjAtYnl0ZSB2aWRlbyBwYXlsb2FkcyAo
-U01QVEUgU1QgMjExMC0yMSBCUE0gc2l6ZSkgd2l0aAorICAgYSBzdGFuZGFyZCBoZWFkcm9vbSwg
-c2V0IGBgZWx0LXNpemVgYCB0byAxMzg4ICg9IDEyOCArIDEyNjApLgorCitUaGUgcG9vbCBpcyBu
-YW1lZCBhY2NvcmRpbmcgdG8gdGVzdHBtZCdzIGludGVybmFsIGNvbnZlbnRpb24gc28gdGhhdAor
-YGByeF9xdWV1ZV9zZXR1cCgpYGAgYXV0b21hdGljYWxseSBzZWxlY3RzIGl0IGZvciBzZWdtZW50
-IGBgc2VnLWlkeGBgCit3aGVuIGBgUlRFX0VUSF9SWF9PRkZMT0FEX0JVRkZFUl9TUExJVGBgIGlz
-IGVuYWJsZWQuCisKKy4uIG5vdGU6OgorCisgICBWRklPIG9yIGFub3RoZXIgSU9NTVUgZHJpdmVy
-IGlzIHJlcXVpcmVkIHNvIHRoYXQgaHVnZXBhZ2UgbWVtb3J5CisgICBoYXMgYSB2YWxpZCBJT1ZB
-LiBUaGUgYmFja2luZyBodWdlcGFnZSBhbGxvY2F0aW9uIGlzIG5vdCBmcmVlZCB3aGVuCisgICB0
-aGUgcG9ydCBpcyBzdG9wcGVkIG9yIHRoZSBwb29sIGlzIHJlLWNyZWF0ZWQ7IHJlc3RhcnQgdGVz
-dHBtZCB0bworICAgcmVjbGFpbSBpdC4KKworKipFeGFtcGxlIOKAlCB6ZXJvLWNvcHkgaGVhZGVy
-L3BheWxvYWQgc3BsaXQgZm9yIHZpZGVvIHN0cmVhbWluZyoqCisKK1RoaXMgZXhhbXBsZSBtaXJy
-b3JzIHRoZSB1c2UgY2FzZSBpbiB0aGUgTWVkaWEgVHJhbnNwb3J0IExpYnJhcnkgKE1UTCkKK2Zv
-ciBTTVBURSBTVCAyMTEwLTIxIHZpZGVvIHJlY2VwdGlvbi4gSGVhZGVycyBsYW5kIGluIHRoZSBk
-ZWZhdWx0Citwb29sOyAxMjYwLWJ5dGUgdmlkZW8gcGF5bG9hZHMgRE1BIGRpcmVjdGx5IGludG8g
-YSBwaW5uZWQgaHVnZXBhZ2UKK3JlZ2lvbiB3aXRob3V0IGFueSBjb3B5LiBUaGUgcG9vbCBob2xk
-cyBlbm91Z2ggc2xvdHMgZm9yIDQgSworZGVzY3JpcHRvcnMgb24gNCBxdWV1ZXMgd2l0aCBoZWFk
-cm9vbToKKworLi4gY29kZS1ibG9jazo6IGNvbnNvbGUKKworICAgIyBTdGFydCB0ZXN0cG1kIHdp
-dGggYSBkZWZhdWx0IGhlYWRlciBwb29sIChzZWdtZW50IDApCisgICBkcGRrLXRlc3RwbWQgLWEg
-MDAwMDozMTowMC4wLGVuYWJsZS1yeC10aW1lc3RhbXA9MCBcCisgICAgIC0tbWJ1Zi1zaXplPTI1
-NiAtLSAtaSAtLXJ4cT00IC0tdHhxPTQgLS1yeGQ9NDA5NgorCisgICAjIEluc2lkZSB0ZXN0cG1k
-OgorCisgICAjIDEuIENyZWF0ZSB0aGUgcGlubmVkIHBheWxvYWQgcG9vbCBmb3Igc2VnbWVudCAx
-ICg0KjQwOTYgbWJ1ZnMsCisgICAjICAgIDEzODggYnl0ZXMgZWFjaDogMTI4IEIgaGVhZHJvb20g
-KyAxMjYwIEIgcGF5bG9hZCkKKyAgIHRlc3RwbWQ+IGNyZWF0ZSBwaW5uZWQtcnhwb29sIDEgMzI3
-NjggMTM4OAorCisgICAjIDIuIENvbmZpZ3VyZSBidWZmZXIgc3BsaXQ6IHNlZ21lbnQgMCA9IFVE
-UCtsb3dlciBoZWFkZXJzLAorICAgIyAgICBzZWdtZW50IDEgPSBwYXlsb2FkIChsZW5ndGggMCBt
-ZWFucyAicmVzdCBvZiBwYWNrZXQiKQorICAgdGVzdHBtZD4gc2V0IHJ4aGRycyBpcHY0LXVkcAor
-ICAgdGVzdHBtZD4gc2V0IHJ4cGt0cyAwLDAKKworICAgIyAzLiBFbmFibGUgYnVmZmVyIHNwbGl0
-IG9uIHRoZSBwb3J0CisgICB0ZXN0cG1kPiBwb3J0IGNvbmZpZyAwIHJ4X29mZmxvYWQgYnVmZmVy
-X3NwbGl0IG9uCisKKyAgICMgNC4gUmVzdGFydCB0aGUgcXVldWVzIHNvIHRoZSBuZXcgY29uZmln
-dXJhdGlvbiB0YWtlcyBlZmZlY3QKKyAgIHRlc3RwbWQ+IHN0b3AKKyAgIHRlc3RwbWQ+IHBvcnQg
-c3RvcCAwCisgICB0ZXN0cG1kPiBwb3J0IHN0YXJ0IDAKKyAgIHRlc3RwbWQ+IHN0YXJ0CisKK0Fm
-dGVyIHRoaXMgc2VxdWVuY2UsIGVhY2ggcmVjZWl2ZWQgVURQIHBhY2tldCBpcyBzcGxpdCBieSB0
-aGUgTklDOgordGhlIGhlYWRlciBtYnVmIChjaGFpbiBoZWFkKSBjb21lcyBmcm9tIHRoZSBkZWZh
-dWx0IHBvb2wsIGFuZCB0aGUKK3BheWxvYWQgbWJ1ZiAoY2hhaW4gbmV4dCkgaGFzIGl0cyBgYGJ1
-Zl9hZGRyYGAgcG9pbnRpbmcgaW50byB0aGUKK3Bpbm5lZCBodWdlcGFnZSByZWdpb24gb3duZWQg
-YnkgdGhlIGFwcGxpY2F0aW9uIOKAlCBubyBjb3B5LCBubworY2FsbGJhY2ssIG5vIG5ldyBldGhk
-ZXYgQVBJLgorCiBzZXQgdHhwa3RzCiB+fn5+fn5+fn5+CiAKLS0gCjIuNDcuMwoKLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tCkludGVsIFRlY2hub2xvZ3kgUG9sYW5kIHNwLiB6IG8uby4KdWwuIFNsb3dhY2tpZWdvIDE3
-MyB8IDgwLTI5OCBHZGFuc2sgfCBTYWQgUmVqb25vd3kgR2RhbnNrIFBvbG5vYyB8IFZJSSBXeWR6
-aWFsIEdvc3BvZGFyY3p5IEtyYWpvd2VnbyBSZWplc3RydSBTYWRvd2VnbyAtIEtSUyAxMDE4ODIg
-fCBOSVAgOTU3LTA3LTUyLTMxNiB8IEthcGl0YWwgemFrbGFkb3d5IDIwMC4wMDAgUExOLgpTcG9s
-a2Egb3N3aWFkY3phLCB6ZSBwb3NpYWRhIHN0YXR1cyBkdXplZ28gcHJ6ZWRzaWViaW9yY3kgdyBy
-b3p1bWllbml1IHVzdGF3eSB6IGRuaWEgOCBtYXJjYSAyMDEzIHIuIG8gcHJ6ZWNpd2R6aWFsYW5p
-dSBuYWRtaWVybnltIG9wb3puaWVuaW9tIHcgdHJhbnNha2NqYWNoIGhhbmRsb3d5Y2guCgpUYSB3
-aWFkb21vc2Mgd3JheiB6IHphbGFjem5pa2FtaSBqZXN0IHByemV6bmFjem9uYSBkbGEgb2tyZXNs
-b25lZ28gYWRyZXNhdGEgaSBtb3plIHphd2llcmFjIGluZm9ybWFjamUgcG91Zm5lLiBXIHJhemll
-IHByenlwYWRrb3dlZ28gb3RyenltYW5pYSB0ZWogd2lhZG9tb3NjaSwgcHJvc2lteSBvIHBvd2lh
-ZG9taWVuaWUgbmFkYXdjeSBvcmF6IHRyd2FsZSBqZWogdXN1bmllY2llOyBqYWtpZWtvbHdpZWsg
-cHJ6ZWdsYWRhbmllIGx1YiByb3pwb3dzemVjaG5pYW5pZSBqZXN0IHphYnJvbmlvbmUuClRoaXMg
-ZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG1hdGVy
-aWFsIGZvciB0aGUgc29sZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJlY2lwaWVudChzKS4gSWYgeW91
-IGFyZSBub3QgdGhlIGludGVuZGVkIHJlY2lwaWVudCwgcGxlYXNlIGNvbnRhY3QgdGhlIHNlbmRl
-ciBhbmQgZGVsZXRlIGFsbCBjb3BpZXM7IGFueSByZXZpZXcgb3IgZGlzdHJpYnV0aW9uIGJ5IG90
-aGVycyBpcyBzdHJpY3RseSBwcm9oaWJpdGVkLgo=
+This series collects a set of correctness fixes, cleanups and feature
+additions across the NXP DPAA bus, net, mempool and DMA drivers.
+
+1. Bus/fman infrastructure cleanups (patches 01, 02, 12)
+   - bus/dpaa: refine fman naming and fix global scope
+   - bus/dpaa: scan max BPID from DTS
+   - bus/dpaa: improve log macro and fix bus detection
+
+2. Process-type guards (patch 03)
+   - drivers: add process-type guards to prevent segfaults in secondary
+
+3. FQ shutdown hardening (patches 04-08)
+   - bus/dpaa: define helpers for qman channel and wq
+   - bus/dpaa: shutdown DPAA FQ by fq descriptor
+   - bus/dpaa: improve FQ shutdown with channel validation
+   - bus/dpaa: enhance DPAA FQ shutdown
+   - bus/dpaa: add DPAA cgrid cleanup support
+
+4. net/dpaa improvements (patches 09, 11, 13)
+   - net/dpaa: add ONIC port checks
+   - net/dpaa: optimize FM deconfig
+   - net/dpaa: optimize FMC MAC type parsing
+
+5. Statistics (patch 10)
+   - drivers: add BMI Tx statistics
+
+6. mempool/dpaa (patches 14-15)
+   - drivers: optimize DPAA multi-entry buffer pool operations
+   - drivers: release DPAA bpid on driver destructor
+
+7. dma/dpaa (patch 16)
+   - dma/dpaa: add SG data validation and ERR050757 fix
+
+v7 changes:
+- Drop three net/dpaa patches from v6 that need further review:
+  "net/dpaa: clean Tx confirmation FQ on device stop",
+  "net/dpaa: remove redundant FQ shutdown from Rx queue setup",
+  "net/dpaa: report error on using deferred start".
+- Rebased onto 26.07-rc2.
+
+v6 changes:
+- Fix bman_release_fast() in patch 14: replace rte_memcpy() on the
+  small bm_bufs[] stack array with memcpy(); the SIMD implementation
+  of rte_memcpy reads in 32/64-byte chunks and triggers
+  -Warray-bounds with GCC 15 / ASAN builds on the 64-byte array.
+  memcpy() is correct here as this is a local stack buffer with no
+  DMA or multi-process constraints.
+
+v5 changes:
+- Rebased onto current upstream main; resolved conflict in
+  drivers/crypto/dpaa_sec/dpaa_sec.c where upstream removed the
+  cryptodev_name[] local variable and snprintf() call in
+  cryptodev_dpaa_sec_probe() -- patch 03 now uses dpaa_dev->name
+  directly in rte_cryptodev_pmd_create().
+- Resolved conflict in drivers/net/dpaa/dpaa_ethdev.c where upstream
+  removed rte_dpaa_device.eth_dev -- patch 03 now uses
+  rte_eth_dev_allocated() to look up the Ethernet device by name.
+
+v4 changes:
+- Fix dpaa_bus_dev_compare() to return the strncmp result (previously
+  always returned 0, breaking device matching).
+- Remove the dead get_tx_port_type() function that triggered a clang
+  -Wunused-function CI failure.
+- Guard all dpaa_fm_deconfig() call sites against NULL port_handle to
+  prevent a NULL dereference on partially initialised interfaces.
+- Move the penv variable declaration in dpaa_qdma_init() to the point of
+  use (C99 inline), fixing a spurious -Wunused-variable warning during
+  bisect of earlier patches in the series.
+
+Gagandeep Singh (2):
+  bus/dpaa: enhance DPAA FQ shutdown
+  dma/dpaa: add SG data validation and ERR050757 fix
+
+Hemant Agrawal (2):
+  net/dpaa: optimize FM deconfig
+  bus/dpaa: improve log macro and fix bus detection
+
+Jun Yang (10):
+  bus/dpaa: refine fman naming and fix global scope
+  bus/dpaa: scan max BPID from DTS
+  bus/dpaa: define helpers for qman channel and wq
+  bus/dpaa: shutdown DPAA FQ by fq descriptor
+  bus/dpaa: improve FQ shutdown with channel validation
+  bus/dpaa: add DPAA cgrid cleanup support
+  drivers: add BMI Tx statistics
+  net/dpaa: optimize FMC MAC type parsing
+  drivers: optimize DPAA multi-entry buffer pool operations
+  drivers: release DPAA bpid on driver destructor
+
+Prashant Gupta (1):
+  drivers: add process-type guards for secondary process
+
+Vanshika Shukla (1):
+  net/dpaa: add ONIC port checks
+
+ drivers/bus/dpaa/base/fman/fman.c         |  23 ++--
+ drivers/bus/dpaa/base/fman/fman_hw.c      | 108 +++++++++---------
+ drivers/bus/dpaa/base/qbman/bman.c        |  59 ++++------
+ drivers/bus/dpaa/base/qbman/bman_driver.c |  48 +++++---
+ drivers/bus/dpaa/base/qbman/qman.c        | 113 +++++++++++--------
+ drivers/bus/dpaa/base/qbman/qman.h        |  23 +++-
+ drivers/bus/dpaa/base/qbman/qman_driver.c |  29 ++++-
+ drivers/bus/dpaa/dpaa_bus.c               |  12 +-
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c  |   4 +
+ drivers/bus/dpaa/include/fman.h           |  30 ++++-
+ drivers/bus/dpaa/include/fsl_bman.h       |  49 ++++++--
+ drivers/bus/dpaa/include/fsl_qman.h       |  22 +++-
+ drivers/crypto/dpaa_sec/dpaa_sec.c        |   3 -
+ drivers/dma/dpaa/dpaa_qdma.c              | 102 +++++++++++++----
+ drivers/mempool/dpaa/dpaa_mempool.c       |  75 +++++++++++--
+ drivers/mempool/dpaa/dpaa_mempool.h       |   3 +-
+ drivers/net/dpaa/dpaa_ethdev.c            | 111 +++++++++++++++----
+ drivers/net/dpaa/dpaa_ethdev.h            |  22 +++-
+ drivers/net/dpaa/dpaa_flow.c              | 129 ++++++++++++----------
+ drivers/net/dpaa/dpaa_flow.h              |   7 +-
+ drivers/net/dpaa/dpaa_fmc.c               |  73 +++++++-----
+ 21 files changed, 697 insertions(+), 348 deletions(-)
+
+-- 
+2.25.1
 
