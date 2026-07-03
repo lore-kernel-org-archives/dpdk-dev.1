@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A93C43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 12:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8484DC43458
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 12:51:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 55F0940BA4;
-	Fri,  3 Jul 2026 14:50:12 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 5ED4440B97
- for <dev@dpdk.org>; Fri,  3 Jul 2026 14:50:10 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 436B41A001F;
- Fri,  3 Jul 2026 14:50:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D3C240B91;
+	Fri,  3 Jul 2026 14:50:14 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 840FF40B9F
+ for <dev@dpdk.org>; Fri,  3 Jul 2026 14:50:11 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 69BE5200017;
+ Fri,  3 Jul 2026 14:50:11 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C19C1A0004;
- Fri,  3 Jul 2026 14:50:10 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 33F58200006;
+ Fri,  3 Jul 2026 14:50:11 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9B188180004C;
- Fri,  3 Jul 2026 20:50:08 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id AE63D180007B;
+ Fri,  3 Jul 2026 20:50:09 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	david.marchand@redhat.com,
 	dev@dpdk.org
-Subject: [PATCH v7 12/16] bus/dpaa: improve log macro and fix bus detection
-Date: Fri,  3 Jul 2026 18:19:46 +0530
-Message-Id: <20260703124950.1895871-13-hemant.agrawal@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v7 13/16] net/dpaa: optimize FMC MAC type parsing
+Date: Fri,  3 Jul 2026 18:19:47 +0530
+Message-Id: <20260703124950.1895871-14-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260703124950.1895871-1-hemant.agrawal@nxp.com>
 References: <20260702053359.3243907-1-hemant.agrawal@nxp.com>
@@ -48,101 +49,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace DPAA_BUS_LOG(LEVEL, ...) calls with shorthand macros
-(DPAA_BUS_INFO, DPAA_BUS_ERR, DPAA_BUS_WARN, DPAA_BUS_DEBUG) for
-consistency across the driver.
+From: Jun Yang <jun.yang@nxp.com>
 
-Make dpaa_bus_dev_compare() a pure comparator: move the sysfs path
-check, dpaa_bus.detected assignment, and pthread_key_create() call
-back to rte_dpaa_bus_scan() where they belong. Having side effects
-in a comparator causes incorrect behavior when the function is called
-multiple times -- it returns 0 (match) for all calls after the first.
+For ls104xa, MAC9 and MAC10's type could be either of 10G/2.5G/1G
+up to serdes configuration, MAC index should be identified by
+port name instead of parsing MAC type and port number.
 
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/dpaa/base/fman/fman.c |  9 ++++-----
- drivers/bus/dpaa/dpaa_bus.c       | 12 ++++++------
- 2 files changed, 10 insertions(+), 11 deletions(-)
+ drivers/net/dpaa/dpaa_fmc.c | 73 ++++++++++++++++++++++---------------
+ 1 file changed, 44 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/fman/fman.c b/drivers/bus/dpaa/base/fman/fman.c
-index 55f466d751..67f77265ca 100644
---- a/drivers/bus/dpaa/base/fman/fman.c
-+++ b/drivers/bus/dpaa/base/fman/fman.c
-@@ -119,7 +119,7 @@ _fman_init(const struct device_node *fman_node, int fd)
- 	ip_rev_1 = in_be32((uint8_t *)fman->ccsr_vir + FMAN_IP_REV_1);
- 	fman->ip_rev = ip_rev_1 >> FMAN_IP_REV_1_MAJOR_SHIFT;
- 	fman->ip_rev &=	FMAN_IP_REV_1_MAJOR_MASK;
--	DPAA_BUS_LOG(NOTICE, "FMan version is 0x%02x", fman->ip_rev);
-+	DPAA_BUS_INFO("FMan version is 0x%02x", fman->ip_rev);
- 
- 	if (fman->ip_rev >= FMAN_V3) {
- 		/*
-@@ -795,8 +795,7 @@ fman_if_init(const struct device_node *dpa_node, int fd)
- 	fman_if_vsp_init(__if);
- 
- 	/* Parsing of the network interface is complete, add it to the list */
--	DPAA_BUS_LOG(DEBUG, "Found %s, Tx Channel = %x, FMAN = %x,"
--		    "Port ID = %x",
-+	DPAA_BUS_DEBUG("Found %s, Tx Channel = %x, FMAN = %x, Port ID = %x",
- 		    dname, __if->__if.tx_channel_id, __if->__if.fman->idx,
- 		    __if->__if.mac_idx);
- 
-@@ -1109,14 +1108,14 @@ fman_init(void)
- 
- 	fd = open(FMAN_DEVICE_PATH, O_RDWR);
- 	if (unlikely(fd < 0)) {
--		DPAA_BUS_LOG(ERR, "Unable to open %s: %s", FMAN_DEVICE_PATH, strerror(errno));
-+		DPAA_BUS_ERR("Unable to open %s: %s", FMAN_DEVICE_PATH, strerror(errno));
- 		return fd;
- 	}
- 	fman_ccsr_map_fd = fd;
- 
- 	parent_node = of_find_compatible_node(NULL, NULL, "fsl,dpaa");
- 	if (!parent_node) {
--		DPAA_BUS_LOG(ERR, "Unable to find fsl,dpaa node");
-+		DPAA_BUS_ERR("Unable to find fsl,dpaa node");
- 		return -ENODEV;
- 	}
- 
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 54779f82f7..73a7e73a0b 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -54,6 +54,9 @@
- /* At present we allow up to 4 push mode queues as default - as each of
-  * this queue need dedicated portal and we are short of portals.
+diff --git a/drivers/net/dpaa/dpaa_fmc.c b/drivers/net/dpaa/dpaa_fmc.c
+index 7dc42f6e23..3034f534a5 100644
+--- a/drivers/net/dpaa/dpaa_fmc.c
++++ b/drivers/net/dpaa/dpaa_fmc.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017-2023 NXP
++ * Copyright 2017-2026 NXP
   */
-+#define DPAA_DEV_PATH1 "/sys/devices/platform/soc/soc:fsl,dpaa"
-+#define DPAA_DEV_PATH2 "/sys/devices/platform/fsl,dpaa"
-+
- #define DPAA_MAX_PUSH_MODE_QUEUE 8
- #define DPAA_DEFAULT_PUSH_MODE_QUEUE 4
  
-@@ -667,8 +670,6 @@ static int rte_dpaa_setup_intr(struct rte_intr_handle *intr_handle)
- 	return 0;
+ /* System headers */
+@@ -204,6 +204,36 @@ struct fmc_model_t {
+ 
+ struct fmc_model_t *g_fmc_model;
+ 
++static int
++dpaa_port_fmc_get_idx_from_name(const char *name)
++{
++	const char *found;
++	int idx_str_start = -1, idx;
++
++#define FMC_PORT_NAME_MAC "MAC/"
++#define FMC_PORT_NAME_OFFLINE "OFFLINE/"
++
++	found = strstr(name, FMC_PORT_NAME_MAC);
++	if (!found) {
++		found = strstr(name, FMC_PORT_NAME_OFFLINE);
++		if (found)
++			idx_str_start = strlen(FMC_PORT_NAME_OFFLINE);
++	} else {
++		idx_str_start = strlen(FMC_PORT_NAME_MAC);
++	}
++
++	if (!found) {
++		DPAA_PMD_ERR("Invalid fmc port name: %s", name);
++		return -EINVAL;
++	}
++
++	idx = atoi(&found[idx_str_start]);
++
++	DPAA_PMD_INFO("MAC index of %s is %d", name, idx);
++
++	return idx;
++}
++
+ static int
+ dpaa_port_fmc_port_parse(struct fman_if *fif,
+ 	const struct fmc_model_t *fmc_model,
+@@ -211,7 +241,10 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
+ {
+ 	int current_port = fmc_model->apply_order[apply_idx].index;
+ 	const fmc_port *pport = &fmc_model->port[current_port];
+-	uint32_t num;
++	int num = dpaa_port_fmc_get_idx_from_name(pport->name);
++
++	if (num < 0)
++		return num;
+ 
+ 	if (pport->type == e_FM_PORT_TYPE_OH_OFFLINE_PARSING &&
+ 	    pport->number == fif->mac_idx &&
+@@ -219,40 +252,22 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
+ 	     fif->mac_type == fman_onic))
+ 		return current_port;
+ 
+-	if (fif->mac_type == fman_mac_1g) {
+-		if (pport->type != e_FM_PORT_TYPE_RX)
+-			return -ENODEV;
+-		num = pport->number + DPAA_1G_MAC_START_IDX;
+-		if (fif->mac_idx == num)
+-			return current_port;
+-
++	if (fif->mac_type == fman_mac_1g &&
++		pport->type != e_FM_PORT_TYPE_RX)
+ 		return -ENODEV;
+-	}
+-
+-	if (fif->mac_type == fman_mac_2_5g) {
+-		if (pport->type != e_FM_PORT_TYPE_RX_2_5G)
+-			return -ENODEV;
+-		num = pport->number + DPAA_2_5G_MAC_START_IDX;
+-		if (fif->mac_idx == num)
+-			return current_port;
+ 
++	if (fif->mac_type == fman_mac_2_5g &&
++		pport->type != e_FM_PORT_TYPE_RX_2_5G)
+ 		return -ENODEV;
+-	}
+-
+-	if (fif->mac_type == fman_mac_10g) {
+-		if (pport->type != e_FM_PORT_TYPE_RX_10G)
+-			return -ENODEV;
+-		num = pport->number + DPAA_10G_MAC_START_IDX;
+-		if (fif->mac_idx == num)
+-			return current_port;
+ 
++	if (fif->mac_type == fman_mac_10g &&
++		pport->type != e_FM_PORT_TYPE_RX_10G)
+ 		return -ENODEV;
+-	}
+ 
+-	DPAA_PMD_ERR("Invalid MAC(mac_idx=%d) type(%d)",
+-		fif->mac_idx, fif->mac_type);
++	if (fif->mac_idx == num)
++		return current_port;
+ 
+-	return -EINVAL;
++	return -ENODEV;
  }
  
--#define DPAA_DEV_PATH1 "/sys/devices/platform/soc/soc:fsl,dpaa"
--#define DPAA_DEV_PATH2 "/sys/devices/platform/fsl,dpaa"
- 
  static int
- rte_dpaa_bus_scan(void)
-@@ -715,12 +716,11 @@ rte_dpaa_bus_scan(void)
- 		dpaa_bus.svr_ver = 0;
- 	}
- 	if (dpaa_bus.svr_ver == SVR_LS1046A_FAMILY) {
--		DPAA_BUS_LOG(INFO, "This is LS1046A family SoC.");
-+		DPAA_BUS_INFO("This is LS1046A family SoC.");
- 	} else if (dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
--		DPAA_BUS_LOG(INFO, "This is LS1043A family SoC.");
-+		DPAA_BUS_INFO("This is LS1043A family SoC.");
- 	} else {
--		DPAA_BUS_LOG(WARNING,
--			"This is Unknown(%08x) DPAA1 family SoC.",
-+		DPAA_BUS_WARN("This is Unknown(%08x) DPAA1 family SoC.",
- 			dpaa_bus.svr_ver);
- 	}
- 
 -- 
 2.25.1
 
