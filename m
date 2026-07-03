@@ -2,74 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4B8C43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 02:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37815C43458
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 04:07:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D52FB40291;
-	Fri,  3 Jul 2026 04:28:21 +0200 (CEST)
-Received: from fout-b1-smtp.messagingengine.com
- (fout-b1-smtp.messagingengine.com [202.12.124.144])
- by mails.dpdk.org (Postfix) with ESMTP id 842C040288
- for <dev@dpdk.org>; Fri,  3 Jul 2026 04:28:20 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id 654431D000B7;
- Thu,  2 Jul 2026 22:28:19 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Thu, 02 Jul 2026 22:28:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm2; t=1783045699; x=1783132099; bh=QOhT35Ni3SmWyAOTIALPY
- YUobQD9K/mc4D188Bg9+t0=; b=mRH38fELfK451paoiOBu7L2V+W7HpKGZPuGsH
- aq4Op2fc3Ngh5Xg9u97YRCaYQF9kRyvNZ8HTQs0aFodYccOkaMDeMCOPl1CVDYPg
- EGNmV5UlrFdYGeqietS8R9j405CPozY0YLT5zzLTj0Z6WEkuWddFDk/M/ZHUCikR
- B1nazf+2jIO9dHEBp1Jd1PqP4oJS1GBQZmEIUtfAs0yzVaIv187hB6zsZFmH/9C3
- oPpqXsP5hIMtstCrnwhZhXm0Shfm3llUl6KTD2KY2/4WkUDsMZTu6SUnzNDOnrS9
- +9CKsPL/YbUhyk0wgm3A2X18ILp1bw4BqaKdCYtxnVa8gOAlA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
- 1783045699; x=1783132099; bh=QOhT35Ni3SmWyAOTIALPYYUobQD9K/mc4D1
- 88Bg9+t0=; b=dHLY7W2amYqKA5oxdKiL3JBGzRSaf3vx2ww4PTdZ1WPvic6LmLh
- O8wdGU6zqWe+XsiY01DtMHdD8p3PiRYsf6DaIOjOZQi1OdNMUp9DuQc7aMBn83O7
- 5opO/bceUdkPx+CXC5OEVKEMPhjsrK1jKUxlllcCITtm+ZAViJE9dxY2j4RpRW4f
- NSl1YgFD1abh+zcmzZi0N0GoZcz268wa77+4dv1mxM4fb8By9u2Qk7eel6Oey7Mz
- pAG/pd8mMhFSDhwg5eqZi6WtnhYJhxSu4PzFMQYUsMedFctYZBr8ZqhI55f2P2JM
- 1Vs2pwVDW4KF/61EDdTBliXY0mBgxAPkr6w==
-X-ME-Sender: <xms:Qh5Haui-uzDnJwSt4g7ixXWE30vkQDIwkRs2IYBpHUlruKpFTikF8w>
- <xme:Qh5HajWk7DgcZKR7paiKgG1dlYStTnMZYQDF7LcXlHRYw3Hf_Y_7Uf_hjKpbIWHvx
- WZq1oiNZEBi7qnMnjY2X8bJHU9iYE3h1O5KMSvuWWEf-XcU954NEQ>
-X-ME-Received: <xmr:Qh5HalM7ugoYOEWvxVT4xc7CddCcV1RgqIKqiqdAKyqLHYRLwlGGbDXMgTSFgHnotTphs8S1rAXfZjgmtGaZa3FqubCTcww>
-X-ME-Proxy-Cause: dmFkZTFpWqLeI7EFGgGAR0vlCu5QacLfl+DLr86oWuWQgcdAOakkPHVH/rhmTTUG5uUJpR
- grrlK1zkIrAUUqxivzoYc9QYxLt3G2vxufQBCr9+q7Szfr4YjzZISp7sq7jNy5jQq28iVS
- KkYpsv5Xtb9UmVt2B9Zq6wC3+qArqHr80DSBS6BjtGLd0G9PLf72ixxE2BMQ4ZUOPDwfDi
- VD/jIdpX+RFmQwcN4WvQS7z1u2wwdviH/VNXCwxbz8FbxJvwJzK6BMq5ormOi3wUZDOh8K
- r1/XbK/Y5t3ZEcS2yVxxlnZU5cnsndw4wpjm2pse3Bb7yIFQJC+F1pwtf+rHbLYS+eE+Da
- z1UJYgll5l/6CANFiNzChjB7JMNrDUKbqClv7aVlvOJCud+We5G41aNi5ZUUi0EyNwZmZ+
- xoFJmrqbV2fZ/Meo0aBST1VX96s9WZSTza+UBV7Iy0vYfvhlEIWb5MYWZ7bXj8GYdn4ISG
- r7AUvD3xnUcNf4PHaM2O0YqfLGz8O/ysBIt8DNs7EWSa+1W+4YjpNOUVs9aQfTNmR2ur/0
- VZ63+uDyNAYD9DPeU4uFmeBwIMxxA2qElbZfAgSeoK3fvNv9+q7uUB6lADhEnuIHAnE7+d
- qSqiCI09Ti78mVFSyMIbtIfMkbRbIXQQXHMXZswffpjcPXWjinZT6x/SinyQ
-X-ME-Proxy: <xmx:Qh5HavbL7T7JDwdnDjU_PtJOsOQlVAZHg0q6K___FxviZbO1-YjxUA>
- <xmx:Qh5HahrkxP-W-a37U7jdKRr5XwCheZR30q7NCmQDvMWFuFdMgCiCcA>
- <xmx:Qh5Harb-hogXMsoTuw1uXW2Jobmq-Vh5pLiSIvxbspetRafoMOkvLw>
- <xmx:Qh5HahRze3iHE2oS-Y84eBJ40tb2nusBK-nt2Iczrtzi5q47i93nKg>
- <xmx:Qx5HavASthIIg9dxXGuERngrHTQv3TtpxfxhuRAzZNHY3AhV12D49SCy>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 2 Jul 2026 22:28:18 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Marat Khalili <marat.khalili@huawei.com>
-Subject: [PATCH] test/bpf: remove validation tests from CI
-Date: Fri,  3 Jul 2026 04:27:37 +0200
-Message-ID: <20260703022738.2574548-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.54.0
+	by mails.dpdk.org (Postfix) with ESMTP id 1A132402D1;
+	Fri,  3 Jul 2026 06:07:13 +0200 (CEST)
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
+ [113.46.200.221])
+ by mails.dpdk.org (Postfix) with ESMTP id 26A8540291
+ for <dev@dpdk.org>; Fri,  3 Jul 2026 06:07:10 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=nEDOq9znT0ebNaBR4F25oq2q6oDZgsjr8zXFQowO/wE=;
+ b=ZPdTlt1mru4HmbZE9407+cZUiheEPP0Jb18GY+/t1BvW2ZudcP0PnhkpQs/W1D8u6X2aSzs0V
+ XnQOj8TV1bsRBcTmp+GHjXGSMqLBcKr4DUhcbKQzijY/ncp0wjvMy2YT5oL0derYX82tdZj1vmq
+ F0cObo9dKfcULsfnMLGy63s=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+ by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4gs0Mm68G5zRhQt;
+ Fri,  3 Jul 2026 11:57:56 +0800 (CST)
+Received: from kwepemo100005.china.huawei.com (unknown [7.202.195.212])
+ by mail.maildlp.com (Postfix) with ESMTPS id 5A4F140575;
+ Fri,  3 Jul 2026 12:07:06 +0800 (CST)
+Received: from [10.67.121.59] (10.67.121.59) by kwepemo100005.china.huawei.com
+ (7.202.195.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Fri, 3 Jul
+ 2026 12:07:05 +0800
+Message-ID: <64f3e01b-f8cd-4c94-9fa2-dfb3ce687bb1@huawei.com>
+Date: Fri, 3 Jul 2026 12:07:04 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] examples/l3fwd-power: fix uncore deinit for
+ non-legacy
+To: "Macnamara, Chris" <chris.macnamara@intel.com>,
+ <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
+ <fengchengwen@huawei.com>, <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, 
+ <john.mcnamara@intel.com>, <lihuisong@huawei.com>
+References: <20260526081138.1434947-1-lihuisong@huawei.com>
+ <20260526081138.1434947-2-lihuisong@huawei.com>
+ <6df97f76-27d7-49f2-8d23-30601c12ca0a@intel.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <6df97f76-27d7-49f2-8d23-30601c12ca0a@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.121.59]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemo100005.china.huawei.com (7.202.195.212)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,281 +61,149 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The new tests for BPF validation are triggering a strange issue
-in GitHub Action: the last tests are killed by signal 7 SIGBUS.
+Hi Macnamara,
 
-The series fixing a lot of BPF issues was merged
-but the related test has to be removed from the fast tests suite
-which runs in some CI jobs.
+Thanks for your review.
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- app/test/test_bpf_validate.c | 58 ++++++++++++++++++------------------
- 1 file changed, 29 insertions(+), 29 deletions(-)
 
-diff --git a/app/test/test_bpf_validate.c b/app/test/test_bpf_validate.c
-index 3f6747eaf6..fafd5d27f5 100644
---- a/app/test/test_bpf_validate.c
-+++ b/app/test/test_bpf_validate.c
-@@ -1291,7 +1291,7 @@ test_alu64_add_k(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_add_k_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_add_k_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_add_k);
- 
- /* 64-bit addition of immediate to a pointer range. */
-@@ -1309,7 +1309,7 @@ test_alu64_add_k_pointer(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_add_k_pointer_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_add_k_pointer_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_add_k_pointer);
- 
- /* 64-bit addition of pointer to a pointer. */
-@@ -1327,7 +1327,7 @@ test_alu64_add_x_pointer_pointer(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_add_x_pointer_pointer_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_add_x_pointer_pointer_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_add_x_pointer_pointer);
- 
- /* 64-bit addition of scalar to a pointer. */
-@@ -1345,7 +1345,7 @@ test_alu64_add_x_pointer_scalar(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_add_x_pointer_scalar_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_add_x_pointer_scalar_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_add_x_pointer_scalar);
- 
- /* 64-bit addition of pointer to a scalar. */
-@@ -1363,7 +1363,7 @@ test_alu64_add_x_scalar_pointer(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_add_x_scalar_pointer_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_add_x_scalar_pointer_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_add_x_scalar_pointer);
- 
- /* 64-bit addition of scalar to a scalar. */
-@@ -1381,7 +1381,7 @@ test_alu64_add_x_scalar_scalar(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_add_x_scalar_scalar_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_add_x_scalar_scalar_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_add_x_scalar_scalar);
- 
- /* 64-bit bitwise AND between a scalar range and immediate. */
-@@ -1398,7 +1398,7 @@ test_alu64_and_k(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_and_k_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_and_k_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_and_k);
- 
- /* 64-bit division and modulo of UINT64_MAX*2/3. */
-@@ -1442,7 +1442,7 @@ test_alu64_div_mod_big_constant(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_div_mod_big_constant_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_div_mod_big_constant_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_div_mod_big_constant);
- 
- /* 64-bit division and modulo of UINT64_MAX/3..UINT64_MAX*2/3 by a constant. */
-@@ -1487,7 +1487,7 @@ test_alu64_div_mod_big_range(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_div_mod_big_range_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_div_mod_big_range_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_div_mod_big_range);
- 
- /* 64-bit division and modulo of INT64_MIN by -1. */
-@@ -1533,7 +1533,7 @@ test_alu64_div_mod_overflow(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_div_mod_overflow_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_div_mod_overflow_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_div_mod_overflow);
- 
- /* 64-bit left shift by 63. */
-@@ -1550,7 +1550,7 @@ test_alu64_lsh_63(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_lsh_63_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_lsh_63_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_lsh_63);
- 
- /* 64-bit multiplication of constant and immediate with overflow. */
-@@ -1567,7 +1567,7 @@ test_alu64_mul_k_overflow(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_mul_k_overflow_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_mul_k_overflow_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_mul_k_overflow);
- 
- /* 64-bit mul of small scalar range and immediate. */
-@@ -1584,7 +1584,7 @@ test_alu64_mul_k_range_small(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_mul_k_range_small_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_mul_k_range_small_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_mul_k_range_small);
- 
- /* 64-bit negation when interval first element is INT64_MIN. */
-@@ -1618,7 +1618,7 @@ test_alu64_neg_int64min_first(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_neg_int64min_first_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_neg_int64min_first_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_neg_int64min_first);
- 
- /* 64-bit negation when interval last element is INT64_MIN. */
-@@ -1647,7 +1647,7 @@ test_alu64_neg_int64min_last(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_neg_int64min_last_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_neg_int64min_last_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_neg_int64min_last);
- 
- /* 64-bit negation when interval first element is zero. */
-@@ -1681,7 +1681,7 @@ test_alu64_neg_zero_first(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_neg_zero_first_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_neg_zero_first_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_neg_zero_first);
- 
- /* 64-bit negation when interval last element is zero. */
-@@ -1710,7 +1710,7 @@ test_alu64_neg_zero_last(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_neg_zero_last_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_neg_zero_last_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_neg_zero_last);
- 
- /* 64-bit bitwise OR between a positive scalar range and negative immediate. */
-@@ -1727,7 +1727,7 @@ test_alu64_or_k_negative(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_or_k_negative_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_or_k_negative_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_or_k_negative);
- 
- /* 64-bit bitwise OR between a positive scalar range and positive immediate. */
-@@ -1744,7 +1744,7 @@ test_alu64_or_k_positive(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_or_k_positive_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_or_k_positive_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_or_k_positive);
- 
- /* 64-bit difference between two negative ranges.. */
-@@ -1761,7 +1761,7 @@ test_alu64_sub_x_src_signed_max_zero(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_sub_x_src_signed_max_zero_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_sub_x_src_signed_max_zero_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_sub_x_src_signed_max_zero);
- 
- /* 64-bit bitwise XOR between a negative scalar range and zero immediate. */
-@@ -1778,7 +1778,7 @@ test_alu64_xor_k_negative(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_alu64_xor_k_negative_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_alu64_xor_k_negative_autotest, NOHUGE_OK, ASAN_OK,
- 	test_alu64_xor_k_negative);
- 
- /* Jump if greater than immediate. */
-@@ -1796,7 +1796,7 @@ test_jmp64_jeq_k(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_jmp64_jeq_k_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_jmp64_jeq_k_autotest, NOHUGE_OK, ASAN_OK,
- 	test_jmp64_jeq_k);
- 
- /* Jump if signed less than another register. */
-@@ -1814,7 +1814,7 @@ test_jmp64_jslt_x(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_jmp64_jslt_x_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_jmp64_jslt_x_autotest, NOHUGE_OK, ASAN_OK,
- 	test_jmp64_jslt_x);
- 
- /* Jump on ordering comparisons with potential bound overflow. */
-@@ -1863,7 +1863,7 @@ test_jmp64_ordering_overflow(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_jmp64_ordering_overflow_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_jmp64_ordering_overflow_autotest, NOHUGE_OK, ASAN_OK,
- 	test_jmp64_ordering_overflow);
- 
- /* Jump on ordering comparisons between two ranges. */
-@@ -2022,7 +2022,7 @@ test_jmp64_ordering_ranges(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_jmp64_ordering_ranges_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_jmp64_ordering_ranges_autotest, NOHUGE_OK, ASAN_OK,
- 	test_jmp64_ordering_ranges);
- 
- /* Jump on ordering comparisons with singleton inside the range. */
-@@ -2080,7 +2080,7 @@ test_jmp64_ordering_singleton_inside(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_jmp64_ordering_singleton_inside_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_jmp64_ordering_singleton_inside_autotest, NOHUGE_OK, ASAN_OK,
- 	test_jmp64_ordering_singleton_inside);
- 
- /* Jump on ordering comparisons with singleton outside the range. */
-@@ -2175,7 +2175,7 @@ test_jmp64_ordering_singleton_outside(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_jmp64_ordering_singleton_outside_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_jmp64_ordering_singleton_outside_autotest, NOHUGE_OK, ASAN_OK,
- 	test_jmp64_ordering_singleton_outside);
- 
- /* Jump on ordering comparisons with ranges "touching" each other. */
-@@ -2249,7 +2249,7 @@ test_jmp64_ordering_touching(void)
- 	return TEST_SUCCESS;
- }
- 
--REGISTER_FAST_TEST(bpf_validate_jmp64_ordering_touching_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_jmp64_ordering_touching_autotest, NOHUGE_OK, ASAN_OK,
- 	test_jmp64_ordering_touching);
- 
- /* 64-bit load from heap (should be set to unknown). */
-@@ -2267,5 +2267,5 @@ test_mem_ldx_dw_heap(void)
- 	});
- }
- 
--REGISTER_FAST_TEST(bpf_validate_mem_ldx_dw_heap_autotest, NOHUGE_OK, ASAN_OK,
-+REGISTER_ATTIC_TEST(bpf_validate_mem_ldx_dw_heap_autotest, NOHUGE_OK, ASAN_OK,
- 	test_mem_ldx_dw_heap);
--- 
-2.54.0
+On 7/2/2026 7:06 PM, Macnamara, Chris wrote:
+>> Uncore resources were not being deinitialized in non-legacy modes (such
+>> as pmd-mgmt), causing the uncore frequency not to return to its original
+>> value after the application exited.
+>>
+>> The root cause is that uncore initialization can be performed for all
+>> modes, whereas the deinitialization logic is incorrectly restricted
+>> to legacy mode only. So do the deinitialization of uncore on all app
+>> modes.
+>>
+>> Fixes: 10db2a5b8724 ("examples/l3fwd-power: add options for uncore 
+>> frequency")
+>> Cc: stable@dpdk.org
+>>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>> ---
+>>   examples/l3fwd-power/main.c | 66 ++++++++++++++++++++-----------------
+>>   1 file changed, 35 insertions(+), 31 deletions(-)
+>>
+>> diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
+>> index 02ec17d799..1122aeb930 100644
+>> --- a/examples/l3fwd-power/main.c
+>> +++ b/examples/l3fwd-power/main.c
+>> @@ -2271,28 +2271,31 @@ init_power_library(void)
+>>       unsigned int lcore_id;
+>>       int ret = 0;
+>>   -    RTE_LCORE_FOREACH(lcore_id) {
+>> -        /* init power management library */
+>> -        ret = rte_power_init(lcore_id);
+>> -        if (ret) {
+>> -            RTE_LOG(ERR, L3FWD_POWER,
+>> -                "Library initialization failed on core %u\n",
+>> -                lcore_id);
+>> -            return ret;
+>> -        }
+>> -        /* we're not supporting the VM channel mode */
+>> -        env = rte_power_get_env();
+>> -        if (env != PM_ENV_ACPI_CPUFREQ &&
+>> -                env != PM_ENV_PSTATE_CPUFREQ &&
+>> -                env != PM_ENV_AMD_PSTATE_CPUFREQ &&
+>> -                env != PM_ENV_CPPC_CPUFREQ) {
+>> -            RTE_LOG(ERR, L3FWD_POWER,
+>> -                "Only ACPI and PSTATE mode are supported\n");
+>> -            return -1;
+>> +    /* only legacy mode relies on the initialization of cpufreq 
+>> library */
+>> +    if (app_mode == APP_MODE_LEGACY) {
+>> +        RTE_LCORE_FOREACH(lcore_id) {
+>> +            /* init power management library */
+>> +            ret = rte_power_init(lcore_id);
+>> +            if (ret) {
+>> +                RTE_LOG(ERR, L3FWD_POWER,
+>> +                    "Library initialization failed on core %u\n",
+>> +                    lcore_id);
+>> +                return ret;
+>> +            }
+>> +            /* we're not supporting the VM channel mode */
+>> +            env = rte_power_get_env();
+>> +            if (env != PM_ENV_ACPI_CPUFREQ &&
+>> +                    env != PM_ENV_PSTATE_CPUFREQ &&
+>> +                    env != PM_ENV_AMD_PSTATE_CPUFREQ &&
+>> +                    env != PM_ENV_CPPC_CPUFREQ) {
+>> +                RTE_LOG(ERR, L3FWD_POWER,
+>> +                    "Only ACPI and PSTATE mode are supported\n");
+>> +                return -1;
+>> +            }
+>>           }
+>>       }
+>>   -    if (cpu_resume_latency != -1) {
+>> +    if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
+>>           RTE_LCORE_FOREACH(lcore_id) {
+>>               /* Back old CPU resume latency. */
+>>               ret = rte_power_qos_get_cpu_resume_latency(lcore_id);
+>> @@ -2329,14 +2332,16 @@ deinit_power_library(void)
+>>       unsigned int lcore_id, max_pkg, max_die, die, pkg;
+>>       int ret = 0;
+>>   -    RTE_LCORE_FOREACH(lcore_id) {
+>> -        /* deinit power management library */
+>> -        ret = rte_power_exit(lcore_id);
+>> -        if (ret) {
+>> -            RTE_LOG(ERR, L3FWD_POWER,
+>> -                "Library deinitialization failed on core %u\n",
+>> -                lcore_id);
+>> -            return ret;
+>> +    if (app_mode == APP_MODE_LEGACY) {
+>> +        RTE_LCORE_FOREACH(lcore_id) {
+>> +            /* deinit power management library */
+>> +            ret = rte_power_exit(lcore_id);
+>> +            if (ret) {
+>> +                RTE_LOG(ERR, L3FWD_POWER,
+>> +                    "Library deinitialization failed on core %u\n",
+>> +                    lcore_id);
+>> +                return ret;
+>> +            }
+>>           }
+>>       }
+>>   @@ -2360,7 +2365,7 @@ deinit_power_library(void)
+>>           }
+>>       }
+>>   -    if (cpu_resume_latency != -1) {
+>> +    if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
+>>           RTE_LCORE_FOREACH(lcore_id) {
+>>               /* Restore the original value. */
+>>               rte_power_qos_set_cpu_resume_latency(lcore_id,
+>
+> Agree there is an issue with uncore deinit.
+>
+> cpu_resume_latency & init_power_library: After this patch, 
+> cpu_resume_latency (for C-state PM QoS control) is gated behind 
+> APP_MODE_LEGACY even though it's orthogonal to the cpufreq library, so 
+> it's silently ignored in pmd-mgmt/interrupt modes. It’s used for C 
+> state management which applies in other modes such as interrupt mode.
+Yeah, so patch 2/5 lets PM QoS can be used for all mode.
+>
+> Also init_power_library() now has both its blocks legacy-guarded 
+> internally, the newly-unconditional call by removing APP_MODE_LEGACY 
+> to it is a no-op in non-legacy modes. This leaves the two functions 
+> inconsistent: init_power_library() does nothing outside legacy mode, 
+> whereas deinit_power_library() still has real work to do in every mode 
+> because of the uncore cleanup.
+Yes, use this method to deinitialize the uncore.
+Currently, the initialization of uncore is located in the parameter 
+parsing function, which lead to the inconsistent.
+>
+> Consider, keep the APP_MODE_LEGACY guard at the init call site as the 
+> init is truly legacy only or split the uncore teardown into its own 
+> deinit_uncore() so that deinit_power_library() stays strictly about 
+> cpufreq.
+This patch doesn't plan to change the original logical about uncore.
+The initialization or deinitialization of all power libs is completed in 
+the same function. It is good to user.
+And patch 4/5 is doing this.
 
+In addition, I think the initialization for power libs is a little 
+scattered in usage.
+I am thinking how to simply these initializations for user.
+For example, fill a configuration about power then call one power_init 
+ops to complete all initialization.
+Anyway, the current changes being made are also beneficial for this matter.
+>
+>
