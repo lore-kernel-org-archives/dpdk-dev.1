@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF7BC43458
-	for <dpdk-dev@archiver.kernel.org>; Sat,  4 Jul 2026 16:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21268C43458
+	for <dpdk-dev@archiver.kernel.org>; Sat,  4 Jul 2026 16:46:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F164402C6;
-	Sat,  4 Jul 2026 18:12:09 +0200 (CEST)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id E51474021F
- for <dev@dpdk.org>; Sat,  4 Jul 2026 18:12:07 +0200 (CEST)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-3817f800c8bso936268a91.1
- for <dev@dpdk.org>; Sat, 04 Jul 2026 09:12:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 24E0B4065A;
+	Sat,  4 Jul 2026 18:46:06 +0200 (CEST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 63799402C6
+ for <dev@dpdk.org>; Sat,  4 Jul 2026 18:46:04 +0200 (CEST)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-37e0a189b0bso1014024a91.1
+ for <dev@dpdk.org>; Sat, 04 Jul 2026 09:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1783181527;
- x=1783786327; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1783183563;
+ x=1783788363; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=pdH3iFZxbn8xK4YC0VpKnosblqwT6El8yEVtJ1+tPU8=;
- b=pUnkgwtluB9ZgS2phO53w0iBedrYsesT56P0cxvAoAxfZfZB5YiS5HJLP6rHNmZaJG
- s8yopTTB+slXdM3lHeYzIDKZq8WWhi0Qp0VhzcKrEnjoQaZlO167DIb9T5bunckRimLd
- c0GW804fRIxSLgQkxnzK1tDw7zy2l+pJLWFN0aZ/FQcDLc/j0w4YOjzdMhgQ8dEVg3Rh
- DQUMTaVHl1VRcn+HwPcjF0gXtgUmVL5no3vim/R6hNKh4xfDPSbXAVlqnJ+jJpo7txl1
- m4BXv8M21rMvkjq6ETM9mVJgYZNb7FqVuR0auegP+HnHptzyKdRO58RGzrwxsoVIczNE
- 8pJw==
+ bh=BMA565bQsNGhFUvTQoClY5WwJpHoQcIakf1/O0Y02IM=;
+ b=raM64yAowOLCZnd5B3C0K+2Wb6HRgpDz0r3yNf+BKuKE32oeG+zQvqa87PMnY1/+ro
+ UVV089A2HXPLnm81fFwewlm+dPcAUjcDsv48dGcpEx+C+KPiVwQvekTIy9+f65lRbSFf
+ eHRFTzU+e0h8qlqb3MTDyej1C6tMiW/koKgQlv06UyZLrM2Z1IZpJrwE/+Nq5+XHMyKD
+ N5+aGW1D5Az6qebNFjNGYNSfY46WUBzrEKZPhpGT525sUB97fpA3DXCRjPAo07XFng6/
+ vgzH6JwvLX8ObH1u+/i9XqqWHxySK07T4hSR7WmYR6W0GrUbZaeI7DAcqeIb6DfjbqiF
+ TWFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783181527; x=1783786327;
+ d=1e100.net; s=20251104; t=1783183563; x=1783788363;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=pdH3iFZxbn8xK4YC0VpKnosblqwT6El8yEVtJ1+tPU8=;
- b=FATNKHCXqSjAh5oIZcdotZEWB5T6dbWoXXJtcLdw6SonoSmufSBXx5eI8xddYkDFMj
- hwwOJbM8hrJK0L0EwAzqxLS4MdZ1FDcE3qDe6mTU/Hah5zf5ZoRRixVSTcqz3YgC5Dra
- b38T3y9PX/lWxg4vvmRKRXDe3GsJ3xZRLKaZWLh5IAADWIifHA8ARq00lwfpAg/CkkjW
- QH1IQWdCFjbDCj/osvoG7XlNGSr+mLM/K2RnskvUfelKoaDVeUtzfXC0hJfXGm2ZF6ZU
- wnU5QuJgIq4rfUqjzBGMQKrOHN4iCWl11G8P7OWXOtakHSYRO1NSEtNZcECRHjlKRqSc
- rX4A==
-X-Gm-Message-State: AOJu0YzVTrxHTuAlfpkzmmvGq3l/BjcxXkweC3+4F3RH/B+KqxyvPhNb
- d9s+jU+98sCGh+3SFmD5p5UPLwUCsi1wAsYzGKzsGBaMmQGEVWA+hLp1wzoKJcE1P5/AsQCxsAU
- GcPeP
-X-Gm-Gg: AfdE7cmlyPlOZ3l6d2vzVxYlqIE8NKjQcckY1cMNrE3PNHuDv43hLpCILePEyMsZ6NT
- oPs8y1ti7fJS7DzDJfRIAGDW/Dof1dTEqCWUAy12HPi7wjBi22L2nj+KM5ahnipK7oi4NpWqshD
- 7quDC5sGHwmZbmnjK2uapQZuJbt91D/XZmiXQScK9J/lAfwrPHJvJsXq2er9WRZsPqIzfzM2ztN
- R/E6AT0MQmYhG4T1We7W58IREV6hpPXZzr2Os3inQp8Cpbovwp/xIttnCqTqKifEwX428alWdgu
- XoFy5FB9adB2t/EZ86TIxT+9FAWF5ebd4BP5/gFFgUuIWOmc8MGHcWibYVXEZ1+2nZLSrqB9w1M
- SNxpGYXEYbUOOKoyRGi97hmjRjAnue3EfqSUpkaat1218s/Jy//LiBDdZEkElU9YnXtmSWAFmrR
- odmdgaOgzcno62YykMPpAdco49i8zLzzDT/c33opJwFdwGZbpkitwCUSbzZwoPZbcV
-X-Received: by 2002:a17:90b:384b:b0:37f:ceed:e1d8 with SMTP id
- 98e67ed59e1d1-38280e98d05mr3703422a91.12.1783181526740; 
- Sat, 04 Jul 2026 09:12:06 -0700 (PDT)
+ bh=BMA565bQsNGhFUvTQoClY5WwJpHoQcIakf1/O0Y02IM=;
+ b=cirM8Z7PGSGotwF2sMCwDSNhXLNBAvTi1XaBV4rZjg9AncI9pQZAwTo/tImcIFNLTC
+ Kc+uQ62B4jPE/b9c3ccmt0Agmc6VraCzX+6Xrzq1AFEMb5184h0WVY72g1/TSqS6d9ey
+ LaBuZegJoDpUsROd18wbAci5cnOyx7fcLaEGySem/fKL566B7AH+QR2b1SoBb1fWlxx5
+ Qgi4hiPj22KJEyqY1kM9neNcDK8Xewl9wpM/z3tBlA7dNop36UZhUcmnLpu2pt4Ou1vQ
+ mGabWOvtNPDSZ43xw5niiANF+rAM1m7H3jvO/H64wxS5ioomBBi/mkjOta0Ku+loTHZZ
+ 2Xig==
+X-Forwarded-Encrypted: i=1;
+ AHgh+Rorbo+kc1qBrX9SS3BfG6H80i7cgrxdxnbJJQod40o0p6B2GHQBg56IIyflg7Ja8X32A5k=@dpdk.org
+X-Gm-Message-State: AOJu0YzxGFbXHt6a3yo0rd6aZOAOG77EqdYOUO1kOX5qxpoaPXZj3Rpn
+ D2WR1g4oAFU44ejAHvn/YL/LWXtKHWnV6kOgP/+m4OhuzTYllEYaa8HTaFhpyNeaY7k=
+X-Gm-Gg: AfdE7cm/yw8zeNpPblw46hj/Q6YVUBsJwZLm/guAzpCXkJD/qdXvYy3EsQv7vMUbuQT
+ BzCL69r/bNo7HTSHiSH/EVG76bA6xsOS8sEnDCCE30PE71XScWcB+5UVQWOJPSD+7ljdPSXn93k
+ zcYruzlkwi3T+qh5ML0hBCAZV5nMcdVdRduNpK1OeGIE8aTWZK27KqT2Poc5VT1Bh+xNXj6PtD2
+ zpkQGqOLlUzPKUHt7kjfflPHAlaHp9e+UjAcFbupl9dufRBUAoPCc3yAO6up9AhWXU5/0+3/o3t
+ ymwQuBPeHYAMgCAdOW7JdWFZpZ8hDr0TmzpT9ee9R4070SoDvnEKOPHscuUVcTH4LdKApuQWewC
+ Dqw+W+RfPDMBnH0iNlv8yt8fb6JYVvh1zUe3/+xbtBHaau9FkeA+tf2R5zr0baeQ9xwV4zSfTns
+ WsNpsk0Ce+SGyjGKakSpWzVlYMZtBaL3vzxybCNo4QQXlhwQTiNwoQSg==
+X-Received: by 2002:a17:90b:3c91:b0:375:2a38:1d40 with SMTP id
+ 98e67ed59e1d1-382934ec0c9mr3809340a91.20.1783183563115; 
+ Sat, 04 Jul 2026 09:46:03 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13b446a766asm34397458c88.7.2026.07.04.09.12.06
+ 5a478bee46e88-30f376bf710sm14186697eec.6.2026.07.04.09.46.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 04 Jul 2026 09:12:06 -0700 (PDT)
-Date: Sat, 4 Jul 2026 09:12:04 -0700
+ Sat, 04 Jul 2026 09:46:02 -0700 (PDT)
+Date: Sat, 4 Jul 2026 09:46:00 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Marat Khalili
- <marat.khalili@huawei.com>
-Subject: Re: [PATCH] bpf: fix unitialized warning
-Message-ID: <20260704091204.132d8a86@phoenix.local>
-In-Reply-To: <20260704040322.157058-1-stephen@networkplumber.org>
-References: <20260704040322.157058-1-stephen@networkplumber.org>
+To: datshan@qq.com
+Cc: thomas@monjalon.net, aconole@redhat.com, dev@dpdk.org
+Subject: Re: [PATCH] devtools: support local opencode agent for patch review
+Message-ID: <20260704094600.3dcf165b@phoenix.local>
+In-Reply-To: <tencent_4A299B76E71AE508AF5D403AFDA4B248B708@qq.com>
+References: <tencent_4A299B76E71AE508AF5D403AFDA4B248B708@qq.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,32 +81,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  3 Jul 2026 21:03:22 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Fri,  3 Jul 2026 17:19:02 +0800
+datshan@qq.com wrote:
 
-> Coverity complains unitialized use of structure.
+> From: Chengwen Feng <fengchengwen@huawei.com>
 > 
-> Coverity ID: 504611
-> Fixes: 17509d474226 ("bpf/validate: fix BPF_ADD of pointer to a scalar")
+> Currently review-patch.py only supports cloud AI providers
+> (Anthropic, OpenAI, xAI, Google) via REST API, requiring API keys.
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Add a --via option that invokes the locally installed opencode CLI as
+> the review runner instead of making HTTP calls. opencode reads
+> AGENTS.md from the DPDK project directory automatically, needing no
+> configuration beyond opencode on PATH.
+> 
+> The --via and -p/--provider options are independent -- via routes to
+> the local agent mode while -p continues to use the cloud API path.
+> 
+> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 > ---
 
-Ignore AI review of this patch. The CI AI review is using weak AI
-model and no tooling; it ends up hallucinating about code that doesn't exist.
-Better AI reviewing the reviewer sees...
+So most of this script was AI generated, turned back to AI
+to look at this change...
 
-Coverity 504611 is a true positive. eval_fill_max_bound() sets u, s,
-v.type, and mask, but not v.size or v.buf_size. In eval_add() the
-pointer+pointer path does eval_fill_max_bound(&rs_buf, msk); *rd =
-rs_buf; on a fresh local, so the struct copy propagates the
-uninitialized v.size/v.buf_size. Zero-init at declaration closes
-exactly that.
 
-The AI review is quoting code that isn't there. eval_add() has no
-rs_buf = *rs; and no eval_apply_mask(&rs_buf, ...) call. That snippet
-looks reconstructed from the diff hunk header (eval_apply_mask, the
-preceding function) rather than the function actually being patched.
-Its central claim, that rs_buf is only touched via rs = &rs_buf inside
-the if, is wrong: the uninitialized read is the *rd = rs_buf copy, and
-rs then reads it after the block. 
+Thanks for the patch - the opencode integration looks sound. The
+--format json parsing matches what the CLI actually emits, and the
+_run_review refactor is a clean way to share the dispatch. A few items:
+
+Bug:
+- subprocess.run() can raise TimeoutExpired, but only FileNotFoundError
+  is caught, so a timeout gives a raw traceback. Catch
+  subprocess.TimeoutExpired and route it through error() like the cloud
+  path does.
+
+Please clarify / fix:
+- -a/--agents is silently ignored in --via mode; opencode auto-loads
+  AGENTS.md from --dir, which you set to the repo root while AGENTS.md
+  lives under devtools/ai/. Does opencode actually find the guidelines?
+  If not the review runs without them.
+- JSON metadata still reports "provider": args.provider (stays
+  "anthropic" under --via); use (args.via or args.provider) as you
+  already did for the token summary.
+- --large-file modes are silently skipped in via mode - intended? A
+  warning would help.
+
+Nits: non-ASCII em-dash in a prompt string (use --); the trailing "--"
+before the message is unnecessary and may drop the prompt; redundant
+import tempfile; unused max_tokens param; f-string with no placeholder;
+run black on the full_message assignment.
