@@ -2,51 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C7EC43458
-	for <dpdk-dev@archiver.kernel.org>; Sun,  5 Jul 2026 08:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5703C43458
+	for <dpdk-dev@archiver.kernel.org>; Sun,  5 Jul 2026 17:12:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52DD84027B;
-	Sun,  5 Jul 2026 10:48:57 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 4E98640150;
- Sun,  5 Jul 2026 10:48:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C0B684027B;
+	Sun,  5 Jul 2026 19:12:29 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 9721D4021E;
+ Sun,  5 Jul 2026 19:12:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783241335; x=1814777335;
+ t=1783271548; x=1814807548;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=0SxutVqRSdHZJTRr9gLQq/L7EPXMTzOpnr1OngS8BQI=;
- b=gxaKok03iAsPal54hIqIILHRxekWUZT8yAkP6LtJNu/9LU3paHX4CvYS
- 7jD6B0oU4Czbxc2mYC4CI15NXtBMLuSPdWKf3UrNkRYBkQuGF3CUiu2vy
- bpfbRXWP81ZLWb1y+LCYO7vIKokNAq2NpKmlWCEVaZVlLEdof6MQXRUVe
- gGjC9Og012rwJsb6aWeO3gDFc9d7KTbUrdVJwJU2F2y2Lt4YISy1IiKQU
- wuBPA7Xn3KhPP0CmG7SNgVc6sSgxoi/pokSiLmGa1LDGvES8kC1h7x4BH
- l1iAgyRKaSqhrRFLh2LxgeRZcK1yp/g8cLYy8ZWbUnXDNHlqwr+5Iq36y w==;
-X-CSE-ConnectionGUID: 52E5flkFT5uN5avcUw6BVw==
-X-CSE-MsgGUID: Y4IdOLVTRma3v0mv7fbFEQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11837"; a="84030795"
-X-IronPort-AV: E=Sophos;i="6.25,149,1779174000"; d="scan'208";a="84030795"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Jul 2026 01:48:53 -0700
-X-CSE-ConnectionGUID: 5XIDXZ5WScK7RDqtwyv5pw==
-X-CSE-MsgGUID: HAIriSo2SNi/4yBzIhe8UQ==
+ bh=IXxxMXYlIAAJJEcLXZI3DLlLOtz7J8pfOV6+XS1JKfI=;
+ b=cfLFzcyNCb9SrjCAcwzbARCf5l4TfmqWrsX+pLKZE2+YjdpgfrVeCPAp
+ kcBGZ5IzX4FNLt334E5MqClR+zwRiDOrIxmuhp2R0xeNr/GSyje+MEDx8
+ YWB2Neo2+eHj6J7tgtcSteQ4t/DMIJGu2PDKCS7q3ZO22iL8+qnfrMAjH
+ eM5tmqSd65KS9IKJRghX8ohY+1DXPVjAShsB1qnLtTQhEZYXEaQHSRoMo
+ iqhc3VcaqG+uY0law1ZXRS+0DGzrMu90bY9V0kHd6VGcC6YgI5yGuWhFS
+ O1ZBvAXAmy9C0Xnfx2aEOizRxPNJaml1bQW31Bvuh5AfdIJgG8qWIjKiN w==;
+X-CSE-ConnectionGUID: AZRke94/RpKuIafe+tmwQw==
+X-CSE-MsgGUID: KYLJXT9OSyGttR1IxaQU5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11838"; a="83788228"
+X-IronPort-AV: E=Sophos;i="6.25,149,1779174000"; d="scan'208";a="83788228"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Jul 2026 10:12:26 -0700
+X-CSE-ConnectionGUID: Bd5SAjXKRA+wduqQE1s1ew==
+X-CSE-MsgGUID: J2teMRsNQ5Ks4coUDqYRdw==
 X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,149,1779174000"; d="scan'208";a="249067653"
 Received: from smserver2row47.iind.intel.com ([10.138.138.56])
- by fmviesa003.fm.intel.com with ESMTP; 05 Jul 2026 01:48:49 -0700
+ by fmviesa006.fm.intel.com with ESMTP; 05 Jul 2026 10:12:23 -0700
 From: Pushpendra Kumar <pushpendra1x.kumar@intel.com>
 To: dev@dpdk.org
-Cc: stable@dpdk.org, thomas@monjalon.net, reshma.pattan@intel.com,
- stephen@networkplumber.org, anatoly.burakov@intel.com,
- dmitry.kozliuk@gmail.com, bruce.richardson@intel.com,
- 14pwcse1224@uetpeshawar.edu.pk, pushpendra.kumar@tieto.com,
+Cc: stable@dpdk.org, reshma.pattan@intel.com, stephen@networkplumber.org,
+ anatoly.burakov@intel.com, dmitry.kozliuk@gmail.com, thomas@monjalon.net,
  Pushpendra Kumar <pushpendra1x.kumar@intel.com>
-Subject: [PATCH v2] pdump: fix teardown race with opt-in MP request mode
-Date: Sun,  5 Jul 2026 14:14:02 +0530
-Message-ID: <20260705084415.1389340-1-pushpendra1x.kumar@intel.com>
+Subject: [PATCH v3] pdump: fix teardown race with opt-in MP request mode
+Date: Sun,  5 Jul 2026 22:37:37 +0530
+Message-ID: <20260705170752.1433868-1-pushpendra1x.kumar@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260701060257.562895-1-pushpendra1x.kumar@intel.com>
-References: <20260701060257.562895-1-pushpendra1x.kumar@intel.com>
+In-Reply-To: <20260705084415.1389340-1-pushpendra1x.kumar@intel.com>
+References: <20260705084415.1389340-1-pushpendra1x.kumar@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -98,48 +97,58 @@ Validation:
   meaningful regression: with changes recorded 12,402,055,320 cycles and
   17,391,769,084 instructions, versus 12,450,031,900 cycles and
   17,499,706,053 instructions on the parent baseline.
-- The extra synchronization in the hot path did not show material
-  overhead in this sample.
+- This validates that the primary forwarding path is not materially
+  affected.
+- Secondary callback-path overhead for pdump_enter/pdump_exit was not
+  separately microbenchmarked in this patch.
 
 Fixes: c3ceb8742295 ("pdump: forward callback enable to secondary process")
 Signed-off-by: Pushpendra Kumar <pushpendra1x.kumar@intel.com>
 
 Cc: stable@dpdk.org
+
 ---
-This V2 patch addresses two pdump teardown failure scenarios:
+v3:
+- strengthen `pdump_enter()` generation loads to use acquire ordering
+- clarify why `pdump_enter()` re-checks generation after taking `inflight`
+- document the distinct roles of `use_count` and `inflight`
+- document bounded disable timeout and retry expectation
+- document first-error return policy in `pdump_request_to_secondary_sync()`
+- document that unknown `rte_mp_request_sync_ex()` flags are rejected intentionally
+- document why generation starts at 1 on primary init
+- clarify fail-closed cleanup behavior and same-process recovery limitation
+- reword release notes to emphasize opt-in EAL API/flag semantics and unchanged legacy behavior
+- clarify commit-message validation scope: perf numbers cover the forwarding primary path only
 
-- A requester secondary can time out if a forwarded secondary is slow,
-  unresponsive, or does not implement rte_pdump_init().
-- A delayed DISABLE reply can race with requester-side teardown, which may
-  lead to crashes if peer processes still access shared pdump resources.
+Not changed:
+- no automatic RX/TX rollback on partial enable failure
+  Current pdump enable intentionally remains partial-apply as documented in the public API. Adding rollback would change semantics toward transactional enable and introduce additional failure handling if rollback itself fails.
+- no non-NULL `cb` after successful callback removal on timeout
+  After successful `rte_eth_remove_*x_callback()`, `cb` must continue to reflect actual ethdev registration state. Leaving it non-NULL would make local state inconsistent and could trigger incorrect later remove/reconcile behavior.
+- no RX/TX helper refactor in this correctness patch
+  This area is concurrency-sensitive and RX/TX callback APIs are not identical, so keeping the logic local reduces regression risk.
 
-To fix this end-to-end:
-- EAL adds an opt-in MP request mode to ignore peers with no matching action,
-  while preserving legacy rte_mp_request_sync() behavior.
-- pdump uses that mode, tracks generation, and waits for in-flight callbacks
-  to drain before completing disable.
-- dumpcap and pdump app cleanup paths are fail-closed when disable does not
-  complete successfully.
+If you want a shorter version for the email intro instead of the `---` block, use:
 
-If this direction is accepted, I can split from the next revision into a
-focused EAL patch followed by pdump and app-user updates.
+v3 updates mainly tighten documentation and clarify intent around the accepted fixes:
+acquire ordering in `pdump_enter()`, explicit comments for generation re-check, `use_count` vs `inflight`, bounded timeout/retry, first-error aggregation, unknown-flag rejection, and generation initialization; fail-closed cleanup/recovery notes; release-note wording for the new opt-in EAL API; and commit-message clarification that current perf numbers cover the forwarding primary path only.
 
  .mailmap                               |   1 +
- app/dumpcap/main.c                     |  23 ++-
- app/pdump/main.c                       |  32 +++-
- doc/guides/rel_notes/release_26_07.rst |   7 +
- lib/eal/common/eal_common_proc.c       |  37 +++-
- lib/eal/include/rte_eal.h              |  33 ++++
+ app/dumpcap/main.c                     |  24 ++-
+ app/pdump/main.c                       |  37 +++-
+ doc/guides/rel_notes/release_26_07.rst |   9 +
+ lib/eal/common/eal_common_proc.c       |  41 +++-
+ lib/eal/include/rte_eal.h              |  33 +++
  lib/eal/windows/eal_mp.c               |   9 +
- lib/pdump/rte_pdump.c                  | 241 ++++++++++++++++++++++---
- lib/pdump/rte_pdump.h                  |  40 +++-
- 9 files changed, 379 insertions(+), 44 deletions(-)
+ lib/pdump/rte_pdump.c                  | 266 ++++++++++++++++++++++---
+ lib/pdump/rte_pdump.h                  |  42 +++-
+ 9 files changed, 417 insertions(+), 45 deletions(-)
 
 diff --git a/.mailmap b/.mailmap
-index c5bc728fae..c1313c7148 100644
+index 05a55c0bd6..3bfe0c4df0 100644
 --- a/.mailmap
 +++ b/.mailmap
-@@ -1332,6 +1332,7 @@ Przemyslaw Gierszynski <przemyslaw.gierszynski@intel.com>
+@@ -1338,6 +1338,7 @@ Przemyslaw Gierszynski <przemyslaw.gierszynski@intel.com>
  Przemyslaw Patynowski <przemyslawx.patynowski@intel.com>
  Przemyslaw Zegan <przemyslawx.zegan@intel.com>
  Pu Xu <583493798@qq.com>
@@ -148,10 +157,10 @@ index c5bc728fae..c1313c7148 100644
  Qi Zhang <qi.z.zhang@intel.com>
  Qian Hao <qi_an_hao@126.com>
 diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
-index 46a6cb251e..f421a17034 100644
+index 46a6cb251e..c6ae916075 100644
 --- a/app/dumpcap/main.c
 +++ b/app/dumpcap/main.c
-@@ -521,14 +521,33 @@ static void
+@@ -521,14 +521,34 @@ static void
  cleanup_pdump_resources(void)
  {
  	struct interface *intf;
@@ -177,7 +186,8 @@ index 46a6cb251e..f421a17034 100644
 +	if (disable_failed) {
 +		/*
 +		 * Fail-closed: if disable did not complete, keep pdump action/state
-+		 * alive and do not uninit shared capture resources.
++		 * alive and do not uninit shared capture resources. Recovery in the
++		 * same process instance is not guaranteed until disable succeeds.
 +		 */
 +		fprintf(stderr,
 +			"Skipping pdump uninit because disable did not complete on all interfaces\n");
@@ -188,7 +198,7 @@ index 46a6cb251e..f421a17034 100644
  }
  
 diff --git a/app/pdump/main.c b/app/pdump/main.c
-index 1e62c8adc1..4cfb038395 100644
+index 1e62c8adc1..8f33d2f603 100644
 --- a/app/pdump/main.c
 +++ b/app/pdump/main.c
 @@ -451,14 +451,17 @@ print_pdump_stats(void)
@@ -213,7 +223,7 @@ index 1e62c8adc1..4cfb038395 100644
  }
  
  static inline void
-@@ -518,15 +521,30 @@ static void
+@@ -518,15 +521,35 @@ static void
  cleanup_pdump_resources(void)
  {
  	int i;
@@ -238,6 +248,11 @@ index 1e62c8adc1..4cfb038395 100644
 +		}
 +	}
 +
++	/*
++	 * Fail-closed: do not uninit/free shared pdump resources after disable
++	 * failure. Recovery in the same process instance is not guaranteed until
++	 * disable succeeds.
++	 */
 +	if (disable_failed)
 +		return;
 +
@@ -248,10 +263,10 @@ index 1e62c8adc1..4cfb038395 100644
  		/*
  		* transmit rest of the enqueued packets of the rings on to
 diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 4ca0a9ac77..1700a56bc7 100644
+index 8b1bdada1a..51fc74e7ef 100644
 --- a/doc/guides/rel_notes/release_26_07.rst
 +++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -177,6 +177,13 @@ New Features
+@@ -250,6 +250,15 @@ New Features
    Added AGENTS.md file for AI review
    and supporting scripts to review patches and documentation.
  
@@ -259,14 +274,16 @@ index 4ca0a9ac77..1700a56bc7 100644
 +
 +  Hardened pdump request completion and application cleanup behavior so timeout
 +  or disable failure does not trigger premature pdump resource teardown.
-+  pdump now uses an opt-in MP request mode that ignores peers without the
-+  pdump action, while preserving legacy EAL MP behavior for all other users.
++  EAL now provides ``rte_mp_request_sync_ex()`` with
++  ``RTE_MP_REQ_F_IGNORE_NO_ACTION`` to ignore peers that do not implement
++  the requested action. pdump uses this opt-in mode, while legacy
++  ``rte_mp_request_sync()`` behavior remains unchanged.
 +
  
  Removed Items
  -------------
 diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
-index 06f151818c..5a458c0417 100644
+index 5133eaaa47..fbfecd82d3 100644
 --- a/lib/eal/common/eal_common_proc.c
 +++ b/lib/eal/common/eal_common_proc.c
 @@ -56,6 +56,7 @@ static struct action_entry_list action_entry_list =
@@ -277,7 +294,7 @@ index 06f151818c..5a458c0417 100644
  	MP_REP, /* Response to previously-received request */
  	MP_IGN, /* Response telling requester to ignore this response */
  };
-@@ -384,11 +385,11 @@ process_msg(struct mp_msg_internal *m, struct sockaddr_un *s)
+@@ -399,11 +400,11 @@ process_msg(struct mp_msg_internal *m, struct sockaddr_un *s)
  	pthread_mutex_unlock(&mp_mutex_action);
  
  	if (!action) {
@@ -294,7 +311,7 @@ index 06f151818c..5a458c0417 100644
  			 */
  			struct rte_mp_msg dummy;
  
-@@ -936,7 +937,8 @@ mp_request_async(const char *dst, struct rte_mp_msg *req,
+@@ -947,7 +948,8 @@ mp_request_async(const char *dst, struct rte_mp_msg *req,
  
  static int
  mp_request_sync(const char *dst, struct rte_mp_msg *req,
@@ -304,7 +321,7 @@ index 06f151818c..5a458c0417 100644
  {
  	int ret;
  	pthread_condattr_t attr;
-@@ -959,7 +961,7 @@ mp_request_sync(const char *dst, struct rte_mp_msg *req,
+@@ -970,7 +972,7 @@ mp_request_sync(const char *dst, struct rte_mp_msg *req,
  		return -1;
  	}
  
@@ -313,7 +330,7 @@ index 06f151818c..5a458c0417 100644
  	if (ret < 0) {
  		EAL_LOG(ERR, "Fail to send request %s:%s",
  			dst, req->name);
-@@ -1010,11 +1012,20 @@ RTE_EXPORT_SYMBOL(rte_mp_request_sync)
+@@ -1021,11 +1023,20 @@ RTE_EXPORT_SYMBOL(rte_mp_request_sync)
  int
  rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
  		const struct timespec *ts)
@@ -334,10 +351,14 @@ index 06f151818c..5a458c0417 100644
  	const struct internal_config *internal_conf =
  		eal_get_internal_configuration();
  
-@@ -1027,6 +1038,14 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
+@@ -1038,6 +1049,18 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
  	if (check_input(req) != 0)
  		goto end;
  
++	/*
++	 * Reject unknown flags for safety instead of silently ignoring them.
++	 * Future flags require corresponding support in this implementation.
++	 */
 +	if (flags & ~RTE_MP_REQ_F_IGNORE_NO_ACTION) {
 +		rte_errno = EINVAL;
 +		goto end;
@@ -349,7 +370,7 @@ index 06f151818c..5a458c0417 100644
  	if (internal_conf->no_shconf) {
  		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
  		rte_errno = ENOTSUP;
-@@ -1046,7 +1065,7 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
+@@ -1057,7 +1080,7 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
  	/* for secondary process, send request to the primary process only */
  	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
  		pthread_mutex_lock(&pending_requests.lock);
@@ -358,7 +379,7 @@ index 06f151818c..5a458c0417 100644
  		pthread_mutex_unlock(&pending_requests.lock);
  		goto end;
  	}
-@@ -1086,7 +1105,7 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
+@@ -1097,7 +1120,7 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
  		/* unlocks the mutex while waiting for response,
  		 * locks on receive
  		 */
@@ -443,7 +464,7 @@ index 6703355318..1066a4d2bc 100644
  	return -1;
  }
 diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
-index ac94efe7ff..3764aeb2d3 100644
+index ac94efe7ff..f55f43774c 100644
 --- a/lib/pdump/rte_pdump.c
 +++ b/lib/pdump/rte_pdump.c
 @@ -3,9 +3,12 @@
@@ -459,7 +480,19 @@ index ac94efe7ff..3764aeb2d3 100644
  #include <rte_mbuf.h>
  #include <rte_ethdev.h>
  #include <rte_lcore.h>
-@@ -68,6 +71,7 @@ struct pdump_request {
+@@ -29,7 +32,10 @@ RTE_LOG_REGISTER_DEFAULT(pdump_logtype, NOTICE);
+ 
+ #define PDUMP_BURST_SIZE	32u
+ 
+-/* Overly generous timeout for secondary to respond */
++/*
++ * Shared timeout budget for both MP request/reply and inflight callback drain
++ * during disable. Kept fixed for now to avoid API/config scope changes.
++ */
+ #define MP_TIMEOUT_S 5
+ 
+ enum pdump_operation {
+@@ -68,6 +74,7 @@ struct pdump_request {
  
  	const struct rte_bpf_prm *prm;
  	uint32_t snaplen;
@@ -467,7 +500,7 @@ index ac94efe7ff..3764aeb2d3 100644
  };
  
  struct pdump_response {
-@@ -81,6 +85,11 @@ struct pdump_bundle {
+@@ -81,6 +88,11 @@ struct pdump_bundle {
  	char peer[];
  };
  
@@ -479,7 +512,7 @@ index ac94efe7ff..3764aeb2d3 100644
  static struct pdump_rxtx_cbs {
  	struct rte_ring *ring;
  	struct rte_mempool *mp;
-@@ -88,11 +97,11 @@ static struct pdump_rxtx_cbs {
+@@ -88,11 +100,11 @@ static struct pdump_rxtx_cbs {
  	const struct rte_bpf *filter;
  	enum pdump_version ver;
  	uint32_t snaplen;
@@ -492,7 +525,7 @@ index ac94efe7ff..3764aeb2d3 100644
  /*
   * The packet capture statistics keep track of packets
   * accepted, filtered and dropped. These are per-queue
-@@ -102,9 +111,59 @@ static const char MZ_RTE_PDUMP_STATS[] = "rte_pdump_stats";
+@@ -102,12 +114,73 @@ static const char MZ_RTE_PDUMP_STATS[] = "rte_pdump_stats";
  static struct {
  	struct rte_pdump_stats rx[RTE_MAX_ETHPORTS][RTE_MAX_QUEUES_PER_PORT];
  	struct rte_pdump_stats tx[RTE_MAX_ETHPORTS][RTE_MAX_QUEUES_PER_PORT];
@@ -506,7 +539,7 @@ index ac94efe7ff..3764aeb2d3 100644
 +pdump_enter(struct pdump_shared_ctl *ctl, const struct pdump_rxtx_cbs *cbs)
 +{
 +	uint32_t generation = rte_atomic_load_explicit(&pdump_stats->generation,
-+						       rte_memory_order_relaxed);
++					       rte_memory_order_acquire);
 +
 +	if (rte_atomic_load_explicit(&ctl->enabled, rte_memory_order_relaxed) == 0 ||
 +	    cbs->generation != generation)
@@ -517,10 +550,12 @@ index ac94efe7ff..3764aeb2d3 100644
 +	/*
 +	 * Disable/re-enable may race with callback entry. Re-check enabled and
 +	 * generation after taking inflight reference so disable can wait for this
-+	 * callback to drain and stale callbacks become no-op.
++	 * callback to drain and stale callbacks become no-op. The second generation
++	 * load is intentional: it detects an epoch change that happens between the
++	 * first check and inflight increment.
 +	 */
 +	generation = rte_atomic_load_explicit(&pdump_stats->generation,
-+					     rte_memory_order_relaxed);
++					     rte_memory_order_acquire);
 +	if (rte_atomic_load_explicit(&ctl->enabled, rte_memory_order_relaxed) != 0 &&
 +	    cbs->generation == generation)
 +		return 1;
@@ -540,6 +575,11 @@ index ac94efe7ff..3764aeb2d3 100644
 +{
 +	uint64_t end_tsc = rte_get_timer_cycles() + MP_TIMEOUT_S * rte_get_timer_hz();
 +
++	/*
++	 * Use the same timeout budget as MP sync requests. Under heavy load this
++	 * can time out and fail closed, requiring disable retry by the caller.
++	 */
++
 +	while (rte_atomic_load_explicit(&ctl->inflight, rte_memory_order_acquire) != 0) {
 +		if (rte_get_timer_cycles() > end_tsc)
 +			return -ETIMEDOUT;
@@ -552,7 +592,14 @@ index ac94efe7ff..3764aeb2d3 100644
  static void
  pdump_cb_wait(struct pdump_rxtx_cbs *cbs)
  {
-@@ -224,12 +283,17 @@ pdump_rx(uint16_t port, uint16_t queue,
++	/*
++	 * use_count protects callback-owned data (for example filter lifetime),
++	 * while ctl->inflight protects callback entry/teardown synchronization.
++	 */
+ 	/* make sure the data loads happens before the use count load */
+ 	rte_atomic_thread_fence(rte_memory_order_acquire);
+ 
+@@ -224,12 +297,17 @@ pdump_rx(uint16_t port, uint16_t queue,
  	uint16_t max_pkts __rte_unused, void *user_params)
  {
  	struct pdump_rxtx_cbs *cbs = user_params;
@@ -570,7 +617,7 @@ index ac94efe7ff..3764aeb2d3 100644
  
  	return nb_pkts;
  }
-@@ -239,12 +303,17 @@ pdump_tx(uint16_t port, uint16_t queue,
+@@ -239,12 +317,17 @@ pdump_tx(uint16_t port, uint16_t queue,
  		struct rte_mbuf **pkts, uint16_t nb_pkts, void *user_params)
  {
  	struct pdump_rxtx_cbs *cbs = user_params;
@@ -588,7 +635,7 @@ index ac94efe7ff..3764aeb2d3 100644
  
  	return nb_pkts;
  }
-@@ -255,20 +324,43 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+@@ -255,20 +338,43 @@ pdump_register_rx_callbacks(enum pdump_version ver,
  			    uint16_t end_q, uint16_t port, uint16_t queue,
  			    struct rte_ring *ring, struct rte_mempool *mp,
  			    struct rte_bpf *filter,
@@ -637,7 +684,7 @@ index ac94efe7ff..3764aeb2d3 100644
  			}
  			cbs->use_count = 0;
  			cbs->ver = ver;
-@@ -276,6 +368,7 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+@@ -276,6 +382,7 @@ pdump_register_rx_callbacks(enum pdump_version ver,
  			cbs->mp = mp;
  			cbs->snaplen = snaplen;
  			cbs->filter = filter;
@@ -645,7 +692,7 @@ index ac94efe7ff..3764aeb2d3 100644
  
  			cbs->cb = rte_eth_add_first_rx_callback(port, qid,
  								pdump_rx, cbs);
-@@ -286,10 +379,15 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+@@ -286,10 +393,15 @@ pdump_register_rx_callbacks(enum pdump_version ver,
  				return rte_errno;
  			}
  
@@ -661,7 +708,7 @@ index ac94efe7ff..3764aeb2d3 100644
  			if (cbs->cb == NULL) {
  				PDUMP_LOG_LINE(ERR,
  					"no existing rx callback for port=%d queue=%d",
-@@ -298,6 +396,11 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+@@ -298,6 +410,11 @@ pdump_register_rx_callbacks(enum pdump_version ver,
  			}
  			ret = rte_eth_remove_rx_callback(port, qid, cbs->cb);
  			if (ret < 0) {
@@ -673,7 +720,7 @@ index ac94efe7ff..3764aeb2d3 100644
  				PDUMP_LOG_LINE(ERR,
  					"failed to remove rx callback, errno=%d",
  					-ret);
-@@ -305,6 +408,10 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+@@ -305,6 +422,10 @@ pdump_register_rx_callbacks(enum pdump_version ver,
  			}
  			pdump_cb_wait(cbs);
  			cbs->cb = NULL;
@@ -684,7 +731,7 @@ index ac94efe7ff..3764aeb2d3 100644
  		}
  	}
  
-@@ -316,7 +423,8 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+@@ -316,7 +437,8 @@ pdump_register_tx_callbacks(enum pdump_version ver,
  			    uint16_t end_q, uint16_t port, uint16_t queue,
  			    struct rte_ring *ring, struct rte_mempool *mp,
  			    struct rte_bpf *filter,
@@ -694,7 +741,7 @@ index ac94efe7ff..3764aeb2d3 100644
  {
  
  	uint16_t qid;
-@@ -324,13 +432,36 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+@@ -324,13 +446,36 @@ pdump_register_tx_callbacks(enum pdump_version ver,
  	qid = (queue == RTE_PDUMP_ALL_QUEUES) ? 0 : queue;
  	for (; qid < end_q; qid++) {
  		struct pdump_rxtx_cbs *cbs = &tx_cbs[port][qid];
@@ -735,7 +782,7 @@ index ac94efe7ff..3764aeb2d3 100644
  			}
  			cbs->use_count = 0;
  			cbs->ver = ver;
-@@ -338,6 +469,7 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+@@ -338,6 +483,7 @@ pdump_register_tx_callbacks(enum pdump_version ver,
  			cbs->mp = mp;
  			cbs->snaplen = snaplen;
  			cbs->filter = filter;
@@ -743,7 +790,7 @@ index ac94efe7ff..3764aeb2d3 100644
  
  			cbs->cb = rte_eth_add_tx_callback(port, qid, pdump_tx,
  								cbs);
-@@ -347,10 +479,15 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+@@ -347,10 +493,15 @@ pdump_register_tx_callbacks(enum pdump_version ver,
  					rte_errno);
  				return rte_errno;
  			}
@@ -759,7 +806,7 @@ index ac94efe7ff..3764aeb2d3 100644
  			if (cbs->cb == NULL) {
  				PDUMP_LOG_LINE(ERR,
  					"no existing tx callback for port=%d queue=%d",
-@@ -359,6 +496,11 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+@@ -359,6 +510,11 @@ pdump_register_tx_callbacks(enum pdump_version ver,
  			}
  			ret = rte_eth_remove_tx_callback(port, qid, cbs->cb);
  			if (ret < 0) {
@@ -771,7 +818,7 @@ index ac94efe7ff..3764aeb2d3 100644
  				PDUMP_LOG_LINE(ERR,
  					"failed to remove tx callback, errno=%d",
  					-ret);
-@@ -367,6 +509,10 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+@@ -367,6 +523,10 @@ pdump_register_tx_callbacks(enum pdump_version ver,
  
  			pdump_cb_wait(cbs);
  			cbs->cb = NULL;
@@ -782,7 +829,7 @@ index ac94efe7ff..3764aeb2d3 100644
  		}
  	}
  
-@@ -459,7 +605,8 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
+@@ -459,17 +619,23 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
  		end_q = (queue == RTE_PDUMP_ALL_QUEUES) ? nb_rx_q : queue + 1;
  		ret = pdump_register_rx_callbacks(p->ver, end_q, port, queue,
  						  ring, mp, filter,
@@ -792,7 +839,13 @@ index ac94efe7ff..3764aeb2d3 100644
  		if (ret < 0)
  			return ret;
  	}
-@@ -469,7 +616,8 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
+ 
++	/*
++	 * Intentional partial-apply behavior: if RX succeeds and TX fails,
++	 * RX remains enabled. API notes require caller-side unwind.
++	 */
+ 	/* register TX callback */
+ 	if (flags & RTE_PDUMP_FLAG_TX) {
  		end_q = (queue == RTE_PDUMP_ALL_QUEUES) ? nb_tx_q : queue + 1;
  		ret = pdump_register_tx_callbacks(p->ver, end_q, port, queue,
  						  ring, mp, filter,
@@ -802,7 +855,7 @@ index ac94efe7ff..3764aeb2d3 100644
  		if (ret < 0)
  			return ret;
  	}
-@@ -477,12 +625,14 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
+@@ -477,12 +643,14 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
  	return ret;
  }
  
@@ -819,7 +872,7 @@ index ac94efe7ff..3764aeb2d3 100644
  
  	PDUMP_LOG_LINE(DEBUG, "forward req %s to secondary", pdump_opname(req->op));
  
-@@ -490,14 +640,41 @@ pdump_request_to_secondary(const struct pdump_request *req)
+@@ -490,14 +658,45 @@ pdump_request_to_secondary(const struct pdump_request *req)
  	strlcpy(mp_req.name, PDUMP_MP, sizeof(mp_req.name));
  	mp_req.len_param = sizeof(*req);
  
@@ -854,6 +907,10 @@ index ac94efe7ff..3764aeb2d3 100644
 +		if (resp->err_value != 0) {
 +			PDUMP_LOG_LINE(ERR, "secondary reply failed: op=%u err=%d",
 +				       resp->res_op, resp->err_value);
++			/*
++			 * Return the first failure to keep a single representative
++			 * status; all per-secondary errors are still logged above.
++			 */
 +			if (ret == 0)
 +				ret = resp->err_value;
 +		}
@@ -864,7 +921,7 @@ index ac94efe7ff..3764aeb2d3 100644
  }
  
  /* Allocate temporary storage for passing state to the alarm thread for deferred handling */
-@@ -556,7 +733,10 @@ pdump_handle_primary_request(const struct rte_mp_msg *mp_msg, const void *peer)
+@@ -556,7 +755,10 @@ pdump_handle_primary_request(const struct rte_mp_msg *mp_msg, const void *peer)
  		PDUMP_LOG_LINE(DEBUG, "secondary pdump %s", pdump_opname(req->op));
  
  		/* Can just do it now, no need for interrupt thread */
@@ -876,7 +933,7 @@ index ac94efe7ff..3764aeb2d3 100644
  	}
  
  	return pdump_send_response(req, ret, peer);
-@@ -569,17 +749,29 @@ __pdump_request(void *param)
+@@ -569,17 +771,29 @@ __pdump_request(void *param)
  {
  	struct pdump_bundle *bundle = param;
  	struct rte_mp_msg *msg = &bundle->msg;
@@ -910,10 +967,11 @@ index ac94efe7ff..3764aeb2d3 100644
  
  	pdump_send_response(req, ret, bundle->peer);
  	free(bundle);
-@@ -659,6 +851,9 @@ rte_pdump_init(void)
+@@ -659,6 +873,10 @@ rte_pdump_init(void)
  
  	pdump_stats = mz->addr;
  	pdump_stats->mz = mz;
++	/* Start at generation 1 so zero remains the default pre-init value. */
 +	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
 +		rte_atomic_store_explicit(&pdump_stats->generation, 1,
 +					  rte_memory_order_release);
@@ -921,7 +979,7 @@ index ac94efe7ff..3764aeb2d3 100644
  	return 0;
  }
 diff --git a/lib/pdump/rte_pdump.h b/lib/pdump/rte_pdump.h
-index 1e32d46097..77e5914420 100644
+index 1e32d46097..52d3c0ca93 100644
 --- a/lib/pdump/rte_pdump.h
 +++ b/lib/pdump/rte_pdump.h
 @@ -64,7 +64,7 @@ rte_pdump_uninit(void);
@@ -957,7 +1015,7 @@ index 1e32d46097..77e5914420 100644
   * @return
   *    0 on success, -1 on error, rte_errno is set accordingly.
   */
-@@ -124,7 +134,14 @@ rte_pdump_enable_bpf(uint16_t port_id, uint16_t queue,
+@@ -124,7 +134,15 @@ rte_pdump_enable_bpf(uint16_t port_id, uint16_t queue,
   *  queues of a given port.
   * @param flags
   *  flags specifies RTE_PDUMP_FLAG_RX/RTE_PDUMP_FLAG_TX/RTE_PDUMP_FLAG_RXTX
@@ -969,11 +1027,12 @@ index 1e32d46097..77e5914420 100644
 + *  complete across pdump-enabled peers. The caller must not release shared
 + *  pdump resources and must not uninitialize pdump for that capture session
 + *  until disable succeeds. Releasing resources on disable failure can lead to
-+ *  crashes in peer processes still accessing those resources.
++ *  crashes in peer processes still accessing those resources. Timeout is
++ *  bounded; callers should retry disable before attempting teardown.
   *
   * @return
   *    0 on success, -1 on error, rte_errno is set accordingly.
-@@ -153,6 +170,11 @@ rte_pdump_disable(uint16_t port, uint16_t queue, uint32_t flags);
+@@ -153,6 +171,11 @@ rte_pdump_disable(uint16_t port, uint16_t queue, uint32_t flags);
   * @param filter
   *  unused should be NULL
   *
@@ -985,7 +1044,7 @@ index 1e32d46097..77e5914420 100644
   * @return
   *    0 on success, -1 on error, rte_errno is set accordingly.
   */
-@@ -186,6 +208,11 @@ rte_pdump_enable_by_deviceid(char *device_id, uint16_t queue,
+@@ -186,6 +209,11 @@ rte_pdump_enable_by_deviceid(char *device_id, uint16_t queue,
   * @param filter
   *  Use BPF program to run to filter packes (can be NULL)
   *
@@ -997,7 +1056,7 @@ index 1e32d46097..77e5914420 100644
   * @return
   *    0 on success, -1 on error, rte_errno is set accordingly.
   */
-@@ -210,7 +237,14 @@ rte_pdump_enable_bpf_by_deviceid(const char *device_id, uint16_t queue,
+@@ -210,7 +238,15 @@ rte_pdump_enable_bpf_by_deviceid(const char *device_id, uint16_t queue,
   *  queues of a given device id.
   * @param flags
   *  flags specifies RTE_PDUMP_FLAG_RX/RTE_PDUMP_FLAG_TX/RTE_PDUMP_FLAG_RXTX
@@ -1009,7 +1068,8 @@ index 1e32d46097..77e5914420 100644
 + *  complete across pdump-enabled peers. The caller must not release shared
 + *  pdump resources and must not uninitialize pdump for that capture session
 + *  until disable succeeds. Releasing resources on disable failure can lead to
-+ *  crashes in peer processes still accessing those resources.
++ *  crashes in peer processes still accessing those resources. Timeout is
++ *  bounded; callers should retry disable before attempting teardown.
   *
   * @return
   *    0 on success, -1 on error, rte_errno is set accordingly.
