@@ -2,46 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A432C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 09:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F03C44500
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 09:19:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B4B52402C3;
-	Mon,  6 Jul 2026 11:17:27 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 0B18C4027B
- for <dev@dpdk.org>; Mon,  6 Jul 2026 11:17:27 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id DA2194B819; Mon,  6 Jul 2026 11:17:26 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1964] [dpdk26.07-rc2] DPDK build failed with
- EXTRA_CFLAGS='-O1' on Ubuntu26.04
-Date: Mon, 06 Jul 2026 09:17:26 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 26.07
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: daxuex.gao@intel.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1964-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id C6A4F402C3;
+	Mon,  6 Jul 2026 11:18:59 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 6CFF74027B
+ for <dev@dpdk.org>; Mon,  6 Jul 2026 11:18:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1783329537;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=AMcL5zyfmdy/WwXZpIIcVqZ17inW+eLyt4Nxd2mHK0Q=;
+ b=XSkNr7ZbXX0/prpMhwSJcosoek33Nhs3cFzzobuV7ol1MioPjJrAVDOGv/iCLriTZ7M6t/
+ XbJS7loLFUy3RYsVUZExNX9MSnR9puGwOXYwA/3cyEPUiVinZPyD7vY3XjEFVnMuemigz4
+ MESsdaZdhob9p7BEDr9vVGepFNZWgvI=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-370-MJV74Gy7NQ21pIqt_xTz5g-1; Mon, 06 Jul 2026 05:18:56 -0400
+X-MC-Unique: MJV74Gy7NQ21pIqt_xTz5g-1
+X-Mimecast-MFC-AGG-ID: MJV74Gy7NQ21pIqt_xTz5g_1783329535
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-39b24bbce44so14062471fa.0
+ for <dev@dpdk.org>; Mon, 06 Jul 2026 02:18:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783329535; x=1783934335;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=AMcL5zyfmdy/WwXZpIIcVqZ17inW+eLyt4Nxd2mHK0Q=;
+ b=BwD/G7WZ8KFX5YPrqgFKS6Au3z+Q0cNMqox9LvEdVnDFpt7CHv5Tpcgi0QEnnbpzsp
+ 8gyZDTnxFKJIK171NBSH1jA/4S0mlVU/sCs4WFz/KO8+y5xQb5QxktydHHYIvdK6TALG
+ 9D0J00/+Yo3UVK+Zn09rEuh03VObhe+xSt1S+E8EkyBFwf6MemxldUbZ2e4zyvLp6+zm
+ 4GGi8ixF8ap1idzZju9DocGLkTUMZwNKwCVsn6L64aaGfjgj7Qlfni9G1SR+6sbTh76F
+ U4TKsHbcgAJdY9i+OrJ9aDlGtxSv/h8Fyyc2RI3ZuLC3lkCSCjkkM4IrgeJ8aCApmdvA
+ 5q0A==
+X-Gm-Message-State: AOJu0YwQ0gMFIncWRpRTJgeAX8nomIJlSJOr2u12P7qAqtRLIPcXKXOV
+ yrifw30hKo7T7w+v7fmTryBgLW21BsgLWnhJyuLh1p+Q3bvSNHsPRYf0ovs+6saw0S45Fx1+TRf
+ mvgFHSOV7GaZ5HiWA0G/oX4ryjdIa9ydw4tDz/dz9J3im+SXYnjjz2q/fEFILp7IIp/7V/Xy5BN
+ aH1bEY7kk6rdBJwdGPgVU=
+X-Gm-Gg: AfdE7clRbkBpGm2W4SU/x0J4LnVsXj0LKdt2cBSuInnSw7AF7XfGW2Pm1vX+OXnOndm
+ e9rMlYB7fL4kT8LzGYeTDQP8I7u2RBNQLUdF4bB7BdZx0NhETSVCrwfzcdkUz7Boc13LSAowP6p
+ rLXj7ymkqPCF+jcF8lLJCczzWtfZYH8yyk5xJ/uBXMvnbL8tqFvF18ouK5Gw+e4umLMilu+TXNQ
+ JvFSRGyPJ4ghTTVklzUl/ADEVcGi0kKz3y/C5ujCT6OvFarIm7w2iZomdg=
+X-Received: by 2002:a2e:bc25:0:b0:39b:1776:6577 with SMTP id
+ 38308e7fff4ca-39b53cda464mr15602731fa.40.1783329534847; 
+ Mon, 06 Jul 2026 02:18:54 -0700 (PDT)
+X-Received: by 2002:a2e:bc25:0:b0:39b:1776:6577 with SMTP id
+ 38308e7fff4ca-39b53cda464mr15602651fa.40.1783329534346; Mon, 06 Jul 2026
+ 02:18:54 -0700 (PDT)
 MIME-Version: 1.0
+References: <20260703144931.2541180-1-radu.nicolau@intel.com>
+In-Reply-To: <20260703144931.2541180-1-radu.nicolau@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 6 Jul 2026 11:18:42 +0200
+X-Gm-Features: AVVi8CcjYiGYPp1YQ0d91j8MHmOAR8ZA0b5Rp5WZIIJKDqtjiihNIpPCvKmeEcU
+Message-ID: <CAJFAV8xL1e7VDTEjKnK62CgJyqfHSwt2t6R+tELTcm2uxNfHCg@mail.gmail.com>
+Subject: Re: [PATCH] crypto/virtio: cookies are allocated from mempool
+To: Radu Nicolau <radu.nicolau@intel.com>
+Cc: dev@dpdk.org, maxime.coquelin@redhat.com, jianjay.zhou@huawei.com, 
+ Fan Zhang <fanzhang.oss@gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: YM_0qVj8jciCxJsZg_4F3cCc_QRtq9U7sRlHwKKm3oE_1783329535
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,115 +83,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1964
+On Fri, 3 Jul 2026 at 16:50, Radu Nicolau <radu.nicolau@intel.com> wrote:
+>
+> The Rx/Tx functions allocate cookies as needed, no need to
+> allocate and free from heap.
+>
+> Fixes: 6f0175ff53e0 ("crypto/virtio: support basic PMD ops")
+> Cc: jianjay.zhou@huawei.com
+>
+> Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
 
-            Bug ID: 1964
-           Summary: [dpdk26.07-rc2] DPDK build failed with
-                    EXTRA_CFLAGS=3D'-O1' on Ubuntu26.04
-           Product: DPDK
-           Version: 26.07
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: daxuex.gao@intel.com
-  Target Milestone: ---
+LGTM, except one nit below.
 
-[Environment]
-DPDK version:=20
-commit f77bc8767a952cf833fc9c85d6b5b8d77d39a5da (HEAD -> main, tag: v26.07-=
-rc2,
-origin/main, origin/HEAD)
-OS: Ubuntu26.04/7.0.0-14-generic
-Compiler: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+[snip]
 
-[Test Setup]
-# build cmd:=20
-CC=3Dgcc meson --optimization=3D1 --werror  -Dlibdir=3Dlib  --default-libra=
-ry=3Dstatic
-x86_64-native-linuxapp-gcc=20
-ninja -C x86_64-native-linuxapp-gcc
+>
+> -cookie_alloc_err:
+> -       rte_mempool_free(vq->mpool);
+> -       if (i != 0) {
+> -               for (j = 0; j < i; j++)
+> -                       rte_free(vq->vq_descx[j].cookie);
+> -       }
+>  mpool_create_err:
+> +       rte_mempool_free(vq->mpool);
 
-[Output]
-# ninja -C x86_64-native-linuxapp-gcc
-ninja: Entering directory `x86_64-native-linuxapp-gcc'
-[1683/3722] Compiling C object
-drivers/libtmp_rte_net_hinic3.a.p/net_hinic3_hinic3_fdir.c.o
-FAILED: drivers/libtmp_rte_net_hinic3.a.p/net_hinic3_hinic3_fdir.c.o
-gcc -Idrivers/libtmp_rte_net_hinic3.a.p -Idrivers -I../drivers
--Idrivers/net/hinic3 -I../drivers/net/hinic3 -Idrivers/net/hinic3/base
--I../drivers/net/hinic3/base -Idrivers/net/hinic3/htn_adapt
--I../drivers/net/hinic3/htn_adapt -Idrivers/net/hinic3/stn_adapt
--I../drivers/net/hinic3/stn_adapt -Ilib/ethdev -I../lib/ethdev -Ilib/eal/co=
-mmon
--I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include
--I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include
--Ilib/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal
--I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metr=
-ics
--I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/argparse
--I../lib/argparse -Ilib/net -I../lib/net -Ilib/mbuf -I../lib/mbuf -Ilib/mem=
-pool
--I../lib/mempool -Ilib/ring -I../lib/ring -Ilib/meter -I../lib/meter
--Idrivers/bus/pci -I../drivers/bus/pci -I../drivers/bus/pci/linux -Ilib/pci
--I../lib/pci -Idrivers/bus/vdev -I../drivers/bus/vdev
--fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -=
-Wextra
--Werror -std=3Dc11 -O1 -include rte_config.h -Wvla -Wcast-qual -Wdeprecated
--Wformat -Wformat-nonliteral -Wformat-security -Wmissing-declarations
--Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith
--Wshadow -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings
--Wno-packed-not-aligned -Wno-missing-field-initializers
--fzero-init-padding-bits=3Dall -D_GNU_SOURCE -fPIC -march=3Dnative -mrtm
--DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-truncation
--Wno-address-of-packed-member -DHW_CONVERT_ENDIAN -DRTE_COMPONENT_CLASS=3Dp=
-md_net
--DRTE_COMPONENT_NAME=3Dhinic3 -DRTE_LOG_DEFAULT_LOGTYPE=3Dpmd.net.hinic3 -M=
-D -MQ
-drivers/libtmp_rte_net_hinic3.a.p/net_hinic3_hinic3_fdir.c.o -MF
-drivers/libtmp_rte_net_hinic3.a.p/net_hinic3_hinic3_fdir.c.o.d -o
-drivers/libtmp_rte_net_hinic3.a.p/net_hinic3_hinic3_fdir.c.o -c
-../drivers/net/hinic3/hinic3_fdir.c
-../drivers/net/hinic3/hinic3_fdir.c: In function
-=E2=80=98hinic3_enable_rxq_fdir_filter=E2=80=99:
-../drivers/net/hinic3/hinic3_fdir.c:1278:13: error: =E2=80=98ret=E2=80=99 m=
-ay be used
-uninitialized [-Werror=3Dmaybe-uninitialized]
- 1278 |         int ret;
-      |             ^~~
-cc1: all warnings being treated as errors
-[1694/3722] Compiling C object
-drivers/libtmp_rte_net_hinic3.a.p/net_hinic3_hinic3_ethdev.c.o
-ninja: build stopped: subcommand failed.
+vq->mpool == NULL if reaching this label.
 
-[Expected Result]
-Build Passed
+Calling rte_mempool_free() with NULL is harmless/noop.
+Still, there is no need (and I find it confusing) to add
+rte_mempool_free under the mpool_create_err label.
 
-[Regression]
-Is this issue a regression: (Y/N)N
 
-[First bad commit]
-commit 1c963e5976a812771a4f3329e340ff9f9bef4406 (HEAD)
-Author: Stephen Hemminger <stephen@networkplumber.org>
-Date:   Tue Jun 9 08:53:30 2026 -0700
+>         rte_free(vq);
+>         return -ENOMEM;
+>  }
+> --
+> 2.52.0
+>
 
-    tailq: fix name truncation
 
-    The tailq name is defined as 32 bytes, but name would be
-    silently truncated at 31 bytes. The function strlcpy() size
-    already accounts for the NUL character at the end.
+-- 
+David Marchand
 
-    Bugzilla ID: 1954
-    Fixes: f9acaf84e923 ("replace snprintf with strlcpy without adding extra
-include")
-    Cc: stable@dpdk.org
-
-    Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-    Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
