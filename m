@@ -2,71 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6419C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 13:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A7DC43458
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 13:28:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F1C640A6B;
-	Mon,  6 Jul 2026 15:26:58 +0200 (CEST)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com
- [209.85.160.176])
- by mails.dpdk.org (Postfix) with ESMTP id A070B406FF
- for <dev@dpdk.org>; Mon,  6 Jul 2026 15:26:56 +0200 (CEST)
-Received: by mail-qt1-f176.google.com with SMTP id
- d75a77b69052e-51c149c5722so17106791cf.0
- for <dev@dpdk.org>; Mon, 06 Jul 2026 06:26:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E14D140615;
+	Mon,  6 Jul 2026 15:28:02 +0200 (CEST)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
+ [209.85.208.50]) by mails.dpdk.org (Postfix) with ESMTP id 08794402C3
+ for <dev@dpdk.org>; Mon,  6 Jul 2026 15:28:01 +0200 (CEST)
+Received: by mail-ed1-f50.google.com with SMTP id
+ 4fb4d7f45d1cf-698e5859a3cso5644777a12.0
+ for <dev@dpdk.org>; Mon, 06 Jul 2026 06:28:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783344480; cv=none;
+ d=google.com; s=arc-20260327;
+ b=E/RQzZ43qpDuzLi9LXNN+5DAY2ddawgzRYJAf+luL30xdkmFjyCVcYtTq+fMufg5AI
+ O+2sgGQVzW6Uex4vgrMO9iEVBtQa0USxKE3wLx63xRH66aO7KEfnzue4WoLZpW9oMIu1
+ MRQcG0DAANgs2uEKKGWo/ZhZAGlUSEDp8WeIlt4JfR3yT3jiTHHZppp8ShW5eS8KVR/u
+ 5XY4W86/2Pd2HloGYuQdBB4ynDKwfRXxNG5OcV/cZpu7CnSQnQUeBvHREfI/sehrSA1N
+ Rnn/16tM587gZAgzU+qziH/+/DbjZw3AQIpEh5XQvwOj7VVH/adAigZCHixcXd1KF/S+
+ PLjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=SJMgYFXW8iXb/ia82k6yyTlZeHC2Pdb5fdJMuOYDOzg=;
+ fh=FSlsNWNwv7lU5nl/fUyv/ErY0jhwYEexjlup5aTQPHw=;
+ b=m6qhEx4pnD+Hjle2n+sVkTXAFkRPRyio+kc+lKER3nl9H2/+7XHTqjyg2Qg+iJKhn3
+ LS+8DGuWA94nLaIM/Azsuo2zU+7xI9kcJ2tcNVvCxrnZfM0XmQWzZBjGKEaC0Nows+Bm
+ exx3VjVDCZqxDH7QAG3N1otGG5tE6IGnGSASJtva2FFzgGPx64JvW+9dMIi47uuQimgg
+ uBkWFq55+h4nrBB/kyluwyztdcf+jCZhxXXn+WcX5BlfrHY9+q3D7T8YkGcDuI5hJ2fR
+ W6GKip1fj9EqZI97JLd3MSNBoJbOwnVKtm4i1srLGwoa1Vv3AaNofBqGrV12tpjmGOo+
+ nO9Q==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1783344416; x=1783949216; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=5QieVuw6ZF6SujvocrVhs8vfmtW9bsjndyyKya6Pz9I=;
- b=dipgW9281WdHzYIUMJCi5b5jU9zAgJXhDK/orbXOaEumP7NjzBaiEzr2ZZTU2ygfxV
- XmbTTh9CVaq9Q/OCJQnr3nE31mrh4raBObg7SbCOI0AMwgoRW6IIfIWltJfof8KAwul0
- Ir7DqSOsUy4Gqct5JTm+m1ivp+XMYCgifpz44=
+ d=iol.unh.edu; s=unh-iol; t=1783344480; x=1783949280; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=SJMgYFXW8iXb/ia82k6yyTlZeHC2Pdb5fdJMuOYDOzg=;
+ b=h+tuqLXTsMyJQrdaExqJo3IMlV3L/Y1LHJvQjaja4GZC7stopFtT0s3BWWIh7PRvmQ
+ leusweX4Ij1JfmazQXTbXoz1ZKmpvhHllaCZxZUPT1OoiDDznlbQtpvbEG5ZSk9fECvE
+ 0gaUloPH/a30Oe9C/pynMLxb/K2Fwtis+lSbM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783344416; x=1783949216;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=5QieVuw6ZF6SujvocrVhs8vfmtW9bsjndyyKya6Pz9I=;
- b=S6CwEbqJjO57hv8wppUzaJ18jqOBimvEBkmNmYgjl7/oacwJy1mkvl5KxHIdmmb/NW
- q3rBP9dnr+UDFp2YGPfgkTyXL4qLX0gOQvP1zHBRdRcfJ9s3B+BAm8+SwT9RZX2ro03m
- Dw79J/WJhhFIjhREDl+8i8BBmXJrNMERfyOaNzfGU4TgQYCnSjU2gzRMJrqt2nbtEv88
- LQ5xulbC+g4baR/b8Lz4yCMW5mgVrTKBgQnWLOGPKhdCmDSQn17J72P7f+SJF3CVoehf
- 4BqTI5peVLMw7KDnxJICw4dPMetXSKU+lL1RtKiP7W0ADTpHoGQpImrxnK3eh2Ds3b/F
- mC+A==
-X-Gm-Message-State: AOJu0YxEiNOApD8NtiqcVTUG+IQjSjrumEUTww7t9/itYJF4B5Tdr8ZO
- MTe8hLM1H/vx3e72gVyaxoptGpkQN6S5WS/IVbkx9tQxiaF8ewNHl3aKCq1VlwJnTmI=
-X-Gm-Gg: AfdE7clEsuS8AGiB1SHtfjKCQAH3WsMsDxcpPUIb4qWwH8n6TwoKjy6Zd0x+uingNr4
- t4EUm2PWFwV3NS+VA+LUw/IxqztBgJnDMFE+IouW74LHr/s3ST1KctRorAWJEbeSWh6OWaM2Qjs
- CDoUV9dGJ1zpCLlLOX3GAaCqRn7Q2Y+I6i9QhDYT1Low3VaBys2zMr3ZxgeCeyxvG82TCJObUA+
- eKIBdoPYkhZ2VOzqnZfEfykjI3w47U/J9zJh12Bdtrer+H/sOAI6rx/B3D+GkZDc6RpETkzK0GF
- rjdFdqHJfXKM94YebrNCOR2iT56skk540F13WHfZoMM5hLcYGeRrph9S8t2+PLLI+dbuGoJjAPC
- Ybbe+8xo5bupxTHK/mbKfnwDQRlnUTK7t+Lq1guvQ9Yp3HOihoTcaoGabKqCadM8E2jH7SWfDIo
- HfL8WQURF77cpalybZhzt/g2BQJ+ogENaS4Ne4RmT7BYwFItsw5tX44qigDYYcsuIk
-X-Received: by 2002:ac8:7c50:0:b0:517:9407:5c38 with SMTP id
- d75a77b69052e-51c3c2f7ce1mr174928791cf.24.1783344415560; 
- Mon, 06 Jul 2026 06:26:55 -0700 (PDT)
-Received: from d121029.iol.unh.edu ([2606:4100:3880:1210:5d7f:246:cd51:1b62])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-51c41db4fb5sm87602801cf.25.2026.07.06.06.26.54
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 06 Jul 2026 06:26:55 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: patrickrobb1997@gmail.com,
-	luca.vizzarro@arm.com
-Cc: dev@dpdk.org,
-	knimoji@iol.unh.edu,
-	Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2 2/2] dts: add latency coverage for cryptodev testing
-Date: Mon,  6 Jul 2026 09:26:33 -0400
-Message-ID: <20260706132633.465385-2-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260706132633.465385-1-abailey@iol.unh.edu>
+ d=1e100.net; s=20251104; t=1783344480; x=1783949280;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=SJMgYFXW8iXb/ia82k6yyTlZeHC2Pdb5fdJMuOYDOzg=;
+ b=B9L/mLbTocCc78NmQEquMbjwUxRVpXcmOdiHHUeSWmsL+GlpJPqSShlc419cM4xgiE
+ jqewVeLio569w9U/VB1xmqKL9hoOe8d6njms3HnErDho6VBfkW4rQLs2cNCP1rotE+t3
+ Mj+qDMm3LcUmH92hl4tlAWrHzDeO5/EkISbgnLMdZQSrr4edxXbb3UE3drvov1tbEzRL
+ 3z6S1WlwTsfBcgqwSmACTYlcuOS/MRi0T/GOSjaK1hYcXmx3fAC6/Xgw8XJEizXwl6ba
+ n8QnddYESwNakZqyAzQ1dNqL6HONRAlVgnW7a9Q6u13m9dmiOFEteI9hRC4pceBqHxTL
+ jEpQ==
+X-Gm-Message-State: AOJu0YxKuskeFOxceAlEpREZRLhuqGqvHSZxBcA4P2bGWYdKVsXhYCLj
+ kvlHcu9bITpawDk3PCajF5jS+0LKUA05C1rKmRSR9ixbew/o5XTigrg+TjDAXex4xIuH+Rfjj68
+ QYUPUbZiKH0VlZqi+IAUncS1y7btALTsQhsEpwO+tgA==
+X-Gm-Gg: AfdE7cmIGE5GwwH2KWiO4eFxNNRQEU5CaXi2REb2BxPFtbIU+lSOc/5UetNDIZt7Tym
+ 5tJ01w4LxgDxkTBEQ+EMqoKyXurcnWTbYSM7wS2tJuN6oWCjQFlLTNyfszF76sYURUzQqGVPi2A
+ LbHEifTLWMUqiZtt+juBpUWTIVoxqQmb4Lb9qS2CqMkZnEXtpHn4vdMDk/qS6h2gdvHLb/Cv/tt
+ 5fhW8UJ60hPPZkNWqI8kFdINsIttZh0HzVPmKRZdpGSpfL006fVJtT48tc3Rgis58w2gJU5kRm9
+ uHQrcdpnFS2rcM0q95XMLN+gOBf2Mw==
+X-Received: by 2002:a05:6402:a593:20b0:698:72f3:9ceb with SMTP id
+ 4fb4d7f45d1cf-698c104c5a0mr4255669a12.7.1783344480612; Mon, 06 Jul 2026
+ 06:28:00 -0700 (PDT)
+MIME-Version: 1.0
 References: <20260428181501.72434-1-abailey@iol.unh.edu>
  <20260706132633.465385-1-abailey@iol.unh.edu>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260706132633.465385-1-abailey@iol.unh.edu>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Mon, 6 Jul 2026 09:27:49 -0400
+X-Gm-Features: AVVi8CchNE0C_nYYiBIwpT3ceY0uBwFn4CCtwflqt0q6FKhgzyGtVLeufVDF9T0
+Message-ID: <CABJ3N2Xkr3zihiTbzdByigibcy4i_txxCk-0Drzw3E1weze6rw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dts: update parsing for cryptodev latency
+To: patrickrobb1997@gmail.com, luca.vizzarro@arm.com
+Cc: dev@dpdk.org, knimoji@iol.unh.edu
+Content-Type: multipart/alternative; boundary="0000000000004787220655f13e59"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,757 +90,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, next DTS only has cryptodev testing coverage for throughput
-metrics. This patch adds a test suite to include latency testing for
-crypto devices.
+--0000000000004787220655f13e59
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
-Reviewed-by: Patrick Robb <patrickrobb1997@gmail.com>
----
- .../dts/tests.TestSuite_cryptodev_latency.rst |   8 +
- dts/tests/TestSuite_cryptodev_latency.py      | 718 ++++++++++++++++++
- 2 files changed, 726 insertions(+)
- create mode 100644 doc/api/dts/tests.TestSuite_cryptodev_latency.rst
- create mode 100644 dts/tests/TestSuite_cryptodev_latency.py
+No changes in the most recent submission, only adding dev to the recipient
+list.
 
-diff --git a/doc/api/dts/tests.TestSuite_cryptodev_latency.rst b/doc/api/dts/tests.TestSuite_cryptodev_latency.rst
-new file mode 100644
-index 0000000000..1bf4a0f4b0
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_cryptodev_latency.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+cryptodev_latency Test Suite
-+============================
-+
-+.. automodule:: tests.TestSuite_cryptodev_latency
-+   :members:
-+   :show-inheritance:
-diff --git a/dts/tests/TestSuite_cryptodev_latency.py b/dts/tests/TestSuite_cryptodev_latency.py
-new file mode 100644
-index 0000000000..411196c4c5
---- /dev/null
-+++ b/dts/tests/TestSuite_cryptodev_latency.py
-@@ -0,0 +1,718 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 University of New Hampshire
-+
-+"""DPDK cryptodev performance test suite.
-+
-+The main goal of this test suite is to utilize the dpdk-test-cryptodev application to gather
-+performance metrics for various cryptographic operations supported by DPDK cryptodev-pmd.
-+It will then compare the results against a predefined baseline given in the test_config file to
-+ensure performance standards are met.
-+"""
-+
-+from api.capabilities import (
-+    LinkTopology,
-+    requires_link_topology,
-+)
-+from api.cryptodev import Cryptodev
-+from api.cryptodev.config import (
-+    AeadAlgName,
-+    AuthenticationAlgorithm,
-+    AuthenticationOpMode,
-+    CipherAlgorithm,
-+    DeviceType,
-+    EncryptDecryptSwitch,
-+    ListWrapper,
-+    OperationType,
-+    TestType,
-+    get_device_from_str,
-+)
-+from api.cryptodev.types import (
-+    CryptodevResults,
-+)
-+from api.test import skip, verify
-+from framework.context import get_ctx
-+from framework.test_suite import BaseConfig, TestSuite, crypto_test
-+from framework.testbed_model.virtual_device import VirtualDevice
-+
-+config_list: list[dict[str, int | float | str]] = [
-+    {"buff_size": 64, "avg_cycles": 99_999.00, "avg_time_us": 9999.0},
-+    {"buff_size": 512, "avg_cycles": 99_999.00, "avg_time_us": 9999.0},
-+    {"buff_size": 2048, "avg_cycles": 99_999.00, "avg_time_us": 9999.0},
-+]
-+
-+TOTAL_OPS = 10_000_000
-+
-+
-+class Config(BaseConfig):
-+    """Performance test metrics.
-+
-+    Attributes:
-+        delta_tolerance: The allowed tolerance below a given baseline.
-+        latency_test_parameters: The test parameters to use in the test suite.
-+    """
-+
-+    delta_tolerance: float = 0.05
-+
-+    latency_test_parameters: dict[str, list[dict[str, int | float | str]]] = {
-+        "aes_cbc": config_list,
-+        "aes_cbc_sha1_hmac": config_list,
-+        "aes_cbc_sha2_hmac": config_list,
-+        "aes_docsisbpi": config_list,
-+        "aes_gcm": config_list,
-+        "kasumi_f8_kasumi_f9": config_list,
-+        "snow3g_uea2_snow3g_uia2": config_list,
-+        "zuc_eea3_zuc_eia3": config_list,
-+        "aesni_gcm_vdev": config_list,
-+        "aesni_mb_cipher_then_auth_vdev": config_list,
-+        "aesni_mb_vdev": config_list,
-+        "kasumi_vdev": config_list,
-+        "open_ssl_vdev": config_list,
-+        "snow3g_vdev": config_list,
-+        "zuc_vdev": config_list,
-+    }
-+
-+
-+@requires_link_topology(LinkTopology.NO_LINK)
-+class TestCryptodevLatency(TestSuite):
-+    """DPDK Crypto Device Testing Suite."""
-+
-+    config: Config
-+
-+    def set_up_suite(self) -> None:
-+        """Set up the test suite."""
-+        self.latency_test_parameters: dict[str, list[dict[str, int | float | str]]] = (
-+            self.config.latency_test_parameters
-+        )
-+        self.delta_tolerance: float = self.config.delta_tolerance
-+        self.device_type: DeviceType | None = get_device_from_str(
-+            str(get_ctx().sut_node.crypto_device_type)
-+        )
-+        self.buffer_sizes = {}
-+
-+        for k, v in self.latency_test_parameters.items():
-+            self.buffer_sizes[k] = ListWrapper([int(run["buff_size"]) for run in v])
-+
-+    def _print_stats(self, test_vals: list[dict[str, int | float | str]]) -> None:
-+        element_len = len("Avg Time us Target")
-+        border_len = (element_len + 1) * (len(test_vals[0]))
-+
-+        print(f"{'Latency Results'.center(border_len)}\n{'=' * border_len}")
-+        for k, v in test_vals[0].items():
-+            print(f"|{k.title():<{element_len}}", end="")
-+        print(f"|\n{'='*border_len}")
-+
-+        for test_val in test_vals:
-+            for k, v in test_val.items():
-+                print(f"|{v:<{element_len}}", end="")
-+            print(f"|\n{'='*border_len}")
-+
-+    def _verify_latency(
-+        self,
-+        results: list[CryptodevResults],
-+        key: str,
-+    ) -> list[dict[str, int | float | str]]:
-+        result_list: list[dict[str, int | float | str]] = []
-+
-+        for result in results:
-+            # get the corresponding baseline for the current buffer size
-+            parameters: dict[str, int | float | str] = next(
-+                filter(
-+                    lambda x: x["buff_size"] == result.buffer_size,
-+                    self.latency_test_parameters[key],
-+                ),
-+                {},
-+            )
-+            if parameters == {}:
-+                raise RuntimeError(
-+                    f"No test parameters found for {key} with buffer size {result.buffer_size}"
-+                )
-+            test_result = True
-+            expected_cycles = parameters["avg_cycles"]
-+            expected_time_us = parameters["avg_time_us"]
-+            measured_time_delta = abs(
-+                (getattr(result, "avg_time_us") - expected_time_us) / expected_time_us
-+            )
-+            measured_cycles_delta = abs(
-+                (getattr(result, "avg_cycles") - expected_cycles) / expected_cycles
-+            )
-+
-+            # result did not meet the given cycles parameter, check if within delta.
-+            if getattr(result, "avg_cycles") > expected_cycles:
-+                if self.delta_tolerance < measured_cycles_delta:
-+                    test_result = False
-+            # result did not meet the given time parameter, check if within delta.
-+            if getattr(result, "avg_time_us") > expected_time_us:
-+                if self.delta_tolerance < measured_time_delta:
-+                    test_result = False
-+            result_list.append(
-+                {
-+                    "Buffer Size": parameters["buff_size"],
-+                    "delta tolerance": self.delta_tolerance,
-+                    "cycles delta": round(measured_cycles_delta, 5),
-+                    "Avg cycles": round(getattr(result, "avg_cycles"), 5),
-+                    "Avg cycles target": expected_cycles,
-+                    "time delta": round(measured_time_delta, 5),
-+                    "Avg time us": round(getattr(result, "avg_time_us"), 5),
-+                    "Avg time us target": expected_time_us,
-+                    "passed": "PASS" if test_result else "FAIL",
-+                }
-+            )
-+        return result_list
-+
-+    @crypto_test
-+    def aes_cbc(self) -> None:
-+        """aes_cbc latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aes_cbc" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            devtype=self.device_type,
-+            optype=OperationType.cipher_only,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["aes_cbc"],
-+        )
-+        results = self._verify_latency(app.run_app(), "aes_cbc")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def aes_cbc_sha1_hmac(self) -> None:
-+        """aes_cbc_sha1_hmac latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aes_cbc_sha1_hmac" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            devtype=self.device_type,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            auth_algo=AuthenticationAlgorithm.sha1_hmac,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=64,
-+            digest_sz=12,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["aes_cbc_sha1_hmac"],
-+        )
-+        results = self._verify_latency(app.run_app(), "aes_cbc_sha1_hmac")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def aes_cbc_sha2_hmac(self) -> None:
-+        """aes_cbc_sha2_hmac latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aes_cbc_sha2_hmac" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            devtype=self.device_type,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.sha2_256_hmac,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=64,
-+            digest_sz=32,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["aes_cbc_sha2_hmac"],
-+        )
-+        results = self._verify_latency(app.run_app(), "aes_cbc_sha2_hmac")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def aes_docsisbpi(self) -> None:
-+        """aes_docsisbpi latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aes_docsisbpi" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            devtype=self.device_type,
-+            optype=OperationType.cipher_only,
-+            cipher_algo=CipherAlgorithm.aes_docsisbpi,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=32,
-+            cipher_iv_sz=16,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["aes_docsisbpi"],
-+        )
-+        results = self._verify_latency(app.run_app(), "aes_docsisbpi")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def aes_gcm(self) -> None:
-+        """aes_gcm latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aes_gcm" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            devtype=self.device_type,
-+            optype=OperationType.aead,
-+            aead_algo=AeadAlgName.aes_gcm,
-+            aead_op=EncryptDecryptSwitch.encrypt,
-+            aead_key_sz=16,
-+            aead_iv_sz=12,
-+            aead_aad_sz=16,
-+            digest_sz=16,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["aes_gcm"],
-+        )
-+        results = self._verify_latency(app.run_app(), "aes_gcm")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def kasumi_f8_kasumi_f9(self) -> None:
-+        """kasumi_f8_kasumi_f9 latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "kasumi_f8_kasumi_f9" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            devtype=self.device_type,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.kasumi_f8,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=8,
-+            auth_algo=AuthenticationAlgorithm.kasumi_f9,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=16,
-+            digest_sz=4,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["kasumi_f8_kasumi_f9"],
-+        )
-+        results = self._verify_latency(app.run_app(), "kasumi_f8_kasumi_f9")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def snow3g_uea2_snow3g_uia2(self) -> None:
-+        """snow3g_uea2_snow3g_uia2 latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "snow3g_uea2_snow3g_uia2" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            devtype=self.device_type,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.snow3g_uea2,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.snow3g_uia2,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=16,
-+            auth_iv_sz=16,
-+            digest_sz=4,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["snow3g_uea2_snow3g_uia2"],
-+        )
-+        results = self._verify_latency(app.run_app(), "snow3g_uea2_snow3g_uia2")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def zuc_eea3_zuc_eia3(self) -> None:
-+        """zuc_eea3_zuc_eia3 cipher and auth latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "zuc_eea3_zuc_eia3" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            devtype=self.device_type,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.zuc_eea3,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.zuc_eia3,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=16,
-+            auth_iv_sz=16,
-+            digest_sz=4,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["zuc_eea3_zuc_eia3"],
-+        )
-+        results = self._verify_latency(app.run_app(), "zuc_eea3_zuc_eia3")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    # BEGIN VDEV TESTS
-+
-+    @crypto_test
-+    def aesni_gcm_vdev(self) -> None:
-+        """aesni_gcm virtual device latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aesni_gcm_vdev" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_aesni_gcm0")],
-+            devtype=DeviceType.crypto_aesni_gcm,
-+            optype=OperationType.aead,
-+            aead_op=EncryptDecryptSwitch.encrypt,
-+            aead_key_sz=16,
-+            aead_iv_sz=12,
-+            aead_aad_sz=16,
-+            digest_sz=16,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["aesni_gcm_vdev"],
-+        )
-+        results = self._verify_latency(app.run_app(num_vfs=0), "aesni_gcm_vdev")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def aesni_mb_cipher_then_auth_vdev(self) -> None:
-+        """aesni_mb vdev cipher and auth latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aesni_mb_cipher_then_auth_vdev" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_aesni_mb0")],
-+            devtype=DeviceType.crypto_aesni_mb,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            auth_algo=AuthenticationAlgorithm.sha1_hmac,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=64,
-+            digest_sz=12,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["aesni_mb_cipher_then_auth_vdev"],
-+        )
-+        results = self._verify_latency(app.run_app(num_vfs=0), "aesni_mb_cipher_then_auth_vdev")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def aesni_mb_vdev(self) -> None:
-+        """aesni_mb vdev latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aesni_mb_vdev" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_aesni_mb0")],
-+            devtype=DeviceType.crypto_aesni_mb,
-+            optype=OperationType.cipher_only,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["aesni_mb_vdev"],
-+        )
-+        results = self._verify_latency(app.run_app(num_vfs=0), "aesni_mb_vdev")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def kasumi_vdev(self) -> None:
-+        """Kasumi vdev latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "kasumi_vdev" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_kasumi0")],
-+            devtype=DeviceType.crypto_kasumi,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.kasumi_f8,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=8,
-+            auth_algo=AuthenticationAlgorithm.kasumi_f9,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=16,
-+            digest_sz=4,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["kasumi_vdev"],
-+        )
-+        results = self._verify_latency(app.run_app(num_vfs=0), "kasumi_vdev")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def open_ssl_vdev(self) -> None:
-+        """open_ssl vdev latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "open_ssl_vdev" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_openssl0")],
-+            devtype=DeviceType.crypto_openssl,
-+            optype=OperationType.aead,
-+            aead_algo=AeadAlgName.aes_gcm,
-+            aead_op=EncryptDecryptSwitch.encrypt,
-+            aead_key_sz=16,
-+            aead_iv_sz=16,
-+            aead_aad_sz=16,
-+            digest_sz=16,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["open_ssl_vdev"],
-+        )
-+        results = self._verify_latency(app.run_app(num_vfs=0), "open_ssl_vdev")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def snow3g_vdev(self) -> None:
-+        """snow3g vdev latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "snow3g_vdev" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_snow3g0")],
-+            devtype=DeviceType.crypto_snow3g,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.snow3g_uea2,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.snow3g_uia2,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=16,
-+            auth_iv_sz=16,
-+            digest_sz=16,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["snow3g_vdev"],
-+        )
-+        results = self._verify_latency(app.run_app(num_vfs=0), "snow3g_vdev")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
-+
-+    @crypto_test
-+    def zuc_vdev(self) -> None:
-+        """Zuc vdev latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "zuc_vdev" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_zuc0")],
-+            devtype=DeviceType.crypto_zuc,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.zuc_eea3,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.zuc_eia3,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=16,
-+            auth_iv_sz=16,
-+            digest_sz=4,
-+            burst_sz=32,
-+            total_ops=TOTAL_OPS,
-+            buffer_sz=self.buffer_sizes["zuc_vdev"],
-+        )
-+        results = self._verify_latency(app.run_app(num_vfs=0), "zuc_vdev")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency was greater than the delta tolerance above baseline",
-+            )
--- 
-2.54.0
+--0000000000004787220655f13e59
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr"><div dir=3D"ltr">No changes in the most recent submission,=
+ only=C2=A0adding dev to the recipient list.</div></div>
+
+--0000000000004787220655f13e59--
