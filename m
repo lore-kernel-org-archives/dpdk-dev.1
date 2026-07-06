@@ -2,72 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22AF1C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 13:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2FDC43458
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 13:44:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D533040A7D;
-	Mon,  6 Jul 2026 15:35:52 +0200 (CEST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id A40AA40A72
- for <dev@dpdk.org>; Mon,  6 Jul 2026 15:35:49 +0200 (CEST)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-8f186025973so33635776d6.0
- for <dev@dpdk.org>; Mon, 06 Jul 2026 06:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1783344949; x=1783949749; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=5BggnIEqa/6C0gHY/ZfnUb771MlEFYNml8if7GrKjYk=;
- b=MCzYUPVxfiE/DDSsXhVaWaPfIVCGqkNP1i7OS0ilRiVx9aBKzBhN4w/7QFJLlEKwqy
- jJtlh3AByE1TBDF2E82TOprHdD9heApzgVDbMjuFdZefYAPrdAw7TAEfXkVWHMYvJl4x
- oBLVyxT07/iMuQ2ODRd7LXsoSM11yxDywPe6A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783344949; x=1783949749;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=5BggnIEqa/6C0gHY/ZfnUb771MlEFYNml8if7GrKjYk=;
- b=Y433P6vnTY3roGXl/iMFKIK+KemCsEpj9TN9Vh0u+Dkv45/dL26KAu7H7+zy8DopuQ
- wc1JLpz//QIPRhNRg0RBfk0IN33HH+b7/l4xLDydehZOJqwjUnrTnxwZoZ/kxwz0ddm4
- M6x2qpT/4Cg8IApwKAhSIboBx9/EpwWBK61vbRBDRye/IN31BfC3fbi0syqThAx4GaNN
- 6/pWJTdKuhDO7hM16JSDZUkKHQH8o3QkCyPb7QYfyTmA/Ql0hZrz3TZQrPSXE9cFvaIm
- uKVYC2a1e2MW3oCk0qpghogY/EnOyLnxOQFb3q6aa13UO78BXhR/0SnrB2HqSNIzsPG3
- zI6w==
-X-Gm-Message-State: AOJu0YxnoQcTCUS75WTT2gD4rcmF58H5aYUQTr/PeiF/KwpFSE3P9rFy
- ooou0XYMYNkw+PCOoY9jBHycjoL19QqeLTtjHocnF61Eg00CcXtLX7eJkaSSQCaUE//cv5Nvk6x
- ylcu0T9VZZkqdlxF+8YNWF0eznXltYBApKKA/mtNyXVwc8KEHmM0wR1KQlmSeds9PLM9QTWEQws
- lWEcpdtaouudunGxpCezzTZMU/U+Y=
-X-Gm-Gg: AfdE7cnjN/uzqIbImFDwnUzDQyexohhwZoMbxH5+3mMqg+tJkq4xE9b1cDi199gH8W7
- ZGT3kaJ/MZMq7XkiZExIGdeLNgJoGSx651ZuXNjvIApZ4hNygiR2DpoZziEmlKfhWfHBxgFQ70d
- n4Id6/Av+1RzFrvKHJlUdXfMfwxXLgnH0Y5XkPkIrXNL6UyCBsr/d6I3QSCEnUqWFUDHRNYvWXf
- jlW7nYugbzwlnCSPMiV4shg7eM1tFpevnkCCHySMx4k7xax2lPjMilo8laJ70l/gMmyHxAZC3o7
- xBgH1Ept6D6tdExLQDjrfj/l6Wxa62TJQAKVes3QlWCL18m7U1lqusips5s+E+ogWrP0Z8c8wVz
- 7e/477TgWhDH2d5wsfbD22Mh07yUGH0UPAWlbJfstOqG3m+xzMFspdyT1s0DThSuq63J+ffgIBk
- +Py8vv/AObsgq2k0n4UsaBvKILiiPEwFMUjQgvGABLFjiN66UZ7T9saA==
-X-Received: by 2002:a05:6214:459c:b0:8f2:4723:d88d with SMTP id
- 6a1803df08f44-8fcb1af3590mr5945566d6.4.1783344948664; 
- Mon, 06 Jul 2026 06:35:48 -0700 (PDT)
-Received: from d121029.iol.unh.edu ([2606:4100:3880:1210:5d7f:246:cd51:1b62])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8f46e27d555sm136081246d6.7.2026.07.06.06.35.47
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 06 Jul 2026 06:35:48 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: dev@dpdk.org,
-	luca.vizzarro@arm.com,
-	patrickrobb1997@gmail.com
-Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2 3/3] dts: add verify coverage for cryptodev testing
-Date: Mon,  6 Jul 2026 09:34:28 -0400
-Message-ID: <20260706133428.468816-3-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260706133428.468816-1-abailey@iol.unh.edu>
-References: <20260514172553.191331-1-abailey@iol.unh.edu>
- <20260706133428.468816-1-abailey@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id D747F4042F;
+	Mon,  6 Jul 2026 15:44:17 +0200 (CEST)
+Received: from fout-b8-smtp.messagingengine.com
+ (fout-b8-smtp.messagingengine.com [202.12.124.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 678C1402E9
+ for <dev@dpdk.org>; Mon,  6 Jul 2026 15:44:16 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.stl.internal (Postfix) with ESMTP id C5A771D000C3;
+ Mon,  6 Jul 2026 09:44:15 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Mon, 06 Jul 2026 09:44:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1783345455;
+ x=1783431855; bh=SuG8qq9v4HK0ibkaE5n4mVwkukUdNsZ67re9f78lSME=; b=
+ Iptb0/QEG/+RxGR2tm/33xLwB88EtrcWN/XmbFbjWP3QKHxO2Y8+RWw2oVXYi2e8
+ pqKuZOMcwo1BrRCjj67fVxW2ehUFID0hr7OO0Oul+avDmnkze2kHFWJRtGA9XWTI
+ o39bTkSmyDWd3VSk2yLxxjD5W4rJ8e4U1Brpl3pgFrBWrBnblz4HYUOt5/2ZdkWs
+ o1PakY7n4mJld6sOICBJLP951M6UBpBNAnzWeKBSCO89MuJ7u5eVFEDswEUYxPS1
+ 1J5mWI1FFqPfB9QdbiYkfCTn6To8KOJixguuTHiSZrn0+XdgO/IkaBEdDqoezaDG
+ Q4R0/P+lOHYn908ySS3RWw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783345455; x=
+ 1783431855; bh=SuG8qq9v4HK0ibkaE5n4mVwkukUdNsZ67re9f78lSME=; b=o
+ B/ntcfGGaS9k5tkQ/n+2VnONJQfTKdk6IcwIz4si94067o6K+HfP+XcY+H+be39U
+ uQQ5kVXQ1a/wfsN0Fbk1YfwbGLjJq1wB8RV9d2nFTVIXX2bmh4f9RzqTir/T6W0V
+ 4PDLGaXm8Du9X9tkgPVFNiz6zmlLATJmtFRc05rFuQ6uHSkJjvykwfMiVDXx9tpE
+ QMX5E2klgYkEabNEoe+pu5MraJ5m0PEpqZy9En025b/BbPPUCUdUXNjMfhLWSNJx
+ m1X6XCLZ+FLzOS8XxZPynyvAb77Nruj6YdIJGSasjgrdjtA4J7SZygPaqvpMFsUy
+ H0xQlTtdypn80nAGftacQ==
+X-ME-Sender: <xms:L7FLapHqhEXiQBDnwSUrV0FdFS3tckgPgjf6zT41jhu1Oi39tBehNQ>
+ <xme:L7FLaioRmp1mbLRV9cgEjBkyJVrwmHTeWLdwHBFMmo-zzJVz8ZHIN5EX69AeDLzXX
+ O0aenOE8t6tSNJ8soGvJODK_BVKRr6KW2e-dt-kf3c31Zc_bkAnPg>
+X-ME-Received: <xmr:L7FLaqS9UaBYsOiefBNeGn_GETa7G-a6wg_S6spOuOq9_yff3HT1nOJRgv1790_3TmvPYfRbtu_cMm7kKVtYKBSicQ>
+X-ME-Proxy-Cause: dmFkZTFzT2684wXQdmP9cTpp96CY4Duh3jVOhOp08ePRfz7xu7fEFzaYQVdQtlw9+JC8rD
+ vgNKdfXUkAEfEXdFb8hA+nVg5AgJ0lx3g6tPktrEmQ1OIkXHMzWM3m41LiTJQcMFu11i+h
+ eE8MkzauK5iJT7XdM39jMvpDJ9Z0GcpPw9sR8DAqVCJz4uq+LAYto6qAoxEztRuG9/1vxd
+ V5RK0mgz8kNQDGa9mx5/7izMlhQf1Z/7C6T8Tthd9fRgBGoE4XDv+hziosTHet8PoTdT6s
+ ZGf6uAbnpxzeiRC07q3YHE4bZJo0GXlz9XMHaEQeER4nqPMHUempIV9FYtPT1uVtfhQtB7
+ 3Z2B1268+TFSraGS/Hxbbag9AdcTJv0EoxvCZkXxCZ/kEDQDnNHObYyRI4h2peoI5W1uIx
+ cR2u/hlNQcv/XRb9u0/WT1Ja8zVNIJwbHDpxHyt4j3xlYjNKlxmC/D9cC5tJMWJ5NgGbqx
+ l3DOKhH5t34sdX+rgYrNL8rkopSrzCUk7We+RNXv9JCNlxOgUdP6fnP2geuhmYr+R+s6kM
+ xHsFtP2GS6cjfs55E9I2VzyeEaX3XgdBOVBjC0Y5odtT0HHWwDkeWKjlIAET6uWPpaFfAY
+ GgMa3JsrD1SacHC2PWZ7MlLtBw3hHXQc6sHiJZvzAotqB5zZg/HrDeCUyYeQ
+X-ME-Proxy: <xmx:L7FLanMOMXASByp6z5s1RkiAPyeSgGLq4ax9F6a1UscaT042cfirCg>
+ <xmx:L7FLalOBYBheMldrNBlYYIQjmNyU0qTPB7w_yY7yzU93Kl1ggyhiJw>
+ <xmx:L7FLavslljCfq0-IDNnIf9GPZQ5KyURctn5m3BB3DiZyj1aD17yJmg>
+ <xmx:L7FLanUp060h4jWRE3g1XVoeryqNskdlg8pczwqPAI3b6CUgJHAI9Q>
+ <xmx:L7FLao0v5W30Md1dOZp2UfluZQncsJygVOfDA7rbpsyDFOlxMMHMoHfh>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 6 Jul 2026 09:44:14 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Emma Finn <emma.finn@intel.com>
+Cc: Kai Ji <kai.ji@intel.com>, dev@dpdk.org
+Subject: Re: [v2] crypto/qat: fix IPsec MB header include for ARM
+Date: Mon, 06 Jul 2026 15:44:12 +0200
+Message-ID: <pCnVKWLoT86aW9AGGIf2CQ@monjalon.net>
+In-Reply-To: <20260706112727.2746447-1-emma.finn@intel.com>
+References: <20260630100105.2330637-1-emma.finn@intel.com>
+ <20260706112727.2746447-1-emma.finn@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,199 +87,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, next-DTS only covers throughput testing through the
-dpdk-test-crypto application. This series adds coverage for the verify
-option to next DTS to allow functional testing for various algorithms of
-crypto devices and virtual devices.
+06/07/2026 13:27, Emma Finn:
+> Update the header file to always include the platform-specific
+> IPsec MB header. Additionally, guard DOCSIS BPI-related fields
+> that depend on IPsec MB so they are not included for ARM build.
+> 
+> Fixes: 03c475d609eb ("crypto/qat: require IPsec MB for HMAC precomputes")
+> 
+> Reported-by: Thomas Monjalon <thomas@monjalon.net>
+> Signed-off-by: Emma Finn <emma.finn@intel.com>
+> ---
+> v2:
+> * Add guards around DOCSIS BPI
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
----
- dts/tests/TestSuite_cryptodev_verify.py | 160 ++++++++++++++++++++++++
- tests.TestSuite_cryptodev_verify.rst    |   8 ++
- 2 files changed, 168 insertions(+)
- create mode 100644 dts/tests/TestSuite_cryptodev_verify.py
- create mode 100644 tests.TestSuite_cryptodev_verify.rst
+The guards skip some code, leaving some variables unused or unset.
+I've fixed them:
 
-diff --git a/dts/tests/TestSuite_cryptodev_verify.py b/dts/tests/TestSuite_cryptodev_verify.py
-new file mode 100644
-index 0000000000..d93f93d09d
---- /dev/null
-+++ b/dts/tests/TestSuite_cryptodev_verify.py
-@@ -0,0 +1,160 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 University of New Hampshire
-+
-+"""DPDK cryptodev verify test suite.
-+
-+The main goal of this test suite is to utilize the verify mode of dpdk-test-crypto application
-+to ensure functional correctness for various cryptographic operations supported by DPDK
-+cryptodev-pmd.
-+"""
-+
-+from api.capabilities import (
-+    LinkTopology,
-+    requires_link_topology,
-+)
-+from api.cryptodev import Cryptodev
-+from api.cryptodev.config import (
-+    AeadAlgName,
-+    AuthenticationAlgorithm,
-+    AuthenticationOpMode,
-+    CipherAlgorithm,
-+    DeviceType,
-+    EncryptDecryptSwitch,
-+    OperationType,
-+    TestType,
-+    get_device_from_str,
-+)
-+from api.cryptodev.types import (
-+    CryptodevResults,
-+)
-+from api.test import verify
-+from framework.context import get_ctx
-+from framework.test_suite import TestSuite, crypto_test
-+from framework.testbed_model.virtual_device import VirtualDevice
-+
-+TOTAL_OPS = 10_000_000
-+AES_CBC_DATA = "test_aes_cbc.data"
-+AES_GCM_DATA = "test_aes_gcm.data"
-+
-+
-+@requires_link_topology(LinkTopology.NO_LINK)
-+class TestCryptodevVerify(TestSuite):
-+    """DPDK Crypto Device Testing Suite."""
-+
-+    def set_up_suite(self) -> None:
-+        """Set up the test suite."""
-+        self.device_type: DeviceType | None = get_device_from_str(
-+            str(get_ctx().sut_node.crypto_device_type)
-+        )
-+
-+    def _verify_output(
-+        self,
-+        results: list[CryptodevResults],
-+    ) -> bool:
-+        for result in results:
-+            if (
-+                getattr(result, "failed_enqueued") > 0
-+                or getattr(result, "failed_dequeued") > 0
-+                or getattr(result, "failed_ops") > 0
-+            ):
-+                return False
-+        return True
-+
-+    @crypto_test
-+    def aesni_mb_vdev(self) -> None:
-+        """aesni_mb_vdev test.
-+
-+        Steps:
-+            * Create a cryptodev instance with aesni_mb virtual device and provided buffer sizes.
-+        Verify:
-+            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
-+                with the dpdk-test-crypto application.
-+        """
-+        app = Cryptodev(
-+            vdevs=[VirtualDevice("crypto_aesni_mb0")],
-+            ptest=TestType.verify,
-+            test_file=AES_CBC_DATA,
-+            test_name="sha1_hmac_buff_32",
-+            devtype=DeviceType.crypto_aesni_mb,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=32,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.sha1_hmac,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=64,
-+            digest_sz=12,
-+            burst_sz=32,
-+            buffer_sz=32,
-+            total_ops=TOTAL_OPS,
-+        )
-+
-+        verify(self._verify_output(app.run_app(num_vfs=0)), "Failed to verify test sha1_hmac_buff_32")
-+
-+    @crypto_test
-+    def openssl_vdev(self) -> None:
-+        """Openssl vdev test.
-+
-+        Steps:
-+            * Create a cryptodev instance with openssl virtual device and provided buffer sizes.
-+        Verify:
-+            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
-+                with the dpdk-test-crypto application.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        app = Cryptodev(
-+            vdevs=[VirtualDevice("crypto_openssl0")],
-+            ptest=TestType.verify,
-+            test_file=AES_GCM_DATA,
-+            test_name="aes_gcm_buff_32",
-+            devtype=DeviceType.crypto_openssl,
-+            optype=OperationType.aead,
-+            aead_algo=AeadAlgName.aes_gcm,
-+            aead_op=EncryptDecryptSwitch.encrypt,
-+            aead_key_sz=16,
-+            aead_aad_sz=16,
-+            aead_iv_sz=12,
-+            digest_sz=16,
-+            burst_sz=32,
-+            buffer_sz=32,
-+            total_ops=TOTAL_OPS,
-+        )
-+
-+        verify(self._verify_output(app.run_app(num_vfs=0)), "Failed to verify test aes_gcm_buff_32")
-+
-+    @crypto_test
-+    def sha1_hmac_buff_32(self) -> None:
-+        """aes_cbc test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
-+                with the dpdk-test-crypto application.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        app = Cryptodev(
-+            ptest=TestType.verify,
-+            test_file=AES_CBC_DATA,
-+            test_name="sha1_hmac_buff_32",
-+            devtype=self.device_type,
-+            optype=OperationType.cipher_then_auth,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=32,
-+            cipher_iv_sz=16,
-+            auth_algo=AuthenticationAlgorithm.sha1_hmac,
-+            auth_op=AuthenticationOpMode.generate,
-+            auth_key_sz=64,
-+            digest_sz=20,
-+            burst_sz=32,
-+            buffer_sz=32,
-+            total_ops=TOTAL_OPS,
-+        )
-+
-+        verify(self._verify_output(app.run_app()), "Failed to verify test sha1_hmac_buff_32")
-diff --git a/tests.TestSuite_cryptodev_verify.rst b/tests.TestSuite_cryptodev_verify.rst
-new file mode 100644
-index 0000000000..d0a305a7d5
---- /dev/null
-+++ b/tests.TestSuite_cryptodev_verify.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+cryptodev_verify Test Suite
-+===========================
-+
-+.. automodule:: tests.TestSuite_cryptodev_verify
-+   :members:
-+   :show-inheritance:
--- 
-2.54.0
+--- a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
++++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
+@@ -102,6 +102,9 @@ qat_bpicipher_preprocess(struct qat_sym_session *ctx,
+ #ifndef RTE_ARCH_ARM
+                bpi_cipher_ipsec(last_block, dst, iv, last_block_len, ctx->expkey,
+                        ctx->mb_mgr, ctx->docsis_key_len);
++#else
++               RTE_SET_USED(dst);
++               RTE_SET_USED(iv);
+ #endif
+ #endif
+ #if RTE_LOG_DP_LEVEL >= RTE_LOG_DEBUG
+
+--- a/drivers/crypto/qat/qat_sym.h
++++ b/drivers/crypto/qat/qat_sym.h
+@@ -242,6 +242,9 @@ qat_bpicipher_postprocess(struct qat_sym_session *ctx,
+ #ifndef RTE_ARCH_ARM
+                bpi_cipher_ipsec(last_block, dst, iv, last_block_len, ctx->expkey,
+                        ctx->mb_mgr, ctx->docsis_key_len);
++#else
++               RTE_SET_USED(dst);
++               RTE_SET_USED(iv);
+ #endif
+ #endif
+ #if RTE_LOG_DP_LEVEL >= RTE_LOG_DEBUG
+
+--- a/drivers/crypto/qat/qat_sym_session.c
++++ b/drivers/crypto/qat/qat_sym_session.c
+@@ -387,7 +387,8 @@ qat_sym_session_configure_cipher(struct rte_cryptodev *dev,
+        struct rte_crypto_cipher_xform *cipher_xform = NULL;
+        enum qat_device_gen qat_dev_gen =
+                                internals->qat_dev->qat_dev_gen;
+-       int ret, is_wireless = 0;
++       int ret = 0;
++       int is_wireless = 0;
+        struct icp_qat_fw_la_bulk_req *req_tmpl = &session->fw_req;
+        struct icp_qat_fw_comn_req_hdr *header = &req_tmpl->comn_hdr;
+
+Applied, thanks.
+
 
