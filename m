@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB88C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 15:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47917C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 15:02:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D6D840696;
-	Mon,  6 Jul 2026 17:02:16 +0200 (CEST)
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com
- [209.85.219.44]) by mails.dpdk.org (Postfix) with ESMTP id 0E0E3402C3
+	by mails.dpdk.org (Postfix) with ESMTP id 2E79C406B6;
+	Mon,  6 Jul 2026 17:02:18 +0200 (CEST)
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com
+ [209.85.167.174])
+ by mails.dpdk.org (Postfix) with ESMTP id B2227402C3
  for <dev@dpdk.org>; Mon,  6 Jul 2026 17:02:14 +0200 (CEST)
-Received: by mail-qv1-f44.google.com with SMTP id
- 6a1803df08f44-8ef1dc934d1so26322566d6.0
+Received: by mail-oi1-f174.google.com with SMTP id
+ 5614622812f47-48f0e5e6698so1755895b6e.1
  for <dev@dpdk.org>; Mon, 06 Jul 2026 08:02:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1783350133; x=1783954933; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1783350134; x=1783954934; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=or2lBNkLE6tiMbWVBOG4EzL0wLvwVEpZS2AQ203v5Pg=;
- b=dEGOY15XUMqn2zfQ3Yx+eUM4TUeoKuvyL9tLoxe18QBUyO66/uE4p224AXNHlIt7HY
- SIzS6oxNDQk4kJvPlyuGyH7rtdC5BJP9Bn1l/do8B+8yHRSd+d9Z18rcflCoKWS2gnqG
- CUzFvcMMZAnwOXuzW4RcMHWqLFS9P2aQZxcok=
+ bh=DmlmCGfriAnyE7oyllSzuW2rLWm2pXjxaSHF5an4kFI=;
+ b=XcQlkuCtOUVNs74rcReV2Jj8Mi6xbY/BReieV122ac8lNJag+EbqoC8qsllJgQKxGV
+ SsfFtSMoOAPbtSfyjtNdBrLp8tv2uupWCkbqsc5nRPCmKqxBfbXmPJqnVtpK0zbi03GW
+ 7h/x0klrSpAI/zI10P9vcNmf52kjfwS5mP/dE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783350133; x=1783954933;
+ d=1e100.net; s=20251104; t=1783350134; x=1783954934;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=or2lBNkLE6tiMbWVBOG4EzL0wLvwVEpZS2AQ203v5Pg=;
- b=klwCKGc++KlQ9aEbOnSvVs/hwljrfYvzf0CPe2bVjhWdQtoREwjr7M2bER7xDno9As
- o/4vhBzJpqdoHTmRbm7+NT3HihoQOtEXSirSfRU5D445d6naUuCMyAJIw14NP0NMlDGz
- l2CXGLMZSD3fiOwRxRwK6nF6+GkMbScTa+yuca+iUs8xfcLUmmnaGheK+pgPaVf6S60Q
- wChV74lhK2pKOG6AY46JHeoenqcfu7kmZ0JOk0vaLucZVY2OMSsLuAFTZFWjaUzdNGNc
- yPmQmDbqPxf0scTbQiyS3JD4jhBGOmr488N1wacs/sCoH7XomAU24ZOf+c5sPsmblszw
- Ba/A==
-X-Gm-Message-State: AOJu0YyQ6aR9v4ScGeFbUdO8TVpWWl61V4yDjmI4X6GWNWFy4fu7qYP7
- Ta7Bdhui4qFJT8qbsfOejNF4QhXdylz6YQ0cg6RGf7yzij6igvZXrIynwLg3gcdrtXQj7OmO9d0
- 0hb1dcyGfxNU011U29ucRr0IEBsGZu6BsEAjPli1r+36EbhRX83dg/lK3mgbY+cXgb0GFEiFx5l
- P2G+rCFoRzi75DYMVGa/6W0d6fUgw=
-X-Gm-Gg: AfdE7cmOX9kSa+otXM3rzMlkTYTuSnnUf3SwjVpqyDdJAhET5BZC4nqL00P2l+sx+fO
- KVaCFg3TPLRE8Dcj4FE+ia5lAFXwpJLIr71EldINAzAmuJn3giLQTgBBEZZ1B86GdO2gGWgRenD
- YnJ3DCPk86/VX4KHVLyclnHGau6fg1qI2DSBwprHGcnzYRSX3g1C3TcN1R56T9azPTY8Ai9dfHR
- FZH3NS6srLZ4+oPd6wpuYCjRyAAEC2+VlTe7jGQXDxfquESFhwBJyUrSp3JJbWRa2vCP3gRN3Ue
- 1ZwtF/QJhYLTxCoN9AkFUsU9hnbDZ6P5dtaOky5AvGsRDtKki2nEcFPYFzUqrEyYuNvpB/PGPPI
- 7a0UdYaFT/ieSiFcO6v5gHCSzlA0CFkrmsVwxrwU5KHZ1uL64YIp/fGGBYE1eOSy8sSJX2Dvin8
- R71zV1qKFyW84OnfHboftDETIsTE1hgDgf1XT71fIcyToGM4WFWhAMzQ==
-X-Received: by 2002:a05:6214:8010:b0:8e5:8d7b:5188 with SMTP id
- 6a1803df08f44-8f5bc7a41bamr197685676d6.9.1783350130592; 
- Mon, 06 Jul 2026 08:02:10 -0700 (PDT)
+ bh=DmlmCGfriAnyE7oyllSzuW2rLWm2pXjxaSHF5an4kFI=;
+ b=K3vuTIAl2orpsRfzvzeMzC6DvO+g2ngVja5MuYuBTluHH2uw/OVrrywp1I/cdjhkOj
+ Zo/nJQPgWvMnLW9kbsMCVkrbFK0YEbwPXxwhiNbm6RldZBGpbYTGD/KxJnNDBVs0Iicg
+ 6CsSUzqHMrO0QZk15ATK920bea5TwRZGIO6CBrTJOMHJJKlNTg+vByMBCF3B+TxVxKxX
+ 6w7CT3JCwahtXUI6IvN9FqbXDxcbZWM33w6iQPeD1c0A97ZKRZSn0Y64degOP1uQtwvb
+ ea4pM0m+gLbIqo0lq8+hjvjcJRkiC24dp8zCeKYcI685NPPYvWtbAggd6CRabJQwNAHX
+ P3EA==
+X-Gm-Message-State: AOJu0YzcdCRb76P/g+1iHQ5Fm/ZD5kkrxqwCf0Xm4tsKsaROzyefEm3N
+ QNOgKeWcvYuzX3zMX2+mTK9JNJUUzQtslPHEpdPCRp6LZR+OGGxYMJW1xgW0ogVOaML4nhm74F2
+ 5Rgxk4+TBODxlnDwR77B9R0W49oJkruFJcG7s2f3c+NT/Wo8jN5d1zvQcRwHjEuqAalsglOm10N
+ FlxGCR3VfOvnh42wlrWg6kqyrx9Ko=
+X-Gm-Gg: AfdE7ckEGfvhaodUIUiPijUUNkX6u6/dROYkTDhoGFSq5aH8DT01LkmJbW1GqduINyF
+ xNven17qNfm0ak4uskmtqXqlHSw8qkc6lKzABkgjC+iP89tcF1/FLdiaxqXrD64c1rKwU1OebVX
+ YQiIcaMLHjt4AcZC+8qhbGTALRr7q8yGAJpeSexCDJQStTGABUuxLauxeqoTIDUKZAoTZsLZ51K
+ ca/mT1EMHGS4AsCYQZRB4GNY2sCBT0xeDXNokHGxmlO9j6XP4sBFXvh/IabpCLspvHdYtknunnC
+ mC2u7lWWQiw7P6pYb3f1xt42oZfT2dpXsEAgIwckJmPT0FP71nthU2tSM9+UCJHPgxZkycsc37a
+ IEiRm1td05dpPV1p+QvnkX99HEIiALZoUmuMUxMh9IcXJrMJw+TueDwpYCQXL7jDVdEVtkRSK7c
+ aqcuKy7um1YLjIqOxWrbGlyfYXXv72m4OW6m9nc49oeCVjirzYahrDd7/I36yTNyM5
+X-Received: by 2002:a05:6808:5283:b0:495:feaa:9db9 with SMTP id
+ 5614622812f47-49fdc871dbcmr709179b6e.10.1783350133221; 
+ Mon, 06 Jul 2026 08:02:13 -0700 (PDT)
 Received: from d121029.iol.unh.edu ([2606:4100:3880:1210:5d7f:246:cd51:1b62])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8f4726b3201sm138661976d6.46.2026.07.06.08.02.09
+ 6a1803df08f44-8f4726b3201sm138661976d6.46.2026.07.06.08.02.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 06 Jul 2026 08:02:09 -0700 (PDT)
+ Mon, 06 Jul 2026 08:02:12 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org,
 	luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu,
  Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v3 1/3] dts: add directory for test resources
-Date: Mon,  6 Jul 2026 11:02:03 -0400
-Message-ID: <20260706150205.497924-1-abailey@iol.unh.edu>
+Subject: [PATCH v3 3/3] dts: add verify coverage for cryptodev testing
+Date: Mon,  6 Jul 2026 11:02:05 -0400
+Message-ID: <20260706150205.497924-3-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260514172553.191331-1-abailey@iol.unh.edu>
+In-Reply-To: <20260706150205.497924-1-abailey@iol.unh.edu>
 References: <20260514172553.191331-1-abailey@iol.unh.edu>
+ <20260706150205.497924-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,91 +82,201 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The crypto verify test suite being added in this series requires an
-input vector file. The two vector files added in this commit are
-relocated from old DTS to new DTS. This will allow the crypto verify
-test suite to access the required vector files for verify testing.
+Currently, next-DTS only covers throughput testing through the
+dpdk-test-crypto application. This series adds coverage for the verify
+option to next DTS to allow functional testing for various algorithms of
+crypto devices and virtual devices.
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- dts/api/cryptodev/__init__.py        |  2 +-
- dts/test_resources/test_aes_cbc.data | 27 +++++++++++++++++++++++++++
- dts/test_resources/test_aes_gcm.data | 19 +++++++++++++++++++
- 3 files changed, 47 insertions(+), 1 deletion(-)
- create mode 100644 dts/test_resources/test_aes_cbc.data
- create mode 100644 dts/test_resources/test_aes_gcm.data
+ dts/tests/TestSuite_cryptodev_verify.py | 162 ++++++++++++++++++++++++
+ tests.TestSuite_cryptodev_verify.rst    |   8 ++
+ 2 files changed, 170 insertions(+)
+ create mode 100644 dts/tests/TestSuite_cryptodev_verify.py
+ create mode 100644 tests.TestSuite_cryptodev_verify.rst
 
-diff --git a/dts/api/cryptodev/__init__.py b/dts/api/cryptodev/__init__.py
-index a4fafc3713..4e8ce47de1 100644
---- a/dts/api/cryptodev/__init__.py
-+++ b/dts/api/cryptodev/__init__.py
-@@ -76,7 +76,7 @@ def vector_directory(self) -> PurePath:
-         Returns:
-             The path to the cryptodev vector files.
-         """
--        return get_ctx().dpdk_build.remote_dpdk_tree_path.joinpath("app/test-crypto-perf/data/")
-+        return get_ctx().dpdk_build.remote_dpdk_tree_path.joinpath("dts/test_resources/")
- 
-     def run_app(self, num_vfs: int = 1) -> list[CryptodevResults]:
-         """Run the cryptodev application with the given app parameters.
-diff --git a/dts/test_resources/test_aes_cbc.data b/dts/test_resources/test_aes_cbc.data
+diff --git a/dts/tests/TestSuite_cryptodev_verify.py b/dts/tests/TestSuite_cryptodev_verify.py
 new file mode 100644
-index 0000000000..ac7a89942f
+index 0000000000..0fc405fcc9
 --- /dev/null
-+++ b/dts/test_resources/test_aes_cbc.data
-@@ -0,0 +1,27 @@
-+# Global Section
-+plaintext =
-+0xff, 0xca, 0xfb, 0xf1, 0x38, 0x20, 0x2f, 0x7b, 0x24, 0x98, 0x26, 0x7d, 0x1d, 0x9f, 0xb3, 0x93,
-+0xd9, 0xef, 0xbd, 0xad, 0x4e, 0x40, 0xbd, 0x60, 0xe9, 0x48, 0x59, 0x90, 0x67, 0xd7, 0x2b, 0x7b
-+ciphertext =
-+0x77, 0xF9, 0xF7, 0x7A, 0xA3, 0xCB, 0x68, 0x1A, 0x11, 0x70, 0xD8, 0x7A, 0xB6, 0xE2, 0x37, 0x7E,
-+0xD1, 0x57, 0x1C, 0x8E, 0x85, 0xD8, 0x08, 0xBF, 0x57, 0x1F, 0x21, 0x6C, 0xAD, 0xAD, 0x47, 0x1E
-+cipher_key =
-+0xE4, 0x23, 0x33, 0x8A, 0x35, 0x64, 0x61, 0xE2, 0x49, 0x03, 0xDD, 0xC6, 0xB8, 0xCA, 0x55, 0x7A,
-+0xd0, 0xe7, 0x4b, 0xfb, 0x5d, 0xe5, 0x0c, 0xe7, 0x6f, 0x21, 0xb5, 0x52, 0x2a, 0xbb, 0xc7, 0xf7
-+auth_key =
-+0xaf, 0x96, 0x42, 0xf1, 0x8c, 0x50, 0xdc, 0x67, 0x1a, 0x43, 0x47, 0x62, 0xc7, 0x04, 0xab, 0x05,
-+0xf5, 0x0c, 0xe7, 0xa2, 0xa6, 0x23, 0xd5, 0x3d, 0x95, 0xd8, 0xcd, 0x86, 0x79, 0xf5, 0x01, 0x47,
-+0x4f, 0xf9, 0x1d, 0x9d, 0x36, 0xf7, 0x68, 0x1a, 0x64, 0x44, 0x58, 0x5d, 0xe5, 0x81, 0x15, 0x2a,
-+0x41, 0xe4, 0x0e, 0xaa, 0x1f, 0x04, 0x21, 0xff, 0x2c, 0xf3, 0x73, 0x2b, 0x48, 0x1e, 0xd2, 0xf7
-+cipher_iv =
-+0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-+# Section sha 1 hmac buff 32
-+[sha1_hmac_buff_32]
-+digest =
-+0x36, 0xCA, 0x49, 0x6A, 0xE3, 0x54, 0xD8, 0x4F, 0x0B, 0x76, 0xD8, 0xAA, 0x78, 0xEB, 0x9D, 0x65,
-+0x2C, 0xCA, 0x1F, 0x97
-+# Section sha 256 hmac buff 32
-+[sha256_hmac_buff_32]
-+digest =
-+0x1C, 0xB2, 0x3D, 0xD1, 0xF9, 0xC7, 0x6C, 0x49, 0x2E, 0xDA, 0x94, 0x8B, 0xF1, 0xCF, 0x96, 0x43,
-+0x67, 0x50, 0x39, 0x76, 0xB5, 0xA1, 0xCE, 0xA1, 0xD7, 0x77, 0x10, 0x07, 0x43, 0x37, 0x05, 0xB4
-diff --git a/dts/test_resources/test_aes_gcm.data b/dts/test_resources/test_aes_gcm.data
++++ b/dts/tests/TestSuite_cryptodev_verify.py
+@@ -0,0 +1,162 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 University of New Hampshire
++
++"""DPDK cryptodev verify test suite.
++
++The main goal of this test suite is to utilize the verify mode of dpdk-test-crypto application
++to ensure functional correctness for various cryptographic operations supported by DPDK
++cryptodev-pmd.
++"""
++
++from api.capabilities import (
++    LinkTopology,
++    requires_link_topology,
++)
++from api.cryptodev import Cryptodev
++from api.cryptodev.config import (
++    AeadAlgName,
++    AuthenticationAlgorithm,
++    AuthenticationOpMode,
++    CipherAlgorithm,
++    DeviceType,
++    EncryptDecryptSwitch,
++    OperationType,
++    TestType,
++    get_device_from_str,
++)
++from api.cryptodev.types import (
++    CryptodevResults,
++)
++from api.test import verify
++from framework.context import get_ctx
++from framework.test_suite import TestSuite, crypto_test
++from framework.testbed_model.virtual_device import VirtualDevice
++
++TOTAL_OPS = 10_000_000
++AES_CBC_DATA = "test_aes_cbc.data"
++AES_GCM_DATA = "test_aes_gcm.data"
++
++
++@requires_link_topology(LinkTopology.NO_LINK)
++class TestCryptodevVerify(TestSuite):
++    """DPDK Crypto Device Testing Suite."""
++
++    def set_up_suite(self) -> None:
++        """Set up the test suite."""
++        self.device_type: DeviceType | None = get_device_from_str(
++            str(get_ctx().sut_node.crypto_device_type)
++        )
++
++    def _verify_output(
++        self,
++        results: list[CryptodevResults],
++    ) -> bool:
++        for result in results:
++            if (
++                getattr(result, "failed_enqueued") > 0
++                or getattr(result, "failed_dequeued") > 0
++                or getattr(result, "failed_ops") > 0
++            ):
++                return False
++        return True
++
++    @crypto_test
++    def aesni_mb_vdev(self) -> None:
++        """aesni_mb_vdev test.
++
++        Steps:
++            * Create a cryptodev instance with aesni_mb virtual device and provided buffer sizes.
++        Verify:
++            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
++                with the dpdk-test-crypto application.
++        """
++        app = Cryptodev(
++            vdevs=[VirtualDevice("crypto_aesni_mb0")],
++            ptest=TestType.verify,
++            test_file=AES_CBC_DATA,
++            test_name="sha1_hmac_buff_32",
++            devtype=DeviceType.crypto_aesni_mb,
++            optype=OperationType.cipher_then_auth,
++            cipher_algo=CipherAlgorithm.aes_cbc,
++            cipher_op=EncryptDecryptSwitch.encrypt,
++            cipher_key_sz=32,
++            cipher_iv_sz=16,
++            auth_algo=AuthenticationAlgorithm.sha1_hmac,
++            auth_op=AuthenticationOpMode.generate,
++            auth_key_sz=64,
++            digest_sz=12,
++            burst_sz=32,
++            buffer_sz=32,
++            total_ops=TOTAL_OPS,
++        )
++
++        verify(
++            self._verify_output(app.run_app(num_vfs=0)), "Failed to verify test sha1_hmac_buff_32"
++        )
++
++    @crypto_test
++    def openssl_vdev(self) -> None:
++        """Openssl vdev test.
++
++        Steps:
++            * Create a cryptodev instance with openssl virtual device and provided buffer sizes.
++        Verify:
++            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
++                with the dpdk-test-crypto application.
++
++        Raises:
++            SkippedTestException: When configuration is not provided.
++        """
++        app = Cryptodev(
++            vdevs=[VirtualDevice("crypto_openssl0")],
++            ptest=TestType.verify,
++            test_file=AES_GCM_DATA,
++            test_name="aes_gcm_buff_32",
++            devtype=DeviceType.crypto_openssl,
++            optype=OperationType.aead,
++            aead_algo=AeadAlgName.aes_gcm,
++            aead_op=EncryptDecryptSwitch.encrypt,
++            aead_key_sz=16,
++            aead_aad_sz=16,
++            aead_iv_sz=12,
++            digest_sz=16,
++            burst_sz=32,
++            buffer_sz=32,
++            total_ops=TOTAL_OPS,
++        )
++
++        verify(self._verify_output(app.run_app(num_vfs=0)), "Failed to verify test aes_gcm_buff_32")
++
++    @crypto_test
++    def sha1_hmac_buff_32(self) -> None:
++        """aes_cbc test.
++
++        Steps:
++            * Create a cryptodev instance with provided device type and buffer sizes.
++        Verify:
++            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
++                with the dpdk-test-crypto application.
++
++        Raises:
++            SkippedTestException: When configuration is not provided.
++        """
++        app = Cryptodev(
++            ptest=TestType.verify,
++            test_file=AES_CBC_DATA,
++            test_name="sha1_hmac_buff_32",
++            devtype=self.device_type,
++            optype=OperationType.cipher_then_auth,
++            cipher_algo=CipherAlgorithm.aes_cbc,
++            cipher_op=EncryptDecryptSwitch.encrypt,
++            cipher_key_sz=32,
++            cipher_iv_sz=16,
++            auth_algo=AuthenticationAlgorithm.sha1_hmac,
++            auth_op=AuthenticationOpMode.generate,
++            auth_key_sz=64,
++            digest_sz=20,
++            burst_sz=32,
++            buffer_sz=32,
++            total_ops=TOTAL_OPS,
++        )
++
++        verify(self._verify_output(app.run_app()), "Failed to verify test sha1_hmac_buff_32")
+diff --git a/tests.TestSuite_cryptodev_verify.rst b/tests.TestSuite_cryptodev_verify.rst
 new file mode 100644
-index 0000000000..034f4fa91a
+index 0000000000..d0a305a7d5
 --- /dev/null
-+++ b/dts/test_resources/test_aes_gcm.data
-@@ -0,0 +1,19 @@
-+# Global Section
-+plaintext =
-+0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
-+0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11
++++ b/tests.TestSuite_cryptodev_verify.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
 +
-+ciphertext =
-+0x82, 0x7d, 0xb6, 0xdf, 0x77, 0x0a, 0xe6, 0x45, 0x5a, 0xc3, 0x70, 0x9b, 0x27, 0xb2, 0x61, 0x19,
-+0xa2, 0x37, 0x0b, 0xf7, 0x42, 0xfc, 0xec, 0xe7, 0xf7, 0x30, 0xe0, 0x3c, 0x05, 0x55, 0xb3, 0x7d
++cryptodev_verify Test Suite
++===========================
 +
-+aead_key =
-+0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-+aead_iv =
-+0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
-+aead_aad =
-+0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-+
-+[aes_gcm_buff_32]
-+digest =
-+0x0f, 0xb2, 0x98, 0x59, 0x48, 0xbf, 0x6c, 0x37, 0x5a, 0xad, 0xcd, 0x97, 0x9f, 0xbb, 0xc8, 0x2a
++.. automodule:: tests.TestSuite_cryptodev_verify
++   :members:
++   :show-inheritance:
 -- 
 2.54.0
 
