@@ -2,52 +2,103 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD09C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 11:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64041C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 11:53:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4BD1402C3;
-	Mon,  6 Jul 2026 13:27:35 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id 59BA54027B
- for <dev@dpdk.org>; Mon,  6 Jul 2026 13:27:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783337254; x=1814873254;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=C29Zu9VJUSiEL8Ih3RB1LXVgPkky2zV/I5Bb3UALgC0=;
- b=ldKUmBUJa1PLOrgCvG9JvokaSivqIKrzbDE8WN5E5MSoT15QNm5wN3SQ
- G/GW/N7vk2+I/xq2ucFYeVY3A0m/U262TdI0migrNBPxhBbKmEG61iIey
- 7Ort9f5/+KGI6YopD2QhliUeRRy8a2IoT7a0yS67HLQeKPyiRGMq9oSXV
- HPC1qCJdRdBr0SUqzrieITot8uyRW4DV2DDeXDiJ17WfkuBQXGedTBQVZ
- chv45VjZuHfnMbzpxc3ekbwMKixkmLNX6l4zoMLHeRCOpD0+Z9TD4O/R7
- jwjDZNKSdNtDUDM4L3tkMSM1OVWDB6zHcnpXp2NyxusDFdv9A+5W+7ETy w==;
-X-CSE-ConnectionGUID: gMNVtyIoS/iOZWPkodmWBg==
-X-CSE-MsgGUID: Gy53C9iNTL2zVIllIXxlVw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11838"; a="95123784"
-X-IronPort-AV: E=Sophos;i="6.25,149,1779174000"; d="scan'208";a="95123784"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2026 04:27:33 -0700
-X-CSE-ConnectionGUID: DW/31oHpRxOp5p1g8qQAGA==
-X-CSE-MsgGUID: kOJVHYkDSyK8/M63D+6BLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,149,1779174000"; d="scan'208";a="251011197"
-Received: from silpixa00401454.ir.intel.com ([10.20.224.230])
- by fmviesa008.fm.intel.com with ESMTP; 06 Jul 2026 04:27:32 -0700
-From: Emma Finn <emma.finn@intel.com>
-To: Kai Ji <kai.ji@intel.com>,
-	Emma Finn <emma.finn@intel.com>
-Cc: dev@dpdk.org,
-	Thomas Monjalon <thomas@monjalon.net>
-Subject: [v2] crypto/qat: fix IPsec MB header include for ARM
-Date: Mon,  6 Jul 2026 11:27:27 +0000
-Message-ID: <20260706112727.2746447-1-emma.finn@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260630100105.2330637-1-emma.finn@intel.com>
-References: <20260630100105.2330637-1-emma.finn@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 72D8B402C3;
+	Mon,  6 Jul 2026 13:53:15 +0200 (CEST)
+Received: from CH1PR05CU001.outbound.protection.outlook.com
+ (mail-northcentralusazon11010026.outbound.protection.outlook.com
+ [52.101.193.26])
+ by mails.dpdk.org (Postfix) with ESMTP id E264D4027B;
+ Mon,  6 Jul 2026 13:53:13 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yFw7nhkEuVqqswy249GkTPAzXGpVO5q5I6VidoLc+zdVukqmYqHaUyil37AwHf39IPocD2tU6Ppnl60mx35hZSZGcFOoAWM6A+Zr1cdlemZvlH4gDG3d9V6x+UFroH/zkbIicfJ63grewuNPc+/pFnLHa18YyhO/3ii4X0GygBPNGzY1vvKkTgyiNagAM7LbMhAJajIqd+bkss3KIT/B5okpfcmfse7btF1frZ3/XxGAcYZO+vsWx0eEs4gE/v856jU4ENEZTP+iEOWZCS/kkp02DxS7CRcahn2TieMiB2cuKqEG/7YYKyhgZ+GMM5ozxemI87a7LvYxSR+VGGVMxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/q0NkjYOWFQbgt1YQLVLZSBP5DtRiMPoO9NM3jugpHU=;
+ b=w3BiU09dFfvglWeWCC81xzRbarW1wu188L7iL6LKs5LRiSMlhCPRKV1ONLRL7bhkmkxUWX4GEQPGP9t17HA1X5j7vGlGVVS5UtG6hyGYmONFXdfcQgdYmcj2yQd5LkmxEOY9JLJcJq/KkBIBMaKsb5eHogQAxErhzkkfktY9bPgpBLwJD0IFiu88gC89JtCmlyF3oMj6gqMHJqGy6gibjk5pXa2UPnKTuYYUzyWDhb+laFe9zw4tcZ63vrjnZNU27q7v4zai8t8r2m4YUKIAtrOZZjBWUR/zIl8CELDkLtWWkDkzLkkjigNMAkpEVfhDVarVdDQeHpzkjMqtK9A9CQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/q0NkjYOWFQbgt1YQLVLZSBP5DtRiMPoO9NM3jugpHU=;
+ b=abI0ny0RbI8pUI6I2LXACXsgMf8udc5I7k5xXb2DGxZXsgvRAYiO5KIA9pYwqGaiajj3+PUlfMWXGpxesPjOD/Pbu7c1aIOIqIl/l90OzOrYKHL+xzqPl+qbMeK44E14yMRJ42Mv8gu2j7DvMPLZrFlMOhEHCByArv56K4V8hWk2hJ+t1PMn+/OJ7MKOQi2a2KrlyBjV3JUFj0cY84lpXvK3vjzA4jnLCniGhwFOShiG/CWkjxlEWvRNF941nd/ZDHNOw9QXKNjgdFCQD5sV9gh0CKaA2cnFH1Y0bRm/gKbShwJ3s1DpsDmfjW2aHKCJvKcfXrZ3yFhrwzYnAfmEZg==
+Received: from BN9PR03CA0589.namprd03.prod.outlook.com (2603:10b6:408:10d::24)
+ by LV0PR12MB999094.namprd12.prod.outlook.com (2603:10b6:408:32e::5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Mon, 6 Jul 2026
+ 11:53:10 +0000
+Received: from BN1PEPF00005FFC.namprd05.prod.outlook.com
+ (2603:10b6:408:10d:cafe::8) by BN9PR03CA0589.outlook.office365.com
+ (2603:10b6:408:10d::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.181.13 via Frontend Transport; Mon, 6
+ Jul 2026 11:53:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00005FFC.mail.protection.outlook.com (10.167.243.228) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.181.6 via Frontend Transport; Mon, 6 Jul 2026 11:53:10 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 6 Jul
+ 2026 04:52:55 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 6 Jul
+ 2026 04:52:53 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 6 Jul 2026 04:52:51 -0700
+From: Maayan Kashani <mkashani@nvidia.com>
+To: <dev@dpdk.org>
+CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, Shani Peretz
+ <shperetz@nvidia.com>, <stable@dpdk.org>, Dariusz Sosnowski
+ <dsosnowski@nvidia.com>, Aman Singh <aman.deep.singh@intel.com>
+Subject: [PATCH] app/testpmd: fix flow cfg double-free after reattach
+Date: Mon, 6 Jul 2026 14:52:48 +0300
+Message-ID: <20260706115248.188551-1-mkashani@nvidia.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFC:EE_|LV0PR12MB999094:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08137150-d0cd-45f1-9fb0-08dedb5526f1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|376014|82310400026|36860700016|1800799024|18002099003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info: MZrEUcB7GAlw/1qA7x5P/bgvxW13kbtVCDmfuPfw73hgnX6FdWiYjW/mSg7waUIrhfiaoaxXyH4nNisP3LYKLMf/ROY3fPxuvRQSdUbAUnIl7bJG4YPnKlr16lAX9KIrFZJo5Ylf9GgIMhIwrlQpK3zD05gFhg21Hpr0FZMpuLB05zWSbbGyocT/6zBg4h4QbR3oA4oThXZmSa/i37r3dx6dDrDFLeQO3/MCf317bpWhwmxzBvBdbu9M2Bi7VSlnc/eAl0FiAOLrdTktjzisCXMxifHqPWc3WQDM/4D1v6NW5C1lBn4xVFDPeDvBKHKkGgEWm9Dx70LRcrOokW9f72upeUSW25phol9MVrRsTzEUp+Y+B5/k0QTI1f7kLhSKhwS3MCHoiGQL7aw8wJtFkuSF3I419SGeu2KbGOPyXfQq+ybHMWGMk29yJvNkqRF8Z9br7XwUDIyXo5lb3xkdDAMvOmEN+YbxcYOtzBKuiiJk/WoPwgbigLaR2gP2vd9+SIdv+zxrE5xINa2JjwdzKBFhTsk4rwyqgR+jaMrnDl263VP0PKS5W4OcXcGnG+Du9GvK08YI75M29n83VKv4dCL00WTwcq2ZChQl0tCd8/USoyZRTKgVPUxPlUajivkTGeMHjn9YandAL2htx7hNumlCvj56VmGZgHNt26nmpzHywO+vS5bmjlK6M0oa4Ub76XO7v3Ro1KW8PLi+sqRTBA==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(23010399003)(376014)(82310400026)(36860700016)(1800799024)(18002099003)(56012099006)(11063799006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: jyrpFZx+RmyNkJqB3ze+AT8dXAvs52DBnkAS2uF9Fh/9c2xpeON3kQozTMjZm64V7RSgZwfWYkdaoUkqYuOAqBjl/makBRP04QcM4wYQ9VbEdJrdA81ycSSucDVjTQLX9O9iHHk2Fx+x0g+0n++cAJzaQQhhKOI0sOIObP9wb/s7TwzHr5HKVaDRmG0yXWoah9OhKLmc6C1bhg0AOuVAWN5m+mgEBwK28+jG1CwjMLTXpooIW7Tno2N//aXtKXxkoHm8qo5skp+EMuzv4skae3gRvxy2EsUtb+BtDCYygAY10XB6nprbXAp7UzG4UUBkkZsI/HkW06CX6GQrlN5NzlLFtNEZXXYdBirPqmOvHk0oArClFj9yhSJ4jmwI/J1kc5JTE+sviOm0GOXgB8o5Ahn9IcD/fANTUvIXYvrg04pGriW3gMJauWfYs/UGzYYJ
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2026 11:53:10.3483 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08137150-d0cd-45f1-9fb0-08dedb5526f1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN1PEPF00005FFC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV0PR12MB999094
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,147 +112,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update the header file to always include the platform-specific
-IPsec MB header. Additionally, guard DOCSIS BPI-related fields
-that depend on IPsec MB so they are not included for ARM build.
+From: Shani Peretz <shperetz@nvidia.com>
 
-Fixes: 03c475d609eb ("crypto/qat: require IPsec MB for HMAC precomputes")
+When a port is closed via close_port(), port_free_job_list() frees the
+job_list but does not NULL the pointer or reset queue_nb. If the port
+is later reattached and "flow configure" is issued, port_flow_configure()
+frees the dangling job_list pointer, causing a double-free.
 
-Reported-by: Thomas Monjalon <thomas@monjalon.net>
-Signed-off-by: Emma Finn <emma.finn@intel.com>
+Fix this by setting job_list to NULL and resetting queue_nb to zero in
+port_free_job_list() after freeing.
+
+Fixes: 7fadc8039588 ("app/testpmd: fix memory leak in port flow configure")
+Cc: stable@dpdk.org
+
+Signed-off-by: Shani Peretz <shperetz@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 ---
-v2:
-* Add guards around DOCSIS BPI
----
- drivers/crypto/qat/dev/qat_crypto_pmd_gens.h | 2 ++
- drivers/crypto/qat/qat_sym.h                 | 6 +++++-
- drivers/crypto/qat/qat_sym_session.c         | 8 +++++++-
- drivers/crypto/qat/qat_sym_session.h         | 6 +++---
- 4 files changed, 17 insertions(+), 5 deletions(-)
+ app/test-pmd/testpmd.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-index 22ee0fe4fe..40d5594453 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-@@ -99,9 +99,11 @@ qat_bpicipher_preprocess(struct qat_sym_session *ctx,
- 		op_bpi_cipher_decrypt(last_block, dst, iv, block_len,
- 				last_block_len, ctx->bpi_ctx);
- #else
-+#ifndef RTE_ARCH_ARM
- 		bpi_cipher_ipsec(last_block, dst, iv, last_block_len, ctx->expkey,
- 			ctx->mb_mgr, ctx->docsis_key_len);
- #endif
-+#endif
- #if RTE_LOG_DP_LEVEL >= RTE_LOG_DEBUG
- 		QAT_DP_HEXDUMP_LOG(DEBUG, "BPI: src after pre-process:",
- 			last_block, last_block_len);
-diff --git a/drivers/crypto/qat/qat_sym.h b/drivers/crypto/qat/qat_sym.h
-index 849e047615..c4e9d16828 100644
---- a/drivers/crypto/qat/qat_sym.h
-+++ b/drivers/crypto/qat/qat_sym.h
-@@ -175,6 +175,7 @@ bpi_cipher_encrypt(uint8_t *src, uint8_t *dst,
- 	return -EINVAL;
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index 9a85657840a..ef337a4d144 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -3358,6 +3358,8 @@ port_free_job_list(portid_t pi)
+ {
+ 	struct rte_port *port = &ports[pi];
+ 	free(port->job_list);
++	port->job_list = NULL;
++	port->queue_nb = 0;
  }
- #else
-+#ifndef RTE_ARCH_ARM
- static __rte_always_inline void
- bpi_cipher_ipsec(uint8_t *src, uint8_t *dst, uint8_t *iv, int srclen,
- 		uint64_t *expkey, IMB_MGR *m, uint8_t docsis_key_len)
-@@ -186,7 +187,8 @@ bpi_cipher_ipsec(uint8_t *src, uint8_t *dst, uint8_t *iv, int srclen,
- 	else if (docsis_key_len == ICP_QAT_HW_DES_KEY_SZ)
- 		des_cfb_one(dst, src, (uint64_t *)iv, expkey, srclen);
- }
--#endif
-+#endif /* RTE_ARCH_ARM */
-+#endif /* RTE_QAT_OPENSSL */
  
- static inline uint32_t
- qat_bpicipher_postprocess(struct qat_sym_session *ctx,
-@@ -237,9 +239,11 @@ qat_bpicipher_postprocess(struct qat_sym_session *ctx,
- 		bpi_cipher_encrypt(last_block, dst, iv, block_len,
- 				last_block_len, ctx->bpi_ctx);
- #else
-+#ifndef RTE_ARCH_ARM
- 		bpi_cipher_ipsec(last_block, dst, iv, last_block_len, ctx->expkey,
- 			ctx->mb_mgr, ctx->docsis_key_len);
- #endif
-+#endif
- #if RTE_LOG_DP_LEVEL >= RTE_LOG_DEBUG
- 		QAT_DP_HEXDUMP_LOG(DEBUG, "BPI: src after post-process:",
- 				last_block, last_block_len);
-diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
-index 486eb5b54a..6dce9ca786 100644
---- a/drivers/crypto/qat/qat_sym_session.c
-+++ b/drivers/crypto/qat/qat_sym_session.c
-@@ -204,6 +204,7 @@ bpi_cipher_ctx_init(enum rte_crypto_cipher_algorithm cryptodev_algo,
- #endif
- 
- #ifndef RTE_QAT_OPENSSL
-+#ifndef RTE_ARCH_ARM
- /** Creates a context in either AES or DES in ECB mode
-  */
- static int
-@@ -245,7 +246,8 @@ ipsec_mb_ctx_init(const uint8_t *key, uint16_t key_length,
- 	}
- 	return ret;
- }
--#endif
-+#endif /* RTE_ARCH_ARM */
-+#endif /* RTE_QAT_OPENSSL */
- 
- static int
- qat_is_cipher_alg_supported(enum rte_crypto_cipher_algorithm algo,
-@@ -477,6 +479,7 @@ qat_sym_session_configure_cipher(struct rte_cryptodev *dev,
- 					cipher_xform->key.length,
- 					&session->bpi_ctx);
- #else
-+#ifndef RTE_ARCH_ARM
- 		session->docsis_key_len = cipher_xform->key.length;
- 		ret = ipsec_mb_ctx_init(
- 					cipher_xform->key.data,
-@@ -485,6 +488,7 @@ qat_sym_session_configure_cipher(struct rte_cryptodev *dev,
- 					session->expkey,
- 					session->dust,
- 					&session->mb_mgr);
-+#endif
- #endif
- 		if (ret != 0) {
- 			QAT_LOG(ERR, "failed to create DES BPI ctx");
-@@ -507,6 +511,7 @@ qat_sym_session_configure_cipher(struct rte_cryptodev *dev,
- 					cipher_xform->key.length,
- 					&session->bpi_ctx);
- #else
-+#ifndef RTE_ARCH_ARM
- 		session->docsis_key_len = cipher_xform->key.length;
- 		ret = ipsec_mb_ctx_init(
- 					cipher_xform->key.data,
-@@ -515,6 +520,7 @@ qat_sym_session_configure_cipher(struct rte_cryptodev *dev,
- 					session->expkey,
- 					session->dust,
- 					&session->mb_mgr);
-+#endif
- #endif
- 		if (ret != 0) {
- 			QAT_LOG(ERR, "failed to create AES BPI ctx");
-diff --git a/drivers/crypto/qat/qat_sym_session.h b/drivers/crypto/qat/qat_sym_session.h
-index 0c7b9cc6cf..b18673a1f7 100644
---- a/drivers/crypto/qat/qat_sym_session.h
-+++ b/drivers/crypto/qat/qat_sym_session.h
-@@ -14,11 +14,11 @@
- #include "icp_qat_fw.h"
- #include "icp_qat_fw_la.h"
- 
--#ifndef RTE_QAT_OPENSSL
--#ifndef RTE_ARCH_ARM
-+#ifdef RTE_ARCH_ARM
-+#include <ipsec-mb.h>
-+#else
- #include <intel-ipsec-mb.h>
- #endif
--#endif
- 
- /*
-  * Key Modifier (KM) value used in KASUMI algorithm in F9 mode to XOR
+ static void
 -- 
-2.43.0
+2.21.0
 
