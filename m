@@ -2,141 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B705C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 13:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69496C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 13:35:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E5EE40615;
-	Mon,  6 Jul 2026 15:34:40 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id BBFFF402C3
- for <dev@dpdk.org>; Mon,  6 Jul 2026 15:34:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783344879; x=1814880879;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=RuMVZIQr1fkl82qjFmeMAk5atL8aPoMPUMEzxE03nlQ=;
- b=d0p2iXYt1OM8CbRm8KjMm9X1S5K+9exoZSuf8pAiMdDmI3X3MkeVUvYK
- 1ft59N1eOA0vQwwwpR8pqddjfXMUfb4VzCKtHvsmtasUG9SX241w+Zxqg
- g+Mtabm+RscwnqhX0d9x7MRGiUhj82KDz6PNdYeQuZ868iiPRtHWqgph4
- vnQtPi7Ehmvynl+M4yrZ0ImrX6RxBgVUmI6P1JvvRRBD7wyarl9KMMTft
- 1T2HyNkrvs3mq371d3j6pReK0o3hW9uNK385PZbPCFHN9g94r/2XXaI6u
- VIB85ytJbQIBbkD+j6c6//MVxZM4fcxsZ3FXg0kOpDSxm4sif50kQXU8Y A==;
-X-CSE-ConnectionGUID: W3XywC3EQkGj5w6LL//wog==
-X-CSE-MsgGUID: hA4y9ip+QjSewdWTG3ZSeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11838"; a="84030695"
-X-IronPort-AV: E=Sophos;i="6.25,149,1779174000"; d="scan'208";a="84030695"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2026 06:34:37 -0700
-X-CSE-ConnectionGUID: Bx/m4gFjQPaOGa1ZSFWgWg==
-X-CSE-MsgGUID: 9UxqVtOzQzyB2st7hBJC5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,149,1779174000"; d="scan'208";a="258045574"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2026 06:34:31 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Mon, 6 Jul 2026 06:34:30 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43 via Frontend Transport; Mon, 6 Jul 2026 06:34:30 -0700
-Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.7) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Mon, 6 Jul 2026 06:34:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IfP5bT41U9XqgE8nOssQ+d4BlZ1z2TMzU/E7nF/8rePeJzb0eciuo3dl1E7p6ve2nYjGPZYF8lFJMxSoTsqP7zrSZIBMdao0p5EiZ1MOVmjpkYvK42xUHzjCMVuMtNxwYDpiu9S9IYIety6/ot/WJyzoddpObMJhnPdmtn3B2f8I6BFDKVS2iVKcsXNM4FtKH+6ccKercX7SGrNSIvw4sq1eBAameHgzl4qk5aNbPkVpJIXPv9IEgI80MInTSZnYU0cQZpvXoi8OFLENB7bp+Jg4NdF8RCfDbMSqyImbmqb2VUM2u2vTgenGBpLyWfTLM0daoozU0/wrsRO0VWVNMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fo7joi2JjlWgNYFLDKKjdDo82hU6SpXX4OcFL+oTJj8=;
- b=lVbP60r7XnwQssQCyd0vO3qvoJnqDhWORYAqgMS4BV456xeMZtmKo7m5PPn+nPq6uXgQ5iypcfy8gqrU3A6bPKAa4a3RwxEEVbs7R7mB62PbLOtw3oOWOpRmsDMILpOUL0QmxRqavElYHvso7D8enUFNOEAszEiS1P2t5X6F3WCveyY27gTtDU7GZAg5J1uD3wVX9OOBEH0CEg6+nf3vrImebAfll6KaWT+tF480kU9iyGwDEZ/c0vel+FchEJ7ccocec5s2Zr0KXcp0fF2d3tw13/lIxyQ09xaevBGnrtHShH2byXqWK0rxADZrkaDE8R8zG98UJCK5SMswSSy9BA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
- by SN7PR11MB6924.namprd11.prod.outlook.com (2603:10b6:806:2ab::9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.11; Mon, 6 Jul
- 2026 13:34:27 +0000
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0181.009; Mon, 6 Jul 2026
- 13:34:27 +0000
-Date: Mon, 6 Jul 2026 14:34:21 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anurag Mandal <anurag.mandal@intel.com>
-CC: <dev@dpdk.org>, <vladimir.medvedkin@intel.com>
-Subject: Re: [PATCH] doc: announce QinQ offloading operations in iavf PMD
-Message-ID: <akuu3clsME4VdIVR@bricha3-mobl1.ger.corp.intel.com>
-References: <20260704131730.457722-1-anurag.mandal@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260704131730.457722-1-anurag.mandal@intel.com>
-X-ClientProxiedBy: DU2PR04CA0245.eurprd04.prod.outlook.com
- (2603:10a6:10:28e::10) To IA3PR11MB9421.namprd11.prod.outlook.com
- (2603:10b6:208:578::9)
+	by mails.dpdk.org (Postfix) with ESMTP id 8B484409FA;
+	Mon,  6 Jul 2026 15:35:48 +0200 (CEST)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
+ [209.85.160.181])
+ by mails.dpdk.org (Postfix) with ESMTP id AF428402C3
+ for <dev@dpdk.org>; Mon,  6 Jul 2026 15:35:47 +0200 (CEST)
+Received: by mail-qt1-f181.google.com with SMTP id
+ d75a77b69052e-51bfad59921so21784771cf.0
+ for <dev@dpdk.org>; Mon, 06 Jul 2026 06:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1783344947; x=1783949747; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=or2lBNkLE6tiMbWVBOG4EzL0wLvwVEpZS2AQ203v5Pg=;
+ b=aWISLWhWJYzMUIj3Q9bzcCzrTC7Dhn+5Ifb6OmGZVNUZoDVYeq1EzU4BH7zKHvsDPa
+ 8isZAXuiLjUFHeYr0zVRT+eXbidL9ICTlkg3J6iWIvRtXdDYCFXC0QB7DBR1A9nRtEV8
+ srP8QMo//9dAOMBPKkkziV6E+XSEVDRw8d+d8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783344947; x=1783949747;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=or2lBNkLE6tiMbWVBOG4EzL0wLvwVEpZS2AQ203v5Pg=;
+ b=ldOfOKMz7ByTwoH+9rW783zdPDojujqETGsT2XkcgYvWkITwZtnvBUK3j7rQusAi3i
+ /C5BauqmpEBhceT8zJvItwD2Rpx54d02v0AO7GsOw7m4/2Kmj/lv5bO9M4VVQhFoSWHM
+ vWP88kvveOFuIsI47mppChdp02MkjMFOSy2Xl3Is44SXBo5AD89Ssn7+AodO5H8wxVjR
+ c1OIGnD89n3mnr854zCv8HAXWqSHI2RP3rezcUq8aSC9MH/34EbOCem3qOaW3tNrPy1b
+ OiUDYS8BPAQARk2BC0+cEIJMpDrmlvaKAFJ77IyATvKDKP2i9/a/jQgbfw8V9uH7Ow/U
+ nRwQ==
+X-Gm-Message-State: AOJu0YzBmFFh+XEgm0W7D9ZbE3SC0J/xrZcYd9oAKnoKtM0RSKmB4AdB
+ 9qhRgZrhaKY3lJzNok227OWmMm9JE5x9hz7vNpzhvEHH+38/Ws2hekxZlV6ehF74BsIGoWAtFcz
+ dGJVr60Xfcqh5sBMZzSANa4g7VBm9nt+sHZuUYieZlIoBUfbITtE4zY06K/GnMZPazde2fG5zPJ
+ o6K/aB6HUGKDGmIgg30Sw6bMWLMr8=
+X-Gm-Gg: AfdE7cnl+zx2S4Ngth/wfmwH/HPUs3AfF1v+iepRxgDDTBR8ny7Y8nzgom9aZ3oJ2FV
+ WP4fWkMZno570rV+DKI452mlmKTzDi2p3MbAcg8XkmMvaPb+ysJSD6JXyDutTOfPTBCGyVB6zMh
+ 3Bs78Kh+HuA6FWu5UgF313scYYMrFy/52l4+PHnDgu25iZRvP9hbmQngMU2wRzYGvJu92DTOFcB
+ lwSk3Nu6ycF289O6LSd1jh0YRcNfaE1/Y3WeGmzl9Hbr+w6BM4PNlqbPm1f2+k0erc+JK2oAIm5
+ 3S1WeUSlv+6KiBqnvOUneA0HuXEYhE1GElLxAI2wHuvnDA06TDFP3PbpXUCYkGtIyH0EiBolZO1
+ NDLt/i1sa2kBZrtxvqJ3PzV6/NlnJKbQvNxdAFYyFUaYNIMz/981W+CGx5qsngKgs2/wRH198MU
+ n2G4/VfAZYv+vMEJzqeGN3Suh38MZEqoQP/CHuhrdkRb3BtJrkUwU1yg==
+X-Received: by 2002:a05:622a:652:b0:51c:2135:b00a with SMTP id
+ d75a77b69052e-51c748beb75mr5714801cf.40.1783344946575; 
+ Mon, 06 Jul 2026 06:35:46 -0700 (PDT)
+Received: from d121029.iol.unh.edu ([2606:4100:3880:1210:5d7f:246:cd51:1b62])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-8f46e27d555sm136081246d6.7.2026.07.06.06.35.45
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 06 Jul 2026 06:35:45 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: dev@dpdk.org,
+	luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v2 1/3] dts: add directory for test resources
+Date: Mon,  6 Jul 2026 09:34:26 -0400
+Message-ID: <20260706133428.468816-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260514172553.191331-1-abailey@iol.unh.edu>
+References: <20260514172553.191331-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|SN7PR11MB6924:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ffdb7cd-9401-48dd-5035-08dedb634cc6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|23010399003|366016|1800799024|11063799006|18002099003|22082099003|56012099006;
-X-Microsoft-Antispam-Message-Info: /zkRila2krur8oF+vW/eXNZ10pue3IelYyM77wmTRoc6ON4LLfAf6oJM6pktrYsWnYFZnoWZb/XlRazPBQijGqZvPt+CMCmLg+J0bAbMbf355XGKSbieopRoALVsMT8VHXUXbSIfp4+Er8s2lfFu1WI8SNV0RbWxJ7AFdDgZD+5RjGD6VMF8YGrBvt0uYDAv8w/86xMA2H6QpbCARdW+RjxqfZMQL8cXHip9d5I8bs2g2zqG9r4DcuBttXZSfLS8FD2tEiLtFEdzaejTQk7KUKchyb29mQnQYeoxzfoSXzPoqgTfNDfQvrQ9d71cosJfUShjmWAp6eYGCb+b8ESBsV4VPiF8NGaRvQaY/678H9aYODvVZAH9jSHVMtt7rFzrO1CtOtB0Ns93d+ZpeOHHu/8drb1GPO6N+REH8ueH42nDlLOfaR7euArsqEKNR4aAq/F3vrTMLy/fLXkEqGZ71UeivkZJRMalHmG7V5J8NlpVULTbY9X0Std1SOfUOBYye4u9tEAcHwzSafI9a7Tsd+X2Tk8h9kqEF3GFdoTwKfIFuY+PAg2O5PSzBCHHBtumVrLmhwoGYLPh1lnXTjSLORnNVYortzel6qnv/yNMdiKHZgtasHSdjNw4vo2jtHK9kugLbf0ahO5A4/Q33b2hlrHqQoQAzbWzp7aZ4mC1dyM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(11063799006)(18002099003)(22082099003)(56012099006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bdY6t72+OvXSlkz9B3oSl0/TbwK/WDkfmg5/mgQnx8uSs85mgLNYjn3nBOK9?=
- =?us-ascii?Q?DYE0ljBcknAaNiUtNhnTyEIwbR3RTIWeQvgIj1LDZ4RRugD4GORlpIP58F30?=
- =?us-ascii?Q?2rwvZBlqtCivO+dvL0E67aGgHZRLhZjBPdAjYd1L2enS8iREE+3efYQq4xvm?=
- =?us-ascii?Q?rqcp6LSzUVMq6SaaFC7HMcTuuCCaM8pjyiT6dQE+9dAa0DkvLhmRi9C8xzCo?=
- =?us-ascii?Q?1WMYQPEkt5rtBccTWcOfVfHTUCNN/RpY+r7DrhL6BDlRXQsxBpw0UkzxRNar?=
- =?us-ascii?Q?8IAUO6yrNFs3KYDXDdzgsJbvxUKLh01SaeMjpmiexsQ8qI+3l96Y82GgjHfa?=
- =?us-ascii?Q?DX9J+kyYly6cHbE1BeQnZWyB5+Ampo9IVyUlnb4hfE9Dd2QVcPfC+5YQL79w?=
- =?us-ascii?Q?0L6IeTy5jdXmutwVR0XFdjyRpraicKonHUOli5fV9KlfSN5++NHSL20J2mXO?=
- =?us-ascii?Q?XVZobKb5g69t+KH8npfXQq+et4By3rXr/yK/6LajFi8AZ6HjfYGIKp1yloxo?=
- =?us-ascii?Q?gE8XKgH8SUODSCyNyE8PdBSiu5Zbis4lFmsTrl8i14L4vP2zAxzIdkqpvVDI?=
- =?us-ascii?Q?JDamgKYgFINYSYDu11nGSHBIKtbebUgzZFiaEGFwzUAG+ePmLMGDeqiFNY/E?=
- =?us-ascii?Q?3eeX3UDdTKVJozmd1SdjK8CIsLJ6h980RUmn3Rhdfcon9TVmpCQxSDKL1MQZ?=
- =?us-ascii?Q?Ern1N71hmpSOcJrhv0G2+dsxCSSGCoUjIOF4KIOGv8AOpCH6Qftdy8x0bFDQ?=
- =?us-ascii?Q?Cv7maMPnQaYAR2qoG5sNxkEUjWfHDoyGDabMhW9EJ8HWR2CZiPl75tYzGkEK?=
- =?us-ascii?Q?b4mvhdpiBxzRyX8ayp+0/2wEs9Pv4Z9n+FS11v7fxN8+62ChyefymeXLm/my?=
- =?us-ascii?Q?iqPDvp+TK2DJ1NCnA+WIYnuTt+FqNN60KdKvR10ljQk41IuJDTd8clOWw5H1?=
- =?us-ascii?Q?3aZCAnoxvhTpPWsNneY2Aq4uKH6V5i7JIj51pr7itVuqDAoGzje10U/IxzaC?=
- =?us-ascii?Q?ACR74GjHplwqlJJChrSjC/7XPVwyGldj5vL41UGNsq+Y1+AM5d+agxEnKUW1?=
- =?us-ascii?Q?ega4GMmgT+e/oXGZEfD/A1BO4V9B+33EbL4QwdA2np/Xj1qB5vtAIhyJIj1u?=
- =?us-ascii?Q?aNdBIWCjnRO44D9rBIHPscaQhMp4aH20IoMMGrDB/qv/1WN0Fkbw85razkH1?=
- =?us-ascii?Q?23tg+I6AD5kAO2EnwzfwA/9Y8ThA6ymiETzmVdZBkrwbiPHD6o2dCiXMdYqf?=
- =?us-ascii?Q?RsLxmpx+LYyBNdcj2NWe/JD4tuwZltxGA2gAOADP310TCrWW8QdffxEO2DgN?=
- =?us-ascii?Q?A0dFy4UkL46w2LdYXY8wE72lidemqHvl0bafnFS8evAhYDr7LQzR+O1ag2zt?=
- =?us-ascii?Q?BeIoolo82N93p2Yjm7fWB1m8aHxNQTa+1Pk9u7ktpyY9uf6Ccswvzjr87Fgk?=
- =?us-ascii?Q?t6yddemWIjOcisSNKrKeE1ea8gJeAAGS4s/ESw+yiYYJ2nKAYyK2hhwkVwwv?=
- =?us-ascii?Q?Ss9B7+qk2ESrF+xFRjNRNYSf33wRggAzT53pef2rqR8GX90ZE5OATFkNgiE4?=
- =?us-ascii?Q?y24j0uUuLiCGWsFlEuTRGrEIleVClyUPaAhvzuLcdk+Y9VYcwPuyyWZ+ldaA?=
- =?us-ascii?Q?pbyZ7f9DgK8ZaCOsZTlbrs/lk/5Ba7bxOZrItJ0Vhw6ni7LcvL0sfNGzNdJG?=
- =?us-ascii?Q?x4burXcz1kSM/VD4tArjPxzjC6yd+SDV60B8OZYcIT5qY2eqGBrkWxQbHCxJ?=
- =?us-ascii?Q?DPm9fLhIJE9vcTpyVSEG2+iWJRjMIfc=3D?=
-X-Exchange-RoutingPolicyChecked: n+KtMelZit71EoS6Qf5D1fEc56Dd2TixuFdiAQZ0qfK+VytaojeXxA01qShP4Ish3sJ9EQCqWw1deBZ7C1XdMf7J2JZiXE6iPDID+j8A8YFt1naiqTsy95xWdU2+uH8VzP2LtLzxZ9PbWbuEZtQ6cusqnUsprEUtHkEWGzjtl3pswR8XP3J4PRkyeqJDG3RwGOgX1SEU14uVx1eWx6xIHDxnxDVAEudeH/ZRvdwuIfjj26GFYRilvV1W+/Fv1ETPr1L5reb5tf7R/MSyRVqg431givdSQKXI4SaJ1KG8aW/OKDadlT3JpYQhV4ctfinHSml1qGK41LjxM3B0HfDm6A==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ffdb7cd-9401-48dd-5035-08dedb634cc6
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2026 13:34:27.1361 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 39QvA1EpdNjWygaBodCk51ne4WQdLaVDyNbdNG9VQul17fjB5sMEyzBMqAjJUXx5x9+4zCiZ/sJIuBAxow5knXhXERbuIFNiTqS4K8diP1I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6924
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -150,17 +81,91 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, Jul 04, 2026 at 01:17:30PM +0000, Anurag Mandal wrote:
-> The iavf PMD supports hardware offloading for all QinQ operations.
-> QinQ tag stripping and insertion offloads have been added for both
-> outer VLAN TPIDs: 0x88a8 (IEEE 802.1ad) & 0x8100 (IEEE 802.1Q).
-> 
-> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-> ---
->  doc/guides/nics/features/iavf.ini      | 2 +-
->  doc/guides/rel_notes/release_26_07.rst | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-Patch applied to dpdk-next-net-intel.
-Thanks,
-/Bruce
+The crypto verify test suite being added in this series requires an
+input vector file. The two vector files added in this commit are
+relocated from old DTS to new DTS. This will allow the crypto verify
+test suite to access the required vector files for verify testing.
+
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ dts/api/cryptodev/__init__.py        |  2 +-
+ dts/test_resources/test_aes_cbc.data | 27 +++++++++++++++++++++++++++
+ dts/test_resources/test_aes_gcm.data | 19 +++++++++++++++++++
+ 3 files changed, 47 insertions(+), 1 deletion(-)
+ create mode 100644 dts/test_resources/test_aes_cbc.data
+ create mode 100644 dts/test_resources/test_aes_gcm.data
+
+diff --git a/dts/api/cryptodev/__init__.py b/dts/api/cryptodev/__init__.py
+index a4fafc3713..4e8ce47de1 100644
+--- a/dts/api/cryptodev/__init__.py
++++ b/dts/api/cryptodev/__init__.py
+@@ -76,7 +76,7 @@ def vector_directory(self) -> PurePath:
+         Returns:
+             The path to the cryptodev vector files.
+         """
+-        return get_ctx().dpdk_build.remote_dpdk_tree_path.joinpath("app/test-crypto-perf/data/")
++        return get_ctx().dpdk_build.remote_dpdk_tree_path.joinpath("dts/test_resources/")
+ 
+     def run_app(self, num_vfs: int = 1) -> list[CryptodevResults]:
+         """Run the cryptodev application with the given app parameters.
+diff --git a/dts/test_resources/test_aes_cbc.data b/dts/test_resources/test_aes_cbc.data
+new file mode 100644
+index 0000000000..ac7a89942f
+--- /dev/null
++++ b/dts/test_resources/test_aes_cbc.data
+@@ -0,0 +1,27 @@
++# Global Section
++plaintext =
++0xff, 0xca, 0xfb, 0xf1, 0x38, 0x20, 0x2f, 0x7b, 0x24, 0x98, 0x26, 0x7d, 0x1d, 0x9f, 0xb3, 0x93,
++0xd9, 0xef, 0xbd, 0xad, 0x4e, 0x40, 0xbd, 0x60, 0xe9, 0x48, 0x59, 0x90, 0x67, 0xd7, 0x2b, 0x7b
++ciphertext =
++0x77, 0xF9, 0xF7, 0x7A, 0xA3, 0xCB, 0x68, 0x1A, 0x11, 0x70, 0xD8, 0x7A, 0xB6, 0xE2, 0x37, 0x7E,
++0xD1, 0x57, 0x1C, 0x8E, 0x85, 0xD8, 0x08, 0xBF, 0x57, 0x1F, 0x21, 0x6C, 0xAD, 0xAD, 0x47, 0x1E
++cipher_key =
++0xE4, 0x23, 0x33, 0x8A, 0x35, 0x64, 0x61, 0xE2, 0x49, 0x03, 0xDD, 0xC6, 0xB8, 0xCA, 0x55, 0x7A,
++0xd0, 0xe7, 0x4b, 0xfb, 0x5d, 0xe5, 0x0c, 0xe7, 0x6f, 0x21, 0xb5, 0x52, 0x2a, 0xbb, 0xc7, 0xf7
++auth_key =
++0xaf, 0x96, 0x42, 0xf1, 0x8c, 0x50, 0xdc, 0x67, 0x1a, 0x43, 0x47, 0x62, 0xc7, 0x04, 0xab, 0x05,
++0xf5, 0x0c, 0xe7, 0xa2, 0xa6, 0x23, 0xd5, 0x3d, 0x95, 0xd8, 0xcd, 0x86, 0x79, 0xf5, 0x01, 0x47,
++0x4f, 0xf9, 0x1d, 0x9d, 0x36, 0xf7, 0x68, 0x1a, 0x64, 0x44, 0x58, 0x5d, 0xe5, 0x81, 0x15, 0x2a,
++0x41, 0xe4, 0x0e, 0xaa, 0x1f, 0x04, 0x21, 0xff, 0x2c, 0xf3, 0x73, 0x2b, 0x48, 0x1e, 0xd2, 0xf7
++cipher_iv =
++0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
++# Section sha 1 hmac buff 32
++[sha1_hmac_buff_32]
++digest =
++0x36, 0xCA, 0x49, 0x6A, 0xE3, 0x54, 0xD8, 0x4F, 0x0B, 0x76, 0xD8, 0xAA, 0x78, 0xEB, 0x9D, 0x65,
++0x2C, 0xCA, 0x1F, 0x97
++# Section sha 256 hmac buff 32
++[sha256_hmac_buff_32]
++digest =
++0x1C, 0xB2, 0x3D, 0xD1, 0xF9, 0xC7, 0x6C, 0x49, 0x2E, 0xDA, 0x94, 0x8B, 0xF1, 0xCF, 0x96, 0x43,
++0x67, 0x50, 0x39, 0x76, 0xB5, 0xA1, 0xCE, 0xA1, 0xD7, 0x77, 0x10, 0x07, 0x43, 0x37, 0x05, 0xB4
+diff --git a/dts/test_resources/test_aes_gcm.data b/dts/test_resources/test_aes_gcm.data
+new file mode 100644
+index 0000000000..034f4fa91a
+--- /dev/null
++++ b/dts/test_resources/test_aes_gcm.data
+@@ -0,0 +1,19 @@
++# Global Section
++plaintext =
++0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
++0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11
++
++ciphertext =
++0x82, 0x7d, 0xb6, 0xdf, 0x77, 0x0a, 0xe6, 0x45, 0x5a, 0xc3, 0x70, 0x9b, 0x27, 0xb2, 0x61, 0x19,
++0xa2, 0x37, 0x0b, 0xf7, 0x42, 0xfc, 0xec, 0xe7, 0xf7, 0x30, 0xe0, 0x3c, 0x05, 0x55, 0xb3, 0x7d
++
++aead_key =
++0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
++aead_iv =
++0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
++aead_aad =
++0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
++
++[aes_gcm_buff_32]
++digest =
++0x0f, 0xb2, 0x98, 0x59, 0x48, 0xbf, 0x6c, 0x37, 0x5a, 0xad, 0xcd, 0x97, 0x9f, 0xbb, 0xc8, 0x2a
+-- 
+2.54.0
+
