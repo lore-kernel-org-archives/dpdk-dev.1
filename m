@@ -2,48 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC6AC44500
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 09:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 288C5C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 09:58:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC007402C3;
-	Mon,  6 Jul 2026 11:27:54 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id F408F4027B
- for <dev@dpdk.org>; Mon,  6 Jul 2026 11:27:52 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gtzX009lpzJ46bB;
- Mon,  6 Jul 2026 17:26:56 +0800 (CST)
-Received: from frapema100001.china.huawei.com (unknown [7.182.19.23])
- by mail.maildlp.com (Postfix) with ESMTPS id 4738840577;
- Mon,  6 Jul 2026 17:27:52 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema100001.china.huawei.com (7.182.19.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Mon, 6 Jul 2026 11:27:52 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Mon, 6 Jul 2026 11:27:52 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Marat Khalili <marat.khalili@huawei.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "thomas@monjalon.net"
- <thomas@monjalon.net>, "stephen@networkplumber.org"
- <stephen@networkplumber.org>
-Subject: RE: [PATCH] test/bpf_validate: use unit_test_suite_runner
-Thread-Topic: [PATCH] test/bpf_validate: use unit_test_suite_runner
-Thread-Index: AQHdCwDTnyBfzP/NNU+cTJXvSpc6jrZgOGXQ
-Date: Mon, 6 Jul 2026 09:27:51 +0000
-Message-ID: <0c7107a5baac4ae5bee6eb81f3e40562@huawei.com>
-References: <20260703152910.80285-1-marat.khalili@huawei.com>
-In-Reply-To: <20260703152910.80285-1-marat.khalili@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.78]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 3BD07402C3;
+	Mon,  6 Jul 2026 11:58:19 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id DB19B4027B
+ for <dev@dpdk.org>; Mon,  6 Jul 2026 11:58:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1783331898; x=1814867898;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=peUTy46irViZUO1O1eU04CayV8rTgRmpeRKMk7kROFk=;
+ b=mUUO5r76/XVDSC9xvuhNabn4UEIKOxjBBWqUJB+gcSp+E+RghlijRQZd
+ 4WB7yrQHDq6OhNDVodpBat7KsFwf4YC8Z2LNpxNLwS62u92J20Nalhdwr
+ 6n0wFFQEdhYU1ajbR6TKQWgPQigWPOQJuj5NwVX9tmVQAOjrUeDDnGttp
+ yJpzq6O03nrtQ1VNEUNQTm0DtR5mvexNAdDZgp0sbOnGxnFw9V/3EYOB0
+ yRWNsUJEPgo/yzkYPpmmqyB/h1+yJw3NshH4gSQ0zSdsbiY10k0Xyfm6I
+ 7Ej6ALWdLZ3EgT2asug8qMgskvVIBUB20KmwhOVL3qYyRrPfFd+mauEiZ A==;
+X-CSE-ConnectionGUID: HevX/QQfTnWdZmc/dI0mEw==
+X-CSE-MsgGUID: YTOpkP8oQgqqit6m7nQUMw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11838"; a="94565694"
+X-IronPort-AV: E=Sophos;i="6.25,149,1779174000"; d="scan'208";a="94565694"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Jul 2026 02:58:16 -0700
+X-CSE-ConnectionGUID: ZV3in04kQzCze90hXzr+QQ==
+X-CSE-MsgGUID: yr2hkpEwQnKa6LM+nP1aGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,149,1779174000"; d="scan'208";a="251929913"
+Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
+ by orviesa006.jf.intel.com with ESMTP; 06 Jul 2026 02:58:16 -0700
+From: Radu Nicolau <radu.nicolau@intel.com>
+To: dev@dpdk.org
+Cc: maxime.coquelin@redhat.com, david.marchand@redhat.com,
+ Radu Nicolau <radu.nicolau@intel.com>, jianjay.zhou@huawei.com,
+ Yu Jiang <yux.jiang@intel.com>, Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [PATCH v2] crypto/virtio: cookies are allocated from mempool
+Date: Mon,  6 Jul 2026 09:57:46 +0000
+Message-ID: <20260706095746.2586714-2-radu.nicolau@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260703144931.2541180-1-radu.nicolau@intel.com>
+References: <20260703144931.2541180-1-radu.nicolau@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,43 +61,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > @@ -2267,5 +2183,47 @@ test_mem_ldx_dw_heap(void)
-> >  	});
-> >  }
-> >=20
-> > -REGISTER_ATTIC_TEST(bpf_validate_mem_ldx_dw_heap_autotest,
-> > -	test_mem_ldx_dw_heap);
-> > +static struct
-> > +unit_test_suite test_bpf_validate_suite  =3D {
-> > +	.suite_name =3D "Test BPF Validate Unit Test Suite",
-> > +	.unit_test_cases =3D {
-> > +		TEST_CASE(test_alu64_add_k),
+The Rx/Tx functions allocate cookies as needed, no need to
+allocate and free from heap.
 
-Received some additional AI comments that are not visible in patchwork (?).
+Fixes: 6f0175ff53e0 ("crypto/virtio: support basic PMD ops")
+Cc: jianjay.zhou@huawei.com
 
-> **Missing blank line before suite definition**
->=20
-> The static structure `test_bpf_validate_suite` should be separated from t=
-he
-> preceding function `test_mem_ldx_dw_heap()` by a blank line for consisten=
-cy
-> with DPDK formatting conventions.
+Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+Tested-by: Yu Jiang <yux.jiang@intel.com>
+---
+v2: removed redundant mempool free
 
-The model seems to be confused, the structure is clearly separated.
+ drivers/crypto/virtio/virtio_cryptodev.c | 23 -----------------------
+ 1 file changed, 23 deletions(-)
 
-> **Extra space in structure name line**
+diff --git a/drivers/crypto/virtio/virtio_cryptodev.c b/drivers/crypto/virtio/virtio_cryptodev.c
+index 6f079f15f6..d70651646e 100644
+--- a/drivers/crypto/virtio/virtio_cryptodev.c
++++ b/drivers/crypto/virtio/virtio_cryptodev.c
+@@ -68,7 +68,6 @@ void
+ virtio_crypto_queue_release(struct virtqueue *vq)
+ {
+ 	struct virtio_crypto_hw *hw;
+-	uint16_t i;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
+@@ -80,9 +79,6 @@ virtio_crypto_queue_release(struct virtqueue *vq)
+ 		hw->vqs[vq->vq_queue_index] = NULL;
+ 		rte_memzone_free(vq->mz);
+ 		rte_mempool_free(vq->mpool);
+-		for (i = 0; i < vq->vq_nentries; i++)
+-			rte_free(vq->vq_descx[i].cookie);
+-
+ 		rte_free(vq);
+ 	}
+ }
+@@ -102,8 +98,6 @@ virtio_crypto_queue_setup(struct rte_cryptodev *dev,
+ 	unsigned int vq_size;
+ 	struct virtio_crypto_hw *hw = dev->data->dev_private;
+ 	struct virtqueue *vq = NULL;
+-	uint32_t i = 0;
+-	uint32_t j;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
+@@ -175,29 +169,12 @@ virtio_crypto_queue_setup(struct rte_cryptodev *dev,
+ 					"Cannot create mempool");
+ 			goto mpool_create_err;
+ 		}
+-		for (i = 0; i < nb_desc; i++) {
+-			vq->vq_descx[i].cookie =
+-				rte_zmalloc("crypto PMD op cookie pointer",
+-					sizeof(struct virtio_crypto_op_cookie),
+-					RTE_CACHE_LINE_SIZE);
+-			if (vq->vq_descx[i].cookie == NULL) {
+-				VIRTIO_CRYPTO_DRV_LOG_ERR("Failed to "
+-						"alloc mem for cookie");
+-				goto cookie_alloc_err;
+-			}
+-		}
+ 	}
+ 
+ 	*pvq = vq;
+ 
+ 	return 0;
+ 
+-cookie_alloc_err:
+-	rte_mempool_free(vq->mpool);
+-	if (i != 0) {
+-		for (j = 0; j < i; j++)
+-			rte_free(vq->vq_descx[j].cookie);
+-	}
+ mpool_create_err:
+ 	rte_free(vq);
+ 	return -ENOMEM;
+-- 
+2.52.0
 
-This one is true BUT seems to be the majority style for some reason.
-If fixed, this needs to be fixed in 49 other places.
-
-> The suite name "Test BPF Validate Unit Test Suite" is somewhat redundant
-> ("Test" appears twice). [...] This is a minor style preference; the curre=
-nt
-> name is acceptable.
-
-I mostly agree with this one, though some (not the majority) of the other
-suites also use this style. But as model said, the current name is acceptab=
-le.
-
-Net result, I do not plan to send another revision in the absence of other
-comments or opinions.
