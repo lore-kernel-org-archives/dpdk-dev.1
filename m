@@ -2,55 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9D5C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 10:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F81C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 10:53:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C64840A73;
-	Mon,  6 Jul 2026 12:47:40 +0200 (CEST)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
- by mails.dpdk.org (Postfix) with ESMTP id DD74640691;
- Mon,  6 Jul 2026 12:47:36 +0200 (CEST)
-X-QQ-mid: esmtpgz13t1783334854t9696c369
-X-QQ-Originating-IP: B136cBHNLDLjsur0jvsWpq9gP6HonnoejGd4VYonEVg=
-Received: from DSK-zaiyuwang.trustnetic.com ( [125.121.223.58])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 06 Jul 2026 18:47:31 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16161646815058786212
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH 2/2] net/txgbe: validate lane_num before GENMASK operations
-Date: Mon,  6 Jul 2026 18:47:19 +0800
-Message-Id: <20260706104723.25968-3-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20260706104723.25968-1-zaiyuwang@trustnetic.com>
-References: <20260706104723.25968-1-zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2014D40685;
+	Mon,  6 Jul 2026 12:53:35 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 0903A4027B
+ for <dev@dpdk.org>; Mon,  6 Jul 2026 12:53:34 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gv1Qr4JHRzJ46ZS;
+ Mon,  6 Jul 2026 18:52:36 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id ECDA240569;
+ Mon,  6 Jul 2026 18:53:32 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 6 Jul 2026 12:53:32 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: 
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>
+Subject: [PATCH v2 2/7] doc: document rte_os.h
+Date: Mon, 6 Jul 2026 11:52:50 +0100
+Message-ID: <20260706105256.79904-3-marat.khalili@huawei.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260706105256.79904-1-marat.khalili@huawei.com>
+References: <20260702200050.88710-1-marat.khalili@huawei.com>
+ <20260706105256.79904-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MdoRYM9mYryd3n9DDdDQknifftEMAxx0BvvG5Z9K1Rgrt/ap5mjhrl1/
- BMybCV4jR7o8MWYgXMJRvxAIiGeEUDJh3LoGCKMHfrw8N5NekxPgq+oDWgDLsmrHUZBb4ef
- I8g3JewEX/S7LimMDOrpdcuwFVGYRR0WIfFkk3OZV5qg+uV64Pb5vpA6oFrydjqA10FBCVb
- lrCSRqmxxfJRn1vJO5IwjS81vDXtMpSi73eoaEoT1p43RBnrg+ccr8LfpbaI1lXoqDtikO5
- n8Om0qv/DpBg6Y5GQq9iI+rXZkG8f821nzBEcj6WFVWHV/OwP/Em4oJPEiE4LcuRRa0+xOe
- u9airQjCbRHhPFuwfed2qApfBKxrBTIzGd9Qyk8f+YmEXYlERnFh7VpgqX8mkhqXrugEY1v
- E931B42tJsrBBV3wP7ReN6/6c7EW8Q4kGVMLbOBxHB7YC+CiUY8mGc3c3L6gSyndoj8dCxf
- d5f9MXjM2kVXcYQVvz1IwxW0+q/Cx0P9oGz4gClre9iZbtzBDqrHPE0MNDKQzAVLhGXiHsP
- kxBFmkd7c+JmIOVx4d2pAruos8m2oVLF3gIfiAJrpQ5H+3XrVmzTrzrjS0KgVs+ddAsTFFn
- 2ECNqyjlSTWJdTfo4ex7zQ24VUArP6KVRP0gUqWDclngA0qFyIh+/pzDZ+pkMnVup4pVpFT
- ZsmvXbVAhs76aSSHBsg+3IBc52KTKCAmKGvMlTcYMvYsQeKJ0aff424rKdngI0pKeE3M8zk
- ulje4sf9ThUkypDdVd7rwjv0aKetgrl/l6kHTKuDPOrGlgyJLjHI+4PXDANP7EHhOV2n+yW
- QDMJiEFw1UP0k+Q/4ZaKoe4jj1cW5RPBCcxsY88p5rosQVU3ZwmIzkNgFxkrIM/R/wvXRyX
- a3OQugy5kxK+TL/ny9UJZ4hfXXT4FfSXPdosz6i7HcxSN0T1dfA0GC+hUsnnsy5negPm0IV
- rn3whj/hqVAid4+uwlwini+Bdj/XyXKprbV7o2J0DZmjtLQ2ILItHg/1rqKJ2TkgUDIx+1h
- HfMGO7+q6rS9ZVEC03EmZEiRpNWvdSlbuiCZdTWQt0KlAVhaxIviaskEbfri8=
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapema100001.china.huawei.com (7.182.19.23) To
+ frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,62 +49,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Coverity reports multiple issues (INTEGER_OVERFLOW and BAD_SHIFT)
-in the e56 backplane code. The root cause is that 'lane_num' is
-initialized to 0 and only set in the switch statement based on
-the link speed. The default case simply logs and breaks, leaving
-lane_num as 0 for unsupported speeds.
+File rte_os.h did not previously have a generic version to generate
+documentation from, but its OS-specific version was installed. Since it
+is now verified that documentation is generated for all public headers,
+add a generic stub containing description of this file.
 
-This leads to unsigned underflow when evaluating 'lane_num - 1'
-in GENMASK(lane_num - 1, 0), and undefined behavior when the
-resulting mask is used in shift operations.
-
-Fix by returning -EINVAL immediately in the default case of
-txgbe_e56_cl72_training(), preventing any invalid speed from
-proceeding further. Also add error handling at the call site
-txgbe_handle_e56_bkp_an73_flow() to check the return value and
-propagate the error.
-
-For txgbe_e56_rxs_osc_init_for_temp_track_range(), no additional
-check is added because:
-1. It is called from txgbe_e56_cl72_training() after lane_num
-   has been validated to one of the legal values (1, 2, 4, or 8).
-2. The other caller, txgbe_e56_set_phy_link_mode(), passes a
-   fixed speed of 10 (lane_num = 1), which is also valid.
-
-Coverity issue: 504598, 504602, 504613
-Fixes: 234ce0d1fa9d ("net/txgbe: fix link stability for Amber-Lite backplane mode")
-Cc: stable@dpdk.org
-
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- drivers/net/txgbe/base/txgbe_e56_bp.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ lib/eal/include/generic/rte_os.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 lib/eal/include/generic/rte_os.h
 
-diff --git a/drivers/net/txgbe/base/txgbe_e56_bp.c b/drivers/net/txgbe/base/txgbe_e56_bp.c
-index f8b39a0c7e..d376d918df 100644
---- a/drivers/net/txgbe/base/txgbe_e56_bp.c
-+++ b/drivers/net/txgbe/base/txgbe_e56_bp.c
-@@ -2432,7 +2432,7 @@ static int txgbe_e56_cl72_training(struct txgbe_hw *hw)
- 		break;
- 	default:
- 		BP_LOG("%s %d :Invalid speed\n", __func__, __LINE__);
--		break;
-+		return -EINVAL;
- 	}
- 
- 	BP_LOG("2.3 Wait %dG KR phy mode init ....\n", bylinkmode);
-@@ -2583,6 +2583,10 @@ int txgbe_handle_e56_bkp_an73_flow(struct txgbe_hw *hw)
- 	}
- 
- 	status = txgbe_e56_cl72_training(hw);
-+	if (status) {
-+		BP_LOG("CL72 training failed, status = %d\n", status);
-+		return status;
-+	}
- 
- 	rdata = rd32_ephy(hw, E56PHY_RXS_IDLE_DETECT_1_ADDR);
- 	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MAX, 0x28);
+diff --git a/lib/eal/include/generic/rte_os.h b/lib/eal/include/generic/rte_os.h
+new file mode 100644
+index 000000000000..aa96321aefc4
+--- /dev/null
++++ b/lib/eal/include/generic/rte_os.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2010-2019 Intel Corporation
++ */
++
++#ifndef _RTE_OS_H_
++#define _RTE_OS_H_
++
++/**
++ * This header should contain any definition
++ * which is not supported natively or named differently in the local OS.
++ */
++
++#endif /* _RTE_OS_H_ */
 -- 
-2.21.0.windows.1
+2.43.0
 
