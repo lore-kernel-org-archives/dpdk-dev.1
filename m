@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F81C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 10:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA06C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 10:53:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2014D40685;
-	Mon,  6 Jul 2026 12:53:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 118A940695;
+	Mon,  6 Jul 2026 12:53:36 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 0903A4027B
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 0CCA1402C3
  for <dev@dpdk.org>; Mon,  6 Jul 2026 12:53:34 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gv1Qr4JHRzJ46ZS;
- Mon,  6 Jul 2026 18:52:36 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gv1Qs0SXDzJ46F8;
+ Mon,  6 Jul 2026 18:52:37 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id ECDA240569;
- Mon,  6 Jul 2026 18:53:32 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 696E540571;
+ Mon,  6 Jul 2026 18:53:33 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 6 Jul 2026 12:53:32 +0200
+ 15.2.1544.11; Mon, 6 Jul 2026 12:53:33 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: 
+To: Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>
-Subject: [PATCH v2 2/7] doc: document rte_os.h
-Date: Mon, 6 Jul 2026 11:52:50 +0100
-Message-ID: <20260706105256.79904-3-marat.khalili@huawei.com>
+Subject: [PATCH v2 3/7] doc: fix typos in rte_bus_pci.h
+Date: Mon, 6 Jul 2026 11:52:51 +0100
+Message-ID: <20260706105256.79904-4-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260706105256.79904-1-marat.khalili@huawei.com>
 References: <20260702200050.88710-1-marat.khalili@huawei.com>
@@ -49,36 +49,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-File rte_os.h did not previously have a generic version to generate
-documentation from, but its OS-specific version was installed. Since it
-is now verified that documentation is generated for all public headers,
-add a generic stub containing description of this file.
+This file contained a couple of doxygen typos that prevented successful
+documentation build. It was not discovered previously because the driver
+despite the presence of public headers was not included in the
+documentation build.
+
+Fix doxygen typos (replace `@bar` with `@p bar`).
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- lib/eal/include/generic/rte_os.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 lib/eal/include/generic/rte_os.h
+ drivers/bus/pci/rte_bus_pci.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/eal/include/generic/rte_os.h b/lib/eal/include/generic/rte_os.h
-new file mode 100644
-index 000000000000..aa96321aefc4
---- /dev/null
-+++ b/lib/eal/include/generic/rte_os.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2010-2019 Intel Corporation
-+ */
-+
-+#ifndef _RTE_OS_H_
-+#define _RTE_OS_H_
-+
-+/**
-+ * This header should contain any definition
-+ * which is not supported natively or named differently in the local OS.
-+ */
-+
-+#endif /* _RTE_OS_H_ */
+diff --git a/drivers/bus/pci/rte_bus_pci.h b/drivers/bus/pci/rte_bus_pci.h
+index 19a7b15b99fd..22a7beb1fc4c 100644
+--- a/drivers/bus/pci/rte_bus_pci.h
++++ b/drivers/bus/pci/rte_bus_pci.h
+@@ -222,7 +222,7 @@ int rte_pci_write_config(const struct rte_pci_device *device,
+  * @param len
+  *   The length of the data buffer.
+  * @param offset
+- *   The offset into MMIO space described by @bar.
++ *   The offset into MMIO space described by @p bar.
+  * @return
+  *   Number of bytes read on success, negative on error.
+  */
+@@ -246,7 +246,7 @@ int rte_pci_mmio_read(const struct rte_pci_device *device, int bar,
+  * @param len
+  *   The length of the data buffer.
+  * @param offset
+- *   The offset into MMIO space described by @bar.
++ *   The offset into MMIO space described by @p bar.
+  * @return
+  *   Number of bytes written on success, negative on error.
+  */
 -- 
 2.43.0
 
