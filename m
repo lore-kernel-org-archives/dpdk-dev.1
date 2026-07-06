@@ -2,77 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915B8C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 09:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E64EAC43458
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Jul 2026 09:25:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D92E14067C;
-	Mon,  6 Jul 2026 11:20:45 +0200 (CEST)
-Received: from sonic302-21.consmr.mail.ir2.yahoo.com
- (sonic302-21.consmr.mail.ir2.yahoo.com [87.248.110.84])
- by mails.dpdk.org (Postfix) with ESMTP id 5B7224026F
- for <dev@dpdk.org>; Fri,  3 Jul 2026 21:22:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.se; s=s2048;
- t=1783106564; bh=sfbvgwoim9h39DgI5Ioankehx3NTtTR17zYAdvLY7vI=;
- h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To;
- b=dkG2xp4mXejLIMjV4OtQMRvM/D9Q+bwJ9D6+UuEF3+JQJMHyEt5CsWkP1fO9PdpMp/9xbmiE9lclDSYmaHxp69Rf3Ty7tQOBm6g3cYudA9Jc3cHEnecWLJE1i4mFUnEtZ2UCvequ1VPwfotXfzF9q77bZvLZJziDEAH3nND5wyTCgHPzZwlsTbc35MiZDRrb+MMBnaIhTLAH6niSBzYBxfkDC8qXh0QM4zaW9rLEFRJUxPTwa8CeyEYK5kI66OdmCsLn1qYYkbONkpTp6cl4lt+S91SqeGdHlIJed2rAn/uHFP4ZnfJJQjNqP+Qar69oU20IA1i3efv3cjzCZkNelg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048;
- t=1783106564; bh=do6xrF59nbxf3N0oJtbVxUCR5TMQR9GF9/mDPWKS9uh=;
- h=X-Sonic-MF:Date:To:From:Subject:From:Subject;
- b=F2CYN/9L1q8Sw80uoWVwANDQVNmLuq3r0Bet30V5q4cScsSFRNE/kAGNVtJ5rutYm+hnKMtgp5qrAs2Qq+Rkrvs42Rq1AoRIlh24k03HV1lfbGaf7pDHj9prUSWAlNvHgSWEFkbGHkEdUo9GOUcWIlfqC9qilZWbw1BEeP15Cj4KS9k5dogLrJVADs8ciOzRbYsuSLVIxhl9FTHNFD5GEJD+oiOuHZpOVvdknI/8JPwPIv5HjsZ6lBhg3NiA5Pqh0eacHiwmCSRF4gOgX3y1YOd8BEZLdbzfM4JTbGHCAh/iP+yJwuGhKL3RjYlei3xufAKGu98G5V9XQOjTBl+Giw==
-X-YMail-OSG: 63Ky7MoVM1kCCHVmo_hCd0XFIRuCunM3bJM7VSIi3XIgPSgKk4cef7c2K2gdSZG
- 0i1fiOqoXccxU_d6j9daWhn_x6l1y9RDW9uMAjOX3Q3w4l_yw0_sMjZ6DA8wxRs1lraZN7yz4k9t
- MJwDqVME_rMnStX5OQ4mgRa9nwAGPRd6haNbI6hGYlLzkRpfvDX6frpi1lbCu.Q7g4pZf3OBXCkB
- gtS6Wux3x2iMWMcjfAFjELBcZ_PjuHXe4i01prW1odWjn0UdRD0SIawrkZuzOevfw3jBW7yiAOHr
- BmzSRv4AKGudsuqbGYiKbgMgefrz.Uy2MxV4b7DB5l7LV8Yw2gZZrA0NPobakf.6D40B4euBT99K
- lub.EPWFnKkVds8FXRUq2LHySj6OCKVIfAXc4qVQ6URkIbXHuHMrmwJu46E4wvempd2lMIrTlnx3
- wI5THc37u1I.5E303EuAjEoZRfP9LpQzHv5otc7tFF4QBD5vvcSv.AJcJrEBMX4qKE3LCUlbiOeI
- UYVBRJE55w6RAeLa1FXgaTmKg5_fCRN8fRKxtEVkJTBtC7moZvBgE1bxhn3..nKKpvV.Z3jSeMLQ
- LYKlAuT34G5kvel3DloO5PIax79uIQIsrxJYKXWsVCBs0gNB243CyoWSGBOamu_0XwvhITkascsD
- 6PyC54fM7f8zhK3RNudzDbFRnIxlXALaGeQJLZlDy_Z201lcA9nO35vgg1iLdt1nnX4T5arvSxFu
- 1SVgcfu9ljNxXTw9KSTdOH7RVDNK71UjjCwdrV7afd8DUM1lLPH1_TwA3u2lvyES4WWAVlKj1Vyk
- l1PiL8tM8N3NbFnm3dCGqOaoeOOFMEssyDvrw7hAh9QTBNJugMuIFu2ndhM_DxGcSIAo0bHX7Z7I
- EMDn3eefLzIkXqbYDaGyMh6l8utLG2yCMyeVeAwse5w52EmfCTu1MTeCcL6j_pj42ByfSE2lpKFi
- tqy1vFFPPTGGvLjfKdwmO7LVOmWAh49nE4D.HpkaSt2kf9i38xybMxBaEYmdSrVMlfCI9BlqDz_5
- si9Gg3BRNT01ZoZ6zcLYj1MOmx7r5hk1PaeO2gU3Q2GTC8rDZTTCQneLnhBP6M2ISRmGy22RcEWi
- Q4Ki2yC9PhmBSaIS8NBPT61HcM.rbjqev0G6thR9NdX09Uvi6vMhql4nfXDTEWHd1RxxyKnKyR3m
- AF2S7vcecCAGHYZ1r2Tk5n8jvd05NLQ4oKvQ_ybBzMYkK5LE5QzO5efzL__qPoXw5r8qILm_HUuO
- W7_RhIh74Ig_AY1h83pcpPonvklyxCyN5BsjjSual_4T98OWwCAE8IXKLHYjNBR8.17PVzMM68nu
- b2ptnPeHby7x1di5784jE21p.iJGQ3dY_L_tyEUeB1EZ_juwwpXuweQcXWjhF0m8JzFoEn2pAUT5
- yNvekqOh__nz8ePM12QCQJ2cOJji.QQWJ2o3THMpDrCRi7iYxNVDCPMSWyukhxdtSrgVsEURysma
- g.qk2ctFzCnL6cGbZNdqcQBhejRLvSaPiMWszE6KeF1vLohFmmjWCV5HouPUAhrIpff7MBcGO69e
- dNrekJC_4l.CDrP9HvF0feN6HYZTbVp0F77sOpMss11dMf30MtRSFA.9ZqP2cD.RqyBmbaCgitpm
- Xgw1.OFgiPoROyC.2.HTvrMMRjrUQhiwmze8d4LxFldx0UziFLaTlCjfv6AOU0TYej_j9sabcz49
- HBPM6KKhiEQKb_bZGnbUk52UrpyPsuf4Urmxx1PVSB3Ax7AJz6H5uptmSdaEz.B3gY0UMN64kgWr
- yu3CwOow9Af9Ur.ZD88p5RK_m_x8kCtly8Q6dd4F1YjC3VtwXvIW6bgKZ946_TbH5HCjxWEO0qI1
- STN6nkedkIvW56yit4OQPkop8BngF8MFGPfvZA_2QGCvh1.03MNhi5Q1c8jgW3Msesmt0kMhUdQu
- bO1AvaIftq8UK8d9uj6Q4i5MLhivaSxUJYwK6DtwkwNb50cWKESPX9uqZjrNdv_JDdINJYOIVdtz
- ZimE45ff3UYNz1SolHVqGZco832zpeeRBdJr2aBcE5zrX4fZknwR1oovLC3lMSGTQzfQqjh.Y.0e
- JsHSXTWiYKS8p1ofBfIJPQwgnjStmKMxSUtzB5nJ6FvjYthYUIz.xHKVVTA9trhsH.YwXFTgYZQs
- vpJg7k._L_vPBTBPcH2BToGFS80133_Fkz6Ig6g0oeFJ3Sp6UmfdsvydyHQY9mVBBMPbjajtAUFr
- XMSKJOA4Oq.3DZp2x744AfC4rBCh0rPZaJmVnZLTcvpEHmN1jgympCQRmtrb_DIve9P.1_6Wj_Q-
- -
-X-Sonic-MF: <anders.franzen@yahoo.se>
-X-Sonic-ID: d43bec42-08a2-4b8a-a79f-1d221d4174e5
-Received: from sonic.gate.mail.ne1.yahoo.com by
- sonic302.consmr.mail.ir2.yahoo.com with HTTP; Fri, 3 Jul 2026 19:22:44 +0000
-Received: by hermes--production-ir2-7b48fcd765-bfwpn (Yahoo Inc. Hermes SMTP
- Server) with ESMTPA ID 4641cd328e20d3b1fcc90d787b282fa0; 
- Fri, 03 Jul 2026 19:22:40 +0000 (UTC)
-Content-Type: multipart/alternative;
- boundary="------------qbgPdKluVSNFjpZ89nHEUDbj"
-Message-ID: <31c2f2b6-fbdb-4d1c-b6d8-5659e0182f8b@yahoo.se>
-Date: Fri, 3 Jul 2026 21:22:39 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id A8B6D402C3;
+	Mon,  6 Jul 2026 11:25:44 +0200 (CEST)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
+ [209.85.215.182])
+ by mails.dpdk.org (Postfix) with ESMTP id B4A6E4027B
+ for <dev@dpdk.org>; Mon,  6 Jul 2026 11:25:43 +0200 (CEST)
+Received: by mail-pg1-f182.google.com with SMTP id
+ 41be03b00d2f7-c85b73ffb52so1347693a12.3
+ for <dev@dpdk.org>; Mon, 06 Jul 2026 02:25:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1783329942; x=1783934742; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=hjzoX3NDeWEcFJ2K3vrM6fgx/nK6X9sta4jLOiiMCy4=;
+ b=PwCWETJLGm0OhPqch+YhOgC0J8ui7b25vErSdcVAZsToLDiMkajSiIqXvt8mnk7lBT
+ mOqmPzm/4ikk2m02l20f4LCj6LeaMfeJpp46juvfiTYD+42OH7o1uCIFyHjr/jvYjJBO
+ MHk2mgvakMsSiwWvyj9qbQx9F5KEoIn/IxKP55OMC0ixo2vHtGk4yOu+NCzEuXJOpqYW
+ eTJCm897DvMVToj4RJ3yzkc9VTqcjMds6yRHHDCZGcFuHfqHwC7WEw97Aio0tMFk4VFh
+ /oEBmxcdXyFFPdmhcdJfIujO8MOGqb/Fdeot6is18Abw922ouGPpPImUYX9UStce1Zj3
+ j3tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783329942; x=1783934742;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=hjzoX3NDeWEcFJ2K3vrM6fgx/nK6X9sta4jLOiiMCy4=;
+ b=oYN9tyLhoAQrDujaTPB1zoTsDGUVoQr8+i7rRnOJuFl1beXr+bNRUTevA2EGCUwV6T
+ jSVncGdrZof6tGZFkq5/gZpbuUtGaeUa+jT9ixrAS9baYU/SNOhSJH6HSr/FtugYBwAZ
+ BpbrREZ55bkQaPPqgJgddgYI0RRTXaJAwaEGV0eDLH8njuUa+EjMWAdvwzKifBsuQkUM
+ NfyNEPlvwG1OPtSeUjHHQ4Mw28VPnO7V826gO3O/zsXeFRqdN6qvdbfAq1SIJtj5HLo8
+ HnPkMcqkapeSqVUafa8Kd6kyJczTMMbYBUuoHV2ZIrN701kVvbL6jy0clBbscEyqoJWO
+ V89A==
+X-Gm-Message-State: AOJu0Yx0cZW4Ih07GxL1+iPfAra/qyt1Oj8x1Z9FjYfH+n32n8xSl7mo
+ J1C9XyiXHtji6RE1YH8a5kPKeTPIs8CHk0NRywvavPJBE3xWavhd8N2g
+X-Gm-Gg: AfdE7ckC820ix/4nW/xMiCbxtXOmG3NdDIumuNMSG9D6we5lrgZJ5ZdyWFDcVtprqDx
+ eikdVsOb9BJe2sqg0KYer/j+3wsivz2ns0Gl5Jhe1jhEeP8s/oNykV+0BD0xcDJTlzWMRX1mWYL
+ MbQmO0N3B8DxxEf8Vm+ledp3u1v3EugWBC2XIqW6GJeBgeB40jQhIiw8FqZOJXZpe+p5DKXFxMa
+ 53SLJCjAC8/MsYzhQrODy8+Z4PdJpx8oO5XAypAB3Y52Jeu9SneMh6v0EPBMkfQ61y01VClOTJ4
+ F9Lv2WgmJ0eKpk+KNMxdMfARz5qHUBDenbnw6adN+6AqmtZ7/cMKkpieb5rz++nyJLClR4sRuTA
+ g8A7ZJnToxZcrI9KiFvPgp15AbUnJdywIxaYoHjdXtXbGrkJw52YU9faaT39GzC2zXYO53Wx6JM
+ K3DkZe+I+C2OTgbI7H
+X-Received: by 2002:a05:6a21:69a:b0:3b2:924c:566e with SMTP id
+ adf61e73a8af0-3c03e3ed5d5mr9154405637.36.1783329942472; 
+ Mon, 06 Jul 2026 02:25:42 -0700 (PDT)
+Received: from gentoo ([49.204.145.109]) by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-13b3c870effsm66791011c88.12.2026.07.06.02.25.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 06 Jul 2026 02:25:41 -0700 (PDT)
+From: Shreesh Adiga <16567adigashreesh@gmail.com>
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Cc: dev@dpdk.org
+Subject: [PATCH] net/crc: add 4x folding loop for aarch64 NEON implementation
+Date: Mon,  6 Jul 2026 14:54:14 +0530
+Message-ID: <20260706092537.1252921-1-16567adigashreesh@gmail.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260703073118.788f4324@phoenix.local>
+References: <20260703073118.788f4324@phoenix.local>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: dev@dpdk.org
-Cc: cburdick@nvidia.com
-From: Anders Franzen <anders.franzen@yahoo.se>
-Subject: Re: [PATCH v4 1/2] eal: support dmabuf
-References: <31c2f2b6-fbdb-4d1c-b6d8-5659e0182f8b.ref@yahoo.se>
-X-Mailer: WebService/1.1.26086
- mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Mailman-Approved-At: Mon, 06 Jul 2026 11:20:43 +0200
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,203 +78,189 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a multi-part message in MIME format.
---------------qbgPdKluVSNFjpZ89nHEUDbj
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Add a 64-byte loop that maintains 4 fold registers and processes
+64 bytes at a time. The 4x fold registers is then reduced to 16 byte
+single fold, similar to x86 SSE implementation. This technique is
+described in the paper by Intel:
+"Fast CRC Computation for Generic Polynomials Using PCLMULQDQ Instruction"
 
-SGkgQ2xpZmYgYW5kIEVBTCBNYWludGFpbmVycywNCg0KV2hpbGUgdGVzdGluZyB0aGUgdjQg
-cGF0Y2ggc2VyaWVzIGZvciBhIHNpZGUtYnktc2lkZSBDUFUgdnMgR1BVIGxvdy1sYXRlbmN5
-DQpmb3J3YXJkaW5nIGNvbXBhcmlzb24gdXNpbmcgRFBESyAyNi4wMywgd2UgdW5jb3ZlcmVk
-IGFuIHVuaW50ZW5kZWQgYmFja3dhcmQNCmNvbXBhdGliaWxpdHkgYnJlYWsgaW5zaWRlIHRo
-ZSBsZWdhY3kgcnRlX2V4dG1lbV9yZWdpc3RlcigpIHdyYXBwZXIgcGF0aC4NCg0KQ3VycmVu
-dGx5LCBsZWdhY3kgYXBwbGljYXRpb25zIGNhbGxpbmcgdGhlIHN0YW5kYXJkIHByaW1pdGl2
-ZSBmYWlsIA0KaW1tZWRpYXRlbHkNCm9uIHRoZSBmaXJzdCBwYWdlIGl0ZXJhdGlvbiB3aXRo
-IEVJTlZBTC4gVGhlcmUgYXJlIHR3byBkaXN0aW5jdCBpc3N1ZXM6DQoNCjEuIEluIHJ0ZV9l
-eG1lbV9yZWdpc3RlciwgdGhlIGxlZ2FjeSB3cmFwcGVyIHJvdXRlcyB0aHJvdWdoDQpydGVf
-ZXh0bWVtX3JlZ2lzdGVyX2RtYWJ1ZigpIHBhc3NpbmcgYSBoYXJkY29kZWQgLTEgZm9yIHRo
-ZSBmaWxlIA0KZGVzY3JpcHRvci4NCkhvd2V2ZXIsIHJ0ZV9leHRtZW1fcmVnaXN0ZXJfZG1h
-YnVmKCkgZW5mb3JjZXMgYSBzdHJpY3QgZ3VhcmQgY2hlY2sgDQpyaWdodCBhdA0KdGhlIGVu
-dHJ5IGdhdGU6DQogwqAgwqAgaWYgKGRtYWJ1Zl9mZCA8IDApIHsgcmV0dXJuIC1FSU5WQUw7
-IH0NClRoaXMgcmVqZWN0cyBhbGwgbGVnYWN5IENQVSBob3N0IG1lbW9yeSBhbGxvY2F0aW9u
-IGNhbGxzLiBUaGUgbGVnYWN5IA0Kd3JhcHBlcg0Kc2hvdWxkIGluc3RlYWQgYnlwYXNzIHRo
-ZSBleHBlcmltZW50YWwgZ2F0ZSBhbmQgbWFwIHN0cmFpZ2h0IHRvIHRoZSANCnVuZGVybHlp
-bmcNCnN0YXRpYyBleHRtZW1fcmVnaXN0ZXIoKSBjYWxsLg0KDQoyLiBJbsKgbWFsbG9jX2hl
-YXBfY3JlYXRlX2V4dGVybmFsX3NlZywNCiDCoFZhcmlhYmxlIFNoYWRvd2luZy9Db3JydXB0
-aW9uOiBJbnNpZGUgdGhlIHBhZ2UgaW5pdGlhbGl6YXRpb24gdHJhY2tpbmcgDQpsb29wLA0K
-dGhlIG1hc3RlciBsaXN0IGluZGV4IGl0ZXJhdG9yIHZhcmlhYmxlIGlzIGNsb2JiZXJlZCBi
-eSB0aGUgc3ViLXBhZ2UgDQpsb29wIGNvdW50ZXIgJ2knLg0KQXMgYSByZXN1bHQ6DQogwqAg
-wqAgZWFsX21lbXNlZ19saXN0X3NldF9kbWFidWZfaW5mbyhpLCAtMSwgMCk7DQp0YXJnZXRz
-IGEgc3RhbGUgbG9vcCBjb3VudGVyIGluZGV4IGluc3RlYWQgb2YgcHJlc2VydmluZyB0aGUg
-YWxsb2NhdGVkIA0KbWFzdGVyIG1lbXNlZyBsaXN0Lg0KVGhpcyBsZWF2ZXMgdGhlIHJlYWwg
-c2VnbWVudCBsaXN0IHNpdHRpbmcgYXQgaXRzIHplcm8taW5pdGlhbGl6ZWQgDQpkZWZhdWx0
-IChkbWFidWZfZmQ9MCksDQp3aGljaCBwb2lzb25zIHN1YnNlcXVlbnQgZHJpdmVyIGxvb2t1
-cHMgKGUuZy4gbWx4NSB0cnlpbmcgdG8gbWFwIA0Kc3RhbmRhcmQgQ1BVIGZyYW1lcw0Kdmlh
-IHJlZ19kbWFidWZfbXIgYmVjYXVzZSBmZD0wIG1hdGNoZXMgc3RhbmRhcmQgc3RkaW4gaW5z
-dGVhZCBvZiBhIGNsZWFuIA0KLTEpLg0KDQpGaXhpbmcgaXQgcmVxdWlyZXMgY2FjaGluZyAn
-aScgaW50byBhIHBlcnNpc3RlbnQgbG9jYWwgdHJhY2tlciB2YXJpYWJsZSANCihlLmcuLCBt
-c2xfaWR4KQ0KaW1tZWRpYXRlbHkgZm9sbG93aW5nIHRoZSBzdWNjZXNzZnVsIHJ0ZV9mYmFy
-cmF5X2luaXQoKSBibG9jaywgYW5kIA0KcGFzc2luZyB0aGF0DQpjYWNoZWQgdHJhY2tlciB0
-byBlYWxfbWVtc2VnX2xpc3Rfc2V0X2RtYWJ1Zl9pbmZvKCkuDQo=
---------------qbgPdKluVSNFjpZ89nHEUDbj
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+This results in roughly 2x performance improvement due to better ILP
+for large input sizes like 1024 observed on Cortex-X925.
 
-<!DOCTYPE html>
-<html>
-  <head>
+Also removed the special handling of len 16 to 31 similar to x86 SSE
+implementation.
 
-    <meta http-equiv=3D"content-type" content=3D"text/html; charset=3DUTF=
--8">
-  </head>
-  <body>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      Hi Cliff and EAL Maintainers,</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      <br>
-    </div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      While testing the v4 patch series for a side-by-side CPU vs GPU
-      low-latency=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      forwarding comparison using DPDK 26.03, we uncovered an unintended
-      backward=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      compatibility break inside the legacy rte_extmem_register()
-      wrapper path.</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      <br>
-    </div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      Currently, legacy applications calling the standard primitive fail
-      immediately=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      on the first page iteration with EINVAL. There are two distinct
-      issues:</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      <br>
-    </div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      1. In rte_exmem_register, the legacy wrapper routes through=C2=A0</=
-div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      rte_extmem_register_dmabuf() passing a hardcoded -1 for the file
-      descriptor.=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      However, rte_extmem_register_dmabuf() enforces a strict guard
-      check right at=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      the entry gate:</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      =C2=A0 =C2=A0 if (dmabuf_fd &lt; 0) { return -EINVAL; }</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      This rejects all legacy CPU host memory allocation calls. The
-      legacy wrapper=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      should instead bypass the experimental gate and map straight to
-      the underlying=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      static extmem_register() call.</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      <br>
-    </div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">2.
-      In=C2=A0malloc_heap_create_external_seg,=C2=A0<br>
-      =C2=A0Variable Shadowing/Corruption: Inside the page initialization=
+Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
+---
+v2 changes removes special handling for len 16-31 similar to x86
+SSE implementation.
 
-      tracking loop,=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      the master list index iterator variable is clobbered by the
-      sub-page loop counter 'i'.</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      As a result:</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      =C2=A0 =C2=A0 eal_memseg_list_set_dmabuf_info(i, -1, 0);</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      targets a stale loop counter index instead of preserving the
-      allocated master memseg list.=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      This leaves the real segment list sitting at its zero-initialized
-      default (dmabuf_fd=3D0),=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      which poisons subsequent driver lookups (e.g. mlx5 trying to map
-      standard CPU frames=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      via reg_dmabuf_mr because fd=3D0 matches standard stdin instead of =
-a
-      clean -1).</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      <br>
-    </div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      Fixing it requires caching 'i' into a persistent local tracker
-      variable (e.g., msl_idx)=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      immediately following the successful rte_fbarray_init() block, and
-      passing that=C2=A0</div>
-    <div class=3D"elementToProof"
-style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Cal=
-ibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-      cached tracker to eal_memseg_list_set_dmabuf_info().</div>
-  </body>
-</html>
+ lib/net/net_crc_neon.c | 103 +++++++++++++++++++++++------------------
+ 1 file changed, 58 insertions(+), 45 deletions(-)
 
---------------qbgPdKluVSNFjpZ89nHEUDbj--
+diff --git a/lib/net/net_crc_neon.c b/lib/net/net_crc_neon.c
+index cee75ddd31..d924aed25d 100644
+--- a/lib/net/net_crc_neon.c
++++ b/lib/net/net_crc_neon.c
+@@ -16,6 +16,7 @@
+ /** PMULL CRC computation context structure */
+ struct crc_pmull_ctx {
+ 	uint64x2_t rk1_rk2;
++	uint64x2_t rk3_rk4;
+ 	uint64x2_t rk5_rk6;
+ 	uint64x2_t rk7_rk8;
+ };
+@@ -136,54 +137,69 @@ crc32_eth_calc_pmull(
+ 	temp = vreinterpretq_u64_u32(vsetq_lane_u32(crc, vmovq_n_u32(0), 0));
+
+ 	/**
+-	 * Folding all data into single 16 byte data block
+-	 * Assumes: fold holds first 16 bytes of data
++	 * Folding all data into 4 parallel 16 byte data block
++	 * Later folds 4 parallel blocks into single fold block
+ 	 */
+-	if (unlikely(data_len < 32)) {
+-		if (unlikely(data_len == 16)) {
+-			/* 16 bytes */
+-			fold = vld1q_u64((const uint64_t *)data);
+-			fold = veorq_u64(fold, temp);
+-			goto reduction_128_64;
+-		}
++	if (likely(data_len >= 64)) {
++		uint64x2_t fold1, fold2, fold3, fold4;
++		uint64x2_t temp1, temp2, temp3, temp4;
++		fold1 = vld1q_u64((const uint64_t *)(data +  0));
++		fold2 = vld1q_u64((const uint64_t *)(data + 16));
++		fold3 = vld1q_u64((const uint64_t *)(data + 32));
++		fold4 = vld1q_u64((const uint64_t *)(data + 48));
++		fold1 = veorq_u64(fold1, temp);
++		k = params->rk1_rk2;
+
+-		if (unlikely(data_len < 16)) {
+-			/* 0 to 15 bytes */
+-			alignas(16) uint8_t buffer[16];
+-
+-			memset(buffer, 0, sizeof(buffer));
+-			memcpy(buffer, data, data_len);
+-
+-			fold = vld1q_u64((uint64_t *)buffer);
+-			fold = veorq_u64(fold, temp);
+-			if (unlikely(data_len < 4)) {
+-				fold = vshift_bytes_left(fold, 8 - data_len);
+-				goto barret_reduction;
+-			}
+-			fold = vshift_bytes_left(fold, 16 - data_len);
+-			goto reduction_128_64;
++		for (n = 64; (n + 64) <= data_len; n += 64) {
++			temp1 = vld1q_u64((const uint64_t *)&data[n +  0]);
++			temp2 = vld1q_u64((const uint64_t *)&data[n + 16]);
++			temp3 = vld1q_u64((const uint64_t *)&data[n + 32]);
++			temp4 = vld1q_u64((const uint64_t *)&data[n + 48]);
++			fold1 = crcr32_folding_round(temp1, k, fold1);
++			fold2 = crcr32_folding_round(temp2, k, fold2);
++			fold3 = crcr32_folding_round(temp3, k, fold3);
++			fold4 = crcr32_folding_round(temp4, k, fold4);
+ 		}
+-		/* 17 to 31 bytes */
+-		fold = vld1q_u64((const uint64_t *)data);
++		k = params->rk3_rk4;
++		fold1 = crcr32_folding_round(fold2, k, fold1);
++		fold1 = crcr32_folding_round(fold3, k, fold1);
++		fold = crcr32_folding_round(fold4, k, fold1);
++		goto single_fold_loop;
++	}
++
++	if (unlikely(data_len < 16)) {
++		/* 0 to 15 bytes */
++		alignas(16) uint8_t buffer[16];
++
++		memset(buffer, 0, sizeof(buffer));
++		memcpy(buffer, data, data_len);
++
++		fold = vld1q_u64((uint64_t *)buffer);
+ 		fold = veorq_u64(fold, temp);
+-		n = 16;
+-		k = params->rk1_rk2;
+-		goto partial_bytes;
++		if (unlikely(data_len < 4)) {
++			fold = vshift_bytes_left(fold, 8 - data_len);
++			goto barret_reduction;
++		}
++		fold = vshift_bytes_left(fold, 16 - data_len);
++		goto reduction_128_64;
+ 	}
+
+-	/** At least 32 bytes in the buffer */
++	/** At least 16 bytes in the buffer */
+ 	/** Apply CRC initial value */
+ 	fold = vld1q_u64((const uint64_t *)data);
+ 	fold = veorq_u64(fold, temp);
+
+-	/** Main folding loop - the last 16 bytes is processed separately */
+-	k = params->rk1_rk2;
+-	for (n = 16; (n + 16) <= data_len; n += 16) {
++	/** Single folding loop - the last 16 bytes is processed separately */
++	k = params->rk3_rk4;
++	n = 16;
++
++single_fold_loop:
++	for (; (n + 16) <= data_len; n += 16) {
+ 		temp = vld1q_u64((const uint64_t *)&data[n]);
+ 		fold = crcr32_folding_round(temp, k, fold);
+ 	}
+
+-partial_bytes:
++	/** Partial bytes - process last <16 bytes */
+ 	if (likely(n < data_len)) {
+ 		uint64x2_t last16, a, b, mask;
+ 		uint32_t rem = data_len & 15;
+@@ -194,15 +210,8 @@ crc32_eth_calc_pmull(
+ 		mask = vshift_bytes_left(vdupq_n_u64(-1), 16 - rem);
+ 		b = vorrq_u64(b, vandq_u64(mask, last16));
+
+-		/* k = rk1 & rk2 */
+-		temp = vreinterpretq_u64_p128(vmull_p64(
+-				vgetq_lane_p64(vreinterpretq_p64_u64(a), 1),
+-				vgetq_lane_p64(vreinterpretq_p64_u64(k), 0)));
+-		fold = vreinterpretq_u64_p128(vmull_p64(
+-				vgetq_lane_p64(vreinterpretq_p64_u64(a), 0),
+-				vgetq_lane_p64(vreinterpretq_p64_u64(k), 1)));
+-		fold = veorq_u64(fold, temp);
+-		fold = veorq_u64(fold, b);
++		/* k = rk3 & rk4 */
++		fold = crcr32_folding_round(b, k, a);
+ 	}
+
+ 	/** Reduction 128 -> 32 Assumes: fold holds 128bit folded data */
+@@ -221,22 +230,26 @@ void
+ rte_net_crc_neon_init(void)
+ {
+ 	/* Initialize CRC16 data */
+-	uint64_t ccitt_k1_k2[2] = {0x189aeLLU, 0x8e10LLU};
++	uint64_t ccitt_k1_k2[2] = {0x14ff2LLU, 0x19a3cLLU};
++	uint64_t ccitt_k3_k4[2] = {0x189aeLLU, 0x8e10LLU};
+ 	uint64_t ccitt_k5_k6[2] = {0x189aeLLU, 0x114aaLLU};
+ 	uint64_t ccitt_k7_k8[2] = {0x11c581910LLU, 0x10811LLU};
+
+ 	/* Initialize CRC32 data */
+-	uint64_t eth_k1_k2[2] = {0xccaa009eLLU, 0x1751997d0LLU};
++	uint64_t eth_k1_k2[2] = {0x1c6e41596LLU, 0x154442bd4LLU};
++	uint64_t eth_k3_k4[2] = {0xccaa009eLLU, 0x1751997d0LLU};
+ 	uint64_t eth_k5_k6[2] = {0xccaa009eLLU, 0x163cd6124LLU};
+ 	uint64_t eth_k7_k8[2] = {0x1f7011640LLU, 0x1db710641LLU};
+
+ 	/** Save the params in context structure */
+ 	crc16_ccitt_pmull.rk1_rk2 = vld1q_u64(ccitt_k1_k2);
++	crc16_ccitt_pmull.rk3_rk4 = vld1q_u64(ccitt_k3_k4);
+ 	crc16_ccitt_pmull.rk5_rk6 = vld1q_u64(ccitt_k5_k6);
+ 	crc16_ccitt_pmull.rk7_rk8 = vld1q_u64(ccitt_k7_k8);
+
+ 	/** Save the params in context structure */
+ 	crc32_eth_pmull.rk1_rk2 = vld1q_u64(eth_k1_k2);
++	crc32_eth_pmull.rk3_rk4 = vld1q_u64(eth_k3_k4);
+ 	crc32_eth_pmull.rk5_rk6 = vld1q_u64(eth_k5_k6);
+ 	crc32_eth_pmull.rk7_rk8 = vld1q_u64(eth_k7_k8);
+ }
+--
+2.54.0
+
