@@ -2,70 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA75EC43602
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 11:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB14C44500
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 11:56:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89C5B4067B;
-	Tue,  7 Jul 2026 13:44:44 +0200 (CEST)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com
- [209.85.208.170])
- by mails.dpdk.org (Postfix) with ESMTP id B4A3740264
- for <dev@dpdk.org>; Tue,  7 Jul 2026 13:44:42 +0200 (CEST)
-Received: by mail-lj1-f170.google.com with SMTP id
- 38308e7fff4ca-39b315585a4so28281081fa.0
- for <dev@dpdk.org>; Tue, 07 Jul 2026 04:44:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1783424682; x=1784029482; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=TYrUs7kNN6vdlBhJYWjUkgdtLCM4dlH2VqgbTXuKR9g=;
- b=Mn/2hf2qSuwcQ5blFdeg8UXUtgC6EZPJ350MWIM/x0n61YrnQw2hJv/VTqxmzuK+BX
- eC1l7OnSi7Y54pEnAN3Ns1Vj4awfiLc1LRZwrl6mDMpmw3YBRHQOwf7663mlj1HQ3SNC
- rl57ajerFuagHwGAVm3PzGhdIqBg9yBaAiXmKP799b/DS7ozIkQfMSSv/5QDgB5+w9cG
- fwEsUZhV9ImZQruKZkna8uz6yVPN/9N6uz6PS9hqNbHi5qhfjaGsFHt5C6CpiKBoIIkJ
- AykqnWU7zMbevcoE5lDS5krFHEzQ0sfvng/mFwY1kDyfyndXV54WU5HWBo5c0LJjLUXX
- 9LzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783424682; x=1784029482;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=TYrUs7kNN6vdlBhJYWjUkgdtLCM4dlH2VqgbTXuKR9g=;
- b=rhKRroe9UX8EVkxiQ/8xWs3ePYlqJnl7EXz2p9ym7OGZo28Q/cN///ZYc7+EI5rN0c
- hRtVghpfQ9UyXqrfhG3LedPCVlth51nla/kd11jX7kD0ssR/Vrkfn6D7gFagkRYf66Uz
- ULDbkxhzxT46JWx5G2qoBcd5eYY7TPJ4R83xGhTuNNH15kTKdfVyZNwM5VFmx9uWEVpI
- mR2vE5HWQ4RVUFXzJgXhDU0UbgBT+hAsnz3PzofsANNHOtXdMMjY1mSdmY7gMvrTuW+J
- 2ssCWMRuqzLcbgoBOKagMU5d5DFHfqAQwxaKQRJNW8+z7TzBjqbkKW9cpIv5ZG/2b8dz
- CXqw==
-X-Gm-Message-State: AOJu0YytcVc5ufEE7KEBNvhM1pdOVvEv581kiyVgch1fKDQP4Mgg9JFa
- aXv8gsmVnOd95iBGH1PZVVrnhKp/6VmrJXUwxJzTY1XoF5POPPXOQuzO
-X-Gm-Gg: AfdE7cmE6bHVUhTTSsP6GJrxdkEIWj8ldYDc3tpLDYn+VTW5xztd6ZJlgAdrsN+174Z
- P3n+893O3yCcAwK2lwIppPumKsXZE6faEUJuNLGpdmu4BNPdWyPa/nybnsxUu3iRySNb4aJlajW
- EMLZibZYXcrPHP24NmDCEVXAkC1xMiCSM3gQD07bRjDPUT71NDzB/aNVezHfeltLbzdNd2r+q3X
- +CvNNcX5NXgpjb+S71oKzgMO0Ef9gzijCqq6mXkY8begJrh4nsEnrcAFTxCIsEb7e+2fepFY9rN
- Q5piYryY46cPR4Ki6zIliVYi/hmGfHPZZPVlmc7BS1NeA8xPK8Q2wpoI16q10ZHDyd9L9vonm8o
- 87jzZYl6eEmaO7q9cbkhoP+zG0+kH00rilVe/uLQzu/fVTFON64hrbbu9/D72K4YK/+vg18ewEP
- 1GWJx2mVd5dRA0n+ZI1Sf+zwX29sWMW3itm4P7cQc6GwcJzrou
-X-Received: by 2002:a2e:a99d:0:b0:393:5c4c:c482 with SMTP id
- 38308e7fff4ca-39c5fffa085mr11336291fa.29.1783424681652; 
- Tue, 07 Jul 2026 04:44:41 -0700 (PDT)
-Received: from home-server.lan ([31.204.104.167])
- by smtp.gmail.com with ESMTPSA id
- 38308e7fff4ca-39c6cb8a5bbsm2136421fa.8.2026.07.07.04.44.41
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Jul 2026 04:44:41 -0700 (PDT)
-From: Alexey Simakov <bigalex934@gmail.com>
-To: John Daley <johndale@cisco.com>,
-	Hyong Youb Kim <hyonkim@cisco.com>
-Cc: dev@dpdk.org,
-	stable@dpdk.org,
-	Alexey Simakov <bigalex934@gmail.com>
-Subject: [PATCH] net/enic: fix null dereference in flow query count
-Date: Tue,  7 Jul 2026 14:44:36 +0300
-Message-Id: <20260707114437.94425-1-bigalex934@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id CEB1740264;
+	Tue,  7 Jul 2026 13:56:01 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 0287B4025F
+ for <dev@dpdk.org>; Tue,  7 Jul 2026 13:56:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1783425360;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=wzeoWmn5pDFx9b7GbdwnLSyKHKoE8W5x/ETZlHFQlUA=;
+ b=f0p5YWeCv2lamRLdNp2ZpYRQINc5QJ5jrEMJwbhHQbLx2cB+I7iPQownJNyaaz8Lu7e8B5
+ 0dvbNhcgaCmKQyQLsdf/aWhAxPyBHai0HgxxQyYMoR0VwXjXyEEIFQDx3FOvHlIRhK/SsI
+ sSe8HEr+FvJjMCCpkB/CkgXeasvt2C4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-99-4yvCq0-0PzS1w8mdFGeVJg-1; Tue,
+ 07 Jul 2026 07:55:57 -0400
+X-MC-Unique: 4yvCq0-0PzS1w8mdFGeVJg-1
+X-Mimecast-MFC-AGG-ID: 4yvCq0-0PzS1w8mdFGeVJg_1783425356
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 323811955D4A; Tue,  7 Jul 2026 11:55:56 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.48.202])
+ by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id EC5D436924; Tue,  7 Jul 2026 11:55:54 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: fengchengwen@huawei.com
+Subject: [PATCH v2] dev: fix hotplug notification to secondary
+Date: Tue,  7 Jul 2026 13:55:50 +0200
+Message-ID: <20260707115551.967336-1-david.marchand@redhat.com>
+In-Reply-To: <20260706145510.680077-1-david.marchand@redhat.com>
+References: <20260706145510.680077-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 4CLxXDP2yiQD8N8zEHwLpGNuvcVT71IihihM2DYQH7g_1783425356
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,39 +66,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-begin_fm() can return NULL when the flow manager is not initialized.
-enic_fm_flow_query_count() did not check the return value, leading
-to a NULL pointer dereference on flowman_cmd() and end_fm().
+There was a logical error when making some last minute change.
+Fix the no_shconf evaluation.
 
-Add NULL check that returns -ENOTSUP with a descriptive error
-message via rte_flow_error_set().
+Bugzilla ID: 1963
+Fixes: 1a2e26d8701d ("dev: skip multi-process in hotplug")
 
-Fixes: ea7768b5bba8 ("net/enic: add flow implementation based on Flow Manager API")
-Cc: stable@dpdk.org
-
-Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/net/enic/enic_fm_flow.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Changes since v1:
+- separated the unit test from the fix,
 
-diff --git a/drivers/net/enic/enic_fm_flow.c b/drivers/net/enic/enic_fm_flow.c
-index 4b0a513977..28e2a9c1e4 100644
---- a/drivers/net/enic/enic_fm_flow.c
-+++ b/drivers/net/enic/enic_fm_flow.c
-@@ -2904,6 +2904,13 @@ enic_fm_flow_query_count(struct rte_eth_dev *dev,
- 
- 	ENICPMD_FUNC_TRACE();
- 	fm = begin_fm(pmd_priv(dev));
-+
-+	if (!fm) {
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+			"enic: flowman is not initialized");
-+	}
-+
- 	query = data;
- 	fm_flow = flow->fm;
- 	if (!fm_flow->counter_valid) {
+---
+ lib/eal/common/eal_common_dev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
+index 9ed62a20e0..b43b0a4bb3 100644
+--- a/lib/eal/common/eal_common_dev.c
++++ b/lib/eal/common/eal_common_dev.c
+@@ -269,7 +269,7 @@ rte_dev_probe(const char *devargs)
+ {
+ 	const struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+-	bool do_mp = !!internal_conf->no_shconf;
++	bool do_mp = internal_conf->no_shconf == 0;
+ 	struct eal_dev_mp_req req;
+ 	struct rte_device *dev;
+ 	int ret;
+@@ -428,7 +428,7 @@ rte_dev_remove(struct rte_device *dev)
+ {
+ 	const struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+-	bool do_mp = !!internal_conf->no_shconf;
++	bool do_mp = internal_conf->no_shconf == 0;
+ 	struct eal_dev_mp_req req;
+ 	char *devargs;
+ 	int ret;
 -- 
-2.34.1
+2.54.0
 
