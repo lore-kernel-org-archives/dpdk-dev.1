@@ -2,38 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27756C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 15:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F55C43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 16:02:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EE7294027B;
-	Tue,  7 Jul 2026 17:34:25 +0200 (CEST)
-Received: from smtp1.ptsecurity.com (smtp1.ptsecurity.com [155.212.252.50])
- by mails.dpdk.org (Postfix) with ESMTP id 40E9D4025F;
- Tue,  7 Jul 2026 15:52:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ptsecurity.com;
- s=202601; t=1783432321;
- bh=Fu/ivxjD94wx2CDIYlZhQlvJsXdOfwhdiljyW+vW2lo=;
- h=From:To:CC:Subject:Date:From;
- b=FmGxfwZSEOvkudoZCk1pEOnwGW2IDkKf2xHvGwGnS64ULvIj1R6fmZ06CIRwI/JCP
- qZK083LmelgCdKvRSTbFwx+Tb8uMUrhegHhDWcJeU9MN1brlMsYjDS5lHPk+rfYhLc
- MGnHOZL5Wuo5NAXY9Y1y3X0nDirSXIybPys5l2sUTrT7HymK9/18RlBt7rJ01PPfkp
- jhIa6bI5EDEGus9A627unq4ZFqXYF2ahFLIpvJQP7Plo/VA4yuyPGGld17sl1K9VHx
- hzAVZ4s69SKoups2ikxxHH+qpKjxvF+j95mM0I8LyEUr6Zf9xYv/PraI7kTQsUPBsj
- 9QlXx6mHK5Xkg==
-From: Anton Vanda <avanda@ptsecurity.com>
-To: Thomas Monjalon <thomas@monjalon.net>, Maxime Coquelin
- <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>, Yuan Wang
- <yuanx.wang@intel.com>, Cheng Jiang <honest.jiang@foxmail.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, <cheng1.jiang@intel.com>, Anton Vanda
- <avanda@ptsecurity.com>
-Subject: [PATCH] vhost: fix null dereference in async packed dequeue
-Date: Tue, 7 Jul 2026 16:50:44 +0300
-Message-ID: <20260707135044.7488-1-avanda@ptsecurity.com>
-X-Mailer: git-send-email 2.51.0
+	by mails.dpdk.org (Postfix) with ESMTP id 7609D40264;
+	Tue,  7 Jul 2026 18:02:33 +0200 (CEST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com
+ [209.85.167.46]) by mails.dpdk.org (Postfix) with ESMTP id 0E5494025F
+ for <dev@dpdk.org>; Tue,  7 Jul 2026 18:02:32 +0200 (CEST)
+Received: by mail-lf1-f46.google.com with SMTP id
+ 2adb3069b0e04-5aeb78090edso3347933e87.0
+ for <dev@dpdk.org>; Tue, 07 Jul 2026 09:02:32 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783440151; cv=none;
+ d=google.com; s=arc-20260327;
+ b=Ut89K8c8x2thE04nYfnc9hHzgX5/lY6WwZy36AC4veyHmeJpDPB0eTMRtZ125T4/eg
+ nwFwEDyP288qi1NX7Yqb/K6MgwE208vUFpwvnvWggqygmbN4zVV6LE9RHJFzvdIr8V29
+ 59vpFhUqwPi/68YlZrIKsoTrZ7XtYDMdO2M9x5wQAWYdEOapY4luSp1L/NfXfhFLxumI
+ NDvCLsR3EcFP+RacpOHipYMQcK0d4B2s5aq/2MyUJ1Q1u2zg4FirdMImgPkbTBINSc2d
+ nCRx6FiIYXwtTNSyj6xqiMEqnBVJtJbxsEy3S9u7PmZ0esagki3Vhp1HCQTpVsjBUo2I
+ DvtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=iCosDLrehq4m5p6p5M008ObV3jYts/9AXn26zWzUnOs=;
+ fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
+ b=EPLRIKwSfMrsIzsRLu7yaTV+0sX4EKrcTrxQQXwt9dOxPXrFCinavNITNeJJrZgnIC
+ xM9eO0+yopUa4Vv1uOSue9HYHZfL9YT8zlKwaQwG636crHhUniu+zoo9FYa4Uz0k8vEt
+ wrBkETAyrDIAnF6J59t1HHuAoS3oa0emCboh7+WwQoGZq1I0zgfetyYb5P0Yd9dKc189
+ 8K0N66UXveUDIPDc086qojhOy1ULtm4AvYhe63jbHyx3E11OQQHBnYAqOl/1bVbbYtIi
+ T188w/+UxxXSovakm6LTbXkpY3P7t0zxF5B0vBtU4lkGRucg8qdA8mq9jE9ppkJTHp2q
+ BwJQ==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20251104; t=1783440151; x=1784044951; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=iCosDLrehq4m5p6p5M008ObV3jYts/9AXn26zWzUnOs=;
+ b=cucivFLeID9VHXL2tX+m+2dPTt6j/mj06s8pXSy4dEhov/J/uXdGd+Vlsv/4Q7IUR6
+ txNDyei1fOgTO9ZkoA4RCJCjMlYrYI04swGkjtpz5mp/owe8xZZF+VH6FiMEkxiSCG4m
+ L3D72kBHG9TlCEknZwgC+tP57hXuuNgnzRvZFtCTsEB7MPlMO3D4djoqTvaiB/LrtqVB
+ hXF1LYbd3DzSjDffnOsgO1ZvhB1nfnbtowG6PrIvY+g7/iVAPeFXF7NenOCj1JUAtQMN
+ mQp/MwRPwyyKNsNloV9cxVdT5QijNaIHHX+kOARwdzcgbM0ImN8kLFrUHNLJNB/qOcuc
+ 10ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783440151; x=1784044951;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=iCosDLrehq4m5p6p5M008ObV3jYts/9AXn26zWzUnOs=;
+ b=f3LNUGbPZa1jUOwy30kE5xaZqW7QzFeYOVUTl8Q+dfUcN4TnfPFRYL4a3aT8Q1Fenv
+ bkj1ZkvXTyLXCtfSHfT2XHS+crSJZOyaoXhfySRgX0lhNMygebSczq59Nc+A6E8heb9R
+ r3TTZeDmHIj6xleh1TZ3xKp/BnXZwAy3cjjW7PgN+BpNaf5Rit0+hga41GhbKWxphk/d
+ 25ttGsyAQnpYKjNttM5asV1E4iUv4IQgDVruH3APespcsEsDx7O92njVo+iAZLNkHtl+
+ i7HknxIPa7V1zqtnlQrKHZuhvKpFPUwDqaJxyuouYzFEUNEkzNuLFy6roRDtYsc/XWS3
+ KPfQ==
+X-Gm-Message-State: AOJu0YztXDD2193yJ5TcOYRmwA1zpLzaJOBxchl4EZb07NhAWVBL8ojV
+ 0fI/hYELxtwO+4sC3uOqI8fEucwnU+hzdiluKUlPLOhlEuGNBcdfka0mz/NN1SEhaYI2q1ZJLAm
+ Mx9G1l/VLNDf+F7uDSpkynxnrG8BbLpR4OZxBGX2ojIy263h5KaC+oi/fQvI=
+X-Gm-Gg: AfdE7ckOWMfGe/68hb7J7HUJuGUWYPifPElusVTmyzRgCVxwQTomrkEcu8d9/EFsWxd
+ /9xK9iMYVVngYjSYnoiiRudueK81N8bIlesM4IDCpcBE1w5x7WP0ItwHOdd/czP3o8oQp1pYWVy
+ Wy2jbRoJ3LxUc64wbfrR0fHxzAYu4I4cuQHgMtRar1y3vcnjgqd1z5SNo8ssdoZ8mZxe1fCVLyU
+ LcPI+Du6oWOlGIGd9t30pdCJug+gNq/Wk+2dY/aIzjrZbQM0Fs7Tao3BOD70L21gcu8X3MhxJ8a
+ nGfnzGPTcZhh0IHW+6li98RBHx4=
+X-Received: by 2002:ac2:4652:0:b0:5ad:5814:1b72 with SMTP id
+ 2adb3069b0e04-5b007c4b442mr1027177e87.34.1783440150916; Tue, 07 Jul 2026
+ 09:02:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Mailman-Approved-At: Tue, 07 Jul 2026 17:34:24 +0200
+References: <20260703131308.2507403-1-joshwash@google.com>
+ <20260703072721.18c5987a@phoenix.local>
+In-Reply-To: <20260703072721.18c5987a@phoenix.local>
+From: Joshua Washington <joshwash@google.com>
+Date: Tue, 7 Jul 2026 12:02:18 -0400
+X-Gm-Features: AVVi8CdUjWFpt9yzV8UH5XEM8OuBncS6nbuJMtQZsD26-PeE0XKLY970EyIxI_Q
+Message-ID: <CALuQH+UE2kJdfbny0qLSxB+izFSPTQJXVCwDNbUotrcQL4LYhw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] Stability fixes for GVE
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,86 +93,9 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In the batch path of the asynchronous packed ring dequeue, the address
-of the virtio net header is obtained from vhost_iova_to_vva(), which
-returns 0 when a guest-provided descriptor address cannot be fully
-translated.  The batch check only validates that the descriptor address
-is non-zero and that the length is consistent. A malicious or buggy
-guest could therefore trigger a NULL pointer dereference and crash the
-vhost application (denial of service).
+>
+> Better but fails on 32 bit build during post-merge testing
+> DPDK 26.07.0-rc2
 
-Check the translation result and leave the batch fast path with an error
-on failure, so the single-packet path handles the invalid descriptor, as
-is already done for the non-batch async dequeue path.
-
-Perform the header translation before the DMA iovec setup so that the
-early return cannot leave the async iterator state partially updated.
-
-Fixes: c2fa52bf1e5d ("vhost: add batch dequeue in async vhost packed ring")
-Cc: stable@dpdk.org
-
-Signed-off-by: Anton Vanda <avanda@ptsecurity.com>
----
- .mailmap               |  1 +
- lib/vhost/virtio_net.c | 26 +++++++++++++++++---------
- 2 files changed, 18 insertions(+), 9 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 05a55c0bd6..9215581a29 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -141,6 +141,7 @@ Antara Ganesh Kolar <antara.ganesh.kolar@intel.com>
- Anthony Fee <anthonyx.fee@intel.com>
- Anthony Harivel <aharivel@redhat.com>
- Antonio Fischetti <antonio.fischetti@intel.com>
-+Anton Vanda <avanda@ptsecurity.com>
- Anup Prabhu <aprabhu@marvell.com>
- Anupam Kapoor <anupam.kapoor@gmail.com>
- Anurag Mandal <anurag.mandal@intel.com>
-diff --git a/lib/vhost/virtio_net.c b/lib/vhost/virtio_net.c
-index 0658b81de5..6528c06ea4 100644
---- a/lib/vhost/virtio_net.c
-+++ b/lib/vhost/virtio_net.c
-@@ -4039,6 +4039,23 @@ virtio_dev_tx_async_packed_batch(struct virtio_net *dev,
- 	vhost_for_each_try_unroll(i, 0, PACKED_BATCH_SIZE)
- 		rte_prefetch0((void *)(uintptr_t)desc_addrs[i]);
- 
-+	if (virtio_net_with_host_offload(dev)) {
-+		vhost_for_each_try_unroll(i, 0, PACKED_BATCH_SIZE) {
-+			desc_vva = vhost_iova_to_vva(dev, vq, desc_addrs[i],
-+						&lens[i], VHOST_ACCESS_RO);
-+			/*
-+			 * A malformed or unmapped guest descriptor makes the
-+			 * IOVA translation fail (returns 0). Bail out of the
-+			 * batch fast path so the single-packet path handles the
-+			 * error, instead of dereferencing a NULL header.
-+			 */
-+			if (unlikely(!desc_vva))
-+				return -1;
-+			hdr = (struct virtio_net_hdr *)(uintptr_t)desc_vva;
-+			pkts_info[slot_idx + i].nethdr = *hdr;
-+		}
-+	}
-+
- 	vhost_for_each_try_unroll(i, 0, PACKED_BATCH_SIZE) {
- 		host_iova[i] = (void *)(uintptr_t)gpa_to_first_hpa(dev,
- 			desc_addrs[i] + buf_offset, pkts[i]->pkt_len, &mapped_len[i]);
-@@ -4053,15 +4070,6 @@ virtio_dev_tx_async_packed_batch(struct virtio_net *dev,
- 		async->iter_idx++;
- 	}
- 
--	if (virtio_net_with_host_offload(dev)) {
--		vhost_for_each_try_unroll(i, 0, PACKED_BATCH_SIZE) {
--			desc_vva = vhost_iova_to_vva(dev, vq, desc_addrs[i],
--						&lens[i], VHOST_ACCESS_RO);
--			hdr = (struct virtio_net_hdr *)(uintptr_t)desc_vva;
--			pkts_info[slot_idx + i].nethdr = *hdr;
--		}
--	}
--
- 	vq_inc_last_avail_packed(vq, PACKED_BATCH_SIZE);
- 
- 	vhost_async_shadow_dequeue_packed_batch(vq, ids);
--- 
-2.51.0
-
+Will fix in v3. Is there a way I can test 32-bit compile using
+test-meson-builds.sh? It doesn't seem to be covered there by default.
