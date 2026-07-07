@@ -2,48 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3609EC43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 11:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4082C43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 11:42:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D08940264;
-	Tue,  7 Jul 2026 13:23:34 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 07ECD4025F
- for <dev@dpdk.org>; Tue,  7 Jul 2026 13:23:33 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gvf2x4zpFzHnH4m;
- Tue,  7 Jul 2026 19:22:33 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id BD29A40575;
- Tue,  7 Jul 2026 19:23:31 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 7 Jul 2026 13:23:31 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Tue, 7 Jul 2026 13:23:31 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Marat Khalili <marat.khalili@huawei.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "thomas@monjalon.net"
- <thomas@monjalon.net>, "bruce.richardson@intel.com"
- <bruce.richardson@intel.com>
-Subject: RE: [PATCH v3 0/8] doc: build for all public headers
-Thread-Topic: [PATCH v3 0/8] doc: build for all public headers
-Thread-Index: AQHdDe3YkeNxlfBY1kq0Qsvuf2iMwbZh38dw
-Date: Tue, 7 Jul 2026 11:23:31 +0000
-Message-ID: <b071c236c8c74b7faecf8efd4da1f46b@huawei.com>
-References: <20260706105256.79904-1-marat.khalili@huawei.com>
- <20260707085048.15295-1-marat.khalili@huawei.com>
-In-Reply-To: <20260707085048.15295-1-marat.khalili@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.16]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 11C9440264;
+	Tue,  7 Jul 2026 13:42:14 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id D9A1E4025F
+ for <dev@dpdk.org>; Tue,  7 Jul 2026 13:42:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1783424531;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=EywC9HtSRepm5s5ZYh5IhiSYmnQzHOJD0WiUztHmJrg=;
+ b=XxuW5zfCAZsauvGdmIwu2nxJ7lZP2RDkmdsGyssQh7J23goE11XlC0YT2LS238ZGB8uGSI
+ vs1rSTyTtsQ78kSSPTTaBLBjlrsngXRz+0aikPCWfXzW7n1M2KcjylPLttjA4mUSIInd3m
+ TJhlvcklIu4VvAU6QIOiMLYrNUKlMYA=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-6ZmNFaL3NO2-N0JVzfgzZA-1; Tue, 07 Jul 2026 07:42:10 -0400
+X-MC-Unique: 6ZmNFaL3NO2-N0JVzfgzZA-1
+X-Mimecast-MFC-AGG-ID: 6ZmNFaL3NO2-N0JVzfgzZA_1783424529
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-39accc98fffso16231521fa.0
+ for <dev@dpdk.org>; Tue, 07 Jul 2026 04:42:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783424528; x=1784029328;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=EywC9HtSRepm5s5ZYh5IhiSYmnQzHOJD0WiUztHmJrg=;
+ b=i4qNFstXnE0Lloqw55m4ZvwqgAVvsO/JuauOj608igZkNqHO0AkWJKhGHI6n+a8snE
+ vV4Ty8edMzxST3wxypxf/dOgCo8TZxXwlMv/UhIlOTaJv3NA5D5vsBKOUrqWPcq5CcWj
+ VirJNv7oDbk29P+TvjsE4WkRXOVuXJoeKmpugTLMo26vb6vA4DKN6riDvilNcYf0qwfV
+ a4RLYNfuhjjEgE7lGVmUDvL/0mX9LyOMpKRAmGcdLUPS9fjN5UIgQ8n5AODCnPHmkuXS
+ Ay1KPY0Pq1nnDcTaA0rDad6D4DCY3nQ5N5qGUAGR2M2SOaHhI7teiKEk2n34qTBcir60
+ kHtQ==
+X-Gm-Message-State: AOJu0YwAB5IVqsiiN9Uads1aLkdbepezFnwX5NJHkOFaidkjNOXWKIIx
+ OOPKMtoqB93uFS9fC7TFMowkUymUrWCiGkT8cPt6eqYP7chiipGCFPDWPtIx/gE8NXi4A8heVK6
+ lJf+aCL6wblAXm3AYc7l21YQFITy6jK+lAtqYG2/oxRkPlaIYCpP4LvKL/zbZ79ybeJIE3OqWpT
+ GjWdZYJJPMvhELLUVNMP7WU1O9440=
+X-Gm-Gg: AfdE7clijcSX7QChSo4stJzKt40Byj2KpNK1Tc/uSd+3XSAFj2CByOWS+cj+jmIZl3u
+ 2UyvViwPV2l4YzJRp6V/JELnIuT0LQy0zy4iKCmkUTZGzzWjsE9x7iz6qEkSwR4qNgpk87z0UAe
+ XZV7WcHWtZWkV5vziqHO+UZA+akpral3jukOffELukqZaCtcqQECghcSBo1whgFHYDWQD6KoQj/
+ ZopJVIuZEEzzFuX975rN9K/EQP8wXpVt+hCvnjJB19QjzC39E45+qFlFu8=
+X-Received: by 2002:a2e:9884:0:b0:39b:90f:b1e7 with SMTP id
+ 38308e7fff4ca-39c5fd378famr8565151fa.10.1783424528034; 
+ Tue, 07 Jul 2026 04:42:08 -0700 (PDT)
+X-Received: by 2002:a2e:9884:0:b0:39b:90f:b1e7 with SMTP id
+ 38308e7fff4ca-39c5fd378famr8565101fa.10.1783424527411; Tue, 07 Jul 2026
+ 04:42:07 -0700 (PDT)
 MIME-Version: 1.0
+References: <20260706145510.680077-1-david.marchand@redhat.com>
+In-Reply-To: <20260706145510.680077-1-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 7 Jul 2026 13:41:54 +0200
+X-Gm-Features: AVVi8Cc5lNdXp0xuJyt9rizPEzu7NJpwxJBtkYLnzAgjqIloVUmwNSqbjL4j2Wc
+Message-ID: <CAJFAV8x8g+NcpjD+u_aKhqGWTPz1c+b9qQ0xaqTiVj6kqsUFsw@mail.gmail.com>
+Subject: Re: [PATCH] dev: fix hotplug notification to secondary
+To: dev@dpdk.org
+Cc: fengchengwen@huawei.com, Thomas Monjalon <thomas@monjalon.net>, 
+ Anatoly Burakov <anatoly.burakov@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: SIIA8lzo70wz8fgEPIcgYr353nz0PY8MW6arBkpvRhI_1783424529
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,140 +83,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Will answer the AI code review comments here.
+On Mon, 6 Jul 2026 at 16:55, David Marchand <david.marchand@redhat.com> wrote:
+>
+> There was a logical error when making some last minute change.
+> Fix the no_shconf evaluation.
+>
+> Besides, we currently have no unit test checking device hotplug in the
+> fast-tests testsuite.
+> Instead, we rely on rcX tags validations when non regression tests
+> relying on the multiprocess examples are run.
+>
+> Add some basic unit test that does not cover all that the examples do
+> yet provide a first gate on multiprocess changes.
+>
+> Bugzilla ID: 1963
+> Fixes: 1a2e26d8701d ("dev: skip multi-process in hotplug")
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-> ## Patch 1/8: doc: detect ignored public headers
->=20
-> ### Errors
->=20
-> **Error: Resource leak in meson.build `run_command()` usage**
-> The `run_command()` calls capture stdout into variables (`doc_built_dirs`=
-, `doc_indexed_headers`) but
-> there is no error handling for the command execution itself beyond `check=
-: true`.
-> If the `sed` command fails partway through (e.g., file read error, permis=
-sion issue), the script
-> continues with potentially incomplete data.
-> While `check: true` will cause meson to fail, the failure mode is not gra=
-ceful.
+There are some issues with the added test.
 
-Requirement for the setup to survive unreadable source files is clearly exc=
-essive.
-And meson reports specific command that failed quite well already.
+The new test is failing on LoongArch CI.
+LoongArch CI seems to have a list of excluded tests, and it excludes
+multiprocess related tests.
+So I guess I'll need LoongArch people to update their tests.
 
-> ### Warnings
->=20
-> **Warning: Hardcoded meson version check without rationale**
-> Line `check_docs =3D is_linux and meson.version().version_compare('>=3D 0=
-.60.0')` introduces a version
-> check for meson 0.60.0 without explanation.
->=20
-> **Suggested fix:** Add a comment explaining why meson 0.60.0 is required =
-(likely for `fs.name()` or
-> another feature used in the check).
+I also have a build issue when disabling net/null.
 
-Meson prints source lines and versions required during the setup already.
-Not sure who would ever benefit from this comment.
+The AI bot also pointed out some leak in the test exit/error paths.
 
-> **Warning: `run_command()` assumes specific sed implementation**
-> The `sed` commands use `--regexp-extended` which is a GNU sed extension.
-> On systems with BSD sed (macOS, FreeBSD), this will fail.
+So I'll send a v2, but I'll separate the EAL fix from the unit test so
+that I can merge the fix quickly.
 
-The check is explicitly limited to Linux.
 
-> **Warning: Global variables `doc_built_dirs` and `doc_indexed_headers` la=
-ck context**
-> These variables are set in the top-level `meson.build` but used in `drive=
-rs/meson.build` and
-> `lib/meson.build` without clear documentation of their contract.
+-- 
+David Marchand
 
-The names are self-descriptive IMO.
-
-> ## Patch 3/8: doc: fix typos in rte_avp_common.h
->=20
-> ### Warnings
->=20
-> **Warning: Missing closing brace on line 271**
-> Line 271 adds `@{` for "Access AVP device version values" but there is no=
- corresponding `@}` to close
-> this group.
-> All three macros that follow (`RTE_AVP_GET_RELEASE_VERSION`, etc.) will b=
-e grouped, but the group is
-> never closed.
-
-Grouping commands are imbalanced in the file now, so the patch has to have =
-them
-imbalanced for the result to be balanced. Instead of the patch the AI revie=
-wer
-should have checked the resulting file or the fact that it builds.
-
-> ## Patch 5/8: doc: fix typos in rte_bus_vmbus.h
->=20
-> ### Warnings
->=20
-> **Warning: Incomplete parameter documentation in `rte_vmbus_chan_send_sgl=
-ist()`**
-> The function takes a `flags` parameter (visible in the function signature=
- in the actual driver code),
-> but the patch removes `@param flags` from the documentation without verif=
-ying that the parameter does
-> not exist.
-
-Not sure how the model checked the function signature, but the parameter do=
-es not exist.
-Which is why documentation failed to build before and builds now.
-
-> **Warning: Parameter name mismatch in `rte_vmbus_chan_recv_raw()`**
-> Documentation refers to `@param channel` but the actual parameter name is=
- `chan` (as used in the
-> corrected version).
-> This is fixed by the patch, but worth noting for consistency checks.
-
-The model notes the discrepancy that the patch already fixes.
-
-> ## Patch 8/8: doc: add missing headers to doxy-api-index.md
->=20
-> ### Warnings
->=20
-> **Warning: BPF list formatting inconsistency**
-> Lines 219-223 introduce a nested bullet list for BPF headers:
-> ```markdown
->   [member](@ref rte_member.h)
->   * BPF:
->     [load and execute](@ref rte_bpf.h),
->     ...
-> ```
-> This creates a sub-list with only one parent item.
-
-Nested bullet lists are used in other places in the file and even in the sa=
-me patch,
-seem to be a good practice actually. Not sure what "only one parent item" m=
-eans.
-
-> **Warning: Comma inconsistency in "containers" section**
-> Line 231 adds `[member](@ref rte_member.h)` followed immediately by a new=
- bullet for BPF, but previous
-> list items in the same block end with commas.
-
-Customary in the file last item in the list does not end with a comma.
-The rendering was verified in the web browser.
-
-> ---
->=20
-> ## Summary by Patch
->=20
-> | Patch | Errors | Warnings | Info |
-> |-------|--------|----------|------|
-> | 1/8   | 0      | 3        | 0    |
-> | 2/8   | 0      | 0        | 1    |
-> | 3/8   | 0      | 1        | 0    |
-> | 4/8   | 0      | 0        | 0    |
-> | 5/8   | 0      | 2        | 0    |
-> | 6/8   | 0      | 0        | 0    |
-> | 7/8   | 0      | 0        | 1    |
-> | 8/8   | 0      | 2        | 0    |
-
-Interestingly, the one found Error did not make it to the table.
-
-This error and all 8 warnings are addressed above and not the actual proble=
-ms.
