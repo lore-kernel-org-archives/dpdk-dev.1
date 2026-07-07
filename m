@@ -2,102 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A518C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 13:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F78C43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 14:01:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A1E384067B;
-	Tue,  7 Jul 2026 15:31:04 +0200 (CEST)
-Received: from BL0PR03CU003.outbound.protection.outlook.com
- (mail-eastusazon11012005.outbound.protection.outlook.com [52.101.53.5])
- by mails.dpdk.org (Postfix) with ESMTP id D16624025F;
- Tue,  7 Jul 2026 15:31:03 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M9q7BGPHJeYSrcR9FZigsAtWoHo2K4HMv0yFotR/Q5a/U9IbAJq2NynIdFOwIHrHIES23NsuC/l9i6GLRAvj3tspq4SbAdsnaUMKeYoLftbHst79w19XL2jvXzJZVCSI7/lOl/faaq/6lWwH21m93w6h+zN7kaK33hV5FDTayr/KfHPzh/Uzx25TEdj9RfJgH0Wdq9SFWo+SaECyb83iBV8G7ijiiF1lu2I0qRXv+LtZkKx8AIn/AiJ7M8kcTU7HyVSvtigiy50xHZ1h2UefF1t02jONQbn+GAlJ7EOvwscK5zAvEsdmecK/oaoWfL3J8IL8qWzT2G/Rm36JRlkNBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3oRBHl6JazleSasNmAB4Efm+YPxoG5VDKDUgDuT+AnU=;
- b=l9Y7rimX767CPPXvcJyMM9+RyOcb+fF90mwkAKmBFnR9O3t52PZI2NDhx2LNzsobBcj4EVCUWvptG6cu7M1J6XuBPZBrYyAy6k1CF3w1UIXg6v3z0jZssDs0uTcNc5eeHnjosan0rsefUC3ucfeD5pxcnuffDi/b6qjFgAfZb3+HkpYmMZv9U2etFAZ+QHOIUMe4fWSOsz3cbZm+7GmB2Niv7BUc2u2pa9on941Ad+fEHylvLgBSCzIK3TMqOGGhp+6ZlMR46egSBDtlOsm9G3hq8bBednloJotA1eh86j17FNI0CcOfeitZHE6SMIMQDFDlfbLgk22AtWHBBuygzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3oRBHl6JazleSasNmAB4Efm+YPxoG5VDKDUgDuT+AnU=;
- b=f/XEGsWEnuFFUa+XhAeDvEpFOMNKi5YgmX5lPrgIs/46w1obmYvarLGGU4ljW2fiW8Z1Uk0S6EHjEZOT5xMqyyJsBRFplVfnSwAp4kqNaoubtlZPaiuiZ0s8xkFLjSvMNp5KUaL8G5eMeVZOWENl2nlGUV9wCTdCN55y8kpaq1rGLdVwyRQTdFR7gUMHs3vvubw6kSU14IQVBFzpe2ePFGCIDGow7aY28p2z7WvEB3Wv1Bt3t6xRQW6F45QREwUjRSRt102YGGsnCD+7LMZZcv1Ryt2e2lGeEcYt33hTijqzfYT9x2r+k8xT76iW0LtWRlh22c5fmD061o2ORh+7hQ==
-Received: from MN0P221CA0019.NAMP221.PROD.OUTLOOK.COM (2603:10b6:208:52a::33)
- by PH7PR12MB7892.namprd12.prod.outlook.com (2603:10b6:510:27e::19)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Tue, 7 Jul
- 2026 13:30:58 +0000
-Received: from MN1PEPF0000F0E4.namprd04.prod.outlook.com
- (2603:10b6:208:52a:cafe::1e) by MN0P221CA0019.outlook.office365.com
- (2603:10b6:208:52a::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.9 via Frontend Transport; Tue, 7
- Jul 2026 13:30:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- MN1PEPF0000F0E4.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Tue, 7 Jul 2026 13:30:57 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Tue, 7 Jul
- 2026 06:30:34 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Tue, 7 Jul 2026 06:30:33 -0700
-Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.126.190.180)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 7 Jul 2026 06:30:31 -0700
-From: Maayan Kashani <mkashani@nvidia.com>
-To: <dev@dpdk.org>
-CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, <stable@dpdk.org>, "Bruce
- Richardson" <bruce.richardson@intel.com>, David Marchand
- <david.marchand@redhat.com>, Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH] build: fix libpcap detection with unusable header
-Date: Tue, 7 Jul 2026 16:30:28 +0300
-Message-ID: <20260707133028.236546-1-mkashani@nvidia.com>
-X-Mailer: git-send-email 2.21.0
+	by mails.dpdk.org (Postfix) with ESMTP id F232840687;
+	Tue,  7 Jul 2026 16:01:17 +0200 (CEST)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com
+ [209.85.167.50]) by mails.dpdk.org (Postfix) with ESMTP id 3E8904027E
+ for <dev@dpdk.org>; Tue,  7 Jul 2026 16:01:16 +0200 (CEST)
+Received: by mail-lf1-f50.google.com with SMTP id
+ 2adb3069b0e04-5aeb36ed873so3030136e87.0
+ for <dev@dpdk.org>; Tue, 07 Jul 2026 07:01:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1783432876; x=1784037676; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=8925+08lVABqmBNrueXtyapbA+TeBh33wAqt0g5UJTQ=;
+ b=DvoxREjRraYusnyA1+T6HjglNsucd7ylDnDw3qlFPqzqBwZ3+0cg+dML7alyJ8T5TC
+ rq2mo++CFPDzjfWDOnNlsHjnIho6izhpxFa93Z1/rZIjr7tPR+ejTcw+vxWLansRNBAh
+ DiOgs7/zcJ5jAjaz+kDRwLg3zClSPPF59zuSeRSwhkLRPnODj3jYxExBMufD2toeEurJ
+ j654mgnNG2AHu7uRqi3Xz1oPsotk7dH8buWgijzp1NByT8FhN8e8qguFa828gviYnbL9
+ R1Z8Rd/Jpla5j3ULVyM9KzGg1x8LEYmQf+V/FbUqkJufL/2zPrTBCKuXlVxYPxI+UkuB
+ tSEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783432876; x=1784037676;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=8925+08lVABqmBNrueXtyapbA+TeBh33wAqt0g5UJTQ=;
+ b=lPwNW3PV/kQSFig9HJb7gz00qRu2uvOFUeXj6WEIqbMPcexJbfWbHaHPVUc6fSXF0h
+ fJJSm++/fdJPWljdGVpf+lxrHli6pO2GUoGSmZhDsMzfECNeyLLnZR9uBCCFxORv3zbr
+ JqwrOXrhbUlhMAsLzPO9Y66PJZ1jP6Ukh6L65ucB6Wh9hZU+LdvqrUpag8aQw/Tneehb
+ hZQtLBFaZeNLZTusHB/iY37TnPco7I0i3g6dKFRcaDvjpXlvPGmwQFZOBrv/PAUvlGZC
+ QMuYf5L+F3DbSxFMH0cTBeWiwc26+YVH8H2kBltomKngFuN7NEE8iTPUg5somulXZ7dq
+ cBew==
+X-Gm-Message-State: AOJu0YygCw4x0whRR04uW6exPBFDUiOV0fFy9e4HN3G+rtASbZMANILJ
+ BRBH85LtvXrWD2e/rii+KwDXqRpyQXooaofpFAzuRG+ZhDv6g5ubomOj
+X-Gm-Gg: AfdE7ckceDkFZ9C9Hi2weKE9HsR+f+rZ2mXN8Om5VSsKp7UfnihVnDNxVz6/CSxW2GJ
+ SzDtCdQ8T3W+ZYIJ04WHY0RqCCFvBIKR2nT6WZ3+oyS7uP/P1kCrtJ6O6/sBog962koWFwJDW33
+ wSUD1qZISqKEDIFsfEJvdKI+qsCFMtfugXOkEd/15TjGsAhpP/zU1zmdvTSMhkKV/bmx3PaAd6T
+ Ckcll4Irh7fWeXkCZHGZEABeglxXvdFtKSwn+J/jcp1cWBaNXE/6Sqz++UBAKGR9cfv+AXOqxkR
+ mEN4oGJbDU8HjUxChhKasf4iI11TXHx5tmw+/Tch1zcekyD2kYkmHoUGUDtX2zd4Uky/UYikQkk
+ /4/05KUlbHriEQSwYbJehzmYSiafxXv+VTp8lPUJTMEIYFWuKeoMRL3O4SmHd3Q8gV6H1fI081Y
+ AtQnW8FjAMKT+cMm65ca9CvtS9aKnBBUJRNHWyIWuGRn9UBwKw
+X-Received: by 2002:a05:6512:6416:b0:5ae:bd53:70f6 with SMTP id
+ 2adb3069b0e04-5b007b8c94fmr1349240e87.4.1783432874876; 
+ Tue, 07 Jul 2026 07:01:14 -0700 (PDT)
+Received: from home-server.lan ([31.204.104.167])
+ by smtp.gmail.com with ESMTPSA id
+ 2adb3069b0e04-5b00c763974sm218741e87.49.2026.07.07.07.01.14
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 07 Jul 2026 07:01:14 -0700 (PDT)
+From: Alexey Simakov <bigalex934@gmail.com>
+To: Chaoyong He <chaoyong.he@corigine.com>,
+ Alejandro Lucero <alejandro.lucero@netronome.com>
+Cc: dev@dpdk.org,
+	stable@dpdk.org,
+	Alexey Simakov <bigalex934@gmail.com>
+Subject: [PATCH] net/nfp: fix UB in BAR size shift operations
+Date: Tue,  7 Jul 2026 17:01:11 +0300
+Message-Id: <20260707140112.140833-1-bigalex934@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E4:EE_|PH7PR12MB7892:EE_
-X-MS-Office365-Filtering-Correlation-Id: 36413051-27a8-426d-e3ba-08dedc2bfa45
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|23010399003|82310400026|1800799024|36860700016|6133799003|5023799004|56012099006|11063799006|18002099003;
-X-Microsoft-Antispam-Message-Info: H05GnU7rpkMpFtPOWOZpNcX/RuH7RNL/QMumJDFkvJQpZnp9jHZ9gsWYzqnSIuwScwMCXlDB1Cr6t8BmIihAupP6hvm8d4cof33GjFcEYNhlXVKlW8uAVMDXDn9dsS6h/1zH+lKw39myH9mnaSLyXUW37fWXrwYGImGTvgGIjZG4XkA+aHazW/fAo4mlXOULHwn/bOCyWC/LxUVhWm33sO1sm/BAi/CDX6m+aTzldKVyoToPmBhJvhQn1kfYFZ2PXDBL5kSphWZVGCKDqF5CnDJyeKZckoidK8xyGzniIDTVYJHmh/zgYV0YFsKH3MePHSZl3gn3N4A/2uX/ubMK8xDMHxEHKKinWl7NfVGqNQsJOSoN4Erzc0wvy+3/XBnDfpqjtCr+Y2xHH7aii2jNBBU9IzqaOeQqmne1pxmyl5UW/XJdHxMUDj+4nY3oT5QkqTnzRkvJFOpVMGV7BoY1SHO4TKDO2OLJzjfqCETkFlqw3YE1RzNbsGNQ6XXKEw2DpqvgStpQuE6aInmgAVWaRKlgRWBgYmNSq1kSXmWgosiPySZV8sXnww2p9QcmAh2WnWxYZdSYaiI1kjGODy7PEx81t7HhbUkTRBwNGoXZGDO7XfqXySPVZPBVjCTtEfauJOGpMsOdAnFS11HYzZKTStV5LGMEfNtW8Gm0/pr6fRqfKr/fDy9tbsS45gSjtdNI9/aeCujkeLV5ZErXqgwrTA==
-X-Forefront-Antispam-Report: CIP:216.228.118.232; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc7edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(82310400026)(1800799024)(36860700016)(6133799003)(5023799004)(56012099006)(11063799006)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: z9AjRN9cue5kDLCCYcMO2xD3H0UR4KnjJtRxjlCpGffuQdNqaovk4O5+ZTmntBUflnIZKAzVgqAHb8DQ+4quBc5fn49L1HxjfPa/yqQxbwXmI+UsVEq/RDc0CWvEr83UPpN8FccWpuhesZkfTdXZ7Y3toGVDDUR9U/MnESGJz1JlqhNfuEiDRgtFDS1B2L70S4Iy3K8N1JloEyZjavBnCQ5WH9mKk5/LRi7QMq9M0QGA6YAa12Wf8GbByyoAH96BiFwrHBp5sSbs4g0NFkcB1AvR68BdfuH+AgCf4YNXlC8CXrqJlOQW3OmWr9pRemNbXyWB3rY17T0x+Ek0UkjtbQFidXdo3W9/q49o5j2opbQd7r5KGyjEV5xPjFSCSeDDvfUMMU6LDyjOLl0nu+vX3Qz4TusI909iILxmpCyVcXzjdVtmR3Se365UEBokZ6h1
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2026 13:30:57.2456 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36413051-27a8-426d-e3ba-08dedc2bfa45
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.118.232];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: MN1PEPF0000F0E4.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7892
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,46 +78,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The libpcap detection only checked that the library was present, that
-<pcap.h> could be included, and that a trivial program links. None of
-these fail when a distribution ships a libpcap-devel package whose
-<pcap.h> is empty (present but declaring nothing) while libpcap.so is
-installed: has_header() passes on an empty file and the link test does
-not reference any pcap symbol. RTE_HAS_LIBPCAP was then set and the
-pcap-dependent code (bpf_convert.c, port source/sink, dumpcap) failed
-to build with errors such as:
+The literal '1' is a signed 32-bit int. Shifting it by bar->bitsize
+is undefined behavior when bitsize >= 31, and sign-extends when
+bitsize == 31 (producing a wrong upper-bound check). BAR aperture
+sizes from hardware can exceed this range.
 
-  bpf_convert.c: error: invalid use of undefined type
-                 'const struct bpf_insn'
+Fix by using RTE_BIT64() which produces a 64-bit unsigned value,
+matching the type of the operands (uint64_t base, uint64_t offset).
 
-Require an actual pcap declaration (pcap_create) to be visible in the
-header before enabling libpcap support, so a broken or empty header
-disables the optional pcap features instead of breaking the build.
-
-Fixes: d6024c0a6757 ("build: cleanup libpcap dependent components")
+Fixes: c7e9729da6b5 ("net/nfp: support CPP")
+Fixes: 1fbe51cd9c3a ("net/nfp: extend usage of BAR from 8 to 24")
 Cc: stable@dpdk.org
 
-Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
 ---
- config/meson.build | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/nfp/nfpcore/nfp6000_pcie.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/config/meson.build b/config/meson.build
-index d7f5e55c18f..4bfb8535781 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -290,7 +290,10 @@ if not pcap_dep.found()
-     # pcap got a pkg-config file only in 1.9.0
-     pcap_dep = cc.find_library(pcap_lib, required: false)
- endif
--if (pcap_dep.found() and cc.has_header('pcap.h', dependencies: pcap_dep)
-+# has_header() passes even when pcap.h is empty; require a real declaration.
-+if (pcap_dep.found()
-+        and cc.has_header_symbol('pcap.h', 'pcap_create', dependencies: pcap_dep,
-+                args: '-D_GNU_SOURCE')
-         and cc.links(min_c_code, dependencies: pcap_dep))
-     dpdk_conf.set('RTE_HAS_LIBPCAP', 1)
-     dpdk_extra_ldflags += '-l@0@'.format(pcap_lib)
+diff --git a/drivers/net/nfp/nfpcore/nfp6000_pcie.c b/drivers/net/nfp/nfpcore/nfp6000_pcie.c
+index 83b7116097..e03c4776d0 100644
+--- a/drivers/net/nfp/nfpcore/nfp6000_pcie.c
++++ b/drivers/net/nfp/nfpcore/nfp6000_pcie.c
+@@ -55,11 +55,11 @@
+  */
+ #define NFP_PCI_MIN_MAP_SIZE        0x080000        /* 512K */
+ 
+-#define NFP_PCIE_P2C_FIXED_SIZE(bar)               (1 << (bar)->bitsize)
+-#define NFP_PCIE_P2C_BULK_SIZE(bar)                (1 << (bar)->bitsize)
++#define NFP_PCIE_P2C_FIXED_SIZE(bar)               RTE_BIT64((bar)->bitsize)
++#define NFP_PCIE_P2C_BULK_SIZE(bar)                RTE_BIT64((bar)->bitsize)
+ #define NFP_PCIE_P2C_GENERAL_TARGET_OFFSET(bar, x) ((x) << ((bar)->bitsize - 2))
+ #define NFP_PCIE_P2C_GENERAL_TOKEN_OFFSET(bar, x) ((x) << ((bar)->bitsize - 4))
+-#define NFP_PCIE_P2C_GENERAL_SIZE(bar)             (1 << ((bar)->bitsize - 4))
++#define NFP_PCIE_P2C_GENERAL_SIZE(bar)             RTE_BIT64(((bar)->bitsize - 4))
+ 
+ #define NFP_PCIE_P2C_EXPBAR_OFFSET(bar_index)      ((bar_index) * 4)
+ 
+@@ -443,7 +443,7 @@ matching_bar_exist(struct nfp_bar *bar,
+ 			(bar_token < 0 || bar_token == token) &&
+ 			bar_action == action &&
+ 			bar->base <= offset &&
+-			(bar->base + (1 << bar->bitsize)) >= (offset + size))
++			(bar->base + RTE_BIT64(bar->bitsize)) >= (offset + size))
+ 		return true;
+ 
+ 	/* No match */
 -- 
-2.21.0
+2.34.1
 
