@@ -2,50 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F30C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 17:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6895C43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 17:47:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5139840279;
-	Tue,  7 Jul 2026 19:18:51 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id E142540264;
- Tue,  7 Jul 2026 19:18:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783444730; x=1814980730;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=Yd5xg4JaRdpvBV/rJOgs5mA6x7ryRfQKpSMGNKq+8XM=;
- b=bYeo7a2LgOAh2Pq/k3F/PM58HuVXpD6Aa61uaFPc8osbIsG6U57ADvnw
- gU3Zgw/kwyNbjKbpG2rqsE1MSV5tWxbw7uR1rFFk/ncR+taPnZMtm9P1c
- ltIpOoMXaGbkUmfpdc94olvilcLup7Dib/e05mhJgvSEiC2PNUp6WH0Kp
- sQIxMJl5NKdHZz2w/s7HKxJqo6MuPcxcI8jJvtSI33U3Cx5MvYmwhOoD1
- H9theFd2JmAl6Hb6yNer1vyKHy9HJ2NwXeMQcFiGFn0KfWuF62Tv5tYxk
- ICQkU+BYujVjMd5EGTTpCyymiPWSABAc/hd2AQOVT09/Fqq+k1g5o7vMj Q==;
-X-CSE-ConnectionGUID: GeblJUpsQdi4d4VKvEJJRQ==
-X-CSE-MsgGUID: AnuB2m8OR2iGItK5sqyQVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11840"; a="87781495"
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="87781495"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Jul 2026 10:18:43 -0700
-X-CSE-ConnectionGUID: AC4Y3thuTEC5SJ5evq2q3g==
-X-CSE-MsgGUID: F5Z/LD6GQyKdTWet9uta+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="253566654"
-Received: from unknown (HELO localhost.localdomain.iind.intel.com)
- ([10.49.105.104])
- by orviesa008.jf.intel.com with ESMTP; 07 Jul 2026 10:18:43 -0700
-From: sandeep.penigalapati@intel.com
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, stable@dpdk.org,
- Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-Subject: [PATCH] net/i40e: fix FDIR flexible payload issues
-Date: Tue,  7 Jul 2026 20:20:45 -0400
-Message-Id: <20260708002045.166595-1-sandeep.penigalapati@intel.com>
-X-Mailer: git-send-email 2.27.0
+	by mails.dpdk.org (Postfix) with ESMTP id C0F5240265;
+	Tue,  7 Jul 2026 19:47:18 +0200 (CEST)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com
+ [209.85.208.51]) by mails.dpdk.org (Postfix) with ESMTP id 1AF2E40264
+ for <dev@dpdk.org>; Tue,  7 Jul 2026 19:47:17 +0200 (CEST)
+Received: by mail-ed1-f51.google.com with SMTP id
+ 4fb4d7f45d1cf-698acd36d67so7941825a12.0
+ for <dev@dpdk.org>; Tue, 07 Jul 2026 10:47:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783446436; cv=none;
+ d=google.com; s=arc-20260327;
+ b=H9IdOyaQgvyXgh+yr0V+Y3Yg/djXW+5TY3FcQPbdkzGyUQPDBVd6dgZxKuevRfC64Q
+ DOi6DQBdRG0c/Aoh/knPvqVnBVhZDIYDjKpAijfhFip5q7mLF59Y6r2ogTbKhxB2J8lr
+ jZjvCmcQtp67ENoGsiLjCxJ8za8KY2J3zYZ8Sm/xFcCpBuUE6OsWsTTpkaZLq4wb/uIC
+ Y1us8A7qHG1rf0YSvOKzICyu8m3IrGimPubWjbGbop19ZNd/yNWUjncGUNHPXU0fkTNm
+ ULA8nnmhJIFPd2rVxszTSusAzzX9+4wtsyxuLKfoqiaA0bs484dVfRxUKF0ZHGZmz+pF
+ IKZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=UH6DSWxpEa0sBtzIrN6w6cnzayujNCo8dIQNgHvbA10=;
+ fh=KwcofSWoKCEhlAhYTAbcj2TMUaaA47iV2YtBLVVkp20=;
+ b=aPsLygwKzh86KlW0ImjIs01sb/uBhe3NhkLtXAjxWPN0D+1ZTt1llKKbRs8JAppno0
+ aN2bQsEp8tTbnCrCd5zdKxY3ujmsCzXH0PzHzdGraTVw+T1a/Jqq3LjqHnRAni7ONvdY
+ +NhtaHnG4op/mncnvKHimA13/sH2O/i/zuSHP1qBptu8mmiUzM5aHofWdgWlJ8RlfE7A
+ 7rgJyAhCinTZ6fvWfZDagpXPNkFxeML7iOoLoQTnySPRCgwI2PnRvpd2uph+YYqwvk5O
+ ZloTHBl2gvdMFJc7q4yhAjUGPlv3+sBAEiU2f+V6zlDRXaq4QR5rNIQ/9yB2uB2bbTe1
+ dSzA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1783446436; x=1784051236; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=UH6DSWxpEa0sBtzIrN6w6cnzayujNCo8dIQNgHvbA10=;
+ b=bYovmDJo+8UvCRd3O/uKDYqCMG0oRimJj9EvdP3K/iCWMPEFtLjYjam+rE491ntNHH
+ l+FYUriWpZCwG/jN0PcNEH2DDyykgoalExmjhqvaYTnV0kZ8ACvsx96/yR19KNURNjKP
+ 3rKPX865UqfGH/sFNgfJXwAgtXKK7QTTZTX1s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783446436; x=1784051236;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=UH6DSWxpEa0sBtzIrN6w6cnzayujNCo8dIQNgHvbA10=;
+ b=Sfb+vRf2gzaZvaQyL4vI+4gYu8iR1u9pqDCokgpjDro45AwnPKGKXVU42Emi9ujPmU
+ T3461CXmnHJWHOdbSw69h/yHroToecDt6tQvVYq57P5IGVC/nXVTWGykekmO3sLDS0bl
+ Cemigww3HtwXfefyAmX/tRhNcsfkWKeXNs1UgnAN5zpA3kMpbpmGjerOAe0CUo0Gh1Nx
+ whPqidfOheHcJs9P45orP4DSf21HN4OWCd4i2tnCe9Yvb/S9QUFlEGETa1a5/Fclbmjd
+ ptTRWEjuTws2eEeAvoBIKNPHJ6UuvxFsAk2Qd9qKJnAhu8R/J/Xz9ra9z+QS7wrQGAXo
+ t+2A==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RpmWsecIw7wnksQzW2U8ghz/IysGiF6yYb9NF6yeX7d4tD4d1z1Ejr6m1MoOwuRTI/R4UE=@dpdk.org
+X-Gm-Message-State: AOJu0YwzrBsqDA8SzWTt002z6qgH7XZaRWkzeV/J8Q9/PyaVPmixULWR
+ A7bt1eY9ynxX2LXGPYvoxwPVqcMUAop6WmhNQ+EcGsqAoSgGgT9LEHA26dh6KXYzeXlBTOwPA/E
+ 5UzH2Tt2d29J/ePHtjLxr2RfA1zh4S0LvDociee0l7g==
+X-Gm-Gg: AfdE7cmCRvC5LXb2UBx+F4qUGnL3gaxuQYR8JkyHjwU7bffIbGNjTDb3gRuslNk1r3S
+ CbUxlXooJg0k+JR3UqoMysln25QaWE7LOBGKu+a+sZbWvqxBawkaFIbBkh+QBSTvBQXtzcQp0yL
+ +iNfZWWy7OSFWY0oXqyABpxeYDyEtoXJcc7lJ+dlQM8ti2jWkL4izlYke/7BRd+1qMWXtOaWa16
+ gb2u5EOsDAhGhxfTgTL4QCaOhUtKQ03bY3kGnRxQVOm/Z+km3kifrp11BFCjjt55tce4MFU3fju
+ XNq0ambPRQ0VGoJb3DjKfuQMekcemXVa5nFS03k6
+X-Received: by 2002:a05:6402:1ed6:b0:68d:92cf:52f4 with SMTP id
+ 4fb4d7f45d1cf-69a85647531mr3405489a12.5.1783446436495; Tue, 07 Jul 2026
+ 10:47:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260508141319.52648-1-abailey@iol.unh.edu>
+ <20260511160013.78676-1-abailey@iol.unh.edu>
+ <e135faa6-020a-42f1-a09f-e21e90dde010@arm.com>
+ <CABJ3N2UPaeLyD7Mv1vtoQSvRJLK0MUfC0LHvvuz-kvjx1YKwcQ@mail.gmail.com>
+ <CABJ3N2VPwsAoDyY4x=k=JQoU74UkdbQQRAy2LQgw_W9r-q8awQ@mail.gmail.com>
+ <0b37dd2e-59ba-4f4a-84f9-3ae6e37f062e@arm.com>
+In-Reply-To: <0b37dd2e-59ba-4f4a-84f9-3ae6e37f062e@arm.com>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Tue, 7 Jul 2026 13:47:05 -0400
+X-Gm-Features: AVVi8CcSZmtvcidi2_BAtrZ80uxGM55dMv4QhAL_1pen7TDJr4UxojyPMNz9s0Y
+Message-ID: <CABJ3N2W5VYcWR+wHkH+b7=JS6xb2qia-D5a5ZsNbjw_NzhR=eg@mail.gmail.com>
+Subject: Re: [PATCH v4] dts: update test suite names to be clear and consistent
+To: Luca Vizzarro <Luca.Vizzarro@arm.com>
+Cc: patrickrobb1997@gmail.com, dev@dpdk.org, lylavoie@iol.unh.edu, 
+ knimoji@iol.unh.edu, ahassick@iol.unh.edu
+Content-Type: multipart/alternative; boundary="00000000000052d251065608fb06"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,87 +97,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+--00000000000052d251065608fb06
+Content-Type: text/plain; charset="UTF-8"
 
-This fixes two issues in the i40e Flow Director flexible payload path.
+Thank you Luca for the suggestion,
 
-The bitmask array bound was checked after the write to
-bitmask[nb_bitmask], allowing a one-slot out-of-bounds write when the
-number of partial-mask words exceeds I40E_FDIR_BITMASK_NUM_WORD. Move
-the check before the write and use '>=' so the array is never indexed
-out of bounds.
+This also does not seem to work. I believe it is because the .rst files are
+being changed more than some threshold since they are only a couple lines
+long to begin with. So git sees them as new files entirely rather than a
+rename of the previous file.
 
-In addition, i40e_flow_set_fdir_flex_pit() programs the global GLQF_ORT
-register, which is shared by all PFs on the NIC. It was called before
-the flex mask was validated, so a rule that is later rejected still left
-the global register modified, affecting other PFs. Validate the flex
-mask first and only touch the hardware registers once it has passed.
+--00000000000052d251065608fb06
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 6ced3dd72f5f ("net/i40e: support flexible payload parsing for FDIR")
-Cc: stable@dpdk.org
-Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
----
- drivers/net/intel/i40e/i40e_fdir.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+<div dir=3D"ltr">Thank you Luca for the suggestion,<br><br>This also does n=
+ot seem to work. I believe it is because the .rst files are being changed m=
+ore than some threshold since they are only a couple lines long to begin wi=
+th. So git sees them as new files entirely rather than a rename of the prev=
+ious file.=C2=A0</div>
 
-diff --git a/drivers/net/intel/i40e/i40e_fdir.c b/drivers/net/intel/i40e/i40e_fdir.c
-index ad256a5a11..8a233f8a97 100644
---- a/drivers/net/intel/i40e/i40e_fdir.c
-+++ b/drivers/net/intel/i40e/i40e_fdir.c
-@@ -1230,12 +1230,12 @@ i40e_flow_store_flex_mask(struct i40e_pf *pf,
- 			flex_mask.word_mask |=
- 				I40E_FLEX_WORD_MASK(i / sizeof(uint16_t));
- 			if (mask_tmp != UINT16_MAX) {
-+				if (nb_bitmask >= I40E_FDIR_BITMASK_NUM_WORD)
-+					return -1;
- 				flex_mask.bitmask[nb_bitmask].mask = ~mask_tmp;
- 				flex_mask.bitmask[nb_bitmask].offset =
- 					i / sizeof(uint16_t);
- 				nb_bitmask++;
--				if (nb_bitmask > I40E_FDIR_BITMASK_NUM_WORD)
--					return -1;
- 			}
- 		}
- 	}
-@@ -1488,15 +1488,17 @@ i40e_flow_add_del_fdir_filter(struct rte_eth_dev *dev,
- 				}
- 			}
- 
--			if (cfg_flex_pit)
--				i40e_flow_set_fdir_flex_pit(pf, layer_idx,
--						filter->input.flow_ext.raw_id);
--
- 			/* Store flex mask to SW */
- 			for (i = 0; i < I40E_FDIR_MAX_FLEX_LEN; i++)
- 				flex_mask[i] =
- 					filter->input.flow_ext.flex_mask[i];
- 
-+			/* Validate the flex mask before writing any hardware
-+			 * register. i40e_flow_set_fdir_flex_pit() below programs
-+			 * the global GLQF_ORT register, which is shared by all
-+			 * PFs on the NIC, so it must not be touched for a rule
-+			 * that is going to be rejected.
-+			 */
- 			ret = i40e_flow_store_flex_mask(pf, pctype, flex_mask);
- 			if (ret == -1) {
- 				PMD_DRV_LOG(ERR, "Exceed maximal"
-@@ -1506,9 +1508,14 @@ i40e_flow_add_del_fdir_filter(struct rte_eth_dev *dev,
- 				PMD_DRV_LOG(ERR, "Conflict with the"
- 					    " first flexible rule");
- 				return -EINVAL;
--			} else if (ret == 0) {
--				i40e_flow_set_fdir_flex_msk(pf, pctype);
- 			}
-+
-+			if (cfg_flex_pit)
-+				i40e_flow_set_fdir_flex_pit(pf, layer_idx,
-+						filter->input.flow_ext.raw_id);
-+
-+			if (ret == 0)
-+				i40e_flow_set_fdir_flex_msk(pf, pctype);
- 		}
- 
- 		ret = i40e_sw_fdir_filter_insert(pf, &check_filter);
--- 
-2.27.0
-
+--00000000000052d251065608fb06--
