@@ -2,39 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48772C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 12:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A9FC43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 12:43:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51FD440264;
-	Tue,  7 Jul 2026 14:01:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4E66240264;
+	Tue,  7 Jul 2026 14:43:51 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 619A44025F;
- Tue,  7 Jul 2026 14:01:36 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DA5524025F
+ for <dev@dpdk.org>; Tue,  7 Jul 2026 14:43:49 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DCE6176A;
- Tue,  7 Jul 2026 05:01:31 -0700 (PDT)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA7721713;
+ Tue,  7 Jul 2026 05:43:44 -0700 (PDT)
 Received: from [192.168.100.239] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D23073FAF5;
- Tue,  7 Jul 2026 05:01:34 -0700 (PDT)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 128F73F7B4;
+ Tue,  7 Jul 2026 05:43:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
- t=1783425695; bh=JXZYh6YweU/wf+WTZxpF6ouccDZJNejBnf8jRXSB0rk=;
+ t=1783428229; bh=5T8vPFcAHjhz0ar3MF1gFbK7BdX28qS8j6abpaBsxlg=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=uKSLUIRYME5nWflkvDHGJSNjLSm/dWIfcybG+skH1tlGyndJhlNJ7fTF9gC9JrO6V
- Zjx6Jal6QscyMKdSMkn1pW4/r7NkMz2yggLEx6EVL5nhgfyxayhWzwIosFGNz8LIR0
- ZfBR8ALytlPcnYtdPRYy8J872qt3J7gCBIdoyMbc=
-Message-ID: <da926a64-c2f1-4471-b147-071e1362079c@arm.com>
-Date: Tue, 7 Jul 2026 13:01:33 +0100
+ b=HO7npVZ5opqBi+TpYNtKQC4E47JVQqXMxMpAvDOlk1VBizSyyPvweCJ1w7zMQF8c2
+ wka5XnA90oJnFPBkOFQcwUHoZbY1xZaK4Pw89qteW4gu2TU93/4lQnQHPxhVz9mLDL
+ G1VIxCCL4KmFLxJshu+83d5/hbGAAoDCrDyYSt0I=
+Message-ID: <e135faa6-020a-42f1-a09f-e21e90dde010@arm.com>
+Date: Tue, 7 Jul 2026 13:43:42 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dts: fix topology capability comparison
+Subject: Re: [PATCH v4] dts: update test suite names to be clear and consistent
 Content-Language: en-GB
-To: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
-Cc: stable@dpdk.org, Patrick Robb <probb@iol.unh.edu>,
- Dean Marx <dmarx@iol.unh.edu>, =?UTF-8?Q?Juraj_Linke=C5=A1?=
- <juraj.linkes@pantheon.tech>, Jeremy Spewock <jspewock@iol.unh.edu>
-References: <20260510194935.182258-1-thomas@monjalon.net>
+To: Andrew Bailey <abailey@iol.unh.edu>, patrickrobb1997@gmail.com
+Cc: dev@dpdk.org, lylavoie@iol.unh.edu, knimoji@iol.unh.edu,
+ ahassick@iol.unh.edu
+References: <20260508141319.52648-1-abailey@iol.unh.edu>
+ <20260511160013.78676-1-abailey@iol.unh.edu>
 From: Luca Vizzarro <Luca.Vizzarro@arm.com>
-In-Reply-To: <20260510194935.182258-1-thomas@monjalon.net>
+In-Reply-To: <20260511160013.78676-1-abailey@iol.unh.edu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
@@ -50,6 +50,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thank you Thomas for this fix. Looks good to me
+Looks ok to me. Thank you Andrew.
+
+The only thing I'd suggest is to use `git mv` next time you rename 
+files. The diff is quite chaotic and not easy to read unfortunately.
+
+I would prefer if you were to send a v5 doing that just to be extra sure 
+that no bugs were introduced in the process.
 
 Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
