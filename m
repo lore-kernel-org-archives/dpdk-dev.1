@@ -2,86 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29658C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 14:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D89C43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 14:16:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 28ECD4027E;
-	Tue,  7 Jul 2026 16:10:12 +0200 (CEST)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com
- [209.85.208.42]) by mails.dpdk.org (Postfix) with ESMTP id AA8334025F
- for <dev@dpdk.org>; Tue,  7 Jul 2026 16:10:10 +0200 (CEST)
-Received: by mail-ed1-f42.google.com with SMTP id
- 4fb4d7f45d1cf-6974a6e54dbso6533875a12.2
- for <dev@dpdk.org>; Tue, 07 Jul 2026 07:10:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783433410; cv=none;
- d=google.com; s=arc-20260327;
- b=P19UYaN5QxMwwm7fGtoxXTCpNLXC2vF1AcyOGQcQV6L2sOffsSQ4F1HaM+p0fZGO5z
- Uwh2UlmdK6ORqzvt4wVJDCa1i0bUpDbfpZhETVU6JalIb/ZT3za29ZmgYBvFQfgVsZu9
- IPOn1bGeXnjnPryu6Ed5OIfqlarG7TR96lz97aZs+2kqP1RJtQxH5mVxcfC/rug5caUS
- urRem+rWPH6U7WvER1ICmkm/7R2GMiuglOa5DWfcbrei+K90ca393khR+jEQYhdlV30+
- Jq8wyH4qYpdlW4f4NbvIkfgrDoH7WZjJNgPIfLOk4LlL3HJC6CiX2Xv3h5A2h55XaAxS
- Ky4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=mc+4zCZ+U6KLdsjZ5dHJ9IQuglX6YbEXMn1L69f09Fg=;
- fh=60MDIcqpvdQ+k38Mr7uKHDt3asNSR/q9/9pya2nXK1o=;
- b=QIwTl9HnGuFPGvaDbYCMD/+8ec8SHexCl+n4n1QbiiY/P2Tkwn+IuYDtffOKy0xJ+T
- PpH4yynk66Klg2mM7apK5EFHeqzbNBDUXUkyAfw0OmUfgydqF/cJLmypPtEd136esU+N
- 9O/ZwMi9WZvedZPN3BirlP3iRdbz7HXGkFxCOycKrBX8+kHyGpZMZg2mrHOmTU62KqJv
- 7ZpY4N6knydhY4eiBkbSz1fcOINjUz2JeI8zXKeWViMUmLC1vMmnNa5njut54LEJ+YTT
- 9U75UDcaL+ornGCqkpmKLE4iXan5qq00gtK5Hy01zfeV8/vXrbRXNcqcCT2CvjNPNvLn
- 4LIQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1783433410; x=1784038210; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=mc+4zCZ+U6KLdsjZ5dHJ9IQuglX6YbEXMn1L69f09Fg=;
- b=aaIYYAQtu5H31a8xnjU7gUBmRHnta4GKfD5brkdpiL5N912fv0b/CADZR+NKG+IZzF
- r7uBY2dl303DNwSLvKQWz2h/BHSaGWxVwRehiOYdJfTMwMcdhe+/zE89ME+5YFbs7JTJ
- s5BymIeFBxKytMm9GgwNqHMvb/74tFcPwW88U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783433410; x=1784038210;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=mc+4zCZ+U6KLdsjZ5dHJ9IQuglX6YbEXMn1L69f09Fg=;
- b=PHHeSUgOzyWiAVIfnqzDkBlsdnbnwPrb7X6UTPXezIA2/e75vAJaOiL1lZXsA5n3jO
- yuox8p/VJK7a3Zt/ekdu/xSJM+n8/nHdXYLTqkX9r+1yPocrLDhrgfu5Ry12/WdR7rqA
- 3StYzeXWMFdIGmNG7D3+R3tAjBW9Jd+TrfU5L3zOdG7GyjEqf12f3yIuX2sKv0iAu0iZ
- xn60SyX7CUjy4KxE4V1TGfTPpaFpY8r/n1XQkEi73fjX5k8DLwgVBCB6o0VcT5ssmPD0
- 6DnxJ72H4quLANp0Fz+dgjY5jCXXWwttjzdfPIpjnx91xNZnvigLDbRun8gq/QhE4rrc
- 1lrQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+RprWsFZ6yB0Bk2WPFwH56jJ0ygXMYJP4GZZ9yOW/MYBwzDA8YvXu02tUefaWxIBdXa4Y7c=@dpdk.org
-X-Gm-Message-State: AOJu0YzRCQ6o96Ck1lXPZCodyg0crmYDAKSV28bxgqeDBUJ7UcDsmqqW
- ysEMuHEKHiOqXlPtECn6ZhBtsA1+/aqMjKT4G7+rMbm/eTgKMXOMgts0qVXSh6NiKuZI0sCrefG
- ZSy1OG3qIqHWFOjSiPWIna4jFzMCjj8FCNRZqW7CzWw==
-X-Gm-Gg: AfdE7clvTBVuSXC0GnGtl2jSO1w2tSwYzLUbe97mIurhXLm4UYutBcrnu12YsWGkLoW
- tACGM2hc+tE6/V18zN3IFP2es4+DrpYV1CbyQp4+KqTVDESM9276nzO5w3mbP5npviKPaYHr+id
- 1xdZ7AP5+wP4raUXsJ31i4WZo5qPrXqzT0jh/y5gaTxJxHG9v8rbuBV5OScE/MHF/SHZOSY6jrm
- ebzIM5uqo7BWEeZxLt2rvLcabt5P6gxGC2XbDXa1mIJnjQZ4SDMMQpxTLLQ2sYTE8+XWXxmhUz0
- HlPztrocUP7jsh3lVoRKrCPapGU9/w==
-X-Received: by 2002:a05:6402:51d0:b0:698:b055:a509 with SMTP id
- 4fb4d7f45d1cf-69a85c186c2mr2621495a12.24.1783433407960; Tue, 07 Jul 2026
- 07:10:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B7BA84027E;
+	Tue,  7 Jul 2026 16:16:35 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 612AA4025F;
+ Tue,  7 Jul 2026 16:16:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1783433794; x=1814969794;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=6gAn063Zw/2UUh8rVOojwbaZprhCgdAtFmWbsHdue7k=;
+ b=EUnkS4g8Xgw3q0C53X5/aBbop7r+5CJqWIkBlqAtFjJpZ2vtxg2C2yDz
+ +D0RpYIeOnwGNpnZtvp31ARv4BZtWb559qYyrWjlPDvJqDvSQwRSbaYmE
+ 6byAUsopLJlYGK34nL3uCINNV3n2YdfWZ8bjifIOeRFARjZ0tX24B54JI
+ DdCRp1uU6gN0PBttv6n1duyIBy/Yc5FvFeJ4qRY1aK0X6+0bfy2Es0zQI
+ mXR0jh1cFIl/f9V6Pet/1d3zHNxKIDat0yblTz4dYG/jqrg6Xr0ZA9Bps
+ nJlOhpgTcVN+ZF4gO8woeR+QTKH9x+6tl1VxD7a4sxXSRgCKQxanF8/j/ g==;
+X-CSE-ConnectionGUID: TrDLlTm5SCGFBvxrZXG2eg==
+X-CSE-MsgGUID: XZbtfVtER6qjmqIIn6XkCQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11840"; a="87997178"
+X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="87997178"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Jul 2026 07:16:33 -0700
+X-CSE-ConnectionGUID: 3S4tlE8IS+W20mv3yeODIg==
+X-CSE-MsgGUID: mlTBZCFiSge/U+2xR4q+pQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="247631249"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Jul 2026 07:16:33 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Tue, 7 Jul 2026 07:16:33 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43 via Frontend Transport; Tue, 7 Jul 2026 07:16:33 -0700
+Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.71) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Tue, 7 Jul 2026 07:16:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jgroA5H9fgsEpZqnYEw4TbNPuQfjRkiZitkTA660aH5tjztRaEeaIa5fcQnF1Rb/DmexYwJbugdqpMZgfNn2pmNyEl3oW6VpDucGAVXAcGnKdz9y8Wj/nPd1S4iRbdQYzbxGKUf54m133RT9jC5ZGXM/d4Djl4JzwymHVof2kOeaTgnmuqdS0OPJk0m4zGlALsmRiWDJWCNEmrIvLUam48grMn5HQMCRyyHEjKxFDgt6ahkkVE4FlWOFo9dSej8mGmxeCqe8Nvupyut8HBiSw/pICIlTyXT6QNZZRP6iracE0z1fpE00PdhjcghnzKx6FGStawRUAx1d8p9c1w/0Aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QEyQrppATqciwJkGqsxQwbazk16iq2k0hGIlATVg/Qc=;
+ b=FfvHqLi/qqhe+0lCkY19D0F5hYcgWKf+1HEYFEagb5pZPpBGEFhiPOgOKj6j7gW/hSWnPusGQSzswtC8Kz8IKwpecbS2GFmjEssi2Om5RbrGchCor/tZ6uFqfmIRM1+9qc7/h4r0pzivrwH0qoVuchlaUXurZ5r+ZMYe4vQycVbOqR9rLLOYHvI70lmNu8W3Sd0oto+nCs7LM/9QAD1/2z9WgjqxL7WvWom/4x1sY1Ns7Tnw+5hBqmh5GpsZMEuQea/qC+0IAnIv2+Blv9plI3SF7AnbmPkjnVLqPl4nOb/s3CC3XAKYOx2K8rwslEzDbJrNxEzpupGXp4deNFnWhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by IA1PR11MB6268.namprd11.prod.outlook.com (2603:10b6:208:3e4::8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Tue, 7 Jul 2026
+ 14:16:29 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0181.009; Tue, 7 Jul 2026
+ 14:16:29 +0000
+Date: Tue, 7 Jul 2026 15:16:23 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Maayan Kashani <mkashani@nvidia.com>
+CC: <dev@dpdk.org>, <rasland@nvidia.com>, <stable@dpdk.org>, David Marchand
+ <david.marchand@redhat.com>, Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH] build: fix libpcap detection with unusable header
+Message-ID: <ak0KN_oZGU1WkPHm@bricha3-mobl1.ger.corp.intel.com>
+References: <20260707133028.236546-1-mkashani@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260707133028.236546-1-mkashani@nvidia.com>
+X-ClientProxiedBy: DU7P250CA0029.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:10:54f::18) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-References: <20260508141319.52648-1-abailey@iol.unh.edu>
- <20260511160013.78676-1-abailey@iol.unh.edu>
- <e135faa6-020a-42f1-a09f-e21e90dde010@arm.com>
- <CABJ3N2UPaeLyD7Mv1vtoQSvRJLK0MUfC0LHvvuz-kvjx1YKwcQ@mail.gmail.com>
-In-Reply-To: <CABJ3N2UPaeLyD7Mv1vtoQSvRJLK0MUfC0LHvvuz-kvjx1YKwcQ@mail.gmail.com>
-From: Andrew Bailey <abailey@iol.unh.edu>
-Date: Tue, 7 Jul 2026 10:09:56 -0400
-X-Gm-Features: AVVi8CcqPFb1-_oNv50u7c-pvS4mRoncfLmhawq4YkXGfUPBvuIrAOxPK1DsBiM
-Message-ID: <CABJ3N2VPwsAoDyY4x=k=JQoU74UkdbQQRAy2LQgw_W9r-q8awQ@mail.gmail.com>
-Subject: Re: [PATCH v4] dts: update test suite names to be clear and consistent
-To: Luca Vizzarro <Luca.Vizzarro@arm.com>
-Cc: patrickrobb1997@gmail.com, dev@dpdk.org, lylavoie@iol.unh.edu, 
- knimoji@iol.unh.edu, ahassick@iol.unh.edu
-Content-Type: multipart/alternative; boundary="000000000000c333e9065605f2f2"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|IA1PR11MB6268:EE_
+X-MS-Office365-Filtering-Correlation-Id: 65ad97f3-9d2e-4708-7980-08dedc32567f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|376014|366016|1800799024|18002099003|56012099006|11063799006|5023799004|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info: Q1nU3swP6i/+L70aFIgaCq+wWzzLirPnDVGVAr10ST9VyLNTkC162zUuEyv12Zk2ZWatTFNOkctHE7AzAs3ueR8mJJVvBtl9cQFCZpsi8UHNuHyrv7PZi+QElIb0ogeb1oAkAbkwfxC4NVUz/9FoYonu0fwcNl4wQEn2lMWNT4DSJlKTS7UJtnZ3IIr/FnWt5gfBWvTiww3wORmbLgzBLXarZmYZuveEP1DyiNAjB6N7i9Xf8ZuqlydCmkquqRV5I/5z3DgLnBuWvrbyTPYuQNoQJQXnZO1HosAmnnxgB+11caNtEJ7OeIkXJnOTEzLqL46t+N7Cxyjy/U2Uswruu2emoqC47T2mQiHMpUCSyGKVKllLMORwsIyQ0DX57jsFovl69iQ64u330DMGOjhbhU6IhU07NdmOfZDntBnXeeGwyrqN0t4MFSnxyHogVxJ3hFizkSjMBjumALTUo4eqSSXaxTW2/UByoQkZRSkyWnbIv3SotrdLLqI8LPw276VQqvRTqocxUM5AsEEZUUSO3hnJc+12J04v4j+p8nmwUvfK7bjt+JNriHTi0NH0bskBd/az5N6Fovo7dZtWbfGr7qEa+uCmtBI4WTB+Ru7D4qVydlb6agHmDh75eDDcZmrLyQupHh0zRm1xDn3QJ21TlE0sH5JMiZbss8MBtspqoMc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(18002099003)(56012099006)(11063799006)(5023799004)(22082099003)(6133799003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nIq6zjD8ArbgDBcbNMXl249Lml7CXLiBbFd3psch+aLy2zWXDLsDORlJjjs3?=
+ =?us-ascii?Q?vhElOtdp1DdmuZjsKJrNQ5bbOAiG3tExXfEfP7h5OVxZUVk1+ccOgdgMlsVr?=
+ =?us-ascii?Q?GiFantZfplEG0Oj13JjKO9ymLu/3BD1PhpnF++E/QgMMKNUbKQV2Bw1R1lKG?=
+ =?us-ascii?Q?vcrMqB7bgJzj4YNITrG/+hwaXoFkg7Wynk6QPGbahUMv82IqszZ2XNyUc4mV?=
+ =?us-ascii?Q?Za52PegLZvE3UlCeKqPeUx3Ji9riVNy91gejOCsRelqXruPmdXzrCbjADKm5?=
+ =?us-ascii?Q?BYbz+mUwS+L/lzwQ4Vo2oQVE9tHD5Dep+FBhRdvKodSLD6b4KsgjwBT1e82p?=
+ =?us-ascii?Q?63mSgzNumirqWDw43JsUfK4f7iQ0wvUxw9WitKx9zaOCTPNA1n7nK7tpGd71?=
+ =?us-ascii?Q?nhAv3OVSGHCwLsdoAP0FrGqSwcPAI2crlcJ8uT0ydBG7RAM4LWbTbHr4yJZs?=
+ =?us-ascii?Q?iuCC1WxCriqZPly9eplEqERH4dvpc2rHKhI/F3Cx8PHMU8fuIiZpQyHbAfSk?=
+ =?us-ascii?Q?mjBE5ANbrSsfDASii2G8p+0FXY0sm951WN4dJ+yc/Ki2YFPs59eU4L8Jn6e1?=
+ =?us-ascii?Q?kX/8xojITvWYLjUhpu+KeBBFR0D1W6/sYOvO4XEEagOsGi4EsEWswN+ZVQRM?=
+ =?us-ascii?Q?TCCGtPHPbxZ7B85Ej1FLVuTlt4RSULOD3D5bUVJa7OySWyBQQ1lRGzqznKHD?=
+ =?us-ascii?Q?7RAfXdXSLYRU4P4pE5DdOqzFYivf5S6LFHOwB0Ghv14nvuN1qOE16w1SQR5A?=
+ =?us-ascii?Q?mt42k2JFbikdlO/wg8Jtmsxp7ARP+gHON0d9ONR80SsMZQembrjm2uRjU+M1?=
+ =?us-ascii?Q?aBNEZ0jVdme3mwqRwoEhQ/QBlvaYkTDiPU9iSMbnt6WAdeDcwjvK2S5RFm1b?=
+ =?us-ascii?Q?JfNLBOaBxH5J3YvQUXGMqN18ds+4U4Q/zZ9r/VsM+rWjVh6YLIa29zSa8fzA?=
+ =?us-ascii?Q?z571W64BxT3pz0qb+shbQqCwGFUnqxSkMnN4Tjs/0IGTsC1a6jI53YvAyyU7?=
+ =?us-ascii?Q?Gpa7fL8RRlln33gaO3Ana7CP/otNDkwDp3AzLaX94PKJjfW5spWZ9Pt/ZkZ2?=
+ =?us-ascii?Q?C/JqA0whV2S0+sCWYJoS58ueBd5Ot+QbV4tRWPdoqBiYagaSbf7BT0K6sB6+?=
+ =?us-ascii?Q?XMdijZKzm+k43iApj74TDbibB5O/+GC26EoAfIt54pGVCFqtZcB5GabTIOSV?=
+ =?us-ascii?Q?wy6XU2CBgXWFyEv1GoGC9D+wHa+ESqptOIpWCN2izAxlA/Rm8kOmAF3jVsA7?=
+ =?us-ascii?Q?Ibq7F18GNkDHWivr9CG/JK5OFNiSVg4wXtocyuTR2N8ErzCYiJ/F+gArWg3u?=
+ =?us-ascii?Q?FTzjlm5PgI3bIUbidY1y9oi5NbHS/bRDQjvl2YOKmfTWSDWTGuQQ3GQ0E6F0?=
+ =?us-ascii?Q?HlNaq3MOlAEXp9u01/JtFfY0snMLYSV7NFfyt+cao6vITBmpn4drd0mguDTv?=
+ =?us-ascii?Q?DwdSFy9hkeM8+mKtNF1BOUQHeabJcTZz9wBL8MvkGS9dFo40/dapZfbvlw3k?=
+ =?us-ascii?Q?4OcHkVFdbLrF+1NNk/+MCX6yT5JyB4BwietCQu4322w/JQ/0539ItmTzDHCG?=
+ =?us-ascii?Q?WzmCzdK0XgHOXjjR6CJAODEWeFwb9fGgKZtUmZOtalmzxWudAvvhUgCA35aF?=
+ =?us-ascii?Q?LGAUTmxIENV7xns5Z2N+93/uExiOJoWoZWlM25BXFHfgTG/3lFMczAmXRd38?=
+ =?us-ascii?Q?eHjt021/F/SLmic3m2hyyk9eCFS+k/FQ7qExYvBbCT+U3Pf5sKwBZEXRL++t?=
+ =?us-ascii?Q?2jxqTTvPjdppYDF4mKMNZ/nBfIYbRI0=3D?=
+X-Exchange-RoutingPolicyChecked: Vzwj7EGQJrWRME7id9F3hw0rcKBMCME0Ybp/xYc+oqabB9hIg3YkOfMJev1jNCLZa9Lvq+EnqSQB8m6eC3yNLsdIv63xCay6qmtlFZaMM9XkffsK4MSItAHMDRSIrvm+z07Ud4OhpLdS+9yu+VhT5LVrXFqzanzc79tzjd4umKpPEpfoYoaj45w2zN5o6tbiMdx5VInJK5uQqgXu+K2jKy6K87HyORZq6q0+umiA0IG0UroiY2I5sCkkrKm9MIki6O/kdfbaeQpumOTBeLfqKHCxJlrzmP2pDcIDtQWImGoLUkVrZa/PCyC4C+lyLiUVDeLX/7OwEPL5Uqab6KvZMA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65ad97f3-9d2e-4708-7980-08dedc32567f
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2026 14:16:29.3142 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: heViH4l4h/nFWn7QttclLyiPymHnwlfQw4jrHonamBdgpJrHRC44pqNFsNwcsp20ahIeGSw+xHbLYJ0iUgCQKLgBEPvZhJSqDkeXbZd43HM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6268
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,34 +151,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000c333e9065605f2f2
-Content-Type: text/plain; charset="UTF-8"
+On Tue, Jul 07, 2026 at 04:30:28PM +0300, Maayan Kashani wrote:
+> The libpcap detection only checked that the library was present, that
+> <pcap.h> could be included, and that a trivial program links. None of
+> these fail when a distribution ships a libpcap-devel package whose
+> <pcap.h> is empty (present but declaring nothing) while libpcap.so is
+> installed: has_header() passes on an empty file and the link test does
+> not reference any pcap symbol. RTE_HAS_LIBPCAP was then set and the
+> pcap-dependent code (bpf_convert.c, port source/sink, dumpcap) failed
+> to build with errors such as:
+> 
 
-Hi Luca,
+Why would a distribution ship a devel package with an empty header file for
+pcap.h? Is that expected behaviour in some scenario that I'm unaware of,
+because it seems strange to me?
 
-    I thought that I did this previously but tried again just to make sure,
-referring to "git mv". The commit is clean when I change the name of the
-files but when I squash my commit that actually changes the contents of the
-files it makes the overview incredibly messy as before. I tried doing the
-moves and changes in different commits and squashing them, as well as just
-doing them in all one commit with the same result. I did not submit two
-separate patches because then the first commit alone would break doc
-builds. Is there something else you would like me to try in order to make
-this cleaner?
+/Bruce
 
---000000000000c333e9065605f2f2
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr">Hi Luca, <br><br>=C2=A0 =C2=A0 I thought =
-that I did this previously but tried again just to make sure, referring=C2=
-=A0to &quot;git mv&quot;. The commit is clean when I change the name of the=
- files but when I squash my commit that actually changes the contents of th=
-e files it makes the overview incredibly messy as before. I tried doing the=
- moves and changes in different commits and squashing=C2=A0them, as well as=
- just doing them in all one commit with the same result. I did not submit t=
-wo separate patches because then the first commit alone would break doc bui=
-lds. Is there something=C2=A0else you would like me to try in order to make=
- this cleaner?<br></div></div>
-
---000000000000c333e9065605f2f2--
+>   bpf_convert.c: error: invalid use of undefined type
+>                  'const struct bpf_insn'
+> 
+> Require an actual pcap declaration (pcap_create) to be visible in the
+> header before enabling libpcap support, so a broken or empty header
+> disables the optional pcap features instead of breaking the build.
+> 
+> Fixes: d6024c0a6757 ("build: cleanup libpcap dependent components")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+> ---
+>  config/meson.build | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/config/meson.build b/config/meson.build
+> index d7f5e55c18f..4bfb8535781 100644
+> --- a/config/meson.build
+> +++ b/config/meson.build
+> @@ -290,7 +290,10 @@ if not pcap_dep.found()
+>      # pcap got a pkg-config file only in 1.9.0
+>      pcap_dep = cc.find_library(pcap_lib, required: false)
+>  endif
+> -if (pcap_dep.found() and cc.has_header('pcap.h', dependencies: pcap_dep)
+> +# has_header() passes even when pcap.h is empty; require a real declaration.
+> +if (pcap_dep.found()
+> +        and cc.has_header_symbol('pcap.h', 'pcap_create', dependencies: pcap_dep,
+> +                args: '-D_GNU_SOURCE')
+>          and cc.links(min_c_code, dependencies: pcap_dep))
+>      dpdk_conf.set('RTE_HAS_LIBPCAP', 1)
+>      dpdk_extra_ldflags += '-l@0@'.format(pcap_lib)
+> -- 
+> 2.21.0
+> 
