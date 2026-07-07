@@ -2,85 +2,102 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5E4C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 13:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A518C43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 13:31:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3801F4067B;
-	Tue,  7 Jul 2026 15:07:38 +0200 (CEST)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com
- [209.85.218.46]) by mails.dpdk.org (Postfix) with ESMTP id 380474025F
- for <dev@dpdk.org>; Tue,  7 Jul 2026 15:07:36 +0200 (CEST)
-Received: by mail-ej1-f46.google.com with SMTP id
- a640c23a62f3a-c1274802697so435638766b.3
- for <dev@dpdk.org>; Tue, 07 Jul 2026 06:07:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783429656; cv=none;
- d=google.com; s=arc-20260327;
- b=QiZ7SlaRhTU5t/zJHKrF3Lkl4T2E/CbOAaWgOMwVcsX/SAlB+YoMJo6wMNvGRbbMNt
- XpuvfngFqvytj2xnTQ3NJ09DGxdpmwGt/SR7bozDS8KcI3nMxe0b8XTkQZj8bQBH+cQO
- Jh2zXyD/dXKD4Xxu+tKn8UFg764WlIokWXbLEa4yKd+BCRSCmCYZriBqx8fbouQUrZ0V
- t0E0/tiPziPzL6+GNrblwuy2DXieJLrkeTAK0Xp+rjcgmvHJG2fI66ftTPnFCOGrtKbp
- LksEJTpDYROoJU4dIllZgLHZB7SVq3dIdkP0gerJzz9bwqCUTTjOwBoeyQ0Huj/EFFTu
- vXsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=syWtUioeSGXQAt1IH6ANTLwWEkvuCcW3ccwnhRqgvPg=;
- fh=iz7e5tmB2gfO0gS02bXbVx221CWv6QwnnLEVLyt0tpw=;
- b=ezt55Ql8TiOp/tnY1sSYuVdakb2Jj9Im1Iph1Jk7kuwF3F0jxXMCkIvnZfk/HB2Own
- 3WVAC+HzPZLiDTyk6z4Qhg/RSbAkpGnPusDne8nGDUaxuEhkEH066XsajLcPxAe1YRb5
- XJ+vBiPf0mlaH/H2EEnqgFhAH0SqIIY/lGV130sMzNalUHPVmK0oqv35f0OSXj0X2o1O
- FuJZQ83aUq7RADq+8AZHK/0e0TgpMNVnXjrC8aSpXpCQMvgwZ/K/Lwil00V3h1dHgmc5
- ZTwza/WibPKu7n9OW6KZm1GFMKeMVom9ioMgXn0hgqSZLi0e2kYdAg393A+bv9uhBtIS
- 3oQw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1783429656; x=1784034456; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=syWtUioeSGXQAt1IH6ANTLwWEkvuCcW3ccwnhRqgvPg=;
- b=F8U4xZmp/H+1RZbVaToY9DXCKI17igRi0uUqzJZFrdcwYrp1D/G73buC2MlkhQCUDI
- SxuICdHzX7KOelZDEPF2G9DieqYKoVWgVFF4OvMrI0jzz2SxlK5lFgj7wc/y93fgExZQ
- WxC/X0LNN0g+Tgk7tJ+j1v38S/WDTktb2uzdk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783429656; x=1784034456;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=syWtUioeSGXQAt1IH6ANTLwWEkvuCcW3ccwnhRqgvPg=;
- b=K/Ex4yWf05lg3Wukbt6Gfr5ZBTKjSHYIWQO5fupXYcAwS0rDPVAcAQGg2d8s5yUyLl
- 1a9/eJ7JafQPk3jiceFurSTqRDy7+mVYHYfABt0NX/8LJdIEMeBNAh77Sakf2X61He8v
- lR9l+HqBMulHOSynW+fxHXeKPEidHntBrCbYd/DNb2/A4iNz1uxN4rvGOM0QKD3hZV+J
- sycWfFp1iAArnPVdqJsJ58WeXGBHBtZjdNB4lC723k2ejEAIauXVuGCXaxHs5fHh3Rml
- FXtlzFqRysLSe0MKVAkiP52z/eUOqDg0vgE6YsBJwndscnNbpaGUrJAp1jCFUp0jBZON
- VH9w==
-X-Forwarded-Encrypted: i=1;
- AHgh+RrLlFDMxASbtS9nACW5IGthkwMgFOakiNCaBHWvZYFb3poDGlxYEl0ZFLs2L5z5A9HIWQw=@dpdk.org
-X-Gm-Message-State: AOJu0YziUYlI8euxWneUCbaptiTmUxnMjj3lAHb8ZAsiYSkp2L0C/FHQ
- 1wMypz+qe8IS1M/KgigPkpkgEKjrhAo4vxZVSdUiVd+qlaGUfL0tFjncrW6zDur8aPTyCtEu5xQ
- 7AGTqX06nRgZuSKiSOM6jyPPJmTDpTlaRz2meaIwZrw==
-X-Gm-Gg: AfdE7ck7DEnwTJWga/+WrWKc9sLZbrwpxn1VXEAmCpycEUoN1btv6kShwFwzRzYf9lU
- KT4gnLHjyurxoPqAo0qff6k6kvmyE78MOBYfJ8SHkcIWBVcawIcVYxvsl3fzWfYZ2DHbtpPR8ng
- 0Tn1aZS02+9I/coLBEmZB8+maczanWV26Y2fYOt4JclBWj/1a4oYy/HhDww0WYhPi+uVS6bg0q2
- iizRdkJus5RIVl0hYwZ3AQ9zTKkdy5lQB3o50ZwY3eCTeen5ME8xz/P2pC1C447Vge2xNqXeuFG
- qps4CsDB0Vcmj3nF0AXnQPydwovrIA==
-X-Received: by 2002:a17:906:495:b0:c12:7d44:3b17 with SMTP id
- a640c23a62f3a-c15a66b412cmr198920966b.4.1783429653132; Tue, 07 Jul 2026
- 06:07:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A1E384067B;
+	Tue,  7 Jul 2026 15:31:04 +0200 (CEST)
+Received: from BL0PR03CU003.outbound.protection.outlook.com
+ (mail-eastusazon11012005.outbound.protection.outlook.com [52.101.53.5])
+ by mails.dpdk.org (Postfix) with ESMTP id D16624025F;
+ Tue,  7 Jul 2026 15:31:03 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M9q7BGPHJeYSrcR9FZigsAtWoHo2K4HMv0yFotR/Q5a/U9IbAJq2NynIdFOwIHrHIES23NsuC/l9i6GLRAvj3tspq4SbAdsnaUMKeYoLftbHst79w19XL2jvXzJZVCSI7/lOl/faaq/6lWwH21m93w6h+zN7kaK33hV5FDTayr/KfHPzh/Uzx25TEdj9RfJgH0Wdq9SFWo+SaECyb83iBV8G7ijiiF1lu2I0qRXv+LtZkKx8AIn/AiJ7M8kcTU7HyVSvtigiy50xHZ1h2UefF1t02jONQbn+GAlJ7EOvwscK5zAvEsdmecK/oaoWfL3J8IL8qWzT2G/Rm36JRlkNBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3oRBHl6JazleSasNmAB4Efm+YPxoG5VDKDUgDuT+AnU=;
+ b=l9Y7rimX767CPPXvcJyMM9+RyOcb+fF90mwkAKmBFnR9O3t52PZI2NDhx2LNzsobBcj4EVCUWvptG6cu7M1J6XuBPZBrYyAy6k1CF3w1UIXg6v3z0jZssDs0uTcNc5eeHnjosan0rsefUC3ucfeD5pxcnuffDi/b6qjFgAfZb3+HkpYmMZv9U2etFAZ+QHOIUMe4fWSOsz3cbZm+7GmB2Niv7BUc2u2pa9on941Ad+fEHylvLgBSCzIK3TMqOGGhp+6ZlMR46egSBDtlOsm9G3hq8bBednloJotA1eh86j17FNI0CcOfeitZHE6SMIMQDFDlfbLgk22AtWHBBuygzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3oRBHl6JazleSasNmAB4Efm+YPxoG5VDKDUgDuT+AnU=;
+ b=f/XEGsWEnuFFUa+XhAeDvEpFOMNKi5YgmX5lPrgIs/46w1obmYvarLGGU4ljW2fiW8Z1Uk0S6EHjEZOT5xMqyyJsBRFplVfnSwAp4kqNaoubtlZPaiuiZ0s8xkFLjSvMNp5KUaL8G5eMeVZOWENl2nlGUV9wCTdCN55y8kpaq1rGLdVwyRQTdFR7gUMHs3vvubw6kSU14IQVBFzpe2ePFGCIDGow7aY28p2z7WvEB3Wv1Bt3t6xRQW6F45QREwUjRSRt102YGGsnCD+7LMZZcv1Ryt2e2lGeEcYt33hTijqzfYT9x2r+k8xT76iW0LtWRlh22c5fmD061o2ORh+7hQ==
+Received: from MN0P221CA0019.NAMP221.PROD.OUTLOOK.COM (2603:10b6:208:52a::33)
+ by PH7PR12MB7892.namprd12.prod.outlook.com (2603:10b6:510:27e::19)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Tue, 7 Jul
+ 2026 13:30:58 +0000
+Received: from MN1PEPF0000F0E4.namprd04.prod.outlook.com
+ (2603:10b6:208:52a:cafe::1e) by MN0P221CA0019.outlook.office365.com
+ (2603:10b6:208:52a::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.9 via Frontend Transport; Tue, 7
+ Jul 2026 13:30:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ MN1PEPF0000F0E4.mail.protection.outlook.com (10.167.242.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.181.6 via Frontend Transport; Tue, 7 Jul 2026 13:30:57 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Tue, 7 Jul
+ 2026 06:30:34 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Tue, 7 Jul 2026 06:30:33 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.126.190.180)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 7 Jul 2026 06:30:31 -0700
+From: Maayan Kashani <mkashani@nvidia.com>
+To: <dev@dpdk.org>
+CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, <stable@dpdk.org>, "Bruce
+ Richardson" <bruce.richardson@intel.com>, David Marchand
+ <david.marchand@redhat.com>, Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH] build: fix libpcap detection with unusable header
+Date: Tue, 7 Jul 2026 16:30:28 +0300
+Message-ID: <20260707133028.236546-1-mkashani@nvidia.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20260508141319.52648-1-abailey@iol.unh.edu>
- <20260511160013.78676-1-abailey@iol.unh.edu>
- <e135faa6-020a-42f1-a09f-e21e90dde010@arm.com>
-In-Reply-To: <e135faa6-020a-42f1-a09f-e21e90dde010@arm.com>
-From: Andrew Bailey <abailey@iol.unh.edu>
-Date: Tue, 7 Jul 2026 09:07:21 -0400
-X-Gm-Features: AVVi8Cd7E8GZsl44_fmIl52CzDEuHrVPEbmdAbOPLLVj-ZxkPUTGtXKrIVlqpus
-Message-ID: <CABJ3N2UPaeLyD7Mv1vtoQSvRJLK0MUfC0LHvvuz-kvjx1YKwcQ@mail.gmail.com>
-Subject: Re: [PATCH v4] dts: update test suite names to be clear and consistent
-To: Luca Vizzarro <Luca.Vizzarro@arm.com>
-Cc: patrickrobb1997@gmail.com, dev@dpdk.org, lylavoie@iol.unh.edu, 
- knimoji@iol.unh.edu, ahassick@iol.unh.edu
-Content-Type: multipart/alternative; boundary="000000000000f50e3a06560512c3"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E4:EE_|PH7PR12MB7892:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36413051-27a8-426d-e3ba-08dedc2bfa45
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|23010399003|82310400026|1800799024|36860700016|6133799003|5023799004|56012099006|11063799006|18002099003;
+X-Microsoft-Antispam-Message-Info: H05GnU7rpkMpFtPOWOZpNcX/RuH7RNL/QMumJDFkvJQpZnp9jHZ9gsWYzqnSIuwScwMCXlDB1Cr6t8BmIihAupP6hvm8d4cof33GjFcEYNhlXVKlW8uAVMDXDn9dsS6h/1zH+lKw39myH9mnaSLyXUW37fWXrwYGImGTvgGIjZG4XkA+aHazW/fAo4mlXOULHwn/bOCyWC/LxUVhWm33sO1sm/BAi/CDX6m+aTzldKVyoToPmBhJvhQn1kfYFZ2PXDBL5kSphWZVGCKDqF5CnDJyeKZckoidK8xyGzniIDTVYJHmh/zgYV0YFsKH3MePHSZl3gn3N4A/2uX/ubMK8xDMHxEHKKinWl7NfVGqNQsJOSoN4Erzc0wvy+3/XBnDfpqjtCr+Y2xHH7aii2jNBBU9IzqaOeQqmne1pxmyl5UW/XJdHxMUDj+4nY3oT5QkqTnzRkvJFOpVMGV7BoY1SHO4TKDO2OLJzjfqCETkFlqw3YE1RzNbsGNQ6XXKEw2DpqvgStpQuE6aInmgAVWaRKlgRWBgYmNSq1kSXmWgosiPySZV8sXnww2p9QcmAh2WnWxYZdSYaiI1kjGODy7PEx81t7HhbUkTRBwNGoXZGDO7XfqXySPVZPBVjCTtEfauJOGpMsOdAnFS11HYzZKTStV5LGMEfNtW8Gm0/pr6fRqfKr/fDy9tbsS45gSjtdNI9/aeCujkeLV5ZErXqgwrTA==
+X-Forefront-Antispam-Report: CIP:216.228.118.232; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc7edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(82310400026)(1800799024)(36860700016)(6133799003)(5023799004)(56012099006)(11063799006)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: z9AjRN9cue5kDLCCYcMO2xD3H0UR4KnjJtRxjlCpGffuQdNqaovk4O5+ZTmntBUflnIZKAzVgqAHb8DQ+4quBc5fn49L1HxjfPa/yqQxbwXmI+UsVEq/RDc0CWvEr83UPpN8FccWpuhesZkfTdXZ7Y3toGVDDUR9U/MnESGJz1JlqhNfuEiDRgtFDS1B2L70S4Iy3K8N1JloEyZjavBnCQ5WH9mKk5/LRi7QMq9M0QGA6YAa12Wf8GbByyoAH96BiFwrHBp5sSbs4g0NFkcB1AvR68BdfuH+AgCf4YNXlC8CXrqJlOQW3OmWr9pRemNbXyWB3rY17T0x+Ek0UkjtbQFidXdo3W9/q49o5j2opbQd7r5KGyjEV5xPjFSCSeDDvfUMMU6LDyjOLl0nu+vX3Qz4TusI909iILxmpCyVcXzjdVtmR3Se365UEBokZ6h1
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2026 13:30:57.2456 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36413051-27a8-426d-e3ba-08dedc2bfa45
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.118.232];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: MN1PEPF0000F0E4.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7892
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -94,14 +111,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000f50e3a06560512c3
-Content-Type: text/plain; charset="UTF-8"
+The libpcap detection only checked that the library was present, that
+<pcap.h> could be included, and that a trivial program links. None of
+these fail when a distribution ships a libpcap-devel package whose
+<pcap.h> is empty (present but declaring nothing) while libpcap.so is
+installed: has_header() passes on an empty file and the link test does
+not reference any pcap symbol. RTE_HAS_LIBPCAP was then set and the
+pcap-dependent code (bpf_convert.c, port source/sink, dumpcap) failed
+to build with errors such as:
 
-Not a problem, I will send a new version shortly
+  bpf_convert.c: error: invalid use of undefined type
+                 'const struct bpf_insn'
 
---000000000000f50e3a06560512c3
-Content-Type: text/html; charset="UTF-8"
+Require an actual pcap declaration (pcap_create) to be visible in the
+header before enabling libpcap support, so a broken or empty header
+disables the optional pcap features instead of breaking the build.
 
-<div dir="ltr"><div dir="ltr">Not a problem, I will send a new version shortly</div></div>
+Fixes: d6024c0a6757 ("build: cleanup libpcap dependent components")
+Cc: stable@dpdk.org
 
---000000000000f50e3a06560512c3--
+Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+---
+ config/meson.build | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/config/meson.build b/config/meson.build
+index d7f5e55c18f..4bfb8535781 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -290,7 +290,10 @@ if not pcap_dep.found()
+     # pcap got a pkg-config file only in 1.9.0
+     pcap_dep = cc.find_library(pcap_lib, required: false)
+ endif
+-if (pcap_dep.found() and cc.has_header('pcap.h', dependencies: pcap_dep)
++# has_header() passes even when pcap.h is empty; require a real declaration.
++if (pcap_dep.found()
++        and cc.has_header_symbol('pcap.h', 'pcap_create', dependencies: pcap_dep,
++                args: '-D_GNU_SOURCE')
+         and cc.links(min_c_code, dependencies: pcap_dep))
+     dpdk_conf.set('RTE_HAS_LIBPCAP', 1)
+     dpdk_extra_ldflags += '-l@0@'.format(pcap_lib)
+-- 
+2.21.0
+
