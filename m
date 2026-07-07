@@ -2,71 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E12C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 11:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3609EC43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 11:23:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 08A9E40679;
-	Tue,  7 Jul 2026 13:22:14 +0200 (CEST)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com
- [209.85.167.54]) by mails.dpdk.org (Postfix) with ESMTP id ABDD140264
- for <dev@dpdk.org>; Tue,  7 Jul 2026 13:22:12 +0200 (CEST)
-Received: by mail-lf1-f54.google.com with SMTP id
- 2adb3069b0e04-5aebc8cb5bcso2698727e87.2
- for <dev@dpdk.org>; Tue, 07 Jul 2026 04:22:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1783423332; x=1784028132; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=LZnwyjM2SQ9q3472mCqdqMQH5cJuvSikxhts4nuQyx8=;
- b=eEA1YI+gyKq7zV4ksfZ0tV94wlEZQQcMHxunY2UAa819eTq7ICD+ZamHEEtBPYhTnT
- Q+QeuCllRpImcchHqqPlk73RwCXFKVgCC9MJHWZCQIUxw4M1GBTmWGGt1NO2gVaZ3+hq
- mdGk9b86Ub4gejHlY3oy6vMrTWrA0CdC54sE7g9csjRkNQeHkmPEGk52anKxScb0Uczt
- jBJXqrCHItX2hCNZDN5ysCqLm4EAHsVP0vf7/XRXRMlUrx9icn8mxRScgOnwCVuAiMBJ
- tnEHE/24xX9MHdU7ZLNhk82z/Tpz2wxTJCztAUFeCbRRSD5xvGNEQxEbXYs+AMIExl0L
- QSfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783423332; x=1784028132;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=LZnwyjM2SQ9q3472mCqdqMQH5cJuvSikxhts4nuQyx8=;
- b=H0qxe+68BuLURm8N0LdRP+YWfbR0Y9ihKzmyOJ0/j0tp28rrlQ/dPxe71wXeOXLVSy
- K7aBRRs8G4mhnzlwhjMVI1sTzmwPvSml/Kjv+ApBCHoqtlliIGe33xkCNpYcUg4n9ZtZ
- /DN+OTsBb5YIMIrZTEDRtGey9idShEBjdXerzbfC8ap46vFBE8PUF0LY1lywYZ11o2fK
- wntsYpItdX3+2RDi2PKgifIluC9Tr57vOgLVcp0LTWzdzod8XTuo3VP28nGOt6SBV9Uv
- noky2EMvVIXMCwgYyZs6963tU3K9cLGMolnnBTswi7rkPRfZr5+SGGdk7H4x2Zn9Pr2l
- Vg1A==
-X-Gm-Message-State: AOJu0YwTV5t+089pBESxkBHtIuBxNuR9JIRShACKHQwSiz4j/9WJkVzk
- zDbADigk1skuQFivw5wi9bmwre8KDN4Ooub0qSqEl98HVqzNphUld0ow
-X-Gm-Gg: AfdE7clnZG1cLkeuCcr21wUJMaz+qAv+r48VOLbjaQTG509IUw2fdUGY8pC2pc9Jhk6
- sjhhdpCZmdkohdZaJJnb3PpsIivlKWoitCuoLPW/nPSMojZQFLfdJLIC1Maq/9OdeHsJHgcN6Yw
- dWXUPmU7u7rxUyFxyDfYAJfN8KdkEoi1Y1RzWn5P7fPOUQuU5TIkFuWhfkUqWTPvjB9ySX03y2/
- jZEXYkvAhJ5LY7eFaB7JMFxQuIi/zMLPXdIkpv5IwdNeAVygi2MdNRcwsiK0ophlNFoBv7rypXz
- k3blPLMCt6RBun5RH1YBnr7H8xbp1geYaL7CKXZOa7/GjYElZuWo5zOUvFRCTyHdNXHSSEpbifw
- PpT+ZrIn5r+ucbnil8oJeqGWtdNpoa/sf2ikdK5tpfzRXukQOOPbVXjCXRD4B/9puIZ7TQUiVpV
- TMlzXk3HJDNAYEnH90wj+M9C7jo/3b8FAXguVnD5pjrZ0u7FBM
-X-Received: by 2002:ac2:5b0d:0:b0:5ae:be88:6db3 with SMTP id
- 2adb3069b0e04-5b007c133d2mr773582e87.29.1783423331659; 
- Tue, 07 Jul 2026 04:22:11 -0700 (PDT)
-Received: from home-server.lan ([31.204.104.167])
- by smtp.gmail.com with ESMTPSA id
- 2adb3069b0e04-5aed136f8dcsm3605062e87.11.2026.07.07.04.22.10
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Jul 2026 04:22:10 -0700 (PDT)
-From: Alexey Simakov <bigalex934@gmail.com>
-To: John Daley <johndale@cisco.com>, Hyong Youb Kim <hyonkim@cisco.com>,
- Sujith Sankar <ssujith@cisco.com>,
- David Marchand <david.marchand@redhat.com>,
- Neil Horman <nhorman@tuxdriver.com>
-Cc: dev@dpdk.org,
-	stable@dpdk.org,
-	Alexey Simakov <bigalex934@gmail.com>
-Subject: [PATCH] net/enic: fix possible null dereference in notify set
-Date: Tue,  7 Jul 2026 14:20:14 +0300
-Message-Id: <20260707112014.82821-1-bigalex934@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 1D08940264;
+	Tue,  7 Jul 2026 13:23:34 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 07ECD4025F
+ for <dev@dpdk.org>; Tue,  7 Jul 2026 13:23:33 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gvf2x4zpFzHnH4m;
+ Tue,  7 Jul 2026 19:22:33 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id BD29A40575;
+ Tue,  7 Jul 2026 19:23:31 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 7 Jul 2026 13:23:31 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Tue, 7 Jul 2026 13:23:31 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Marat Khalili <marat.khalili@huawei.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "thomas@monjalon.net"
+ <thomas@monjalon.net>, "bruce.richardson@intel.com"
+ <bruce.richardson@intel.com>
+Subject: RE: [PATCH v3 0/8] doc: build for all public headers
+Thread-Topic: [PATCH v3 0/8] doc: build for all public headers
+Thread-Index: AQHdDe3YkeNxlfBY1kq0Qsvuf2iMwbZh38dw
+Date: Tue, 7 Jul 2026 11:23:31 +0000
+Message-ID: <b071c236c8c74b7faecf8efd4da1f46b@huawei.com>
+References: <20260706105256.79904-1-marat.khalili@huawei.com>
+ <20260707085048.15295-1-marat.khalili@huawei.com>
+In-Reply-To: <20260707085048.15295-1-marat.khalili@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.16]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,38 +57,140 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The memset of notify_addr in vnic_dev_notify_setcmd() was performed
-unconditionally before the device reset check. When the device is in
-reset, vnic_dev_notify_set() skips the notification buffer allocation,
-leaving notify_addr as NULL. The subsequent call to
-vnic_dev_notify_setcmd() would then dereference the NULL pointer via
-memset.
+Will answer the AI code review comments here.
 
-Move the memset inside the existing !vnic_dev_in_reset() guard where
-notify_addr is guaranteed to be valid.
+> ## Patch 1/8: doc: detect ignored public headers
+>=20
+> ### Errors
+>=20
+> **Error: Resource leak in meson.build `run_command()` usage**
+> The `run_command()` calls capture stdout into variables (`doc_built_dirs`=
+, `doc_indexed_headers`) but
+> there is no error handling for the command execution itself beyond `check=
+: true`.
+> If the `sed` command fails partway through (e.g., file read error, permis=
+sion issue), the script
+> continues with potentially incomplete data.
+> While `check: true` will cause meson to fail, the failure mode is not gra=
+ceful.
 
-Fixes: 9913fbb91df0 ("enic/base: common code")
-Cc: stable@dpdk.org
+Requirement for the setup to survive unreadable source files is clearly exc=
+essive.
+And meson reports specific command that failed quite well already.
 
-Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
----
- drivers/net/enic/base/vnic_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ### Warnings
+>=20
+> **Warning: Hardcoded meson version check without rationale**
+> Line `check_docs =3D is_linux and meson.version().version_compare('>=3D 0=
+.60.0')` introduces a version
+> check for meson 0.60.0 without explanation.
+>=20
+> **Suggested fix:** Add a comment explaining why meson 0.60.0 is required =
+(likely for `fs.name()` or
+> another feature used in the check).
 
-diff --git a/drivers/net/enic/base/vnic_dev.c b/drivers/net/enic/base/vnic_dev.c
-index ba8ecc16f2..e6d34622af 100644
---- a/drivers/net/enic/base/vnic_dev.c
-+++ b/drivers/net/enic/base/vnic_dev.c
-@@ -964,8 +964,8 @@ int vnic_dev_notify_setcmd(struct vnic_dev *vdev,
- 	int wait = 1000;
- 	int r;
- 
--	memset(notify_addr, 0, sizeof(struct vnic_devcmd_notify));
- 	if (!vnic_dev_in_reset(vdev)) {
-+		memset(notify_addr, 0, sizeof(struct vnic_devcmd_notify));
- 		vdev->notify = notify_addr;
- 		vdev->notify_pa = notify_pa;
- 	}
--- 
-2.34.1
+Meson prints source lines and versions required during the setup already.
+Not sure who would ever benefit from this comment.
 
+> **Warning: `run_command()` assumes specific sed implementation**
+> The `sed` commands use `--regexp-extended` which is a GNU sed extension.
+> On systems with BSD sed (macOS, FreeBSD), this will fail.
+
+The check is explicitly limited to Linux.
+
+> **Warning: Global variables `doc_built_dirs` and `doc_indexed_headers` la=
+ck context**
+> These variables are set in the top-level `meson.build` but used in `drive=
+rs/meson.build` and
+> `lib/meson.build` without clear documentation of their contract.
+
+The names are self-descriptive IMO.
+
+> ## Patch 3/8: doc: fix typos in rte_avp_common.h
+>=20
+> ### Warnings
+>=20
+> **Warning: Missing closing brace on line 271**
+> Line 271 adds `@{` for "Access AVP device version values" but there is no=
+ corresponding `@}` to close
+> this group.
+> All three macros that follow (`RTE_AVP_GET_RELEASE_VERSION`, etc.) will b=
+e grouped, but the group is
+> never closed.
+
+Grouping commands are imbalanced in the file now, so the patch has to have =
+them
+imbalanced for the result to be balanced. Instead of the patch the AI revie=
+wer
+should have checked the resulting file or the fact that it builds.
+
+> ## Patch 5/8: doc: fix typos in rte_bus_vmbus.h
+>=20
+> ### Warnings
+>=20
+> **Warning: Incomplete parameter documentation in `rte_vmbus_chan_send_sgl=
+ist()`**
+> The function takes a `flags` parameter (visible in the function signature=
+ in the actual driver code),
+> but the patch removes `@param flags` from the documentation without verif=
+ying that the parameter does
+> not exist.
+
+Not sure how the model checked the function signature, but the parameter do=
+es not exist.
+Which is why documentation failed to build before and builds now.
+
+> **Warning: Parameter name mismatch in `rte_vmbus_chan_recv_raw()`**
+> Documentation refers to `@param channel` but the actual parameter name is=
+ `chan` (as used in the
+> corrected version).
+> This is fixed by the patch, but worth noting for consistency checks.
+
+The model notes the discrepancy that the patch already fixes.
+
+> ## Patch 8/8: doc: add missing headers to doxy-api-index.md
+>=20
+> ### Warnings
+>=20
+> **Warning: BPF list formatting inconsistency**
+> Lines 219-223 introduce a nested bullet list for BPF headers:
+> ```markdown
+>   [member](@ref rte_member.h)
+>   * BPF:
+>     [load and execute](@ref rte_bpf.h),
+>     ...
+> ```
+> This creates a sub-list with only one parent item.
+
+Nested bullet lists are used in other places in the file and even in the sa=
+me patch,
+seem to be a good practice actually. Not sure what "only one parent item" m=
+eans.
+
+> **Warning: Comma inconsistency in "containers" section**
+> Line 231 adds `[member](@ref rte_member.h)` followed immediately by a new=
+ bullet for BPF, but previous
+> list items in the same block end with commas.
+
+Customary in the file last item in the list does not end with a comma.
+The rendering was verified in the web browser.
+
+> ---
+>=20
+> ## Summary by Patch
+>=20
+> | Patch | Errors | Warnings | Info |
+> |-------|--------|----------|------|
+> | 1/8   | 0      | 3        | 0    |
+> | 2/8   | 0      | 0        | 1    |
+> | 3/8   | 0      | 1        | 0    |
+> | 4/8   | 0      | 0        | 0    |
+> | 5/8   | 0      | 2        | 0    |
+> | 6/8   | 0      | 0        | 0    |
+> | 7/8   | 0      | 0        | 1    |
+> | 8/8   | 0      | 2        | 0    |
+
+Interestingly, the one found Error did not make it to the table.
+
+This error and all 8 warnings are addressed above and not the actual proble=
+ms.
