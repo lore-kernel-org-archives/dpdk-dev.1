@@ -2,50 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAC6C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 01:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFADBC43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 08:04:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8091E40264;
-	Tue,  7 Jul 2026 03:41:11 +0200 (CEST)
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
- [113.46.200.222])
- by mails.dpdk.org (Postfix) with ESMTP id ED91B4025F
- for <dev@dpdk.org>; Tue,  7 Jul 2026 03:41:09 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=Ero1T47kqw6Y4NlQezqdruSX9jQN3HgvyowUM7pcz+U=;
- b=5xGk22VHBuFZ47cRIevqYd2+cfwKA+MKshrxjaRRWcM8uL3IOgn4lPUCgwHerpJJOouk+Lb1j
- Yfwzdq+uGUWtlLER9tZWCmEzsmvP+8dagtSebsC1tc0qx2AtM8r7GMfvt7cWeanpKu+osS65l9X
- af+W/SpAEIRJy0gtJYx9ZiI=
-Received: from mail.maildlp.com (unknown [172.19.162.92])
- by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4gvNxQ33rXzLlSL;
- Tue,  7 Jul 2026 09:31:54 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id 9F03E4058A;
- Tue,  7 Jul 2026 09:41:07 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 7 Jul 2026 09:41:07 +0800
-Message-ID: <44a99399-6050-4374-9f3f-64f6b8ed70d2@huawei.com>
-Date: Tue, 7 Jul 2026 09:41:06 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] test/dma: skip instance suite on low burst capacity
-To: Raghavendra Ningoji <raghavendra.ningoji@amd.com>, <dev@dpdk.org>
-CC: <david.marchand@redhat.com>, <bruce.richardson@intel.com>,
- <selwin.sebastian@amd.com>, <bhagyada.modali@amd.com>, <rjarry@redhat.com>,
- <thomas@monjalon.net>
-References: <20260706115533.2937512-1-raghavendra.ningoji@amd.com>
- <20260706115533.2937512-5-raghavendra.ningoji@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A50B240264;
+	Tue,  7 Jul 2026 10:04:42 +0200 (CEST)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 8A5334025F
+ for <dev@dpdk.org>; Tue,  7 Jul 2026 10:04:41 +0200 (CEST)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-2cad225673bso31172055ad.3
+ for <dev@dpdk.org>; Tue, 07 Jul 2026 01:04:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1783411480; x=1784016280; darn=dpdk.org;
+ h=mime-version:content-transfer-encoding:content-type:msip_labels
+ :content-language:accept-language:reply-to:message-id:date
+ :thread-index:thread-topic:subject:cc:to:from:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=8bqVdrV/YAXGlR3Tn9LRGEwcHFxHm7ze28fm5wEM3aI=;
+ b=jaNYJ9Ua+LfPNsldaWP/M7TvTvwR09Wh2iyj4hwT3tF0SddAxPwUzilfOL3ilL3+sn
+ imIZ3rwoWMq3/54s5lFkMokPidcn4TPPjXVwk3ybEsI17/Ti/wNfY+4l5bV+wHaI8BR2
+ Wwcxy8HkPWlyuQ6dwwI7/dCcYgstJCWf+kI0xayE8NO73OJ95uTrdddOU9Hd5gM0riGk
+ Q1BT9spmCet0avEOdnNj3y6AEYXgPtkFhQv/L3JU+v4jd+KHQRmiumFdmu5n2FP7sbqR
+ Obe6D1oegHG/AFwg2dZqistWV6XzyYLbd+l1qNzr3QW+CJwm2oF0ab9NOEhgDwcULony
+ 97/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783411480; x=1784016280;
+ h=mime-version:content-transfer-encoding:content-type:msip_labels
+ :content-language:accept-language:reply-to:message-id:date
+ :thread-index:thread-topic:subject:cc:to:from:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=8bqVdrV/YAXGlR3Tn9LRGEwcHFxHm7ze28fm5wEM3aI=;
+ b=eqTcvSN3bJBITwMP6TM0+GblAxUI1yWcTVMj+tqLAWjgq7gszD2RXodbSq4bsyv77H
+ rMsw1m6w5uGHCAQzcjvy8+GL9oI/ecvE0LJK8lw0gDqxDi24k9QYFBV/521tqvZkEnF8
+ ZbDOICLRMLHMX1vXQHvbtdbhK3zcJDi9Tl5iaZpDGnabHfjMLgd2KjYr1/C+N91Mn4jf
+ vsgXdl1XmBMJAafhT0j8u5xQdHgwKM5lTgljm+uMKi4QgZqyunJ/vQjtLMBSEBbDG/7D
+ m9t3Bt14gmcChyLA725sUVYWevnj4QROfBoDJbxSYyqjmMkFUGcltTh4kgjPrYAFQtTN
+ H7MQ==
+X-Gm-Message-State: AOJu0YzBlNSVYK3Jk/eHyyjfJlVI1ogVexHt4OowaZk90XRxlkiZMdvm
+ brM31tuCNzMJj7DDoOV1ebn1UPivw776bd4RjH7EFmcMNeEvSIiY9Cbg
+X-Gm-Gg: AfdE7cnr3WsxofsM/IFr8U21CWlc8h5jSHpPYOE5988Pc1ATSqbnqqKcunMY97rsI45
+ IkIjHiB/F5qPT5CR9Sa5v8PHDy2oFSRgjeZ84t/+/+9UfdEceyiEkjfgdj0ZNUjBPVZd7Wmc2H9
+ Ol6gsW3LAaCivRkkUwC4sFOP8D1eEmh7hDokv45eFX8PqTcSfgrr0TH9j3Kb1I5Q2u5z4rG8a5z
+ Z6VnAHJDDIm7F14SoKBMDJv36zj2rOVTn1tZt5qP15IPzo4urZNEklq4qlESKR3cX6UP1vPVMwc
+ PBusJHVK82ddH57j1zglu1CiQjB8qQTzThXU83TbTgkAErnqg3r07MUg99GqwiQQ4C1lljvP77m
+ EqjbciL0S6TZxzOFc0sjVr8IrK5lnAyZ9swWmrVCr1dsk0vyxaZmN1Dczcc94ZkztK8Up1lIF5B
+ 9fL/Q+xa6gvagrXlxCbEO8yjDdmdMfXKaQySUnPEH2xpzvG7vtoAHU7Wz+QCJKsz/68ina8mVoV
+ Az9m5gmI7r63KWdtAHWXhx1hVHSRdyLu8MRvcF2IMHQKWXC8xsb
+X-Received: by 2002:a17:903:38cf:b0:2c9:e9c4:82c1 with SMTP id
+ d9443c01a7336-2ccbf051685mr48947835ad.26.1783411480361; 
+ Tue, 07 Jul 2026 01:04:40 -0700 (PDT)
+Received: from EAYPR13MB731689.namprd13.prod.outlook.com
+ ([2603:1036:308:4c31:365:be:0:2b]) by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2ccc9d3d2efsm7200585ad.64.2026.07.07.01.04.39
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 07 Jul 2026 01:04:39 -0700 (PDT)
+From: Simakov Aleksey <bigalex934@gmail.com>
+To: "kishore.padmanabha@broadcom.com" <kishore.padmanabha@broadcom.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "ajit.khaparde@broadcom.com"
+ <ajit.khaparde@broadcom.com>, "stable@dpdk.org" <stable@dpdk.org>,
+ "denserg.edu@gmail.com" <denserg.edu@gmail.com>
+Subject: Inquiry about status of accepted patch net/bnxt/tf_core: fix null
+ deref on pool use allocation
+Thread-Topic: Inquiry about status of accepted patch net/bnxt/tf_core: fix
+ null deref on pool use allocation
+Thread-Index: AQHdDeXmGwD/g/OT80OkgFn1GlXjgQ==
+X-MS-Exchange-MessageSentRepresentingType: 1
+Date: Tue, 7 Jul 2026 08:04:38 +0000
+Message-ID: <EAYPR13MB7316899D71B96849EDFB8BC0B4F2F02@EAYPR13MB731689.namprd13.prod.outlook.com>
+Accept-Language: en-US, ru-RU
 Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260706115533.2937512-5-raghavendra.ningoji@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+X-MS-Has-Attach: 
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator: 
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+msip_labels: 
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,49 +93,19 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: "20260603041557.115956-1-denserg.edu@gmail.com"
+ <20260603041557.115956-1-denserg.edu@gmail.com>
 Errors-To: dev-bounces@dpdk.org
 
-On 7/6/2026 7:55 PM, Raghavendra Ningoji wrote:
-> test_dmadev_setup() aborts the entire "DMA dev instance" test suite
-> with a hard failure when rte_dma_burst_capacity() reports fewer than
-> 32 descriptors. Some DMA engines expose a small hardware ring; for
-> example a 32-entry ring that reserves one slot to distinguish a full
-> ring from an empty one leaves only 31 descriptors usable. Such a
-> device genuinely cannot run the instance tests, which enqueue 32-deep
-> bursts, but it should be reported as skipped rather than failed.
-> 
-> Return TEST_SKIPPED instead, matching test_dmadev_burst_setup() which
-> already skips (rather than fails) when the capacity is below 64.
-> 
-> Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-> ---
->  app/test/test_dmadev.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/app/test/test_dmadev.c b/app/test/test_dmadev.c
-> index 5488a1af33..1cfa8c1e10 100644
-> --- a/app/test/test_dmadev.c
-> +++ b/app/test/test_dmadev.c
-> @@ -1397,8 +1397,12 @@ test_dmadev_setup(void)
->  	if (rte_dma_stats_get(dev_id, vchan, &stats) != 0)
->  		ERR_RETURN("Error with rte_dma_stats_get()\n");
->  
-> -	if (rte_dma_burst_capacity(dev_id, vchan) < 32)
-> -		ERR_RETURN("Error: Device does not have sufficient burst capacity to run tests");
-> +	if (rte_dma_burst_capacity(dev_id, vchan) < 32) {
-> +		RTE_LOG(ERR, USER1,
-> +			"DMA Dev %u: insufficient burst capacity (32 required), skipping tests\n",
-> +			dev_id);
-> +		return TEST_SKIPPED;
-> +	}
-
-This approach is also acceptable, but I think this test, as a community
-"free gift", should be supported as much as possible. So I would suggest
-you modify the relevant code to support this test, but it is not mandatory.
-
-Thanks
-
->  
->  	if (stats.completed != 0 || stats.submitted != 0 || stats.errors != 0)
->  		ERR_RETURN("Error device stats are not all zero: completed = %"PRIu64", "
-
+Hello!=0A=
+=0A=
+I hope this message finds you well.=0A=
+=0A=
+I am writing to inquire about the status of patch https://patches.dpdk.org/=
+project/dpdk/patch/20260603041557.115956-1-denserg.edu@gmail.com/=0A=
+It was marked as "Accepted" in Patchwork over a month ago, but I noticed th=
+at it has not yet been merged into any of the DPDK branches.=0A=
+=0A=
+Could you please clarify the current status of this patch?=0A=
+=0A=
+Thank you for your time=
