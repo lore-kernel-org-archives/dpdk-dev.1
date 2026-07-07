@@ -2,83 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F55C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 16:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEAAC43458
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Jul 2026 16:11:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7609D40264;
-	Tue,  7 Jul 2026 18:02:33 +0200 (CEST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com
- [209.85.167.46]) by mails.dpdk.org (Postfix) with ESMTP id 0E5494025F
- for <dev@dpdk.org>; Tue,  7 Jul 2026 18:02:32 +0200 (CEST)
-Received: by mail-lf1-f46.google.com with SMTP id
- 2adb3069b0e04-5aeb78090edso3347933e87.0
- for <dev@dpdk.org>; Tue, 07 Jul 2026 09:02:32 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783440151; cv=none;
- d=google.com; s=arc-20260327;
- b=Ut89K8c8x2thE04nYfnc9hHzgX5/lY6WwZy36AC4veyHmeJpDPB0eTMRtZ125T4/eg
- nwFwEDyP288qi1NX7Yqb/K6MgwE208vUFpwvnvWggqygmbN4zVV6LE9RHJFzvdIr8V29
- 59vpFhUqwPi/68YlZrIKsoTrZ7XtYDMdO2M9x5wQAWYdEOapY4luSp1L/NfXfhFLxumI
- NDvCLsR3EcFP+RacpOHipYMQcK0d4B2s5aq/2MyUJ1Q1u2zg4FirdMImgPkbTBINSc2d
- nCRx6FiIYXwtTNSyj6xqiMEqnBVJtJbxsEy3S9u7PmZ0esagki3Vhp1HCQTpVsjBUo2I
- DvtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=iCosDLrehq4m5p6p5M008ObV3jYts/9AXn26zWzUnOs=;
- fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
- b=EPLRIKwSfMrsIzsRLu7yaTV+0sX4EKrcTrxQQXwt9dOxPXrFCinavNITNeJJrZgnIC
- xM9eO0+yopUa4Vv1uOSue9HYHZfL9YT8zlKwaQwG636crHhUniu+zoo9FYa4Uz0k8vEt
- wrBkETAyrDIAnF6J59t1HHuAoS3oa0emCboh7+WwQoGZq1I0zgfetyYb5P0Yd9dKc189
- 8K0N66UXveUDIPDc086qojhOy1ULtm4AvYhe63jbHyx3E11OQQHBnYAqOl/1bVbbYtIi
- T188w/+UxxXSovakm6LTbXkpY3P7t0zxF5B0vBtU4lkGRucg8qdA8mq9jE9ppkJTHp2q
- BwJQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1783440151; x=1784044951; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=iCosDLrehq4m5p6p5M008ObV3jYts/9AXn26zWzUnOs=;
- b=cucivFLeID9VHXL2tX+m+2dPTt6j/mj06s8pXSy4dEhov/J/uXdGd+Vlsv/4Q7IUR6
- txNDyei1fOgTO9ZkoA4RCJCjMlYrYI04swGkjtpz5mp/owe8xZZF+VH6FiMEkxiSCG4m
- L3D72kBHG9TlCEknZwgC+tP57hXuuNgnzRvZFtCTsEB7MPlMO3D4djoqTvaiB/LrtqVB
- hXF1LYbd3DzSjDffnOsgO1ZvhB1nfnbtowG6PrIvY+g7/iVAPeFXF7NenOCj1JUAtQMN
- mQp/MwRPwyyKNsNloV9cxVdT5QijNaIHHX+kOARwdzcgbM0ImN8kLFrUHNLJNB/qOcuc
- 10ng==
+	by mails.dpdk.org (Postfix) with ESMTP id 2B93B40264;
+	Tue,  7 Jul 2026 18:11:02 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 595D54025F
+ for <dev@dpdk.org>; Tue,  7 Jul 2026 18:11:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1783440659;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=re6VS5wItWQeHdUUPElnH/XXeyqTBc1zT33wMvhWCo4=;
+ b=MjUHPE2DcDiP4MMdTiIjnr12RxwpMulEIwvNBI3RqgWLwU1sJJqIpiQiwg6tkd7IbBd/k9
+ LO2f4iuUJ+6vmJ+DLMBGyTAzcAy8El2Wkn9dpQ82RKsfQZV3mzuN6+64anRxkVJ+7cfU6C
+ M7+j17bzUPe0FhPgLeIIImvUMPtcTUY=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-161-WNlaleICPQ2Jud87jGEyYQ-1; Tue, 07 Jul 2026 12:10:58 -0400
+X-MC-Unique: WNlaleICPQ2Jud87jGEyYQ-1
+X-Mimecast-MFC-AGG-ID: WNlaleICPQ2Jud87jGEyYQ_1783440657
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-39987ae63b5so19149361fa.3
+ for <dev@dpdk.org>; Tue, 07 Jul 2026 09:10:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783440151; x=1784044951;
+ d=1e100.net; s=20251104; t=1783440657; x=1784045457;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=iCosDLrehq4m5p6p5M008ObV3jYts/9AXn26zWzUnOs=;
- b=f3LNUGbPZa1jUOwy30kE5xaZqW7QzFeYOVUTl8Q+dfUcN4TnfPFRYL4a3aT8Q1Fenv
- bkj1ZkvXTyLXCtfSHfT2XHS+crSJZOyaoXhfySRgX0lhNMygebSczq59Nc+A6E8heb9R
- r3TTZeDmHIj6xleh1TZ3xKp/BnXZwAy3cjjW7PgN+BpNaf5Rit0+hga41GhbKWxphk/d
- 25ttGsyAQnpYKjNttM5asV1E4iUv4IQgDVruH3APespcsEsDx7O92njVo+iAZLNkHtl+
- i7HknxIPa7V1zqtnlQrKHZuhvKpFPUwDqaJxyuouYzFEUNEkzNuLFy6roRDtYsc/XWS3
- KPfQ==
-X-Gm-Message-State: AOJu0YztXDD2193yJ5TcOYRmwA1zpLzaJOBxchl4EZb07NhAWVBL8ojV
- 0fI/hYELxtwO+4sC3uOqI8fEucwnU+hzdiluKUlPLOhlEuGNBcdfka0mz/NN1SEhaYI2q1ZJLAm
- Mx9G1l/VLNDf+F7uDSpkynxnrG8BbLpR4OZxBGX2ojIy263h5KaC+oi/fQvI=
-X-Gm-Gg: AfdE7ckOWMfGe/68hb7J7HUJuGUWYPifPElusVTmyzRgCVxwQTomrkEcu8d9/EFsWxd
- /9xK9iMYVVngYjSYnoiiRudueK81N8bIlesM4IDCpcBE1w5x7WP0ItwHOdd/czP3o8oQp1pYWVy
- Wy2jbRoJ3LxUc64wbfrR0fHxzAYu4I4cuQHgMtRar1y3vcnjgqd1z5SNo8ssdoZ8mZxe1fCVLyU
- LcPI+Du6oWOlGIGd9t30pdCJug+gNq/Wk+2dY/aIzjrZbQM0Fs7Tao3BOD70L21gcu8X3MhxJ8a
- nGfnzGPTcZhh0IHW+6li98RBHx4=
-X-Received: by 2002:ac2:4652:0:b0:5ad:5814:1b72 with SMTP id
- 2adb3069b0e04-5b007c4b442mr1027177e87.34.1783440150916; Tue, 07 Jul 2026
- 09:02:30 -0700 (PDT)
+ bh=re6VS5wItWQeHdUUPElnH/XXeyqTBc1zT33wMvhWCo4=;
+ b=Phu2xXXvhDlo5O/OSqtj+qNY3whFXB6W6yiD43R/KzjdfgggHTxI57YSS1deSob7HR
+ Hf/yIf++Nu/lYUBhe1oGerIbZMX4OU9PzoIg9U02NZMWBfMQO9mxiPQdDZVtSFInILI5
+ cmtjKMTMaqheTkORFtQEDVpIB484x9IZC+UeLKTtJnhFV6hVPwSQy+pQLKwZTeAI8kmM
+ Sr9uraNJJZ3DbcGySYJZ2RiI98neDqXwj5sdMr+fPFWaKA3SD7gwY5++K0XHgP2v51xI
+ +CsvdRI5p7sKnEYTDqcaTo1Q04MY6Rb2Mqp3jdqXdZd24OynfkXJbb+G66B2HtgOuu26
+ mpSA==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RoeMCg1BSEwx+aNdoox3Ak0hp56KQT+wD9b/0oLpJ8GnMhQETGJok6QUVb9b5bxxlJ+2dM=@dpdk.org
+X-Gm-Message-State: AOJu0Yzb5SAOBuJ6s0haDw6WbtPc8zrPqDav0a0JOrNyW/fM2RihPsge
+ fbvOQslR1osAL5ogx8+Ib5gjLt7RriOfXbxMJm57N1Bji+XIW6pMRSa7ye1EwC0ISlsVSgZf5me
+ iOmQadrIzI5g174zwaGoxrWdThw83YdExxPU9Z84qCrnyOV/404zyNOpoSeNO1O86KX9/OWIxDL
+ gTvRHhiLEy9vlL9rSuRoI=
+X-Gm-Gg: AfdE7ckHPIJ6RMskqVVyjiagBUuAWBj3UeCu0Bs5mnOMxXtGrMEsyvJfNEM9Fruk+1q
+ 4jqQG5SKKaRBNF8DDYJ6E47VrmmRZ45DhEMrwvGusgJqHZeKilkReYvDdmYNfPOR9e6kBEum2qG
+ /sSRLY5txFsbmAPGXvbeFnbGovkCHzV3FeHJc0TE1NoeChGt4AgnUilNDEOs7FQgeH51dNijEvV
+ QIyvS5Dqj826VLtxm6/qRvR5+NnSHj3+xkmcie0A3W882wqOVYkcWwFVTc=
+X-Received: by 2002:a2e:a99d:0:b0:39a:fec6:efd0 with SMTP id
+ 38308e7fff4ca-39c5ffae1cfmr14096021fa.23.1783440657018; 
+ Tue, 07 Jul 2026 09:10:57 -0700 (PDT)
+X-Received: by 2002:a2e:a99d:0:b0:39a:fec6:efd0 with SMTP id
+ 38308e7fff4ca-39c5ffae1cfmr14095291fa.23.1783440652518; Tue, 07 Jul 2026
+ 09:10:52 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260703131308.2507403-1-joshwash@google.com>
  <20260703072721.18c5987a@phoenix.local>
-In-Reply-To: <20260703072721.18c5987a@phoenix.local>
-From: Joshua Washington <joshwash@google.com>
-Date: Tue, 7 Jul 2026 12:02:18 -0400
-X-Gm-Features: AVVi8CdUjWFpt9yzV8UH5XEM8OuBncS6nbuJMtQZsD26-PeE0XKLY970EyIxI_Q
-Message-ID: <CALuQH+UE2kJdfbny0qLSxB+izFSPTQJXVCwDNbUotrcQL4LYhw@mail.gmail.com>
+ <CALuQH+UE2kJdfbny0qLSxB+izFSPTQJXVCwDNbUotrcQL4LYhw@mail.gmail.com>
+In-Reply-To: <CALuQH+UE2kJdfbny0qLSxB+izFSPTQJXVCwDNbUotrcQL4LYhw@mail.gmail.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 7 Jul 2026 18:10:38 +0200
+X-Gm-Features: AVVi8CdRPmG_ks1bA2SYyyE6NDtXkCTNxCb3gMTzZBELHTvYacori-xfosyVAWw
+Message-ID: <CAJFAV8wWC9VbkDT0tqk+EkZGfxJm1weiV5u=HwQhOk3sC2L4eg@mail.gmail.com>
 Subject: Re: [PATCH v2 0/9] Stability fixes for GVE
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
+To: Joshua Washington <joshwash@google.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: s-2ktsIp5VkBHwA16uMkTQ2u5LjRI9uHM4pkZJRP_Nk_1783440657
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -93,9 +86,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Tue, 7 Jul 2026 at 18:02, Joshua Washington <joshwash@google.com> wrote:
 >
-> Better but fails on 32 bit build during post-merge testing
-> DPDK 26.07.0-rc2
+> >
+> > Better but fails on 32 bit build during post-merge testing
+> > DPDK 26.07.0-rc2
+>
+> Will fix in v3. Is there a way I can test 32-bit compile using
+> test-meson-builds.sh? It doesn't seem to be covered there by default.
+>
 
-Will fix in v3. Is there a way I can test 32-bit compile using
-test-meson-builds.sh? It doesn't seem to be covered there by default.
+You'll need support in your toolchain, but this script does support
+32-bit compilation.
+
+On debian for example, you'll need (at least):
+dpkg --add-architecture i386
+apt install -y gcc-multilib g++-multilib libnuma-dev:i386
+
+If you have a personal github account, it is also possible to try your
+changes after enabling github actions in your dpdk fork.
+
+
+-- 
+David Marchand
+
