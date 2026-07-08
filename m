@@ -2,74 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D1BC43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 07:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FB9C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 07:27:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1738A40264;
-	Wed,  8 Jul 2026 09:17:56 +0200 (CEST)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
- [209.85.215.172])
- by mails.dpdk.org (Postfix) with ESMTP id D0B0740041
- for <dev@dpdk.org>; Wed,  8 Jul 2026 09:17:54 +0200 (CEST)
-Received: by mail-pg1-f172.google.com with SMTP id
- 41be03b00d2f7-c9e607d81fcso190908a12.2
- for <dev@dpdk.org>; Wed, 08 Jul 2026 00:17:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7C87F40264;
+	Wed,  8 Jul 2026 09:27:13 +0200 (CEST)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
+ [209.85.160.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 8BDE640264
+ for <dev@dpdk.org>; Wed,  8 Jul 2026 09:27:12 +0200 (CEST)
+Received: by mail-qt1-f181.google.com with SMTP id
+ d75a77b69052e-51c2cce930cso2861831cf.0
+ for <dev@dpdk.org>; Wed, 08 Jul 2026 00:27:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783495632; cv=none;
+ d=google.com; s=arc-20260327;
+ b=gxX5dsgEBUdZTrVQrzqBBqnua14Vob7PgiJfSBYcdsvo0cLgAOPCh4QBx980mUwWo2
+ HZ/RYexhEDB2iBa5KaHOBW3Vvh4MZ8irql+SnGFHSF0RZutTOl03BcvulGwKQv8f5kRE
+ Ul5U7bfvk8B24MQtzlbtgtUgUZPJTw+/9ak3HSeEoW+SO3481g6zckh7u/vxOnY70Jlg
+ cT2fY2FRmIv/75ms+8m/hv51BDJLEv42VjmSHKxzhGwfkVMfMcAQCopLQKR05E8cMBFP
+ 0QyV9TlwfzZl/cKEXxacc4eKGiMcsdaoPvAhSm0dRHdRK5wLJqk0dyryBE3uc+Pw+2P0
+ Ni4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=h54Nu6KTKsg+t4tLfwq7mTT1Jk6zAEPmHITrMbOqw2A=;
+ fh=rZZ1Ewxz5HIjG0zJzoh7t/3GPP3sRix3QQW44jxDzSM=;
+ b=R9ZkPm9RQqZSoCiPhjUMORcxKtex+pCumK3dZzZ2E14q9ZXPJ12dsjTFReLwRpR4lL
+ G80aHwR2Nhs+6+GNJbaUh0zkizQHd2+wmQRojj+zmS1PEoH9CECqpa7r32oK1um0C7ns
+ /7Y+DYJRlcXct0wikZPUNb88ec3chGJSUJpkeVdgt90YnnTiqIQN8Yp6gXn3Ho3ycLGE
+ v7IYlNRZJUYZdVh/k6ySBD3lY81JlLvQvNhk9x5bL9Hsgfvc1jrqHApZcdBU3LzcaLdQ
+ vow4ygS0GYPLaSeawZE2RORV8tXW2/h5WG22xEeLdIYl6su6h2r5IHznSRgXWVNAL1LJ
+ QTLw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1783495074; x=1784099874; darn=dpdk.org;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=lNoWrnvV+fySq1NRZweFgBK7ZJDE8RCe4F2H+eqCDGo=;
- b=ZbZ0yu4xo28+EWctjSUJd8fWc25kQsRVFWdOhv9G1BpRh/0IAU9BqJgf3TDyAAVEJx
- iDJ+4JMJ7TNPANiKLqQda5akUMpWvMNbkNrIEoOskivHAbQeMVrdDEEyBhuyIUBohGEB
- qyDcYCwKzpTxxrxHNNaQTQ1scdM7ywqcYI7M2IcYiUKiOFUMCkBBPztInFYOEssbjwYw
- A0z1bvfuRdsR8J6/t2VIuMpk+P5UhMqa54y2pPdtya+2/SDlERmpBAW+B7OUJxoD6Lkp
- 6duTkRnNQVUPf/krdpNJ80////VC6NK4P7NmE5aqACDPPMNw6Ij+t1qrx+KQZF+/HO12
- VVcw==
+ d=gmail.com; s=20251104; t=1783495632; x=1784100432; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=h54Nu6KTKsg+t4tLfwq7mTT1Jk6zAEPmHITrMbOqw2A=;
+ b=S/mHh+JAwSwl1lHnT8kDOLUkiiC4uh9f255wZQuAaIKSV+jPCFlMTBUOkNh8LCSmJc
+ 4dtECbThp87nVQRo2Kw78J9pcPJ+aM2RKrWfwOpQ+9L/vYyDh2YLALfrhfbb6E7v0Tro
+ VNNf58ym5xZG7/GCWVN3rxpwgF4EnxiROFu9kTXKcO6a5PnNu0W1Wr+90hO+Fex5+KLQ
+ EB+AL3MySE392u/+8kIFuFmnAJa2mn1WSq+VSMhbiOxR77qPxfv4L2sa8FC7RG8Ae/xV
+ 2TgiI6Bx7iWicYzZhELA4ZCiKCpOTlSnRTOx5ebhZMrXS8MuPeT/BSHzjTNH+ev94TPA
+ C7sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783495074; x=1784099874;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=lNoWrnvV+fySq1NRZweFgBK7ZJDE8RCe4F2H+eqCDGo=;
- b=D3r915ObLEyC+Cnm8bPSEq2e2GCUJkz6qDvJRW7lo5J6utZAc+TzUS9dwpLNMuQcIX
- m4qWT3Z3+I5wKCk7nv3CU2jrt/9IDVZB2lorOMW1yoXEqck91qgCGr8fs2g5mrKpfWSm
- d60gutCsw4l4xPRn546SrD0fS8qjzF/OgR4Vv9RDXOFxs8SbTrHAlHw0TvEKFwET2nJN
- y08fPnxlPwq0FpooB/Nviz9durAn6ce72dJNKP4orSb8mTZnG+yCCai/dgLjLa7aU9ag
- oLnbzhPEOg6ttFgbt/O2M2BaBF8keZnkrrm4gOBDdei4bwFnoYaMlAGfV2ozvPQVmZVK
- S3KA==
-X-Gm-Message-State: AOJu0Yy+GYh2upQSjZYZNsMZ42WNn81/S3qMLmhoJSGeF5joTCvoZHfp
- rRAnoynRlKHuKIw53MybRQ/JsIEAVVeRtDSik3EgLAWB67HZ3j72PxBa
-X-Gm-Gg: AfdE7ckmCgLzjfKDLzsabOgryc+vSQtvhIu/oDfya1A3DHslf5NbeSuYRpbKA8er66i
- yHXYP2w50wsWpdy6KC2rgHv0EwowEqJ4QzNeEnwPhGUPcbK4B0zLE0DpUTsQ0IjzhfoZmsT9LxF
- bHuo7xyTcZXExZvKxTxIHipw+/h+FSi+kppPUqwcoYE2U7weIqAGxTqLLNgagyCG0CP1JtDk5cN
- 0o0Xf4KHvl8+NRbjwkTfS/fkJg5DNw7lje1XgIfgTMS2Ni2pJl+hUAbG7mLOBTSQiaJgYdRWURR
- 6aEBchpwuYCfb3Hlpl1ZOP71Zo/zRf8feDWOkSz93fg6AjzOmK6F2LE3o/kORZQyH+tbBe3+bIW
- CC+2cetvq0ivTUhwXH+INs34Vl5EU0hHJ4QFAWbZa/sQdJkoyG5ijIkNyUerXdF9GYHWpYppMuZ
- tpjca19wBjHBlazOpFUG82+AIBilF4IGAnLT8=
-X-Received: by 2002:a05:6a20:1615:b0:3c0:9c19:b272 with SMTP id
- adf61e73a8af0-3c0bcc32329mr1530992637.64.1783495073548; 
- Wed, 08 Jul 2026 00:17:53 -0700 (PDT)
-Received: from YTJMJ2RP0G.bytedance.net ([2408:8740:c4ff:1::8])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-ca5afdb7534sm1956997a12.12.2026.07.08.00.17.49
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 08 Jul 2026 00:17:53 -0700 (PDT)
-From: Su Sai <spiderdetective.ss@gmail.com>
-To: stephen@networkplumber.org,
-	marat.khalili@huawei.com
-Cc: dev@dpdk.org,
-	spiderdetective.ss@gmail.com
-Subject: [v5] net/cksum: compute raw cksum for several segments
-Date: Wed,  8 Jul 2026 15:17:42 +0800
-Message-Id: <20260708071742.94924-1-spiderdetective.ss@gmail.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
-In-Reply-To: <20260703074132.2a718abe@phoenix.local>
-References: <20260703074132.2a718abe@phoenix.local>
+ d=1e100.net; s=20251104; t=1783495632; x=1784100432;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=h54Nu6KTKsg+t4tLfwq7mTT1Jk6zAEPmHITrMbOqw2A=;
+ b=GkLJ6YgMdaDUt1Hw09/pM8xXM1/O0MwYI5TfXDGu0jKS0+EHK4U5u8HXPVbDXSSyWK
+ cW854CSmob7qQ+jtbbpiuO7O962Nt/Klv9Y8x8yRntcxFALsxyXQEsu5LgjioG9hjdIP
+ ksMOcP9I0ERRNF+ec+/9QuQaG33sZIdy5c6eNIGeyPrQB6G4lXlHpbC/CSipPR8KB5IL
+ eSyDbDmlGhoAlgZKEiUKLzvF5roigjGz+9xgAZOjqwLNGHsdbxDKXJpwQBGikaOv3yJ/
+ zrMQnWv7DjtpnX1NYu/GmQtcK+kqt/BzlJVDGhiGJY/WzpfkgMeSDuE2SSP/FTkyIV8H
+ TrEQ==
+X-Gm-Message-State: AOJu0YzURkpqD9GTsJeSZy0Okn73PVpNbUj4kD5PIXRbNRv/rU/HR0tz
+ /lPOgK6OKr57Wo8tO+a/uiKwEeqXLimFe6jXvSqIHPFdIqMe7SSw+7rx9pvFjahKeSa5cS6MgLr
+ Sq20rhd+haZPh4S+Tov4dfKsVzPiw9lM=
+X-Gm-Gg: AfdE7clbAUpNYQ8vT3fQoXMThrlVaWA//+RjDjWxTrnP5vJ+z3hjulrFQGzpdR+MzS8
+ ynoGrM7IuVRacewG0rlVCPfk1fmnGy8AfeS38vgW4lTxhpT/zEQE12axCjAWL+9WztgarTfarFD
+ oJniepvFgKaBTaEyE5xnbHCJA6RGf4akFbUlm+/0O2Zd+4rNHNTP5BLU7XVx9fcLMdIqDe4YS+C
+ bqO8aTes+t4WgxxorbNCJzf/Sl4cOa+xr8ZYpMDOnIEBCprfTAwc3fNJsA7zHOJ1ugk5RZw9dYD
+ UtS6lw3z6g==
+X-Received: by 2002:ac8:5fcd:0:b0:51c:1568:3a53 with SMTP id
+ d75a77b69052e-51c8b39902fmr14402021cf.16.1783495631652; Wed, 08 Jul 2026
+ 00:27:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+References: <1f2b21bd87a24610bc09b3b8da8100b5@huawei.com>
+ <20260618063242.99189-1-spiderdetective.ss@gmail.com>
+ <20260703074132.2a718abe@phoenix.local>
+In-Reply-To: <20260703074132.2a718abe@phoenix.local>
+From: su sai <spiderdetective.ss@gmail.com>
+Date: Wed, 8 Jul 2026 15:26:58 +0800
+X-Gm-Features: AVVi8CdTuh6m3P5cnk8-lsBpftNWrZlGcHd97uqJobBQQSMdp0L0fWq9G5cDJrg
+Message-ID: <CAFQeoKgF7t-UjrkUi+NTywuL8JKkrhovWibUw=8VbejWWEaV+Q@mail.gmail.com>
+Subject: Re: [v4] net/cksum: compute raw cksum for several segments
+To: Stephen Hemminger <stephen@networkplumber.org>,
+ Marat Khalili <marat.khalili@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="0000000000009549970656146f0b"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,230 +96,216 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_raw_cksum_mbuf function is used to compute
-the raw checksum of a packet.
-If the packet payload stored in multi mbuf, the function
-will goto the hard case. In hard case,
-the variable 'tmp' is a type of uint32_t,
-so rte_bswap16 will drop high 16 bit.
-Meanwhile, the variable 'sum' is a type of uint32_t,
-so 'sum += tmp' will drop the carry when overflow.
-Both drop will make cksum incorrect.
-This commit fixes the above bug.
+--0000000000009549970656146f0b
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Su Sai <spiderdetective.ss@gmail.com>
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
----
- .mailmap              |   1 +
- app/test/test_cksum.c | 109 ++++++++++++++++++++++++++++++++++++++++++
- lib/net/rte_cksum.h   |  27 +++++++++--
- 3 files changed, 133 insertions(+), 4 deletions(-)
+Rename test_l4_cksum_multi_mbufs to test_l4_cksum_mbuf_chain, resolve
+double-free issue.
 
-diff --git a/.mailmap b/.mailmap
-index 4001e5fb0e..bcf73cb902 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1630,6 +1630,7 @@ Sylvia Grundwürmer <sylvia.grundwuermer@b-plus.com>
- Sylwester Dziedziuch <sylwesterx.dziedziuch@intel.com>
- Sylwia Wnuczko <sylwia.wnuczko@intel.com>
- Szymon Sliwa <szs@semihalf.com>
-+Su Sai <spiderdetective.ss@gmail.com> <susai.ss@bytedance.com>
- Szymon T Cudzilo <szymon.t.cudzilo@intel.com>
- Tadhg Kearney <tadhg.kearney@intel.com>
- Taekyung Kim <kim.tae.kyung@navercorp.com>
-diff --git a/app/test/test_cksum.c b/app/test/test_cksum.c
-index ea443382a1..73f2511731 100644
---- a/app/test/test_cksum.c
-+++ b/app/test/test_cksum.c
-@@ -85,6 +85,42 @@ static const char test_cksum_ipv4_opts_udp[] = {
- 	0x00, 0x35, 0x00, 0x09, 0x89, 0x6f, 0x78,
- };
- 
-+/*
-+ * generated in scapy with
-+ * Ether()/IP()/TCP(options=[NOP,NOP,Timestamps])/os.urandom(113))
-+ */
-+static const char test_cksum_ipv4_tcp_multi_segs[] = {
-+	0x00, 0x16, 0x3e, 0x0b, 0x6b, 0xd2, 0xee, 0xff,
-+	0xff, 0xff, 0xff, 0xff, 0x08, 0x00, 0x45, 0x00,
-+	0x00, 0xa5, 0x46, 0x10, 0x40, 0x00, 0x40, 0x06,
-+	0x80, 0xb5, 0xc0, 0xa8, 0xf9, 0x1d, 0xc0, 0xa8,
-+	0xf9, 0x1e, 0xdc, 0xa2, 0x14, 0x51, 0xbb, 0x8f,
-+	0xa0, 0x00, 0xe4, 0x7c, 0xe4, 0xb8, 0x80, 0x10,
-+	0x02, 0x00, 0x4b, 0xc1, 0x00, 0x00, 0x01, 0x01,
-+	0x08, 0x0a, 0x90, 0x60, 0xf4, 0xff, 0x03, 0xc5,
-+	0xb4, 0x19, 0x77, 0x34, 0xd4, 0xdc, 0x84, 0x86,
-+	0xff, 0x44, 0x09, 0x63, 0x36, 0x2e, 0x26, 0x9b,
-+	0x90, 0x70, 0xf2, 0xed, 0xc8, 0x5b, 0x87, 0xaa,
-+	0xb4, 0x67, 0x6b, 0x32, 0x3d, 0xc4, 0xbf, 0x15,
-+	0xa9, 0x16, 0x6c, 0x2a, 0x9d, 0xb2, 0xb7, 0x6b,
-+	0x58, 0x44, 0x58, 0x12, 0x4b, 0x8f, 0xe5, 0x12,
-+	0x11, 0x90, 0x94, 0x68, 0x37, 0xad, 0x0a, 0x9b,
-+	0xd6, 0x79, 0xf2, 0xb7, 0x31, 0xcf, 0x44, 0x22,
-+	0xc8, 0x99, 0x3f, 0xe5, 0xe7, 0xac, 0xc7, 0x0b,
-+	0x86, 0xdf, 0xda, 0xed, 0x0a, 0x0f, 0x86, 0xd7,
-+	0x48, 0xe2, 0xf1, 0xc2, 0x43, 0xed, 0x47, 0x3a,
-+	0xea, 0x25, 0x2d, 0xd6, 0x60, 0x38, 0x30, 0x07,
-+	0x28, 0xdd, 0x1f, 0x0c, 0xdd, 0x7b, 0x7c, 0xd9,
-+	0x35, 0x9d, 0x14, 0xaa, 0xc6, 0x35, 0xd1, 0x03,
-+	0x38, 0xb1, 0xf5,
-+};
-+
-+static const uint8_t test_cksum_ipv4_tcp_multi_segs_len[] = {
-+	66,  /* the first seg contains all headers, including L2 to L4 */
-+	61,  /* the second seg length is odd, test byte order independent */
-+	52,  /* three segs are sufficient to test the most complex scenarios */
-+};
-+
- /* test l3/l4 checksum api */
- static int
- test_l4_cksum(struct rte_mempool *pktmbuf_pool, const char *pktdata, size_t len)
-@@ -223,6 +259,73 @@ test_l4_cksum(struct rte_mempool *pktmbuf_pool, const char *pktdata, size_t len)
- 	return -1;
- }
- 
-+/* test l4 checksum api for a packet with mbuf chain */
-+static int
-+test_l4_cksum_mbuf_chain(struct rte_mempool *pktmbuf_pool, const char *pktdata, size_t len,
-+			     const uint8_t *segs, size_t segs_len)
-+{
-+	struct rte_mbuf *m[NB_MBUF] = {0};
-+	struct rte_mbuf *m_hdr = NULL;
-+	struct rte_net_hdr_lens hdr_lens;
-+	size_t i, off = 0;
-+	uint32_t packet_type, l3;
-+	void *l3_hdr;
-+	char *data;
-+
-+	for (i = 0; i < segs_len; i++) {
-+		m[i] = rte_pktmbuf_alloc(pktmbuf_pool);
-+		if (m[i] == NULL)
-+			GOTO_FAIL("Cannot allocate mbuf");
-+
-+		data = rte_pktmbuf_append(m[i], segs[i]);
-+		if (data == NULL) {
-+			rte_pktmbuf_free(m[i]);
-+			m[i] = NULL;
-+			GOTO_FAIL("Cannot append data");
-+		}
-+
-+		memcpy(data, pktdata + off, segs[i]);
-+		off += segs[i];
-+
-+		if (m_hdr) {
-+			if (rte_pktmbuf_chain(m_hdr, m[i])) {
-+				rte_pktmbuf_free(m[i]);
-+				m[i] = NULL;
-+				GOTO_FAIL("Cannot chain mbuf");
-+			}
-+		} else {
-+			m_hdr = m[i];
-+		}
-+	}
-+
-+	if (off != len)
-+		GOTO_FAIL("Invalid segs");
-+
-+	packet_type = rte_net_get_ptype(m_hdr, &hdr_lens, RTE_PTYPE_ALL_MASK);
-+	l3 = packet_type & RTE_PTYPE_L3_MASK;
-+
-+	l3_hdr = rte_pktmbuf_mtod_offset(m_hdr, void *, hdr_lens.l2_len);
-+	off = hdr_lens.l2_len + hdr_lens.l3_len;
-+
-+	if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
-+		if (rte_ipv4_udptcp_cksum_mbuf_verify(m_hdr, l3_hdr, off) != 0)
-+			GOTO_FAIL("Invalid L4 checksum verification for mbuf chain");
-+	} else if (l3 == RTE_PTYPE_L3_IPV6 || l3 == RTE_PTYPE_L3_IPV6_EXT) {
-+		if (rte_ipv6_udptcp_cksum_mbuf_verify(m_hdr, l3_hdr, off) != 0)
-+			GOTO_FAIL("Invalid L4 checksum verification for mbuf chain");
-+	}
-+
-+	rte_pktmbuf_free(m_hdr);
-+
-+	return 0;
-+
-+fail:
-+	if (m_hdr)
-+		rte_pktmbuf_free(m_hdr);
-+
-+	return -1;
-+}
-+
- static int
- test_cksum(void)
- {
-@@ -256,6 +359,12 @@ test_cksum(void)
- 			  sizeof(test_cksum_ipv4_opts_udp)) < 0)
- 		GOTO_FAIL("checksum error on ipv4_opts_udp");
- 
-+	if (test_l4_cksum_mbuf_chain(pktmbuf_pool, test_cksum_ipv4_tcp_multi_segs,
-+			  sizeof(test_cksum_ipv4_tcp_multi_segs),
-+			  test_cksum_ipv4_tcp_multi_segs_len,
-+			  sizeof(test_cksum_ipv4_tcp_multi_segs_len)) < 0)
-+		GOTO_FAIL("checksum error on mbuf chain check");
-+
- 	rte_mempool_free(pktmbuf_pool);
- 
- 	return 0;
-diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
-index a8e8927952..679ba82eb6 100644
---- a/lib/net/rte_cksum.h
-+++ b/lib/net/rte_cksum.h
-@@ -80,6 +80,25 @@ __rte_raw_cksum_reduce(uint32_t sum)
- 	return (uint16_t)sum;
- }
- 
-+/**
-+ * @internal Reduce a sum to the non-complemented checksum.
-+ * Helper routine for the rte_raw_cksum_mbuf().
-+ *
-+ * @param sum
-+ *   Value of the sum.
-+ * @return
-+ *   The non-complemented checksum.
-+ */
-+static inline uint16_t
-+__rte_raw_cksum_reduce_u64(uint64_t sum)
-+{
-+	uint32_t tmp;
-+
-+	tmp = __rte_raw_cksum_reduce((uint32_t)sum);
-+	tmp += __rte_raw_cksum_reduce((uint32_t)(sum >> 32));
-+	return __rte_raw_cksum_reduce(tmp);
-+}
-+
- /**
-  * Process the non-complemented checksum of a buffer.
-  *
-@@ -119,8 +138,8 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t off, uint32_t len,
- {
- 	const struct rte_mbuf *seg;
- 	const char *buf;
--	uint32_t sum, tmp;
--	uint32_t seglen, done;
-+	uint32_t seglen, done, tmp;
-+	uint64_t sum;
- 
- 	/* easy case: all data in the first segment */
- 	if (off + len <= rte_pktmbuf_data_len(m)) {
-@@ -157,7 +176,7 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t off, uint32_t len,
- 	for (;;) {
- 		tmp = __rte_raw_cksum(buf, seglen, 0);
- 		if (done & 1)
--			tmp = rte_bswap16((uint16_t)tmp);
-+			tmp = rte_bswap32(tmp);
- 		sum += tmp;
- 		done += seglen;
- 		if (done == len)
-@@ -169,7 +188,7 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t off, uint32_t len,
- 			seglen = len - done;
- 	}
- 
--	*cksum = __rte_raw_cksum_reduce(sum);
-+	*cksum = __rte_raw_cksum_reduce_u64(sum);
- 	return 0;
- }
- 
--- 
-2.20.1
+On Fri, Jul 3, 2026 at 10:41=E2=80=AFPM Stephen Hemminger <
+stephen@networkplumber.org> wrote:
 
+> On Thu, 18 Jun 2026 14:32:42 +0800
+> Su Sai <spiderdetective.ss@gmail.com> wrote:
+>
+> > The rte_raw_cksum_mbuf function is used to compute
+> > the raw checksum of a packet.
+> > If the packet payload stored in multi mbuf, the function
+> > will goto the hard case. In hard case,
+> > the variable 'tmp' is a type of uint32_t,
+> > so rte_bswap16 will drop high 16 bit.
+> > Meanwhile, the variable 'sum' is a type of uint32_t,
+> > so 'sum +=3D tmp' will drop the carry when overflow.
+> > Both drop will make cksum incorrect.
+> > This commit fixes the above bug.
+> >
+> > Signed-off-by: Su Sai <spiderdetective.ss@gmail.com>
+> > Acked-by: Marat Khalili <marat.khalili@huawei.com>
+> > ---
+>
+> Still one error in the test.
+>
+> Error =E2=80=94 double-free in test_l4_cksum_multi_mbufs() (app/test/test=
+_cksum.c)
+> The segments are chained into one packet (rte_pktmbuf_chain sets
+> m[0]->next =3D m[1], m[1]->next =3D m[2]), but cleanup then calls
+> rte_pktmbuf_free_bulk(m, segs_len) over the array.
+> rte_pktmbuf_free_bulk walks the ->next chain of each array element, so
+> index 0 frees the entire chain (m[0], m[1], m[2]), and indices 1 and 2
+> then free m[1]/m[2] a second time. This fires on the normal success
+> path every run, and on the fail path whenever =E2=89=A52 segments were ch=
+ained
+> =E2=80=94 a debug/ASAN build will abort on the sanity check, and a normal=
+ build
+> corrupts pool accounting. The array-of-independent-mbufs contract that
+> free_bulk expects doesn't hold here because the elements alias one
+> chain. Free the chain once through its head:
+>
+
+--0000000000009549970656146f0b
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div style=3D"color:rgb(0,0,0);font-style:normal;font-vari=
+ant:normal;font-size-adjust:none;font-kerning:auto;font-feature-settings:no=
+rmal;font-stretch:normal;font-size:16px;line-height:24px;font-family:ui-san=
+s-serif,system-ui,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI E=
+moji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;padding=
+:0px;margin:0px;background:none 0% 0%/auto repeat scroll padding-box border=
+-box rgba(0,0,0,0)"><div style=3D"font-style:normal;font-variant:normal;fon=
+t-size-adjust:none;font-kerning:auto;font-feature-settings:normal;font-stre=
+tch:normal;font-size:16px;line-height:24px;font-family:ui-sans-serif,system=
+-ui,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&qu=
+ot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;padding:0px;margin:0p=
+x;background:none 0% 0%/auto repeat scroll padding-box border-box rgba(0,0,=
+0,0)"><div style=3D"font-style:normal;font-variant:normal;font-size-adjust:=
+none;font-kerning:auto;font-feature-settings:normal;font-stretch:normal;fon=
+t-size:16px;line-height:24px;font-family:ui-sans-serif,system-ui,sans-serif=
+,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Sy=
+mbol&quot;,&quot;Noto Color Emoji&quot;;padding:0px 0px 0px 8px;margin:0px;=
+background:none 0% 0%/auto repeat scroll padding-box border-box rgba(0,0,0,=
+0)"><div style=3D"font-style:normal;font-variant:normal;font-size-adjust:no=
+ne;font-kerning:auto;font-feature-settings:normal;font-stretch:normal;font-=
+size:16px;line-height:24px;font-family:ui-sans-serif,system-ui,sans-serif,&=
+quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symb=
+ol&quot;,&quot;Noto Color Emoji&quot;;padding:0px;margin:0px;background:non=
+e 0% 0%/auto repeat scroll padding-box border-box rgba(0,0,0,0)"><div style=
+=3D"font-style:normal;font-variant:normal;font-size-adjust:none;font-kernin=
+g:auto;font-feature-settings:normal;font-stretch:normal;font-size:16px;line=
+-height:24px;font-family:ui-sans-serif,system-ui,sans-serif,&quot;Apple Col=
+or Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot=
+;Noto Color Emoji&quot;;padding:0px;margin:0px;background:none 0% 0%/auto r=
+epeat scroll padding-box border-box rgba(0,0,0,0)"><div style=3D"font-style=
+:normal;font-variant:normal;font-size-adjust:none;font-kerning:auto;font-fe=
+ature-settings:normal;font-stretch:normal;font-size:16px;line-height:24px;f=
+ont-family:ui-sans-serif,system-ui,sans-serif,&quot;Apple Color Emoji&quot;=
+,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Em=
+oji&quot;;padding:0px;margin:0px;background:none 0% 0%/auto repeat scroll p=
+adding-box border-box rgba(0,0,0,0)"><div style=3D"color:rgba(0,0,0,0.85);f=
+ont-style:normal;font-variant:normal;font-size-adjust:none;font-kerning:aut=
+o;font-feature-settings:normal;font-stretch:normal;font-size:16px;line-heig=
+ht:24px;font-family:ui-sans-serif,system-ui,sans-serif,&quot;Apple Color Em=
+oji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto=
+ Color Emoji&quot;;display:flex;padding:0px;margin:0px;background:none 0% 0=
+%/auto repeat scroll padding-box border-box rgba(0,0,0,0)"><div style=3D"fo=
+nt-style:normal;font-variant:normal;font-size-adjust:none;font-kerning:auto=
+;font-feature-settings:normal;font-stretch:normal;font-size:16px;line-heigh=
+t:24px;font-family:ui-sans-serif,system-ui,sans-serif,&quot;Apple Color Emo=
+ji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto =
+Color Emoji&quot;;display:flex;padding:0px;margin:0px;background:none 0% 0%=
+/auto repeat scroll padding-box border-box rgba(0,0,0,0)"><div style=3D"fon=
+t-style:normal;font-variant:normal;font-size-adjust:none;font-kerning:auto;=
+font-feature-settings:normal;font-stretch:normal;font-size:16px;line-height=
+:24px;font-family:ui-sans-serif,system-ui,sans-serif,&quot;Apple Color Emoj=
+i&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto C=
+olor Emoji&quot;;display:grid;padding:0px;margin:0px;background:none 0% 0%/=
+auto repeat scroll padding-box border-box rgba(0,0,0,0)"><div style=3D"font=
+-style:normal;font-variant:normal;font-size-adjust:none;font-kerning:auto;f=
+ont-feature-settings:normal;font-stretch:normal;font-size:16px;line-height:=
+24px;font-family:ui-sans-serif,system-ui,sans-serif,&quot;Apple Color Emoji=
+&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Co=
+lor Emoji&quot;;padding:0px;margin:0px;background:none 0% 0%/auto repeat sc=
+roll padding-box border-box rgba(0,0,0,0)"><div style=3D"font-style:normal;=
+font-variant:normal;font-size-adjust:none;font-kerning:auto;font-feature-se=
+ttings:normal;font-stretch:normal;font-size:16px;line-height:24px;font-fami=
+ly:ui-sans-serif,system-ui,sans-serif,&quot;Apple Color Emoji&quot;,&quot;S=
+egoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot=
+;;display:flex;padding:0px;margin:0px;background:none 0% 0%/auto repeat scr=
+oll padding-box border-box rgba(0,0,0,0)"><div style=3D"font-style:normal;f=
+ont-variant:normal;font-size-adjust:none;font-kerning:auto;font-feature-set=
+tings:normal;font-stretch:normal;font-size:16px;line-height:24px;font-famil=
+y:ui-sans-serif,system-ui,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Se=
+goe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;=
+;padding:0px;margin:0px;background:none 0% 0%/auto repeat scroll padding-bo=
+x border-box rgba(0,0,0,0)"><div style=3D"font-style:normal;font-variant:no=
+rmal;font-size-adjust:none;font-kerning:auto;font-feature-settings:normal;f=
+ont-stretch:normal;font-size:16px;line-height:24px;font-family:ui-sans-seri=
+f,system-ui,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&q=
+uot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;display:flex;=
+padding:0px;margin:0px;background:none 0% 0%/auto repeat scroll padding-box=
+ border-box rgba(0,0,0,0)"><div style=3D"color:rgb(0,0,0);font-style:normal=
+;font-variant:normal;font-size-adjust:none;font-kerning:auto;font-feature-s=
+ettings:normal;font-stretch:normal;font-size:16px;line-height:24px;font-fam=
+ily:ui-sans-serif,system-ui,sans-serif,&quot;Apple Color Emoji&quot;,&quot;=
+Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quo=
+t;;padding:0px;margin:0px;background:none 0% 0%/auto repeat scroll padding-=
+box border-box rgba(0,0,0,0)"><div style=3D"font-style:normal;font-variant:=
+normal;font-size-adjust:none;font-kerning:auto;font-feature-settings:normal=
+;font-stretch:normal;font-size:16px;line-height:24px;font-family:ui-sans-se=
+rif,system-ui,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji=
+&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;padding:0px=
+;margin:0px;background:none 0% 0%/auto repeat scroll padding-box border-box=
+ rgba(0,0,0,0)"><div style=3D"font-style:normal;font-variant:normal;font-si=
+ze-adjust:none;font-kerning:auto;font-feature-settings:normal;font-stretch:=
+normal;font-size:16px;line-height:24px;font-family:ui-sans-serif,system-ui,=
+sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;S=
+egoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;padding:0px;margin:0px;ba=
+ckground:none 0% 0%/auto repeat scroll padding-box border-box rgba(0,0,0,0)=
+">Rename test_l4_cksum_multi_mbufs to test_l4_cksum_mbuf_chain, resolve dou=
+ble-free issue.</div></div></div></div></div></div></div></div></div></div>=
+</div></div></div></div></div></div><div style=3D"color:rgb(0,0,0);font-sty=
+le:normal;font-variant:normal;font-size-adjust:none;font-kerning:auto;font-=
+feature-settings:normal;font-stretch:normal;font-size:16px;line-height:24px=
+;font-family:ui-sans-serif,system-ui,sans-serif,&quot;Apple Color Emoji&quo=
+t;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color =
+Emoji&quot;;padding:0px;margin:0px;background:none 0% 0%/auto repeat scroll=
+ padding-box border-box rgba(0,0,0,0)"><div style=3D"font-style:normal;font=
+-variant:normal;font-size-adjust:none;font-kerning:auto;font-feature-settin=
+gs:normal;font-stretch:normal;font-size:16px;line-height:24px;font-family:u=
+i-sans-serif,system-ui,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe=
+ UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;pa=
+dding:0px;margin:0px;background:none 0% 0%/auto repeat scroll padding-box b=
+order-box rgba(0,0,0,0)"><div style=3D"font-style:normal;font-variant:norma=
+l;font-size-adjust:none;font-kerning:auto;font-feature-settings:normal;font=
+-stretch:normal;font-size:16px;line-height:24px;font-family:ui-sans-serif,s=
+ystem-ui,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot=
+;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;padding:0px;marg=
+in:0px;background:none 0% 0%/auto repeat scroll padding-box border-box rgba=
+(0,0,0,0)"></div></div></div></div><br><div class=3D"gmail_quote gmail_quot=
+e_container"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, Jul 3, 2026 at 1=
+0:41=E2=80=AFPM Stephen Hemminger &lt;<a href=3D"mailto:stephen@networkplum=
+ber.org">stephen@networkplumber.org</a>&gt; wrote:<br></div><blockquote cla=
+ss=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid =
+rgb(204,204,204);padding-left:1ex">On Thu, 18 Jun 2026 14:32:42 +0800<br>
+Su Sai &lt;<a href=3D"mailto:spiderdetective.ss@gmail.com" target=3D"_blank=
+">spiderdetective.ss@gmail.com</a>&gt; wrote:<br>
+<br>
+&gt; The rte_raw_cksum_mbuf function is used to compute<br>
+&gt; the raw checksum of a packet.<br>
+&gt; If the packet payload stored in multi mbuf, the function<br>
+&gt; will goto the hard case. In hard case,<br>
+&gt; the variable &#39;tmp&#39; is a type of uint32_t,<br>
+&gt; so rte_bswap16 will drop high 16 bit.<br>
+&gt; Meanwhile, the variable &#39;sum&#39; is a type of uint32_t,<br>
+&gt; so &#39;sum +=3D tmp&#39; will drop the carry when overflow.<br>
+&gt; Both drop will make cksum incorrect.<br>
+&gt; This commit fixes the above bug.<br>
+&gt; <br>
+&gt; Signed-off-by: Su Sai &lt;<a href=3D"mailto:spiderdetective.ss@gmail.c=
+om" target=3D"_blank">spiderdetective.ss@gmail.com</a>&gt;<br>
+&gt; Acked-by: Marat Khalili &lt;<a href=3D"mailto:marat.khalili@huawei.com=
+" target=3D"_blank">marat.khalili@huawei.com</a>&gt;<br>
+&gt; ---<br>
+<br>
+Still one error in the test.<br>
+<br>
+Error =E2=80=94 double-free in test_l4_cksum_multi_mbufs() (app/test/test_c=
+ksum.c)<br>
+The segments are chained into one packet (rte_pktmbuf_chain sets<br>
+m[0]-&gt;next =3D m[1], m[1]-&gt;next =3D m[2]), but cleanup then calls<br>
+rte_pktmbuf_free_bulk(m, segs_len) over the array.<br>
+rte_pktmbuf_free_bulk walks the -&gt;next chain of each array element, so<b=
+r>
+index 0 frees the entire chain (m[0], m[1], m[2]), and indices 1 and 2<br>
+then free m[1]/m[2] a second time. This fires on the normal success<br>
+path every run, and on the fail path whenever =E2=89=A52 segments were chai=
+ned<br>
+=E2=80=94 a debug/ASAN build will abort on the sanity check, and a normal b=
+uild<br>
+corrupts pool accounting. The array-of-independent-mbufs contract that<br>
+free_bulk expects doesn&#39;t hold here because the elements alias one<br>
+chain. Free the chain once through its head:<br>
+</blockquote></div>
+
+--0000000000009549970656146f0b--
