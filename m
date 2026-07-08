@@ -2,48 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BA6C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 09:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6921C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 10:33:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4C0E4068E;
-	Wed,  8 Jul 2026 11:40:11 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id 3836940041;
- Wed,  8 Jul 2026 11:40:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5ADF3402D1;
+	Wed,  8 Jul 2026 12:33:15 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id A4BBE40041;
+ Wed,  8 Jul 2026 12:33:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783503611; x=1815039611;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=iWLBmJ2o4a6z6PWeBMeOukhdIowgy6qtvOh07/0IdqE=;
- b=eBCZ+7mV+Lpl+L7wcFlGXAqLT7qmw27sPSD7yGz8g4Mq5SVq1hDVE6ef
- RoQ/srcmENVND3428YwQlM9jReoyRWmtwDRyB1oRauQ0LXADnDTlFfvKs
- gGSO77M/Lxon4KF96zjqZWAPVUPlwsuvuN1PJR6D3MxBB/GLmi5ui0wJC
- 2JfCQUXBFN+zBX3wCs6DJSB8xVWe7/8hhPJhBa3ojqoltXbCWW1ILAUYk
- IHy7TX4DEh1s8mEYKMljWseowJoiO0gSQisu+2pf6NN0QT/IzgCOvhOSi
- HOccnzGl94doFF0mYbIVbPa3LH+Kgvv92A0PjYAOaJPEVPDfQApjNHtMG w==;
-X-CSE-ConnectionGUID: AztLyYR2T9yLtHEICI5nWw==
-X-CSE-MsgGUID: Anc/OHiOQgOnvIl8QU8h7g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11840"; a="84260350"
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="84260350"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jul 2026 02:40:09 -0700
-X-CSE-ConnectionGUID: OAEN7zNRSiW9SuRQNdv8HQ==
-X-CSE-MsgGUID: sNwX5lk8QC2MMb5QTOWx7Q==
+ t=1783506794; x=1815042794;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=ELB0Ae7f+zK/ZAPZYXwTLgNlfrVD6OUFEI4tQ4WIUeM=;
+ b=YodfhjbyQmn9Xm8eMY5mQXIJ4UhAkKHvEkq6h6eEM2PVojS+VB6d2KkD
+ lrZmblNMyvvShQqVvKF8mTPYarkLlFCsgeg+6BjBWqFqVjc4NcLPhAAoU
+ 0+tj75ldAsKs5y7QXJYwSZVB+eFaLQl+9zrrybPwykS1+m0kTY1UqbY7s
+ mGUG8v3yjJhxjvy+prHlSZr7oezokH5/cR5k+F9UQEEvGuBEmAWJG6Ezy
+ cObFAT35nmsQt02d6fJLUF0HnH/ifEkjmyaBv10dL+bE4ujliJWj5mwPg
+ sd8y/gR2Rw6ji8dmX3bVtJxb9aTnBxQc5zkVsezMHHTZq9qLxPmavrUif Q==;
+X-CSE-ConnectionGUID: rFL2b9o5T8e2hRcwMiCX2Q==
+X-CSE-MsgGUID: rT5yFWNCTfyCCAam5vxp6g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11840"; a="86713657"
+X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="86713657"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 08 Jul 2026 03:33:13 -0700
+X-CSE-ConnectionGUID: lzMqiE8jS8mStdI3pksALA==
+X-CSE-MsgGUID: hspR+THwQ8KwHybvXvrV/Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="278617331"
+X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="253760863"
 Received: from pae-14.iind.intel.com ([10.190.203.153])
- by fmviesa001.fm.intel.com with ESMTP; 08 Jul 2026 02:40:05 -0700
+ by orviesa008.jf.intel.com with ESMTP; 08 Jul 2026 03:33:10 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
  Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org,
  Ye Chen <yex.chen@intel.com>
-Subject: [PATCH] net/iavf: fix single VLAN strip in double VLAN mode
-Date: Wed,  8 Jul 2026 09:39:55 +0000
-Message-Id: <20260708093955.495637-1-anurag.mandal@intel.com>
+Subject: [PATCH v2] net/iavf: fix single VLAN strip in double VLAN mode
+Date: Wed,  8 Jul 2026 10:33:00 +0000
+Message-Id: <20260708103300.496488-1-anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260708093955.495637-1-anurag.mandal@intel.com>
+References: <20260708093955.495637-1-anurag.mandal@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -74,7 +76,7 @@ stays enabled.
 Hence, the single VLAN tag still gets stripped.
 This does not honor the application's request.
 
-This patche fixes the aforesaid case.
+This patch fixes the aforesaid case.
 When DVM and QinQ stripping are both enabled, also apply the strip
 enable/disable to the outer VLAN so that single VLAN packets received
 in double VLAN mode respect the single VLAN strip configuration.
@@ -85,6 +87,8 @@ Cc: stable@dpdk.org
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 Tested-by: Ye Chen <yex.chen@intel.com>
 ---
+V2: Spelling correction in commit message
+
  .mailmap                            | 1 +
  drivers/net/intel/iavf/iavf_vchnl.c | 5 +++++
  2 files changed, 6 insertions(+)
