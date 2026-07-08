@@ -2,52 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6921C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 10:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B75C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 11:36:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5ADF3402D1;
-	Wed,  8 Jul 2026 12:33:15 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id A4BBE40041;
- Wed,  8 Jul 2026 12:33:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783506794; x=1815042794;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=ELB0Ae7f+zK/ZAPZYXwTLgNlfrVD6OUFEI4tQ4WIUeM=;
- b=YodfhjbyQmn9Xm8eMY5mQXIJ4UhAkKHvEkq6h6eEM2PVojS+VB6d2KkD
- lrZmblNMyvvShQqVvKF8mTPYarkLlFCsgeg+6BjBWqFqVjc4NcLPhAAoU
- 0+tj75ldAsKs5y7QXJYwSZVB+eFaLQl+9zrrybPwykS1+m0kTY1UqbY7s
- mGUG8v3yjJhxjvy+prHlSZr7oezokH5/cR5k+F9UQEEvGuBEmAWJG6Ezy
- cObFAT35nmsQt02d6fJLUF0HnH/ifEkjmyaBv10dL+bE4ujliJWj5mwPg
- sd8y/gR2Rw6ji8dmX3bVtJxb9aTnBxQc5zkVsezMHHTZq9qLxPmavrUif Q==;
-X-CSE-ConnectionGUID: rFL2b9o5T8e2hRcwMiCX2Q==
-X-CSE-MsgGUID: rT5yFWNCTfyCCAam5vxp6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11840"; a="86713657"
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="86713657"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jul 2026 03:33:13 -0700
-X-CSE-ConnectionGUID: lzMqiE8jS8mStdI3pksALA==
-X-CSE-MsgGUID: hspR+THwQ8KwHybvXvrV/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="253760863"
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by orviesa008.jf.intel.com with ESMTP; 08 Jul 2026 03:33:10 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org,
- Ye Chen <yex.chen@intel.com>
-Subject: [PATCH v2] net/iavf: fix single VLAN strip in double VLAN mode
-Date: Wed,  8 Jul 2026 10:33:00 +0000
-Message-Id: <20260708103300.496488-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260708093955.495637-1-anurag.mandal@intel.com>
-References: <20260708093955.495637-1-anurag.mandal@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id ADC8340268;
+	Wed,  8 Jul 2026 13:36:46 +0200 (CEST)
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+ by mails.dpdk.org (Postfix) with ESMTP id 35C0B40041;
+ Wed,  8 Jul 2026 10:15:12 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 5FC352C0B8C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+ t=1783498511; bh=xJ2Bhcqng2UtVHy26paCDkWCB/vItwvW79lD/onPLcM=;
+ h=From:To:CC:Subject:Date:From;
+ b=txB+hv9k3/dJSVZXVgNhhZgJofXx/sM8aWdbiIW5aG1t9sBveVcRGPI9Y0l0UKURY
+ dKSY5hxf+GAWuCl8n48fRXjiLtvTWplc4dI/2hdUmb/bfNR6htFMPiE90Mwt/H4ejM
+ HvBLVx4kvV0DYLoOle9Mku8KrddlpSRKanPByTJE=
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+ by mx0.infotecs.ru (Postfix) with ESMTP id 5FC352C0B8C;
+ Wed,  8 Jul 2026 11:15:11 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 257D82C0B89
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+ by mx0.infotecs-nt (Postfix) with ESMTP id 257D82C0B89;
+ Wed,  8 Jul 2026 11:15:11 +0300 (MSK)
+From: Andrey Yudin <Andrey.Yudin@infotecs.ru>
+To: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan
+ <yanzhirun_163@163.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, Robin
+ Jarry <rjarry@redhat.com>
+CC: <dev@dpdk.org>, Andrey Yudin <Andrey.Yudin@infotecs.ru>, <stable@dpdk.org>
+Subject: [PATCH] graph: fix xstats of cloned nodes
+Date: Wed, 8 Jul 2026 11:14:19 +0300
+Message-ID: <20260708081420.1100574-1-Andrey.Yudin@infotecs.ru>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [11.0.19.41]
+X-ClientProxiedBy: msk-exch-02.infotecs-nt (10.0.7.192) To
+ msk-exch-02.infotecs-nt (10.0.7.192)
+X-EXCLAIMER-MD-CONFIG: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: Andrey.Yudin@infotecs.ru
+X-KSMG-AntiSpam-Info: LuaCore: 112 0.3.112
+ 7c8d497b0e572fbfa504a2ee62037c045a8cb4ec, {Tracking_ml_letters},
+ {Tracking_from_domain_doesnt_match_to}, infotecs.ru:7.1.1;
+ d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;
+ 127.0.0.199:7.1.2, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 204312 [Jul 08 2026]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.22
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 3.0.0.9059,
+ bases: 2026/07/08 05:05:00 #28416730
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 8
+X-Mailman-Approved-At: Wed, 08 Jul 2026 13:36:45 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,68 +75,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In Double VLAN Mode (DVM) i.e. when RTE_ETH_RX_OFFLOAD_VLAN_EXTEND
-is enabled iavf_config_vlan_strip_v2() only toggles the inner
-VLAN strip setting (0x8100) for the RTE_ETH_RX_OFFLOAD_VLAN_STRIP
-offload, while the outer VLAN strip is controlled independently
-through the QinQ strip path.
+When cloning a node with xstats enabled, xstat_desc entries are copied
+into the rte_node_register structure, but the nb_xstats field is not.
 
-However, in DVM, most hardwares place a single (non-QinQ) VLAN
-tag in the outer position
-As a result, when a single VLAN packet is received and the
-application disables single VLAN tag stripping, only the inner
-VLAN tag strip gets turned off and the outer VLAN tag strip
-stays enabled.
-Hence, the single VLAN tag still gets stripped.
-This does not honor the application's request.
+As a result, the cloned node reports zero available xstats,
+making xstats unusable.
 
-This patch fixes the aforesaid case.
-When DVM and QinQ stripping are both enabled, also apply the strip
-enable/disable to the outer VLAN so that single VLAN packets received
-in double VLAN mode respect the single VLAN strip configuration.
+Copy the nb_xstats field when cloning the node so that cloned nodes
+preserve the xstats configuration of the original node.
 
-Fixes: 8599d7604e0a ("net/iavf: support QinQ strip")
+Fixes: 070db97e017b ("graph: support node xstats")
 Cc: stable@dpdk.org
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-Tested-by: Ye Chen <yex.chen@intel.com>
+Signed-off-by: Andrey Yudin <Andrey.Yudin@infotecs.ru>
 ---
-V2: Spelling correction in commit message
+ lib/graph/node.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- .mailmap                            | 1 +
- drivers/net/intel/iavf/iavf_vchnl.c | 5 +++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/.mailmap b/.mailmap
-index 05a55c0bd6..7ac425f800 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1893,6 +1893,7 @@ Yaron Illouz <yaroni@radcom.com>
- Yaroslav Brustinov <ybrustin@cisco.com>
- Yash Sharma <ysharma@marvell.com>
- Yasufumi Ogawa <ogawa.yasufumi@lab.ntt.co.jp> <yasufum.o@gmail.com>
-+Ye Chen <yex.chen@intel.com>
- Yehor Malikov <yehor.malikov@solidigm.com>
- Yelena Krivosheev <yelena@marvell.com>
- Yerden Zhumabekov <e_zhumabekov@sts.kz> <yerden.zhumabekov@sts.kz>
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index cd6e8325fc..a3cc5459d6 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -922,8 +922,13 @@ iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable)
- 	uint32_t *ethertype;
- 	int qinq = adapter->dev_data->dev_conf.rxmode.offloads &
- 		   RTE_ETH_RX_OFFLOAD_VLAN_EXTEND;
-+	bool strip_qinq = adapter->dev_data->dev_conf.rxmode.offloads &
-+			  RTE_ETH_RX_OFFLOAD_QINQ_STRIP;
- 	int ret;
+diff --git a/lib/graph/node.c b/lib/graph/node.c
+index 1fce3e6632..bb39c616de 100644
+--- a/lib/graph/node.c
++++ b/lib/graph/node.c
+@@ -208,6 +208,7 @@ node_clone(struct node *node, const char *name)
+ 			goto free;
+ 		}
  
-+	if (qinq && strip_qinq)
-+		iavf_config_outer_vlan_strip_v2(adapter, enable);
-+
- 	stripping_caps = &vf->vlan_v2_caps.offloads.stripping_support;
- 
- 	/* When VLAN extend is disabled, Single VLAN mode which is Outer VLAN
++		reg->xstats->nb_xstats = node->xstats->nb_xstats;
+ 		for (i = 0; i < node->xstats->nb_xstats; i++)
+ 			if (rte_strscpy(reg->xstats->xstat_desc[i], node->xstats->xstat_desc[i],
+ 					RTE_NODE_XSTAT_DESC_SIZE) < 0)
 -- 
-2.34.1
+2.47.3
 
