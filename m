@@ -2,52 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC65C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 18:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C5FC43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 20:13:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43D8640268;
-	Wed,  8 Jul 2026 20:59:03 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 488C640265;
- Wed,  8 Jul 2026 20:59:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783537142; x=1815073142;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=9ACsL3qIuiKSXhktBWa1hUx9+akbS0HQVF3xLRudb8o=;
- b=ktaelXCyuGeRTT2oyjAKhP21C9hkmJsIziY6mm/kk4NGLTOy0v85kP/+
- DMz78XiWmHEdcgQuZ0JTq0j3aV9J1BwO5Uz/teUdidekJskCQhY7en5CU
- m7TKG0iqUbu3ei8ofyI3W9nVgBaD/dpvb1DjL09RIW5CRdLilTcU1zxQ6
- kDWIKGIjSAed+vKj9kUolCjaWTfrPN76HV7kla/2dTMJKX7ogHooCQK8b
- kK/E7uq7T91GKWWyQCpo2kLjFF44ltAKUkM2nk9HJV87lIwhgV6ss3qHG
- fk92Q39n2KedMMlkNqkGVBVN2W5mfDwm/8PYD7VRxNKWm0t/+JfxlZDil g==;
-X-CSE-ConnectionGUID: UQV01/GWSt+bwF+3+Cp0Bw==
-X-CSE-MsgGUID: Nwq0BLx6RW+zr1XXVqU8Gw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="88126759"
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="88126759"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jul 2026 11:59:01 -0700
-X-CSE-ConnectionGUID: xrYQf03KSh+TqcDUMzFeeQ==
-X-CSE-MsgGUID: myZX4Ud5RjmaAZ6YI6LuDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="250371424"
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by fmviesa010.fm.intel.com with ESMTP; 08 Jul 2026 11:58:58 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F22F24026A;
+	Wed,  8 Jul 2026 22:13:17 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 423B540265
+ for <dev@dpdk.org>; Wed,  8 Jul 2026 22:13:16 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 360ED4B84D; Wed,  8 Jul 2026 22:13:16 +0200 (CEST)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org,
- Ye Chen <yex.chen@intel.com>
-Subject: [PATCH v3] net/iavf: fix single VLAN strip in double VLAN mode
-Date: Wed,  8 Jul 2026 18:58:47 +0000
-Message-Id: <20260708185847.550732-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260708093955.495637-1-anurag.mandal@intel.com>
-References: <20260708093955.495637-1-anurag.mandal@intel.com>
+Subject: [DPDK/cryptodev Bug 1966] crypto-perf application segmentation
+ faults where it previously didn't
+Date: Wed, 08 Jul 2026 20:13:16 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: cryptodev
+X-Bugzilla-Version: 26.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: major
+X-Bugzilla-Who: abailey@iol.unh.edu
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1966-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,69 +55,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In Double VLAN Mode (DVM) i.e. when RTE_ETH_RX_OFFLOAD_VLAN_EXTEND
-is enabled iavf_config_vlan_strip_v2() only toggles the inner
-VLAN strip setting (0x8100) for the RTE_ETH_RX_OFFLOAD_VLAN_STRIP
-offload, while the outer VLAN strip is controlled independently
-through the QinQ strip path.
+http://bugs.dpdk.org/show_bug.cgi?id=3D1966
 
-However, in DVM, most hardwares place a single (non-QinQ) VLAN
-tag in the outer position
-As a result, when a single VLAN packet is received and the
-application disables single VLAN tag stripping, only the inner
-VLAN tag strip gets turned off and the outer VLAN tag strip
-stays enabled.
-Hence, the single VLAN tag still gets stripped.
-This does not honor the application's request.
+            Bug ID: 1966
+           Summary: crypto-perf application segmentation faults where it
+                    previously didn't
+           Product: DPDK
+           Version: 26.07
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: major
+          Priority: Normal
+         Component: cryptodev
+          Assignee: dev@dpdk.org
+          Reporter: abailey@iol.unh.edu
+  Target Milestone: ---
 
-This patch fixes the aforesaid case.
-When DVM and QinQ stripping are both enabled, also apply the strip
-enable/disable to the outer VLAN so that single VLAN packets received
-in double VLAN mode respect the single VLAN strip configuration.
+Running the dpdk-crypto-perf application with the following args creates a
+segmentation fault. I am testing on an Intel QAT 8970 on an aarch64 system =
+with
+a single virtual function bound to vfio-pci. To the best of my knowledge, t=
+his
+was not seen in testing prior to the merge of 26.07-rc2.
 
-Fixes: 8599d7604e0a ("net/iavf: support QinQ strip")
-Cc: stable@dpdk.org
+sudo ./dpdk-test-crypto-perf=20
+-l 1-2=20
+-n 4=20
+--file-prefix=3Ddpdk_1_20260708200005=20
+-a 0000:03:01.0=20
+--=20
+--aead-aad-sz=3D16=20
+--aead-algo=3Daes-gcm=20
+--aead-iv-sz=3D12=20
+--aead-key-sz=3D16=20
+--aead-op=3Dencrypt=20
+--buffer-sz=3D64,512,2048=20
+--devtype=3Dcrypto_qat=20
+--digest-sz=3D16=20
+--optype=3Daead=20
+--ptest=3Dthroughput=20
+--silent=20
+--total-ops=3D10000000'
 
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-Tested-by: Ye Chen <yex.chen@intel.com>
----
-V3: Restricted to VLAN TPID 0x8100
-V2: Spelling correction in commit message
+' returned a non-zero exit code: 139
+16:00:57  Stderr: EAL: Detected CPU lcores: 160
+16:00:57  EAL: Detected NUMA nodes: 2
+16:00:57  EAL: Detected static linkage of DPDK
+16:00:57  EAL: Multi-process socket
+/var/run/dpdk/dpdk_1_20260708200005/mp_socket
+16:00:57  EAL: Selected IOVA mode 'PA'
+16:00:57  EAL: VFIO support initialized
+16:00:57  EAL: Using IOMMU type 1 (Type 1)
+16:00:57  CRYPTODEV: Creating cryptodev 0000:03:01.0_qat_asym
+16:00:57  CRYPTODEV: Initialisation parameters - name:
+0000:03:01.0_qat_asym,socket id: 0, max queue pairs: 0
+16:00:57  CRYPTODEV: Creating cryptodev 0000:03:01.0_qat_sym
+16:00:57  CRYPTODEV: Initialisation parameters - name:
+0000:03:01.0_qat_sym,socket id: 0, max queue pairs: 0
+16:00:57  Segmentation fault (core dumped)
 
- .mailmap                            | 1 +
- drivers/net/intel/iavf/iavf_vchnl.c | 5 +++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/.mailmap b/.mailmap
-index 05a55c0bd6..7ac425f800 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1893,6 +1893,7 @@ Yaron Illouz <yaroni@radcom.com>
- Yaroslav Brustinov <ybrustin@cisco.com>
- Yash Sharma <ysharma@marvell.com>
- Yasufumi Ogawa <ogawa.yasufumi@lab.ntt.co.jp> <yasufum.o@gmail.com>
-+Ye Chen <yex.chen@intel.com>
- Yehor Malikov <yehor.malikov@solidigm.com>
- Yelena Krivosheev <yelena@marvell.com>
- Yerden Zhumabekov <e_zhumabekov@sts.kz> <yerden.zhumabekov@sts.kz>
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index cd6e8325fc..f8fffa7802 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -922,8 +922,13 @@ iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable)
- 	uint32_t *ethertype;
- 	int qinq = adapter->dev_data->dev_conf.rxmode.offloads &
- 		   RTE_ETH_RX_OFFLOAD_VLAN_EXTEND;
-+	bool strip_qinq = adapter->dev_data->dev_conf.rxmode.offloads &
-+			  RTE_ETH_RX_OFFLOAD_QINQ_STRIP;
- 	int ret;
- 
-+	if (qinq && strip_qinq && adapter->tpid == RTE_ETHER_TYPE_VLAN)
-+		iavf_config_outer_vlan_strip_v2(adapter, enable);
-+
- 	stripping_caps = &vf->vlan_v2_caps.offloads.stripping_support;
- 
- 	/* When VLAN extend is disabled, Single VLAN mode which is Outer VLAN
--- 
-2.34.1
-
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
