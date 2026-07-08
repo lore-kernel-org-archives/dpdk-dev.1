@@ -2,77 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A136C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 15:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCC3C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 16:24:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E269F40268;
-	Wed,  8 Jul 2026 17:48:09 +0200 (CEST)
-Received: from fhigh-b1-smtp.messagingengine.com
- (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
- by mails.dpdk.org (Postfix) with ESMTP id 29DAF40265
- for <dev@dpdk.org>; Wed,  8 Jul 2026 17:48:09 +0200 (CEST)
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 5332B7A0097;
- Wed,  8 Jul 2026 11:48:08 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-12.internal (MEProxy); Wed, 08 Jul 2026 11:48:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1783525688;
- x=1783612088; bh=q8pCio9tYe//Kmw9nc91kUQwJ/XaVfQnPY1p2UTWzFk=; b=
- aajFtUurlYKAKAUuiHzskiX+ov9Eyz5luiJhC5fQudOM95ViyepQxevwWK05z/io
- /EI2BqFTym4bc1cAEpOwnOuTD/jFxKXdA0IYE9MdVYUr87t0U+8wM7fVLjPLVRUJ
- tR4H88rZFFnvO+dq1oC/qabv1QQGaCBXIaDgeMqVOdvmlc5jp2PpuMUW/lwN96Ib
- x8RG6S0/n4KiL6bC8kIt2L/LfvZEM53+doKq/AJcQdUMwKozGaevdiIyKvH93dor
- wNkE8acvldrJHwx4c6PdcdM2QP0z8Mj27CrHmy2FnxP0H3jRT9Dt7AM/os3KlelB
- /hs643a9mAgU+fP5TmvWiQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783525688; x=
- 1783612088; bh=q8pCio9tYe//Kmw9nc91kUQwJ/XaVfQnPY1p2UTWzFk=; b=T
- D178um0OxclEYj6nBLCAa0PIv4DOhwl1sBCsB5E+LNyyWweealz7yvp+HJ4pLBdw
- BvLipQJHCQqHlxuv4c18cbJmrARuf93AmeVEuYRHZzAWGSE6/Z6qJvhJEZ3gJ8OO
- 5+DTbqHJXHHnjmkEMrs9fyurJpnjoj5xRcpa4v2mhUqf8QNgB3Pz4Kpt5OsEGUKg
- Y1MYnCM2tWITUktUIISG+NktP8Fq07/s+1DwVwhKTP07Y/Pl/T/XT4N1WU3+DN85
- eePnyPFn0wDFHBsYKuPLIFFbnYCrGMMG0QROnE6D2qRRAF7PoUgHCnf6wxCB+pQJ
- h4IrF7fWM/j50IXVO/FcA==
-X-ME-Sender: <xms:N3FOaptcXPctotj1sJmNKgNdYP6bYgTXHwjpA56BtoY0s_b3-wPOsg>
- <xme:N3FOaodP_u4vcpTONJYyQ0W999-7bw99VcDC3xWTISlqQ6p6srawK8m3t_v5Qi0gL
- nXIJEUgRhTfYfFQ5hfxw25kGtw1G11hoQPYJi47Pou-fmSZjX9n>
-X-ME-Received: <xmr:N3FOaqYceNRzlQyny84xt0qTrO4FV8ldJazyc8jMELqIfFoNLZ1XDaFcw7Gad2pbjFxF_88IOxq6cCEZmu6YEEAp8w>
-X-ME-Proxy-Cause: dmFkZTGEmIb1D1SONjXPFEAdQZBFugedA4vvxwrIgryjvk8hbr4xdGl1f7N8BFxz6akgQ8
- GSIG45UA0i790PwLyZCRnYCqDpC/0SWh4n7viiCMdAbZ/+Mb7EEkhk8HuXu8Rw35VVd2jD
- wY8L4W9y5wNfrs0bqXrfPYQmP8ACSEVqZVL+TB2gwWCZWHwON3UnyMws54SUeDkPTDEhZv
- cYWIpYqoWa4qBhSH0cQParKjuQISmvDVMPCTArQZs9pTk1iRlWSgwmFEJL+N60gyO1VYfZ
- 47QzPy3nu/inqS3IiuF+/5mezZhm6V9C3+8mdzt5Ix3gGhLqsRYlqVYdESD0UcEfHUGObG
- 1QszEDBn0YIiEsbPzjuPJ2N/zXznc+4SF/3BzeO0T12i8dUlJYNnA5yG23DoCb1j26k/RS
- uArxaA8ZnhlHbRtLpWha0YrI+pnJCqs3muxMUHXkB6OnU/DulLiji5Tp5d/o3nibsqsydg
- NlOGMEfEskDg8thmRTtPK3nkAGsV0CeZmVYWax1JxH7PUQSLlAeAVBppXLTjfLhoMVsDLJ
- Ma2AvRJJ3NCPx8zKsvGpuEP33g07OiVXJZxLFdT+Mr/msN3t9nbRDc6ynGMNOoyeczEaX9
- 0050sH7SSdhS0YwqHoQnSiZPHZCLku28HUWO3zMed7/aTFV8B8lZjEfSdBKQ
-X-ME-Proxy: <xmx:N3FOarWfw-VkdAOaXOsNTXmzaI2WnXCR39aR2v0pcYzWQcAAx0E1Cg>
- <xmx:N3FOasgbarBF410OFNHMmGnfCrsKt0qcxo0azb3nChR_HcEJ6NORkA>
- <xmx:N3FOapVvGxx7g2IXRPBy8yM2sYAKMumTSAEy6W9tRVphCUOoFoFgdQ>
- <xmx:N3FOajMT34yQZbpRP0HMTEV7RkG62CRf0fgD_grdHk-dHqYvvPnV_A>
- <xmx:OHFOaroZH6jXhOsn-T_VgxVlacCpzmqayAdUAV9QzzkLxD02nXiqWEdu>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Jul 2026 11:48:07 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Lincoln Lavoie <lylavoie@iol.unh.edu>
-Cc: dev <dev@dpdk.org>
-Subject: Re: DTS code coverage question
-Date: Wed, 08 Jul 2026 17:48:03 +0200
-Message-ID: <py5Ntr2DSbud_I-983p8ug@monjalon.net>
-In-Reply-To: <CAOE1vsNCkhZ8q7ieRAGbJZTFg+xUsjBXXOmegXdoG6L24-Y2HQ@mail.gmail.com>
-References: <CAOE1vsNCkhZ8q7ieRAGbJZTFg+xUsjBXXOmegXdoG6L24-Y2HQ@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5B5CA40268;
+	Wed,  8 Jul 2026 18:24:44 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id E6B5240265
+ for <dev@dpdk.org>; Wed,  8 Jul 2026 18:24:42 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BDCCA20BBF;
+ Wed,  8 Jul 2026 18:24:42 +0200 (CEST)
+Content-class: urn:content-classes:message
+Subject: RE: [PATCH v8] mempool: improve cache behaviour and performance
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Date: Wed, 8 Jul 2026 18:24:41 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65964@smartserver.smartshare.dk>
+In-Reply-To: <LV2PR12MB5893086C50C6C4752CBA46BEA4FF2@LV2PR12MB5893.namprd12.prod.outlook.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v8] mempool: improve cache behaviour and performance
+Thread-Index: AQHc9BgqU5MXD4EJbU6GnkYjz7nN67Y3qjmAgCwI/3CAACj5IIAAEDUwgAASKxA=
+References: <20260408141315.904381-1-mb@smartsharesystems.com>
+ <20260604114851.12586-1-mb@smartsharesystems.com>
+ <VxW5gWu4QO2u3TstS3BuBw@monjalon.net>
+ <LV2PR12MB589331A1E8F78B5C9F3DC9C6A4FF2@LV2PR12MB5893.namprd12.prod.outlook.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65962@smartserver.smartshare.dk>
+ <LV2PR12MB5893086C50C6C4752CBA46BEA4FF2@LV2PR12MB5893.namprd12.prod.outlook.com>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Wisam Jaddo" <wisamm@nvidia.com>,
+ "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
+Cc: <dev@dpdk.org>, "Raslan Darawsheh" <rasland@nvidia.com>,
+ "Maayan Kashani" <mkashani@nvidia.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,32 +54,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-11/06/2026 16:29, Lincoln Lavoie:
-> Hello All,
-> 
-> We have a patch into the 26.07 release that will enable generating
-> code coverage reports when DTS is run. The community lab can then
-> generate coverage reports, like we do for unit testing
-> (https://lab.dpdk.org/results/dashboard/code-coverage).
-> 
-> The question is, with DTS, tests can run on combinations of NICs, etc.
-> So how should those be factored into the reporting.  We can do 1 of
-> the following:
-> 
-> Option 1: Collect coverage reports per NIC / PMD
-> Option 2: Aggregate (combine) reports from multiple NICs / PMDs into a
-> single report
-> Option 3: Only run it on one NIC / PMD, assuming specific PMDs don't
-> change the coverage much.
-> 
-> Is there a specific direction the community would prefer?
-
-As discussed today in the techboard meeting,
-we have limited number of NICs in the lab at the moment,
-so it's probably better to start small
-and focus on the libraries coverage.
-If some NICs help to cover more library features, let's combine them.
-
-
+PiBGcm9tOiBXaXNhbSBKYWRkbyBbbWFpbHRvOndpc2FtbUBudmlkaWEuY29tXQ0KPiBTZW50OiBX
+ZWRuZXNkYXksIDggSnVseSAyMDI2IDE3LjA1DQo+IA0KPiBIaSwNCj4gDQo+IFRlc3RlZCBvbiBB
+Uk0gQkYzOg0KPiBjb21tYW5kOg0KPiAuIC9kcGRrLXRlc3RwbWQgLW4gNCAgLWEgMDAwMDowMzow
+MC4wLGR2X2Zsb3dfZW49MiAgLWENCj4gMDAwMDowMzowMC4xLGR2X2Zsb3dfZW49MiAgLWEgYXV4
+aWxpYXJ5OiAgLWEgMDA6MDAuMCAtYyAweDMwICAtLSAtLQ0KPiBtYmNhY2hlPTUxMiAtaSAgLS1u
+Yi1jb3Jlcz0xICAtLWJ1cnN0PTY0IC0tdHhkPTI1NiAtLXJ4ZD0yNTYgIC0tcmVjb3JkLQ0KPiBi
+dXJzdC1zdGF0cyAtLXJlY29yZC1jb3JlLWN5Y2xlcyAtLWF1dG8tc3RhcnQNCg0KVGhhbmsgeW91
+IGZvciB0aGUgZGV0YWlsZWQgcmVzcG9uc2UuDQoNCkFzIG5vdGVkIGluIHRoZSByZWxlYXNlIG5v
+dGVzIHdpdGggdGhlIHBhdGNoLCB0aGUgZWZmZWN0aXZlIG1lbXBvb2wgY2FjaGUgc2l6ZSB3YXMg
+Y2hhbmdlZCB0byBubyBsb25nZXIgYmUgMS41IHRpbWVzIHRoZSBjb25maWd1cmVkIGNhY2hlIHNp
+emUuIChUaGlzIGNoYW5nZSBmaXhlZCBidWcgMTAyNyBbQloxMDI3XS4pDQpJLmUuIHdpdGggeW91
+ciB0ZXN0cG1kIHBhcmFtZXRlcnMgdGhlIGVmZmVjdGl2ZSBtYnVmIG1lbXBvb2wgY2FjaGUgc2l6
+ZSB3YXMgcmVkdWNlZCBmcm9tIDc2OCAoMS41ICogNTEyKSB0byA1MTIgbWJ1ZnMuDQpJbiBvcmRl
+ciB0byB0ZXN0IHdpdGggdGhlIHNhbWUgZWZmZWN0aXZlIG1idWYgbWVtcG9vbCBjYWNoZSBzaXpl
+LCB5b3UgbmVlZCB0byBwYXNzIC0tbWJjYWNoZT03NjguDQpBbmQgc2luY2UgNzY4IGV4Y2VlZHMg
+UlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJWkUgKGRlZmF1bHQgNTEyKSBpbiBydGVfY29uZmlnLmgs
+IHlvdSBhbHNvIG5lZWQgdG8gcmVidWlsZCBEUERLIHdpdGggdGhhdCBzZXQgdG8gMTAyNCBpbnN0
+ZWFkIG9mIDUxMi4NCg0KW0JaMTAyN10gaHR0cHM6Ly9idWdzLmRwZGsub3JnL3Nob3dfYnVnLmNn
+aT9pZD0xMDI3DQoNClBsZWFzZSBsZXQgdXMga25vdyB5b3VyIHVwZGF0ZWQgdGVzdCByZXN1bHRz
+LCBpZiB5b3UgZGVjaWRlIHRvIHJldGVzdCB3aXRoIC0tbWJjYWNoZT03NjggYW5kIERQREsgcmVi
+dWlsdCB3aXRoIFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFIDEwMjQuDQoNCj4gDQo+IE5vIG9m
+ZmxvYWRzLCBwbGFpbiB0ZXN0cG1kIHdpdGggYXV0by1zdGFydC4NCj4gT24gdGhlIG90aGVyIGVu
+ZCBJIGhhdmUgaXhpYSBnZW5lcmF0aW5nIHRoZSBpcHY0X3VkcCB0cmFmZmljLCB3aXRoIGRlc3QN
+Cj4gdWRwIHJhbmdlIGZyb20gNjUwMjQgdG8gNjUyODAgIlRvIHNlbmQgZGlmZmVyZW50IHBhY2tl
+dHMgd2l0aCBtc2cgc2l6ZQ0KPiA2NEJ5dGVzLg0KPiANCj4gV2Ugc2VuZCAxMDAlIG9uIFRYIHNp
+ZGUsIGFuZCB3ZSByZWFkIHdoYXQgd2UgcmVhY3RpdmUgYmFjayBvbiBSWCBzaWRlDQo+IGluIGl4
+aWEgInVzaW5nIHR3byBwb3J0cyBhZ2cuIg0KPiBUaGUgcmVzdWx0cyB0aGF0IHdlIHN0YXJ0IHRv
+IHNlZSBhZnRlciB0aGlzIGNvbW1pdCBpcyBhIGRlZ3JhZGF0aW9uIG9mDQo+IDEuOCUgLSAyJQ0K
+PiANCj4gQlJzLA0KPiBXaXNhbSBKYWRkbw0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
+LS0tLQ0KPiA+IEZyb206IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+
+DQo+ID4gU2VudDogV2VkbmVzZGF5LCBKdWx5IDgsIDIwMjYgNTowOSBQTQ0KPiA+IFRvOiBXaXNh
+bSBKYWRkbyA8d2lzYW1tQG52aWRpYS5jb20+OyBOQlUtQ29udGFjdC1UaG9tYXMgTW9uamFsb24N
+Cj4gPiAoRVhURVJOQUwpIDx0aG9tYXNAbW9uamFsb24ubmV0Pg0KPiA+IENjOiBkZXZAZHBkay5v
+cmc7IEFuZHJldyBSeWJjaGVua28gPGFuZHJldy5yeWJjaGVua29Ab2t0ZXRsYWJzLnJ1PjsNCj4g
+PiBSYXNsYW4gRGFyYXdzaGVoIDxyYXNsYW5kQG52aWRpYS5jb20+OyBNYWF5YW4gS2FzaGFuaQ0K
+PiA+IDxta2FzaGFuaUBudmlkaWEuY29tPg0KPiA+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggdjhdIG1l
+bXBvb2w6IGltcHJvdmUgY2FjaGUgYmVoYXZpb3VyIGFuZA0KPiBwZXJmb3JtYW5jZQ0KPiA+DQo+
+ID4gPiBGcm9tOiBXaXNhbSBKYWRkbyBbbWFpbHRvOndpc2FtbUBudmlkaWEuY29tXQ0KPiA+ID4g
+U2VudDogV2VkbmVzZGF5LCA4IEp1bHkgMjAyNiAxNC4yOA0KPiA+ID4NCj4gPiA+IEhpLA0KPiA+
+ID4NCj4gPiA+IE91ciBpbnRlcm5hbCBwZXJmb3JtYW5jZSB0ZXN0aW5nIGFyZSBzaG93aW5nIGRl
+Z3JhZGF0aW9uIHN0YXJ0aW5nDQo+IGZyb20NCj4gPiA+IHRoaXMgY29tbWl0Lg0KPiA+ID4gVGhl
+IGRlZ3JhZGF0aW9uIGlzIGFib3V0IDEuOCUgLSAyJSBvbiBzbWFsbCBtc2cgc3ppZXMuDQo+ID4N
+Cj4gPiBXaGF0IGRvIHlvdSBtZWFuICJzbWFsbCBtZXNzYWdlIHNpemVzIj8NCj4gPg0KPiA+IEFs
+c28sIHBsZWFzZSBzaGFyZSBtb3JlIGRldGFpbHMgYWJvdXQgdGhlIHRlc3QgY2FzZToNCj4gPiBB
+Y2Nlc3MgcGF0dGVybiwgZS5nLiBwaXBlbGluZWQgYWNyb3NzIG11bHRpcGxlIHRocmVhZHMgb3Ig
+cnVuLXRvLQ0KPiBjb21wbGV0aW9uPyBJZg0KPiA+IHBvc3NpYmxlLCBsaW5rIHRvIHRlc3QgY2Fz
+ZSBzb3VyY2UgY29kZT8NCj4gPiBHZXQgYW5kIHB1dCBidXJzdCBzaXplcz8NCj4gPiBNZW1wb29s
+IGNhY2hlIHNpemU/DQo+ID4gTWVtcG9vbCBkcml2ZXI/DQo+ID4NCj4gPiBQUzogSSBhc3N1bWUg
+aXQgaXMgYWJvdXQgbWJ1ZiBtZW1wb29sLiBPciBpcyBpdCBzb21lIG90aGVyIG9iamVjdA0KPiB0
+eXBlIGluIHRoZQ0KPiA+IG1lbXBvb2w/DQo+ID4NCj4gPiA+DQo+ID4gPiBCUnMsDQo+ID4gPiBX
+aXNhbSBKYWRkbw0KPiA+ID4NCj4gPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
+PiA+ID4gRnJvbTogVGhvbWFzIE1vbmphbG9uIDx0aG9tYXNAbW9uamFsb24ubmV0Pg0KPiA+ID4g
+PiBTZW50OiBXZWRuZXNkYXksIEp1bmUgMTAsIDIwMjYgMjowNyBQTQ0KPiA+ID4gPiBUbzogTW9y
+dGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4gPiA+ID4gQ2M6IGRldkBk
+cGRrLm9yZzsgQW5kcmV3IFJ5YmNoZW5rbw0KPiA8YW5kcmV3LnJ5YmNoZW5rb0Bva3RldGxhYnMu
+cnU+DQo+ID4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjhdIG1lbXBvb2w6IGltcHJvdmUgY2Fj
+aGUgYmVoYXZpb3VyIGFuZA0KPiA+ID4gcGVyZm9ybWFuY2UNCj4gPiA+ID4NCj4gPiA+ID4gMDQv
+MDYvMjAyNiAxMzo0OCwgTW9ydGVuIEJyw7hydXA6DQo+ID4gPiA+ID4gVGhpcyBwYXRjaCByZWZh
+Y3RvcnMgdGhlIG1lbXBvb2wgY2FjaGUgdG8gZWxpbWluYXRlIHNvbWUNCj4gPiA+ID4gPiB1bmV4
+cGVjdGVkIGJlaGF2aW91ciBhbmQgcmVkdWNlIHRoZSBtZW1wb29sIGNhY2hlIG1pc3MgcmF0ZS4N
+Cj4gPiA+ID4NCj4gPiA+ID4gQXBwbGllZCwgdGhhbmtzLg0KPiA+ID4gPg0KPiA+ID4gPg0KDQo=
