@@ -2,45 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCC3C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 16:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A952C43458
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 17:25:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5B5CA40268;
-	Wed,  8 Jul 2026 18:24:44 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id E6B5240265
- for <dev@dpdk.org>; Wed,  8 Jul 2026 18:24:42 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BDCCA20BBF;
- Wed,  8 Jul 2026 18:24:42 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [PATCH v8] mempool: improve cache behaviour and performance
+	by mails.dpdk.org (Postfix) with ESMTP id CC228402CF;
+	Wed,  8 Jul 2026 19:25:52 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 05E6940268
+ for <dev@dpdk.org>; Wed,  8 Jul 2026 19:25:52 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3A611A9A;
+ Wed,  8 Jul 2026 10:25:46 -0700 (PDT)
+Received: from [10.57.80.210] (unknown [10.57.80.210])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13F533F905;
+ Wed,  8 Jul 2026 10:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+ t=1783531551; bh=B6D8J+9eai7qQ2BjdCSJJs0J0fteES5RtcEQeDUOCxg=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=pzzPcJ+ffoDRSALv5/e7YwtQgMxlULgHRdLY2bMplJV3WSnuSvLe/5yRRhL/Eszmz
+ rqnTiuDB9L1oZa/fh8zkaz1XLXed2MhJmRwHkgNkzuuewgZjjcbaqyN0RqbMr1CXQ8
+ 0JmbOkOx2YsiBg7IrPs5pTP6yPdxUK78bM25uAuk=
+Message-ID: <1fdd3b4a-32ad-4e6e-b0eb-20380b1e72b4@arm.com>
+Date: Wed, 8 Jul 2026 18:25:48 +0100
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Date: Wed, 8 Jul 2026 18:24:41 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65964@smartserver.smartshare.dk>
-In-Reply-To: <LV2PR12MB5893086C50C6C4752CBA46BEA4FF2@LV2PR12MB5893.namprd12.prod.outlook.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v8] mempool: improve cache behaviour and performance
-Thread-Index: AQHc9BgqU5MXD4EJbU6GnkYjz7nN67Y3qjmAgCwI/3CAACj5IIAAEDUwgAASKxA=
-References: <20260408141315.904381-1-mb@smartsharesystems.com>
- <20260604114851.12586-1-mb@smartsharesystems.com>
- <VxW5gWu4QO2u3TstS3BuBw@monjalon.net>
- <LV2PR12MB589331A1E8F78B5C9F3DC9C6A4FF2@LV2PR12MB5893.namprd12.prod.outlook.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65962@smartserver.smartshare.dk>
- <LV2PR12MB5893086C50C6C4752CBA46BEA4FF2@LV2PR12MB5893.namprd12.prod.outlook.com>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Wisam Jaddo" <wisamm@nvidia.com>,
- "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
-Cc: <dev@dpdk.org>, "Raslan Darawsheh" <rasland@nvidia.com>,
- "Maayan Kashani" <mkashani@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dts: update test suite names to be clear and consistent
+Content-Language: en-GB
+To: Andrew Bailey <abailey@iol.unh.edu>, patrickrobb1997@gmail.com
+Cc: dev@dpdk.org, lylavoie@iol.unh.edu, knimoji@iol.unh.edu,
+ ahassick@iol.unh.edu
+References: <20260508141319.52648-1-abailey@iol.unh.edu>
+ <20260511160013.78676-1-abailey@iol.unh.edu>
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <20260511160013.78676-1-abailey@iol.unh.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,64 +50,4 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBXaXNhbSBKYWRkbyBbbWFpbHRvOndpc2FtbUBudmlkaWEuY29tXQ0KPiBTZW50OiBX
-ZWRuZXNkYXksIDggSnVseSAyMDI2IDE3LjA1DQo+IA0KPiBIaSwNCj4gDQo+IFRlc3RlZCBvbiBB
-Uk0gQkYzOg0KPiBjb21tYW5kOg0KPiAuIC9kcGRrLXRlc3RwbWQgLW4gNCAgLWEgMDAwMDowMzow
-MC4wLGR2X2Zsb3dfZW49MiAgLWENCj4gMDAwMDowMzowMC4xLGR2X2Zsb3dfZW49MiAgLWEgYXV4
-aWxpYXJ5OiAgLWEgMDA6MDAuMCAtYyAweDMwICAtLSAtLQ0KPiBtYmNhY2hlPTUxMiAtaSAgLS1u
-Yi1jb3Jlcz0xICAtLWJ1cnN0PTY0IC0tdHhkPTI1NiAtLXJ4ZD0yNTYgIC0tcmVjb3JkLQ0KPiBi
-dXJzdC1zdGF0cyAtLXJlY29yZC1jb3JlLWN5Y2xlcyAtLWF1dG8tc3RhcnQNCg0KVGhhbmsgeW91
-IGZvciB0aGUgZGV0YWlsZWQgcmVzcG9uc2UuDQoNCkFzIG5vdGVkIGluIHRoZSByZWxlYXNlIG5v
-dGVzIHdpdGggdGhlIHBhdGNoLCB0aGUgZWZmZWN0aXZlIG1lbXBvb2wgY2FjaGUgc2l6ZSB3YXMg
-Y2hhbmdlZCB0byBubyBsb25nZXIgYmUgMS41IHRpbWVzIHRoZSBjb25maWd1cmVkIGNhY2hlIHNp
-emUuIChUaGlzIGNoYW5nZSBmaXhlZCBidWcgMTAyNyBbQloxMDI3XS4pDQpJLmUuIHdpdGggeW91
-ciB0ZXN0cG1kIHBhcmFtZXRlcnMgdGhlIGVmZmVjdGl2ZSBtYnVmIG1lbXBvb2wgY2FjaGUgc2l6
-ZSB3YXMgcmVkdWNlZCBmcm9tIDc2OCAoMS41ICogNTEyKSB0byA1MTIgbWJ1ZnMuDQpJbiBvcmRl
-ciB0byB0ZXN0IHdpdGggdGhlIHNhbWUgZWZmZWN0aXZlIG1idWYgbWVtcG9vbCBjYWNoZSBzaXpl
-LCB5b3UgbmVlZCB0byBwYXNzIC0tbWJjYWNoZT03NjguDQpBbmQgc2luY2UgNzY4IGV4Y2VlZHMg
-UlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJWkUgKGRlZmF1bHQgNTEyKSBpbiBydGVfY29uZmlnLmgs
-IHlvdSBhbHNvIG5lZWQgdG8gcmVidWlsZCBEUERLIHdpdGggdGhhdCBzZXQgdG8gMTAyNCBpbnN0
-ZWFkIG9mIDUxMi4NCg0KW0JaMTAyN10gaHR0cHM6Ly9idWdzLmRwZGsub3JnL3Nob3dfYnVnLmNn
-aT9pZD0xMDI3DQoNClBsZWFzZSBsZXQgdXMga25vdyB5b3VyIHVwZGF0ZWQgdGVzdCByZXN1bHRz
-LCBpZiB5b3UgZGVjaWRlIHRvIHJldGVzdCB3aXRoIC0tbWJjYWNoZT03NjggYW5kIERQREsgcmVi
-dWlsdCB3aXRoIFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFIDEwMjQuDQoNCj4gDQo+IE5vIG9m
-ZmxvYWRzLCBwbGFpbiB0ZXN0cG1kIHdpdGggYXV0by1zdGFydC4NCj4gT24gdGhlIG90aGVyIGVu
-ZCBJIGhhdmUgaXhpYSBnZW5lcmF0aW5nIHRoZSBpcHY0X3VkcCB0cmFmZmljLCB3aXRoIGRlc3QN
-Cj4gdWRwIHJhbmdlIGZyb20gNjUwMjQgdG8gNjUyODAgIlRvIHNlbmQgZGlmZmVyZW50IHBhY2tl
-dHMgd2l0aCBtc2cgc2l6ZQ0KPiA2NEJ5dGVzLg0KPiANCj4gV2Ugc2VuZCAxMDAlIG9uIFRYIHNp
-ZGUsIGFuZCB3ZSByZWFkIHdoYXQgd2UgcmVhY3RpdmUgYmFjayBvbiBSWCBzaWRlDQo+IGluIGl4
-aWEgInVzaW5nIHR3byBwb3J0cyBhZ2cuIg0KPiBUaGUgcmVzdWx0cyB0aGF0IHdlIHN0YXJ0IHRv
-IHNlZSBhZnRlciB0aGlzIGNvbW1pdCBpcyBhIGRlZ3JhZGF0aW9uIG9mDQo+IDEuOCUgLSAyJQ0K
-PiANCj4gQlJzLA0KPiBXaXNhbSBKYWRkbw0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
-LS0tLQ0KPiA+IEZyb206IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+
-DQo+ID4gU2VudDogV2VkbmVzZGF5LCBKdWx5IDgsIDIwMjYgNTowOSBQTQ0KPiA+IFRvOiBXaXNh
-bSBKYWRkbyA8d2lzYW1tQG52aWRpYS5jb20+OyBOQlUtQ29udGFjdC1UaG9tYXMgTW9uamFsb24N
-Cj4gPiAoRVhURVJOQUwpIDx0aG9tYXNAbW9uamFsb24ubmV0Pg0KPiA+IENjOiBkZXZAZHBkay5v
-cmc7IEFuZHJldyBSeWJjaGVua28gPGFuZHJldy5yeWJjaGVua29Ab2t0ZXRsYWJzLnJ1PjsNCj4g
-PiBSYXNsYW4gRGFyYXdzaGVoIDxyYXNsYW5kQG52aWRpYS5jb20+OyBNYWF5YW4gS2FzaGFuaQ0K
-PiA+IDxta2FzaGFuaUBudmlkaWEuY29tPg0KPiA+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggdjhdIG1l
-bXBvb2w6IGltcHJvdmUgY2FjaGUgYmVoYXZpb3VyIGFuZA0KPiBwZXJmb3JtYW5jZQ0KPiA+DQo+
-ID4gPiBGcm9tOiBXaXNhbSBKYWRkbyBbbWFpbHRvOndpc2FtbUBudmlkaWEuY29tXQ0KPiA+ID4g
-U2VudDogV2VkbmVzZGF5LCA4IEp1bHkgMjAyNiAxNC4yOA0KPiA+ID4NCj4gPiA+IEhpLA0KPiA+
-ID4NCj4gPiA+IE91ciBpbnRlcm5hbCBwZXJmb3JtYW5jZSB0ZXN0aW5nIGFyZSBzaG93aW5nIGRl
-Z3JhZGF0aW9uIHN0YXJ0aW5nDQo+IGZyb20NCj4gPiA+IHRoaXMgY29tbWl0Lg0KPiA+ID4gVGhl
-IGRlZ3JhZGF0aW9uIGlzIGFib3V0IDEuOCUgLSAyJSBvbiBzbWFsbCBtc2cgc3ppZXMuDQo+ID4N
-Cj4gPiBXaGF0IGRvIHlvdSBtZWFuICJzbWFsbCBtZXNzYWdlIHNpemVzIj8NCj4gPg0KPiA+IEFs
-c28sIHBsZWFzZSBzaGFyZSBtb3JlIGRldGFpbHMgYWJvdXQgdGhlIHRlc3QgY2FzZToNCj4gPiBB
-Y2Nlc3MgcGF0dGVybiwgZS5nLiBwaXBlbGluZWQgYWNyb3NzIG11bHRpcGxlIHRocmVhZHMgb3Ig
-cnVuLXRvLQ0KPiBjb21wbGV0aW9uPyBJZg0KPiA+IHBvc3NpYmxlLCBsaW5rIHRvIHRlc3QgY2Fz
-ZSBzb3VyY2UgY29kZT8NCj4gPiBHZXQgYW5kIHB1dCBidXJzdCBzaXplcz8NCj4gPiBNZW1wb29s
-IGNhY2hlIHNpemU/DQo+ID4gTWVtcG9vbCBkcml2ZXI/DQo+ID4NCj4gPiBQUzogSSBhc3N1bWUg
-aXQgaXMgYWJvdXQgbWJ1ZiBtZW1wb29sLiBPciBpcyBpdCBzb21lIG90aGVyIG9iamVjdA0KPiB0
-eXBlIGluIHRoZQ0KPiA+IG1lbXBvb2w/DQo+ID4NCj4gPiA+DQo+ID4gPiBCUnMsDQo+ID4gPiBX
-aXNhbSBKYWRkbw0KPiA+ID4NCj4gPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
-PiA+ID4gRnJvbTogVGhvbWFzIE1vbmphbG9uIDx0aG9tYXNAbW9uamFsb24ubmV0Pg0KPiA+ID4g
-PiBTZW50OiBXZWRuZXNkYXksIEp1bmUgMTAsIDIwMjYgMjowNyBQTQ0KPiA+ID4gPiBUbzogTW9y
-dGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4gPiA+ID4gQ2M6IGRldkBk
-cGRrLm9yZzsgQW5kcmV3IFJ5YmNoZW5rbw0KPiA8YW5kcmV3LnJ5YmNoZW5rb0Bva3RldGxhYnMu
-cnU+DQo+ID4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjhdIG1lbXBvb2w6IGltcHJvdmUgY2Fj
-aGUgYmVoYXZpb3VyIGFuZA0KPiA+ID4gcGVyZm9ybWFuY2UNCj4gPiA+ID4NCj4gPiA+ID4gMDQv
-MDYvMjAyNiAxMzo0OCwgTW9ydGVuIEJyw7hydXA6DQo+ID4gPiA+ID4gVGhpcyBwYXRjaCByZWZh
-Y3RvcnMgdGhlIG1lbXBvb2wgY2FjaGUgdG8gZWxpbWluYXRlIHNvbWUNCj4gPiA+ID4gPiB1bmV4
-cGVjdGVkIGJlaGF2aW91ciBhbmQgcmVkdWNlIHRoZSBtZW1wb29sIGNhY2hlIG1pc3MgcmF0ZS4N
-Cj4gPiA+ID4NCj4gPiA+ID4gQXBwbGllZCwgdGhhbmtzLg0KPiA+ID4gPg0KPiA+ID4gPg0KDQo=
+Applies to next-dts, thanks
