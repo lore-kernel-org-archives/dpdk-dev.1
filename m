@@ -2,88 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC54EC43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Jul 2026 00:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C67BC43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Jul 2026 01:05:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A539440268;
-	Thu,  9 Jul 2026 02:57:37 +0200 (CEST)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 3878B40265
- for <dev@dpdk.org>; Thu,  9 Jul 2026 02:57:36 +0200 (CEST)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-47ddf7b09aaso869588f8f.3
- for <dev@dpdk.org>; Wed, 08 Jul 2026 17:57:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783558656; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 53902402D1;
+	Thu,  9 Jul 2026 03:05:10 +0200 (CEST)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
+ [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id D52CF4026E
+ for <dev@dpdk.org>; Thu,  9 Jul 2026 03:05:08 +0200 (CEST)
+Received: by mail-wr1-f42.google.com with SMTP id
+ ffacd0b85a97d-47ddf7b09aaso872222f8f.3
+ for <dev@dpdk.org>; Wed, 08 Jul 2026 18:05:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783559108; cv=none;
  d=google.com; s=arc-20260327;
- b=FOCd+t1g87uUFt1nBiDguoh7Mz1QjmszdB9IOM9KfrBmfjrjM3tF+PIxTiD9uCSWV1
- UjVLyPiuVKFwTlNeZjO4nvC7KGRaAYv65dX52zz5hQBZyEZVo2dc+fe34Z6+qMcXId4h
- b9YHJrpfzFeCkUHCPKRvB2qQoMDf/lBeKTLX4eHHXkGg6GWT28pAaHXNzMQNFqkYpu0p
- fADRb1GClWFpSqjay7sb3VLFuU1J/4JMRwypxWLxTClFx/43cphwFHuPE0jjLh3kio0Y
- O6kyNxh8iTtUX7mlkEzPGK+BE2i5UjWSivBNu58uE3eolDtcM+dHonG4/Mut8534yY+n
- zgcw==
+ b=Owjnoj8pUurjVT1rFpajP3d+KWGH7lXl20NUHaf0otnTAiZ2UXaquXtEX1L3mfHRLa
+ OhbZmp81lTcPdmsTrycYZQHMEGZjsuRQha00/ZSoZVPhUKOEWdIBVoeKwQ0cWjZEDFDC
+ /d0l138HTUPl+cdnVz+UQgeUdlFTwgR2hRh/kQ0zw+N+4a82B76qZmJtgHZbZrDjbkIT
+ GadNFrdDQ4Cnm7mDUnhevas3xHxj33SlEhX9KssG52JN7+dNm1HISS8Lbauth0XTGlQE
+ lhv3b0UemuLsR7vjhH/fRbtR+17DgfOWhnHm83KOupJYqMc1FMYFVTC/m6ltLMfharBN
+ sW2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20260327; 
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:dkim-signature;
- bh=ojZfBeo6pcM3uI4c4XKA6Faf8XD7eoHjdmPrIkqV5nU=;
- fh=iCEkq2NlOBZ9YZRdZ1zQDLeKgWB8XrJzbIJcJKtfssM=;
- b=MJsW2CB0bzGxZoP8zFrSSN9EF6gTmUZztGk1MjJUm92YLnMLNmt48REgec9pmfM2Fp
- YgYAFs/VvvsyG5x5ws9O4Hd+3VBNdTXWZVLZxPkXh9KGXFbKxRc1xgMQsFeKDNJ2f0kF
- XBV4rIWI6aCn7LaLvt+pURJDig2A50ztLCrKiT1JXU39GB/YuFn+4KA3S00MllO1raCo
- W9HS3vc5kStjQgDpLHdcdsuvyOyLrtzy8NSTIjjaxJT1L9qYoYUn/klyXWfmo2nyhhmZ
- Y5cMJII8Fjtra3QvOz/fHF5NPBZLqZ9Wstetv96BxHEZtU1Wdmc9r3IU3g1+Nq9o+Ydk
- CWJw==; darn=dpdk.org
+ bh=tKX3lmtmcqSoVZZvZ9yJcRcN8ulpeTGUkeH4I4w9dOc=;
+ fh=gvqagplSAqYMdkHxC6SzTWIgW4MJj2Wy2iwnVagobe8=;
+ b=jT1pMxBvjKtly0cypS6zZqf3gOZTuBl/pPemLbwQEGyJ3Qfjr61OhcTTh+te9Puyns
+ 8AW3AQ34RwN/10zXhciM+UtlAspTK09JBf0fYTU4apRG28EFRchd/0NQ56wwvcm99C3C
+ r5TL5HUHZ1an9wjoPWqAWpAy6B8B3lEbqgXSBpbtlCHgcJF44RIbglbiell+BNxcfacW
+ Z+9szV5r2av0JvgTgJfMhCPmddvvfdi41iWt4OfLDVNtRkZqsAsmeTID1kqryFSxsNvn
+ LKgpSRv73zt0H0hlHvMzwFkc+Sx/qmbkVDMxjka3QlbtkMDlRVbQJvVdysjK797JpG1T
+ cXjw==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1783558656; x=1784163456; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1783559108; x=1784163908; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=ojZfBeo6pcM3uI4c4XKA6Faf8XD7eoHjdmPrIkqV5nU=;
- b=KVOkQEjXujUsA5JBxZwq19aBqWmBZC/yZfAFtSG9A0oGdByPqrbs/E2obqYQYr29Tz
- ecs3zRXmnOQWvEubxCShTpUB5jfncrbRLkAciFFP+qXKP35PNwjtmChDpfXkrUr6wONv
- sMymxiC4nDjBy3xisLyjepzDameHPI2+F+icQ5npMaT3Jbh1lKgiDxYzQRJQpr9tvUdT
- wh11Ql7xoEVZTXkWt4PRAF8XOq5fuMEaaUM8N/xGAwWr3xiHW/+Kdl4kRgXRSBiC7zY0
- ea9W77ybQYSDDK9f4sWZQQdrwkwzT8dNr9PMcvgvTZvGW1brQo+RRupBYbSz0qnI6UEV
- j2Cw==
+ :content-type; bh=tKX3lmtmcqSoVZZvZ9yJcRcN8ulpeTGUkeH4I4w9dOc=;
+ b=WEBfROAulnsspBxDKx+kiO+8ZZHZ4f8eZGiw0KCV2/39368RovZUqGcx43A4K5z9rz
+ Zz6yIAfZmaE80Rg3De5j8ypw8NXSjR18jk4xwRUg0sp7E/lUUBNGfWBBSSqxfsDNhfHE
+ bGfyBEWMh3wT/dEIzzTzEtg5Xk8Z3K3YDW532i+UbKCjltuOtj/hizjeHjjhDzSp9W08
+ niQ4qzEHIbTgctqieXgLVqcQhDsYDtrLIktce2vpUqPAvL1fgKy9EXHVjwoFFL0vE8KY
+ Vw32YFbka28Xr/0sugyYhxoxKx5ZK1kLMyu6l0jgwDzJOYYo5ryQNGdxfo3WdmO3QwHl
+ RwQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783558656; x=1784163456;
+ d=1e100.net; s=20251104; t=1783559108; x=1784163908;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=ojZfBeo6pcM3uI4c4XKA6Faf8XD7eoHjdmPrIkqV5nU=;
- b=AFPmKCZsOTpqET0ZjZLUoVVM/yYo0khQpjNx45a61S6eDevWdc0uUS+lmgJ9gfkl8G
- IJcCC+kIA4L5y/LSa7Svqw4GsxnmhcDwUAa3QH19JKAT5EEnLzs8xe+ciXg1foqWvP8g
- V4ZgLTiWOPHW992I1cXuyTkc/udgQD0sISTo0/ow2dMvfzoylev8Fcg/7jhOu38Xxp5y
- vyHsFsRfP1s9NqdizHUjirJqDz+o9u3rHPSNJIFLAriRjJIk1WvzouPtCF53wuQ088HK
- QpyLsflLHeH8+qD+LG5dnF9Su4N+DNPpcJfDxaP9kCAzklMXC0FDD5QXd/r+1TV25isB
- sSYg==
+ bh=tKX3lmtmcqSoVZZvZ9yJcRcN8ulpeTGUkeH4I4w9dOc=;
+ b=psQ39781NL7dUo8lcmV303O8JXKvHdkb/lKI9Acp06vUyMH32tiO/TaYugmUEBvofJ
+ HVRlgvGV0EsZpXO4Ht//qpT7jinEjX5bY6pNVSBTt0snJ9hWTYL8NJyhmb3S19Dlgocz
+ tzsyJ2rNjwMiImrJ2Zjc9k0MJsTzT8F7N9alha8fanNLm4ZSTfjrpzN/PIJDwX7cfwhg
+ sQrzU4r84pqJXOS8AJqDCS+8RtDagwY2gRAL6JjtBt2nO9qxGnY5BiKygjdQ7LCeuM3e
+ aN40yH8NGIdXDvb9gJbMIavG5GkVB1qv+gudwr9GnB8cVhfAWYd7776ARwj61aDv8Zae
+ QtjQ==
 X-Forwarded-Encrypted: i=1;
- AHgh+RqLEGSe93WPrgKmb/h/F8lGaWvwP20tha+Wlv4ndnRNPMp9A7OTNwQrbhhjq8yfWIiHxqc=@dpdk.org
-X-Gm-Message-State: AOJu0Ywj1Hh2KgCmgWEXCuAWN+IleHFa9jnCQT3wTmWU3G2VNAWjB4Yl
- fUgUKUVvDTpVlqujUR4Iw/lMMEGMmcHoYpxP1MBsabhPplyOtoeN+fAipxC/BtXvI1VMuBW4Jke
- dOUFuND34A7AUR1tXoz9JwUjpl2fxR2v2t1E9Gnk=
-X-Gm-Gg: AfdE7cksUHw6jATZhj+VIYIZb4hsvLFlo8aBnWDy0h+cIIbhi+n4QyNDHcQsW4/WIBW
- 4vzI92X36NJEkaf64tsnEI81MEWO4XhXjp3tT93OUyCsKlNrtSf9+3sAsE/0Cj38RSjKMbBolt9
- IeZVPAR8dvIAmuJN3R4Uh8rDZ/kOj4wq+f6ObjzUOCPF1hW0UJYUvz19aUYMi3WFkskyB7QwVnl
- zdC7Py+hgEEf4bTA1qzx5WlITiMTcqaNDqLbxnCDw7bP+4uLxQ6DLz6V3P5oneMRQ2v7engkx3F
- WvedWO7EdMB3Qy+Z1a/S1ZZy93k/Oxo2uDalcoI55WT4HuEuhLW+KArq
-X-Received: by 2002:a05:6000:41ee:b0:46e:6210:ad4a with SMTP id
- ffacd0b85a97d-47df071e518mr4566619f8f.5.1783558655560; Wed, 08 Jul 2026
- 17:57:35 -0700 (PDT)
+ AHgh+Rob1FL5s5aUYVehLeYOqEHDcfVT/q67rC5cndWUS3yi+ZLh5YZ4zv+nFHGz5+b2dHD3g4c=@dpdk.org
+X-Gm-Message-State: AOJu0YyiSnaBLoFa5fO2oTQx9t1FYG/xJW2ig6Yl8N/uF8g5baXI5HQn
+ amT889aWQDX8lR/pmFAGmmJnVDNcMSEBIxSi5tB3CjNZ+ekVE0DHKD8yOAPt1O7CvfoP27RjGQP
+ IdflOqKZT9Yqln5QfRmsOui/UYv+j4LE=
+X-Gm-Gg: AfdE7cnx2ODIwrXLjeKCI4o5CPv6qujlXNZ81lyIhdtmy9EMJebhE0C9AalLb+2d+Wb
+ jccuo7gjpkdb2S5BN+onikZIxMMXWIluCOCV6f+SlEWdX9MsrRmPU+vxbUZqK9BSGS6zXm7M2rY
+ QBlwS8AtXXg/mJxPchkMOUv4SP+7+kHhRAFXeMxobxBIn8W9uze6Z0QRrRQ2JlBn4GegA4UsGIY
+ MazPuRvT3NBA0KK7jbMtVGk3ZSIxfTuwK+lubg6tj6P/sAIDiRimHS/yGSCfD1b5SL/xvcHPKuR
+ UY+TrhhcgxVwjiTUvsjYY5JKjuNY2UgKS2wi+dEIub7Im7BJSrLU4KYTfJCrZhlFFts=
+X-Received: by 2002:a05:6000:1a86:b0:46e:47a:dcd3 with SMTP id
+ ffacd0b85a97d-47df073326dmr5462943f8f.19.1783559108325; Wed, 08 Jul 2026
+ 18:05:08 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260602163647.101815-1-knimoji@iol.unh.edu>
  <20260625154712.2255474-1-knimoji@iol.unh.edu>
  <CAK6DuxvEjRGOQJMY-Amd+QUxQBAV9ihp35fX1PQ2D5p7bt=L8w@mail.gmail.com>
-In-Reply-To: <CAK6DuxvEjRGOQJMY-Amd+QUxQBAV9ihp35fX1PQ2D5p7bt=L8w@mail.gmail.com>
+ <CAK6DuxskqPSX-wgxHLOmhd7U=HSYg2js99E7th76LeAY4CBbHA@mail.gmail.com>
+In-Reply-To: <CAK6DuxskqPSX-wgxHLOmhd7U=HSYg2js99E7th76LeAY4CBbHA@mail.gmail.com>
 From: Patrick Robb <patrickrobb1997@gmail.com>
-Date: Wed, 8 Jul 2026 20:57:24 -0400
-X-Gm-Features: AUfX_mwGb7HBSgiBIHi3FyNu6w1w4ccWaTe19UAqZ_hrLkR2wrbQgRP1ni56LZM
-Message-ID: <CAK6DuxskqPSX-wgxHLOmhd7U=HSYg2js99E7th76LeAY4CBbHA@mail.gmail.com>
+Date: Wed, 8 Jul 2026 21:04:56 -0400
+X-Gm-Features: AUfX_mz7RO7g1YxSsC9sdlNDdyNoSLZIgyp25fjYRIQzc1_XxedI3FEBEMiVUoQ
+Message-ID: <CAK6DuxthwOFOdvLgsEoxu+ShXaiKZWc9+RuVXG9czsazuipzTw@mail.gmail.com>
 Subject: Re: [PATCH v5] dts: report dut/NIC info during DTS run
 To: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
 Cc: luca.vizzarro@arm.com, dev@dpdk.org, abailey@iol.unh.edu, 
  ahassick@iol.unh.edu, lylavoie@iol.unh.edu
-Content-Type: multipart/alternative; boundary="00000000000019cde40656231cad"
+Content-Type: multipart/alternative; boundary="0000000000001672d50656233713"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,56 +98,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000019cde40656231cad
+--0000000000001672d50656233713
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Please make sure you always run checkpatches, check-git-log,
-dts-check-format, and a doc build or each patch you send. I will update the
-commit message before applying. The mailmap issue will go away when your
-other series (with the mailmap addition) is applied.
+Actually, please see the AI code review of this patch. Specifically, this
+comment looks correct to me. What are your thoughts?
 
-Thanks for the patch! Applying to next-dts.
+**File:** `dts/framework/testbed_model/linux_session.py`, line 228
 
-./devtools/check-git-log.sh -n 1
-Wrong headline case:
-                        "dts: report dut and nic info during DTS run": nic
---> NIC
-Contributor name/email mismatch with .mailmap:
-        Koushik Bhargav Nimoji <knimoji@iol.unh.edu> is unknown in .mailmap
+The code checks `lshw_result.return_code !=3D 0 and lshw_result.stdout =3D=
+=3D ""`
+but the logic is incorrect. If the command fails, you should raise an
+error. The `and` should likely be `or`:
 
-Invalid patch(es) found - checked 1 patch
 
-On Tue, Jul 7, 2026 at 9:46=E2=80=AFPM Patrick Robb <patrickrobb1997@gmail.=
+
+Please read through the other suggestions too. There is some fluff but also
+some good advice.
+
+On Wed, Jul 8, 2026 at 8:57=E2=80=AFPM Patrick Robb <patrickrobb1997@gmail.=
 com>
 wrote:
 
-> Tested-by: Patrick Robb <patrickrobb1997@gmail.com>
+> Please make sure you always run checkpatches, check-git-log,
+> dts-check-format, and a doc build or each patch you send. I will update t=
+he
+> commit message before applying. The mailmap issue will go away when your
+> other series (with the mailmap addition) is applied.
+>
+> Thanks for the patch! Applying to next-dts.
+>
+> ./devtools/check-git-log.sh -n 1
+> Wrong headline case:
+>                         "dts: report dut and nic info during DTS run": ni=
+c
+> --> NIC
+> Contributor name/email mismatch with .mailmap:
+>         Koushik Bhargav Nimoji <knimoji@iol.unh.edu> is unknown in
+> .mailmap
+>
+> Invalid patch(es) found - checked 1 patch
+>
+> On Tue, Jul 7, 2026 at 9:46=E2=80=AFPM Patrick Robb <patrickrobb1997@gmai=
+l.com>
+> wrote:
+>
+>> Tested-by: Patrick Robb <patrickrobb1997@gmail.com>
+>>
 >
 
---00000000000019cde40656231cad
+--0000000000001672d50656233713
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">Please make sure you always run checkpatches, check-git-lo=
-g, dts-check-format, and a doc build or each patch you send. I will update =
-the commit=C2=A0message before applying. The mailmap issue will go away whe=
-n your other series (with the mailmap addition) is applied.<div><br></div><=
-div>Thanks for the patch! Applying to next-dts.<br><div><br></div><div>./de=
-vtools/check-git-log.sh -n 1<br>Wrong headline case:<br>=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;dt=
-s: report dut and nic info during DTS run&quot;: nic --&gt; NIC<br>Contribu=
-tor name/email mismatch with .mailmap: <br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Kous=
-hik Bhargav Nimoji &lt;<a href=3D"mailto:knimoji@iol.unh.edu">knimoji@iol.u=
-nh.edu</a>&gt; is unknown in .mailmap<br><br>Invalid patch(es) found - chec=
-ked 1 patch</div></div></div><br><div class=3D"gmail_quote gmail_quote_cont=
-ainer"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Jul 7, 2026 at 9:46=E2=
-=80=AFPM Patrick Robb &lt;<a href=3D"mailto:patrickrobb1997@gmail.com">patr=
-ickrobb1997@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_qu=
-ote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,20=
-4);padding-left:1ex"><div dir=3D"ltr">Tested-by: Patrick Robb &lt;<a href=
-=3D"mailto:patrickrobb1997@gmail.com" target=3D"_blank">patrickrobb1997@gma=
-il.com</a>&gt;</div>
+<div dir=3D"ltr">Actually, please see the AI code review of this patch. Spe=
+cifically, this comment looks correct to me. What are your thoughts?<div><b=
+r>**File:** `dts/framework/testbed_model/linux_session.py`, line 228<br><br=
+>The code checks `lshw_result.return_code !=3D 0 and lshw_result.stdout =3D=
+=3D &quot;&quot;` but the logic is incorrect. If the command fails, you sho=
+uld raise an error. The `and` should likely be `or`:</div><div><br><br><br>=
+</div><div>Please read through the other suggestions too. There is some flu=
+ff but also some good advice.</div></div><br><div class=3D"gmail_quote gmai=
+l_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Jul 8, 202=
+6 at 8:57=E2=80=AFPM Patrick Robb &lt;<a href=3D"mailto:patrickrobb1997@gma=
+il.com">patrickrobb1997@gmail.com</a>&gt; wrote:<br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
+b(204,204,204);padding-left:1ex"><div dir=3D"ltr">Please make sure you alwa=
+ys run checkpatches, check-git-log, dts-check-format, and a doc build or ea=
+ch patch you send. I will update the commit=C2=A0message before applying. T=
+he mailmap issue will go away when your other series (with the mailmap addi=
+tion) is applied.<div><br></div><div>Thanks for the patch! Applying to next=
+-dts.<br><div><br></div><div>./devtools/check-git-log.sh -n 1<br>Wrong head=
+line case:<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 &quot;dts: report dut and nic info during DTS run&=
+quot;: nic --&gt; NIC<br>Contributor name/email mismatch with .mailmap: <br=
+>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Koushik Bhargav Nimoji &lt;<a href=3D"mailto:k=
+nimoji@iol.unh.edu" target=3D"_blank">knimoji@iol.unh.edu</a>&gt; is unknow=
+n in .mailmap<br><br>Invalid patch(es) found - checked 1 patch</div></div><=
+/div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">O=
+n Tue, Jul 7, 2026 at 9:46=E2=80=AFPM Patrick Robb &lt;<a href=3D"mailto:pa=
+trickrobb1997@gmail.com" target=3D"_blank">patrickrobb1997@gmail.com</a>&gt=
+; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px=
+ 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div di=
+r=3D"ltr">Tested-by: Patrick Robb &lt;<a href=3D"mailto:patrickrobb1997@gma=
+il.com" target=3D"_blank">patrickrobb1997@gmail.com</a>&gt;</div>
+</blockquote></div>
 </blockquote></div>
 
---00000000000019cde40656231cad--
+--0000000000001672d50656233713--
