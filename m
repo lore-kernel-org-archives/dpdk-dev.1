@@ -2,55 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FF1C43458
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Jul 2026 22:53:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC54EC43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Jul 2026 00:57:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B0DB640268;
-	Thu,  9 Jul 2026 00:53:14 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id DB9F840697
- for <dev@dpdk.org>; Thu,  9 Jul 2026 00:53:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783551193; x=1815087193;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=3jSHOMprfFYQd2txpWBwU/TIMJ9lNjsDLNEfuhLVAA4=;
- b=C9P2l9QuxlSNjwsnQpEgWAFu3L/8LWuUi9v38jxsAnC95MXhUgAJ7y8J
- JmRH54x0zyBkSddTCY7s5TUyP0+Fdft1nPteZ76/uqsCgRYuDFpV4gaCh
- RnvKSFpWFO2yANRXEj4Ea5ujnBZVfuXKPqEg2FrrOFsguGCWuHj5bxuY8
- PMcuAY6cjc2rff49mQpxQmlwff8JTDycpFQUwqaDzpP9thMbzLJDB+4wl
- 6+7JI5X8DdAAL+hnMEQY0adf5mYORK4OLl3hyzu4anJrMswimqNoKMQ7W
- l0lIjEAxWQBL5fuuptm2nMEz8rQtfSkD4s8xXbfKxKfXxNmJBuwPlNqx7 g==;
-X-CSE-ConnectionGUID: G7XiqyU7QpyRnf0DGoDERw==
-X-CSE-MsgGUID: gTKNU0lfTIK7CvKEp6vEYw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="84342809"
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="84342809"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jul 2026 15:53:12 -0700
-X-CSE-ConnectionGUID: J+Qo105lQsiuNwkaGEao3g==
-X-CSE-MsgGUID: PFNSz5coTRqwfHhn60hqzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; d="scan'208";a="292608255"
-Received: from unknown (HELO localhost.igk.intel.com) ([10.123.235.20])
- by orviesa001.jf.intel.com with ESMTP; 08 Jul 2026 15:53:10 -0700
-From: Dawid Wesierski <dawid.wesierski@intel.com>
-To: dev@dpdk.org
-Cc: thomas@monjalon.net, stephen@networkplumber.org,
- bruce.richardson@intel.com, marek.kasiewicz@intel.com,
- Dawid Wesierski <dawid.wesierski@intel.com>
-Subject: [PATCH 2/2] net/iavf: disable runtime queue setup during queue rate
- limiting
-Date: Wed,  8 Jul 2026 19:19:26 -0400
-Message-ID: <20260708231926.1550698-3-dawid.wesierski@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260708231926.1550698-1-dawid.wesierski@intel.com>
-References: <20260703121952.1277387-6-dawid.wesierski@intel.com>
- <20260708231926.1550698-1-dawid.wesierski@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A539440268;
+	Thu,  9 Jul 2026 02:57:37 +0200 (CEST)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
+ [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 3878B40265
+ for <dev@dpdk.org>; Thu,  9 Jul 2026 02:57:36 +0200 (CEST)
+Received: by mail-wr1-f53.google.com with SMTP id
+ ffacd0b85a97d-47ddf7b09aaso869588f8f.3
+ for <dev@dpdk.org>; Wed, 08 Jul 2026 17:57:36 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783558656; cv=none;
+ d=google.com; s=arc-20260327;
+ b=FOCd+t1g87uUFt1nBiDguoh7Mz1QjmszdB9IOM9KfrBmfjrjM3tF+PIxTiD9uCSWV1
+ UjVLyPiuVKFwTlNeZjO4nvC7KGRaAYv65dX52zz5hQBZyEZVo2dc+fe34Z6+qMcXId4h
+ b9YHJrpfzFeCkUHCPKRvB2qQoMDf/lBeKTLX4eHHXkGg6GWT28pAaHXNzMQNFqkYpu0p
+ fADRb1GClWFpSqjay7sb3VLFuU1J/4JMRwypxWLxTClFx/43cphwFHuPE0jjLh3kio0Y
+ O6kyNxh8iTtUX7mlkEzPGK+BE2i5UjWSivBNu58uE3eolDtcM+dHonG4/Mut8534yY+n
+ zgcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=ojZfBeo6pcM3uI4c4XKA6Faf8XD7eoHjdmPrIkqV5nU=;
+ fh=iCEkq2NlOBZ9YZRdZ1zQDLeKgWB8XrJzbIJcJKtfssM=;
+ b=MJsW2CB0bzGxZoP8zFrSSN9EF6gTmUZztGk1MjJUm92YLnMLNmt48REgec9pmfM2Fp
+ YgYAFs/VvvsyG5x5ws9O4Hd+3VBNdTXWZVLZxPkXh9KGXFbKxRc1xgMQsFeKDNJ2f0kF
+ XBV4rIWI6aCn7LaLvt+pURJDig2A50ztLCrKiT1JXU39GB/YuFn+4KA3S00MllO1raCo
+ W9HS3vc5kStjQgDpLHdcdsuvyOyLrtzy8NSTIjjaxJT1L9qYoYUn/klyXWfmo2nyhhmZ
+ Y5cMJII8Fjtra3QvOz/fHF5NPBZLqZ9Wstetv96BxHEZtU1Wdmc9r3IU3g1+Nq9o+Ydk
+ CWJw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1783558656; x=1784163456; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=ojZfBeo6pcM3uI4c4XKA6Faf8XD7eoHjdmPrIkqV5nU=;
+ b=KVOkQEjXujUsA5JBxZwq19aBqWmBZC/yZfAFtSG9A0oGdByPqrbs/E2obqYQYr29Tz
+ ecs3zRXmnOQWvEubxCShTpUB5jfncrbRLkAciFFP+qXKP35PNwjtmChDpfXkrUr6wONv
+ sMymxiC4nDjBy3xisLyjepzDameHPI2+F+icQ5npMaT3Jbh1lKgiDxYzQRJQpr9tvUdT
+ wh11Ql7xoEVZTXkWt4PRAF8XOq5fuMEaaUM8N/xGAwWr3xiHW/+Kdl4kRgXRSBiC7zY0
+ ea9W77ybQYSDDK9f4sWZQQdrwkwzT8dNr9PMcvgvTZvGW1brQo+RRupBYbSz0qnI6UEV
+ j2Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783558656; x=1784163456;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=ojZfBeo6pcM3uI4c4XKA6Faf8XD7eoHjdmPrIkqV5nU=;
+ b=AFPmKCZsOTpqET0ZjZLUoVVM/yYo0khQpjNx45a61S6eDevWdc0uUS+lmgJ9gfkl8G
+ IJcCC+kIA4L5y/LSa7Svqw4GsxnmhcDwUAa3QH19JKAT5EEnLzs8xe+ciXg1foqWvP8g
+ V4ZgLTiWOPHW992I1cXuyTkc/udgQD0sISTo0/ow2dMvfzoylev8Fcg/7jhOu38Xxp5y
+ vyHsFsRfP1s9NqdizHUjirJqDz+o9u3rHPSNJIFLAriRjJIk1WvzouPtCF53wuQ088HK
+ QpyLsflLHeH8+qD+LG5dnF9Su4N+DNPpcJfDxaP9kCAzklMXC0FDD5QXd/r+1TV25isB
+ sSYg==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RqLEGSe93WPrgKmb/h/F8lGaWvwP20tha+Wlv4ndnRNPMp9A7OTNwQrbhhjq8yfWIiHxqc=@dpdk.org
+X-Gm-Message-State: AOJu0Ywj1Hh2KgCmgWEXCuAWN+IleHFa9jnCQT3wTmWU3G2VNAWjB4Yl
+ fUgUKUVvDTpVlqujUR4Iw/lMMEGMmcHoYpxP1MBsabhPplyOtoeN+fAipxC/BtXvI1VMuBW4Jke
+ dOUFuND34A7AUR1tXoz9JwUjpl2fxR2v2t1E9Gnk=
+X-Gm-Gg: AfdE7cksUHw6jATZhj+VIYIZb4hsvLFlo8aBnWDy0h+cIIbhi+n4QyNDHcQsW4/WIBW
+ 4vzI92X36NJEkaf64tsnEI81MEWO4XhXjp3tT93OUyCsKlNrtSf9+3sAsE/0Cj38RSjKMbBolt9
+ IeZVPAR8dvIAmuJN3R4Uh8rDZ/kOj4wq+f6ObjzUOCPF1hW0UJYUvz19aUYMi3WFkskyB7QwVnl
+ zdC7Py+hgEEf4bTA1qzx5WlITiMTcqaNDqLbxnCDw7bP+4uLxQ6DLz6V3P5oneMRQ2v7engkx3F
+ WvedWO7EdMB3Qy+Z1a/S1ZZy93k/Oxo2uDalcoI55WT4HuEuhLW+KArq
+X-Received: by 2002:a05:6000:41ee:b0:46e:6210:ad4a with SMTP id
+ ffacd0b85a97d-47df071e518mr4566619f8f.5.1783558655560; Wed, 08 Jul 2026
+ 17:57:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20260602163647.101815-1-knimoji@iol.unh.edu>
+ <20260625154712.2255474-1-knimoji@iol.unh.edu>
+ <CAK6DuxvEjRGOQJMY-Amd+QUxQBAV9ihp35fX1PQ2D5p7bt=L8w@mail.gmail.com>
+In-Reply-To: <CAK6DuxvEjRGOQJMY-Amd+QUxQBAV9ihp35fX1PQ2D5p7bt=L8w@mail.gmail.com>
+From: Patrick Robb <patrickrobb1997@gmail.com>
+Date: Wed, 8 Jul 2026 20:57:24 -0400
+X-Gm-Features: AUfX_mwGb7HBSgiBIHi3FyNu6w1w4ccWaTe19UAqZ_hrLkR2wrbQgRP1ni56LZM
+Message-ID: <CAK6DuxskqPSX-wgxHLOmhd7U=HSYg2js99E7th76LeAY4CBbHA@mail.gmail.com>
+Subject: Re: [PATCH v5] dts: report dut/NIC info during DTS run
+To: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, dev@dpdk.org, abailey@iol.unh.edu, 
+ ahassick@iol.unh.edu, lylavoie@iol.unh.edu
+Content-Type: multipart/alternative; boundary="00000000000019cde40656231cad"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,149 +97,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Runtime queue setup on E810 VFs causes queue state corruption when
-queues are dynamically reconfigured while the hardware rate limiter
-is actively pacing TX queues. Queue configuration messages to the PF
-via virtchnl can race with ongoing TX operations, leading to undefined
-behavior.
+--00000000000019cde40656231cad
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rather than gating this behind a devarg that an application would have
-to know to set (and could just as easily avoid triggering the race by
-not calling rte_eth_{rx,tx}_queue_setup() on a running port), stop
-advertising RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP and
-RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP as soon as the application
-commits a per-queue bandwidth rte_tm hierarchy, i.e. as soon as the
-condition that causes the race actually exists. iavf_dev_info_get() is
-re-queried by the ethdev layer on every rx/tx_queue_setup() call, so
-this is enough for the generic layer to start rejecting runtime queue
-(re)configuration with -EBUSY once queue rate limiting is active, and
-to automatically allow it again once the rte_tm hierarchy is torn
-down.
+Please make sure you always run checkpatches, check-git-log,
+dts-check-format, and a doc build or each patch you send. I will update the
+commit message before applying. The mailmap issue will go away when your
+other series (with the mailmap addition) is applied.
 
-vf->qtc_map, already used elsewhere to look up a queue's TC mapping,
-is repurposed as the "queue bandwidth committed" signal since it's set
-by iavf_hierarchy_commit() exactly when a per-queue bandwidth mapping
-has been pushed to the PF, regardless of whether the port was stopped
-at the time. Fix two related issues found while making it load-bearing
-for this check:
+Thanks for the patch! Applying to next-dts.
 
-- iavf_hierarchy_commit() replaced vf->qtc_map on every successful
-  commit without freeing the previous allocation, leaking memory.
-- vf->qtc_map was never released on VF teardown, so
-  iavf_uninit_vf()/iavf_init_vf() (e.g. across a VF reset) could leave
-  a stale pointer referencing freed unrelated memory, and the runtime
-  queue setup capability would never be re-advertised after a reset.
+./devtools/check-git-log.sh -n 1
+Wrong headline case:
+                        "dts: report dut and nic info during DTS run": nic
+--> NIC
+Contributor name/email mismatch with .mailmap:
+        Koushik Bhargav Nimoji <knimoji@iol.unh.edu> is unknown in .mailmap
 
-Both are fixed by freeing vf->qtc_map before replacing it in
-iavf_hierarchy_commit(), and freeing and clearing it in
-iavf_uninit_vf().
+Invalid patch(es) found - checked 1 patch
 
-Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
-Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
----
- doc/guides/nics/intel_vf.rst           | 10 ++++++++++
- doc/guides/rel_notes/release_26_07.rst |  3 +++
- drivers/net/intel/iavf/iavf_ethdev.c   | 23 ++++++++++++++++++++---
- drivers/net/intel/iavf/iavf_tm.c       |  2 ++
- 4 files changed, 35 insertions(+), 3 deletions(-)
+On Tue, Jul 7, 2026 at 9:46=E2=80=AFPM Patrick Robb <patrickrobb1997@gmail.=
+com>
+wrote:
 
-diff --git a/doc/guides/nics/intel_vf.rst b/doc/guides/nics/intel_vf.rst
-index e010f852cf..a47e3f6736 100644
---- a/doc/guides/nics/intel_vf.rst
-+++ b/doc/guides/nics/intel_vf.rst
-@@ -150,6 +150,16 @@ Intel\ |reg| E800 Series Ethernet devices:
-   for example: ``-a 18:00.0,quanta_size=2048``.
-   The default value is 1024, and quanta size should be set as the product of 64 in legacy host interface mode.
- 
-+* Runtime (post-start) Rx/Tx queue setup can race with the hardware Tx rate
-+  limiter on E810 VFs and corrupt queue state.
-+  Once an application commits a per-queue bandwidth ``rte_tm`` hierarchy,
-+  the driver automatically stops advertising
-+  ``RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP`` and
-+  ``RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP``,
-+  so ``rte_eth_rx_queue_setup()``/``rte_eth_tx_queue_setup()``
-+  are rejected with ``-EBUSY`` on a running port for as long as queue rate
-+  limiting is active.
-+
- * When using the Intel out-of-tree "ice" PF/kernel driver v1.13.7 or later,
-   to create VFs with >16 queues (aka. "large VFs"),
-   it is necessary to change the rss_lut_vf_addr setting in sysfs from the default of 64 to 512.
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 6352ef27ab..7ea80112f4 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -143,6 +143,9 @@ New Features
- 
-   * Added support for transmitting LLDP packets based on mbuf packet type.
-   * Implemented AVX2 context descriptor transmit paths.
-+  * Runtime Rx/Tx queue setup is now automatically disabled while a
-+    per-queue bandwidth ``rte_tm`` hierarchy is committed, to avoid
-+    corrupting queue state on E810 VFs.
- 
- * **Updated Intel ice driver.**
- 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 80e740ef29..5d0c361978 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -1160,9 +1160,18 @@ iavf_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->reta_size = vf->vf_res->rss_lut_size;
- 	dev_info->flow_type_rss_offloads = IAVF_RSS_OFFLOAD_ALL;
- 	dev_info->max_mac_addrs = IAVF_NUM_MACADDR_MAX;
--	dev_info->dev_capa =
--		RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
--		RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
-+	/*
-+	 * Runtime queue setup can race with the hardware Tx rate limiter on
-+	 * E810 VFs and corrupt queue state. Once a per-queue bandwidth rte_tm
-+	 * hierarchy has been committed (vf->qtc_map is set), stop advertising
-+	 * the capability so the ethdev layer rejects further rx/tx_queue_setup()
-+	 * calls on a running port with -EBUSY. The capability is re-advertised
-+	 * automatically once the rte_tm hierarchy is torn down.
-+	 */
-+	if (vf->qtc_map == NULL)
-+		dev_info->dev_capa =
-+			RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
-+			RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
- 	dev_info->rx_offload_capa =
- 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
- 		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
-@@ -2756,6 +2765,14 @@ iavf_uninit_vf(struct rte_eth_dev *dev)
- 	rte_free(vf->qos_cap);
- 	vf->qos_cap = NULL;
- 
-+	/*
-+	 * Drop the committed queue/TC bandwidth mapping so a subsequent
-+	 * iavf_init_vf() (e.g. after a device reset) starts with runtime
-+	 * Rx/Tx queue setup available again (see iavf_dev_info_get()).
-+	 */
-+	rte_free(vf->qtc_map);
-+	vf->qtc_map = NULL;
-+
- 	rte_free(vf->rss_lut);
- 	vf->rss_lut = NULL;
- 	rte_free(vf->rss_key);
-diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
-index e3492ec491..c9d856e937 100644
---- a/drivers/net/intel/iavf/iavf_tm.c
-+++ b/drivers/net/intel/iavf/iavf_tm.c
-@@ -905,6 +905,8 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
- 	if (ret_val)
- 		goto fail_clear;
- 
-+	/* replace the previously committed mapping, if any */
-+	rte_free(vf->qtc_map);
- 	vf->qtc_map = qtc_map;
- 	if (adapter->stopped == 1)
- 		vf->tm_conf.committed = true;
--- 
-2.47.3
+> Tested-by: Patrick Robb <patrickrobb1997@gmail.com>
+>
 
----------------------------------------------------------------------
-Intel Technology Poland sp. z o.o.
-ul. Slowackiego 173 | 80-298 Gdansk | Sad Rejonowy Gdansk Polnoc | VII Wydzial Gospodarczy Krajowego Rejestru Sadowego - KRS 101882 | NIP 957-07-52-316 | Kapital zakladowy 200.000 PLN.
-Spolka oswiadcza, ze posiada status duzego przedsiebiorcy w rozumieniu ustawy z dnia 8 marca 2013 r. o przeciwdzialaniu nadmiernym opoznieniom w transakcjach handlowych.
+--00000000000019cde40656231cad
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ta wiadomosc wraz z zalacznikami jest przeznaczona dla okreslonego adresata i moze zawierac informacje poufne. W razie przypadkowego otrzymania tej wiadomosci, prosimy o powiadomienie nadawcy oraz trwale jej usuniecie; jakiekolwiek przegladanie lub rozpowszechnianie jest zabronione.
-This e-mail and any attachments may contain confidential material for the sole use of the intended recipient(s). If you are not the intended recipient, please contact the sender and delete all copies; any review or distribution by others is strictly prohibited.
+<div dir=3D"ltr">Please make sure you always run checkpatches, check-git-lo=
+g, dts-check-format, and a doc build or each patch you send. I will update =
+the commit=C2=A0message before applying. The mailmap issue will go away whe=
+n your other series (with the mailmap addition) is applied.<div><br></div><=
+div>Thanks for the patch! Applying to next-dts.<br><div><br></div><div>./de=
+vtools/check-git-log.sh -n 1<br>Wrong headline case:<br>=C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;dt=
+s: report dut and nic info during DTS run&quot;: nic --&gt; NIC<br>Contribu=
+tor name/email mismatch with .mailmap: <br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Kous=
+hik Bhargav Nimoji &lt;<a href=3D"mailto:knimoji@iol.unh.edu">knimoji@iol.u=
+nh.edu</a>&gt; is unknown in .mailmap<br><br>Invalid patch(es) found - chec=
+ked 1 patch</div></div></div><br><div class=3D"gmail_quote gmail_quote_cont=
+ainer"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Jul 7, 2026 at 9:46=E2=
+=80=AFPM Patrick Robb &lt;<a href=3D"mailto:patrickrobb1997@gmail.com">patr=
+ickrobb1997@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_qu=
+ote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,20=
+4);padding-left:1ex"><div dir=3D"ltr">Tested-by: Patrick Robb &lt;<a href=
+=3D"mailto:patrickrobb1997@gmail.com" target=3D"_blank">patrickrobb1997@gma=
+il.com</a>&gt;</div>
+</blockquote></div>
 
+--00000000000019cde40656231cad--
