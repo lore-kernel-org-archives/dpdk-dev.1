@@ -2,59 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F39A3C43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Jul 2026 04:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 650A4C44501
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Jul 2026 04:07:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A791D4028C;
-	Thu,  9 Jul 2026 06:07:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 924B74068A;
+	Thu,  9 Jul 2026 06:07:45 +0200 (CEST)
 Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com
  [209.85.214.201])
- by mails.dpdk.org (Postfix) with ESMTP id 508EB4026E
- for <dev@dpdk.org>; Thu,  9 Jul 2026 06:07:42 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DC24C4067C
+ for <dev@dpdk.org>; Thu,  9 Jul 2026 06:07:43 +0200 (CEST)
 Received: by mail-pl1-f201.google.com with SMTP id
- d9443c01a7336-2ccbb61893fso13695425ad.0
- for <dev@dpdk.org>; Wed, 08 Jul 2026 21:07:42 -0700 (PDT)
+ d9443c01a7336-2cca5e0a0c9so29360865ad.1
+ for <dev@dpdk.org>; Wed, 08 Jul 2026 21:07:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1783570061; x=1784174861; darn=dpdk.org;
- h=content-type:cc:from:subject:message-id:references:mime-version
+ d=google.com; s=20251104; t=1783570063; x=1784174863; darn=dpdk.org;
+ h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=4165vKpXcvYWAiI3MqmygFQmFN6s3YGCfEyy3Rv7OuM=;
- b=CB3ocFfRqGzsGAieC5psD4w6MRWJPa+MuoxwbelEQOeweV8l9f5sts1lZmJUPHmT6N
- 7N3cvJJUkTHMGKMYkQ3mAiHn4UIJ9hflRMd5iI8QQ7S3bb7vjomNLW5mWJUD0zyvdefx
- D3iFsFs5vll+KOE+aRxdNc0g8ZVnbLCsZCtqNWabxMa1xZ17M8MXs6clsiX3GQnzQ+PP
- /8iS4ROiJ2ndLeEWVDKOu+jTYsMs1r/1SUBzxtuNh2MwwXDu4WWQTS1rWRt9v5p/jjkM
- JAilZcMXoBrHYaFePBhC4/EOAy3l8QNEchRO2Jctsd6BopSn0bbLa+ckR4C2Hd6JxoZa
- I0ZA==
+ :content-type; bh=41y4wIsIpuC6IDIkiS38QYAbnUut/LgYJuRiCuOjKN4=;
+ b=jZzjSVmOciC4Z5dKZZsVQPkrkdx43k2lAL15DsMIXKlSY20JfDVvVYWk2iEGvkHDSm
+ B3X1IYTorG1CKuCQ8Cl8ilSDVHU74Jykrpw0LrD0pgI4tITmetywqNL6m1r8B9Fi4QrJ
+ xaeQZluE6sWV2MKwxhsB0M8Qpi8AQz+R5jg6WOwlz5Jt5feXGolEuwHQAWA9KYC3xW05
+ tU+Xla5TkPuvrddLUkChUGTrlmol+NwxbSl7bbQCC9kivyLzGjWIx7+LHtF3cO3klQUD
+ b8FXde8HuhqLVtzTeX6DGs6QYbJ1dLuBIhj9NtI6OwQvb0LmDeb6K9bzNnxamSJeTyuC
+ i+0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783570061; x=1784174861;
- h=content-type:cc:from:subject:message-id:references:mime-version
+ d=1e100.net; s=20251104; t=1783570063; x=1784174863;
+ h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=4165vKpXcvYWAiI3MqmygFQmFN6s3YGCfEyy3Rv7OuM=;
- b=VCMKcjwzQPy9kXDUxo72Ma2ZqoTt9Bys1BspXgiGEY7fJD0Dmb+WBYAbNTwtIzynHU
- /iHebbEdmx3Wy/LOxT9syCsojjwVHuxjBp5dEuqRA4GHCkLKnoAgLm1dhBK4L08qtlnE
- nwBN+BvGC9oGwTb4eS0hIeecbP5FxjekrpgpV2X48cHy8ij5+x/p1R5ZpctCaI/KPljr
- 5NDGvZjUi72IVdP8uW58MF22+RZdgW+DRh7BE9HR+wpvc425KqcjTP9Vp//tr9W4uCLI
- qAbs7fEWYu8jHyv6z0HfMGxAiaWEzSFpotPBYDN2WeenZtNfI6JUevYsZs8OfNxp7Ba1
- gvLA==
-X-Gm-Message-State: AOJu0YzuJYVm3kfHAJsLRNOx/icMQ5uycTimTFD6ib4xICGgpQhmuCvu
- WxpvVMZum945sKIayZUEDzVuJExRcOuaD/GcUQ+/qQU+jeJh9Gb/3FUHK/6T+ecdEMDKRXFI8f1
- xmf81V2DryuFYbfXsq1vafuvC/+qe7ftGB5gqY0lRGQ29t+JHOTBQzBQbWbYrB3DV2JszFeOzxu
- QNC23tfVFlvs6J49iaFYVnnLZCSMBvdWkGqg==
-X-Received: from plbkc12.prod.google.com ([2002:a17:903:33cc:b0:2ca:d667:90e3])
+ bh=41y4wIsIpuC6IDIkiS38QYAbnUut/LgYJuRiCuOjKN4=;
+ b=HKALnEO66OHyrudgGVBQacxCSXPkuypMN1wk2LP7L3a1yJeQ238i3Mp2DY/DurHiiO
+ 8lLX8UqqiuR5d2uG7m8OMB6JWdYzTO2o4CcH/2if5DsOfsTpn2egOEcYz1YXCFMH8stO
+ sAeVM5Z2epbfJHFvlS1R7HkXv7lWzuXTYAvNM4sfVDVBfww+oqQGGicXO4TfDmQdvimn
+ 9NW19sDpLC3YgsvfAYsQ+PcRsfmj9kd0kvYLJw+u/vGfg7Aa5CKELMRhAedkYogMTk9u
+ biytRjZ7miSHWOMOMxsrLobSNkojDqIbd55E1YZ4mjRaaVp7x+9/ac6q5K84bs4ABANf
+ BQHA==
+X-Gm-Message-State: AOJu0Yz7W76toT403bfTyXf/NAFZ/jSXudQEVVsPMrd9Wpi7flJEa/H0
+ V+OfV+wDoe5qll/tCR6dkCxn98caL4+wwCg4luxiy5IURpwfplGW6aoikZuOpckli4NOTkO7NMM
+ Ho+IkUpFJ/j/kGg==
+X-Received: from plbbd12.prod.google.com ([2002:a17:902:830c:b0:2cc:8271:578d])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:120f:b0:2ca:53e9:1277 with SMTP id
- d9443c01a7336-2ccea37df7bmr58512135ad.1.1783570060661; 
- Wed, 08 Jul 2026 21:07:40 -0700 (PDT)
-Date: Wed,  8 Jul 2026 21:07:28 -0700
-In-Reply-To: <20260707164020.2936476-1-joshwash@google.com>
+ 2002:a17:902:db04:b0:2c9:97a7:3278 with SMTP id
+ d9443c01a7336-2ccea483c06mr55654395ad.41.1783570062765; 
+ Wed, 08 Jul 2026 21:07:42 -0700 (PDT)
+Date: Wed,  8 Jul 2026 21:07:29 -0700
+In-Reply-To: <20260709040739.3184955-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20260707164020.2936476-1-joshwash@google.com>
+ <20260709040739.3184955-1-joshwash@google.com>
 X-Mailer: git-send-email 2.55.0.795.g602f6c329a-goog
-Message-ID: <20260709040739.3184955-1-joshwash@google.com>
-Subject: [PATCH v4 0/9] Stability fixes for GVE
+Message-ID: <20260709040739.3184955-2-joshwash@google.com>
+Subject: [PATCH v4 1/9] net/gve: clear out shared memory region for stats
+ report
 From: Joshua Washington <joshwash@google.com>
-Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
+To: Jeroen de Borst <jeroendb@google.com>,
+ Joshua Washington <joshwash@google.com>, 
+ Rushil Gupta <rushilg@google.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Mark Blasko <blasko@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -69,35 +73,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch series consists of mostly unrelated fixes in the GVE driver.
+The stats report memzone is allocated from hugepage memory which could
+possibly have had sensitive data from a previous DPDK invocation.
 
-v4:
-  - Remove unncessary include
-v3:
-  - Fix 32-bit compilation issue
-v2:
-  - Remove unused definition
+Clear out the buffer before sharing the memory region with the virtual
+device to protect guest memory.
 
-Joshua Washington (9):
-  net/gve: clear out shared memory region for stats report
-  net/gve: delay adding mbuf head to software ring
-  net/gve: copy data to QPL buffer when mbuf read does not
-  net/gve: validate buf ID before processing Rx packet
-  net/gve: set mbuf to null in software ring after use
-  net/gve: free ctx mbuf if packet dropped after first segment
-  net/gve: increase range of DMA memzone ids to 64 bits
-  net/gve: don't reset ring size bounds to default on reset
-  net/gve: restrict max ring size in GQ QPL to 2K
+Fixes: 458b53dec01e ("net/gve: enable imissed stats for GQ format")
+Cc: stable@dpdk.org
+Signed-off-by: Joshua Washington <joshwash@google.com>
+Reviewed-by: Mark Blasko <blasko@google.com>
+---
+ drivers/net/gve/gve_ethdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/net/gve/base/gve_adminq.c | 11 ++++++--
- drivers/net/gve/base/gve_osdep.h  |  4 +--
- drivers/net/gve/gve_ethdev.c      |  8 ++++--
- drivers/net/gve/gve_ethdev.h      |  1 +
- drivers/net/gve/gve_rx.c          |  3 ++
- drivers/net/gve/gve_rx_dqo.c      |  6 ++++
- drivers/net/gve/gve_tx.c          | 46 ++++++++++++++++++-------------
- 7 files changed, 52 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
+index 0b02dcb3ad..f73784a109 100644
+--- a/drivers/net/gve/gve_ethdev.c
++++ b/drivers/net/gve/gve_ethdev.c
+@@ -306,6 +306,8 @@ gve_alloc_stats_report(struct gve_priv *priv,
+ 	if (!priv->stats_report_mem)
+ 		return -ENOMEM;
+ 
++	memset(priv->stats_report_mem->addr, 0, priv->stats_report_mem->len);
++
+ 	/* offset by skipping stats written by gve. */
+ 	priv->stats_start_idx = (GVE_TX_STATS_REPORT_NUM * nb_tx_queues) +
+ 		(GVE_RX_STATS_REPORT_NUM * nb_rx_queues);
 -- 
 2.55.0.795.g602f6c329a-goog
 
