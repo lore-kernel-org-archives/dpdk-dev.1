@@ -2,89 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA19C43458
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Jul 2026 16:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D47C43458
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Jul 2026 17:28:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D53984060B;
-	Thu,  9 Jul 2026 18:09:42 +0200 (CEST)
-Received: from mail-vs1-f98.google.com (mail-vs1-f98.google.com
- [209.85.217.98]) by mails.dpdk.org (Postfix) with ESMTP id 41F1E402CC
- for <dev@dpdk.org>; Thu,  9 Jul 2026 18:09:41 +0200 (CEST)
-Received: by mail-vs1-f98.google.com with SMTP id
- ada2fe7eead31-73770fd1cd9so2281137.3
- for <dev@dpdk.org>; Thu, 09 Jul 2026 09:09:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783613380; x=1784218180;
- h=content-type:cc:to:subject:message-id:date:thread-index
- :mime-version:in-reply-to:references:from:dkim-signature:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=3/nRUl2czCQQbmU8nrb7rMf8OxodgGeyxz5aYWVrl3g=;
- b=eqXUaqD/dFC70Ie8a37wj4A5qE/W8kwXrsatvgYZ4cll2SUgfS+Seqvyg4ODVOdqAC
- JBD3ypEZ7zbacVkT2rJN3ayfBJfycHCpCC0wpFmrkTq71uWzgU+6myh46pxlI8AA8WMj
- RBZh4JMz8CAcuqqNZ2eImHkKk9jEcgUBwvi1DQ9lQXTYqJuePn+63mcTEdDj0wxWPasD
- +8qAka6/3/t09aNBtCIHpXgHtqgPSJfyR5O17Swj2lhG4j9/KoyW19yzGYMLW4f4GeDg
- TEgp+MChoeoi0cu5kHfcN4uTtEgyYdpXTrn53PRWjEH+ujbbFzJYpC6YGXODANjHLRq/
- nV0w==
-X-Gm-Message-State: AOJu0Yzq+pEj41UgLtQxsSnaOHwfvQsTq2zpluwitgN53VJsKT4qW2ZE
- nzlISY7JA6drbdxhCDNNi0KEsufo8+0ngBcPXHRjweRDsAHQK1t7zMS5fn4HnAKRmHYtdM/aZev
- x/BQ3KRmNbSU76mYRK5WF309u+qaLr7Y3WM17s6m2XTzh89jlOMgKAN+HbtTGpUgyxQgtf6DcUY
- /3iIdxRdYItXQWeMlMAWKdbDcD3LyfTlI4McO6nte6j19k0RK+3jrGLzuPMS+n8mKZx+P4mlo/8
- Ejfwg==
-X-Gm-Gg: AfdE7cmD3HcrmA9zBn1kT04WGp8U24QdzXsbS3zIuEYqp7IsaVXNmIx+f8IU/nLpNxN
- LbEdU0C8iThPM5a0TBVQCcQECeDgE+qbu9H6i7F6AsBFa+6KKPk/QTfcS1YioEyOyXt3oXoCntA
- 0WTY+HgPm3jI1x9eatcWqbE1AoBtzIYLoalkNeJcSdPRTXogaJv5R0ktgvfx4XSsbwjvhbWo3YC
- vLIG85sIYjyyQI/zpjdsBr6HegHfrmjG9wqOWxcNWmgHKw3A7RUnTRtQSdPIcT5GCO9mMy916cQ
- hw/GpmiopSnjlRyHYbrbweXvRZdmet0FGDN+qUjCzvgPZjP8YSD6ghZL5tT6W7Aclf9xGKE+jxR
- 4Kzn7jRTxXmLuZT578OQtHLRfzVyzlX+lSIKgTRtxkN//6+W5iZBhAyb5uMRRA9hFKywPjlP8ET
- OT/YNSf++nex9KRHuJylLRvh1QHJpkTjlUIn9gSqMvBZV9AQ665fsYIg==
-X-Received: by 2002:a05:6102:418f:b0:738:1fcb:f276 with SMTP id
- ada2fe7eead31-744dffbeddbmr4906541137.1.1783613379969; 
- Thu, 09 Jul 2026 09:09:39 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-12.dlp.protect.broadcom.com. [144.49.247.12])
- by smtp-relay.gmail.com with ESMTPS id
- ada2fe7eead31-744d6ee19fbsm476893137.26.2026.07.09.09.09.39
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 09 Jul 2026 09:09:39 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-wm1-f72.google.com with SMTP id
- 5b1f17b1804b1-4926596eebcso17442935e9.3
- for <dev@dpdk.org>; Thu, 09 Jul 2026 09:09:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A44C9402CC;
+	Thu,  9 Jul 2026 19:28:28 +0200 (CEST)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com
+ [209.85.219.41]) by mails.dpdk.org (Postfix) with ESMTP id 5173740268
+ for <dev@dpdk.org>; Thu,  9 Jul 2026 19:28:27 +0200 (CEST)
+Received: by mail-qv1-f41.google.com with SMTP id
+ 6a1803df08f44-8ef1dc934d1so1323126d6.0
+ for <dev@dpdk.org>; Thu, 09 Jul 2026 10:28:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1783613378; x=1784218178; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:thread-index
- :mime-version:in-reply-to:references:from:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1783618106; x=1784222906; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=3/nRUl2czCQQbmU8nrb7rMf8OxodgGeyxz5aYWVrl3g=;
- b=L3KayoRlAKhdSDwuwhwc6K60AS6sxssXZ4Yp412iP8aV98RbEeFuvxOSscK4r8n+9Q
- EQh4ouTJ9r0UORbJUGeFHDXihbxjezMnQ+NKnvBaegQ+glVEVkuPagrw/gH2Bz+bDydm
- Gz4vSmxpkWC3VUIGv9meBeNe0dW8k9LpgA1AY=
-X-Received: by 2002:a05:600c:4743:b0:48f:d5b8:5b07 with SMTP id
- 5b1f17b1804b1-493e68c4a07mr76623215e9.20.1783613378525; 
- Thu, 09 Jul 2026 09:09:38 -0700 (PDT)
-X-Received: by 2002:a05:600c:4743:b0:48f:d5b8:5b07 with SMTP id
- 5b1f17b1804b1-493e68c4a07mr76623045e9.20.1783613378099; Thu, 09 Jul 2026
- 09:09:38 -0700 (PDT)
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-References: <EAYPR13MB7316899D71B96849EDFB8BC0B4F2F02@EAYPR13MB731689.namprd13.prod.outlook.com>
-In-Reply-To: <EAYPR13MB7316899D71B96849EDFB8BC0B4F2F02@EAYPR13MB731689.namprd13.prod.outlook.com>
+ bh=wN9XCDSB0C/XUUy221XIoqYtgh10ewSBgoxvbP3nm8E=;
+ b=BJ82hv+/Tn4aExd468KZVmQVXAlml6wpp96cnMP+fAqodXTvWctcanIfLZP8EwGyPR
+ U+eDk1qYZ5czyGn8GUXL27vSB72FSrF3qJxuIGyiNDjaYmCBASCGCdu32qjrmW9RBCdr
+ 3rh3p8bjBRWJSyxmbsMNeQDBlux4GPx6JOC9k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783618106; x=1784222906;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=wN9XCDSB0C/XUUy221XIoqYtgh10ewSBgoxvbP3nm8E=;
+ b=RNAHq1FUN19mXqbdgNbjpYaTJEMCbtj2GR+itj47QPvsZtQR/pzLCPBFQaIBwJqsfY
+ ZC+UyvasTz1A0+G+2xWY78ZsvvwTS+lT+TKCOyNDy2V2i3LeTzV9U+tOuYq/M1MjigKz
+ pc7thMxHGKLegAzhdhDnBhQMaOJq0EVNkVkD3GtG3nROVCha1Eg0RphUlO1LfJwHdd5C
+ O0M6592aIqzYaAHeRPXCv1/ObOBh8qULMq/7Io/ssXDH/IvkgIra6QRA7Wz4LWU9tU4L
+ P5QGUI/CcHrUYU8lVB6o0Q3UWvdsgpnL8sYBxpCjM03KFvJ6JnYQS1ttYKQ/h4d/rA7u
+ R59g==
+X-Gm-Message-State: AOJu0YykkT3sTvU3ooeTu93kbEfkRQzBVfjFrDLrwv3IvFQh/ZHP7MCm
+ WQmVyPXa+owgyZc2hrF0QnqWrxatqdTFC2ZOtiGZFaJBSqhACTmdnSl1OOMujDnPC7U=
+X-Gm-Gg: AfdE7cnoBv5puhWvMkgMFSG7EZCJ9M4glPWY7iocb6Bat10KuEAuCcQm8TOnodvhy0D
+ 6WUZV1C210vBgwgoXxIzW3WJo2M5krPGLEn4TtzfgO0PDu13AB5ymUlzDfVlOTwdNbqOB26YMVn
+ rN7BWQmjFFIURH0URLhZ7n074iYRTQXSRl1Ve59DPUb9r/TxgIehK2EqZcKYqP5XGxD0kTkSFqc
+ zWhEfgvYCk62lgl3luz6kJFPmhoOltNKxAmP+QBpV1kOpO7Y2KdZq/nbxOngNytVUx/EXU8HQF4
+ 3OuwVeWYh+dPbGuKIpzqZiS5YZe/qhjTdWDSxZ//u7Rc/g4fXlvhz6mjhw7zG+RO3ex6a8bYJjy
+ mziKDvt6m20Kv8cbHMC+XpB9oVdOyrs+CtVFncYuW/D7KXvfCcVrkeQ2Jp5lI7TExTHpLBFEHls
+ Suyt+90ICzrnzpoSN3REtTehmI3hndfqR2b6TYi9Ji9VvHK9W6irD6BbmJ+RxwJJMo+uVgBvSfR
+ zYPRG+yyIyWDzodWQr1voesvX80Q8y4X8hJJsfzpJ+2C/HNkBHh0MHbIJT++B6ClbzBPoaSydco
+ pzdr0KVPCbYAZOFWoL+dQEw=
+X-Received: by 2002:a05:6214:4344:b0:8fd:6e22:6631 with SMTP id
+ 6a1803df08f44-9025b086e36mr836576d6.29.1783618106491; 
+ Thu, 09 Jul 2026 10:28:26 -0700 (PDT)
+Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:af2f:903c:2ca9:975f])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-8ffd56bdcdbsm22103326d6.11.2026.07.09.10.28.25
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 09 Jul 2026 10:28:26 -0700 (PDT)
+From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+To: luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: dev@dpdk.org, abailey@iol.unh.edu, ahassick@iol.unh.edu,
+ lylavoie@iol.unh.edu, Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Subject: [PATCH v5 1/2] dts: add code coverage reporting to DTS
+Date: Thu,  9 Jul 2026 13:28:22 -0400
+Message-ID: <20260709172823.972163-1-knimoji@iol.unh.edu>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260522154637.952588-1-knimoji@iol.unh.edu>
+References: <20260522154637.952588-1-knimoji@iol.unh.edu>
 MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJWsLk+Taj3zPwIrv2QKb7C2ptLl7VyGRcA
-Date: Thu, 9 Jul 2026 12:09:35 -0400
-X-Gm-Features: AUfX_mwXszWkr3S8uRIO0dfxkABxhkI5Zh3BQ8X5BKDLUOhV08od3VzEI2tycJQ
-Message-ID: <6456b41e6775851acdf996127afffc35@mail.gmail.com>
-Subject: RE: Inquiry about status of accepted patch net/bnxt/tf_core: fix null
- deref on pool use allocation
-To: 20260603041557.115956-1-denserg.edu@gmail.com
-Cc: dev@dpdk.org, Ajit Kumar Khaparde <ajit.khaparde@broadcom.com>,
- stable@dpdk.org, denserg.edu@gmail.com
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="000000000000dcf86706562fd9d6"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,141 +79,289 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000dcf86706562fd9d6
-Content-Type: text/plain; charset="UTF-8"
+Previously, DTS had no code coverage. This patch adds a command line
+argument in order to build DPDK with code coverage enabled. This allows
+users to create and view code coverage reports of what code and functions
+were called during a DTS run.
 
-Hi Simakov,
+Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+---
+v2:
+    *Fixed error in lcov/gcov tool detection
+v3:
+    *Fixed type hints and error message typos
+v4:
+    *Fixed documentation and docstring comments
+    *Added a check to make sure code coverage is
+     not enabled on a DTS run with a precompiled
+     build directory
+v5:
+    *Fixed issue where teardown fails when code
+     coverage report generation fails
+---
+ .mailmap                                      |  1 +
+ doc/guides/tools/dts.rst                      | 18 +++++++++++
+ dts/README.md                                 |  5 +++
+ dts/framework/remote_session/dpdk.py          | 31 +++++++++++++++++++
+ .../remote_session/remote_session.py          |  5 ++-
+ dts/framework/settings.py                     | 10 ++++++
+ dts/framework/testbed_model/os_session.py     | 10 ++++++
+ dts/framework/testbed_model/posix_session.py  | 22 +++++++++++++
+ dts/framework/utils.py                        |  8 +++++
+ 9 files changed, 109 insertions(+), 1 deletion(-)
 
-Will get back once I check with the maintainers.
+diff --git a/.mailmap b/.mailmap
+index 05a55c0bd6..ed1553c6c3 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -887,6 +887,7 @@ Klaus Degner <kd@allegro-packets.com>
+ Kommula Shiva Shankar <kshankar@marvell.com>
+ Konstantin Ananyev <konstantin.ananyev@huawei.com> <konstantin.v.ananyev@yandex.ru>
+ Konstantin Ananyev <konstantin.ananyev@huawei.com> <konstantin.ananyev@intel.com>
++Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+ Krishna Murthy <krishna.j.murthy@intel.com>
+ Krzysztof Galazka <krzysztof.galazka@intel.com>
+ Krzysztof Kanas <kkanas@marvell.com> <krzysztof.kanas@caviumnetworks.com>
+diff --git a/doc/guides/tools/dts.rst b/doc/guides/tools/dts.rst
+index 5b9a348016..0ffebdc713 100644
+--- a/doc/guides/tools/dts.rst
++++ b/doc/guides/tools/dts.rst
+@@ -352,6 +352,10 @@ DTS is run with ``main.py`` located in the ``dts`` directory using the ``poetry
+      --precompiled-build-dir DIR_NAME
+                            [DTS_PRECOMPILED_BUILD_DIR] Define the subdirectory under the DPDK tree root directory or tarball where the pre-
+                            compiled binaries are located. (default: None)
++     --code-coverage       Builds DPDK on the SUT node with code coverage enabled. Generates a code coverage report which can be found on
++                           the DTS execution hosts local filesystem at dts/output/coverage_reports/meson-logs/coveragereport/index.html,
++                           or the specified output directory. To use code coverage, please ensure lcov v1.15 and gcov v8.0 or higher
++                           (included in gcc package) are installed on the SUT node.
+ 
+ 
+ The brackets contain the names of environment variables that set the same thing.
+@@ -367,6 +371,20 @@ Results are stored in the output dir by default
+ which be changed with the ``--output-dir`` command line argument.
+ The results contain basic statistics of passed/failed test cases and DPDK version.
+ 
++Code Coverage
++~~~~~~~~~~~~~
++
++DTS has the ablilty to track code usage during test runs, and generate an HTML
++coverage report which shows the coverage percentage for the various DPDK
++libraries and drivers utilized during execution. The DPDK build directory must
++be compiled on the SUT node, as a pre-built build directory may not be properly
++configured for code coverage. Code coverage can be enabled by using the
++"--code-coverage" CLI parameter when running DTS.
++
++To use code coverage, please make sure the following dependencies are available
++on the SUT node:
++- lcov v1.15 or greater
++- gcov v8.0 or greater (included in gcc package)
+ 
+ Contributing to DTS
+ -------------------
+diff --git a/dts/README.md b/dts/README.md
+index d257b7a167..51f824e077 100644
+--- a/dts/README.md
++++ b/dts/README.md
+@@ -64,6 +64,11 @@ $ poetry run ./main.py
+ These commands will give you a bash shell inside a docker container
+ with all DTS Python dependencies installed.
+ 
++# Code Coverage
++
++To generate code coverage reports, ensure the SUT has lcov v1.15 and gcov v8.0 or greater
++installed, and that DTS is run using the '--code-coverage' argument.
++
+ ## Visual Studio Code
+ 
+ Usage of VScode devcontainers is NOT required for developing on DTS and running DTS,
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
+index c3575cfcaf..31610f14c4 100644
+--- a/dts/framework/remote_session/dpdk.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -29,6 +29,7 @@
+ from framework.logger import DTSLogger, get_dts_logger
+ from framework.params.eal import EalParams
+ from framework.remote_session.remote_session import CommandResult
++from framework.settings import SETTINGS
+ from framework.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
+ from framework.testbed_model.node import Node
+ from framework.testbed_model.os_session import OSSession
+@@ -80,6 +81,10 @@ def setup(self) -> None:
+         DPDK setup includes setting all internals needed for the build, the copying of DPDK
+         sources and then building DPDK or using the exist ones from the `dpdk_location`. The drivers
+         are bound to those that DPDK needs.
++
++        Raises:
++            ConfigurationError: When DTS is run with code coverage enabled, but is also provided
++            a precompiled build directory.
+         """
+         if not isinstance(self.config.dpdk_location, RemoteDPDKTreeLocation):
+             self._node.main_session.create_directory(self.remote_dpdk_tree_path)
+@@ -98,6 +103,10 @@ def setup(self) -> None:
+ 
+         match self.config:
+             case DPDKPrecompiledBuildConfiguration(precompiled_build_dir=build_dir):
++                if SETTINGS.code_coverage:
++                    raise ConfigurationError(
++                        "Cannot create code coverage report using a precompiled build directory."
++                    )
+                 self._set_remote_dpdk_build_dir(build_dir)
+             case DPDKUncompiledBuildConfiguration(build_options=build_options):
+                 self._configure_dpdk_build(build_options)
+@@ -107,7 +116,26 @@ def teardown(self) -> None:
+         """Teardown the DPDK build on the target node.
+ 
+         Removes the DPDK tree and/or build directory/tarball depending on the configuration.
++        If code coverage is enabled, the coverage report and .info file are generated and
++        copied onto the local filesystem before teardown.
+         """
++        try:
++            if SETTINGS.code_coverage:
++                report_folder = PurePath(self.remote_dpdk_build_dir / "meson-logs")
++                output_dir = SETTINGS.output_dir
++                Path(output_dir).mkdir(parents=True, exist_ok=True)
++
++                coverage_status = self._session.generate_coverage_report(self.remote_dpdk_build_dir)
++                if coverage_status:
++                    self._session.copy_dir_from(report_folder, output_dir)
++                    self._logger.info(
++                        "Coverage HTML report generated, "
++                        f"available at {output_dir}/meson-logs/coveragereport/index.html"
++                    )
++
++        except Exception as e:
++            self._logger.info(f"Unable to create code coverage report due to an error: {e}")
++
+         match self.config.dpdk_location:
+             case LocalDPDKTreeLocation():
+                 self._node.main_session.remove_remote_dir(self.remote_dpdk_tree_path)
+@@ -272,6 +300,9 @@ def _build_dpdk(self) -> None:
+         else:
+             meson_args = MesonArgs(default_library="static", libdir="lib")
+ 
++        if SETTINGS.code_coverage:
++            meson_args._add_arg("-Db_coverage=true")
++
+         self._session.build_dpdk(
+             self._env_vars,
+             meson_args,
+diff --git a/dts/framework/remote_session/remote_session.py b/dts/framework/remote_session/remote_session.py
+index fb5f6fedf5..cc1f1f6a4f 100644
+--- a/dts/framework/remote_session/remote_session.py
++++ b/dts/framework/remote_session/remote_session.py
+@@ -250,7 +250,10 @@ def copy_from(self, source_file: str | PurePath, destination_dir: str | Path) ->
+             destination_dir: The directory path on the local filesystem where the `source_file`
+                 will be saved.
+         """
+-        self.session.get(str(source_file), str(destination_dir))
++        source_file = PurePath(source_file)
++        destination_dir = Path(destination_dir)
++        local_path = destination_dir / source_file.name
++        self.session.get(str(source_file), str(local_path))
+ 
+     def copy_to(self, source_file: str | Path, destination_dir: str | PurePath) -> None:
+         """Copy a file from local filesystem to the remote Node.
+diff --git a/dts/framework/settings.py b/dts/framework/settings.py
+index f329677804..6e2fc78b78 100644
+--- a/dts/framework/settings.py
++++ b/dts/framework/settings.py
+@@ -159,6 +159,8 @@ class Settings:
+     re_run: int = 0
+     #:
+     random_seed: int | None = None
++    #:
++    code_coverage: bool = False
+ 
+ 
+ SETTINGS: Settings = Settings()
+@@ -489,6 +491,14 @@ def _get_parser() -> _DTSArgumentParser:
+     )
+     _add_env_var_to_action(action)
+ 
++    action = parser.add_argument(
++        "--code-coverage",
++        action="store_true",
++        default=False,
++        help="Used to build DPDK with code coverage enabled.",
++    )
++    _add_env_var_to_action(action)
++
+     return parser
+ 
+ 
+diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/testbed_model/os_session.py
+index f2dc9b20a9..c2874051a7 100644
+--- a/dts/framework/testbed_model/os_session.py
++++ b/dts/framework/testbed_model/os_session.py
+@@ -480,6 +480,16 @@ def build_dpdk(
+             timeout: Wait at most this long in seconds for the build execution to complete.
+         """
+ 
++    @abstractmethod
++    def generate_coverage_report(self, remote_build_dir: PurePath | None) -> bool:
++        """Generates a code coverage report for a DTS run.
++
++        Args:
++            remote_build_dir: The remote DPDK build directory
++        Returns:
++            Whether the coverage report was able to be created or not.
++        """
++
+     @abstractmethod
+     def get_dpdk_version(self, version_path: str | PurePath) -> str:
+         """Inspect the DPDK version on the remote node.
+diff --git a/dts/framework/testbed_model/posix_session.py b/dts/framework/testbed_model/posix_session.py
+index dec952685a..0a281f658c 100644
+--- a/dts/framework/testbed_model/posix_session.py
++++ b/dts/framework/testbed_model/posix_session.py
+@@ -295,6 +295,28 @@ def build_dpdk(
+         except RemoteCommandExecutionError as e:
+             raise DPDKBuildError(f"DPDK build failed when doing '{e.command}'.")
+ 
++    def generate_coverage_report(self, remote_build_dir: PurePath | None) -> bool:
++        """Overrides :meth:`~.os_session.OSSession.generate_coverage_report`."""
++        command_result = self.send_command(r"lcov --version | grep -oP '\d+\.\d+'")
++        lcov_version = float(
++            command_result.stdout if command_result.return_code == 0 and command_result else -1
++        )
++        command_result = self.send_command(
++            r"gcov --version | head -n 1 | grep -oP '\d+\.\d+' | tail -n 1"
++        )
++        gcov_version = float(
++            command_result.stdout if command_result.return_code == 0 and command_result else -1
++        )
++
++        if lcov_version >= 1.15 and gcov_version >= 8.0:
++            self.send_command(f"ninja -C {remote_build_dir} coverage-html", timeout=600)
++            return True
++        else:
++            self._logger.info(
++                "Unable to generate code coverage report, ensure at least lcov v1.15 and gcov v8.0"
++            )
++            return False
++
+     def get_dpdk_version(self, build_dir: str | PurePath) -> str:
+         """Overrides :meth:`~.os_session.OSSession.get_dpdk_version`."""
+         out = self.send_command(f"cat {self.join_remote_path(build_dir, 'VERSION')}", verify=True)
+diff --git a/dts/framework/utils.py b/dts/framework/utils.py
+index 5753c1b7fe..55d6dfc337 100644
+--- a/dts/framework/utils.py
++++ b/dts/framework/utils.py
+@@ -127,6 +127,14 @@ def __str__(self) -> str:
+         """The actual args."""
+         return " ".join(f"{self._default_library} {self._dpdk_args}".split())
+ 
++    def _add_arg(self, arg: str):
++        """Adds an argument to the meson setup command.
++
++        Args:
++            arg: The meson build argument to be added.
++        """
++        self._dpdk_args = self._dpdk_args + " " + arg
++
+ 
+ class TarCompressionFormat(StrEnum):
+     """Compression formats that tar can use.
+-- 
+2.54.0
 
-Thanks,
-Kishore
-
-
------Original Message-----
-From: Simakov Aleksey <bigalex934@gmail.com>
-Sent: Tuesday, July 7, 2026 4:05 AM
-To: kishore.padmanabha@broadcom.com
-Cc: dev@dpdk.org; ajit.khaparde@broadcom.com; stable@dpdk.org;
-denserg.edu@gmail.com
-Subject: Inquiry about status of accepted patch net/bnxt/tf_core: fix null
-deref on pool use allocation
-
-Hello!
-
-I hope this message finds you well.
-
-I am writing to inquire about the status of patch
-https://patches.dpdk.org/project/dpdk/patch/20260603041557.115956-1-denser
-g.edu@gmail.com/
-It was marked as "Accepted" in Patchwork over a month ago, but I noticed
-that it has not yet been merged into any of the DPDK branches.
-
-Could you please clarify the current status of this patch?
-
-Thank you for your time
-
---000000000000dcf86706562fd9d6
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIVcQYJKoZIhvcNAQcCoIIVYjCCFV4CAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghLeMIIGqDCCBJCgAwIBAgIQfofDCS7XZu8vIeKo0KeY9DANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNTNaFw0yOTA0MTkwMDAwMDBaMFIxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBS
-NiBTTUlNRSBDQSAyMDIzMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwjAEbSkPcSyn
-26Zn9VtoE/xBvzYmNW29bW1pJZ7jrzKwPJm/GakCvy0IIgObMsx9bpFaq30X1kEJZnLUzuE1/hlc
-hatYqyORVBeHlv5V0QRSXY4faR0dCkIhXhoGknZ2O0bUJithcN1IsEADNizZ1AJIaWsWbQ4tYEYj
-ytEdvfkxz1WtX3SjtecZR+9wLJLt6HNa4sC//QKdjyfr/NhDCzYrdIzAssoXFnp4t+HcMyQTrj0r
-pD8KkPj96sy9axzegLbzte7wgTHbWBeJGp0sKg7BAu+G0Rk6teO1yPd75arbCvfY/NaRRQHk6tmG
-71gpLdB1ZhP9IcNYyeTKXIgfMh2tVK9DnXGaksYCyi6WisJa1Oa+poUroX2ESXO6o03lVxiA1xyf
-G8lUzpUNZonGVrUjhG5+MdY16/6b0uKejZCLbgu6HLPvIyqdTb9XqF4XWWKu+OMDs/rWyQ64v3mv
-Sa0te5Q5tchm4m9K0Pe9LlIKBk/gsgfaOHJDp4hYx4wocDr8DeCZe5d5wCFkxoGc1ckM8ZoMgpUc
-4pgkQE5ShxYMmKbPvNRPa5YFzbFtcFn5RMr1Mju8gt8J0c+dxYco2hi7dEW391KKxGhv7MJBcc+0
-x3FFTnmhU+5t6+CnkKMlrmzyaoeVryRTvOiH4FnTNHtVKUYDsCM0CLDdMNgoxgkCAwEAAaOCAX4w
-ggF6MA4GA1UdDwEB/wQEAwIBhjBMBgNVHSUERTBDBggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQB
-gjcUAgIGCisGAQQBgjcKAwwGCisGAQQBgjcKAwQGCSsGAQQBgjcVBjASBgNVHRMBAf8ECDAGAQH/
-AgEAMB0GA1UdDgQWBBQAKTaeXHq6D68tUC3boCOFGLCgkjAfBgNVHSMEGDAWgBSubAWjkxPioufi
-1xzWx/B/yGdToDB7BggrBgEFBQcBAQRvMG0wLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9i
-YWxzaWduLmNvbS9yb290cjYwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
-b20vY2FjZXJ0L3Jvb3QtcjYuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vcm9vdC1yNi5jcmwwEQYDVR0gBAowCDAGBgRVHSAAMA0GCSqGSIb3DQEBDAUAA4IC
-AQCRkUdr1aIDRmkNI5jx5ggapGUThq0KcM2dzpMu314mJne8yKVXwzfKBtqbBjbUNMODnBkhvZcn
-bHUStur2/nt1tP3ee8KyNhYxzv4DkI0NbV93JChXipfsan7YjdfEk5vI2Fq+wpbGALyyWBgfy79Y
-IgbYWATB158tvEh5UO8kpGpjY95xv+070X3FYuGyeZyIvao26mN872FuxRxYhNLwGHIy38N9ASa1
-Q3BTNKSrHrZngadofHglG5W3TMFR11JOEOAUHhUgpbVVvgCYgGA6dSX0y5z7k3rXVyjFOs7KBSXr
-dJPKadpl4vqYphH7+P40nzBRcxJHrv5FeXlTrb+drjyXNjZSCmzfkOuCqPspBuJ7vab0/9oeNERg
-nz6SLCjLKcDXbMbKcRXgNhFBlzN4OUBqieSBXk80w2Nzx12KvNj758WavxOsXIbX0Zxwo1h3uw75
-AI2v8qwFWXNclO8qW2VXoq6kihWpeiuvDmFfSAwRLxwwIjgUuzG9SaQ+pOomuaC7QTKWMI0hL0b4
-mEPq9GsPPQq1UmwkcYFJ/Z4I93DZuKcXmKMmuANTS6wxwIEw8Q5MQ6y9fbJxGEOgOgYL4QIqNULb
-5CYPnt2LeiIiEnh8Uuh8tawqSjnR0h7Bv5q4mgo3L1Z9QQuexUntWD96t4o0q1jXWLyrpgP7Zcnu
-CzCCBYMwggNroAMCAQICDkXmuwODM8OFZUjm/0VRMA0GCSqGSIb3DQEBDAUAMEwxIDAeBgNVBAsT
-F0dsb2JhbFNpZ24gUm9vdCBDQSAtIFI2MRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpH
-bG9iYWxTaWduMB4XDTE0MTIxMDAwMDAwMFoXDTM0MTIxMDAwMDAwMFowTDEgMB4GA1UECxMXR2xv
-YmFsU2lnbiBSb290IENBIC0gUjYxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2Jh
-bFNpZ24wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCVB+hzymb57BTKezz3DQjxtEUL
-LIK0SMbrWzyug7hBkjMUpG9/6SrMxrCIa8W2idHGsv8UzlEUIexK3RtaxtaH7k06FQbtZGYLkoDK
-RN5zlE7zp4l/T3hjCMgSUG1CZi9NuXkoTVIaihqAtxmBDn7EirxkTCEcQ2jXPTyKxbJm1ZCatzEG
-xb7ibTIGph75ueuqo7i/voJjUNDwGInf5A959eqiHyrScC5757yTu21T4kh8jBAHOP9msndhfuDq
-jDyqtKT285VKEgdt/Yyyic/QoGF3yFh0sNQjOvddOsqi250J3l1ELZDxgc1Xkvp+vFAEYzTfa5MY
-vms2sjnkrCQ2t/DvthwTV5O23rL44oW3c6K4NapF8uCdNqFvVIrxclZuLojFUUJEFZTuo8U4lptO
-TloLR/MGNkl3MLxxN+Wm7CEIdfzmYRY/d9XZkZeECmzUAk10wBTt/Tn7g/JeFKEEsAvp/u6P4W4L
-sgizYWYJarEGOmWWWcDwNf3J2iiNGhGHcIEKqJp1HZ46hgUAntuA1iX53AWeJ1lMdjlb6vmlodiD
-D9H/3zAR+YXPM0j1ym1kFCx6WE/TSwhJxZVkGmMOeT31s4zKWK2cQkV5bg6HGVxUsWW2v4yb3BPp
-DW+4LtxnbsmLEbWEFIoAGXCDeZGXkdQaJ783HjIH2BRjPChMrwIDAQABo2MwYTAOBgNVHQ8BAf8E
-BAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUrmwFo5MT4qLn4tcc1sfwf8hnU6AwHwYD
-VR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwDQYJKoZIhvcNAQEMBQADggIBAIMl7ejR/ZVS
-zZ7ABKCRaeZc0ITe3K2iT+hHeNZlmKlbqDyHfAKK0W63FnPmX8BUmNV0vsHN4hGRrSMYPd3hckSW
-tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
-2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
-phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
-a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
-ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
-07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
-SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
-rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGpzCCBI+g
-AwIBAgIMTxuM8PbwRQIs9uJeMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
-ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
-MDIzMB4XDTI1MDYyMDEzNTIxOFoXDTI3MDYyMTEzNTIxOFowgekxCzAJBgNVBAYTAlVTMRMwEQYD
-VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
-MDExNzETMBEGA1UEBBMKUGFkbWFuYWJoYTEQMA4GA1UEKhMHS2lzaG9yZTEWMBQGA1UEChMNQlJP
-QURDT00gSU5DLjEoMCYGA1UEAwwfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTEuMCwG
-CSqGSIb3DQEJARYfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcN
-AQEBBQADggEPADCCAQoCggEBALtFWP+ax39qiJZsJuukdoqMyp0GWGaJ6MdaHvAxXWiEY5zmTiVU
-QnpmNYp5SO1Cd1cBqDB0dcelQbiQ1qh+lnlUchJLR63y0ysUvUNvqV493q8+pHCm/2jPb0/R9rec
-/jxwM9jaPAVkhGBwvudSfOAQlMPORtAHZyLHKFINcsNfLrGP/3lx+zj30v5tmDN7isOLWos7Jm/U
-qRdC7UuUiXgX7q8xXd1MQlA95O73IY/Qb/y0ChEjGPb+U1wr+OsAWJ5fcjQXA/ffBb2GmMp9OUOs
-wVNq8iHfie9nzNaaRw+yoyn0ovoiq2W3Q6r+U53ha/lz0itqCrJZN+G0MFf+cX8CAwEAAaOCAeMw
-ggHfMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggr
-BgEFBQcwAoY6aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1l
-Y2EyMDIzLmNydDA5BggrBgEFBQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2Ny
-NnNtaW1lY2EyMDIzMGUGA1UdIAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGg
-MgoDAjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5
-LzBBBgNVHR8EOjA4MDagNKAyhjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWlt
-ZWNhMjAyMy5jcmwwKgYDVR0RBCMwIYEfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTAT
-BgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBQAKTaeXHq6D68tUC3boCOFGLCgkjAdBgNV
-HQ4EFgQURIyot+ZP/mdwQsofZexqAvOm5pMwDQYJKoZIhvcNAQELBQADggIBAKc5gYnhyTf+f6cm
-kAHy1a4cLIWou43yaS+M/r69Pv44EVYvHxqt0mMvKh3U40Y+pHKph+VCjdoINKCd1SaqAFIqqEO4
-XHWrFi3QAI3snUB6spPIoHN/srAcpX9tdrnAlyK593pq+H+mTMoFIGBP/oc8XCtaDgHp37rpuK9Q
-qhF9h5cEJWgShmD7/Q02YydW3jsioy8HdTUD9fib1fRwiSc9uGq8JV5NJsYiJsi9FUz7kTUPohO0
-h6U9tRUVmAf9gPbU46rin9By5X4Lt1jKge5O0vFEawCTr/pLmDcIf7CqRZfBoNalKOsBDovoeAOf
-pXmQzQEMhnaf93MvbFvZaxC9Ir92DR45BH42xZuLKcQVUsqyLKwC6kEZg81AnZsRAUVpMvqiGbVb
-hZnabsHragNY7Br3VCA2OaWk9yRRjt1UwzfIEEMNWqZeQzzAqKIR3XdXIrqAUlMQOX42tSV9FaIv
-PSmR3uaH2M0/bRtz4TE1qRuTsLlr+XEGMxHssK7u7+WYM7EGF3ueZLcE7WmnwXEFli5Y5QX0SnmT
-W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
-6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
-YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
-YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCChPR0vF31q2Ts/YruB4+/BN3bz0gnLHU6L0AsvmIaphjAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA3MDkxNjA5MzhaMFwGCSqG
-SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBusP/Lzflk
-02afn7F4mwltfiDXrRFBA5evDlo3BgTE+kCeeEjb+fo89mhamZtEKY+emSsyZpfwuJPEfOHPpn9d
-FGsMbGtYLMradS7ONJXrxrv8Af5S+C08IOes3wuIGc4k1RvI8NulKxigQF8Od7EoHTxS5wLM3+rN
-GZJApiIidO9u1Xt+JMRBpA+OS7igh22ZvEA4kKlJtqEPTHb2AdXzL/LuNY/TuqL8cpcnHedQiWEn
-l3V+3pNV60lSR7F2lqRKyIlVrujdCJPm2TjwJffe6Rkwz5tMDLehEdghHxysLmLK1xCok1P4oY1W
-H9XS3GNwKaQFoY69yqHBYZXC8OC+
---000000000000dcf86706562fd9d6--
