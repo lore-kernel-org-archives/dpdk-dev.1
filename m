@@ -2,74 +2,94 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76528C43458
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 16:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3006AC43458
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 20:33:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 50EB04028E;
-	Fri, 10 Jul 2026 18:43:24 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id B393C400D5
- for <dev@dpdk.org>; Fri, 10 Jul 2026 18:43:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1783701801;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=yFgg9pEYag9ZfuFlG8vEGol2pKCgNyPCKIyNoRg+Q7A=;
- b=D7GQnQlCa8EAWZYZVe6BaFm7b1rznExWWW52xu61mEFwhejTmfqJ/4bouQ3KRfSO9m+MCG
- FLYVdppTQ4MC6jKmtbgTcBFJT+qb9sA8Q3YAFgR4vSkii+Hw+Zrbiux2vD3GTZG8PAI0Tg
- PZf+fFgVvtO/69PG8GwT83exgE/SKoY=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-15-XcY16qmxMsy8k0wqVocNTQ-1; Fri, 10 Jul 2026 12:43:20 -0400
-X-MC-Unique: XcY16qmxMsy8k0wqVocNTQ-1
-X-Mimecast-MFC-AGG-ID: XcY16qmxMsy8k0wqVocNTQ_1783701799
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5aeb351bb5fso825172e87.2
- for <dev@dpdk.org>; Fri, 10 Jul 2026 09:43:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7827840613;
+	Fri, 10 Jul 2026 22:33:18 +0200 (CEST)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com
+ [209.85.208.172])
+ by mails.dpdk.org (Postfix) with ESMTP id A987A400D5
+ for <dev@dpdk.org>; Fri, 10 Jul 2026 22:33:17 +0200 (CEST)
+Received: by mail-lj1-f172.google.com with SMTP id
+ 38308e7fff4ca-39b22d0e488so13518711fa.3
+ for <dev@dpdk.org>; Fri, 10 Jul 2026 13:33:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783715597; cv=none;
+ d=google.com; s=arc-20260327;
+ b=Virp8y+wmnL+H3RqmGJp/ET1FD9+VYIVQQGQ3v2ytghA22e/aGn4M9D4WVgv0nyimr
+ B9JV3QafHDN3oSl85dMq3/X0B1DVMzT/F85yT8CkC1fjpg8ubdrymc0kAzfybwVUkLCn
+ DehLs4p3N+8JsmeE6YEBiAW1V1Pist7vrOa89mIa2Wo2wlIDvCbxIRvqwx4FC5mwpliT
+ YoeyXUyEYj8PO4h7qyNJlLLWnN135c/5R0m6vEHqy9WK4Dhz+2bFAGuVxBPTHdYkvpUV
+ 94zz/gu61vu7Lrem8rqpEPXslwxDrIOSmPSxocLBL8d9MBqeMW8WuFedkL/EhUhR2o73
+ j0+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=5iMFDalDLuwdFCEXokQl7+cPvgCavNPFweyB+gydSdc=;
+ fh=HZaH2ycltzw47yxXb7Ftlj89OhaaX/WAtsn+q7xXpJM=;
+ b=WokAOcB2J9tRnka5qTrUPvKNtDHsknBINvbr++E8XDq79jePDcEhgm+R8iuM9MZUId
+ ns5on9AayQoNIdCFgHgbinpJovyGS8JzFAaiBEu65/uqJ5hNpnxHtlQVjSnAC2E/FgVO
+ YVKAMzX4eLTMACFuNuDWPQMy4+dGBYnJRvMbou1270Fity24RDhu/6P70eUpXsl3llIB
+ uzzawzK2jHPtIAV5onxjpAnCrYYsYzUBpBS8yNqGBH1x76dtrwYBepsEC7qic2NaH5aG
+ BK5v6D47lMJzHJBVE1d9eNc/pRC8b8pq4z4aYASmDiluZskp3yQd9ft3eMceyhoFYfem
+ tEIw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20251104; t=1783715597; x=1784320397; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=5iMFDalDLuwdFCEXokQl7+cPvgCavNPFweyB+gydSdc=;
+ b=na4AZtQyqeZ/Sq6gj1MhQsRc1ePMF1usaC0dmRe9WqfL0GrAUCpuIh+Za9u2dxNBDN
+ x4egNE4KLDjnLt1PTyFRgeaTpYLiB8m2ZFYZpVO4eeQFZ3BV0NvKzHltjzSceO6b0rBD
+ EPdW9+MIjfn0y2NCS8IP9pPy/umO3BGqGnBFrO5NkEVKiIGlz8mYcN+S5wFSW8fRYe31
+ vC01YJikbQg9L/FC7U6KpHc+lbq6fdkU9p0p5SnGxbmxNp9UneTgj4vScNKei3Eq8xI0
+ O1MKyQukyPtLCI7erQFkKIBvqMQR6GP3un5pP2UKKAacrJXoOjFYpT+CBgrDxFNYgm63
+ tTkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783701799; x=1784306599;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=yFgg9pEYag9ZfuFlG8vEGol2pKCgNyPCKIyNoRg+Q7A=;
- b=P3OdCvH1+hGuvZYQ1ThRih6l9px7V/u67vXFCkxMJm33Tc5OkLqh/PH7Fusmw8L3R9
- AGtvfSzFHl0ju2mt29B8/b4c3w6OCiip6uDwkTZBFX8EmfN0mL50CEmCdq6RQYRUQeaN
- IAgu3g5ibCq1qPqS+N+pc9wCosl5PivK4ipABLGGrBlbM5LtiIp3FTigG508HYAnzKEO
- X3/c9Bc+3igONn0moqFizg7Pa3ZLbpNy8vYe8j+KrCXPDHyiz0T6RaR3oUFBe59fzE2+
- TOOqfeKPiUbCuhcnsDVIAbEC9QyVS/lXyZEVmSS2kZ300qRVeUkHx0pUdR8ppwaLBB7C
- qiqQ==
-X-Gm-Message-State: AOJu0YxdPERdpSAYVaLfns51QvdlbHqZBtEPIUfiwSvwAWSFKWPATuGy
- 9a3NvBta0Ic8YJvL0mMxAu3t0xjS0KDjHmR6KB9x1llHAUbreKIgQ52S/s/v/ZkvmdC5wOSS0QO
- YQHRkGySV/5yH/hd3m4ddfrQ5NVAkSd+a8D3DEm27dD3U1XBjxclLhzeoiSIWMpp2KJjhpw9xab
- hwfE0eA0tjsd53PDY3znFQvH89k3k=
-X-Gm-Gg: AfdE7cn2xU+50NFQsyamq2mQ8Q1TUAHBlQqgd+aWveX+9zr9B2BWBI5wXiG0WwPIhOM
- BXaWCbgQZsqqf9Fjyr+Of165PsnS1zFZCtQLJkLiQIr2WAF3zg/GdRAWy7N/+s5ct296/vCHgVZ
- LLpHN6E+4F9pSjqgnYiwW8cVIE2woZjttCJybtbPc3mYynJXnPVDw6wGLklFcz1Vf/8d+CLBNk2
- bsPjNm4p9WZBiDsPFJmPR/655wRxcI2So9gin9ArQ3uc4pecuzoLrmxNXo=
-X-Received: by 2002:a05:6512:6805:b0:5b0:137f:9466 with SMTP id
- 2adb3069b0e04-5b0137f970dmr1974753e87.59.1783701798745; 
- Fri, 10 Jul 2026 09:43:18 -0700 (PDT)
-X-Received: by 2002:a05:6512:6805:b0:5b0:137f:9466 with SMTP id
- 2adb3069b0e04-5b0137f970dmr1974751e87.59.1783701798130; Fri, 10 Jul 2026
- 09:43:18 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1783715597; x=1784320397;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=5iMFDalDLuwdFCEXokQl7+cPvgCavNPFweyB+gydSdc=;
+ b=PamSFLln5SxGYzIQCh3OZd3O27NPASoUHqMF7Mo1w2jdyNZGO6Bi2OwwV7msJ8ySlu
+ WdnsSwyq0BLAt8XtdgTjfFHv/mncQRMTUmLkwbkMrtK1bZIjiRfHeYEiIyaEj6hfj+iB
+ ON6o72ZEzAf4/6vodVySRk+AIbfylPPr/uoAsDEuh8tZS9T+o8GcPStZQSVCZONMYL4x
+ Y9GFTp1h8P+4QfH32nSTPYV+PkZ/12OFrrHqxQlkS35TKVLA/IYUDfjmfvWN7H5bik/5
+ J1mwBpvvJ9OzL+5E3A/Z8sLtvF+SIqVwDhjeAsanCWuSrSoF4Pmv2sQwrBW8zlPxkN9z
+ 1b7w==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RqiPmvWXMiKwdZVKJNUPQwYtw6+yFu/nBZL8mwJLquxBJpIKznyW1vVxyRD9dIkwFRLLcs=@dpdk.org
+X-Gm-Message-State: AOJu0YwGWUL0tx62npR3HNY24KtMBvur3npgnqaxZ9GqqABsbwiNQKGT
+ 0u11hM8lcqfrK6C5tkHAOXDuESTddhOpwtDm1JN0KBy7CT4gT1in7M20jalvQ5Lw8GzEEaAmQAa
+ kENFGV/IL9tLelHea/4xxzsKfDwdb5SyPILMLVs/L
+X-Gm-Gg: AfdE7cnbKj4PFrdLZu6lxAe0DK1VDrn2tmL5btQMhfNpgvaizEfe5fwMPAtTzRKyh79
+ srCAX7brzsSDhuuUWGFBUCotFPqk+jpxUee0JIuAU6Xp1wRvU4gUmQjUWFAVMloTlHyIUvINgjy
+ emBFSZhrboTdJhO+9pXD8Klo9NXiRkinPaq2Qz0n+01XA+6kIf5R0dBmKgo9hTe1SKIJoXXr4jY
+ Mz5LmPCNtoqHvakvjtwpxVGXcKwr8HO3ErwFDPfFwmUJcm3QqUBD+2atK489DdxQVza/8Jc1JM=
+X-Received: by 2002:a05:651c:154b:b0:39c:8124:93b3 with SMTP id
+ 38308e7fff4ca-39caa1026a9mr355611fa.9.1783715596454; Fri, 10 Jul 2026
+ 13:33:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260702130729.26577-1-mkashani@nvidia.com>
- <20260702161244.363233-1-stephen@networkplumber.org>
-In-Reply-To: <20260702161244.363233-1-stephen@networkplumber.org>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 10 Jul 2026 18:43:06 +0200
-X-Gm-Features: AVVi8CfkdXjV5C40k43xWD4A-n5lE9ZKBnCcw9u3RbvbFCm2_uAGq4STLa2tvkY
-Message-ID: <CAJFAV8yZxv247z5eDvY-BgN23Ot=Abn_n4zdxSCkxhdOzmutqQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] app/testpmd: fix socket id handling with NUMA disabled
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: BTfYJ8Z66GOklv7-wOO_EtiHbtekKxhXkWsjKYqcM-8_1783701799
-X-Mimecast-Originator: redhat.com
+References: <20260707164020.2936476-1-joshwash@google.com>
+ <20260709040739.3184955-1-joshwash@google.com>
+ <20260709040739.3184955-3-joshwash@google.com>
+ <l7g2E_cUTtqIHhK0pfFLlQ@monjalon.net>
+In-Reply-To: <l7g2E_cUTtqIHhK0pfFLlQ@monjalon.net>
+From: Joshua Washington <joshwash@google.com>
+Date: Fri, 10 Jul 2026 16:33:03 -0400
+X-Gm-Features: AVVi8CcZawa4c-o75s9h2LtnF_7MwM7Rasz2erQdBTpGgu651gZTRPF96sbysHM
+Message-ID: <CALuQH+UAn1tk22RAjRukEOSkAnikv8sLUuBPVBq4MrJ_Rgw1Lg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/9] net/gve: delay adding mbuf head to software ring
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: Jeroen de Borst <jeroendb@google.com>,
+ "Jasper Tran O'Leary" <jtranoleary@google.com>, 
+ Junfeng Guo <junfengg@nvidia.com>, Xiaoyun Li <xiaoyun.li@intel.com>,
+ stable@dpdk.org, dev@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,55 +103,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 2 Jul 2026 at 18:13, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
+On Fri, Jul 10, 2026 at 10:45=E2=80=AFAM Thomas Monjalon <thomas@monjalon.n=
+et> wrote:
 >
-> Alternative to the patch "app/testpmd: fix multi-pool Rx setup with --no-NUMA"
-> from Maayan Kashani, fixing the problem at the source
-> rather than remapping inside mbuf_pool_find().
+> 09/07/2026 06:07, Joshua Washington:
+> > The GQ TX datapath was set up to write the mbuf head into the sw_ring
+> > before writing the descriptors. This poses a problem because it's
+> > possible for the packet to be dropped due to lacking the FIFO space to
+> > do a proper TX. In such a case, the packet won't be sent, and will lead
+> > to leaked mbufs in the subsequent segments.
+> >
+> > There is also no real reason that the head mbuf must be set in the
+> > sw_ring separately from the others; the mbuf chain is not actually
+> > walked as part of GQ TX.
+> >
+> > Fixes: a46583cf43c8 ("net/gve: support Rx/Tx")
+> > Cc: stable@dpdk.org
+> > Signed-off-by: Joshua Washington <joshwash@google.com>
+> > Reviewed-by: Jasper Tran O'Leary <jtranoleary@google.com>
 >
-> Since commit 835fd4893a31 ("app/testpmd: support cross-NUMA allocations"),
-> mbuf pools are created (and named) on SOCKET_ID_ANY
-> when NUMA support is disabled, but port->socket_id still holds 0/--socket-num.
-> Every name-based pool lookup that does not go through the single workaround in
-> start_port() misses. The reported multi-pool Rx failure is one instance; plain
-> "testpmd --no-numa --forward-mode=txonly" also crashes with a NULL
-> mempool dereference, and --socket-num no longer affects pool allocation.
+> AI found this issue:
 >
-> Patch 1 restores the invariant that port->socket_id equals the
-> socket id the pools are created and named with, and removes the
-> start_port() workaround. It should go to stable (the regression
-> shipped in 25.07 and 25.11); it cherry-picks onto 25.11 with
-> trivial context conflicts and was build- and run-tested there.
+> **Error:** Resource leak on early return from `gve_tx_burst_qpl()`.
 >
-> Patch 2 consolidates the three diverging copies of the port socket
-> id policy into one helper; this also fixes hot-attached ports
-> ignoring --port-numa-config, --no-numa and --socket-num.
+> The patch modifies the loop to store mbufs in `sw_ring` only after checki=
+ng FIFO availability, but introduces a leak when `goto end_of_tx` is taken =
+after the first segment has been processed. At line 306-307:
 >
-> Patch 3 prints SOCKET_ID_ANY as "any" instead of 4294967295.
+> ```c
+> if (!is_fifo_avail(txq, hlen)) {
+>     gve_tx_clean(txq);
+>     if (!is_fifo_avail(txq, hlen))
+>         goto end_of_tx;
+> }
+> ```
 >
-> Patch 4 adds the error string to the interactive queue setup
-> command failure message; rte_eth_rx/tx_queue_setup() can return
-> -EBUSY silently when the port is started and the PMD lacks
-> runtime queue setup support.
+> If the second `is_fifo_avail()` check fails and we `goto end_of_tx`, the =
+current `tx_pkt` (which is the mbuf chain head) has not been added to `sw_r=
+ing` yet (that happens later in the modified loop at lines 346-351). The fu=
+nction will return without freeing `tx_pkt`, and the mbuf chain is lost.
 >
-> Stephen Hemminger (4):
->   app/testpmd: fix port socket ID with NUMA disabled
->   app/testpmd: consolidate port socket ID computation
->   app/testpmd: display any socket ID as text
->   app/testpmd: report reason when queue setup command fails
+> **Suggested fix:** Free the current packet before `goto end_of_tx`:
 >
->  app/test-pmd/cmdline.c |  12 +++--
->  app/test-pmd/config.c  |  18 ++++---
->  app/test-pmd/testpmd.c | 120 +++++++++++++++++++++--------------------
->  app/test-pmd/testpmd.h |  11 ++++
->  4 files changed, 92 insertions(+), 69 deletions(-)
+> ```c
+> if (!is_fifo_avail(txq, hlen)) {
+>     gve_tx_clean(txq);
+>     if (!is_fifo_avail(txq, hlen)) {
+>         rte_pktmbuf_free(tx_pkt);
+>         goto end_of_tx;
+>     }
+> }
+> ```
+>
+> Similarly, for the TSO path at lines 314-316, if the FIFO space check fai=
+ls, `tx_pkt` should be freed before the goto.
 
-LGTM.
+I believe this is a hallucination. The driver does not free the TX
+packet in the case of a failed send because it does not count that
+packet in the packets sent to the application. It ultimately did not
+take ownership of the mbuf for the failing packet from the
+application, so it should not free that mbuf. The tx_id pointer is not
+incremented until after it is sure that the packet data can be copied
+to the DMA area (FIFO buffer), so there is no unintended descriptor
+write either, as far as I can tell.
 
-Series applied, thanks for the cleanups.
-
-
--- 
-David Marchand
-
+-- Josh
