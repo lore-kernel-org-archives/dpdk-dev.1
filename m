@@ -2,40 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B494C43458
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 07:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76220C43458
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 07:36:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8315A406B7;
-	Fri, 10 Jul 2026 09:36:45 +0200 (CEST)
-Received: from SJ2PR03CU001.outbound.protection.outlook.com
- (mail-westusazon11012019.outbound.protection.outlook.com [52.101.43.19])
- by mails.dpdk.org (Postfix) with ESMTP id 1557E4026A
- for <dev@dpdk.org>; Fri, 10 Jul 2026 09:36:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8A61440A71;
+	Fri, 10 Jul 2026 09:36:46 +0200 (CEST)
+Received: from CO1PR03CU002.outbound.protection.outlook.com
+ (mail-westus2azon11010061.outbound.protection.outlook.com [52.101.46.61])
+ by mails.dpdk.org (Postfix) with ESMTP id 093744026A
+ for <dev@dpdk.org>; Fri, 10 Jul 2026 09:36:44 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W856e77zhB/B4SmePawyOF+ptr+Or/ppLM+g7gimv8qpscQtHFtXVsQw2jv2Db6bN3WdAdgJmnpxj6oXmHS2nE0FnLUXsEqYLTt6d9bq4D2GekFAhUbPaAuCZeLDXaz6DKgM2hEy6cqzmfqJSEoNzGcyoSevNv5uQ6mB7074XHz9So+YiZ8yLGAH90nad7ACpl/cvs7PHCewDjRuKhhtL1e4tPK76hbYCEW9to4AVDW4XdD6ZnZAlAPKtmjOWl9Lw81bXYL5R0ZVsSz8FH6lWncFO10Akfx8W3jWjrC2jvQDVykqmDfuAUH7T6smsmXnafij8cPTlYe6HWASIPF7Mw==
+ b=rAvzNS/0qggWVhB9NkSZCDcpLoohuAU19n1l+y7lykPa4vBoiHPOzHJzSRNCA9fFm1qWQa5kghvlwqrgSHxfraEWteh/TWN9kHAKdDbJRLlO7V3cDQyDYy46pKpXenFn1Wf17EcXZ7jFsad/nz9TsvoiSwQVvgoS2w4KG78pcI/NGrx3Wv0NbOAOhkZA8/nZUffFYQhTO1zzszu51bXjNgaWkzS2wPNF7+hoYCABoET4sSYec2lcRN3G+/gPVt/QMVof0hGmwFJzHgyANF2eb8A6CNVyzI6i2fjMHIIMUXePU8QGOGIBZKYdcYeTX1JV4s+wA4YC3JnAv+LF8FaojA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aE1TwWUISjQBqfaUWte3zxWu+KtFiKrtx7v7FBaafmc=;
- b=C4IwVnvU31s29sDDqdp+kY4744CyoJN0RPeOP+0t18PAVm2fTxYgZX86fkgkfkTwMn1EMTVCxWcv7vFqrz9TtwfaEO8KuMXf7QvmgYQS5/3OBOUUITcljiRmDD53DOHI8oLq3d1FL2KYAGuEc1o3QPbIpokt0vz0pPJirv/oIPA8vGYdkTEBjiInJqmmSUa3j4heFzoX1jiZxwG4BlXzPVGbCIj8zJ3SAU2KnGCUg+8KGilr4J92uGwCP5GZd7WMHvtYMCn119AUVcRq8+M9EJQCUIGhnOiqC5+TRbXVKmpQAwxKqEjQiqRqkhxx5/cYjCWf+40O5SLjvHpjdY7GuQ==
+ bh=HvDeDfh5pEZwmulMRsVQeg9KyfjkoXpSOtEnBlBlLeo=;
+ b=G24RJetj4xUkKmgJtZst6QOKinA41KjJLdtODdRC35VP/uNUEMiuP0adWEKf41alViwBjbrpQ/bpDnkyG1Gc2sftrnKCLasF+2CPXPjdtNwH+MseuloaHiZFmXb6pNjyt/r19FNUrgIu49yF8UV15H7s2Mc5UvxAGwKqq1FWVQetq/GuSSg/cIJh9RpeQQT32PX2U/2HQCjFSOanY22VB7D8Kd2GsFT0cIsrCncjSIq+y7JrnVSlDupNAilQBYTCP9Gv1rEMfih3QqD7tny1oD2HugW+VTWy1vt/BKLIQSGYbXTPcXcBlTlq7gi6B8NSGiz0gzjo1nkhfANLiyXoBg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aE1TwWUISjQBqfaUWte3zxWu+KtFiKrtx7v7FBaafmc=;
- b=JtakvWII0Tgl2pSvxao5CKmcrLyJfqcOo0EbMQfyIGR/Tq2A1DIZSyzKoim9PnIKr6DjYMtAv1Q7+2q3Oq6FBw2+8jrFBHy4Ozw9ULzU0NjEW1Z6q2hvDqlHpYMSzYzxZltwfGGt54MEmfMPLeLiFjPosJoaT7NgnHaP1VX08Bc=
-Received: from BL1P222CA0017.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:2c7::22)
- by SJ2PR12MB8873.namprd12.prod.outlook.com (2603:10b6:a03:53d::18)
+ bh=HvDeDfh5pEZwmulMRsVQeg9KyfjkoXpSOtEnBlBlLeo=;
+ b=FJN1+vIauWzfe6FUNoEf+j84D2bfv5yhsrpZC5I5zhYrFZ4OKCiVq63GjB6xnt/32nOkUuq7hOE9EN3g0EH+2vMtkV4UvpJhbJDplQPIQ/TCmff8w5l5oJAFPqsUWJkrHQ0WlwDoiIayth6C7izMBtSFdcTWqhs/XHH66VTO1G0=
+Received: from BL1PR13CA0415.namprd13.prod.outlook.com (2603:10b6:208:2c2::30)
+ by IA5PR12MB999324.namprd12.prod.outlook.com (2603:10b6:208:609::6)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.9; Fri, 10 Jul
- 2026 07:36:36 +0000
-Received: from BL6PEPF0001AB58.namprd02.prod.outlook.com
- (2603:10b6:208:2c7:cafe::6) by BL1P222CA0017.outlook.office365.com
- (2603:10b6:208:2c7::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.10 via Frontend Transport; Fri,
- 10 Jul 2026 07:36:35 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.16; Fri, 10 Jul
+ 2026 07:36:38 +0000
+Received: from BL6PEPF0001AB59.namprd02.prod.outlook.com
+ (2603:10b6:208:2c2:cafe::ab) by BL1PR13CA0415.outlook.office365.com
+ (2603:10b6:208:2c2::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.223.3 via Frontend Transport; Fri, 10
+ Jul 2026 07:36:38 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -43,22 +43,22 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- BL6PEPF0001AB58.mail.protection.outlook.com (10.167.241.10) with Microsoft
+ BL6PEPF0001AB59.mail.protection.outlook.com (10.167.241.11) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Fri, 10 Jul 2026 07:36:35 +0000
+ 15.21.181.6 via Frontend Transport; Fri, 10 Jul 2026 07:36:38 +0000
 Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Fri, 10 Jul
- 2026 02:36:32 -0500
+ 2026 02:36:35 -0500
 From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 To: <dev@dpdk.org>
 CC: <fengchengwen@huawei.com>, <david.marchand@redhat.com>,
  <bruce.richardson@intel.com>, <selwin.sebastian@amd.com>,
  <bhagyada.modali@amd.com>, <rjarry@redhat.com>, <thomas@monjalon.net>,
  Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-Subject: [PATCH v5 2/4] dma/ae4dma: add control path operations
-Date: Fri, 10 Jul 2026 13:06:06 +0530
-Message-ID: <20260710073608.3034898-3-raghavendra.ningoji@amd.com>
+Subject: [PATCH v5 3/4] dma/ae4dma: add data path operations
+Date: Fri, 10 Jul 2026 13:06:07 +0530
+Message-ID: <20260710073608.3034898-4-raghavendra.ningoji@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260710073608.3034898-1-raghavendra.ningoji@amd.com>
 References: <20260710073608.3034898-1-raghavendra.ningoji@amd.com>
@@ -70,29 +70,29 @@ X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB58:EE_|SJ2PR12MB8873:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27d52ae0-2200-43d4-bd1f-08dede55f885
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB59:EE_|IA5PR12MB999324:EE_
+X-MS-Office365-Filtering-Correlation-Id: b0c4a0c2-ebad-40e1-81de-08dede55fa22
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|36860700016|82310400026|1800799024|18002099003|22082099003|56012099006|11063799006|6133799003;
-X-Microsoft-Antispam-Message-Info: YynX9+yMp493DtNHryEVrq72llqhwY1yOHpmB1c2N92WlW0K2n/+6FUUDoyfDIgXuEmA2nRxDvpTbTkupL210fFL5H6rukyHzg3cKz+yA3pmUoh1VyV/ZFyf4Yt8RWNmv84IR99OknLJHzszvHGKQx1jYhWspnkvbgn4bJJk3ulcr/4HHpxpk6LRlfl1JKLMqbpjHO++fL/nNUL+aEnIpZs8tvDU8epqTdUDk0yIFCXLSu9yRLb2trXHPO01Goglgzjxqa3hv7gnUDpHEndW4tU7lYOKDGeYeUfejayZAJVAohNVwixn1mfmC3L6Kn7TrUSVJqdV2GgXmlfWztYnDf74rjhpEOaD7zYm/thHoOl/zh5mRjMIy8/n/dW+1UMwhw/1KRvawGmVnZ/sqfn9DvhJesCxIlEjNLPWidNzbuQM+apHXpzk1CiKDqixdLu5E6zEJXf6dyRH2CfOC0Lu8S4N9T58zOGDmQD58qHdkwmSRWu2DTSPF67TILoOGwtwy4MNgQWSBgl+ioypCZv5M1GVNv0W1TaTtLCPPdSUwTaveG2DNTwAhSO/bIifj8XIGz89Jd8dRInF9GxAFuK3KraXkaBEbJIgHJUACRV4EnV9yvSrOFgNP5mcGozQgQ+jb5GkIWOYVekChmefx3qAqTiP33z5CrlsvRXs1VOLGGeQZZDpqUtM/0MZMhnlIg1Y
+ ARA:13230040|376014|36860700016|82310400026|1800799024|23010399003|5023799004|11063799006|22082099003|56012099006|18002099003|6133799003;
+X-Microsoft-Antispam-Message-Info: RyPfSrwDbKFpUltW8o1PjqRNbvAxmcH3Om8M1tifq+5o+0uJNYop43gsxLg/hIsJfE4tsjWHTok2OzoH7hWsFBCy58spW5GqS4aQ8ACVNnoHLqTpGSgZBGk3jLe0uY1jU8oci2EGJAmT14c9Rvx9BfeTYVWc22hiBt10Ll7Y1QBOYvQg61X96wF1xH8xsYdoAj7jRhyB3JN+9TZZ+bQ6lvz2TuR6lLXGvNRUbvHgOst4CThiKhMy9pGsBUr7QnyZ808NQjzS32SSx8szlXN1esYD4fsF5Tw2803xXCzaIPtTBgg0iTalb2ecU7PAzGAvtPt/K9VyC2jlcKi837tHMb3nlK+1vi2ZzApp6DjAS5alQ+AdQ9x2cLaJGE0jhJcIi8cDm4uLgeUSTPygbm8Ml5yK+pwa7B7eCdO8AH+Ij3ez8UtvSlnEM2h5Zhi1svokWETXyTFVkFmf6gfOqRKDOo8x5B6+SKMO3HBGywmoFf1F4buOJo+VC8sM2teQvllNPgZpTsVB79psOWnQYFGLmVcqV7HyPPNnuoNndX5LlqSJxKzf76J69cyQlKW97CjhoHSCOCFtB/dUm/TTzPd6WYcj6WB86dL7PuxtqmirvMtThlYtEoCKXo/uk2eQK+SpFSr4BxWQ2YtCP8W2UIDWb8zGR4RWe2jfFP6jFYej1oyo+eFaXd5o5Zd/i3PDca2e7ATetVTpbMBaKl3215mLGg==
 X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(36860700016)(82310400026)(1800799024)(18002099003)(22082099003)(56012099006)(11063799006)(6133799003);
+ SFS:(13230040)(376014)(36860700016)(82310400026)(1800799024)(23010399003)(5023799004)(11063799006)(22082099003)(56012099006)(18002099003)(6133799003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: GhjFMdoR549lqMbMMu8QkjcGT/3cHLwdhjHb7KtlFR5I/rqWY1faB2zZFw6Jh4szS+fp/Vbt4GGQgEzhtwmyqR1sd+KdZkuGP1TrfTm1AVoqXoWjs90L1GuLUrWTUzWahGwW3qDX+OQurY3uKJg7P0HESZ3XBfEbW1Y5mhDjKbAVYwjVMHHoCgN+kXUenhxMMs5X1+5Si9m+AfEMAjqj0UHmW69ztH60WBorFnSq+0YEo/A3Sz8QYJzwRqNRzeiGO3peLWabTZOd4cUvZUZVPbGOS7/iY0b/NhfSaQoQScCRJ5iJJLgbN7iCWv7hCDU+LC6fWobZyA+NUpqEKNfb/WAJc6/MZQ1sThVinPrVuu4C1R1p6wAzoQ3SIqcHzbxl1BtVn3IOPJyHQEyt24qncRVyHWhtUg7UJ0tuZo09mgOaWni+eO4uHiOnLxBpS3xj
+X-MS-Exchange-AntiSpam-MessageData-0: keMAMsSiA+J7F3JU5HlKN22tM/iq/pfh5qZP1gwmbGC3gy2Xu1MPTdU3OEwKPEqGQcEBzfqQmihh56Yps8zePzDu0+Iam4pKNlHkQ77HLxjaKxygziNXrNbSk/la+GnZqJGQJye0YBohBilqdOa+9KUVdbenpS3c9zWlYy0EiBKe1rvyjTlDClJSK5yUb8Vgq8+5KullE3p4lpoZ8k1SNwdZBS4myWmMRH/Ndr3r1LMbFCxmCg2CApclLHRsq7VcEvZVtPX20wDNWGkPfEHhj3RGma7GUal9uWeT06etoKEf3bgmLRnQ0Vhq37tGVG1KcjHcFZi79yW/ravYtHmCW351Mx8ywFJfJIdPFt1JCjMC5Ia3+jcYDEsDj7XtwCl/hCT72H4plVc65CfWIQ3L66yIPke4M/udDwFeHlFqm+RpiZKL/DB8uBnOxMJPWZPG
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2026 07:36:35.5846 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27d52ae0-2200-43d4-bd1f-08dede55f885
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2026 07:36:38.2979 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0c4a0c2-ebad-40e1-81de-08dede55fa22
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
  Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB58.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB59.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8873
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA5PR12MB999324
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -106,287 +106,335 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement the dmadev control path for the AMD AE4DMA PMD.
+Implement the dmadev fast path (copy, submit, completed,
+completed_status and burst_capacity) for the AMD AE4DMA PMD and wire
+the entry points through fp_obj in ae4dma_dmadev_create().
 
-This commit adds:
- - dev_configure / vchan_setup: accept a single virtual channel per
-   dmadev and a ring size of 2 to 32 descriptors (rounded up to a
-   power of two so the ring slot can be derived by masking). vchan_setup
-   also resets the free-running ring indices.
- - dev_start / dev_stop / dev_close: enable the hardware queue and reset
-   the ring indices on start (read_idx is HW-owned, so index 0 is
-   anchored to the current HW consumer slot), disable the queue on stop,
-   and release the descriptor ring memzone on close.
- - dev_info_get: advertise RTE_DMA_CAPA_MEM_TO_MEM and
-   RTE_DMA_CAPA_OPS_COPY, the single virtual channel and the 2 to 32
-   descriptor range.
- - dev_dump: print the queue identifiers, ring layout and software
-   completion counters.
- - stats_get / stats_reset: expose submitted / completed / errors
-   counters maintained by the driver.
- - vchan_status: report IDLE / ACTIVE based on hardware read_idx vs
-   write_idx, and HALTED_ERROR when the queue is not enabled.
+The framework-visible ring index is a free-running 16-bit value; the
+HW ring slot is derived as (hw_base + idx) & (nb_desc - 1), which is
+why the vchan ring depth is kept a power of two. completed() and
+completed_status() always report the last completed ring_idx via
+last_idx, even when no new op is reaped, as required by the dmadev
+API. Only memory-to-memory copy is advertised, so fp_obj->fill is
+left zero-initialised.
 
-The dmadev framework is wired through dev_ops in ae4dma_dmadev_create().
+AE4DMA-specific completion handling: the engine reports completion by
+advancing the per-queue read_idx register rather than reliably writing
+a status word back, so the driver uses read_idx as the source of truth
+and only reads the descriptor err_code byte to flag failures.
 
 Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 ---
- drivers/dma/ae4dma/ae4dma_dmadev.c | 228 +++++++++++++++++++++++++++++
- 1 file changed, 228 insertions(+)
+ doc/guides/dmadevs/ae4dma.rst      |  24 +++
+ drivers/dma/ae4dma/ae4dma_dmadev.c | 249 +++++++++++++++++++++++++++++
+ 2 files changed, 273 insertions(+)
 
+diff --git a/doc/guides/dmadevs/ae4dma.rst b/doc/guides/dmadevs/ae4dma.rst
+index eeed55c283..10446ca2e8 100644
+--- a/doc/guides/dmadevs/ae4dma.rst
++++ b/doc/guides/dmadevs/ae4dma.rst
+@@ -51,3 +51,27 @@ On probe the PMD performs the following steps for each PCI function:
+   IOVA-contiguous memory, programs the queue base address and ring
+   depth into the per-queue registers, and enables the queue.
+ * Interrupts are masked; completion is polled by the application.
++
++Usage
++-----
++
++Once a dmadev has been started, copies are submitted with
++``rte_dma_copy()`` and completions are reaped with ``rte_dma_completed()``
++or ``rte_dma_completed_status()``. See the
++:ref:`Enqueue / Dequeue API <dmadev_enqueue_dequeue>` section of the
++dmadev library documentation for details.
++
++Limitations
++-----------
++
++* Only memory-to-memory copies are supported. Fill, scatter-gather and
++  any other operation types are not advertised in
++  ``rte_dma_info::dev_capa``.
++* The maximum number of descriptors per virtual channel is fixed by
++  hardware at 32, and the engine reserves one slot to distinguish a full
++  ring from an empty one, so at most 31 operations can be outstanding
++  (``rte_dma_burst_capacity()`` returns at most 31). The PMD rounds the
++  requested ring size up to a power of two and clamps it to 32.
++* Only a single virtual channel per dmadev is supported; use the 16
++  per-PCI-function dmadevs to obtain channel-level parallelism.
++* Interrupt-driven completion is not supported.
 diff --git a/drivers/dma/ae4dma/ae4dma_dmadev.c b/drivers/dma/ae4dma/ae4dma_dmadev.c
-index bf0d3bb2bd..9910e115b2 100644
+index 9910e115b2..70c7c21ddf 100644
 --- a/drivers/dma/ae4dma/ae4dma_dmadev.c
 +++ b/drivers/dma/ae4dma/ae4dma_dmadev.c
-@@ -35,6 +35,220 @@ ae4dma_queue_dma_zone_reserve(const char *queue_name,
- 			socket_id, RTE_MEMZONE_IOVA_CONTIG, queue_size);
+@@ -162,6 +162,76 @@ ae4dma_dev_close(struct rte_dma_dev *dev)
+ 	return 0;
  }
  
-+static int
-+ae4dma_dev_configure(struct rte_dma_dev *dev __rte_unused,
-+		const struct rte_dma_conf *dev_conf,
-+		uint32_t conf_sz)
++/* Ring the doorbell: publish all enqueued descriptors to the hardware. */
++static inline void
++__submit(struct ae4dma_dmadev *ae4dma)
 +{
-+	if (conf_sz < sizeof(struct rte_dma_conf))
-+		return -EINVAL;
-+
-+	if (dev_conf->nb_vchans != 1)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+/* Setup a virtual channel for AE4DMA, only 1 vchan is supported per dmadev. */
-+static int
-+ae4dma_vchan_setup(struct rte_dma_dev *dev, uint16_t vchan __rte_unused,
-+		const struct rte_dma_vchan_conf *qconf, uint32_t qconf_sz)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
-+	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+	uint16_t max_desc = qconf->nb_desc;
-+
-+	if (qconf_sz < sizeof(struct rte_dma_vchan_conf))
-+		return -EINVAL;
-+
-+	/*
-+	 * The framework already clamps nb_desc to the advertised [min_desc,
-+	 * max_desc] range. The HW ring slot is computed by masking a
-+	 * free-running 16-bit index, so the depth must be a power of two:
-+	 * round up here when the application asks for a non-power-of-two size.
-+	 */
-+	if (!rte_is_power_of_2(max_desc))
-+		max_desc = rte_align32pow2(max_desc);
-+
-+	cmd_q->qcfg = *qconf;
-+	cmd_q->qcfg.nb_desc = max_desc;
-+
-+	/* Reset ring indices and stats when (re)configuring the vchan.
-+	 * hw_base is (re)sampled from the HW consumer index in dev_start.
-+	 */
-+	cmd_q->next_write = 0;
-+	cmd_q->next_read = 0;
-+	cmd_q->last_write = 0;
-+	cmd_q->hw_base = 0;
-+	memset(&cmd_q->stats, 0, sizeof(cmd_q->stats));
-+	return 0;
-+}
-+
-+static int
-+ae4dma_dev_start(struct rte_dma_dev *dev)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
 +	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
 +	uint16_t nb = cmd_q->qcfg.nb_desc;
-+	uint16_t hw_pos;
 +
 +	if (nb == 0)
-+		return -EBUSY;
++		return;
 +
-+	/* Program ring depth and (re)enable the HW queue. On HW that resets
-+	 * the queue indices on enable, this must happen before we sample
-+	 * read_idx below.
-+	 */
-+	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->max_idx, nb);
-+	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->control_reg.control_raw,
-+			AE4DMA_CMD_QUEUE_ENABLE);
++	/* The HW producer index is the ring slot of the next free descriptor. */
++	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->write_idx,
++			(cmd_q->hw_base + cmd_q->next_write) & (nb - 1));
++	cmd_q->stats.submitted += (uint16_t)(cmd_q->next_write - cmd_q->last_write);
++	cmd_q->last_write = cmd_q->next_write;
++}
 +
++static int
++ae4dma_submit(void *dev_private, uint16_t vchan __rte_unused)
++{
++	struct ae4dma_dmadev *ae4dma = dev_private;
++
++	__submit(ae4dma);
++	return 0;
++}
++
++/* Write a copy descriptor; returns the free-running ring_idx assigned to it. */
++static inline int
++__write_desc_copy(void *dev_private, rte_iova_t src, rte_iova_t dst,
++		uint32_t len, uint64_t flags)
++{
++	struct ae4dma_dmadev *ae4dma = dev_private;
++	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
++	uint16_t ring_idx = cmd_q->next_write;
++	uint16_t nb = cmd_q->qcfg.nb_desc;
++	struct ae4dma_desc *dma_desc;
++	uint16_t in_flight;
++
++	if (nb == 0)
++		return -EINVAL;
++
++	/* Reserve one slot to distinguish full from empty on the ring. */
++	in_flight = (uint16_t)(cmd_q->next_write - cmd_q->next_read);
++	if (in_flight >= nb - 1)
++		return -ENOSPC;
++
++	dma_desc = &cmd_q->qbase_desc[(cmd_q->hw_base + ring_idx) & (nb - 1)];
++	memset(dma_desc, 0, sizeof(*dma_desc));
++	dma_desc->length = len;
++	dma_desc->src_hi = upper_32_bits(src);
++	dma_desc->src_lo = lower_32_bits(src);
++	dma_desc->dst_hi = upper_32_bits(dst);
++	dma_desc->dst_lo = lower_32_bits(dst);
++
++	cmd_q->next_write++;
++	if (flags & RTE_DMA_OP_FLAG_SUBMIT)
++		__submit(ae4dma);
++
++	/* dmadev ring_idx is a free-running 16-bit value, not a ring slot. */
++	return ring_idx;
++}
++
++/* Enqueue a copy operation onto the ae4dma device. */
++static int
++ae4dma_enqueue_copy(void *dev_private, uint16_t vchan __rte_unused,
++		rte_iova_t src, rte_iova_t dst, uint32_t length, uint64_t flags)
++{
++	return __write_desc_copy(dev_private, src, dst, length, flags);
++}
++
+ static int
+ ae4dma_dev_dump(const struct rte_dma_dev *dev, FILE *f)
+ {
+@@ -192,6 +262,178 @@ ae4dma_dev_dump(const struct rte_dma_dev *dev, FILE *f)
+ 	return 0;
+ }
+ 
++/* Translate an AE4DMA descriptor error code to the dmadev status code. */
++static inline enum rte_dma_status_code
++__translate_status_ae4dma_to_dma(enum ae4dma_dma_err status)
++{
++	switch (status) {
++	case AE4DMA_DMA_ERR_NO_ERR:
++		return RTE_DMA_STATUS_SUCCESSFUL;
++	case AE4DMA_DMA_ERR_INV_LEN:
++		return RTE_DMA_STATUS_INVALID_LENGTH;
++	case AE4DMA_DMA_ERR_INV_SRC:
++		return RTE_DMA_STATUS_INVALID_SRC_ADDR;
++	case AE4DMA_DMA_ERR_INV_DST:
++		return RTE_DMA_STATUS_INVALID_DST_ADDR;
++	default:
++		return RTE_DMA_STATUS_ERROR_UNKNOWN;
++	}
++}
++
++/* True if the descriptor at ring slot has been flagged as failed by HW. */
++static inline bool
++ae4dma_desc_failed(volatile struct ae4dma_desc *hw_desc)
++{
 +	/*
-+	 * The dmadev ring index is a free-running 16-bit counter that restarts
-+	 * from 0 on every (re)start. read_idx is HW-owned (read-only), so we
-+	 * cannot force it to 0; instead anchor index 0 to wherever the HW
-+	 * consumer currently sits (hw_base) and derive the ring slot as
-+	 * (hw_base + idx) & (nb - 1). write_idx is set equal to read_idx so the
-+	 * queue starts empty without touching the read-only read_idx register.
++	 * read_idx advancing is the definitive completion signal. The
++	 * per-descriptor status byte is informational and may not yet be
++	 * written when we observe it, so a slot is only a failure if the
++	 * HW flagged DESC_ERROR or set a non-zero err_code.
 +	 */
-+	hw_pos = (uint16_t)(AE4DMA_READ_REG(&cmd_q->hwq_regs->read_idx) & (nb - 1));
-+	cmd_q->hw_base = hw_pos;
-+	cmd_q->next_write = 0;
-+	cmd_q->next_read = 0;
-+	cmd_q->last_write = 0;
-+	AE4DMA_WRITE_REG(&cmd_q->hwq_regs->write_idx, hw_pos);
-+	return 0;
-+}
-+
-+static int
-+ae4dma_dev_stop(struct rte_dma_dev *dev)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
-+	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+
-+	if (cmd_q->hwq_regs != NULL)
-+		AE4DMA_WRITE_REG(&cmd_q->hwq_regs->control_reg.control_raw,
-+				AE4DMA_CMD_QUEUE_DISABLE);
-+	return 0;
-+}
-+
-+static int
-+ae4dma_dev_info_get(const struct rte_dma_dev *dev __rte_unused,
-+		struct rte_dma_info *info, uint32_t size __rte_unused)
-+{
-+	info->dev_capa = RTE_DMA_CAPA_MEM_TO_MEM | RTE_DMA_CAPA_OPS_COPY;
-+	info->max_vchans = 1;
-+	info->min_desc = 2;
-+	info->max_desc = AE4DMA_DESCRIPTORS_PER_CMDQ;
-+	info->nb_vchans = 1;
-+	return 0;
-+}
-+
-+static int
-+ae4dma_dev_close(struct rte_dma_dev *dev)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
-+	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+
-+	if (cmd_q->hwq_regs != NULL)
-+		AE4DMA_WRITE_REG(&cmd_q->hwq_regs->control_reg.control_raw,
-+				AE4DMA_CMD_QUEUE_DISABLE);
-+
-+	rte_memzone_free(cmd_q->mz);
-+	cmd_q->mz = NULL;
-+	cmd_q->qbase_desc = NULL;
-+	cmd_q->qbase_addr = NULL;
-+	cmd_q->qbase_phys_addr = 0;
-+	return 0;
-+}
-+
-+static int
-+ae4dma_dev_dump(const struct rte_dma_dev *dev, FILE *f)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
-+	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+	void *mmio = ae4dma->io_regs;
-+
-+	fprintf(f, "cmd_q->id              = %" PRIx64 "\n", cmd_q->id);
-+	fprintf(f, "cmd_q->qidx            = %" PRIx64 "\n", cmd_q->qidx);
-+	fprintf(f, "cmd_q->qsize           = %" PRIx64 "\n", cmd_q->qsize);
-+	fprintf(f, "mmio_base_addr	= %p\n", mmio);
-+	fprintf(f, "queues per ae4dma engine     = %d\n", AE4DMA_READ_REG_OFFSET(
-+				mmio, AE4DMA_COMMON_CONFIG_OFFSET));
-+	fprintf(f, "== Private Data ==\n");
-+	fprintf(f, "  Config: { ring_size: %u }\n", cmd_q->qcfg.nb_desc);
-+	fprintf(f, "  Ring virt: %p\tphys: %#" PRIx64 "\n",
-+			(void *)cmd_q->qbase_desc,
-+			(uint64_t)cmd_q->qbase_phys_addr);
-+	fprintf(f, "  Next write: %u\n", cmd_q->next_write);
-+	fprintf(f, "  Next read: %u\n", cmd_q->next_read);
-+	fprintf(f, "  current queue depth: %u\n",
-+			(uint16_t)(cmd_q->next_write - cmd_q->next_read));
-+	fprintf(f, "  }\n");
-+	fprintf(f, "  Key Stats { submitted: %" PRIu64 ", comp: %" PRIu64 ", failed: %" PRIu64 " }\n",
-+		cmd_q->stats.submitted,
-+		cmd_q->stats.completed,
-+		cmd_q->stats.errors);
-+	return 0;
-+}
-+
-+static int
-+ae4dma_stats_get(const struct rte_dma_dev *dev, uint16_t vchan __rte_unused,
-+		struct rte_dma_stats *rte_stats, uint32_t size __rte_unused)
-+{
-+	const struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
-+	const struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+
-+	*rte_stats = cmd_q->stats;
-+	return 0;
-+}
-+
-+static int
-+ae4dma_stats_reset(struct rte_dma_dev *dev, uint16_t vchan __rte_unused)
-+{
-+	struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
-+	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+
-+	memset(&cmd_q->stats, 0, sizeof(cmd_q->stats));
-+	return 0;
++	return hw_desc->dw1.status == AE4DMA_DMA_DESC_ERROR ||
++			hw_desc->dw1.err_code != AE4DMA_DMA_ERR_NO_ERR;
 +}
 +
 +/*
-+ * Report channel state to the dmadev framework.
++ * Number of descriptors the HW has completed since our last reap, without
++ * consuming them (non-blocking, no state change).
 + *
-+ *   RTE_DMA_VCHAN_HALTED_ERROR - HW queue is disabled (never started, or
-+ *                                stopped via dev_stop()).
-+ *   RTE_DMA_VCHAN_IDLE         - HW has caught up: read_idx == write_idx,
-+ *                                no descriptors in flight.
-+ *   RTE_DMA_VCHAN_ACTIVE       - HW still has descriptors to process.
++ * The AE4DMA engine signals completion by advancing the per-queue read_idx
++ * register; it does not (reliably) write a status word back into the
++ * descriptor. We therefore use the HW read_idx register as the source of
++ * truth for how many ops are done.
++ *
++ * next_read/next_write are free-running 16-bit indices; the HW ring slot is
++ * ((hw_base + idx) & mask) and the number of in-flight ops is
++ * (next_write - next_read), both relying on nb_desc being a power of two.
 + */
-+static int
-+ae4dma_vchan_status(const struct rte_dma_dev *dev, uint16_t vchan __rte_unused,
-+		enum rte_dma_vchan_status *status)
++static inline uint16_t
++ae4dma_pending(struct ae4dma_cmd_queue *cmd_q)
 +{
-+	const struct ae4dma_dmadev *ae4dma = dev->fp_obj->dev_private;
++	uint16_t nb = cmd_q->qcfg.nb_desc;
++	uint16_t hw_read_pos, tail_pos;
++	uint16_t newly_done, in_flight;
++	uint16_t mask;
++
++	if (nb == 0)
++		return 0;
++	mask = nb - 1;
++
++	in_flight = (uint16_t)(cmd_q->next_write - cmd_q->next_read);
++	if (in_flight == 0)
++		return 0;
++
++	/* Descriptors HW has consumed since our last visit: [tail, read). */
++	hw_read_pos = (uint16_t)(AE4DMA_READ_REG(&cmd_q->hwq_regs->read_idx) & mask);
++	tail_pos = (uint16_t)((cmd_q->hw_base + cmd_q->next_read) & mask);
++	newly_done = (uint16_t)((hw_read_pos - tail_pos) & mask);
++
++	return RTE_MIN(newly_done, in_flight);
++}
++
++/*
++ * Report ops that completed successfully, stopping at the first failure.
++ *
++ * Per the dmadev contract, this reaps only the run of successful ops at the
++ * head of the completed region and stops as soon as it meets a failed one.
++ * The failed op is left in place (not consumed) and *has_error is set so the
++ * application switches to rte_dma_completed_status() to retrieve its status.
++ * last_idx is the ring_idx of the last successfully completed op.
++ */
++static uint16_t
++ae4dma_completed(void *dev_private, uint16_t vchan __rte_unused,
++		const uint16_t max_ops, uint16_t *last_idx, bool *has_error)
++{
++	struct ae4dma_dmadev *ae4dma = dev_private;
++	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
++	uint16_t mask = cmd_q->qcfg.nb_desc - 1;
++	uint16_t ready, count;
++
++	*has_error = false;
++
++	ready = ae4dma_pending(cmd_q);
++	if (ready > max_ops)
++		ready = max_ops;
++
++	for (count = 0; count < ready; count++) {
++		uint16_t slot = (cmd_q->hw_base + cmd_q->next_read + count) & mask;
++
++		if (ae4dma_desc_failed(&cmd_q->qbase_desc[slot])) {
++			*has_error = true;
++			break;
++		}
++	}
++
++	cmd_q->next_read += count;
++	cmd_q->stats.completed += count;
++	*last_idx = (uint16_t)(cmd_q->next_read - 1);
++
++	return count;
++}
++
++/*
++ * Report per-op status for all completed ops, including failures.
++ *
++ * Unlike ae4dma_completed(), this consumes failed ops too so the application
++ * can drain past an error. last_idx is the ring_idx of the last op reported.
++ */
++static uint16_t
++ae4dma_completed_status(void *dev_private, uint16_t vchan __rte_unused,
++		uint16_t max_ops, uint16_t *last_idx,
++		enum rte_dma_status_code *status)
++{
++	struct ae4dma_dmadev *ae4dma = dev_private;
++	struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
++	uint16_t mask = cmd_q->qcfg.nb_desc - 1;
++	uint16_t ready, fails = 0;
++	uint16_t i;
++
++	ready = ae4dma_pending(cmd_q);
++	if (ready > max_ops)
++		ready = max_ops;
++
++	for (i = 0; i < ready; i++) {
++		uint16_t slot = (cmd_q->hw_base + cmd_q->next_read + i) & mask;
++		volatile struct ae4dma_desc *hw_desc = &cmd_q->qbase_desc[slot];
++
++		if (ae4dma_desc_failed(hw_desc)) {
++			status[i] = __translate_status_ae4dma_to_dma(
++					(enum ae4dma_dma_err)hw_desc->dw1.err_code);
++			AE4DMA_PMD_WARN("Desc failed: status=%u err=%u",
++					hw_desc->dw1.status, hw_desc->dw1.err_code);
++			fails++;
++		} else {
++			status[i] = RTE_DMA_STATUS_SUCCESSFUL;
++		}
++	}
++
++	cmd_q->next_read += ready;
++	cmd_q->stats.completed += ready;
++	cmd_q->stats.errors += fails;
++	*last_idx = (uint16_t)(cmd_q->next_read - 1);
++
++	return ready;
++}
++
++/* Get the remaining capacity of the ring. */
++static uint16_t
++ae4dma_burst_capacity(const void *dev_private, uint16_t vchan __rte_unused)
++{
++	const struct ae4dma_dmadev *ae4dma = dev_private;
 +	const struct ae4dma_cmd_queue *cmd_q = &ae4dma->cmd_q;
-+	uint32_t ctrl, hw_read, hw_write;
++	uint16_t nb = cmd_q->qcfg.nb_desc;
++	uint16_t in_flight;
 +
-+	if (cmd_q->hwq_regs == NULL) {
-+		*status = RTE_DMA_VCHAN_HALTED_ERROR;
++	if (nb == 0)
 +		return 0;
-+	}
 +
-+	ctrl = AE4DMA_READ_REG(&cmd_q->hwq_regs->control_reg.control_raw);
-+	if ((ctrl & AE4DMA_CMD_QUEUE_ENABLE) == 0) {
-+		*status = RTE_DMA_VCHAN_HALTED_ERROR;
++	/* One slot reserved to distinguish full from empty. */
++	in_flight = (uint16_t)(cmd_q->next_write - cmd_q->next_read);
++	if (in_flight >= nb - 1)
 +		return 0;
-+	}
-+
-+	hw_read  = AE4DMA_READ_REG(&cmd_q->hwq_regs->read_idx);
-+	hw_write = AE4DMA_READ_REG(&cmd_q->hwq_regs->write_idx);
-+
-+	*status = (hw_read == hw_write) ? RTE_DMA_VCHAN_IDLE
-+					: RTE_DMA_VCHAN_ACTIVE;
-+	return 0;
++	return (uint16_t)(nb - 1 - in_flight);
 +}
 +
  static int
- ae4dma_add_queue(struct ae4dma_dmadev *dev, struct rte_pci_device *pci,
- 		uint8_t qn, const char *pci_name)
-@@ -96,6 +310,19 @@ ae4dma_channel_dev_name(char *out, size_t outlen, const char *pci_name,
- static int
- ae4dma_dmadev_create(const char *name, struct rte_pci_device *dev, uint8_t qn)
- {
-+	static const struct rte_dma_dev_ops ae4dma_dmadev_ops = {
-+		.dev_close = ae4dma_dev_close,
-+		.dev_configure = ae4dma_dev_configure,
-+		.dev_dump = ae4dma_dev_dump,
-+		.dev_info_get = ae4dma_dev_info_get,
-+		.dev_start = ae4dma_dev_start,
-+		.dev_stop = ae4dma_dev_stop,
-+		.stats_get = ae4dma_stats_get,
-+		.stats_reset = ae4dma_stats_reset,
-+		.vchan_status = ae4dma_vchan_status,
-+		.vchan_setup = ae4dma_vchan_setup,
-+	};
-+
- 	char hwq_dev_name[RTE_DEV_NAME_MAX_LEN] = {0};
- 	struct ae4dma_dmadev *ae4dma;
- 	struct rte_dma_dev *dmadev;
-@@ -110,6 +337,7 @@ ae4dma_dmadev_create(const char *name, struct rte_pci_device *dev, uint8_t qn)
- 	}
- 	dmadev->device = &dev->device;
+ ae4dma_stats_get(const struct rte_dma_dev *dev, uint16_t vchan __rte_unused,
+ 		struct rte_dma_stats *rte_stats, uint32_t size __rte_unused)
+@@ -339,6 +581,13 @@ ae4dma_dmadev_create(const char *name, struct rte_pci_device *dev, uint8_t qn)
  	dmadev->fp_obj->dev_private = dmadev->data->dev_private;
-+	dmadev->dev_ops = &ae4dma_dmadev_ops;
+ 	dmadev->dev_ops = &ae4dma_dmadev_ops;
  
++	dmadev->fp_obj->burst_capacity = ae4dma_burst_capacity;
++	dmadev->fp_obj->completed = ae4dma_completed;
++	dmadev->fp_obj->completed_status = ae4dma_completed_status;
++	dmadev->fp_obj->copy = ae4dma_enqueue_copy;
++	dmadev->fp_obj->submit = ae4dma_submit;
++	/* fill capability not advertised: leave fp_obj->fill as zero-initialised. */
++
  	ae4dma = dmadev->data->dev_private;
  
+ 	if (ae4dma_add_queue(ae4dma, dev, qn, name) != 0)
 -- 
 2.34.1
 
