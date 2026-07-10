@@ -2,79 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BDBC43458
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 07:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7001C43458
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 07:57:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4209340274;
-	Fri, 10 Jul 2026 09:48:32 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 84A4D4026A
- for <dev@dpdk.org>; Fri, 10 Jul 2026 09:48:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1783669711;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=iZ2nTZ8crHQJzqa6cX8GCL5vsJr0xxlR0/8QYEKu3Uo=;
- b=E0VUw2BsiuhroOJZhukCEZXSVwBtDS2uWr22tfc1x1Hkhq5ZQKKBZ97oZtbZFUt9peYUCa
- w1PTPURx4QtuD6RkH8La35Q5mlrjPTT8zjtSkX9qMMtB5qDHzNsChP3Yb2BbbQdJ3JaeyP
- IyWbou4FUVMe8mEklQ+2R24sCI8PkE8=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-434-UAblf1TiNAyvrDbw47kLJg-1; Fri, 10 Jul 2026 03:48:29 -0400
-X-MC-Unique: UAblf1TiNAyvrDbw47kLJg-1
-X-Mimecast-MFC-AGG-ID: UAblf1TiNAyvrDbw47kLJg_1783669708
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-39abd6b0c78so3385341fa.1
- for <dev@dpdk.org>; Fri, 10 Jul 2026 00:48:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783669708; x=1784274508;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=iZ2nTZ8crHQJzqa6cX8GCL5vsJr0xxlR0/8QYEKu3Uo=;
- b=ACLLwxMjlVVKnnTAxUE5z1hw/kiMrj9hwC1juzhuE8S+UsUFm9P56YbLPI4S8F8kpA
- XmoI/M/CdFW5KQxe2oUgoOodB2/XyVK6JjL61LT0f/BGh8UaSZh47/6PZ9311cLdKv7R
- Ic34E6kGYOuejRP70AFblT+sxYl1cyKkLYTmuHcT5BZtdXL+FwWTKQqAKJ/CTugmcquL
- +71BZDtYmulT2PcFfay5VXtHPwZB27t3X7Qc37WA37DQh1bPqMNOoT3ZlqNqJt9uK1pG
- t7sXSsroEAJzpr2XZEbuPFX/lrGHwY78yP+MY3aliwliNAM8sjPoBUophl8HPZZFBVbI
- WFWg==
-X-Gm-Message-State: AOJu0YxtpHe84YQVALPHWJk2sGDcYmXXMDAD2Al7XAQVf6wEupEvaLKP
- Yk3eVhJzXrLpQov65b1/hph/+ck3e9W4fpq6X0pVSLkPJ7oRJC8d96Xtk60T7IQyn0BSEg6um1S
- +lJCpsf+Rc5ksf45h+tfsUL14DiSuyeemjzz7xHAJMknUaAUTZq0KIyhqavu6zpDRSJYlRPwe8v
- iVel+LpV8pxt9MfkKa/CLzxsC8yRJysQ==
-X-Gm-Gg: AfdE7clK2SZFb9jZ/w4NEa64azzceE/jQAI8W48LuvvQs8b1RDSTDilzfzLSd8X8Y56
- WVYU9tPwSzoMUidpVBc9MPyqJAwE+AMqhM0Qdnr4hB9kmXTXKzKfwnuEOcMo4jWc6ZwrXem/O1P
- MD5tRNIWi2Rv06zG3A6fgLhBE+fWTeLrRtLOnn47p8UD5bUPDJdRb9EWYdK9tmntKRCxHHkB6ib
- iDO77EjlbqbQvFmScL/TnhSAYhzAcwhgTYCK7Zz27T42UH0mOreBlN7f+s=
-X-Received: by 2002:a05:651c:1583:b0:39c:9086:9065 with SMTP id
- 38308e7fff4ca-39c94f4a528mr4690671fa.20.1783669707671; 
- Fri, 10 Jul 2026 00:48:27 -0700 (PDT)
-X-Received: by 2002:a05:651c:1583:b0:39c:9086:9065 with SMTP id
- 38308e7fff4ca-39c94f4a528mr4690501fa.20.1783669707196; Fri, 10 Jul 2026
- 00:48:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CB58040274;
+	Fri, 10 Jul 2026 09:57:53 +0200 (CEST)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id 22AE24026A
+ for <dev@dpdk.org>; Fri, 10 Jul 2026 09:57:52 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=vb+UBgKP7T1V5vG3U3jZK9ID6rRxzwkJKlhoo8h23s0=;
+ b=qUTQ/fAwZye0RlWfaiBahs0iSVlyN/5MRUND09pRL5E5yyrIKb1plMwAJLsCRJ5UeAGgWCLRT
+ w6FAT9zslMWrbrQkQ9Ly+hf+FXY+r8HyejUYuuuXj6DP43gBfbXhtwoy9O1Q4syGg0UQP3pNm+d
+ KqixRGpjN2UHJ0DVYTsocEY=
+Received: from mail.maildlp.com (unknown [172.19.162.92])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4gxP8f0tClzLlXD;
+ Fri, 10 Jul 2026 15:48:34 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+ by mail.maildlp.com (Postfix) with ESMTPS id 5632F40586;
+ Fri, 10 Jul 2026 15:57:49 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Fri, 10 Jul 2026 15:57:48 +0800
+Message-ID: <c5331090-0d39-4479-8de5-44b95d364b55@huawei.com>
+Date: Fri, 10 Jul 2026 15:57:48 +0800
 MIME-Version: 1.0
-References: <20260403091836.1073484-1-david.marchand@redhat.com>
- <20260709160247.1798575-1-david.marchand@redhat.com>
- <20260709160247.1798575-11-david.marchand@redhat.com>
-In-Reply-To: <20260709160247.1798575-11-david.marchand@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 10 Jul 2026 09:48:15 +0200
-X-Gm-Features: AVVi8Cdkm16qvjJ0-rNozAqm6h1CrPp8MSPmJphCMiK9Glgz3Rsy9I8PxKLveWM
-Message-ID: <CAJFAV8zPVk4k8pN+_S9NiocghEx0sxvDngNFP39imETn8z5vnQ@mail.gmail.com>
-Subject: Re: [PATCH v4 10/10] net/mlx5: accept more unicast MAC addresses
-To: dev@dpdk.org
-Cc: rjarry@redhat.com, cfontain@redhat.com, 
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 8IFYTyDj674NH3xyxsMKx9b7zy2JK9FfGLsT_JRoiGg_1783669708
-X-Mimecast-Originator: redhat.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] dma/ae4dma: add data path operations
+To: Raghavendra Ningoji <raghavendra.ningoji@amd.com>, <dev@dpdk.org>
+CC: David Marchand <david.marchand@redhat.com>, Bruce Richardson
+ <bruce.richardson@intel.com>, <Selwin.Sebastian@amd.com>, Bhagyada Modali
+ <bhagyada.modali@amd.com>, Robin Jarry <rjarry@redhat.com>, Thomas Monjalon
+ <thomas@monjalon.net>
+References: <aa1b5a05-976f-4dfa-89bc-4cea18b56d33@huawei.com>
+ <20260710072250.3034265-2-raghavendra.ningoji@amd.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20260710072250.3034265-2-raghavendra.ningoji@amd.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,53 +60,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 9 Jul 2026 at 18:04, David Marchand <david.marchand@redhat.com> wrote:
-> diff --git a/drivers/common/mlx5/mlx5_devx_cmds.h b/drivers/common/mlx5/mlx5_devx_cmds.h
-> index 90beb2e9e6..7fe89bc6a4 100644
-> --- a/drivers/common/mlx5/mlx5_devx_cmds.h
-> +++ b/drivers/common/mlx5/mlx5_devx_cmds.h
-> @@ -356,6 +356,8 @@ struct mlx5_hca_attr {
->         uint8_t tx_sw_owner_v2:1;
->         uint8_t esw_sw_owner:1;
->         uint8_t esw_sw_owner_v2:1;
-> +       uint32_t log_max_current_uc_list:5;
-> +       uint32_t log_max_current_mc_list:5;
+On 7/10/2026 3:22 PM, Raghavendra Ningoji wrote:
+> On Mon, 7 Jul 2026 at 06:49, fengchengwen <fengchengwen@huawei.com> wrote:
+>>
+>>> +	if (last_idx != NULL)
+>>> +		*last_idx = (uint16_t)(cmd_q->next_read - 1);
+>>
+>> 1\ the last_idx always non-NULL for driver, so no need for
+>>    'if (last_idx != NULL)'
+>> 2\ last_idx should be the last success completed index
+> 
+> Both fixed in v5. The NULL check is dropped, and last_idx now reports
+> the ring_idx of the last *successfully* completed op.
+> 
+>> Consider four reqests, the hardware mark each request as following:
+>>     req1   success
+>>     req2   err
+>>     req3   success
+>>     req4   err
+>> the cpl_count will be 4, and err_count will be 2
+>> It will return 2 in current impl, and last_idx will be the req4's
+>> But in this function, it should return 1, and last_idx should be req1's
+> 
+> Agreed - thanks for the clear example. rte_dma_completed() is reworked
+> in v5 to stop at the first failed descriptor: it returns only the run of
+> successful ops preceding the error (1 in your example), sets *has_error,
+> and leaves the failed op in place with last_idx pointing at the last
+> success (req1). The failed op and everything after it are then drained
+> and reported by rte_dma_completed_status().
+> 
+> On a related note, while implementing the above I found the last_idx
+> documentation for rte_dma_completed() and rte_dma_completed_status()
+> to be identical:
+> 
+>     @param[out] last_idx
+>       The last completed operation's ring_idx.
+> 
+> Since rte_dma_completed() only reports operations that completed
+> *successfully* (it stops at the first error), its last_idx is really the
+> last successfully completed operation's ring_idx, whereas for
+> rte_dma_completed_status() it is the last completed operation regardless
+> of status. Would a small doc clarification along these lines be welcome
+> (as a separate patch)?
 
-uint8_t is enough.
+I think it is necessary to update.
+Please also update rte_dma_completed_status, both in a separate patch
 
+Thanks
 
->  };
->
->  /* LAG Context. */
-
-[...]
-
-> diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
-> index f7ba8df108..1fcc40fade 100644
-> --- a/drivers/net/mlx5/mlx5.h
-> +++ b/drivers/net/mlx5/mlx5.h
-> @@ -217,6 +217,9 @@ struct mlx5_dev_cap {
->         } mprq; /* Capability for Multi-Packet RQ. */
->         char fw_ver[64]; /* Firmware version of this device. */
->         struct flow_hw_port_info esw_info; /* E-switch manager reg_c0. */
-> +       uint16_t max_uc_mac_addrs; /* Maximum unicast MAC addresses. */
-> +       uint16_t max_mc_mac_addrs; /* Maximum multicast MAC addresses. */
-> +       uint16_t max_mac_addrs; /* Total maximum MAC addresses. */
->  };
->
->  #define MLX5_MPESW_PORT_INVALID (-1)
-
-The firmware provides a log value on 5 bits, so max value for uc and
-mc would be 1 << 31, and the sum would be up to 1 << 32.
-In theory, ethdev caps max_mac_addrs to 1 << 32 - 1, but the firmware
-only allows up to 4k uc macs and extending this limit has been said
-not possible easily.
-So reaching 1 << 32 as a total is not going to happen soon and
-uint32_t is enough for those 3 fields.
-
-In next revision.
-
-
--- 
-David Marchand
+> 
+>     rte_dma_completed():
+>     @param[out] last_idx
+>       The last successfully completed operation's ring_idx.
+> 
+> I'm happy to send that as a separate dmadev doc patch if you agree.
+> 
+> Thanks,
+> Raghavendra
 
