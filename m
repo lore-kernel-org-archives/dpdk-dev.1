@@ -2,143 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE32C44506
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 15:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06164C43458
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 15:26:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E9CE40150;
-	Fri, 10 Jul 2026 17:14:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 90507409FA;
+	Fri, 10 Jul 2026 17:26:57 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 88E1F400D5
- for <dev@dpdk.org>; Fri, 10 Jul 2026 17:14:26 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2434A400D5;
+ Fri, 10 Jul 2026 17:26:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783696466; x=1815232466;
+ t=1783697216; x=1815233216;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=UESLZPCgt0/d0wlOUbGA44TLSbLNPTzwcp1xWXEnFno=;
- b=YZUbUXhkdbItAaxkXpx+vw5qMZRHkyWcE9y/zTyY6ElTEmzZXSqhuLrM
- +2EmuupPnA1CgqIqxeGwjFImJwQZHv5eJYjDGG/GPX2fWihbkcV7PrBkD
- ojDi+GiYFDpp7zYJE2+iSgeK2e3qC3Rn7M27tUbJci/mDzi2TxGlmSDXs
- cYOzJldguf4qrc9XE4S1kGjEE2R0nn8ICW44/KlRYrqp/1McUws0udquH
- LDs3BWWaUXoyVlrZhhJIVgB+i/ROZ3FH65zzTehEImPbVypT1I+NeD/aV
- RWf+jEha5GuLWgRfMp7nIBzWajbd+yIPVWfukc42zLHOze07gYEeSJchI A==;
-X-CSE-ConnectionGUID: EtCMTG8GQ4+MvUTKRIExqw==
-X-CSE-MsgGUID: zL3mONDtQtyjqALlLvZ+Zg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="84418321"
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="84418321"
+ bh=GeAKzpr3mKUqvWKUd6/o61joQMp4tfWH350f3yQX3N4=;
+ b=VM1i6UbTlNAMRBf4Pppc2db29mgOQQisQODAdWpcNb+LvTNdvxHCzQJO
+ moZiOey6DIqlUdd9R27w2PBFgu8vVZtkYG2jrtsxPF5mQPlEXm8CbF+aR
+ o2mYOzv37gj9GTK9VP+ujYJwIBm8qwoJ2LniiYD+qG0NL7PUo5Pxmw99z
+ yZNNdxmXeMAyIjFtYmEYmAO4TkBF8L2V6i04qsjLyKDnppznCKgWFRQ3a
+ pyWprR5psvZOocac4YzWYiD+XYinYG7j3EzkWH08wPPN4HS7y+JsESt9Y
+ 4q3cLQZDDlDCrpFdrrfl7AZNe+URmX9g2NxOqG6gOnKumHCZn75Fm478M A==;
+X-CSE-ConnectionGUID: yyead+X2SEO3vdf0+6BygA==
+X-CSE-MsgGUID: mDVEbLGERmqaZFi7e235zw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="84419120"
+X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="84419120"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Jul 2026 08:14:25 -0700
-X-CSE-ConnectionGUID: jBQjwHwwQkSKn3RzXuajcw==
-X-CSE-MsgGUID: kqXdBTMQRQKXLy+wnLDj5g==
+ 10 Jul 2026 08:26:55 -0700
+X-CSE-ConnectionGUID: 9jl59cV0SAyylh5kCkm8tA==
+X-CSE-MsgGUID: 3Sd+8FTyQ66DCv23A9lYcQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="254407965"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="254410297"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Jul 2026 08:14:26 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Fri, 10 Jul 2026 08:14:25 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ 10 Jul 2026 08:26:53 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
  ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43 via Frontend Transport; Fri, 10 Jul 2026 08:14:25 -0700
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.47) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.43; Fri, 10 Jul 2026 08:26:53 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Fri, 10 Jul 2026 08:14:24 -0700
+ 15.2.2562.43 via Frontend Transport; Fri, 10 Jul 2026 08:26:53 -0700
+Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.70) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Fri, 10 Jul 2026 08:26:52 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WjMCrfaehbcSwFywEDm/EEOiAShEPYYlthWgiI4iSs6PAmFibzw7sIprcoBd8lIRiOSrU9tka/l6kDrYgA9KnKRnqynJ2jeJmhi5mbonQ4/HMF6I1PFmflfwwnuQE6YbyOV4aB3Rxu8c7Ct0IiT0KsW3sEtbMU6ix0Un76I01UNfdBXeKLSszWfY/u5O//LqnHkrQnUYm4w9gIEMz8GL7xo0vDC4RA0DVg6L4SoOPEgIeNg7R/lADWTPmcIEbRtQmgy5VoBXASSZ0ZW0BomcKhzwpgFwcEDJtb/1xxeLKgMYJvTAUZrgd5J2gxmHa+zXIkVuh/3hiK3QhQBGPJ/+zQ==
+ b=K9IgwICi0rL1r+FSsoHwjzqUbMWbyGiqKnViiNIvxxjn4aLDbt+f6NPugN/gqg4F0kJ/cg7A65BtjCHW72Z29JxXvdMRkDjUcwweHQeLgVAy8tV8vN7EAgioWaFRP2nQ/fCrqlv9BT2akEyiWS03jXEzasXU+2AoWikJR/UqVgOmeLPcgdlnrBkFcIK3bjtNbPUN6pkZ+3vrhSE/E9YbCFASKVUsZlmppwBSWpLyYH4VT1wEZmtdLayJGZiyXAUFRYYcoDrU1W7J3pmPMBeVNaxe+wgm3fKHC7hGt2FvTcKiphFQ3aXuLxUCfh3lYm16NsT3XJGEXLv4lXrS8ZeflQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6V/+tkqVYSo+DZ+rvdcBtekcvRUPNw7G6ayBDwc0tgg=;
- b=ZOwXzWzRTNMR8HdBFfxfem2qtBJZHUEURw0Cj6nzGUnMPCvIKdtI9CTUv+jmch14yABmcEUNvNGaTPag9NsJQ7+jcILzKJYoQ9wr6bB2SJ6kwPEvHfl+4G+LFzFXfnga9+6EtNfJcqPj699mlYYvY7xr8lZC3lC7MzdqFI5jPYYUqbmIvjTDViklI+q5O8CRQRnFgi740uu7AVPT6fV/8/aIyeU6NWbTWHUnzu21UQ4R1o+QNurcuPlbps+9xwwEXACUUyNk4z0H4UH5yPsypjAip+0T8p2A/JOSIrFbaaNay5ru4YtpJot0OZBLcCVYz2J9wWZd8R4JqLuVVTtINA==
+ bh=B+zcnG7/fdkJ29zFK1xtpkm0JJTH80Yc5A+fdgsNvX8=;
+ b=u1jbSJTljL4wPyECeOv0xU4YKc2gUWr+LRbiq4C0Z3aK1JWZ1Luj7SF1fqRzjq2ivK3NPVt6h9QU1AC1i0f5S71Jk4CSGvuZa8SG0+81JUsFchdXOWTlDHTHhoXyfQBAO2IIq4jccW4xC7WjNiT6N1NBM4KPAOBrIlrML3kJPZSGBS8/fgs6Pq4quO9sD83BNyj9QmjHPSiOlBg/VHolhhi4TO6KqNKzbEzXtdit0V82TqyPcMHHAj6qcbkagM+MtN7RQp3M0vYCV/WEgzDF8rVtE+0baOI3YbrrGoiZ5QTQwGiKwc982+x+cXRCiS/EiNfRDh1HbNL7+v8c04zqVw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
- by DS0PR11MB7767.namprd11.prod.outlook.com (2603:10b6:8:138::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Fri, 10 Jul
- 2026 15:14:21 +0000
+ by CY8PR11MB7244.namprd11.prod.outlook.com (2603:10b6:930:97::18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.17; Fri, 10 Jul
+ 2026 15:26:46 +0000
 Received: from IA3PR11MB9421.namprd11.prod.outlook.com
  ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
  ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0181.014; Fri, 10 Jul 2026
- 15:14:21 +0000
-Date: Fri, 10 Jul 2026 16:14:17 +0100
+ 15:26:46 +0000
+Date: Fri, 10 Jul 2026 16:26:41 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: Dawid Wesierski <dawid.wesierski@intel.com>
-CC: <dev@dpdk.org>, <marek.kasiewicz@intel.com>
-Subject: Re: [PATCH 2/2] net/iavf: disable runtime queue setup during queue
- rate limiting
-Message-ID: <alEMScYtuGJfEo_U@bricha3-mobl1.ger.corp.intel.com>
-References: <20260703121952.1277387-6-dawid.wesierski@intel.com>
- <20260708231926.1550698-1-dawid.wesierski@intel.com>
- <20260708231926.1550698-3-dawid.wesierski@intel.com>
+To: SidAli CHERRATI <scherrati1@gmail.com>
+CC: <dev@dpdk.org>, Anatoly Burakov <anatoly.burakov@intel.com>, "Vladimir
+ Medvedkin" <vladimir.medvedkin@intel.com>, <stable@dpdk.org>
+Subject: Re: [PATCH 2/2] net/ixgbe: fix return value of close operation
+Message-ID: <alEPMeDmuWXYwKDq@bricha3-mobl1.ger.corp.intel.com>
+References: <20260710134639.108129-1-scherrati1@gmail.com>
+ <20260710134639.108129-2-scherrati1@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20260708231926.1550698-3-dawid.wesierski@intel.com>
-X-ClientProxiedBy: DUZPR01CA0218.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b4::21) To IA3PR11MB9421.namprd11.prod.outlook.com
+In-Reply-To: <20260710134639.108129-2-scherrati1@gmail.com>
+X-ClientProxiedBy: DU7P190CA0027.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:10:550::13) To IA3PR11MB9421.namprd11.prod.outlook.com
  (2603:10b6:208:578::9)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|DS0PR11MB7767:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a8e3810-d95c-4848-4aed-08dede95eb45
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|CY8PR11MB7244:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6068afeb-d506-4bc7-ca81-08dede97a726
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|23010399003|1800799024|366016|18002099003|22082099003|56012099006|11063799006|4143699003|6133799003;
-X-Microsoft-Antispam-Message-Info: BkuihxYH9o0+AXZy2on5zvXSe+aSoIjrON3Fh+eVtRVv2kNa0VhGbHHDrqtleVOCyPEEHx7zuKw1sc8Vi6NOjIr+rKLKYbwJV/eUZi5fqCySzUXEF4zBxjC5eXvdsy+Ptpf1krXFdkUK+GoQfmbwm002rzDMvaG4Eu9a3D+3ALCbW3UP3g5jLOkB5Ld6Nq69v/0MANDUl6ScecJQnStihQlto1DQsXLMQOuWEj8v9sk/+fgYzyIl0oFkXl/goTZDLQAw5Y4WMrsdSnKKrICk7kVIyVcLCC4wuQICDkAZ6i4EXF7W7fBrjLKotiBQThglGXWT0Yk+RHayyu9mehUDs17KE+VYYXH7mwIe86Jzz9/4BzJ91JJGCGysSQGJfXr9WienqiTm6EeMLS4bS6f+F8ts6HHwmF01Toz1GrEkl9amRVdvzjh3LUKDgJP5GGPhqiRiw9knu/kUN3IM5Iovor2WSSGgk8tJ2l/mN7PnSJ982ODEknAD+Vz3uld7GYdEj4tGXanRVg2fI7ZoM4vgo+nygyhrtzt7kjic0B/WOiSEhwPF9AwljsdVBNUizwmJKIUivxUuEEVkoAswRYAV4Wbs22eecUXAfM9fkNa6p/qccjYghwW411OwFhCu9qz8MT0DC2iGB/sJ6UU4DVS8VdJ08FNB7ivQu2gtKsZhv0Q=
+ ARA:13230040|23010399003|366016|1800799024|376014|11063799006|56012099006|4143699003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: pJs2EgEVgG3GTXE7r7Hsn7Fel4qktVG61Zi06wJdoOpFlX3WC7dF+KynXL0zr7HeHberFO9MYBusJA/zgiKtfuB8UPQK4ThsYDNldqrgP9ILA5Viz1ZjfhZcOa1v2UNfkFdCTQPPyZbESnxFTeJBqfzHGhRPgZ7wr//ltudowyuyAdW5EQAQ09bRAzEI/tzGNMB3HjfV9mw6smwAEpHX/VXkAbtWC72vhg2lWg68VAIfesxK1MQWf4WO5rfoAqF4ABq+WxrKrSRyJ+/mm88TrDLPu5ovI+VoNgPH6x7bnQtdgCFGdQh0qU0WfjG2T2heB/L/qJpylqML+xxllES1KdV1dfF3joj4letzLRTgczqs64Ft9qwDuL4mMOKdJGbXg3AX87hvvrq8vbN415D/4miULkdJzEHR2rkcZosgOFzJjETb/mkyzAWGvsWHCl2AT7syCfBpP/hxVLDVMHB6LZ0f+jft8894mlIgjtpWOgibzFcs12XXB/pjqXS4qAsHZoV2w5tcmMAQfSVpGXfwwrKwb5FCyQHYNqeL7FnndGyhEdrWDsDVb9mp/uF6+b6S8+//FQHCpknsVMDNR8nlLorsH+qGW8Wsdfu/KWm8i4DCBdwX9gYJnQa4l7oIkcNkXdEVR1Jh0NR3pqmVnntlKHCFoPqSn8a7D2Mce1PFuK0=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(1800799024)(366016)(18002099003)(22082099003)(56012099006)(11063799006)(4143699003)(6133799003);
+ SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(11063799006)(56012099006)(4143699003)(18002099003)(22082099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?s9JjeQtlhE0Wxu9BUC4+LoqGgOEbcXBcXz6Yr6Z69G/eFq+zPzCaMfZmqvis?=
- =?us-ascii?Q?OBaLvRRpA+oaWsRwG+gJVgeVT77N59COWcuuilbiUzqODyeuCQsfbfh0L2MO?=
- =?us-ascii?Q?oAXxaBWtM9JRTgajPABBPAyiH2zLn5chfnNpUwY2tPvafbt/TnuRWKHcbPB7?=
- =?us-ascii?Q?k+U5ER4xf2OQFWAU095LyS2/nMMzlVfz+Ex9ozq9krzbMhc1PfowBI/xKtXw?=
- =?us-ascii?Q?2RPdSDTEC7G2TRvbeJ1gaEkWSbaqBJS76+xiRvqt2r4knF5P77qobZsyTHuH?=
- =?us-ascii?Q?2DqucdPlbebMkxpY3gGjqtPbGgLHa+bWBm003H96oFCF3G6srwbqiZBftWMW?=
- =?us-ascii?Q?su8IH74X3qY4hakbOEt4G8N4Zj2+/8gUZ8V/CsLVyfsddWCR7nzCPTqAGwYS?=
- =?us-ascii?Q?5Rni60x0UXxFts2HlKXngf5w/HQKk+STptiCo/Wju4CQEyjmrzI/IVY+zFBr?=
- =?us-ascii?Q?J/cBHGWzIn/QCm4uKOGFi3XxSwC5rHeBSveh5ljFzYRDeqphr7TiNG4IuGI0?=
- =?us-ascii?Q?xG7nUOjhLVkUzC4jRk608UWTvcWfIo/BbV4yzbA4k0kRj7DYK8xGObydup53?=
- =?us-ascii?Q?Bp9rZaMD3It8hQ8AhtuGh3klhf+eENWaDZAf3+JbH/U/PNS0nvtJS+949V3a?=
- =?us-ascii?Q?Qa2Arl90f9vooRPz2FJpbpjKKcERfeNB6lsidY5spkmWU35wYXk7oa8iNSPh?=
- =?us-ascii?Q?Uww8S2ezZUpX74JgH42PNN5trCjG2WZFVfE1u/ljNW2FsIBrOR8KMk8A9Zeg?=
- =?us-ascii?Q?UQ/rXj0tVRIOWLrxMXo7LMffWb+2DDoQ+G1SI4L5mUiopVhf4qM6z4naBO0F?=
- =?us-ascii?Q?JLyusNCcTRN8u5ZcKB8pqc23bn6vcnv0VpZvtaXiv2fKFH90Abx1BoWbkGmV?=
- =?us-ascii?Q?EGHZHAJY8kYxD4PQfO3VfChAHbCD5mPhGlg1xMtnzBlIFdS9O/ZQzXm0itVp?=
- =?us-ascii?Q?pNMrv/0X29buGaGb4TNbTu/NICbB0w2z85nDe/P3KQsumj7jb0+RrDnrlBQZ?=
- =?us-ascii?Q?yBcfA7GvrHn0XQFVsxdAv/VIvf8ViQiAeg8zV8m9mxvVznhOYzPbZ4plfMSp?=
- =?us-ascii?Q?P9j45C61KhqLIkjLIf9hXosenUXpdhLzWgLWybM8lhsURQByEFfT6TBvVh+U?=
- =?us-ascii?Q?ayNG8MJMWyaIyzCzvbbV/ZJlkYEqMa+wxqOjToBCsxqhUTWPI+LjwNB3YHKV?=
- =?us-ascii?Q?Us1FHM3EJBoC96EnlSkBJmqE307O1cPaG2ns1yyfBD6rsKciUoXUq9aPPX7v?=
- =?us-ascii?Q?2k8zQtleQ6X1LbZ5PVeyr+wrMgz7vPZv+0sodPbxQ4MDPsi48kLH/vckZB0N?=
- =?us-ascii?Q?BFeo8ihTi4+sMS/Ld3YbHtGEsmgVQ9zMYf5fea8+pLw5x00Tu6B1D72oPggI?=
- =?us-ascii?Q?Kac3OCkfQ65ctIVg7qvC4A20O2KRZrcgaJIgDbUKV5lM2aMbF/HI/4s6AL5+?=
- =?us-ascii?Q?sXL6OwBxRlQvJ+O7kwXjliMsvZyknGvnM06X0wKH+pw2MUAlwhpkoonhoc48?=
- =?us-ascii?Q?tJsd9Qn5hFZEohqvK1Lw74nvkJpu1AKVLE4DTml2WymceZb1ooLam8xUvuD6?=
- =?us-ascii?Q?ccd+kbwnXDZezEBDW1oe7649o/Lz0ekD04QrJKd+wtlc3qBiKAdSYraGTzx3?=
- =?us-ascii?Q?JDtVDoXGtbjZOON4vxQ4OLNS2PrQUxDHvS+BkgdG+1ogaWm0lfvSimEC8oQP?=
- =?us-ascii?Q?gyYgfTOHMXhRTVX0RFWW+iXaY2TpJrZn0AmS01Y+qloDaQriJOYUG7abHr6R?=
- =?us-ascii?Q?5OjekFK7d0oQUF+tk1p4J+7Ynbbx7hE=3D?=
-X-Exchange-RoutingPolicyChecked: mxhWjIf15alqCQxHX8SqJ8rFC0G8qA0LoYUOiUILy76Xm6fPV9BwSKX6PvLOyQsBoYlNK+mJc4mlBLiCETrqbP5w8kpicNDSxqZPGHPUoN5dcbdbn8BLZBGFUGMQQoH6Ib3OcgJNTeqy/k7cerpEOEun/UGNiplXCZMkgobzqyNqp6q9qqr6fNrs8PxH6gEfvlyM5Zr5MlslrswqEPX9qImzWFpz8Yre3zX9n4HNsTSw5Tq9ni1Vb20PIhzgJbBfGbZUMIC4cZ7Ffo8zDUy34/HfG4H6qnudbfp+aV5KZ/MQ/QPmmk9mcqKHyXAXv1l96lLpUPUThMO3cezToUgWsg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a8e3810-d95c-4848-4aed-08dede95eb45
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bSvgeQzVdJcR8EDtpW9suOPAsegkXln8KHF8PGC+2zZ5rYEHFMqllbGYFGlj?=
+ =?us-ascii?Q?iQe+EDbs5K+2yds4JnIkI+//lLrHqtq/CpOWP/RRBd4yP7Xx9eJZuDu3oChY?=
+ =?us-ascii?Q?ZLOY6ArsZR/hNM+RgwsIOyIKLlEed0854+ID3uu6WwsPPSP7VbT4n23SLaZI?=
+ =?us-ascii?Q?9YJhDIFpiGQ8akl5RYgSyRJmKYj75yYHuZvXS0Eem3e/D2LSb3QQdTAl25cA?=
+ =?us-ascii?Q?trp/3FW06fM0JqR5lIsXK7+QlAMU3JdlZIdBFCieVNgItNdnCDjz2F+dOyWb?=
+ =?us-ascii?Q?9Mny7Zewb+O4pMRM3QXaetOPa4ZlxVN1hkQP9cGMmnsC4Rv2vS9693j+RJfx?=
+ =?us-ascii?Q?Lo/dGNHMOqICJUPF/lYlEG6ZWkeJ7Wqf9PZ0ND8EXpQwxzCZkL8IZhvL7L+A?=
+ =?us-ascii?Q?2erbRvWOKQtVxDVSYx8gnZAUwvSTZBhFFRemXhWlLuyi3Z1rZ+BRDrlRUPik?=
+ =?us-ascii?Q?p7dDlrTqRI0gNsF4DdBdbpF5+ZM5n7vd0NTMeLPRFWjnyOAMnafZFr2Jz2g3?=
+ =?us-ascii?Q?Lih3s7R+bVuUtqBym1a86TaTbk1cjkPsIHID23EgkSMorIXwW2oQToHAilk3?=
+ =?us-ascii?Q?4uKJ9ws79kaFQqIO+EWS80y98D4QPGdyVxrfqi3+aXHekNhB0fgtEzdE/YLm?=
+ =?us-ascii?Q?YKrPsRSJylHur+O72Qw3w8yA295S68Hs+oTaLo5BZrv/8FjK5hbSuvp3ZW4u?=
+ =?us-ascii?Q?5XvnTCABwwzjQucBfSa989VHSEA5/T+rr6uIzTNemL1BMnPr6TVx3RWANYAr?=
+ =?us-ascii?Q?yDTYSEnQhj6+lq1ibkerKS8LdcRmMqIu2alun1Fdy5SEpY/idq48KTesy9BV?=
+ =?us-ascii?Q?YvEhUzxkBlOolt1tZuC61H/R1SpqQdKqpp1BXlYNqyfAYoeN805BaY2CPijy?=
+ =?us-ascii?Q?634768TuXPQStGppmJZuM4oHzEVMSUA8bEYx9jrYfiDTTllii+MXzlk2xKPf?=
+ =?us-ascii?Q?W8WUxJw24V/lpIY1ATApW3GNRITtM+GY2xFZNIfF+1RTJ2cgIQzUNXz5ahcR?=
+ =?us-ascii?Q?VFEDAa/pDLROId7xQX8MMmVTTuH2v7MgtGu0q8Cf3uUIHut7vrPZ738QOJ2G?=
+ =?us-ascii?Q?Cw9awGt2IvURvHehFF/DW9AC3jJiHQljYsD2sLXAe047czJaWZYNvB+x2PJh?=
+ =?us-ascii?Q?M1a9x+4DvvuNLwVhx1/rN8SJ2V84KDVx43MU4q4/Iv4PMdZf1eXDDhcgOKZH?=
+ =?us-ascii?Q?8ouz6IzWHl2vcAvrdZW6yA1qqP1M6V+2wnCysbecblhB4vnxuIaOql6Jm1hu?=
+ =?us-ascii?Q?giDhRoWcgLSddoMS3Mb7EsIPiPOkWka/bNaXlMVEuNuZOPOSbH3jZuv4Lt9R?=
+ =?us-ascii?Q?T6AtCQ9Su5kwS8oLXg8noXMbKDY27WInsDNZ41HYiLulLZCu/b8fxb9Bqrqd?=
+ =?us-ascii?Q?RBuK3xsKfI+REvtKp5MkmGkBO6ksdgWfVt+tWT0LVI+yKFeAG7Kda86PL14r?=
+ =?us-ascii?Q?ipnHQIZ+Y2HMoZM5MnL4+TLHjB6kNdPyY+vAx83vbOMQuzEwxFg1OIQg26Qv?=
+ =?us-ascii?Q?JHmYb2WFV3YLg1Ozto1+BrxTUR/K4nB2I0WBYGBwLdNHnE65ULk2da6pdB7H?=
+ =?us-ascii?Q?rC0wNcxLBIWAxSBPK7R8twS/+loUHW9vf76LKIYUEE5VLArzuxwpibvg9Ow8?=
+ =?us-ascii?Q?GruUg8XARgF7TaWNkaSHZ5NAfd32ODdlYKSFDjqnH5iMvWHerLw/qbtXBBo2?=
+ =?us-ascii?Q?4HoTt8LhWOiR5QspiWMdIwk3xIvXVfqth2NW4PTJn20mmmf57bOG8Z9MSFnk?=
+ =?us-ascii?Q?XOQFmaXzsPx/T6s87WnW7IMtdKPjvnc=3D?=
+X-Exchange-RoutingPolicyChecked: MYq6Fj/4h4asDa2uBDgBMeYuzF8/qQj8NiyPAWW6CczWNvBxcW/X5WOn5kGzJR4dwU9ht4M5hawOp3xVp4BG68A+Q3K3resq7TZRSOzDVqUZFBxWFYvGQz+eTBGqfBKbkGUHs6pcRelcd0WKVeRGftxwjTE4tr/hx8TGxEnx31sw2DUQIl7MqRs7n+UsB3I/HGgyALTTp3aPtUx2HRdJMkoCcI+he17lsN1OawASM1uWewvoAbvUHvRgVNDRBKgDcb3dPYiaJ5I39u66ymKfmag9nue1eXbJe6ze9TYaj9AvdSbxUK/6XbXiSuLWqlyAL5AchG2b7Rf/aMdZATx00w==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6068afeb-d506-4bc7-ca81-08dede97a726
 X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2026 15:14:21.3497 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2026 15:26:46.1122 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DZpGvBRwionbWq7sTh4MDXIZFR/fniwRz69GJZRF//suwhsijM4HWvHKCIfbCuv2Q0h9upC8Jh5hLBNaPexJ73Mq3g/eY3Z4hPY3BZmpX2c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7767
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4Y5zgkedcPTvTIIPULy/IqDIaXZHp+WxGO5jspJOXcNK2GS6HU127EkFMaWuH4P0BX+ikvO3KlTu1zIQM/WIspmg52249IfIXB9hIElNbkI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7244
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -153,149 +152,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jul 08, 2026 at 07:19:26PM -0400, Dawid Wesierski wrote:
-> Runtime queue setup on E810 VFs causes queue state corruption when
-> queues are dynamically reconfigured while the hardware rate limiter
-> is actively pacing TX queues. Queue configuration messages to the PF
-> via virtchnl can race with ongoing TX operations, leading to undefined
-> behavior.
+On Fri, Jul 10, 2026 at 03:46:39PM +0200, SidAli CHERRATI wrote:
+> rte_intr_callback_unregister() returns the number of unregistered
+> callbacks on success. Since the close operation started returning
+> the ret variable instead of 0, this positive value leaks as the
+> return value of ixgbe_dev_close(), so applications checking
+> rte_eth_dev_close() != 0 treat a successful close as a failure.
 > 
-> Rather than gating this behind a devarg that an application would have
-> to know to set (and could just as easily avoid triggering the race by
-> not calling rte_eth_{rx,tx}_queue_setup() on a running port), stop
-> advertising RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP and
-> RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP as soon as the application
-> commits a per-queue bandwidth rte_tm hierarchy, i.e. as soon as the
-> condition that causes the race actually exists. iavf_dev_info_get() is
-> re-queried by the ethdev layer on every rx/tx_queue_setup() call, so
-> this is enough for the generic layer to start rejecting runtime queue
-> (re)configuration with -EBUSY once queue rate limiting is active, and
-> to automatically allow it again once the rte_tm hierarchy is torn
-> down.
-> 
-> vf->qtc_map, already used elsewhere to look up a queue's TC mapping,
-> is repurposed as the "queue bandwidth committed" signal since it's set
-> by iavf_hierarchy_commit() exactly when a per-queue bandwidth mapping
-> has been pushed to the PF, regardless of whether the port was stopped
-> at the time. Fix two related issues found while making it load-bearing
-> for this check:
-> 
-> - iavf_hierarchy_commit() replaced vf->qtc_map on every successful
->   commit without freeing the previous allocation, leaking memory.
-> - vf->qtc_map was never released on VF teardown, so
->   iavf_uninit_vf()/iavf_init_vf() (e.g. across a VF reset) could leave
->   a stale pointer referencing freed unrelated memory, and the runtime
->   queue setup capability would never be re-advertised after a reset.
-> 
-> Both are fixed by freeing vf->qtc_map before replacing it in
-> iavf_hierarchy_commit(), and freeing and clearing it in
-> iavf_uninit_vf().
-> 
-> Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
-> Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
+> Fixes: 62024eb82756 ("ethdev: change stop operation callback to return int")
+> Cc: stable@dpdk.org
+> Signed-off-by: SidAli CHERRATI <scherrati1@gmail.com>
 > ---
-
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-
-
-However, this patch needs a rebase since some of the changes to cleanup
-the qtc_map were made in a previously-applied patch.
-
->  doc/guides/nics/intel_vf.rst           | 10 ++++++++++
->  doc/guides/rel_notes/release_26_07.rst |  3 +++
->  drivers/net/intel/iavf/iavf_ethdev.c   | 23 ++++++++++++++++++++---
->  drivers/net/intel/iavf/iavf_tm.c       |  2 ++
->  4 files changed, 35 insertions(+), 3 deletions(-)
+>  drivers/net/intel/ixgbe/ixgbe_ethdev.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/doc/guides/nics/intel_vf.rst b/doc/guides/nics/intel_vf.rst
-> index e010f852cf..a47e3f6736 100644
-> --- a/doc/guides/nics/intel_vf.rst
-> +++ b/doc/guides/nics/intel_vf.rst
-> @@ -150,6 +150,16 @@ Intel\ |reg| E800 Series Ethernet devices:
->    for example: ``-a 18:00.0,quanta_size=2048``.
->    The default value is 1024, and quanta size should be set as the product of 64 in legacy host interface mode.
->  
-> +* Runtime (post-start) Rx/Tx queue setup can race with the hardware Tx rate
-> +  limiter on E810 VFs and corrupt queue state.
-> +  Once an application commits a per-queue bandwidth ``rte_tm`` hierarchy,
-> +  the driver automatically stops advertising
-> +  ``RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP`` and
-> +  ``RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP``,
-> +  so ``rte_eth_rx_queue_setup()``/``rte_eth_tx_queue_setup()``
-> +  are rejected with ``-EBUSY`` on a running port for as long as queue rate
-> +  limiting is active.
-> +
->  * When using the Intel out-of-tree "ice" PF/kernel driver v1.13.7 or later,
->    to create VFs with >16 queues (aka. "large VFs"),
->    it is necessary to change the rss_lut_vf_addr setting in sysfs from the default of 64 to 512.
-> diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-> index 6352ef27ab..7ea80112f4 100644
-> --- a/doc/guides/rel_notes/release_26_07.rst
-> +++ b/doc/guides/rel_notes/release_26_07.rst
-> @@ -143,6 +143,9 @@ New Features
->  
->    * Added support for transmitting LLDP packets based on mbuf packet type.
->    * Implemented AVX2 context descriptor transmit paths.
-> +  * Runtime Rx/Tx queue setup is now automatically disabled while a
-> +    per-queue bandwidth ``rte_tm`` hierarchy is committed, to avoid
-> +    corrupting queue state on E810 VFs.
->  
->  * **Updated Intel ice driver.**
->  
-> diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-> index 80e740ef29..5d0c361978 100644
-> --- a/drivers/net/intel/iavf/iavf_ethdev.c
-> +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-> @@ -1160,9 +1160,18 @@ iavf_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
->  	dev_info->reta_size = vf->vf_res->rss_lut_size;
->  	dev_info->flow_type_rss_offloads = IAVF_RSS_OFFLOAD_ALL;
->  	dev_info->max_mac_addrs = IAVF_NUM_MACADDR_MAX;
-> -	dev_info->dev_capa =
-> -		RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
-> -		RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
-> +	/*
-> +	 * Runtime queue setup can race with the hardware Tx rate limiter on
-> +	 * E810 VFs and corrupt queue state. Once a per-queue bandwidth rte_tm
-> +	 * hierarchy has been committed (vf->qtc_map is set), stop advertising
-> +	 * the capability so the ethdev layer rejects further rx/tx_queue_setup()
-> +	 * calls on a running port with -EBUSY. The capability is re-advertised
-> +	 * automatically once the rte_tm hierarchy is torn down.
-> +	 */
-> +	if (vf->qtc_map == NULL)
-> +		dev_info->dev_capa =
-> +			RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
-> +			RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
->  	dev_info->rx_offload_capa =
->  		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
->  		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
-> @@ -2756,6 +2765,14 @@ iavf_uninit_vf(struct rte_eth_dev *dev)
->  	rte_free(vf->qos_cap);
->  	vf->qos_cap = NULL;
->  
-> +	/*
-> +	 * Drop the committed queue/TC bandwidth mapping so a subsequent
-> +	 * iavf_init_vf() (e.g. after a device reset) starts with runtime
-> +	 * Rx/Tx queue setup available again (see iavf_dev_info_get()).
-> +	 */
-> +	rte_free(vf->qtc_map);
-> +	vf->qtc_map = NULL;
-> +
->  	rte_free(vf->rss_lut);
->  	vf->rss_lut = NULL;
->  	rte_free(vf->rss_key);
-> diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
-> index e3492ec491..c9d856e937 100644
-> --- a/drivers/net/intel/iavf/iavf_tm.c
-> +++ b/drivers/net/intel/iavf/iavf_tm.c
-> @@ -905,6 +905,8 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
->  	if (ret_val)
->  		goto fail_clear;
->  
-> +	/* replace the previously committed mapping, if any */
-> +	rte_free(vf->qtc_map);
->  	vf->qtc_map = qtc_map;
->  	if (adapter->stopped == 1)
->  		vf->tm_conf.committed = true;
-> -- 
-> 2.47.3
-> 
+> diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> index c5010f623c..6b1799d7a0 100644
+> --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> @@ -3121,6 +3121,7 @@ ixgbe_dev_close(struct rte_eth_dev *dev)
+>  		ret = rte_intr_callback_unregister(intr_handle,
+>  				ixgbe_dev_interrupt_handler, dev);
+>  		if (ret >= 0 || ret == -ENOENT) {
+> +			ret = 0;
+>  			break;
+
+This fixes the issue of returning an invalid value from the interrupt
+unregister, but it also means losing the previous value of ret from the
+stop call above. I'm therefore wondering if a better fix is to use a new
+temporary variable inside the do{ }while loop, and assign that to ret in
+the case of an actual error, otherwise leaving ret unmodified.
+In that case, we probably want to stop retries on an error too, right?
+
+	do {
+		int cb_ret = rte_intr_callback_unregister(intr_handle,
+				ixgbe_dev_interrupt_handler, dev);
+		if (cb_ret >= 0 || cb_ret == -ENOENT) {
+			break;
+		} else if (cb_ret != -EAGAIN) {
+			PMD_INIT_LOG(ERR,
+				"intr callback unregister failed: %d",
+				cb_ret);
+			ret = cb_ret;
+			break;  /* on error, don't retry */
+		}
+		rte_delay_ms(100);
+	} while (retries++ < (10 + IXGBE_LINK_UP_TIME));
+
+IF we do need to retry on error, then this approach won't work. Maybe a
+modified version of your suggestion might do instead - rather than assigning
+0 to ret on success, we assign a saved off version of it from before the
+loop?
+
+What do you think?
+/Bruce
