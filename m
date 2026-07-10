@@ -2,76 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C19EC43458
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 14:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E2B0C43458
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 14:45:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 682E840150;
-	Fri, 10 Jul 2026 16:38:52 +0200 (CEST)
-Received: from fout-b5-smtp.messagingengine.com
- (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id BEAFB400D5;
- Fri, 10 Jul 2026 16:38:50 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfout.stl.internal (Postfix) with ESMTP id A7D661D000F9;
- Fri, 10 Jul 2026 10:38:49 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 21E5440150;
+	Fri, 10 Jul 2026 16:45:44 +0200 (CEST)
+Received: from fhigh-b3-smtp.messagingengine.com
+ (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 9D0F6400D5;
+ Fri, 10 Jul 2026 16:45:42 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id DEAB47A010C;
+ Fri, 10 Jul 2026 10:45:41 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Fri, 10 Jul 2026 10:38:49 -0400
+ by phl-compute-04.internal (MEProxy); Fri, 10 Jul 2026 10:45:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1783694329;
- x=1783780729; bh=MOLppHtvF+mTk8ubJNeGa9v01UKwoOarCICtALgSRew=; b=
- JFH9WffX6/msVSq26ckVK8WYg8pmcvExb+KCJHusJQuPEv9fZVh0Mh3X5uwnxO9U
- rtaJukLSEyoQzMr145/wJE5/sPE66wjUuidPndwJKnHIucnt/u6YqWT80ahoKiYF
- LOzMB4XT6Iedf+/4GdFOUDc94QVkD0DNJkPj68oFjolSoep44JUxHY01V5JEA0Ay
- Lf85vm86FbBGPUq+0BSeH9qliY79zWznZxyyxUeUI1f2oFYpKuNPHsGDsrtb98wQ
- GpFqbzmHSZc1YukpF2Oubk6KgQ06L291wQzY5P2hrJCm40RhVNMBJd9EgizZMqzq
- XOsiXxQUEtl0zXMbFX5qxg==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1783694741;
+ x=1783781141; bh=3NkmTeSYiMVpQI22WTA+5UxKAiK8FXhHueZdcQWPTog=; b=
+ Q+9lDweq85UajdZ75EgK1rdotj38RY8jnkvmA2P673qY3EyYNs8usJop5pUIS0oa
+ Rhh9isxxDgWvSAVsYM0Zy/RXwp9C6uY/MzxkgS+Oe2ppov7FwXu3XPQcSrze+vZA
+ dQoeZIq/YS+iDHinRZVVBk3tsGoTPwwqgC860xWNUoKhxVYn+DvGeFUBVR/jkBpQ
+ uidtNH4nWwmbCmSbhmkIpasTkSutrvTPTYHgdgKXPaaOSY9wEEfsBiRzVaGrjLPh
+ NbT6TcAajggHsCpM6YB12d1e8+y0CeLsbs2UtJQppAyfYk4TFWY3/YHl15zKkxFH
+ wlmZ03dyYO9G+3ty1ZR10g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783694329; x=
- 1783780729; bh=MOLppHtvF+mTk8ubJNeGa9v01UKwoOarCICtALgSRew=; b=j
- F56ruZHbBxbVOrRa7Xjl/JumJe0P3PtZHe/9bOW8NEJzRcvG1y06jUtAI83hYVH7
- XrLqT5ug4OQswZ07713lC81db8uFGjWnQUik0WSmbk74vkUt7LgbAkYkxjSeY8nT
- 0YkLFDgEbDkwVWGmBGdHpJ/rEoqJFATkofbsoQgY1VOZUi9TVzWTPh8E7deuiPEt
- UKXMxsI1wPLdhka+UeODRWZ6SdMN0n1puLXYeAkKEIynQlo2gWAERgfAWc7fT/lF
- JaCFy/OeImOZu3zmvmQkzqWQ7yP445qUhykJFWnOOrCa2Wkm14ZjyA1BM+PpxfpT
- yX8D4Ver5s4qEBBSExuqw==
-X-ME-Sender: <xms:-QNRapOhcARzYtmKFZxwf7byjlOs0Y8HX7O76X2OaxsDVcqpZC-ELw>
- <xme:-QNRanYrOdFhGw_eKDp8nifilz4ExFODVig0eeZ2VeAbngSBdqzb4bpiHEKtigv7Y
- 6slsRtrfSmEAMlK2v4RjZ2MkcBfJetkNTnk5bpNZn2-CpE48iz7HQ>
-X-ME-Received: <xmr:-QNRaryYFl8at0bfhMFadEbRwOT0lLl182CAiyaOJgPsGksO2P1kXdxpRHrO8qyNQdqqFmjc8hWjUmrVAzrQUQ5yOQ>
-X-ME-Proxy-Cause: dmFkZTEkR/mTZOGmknEI4qYacjnDqEk21P088Oupt9Hn5bwY8aCkm/W4OC1w5pzeNfG2Fx
- j3Yn5451rCH9fsMgQUoFT2ALym4gGKzGfssrE8u+fm3QaC9sL75xjt62uzzryNk4cggFVR
- LpIV6mntwn0h/PgcH1ksTc8D5LAzSk62E1UDgjgiHChDkQo+RX5JOEtXkJOCxqU4WvlPEX
- qXuSjvcrUuExyLshXbbf1NtCPdlsCjNi3PuGPkALc+fnoPDf9asXJU+eHbgdlhv53+uEyJ
- XgFIsvkSKrBvUtvWa/W+81CMnvv8RWzGbRBVMC5kxYGFGBSAc7YU2jEFQbFq+GDL+asDsQ
- NeSP9vTquI/5qfhZtr8TDeed/T1jJ3+KLwXOQx4dtMNXgNvUG3l58YdYsBPpEx4mXzo0XK
- 7+fZWf+smvVZG3H3mJ96+H8lllU3gjA5cBcaLuxwCuqpi/iMLuYLk3IgJSZ/t8F9nFockO
- 1ZA5puJ6iRxbioTLRjol6/B+JmS3NathGejZBmsV4zfaTHM5MM0Qaas3jMPDDzhI49PFWR
- QbluXUfKZdxVwWJxq8ESlUVL7nnwdUZaPBoKZYPlZX7UAGgcgV7bPS22Aeg/y1lT14Yq7X
- uFkd0zCL5uL4UAJBcJE3KG6/PMbrELeOEEoJu7cP3wtwTJLOatTHQjddTKYw
-X-ME-Proxy: <xmx:-QNRaqLWVLr_VRiRo8VD3PZe0SoVqDcy8hrwCPF2XyIaYXk4XOmdRw>
- <xmx:-QNRatqBX4uGHgW0wWThheKx71k_VSLxWHYaRk8qg-3y_hDqzfL3zg>
- <xmx:-QNRahJQ7Wze0nhOLad6DBO2OcaAUyY4zoEsq1mvUkn3wxAQW0e95Q>
- <xmx:-QNRaqQAqTg65DWgtMMs9_7XFWl71idLd38gHm9abeQTNi0KKFg_3A>
- <xmx:-QNRar-ObjJ2QzrsMggySAYAT-JeTN0CaN-DCoxgY5-DpCdbQQq28KrQ>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783694741; x=
+ 1783781141; bh=3NkmTeSYiMVpQI22WTA+5UxKAiK8FXhHueZdcQWPTog=; b=R
+ SJATWuK/kbGCnE1W7qx8A3m5VhhZd3ISkoi1dHBgGPiPhMAuKZDpghAlsgkj/ox+
+ RoRDa+DRIBe2/fjQrYxMoKa9eGi5nIORc8+B0cmc2i/8W5tW7IDpCX86DN1WKO83
+ sq8MdfPiIXFv5HVHenPE93W8YOhvYt00faawGClwfkLq7YipYX5rHaisvn1wLOTQ
+ DDVIZDj9g8I7uV/3Oi4o9HTi0il2qL2Ci6IvOkVxviM4A+EHCaRiVuWMNybzzxaK
+ RyuhCNnO1igKNiPcYrnruCWWuB9cPzZ31FLPtTVueiVWivrj+RzOwwiLDl4bHIN5
+ erEiCt0/aycIKNMGSxJiA==
+X-ME-Sender: <xms:lQVRatBWPmBOl2zqqthd1JLx3Wk4Itf7iZkOeRMxAD-8tanG0FHXLg>
+ <xme:lQVRamf1efOMGdMm7TefK4haH1G7FhVdebGrCEy-vMcANjjw-h4pZiAeQFImV5tyk
+ ojpvN5uV_T8sLb1oUJzFZUPZxNtxdVruYcA6V_ga2-2D2IgT41vFCE>
+X-ME-Received: <xmr:lQVRanl9ZNi7yFd-dxAIRquYQiA0XaZk_734Ml9sX2yfpPL8jgJnOBWdA1J-_2QX_gN1O-VTRYu4vxQc3vQcsRp8pA>
+X-ME-Proxy-Cause: dmFkZTE5zhrpww4QHn7+aNgdDmmTouvv+aD2gtZsG02hwwhZ0IiWLqD0sFTUUeByhrUdcu
+ tnYEgtYBzZET/5Twes+wd0idgCUX7nhUvZkaixTHL8nXFWfkzmnHFYuHYuZl512uVPIYDA
+ +wJ7g91dOEKw+Hjvlk16syqDXeCxW/a0KmDXATH62Lk5Xyk/dJR7O5WlrUOFcsuZjUyQ+m
+ ex3puzdPmn3/L/P1dEbQbnd7eUoeWxti0R5Dd4HJNJLmXtjTKiUHwTHfHNUHC6PXL99nBJ
+ +CCdCBdgkkm+QmK9qEbLJxRuBjKXRN11aJMqvhBjYJN1Zdab7whZBY+9BJjXNbQnYKi6O9
+ AclIrS6KftUoxbheYtq93vdFMw3VchgFH7/SSGbZmwhE5feLB1dfhgEZUaR5E3YepqH6fv
+ EN41uumXG/Cke+hQcOjFvr50y50/s5IlsNC/N5fd6DLUT0nrez5Uw4Sn9W9LaubKmdZfoE
+ kQmx5WMY3KLzcJw3hXW2iQQ+qV0Z+NzT6+lHt/ZeyeDA/xZIEWW8+I2XuE9Wgd3gaqTR+c
+ QXC7vrdsOUxPftR171zFr0doCVxFhY2WndCYYir0SOzZAU8R0uobHc4aBpiEHWEdHAdYcJ
+ ucdKfEM2ibocBdlXN8v5eZIdJAykGm2snVTv6/qFWjZV6+80hTmo0I6Ma9BA
+X-ME-Proxy: <xmx:lQVRatEm3gNzXyeW2k_a7rakWSxy8y3K1-j_nOJo3khj_MBy5j_fgg>
+ <xmx:lQVRav4oZi7XFLx_8EQ3p2ln3swpyZQey2Q-s6QbRZcYpTwpIuQIcQ>
+ <xmx:lQVRalkWKyc8h3-NyWIPNIDl02zLbruYcy_mr6oddt3pc-cE_79BDQ>
+ <xmx:lQVRakpOLXNH7xjZkEiywcyaR8TzuEmudKvPcb0i3Urvgpl4BuI-Kg>
+ <xmx:lQVRau47XqNnjX26dafRjujuX6Ku4qEPU9QejZz-ID5hEwo3f_GmxfCs>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 10 Jul 2026 10:38:48 -0400 (EDT)
+ 10 Jul 2026 10:45:40 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Alexey Simakov <bigalex934@gmail.com>
-Cc: Chaoyong He <chaoyong.he@corigine.com>,
- Alejandro Lucero <alejandro.lucero@netronome.com>, dev@dpdk.org,
- stable@dpdk.org
-Subject: Re: [PATCH] net/nfp: fix UB in BAR size shift operations
-Date: Fri, 10 Jul 2026 16:38:46 +0200
-Message-ID: <i8TrHM9iTYmeFC_7-DKzYQ@monjalon.net>
-In-Reply-To: <20260707140112.140833-1-bigalex934@gmail.com>
-References: <20260707140112.140833-1-bigalex934@gmail.com>
+To: Jeroen de Borst <jeroendb@google.com>,
+ Joshua Washington <joshwash@google.com>,
+ Jasper Tran O'Leary <jtranoleary@google.com>
+Cc: Junfeng Guo <junfengg@nvidia.com>, Xiaoyun Li <xiaoyun.li@intel.com>,
+ stable@dpdk.org, dev@dpdk.org
+Subject: Re: [PATCH v4 2/9] net/gve: delay adding mbuf head to software ring
+Date: Fri, 10 Jul 2026 16:45:39 +0200
+Message-ID: <l7g2E_cUTtqIHhK0pfFLlQ@monjalon.net>
+In-Reply-To: <20260709040739.3184955-3-joshwash@google.com>
+References: <20260707164020.2936476-1-joshwash@google.com>
+ <20260709040739.3184955-1-joshwash@google.com>
+ <20260709040739.3184955-3-joshwash@google.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,21 +91,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-07/07/2026 16:01, Alexey Simakov:
-> The literal '1' is a signed 32-bit int. Shifting it by bar->bitsize
-> is undefined behavior when bitsize >= 31, and sign-extends when
-> bitsize == 31 (producing a wrong upper-bound check). BAR aperture
-> sizes from hardware can exceed this range.
+09/07/2026 06:07, Joshua Washington:
+> The GQ TX datapath was set up to write the mbuf head into the sw_ring
+> before writing the descriptors. This poses a problem because it's
+> possible for the packet to be dropped due to lacking the FIFO space to
+> do a proper TX. In such a case, the packet won't be sent, and will lead
+> to leaked mbufs in the subsequent segments.
 > 
-> Fix by using RTE_BIT64() which produces a 64-bit unsigned value,
-> matching the type of the operands (uint64_t base, uint64_t offset).
+> There is also no real reason that the head mbuf must be set in the
+> sw_ring separately from the others; the mbuf chain is not actually
+> walked as part of GQ TX.
 > 
-> Fixes: c7e9729da6b5 ("net/nfp: support CPP")
-> Fixes: 1fbe51cd9c3a ("net/nfp: extend usage of BAR from 8 to 24")
+> Fixes: a46583cf43c8 ("net/gve: support Rx/Tx")
 > Cc: stable@dpdk.org
-> 
-> Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
+> Signed-off-by: Joshua Washington <joshwash@google.com>
+> Reviewed-by: Jasper Tran O'Leary <jtranoleary@google.com>
 
-Applied, thanks.
+AI found this issue:
+
+**Error:** Resource leak on early return from `gve_tx_burst_qpl()`.
+
+The patch modifies the loop to store mbufs in `sw_ring` only after checking FIFO availability, but introduces a leak when `goto end_of_tx` is taken after the first segment has been processed. At line 306-307:
+
+```c
+if (!is_fifo_avail(txq, hlen)) {
+    gve_tx_clean(txq);
+    if (!is_fifo_avail(txq, hlen))
+        goto end_of_tx;
+}
+```
+
+If the second `is_fifo_avail()` check fails and we `goto end_of_tx`, the current `tx_pkt` (which is the mbuf chain head) has not been added to `sw_ring` yet (that happens later in the modified loop at lines 346-351). The function will return without freeing `tx_pkt`, and the mbuf chain is lost.
+
+**Suggested fix:** Free the current packet before `goto end_of_tx`:
+
+```c
+if (!is_fifo_avail(txq, hlen)) {
+    gve_tx_clean(txq);
+    if (!is_fifo_avail(txq, hlen)) {
+        rte_pktmbuf_free(tx_pkt);
+        goto end_of_tx;
+    }
+}
+```
+
+Similarly, for the TSO path at lines 314-316, if the FIFO space check fails, `tx_pkt` should be freed before the goto.
+
 
 
