@@ -2,62 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F4DC43458
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 22:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E192C43458
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Jul 2026 22:22:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC59940B94;
-	Sat, 11 Jul 2026 00:10:22 +0200 (CEST)
-Received: from mail-qv1-f73.google.com (mail-qv1-f73.google.com
- [209.85.219.73]) by mails.dpdk.org (Postfix) with ESMTP id 5B4614065A
- for <dev@dpdk.org>; Sat, 11 Jul 2026 00:10:21 +0200 (CEST)
-Received: by mail-qv1-f73.google.com with SMTP id
- 6a1803df08f44-8f45dde7595so17871316d6.3
- for <dev@dpdk.org>; Fri, 10 Jul 2026 15:10:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1783721421; x=1784326221; darn=dpdk.org;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=yR+cSJ8xFXNmlPSMOucLv2pwk+KcK1SbHqxAdPaALPo=;
- b=pRSWtDsH2zXw2DoAG1H8TiwpkoDMOducv/w4bI6TD4OJ9hz3ahsGN/nopqPS9XfFoe
- JieZlHi/8yFkvqBZiUFpIon5KbMyFkGFL1OZvu+sjjw6gu5Tuh3P91dL2fuYt5RkNuTn
- fWqDS3xVcCYT+orqhybSEOpcIQBp0jNbGlaHsaAvhkH7GTOeLW3CMnPuPe3iPuG2tjx/
- F9OXX0HhQVzeqQcjqekwf4+fCzSFLwAL3rfaxfRlzwIzp3RKeUB/8xuqqTgujvVYSjjX
- 6ssIf4gOo0GVkWg4nq/nO9g+E5aA38OYRsILpZQHXfO0CUvC7/YyupDseQftRujfR5Dr
- /nxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783721421; x=1784326221;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=yR+cSJ8xFXNmlPSMOucLv2pwk+KcK1SbHqxAdPaALPo=;
- b=m7NnbpRyArQ96yV6SWH/ztNnbLRFetagpLF0Q8cnr2EQ9mv+Z88sjKH6q1lOX97ETV
- ri4ON7JC4B0kPlUi8/MAvKapHptdRrfonr/BfsHjR3ym6/S2u4O1A1wvzCMhDZD2Ku3H
- l19ZUPe5NnINuWunJDWtVF0ScQc++dvGJ5PN6p2Y18kwZC4f2xqhTwiBuck9FDAM71yI
- jGLT2ZxKF3TUsjp4XP8Vwz3R9sGz5IzNv/UyR3am2J9luSgdVYAGJ6iOSXZWiHYzSLNN
- rGfDy5UG++hJSWKz+Dsb10KsgGae9eJmYA84TUgfJDqbMbssHCjnHcXMOE+tq+BaoDGq
- 8ifA==
-X-Gm-Message-State: AOJu0Yzs7WqIc+ANbD1/tSDKRkwfm1DbJRltNN77G40vZL9F+UXAgwFb
- cEv1+YGymUkLCYv0AENR16V57zMktLdm+/wqQDFPDJigsO8ucX2o6tNlLzIXG1NXrJRlDSqWncC
- i5yWofp1+bD0jtZxs6jVkDLHJ2MpWy5SZaAnKRbrVwOkmy+0kjD4FCtlWzPW/MWHhPCPxbqyT39
- tSWm6krBATzEB4oruedRWLXm4=
-X-Received: from qvbj4.prod.google.com ([2002:a0c:f004:0:b0:8ff:97d7:249a])
- (user=blasko job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6214:3b86:b0:8e9:f62b:8f9c
- with SMTP id 6a1803df08f44-9040197e2d5mr10225666d6.49.1783721420301; Fri, 10
- Jul 2026 15:10:20 -0700 (PDT)
-Date: Fri, 10 Jul 2026 22:10:12 +0000
-In-Reply-To: <20260710221013.3913447-1-blasko@google.com>
-Mime-Version: 1.0
-References: <20260623215325.814776-1-blasko@google.com>
- <20260710221013.3913447-1-blasko@google.com>
-X-Mailer: git-send-email 2.55.0.141.g00534a21ce-goog
-Message-ID: <20260710221013.3913447-3-blasko@google.com>
-Subject: [PATCH v2 2/2] net/af_xdp: add read_clock support to AF_XDP PMD
-From: Mark Blasko <blasko@google.com>
-To: dev@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>, 
- Maryam Tahhan <mtahhan@redhat.com>
-Cc: joshwash@google.com, jtranoleary@google.com, blasko@google.com
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 6CA0F4027F;
+	Sat, 11 Jul 2026 00:22:58 +0200 (CEST)
+Received: from fout-b8-smtp.messagingengine.com
+ (fout-b8-smtp.messagingengine.com [202.12.124.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 2A7E340270
+ for <dev@dpdk.org>; Sat, 11 Jul 2026 00:22:57 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.stl.internal (Postfix) with ESMTP id 7B1321D000D4;
+ Fri, 10 Jul 2026 18:22:56 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Fri, 10 Jul 2026 18:22:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1783722176;
+ x=1783808576; bh=1Agu0dy4bMkRRPSZmSYCs83PVEF2d2+yxgJxDWgUtZs=; b=
+ hQaNX/T7MpkIZo6ss3/LE0S9My8GmT+5iQNC4G+IcDTLDxzS6vFoowiCdy7TtInO
+ BHd3g444wLTw9vXHm5K6D5ZTX9fFPImlQRxI7wxYFi4xEfdVdfSxAzRw3PYjJxFQ
+ /axK6/DvMcURpIxdT27ofrX7p5ZFLL/SjVmiQD1QRYH/DqqcXEbhSU4kZ7DNoeQj
+ qy/RLuUhDXLeTSpWbhf/7eFT9ehONtAHb7bGAtOmggfC1uwtCtkQETs+Q1/BeD/J
+ ei8vyffzZDqDzBk2WZ1CdQo2IG0r6Fubs70YWDaxGQEcy+fOsHTO+RIgYHhf64qE
+ fgGSPwr+WtwkDC5hKd5P9w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783722176; x=
+ 1783808576; bh=1Agu0dy4bMkRRPSZmSYCs83PVEF2d2+yxgJxDWgUtZs=; b=N
+ kSxR4Sc2ZOVPCUiWiCLZt6eDjQmBrHQojgxVkQn2EABKEb8mGSU5ClHG0HsHBn2Y
+ xAkC8jBsKWBaHzY7lQYXkjREqDfprbiLccqXqKDZL1XZYmkb7K71BGPxEtJG86hx
+ A3ihrdg8oH+fZkPArG8hsypPbk4+UY8Du/HyTa6ntKeB8xRRufpZKj4WRL9qiT0m
+ sOoxwi/SF0fc7Q7AjEBGHDRxXJv5IIT0d/Sh8usI0u+W8XGto0eaq5UQizbhcQR6
+ Q3CBNpJpYWxsDQ4z3L6x16if13KkUDp3nmoBnNl/+gSE+NaTF71Cjys0pI5xIXkw
+ 5INpMXWH4X/N9+eJ1Djaw==
+X-ME-Sender: <xms:wHBRatZtjTUHOrtcFeQqYBf3vaFFtH_h8a2yIG-JcsaSbDRuwDmC2Q>
+ <xme:wHBRaovzxVDnDzL3ps34CYDgZ40-Z1r36sEnCkilfzm1CJ0dPFMyIGiAKEOSCyqiD
+ MlVA6ql67pwXNq75i6J7IDN7Pz1Ku0_P0DddTus3PxAA46NdS2npM8>
+X-ME-Received: <xmr:wHBRavFG0CY3nXIjtv_RcujGoFJYORj9XzEVRvKk52c1poquZGSzhvJiXcNm0RZO_eqOOFeGGDVBt5giEXyD6BObCw>
+X-ME-Proxy-Cause: dmFkZTE7UW/EabxKG1eeoUkb84Z+trN0P6uwsBJkGwcUXutbat6c/jsuSAjCIQGkTkurq5
+ k5WELzdH3mjQ5+h8fMqm23nNkswa4qkGogQkhL6a9B7KsEl7cBOJD1dyhD+SFoN2PUnrWB
+ EkNRw2Ezu3EXenlql6p8Xm30nUlK0gxsFBKnMNIJgP8uYYfFPjTvzxeG7rLe24kfSI6vj9
+ COp54OixR0BNU6DkUi6pSW+XxfKz9BvlA2J/pCnCRK+Ogs1GEOJ29Uo0zo3Qbp+rZqr/oF
+ pL8Jzu2iI0MIW2JbhCvWOZbQ0/RAr9DSYBCOx8aE+WDEB13k1Utcvqb8ifmMXljFS7s4Jb
+ DIHedO6yFCB9qZZN5ASi70kyQ3cGL6UjZ6xChWE4BmFpGjL0ujCt+TVZroHqJaPfhZ0Ekj
+ gpLu8YWCZIZMKJHURq7jHQn6onQmL2VwSW6eioxQcpW4wuTwunnS4oftY5d9e5B/Lp9nD4
+ VHWivYPtY7YhR+kludyzDvCpdNyFi57JTNLCV9CQ36clxTs1AqQkgXjvmkyzK/BqQ8z0SW
+ smQiWcAVPwg4KcbQLAIsjFyo4xOOdhuFBLrFGS67r8yX9Goc5hrM4AjwN/2Acc2Co3haWg
+ 6GHLWvx/KG28RSpmVeLbbpHe+74oL3gL3+YdGtKOreSsZTHnlt5JNPbXUyVw
+X-ME-Proxy: <xmx:wHBRajyyaLzqOgSSqEwNrgUcgEAJRUlCbU901uJ_HLTp42pYP92y_Q>
+ <xmx:wHBRaujTg9R7hCgUWRgVlGajtTRFquQgy8IA5ZdiGCmRd8XEq9V0tA>
+ <xmx:wHBRamwtLl88JSmZEeDmO24pbnDgWYahEvciCa8jifjKI3sWiIQMtA>
+ <xmx:wHBRapLaafV0BsD_Dv8AyXA3jxbHOh0lEyIB01VU7rcOkN_b5QqyNQ>
+ <xmx:wHBRakZuuECAVk7PEcpIA4KlT4uj-UPClSJ2P4Ebn9jn4PH-v2DVa2ZM>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 10 Jul 2026 18:22:55 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Shani Peretz <shperetz@nvidia.com>
+Cc: dev@dpdk.org, Ori Kam <orika@nvidia.com>
+Subject: Re: [PATCH] examples/flow_filtering: fix null derefs and memory leaks
+Date: Sat, 11 Jul 2026 00:22:53 +0200
+Message-ID: <7ak0_vY6REuy4xAALDQskg@monjalon.net>
+In-Reply-To: <20260331125347.346362-1-shperetz@nvidia.com>
+References: <20260331125347.346362-1-shperetz@nvidia.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,248 +86,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement the ethdev read_clock operation in the AF_XDP Poll Mode
-Driver. This allows DPDK applications to query the current time of the
-NIC hardware clock.
+31/03/2026 14:53, Shani Peretz:
+> Add missing return statements after failed calloc NULL checks to
+> prevent null pointer dereferences.
+> 
+> Free previously allocated memory on error paths to prevent
+> leaked storage when a subsequent allocation fails.
+> 
+> Fixes: 3ebb8789136a ("examples/flow_filtering: add more snippets")
+> 
+> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 
-At device start, the PMD queries ethtool for the interface's PTP
-Hardware Clock index and opens the corresponding PTP device node. The
-read_clock operation queries the current time via clock_gettime.
+Applied, thanks.
 
-Signed-off-by: Mark Blasko <blasko@google.com>
-Reviewed-by: Joshua Washington <joshwash@google.com>
----
-v2:
-  - New patch introduced in v2 to support read_clock ethdev operation.
----
- drivers/net/af_xdp/rte_eth_af_xdp.c | 127 ++++++++++++++++++++++++++++
- 1 file changed, 127 insertions(+)
 
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 2f9ad7d180..410be570a0 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -15,6 +15,7 @@
- #include <linux/if_link.h>
- #include <linux/ethtool.h>
- #include <linux/sockios.h>
-+#include <linux/net_tstamp.h>
- #include "af_xdp_deps.h"
- 
- #include <rte_ethdev.h>
-@@ -28,6 +29,7 @@
- #include <dev_driver.h>
- #include <rte_eal.h>
- #include <rte_ether.h>
-+#include <rte_time.h>
- #include <rte_lcore.h>
- #include <rte_log.h>
- #include <rte_memory.h>
-@@ -62,6 +64,9 @@
- #define PF_XDP AF_XDP
- #endif
- 
-+#include <fcntl.h>
-+#include <time.h>
-+
- 
- static int timestamp_dynfield_offset = -1;
- static uint64_t timestamp_dynflag;
-@@ -194,6 +199,7 @@ struct pmd_internals {
- 	int rx_timestamp_offset;
- 	int rx_timestamp_valid_offset;
- 	uint8_t rx_timestamp_valid_mask;
-+	int ptp_fd;
- };
- 
- struct pmd_process_private {
-@@ -795,9 +801,72 @@ eth_af_xdp_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- #endif
- }
- 
-+static int
-+eth_af_xdp_enable_hw_timestamping(const char *if_name)
-+{
-+	struct hwtstamp_config config = {0};
-+	struct ifreq ifr = {0};
-+	int fd, ret;
-+
-+	fd = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (fd < 0)
-+		return -1;
-+
-+	ifr.ifr_data = (caddr_t)&config;
-+	strlcpy(ifr.ifr_name, if_name, IFNAMSIZ);
-+
-+	ret = ioctl(fd, SIOCGHWTSTAMP, &ifr);
-+	if (ret == 0) {
-+		if (config.rx_filter != HWTSTAMP_FILTER_NONE) {
-+			close(fd);
-+			return 0;
-+		}
-+	}
-+
-+	config.flags = 0;
-+	config.tx_type = HWTSTAMP_TX_OFF;
-+	config.rx_filter = HWTSTAMP_FILTER_ALL;
-+
-+	ret = ioctl(fd, SIOCSHWTSTAMP, &ifr);
-+	close(fd);
-+
-+	if (ret < 0)
-+		return -errno;
-+
-+	if (config.rx_filter == HWTSTAMP_FILTER_NONE)
-+		return -ENOTSUP;
-+
-+	return 0;
-+}
-+
-+static int
-+eth_af_xdp_get_ptp_index(const char *if_name)
-+{
-+	struct ethtool_ts_info info = {0};
-+	struct ifreq ifr = {0};
-+	int fd, ret;
-+
-+	fd = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (fd < 0)
-+		return -1;
-+
-+	ifr.ifr_data = (caddr_t)&info;
-+	info.cmd = ETHTOOL_GET_TS_INFO;
-+	strlcpy(ifr.ifr_name, if_name, IFNAMSIZ);
-+
-+	ret = ioctl(fd, SIOCETHTOOL, &ifr);
-+	close(fd);
-+
-+	if (ret < 0)
-+		return -1;
-+
-+	return info.phc_index;
-+}
-+
- static int
- eth_dev_start(struct rte_eth_dev *dev)
- {
-+	struct pmd_internals *internals = dev->data->dev_private;
- 	uint16_t i;
- 
- 	if (dev->data->dev_conf.rxmode.offloads &
-@@ -814,6 +883,25 @@ eth_dev_start(struct rte_eth_dev *dev)
- 		AF_XDP_LOG_LINE(INFO,
- 			"Registered mbuf timestamp field, offset: %d",
- 			timestamp_dynfield_offset);
-+
-+		rc = eth_af_xdp_enable_hw_timestamping(internals->if_name);
-+		if (rc < 0) {
-+			AF_XDP_LOG_LINE(WARNING,
-+				"Could not enable HW timestamping on %s: %s",
-+				internals->if_name, strerror(-rc));
-+		}
-+
-+		int phc_index = eth_af_xdp_get_ptp_index(internals->if_name);
-+		if (phc_index >= 0) {
-+			char ptp_dev[32];
-+			snprintf(ptp_dev, sizeof(ptp_dev), "/dev/ptp%d", phc_index);
-+			internals->ptp_fd = open(ptp_dev, O_RDONLY);
-+			if (internals->ptp_fd >= 0) {
-+				AF_XDP_LOG_LINE(INFO,
-+					"Opened PTP device %s for read_clock",
-+					ptp_dev);
-+			}
-+		}
- 	}
- 
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
-@@ -829,6 +917,7 @@ eth_dev_start(struct rte_eth_dev *dev)
- static int
- eth_dev_stop(struct rte_eth_dev *dev)
- {
-+	struct pmd_internals *internals = dev->data->dev_private;
- 	uint16_t i;
- 
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-@@ -837,6 +926,11 @@ eth_dev_stop(struct rte_eth_dev *dev)
- 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
- 	}
- 
-+	if (internals->ptp_fd >= 0) {
-+		close(internals->ptp_fd);
-+		internals->ptp_fd = -1;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1170,6 +1264,11 @@ eth_dev_close(struct rte_eth_dev *dev)
- 		}
- 	}
- 
-+	if (internals->ptp_fd >= 0) {
-+		close(internals->ptp_fd);
-+		internals->ptp_fd = -1;
-+	}
-+
- out:
- 	rte_free(dev->process_private);
- 
-@@ -2039,6 +2138,31 @@ eth_dev_promiscuous_disable(struct rte_eth_dev *dev)
- 	return eth_dev_change_flags(internals->if_name, 0, ~IFF_PROMISC);
- }
- 
-+/*
-+ * In Linux, dynamic POSIX clock IDs from file descriptors (such as /dev/ptpX)
-+ * are encoded with CLOCKFD (3) in the lower 3 bits and ~fd in the upper bits.
-+ * As this is not defined in user-space UAPI headers, define the macro here.
-+ */
-+#define CLOCKFD 3
-+#define FD_TO_CLOCKID(fd)	((clockid_t)(~(unsigned int)(fd) << 3 | CLOCKFD))
-+
-+static int
-+eth_af_xdp_read_clock(struct rte_eth_dev *dev, uint64_t *timestamp)
-+{
-+	struct pmd_internals *internals = dev->data->dev_private;
-+	struct timespec ts;
-+
-+	if (internals->ptp_fd < 0)
-+		return -ENOTSUP;
-+
-+	clockid_t clkid = FD_TO_CLOCKID(internals->ptp_fd);
-+	if (clock_gettime(clkid, &ts) < 0)
-+		return -1;
-+
-+	*timestamp = rte_timespec_to_ns(&ts);
-+	return 0;
-+}
-+
- static const struct eth_dev_ops ops = {
- 	.dev_start = eth_dev_start,
- 	.dev_stop = eth_dev_stop,
-@@ -2054,6 +2178,7 @@ static const struct eth_dev_ops ops = {
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
- 	.get_monitor_addr = eth_get_monitor_addr,
-+	.read_clock = eth_af_xdp_read_clock,
- };
- 
- /* AF_XDP Device Plugin option works in unprivileged
-@@ -2075,6 +2200,7 @@ static const struct eth_dev_ops ops_afxdp_dp = {
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
- 	.get_monitor_addr = eth_get_monitor_addr,
-+	.read_clock = eth_af_xdp_read_clock,
- };
- 
- /** parse busy_budget argument */
-@@ -2399,6 +2525,7 @@ init_internals(struct rte_vdev_device *dev, const char *if_name,
- 	internals->rx_timestamp_offset = rx_timestamp_offset;
- 	internals->rx_timestamp_valid_offset = rx_timestamp_valid_offset;
- 	internals->rx_timestamp_valid_mask = (uint8_t)rx_timestamp_valid_mask;
-+	internals->ptp_fd = -1;
- 
- 	if (xdp_get_channels_info(if_name, &internals->max_queue_cnt,
- 				  &internals->configured_queue_cnt)) {
--- 
-2.55.0.141.g00534a21ce-goog
 
