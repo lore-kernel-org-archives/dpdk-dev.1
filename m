@@ -2,50 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BB1C43458
-	for <dpdk-dev@archiver.kernel.org>; Sat, 11 Jul 2026 20:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE65AC43458
+	for <dpdk-dev@archiver.kernel.org>; Sat, 11 Jul 2026 22:46:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E4A340274;
-	Sat, 11 Jul 2026 22:24:51 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 317D34026F;
- Sat, 11 Jul 2026 22:24:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783801490; x=1815337490;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=5wXJGCIgKj03RMnQkIE6PJuoQZq7TNgB4u5yvrcC9uY=;
- b=fo+BuPQ7zUVLDWwF7y7zq3N02N4xuqiAKjZblnMW3CyOJKDGpOXv2qV8
- ytElJPHZRuRVpSAONmiY4G2XxJCdsr0m9C9VC7aF+x6bg+oTK6+ylWa7s
- dqCEJnFv5wLJJSlV6W14CoLkWGlXBiV2nhhlVCB6b1WKQwzH1zAohXaPo
- 4uito76/jan+dJEYnbdE1SYpILdjVDATr6ZUM6VKfvY+UsEhRWHNvH25y
- ifkqKTM9yDUKIkkey2OL2huw/xofw7lc4iLQKu8D7YPgKGkKwRHErvF5k
- ZnVPKkolnvNY3tAAhGe1HCQ59h+Lwv2+haiZZ7DmWq2AMJM0mpZONfNgz Q==;
-X-CSE-ConnectionGUID: 8aVc4XnaQHqiSkiY8HKzwg==
-X-CSE-MsgGUID: EdlOMu4ZRXS2A8xJYmyQsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="87013615"
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="87013615"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Jul 2026 13:24:48 -0700
-X-CSE-ConnectionGUID: b2WVKP01RYOUbMK+SV0SIQ==
-X-CSE-MsgGUID: hEi7ny7lQ82xQBJwIDvDVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="279587263"
-Received: from unknown (HELO localhost.localdomain.iind.intel.com)
- ([10.49.105.104])
- by fmviesa001.fm.intel.com with ESMTP; 11 Jul 2026 13:24:46 -0700
-From: sandeep.penigalapati@intel.com
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, stable@dpdk.org,
- Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-Subject: [PATCH] net/ice: fix missing return on unsupported range in FDIR
-Date: Sat, 11 Jul 2026 23:26:47 -0400
-Message-Id: <20260712032647.196461-1-sandeep.penigalapati@intel.com>
-X-Mailer: git-send-email 2.27.0
+	by mails.dpdk.org (Postfix) with ESMTP id 7315B40274;
+	Sun, 12 Jul 2026 00:46:16 +0200 (CEST)
+Received: from fout-a5-smtp.messagingengine.com
+ (fout-a5-smtp.messagingengine.com [103.168.172.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 37EEC4026F
+ for <dev@dpdk.org>; Sun, 12 Jul 2026 00:46:15 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.phl.internal (Postfix) with ESMTP id 8E9B3EC009F;
+ Sat, 11 Jul 2026 18:46:14 -0400 (EDT)
+Received: from phl-imap-06 ([10.202.2.83])
+ by phl-compute-05.internal (MEProxy); Sat, 11 Jul 2026 18:46:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1783809974;
+ x=1783896374; bh=fPF94KOvSSxoYmsQxA6fGoyrSP3R/1uFDvdsPs0x0WI=; b=
+ evKV+v4OzTdDzUddGB52Auas/Vkn0ipTjvBEJKYAmPZjUDSCP9Kzg5nLcW9+b12u
+ xf9kRk8XI0xrcOshM4OIXruOL3NpAXiI8j5sH4lLa/1V5kzzWqx5vzB7fRbreE5N
+ QUpH38ur3erRLiWdNVBG8SdZnwAk9DN+dRl/8L7aGwi2VQTfJl4NuKxyGCBzlsRT
+ zvk+T7DQC94hxAmN5eWqYPjSJdK6VwMEJoA0T4+5OF3QekeDna3IWV5LAN74J+ED
+ O4dBkbZAVxM9nej+5rTWPCRR7ceFkCEL5RHoh9ioaOAkLZMxfH695xuCxdCVLkbY
+ Zw4VV7dLKNt7L4359YGzfQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783809974; x=
+ 1783896374; bh=fPF94KOvSSxoYmsQxA6fGoyrSP3R/1uFDvdsPs0x0WI=; b=a
+ ubzGFwpEpJnSloPyjzjfTa5HlH7T2UPYUSucWlH1zttcl+SlzZxgLnNHsrPIFUCu
+ Y7wpw1Xb63AqmKeB2SVhHTbOxlviJflDt7y+IpLyXrIrfUVoiZdSYq1+5S1unFpF
+ EG/jaO8G/OiMkYP7CBd6+x69SlFU7J3wzSn9XMBR8niYdexSX3opZtHwjnAjsTZ5
+ 3DMWoHN9PqlQiU4Sz/zBx0AzTc4sfpy03P69UoWk2gaOeYDKKlBREL56o2SrsmEh
+ VrDOqMZoRcFfheRunqbF1ge+hzAMBWYZPbZxNwbiPtVxWPYcTsNzE1O7WHuWL/HE
+ dj9nPGeScP5syKbXvZMsg==
+X-ME-Sender: <xms:tsdSakxkUOmYhzBpGImiTUin50vY8NRJIer9sav9nqaDpbRzIVmnEg>
+ <xme:tsdSajHQ9co_TMHe-GFYkp7tpu84XerCUMULdlEM8eP5_FHz8izTuBZZb_E5hgGs8
+ e55CpYRSPKW4cqWS48Ua0ZitdeJ1mH6-AH4KPboMp9ihXud8jQ-eQ>
+X-ME-Proxy-Cause: dmFkZTF0i6L/xHQhshmcxsMeaTu6DAh+9s7teZmC1Rv4qchZjsynLxCiUGv5+2WoogvnYn
+ 6yjf1z8ial6vGrqR0OhEIC5lTa6AuSaWAlemM0NxlCme3u5h+s9ysVCvHtD4+IyjPITx2N
+ 1Zxa5mLaDmD9vZ4YZLaNPYZWnDe+IDPIKIoRgeFVs4tEBTK2OaRJp/5cvBaOKMgGRRghSJ
+ XScHXcjfd3/aV4IepiCWF2ZyEtqtNsAbCLt0cH9oVpDvrXE3tlmFNjtpFRSOjiQbShJDcf
+ V29zs42KwCWlLhfqdrYnphdJNjtlu51gA8Ugkiy1S1KB7oqhrTgA4u52RZhH2VIRNfwjX0
+ l7ruaqzBFsmidJq0hFxC0ZdnsnKuRIBguOo/IGcKPWp5cI/ma52JE1jK55sf/8/xFj7Kdy
+ wrcHuubwi33kIUZKUsr6ka4chVGs8WzjaS7SG+BhASIZKfsX5KB/M2VrxZmaNk/jduHtyu
+ BqdHVlfVw81QP3s8/rydftSE3kqc+nVI+7d1yMqoMexYlu6fdqU1cUbKgdyJFRcbKze4yk
+ y1ZTwIk2bJOcPTBRyhUko05ktoCgPoiJayZlF06bITnYHMg29g/dp8qhzlU+/vXpMVWqqI
+ JUHsT9oOqEgtkAVKlTQqZ28PBt4epmCD6Y3EnwJaUYQBA5tqrg6kXk+Ht6dA
+X-ME-Proxy: <xmx:tsdSahSZ2b_WphozXv7-az4vHUMpgFyabmrDxzd9BV322zdDej9Tag>
+ <xmx:tsdSaiMdcFfy7-ZioQ8pMEXe_AgwUt4HmXxchsRDYskzCLGzuY7Uyg>
+ <xmx:tsdSakPiq18DFcASV4nkiy9eNRiA_SumNy7823AASTkWlBbeaD1OcQ>
+ <xmx:tsdSaisMBsJP5GJTM5w-HHaZWf85wFnNQTlfuLv9CMqYOp3SxKYHxg>
+ <xmx:tsdSavCXZpL_VwvHoLpgJO0dNZt4Yhs9goXOsN5aeKnkAFF5DD7D7O0X>
+Feedback-ID: i47234305:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+ id 3C8B4240009A; Sat, 11 Jul 2026 18:46:14 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Sun, 12 Jul 2026 00:45:53 +0200
+From: "Thomas Monjalon" <thomas@monjalon.net>
+To: "Harold Huang" <baymaxhuang@gmail.com>, dev@dpdk.org
+Cc: "Wisam Jaddo" <wisamm@nvidia.com>
+Message-Id: <b56380ab-da8d-4642-9f07-320c6e948ee8@app.fastmail.com>
+In-Reply-To: <20230312020009.288-1-baymaxhuang@gmail.com>
+References: <20230312020009.288-1-baymaxhuang@gmail.com>
+Subject: Re: [PATCH] app/flow-perf: replace RTE_BE32/16 with
+ rte_cpu_to_be_32/16 for variables
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,35 +87,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+> In DPDK, the macros RTE_BE32 or RTE_BE16 are usually used for
+> constant values. And functions such as rte_cpu_to_be_32 or
+> rte_cpu_to_be_16 are optimized for variables.
+>
+> Signed-off-by: Harold Huang <baymaxhuang@gmail.com>
 
-In ice_fdir_parse_pattern(), a flow item that specifies a 'last'
-member (a range) is only allowed for IPV4 and IPV6_FRAG_EXT item
-types.  For other item types the code set an rte_flow error but did
-not return, so parsing continued from an inconsistent state.
-
-Add the missing return so an unsupported range aborts parsing.
-
-Fixes: b7e8781de768 ("net/ice: support flow director for IP fragment packet")
-Cc: stable@dpdk.org
-
-Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
----
- drivers/net/intel/ice/ice_fdir_filter.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-index fc848a33db..d7ddd32f90 100644
---- a/drivers/net/intel/ice/ice_fdir_filter.c
-+++ b/drivers/net/intel/ice/ice_fdir_filter.c
-@@ -1929,6 +1929,7 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
- 			rte_flow_error_set(error, EINVAL,
- 					   RTE_FLOW_ERROR_TYPE_ITEM, item,
- 					   "Not support range");
-+			return -rte_errno;
- 		}
- 
- 		input_set = (tunnel_type && !is_outer) ?
--- 
-2.27.0
-
+Sorry this patch was forgotten.
+Applied, thanks.
