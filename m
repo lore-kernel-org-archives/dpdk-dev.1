@@ -2,78 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10ACC43458
-	for <dpdk-dev@archiver.kernel.org>; Sat, 11 Jul 2026 23:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3AAC43458
+	for <dpdk-dev@archiver.kernel.org>; Sun, 12 Jul 2026 00:17:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7FF03402F0;
-	Sun, 12 Jul 2026 01:14:50 +0200 (CEST)
-Received: from fout-a5-smtp.messagingengine.com
- (fout-a5-smtp.messagingengine.com [103.168.172.148])
- by mails.dpdk.org (Postfix) with ESMTP id D06484026F;
- Sun, 12 Jul 2026 01:14:48 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id 32CD8EC008C;
- Sat, 11 Jul 2026 19:14:48 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Sat, 11 Jul 2026 19:14:48 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 52809402A7;
+	Sun, 12 Jul 2026 02:17:08 +0200 (CEST)
+Received: from fout-a7-smtp.messagingengine.com
+ (fout-a7-smtp.messagingengine.com [103.168.172.150])
+ by mails.dpdk.org (Postfix) with ESMTP id C1AB84026F
+ for <dev@dpdk.org>; Sun, 12 Jul 2026 02:17:06 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+ by mailfout.phl.internal (Postfix) with ESMTP id 11399EC00B3;
+ Sat, 11 Jul 2026 20:17:06 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-12.internal (MEProxy); Sat, 11 Jul 2026 20:17:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1783811688;
- x=1783898088; bh=mNorHogM4LsF9Z8O16FBU1svRgVKubDySUmP+LKzFbc=; b=
- PgV+eg9ZFZOkeZ/1Xv01CFQHPzVnZEtL6q5lepPaedIqP+EJaTG1MazbQW+6l4po
- xKgg2Qgb3z1TrUOMhU80Md6rDeoVb9lTcj/sC9mAXKwWJILh23TiJF+Xfja5C1Ov
- zdc73eIqd12X1XUMnkW9dKIqONpJnDNngK81d3quhDaYmo0LieB6wexcNtKgpAFt
- 4mPGeuBqGpgIkn5XT71HMjAJS86WIIHkVrCLuAhT7dav8FNiaaElIK/1wusigYAr
- RncXwQVqj4QJ2Mot34CH2n8PVlad886KVDWrqpmK16lwB6ex6QVyo51tyiTP5B82
- WOcgFPMesWG2nbxqjZADMQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1783815426;
+ x=1783901826; bh=RcyUoePQrzkoRxe/QAXn3ICUa/t9zuhYYaOSYKrnH5g=; b=
+ HAEC+xPCn4xJfcXdFnuclZV41dxbin0de5EuEkHbA+GeIBaE8m2wFhW5biXdWkrA
+ 5frXxFejtrQRnQzH7nHaNwSfJEkk/qrcBB9x7TiZpnlitq0eYjedGaYrv3aB8KBA
+ XbP9ChSXdUfJO9dpo948q/yJu6u9aouRA+3nem24Gbu2XZMszCvfe7lqQKb8PhZM
+ csqbyGul0EADs4wChRJ4PwYD+wSiW/6TyjhQQyclvpHsGYbvQKjZM0l6N5hruK8D
+ aJ0EObB9M8Zo7gLaJ2oYzvLufbzhBZg/FmW/nBpPdR7zs0HrkmqtNHIYAmqFHAhN
+ 7FeQ5W9oO2qOEMJNcmu3CA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783811688; x=
- 1783898088; bh=mNorHogM4LsF9Z8O16FBU1svRgVKubDySUmP+LKzFbc=; b=T
- gAM+TeF2u98kDXLQgwpsgDkFjXPraorWIVH6xPGhDYjKt3zO8X5WR9u/9W49c5Gr
- mxFwfQjfBgQ8KJkZzCHHHNACyLLYGDb4p7UOGKczzrVCliaMKkE2gaJWSnerftvL
- aV4jCYArVX+8UEHpiDwGhLrJsUiAbd3WKF0VsIAWIyqWpMO64sBa+TYZWLghV6TK
- M7YxZyHWI9Zu9nXwaqLfbUX23YXCd0Ovaf8ut27o3FlkBg+2v8gW2UKQPP7fliEh
- 1Kdd73eQReU1gy0elHbRRAgMQrEplcGDJuE9MzNqRacyM5GbgBqIm0p44NuYmGZA
- /XAxnydWs0AAbcJTiNZiA==
-X-ME-Sender: <xms:Z85Sauqz6BuF2uYZ2eHQwO6WcMDRrJ6XgG9Kz_bmUGxv_60p3aDAHw>
- <xme:Z85Sams2vg080_z0T8iZ5vfj1t66Kv1PaGqCUc5FkbEFqIGuE9zIL3gK67dIAr68N
- ZLMfdQP7yhoX0gp3XVVkgofm_fE5uVQO_xK4GGC1UW7fhFxISC3PQ>
-X-ME-Received: <xmr:Z85SajGpXyfhKeGLglxoK9tjQtqQsxmMyD_RHzV2V6JHt0_fh2ODHjbhsKjqwpkM-h84dL0zNTP56y_znw>
-X-ME-Proxy-Cause: dmFkZTEjAtd9Zf7GLI578hDx2kmR4AM4SeFMNxmsl8FO6vY26C+fghDXYn2IZo9kMhc407
- eLjb9GQxWqQhUjWhAWb0EofkfM5pJJNjMSrXp93eG+U9OgA29X9Y22E/OnXQVHxD7g4BpB
- e77IAjMwDDPRBUxyXnAiaILSPj+Jb1tpitS4kSpieIbMteWnEM8ew9LWAIWnfnX+wFd3x8
- 4jX40Z4rSz6FwZ1v7jADbFnGX1o0YR6As1FwUE/dMjKwRb2crGJUWC+V6dKUGlJw5QWw3P
- O/pvCLB+bUQrTkOhP53FutFt3h9mYlqyEJnzY8FiuLqqusjIYVnYSdoxXxjvYkbhK+0bAl
- RGZ+scv+UeqATZrKjiYr0OyixLBVp8pXZQWI20BNLWOURmygdUN3cdOVyBVy2roXvoPb1n
- UErETtY5oPal8wib1r0bodRUspGT5QyvNhDYHqvQLjgW6XIn8j0QiYhApk23X+yOfjImHn
- OCKLGxDwhyaJUkKVuCSJlwO3yuFN41bwOc8hHjtOFB7znXX0NgN6pRnUGTyD3DZtR69oal
- CpthF7ejso10sWn5ACTI75J4W8nGw1v8pwyKxe8InE0qBdaGGmceV6pWKLOb5ayH9CeXFu
- g19EOEnfbc5OAYtkjbJRZk1r8bE2v/VbEEH4a2M5P5nu9ABZ6VODQOkkgRgw
-X-ME-Proxy: <xmx:Z85SavYKUrs-FW0mHZBnCPCgdLaXZxp0ZP6doc9fd9WHykRogmNXgw>
- <xmx:Z85SarVsHHr0fHHbqQ_kS5igDdckfT2CL1ed5DB9g9D9Zsd7_rLK_w>
- <xmx:Z85SatkEiimObtl402-oWVQCg3ZOBffcoFnDIhq3NpeBW_Cl3nyopg>
- <xmx:Z85SauCUaX7clMYlEsQdjUBzDDdiDgb19tPiH7wDt1z2lk7M_dIPXg>
- <xmx:aM5Saj5_3KI_YFN6AT-SDASDSEGyyYV54iBMzuULu6NiQaCoZgjd4JJ->
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783815426; x=
+ 1783901826; bh=RcyUoePQrzkoRxe/QAXn3ICUa/t9zuhYYaOSYKrnH5g=; b=O
+ D0Xr6aKqJzhdlM/950NCoMxu5xvdzkrWLP/pmawxS0T1WMkDFXkX2fFfZN1VtjAj
+ HPOGAJA6WKVH4A2lc0U7UGB43I/44OclUu2BFrsshcekdZNulvSx72DrzClNlIur
+ bZNUlbJZ7I3u1Rf+YNvPHdqJ+w+llZkho3R1PdWzdRd+Cdm0xktJUvt7KzFaZ/zS
+ EQrfQvTNnD6kVOOD1+sDpIS2No94INLNxxrJvQGM4Uqy3VgzTE0D/QGtAPg8nJOv
+ 7vShB7EEcBGCsXn16ehZ/ru1VHYtR1XlI92isQwCS8OMfN6kjRserDaTk1wo6qLb
+ M1SgcaszVeWW0tl2cG/ew==
+X-ME-Sender: <xms:Ad1SahhehBYnN0r9yYfpKVib6ygEtWb_OFN7U6ATX5Q_gjS4_589Cg>
+ <xme:Ad1SamIhlxvXZT224mmhsxPWV83ln6ZkOWTjXygnMDU_hrSw9ZjRqnnQWhXTtJ4dO
+ TBRepbBO849apoqMR6nlmoavmrlW-oPHi7XkxL3Y3LlMAiKbEJ9kg>
+X-ME-Received: <xmr:Ad1SapBMgrcy3XTgJQEkXSZi7dw6mv2d6aTRFqclojakEeMCNc7P86vlJSvffm-0D6iC34epRrgGYG1GVQ>
+X-ME-Proxy-Cause: dmFkZTEJm23+AtCiArqySbCLq53HWhW/lSlifpmTSuteKP9DVnITYAzO8hHb97CM8EG/li
+ 5ZgB72/xXbWoW/WkKO1/EFwZbK26A47TMWVpxjq4c/27FMfOlT03bVi6r76JwfwIOxnbaK
+ N/XU7bw/sNMio+FienLVfOgXSk4icxsIfMW5F2Vhl8jF8u2tA1qiNeTEbiETPyoF0tBdfG
+ iX7NJmKlEbMnOp6+x5ZDFV46HnUUwuEINslZDdmmq7z9g8muoOcq1z+4wvmlTXgWNNiEg1
+ nuAEsgBQpyn/+38bhrb7POuP3Fgpd8Z6maULw4JsKSwvkIYE410nLuBDop9+DP9h251ok+
+ Q2unCKV2f6XdeGXEdBtRGCPokgzP6lvpJvemWw84eSo3zE/GpunSzifwUE1KCZH2mAom8F
+ ngUopue0uFS3RRZUz4dst+ZuFOsz/WiQsjbJuIaBLTPXxAdz9Jyp0n+ogTOdEugvtjQTms
+ bDwk/nNgemmhgUc7YtX/YkzFWeIHdtOoX/CnIk+YDon6YEDx8pOmROhAs3N8kKXcVN5KO0
+ hBREhjooj9z77UG2Aa7vH8RIL6eLHd+TakKNnNViZWgbN9exH97iKipQ9cZOfCw7XvmwHB
+ 7zFzerV+Y9DBq6oo86L8dU9zmmUs5mttjbX2OY1Oy+zgVt6Xpp8iP41DSJew
+X-ME-Proxy: <xmx:Ad1Saui5MgveFWYw0WaFQL1g042blnuHzEy7I5kKwQHTV0sktVkAig>
+ <xmx:Ad1SapmlaVd9h-TcBa1BLMfqOFGdBqXgzb931bA0OwX_nCs0-WvD7w>
+ <xmx:Ad1SaioG71LSBC-DBIO0YGpVqazd7QKpv7WWD_3ZlatrsmMFzA_kzg>
+ <xmx:Ad1SaqGRSNfgGdJgpSUKT3FjzONgCOj529Ix9CVM6WKp-DsxGdiX_g>
+ <xmx:At1SaojsVV-B7oT_YhxtY2ovkCJKS_NCUSSlQanl12CNXdrb3bvzEwd9>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 11 Jul 2026 19:14:45 -0400 (EDT)
+ 11 Jul 2026 20:17:04 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Rupesh Chiluka <rchiluka@marvell.com>
-Cc: dev@dpdk.org, stable@dpdk.org, honest.jiang@foxmail.com,
- gakhil@marvell.com, anoobj@marvell.com, ktejasree@marvell.com,
- fengchengwen <fengchengwen@huawei.com>
-Subject: Re: [PATCH v2] app/dma_perf: skip case if worker maps to main lcore
-Date: Sun, 12 Jul 2026 01:14:43 +0200
-Message-ID: <zvBuG0MvQ9O-GpS01tCxCQ@monjalon.net>
-In-Reply-To: <02096633-cb82-4c04-9e39-00638146c11b@huawei.com>
-References: <20260624045417.3294252-1-rchiluka@marvell.com>
- <20260624054254.3367097-1-rchiluka@marvell.com>
- <02096633-cb82-4c04-9e39-00638146c11b@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ sivaprasad.tummala@amd.com
+Subject: Re: [PATCH v3 0/6] examples: remove MAX_TX_QUEUE_PER_PORT
+Date: Sun, 12 Jul 2026 02:17:02 +0200
+Message-ID: <t6KcvAQNSxmP0tIP2RlKqA@monjalon.net>
+In-Reply-To: <aj4o9IOCeg7qWiNs@bricha3-mobl1.ger.corp.intel.com>
+References: <20250901154400.2333310-1-sivaprasad.tummala@amd.com>
+ <20260625174908.278408-1-stephen@networkplumber.org>
+ <aj4o9IOCeg7qWiNs@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,21 +89,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-24/06/2026 08:09, fengchengwen:
-> On 6/24/2026 1:42 PM, Rupesh Chiluka wrote:
-> > When a configured worker lcore is same as EAL main lcore, the main
-> > thread calls `rte_eal_remote_launch()` on itself and then waits for
-> > `worker_info.ready_flag`. The worker function cannot run on the main
-> > lcore while the main thread is blocked in that loop, and the test hangs.
+26/06/2026 09:23, Bruce Richardson:
+> On Thu, Jun 25, 2026 at 10:46:50AM -0700, Stephen Hemminger wrote:
+> > This is an old set of patches that removes the use of MAX_TX_QUEUE_PER_PORT
+> > in all the examples.
 > > 
-> > Reject such cases early in the `run_test()`.
+> > Sivaprasad Tummala (5):
+> >   examples/l3fwd-graph: remove redundant Tx queue limit
+> >   examples/l3fwd: remove redundant Tx queue limit
+> >   examples/ip_fragmentation: remove redundant Tx queue limit
+> >   examples/ip_reassembly: remove redundant Tx queue limit
+> >   examples/ipv4_multicast: remove redundant Tx queue limit
 > > 
-> > Fixes: 623dc9364dc6 ("app/dma-perf: introduce DMA performance test")
-> > CC: stable@dpdk.org
+> > Stephen Hemminger (1):
+> >   examples: remove unused define
 > > 
-> > Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
-> 
-> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+> Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
 Applied, thanks.
 
