@@ -2,75 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C142CC43458
-	for <dpdk-dev@archiver.kernel.org>; Sun, 12 Jul 2026 15:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60694C43458
+	for <dpdk-dev@archiver.kernel.org>; Sun, 12 Jul 2026 15:44:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E234402A7;
-	Sun, 12 Jul 2026 17:06:43 +0200 (CEST)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id 6FDD94013F
- for <dev@dpdk.org>; Sun, 12 Jul 2026 17:06:41 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfhigh.phl.internal (Postfix) with ESMTP id E672614000FD;
- Sun, 12 Jul 2026 11:06:40 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Sun, 12 Jul 2026 11:06:40 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 4A9D2402A7;
+	Sun, 12 Jul 2026 17:44:12 +0200 (CEST)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 9CB004013F
+ for <dev@dpdk.org>; Sun, 12 Jul 2026 17:44:10 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 1773314000C1;
+ Sun, 12 Jul 2026 11:44:10 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Sun, 12 Jul 2026 11:44:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1783868800;
- x=1783955200; bh=zOETTlnBw5ckd+F0srCGJh3ioDe4X4f98T72fZH0pdI=; b=
- YYxJxR2OsgT/nN8c4ExzlVM5vv0/I0n4uNx+iyJROpq2uQscaCFQ9B5BqIi4bqDt
- yQTo2+jEoGwVfRiw701xDd9Fj/agelrLSHuZhscUX/k2BhKfASw6qoTFBBv5AsVo
- GBMrA2RFcjBl16qMI9OhvIoS4PxBxsVNd1VPGGdsuOvu7fGM31LTb7sS7uYAUYJl
- QRF2G1EJELEdduL9HraEhsKk1j0d3bNuHSiB4ceHbAX2rCrttwAq+5bW6ohwbPSo
- CM1Z71e+GZl+R2PySvLLkmXcYIBexWA4Ofsm7v+aX2QgdxdnqzWfcJaGW5qEWu8O
- 3PvbyLx9yoLZ/0SPsyZ4KA==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1783871050;
+ x=1783957450; bh=JVELlR5x7LIRLp9D4JswyMF1QFWt/4znTqT7gXTRlII=; b=
+ j6cvTLe5PjXY6zVvWXDO7p0IeBQx0CNKRpPWmajOcaJ/2v+gaV7wcABVQOaLZhqV
+ /zAdIGCEgHpdVnqEmX0ann2dZhW1ra3ti0vCLopvOJItn0rko1ncz5UIxcRCOycC
+ cvtGrfbOHtYWaY/wGQqtnWOyexJhAO9LHQXVwOw06jWdLMb3bScwIPp+e/vVt+/j
+ r15OdluFrB3u+UYaoGLSC/HRlln4nnBVG5i5cqMzmgQiTIBm3AnicNzn3uJs/DdC
+ 2XKykfMLeD3pz+QpgbfDHOhD+T+oDhzhIqyQ74t5e49PVOO7HCgA25qJ96nIYpg6
+ w+BObpyPEHvW71EvxMCXYw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783868800; x=
- 1783955200; bh=zOETTlnBw5ckd+F0srCGJh3ioDe4X4f98T72fZH0pdI=; b=i
- tzs6q4bnPEI96PD0QlsdBR7Zh5UzK87nY2plXCPvQayG31rvIQAOAki61ZQkv0ko
- ZZugAn3vS4qkpuI126dVVbV9Fu5GEC/K+8mhRjsmLCcsNgDvab302qPn0v2k5Gyj
- glyUut/tfvkeqrowU68fO/4jE4cYgvnjljMeBYHt0QpYzjj78YoDSVjgabsR6waT
- nBlHkSFgppomWUuXY0wXmzk3RvvtgEXf2RYAEuJtNQRv2jSOuoitTNyhycYaZBbo
- u1S68JHXaepd8Emz0gMdCeqncee4fA40kEPZoQNN2qptoAUHG+Hg+r6F2skDmPhq
- HSZS9Cw27J5ejpv7D9Gqg==
-X-ME-Sender: <xms:gK1TatRZ6aEVD0xiz3eq56-zdr5ecsg7pTDnKhR7lAlIn1IxP-XWsA>
- <xme:gK1TajGkKgBPUIPYiLaZrKSGYDHeQj7E_7dgT221ePVLve9lM9Awzi07UK6YOx0xd
- uauR45QCfupjj_SGV0gseb_rTDNaIyaOtN0D2WEcv7trYBJ_n-O3A>
-X-ME-Received: <xmr:gK1Taln41kvPjEtHKtWIYSZRu3pommupm8qUnw7qdeHLtEx4N5kwdiLQqzB3EYivug3ynhdW9ggWprRPefwg26w>
-X-ME-Proxy-Cause: dmFkZTEn2Kn7DrHhSpplbdiNWH977rntdSFRo17sXLCxPo+zSdh/3DutTN4JeTQVWQceoQ
- MRqBAbcPl8fMGz0Gcmtsncbfyj4g8RrqATuRwp0uigdObdUjE6+0XV0YMHzpbeLrl2BwSU
- L+54QIFD4/TBDMVneSCFFSnYm92olp9xXgqA+xB/HjWoR7VGX1WzQX6Lbr9owUMPMTqmt0
- Tw5kP/Q3A5D5dnc7oJHV1H944vL8v5yIW18PqcswO8a2H/2i5GYy4FmlxCwPGuD1N0G1xU
- AH0QrDGvIkuceaedXdo0tIz6m8SV+ZGJtsUaF3af8KQjQGQT6xRsvIij369x9cvqaJItXO
- ABSRwsTT/sd07thrlj2JWC+fLJvvGGtybYHjbwkUdtKqNJAv73/WVS/dpa5Q+9Ij2Loe1V
- XB6lr/iY0LXdXHAjrVqgI55GAsi/mZ7gwlTuGoO7TbEBSvhu40QPoIof/4AdUzkjcF3gsE
- HrJiOPlAxTKWoUNljzR4+7waPRBIjrFf0hTzxp/mT6wAAl/IzpiRU9odd4+gQ1/T+jVTVe
- io/NSunbYjo7vRpWRbeO7+0XAa257prhkB95GWAOtSiu47ppNM9YYs451/cMj00jI3RzgJ
- lePYDCiD7P+vC5Y7258jI9F0b6P4WZsMnlWArVwJr551dsLowWrISVKJHGdQ
-X-ME-Proxy: <xmx:gK1Tam1TR2YnwPxemdVRiDt2lzsdHbk9ZBTy0aK3dquOgbSNncZgMg>
- <xmx:gK1TapRpF0TX9wYQJSoupsjLI4VHDf277ebaCZq8ZCOlCJAbCVeySQ>
- <xmx:gK1Tags1Hdtt5AHnKrEGwRCMcoa0zysGSv036mVphhMdS9hfcnoq9g>
- <xmx:gK1Tamb1AeN8X2Bi29jW1H6OsA0ZQ_-3RDaqx8_mVf4Gq3RyIj3HKQ>
- <xmx:gK1Tan48i9DUmp-SlVm6V2enKA5CqwQJkmACi5t9M6NOzaRVQBSJQVv->
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783871050; x=
+ 1783957450; bh=JVELlR5x7LIRLp9D4JswyMF1QFWt/4znTqT7gXTRlII=; b=l
+ ZYYXEncmCWZH3xR9QCRWc3Rw+CVWeBEUGyCcM/tMCzqaWuPDe718P2I/uqTrFxgW
+ 0Z2UnGkDTpCKF3SO5T6JO4SIygJeyAtOh7cWjWBSxnET4jmoD6aBu3UlOFkLk+fR
+ eXr/fjacuO3Afak0179Z2gj2wjGCm5n0CAIh93HdA7zDMCTAVPhDbKgPnwluPPEz
+ RrUKBNEECfToD8NP5BDyt77ah/Uf2uoRM3lg/8GdDr9hgH9keGLmBFHsyZgLujY6
+ 2sX4/Mx/9K0+0lo4IsQZVnnpiABWEEZFTEwx0RX9FXd5ctnNz2ANUbr3RoNQFNs4
+ uqCVx0YlwwmsE6osv8yTg==
+X-ME-Sender: <xms:SbZTanceJ64L58AJrJdy5n6b5WXwEXgtqwJuHoP3zUDY40u11EtBvg>
+ <xme:SbZTausMXBli4J-kA9Q8mD8i8gX7E5xW1bEJq-7vfWQC2wFBL-RwR8lE5A5zV1Ti0
+ NlQqFHopGLg8g1qyx30QP1p4Us5Ow6HZJzHAc6RKIfHniA94Z-DdA>
+X-ME-Received: <xmr:SbZTaglfhme9CYkSMS0y63NokoEuRQ6ie3QtPU6nPjTqhjUkCYRaEFCv_QV5X190CI5p1KpcvIERrzAv0mkd1ic>
+X-ME-Proxy-Cause: dmFkZTE0Y57aBLAiXP5SG5T00v0T+YCkT1fg0vzVyvNsU23czTGWSUZ1qAY0NJbN23QkgH
+ Zasys1f5yG+RgeYqIeJczvdsDy2rWLfUMM0LH2DWIxYCPIjfxXuiTHv61hWPtkwNaN+E1I
+ QhFTRdAQSrQCkmIGi+YI9pt0v4BlwHktaMk95aWxtiHVQee4gGpB4w86tpzxRbmJ0wJZdQ
+ rwSL/1fFW6njKgm7ZftS8HCyu8PJYg4lVvMJb0y3Rn0JbzZ3AtJdjD3MxXzkkmWQFM6WjU
+ a/quCPk8x67JHwfG2LqIbUYCyj/AVjIumDvj+kTt4fnZoUYCs6+xHC8PQWM520VTOyyuR4
+ RSa5ZXXhpteGFVhpf73dhuHX4pHf0d+uiYyzDP1+Ll02kCzGjt/ivFMU2dNJs0o3A0xy7Q
+ ki3qNS8lBxVZHitcIW+hVD9iJ+HGBXweuSqO/9nOui2DM9DLbNjL6F14y0QPPZOyLNE9VS
+ EZabqbm6PBukj2xkRV12SZwu96h4KTxFNchwiIxxuV1yM8YCCBi/FXYGQ4BdC7n6BCRb4z
+ JPs9Sb79qV+Z5pd3c1kZ+ppn/3xkSLw9CsXub5219xAqvqhg4pKkLgQOBCk3s/4m97gRE0
+ 2mH5QqEB1FvQbo7dFtjmUFoJOgmCV2mlezPbKYVbmXhWzvE1yq2MBjuC5NVA
+X-ME-Proxy: <xmx:SbZTaozm4DulHSnOK52nwdf0uC88J_5R_sOlC8MuVRdAW7rTuqTJyA>
+ <xmx:SbZTaqM5LdXsDZ0kqZ73fxvWETEbkDaWKJ3vyGL5H-VidFSYXy9mDw>
+ <xmx:SbZTaso9v9njmj_h-gucY6qcwmTCr7m-VnWcTvaEXScsx4DdTpnVNw>
+ <xmx:SbZTarEl7PLJi3QWX0U7jpHBl_3wg0qw0eHOfMu21LASIhk22gtH5w>
+ <xmx:SrZTarIsTeg91Pof7LXfbbaIIaItpb2BZhWboo9Rz8RXRvQmILjRG0MV>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 12 Jul 2026 11:06:39 -0400 (EDT)
+ 12 Jul 2026 11:44:07 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v5 0/7] Add script for real-time telemetry monitoring
-Date: Sun, 12 Jul 2026 17:06:36 +0200
-Message-ID: <VfKZhVMfQxCPtdJl0VYxpA@monjalon.net>
-In-Reply-To: <20260505100833.2885047-1-bruce.richardson@intel.com>
-References: <20251210165532.103450-1-bruce.richardson@intel.com>
- <20260505100833.2885047-1-bruce.richardson@intel.com>
+To: Matthew Gee <mgee@iol.unh.edu>
+Cc: dev@dpdk.org, stephen@networkplumber.org, aconole@redhat.com,
+ lylavoie@iol.unh.edu
+Subject: Re: [PATCH v3] tools: AI review handle empty Error sections
+Date: Sun, 12 Jul 2026 17:44:04 +0200
+Message-ID: <CuzZJHWKQcyfa7PHW-BHQQ@monjalon.net>
+In-Reply-To: <20260617174402.2123568-1-mgee@iol.unh.edu>
+References: <20260612190225.1016275-1-mgee@iol.unh.edu>
+ <20260617174402.2123568-1-mgee@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,14 +88,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Bruce Richardson (7):
->   usertools: add new script to monitor telemetry on terminal
->   usertools/telemetry-watcher: add displaying stats
->   usertools/telemetry-watcher: add delta and timeout opts
->   usertools/telemetry-watcher: add total and one-line opts
->   usertools/telemetry-watcher: add thousands separator
->   usertools/telemetry-watcher: add eth name shortcuts
->   usertools/telemetry-watcher: support reconnection
+17/06/2026 19:44, Matthew Gee:
+> This patch fixes a bug where review-patch.py would detect and report an
+> error or warning only based off of the occurrence of the headers of the
+> error and warning sections. This led to consistent false positives as
+> often AI reviewers will create the header but put "none" or similar
+> filler text within the following body.
+> 
+> This patch updates the code in order to check if the AI review has a
+> body with error or warnings to fix and not just filler text. This is
+> done by keeping track of whether the for loop parser is within an error
+> or warning section; analyzing the first non-whitespace line within the
+> section. If the first non-whitespace line matches known filler then the
+> section can be ignored.  It has been observed that if the AI includes
+> filler then there is no actual concern.
+> 
+> These changes were tested against 10+ markdown AI review outputs with
+> several variations in formatting and filler text. The changes caught
+> error or warning sections with actual concerns and successfully ignored
+> sections containing only filler.
+> 
+> Signed-off-by: Matthew Gee <mgee@iol.unh.edu>
 
 Applied, thanks.
 
