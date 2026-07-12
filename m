@@ -2,75 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B04CEC44501
-	for <dpdk-dev@archiver.kernel.org>; Sun, 12 Jul 2026 15:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2ADC43458
+	for <dpdk-dev@archiver.kernel.org>; Sun, 12 Jul 2026 16:18:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F91D402A7;
-	Sun, 12 Jul 2026 17:49:45 +0200 (CEST)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id 75A7F4013F
- for <dev@dpdk.org>; Sun, 12 Jul 2026 17:49:44 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id CFE38EC0100;
- Sun, 12 Jul 2026 11:49:43 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Sun, 12 Jul 2026 11:49:43 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id C1CCE402A7;
+	Sun, 12 Jul 2026 18:18:48 +0200 (CEST)
+Received: from fout-a2-smtp.messagingengine.com
+ (fout-a2-smtp.messagingengine.com [103.168.172.145])
+ by mails.dpdk.org (Postfix) with ESMTP id BFB984013F
+ for <dev@dpdk.org>; Sun, 12 Jul 2026 18:18:47 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id 2E44AEC0141;
+ Sun, 12 Jul 2026 12:18:47 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Sun, 12 Jul 2026 12:18:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1783871383;
- x=1783957783; bh=5GZBOMvLTpngIcCQHUyERUQrvrbGIYBColaHTLmQuCA=; b=
- dTCWtU9/a6fY1zy2U4UlJVQ7VoWLVxbG2V7OFV/edYH0IOQkKfAfXfYp7brF+xlQ
- Hu4SMYn5IDVCgmkOtH5hYLYylbkNa2OvruAlcM8t0gayLJJWYXDwSlDTKxRZl7yc
- MPRSedkd5GrBC80b+5I2Ai5p2ViKNgnc5OtCfC8uRsUXWIBiQ5muB5DuUZBYGU70
- Tshl9aQjo1hcXCtVbrNhzejMLEFWAMF3zk4eHb46nZsM8lEgWyNdWKxgE6biEBgj
- WojrjiV07VhghR8PKiA68UKZVXGr2EWtpoDgtCPBzkcIDgy/UwpqDsUnQSM5bLX/
- ARfUTO2aFqyfmnjJCRQeOw==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1783873127;
+ x=1783959527; bh=k7gP9i5p41rQRUiiBUxA7Bh64Jx6zI/L0E9fhy5dOd8=; b=
+ drPagwtnEO7TVMom/sPodEz50SI0dcDvjcNv0PzPXgDiD1HSF+tEr6wgH4GKplYM
+ V1Q1vkMPCaGmKBC9B4CzuSEH9Y4526jpjzaXb7bpP0MdNHFSd4rIrYH2ODgDtJ/v
+ affLHbiHYa+9A98LT1xFZbghdT5GCxk6R2+G+uOJpctJI/01abOP98XggEEsDZtF
+ hUd96PU3v8cjJZm0wm8Ut8qu/28SpKxW/yx46YF2Q+ISAy5k+flbXmHkQJ9/dmx2
+ l2s+oVs5HniNlLXquXYlsoibRwSlHcqy+mMCYwo9nuxOYj860pLqi2AZRCAefcfm
+ Y6ohF3E2UgqiIB+u1D+Csw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783871383; x=
- 1783957783; bh=5GZBOMvLTpngIcCQHUyERUQrvrbGIYBColaHTLmQuCA=; b=N
- jUtzXnWGzA0fxDHRTaKqBcfcDrCh22ipLRQ8bcr4aLGYc5f1rf6y2XVSsX1oM7LE
- ykX8tgjrXASWOiOJUl3ItQuEg0R8NcyHdIzECSc357hjYu+wQ0rYbQftkWJE64CA
- QCzwEFxJccIUfF1ASsNwM/M5wAJQrzfTZmUy1uONIeK/IItKnOZ3oMsij99l3UIk
- v8KC85EPsdttOLYUZh5CU5NS9x8wXy6uLLfB3FfqpTWHLGzVEnQskhw2/gmL5PjV
- cPkg5bfK4a1gFN6wnpaQGg7FZbWT3qJtLemWQgroUM6Hh2dMTHW+Aq7hO0qWHTp4
- VQiAgdDjeGDyxAQNwDD7w==
-X-ME-Sender: <xms:l7dTaghhf2fVEsru2QoZ1hPvytkx4IdTy3BEPebw0YlwlR6MPPQOtw>
- <xme:l7dTakfOXzSGl4yf5gGAW3RbA05JrWuafIlbWAXcJfRLd2aQGvmmPshDozOTuFl9s
- Qk997z2tLg8kDrNfNUoNlfU28CvWH-5vO2Ily_WGPMLHrzPYt-FtQ>
-X-ME-Received: <xmr:l7dTarmxfaP5jDOZBO341pn4x7lC6XPtuSS5_Wj9jHhrUAe97C_0pxt6esCTKZgdKtTRGbRuwjkQ1RiQHeFjWeo>
-X-ME-Proxy-Cause: dmFkZTFgkBSN4NBRSqObZtA/MvNLEKTu3rYOcpZP2QX4Mp6iK3JcMjyUXfLOpmo/De6/Da
- EyklZTEtTjf07rrRJ3nWmE8J5zPIM6eACRKx/N1R9gXrtMUtcMdzfFjfqWqtIsP7ydGwZg
- hSdywFxygdidaAlnk1K3y05dv+sb2cWzsH7XG0ZJc/HSEWVIkuo0ytDoXlQCK4wZSAxzuk
- /FlwIaxDFgCLxaumD6oc4KiiGxxooPq3W4NWlQJHvtyY+oN5ybSMmF4Vz/yTK4o8xFcptd
- WZLthqGkRFMKadpTVJt+O4HuSTmJ0SeDpuzk68poGWs26H143X46uNduZnlnOO73dGYzKD
- j+ewoSepzI0txqRq+c0xS1U4MYQyj85MwFpXhPWk64LUfr36L1vvHOnYvYB2fWIgQHZwnQ
- gnRBEz82XMCY+ys+mitRPRcW5UfwhS+A44+8zVBvzO4mMdnjdMcXo9Yr+K16Uxfr68Hx+E
- /78Ukav2B25lzjN/tGKLvJkJOr9vLqrT6PQ42TdmN1KbJyCad3jpru64McfpKUCZeMNHdT
- O+8uliVWX8fD5OOUiXjSE43RALM6bcAQl/dTaJJvKh742O0Lo0f7U0kVsjBePXOY+leLh7
- jnBpXopI2nYvDrxR/cGreU2XlCiHsJPp0SbDOqJ7s56ZhMhmlm3cQsOPZBvQ
-X-ME-Proxy: <xmx:l7dTalvI6ekOkEepFmHb_Hawl0VbXr-a9bL2cE3xIafpwxai1WToHw>
- <xmx:l7dTap-jguO1k6nCvtawv0wy9jrg8uwPKtYXNyW8HTIO-GIaUKbfRA>
- <xmx:l7dTavOu1XuXaFbs2mEEFgp-RlGfpO5m3VGGkZZJm_nlqFWIvF112g>
- <xmx:l7dTanGMQ-wiLoNbMfIjrG-7l2Mo28gY_E71RQopULH7qQiIiJOrLA>
- <xmx:l7dTaooH-eofKuGqIfq-Fin92Gj9lozhjyF9ayD-MumWrRhDmEuDRu2c>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1783873127; x=
+ 1783959527; bh=k7gP9i5p41rQRUiiBUxA7Bh64Jx6zI/L0E9fhy5dOd8=; b=n
+ 9OmnS3ggzqnMqa1Hq8NB35vri2oU/OKXHSQ20wLAKVIUQSUQKtRuplTuuyAAXkjR
+ 5pmzonvgpRkbjWZiewpT/PwH+BJX5zvgOXUzn8Yp4Knr+E+fvHJ3fZELYrTwvtJs
+ uY5kpcPFYBqh9xd2SkLcEm948+Sju0W22QLQmmPt7MV/u8gTjJb2bRMY7k/iIgEw
+ V1Oajx0UeM/kvfYtfQejTJpl1jRBqHp8dbnFDpvY9EiNC3/nie426Eou4AQG8P8r
+ EdMvu5/CXF3jKcstOr7rDpwWkeGhXvvq9k9+zqbFN4Ojz2YxtIjfjLZTgR4Y6f0O
+ mvhHcW1yahJfpk/yrvU6g==
+X-ME-Sender: <xms:Zr5TaqrEo5OvPmMvheCTOQ9aOMGPfNeZ9M2lZl0WK9_ARYcNIgX2ew>
+ <xme:Zr5Taoz5tMI391-0QoXLeyUsQU_n1l1PFkNgkLAP3lQCojrOAVl_fU-JaC1oYhK-B
+ CKtKOLZiWBlX2gbxGiv_PeH9CXlmNvz-Tfnoa3wb_YMwfqlOXkIVMk>
+X-ME-Received: <xmr:Zr5TanISJWJJKuXb3ihODHJhcY0OvdPE38W6ZXclk6bGQq294QL-cckIOAwgpqnJWeoAjZZTaxhhLucwD6vRS7U>
+X-ME-Proxy-Cause: dmFkZTEowzk8ug8efH91GBeZN7c0jb1SDVQjwSkuweASBNz6XXFaXpYLCD40USQRONPqqR
+ /TAPaMBvcsEl+aswd0V/Om4t0E39ocasEBSkdhAMwATiyfHJMr1GUyDjVHqKK1IlwnCu4G
+ RuVhFiihx1Nu8jiCaUmRrjB7KstIHqbE8mjX2WlHOWiXwoh2BjTNzL1emtz/1BCm5ZrbOF
+ 7U74dj2FZ0ORnRM03j2e5+mpVgxAJ9Dbwh7Fsr4o89Y0MCgxwUai/DSTQuN+A4RIlXUOXp
+ KeohcgCTB8dfVE+Jb7e103vrhW0shfmkY1HrmAQYbt4YKIimCIIJOmzqBO6DDebfccVbW7
+ lbb0ZvG8Agbox6DzTgiKMEoeW6IR7f+e6tRQOwjF/wtC4iUCyWi75C9bLcMrsJBx+AC5Ze
+ vmxL7oNgZV9vDE2s030R3sl8ACQTITAo0Kxh+8UW8T1rca4FB5rJ82AohmOaZh3kwTyf1a
+ LvdrFIKI5t/7qARcDK+mPqG/dILCP7xdDc00gtadSHQqzUU0C2gvV0Fq6wKdXClChefX4r
+ ezRJoUoMew9QjgXYMMPUFJMgChU+/5Dz9pbdnitrgmTc8mFHp8BYWnuh9appoiNrdGASpS
+ zwFCQYbdx9vJoNUUPgSzHNITFgVZuhhobUbFEAE2v8jhs8dD130XwARSfPjQ
+X-ME-Proxy: <xmx:Zr5TaiIHolhwKGif5aEvNRYlUMFi45SOMjo2RJF5nOnqDsBgl9HV4w>
+ <xmx:Zr5Takujp8xAEKvID3NYVp05hEgp_ei-0gM8JqxU_BDOUhjWtlzW_g>
+ <xmx:Zr5TavT2WSzlqTW5jsDAh9z8dqalRkqcgm6CPqjEeF5ghIMyWwhAKg>
+ <xmx:Zr5TaqOTXqTJGsjgsJ7cZSh-ZvRZsF49deMEViLisj-q9p-iyHAs2A>
+ <xmx:Z75TanCaz7OQyzjXsk81t6-c0DKJYGaw1Sy1HR2bFpaB1-uYtvDVOqtn>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 12 Jul 2026 11:49:41 -0400 (EDT)
+ 12 Jul 2026 12:18:45 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, konstantin.ananyev@huawei.com, vladimir.medvedkin@intel.com, 
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
  Aaron Conole <aconole@redhat.com>
-Subject: Re: [PATCH] AGENTS.md: add additional checks for crypto related code
-Date: Sun, 12 Jul 2026 17:49:38 +0200
-Message-ID: <_A8u46MgQQuCAo2fxGs2lg@monjalon.net>
-In-Reply-To: <20260625230536.147975-1-stephen@networkplumber.org>
-References: <20260625230536.147975-1-stephen@networkplumber.org>
+Subject: Re: [PATCH v3] devtools: add Vertex AI to review scripts
+Date: Sun, 12 Jul 2026 18:18:42 +0200
+Message-ID: <8yANTemdRNK0q0uGAXaeUg@monjalon.net>
+In-Reply-To: <20260625123237.832480-1-david.marchand@redhat.com>
+References: <20260601132402.1125588-1-david.marchand@redhat.com>
+ <20260625123237.832480-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,12 +88,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-26/06/2026 01:05, Stephen Hemminger:
-> Security related code is a high value target and extra precautions
-> should be taken. These are hard to catch with checkpatch alone
-> so add additional rules to AGENTS file.
+25/06/2026 14:32, David Marchand:
+> Add support for Google Vertex AI authentication as an alternative to
+> direct API key authentication. All four providers (Anthropic, Google,
+> OpenAI, xAI) can now use Vertex AI with Application Default Credentials.
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> This requires a python dependency google-auth but it is left as
+> optional.
+> 
+> Key features:
+> - Auto-detection of authentication method based on environment
+> - Manual override via --auth flag (auto, direct, vertex)
+> - Automatic model name translation for Vertex format
+> - Support for both global and regional Vertex endpoints
+> - Proper error handling for Vertex API responses
+> 
+> Provider-specific implementations:
+> - Anthropic: Uses /publishers/anthropic/models/{model}:rawPredict
+>   with model name format claude-sonnet-4-5@20250929
+> - Google: Uses /publishers/google/models/{model}:generateContent
+> - OpenAI/xAI: Use /endpoints/openapi/chat/completions
+>   with publisher prefix (e.g., openai/gpt-oss-120b-maas)
+> 
+> Authentication detection logic:
+> - Vertex: Requires google-auth library and ADC configured
+> - Direct: Falls back to API key from environment variables
+> 
+> Available models on Vertex AI:
+> - Anthropic: All Claude models
+> - Google: All Gemini models
+> - OpenAI: gpt-oss-120b-maas, gpt-oss-20b-maas (open-weight only)
+> - xAI: grok-4.20-*, grok-4.1-fast-* variants
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
 Applied, thanks.
 
