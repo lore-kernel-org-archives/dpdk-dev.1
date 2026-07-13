@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E33C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 09:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C60C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 09:26:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59F0840DDB;
-	Mon, 13 Jul 2026 11:26:29 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 37F1140DD0;
+	by mails.dpdk.org (Postfix) with ESMTP id 7F0CB40E0B;
+	Mon, 13 Jul 2026 11:26:30 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id D05AF40DDB;
  Mon, 13 Jul 2026 11:26:28 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1A2CB20002F;
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AD4F41A0002;
  Mon, 13 Jul 2026 11:26:28 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D8EBB200019;
- Mon, 13 Jul 2026 11:26:27 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 763231A0008;
+ Mon, 13 Jul 2026 11:26:28 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5634B1800229;
- Mon, 13 Jul 2026 17:26:25 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BB4C418000B0;
+ Mon, 13 Jul 2026 17:26:26 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: stable@dpdk.org,
-	Prashant Gupta <prashant.gupta_3@nxp.com>
-Subject: [PATCH v4 05/18] net/dpaa/fmlib: add null check in scheme delete
-Date: Mon, 13 Jul 2026 14:56:03 +0530
-Message-Id: <20260713092616.2902828-6-hemant.agrawal@nxp.com>
+	Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v4 06/18] bus/dpaa: fix BMI RX stats register offset
+Date: Mon, 13 Jul 2026 14:56:04 +0530
+Message-Id: <20260713092616.2902828-7-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260713092616.2902828-1-hemant.agrawal@nxp.com>
 References: <20260619103901.2274740-1-hemant.agrawal@nxp.com>
@@ -50,37 +50,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
+From: Jun Yang <jun.yang@nxp.com>
 
-Add a null pointer check at the entry of fm_pcd_kg_scheme_delete().
-Since p_dev is assigned directly from h_scheme via a cast
-(t_device *)h_scheme, checking p_dev == NULL is equivalent to
-checking h_scheme == NULL. This matches the defensive pattern used
-in all sibling functions in fm_lib.c and returns E_NO_DEVICE on a
-null handle.
+Fix incorrect register offset for BMI RX statistics counters
+in the fman.h header. The wrong offset caused incorrect stats
+values to be reported.
 
-Fixes: 663ff698e38f ("net/dpaa: support VSP in fmlib")
+Fixes: 0095306cdbda ("bus/dpaa: add FMan node")
 Cc: stable@dpdk.org
 
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/net/dpaa/fmlib/fm_lib.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/bus/dpaa/include/fman.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/dpaa/fmlib/fm_lib.c b/drivers/net/dpaa/fmlib/fm_lib.c
-index b35feba004..65a818372e 100644
---- a/drivers/net/dpaa/fmlib/fm_lib.c
-+++ b/drivers/net/dpaa/fmlib/fm_lib.c
-@@ -305,6 +305,9 @@ fm_pcd_kg_scheme_delete(t_handle h_scheme)
+diff --git a/drivers/bus/dpaa/include/fman.h b/drivers/bus/dpaa/include/fman.h
+index c33fe81516..6e3abf1b50 100644
+--- a/drivers/bus/dpaa/include/fman.h
++++ b/drivers/bus/dpaa/include/fman.h
+@@ -2,7 +2,7 @@
+  *
+  * Copyright 2010-2012 Freescale Semiconductor, Inc.
+  * All rights reserved.
+- * Copyright 2019-2024 NXP
++ * Copyright 2019-2026 NXP
+  *
+  */
  
- 	_fml_dbg("Calling...");
- 
-+	if (p_dev == NULL)
-+		return E_NO_DEVICE;
-+
- 	p_pcd_dev =  (t_device *)p_dev->h_user_priv;
- 	id.obj = UINT_TO_PTR(p_dev->id);
- 
+@@ -263,8 +263,8 @@ struct rx_bmi_regs {
+ 					/**< Buffer Manager pool Information-*/
+ 	uint32_t fmbm_acnt[FMAN_PORT_MAX_EXT_POOLS_NUM];
+ 					/**< Allocate Counter-*/
+-	uint32_t reserved0120[16];
+-					/**< 0x130/0x140 - 0x15F reserved -*/
++	uint32_t reserved0140[8];
++					/**< 0x140 - 0x15F reserved -*/
+ 	uint32_t fmbm_rcgm[FMAN_PORT_CG_MAP_NUM];
+ 					/**< Congestion Group Map*/
+ 	uint32_t fmbm_mpd;		/**< BM Pool Depletion  */
 -- 
 2.25.1
 
