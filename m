@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6698CC43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 09:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB788C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 09:27:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DDE340E17;
-	Mon, 13 Jul 2026 11:26:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 23E6440E25;
+	Mon, 13 Jul 2026 11:26:33 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 3BEEE40DF6;
- Mon, 13 Jul 2026 11:26:30 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 93C5340E15;
+ Mon, 13 Jul 2026 11:26:31 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 142AA200017;
- Mon, 13 Jul 2026 11:26:30 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6FF2F200015;
+ Mon, 13 Jul 2026 11:26:31 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D251520000C;
- Mon, 13 Jul 2026 11:26:29 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 39E1E200012;
+ Mon, 13 Jul 2026 11:26:31 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2F0791800229;
- Mon, 13 Jul 2026 17:26:28 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 8B4FB18000B0;
+ Mon, 13 Jul 2026 17:26:29 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: stable@dpdk.org,
-	Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4 07/18] bus/dpaa: fix fd leak for ccsr mmap
-Date: Mon, 13 Jul 2026 14:56:05 +0530
-Message-Id: <20260713092616.2902828-8-hemant.agrawal@nxp.com>
+	Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v4 08/18] bus/dpaa: fix device probe issue
+Date: Mon, 13 Jul 2026 14:56:06 +0530
+Message-Id: <20260713092616.2902828-9-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260713092616.2902828-1-hemant.agrawal@nxp.com>
 References: <20260619103901.2274740-1-hemant.agrawal@nxp.com>
@@ -50,74 +50,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The CCSR file descriptor was kept open after mmap() was done.
-Close the fd immediately after mmap() as it is no longer needed,
-preventing a file descriptor leak.
+From: Gagandeep Singh <g.singh@nxp.com>
 
-Fixes: 8e253882cd31 ("bus/dpaa: support interrupt portal based fd")
+Remove an unintended early return in the LS1043 SoC version check
+that was preventing device probing from completing successfully on
+LS1043A platforms.
+
+The early return did two things: set max_push_rxq_num = 0 and skip
+the DPAA_PUSH_QUEUES_NUMBER env-var override. With the return gone,
+the env-var could inadvertently re-enable push mode on LS1043A, which
+must remain disabled due to the FMAN push-mode errata handled in
+dpaa_rxtx.c. Guard the env-var override so it only applies to
+non-LS1043A SoCs.
+
+Fixes: 164e9e13e50f ("bus/dpaa: enhance SoC version")
 Cc: stable@dpdk.org
 
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/bman_driver.c | 3 ++-
- drivers/bus/dpaa/base/qbman/qman_driver.c | 6 +++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/bus/dpaa/dpaa_bus.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/bman_driver.c b/drivers/bus/dpaa/base/qbman/bman_driver.c
-index 23e44ac10b..71a2028383 100644
---- a/drivers/bus/dpaa/base/qbman/bman_driver.c
-+++ b/drivers/bus/dpaa/base/qbman/bman_driver.c
-@@ -145,7 +145,7 @@ void bman_thread_irq(void)
- 
- int bman_init_ccsr(const struct device_node *node)
- {
--	static int ccsr_map_fd;
-+	int ccsr_map_fd;
- 	uint64_t phys_addr;
- 	const uint32_t *bman_addr;
- 	uint64_t regs_size;
-@@ -169,6 +169,7 @@ int bman_init_ccsr(const struct device_node *node)
- 
- 	bman_ccsr_map = mmap(NULL, regs_size, PROT_READ |
- 			     PROT_WRITE, MAP_SHARED, ccsr_map_fd, phys_addr);
-+	close(ccsr_map_fd);
- 	if (bman_ccsr_map == MAP_FAILED) {
- 		pr_err("Can not map BMan CCSR base Bman: "
- 		       "0x%x Phys: 0x%" PRIx64 " size 0x%" PRIu64,
-diff --git a/drivers/bus/dpaa/base/qbman/qman_driver.c b/drivers/bus/dpaa/base/qbman/qman_driver.c
-index 3bab8b8337..45b094e0c6 100644
---- a/drivers/bus/dpaa/base/qbman/qman_driver.c
-+++ b/drivers/bus/dpaa/base/qbman/qman_driver.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index 54779f82f7..368c8eeb98 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
   *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017-2022, 2025 NXP
-+ * Copyright 2017-2022, 2025-2026 NXP
+- * Copyright 2017-2025 NXP
++ * Copyright 2017-2026 NXP
   *
   */
- 
-@@ -270,7 +270,7 @@ int qman_global_init(void)
- 	const struct device_node *dt_node;
- 	size_t lenp;
- 	const u32 *chanid;
--	static int ccsr_map_fd;
-+	int ccsr_map_fd;
- 	const uint32_t *qman_addr;
- 	uint64_t phys_addr;
- 	uint64_t regs_size;
-@@ -358,9 +358,9 @@ int qman_global_init(void)
- 		pr_err("Can not open /dev/mem for qman ccsr map\n");
- 		return ccsr_map_fd;
+ /* System headers */
+@@ -724,18 +724,17 @@ rte_dpaa_bus_scan(void)
+ 			dpaa_bus.svr_ver);
  	}
+ 
+-	/* Disabling the default push mode for LS1043A */
++	/* Disabling the default push mode for LS1043A due to errata */
+ 	if (dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
+ 		dpaa_bus.max_push_rxq_num = 0;
+-		return 0;
++	} else {
++		penv = getenv("DPAA_PUSH_QUEUES_NUMBER");
++		if (penv)
++			dpaa_bus.max_push_rxq_num = atoi(penv);
++		if (dpaa_bus.max_push_rxq_num > DPAA_MAX_PUSH_MODE_QUEUE)
++			dpaa_bus.max_push_rxq_num = DPAA_MAX_PUSH_MODE_QUEUE;
+ 	}
+ 
+-	penv = getenv("DPAA_PUSH_QUEUES_NUMBER");
+-	if (penv)
+-		dpaa_bus.max_push_rxq_num = atoi(penv);
+-	if (dpaa_bus.max_push_rxq_num > DPAA_MAX_PUSH_MODE_QUEUE)
+-		dpaa_bus.max_push_rxq_num = DPAA_MAX_PUSH_MODE_QUEUE;
 -
- 	qman_ccsr_map = mmap(NULL, regs_size, PROT_READ | PROT_WRITE,
- 			     MAP_SHARED, ccsr_map_fd, phys_addr);
-+	close(ccsr_map_fd);
- 	if (qman_ccsr_map == MAP_FAILED) {
- 		pr_err("Can not map qman ccsr base\n");
- 		return -EINVAL;
+ 	/* Device list creation is only done once */
+ 	if (!process_once) {
+ 		rte_dpaa_bus_dev_build();
 -- 
 2.25.1
 
