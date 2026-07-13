@@ -2,54 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB8FC43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 09:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97416C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 09:17:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D393406A2;
-	Mon, 13 Jul 2026 11:16:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 48EF4406BA;
+	Mon, 13 Jul 2026 11:16:54 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 7683040298
- for <dev@dpdk.org>; Mon, 13 Jul 2026 11:16:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D3139409FA
+ for <dev@dpdk.org>; Mon, 13 Jul 2026 11:16:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1783934203; x=1815470203;
+ t=1783934213; x=1815470213;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=bTyaqafWOAOj5DHurVpn2TnD0A3CPM6rMorF2WNu9tw=;
- b=L3xdj+K0z0doNwolseufi62t/Tp56h3oVIW6iNbQ9A5MOJ9EmMqhoQj+
- Wfp40PhXFXzhvTFoRHNm6l3SxL5wPCB2MtGWvejbfcKuqhGkhQTxtkzr+
- a3Xz9dtKCY8fTYazMHMEB1+fERF0etloTvDvH5b+txtqRhn0o3ZIuoIAm
- K75DpVaRbCBnWbjP35L18f8OxdJmlA3rqK0T2bD8bBPJT/4yhKQ5cxBox
- KkHmcukCVKQQWdI4yff05cMdyoth61qXjrhQAdT/wrJwOGNIr09bGXTX2
- yHDF/FbvkKp+hz+OMEw0qHHeRUhl9b9mQDXk9/CDEw8YGjzWpdmTqs3kr g==;
-X-CSE-ConnectionGUID: QLhqcaQrTKKhhflqv92U9g==
-X-CSE-MsgGUID: sAkGzuycQBCr/UCaXVkRmQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="88218179"
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="88218179"
+ bh=wSfucJIjwmCKX4uvnKLpPrxEeFpswWv7V7CeotBY+9U=;
+ b=UBxCUjMSXx8faUSEpHP+PKlhl0nIKHCfSnVQ0v635PoirVlzT+wPFXKf
+ qP2hu4tx7+2X1kLrJH533ksK1JOBRJ31Wdk6KjNPkGZ7btlxX13Ppz+4L
+ Ojo20xpgfWzc3kWUK67K5nvthmFfG3CgcsmURlPc5rVTC+HUd3KQyBvVu
+ e/pcOsA3GRguyVTIKKAKe0hPOEaaQmoCyAXV560qTsi5XsfMU9MA9qWKn
+ hXOGFI2YTaNkNFfsnhFrIauzcrXjCuuQFQlVNRw/hECP3fI5AgtBpBI32
+ Bzy/5r75RXi+tLRR/dpB46/Q0hAcZpMUYBf2E/WD18CRAD6FYnxBcJ5f2 Q==;
+X-CSE-ConnectionGUID: sgWocvI/RTKw+H5n/5CwaQ==
+X-CSE-MsgGUID: rn3P9UY7RPyrbSe6RsG9OA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="88218195"
+X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="88218195"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Jul 2026 02:16:36 -0700
-X-CSE-ConnectionGUID: FNIFFOCNQxOzE0dobPASHQ==
-X-CSE-MsgGUID: eI0GdNq9TZ6hOR4o4aJcyw==
+ 13 Jul 2026 02:16:51 -0700
+X-CSE-ConnectionGUID: FnBgfyazRwec3TE4i8TbWQ==
+X-CSE-MsgGUID: 17YgNFLcTcK0PinDmfxQ2g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="279911372"
+X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="279911377"
 Received: from unknown (HELO localhost.igk.intel.com) ([10.123.235.20])
- by fmviesa001.fm.intel.com with ESMTP; 13 Jul 2026 02:16:35 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 13 Jul 2026 02:16:50 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, stephen@networkplumber.org,
  bruce.richardson@intel.com, marek.kasiewicz@intel.com,
- Dawid Wesierski <dawid.wesierski@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v6 2/2] net/iavf: disable runtime queue setup during queue
- rate limiting
-Date: Mon, 13 Jul 2026 05:42:40 -0400
-Message-ID: <20260713094240.1721105-3-dawid.wesierski@intel.com>
+ Dawid Wesierski <dawid.wesierski@intel.com>
+Subject: [PATCH v6 0/2] Intel network driver enhancements
+Date: Mon, 13 Jul 2026 05:42:56 -0400
+Message-ID: <20260713094259.1721234-1-dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260713094240.1721105-1-dawid.wesierski@intel.com>
+In-Reply-To: <20260708231926.1550698-1-dawid.wesierski@intel.com>
 References: <20260708231926.1550698-1-dawid.wesierski@intel.com>
- <20260713094240.1721105-1-dawid.wesierski@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -66,141 +62,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Runtime queue setup on E810 VFs causes queue state corruption when
-queues are dynamically reconfigured while the hardware rate limiter
-is actively pacing TX queues. Queue configuration messages to the PF
-via virtchnl can race with ongoing TX operations, leading to undefined
-behavior.
+This series contains enhancements for Intel ice and iavf drivers.
 
-Rather than gating this behind a devarg that an application would have
-to know to set (and could just as easily avoid triggering the race by
-not calling rte_eth_{rx,tx}_queue_setup() on a running port), stop
-advertising RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP and
-RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP as soon as the application
-commits a per-queue bandwidth rte_tm hierarchy, i.e. as soon as the
-condition that causes the race actually exists. iavf_dev_info_get() is
-re-queried by the ethdev layer on every rx/tx_queue_setup() call, so
-this is enough for the generic layer to start rejecting runtime queue
-(re)configuration with -EBUSY once queue rate limiting is active, and
-to automatically allow it again once the rte_tm hierarchy is torn
-down.
+v6:
+- doc/ice: addressed Bruce's review comments. Dropped re-wrapping of 
+  existing text to follow DPDK policy (starting each sentence on a new line).
+- doc/ice: explicitly noted that invalid rl_burst_size values cause the 
+  driver to fail to initialize (hard failure).
+- net/iavf: re-submitted patch 2 (runtime queue setup race fix) which 
+  had application issues in v5.
 
-vf->qtc_map, already used elsewhere to look up a queue's TC mapping,
-is repurposed as the "queue bandwidth committed" signal since it's set
-by iavf_hierarchy_commit() exactly when a per-queue bandwidth mapping
-has been pushed to the PF, regardless of whether the port was stopped
-at the time. Fix two related issues found while making it load-bearing
-for this check:
+v5:
+- Added documented rejection of invalid values to rl_burst_size.
+- Improved commit message for iavf runtime queue setup fix.
 
-- iavf_hierarchy_commit() replaced vf->qtc_map on every successful
-  commit without freeing the previous allocation, leaking memory.
-- vf->qtc_map was never released on VF teardown, so
-  iavf_uninit_vf()/iavf_init_vf() (e.g. across a VF reset) could leave
-  a stale pointer referencing freed unrelated memory, and the runtime
-  queue setup capability would never be re-advertised after a reset.
+Dawid Wesierski (2):
+  doc: fix ice scheduler rate-limiter burst size description
+  net/iavf: disable runtime queue setup during queue rate limiting
 
-Both are fixed by freeing vf->qtc_map before replacing it in
-iavf_hierarchy_commit(), and freeing and clearing it in
-iavf_uninit_vf().
-
-Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
-Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
----
+ doc/guides/nics/ice.rst                |  1 +
  doc/guides/nics/intel_vf.rst           | 10 ++++++++++
  doc/guides/rel_notes/release_26_07.rst |  3 +++
  drivers/net/intel/iavf/iavf_ethdev.c   | 23 ++++++++++++++++++++---
  drivers/net/intel/iavf/iavf_tm.c       |  2 ++
- 4 files changed, 35 insertions(+), 3 deletions(-)
+ 5 files changed, 36 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/nics/intel_vf.rst b/doc/guides/nics/intel_vf.rst
-index e010f852cf..a47e3f6736 100644
---- a/doc/guides/nics/intel_vf.rst
-+++ b/doc/guides/nics/intel_vf.rst
-@@ -150,6 +150,16 @@ Intel\ |reg| E800 Series Ethernet devices:
-   for example: ``-a 18:00.0,quanta_size=2048``.
-   The default value is 1024, and quanta size should be set as the product of 64 in legacy host interface mode.
- 
-+* Runtime (post-start) Rx/Tx queue setup can race with the hardware Tx rate
-+  limiter on E810 VFs and corrupt queue state.
-+  Once an application commits a per-queue bandwidth ``rte_tm`` hierarchy,
-+  the driver automatically stops advertising
-+  ``RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP`` and
-+  ``RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP``,
-+  so ``rte_eth_rx_queue_setup()``/``rte_eth_tx_queue_setup()``
-+  are rejected with ``-EBUSY`` on a running port for as long as queue rate
-+  limiting is active.
-+
- * When using the Intel out-of-tree "ice" PF/kernel driver v1.13.7 or later,
-   to create VFs with >16 queues (aka. "large VFs"),
-   it is necessary to change the rss_lut_vf_addr setting in sysfs from the default of 64 to 512.
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 6badd6d91b..4faa7b8fe2 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -144,6 +144,9 @@ New Features
-   * Added support for QinQ offloading operations.
-   * Added support for transmitting LLDP packets based on mbuf packet type.
-   * Implemented AVX2 context descriptor transmit paths.
-+  * Runtime Rx/Tx queue setup is now automatically disabled while a
-+    per-queue bandwidth ``rte_tm`` hierarchy is committed, to avoid
-+    corrupting queue state on E810 VFs.
- 
- * **Updated Intel ice driver.**
- 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index d601ec3b6a..e475b64971 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -1160,9 +1160,18 @@ iavf_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->reta_size = vf->vf_res->rss_lut_size;
- 	dev_info->flow_type_rss_offloads = IAVF_RSS_OFFLOAD_ALL;
- 	dev_info->max_mac_addrs = IAVF_NUM_MACADDR_MAX;
--	dev_info->dev_capa =
--		RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
--		RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
-+	/*
-+	 * Runtime queue setup can race with the hardware Tx rate limiter on
-+	 * E810 VFs and corrupt queue state. Once a per-queue bandwidth rte_tm
-+	 * hierarchy has been committed (vf->qtc_map is set), stop advertising
-+	 * the capability so the ethdev layer rejects further rx/tx_queue_setup()
-+	 * calls on a running port with -EBUSY. The capability is re-advertised
-+	 * automatically once the rte_tm hierarchy is torn down.
-+	 */
-+	if (vf->qtc_map == NULL)
-+		dev_info->dev_capa =
-+			RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
-+			RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
- 	dev_info->rx_offload_capa =
- 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
- 		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
-@@ -2760,6 +2769,14 @@ iavf_uninit_vf(struct rte_eth_dev *dev)
- 	rte_free(vf->proto_xtr);
- 	vf->proto_xtr = NULL;
- 
-+	/*
-+	 * Drop the committed queue/TC bandwidth mapping so a subsequent
-+	 * iavf_init_vf() (e.g. after a device reset) starts with runtime
-+	 * Rx/Tx queue setup available again (see iavf_dev_info_get()).
-+	 */
-+	rte_free(vf->qtc_map);
-+	vf->qtc_map = NULL;
-+
- 	rte_free(vf->rss_lut);
- 	vf->rss_lut = NULL;
- 	rte_free(vf->rss_key);
-diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
-index faa2d4b8a0..fc84bf7e6b 100644
---- a/drivers/net/intel/iavf/iavf_tm.c
-+++ b/drivers/net/intel/iavf/iavf_tm.c
-@@ -912,6 +912,8 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
- 	if (ret_val)
- 		goto fail_clear;
- 
-+	/* replace the previously committed mapping, if any */
-+	rte_free(vf->qtc_map);
- 	vf->qtc_map = qtc_map;
- 	free(old_qtc_map);
- 	if (adapter->stopped == 1)
 -- 
 2.47.3
 
