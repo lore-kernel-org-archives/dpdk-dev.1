@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5318C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 10:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2388C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 10:19:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC2D740E16;
-	Mon, 13 Jul 2026 12:18:12 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id A776840E45;
- Mon, 13 Jul 2026 12:18:09 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8D4D81A0012;
- Mon, 13 Jul 2026 12:18:09 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 027FF40E68;
+	Mon, 13 Jul 2026 12:18:14 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id E4ADA40A81;
+ Mon, 13 Jul 2026 12:18:10 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CA7B1200026;
+ Mon, 13 Jul 2026 12:18:10 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5475F1A000C;
- Mon, 13 Jul 2026 12:18:09 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 94859200015;
+ Mon, 13 Jul 2026 12:18:10 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BF7B11800226;
- Mon, 13 Jul 2026 18:18:07 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0C13B1800229;
+ Mon, 13 Jul 2026 18:18:08 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v5 14/18] net/dpaa: remove duplicate ptype entries
-Date: Mon, 13 Jul 2026 15:47:43 +0530
-Message-Id: <20260713101747.2947405-15-hemant.agrawal@nxp.com>
+Subject: [PATCH v5 15/18] net/dpaa: fix wrong buffer in xstats get by id
+Date: Mon, 13 Jul 2026 15:47:44 +0530
+Message-Id: <20260713101747.2947405-16-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260713101747.2947405-1-hemant.agrawal@nxp.com>
 References: <20260713092616.2902828-1-hemant.agrawal@nxp.com>
@@ -49,31 +49,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-RTE_PTYPE_L4_TCP and RTE_PTYPE_L4_UDP were listed twice in the
-supported ptypes array returned by dpaa_supported_ptypes_get().
-Remove the duplicate entries.
+In dpaa_xstats_get_by_id(), fman_if_bmi_stats_get_all() was called
+with 'values' (the output array) instead of 'values_copy' (the
+scratch buffer). This caused the BMI stats to overwrite already
+computed xstat values and then the subsequent loop would copy
+garbage from values_copy into the output.
 
-Fixes: ec503d8fa782 ("net/dpaa: update supported ptypes")
+Pass 'values_copy' as intended so that BMI stats are fetched into
+the scratch buffer and then correctly indexed into 'values'.
+
+Fixes: d2536b006d78 ("bus/dpaa: add port buffer manager stats")
 Cc: stable@dpdk.org
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 50d30d23b2..1774d000a0 100644
+index 1774d000a0..f6d9dd6248 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -406,8 +406,6 @@ dpaa_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
- 		RTE_PTYPE_L4_TCP,
- 		RTE_PTYPE_L4_UDP,
- 		RTE_PTYPE_L4_FRAG,
--		RTE_PTYPE_L4_TCP,
--		RTE_PTYPE_L4_UDP,
- 		RTE_PTYPE_L4_SCTP,
- 		RTE_PTYPE_TUNNEL_ESP,
- 		RTE_PTYPE_TUNNEL_GRE,
+@@ -928,7 +928,8 @@ dpaa_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 			values[i] =
+ 				values_copy[dpaa_xstats_strings[i].offset / 8];
+ 
+-		fman_if_bmi_stats_get_all(dev->process_private, values);
++		/* i continues from previous loop; BMI stats fill values[i..stat_cnt-1] */
++		fman_if_bmi_stats_get_all(dev->process_private, values_copy);
+ 		for (j = 0; i < stat_cnt; i++, j++)
+ 			values[i] = values_copy[j];
+ 
 -- 
 2.25.1
 
