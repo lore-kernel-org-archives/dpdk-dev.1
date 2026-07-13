@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CF2C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 09:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E33C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 09:26:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A1D540DCA;
-	Mon, 13 Jul 2026 11:26:28 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id DB98140A8A;
- Mon, 13 Jul 2026 11:26:26 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 32B8D1A000B;
- Mon, 13 Jul 2026 11:26:26 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 59F0840DDB;
+	Mon, 13 Jul 2026 11:26:29 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 37F1140DD0;
+ Mon, 13 Jul 2026 11:26:28 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1A2CB20002F;
+ Mon, 13 Jul 2026 11:26:28 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F9641A000C;
- Mon, 13 Jul 2026 11:26:24 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D8EBB200019;
+ Mon, 13 Jul 2026 11:26:27 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id CB06418000B0;
- Mon, 13 Jul 2026 17:26:22 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5634B1800229;
+ Mon, 13 Jul 2026 17:26:25 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: stable@dpdk.org
-Subject: [PATCH v4 03/18] bus/dpaa: fix error handling in qman_query
-Date: Mon, 13 Jul 2026 14:56:01 +0530
-Message-Id: <20260713092616.2902828-4-hemant.agrawal@nxp.com>
+Cc: stable@dpdk.org,
+	Prashant Gupta <prashant.gupta_3@nxp.com>
+Subject: [PATCH v4 05/18] net/dpaa/fmlib: add null check in scheme delete
+Date: Mon, 13 Jul 2026 14:56:03 +0530
+Message-Id: <20260713092616.2902828-6-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260713092616.2902828-1-hemant.agrawal@nxp.com>
 References: <20260619103901.2274740-1-hemant.agrawal@nxp.com>
@@ -49,35 +50,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Optimize error handling in qman_query() to avoid redundant
-checks and properly propagate error codes.
+From: Prashant Gupta <prashant.gupta_3@nxp.com>
 
-Fixes: 06268e2cb175 ("bus/dpaa: query queue frame count support")
+Add a null pointer check at the entry of fm_pcd_kg_scheme_delete().
+Since p_dev is assigned directly from h_scheme via a cast
+(t_device *)h_scheme, checking p_dev == NULL is equivalent to
+checking h_scheme == NULL. This matches the defensive pattern used
+in all sibling functions in fm_lib.c and returns E_NO_DEVICE on a
+null handle.
+
+Fixes: 663ff698e38f ("net/dpaa: support VSP in fmlib")
 Cc: stable@dpdk.org
 
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/dpaa/fmlib/fm_lib.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index 2da1b3e3f7..d289df2d33 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -1955,11 +1955,11 @@ int qman_query_fq(struct qman_fq *fq, struct qm_fqd *fqd)
- 		cpu_relax();
- 	DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) == QM_MCR_VERB_QUERYFQ);
- 	res = mcr->result;
--	if (res == QM_MCR_RESULT_OK)
--		*fqd = mcr->queryfq.fqd;
--	hw_fqd_to_cpu(fqd);
- 	if (res != QM_MCR_RESULT_OK)
- 		return -EIO;
+diff --git a/drivers/net/dpaa/fmlib/fm_lib.c b/drivers/net/dpaa/fmlib/fm_lib.c
+index b35feba004..65a818372e 100644
+--- a/drivers/net/dpaa/fmlib/fm_lib.c
++++ b/drivers/net/dpaa/fmlib/fm_lib.c
+@@ -305,6 +305,9 @@ fm_pcd_kg_scheme_delete(t_handle h_scheme)
+ 
+ 	_fml_dbg("Calling...");
+ 
++	if (p_dev == NULL)
++		return E_NO_DEVICE;
 +
-+	*fqd = mcr->queryfq.fqd;
-+	hw_fqd_to_cpu(fqd);
- 	return 0;
- }
+ 	p_pcd_dev =  (t_device *)p_dev->h_user_priv;
+ 	id.obj = UINT_TO_PTR(p_dev->id);
  
 -- 
 2.25.1
