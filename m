@@ -2,34 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44ED1C43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 10:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5501CC43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 10:18:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC71C40E2B;
-	Mon, 13 Jul 2026 12:18:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B96AC40E32;
+	Mon, 13 Jul 2026 12:18:07 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 258D140DDD;
- Mon, 13 Jul 2026 12:18:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8827940E1E;
+ Mon, 13 Jul 2026 12:18:05 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 06DE7200026;
- Mon, 13 Jul 2026 12:18:04 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6CEBF200055;
+ Mon, 13 Jul 2026 12:18:05 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C5853200034;
- Mon, 13 Jul 2026 12:18:03 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 37B45200068;
+ Mon, 13 Jul 2026 12:18:05 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 66C8318000B0;
- Mon, 13 Jul 2026 18:18:02 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D0DB51800229;
+ Mon, 13 Jul 2026 18:18:03 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: stable@dpdk.org,
 	Vanshika Shukla <vanshika.shukla@nxp.com>
-Subject: [PATCH v5 10/18] net/dpaa: fix port_handle leak in fm_prev_cleanup
-Date: Mon, 13 Jul 2026 15:47:39 +0530
-Message-Id: <20260713101747.2947405-11-hemant.agrawal@nxp.com>
+Subject: [PATCH v5 11/18] dma/dpaa: fix out-of-bounds access in SG descriptor
+ enqueue
+Date: Mon, 13 Jul 2026 15:47:40 +0530
+Message-Id: <20260713101747.2947405-12-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260713101747.2947405-1-hemant.agrawal@nxp.com>
 References: <20260713092616.2902828-1-hemant.agrawal@nxp.com>
@@ -52,33 +53,42 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Vanshika Shukla <vanshika.shukla@nxp.com>
 
-In fm_prev_cleanup(), the port_handle was not closed before being
-overwritten on each iteration, causing a resource leak. Add a null
-check and close the existing handle before opening a new one.
+In fsl_qdma_enqueue_desc_sg(), the code accesses desc_ssge[num - 1]
+without validating num first. If pending_num is 0, num will be 0 and
+the access underflows. Add a bounds check to return -EINVAL when num
+is 0 or exceeds FSL_QDMA_SG_MAX_ENTRY.
 
-Fixes: e498f3b51f38 ("net/dpaa: improve port cleanup")
+Fixes: a77261f61245 ("dma/dpaa: support scatter-gather")
 Cc: stable@dpdk.org
 
 Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- drivers/net/dpaa/dpaa_flow.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/dma/dpaa/dpaa_qdma.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
-index 417b9b6fbb..f21950f64d 100644
---- a/drivers/net/dpaa/dpaa_flow.c
-+++ b/drivers/net/dpaa/dpaa_flow.c
-@@ -81,6 +81,10 @@ static void fm_prev_cleanup(void)
- 		devid = fm_model.device_order[i];
- 		/* FM Port Open */
- 		fm_model.fm_port_params[devid].h_fm = fm_info.fman_handle;
-+		if (dpaa_intf.port_handle) {
-+			fm_port_close(dpaa_intf.port_handle);
-+			dpaa_intf.port_handle = NULL;
-+		}
- 		dpaa_intf.port_handle =
- 				fm_port_open(&fm_model.fm_port_params[devid]);
- 		dpaa_intf.scheme_handle[0] = create_device(fm_info.pcd_handle,
+diff --git a/drivers/dma/dpaa/dpaa_qdma.c b/drivers/dma/dpaa/dpaa_qdma.c
+index a695f58bc5..e2cb157c43 100644
+--- a/drivers/dma/dpaa/dpaa_qdma.c
++++ b/drivers/dma/dpaa/dpaa_qdma.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2021-2024 NXP
++ * Copyright 2021-2026 NXP
+  */
+ 
+ #include <bus_dpaa_driver.h>
+@@ -827,6 +827,11 @@ fsl_qdma_enqueue_desc_sg(struct fsl_qdma_queue *fsl_queue)
+ 		}
+ 	}
+ 
++	if (num == 0 || num > FSL_QDMA_SG_MAX_ENTRY) {
++		DPAA_QDMA_ERR("Invalid scatter-gather entry count: num=%u", num);
++		return -EINVAL;
++	}
++
+ 	ft->desc_ssge[num - 1].final = 1;
+ 	ft->desc_dsge[num - 1].final = 1;
+ 	csgf_src->length = total_len;
 -- 
 2.25.1
 
