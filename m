@@ -2,124 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E05DC43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 10:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A572C43458
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 10:06:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 984974028A;
-	Mon, 13 Jul 2026 12:04:21 +0200 (CEST)
-Received: from DU2PR03CU002.outbound.protection.outlook.com
- (mail-northeuropeazon11011041.outbound.protection.outlook.com [52.101.65.41])
- by mails.dpdk.org (Postfix) with ESMTP id EF82440276
- for <dev@dpdk.org>; Mon, 13 Jul 2026 12:04:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B9E4F4028A;
+	Mon, 13 Jul 2026 12:06:20 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id EC59E40276
+ for <dev@dpdk.org>; Mon, 13 Jul 2026 12:06:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1783937179; x=1815473179;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=jm4UdayTPmJTbVlsQzc8m6U+7c8qx1Q4dGdZNIq09eM=;
+ b=hTgAr05o8rmHccg1ssSCYCVhZxdaJuBTWm6kJjcXwdcJ69decbtCh9kG
+ VrbHm35cXwaxEMWkMzsHRWNuIM0gqU9g5iuQ6Jp661IPQeH+G15ZtaeRJ
+ aEJL6SZtPc6ftW1T8pg+S83qf9nDQlmnP3Ue4NOcs0kjlCzjwjQHXHWjj
+ +CZgneUxtNsAGRdBNQmu5uLetUMQwJI5jsdUoWIpaXn6xcHjShlQV1sex
+ BuJDP47CbGmnrJsKXPHSSnM5jCWgzr/6PATftX6BpjJSe1APuMnjaYBKR
+ KgxFDh62JRgC+RifLjeiZp7681stih7NhYmym7Zd6r3ZMUdfXl1oBgvIp Q==;
+X-CSE-ConnectionGUID: brY+yWHgRZCk1aY3E7VvxA==
+X-CSE-MsgGUID: H0pGQJ+lTJKHw1WbIODa5w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="84593401"
+X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="84593401"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Jul 2026 03:06:18 -0700
+X-CSE-ConnectionGUID: 3tNjl7S5RQC1P+Qb8oft3g==
+X-CSE-MsgGUID: OjWzpHX3R4+8cIH5O9OUJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; d="scan'208";a="251090509"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Jul 2026 03:06:15 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Mon, 13 Jul 2026 03:06:14 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43 via Frontend Transport; Mon, 13 Jul 2026 03:06:14 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.0) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Mon, 13 Jul 2026 03:06:12 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ygSnSQVa69jjwWm3J7bWp7WCiv2cZ3Y2qd2hG1b/zz2ULbv5PIit5/jbQ2Aww7P4+IsxV4ZI69/2yg1pnfmxH6VWFF+t/xHClQg2HN+OXCRUmKwZzCdbodyCx1hu6Za0DlN4S7XF6b00wiEvlAOg4LvYTRQDEaScQcn8l/u1U+w9Hk02hXHfHs5I7malaSWI3k1l9QBXIZzGRX8R/NCXy567GCxZch1XRpbDn8hOZ30PlgYcXIqODKD1bFxHhQCm+o8Zb/Fru3OddnHhu2p1yVlxKIbPYP36oHOisf8DWWQFcLThxBsF9EzWY7cCfV3VFECJ9TzN+x6iTGZmvmNG/A==
+ b=b2OR6e/Zx16GsLhm8quzUIS4Lw/mQ3arHUH0CbTd2ovt6cPIAPyHZVGXhAS817gS0YUkPvQkzK5t/nvEN2Gx+JWFKWKy6iEbB4cHDR2Qcm7BR8AG1H0eBnS6+lwRmqG8rpc83pDD5ycVEOTnGDGz1u75HLzz6K8GIyqJrWTicDtAFnA0gyYYJUeeHTwcx2zNAodzPliz/fagWQxRV//joRpk6pxLNoYbE4xJBuP1k3WialrqM8xrxBXIKe/9kx2wbJX0/YN1qjePhiLUMTxIBu19OeOhaQB/nEo1MvTWr+W8jWubDAp6RkoaPN1E7VSqvvitCL6hodNyUWywnZfmHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nQf7kjVMvUOUUSAacqRynIlknOPRL6eUamQ5HPtqCQo=;
- b=BOJmls/cnEpgA6K8ruml0Vb2F3ZQanMzsvabV/cC0P5KPXWEE4z2rLECwyMNeSpEglhvHZEnseR0jxifAVv2v7d235deho/NtAmSAaFvK+V6kWym7KmwnMULyFSfr3If3c7WrlBTmrmZxkXehKJdCKHp6Wne5MNYgTUjGzJiLCiMj+cfP/Djl97CSCV2dU/tsMeUKLPeG3OPdsDoRW1jqqI59g1dS7XoMvRrSn5wfaDeGGnNu4sBQ1Hy8+49yxZI2SdH1syVtOK4/HOjTcpKAxrA3PjnQ4ssucnqoIC9ZG7U5pmDz2A4AMTIrBoR8KTWMS7sNiHn5cQSd7YKI3VArA==
+ bh=QGjyxOk+kMpMDVz85bFuzh+hJBe/Lb6GAJKAt8TE34c=;
+ b=Vf+oqBbygfAs/zM2U+zQbPaVBqiplEl51zfiO4h/Xpbsei/yRCvhJlk8906LR/k90awxC7X5QqKfqklilK4w47FKqViD3piKhEQrCZz1PiRVnlGMSL08L8WmeJCXTCgDmDinJvJt0+7iCV4D411XxDWTMFyYlYWq8DxRTKJZZczVorUYBKpZxt86E2Ioy8/p0T94SDAcks/jPusGuVMLpz4Ug1h+kfu8EDHDwWu7eBI7mJXpSBBrIELjF3XvOhxle62+lEewT7W11hTE9VF1iyE5pl7zhMV1nygGwv4Kys9Adt4UEYdgQ7sr6BIMnRTwE3vxJ02EtAZU+YoogWNSSw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nQf7kjVMvUOUUSAacqRynIlknOPRL6eUamQ5HPtqCQo=;
- b=STq/kPbJiNdW7oGCyaoIzbYTYM5m3xqvUCKvbsQ4BeJo0bC2hF8d+/2QZk52MehawtD0yNxRXyP7c1mXWbAn4NY9MvV7EllyGJeHEo/etzWmbbmdRpKy0W2MQ7RpvKnPM9KJ0ruLejmSTZxWORUQVS0CQTFjpNO0qyEUg3Urr3vnL4ws/lv6LW0P429kf6hqVLjY+iUNf3boco0Xq7zbIA+rHq224nB5bdAB+5fbqHcIH+JiE6MygJragYSL1RUdFawvSqUeZTUUhLlDwLZna8h6yrN+MBCUVGN2mPFynEU07tD+cNnjexvKiBWgsJoy+brdhnh3dJWUaM79SG64VA==
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PA1PR04MB10770.eurprd04.prod.outlook.com (2603:10a6:102:492::5)
- by DBAPR04MB7286.eurprd04.prod.outlook.com (2603:10a6:10:1aa::6) with
- Microsoft SMTP Server (version=TLS1_2,
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ5PPFED9C9AC99.namprd11.prod.outlook.com
+ (2603:10b6:a0f:fc02::85d) by DSWPR11MB9581.namprd11.prod.outlook.com
+ (2603:10b6:8:36e::12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.202.18; Mon, 13 Jul
- 2026 10:04:19 +0000
-Received: from PA1PR04MB10770.eurprd04.prod.outlook.com
- ([fe80::944c:6b2:95a0:32d7]) by PA1PR04MB10770.eurprd04.prod.outlook.com
- ([fe80::944c:6b2:95a0:32d7%5]) with mapi id 15.21.0181.019; Mon, 13 Jul 2026
- 10:04:19 +0000
-Content-Type: multipart/alternative;
- boundary="------------V19Yxev0kQ0arPay0R3ys7EB"
-Message-ID: <d646d669-0adb-4904-9d83-6a1b25ccda3a@oss.nxp.com>
-Date: Mon, 13 Jul 2026 15:34:12 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: DPAA driver series - mix up
-To: Thomas Monjalon <thomas@monjalon.net>,
- Hemant Agrawal <hemant.agrawal@nxp.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Gagandeep Singh <G.Singh@nxp.com>, dev <dev@dpdk.org>
-References: <PA1PR04MB10770E11CEC25E074365C3E1289FA2@PA1PR04MB10770.eurprd04.prod.outlook.com>
- <iSawvfAuRvCNNdxNcuk17g@monjalon.net>
-Content-Language: en-US
-From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
-In-Reply-To: <iSawvfAuRvCNNdxNcuk17g@monjalon.net>
-X-ClientProxiedBy: MA5P287CA0006.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:176::6) To PA1PR04MB10770.eurprd04.prod.outlook.com
- (2603:10a6:102:492::5)
+ 2026 10:06:08 +0000
+Received: from SJ5PPFED9C9AC99.namprd11.prod.outlook.com
+ ([fe80::a6e3:dc11:48e:b2e0]) by SJ5PPFED9C9AC99.namprd11.prod.outlook.com
+ ([fe80::a6e3:dc11:48e:b2e0%7]) with mapi id 15.21.0202.014; Mon, 13 Jul 2026
+ 10:06:08 +0000
+Date: Mon, 13 Jul 2026 11:05:45 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Dawid Wesierski <dawid.wesierski@intel.com>
+CC: <dev@dpdk.org>, <marek.kasiewicz@intel.com>, Anatoly Burakov
+ <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v6 1/2] doc: fix ice scheduler rate-limiter burst size
+ description
+Message-ID: <alS4eYMnlpqisUMQ@bricha3-mobl1.ger.corp.intel.com>
+References: <20260708231926.1550698-1-dawid.wesierski@intel.com>
+ <20260713094259.1721234-1-dawid.wesierski@intel.com>
+ <20260713094259.1721234-2-dawid.wesierski@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260713094259.1721234-2-dawid.wesierski@intel.com>
+X-ClientProxiedBy: DU2PR04CA0228.eurprd04.prod.outlook.com
+ (2603:10a6:10:2b1::23) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA1PR04MB10770:EE_|DBAPR04MB7286:EE_
-X-MS-Office365-Filtering-Correlation-Id: c95201f0-7112-45f6-22d0-08dee0c61a76
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-TrafficTypeDiagnostic: SJ5PPFED9C9AC99:EE_|DSWPR11MB9581:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d6b49cf-dcc8-4525-6163-08dee0c6528e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|19092799006|376014|23010399003|18002099003|22082099003|11063799006|56012099006|8096899003|4143699003|13003099007;
-X-Microsoft-Antispam-Message-Info: z5HE/3C5P63isImtuLQUxmncbJnq6+Vi+0NZb7kLx2rEnldX19KaKCR/bp81CxSd/xMxRNiNm9JaohGF6+GUQoMJVX8Y2TXOvVR9M3bHegfUobVAv38qikTMdz/+AcVCVzHIGONCvgzWZYC4/wdkmMBwPf9E47GwbhW1u+BRoz/cRqATCQ4YVz2nxgUvqQNA6tfVNabMeh4I4tnLiFHvxO8lhBmR/V766BvG7B9wfoWoMRj9k7PjOHIa1hUZrPJwJF0iy4nJ2gZKunTwObmsahRGE13kbz4l8IuNRGdXXCOSU45lm/qChh6z142k7r2rIOGdRaDAlLPthFNchKneHnLTwzuc8aSarQglvQHcb95E8h29DCXD3aG17+BxypCobZe07VsDbfqfX3kV2FxJtMdcXntPW+vZHagPV36SRbkTVShEsqIurxT8h8+snJybHEkb/JMF6zhgb1qaI+Y/VY5oanZGRBWQqhYAeVJWsXiEnS4QjoxQXTD57kHpj0XEM6Vc7I0/Gb76Ia+ed430N9xubO9g8aEyP0JEh3CJtJomhiLF79LArmwFjgkrUY/3OU1JeTNpp9+cB4uZzwZYKnz4p5srztdQtGZ/oubKx6ea9Cb/tEt3qsu/OJeWkqiS19gbZESHx/lvEXdbk7dqKc+z4CDWJR4SvsZGxKGjx40=
+ ARA:13230040|23010399003|1800799024|366016|376014|6133799003|4143699003|11063799006|56012099006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: MOl8EqQQKEcR6LsPuheRH3g5bIA4fm9UTs7KgFQh7Fyvc2YCbP+XPuH3QzFJQOMkAqWZsQpjZWKCvbK9n10AC7ZTS/xrPLbM5p6aaDo5ppvkeZLfVPFOtgdhe65b118skA5fV7xDnufAuSGW9j/Yse8S2jkOHhvxP0/s+FjInsVzUDKYUue2yKNSL7td9/CNUtk38LFIuIxe2Gz6uhGujuCh2Huf/S4yG94VAkuzyfqaqd9Huj2NTo38EZeiea8cHaraovL4INQSDDJ0ovJCaC1XXipmrbaLiR1pQlqDqqOgCeBLxPsYg8gYG8WUq7wnwNuB2PYti0DS8vx2o8+gTFhNP/buB9T+GsDVWzkJTRizVVGrhtIFqO8kElnf+uDijwayy/+xJu4lrNFh2dYWtMO7fTMttVmaBWNqSfo8t7niHCy6P9PHBvZ0z9eJcqwcRwGwASLOrKU+Pqrk8nz6giRJolzDFqATfhrOt4NYbXkQez5FFiSfAdl4y8zbvEcog070t8DP+ccr58mDgKWKsH0hyFLtCQWKOISmat2BcLKM2kln4Un5yQJZHvvXAb779gC2Cw8jU+M0LaQLfKQfByHjAvv7t0VFSS0gWEJQVaufF0GyHIR6sroNgwPonXcjfOqR1/srj1UmhCjAg0+VZfI6IA0cG1DWinTL4MWEuPk=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PA1PR04MB10770.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(23010399003)(18002099003)(22082099003)(11063799006)(56012099006)(8096899003)(4143699003)(13003099007);
+ IPV:NLI; SFV:NSPM; H:SJ5PPFED9C9AC99.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(6133799003)(4143699003)(11063799006)(56012099006)(22082099003)(18002099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NFZLY0tSOGtLcEFxM2FUVFRMTFloeEY4T1FCWEhZUE5PVDNWZzRlUWhjQlY2?=
- =?utf-8?B?cDVkODVoTjFqUVNyTUwwc0VZMjJIemRnYXd6YzRHZ0NkdzBDaEoyNWVzVjMw?=
- =?utf-8?B?ZWFXMUNoQjJnclgrNWVMWUJqK1B6ZDMzQ2dqMkxEaXpVWWcrUE8yYmFyeG1L?=
- =?utf-8?B?TzhuQzNNWlNMSXYrVVh1b0NlakxLeW9XM2xyN1VlMHl0RnRIMVdtbElxVTBR?=
- =?utf-8?B?aHRpam1PVVBMSGRsdTRWaUNuclVIeWNLczZkeDF5UmViVUxpLzJWVk56VzQ5?=
- =?utf-8?B?bWd1L283RkVjZkE5TzAvdUNjenU5ME9pNjdaazZybSt3REhOYmZJdEd4a2lV?=
- =?utf-8?B?dGpMeHhnSDR3UjBrcDdmM3MxaHk4cWJ4TDhSTm9vL3dGWEtuUmx3RXVaQVNn?=
- =?utf-8?B?VlNKUmoyQVFLWCtpTDJTTnFOUkpBZ0drdG96eEhpSU9TM3hzMENpdzk2OW4v?=
- =?utf-8?B?RXZsZWU1QVkwaVJ5K0x3TVEva0ZpalowSEttc0lUcUpWa05hQ1JLZlZtcjdC?=
- =?utf-8?B?aVByeStBc2FtSS9JeTdVbXNLeHYzdVc2TUV4ejlaay92SlQxQk8yUHY2ZFpp?=
- =?utf-8?B?OVZlNDFJckNUc3luSDRwU2xPME1DT1lySlNlb0NGdmxyQjdsaS9qcERhc2NW?=
- =?utf-8?B?Z1J6VGI3YkZHZ2tmNnlrRUdMK1dNVVI3ckhTWUU3ZkxKMVdkSUV2ME1SRS9C?=
- =?utf-8?B?MUlzc0dhRS9HK0hGayswaXpCUXZOb0UxQjQ0MHF0M1EzRTdLeWtma3NrOTVB?=
- =?utf-8?B?MHdJdlRadGxVMUpJOEFxbU5FNDE4RHdhUTFNS3RpWXZWVXJnQWdxdnNUL3pt?=
- =?utf-8?B?bWVXU0x0QUxTWC94a0libSsrbWhLMlVHU3I3bk5kRkZhVHdrKzdpeUFwcEJX?=
- =?utf-8?B?VjZsNEprOUhlanhuSFh0MEVqZEc4QlBMNFcvWkkrTjdXUHBCS01FdW1FUnBy?=
- =?utf-8?B?U0tFbTBpUUcya3c5S2VHZzA2dzBEZlVtNFF2UEgvR3FUZGluazNBUjRLbklC?=
- =?utf-8?B?eXVqTWFmZUE3VUh2MWszdlRYR25vVVd5UWxCTVFSY3dzQ0tsZ2YwdHVKMDVU?=
- =?utf-8?B?UlNubUV4WDBBZmlVK2xRL3Jpd2lzdFcyV0pBU1d3by9UVHFTY1dvZkxKNmNB?=
- =?utf-8?B?ZlJvZ0lkc0Y1Rk9EeDJkbFpSb2NpK1FrZmI2TFI0Y3VPdFR6VlJZOHI3T1FY?=
- =?utf-8?B?eDhKSmlpOWowaDdTcVRBYWhqZmtJdjF2blYzT3ZORU9rTkZkUDhhcmkvMmFy?=
- =?utf-8?B?MlNLTzZiaDZ4b3NPdGs4dFZnUi9yUXBlQUFaelNBa3MxM1luWWcrVmZVWm1J?=
- =?utf-8?B?bFk5U1lhL2x6L1hmTlJNQWNENkpZK0JWdmlVS1NDc2dKZEkrbjFRbEtFOVlm?=
- =?utf-8?B?c0tpeHAxc0t5RnlRN0hzNXRDeW1iY1JUT0lVNW4wdnd5NldvR2JrNkNxNUlK?=
- =?utf-8?B?U0hGM0VIZDJ4Y21oZnpwY3ZCS2REaU9od3ArOFhDM2F6NlpkTi95ZU9tdDFr?=
- =?utf-8?B?cGowSzJ5bTM4ZEJTR3J5d0w5WE5JVVY5SThJN2JIeklVeGRrZ3FtaUl3ZmN0?=
- =?utf-8?B?QUZjQVM4d00rWElSNHpsR3ExTm1BZHkxajh6N2dJU1pJSmtIMi8ralo0VUJH?=
- =?utf-8?B?empwdlN5SlZ6KzRBenoyTWpOdCtEQVpGd051YXU4S3JLNi9xQWdzS2dHU0JP?=
- =?utf-8?B?K2xVYndYSlhPeG55ZWkzWThwMllWMFBubmpUaXFDZkoyajJzV0FHZU9yaVF2?=
- =?utf-8?B?NGE4clVSbUx6ZFlyMlhRTWtvR0xueVFiSDQ3ZTFOU0Zuc2pSVThIUlMxRng0?=
- =?utf-8?B?aXpCOW05Y3FPeWVtWEErd0lodWNBTm0rd0tpMnZVdWZ6aUU5bWVsUGVyTHZ5?=
- =?utf-8?B?aXpIb3FsYU93SzBBWFJXc29ISHl2WW1lY2JBTFdvT0N4bS83R3YwZWJZem00?=
- =?utf-8?B?MGNhV3FlUGwvL0JtaEt4NHZzK1FIa2Nub0hpbzJZb2lCMit2NytTWWJjMkVq?=
- =?utf-8?B?TzJ0T0xEWE5tZU1LZVVyMmlNWmRPdjVFVU5DYUtrU0VvNVZITktrbnY0STFl?=
- =?utf-8?B?d3QxWXRDenJJR3RuSlhqaG9LQUlpeTdCZzNCZXp0WWgxNE0xY3gyajJ0ZTVB?=
- =?utf-8?B?Y2l2ZFgrNWhPNmZDQXNVbnUvSVpMeVdybytncHUwbmpVNklHdWVSclErSmhL?=
- =?utf-8?B?LzNsanRUejMyemZiMGNpNy9SaTR0OFl6UE1zVEd3eWtqQU9zc2xKYytZb0VC?=
- =?utf-8?B?TEw4ajhXMlJJUXlOeEVibkZReUtkVy9FSzF4bFc5VDBXUi9HTWdySEpnaklB?=
- =?utf-8?B?N0tUYU9HOWNQMTM3Z1JzNkJObEtLV01LTzZWWmlUUXBKdFdBSGRkZz09?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c95201f0-7112-45f6-22d0-08dee0c61a76
-X-MS-Exchange-CrossTenant-AuthSource: PA1PR04MB10770.eurprd04.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?dw8umN3c8iEADuQZheC3SAxc+Yev/ocIE6/VEg1SSGOTP1XVVHZi8ox+qT0R?=
+ =?us-ascii?Q?xlRKWGw3Cn8ag1Ex676uosuLMjOtRj6EJMPXYVcneFKm7AFyJtWsaxBaNFNl?=
+ =?us-ascii?Q?2YrO7Z5lPJy2KBk16nD+Gj9ZZTGQ5nPc33F6nl7jGyhHnr/JGLid820V04q7?=
+ =?us-ascii?Q?Sbn89lCnRRGPsnrHospm/J11zYULs4hecUnPosTdLT2pKrmIanjAAPEeDt2M?=
+ =?us-ascii?Q?RouU1uDCjaoF9yxGNgPv2ooHaf8ulPmEBJ7BXdWH6rvZ18Bo7Iv56VFiu+On?=
+ =?us-ascii?Q?N0rjodrBQaid+PbiYqA5gphd8IkjYpvYoXPg0ehK/URlQ2wG/r2SM395hGMS?=
+ =?us-ascii?Q?V4ptSXKZF57m6miqXhSxZ1uq3/tDT0/ubHOaGlX0klGFbJKSzh5egc454hdF?=
+ =?us-ascii?Q?wB9lg+HQXcXFafgX+ATmx2W5IpQsdVpS5OQ06x3r2TphP6VmoTtpU4j12P+/?=
+ =?us-ascii?Q?7encwCCwxkQ6ElVD+hev49mXQiSUVygHuOScwL1EOPoFSE0XsuhdSkDKM8ho?=
+ =?us-ascii?Q?EZFpisOKTZ89No8yAur8Zb73N8AvtaxzVBOKs9idwsGaqbue6h33M6bhCGCv?=
+ =?us-ascii?Q?m3MLgJstCjDDGD2PX7aKjwuh8f8C/Pp4KPCzWIhjpn9BbIz32yDeFSRRxVmR?=
+ =?us-ascii?Q?eWGqMzvaZplrqlLuEWIxARavqshh6DvBkkiI/XzAiIn+/unmRlauqkrYor3I?=
+ =?us-ascii?Q?AyyVxhXYjqrSa47fT6heInbCrC1jWLyOlb58/6hxSav0JQ6GaxdMb2oCiq/q?=
+ =?us-ascii?Q?765rybcw55rpCtGidt0Cq/iV57yuzlzCCBD/AFBkRzUPmxpL2mAO5loHCluO?=
+ =?us-ascii?Q?B86Z7ZcDO/GKLiLb0++JVEzEYKQEtq//81OVtvMfomAxggYCJCenkuZDFcGw?=
+ =?us-ascii?Q?C4c/ZoeJ4JkH7IiVArSZszym6tQqRPxjfgB60pkTRoqDsjQ8zLCyoVCgTzE+?=
+ =?us-ascii?Q?hZAhvffKyfc4B+O9+NdS384oMwz4NYLxXlHEBNTRpVi5EoL8gFazCcJ6EtVT?=
+ =?us-ascii?Q?/FB4KNYDq36b3kIG6IKxfvKpZ04B89OBeqhODIwBpGr76K2UcHPN2qO5WPIU?=
+ =?us-ascii?Q?cLG+eMyfSu+ZeyxFBSTvv5k04SilUvlVSdYoYaBKi1ME2VWPFo69f47UPGlf?=
+ =?us-ascii?Q?ThfdMDzaVYmhDJf9Pm7r5TprfFaLATs+M+3eAOkoYzCahEIUv9DPIOMD9A9F?=
+ =?us-ascii?Q?xRszYofZKrbY8OkhKOmqaEYR6sJMCDuzUH5hJk9Evk8N5Nq17RjY46MRk2JL?=
+ =?us-ascii?Q?G8RriO/eqF0UcOwpbewJpwgntmUQtNVKvp4+PVHd3L8M4T7wsh0lMNnoJhf0?=
+ =?us-ascii?Q?ZumcWET1pmhy+psrci/jN7hadvRF9OQYOQj3QfnGZItIkQ6PIdfW83Qw14lT?=
+ =?us-ascii?Q?KmOkkHaeT7S4KMLuKbk+Q79mvVRTtUlaNzydvHuxg+ufuGF3z+mzeSW/ptra?=
+ =?us-ascii?Q?HhTUUsuZlOu1z3a3o+WoxH4aigU5AvPEIPhW0lDdlZsDZAx0almobrgI96Aw?=
+ =?us-ascii?Q?32/ZvECXUgIBRCXdeK5XncH8neE9Qs3YAkakoUJrAmPdzmYQUksk9cdOoIU4?=
+ =?us-ascii?Q?zTNdXjY+OU42rh20QT4iGRQ7D0e3Nvq8KMRA5qgOkaso9Z/R4E3Va9MCxu22?=
+ =?us-ascii?Q?NZ2HEn/+HSpTzqu8juCFfkTa2dpnjeehKgAGoixt7ZE16OMoWpazJB3TKcbL?=
+ =?us-ascii?Q?lgcfSTAfrsZef9BhfMaoNxeY1qjR0+Hu7t56Hmk/3lMUvHrsWr+xSY89Uey9?=
+ =?us-ascii?Q?fqbUw8TAWXNQTf2iGU6+rHNnHEDcdkI=3D?=
+X-Exchange-RoutingPolicyChecked: rCcQcez8hMDWGNjM5uoQcXk1Dx7Un8X1Tgvwc/odmCbFLWsjb2+f1IuUq8nVkMD9/iHhR/o2naG2E35+fNwFlm1Fo0QUNbyDYljfd2LOYCoT6A23knzjEqyh9uMmyp8ujArp2kyWvWf/8T1+jg1mSwRvLGSea1pqv3leHKlPZyarG3q9NhPPvU72Ec3a/Le4ecMkzD0XBrckpp5eLjDmlxmkZRCwZwQPtA1S9CBXfeSHE2KjZ16vqvr8Zq13lx7TaYuO4WsBeWEv6LawKFQK4Pme+2C2Ol3+Ob2ft6rmKBZZIH9GOl5stvQmz9ai6xhKFhSOEcmUQO++DkuqB6cQVA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d6b49cf-dcc8-4525-6163-08dee0c6528e
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2026 10:04:18.9986 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2026 10:06:08.5772 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8829IJU6GUlUz/CdwBliXqVXQPl0NRMEWLJDknPMgZopvapEQPeJoQrJ/T+T/vUO7+mPR3u57SaeFKTDqEPGBg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7286
+X-MS-Exchange-CrossTenant-UserPrincipalName: mx9+GT9S8s7MitQbS+YrO1/xkWvwej3ciW9/gNfacJna1wmvCtena42vfziP9Mx3JkNatq5B+Z8a1mJSGkdb1Z0fT4MK9X1RCE9Nia32HOA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DSWPR11MB9581
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -133,117 +154,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---------------V19Yxev0kQ0arPay0R3ys7EB
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+On Mon, Jul 13, 2026 at 05:42:57AM -0400, Dawid Wesierski wrote:
+> The paragraph describing the rl_burst_size devarg did not mention
+> that out-of-range values are rejected, which can otherwise look like
+> a silent no-op to a reader. Add a note that such values cause the
+> driver to fail to initialize, since ice_cfg_rl_burst_size() validates
+> the value and dev_probe() bails out with -EINVAL if it is rejected.
+> 
+> Fixes: b3f2afb3b7ea ("net/ice: add scheduler rate-limiter burst size devarg")
+> 
+> Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
+> ---
+>  doc/guides/nics/ice.rst | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
+> index 5589ce934f..2f7c9e6f7c 100644
+> --- a/doc/guides/nics/ice.rst
+> +++ b/doc/guides/nics/ice.rst
+> @@ -164,6 +164,7 @@ Runtime Configuration
+>    Time-sensitive applications can lower this value to reduce Tx latency jitter
+>    at the cost of throughput by setting the ``rl_burst_size`` devargs parameter, in bytes.
+>    A value of ``0`` (the default) keeps the hardware default.
+> +  Values outside the range supported by the hardware cause the driver to fail to initialize.
 
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-On 13-07-2026 15:29, Thomas Monjalon wrote:
-> 13/07/2026 11:27, Hemant Agrawal:
->> Hi Thomas
->>                  We sent two different series for DPAA/NXP code:
->>
->>
->>    1.   net/dpaa: bug fixes for bus, net and fmlib drivershttps://patches.dpdk.org/project/dpdk/patch/20260619103901.2274740-2-hemant.agrawal@nxp.com/0
->>       *   This was originally accepted and added to next-net by Stephen
->>
->>
->>
->>    1.  DPAA bus/net/mempool/DMA driver fixes and improvementshttps://patches.dpdk.org/project/dpdk/patch/20260703124950.1895871-2-hemant.agrawal@nxp.com/
->>       *   You have recently commented on it, we need to make changes
->>
->> I am not sure how, but I now see that the first series for fixes has been dropped.  The series is marked as superseded.
-> He had sent an email on June 25 explaining you need to rebase:
-> https://mails.dpdk.org/archives/dev/2026-June/340944.html
-It was my mix-up; I did read this mail. Somehow I thought it was for my 
-new feature series, which was having merge conflict on master.
->> I have just sent v4 for the bug fix series.
->> https://patches.dpdk.org/project/dpdk/patch/20260713092616.2902828-2-hemant.agrawal@nxp.com/
->>
->> Will you please consider it for merge it again to 26.07 ?
-> I don't want to take risks with new features and improvements in rc4.
-> If I understand well, you are talking about the fixes you rebased?
-
-I am only talking about the Fixes;  (which I just sent as v4).  
-(net/dpaa: bug fixes for bus, net and fmlib drivers )
-
-The feature series can wait for next release.  (DPAA bus/net/mempool/DMA 
-driver fixes and improvements)
-
-> It's a pity you missed the request 3 weeks ago.
->
-Regards
-
-Hemant
-
---------------V19Yxev0kQ0arPay0R3ys7EB
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-<!DOCTYPE html><html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  </head>
-  <body>
-    <p><br>
-    </p>
-    <div class="moz-cite-prefix">On 13-07-2026 15:29, Thomas Monjalon
-      wrote:<br>
-    </div>
-    <blockquote type="cite" cite="mid:iSawvfAuRvCNNdxNcuk17g@monjalon.net">
-      <pre wrap="" class="moz-quote-pre">13/07/2026 11:27, Hemant Agrawal:
-</pre>
-      <blockquote type="cite">
-        <pre wrap="" class="moz-quote-pre">Hi Thomas
-                We sent two different series for DPAA/NXP code:
-
-
-  1.   net/dpaa: bug fixes for bus, net and fmlib drivers   <a class="moz-txt-link-freetext" href="https://patches.dpdk.org/project/dpdk/patch/20260619103901.2274740-2-hemant.agrawal@nxp.com/0">https://patches.dpdk.org/project/dpdk/patch/20260619103901.2274740-2-hemant.agrawal@nxp.com/0</a>
-     *   This was originally accepted and added to next-net by Stephen
-
-
-
-  1.  DPAA bus/net/mempool/DMA driver fixes and improvements   <a class="moz-txt-link-freetext" href="https://patches.dpdk.org/project/dpdk/patch/20260703124950.1895871-2-hemant.agrawal@nxp.com/">https://patches.dpdk.org/project/dpdk/patch/20260703124950.1895871-2-hemant.agrawal@nxp.com/</a>
-     *   You have recently commented on it, we need to make changes
-
-I am not sure how, but I now see that the first series for fixes has been dropped.  The series is marked as superseded.
-</pre>
-      </blockquote>
-      <pre wrap="" class="moz-quote-pre">
-He had sent an email on June 25 explaining you need to rebase:
-<a class="moz-txt-link-freetext" href="https://mails.dpdk.org/archives/dev/2026-June/340944.html">https://mails.dpdk.org/archives/dev/2026-June/340944.html</a>
-</pre>
-    </blockquote>
-    It was my mix-up; I did read this mail. Somehow I thought it was for
-    my new feature series, which was having merge conflict on master.&nbsp;
-    <blockquote type="cite" cite="mid:iSawvfAuRvCNNdxNcuk17g@monjalon.net">
-      <pre wrap="" class="moz-quote-pre">
-</pre>
-      <blockquote type="cite">
-        <pre wrap="" class="moz-quote-pre">I have just sent v4 for the bug fix series.
-<a class="moz-txt-link-freetext" href="https://patches.dpdk.org/project/dpdk/patch/20260713092616.2902828-2-hemant.agrawal@nxp.com/">https://patches.dpdk.org/project/dpdk/patch/20260713092616.2902828-2-hemant.agrawal@nxp.com/</a>
-
-Will you please consider it for merge it again to 26.07 ?
-</pre>
-      </blockquote>
-      <pre wrap="" class="moz-quote-pre">
-I don't want to take risks with new features and improvements in rc4.
-If I understand well, you are talking about the fixes you rebased?</pre>
-    </blockquote>
-    <p>I am only talking about the Fixes;&nbsp; (which I just sent as v4).&nbsp; (<span style="white-space: pre-wrap">net/dpaa: bug fixes for bus, net and fmlib drivers )</span></p>
-    <p>The feature series can wait for next release.&nbsp; (<span style="white-space: pre-wrap">DPAA bus/net/mempool/DMA driver fixes and improvements)</span></p>
-    <blockquote type="cite" cite="mid:iSawvfAuRvCNNdxNcuk17g@monjalon.net">
-      <pre wrap="" class="moz-quote-pre">
-It's a pity you missed the request 3 weeks ago.
-
-</pre>
-    </blockquote>
-    <p>Regards</p>
-    <p>Hemant</p>
-    <blockquote type="cite" cite="mid:iSawvfAuRvCNNdxNcuk17g@monjalon.net">
-      <pre wrap="" class="moz-quote-pre">
-</pre>
-    </blockquote>
-  </body>
-</html>
-
---------------V19Yxev0kQ0arPay0R3ys7EB--
+Applied to dpdk-next-net-intel.
+Thanks,
+/Bruce
