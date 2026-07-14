@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE116C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Jul 2026 09:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F42C43458
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Jul 2026 09:43:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B243540289;
-	Tue, 14 Jul 2026 11:35:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4081940289;
+	Tue, 14 Jul 2026 11:43:32 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 7EB5F4026E
- for <dev@dpdk.org>; Tue, 14 Jul 2026 11:35:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2EBBF4026E
+ for <dev@dpdk.org>; Tue, 14 Jul 2026 11:43:31 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 50A2F4B890; Tue, 14 Jul 2026 11:35:00 +0200 (CEST)
+ id 009644B890; Tue, 14 Jul 2026 11:43:30 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/core Bug 1967] [dpdk-26.07] ABI testing dpdk26.07+dpdk25.11
- meson_tests/test_fasts vdev_autotest and devargs_autotest both failed
-Date: Tue, 14 Jul 2026 09:35:00 +0000
+Subject: [DPDK/core Bug 1968] [dpdk-26.07] ABI testing dpdk26.07+dpdk25.11
+ meson_tests/power_kvm_vm_autotest: TEST FAILED
+Date: Tue, 14 Jul 2026 09:43:30 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1967-3@http.bugs.dpdk.org/>
+Message-ID: <bug-1968-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: http://bugs.dpdk.org/
@@ -55,12 +55,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1967
+http://bugs.dpdk.org/show_bug.cgi?id=3D1968
 
-            Bug ID: 1967
+            Bug ID: 1968
            Summary: [dpdk-26.07] ABI testing dpdk26.07+dpdk25.11
-                    meson_tests/test_fasts vdev_autotest and
-                    devargs_autotest both failed
+                    meson_tests/power_kvm_vm_autotest: TEST FAILED
            Product: DPDK
            Version: 26.07
           Hardware: All
@@ -108,36 +107,12 @@ rm -rf x86_64-native-linuxapp-gcc/lib
 rm -rf x86_64-native-linuxapp-gcc/drivers
 
 3, do meson test
-meson test -C x86_64-native-linuxapp-gcc --suite DPDK:fast-tests
-devargs_autotest vdev_autotest -t 24 --num-processes 20  --test-args '-l 1-=
-8 -d
-/root/shared_lib_dpdk'=20
+meson test -C x86_64-native-linuxapp-gcc power_kvm_vm_autotest -t 24
+--num-processes 20 --test-args '-l 1-8 -d /root/shared_lib_dpdk'=20
 
 Show the output from the previous commands.
 -------------------------------------------
 FAIL
-root@icx-jy-abi-d81:~/dpdk# MALLOC_PERTURB_=3D132
-LD_LIBRARY_PATH=3D/root/dpdk/x86_64-native-linuxapp-gcc/lib:/root/dpdk/x86_=
-64-native-linuxapp-gcc/drivers:/root/shared_lib_dpdk
-MESON_TEST_ITERATION=3D1 DPDK_TEST=3Dvdev_autotest
-UBSAN_OPTIONS=3Dhalt_on_error=3D1:abort_on_error=3D1:print_summary=3D1:prin=
-t_stacktrace=3D1
-MSAN_OPTIONS=3Dhalt_on_error=3D1:abort_on_error=3D1:print_summary=3D1:print=
-_stacktrace=3D1
-ASAN_OPTIONS=3Dhalt_on_error=3D1:abort_on_error=3D1:print_summary=3D1
-/root/dpdk/x86_64-native-linuxapp-gcc/app/dpdk-test --no-huge -m 2048 -d
-/root/dpdk/x86_64-native-linuxapp-gcc/drivers -l 1-8 -d /root/shared_lib_dp=
-dk
-EAL: Detected CPU lcores: 160
-EAL: Detected NUMA nodes: 2
-EAL: Detected shared linkage of DPDK
-EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-EAL: Selected IOVA mode 'VA'
-EAL: VFIO support initialized
-APP: HPET is not enabled, using TSC as default timer
-RTE>>vdev_autotest
-=3D=3D test vdev bus =3D=3D
-Segmentation fault (core dumped)
 
 
 Expected Result
@@ -147,8 +122,7 @@ Test OK
 
 Is this issue a regression: Y
 -----------------------------
-devargs_autotest bad commit: d03dbd4003 bus: support multiple probe
-vdev_autotest bad commit: 89127f66f5 bus: consolidate device lookup
+0cec08732d (3-0cec08732d-f) power: validate lcore ID in cpufreq framework
 
 
 Need fix or not? pls confirm
