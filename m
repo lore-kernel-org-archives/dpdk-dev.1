@@ -2,79 +2,104 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A66DC43458
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Jul 2026 17:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80994C44501
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Jul 2026 06:08:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8875340DD7;
-	Mon, 13 Jul 2026 19:22:46 +0200 (CEST)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 85E7D40DC9
- for <dev@dpdk.org>; Mon, 13 Jul 2026 19:22:45 +0200 (CEST)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-493f2e39e81so13268315e9.2
- for <dev@dpdk.org>; Mon, 13 Jul 2026 10:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1783963365; x=1784568165; darn=dpdk.org;
- h=content-transfer-encoding:reply-to:mime-version:message-id:date
- :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=2/5a7oiP029oXgf9ffb0/hV0017mjVjZWWKaHOB2NZ4=;
- b=ErXwHGAbm6HpFTh23BGYOjmWo6WZOkY2bat7I7al246CXjVOHoKt6dA3vU/6AOvsPw
- /2Ijsj0U2ZSdR5xxm41jsD6+0nk5EBqYiI3HBgp+icpV6EP75o9z1O/BAtocUryR7Oey
- QDqZ1Fc8bgIyqPycGudFgUqTW82vzSl7+S0poF9H2eN6lUjC7ffmy6ZbHsPuML8JxGPW
- WC97moKXJ+7kjEcCw2cgVwDfI/IhUYODnbwdS7FeLAqGsi8ghIJ07KsxlAftF9dYo/wa
- 8505zACOXibcWYpe1E3gqdnLv2BU6wGfiVyJ7/EWL2ZkV5nmDgXqXLKK86XSkND23bri
- SkpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1783963365; x=1784568165;
- h=content-transfer-encoding:reply-to:mime-version:message-id:date
- :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=2/5a7oiP029oXgf9ffb0/hV0017mjVjZWWKaHOB2NZ4=;
- b=GXp68Q/Icft38ojcX24oHRFB8KbBeIqYi800foazxqD9q6yjmrR27WQmaAMUPFQHxT
- Vdjikdpe5c2hlsNM6LFKrRSkpk+qs1x2ZQVV+x54LSAJWoD5GJdoUk+CVXiwttIjlQbs
- /rpa7ej6pFT6vBBKWdnpl6TznuUD8A2YjJbgrtQa9+JVuY0Z/Jb3/LayVCRlJEaDTn6z
- sDxeyk1Mc9NpPSQHix0xALAfizlOLt3tfZSBz9t/t5eOkn9NTjn/K69LEBHSBXRhV4YM
- eEINP+kCfIuapqDTzEg7hnpwIV4/dBKNv6DR6sUZXoAEBaD954f2tdx3PprKGcmxGJOX
- naxw==
-X-Gm-Message-State: AOJu0YzldZqvNvlRD9tMCiNmol6a55jFa4vB3U42PRLWwF4bwFrLK7mb
- Nx5czHAqLiipoA5dgvT/LqICARf9SPfVx0eMbZY2QsDu3rc5lY2XcD23zjLWHjhN
-X-Gm-Gg: AfdE7cn9su9xtmwj5S8pD7SjvijH+nJCRnXYN7iP+dFZelSzB898WYMSReH8l+eMBjq
- GJ2/v6Ef2Y+qXSxEFM6N6q6W1YBPE/5XLKCtHXmzrefLRW6sdwCXj1f3YrDdYtEjHgszqNQCmHv
- Ns8GAvsGnT2YF2D1UCpRcZvbfYiobTqBrHI0WtoZu8xC6MMuDy9ATbdKEmRdnj7tZvazm3PGorM
- kQLsKHPrUxQHMX0yH32x7W2CKo8EN0qK2AMST8iCesrn06YOYLuRa99kBtXEk7ym+JoluVhe6p2
- mNsGghZbnHx9WuExyqbqo8qDMNz4ECczdCgkayDyHgqx1nLLBqchfRhC2hfSRNqzgpyG0nk45/N
- XVeixiC5LcAvy57fMF3igu9QmeuE8DyXehRMws9Z34ynNf2xs2AbqSkli0fxRQOKz4kdbpbGb9u
- OBSeVj3ENuW7teCfJb73U2gCrbfxNd
-X-Received: by 2002:a05:600c:a016:b0:493:f442:3de9 with SMTP id
- 5b1f17b1804b1-493f883174amr101145995e9.27.1783963365052; 
- Mon, 13 Jul 2026 10:22:45 -0700 (PDT)
-Received: from localhost ([2a01:4b00:d036:ae00:3bc9:8b70:b42b:658a])
- by smtp.gmail.com with UTF8SMTPSA id
- ffacd0b85a97d-47f464c4320sm795712f8f.32.2026.07.13.10.22.44
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 13 Jul 2026 10:22:44 -0700 (PDT)
-From: luca.boccassi@gmail.com
-To: dpdk <dev@dpdk.org>
-Cc: dpdk stable <stable@dpdk.org>, Akhil Goyal <gakhil@marvell.com>,
- Ankur Dwivedi <adwivedi@marvell.com>, Anoob Joseph <anoobj@marvell.com>,
- Archana Muniganti <marchana@marvell.com>,
- Ferruh Yigit <ferruh.yigit@intel.com>,
- Jack Bond-Preston <jack.bond-preston@foss.arm.com>,
- Jerin Jacob <jerin.jacob@caviumnetworks.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Ravi Kumar <ravi1.kumar@amd.com>,
- Siraj Luthfi Ananda <sirajluthfi@gmail.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Sunil Uttarwar <sunilprakashrao.uttarwar@amd.com>,
- Tejasree Kondoj <ktejasree@marvell.com>,
- Zbigniew Bodek <zbigniew.bodek@caviumnetworks.com>
-Subject: please help backporting some patches to stable release 24.11.7
-Date: Mon, 13 Jul 2026 18:22:38 +0100
-Message-ID: <20260713172241.1709792-1-luca.boccassi@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	by mails.dpdk.org (Postfix) with ESMTP id 1C9BF4028A;
+	Tue, 14 Jul 2026 08:08:45 +0200 (CEST)
+Received: from CO1PR03CU002.outbound.protection.outlook.com
+ (mail-westus2azon11010003.outbound.protection.outlook.com [52.101.46.3])
+ by mails.dpdk.org (Postfix) with ESMTP id 15A7540289;
+ Tue, 14 Jul 2026 08:08:44 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sYSqtzZPmN7MyQ5TwIOKFNTFZqteSE6DVMYqlP21idL7iPxfKCIH4MGd+XwRa8K1q0WrjwEB6SL9VHuSLRvI5DVzy3MO7IjY3Q4pyfYbAbezwkF062UTkrmtJKCEVE7cxGSKokLrZHMVaggX6sEJrUYCoZZdmv64PUumWyagydgNLJ2uihlroGsfsg0Y80yO4CaxXogz2uEp6qVkpuTFcSOwxQmPGJqaJGNAdnFtw/lRSPijCaWlsskfkvLA/bGnqWS6LxMkc8XI6n0oXoBgdgBs4gEYEgTPjGbUVGr4rlgK234k6NymJEHaPM4sInqal0lZwHXyq4EkbODpYEEJAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mMv2gVCnXlwF+Xq41pKpNflGMlh7ihoTP5LVek7uNTI=;
+ b=JcAFeApekz5x5lCUgWiIptTiea0uM46ShrYIG9bLSYmlmNr6+QAPXjJshyhzKyJvFVFF36iRrSYVpzxp0HItXotyNv9+3sXCBW4NN7KKY4nBFvGVq1MM4hdaCw2pObboywq8U5PmZ6VUTj+DESg6+9uNUormmGRtK3Qw4wqXYKtElHeoN7SVfNtAum6srZ+ER/ycCWFe+2WiSH3u7jo9bUNWC3hn6KbeZITAZloR+ytwY3ITimqp8d7pTqTwYhGo2jBc/CyZR+59pNcg4thzvYm6/cghdh77aQV9vcCIlBQ02DkfSOXBq7izdy2E17pzPDVuldjTrafgLu3Jk/dfqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mMv2gVCnXlwF+Xq41pKpNflGMlh7ihoTP5LVek7uNTI=;
+ b=ag6VoO/p3aNQhX56n39nBvcVImsDyqllSa6UC9bCj808VEbPUBWyhDKchTQ0v3eU+MBA5NdfcuuBocQ1rMhQsxQbDLAUqWS8PDgQEzLjXXTYsn3tmc+r9G7BsFiAzitp/TwZwv2THwqfMzv+ijumbWHXlecELM0inS+Wr/15OJnH51R1/qkPo1EY3s4Ol2+i3tat/Bu9r58DjrwdHyvrskGpIGdXAR6ZYpIOr67qK42YQpGRuy42gjUXkGA5fpK6luZwecdZ2ONt2iKpLb3rd8Pi9CqLiQqMHoRpmXPQ4i8b0dPBW7moTJRPgQQAICiA3ug1fL0+ipLrvT0Ji4IvJQ==
+Received: from SJ0PR03CA0273.namprd03.prod.outlook.com (2603:10b6:a03:39e::8)
+ by SN7PR12MB7300.namprd12.prod.outlook.com (2603:10b6:806:298::7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.202.18; Tue, 14 Jul
+ 2026 06:08:36 +0000
+Received: from CO1PEPF000066E8.namprd05.prod.outlook.com
+ (2603:10b6:a03:39e:cafe::e) by SJ0PR03CA0273.outlook.office365.com
+ (2603:10b6:a03:39e::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.19 via Frontend Transport; Tue,
+ 14 Jul 2026 06:08:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1PEPF000066E8.mail.protection.outlook.com (10.167.249.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.223.9 via Frontend Transport; Tue, 14 Jul 2026 06:08:35 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 13 Jul
+ 2026 23:08:18 -0700
+Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 13 Jul
+ 2026 23:08:14 -0700
+From: Gavin Hu <gahu@nvidia.com>
+To: <dev@dpdk.org>
+CC: Wei Yan <yanwei.wy@bytedance.com>, <stable@dpdk.org>, Dariusz Sosnowski
+ <dsosnowski@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, "Bing
+ Zhao" <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Ophir Munk
+ <ophirmu@nvidia.com>, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Subject: [PATCH v2] net/mlx5: avoid wildcard drop flow in priority discovery
+Date: Tue, 14 Jul 2026 14:07:51 +0800
+Message-ID: <20260714060751.44814-1-gahu@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260713041856.67144-1-gahu@nvidia.com>
+References: <20260713041856.67144-1-gahu@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E8:EE_|SN7PR12MB7300:EE_
+X-MS-Office365-Filtering-Correlation-Id: 649a46cd-1fd1-40ef-a253-08dee16e5715
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|23010399003|82310400026|1800799024|36860700016|22082099003|18002099003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info: BhfZc5jo9xGDzDcM3izLUzNW5j6xejJylkNw/wyZqBYsqzr/+9grt4syGdwjBa+RJG4ym8caPzfF0Nfwf8V9VPief+UsYfIZ8pC/vDD2EyQeYK5Z6Ydrc5RvIomzvBnwhaNC/mqYS0tGscjLtDBpnf1X2+pmvG/oooXto13QuzPBDNUe7CBeICUH+YdumyZ9c+LCqJJkWFhAMwoJ9SJE4geGGYI7iBix9wnuIJtpKFUw7WQ2D2saRHBs5r6nd/gj+r9xfx6T7XsuLNsgKDCENaBVdpvhlTDjfzzumBvW5j0BVOOS4dKlne3ClB/HEOh4oysUxAiBRWbwVI67XTwatLSCdKxRpIRVQIW4wJ5MD06DYDdr4/jW92ER7pv4yb4065XFKWcWP0t4Q2eh01mh3IulwX5tnakLStTTS/R0zp6zz2aCnpK5vn0ZcPxeXGtQAvauR+LcAUjqy9YaNoKQAAXuhXubjr1tgf9grekMVTBjUk822LhrKIrdT7Zk841qn4z3cE190+OYQJBtwAxR+Z6dN237agZy5sxLRS2zMif31+jIpcywatIb/V4QP8oZ3iypInfeBbQoVBFzAHOitX5pe6RS7y+d3jQlO0ectHNHERdZbCtxFsjaUCQ12xFyuYbejprTU0GonVNvSi0nbUJH79Z+NTleAYAPXIcJ6BnhSbqjwquSGmlt85fVuOpmC9CpIuwJVPHGxDV33cfZFA==
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(82310400026)(1800799024)(36860700016)(22082099003)(18002099003)(56012099006)(11063799006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: /gt5rJAI7DC4zdqXZ7SW9KmGrReVy8ef7oh0/3mDoru5Lcwg4mmeSzR8rA8AZmDh6AcFV1KdKsEMnRqT1Db0L6Nx9p5R+aqDeRh+UWyxejHmdcOgkf0UkpZ/i7Wflg+tlPf0fNvqQvh495ZWTkSpORYKRykuqtAGXZalmB8d3ekzWkoYcG2NZOGG+RZrLmLFZ8KFWUkBUHECY/gFERVGFzNZ+HFwlrU2ny5bmn2fJtwJ1Ms8Itm+c7C4ZgTg9hExeKNCTVVWZxng0T5HDk01rYF2m1Xs8HsP9CZM5wXaO9A8937La0JqlGf2N0rATTg99c1EQyMloPasGp1oaSzlEtwtiXZwbl+NkLmx9tPnyvV+Me9jAjal1TjHF9R4e0TXgoLH+SsAdR0mst5k8fTjRmIRTUQgHqUvCofKyNReDFG7wNTudHRKUzDHccpRXuug
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2026 06:08:35.5890 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 649a46cd-1fd1-40ef-a253-08dee16e5715
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000066E8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7300
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,53 +111,88 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: dpdk stable <stable@dpdk.org>
 Errors-To: dev-bounces@dpdk.org
 
-Hi commit authors (and maintainers),
+From: Wei Yan <yanwei.wy@bytedance.com>
 
-Despite being selected by the DPDK maintenance tool ./devtools/git-log-fixes.sh
-I didn't apply following commits from DPDK main to 24.11
-stable branch, as conflicts or build errors occur.
+Priority discovery installs temporary drop flows to probe supported flow
+priorities. These flows match a wildcard Ethernet pattern, so they can
+also match real traffic while discovery is running. On shared devices this
+may temporarily drop kernel traffic and cause TCP connection timeouts.
 
-Can authors check your patches in the following list and either:
-    - Backport your patches to the 24.11 branch, or
-    - Indicate that the patch should not be backported
+Constrain the probe flows to match both source and destination MAC
+addresses as ff:ff:ff:ff:ff:ff. This keeps the rule valid for discovery
+while avoiding matches on normal Ethernet traffic.
 
-Please do either of the above by 2026/07/20.
+Fixes: 3eca5f8a610e ("net/mlx5: move flow priority discovery to Verbs file")
+Fixes: c5042f93a425 ("net/mlx5: discover max flow priority using DevX")
+Cc: stable@dpdk.org
 
-You can find the a temporary work-in-progress branch of the coming 24.11.7
-release at:
-    https://github.com/bluca/dpdk-stable
-It is recommended to backport on top of that to minimize further conflicts or
-misunderstandings.
-
-Some notes on stable backports:
-
-A backport should contain a reference to the DPDK main branch commit
-in it's commit message in the following fashion:
-    [ upstream commit <commit's dpdk main branch SHA-1 checksum> ]
-
-For example:
-    https://git.dpdk.org/dpdk-stable/commit/?h=18.11&id=d90e6ae6f936ecdc2fd3811ff9f26aec7f3c06eb
-
-When sending the backported patch, please indicate the target branch in the
-subject line, as we have multiple branches, for example:
-    [PATCH 24.11] foo/bar: fix baz
-
-With git format-patch, this can be achieved by appending the parameter:
-    --subject-prefix='PATCH 24.11'
-
-Send the backported patch to "stable@dpdk.org" but not "dev@dpdk.org".
-
-FYI, branch 24.11 is located at tree:
-   https://git.dpdk.org/dpdk-stable
-
-Thanks.
-
-Luca Boccassi
-
+Signed-off-by: Wei Yan <yanwei.wy@bytedance.com>
+Signed-off-by: Gavin Hu <gahu@nvidia.com>
 ---
-d84f4082f8  Stephen Hemminger crypto/armv8: use timing-safe digest comparison
-752589fb45  Stephen Hemminger crypto/ccp: use timing-safe digest comparison
-f72517b8e7  Stephen Hemminger crypto/cnxk: use timing-safe digest comparison
++v2:
++* Fixed the compiling issue by some compilers in mlx5_flow_verbs.c.
+
+ drivers/net/mlx5/mlx5_flow_dv.c    | 18 ++++++++++++++++++
+ drivers/net/mlx5/mlx5_flow_verbs.c |  8 ++++++++
+ 2 files changed, 26 insertions(+)
+
+diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
+index 58ebcf87eb..9cb7c59b83 100644
+--- a/drivers/net/mlx5/mlx5_flow_dv.c
++++ b/drivers/net/mlx5/mlx5_flow_dv.c
+@@ -19794,6 +19794,22 @@ mlx5_flow_discover_dr_action_support(struct rte_eth_dev *dev)
+ 	void *matcher = NULL;
+ 	void *flow = NULL;
+ 	int ret = -1;
++	struct rte_flow_item_eth eth;
++	struct rte_flow_item item = {
++		.type = RTE_FLOW_ITEM_TYPE_ETH,
++		.spec = &eth,
++		.mask = &eth,
++	};
++
++	memset(&eth, 0, sizeof(eth));
++	memset(&eth.hdr.dst_addr, 0xff, sizeof(eth.hdr.dst_addr));
++	memset(&eth.hdr.src_addr, 0xff, sizeof(eth.hdr.src_addr));
++	flow_dv_translate_item_eth(mask.buf, &item,
++				   /* inner */ false, /* group */ 0,
++				   MLX5_SET_MATCHER_SW_M);
++	flow_dv_translate_item_eth(value.buf, &item,
++				   /* inner */ false, /* group */ 0,
++				   MLX5_SET_MATCHER_SW_V);
+ 
+ 	tbl = mlx5_flow_dv_tbl_resource_get(dev, 0, 0, 0, false, NULL,
+ 					    0, 0, 0, NULL);
+@@ -20683,6 +20699,8 @@ flow_dv_discover_priorities(struct rte_eth_dev *dev,
+ 	flow.dv.actions[0] = action;
+ 	flow.dv.actions_n = 1;
+ 	memset(&eth, 0, sizeof(eth));
++	memset(&eth.hdr.dst_addr, 0xff, sizeof(eth.hdr.dst_addr));
++	memset(&eth.hdr.src_addr, 0xff, sizeof(eth.hdr.src_addr));
+ 	flow_dv_translate_item_eth(matcher.mask.buf, &item,
+ 				   /* inner */ false, /* group */ 0,
+ 				   MLX5_SET_MATCHER_SW_M);
+diff --git a/drivers/net/mlx5/mlx5_flow_verbs.c b/drivers/net/mlx5/mlx5_flow_verbs.c
+index bb240d38d9..eb576f73d4 100644
+--- a/drivers/net/mlx5/mlx5_flow_verbs.c
++++ b/drivers/net/mlx5/mlx5_flow_verbs.c
+@@ -65,6 +65,14 @@ flow_verbs_discover_priorities(struct rte_eth_dev *dev,
+ 		.eth = {
+ 			.type = IBV_FLOW_SPEC_ETH,
+ 			.size = sizeof(struct ibv_flow_spec_eth),
++			.val = {
++				.dst_mac = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
++				.src_mac = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
++			},
++			.mask = {
++				.dst_mac = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
++				.src_mac = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
++			},
+ 		},
+ 		.drop = {
+ 			.size = sizeof(struct ibv_flow_spec_action_drop),
+-- 
+2.27.0
+
