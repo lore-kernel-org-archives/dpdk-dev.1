@@ -2,76 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A05C43458
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Jul 2026 10:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC83C43458
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Jul 2026 10:27:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7102540289;
-	Tue, 14 Jul 2026 12:21:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DA5DA406A2;
+	Tue, 14 Jul 2026 12:27:10 +0200 (CEST)
 Received: from fout-b6-smtp.messagingengine.com
  (fout-b6-smtp.messagingengine.com [202.12.124.149])
- by mails.dpdk.org (Postfix) with ESMTP id 949194026E
- for <dev@dpdk.org>; Tue, 14 Jul 2026 12:21:39 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id 7FE9B1D00176;
- Tue, 14 Jul 2026 06:21:38 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Tue, 14 Jul 2026 06:21:38 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id CEC0F4026E
+ for <dev@dpdk.org>; Tue, 14 Jul 2026 12:27:09 +0200 (CEST)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfout.stl.internal (Postfix) with ESMTP id 0B57C1D000D3;
+ Tue, 14 Jul 2026 06:27:08 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-11.internal (MEProxy); Tue, 14 Jul 2026 06:27:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784024498;
- x=1784110898; bh=B0dWs1Be2HmwRiiF1ULcqpsVpR8nc80uuC67WaRn1MU=; b=
- kOE+ekuzWMllYd1XfDc/INSd1XOfOSiuE0L9rn3p9+Zhtp5d6isimwgmc4GXxTOL
- wstgJ0wVT8hyq/Ep/c59h81jnBMfI7NRGNgnBJSxjHvwx+7d2td6ZAUEWWSA6ELI
- CiV7nJQCFDiAMn6OGs86J6lipYBGP0Oo+n23ZOULKfvMGDm6Bt8GFavaTklSDQVi
- IoWbDeghGqWEckY84bJTElFGlvdeZV/nzWjSvnTR+kx54iXWFfzYgsG8RM+JjMg9
- Arh2rAHkKwmkAlVrwWvE0//u1iGU+qjZJn19p1syVLlDuqSM23+vM2STNI3waOJT
- BN8QAw8rLwIxXx1xwvTK5g==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784024827;
+ x=1784111227; bh=n/f6+TbnYQ9ZG8S8C95pRpg6+l9/gjoSCUYPtQMF2cE=; b=
+ MqxwBKsy+bmgQKz5WCLKUQpz6K10K30rmN57KJDQeWnoa89/4KQOOhd+qfcEYPhv
+ OMV2wE83NWks8XdahnV6S8prjSSvx6xY94eS3f6raDYJrPBkMXTiWX7425kBOBvG
+ Fakb6qORa2KD828dD2sw5t23hYGiwDI+eFz3eBk3zz7/ez3fRnZB6VjfipUuNcn5
+ a2BDrnq5G+63gN/lwksdOyHzUABx565FxfWMf7ZgQByZAAUY89xp4AdzNXdKFQt+
+ 8l9NYVcS+zqb9BxmqlcbwZFHH9x76YpvFSiskzBMFfg6PDZPvGZkfB/7SbTu7Sb5
+ 78dk8aH5X3gEMywPclgXGw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784024498; x=
- 1784110898; bh=B0dWs1Be2HmwRiiF1ULcqpsVpR8nc80uuC67WaRn1MU=; b=F
- IT+EPjky5qw7cZSr5oxxASMBujWAIYNwtb2F5THXEXVMiS2ishrDuEfQIUu7TnH8
- OhgoRRKUOTKThw+ZpoSzPlrSRlAPXbN7gD3c4M8BUB0H0PS0lsCNEyOVLLSVrG3s
- HD5Nt9/XZwY8jFXw19WWDzxXWZnuLlYilUJN5nBcv3M/V5kNQ4Qk2sWmKS0X2oRl
- Db9dokPxns2yviWfecSmmVTtgxH9GESvFnuOenL7dCYyBBbaF1BJo9hrd2nj7CIB
- hykA6wzkLSClUM0dpiGBUJ6nypKDPnIb82A2ss3r61NIpUEm6AQgkDLgy58ZMTSW
- TtC5/iscM/vekQ0Jt8BTA==
-X-ME-Sender: <xms:sQ1WalpSRnl5xepyk9muJ--eThiCrR0EiIPJv0QnUwQ9_eafYVOGwg>
- <xme:sQ1War_XfWWmFNaG-If567VYz-IwovLYTlnndSg08NCMxLogmslKZwTrrbgaJ9qMh
- OQjyzM0sXcoIP-fo5pane1aMe0CphvjjFN7yIY2ZNk2h02uN36P6ew>
-X-ME-Received: <xmr:sQ1WahUpE6hnFvLmRsQnRO12PPdKHy2nRPbS1kNc8wvLqbX8gaqi6OW5S5oIIT2erbD3hWX6JtEAFCevaA>
-X-ME-Proxy-Cause: dmFkZTGjGge60XM0NJYrFbrABUERrlnypDE5ANmXECbtweOv83CGdE103llPRg2FfESfAT
- 8nY6CV0fJ8+hmHfBkqVMvWuynvM3wscARjCcS0O5VnuPzz2NuvpjFsNzn6bQslaNmMfB/m
- KZqazPbRrwM+HHe2jJM6ynNqyAxZVS/qhhmOdSx5U0eSppgPxjEF4/Co4twlCcBopsdjTJ
- V1966q+eIG15pfEf2nOfwl9PhBXzAHrvtZeTsaa2T7PfSK44AgZXoX8xNGjvwwrHWdbs4K
- eoqiRVYeR1/9vR0QfDM2ol0yY5rs6dwpmoE4tzV625ZzSi53hm7lYOq28yxDt2WriDiSbx
- gp9SxuYyTof0kzcfDlpQhvVkZmUZ93FfD4ccTre3ICVc+u8Ogtv4s0vlNkY8zrdel79Bwh
- ch+SnlG37UunAh/jxfN7fKrqxghDUgIhtR1GITnvslIZfOSdTBAdTp00MN0OqlS5Kf3G+C
- Z8rSEcUdD6CF3xeAElgS5Dx/L13QNMA6aqxMbxM8xjYDZLXc7Fkicjr3DAKt/Q2aS/6g98
- MYdMfyY6aouwmO0H8wZXIxUVf6UWD9PmSZxIDqFpqi+kb5jXqUw9G9pTjpHTLDjEhoBxbo
- hUzg+QTb+9GRS0pndNUUUOqbMGgXDBUxbTdzHx+oOJj9TfejMesu4GS7sCLA
-X-ME-Proxy: <xmx:sQ1WapBTP45YX49F2fBpB0pK3KzzrsrXH_MbpjI5NnogO7U6X7phig>
- <xmx:sQ1Waqz8R5PPCRHW5JBHeumFszElez6Ac2q0e8zq2dlG7QM0fGNDCA>
- <xmx:sQ1WauCgA2LomxCkx-l70sE49AwT1iu9PpBxG3aZZZCbJ64exclKzg>
- <xmx:sQ1WavY69vbsVpq9lKraeA4eQU2FZhJ8Y8ofTPFuuYB5lJxItzsfcg>
- <xmx:sg1WanB82EGRT0adIT-4jmC-4uJ_O2XbEzbdeHWx3C-eR-fX0uaGENtK>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784024827; x=
+ 1784111227; bh=n/f6+TbnYQ9ZG8S8C95pRpg6+l9/gjoSCUYPtQMF2cE=; b=T
+ EaW40EkS4e04P+O3DcDOdHpTmStWsiT3YakxoStjU/ybaJY2Piy44y1ZCp2GyA4f
+ GhKa5XINmaVLXAugrSTSgKegYQ/rPAGlyMgcRT2nPMpx0rbdJAURRb4lJuSTRnij
+ Gq/IsgkvlpCmu6IuoHm5TWKFTfrENbwOS2ufZ9dothDizh2ur5CGfPnSjB9a2ENi
+ 2R1HTrJTRcVt+5Az5b68GRdwTZ95JcXkIENjDyZUjAJPkW8G64EnKc4EPo1z0xJd
+ OqABuabSDzEhkfXZD2K8GDp5LfqyJMhJT4ZCYzXTH/AmwknZKD7+fZeNikztY0i/
+ aSuvsTjMzDandI7YgyCig==
+X-ME-Sender: <xms:-w5WaoCwxzRT3JhP0wCzKNQk8-h6VrsDQRC7fRX-2rKg3tjdA8Fa6Q>
+ <xme:-w5WasBQOh29Z8uhwaw72ky4aZGkq8JO5GC2wyaFtnDI4gpQvSXHFh-4lRphP5UEG
+ pYvwn9REBdIJX3V9CzZGIQgDFsmO3eRo0n8PsmT097ipCHTpGZsGg>
+X-ME-Received: <xmr:-w5WarqedvyjSykDA3-qWpqapUCViS3egJOzTcyw51t2I3ppLGrUyZdHAiC54mRBbDwQI3tp2Cly62J_bg>
+X-ME-Proxy-Cause: dmFkZTFOJ7+u6ZA2PoFEWr6HVPtJCuBfdi6fYIX+5Ma/OlPBn3xS2rJekzCUZJxxXFPntF
+ JdsiqEacE97S/zyrXolvNC5ek4K9ytDoI/QzT06J9/psKZvUiofz2kZ37jGVQNnvzNTTfc
+ 0zU952eRyaMOZzUPJf5PAGMOI7Pzpdz4qT2z+ztKImIdrib8JGz1B4wY1JPCFSKSo2BJXU
+ uCnkcUHeqLcD71/8/ReQ80CeQ2JttQItXVn5RFWYOFIOTUq38ReYJTx0S7WGovKJk1ZJz0
+ CGeZZq2vuCe5RAVQZuYpNOVwbL5IQASnl46za4uYAkyl7SlXKRWG4nB+Cggei0dnyYY8L9
+ lnIQ9pqwhJ8ZLGFUqRCzo5xLmVMLSw/uO/4PNtHvvJXoSfU0szzi7G/lXTLFYjzTXfsWYY
+ PvvzGYwgrYmJhPoe6LgRjUfLcvff9/bgCAej1qqJM+J++e6JLSe9sKQ04AUYll1PamcGmC
+ u8oterktsWP8HwW7q6SEP2yWKf+ejQa+AHFHEnKuPRHjNhGMOf2GXidRVvOm72lt8SOEa7
+ 8M0foS9P28ofh+02hyTwkeviiOGtk4HsxSlxLhTbqvmNM6Hde9pM051Xu81QhG5QwSZ5fB
+ s8G6g70pNKM10Gbkb8NksV7xVCPNXW/6xl1l+OmgUX69u7RxWyqcAUpB2pdg
+X-ME-Proxy: <xmx:-w5WaukKkbRmaNycZ8UgA7DS1E3BflrVQQjcSmB5xHqqDuhZfr3MOg>
+ <xmx:-w5WajxDlKRC36U_ioGpHHp3yFOLLiWkyThDin6-8InYbuK-wSn42Q>
+ <xmx:-w5Wau_JSUI2OfBNB0T_EKH7e09sddAQkc6MVpPle0H69njYW_gIuw>
+ <xmx:-w5WanIP7zdp6c5lZF14erjx2eYxyXIod5ZZcZ_dU7BJH9wJZ3hI6Q>
+ <xmx:-w5WarfAwma8aQGRPs8yArkyAQwql4Tl8HoPdbrKMEHq34mDcGcH74pK>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Jul 2026 06:21:36 -0400 (EDT)
+ 14 Jul 2026 06:27:06 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Hemant Agrawal <hemant.agrawal@nxp.com>
-Cc: stephen@networkplumber.org, dev@dpdk.org
-Subject: Re: [PATCH v5 00/18] net/dpaa: bug fixes for bus,
- net and fmlib drivers
-Date: Tue, 14 Jul 2026 12:21:34 +0200
-Message-ID: <BuZHjYthSkqL9MviBfI9Xg@monjalon.net>
-In-Reply-To: <20260713101747.2947405-1-hemant.agrawal@nxp.com>
-References: <20260713092616.2902828-1-hemant.agrawal@nxp.com>
- <20260713101747.2947405-1-hemant.agrawal@nxp.com>
+To: Matthew Gee <mgee@iol.unh.edu>
+Cc: dev@dpdk.org, stephen@networkplumber.org, aconole@redhat.com,
+ lylavoie@iol.unh.edu
+Subject: Re: [PATCH v1] tools: ai review fix uninitialized variable
+Date: Tue, 14 Jul 2026 12:27:03 +0200
+Message-ID: <6z6dN0KTTkOJTlOdKYUIKg@monjalon.net>
+In-Reply-To: <20260713161128.2338643-1-mgee@iol.unh.edu>
+References: <20260713161128.2338643-1-mgee@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,43 +87,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-13/07/2026 12:17, Hemant Agrawal:
-> Gagandeep Singh (3):
->   bus/dpaa: fix device probe issue
->   net/dpaa: fix invalid check on interrupt unregister
->   net/dpaa: fix device remove
+13/07/2026 18:11, Matthew Gee:
+> There was a previously introduced bug where the curr_state variable in
+> the classify_review function would be potentially uninitialized. This
+> would cause the script to crash when the variable was used during the
+> analysis of the AI review text.
 > 
-> Hemant Agrawal (11):
->   bus/dpaa: fix error handling of qman_create_fq
->   bus/dpaa: fix fqid endianness
->   bus/dpaa: fix error handling in qman_query
->   net/dpaa: fix modify cgr to use index
->   bus/dpaa: fix fd leak for ccsr mmap
->   net/dpaa: fix xstat name for tx undersized counter
->   net/dpaa: fix xstat string typos in BMI stats table
->   net/dpaa: remove duplicate ptype entries
->   net/dpaa: fix wrong buffer in xstats get by id
->   net/dpaa: fix null l3_len check in checksum offload
->   net/dpaa: fix mbuf leak in SG fd creation
+> This patch fixes the bug by initializing the variable before it is used
+> during the parsing of the AI review text.
 > 
-> Jun Yang (1):
->   bus/dpaa: fix BMI RX stats register offset
+> Fixes: 18b85df67daa ("devtools: fix AI review result classification")
 > 
-> Prashant Gupta (1):
->   net/dpaa/fmlib: add null check in scheme delete
-> 
-> Vanshika Shukla (2):
->   net/dpaa: fix port_handle leak in fm_prev_cleanup
->   dma/dpaa: fix out-of-bounds access in SG descriptor enqueue
+> Signed-off-by: Matthew Gee <mgee@iol.unh.edu>
 
-We don't care the cause of a bug in the subject of the fix.
-The most important is to reflect clearly the consequence,
-the scope of the impact in words easy to quickly read.
-Also, acronyms should be uppercased.
+Applied, thanks.
 
-Applied with better titles.
-
-Note there are still issues detected by AI but it is late
-and merging in this release was explicitly requested.
 
 
