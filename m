@@ -2,75 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE70EC44507
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C92C44507
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:30:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1344540A7F;
-	Fri, 17 Jul 2026 11:23:03 +0200 (CEST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com
- [209.85.167.44]) by mails.dpdk.org (Postfix) with ESMTP id 7B8F240684
- for <dev@dpdk.org>; Fri, 17 Jul 2026 11:23:02 +0200 (CEST)
-Received: by mail-lf1-f44.google.com with SMTP id
- 2adb3069b0e04-5aec6360133so6063973e87.1
- for <dev@dpdk.org>; Fri, 17 Jul 2026 02:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1784280182; x=1784884982; darn=dpdk.org;
- h=in-reply-to:content-disposition:content-type:mime-version
- :references:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=f+GRN9CN5SczJAoqL/hPa5Kyx1E/0LZHIAl0zAyx6Wc=;
- b=YN6RHY8pS+/ti4pbYmkIuyax0t1tXbz/egWhxlvGgK/NVreud54AkihDEa4sRjkrvx
- FgDEDA8QqRHeoyhE8vyMLBEZSrKl3HmPOSKNzpa/NqzfKLkMfnt2KeyxNj68zdxqxTx5
- ifWySYniBsuyRjUy+mGDxv8430dilwhLTmgJYn6m2QH3eVhUdohcgWZEUyBIA/tSw3tJ
- cyfL6K/serhMzGyDPAnhUGBkHxyqiBLTkwf6IgvuNpmVqsAZWtpJ5apQM8ubFRp/5BEy
- JBaHI1roeSgLb/Ja7xk0Q+40vh6A098Okt71NDZ7KVTVbPVk+WpCRtAyuCtYgA4awwfN
- junQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784280182; x=1784884982;
- h=in-reply-to:content-disposition:content-type:mime-version
- :references:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=f+GRN9CN5SczJAoqL/hPa5Kyx1E/0LZHIAl0zAyx6Wc=;
- b=c+ZTRRVMqbVINnVXkKEY79zQGi5bTkX9yLjcOHlf4lNLnQhNIV88Vlnpbw2Tb5et5+
- z0y/CP3KtQ3fuAHk6RKDGwy+rrowTj614AcrEJb9sfS2Jg4KU5v7rAatMzPokQAWn2nK
- hsxBz6ISEzArjzApmMFS4btxeSEUs8DcZntyV/iH+DPkk1ZRHoe2+Uji7Ne3+ReTR+t6
- tPOYI4C13af9YRuM3FO13tx5l0PFAn+eGIrcyi2us0iQELj7eYBK+mRysh24AxJNlOYG
- Gq+Ybu/DAx4PBghtbWxwdO89Kk4mBhRbbzI8xFWR+c0YElMnYRr97H3/eVocWtBcK9p3
- Rcnw==
-X-Forwarded-Encrypted: i=1;
- AHgh+RrPva3fYXItbA5ld+D/S+rM8rl431HgssouBgldymGHpUG4cK6A7L9JnSRU7VLt/fB4vUg=@dpdk.org
-X-Gm-Message-State: AOJu0YyJTEXLdmqYiIMP7j9qiW12enejYkM2fN4uqqR168wEWJ6vMvT4
- aknlrj/99dJOmkEMWobIIO5JlzTrGvxHzB1Wz83wbK/p4edXBSV6IMeM
-X-Gm-Gg: AfdE7clpgsVJtCnFz1OWVVbHj8wzQvB22dPZGCW7yP++Uk949EG1jmm2f5aYIf4/Bln
- fO/J8JlK3OJZfYjBVRGge8ZjyUbGqXDyWzfJXyfNpxE15CnUtPbs9557Zpel6TlokiaiNtPTNyL
- IKOoPe9DZsvsPBdWkpe7OGwXvrPEbmKdGPDHCxyFCs+sTBuJRlA/My2IfiKwr+xu6Q1Eh79qiCK
- zdU8tTQ65iriE0lt3iv08ePNWutVUaCx4khvi9if+8XStEyF3QEw3wjK7oBA0Y874fhjj25GWfw
- FhqFmuftyq8pj0l0DltNir+2QvE9iuiPr6ceI06G3JZ6BOBnRmCREnY9c9x+yoQJHtMWMNTVnVA
- JRnCLIHkFslWwi4EARudewHU5E8W5KJDF40q0VcnBdPJ9aJZHKOqPbTqYbW7V+827vLBwBhGXRc
- Rf0uGA/dl9Gx7cwPWsN8ivRKrtvPtnR6srbRhEimzpCGUXvXUFqq9aFA==
-X-Received: by 2002:ac2:59c6:0:b0:5b0:1bef:2e9a with SMTP id
- 2adb3069b0e04-5b28f9abf0cmr284448e87.33.1784280181498; 
- Fri, 17 Jul 2026 02:23:01 -0700 (PDT)
-Received: from home-server ([31.204.104.167]) by smtp.gmail.com with ESMTPSA id
- 2adb3069b0e04-5b291e25290sm197718e87.73.2026.07.17.02.23.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 17 Jul 2026 02:23:01 -0700 (PDT)
-Date: Fri, 17 Jul 2026 12:22:59 +0300
-From: Alexey Simakov <bigalex934@gmail.com>
-To: "Hyong Youb Kim (hyonkim)" <hyonkim@cisco.com>
-Cc: "John Daley (johndale)" <johndale@cisco.com>,
- Neil Horman <nhorman@tuxdriver.com>, Sujith Sankar <ssujith@cisco.com>,
- David Marchand <david.marchand@redhat.com>,
- "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: Re: [PATCH v2] net/enic: check notify set return value during init
-Message-ID: <20260717092259.vfwlgwahsquw3z2x@home-server>
-References: <20260715103105.39417-1-bigalex934@gmail.com>
- <IA3PR11MB8987D9D134E71F46596649AEBFC72@IA3PR11MB8987.namprd11.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B577D40A7F;
+	Fri, 17 Jul 2026 11:30:15 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8EEAB40684
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 11:30:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1784280614;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=qBmPT6wwOFH49eFyxmA3wxpV/vD4ro0a8PGrZfMs9yA=;
+ b=cy53TEQ8W3cBEh7ANNSDRCYcrJ3OWt5YhP0Lw9L7iN/f8R30WdOTYmMwF3tVvUNyxLejK4
+ iGFav4oIUOEBlENrpkM8eOzVMoem4enjIdW1JgXBeKkIxF3N43+XGRvCbCn7P1i92PwJJy
+ r2UcC1MQXkU3Z4bv6K4+nyqzYMYPwmU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-631-zRNa3q8COfiEn74RZveG7g-1; Fri,
+ 17 Jul 2026 05:30:12 -0400
+X-MC-Unique: zRNa3q8COfiEn74RZveG7g-1
+X-Mimecast-MFC-AGG-ID: zRNa3q8COfiEn74RZveG7g_1784280612
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id E6FAF1955DCC
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 09:30:11 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.48.202])
+ by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 2FCDBD72 for <dev@dpdk.org>; Fri, 17 Jul 2026 09:30:10 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Subject: [PATCH 00/10] Limit usage of internal API in tests
+Date: Fri, 17 Jul 2026 11:29:55 +0200
+Message-ID: <20260717093006.229370-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <IA3PR11MB8987D9D134E71F46596649AEBFC72@IA3PR11MB8987.namprd11.prod.outlook.com>
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: oNfNePAR5Wr4GD0bDS7dWhl5js_8sof-pZo6HNyQ0xg_1784280612
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,34 +63,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Sure, also dpdk ai review higlightet potential problems in memory
-management
+This series is aimed at 26.11.
 
-For example:
+We had a few bug reports related to internal (and experimental) symbols
+issues during 26.07 development.
+See for example https://bugs.dpdk.org/show_bug.cgi?id=1957 or more
+recently https://bugs.dpdk.org/show_bug.cgi?id=1967.
 
-enic->cq = rte_zmalloc("enic_vnic_cq", sizeof(struct vnic_cq) *
-			       enic->conf_cq_count, 8);
-enic->intr = rte_zmalloc("enic_vnic_intr", sizeof(struct vnic_intr) *
-			enic->conf_intr_count, 8);
-enic->rq = rte_zmalloc("enic_vnic_rq", sizeof(struct vnic_rq) *
-			enic->conf_rq_count, 8);
-enic->wq = rte_zmalloc("enic_vnic_wq", sizeof(struct vnic_wq) *
-			enic->conf_wq_count, 8);
+To catch such issues earlier in the CI, this series proposes to run
+the unit tests through meson with the ABI reference unit test binary
+against the current ABI libraries and drivers.
 
-if (enic->conf_cq_count > 0 && enic->cq == NULL) {
-	dev_err(enic, "failed to allocate vnic_cq, aborting.\n");
-	return -1;
-}
-if (enic->conf_intr_count > 0 && enic->intr == NULL) {
-	dev_err(enic, "failed to allocate vnic_intr, aborting.\n");
-	return -1;
-}
+For this to work, some unit tests must be skipped (since meson may
+invoke the ABI reference code with tests that were unknown at the time).
 
-Lets imagine that enic->cq is allocated successfully, after that
-when we trying to allocate enic->intr we are failing, so in this
-case we leaking in second if statement, this related to all error
-handling paths in driver, since as far as I understand resource
-free happening only in enic_dev_deinit(...) function.
+A few unit tests were directly dereferencing internal structures and are
+reworked so they use public APIs.
 
-So my question is it problem? If yes, should I address this issue
-in scope of my patch or better to make it in another?
+Additionally, unit tests were allowed to use any internal API which has
+hidden a few issues (like a public API backed by internal symbols in the
+hash library).
+So disable the global ALLLOW_INTERNAL_API and move it to code explicitly
+requiring internal API, with the hope it will push us to have better API.
+
+The last patch contains a hack for now, where the cached ABI reference
+is force regenerated with a branch of mine where I backported the
+fixes of this series.
+
+
+-- 
+David Marchand
+
+David Marchand (10):
+  bbdev: fix stats aggregation from queues
+  bbdev: add per-queue statistics API
+  hash: fix GFNI stubs export
+  test: uninline helper for forking
+  test/bonding: get MAC address with public API
+  test/devargs: check driver presence with public API
+  test/vdev: find device with public API
+  test: limit internal API usage
+  ci: make ABI reference generation faster
+  ci: run reference unit tests against ABI
+
+ .ci/linux-build.sh                     |  35 +++-
+ .github/workflows/build.yml            |  15 +-
+ MAINTAINERS                            |   1 +
+ app/test-bbdev/test_bbdev_perf.c       |  38 +---
+ app/test/meson.build                   |   7 +-
+ app/test/process.c                     | 231 +++++++++++++++++++++++++
+ app/test/process.h                     | 228 +-----------------------
+ app/test/test_devargs.c                |  12 +-
+ app/test/test_external_mem.c           |   2 +
+ app/test/test_link_bonding.c           |  35 ++--
+ app/test/test_malloc.c                 |   2 +
+ app/test/test_mempool.c                |   2 +
+ app/test/test_pdump.c                  |   3 +
+ app/test/test_pdump.h                  |   3 +
+ app/test/test_vdev.c                   |  85 ++-------
+ app/test/virtual_pmd.c                 |   2 +
+ devtools/test-meson-builds.sh          |   5 +-
+ doc/guides/rel_notes/release_26_07.rst |   5 +
+ lib/bbdev/rte_bbdev.c                  |  26 ++-
+ lib/bbdev/rte_bbdev.h                  |  20 +++
+ lib/hash/rte_thash_gfni.c              |   4 +-
+ lib/hash/rte_thash_gfni.h              |   2 -
+ 22 files changed, 405 insertions(+), 358 deletions(-)
+ create mode 100644 app/test/process.c
+
+-- 
+2.54.0
+
