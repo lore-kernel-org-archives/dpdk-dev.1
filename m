@@ -2,76 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBB9C4451C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 13:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A0FC44520
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 13:39:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4178640A6C;
-	Fri, 17 Jul 2026 15:36:32 +0200 (CEST)
-Received: from fout-a3-smtp.messagingengine.com
- (fout-a3-smtp.messagingengine.com [103.168.172.146])
- by mails.dpdk.org (Postfix) with ESMTP id D9BB4406B4
- for <dev@dpdk.org>; Fri, 17 Jul 2026 15:36:30 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.phl.internal (Postfix) with ESMTP id 4E290EC0169;
- Fri, 17 Jul 2026 09:36:30 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 62ED840A6C;
+	Fri, 17 Jul 2026 15:39:11 +0200 (CEST)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 685DA406B4
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 15:39:10 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id E578514000F5;
+ Fri, 17 Jul 2026 09:39:09 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Fri, 17 Jul 2026 09:36:30 -0400
+ by phl-compute-02.internal (MEProxy); Fri, 17 Jul 2026 09:39:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784295390;
- x=1784381790; bh=1tMb0eKUdRyNUGfqgwrJ3qNHkXEW3N2+HkHoOYgbKLU=; b=
- OV1h/E6aZkC814Sv4ktWEfuNQgTe+x/neMo3lrBGDb6aFHmInCNYa3ErFizNXnFJ
- NMXxx2BUJo8kBgzF6IBAk2nzyDkvNf3azf/HhILQuV8332mJ63Qh66L934saa6dt
- TC4HUgp6K+tTKPIFE/WLXMlp81ISXPpcBT/02+zlPviVmxEz3Pc1ggboDLF8PaNx
- 1gtomNfaOHqyyUwHTIioM0m5D1akpIpWW0r/WCCfG7nCGwdvrUk9TL8O3UdrzVnT
- vXJXaqVlu+nmFcqk+C62a1bWD9e4Y4q/z5KSnIIwhXQmM7UBAAVGfpVJN6IGHkfm
- GopiBp3X62px0PfG1xdbxA==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784295549;
+ x=1784381949; bh=JMcf+GE4AZxMu4kNuchSoFw/124+mu+dxfMRX2t7QL8=; b=
+ KkAPAYYy2MJbGDpAKFdLDj8NP+fxRS6pj8b/05Sh85XlTFIe/xfe4JyDolyOFIz3
+ NJMJfCRvdg3BlIBxfm2CctR9MmoyXNA7pChHCHN1UDVJeWO60yVxJGjA3RInGi6j
+ W6F5a2qDCOSyCOz9/8diKKJk7RSZGw68nmtKdjr3YcN3svMJJ7G4uB8Cim+GZA8s
+ Do+x/ho3h1SfmfFCRN8BR+EJVmU7as83zImC6mAc55ndoXru8m9UqIeLnVK5Q+Bf
+ Blj6Vd4/l7DbJQekEtJoyfM4qg57728o5f3XNfaLtrLbgmLQoCLQyj43HbfaiBqa
+ RjTOngeWbyEXxZMDJqEvQQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784295390; x=
- 1784381790; bh=1tMb0eKUdRyNUGfqgwrJ3qNHkXEW3N2+HkHoOYgbKLU=; b=M
- u/yGX/tW2a2TJFFkCNvC+w0VrfrHFkVSLRRgmLc+TFyR3VLgdqCNUAnSu+EYsvYJ
- 46s24EjmHRGICLaDfNhDQU6XdNQj6GVEzieRlFcq5OifFkTeMEr/3UGAO/1WzaGk
- 8YeAfpWHBxqeXWco6DnyWpVtbAU+eUwx/dvGQFHK1ggG5oaKOuWxGEED00viAwg6
- gpD3Rg/Kp65Enq66BQB5Yzd1v5PVK6ahzQCSHIHKJczVdoXxs4h1k8o98BXwMJMr
- Qa4u/srjOEQ7SU1e8JIHM99rdJ4MhBrfkzEHiz1JoFYU4QDWauWEAgoQ7p3WTasS
- tHRr97klFI1PNapz6ytyg==
-X-ME-Sender: <xms:3S9aaqYeg0yra4ax5g9VvooN5hIzTfskA3QiVRzC89hlLcgFgSkimA>
- <xme:3S9aatix9qDA5_9bc8bAe4lppLIyIKJ-DnM12oKfphkkLFcezl9FIfdEteqElZiGX
- NwHrW8E01gPOWnqAhWtruIqZ50UcTiMS-i1ZDkD-H-qAC99T7YA4Q>
-X-ME-Received: <xmr:3S9aas7SxN2UcOD2_CYiTwTcXXiBke6_q6GsxEjpYVTZfGnqQc2INKuwH5WndObZyE7-z31fCmlQuQQWcA>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784295549; x=
+ 1784381949; bh=JMcf+GE4AZxMu4kNuchSoFw/124+mu+dxfMRX2t7QL8=; b=H
+ mOoWsRZfzOT6k3XgsWbawrw1xplGIBJhGDgErvW/zTKn+t/U+FT6+kfDNQHL4Fhw
+ kFvSX+NTWGeI3+eQXYNjuQEUX7K7E4eo9knUGb+T4A0gpJcEQf5511JFyltI9Vnb
+ jECFhbIUxk63w+HsA+TiWHjGceBNdk0iWuO+GIc89DSdC2alHgqB8aak4qOlXd8u
+ Qw3bCkLndmvLBjDq9qHMUOjhSkY1h+T2SwDy8zJwj+jr5NcJsR7lKtqFUGhs+BY9
+ cB3iwho5zdGI8CfJa7pct019oIQQ8JZaAaB2T9NtCb9GuH1Z5ze8bgJwD082ijCe
+ 2acvM1yCHTh0Jd7E6QtEQ==
+X-ME-Sender: <xms:fTBaan1xp3Bt7rLmcOtvIAO2rdBnf7mtRwsNc6nC58SLayUaIy3FiA>
+ <xme:fTBaaqaLFQoThcacjAdab1xssWiZzdbYWSip08_yUtm6_PrRh9pBLyu2SYduuCm3b
+ lAFTM-8GgF-bVT7HNXWSnNVyTw8ifbLIEOfTJh-QhP0AslTCsikbA>
+X-ME-Received: <xmr:fTBaanBMQDOwfZYLLxXnz6n0rf14z0DzLh_KauWYGph3O3swfxwlvFbP60vvQ1E4VPj2g_edDLH1UdRPTg>
 X-ME-Proxy-Cause: dmFkZTEgwglvb1O22yCA5vtyx7+Rml1oVbBpfyxNb/xxI+slpxNMlWAeHbaJYbj0bAh1AZ
  HrIT8hSBe/TjAKfyRa00FbWtY2wXJDhlGDz30oll6uxwMtHQUSQXw1mxphHNeHL7NvVWDY
  U3bVH6VNCZChhL0iy/6nJq/kL/Ew2qNPLgxTOIWnDeAUs+d0xJt7kW6k2oMYf8FtkDfdzz
  tC/eQIh8oaCWwvRfuuFiXwbUp79v6tlRpJOI77lUKOEgX89IWfpTUKyk0ct9XLWX2jWdVY
- IqE5sWyx+t+9duzL4yzpswhNl3QxS0HtRoEodWeozxmxlrT+cxns3aPCLIKhexeOE37KO0
- NUQv+RVhczy6jcfBo/BZYV/iVGxqSCVNFTIvLirVEMjdaJrJykEr6mz6vnPqBbWa1PhzTs
- 4FvI04ZXZ9IJd+Y2N1cYzVm28JoFN7un4qTDZBmTyGNRBYuPtTSJE4+5WSCZp4CLQ6qzDa
- NO+Z8s2IgIJ5S3jViI3aCGUqx9unlDTZm1EPKUiebhb16MjiudKshIxJvaPBwwtsKbsp3i
- x4lCEXhC3Tj88eAg4y1tYPYLm7/J7OHzEdygLBW6QhEsZVBkgTBMUlYuRyrvFppIR2GDE6
- +djej6Iex7W/23SDEKLtWTavC7p20rJgNvyA1C2VslbHSeJV+S/lTZp3O+hQ
-X-ME-Proxy: <xmx:3S9aak6WSZ879clJH7TBsNRRNAuXJ0KvwBT0CTP62WXZ50updVHC5g>
- <xmx:3S9aagchMZFlu25yhXzxSxFs-rhp67gsDHA25jvCBN9JJsMl_JlkPA>
- <xmx:3S9aagBoK1MC-E6xuPyKW8spQ1T-jNw4tbnThU5ga7LlV-HPddRjzg>
- <xmx:3S9aar99LPbNy6J7qVNibuffOerYo7PKetcBJQKn0vVrExNJjg9p3A>
- <xmx:3i9aasGPP2hqLEvqudIIMTKg4gJYwpoPJOhdIUy_E4T7uPyl0DkZc96m>
+ IqE5sWyx+t+9duzL4yzpswhNl3QxS0HtRoEodWeozxmxlrT+cxns3aPCLIKhexeOE37Kbd
+ zeT1nZrllE9Ipl7gMo+WXXFA8D+1gqP7LRTf3rhQ4E7geQCwFDcCUSpk0O4Q4G2X9KQkG5
+ JVO/6m9xyemHBrnSINlwThGYVQe5pv2zfXNqqfOfo954WmzJRvaCVcC9MgUG3sDpmBJopA
+ ARR4tTaW/zEAwINBEGDqGUL9oyYWoQiMdCsuytlmhR3Q0syCQGEqDRjP4qkuxtEBgEA2F8
+ k//2W3FtgLDbBwHfoPw/f2FHUbrTC7XQKgw97C3ZS5iwy0LaA9KKaBF+UyJzM/025yGgVy
+ /DupYu11N0n/X1wSisVCUD8/IgQJSZU+p9NSfxZYVFWwD8knANmOK2mnGTwA
+X-ME-Proxy: <xmx:fTBaak8jH-CaBufYhJx8OriLeiHurae0gjQhwMPeiLKUs_v_uJiang>
+ <xmx:fTBaav8KTapIsRvW-vswwtRETrzrZluY3MwsW-uAluKwaJVDNRbtGw>
+ <xmx:fTBaajdMjehxWJ9is-N4tMfs0hsq0R6OVe-cpmKkM3nUAhyHma9OfQ>
+ <xmx:fTBaagFZuFVE3wl1EhITucvj9UBubN3N3M7UXPykuwX98tGwTbma-g>
+ <xmx:fTBaal5ydwmyFvMBdOzYWgMIYWWX14d4o9exz3keQKu-XLmhOhz1DUVc>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Jul 2026 09:36:28 -0400 (EDT)
+ 17 Jul 2026 09:39:08 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Robin Jarry <rjarry@redhat.com>,
+To: David Marchand <david.marchand@redhat.com>,
  Chengwen Feng <fengchengwen@huawei.com>
-Subject: Re: [PATCH] usertools/telemetry: load aliases from config directory
-Date: Fri, 17 Jul 2026 15:36:26 +0200
-Message-ID: <nVqd4pYGTXa6_1pd3y2nwQ@monjalon.net>
-In-Reply-To: <aln3w5hRyGXhJas1@bricha3-mobl1.ger.corp.intel.com>
-References: <20260717091603.1492650-1-thomas@monjalon.net>
- <aln3w5hRyGXhJas1@bricha3-mobl1.ger.corp.intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v3 0/8] doc: clean-up links in guides
+Date: Fri, 17 Jul 2026 15:39:07 +0200
+Message-ID: <rsRsIBITTgGy3qUk3BFbmw@monjalon.net>
+In-Reply-To: <CAJFAV8w5W+VP3+vvBuYZWMnHKSftnxq7aYBOFVoa-rWm-FpP1w@mail.gmail.com>
+References: <20250527140435.21361-1-nandinipersad361@gmail.com>
+ <20260716103632.711164-1-thomas@monjalon.net>
+ <CAJFAV8w5W+VP3+vvBuYZWMnHKSftnxq7aYBOFVoa-rWm-FpP1w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,31 +89,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-17/07/2026 11:37, Bruce Richardson:
-> On Fri, Jul 17, 2026 at 11:16:03AM +0200, Thomas Monjalon wrote:
-> > The default path of the telemetry alias file
-> > was at the top level of the home directory.
-> > 
-> > Load aliases from the DPDK configuration directory instead,
-> > using $XDG_CONFIG_HOME/dpdk/telemetry_aliases
-> > or $HOME/.config/dpdk/telemetry_aliases.
-> > 
-> > Keep --alias-file for users who want to provide an explicit path.
-> > 
-> > Fixes: 410d498412e4 ("usertools/telemetry: support aliases for long commands")
-> > 
-> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+16/07/2026 17:29, David Marchand:
+> On Thu, 16 Jul 2026 at 12:36, Thomas Monjalon <thomas@monjalon.net> wrote:
+> >
+> > Links and references to other guide sections had multiple issues,
+> > all solved in this series.
 > 
-> Tested without moving my existing alias file - no aliases loaded. Then
-> tested after moving to .config/dpdk/ and it worked fine.
-> 
-> Doc changes LGTM too.
-> 
-> Tested-by: Bruce Richardson <bruce.richardson@intel.com>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Robin Jarry <rjarry@redhat.com>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+> For the series:
+> Acked-by: David Marchand <david.marchand@redhat.com>
 
-Applied, thanks for testing.
+Series-acked-by: Chengwen Feng <fengchengwen@huawei.com>
+
+Applied
 
 
