@@ -2,79 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C826AC4451C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 12:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 756A1C44516
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 12:56:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C9738402D4;
-	Fri, 17 Jul 2026 14:51:46 +0200 (CEST)
-Received: from fhigh-a8-smtp.messagingengine.com
- (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
- by mails.dpdk.org (Postfix) with ESMTP id D6E75402BA
- for <dev@dpdk.org>; Fri, 17 Jul 2026 14:51:44 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 57A8014000CF;
- Fri, 17 Jul 2026 08:51:44 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Fri, 17 Jul 2026 08:51:44 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 335DD40BA2;
+	Fri, 17 Jul 2026 14:56:13 +0200 (CEST)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTP id D823E402D4
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 14:56:11 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfout.phl.internal (Postfix) with ESMTP id 49334EC011B;
+ Fri, 17 Jul 2026 08:56:11 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Fri, 17 Jul 2026 08:56:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784292704;
- x=1784379104; bh=Qm2dXTihrY/TM8rsJErpiHpgKGY6ekMqBzZ1ljqTD/Y=; b=
- Js8t2YdOrs2vyUVz00gKMDwbFaFkKAQYN3BifZEjCoTf1cVDokLokFo9TXV3HBSc
- VKqUZXiacmrl6BUv07g4EWYK0QR3go/IkDd1Xj/xVJbyZ7JiVMjAY2PNYwmKhuCE
- O6/rel4stfgxb/eLDQyt8DXGoSsUCt3BF6M9XcOOApEUkd22sKmJLA10uRy2qIJQ
- JX4LUaY8gAsbbBqX/KT90NoNem7d3ItF9ayrkpBnwmNO0OaJrTurejzTgyDNUNa+
- y6RimvQocD4IbE+Mdq62bjCpjAjLdyqI6Jh2EuHWzUjx+6BEtXdzro18CVeZjgzX
- nqt6oj2+CoBRtNcKtg2aqw==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784292971;
+ x=1784379371; bh=M1V1FmVZjDvPCe6vWUr/hbZDhpTqFIe7dw/6KycnayA=; b=
+ jh9DyEYSOOpTacrrhFjq+o/eGDg8PwQEEGNijmkEsBoSdQzAlWyVssB78promIwr
+ +ZAYPdSm/lXazADJ6DypORB807kr8T+GaTfxKNZfODTxIuK16iv3538UTTbff9/L
+ tu1M/kpazijbTcdrP4mZQFDVW9bKk1AleN3+RQvAGgSVA3Ade2aMyRhiaAgOS+25
+ IHt//cv7wtM/UOKQ+G1xFcefe4iIWqhibTK/r7jfP1qZgFQprIjMuPt0qu7/AzI8
+ GhCFJztnYVSYg5wQvT+mj+oV5CBCCfHNsnxswsfG1snf6LqS0Bf8bsFDAFQl9Pje
+ +x+VgPHV4NCua4/sAY0DBw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784292704; x=
- 1784379104; bh=Qm2dXTihrY/TM8rsJErpiHpgKGY6ekMqBzZ1ljqTD/Y=; b=p
- TvLg1yjwxbADUQtmVaflxzfNsOPkFarOzAVrxr+0nvoafPHaDJNA9X4199D/Q7+G
- IehVv4bwEbFxNYRA/JvDJqba7KV7Xm3PZuQICiTkxcKzjLHYgd+Q3V05UqHmCoNf
- x3x4d/pCSR6k++qiB6ZhzCxnpsgvRcfnEntlbtasMU6Q90yHoja6AX2PIYE7O/7D
- 5kXLCSExctX8Xehmb+zEIQnDQW5YhW/msnZByn50MzJ191YhRx5TTaIe1qkpFL46
- 1nzpdzZOuSQx0K0NE8kA8Jk/n1j9NSLVMN6obebImGIWa36tOGm8N/qPspQfSn64
- LpFn9hCZUgPEYTy3R+A6g==
-X-ME-Sender: <xms:YCVaah8hwfpv5_NR0TCnpHDWn3bcJul5Xi5PZWFSA4qeBBkkcMZK7g>
- <xme:YCVaaqDfKFB1xwKfNFXAaXcXSwtYOiDUwO0P8qo19YVnMTStdyF23DwSnGfdlO25l
- fLHyMiZNaoemPQZpK7tpFoSue0WV0xBZWhGhaQSZ35M4ZOlO7wIIQ>
-X-ME-Received: <xmr:YCVaauKpZZ057IH1jHdDIHiXuUdjKQuaYnOlYpr-H8BSBrT2qfUlezCmiCC4xqkD49LdIH5JwsffzisSgg>
-X-ME-Proxy-Cause: dmFkZTEU9l0QX6OaVNlDde5Zr0WzjcEHwnpd5Ouv00q6qG6i1zMwFNiasiVURJrp95Q418
- azywC09++NWlFYMw7xOgFBON00XfEx1fgcAdgkNeBXYZMkf6q7BI8IjgNvuvIayzd2ibAs
- mHUJxnAoAApOiAHRsvI7vkqu3fPAB4qLg1ZTA0hnxCYb3SSfvG5ySQfYMDZe5MBWgvHKyp
- cdMg8APNdXG8evepV8auUZ8Z2forWNWcP1Y2SQMI5eDHDtFG4j7dg2r/rUTuYIVE2xCZ4P
- OWL09Q4VJ+ifB7rcgVa8HPCzV1wxo+6ptxqRZTLXw9Sv/HUk9tabDz52UNda92uRwMTNjW
- r5NjMV8JOrHYwzryoBXAfvk47XJDVUWC96MpRGVEj6DFHl1MYue1zYK12PASTsXN4L1L7M
- vspzv+hldMIx+qfA8MNEDHvsbPNEI6t91DJ6NLg6aE53Y+iRaMcm8kfmlgrNf4fC1M9Y7l
- /Wy8QooIuu0v1i5o+qrMkig3TzpjNEtezW2G8fr5JA8d6wJ31IKQGx61j4+nDVWKrMumQL
- 8JaysB9WlV85aConXOgOnzrlOWZIWAbGI97XCV8lcH8txnc+jd5PAS/SL0RCKiqeI406c/
- hWqngS7mBIgK285+tcBAjv4kksyUxDG16R242Nbodd/iinYGGwfqJnZbbFDA
-X-ME-Proxy: <xmx:YCVaatlYFKVm9M4E9K2iDEjPHIOKBCOQArw3ovFefIiU_mCXODFLFA>
- <xmx:YCVaasHSBtxvIsNzg9LDPAFik3LmgU_X3BhvYZ7OQSPP3N9KoDectQ>
- <xmx:YCVaatGl92ApNlTMScFSYi7Xi4csLG5mOLizNVJTLarW84aPUV2-Ug>
- <xmx:YCVaapPbeE3cAKIpRX9I-bqFLHzDsleIRtGuCq5g-BkMvKNoIxsDNg>
- <xmx:YCVaar0OsCxQqbOzOb2ytHCzE_2OEQ1nAQTezRHqAFoIXs_Dd4nQBD2->
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784292971; x=
+ 1784379371; bh=M1V1FmVZjDvPCe6vWUr/hbZDhpTqFIe7dw/6KycnayA=; b=Q
+ 6hugXSYFsabLPLuZOOkpg8U2l4ypD5QTr/B9p5sbgNuZf3H35YOqqXeFmlXdy/u1
+ ePjZaexATDZgNRAn2CcfAD9qaDZD222Q24i+pUajbApjqTSJwhLveIcOiu1LOz6Z
+ lJ3F2rbiGLI+Huia2LxoIc1GLkX+hr7JmW9mdoEmHYm/DLOQsWNyduBHGtUIyAYr
+ M049KYiCIN90jTroPiLtzYUg7Cc60sWpL3bHmJGKZoP5Tnt7rm4ZcM2Wpy83/MIB
+ eNnjgYEQOOfucS5YaksFB0r4QxuAIVZaqqVLSjXTmcezVcOAQ9sw5zI8v4AmMoCB
+ D1Ow6fdG8E4uXOh89XXtg==
+X-ME-Sender: <xms:ayZaapSnozziW740cE-f4CRJLfUjOzWtxg-MuWdUw1B-wiX7budhDA>
+ <xme:ayZaai7TPrmW4Zq4ZlgMHm_hmg3gn0_R_hCElg4M0t0QKgwxbM0bOsSt0m3cAiVNX
+ f6uhekZxNntaFOn5ubNFTmo40vfE0kzs8Q1kOB3e3nXKWIMh7ux2w>
+X-ME-Received: <xmr:ayZaamxItlGCkT9TPcoCQvY0urFLLsVZWsj6ZIwsrdqSZUITwt_0HtunH7BxpR5Egh8E6UjyCjs7HWWr-g>
+X-ME-Proxy-Cause: dmFkZTFv0/Y0PyXKfcr++RAleJeyqBaBGM1TBxTVO40nyQyWo1g1Ih7CX4qVcU/YZTnIrJ
+ xalcO1iGdWyw7kwxjyILJ6tWksAUjI89gbFw77EN8WM58Ez3tGhola1H6r7XANwlxXN2Ij
+ fOJzF/eUiGZM1QBmnteTyNuJskfPBWBA5NUU4vedCaTXE9CWinuddL4D/PHb4qTMLAm0lP
+ PmBQWh/vg5u25+HRxNhxxIl964xbOTXYOGQxdxLnVPTw5aFcEm9827Y9xY00PA7fl2tXdG
+ JqLXBvV2W79CtbsIU9aaDqcF18XYI60IzpkhEk+YuHEHExt5L/zjMYVby3S6jID9tiN/OP
+ OG/bLD1eolkoasOP4xBScTeDVaWNsOGwlyZi5PfSKS8SFhdNG1Gk0Ou7Dr9lmedddnuk1d
+ H1oItcCE2+mTw0TInPCmltP57smttSdG6EmY+n2rJCpA9EZP7Ang/L1BY+1S5nkHGy5H9h
+ DmRvd/QIl0ys3OTr+1NSFrL4r/+c6Wi0kUsweHPEB/xCog7TVJjZodtMYoklIdxtMY+cel
+ JYvkskQjkCkxfdDSclyDc1viTe74ipCo+pujSvqwNLha8uGtvpyMU+m9xir3rRYLw27zle
+ d6GXTw1nvuGjbZhFSYCy0fimcXFXviJvK/VfAHVnO/XKegVpeJJiZ+Iq+WCw
+X-ME-Proxy: <xmx:ayZaapSebF69FiNeEPl3sVThqIgyf9Fg4rnsGz_AdFmcjqePB9uF6A>
+ <xmx:ayZaatWKEsEeWN8T_R0K5YiQu7Dy27Q__bHyBFgOxqfgtX0N9Fr4GA>
+ <xmx:ayZaaraIHGlqih5sCQRv7QWMHHVSm0N_fL7dLSWGtqy6T2ui60AhvA>
+ <xmx:ayZaaj3vAu2scj8VC4FJaE6awFAJsMV17vPcQqt2S2tlqM9y7O71RQ>
+ <xmx:ayZaar3ayjLgandRkBx0egUglwMrEhEEg_R5qkJG9S37h0-HiDXXVAgC>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Jul 2026 08:51:43 -0400 (EDT)
+ 17 Jul 2026 08:56:10 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>,
- "bruce.richardson@intel.com" <bruce.richardson@intel.com>
-Subject: Re: [PATCH v3 8/8] doc: add missing headers to doxy-api-index.md
-Date: Fri, 17 Jul 2026 14:51:42 +0200
-Message-ID: <FoC0dWG_S2adDZql-PwRQA@monjalon.net>
-In-Reply-To: <5803e998c8404b5387ba9ef0bcb530b9@huawei.com>
-References: <20260706105256.79904-1-marat.khalili@huawei.com>
- <--xEtZJ0Sj2LGPVvl3IDnQ@monjalon.net>
- <5803e998c8404b5387ba9ef0bcb530b9@huawei.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ "Xueming(Steven) Li" <xuemingl@nvidia.com>, dev@dpdk.org
+Subject: Re: [PATCH 06/10] test/devargs: check driver presence with public API
+Date: Fri, 17 Jul 2026 14:56:08 +0200
+Message-ID: <a4aCxIgGT12A1zShAOydIQ@monjalon.net>
+In-Reply-To: <CAJFAV8yr_4Wttt7sDUVzqYnAsMYxoTRg3FcNbZefpYzs1v9e0A@mail.gmail.com>
+References: <20260717093006.229370-1-david.marchand@redhat.com>
+ <aloAfU6IdpZOMAlQ@bricha3-mobl1.ger.corp.intel.com>
+ <CAJFAV8yr_4Wttt7sDUVzqYnAsMYxoTRg3FcNbZefpYzs1v9e0A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -89,15 +89,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-17/07/2026 10:30, Marat Khalili:
-> > I'm not sure we should add all in this index,
-> > especially the *_trace.h which are not really interesting.
-> 
-> These are all public headers, all of them have a man page and an HTML documentation page generated. Yet when a user clicks `API Reference` on dpdk.org they arrive here: https://doc.dpdk.org/api/ . Without listing all public headers this page is meaningless and misleading; web crawlers could also be confused by lack of direct access to inner pages.
-> 
-> I don't know specifics of *_trace.h pages, maybe they are special and should not be exposed. In this case we can add an exception, although I'd rather put them in a separate section explaining why they are special and not worth bothering with. After all users might be similarly puzzled.
+17/07/2026 14:34, David Marchand:
+> On Fri, 17 Jul 2026 at 12:15, Bruce Richardson
+> <bruce.richardson@intel.com> wrote:
+> >
+> > On Fri, Jul 17, 2026 at 12:08:01PM +0200, David Marchand wrote:
+> > > On Fri, 17 Jul 2026 at 11:56, Bruce Richardson
+> > > <bruce.richardson@intel.com> wrote:
+> > > >
+> > > > On Fri, Jul 17, 2026 at 11:30:01AM +0200, David Marchand wrote:
+> > > > > Let's avoid calling internal drivers API.
+> > > > >
+> > > > > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > > > > ---
+> > > > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> > > >
+> > > > One suggestion inline below.
+> > > >
+> > > > >  app/test/test_devargs.c | 10 +++++++---
+> > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/app/test/test_devargs.c b/app/test/test_devargs.c
+> > > > > index 0bd14c24ec..6c194ecfc6 100644
+> > > > > --- a/app/test/test_devargs.c
+> > > > > +++ b/app/test/test_devargs.c
+> > > > > @@ -10,7 +10,7 @@
+> > > > >  #include <rte_common.h>
+> > > > >  #include <rte_devargs.h>
+> > > > >  #include <rte_kvargs.h>
+> > > > > -#include <bus_driver.h>
+> > > > > +#include <rte_bus.h>
+> > > > >  #include <rte_class.h>
+> > > > >
+> > > > >  #include "test.h"
+> > > > > @@ -167,14 +167,18 @@ test_valid_devargs(void)
+> > > > >               { "net_ring0,iface=3Dtest,path=3D/class/bus/,queues=
+=3D1",
+> > > > >                 0, 0, 3, "vdev", "net_ring0", NULL },
+> > > > >       };
+> > > > > -     struct rte_bus *vdev_bus =3D rte_bus_find_by_name("vdev");
+> > > > > +     struct rte_devargs da;
+> > > > >       int ret;
+> > > > >
+> > > > >       ret =3D test_valid_devargs_cases(list, RTE_DIM(list));
+> > > > > -     if (vdev_bus !=3D NULL && vdev_bus->parse("net_ring0", NULL=
+) =3D=3D 0)
+> > > > > +
+> > > > > +     memset(&da, 0, sizeof(da));
+> > > > > +     if (rte_devargs_parse(&da, "net_ring0") =3D=3D 0)
+> > > >
+> > > > From what I/AI can see, there is nothing in this test case that req=
+uires
+> > >
+> > > (you could write it as "From what A?I can see")
+> > >
+> > > > the ring PMD specifically. I think it would be good if it were upda=
+ted to
+> > > > use net/null, so that we standardize on our basic unit tests only r=
+elying
+> > > > upon that PMD, rather than requiring a variety of drivers. WDYT?
+> > >
+> > > There may be a hidden (capillotract=C3=A9) reason.
+> > > Passing path=3D/class/bus/ seems to be intended at catching errors in
+> > > devargs parsing.
+> > > No argument in net/null could accept such string.
+> > >
+> > Not a path string, no, though it can take other parameters. Do we
+> > specifically want/need it to take a path string?
+>=20
+> This is some special case tested for "legacy".
+> I prefer asking Xueming and Thomas what the intention was.
 
-Trace functions are not directly called by users.
-Yes they are exposed, but no they are not part of the Application Programming Interface :-)
+I have no idea about the original intent.
+If it's unclear, it means it can be removed :-)
+
 
 
