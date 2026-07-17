@@ -2,59 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9C5C44515
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED6AC44515
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:04:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7BE7840A7F;
-	Fri, 17 Jul 2026 11:04:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6F36940B90;
+	Fri, 17 Jul 2026 11:04:50 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 4D95B4028A
- for <dev@dpdk.org>; Fri, 17 Jul 2026 11:04:46 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 3E7944028A
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 11:04:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1784279085;
+ s=mimecast20190719; t=1784279087;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=0Lj1S69pDpfvAMgcGm9Gas7ragM7bPQkcjs9AJ0eNac=;
- b=aQvVeGI4UOWJ+Nk0G6d9bXMe/bVPwozgnuSNnVVwCCs6MOManqaDR3/EXfduZTLaDpm5sF
- vMsCW7Jhe3Q65Zsbv+tnKZXYdyevoXLL4n1TX8GLCogkiiZUj7huRD1Vz1k2sjpzSbxkQw
- GMs9qOSDZc+x6sY1kafYLrlLsgEBOSw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=Oa6Z9W8ctA4HzTTtUo0OAzsp5K1ebgjIzW2/pVD1Pak=;
+ b=f5HPkOjuCsnKbmSMcnY8v+PaVNhntugAJ8GEmd92O2e5KCo+PuoN2IXYHFqmy5roNUAsQS
+ n81OGfvxQtF9jP5fZnqBPMDoh3fUMMDIiUM5FFVYZ1p/sNjc3rAtnlShROZ6EA8HKCcgYD
+ TIRJB7M8bzoquxuKMf1/WBONrjn8gYk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-556-vVrEJV8XMdGTpVEwhyeXIA-1; Fri,
- 17 Jul 2026 05:04:42 -0400
-X-MC-Unique: vVrEJV8XMdGTpVEwhyeXIA-1
-X-Mimecast-MFC-AGG-ID: vVrEJV8XMdGTpVEwhyeXIA_1784279080
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-163-NjbiGwXDN0W8_0hNF30q3w-1; Fri,
+ 17 Jul 2026 05:04:44 -0400
+X-MC-Unique: NjbiGwXDN0W8_0hNF30q3w-1
+X-Mimecast-MFC-AGG-ID: NjbiGwXDN0W8_0hNF30q3w_1784279083
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id AFA551954B37; Fri, 17 Jul 2026 09:04:40 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 24CF31955EA3; Fri, 17 Jul 2026 09:04:43 +0000 (UTC)
 Received: from ringo.redhat.com (unknown [10.44.33.106])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 23CFC180036E; Fri, 17 Jul 2026 09:04:36 +0000 (UTC)
+ id 4C649180036E; Fri, 17 Jul 2026 09:04:40 +0000 (UTC)
 From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org
-Cc: Christophe Fontaine <cfontain@redhat.com>,
- David Marchand <david.marchand@redhat.com>,
- Jerin Jacob <jerinj@marvell.com>,
- Kiran Kumar Kokkilagadda <kirankumark@marvell.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Maxime Leroy <maxime@leroys.fr>,
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
  Zhirun Yan <yanzhirun_163@163.com>
-Subject: [PATCH dpdk/26.11 v3 0/2] graph: topological bitmap scheduling
-Date: Fri, 17 Jul 2026 11:03:24 +0200
-Message-ID: <20260717090326.1860634-1-rjarry@redhat.com>
+Subject: [PATCH dpdk/26.11 v3 1/2] graph: add diamond topology performance test
+Date: Fri, 17 Jul 2026 11:03:25 +0200
+Message-ID: <20260717090326.1860634-2-rjarry@redhat.com>
+In-Reply-To: <20260717090326.1860634-1-rjarry@redhat.com>
+References: <20260717090326.1860634-1-rjarry@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: L7fV_e-Zo9_e4h48k5st3m2Q5aeL6VvowTDBhzvk45Q_1784279080
+X-Mimecast-MFC-PROC-ID: n_xZ4dAoqZu7kyQm37eG7l68MMF7zdriQcgNCECOcH0_1784279083
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -71,64 +68,176 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace the FIFO circular buffer in rte_graph with a bitmap and a
-topologically-sorted schedule table. The old circular buffer appended
-nodes in enqueue order, effectively a partial DFS driven by per-node
-process functions. This caused convergence nodes to be visited before
-all upstream branches had run, resulting in redundant visits with
-smaller batches.
+Add a fan-out-then-converge test case to graph_perf_autotest. The
+fan_out node sends 50% of objects to a converge node (edge 0) and
+50% to a branch node (edge 1). The branch node forwards everything
+to the same converge node.
 
-Nodes are now sorted by (topo_order, node_id) using BFS depth from
-source nodes, ensuring upstream nodes are always visited before
-downstream ones. The diamond perf test shows a ~10% throughput
-improvement (converge visited once at 256 objs/call instead of twice
-at 128).
+Because converge is edge 0, a FIFO scheduler visits it before the
+branch has run, causing two visits at 128 objs/call each. This
+topology is used in a follow-up patch to demonstrate the benefit of
+priority-based scheduling.
 
-Changes v2 -> v3:
- - dropped explicit priority field (int16_t) from rte_node_register
-   and struct node; topological ordering from BFS is sufficient
- - removed hiprio worker node type from diamond test; topo_order
-   alone provides correct ordering without user intervention
- - updated documentation and SVG diagram accordingly
+Signed-off-by: Robin Jarry <rjarry@redhat.com>
+---
+ app/test/test_graph_perf.c | 130 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 129 insertions(+), 1 deletion(-)
 
-Changes v1 -> v2:
- - split diamond perf test into separate preparatory patch
- - added topological depth (topo_order) as secondary sort key to
-   preserve upstream-before-downstream ordering, preventing a
-   regression in the reverse tree test
- - restored idx == 0 guard on bitmap set in the enqueue path to
-   avoid a ~15% throughput regression caused by touching the pending
-   bitmap cache line on every enqueue call
- - added performance numbers measured before and after
-
-Cc: Christophe Fontaine <cfontain@redhat.com>
-Cc: David Marchand <david.marchand@redhat.com>
-Cc: Jerin Jacob <jerinj@marvell.com>
-Cc: Kiran Kumar Kokkilagadda <kirankumark@marvell.com>
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: Maxime Leroy <maxime@leroys.fr>
-Cc: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>
-Cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Cc: Zhirun Yan <yanzhirun_163@163.com>
-
-Robin Jarry (2):
-  graph: add diamond topology performance test
-  graph: replace circular buffer with topological bitmap
-
- app/test/test_graph_perf.c                    |  130 +-
- doc/guides/prog_guide/graph_lib.rst           |   29 +-
- .../prog_guide/img/graph_mem_layout.svg       | 1823 +++++++----------
- lib/graph/graph.c                             |   27 +-
- lib/graph/graph_debug.c                       |   12 +-
- lib/graph/graph_ops.c                         |   46 +
- lib/graph/graph_populate.c                    |  107 +-
- lib/graph/graph_private.h                     |   41 +-
- lib/graph/rte_graph_model_mcore_dispatch.h    |   34 +-
- lib/graph/rte_graph_model_rtc.h               |   63 +-
- lib/graph/rte_graph_worker.h                  |    2 +-
- lib/graph/rte_graph_worker_common.h           |   78 +-
- 12 files changed, 1158 insertions(+), 1234 deletions(-)
-
+diff --git a/app/test/test_graph_perf.c b/app/test/test_graph_perf.c
+index 983735c2d9c4..c509d364b826 100644
+--- a/app/test/test_graph_perf.c
++++ b/app/test/test_graph_perf.c
+@@ -263,7 +263,7 @@ graph_perf_teardown(void)
+ }
+ 
+ static inline rte_node_t
+-graph_node_get(const char *pname, char *nname)
++graph_node_get(const char *pname, const char *nname)
+ {
+ 	rte_node_t pnode_id = rte_node_from_name(pname);
+ 	char lookup_name[RTE_NODE_NAMESIZE];
+@@ -1042,6 +1042,132 @@ graph_init_parallel_tree(void)
+  *	snk_map[][2] = { {50, 50}, {50, 50}, {0, 0}, {0, 0} }
+  */
+ 
++/* Graph Topology: fan-out-then-converge (diamond)
++ *
++ *   src --> fan_out --(50%)-------------------+-> converge --(100%)--> sink
++ *                   `-(50%)--> branch -(100%)-'
++ *
++ * The fan_out node enqueues to converge (edge 0) before branch (edge 1).
++ * With a FIFO scheduler, converge is visited first with only 50% of the
++ * objects, then branch runs and re-enqueues to converge for a second visit.
++ * With priority-based bitmap scheduling, branch (priority -1) runs before
++ * converge (priority 0), so converge accumulates all objects and is visited
++ * only once.
++ */
++static inline int
++graph_init_diamond(void)
++{
++	rte_node_t fan_out, branch, converge, src, snk;
++	struct test_graph_perf *graph_data;
++	struct rte_graph_param gconf = {0};
++	struct test_node_data *node_data;
++	const struct rte_memzone *mz;
++	const char *edge_names[2];
++	char *node_patterns[5];
++	rte_graph_t graph_id;
++
++	mz = rte_memzone_reserve(TEST_GRAPH_PERF_MZ,
++				 sizeof(struct test_graph_perf), 0, 0);
++	if (mz == NULL) {
++		printf("Failed to allocate graph common memory\n");
++		return -ENOMEM;
++	}
++	graph_data = mz->addr;
++	graph_data->nb_nodes = 5;
++	graph_data->node_data = calloc(5, sizeof(struct test_node_data));
++	if (graph_data->node_data == NULL)
++		goto memzone_free;
++
++	/* Clone all nodes */
++	src = graph_node_get(TEST_GRAPH_SRC_NAME, "0");
++	fan_out = graph_node_get(TEST_GRAPH_WRK_NAME, "fan");
++	/* converge must be edge 0 from fan_out so FIFO visits it first */
++	converge = graph_node_get(TEST_GRAPH_WRK_NAME, "conv");
++	branch = graph_node_get(TEST_GRAPH_WRK_NAME, "br");
++	snk = graph_node_get(TEST_GRAPH_SNK_NAME, "0");
++
++	if (src == RTE_NODE_ID_INVALID || fan_out == RTE_NODE_ID_INVALID ||
++	    converge == RTE_NODE_ID_INVALID || branch == RTE_NODE_ID_INVALID ||
++	    snk == RTE_NODE_ID_INVALID) {
++		printf("Failed to create nodes\n");
++		goto data_free;
++	}
++
++	/* src -> fan_out (100%) */
++	edge_names[0] = rte_node_id_to_name(fan_out);
++	rte_node_edge_update(src, 0, edge_names, 1);
++	node_data = &graph_data->node_data[0];
++	node_data->node_id = src;
++	node_data->is_sink = false;
++	node_data->next_nodes[0] = fan_out;
++	node_data->next_percentage[0] = 100;
++
++	/* fan_out: edge 0 -> converge (50%), edge 1 -> branch (50%) */
++	edge_names[0] = rte_node_id_to_name(converge);
++	edge_names[1] = rte_node_id_to_name(branch);
++	rte_node_edge_update(fan_out, 0, edge_names, 2);
++	node_data = &graph_data->node_data[1];
++	node_data->node_id = fan_out;
++	node_data->is_sink = false;
++	node_data->next_nodes[0] = converge;
++	node_data->next_percentage[0] = 50;
++	node_data->next_nodes[1] = branch;
++	node_data->next_percentage[1] = 50;
++
++	/* branch -> converge (100%) */
++	edge_names[0] = rte_node_id_to_name(converge);
++	rte_node_edge_update(branch, 0, edge_names, 1);
++	node_data = &graph_data->node_data[2];
++	node_data->node_id = branch;
++	node_data->is_sink = false;
++	node_data->next_nodes[0] = converge;
++	node_data->next_percentage[0] = 100;
++
++	/* converge -> sink (100%) */
++	edge_names[0] = rte_node_id_to_name(snk);
++	rte_node_edge_update(converge, 0, edge_names, 1);
++	node_data = &graph_data->node_data[3];
++	node_data->node_id = converge;
++	node_data->is_sink = false;
++	node_data->next_nodes[0] = snk;
++	node_data->next_percentage[0] = 100;
++
++	/* sink */
++	node_data = &graph_data->node_data[4];
++	node_data->node_id = snk;
++	node_data->is_sink = true;
++
++	node_patterns[0] = rte_node_id_to_name(src);
++	node_patterns[1] = rte_node_id_to_name(fan_out);
++	node_patterns[2] = rte_node_id_to_name(converge);
++	node_patterns[3] = rte_node_id_to_name(branch);
++	node_patterns[4] = rte_node_id_to_name(snk);
++
++	gconf.socket_id = SOCKET_ID_ANY;
++	gconf.nb_node_patterns = 5;
++	gconf.node_patterns = (const char **)(uintptr_t)node_patterns;
++
++	graph_id = rte_graph_create("graph_diamond", &gconf);
++	if (graph_id == RTE_GRAPH_ID_INVALID) {
++		printf("Graph creation failed with error = %d\n", rte_errno);
++		goto data_free;
++	}
++	graph_data->graph_id = graph_id;
++	return 0;
++
++data_free:
++	free(graph_data->node_data);
++memzone_free:
++	rte_memzone_free(mz);
++	return -ENOMEM;
++}
++
++static inline int
++graph_diamond_1src_1snk(void)
++{
++	return measure_perf();
++}
++
+ static struct unit_test_suite graph_perf_testsuite = {
+ 	.suite_name = "Graph library performance test suite",
+ 	.setup = graph_perf_setup,
+@@ -1061,6 +1187,8 @@ static struct unit_test_suite graph_perf_testsuite = {
+ 			     graph_reverse_tree_3s_4n_1src_1snk),
+ 		TEST_CASE_ST(graph_init_parallel_tree, graph_fini,
+ 			     graph_parallel_tree_5s_4n_4src_4snk),
++		TEST_CASE_ST(graph_init_diamond, graph_fini,
++			     graph_diamond_1src_1snk),
+ 		TEST_CASES_END(), /**< NULL terminate unit test array */
+ 	},
+ };
 -- 
 2.55.0
 
