@@ -2,79 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E19ECC44507
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 598A6C44507
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:35:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3F2940E24;
-	Fri, 17 Jul 2026 11:35:03 +0200 (CEST)
-Received: from fout-a2-smtp.messagingengine.com
- (fout-a2-smtp.messagingengine.com [103.168.172.145])
- by mails.dpdk.org (Postfix) with ESMTP id C5C6840E0B;
- Fri, 17 Jul 2026 11:35:01 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id 596DAEC00D1;
- Fri, 17 Jul 2026 05:35:01 -0400 (EDT)
-Received: from phl-imap-06 ([10.202.2.83])
- by phl-compute-05.internal (MEProxy); Fri, 17 Jul 2026 05:35:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784280901;
- x=1784367301; bh=U1956PIC7MsSLKrBzWkieSW4nLeyjEq7m/JWZcEyx1s=; b=
- ctq6HzpehlZ7QbFI3S9SLAgLYZhsZ3yaztTOeFGkzikJsj1jTVbZC68NcbKiem6k
- 42mB/+JeoFviqFjute32plYT5sFqUqZYeZf2MV8SqrrewK+IE+q+DpqMYvTQ7cSH
- bpeFTkEixq4IICHSeEuLuHjbXMJi+Ac0xIK5GyWe5/YrN67AmkWNSX4pPrYonMwI
- Tr+no87so+8gSYeUeJ8FkBAfn/LL6QYLc/Z/flz0JTBlhZDnvyp9q584jzVShjIf
- WxUXUDTKhcjJgKOISTTcN5uzd761qW6rXbUzC50tLudwd2Y6fqjf0LNj+O87xsP5
- kcFLC0fIDCIWhbI+HZq/dw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784280901; x=
- 1784367301; bh=U1956PIC7MsSLKrBzWkieSW4nLeyjEq7m/JWZcEyx1s=; b=O
- QxKkzHcuDHTOUdId4m3rMwCjUgsGuLF1GNB2SjwJoWxeIBUAvNNGA4CyilVTuRfk
- u3ZZBHRphT2O0Qk1vncvCieM1ctdbLgGZN6XiNBmGH+AUExGcm9ysXop12jJHN9T
- Yb3HDHxxO5SUAd35gHPB5zthgVmU98lG05/JLQE3AjZfKGKnrepoAt9TLiS12R3R
- Coc2yPHPAliibLMwbdcyyS+UdbGiVJ5DBRpzxgPotljUMO3ELOO70VOI3SBfjOes
- A/IYnOcFeSMz6qWwplukLuhvgHZepwDYyQO3WawXEPTUe/eZL+a0UChIJsWtSlyF
- onP0DnUKJjuk8qMv6ahEg==
-X-ME-Sender: <xms:RfdZauqAhbtgH_erVXGM8T_qdy-yEeeVRhnPhLKEUP0jW0laWiNrfg>
- <xme:RfdZanfz8Gh5z5oIMC7OhGnfTwk6uroKu7TKjakNSNwPJGEpNr-5woLrkSLp6p8Je
- 4kPejMLKMmyk1ROZlnwbu4hapzNej7M7e-cAh48geV114qIwl7p>
-X-ME-Proxy-Cause: dmFkZTE1pvhUIsKhviU29XNOebQI2BPgF8hR1nbaLCM6cRu1pWn6lgx5obRCYNT+j5lTde
- KrvYRo1WBEK+khFd/xu6r9E4cATfcAy0cHnfdXBXn9c8JGYzD1wzLV1ffPPvSXjeVxP+bv
- p3EiBsdtBOLC5wMUgTimUi4wet19hIjDTUdJyhcFVwFNDJSunuAvQabt8iJeFB+TdFR/89
- CeGbPTBW0OM6qeYtX3AxhKvRaAjGzKhNlQ3EXOjVzPA1DuNzDiTSAebI8KiOqDdLJ1Vszv
- IbpGusNadD4VNc7IOi4pXMw4JVXoxNo6VAq2q8QzmF4Y0tEZbLA9P0MKlqvk52nYv8Gvgj
- 0+gPk5WVN3mg1FZOYTvnCWFJaLP3XvcIySwJA6+e0dehHaY09jpMrQduEfEO7YGg37DxYp
- M6x5nnYcSEXB/kPhTLG/brVdpy1In2AIXCU3FezzBcDOH6Hs0xjWW8ctUwNB5U7IlrGgsU
- Wcmc0O4WvM4/zF5o7/WQysNXXsAziyNFWPixjyVS0r9Xo18pv49L+r2ysGrYyGTyEw637D
- djssJWVfj+bbrGbOqqGKXVd4qO8eKhQY6gYXLCfAV7e2EinCCKnDoe93FiBNtI+rxfdWDV
- fe+eFlr+Sq8D8IhjJBZlTNl2T5emcrfeQ8D1Wqh2ozMpKrTJqbh5lxgEImPQ
-X-ME-Proxy: <xmx:RfdZaj7gxKZYjOcsc2hUz5Qzs3xnY5dyDBhWnQei5Z6MCiWZ3WgBqQ>
- <xmx:RfdZapr96MZ9vdKLVIhN0iO_t2SLwhLEKo-wB8rjmJItOu5YM52DCw>
- <xmx:RfdZaml1NOp173R0N8WsbxHoEBdorQdAr8tQWTQkUzrkFk-yY3JzOA>
- <xmx:RfdZalPKpjIoMzpdu2YM1L3JY54_Z1UM4JOpy64vvu1NsQMDnC2a6Q>
- <xmx:RfdZaqnSQhMqrAQZZh3fJJ3iLHWbHHksyhVk3oLDpP10J5_Gfc-2LZCO>
-Feedback-ID: i47234305:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
- id 00D1D2400098; Fri, 17 Jul 2026 05:35:00 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by mails.dpdk.org (Postfix) with ESMTP id 9C55C40E1C;
+	Fri, 17 Jul 2026 11:35:26 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 03C4C40E0B
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 11:35:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1784280924;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=CvbvYM1fmBLXt4aQk5JqFWVfO7EXxbnClVjdDmWrSjQ=;
+ b=dlRz6CFy18ijV6UDEiW8wLoSozn6xmzHTb9UD3YZkVXlA+BVMABlCZ8UHFsI7rV6o7yen2
+ qHy7HouBZkBIfe3gHxsxzsHlVkc8A35i7UU0y6YrYJfj1YoP4+yPCPfMx2Vig+6alKfrJZ
+ enDqXG/qAY03LGsI4xvpcly3yY3zVu0=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-374-ArTnOgI1OyKFdf7I-TaZpw-1; Fri, 17 Jul 2026 05:35:22 -0400
+X-MC-Unique: ArTnOgI1OyKFdf7I-TaZpw-1
+X-Mimecast-MFC-AGG-ID: ArTnOgI1OyKFdf7I-TaZpw_1784280921
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-5aeb711dff7so4602934e87.3
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 02:35:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784280921; x=1784885721;
+ h=content-type:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=CvbvYM1fmBLXt4aQk5JqFWVfO7EXxbnClVjdDmWrSjQ=;
+ b=aBOjEOswA6yEaQpmS1gs0tMqdQp0x5uH4miit4M7GIvn2LzTPOjtYQSPB8DC7NmJYd
+ QDLRbxJHVPQvFqwphXPE04TstkIyxpFirdSBsCE8JxUhypUVTW98nyGkVN5fRnQ93tXl
+ xZCm7mvTQkxveyuIkkj9Str2EsML3lU8g0jSvmcHUPjSPo2F5tXuzgfb3q0jb3av1KMP
+ Aca4Jvi9nqbZ9eBVaLeNVf3J9lg4CeT1zJAR36Yc59mu3/DAhDAdNzmUmXeW3FgHY7hU
+ 1tteT2Zwzrb6towwWzInaZ4MJAGZZfSYFdKF/vyw7M6JTeextfNB64piuVTwlK2b9o3i
+ OQ2g==
+X-Gm-Message-State: AOJu0YwTRSsaIuUATPyJ3zhd4xXbeXUDXRNkw8vc/QmmI7tSKmP7WO9R
+ G2q+IjL+WWsWv9YWn1uyHwK42g5p/jvKElodKwK64POFgTGm6fTptw+lTM2wM2EW8GsCbgbVAiT
+ sUS2hLg6ubiG0CD1s3PYEq3uL7bhvpdG5ZZyh6DQ2uNSRUtTab8/tl6CXOMR1eIdAQgxAlHuUys
+ uk7F4pdcXpIPxnyIHCnPyUUuEjMRg=
+X-Gm-Gg: AfdE7cl3x8YeHeCJIpTRngoI0iKek4LllUApO4e+LTnzHkNkf/3zLMRZCpDeyoq1eba
+ eNwOyV783uHSdfXAcOWjO1frs8CGBmBChwzu0We3o1Ha8kZ2qvXUArlLQ38giMLyVBTsjtRWp7O
+ x1rw8Qyl1qKeSphrNPBnK3XL9koB2jgOHbnh6EHom3trDt6b3hljMs1Ac6v9L7ODVCLbKWmX+lc
+ HivRR/IZOfvkbCo3K0k9yidjilbJX/ZErKlGL1UXs/a7tkj
+X-Received: by 2002:a05:6512:800b:10b0:5b0:1eed:f707 with SMTP id
+ 2adb3069b0e04-5b28f87d8c1mr321790e87.23.1784280920735; 
+ Fri, 17 Jul 2026 02:35:20 -0700 (PDT)
+X-Received: by 2002:a05:6512:800b:10b0:5b0:1eed:f707 with SMTP id
+ 2adb3069b0e04-5b28f87d8c1mr321781e87.23.1784280920154; Fri, 17 Jul 2026
+ 02:35:20 -0700 (PDT)
 MIME-Version: 1.0
-Date: Fri, 17 Jul 2026 11:34:40 +0200
-From: "Thomas Monjalon" <thomas@monjalon.net>
-To: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
- dev@dpdk.org, "Jerin Jacob Kollanukkaran" <jerinj@marvell.com>
-Cc: hofors@lysator.liu.se, "Luka Jankovic" <luka.jankovic@ericsson.com>,
- stable@dpdk.org
-Message-Id: <9491ee40-aa15-42b4-9b99-e47f29df217c@app.fastmail.com>
-In-Reply-To: <20241211141303.132448-1-mattias.ronnblom@ericsson.com>
-References: <20241211141303.132448-1-mattias.ronnblom@ericsson.com>
-Subject: Re: [PATCH] test/dispatcher: transfer impl_opaque field
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20260717093006.229370-1-david.marchand@redhat.com>
+In-Reply-To: <20260717093006.229370-1-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 17 Jul 2026 11:35:08 +0200
+X-Gm-Features: AUfX_mwcWyf53v-0qQwGiIQQIarFALN_odHytPboel3sL0Wn-rggq4p2TufkMyI
+Message-ID: <CAJFAV8yS7WNYSuuJV3s=a5FutXkg0+3W+VJ4xvXOXrsfHd18WA@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Limit usage of internal API in tests
+To: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: GtDzYDPpqe-hlrNitGvAM7TvOvRaYTov2R9-o8eLRbY_1784280921
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,15 +81,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> The dispatcher tests failed to transfer the impl_opaque rte_event
-> field between the dequeued and enqueued event, in violation with the
-> Eventdev API contract.
+On Fri, 17 Jul 2026 at 11:30, David Marchand <david.marchand@redhat.com> wrote:
 >
-> Fixes: ecca8a0be606 ("lib: introduce dispatcher library")
-> Cc: stable@dpdk.org
+> This series is aimed at 26.11.
 >
-> Signed-off-by: Mattias R=C3=B6nnblom <mattias.ronnblom@ericsson.com>
+> We had a few bug reports related to internal (and experimental) symbols
+> issues during 26.07 development.
+> See for example https://bugs.dpdk.org/show_bug.cgi?id=1957 or more
+> recently https://bugs.dpdk.org/show_bug.cgi?id=1967.
+>
+> To catch such issues earlier in the CI, this series proposes to run
+> the unit tests through meson with the ABI reference unit test binary
+> against the current ABI libraries and drivers.
 
-Applied, thanks.
+I could have called test-null.sh for checking testpmd too.
+For a next revision if any.
 
-(better late than never)
+>
+> For this to work, some unit tests must be skipped (since meson may
+> invoke the ABI reference code with tests that were unknown at the time).
+>
+> A few unit tests were directly dereferencing internal structures and are
+> reworked so they use public APIs.
+>
+> Additionally, unit tests were allowed to use any internal API which has
+> hidden a few issues (like a public API backed by internal symbols in the
+> hash library).
+> So disable the global ALLLOW_INTERNAL_API and move it to code explicitly
+> requiring internal API, with the hope it will push us to have better API.
+>
+> The last patch contains a hack for now, where the cached ABI reference
+> is force regenerated with a branch of mine where I backported the
+> fixes of this series.
+
+
+-- 
+David Marchand
+
