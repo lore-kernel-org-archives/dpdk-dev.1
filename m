@@ -2,81 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CD5C44514
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 08:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 336A8C44515
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 08:47:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF7934028B;
-	Fri, 17 Jul 2026 10:44:50 +0200 (CEST)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id 79C624028A
- for <dev@dpdk.org>; Fri, 17 Jul 2026 10:44:49 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfout.phl.internal (Postfix) with ESMTP id DDA59EC011B;
- Fri, 17 Jul 2026 04:44:48 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Fri, 17 Jul 2026 04:44:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784277888;
- x=1784364288; bh=2u1l5moxwgS+8/gGtXH4rIEQfy8mXmyCNM0c9WZK370=; b=
- kNc5YAId14ltnqpVNK86cQQ9//8/EW5lxpe6e4LPNfMnGg1CsSm6Af2//Hm3v/kd
- lr7da7m6Ix6sneRsVmuMaiohWRoqg9RllxLlV8ip6Anw9wCuUJjzQNbBpxcK00WF
- nlvFyzWx6ej1NPUryHuOhbPfe+0gfky5IN7NAjXlIAByL46Kg6t5cXar7qa5Mb+c
- yHNLjnvbLulWUn+3n0KMb5MrEVHwv3Nm76KpcukfP7XEaEF63DNdWXq3qgrNwEN+
- DCFU5Yq7EQnf83d0ur/ATksV66TsKHcdptUhroY9JRo0z3NnbAe7dGfXu2o9+i50
- tbtYdtqOh9w/wCGdy5VvqA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784277888; x=
- 1784364288; bh=2u1l5moxwgS+8/gGtXH4rIEQfy8mXmyCNM0c9WZK370=; b=e
- 3b3BbevB6weCE4QjLdMa3Uzkh4us9me8PPqnbzG6V0lvwpt1R802QoJFbCeNPJ9t
- aWX2qNZXKGIDs2IVEQvc0iXo6mDGibxTN1zaeAhEyYiweuTRCt224I0t8JNqsoM0
- Zug4GPmzE+zy8QwqeJvKqKMU55qdGv8FlI24kA6FoLIedlO7kuaVZ03298sE8LLh
- pcPPrD54DGQ0RNP6mrTXN/4HraqCx71Oi48SiFQh/oYQai7MlylaHFjzAiOPWCcz
- b0yhUGMo/UqGfxTGfhr6JZBM2IGZBTj6KEKD7wIDZCZfWY/vl5E/337VpqG1BSUc
- ydJ0zpj6lG73pf8IDn+CQ==
-X-ME-Sender: <xms:gOtZanp9gD5411B2dGrVoRXbE4IKBdNEyKBME5_Tz_WenRLN6EWhiA>
- <xme:gOtZartoNtjBqHLGL6SysUjviuyZNVHsLERJO8HauPpRJrCXWvp2-1kRDoLoPStAY
- dvJDYBlMW5eQyJEh8n8Mu6m3ts767XlpkSUtwQCY9wY12SUUC0PUQ>
-X-ME-Received: <xmr:gOtZakH1gBumzEqGGTEhJogRor2nwGH5cgzKLKXoL2G_D3qW_GFzbHbG5PxegWcXwj9evhggVGWhpXaLkA>
-X-ME-Proxy-Cause: dmFkZTGfva2SUH1Dbcz/IH5z9rdef/Rk2B3yoID/ioGtZw0PIUgIyPRUhaetFihcOE9abG
- RIipFFV9ysovIeSd3+oeA/Cf0HnuZs84D8l1Ef+JaDw8XC11WHB5FI3owVjm+fFcHtJxh1
- 77IJKpOcd7HrIG/dRh5bxfuU85yfux9LZYs6JgO1+4vayuAaRSXmDWxFdHKcYKtYVmjP8B
- xnEWjs6WU4O5CA5f2YrY2XVLIKYcGpBHjik5au9qcCf3Iz5vyorAbeJmFQvnMOQ3nJ59bJ
- dLnvMGNFFKxE9EhBLLxn7GqJVvz5w8Dl08kpZUdM92+VYuakj0IjEd1kaiHaAaa3j8KrJv
- LdPHYLoNBLbHISNYbUX8gOQ7NLHJ6zGhBC6+FBXw7k+geUYow9h3rycwC5/4yzMxOYngL9
- YB0bkbR6t+JiP4vOcv4V1z9hAGZLgx1R6d1F21QpQBv+X2SPwyJLxM2cGSgPJX4JFMikyY
- pPHJMGLrio1OdVpN/78DAdXElLxHzOpEN0NbfZQCXF2Oq1J0+ehggRTjJd3djcVM8vfI1f
- evwYB29AQnKldGsW4UGyK7YJIMJnY/fYkHBQ4WDp2G9ASmWwu+XB5RYh3sfswOM7nMq7eU
- ranoZxlwKB1pamqSTMULlpEvj92Ij4qEaUY/3rM7Am/SiZmTjzJ8EexPwleA
-X-ME-Proxy: <xmx:gOtZasbNlZZVd4h8e1MPvPvcxzWwm8_puB32srR9Ok_sApqVBH0W4Q>
- <xmx:gOtZakU_va6EvWSBYBUrG1OvJCYI_R-7qRlnLwFD5gNQcx9xQPRdFQ>
- <xmx:gOtZaikM8QsMJEuGj2i7k1CXLF3GcAgFP9mWU2mXwzQf1F5IHFl0Aw>
- <xmx:gOtZavCRmZLyomNBwrMjeF3wczHR1svPuFGV9yAkfP-rOnwgbXmLlw>
- <xmx:gOtZaukP5z9KRSsMDaqLLN_1Cn3oowMT14wDgUQN2M9wKqVxd9zXOhHX>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Jul 2026 04:44:45 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, kevin.laatz@intel.com,
- selwin.sebastian@amd.com, bhagyada.modali@amd.com, david.marchand@redhat.com, 
- fengchengwen <fengchengwen@huawei.com>
-Subject: Re: [PATCH v3] dmadev: clarify last_idx documentation for completion
- APIs
-Date: Fri, 17 Jul 2026 10:44:43 +0200
-Message-ID: <-xlt_zDzRlON1MlTfXvDNQ@monjalon.net>
-In-Reply-To: <b79c0cce-f9b3-4e90-848b-0ccd013c5cb4@huawei.com>
-References: <20260715104934.3668478-1-raghavendra.ningoji@amd.com>
- <b79c0cce-f9b3-4e90-848b-0ccd013c5cb4@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2DD644028B;
+	Fri, 17 Jul 2026 10:47:03 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 68B744028A
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 10:47:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1784278020;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=h5yPDGsGll6x78yW6EMQjrG5kbwIvYZbITNUAc/kGaQ=;
+ b=Mj2zEso/LPJgzU2OOI9HTgNSs2u+lnT3JIgHxK4xe1ODYqOqKH5z60Rk/zgYZ6rvr1RyrV
+ nFTQNjNac0//QTRpbp8o3kUk5rCyoQa9gaa2Yvhbqdc+2fLoYaQ5DTY6yBpywDjHCQcP8k
+ p2R4v+JPg0ebAQM/rleOqaoPDjryXG0=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-320-82tKoC_ROQuqEvXljm7SpQ-1; Fri, 17 Jul 2026 04:46:59 -0400
+X-MC-Unique: 82tKoC_ROQuqEvXljm7SpQ-1
+X-Mimecast-MFC-AGG-ID: 82tKoC_ROQuqEvXljm7SpQ_1784278018
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-5aebe29f8cfso1370943e87.0
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 01:46:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784278018; x=1784882818;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=h5yPDGsGll6x78yW6EMQjrG5kbwIvYZbITNUAc/kGaQ=;
+ b=g00xUfEukQQzKrM+cNHjabv90RuE1O/eixOfMqXAyb6sMUpNrInZ6/MPTLW2i1SfS5
+ c9Q2t/6jJSTPqKgmNZcnjuD2fIeVUH21bZdPn5Lvh6e1nXy+c/Uq02gd93KJ3hbo1TO0
+ 9lHOtoxixiXGvLj8WdJlFb6bwCgIxXCjdugJX5+Lb1aHKjmnETFo+XC2kjzKqUqinWW4
+ E8hXLk1KBJTWOrFjuDNH1RiC06W+V6pv4owJIqOHXYRD+L2YAH5FsvcMTrCoMYD8m9wJ
+ jGaOMK8v/CkvMdV8RKUYp8xev2OI0cwbD3DjCA/adqI9VpiCB9CVTz828ttUruZbEooH
+ sqwA==
+X-Gm-Message-State: AOJu0YwjFvQnxPU7KBXbK0/4lf8z2SMwkMdqAqspVs5evifpafyhfF4V
+ YjPSp6Njnomdz9xLzVQNRDnACeD+yjdeZRIKFp4Dj1uVj1osFs6ztZRdqGCM8bDknWUo930s2NJ
+ trEJdNklkP6kAXcD0LSiXb7eS6U9TVQHBHEhCCXbb6oAFWKpgOM+Zq9SsCpbD9LVZm2vF0D4wAi
+ 3YjjILuZGSL1IVqHNZIk4=
+X-Gm-Gg: AfdE7cm/2CDQjUbUPc6WCyM0Fr2BPeZz36ASbAWVuddgcfXJsMrooXocfqS8xQBa3IX
+ wCFNcL/cM4hLyahnFQlPIG1cpwVGIyGGVURE7EEwfYCivDKM/Au5qviNCVaU5UG5E6r73nGI/8S
+ Rnnb8zl5NsgYsZM7yVj6LisbnHwmRyDN4Srj1y4J7VkaDP7nG4R2DJByct4r2nFCP+kPbLKV5+l
+ dqDdt+PgtbeXfkJJ5evMQOaYcv8WPDnShPQOF5MeyZ1woGD
+X-Received: by 2002:a05:6512:ba1:b0:5b0:6343:a298 with SMTP id
+ 2adb3069b0e04-5b28a15cc69mr1334579e87.7.1784278017649; 
+ Fri, 17 Jul 2026 01:46:57 -0700 (PDT)
+X-Received: by 2002:a05:6512:ba1:b0:5b0:6343:a298 with SMTP id
+ 2adb3069b0e04-5b28a15cc69mr1334571e87.7.1784278017173; Fri, 17 Jul 2026
+ 01:46:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20260715105959.2216756-1-ciara.loftus@intel.com>
+ <20260715122045.2256082-1-ciara.loftus@intel.com>
+In-Reply-To: <20260715122045.2256082-1-ciara.loftus@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 17 Jul 2026 10:46:45 +0200
+X-Gm-Features: AUfX_my6etB38bHG2kyTRg8sIohISHxDOWYuE0RwTN26IfqRJN1g2ElMP5AORoo
+Message-ID: <CAJFAV8x=gV6oUSA88cc4mEvqEOCown0wC5sZJX0o8TQTLtOCCw@mail.gmail.com>
+Subject: Re: [PATCH v2] doc: add deprecation notice for iavf devarg auto
+ reconfig
+To: Ciara Loftus <ciara.loftus@intel.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: qrwXSZtER6QmHvSzeIg1tOijbOoMNsjRQg2voYp14pc_1784278018
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,31 +84,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > The last_idx output parameter was documented identically for
-> > rte_dma_completed() and rte_dma_completed_status(), even though the two
-> > APIs have different semantics:
-> > 
-> > - rte_dma_completed() only reports operations that completed
-> >   successfully and stops at the first error, so its last_idx is the
-> >   ring_idx of the last successfully completed operation.
-> > - rte_dma_completed_status() reports all completed operations regardless
-> >   of status, so its last_idx is the last completed operation's ring_idx
-> >   irrespective of success or failure.
-> > 
-> > In both cases only up to nb_cpls operations are reported per call, so
-> > last_idx is the ring_idx of the last reported operation, which may not
-> > be the last operation the device has actually completed.
-> > 
-> > Refresh the full documentation of both functions to remove the
-> > ambiguity and make the behaviour explicit.
-> > 
-> > Fixes: 91e581e5c924 ("dmadev: add data plane API")
-> > 
-> > Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> Reviewed-by: Chengwen Feng <fengchengwen@huawei.com>
+On Wed, 15 Jul 2026 at 14:21, Ciara Loftus <ciara.loftus@intel.com> wrote:
+>
+> The `auto_reconfig` devarg in the iavf driver is enabled by default and the
+> case for ever disabling it is weak. When disabled, it means the user is
+> requesting the driver not to restore settings (unicast/multicast
+> promiscuous modes) when recovering from a reset. The use case where this
+> might be desired is during a VF initiated reset where the user initiates
+> the reset and wants the VF brought back up in an untouched state. That
+> scenario can be facilitated by extending the `rte_pmd_iavf_reinit` API
+> rather than relying on this devarg, so it should be safe to remove the
+> devarg.
+>
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Applied, thanks.
+Acked-by: David Marchand <david.marchand@redhat.com>
 
 
+-- 
+David Marchand
 
