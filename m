@@ -2,51 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A67FC44507
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9C5C44515
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:04:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45FB84028B;
-	Fri, 17 Jul 2026 11:01:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7BE7840A7F;
+	Fri, 17 Jul 2026 11:04:48 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 434614028A
- for <dev@dpdk.org>; Fri, 17 Jul 2026 11:01:38 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4D95B4028A
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 11:04:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1784278897;
+ s=mimecast20190719; t=1784279085;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding;
- bh=HZ6pcZVsBZTqGsU7MfYHflvtATT1v9b1IYhnnKV+dTA=;
- b=XQfiOt72AOYvMIWW1JH3ukccNcd/YrXrDIUttm29WGd4cocP94ld3gWZxXypdkXLquHRW1
- an1hN8QVsiJ4PMEZPzi1zRB25L56M/KF/1FAM1x7dXayPs2MIJcQbiQqHbgnLoeJnReBEE
- Q70at2MA27Njauox37WVn1ZEFMOqmaM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=0Lj1S69pDpfvAMgcGm9Gas7ragM7bPQkcjs9AJ0eNac=;
+ b=aQvVeGI4UOWJ+Nk0G6d9bXMe/bVPwozgnuSNnVVwCCs6MOManqaDR3/EXfduZTLaDpm5sF
+ vMsCW7Jhe3Q65Zsbv+tnKZXYdyevoXLL4n1TX8GLCogkiiZUj7huRD1Vz1k2sjpzSbxkQw
+ GMs9qOSDZc+x6sY1kafYLrlLsgEBOSw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-266-5_jcyBqGN-WnnUeU2BFHSw-1; Fri,
- 17 Jul 2026 05:01:36 -0400
-X-MC-Unique: 5_jcyBqGN-WnnUeU2BFHSw-1
-X-Mimecast-MFC-AGG-ID: 5_jcyBqGN-WnnUeU2BFHSw_1784278895
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-556-vVrEJV8XMdGTpVEwhyeXIA-1; Fri,
+ 17 Jul 2026 05:04:42 -0400
+X-MC-Unique: vVrEJV8XMdGTpVEwhyeXIA-1
+X-Mimecast-MFC-AGG-ID: vVrEJV8XMdGTpVEwhyeXIA_1784279080
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 5BC0718007F0
- for <dev@dpdk.org>; Fri, 17 Jul 2026 09:01:35 +0000 (UTC)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id AFA551954B37; Fri, 17 Jul 2026 09:04:40 +0000 (UTC)
 Received: from ringo.redhat.com (unknown [10.44.33.106])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 6CDC0D71; Fri, 17 Jul 2026 09:01:34 +0000 (UTC)
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 23CFC180036E; Fri, 17 Jul 2026 09:04:36 +0000 (UTC)
 From: Robin Jarry <rjarry@redhat.com>
 To: dev@dpdk.org
-Subject: [PATCH dpdk] doc: announce rte_graph ABI changes for 26.11
-Date: Fri, 17 Jul 2026 11:01:22 +0200
-Message-ID: <20260717090121.1859773-2-rjarry@redhat.com>
+Cc: Christophe Fontaine <cfontain@redhat.com>,
+ David Marchand <david.marchand@redhat.com>,
+ Jerin Jacob <jerinj@marvell.com>,
+ Kiran Kumar Kokkilagadda <kirankumark@marvell.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Maxime Leroy <maxime@leroys.fr>,
+ Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Subject: [PATCH dpdk/26.11 v3 0/2] graph: topological bitmap scheduling
+Date: Fri, 17 Jul 2026 11:03:24 +0200
+Message-ID: <20260717090326.1860634-1-rjarry@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: mtyRFb-ffJudugS8pj02dzgQbbqvJQSFOLRqrpZveNI_1784278895
+X-Mimecast-MFC-PROC-ID: L7fV_e-Zo9_e4h48k5st3m2Q5aeL6VvowTDBhzvk45Q_1784279080
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -63,33 +71,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The graph library internal scheduling will change from a circular
-buffer to a topological bitmap. This affects struct rte_graph and
-struct rte_node layouts.
+Replace the FIFO circular buffer in rte_graph with a bitmap and a
+topologically-sorted schedule table. The old circular buffer appended
+nodes in enqueue order, effectively a partial DFS driven by per-node
+process functions. This caused convergence nodes to be visited before
+all upstream branches had run, resulting in redundant visits with
+smaller batches.
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
----
- doc/guides/rel_notes/deprecation.rst | 7 +++++++
- 1 file changed, 7 insertions(+)
+Nodes are now sorted by (topo_order, node_id) using BFS depth from
+source nodes, ensuring upstream nodes are always visited before
+downstream ones. The diamond perf test shows a ~10% throughput
+improvement (converge visited once at 256 objs/call instead of twice
+at 128).
 
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index f5c12cc74762..6183f33b893a 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -61,6 +61,13 @@ Deprecation Notices
- * mempool: The object array in ``struct rte_mempool_cache`` is oversize by factor two,
-   and will be reduced to ``RTE_MEMPOOL_CACHE_MAX_SIZE`` in DPDK 26.11.
- 
-+* graph: The internal scheduling mechanism of ``struct rte_graph`` will change
-+  in DPDK 26.11. The circular buffer fields (``head``, ``tail``, ``cir_mask``,
-+  ``cir_start``) will be replaced with a topological bitmap scheduler.
-+  A new field will be added to ``struct rte_node`` for the scheduling order.
-+  The graph walk functions will process nodes in topological order using bitmap
-+  scanning instead of the circular buffer.
-+
- * lib: will fix extending some enum/define breaking the ABI. There are multiple
-   samples in DPDK that enum/define terminated with a ``.*MAX.*`` value which is
-   used by iterators, and arrays holding these values are sized with this
+Changes v2 -> v3:
+ - dropped explicit priority field (int16_t) from rte_node_register
+   and struct node; topological ordering from BFS is sufficient
+ - removed hiprio worker node type from diamond test; topo_order
+   alone provides correct ordering without user intervention
+ - updated documentation and SVG diagram accordingly
+
+Changes v1 -> v2:
+ - split diamond perf test into separate preparatory patch
+ - added topological depth (topo_order) as secondary sort key to
+   preserve upstream-before-downstream ordering, preventing a
+   regression in the reverse tree test
+ - restored idx == 0 guard on bitmap set in the enqueue path to
+   avoid a ~15% throughput regression caused by touching the pending
+   bitmap cache line on every enqueue call
+ - added performance numbers measured before and after
+
+Cc: Christophe Fontaine <cfontain@redhat.com>
+Cc: David Marchand <david.marchand@redhat.com>
+Cc: Jerin Jacob <jerinj@marvell.com>
+Cc: Kiran Kumar Kokkilagadda <kirankumark@marvell.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: Maxime Leroy <maxime@leroys.fr>
+Cc: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>
+Cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Cc: Zhirun Yan <yanzhirun_163@163.com>
+
+Robin Jarry (2):
+  graph: add diamond topology performance test
+  graph: replace circular buffer with topological bitmap
+
+ app/test/test_graph_perf.c                    |  130 +-
+ doc/guides/prog_guide/graph_lib.rst           |   29 +-
+ .../prog_guide/img/graph_mem_layout.svg       | 1823 +++++++----------
+ lib/graph/graph.c                             |   27 +-
+ lib/graph/graph_debug.c                       |   12 +-
+ lib/graph/graph_ops.c                         |   46 +
+ lib/graph/graph_populate.c                    |  107 +-
+ lib/graph/graph_private.h                     |   41 +-
+ lib/graph/rte_graph_model_mcore_dispatch.h    |   34 +-
+ lib/graph/rte_graph_model_rtc.h               |   63 +-
+ lib/graph/rte_graph_worker.h                  |    2 +-
+ lib/graph/rte_graph_worker_common.h           |   78 +-
+ 12 files changed, 1158 insertions(+), 1234 deletions(-)
+
 -- 
 2.55.0
 
