@@ -2,74 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01481C44507
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE70EC44507
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:23:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 567B540DCF;
-	Fri, 17 Jul 2026 11:16:20 +0200 (CEST)
-Received: from fhigh-a7-smtp.messagingengine.com
- (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id B247740612
- for <dev@dpdk.org>; Fri, 17 Jul 2026 11:16:19 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 2D4CC140005B;
- Fri, 17 Jul 2026 05:16:19 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Fri, 17 Jul 2026 05:16:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm2; t=1784279779; x=1784366179; bh=pLuZwQkbaxbrhsfnrbVyy
- ZeaJKJQcfPUeV1eGZARJ60=; b=ipLb9ilLcaEIDR/MOnFZd2nASGwE0z/TOLQOQ
- dMAbhSwIijW2YBrAgYlMlb9agsWgpNT9xH1CyChEMiz86dg6XeG/gSBU4qBcsWme
- GcR0em3DYXZeqSzc0UY3AF9nwNBQKOQ4r408tN9jeppHE+B3qAIfn4n8f/OHkE5v
- KT8lKEIG42K6UQQGEJehUn7CPN53bHFLkLF1i7fqT7CtGjd/Jbb5FIyL++Z0IiRG
- WAxesilZjMZ3qBIAGVVK2TAdcg71cKKdOYctFDIg58tXVwRluPKctAAZmY9oN1oV
- cCzslqmKXejcA1qjvllVWntUkQB5xjJaOGAjZaS8G2y/e4myA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
- 1784279779; x=1784366179; bh=pLuZwQkbaxbrhsfnrbVyyZeaJKJQcfPUeV1
- eGZARJ60=; b=eNwAJsLjwP8ng8Zzycn4+R18kC/gUsK+muBJ1Xv0dJpWmarhfq1
- ieui/8JybaBBfAaWvQ0cEjZ4HFG6011r8Y/4k1mfNYQe057iT4G2msAshyt4DkO6
- U9rkEE7zNzXxHs7k1bWZD1UrdV9BgP2D8getMCf9JErRP4jAbux7OFer5zJcYuIA
- 0nYiBYlzevOo4Ks34spUipqUyeVUpc3jsbJSi0rOusPhFzelWDMJJKl1TsPuzcNP
- z3nuuH4fFWkhbXcGiiRp2fRMm6qoBwUj8s9RDO56Is57Rg/WS0pg7YFzzGYUAZiW
- nLV9PQ1rC+tYAt88ChgLXO/g4sGpYLalqEQ==
-X-ME-Sender: <xms:4vJZaioo3KYKv3kibJXuReB8shlSbCKNuB9R6YbOoL90Dpg3Fj0DOA>
- <xme:4vJZagxXHFUlHNDQweVXtHAqgI_zvKUQXIYt19rGvSSt18gPP34HvkiVAMneEzR0M
- AVGi3ti3QzOBXqnzaDVYPjjvoGmRBFSGkSGBelLY3CgG6P58xZ8Bw>
-X-ME-Received: <xmr:4vJZavLhKMjBwuhTCaGoM8EGqBTY-EwGUu3-B2x9uRAsPs8iNottAYT2V5P8JMVJKWBvgCcWJreFTBonPF9RqtA>
-X-ME-Proxy-Cause: dmFkZTFUj4k431mDtP1L4K6Zm0wLO1WsydUkpnmBnteNj2LDCaP9HNfgJS4i/HaG2v6K2s
- 25qmLxCf5UclqyykS+u/yV84UiO1jsPuKf/95NN8b8EZPRaandppFicyo6MvUpqRxtzq0H
- d7cn5dMGiMHs+DKdwfOStyAACzZUmZ5gsB2XNfKH4PiQm3V3PAlB6aatkZG5FqM2KIO8Ka
- VnsPPJgaYHL4uA+9pzFVNpQp4T33jW9AnH8tX2brsukcNCc6kh/TuEiA2FGRYWSpnEYFGP
- oqcX4MRzczaRUWTuGIXcsxvMyoRnRl9L+Mfr8GU4XzayFL9xG6GOB9uyu7REAuR8GXx9R2
- rmz9GBWi8pB5c2ak98ynWcAArbDIiMB6TYDEwpNM6NFezShfTlOfvyWxHUy6eRKM5zr7sz
- vvDNtkFLSJ2023och/MPJ7W71J7JOFsDqeQyOj1/BHgDJOt21MKcMyxtL/OsuwY/84hDWW
- Tyll7jEAT7zILoKEoD7R/MexfytwqUJBcbmGhIUGV5VdPxQJdKhMVNcKYRushfnUmeebmv
- B010CGCBMTL6V2iZy20k7tUlWBurTBFqorhY6pD8VPRIjEZhNutfvBk7R41Nynhp2Dxrik
- zSiRAWPBClqzhse5t34qHEFlQFnHW3QhOOrzzvnRwBPyUKzZkSbbh9PwP8SQ
-X-ME-Proxy: <xmx:4vJZaqJgrn7xRdjASY88jHmZ2PUiBxpEWg2VC20N9wOxzX0rVfn3Ow>
- <xmx:4vJZasu-UpoVWQGoJO2KAMlPqLoaMGxhy9QQ3dd7X4ogTK7i5Ok8xQ>
- <xmx:4vJZanSs6dJpJNR_CnjkwGLyDIcHiDZyCeuIJsMqm_ei6Gqi6QDWQg>
- <xmx:4vJZaiPbn_6hF3AJ2a20AjcDxiWTVMWFRE9HAH5UIbcw4HCdrYCvjQ>
- <xmx:4_JZaoWRjhFE7268ct_nSz5RUPDVp7YnQKGT_uSkEV8PwVxhdGrRG3Se>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Jul 2026 05:16:17 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Robin Jarry <rjarry@redhat.com>, Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH] usertools/telemetry: load aliases from config directory
-Date: Fri, 17 Jul 2026 11:16:03 +0200
-Message-ID: <20260717091603.1492650-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.54.0
+	by mails.dpdk.org (Postfix) with ESMTP id 1344540A7F;
+	Fri, 17 Jul 2026 11:23:03 +0200 (CEST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com
+ [209.85.167.44]) by mails.dpdk.org (Postfix) with ESMTP id 7B8F240684
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 11:23:02 +0200 (CEST)
+Received: by mail-lf1-f44.google.com with SMTP id
+ 2adb3069b0e04-5aec6360133so6063973e87.1
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 02:23:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1784280182; x=1784884982; darn=dpdk.org;
+ h=in-reply-to:content-disposition:content-type:mime-version
+ :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=f+GRN9CN5SczJAoqL/hPa5Kyx1E/0LZHIAl0zAyx6Wc=;
+ b=YN6RHY8pS+/ti4pbYmkIuyax0t1tXbz/egWhxlvGgK/NVreud54AkihDEa4sRjkrvx
+ FgDEDA8QqRHeoyhE8vyMLBEZSrKl3HmPOSKNzpa/NqzfKLkMfnt2KeyxNj68zdxqxTx5
+ ifWySYniBsuyRjUy+mGDxv8430dilwhLTmgJYn6m2QH3eVhUdohcgWZEUyBIA/tSw3tJ
+ cyfL6K/serhMzGyDPAnhUGBkHxyqiBLTkwf6IgvuNpmVqsAZWtpJ5apQM8ubFRp/5BEy
+ JBaHI1roeSgLb/Ja7xk0Q+40vh6A098Okt71NDZ7KVTVbPVk+WpCRtAyuCtYgA4awwfN
+ junQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784280182; x=1784884982;
+ h=in-reply-to:content-disposition:content-type:mime-version
+ :references:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=f+GRN9CN5SczJAoqL/hPa5Kyx1E/0LZHIAl0zAyx6Wc=;
+ b=c+ZTRRVMqbVINnVXkKEY79zQGi5bTkX9yLjcOHlf4lNLnQhNIV88Vlnpbw2Tb5et5+
+ z0y/CP3KtQ3fuAHk6RKDGwy+rrowTj614AcrEJb9sfS2Jg4KU5v7rAatMzPokQAWn2nK
+ hsxBz6ISEzArjzApmMFS4btxeSEUs8DcZntyV/iH+DPkk1ZRHoe2+Uji7Ne3+ReTR+t6
+ tPOYI4C13af9YRuM3FO13tx5l0PFAn+eGIrcyi2us0iQELj7eYBK+mRysh24AxJNlOYG
+ Gq+Ybu/DAx4PBghtbWxwdO89Kk4mBhRbbzI8xFWR+c0YElMnYRr97H3/eVocWtBcK9p3
+ Rcnw==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RrPva3fYXItbA5ld+D/S+rM8rl431HgssouBgldymGHpUG4cK6A7L9JnSRU7VLt/fB4vUg=@dpdk.org
+X-Gm-Message-State: AOJu0YyJTEXLdmqYiIMP7j9qiW12enejYkM2fN4uqqR168wEWJ6vMvT4
+ aknlrj/99dJOmkEMWobIIO5JlzTrGvxHzB1Wz83wbK/p4edXBSV6IMeM
+X-Gm-Gg: AfdE7clpgsVJtCnFz1OWVVbHj8wzQvB22dPZGCW7yP++Uk949EG1jmm2f5aYIf4/Bln
+ fO/J8JlK3OJZfYjBVRGge8ZjyUbGqXDyWzfJXyfNpxE15CnUtPbs9557Zpel6TlokiaiNtPTNyL
+ IKOoPe9DZsvsPBdWkpe7OGwXvrPEbmKdGPDHCxyFCs+sTBuJRlA/My2IfiKwr+xu6Q1Eh79qiCK
+ zdU8tTQ65iriE0lt3iv08ePNWutVUaCx4khvi9if+8XStEyF3QEw3wjK7oBA0Y874fhjj25GWfw
+ FhqFmuftyq8pj0l0DltNir+2QvE9iuiPr6ceI06G3JZ6BOBnRmCREnY9c9x+yoQJHtMWMNTVnVA
+ JRnCLIHkFslWwi4EARudewHU5E8W5KJDF40q0VcnBdPJ9aJZHKOqPbTqYbW7V+827vLBwBhGXRc
+ Rf0uGA/dl9Gx7cwPWsN8ivRKrtvPtnR6srbRhEimzpCGUXvXUFqq9aFA==
+X-Received: by 2002:ac2:59c6:0:b0:5b0:1bef:2e9a with SMTP id
+ 2adb3069b0e04-5b28f9abf0cmr284448e87.33.1784280181498; 
+ Fri, 17 Jul 2026 02:23:01 -0700 (PDT)
+Received: from home-server ([31.204.104.167]) by smtp.gmail.com with ESMTPSA id
+ 2adb3069b0e04-5b291e25290sm197718e87.73.2026.07.17.02.23.00
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 17 Jul 2026 02:23:01 -0700 (PDT)
+Date: Fri, 17 Jul 2026 12:22:59 +0300
+From: Alexey Simakov <bigalex934@gmail.com>
+To: "Hyong Youb Kim (hyonkim)" <hyonkim@cisco.com>
+Cc: "John Daley (johndale)" <johndale@cisco.com>,
+ Neil Horman <nhorman@tuxdriver.com>, Sujith Sankar <ssujith@cisco.com>,
+ David Marchand <david.marchand@redhat.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: Re: [PATCH v2] net/enic: check notify set return value during init
+Message-ID: <20260717092259.vfwlgwahsquw3z2x@home-server>
+References: <20260715103105.39417-1-bigalex934@gmail.com>
+ <IA3PR11MB8987D9D134E71F46596649AEBFC72@IA3PR11MB8987.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA3PR11MB8987D9D134E71F46596649AEBFC72@IA3PR11MB8987.namprd11.prod.outlook.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,98 +84,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The default path of the telemetry alias file
-was at the top level of the home directory.
+Sure, also dpdk ai review higlightet potential problems in memory
+management
 
-Load aliases from the DPDK configuration directory instead,
-using $XDG_CONFIG_HOME/dpdk/telemetry_aliases
-or $HOME/.config/dpdk/telemetry_aliases.
+For example:
 
-Keep --alias-file for users who want to provide an explicit path.
+enic->cq = rte_zmalloc("enic_vnic_cq", sizeof(struct vnic_cq) *
+			       enic->conf_cq_count, 8);
+enic->intr = rte_zmalloc("enic_vnic_intr", sizeof(struct vnic_intr) *
+			enic->conf_intr_count, 8);
+enic->rq = rte_zmalloc("enic_vnic_rq", sizeof(struct vnic_rq) *
+			enic->conf_rq_count, 8);
+enic->wq = rte_zmalloc("enic_vnic_wq", sizeof(struct vnic_wq) *
+			enic->conf_wq_count, 8);
 
-Fixes: 410d498412e4 ("usertools/telemetry: support aliases for long commands")
+if (enic->conf_cq_count > 0 && enic->cq == NULL) {
+	dev_err(enic, "failed to allocate vnic_cq, aborting.\n");
+	return -1;
+}
+if (enic->conf_intr_count > 0 && enic->intr == NULL) {
+	dev_err(enic, "failed to allocate vnic_intr, aborting.\n");
+	return -1;
+}
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- doc/guides/howto/telemetry.rst |  6 ++++--
- usertools/dpdk-telemetry.py    | 23 +++++++++++++++++------
- 2 files changed, 21 insertions(+), 8 deletions(-)
+Lets imagine that enic->cq is allocated successfully, after that
+when we trying to allocate enic->intr we are failing, so in this
+case we leaking in second if statement, this related to all error
+handling paths in driver, since as far as I understand resource
+free happening only in enic_dev_deinit(...) function.
 
-diff --git a/doc/guides/howto/telemetry.rst b/doc/guides/howto/telemetry.rst
-index b3f25c1113..fdaede1987 100644
---- a/doc/guides/howto/telemetry.rst
-+++ b/doc/guides/howto/telemetry.rst
-@@ -154,9 +154,11 @@ and query information using the telemetry client python script.
- 
-      The telemetry script can load aliases at startup from::
- 
--        $HOME/.dpdk_telemetry_aliases
-+        $XDG_CONFIG_HOME/dpdk/telemetry_aliases
-+
-+     If ``XDG_CONFIG_HOME`` is not set, ``$HOME/.config/dpdk/telemetry_aliases`` is used.
-+     A custom path can also be provided via the ``--alias-file`` script flag.
- 
--     or from a custom path provided via the ``--alias-file`` script flag.
-      Each alias entry must be in ``alias=command`` format.
-      Empty lines and lines starting with ``#`` are ignored.
- 
-diff --git a/usertools/dpdk-telemetry.py b/usertools/dpdk-telemetry.py
-index 20627b596b..e575f269cb 100755
---- a/usertools/dpdk-telemetry.py
-+++ b/usertools/dpdk-telemetry.py
-@@ -22,7 +22,7 @@
- DEFAULT_PREFIX = "rte"
- CMDS = []
- ALIASES = {}
--ALIAS_FILE = ".dpdk_telemetry_aliases"
-+ALIAS_FILE = "telemetry_aliases"
- MAX_ALIAS_EXPANSIONS = 32
- 
- BASIC_HELP_TEXT = """Basic usage:
-@@ -46,19 +46,30 @@
- """
- 
- 
-+def get_default_alias_path():
-+    config_home = os.environ.get("XDG_CONFIG_HOME")
-+    if config_home:
-+        return os.path.join(config_home, "dpdk", ALIAS_FILE)
-+
-+    home = os.environ.get("HOME")
-+    if not home:
-+        return None
-+
-+    return os.path.join(home, ".config", "dpdk", ALIAS_FILE)
-+
-+
- def load_aliases(alias_path=None):
--    """Load aliases from $HOME/.dpdk_telemetry_aliases or a custom path if provided"""
-+    """Load aliases from the config directory or a custom path if provided"""
-     aliases = {}
-     if alias_path and not os.path.isfile(alias_path):
-         print("Warning: alias file {} not found, skipping".format(alias_path), file=sys.stderr)
-         return aliases
- 
-     if not alias_path:
--        home = os.environ.get("HOME")
--        if not home:
-+        alias_path = get_default_alias_path()
-+        if not alias_path:
-             return aliases
- 
--        alias_path = os.path.join(home, ALIAS_FILE)
-         if not os.path.isfile(alias_path):
-             return aliases
- 
-@@ -434,7 +445,7 @@ def readline_complete(text, state):
- )
- parser.add_argument(
-     "--alias-file",
--    help=f"Provide a custom alias file instead of $HOME/{ALIAS_FILE}",
-+    help="Provide a custom alias file instead of the default config path",
- )
- parser.add_argument(
-     "-i", "--instance", default="0", type=int, help="Provide instance number for DPDK application"
--- 
-2.54.0
-
+So my question is it problem? If yes, should I address this issue
+in scope of my patch or better to make it in another?
