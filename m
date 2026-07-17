@@ -2,78 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0378C44516
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 12:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF91CC4451C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 12:50:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ABF19402D4;
-	Fri, 17 Jul 2026 14:49:25 +0200 (CEST)
-Received: from fhigh-a8-smtp.messagingengine.com
- (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
- by mails.dpdk.org (Postfix) with ESMTP id 55AD2402D4
- for <dev@dpdk.org>; Fri, 17 Jul 2026 14:49:24 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.phl.internal (Postfix) with ESMTP id CBBC11400076;
- Fri, 17 Jul 2026 08:49:23 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-10.internal (MEProxy); Fri, 17 Jul 2026 08:49:23 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id B448A402D4;
+	Fri, 17 Jul 2026 14:50:48 +0200 (CEST)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTP id 1F44A402BA
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 14:50:47 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id A60CEEC0180;
+ Fri, 17 Jul 2026 08:50:46 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Fri, 17 Jul 2026 08:50:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784292563;
- x=1784378963; bh=kKAPU4S223qfqa2jyC7SGYo8efZOGMsXj9gzdXsQNH0=; b=
- AdUmykWWhlevxinMiyM7sSl5w1muosKgOvVOC8yqbemxoyCAZ2NBFeTeehaGYF31
- FcVZ1sPodnZHWLq6K7R4q8KUY1JGUcrtSZNFaWL4RiwTtCD4Li9Zl6i3xd8Duz4/
- vFs9RERbzQHnwMvHm8vVAVYJLgJqD5sF+yGoLJZE9brGPo6m3Ha8GEb8730Sk1wW
- 5ou30ljAukJEh/LCrZThVTRqJpZDKCcC+h4ipwy1BtkBD6XBYjsscdEJ13sG2+mV
- wv6yTks4jXX2cXrXVfWj3BWbydnSP9AXXmiy/lUTBqrPREvpTxRV5V2wmVh/j7m+
- G1Q8Hc32JJsdYRU3+6pJ4Q==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784292646;
+ x=1784379046; bh=vC3jTikM6n/xryGf6DHncNyeRXEEVUnf/kSDIti/s84=; b=
+ KABqjFd5RxY5MfFbLWR0n6t1Tb5bCy1YpNeTnJCNzuCF7SeGH96G2kvwFpHhMDBm
+ 41/nhm1xM6mHHE2hlQuP2eM03aW1NFwXKMV4MVQgy4vOHMdh4HGntvH7GuXc8Rpg
+ rSkyFGYomvw2fNY9n01leALY2w+FyK+khe/NwhoUtEmfnkkH4HoCRxV6eNXwrRFC
+ XdErjVHgjc8ILMkhJBKDQwNMTIa9aidDRXyJaVtFBATfaKUcnU01qsIy9xnLq5xi
+ QcVBA93+CZ+c2Htc4jOa+NCGEgnjEUhcVOfTsRTeFJSnM+slfnMeCdfHRm60UHsW
+ rn+ch7D5SOQlfW2e7CcBMQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784292563; x=
- 1784378963; bh=kKAPU4S223qfqa2jyC7SGYo8efZOGMsXj9gzdXsQNH0=; b=T
- I5W7ITi/Z3HggAG41aBpau+Q9kDrbyFZh1f46v4r4rox3sBqKB45swv6b7M4nTdf
- QMTZ9jEC4/Y5HqrpBbx0IVTI8UgftW+2qnDMvympbVj3E9FAEzT3lDBzsNxhyrgP
- aOC1P1cbfDX/6urT56Ik7qEWVOB3a929ZzcG8q6wMF4Tm/nfpt87wMTna19s2rWy
- ncnjD7OvGs/oFmcIo6hpx2dycE+rOlKHaA8rd745CCMUCKdPZN+BiJ1uGO+RIbxs
- JCmF5qrHPzcV1ssU9Ck1ksUWOn2d/fZr+QJWFarZp+p1UMUjvYWslIClHIxZODKn
- JPqgV0MrJ1gNEgV+fAvJw==
-X-ME-Sender: <xms:0yRaaiKCfWW0zajsLvYQHuiWUXgyAZCEZ7tWry-d10PBqTfBa4MmSg>
- <xme:0yRaaqR1RHcPNDSAfQW5_YwmfJt89vsndJzgkrEqSoQp2IBETLefYEasRajErQUbd
- e_AnnVF235Ja6hx4amJYFm066LSxHZL4VH2e4n08WJbnfeM85px>
-X-ME-Received: <xmr:0yRaaqp42mJPdBVGlnXGgjhJCLK36N2Ne1nDtnTEeACaFoRNemGZoBJZVwsW-hR4mVQrfWJZtxWQGduwhw>
-X-ME-Proxy-Cause: dmFkZTEFSS+AIk3P/SLxXa0eAIKJhSar3npsFFil75D1xaANjjY3O6CbvQCsdQmfXq6HQK
- c6W98TlgXzinWL/VEc2VV/AbZm+s+tBpS4MD8x527iuABhUQr9Ll8DshcFHrH7qFgMj+sQ
- N64paUKbV5rDuKVBqdY062bn4cv1QpyE55vph78aFT5G26mIoIehU4Qk+S0+JcIcRPn/hk
- upHKe0rgEyao/QcRpAR3kcjHBYpQx8I/Nj6WLIZbA7UI+vEFuBx1zlEetKd0G/Yt3fuW9B
- VCrS7D30Ac4xImyQAQ/yGuOoar1Tk6F1y00MsYXapTKcE3LuLyTYrdFLkoUUAmiJaBDbWf
- eN1pkaPe7Jmpk1ilZSMtJZd0OGMHeWQr0p036uaJ5FMnqS2tWk8jjyBZZTGXtQnQ0NsXj0
- gfbscH6ZLToB0P+vXiamJozX8jpS26zvEVUOVR7IHeCZBjILn3/AqopuMG0qn46kMSXtfP
- HX5Iyu5zgg1sNIjHiMbS/9+3KWijpIAYqj++HfdZ0RWg73iJcdtlDsv2EUa47CXE7gapu0
- WwukXic8sOPmW73h5H5VZ/PpHt8qdbcQjVApx7pUPWEq/eJRwPfiZRq2s/Eq4FE1ajTo61
- MWOJeW8PzLrzS9CbKMzPnS/YxBYCYDT7auoaIXg5C398eV3/GqRhxLoKL1FQ
-X-ME-Proxy: <xmx:0yRaavrcVGuzEfgZME22LAnGI4MIkqkESZ_et_l5630zhAGGi6vV7Q>
- <xmx:0yRaakPADOJadRkLxPV-FXkGj_jskCI_yf0oJZyx2deikTXURnGwAA>
- <xmx:0yRaaowcDuVG5B7NKb7PrvtEWztj1n_sI3C9RbSsjSpyJL7Tbpm2cQ>
- <xmx:0yRaalsl-ZrCSXy57oHmzbGtgpedcmQaSG8eAJO988NKFRXXrw3bfA>
- <xmx:0yRaaihRENwvTgPbbTs00euRTnwqkmMPkLTTTE7pkaIDCLyu2ZK2uO7j>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784292646; x=
+ 1784379046; bh=vC3jTikM6n/xryGf6DHncNyeRXEEVUnf/kSDIti/s84=; b=Q
+ 5Fv9O/lcUY1lufVExMQccWKkTEaePOiewWGkrYcryoBC5VoWNwWTVnOiHIfgrEp1
+ h0GAXIY2AflbRxgk1g9lpJnHwDaAgCw7/OidRUMCJXJvGq91PpuZHBM1yNNUM2Ji
+ qU44/e+2EJVcDNLhQ/Mt1Raa7i1LKjZuDlRh4ij3rj1DFECvd7CXypTGMMdVWTRz
+ rAB3BpGEii+LmCeLKeMYafa5Nwm0OMuPujN5bCnMxkxOzpLI8nJIqFsvok/eYrrW
+ N4Bk0Qo+a90arTI3r+S2kdHAXaRnzsrx+E+qWeS1n9zAh6JhoMfGPv4ulBz9ifc9
+ ZHTuDVcgdbzIm+MIhsdMA==
+X-ME-Sender: <xms:JiVaah4azF0bkjRUloEhr6nZzeDxzyqVPLl3-O_1XQHgtuE17n7GZQ>
+ <xme:JiVaajP-nQTWoZ5-TKKOhe-cnEE-2rDuLGoRQp4lw0T71HJsaJNDbp_jnf7FzqRjx
+ 26K6Et0AVORqvvsEXrgjSY9cQYw-SVJTs2Rp3wqOPoFxXQ2NQmJRw>
+X-ME-Received: <xmr:JiVaannAP1awBKiicbu3u8l9vr70G6lsmcl9vQKA-Vb_ajDO6rKg7OoBo1QhQ8qQxGIcnM243HPeao9PgA>
+X-ME-Proxy-Cause: dmFkZTF/efTa96VRoqp0LalCL2ZyA7d3WVJwUyYm4e0EuMROVKykNnsmAj5qlZuUxBSs/H
+ wiayIwETBQxVX0RMQYFvUOZsMjg96yDY7tcIepQ061C09GbJVlJyYYZhTZWSyTHnnKbOEn
+ XwfNEI3+9uT+tHc4FtQYqSf9HTsq4Orl5XoVcaK7Q4YQC3IwBitPhsM8Adhc5tOa/v5Nsc
+ 1g+1M/RCCfUbVqc3BA0uhCwom6xAUxjiM+qTPH2n76jOfCS8xsNt4ddVyDUu5HHOg3tn+F
+ Msf/Ubh4UOL9NJr8kfNHUuKNMSNzN9AP/+cFPlf85BJUuCcqntyzB16Q5U7yW7gvc5jBto
+ Hnc8/XUeHVPaeOm1S4ZEN/O/vzPCj1ebGgNqkRzuGRfr8SmTJaYQ6MF/SYV2UJwatbvlQT
+ QsfxunqnoIFtj/JTTF1+d2ffm9BTzckn0KnfVXpYMmJZDn07NWkIQ7O1bydH+f92BmfIRq
+ 3v8RPL4dBinjmTldMqx1FUUZNPlB2Sx5hlyyBUbHKn80X4cajk29NxCUDvbpExJk3BdKEC
+ YqCyocFnNa4yNoDXLFABe9P8/EdNBJDl8Bd/w16D+qIopLCrXkuzna+OCTg0X1kSY/gUQs
+ TKHgQOOXks02jXP+6RrWCTtZibgw/VWkvTheD+CGGmmrD13TT2lVoKjudpKA
+X-ME-Proxy: <xmx:JiVaaiShbw-mpRdHOwAjgkEojmsj5vXyTtI_Qphy-bhDYoTMVOv2iA>
+ <xmx:JiVaarD8-9Yzig350NdLWDbCfSGKlW0eAOCN4PukKIBSoNK7UdjIJw>
+ <xmx:JiVaapQ6W2mP_2PSrsyY3O-tDA1zp2sDlnAo-0ls2ig1G_Ki5_9_Mw>
+ <xmx:JiVaappkSpXjrpmZWgkh25ry_f_9r1R6JLWFyaLgpOqVlntWGUUd0Q>
+ <xmx:JiVaavgeUaDB1CjaM1r_aCns5vIOYc52_TNB3jJSKlr9kAJ8gXxfsPTV>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Jul 2026 08:49:22 -0400 (EDT)
+ 17 Jul 2026 08:50:45 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Marat Khalili <marat.khalili@huawei.com>
 Cc: "dev@dpdk.org" <dev@dpdk.org>,
- "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: Re: [PATCH v3 6/8] doc: add missing globs to doxy-api.conf.in
-Date: Fri, 17 Jul 2026 14:49:20 +0200
-Message-ID: <R96dKgyaRl69srX90yAl5Q@monjalon.net>
-In-Reply-To: <3146b71600564d1fb36690091a1c5d6f@huawei.com>
+ "bruce.richardson@intel.com" <bruce.richardson@intel.com>
+Subject: Re: [PATCH v3 2/8] doc: document rte_os.h
+Date: Fri, 17 Jul 2026 14:50:43 +0200
+Message-ID: <o9pff8usTZKoTG6Tp4x0JA@monjalon.net>
+In-Reply-To: <d118b8d80ba64106ad538a5d214f1f34@huawei.com>
 References: <20260706105256.79904-1-marat.khalili@huawei.com>
- <89E6AkFFQ-mRyIB3PXdwvg@monjalon.net>
- <3146b71600564d1fb36690091a1c5d6f@huawei.com>
+ <4fzQ93JqRAO9h6zzYW03fg@monjalon.net>
+ <d118b8d80ba64106ad538a5d214f1f34@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,16 +89,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-17/07/2026 10:18, Marat Khalili:
-> From: Thomas Monjalon <thomas@monjalon.net>
-> > 07/07/2026 10:50, Marat Khalili:
-> > > Public headers starting from `cmdline` (except for `cmdline.h` itself)
-> > > and `bpf_def.h` were not previously included in the documentation build.
-> > 
-> > Why bpf_def.h is not prefixed with "rte_" ?
+17/07/2026 10:34, Marat Khalili:
+> > I don't understand the benefit of adding an empty file.
+> > rte_os.h files are defining standard functions which do not need documentation.
 > 
-> I don't know historical reasons, but I would add this "rte_" prefix. As far as I understand 26.11 is the next opportunity to do it, right?
+> It was easier to add a stub file explaining the file purpose than to add an exception just for it, but sure we can exclude it explicitly.
 
-Absolutely
+I think an exception would be appropriate, there is nothing to document.
 
 
