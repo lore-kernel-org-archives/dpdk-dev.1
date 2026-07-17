@@ -2,76 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADA4C44515
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 21:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFFDC44516
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 23:26:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0508F40297;
-	Fri, 17 Jul 2026 23:39:28 +0200 (CEST)
-Received: from fhigh-b1-smtp.messagingengine.com
- (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
- by mails.dpdk.org (Postfix) with ESMTP id 28F084013F
- for <dev@dpdk.org>; Fri, 17 Jul 2026 23:39:26 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 517DD7A0015;
- Fri, 17 Jul 2026 17:39:24 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Fri, 17 Jul 2026 17:39:24 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 8C92F402C1;
+	Sat, 18 Jul 2026 01:26:20 +0200 (CEST)
+Received: from fout-b8-smtp.messagingengine.com
+ (fout-b8-smtp.messagingengine.com [202.12.124.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 15B55402AB
+ for <dev@dpdk.org>; Sat, 18 Jul 2026 01:26:19 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfout.stl.internal (Postfix) with ESMTP id 803921D000D3;
+ Fri, 17 Jul 2026 19:26:17 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Fri, 17 Jul 2026 19:26:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784324364;
- x=1784410764; bh=HnwVVz9fVkrTEudogU2hKpLwvshlxc6C9RONyJ0JzKQ=; b=
- PZTiF5I6A3SbXVYk14S0HQZN8RqtftKvJUmPH4zaFruzdLxSKEZc0xZjWJJFQH8p
- f2Am0rbEwAOKBOpLweHFTXqkypzUw6BUX1PraFUlsEdhRqJ4zcFvoUxK/gMq2rIG
- fQR48CJApX0SB/jCv7LJVt9ILJ5l3NlrSe/zE7ffEpibOtu5ncUvUfuYCELNrJVQ
- 5Rl43TBg0y4tqHxElRQjjNmFQaxjQ8jIHlsYVAQecH+LZL+ZfhaiDj8tlsAH1Alz
- xVDoNJnFOKiLZlljJxawPCu2sxSrcNPpn8oUE+/6aOTPrStOmeRojjns0mIRjtXV
- v2Tly4i9RuGdwwJjJ9CX4Q==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784330777;
+ x=1784417177; bh=DbCqvkeyi4v6VL6r+qJKafvsSkXdBmVLRG5EZ7AhFqw=; b=
+ ix7WPMl4OkLDUflBGL9VCBM0mZTwfO72UCzhvoSjY7oj0xV2V0BhotoGIsBa9bbS
+ BLKOK6MYo/3mUMhKXMRqE3Oj4l35NYUVxhbYOtjkzOjiWsU91ZmY6G4uS3KfTcK2
+ E61KCrnfFSi6BIbjgUHpdn8Nfm/ozglB+17R2UWrtf5WTnA+g7rOBwujq62ebYPr
+ wumBQq0+U1AI1hrbLGCXfwaE29/kzveayIWbQ0bMHry9RFhle1UgxDCYHfBr2XIc
+ AUA9HCytkkBHBaCuFD9uN0SsbNf2shOgeiLTkW4BlRyCczo4UEdYKgN26cCEQWJE
+ oALeJ/dal4ni1kpA/W/YTw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784324364; x=
- 1784410764; bh=HnwVVz9fVkrTEudogU2hKpLwvshlxc6C9RONyJ0JzKQ=; b=O
- iUJJoMouLXy20Q8dZkBc5UuEsn3NGpRcVQpQtnBB/LOhYidq/r04Wo+xq1JDNqaP
- xk0xXPPoLGkD/wsUDDTzh4ZWcwqcD6C7b2nyYQ8b4MKiBeu36SUxeUryJqZUtEEz
- pQZgmCWggNRhvsYK5dlNMrI9gDRmaHbH1uOxKNMJE43qyJR98hYwntB1AAizT6hM
- wxiHiUDgD8qF/TDE4UIHl1chBZYnZIpC+2/jcpWKbH4C4GzL4MjjflVZTqHawHik
- xzld21TeCKjl92l3n2L/N05G+J+Rl+772Qnnqoq/JJYc32ZyNT8mBJ6B2ZGjBbkh
- 7avdRNRbB9WfFADHI70lw==
-X-ME-Sender: <xms:C6FaanIhssGZt6K-wTYtX3LX2CAA0j-9MzOoSb3hiiNCTSH26Um_PQ>
- <xme:C6FaaneWp_X2JXq3ZlPN5R6LnlBKYJv0amKOEYJ6S6_z6AFhW3mr3ihi9t3wNRvMI
- xlLlJuM8PH3aZ1RURFzggTPI3uf07hV7dP3saziLlsyqYonw3m3wwQ>
-X-ME-Received: <xmr:C6FaaicEPSANlXbxKhBQ1dyORKMQzeQrDiZEc_uXnI8f1w1sb8vYEzkWXKUnW86yyjE3T4kYmI61qQ7J9g>
-X-ME-Proxy-Cause: dmFkZTFqAqokgjnQ1R0qxEmchrrFnS2XELqTyjPsI1xazsbgPz2pu7bLFhuAwGNq8tOSnd
- sQBhvmrxDa+IYp3RIFEtXvt1n0cC+QUiJ4FrWXevA/hmqaj8Ort2hSn1lO1NMVjh3R42Df
- AGRBz1fofjyBIkDVrE55D2f07n8MN015LIxp6V842c8G3uQiVncLOb1trkH92OqlrUWNPk
- Oni5xoT53UIoOxn/tFsllh6GMNsYiMEMjBIPdv3pIfmaAcXrzYsikEaoSU76EHtHja2ACL
- atAd3i/pIuZ88tSngUN3y7Bwr2AT0j0U0pwhrWN1G8owQjTN0MdM4aByOfK4BZW2FGRjPz
- egm+/hJYXGbmFdSADz217z5SqYdu3JoRDcIWy2W8SQ3gwxZJRR5L+XiOkXmTDtWJzHFw1+
- yGvhiq9NrtIB1e5H0Bci5vT0ueqCJylSMSna+FYoFCx1+dGwtRW1UEgzCv0qZPt3E9pEBB
- XurZVLOtjfNpkwIBTnUCvTKoEsh3vnbAKsP3LoBanB/Dx8N0dOCM93EXZM9fJVces+clos
- KCxYZ8hXZecXpQziTSH2WpGBe97efT13/yR2e5oPBg1AbP4JSvGszZKHiL20/+85LurcEt
- vB9KyJpyG0yRXw41QeyX96EfbxBZ1fAHa017GHKfkIwXawMOlogDFr7uelDg
-X-ME-Proxy: <xmx:C6FaaiNuPQraxHPy-bHp5WPB__2IJJrjzYtEzlPRwAb6BMroiYlpFg>
- <xmx:C6FaahJNqKMbqYfrXBwqxQa9ain2L-fUOUO_ybYIde8DA0y2KlKWGg>
- <xmx:C6FaarFFWbQCJ4ebmy2fO6lGCv1qO3d-Vylp9mEs-Kg3zHwwDmNvMw>
- <xmx:C6FaahQwkqX-4JuoDA3EYg21WINpeXkM4SXUBCBddNNpEplOBwJUbg>
- <xmx:DKFaakLKIKDYnwaBB9gpkpN8iLA-yeG2xNhdYi7uFVVWvpKE2yEAN5mi>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784330777; x=
+ 1784417177; bh=DbCqvkeyi4v6VL6r+qJKafvsSkXdBmVLRG5EZ7AhFqw=; b=O
+ nSXDtJUCuOpJoOlL6WMYjolHp2YdvBdMuU5phl/EnKEbE9aLMzLBBUArISo1Lb3m
+ 3QA8cY+keqy1t5qUBLOOUpYPXii0gFchuwMTR1dwrZ7yaOMj8s8v4DbOHzNWA1Yh
+ Jq8JecO7XR4otpaDwY3grFpGlzFMyubvJxMXD61tJb1n8vJs3fx9ipGcjDqTK8Ao
+ wvAgkZj+q83fV9DV8AoiHLTgcsZqQJLXiGlH+zynuZuz6XRFSb+TNxGcDQ+yiEqU
+ aQdU98qg2U+plXYcGq0GMHiQ+Xpn43bStKeKBfo13k+dprJw1hsnMwhDJGJdg5wE
+ deNhes2KwpV0CLCignSYQ==
+X-ME-Sender: <xms:Gbpaajra3-uof8ckGlq4QtNndxnU9NdyhSj_8Cbz48rl_qaXzjTpNg>
+ <xme:Gbpaap_zgsdMrVAw-Nv81of7KCJXYrDa76NSIKbqbli6SiWvzrW7aYKxtc6xNG1rI
+ qckOidiNFepi0s29Ey234wlCnfXowY6tGydThcKjnC4jjEZuXyvKw>
+X-ME-Received: <xmr:Gbpaai-eNSFpzgWzGaq5h4P2ENGAzTSUQvoohDM5X1LNkK150yJT8_esCIK1jno48UeJROaMENuX68h1WA>
+X-ME-Proxy-Cause: dmFkZTFaKvrqiyCofyFHPbxmOSKtKzX2MR8/9D0BOWEsG7GlcaK8eZW7ZCvnyd4eK9UVHT
+ AFJrCCRu154wwzSLN15mD0VoIj4Hs7v7hWU0YGTZXoubfRazyNJpZcGgHBCsLkMp1tv22E
+ 2eleZhUox9e3kPtpcMiuCWObQDu7Ijtw/nkKOMYsJR2GeUGtjp9pZXZZ/tcOF5nvr55RWe
+ 5BG5AEtTF11UKDFI+Bjna9aXX2WbfRuJJa2mLOjhwiOn+1ZoUjfOc6w7s0RYw6RbUTPMrX
+ gP99bSNJsq4EtqVji/y7OmlniG2hAOXlBHM886Kp9nqCT7w5YHKF3iJ2oc3YT9+bkyxkr4
+ XXMhqvjNtVI0iaSPUR+rjh0AvVTr2apCSggII365zhxhm3eli+p4dcOaw7OCvRD5Kp49vf
+ VmdCY5eUVgBvmQtmiypI8NclIazPmz/lUcU9Z5i7WoQHCBgzTo+yPgQTh5wdOpkuYj0BkZ
+ zjtHXZwJAwGFU3riBbtD8brAno9Ggd//moD7b/as0wLwIR+VLP9Mp3l10WNuVM2zFTGlZc
+ AI8GST+RqwiF3n0GHGg2UVxnZ3bbwUwQsGTJbaFgajVYf5TOsaI5gcCPpCNUKNO31G1aEA
+ xpdLViU8qcPHFP9g9VZFmGtasGQfF1L3QCwmSmw2eq7MUVQHO75FAMPpwGDw
+X-ME-Proxy: <xmx:Gbpaaosz2r3TfEBV7pcmkXVr3ToW416OxE6asjdw9Cg87fcniJ3lyg>
+ <xmx:GbpaalrKoyJMrtRS9xV5NfyjpR6D6GGKELq6CCWYqtXuKMPQ8I4qoA>
+ <xmx:GbpaallNXKaomkPf-CGuAsSAeeOmCyhyzesCDqGaIKDCtPdvZIUc3Q>
+ <xmx:GbpaapxinShWf1QGlmMdIEncFkK03e0PxPROzZ4cgqBdqM1FUYDkbg>
+ <xmx:GbpaakqTGX5NtuYqf4875IDT2waimsvrePujx7Esz-L0w3t_GIRIChxZ>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Jul 2026 17:39:23 -0400 (EDT)
+ 17 Jul 2026 19:26:16 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 00/12] doc: improve contributing documentation clarity
- and style
-Date: Fri, 17 Jul 2026 23:39:20 +0200
-Message-ID: <CURiMqY8R66-Lj045EG2RQ@monjalon.net>
-In-Reply-To: <20260116201738.74578-1-stephen@networkplumber.org>
-References: <20260114225555.127448-1-stephen@networkplumber.org>
- <20260116201738.74578-1-stephen@networkplumber.org>
+Subject: Re: [PATCH v5 00/54] doc: programmers guide corrections
+Date: Sat, 18 Jul 2026 01:26:13 +0200
+Message-ID: <KyjwWJg3QACMtpEHv56IoQ@monjalon.net>
+In-Reply-To: <20260118191323.241013-1-stephen@networkplumber.org>
+References: <20240513155911.31872-1-nandinipersad361@gmail.com>
+ <20260118191323.241013-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,22 +87,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-16/01/2026 21:14, Stephen Hemminger:
-> Nandini Persad (1):
->   doc: correct grammar and typos in design guide
-> 
-> Stephen Hemminger (11):
->   doc: improve ABI policy documentation style
->   doc: improve coding style guide readability
->   doc: improve documentation guidelines style
->   doc: improve Linux uAPI header documentation
->   doc: improve new driver guide readability
->   doc: improve new library guide style
->   doc: improve patch submission guide readability
->   doc: improve stable releases documentation
->   doc: improve vulnerability process documentation
->   doc: improve unit test guide readability
->   doc: fix grammar and style in ABI versioning guide
+> Stephen Hemminger (54):
+>   doc: correct grammar and typos in argparse library guide
+>   doc: correct grammar in service cores guide
+>   doc: correct grammar and errors in trace library guide
+>   doc: correct typos in log library guide
+>   doc: correct errors in command-line library guide
+>   doc: correct errors in trace library guide
+>   doc: correct errors in stack library guide
+>   doc: correct errors in RCU library guide
+>   doc: correct grammar and formatting in ASan guide
+>   doc: correct grammar and typos in bbdev guide
+>   doc: correct grammar and formatting in bpf lib guide
+>   doc: correct grammar and typos in meson build guide
+>   doc: correct grammar and typos in cryptodev guide
+>   doc: correct grammar and formatting in compressdev guide
+>   doc: correct grammar in dmadev guide
+>   doc: correct grammar in efd guide
+>   doc: correct grammar in EAL guide
+>   doc: correct double space in FIB guide
+>   doc: correct grammar in GRO guide
+>   doc: correct grammar in GSO guide
+>   doc: correct typos and grammar in graph guide
+>   doc: correct grammar in hash guide
+>   doc: correct grammar and typos in IP fragment guide
+>   doc: correct double spaces in IPsec guide
+>   doc: correct grammar in lcore variables guide
+>   doc: correct typo in link bonding guide
+>   doc: correct grammar in LTO guide
+>   doc: correct grammar in LPM guide
+>   doc: correct grammar and typo in LPM6 guide
+>   doc: correct grammar in introduction
+>   doc: correct grammar in mbuf library guide
+>   doc: correct grammar in membership library guide
+>   doc: correct errors in mempool library guide
+>   doc: correct style in meson unit tests guide
+>   doc: correct errors in metrics library guide
+>   doc: correct grammar in mldev library guide
+>   doc: correct grammar in multi-process guide
+>   doc: correct grammar in overview
+>   doc: correct grammar in ACL library guide
+>   doc: correct typos in packet distributor guide
+>   doc: correct grammar in packet framework guide
+>   doc: correct grammar in PDCP library guide
+>   doc: correct grammar in pdump library guide
+>   doc: correct typos in power management guide
+>   doc: correct grammar in profiling guide
+>   doc: correct errors in regexdev guide
+>   doc: correct grammar in reorder library guide
+>   doc: correct whitespace in RIB library guide
+>   doc: correct incomplete sentence in ring library guide
+>   doc: correct grammar in security library guide
+>   doc: correct hyphenation in thread safety guide
+>   doc: correct errors in toeplitz hash library guide
+>   doc: correct errors in vhost library guide
+>   doc: correct whitespace in efficient code guide
 
 Applied, thanks.
 
