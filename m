@@ -2,56 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EB5C44507
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE51C44514
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:30:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A5BC40E12;
-	Fri, 17 Jul 2026 11:30:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CCAEC40E1C;
+	Fri, 17 Jul 2026 11:30:42 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id BD5EE40E0A
- for <dev@dpdk.org>; Fri, 17 Jul 2026 11:30:36 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B1CEF40E27
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 11:30:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1784280636;
+ s=mimecast20190719; t=1784280640;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=HQKPoDnB6Y/nkB3oGY+MtvWeCY/KrZcmPQgbawsYytY=;
- b=X9IMuesyuVjTE3hJ0NTTJVAjJnpaiYuU+R+Qz63uKarI3ybAMXOzb+ijzkWGDgoIlgC5X4
- Hy+tiaevPmHAcZCSiJTEMEC5t2D3zo9AANOtvnx8ua3quxIgCwiL0ts4t+LGzPRYTkdCEz
- k3WrzM1WXsSFRq2HNlLcp0AZogVq9c8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ bh=jlHtxIMo1hfPP2p0cfCOm0j7V9a8V0lAMMTV/KPg8LE=;
+ b=Yxcl5INZmXUxBsfnWEHJNly/Hpx0TnYVh6LyvUPGEYmfKqw6Hnd6j/EqhZWc6PVtZiGj/Y
+ yZ/ytMRrtsABZGId+QORREIq0qb4byoHqUssgq2lfGQvgsotgQ5e3SK9tfa5Mj6qcDzuAK
+ OIQ3pgQh4zJYg9vrvnJGL3tz1lXYIaA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-418-EK2e3j17Msi-R3ZNblcw1w-1; Fri,
- 17 Jul 2026 05:30:31 -0400
-X-MC-Unique: EK2e3j17Msi-R3ZNblcw1w-1
-X-Mimecast-MFC-AGG-ID: EK2e3j17Msi-R3ZNblcw1w_1784280630
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-397-X6HeHoUoNSm5vbLNc98PpA-1; Fri,
+ 17 Jul 2026 05:30:38 -0400
+X-MC-Unique: X6HeHoUoNSm5vbLNc98PpA-1
+X-Mimecast-MFC-AGG-ID: X6HeHoUoNSm5vbLNc98PpA_1784280637
 Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id BB7F91955E8C; Fri, 17 Jul 2026 09:30:29 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A738F195D008
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 09:30:37 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.48.202])
  by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 0D965D72; Fri, 17 Jul 2026 09:30:27 +0000 (UTC)
+ id D813CD72 for <dev@dpdk.org>; Fri, 17 Jul 2026 09:30:36 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>,
- Reshma Pattan <reshma.pattan@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 04/10] test: uninline helper for forking
-Date: Fri, 17 Jul 2026 11:29:59 +0200
-Message-ID: <20260717093006.229370-5-david.marchand@redhat.com>
+Subject: [PATCH 06/10] test/devargs: check driver presence with public API
+Date: Fri, 17 Jul 2026 11:30:01 +0200
+Message-ID: <20260717093006.229370-7-david.marchand@redhat.com>
 In-Reply-To: <20260717093006.229370-1-david.marchand@redhat.com>
 References: <20260717093006.229370-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cYk1rncSSjc1blsxpG3iAH9QQyjdcLvUK78RL_umIKs_1784280630
+X-Mimecast-MFC-PROC-ID: hS6V_2MufM0W8Fg1x1W2QDSDfFik7iWCyuFNCCAteJU_1784280637
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -68,547 +66,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There is no reason to keep those helpers inlined.
-
-Besides, this code relies on internal API.
-So any consumer of process.h requires internal API.
-
-Move this code in process.c.
+Let's avoid calling internal drivers API.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- MAINTAINERS           |   1 +
- app/test/meson.build  |   4 +
- app/test/process.c    | 229 ++++++++++++++++++++++++++++++++++++++++++
- app/test/process.h    | 228 ++---------------------------------------
- app/test/test_pdump.h |   3 +
- 5 files changed, 246 insertions(+), 219 deletions(-)
- create mode 100644 app/test/process.c
+ app/test/test_devargs.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 84c528437f..176f58f64c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1950,6 +1950,7 @@ F: app/test/commands.c
- F: app/test/packet_burst_generator.c
- F: app/test/packet_burst_generator.h
- F: app/test/process.h
-+F: app/test/process.c
- F: app/test/test.c
- F: app/test/test.h
- F: app/test/test_pmd_perf.c
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 51abeeb732..d8efa93050 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -5,6 +5,10 @@
- deps += ['cmdline', 'ring', 'mempool', 'mbuf']
- sources += files('commands.c', 'test.c')
+diff --git a/app/test/test_devargs.c b/app/test/test_devargs.c
+index 0bd14c24ec..6c194ecfc6 100644
+--- a/app/test/test_devargs.c
++++ b/app/test/test_devargs.c
+@@ -10,7 +10,7 @@
+ #include <rte_common.h>
+ #include <rte_devargs.h>
+ #include <rte_kvargs.h>
+-#include <bus_driver.h>
++#include <rte_bus.h>
+ #include <rte_class.h>
  
-+if not is_windows
-+    sources += files('process.c')
-+endif
-+
- # optional dependencies: some files may use these - and so we should link them in -
- # but do not explicitly require them so they are not listed in the per-file lists below
- optional_deps = ['crypto_scheduler', 'lpm']
-diff --git a/app/test/process.c b/app/test/process.c
-new file mode 100644
-index 0000000000..2b6d7ae84b
---- /dev/null
-+++ b/app/test/process.c
-@@ -0,0 +1,229 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2010-2014 Intel Corporation
-+ */
-+
-+#include <errno.h>  /* errno */
-+#include <limits.h> /* PATH_MAX */
-+#ifndef RTE_EXEC_ENV_WINDOWS
-+#include <sys/wait.h>
-+#endif
-+#include <stdlib.h> /* NULL */
-+#include <string.h> /* strerror */
-+#include <unistd.h>
-+#include <dirent.h>
-+
-+#include <rte_string_fns.h> /* strlcpy */
-+#include <rte_devargs.h>
-+#include <rte_eal.h>
-+
-+#ifdef RTE_LIB_PDUMP
-+#ifdef RTE_NET_RING
-+#include <rte_thread.h>
-+#include "test_pdump.h"
-+#endif
-+#endif
-+
-+#include "test.h"
-+#include "process.h"
-+
-+#define PREFIX_ALLOW "--allow="
-+#define PREFIX_DRIVER_PATH "--driver-path="
-+
-+static int
-+add_parameter_allow(char **argv, int max_capacity)
-+{
-+	struct rte_devargs *devargs;
-+	int count = 0;
-+
-+	RTE_EAL_DEVARGS_FOREACH(NULL, devargs) {
-+		if (strlen(devargs->name) == 0)
-+			continue;
-+
-+		if (devargs->data == NULL || strlen(devargs->data) == 0) {
-+			if (asprintf(&argv[count], PREFIX_ALLOW"%s", devargs->name) < 0)
-+				break;
-+		} else {
-+			if (asprintf(&argv[count], PREFIX_ALLOW"%s,%s",
-+					 devargs->name, devargs->data) < 0)
-+				break;
-+		}
-+
-+		if (++count == max_capacity)
-+			break;
-+	}
-+
-+	return count;
-+}
-+
-+static int
-+add_parameter_driver_path(char **argv, int max_capacity)
-+{
-+	const char *driver_path;
-+	int count = 0;
-+
-+	RTE_EAL_DRIVER_PATH_FOREACH(driver_path, true) {
-+		if (asprintf(&argv[count], PREFIX_DRIVER_PATH"%s", driver_path) < 0)
-+			break;
-+
-+		if (++count == max_capacity)
-+			break;
-+	}
-+
-+	return count;
-+}
-+
-+int
-+process_dup(const char *const argv[], int numargs, const char *env_value)
-+{
-+	int num = 0;
-+	char **argv_cpy;
-+	int allow_num;
-+	int driver_path_num;
-+	int argv_num;
-+	int i, status;
-+#ifdef RTE_LIB_PDUMP
-+#ifdef RTE_NET_RING
-+	rte_thread_t thread;
-+	int rc;
-+#endif
-+#endif
-+
-+	pid_t pid = fork();
-+	if (pid < 0)
-+		return -1;
-+	else if (pid == 0) {
-+		allow_num = rte_devargs_type_count(RTE_DEVTYPE_ALLOWED);
-+		driver_path_num = rte_eal_driver_path_count(true);
-+		argv_num = numargs + allow_num + driver_path_num + 1;
-+		argv_cpy = calloc(argv_num, sizeof(char *));
-+		if (!argv_cpy)
-+			rte_panic("Memory allocation failed\n");
-+
-+		/* make a copy of the arguments to be passed to exec */
-+		for (i = 0; i < numargs; i++) {
-+			argv_cpy[i] = strdup(argv[i]);
-+			if (argv_cpy[i] == NULL)
-+				rte_panic("Error dup args\n");
-+		}
-+		if (allow_num > 0)
-+			num = add_parameter_allow(&argv_cpy[i], allow_num);
-+		num += numargs;
-+
-+		if (driver_path_num > 0) {
-+			int added = add_parameter_driver_path(&argv_cpy[num], driver_path_num);
-+			num += added;
-+		}
-+
-+#ifdef RTE_EXEC_ENV_LINUX
-+		{
-+			const char *procdir = "/proc/self/fd/";
-+			struct dirent *dirent;
-+			char *endptr;
-+			int fd, fdir;
-+			DIR *dir;
-+
-+			/* close all open file descriptors, check /proc/self/fd
-+			 * to only call close on open fds. Exclude fds 0, 1 and
-+			 * 2
-+			 */
-+			dir = opendir(procdir);
-+			if (dir == NULL) {
-+				rte_panic("Error opening %s: %s\n", procdir,
-+						strerror(errno));
-+			}
-+
-+			fdir = dirfd(dir);
-+			if (fdir < 0) {
-+				status = errno;
-+				closedir(dir);
-+				rte_panic("Error %d obtaining fd for dir %s: %s\n",
-+						fdir, procdir,
-+						strerror(status));
-+			}
-+
-+			while ((dirent = readdir(dir)) != NULL) {
-+
-+				if (strcmp(dirent->d_name, ".") == 0 ||
-+					strcmp(dirent->d_name, "..") == 0)
-+					continue;
-+
-+				errno = 0;
-+				fd = strtol(dirent->d_name, &endptr, 10);
-+				if (errno != 0 || endptr[0] != '\0') {
-+					printf("Error converting name fd %d %s:\n",
-+						fd, dirent->d_name);
-+					continue;
-+				}
-+
-+				if (fd == fdir || fd <= 2)
-+					continue;
-+
-+				close(fd);
-+			}
-+			closedir(dir);
-+		}
-+#endif
-+		printf("Running binary with argv[]:");
-+		for (i = 0; i < num; i++)
-+			printf("'%s' ", argv_cpy[i]);
-+		printf("\n");
-+		fflush(stdout);
-+
-+		/* set the environment variable */
-+		if (setenv(RECURSIVE_ENV_VAR, env_value, 1) != 0)
-+			rte_panic("Cannot export environment variable\n");
-+		if (execv(argv_cpy[0], argv_cpy) < 0)
-+			rte_panic("Cannot exec: %s\n", strerror(errno));
-+	}
-+	/* parent process does a wait */
-+#ifdef RTE_LIB_PDUMP
-+#ifdef RTE_NET_RING
-+	if ((strcmp(env_value, "run_pdump_server_tests") == 0)) {
-+		rc = rte_thread_create(&thread, NULL, send_pkts, NULL);
-+		if (rc != 0) {
-+			rte_panic("Cannot start send pkts thread: %s\n",
-+				  strerror(rc));
-+		}
-+	}
-+#endif
-+#endif
-+
-+	while (wait(&status) != pid)
-+		;
-+#ifdef RTE_LIB_PDUMP
-+#ifdef RTE_NET_RING
-+	if ((strcmp(env_value, "run_pdump_server_tests") == 0)) {
-+		flag_for_send_pkts = 0;
-+		rte_thread_join(thread, NULL);
-+	}
-+#endif
-+#endif
-+	return status;
-+}
-+
-+#ifndef RTE_EXEC_ENV_LINUX
-+const char *
-+file_prefix_arg(void)
-+{
-+	return "";
-+}
-+#else /* RTE_EXEC_ENV_LINUX */
-+char *
-+get_current_prefix(char *prefix, int size)
-+{
-+	rte_basename(rte_eal_get_runtime_dir(), prefix, size);
-+	return prefix;
-+}
-+
-+/* Return a --file-prefix=XXXX argument */
-+const char *
-+file_prefix_arg(void)
-+{
-+	static char prefix[NAME_MAX + sizeof("--file-prefix=")];
-+	char tmp[NAME_MAX];
-+
-+	snprintf(prefix, sizeof(prefix), "--file-prefix=%s",
-+			get_current_prefix(tmp, sizeof(tmp)));
-+	return prefix;
-+}
-+#endif /* RTE_EXEC_ENV_LINUX */
-diff --git a/app/test/process.h b/app/test/process.h
-index 3ee899dbc8..cf2f95f035 100644
---- a/app/test/process.h
-+++ b/app/test/process.h
-@@ -5,73 +5,7 @@
- #ifndef _PROCESS_H_
- #define _PROCESS_H_
+ #include "test.h"
+@@ -167,14 +167,18 @@ test_valid_devargs(void)
+ 		{ "net_ring0,iface=test,path=/class/bus/,queues=1",
+ 		  0, 0, 3, "vdev", "net_ring0", NULL },
+ 	};
+-	struct rte_bus *vdev_bus = rte_bus_find_by_name("vdev");
++	struct rte_devargs da;
+ 	int ret;
  
--#include <errno.h>  /* errno */
--#include <limits.h> /* PATH_MAX */
--#ifndef RTE_EXEC_ENV_WINDOWS
--#include <sys/wait.h>
--#endif
--#include <stdlib.h> /* NULL */
--#include <string.h> /* strerror */
--#include <unistd.h>
--#include <dirent.h>
--
--#include <rte_string_fns.h> /* strlcpy */
--#include <rte_devargs.h>
--#include <rte_eal.h>
--
--#ifdef RTE_LIB_PDUMP
--#ifdef RTE_NET_RING
--#include <rte_thread.h>
--extern uint32_t send_pkts(void *empty);
--extern uint16_t flag_for_send_pkts;
--#endif
--#endif
--
--#define PREFIX_ALLOW "--allow="
--#define PREFIX_DRIVER_PATH "--driver-path="
--
--static int
--add_parameter_allow(char **argv, int max_capacity)
--{
--	struct rte_devargs *devargs;
--	int count = 0;
--
--	RTE_EAL_DEVARGS_FOREACH(NULL, devargs) {
--		if (strlen(devargs->name) == 0)
--			continue;
--
--		if (devargs->data == NULL || strlen(devargs->data) == 0) {
--			if (asprintf(&argv[count], PREFIX_ALLOW"%s", devargs->name) < 0)
--				break;
--		} else {
--			if (asprintf(&argv[count], PREFIX_ALLOW"%s,%s",
--					 devargs->name, devargs->data) < 0)
--				break;
--		}
--
--		if (++count == max_capacity)
--			break;
--	}
--
--	return count;
--}
--
--static int
--add_parameter_driver_path(char **argv, int max_capacity)
--{
--	const char *driver_path;
--	int count = 0;
--
--	RTE_EAL_DRIVER_PATH_FOREACH(driver_path, true) {
--		if (asprintf(&argv[count], PREFIX_DRIVER_PATH"%s", driver_path) < 0)
--			break;
--
--		if (++count == max_capacity)
--			break;
--	}
--
--	return count;
--}
-+#include <stdint.h>
- 
- /*
-  * launches a second copy of the test process using the given argv parameters,
-@@ -79,161 +13,17 @@ add_parameter_driver_path(char **argv, int max_capacity)
-  * subprocess the source of the call, the env_value parameter is set in the
-  * environment as $RTE_TEST
-  */
--static inline int
--process_dup(const char *const argv[], int numargs, const char *env_value)
--{
--	int num = 0;
--	char **argv_cpy;
--	int allow_num;
--	int driver_path_num;
--	int argv_num;
--	int i, status;
--#ifdef RTE_LIB_PDUMP
--#ifdef RTE_NET_RING
--	rte_thread_t thread;
--	int rc;
--#endif
--#endif
--
--	pid_t pid = fork();
--	if (pid < 0)
--		return -1;
--	else if (pid == 0) {
--		allow_num = rte_devargs_type_count(RTE_DEVTYPE_ALLOWED);
--		driver_path_num = rte_eal_driver_path_count(true);
--		argv_num = numargs + allow_num + driver_path_num + 1;
--		argv_cpy = calloc(argv_num, sizeof(char *));
--		if (!argv_cpy)
--			rte_panic("Memory allocation failed\n");
--
--		/* make a copy of the arguments to be passed to exec */
--		for (i = 0; i < numargs; i++) {
--			argv_cpy[i] = strdup(argv[i]);
--			if (argv_cpy[i] == NULL)
--				rte_panic("Error dup args\n");
--		}
--		if (allow_num > 0)
--			num = add_parameter_allow(&argv_cpy[i], allow_num);
--		num += numargs;
-+int process_dup(const char *const argv[], int numargs, const char *env_value);
- 
--		if (driver_path_num > 0) {
--			int added = add_parameter_driver_path(&argv_cpy[num], driver_path_num);
--			num += added;
--		}
-+/*
-+ * Return a --file-prefix=XXXX argument
-+ * Note: only Linux supports file prefixes.
-+ */
-+const char *file_prefix_arg(void);
- 
- #ifdef RTE_EXEC_ENV_LINUX
--		{
--			const char *procdir = "/proc/self/fd/";
--			struct dirent *dirent;
--			char *endptr;
--			int fd, fdir;
--			DIR *dir;
--
--			/* close all open file descriptors, check /proc/self/fd
--			 * to only call close on open fds. Exclude fds 0, 1 and
--			 * 2
--			 */
--			dir = opendir(procdir);
--			if (dir == NULL) {
--				rte_panic("Error opening %s: %s\n", procdir,
--						strerror(errno));
--			}
--
--			fdir = dirfd(dir);
--			if (fdir < 0) {
--				status = errno;
--				closedir(dir);
--				rte_panic("Error %d obtaining fd for dir %s: %s\n",
--						fdir, procdir,
--						strerror(status));
--			}
--
--			while ((dirent = readdir(dir)) != NULL) {
--
--				if (strcmp(dirent->d_name, ".") == 0 ||
--					strcmp(dirent->d_name, "..") == 0)
--					continue;
--
--				errno = 0;
--				fd = strtol(dirent->d_name, &endptr, 10);
--				if (errno != 0 || endptr[0] != '\0') {
--					printf("Error converting name fd %d %s:\n",
--						fd, dirent->d_name);
--					continue;
--				}
--
--				if (fd == fdir || fd <= 2)
--					continue;
--
--				close(fd);
--			}
--			closedir(dir);
--		}
-+/* Get current hugepage file prefix */
-+char *get_current_prefix(char *prefix, int size);
- #endif
--		printf("Running binary with argv[]:");
--		for (i = 0; i < num; i++)
--			printf("'%s' ", argv_cpy[i]);
--		printf("\n");
--		fflush(stdout);
--
--		/* set the environment variable */
--		if (setenv(RECURSIVE_ENV_VAR, env_value, 1) != 0)
--			rte_panic("Cannot export environment variable\n");
--		if (execv(argv_cpy[0], argv_cpy) < 0)
--			rte_panic("Cannot exec: %s\n", strerror(errno));
--	}
--	/* parent process does a wait */
--#ifdef RTE_LIB_PDUMP
--#ifdef RTE_NET_RING
--	if ((strcmp(env_value, "run_pdump_server_tests") == 0)) {
--		rc = rte_thread_create(&thread, NULL, send_pkts, NULL);
--		if (rc != 0) {
--			rte_panic("Cannot start send pkts thread: %s\n",
--				  strerror(rc));
--		}
--	}
--#endif
--#endif
--
--	while (wait(&status) != pid)
--		;
--#ifdef RTE_LIB_PDUMP
--#ifdef RTE_NET_RING
--	if ((strcmp(env_value, "run_pdump_server_tests") == 0)) {
--		flag_for_send_pkts = 0;
--		rte_thread_join(thread, NULL);
--	}
--#endif
--#endif
--	return status;
--}
--
--/* Only Linux supports file prefixes. */
--#ifndef RTE_EXEC_ENV_LINUX
--static inline const char *
--file_prefix_arg(void)
--{
--	return "";
--}
--#else /* RTE_EXEC_ENV_LINUX */
--static inline char *
--get_current_prefix(char *prefix, int size)
--{
--	rte_basename(rte_eal_get_runtime_dir(), prefix, size);
--	return prefix;
--}
--
--/* Return a --file-prefix=XXXX argument */
--static inline const char *
--file_prefix_arg(void)
--{
--	static char prefix[NAME_MAX + sizeof("--file-prefix=")];
--	char tmp[NAME_MAX];
--
--	snprintf(prefix, sizeof(prefix), "--file-prefix=%s",
--			get_current_prefix(tmp, sizeof(tmp)));
--	return prefix;
--}
--#endif /* RTE_EXEC_ENV_LINUX */
- 
- #endif /* _PROCESS_H_ */
-diff --git a/app/test/test_pdump.h b/app/test/test_pdump.h
-index 8746d61269..b026dcc6fb 100644
---- a/app/test/test_pdump.h
-+++ b/app/test/test_pdump.h
-@@ -11,6 +11,9 @@
- /* sample test to send packets to the pdump client recursively */
- uint32_t send_pkts(void *empty);
- 
-+/* flag to stop send_pkts thread */
-+extern uint16_t flag_for_send_pkts;
+ 	ret = test_valid_devargs_cases(list, RTE_DIM(list));
+-	if (vdev_bus != NULL && vdev_bus->parse("net_ring0", NULL) == 0)
 +
- /* Sample test to create setup for the pdump server tests */
- int test_pdump_init(void);
++	memset(&da, 0, sizeof(da));
++	if (rte_devargs_parse(&da, "net_ring0") == 0)
+ 		/* Ring vdev driver enabled. */
+ 		ret |= test_valid_devargs_cases(legacy_ring_list,
+ 						RTE_DIM(legacy_ring_list));
++	rte_devargs_reset(&da);
++
+ 	return ret;
+ }
  
 -- 
 2.54.0
