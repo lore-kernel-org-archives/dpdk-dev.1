@@ -2,82 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B83C44520
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 12:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0378C44516
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 12:49:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C45E4402D4;
-	Fri, 17 Jul 2026 14:35:01 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9FC6D4028A
- for <dev@dpdk.org>; Fri, 17 Jul 2026 14:35:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1784291700;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ryBMAZWFlLMjM+6VeIoHkciD7NL4JfMQh2J65HaOfTY=;
- b=dPRGSo4Zr07Cv8yT5IyZx89jldl/2WkwaJSUGyfSvDD+Zf7IbLZ5dn4QtyPAf7wRVlKjWK
- 2m5vzTXBaNZq+hwGdnTCDAvsZ0jqCLxzYXr1ws8RW/e4Yb6h80AZDAEXuSkgaHYN6+yEPm
- tXbsumJHkhU6yKqQ4t/ntmEx9lkUOko=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-178-klle_dLYPBWnajBPtfrX3g-1; Fri, 17 Jul 2026 08:34:58 -0400
-X-MC-Unique: klle_dLYPBWnajBPtfrX3g-1
-X-Mimecast-MFC-AGG-ID: klle_dLYPBWnajBPtfrX3g_1784291697
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5aec6240ddbso2499107e87.3
- for <dev@dpdk.org>; Fri, 17 Jul 2026 05:34:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784291697; x=1784896497;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=ryBMAZWFlLMjM+6VeIoHkciD7NL4JfMQh2J65HaOfTY=;
- b=E0S3MPdeuy6+WnG6tc5f7BlvxEDR+Gp6e1n+ydz4no6hd2sFAE6FaRxR6KofIVDz8X
- vZpzeVvlGETL4B24Zq/3HRU6ulwsRyv5OsuPJqJKoVSSm87oO7zHgbuKMO04oc3ML7uF
- mYPBCUBUpy6PzjM1z41B1r4FeCmwNk7C7DhjhrPMdPnaCBMoPHir1Lp1u0Zd58fteNku
- mPqDQw95QEJLhhtnS/MXnb0psWjvn+U7U6HQIWWvsjOb/RtBKvfxCtHqOjo9DqY+JHn4
- Ar1OYKkaLXq6hzJttDrFYs8vURiHysagH4XgWLyYJT0owTm2VqmNOGXzt/QCT7YxGJCz
- 3cGg==
-X-Gm-Message-State: AOJu0YxSTDFVC/pIaZfdT3K1Je/SMIlIl/fQrVbmhVMcnZHnt3AYGyXa
- jntff4l4ITFM/qjavH0ytM+wy+FQZaqhYKx0ATuZi5QkUMHz/6ldPgyanD9Tu/j4Aq+AengIr9x
- oU39xgfMfYflol+q0Vm7R0RvEgPmGt1su7HDMzzay0JnxTrV8KpXcN2aVZFoQRA4yG+0FUOPt7J
- WmPsOp266AJ1344alOM7g=
-X-Gm-Gg: AfdE7cleiIvVqFFXR1nxCuM/jJBn6ult9UB2mn1iGnaSriv8RglU3Iw/P5pZTxlNyaS
- SDUsvbLmHgPCHQLsWsKNoOWDnuchgdsC6Am9NOdZ/dbkJQ8NtaelaQaPWMqQ+4qJETROwj7sYtT
- mRR7oESBzERJOjlfwahwiU7lRQzJbVaoQj/U2hBTxaFQQ2ud85f8w4evpDX18xEE7ETVrKWGG4Y
- ON6f8czXqXglw7j1p4bNosIACPRMthtpflhVT8VIsZZVvjj
-X-Received: by 2002:a05:6512:63ce:10b0:5ae:d7dd:5815 with SMTP id
- 2adb3069b0e04-5b28f9ac979mr404521e87.41.1784291696891; 
- Fri, 17 Jul 2026 05:34:56 -0700 (PDT)
-X-Received: by 2002:a05:6512:63ce:10b0:5ae:d7dd:5815 with SMTP id
- 2adb3069b0e04-5b28f9ac979mr404510e87.41.1784291696344; Fri, 17 Jul 2026
- 05:34:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id ABF19402D4;
+	Fri, 17 Jul 2026 14:49:25 +0200 (CEST)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 55AD2402D4
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 14:49:24 +0200 (CEST)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id CBBC11400076;
+ Fri, 17 Jul 2026 08:49:23 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-10.internal (MEProxy); Fri, 17 Jul 2026 08:49:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784292563;
+ x=1784378963; bh=kKAPU4S223qfqa2jyC7SGYo8efZOGMsXj9gzdXsQNH0=; b=
+ AdUmykWWhlevxinMiyM7sSl5w1muosKgOvVOC8yqbemxoyCAZ2NBFeTeehaGYF31
+ FcVZ1sPodnZHWLq6K7R4q8KUY1JGUcrtSZNFaWL4RiwTtCD4Li9Zl6i3xd8Duz4/
+ vFs9RERbzQHnwMvHm8vVAVYJLgJqD5sF+yGoLJZE9brGPo6m3Ha8GEb8730Sk1wW
+ 5ou30ljAukJEh/LCrZThVTRqJpZDKCcC+h4ipwy1BtkBD6XBYjsscdEJ13sG2+mV
+ wv6yTks4jXX2cXrXVfWj3BWbydnSP9AXXmiy/lUTBqrPREvpTxRV5V2wmVh/j7m+
+ G1Q8Hc32JJsdYRU3+6pJ4Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784292563; x=
+ 1784378963; bh=kKAPU4S223qfqa2jyC7SGYo8efZOGMsXj9gzdXsQNH0=; b=T
+ I5W7ITi/Z3HggAG41aBpau+Q9kDrbyFZh1f46v4r4rox3sBqKB45swv6b7M4nTdf
+ QMTZ9jEC4/Y5HqrpBbx0IVTI8UgftW+2qnDMvympbVj3E9FAEzT3lDBzsNxhyrgP
+ aOC1P1cbfDX/6urT56Ik7qEWVOB3a929ZzcG8q6wMF4Tm/nfpt87wMTna19s2rWy
+ ncnjD7OvGs/oFmcIo6hpx2dycE+rOlKHaA8rd745CCMUCKdPZN+BiJ1uGO+RIbxs
+ JCmF5qrHPzcV1ssU9Ck1ksUWOn2d/fZr+QJWFarZp+p1UMUjvYWslIClHIxZODKn
+ JPqgV0MrJ1gNEgV+fAvJw==
+X-ME-Sender: <xms:0yRaaiKCfWW0zajsLvYQHuiWUXgyAZCEZ7tWry-d10PBqTfBa4MmSg>
+ <xme:0yRaaqR1RHcPNDSAfQW5_YwmfJt89vsndJzgkrEqSoQp2IBETLefYEasRajErQUbd
+ e_AnnVF235Ja6hx4amJYFm066LSxHZL4VH2e4n08WJbnfeM85px>
+X-ME-Received: <xmr:0yRaaqp42mJPdBVGlnXGgjhJCLK36N2Ne1nDtnTEeACaFoRNemGZoBJZVwsW-hR4mVQrfWJZtxWQGduwhw>
+X-ME-Proxy-Cause: dmFkZTEFSS+AIk3P/SLxXa0eAIKJhSar3npsFFil75D1xaANjjY3O6CbvQCsdQmfXq6HQK
+ c6W98TlgXzinWL/VEc2VV/AbZm+s+tBpS4MD8x527iuABhUQr9Ll8DshcFHrH7qFgMj+sQ
+ N64paUKbV5rDuKVBqdY062bn4cv1QpyE55vph78aFT5G26mIoIehU4Qk+S0+JcIcRPn/hk
+ upHKe0rgEyao/QcRpAR3kcjHBYpQx8I/Nj6WLIZbA7UI+vEFuBx1zlEetKd0G/Yt3fuW9B
+ VCrS7D30Ac4xImyQAQ/yGuOoar1Tk6F1y00MsYXapTKcE3LuLyTYrdFLkoUUAmiJaBDbWf
+ eN1pkaPe7Jmpk1ilZSMtJZd0OGMHeWQr0p036uaJ5FMnqS2tWk8jjyBZZTGXtQnQ0NsXj0
+ gfbscH6ZLToB0P+vXiamJozX8jpS26zvEVUOVR7IHeCZBjILn3/AqopuMG0qn46kMSXtfP
+ HX5Iyu5zgg1sNIjHiMbS/9+3KWijpIAYqj++HfdZ0RWg73iJcdtlDsv2EUa47CXE7gapu0
+ WwukXic8sOPmW73h5H5VZ/PpHt8qdbcQjVApx7pUPWEq/eJRwPfiZRq2s/Eq4FE1ajTo61
+ MWOJeW8PzLrzS9CbKMzPnS/YxBYCYDT7auoaIXg5C398eV3/GqRhxLoKL1FQ
+X-ME-Proxy: <xmx:0yRaavrcVGuzEfgZME22LAnGI4MIkqkESZ_et_l5630zhAGGi6vV7Q>
+ <xmx:0yRaakPADOJadRkLxPV-FXkGj_jskCI_yf0oJZyx2deikTXURnGwAA>
+ <xmx:0yRaaowcDuVG5B7NKb7PrvtEWztj1n_sI3C9RbSsjSpyJL7Tbpm2cQ>
+ <xmx:0yRaalsl-ZrCSXy57oHmzbGtgpedcmQaSG8eAJO988NKFRXXrw3bfA>
+ <xmx:0yRaaihRENwvTgPbbTs00euRTnwqkmMPkLTTTE7pkaIDCLyu2ZK2uO7j>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 Jul 2026 08:49:22 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>,
+ "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: Re: [PATCH v3 6/8] doc: add missing globs to doxy-api.conf.in
+Date: Fri, 17 Jul 2026 14:49:20 +0200
+Message-ID: <R96dKgyaRl69srX90yAl5Q@monjalon.net>
+In-Reply-To: <3146b71600564d1fb36690091a1c5d6f@huawei.com>
+References: <20260706105256.79904-1-marat.khalili@huawei.com>
+ <89E6AkFFQ-mRyIB3PXdwvg@monjalon.net>
+ <3146b71600564d1fb36690091a1c5d6f@huawei.com>
 MIME-Version: 1.0
-References: <20260717093006.229370-1-david.marchand@redhat.com>
- <20260717093006.229370-7-david.marchand@redhat.com>
- <aln8LkIk5q74OlpT@bricha3-mobl1.ger.corp.intel.com>
- <CAJFAV8zaL+CVOaZ7THPc1yzjC-PYn072sUuSF25WngPdRNBLmw@mail.gmail.com>
- <aloAfU6IdpZOMAlQ@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aloAfU6IdpZOMAlQ@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 17 Jul 2026 14:34:44 +0200
-X-Gm-Features: AUfX_mzou34d8QFVrjiYrz05wVz-H84H4sehMjliDUQ0Gy9oSEVR64A-Ps_mZ-Q
-Message-ID: <CAJFAV8yr_4Wttt7sDUVzqYnAsMYxoTRg3FcNbZefpYzs1v9e0A@mail.gmail.com>
-Subject: Re: [PATCH 06/10] test/devargs: check driver presence with public API
-To: Bruce Richardson <bruce.richardson@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>, 
- "Xueming(Steven) Li" <xuemingl@nvidia.com>
-Cc: dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: bxgwLeNrhUjqQegrzkXyI6O70vgeHRa7bDgxUymKE84_1784291697
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,77 +90,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 17 Jul 2026 at 12:15, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Fri, Jul 17, 2026 at 12:08:01PM +0200, David Marchand wrote:
-> > On Fri, 17 Jul 2026 at 11:56, Bruce Richardson
-> > <bruce.richardson@intel.com> wrote:
-> > >
-> > > On Fri, Jul 17, 2026 at 11:30:01AM +0200, David Marchand wrote:
-> > > > Let's avoid calling internal drivers API.
-> > > >
-> > > > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > > > ---
-> > > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> > >
-> > > One suggestion inline below.
-> > >
-> > > >  app/test/test_devargs.c | 10 +++++++---
-> > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/app/test/test_devargs.c b/app/test/test_devargs.c
-> > > > index 0bd14c24ec..6c194ecfc6 100644
-> > > > --- a/app/test/test_devargs.c
-> > > > +++ b/app/test/test_devargs.c
-> > > > @@ -10,7 +10,7 @@
-> > > >  #include <rte_common.h>
-> > > >  #include <rte_devargs.h>
-> > > >  #include <rte_kvargs.h>
-> > > > -#include <bus_driver.h>
-> > > > +#include <rte_bus.h>
-> > > >  #include <rte_class.h>
-> > > >
-> > > >  #include "test.h"
-> > > > @@ -167,14 +167,18 @@ test_valid_devargs(void)
-> > > >               { "net_ring0,iface=3Dtest,path=3D/class/bus/,queues=
-=3D1",
-> > > >                 0, 0, 3, "vdev", "net_ring0", NULL },
-> > > >       };
-> > > > -     struct rte_bus *vdev_bus =3D rte_bus_find_by_name("vdev");
-> > > > +     struct rte_devargs da;
-> > > >       int ret;
-> > > >
-> > > >       ret =3D test_valid_devargs_cases(list, RTE_DIM(list));
-> > > > -     if (vdev_bus !=3D NULL && vdev_bus->parse("net_ring0", NULL) =
-=3D=3D 0)
-> > > > +
-> > > > +     memset(&da, 0, sizeof(da));
-> > > > +     if (rte_devargs_parse(&da, "net_ring0") =3D=3D 0)
-> > >
-> > > From what I/AI can see, there is nothing in this test case that requi=
-res
-> >
-> > (you could write it as "From what A?I can see")
-> >
-> > > the ring PMD specifically. I think it would be good if it were update=
-d to
-> > > use net/null, so that we standardize on our basic unit tests only rel=
-ying
-> > > upon that PMD, rather than requiring a variety of drivers. WDYT?
-> >
-> > There may be a hidden (capillotract=C3=A9) reason.
-> > Passing path=3D/class/bus/ seems to be intended at catching errors in
-> > devargs parsing.
-> > No argument in net/null could accept such string.
-> >
-> Not a path string, no, though it can take other parameters. Do we
-> specifically want/need it to take a path string?
+17/07/2026 10:18, Marat Khalili:
+> From: Thomas Monjalon <thomas@monjalon.net>
+> > 07/07/2026 10:50, Marat Khalili:
+> > > Public headers starting from `cmdline` (except for `cmdline.h` itself)
+> > > and `bpf_def.h` were not previously included in the documentation build.
+> > 
+> > Why bpf_def.h is not prefixed with "rte_" ?
+> 
+> I don't know historical reasons, but I would add this "rte_" prefix. As far as I understand 26.11 is the next opportunity to do it, right?
 
-This is some special case tested for "legacy".
-I prefer asking Xueming and Thomas what the intention was.
+Absolutely
 
-
---=20
-David Marchand
 
