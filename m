@@ -2,144 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA847C44516
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D530C44516
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Jul 2026 09:38:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9A6540E0B;
-	Fri, 17 Jul 2026 11:38:53 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id EC3ED40B95
- for <dev@dpdk.org>; Fri, 17 Jul 2026 11:38:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1784281132; x=1815817132;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=TRaRcU+7Lxh/0TnVo9ICL+2o1E4lTJQdkEpbCruE2QI=;
- b=ihqB/uTOY0z/2jo7ReC2CLTChJ90Pk4ks1BxMLuP8bOecSIZnZM3iJrI
- oUUBaHoWHaliqwyL7ETBj0//xYRQKsO+RezEmBRbVLT0uTPoGibA3kaD9
- GqFCtwXq/WtALhwDBOPc6wah6MHiaNQrG1hMNXsNflY97z3/ad63UBo4Z
- ETL7nehAl6Zl0plMQwaC732rAQyd+3iCYnw5PDMDovSWabeF1GL+vY82V
- KVidWtfOIjBn9EzOgEwFDYfumD7nXRQ52SqaFw7gbG22P28k0rY7m+2L3
- tqGaOl1i1ABVxnKZkmDRZB6/wDLGvNPB3RpqEwUWxa6aSp13OyOlVUj1u w==;
-X-CSE-ConnectionGUID: nttZZpYITnyNsbPQtPSkQg==
-X-CSE-MsgGUID: oK2DP1rNSMaoDCuzOSkZ/Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11848"; a="84071592"
-X-IronPort-AV: E=Sophos;i="6.25,169,1779174000"; d="scan'208";a="84071592"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Jul 2026 02:38:51 -0700
-X-CSE-ConnectionGUID: 2b689N5uSRCKfgMdGaRyjg==
-X-CSE-MsgGUID: 44RwlkubRWCWhD30aCiXGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,169,1779174000"; d="scan'208";a="261027651"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Jul 2026 02:38:51 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Fri, 17 Jul 2026 02:38:50 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43 via Frontend Transport; Fri, 17 Jul 2026 02:38:50 -0700
-Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.7) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Fri, 17 Jul 2026 02:38:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tpstTiP4KBfIQBJOdxmB5vQgDyocNc5jqXjhdISzg+vrSabim+zuAhhewUS20df7LImq8/+eMLOEKrHzOGl9+QXw187i472MWg+wcaK3O424AOerP/HlC940SOXU0f5dfALpJVpNdJad8gvWiTir+Trirn4e9CCfYUQGR5rakJoWyS4mivjDvadMau3V4WGAUGTXmbUm9keLL74x3ReU5b79eoo9RpCDwDNJm38lgYc1NokzOUvk5ZBxmVn/lVgudMXwPxTrcj97CZhspnsazNZfhMAT4LHn+uM4EWoP0f0u9VJFbI5t+GdylbRA0wM3PNpZWau1nskRm69Z8uBIHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JGdSRosh3bf0VWWRwyJrRx6QBW3OvXKK7eelVcVOyv4=;
- b=ZLnJxEOh6b/4GmNnJjNTIQQq3OplSIByUi2pbEqvIVs7uHZEk5cnfbVKAZIKLpTX6TxR5jQcFOJnxI3UTk5POCZRBcN346gNzjxIIAuQyetsMOuxka7Wq2+YNcKtePLCwa+IK032wbHoeJre27hNBPJEVWHpGhQKRZUYutqii2mwqVMmHVFBqRtuvtQVZ2nGpRXKCjUwLIFAIh9NFz0EaYFWL4AKUkCUYWmNGOAK6w8LSk1GJqVdhq46JnIID+Xi78AymGfagSsnf/JSoclfY7kBwXKfYunXAzEpezZGSfP/ugvpAjkOFSUDbmFRYNjJU9rTh8Rwx+nhsWuHye/Avg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
- by CO1PR11MB5025.namprd11.prod.outlook.com (2603:10b6:303:9e::19)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.12; Fri, 17 Jul
- 2026 09:38:48 +0000
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0223.012; Fri, 17 Jul 2026
- 09:38:48 +0000
-Date: Fri, 17 Jul 2026 10:38:43 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Yipeng Wang <yipeng1.wang@intel.com>, Sameh Gobriel
- <sameh.gobriel@intel.com>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>, 
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH 03/10] hash: fix GFNI stubs export
-Message-ID: <aln4I_V8hcMMJCK_@bricha3-mobl1.ger.corp.intel.com>
-References: <20260717093006.229370-1-david.marchand@redhat.com>
- <20260717093006.229370-4-david.marchand@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260717093006.229370-4-david.marchand@redhat.com>
-X-ClientProxiedBy: DB9PR01CA0025.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:1d8::30) To IA3PR11MB9421.namprd11.prod.outlook.com
- (2603:10b6:208:578::9)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|CO1PR11MB5025:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae5cf7c4-17a6-4eb0-0ef0-08dee3e733f8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|1800799024|23010399003|11063799006|4143699003|56012099006|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: cEJZHVBr+E+mIO0ASLx/2y9NGVnN+BrTHx5aEQJ6kNgL/s/mk3CD7IkhmFuP3/+MRxboeQIVh6vBZ79lTp4NSF0cymmaKpslfEChdc3V+M1wNyUU+0avVmUCfdEvclYeUIb5vOO401S6qcc+7ToX3JoTZEP7Qs3lVwcxhejQ8bAWZsz/hC9mjpgNCudpbqEO/ZKJo4ni9W8bSfH8/T1R/nT+At8SiLMeJcgrhFaCV4iGnVboexDOuTmeDAyyc/apKB8Af8uVBdQlKiJCyxBWgV8M9NPu6bM3uWr4xWP/ILe20Zh8roIYq+4kQmhtAiEskuA1AiE+LfahdOb7P7WGGRfTfLnskbKqkG9hLOk6i8ssnLpUzepkdalYjb+RmhIJWfhL5VcySpMTyVL0Dt+lMGyeeXLvmVnh2wyoQXNj4qJS06ULlF8jsisNMlkqt+cCZ0+Fj8IpUHMfCJCfHURdiMLwIiSKTcPP8OMJ9U1WuXMv5Zwg7x3MXE5p8Y0p3HMDgE+jRStaBZCXXBI8GGvjzahJwF4WV66vypnrQNDHYnOUBUUnPOz0VQZZXMT58dpLgCDdCMdvumhuqd1gH94oU+kzHOPbG2RNyJib9HFZ3FpmcJ1i5Gadlt662ceUPoXhIrS2paL1cjLyX+OeKMPkUElNpgTLjnFxq77sBoZglNw=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(11063799006)(4143699003)(56012099006)(10067099003)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?f2vt0mNzbhOZAJTpH7Y+K8htvdvM4zrIcGX5TJ6Ls0eaMBfE/oJK47CX8/xt?=
- =?us-ascii?Q?gxpTUoTV9ghI2X/b4KRoiwLd0Yq4OcDkPvcf8YB+dHDfFBD9p61e3c8NfwDd?=
- =?us-ascii?Q?BNx/rpxyuv/X0FsGbLlDo+dDcHE1D4UqP2A5ovRmXuxDqSrkhouChbqaJ1y4?=
- =?us-ascii?Q?0uIliev01ad8OMXrfs6922NFwLatBhDaGp3/p6rGjD/p6BaDpEhwDkzSu6sr?=
- =?us-ascii?Q?6az1bEQoduXARvOZyBn74i6PForjBvpCntBwOQHx6GmicuHWY2/V1Rpqmufq?=
- =?us-ascii?Q?TyYasNrodZHyvOtqPO4qjK0MSFAHawVLOBvnR7ITreXoemszSe6WGBZvxTNV?=
- =?us-ascii?Q?O7hJ3rHldN/o6obDAToHfqTfE+D+XKCcmSgPRadAapQpcCvFK52NXw6Gzugc?=
- =?us-ascii?Q?sSFqNZ6fMplVeSxB/BgrssktQiSkzfBzufvC/ociraSrIDIOVqiUxgGtL17L?=
- =?us-ascii?Q?LQYxVadHYB1/mvy/Ljo7C2aJ6a6unjawUrmzaA3V22qM8RH6Jbb2JLzI35Ih?=
- =?us-ascii?Q?Vo5wLdFS0+th8N5T61HTXW2NLixt8EA1JriU1rDawbusBsSUw24ttgDff1UL?=
- =?us-ascii?Q?6FmLp+x//9+bW2hr2fXfvMFS90CswWozDUrGZt9RQ13EmrmArZwUPHc9wXfs?=
- =?us-ascii?Q?bZk3qZxi4q33I62U9hZ9b9g/CaF6Z00IBuqaBVv5U2siBCSD6DC/bYpqw4Ye?=
- =?us-ascii?Q?7XY6Ed67jU1gJyXeEyvz9LExs/wxnBlEkLB3nPBilK844Arv8Z7vl2Pu0BhA?=
- =?us-ascii?Q?wW0tKJSQKkN9KsD2zdBXDdcX6TPn2vEZGBFkUj4iulMFedKwgSVFsp+v2zLy?=
- =?us-ascii?Q?QjEMIe9ExWQPkRX7R7TlpFF65v2BqS7Nm/niJdYZq4J8Qce4Rz5aj7K2uWJ+?=
- =?us-ascii?Q?PnsVx9YBboz+cbIpXuNPQ6NjrfxEgnNbIqEryUtqRTTYrrp70msH8rcPC0HS?=
- =?us-ascii?Q?1sCCESbSPyrunaSduOWLdq5aPZQEPU2V+iXaLEsYRp5lvzN2gwYaK2OdbIjo?=
- =?us-ascii?Q?dAVwcrfKV1BP30WKcYMPcAH13h6moqYPo25NZHn05ytED9/WZJH7LMsBuhdO?=
- =?us-ascii?Q?L105bvkb3Hugyte94f4OT3oK12bheDjdCJhlU59zwg2LG1/jg4KdhW6Evp7Z?=
- =?us-ascii?Q?GZKTvy1AL3CL/EmtYX8+IGQil58l7BiJTLKuHi/mKBID2g/xV0wmLkQIjtww?=
- =?us-ascii?Q?CDvvCkBihhNQ7jAQFEX6dPigA1ZvVWlDlAjmDwE/P7Scv0eZW2/ywp8uaiPN?=
- =?us-ascii?Q?bAOsvxj79WvWYWzggubrlnoqLZiY3EJ/MiHBT9/o4FPXEWKjxofcR1zkrfUX?=
- =?us-ascii?Q?2209hdswnXtvEWNzCaXqLv5L/GobaI39zI66Zdk9Dzx6DVeLuwjDRoXYX2sD?=
- =?us-ascii?Q?naU3pt2MqAWpuVfTbCNATaVUxEAYV6U78ZJUcyYTgtDUWZJJGoh7VR0Rmww+?=
- =?us-ascii?Q?CkB5idPGYHKk2vibau/pXA8sd5Vou92ydlWvYzM4fuXz0o6VevrBA5/DJ/4C?=
- =?us-ascii?Q?xEGXRAQffxnekflsT9fKAjahNeLyI+hmFyBnpXgESH/IRtq+uQfLGpDzdAQD?=
- =?us-ascii?Q?c6wP7qV/2Eb6ImCNT3qyjc5hdavAqke4JPM/cK++kzf/fdFoJOhwYJdL/t/n?=
- =?us-ascii?Q?zIELMWYdrFFl+vsBNGid+WqotL1Kpas/kQrK8VNmCR0+dxvhoPwxb7D6h6gV?=
- =?us-ascii?Q?eZ5eHKYp83cA0azGa0JIjLNaXVg5zCN40nuSKjAPF/nUk073FN8N/pdydsow?=
- =?us-ascii?Q?3MJiyY1odkHFm5ivGC8y5WMS778qMig=3D?=
-X-Exchange-RoutingPolicyChecked: nUvqmUrKPzhZO/LJ3mb2IYkdZWUCKUlWYvtXpvfhhFKWFE0dhPY+MCVYaeSyo05GWGEfA+VRISJAvFWsgxf7/wTihX/9EvcNqi3CVvnLCo6sHH/Txs2QsUnh6GpmizEJPVqfjc5FwFdlABTIQMb7r/yoBRVKkGOyZqRAls9NZxGED2j7yHC7KuN12mNe3OHKt92mFgqAuu3Nn+Y7+eQkQeOK0UawApVy3ojmAiitKATFY9Ahf9iKHgF4qHWr2/OvQbawNyA4VQ5eA6GHNkvWucn7461dlPflIO+caLgHo6Ck6JnEbOSjj8rWq01oXpTkkuYtYSISm7fyBNmDfD4vxw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae5cf7c4-17a6-4eb0-0ef0-08dee3e733f8
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2026 09:38:48.3631 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cRK5G07LhU8d8FyNU0of0+k2ohlH19wbv8FnsgTmrC3nO/kZdMbm26+odqqg+CdVrjWpcrMuPS4wqtrlTQciML2MIyg6cONGdcnsAQpQnZs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5025
-X-OriginatorOrg: intel.com
+	by mails.dpdk.org (Postfix) with ESMTP id CFCFB402BA;
+	Fri, 17 Jul 2026 11:38:55 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 97B4840E1D
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 11:38:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1784281134;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=TeL2Y6DWDFslpf/HjByi4yaFAOQOwNt3jZUbRdbKb90=;
+ b=BQuNgmzAXOrnfhFw/NxAspxZri3n31nA9HzGSDZt+Kt6JWYR14lYHZHJ5Xl53XeyuvfL5J
+ MBpGKSAdu4GpkqHc9WFebKkGeTbxwuQVp7YxfR5Zk5OyJc6COkpk2jXgfHUDemZfJxVS8B
+ DsQFfRYmuFKjKmrcMQob7WJdRSm0I0A=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-XiheJ2uEM0WKQ3MkJ34qHQ-1; Fri, 17 Jul 2026 05:38:52 -0400
+X-MC-Unique: XiheJ2uEM0WKQ3MkJ34qHQ-1
+X-Mimecast-MFC-AGG-ID: XiheJ2uEM0WKQ3MkJ34qHQ_1784281131
+Received: by mail-wr1-f71.google.com with SMTP id
+ ffacd0b85a97d-47485fde05aso4523149f8f.0
+ for <dev@dpdk.org>; Fri, 17 Jul 2026 02:38:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784281131; x=1784885931;
+ h=in-reply-to:references:user-agent:subject:to:from:cc:message-id
+ :date:content-type:content-transfer-encoding:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=TeL2Y6DWDFslpf/HjByi4yaFAOQOwNt3jZUbRdbKb90=;
+ b=g3Y9ZUYnj14qf2QlWi2mKr9+AgFIu3+NDMjPHPVCq6F8T4LbUIfCV/RIuQhg5bMqgg
+ UgW6hRYurOAgWV3K5rxMIGP/cg+eFcwtjvuEPDwdvM8sPyDGG8sXK+uRgRLQU3IWUJoX
+ 2cIukKr3hO8XqVxXh3LCTEHeIckUZmtCQgBEtYQoO16F2+1NtiTUQOCxV5EdihD8gOF0
+ Xjo1wsCXEZdMYlmpD1PnVoLkU3OtHpkObSSaNcoDGDaqiSBsLVR+cRI7iKdzb5Bu4DFB
+ 0HuSiA52LleJSZMj2pLwFA2voEfdvKD5rbwkkwt6T3wGUI7aRr45f94Q90VOdzlCDHVF
+ H1Tg==
+X-Forwarded-Encrypted: i=1;
+ AHgh+Rof3SJZBe0IBp+2SEnCRMQFOylxOQ1LY6UDfQNXANJaJCWHQHRnoxOgXcuS10ydiz6iMgo=@dpdk.org
+X-Gm-Message-State: AOJu0YxBQtvcamWmPF9Q1ziJmBAQYzMGd0ao9Cf6STrIdJu8eHwwTJSF
+ 4/4w8hF2bxSBsD/6GycafhNOTjmqqJWeSmbHhkAkVV7QzpsMiuyi6rreInPOVV/Gxlf6gCOIVUo
+ oC7v2juMcL1OzhMaCNJBDhDZRq/YePDFCvyIlB3929Gks
+X-Gm-Gg: AfdE7cmeTLv5zZXPEeHeNq+rkIJJkZJ5wtqELiUG3yBDT4NGD5f6IKcdIBziQOFDzFQ
+ SpjDtD4UiZMxKSbjC8J/2lIMQ2K8694DgAJX1iQRHkDyuSTylLBs+08kFv+SPL7xKfXZCE6pQnL
+ i3qq1Nsea8WEXwWXTE7kIdMsNaOUO7o+BSKffkq43cGTwLSYlzfgK6dQwIMpTv3OSfshdyjWZAs
+ G3I1paQBC3LHxduNE6GOODCCa/0X6T7lUa2xlpQpeEH8i29EneaL6dKQwFqfG8RwUYXR0oSkASt
+ 0/E6LRL9h9u0gxyFuZ9Z7bNgW1bEIoiTqU9C3b7AO74Sdakgbg6rb5mm02mSIUKlQqAUHqsvZJl
+ C9I6WT8eWl9j3xAXVXua5vyEButdG2NJBv2/wNy/hjxowp8PE5fU0w+3oW8M=
+X-Received: by 2002:a05:6000:1846:b0:476:6559:2a72 with SMTP id
+ ffacd0b85a97d-47f62307688mr2449378f8f.2.1784281131406; 
+ Fri, 17 Jul 2026 02:38:51 -0700 (PDT)
+X-Received: by 2002:a05:6000:1846:b0:476:6559:2a72 with SMTP id
+ ffacd0b85a97d-47f62307688mr2449347f8f.2.1784281130888; 
+ Fri, 17 Jul 2026 02:38:50 -0700 (PDT)
+Received: from localhost (2a01cb00021ec000b06e6b63494bd4c5.ipv6.abo.wanadoo.fr.
+ [2a01:cb00:21e:c000:b06e:6b63:494b:d4c5])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-47f63e499c2sm2101815f8f.4.2026.07.17.02.38.50
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Fri, 17 Jul 2026 02:38:50 -0700 (PDT)
+Mime-Version: 1.0
+Date: Fri, 17 Jul 2026 11:38:49 +0200
+Message-Id: <DK0QVF5D2B66.I9FI8XCFFTCY@redhat.com>
+Cc: "Bruce Richardson" <bruce.richardson@intel.com>, "Chengwen Feng"
+ <fengchengwen@huawei.com>
+From: "Robin Jarry" <rjarry@redhat.com>
+To: "Thomas Monjalon" <thomas@monjalon.net>, <dev@dpdk.org>
+Subject: Re: [PATCH] usertools/telemetry: load aliases from config directory
+User-Agent: aerc/0.21.0-150-g6f19ced00800
+References: <20260717091603.1492650-1-thomas@monjalon.net>
+In-Reply-To: <20260717091603.1492650-1-thomas@monjalon.net>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: KNxzBxSXDBQmY4T1KYM9JISVp2pCPeYQZJMdkJ-WXT8_1784281131
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -153,58 +95,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Jul 17, 2026 at 11:29:58AM +0200, David Marchand wrote:
-> Internal symbols *can not* be called as part of public ABI.
-> The GFNI stubs must be exported so that an application may call them
-> through the (inlined) GFNI API without requiring ALLOW_INTERNAL_API.
-> 
-> Fixes: 944a03a5cfc1 ("hash: fix MSVC link on GFNI stubs")
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Thomas Monjalon, Jul 17, 2026 at 11:16:
+> The default path of the telemetry alias file
+> was at the top level of the home directory.
+>
+> Load aliases from the DPDK configuration directory instead,
+> using $XDG_CONFIG_HOME/dpdk/telemetry_aliases
+> or $HOME/.config/dpdk/telemetry_aliases.
+>
+> Keep --alias-file for users who want to provide an explicit path.
+>
+> Fixes: 410d498412e4 ("usertools/telemetry: support aliases for long comma=
+nds")
+>
+> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 > ---
->  lib/hash/rte_thash_gfni.c | 4 ++--
->  lib/hash/rte_thash_gfni.h | 2 --
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/lib/hash/rte_thash_gfni.c b/lib/hash/rte_thash_gfni.c
-> index 2003c7b3db..ae55f7f711 100644
-> --- a/lib/hash/rte_thash_gfni.c
-> +++ b/lib/hash/rte_thash_gfni.c
-> @@ -13,7 +13,7 @@ RTE_LOG_REGISTER_SUFFIX(hash_gfni_logtype, gfni, INFO);
->  #define HASH_LOG(level, ...) \
->  	RTE_LOG_LINE(level, HASH, "" __VA_ARGS__)
->  
-> -RTE_EXPORT_INTERNAL_SYMBOL(rte_thash_gfni_stub)
-> +RTE_EXPORT_SYMBOL(rte_thash_gfni_stub)
->  uint32_t
->  rte_thash_gfni_stub(const uint64_t *mtrx __rte_unused,
->  	const uint8_t *key __rte_unused, int len __rte_unused)
-> @@ -29,7 +29,7 @@ rte_thash_gfni_stub(const uint64_t *mtrx __rte_unused,
->  	return 0;
->  }
->  
-> -RTE_EXPORT_INTERNAL_SYMBOL(rte_thash_gfni_bulk_stub)
-> +RTE_EXPORT_SYMBOL(rte_thash_gfni_bulk_stub)
->  void
->  rte_thash_gfni_bulk_stub(const uint64_t *mtrx __rte_unused,
->  	int len __rte_unused, uint8_t *tuple[] __rte_unused,
-> diff --git a/lib/hash/rte_thash_gfni.h b/lib/hash/rte_thash_gfni.h
-> index e82378933c..8a72fa9ec6 100644
-> --- a/lib/hash/rte_thash_gfni.h
-> +++ b/lib/hash/rte_thash_gfni.h
-> @@ -22,11 +22,9 @@ extern "C" {
->   * @internal
->   * Stubs only used when GFNI is not available.
->   */
-> -__rte_internal
->  uint32_t
->  rte_thash_gfni_stub(const uint64_t *mtrx, const uint8_t *key, int len);
->  
-> -__rte_internal
->  void
->  rte_thash_gfni_bulk_stub(const uint64_t *mtrx, int len, uint8_t *tuple[],
->  	uint32_t val[], uint32_t num);
-> -- 
-> 2.54.0
-> 
+
+Acked-by: Robin Jarry <rjarry@redhat.com>
+
