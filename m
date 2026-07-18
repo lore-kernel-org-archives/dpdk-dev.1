@@ -2,77 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB9DC4451B
-	for <dpdk-dev@archiver.kernel.org>; Sat, 18 Jul 2026 20:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725E3C4450A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 18 Jul 2026 20:45:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AABA14027A;
-	Sat, 18 Jul 2026 22:23:04 +0200 (CEST)
-Received: from fhigh-a5-smtp.messagingengine.com
- (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
- by mails.dpdk.org (Postfix) with ESMTP id A6C7040276
- for <dev@dpdk.org>; Sat, 18 Jul 2026 22:23:03 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 237941400042;
- Sat, 18 Jul 2026 16:23:03 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Sat, 18 Jul 2026 16:23:03 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 6AFA84027A;
+	Sat, 18 Jul 2026 22:45:16 +0200 (CEST)
+Received: from fout-a7-smtp.messagingengine.com
+ (fout-a7-smtp.messagingengine.com [103.168.172.150])
+ by mails.dpdk.org (Postfix) with ESMTP id 1F27B40276
+ for <dev@dpdk.org>; Sat, 18 Jul 2026 22:45:14 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.phl.internal (Postfix) with ESMTP id 8A65FEC0198;
+ Sat, 18 Jul 2026 16:45:13 -0400 (EDT)
+Received: from phl-imap-06 ([10.202.2.83])
+ by phl-compute-05.internal (MEProxy); Sat, 18 Jul 2026 16:45:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784406183;
- x=1784492583; bh=iMJJxBLp54EvWVCvGXfx7GtjeM9c24PHhIFjK18XQio=; b=
- dgPphehP6hv7Kvzpw5gNin/sp4Y3OIfHP/nrqazLrfu3u1Uex0QnTxeUyaKn8uTM
- eopO7DNLDKH9rTBFeK2kyWcRhplS1J/VdIwtQLHomW6cDemXY+Qdwjw0S0MI8SwP
- oRfhv8yDEc2tho15owEAHUKr/XvXPk/M2DcIPRqO8pFu3l5pjP/ettjbhiXWz++f
- sEA3wvnu5fa7n7BO/7a9t+XDueREkMQpj/F3wmFO28S9jHPA4kDvOIzFr8w/DYIY
- BqLHM0bvZaFdA3hTEPFDqclfL+dxR17eOIQrdDNbq50IH0WBRiTXayJrzFWX8cgJ
- SRZGpSoRVVkcX0Lf5gtH5A==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784407513;
+ x=1784493913; bh=2ZnAbWY6wTHWSObMNukDcLcxWCLMGjvprS66HuNT7FQ=; b=
+ lUWNlM0B3QM52a6/Q8M3cLH5u1Ehzffoebjoc6dJa5ncFbmQwuaUGbEqIE9/MuMJ
+ pHvydvERwq0S2YnBnJvkDtXf52HCAg8cqY55ORSKetqq7KsLQQz9PHoHtIkb+9Qu
+ 7qTyp/2dxV8ox4IKm8Y54Mkk7s1DmKPaLxw8BRLgZgVI7Ov1sgj74Kk28kXvgU+v
+ b11lA/uh2KpPDUPW6JPCid9UV1odFOfldljTgl7THpmQ8NMua7R39rLr2ladLpJ1
+ Rx4FXrKGkYq3Xx4heSoaqFCYSwvXC9OyzJVdPs32dYURraEovYVTUBfniK6RCg8p
+ 9mp8pKi635t6qKdiHWcSDw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784406183; x=
- 1784492583; bh=iMJJxBLp54EvWVCvGXfx7GtjeM9c24PHhIFjK18XQio=; b=c
- oVQ+mav4drBDZfPzBCz1JlC01wF3WVDfngYOLyQQgpLM5KYdpZolYZaE6IXPjY8w
- xVzBZ4kX/jXGSQLLzah0/FPpA/lFDF8Zx8b6Ab4YkUCKAAhWCuVmwbti8EhWhQkB
- sePmSfNAnO4eaeCqILx2B6dOfVuSsQ7lJ7XUYcFSm5h9b9MXxRPfARtD8Yx6wKWz
- FLPJbjXfq1vUUPyySupo1floZncROr/Q6cBeQ8fo3ej5OfA4hy6syT6KLt1rz8fE
- Zf9LwwaynDosxfHudYs0mD23Hht0QPG5/E475+4LnIhMiESoXSk2AW0g55i8Hp0V
- SK1caXChMiJ9e8bdAKE6g==
-X-ME-Sender: <xms:puBbahy4E22aGkLMUIEmdvW9iIaCM-58uKnX1gdeL-WHOt8wa-taSQ>
- <xme:puBbatl4Sexk8Lx9hnqmsNXCH3PhwrYiOR0DgrbVg51Qo23mFVOGBOEHypUYcfrwK
- A3YGmqsYvHkvSXlxrGjs9aNctVTx4-A8cC_lgNc-SQ6emCjaYFp17I>
-X-ME-Received: <xmr:puBbauFz5kK4DT9YvPUEzNQekxCTjOUTPeZOXg6wRfa2XEUXvANe-d3osdsgfHeiW7eRhi7yiOu2ioDDKg>
-X-ME-Proxy-Cause: dmFkZTGZWZ4yMnZGEseyatMc5CHe3oEBU3B+jsTp+GFx535sgs1VPVY2PQW8g+ydm9XVke
- QIwWN6Y3vkn31PyWyVVqalh1iuy7/kuYkBL+hH3Zq1Re22ckOlMOuiWbWYq6+7/MXRJIvp
- Ta9t/fByVM+rWXwMwBeJ8A1siOARQj7K2D3ywxu2WMFM9MZMxcfwmBXSnsY3idQ0op/pP+
- wr+DTV627IfS0dfkPoc0nF5p4l7LzUd6OxuBL3sGoynnorLmTAJeh9LxOXZHmztbNKqM79
- l+Fsw3olOcSCApSW/vLAcdPlQa7QT+a21OeaTeXhwvmLhNJVUUQiY+tMTARCQX+RR8/vQR
- OhRMfmWWJ0hzZFltzpRUXhewYf3X2ctwZHZgx1k8ypa9S3Kx050NTydYbwpDgnr9UrC8gP
- NqeCua3nNT6p9PBSS71jMk9tTC/DTMALTuwJpvIgOmzHWNWj0cD0HTJdu3D/auWSlp4OnM
- sJw+eOVAIaVz6M9F+21pAUgOo3nFNz3aojFNpG8XkmPgLTi9ZqB6Wjq5n5jCS6bcssKJ6I
- 2HJ+A5iWGci6xN+TUXUgnD6cYXoMCojS5xA0robzzJJlD9JwVNSjlTmYhu2BTCh80xLb4o
- rHDcqDYm1mh/Jc//PLPr1UKW698l9Xqs6X+2+W7a6HT8vEGJbDlx5RJMJTWA
-X-ME-Proxy: <xmx:puBbalUcO1IR_1FKkMBTbltfhr1E6OXGY-MkPIYvwgNHizK9GCIZ-g>
- <xmx:puBbalxkRCddMweMbLpLWGwmDVpXmacqz1XDKVJWZNCsZiXpBiFPUA>
- <xmx:puBbajOs85706i7e1kmmbyckRgWVwPO8qb3eGn9hX1Ybw0AEPAySgg>
- <xmx:puBbam6hQH2ctUz4GGBeSgASNGIc11rwWfTfL7wXGXqfeBKEATTwwQ>
- <xmx:p-Bbatl8HJoAUIhVPrV00G65tCG2K1XgnpbFSeQd7SxJHduLHlyPcf2G>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784407513; x=
+ 1784493913; bh=2ZnAbWY6wTHWSObMNukDcLcxWCLMGjvprS66HuNT7FQ=; b=E
+ l6/LJ31Q1EjAUTXPzikv3NqooKhQfDjiosW1YcAAP6Cdrd9/x5BMVjQaNmtyRc8o
+ Yk9hH9b/rkyj2yNKtljBPfJesJED+Oy93EluvMMF91V0J+RRTQM1WwjO4ibDy0Y3
+ +WEZq4wmhs6QqoMnm6/yJGJCNwcDoJg0ZtMqA1cZM6kYy6w5ZHqchbrGPOpWglU8
+ CxNSAiQ57Dn+vwEiGv6C59WiJTEQ9sjXDsLcq5Ifyo9SR3qoJqKyMn0WCMSyja9I
+ OoyeM0g3vRynP0m1jED2n41nS1OsyzN4NyaGGrnhcFE1Vg9X7rvd/1/v0IIrkACv
+ fI09D8kv96L1knO4yLMNw==
+X-ME-Sender: <xms:2eVbakCWxeIVhJFtdF0MbOoCBR-JSWfssIZDLmytNV8ufI5rLmzHYw>
+ <xme:2eVbahVNrfG_FkZrsFBeg9j3eaFyg1yOfMWcX-Eg7WiJvl_EXnfUQlTyLcUP1VkwB
+ UtpSUuS0KlkvpQ67D5iAGkUPgZK30aUXJRvLHwvfphIEr_vO1155w>
+X-ME-Proxy-Cause: dmFkZTF6tbsQESItkVedIqH1D3hQ9O1WJWeSUfFsVMYpGQ+nlxhRdnpbPGfXO8oB+q4p+z
+ NWazgmkmcsQXofvOoj0vDCVbPyJhYqHdJwwoxcBc3332eBj7Q5IFgFXHLo3rMPejfMCnyh
+ kXWhQb77Oa4msDpNHavmOCMnwQ+Jz/JK3MFDuY79mTob1oByCakuC/wNMSeFhHbv3WkM6p
+ mknqZNf2+POiAAyEs/fzSc+ytG+JAO4mYxBnts3nQy9guNKgw5+GzUnARs0RLlPw0UoWf+
+ iFYl3yuiu6Fy9pMVH9Y4GcXEnFDaknzIkRXmGYqV6/DPO1HefgCg9HJK3dxoB/LofGl5hl
+ DkIAqHuQRap339bTBKOf1n83ebHzfCEY8wSor/ztb5WqgD4t8TalCFkBmc8kpTaiGGCebB
+ yKcnozAkIit5xI0ldp3+4n4XbfCeErHiGVFNC4w+SyY0hpHxjTX0w1Qbu0Z9NRmFTsQGu4
+ 8BScq6V9xnkq9+21A2gNlxiswDpQJAcghdKIjLJwA1v7w4/BZ5MhsHXf+irVMvMArdO9jF
+ 5LCYvqPyjSnGhHp+2hV6yiWFC4VymxNhFQRB6Q/7F6PRhl0f8szVvMlF7ZMSrHgAvmF+4p
+ iiY7LZfqAStg+STs4px6Bx3Abn19R/Jk4yuNEs6Vs1L2ZOk+zOPj9CpqwUfA
+X-ME-Proxy: <xmx:2eVbapjscwLSPWIwSjUSyqkOX6dCeXvsNCmdRYuh5eLNHxwmOfKpOg>
+ <xmx:2eVbakDsn_byBWdjjs-bZvWEY2KjeY8XItHzwqxe6VM2UtNC1W1cBA>
+ <xmx:2eVbamsNoi9WDfh6Q56eBctOTuJ6vSCITnDdJWGYL4RaxXiKnk3mqA>
+ <xmx:2eVbapYhjDCh2M9Ev0hir_nYrB3LeJFH9x_dn5BZY0gUsP5Bp1nq6w>
+ <xmx:2eVbapyWnEf-zorfBhJO6VD7LpBer9AySy0HYjR6QxWrNDGZb743fM2F>
 Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 18 Jul 2026 16:23:01 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Andrea Panattoni <apanatto@redhat.com>
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+ id 5BAFF2400098; Sat, 18 Jul 2026 16:45:13 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+MIME-Version: 1.0
+Date: Sat, 18 Jul 2026 22:44:52 +0200
+From: "Thomas Monjalon" <thomas@monjalon.net>
+To: "Andrea Panattoni" <apanatto@redhat.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH] doc: using container to build and run applications
-Date: Sat, 18 Jul 2026 22:22:59 +0200
-Message-ID: <57UMukEFRrWeWVgLle71uw@monjalon.net>
+Message-Id: <ad4d60f6-575a-4e30-bb37-861f02ee1915@app.fastmail.com>
 In-Reply-To: <20260603140421.3023794-1-apanatto@redhat.com>
 References: <20260603140421.3023794-1-apanatto@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH] doc: using container to build and run applications
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,28 +86,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-03/06/2026 16:04, Andrea Panattoni:
-> Add explanation about how container runtimes like podman
-> or docker can be used to build and run DPDK application.
-> 
-> Signed-off-by: Andrea Panattoni <apanatto@redhat.com>
-[...]
-> +.. _building_dpdk_in_container:
+> +DPDK can be built inside a container to provide a reproducible build environment.
 
-Adding a prefix linux_gsg_ to this label.
+Changed "reproducible" to "isolated" as it is not always a reproducible build,
+especially with "FROM fedora:latest".
 
+
+> +Once the build completes, verify that the helloworld example runs:
 > +
-> +Building Applications in a Container
-> +------------------------------------
+> +.. code-block:: console
+> +
+> +   podman run --rm dpdk-builder /dpdk/build/examples/dpdk-helloworld
 
-Actually it should be "Building DPDK in a Container"
-
-
-> +Running Sample Application in a Container
-> +-----------------------------------------
-
-It should be "Running an Application in a Container" as testpmd is not a sample app.
-
-Applied with adjustments, thanks.
+Hugepages are not installed at this stage, so adding --no-huge is required.
 
 
+They are small changes, done while merging after a quick test.
