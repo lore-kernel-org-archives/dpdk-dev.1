@@ -2,74 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9C1C44512
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Jul 2026 08:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC42EC44512
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Jul 2026 09:22:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 462814027A;
-	Sun, 19 Jul 2026 10:27:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A584B40297;
+	Sun, 19 Jul 2026 11:22:54 +0200 (CEST)
 Received: from fhigh-b3-smtp.messagingengine.com
  (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
- by mails.dpdk.org (Postfix) with ESMTP id 6BABB40276
- for <dev@dpdk.org>; Sun, 19 Jul 2026 10:27:04 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 5482E7A003E;
- Sun, 19 Jul 2026 04:27:03 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Sun, 19 Jul 2026 04:27:03 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 82C3940276
+ for <dev@dpdk.org>; Sun, 19 Jul 2026 11:22:53 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id BE7E07A0036;
+ Sun, 19 Jul 2026 05:22:52 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Sun, 19 Jul 2026 05:22:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784449623;
- x=1784536023; bh=srzeJUva4pJJqgtFMiGm+h6/KtMwHjzfAWUmKTt0i30=; b=
- mNHE6x+1ONBlSNb0WiPUCWwvse8UXw8aPAxSH3TK5a7Ei9+OPJfsMX9NsWqkwGtx
- 245I6U5F8Zrvrzqhpr9fctYNjrpC81+vLYZz7vqlbwKiACdx9Y8C6ZM9D0On5ABF
- DZ6gTKWf0AKHwJHuUNwngTCmecs0TxIMU6re+VXhjYH9urvjvX5fUHN89soSJSPb
- hrrAz8Onew9whc1t4ynZHjBLoNCJ/NuOIRshAEVSjLGtPasHmVIOaEBxmzvv9jZJ
- R15csgFoKMVBgcxcImgFx5B5POhxSdqlnITJ4d9sJX07zx/zU/gasnSGqTRufmJB
- SkTs9xq5WFTBe5xqYyyvrQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784452972;
+ x=1784539372; bh=VWCO6Td5qa78zYSkIuHPCNdrOcJurAwV7+YycXcwNKA=; b=
+ XHbZvj2pSmpqQguEX6mneh7X2qs4F6OapsijXGlPeh/mIQ0uYVtdKdGw/gy6A9FW
+ 86j+kjUDAahq5pQYUAnppCvGOnM767Gupv3wJ3rPh9ZSxi4vysLvx/AjJ87gUJI/
+ WJusTXH7rNbCGWP/TRzl3ATNHLAkgDg5WPSsuiPoYL6CM0oQlp3twZpVZV2dswOO
+ YMHoC8WJ970nmRpA+1w1QHupL5RRYjijok4UsvOblrp2nPDwljMaqXy87n4zjppB
+ 5flhD7iB4kcAm3uiVovHy82ebONkC6XWB0fMvEM6rMkKz5zUTrTokH3DJdnISe+W
+ 52dhyi+qCwhStHeacfS6pA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784449623; x=
- 1784536023; bh=srzeJUva4pJJqgtFMiGm+h6/KtMwHjzfAWUmKTt0i30=; b=n
- uHzt5SOXidP6SPRmkdi5VDSFVbalBta7MwcY4erTAQc9vqk3JTljwk7D7UvVfHkz
- mRGkfLow8jb8yXRfVoHRDTV4AjPx1ZSS9UaqwjxlujBZ6wm/R7mqtm5Wj6tkHWD/
- DtUdKKyci5CZui6rupj8TXLkzV78Kw7xqqh/ZMrM0r/rO3AlwzrXgWtTyFtf8Eks
- 7TTnJZnEGXV4FKvdiQtL+7e+rivODqHPKDgQJSPgw9kAYVSvtN2k0hL3sJf29FaM
- JuyQbiGUjFctFrA6gVAHsANvx1vjS37kODil+H75vIcsJlUCvoh+/1hJDqSACLxa
- /+nSOzF9Aa2hbpQurB60Q==
-X-ME-Sender: <xms:VopcamMTm_MnPeZgdcTIEFU2E66lMXlzBJEdZt-RBeUz7YfSPQ8Cxw>
- <xme:VopcalG0R9Cyfj76z61kag88iuCCHFFDG4E2hHgda0j-RaqGhg0U-kfwhCKdTpLn2
- glzJp2JdSZX_air-MUVmU7dS1iAhj_vQsFE3twY6nX0njjTDMzHkQ>
-X-ME-Received: <xmr:VopcalOWBwHU3aDEAWBF-9tfOxXzOXsvci5_by3Tx_Gfz2OCwJfb8Q9n8PMU8CElKaHPc9CvRt5Xp03qkA>
-X-ME-Proxy-Cause: dmFkZTGmCd3jWHfRr4rsjMenUkpBoqQQxjF7azT+6LYtE38rGamTE2OPGmGNS0SRRYMlbm
- 5Xf6sU7qTwaq11NQql3MXyo0LkXuVTwPHIG/8mJWNidGDdorQ3uxDfV5G6LD7TWFTot536
- FI6AbQg7ilvhV13kThkd0WcxNXN7U+LodNlNyQpY8H6cc+6eCWVgc7V2sTl2zLEFLduGke
- 5oifCJQWZ7TIvVUWnbsGMe0g38fM8/urvWe09eQgOs5FxAVp25s8iyJ/ZtRmhHKVjDe+fM
- 9ouYYXopPgBpBL/DK8EzJ4BUovfKqZPwXB1VUbXkfYaafauG+pm//iDp/vaOSuUVBi+pfC
- qTOEzeHpfpPiEES2NWC4/NNaWCZlN6tQj0dJj6ZoTXHHXIZkifFbSQRGSkOPSrunryCj9l
- xoj0oV4U42Ihsj6CBhx6LhZMOKFHdiXPnAWRldoP3DJrXlG87JK+1diYuMdsFhSqol0Wwe
- 0HLhpuChzDDWrTNzXC9J1yHef+gd2gnUBEhoG/3crbt76K/mUk/i4IrmPJDpsbTxHysrGb
- fJ7yw1nXsAJSs63gOrtk4KBOif4FDuH2kW28DXeRgaE2yRMvo8D0tQ1C0KTh28d6H/AYhO
- fBPq+QeTMJcAoPQ8S6TdOlLpkfnM1kIfAwoyovsI3UX9IXaJdZRiqWk6jnFg
-X-ME-Proxy: <xmx:Vopcau9T_DLv5S00_e03jX-bnPM7mua6AxMY70rgaX4Gq-xkeTBQJQ>
- <xmx:VopcapSEFnlQ78D6wiznWAkZ6126tNLNSmPtVstE4mJtez8iF7hBvQ>
- <xmx:Vopcagl5QzOf9ufCDYTdMNaAscr7nT3HwnqZ2w8QCDCC2_YYr5T75g>
- <xmx:VopcapTUBYLPiZtaP6vnR-SqDMrezUpvCANdDx5BxLVGs-2yuLt2tg>
- <xmx:V4pcas-yJigNO6F5qLEEU6FgMd4Ts0Gb6LU2dNGUP2EDEIFQYXw8IMrl>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784452972; x=
+ 1784539372; bh=VWCO6Td5qa78zYSkIuHPCNdrOcJurAwV7+YycXcwNKA=; b=E
+ hcGnn+QR/DhEwwvERvTCPeMzxcsfg50KV/44GYLrrkTcWhz8XVPnhNpzggwWWLMX
+ G2QT+qXE1cu1e55rRVbURDVjfFJygRYd5Nvbm7m4qyGBAwEDm5sw1do8Z7xM7Lus
+ JhdKandA4NVTh+B0pjy+AhXozpOa2020RpzKlbFpAaFTJXZmJoWbuh9iLeuQr7CM
+ 46TLONzjP3HcKUb+5DhxwQ2vcSGVjLxGPL99QRxfG2zYUyO1XcuSwwQ/6RCboKnF
+ lMDcIBV+LIOAxEFpyHCPa05+E+ckZ7rNDCl4K8HISF43CfZQGiZ8BhtnhrknDCkU
+ CaaRNDBmjOn+NeVPdpp6A==
+X-ME-Sender: <xms:bJdcaqcE0z8K-cMFf2QJvrSUmuADzOtVdE7sMi-DQ0UXF6TwLwQkfA>
+ <xme:bJdcatJe9-L_nJH-ZIWbN8QeuZEANZzXhEQqO6nXtghwXrXlWLxC6Ym9xIQpESiTV
+ socIyY1yKBj2dwAepycWV9CYe3Sql1nSuzeJNvG2QeydZkvNStsDyc>
+X-ME-Received: <xmr:bJdcanFTVb6D0mFEPJKZOM8BKIhozpvFzWNqnEYteLRVwm524xfUodT-GVwBKj8-GdWVQ6gPHqxTMgHM9g>
+X-ME-Proxy-Cause: dmFkZTEzEOPPVN6W4jZuvwCDz7Cq517fanCrRmsa/zRMS72mKEnpVBuu1nFUEUTP52Ccon
+ PboykJcGTe/rFFoB8V2J04zqFWrYvgrGf+RRx0YUL0hv0SW5yBT8vntcTUwPAZk99lhSLr
+ xk1CxiVl7OWu1WvO76PnnmqEPrjsTN8zNV7qv50JtDJRyTjvZEwp84+zjH4a6lxRZXcXNj
+ QunJx4Ijx9wT2Jwsz9WafLBm69Fb2RlMMfw1vNBE5BPhYRvQ/w9zxKD9mL2lYwLEMfPQLk
+ awQUH6yvEQ0/Hsl4nWmOzpaBEzS7tC72ic0BgIHIFcs2ZGggQU7Xq0n0YVqKIWJlBifHq9
+ jcwcxUnr9WM6/BjPbOgkaQKXaAwqkjBw0175PRZFBIqSEHfPaPANFHH71I6kjmFYEKL+y1
+ xG/2Dc3Gq/XRxBakMUp57uKELPPW3alFaaSehNvlOlmXsYK87oUz4fIuYVsRAhvLqq1Ngk
+ VRLLm+y4Xv1VXmn5ozuKTQoOGLchvorVdaFtR8CBRkw2Xfu+CBmNfIQnKBxJi1Eaw/6fgB
+ VApIVzNd3kueCSbgjNFazO4zGgNlVTyWooZFxhwz7kMKrHG9c6MPo7sDZ4/L7Ys+wD3DV6
+ AUp5UPEmuyHmxEMKJH+SeB751pf0c8dvgDTtupJrGITgZ/nBzyutbMDX1R5A
+X-ME-Proxy: <xmx:bJdcaoBO6ZRMAcTtzZyGiASwR1EZegFuf7a2uF1bwHZkW42xGRw0hw>
+ <xmx:bJdcai_HoKp-IymQaB4ERtYUh1DeMKYYF1hg5igQn96mtuNILfo6rw>
+ <xmx:bJdcasB4ql44hlhguFPtUw7VcqG8E1L7A7xavVQ53Oj77RkhtMqlCg>
+ <xmx:bJdcavS4h661Zij-lkSLYQU2OMPTKMcxNnTDZfHUWYtHcLtjPVVYaQ>
+ <xmx:bJdcak_OQbF634qdhTc2Q70aDL5omLgmCcpRobgyFosO25-oux-ubhW6>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 19 Jul 2026 04:27:01 -0400 (EDT)
+ 19 Jul 2026 05:22:51 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Hailin Xu <hailinx.xu@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, manjunathgouda.hosamani@intel.com
-Subject: Re: [PATCH v1 1/3] updated i40e latest recommended matching list
-Date: Sun, 19 Jul 2026 10:26:58 +0200
-Message-ID: <U62IblfaS3WlSqtsrp17ZA@monjalon.net>
-In-Reply-To: <20260717091233.12102-1-hailinx.xu@intel.com>
-References: <20260717091233.12102-1-hailinx.xu@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, shaibran@amazon.com, evgenys@amazon.com,
+ amitbern@amazon.com, atrwajee@amazon.com
+Subject: Re: [PATCH] MAINTAINERS: update for ena
+Date: Sun, 19 Jul 2026 11:22:48 +0200
+Message-ID: <077wO4ZZQJSfJKkE2sCeVg@monjalon.net>
+In-Reply-To: <20260620164001.129129-1-stephen@networkplumber.org>
+References: <20260620164001.129129-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,10 +87,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-17/07/2026 11:12, Hailin Xu:
-> Signed-off-by: Hailin Xu <hailinx.xu@intel.com>
+20/06/2026 18:40, Stephen Hemminger:
+> Email to Ron Beider <rbeider@amazon.com> bounced.
+> I assume he is no longer available and other listed maintainers
+> for ena driver will be enough.
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Series applied, thanks.
+Applied
 
 
 
