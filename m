@@ -2,82 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5EDC44520
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Jul 2026 12:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44594C44515
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Jul 2026 12:07:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54C3B40290;
-	Mon, 20 Jul 2026 14:06:50 +0200 (CEST)
-Received: from fhigh-b7-smtp.messagingengine.com
- (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
- by mails.dpdk.org (Postfix) with ESMTP id 73DF04028E;
- Mon, 20 Jul 2026 14:06:48 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 3BED17A0012;
- Mon, 20 Jul 2026 08:06:47 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-10.internal (MEProxy); Mon, 20 Jul 2026 08:06:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1784549207;
- x=1784635607; bh=AmgEMIt1nI+CRYbrw8lxXWJ2n9z27YOutGb3Sq51nDQ=; b=
- ip2e/NHLhK/mSMVZrlhGNg2Nv05LvQPJr29/Scv1EKrCAukbeqyv3JZhe3/QJJzy
- SYmL+9tBix2NdDEXMHr/07hvz2Vmwx093hPkkB3c4BNgUi4aNk8Mm0djgQLHCWlL
- DSpqBOTuspOTjJiT+DJz/zmbe/8HZrNwQhswfm/C588IKQ4YCTuMktzMIY7JweRn
- iMme1ZFg1Vk5/tlPQ28BJCF2czdKGBZAYCbH/wBasVG+eEfuVOEtXcfZG1JZC9eW
- k9Uy2NZJHv1dAkl373t7bffp6sSXU6GO+rVQsVCgUFgaDKNZmUyl6cfFW7vR93Ep
- v0xOtYMPCKSKUCc3ujIycA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784549207; x=
- 1784635607; bh=AmgEMIt1nI+CRYbrw8lxXWJ2n9z27YOutGb3Sq51nDQ=; b=D
- k1Q8k/AqYMLNX8gTKgKhsRsx31i9KuIpxHorqLqD8aTQ6kexmx3i0I0qAgqWQDkx
- 47FULJt1Aeh7C8y/oW/oZtBqjTQ1K1NeigeMh91rzGBA36S0mn9bUVcN/3MkgMpY
- 1QJq1R2ZSqAB0IT1LpgrrcjId3+fRHBBsj28PND3zOM/mCXt4BZE4slpeObEgxja
- njVL4+f1FCI7jT0Akflw21P9HttYZFd+XqMbD8x0I6F1l8k087qAyOfqgSHYsumX
- ztagdQfQLq8p4NhebOUkIiPaBgWM8TqSwrBvp9rKCIsgI2LneJLg4pLQx2KZvt0w
- iMWQI+aomOXeKAMsgJpCQ==
-X-ME-Sender: <xms:Vg9earAbRUmUrkwN8NOBLlZL4M0__4VMVyP4IrFXhXwophfwdOq_oA>
- <xme:Vg9eah-gLoHZ14mCH0cNmC2OdwLkViNWmQjPBMEFGEyqrvkxaIICMXPqSSuQDS2RI
- Eh3nFaSpS5MIAxkrF55D_ohqcu3KUwITXWs4zKAznhYWUDlLu8SJao>
-X-ME-Received: <xmr:Vg9eanQDUSzpu-5p8d-yhqzALRubT8f2G-BsiSTRI4IFtWDBpl2Yev06jLPUvpZ_CB-S2aiBBss3YRrDF58zkrb_4-GuxsmY3EIM1JxDvHKc1bKJa_NPGQ>
-X-ME-Proxy-Cause: dmFkZTFesTqZQPecyTQXzGIkohPtfjp3Bxm2/6jqthv0xQpqn04HUNB/ntagmt3yMKbdhQ
- CP7UTlBk+yIb4rXgiozrXcOuT5RGDUFYiZ75ggYtY1qyx+wF9uEdGgzxPl3PpwSPjpgFVt
- 8xgjvQaZGHTAfbQ53H9IWkKE4vkox4KMG3zbgXW/chb4vo9XCoEWAv4S72Sa4dj+KkYT4B
- 56S1aNTSKTonqwWdKduHwi3A1GlQtv2OgN45GJI6J0oNtBsAi8kCVuxxI0zRw3r8Vattrb
- +ZHLicIeZDsiBrXMTe5kHktOY/DVEwRZYAl263L/DfkBdonTja8V7D4QAgAm9o4sOnRYV2
- nf8G/VnDs8tzxzUSXPfQJZep5BxksciZ7qOxDsKKXdq7iGo44K49PgIyYJphlKSVuJrBm9
- MWMBUAgJNt0L3/Up165RLr6mFrotzJTPxU8cThraKn7nOg0LIbg7Ys+oRWARolPpWOjFSK
- Ui91N+eVPcMDXpZtavgjHVFfNelOjqGRKdqgfzDD5vxVASf5mZuY13fzSL8ecCXJtseVsy
- pOPn1PxUggxtYO3COrbgG139rfpeUzX4gGV1oGhbC+MG8RAwu5sB4j8Hi2/mVu0tMtd+Wa
- zHPEsQUS51fUF14bfMUlm7mpoVpM5hLBcXPxgg+KiDyHZAvt9b8Fv6q+oPag
-X-ME-Proxy: <xmx:Vg9ealWXVOZ4T4JwKmuZgYEPH1__D00pCbn_o8lDqFDIWV7jpH_7QA>
- <xmx:Vg9eahQG_b1MWV395kmk8ceINllxtnBl30e_vjQ0FKhSPQLVKnUSDA>
- <xmx:Vg9eat2PFltOVHe_5rMFzLPps0rYStRqjfMIaHafL3YNclSWjIj8Bg>
- <xmx:Vg9eahenta_llmCb4yeq3uVVKBs2yMzNwjMDtinqkznbYmDtPKR3ZQ>
- <xmx:Vw9eap8sZ8xVM4IhBhfSxR8TtTYW8YPP2SV1b0fH8-QpVvwo0ZYEMVU6>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 20 Jul 2026 08:06:45 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Pier Damouny <pdamouny@nvidia.com>
-Cc: dev@dpdk.org, stable@dpdk.org,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
- Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
- Matan Azrad <matan@nvidia.com>, Banoth Saikumar <banoth.saikumar@oracle.com>
-Subject: Re: [PATCH] net/mlx5: revert fallback to Verbs Tx allocation
-Date: Mon, 20 Jul 2026 14:06:38 +0200
-Message-ID: <pqH0lM66SsCC0zN2jRaFcw@monjalon.net>
-In-Reply-To: <ekuco7abfynbgdovhotzbvbgynu3ldld65jlh7cpxwl4iz2amj@bzdg33appnnl>
-References: <20260720114929.2998238-1-thomas@monjalon.net>
- <ekuco7abfynbgdovhotzbvbgynu3ldld65jlh7cpxwl4iz2amj@bzdg33appnnl>
+	by mails.dpdk.org (Postfix) with ESMTP id 7300F4068A;
+	Mon, 20 Jul 2026 14:07:08 +0200 (CEST)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
+ [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 0A5094028E
+ for <dev@dpdk.org>; Mon, 20 Jul 2026 14:07:04 +0200 (CEST)
+Received: by mail-wm1-f47.google.com with SMTP id
+ 5b1f17b1804b1-495437bb891so29411505e9.1
+ for <dev@dpdk.org>; Mon, 20 Jul 2026 05:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1784549223; x=1785154023; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=KeRM7pBAcXslTBXwSaYxQWwFxjHiPDimp03/SkV9vrk=;
+ b=o7KQFvW6DfdcgMuLjmJcNor8PpqfUiPQMOj76L6xmF7+skQ9rEROdG70oH5qZMddHz
+ wvoRTDxmPsZMnJRI3l4wtyWfiKidPG6OcambLzI9ojxPWWTglm9Z+JcFNXSf0qF239VX
+ EJJBmPLd+ZlGMLMS7qflRgpZcwZU0JahfmWd1YOxY48EeMEonzHBFJC6Orwoux//6KST
+ smt23+7G38CTqFqAXjLlqfppXzIq8GWvdpSE9fea4smmovIm3+0z2yuPtcXPxIb459DS
+ CwPWlS05EXkltbfL+rNxRf35A1WGXLMO9COj1Z3J7MUPUpCBuC3S+0lAMEo0y5ZtIxl2
+ La/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784549223; x=1785154023;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=KeRM7pBAcXslTBXwSaYxQWwFxjHiPDimp03/SkV9vrk=;
+ b=aJZgWkg6q3FL2E/Dk42pgr+iURDhOxjI8Knjy0dVo+vHPVO8jD7jo21cb5nDwMObeI
+ VELtu34eVD09rAyuQ1LuCe0GbsDlOo8VgW555w/QI+0b8/CgSxhUTDpLA1VfWri3O/ET
+ 0cQqtf6Ckue6mIOh3JCykjcJFQ+0EuweKhBCDMgK65j7WgtxSyKeUnx0xHcDaRwqRPXT
+ 9bak95r6pDtSPinfl52f9WZkYpY3/Kq958eE7Ad1rdj7HV5tSJz10E1M27vLHtWWtvhp
+ ckb+rLMqMFZxLZ9NR22K+wUVTcUzKXn+K799vKPoZua0Ag8eXlmOlVm4WxSv8WwFI38r
+ oHCg==
+X-Gm-Message-State: AOJu0YygJvVkVHPGbY7qx36qWxAE4QFXB6h6eXBXyEVGouH3RP1NcbNe
+ 21gamoAa55bwBRkJlCZpjZ3lAh0XcBpTkez+1sZjT592uvyxOcktZRyi2FtJTvis
+X-Gm-Gg: AfdE7clo6tQb2KuQlPFsqmHiTCbKK7O/6/wRDKWPSvrY+6dR1rKC5uw7Lm5MVV/Netv
+ rNxJ78CopAF1J3XexdAWx2ZvuAt6ZlibfW98hfW+KOogIiJy3CdRKTPxaXaop8TKb/A9XZDkuNs
+ xdUZTXGWa0F/v2mjP5JFFMKd8dR3famCyDo4mLv1xW841xUtIWrVPqfDyI8V9MxDdSrDGoSfrVE
+ iMEVet+JYiCx7p0lB+nXcDLtbNJZIFshHkk9532dRAgHOg/vpiaB3ND5SMqI2UY2/OhliCAntdm
+ 4YHusLtwfsN0Hj4aMGdo5Ow3yA6gwi0Wpe+tAwhaDrtQYbD/7dQ2+ciNV2Z0rEw3KqS3uIGEF+e
+ iMaVyMNUrBdKEtLh6kwRKOHK776fhnnMJkjyPNAe9wHH5EcxPdX9G9IQfU0Ir4Mqqy5ha5dfZ0W
+ wjD9UA5LdtUMLoKmYJ+ucVncT/TWCshACGrw==
+X-Received: by 2002:a05:600d:849c:10b0:495:636b:e50b with SMTP id
+ 5b1f17b1804b1-495636be74dmr13509285e9.6.1784549223281; 
+ Mon, 20 Jul 2026 05:07:03 -0700 (PDT)
+Received: from localhost.localdomain (free-mobile.vlq16.iliad.fr.
+ [213.36.7.11]) by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-47f63ee0086sm31703509f8f.30.2026.07.20.05.07.02
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 20 Jul 2026 05:07:02 -0700 (PDT)
+Sender: Maxime Leroy <maxime.leroys@gmail.com>
+From: Maxime Leroy <maxime@leroys.fr>
+To: dev@dpdk.org
+Cc: Maxime Leroy <maxime@leroys.fr>
+Subject: [PATCH v2 0/3] net/tap: fix Rx queue interrupt support
+Date: Mon, 20 Jul 2026 14:06:56 +0200
+Message-ID: <20260720120700.801099-1-maxime@leroys.fr>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260717095842.419130-1-maxime@leroys.fr>
+References: <20260717095842.419130-1-maxime@leroys.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,20 +80,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-20/07/2026 14:04, Dariusz Sosnowski:
-> On Mon, Jul 20, 2026 at 01:49:29PM +0200, Thomas Monjalon wrote:
-> > On Windows, DevX CQ creation was failing because
-> > of a different allocation fallback behaviour.
-> > 
-> > Fixes: 4abc12b9331c ("net/mlx5: fall back to Verbs Tx allocation without DevX")
-> > Cc: stable@dpdk.org
-> > 
-> > Reported-by: Pier Damouny <pdamouny@nvidia.com>
-> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> 
-> Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+The tap PMD registers each queue file descriptor for Rx interrupts but the
+feature is not usable through the generic API. This series fixes two
+distinct issues against the original Rx interrupt support, plus a small
+type cleanup.
 
-Applied
+Patch 1 adds the missing rx_queue_intr_enable/disable ops. Without them
+rte_eth_dev_rx_intr_enable() returns -ENOTSUP, so applications that arm
+queues before sleeping (l3fwd-power and similar) treat tap as having no
+interrupt support and fall back to polling.
 
+Patch 2 fixes a traffic stall specific to interrupt mode: the Rx burst
+skips reading the queue fd until the SIGIO trigger advances, but in
+interrupt mode the application wakes through epoll, a distinct signal, so
+the burst can return 0 right after a wakeup and the fd stays readable with
+no further edge. The fd is now drained unconditionally in interrupt mode
+and the SIGIO trigger is not armed on the data queue fds.
 
+Patch 3 converts the driver's int-as-boolean fields to bool.
+
+Patches 1 and 2 are candidates for stable.
+
+v2:
+ - use bool for the new interrupt-mode fields instead of int (Stephen);
+   both fit existing padding, so neither struct grows
+ - add patch 3 converting the existing int booleans to bool
+
+The coding_style.rst note that discouraged bool in structures no longer
+matches DPDK practice; it is dropped by a separate patch.
+
+Maxime Leroy (3):
+  net/tap: support Rx queue interrupt enable/disable
+  net/tap: drain queue FD in Rx interrupt mode
+  net/tap: use bool for boolean flags
+
+ drivers/net/tap/rte_eth_tap.c | 25 +++++++++++++++++++-
+ drivers/net/tap/rte_eth_tap.h | 11 ++++++---
+ drivers/net/tap/tap_flow.c    |  4 ++--
+ drivers/net/tap/tap_intr.c    | 44 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 78 insertions(+), 6 deletions(-)
+
+-- 
+2.43.0
 
