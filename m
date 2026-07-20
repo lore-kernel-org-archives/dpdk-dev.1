@@ -2,46 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE05C44515
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Jul 2026 09:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC85C44525
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Jul 2026 09:34:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D762B402A7;
-	Mon, 20 Jul 2026 11:27:49 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id C016E4028C
- for <dev@dpdk.org>; Mon, 20 Jul 2026 11:27:48 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id B0B944B8EE; Mon, 20 Jul 2026 11:27:48 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1970] fib: trie leaks a tbl8 group and can corrupt
- the dataplane  when a tbl8 allocation fails during insert
-Date: Mon, 20 Jul 2026 09:27:47 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: maxime@leroys.fr
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone attachments.created
-Message-ID: <bug-1970-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 6FA554064C;
+	Mon, 20 Jul 2026 11:34:13 +0200 (CEST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com
+ [209.85.208.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 370334028C
+ for <dev@dpdk.org>; Mon, 20 Jul 2026 11:34:11 +0200 (CEST)
+Received: by mail-lj1-f174.google.com with SMTP id
+ 38308e7fff4ca-39c9452244aso89927671fa.3
+ for <dev@dpdk.org>; Mon, 20 Jul 2026 02:34:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1784540050; x=1785144850; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=eOup8c8fS7bclFrAQ0AAqpgWGAgcz2mtRVk41BE49oE=;
+ b=c2PSZ8G8JskrKAga0BixSKFmSyFccmTpizc+w7cMiKRasiKPwrjxvUdnQ3dh7EJvRX
+ 7kQJCtJajX3qm8mZrhxwO4Ni39+J9/ew4wsQZhoCHJj/cSbHfwCaQSBDoGxJ5RjxZAm2
+ W2hSNU1Cclynfh1Y9zSgy4Yk8sTK59z358jREnEyvSzAoYlKP2DW6Ddy5zGS8tC9qH+z
+ w0+F6XLi5spawq2UcP4Yaa1Ye66CGaOGkTrNBKtB5/ufFsEfilQ6fIawgxDHPF9Jytzv
+ N63L0hozdIQk7Ry/zXbrSnKt7wn6h6/GtSh/HPIGPoTUKY6ElXw9aFeWwfolQ7SDnj3u
+ PbhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784540050; x=1785144850;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=eOup8c8fS7bclFrAQ0AAqpgWGAgcz2mtRVk41BE49oE=;
+ b=JMGAT16oASFoDgPAo9UgpsxgiugorsexaILpBo92O0hYTw+naL+XvzBnMVhqPqsvNn
+ VyTIPI84uCUGywac3TvPovs9pGpQc0ofaFLKxsfsC9PzWNnYIdiVwBOIOlX/L1oItvaF
+ l2wv9QrvPzZgpbOxW6NazftvqoYKYBdlZ1JTPw/ZpDgdbTsxdPE/ufD4mbI7APDXoXfO
+ GQXWNsZ4VHUyRvbxlJm0rDq4MTM7Ns0fqEQhwulTfxD+YoIfZasVSjz1gwTNEZgG1FXI
+ St4HAM3mZkvXMts1G1vtgu08SyZ+sraw/m7R+hbEPIq+3xuQ5JKi67ee0pkSEu4Bbs5p
+ HLOQ==
+X-Forwarded-Encrypted: i=1;
+ AHgh+Ro10UeXRIPrXYK7MPRK1ZI9sLNSgCMvYVFchYXcvIPQtuaarl0AHueLDO6DrEGISuj97Hw=@dpdk.org
+X-Gm-Message-State: AOJu0YyJ+3JfJVphWQpaRKuf+rr5Wp2E+QDOHAbNk9+rsRvA5xBZhLXw
+ TRsch7FPE+5a+DV73xUMG6hnk1QKLJ/3nqV2IXGqyCSBRc4oD/wTfCRQ
+X-Gm-Gg: AfdE7cmkT20Y3W6IAvocRbEQafxDYudw8nS8SLCjisN0sHgxTftcuzs7sikNvHMEI+B
+ guzboh5yE/6v2uUHtvS7Pi5AoJVpgGjbcOKaSv7UfHbfkMsFH6n3X2Gs/SYr6X4lLJE/4BR9CEs
+ vlM0QLA1RrH0pSvnj38MksYLNoIlaflvMYg0deZ+G7xTY/VTZPE3jeMMnpDqzgQOsHqTuZVqQa7
+ qdJkwMNw6NHLRZ87Na/DM2/mpQA4TA73m4ofuNR2FCiNXYs9aFJ+ryftfOcsWuTViPADguqffAe
+ GWrpTn6nexFRy20lQY5eBy4yJEr0A5AuHdLjfVYaut0RTt8FQpjpQXqpai4ZIrhjdI1bF2i4RjC
+ mNfxldfPOL99Y6GD7ha7h8G39vprPnbxn6BP5YwfOh/ct+HJaPIRDU6CkhuLejtlssrGdHbaxBm
+ nQtxZtvCrChUOYjGDKn4n3rzkmpXq+tEVJFY4aQ8ITP84=
+X-Received: by 2002:a05:651c:150c:b0:39c:a108:c3fb with SMTP id
+ 38308e7fff4ca-39eb294f27bmr26848641fa.41.1784540050227; 
+ Mon, 20 Jul 2026 02:34:10 -0700 (PDT)
+Received: from kernel-builder.lan ([31.204.104.167])
+ by smtp.gmail.com with ESMTPSA id
+ 38308e7fff4ca-39eb5019d09sm16131891fa.39.2026.07.20.02.34.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 20 Jul 2026 02:34:09 -0700 (PDT)
+From: Alexey Simakov <bigalex934@gmail.com>
+To: hyonkim@cisco.com
+Cc: david.marchand@redhat.com, dev@dpdk.org, johndale@cisco.com,
+ ssujith@cisco.com, stable@dpdk.org, Alexey Simakov <bigalex934@gmail.com>
+Subject: [PATCH v3] net/enic: check notify set return value during init
+Date: Mon, 20 Jul 2026 12:33:39 +0300
+Message-ID: <20260720093338.92744-2-bigalex934@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <IA3PR11MB89877F0FA4E9EF63B478A201BFC42@IA3PR11MB8987.namprd11.prod.outlook.com>
+References: <IA3PR11MB89877F0FA4E9EF63B478A201BFC42@IA3PR11MB8987.namprd11.prod.outlook.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,101 +82,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1970
+The return value of vnic_dev_notify_set() is silently ignored in
+enic_dev_init(), so a memory allocation failure or hardware command
+error goes unnoticed and the driver continues with uninitialized
+notification state.
 
-            Bug ID: 1970
-           Summary: fib: trie leaks a tbl8 group and can corrupt the
-                    dataplane  when a tbl8 allocation fails during insert
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: maxime@leroys.fr
-  Target Milestone: ---
+Check the return value and propagate the error to abort probe when
+notification setup fails.
 
-Created attachment 356
-  --> http://bugs.dpdk.org/attachment.cgi?id=3D356&action=3Dedit
-Patch to reproduce the bug
+Fixes: fefed3d1e62c ("enic: new driver")
+Cc: stable@dpdk.org
 
-On a full or tight tbl8 pool, an add whose install runs out of tbl8 groups
-mid-way
-is not rolled back: the group(s) already taken are leaked and the tbl24 ent=
-ry
-already written is left dangling.
-trie_modify() undoes only the RIB node (rte_rib6_remove), never the datapla=
-ne
-or the tbl8 pool. A later, valid add is then wrongly refused with -ENOSPC, =
-and
-a multi-interval update can leave the dataplane inconsistent.
+Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
+---
 
+v3 changes: add log message
 
-Steps to reproduce (fixed pool, no RCU)
----------------------------------------
+v2 link: https://patches.dpdk.org/project/dpdk/patch/20260715103105.39417-1-bigalex934@gmail.com/
+v2 changes: validate return code of vnic_dev_notify_set() in driver init section
 
-IPv6 trie, 2-byte next hop, config.trie.num_tbl8 =3D 1:
+v1 link: https://patches.dpdk.org/project/dpdk/patch/20260707112014.82821-1-bigalex934@gmail.com/
 
-    rte_fib6_add(fib, 2001:db8::, 32, nh);   ->  -ENOSPC
-    rte_fib6_add(fib, fc00::,     25, nh);   ->  -ENOSPC   (WRONG)
+ drivers/net/enic/enic_main.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Expected: the /25 needs a single tbl8 group and the pool has capacity
-1, so it must succeed. It is refused because the failed /32 leaked the
-only group.
+diff --git a/drivers/net/enic/enic_main.c b/drivers/net/enic/enic_main.c
+index 2696fa77d4..2a1a65d8da 100644
+--- a/drivers/net/enic/enic_main.c
++++ b/drivers/net/enic/enic_main.c
+@@ -1887,7 +1887,11 @@ static int enic_dev_init(struct enic *enic)
+ 	LIST_INIT(&enic->flows);
+ 
+ 	/* set up link status checking */
+-	vnic_dev_notify_set(enic->vdev, -1); /* No Intr for notify */
++	err = vnic_dev_notify_set(enic->vdev, -1); /* No Intr for notify */
++	if (err) {
++		dev_err(enic, "failed to enable notify buffer\n");
++		return err;
++	}
+ 
+ 	enic->overlay_offload = false;
+ 	/*
+-- 
+2.53.0
 
-Instrumenting tbl8_pool_pos at the modify_dp() call confirms the leak:
-
-    add /32: ret=3D-ENOSPC, tbl8_pool_pos 0 -> 1  (group taken, not returne=
-d)
-    add /25: ret=3D-ENOSPC, tbl8_pool_pos 1 -> 1  (no free group left)
-
-QSBR defer mode (pool of 2, a reader kept non-quiescent):
-
-    add /25 ; delete /25    (group deferred; rsvd_tbl8s back to 0)
-    add /32                 ->  passes the reservation check, then leaks
-    add /25 (other prefix)  ->  -ENOSPC (WRONG: a group was leaked)
-
-A reproducer is attached (test/fib6). Both new cases fail on current
-main:
-    0001-test-fib6-reproduce-tbl8-leak-on-failed-trie-insert.patch
-
-
-Root cause
-----------
-
-install_to_dp() (build_common_root()/write_edge()) allocates and
-publishes tbl8 groups incrementally and has no failure path: on
-tbl8_alloc() failure it returns an error, leaving the partial writes
-and the taken groups in place. trie_modify() only removes the RIB node.
-
-Two reasons the pre-check does not prevent it:
-
-1. Transient peak. trie_modify() checks the steady-state footprint:
-
-       if (dp->rsvd_tbl8s + count_empty_levels(node) > dp->number_tbl8s)
-
-   but install_to_dp() transiently needs footprint + 1 for a
-   byte-aligned prefix: build_common_root() descends one byte level
-   past the prefix and allocates a group there; recycle_root_path()
-   frees it only at the end. So the check passes with a pool of one,
-   the install takes the first group, then tbl8_alloc() for the
-   transient group fails.
-
-2. Logical vs physical, under QSBR defer. rsvd_tbl8s tracks the
-   logical reservation, not physical occupancy. In
-   RTE_FIB6_QSBR_MODE_DQ a recycled group stays out of the pool until
-   a grace period elapses, so rsvd_tbl8s drops while the group is
-   still allocated, and the check accepts an add that then fails.
-
-modify_dp() also calls install_to_dp() once per gap around covering
-more-specifics; under defer mode each interval's transient group
-accumulates, so the peak can exceed footprint + 1, and a failure on a
-late interval leaves earlier intervals already written (a lookup in
-one range returns the new next hop while another returns the old one).
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
