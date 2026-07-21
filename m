@@ -2,43 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB661C44532
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 13:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9EEC44532
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 14:59:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0912D4042F;
-	Tue, 21 Jul 2026 15:26:23 +0200 (CEST)
-Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id 90AED402A7;
- Tue, 21 Jul 2026 15:26:21 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 59D2A41
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1784640380;
- bh=mIuSACysoN6FY+fbgPBcrV9LU4B6cq3Tfd9o05r8vHw=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Wi3uW6g93ueO6fKpoEBsLQdMgKt+rFmP+ilUMY58S4657Bx05dlTtkez7ghgOcj97
- /Ye9/9f1+iz86ghyZSXG7rjlBLtyLSEnWVKnDe8D/N1INC/m83XoS3I+Slipe9ZrKq
- YXZ5VGIFLCnCARl49BEupH67/8ly38Gdx50kxRTs=
-Received: from [192.168.1.42] (unknown [188.170.72.157])
- (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 59D2A41;
- Tue, 21 Jul 2026 16:26:20 +0300 (MSK)
-Message-ID: <e11f32cc-471c-43c2-840b-7d66eda20e02@oktetlabs.ru>
-Date: Tue, 21 Jul 2026 16:26:18 +0300
+	by mails.dpdk.org (Postfix) with ESMTP id 727D6402A7;
+	Tue, 21 Jul 2026 16:59:14 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 201BE40294
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 16:59:13 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=9duVnUbLAceTfTBTSd/WXzXhigfPxvOuYlRQz4TLoOs=;
+ b=MDihhjS4Rw7nby3XJ2MUWu9Ml6nClpnhG50KzBnSUmtx1lj8zlVafkh4lWJLh18LyI459Kg3w
+ Rxf2rKUS6ZIOjeXVAG/xVt2vaPTjDngG8mkoMC8WhL5kcCNEgasSuhFZMyWNyqlg1R4CslP5W6t
+ jolVz1GhfJZpF8PmxbKtnG4=
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h4LB31gBzzJ46d2;
+ Tue, 21 Jul 2026 22:58:51 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id 9716B4058B;
+ Tue, 21 Jul 2026 22:59:11 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 21 Jul 2026 16:59:11 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Steven Webster <steven.webster@windriver.com>, Matt Peters
+ <matt.peters@windriver.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>
+Subject: [PATCH v4 2/7] doc: fix typos in rte_avp_common.h
+Date: Tue, 21 Jul 2026 15:58:35 +0100
+Message-ID: <20260721145841.7424-3-marat.khalili@huawei.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260721145841.7424-1-marat.khalili@huawei.com>
+References: <20260707085048.15295-1-marat.khalili@huawei.com>
+ <20260721145841.7424-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] ethdev: remove use of strncpy
-To: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org
-Cc: stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Harman Kalra <hkalra@marvell.com>, Ferruh Yigit <ferruh.yigit@amd.com>
-References: <20260623141930.704771-1-bruce.richardson@intel.com>
- <20260623141930.704771-2-bruce.richardson@intel.com>
-Content-Language: en-US
-From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-In-Reply-To: <20260623141930.704771-2-bruce.richardson@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapema100002.china.huawei.com (7.182.19.63) To
+ frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,21 +56,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 6/23/26 5:19 PM, Bruce Richardson wrote:
-> The use of strncpy is not generally recommended, so replace it in code
-> tokenizing the representor list. Since its use in the function is not
-> involving null-terminated strings (we know that copied block will
-> not involve a null value in it), we can replace strncpy with memcpy
-> rather than a string function. This keeps the original intent of the
-> code.
-> 
-> For extra safety, also add in an explicit bounds check on the length
-> value before doing the memcpy.
-> 
-> Fixes: 9a9eb104edf6 ("ethdev: parse multiple representor devargs")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+The file contained doxygen typos that caused `unbalanced grouping
+commands` errors and prevented successful documentation build. It was
+not discovered previously because: (1) the driver despite the presence
+of public headers was not included in the documentation build, and (2)
+versions of doxygen before 1.9 did not fully parse and verify the syntax
+of the file unless it contained the `@file` tag.
 
-Reviewed-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Make sure all doxygen grouping commands are balanced.
+
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+---
+ drivers/net/avp/rte_avp_common.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/avp/rte_avp_common.h b/drivers/net/avp/rte_avp_common.h
+index ffdf07cd8098..da84a1a3649c 100644
+--- a/drivers/net/avp/rte_avp_common.h
++++ b/drivers/net/avp/rte_avp_common.h
+@@ -117,7 +117,7 @@ struct __rte_cache_aligned __rte_packed_begin rte_avp_desc {
+ } __rte_packed_end;
+ 
+ 
+-/**{ AVP device features */
++/**@{ AVP device features */
+ #define RTE_AVP_FEATURE_VLAN_OFFLOAD (1 << 0) /**< Emulated HW VLAN offload */
+ /**@} */
+ 
+@@ -160,14 +160,14 @@ struct __rte_cache_aligned __rte_packed_begin rte_avp_desc {
+ #define RTE_AVP_MAX_MSIX_VECTORS 1
+ /**@} */
+ 
+-/**@} AVP Migration status/ack register values */
++/**@{ AVP Migration status/ack register values */
+ #define RTE_AVP_MIGRATION_NONE      0 /**< Migration never executed */
+ #define RTE_AVP_MIGRATION_DETACHED  1 /**< Device attached during migration */
+ #define RTE_AVP_MIGRATION_ATTACHED  2 /**< Device reattached during migration */
+ #define RTE_AVP_MIGRATION_ERROR     3 /**< Device failed to attach/detach */
+ /**@} */
+ 
+-/**@} AVP MMIO Register Offsets */
++/**@{ AVP MMIO Register Offsets */
+ #define RTE_AVP_REGISTER_BASE 0
+ #define RTE_AVP_INTERRUPT_MASK_OFFSET (RTE_AVP_REGISTER_BASE + 0)
+ #define RTE_AVP_INTERRUPT_STATUS_OFFSET (RTE_AVP_REGISTER_BASE + 4)
+@@ -175,7 +175,7 @@ struct __rte_cache_aligned __rte_packed_begin rte_avp_desc {
+ #define RTE_AVP_MIGRATION_ACK_OFFSET (RTE_AVP_REGISTER_BASE + 12)
+ /**@} */
+ 
+-/**@} AVP Interrupt Status Mask */
++/**@{ AVP Interrupt Status Mask */
+ #define RTE_AVP_MIGRATION_INTERRUPT_MASK (1 << 1)
+ #define RTE_AVP_APP_INTERRUPTS_MASK      0xFFFFFFFF
+ #define RTE_AVP_NO_INTERRUPTS_MASK       0
+@@ -268,7 +268,7 @@ RTE_AVP_MAKE_VERSION(RTE_AVP_RELEASE_VERSION_1, \
+ 		     RTE_AVP_MINOR_VERSION_13)
+ 
+ /**
+- * Access AVP device version values
++ * @{ Access AVP device version values
+  */
+ #define RTE_AVP_GET_RELEASE_VERSION(_version) (((_version) >> 16) & 0xffff)
+ #define RTE_AVP_GET_MAJOR_VERSION(_version) (((_version) >> 8) & 0xff)
+-- 
+2.43.0
 
