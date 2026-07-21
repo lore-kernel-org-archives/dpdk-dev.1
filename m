@@ -2,86 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB71C4452B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 17:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1DEC4451C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 19:07:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A401D40609;
-	Tue, 21 Jul 2026 19:42:11 +0200 (CEST)
-Received: from mail-qt1-f226.google.com (mail-qt1-f226.google.com
- [209.85.160.226])
- by mails.dpdk.org (Postfix) with ESMTP id 1EF11402A7
- for <dev@dpdk.org>; Tue, 21 Jul 2026 19:42:10 +0200 (CEST)
-Received: by mail-qt1-f226.google.com with SMTP id
- d75a77b69052e-51c08df8513so56980351cf.3
- for <dev@dpdk.org>; Tue, 21 Jul 2026 10:42:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 082C74042F;
+	Tue, 21 Jul 2026 21:07:23 +0200 (CEST)
+Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
+ [209.85.216.100])
+ by mails.dpdk.org (Postfix) with ESMTP id E866240294
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 21:07:21 +0200 (CEST)
+Received: by mail-pj1-f100.google.com with SMTP id
+ 98e67ed59e1d1-38e07ebd263so5350092a91.1
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 12:07:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784655729; x=1785260529;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=us+mVWZHCHenNqtjc95UXJKadsREqtQfhxk5K+oW8sc=;
- b=ZbGnpexoNyD607X6ONS9fpzuJ+JQX+ZoZGwvNJkYHyYvQKGcLfTsqsjKj4rwwNoWED
- FXU3PU3ioUBU2oDCbuP28CQcvas0saD6olLCuqak6wzUEbsNsK3vjaB6vcjVziUrYZH2
- STo97ojm1JAY+n3OfoigK0L/KlxIJOWw4wx24/TIKyF5vQahTuh9+Uc+PDpCseunkFQV
- i48aGvDt8S5n/sg2SNxUjsseop9ed3xhC4y3ifJ/6kD4m1P/Rp2r5sm/ZDYTK7e5L4PO
- 81nwrTKpHjA5/aAtK+blzs5I5a65kEGcozhkCiGNUUyHqt66iCLYqpK18OIXhyg1504+
- ugLA==
-X-Gm-Message-State: AOJu0YwXoYwpYxNurgm4SMRMp1Ik+kh5MKsa42hYNxRagzCPWfDVs+mH
- 4j42fQoxYwn8IGl4p9wGxJ1bWOqxXocZe5uY4WeserW5ibh2ncSF/bHYo3XpEhwxe+ArJLOycpf
- kiNXUrH+Z+8lI9akxI6z9vbwGLVotDakhAB0feraSmKyT32xpIOWQ4OGlyewJfaHuqiI3VVqQFq
- vc5ydwg8lmsC3/OTwVEGAdCrRPLC8aFEp8nwVpWpR740T2mFe2VAfpxaTHxnAOc4pkmg6u/Fafm
- kr/VOnOFrrG
-X-Gm-Gg: AfdE7cmF1xPTKf2sftQ89AD4jWOe/ezwV3g1pZX6UZKU9i5XKRx9oVI8wf0XBoq9uS8
- grb2vIm8SH4Sgm5jeonE8AbVSwMFSODIXe0nJBDgDI9hOQ2wjKvNKBoaDWtyNGprcnRQGTmKV2F
- 3LJWvk3QJPRboOVtt9lHETSbThE5lPw8C53jdGGE5tq61oVWljohoRsf8qKk2VD9w/oLagfA3pW
- AhdRkozfbyGymYaYNmc/adOpsnGe/WAWZQOVjQH/bQr+LWeY4LCNSKutxNZJikJFz0gFBOeXapw
- +QU3eM6DIK/anuGPqvEvYjsA5FfyOtb4nSV/ZaETLVHK/1p2v1rj+mbREw9Lr4vfDgWQKUUmtcP
- 9btYmxlqU9GKpVV7pV4uOG4CG5fRR284pttBHLvyLBZB0P9sNQAsnNFlobXjXyVjZa2mlo2iA+J
- B/L2vhLqm1dlCqz36G2BT4WLOMg+3Yl6cYxTT9FSnWb+2FWeILmA==
-X-Received: by 2002:ac8:59cb:0:b0:51c:12bf:d4a6 with SMTP id
- d75a77b69052e-5213e48ba27mr182641171cf.48.1784655729277; 
- Tue, 21 Jul 2026 10:42:09 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1784660841; x=1785265641;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=bw4PcKviKaNdOkloyDNJxr5ubIQXOPa6NtI3XsXtgzk=;
+ b=BIljX+jzHQ1CckjfCbMIXu5CWnvMbP9RzYW2humPxX+RgADk8J8erERrAE9rMHmigH
+ zPporTN7RiNZO/q2wdBwnEclJXC1Gt9vaBITI/ZM4toTW2VvZUE/hxD1scMDrhyz2K3x
+ Bl6pvYdv0BWLPXj3xdHWLqEqID8I6vjAuFyFhRo+rYJa3B4SNct/OQRtG01p2Mm9g/59
+ zlKPnf5GHijgTB3cIRi9ArcSBp+fD04oXJkBcB048BquEFCvM5lKY9Ff/qJtKwsux1of
+ rXEH5n9Lhv24qhMVHT7569d+SttSKs93NcRVneDDpypvKWLnBMFRZZPoO4N2M8D5Cykx
+ JB5g==
+X-Gm-Message-State: AOJu0YxLWjdf3aYPGiGqoYh5erSYbtJ/2HRSVwIPVjeRkv3oc8cbO2KJ
+ Om7HsIOJe1e/1/z/4m/J6n+FbME6zooN9DzDvOfcl3jGJ1qf2t7QGtKzia0yJeB81aDfNSM5ZSF
+ DWD0YbJzhyCJiAQpzTq8ztX0HbO/azn3flfF4b5ez2V6LraxPGbbLOJXr/dLCyZpb1a2LlfqII0
+ ZjjemMt8IsSWTxOuvnmxzz5m5xoO+tP385pkYyhXEpaNOlwqaB9TzHgRiq7NuItS1b2tsLMTMCA
+ RWHAU8vZPSr
+X-Gm-Gg: AR+sD11I8TlF9JHYlrLVol+M/3W9zoMAT7QmS0NtOtAYP+pEqNNal0KMrTZjiaR1D6i
+ nm7QgjvLvOyRUeExgpacEJoCQf7KD0fF673lSZwMBmQuCZtWfbb3SPzcPbgoxYrV1TxSocCrYnn
+ qqlOp/LxA0ixjQmyDsRWpGfW+My2mBf4KmeO4btWG/KSJytZBvhiaoXXeRqZR+XzaXEvWnCCuwf
+ WRj26eY2eaprqG6QEUSmQBwXLrVxAKjbchg4NDECutWCn9lfEqEo78F0RyHmipt/dpA3X18X2iv
+ AOwbwV9nb4ZftirQnvGxfuOrSomYt8NNPQG66r9wV/mVhfEEo/ooTojBiMf4CIUUIYKa+rOT1g6
+ 0t8lrTRN3Uxv/Rz4zyR7DxSt7oQc1qxfTmzpnSBqUHy0t4onB1iKQ1cQirOxxZZ9qIKdcLjY3gf
+ opt83mN3y87ytp/BSSQ+jJ5oNdG9SrIpoEpT/nBd7TUyTdmiV2pA==
+X-Received: by 2002:a17:90b:2151:b0:38e:59c2:cbc5 with SMTP id
+ 98e67ed59e1d1-38e59c2dc76mr11392629a91.18.1784660840603; 
+ Tue, 21 Jul 2026 12:07:20 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-20.dlp.protect.broadcom.com. [144.49.247.20])
+ (address-144-49-247-12.dlp.protect.broadcom.com. [144.49.247.12])
  by smtp-relay.gmail.com with ESMTPS id
- d75a77b69052e-521503b627fsm4734111cf.25.2026.07.21.10.42.08
+ 98e67ed59e1d1-38e92151a4bsm331692a91.5.2026.07.21.12.07.20
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 21 Jul 2026 10:42:09 -0700 (PDT)
+ Tue, 21 Jul 2026 12:07:20 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qk1-f197.google.com with SMTP id
- af79cd13be357-92ec91dc265so806589285a.2
- for <dev@dpdk.org>; Tue, 21 Jul 2026 10:42:08 -0700 (PDT)
+Received: by mail-qk1-f200.google.com with SMTP id
+ af79cd13be357-92e8004d60eso1840179685a.1
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 12:07:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1784655728; x=1785260528; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=us+mVWZHCHenNqtjc95UXJKadsREqtQfhxk5K+oW8sc=;
- b=iFy1Ep98sgO+/xIVpHwpkYjnuMCLajLiXPIcAWd65VipAmu4K6yJhXyugJ6Zl4Pe+W
- QjY5rnoMbUL04mS48aw7LiVBVHtxrR02LqW7sWjSAhxjv29BKViSCKUjkNXIzyEeV3g3
- eYA4ZsTwfeqYPpvwUcGWHK5IG8nJyq7fUsWsA=
-X-Received: by 2002:a05:620a:43a3:b0:92b:440e:5d53 with SMTP id
- af79cd13be357-930b3e4b798mr1895875485a.3.1784655727973; 
- Tue, 21 Jul 2026 10:42:07 -0700 (PDT)
-X-Received: by 2002:a05:620a:43a3:b0:92b:440e:5d53 with SMTP id
- af79cd13be357-930b3e4b798mr1895871485a.3.1784655727294; 
- Tue, 21 Jul 2026 10:42:07 -0700 (PDT)
+ d=broadcom.com; s=google; t=1784660839; x=1785265639; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=bw4PcKviKaNdOkloyDNJxr5ubIQXOPa6NtI3XsXtgzk=;
+ b=QRCMn8dMT5fngZtR17RhBV3ePzIgghrVaztRsEQE8POza9WYrR6t8CkGEwEdGIUieA
+ kVcbL5An4W1O2lP5ODBjLl0EUA6daadwbLW1at0BkCeiwCeLYm/MQnF0WONvYHi6hKWC
+ ACjHGovoE1E9WIa5fpKqcgvdE7J2LorZTWIFc=
+X-Received: by 2002:a05:620a:bd6:b0:92e:7383:4a93 with SMTP id
+ af79cd13be357-930b3ec9d31mr2172598585a.35.1784660839388; 
+ Tue, 21 Jul 2026 12:07:19 -0700 (PDT)
+X-Received: by 2002:a05:620a:bd6:b0:92e:7383:4a93 with SMTP id
+ af79cd13be357-930b3ec9d31mr2172592085a.35.1784660838793; 
+ Tue, 21 Jul 2026 12:07:18 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-930b52dd4c2sm1169980985a.6.2026.07.21.10.42.06
+ af79cd13be357-930b542bcefsm1226059085a.28.2026.07.21.12.07.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 21 Jul 2026 10:42:06 -0700 (PDT)
+ Tue, 21 Jul 2026 12:07:18 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
  Artin Davari <artin.davari@broadcom.com>
-Subject: [PATCH] app/testpmd: fix segfault in flow rule parser
-Date: Tue, 21 Jul 2026 11:44:15 -0600
-Message-ID: <20260721174415.1317549-1-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH v2] app/testpmd: fix segfault in flow rule parser
+Date: Tue, 21 Jul 2026 13:09:31 -0600
+Message-ID: <20260721190931.1321010-1-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260721174415.1317549-1-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260721174415.1317549-1-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
@@ -105,7 +109,14 @@ arrays in three parse functions - prefix spec, RSS type, and RSS
 queue handling - to prevent invalid pointer access during parsing
 of complex flow rules.
 
-Fixes: c439a84f1a ("app/testpmd: fix build with MSVC on non-constant initializer")
+NEXT_ENTRY() expands to a compound literal, which has automatic
+storage duration when used inside a function body. The parser stores
+the resulting pointer in ctx->next[], which is dereferenced after the
+function returns, so the stack storage backing it is no longer valid
+by the time it is accessed. Declaring the arrays 'static const' gives
+them a lifetime that outlives the call, fixing the dangling pointer.
+
+Fixes: c439a84f1a78 ("app/testpmd: fix build with MSVC on non-constant initializer")
 Cc: stable@dpdk.org
 
 Signed-off-by: Artin Davari <artin.davari@broadcom.com>
