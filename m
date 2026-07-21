@@ -2,182 +2,101 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A75C44520
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Jul 2026 22:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B59C44520
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 01:42:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 38EEA4028E;
-	Tue, 21 Jul 2026 00:56:08 +0200 (CEST)
-Received: from rcdn-iport-6.cisco.com (rcdn-iport-6.cisco.com [173.37.86.77])
- by mails.dpdk.org (Postfix) with ESMTP id 4384540288;
- Tue, 21 Jul 2026 00:56:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AF08340289;
+	Tue, 21 Jul 2026 03:42:54 +0200 (CEST)
+Received: from mail-pf1-f225.google.com (mail-pf1-f225.google.com
+ [209.85.210.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 7F7A640288
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 03:42:52 +0200 (CEST)
+Received: by mail-pf1-f225.google.com with SMTP id
+ d2e1a72fcca58-8487088510aso10878195b3a.0
+ for <dev@dpdk.org>; Mon, 20 Jul 2026 18:42:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784598171; x=1785202971;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=6WJPLrmCETIseRU4r2D0tITW+/jln5HId03OGPNSK8g=;
+ b=gL1LYT6UJScSi3ZrXioRV9pYvVAqfpl3+0Xco3sfqGlrLiTgtNnIlCzmk8iOn1SKnL
+ KIKtz7YVxQIwhPtxZVfH+3i3+xCdcl2/w0qv/wRGZzRfMFavnq7WMBe7E9hvdwhiW0pz
+ BYk5hB0lmByNLXEnMImNHvFLiM9v5ZBMrUYbV+4lU1h0mqKmbA6SIsX3Kc8hsUiLpkxq
+ 2l3ObberIs31tf3HeSLEg4Uia/ODn77RAqomHG3roqZVrspo0ikPQ5RHXV0ozcsnwu+2
+ MRWX2c1Fao/b79cwnn11FUUf7NqIg9AWLudpe+oHYNAXQ2nhFSAklPDJGxz1vAdS5+6d
+ UvwA==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RqmxRa+fjXXrEmLpyzw3bG+8RKI36j5uZbO8ioXMSBGvlbVXL+ds0cSxVVzj8CWtCUsmDA=@dpdk.org
+X-Gm-Message-State: AOJu0YwXZDMgX121K26yIfnujnxNCrjy27QRPkgkyOLMd7zAhIiy8z3m
+ r/jSx4z6aB2pgtFfyRQs/gLavnt6dSys9LDgWO0IIcAQDZ6eh1RaYAxTor4EfiJPv7a3qM/cUOg
+ SZMXDOufxfU5jt+P+zcQc/SfJUASNifEOEAMOdbHMuwTOtBcPBguolf+/ERCiDfM8THC4B3XFAD
+ yvW3ZwUDvQptZKc7CFPq/Vm9Z3T6AqUztOIk8JLZokAKA/EJXUyBwZx7fzCxyMcwIYnu5y9bc4w
+ DUxGw==
+X-Gm-Gg: AfdE7clHeC90PdORhyS6fW3/S6YxENEksYiJIxiRMeQDHN5v34a8knzcvnLCz8A4be4
+ W9ZoiKu3hmsmdD2mWTOpZ4eASZGw3fEg2VLozTlvhj4zdA52qB05GEBXrCr9O8KVkAb+UbETfag
+ C2O4SqC3aKpxQiY20EvXvoPo46/oCqI9ZJKKbcBRm9KhuL7aOEWaPkSpoXE1f+XXg9TOAuDJLKt
+ Nsi7/8GgcbputkJkV/6CoW+bE5xZ20IxmzbkB1vrMcBfERS97KPzIDA0pndnfhhwjdK2pLI5MBF
+ Cz4+udYm06Vs0+IDDSLDaKQY8xmeQSt3SqBUgsdEOuJksKPJ1b+2oVx7H9U6P0iZplOK2UWezyi
+ tmQ2fhb8nWFjK8cGN48txORlibOhcR9oZG4PjGBkCRjMQpqYFdrZ/+kzyJ3IOARZmBK/+jFjrIN
+ DEOVrKqyQTiXFKexLO26qvcRQoWHXYOaZOrOpQ4b9oZ1k=
+X-Received: by 2002:a05:6a20:7487:b0:3bf:6c05:ab with SMTP id
+ adf61e73a8af0-3c3ad9d632bmr17736176637.58.1784598171180; 
+ Mon, 20 Jul 2026 18:42:51 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
+ (address-144-49-247-12.dlp.protect.broadcom.com. [144.49.247.12])
+ by smtp-relay.gmail.com with ESMTPS id
+ 5a478bee46e88-3142a1bb757sm635117eec.17.2026.07.20.18.42.50
+ for <dev@dpdk.org>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Mon, 20 Jul 2026 18:42:51 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pf1-f199.google.com with SMTP id
+ d2e1a72fcca58-84e01a62d99so481034b3a.0
+ for <dev@dpdk.org>; Mon, 20 Jul 2026 18:42:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=2062; q=dns/txt;
- s=iport01; t=1784588166; x=1785797766;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=ekkdJllbLgHKRuPDK5r0q63+3dK/iSJIawXZu54nDAM=;
- b=LG6JEuOniVX6zZEa7BoMBI95RBGG+MXJvi37viKuPW6Cfh+QBweIgFP8
- Q6a+PivwoFJpMWOcgvNKtbYMN4QVS8Ny6YI5IPKYCPqEd9taEgqaZ6G0q
- U0n5/+JU1WmCeUJ2LHFc+36vFzWVl9G2lgKHP2v2Ca9BtBpY3fTEZGIZ2
- h9OiKWu4sGDnjWUaL9vKxMbFu2X89U4ph/yUdxq4C7FR8hG11+rlMOysF
- t2N+FxWmTGqmeyBnkLLoWwahn5K99Hg/t41bt42aA5zb/AAGlGjtUdiH1
- tKJXDyG2VeENhwWlNBtuj+Wr6yUG75SBvPLHMIQ12AvoaBin479v+AbFB Q==;
-X-CSE-ConnectionGUID: SRqJvqI8S+G+Dmc4/doHHw==
-X-CSE-MsgGUID: r2V+v//VQneZM+qpAGqDYw==
-X-IPAS-Result: =?us-ascii?q?A0ADAABapl5q/43/Ja1aGQEBAQEBAQEBAQEBAQEBAQEBA?=
- =?us-ascii?q?RIBAQEBAQEBAQEBAQFlgRcEAQEBAQELAYFtU4EKgSFJiCMDhExfiHkDi2SSN?=
- =?us-ascii?q?4F+DwEBAQ89FAQBAYUFAo1XAiY0CQ4BAgQDAgMBAQEBAQEBAQEBAQsBAQUBA?=
- =?us-ascii?q?QECAQcFgQ4Thk8NhloBAQEBAgESFRM/BQcEAgEIDgMEAQEfECARHQgCBA4FC?=
- =?us-ascii?q?BqCYYI6AxAnAwECDgayOwGBPQKKKniBATOBAd1GDYJeBhQBgTgBhT6CfR8BA?=
- =?us-ascii?q?YQ8gSEBGYR8JxuBSUSBV4JpPoIfgWs7hBOCMASCIoEMg0+CB4wzUnh4LAFVE?=
- =?us-ascii?q?xcLBwWBI0MDgQYjSwUtHYEjIR0XFh5YGwcFEiAqQUUjA08vEDgLQwWBVwKCB?=
- =?us-ascii?q?U4jHwM5f4EvdUp3LWkBAhAXSjgkghICgTsCTgMLbT03FBkDBIE1BY1RI4JAA?=
- =?us-ascii?q?XoJCixQMxWUQoM1kEieaXEKhB2MIY8+hjIXqmyZCI4KhAmRboUXAgQCBAUCE?=
- =?us-ascii?q?AEBBoFoPIFDDwdwFYMiE0AZD5c2ySd5AjsCBwIHDgMLkWgCJgeBTwEB?=
-IronPort-PHdr: A9a23:M9dFAhOBs/dl1eY9v7El6nc2WUAX0o4cdiYP4ZYhzrVWfbvmo9LpP
- VfU4rNmi1qaFYnY6vcRk+PNqOigQm0P55+drWoPOIJBTR4LiMga3kQgDceJBFe9LavCZC0hF
- 8MEX1hgl0w=
-IronPort-Data: A9a23:Yz7/bqnLoeYWZSPdNuj5id7o5gzWJ0RdPkR7XQ2eYbSJt1+Wr1Gzt
- xIeDGqAP/fYa2bwc9wlOY7j8UtXuZKBx9BlSlFs+SkxFVtH+JHPbTi7wugcHM8zwunrFh8PA
- xA2M4GYRCwMZiaC4E/raf658SUUOZigHtLUEPTDNj16WThqQSIgjQMLs+Mii+aEu/Dha++2k
- Y20+ZC31GONgWYubDpLsfrb9nuDgdyr0N8mlg1mDRx0lAe2e0k9VPo3Oay3Jn3kdYhYdsbSb
- /rD1ryw4lTC9B4rDN6/+p6jGqHdauePVeQmoiM+t5mK2nCulARrukoIHKZ0hXNsttm8t4sZJ
- OOhGnCHYVxB0qXkwIzxWvTDes10FfUuFLTveRBTvSEPpqHLWyOE/hlgMK05FbYi48RpGEAez
- r83axwIZUzEi+WW4K3uH4GAhux7RCXqFJkUtnclyXTSCuwrBMifBa7L/tRfmjw3g6iiH96HO
- JFfMmUpNkmdJUQTYz/7C7pm9AusrnnudDtbqVe9rqss6G+Vxwt0uFToGIeMIYTQHZ0Ezi50o
- ErcpVq6HFZdCuWZxAigsWu0r8DWsRLkDdd6+LqQs6QCbEeo7mAeFjUaTVe45/6jhSaWQM5WI
- UgZ0iY2oat081akJuQRRDWiq3KC+xpZUN1KHqhitEeGy7Hf5ECSAW1soiN9VeHKffQeHFQC/
- lSIhNjuQzdotdWopbi1rN94cRva1fApEFI/
-IronPort-HdrOrdr: A9a23:hYkQA65zBqdD5LUPbgPXwceCI+orL9Y04lQ7vn2ZFiYlEfBwxv
- rPoB1E737JYW4qKQ8dcLC7VJVpQRvnhPhICPoqTMaftW7dySSVxeBZnMffKlLbalfDH4JmpM
- Ndmu1FeaLN5DtB/IjHCWuDYqsdKbC8mcjC65a9vhJQpENRGt1dBmxCe3+m+zhNNXJ77O0CZe
- KhD6R81l2dUEVSRP6WQlMCWO/OrcDKkpXJXT4qbiRM1CC+yRmTxPrfCRa34jcyOgkj/Z4StU
- TVmQ3w4auu98q81gLd0GHr6ZFXksvKy9dIBsCA4/JlawkEjDzGWK1RH5m5+BwlquCm71gn1P
- PWpQ07Ash143TNOkmovBrEwWDboXUTwk6n7WXdrWrooMT/Sj5/IdFGn5hlfhzQ7FdllM1g0Z
- hMw3mSu/NsfFH9dWXGlp31viNR5w2JSEkZ4KguZrtkINIjgYpq3MgiFYVuYc899WzBmdsa+a
- JVfbHhDb5tACCnhjbizylS6e3peGgvFRGbRUVHkMmU3z9K2E1d9SIjtZYidrNqzuNgd3GCjN
- 60b5hAhfVASNQbYrl6A/pEScyrCnbVSRaJK26KJ0/7fZt3cE4lhqSHqYnd3tvaMKAg3d83gt
- DMQVlYvWk9dwbnDtCPxoRC9lTITH+mVTrgx8lC79wh04eMCYbDIGmGUhQjgsGgq/IQDonSXO
- uyIotfB7vmIXH1EYhE0gXiU91ZKGUYUscSptEnMmj+6P7jO8nvrKjWYfzTLL3iHXItXX7+GG
- IKWHzpKMBJ/imQKwnFadjqKgTQk2DEjOZN+fLhjpouIaA2R/hxjjQ=
-X-Talos-CUID: 9a23:8CBg+G6z5oclHO+Z0Nssz3QNON48Uy3mj1iTD0qzVSFlT521VgrF
-X-Talos-MUID: =?us-ascii?q?9a23=3A/U4sOQ4RrFdvwYoeGOheuYXmxoxyuZrtFgdKr6w?=
- =?us-ascii?q?AtvuhdjVoEhiEoAWoF9o=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-Received: from rcdn-l-core-04.cisco.com ([173.37.255.141])
- by rcdn-iport-6.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 20 Jul 2026 22:56:05 +0000
-Received: from rcdn-opgw-4.cisco.com (rcdn-opgw-4.cisco.com [72.163.7.165])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by rcdn-l-core-04.cisco.com (Postfix) with ESMTPS id EAA99180001AB;
- Mon, 20 Jul 2026 22:56:04 +0000 (GMT)
-X-CSE-ConnectionGUID: oZ3lF21lQtejDlydTAOR9A==
-X-CSE-MsgGUID: ON6k1EW5RvyMk8B1ekcbtw==
-Authentication-Results: rcdn-opgw-4.cisco.com;
- dkim=pass (signature verified) header.i=@cisco.com
-X-IronPort-AV: E=Sophos;i="6.25,175,1779148800"; d="scan'208";a="88860433"
-Received: from mail-southcentralusazon11011012.outbound.protection.outlook.com
- (HELO SN4PR0501CU005.outbound.protection.outlook.com) ([40.93.194.12])
- by rcdn-opgw-4.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 20 Jul 2026 22:56:04 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OE0E8hTLwwBHVtmG6ZLH4NK2oPMPsd8xMBV1pGM3CvvQsWLaHIxMWcmMiNxysxyWPwUHLEkQaszkngW8rXoxTOD4MMkfzyoxjJTCGSumjzuvOni8u7ckXDtMnjnViT3fE7YyIwrzE2sXGW2SxzuoH3XmMSksC+ZhwtNpPwV+R5CQ1Qaz7V3cm5LgNVaxi9bKP+VksaWNS5ixF7hNm3n0zIZQWMVSOeb0FULSjPMggCYnq2+vsvzVk7O0wrq+oSnyvmwm78moLe/t040D/CqrlZopVOCejGB0WPipjtKGTXLhTpfW0Uu1sWFnv+Oc7KQVourOGGYiy8qp6GZu0Pbp1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ekkdJllbLgHKRuPDK5r0q63+3dK/iSJIawXZu54nDAM=;
- b=hA81M8EL4qUW7pjGG8lBfzKdGJB1bUnnhK+4wwvXPaWLcJrNmn2/OKnDIWA7Xs1zwe7vBmYNRyxj0cGtPxVulUbnRgD49awGL78Oirow3Xo3hAQGUuzmG9pZB3mQtyhyXDEBnHxVMU5EWm9hlWqmbadM0BMJ61SOwngG3WViRlEuKyZwCbcjIUCnCWQ7JiFWs8yDjfFiSGslvWZX5qqliPJSbqiXyNly46LwzIRQsCAw0H/sRX1PFl0e7FgIC2x0kg0uQIvcyQy3x3yGlBADt0/BplEO+twOCgLmgqVa+uOup4nC+l72wXP8oqc1OzvkTl6rF3sUqVDBcE1XiFNx6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-Received: from PH3PPF7A88A980A.namprd11.prod.outlook.com
- (2603:10b6:518:1::d32) by PH7PR11MB7122.namprd11.prod.outlook.com
- (2603:10b6:510:20d::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Mon, 20 Jul
- 2026 22:56:00 +0000
-Received: from PH3PPF7A88A980A.namprd11.prod.outlook.com
- ([fe80::6512:7c98:831d:3b0d]) by PH3PPF7A88A980A.namprd11.prod.outlook.com
- ([fe80::6512:7c98:831d:3b0d%7]) with mapi id 15.21.0223.017; Mon, 20 Jul 2026
- 22:56:00 +0000
-From: "Hyong Youb Kim (hyonkim)" <hyonkim@cisco.com>
-To: Alexey Simakov <bigalex934@gmail.com>
-CC: "david.marchand@redhat.com" <david.marchand@redhat.com>, "dev@dpdk.org"
- <dev@dpdk.org>, "John Daley (johndale)" <johndale@cisco.com>,
- "ssujith@cisco.com" <ssujith@cisco.com>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [PATCH v3] net/enic: check notify set return value during init
-Thread-Topic: [PATCH v3] net/enic: check notify set return value during init
-Thread-Index: AQHdGCryGLLswzoiVEW5AenB2jvORbZ3BKWQ
-Date: Mon, 20 Jul 2026 22:56:00 +0000
-Message-ID: <PH3PPF7A88A980A884D92206420445FE4ECBFC32@PH3PPF7A88A980A.namprd11.prod.outlook.com>
-References: <IA3PR11MB89877F0FA4E9EF63B478A201BFC42@IA3PR11MB8987.namprd11.prod.outlook.com>
- <20260720093338.92744-2-bigalex934@gmail.com>
-In-Reply-To: <20260720093338.92744-2-bigalex934@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH3PPF7A88A980A:EE_|PH7PR11MB7122:EE_
-x-ms-office365-filtering-correlation-id: 99705940-8f38-412c-b4da-08dee6b21160
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|23010399003|366016|1800799024|38070700021|10067099003|56012099006|11063799006|4143699003|18002099003|22082099003;
-x-microsoft-antispam-message-info: wFMGVWzvkf/5bp/oG/glV2PBzBuzzyrMtHEVjQ0cFMDP9sLc0Qfm0KVIAIHxCBr3uD6mUQLJL3jAyd3oX5oPb81gW0eS5qaM9JyvDouw9TWfeXWbiN3NgyQD8Y9KkeBoqP84V2zGhAc0tW8XloARLGyRleTJjrt5hR+99u946Hp2lLXYZdWvk1J35abD399sWyHZ0d7Wad+IC3uLdSwvO3XpyDwv26zRMy3nwgHWuR4sY2fpVe20EYktpH1iTAxalsHjPEPciuhPV05FdDnVkHi1fGtGkB18YoHa4HI+YfX85tQFd/9jOzinmFz1gQjk7yvKArbuHGZF3Dx0zziwYpETum4rozxarDVeMmb4lwZ3C2C6iFmR39RM5m+4inv3QgoXbsM4zpiu2CsHOonewxoho2d+jaZrryTp3up6KAUjYcz0tWIGEmWABZO+fCNk9nW/t8gp60XnM4cUFth7909DPZlnhdmOB4aOrdj9pQNJfg4im3qN5NCp06Q7+/esg7udmYhg12jcdsEJqXmFKfHTrxcXHs9c38dseNBdNNztXTB2LEiC8HV6AXV/kYtx+YGs+juUcmTVx56O0H+s3i4binAzXpk+LJzJ5JgoSVGLnHux6Sb91NMfnwNu8ViLUqoW58/r+cXE60CpM2ZOgHNpTGHrxLxJOf1VCrEy2veA9BSuG/P+KMas1UujnbkwmW28YF2d0nxlYXIBAbWuJhIBD2dLbvwovbiXUo10mLg=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH3PPF7A88A980A.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(38070700021)(10067099003)(56012099006)(11063799006)(4143699003)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?DlhlMZWIAWjKcQXGkkWG4eTv+m6eBgnqDLNMmUnRS8eANWgcj16tHf+yNPhC?=
- =?us-ascii?Q?Xeur82UNKVazTumvxaLJL87XqGOMIK1CpPIaCqU9Y0RO4PXu2+Hmp4aibwTr?=
- =?us-ascii?Q?8KKoBGQE4XsN78jMvTcmb7QiR0TX8f8rdggpjKdDlBk7pkUpeuTdi2XgB8uE?=
- =?us-ascii?Q?lOrhhmI9Q5hTUu+A3R9EJsLgZdabpxHBQNI4cSuZIzuts/Uny2nxp1fiqEIY?=
- =?us-ascii?Q?c4OnozY7iLSrbgsz0dRn/cBbnAI0UL8pMujfB5scbsf4fkIWCUBLQ/OYpLuC?=
- =?us-ascii?Q?JoPx5r3FtydA0gPMl1P8/Lgau9PzUd/5niSkPG4aUu13ZSgl66rr/Z0bWHz7?=
- =?us-ascii?Q?aXhRKmOL3L6yrpxZIjLENyILK+kEnVsrLItKZXJQqUtyJvvLeMdcwhtXYP77?=
- =?us-ascii?Q?CcqK0xfJvLM4MLuP/H/Ep7Z/NIOVuDmWmulq/GI5nYJaAWwIGyz9uKR3wdIY?=
- =?us-ascii?Q?mcRanX5pLIQLOxx/35sA7xP2vu8/GgkwIdriKxNmvwUTgkjwDhvaW5TE4Yz3?=
- =?us-ascii?Q?l+533RbI826WgTK5LG/2W7ZW4UYK/SF2rVvrFMJ4ovCC+FIseXc/VY6F5R99?=
- =?us-ascii?Q?toJpy/XnT6V636LHKcXHOKIdVie/MrFVm8szf+9qnhzQUdac00R3Jnl2rEpd?=
- =?us-ascii?Q?M7DL6Q2uHKlIEZLaeB0x6yOOijwX7EDyEuNNiGgA5Ik4wBwRr1gpO4rBmolD?=
- =?us-ascii?Q?M2qAIvA/fdcOH3fWLw/S11D4t1FWbMvu0uLtedG+GKVvAPqyGhAXgn9a+gmV?=
- =?us-ascii?Q?Ho/NfBVI9zz6KHoYhyZe1p8KzMpgUCFFpM7HO5RfgARUx2l0MDWyqtCC8+iZ?=
- =?us-ascii?Q?R9jXDGebb/dYIFw6l4m3yptqLf0jk9bigp8uSt6wXOoDopl72fCYAlJl/x9E?=
- =?us-ascii?Q?r4LICNS8EViBWiHKIENJ5v7fX+Ej7oyxj8Bpfe0Xy7d1SDSubrK83MZr+mnU?=
- =?us-ascii?Q?NCFz85NloHaKtepYhFFIshW9Ib8BEmgesXT/iyXqQa4Sd1UuW5XtoUOJK/fJ?=
- =?us-ascii?Q?cnAbCh6F2D0H/NztCXW8AH1cmw477IuQp0ubFWRjOxju9RonuoEo0VvpV6RQ?=
- =?us-ascii?Q?be76msimaZlzTDueGg3MsXc7mUq16I3m+YtTxcv2RUNHoAZgR6hxI76+SbuG?=
- =?us-ascii?Q?9oKTHuCKCZLBbgCJD+be7TsnDA8HkXOfFCb4erOe0t9OVYu13Z1VKt3rr6+4?=
- =?us-ascii?Q?E8/qiVuV/dlWQi1myK3AQ752ytkEqtv0E1of5AYqzE1Cw6RAIVAow4fFnmhw?=
- =?us-ascii?Q?TLsLLa4yeKiX/+fDKym2O+ic9BXV4nhBALSWTwv2MzcDPAWso17vfS0F1wQr?=
- =?us-ascii?Q?pgCEJkQqCRJ0NhwUsdlPsoFL+cXDfp7kUYEU3epMU02gSlvfzuDf15v4pnGp?=
- =?us-ascii?Q?BmaqrtN2l4cHbV1p4VKnJvcN5FMMV0ocum/tq+QxFrgGmDMXbRA4pObTMBm+?=
- =?us-ascii?Q?DdjVKjuKVpz2kCF7/5U9tkN1yQnAw+Jwhb1gVj3SiFGU09h0GGYWB29a0Ski?=
- =?us-ascii?Q?JcZWMdbNFtfCLqVbJJwbs+ctE0t4sZ4ssHUTNwcHQ6zfvHO8XDE84h+g9B2e?=
- =?us-ascii?Q?Ewy003ep9IO013atfETMd3+6dpJLUikS+JvOcaSG2qL0MizIEsj5nFi8nSWr?=
- =?us-ascii?Q?KUr/LPxKtL/CHiwoG5lEB7n8Au2F246GpDfNkMu9chPTXGn7dHsTxogrQ1z/?=
- =?us-ascii?Q?XW5dtQYGg8qdMhNPquDwIGIJR8eMZowT7KtGsG1ZEGLzNMo5?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ d=broadcom.com; s=google; t=1784598169; x=1785202969; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=6WJPLrmCETIseRU4r2D0tITW+/jln5HId03OGPNSK8g=;
+ b=YwUsQqIrS+AIvnHfe/VTvsUEBhFIy7PJdoFRD8kcXZZfMQfzUO8e4aOsiVm/E8rh79
+ aGXNlFQn50M7cXg3CWyOke9Mfc4I8/Aqtw2oFXdG2M5wFeakq4o+jWWr90cFJ6Et5RVW
+ ukLyGEQTDk+Ff2hanrt0/PE+lA2CZb4fJ1Kqc=
+X-Forwarded-Encrypted: i=1;
+ AHgh+RpX4X/rukP8jwPkQ0ZWFpBbX0imGQgj0qpXrKiJ5dZHZgTI9sprPmb3MwG0Od0qTLsKTGE=@dpdk.org
+X-Received: by 2002:a05:6a00:21cb:b0:848:599f:26b with SMTP id
+ d2e1a72fcca58-84c292d0fd8mr17403257b3a.14.1784598168949; 
+ Mon, 20 Jul 2026 18:42:48 -0700 (PDT)
+X-Received: by 2002:a05:6a00:21cb:b0:848:599f:26b with SMTP id
+ d2e1a72fcca58-84c292d0fd8mr17403224b3a.14.1784598168289; Mon, 20 Jul 2026
+ 18:42:48 -0700 (PDT)
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: M0nlHOyr/u6M1rsiOb1/BfXC6i1WmoksJNpUe6uK6TwTMMalpklNRlOKFgdVktqAr368IxZmwBDG4byxZwCShoxyVFUEsqxgvEp+wetJLvHLe9dkMkjvqPK7bVz4JNVaANqDcE/vp9KuzkMO6qI0Q2kNPB0+AaK9GZy3ZnYWOl/jlb4AqGSpIv7AIIy7QGSOei+AchpYTx4XEBn4fuScyyvYvq2RUwQfyG6kwUgfxD0ixaWLIbBOceSDzkLAiy9vZbUMFMaosL9Hbb8AovTQROx0+m5PIXAZoV+1Lu2LVCcspzP+mg5uCMigucfJkDt3CWns8s9F6uV5/oB2y49OOg==
-X-OriginatorOrg: cisco.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF7A88A980A.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99705940-8f38-412c-b4da-08dee6b21160
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jul 2026 22:56:00.3170 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: G2OjEhL478xRKcgpAJLeeCTMfYgmG/P3VaEqQGmMm84k8RhX931rGyNt5di8bfYZ+b4H8yBPSFLVQIoJOF/XXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7122
-X-Outbound-Client-TLS: ANONYMOUS; rcdn-opgw-4.cisco.com [72.163.7.165]; TLSv1.3;
- TLS_AES_256_GCM_SHA384; 256
-X-Outbound-SMTP-Client: 72.163.7.165, rcdn-opgw-4.cisco.com
-X-Outbound-Node: rcdn-l-core-04.cisco.com
+References: <b54ad1f1692a0274da705d446972efd1@mail.gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6596D@smartserver.smartshare.dk>
+ <e0b59e0b-1fb7-4a7b-84bb-9fc47f4feb5a@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6596E@smartserver.smartshare.dk>
+ <CA+BST0kV0w7teE2h8OVZ5Ont-BCrf6rSxw9+t+Bbn8hx6xUwtA@mail.gmail.com>
+ <aliq6kqGI2TfyFoH@bricha3-mobl1.ger.corp.intel.com>
+ <00fe4a299adc03ff7d39ef943e62b921@mail.gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65979@smartserver.smartshare.dk>
+ <al3YgIWkXNihHGMv@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6597F@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6597F@smartserver.smartshare.dk>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Date: Mon, 20 Jul 2026 21:42:31 -0400
+X-Gm-Features: AUfX_mxpZb-O7IFe9jgS88G5FzHLM9DRKdtheQS-SU3hsq0TYGFX3kaQ9vI96BM
+Message-ID: <CA+BST0mvrhPX9aw4CheJO5z5O7QWWe--uBuGhsvLxk7Xc+xAMQ@mail.gmail.com>
+Subject: Re: mempool cache change
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ fengchengwen <fengchengwen@huawei.com>, dev@dpdk.org, 
+ Wisam Jaddo <wisamm@nvidia.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
+ Thomas Monjalon <thomas@monjalon.net>
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: multipart/signed; protocol="application/pkcs7-signature";
+ micalg=sha-256; boundary="000000000000f3e0a30657152328"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -191,69 +110,398 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+--000000000000f3e0a30657152328
+Content-Type: multipart/alternative; boundary="000000000000e3607b06571523a6"
+
+--000000000000e3607b06571523a6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 20, 2026 at 6:54=E2=80=AFAM Morten Br=C3=B8rup <mb@smartsharesy=
+stems.com>
+wrote:
+
+> > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> > Sent: Monday, 20 July 2026 10.13
+> >
+> > On Sat, Jul 18, 2026 at 04:07:05PM +0200, Morten Br=C3=B8rup wrote:
+> > > > From: Kishore Padmanabha [mailto:kishore.padmanabha@broadcom.com]
+> > > > Sent: Friday, 17 July 2026 19.10
+> > > >
+> > > > Hi Bruce,
+> > > >
+> > > > The below patch works fine for us. We tested all the different
+> > packet
+> > > > sizes.
+> > > > Thanks for the patch. Do you want to push this patch since it is
+> > not
+> > > > changing the ABI/API?
+> > >
+> > > Too late in the release process.
+> > >
+> > > Let's postpone the discussion for DPDK 26.11, where API/ABI breakage
+> > is allowed.
+> >
+> > Agreed. Let's not unnecessarily rush this.
+> >
+> > >
+> > > I'm not strongly opposed to Bruce's algorithm, targeting a fill level
+> > of 25 % from the edges and flushing/refilling up to 75 % of the cache
+> > when necessary. It does have its advantages for some mempool access
+> > patterns (which are not exotic).
+> > > I just prefer the current algorithm, targeting a fill level of 50 %
+> > and only flushing/refilling up to 50 % of the cache when necessary. It
+> > performs better at random get/put access patterns, and the backend
+> > transactions are smaller.
+> > >
+> > > For DPDK 26.11, where we can break the API/ABI, we can simply double
+> > RTE_MEMPOOL_CACHE_MAX_SIZE to 1024, to compensate for reducing the
+> > effective cache size from 150 % to 100 %.
+> > > The mempool cache objs array will no longer be
+> > [RTE_MEMPOOL_CACHE_MAX_SIZE * 2], but only
+> > [RTE_MEMPOOL_CACHE_MAX_SIZE], so doubling RTE_MEMPOOL_CACHE_MAX_SIZE
+> > will not increase the memory footprint, but allow using a cache size up
+> > to 1024.
+> >
+> > My concern with this approach is that it won't automatically fix the
+> > problem if we have users who experience a performance regression due to
+> > the
+> > mempool changes. While testpmd allows the mbcache size to be provided
+> > via
+> > parameter, end applications are likely to have it hardcoded. That means
+> > that if an app does experience a regression, the author/user has to be
+> > either aware of the mempool changes, or has to debug it down to the
+> > mempool
+> > and then know to increase the mempool cache size in the app.
+> >
+> > It's not an insurmountable problem, but one that needs to be very
+> > clearly
+> > called out in our documentation, what the change is, how it may affect
+> > things and how to fix it.
+>
+> The release notes [1] do mention that the mempool algorithm has changed,
+> and how some applications should adapt to it.
+> They also do mention that the effective mempool cache size has changed,
+> but not that applications can restore the previously 50 % larger effectiv=
+e
+> cache size by simply requesting a 50 % larger cache.
+>
+> Maybe we should move the notes about the mempool changes from the New
+> Features section to the API Changes section, and mention how to increase
+> the cache size to regain the reduction in effective size?
+>
+> [1]:
+> https://github.com/DPDK/dpdk/blob/v26.07-rc4/doc/guides/rel_notes/release=
+_26_07.rst?plain=3D1#L80
+>
+> >
+> > On the other hand, in realworld, i.e. not just testpmd/l3fwd cases
+> > doing
+> > little packet processesing, I would be fairly hopeful that regressions
+> > are
+> > going to be few and very small.
+>
+> Yes.
+> And some real world applications (most run-to-completion applications?)
+> will get fewer mempool cache misses with the new algorithm.
+> Best case a performance improvement exceeding the performance cost of the
+> reduced effective cache size.
+>
+> >
+> > >
+> > > Please also note that the current implementation is carefully
+> > designed to keep the transfers to/from the mempool backend CPU cache
+> > aligned (assuming cache->size is 2^N and large enough).
+> > > Refer to the parameters passed to
+> > rte_mempool_ops_enqueue/dequeue_bulk().
+> > > E.g. with mempool cache size 256, backend transfers are 128 objects,
+> > 16 full cache lines.
+> > > Using CPU cache aligned transfers has a few advantages:
+> > > - There are no cache line ownership issues across different CPU cores
+> > repeatedly accessing the backend.
+> > > - The mempool backend drivers can be performance optimized for
+> > transferring full CPU cache lines. (Both source and destination
+> > addresses, and number of objects copied, are CPU cache aligned.
+> > Assuming all transfers go via the mempool cache.)
+> > >
+> > > These details should be fine tuned in the implementation, if we do
+> > proceed with Bruce's algorithm.
+> > >
+> > Yep, good points.
+> >
+> > /Bruce
+>
+> Sounds good. Documenting the limitation helps.
 
 
-> -----Original Message-----
-> From: Alexey Simakov <bigalex934@gmail.com>
-> Sent: Monday, July 20, 2026 6:34 PM
-> To: Hyong Youb Kim (hyonkim) <hyonkim@cisco.com>
-> Cc: david.marchand@redhat.com; dev@dpdk.org; John Daley (johndale)
-> <johndale@cisco.com>; ssujith@cisco.com; stable@dpdk.org; Alexey Simakov
-> <bigalex934@gmail.com>
-> Subject: [PATCH v3] net/enic: check notify set return value during init
->=20
-> The return value of vnic_dev_notify_set() is silently ignored in
-> enic_dev_init(), so a memory allocation failure or hardware command
-> error goes unnoticed and the driver continues with uninitialized
-> notification state.
->=20
-> Check the return value and propagate the error to abort probe when
-> notification setup fails.
->=20
-> Fixes: fefed3d1e62c ("enic: new driver")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
-> ---
->=20
-> v3 changes: add log message
->=20
-> v2 link: https://patches.dpdk.org/project/dpdk/patch/20260715103105.39417=
--
-> 1-bigalex934@gmail.com/
-> v2 changes: validate return code of vnic_dev_notify_set() in driver init =
-section
->=20
-> v1 link: https://patches.dpdk.org/project/dpdk/patch/20260707112014.82821=
--
-> 1-bigalex934@gmail.com/
->=20
->  drivers/net/enic/enic_main.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/enic/enic_main.c b/drivers/net/enic/enic_main.c
-> index 2696fa77d4..2a1a65d8da 100644
-> --- a/drivers/net/enic/enic_main.c
-> +++ b/drivers/net/enic/enic_main.c
-> @@ -1887,7 +1887,11 @@ static int enic_dev_init(struct enic *enic)
->  	LIST_INIT(&enic->flows);
->=20
->  	/* set up link status checking */
-> -	vnic_dev_notify_set(enic->vdev, -1); /* No Intr for notify */
-> +	err =3D vnic_dev_notify_set(enic->vdev, -1); /* No Intr for notify */
-> +	if (err) {
-> +		dev_err(enic, "failed to enable notify buffer\n");
-> +		return err;
-> +	}
->=20
+> PS:
+> I have some API/ABI breaking mempool optimizations in the pipeline for
+> DPDK 26.11.
+> But let's try to concentrate on DPDK 26.07 for now. ;-)
+>
+>
 
-Acked-by: Hyong Youb Kim <hyonkim@cisco.com>
+--000000000000e3607b06571523a6
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
--Hyong
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Jul 20,=
+ 2026 at 6:54=E2=80=AFAM Morten Br=C3=B8rup &lt;<a href=3D"mailto:mb@smarts=
+haresystems.com">mb@smartsharesystems.com</a>&gt; wrote:<br></div><blockquo=
+te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
+solid rgb(204,204,204);padding-left:1ex">&gt; From: Bruce Richardson [mailt=
+o:<a href=3D"mailto:bruce.richardson@intel.com" target=3D"_blank">bruce.ric=
+hardson@intel.com</a>]<br>
+&gt; Sent: Monday, 20 July 2026 10.13<br>
+&gt; <br>
+&gt; On Sat, Jul 18, 2026 at 04:07:05PM +0200, Morten Br=C3=B8rup wrote:<br=
+>
+&gt; &gt; &gt; From: Kishore Padmanabha [mailto:<a href=3D"mailto:kishore.p=
+admanabha@broadcom.com" target=3D"_blank">kishore.padmanabha@broadcom.com</=
+a>]<br>
+&gt; &gt; &gt; Sent: Friday, 17 July 2026 19.10<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; Hi Bruce,<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; The below patch works fine for us. We tested all the differe=
+nt<br>
+&gt; packet<br>
+&gt; &gt; &gt; sizes.<br>
+&gt; &gt; &gt; Thanks for the patch. Do you want to push this patch since i=
+t is<br>
+&gt; not<br>
+&gt; &gt; &gt; changing the ABI/API?<br>
+&gt; &gt;<br>
+&gt; &gt; Too late in the release process.<br>
+&gt; &gt;<br>
+&gt; &gt; Let&#39;s postpone the discussion for DPDK 26.11, where API/ABI b=
+reakage<br>
+&gt; is allowed.<br>
+&gt; <br>
+&gt; Agreed. Let&#39;s not unnecessarily rush this.<br>
+&gt; <br>
+&gt; &gt;<br>
+&gt; &gt; I&#39;m not strongly opposed to Bruce&#39;s algorithm, targeting =
+a fill level<br>
+&gt; of 25 % from the edges and flushing/refilling up to 75 % of the cache<=
+br>
+&gt; when necessary. It does have its advantages for some mempool access<br=
+>
+&gt; patterns (which are not exotic).<br>
+&gt; &gt; I just prefer the current algorithm, targeting a fill level of 50=
+ %<br>
+&gt; and only flushing/refilling up to 50 % of the cache when necessary. It=
+<br>
+&gt; performs better at random get/put access patterns, and the backend<br>
+&gt; transactions are smaller.<br>
+&gt; &gt;<br>
+&gt; &gt; For DPDK 26.11, where we can break the API/ABI, we can simply dou=
+ble<br>
+&gt; RTE_MEMPOOL_CACHE_MAX_SIZE to 1024, to compensate for reducing the<br>
+&gt; effective cache size from 150 % to 100 %.<br>
+&gt; &gt; The mempool cache objs array will no longer be<br>
+&gt; [RTE_MEMPOOL_CACHE_MAX_SIZE * 2], but only<br>
+&gt; [RTE_MEMPOOL_CACHE_MAX_SIZE], so doubling RTE_MEMPOOL_CACHE_MAX_SIZE<b=
+r>
+&gt; will not increase the memory footprint, but allow using a cache size u=
+p<br>
+&gt; to 1024.<br>
+&gt; <br>
+&gt; My concern with this approach is that it won&#39;t automatically fix t=
+he<br>
+&gt; problem if we have users who experience a performance regression due t=
+o<br>
+&gt; the<br>
+&gt; mempool changes. While testpmd allows the mbcache size to be provided<=
+br>
+&gt; via<br>
+&gt; parameter, end applications are likely to have it hardcoded. That mean=
+s<br>
+&gt; that if an app does experience a regression, the author/user has to be=
+<br>
+&gt; either aware of the mempool changes, or has to debug it down to the<br=
+>
+&gt; mempool<br>
+&gt; and then know to increase the mempool cache size in the app.<br>
+&gt; <br>
+&gt; It&#39;s not an insurmountable problem, but one that needs to be very<=
+br>
+&gt; clearly<br>
+&gt; called out in our documentation, what the change is, how it may affect=
+<br>
+&gt; things and how to fix it.<br>
+<br>
+The release notes [1] do mention that the mempool algorithm has changed, an=
+d how some applications should adapt to it.<br>
+They also do mention that the effective mempool cache size has changed, but=
+ not that applications can restore the previously 50 % larger effective cac=
+he size by simply requesting a 50 % larger cache.<br>
+<br>
+Maybe we should move the notes about the mempool changes from the New Featu=
+res section to the API Changes section, and mention how to increase the cac=
+he size to regain the reduction in effective size?<br>
+<br>
+[1]: <a href=3D"https://github.com/DPDK/dpdk/blob/v26.07-rc4/doc/guides/rel=
+_notes/release_26_07.rst?plain=3D1#L80" rel=3D"noreferrer" target=3D"_blank=
+">https://github.com/DPDK/dpdk/blob/v26.07-rc4/doc/guides/rel_notes/release=
+_26_07.rst?plain=3D1#L80</a><br>
+<br>
+&gt; <br>
+&gt; On the other hand, in realworld, i.e. not just testpmd/l3fwd cases<br>
+&gt; doing<br>
+&gt; little packet processesing, I would be fairly hopeful that regressions=
+<br>
+&gt; are<br>
+&gt; going to be few and very small.<br>
+<br>
+Yes.<br>
+And some real world applications (most run-to-completion applications?) wil=
+l get fewer mempool cache misses with the new algorithm.<br>
+Best case a performance improvement exceeding the performance cost of the r=
+educed effective cache size.<br>
+<br>
+&gt; <br>
+&gt; &gt;<br>
+&gt; &gt; Please also note that the current implementation is carefully<br>
+&gt; designed to keep the transfers to/from the mempool backend CPU cache<b=
+r>
+&gt; aligned (assuming cache-&gt;size is 2^N and large enough).<br>
+&gt; &gt; Refer to the parameters passed to<br>
+&gt; rte_mempool_ops_enqueue/dequeue_bulk().<br>
+&gt; &gt; E.g. with mempool cache size 256, backend transfers are 128 objec=
+ts,<br>
+&gt; 16 full cache lines.<br>
+&gt; &gt; Using CPU cache aligned transfers has a few advantages:<br>
+&gt; &gt; - There are no cache line ownership issues across different CPU c=
+ores<br>
+&gt; repeatedly accessing the backend.<br>
+&gt; &gt; - The mempool backend drivers can be performance optimized for<br=
+>
+&gt; transferring full CPU cache lines. (Both source and destination<br>
+&gt; addresses, and number of objects copied, are CPU cache aligned.<br>
+&gt; Assuming all transfers go via the mempool cache.)<br>
+&gt; &gt;<br>
+&gt; &gt; These details should be fine tuned in the implementation, if we d=
+o<br>
+&gt; proceed with Bruce&#39;s algorithm.<br>
+&gt; &gt;<br>
+&gt; Yep, good points.<br>
+&gt; <br>
+&gt; /Bruce<br>
+<br></blockquote><div>Sounds good. Documenting the limitation helps.</div><=
+div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0=
+px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+PS:<br>
+I have some API/ABI breaking mempool optimizations in the pipeline for DPDK=
+ 26.11.<br>
+But let&#39;s try to concentrate on DPDK 26.07 for now. ;-)<br>
+<br>
+</blockquote></div></div>
 
->  	enic->overlay_offload =3D false;
->  	/*
-> --
-> 2.53.0
+--000000000000e3607b06571523a6--
 
+--000000000000f3e0a30657152328
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
+2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
+phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
+a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
+ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
+07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
+SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
+rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGpzCCBI+g
+AwIBAgIMTxuM8PbwRQIs9uJeMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
+ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
+MDIzMB4XDTI1MDYyMDEzNTIxOFoXDTI3MDYyMTEzNTIxOFowgekxCzAJBgNVBAYTAlVTMRMwEQYD
+VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
+MDExNzETMBEGA1UEBBMKUGFkbWFuYWJoYTEQMA4GA1UEKhMHS2lzaG9yZTEWMBQGA1UEChMNQlJP
+QURDT00gSU5DLjEoMCYGA1UEAwwfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTEuMCwG
+CSqGSIb3DQEJARYfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBALtFWP+ax39qiJZsJuukdoqMyp0GWGaJ6MdaHvAxXWiEY5zmTiVU
+QnpmNYp5SO1Cd1cBqDB0dcelQbiQ1qh+lnlUchJLR63y0ysUvUNvqV493q8+pHCm/2jPb0/R9rec
+/jxwM9jaPAVkhGBwvudSfOAQlMPORtAHZyLHKFINcsNfLrGP/3lx+zj30v5tmDN7isOLWos7Jm/U
+qRdC7UuUiXgX7q8xXd1MQlA95O73IY/Qb/y0ChEjGPb+U1wr+OsAWJ5fcjQXA/ffBb2GmMp9OUOs
+wVNq8iHfie9nzNaaRw+yoyn0ovoiq2W3Q6r+U53ha/lz0itqCrJZN+G0MFf+cX8CAwEAAaOCAeMw
+ggHfMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggr
+BgEFBQcwAoY6aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1l
+Y2EyMDIzLmNydDA5BggrBgEFBQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2Ny
+NnNtaW1lY2EyMDIzMGUGA1UdIAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGg
+MgoDAjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5
+LzBBBgNVHR8EOjA4MDagNKAyhjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWlt
+ZWNhMjAyMy5jcmwwKgYDVR0RBCMwIYEfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTAT
+BgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBQAKTaeXHq6D68tUC3boCOFGLCgkjAdBgNV
+HQ4EFgQURIyot+ZP/mdwQsofZexqAvOm5pMwDQYJKoZIhvcNAQELBQADggIBAKc5gYnhyTf+f6cm
+kAHy1a4cLIWou43yaS+M/r69Pv44EVYvHxqt0mMvKh3U40Y+pHKph+VCjdoINKCd1SaqAFIqqEO4
+XHWrFi3QAI3snUB6spPIoHN/srAcpX9tdrnAlyK593pq+H+mTMoFIGBP/oc8XCtaDgHp37rpuK9Q
+qhF9h5cEJWgShmD7/Q02YydW3jsioy8HdTUD9fib1fRwiSc9uGq8JV5NJsYiJsi9FUz7kTUPohO0
+h6U9tRUVmAf9gPbU46rin9By5X4Lt1jKge5O0vFEawCTr/pLmDcIf7CqRZfBoNalKOsBDovoeAOf
+pXmQzQEMhnaf93MvbFvZaxC9Ir92DR45BH42xZuLKcQVUsqyLKwC6kEZg81AnZsRAUVpMvqiGbVb
+hZnabsHragNY7Br3VCA2OaWk9yRRjt1UwzfIEEMNWqZeQzzAqKIR3XdXIrqAUlMQOX42tSV9FaIv
+PSmR3uaH2M0/bRtz4TE1qRuTsLlr+XEGMxHssK7u7+WYM7EGF3ueZLcE7WmnwXEFli5Y5QX0SnmT
+W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
+6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
+YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
+YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
+oIHHMC8GCSqGSIb3DQEJBDEiBCAyWtVQnR5RZYtQpYahMiqtPYFCztLPP2fK+IcIgquEZTAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA3MjEwMTQyNDlaMFwGCSqG
+SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAQTdWOdupX
+xsbY+CIh4s9tUYCbNlJug8AWGb+2JFM0zk8L76BzmLBW/pNb5GB1TcdfJGw6lm+XzwRqKx5TBszk
+uG+zfrV18NVmZVWl+yC9drC6lMFGpF/zORXvAWKNvAzzrFCjoJ49zazo1Or1i84Gy1J2UJcQ4Bk7
+nXvpKrVQxdvtivIxOSk7YyGSPRFEzHr8CC4yFppe9hKcdZtkom6HZr66tDYBnzPLz+8RORGOLWK7
+OJ42YFT1Mi2l0ehhg9+nH+5GSpn/pleM4zl8b3ivQ29K8nnZB9vvW1kTmgqPICx15KvmVmxrVVXY
+8fMFuIv3BnBuQQuLjl5U04A28FxZ
+--000000000000f3e0a30657152328--
