@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B666BC4451C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 09:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D55F5C44529
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 09:49:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1E99B40EDF;
-	Tue, 21 Jul 2026 11:46:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 17F1440EE3;
+	Tue, 21 Jul 2026 11:46:39 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 74A56402AD
- for <dev@dpdk.org>; Tue, 21 Jul 2026 11:46:35 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 05BE740E8A
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 11:46:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1784627196; x=1816163196;
+ t=1784627195; x=1816163195;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=IK/K5Z94VhiX46ys0KUSnsTmr9+zaMWa8cDFEgk5uvk=;
- b=BI0x72fKXuMSoQ+F2KJceJMN0veLqHoQgLpldV/LcDe2fbZcUMUZTiWb
- rKj34cSR/G8CcXTLs2P/ZFFtjx0wdtTCByYi7Vak8RoHw0SAR9K3Ljqyh
- w3QibenatacS48w9pWqknAZ7V1bvmGqs+2Sl/fSjXtQZ3KI9F9fTwOIBf
- K45g+t9Tj3DmrvXmknM1Waelqz+XoBy6ZYLM7dskzNZs4X1gTOTWcSZ8I
- wM39Rj7BlBqGHlc9/gwusE9f0xnzXosdlDWMSZSnlwLYt2Y9tZn+hvsGq
- hohmdWsAPPBAEU5mKE/G7LUUFuH1F7jy/GLyz+0LegaSrViXxgvVVMC0H A==;
-X-CSE-ConnectionGUID: bQRK1y5wRuOXUCWjbpFNjA==
-X-CSE-MsgGUID: S9FAfaJ5TDGauuhciUIHTA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11852"; a="95872510"
-X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="95872510"
+ bh=shOkOUUHp2fL0Bn32PoeVQtpq1pa9WTHnRit+2IuyYY=;
+ b=U0PPEnECIf0AvtOqnzWHPh1vxJMAtdjx+xatPFgBKoflZAL1Q9owd4zz
+ 6Cd7RBotRi0/WLvuchZc9FykOC9MeBgvM2oLIanK6KExTArViuW4sxhvk
+ I9auU6LDI1e1zfA8g3Y6PgEZUDQ9c8pv02SncYbjvdruPISMdNC6kYKnr
+ fbAizYOHY7QqaFSUBdDFqlxAFFqVkNnt6OsTUOVrfcWY+pPyXfYo19G2X
+ nQtGQK8SkuJXv3b+dPpKtdOvjaLEkJvrJhrEiNCOacWda0jb62I/hJhoi
+ Yr9xwyUZeTTcUZ8cZBqcT3NfDr8YwQbGFADWt11wKJn1WxAHEcIR1mNEf A==;
+X-CSE-ConnectionGUID: kdhyHSDfQf660uVnkiGDrw==
+X-CSE-MsgGUID: yRo5nPGlSvGFYMNJ8Lf1aw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11852"; a="95872509"
+X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="95872509"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Jul 2026 02:46:35 -0700
-X-CSE-ConnectionGUID: kBWV6RjtRXKbb6BrK0DEKw==
-X-CSE-MsgGUID: pG8Umw8bSwqt190K4S8/7g==
+ 21 Jul 2026 02:46:34 -0700
+X-CSE-ConnectionGUID: YgDCd/jzQ9Sxb9mOWhsALQ==
+X-CSE-MsgGUID: YrD+rbVJTouulc1g6QC04g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="295922433"
+X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="295922429"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa001.jf.intel.com with ESMTP; 21 Jul 2026 02:46:33 -0700
+ by orviesa001.jf.intel.com with ESMTP; 21 Jul 2026 02:46:32 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 32/39] eal: clarify docs on params taking lcore IDs
-Date: Tue, 21 Jul 2026 10:45:40 +0100
-Message-ID: <20260721094555.2188496-33-bruce.richardson@intel.com>
+Subject: [PATCH 31/39] eal: store user-provided lcore info in user config
+ struct
+Date: Tue, 21 Jul 2026 10:45:39 +0100
+Message-ID: <20260721094555.2188496-32-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260721094555.2188496-1-bruce.richardson@intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
@@ -60,99 +61,358 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The documentation doesn't make clear how the parameters to service core
-and main lcore EAL flags relate to the regular --lcores parameter when
-mapping lcores to physical CPU ids.
-
-For example, when looking to add service cores to process run using the
-command "/path/to/app -R -l 40-50", it's not clear whether the service
-cores list parameter should be "-S 49-50" i.e. physical CPU ids, or "-S
-9-10" i.e.  logical lcore IDs. Update the docs to make it clear its the
-latter.
+The user provides details of what lcores are to run on what cpus in a
+variety of ways. Map all those to a single array of cpusets in the
+user_cfg struct, such that each lcore id has a cpuset of physical lcore
+ids if it is to be used. Then post-parse of args, we can use that to
+appropriately populate the runtime configuration.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- doc/guides/linux_gsg/eal_args.include.rst | 38 +++++++++++++++++++++--
- lib/eal/common/eal_option_list.h          |  6 ++--
- 2 files changed, 38 insertions(+), 6 deletions(-)
+ lib/eal/common/eal_common_options.c | 151 ++++++++++++++++++----------
+ lib/eal/common/eal_internal_cfg.h   |   9 +-
+ lib/eal/freebsd/eal.c               |   1 +
+ lib/eal/linux/eal.c                 |   1 +
+ lib/eal/windows/eal.c               |   1 +
+ 5 files changed, 109 insertions(+), 54 deletions(-)
 
-diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
-index 32c24c8e41..33281ecec3 100644
---- a/doc/guides/linux_gsg/eal_args.include.rst
-+++ b/doc/guides/linux_gsg/eal_args.include.rst
-@@ -89,13 +89,45 @@ Lcore-related options
-     and the use of ``()`` for core groupings,
-     are not allowed when ``-R`` or ``--remap-lcore-ids`` is also used.
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index 31eff2c59d..a0b2243873 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -546,6 +546,10 @@ eal_reset_internal_config(void)
+ 	CPU_ZERO(&runtime_state->ctrl_cpuset);
+ 	runtime_state->init_complete = 0;
+ 	CPU_ZERO(&user_cfg->service_cpuset);
++	for (i = 0; i < RTE_MAX_LCORE; i++) {
++		free(user_cfg->lcore_cpusets[i]);
++		user_cfg->lcore_cpusets[i] = NULL;
++	}
+ 	user_cfg->max_simd_bitwidth.bitwidth = RTE_VECT_DEFAULT_SIMD_BITWIDTH;
+ 	user_cfg->max_simd_bitwidth.forced = 0;
+ }
+@@ -913,23 +917,20 @@ eal_parse_service_corelist(const char *corelist, rte_cpuset_t *cpuset)
+ 	return CPU_COUNT(cpuset) > 0 ? 0 : -1;
+ }
  
--*   ``--main-lcore <core ID>``
-+*   ``--main-lcore <lcore ID>``
++/* Expand a flat cpuset into lcore_cpusets[], assigning lcore IDs.
++ * If remap is false:  lcore_id == physical CPU id (identity mapping).
++ * If remap is true:   lcore IDs are assigned sequentially from remap_base.
++ * Returns the number of lcores configured, or -1 on error.
++ */
+ static int
+-update_lcore_config(const rte_cpuset_t *cpuset, bool remap, uint16_t remap_base)
++eal_expand_cpuset_to_map(const rte_cpuset_t *cpuset, bool remap, uint16_t remap_base,
++		rte_cpuset_t **lcore_cpusets)
+ {
+-	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	unsigned int lcore_id = remap_base;
+ 	unsigned int count = 0;
+ 	unsigned int i;
+ 	int ret = 0;
  
--    Core ID that is used as main.
-+    Set the lcore ID to use for the main thread.
-+    The value is a DPDK lcore ID, not a physical CPU ID,
-+    and must be present in the enabled lcore set (as configured by ``-l``/``--lcores``).
-+
-+    In the simple case, without any explicit lcore-to-CPU mapping,
-+    lcore IDs equal physical CPU IDs so the distinction does not matter.
-+    The two differ when ``-R``/``--remap-lcore-ids`` assigns sequential lcore IDs to higher-numbered physical CPUs,
-+    or when the ``@`` mapping syntax in ``--lcores`` is used.
-+    In those cases the lcore ID must be specified here, not the physical CPU ID.
-+
-+    Example using ``--lcores`` explicit mapping:
-+    ``--lcores=1@31,2@32,3@33 --main-lcore 2`` selects the thread with lcore ID 2,
-+    running on physical CPU 32, as the main thread.
-+
-+    Example using ``-R`` remapping:
-+    ``-l 31-33 -R --main-lcore 1`` starts three threads on physical CPUs 31, 32 and 33, remapped to lcore IDs 0, 1 and 2.
-+    ``--main-lcore 1`` selects the thread remapped to lcore ID 1, which runs on physical CPU 32.
+-	/* set everything to disabled first, then set up values */
+-	rte_bitset_clear_all(runtime_state->core_indices, RTE_MAX_LCORE);
+-	for (i = 0; i < RTE_MAX_LCORE; i++) {
+-		runtime_state->lcore_cfg[i].role = ROLE_OFF;
+-		runtime_state->lcore_cfg[i].core_index = -1;
+-	}
+-
+-	/* now go through the cpuset */
+ 	for (i = 0; i < CPU_SETSIZE; i++) {
+ 		if (CPU_ISSET(i, cpuset)) {
+ 			if (eal_cpu_detected(i) == 0) {
+@@ -953,12 +954,17 @@ update_lcore_config(const rte_cpuset_t *cpuset, bool remap, uint16_t remap_base)
+ 				continue;
+ 			}
  
- *   ``-S, --service-corelist <service core list>``
+-			rte_bitset_set(runtime_state->core_indices, count);
+-			runtime_state->lcore_cfg[lcore_id].role = ROLE_RTE;
+-			runtime_state->lcore_cfg[lcore_id].core_index = count;
+-			CPU_ZERO(&runtime_state->lcore_cfg[lcore_id].cpuset);
+-			CPU_SET(i, &runtime_state->lcore_cfg[lcore_id].cpuset);
+-			runtime_state->lcore_cfg[lcore_id].first_cpu = i;
++			lcore_cpusets[lcore_id] = malloc(sizeof(rte_cpuset_t));
++			if (lcore_cpusets[lcore_id] == NULL) {
++				EAL_LOG(ERR, "failed to allocate cpuset for lcore %u", lcore_id);
++				for (unsigned int j = 0; j < lcore_id; j++) {
++					free(lcore_cpusets[j]);
++					lcore_cpusets[j] = NULL;
++				}
++				return -1;
++			}
++			CPU_ZERO(lcore_cpusets[lcore_id]);
++			CPU_SET(i, lcore_cpusets[lcore_id]);
+ 			EAL_LOG(DEBUG, "lcore %u mapped to physical core %u", lcore_id, i);
+ 			lcore_id++;
+ 			count++;
+@@ -968,9 +974,9 @@ update_lcore_config(const rte_cpuset_t *cpuset, bool remap, uint16_t remap_base)
+ 		EAL_LOG(ERR, "No valid lcores in core list");
+ 		ret = -1;
+ 	}
+-	if (!ret)
+-		runtime_state->lcore_count = count;
+-	return ret;
++	if (ret == -1)
++		return -1;
++	return (int)count;
+ }
  
--    List of cores to be used as service cores.
-+    List of lcore IDs to be used as service cores.
-+    The list format is the same as for ``-l``/``--lcores``:
-+    a comma-separated set of lcore IDs or ranges (e.g. ``2,3`` or ``2-5``).
-+    Each specified lcore ID must be present in the enabled lcore set.
-+
-+    The values are lcore IDs, not physical CPU IDs.
-+    In the simple case, without any explicit lcore-to-CPU mapping, the two are equal so the distinction does not matter.
-+    When using ``-R``/``--remap-lcore-ids`` or the ``@`` mapping syntax in ``--lcores``, lcore IDs and physical CPU IDs differ,
-+    and the lcore IDs must be used here.
-+
-+    Example using ``--lcores`` explicit mapping:
-+    ``--lcores=1@31,2@32,3@33 -S 2,3`` assigns the threads with
-+    lcore IDs 2 and 3 (running on physical CPUs 32 and 33) as service cores.
-+
-+    Example using ``-R`` remapping:
-+    ``-l 31-33 -R -S 1,2`` starts three threads on physical CPUs 31, 32 and 33, remapped to lcore IDs 0, 1 and 2.
-+    ``-S 1,2`` assigns the threads with lcore IDs 1 and 2 (running on physical CPUs 32 and 33) as service cores.
+ static int
+@@ -1092,7 +1098,6 @@ eal_parse_main_lcore(const char *arg)
+ 	char *parsing_end;
+ 	long main_lcore;
+ 	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+-	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
  
+ 	errno = 0;
+ 	main_lcore = strtol(arg, &parsing_end, 0);
+@@ -1106,8 +1111,9 @@ eal_parse_main_lcore(const char *arg)
+ 		EAL_LOG(ERR, "Error: Main lcore is used as a service core");
+ 		return -1;
+ 	}
+-	/* check that we have the core recorded in the core list */
+-	if (runtime_state->lcore_cfg[user_cfg->main_lcore].role != ROLE_RTE) {
++
++	/* lcore_cpusets is always populated before eal_parse_main_lcore is called */
++	if (user_cfg->lcore_cpusets[user_cfg->main_lcore] == NULL) {
+ 		EAL_LOG(ERR, "Error: Main lcore is not enabled for DPDK");
+ 		return -1;
+ 	}
+@@ -1269,15 +1275,18 @@ check_cpuset(rte_cpuset_t *set)
+  *   lcore 6 runs on cpuset 0x41 (cpu 0,6)
+  *   lcore 7 runs on cpuset 0x80 (cpu 7)
+  *   lcore 8 runs on cpuset 0x100 (cpu 8)
++ *
++ * Writes the physical-CPU affinity for each mentioned lcore_id into
++ * cpusets[lcore_id].  Slots not mentioned are left as NULL.
++ * Returns the number of distinct lcore IDs configured, or -1 on error.
+  */
+ static int
+-eal_parse_lcores(const char *lcores)
++eal_parse_lcores_to_map(const char *lcores, rte_cpuset_t **cpusets)
+ {
+-	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	rte_cpuset_t lcore_set;
+ 	unsigned int set_count;
+-	unsigned idx = 0;
+-	unsigned count = 0;
++	unsigned int idx;
++	int count = 0;
+ 	const char *lcore_start = NULL;
+ 	const char *end = NULL;
+ 	int offset;
+@@ -1294,15 +1303,6 @@ eal_parse_lcores(const char *lcores)
  
- Device-related options
-diff --git a/lib/eal/common/eal_option_list.h b/lib/eal/common/eal_option_list.h
-index b72f243cc6..2b94e4f22f 100644
---- a/lib/eal/common/eal_option_list.h
-+++ b/lib/eal/common/eal_option_list.h
-@@ -47,7 +47,7 @@ BOOL_ARG("--legacy-mem", NULL, "Enable legacy memory behavior", legacy_mem)
- OPT_STR_ARG("--log-color", NULL, "Enable/disable color in log output", log_color)
- LIST_ARG("--log-level", NULL, "Log level for loggers; use log-level=help for list of log types and levels", log_level)
- OPT_STR_ARG("--log-timestamp", NULL, "Enable/disable timestamp in log output", log_timestamp)
--STR_ARG("--main-lcore", NULL, "Select which core to use for the main thread", main_lcore)
-+STR_ARG("--main-lcore", NULL, "Lcore ID to use for the main thread", main_lcore)
- STR_ARG("--mbuf-pool-ops-name", NULL, "User defined mbuf default pool ops name", mbuf_pool_ops_name)
- STR_ARG("--memory-channels", "-n", "Number of memory channels per socket", memory_channels)
- STR_ARG("--memory-ranks", "-r", "Force number of memory ranks (don't detect)", memory_ranks)
-@@ -61,8 +61,8 @@ BOOL_ARG("--no-telemetry", NULL, "Disable telemetry", no_telemetry)
- LIST_ARG("--pagesz-mem", NULL, "Memory allocation per hugepage size (format: <pagesz>:<limit>, e.g. 2M:32G). Repeat option for multiple page sizes.", pagesz_mem)
- STR_ARG("--proc-type", NULL, "Type of process (primary|secondary|auto)", proc_type)
- OPT_STR_ARG("--remap-lcore-ids", "-R", "Remap lcore IDs to be contiguous starting from 0, or supplied value", remap_lcore_ids)
--STR_ARG("--service-corelist", "-S", "List of cores to use for service threads", service_corelist)
--STR_ARG("--service-coremask", "-s", "[Deprecated] Bitmask of cores to use for service threads", service_coremask)
-+STR_ARG("--service-corelist", "-S", "List of lcore IDs to use for service threads", service_corelist)
-+STR_ARG("--service-coremask", "-s", "[Deprecated] Bitmask of lcore IDs to use for service threads", service_coremask)
- BOOL_ARG("--single-file-segments", NULL, "Store all pages within single files (per-page-size, per-node)", single_file_segments)
- BOOL_ARG("--telemetry", NULL, "Enable telemetry", telemetry)
- LIST_ARG("--vdev", NULL, "Add a virtual device to the system; format=<driver><id>[,key=val,...]", vdev)
+ 	CPU_ZERO(&cpuset);
+ 
+-	/* Reset lcore config */
+-	rte_bitset_clear_all(runtime_state->core_indices, RTE_MAX_LCORE);
+-	for (idx = 0; idx < RTE_MAX_LCORE; idx++) {
+-		runtime_state->lcore_cfg[idx].role = ROLE_OFF;
+-		runtime_state->lcore_cfg[idx].core_index = -1;
+-		CPU_ZERO(&runtime_state->lcore_cfg[idx].cpuset);
+-		runtime_state->lcore_cfg[idx].first_cpu = UINT16_MAX;
+-	}
+-
+ 	/* Get list of cores */
+ 	do {
+ 		while (isblank(*lcores))
+@@ -1351,7 +1351,7 @@ eal_parse_lcores(const char *lcores)
+ 
+ 		/* without '@', by default using lcore_set as cpuset */
+ 		if (*lcores != '@')
+-			rte_memcpy(&cpuset, &lcore_set, sizeof(cpuset));
++			memcpy(&cpuset, &lcore_set, sizeof(cpuset));
+ 
+ 		set_count = CPU_COUNT(&lcore_set);
+ 		/* start to update lcore_set */
+@@ -1360,13 +1360,6 @@ eal_parse_lcores(const char *lcores)
+ 				continue;
+ 			set_count--;
+ 
+-			if (runtime_state->lcore_cfg[idx].role != ROLE_RTE) {
+-				rte_bitset_set(runtime_state->core_indices, count);
+-				runtime_state->lcore_cfg[idx].core_index = count;
+-				runtime_state->lcore_cfg[idx].role = ROLE_RTE;
+-				count++;
+-			}
+-
+ 			if (lflags) {
+ 				CPU_ZERO(&cpuset);
+ 				CPU_SET(idx, &cpuset);
+@@ -1374,10 +1367,16 @@ eal_parse_lcores(const char *lcores)
+ 
+ 			if (check_cpuset(&cpuset) < 0)
+ 				goto err;
+-			rte_memcpy(&runtime_state->lcore_cfg[idx].cpuset, &cpuset,
+-				   sizeof(rte_cpuset_t));
+-			runtime_state->lcore_cfg[idx].first_cpu =
+-					(uint16_t)(RTE_CPU_FFS(&cpuset) - 1);
++			if (cpusets[idx] == NULL) {
++				cpusets[idx] = malloc(sizeof(rte_cpuset_t));
++				if (cpusets[idx] == NULL) {
++					EAL_LOG(ERR, "failed to allocate cpuset for lcore %u", idx);
++					ret = -1;
++					goto err;
++				}
++				count++;
++			}
++			memcpy(cpusets[idx], &cpuset, sizeof(rte_cpuset_t));
+ 		}
+ 
+ 		/* some cores from the lcore_set can't be handled by EAL */
+@@ -1390,11 +1389,14 @@ eal_parse_lcores(const char *lcores)
+ 	if (count == 0)
+ 		goto err;
+ 
+-	runtime_state->lcore_count = count;
+-	ret = 0;
+-
++	ret = count;
+ err:
+-
++	if (ret == -1) {
++		for (unsigned int j = 0; j < RTE_MAX_LCORE; j++) {
++			free(cpusets[j]);
++			cpusets[j] = NULL;
++		}
++	}
+ 	return ret;
+ }
+ 
+@@ -2036,7 +2038,7 @@ eal_parse_args(void)
+ 
+ 	/* First handle the special case where we have explicit core mapping/remapping */
+ 	if (manual_lcore_mapping) {
+-		if (eal_parse_lcores(args.lcores) < 0) {
++		if (eal_parse_lcores_to_map(args.lcores, user_cfg->lcore_cpusets) < 0) {
+ 			EAL_LOG(ERR, "invalid lcore mapping list: '%s'", args.lcores);
+ 			return -1;
+ 		}
+@@ -2074,7 +2076,8 @@ eal_parse_args(void)
+ 			EAL_LOG(DEBUG, "Cores selected by %s: %s", cpuset_source, cpuset_str);
+ 			free(cpuset_str);
+ 		}
+-		if (update_lcore_config(&cpuset, remap_lcores, lcore_id_base) < 0) {
++		if (eal_expand_cpuset_to_map(&cpuset, remap_lcores, lcore_id_base,
++				user_cfg->lcore_cpusets) < 0) {
+ 			char *available = available_cores();
+ 
+ 			EAL_LOG(ERR, "invalid coremask or core-list parameter, please check specified cores are part of %s",
+@@ -2414,7 +2417,46 @@ eal_cleanup_config(void)
+ 	free(user_cfg->hugefile_prefix);
+ 	free(user_cfg->hugepage_dir);
+ 	free(user_cfg->user_mbuf_pool_ops_name);
++	for (unsigned int i = 0; i < RTE_MAX_LCORE; i++) {
++		free(user_cfg->lcore_cpusets[i]);
++		user_cfg->lcore_cpusets[i] = NULL;
++	}
++
++	return 0;
++}
++
++static int
++eal_apply_lcore_config(void)
++{
++	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
++
++	/* lcore_cpusets[] is always populated at parse time for all input forms */
++	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
++	unsigned int i;
++	unsigned int count = 0;
+ 
++	rte_bitset_clear_all(runtime_state->core_indices, RTE_MAX_LCORE);
++	for (i = 0; i < RTE_MAX_LCORE; i++) {
++		if (user_cfg->lcore_cpusets[i] == NULL) {
++			runtime_state->lcore_cfg[i].role = ROLE_OFF;
++			runtime_state->lcore_cfg[i].core_index = -1;
++			CPU_ZERO(&runtime_state->lcore_cfg[i].cpuset);
++			runtime_state->lcore_cfg[i].first_cpu = UINT16_MAX;
++			continue;
++		}
++		rte_bitset_set(runtime_state->core_indices, count);
++		runtime_state->lcore_cfg[i].role = ROLE_RTE;
++		runtime_state->lcore_cfg[i].core_index = count++;
++		memcpy(&runtime_state->lcore_cfg[i].cpuset,
++			user_cfg->lcore_cpusets[i], sizeof(rte_cpuset_t));
++		runtime_state->lcore_cfg[i].first_cpu =
++			(uint16_t)(RTE_CPU_FFS(&runtime_state->lcore_cfg[i].cpuset) - 1);
++	}
++	if (count == 0) {
++		EAL_LOG(ERR, "No valid lcores in core list");
++		return -1;
++	}
++	runtime_state->lcore_count = count;
+ 	return 0;
+ }
+ 
+@@ -2424,6 +2466,9 @@ eal_apply_runtime_state(void)
+ 	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 
++	if (eal_apply_lcore_config() < 0)
++		return -1;
++
+ 	/* Apply service core roles: service_cpuset bits are lcore IDs */
+ 	if (CPU_COUNT(&user_cfg->service_cpuset) > 0) {
+ 		unsigned int i;
+diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
+index 26a0350660..3bdeeaea10 100644
+--- a/lib/eal/common/eal_internal_cfg.h
++++ b/lib/eal/common/eal_internal_cfg.h
+@@ -138,7 +138,14 @@ struct eal_user_cfg {
+ 	} pagesz_mem_overrides[MAX_HUGEPAGE_SIZES];
+ 	unsigned int num_pagesz_mem_overrides;  /**< number of stored overrides */
+ 	rte_cpuset_t service_cpuset; /**<  each bit set is one lcore ID to use as service core */
+-	int main_lcore;          /**< ID of the main lcore */
++
++	/** Per-lcore cpuset array, always populated at arg-parse time for all input forms
++	 * (-c coremask, -l corelist, --lcores with or without '@'/'()').
++	 * Each non-NULL slot is an individually heap-allocated rte_cpuset_t.
++	 * NULL means the corresponding lcore ID is not configured.
++	 */
++	rte_cpuset_t *lcore_cpusets[RTE_MAX_LCORE];
++	int            main_lcore;    /**< ID of the main lcore */
+ };
+ 
+ /**
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index 9a976e2333..51604474cc 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -750,6 +750,7 @@ rte_eal_init(int argc, char **argv)
+ 	return fctret;
+ err_out:
+ 	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
++	eal_cleanup_config();
+ 	eal_clean_saved_args();
+ 	return -1;
+ }
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index c1869dde2d..ff75f6d430 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -925,6 +925,7 @@ rte_eal_init(int argc, char **argv)
+ 
+ err_out:
+ 	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
++	eal_cleanup_config();
+ 	eal_clean_saved_args();
+ 	return -1;
+ }
+diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
+index 734ad02c6a..d4c49f1560 100644
+--- a/lib/eal/windows/eal.c
++++ b/lib/eal/windows/eal.c
+@@ -414,6 +414,7 @@ rte_eal_init(int argc, char **argv)
+ 
+ 	return fctret;
+ err_out:
++	eal_cleanup_config();
+ 	eal_clean_saved_args();
+ 	return -1;
+ }
 -- 
 2.53.0
 
