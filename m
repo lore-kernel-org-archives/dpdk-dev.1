@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9159DC4451C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 09:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31557C4451C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 09:48:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B46D40E1C;
-	Tue, 21 Jul 2026 11:46:26 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5549540E2C;
+	Tue, 21 Jul 2026 11:46:27 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 7B07740DD2
- for <dev@dpdk.org>; Tue, 21 Jul 2026 11:46:22 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AED5640DD5
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 11:46:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1784627183; x=1816163183;
+ t=1784627184; x=1816163184;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=9iF7X+dUn9Kdm8kJVJOXNn47YvruB+lx27EJsPnwyig=;
- b=SrYQ1fOZo7ZhIVqdiAX8V9LBNASff2ugGSJdem8dR/7aieHYbFDOKfDt
- UwYXV4JzsxYOa906Zp1Gd3j8T6fZ28AS6sGtbraKtISkrO6unTQDmppAP
- 85gFazrCr7d/I/s3gJYcHHcXMoNK5cAOSnEGP38t4DI/hh/K1PoOnm8uc
- eW/yFnIBipdudkeTn1MrPES6yEMti2+sObi1fqX8LGaiJMMdQDFILYEw1
- 2noWZdceQjaAqSHNozFnho6w5CUj3WQBGo+quUsj4ZYGG7XZrMttkykXq
- +DHgP73TX2ViEdn1YIbi9cSp59K6O7fjeiRMr1yZQDqpHciu1/tQoejki w==;
-X-CSE-ConnectionGUID: 3fLiis6LT0ur+NjbZXGCJg==
-X-CSE-MsgGUID: cUK5QGsFQp6GEAlsrAkwow==
-X-IronPort-AV: E=McAfee;i="6800,10657,11852"; a="95872484"
-X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="95872484"
+ bh=g4bsRf6BPtTwqA2fBflltTPHsyk151yZSTghfAGDrd0=;
+ b=N1/O/JO4s0AWISq04cvcQxcH/aGD1yjTy+eul6KLRzxp9bztXmSZ54Sj
+ qVwFpppXDoPq5otNiFHU1RsBZl9lFamD6zgmZpByHYHAyVC+jc9twgH+K
+ hYr/qnnqNcYT2SeOXYa7QmG26tknOIZiX/GZJ9KBdKBVXSHyc1voJms04
+ IxsHSfd8V6/vPq+ZDgKGMte5Y8jMrq5YUIQCgV0TUwpDC2vQ3sYsfaN3F
+ qrjAn6V+WHznNqru41ew1YaM/igQ0xHHVXgVpD2ptO0bleK4ux1goku8V
+ TIqId3pVXwgK7XND1zVAmacnmkcAfepl1YLJNnF/V4iHQPCZn6xAodtrL g==;
+X-CSE-ConnectionGUID: zkKjLmYKSKiavhfc+3jrnw==
+X-CSE-MsgGUID: jJITYIMkT5m3EHVrxn2UjA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11852"; a="95872486"
+X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="95872486"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Jul 2026 02:46:22 -0700
-X-CSE-ConnectionGUID: psV8ckzYRE+DZ/Lv+bOytw==
-X-CSE-MsgGUID: p6VxOosATeCN1Gs40BlwhA==
+ 21 Jul 2026 02:46:23 -0700
+X-CSE-ConnectionGUID: QeUEy4ttRLye+yW1MtMz2Q==
+X-CSE-MsgGUID: erTnl8w0QmK4jtXPcCSgbQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="295922371"
+X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="295922376"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa001.jf.intel.com with ESMTP; 21 Jul 2026 02:46:20 -0700
+ by orviesa001.jf.intel.com with ESMTP; 21 Jul 2026 02:46:22 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 20/39] eal: make lcore role a field in lcore config struct
-Date: Tue, 21 Jul 2026 10:45:28 +0100
-Message-ID: <20260721094555.2188496-21-bruce.richardson@intel.com>
+Subject: [PATCH 21/39] eal: move main lcore setting to runtime config struct
+Date: Tue, 21 Jul 2026 10:45:29 +0100
+Message-ID: <20260721094555.2188496-22-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260721094555.2188496-1-bruce.richardson@intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
@@ -60,289 +60,320 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than having a separate array for lcore role, just make the role a
-field in the lcore_cfg struct.
+Move the main lcore setting from the rte_config struct to the new
+runtime structure. One additional wrinkle here is that this is an
+optional user setting, so it also needs to be stored in eal_user_cfg if
+specified. The difference is that the eal_user_cfg value is the raw
+value and can be "-1" if unspecified, while the runtime config value has
+to have a valid lcore id.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_lcore.c   | 28 ++++++++++++++--------------
- lib/eal/common/eal_common_options.c | 26 +++++++++++++-------------
- lib/eal/common/eal_internal_cfg.h   |  2 +-
- lib/eal/common/rte_service.c        |  6 +++---
- 4 files changed, 31 insertions(+), 31 deletions(-)
+ lib/eal/common/eal_common_dynmem.c  |  4 +---
+ lib/eal/common/eal_common_lcore.c   |  2 +-
+ lib/eal/common/eal_common_options.c | 32 ++++++++++++++++-------------
+ lib/eal/common/eal_internal_cfg.h   |  2 ++
+ lib/eal/common/eal_private.h        |  1 -
+ lib/eal/common/rte_service.c        |  3 +--
+ lib/eal/freebsd/eal.c               | 12 +++++------
+ lib/eal/linux/eal.c                 | 12 +++++------
+ lib/eal/linux/eal_memory.c          |  3 +--
+ lib/eal/windows/eal.c               |  9 ++++----
+ 10 files changed, 38 insertions(+), 42 deletions(-)
 
+diff --git a/lib/eal/common/eal_common_dynmem.c b/lib/eal/common/eal_common_dynmem.c
+index 9c421be225..df6cdb00e9 100644
+--- a/lib/eal/common/eal_common_dynmem.c
++++ b/lib/eal/common/eal_common_dynmem.c
+@@ -420,11 +420,9 @@ eal_dynmem_calc_num_pages_per_socket(
+ 		total_size = user_cfg->memory;
+ 		for (socket = 0; socket < RTE_MAX_NUMA_NODES && total_size != 0;
+ 				socket++) {
+-			struct rte_config *cfg = rte_eal_get_configuration();
+ 			unsigned int main_lcore_socket;
+ 
+-			main_lcore_socket =
+-				rte_lcore_to_socket_id(cfg->main_lcore);
++			main_lcore_socket = rte_lcore_to_socket_id(rte_get_main_lcore());
+ 
+ 			if (main_lcore_socket != socket)
+ 				continue;
 diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
-index 20d543d76f..0b59262364 100644
+index 0b59262364..f45cdb2800 100644
 --- a/lib/eal/common/eal_common_lcore.c
 +++ b/lib/eal/common/eal_common_lcore.c
-@@ -89,7 +89,7 @@ rte_eal_lcore_role(unsigned int lcore_id)
- 
- 	if (lcore_id >= RTE_MAX_LCORE)
- 		return ROLE_OFF;
--	return runtime_state->lcore_role[lcore_id];
-+	return runtime_state->lcore_cfg[lcore_id].role;
+@@ -23,7 +23,7 @@
+ RTE_EXPORT_SYMBOL(rte_get_main_lcore)
+ unsigned int rte_get_main_lcore(void)
+ {
+-	return rte_eal_get_configuration()->main_lcore;
++	return eal_get_runtime_state()->main_lcore;
  }
  
- RTE_EXPORT_SYMBOL(rte_lcore_has_role)
-@@ -101,7 +101,7 @@ rte_lcore_has_role(unsigned int lcore_id, enum rte_lcore_role_t role)
- 	if (lcore_id >= RTE_MAX_LCORE)
- 		return 0;
- 
--	return runtime_state->lcore_role[lcore_id] == role;
-+	return runtime_state->lcore_cfg[lcore_id].role == role;
- }
- 
- RTE_EXPORT_SYMBOL(rte_lcore_is_enabled)
-@@ -111,7 +111,7 @@ int rte_lcore_is_enabled(unsigned int lcore_id)
- 
- 	if (lcore_id >= RTE_MAX_LCORE)
- 		return 0;
--	return runtime_state->lcore_role[lcore_id] == ROLE_RTE;
-+	return runtime_state->lcore_cfg[lcore_id].role == ROLE_RTE;
- }
- 
- RTE_EXPORT_SYMBOL(rte_get_next_lcore)
-@@ -339,7 +339,7 @@ rte_lcore_callback_register(const char *name, rte_lcore_init_cb init,
- 	if (callback->init == NULL)
- 		goto no_init;
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--		if (runtime_state->lcore_role[lcore_id] == ROLE_OFF)
-+		if (runtime_state->lcore_cfg[lcore_id].role == ROLE_OFF)
- 			continue;
- 		if (callback_init(callback, lcore_id) == 0)
- 			continue;
-@@ -347,7 +347,7 @@ rte_lcore_callback_register(const char *name, rte_lcore_init_cb init,
- 		 * previous lcore.
- 		 */
- 		while (lcore_id-- != 0) {
--			if (runtime_state->lcore_role[lcore_id] == ROLE_OFF)
-+			if (runtime_state->lcore_cfg[lcore_id].role == ROLE_OFF)
- 				continue;
- 			callback_uninit(callback, lcore_id);
- 		}
-@@ -379,7 +379,7 @@ rte_lcore_callback_unregister(void *handle)
- 	if (callback->uninit == NULL)
- 		goto no_uninit;
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--		if (runtime_state->lcore_role[lcore_id] == ROLE_OFF)
-+		if (runtime_state->lcore_cfg[lcore_id].role == ROLE_OFF)
- 			continue;
- 		callback_uninit(callback, lcore_id);
- 	}
-@@ -408,11 +408,11 @@ eal_lcore_non_eal_allocate(void)
- 		goto out;
- 	}
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--		if (runtime_state->lcore_role[lcore_id] != ROLE_OFF)
-+		if (runtime_state->lcore_cfg[lcore_id].role != ROLE_OFF)
- 			continue;
- 		rte_bitset_set(runtime_state->core_indices, core_index);
- 		runtime_state->lcore_cfg[lcore_id].core_index = core_index;
--		runtime_state->lcore_role[lcore_id] = ROLE_NON_EAL;
-+		runtime_state->lcore_cfg[lcore_id].role = ROLE_NON_EAL;
- 		runtime_state->lcore_count++;
- 		break;
- 	}
-@@ -436,7 +436,7 @@ eal_lcore_non_eal_allocate(void)
- 		rte_bitset_clear(runtime_state->core_indices,
- 				runtime_state->lcore_cfg[lcore_id].core_index);
- 		runtime_state->lcore_cfg[lcore_id].core_index = -1;
--		runtime_state->lcore_role[lcore_id] = ROLE_OFF;
-+		runtime_state->lcore_cfg[lcore_id].role = ROLE_OFF;
- 		runtime_state->lcore_count--;
- 		lcore_id = RTE_MAX_LCORE;
- 		goto out;
-@@ -453,14 +453,14 @@ eal_lcore_non_eal_release(unsigned int lcore_id)
- 	struct lcore_callback *callback;
- 
- 	rte_rwlock_write_lock(&lcore_lock);
--	if (runtime_state->lcore_role[lcore_id] != ROLE_NON_EAL)
-+	if (runtime_state->lcore_cfg[lcore_id].role != ROLE_NON_EAL)
- 		goto out;
- 	TAILQ_FOREACH(callback, &lcore_callbacks, next)
- 		callback_uninit(callback, lcore_id);
- 	rte_bitset_clear(runtime_state->core_indices,
- 			runtime_state->lcore_cfg[lcore_id].core_index);
- 	runtime_state->lcore_cfg[lcore_id].core_index = -1;
--	runtime_state->lcore_role[lcore_id] = ROLE_OFF;
-+	runtime_state->lcore_cfg[lcore_id].role = ROLE_OFF;
- 	runtime_state->lcore_count--;
- out:
- 	rte_rwlock_write_unlock(&lcore_lock);
-@@ -476,7 +476,7 @@ rte_lcore_iterate(rte_lcore_iterate_cb cb, void *arg)
- 
- 	rte_rwlock_read_lock(&lcore_lock);
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--		if (runtime_state->lcore_role[lcore_id] == ROLE_OFF)
-+		if (runtime_state->lcore_cfg[lcore_id].role == ROLE_OFF)
- 			continue;
- 		ret = cb(lcore_id, arg);
- 		if (ret != 0)
-@@ -541,7 +541,7 @@ lcore_dump_cb(unsigned int lcore_id, void *arg)
- 	cpuset = eal_cpuset_to_str(&runtime_state->lcore_cfg[lcore_id].cpuset);
- 	fprintf(f, "lcore %u, socket %u, role %s, cpuset %s\n", lcore_id,
- 		rte_lcore_to_socket_id(lcore_id),
--		lcore_role_str(runtime_state->lcore_role[lcore_id]),
-+		lcore_role_str(runtime_state->lcore_cfg[lcore_id].role),
- 		cpuset != NULL ? cpuset : "<unknown>");
- 	free(cpuset);
- 	free(usage_str);
-@@ -608,7 +608,7 @@ lcore_telemetry_info_cb(unsigned int lcore_id, void *arg)
- 	rte_tel_data_add_dict_int(info->d, "lcore_id", lcore_id);
- 	rte_tel_data_add_dict_int(info->d, "socket", rte_lcore_to_socket_id(lcore_id));
- 	rte_tel_data_add_dict_string(info->d, "role",
--			lcore_role_str(runtime_state->lcore_role[lcore_id]));
-+			lcore_role_str(runtime_state->lcore_cfg[lcore_id].role));
- 	cpuset = rte_tel_data_alloc();
- 	if (cpuset == NULL)
- 		return -ENOMEM;
+ RTE_EXPORT_SYMBOL(rte_lcore_count)
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 62c94e7704..05b6eb418b 100644
+index 05b6eb418b..68909e97b0 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -907,10 +907,10 @@ eal_parse_service_coremask(const char *coremask)
- 					return -1;
- 				}
+@@ -1194,23 +1194,24 @@ static int
+ eal_parse_main_lcore(const char *arg)
+ {
+ 	char *parsing_end;
+-	struct rte_config *cfg = rte_eal_get_configuration();
+-	const struct eal_runtime_state *runtime_state = eal_get_runtime_state();
++	long main_lcore;
++	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
++	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
  
--				if (runtime_state->lcore_role[idx] == ROLE_RTE)
-+				if (runtime_state->lcore_cfg[idx].role == ROLE_RTE)
- 					taken_lcore_count++;
- 
--				runtime_state->lcore_role[idx] = ROLE_SERVICE;
-+				runtime_state->lcore_cfg[idx].role = ROLE_SERVICE;
- 				count++;
- 			}
- 		}
-@@ -946,7 +946,7 @@ update_lcore_config(const rte_cpuset_t *cpuset, bool remap, uint16_t remap_base)
- 	/* set everything to disabled first, then set up values */
- 	rte_bitset_clear_all(runtime_state->core_indices, RTE_MAX_LCORE);
- 	for (i = 0; i < RTE_MAX_LCORE; i++) {
--		runtime_state->lcore_role[i] = ROLE_OFF;
-+		runtime_state->lcore_cfg[i].role = ROLE_OFF;
- 		runtime_state->lcore_cfg[i].core_index = -1;
- 	}
- 
-@@ -975,7 +975,7 @@ update_lcore_config(const rte_cpuset_t *cpuset, bool remap, uint16_t remap_base)
- 			}
- 
- 			rte_bitset_set(runtime_state->core_indices, count);
--			runtime_state->lcore_role[lcore_id] = ROLE_RTE;
-+			runtime_state->lcore_cfg[lcore_id].role = ROLE_RTE;
- 			runtime_state->lcore_cfg[lcore_id].core_index = count;
- 			CPU_ZERO(&runtime_state->lcore_cfg[lcore_id].cpuset);
- 			CPU_SET(i, &runtime_state->lcore_cfg[lcore_id].cpuset);
-@@ -1148,11 +1148,11 @@ eal_parse_service_corelist(const char *corelist)
- 			if (min == RTE_MAX_LCORE)
- 				min = idx;
- 			for (idx = min; idx <= max; idx++) {
--				if (runtime_state->lcore_role[idx] != ROLE_SERVICE) {
--					if (runtime_state->lcore_role[idx] == ROLE_RTE)
-+				if (runtime_state->lcore_cfg[idx].role != ROLE_SERVICE) {
-+					if (runtime_state->lcore_cfg[idx].role == ROLE_RTE)
- 						taken_lcore_count++;
- 
--					runtime_state->lcore_role[idx] = ROLE_SERVICE;
-+					runtime_state->lcore_cfg[idx].role = ROLE_SERVICE;
- 					count++;
- 				}
- 			}
-@@ -1175,7 +1175,7 @@ eal_parse_service_corelist(const char *corelist)
- 	rte_cpuset_t service_cpuset;
- 	CPU_ZERO(&service_cpuset);
- 	for (i = 0; i < RTE_MAX_LCORE; i++) {
--		if (runtime_state->lcore_role[i] == ROLE_SERVICE)
-+		if (runtime_state->lcore_cfg[i].role == ROLE_SERVICE)
- 			CPU_SET(i, &service_cpuset);
- 	}
- 	if (CPU_COUNT(&service_cpuset) > 0) {
-@@ -1205,12 +1205,12 @@ eal_parse_main_lcore(const char *arg)
+ 	errno = 0;
+-	cfg->main_lcore = (uint32_t) strtol(arg, &parsing_end, 0);
+-	if (errno || parsing_end[0] != 0)
+-		return -1;
+-	if (cfg->main_lcore >= RTE_MAX_LCORE)
++	main_lcore = strtol(arg, &parsing_end, 0);
++	if (errno || parsing_end[0] != 0 || main_lcore < 0 ||
++			main_lcore >= RTE_MAX_LCORE)
  		return -1;
++	user_cfg->main_lcore = (int)main_lcore;
  
  	/* ensure main core is not used as service core */
--	if (runtime_state->lcore_role[cfg->main_lcore] == ROLE_SERVICE) {
-+	if (runtime_state->lcore_cfg[cfg->main_lcore].role == ROLE_SERVICE) {
+-	if (runtime_state->lcore_cfg[cfg->main_lcore].role == ROLE_SERVICE) {
++	if (runtime_state->lcore_cfg[user_cfg->main_lcore].role == ROLE_SERVICE) {
  		EAL_LOG(ERR, "Error: Main lcore is used as a service core");
  		return -1;
  	}
  	/* check that we have the core recorded in the core list */
--	if (runtime_state->lcore_role[cfg->main_lcore] != ROLE_RTE) {
-+	if (runtime_state->lcore_cfg[cfg->main_lcore].role != ROLE_RTE) {
+-	if (runtime_state->lcore_cfg[cfg->main_lcore].role != ROLE_RTE) {
++	if (runtime_state->lcore_cfg[user_cfg->main_lcore].role != ROLE_RTE) {
  		EAL_LOG(ERR, "Error: Main lcore is not enabled for DPDK");
  		return -1;
  	}
-@@ -1400,7 +1400,7 @@ eal_parse_lcores(const char *lcores)
- 	/* Reset lcore config */
- 	rte_bitset_clear_all(runtime_state->core_indices, RTE_MAX_LCORE);
- 	for (idx = 0; idx < RTE_MAX_LCORE; idx++) {
--		runtime_state->lcore_role[idx] = ROLE_OFF;
-+		runtime_state->lcore_cfg[idx].role = ROLE_OFF;
- 		runtime_state->lcore_cfg[idx].core_index = -1;
- 		CPU_ZERO(&runtime_state->lcore_cfg[idx].cpuset);
- 		runtime_state->lcore_cfg[idx].first_cpu = UINT16_MAX;
-@@ -1463,10 +1463,10 @@ eal_parse_lcores(const char *lcores)
- 				continue;
- 			set_count--;
- 
--			if (runtime_state->lcore_role[idx] != ROLE_RTE) {
-+			if (runtime_state->lcore_cfg[idx].role != ROLE_RTE) {
- 				rte_bitset_set(runtime_state->core_indices, count);
- 				runtime_state->lcore_cfg[idx].core_index = count;
--				runtime_state->lcore_role[idx] = ROLE_RTE;
-+				runtime_state->lcore_cfg[idx].role = ROLE_RTE;
- 				count++;
- 			}
- 
+@@ -2078,7 +2079,7 @@ int
+ eal_parse_args(void)
+ {
+ 	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+-	struct rte_config *rte_cfg = rte_eal_get_configuration();
++	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	bool remap_lcores = (args.remap_lcore_ids != NULL);
+ 	struct arg_list_elem *arg;
+ 	uint16_t lcore_id_base = 0;
+@@ -2202,13 +2203,16 @@ eal_parse_args(void)
+ 			return -1;
+ 		}
+ 	}
+-	if (args.main_lcore != NULL) {
+-		if (eal_parse_main_lcore(args.main_lcore) < 0)
+-			return -1;
++	user_cfg->main_lcore = -1;
++	if (args.main_lcore != NULL && eal_parse_main_lcore(args.main_lcore) < 0)
++		return -1;
++
++	if (user_cfg->main_lcore != -1) {
++		runtime_state->main_lcore = user_cfg->main_lcore;
+ 	} else {
+ 		/* default main lcore is the first one */
+-		rte_cfg->main_lcore = rte_get_next_lcore(-1, 0, 0);
+-		if (rte_cfg->main_lcore >= RTE_MAX_LCORE) {
++		runtime_state->main_lcore = rte_get_next_lcore(-1, 0, 0);
++		if (runtime_state->main_lcore >= RTE_MAX_LCORE) {
+ 			EAL_LOG(ERR, "Main lcore is not enabled for DPDK");
+ 			return -1;
+ 		}
 diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
-index 4e4b9e975c..2ee2fe5a4a 100644
+index 2ee2fe5a4a..c14d11b225 100644
 --- a/lib/eal/common/eal_internal_cfg.h
 +++ b/lib/eal/common/eal_internal_cfg.h
-@@ -123,6 +123,7 @@ struct eal_platform_info {
-  */
- struct lcore_cfg {
- 	int core_index;                   /**< relative index, starting from 0 */
-+	enum rte_lcore_role_t role;       /**< role assigned to this lcore */
- 	rte_cpuset_t cpuset;              /**< cpu set which the lcore affinity to */
- 	uint16_t first_cpu;               /**< lowest CPU set in cpuset, UINT16_MAX if none */
- 	/* Fields for executing code on a remote lcore */
-@@ -148,7 +149,6 @@ struct eal_runtime_state {
+@@ -93,6 +93,7 @@ struct eal_user_cfg {
+ 		uint64_t limit;    /**< memory limit in bytes */
+ 	} pagesz_mem_overrides[MAX_HUGEPAGE_SIZES];
+ 	unsigned int num_pagesz_mem_overrides;  /**< number of stored overrides */
++	int main_lcore;          /**< ID of the main lcore */
+ };
+ 
+ /**
+@@ -148,6 +149,7 @@ struct eal_runtime_state {
+ 	rte_cpuset_t ctrl_cpuset;         /**< cpuset for ctrl threads */
  	volatile unsigned int init_complete;
  	/**< indicates whether EAL has completed initialization */
++	uint32_t main_lcore;          /**< ID of the main lcore */
  	uint32_t lcore_count;         /**< Number of active lcore IDs (role != ROLE_OFF). */
--	enum rte_lcore_role_t lcore_role[RTE_MAX_LCORE]; /**< State of cores. */
  	struct lcore_cfg lcore_cfg[RTE_MAX_LCORE];
  	RTE_BITSET_DECLARE(core_indices, RTE_MAX_LCORE); /**< currently allocated core_indices */
- };
+diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.h
+index 07500dd449..11f1571466 100644
+--- a/lib/eal/common/eal_private.h
++++ b/lib/eal/common/eal_private.h
+@@ -21,7 +21,6 @@
+  * The global RTE configuration structure.
+  */
+ struct rte_config {
+-	uint32_t main_lcore;         /**< Id of the main lcore */
+ 
+ 	/** Primary or secondary configuration */
+ 	enum rte_proc_type_t process_type;
 diff --git a/lib/eal/common/rte_service.c b/lib/eal/common/rte_service.c
-index 36ef2d32a7..e28e17f8d5 100644
+index e28e17f8d5..aa068f88ea 100644
 --- a/lib/eal/common/rte_service.c
 +++ b/lib/eal/common/rte_service.c
-@@ -108,7 +108,7 @@ rte_service_init(void)
- 	const struct rte_config *cfg = rte_eal_get_configuration();
+@@ -105,11 +105,10 @@ rte_service_init(void)
+ 		RTE_LCORE_VAR_ALLOC(lcore_states);
+ 
+ 	int i;
+-	const struct rte_config *cfg = rte_eal_get_configuration();
  	const struct eal_runtime_state *runtime_state = eal_get_runtime_state();
  	for (i = 0; i < RTE_MAX_LCORE; i++) {
--		if (runtime_state->lcore_role[i] == ROLE_SERVICE) {
-+		if (runtime_state->lcore_cfg[i].role == ROLE_SERVICE) {
- 			if ((unsigned int)i == cfg->main_lcore)
+ 		if (runtime_state->lcore_cfg[i].role == ROLE_SERVICE) {
+-			if ((unsigned int)i == cfg->main_lcore)
++			if ((unsigned int)i == runtime_state->main_lcore)
  				continue;
  			rte_service_lcore_add(i);
-@@ -712,7 +712,7 @@ set_lcore_state(uint32_t lcore, int32_t state)
+ 		}
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index 0aacc5a304..eeeffd08a5 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -358,9 +358,8 @@ static void
+ eal_check_mem_on_local_socket(void)
  {
+ 	int socket_id;
+-	const struct rte_config *config = rte_eal_get_configuration();
+ 
+-	socket_id = rte_lcore_to_socket_id(config->main_lcore);
++	socket_id = rte_lcore_to_socket_id(rte_get_main_lcore());
+ 
+ 	if (rte_memseg_list_walk(check_socket, &socket_id) == 0)
+ 		EAL_LOG(WARNING, "WARNING: Main core has no memory on local socket!");
+@@ -403,7 +402,6 @@ rte_eal_init(int argc, char **argv)
+ 	uint32_t has_run = 0;
+ 	char cpuset[RTE_CPU_AFFINITY_STR_LEN];
+ 	char thread_name[RTE_THREAD_NAME_SIZE];
+-	const struct rte_config *config = rte_eal_get_configuration();
+ 	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
  	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
- 	struct core_state *cs =	RTE_LCORE_VAR_LCORE(lcore, lcore_states);
--	runtime_state->lcore_role[lcore] = state;
-+	runtime_state->lcore_cfg[lcore].role = state;
+ 	bool has_phys_addr;
+@@ -653,18 +651,18 @@ rte_eal_init(int argc, char **argv)
+ 	eal_check_mem_on_local_socket();
  
- 	/* update per-lcore optimized state tracking */
- 	cs->is_service_core = (state == ROLE_SERVICE);
-@@ -1124,7 +1124,7 @@ rte_service_dump(FILE *f, uint32_t id)
+ 	if (rte_thread_set_affinity_by_id(rte_thread_self(),
+-			&runtime_state->lcore_cfg[config->main_lcore].cpuset) != 0) {
++			&runtime_state->lcore_cfg[rte_get_main_lcore()].cpuset) != 0) {
+ 		rte_eal_init_alert("Cannot set affinity");
+ 		rte_errno = EINVAL;
+ 		goto err_out;
+ 	}
+-	__rte_thread_init(config->main_lcore,
+-		&runtime_state->lcore_cfg[config->main_lcore].cpuset);
++	__rte_thread_init(rte_get_main_lcore(),
++		&runtime_state->lcore_cfg[rte_get_main_lcore()].cpuset);
  
- 	fprintf(f, "Service Cores Summary\n");
- 	for (i = 0; i < RTE_MAX_LCORE; i++) {
--		if (runtime_state->lcore_role[i] != ROLE_SERVICE)
-+		if (runtime_state->lcore_cfg[i].role != ROLE_SERVICE)
- 			continue;
+ 	ret = eal_thread_dump_current_affinity(cpuset, sizeof(cpuset));
  
- 		service_dump_calls_per_lcore(f, i);
+ 	EAL_LOG(DEBUG, "Main lcore %u is ready (tid=%zx;cpuset=[%s%s])",
+-		config->main_lcore, (uintptr_t)pthread_self(), cpuset,
++		rte_get_main_lcore(), (uintptr_t)pthread_self(), cpuset,
+ 		ret == 0 ? "" : "...");
+ 
+ 	RTE_LCORE_FOREACH_WORKER(i) {
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index 51ab6a90dc..361af0c1ed 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -439,9 +439,8 @@ static void
+ eal_check_mem_on_local_socket(void)
+ {
+ 	int socket_id;
+-	const struct rte_config *config = rte_eal_get_configuration();
+ 
+-	socket_id = rte_lcore_to_socket_id(config->main_lcore);
++	socket_id = rte_lcore_to_socket_id(rte_get_main_lcore());
+ 
+ 	if (rte_memseg_list_walk(check_socket, &socket_id) == 0)
+ 		EAL_LOG(WARNING, "WARNING: Main core has no memory on local socket!");
+@@ -566,7 +565,6 @@ rte_eal_init(int argc, char **argv)
+ 	char cpuset[RTE_CPU_AFFINITY_STR_LEN];
+ 	char thread_name[RTE_THREAD_NAME_SIZE];
+ 	bool phys_addrs;
+-	const struct rte_config *config = rte_eal_get_configuration();
+ 	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 
+@@ -829,17 +827,17 @@ rte_eal_init(int argc, char **argv)
+ 	eal_check_mem_on_local_socket();
+ 
+ 	if (rte_thread_set_affinity_by_id(rte_thread_self(),
+-			&runtime_state->lcore_cfg[config->main_lcore].cpuset) != 0) {
++			&runtime_state->lcore_cfg[rte_get_main_lcore()].cpuset) != 0) {
+ 		rte_eal_init_alert("Cannot set affinity");
+ 		rte_errno = EINVAL;
+ 		goto err_out;
+ 	}
+-	__rte_thread_init(config->main_lcore,
+-		&runtime_state->lcore_cfg[config->main_lcore].cpuset);
++	__rte_thread_init(rte_get_main_lcore(),
++		&runtime_state->lcore_cfg[rte_get_main_lcore()].cpuset);
+ 
+ 	ret = eal_thread_dump_current_affinity(cpuset, sizeof(cpuset));
+ 	EAL_LOG(DEBUG, "Main lcore %u is ready (tid=%zx;cpuset=[%s%s])",
+-		config->main_lcore, (uintptr_t)pthread_self(), cpuset,
++		rte_get_main_lcore(), (uintptr_t)pthread_self(), cpuset,
+ 		ret == 0 ? "" : "...");
+ 
+ 	RTE_LCORE_FOREACH_WORKER(i) {
+diff --git a/lib/eal/linux/eal_memory.c b/lib/eal/linux/eal_memory.c
+index 1fc01beae9..8e61a0a6ae 100644
+--- a/lib/eal/linux/eal_memory.c
++++ b/lib/eal/linux/eal_memory.c
+@@ -1762,7 +1762,6 @@ memseg_primary_init_32(void)
+ 		int hp_sizes = (int) platform_info->num_hugepage_sizes;
+ 		uint64_t max_socket_mem, cur_socket_mem;
+ 		unsigned int main_lcore_socket;
+-		struct rte_config *cfg = rte_eal_get_configuration();
+ 		bool skip;
+ 		int ret;
+ 
+@@ -1785,7 +1784,7 @@ memseg_primary_init_32(void)
+ 		/* ...or if we didn't specifically request memory on *any*
+ 		 * socket, and this is not main lcore
+ 		 */
+-		main_lcore_socket = rte_lcore_to_socket_id(cfg->main_lcore);
++		main_lcore_socket = rte_lcore_to_socket_id(rte_get_main_lcore());
+ 		skip |= active_sockets == 0 && socket_id != main_lcore_socket;
+ 
+ 		if (skip) {
+diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
+index 88fc168976..82b3886d9e 100644
+--- a/lib/eal/windows/eal.c
++++ b/lib/eal/windows/eal.c
+@@ -154,7 +154,6 @@ int
+ rte_eal_init(int argc, char **argv)
+ {
+ 	int i, fctret, bscan;
+-	const struct rte_config *config = rte_eal_get_configuration();
+ 	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	bool has_phys_addr;
+@@ -346,17 +345,17 @@ rte_eal_init(int argc, char **argv)
+ 	eal_rand_init();
+ 
+ 	if (rte_thread_set_affinity_by_id(rte_thread_self(),
+-			&runtime_state->lcore_cfg[config->main_lcore].cpuset) != 0) {
++			&runtime_state->lcore_cfg[rte_get_main_lcore()].cpuset) != 0) {
+ 		rte_eal_init_alert("Cannot set affinity");
+ 		rte_errno = EINVAL;
+ 		goto err_out;
+ 	}
+-	__rte_thread_init(config->main_lcore,
+-		&runtime_state->lcore_cfg[config->main_lcore].cpuset);
++	__rte_thread_init(rte_get_main_lcore(),
++		&runtime_state->lcore_cfg[rte_get_main_lcore()].cpuset);
+ 
+ 	ret = eal_thread_dump_current_affinity(cpuset, sizeof(cpuset));
+ 	EAL_LOG(DEBUG, "Main lcore %u is ready (tid=%zx;cpuset=[%s%s])",
+-		config->main_lcore, rte_thread_self().opaque_id, cpuset,
++		rte_get_main_lcore(), rte_thread_self().opaque_id, cpuset,
+ 		ret == 0 ? "" : "...");
+ 
+ 	RTE_LCORE_FOREACH_WORKER(i) {
 -- 
 2.53.0
 
