@@ -2,90 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B97A9C44529
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 10:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA7FC44529
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 10:37:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E7018402A7;
-	Tue, 21 Jul 2026 12:25:41 +0200 (CEST)
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com
- [74.125.224.41]) by mails.dpdk.org (Postfix) with ESMTP id 099EC40289
- for <dev@dpdk.org>; Tue, 21 Jul 2026 12:25:40 +0200 (CEST)
-Received: by mail-yx1-f41.google.com with SMTP id
- 956f58d0204a3-668432d50b0so3163943d50.1
- for <dev@dpdk.org>; Tue, 21 Jul 2026 03:25:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784629539; cv=none;
- d=google.com; s=arc-20260327;
- b=R2X8s9Z7EYBNFgWTKTzTIFYiOyUuJHjsPpKbLKUGkxKfQD03miEQ+6d86BhubbO5Jt
- CwTTsOAR4o6OuCyZrxLArshBIt/pEnxpiqcyxLdDB/deYM4Z05D0BT+OVn7Q92cDTo3A
- /hqVdObbpZj24jADZHqT1IpKAh1nOb14mPrW0MbbrSXIASvARszR4UDdRc/8Fd+XisQK
- R7dA6SxezrfR89PxIYoHcz5f4DPd73FvXpPYdc/LJ7ZUjD/iDfaj14cpNLwiKdKaf1Z+
- HQkh/TWF9i9rxsEX0VEy3J1pCpXjfVbudVaWLKmbpLN4vjT/JML9XkaljJqvho146TXk
- yzxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=jOmGPNfAUeS90aIoYi8y0YyiYOAEIDNh62ObkwQLI64=;
- fh=Dzvm8iYfj2/D8mm9PlzwoKEpJYZTAuYoKcsQxrv5mXo=;
- b=MAz5QI4MlH4CuCdb0vf8Io0jPlj+KdCQ5HFV6pSWEDOSYHJjM0KbneOvOU4m7tnFJZ
- JN567RlFRtICObXLP/UlqgC/57misraIFpw9k3B65/DuEu0xfa/JJjsToMwLO+rZu7Wf
- 9KjAuLS68l61BysQvCaGhSdfIE+ZTQridhD6P3EHDHZ3T18eZkpjz4iNHy+AI+Inp9QQ
- /1pTHBF5T0Pz7EkfB3gBUrwZO7MGtfUfBjDYOd+P632JewHBo9PMWTA1nLWr7tBezcin
- oEU5dFa37wkUmd+w8++8Bx0OIrRL8dXzt/oxYk6JnTkdMMcJerIk9aRMoRlU6tedMfd8
- 7drQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1784629539; x=1785234339; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=jOmGPNfAUeS90aIoYi8y0YyiYOAEIDNh62ObkwQLI64=;
- b=l1ZFDodnqthK9Y5xhl74r9THnN1SCxNr8k4oa/zBW15b2JVhYvKz4sNxSRNky0t0Fq
- act6V4irtXWnF7FkosQZ4Ipc2XiGuAMPeMvEBI2U5JdnBlY4gtKd8VdvcOwGvDGYMvoR
- ma3CS7e2b38rnteJHddC0ystTDoigMUKhvmCjXhxE3Lh3+4fxHYv9UtygbRGAGAe7in6
- orASAVKgIuS6LYSFeJeKAtDDdLWTnYCDEsPbTybLMMKy3Z0QVf3Ep0yEvTZeG4kcp1eT
- Lu98+Gnfw5G444/RNo8Ls3N6ZeHHGu8qHan5k6FIoxe7Kh7q+vVu2fIAVWTAKzVfcsec
- V5iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784629539; x=1785234339;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=jOmGPNfAUeS90aIoYi8y0YyiYOAEIDNh62ObkwQLI64=;
- b=Csyvdyle8X1ZfdUAh/uLcBtMVz1By12rnxGw5WipE90VX7jG32PU5Fg6s90Tm7L4Ur
- yo++xybt0CvAiGxwULY99yND5i/8xFzjorlTZipOap0ikWdPzKu3A8g3o/VqiaK0Zkmz
- llCSv2YI1OnWiGlq0flbDZVJg0RS+A14vh4Jq5tkkNDHjjcZkzJ7hWbo8jMgVQY0NMWa
- mmLWxuNlw4XmbPLNMqzcv15n1GoapjDbCvTytdcGlkbmWei07LGHYLAbpJrOGDzoyuzR
- 83SyC/I8Q+o9jGPOXDPg/37haCvD7oCdbrN4xjnwjGVQP8Bm9Pm7CqhxJ6TbE4big+EA
- JKUA==
-X-Forwarded-Encrypted: i=1;
- AHgh+RrfB2ffj+mX9VuyZigFS9tIsEplD41jt4L7g5BmLWaU9pLUyvTXBmRyH4MlONLWL+k+XAA=@dpdk.org
-X-Gm-Message-State: AOJu0YxXNmHzQTtaDHtb9G2/F/EEYN/548QAasknIQOTYQ7Rbwns3t8y
- QF9uHKrfPiI8CaKn4xSt+4dudLJnnyfjcFm4EL8TKYm5kjVwbyWZ1eH6JRd3sanQaFSRzYXUZZT
- wD8QP8p+u7Yr3SFV24ArRXdOBdegyqJY=
-X-Gm-Gg: AR+sD11Uufl4OZD84RmGxuS2V4FRx58NEvgVHWhR8hnLsxLD4m+gdJuORgGKnWH2u4v
- 5RW1fjC+XWXRTUbV9O3I2llBmT4xhGZpNRo8wRt0VaM46uR/AwzgpMS+Jg3OaDAYvNlYFb4GRPi
- 7Z9lhLiARJ10UO2hqrWN71keFhfAY5p8w7P8Oi8Z5q44sECXziCU48Woo9iAriJvtJ4s9E6YuNF
- HQRU81It48WhzTiHl/W2K6f5+wUF2YjJ5ue1k/jNFHXMwX2UmlA5U3AIN+rnXEIhi7qGOr6gMLU
- eEM36K3pqxeFcbAegfTS683VBHmyvg2Bug64SA==
-X-Received: by 2002:a53:ec47:0:b0:665:a15a:71aa with SMTP id
- 956f58d0204a3-6683bd2c3ccmr3638671d50.72.1784629539232; Tue, 21 Jul 2026
- 03:25:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E28D3402A7;
+	Tue, 21 Jul 2026 12:37:29 +0200 (CEST)
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+ by mails.dpdk.org (Postfix) with ESMTP id 2685640289;
+ Tue, 21 Jul 2026 12:37:28 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 084912C0BB8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+ t=1784630247; bh=g0W16JmqEeZ/4GQEnnqrm1xvXymuAXwTGMGo2xzbpqg=;
+ h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+ b=E7zw/CpDg6T7/gRFUy4kN/N5xS3AdtaUcOMK45wZR/1kJoqJzQW+owRugFCzb7f31
+ jlRwMJhZJJoJ6DzCuu0pUew9cN8Xn52ql8p4IROy3i/AhT9q8yTjennEcToPfPfv0H
+ rC0HpWlxJXjtdLC/lEmFXbuW/7AHb70Sc8lYXxOw=
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+ by mx0.infotecs.ru (Postfix) with ESMTP id 084912C0BB8;
+ Tue, 21 Jul 2026 13:37:27 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt BE5702C09EE
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+ by mx0.infotecs-nt (Postfix) with ESMTP id BE5702C09EE;
+ Tue, 21 Jul 2026 13:37:26 +0300 (MSK)
+From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
+To: Thomas Monjalon <thomas@monjalon.net>, Chas Williams <3chas3@gmail.com>,
+ "Min Hu (Connor)" <humin29@huawei.com>, Declan Doherty
+ <declan.doherty@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>,
+ "chas3@att.com" <chas3@att.com>
+Subject: RE: [PATCH] net/bonding: fix the log MAC address restore failure
+Thread-Topic: [PATCH] net/bonding: fix the log MAC address restore failure
+Thread-Index: AQHdB89lQ8ppYHCRQk2soIiCEnNxALZ36cBQ
+Date: Tue, 21 Jul 2026 10:37:26 +0000
+Message-ID: <41f4362c49a845319e8e2603ec56831c@infotecs.ru>
+References: <20260629135841.1181247-1-Evgeny.Sokolov@infotecs.ru>
+In-Reply-To: <20260629135841.1181247-1-Evgeny.Sokolov@infotecs.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: ru-RU
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.17.0.1]
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20260603023207.31974-1-stephen@networkplumber.org>
- <CAJFAV8zhrp3ke9k_RnwG28x-M8MzhK7R+=BKvc_+piZ+a7VcfQ@mail.gmail.com>
-In-Reply-To: <CAJFAV8zhrp3ke9k_RnwG28x-M8MzhK7R+=BKvc_+piZ+a7VcfQ@mail.gmail.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Tue, 21 Jul 2026 15:55:12 +0530
-X-Gm-Features: AUfX_mzTKej1ZWL4G83TEUcaBbL374xxU7bs75t7qYwTZ4t2rf3TOo2vE0W88GI
-Message-ID: <CALBAE1M+w=jEmEcd_455jsH6Pa+pUMYzS0yqW121Tff=eTzNbw@mail.gmail.com>
-Subject: Re: [PATCH] doc: add deprecation notice about upcoming change to
- ethdev API
-To: David Marchand <david.marchand@redhat.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: Evgeny.Sokolov@infotecs.ru
+X-KSMG-AntiSpam-Info: LuaCore: 113 0.3.113
+ b83a27b0bdff87150e3aba5d24ea90b4a220db99,
+ {Tracking_from_domain_doesnt_match_to},
+ d41d8cd98f00b204e9800998ecf8427e.com:7.1.1; 127.0.0.199:7.1.2;
+ infotecs.ru:7.1.1, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 204607 [Jul 21 2026]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.22
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 3.0.0.9059,
+ bases: 2026/07/21 08:43:00 #28477919
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,23 +79,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jul 21, 2026 at 3:37=E2=80=AFPM David Marchand
-<david.marchand@redhat.com> wrote:
->
-> On Wed, 3 Jun 2026 at 04:32, Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
-> >
-> > Inform users that rte_eth_dev_get_name_by_port() will add a size
-> > parameter in next release.
-> >
-> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
->
-> Acked-by: David Marchand <david.marchand@redhat.com>
-
-Acked-by: Jerin Jacob <jerinj@marvell.com>
-
-
->
-> --
-> David Marchand
->
+S2luZGx5IHJlbWluZGVyDQpTb3JyeSwgQnV0IG5vYm9keSBoYXMgcmV2aWV3ZWQgbXkgcGF0Y2gN
+CkNvdWxkIHlvdSBwbGVhc2UgcmV2aWV3IHRoaXM/DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0t
+LS0tDQpGcm9tOiBTb2tvbG92IEV2Z2VueSA8RXZnZW55LlNva29sb3ZAaW5mb3RlY3MucnU+IA0K
+U2VudDogTW9uZGF5LCBKdW5lIDI5LCAyMDI2IDQ6NTkgUE0NClRvOiBUaG9tYXMgTW9uamFsb24g
+PHRob21hc0Btb25qYWxvbi5uZXQ+OyBDaGFzIFdpbGxpYW1zIDwzY2hhczNAZ21haWwuY29tPjsg
+TWluIEh1IChDb25ub3IpIDxodW1pbjI5QGh1YXdlaS5jb20+OyBEZWNsYW4gRG9oZXJ0eSA8ZGVj
+bGFuLmRvaGVydHlAaW50ZWwuY29tPg0KQ2M6IGRldkBkcGRrLm9yZzsgc3RhYmxlQGRwZGsub3Jn
+OyBjaGFzM0BhdHQuY29tOyBTb2tvbG92IEV2Z2VueSA8RXZnZW55LlNva29sb3ZAaW5mb3RlY3Mu
+cnU+DQpTdWJqZWN0OiBbUEFUQ0hdIG5ldC9ib25kaW5nOiBmaXggdGhlIGxvZyBNQUMgYWRkcmVz
+cyByZXN0b3JlIGZhaWx1cmUNCg0KTG9nIGFuIGVycm9yIHdoZW4gcnRlX2V0aF9kZXZfZGVmYXVs
+dF9tYWNfYWRkcl9zZXQoKSBmYWlscyB3aGlsZSByZXN0b3JpbmcgdGhlIGRlZmF1bHQgTUFDIGFk
+ZHJlc3Mgb2YgYSBtZW1iZXIgZGV2aWNlIHJlbW92ZWQgZnJvbSBhIGJvbmRpbmcgZGV2aWNlLg0K
+VGhpcyBpbXByb3ZlcyB2aXNpYmlsaXR5IG9mIGZhaWx1cmVzIHdpdGhvdXQgY2hhbmdpbmcgdGhl
+IGV4aXN0aW5nIGJlaGF2aW9yLg0KDQpGaXhlczogYWE3NzkxYmE4ZGUwICgibmV0L2JvbmRpbmc6
+IGZpeCBzZXR0aW5nIHNsYXZlIE1BQyBhZGRyZXNzZXMiKQ0KQ2M6IGNoYXMzQGF0dC5jb20NCg0K
+U2lnbmVkLW9mZi1ieTogRXZnZW55IFNva29sb3YgPEV2Z2VueS5Tb2tvbG92QGluZm90ZWNzLnJ1
+Pg0KQ2M6IHN0YWJsZUBkcGRrLm9yZw0KLS0tDQogLm1haWxtYXAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgfCAxICsNCiBkcml2ZXJzL25ldC9ib25kaW5nL3J0ZV9ldGhfYm9uZF9hcGku
+YyB8IDggKysrKysrLS0NCiAyIGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMiBkZWxl
+dGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhLy5tYWlsbWFwIGIvLm1haWxtYXANCmluZGV4IDhlMTE1
+M2NlNTguLmRkYmFhZjc0NGYgMTAwNjQ0DQotLS0gYS8ubWFpbG1hcA0KKysrIGIvLm1haWxtYXAN
+CkBAIC00NjEsNiArNDYxLDcgQEAgRXZhbiBTd2Fuc29uIDxldmFuLnN3YW5zb25AaW50ZWwuY29t
+PiAgRXZnZW55IEVmaW1vdiA8ZXZnZW55LmVmaW1vdkBpbnRlbC5jb20+ICBFdmdlbnkgSW0gPGV2
+Z2VueS5pbUBva3RldGxhYnMuY29tPiAgRXZnZW55IFNjaGVtZWlsaW4gPGV2Z2VueXNAYW1hem9u
+LmNvbT4NCitFdmdlbnkgU29rb2xvdiA8RXZnZW55LlNva29sb3ZAaW5mb3RlY3MucnU+DQogRmFi
+aW8gUHJpY29jbyA8ZmFiaW8ucHJpY29jb0BpbnRlbC5jb20+ICBGYWR5IEJhZGVyIDxmYWR5QG1l
+bGxhbm94LmNvbT4gIEZhaWNrZXIgTW8gPGZhaWNrZXIubW9AdWNsb3VkLmNuPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9uZXQvYm9uZGluZy9ydGVfZXRoX2JvbmRfYXBpLmMgYi9kcml2ZXJzL25ldC9i
+b25kaW5nL3J0ZV9ldGhfYm9uZF9hcGkuYw0KaW5kZXggOWU1ZGY2N2MxOC4uZGEyYjUzOGIzYyAx
+MDA2NDQNCi0tLSBhL2RyaXZlcnMvbmV0L2JvbmRpbmcvcnRlX2V0aF9ib25kX2FwaS5jDQorKysg
+Yi9kcml2ZXJzL25ldC9ib25kaW5nL3J0ZV9ldGhfYm9uZF9hcGkuYw0KQEAgLTcwNiw4ICs3MDYs
+MTIgQEAgX19ldGhfYm9uZF9tZW1iZXJfcmVtb3ZlX2xvY2tfZnJlZSh1aW50MTZfdCBib25kaW5n
+X3BvcnRfaWQsDQogCQkJJnJ0ZV9ldGhfZGV2aWNlc1tib25kaW5nX3BvcnRfaWRdLmRhdGEtPnBv
+cnRfaWQpOw0KIA0KIAkvKiBSZXN0b3JlIG9yaWdpbmFsIE1BQyBhZGRyZXNzIG9mIG1lbWJlciBk
+ZXZpY2UgKi8NCi0JcnRlX2V0aF9kZXZfZGVmYXVsdF9tYWNfYWRkcl9zZXQobWVtYmVyX3BvcnRf
+aWQsDQotCQkJJmludGVybmFscy0+bWVtYmVyc1ttZW1iZXJfaWR4XS5wZXJzaXN0ZWRfbWFjX2Fk
+ZHIpOw0KKwlpZiAocnRlX2V0aF9kZXZfZGVmYXVsdF9tYWNfYWRkcl9zZXQobWVtYmVyX3BvcnRf
+aWQsDQorCQkJJmludGVybmFscy0+bWVtYmVyc1ttZW1iZXJfaWR4XS5wZXJzaXN0ZWRfbWFjX2Fk
+ZHIpKSB7DQorCQlSVEVfQk9ORF9MT0coRVJSLA0KKwkJCQkiRmFpbGVkIHRvIHJlc3RvcmUgTUFD
+IGFkZHJlc3Mgb24gbWVtYmVyIHBvcnQgJXUiLA0KKwkJCQltZW1iZXJfcG9ydF9pZCk7DQorCX0N
+CiANCiAJLyogcmVtb3ZlIGFkZGl0aW9uYWwgTUFDIGFkZHJlc3NlcyBmcm9tIHRoZSBtZW1iZXIg
+Ki8NCiAJbWVtYmVyX3JlbW92ZV9tYWNfYWRkcmVzc2VzKGJvbmRpbmdfZXRoX2RldiwgbWVtYmVy
+X3BvcnRfaWQpOw0KLS0NCjIuNDcuMw0KDQo=
