@@ -2,46 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8263C44529
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 14:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9194C44529
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 15:13:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D413340A81;
-	Tue, 21 Jul 2026 16:59:24 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 70CCF409FA
- for <dev@dpdk.org>; Tue, 21 Jul 2026 16:59:18 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=Ih4KiAHPdCAVDFsx5fxLBFTUoL8GS50rfYJYOimWheQ=;
- b=xWqyvefZO2qMKDZ5VJmKlx7sdWk/M36T/XP9ntTIVaJuUUJB05T7KBQWCS9E3XJjvnkaNNMOL
- /pDKLgS3BcNADjereT6EfTyESRYcfE+U5VCFLyQW+3y80vLlazE6tp8W33SqU3AIZ8lo+SBkBNT
- f897bWIv8PtizrJMDdNd+B0=
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h4LB00QbvzHnH3P;
- Tue, 21 Jul 2026 22:58:48 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 785664057A;
- Tue, 21 Jul 2026 22:59:12 +0800 (CST)
-Received: from localhost.localdomain (10.220.239.45) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 21 Jul 2026 16:59:12 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>
-Subject: [PATCH v4 4/7] doc: fix typos in rte_bus_vmbus.h
-Date: Tue, 21 Jul 2026 15:58:37 +0100
-Message-ID: <20260721145841.7424-5-marat.khalili@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260721145841.7424-1-marat.khalili@huawei.com>
-References: <20260707085048.15295-1-marat.khalili@huawei.com>
- <20260721145841.7424-1-marat.khalili@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E208E402ED;
+	Tue, 21 Jul 2026 17:13:31 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id D144240294
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 17:13:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1784646810; x=1816182810;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=qL6LcZVJzrKQkk5GhwzmzcKpndsQh5krHysTz71LsNg=;
+ b=QZLlur9OfY3LT1HJEoV05H+y8IY2PrIzzO5fteKeV5FvX7xpV1hZKnf3
+ GvGP2IKq6PrLd4tRt0F5bS1ENuZgfZHYhZUv9r06MA+yJq/aLh+PAobQl
+ 0Br/5dAI1MyIvwSA1OqezJuapb7DjWJw28t/rC9XogoXQHAZTqqQQxGf9
+ agirJ3FBvyRZUPuj4vcqL25Q7qALor8pYNbr6E/zQEXSdpinLRdQ/2vgm
+ 4jkRaTU9hTpNWYGY9UZ6YN1FSSaIgSQcYhfGcDEVxPN4ytVQxCqV7ZDit
+ XK/N7pKVetagl4a/TWxh3NeHNi9csD6wHLmeuMTe5+zubI+yGTkHhDiQb w==;
+X-CSE-ConnectionGUID: i58vDxeyQo+B5FW2R87DpA==
+X-CSE-MsgGUID: Ijr6mBAxQi+6eiv4P78+bQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11853"; a="85107705"
+X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="85107705"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 21 Jul 2026 08:13:28 -0700
+X-CSE-ConnectionGUID: q0xiHon3QrSXiX6JiThSIg==
+X-CSE-MsgGUID: 4GnNziHSSCmTiNNcjvkl1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="281070922"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by fmviesa002.fm.intel.com with ESMTP; 21 Jul 2026 08:13:28 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: thomas@monjalon.net,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH 0/6] doc/rel_notes: updates to 26.07 doc
+Date: Tue, 21 Jul 2026 16:13:19 +0100
+Message-ID: <20260721151325.2698283-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.220.239.45]
-X-ClientProxiedBy: frapema100002.china.huawei.com (7.182.19.63) To
- frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,132 +58,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This file contained multiple doxygen issues that prevented successful
-documentation build (missing, extra, misspelt parameter names etc). It
-was not discovered previously because the driver despite the presence of
-public headers was not included in the documentation build.
+A collection of miscellaneous updates and fixes for the 26.07 release notes.
 
-Fix invalid doxygen parameters annotations.
+Bruce Richardson (6):
+  doc/rel_notes: remove bullets for single items
+  doc/rel_notes: move mempool change to first item
+  doc/rel_notes: keep library updates together
+  doc/rel_notes: fix driver ordering
+  doc/rel_notes: fix style of API changes section
+  doc/rel_notes: minor style fixes
 
-Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
----
- drivers/bus/vmbus/rte_bus_vmbus.h | 33 +++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
+ doc/guides/rel_notes/release_26_07.rst | 143 ++++++++++++-------------
+ 1 file changed, 69 insertions(+), 74 deletions(-)
 
-diff --git a/drivers/bus/vmbus/rte_bus_vmbus.h b/drivers/bus/vmbus/rte_bus_vmbus.h
-index 2e9898ed7fb6..7f3ebd823201 100644
---- a/drivers/bus/vmbus/rte_bus_vmbus.h
-+++ b/drivers/bus/vmbus/rte_bus_vmbus.h
-@@ -111,7 +111,7 @@ int rte_vmbus_max_channels(const struct rte_vmbus_device *device);
-  *
-  * @param primary
-  *   A pointer to primary VMBUS channel
-- * @param chan
-+ * @param new_chan
-  *   A pointer to a secondary VMBUS channel pointer that will be filled.
-  * @return
-  *   - 0 Success; channel opened.
-@@ -158,6 +158,8 @@ bool rte_vmbus_chan_rx_empty(const struct vmbus_channel *channel);
- /**
-  * Send the specified buffer on the given channel
-  *
-+ * @param dev
-+ *	A pointer to a rte_vmbus_device structure describing the device
-  * @param channel
-  *	Pointer to vmbus_channel structure.
-  * @param type
-@@ -184,7 +186,9 @@ int rte_vmbus_chan_send(struct rte_vmbus_device *dev,
- /**
-  * Explicitly signal host that data is available
-  *
-- * @param
-+ * @param dev
-+ *	A pointer to a rte_vmbus_device structure describing the device
-+ * @param channel
-  *	Pointer to vmbus_channel structure.
-  *
-  * Used when batching multiple sends and only signaling host
-@@ -203,11 +207,10 @@ struct iova_list {
- /**
-  * Send a scattered buffer on the given channel
-  *
-+ * @param dev
-+ *	A pointer to a rte_vmbus_device structure describing the device
-  * @param channel
-  *	Pointer to vmbus_channel structure.
-- * @param type
-- *	Type of packet that is being send e.g. negotiate, time
-- *	packet etc.
-  * @param gpa
-  *	Array of buffers to send
-  * @param gpacnt
-@@ -218,8 +221,6 @@ struct iova_list {
-  *	 Maximum size of what the buffer will hold
-  * @param xact
-  *	Identifier of the request
-- * @param flags
-- *	Message type inband, rxbuf, gpa
-  * @param need_sig
-  *	Is host signal tx is required (optional)
-  *
-@@ -234,13 +235,15 @@ int rte_vmbus_chan_send_sglist(struct rte_vmbus_device *dev,
-  * Receive response to request on the given channel
-  * skips the channel header.
-  *
-- * @param channel
-+ * @param dev
-+ *	A pointer to a rte_vmbus_device structure describing the device
-+ * @param chan
-  *	Pointer to vmbus_channel structure.
-  * @param data
-  *	Pointer to the buffer you want to receive the data into.
-  * @param len
-  *	Pointer to size of receive buffer (in/out)
-- * @param
-+ * @param request_id
-  *	Pointer to received transaction_id
-  * @return
-  *   On success, returns 0
-@@ -255,7 +258,7 @@ int rte_vmbus_chan_recv(struct rte_vmbus_device *dev,
-  * Receive response to request on the given channel
-  * includes the channel header.
-  *
-- * @param channel
-+ * @param chan
-  *	Pointer to vmbus_channel structure.
-  * @param data
-  *	Pointer to the buffer you want to receive the data into.
-@@ -272,7 +275,9 @@ int rte_vmbus_chan_recv_raw(struct vmbus_channel *chan,
-  * Notify host of bytes read (after recv_raw)
-  * Signals host if required.
-  *
-- * @param channel
-+ * @param dev
-+ *	A pointer to a rte_vmbus_device structure describing the device
-+ * @param chan
-  *	Pointer to vmbus_channel structure.
-  * @param bytes_read
-  *	Number of bytes read since last signal
-@@ -284,7 +289,7 @@ void rte_vmbus_chan_signal_read(struct rte_vmbus_device *dev,
- /**
-  * Determine sub channel index of the given channel
-  *
-- * @param channel
-+ * @param chan
-  *	Pointer to vmbus_channel structure.
-  * @return
-  *   Sub channel index (0 for primary)
-@@ -309,7 +314,9 @@ void rte_vmbus_set_latency(const struct rte_vmbus_device *dev,
- /**
-  * For debug dump contents of ring buffer.
-  *
-- * @param channel
-+ * @param f
-+ *	Output file to dump to.
-+ * @param chan
-  *	Pointer to vmbus_channel structure.
-  */
- void rte_vmbus_chan_dump(FILE *f, const struct vmbus_channel *chan);
--- 
-2.43.0
+--
+2.53.0
 
