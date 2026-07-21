@@ -2,39 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5789C44532
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 14:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8263C44529
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 14:59:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BCD1240A6F;
-	Tue, 21 Jul 2026 16:59:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D413340A81;
+	Tue, 21 Jul 2026 16:59:24 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 67319406B6
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 70CCF409FA
  for <dev@dpdk.org>; Tue, 21 Jul 2026 16:59:18 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=lBjlMwa8/V3yIt+/qoaD5sZ16XF00KXfUypUIya/z04=;
- b=2SbEWMmS7bgJnTdFhAJS5jDu98kFTTFzjOJ0BiU7xP2Kc9O8RSBk6jSAKP/nGT9t2kOZIytQM
- Y4Q7f4Uu5EeTO7Nwxa9sN81LtwArLMZE+OLyb6NFjMWPHfmlvJA7i7mPhvV2nriET47CuTtjBvl
- UqDF0qZ6uSZBgi16ljydWYY=
+ bh=Ih4KiAHPdCAVDFsx5fxLBFTUoL8GS50rfYJYOimWheQ=;
+ b=xWqyvefZO2qMKDZ5VJmKlx7sdWk/M36T/XP9ntTIVaJuUUJB05T7KBQWCS9E3XJjvnkaNNMOL
+ /pDKLgS3BcNADjereT6EfTyESRYcfE+U5VCFLyQW+3y80vLlazE6tp8W33SqU3AIZ8lo+SBkBNT
+ f897bWIv8PtizrJMDdNd+B0=
 Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h4L9y2Zh8zHnGfC;
- Tue, 21 Jul 2026 22:58:46 +0800 (CST)
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h4LB00QbvzHnH3P;
+ Tue, 21 Jul 2026 22:58:48 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id C46A540577;
- Tue, 21 Jul 2026 22:59:10 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 785664057A;
+ Tue, 21 Jul 2026 22:59:12 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 21 Jul 2026 16:59:10 +0200
+ 15.2.1544.11; Tue, 21 Jul 2026 16:59:12 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: 
+To: Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>
-Subject: [PATCH v4 0/7] doc: build for all public headers
-Date: Tue, 21 Jul 2026 15:58:33 +0100
-Message-ID: <20260721145841.7424-1-marat.khalili@huawei.com>
+Subject: [PATCH v4 4/7] doc: fix typos in rte_bus_vmbus.h
+Date: Tue, 21 Jul 2026 15:58:37 +0100
+Message-ID: <20260721145841.7424-5-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260707085048.15295-1-marat.khalili@huawei.com>
+In-Reply-To: <20260721145841.7424-1-marat.khalili@huawei.com>
 References: <20260707085048.15295-1-marat.khalili@huawei.com>
+ <20260721145841.7424-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -54,52 +55,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-It was noticed that not all public headers were included in the doxygen
-build, and once built not all files were listed in the index file
-serving as a point of entry for the HTML version.
+This file contained multiple doxygen issues that prevented successful
+documentation build (missing, extra, misspelt parameter names etc). It
+was not discovered previously because the driver despite the presence of
+public headers was not included in the documentation build.
 
-Bruce Richardson provided an idea and a draft implementation of the
-configuration-time check, which I optimized to avoid repeat grep calls
-and expanded to include indexing check.
+Fix invalid doxygen parameters annotations.
 
-After all drivers and public headers were included, multiple small
-problems have surfaced fixes for which (with one exception covered by
-bug 1962) are also included in this patch set.
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+---
+ drivers/bus/vmbus/rte_bus_vmbus.h | 33 +++++++++++++++++++------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
-v4:
-* implemented index exception list to ignore headers like `*_trace.h`;
-* dropped rte_os.h stub, added it to the exception list instead;
-* dropped trace headers from the doxy-api-index.md updates;
-
-v3:
-* added fixes for typos in rte_avp_common.h that tripped doxygen 1.9+;
-* fixed variable name typo in lib/meson.build introduced in v1;
-
-v2:
-* switched from `splitlines()` to `strip('\n').split('\n')` for
-  compatibility with older versions of meson;
-* rebased on fresh main and updated BPF header links in the index file
-  (note: following other examples BPF links are formatted as a sublist);
-
-Marat Khalili (7):
-  doc: detect ignored public headers
-  doc: fix typos in rte_avp_common.h
-  doc: fix typos in rte_bus_pci.h
-  doc: fix typos in rte_bus_vmbus.h
-  doc: add missing globs to doxy-api.conf.in
-  doc: add missing drivers to doxy-api.conf.in
-  doc: add missing headers to doxy-api-index.md
-
- doc/api/doxy-api-index.md         | 110 ++++++++++++++++++++++++++----
- doc/api/doxy-api.conf.in          |  17 ++++-
- drivers/bus/pci/rte_bus_pci.h     |   4 +-
- drivers/bus/vmbus/rte_bus_vmbus.h |  33 +++++----
- drivers/meson.build               |  21 ++++++
- drivers/net/avp/rte_avp_common.h  |  10 +--
- lib/meson.build                   |  27 ++++++++
- meson.build                       |  28 ++++++++
- 8 files changed, 214 insertions(+), 36 deletions(-)
-
+diff --git a/drivers/bus/vmbus/rte_bus_vmbus.h b/drivers/bus/vmbus/rte_bus_vmbus.h
+index 2e9898ed7fb6..7f3ebd823201 100644
+--- a/drivers/bus/vmbus/rte_bus_vmbus.h
++++ b/drivers/bus/vmbus/rte_bus_vmbus.h
+@@ -111,7 +111,7 @@ int rte_vmbus_max_channels(const struct rte_vmbus_device *device);
+  *
+  * @param primary
+  *   A pointer to primary VMBUS channel
+- * @param chan
++ * @param new_chan
+  *   A pointer to a secondary VMBUS channel pointer that will be filled.
+  * @return
+  *   - 0 Success; channel opened.
+@@ -158,6 +158,8 @@ bool rte_vmbus_chan_rx_empty(const struct vmbus_channel *channel);
+ /**
+  * Send the specified buffer on the given channel
+  *
++ * @param dev
++ *	A pointer to a rte_vmbus_device structure describing the device
+  * @param channel
+  *	Pointer to vmbus_channel structure.
+  * @param type
+@@ -184,7 +186,9 @@ int rte_vmbus_chan_send(struct rte_vmbus_device *dev,
+ /**
+  * Explicitly signal host that data is available
+  *
+- * @param
++ * @param dev
++ *	A pointer to a rte_vmbus_device structure describing the device
++ * @param channel
+  *	Pointer to vmbus_channel structure.
+  *
+  * Used when batching multiple sends and only signaling host
+@@ -203,11 +207,10 @@ struct iova_list {
+ /**
+  * Send a scattered buffer on the given channel
+  *
++ * @param dev
++ *	A pointer to a rte_vmbus_device structure describing the device
+  * @param channel
+  *	Pointer to vmbus_channel structure.
+- * @param type
+- *	Type of packet that is being send e.g. negotiate, time
+- *	packet etc.
+  * @param gpa
+  *	Array of buffers to send
+  * @param gpacnt
+@@ -218,8 +221,6 @@ struct iova_list {
+  *	 Maximum size of what the buffer will hold
+  * @param xact
+  *	Identifier of the request
+- * @param flags
+- *	Message type inband, rxbuf, gpa
+  * @param need_sig
+  *	Is host signal tx is required (optional)
+  *
+@@ -234,13 +235,15 @@ int rte_vmbus_chan_send_sglist(struct rte_vmbus_device *dev,
+  * Receive response to request on the given channel
+  * skips the channel header.
+  *
+- * @param channel
++ * @param dev
++ *	A pointer to a rte_vmbus_device structure describing the device
++ * @param chan
+  *	Pointer to vmbus_channel structure.
+  * @param data
+  *	Pointer to the buffer you want to receive the data into.
+  * @param len
+  *	Pointer to size of receive buffer (in/out)
+- * @param
++ * @param request_id
+  *	Pointer to received transaction_id
+  * @return
+  *   On success, returns 0
+@@ -255,7 +258,7 @@ int rte_vmbus_chan_recv(struct rte_vmbus_device *dev,
+  * Receive response to request on the given channel
+  * includes the channel header.
+  *
+- * @param channel
++ * @param chan
+  *	Pointer to vmbus_channel structure.
+  * @param data
+  *	Pointer to the buffer you want to receive the data into.
+@@ -272,7 +275,9 @@ int rte_vmbus_chan_recv_raw(struct vmbus_channel *chan,
+  * Notify host of bytes read (after recv_raw)
+  * Signals host if required.
+  *
+- * @param channel
++ * @param dev
++ *	A pointer to a rte_vmbus_device structure describing the device
++ * @param chan
+  *	Pointer to vmbus_channel structure.
+  * @param bytes_read
+  *	Number of bytes read since last signal
+@@ -284,7 +289,7 @@ void rte_vmbus_chan_signal_read(struct rte_vmbus_device *dev,
+ /**
+  * Determine sub channel index of the given channel
+  *
+- * @param channel
++ * @param chan
+  *	Pointer to vmbus_channel structure.
+  * @return
+  *   Sub channel index (0 for primary)
+@@ -309,7 +314,9 @@ void rte_vmbus_set_latency(const struct rte_vmbus_device *dev,
+ /**
+  * For debug dump contents of ring buffer.
+  *
+- * @param channel
++ * @param f
++ *	Output file to dump to.
++ * @param chan
+  *	Pointer to vmbus_channel structure.
+  */
+ void rte_vmbus_chan_dump(FILE *f, const struct vmbus_channel *chan);
 -- 
 2.43.0
 
