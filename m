@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4382AC4452B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 09:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 927AEC44529
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 09:47:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A82040BA4;
-	Tue, 21 Jul 2026 11:46:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A043D40DD0;
+	Tue, 21 Jul 2026 11:46:19 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 56DA140A81
- for <dev@dpdk.org>; Tue, 21 Jul 2026 11:46:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 27AB440BA3
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 11:46:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1784627176; x=1816163176;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=rgB0OTMvXE5/eD63u4em3KDb11i0/HzU/KQS/3m5d6Q=;
- b=NI6Gpu1V0mPwpzfzBy6w1z1QZaqAYb6Gp9LL5srof8EDLVOoVSldUZls
- VnoOW4W12AsRWTwYSrmdEWT4jIwmD/eFjXlKxWji14QqOxcnGmnDYYk/J
- swTatVAZFGzGV77BMLNIKcm5ZwIY/nyzHeLxxeMYMqafhWoeAVyjyyW90
- rwq5LXk7Qb+lmSEa1077++0DpI/Qf+CKSnWT3tVTDGcbg1TqSofW2cY2x
- SrIsrTIpDMGcIinjWVB1+LqBVwmJBFupVwAn2BjxOAqlIxJ+o42d//MEv
- DkWtrBhmIF3FxEERZStaHeBTeaBnqx23xIncpj8kIVJJtywEB/5ux4Dfk Q==;
-X-CSE-ConnectionGUID: ZbTQLxolR7eNNqpFQ+YgiA==
-X-CSE-MsgGUID: Ne8hZq2rTG6Y5f5qCK7Dyw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11852"; a="95872469"
-X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="95872469"
+ bh=RRohY4TQG6VtW7drIf4kTxc9h1j5kQUIonNjmqlmaHY=;
+ b=PBOjD6YcIHaQJ1ceB2JRaSeG25VLomEHbF7eszfPY/XpE5rsR+mDN4rb
+ D76SzJ1ar3On0jpEEzBQeB8itrsc+OxQmbXD6u4vhfgEyoGDbaNJ6xQ3W
+ faQCun5Y5RktHOFXjbq/0SaWfx6vA9BUDEULhD7Fdd1TPrbTTK3BOm4Nt
+ Q6EBQyUjtQIPwWt0q/7yJFzd5REizAd3EDkkXu4nLxqDhYIFg8SxVXiVQ
+ 2MHU57vll0eTEFx9GDqa7Eho5YxJqgIdJRgPWxC3rLVQquz4n8Oo2kNZu
+ 4CZaUoqi23laTk2tmQ5bmVPDSRcbyAx2FM6jQCst2YaMU6gWM0F49zjhZ A==;
+X-CSE-ConnectionGUID: DfP3HhnIQbaxunUOWx7Tcw==
+X-CSE-MsgGUID: 7qWXOYyqTWSk57TGAPIeXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11852"; a="95872471"
+X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="95872471"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Jul 2026 02:46:14 -0700
-X-CSE-ConnectionGUID: adSdZznURTqqMXs9tG4fVQ==
-X-CSE-MsgGUID: CQqUdXF2SQqzY1N9m1bQLg==
+ 21 Jul 2026 02:46:15 -0700
+X-CSE-ConnectionGUID: 4cpHXWk7TP6wGBB4YljX2A==
+X-CSE-MsgGUID: BnhK7E4JRz24CQ70je9uEw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="295922321"
+X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="295922327"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa001.jf.intel.com with ESMTP; 21 Jul 2026 02:46:13 -0700
+ by orviesa001.jf.intel.com with ESMTP; 21 Jul 2026 02:46:14 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 13/39] eal: use platform info for lcore lookups
-Date: Tue, 21 Jul 2026 10:45:21 +0100
-Message-ID: <20260721094555.2188496-14-bruce.richardson@intel.com>
+Subject: [PATCH 14/39] eal: add macro for lowest set CPU bit in a set
+Date: Tue, 21 Jul 2026 10:45:22 +0100
+Message-ID: <20260721094555.2188496-15-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260721094555.2188496-1-bruce.richardson@intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
@@ -60,206 +60,89 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than storing the lcore and numa fields in the lcore_config
-structure - which is a structure indexed by logical core id, rather than
-physical cpu - use the platform info struct as the one source of truth
-for cpu topology info.
+FreeBSD supports the CPU_FFS macro as part of the regular cpuset
+functions. Add this as RTE_CPU_FFS for all OS's.
+
+From "man CPU_FFS" on FreeBSD 15:
+
+  The CPU_FFS() macro returns the 1-index of the first (lowest) CPU in
+  cpuset, or zero if cpuset is empty.  Like with ffs(3), to use the non-
+  zero result of CPU_FFS() as a cpu_idx index parameter to any other
+  cpuset(9) macro, you must subtract one from the result.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_lcore.c  | 38 +++++++++++++++++++-----------
- lib/eal/common/eal_common_thread.c | 37 ++++++++++++-----------------
- lib/eal/common/eal_private.h       |  9 +++++--
- 3 files changed, 46 insertions(+), 38 deletions(-)
+ lib/eal/freebsd/include/rte_os.h |  2 ++
+ lib/eal/linux/include/rte_os.h   | 10 ++++++++++
+ lib/eal/windows/include/rte_os.h |  1 +
+ lib/eal/windows/include/sched.h  | 10 ++++++++++
+ 4 files changed, 23 insertions(+)
 
-diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
-index a5f5c99af9..16af89a968 100644
---- a/lib/eal/common/eal_common_lcore.c
-+++ b/lib/eal/common/eal_common_lcore.c
-@@ -51,6 +51,9 @@ int rte_lcore_index(int lcore_id)
- RTE_EXPORT_SYMBOL(rte_lcore_to_cpu_id)
- int rte_lcore_to_cpu_id(int lcore_id)
- {
-+	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	unsigned int cpu;
+diff --git a/lib/eal/freebsd/include/rte_os.h b/lib/eal/freebsd/include/rte_os.h
+index 94b9275beb..38fd0e7f05 100644
+--- a/lib/eal/freebsd/include/rte_os.h
++++ b/lib/eal/freebsd/include/rte_os.h
+@@ -75,4 +75,6 @@ typedef cpuset_t rte_cpuset_t;
+ 
+ #endif /* RTE_EAL_FREEBSD_CPUSET_LEGACY */
+ 
++#define RTE_CPU_FFS CPU_FFS
 +
- 	if (unlikely(lcore_id >= RTE_MAX_LCORE))
- 		return -1;
- 
-@@ -61,7 +64,11 @@ int rte_lcore_to_cpu_id(int lcore_id)
- 		lcore_id = (int)rte_lcore_id();
- 	}
- 
--	return lcore_config[lcore_id].core_id;
-+	for (cpu = 0; cpu < CPU_SETSIZE && cpu < platform_info->cpu_count; cpu++) {
-+		if (CPU_ISSET(cpu, &lcore_config[lcore_id].cpuset))
-+			return (int)platform_info->cpu_info[cpu].core_id;
-+	}
-+	return -1;
- }
- 
- RTE_EXPORT_SYMBOL(rte_lcore_cpuset)
-@@ -127,7 +134,10 @@ RTE_EXPORT_SYMBOL(rte_lcore_to_socket_id)
- unsigned int
- rte_lcore_to_socket_id(unsigned int lcore_id)
- {
--	return lcore_config[lcore_id].numa_id;
-+	if (unlikely(lcore_id >= RTE_MAX_LCORE))
-+		return (unsigned int)SOCKET_ID_ANY;
+ #endif /* _RTE_OS_H_ */
+diff --git a/lib/eal/linux/include/rte_os.h b/lib/eal/linux/include/rte_os.h
+index 20eff0409a..85ce56afaa 100644
+--- a/lib/eal/linux/include/rte_os.h
++++ b/lib/eal/linux/include/rte_os.h
+@@ -41,6 +41,16 @@ typedef cpu_set_t rte_cpuset_t;
+ 	RTE_CPU_FILL(&tmp); \
+ 	CPU_XOR(dst, &tmp, src); \
+ } while (0)
 +
-+	return (unsigned int)eal_cpuset_socket_id(&lcore_config[lcore_id].cpuset);
- }
++static inline int
++rte_cpu_ffs(const rte_cpuset_t *s)
++{
++	for (unsigned int _i = 0; _i < CPU_SETSIZE; _i++)
++		if (CPU_ISSET(_i, s))
++			return (int)(_i + 1);
++	return 0;
++}
++#define RTE_CPU_FFS(s) rte_cpu_ffs(s)
+ #endif
  
- static int
-@@ -191,16 +201,16 @@ rte_eal_cpu_init(void)
- 		/* init cpuset for per lcore config */
- 		CPU_ZERO(&lcore_config[lcore_id].cpuset);
+ #endif /* _RTE_OS_H_ */
+diff --git a/lib/eal/windows/include/rte_os.h b/lib/eal/windows/include/rte_os.h
+index 2a43cb1f9b..25701c7906 100644
+--- a/lib/eal/windows/include/rte_os.h
++++ b/lib/eal/windows/include/rte_os.h
+@@ -49,6 +49,7 @@ struct { \
+ #define RTE_CPU_OR(dst, src1, src2) CPU_OR(dst, src1, src2)
+ #define RTE_CPU_FILL(set) CPU_FILL(set)
+ #define RTE_CPU_NOT(dst, src) CPU_NOT(dst, src)
++#define RTE_CPU_FFS(s) CPU_FFS(s)
  
--		/* find socket first */
--		socket_id = eal_cpu_socket_id(lcore_id);
--		lcore_to_socket_id[lcore_id] = socket_id;
--
- 		if (eal_cpu_detected(lcore_id) == 0) {
- 			config->lcore_role[lcore_id] = ROLE_OFF;
- 			lcore_config[lcore_id].core_index = -1;
- 			continue;
- 		}
+ /* This is an exception without "rte_" prefix, because Windows does have
+  * ssize_t, but it's defined in <windows.h> which we avoid to expose.
+diff --git a/lib/eal/windows/include/sched.h b/lib/eal/windows/include/sched.h
+index 912fed12c2..230de19c76 100644
+--- a/lib/eal/windows/include/sched.h
++++ b/lib/eal/windows/include/sched.h
+@@ -86,6 +86,16 @@ do { \
+ 		(dst)->_bits[_i] = (src)->_bits[_i] ^ -1LL; \
+ } while (0)
  
-+		/* find socket first */
-+		socket_id = platform_info->cpu_info[lcore_id].numa_id;
-+		lcore_to_socket_id[lcore_id] = socket_id;
++static inline int
++cpu_ffs(const rte_cpuset_t *s)
++{
++	for (unsigned int _i = 0; _i < CPU_SETSIZE; _i++)
++		if (CPU_ISSET(_i, s))
++			return (int)(_i + 1);
++	return 0;
++}
++#define CPU_FFS(s) cpu_ffs(s)
 +
- 		/* By default, lcore 1:1 map to cpu id */
- 		CPU_SET(lcore_id, &lcore_config[lcore_id].cpuset);
- 
-@@ -210,22 +220,22 @@ rte_eal_cpu_init(void)
- 		/* By default, each detected core is enabled */
- 		config->lcore_role[lcore_id] = ROLE_RTE;
- 		lcore_config[lcore_id].core_role = ROLE_RTE;
--		lcore_config[lcore_id].core_id = eal_cpu_core_id(lcore_id);
--		lcore_config[lcore_id].numa_id = socket_id;
- 		EAL_LOG(DEBUG, "Detected lcore %u as "
- 				"core %u on NUMA node %u",
--				lcore_id, lcore_config[lcore_id].core_id,
--				lcore_config[lcore_id].numa_id);
-+				lcore_id,
-+				platform_info->cpu_info[lcore_id].core_id,
-+				platform_info->cpu_info[lcore_id].numa_id);
- 		count++;
- 	}
- 	for (; lcore_id < CPU_SETSIZE; lcore_id++) {
- 		if (eal_cpu_detected(lcore_id) == 0)
- 			continue;
--		socket_id = eal_cpu_socket_id(lcore_id);
--		lcore_to_socket_id[lcore_id] = socket_id;
-+		if (unlikely(lcore_id >= platform_info->cpu_count))
-+			break;
-+		lcore_to_socket_id[lcore_id] = platform_info->cpu_info[lcore_id].numa_id;
- 		EAL_LOG(DEBUG, "Skipped lcore %u as core %u on NUMA node %u",
--			lcore_id, eal_cpu_core_id(lcore_id),
--			socket_id);
-+			lcore_id, platform_info->cpu_info[lcore_id].core_id,
-+			platform_info->cpu_info[lcore_id].numa_id);
- 	}
- 
- 	/* Set the count of enabled logical cores of the EAL configuration */
-diff --git a/lib/eal/common/eal_common_thread.c b/lib/eal/common/eal_common_thread.c
-index c2e7315bf4..10e8d84aa7 100644
---- a/lib/eal/common/eal_common_thread.c
-+++ b/lib/eal/common/eal_common_thread.c
-@@ -37,30 +37,25 @@ unsigned rte_socket_id(void)
- 	return RTE_PER_LCORE(_numa_id);
+ #ifdef __cplusplus
  }
- 
--static int
--eal_cpuset_socket_id(rte_cpuset_t *cpusetp)
-+int
-+eal_cpuset_socket_id(const rte_cpuset_t *cpusetp)
- {
--	unsigned cpu = 0;
-+	const struct eal_platform_info *platform_info = eal_get_platform_info();
- 	int socket_id = SOCKET_ID_ANY;
--	int sid;
- 
- 	if (cpusetp == NULL)
- 		return SOCKET_ID_ANY;
- 
--	do {
-+	for (unsigned int cpu = 0; cpu < CPU_SETSIZE && cpu < platform_info->cpu_count; cpu++) {
- 		if (!CPU_ISSET(cpu, cpusetp))
- 			continue;
- 
-+		int sid = (int)platform_info->cpu_info[cpu].numa_id;
- 		if (socket_id == SOCKET_ID_ANY)
--			socket_id = eal_cpu_socket_id(cpu);
--
--		sid = eal_cpu_socket_id(cpu);
--		if (socket_id != sid) {
--			socket_id = SOCKET_ID_ANY;
--			break;
--		}
--
--	} while (++cpu < CPU_SETSIZE);
-+			socket_id = sid;
-+		else if (socket_id != sid)
-+			return SOCKET_ID_ANY;
-+	}
- 
- 	return socket_id;
- }
-@@ -70,19 +65,17 @@ thread_update_affinity(rte_cpuset_t *cpusetp)
- {
- 	unsigned int lcore_id = rte_lcore_id();
- 
--	/* store numa_id in TLS for quick access */
--	RTE_PER_LCORE(_numa_id) =
--		eal_cpuset_socket_id(cpusetp);
--
- 	/* store cpuset in TLS for quick access */
--	memmove(&RTE_PER_LCORE(_cpuset), cpusetp,
--		sizeof(rte_cpuset_t));
-+	memmove(&RTE_PER_LCORE(_cpuset), cpusetp, sizeof(rte_cpuset_t));
- 
- 	if (lcore_id != (unsigned)LCORE_ID_ANY) {
--		/* EAL thread will update lcore_config */
--		lcore_config[lcore_id].numa_id = RTE_PER_LCORE(_numa_id);
-+		/* EAL thread: update lcore_config cpuset first then find numa based on that */
- 		memmove(&lcore_config[lcore_id].cpuset, cpusetp,
- 			sizeof(rte_cpuset_t));
-+		RTE_PER_LCORE(_numa_id) = rte_lcore_to_socket_id(lcore_id);
-+	} else {
-+		/* Non-EAL thread: preserve SOCKET_ID_ANY if cpuset spans NUMA nodes. */
-+		RTE_PER_LCORE(_numa_id) = (unsigned int)eal_cpuset_socket_id(cpusetp);
- 	}
- }
- 
-diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.h
-index c4a7a35cd9..a20627edd5 100644
---- a/lib/eal/common/eal_private.h
-+++ b/lib/eal/common/eal_private.h
-@@ -31,8 +31,6 @@ struct lcore_config {
- 	volatile int ret;          /**< return value of function */
- 
- 	volatile RTE_ATOMIC(enum rte_lcore_state_t) state; /**< lcore state */
--	unsigned int numa_id;      /**< NUMA node ID for this lcore */
--	unsigned int core_id;      /**< core number on socket for this lcore */
- 	int core_index;            /**< relative index, starting from 0 */
- 	uint8_t core_role;         /**< role of core eg: OFF, RTE, SERVICE */
- 
-@@ -96,6 +94,13 @@ int eal_collate_args(int argc, char **argv);
-  */
- char *eal_cpuset_to_str(const rte_cpuset_t *cpuset);
- 
-+/**
-+ * Resolve a cpuset to a NUMA socket id.
-+ *
-+ * Returns SOCKET_ID_ANY if cpuset is NULL, empty, or spans multiple sockets.
-+ */
-+int eal_cpuset_socket_id(const rte_cpuset_t *cpuset);
-+
- /**
-  * Initialize the memzone subsystem (private to eal).
-  *
+ #endif
 -- 
 2.53.0
 
