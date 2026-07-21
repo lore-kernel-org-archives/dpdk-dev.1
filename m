@@ -2,50 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E6BC44532
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 13:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D727C4452F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 13:17:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F3EA440695;
-	Tue, 21 Jul 2026 15:08:33 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id 8E65440294
- for <dev@dpdk.org>; Tue, 21 Jul 2026 15:08:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1784639311; x=1816175311;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=MgpR5J6iSTNvcWGwSHUEJYHnJS02MXPG/fp7ptyjhGQ=;
- b=JrOHDRtCJlKhPIQzK/rZBxI1/0EHxTxFGM3Bxgzb8QhoBbwmIJdQbyZp
- Pwx9T/EP/+Emk+SsA3spqg0Mn7vL6IisYUYVWTEnNPfsnSALH5qKZ4hHO
- vSALt7gobI+2Ev5+0lyKiL1hE9SCKf7fRAK9lcG1v/ywO6t/W1BtZ+soI
- rRkwa7o0gJ+bv85C0jScGUOImTEMP9ALqQR2Wc/KcduUnoy9Et76C7L5w
- 7VVzDdz7lX5aiZMebQwcUJY4jxXNZzQUu5j4Q05wgkjxeu4IcHKrOAxkk
- sEHRJwH5jMIAAuxgddR8oQqj8pIMF83cT1N64SNFbkR54uB7O5PNj6QPo g==;
-X-CSE-ConnectionGUID: xm5PEMczSwq4bo2PAm432A==
-X-CSE-MsgGUID: uyYIfA94Szu4hmohcRkELQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11852"; a="108027791"
-X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="108027791"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Jul 2026 06:08:31 -0700
-X-CSE-ConnectionGUID: smxkFSSVSdiSf6qflySXWA==
-X-CSE-MsgGUID: ZaGQ0OkoRe+n5FCbS732/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,176,1779174000"; d="scan'208";a="254360086"
-Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by fmviesa007.fm.intel.com with ESMTP; 21 Jul 2026 06:08:29 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [RFC 2/2] net/iavf: restore promiscuous mode only after VF reset
-Date: Tue, 21 Jul 2026 13:08:14 +0000
-Message-ID: <20260721130814.2950332-3-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260721130814.2950332-1-ciara.loftus@intel.com>
-References: <20260721130814.2950332-1-ciara.loftus@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DEB1E4042F;
+	Tue, 21 Jul 2026 15:17:15 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 68D48402A7
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 15:17:14 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=m38L1KserQRKxm+3PMO2dwhGqymwGd4rglbFS+5NzR4=;
+ b=D8dQ3cZabrlqC1P8hcVKV/4TvdvEI5fssoOohlzZgeWNDdpmDp3FpSV7qRy5DMhKInMuGgVWA
+ gwgUMr5VC4uaRHteInrtIDlYVxj1qqhjsV2lya0zC0v8jGDYFE/tuXHYR2krQseDKs2LJTb+2W9
+ Btws/8oU9/sxOu9/oV2wmmQ=
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h4HwH6xhYzJ46bX;
+ Tue, 21 Jul 2026 21:16:47 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id 3AC5840575;
+ Tue, 21 Jul 2026 21:17:08 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 21 Jul 2026 15:17:08 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Tue, 21 Jul 2026 15:17:08 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Maxime Leroy <maxime@leroys.fr>, "dev@dpdk.org" <dev@dpdk.org>
+CC: Stephen Hemminger <stephen@networkplumber.org>, Thomas Monjalon
+ <thomas@monjalon.net>, David Marchand <david.marchand@redhat.com>
+Subject: RE: [PATCH] doc: drop recommendation against bool in structures
+Thread-Topic: [PATCH] doc: drop recommendation against bool in structures
+Thread-Index: AQHdGD1szi5HSkvZIUS60Ixy8Z3xDbZ39XYw
+Date: Tue, 21 Jul 2026 13:17:07 +0000
+Message-ID: <f3d6a6d6db914191b3969a338758b878@huawei.com>
+References: <20260720114602.787429-1-maxime@leroys.fr>
+In-Reply-To: <20260720114602.787429-1-maxime@leroys.fr>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.16]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,112 +61,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The promiscuous and all-multicast settings persist in hardware across
-a port stop/start and are only cleared by a VF reset. Despite this,
-the ethdev start path re-applied them on every `dev_start` through the
-config restore logic. Together with the driver's own restore after a
-reset, a reset followed by a start reprogrammed them twice and issued
-redundant requests to the PF.
+> -----Original Message-----
+> From: Maxime Leroy <maxime.leroys@gmail.com> On Behalf Of Maxime Leroy
+> Sent: Monday 20 July 2026 12:46
+> To: dev@dpdk.org
+> Cc: Stephen Hemminger <stephen@networkplumber.org>; Thomas Monjalon <thom=
+as@monjalon.net>; David
+> Marchand <david.marchand@redhat.com>; Maxime Leroy <maxime@leroys.fr>
+> Subject: [PATCH] doc: drop recommendation against bool in structures
+>=20
+> The coding style advised against bool in structures, citing space and
+> type-size concerns inherited from the Linux kernel. That does not match
+> DPDK practice: bool is already used in over 1400 structure fields across
+> the tree, including core APIs such as rte_flow. Drop the note so the
+> style guide reflects actual usage.
+>=20
+> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+> ---
+>  doc/guides/contributing/coding_style.rst | 9 ---------
+>  1 file changed, 9 deletions(-)
+>=20
+> diff --git a/doc/guides/contributing/coding_style.rst b/doc/guides/contri=
+buting/coding_style.rst
+> index 976a1e1de3..11de3bb39a 100644
+> --- a/doc/guides/contributing/coding_style.rst
+> +++ b/doc/guides/contributing/coding_style.rst
+> @@ -313,15 +313,6 @@ Structure Declarations
+>  * Use of the structures should be by separate variable declarations and =
+those declarations must be
+> extern if they are declared in a header file.
+>  * Externally visible structure definitions should have the structure nam=
+e prefixed by ``rte_`` to
+> avoid namespace collisions.
+>=20
+> -.. note::
+> -
+> -    Avoid using ``bool`` in structures because it wastes space and
+> -    the type size is unclear. A preferred use of
+> -    ``bool`` is mainly as a return type from functions that return true/=
+false,
+> -    and maybe local variable functions.
+> -
+> -    Ref: `LKML <https://lkml.org/lkml/2017/11/21/384>`_
+> -
 
-Implement the `get_restore_flags` callback to clear
-`RTE_ETH_RESTORE_PROMISC` and `RTE_ETH_RESTORE_ALLMULTI` so ethdev
-skips them on start; the driver restores them only after a VF reset.
-A queue reconfiguration in `iavf_dev_configure` also triggers a reset,
-so the states are re-applied there too, except during reset recovery
-where the reset handler already restores them once.
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/iavf/iavf_ethdev.c | 34 ++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 829573983a..183d986831 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -163,6 +163,9 @@ static int iavf_set_mc_addr_list(struct rte_eth_dev *dev,
- 			struct rte_ether_addr *mc_addrs,
- 			uint32_t mc_addrs_num);
- static int iavf_tm_ops_get(struct rte_eth_dev *dev __rte_unused, void *arg);
-+static uint64_t iavf_get_restore_flags(struct rte_eth_dev *dev,
-+				       enum rte_eth_dev_operation op);
-+static int iavf_post_reset_reconfig(struct rte_eth_dev *dev);
- 
- static const struct rte_pci_id pci_id_iavf_map[] = {
- 	{ RTE_PCI_DEVICE(IAVF_INTEL_VENDOR_ID, IAVF_DEV_ID_ADAPTIVE_VF) },
-@@ -262,6 +265,7 @@ static const struct eth_dev_ops iavf_eth_dev_ops = {
- 	.tx_done_cleanup	    = iavf_dev_tx_done_cleanup,
- 	.get_monitor_addr           = iavf_get_monitor_addr,
- 	.tm_ops_get                 = iavf_tm_ops_get,
-+	.get_restore_flags          = iavf_get_restore_flags,
- };
- 
- static int
-@@ -282,6 +286,19 @@ iavf_tm_ops_get(struct rte_eth_dev *dev,
- 	return 0;
- }
- 
-+static uint64_t
-+iavf_get_restore_flags(__rte_unused struct rte_eth_dev *dev,
-+		       __rte_unused enum rte_eth_dev_operation op)
-+{
-+	/*
-+	 * The unicast and multicast promiscuous settings persist across a
-+	 * stop/start; they are only cleared by a VF reset, which the driver
-+	 * restores itself. So ethdev does not need to restore them on start.
-+	 */
-+	return RTE_ETH_RESTORE_ALL & ~(RTE_ETH_RESTORE_PROMISC |
-+				       RTE_ETH_RESTORE_ALLMULTI);
-+}
-+
- __rte_unused
- static int
- iavf_vfr_inprogress(struct iavf_hw *hw)
-@@ -673,6 +690,7 @@ iavf_dev_configure(struct rte_eth_dev *dev)
- 	struct iavf_info *vf =  IAVF_DEV_PRIVATE_TO_VF(ad);
- 	uint16_t num_queue_pairs = RTE_MAX(dev->data->nb_rx_queues,
- 		dev->data->nb_tx_queues);
-+	bool reset_done = false;
- 	int ret;
- 
- 	if (ad->closed)
-@@ -702,6 +720,7 @@ iavf_dev_configure(struct rte_eth_dev *dev)
- 		ret = iavf_queues_req_reset(dev, num_queue_pairs);
- 		if (ret)
- 			return ret;
-+		reset_done = true;
- 
- 		ret = iavf_get_max_rss_queue_region(ad);
- 		if (ret) {
-@@ -720,6 +739,7 @@ iavf_dev_configure(struct rte_eth_dev *dev)
- 			ret = iavf_queues_req_reset(dev, num_queue_pairs);
- 			if (ret)
- 				return ret;
-+			reset_done = true;
- 
- 			vf->lv_enabled = false;
- 		}
-@@ -735,6 +755,20 @@ iavf_dev_configure(struct rte_eth_dev *dev)
- 			return -1;
- 		}
- 	}
-+
-+	/*
-+	 * A queue reconfiguration above triggers a VF reset, which clears the
-+	 * promiscuous and all-multicast settings in hardware. Re-apply the
-+	 * pre-reset states here, unless this configure is itself part of reset
-+	 * recovery, in which case the reset handler restores them once at the
-+	 * end (avoiding a double restore).
-+	 */
-+	if (reset_done && !vf->in_reset_recovery) {
-+		ret = iavf_post_reset_reconfig(dev);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.43.0
+>  Queues
+>  ~~~~~~
+>=20
+> --
+> 2.43.0
 
