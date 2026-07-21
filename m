@@ -2,84 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5ABC44529
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 10:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C13C4451C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Jul 2026 10:24:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 18FCD402A7;
-	Tue, 21 Jul 2026 12:24:25 +0200 (CEST)
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com
- [74.125.224.44]) by mails.dpdk.org (Postfix) with ESMTP id 59C5C40289
- for <dev@dpdk.org>; Tue, 21 Jul 2026 12:24:24 +0200 (CEST)
-Received: by mail-yx1-f44.google.com with SMTP id
- 956f58d0204a3-664a09bc459so15115901d50.1
- for <dev@dpdk.org>; Tue, 21 Jul 2026 03:24:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784629463; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 0F94E4064A;
+	Tue, 21 Jul 2026 12:24:36 +0200 (CEST)
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com
+ [209.85.160.49]) by mails.dpdk.org (Postfix) with ESMTP id 895CB40687
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 12:24:34 +0200 (CEST)
+Received: by mail-oa1-f49.google.com with SMTP id
+ 586e51a60fabf-43bf9548df4so5706907fac.0
+ for <dev@dpdk.org>; Tue, 21 Jul 2026 03:24:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784629474; cv=none;
  d=google.com; s=arc-20260327;
- b=ZgzRF2p+lbaFYx74Fm54YiNMtnXyKRgEQ9r+iI+YhrjYtDMsMGYUbn9x6VG6/JpsXp
- ZDiUF87N4y37lg1xHv3EYt12j2sjMgAxy5veZa0D7357HAyvrZ1XVN1EAlbxjEQGTiP/
- g5J37tysekBUD+9GxjOS0fVmysbpHQsZEVYSYw4sGWkU4I+7RPKz6kX/gIihay4yxk7B
- tO1VicfK8IfkAr39r46s59BeHGQVp6aw6yhEaBlMWAEsI2jiN4Xg7sdzbSG7NX5rf5Nn
- Zup6cKqtX3RYwYsa4SRSqH5h9BY8sAmMftfA6DJVavrse3C+jTCUjGS1jCgAh7Tf44sr
- t26Q==
+ b=LofeB9LfAmU/laOUnweb2Sypzdkuxfg/JN575RSKAFdCHTFWohwerYwx08fHc664fX
+ hTN+1U+ZtOJhIoAwajd8tWMP78aMUmV+JUn56VTyFaueaFeotCMXblnrjdEt/x2Z3v2e
+ JSt/T+3wIUvO94hdKJdsCQiUTTSaYgC9hMrrnqGa5q24Wz25ebOPf1dpxKRy+dg0dLZT
+ H6mDaAt8l7q+MsjXFd/q/NL27YSZxmmKqazG2UAardxAF3Eo7TIR2UlleGG1eDoHQKub
+ +PgEQEZi/Oe6edQXQzwA50SMNJfu5ZxYLFmxy6GhIcOOUxqKIVjcOc5Xaq5tQMUT8cTm
+ wNkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20260327; 
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:dkim-signature;
- bh=gz4IVLfTcm53kyMaf4ca7StK207I4OQacC8kXGbV+Yw=;
- fh=Fu2QypkQn1X1moU+X6TPX6ikDVYUQlxaQQcy3X+AIZM=;
- b=Vz4PKuhh7iXo/njQFWKMQJOL6YVrt1S6L2q99MfkF8etgKHBSKNblgwA7+4thB9B41
- 773pSgnJR2O9Fhva5LX1H+dQCXWPed6BODt87hdRThoOsRK/I83rXgQGrA3jtl8qookY
- 9Vj5+YKKOUYZCPCnrTh4PE4jmvd9NoQRV5daK7qR160GSlUmsSAcMgb2w2+DU5ufh9IV
- Zq96aOIWXjDKqPxsYvuI6t5/p0b4MpWj/9xZASgqTYDyb5GCo2mWWv+rnUGKzivEf3iA
- lqbbZCWpRKr2ypsNzjWCTK1458OX5bB5PVOiVA7HMUiouDKXqGmrEYaXvDia/wqIWmB2
- A+fQ==; darn=dpdk.org
+ bh=LNIPg2dSS4jXhhK8MqyiNnYyZwPU/+lIyDmHUjXxBN0=;
+ fh=AlWrETRXsmxQwM6CgsTmxQ1VLa6tr3MyI/1QgI7v9As=;
+ b=g7X8HpcgbHviKE+6xOCQPhWtKt2C7LIFSvBl0058nQmB5LSETrnM0I57Xs/5kWTSeI
+ EEezBThhJMWIssnsZ4xj2YCYgGzfjhIscoBn2klgusySHllBklIkPXF1pEex0lm5m2BG
+ 15Iahi4UAFjNEsIL5Zfw6sYQTM8uYdjWPSgq6WscVcTAEpYV8bHTNGvi4y5ro/UY+bRe
+ rYed20ZwJ0hoRbdqDCc41qm3T6RYV4fTe/kB6/RbUxZhMdOf2zzxBOkt26O/4Uf65fQu
+ kr5BaMDa8bLnVrBoBvX9jfgOA/k8cwBYdFWymotxvH8SS1eKYh4dOngYk7xYKJu+vFtx
+ G9gg==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1784629463; x=1785234263; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1784629474; x=1785234274; darn=dpdk.org;
  h=content-transfer-encoding:content-type:cc:to:subject:message-id
  :date:from:in-reply-to:references:mime-version:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=gz4IVLfTcm53kyMaf4ca7StK207I4OQacC8kXGbV+Yw=;
- b=PPvAF0/IUptloPjlBFDwBX1YsDk3N+6Fc5oiW2WxUymoXcTR9xetAdBPM8n5jQ+xYU
- 4yD6Mx9dkhiY2S4DVRB6zqXdJ9XbH2YdepndqrxTYn4cqr3q6ZcFTFp5b2oTx+iU2LDM
- D9LwHuTzWBaRMsxHbg/z0GRxoHWOez6dD6yFiTIt/QxRYvpQvZELtqopMEBLKUC8cDMp
- /8Uizx3nWm62DJD5LglPUQ80bGQazvVeb6FQB//MyScSRxaysXL1SaW6KJ2pr7N7N6lg
- ACOGOoKNdY9PuJttu+pGiO4MihN6fPZka/F/2MBhaK5iv+kz37WREfIiBw+vjXwl6EWM
- rFBQ==
+ bh=LNIPg2dSS4jXhhK8MqyiNnYyZwPU/+lIyDmHUjXxBN0=;
+ b=B9xsuRHZj57SrKEdG/Ini1meygNuejmz88KEQTO/TpsA8hGDHeWD9usDgeFHu58IyU
+ eqf6QoM91aTHoa3BpDEcIdG6NqZexaaEvEkGH/oIHVrUGPcKQOvHS6bK3hQgCAZdYCQ7
+ PXBPGn65E5R4gJ559YeajTgUD6PdqWPj+UyPtiIoSdGDDre7d3IiYiURD5GUNfFpC2JO
+ GA5J96rbepgntAXNXPniJSkClBfrOMy8OQoDOZfLRwEYYWK2wsb9j2ZD3Cirglmcsh6T
+ uY81Gn6Kc9uIbkSUZJPayOr4BK+F1zzuPvpnYiuevBYphwpUv9w6UflMxfExVeydng9s
+ 8KpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784629463; x=1785234263;
+ d=1e100.net; s=20251104; t=1784629474; x=1785234274;
  h=content-transfer-encoding:content-type:cc:to:subject:message-id
  :date:from:in-reply-to:references:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=gz4IVLfTcm53kyMaf4ca7StK207I4OQacC8kXGbV+Yw=;
- b=WFLPozcQ4tYaMYrIjIFm48c5FsMPRSWrlq+qu5g/M3VFpLdBdl/dSRYkz74+/9CDDY
- Ah81dkJV4W4smaygAys43n8ERUswDsK1c6fTnJR2R6HypLENZ89CY1Qc80hDRKh8BBcr
- 3Ks9CpUN9dCcKhiu2G0G0YjCZe3y6OrgPkyLTeGGS3FianrNYh9DI1yKdwyZ40r8ZMh7
- vvJ/SJycjEQjNgdz2HH+juQTbJaVPKxyN857dvLBU1pRWDzyFktA4vMe5gDsW6Eru9ci
- 70hgN6BPbUGmxfdne7KxiZlBDVhOiqIokIdP0YGKJ9gCXbHfr2KDxOYwgsnxTpNWzXek
- 7l2A==
-X-Gm-Message-State: AOJu0YzSTkBLw8+vZ3cMS8rGZ2FBzgO2DF9CbzoUT85iPWIZWTGTkrap
- fCRUFGIGjf3yotkLVcaPklN5tfZTcX3LAUkidOor7MNA1r7Ga7Hg69yr7o2Lq2VpJQSmd0nvWMg
- wM8sYskAZSl0W5PP/k2FN1HVsm7foldg=
-X-Gm-Gg: AR+sD10oClHwLKH1XoWY1lQPuYIfLvSLc6/ylxHJLYYTJmNViZz2I5unSyGv20ieOWZ
- v1aXOtqjb+ylixmmUv7QYscs6Q8+mw99cZQ0xJvgIcW14X+7QIRivjdUgxC+ypKJ0Q40bngZ7xk
- v0MPW7Wx/ccHMyhidhv16PTxYpA4oH28RzS2EQD8dlzGC4TSghp3VasIXF4ZOtwi3SiJnD0wQ+i
- i3+scXa/e+ZC6x+4XqUOR0Ms690pnXgEjAG7OjpOHQxsvoPAo9fzBnpoovYnQTmoI4d6PgbKTZR
- hzqkx80CqYYWUGkbqp1ynQOz9/fpyIL4mMZQqg==
-X-Received: by 2002:a53:bb8f:0:b0:667:e855:ec85 with SMTP id
- 956f58d0204a3-6683bbdf79cmr3263762d50.12.1784629463625; Tue, 21 Jul 2026
- 03:24:23 -0700 (PDT)
+ bh=LNIPg2dSS4jXhhK8MqyiNnYyZwPU/+lIyDmHUjXxBN0=;
+ b=GK8hRj/xAQHF7YHauTvf45rlyLhpkDfmMLuJuvLKI0LPDVgQkXGgRTEyC0bmQ7S6YU
+ 76KrGST7ZwEIORVx4FHSzPKj0cq2j9V82OLRf8+YAuV+LTIskwruVyUwnpxzPqiIiHQX
+ eXoOkLdTqlrLtbb+zHy+5jGCAkEzcf1Wmxs1SxOtct9nkxcwew7AtkJoD/2GhtB34JX7
+ 3396oKV7XFQHNW6CvpB4qHQv5IGoGgbwQhdXCPgA+6ePOE2jdyN2uNRpYsaWJHBefjK9
+ naPFLA7R8/YoQVvnBSmS0RGmOdFXDen7nFgbXaaBiMRV6tactKUqMdnofHud7GBjuC4T
+ MZOw==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RpKyMl4Rot8xrgqFCPznSb6CnJq3npgvKiobbockRr7Z2aQSX1cT9/z9d4dOkZH/gAsWuI=@dpdk.org
+X-Gm-Message-State: AOJu0YxAYETAyu+q1FGbkA8wk7vmLYccgeIqSnP2LNBBgLK58jf7wUBe
+ 8GaVHsfdOmU18JILYLITw3LvSbJS7sbAezCCfG7jHsVvJSA2YSmUOeiGKhO7za+PN2FpVb9e+Rw
+ fNQBfaLMDJQ77yf0vSVG070pYIudsaCk=
+X-Gm-Gg: AfdE7ckcvzONskiVHFhliYUfvLpFtTeSRL9m2YovK7yTucA4UVfOhkoEYcBJxZWnCu5
+ rDV89ltPvl1L8NLcYKhYe1QWgde8TCLl92T1BbLKdiG3icMWVaonYcGt5DTfaU+AVvPWFE8sK+z
+ OfYIOVlGPzLITgcQrTvpxYnpbthhT/T9Kz0pXCovcN00PLIYcnaxG+tRn+MamaUY0WRPumX8tgZ
+ NplBophoWaOUC6o0S4pvnE9RUh+lW1IOkpgKmrtk0auC69TL/pbENTaYxw+lvM=
+X-Received: by 2002:a05:6808:4fe7:b0:4a1:296:adec with SMTP id
+ 5614622812f47-4a4d01de8a2mr12281729b6e.15.1784629473726; Tue, 21 Jul 2026
+ 03:24:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260717090121.1859773-2-rjarry@redhat.com>
-In-Reply-To: <20260717090121.1859773-2-rjarry@redhat.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Tue, 21 Jul 2026 15:53:56 +0530
-X-Gm-Features: AUfX_mz7FWox8rm--xdbBaloHrLqvodhzcwWnIWt5gE678ICSQ0N_-r9FNGUlgs
-Message-ID: <CALBAE1OmG3d4=63YfqYCs+ZWWVzitpCcTBRTjr5yhLA-RZGgmA@mail.gmail.com>
-Subject: Re: [PATCH dpdk] doc: announce rte_graph ABI changes for 26.11
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org
+References: <20260603023207.31974-1-stephen@networkplumber.org>
+ <CAJFAV8zhrp3ke9k_RnwG28x-M8MzhK7R+=BKvc_+piZ+a7VcfQ@mail.gmail.com>
+In-Reply-To: <CAJFAV8zhrp3ke9k_RnwG28x-M8MzhK7R+=BKvc_+piZ+a7VcfQ@mail.gmail.com>
+From: Nithin Dabilpuram <nithind1988@gmail.com>
+Date: Tue, 21 Jul 2026 15:54:22 +0530
+X-Gm-Features: AUfX_mzpflOjxyAPh40d4plh9392buVd0vVU6tAo_yHJVYOBRJVm8MTOyvs7l6w
+Message-ID: <CAMuDWKQr7XaZdwpF_-DaNgOk6POCukygVyBqbk3Hrwggygw1OA@mail.gmail.com>
+Subject: Re: [PATCH] doc: add deprecation notice about upcoming change to
+ ethdev API
+To: David Marchand <david.marchand@redhat.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -95,49 +98,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Jul 17, 2026 at 2:47=E2=80=AFPM Robin Jarry <rjarry@redhat.com> wro=
-te:
+On Tue, Jul 21, 2026 at 3:52=E2=80=AFPM David Marchand
+<david.marchand@redhat.com> wrote:
 >
-> The graph library internal scheduling will change from a circular
-> buffer to a topological bitmap. This affects struct rte_graph and
-> struct rte_node layouts.
+> On Wed, 3 Jun 2026 at 04:32, Stephen Hemminger
+> <stephen@networkplumber.org> wrote:
+> >
+> > Inform users that rte_eth_dev_get_name_by_port() will add a size
+> > parameter in next release.
+> >
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 >
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
-
-
-Acked-by: Jerin Jacob <jerinj@marvell.com>
-
-
-> ---
->  doc/guides/rel_notes/deprecation.rst | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Acked-by: David Marchand <david.marchand@redhat.com>
 >
-> diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/=
-deprecation.rst
-> index f5c12cc74762..6183f33b893a 100644
-> --- a/doc/guides/rel_notes/deprecation.rst
-> +++ b/doc/guides/rel_notes/deprecation.rst
-> @@ -61,6 +61,13 @@ Deprecation Notices
->  * mempool: The object array in ``struct rte_mempool_cache`` is oversize =
-by factor two,
->    and will be reduced to ``RTE_MEMPOOL_CACHE_MAX_SIZE`` in DPDK 26.11.
->
-> +* graph: The internal scheduling mechanism of ``struct rte_graph`` will =
-change
-> +  in DPDK 26.11. The circular buffer fields (``head``, ``tail``, ``cir_m=
-ask``,
-> +  ``cir_start``) will be replaced with a topological bitmap scheduler.
-> +  A new field will be added to ``struct rte_node`` for the scheduling or=
-der.
-> +  The graph walk functions will process nodes in topological order using=
- bitmap
-> +  scanning instead of the circular buffer.
-> +
->  * lib: will fix extending some enum/define breaking the ABI. There are m=
-ultiple
->    samples in DPDK that enum/define terminated with a ``.*MAX.*`` value w=
-hich is
->    used by iterators, and arrays holding these values are sized with this
 > --
-> 2.55.0
+> David Marchand
 >
+Acked-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
