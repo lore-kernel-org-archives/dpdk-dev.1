@@ -2,52 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 613DCC4453A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Jul 2026 09:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFDAC44539
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Jul 2026 09:44:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17DC840274;
-	Wed, 22 Jul 2026 11:36:07 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id C37C2400EF
- for <dev@dpdk.org>; Wed, 22 Jul 2026 11:36:05 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=tFASn0rUp1oXne5EkoEhawao+rsyMkBxgSOtMOJhTbw=;
- b=USMuTZkm7ESL1AzPP+ceTnAVoI+CpF4kO2ndhwUQYkBsXcunuZqX/sa0l611UcVZweLn4Fsk/
- Xq0h7GwGEcBQxukBqgkVb520SdqVAObmgHUM4CxH4KvJy45IzzV/lwGqAyNWVEEpJt4tSVs5G82
- /1NSllY2xZrdCkS+d3bF9DA=
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h4pyb4zf1zHnH7c
- for <dev@dpdk.org>; Wed, 22 Jul 2026 17:35:35 +0800 (CST)
-Received: from frapema100004.china.huawei.com (unknown [7.182.19.128])
- by mail.maildlp.com (Postfix) with ESMTPS id 9C7F840570
- for <dev@dpdk.org>; Wed, 22 Jul 2026 17:36:01 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema100004.china.huawei.com (7.182.19.128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 22 Jul 2026 11:36:01 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Wed, 22 Jul 2026 11:36:01 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v4 7/7] doc: add missing headers to doxy-api-index.md
-Thread-Topic: [PATCH v4 7/7] doc: add missing headers to doxy-api-index.md
-Thread-Index: AQHdGSGiDCymJ3o79keWWJFJmf3QQ7Z5SGRQ
-Date: Wed, 22 Jul 2026 09:36:01 +0000
-Message-ID: <d020421a790c4c88b2e19bbb8243a83c@huawei.com>
-References: <20260707085048.15295-1-marat.khalili@huawei.com>
- <20260721145841.7424-1-marat.khalili@huawei.com>
- <20260721145841.7424-8-marat.khalili@huawei.com>
-In-Reply-To: <20260721145841.7424-8-marat.khalili@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.78]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id A836B40274;
+	Wed, 22 Jul 2026 11:44:12 +0200 (CEST)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTP id D7E73400EF
+ for <dev@dpdk.org>; Wed, 22 Jul 2026 11:44:11 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id 442AFEC0185;
+ Wed, 22 Jul 2026 05:44:11 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Wed, 22 Jul 2026 05:44:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784713451;
+ x=1784799851; bh=U8EJuG9aYBavDoKDnfZ0nZEFWFR0WgzW9bbDgWZDf9g=; b=
+ QfieSez+HjmmMR/p4ZNJde9NVHnfMpdC/P3PPzpwCNTgJCE9dYY7zci6ofR8glPe
+ dHdGEYxCFwi1nw34L+0wsllEOu+YXbYSCg9jaRxuzKPGBfOEipHYRkTeR1/1L0Ec
+ PVCZc8+t2Q3BgHgns10MY7Zuby/MARFfWll/dN+IBMTnldT7xa8KnVjHG2ytt8KO
+ QPrxl/mjuqEoB7O6TGNwSeCpQH2MI5d2vdN7nSpNTrobzakpgZuv9yGj1wzgIfB6
+ 0RYklo2D4Ds5d+s5J7N8V05WTKWIHe2NOnubr/3ZknbilPIXQdtnGZm+0IwAb1Ir
+ 7TV34CZBRN3AaPgvfsDK9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784713451; x=
+ 1784799851; bh=U8EJuG9aYBavDoKDnfZ0nZEFWFR0WgzW9bbDgWZDf9g=; b=c
+ zVWLn1TWqw2M07HH6JI2acwXWgsmIE2QTqpZJZz78fCVC98wj6Vi7RnygBRFNlVb
+ kbnnCFjWHkTGuZomc/8Sd/38z3ZC9EDWctqPQTYf34jYdjboqVEdBN4Qp6Crbx52
+ RcSNdA346fjzFZJwqb02ouWyEhrgeSxbHnTyZtFdweTZl/xx+egrq2+nFs45UkGC
+ LYIYTRHvQVgoRVQBopixVAWpJRiFf2iNOsoOqLj4P1Nge25SvH7Btidgtk8qHQNp
+ 8GC15h3/SJzwvmmmZOfZLhzAkUZ2IdTWVDJvS7i7Th6mOQlBA1emCZ8rPN3FQ4HB
+ RBFdVfQAkAVYVWgvQrg0g==
+X-ME-Sender: <xms:6ZBgaqlzLALKA2pBxKVHKYo0SVlDTQCDarCFjCu_zIIsNuhjh-JUSg>
+ <xme:6ZBgaswz05naxoQqvcJKyWI_LwNSOnpI9YEWTR3zCjmREuT9UGxQIt1W3hyuocfNL
+ zna3dxoP5bnTMH8qt9hnScjmtsrF1ALE_0MQCorL2-9yCBfFvE5Vw>
+X-ME-Received: <xmr:6ZBganrMjvXyL3teX0NkrKI3xsAKq_GwkEUD-F0vLxY_STwfabO4wOVDaJaKpZeg-bHYzJXidiwExzIO-tkoEIwPxQ>
+X-ME-Proxy-Cause: dmFkZTFOoHVJomPAXSAGej36zznuA7kcO4Fmn9OIHamBGaalOsWP6iv6uIjpsxx+MBTOua
+ B1Uk++aQqTm92pqz4nwYUhkDyqqPrmwFXQoSOCBPAuDo1qacxjX4OZH6ITE9CEA7P9AzpX
+ RKIlri5Wbt3ohGuz1a7dAXOYzcsNsY3pSAkvHEWba97rfAhUVcD1nF+MLmiqtI+AIpSvJR
+ TWZE4XwkpbML2mNvOIyzla0C+0TRKVwUm3Vc4N6q3FbUEs1rgQ2CzbApA26ofz5ba+HrD6
+ w7ZUVYPjHNbKBPSa4Yk5ymEBBxIscNvJ5forW+d63m76a1m9FSpCA92v47pwmV8mOSuclv
+ VENdReEgOipE+rBjIwYH6e8sKN5q4F6cwtdiWlIzpTn26b3hQUDBjM9Wuo/hdUV+/ndWhr
+ 16ung5KpG5ZzMVaI9ehoo+JwKPUA9cCKVYQJy2++HRn/bDgQmyRX9ilAE4sLKwcKFbkMmY
+ doDrVEGYs/HqJ/ryKD/lljY7lvnNd3wQe7bLhG9F13Aro6xXhP06Kv29fKtboFaT+bmWqt
+ L2J99mTpu1T4+h3K7ms1NtnRtzmIpWK/NsKHzARmxMU9W/n+3uC20cht/0OxaW0a2oRghd
+ 5KXMhoNvZc7zRvWSrny6/WBk/K4aXiCias7Maesgg3wI0cNT6nbZbMTPxUsw
+X-ME-Proxy: <xmx:6ZBgaj6wyCS44GRtNs0mYFW8i3ZgX-WdSQbEmqQ7PcPtNn1s1KKJhQ>
+ <xmx:6ZBgameaNiDQbTCLXeZYZqGA3MhxKwdxVgwO8FrlG4R38av507YUbw>
+ <xmx:6ZBgag62m_0Y0mkyFeo-AkIGA2oziA-iF-OxsIl1onoimfDrBwMYDg>
+ <xmx:6ZBgalvseSFoyMVAwNBSFn2Y_mHzdHsJ6QUUfZtPOWPcnpjEcU4vEQ>
+ <xmx:65Bgaqwz_Zc7UPUeE63_It5qrBPyRr_C9GQFALlbt0pquIF3Ot-2L8zY>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 22 Jul 2026 05:44:07 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
+ David Marchand <david.marchand@redhat.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ Marat Khalili <marat.khalili@huawei.com>
+Subject: Re: [PATCH] doc: drop recommendation against bool in structures
+Date: Wed, 22 Jul 2026 11:44:05 +0200
+Message-ID: <dr8OTbOEQGerczIWADcBzg@monjalon.net>
+In-Reply-To: <20260720114602.787429-1-maxime@leroys.fr>
+References: <20260720114602.787429-1-maxime@leroys.fr>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,4 +90,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Recheck-request: iol-intel-Functional
+20/07/2026 13:46, Maxime Leroy:
+> The coding style advised against bool in structures, citing space and
+> type-size concerns inherited from the Linux kernel. That does not match
+> DPDK practice: bool is already used in over 1400 structure fields across
+> the tree, including core APIs such as rte_flow. Drop the note so the
+> style guide reflects actual usage.
+>=20
+> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
+
+Applied, thanks.
+
+
