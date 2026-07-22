@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E337EC43458
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Jul 2026 02:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0298C44536
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Jul 2026 20:14:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BFEA540615;
-	Fri,  3 Jul 2026 04:58:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D9258402E4;
+	Wed, 22 Jul 2026 22:14:02 +0200 (CEST)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
- by mails.dpdk.org (Postfix) with ESMTP id 3A45D40291;
- Fri,  3 Jul 2026 04:58:54 +0200 (CEST)
-Received: from fout-b1-smtp.messagingengine.com
- (fout-b1-smtp.messagingengine.com [202.12.124.144])
- by mails.dpdk.org (Postfix) with ESMTP id 596B140288
- for <announce@dpdk.org>; Fri,  3 Jul 2026 04:58:53 +0200 (CEST)
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
- by mailfout.stl.internal (Postfix) with ESMTP id 8A3E41D00144;
- Thu,  2 Jul 2026 22:58:52 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id 3BF5A4027C;
+ Wed, 22 Jul 2026 22:14:01 +0200 (CEST)
+Received: from fhigh-b2-smtp.messagingengine.com
+ (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+ by mails.dpdk.org (Postfix) with ESMTP id 917994014F
+ for <announce@dpdk.org>; Wed, 22 Jul 2026 22:13:59 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 1AF867A006D;
+ Wed, 22 Jul 2026 16:13:59 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-12.internal (MEProxy); Thu, 02 Jul 2026 22:58:52 -0400
+ by phl-compute-05.internal (MEProxy); Wed, 22 Jul 2026 16:13:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:content-transfer-encoding:content-type:content-type:date:date
  :from:from:in-reply-to:message-id:mime-version:reply-to:subject
- :subject:to:to; s=fm2; t=1783047532; x=1783133932; bh=h+A2nFB2NW
- +7Lg8ovlLaKT8XdmR8vEc+pmnkEmdpOXE=; b=Osl3OGOS0g/9IEBISZq7gLFqVW
- hi7u1lKOGhHkr8C0PMVXVr55/8hUfYKLDTzWK88FHLOesNYrc2ZiNJjasH2f/HVP
- G41SPHO87k3DZfoLbliIVRO74bS80lssCC7/ojpgXxlVOPn/cMSkS515o3MN7o6I
- QvbAfP7LDVomxtZt4y5UcD3Y8TiDIpfRzl6vxV5hHjezT6JD7QsoRd6oCqez/Lve
- 5qRjnWIQbl/1ppCuzaf/MP20jwd9isrYCL9e4C0tr9TNtY+XEZGqvD6QbRU6lLpP
- e6x1FlhNQLjW/9Vzyep8p5L/50WLi01PHBA/Utyioif7VEFdO5o6An5wudLw==
+ :subject:to:to; s=fm2; t=1784751238; x=1784837638; bh=u3wOHXNPvo
+ Ahhswz27H/1ktXbSr6jBpWzX9ZWShSad8=; b=ZIX5iXO7YzmeEt5qvPTaBdCpba
+ 9KRqupyqoyLFjHigN9SwquC57TRJ4koI4KsVrpd2wHbe4nrd0KWBCdZSAl0Y1kX7
+ linuK2dKHdNtAiDT+U796A0wGZswcTq6HKF+tISj0m2SqYe/bIsq7D5hUsPIFRA9
+ ZUpsqhkzLv3yqog6bvSILrSfOgUiTfO48PbX+qsUCLGkbajSA2PU1nh0C3rzj6KV
+ SjS+fjWHYcgT4vZUqXklEv4mEJyXjAjDar1CFPsuRjAJlAN5z9Lod7haE3/CXYCl
+ w4ODdNJYOng1bQXRz6nwzzDL0DN/my3tR8n7F78BB77aD32Zpwk/x7nibdyA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:content-transfer-encoding:content-type
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
  :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
- 1783047532; x=1783133932; bh=h+A2nFB2NW+7Lg8ovlLaKT8XdmR8vEc+pmn
- kEmdpOXE=; b=MxbnnmFgFPWzGv2WsmRJHVnuAyGiOkqRBcn5Gqkj8h9el0Bvi5g
- xhn7HP/lUty+do5HYRpxHk9GZe2/Q2aVALncyJ3lZs3YhjMdzkHhVDg6omy+PxH2
- 9zyNSrLgDYRDRYvBjgALzD0bP6SXSJUVigTUIEbTXnAQVq9RSsP2mlBoS5URg0IR
- THT5B+txDa7XsXjLsup/xoN9iW/zlPnNjO6CLnBCXYM2EmJGXIq2Z17TGeT7bCsr
- VnZYqzKHKTuaASP3xYuiY+3CKPGWbHLXsXwLKuopdIlfVKguN0jI+0ASRLXJOSxM
- HPZ1Tb013RnvPhvCbLbGK/RZnvFTmM/s/rA==
-X-ME-Sender: <xms:bCVHageSOGuaHk27rQPR2iNvxStzII9iX5Li0jQqWaFSrAesV-2uxA>
- <xme:bCVHaoEIWp0O1SRK7mR8Nk2jYI8dmL1SXOG6zYKgBkEMpvL3jszMw3S2GvLFMS286
- BryEOUQQ3zpwqNH7QY2AtWT48K1tNTuq8V7tcJMlGwwvu7XUNMW-w>
-X-ME-Received: <xmr:bCVHaslRlqDHJK3gAO02r8f9mKwGmurjZ9gubdy94MTuOobP9m66Z_8-yOc7y154ZQPMP2PZ17dG6wyTW4xvrnLiKg>
-X-ME-Proxy-Cause: dmFkZTE8Jau3sIPxedChChkRPi1oAj/b2x2ZLb3PNuAnVj8QbY4Uxu3F7ooexOVNXA1u7p
- Ujvta9TIckqSVPun8DQonncYBDuMUZD1KatiYLO05wDeXmq+iQ33iuninz1sl2NcJbSbot
- dc/PXXeZ0U5D36re+CrPZnZaSyPl//LpafLeK9UXithu3XbiWPrkdZeLdzDvL34Tim1EbD
- h6En3rklXSFWqYutwJadXSGjikj1mDerWpNJwtRWl2kKpsfzPL5xWCsyAG6NakSTImV7Y7
- KcpYhd3pjBRF/0KSls5reKAdw712MBrjImAuSEXa1FkeM676uwBLpRhgyIc2Yf84KP+RSb
- bjj49yTxWkYH/XpwBJTlqgmp/kOn3J0ej45hgfkninKS6tJ80yj6iSxHXs0dil43WPBRby
- SA92hK2AIXzgx7GVaJen2ii64suOcl6696hit+LDNcd9Fv6vjmOW4AqELDQpe1BR5g5Uy6
- CrE+yCgr5lljTJMiQ3eu86H4OzeWljwZ4Nn7wG9q1/NVEJHtKuP+rDVQ79U0sPkWyh4AYm
- WZhIN52/dAKwIoOIXStaqEZ36iWAtaIG9hiMeP/b7ov1J5KclOtD5jaP0YcCkw1y3rT3Ga
- 20Lp66XQHZ8iBQYSxw/2Axglu2GBgjfB3xklysM5J2r9MTR0HVVYSCySiQXw
-X-ME-Proxy: <xmx:bCVHaix9Z8eSsSmL5IwpApVsnPDNtie8iGbwzbeTddjqjnjZBEyXZg>
- <xmx:bCVHagQ_OOob8xNc7UEYYf99UEwFl4L6da1RrWkc4PVI1aFjTIwplQ>
- <xmx:bCVHatvttTrGOMjTI_JxcGjSkdCWp246t5Rezlhc9NGMZzIfLWs0JQ>
- <xmx:bCVHaqv9MUSdpL3HuHAcRv-NJ_QY0mMNa_ZYsotbXfzUWeRd0oPDjw>
- <xmx:bCVHah8rDYnBApe93BEoihwS9L5D5_rjf9SEHHP8KG2kIkBbs6bJtEpZ>
+ 1784751238; x=1784837638; bh=u3wOHXNPvoAhhswz27H/1ktXbSr6jBpWzX9
+ ZWShSad8=; b=mdXLJBHDQwe2KH8zSPp6zyUfWgookUzx5jO19s/vVcj1P24KbmF
+ O0NOWh0v2vckc4KUk0+o9LTPTW8F8dKkFziQOWd9C7Eq6ezxspHMO+UdSben/XVb
+ fSyT52SMxYRUpu1xuh4C2zkw7XKIXnhZjJPZbWY4qzqxHcJXz8QgS+GK2qc0W5PS
+ qZo+eCe5EQLFuzxThCOOr8oGpp1ary5fdwoaXwVAT/W/O7gRuANA38IXInCwu4Hm
+ 9LvPe3/jAU10UUrgbWLF6B1f1ImG52VxVljabXME78Hclx56zMbrhXf4SE478db8
+ y4MQk+/ehfwEAg6WBMcwxRbcAJUgnuaf4TQ==
+X-ME-Sender: <xms:hiRhancG58LK-9SdOBQxtZqjcYiV1SU-Y894ZLRXcVTUaPyQ3szNLA>
+ <xme:hiRhajE8fibrSTks1ViFfqa6JmWzijqJxU8ovrBWYfTbICLVcrTMeZJPbpYWsZEPd
+ nO3y-2dpeBpksd8zHO_qux6eKbre0tDksjvY9L_mQjg9nu2-VCuKQ>
+X-ME-Received: <xmr:hiRharlzsNG0dRCKclirK2ytkn-KCUy5yTANw_HBVSf4_n74LZsWumzDj-WPBk2G93-_AiX0DqbhBgVCdrEHgcvKyw>
+X-ME-Proxy-Cause: dmFkZTGn8K+rOF46A30++tAip9uguJGChFC5rdp21P/EE6nK/jFNeOAg97I1NyYfhEEu/w
+ XYNKymtTmHG5sDWvXLR8IqoxAmioZz7v+Iob3uO7I2Z9XA6c6TX2OQPwUiHA3VzP5NnTa3
+ UctxOQwLABTpAyOquKIl9g4usZgXZYFUMU9HH4QjDR32v5AvBT085o7BTtIRaO+hgJEINB
+ 4QMb0fEdFbjR+FRm4QFbEqXWLCJBbSdcGs5t9Cw+nqG2C7jeHFR1mSCRaIimj+xzNl/PNG
+ C8t/RjWllLIAgrOOFAtWMWtJhj6M+jsVN4TnbsUf8WwrcmKgBtKhDsIVepyh8kzWc6NiLu
+ r1GdyowylvRssdC7/2Fm8EHAY0aOsccUwzFcryTcNhvaIZSDa9FNqLvShHNxLQ41QuLkfG
+ k2qptYfhSh+mf/yAFZevCrnqxWciFfOYYD+iDfE2j0DsWZcQbZINAje+K9ZRwDgUCq8kPG
+ +kapyJlzNRIPeCtK847qlrNrpl3eEiVuYhnLUPjftqqu6sX+tipdf3yUfxVX4HaOVLyoKU
+ iVKI1H2Mea1P1H08wleAG4t3ByWRe4FNIkuXocWgD79UwzJVE9X2c8pqJUeoCww3mV7qne
+ r+EiPMn9OHnNiXh4w2s8rMbmssDIAdWk247sdhSj8jb/haW/AxcxNaGhyGug
+X-ME-Proxy: <xmx:hiRhalyQRZOv6NEwbDDyGrRqCKOQTo6kcnOtrEd7ae6AYBzHfksUeA>
+ <xmx:hiRhanSKQ436wGX6hC6JuwoIg9v96eZzDECCxn0gcjp7UU547xsx-A>
+ <xmx:hiRhaousi3dz937oraO1757lHDwnGQ4JSNpWtLV0OttEiNxOA2S8OQ>
+ <xmx:hiRhaptOxp5AhcyhSytdJGIW1AYyfwAbNheisObqHMqKTi00AlEOHg>
+ <xmx:hiRhas-qZQ8XoddCO3m6ojMdnI61cNmOrzJAJe1mk8YcFULpOXZUChR_>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA for
- <announce@dpdk.org>; Thu, 2 Jul 2026 22:58:51 -0400 (EDT)
+ <announce@dpdk.org>; Wed, 22 Jul 2026 16:13:58 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: announce@dpdk.org
-Subject: DPDK release candidate 26.07-rc2
-Date: Fri, 03 Jul 2026 04:58:50 +0200
-Message-ID: <CP3kiV_jTf67aEg8Usilhg@monjalon.net>
+Subject: DPDK 26.07 released
+Date: Wed, 22 Jul 2026 22:13:57 +0200
+Message-ID: <nkvYuCbUTBKN7caG89ssLw@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -85,20 +85,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A new DPDK release candidate is ready for testing:
-	https://git.dpdk.org/dpdk/tag/?id=v26.07-rc2
+A new major release is available:
+	https://fast.dpdk.org/rel/dpdk-26.07.tar.xz
 
-There are 289 new patches in this snapshot.
+It was a small release cycle:
+	868 commits from 132 authors
+	1388 files changed, 99644 insertions(+), 21594 deletions(-)
 
-Release notes:
+It is not planned to start a maintenance branch for 26.07.
+This version is ABI-compatible with 25.11.
+
+Highlights of 26.07:
+	- option --pagesz-mem for per-page-size maximum
+	- option --no-auto-probing for no device at init
+	- less mempool cache misses in run-to-completion
+	- peek style API for staged-ordered ring
+	- RISC-V vector paths
+	- PTP helpers and clock relay example
+	- selective Rx API to save PCI bandwidth
+	- vhost memory hotplug
+	- pcap driver enhanced
+	- LinkData sxe2 NIC driver
+	- extended BPF API and hardened validator
+	- real-time telemetry watcher
+	- AI review helpers
+
+Important note:
+	Applications may need to retune their mempool cache size
+	after upgrading to DPDK 26.07.
+
+More details in the release notes:
 	https://doc.dpdk.org/guides/rel_notes/release_26_07.html
 
-There are many fixes and new drivers features.
 
-Please test and report issues on bugs.dpdk.org.
+There are 49 new contributors (including authors, reviewers and testers).
+Welcome Adam Hassick, Alexey Simakov, Alok Mishra, Andrea Panattoni,
+Arin Kharkar, Borys Tsyrulnikov, Chengfei Han, Chenna Arnoori,
+Claudia Cauli, Dakota Sicher, Daniil Agalakov, Daniil Iskhakov,
+Daphne Priscilla, Dawid Wesierski, Deepthi Kavalur, Denis Lyulin,
+Denis Sergeev, Gena Tertychnyi, James Raphael Tiovalen, Jay Wang,
+Jie Liu, Kavya AV, Koushik Bhargav Nimoji, Linhu Li, Marcel Telka,
+Marek Kasiewicz, Mark Blasko, Mateusz Fryze, Matthew Gee, Maxime Peim,
+Md Shofiqul Islam, Michal Sieron, Mukul Katiyar, Ouyang Hao,
+Pratik Senapati, Pravin M Bathija, Raghavendra Ningoji, Rayane Boussanni,
+Samyak Jain, Shuzo Ichiyoshi, Siraj Luthfi Ananda, Sushmita Hoskeri,
+Weijun Pan, Wenqiang Chen, Ye Chen, Zhiguang Jin, Zijian Li,
+Zoe Cheimets, and Zongyu Wu.
 
-Patches to improve tooling, examples and documentation are welcome.
+Below are the top commit counts per employer (with authors count):
+	230     Intel (27)
+	136     stephen@networkplumber.org (1)
+	 62     NVIDIA (8)
+	 60     Red Hat (3)
+	 54     Marvell (18)
+	 48     Huawei (7)
+	 32     LinkData (1)
+	 31     Free (2)
+	 27     Trustnet (1)
+	 27     NXP (5)
+	 25     Broadcom (8)
+	 21     Google (4)
+	 14     UNH (3)
+	 12     Microsoft (4)
+	 10     SmartShare Systems (1)
 
-Thank you everyone
+A big thank to all courageous people who took on the non rewarding task
+of reviewing other's job.
+Based on Reviewed-by and Acked-by tags, the top non-PMD reviewers are:
+     72     Bruce Richardson <bruce.richardson@intel.com>
+     48     Konstantin Ananyev <konstantin.ananyev@huawei.com>
+     41     Chengwen Feng <fengchengwen@huawei.com>
+     24     Stephen Hemminger <stephen@networkplumber.org>
+
+
+The next release will be 26.11 in November.
+New features may be submitted during August:
+	http://core.dpdk.org/roadmap#dates
+
+Enjoy the summer!
+
+Thanks everyone
 
 
