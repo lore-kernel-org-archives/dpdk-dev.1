@@ -2,73 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFC7C44539
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Jul 2026 10:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C22C44536
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Jul 2026 12:42:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C5BE40274;
-	Wed, 22 Jul 2026 12:10:44 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 16E33400EF
- for <dev@dpdk.org>; Wed, 22 Jul 2026 12:10:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1784715042;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=J1VS573HoU0XpOOB3QVPkV69SvbzsghoACz87xqnFOk=;
- b=gWauz2/DIq+c2RJwxqaqdbWXtmaHFOxTqfKGtUD7egUSO9L9p9mExgwkxuDzWrSYtuxztd
- SVbcnYmIEmYwc6QNs8qszpz7rC1mQl6gtfFSVrDnOgQMPBLT2fUz+NSOE8KlJ7l5dIJWYG
- 9lLt42ZeO6rIDQ39dxaRzIi7OhRsCoY=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-JTjBC8-kMWu9vE4ROPV0XQ-1; Wed, 22 Jul 2026 06:10:40 -0400
-X-MC-Unique: JTjBC8-kMWu9vE4ROPV0XQ-1
-X-Mimecast-MFC-AGG-ID: JTjBC8-kMWu9vE4ROPV0XQ_1784715039
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-5aeb72bda2aso6746289e87.2
- for <dev@dpdk.org>; Wed, 22 Jul 2026 03:10:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784715039; x=1785319839;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=J1VS573HoU0XpOOB3QVPkV69SvbzsghoACz87xqnFOk=;
- b=l105dj9QawqSIwOrxazCf3qBxcfaC3eL4wEbdFittzJiM3Z3XBmPzfQAXFFb6h8llk
- skiQCMOquAGKMQ6EWhqj+5aGMegoTdcHO/Jg4RGOMpHFuJZDKNHIcSPAH1HXZZK2pNO6
- nnAjEY9BgHBhiZfdXAljFQNgVUquXDGfjVIHtNszGvcADpdQzop3XAsSoV52hNn4unjy
- pZFsXfvkDvJw8TZIiZIqFMfAwVZ0uDD5UYpFnrO7ki5xNAE8RQnpoWuWEnrmp/+Si9LD
- 59OxRuEj8t8O7DfU/BlVgOXL4o6wHFcUhtVm9LxhF+byE31QJAZZEVRigC2+FfeaSo7/
- 1tXA==
-X-Gm-Message-State: AOJu0Yxna4qo2Yyn5RKMPE1CiljQVZfEc3+F5dbOzqN0G5Lrgk/gWMBI
- ejdLM+kVS+I9QkaQRqb+UqCi41JuwHmnAzuNQgPUv9mLNVJRVYY/fmBAqeOS85QzWx8nkUtVKBk
- wDQZCHw8YjYjl77PiQ6aS9rE342c/trp3RLWd/ucCqWDWxpUmcsLjh3RpKsoL8DR2iKyBB+z28K
- bpTrE1QRXS0wcbKwRp4P4=
-X-Gm-Gg: AR+sD11cEN8Ye9a3igYqC2trQQr+4EwXrqZVASfROUsR/UN4+BjFzQOZzNmBSlzgqAj
- rfRvM4LtFqfgF/tsnHYunq9/UZRxICBVUd03bRFaQ/1eaEGBOj4C4ztKWPNNqyoUm5mGzdgBEri
- oSfGyWPhXnAdt4OKsj4RQgRVXWLYkG/d/aNmLvL/up7Dv/AHRHiWjEW+AV3gMk/6zPflQbqr35K
- 8XvbkB/qg3gBdYBxU+QY+WvNnlrNTHHPiSVYpuiUjkZjs9K
-X-Received: by 2002:a05:6512:b93:b0:5b0:22a6:6b13 with SMTP id
- 2adb3069b0e04-5b28f6eb581mr5425229e87.0.1784715038832; 
- Wed, 22 Jul 2026 03:10:38 -0700 (PDT)
-X-Received: by 2002:a05:6512:b93:b0:5b0:22a6:6b13 with SMTP id
- 2adb3069b0e04-5b28f6eb581mr5425217e87.0.1784715038310; Wed, 22 Jul 2026
- 03:10:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260721130814.2950332-1-ciara.loftus@intel.com>
-In-Reply-To: <20260721130814.2950332-1-ciara.loftus@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 22 Jul 2026 12:10:26 +0200
-X-Gm-Features: AUfX_myakRVCnH-fUkJB1pn3NUPlGG2hKB_58QOxpws8r-mC9cS_6SC0JH09qxk
-Message-ID: <CAJFAV8y4HTMugLHKUaynEQ7qxqkAY+F6RZG-yUQb6ODLtM4FNw@mail.gmail.com>
-Subject: Re: [RFC 0/2] iavf post-reset state restoration updates
+	by mails.dpdk.org (Postfix) with ESMTP id 671F740274;
+	Wed, 22 Jul 2026 14:42:02 +0200 (CEST)
+Received: from fout-b6-smtp.messagingengine.com
+ (fout-b6-smtp.messagingengine.com [202.12.124.149])
+ by mails.dpdk.org (Postfix) with ESMTP id 6D7D840270
+ for <dev@dpdk.org>; Wed, 22 Jul 2026 14:42:00 +0200 (CEST)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfout.stl.internal (Postfix) with ESMTP id E81521D0000B;
+ Wed, 22 Jul 2026 08:41:58 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-11.internal (MEProxy); Wed, 22 Jul 2026 08:41:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1784724118;
+ x=1784810518; bh=6pBU2C+WIwMxAuU30LSPjFgbyxgrn0wXxIudJQ+N9e8=; b=
+ Gf6QpUnn/ENtA/iOIDkF4ewBZHP5XejcbxHGuxOn5G25YEh2mQqSiLotyKbMMoSE
+ e36ySuutNqd9iYQ7BwQ4QCtojLmZPfZaw2vgbIlsvCTyVjlmuSvgRud8dCJ3BoMP
+ x8Ba1YppkfzcUYvsUB7EAmwXsjZDTFVaT0xYDfCNpWWNNvVpPfqi8HkWzXF7JQ05
+ OuK738cvgSCyTqwKDGpqrgw55nJXuTHwOtmMm5FgL53ajTXyG3GLtv6c/AJUPaeQ
+ EE3YJHT86L+n+mnReQpMHcn8l+dV5BRDPzZLM+vjuh3C35SGIDAfQ4/8B+Plp+5d
+ /h93moVv3zOT6KBZqZfeYw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784724118; x=
+ 1784810518; bh=6pBU2C+WIwMxAuU30LSPjFgbyxgrn0wXxIudJQ+N9e8=; b=O
+ dbVDuFyAlQTukAUHkM9sMwTwuA+/GS0JpHlHZ3TQeKI15RQ7d6/MqGyA81y1/EUE
+ jCXMGNhuH9QwBRbDUmLucMYz/yS2HrsWnEAJkoGW1Z5Mgk1fH681S8Ms5LVLFjBs
+ DYYaTXdb3B/3uI6p7O4HViAGsNIiw/Vl+V+tZjWHzvRVIqKLdawdJhAf37AHkl8R
+ M+ZY/MGvpntydzjViVkygvggpu1V/k+y3PBpf3YK1c8ojFE9mVO9u/zyZwWIoaJY
+ YIKhvMUmEKcIii02llro+zxmscO7bxqqVaTi4yVxzVnc6mmGraj0bj0wtwqBek1Z
+ rAAkB3tstLzljMgt1mJNQ==
+X-ME-Sender: <xms:lrpgauVYZ0uEncLtHsn6CwBVaNHKiltLMZLQlsb8_GbWeeyfHNhVZA>
+ <xme:lrpgamDlkMxqbKXUlG6IGwm5FotKyrVr_Q7-fKV_C8KPYF1dvF1GOipoC_Oj7HtjM
+ FcgqkaErseUVPx4hKjSMVeSObx933duWuW_xiYQWbthlnHWsS15cw>
+X-ME-Received: <xmr:lrpgal79MITmJsgn6BlsGPpWUx3GFAwA9DUC1_TjZxOejCFTfaFRWbeyfntRNcdDEd9njiWIHUrzvgTmSRO2xhwv_w>
+X-ME-Proxy-Cause: dmFkZTEtGhMGAwCL1B5VtO8K34q2QuVVm1KEy33dIRCpAbl768uNKOVLBc9j3rF+qP6Mfq
+ L5Uw98WHys/XAZQ71Hr6GWDy4S6G8BA2SZRb9WEKnJ2u7gz6jmfFGzYXtHOwgx0Ln8S5oE
+ s7ILt0jv4INtYz5wPvYRxYweshUM14zwyGQhkoDX31wr4yHEyypjnKRDDD23CVxmFRvJwU
+ u0CpiRjnRaXYWPI+5LNSEwkULqvJaQVuyOrZ19/bpymnWDusfCbNQMqleNWg7VY1dxE/7o
+ Ao7HZGEyWmCoNTVDep5uK/X6LwZVX0MnG9/GmSHlXYl/roYHfFdzKc76tI2WQG1scXeAtz
+ cSudcZGfDK0argW1n5iBhoKj+N5+e5TzjrtUuPBgQkIaviBKcwLWvGDBKqqe6OUSaSvW0x
+ lKxZgcJfqlBBG94p7xNUFz46USdEr+oce/K3KMA7meB1089nH3xR1OP18aRo/tby1d/A7S
+ k0HcXHGndnNiDE23LIzn8WrZO5yi0xdGnyKJBZy7Yp3CxKFTBqxYq5ov1a6TO4AaCPdvmS
+ qLeFO1JNPw4oaqQPYED7FbcUp7eBU+ZJDHwmw3/HjUp+ZeWigbQSwGvy+LaI93qX7DC9ic
+ s+RdpZzsHLx4n/l58Oq2vvOx46R+hbuhNgwow+KkIexkFklrdMv/ANB2ifRA
+X-ME-Proxy: <xmx:lrpgapw7U35vUHafDp0AkKtHi_6XDeeemDEHQii-xKrCVdveUCyPZQ>
+ <xmx:lrpgakwc4W-5QO1EnbzwvOT90OU_664kqYmBcnAmbI0fb9ZCKp4B2w>
+ <xmx:lrpgapx-9mXeczztz-fMX8mM3x9VyfQxWZNOD85yZKEELarXV-ZBpA>
+ <xmx:lrpgambNmRQ8QpyxZIjWACpPUOgMC7eydVPtfBKPaEfz-Fh-4BfSPQ>
+ <xmx:lrpgarKjHXH_HK1suu4AlKr5iiItWjzTrruEpEz5tyJTLXYt0C0meGG4>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 22 Jul 2026 08:41:57 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
 To: Ciara Loftus <ciara.loftus@intel.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 37QxjWur_-61e5kne85mdC6J5cRXyUgUGw-MaTGgUs0_1784715039
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>,
+ David Marchand <david.marchand@redhat.com>
+Subject: Re: [PATCH v2] doc: add deprecation notice for iavf devarg auto
+ reconfig
+Date: Wed, 22 Jul 2026 14:41:55 +0200
+Message-ID: <mlhkgerPRiWE9pm-OyoGXw@monjalon.net>
+In-Reply-To: <16acd53d-6d66-44b5-acb0-feb495c96502@intel.com>
+References: <20260715105959.2216756-1-ciara.loftus@intel.com>
+ <20260715122045.2256082-1-ciara.loftus@intel.com>
+ <16acd53d-6d66-44b5-acb0-feb495c96502@intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,33 +91,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 21 Jul 2026 at 15:09, Ciara Loftus <ciara.loftus@intel.com> wrote:
->
-> A deprecation notice [1] has been submitted for the iavf auto_reconfig devarg.
->
-> The first patch removes the devarg, restoring promiscuous and all-multicast
-> modes unconditionally after a VF reset. The second patch limits this
-> restoration to VF reset only, avoiding unnecessary work on dev_start.
->
-> [1] https://mails.dpdk.org/archives/dev/2026-July/341822.html
->
-> Ciara Loftus (2):
->   net/iavf: remove auto reconfig devarg
->   net/iavf: restore promiscuous mode only after VF reset
->
->  doc/guides/nics/intel_vf.rst           |  5 ---
->  doc/guides/rel_notes/release_26_07.rst |  5 +++
->  drivers/net/intel/iavf/iavf.h          |  1 -
->  drivers/net/intel/iavf/iavf_ethdev.c   | 62 +++++++++++++++++---------
->  4 files changed, 45 insertions(+), 28 deletions(-)
+> > The `auto_reconfig` devarg in the iavf driver is enabled by default and the
+> > case for ever disabling it is weak. When disabled, it means the user is
+> > requesting the driver not to restore settings (unicast/multicast
+> > promiscuous modes) when recovering from a reset. The use case where this
+> > might be desired is during a VF initiated reset where the user initiates
+> > the reset and wants the VF brought back up in an untouched state. That
+> > scenario can be facilitated by extending the `rte_pmd_iavf_reinit` API
+> > rather than relying on this devarg, so it should be safe to remove the
+> > devarg.
+> >
+> > Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Acked-by: David Marchand <david.marchand@redhat.com>
 
-This lgtm on the principle.
-This will conflict with my series that touches mac restoration, but it
-should be trivial to resolve.
+Applied, thanks.
 
-I'll try to find some time to test this, more likely after the summer period.
-
-
--- 
-David Marchand
 
