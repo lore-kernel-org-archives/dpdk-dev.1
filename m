@@ -2,69 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C629C531CC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 17:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 367B8C531D0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 17:52:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D310A40658;
-	Thu, 23 Jul 2026 19:45:26 +0200 (CEST)
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com
- [209.85.215.171])
- by mails.dpdk.org (Postfix) with ESMTP id 3B91640658
- for <dev@dpdk.org>; Thu, 23 Jul 2026 19:45:25 +0200 (CEST)
-Received: by mail-pg1-f171.google.com with SMTP id
- 41be03b00d2f7-c999f162c9aso741253a12.3
- for <dev@dpdk.org>; Thu, 23 Jul 2026 10:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784828724;
- x=1785433524; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=xMlrDmPqrDQAaQ78RI5MfLi6RHduOLgn3vivF5KWRoc=;
- b=OzSjwv4NaCCREcRECeO94kW+uCTfPK5bR0FoDH/Vjl3udZXI2jPxSU7uwvOkBzT/92
- 2fvIMTp+9UlX7bNpMmxwBaZbXAqBhvJJeRj2xCOHrtlbn+QH/AoqdzpVJwENJWmviD6G
- EzQhPCuZ93saSPymgMOtitvJ9Rr4uiTxlnE3dyvl6BSblkFixHRqxcDO6eQiifTIUfRV
- lKQwBxaYrTvEsDpp+xO9xyWvQvr/IXS6ZWiS6yqB4BO1/8/hRsP+4CRgcIG2vEB2UZuZ
- iTMjl2QSilKGuTYBhwEpG7WlredO2g+7nOEUh8pz/lYiJw7I+nxccjQ0f8FZwS9p6LkM
- J99w==
+	by mails.dpdk.org (Postfix) with ESMTP id 49E2240658;
+	Thu, 23 Jul 2026 19:52:18 +0200 (CEST)
+Received: from mail-oo1-f99.google.com (mail-oo1-f99.google.com
+ [209.85.161.99]) by mails.dpdk.org (Postfix) with ESMTP id 70A0540280
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 19:52:16 +0200 (CEST)
+Received: by mail-oo1-f99.google.com with SMTP id
+ 006d021491bc7-6aae36ea5c4so83388eaf.1
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 10:52:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784828724; x=1785433524;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=xMlrDmPqrDQAaQ78RI5MfLi6RHduOLgn3vivF5KWRoc=;
- b=Ims/+1sUJHVMelRH/cXZsMeSOzLueZaTSpJUDehBwneFL0JfC6qfHedu1WieGXBNZ4
- lIfoDayihq406MMH31hpCu+73MwS2wuE5tDgYZRd9XZE6N/PDEB+/R3zUdlkeLfOFjUw
- KUtHext0Y6cRJXiaM8KXEJU85+3fuQgcWquA+BAffOfGPUI3s3sG8rGIZ7vdG50pcFLl
- q3h87tNQdNDbyCffCyNsaSAtweEVfLosx8LrR8HEuiqWAVDV5WjWMxxM7X6e9uxGJEoA
- P05HcrkunhZ8LxK2IdIY/2vYWsvHS6Zmw3QD/MzwJ4EtcPCWAaUzyf5tFq4+VXCruuCb
- G09g==
-X-Gm-Message-State: AOJu0Yxy2Gec+94KY52PavWq8aYYq1j6xZva1qHqTRDFZnmNH0rIocx0
- X2G+dGv9d8Sv/XumE/j+OiBWn+qLf4C/NfWbM36bXoX7CueZ1mnDQ7R0utjUnKdXDkndiryI0IF
- UlWok
-X-Gm-Gg: AR+sD13plEasSbElQLJjTpXSdpDtMzYquImrUy3dbkFqDWDOr6WIPc8p5UsmNyrAgAu
- h9fnRUITmzoX74c95Ttcrnvr1FNINUHEMYHLksSZBu9yq+ENmr9Ty/jzQjrDFdpxTXAUa76dQPi
- bvwgCrUof5XVgqNV87UCS4WgRieA1kSLGTVO7mDRUyzc0ImZPzYUxa3QKtqoV34LQPuLcFRBGXe
- 2F8TMFjVWkbsf4n2z3mlM/Tr8s/yg21FiA8skbTSvieXVH+B3fl9TkeUPH0Ek/PyEK8eOsRJdml
- Yb2Eg6HjddubOsaNAn8x9GbwpOnksskG8V5dbDju9C0DNjkeR81gfjexzzqyHYxIdZzdbxdIGlu
- bU4XgO4trs7p+aI5K2BfPMKDl6o4qmjhajBXIccsk4YgZATrZbfBxH/17kCt+jimYOG17WG5ZtK
- Va5FqbQqLRRiaNIigUONkT/8t3OP7fYhwC6ujLj+ar
-X-Received: by 2002:a05:6a20:b090:b0:3c4:397a:69be with SMTP id
- adf61e73a8af0-3c44afde4b3mr4628734637.19.1784828724075; 
- Thu, 23 Jul 2026 10:45:24 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3147e088d3fsm22579754eec.25.2026.07.23.10.45.23
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Jul 2026 10:45:23 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH] eal: check for invalid memory parameters
-Date: Thu, 23 Jul 2026 10:45:21 -0700
-Message-ID: <20260723174521.176147-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+ d=1e100.net; s=20251104; t=1784829135; x=1785433935;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=lbvzyoGVa15lgw2Kro49lWl+RrS8rBxWd/VTtS2zq+o=;
+ b=nBBk6DViEaAq7vESz4cRc3kmo3sKsLwq6L2cCcT/bdTyr0xFySi8C2Al2x7erdeEVC
+ GaNcjDlPDHyXzMbDyeme5VIFEbdLZuPOQvyYP6H+vbfCIBmR9IgfjWApJoLXcCyq1p7t
+ JhYi5FeusHQyoke2lq8C4Xj30fgXkbwTCYPAmANFWG5IvgNNAwSRVXkQFONal7wToRDK
+ IoywuuVj17AnvFJ7jdZ3zTGoeTnHjDp+CwuAXAAzGKekdnj001daZDXVRA8OoRnoQ7D7
+ jHmhUC2MJ3jsPKIpPDFLYYJ1vQ3Qfmqcq3u7ElLv3ICoIsZPFog42OsG+DaPTuHs/Fb2
+ YZ2A==
+X-Gm-Message-State: AOJu0YzEQSYGujPIfVO6za6/gZ2pmOq/NywCIpE7QGPfzRUtDPsNm81D
+ k0kv6e3Ooaxc5fQDn0S7fb4SfyD2LHze8gIp4pLN776vscZ9tRJv0StBP3XH0YCPO3ewYcnu7zC
+ gaOiC7BYy2YMGhWwSWhCSb/XLISlWkpZQGXPaDekzWwL3mND9bYWpY6k3V3vsRSX02ACtGrZwcI
+ wMi4frSsBPdeSRlmFx60HzRJxZ82O9B2hRYO3rbQyr6dXLxtCLFAn+1esMogXMnBG9a7NjyglL2
+ 0TdBg==
+X-Gm-Gg: AR+sD13PPljQPSvaOfi/Gx/hCJJNNrnba+oMa6xih3woE9oySEpygeT4eO7gdhIgaNW
+ E5TYaen3ofSOiN+wGIxNe+keMCLl9ieox1kvVwxtpc06MEjyKq3dT693x2PPpvYm5pqi5eWN/35
+ V+SncPpzvBRUKDQEnxCSLMZeuyuqRJ3Q2kz6lr+gPbwbqS9MYs6P43nkTfUfnAh3xZFUMe0yAjG
+ 6rL0uLwrYl6yok49gRpO3j48Dhbzkhni29ujLM0aKn3HwYNglWStQ3ucVU4jsqIg+aH/QLK3f/4
+ VMQiAWq8nNx4lVGZKiMzqjKm5tIKzdhpJ1eqcKSgaP8K8rJzlcZFyvC3sMic/W/d3a4aSrTzPb1
+ Z2QmAyVjkTx12steMyxH7UqQfNe+xXaAv/uDRArriUx6TMpQVx0FLsdN32XpOhXLbVwrtRZfE8p
+ OP9FIOcPzf0NrqzeqYr04YXD5y359nc+batPtxvh5oClc=
+X-Received: by 2002:a05:6820:168c:b0:6a3:81a2:746b with SMTP id
+ 006d021491bc7-6aad3fe2ab8mr1761546eaf.21.1784829135430; 
+ Thu, 23 Jul 2026 10:52:15 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
+ (address-144-49-247-73.dlp.protect.broadcom.com. [144.49.247.73])
+ by smtp-relay.gmail.com with ESMTPS id
+ 006d021491bc7-6aad83d3211sm115521eaf.28.2026.07.23.10.52.14
+ for <dev@dpdk.org>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Thu, 23 Jul 2026 10:52:15 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pf1-f198.google.com with SMTP id
+ d2e1a72fcca58-84877b362f6so1564736b3a.2
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 10:52:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1784829133; x=1785433933; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=lbvzyoGVa15lgw2Kro49lWl+RrS8rBxWd/VTtS2zq+o=;
+ b=JkLsxfDk+KRagLIHogIC0/2BJfiV31Zc+7ns86Pb8LdgYxvPeapfGvN6if8vMaVfta
+ hUrX7pB/k/QPz6iX3IPrPwJuLl6DGmUL+tYP7dN6+2DuBIQMuRQMGdCYbD/WddyIwO6R
+ JdncXnQrR3OLaKLBDc/6sNthMbuS+JJv5JXJ4=
+X-Received: by 2002:a05:6a00:a17:b0:847:e791:d5c5 with SMTP id
+ d2e1a72fcca58-84e2c1baab9mr4641047b3a.35.1784829133601; 
+ Thu, 23 Jul 2026 10:52:13 -0700 (PDT)
+X-Received: by 2002:a05:6a00:a17:b0:847:e791:d5c5 with SMTP id
+ d2e1a72fcca58-84e2c1baab9mr4641009b3a.35.1784829132908; Thu, 23 Jul 2026
+ 10:52:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <kvNGsDZ2SLOK2WFaq05qOA@monjalon.net>
+In-Reply-To: <kvNGsDZ2SLOK2WFaq05qOA@monjalon.net>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Date: Thu, 23 Jul 2026 13:51:56 -0400
+X-Gm-Features: AUfX_my-P0ZeZvMxUs3x4kIfYtQXnEUCvVvaE1mZHSBqRe_Ejj2szbdNG7RPRDs
+Message-ID: <CA+BST0=jG640jgf3EfN_jRHQL_rXghKmzkRNgXhqPA8X+dFG=Q@mail.gmail.com>
+Subject: Re: DPDK release candidate 26.07-rc4
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: dpdk <dev@dpdk.org>
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: multipart/signed; protocol="application/pkcs7-signature";
+ micalg=sha-256; boundary="00000000000084328b06574aea56"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,89 +92,225 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The code to parse arguments like memory size, channels and rank
-was using atoi() which has no check for garbage after the number.
-Switch to using a helper that uses strtoul().
+--00000000000084328b06574aea56
+Content-Type: multipart/alternative; boundary="00000000000073c5f006574aea0a"
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- lib/eal/common/eal_common_options.c | 44 +++++++++++++++++++++++++----
- 1 file changed, 39 insertions(+), 5 deletions(-)
+--00000000000073c5f006574aea0a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 42cdef632f..bda60e6394 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -2067,6 +2067,29 @@ eal_parse_huge_worker_stack(const char *arg)
- 	return 0;
- }
- 
-+static int
-+eal_parse_num(const char *str, unsigned int *val)
-+{
-+	char *endptr;
-+	unsigned long n;
-+
-+	while (isspace((unsigned char)*str))
-+		str++;
-+
-+	if (*str == '-')
-+		return -1;
-+
-+	errno = 0;
-+	n = strtoul(str, &endptr, 10);
-+
-+	/* Error if string is empty or has trailing characters */
-+	if (*str == '\0' || *endptr != '\0' || errno != 0 || n > UINT_MAX)
-+		return -1;
-+
-+	*val = n;
-+	return 0;
-+}
-+
- /* Parse the arguments given in the command line of the application */
- int
- eal_parse_args(void)
-@@ -2210,23 +2233,34 @@ eal_parse_args(void)
- 
- 	/* memory options */
- 	if (args.memory_size != NULL) {
--		int_cfg->memory = atoi(args.memory_size);
-+		unsigned int mb;
-+		if (eal_parse_num(args.memory_size, &mb) < 0) {
-+			EAL_LOG(ERR, "invalid memory size parameter");
-+			return -1;
-+		}
-+
-+		int_cfg->memory = mb;
- 		int_cfg->memory *= 1024ULL;
- 		int_cfg->memory *= 1024ULL;
- 	}
- 	if (args.memory_channels != NULL) {
--		int_cfg->force_nchannel = atoi(args.memory_channels);
--		if (int_cfg->force_nchannel == 0) {
-+		unsigned int n;
-+		if (eal_parse_num(args.memory_channels, &n) < 0 ||
-+		    	n == 0 || n > 32) {
- 			EAL_LOG(ERR, "invalid memory channel parameter");
- 			return -1;
- 		}
-+		int_cfg->force_nchannel = n;
- 	}
- 	if (args.memory_ranks != NULL) {
--		int_cfg->force_nrank = atoi(args.memory_ranks);
--		if (int_cfg->force_nrank == 0 || int_cfg->force_nrank > 16) {
-+		unsigned int n;
-+
-+		if (eal_parse_num(args.memory_ranks, &n) < 0 ||
-+			n == 0 || n > 16) {
- 			EAL_LOG(ERR, "invalid memory rank parameter");
- 			return -1;
- 		}
-+		int_cfg->force_nrank = n;
- 	}
- 	if (args.no_huge) {
- 		int_cfg->no_hugetlbfs = 1;
--- 
-2.53.0
+Here is the Broadcom's Test Report of DPDK v26.07-rc4
 
+- DPDK DTS Verification: Executed the DPDK Test Suite (DTS) Python
+framework for functional validation. The following test suites were
+verified:
+     - Smoke Tests: Verified basic driver initialization, device binding,
+and testpmd launch capabilities.
+     - Unit Tests: Executed DPDK core unit tests and fast-tests.
+- DPDK Baseline Conformance: Verified Link Speed, MTU, RSS (IPv4/IPv6),
+CSO/TSO offloads, stress testing (link toggles, testpmd stability), and
+statistics (xstats). No issues were identified.
+- Tunnelling Protocols: Verified IPGRE (TCP/UDP over IPv4) and VxLAN
+tunnelling traffic, both with and without Checksum Offload (CSO). No issues
+were identified.
+- Operating System: RHEL 9.0 (kernel: 5.14.0-70.13.1.el9_0.x86_64) with gcc
+version 11.2.1 20220127 (Red Hat 11.2.1-9).
+
+Systems Tested:
+- Dell 740 server (x86_64)
+- NICs:
+     - THOR2 - P2200
+     - WH+ - Broadcom Adv. Dual 25Gb Ethernet
+
+Thanks,
+Kishore
+
+
+On Sun, Jul 19, 2026 at 5:53=E2=80=AFAM Thomas Monjalon <thomas@monjalon.ne=
+t> wrote:
+
+> A new DPDK release candidate is ready for testing:
+>         https://git.dpdk.org/dpdk/tag/?id=3Dv26.07-rc4
+>
+> There are 48 new patches in this snapshot.
+>
+> Release notes:
+>         https://doc.dpdk.org/guides/rel_notes/release_26_07.html
+>
+> Please test and report issues on bugs.dpdk.org.
+>
+> You may share some release validation results
+> by replying to this message at dev@dpdk.org
+> and by adding tested hardware in the release notes.
+>
+> Only release notes changes are expected at this stage.
+> There are some deprecation notices pending for review.
+>
+> This release cycle should be closed in few days.
+>
+> Thank you everyone
+>
+>
+>
+
+--00000000000073c5f006574aea0a
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><div dir=3D"ltr">Here is the Br=
+oadcom&#39;s Test Report of=C2=A0DPDK v26.07-rc4<br><br>- DPDK DTS Verifica=
+tion: Executed the DPDK Test Suite (DTS) Python framework for functional va=
+lidation. The following test suites were verified:<br>=C2=A0 =C2=A0 =C2=A0-=
+ Smoke Tests: Verified basic driver initialization, device binding, and tes=
+tpmd launch capabilities.<br>=C2=A0 =C2=A0 =C2=A0- Unit Tests: Executed DPD=
+K core unit tests and fast-tests.<br>- DPDK Baseline Conformance: Verified =
+Link Speed, MTU, RSS (IPv4/IPv6), CSO/TSO offloads, stress testing (link to=
+ggles, testpmd stability), and statistics (xstats). No issues were identifi=
+ed.<br>- Tunnelling Protocols: Verified IPGRE (TCP/UDP over IPv4) and VxLAN=
+ tunnelling traffic, both with and without Checksum Offload (CSO). No issue=
+s were identified.<br>- Operating System: RHEL 9.0 (kernel: 5.14.0-70.13.1.=
+el9_0.x86_64) with gcc version 11.2.1 20220127 (Red Hat 11.2.1-9).<br><br>S=
+ystems Tested:<br>- Dell 740 server (x86_64)<br>- NICs:<br>=C2=A0 =C2=A0 =
+=C2=A0- THOR2 - P2200<br>=C2=A0 =C2=A0 =C2=A0- WH+ - Broadcom Adv. Dual 25G=
+b Ethernet<br></div><div dir=3D"ltr"><br></div><div>Thanks,</div><div>Kisho=
+re</div><div><br></div><br><div class=3D"gmail_quote gmail_quote_container"=
+><div dir=3D"ltr" class=3D"gmail_attr">On Sun, Jul 19, 2026 at 5:53=E2=80=
+=AFAM Thomas Monjalon &lt;<a href=3D"mailto:thomas@monjalon.net">thomas@mon=
+jalon.net</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=
+=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding=
+-left:1ex">A new DPDK release candidate is ready for testing:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"https://git.dpdk.org/dpdk/tag/?id=3D=
+v26.07-rc4" rel=3D"noreferrer" target=3D"_blank">https://git.dpdk.org/dpdk/=
+tag/?id=3Dv26.07-rc4</a><br>
+<br>
+There are 48 new patches in this snapshot.<br>
+<br>
+Release notes:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"https://doc.dpdk.org/guides/rel_note=
+s/release_26_07.html" rel=3D"noreferrer" target=3D"_blank">https://doc.dpdk=
+.org/guides/rel_notes/release_26_07.html</a><br>
+<br>
+Please test and report issues on <a href=3D"http://bugs.dpdk.org" rel=3D"no=
+referrer" target=3D"_blank">bugs.dpdk.org</a>.<br>
+<br>
+You may share some release validation results<br>
+by replying to this message at <a href=3D"mailto:dev@dpdk.org" target=3D"_b=
+lank">dev@dpdk.org</a><br>
+and by adding tested hardware in the release notes.<br>
+<br>
+Only release notes changes are expected at this stage.<br>
+There are some deprecation notices pending for review.<br>
+<br>
+This release cycle should be closed in few days.<br>
+<br>
+Thank you everyone<br>
+<br>
+<br>
+</blockquote></div></div>
+
+--00000000000073c5f006574aea0a--
+
+--00000000000084328b06574aea56
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
+2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
+phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
+a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
+ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
+07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
+SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
+rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGpzCCBI+g
+AwIBAgIMTxuM8PbwRQIs9uJeMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
+ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
+MDIzMB4XDTI1MDYyMDEzNTIxOFoXDTI3MDYyMTEzNTIxOFowgekxCzAJBgNVBAYTAlVTMRMwEQYD
+VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
+MDExNzETMBEGA1UEBBMKUGFkbWFuYWJoYTEQMA4GA1UEKhMHS2lzaG9yZTEWMBQGA1UEChMNQlJP
+QURDT00gSU5DLjEoMCYGA1UEAwwfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTEuMCwG
+CSqGSIb3DQEJARYfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBALtFWP+ax39qiJZsJuukdoqMyp0GWGaJ6MdaHvAxXWiEY5zmTiVU
+QnpmNYp5SO1Cd1cBqDB0dcelQbiQ1qh+lnlUchJLR63y0ysUvUNvqV493q8+pHCm/2jPb0/R9rec
+/jxwM9jaPAVkhGBwvudSfOAQlMPORtAHZyLHKFINcsNfLrGP/3lx+zj30v5tmDN7isOLWos7Jm/U
+qRdC7UuUiXgX7q8xXd1MQlA95O73IY/Qb/y0ChEjGPb+U1wr+OsAWJ5fcjQXA/ffBb2GmMp9OUOs
+wVNq8iHfie9nzNaaRw+yoyn0ovoiq2W3Q6r+U53ha/lz0itqCrJZN+G0MFf+cX8CAwEAAaOCAeMw
+ggHfMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggr
+BgEFBQcwAoY6aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1l
+Y2EyMDIzLmNydDA5BggrBgEFBQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2Ny
+NnNtaW1lY2EyMDIzMGUGA1UdIAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGg
+MgoDAjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5
+LzBBBgNVHR8EOjA4MDagNKAyhjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWlt
+ZWNhMjAyMy5jcmwwKgYDVR0RBCMwIYEfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTAT
+BgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBQAKTaeXHq6D68tUC3boCOFGLCgkjAdBgNV
+HQ4EFgQURIyot+ZP/mdwQsofZexqAvOm5pMwDQYJKoZIhvcNAQELBQADggIBAKc5gYnhyTf+f6cm
+kAHy1a4cLIWou43yaS+M/r69Pv44EVYvHxqt0mMvKh3U40Y+pHKph+VCjdoINKCd1SaqAFIqqEO4
+XHWrFi3QAI3snUB6spPIoHN/srAcpX9tdrnAlyK593pq+H+mTMoFIGBP/oc8XCtaDgHp37rpuK9Q
+qhF9h5cEJWgShmD7/Q02YydW3jsioy8HdTUD9fib1fRwiSc9uGq8JV5NJsYiJsi9FUz7kTUPohO0
+h6U9tRUVmAf9gPbU46rin9By5X4Lt1jKge5O0vFEawCTr/pLmDcIf7CqRZfBoNalKOsBDovoeAOf
+pXmQzQEMhnaf93MvbFvZaxC9Ir92DR45BH42xZuLKcQVUsqyLKwC6kEZg81AnZsRAUVpMvqiGbVb
+hZnabsHragNY7Br3VCA2OaWk9yRRjt1UwzfIEEMNWqZeQzzAqKIR3XdXIrqAUlMQOX42tSV9FaIv
+PSmR3uaH2M0/bRtz4TE1qRuTsLlr+XEGMxHssK7u7+WYM7EGF3ueZLcE7WmnwXEFli5Y5QX0SnmT
+W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
+6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
+YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
+YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
+oIHHMC8GCSqGSIb3DQEJBDEiBCB1WP1Y2NjSMHPiRmBaGVo161738eZZkrnbA44kLjFZ2DAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA3MjMxNzUyMTNaMFwGCSqG
+SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCEt5Bwdhzf
+KRRxGxMyem0oEmjcNTLK7azUcSC+nUSFUwZ1+dxYyiI2rcSPEzl7MuaRWM8SeM8Rxsq56zgWj6Wi
+Tf2swRSzpmACq7fwFgsG67WlJfX6U7WI5r68ZnrOHEcPJD8K1G4cMjDCN+5m1ctKOX/XiZ69EbpJ
+kJu9+kAdTkBXUJh7HJGv7YS8VbEGBnmqdxntbxVPxN71C9o8wBIDYNVHcWEE7JN/GtTw/s1nnGpa
+gorm7rYCd4u2tuvIKsJHGX24y9IqnffCHhdQPnOxfZPK2zfJXicNW2mu+yiT+KQsvgrPR7XLYhp0
+iZiH/LmAI+Mkl2C9RpijmbpsfumF
+--00000000000084328b06574aea56--
