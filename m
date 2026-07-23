@@ -2,53 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DF9C54F51
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 10:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E429C53200
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 10:49:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B94534026D;
-	Wed, 29 Jul 2026 12:32:42 +0200 (CEST)
-Received: from mx0b-003cac02.pphosted.com (mx0b-003cac02.pphosted.com
- [205.220.181.234])
- by mails.dpdk.org (Postfix) with ESMTP id 459F140269;
- Wed, 29 Jul 2026 12:32:41 +0200 (CEST)
-Received: from pps.filterd (m0314250.ppops.net [127.0.0.1])
- by mx0b-003cac02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 66T81MXt3354840; Wed, 29 Jul 2026 10:32:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
- cc:content-transfer-encoding:date:from:message-id:mime-version
- :subject:to; s=keysight-0815; bh=XrAZQAf0nwJXZXAAataSpVeUewgPae/
- jRcPoRyZU1+k=; b=u1K9fGepG41PNZfl+Fp22aBzax8j98+0QxrgaXqMViYZpCz
- ItR2Gsr4S1iovy4hd2hbrLFuvI72VU43OS+dMw0B7DADi6hhGsS7DlZxFPFs+wxP
- GMpgLumVyXlIFuUX0oTfSnpEl4YyxvZuSyHaJmTUWQCkAf66uCTs+DENoup6neSx
- 4kXOlo+Qe3bsNHbAaYn5oaM5VqsMBbFNGz0T6KgO3NM5mjsUJpDPpUqfSDyYavAt
- aDsVRSuXlhNaolyaQK8Bq51LzYUoYdHPlwy+Y7ceNP++RDX7dfdLJKv2+5k609wc
- c2oHjSIC6Q9hMFFczq7dbxhC899rcvagqp66eEQ==
-Received: from smtp-us.ser.proofpoint.com (pmta-use.ser.proofpoint.com
- [3.215.31.156])
- by mx0b-003cac02.pphosted.com (PPS) with ESMTPS id 4fn9x5wpjw-1
- (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT);
- Wed, 29 Jul 2026 10:32:40 +0000 (GMT)
-Received: from ppserconnector3.cos.dmz.keysight.com ([192.25.5.34])
- by cmsmtp with ESMTPSA
- id p1ZkwPio2VWzXp1aawEyxT; Wed, 29 Jul 2026 10:32:40 +0000
-X-Mailer: SER-9da617c0781f77b24d454c2ffca1e7acced358b813e950646219cc1f5ae32690
-X-Cloudmark-MID: p1ZkwPio2VWzXp1aawEyxT
-pfptstatus: 1568ac97-559f-432f-801f-22d134b402f7@pfpt
-X-Proofpoint-CID: 3612b050-454b-3384-9099-49ecf78b7412
-Received: from eda-dev1.buh.is.keysight.com ([10.38.132.129])
- by ppserconnector3.cos.dmz.keysight.com with ESMTP
- id p1aYw4OEwzt35p1aYw9Pij; Wed, 29 Jul 2026 10:32:40 +0000
-ser_con_authuser: ??
-From: Dragos Tarcatu <dragos.tarcatu@keysight.com>
-To: dev@dpdk.org
-Cc: skori@marvell.com, pbhagavatula@marvell.com, stable@dpdk.org,
- Dragos Tarcatu <dragos.tarcatu@keysight.com>
-Subject: [PATCH] examples/l2fwd-event: fix memset of port statistics array
-Date: Wed, 29 Jul 2026 10:32:36 +0000
-Message-Id: <20260729103236.3878391-1-dragos.tarcatu@keysight.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 293FF4026D;
+	Wed, 29 Jul 2026 12:49:20 +0200 (CEST)
+Received: from send226.i.mail.ru (send226.i.mail.ru [95.163.59.65])
+ by mails.dpdk.org (Postfix) with ESMTP id AB0D44027C;
+ Thu, 23 Jul 2026 11:35:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
+ s=mail4; h=References:In-Reply-To:Content-Type:Message-Id:Date:MIME-Version:
+ Subject:Reply-To:Cc:To:From:From:Sender:Subject:To:Cc:Content-Type:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+ X-Cloud-Ids; bh=lLJUkRtDVxnWoLdArNDaThcRGyeRH80uqjDuQIzixi8=; t=1784799323;
+ x=1784889323; b=F82oF9kmgqEhaNtYCCPPK+DNV+oOpsGnvtFRcDswJm7Ygx2xhsf6pZopmrAwf
+ Nadw86GK1XqLboScrnioIGnAyi9VNYVTTT0gPP2DV3tD0wl9MQmU2opS9m4dsR/yRKZSLdyyIelw9
+ x6GaiNo5bw/M4hZmbyIg5rnlRaKb82J0w8c+K/hD7KOeXJ8BaWV+/XtK7qa0RxCa3ziR7/ful4JSP
+ ANf7sxVfHNHfqw3C3dMx/Ovddl62XRMNbcetZaDzVgn9Gx4xJgLiL679S5+OublN17gFbUMZAjKqp
+ 91bGd+ihgryglTE4J6zfN2IQWaUov08lFQGLsjHM9RSeLB4BOQ==;
+Received: by exim-f-7ff5594bb5-dj2sj with local (envelope-from
+ <lyulin.2003@mail.ru>)
+ id 1wmppZ-00000000QmO-3ztR; Thu, 23 Jul 2026 12:35:10 +0300
+Received: by e.mail.ru with HTTP;
+	Thu, 23 Jul 2026 12:35:05 +0300
+From: =?UTF-8?B?0JTQtdC90LjRgSDQm9GO0LvQuNC9?= <lyulin.2003@mail.ru>
+To: =?UTF-8?B?S2lzaG9yZSBQYWRtYW5hYmhh?= <kishore.padmanabha@broadcom.com>
+Cc: =?UTF-8?B?QWppdCBLaGFwYXJkZQ==?= <ajit.khaparde@broadcom.com>,
+ =?UTF-8?B?TWFuaXNoIEt1cnVw?= <manish.kurup@broadcom.com>,
+ =?UTF-8?B?U2h1YW5nbGluIFdhbmc=?= <shuanglin.wang@broadcom.com>,
+ =?UTF-8?B?UmFuZHkgU2NoYWNoZXI=?= <stuart.schacher@broadcom.com>,
+ dev@dpdk.org, stable@dpdk.org
+Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gbmV0L2JueHQ6IGZpeCBtZW1zZXQgc2l6ZSBtaXNtYXRj?=
+ =?UTF-8?B?aCBpbiBUeCBxdWV1ZSBzdGFydA==?=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Priority: 3 (Normal)
+X-Mailer: Mail.Ru Mailer 1.0
+X-Senderfield-Remsg: 17764436580970480114
+X-Senderfield-Remind: 0
+Date: Thu, 23 Jul 2026 12:35:05 +0300
+Message-Id: <1784799305.659637239@f128.i.mail.ru>
+Content-Type: multipart/alternative;
+ boundary="--ALT--39c3Fe3C46Fa99a067cD30422C9aDdCa1784799305"
+In-Reply-To: <CA+BST0m7zXt0YD2kgg5nXzHsAk_3n8aYsgncifRxm5dvJt1SyQ@mail.gmail.com>
+References: <20260416090252.2211405-1-lyulin.2003@mail.ru>
+ <CA+BST0m7zXt0YD2kgg5nXzHsAk_3n8aYsgncifRxm5dvJt1SyQ@mail.gmail.com>
+Authentication-Results: exim-f-7ff5594bb5-dj2sj;
+ auth=pass smtp.auth=lyulin.2003@mail.ru
+ smtp.mailfrom=lyulin.2003@mail.ru
+X-Mailru-Src: fe
+X-7564579A: 646B95376F6C166E
+X-77F55803: 119C1F4DF6A9251C97EA546403023E344AA160E3CB549D10CC2006316F783EA6ABF6EAE57C0FACE911F8723C2927869D4BD03525DDD6C896DA350AB3B7809D0E5A3F3DB5FD81033F4787F701E02FBF3D
+X-7FA49CB5: 70AAF3C13DB70168C09775C1D3CA48CFE478A468B35FE767CEDC9CE4EAAF8441BD4B6F7A4D31EC0BF3A348AD53D4D78F85486F6F803D294133AC447995A7AD18ED447A1BDF2A9C03B5C8C57E37DE458B82E5F47F6DA45BB98638F802B75D45FFA18204E546F3947CDE97B91745A5E329AC83A81C8FD4AD23E2E44EFD321A7F275571747095F342E85644E22E05AA81AEE6DE07D961CB05C29ECD01F8117BC8BEBFD28B28ED457873F004C90652538430E3301CADCF4A3327A9D420A4CFB5DD3E686BEE2986C85F5C5002B1117B3ED6965A146F93257759EC5781FBA1B2D9A3D102ED4CEA229C1FA827C277FBC8AE2E8B00E8CE3DD197987DA471835C12D1D9774AD6D5ED66289B5278DA827A17800CE74A95F4E53E8DCE969FA2833FD35BB23D2EF20D2F80756B5F868A13BD56FB6657A471835C12D1D977725E5C173C3A84C34964A708C60C975A117882F4460429728AD0CFFFB425014E868A13BD56FB6657E2021AF6380DFAD1A18204E546F3947CB11811A4A51E3B096D1867E19FE1407959CC434672EE6371089D37D7C0E48F6C8AA50765F7900637D201EC543C311F45EFF80C71ABB335746BA297DBC24807EABDAD6C7F3747799A
+X-87b9d050: 1
+X-C1DE0DAB: 0D63561A33F958A5686BEE2986C85F5C5002B1117B3ED6965A146F93257759ECBFF4097FFC9E796F823CB91A9FED034534781492E4B8EEADB73CFAAED92B6E13BDAD6C7F3747799A
+X-C8649E89: 1C3962B70DF3F0AD73CAD6646DEDE191543584D22441D85277DD89D51EBB774225B6776AC983F447FC0B9F89525902EE6F57B2FD27647F25E66C117BDB76D6594208A8F68B8EE406D6EB22FCCAB070C857DFFD372297CC2A28D881A3EBB8B9A9DFC61095904A3960B8341EE9D5BE9A0AE1D8C2A806A89BDAC726F2780FF8177EFF848B317924E3C3DABE3362BFED2FD64C41F94D744909CE5DDE6AB186FA14AA15C35E0BAFFE8D415811D22EBD454E4C3FCF178C6DD14203
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+Od3uM/CLT152eL7j4ZacoUSF0MSa0v5VBmEtSutdC50BIKdL3VIRlkt/X9Gr7QWYXucPUinHATAeHXorM+S1NQOd7Dfgh+EySdt04sp+fU/8hfd06EZyRe8=
+X-Mailru-MI: 20000000010000000000000800
+X-Mailru-Sender: 945B8B189F1F329C30F4BD1947FCC5260A8AE8E27BCE34A156704ABB56AC4A0FD139D1F57AEAED06DED98231772F0686F9C04CAAA76071847EC87AB16ABDDD39FA1D9B4E0270856D57914126969F3D95282AEC14F0CDEEA9E08AD13A84CB3945C28A6F9BFFBDA7B2D7A14DD9E34ECE7467EA787935ED9F1B
+X-Mras: Ok
+X-Spam: undefined
+X-Mailman-Approved-At: Wed, 29 Jul 2026 12:49:19 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,39 +75,111 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: =?UTF-8?B?0JTQtdC90LjRgSDQm9GO0LvQuNC9?= <lyulin.2003@mail.ru>
 Errors-To: dev-bounces@dpdk.org
 
-port_stats is declared as struct l2fwd_port_statistics[RTE_MAX_ETHPORTS],
-but the memset passed sizeof(struct l2fwd_port_statistics) -- the size
-of a single element -- leaving ports 1 through RTE_MAX_ETHPORTS-1 with
-uninitialized stats. Use sizeof(rsrc->port_stats) to clear the whole
-array regardless of RTE_MAX_ETHPORTS.
 
-Surfaced as a -Wmemset-elt-size warning when building with
--Dmax_ethports=64 -Dexamples=all.
+----ALT--39c3Fe3C46Fa99a067cD30422C9aDdCa1784799305
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 
-Fixes: 4ff457986f76 ("examples/l2fwd-event: add default poll mode routines")
-Cc: stable@dpdk.org
+S2luZGx5IHJlbWluZGVyClNvcnJ5LCBCdXQgbm9ib2R5IGhhcyByZXZpZXdlZCBteSBwYXRjaCBv
+biBQYXRjaHdvcmsgaHR0cHM6Ly9wYXRjaGVzLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRjaC8y
+MDI2MDQxNjA5MDI1Mi4yMjExNDA1LTEtbHl1bGluLjIwMDNAbWFpbC5ydS8KQ291bGQgeW91IHBs
+ZWFzZSByZXZpZXcgdGhpcz8KCj4gCj4gT24gVGh1LCBBcHIgMTYsIDIwMjYgYXQgNTowM+KAr0FN
+IERlbmlzIEx5dWxpbiA8bHl1bGluLjIwMDNAbWFpbC5ydT4gd3JvdGU6Cj4gCj4+IFdoZW4gdGhl
+IHR4X3F1ZXVlIGlzIHN0YXJ0ZWQsIHByZXZpb3VzIHN0YXRzIGFyZSByZXNldC4KPj4gRm9yIHRw
+YV92MiBhbmQgUDcsIGV4dGVuZGVkIHN0YXRzIHN0cnVjdHVyZSBpcyB1c2VkOgo+PiBgc3RydWN0
+IGJueHRfcmluZ19zdGF0c19leHRgLCBzbyBwYXNzaW5nIHdyb25nIHNpemUgdG8gbWVtc2V0Cj4+
+IG1ha2VzIG5vdCBhbGwgc3RhdHMgdG8gYmUgcmVzZXQuIFRoaXMgY29tbWl0IHNldHMgY29ycmVj
+dCBzaXplIG9mCj4+IHRoZSBzdHJ1Y3R1cmUgcGFzc2VkIHRvIG1lbXNldCB3aGVuIHplcm9pbmct
+b3V0IHByZXZpb3VzIHN0YXRzLgo+PiAKPj4gRml4ZXM6IGRkMDE5MWQ1ZTcwZCAoIm5ldC9ibnh0
+L3RmX3VscDogc3VwcG9ydCBUaG9yMiBVTFAgbGF5ZXIiKQo+PiBDYzogc2h1YW5nbGluLndhbmdA
+YnJvYWRjb20uY29tCj4+IENjOiBzdGFibGVAZHBkay5vcmcKPj4gCj4+IFNpZ25lZC1vZmYtYnk6
+IERlbmlzIEx5dWxpbiA8bHl1bGluLjIwMDNAbWFpbC5ydT4KPiAKPiAKPiBBY2tlZC1ieTogS2lz
+aG9yZSBQYWRtYW5hYmhhIDxraXNob3JlLnBhZG1hbmFiaGFAYnJvYWRjb20uY29tPgo+IAo+PiAt
+LS0KPj4gZHJpdmVycy9uZXQvYm54dC9ibnh0X3R4ci5jIHwgMiArLQo+PiAxIGZpbGUgY2hhbmdl
+ZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL25ldC9ibnh0L2JueHRfdHhyLmMgYi9kcml2ZXJzL25ldC9ibnh0L2JueHRfdHhyLmMKPj4g
+aW5kZXggMjc3NTg4OThiMC4uYjZhZDM3Zjg3MiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9uZXQv
+Ym54dC9ibnh0X3R4ci5jCj4+ICsrKyBiL2RyaXZlcnMvbmV0L2JueHQvYm54dF90eHIuYwo+PiBA
+QCAtNzI5LDcgKzcyOSw3IEBAIGludCBibnh0X3R4X3F1ZXVlX3N0YXJ0KHN0cnVjdCBydGVfZXRo
+X2RldiAqZGV2LAo+PiB1aW50MTZfdCB0eF9xdWV1ZV9pZCkKPj4gKi8KPj4gaWYgKEJOWFRfVFBB
+X1YyX1A3KGJwKSkKPj4gbWVtc2V0KCZicC0+cHJldl90eF9yaW5nX3N0YXRzX2V4dFt0eF9xdWV1
+ZV9pZF0sIDAsCj4+IC3CoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzaXplb2Yoc3Ry
+dWN0IGJueHRfcmluZ19zdGF0cykpOwo+PiArwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgc2l6ZW9mKHN0cnVjdCBibnh0X3Jpbmdfc3RhdHNfZXh0KSk7Cj4+IGVsc2UKPj4gbWVtc2V0
+KCZicC0+cHJldl90eF9yaW5nX3N0YXRzW3R4X3F1ZXVlX2lkXSwgMCwKPj4gc2l6ZW9mKHN0cnVj
+dCBibnh0X3Jpbmdfc3RhdHMpKTsKPj4gLS0KPj4gMi4zNC4xCj4+IAo+IAo+IAo+
 
-Signed-off-by: Dragos Tarcatu <dragos.tarcatu@keysight.com>
----
- examples/l2fwd-event/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+----ALT--39c3Fe3C46Fa99a067cD30422C9aDdCa1784799305
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: base64
 
-diff --git a/examples/l2fwd-event/main.c b/examples/l2fwd-event/main.c
-index 2d31d4c6ad..eff2bee503 100644
---- a/examples/l2fwd-event/main.c
-+++ b/examples/l2fwd-event/main.c
-@@ -696,8 +696,7 @@ main(int argc, char **argv)
- 		l2fwd_poll_resource_setup(rsrc);
- 
- 	/* initialize port stats */
--	memset(&rsrc->port_stats, 0,
--					sizeof(struct l2fwd_port_statistics));
-+	memset(rsrc->port_stats, 0, sizeof(rsrc->port_stats));
- 
- 	/* All settings are done. Now enable eth devices */
- 	RTE_ETH_FOREACH_DEV(port_id) {
--- 
-2.34.1
+CjxIVE1MPjxCT0RZPjxkaXYgY2xhc3M9ImNsLWd2djcwYzZwMDEiPktpbmRseSByZW1pbmRlcjxi
+cj5Tb3JyeSwgQnV0IG5vYm9keSBoYXMgcmV2aWV3ZWQgbXkgcGF0Y2ggb24gUGF0Y2h3b3JrJm5i
+c3A7PGEgaHJlZj0iaHR0cHM6Ly9wYXRjaGVzLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRjaC8y
+MDI2MDQxNjA5MDI1Mi4yMjExNDA1LTEtbHl1bGluLjIwMDNAbWFpbC5ydS8iPmh0dHBzOi8vcGF0
+Y2hlcy5kcGRrLm9yZy9wcm9qZWN0L2RwZGsvcGF0Y2gvMjAyNjA0MTYwOTAyNTIuMjIxMTQwNS0x
+LWx5dWxpbi4yMDAzQG1haWwucnUvPC9hPjxicj5Db3VsZCB5b3UgcGxlYXNlIHJldmlldyB0aGlz
+Pzxicj48YnI+Jm5ic3A7PGRpdiBjbGFzcz0ibWFpbC1xdW90ZS1jb2xsYXBzZSI+PGJsb2NrcXVv
+dGUgc3R5bGU9ImJvcmRlci1sZWZ0OjFweCBzb2xpZCAjMDg1N0E2O21hcmdpbjoxMHB4O3BhZGRp
+bmc6MCAwIDAgMTBweCI+PGRpdj48ZGl2IGlkPSIiPjxkaXYgY2xhc3M9ImNsLXBzZWYxcW5seGYi
+PjxkaXYgY2xhc3M9ImpzLWhlbHBlcl9tcl9jc3NfYXR0ciBqcy1yZWFkbXNnLW1zZ19tcl9jc3Nf
+YXR0ciI+PGRpdiBpZD0ic3R5bGVfMTc3NjQ0MzY1ODA5NzA0ODAxMTRfbXJfY3NzX2F0dHIiPjxk
+aXYgaWQ9InN0eWxlXzE3NzY0NDM2NTgwOTcwNDgwMTE0X0JPRFlfbXJfY3NzX2F0dHIiPjxkaXY+
+PGRpdiBjbGFzcz0iZ21haWxfcXVvdGVfY29udGFpbmVyX21yX2Nzc19hdHRyIGdtYWlsX3F1b3Rl
+X21yX2Nzc19hdHRyIj48ZGl2IGNsYXNzPSJnbWFpbF9hdHRyX21yX2Nzc19hdHRyIj48c3Bhbj5P
+biBUaHUsIEFwciAxNiwgMjAyNiBhdCA1OjAz4oCvQU0gRGVuaXMgTHl1bGluICZsdDs8YSBocmVm
+PSJtYWlsdG86bHl1bGluLjIwMDNAbWFpbC5ydSI+bHl1bGluLjIwMDNAbWFpbC5ydTwvYT4mZ3Q7
+IHdyb3RlOjwvc3Bhbj48L2Rpdj48ZGl2IGNsYXNzPSJtYWlsLXF1b3RlLWNvbGxhcHNlIj48ZGl2
+PjxibG9ja3F1b3RlIHN0eWxlPSJtYXJnaW46MHB4IDBweCAwcHggMC44ZXg7Ym9yZGVyLWxlZnQ6
+MXB4IHNvbGlkIHJnYigyMDQsMjA0LDIwNCk7cGFkZGluZy1sZWZ0OjFleCIgY2xhc3M9ImdtYWls
+X3F1b3RlX21yX2Nzc19hdHRyIj5XaGVuIHRoZSB0eF9xdWV1ZSBpcyBzdGFydGVkLCBwcmV2aW91
+cyBzdGF0cyBhcmUgcmVzZXQuPGJyPkZvciB0cGFfdjIgYW5kIFA3LCBleHRlbmRlZCBzdGF0cyBz
+dHJ1Y3R1cmUgaXMgdXNlZDo8YnI+YHN0cnVjdCBibnh0X3Jpbmdfc3RhdHNfZXh0YCwgc28gcGFz
+c2luZyB3cm9uZyBzaXplIHRvIG1lbXNldDxicj5tYWtlcyBub3QgYWxsIHN0YXRzIHRvIGJlIHJl
+c2V0LiBUaGlzIGNvbW1pdCBzZXRzIGNvcnJlY3Qgc2l6ZSBvZjxicj50aGUgc3RydWN0dXJlIHBh
+c3NlZCB0byBtZW1zZXQgd2hlbiB6ZXJvaW5nLW91dCBwcmV2aW91cyBzdGF0cy48YnI+PGJyPkZp
+eGVzOiBkZDAxOTFkNWU3MGQgKCJuZXQvYm54dC90Zl91bHA6IHN1cHBvcnQgVGhvcjIgVUxQIGxh
+eWVyIik8YnI+Q2M6IDxhIGhyZWY9Im1haWx0bzpzaHVhbmdsaW4ud2FuZ0Bicm9hZGNvbS5jb20i
+PnNodWFuZ2xpbi53YW5nQGJyb2FkY29tLmNvbTwvYT48YnI+Q2M6IDxhIGhyZWY9Im1haWx0bzpz
+dGFibGVAZHBkay5vcmciPnN0YWJsZUBkcGRrLm9yZzwvYT48YnI+PGJyPlNpZ25lZC1vZmYtYnk6
+IERlbmlzIEx5dWxpbiAmbHQ7PGEgaHJlZj0ibWFpbHRvOmx5dWxpbi4yMDAzQG1haWwucnUiPmx5
+dWxpbi4yMDAzQG1haWwucnU8L2E+Jmd0OzwvYmxvY2txdW90ZT48L2Rpdj48L2Rpdj48ZGl2Pjxz
+cGFuIHN0eWxlPSJjb2xvcjpibGFjaztmb250LWZhbWlseTpDYWxpYnJpLHNhbnMtc2VyaWY7Zm9u
+dC1zaXplOjExcHQiPkFja2VkLWJ5Ojwvc3Bhbj48c3BhbiBzdHlsZT0iY29sb3I6YmxhY2s7Zm9u
+dC1mYW1pbHk6Q2FsaWJyaSxzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxMXB0Ij4mbmJzcDsgPC9zcGFu
+PjxzcGFuIHN0eWxlPSJjb2xvcjpibGFjaztmb250LWZhbWlseTpDYWxpYnJpLHNhbnMtc2VyaWY7
+Zm9udC1zaXplOjExcHQiPktpc2hvcmUgUGFkbWFuYWJoYSAmbHQ7PC9zcGFuPjxhIHN0eWxlPSJm
+b250LWZhbWlseTpDYWxpYnJpLHNhbnMtc2VyaWY7Zm9udC1zaXplOjExcHQ7Y29sb3I6cmdiKDUs
+OTksMTkzKSIgaHJlZj0ibWFpbHRvOmtpc2hvcmUucGFkbWFuYWJoYUBicm9hZGNvbS5jb20iPmtp
+c2hvcmUucGFkbWFuYWJoYUBicm9hZGNvbS5jb208L2E+PHNwYW4gc3R5bGU9ImNvbG9yOmJsYWNr
+O2ZvbnQtZmFtaWx5OkNhbGlicmksc2Fucy1zZXJpZjtmb250LXNpemU6MTFwdCI+Jmd0Ozwvc3Bh
+bj4mbmJzcDs8L2Rpdj48YmxvY2txdW90ZSBzdHlsZT0ibWFyZ2luOjBweCAwcHggMHB4IDAuOGV4
+O2JvcmRlci1sZWZ0OjFweCBzb2xpZCByZ2IoMjA0LDIwNCwyMDQpO3BhZGRpbmctbGVmdDoxZXgi
+IGNsYXNzPSJnbWFpbF9xdW90ZV9tcl9jc3NfYXR0ciI+LS0tPGJyPiZuYnNwO2RyaXZlcnMvbmV0
+L2JueHQvYm54dF90eHIuYyB8IDIgKy08YnI+Jm5ic3A7MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCAxIGRlbGV0aW9uKC0pPGJyPjxicj5kaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvYm54
+dC9ibnh0X3R4ci5jIGIvZHJpdmVycy9uZXQvYm54dC9ibnh0X3R4ci5jPGJyPmluZGV4IDI3NzU4
+ODk4YjAuLmI2YWQzN2Y4NzIgMTAwNjQ0PGJyPi0tLSBhL2RyaXZlcnMvbmV0L2JueHQvYm54dF90
+eHIuYzxicj4rKysgYi9kcml2ZXJzL25ldC9ibnh0L2JueHRfdHhyLmM8YnI+QEAgLTcyOSw3ICs3
+MjksNyBAQCBpbnQgYm54dF90eF9xdWV1ZV9zdGFydChzdHJ1Y3QgcnRlX2V0aF9kZXYgKmRldiwg
+dWludDE2X3QgdHhfcXVldWVfaWQpPGJyPiZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
+cDsqLzxicj4mbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgaWYgKEJOWFRfVFBBX1YyX1A3KGJw
+KSk8YnI+Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZu
+YnNwOyBtZW1zZXQoJmFtcDticC0mZ3Q7cHJldl90eF9yaW5nX3N0YXRzX2V4dFt0eF9xdWV1ZV9p
+ZF0sIDAsPGJyPi0mbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
+cDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHNpemVvZihzdHJ1Y3QgYm54dF9yaW5nX3N0
+YXRzKSk7PGJyPismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
+cDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHNpemVvZihzdHJ1Y3QgYm54dF9yaW5nX3N0
+YXRzX2V4dCkpOzxicj4mbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgZWxzZTxicj4mbmJzcDsg
+Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IG1lbXNldCgm
+YW1wO2JwLSZndDtwcmV2X3R4X3Jpbmdfc3RhdHNbdHhfcXVldWVfaWRdLCAwLDxicj4mbmJzcDsg
+Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwO3NpemVvZihzdHJ1Y3QgYm54dF9yaW5nX3N0YXRzKSk7PGJyPi0t
+PGJyPjIuMzQuMTxicj4mbmJzcDs8L2Jsb2NrcXVvdGU+PC9kaXY+PC9kaXY+PC9kaXY+PC9kaXY+
+PC9kaXY+PC9kaXY+PC9kaXY+PC9kaXY+PC9ibG9ja3F1b3RlPjwvZGl2PjwvZGl2PjwvQk9EWT48
+L0hUTUw+Cg==
 
+----ALT--39c3Fe3C46Fa99a067cD30422C9aDdCa1784799305--
