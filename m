@@ -2,75 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2C0C44536
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Jul 2026 23:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2650C44524
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 04:00:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CFCB2402AD;
-	Thu, 23 Jul 2026 01:10:35 +0200 (CEST)
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com
- [209.85.216.44]) by mails.dpdk.org (Postfix) with ESMTP id 8B0824027C
- for <dev@dpdk.org>; Thu, 23 Jul 2026 01:10:34 +0200 (CEST)
-Received: by mail-pj1-f44.google.com with SMTP id
- 98e67ed59e1d1-381b831d535so21871a91.0
- for <dev@dpdk.org>; Wed, 22 Jul 2026 16:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784761833;
- x=1785366633; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=SjWz4JgSK95kDOW51RsCNQqqm83lBBwxzf17JW9Oi44=;
- b=vAtvmxnSrT7ejmARqPiKutCkJ/b3oRZkZ4T36K1Y1OVDnCr+Lm3K+n6ZUOZBEb6qdF
- D+GRH0Vw35Orzy0iqjBsDBjNHh0dp6g4PfRJMBmMCXZspIOOEdXk208aqX19u3n/ZAcn
- qSo60Y7rB3RD2OkWTMnUj6e7SzPq/l8B3arddAh3Nky7wR41QteY4vCxnTtucNk2x2m4
- rBARCUYYfS8elohppZCXWZI8YKFtwyHE6f4mbbt+KFy6TOPKHIQ8Ow03Fy3BiJylYrHW
- ZJ5cHyxs6LxwTuIwQXGqPA0tT+4kDMeOSG59X7VV9uC8cM2eeg+yMJEdSx4sgfYyEvax
- 1oWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784761833; x=1785366633;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=SjWz4JgSK95kDOW51RsCNQqqm83lBBwxzf17JW9Oi44=;
- b=EvuSiSZ6OZ4zVjgxRuH91McDPkU5iT10vloQLA/AsBJFIxTusioOdvtSCcgDg3Mjoa
- +SJ/2gAb/ThxKkIZOTgUvoz5gKSkpyGmQIXF2G0B5X2o8rMPU4ZP+rjOiSRLQ80o10a0
- iRKXgdrxZX7TVhC6rXuDL2kLM7HECdGZd3GLreVhd8WeDs4E2dxfoGKvPW8CtTGWH7Xr
- Y0ZE03BWBjtZhzeccUTt8Lj/UlyBOtQqH6FPPzDya8fHy30rbBdorOpCQXXbtdBqxB89
- I/uF77r8QYEuvHY1l2lVVGiDw43ef3S2wLQ+l0ZRY0XtZ1QAOYHDJ4gUUCi6z1wtkqyn
- sSxQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+RohCeXyIkt7CwUeR74D21HexLAQ1Ym6VWvDwV0A9JgcXJA7SC1qLmGoiqi0lS8gnqFfJDg=@dpdk.org
-X-Gm-Message-State: AOJu0Yw9Iry6lxGpDJ5wILF3XtGf3RW6idZZw1d1SVYfbRU+f0mBm02J
- w3ml24PvIkZBtpjAfNnSRAfU6Wn7nl8/APMLHimXKLz0WsdfpvG+SO7XQvE7MWvuPXY=
-X-Gm-Gg: AR+sD13W3J+3XneEgnrVYBOaCsEQu2UghM8LcsbHyYF5w+3fR4bI6vK1FHkjUFiKvXm
- jYHNIiJsJuCQhIJP0FQ7CuxPIMN3rdz+B8O2eap1NfF3PloaZgEF0hc8yVOeJ0P/B/WIl/G3zO1
- BJPTxKLvRrGRe9S+x//6Phs2vjY4n3E7e4evl9bEQ/bTmieoQeVCU9QrxhbgGeCQZN5CHKava9c
- 7B+wGMFLwG5DsZrWPLqNlKBiWDbIxS3gDbWZ5euBkFrgnmtB7J43lCDDjIkIiN9HFNtqdk1p64t
- iZGd8prdOG713mrZ+2YIS4NylbuiEZmp4zhNdurX1gaGM/ncf0T533xjTcerdj3aWZpnCANn1ee
- mW6bqPk/Xj3wzu+SaMK5FMyZAyH35Iw0qYP/e5S517PsfSswna5qSEVtY8ja39SdRr5vsgnuyHK
- 7RXhkkFGyQyeLoK9WZP4PVngx4VrhaK8RCff0FmX333xs=
-X-Received: by 2002:a17:90a:da8f:b0:37f:9ce1:cda8 with SMTP id
- 98e67ed59e1d1-38ec687719bmr629494a91.30.1784761833624; 
- Wed, 22 Jul 2026 16:10:33 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13d130a8421sm8839836c88.10.2026.07.22.16.10.32
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 22 Jul 2026 16:10:33 -0700 (PDT)
-Date: Wed, 22 Jul 2026 16:10:30 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Weijun Pan <wpan3636@gmail.com>
-Cc: Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)"
- <humin29@huawei.com>, Anatoly Burakov <anatoly.burakov@intel.com>,
- dev@dpdk.org
-Subject: Re: [RFC PATCH] net/bonding: reject control operations in secondary
-Message-ID: <20260722161030.54962462@phoenix.local>
-In-Reply-To: <20260708174204.72574-1-wpan3636@gmail.com>
-References: <20260708174204.72574-1-wpan3636@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E9060402AD;
+	Thu, 23 Jul 2026 06:00:49 +0200 (CEST)
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
+ [113.46.200.219])
+ by mails.dpdk.org (Postfix) with ESMTP id 20E8A4027C
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 06:00:47 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=lia5dOHUtONCOE4Qf1pTqS51r0WiiyTDMhzL9Vo/qjY=;
+ b=rQ0bGfaxN+5l3JdnoTFvIGlTkJjRJdwJWDOBJSl/OnWaqegv48ZBbDaCNOYGtc/H+LUbSAoaB
+ rDujHCIXpTtJSc1E6WgaT3cSuWH65hZQvvPLmOoUFC0N4cNQ63HG0GNM8wk+qg8n4IIqhWv9sKZ
+ hFE64lL/e089ch0GL2HifQ4=
+Received: from mail.maildlp.com (unknown [172.19.162.197])
+ by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4h5HGr1FxKz1prKd;
+ Thu, 23 Jul 2026 11:51:16 +0800 (CST)
+Received: from kwepemj100018.china.huawei.com (unknown [7.202.194.12])
+ by mail.maildlp.com (Postfix) with ESMTPS id 62C0E40579;
+ Thu, 23 Jul 2026 12:00:41 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ kwepemj100018.china.huawei.com (7.202.194.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Thu, 23 Jul 2026 12:00:40 +0800
+Message-ID: <2fd6e7d8-7679-2c7e-5716-ccc20550ded0@huawei.com>
+Date: Thu, 23 Jul 2026 12:00:40 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3] app/testpmd: support runt and ultra-small frames in
+ txonly
+Content-Language: en-CA
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <david.marchand@redhat.com>, <aman.deep.singh@intel.com>, 
+ <fengchengwen@huawei.com>, <lihuisong@huawei.com>, <liuyonglong@huawei.com>,
+ <kangfenglong@huawei.com>
+References: <20260706132050.3054235-1-yangxingui@huawei.com>
+ <20260722152256.16fa03a9@phoenix.local>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <20260722152256.16fa03a9@phoenix.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.120.108]
+X-ClientProxiedBy: kwepemh100009.china.huawei.com (7.202.181.94) To
+ kwepemj100018.china.huawei.com (7.202.194.12)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,20 +61,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  8 Jul 2026 12:42:04 -0500
-Weijun Pan <wpan3636@gmail.com> wrote:
 
-> +static int
-> +bond_ethdev_primary_only(const char *op)
-> +{
-> +	if (rte_eal_process_type() != RTE_PROC_SECONDARY)
-> +		return 0;
-> +
-> +	RTE_BOND_LOG(ERR, "%s not supported in secondary process", op);
-> +	return -ENOTSUP;
-> +}
-> +
 
-Minor nit, the function returns 0 or -ENOTSUP but then caller
-always ends up just checking for 0. It might look cleaner as boolean
-function or wrap the whole thing as a macro like ethdev does.
+On 2026/7/23 6:22, Stephen Hemminger wrote:
+> On Mon, 6 Jul 2026 21:20:50 +0800
+> Xingui Yang <yangxingui@huawei.com> wrote:
+> 
+>> Allow set txpkts to accept packet lengths as small as one byte,
+>> enabling generation of runt frames and ultra-small packets for
+>> testing NIC padding logic and undersized frame handling.
+>>
+>> The txonly engine handles three ranges: normal (>= 42 bytes) with
+>> full Ethernet/IPv4/UDP headers, runt (14-41 bytes) with truncated
+>> headers, and ultra-small (< 14 bytes) filled with a repeating
+>> pattern. Checksum offloads are disabled when headers are incomplete.
+>>
+>> Minimum length validation in set_tx_pkt_segments() is relaxed from
+>> 42 to 1 byte. Random split and multi-flow still require the full
+>> header stack in the first segment, as enforced by tx_only_begin().
+>>
+>> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+>> Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+>> ---
+>   
+> I would suggest that if NIC ever gets a packet < ethernet header it is
+> an application bug, and driver should drop it as an transmit error.
+> Or crash with an assert failed. There is no guarantee that this
+> will ever work.
+> 
+> Therefore can not see why testpmd needs to do this.
+> 
+> For packets with Ethernet header plus a few more bytes, it makes
+> sense to allow. There are always control level protocols that are
+> very short.
+
+Haha, I think you're right. We have an internal test case for 
+ultra-short packets to verify hardware capabilities, and this test case 
+has been around for many years. We have maintained this private patch 
+separately for many years. It's possible that other network cards might 
+not have such a requirement.
+
+Thanks.
+Xingui
