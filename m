@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E5DC531CC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 20:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D00C531F7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 20:30:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52AFD40BA0;
-	Thu, 23 Jul 2026 22:29:52 +0200 (CEST)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id B78A440B92
- for <dev@dpdk.org>; Thu, 23 Jul 2026 22:29:49 +0200 (CEST)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-38e071ed6aeso865096a91.0
- for <dev@dpdk.org>; Thu, 23 Jul 2026 13:29:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9D9D440DD3;
+	Thu, 23 Jul 2026 22:29:53 +0200 (CEST)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
+ [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id F27FC40B9E
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 22:29:50 +0200 (CEST)
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-381c51fde6bso1162291a91.2
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 13:29:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784838589;
- x=1785443389; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784838590;
+ x=1785443390; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=0ELBDAilgaoqGPgJBq/h8aJC7grLC8r2bjc97BlHVLA=;
- b=zyAcKkIEpR5HjG6KHxueGKmfkDF8Ok95L7RhQq9jaEo1COxF6aO4Mvw95ATqdaVvPQ
- 16JIeB4qjvN/f4EdIi0sQXFJ3LMqur6moIvHD2I8Tk59gb88juTXnOGsQsXHNSB1gxH/
- 6ZgQem3uSVvVhViEzauRIQMk/sUBd5BzvJERPV+iP1mYZjo4PSdbwKW6sxj4AlTP8l2a
- mRAGbPCo2DR+DiWhU5e97qm2ZUpv773Wu8PRUm/cKR7ca8ZmqMTejRvYv9BXCz4QvASR
- bkq5BJiR1joUvoGFkz9LwDO1SQfteB2MjE60HRfRtvNWELEuY8THqsCsXDCklar6wdqM
- BycA==
+ bh=Uc2eEfL1xIgEbk2HTKKH1FbbTC7nsoCaMM20guOA2Ak=;
+ b=wPXRIws8Ro+J8MZLHH1f7Lsod4NGBHmpq/EL01FJviV46CmlRF+KgKTM4AyI+665PH
+ ltUclhD5uFbOowa01etA3aMuZy0Lcmu1e5up7v2k4HRqbMKQ9yHF2SmRyFNoiYOHZhYg
+ 2DrIsTQehTZDVzN+ZRdYHyiCpT8gaL9P+d9uEdKJkWpitkZnDtbuwf1bl1w4zaXVz1c9
+ Lhz9abou+az5kRlhGApBRpIu/T+s3t+xM6HyfD2Xhyl/4n3Uqa1iuD8isJtzGC/uXpy7
+ XKpcIuT+M4YYWgRMqR+fdBjwvP1sT5KwhhaHGsFhN62dUkoPUH9R6urbMngxKYrYDZNZ
+ tKPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784838589; x=1785443389;
+ d=1e100.net; s=20251104; t=1784838590; x=1785443390;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=0ELBDAilgaoqGPgJBq/h8aJC7grLC8r2bjc97BlHVLA=;
- b=H0kHiecjknGoOfA1hqnw9AOhG70p45xKuHBoS9EAl3Dv7L9qRdhzCuSqgRUr00/EcT
- uq1ZeADrSrvdbfBW42FZAM5y9UMmyVxsj0VUg5D0DxaD48GKLSDKjUXZ40UAIsC6ZtO5
- nd7mYWkflzCl7Od6xh7M4JwUTxA5GxuG1MBN+o1dUxeo5FOcp6zWVATLKchtQfQiY9Qs
- 9VS/UbFSTev6K1KUu79VrnQjg0Se9AMxcsTwgDrEkkXqkEbIaDOANcWo/Tb1dfa5NFQQ
- HdgfcVsuutlQ/0kXGo5QPoP9BscI637ODCTNV6pqjodHhYRyXh2xs+LKbdbYhkB1hdeI
- SHWA==
-X-Gm-Message-State: AOJu0Yz06r2JzqAVvAjf3X22yHBKAH1zdzCr+rz+m1hD0DFD14b0Yjme
- CYLSI928uSP2iY01FutvDoacKHx6LfAuS561Uucb6AQyaQWH+lE7MHwFZGXndEO4CR6+DKhfVfh
- 8Ye+E
-X-Gm-Gg: AR+sD11sFYk0FMNnH9/9DtdsiikFsY++9TFZz53cEEFWWmcECcrPRB+jvasYvYAnVlQ
- 8xwvwdjIXlTLPvEBdxN3KVZY1Srn/lYXFQJt0XU9II6Zu0eTvtOYbBa5WIkdkHZw5knyuwdYSeA
- 1qxf+1AsJsxPKW7zcZbubs5Fp8pWARYaKT1VYKLKkT9TcgvYIwo+jGJsAdLRRE7xsYm6/zoBout
- xfZ5W6jaddksvYODauMceWdx0S1bLxIZ7yvXUcVqrbGGloAh+um+ZJSz+j91cHLlhpG5G5FjEX9
- 5MCv2EcBZMgcdRO6dpIa9diUB1QXYnB9Qava+Nc552onlbO2XDmRkou7vNa1QZcDHC/I3LpBWpA
- vnQ9teVdO0ffuiW7uQVfEZspfPtgmWiCWKpqYkiQyzb0RZsH3pWA1WKjbYsHHyUtmd6cpHwNV8r
- hlh0KuwnahNKXgSOmyCisZCLfcWhaOgWi78uIUlAcgRQsqGgJPiAU=
-X-Received: by 2002:a17:90b:3944:b0:38e:7268:220d with SMTP id
- 98e67ed59e1d1-38ec65f99bcmr4546983a91.20.1784838588783; 
- Thu, 23 Jul 2026 13:29:48 -0700 (PDT)
+ bh=Uc2eEfL1xIgEbk2HTKKH1FbbTC7nsoCaMM20guOA2Ak=;
+ b=ouPDomAR61wMgcSHaq1dp9npq3AOgnIX+G4wFPsp2JaarP0tLm3RlLStuJjqJwjCSQ
+ Z7OHd150+rZM18/8omxShrzrnaUFEZ4MLSU091sHqqHOEm2RoyX2WsWH61ev8bZfR4z9
+ ZFbahuRyXHQUtdDsTYPzhIyKSbh9KfBXKpz+BzjVZ9TfNk992v8SYIaqiW+k0Ky/5/ZU
+ /FBXqCQcddUNK6WkXEmPS25wBlTo66jPWrg+QUMfOxncSzkFpErsGi9m1JyzV7UeiXlw
+ 6NLK/mV5QBSBtg1R6Q5Cml5cYYhlKGb+Ko4lQv8HEaPs3Kv9yK9TJoar/WYecREjnqSB
+ 4yrw==
+X-Gm-Message-State: AOJu0YxQA5uW2i2ciiRZ0+tZTqlcQTr49g9g4xzOQqZqNC1Z2W0Q/8ND
+ +JtKD8qyYp3KTaZ9M1wXT+fjEAByIh3MFO/ClFVO2TRuv7zQH698PUbRYKTNvqYACeoyxgZp2qu
+ ywxJb
+X-Gm-Gg: AR+sD10Yg9dHhGWyCku9XnfUAZ3rrzcfe8tpDpxwMa+kE8ik7D7QSahhGZmANRSstnp
+ yL0ni4256cq3OGQQxpCJZpr2d3AWkGBxXgSZyKA/oX2mMrTU39bzFDGUshF0P5GtyJcChtofroB
+ U+X2Wk0B+j1loRuU0Hkm7ce471qoplDoCBTOEh741fLwPwKlpDYIcpz4Ry8mWjJM526JwzpfWEe
+ otxEJ7lKSrtcaPLEzdOQlDOWG/yeF8OXwApSEI/ufAoI+nBrYCPx8oHiXRmfo3p2bDgw89MTLnG
+ 1O9UnB1Bur+jxpHiZyWhU2UWWKow/SkUFFYCbv1sq+zzhBfH0EgHOLVddg4AjCa3nvDLc/Hlz+x
+ jk24IaGxP3+lS2M7WLjydp/CbMmaIjXtNEhr3f0XmAcRsfNtk7YGYMzSzwvcM1ipGph1i71Oarl
+ 8b8z2U5l4w+lObsJWH9sS9B0W6Ff1Qj0p/aPyBYwHm
+X-Received: by 2002:a17:90a:c888:b0:381:28e0:624d with SMTP id
+ 98e67ed59e1d1-38ec6566fbamr4928155a91.28.1784838590115; 
+ Thu, 23 Jul 2026 13:29:50 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13d12f267fdsm18864877c88.0.2026.07.23.13.29.47
+ a92af1059eb24-13d12f267fdsm18864877c88.0.2026.07.23.13.29.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Jul 2026 13:29:48 -0700 (PDT)
+ Thu, 23 Jul 2026 13:29:49 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v2 8/9] net/sxe2: remove queue stats mapping
-Date: Thu, 23 Jul 2026 13:28:13 -0700
-Message-ID: <20260723202936.378793-9-stephen@networkplumber.org>
+ Chengwen Feng <fengchengwen@huawei.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH v2 9/9] ethdev: remove support for queue stats mapping
+Date: Thu, 23 Jul 2026 13:28:14 -0700
+Message-ID: <20260723202936.378793-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260723202936.378793-1-stephen@networkplumber.org>
 References: <20260530161151.873199-1-stephen@networkplumber.org>
@@ -82,285 +84,290 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The queue stats mapping API is removed in 26.11. Drop the
-.queue_stats_mapping_set op and the SXE2_DEV_CAPS_OFFLOAD_Q_MAP
-handling, along with the now-unused mapping init/reset helpers.
+The support for queue stats mapping has been deprecated since 25.11
+release by commit 2863cbd9ee6d ("ethdev: deprecate queue stats mapping
+functions")
+
+This patch completes final removal from ethdev and documentation.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.c | 99 --------------------------------
- drivers/net/sxe2/sxe2_cmd_chnl.h | 10 ----
- drivers/net/sxe2/sxe2_ethdev.c   |  5 --
- drivers/net/sxe2/sxe2_stats.c    | 76 +-----------------------
- drivers/net/sxe2/sxe2_stats.h    |  5 --
- 5 files changed, 3 insertions(+), 192 deletions(-)
+ doc/guides/nics/features.rst           |  7 ---
+ doc/guides/rel_notes/deprecation.rst   |  6 ---
+ doc/guides/rel_notes/release_26_11.rst |  5 +++
+ lib/ethdev/ethdev_driver.h             | 11 -----
+ lib/ethdev/ethdev_trace.h              | 20 ---------
+ lib/ethdev/ethdev_trace_points.c       |  6 ---
+ lib/ethdev/rte_ethdev.c                | 62 --------------------------
+ lib/ethdev/rte_ethdev.h                | 45 -------------------
+ 8 files changed, 5 insertions(+), 157 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index b09989fe50..050488301c 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -1609,105 +1609,6 @@ int32_t sxe2_drv_queue_info_get_update(struct sxe2_adapter *adapter, struct eth_
- 	return ret;
+diff --git a/doc/guides/nics/features.rst b/doc/guides/nics/features.rst
+index 0b0c69e7cd..d6852b063c 100644
+--- a/doc/guides/nics/features.rst
++++ b/doc/guides/nics/features.rst
+@@ -764,13 +764,6 @@ If driver does not support this feature the per queue stats will be zero.
+ * **[implements] eth_dev_ops**: ``stats_get``, ``stats_reset``.
+ * **[related]    API**: ``rte_eth_stats_get``, ``rte_eth_stats_reset()``.
+ 
+-May also support configuring per-queue stat counter mapping.
+-Used by some drivers to workaround HW limitations.
+-
+-* **[implements] eth_dev_ops**: ``queue_stats_mapping_set``.
+-* **[related]    API**: ``rte_eth_dev_set_rx_queue_stats_mapping()``,
+-  ``rte_eth_dev_set_tx_queue_stats_mapping()``.
+-
+ 
+ .. _nic_features_extended_stats:
+ 
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index 6ad7698c6b..aaa2918865 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -83,12 +83,6 @@ Deprecation Notices
+   and the header struct ``rte_vxlan_gpe_hdr`` with the macro ``RTE_ETHER_VXLAN_GPE_HLEN``
+   will be removed in DPDK 25.11.
+ 
+-* ethdev: The queue stats mapping functions
+-  ``rte_eth_dev_set_tx_queue_stats_mapping`` and ``rte_eth_dev_set_rx_queue_stats_mapping``
+-  are deprecated and will be removed in a future release.
+-  Following the removal of queue statistics from the main ethdev statistics structure,
+-  these functions are no longer needed.
+-
+ * ethdev: The flow API matching pattern structures, ``struct rte_flow_item_*``,
+   should start with relevant protocol header structure from lib/net/.
+   The individual protocol header fields and the protocol header struct
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 938617ca75..ed6937c8b5 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -68,6 +68,11 @@ Removed Items
+    Also, make sure to start the actual text at the margin.
+    =======================================================
+ 
++* ethdev: Removed support for ethdev queue stats mapping.
++
++  ``rte_eth_dev_set_tx_queue_stats_mapping`` and ``rte_eth_dev_set_rx_queue_stats_mapping``
++  were deprecated and are now removed.
++
+ 
+ API Changes
+ -----------
+diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
+index 0f336f9567..0477579cc3 100644
+--- a/lib/ethdev/ethdev_driver.h
++++ b/lib/ethdev/ethdev_driver.h
+@@ -567,15 +567,6 @@ typedef int (*eth_xstats_disable_counter_t)(struct rte_eth_dev *dev, uint64_t id
+ /** @internal Query the state of an xstat the can be enabled and disabled in runtime. */
+ typedef int (*eth_xstats_query_state_t)(struct rte_eth_dev *dev, uint64_t id);
+ 
+-/**
+- * @internal
+- * Set a queue statistics mapping for a Tx/Rx queue of an Ethernet device.
+- */
+-typedef int (*eth_queue_stats_mapping_set_t)(struct rte_eth_dev *dev,
+-					     uint16_t queue_id,
+-					     uint8_t stat_idx,
+-					     uint8_t is_rx);
+-
+ /** @internal Get specific information of an Ethernet device. */
+ typedef int (*eth_dev_infos_get_t)(struct rte_eth_dev *dev,
+ 				   struct rte_eth_dev_info *dev_info);
+@@ -1454,8 +1445,6 @@ struct eth_dev_ops {
+ 	eth_xstats_reset_t         xstats_reset;
+ 	/** Get names of extended statistics */
+ 	eth_xstats_get_names_t     xstats_get_names;
+-	/** Configure per queue stat counter mapping */
+-	eth_queue_stats_mapping_set_t queue_stats_mapping_set;
+ 
+ 	eth_dev_infos_get_t        dev_infos_get; /**< Get device info */
+ 	/** Retrieve Rx queue information */
+diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
+index 6554cc1a21..6f1804a765 100644
+--- a/lib/ethdev/ethdev_trace.h
++++ b/lib/ethdev/ethdev_trace.h
+@@ -310,26 +310,6 @@ RTE_TRACE_POINT(
+ 	rte_trace_point_emit_int(ret);
+ )
+ 
+-RTE_TRACE_POINT(
+-	rte_ethdev_trace_set_rx_queue_stats_mapping,
+-	RTE_TRACE_POINT_ARGS(uint16_t port_id, uint16_t rx_queue_id,
+-		uint8_t stat_idx, int ret),
+-	rte_trace_point_emit_u16(port_id);
+-	rte_trace_point_emit_u16(rx_queue_id);
+-	rte_trace_point_emit_u8(stat_idx);
+-	rte_trace_point_emit_int(ret);
+-)
+-
+-RTE_TRACE_POINT(
+-	rte_ethdev_trace_set_tx_queue_stats_mapping,
+-	RTE_TRACE_POINT_ARGS(uint16_t port_id, uint16_t tx_queue_id,
+-		uint8_t stat_idx, int ret),
+-	rte_trace_point_emit_u16(port_id);
+-	rte_trace_point_emit_u16(tx_queue_id);
+-	rte_trace_point_emit_u8(stat_idx);
+-	rte_trace_point_emit_int(ret);
+-)
+-
+ RTE_TRACE_POINT(
+ 	rte_ethdev_trace_fw_version_get,
+ 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const char *fw_version,
+diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
+index 0a28378a56..b0644ea489 100644
+--- a/lib/ethdev/ethdev_trace_points.c
++++ b/lib/ethdev/ethdev_trace_points.c
+@@ -230,12 +230,6 @@ RTE_TRACE_POINT_REGISTER(rte_eth_trace_xstats_get,
+ RTE_TRACE_POINT_REGISTER(rte_eth_trace_xstats_reset,
+ 	lib.ethdev.xstats_reset)
+ 
+-RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_set_tx_queue_stats_mapping,
+-	lib.ethdev.set_tx_queue_stats_mapping)
+-
+-RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_set_rx_queue_stats_mapping,
+-	lib.ethdev.set_rx_queue_stats_mapping)
+-
+ RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_fw_version_get,
+ 	lib.ethdev.fw_version_get)
+ 
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index 9efeaf77cb..d6915a6b08 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -160,11 +160,6 @@ static const struct {
+ 	{RTE_ETH_DEV_CAPA_FLOW_SHARED_OBJECT_KEEP, "FLOW_SHARED_OBJECT_KEEP"},
+ };
+ 
+-enum {
+-	STAT_QMAP_TX = 0,
+-	STAT_QMAP_RX
+-};
+-
+ static const struct {
+ 	enum rte_eth_hash_function algo;
+ 	const char *name;
+@@ -4005,63 +4000,6 @@ rte_eth_xstats_query_state(uint16_t port_id, uint64_t id)
+ 	return -ENOTSUP;
  }
  
--int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx)
+-static int
+-eth_dev_set_queue_stats_mapping(uint16_t port_id, uint16_t queue_id,
+-		uint8_t stat_idx, uint8_t is_rx)
 -{
--	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(eth_dev);
--	int32_t ret = 0;
--	struct sxe2_common_device *cdev = adapter->cdev;
--	struct sxe2_drv_cmd_params param = {0};
--	struct sxe2_drv_rx_map_req req = {0};
--	struct sxe2_rx_queue *rxq = NULL;
+-	struct rte_eth_dev *dev;
 -
--	rxq = eth_dev->data->rx_queues[queue_id];
--	if (rxq == NULL) {
--		PMD_LOG_ERR(DRV, "Rx queue %u is not available or setup",
--				queue_id);
--		ret = -EINVAL;
--		goto l_end;
--	}
+-	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+-	dev = &rte_eth_devices[port_id];
 -
--	req.queue_id = rxq->queue_id;
--	req.pool_idx = pool_idx;
+-	if (is_rx && (queue_id >= dev->data->nb_rx_queues))
+-		return -EINVAL;
 -
--	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RX_MAP_SET,
--				 &req, sizeof(req),
--				 NULL, 0);
+-	if (!is_rx && (queue_id >= dev->data->nb_tx_queues))
+-		return -EINVAL;
 -
--	ret = sxe2_drv_cmd_exec(cdev, &param);
--	if (ret)
--		PMD_LOG_ERR(DRV, "get dev caps failed, ret=%d", ret);
+-	if (stat_idx >= RTE_ETHDEV_QUEUE_STAT_CNTRS)
+-		return -EINVAL;
 -
--l_end:
--	return ret;
+-	if (dev->dev_ops->queue_stats_mapping_set == NULL)
+-		return -ENOTSUP;
+-	return dev->dev_ops->queue_stats_mapping_set(dev, queue_id, stat_idx, is_rx);
 -}
 -
--int32_t sxe2_drv_txq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx)
+-RTE_EXPORT_SYMBOL(rte_eth_dev_set_tx_queue_stats_mapping)
+-int
+-rte_eth_dev_set_tx_queue_stats_mapping(uint16_t port_id, uint16_t tx_queue_id,
+-		uint8_t stat_idx)
 -{
--	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(eth_dev);
--	int32_t ret = 0;
--	struct sxe2_common_device *cdev = adapter->cdev;
--	struct sxe2_drv_cmd_params param = {0};
--	struct sxe2_drv_tx_map_req req = {0};
--	struct sxe2_tx_queue *txq = NULL;
+-	int ret;
 -
--	txq = eth_dev->data->tx_queues[queue_id];
--	if (txq == NULL) {
--		PMD_LOG_ERR(DRV, "Rx queue %u is not available or setup", queue_id);
--		ret = -EINVAL;
--		goto l_end;
--	}
+-	ret = eth_err(port_id, eth_dev_set_queue_stats_mapping(port_id,
+-						tx_queue_id,
+-						stat_idx, STAT_QMAP_TX));
 -
--	req.queue_id = txq->queue_id;
--	req.pool_idx = pool_idx;
--
--	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_TX_MAP_SET,
--				 &req, sizeof(req),
--				 NULL, 0);
--
--	ret = sxe2_drv_cmd_exec(cdev, &param);
--	if (ret)
--		PMD_LOG_ERR(DRV, "get dev caps failed, ret=%d", ret);
--
--l_end:
--	return ret;
--}
--
--int32_t sxe2_drv_mapping_reset(struct rte_eth_dev *eth_dev)
--{
--	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(eth_dev);
--	struct sxe2_drv_cmd_params param = {0};
--	struct sxe2_common_device *cdev = adapter->cdev;
--	int32_t ret;
--
--	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_TX_RX_MAP_RESET,
--				 NULL, 0,
--				 NULL, 0);
--
--	ret = sxe2_drv_cmd_exec(cdev, &param);
--	if (ret)
--		PMD_LOG_ERR(DRV, "Reset queue mapping failed, ret=%d", ret);
+-	rte_ethdev_trace_set_tx_queue_stats_mapping(port_id, tx_queue_id,
+-						    stat_idx, ret);
 -
 -	return ret;
 -}
 -
--int32_t sxe2_drv_mapping_stats_info_clear(struct rte_eth_dev *eth_dev)
+-RTE_EXPORT_SYMBOL(rte_eth_dev_set_rx_queue_stats_mapping)
+-int
+-rte_eth_dev_set_rx_queue_stats_mapping(uint16_t port_id, uint16_t rx_queue_id,
+-		uint8_t stat_idx)
 -{
--	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(eth_dev);
--	struct sxe2_drv_cmd_params param = {0};
--	struct sxe2_common_device *cdev = adapter->cdev;
--	int32_t ret;
+-	int ret;
 -
--	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_TX_RX_MAP_INFO_CLEAR,
--				 NULL, 0,
--				 NULL, 0);
+-	ret = eth_err(port_id, eth_dev_set_queue_stats_mapping(port_id,
+-						rx_queue_id,
+-						stat_idx, STAT_QMAP_RX));
 -
--	ret = sxe2_drv_cmd_exec(cdev, &param);
--	if (ret)
--		PMD_LOG_ERR(DRV, "Clear map stats info failed, ret=%d", ret);
+-	rte_ethdev_trace_set_rx_queue_stats_mapping(port_id, rx_queue_id,
+-						    stat_idx, ret);
 -
 -	return ret;
 -}
 -
- int32_t sxe2_drv_flow_filter_add(struct sxe2_adapter *adapter, struct sxe2_flow *flow)
- {
- 	struct sxe2_drv_flow_filter_req req = { 0 };
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index d63caad526..f43dcc8e7a 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -102,16 +102,6 @@ int32_t sxe2_drv_queue_info_get_update(struct sxe2_adapter *adapter,
- int32_t sxe2_drv_fc_state_get(struct sxe2_adapter *adapter,
- 			      struct sxe2_drv_vsi_fc_get_resp *dev_fc_state_resp);
+ RTE_EXPORT_SYMBOL(rte_eth_dev_fw_version_get)
+ int
+ rte_eth_dev_fw_version_get(uint16_t port_id, char *fw_version, size_t fw_size)
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index ee400b386f..3aa7a22fbc 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -3491,51 +3491,6 @@ int rte_eth_xstats_query_state(uint16_t port_id, uint64_t id);
+  */
+ int rte_eth_xstats_reset(uint16_t port_id);
  
--int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
+-/**
+- *  Set a mapping for the specified transmit queue to the specified per-queue
+- *  statistics counter.
+- *
+- * @param port_id
+- *   The port identifier of the Ethernet device.
+- * @param tx_queue_id
+- *   The index of the transmit queue for which a queue stats mapping is required.
+- *   The value must be in the range [0, nb_tx_queue - 1] previously supplied
+- *   to rte_eth_dev_configure().
+- * @param stat_idx
+- *   The per-queue packet statistics functionality number that the transmit
+- *   queue is to be assigned.
+- *   The value must be in the range [0, RTE_ETHDEV_QUEUE_STAT_CNTRS - 1].
+- *   Max RTE_ETHDEV_QUEUE_STAT_CNTRS being 256.
+- * @return
+- *   Zero if successful. Non-zero otherwise.
+- */
+-__rte_deprecated
+-int rte_eth_dev_set_tx_queue_stats_mapping(uint16_t port_id,
+-		uint16_t tx_queue_id, uint8_t stat_idx);
 -
--int32_t sxe2_drv_txq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
+-/**
+- *  Set a mapping for the specified receive queue to the specified per-queue
+- *  statistics counter.
+- *
+- * @param port_id
+- *   The port identifier of the Ethernet device.
+- * @param rx_queue_id
+- *   The index of the receive queue for which a queue stats mapping is required.
+- *   The value must be in the range [0, nb_rx_queue - 1] previously supplied
+- *   to rte_eth_dev_configure().
+- * @param stat_idx
+- *   The per-queue packet statistics functionality number that the receive
+- *   queue is to be assigned.
+- *   The value must be in the range [0, RTE_ETHDEV_QUEUE_STAT_CNTRS - 1].
+- *   Max RTE_ETHDEV_QUEUE_STAT_CNTRS being 256.
+- * @return
+- *   Zero if successful. Non-zero otherwise.
+- */
+-__rte_deprecated
+-int rte_eth_dev_set_rx_queue_stats_mapping(uint16_t port_id,
+-					   uint16_t rx_queue_id,
+-					   uint8_t stat_idx);
 -
--int32_t sxe2_drv_mapping_reset(struct rte_eth_dev *eth_dev);
--
--int32_t sxe2_drv_mapping_stats_info_clear(struct rte_eth_dev *eth_dev);
--
--int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
--
- int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
- 
- int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 8bbfdc3a15..440411a65a 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -194,8 +194,6 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.xstats_get_names           = sxe2_xstats_names_get,
- 	.xstats_reset               = sxe2_stats_info_reset,
- 
--	.queue_stats_mapping_set    = sxe2_queue_stats_mapping_set,
--
- 	.fw_version_get             = sxe2_fw_version_string_get,
- 
- 	.get_monitor_addr           = sxe2_get_monitor_addr,
-@@ -1309,9 +1307,6 @@ static void sxe2_drv_dev_caps_set(struct sxe2_adapter *adapter,
- 	if (dev_caps->cap_flags & SXE2_DEV_CAPS_OFFLOAD_PTP)
- 		adapter->cap_flags |= SXE2_DEV_CAPS_OFFLOAD_PTP;
- 
--	if (dev_caps->cap_flags & SXE2_DEV_CAPS_OFFLOAD_Q_MAP)
--		adapter->cap_flags |= SXE2_DEV_CAPS_OFFLOAD_Q_MAP;
--
- 	if (dev_caps->cap_flags & SXE2_DEV_CAPS_OFFLOAD_FC_STATE)
- 		adapter->cap_flags |= SXE2_DEV_CAPS_OFFLOAD_FC_STATE;
- }
-diff --git a/drivers/net/sxe2/sxe2_stats.c b/drivers/net/sxe2/sxe2_stats.c
-index 3ad8fe2fe9..27cd019c1a 100644
---- a/drivers/net/sxe2/sxe2_stats.c
-+++ b/drivers/net/sxe2/sxe2_stats.c
-@@ -497,90 +497,20 @@ int32_t sxe2_stats_hw_reset(struct rte_eth_dev *dev)
- 
- int32_t sxe2_stats_info_reset(struct rte_eth_dev *dev)
- {
--	int32_t ret;
--	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
--
- 	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
- 		return sxe2_mp_req_reset_stats(dev);
- 
--	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_Q_MAP) {
--		ret = sxe2_drv_mapping_stats_info_clear(dev);
--		if (ret)
--			goto l_end;
--	}
--
--	ret = sxe2_stats_hw_reset(dev);
--	if (ret)
--		goto l_end;
--
--l_end:
--	return ret;
-+	return sxe2_stats_hw_reset(dev);
- }
- 
- int32_t sxe2_stats_init(struct rte_eth_dev *dev)
- {
- 	PMD_INIT_FUNC_TRACE();
--	int32_t ret;
- 
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
- 		return 0;
- 
--	ret = sxe2_queue_stats_map_init(dev);
--	if (ret)
--		goto l_end;
--
--	ret = sxe2_stats_hw_reset(dev);
--	if (ret)
--		goto l_end;
--
--l_end:
--	return ret;
--}
--
--int32_t sxe2_queue_stats_mapping_set(struct rte_eth_dev *eth_dev,
--				  uint16_t queue_id, uint8_t pool_idx, uint8_t is_rx)
--{
--	int32_t ret = -1;
--	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(eth_dev);
-+	dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
- 
--	if (!(adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_Q_MAP)) {
--		PMD_LOG_ERR(DRV, "VF does not support queue mapping! ");
--		goto l_end;
--	}
--
--	if (is_rx)
--		ret = sxe2_drv_rxq_mapping_set(eth_dev, queue_id, pool_idx);
--	else
--		ret = sxe2_drv_txq_mapping_set(eth_dev, queue_id, pool_idx);
--
--	if (ret) {
--		PMD_LOG_ERR(DRV, "Queue stats mapping failed ! "
--			"queue_id:%u pool_idx:%u", queue_id, pool_idx);
--		goto l_end;
--	}
--
--	PMD_LOG_DEBUG(DRV, "port %u %s queue_id %d stat map to pool[%u] ",
--		     (uint16_t)(eth_dev->data->port_id), is_rx ? "RX" : "TX",
--		     queue_id, pool_idx);
--l_end:
--	return ret;
--}
--
--int32_t sxe2_queue_stats_map_init(struct rte_eth_dev *dev)
--{
--	int32_t ret = 0;
--	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
--
--	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_Q_MAP) {
--		dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
--
--		ret = sxe2_drv_mapping_reset(dev);
--		if (ret) {
--			PMD_LOG_ERR(DRV, "Queue stats mapping init failed !");
--			goto l_end;
--		}
--	}
--
--l_end:
--	return ret;
-+	return sxe2_stats_hw_reset(dev);
- }
-diff --git a/drivers/net/sxe2/sxe2_stats.h b/drivers/net/sxe2/sxe2_stats.h
-index 64ac2bb11d..f9cb5a8225 100644
---- a/drivers/net/sxe2/sxe2_stats.h
-+++ b/drivers/net/sxe2/sxe2_stats.h
-@@ -31,9 +31,4 @@ int32_t sxe2_stats_info_reset(struct rte_eth_dev *dev);
- 
- int32_t sxe2_stats_init(struct rte_eth_dev *dev);
- 
--int32_t sxe2_queue_stats_mapping_set(struct rte_eth_dev *eth_dev,
--				  uint16_t queue_id, uint8_t pool_idx, uint8_t is_rx);
--
--int32_t sxe2_queue_stats_map_init(struct rte_eth_dev *dev);
--
- #endif
+ /**
+  * Retrieve the Ethernet address of an Ethernet device.
+  *
 -- 
 2.53.0
 
