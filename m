@@ -2,71 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C731C531D0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 20:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C22D4C531CC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 20:30:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1E41540280;
-	Thu, 23 Jul 2026 22:29:48 +0200 (CEST)
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
- [209.85.215.180])
- by mails.dpdk.org (Postfix) with ESMTP id 3028540280
- for <dev@dpdk.org>; Thu, 23 Jul 2026 22:29:45 +0200 (CEST)
-Received: by mail-pg1-f180.google.com with SMTP id
- 41be03b00d2f7-c981c2c37cbso897356a12.0
- for <dev@dpdk.org>; Thu, 23 Jul 2026 13:29:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 22AB340B8D;
+	Thu, 23 Jul 2026 22:29:49 +0200 (CEST)
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
+ [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id 273C440280
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 22:29:46 +0200 (CEST)
+Received: by mail-pj1-f45.google.com with SMTP id
+ 98e67ed59e1d1-38125cebfdaso1445366a91.1
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 13:29:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784838584;
- x=1785443384; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784838585;
+ x=1785443385; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=ul2m75f3HrCo0aD5dgYXRI8SlNJKci+vk3sm/CGs2JI=;
- b=JGL3u/soo+VhcCey69rbCaQEodz+LJ4OK/PR7Ad+RSP6yzcSBOVe4qbewOIsZmrx4q
- IVcl2fuSTc/xOb9c8Gpcz8+3yLXD26ZAtjdtdWXYy0grnwD1MrScpkQ4/iRbS3c7QT8u
- e5AbGAhusYcJg7trmZz2nPBTniBhoqVsOMEcEp7C6s3q7x5ylDOs2Oog3y9NYnLcu2v0
- FfMIqMmqLMUOX5ftolQayAWPF217sLXc+n9WtFDVbWMZNhgPuRmaRKjjgHCLeytUCB+4
- os37HZh6a4sGxVxBnLWxYkcqlDdt9vgsDNd6V4j8hMES21mWngf1ANe6KLrw2/Z3GsgG
- WFog==
+ bh=tHcTfK3henNm7qitboSMcTFPFWTVwwxC16J0UsLhk4M=;
+ b=lyiwQO03eTszlu4o5MmT9HkM6THjLEm/lTlIIUc52I1o/zLE1KMvmsnp3/Re8KdAE1
+ 4v/iurYgtEUAAF9TRr0pNZ9lwZiOBxABh9ofwPYiQB6ymSfm27r5Fl2S3ZETdqq0Z+Ub
+ ARA9F1/4d1h2uxLi09Hs+HjhGRRYOm39B901B0tUB/E/19SyxjSDa+dNmz/c84ovCLL/
+ XDNcEHU02xWvNKgBHV2DeivERhwkkweIdzNkXq5DqieRQZ00zxlpMgK6SgYBTk1xC4h6
+ iwILryd9tr6u+LkG5yvTmi0sy0Xf+66JPFzLfWldqlQJqXkUWy4qAEdaB+lTrYoMd3lD
+ rgtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784838584; x=1785443384;
+ d=1e100.net; s=20251104; t=1784838585; x=1785443385;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=ul2m75f3HrCo0aD5dgYXRI8SlNJKci+vk3sm/CGs2JI=;
- b=WqsskHc//ctUwqpue+5ffVm2u3WkemW6WFQsXFWlIQ6i0zddY9RVk7wUfvcTDrop2F
- FQ6ESszXn04laXQBwbBpyRTUemr495ciJBGu14wFqcOxFU604gPrYPw07Eqvvxx+TyIK
- O+hnPDwXMVa5CIXc3JxJS5kBkkOY+xGXV1mxWE1QHgi/1vwvYWijqJnv0U1293ukOxsQ
- py5nglVZVgMmvLiJu6LTRx7/YbNfZ2q00bHSmZXCpc7IF3ycYRjBrULtmfzbTJA7nLTg
- 5y4yKcdCAUKBwPVhOVwj2uEUuEMaYSBV7JbJo6xW/jj37siii4Sr5rQKxWBU44Y/EHwP
- 0Crw==
-X-Gm-Message-State: AOJu0YwKCGrkTgXRlWL81PalqRrDUuvZSfqWKUm4QhxgP5LNRT0vFhII
- uL4DAoan/xZyoA0AOIznxtLiWpxHQetnvPs7oVVZhYr8QQjpF2Bym/wE70u4s5xjSt+xbr0kKS6
- hUKv7
-X-Gm-Gg: AR+sD10bsOe3m0upptoELE9yurmT2Sc9jJVvWikv9/tl/POEeOLRnjP3NZOg3d455gl
- DMr95nTBk8JZUc4toMVoMzoc5ttAwdszyzVZZBY1TTIIg6MsdHs51Qy1yIKjxOY3V1Hr806386g
- E3BQFLRJ+XccIs7niGnrEa13jFWhTxfrwYk5Z5QahcWZjRdhLcIDI2Fo+PVXppp6WxukKmTgdml
- RbF7gs0A3xCRWYVx62GVZT9TRBxBARpxnjtZiwYQyrh4quJ0P0tiYnFIyDePUvF8j1GyDVrEij3
- php8qoS7Gj0PVSSCnCF4BfJdrOXtdFpvIclUNl+22WPG7PtvGIXXfueZnkQvKqHifvtBkl15On/
- ciSkjS0CKhV4lRgjdSMt5t2MVZgd6eSDYpen5+dPHXSk+Gbl3nUg/2kqj4mc2MiGrHzqwespw4o
- /VS2ca9d6IU05qHa1sSnPf9NuRLpB2bQSK+gXOqFrU
-X-Received: by 2002:a05:6a21:3204:b0:3c3:c3fb:2473 with SMTP id
- adf61e73a8af0-3c44b006731mr4829416637.20.1784838584333; 
- Thu, 23 Jul 2026 13:29:44 -0700 (PDT)
+ bh=tHcTfK3henNm7qitboSMcTFPFWTVwwxC16J0UsLhk4M=;
+ b=me+BJiQQn7HNS0zkk4ET4wG6StMrMtWODtF6YFJ8yl21KavB7MnVH+ZNRNfAmbovqd
+ Y1kf6NprZxBGFIkw3hbBumSB2VJPmUX5qj6j2YwstNw2Y+YfCb84a2liASw3YXZmornX
+ oiXzyMTFSF4bWoJM/UVo3oRXJdV2Lf96nkMXVivWyALJG5W+8Hj/h7sFXtea3RNFvJno
+ EIqAF5kfS+jqxSO8CtdSdMHbHLJ/ijjFQeeBJnJRkkEVsrBopKa77/q3WHpAv82k0pOZ
+ rZil0cqrSo2ucGJk+H0+tXjat41GrLedW64aX13+F5VeR8fg4uiccMTW9JReUq2W7iiV
+ f/Tg==
+X-Gm-Message-State: AOJu0YxYX1ueNuax8DVSBLLYv+ad8aL0mwom2izH9x07In5E2peASeDW
+ lmJ3veK/0fz9X+gFQL/1xFP1l0iDYuGfqekJSlVnTdvRBuGOLwbWUHKGdjPcghEkNTSKnWZHOKJ
+ 1U9zW
+X-Gm-Gg: AR+sD134Zo4a04AU5yt+HSGOtpHhYOMFSKhnTBlC4YWeNkCpZNo/mW21i5l7Gts9e9p
+ Fx4y0h7gVyAxGG9f+zh3HYcpqrxiM3sKlQGJxQbvGitdjGOyvE343KN7nRvdrh6+iv3NWogbo80
+ +EHmxIG0RiK+VWJ8OJt6j9RHXs8iylwVsJEO9WRgbpmw6Upp7oSpd4976JJsTD5t/uRT5gxGUnP
+ bL4+zXwigwHeydjnzLE1WhkvIid5r6ksGANoKXtiWPs2aqDVogciLL/Dt6Y592FbsOE6sQ8ekY3
+ DfSZOYpaU/rOnWVDx7fevR0xDXL04dbLbi+hNUjHFbQ0lh5moonXPweQcd784EWzpceYs7ZTdCW
+ WupFgo2mj28cym7dosRSOI2eiLMmrY15325unUUqRn5Mtqe+yzhElDaCPSJr3W50kmI+QVoX7kx
+ xXB8jo++rqV29/rTgA5xvUSxYncPrMqToyJLpeeBPD
+X-Received: by 2002:a17:90b:4c10:b0:38e:6f90:eabd with SMTP id
+ 98e67ed59e1d1-38ec653c390mr4471370a91.5.1784838585269; 
+ Thu, 23 Jul 2026 13:29:45 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13d12f267fdsm18864877c88.0.2026.07.23.13.29.42
+ a92af1059eb24-13d12f267fdsm18864877c88.0.2026.07.23.13.29.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Jul 2026 13:29:43 -0700 (PDT)
+ Thu, 23 Jul 2026 13:29:44 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>
-Subject: [PATCH v2 4/9] net/cnxk: remove queue stats mapping
-Date: Thu, 23 Jul 2026 13:28:09 -0700
-Message-ID: <20260723202936.378793-5-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 5/9] net/e1000: remove queue stats mapping
+Date: Thu, 23 Jul 2026 13:28:10 -0700
+Message-ID: <20260723202936.378793-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260723202936.378793-1-stephen@networkplumber.org>
 References: <20260530161151.873199-1-stephen@networkplumber.org>
@@ -86,153 +81,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The queue stats mapping feature has been deprecated since 25.11.
-Remove support in this driver for stats map.
+Support for queue stats mapping has been deprecated since 25.11.
+Remove support for this operation in the e1000 driver.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/cnxk/cnxk_ethdev.c |  1 -
- drivers/net/cnxk/cnxk_ethdev.h |  6 ---
- drivers/net/cnxk/cnxk_stats.c  | 76 ++++++++++++++--------------------
- 3 files changed, 31 insertions(+), 52 deletions(-)
+ drivers/net/intel/e1000/igc_ethdev.c | 54 ++++------------------------
+ drivers/net/intel/e1000/igc_ethdev.h |  2 --
+ 2 files changed, 7 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
-index c41959173b..9a4da870cd 100644
---- a/drivers/net/cnxk/cnxk_ethdev.c
-+++ b/drivers/net/cnxk/cnxk_ethdev.c
-@@ -2103,7 +2103,6 @@ struct eth_dev_ops cnxk_eth_dev_ops = {
- 	.rx_queue_intr_enable = cnxk_nix_rx_queue_intr_enable,
- 	.rx_queue_intr_disable = cnxk_nix_rx_queue_intr_disable,
- 	.pool_ops_supported = cnxk_nix_pool_ops_supported,
--	.queue_stats_mapping_set = cnxk_nix_queue_stats_mapping,
- 	.stats_get = cnxk_nix_stats_get,
- 	.stats_reset = cnxk_nix_stats_reset,
- 	.xstats_get = cnxk_nix_xstats_get,
-diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
-index fc66135c66..5dd74de577 100644
---- a/drivers/net/cnxk/cnxk_ethdev.h
-+++ b/drivers/net/cnxk/cnxk_ethdev.h
-@@ -423,10 +423,6 @@ struct cnxk_eth_dev {
- 	/* LSO Tunnel format indices */
- 	uint64_t lso_tun_fmt;
+diff --git a/drivers/net/intel/e1000/igc_ethdev.c b/drivers/net/intel/e1000/igc_ethdev.c
+index de35da2c36..e5feea10d4 100644
+--- a/drivers/net/intel/e1000/igc_ethdev.c
++++ b/drivers/net/intel/e1000/igc_ethdev.c
+@@ -239,9 +239,7 @@ static int eth_igc_xstats_get_names_by_id(struct rte_eth_dev *dev,
+ 		const uint64_t *ids, struct rte_eth_xstat_name *xstats_names,
+ 		unsigned int limit);
+ static int eth_igc_xstats_reset(struct rte_eth_dev *dev);
+-static int
+-eth_igc_queue_stats_mapping_set(struct rte_eth_dev *dev,
+-	uint16_t queue_id, uint8_t stat_idx, uint8_t is_rx);
++
+ static int
+ eth_igc_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id);
+ static int
+@@ -317,7 +315,6 @@ static const struct eth_dev_ops eth_igc_ops = {
+ 	.xstats_get_names	= eth_igc_xstats_get_names,
+ 	.stats_reset		= eth_igc_xstats_reset,
+ 	.xstats_reset		= eth_igc_xstats_reset,
+-	.queue_stats_mapping_set = eth_igc_queue_stats_mapping_set,
+ 	.rx_queue_intr_enable	= eth_igc_rx_queue_intr_enable,
+ 	.rx_queue_intr_disable	= eth_igc_rx_queue_intr_disable,
+ 	.flow_ctrl_get		= eth_igc_flow_ctrl_get,
+@@ -1362,7 +1359,7 @@ eth_igc_dev_init(struct rte_eth_dev *dev)
+ 	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
+ 	struct igc_adapter *igc = IGC_DEV_PRIVATE(dev);
+ 	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+-	int i, error = 0;
++	int error = 0;
  
--	/* Per queue statistics counters */
--	uint32_t txq_stat_map[RTE_ETHDEV_QUEUE_STAT_CNTRS];
--	uint32_t rxq_stat_map[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+ 	PMD_INIT_FUNC_TRACE();
+ 	dev->dev_ops = &eth_igc_ops;
+@@ -1493,12 +1490,6 @@ eth_igc_dev_init(struct rte_eth_dev *dev)
+ 	/* enable support intr */
+ 	igc_intr_other_enable(dev);
+ 
+-	/* initiate queue status */
+-	for (i = 0; i < IGC_QUEUE_PAIRS_NUM; i++) {
+-		igc->txq_stats_map[i] = -1;
+-		igc->rxq_stats_map[i] = -1;
+-	}
 -
- 	/* Security data */
- 	struct cnxk_eth_dev_sec_inb inb;
- 	struct cnxk_eth_dev_sec_outb outb;
-@@ -700,8 +696,6 @@ void cnxk_eth_dev_link_status_get_cb(struct roc_nix *nix,
- void cnxk_eth_dev_q_err_cb(struct roc_nix *nix, void *data);
- int cnxk_nix_link_info_configure(struct rte_eth_dev *eth_dev);
- int cnxk_nix_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete);
--int cnxk_nix_queue_stats_mapping(struct rte_eth_dev *dev, uint16_t queue_id,
--				 uint8_t stat_idx, uint8_t is_rx);
- int cnxk_nix_stats_reset(struct rte_eth_dev *dev);
- int cnxk_nix_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
- 		       struct eth_queue_stats *qstats);
-diff --git a/drivers/net/cnxk/cnxk_stats.c b/drivers/net/cnxk/cnxk_stats.c
-index d57659ef51..e5d29a78b3 100644
---- a/drivers/net/cnxk/cnxk_stats.c
-+++ b/drivers/net/cnxk/cnxk_stats.c
-@@ -14,7 +14,8 @@ cnxk_nix_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
- 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
- 	struct roc_nix *nix = &dev->nix;
- 	struct roc_nix_stats nix_stats;
--	int rc = 0, i;
-+	unsigned int i;
-+	int rc = 0;
- 
- 	rc = roc_nix_stats_get(nix, &nix_stats);
- 	if (rc)
-@@ -33,31 +34,35 @@ cnxk_nix_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
- 	stats->ibytes = nix_stats.rx_octs;
- 	stats->ierrors = nix_stats.rx_err;
- 
--	if (qstats != NULL) {
--		for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS; i++) {
--			struct roc_nix_stats_queue qstats_data;
--			uint16_t qidx;
--
--			if (dev->txq_stat_map[i] & (1U << 31)) {
--				qidx = dev->txq_stat_map[i] & 0xFFFF;
--				rc = roc_nix_stats_queue_get(nix, qidx, 0, &qstats_data);
--				if (rc)
--					goto exit;
--				qstats->q_opackets[i] = qstats_data.tx_pkts;
--				qstats->q_obytes[i] = qstats_data.tx_octs;
--				qstats->q_errors[i] = qstats_data.tx_drop_pkts;
+ 	igc_flow_init(dev);
+ 	igc_clear_all_filter(dev);
+ 	return 0;
+@@ -2031,7 +2022,6 @@ static int
+ eth_igc_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *rte_stats,
+ 		struct eth_queue_stats *qstats)
+ {
+-	struct igc_adapter *igc = IGC_DEV_PRIVATE(dev);
+ 	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
+ 	struct e1000_hw_stats *stats = IGC_DEV_PRIVATE_STATS(dev);
+ 	struct igc_hw_queue_stats *queue_stats =
+@@ -2070,19 +2060,11 @@ eth_igc_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *rte_stats,
+ 	/* Get per-queue statuses */
+ 	if (qstats) {
+ 		for (i = 0; i < IGC_QUEUE_PAIRS_NUM; i++) {
+-			/* GET TX queue statuses */
+-			int map_id = igc->txq_stats_map[i];
+-			if (map_id >= 0) {
+-				qstats->q_opackets[map_id] += queue_stats->pqgptc[i];
+-				qstats->q_obytes[map_id] += queue_stats->pqgotc[i];
 -			}
--
--			if (dev->rxq_stat_map[i] & (1U << 31)) {
--				qidx = dev->rxq_stat_map[i] & 0xFFFF;
--				rc = roc_nix_stats_queue_get(nix, qidx, 1, &qstats_data);
--				if (rc)
--					goto exit;
--				qstats->q_ipackets[i] = qstats_data.rx_pkts;
--				qstats->q_ibytes[i] = qstats_data.rx_octs;
--				qstats->q_errors[i] += qstats_data.rx_drop_pkts;
+-			/* Get RX queue statuses */
+-			map_id = igc->rxq_stats_map[i];
+-			if (map_id >= 0) {
+-				qstats->q_ipackets[map_id] += queue_stats->pqgprc[i];
+-				qstats->q_ibytes[map_id] += queue_stats->pqgorc[i];
+-				qstats->q_errors[map_id] += queue_stats->rqdpc[i];
 -			}
--		}
-+	if (qstats == NULL)
-+		goto exit;
-+
-+	for (i = 0; i < eth_dev->data->nb_tx_queues; i++) {
-+		struct roc_nix_stats_queue qstats_data;
-+
-+		if (i >= RTE_ETHDEV_QUEUE_STAT_CNTRS)
-+			break;
-+
-+		rc = roc_nix_stats_queue_get(nix, i, 0, &qstats_data);
-+		if (rc)
-+			goto exit;
-+		qstats->q_opackets[i] = qstats_data.tx_pkts;
-+		qstats->q_obytes[i] = qstats_data.tx_octs;
-+		qstats->q_errors[i] = qstats_data.tx_drop_pkts;
-+	}
-+
-+	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
-+		struct roc_nix_stats_queue qstats_data;
-+
-+		if (i >= RTE_ETHDEV_QUEUE_STAT_CNTRS)
-+			break;
-+
-+		rc = roc_nix_stats_queue_get(nix, i, 1, &qstats_data);
-+		if (rc)
-+			goto exit;
-+		qstats->q_ipackets[i] = qstats_data.rx_pkts;
-+		qstats->q_ibytes[i] = qstats_data.rx_octs;
-+		qstats->q_errors[i] += qstats_data.rx_drop_pkts;
++			qstats->q_opackets[i] += queue_stats->pqgptc[i];
++			qstats->q_obytes[i] += queue_stats->pqgotc[i];
++			qstats->q_ipackets[i] += queue_stats->pqgprc[i];
++			qstats->q_ibytes[i] += queue_stats->pqgorc[i];
++			qstats->q_errors[i] += queue_stats->rqdpc[i];
+ 		}
  	}
- exit:
- 	return rc;
-@@ -71,25 +76,6 @@ cnxk_nix_stats_reset(struct rte_eth_dev *eth_dev)
- 	return roc_nix_stats_reset(&dev->nix);
+ 
+@@ -2231,28 +2213,6 @@ eth_igc_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 	}
  }
  
--int
--cnxk_nix_queue_stats_mapping(struct rte_eth_dev *eth_dev, uint16_t queue_id,
--			     uint8_t stat_idx, uint8_t is_rx)
+-static int
+-eth_igc_queue_stats_mapping_set(struct rte_eth_dev *dev,
+-		uint16_t queue_id, uint8_t stat_idx, uint8_t is_rx)
 -{
--	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
+-	struct igc_adapter *igc = IGC_DEV_PRIVATE(dev);
 -
--	if (is_rx) {
--		if (queue_id >= dev->nb_rxq)
--			return -EINVAL;
--		dev->rxq_stat_map[stat_idx] = ((1U << 31) | queue_id);
--	} else {
--		if (queue_id >= dev->nb_txq)
--			return -EINVAL;
--		dev->txq_stat_map[stat_idx] = ((1U << 31) | queue_id);
+-	/* check queue id is valid */
+-	if (queue_id >= IGC_QUEUE_PAIRS_NUM) {
+-		PMD_DRV_LOG(ERR, "queue id(%u) error, max is %u",
+-			queue_id, IGC_QUEUE_PAIRS_NUM - 1);
+-		return -EINVAL;
 -	}
+-
+-	/* store the mapping status id */
+-	if (is_rx)
+-		igc->rxq_stats_map[queue_id] = stat_idx;
+-	else
+-		igc->txq_stats_map[queue_id] = stat_idx;
 -
 -	return 0;
 -}
 -
- int
- cnxk_nix_xstats_get(struct rte_eth_dev *eth_dev, struct rte_eth_xstat *xstats,
- 		    unsigned int n)
+ static int
+ eth_igc_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
+ {
+diff --git a/drivers/net/intel/e1000/igc_ethdev.h b/drivers/net/intel/e1000/igc_ethdev.h
+index 7fa7877adf..96ff520da7 100644
+--- a/drivers/net/intel/e1000/igc_ethdev.h
++++ b/drivers/net/intel/e1000/igc_ethdev.h
+@@ -227,8 +227,6 @@ struct igc_adapter {
+ 	struct e1000_hw		hw;
+ 	struct e1000_hw_stats	stats;
+ 	struct igc_hw_queue_stats queue_stats;
+-	int16_t txq_stats_map[IGC_QUEUE_PAIRS_NUM];
+-	int16_t rxq_stats_map[IGC_QUEUE_PAIRS_NUM];
+ 
+ 	struct igc_interrupt	intr;
+ 	struct igc_vfta	shadow_vfta;
 -- 
 2.53.0
 
