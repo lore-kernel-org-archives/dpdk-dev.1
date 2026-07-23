@@ -2,153 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B088DC531CB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 09:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6628C531CB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 09:35:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9D69A4028A;
-	Thu, 23 Jul 2026 11:12:57 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id 38CB74027C
- for <dev@dpdk.org>; Thu, 23 Jul 2026 11:12:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1784797976; x=1816333976;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=6Au8qgx4eA9wQv3PzBdTtL0Raz7RZjH49g4qaPkjAF8=;
- b=Nk2tTPyLFnlHiAE+D05g3SXSYpZ1ShdBTu9jEGjPvPQJ2YV8oYyxKM65
- uUfcgbO9JedUichZrPWshAnXMu/7Ed5spxHj6Trp19vH8h3EFIrCfjLMH
- l6FVPLPoxzqHFfnc81FNTg24uyIYLbUkm48AdlLBIX5I/D640/l9Wgzbe
- sHruYXsM60MlW+GeEnBWoVpyXCxlmtLf3soBSrzSoeuM1VEsHutTsHPYF
- CbRLcdjzxAH+pwdATgqgOZ/vEbk8brL1UtOjZpfaYJMOJtkjSLX6FPRCn
- WU8WLuPN/ylWYnn8HpFhGaa1snZLb6NsEgVWT8z7QGiZr3foUYOlBy4Bv g==;
-X-CSE-ConnectionGUID: N7ZopLIATY+v19Xu/Ek2GQ==
-X-CSE-MsgGUID: FJNEQKJJS4iu10sIqPndLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11854"; a="108237656"
-X-IronPort-AV: E=Sophos;i="6.25,180,1779174000"; d="scan'208";a="108237656"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jul 2026 02:12:55 -0700
-X-CSE-ConnectionGUID: uoQMJedVQOGGCXOMpC8SBg==
-X-CSE-MsgGUID: PYO5rg3aRhinpym2g4Rt4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,180,1779174000"; d="scan'208";a="257105360"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jul 2026 02:12:55 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Thu, 23 Jul 2026 02:12:54 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43 via Frontend Transport; Thu, 23 Jul 2026 02:12:54 -0700
-Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.38) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Thu, 23 Jul 2026 02:12:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rzhKIZx+N/assokYw84PeOmhz3V0wrzitTXD+Sw4VHcHf+yhjLX/gHK5RbvglVrYaZsgGFpYDO3xtcMJcbKWucu+6uuYcce97s3cea5GsLJRwB+pY3Gs7P+oaWL1J9IaBH2lzQhXQJphl4YsLgNgcTMViAz8oJBuj9twi6pfwRoyN5EIEBcU7aOcpgL8ZHDUFqbB2ubf6Xz/tQvF9OyxakP7OdLHN1rc/5XqRU3kUQTAU4nLONaqCFTod4WclecykAZi+Q41pNpxOpubt7IkfjXLBWHZGmLLF52IT9R+raZ8V+10fTX6NTE3iBFqfV9FtAP5zkw+zoK8GygCyc+Vcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DxmXiR38Swt2Q5nw8G10mXjQK/xpgZGV8gfKYqBy0v4=;
- b=B01jAMq8vOSWDpp+9EewGvRZB5JUjyuqEifUHWfaY1OxN2Nk3ncn9R+eiHKs9g/isF7RsPurBeCFDR1p2ZhuJ9j+jOFUtzNyziCGUN8ApJl0tPm27xcLz9nLePE6uNU399AWl8p52aSbp65guKrsndWNhTq6urcMUgIDp1oWHvGCpEQ6eCEMhcuGQxpHRCUWq2ftzzWVkUIHSo3ZZDbZHvORwb0DmwxXBYYQTm41QWFTDAvcGj6Qz0TuqZhxNOiEsqEYOk1prE/4g9p803QXmqcl4Yp/vhmR5w4z+kiYLLabn+q1xkGiN4YzsOU2bKCdj+f1/3ktP0QXP1QANauInA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
- by MW4PR11MB7102.namprd11.prod.outlook.com (2603:10b6:303:22b::21)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Thu, 23 Jul
- 2026 09:12:47 +0000
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0245.009; Thu, 23 Jul 2026
- 09:12:46 +0000
-Date: Thu, 23 Jul 2026 10:12:41 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Mingjin Ye <mingjinx.ye@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [RFC v2] net/ice: add devargs to control link update
-Message-ID: <amHbCSPhesiBh6WA@bricha3-mobl1.ger.corp.intel.com>
-References: <20241022062043.1833554-1-mingjinx.ye@intel.com>
- <20241022063849.1834740-1-mingjinx.ye@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241022063849.1834740-1-mingjinx.ye@intel.com>
-X-ClientProxiedBy: DU2PR04CA0345.eurprd04.prod.outlook.com
- (2603:10a6:10:2b4::16) To IA3PR11MB9421.namprd11.prod.outlook.com
- (2603:10b6:208:578::9)
+	by mails.dpdk.org (Postfix) with ESMTP id 74A0A4028A;
+	Thu, 23 Jul 2026 11:35:51 +0200 (CEST)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
+ [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id E3F6B4027C
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 11:35:49 +0200 (CEST)
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-49550ec592cso1741995e9.0
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 02:35:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1784799349; x=1785404149; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=425IOe62VHh1DCbE9FjyySLAKQFT1iR9hN6TWc7zDNc=;
+ b=C4tVKjBp4ZyaKgh6DW1J69MKtdgAkQcMNv3NZPV8+qJ5bpPlM5FsCukV8YTtBM0rzZ
+ hpwNS1Z8ajbf3t+/Xgin9ZraqWX1TcKFSABT+nlCyEuNLzo5IOTnzF7m49gvTfh6J64o
+ gDBW+NSfXotMXdnMXzfA0rRHhi1WDJEHRau4wpLDIFgy6vsV2gYQW2luGJJO5W4g5C+g
+ f8PG7JYVCLsPxUnXQiexd5SSt67ZpF403tWlEFOYqs+E/O4yHGOEQxLukJlkkoqwi0X3
+ 5HXYY9KXxILddIhh8sy2KEh5LQFXePxU/iHU428C0P+ETVQ8fJxJRdC23SmPpf0ktOK6
+ qwSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784799349; x=1785404149;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=425IOe62VHh1DCbE9FjyySLAKQFT1iR9hN6TWc7zDNc=;
+ b=eo3byrrVdcmLqw8EHDad7eXMWuatTXOx1Q7exQEC2mP1xJhdO/QfrapRJSMmQ8vKIW
+ 3hm532O4YMhSHgLUQflNXe5LAyfMBbD5f/i+0ZvssWDpyRnx+Hd7IFs7o5HVVaOqicIE
+ 2FgNHCdvJjSNEucgqlLQAUxf1ocdHagFJgvAd7R/9wJzWIY1IllmBf0V/c2CGKhTVsZc
+ bzHtFEA7c8hEyWLy9ZP6IpqtSaP2OsW+2ytkAyJ9yNfordwNFUONu2RnJ3NnXabrjflQ
+ JUaZrTCK843DZoL741qE4xqVDjD2rq7qh9hw4PiUhPglY4AxjvAR9l6qqs47/Roa69JJ
+ rc5A==
+X-Gm-Message-State: AOJu0Ywqf/aMOZRU3/TaxQOba9aAsx8lfJrO0dir9OsAJm9T1X6irlLk
+ UKh4rUL00rxqy+gQW0yIOTXQFXz+akvhO19Gbmh+UArvlpqkQxFGsf4An3TK7zUr
+X-Gm-Gg: AR+sD13yGp8HWw00id/VsxYe70k70lzIVgaE7KDR8muF9rkvCFKRbcHJ2ge6Q2Van3b
+ vgV7T4Eo1xSkD18g5/63Bv31QAsbKT4cWRzXGHEQAUImdcH2oKi15EUCs+KcQf303otzHO/R5Yx
+ nyjnw/Q0sYbP/BqysCkXkUqgb869Ma61SvGXgGF6giaTrTgspXu0/iMb1ZnURVH6xOsd0Hdub4I
+ ge4H6C8gPqn5UpNc6jBh+QupTq/wNMf+w4I/b8xCvmkGD+t3jcSOR/uI56CyeRUr8iaI2MWe0nz
+ bJoi90b7xxs2fdNrpRyUGVIComRcv5zV3nOvkEhAEGKK4LjDV8CLzMGvTZOXfzKc3CGCsSt011+
+ rnYOVanZKONTOukAP0zHOCAQKZtK5qjHhAbY31y2ASlAqum35Ikh25PVX4/fKP9s525SJk/0lAW
+ h8gep2ZY0r6WP8LvZt/qPmoQ==
+X-Received: by 2002:a05:600c:8284:b0:495:3c6f:7c18 with SMTP id
+ 5b1f17b1804b1-495745817f9mr19810375e9.3.1784799349077; 
+ Thu, 23 Jul 2026 02:35:49 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:6f:bdf0:7f2c:8921:1691:e459])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-495730353d9sm56728425e9.12.2026.07.23.02.35.48
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 23 Jul 2026 02:35:48 -0700 (PDT)
+Sender: Maxime Leroy <maxime.leroys@gmail.com>
+From: Maxime Leroy <maxime@leroys.fr>
+To: dev@dpdk.org
+Cc: Maxime Leroy <maxime@leroys.fr>, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [PATCH v2] net/dpaa2: hash inner IP for tunnelled traffic
+Date: Thu, 23 Jul 2026 11:35:40 +0200
+Message-ID: <20260723093540.1839619-1-maxime@leroys.fr>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260720133436.869334-1-maxime@leroys.fr>
+References: <20260720133436.869334-1-maxime@leroys.fr>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|MW4PR11MB7102:EE_
-X-MS-Office365-Filtering-Correlation-Id: 317afed4-e5b1-487a-8243-08dee89a8ed1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|23010399003|366016|22082099003|18002099003|56012099006|11063799006|4143699003|10067099003;
-X-Microsoft-Antispam-Message-Info: jv25Lz2mbL4pq6frWxWfQY5Z3Np06w39gDN2vqMGWfd405kKNLwAR/+U6CZJw2B4TeDs2+YxJ5bnjiF0eXKIhXEETxShHY6JnUJ38wd90HLXKL97pD9yXnl02lz7a7a6D9o3l6fwz+FOTc9dfm+g07SR9pTdU2DeZRcBLtkJEJFJwUYrXpboMhf00ZAl9tQnKD/xUucDkHNLOnwOhQwQA/WXKEi0E/Yk6W10u+HQKAXS0stipG0xBoTOgP18PWbES6DV+aHB7oJbZjzF1y+yXhsOeleit/sTqKMJWiUtbNlDGm1QXIaE3XXVKToNeXdrAtNFComk64ajRfrjxa/s9XIoZcV2+gkK3AM+bBCvupbWrd8Z5c3hEWe85o6/ddUwdLC6PU9Bh2KxHIzB4njeTRzYi8kp+Jhb/o4o6524RLrJVXB/usUJvHzPOz3aCMtvZr7rqcvpuAWrS1GzFem9pGufjgghokKN/yJjnu5t23PWGBURIeWkxik2NgcGRoBdeJsCmKnMHJcPZiuES3VbbjvDLwKoIhCpqb7J/DXtw+4hlDUGuNEL4PBa8HdhLDeUn+yC1rg2XyNVYeLwqoPjkd7EHL2KxIoVvzNx+XnHDeXWS1+Hs03XIn04xvpMwkLx9OjvbLfFq3pRpVlm57rypg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(22082099003)(18002099003)(56012099006)(11063799006)(4143699003)(10067099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Yzk1MGJxNGszYTIvR0hvaTRHUnNQZFVzNGdPaFFJUHBjRWlyRVlweDZOd3I5?=
- =?utf-8?B?TU9kSnRoUjQxMVVTQjRhWnFINmV0V0sxUlZmWTFlbmVjSUc4UUQ5akt6NGJm?=
- =?utf-8?B?YjBCdmRhd1FrZFpCaTlwQVdTR2E3VEY5TlJ0Y0ZFQzFxWDUxWE50ZzJ3V05k?=
- =?utf-8?B?cVZaU3FGZVlMN2w0K3RLWmZSZTBkaXV3dkJaK2xKL0hJWm1UYThHNG9sZlND?=
- =?utf-8?B?YURPdjNvNmNQUzdXWnk3U2NBMGFlTXRDQStFL05kT3V5YXFWMmpKTEMyNWxU?=
- =?utf-8?B?OENXMWIrd0RCN0xhaXZ3QS9yQzRIcXliemJwaS9JWVhUSkIzMUxuWm9pS0JB?=
- =?utf-8?B?eWFJdUxsY2F1S2JsMjI1cGN5NEptVEViaVpYVmxqSmJBSEVtSnVxRlBQckYx?=
- =?utf-8?B?QXg0YkREcWJNOWhrZDg5aEZBek5xemtYd1BJL0NScnVScXVUT0RQbi9MQmpm?=
- =?utf-8?B?RlRIb1BlUmxoQWkzSHIzTzB0dXFWMHVNMWNFNVlmSjhUWno4a3R4aW54V21u?=
- =?utf-8?B?aFZYTmh5STJDcmM0OW1ldHdkV3I1c05WYjlCbGVrREV2NURRblNJTzFpWlVh?=
- =?utf-8?B?dU9XUDVQU1h1bWp5T05KbjlKWUwrek5yS1FqNnVISzEvQ0VPblBvaDQxbUVk?=
- =?utf-8?B?bzVoMjNkOURDQzNoRnZja2taUmhGS1ZnODNEd1U5WVdMblJ0elk4bmZiN2s1?=
- =?utf-8?B?ODJTVHpydkRpQkFGM256dXVFMk1WQmJ5VExjbE0wVWpQM05zTnpDdGQ3Rm1P?=
- =?utf-8?B?QkFaSC9VYldLdFA5YWtMNjUrQWdUTWc4OFlLYVVzYVRIbGJEOFN0TFY2d3Br?=
- =?utf-8?B?NWV0VlRHMWlpb2RLdkdVL3hzd1h4UkJFbzVGZGhPeVdLSHB4RzJzQzZDdmZK?=
- =?utf-8?B?WG55ODM5aFRmZDV1blpsZE0wR2V3d2hUdnBWTWt5Qmgwd0U5TC9tREtJb1BV?=
- =?utf-8?B?QmxQRUpzSnJmQ0JoL0FMMmhGa3JwUVlOY0drRm5nb3laaGxxdGp1aVU4VXJl?=
- =?utf-8?B?QW1rYUJBYnF0V2J1RlNHRTU4dllLeHorOTFDYTBHZUdqZUREZk9DMDBqMXlJ?=
- =?utf-8?B?b1NUcE1rQkZTTXNPdXFOaFpMSVhwaWpxNk9IUXZnWm5zeXk0aTBmckdCMDhX?=
- =?utf-8?B?dDJwZkkwVE4wWFRlZ2NMVEZGOHZmN3UxTjVjMHBhUktSUURMckk5bXNjaTFl?=
- =?utf-8?B?NjBGZEViSDVJQnhlTFRqQW5maUZkUzlTN1pmWVQ2QnpNbmI0cExhajIzb29w?=
- =?utf-8?B?QnhmS0JOZGJYeC9mMjVnNk5MUUN6dUIwbC80cHdUdU9hQXgrUEdNWU5HeHVT?=
- =?utf-8?B?Nks1WmVqc2Zncng3MWJ3VERMSGJDeTUrc0JYdXBud0ZlVVlJSm10WWlHRGhs?=
- =?utf-8?B?NVJmRTV0emdyaktLMTRHZHR5TXBpdWNENmhHOVZheTB0OGd5YWJJaWpQMnVt?=
- =?utf-8?B?RThHdU1KN1JSSE9mL3NzOHMrcElKbHM3L1A2RmowR1BBRTJJSi9qMjcrL3lU?=
- =?utf-8?B?Rkg5ZGJRQ2lWS0FTdDFBUWhkOUhMUFY2TlBBKzBpL3Ayblg1RzJxT29idzFE?=
- =?utf-8?B?UGRYblFsQ0M2S1hDWXAzc2J4dExnUFRXbWdzeVpoWFlRWFBtTVZFRWpYWVU2?=
- =?utf-8?B?dzBydU0rSk1yNnJrMVdDdC9IRUFnQnB4YmVUNUltQ1Z5bzF2aGRycFZ0blNj?=
- =?utf-8?B?a1R4VTUyWWpzRzJrNFNZQ3p2TEx3KzBOckZtNVNvUGpaSmxsRG5Da2FKUWNI?=
- =?utf-8?B?eEUrN0VtSnRrVEFaKzNQcjEyZmZTaG5KdUFpOGhsUFhQTXkwQjcySDlMVTRh?=
- =?utf-8?B?MHVzUDU4U1RoelplNzAzM2ZLTGwyeUhtVXZRV0xiVmhpMlRQMTk3V1AxcVEx?=
- =?utf-8?B?eDE0Z2Rvb0lIOHpUcGF2VHI3VGk1UUFGejk3TjJpVmdadS9yVmtSVS8vdkoy?=
- =?utf-8?B?c0tKSWlXNkgvV01XS2xLK0lpZTRITTZRZzlGeGFhNVRVdjV4SzNCWkVwbS81?=
- =?utf-8?B?TEFxbVAwSUZ2Nk9qWHpDUVl6UVNyTjd5cnBOck9rNmtXYTNFdXdSbWFoTjMr?=
- =?utf-8?B?NmJJSzc0Wm9OUDBzS1hVaTI0ZzlRZ25FYi82S2VyOVI3bGNncm9XdEovTGNT?=
- =?utf-8?B?UldacmRTSXVkNTVxc2hqdC9hRXVoamVzUXhsMXVhblQ0K3ZFV3ZTMkVjZEo2?=
- =?utf-8?B?ejdxRFhvMDJBdkQ0L1ptKzRWWGQ4WlV5YUJrRFFtc25kZzcwaXlmNGNPWmxZ?=
- =?utf-8?B?TVJlYTRrUC9DQ3QxSHVSMy80YW94MXQ1Y3JYTW9RenRFL3pHclUxRWdUcTNS?=
- =?utf-8?B?ZXl4NjRxRFBaSkNrTGVmS1VCNU5OTkRMRzJ5T3JlVmhiUk41QUhxWnVrcU9p?=
- =?utf-8?Q?IL1wLHqAM19/TKZ4=3D?=
-X-Exchange-RoutingPolicyChecked: AT++iIYii6XOSfpOdlRU3bpMNo6hu3vIuJfdeODVsVbV6jRxUruxZ+lBnOejGj4pFuGItvajUknG21ZP2+VeNg2Wg9qGA+ZzwM1m6iuI3U3lLm6NSocnLQt6FJ/NDoRBP3sKxkwG1VTWQmB6hwayu1TmsLWi7eHbCES0DadOHubf9Am+3N0zgySvvOs46MxkIihtNR6e7V9xxGpA03JYTbzufvpJT2c7IqqNGODF9sqkhKuzL1HZLLbp0F8pghQXWOpe7XsXWfMk/PR7NBpBAJZsKhkfVrRCzsPpxVG/YKhZOXCTMQhpDwWctTaDbrhjFwbvA+Yil2HZV97wViZfrQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 317afed4-e5b1-487a-8243-08dee89a8ed1
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2026 09:12:45.9055 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yJBrwITX7JLiBLHjt2+ygcJRiMo7Yade4KQlBsplYUUPeoZe/iVSxJ3IDN/TgXQjUT85kVS+C12mt8fRXh7qUcgKKeAD4TXO+6/GcESuVas=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7102
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -162,25 +81,159 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Oct 22, 2024 at 06:38:49AM +0000, Mingjin Ye wrote:
-> This patch adds the ‘link_period’ devargs to adjust the link update
-> period (microseconds), when the value is less than or equal to 0
-> it will be disabled, by default it is not enabled.
-> 
-> Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
-> ---
-> v2: Fix using the wrong variable.
-> ---
->  doc/guides/nics/ice.rst      |  7 ++++
->  drivers/net/ice/ice_ethdev.c | 69 ++++++++++++++++++++++++++++++++++++
->  drivers/net/ice/ice_ethdev.h |  1 +
->  3 files changed, 77 insertions(+)
-> 
+The RSS key only extracted the outer IP header. Tunnelled traffic whose
+outer headers are fixed then carries no entropy for the hash, so every
+flow lands on a single Rx queue.
 
-This RFC is now quite old, so marking as "Not Applicable" in patchwork. I
-know we had some other rework around link status updates in our driver, so
-these changes may no longer be relevant. If they are, please submit a new
-patch version rebased on latest main.
+Extract both the outer IP (header index 0) and the innermost IP
+instance (HDR_INDEX_LAST). Plain frames keep being hashed on their only
+IP header; the inner extract resolves to nothing and adds no entropy.
+Tunnelled frames are also hashed on their inner IP and spread across the
+Rx queues.
 
-Thanks,
-/Bruce
+This is the PMD default hash: dpaa2 does not expose the ethdev RSS level
+selector, so it applies to every RSS request. The hardware cannot hash
+the inner IP alone, as HDR_INDEX_LAST only resolves when several IP
+headers are stacked and a plain frame would hash to a constant. Folding
+the outer IP into the key is therefore unavoidable, and two tunnelled
+flows that share an inner IP but differ in their outer IP may hash to
+different queues. This is documented in the dpaa2 guide.
+
+Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+---
+v2:
+* Dropped the first patch (the INNERMOST revert), now applied upstream;
+  this is the remaining standalone patch.
+* Rebased on main for the 26.11 cycle; moved the release note from
+  release_26_07.rst to release_26_11.rst.
+
+v1 (since RFC):
+* Reworked the approach: rather than overloading INNERMOST to also hash
+  the outer IP, always extract outer+inner as the PMD default, since
+  dpaa2 does not expose the RSS level selector, and revert the INNERMOST
+  support in a separate patch. Dropped the Fixes: tag accordingly.
+---
+ doc/guides/nics/dpaa2.rst              |  3 ++
+ doc/guides/rel_notes/release_26_11.rst |  5 ++
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c | 63 +++++++++++++-------------
+ 3 files changed, 40 insertions(+), 31 deletions(-)
+
+diff --git a/doc/guides/nics/dpaa2.rst b/doc/guides/nics/dpaa2.rst
+index ae8b32af2c..aaaf5f9713 100644
+--- a/doc/guides/nics/dpaa2.rst
++++ b/doc/guides/nics/dpaa2.rst
+@@ -588,6 +588,9 @@ Other Limitations
+ 
+ - RSS hash key cannot be modified.
+ - RSS RETA cannot be configured.
++- RSS hashes on both the outer and the inner IP header. Tunnelled flows
++  that share the same inner IP but differ in their outer IP may therefore
++  be steered to different Rx queues.
+ 
+ .. _dpaa2_dptmapi:
+ 
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 938617ca75..bdfe424f26 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,11 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Updated NXP dpaa2 driver.**
++
++  * Added the inner IP header to the RSS hash so tunnelled traffic is
++    distributed across the Rx queues.
++
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/net/dpaa2/base/dpaa2_hw_dpni.c b/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+index 26ad105c73..5bb9ad4591 100644
+--- a/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
++++ b/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+@@ -236,6 +236,9 @@ dpaa2_remove_flow_dist(struct rte_eth_dev *eth_dev,
+ 	return ret;
+ }
+ 
++/* hdr_index selecting the innermost IP instance in a dpkg extract */
++#define DPAA2_DIST_HDR_INDEX_LAST 0xff
++
+ int
+ dpaa2_distset_to_dpkg_profile_cfg(
+ 		uint64_t req_dist_set,
+@@ -381,42 +384,40 @@ dpaa2_distset_to_dpkg_profile_cfg(
+ 			case RTE_ETH_RSS_IPV6:
+ 			case RTE_ETH_RSS_FRAG_IPV6:
+ 			case RTE_ETH_RSS_NONFRAG_IPV6_OTHER:
+-			case RTE_ETH_RSS_IPV6_EX:
++			case RTE_ETH_RSS_IPV6_EX: {
++				static const uint32_t ip_fields[] = {
++					NH_FLD_IP_SRC, NH_FLD_IP_DST,
++					NH_FLD_IP_PROTO };
++				static const uint8_t ip_hdr_index[] = {
++					0, DPAA2_DIST_HDR_INDEX_LAST };
++				unsigned int f, h;
+ 
+ 				if (l3_configured)
+ 					break;
+ 				l3_configured = 1;
+ 
+-				kg_cfg->extracts[i].extract.from_hdr.prot =
+-					NET_PROT_IP;
+-				kg_cfg->extracts[i].extract.from_hdr.field =
+-					NH_FLD_IP_SRC;
+-				kg_cfg->extracts[i].type =
+-					DPKG_EXTRACT_FROM_HDR;
+-				kg_cfg->extracts[i].extract.from_hdr.type =
+-					DPKG_FULL_FIELD;
+-				i++;
+-
+-				kg_cfg->extracts[i].extract.from_hdr.prot =
+-					NET_PROT_IP;
+-				kg_cfg->extracts[i].extract.from_hdr.field =
+-					NH_FLD_IP_DST;
+-				kg_cfg->extracts[i].type =
+-					DPKG_EXTRACT_FROM_HDR;
+-				kg_cfg->extracts[i].extract.from_hdr.type =
+-					DPKG_FULL_FIELD;
+-				i++;
+-
+-				kg_cfg->extracts[i].extract.from_hdr.prot =
+-					NET_PROT_IP;
+-				kg_cfg->extracts[i].extract.from_hdr.field =
+-					NH_FLD_IP_PROTO;
+-				kg_cfg->extracts[i].type =
+-					DPKG_EXTRACT_FROM_HDR;
+-				kg_cfg->extracts[i].extract.from_hdr.type =
+-					DPKG_FULL_FIELD;
+-				i++;
+-			break;
++				/* Hash on the outer IP (index 0) and the innermost
++				 * IP instance. A plain frame has a single IP header,
++				 * so only the outer extract resolves; a tunnelled
++				 * frame resolves both and is also spread on its inner
++				 * IP.
++				 */
++				for (h = 0; h < RTE_DIM(ip_hdr_index); h++)
++					for (f = 0; f < RTE_DIM(ip_fields); f++) {
++						kg_cfg->extracts[i].extract.from_hdr.prot =
++							NET_PROT_IP;
++						kg_cfg->extracts[i].extract.from_hdr.hdr_index =
++							ip_hdr_index[h];
++						kg_cfg->extracts[i].extract.from_hdr.field =
++							ip_fields[f];
++						kg_cfg->extracts[i].type =
++							DPKG_EXTRACT_FROM_HDR;
++						kg_cfg->extracts[i].extract.from_hdr.type =
++							DPKG_FULL_FIELD;
++						i++;
++					}
++				break;
++			}
+ 
+ 			case RTE_ETH_RSS_NONFRAG_IPV4_TCP:
+ 			case RTE_ETH_RSS_NONFRAG_IPV6_TCP:
+-- 
+2.43.0
+
