@@ -2,73 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D00C531F7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 20:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5A7C531CC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 21:07:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9D9D440DD3;
-	Thu, 23 Jul 2026 22:29:53 +0200 (CEST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
- [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id F27FC40B9E
- for <dev@dpdk.org>; Thu, 23 Jul 2026 22:29:50 +0200 (CEST)
-Received: by mail-pj1-f53.google.com with SMTP id
- 98e67ed59e1d1-381c51fde6bso1162291a91.2
- for <dev@dpdk.org>; Thu, 23 Jul 2026 13:29:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AEA5640280;
+	Thu, 23 Jul 2026 23:07:05 +0200 (CEST)
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
+ [209.85.210.171])
+ by mails.dpdk.org (Postfix) with ESMTP id A964240041
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 23:07:03 +0200 (CEST)
+Received: by mail-pf1-f171.google.com with SMTP id
+ d2e1a72fcca58-84a2c90e383so651766b3a.0
+ for <dev@dpdk.org>; Thu, 23 Jul 2026 14:07:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784838590;
- x=1785443390; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784840822;
+ x=1785445622; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=Uc2eEfL1xIgEbk2HTKKH1FbbTC7nsoCaMM20guOA2Ak=;
- b=wPXRIws8Ro+J8MZLHH1f7Lsod4NGBHmpq/EL01FJviV46CmlRF+KgKTM4AyI+665PH
- ltUclhD5uFbOowa01etA3aMuZy0Lcmu1e5up7v2k4HRqbMKQ9yHF2SmRyFNoiYOHZhYg
- 2DrIsTQehTZDVzN+ZRdYHyiCpT8gaL9P+d9uEdKJkWpitkZnDtbuwf1bl1w4zaXVz1c9
- Lhz9abou+az5kRlhGApBRpIu/T+s3t+xM6HyfD2Xhyl/4n3Uqa1iuD8isJtzGC/uXpy7
- XKpcIuT+M4YYWgRMqR+fdBjwvP1sT5KwhhaHGsFhN62dUkoPUH9R6urbMngxKYrYDZNZ
- tKPw==
+ bh=JZU8slPO8PjoFzdZJSXzTmBlmKkY2jHKlnCFMmh55Co=;
+ b=tdqwzEVEl76e7eW8mVFYmOHS0aNYja9aR3WYbzrnhaRBrxyrVkAw52bzzKH1EWzLpS
+ 2WXS0tyaKFjmePRkdkZoI9F3bHKXKaP3idLIU1/VrfQvQI2nPMBY7GjYRCJSc2cF8H0N
+ Zzndbld/IhmZJ+PcIA7JC4ivqmnow2gi2Kx3UGkm8id+BSqmBh1kjYNIZRoiA8vBN1mQ
+ ZC9bnaBHd9pQkBgueDYZmMxR+kJtY1oydqdig5lBiPwZ8+NYLKOtEWMeOC5JXKC4Ru9t
+ kKaK9wfmMIwQWLeFWOvwkEhQWUV1R57PKxDDvlOk5N1Bnytpi+s/CrbAD1rJtU7sQa9m
+ vIKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784838590; x=1785443390;
+ d=1e100.net; s=20251104; t=1784840822; x=1785445622;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=Uc2eEfL1xIgEbk2HTKKH1FbbTC7nsoCaMM20guOA2Ak=;
- b=ouPDomAR61wMgcSHaq1dp9npq3AOgnIX+G4wFPsp2JaarP0tLm3RlLStuJjqJwjCSQ
- Z7OHd150+rZM18/8omxShrzrnaUFEZ4MLSU091sHqqHOEm2RoyX2WsWH61ev8bZfR4z9
- ZFbahuRyXHQUtdDsTYPzhIyKSbh9KfBXKpz+BzjVZ9TfNk992v8SYIaqiW+k0Ky/5/ZU
- /FBXqCQcddUNK6WkXEmPS25wBlTo66jPWrg+QUMfOxncSzkFpErsGi9m1JyzV7UeiXlw
- 6NLK/mV5QBSBtg1R6Q5Cml5cYYhlKGb+Ko4lQv8HEaPs3Kv9yK9TJoar/WYecREjnqSB
- 4yrw==
-X-Gm-Message-State: AOJu0YxQA5uW2i2ciiRZ0+tZTqlcQTr49g9g4xzOQqZqNC1Z2W0Q/8ND
- +JtKD8qyYp3KTaZ9M1wXT+fjEAByIh3MFO/ClFVO2TRuv7zQH698PUbRYKTNvqYACeoyxgZp2qu
- ywxJb
-X-Gm-Gg: AR+sD10Yg9dHhGWyCku9XnfUAZ3rrzcfe8tpDpxwMa+kE8ik7D7QSahhGZmANRSstnp
- yL0ni4256cq3OGQQxpCJZpr2d3AWkGBxXgSZyKA/oX2mMrTU39bzFDGUshF0P5GtyJcChtofroB
- U+X2Wk0B+j1loRuU0Hkm7ce471qoplDoCBTOEh741fLwPwKlpDYIcpz4Ry8mWjJM526JwzpfWEe
- otxEJ7lKSrtcaPLEzdOQlDOWG/yeF8OXwApSEI/ufAoI+nBrYCPx8oHiXRmfo3p2bDgw89MTLnG
- 1O9UnB1Bur+jxpHiZyWhU2UWWKow/SkUFFYCbv1sq+zzhBfH0EgHOLVddg4AjCa3nvDLc/Hlz+x
- jk24IaGxP3+lS2M7WLjydp/CbMmaIjXtNEhr3f0XmAcRsfNtk7YGYMzSzwvcM1ipGph1i71Oarl
- 8b8z2U5l4w+lObsJWH9sS9B0W6Ff1Qj0p/aPyBYwHm
-X-Received: by 2002:a17:90a:c888:b0:381:28e0:624d with SMTP id
- 98e67ed59e1d1-38ec6566fbamr4928155a91.28.1784838590115; 
- Thu, 23 Jul 2026 13:29:50 -0700 (PDT)
+ bh=JZU8slPO8PjoFzdZJSXzTmBlmKkY2jHKlnCFMmh55Co=;
+ b=qUmYLHsG1p1slD70QXzDcQsgdktqQdlnl6nUNYQE3YOO7ftNlj32HIKij8FdFD+jEL
+ 9DyEXdE3HIPmh3mT8/+PQ+lVAAaPzGUCnQ1WFZZd7LjF7ynCJpvtZHuGYm1prM3xjv1I
+ sFsuT9alnUBcKklAcGHQn45w3GI4z4E7azdzKRKVY/mnOBH+rGwfWkU1neZslsSrBKVt
+ vzVbhG+qaaVodJVULusCpn0j3OU+EO6FsvG3t+cfNM05ldtiQ6SZLlsto45W+7t4IRCa
+ LeW3ic5Om9g97kan27Z1JA7tSgjVF7UfmPjU04v4nNWdASZDxuf1rxSNGpoX2YeQ+rVJ
+ oubQ==
+X-Gm-Message-State: AOJu0YxSxDfZXSX/1+s6ycU602CpqxT5DmhX5kAra+Npw5PCs0sdXsyj
+ k7tGINu+GHBDwoFajAAX1C8Xq3BomFDRGnGPZg7e/4DJ1ZqQknOYMdUtjP48Soh0KilNiCvDh+f
+ Vs8uq
+X-Gm-Gg: AR+sD12gW6R82hfRwAce8319UqjvW0CbYrQmOmTjVLWCPhiDm1v1qhjRtWoFeDAd/vT
+ DUSFTosSyKDm2I1Jg+MJuv7jpiSCD/pXoklNlWZylsfQ/wPvcvcwyaPv2F3//Md61Q2PDvzkayc
+ wWZ1lKrvZUn1i8evABfLcIw8S+/CFpzdYRyqzhFL7qt3J1LoYN3KG2cz1ni3ALMJZLB7YPnQG+m
+ xEJdwbSgek/gUmQDL4xp/FUK/AHmYSC8QlueXVCFYzYG1V5lJRr5bzpXc17wAOkREHB7brWATeZ
+ ULRHV10VbILEbZoTZtkQSBecVudW4fsYthMWxCgUxl3wTHHom7PzEE8ghFboEssU/5qsMcXjLiX
+ CYOlXyBEE29/umzX7mmx2umgQG5B/2GzDueD5qPr8ZjuBmD44Nj3l+AyXJCj5aZSPrAyqjm1DGh
+ xmO488AZstWmpnoxlGJK8OUd11/iogpQzQy674s5rV3eG9ydfpRDs=
+X-Received: by 2002:a05:6a21:a382:b0:3c0:4179:b5d5 with SMTP id
+ adf61e73a8af0-3c44cb5b30fmr4834714637.28.1784840822446; 
+ Thu, 23 Jul 2026 14:07:02 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13d12f267fdsm18864877c88.0.2026.07.23.13.29.49
+ 5a478bee46e88-3147e1b6a45sm22922560eec.28.2026.07.23.14.07.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Jul 2026 13:29:49 -0700 (PDT)
+ Thu, 23 Jul 2026 14:07:01 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chengwen Feng <fengchengwen@huawei.com>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Aman Singh <aman.deep.singh@intel.com>,
+ Naga Harish K S V <s.v.naga.harish.k@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
  Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH v2 9/9] ethdev: remove support for queue stats mapping
-Date: Thu, 23 Jul 2026 13:28:14 -0700
-Message-ID: <20260723202936.378793-10-stephen@networkplumber.org>
+Subject: [PATCH v3] ethdev: add buffer size parameter to
+ rte_eth_dev_get_name_by_port()
+Date: Thu, 23 Jul 2026 14:06:40 -0700
+Message-ID: <20260723210658.475716-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260723202936.378793-1-stephen@networkplumber.org>
-References: <20260530161151.873199-1-stephen@networkplumber.org>
- <20260723202936.378793-1-stephen@networkplumber.org>
+In-Reply-To: <20260409013658.965613-1-stephen@networkplumber.org>
+References: <20260409013658.965613-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -84,290 +96,423 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The support for queue stats mapping has been deprecated since 25.11
-release by commit 2863cbd9ee6d ("ethdev: deprecate queue stats mapping
-functions")
+rte_eth_dev_get_name_by_port() uses strcpy() into a caller-provided
+buffer with no bounds checking. A mistaken caller that supplies a
+buffer smaller than RTE_ETH_NAME_MAX_LEN can overflow the buffer.
 
-This patch completes final removal from ethdev and documentation.
+Add a size parameter and replace strcpy() with strlcpy(), returning
+-ERANGE if the name is truncated. The copy is now performed under
+the ethdev shared data lock so that the name cannot be mutated by
+another process between reading and copying.
+
+Update all in-tree callers to pass sizeof(name) as the new parameter.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Reviewed-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 ---
- doc/guides/nics/features.rst           |  7 ---
- doc/guides/rel_notes/deprecation.rst   |  6 ---
- doc/guides/rel_notes/release_26_11.rst |  5 +++
- lib/ethdev/ethdev_driver.h             | 11 -----
- lib/ethdev/ethdev_trace.h              | 20 ---------
- lib/ethdev/ethdev_trace_points.c       |  6 ---
- lib/ethdev/rte_ethdev.c                | 62 --------------------------
- lib/ethdev/rte_ethdev.h                | 45 -------------------
- 8 files changed, 5 insertions(+), 157 deletions(-)
+v3 - rebase for 26.11 and drop function versioning
 
-diff --git a/doc/guides/nics/features.rst b/doc/guides/nics/features.rst
-index 0b0c69e7cd..d6852b063c 100644
---- a/doc/guides/nics/features.rst
-+++ b/doc/guides/nics/features.rst
-@@ -764,13 +764,6 @@ If driver does not support this feature the per queue stats will be zero.
- * **[implements] eth_dev_ops**: ``stats_get``, ``stats_reset``.
- * **[related]    API**: ``rte_eth_stats_get``, ``rte_eth_stats_reset()``.
+ app/dumpcap/main.c                           |  8 +++----
+ app/pdump/main.c                             |  8 +++----
+ app/test-pmd/config.c                        |  6 ++---
+ app/test/test_event_eth_tx_adapter.c         |  4 ++--
+ app/test/test_pmd_ring_perf.c                |  4 ++--
+ app/test/test_pmd_tap.c                      |  6 ++---
+ doc/guides/rel_notes/release_26_11.rst       |  3 +++
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c        |  4 ++--
+ drivers/net/cnxk/cnxk_flow.c                 | 10 ++++----
+ examples/multi_process/hotplug_mp/commands.c |  2 +-
+ examples/pipeline/cli.c                      |  2 +-
+ lib/ethdev/meson.build                       |  2 ++
+ lib/ethdev/rte_ethdev.c                      | 25 ++++++++++++++------
+ lib/ethdev/rte_ethdev.h                      | 10 +++++---
+ lib/pdump/rte_pdump.c                        |  8 +++----
+ 15 files changed, 62 insertions(+), 40 deletions(-)
+
+diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
+index 46a6cb251e..47483535fc 100644
+--- a/app/dumpcap/main.c
++++ b/app/dumpcap/main.c
+@@ -244,7 +244,7 @@ static void find_interfaces(void)
  
--May also support configuring per-queue stat counter mapping.
--Used by some drivers to workaround HW limitations.
--
--* **[implements] eth_dev_ops**: ``queue_stats_mapping_set``.
--* **[related]    API**: ``rte_eth_dev_set_rx_queue_stats_mapping()``,
--  ``rte_eth_dev_set_tx_queue_stats_mapping()``.
--
+ 		/* maybe got passed port number string as name */
+ 		intf->port = get_uint(intf->name, "port_number", UINT16_MAX);
+-		if (rte_eth_dev_get_name_by_port(intf->port, intf->name) < 0)
++		if (rte_eth_dev_get_name_by_port(intf->port, intf->name, sizeof(intf->name)) < 0)
+ 			rte_exit(EXIT_FAILURE, "Invalid port number %u\n",
+ 				 intf->port);
+ 	}
+@@ -261,7 +261,7 @@ static void set_default_interface(void)
+ 	uint16_t p;
  
- .. _nic_features_extended_stats:
+ 	RTE_ETH_FOREACH_DEV(p) {
+-		if (rte_eth_dev_get_name_by_port(p, name) < 0)
++		if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
+ 			continue;
  
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 6ad7698c6b..aaa2918865 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -83,12 +83,6 @@ Deprecation Notices
-   and the header struct ``rte_vxlan_gpe_hdr`` with the macro ``RTE_ETHER_VXLAN_GPE_HLEN``
-   will be removed in DPDK 25.11.
+ 		intf = add_interface(name);
+@@ -278,7 +278,7 @@ static void dump_interfaces(void)
+ 	uint16_t p;
  
--* ethdev: The queue stats mapping functions
--  ``rte_eth_dev_set_tx_queue_stats_mapping`` and ``rte_eth_dev_set_rx_queue_stats_mapping``
--  are deprecated and will be removed in a future release.
--  Following the removal of queue statistics from the main ethdev statistics structure,
--  these functions are no longer needed.
--
- * ethdev: The flow API matching pattern structures, ``struct rte_flow_item_*``,
-   should start with relevant protocol header structure from lib/net/.
-   The individual protocol header fields and the protocol header struct
+ 	RTE_ETH_FOREACH_DEV(p) {
+-		if (rte_eth_dev_get_name_by_port(p, name) < 0)
++		if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
+ 			continue;
+ 		printf("%u. %s\n", p, name);
+ 	}
+@@ -498,7 +498,7 @@ static void statistics_loop(void)
+ 
+ 	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
+ 		RTE_ETH_FOREACH_DEV(p) {
+-			if (rte_eth_dev_get_name_by_port(p, name) < 0)
++			if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
+ 				continue;
+ 
+ 			r = rte_eth_stats_get(p, &stats);
+diff --git a/app/pdump/main.c b/app/pdump/main.c
+index 1e62c8adc1..1f6135b20e 100644
+--- a/app/pdump/main.c
++++ b/app/pdump/main.c
+@@ -539,16 +539,16 @@ cleanup_pdump_resources(void)
+ 
+ 		/* Remove the vdev(s) created */
+ 		if (pt->dir & RTE_PDUMP_FLAG_RX) {
+-			rte_eth_dev_get_name_by_port(pt->rx_vdev_id, name);
+-			rte_eal_hotplug_remove("vdev", name);
++			if (rte_eth_dev_get_name_by_port(pt->rx_vdev_id, name, sizeof(name)) == 0)
++				rte_eal_hotplug_remove("vdev", name);
+ 		}
+ 
+ 		if (pt->single_pdump_dev)
+ 			continue;
+ 
+ 		if (pt->dir & RTE_PDUMP_FLAG_TX) {
+-			rte_eth_dev_get_name_by_port(pt->tx_vdev_id, name);
+-			rte_eal_hotplug_remove("vdev", name);
++			if (rte_eth_dev_get_name_by_port(pt->tx_vdev_id, name, sizeof(name)) == 0)
++				rte_eal_hotplug_remove("vdev", name);
+ 		}
+ 
+ 	}
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index aa03eb99cc..b470b95694 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -697,7 +697,7 @@ device_infos_display(const char *identifier)
+ 							      &mac_addr) == 0)
+ 					print_ethaddr("\n\tMAC address: ",
+ 						      &mac_addr);
+-				rte_eth_dev_get_name_by_port(port_id, name);
++				rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
+ 				printf("\n\tDevice name: %s", name);
+ 				if (rte_eth_dev_info_get(port_id, &dev_info) == 0)
+ 					device_infos_display_speeds(dev_info.speed_capa);
+@@ -830,7 +830,7 @@ port_infos_display(portid_t port_id)
+ 	       info_border, port_id, info_border);
+ 	if (eth_macaddr_get_print_err(port_id, &mac_addr) == 0)
+ 		print_ethaddr("MAC address: ", &mac_addr);
+-	rte_eth_dev_get_name_by_port(port_id, name);
++	rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
+ 	printf("\nDevice name: %s", name);
+ 	printf("\nDriver name: %s", dev_info.driver_name);
+ 
+@@ -1031,7 +1031,7 @@ port_summary_display(portid_t port_id)
+ 	if (ret != 0)
+ 		return;
+ 
+-	rte_eth_dev_get_name_by_port(port_id, name);
++	rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
+ 	ret = eth_macaddr_get_print_err(port_id, &mac_addr);
+ 	if (ret != 0)
+ 		return;
+diff --git a/app/test/test_event_eth_tx_adapter.c b/app/test/test_event_eth_tx_adapter.c
+index bec298a8b8..a7cbe39367 100644
+--- a/app/test/test_event_eth_tx_adapter.c
++++ b/app/test/test_event_eth_tx_adapter.c
+@@ -192,8 +192,8 @@ deinit_ports(void)
+ 
+ 	for (i = 0; i < RTE_DIM(default_params.port); i++) {
+ 		rte_eth_dev_stop(default_params.port[i]);
+-		rte_eth_dev_get_name_by_port(default_params.port[i], name);
+-		rte_vdev_uninit(name);
++		if (rte_eth_dev_get_name_by_port(default_params.port[i], name, sizeof(name)) == 0)
++			rte_vdev_uninit(name);
+ 		for (j = 0; j < RTE_DIM(default_params.r[i]); j++)
+ 			rte_ring_free(default_params.r[i][j]);
+ 	}
+diff --git a/app/test/test_pmd_ring_perf.c b/app/test/test_pmd_ring_perf.c
+index 3636df5c73..ac60f506ab 100644
+--- a/app/test/test_pmd_ring_perf.c
++++ b/app/test/test_pmd_ring_perf.c
+@@ -157,8 +157,8 @@ test_ring_pmd_perf(void)
+ 	/* release port and ring resources */
+ 	if (rte_eth_dev_stop(ring_ethdev_port) != 0)
+ 		return -1;
+-	rte_eth_dev_get_name_by_port(ring_ethdev_port, name);
+-	rte_vdev_uninit(name);
++	if (rte_eth_dev_get_name_by_port(ring_ethdev_port, name, sizeof(name)) == 0)
++		rte_vdev_uninit(name);
+ 	rte_ring_free(r);
+ 	return 0;
+ }
+diff --git a/app/test/test_pmd_tap.c b/app/test/test_pmd_tap.c
+index 6d0e8b4f54..ded26bc5e3 100644
+--- a/app/test/test_pmd_tap.c
++++ b/app/test/test_pmd_tap.c
+@@ -594,7 +594,7 @@ test_tap_multi_queue(void)
+ 	uint16_t port;
+ 	RTE_ETH_FOREACH_DEV(port) {
+ 		char name[RTE_ETH_NAME_MAX_LEN];
+-		if (rte_eth_dev_get_name_by_port(port, name) == 0 &&
++		if (rte_eth_dev_get_name_by_port(port, name, sizeof(name)) == 0 &&
+ 		    strstr(name, "net_tap_mq"))
+ 			goto found;
+ 	}
+@@ -739,7 +739,7 @@ test_tap_setup(void)
+ 	/* Find the port IDs */
+ 	RTE_ETH_FOREACH_DEV(port_id) {
+ 		char name[RTE_ETH_NAME_MAX_LEN];
+-		if (rte_eth_dev_get_name_by_port(port_id, name) != 0)
++		if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) != 0)
+ 			continue;
+ 
+ 		if (strstr(name, "net_tap0"))
+@@ -785,7 +785,7 @@ test_tap_rx_queue_setup(void)
+ 	port = -1;
+ 	RTE_ETH_FOREACH_DEV(port_id) {
+ 		char name[RTE_ETH_NAME_MAX_LEN];
+-		if (rte_eth_dev_get_name_by_port(port_id, name) == 0 &&
++		if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) == 0 &&
+ 		    strstr(name, "net_tap_neg")) {
+ 			port = port_id;
+ 			break;
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 938617ca75..ed6937c8b5 100644
+index 938617ca75..3d8fa31730 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -68,6 +68,11 @@ Removed Items
+@@ -100,6 +100,9 @@ ABI Changes
     Also, make sure to start the actual text at the margin.
     =======================================================
  
-+* ethdev: Removed support for ethdev queue stats mapping.
-+
-+  ``rte_eth_dev_set_tx_queue_stats_mapping`` and ``rte_eth_dev_set_rx_queue_stats_mapping``
-+  were deprecated and are now removed.
++* ethdev: Added ``size`` parameter to ``rte_eth_dev_get_name_by_port()``
++  to prevent buffer overflows.
 +
  
- API Changes
- -----------
-diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
-index 0f336f9567..0477579cc3 100644
---- a/lib/ethdev/ethdev_driver.h
-+++ b/lib/ethdev/ethdev_driver.h
-@@ -567,15 +567,6 @@ typedef int (*eth_xstats_disable_counter_t)(struct rte_eth_dev *dev, uint64_t id
- /** @internal Query the state of an xstat the can be enabled and disabled in runtime. */
- typedef int (*eth_xstats_query_state_t)(struct rte_eth_dev *dev, uint64_t id);
+ Known Issues
+ ------------
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+index 6ca9d3309b..e1ffc64c5e 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+@@ -608,7 +608,7 @@ ulp_tf_ctx_shared_session_open(struct bnxt *bp,
  
--/**
-- * @internal
-- * Set a queue statistics mapping for a Tx/Rx queue of an Ethernet device.
-- */
--typedef int (*eth_queue_stats_mapping_set_t)(struct rte_eth_dev *dev,
--					     uint16_t queue_id,
--					     uint8_t stat_idx,
--					     uint8_t is_rx);
--
- /** @internal Get specific information of an Ethernet device. */
- typedef int (*eth_dev_infos_get_t)(struct rte_eth_dev *dev,
- 				   struct rte_eth_dev_info *dev_info);
-@@ -1454,8 +1445,6 @@ struct eth_dev_ops {
- 	eth_xstats_reset_t         xstats_reset;
- 	/** Get names of extended statistics */
- 	eth_xstats_get_names_t     xstats_get_names;
--	/** Configure per queue stat counter mapping */
--	eth_queue_stats_mapping_set_t queue_stats_mapping_set;
+ 	memset(&parms, 0, sizeof(parms));
+ 	rc = rte_eth_dev_get_name_by_port(ethdev->data->port_id,
+-					  parms.ctrl_chan_name);
++					  parms.ctrl_chan_name, sizeof(parms.ctrl_chan_name));
+ 	if (rc) {
+ 		BNXT_DRV_DBG(ERR, "Invalid port %d, rc = %d\n",
+ 			     ethdev->data->port_id, rc);
+@@ -786,7 +786,7 @@ ulp_tf_ctx_session_open(struct bnxt *bp,
+ 	memset(&params, 0, sizeof(params));
  
- 	eth_dev_infos_get_t        dev_infos_get; /**< Get device info */
- 	/** Retrieve Rx queue information */
-diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
-index 6554cc1a21..6f1804a765 100644
---- a/lib/ethdev/ethdev_trace.h
-+++ b/lib/ethdev/ethdev_trace.h
-@@ -310,26 +310,6 @@ RTE_TRACE_POINT(
- 	rte_trace_point_emit_int(ret);
- )
+ 	rc = rte_eth_dev_get_name_by_port(ethdev->data->port_id,
+-					  params.ctrl_chan_name);
++					  params.ctrl_chan_name, sizeof(params.ctrl_chan_name));
+ 	if (rc) {
+ 		BNXT_DRV_DBG(ERR, "Invalid port %d, rc = %d\n",
+ 			     ethdev->data->port_id, rc);
+diff --git a/drivers/net/cnxk/cnxk_flow.c b/drivers/net/cnxk/cnxk_flow.c
+index c1c48eb7ab..eb51ce37e8 100644
+--- a/drivers/net/cnxk/cnxk_flow.c
++++ b/drivers/net/cnxk/cnxk_flow.c
+@@ -117,7 +117,7 @@ npc_parse_port_id_action(struct rte_eth_dev *eth_dev, const struct rte_flow_acti
  
--RTE_TRACE_POINT(
--	rte_ethdev_trace_set_rx_queue_stats_mapping,
--	RTE_TRACE_POINT_ARGS(uint16_t port_id, uint16_t rx_queue_id,
--		uint8_t stat_idx, int ret),
--	rte_trace_point_emit_u16(port_id);
--	rte_trace_point_emit_u16(rx_queue_id);
--	rte_trace_point_emit_u8(stat_idx);
--	rte_trace_point_emit_int(ret);
--)
--
--RTE_TRACE_POINT(
--	rte_ethdev_trace_set_tx_queue_stats_mapping,
--	RTE_TRACE_POINT_ARGS(uint16_t port_id, uint16_t tx_queue_id,
--		uint8_t stat_idx, int ret),
--	rte_trace_point_emit_u16(port_id);
--	rte_trace_point_emit_u16(tx_queue_id);
--	rte_trace_point_emit_u8(stat_idx);
--	rte_trace_point_emit_int(ret);
--)
--
- RTE_TRACE_POINT(
- 	rte_ethdev_trace_fw_version_get,
- 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const char *fw_version,
-diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
-index 0a28378a56..b0644ea489 100644
---- a/lib/ethdev/ethdev_trace_points.c
-+++ b/lib/ethdev/ethdev_trace_points.c
-@@ -230,12 +230,6 @@ RTE_TRACE_POINT_REGISTER(rte_eth_trace_xstats_get,
- RTE_TRACE_POINT_REGISTER(rte_eth_trace_xstats_reset,
- 	lib.ethdev.xstats_reset)
+ 	port_act = (const struct rte_flow_action_port_id *)action->conf;
  
--RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_set_tx_queue_stats_mapping,
--	lib.ethdev.set_tx_queue_stats_mapping)
--
--RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_set_rx_queue_stats_mapping,
--	lib.ethdev.set_rx_queue_stats_mapping)
--
- RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_fw_version_get,
- 	lib.ethdev.fw_version_get)
+-	rc = rte_eth_dev_get_name_by_port(port_act->id, if_name);
++	rc = rte_eth_dev_get_name_by_port(port_act->id, if_name, sizeof(if_name));
+ 	if (rc) {
+ 		plt_err("Name not found for output port id");
+ 		goto err_exit;
+@@ -517,7 +517,8 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
+ 		case RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR:
+ 			in_actions[i].conf = actions->conf;
+ 			act_ethdev = (const struct rte_flow_action_ethdev *)actions->conf;
+-			if (rte_eth_dev_get_name_by_port(act_ethdev->port_id, if_name)) {
++			if (rte_eth_dev_get_name_by_port(act_ethdev->port_id, if_name,
++							 sizeof(if_name))) {
+ 				plt_err("Name not found for output port id");
+ 				goto err_exit;
+ 			}
+@@ -557,7 +558,7 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
+ 				    actions->type != RTE_FLOW_ACTION_TYPE_PORT_ID ?
+ 					    act_ethdev->port_id :
+ 					    port_act->id,
+-				    if_name)) {
++				    if_name, sizeof(if_name))) {
+ 				plt_err("Name not found for output port id");
+ 				goto err_exit;
+ 			}
+@@ -713,7 +714,8 @@ cnxk_map_pattern(struct rte_eth_dev *eth_dev, const struct rte_flow_item pattern
+ 		if (pattern->type == RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT ||
+ 		    pattern->type == RTE_FLOW_ITEM_TYPE_PORT_REPRESENTOR) {
+ 			rep_eth_dev = (const struct rte_flow_item_ethdev *)pattern->spec;
+-			if (rte_eth_dev_get_name_by_port(rep_eth_dev->port_id, if_name)) {
++			if (rte_eth_dev_get_name_by_port(rep_eth_dev->port_id, if_name,
++							 sizeof(if_name))) {
+ 				plt_err("Name not found for output port id");
+ 				goto fail;
+ 			}
+diff --git a/examples/multi_process/hotplug_mp/commands.c b/examples/multi_process/hotplug_mp/commands.c
+index 900eb9f774..92a4f0378b 100644
+--- a/examples/multi_process/hotplug_mp/commands.c
++++ b/examples/multi_process/hotplug_mp/commands.c
+@@ -36,7 +36,7 @@ cmd_list_parsed(__rte_unused void *parsed_result,
+ 	cmdline_printf(cl, "list all etherdev\n");
  
+ 	RTE_ETH_FOREACH_DEV(port_id) {
+-		rte_eth_dev_get_name_by_port(port_id, dev_name);
++		rte_eth_dev_get_name_by_port(port_id, dev_name, sizeof(dev_name));
+ 		if (strlen(dev_name) > 0)
+ 			cmdline_printf(cl, "%d\t%s\n", port_id, dev_name);
+ 		else
+diff --git a/examples/pipeline/cli.c b/examples/pipeline/cli.c
+index 901706fab9..b65c6c8be6 100644
+--- a/examples/pipeline/cli.c
++++ b/examples/pipeline/cli.c
+@@ -396,7 +396,7 @@ ethdev_show(uint16_t port_id, char **out, size_t *out_size)
+ 	if (rte_eth_link_get(port_id, &link) != 0)
+ 		return;
+ 
+-	rte_eth_dev_get_name_by_port(port_id, name);
++	rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
+ 	rte_eth_stats_get(port_id, &stats);
+ 	rte_eth_macaddr_get(port_id, &addr);
+ 	rte_eth_dev_get_mtu(port_id, &mtu);
+diff --git a/lib/ethdev/meson.build b/lib/ethdev/meson.build
+index 8ba6c708a2..b2c4222fe6 100644
+--- a/lib/ethdev/meson.build
++++ b/lib/ethdev/meson.build
+@@ -62,3 +62,5 @@ endif
+ if get_option('buildtype').contains('debug')
+     cflags += ['-DRTE_FLOW_DEBUG']
+ endif
++
++use_function_versioning = true
 diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 9efeaf77cb..d6915a6b08 100644
+index 9efeaf77cb..23219ae992 100644
 --- a/lib/ethdev/rte_ethdev.c
 +++ b/lib/ethdev/rte_ethdev.c
-@@ -160,11 +160,6 @@ static const struct {
- 	{RTE_ETH_DEV_CAPA_FLOW_SHARED_OBJECT_KEEP, "FLOW_SHARED_OBJECT_KEEP"},
- };
+@@ -723,10 +723,8 @@ rte_eth_dev_count_total(void)
  
--enum {
--	STAT_QMAP_TX = 0,
--	STAT_QMAP_RX
--};
--
- static const struct {
- 	enum rte_eth_hash_function algo;
- 	const char *name;
-@@ -4005,63 +4000,6 @@ rte_eth_xstats_query_state(uint16_t port_id, uint64_t id)
- 	return -ENOTSUP;
- }
- 
--static int
--eth_dev_set_queue_stats_mapping(uint16_t port_id, uint16_t queue_id,
--		uint8_t stat_idx, uint8_t is_rx)
--{
--	struct rte_eth_dev *dev;
--
--	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
--	dev = &rte_eth_devices[port_id];
--
--	if (is_rx && (queue_id >= dev->data->nb_rx_queues))
--		return -EINVAL;
--
--	if (!is_rx && (queue_id >= dev->data->nb_tx_queues))
--		return -EINVAL;
--
--	if (stat_idx >= RTE_ETHDEV_QUEUE_STAT_CNTRS)
--		return -EINVAL;
--
--	if (dev->dev_ops->queue_stats_mapping_set == NULL)
--		return -ENOTSUP;
--	return dev->dev_ops->queue_stats_mapping_set(dev, queue_id, stat_idx, is_rx);
--}
--
--RTE_EXPORT_SYMBOL(rte_eth_dev_set_tx_queue_stats_mapping)
--int
--rte_eth_dev_set_tx_queue_stats_mapping(uint16_t port_id, uint16_t tx_queue_id,
--		uint8_t stat_idx)
--{
--	int ret;
--
--	ret = eth_err(port_id, eth_dev_set_queue_stats_mapping(port_id,
--						tx_queue_id,
--						stat_idx, STAT_QMAP_TX));
--
--	rte_ethdev_trace_set_tx_queue_stats_mapping(port_id, tx_queue_id,
--						    stat_idx, ret);
--
--	return ret;
--}
--
--RTE_EXPORT_SYMBOL(rte_eth_dev_set_rx_queue_stats_mapping)
--int
--rte_eth_dev_set_rx_queue_stats_mapping(uint16_t port_id, uint16_t rx_queue_id,
--		uint8_t stat_idx)
--{
--	int ret;
--
--	ret = eth_err(port_id, eth_dev_set_queue_stats_mapping(port_id,
--						rx_queue_id,
--						stat_idx, STAT_QMAP_RX));
--
--	rte_ethdev_trace_set_rx_queue_stats_mapping(port_id, rx_queue_id,
--						    stat_idx, ret);
--
--	return ret;
--}
--
- RTE_EXPORT_SYMBOL(rte_eth_dev_fw_version_get)
+ RTE_EXPORT_SYMBOL(rte_eth_dev_get_name_by_port)
  int
- rte_eth_dev_fw_version_get(uint16_t port_id, char *fw_version, size_t fw_size)
+-rte_eth_dev_get_name_by_port(uint16_t port_id, char *name)
++rte_eth_dev_get_name_by_port(uint16_t port_id, char *name, size_t size)
+ {
+-	char *tmp;
+-
+ 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+ 
+ 	if (name == NULL) {
+@@ -735,13 +733,26 @@ rte_eth_dev_get_name_by_port(uint16_t port_id, char *name)
+ 		return -EINVAL;
+ 	}
+ 
++	if (size == 0) {
++		RTE_ETHDEV_LOG_LINE(ERR,
++			"Cannot get ethdev port %u name with zero-size buffer", port_id);
++		return -EINVAL;
++	}
++
+ 	rte_spinlock_lock(rte_mcfg_ethdev_get_lock());
+-	/* shouldn't check 'rte_eth_devices[i].data',
+-	 * because it might be overwritten by VDEV PMD */
+-	tmp = eth_dev_shared_data->data[port_id].name;
++	/*
++	 * Use the shared data name rather than rte_eth_devices[].data->name
++	 * because VDEV PMDs may overwrite the per-process data pointer.
++	 */
++	size_t n = strlcpy(name, eth_dev_shared_data->data[port_id].name, size);
+ 	rte_spinlock_unlock(rte_mcfg_ethdev_get_lock());
+ 
+-	strcpy(name, tmp);
++	if (n >= size) {
++		RTE_ETHDEV_LOG_LINE(ERR,
++				    "ethdev port %u name exceeds buffer size %zu",
++				    port_id, size);
++		return -ERANGE;
++	}
+ 
+ 	rte_ethdev_trace_get_name_by_port(port_id, name);
+ 
 diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index ee400b386f..3aa7a22fbc 100644
+index ee400b386f..f11b54f184 100644
 --- a/lib/ethdev/rte_ethdev.h
 +++ b/lib/ethdev/rte_ethdev.h
-@@ -3491,51 +3491,6 @@ int rte_eth_xstats_query_state(uint16_t port_id, uint64_t id);
+@@ -5704,14 +5704,18 @@ rte_eth_dev_get_port_by_name(const char *name, uint16_t *port_id);
+  * @param port_id
+  *   Port identifier of the device.
+  * @param name
+- *   Buffer of size RTE_ETH_NAME_MAX_LEN to store the name.
++ *   Buffer to store the name.
++ * @param size
++ *   Size of the buffer pointed to by @p name. Should be at least
++ *   RTE_ETH_NAME_MAX_LEN bytes.
+  * @return
+  *   - (0) if successful.
+  *   - (-ENODEV) if *port_id* is invalid.
+- *   - (-EINVAL) on failure.
++ *   - (-EINVAL) if *name* is NULL or *size* is 0.
++ *   - (-ERANGE) if the buffer is too small for the device name.
   */
- int rte_eth_xstats_reset(uint16_t port_id);
+ int
+-rte_eth_dev_get_name_by_port(uint16_t port_id, char *name);
++rte_eth_dev_get_name_by_port(uint16_t port_id, char *name, size_t size);
  
--/**
-- *  Set a mapping for the specified transmit queue to the specified per-queue
-- *  statistics counter.
-- *
-- * @param port_id
-- *   The port identifier of the Ethernet device.
-- * @param tx_queue_id
-- *   The index of the transmit queue for which a queue stats mapping is required.
-- *   The value must be in the range [0, nb_tx_queue - 1] previously supplied
-- *   to rte_eth_dev_configure().
-- * @param stat_idx
-- *   The per-queue packet statistics functionality number that the transmit
-- *   queue is to be assigned.
-- *   The value must be in the range [0, RTE_ETHDEV_QUEUE_STAT_CNTRS - 1].
-- *   Max RTE_ETHDEV_QUEUE_STAT_CNTRS being 256.
-- * @return
-- *   Zero if successful. Non-zero otherwise.
-- */
--__rte_deprecated
--int rte_eth_dev_set_tx_queue_stats_mapping(uint16_t port_id,
--		uint16_t tx_queue_id, uint8_t stat_idx);
--
--/**
-- *  Set a mapping for the specified receive queue to the specified per-queue
-- *  statistics counter.
-- *
-- * @param port_id
-- *   The port identifier of the Ethernet device.
-- * @param rx_queue_id
-- *   The index of the receive queue for which a queue stats mapping is required.
-- *   The value must be in the range [0, nb_rx_queue - 1] previously supplied
-- *   to rte_eth_dev_configure().
-- * @param stat_idx
-- *   The per-queue packet statistics functionality number that the receive
-- *   queue is to be assigned.
-- *   The value must be in the range [0, RTE_ETHDEV_QUEUE_STAT_CNTRS - 1].
-- *   Max RTE_ETHDEV_QUEUE_STAT_CNTRS being 256.
-- * @return
-- *   Zero if successful. Non-zero otherwise.
-- */
--__rte_deprecated
--int rte_eth_dev_set_rx_queue_stats_mapping(uint16_t port_id,
--					   uint16_t rx_queue_id,
--					   uint8_t stat_idx);
--
  /**
-  * Retrieve the Ethernet address of an Ethernet device.
-  *
+  * Check that numbers of Rx and Tx descriptors satisfy descriptors limits from
+diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
+index ac94efe7ff..ba36949b01 100644
+--- a/lib/pdump/rte_pdump.c
++++ b/lib/pdump/rte_pdump.c
+@@ -726,7 +726,7 @@ pdump_validate_flags(uint32_t flags)
+ }
+ 
+ static int
+-pdump_validate_port(uint16_t port, char *name)
++pdump_validate_port(uint16_t port, char *name, size_t name_size)
+ {
+ 	int ret = 0;
+ 
+@@ -736,7 +736,7 @@ pdump_validate_port(uint16_t port, char *name)
+ 		return -1;
+ 	}
+ 
+-	ret = rte_eth_dev_get_name_by_port(port, name);
++	ret = rte_eth_dev_get_name_by_port(port, name, name_size);
+ 	if (ret < 0) {
+ 		PDUMP_LOG_LINE(ERR, "port %u to name mapping failed",
+ 			  port);
+@@ -818,7 +818,7 @@ pdump_enable(uint16_t port, uint16_t queue,
+ 	int ret;
+ 	char name[RTE_DEV_NAME_MAX_LEN];
+ 
+-	ret = pdump_validate_port(port, name);
++	ret = pdump_validate_port(port, name, sizeof(name));
+ 	if (ret < 0)
+ 		return ret;
+ 	ret = pdump_validate_ring_mp(ring, mp);
+@@ -912,7 +912,7 @@ rte_pdump_disable(uint16_t port, uint16_t queue, uint32_t flags)
+ 	int ret = 0;
+ 	char name[RTE_DEV_NAME_MAX_LEN];
+ 
+-	ret = pdump_validate_port(port, name);
++	ret = pdump_validate_port(port, name, sizeof(name));
+ 	if (ret < 0)
+ 		return ret;
+ 	ret = pdump_validate_flags(flags);
 -- 
 2.53.0
 
