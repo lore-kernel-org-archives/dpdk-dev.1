@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D16A0C531F9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 07:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB02C531FA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 07:42:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B768402A7;
-	Fri, 24 Jul 2026 09:39:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 157E2402A7;
+	Fri, 24 Jul 2026 09:42:28 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id C821C4029B
- for <dev@dpdk.org>; Fri, 24 Jul 2026 09:39:44 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 870D84029B
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 09:42:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1784878784;
+ s=mimecast20190719; t=1784878945;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=pk8tkY4A3DgxjWM/nkvN+3cW6QzmEujqYuWKL4xlfcc=;
- b=WVjz31SZQeKIAvsngeG9ac8K4pN6mAjr1EyvlbOX+N/HZbTmiLA/cmNoxTsaAaOfKZBfh9
- 45mDIPv6jLLWgH02Oi2QUwiZUfKse4qBkV2XDi841IdPmVfR9OtKhsPGS3698/2YhgcQXy
- OgMkPpKGtCOw8CVMfRzOIFPmk9iel08=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=JZus/PRSaziV8sRKg7l/I39hn2rcNlxpfGLQ/mlM5+k=;
+ b=eYxz8ADSNO3+bNBeelm6LlWJCsNivvyJ6kCRCta9OY6+UKK/6LVxza45wuaZrGHjMR+gLv
+ saZbJClFLJgqptUe16kUwQQf8g/0ChwaBzk/QpQ+nYFL5/pDOs6fCsK32GYhGlowlhrSUn
+ aMv5a8lhsIn7/ZrRKPPvKpJCWtmegmc=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-330-3tiJYVwyPmCMvJYHg_rd5Q-1; Fri, 24 Jul 2026 03:39:42 -0400
-X-MC-Unique: 3tiJYVwyPmCMvJYHg_rd5Q-1
-X-Mimecast-MFC-AGG-ID: 3tiJYVwyPmCMvJYHg_rd5Q_1784878781
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5b2a35b9306so102999e87.1
- for <dev@dpdk.org>; Fri, 24 Jul 2026 00:39:42 -0700 (PDT)
+ us-mta-541-Sm0V3OSWNwaZcIGjGlP9bw-1; Fri, 24 Jul 2026 03:42:24 -0400
+X-MC-Unique: Sm0V3OSWNwaZcIGjGlP9bw-1
+X-Mimecast-MFC-AGG-ID: Sm0V3OSWNwaZcIGjGlP9bw_1784878942
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5b2a24ae6deso120960e87.0
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 00:42:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784878781; x=1785483581;
+ d=1e100.net; s=20251104; t=1784878942; x=1785483742;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=pk8tkY4A3DgxjWM/nkvN+3cW6QzmEujqYuWKL4xlfcc=;
- b=HzWIGnLB0KfZFh7OiV4H6116pgEXe0fTmgwcQnE9jMOxhdxbv86ayLzK7SbTGibqAH
- mBU6qKiM8TFVh1i0LFARnDPId7ESUAKF9VGvC05hBxBTAGI/+qOD0WJCP+pnEW6uiuRT
- 3AjlU0XWgO9Duv3ZU7Q4sMhosYFhESo4nAGXEirgGmdoAXGhksG4j+AfOpSxlNd0PMRl
- ziaweDgRCWNgyREigJwn0SQOcscpRwzPVqVAtkBXC+PWs0+Bw/Hqf1Ev2oDYjGzrCvCa
- 60lntKuMYawDS7zwN5eZyy4UMMnLSBwjeAdqurHrN+4Tw6r390G3GuLvRVkSPCJ3x0dr
- 5MhA==
-X-Gm-Message-State: AOJu0Yy1t1PC++Sx2De4JJNZEvjM3vwEI0NAqpDA62VH+cYT0reGzyiv
- z7iGxHcaFcKt5cqi9E5wEWH3oqYMG9PKBB7gxZAR8Au2mjnMjxGj4P9NfknAjd0BiJkzNufLbnM
- GRo/7E7n5AUmWZsEyJPs64h49UE+NAkupgf/Zklk+Vk636OqZ9ah6eq8MnJ3v/yMJUTM0pDioYJ
- r6tDe7Uc0/Fn+WLi6jb44=
-X-Gm-Gg: AR+sD13VGl+cRXiXreFdnGCtx1n+8xbC/5jB6lw9qFe4ikuSbY1jWapZNSLk3ayNqB9
- 4tcdbVZ4R9jaTARXVBFWb6OADAAC8urFHiTZ07S962JlNWykU/JE2RlavrgCT9LsxSqXNZHs+6h
- tnoBx1+XNgnQFe4PKtvxfh+sKJMr/n8yGtIkEK3G5QP5YBh+t9hHk4VWg+gBqCPxqx1Micnczdi
- 3ICKdj4BfnOverhBnRDtiIum0WDNbiX/bne4dr4JvDOSVJJ
-X-Received: by 2002:a05:6512:3406:b0:5b0:eda:de1f with SMTP id
- 2adb3069b0e04-5b2b2e4d197mr1568998e87.6.1784878781144; 
- Fri, 24 Jul 2026 00:39:41 -0700 (PDT)
-X-Received: by 2002:a05:6512:3406:b0:5b0:eda:de1f with SMTP id
- 2adb3069b0e04-5b2b2e4d197mr1568989e87.6.1784878780651; Fri, 24 Jul 2026
- 00:39:40 -0700 (PDT)
+ bh=JZus/PRSaziV8sRKg7l/I39hn2rcNlxpfGLQ/mlM5+k=;
+ b=Nw/UHNcAb+po1DdmDyTvkfla3KmH64o3YYqWAm+0/DVFxnervOdZocpEAophHFzleb
+ KdwNH9dEvCYVNlBMhlPleGu2PIT9J6h7KTIH7rD1+AnUaZTyETlHjFKAkMxkBi6vHSYZ
+ s5jdPyR1DtKQEkZQbk8ispsffly2dnWWOR1xSzSYEFGproCUGqgJOgwnouLhRnW+ni0R
+ n0WUcuN3EyYwtIrHuOZal4SwZ8jGveYV01UA76SEn6cmQOHf+KiqzaPpJJT13y++BVBX
+ oXPmzrSYQQe3ndyPIXpsc5jaUKyWECDhFfJM9mlskkVIAUiTPGAFiTr9B9o0+pVT+DzG
+ RJdA==
+X-Gm-Message-State: AOJu0YzEn9iIO2kxqV0+2U5fC92pD1/07mW8bCCvNX7N1iGgMO4+1fLP
+ NRR+Le69ymKHRzk+xWVcB7HVzZaP97hwy4pKZglIUyZku1hEPyJBfVibzls51wEyL9E/Mb8CJ5y
+ 3fin+fm9SVVWU5Ual+QGeo4MEdse+ZRK8FBlV+HMNjwl6W73XLKjSLvu0OY6QQUUdYI4SwrC3q9
+ AkZ3qxCOJBBpYmPOxZ+MI=
+X-Gm-Gg: AR+sD11qXZfRPW3jv4uzbejkKqx6P7LWoQbQMGDw+XRzdWTBBZWslhFkN1pS3k9HWIy
+ yUZEsdnTlm0+EGQwuwnv28LGyllN33CA354mGY5JEUdKG9lrbHZgonqAIMK8a3uZgFtiHAhVMP4
+ LLJ11/twNpwoHegtBXnYmcro+Tw5KhZv5bSebeSk5w9l4F6YQE8pnfv1pqi+UGxASpLCVJig/NZ
+ 6mxfCNfKPp7awL7uMhWleVA1LbcNI4UjM/aolJCPhVRrwmV
+X-Received: by 2002:a05:651c:a11:b0:39b:d04:b778 with SMTP id
+ 38308e7fff4ca-39f07c42edfmr13102621fa.5.1784878942372; 
+ Fri, 24 Jul 2026 00:42:22 -0700 (PDT)
+X-Received: by 2002:a05:651c:a11:b0:39b:d04:b778 with SMTP id
+ 38308e7fff4ca-39f07c42edfmr13102541fa.5.1784878941896; Fri, 24 Jul 2026
+ 00:42:21 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260530161151.873199-1-stephen@networkplumber.org>
  <20260723202936.378793-1-stephen@networkplumber.org>
 In-Reply-To: <20260723202936.378793-1-stephen@networkplumber.org>
 From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 24 Jul 2026 09:39:28 +0200
-X-Gm-Features: AUfX_mxgQ6Z_X1Lm9gE-xFszra53xuZHvJvfseJmlAf1AyL6cdjhPyJVEjbEd_Q
-Message-ID: <CAJFAV8ycF5hQESdDGfkCKCuu+05SAepB6abu7Voks19_=A5Wdg@mail.gmail.com>
+Date: Fri, 24 Jul 2026 09:42:09 +0200
+X-Gm-Features: AUfX_mxEdhH8r74rVhyUJBjNHtZ5qEDFySQB5ofSVwGXpptVf9RIpTOBLPRaSRM
+Message-ID: <CAJFAV8zvhZ0vys=_2xHa-MT-rHKwmxXmOGe9spoUikPU8zxZkw@mail.gmail.com>
 Subject: Re: [PATCH v2 0/9] Complete removal of queue stats mapping
 To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: uWZSqfDZMpvc_vU6lzltOkaJ14yCSVSU3OuE2WV5RXE_1784878781
+X-Mimecast-MFC-PROC-ID: QvxAe4aB5VUztZplzEHkkJpSNvgXBElki97jCWZxWkM_1784878942
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -98,52 +98,9 @@ On Thu, 23 Jul 2026 at 22:29, Stephen Hemminger
 > RTE_ETHDEV_QUEUE_STAT_CNTRS), and the op, the two public functions, their trace
 > points, and the documentation are removed from ethdev. The leftover per-driver
 > mapping tables, accessor macros, and init code go away with them.
->
-> Also, found some leftover bits from the earlier removal.
->
-> Stephen Hemminger (9):
->   net/virtio: remove unused queue stats mapping
->   app/testpmd: remove unused function prototype
->   net/enic: remove unneeded ops initialization
->   net/cnxk: remove queue stats mapping
->   net/e1000: remove queue stats mapping
->   net/ixgbe: remove queue stats mapping
->   net/txgbe: remove queue stats mapping
->   net/sxe2: remove queue stats mapping
->   ethdev: remove support for queue stats mapping
->
->  app/test-pmd/cmdline.c                 |  6 --
->  app/test-pmd/testpmd.h                 |  2 -
->  doc/guides/nics/features.rst           |  7 --
->  doc/guides/rel_notes/deprecation.rst   |  6 --
->  doc/guides/rel_notes/release_26_11.rst |  5 ++
->  drivers/net/cnxk/cnxk_ethdev.c         |  1 -
->  drivers/net/cnxk/cnxk_ethdev.h         |  6 --
->  drivers/net/cnxk/cnxk_stats.c          | 76 ++++++++------------
->  drivers/net/enic/enic_ethdev.c         | 11 ---
->  drivers/net/intel/e1000/igc_ethdev.c   | 54 ++------------
->  drivers/net/intel/e1000/igc_ethdev.h   |  2 -
->  drivers/net/intel/ixgbe/ixgbe_ethdev.c | 97 -------------------------
->  drivers/net/intel/ixgbe/ixgbe_ethdev.h |  9 ---
->  drivers/net/sxe2/sxe2_cmd_chnl.c       | 99 --------------------------
->  drivers/net/sxe2/sxe2_cmd_chnl.h       | 10 ---
->  drivers/net/sxe2/sxe2_ethdev.c         |  5 --
->  drivers/net/sxe2/sxe2_stats.c          | 76 +-------------------
->  drivers/net/sxe2/sxe2_stats.h          |  5 --
->  drivers/net/txgbe/txgbe_ethdev.c       | 87 ++--------------------
->  drivers/net/txgbe/txgbe_ethdev.h       | 13 ----
->  drivers/net/virtio/virtio_ethdev.c     | 21 ------
->  lib/ethdev/ethdev_driver.h             | 11 ---
->  lib/ethdev/ethdev_trace.h              | 20 ------
->  lib/ethdev/ethdev_trace_points.c       |  6 --
->  lib/ethdev/rte_ethdev.c                | 62 ----------------
->  lib/ethdev/rte_ethdev.h                | 45 ------------
->  26 files changed, 53 insertions(+), 689 deletions(-)
 
-I sent two comments but the series itself lgtm.
-
-For the series:
-Acked-by: David Marchand <david.marchand@redhat.com>
+Do you have plans to remove this RTE_ETHDEV_QUEUE_STAT_CNTRS limit in
+the future?
 
 
 -- 
