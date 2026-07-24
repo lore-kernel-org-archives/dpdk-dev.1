@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B0FC531C9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 15:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB8BC531FA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 15:28:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 194EE402EE;
-	Fri, 24 Jul 2026 17:20:33 +0200 (CEST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
- [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id BB7D14028B
- for <dev@dpdk.org>; Fri, 24 Jul 2026 17:20:31 +0200 (CEST)
-Received: by mail-pj1-f53.google.com with SMTP id
- 98e67ed59e1d1-38e071ed6aeso432041a91.0
- for <dev@dpdk.org>; Fri, 24 Jul 2026 08:20:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BCB8B40653;
+	Fri, 24 Jul 2026 17:28:54 +0200 (CEST)
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
+ [209.85.215.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E4A2402DA
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 17:28:52 +0200 (CEST)
+Received: by mail-pg1-f172.google.com with SMTP id
+ 41be03b00d2f7-cb5a6aa8760so386007a12.1
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 08:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784906431;
- x=1785511231; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784906931;
+ x=1785511731; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=hTU3n8NEI8LoB8QbMBeNjoQ2/d37NjnCJJn6bu4XnME=;
- b=bsbyk4pt3bPp9ROXUd7IWUTZVXGG3S6s4FWWYHZzhTjqe25CHFpMuChnv59rUG6PzM
- 7r2QKgVNsLRDLjFKgA6Fi2r9ll7En9BqQj2T8yvDO3y1oX8HdUVW3sD2Xka/rwp1HFBd
- 1ucaPoDHpSk3uMMiXsKAsaDv91CK3IWALrCBbE7xh0OyyVecuRtrFJShWq8Ci+0SB5Q0
- 1APrsOCiTARqFpmpYHJcEyuA90nQVrSNvmpTIhiY11/4XBmHJYK1+CtI5k/GYB0rxaD1
- G9zraiTd4ym6Z0BJseR1oUxHYz49yuHGsxq46OHTo2ge+bR71HD5PH4KWmx6D9zrjwsR
- tMaA==
+ bh=QlBNUs4CRL0ucnjqfikILMWdze+QBP7gAqfC4m7yphQ=;
+ b=lBPf/6helOCgEG+h5n8cl0M0r0R9Uh2crXoF6us+dva6qYmHA1vtQTLQPBeboaQbtD
+ CANIdMl8QRpGI6WWayYfTtY/nt7DOcdZO2hTfgO7KsYa7qgQ2BA9/YMAnRX2JNymqEZ0
+ 7dcKmu7vyc0OybMYIC18VhIgdRk66HlJjxgGB8yKS8WlYtD0qoHiEmLMhv/qq8ub0m5u
+ snI4b8Px0PDe6G6WjMGIaeFqSmmUc/Z9uvOsKxlfRwRJYqKN5tt+ZmcxVmIDtDMDDV+Q
+ nXrRgADI+2WwBV4L4GXXcGF1tmWNj04RdmrtX7tdYcVzwriHBUzwSH9UudMelGipRY5n
+ p+vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784906431; x=1785511231;
+ d=1e100.net; s=20251104; t=1784906931; x=1785511731;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=hTU3n8NEI8LoB8QbMBeNjoQ2/d37NjnCJJn6bu4XnME=;
- b=gh1nWmlqx20Pv0m4EhEUT4bj0WvvecKLSy55CbRv3+Tnpl1/IGkZIfq63EBImxvSz8
- u1Xlw8hUvLAqfHE7tFJfD9q1LYPFOTR1GIxNV86pFrALMCLEKfdMApE6Zw9LxYRXPi9P
- 36wrY4YCWtvtS+YstT/i3RTHin5qyB0kQbcagne6tGjR1zv/I1oF54MJGTZ8H0vMUn+k
- 7vJ6nKP3DlrYYrksN+xsUOCcDpchwy6ISpnn1v+dtWm7n9wJTp8BD2M+Cjba5LjgSlyz
- kb1HBD/4hSLoMuz75GgUS/XHkK+XIBnxTXB8BXIvNe7uC5QJnRbETngiJ17zieedcvK/
- 6U8g==
-X-Gm-Message-State: AOJu0YyLK8rHEEOtkD3B/Md7LLeJ8kQLWt1DHipiprYiwWoYQ+yXlZaX
- sa8zd1z10r5CcnG6eQ5jyPKN7RzlIgaOS4+kGpONyxKKDYwtKBmsaTpjK8Cfz89yrM0=
-X-Gm-Gg: AR+sD12OFUmWcc1FAs/PeLYy8qXwweTsk8YNO5sKBiMrMhYOEGKCJ3ojkyeHAsYQV2/
- 9DuLFC8ILrVt8Kk55ZHsNRpiWgJir44pGKOOwlPO9FxIB0sVhv3o7nfGSAyKRzrNSHBcQ2Xg6tl
- xFNWhFOds0Y3wVTOhNqpOkBmJxx/OAPVI1lG/QaIyELscHF44J54COiDwCyyFi2pdoLLwobWEca
- 8g8+aYe3+vLo1jhYZ3cu3TbI+H5kpTpWwFtkSPu3ccbWeWdDeCKexwmE/1PrjeEJCigKp0YBYtZ
- ahGsgVe1hSaAIxSleKwNdcQ0RIKEHn0620ffGFBriFfbo5kDB0LLWEGyazCjt4mFNXHDOvMHRvF
- 4tcc+MTmfvsqH14U0ExQRymviLkfcNXr+IEnRolckKaxyQQC+Dq8f84TwwfgxMJprV7EP/It3lM
- jgda26SkWxrwgKNp7XDOFu/E4dDnjxXlbtjgBBcYZmvtE=
-X-Received: by 2002:a17:90b:2881:b0:38e:2860:253f with SMTP id
- 98e67ed59e1d1-38ec64bba97mr8051875a91.12.1784906430689; 
- Fri, 24 Jul 2026 08:20:30 -0700 (PDT)
+ bh=QlBNUs4CRL0ucnjqfikILMWdze+QBP7gAqfC4m7yphQ=;
+ b=UReqTR575XdjxceIw5/anSEkgsRksdw0YNO2DVeS7qBR2MVz/z/Lg4Y2jx+C2unYG3
+ ol4QNimbwhL/ytQtUgGiojxgcB8uq+k4C+zv1Mzn1T1ZsZVEudfh4DRw77iQ97Bxxugw
+ xWyCQfZ7s5rtFRZoH/O0Sb9XiilA/8A6qRLs07u4HWz2QNTkFMcrfiA33uoiZ9Ld4hYg
+ 4aEXhIuYqfpG0RVQo615rCTGudlSxMzyLFNnzYm3qECYT9yXgkQZ99YBc6IYHvl4W0Dq
+ YuWFQtF0Qfs+OwION2hm2F+cnfKBdDPgo4TZs5596fibK2+KtIRp1Uiljed0I8FMjkLZ
+ hBnA==
+X-Gm-Message-State: AOJu0YxC4NhhyzTFdd7ojHFhjbd0Un1AInTY71rufxIXEgYugJjAaNox
+ CUc8bgnXCmP+twezxOYX+AbhLFIGYyc/aHIcCuBAjp38tg5lf29cUuERfWyKuwAGeyuo/SPupFK
+ uzccw
+X-Gm-Gg: AR+sD1098YB69Bzdv4tO3+f6/YELn0Mu242aCNcbgVdYj/yX5L69kp4JT/KoXaiTDMV
+ zUWwrpp3fLtP1IIduDyz7mMB2vqTQ2oAQVHwCIzncxkDJD+G646qAR3Jg5SLPwlAIYDLUaffskg
+ vcZ9Tt1rUxEwZPtoWeJ+nJS2Euc9iiErgadgsX2beYTq7ofW8qO5cGL+AB8ZCw8JjAXYPKpRAeG
+ 6P/gv/EieTU7IWJYUNQovk+f4r6k7YV+DL6m6zz0yWu9RJoPbcSWLe6KN2aO06MY/s4J40pLK1i
+ xyRdEVNZpe3GjNZxIR1mwPnmM9T15Ky1fzNMZJYX9nSAlGzq42muNQ6sJkZ2cS1B5JV0sRYEcHl
+ m1tcefWlCVOdanmyiq90ZtWns7QS9ipQtad5uRDMT4BIerUsKn3ExKnKaMlLA/cGaYJg9rQgKYb
+ LDh711l9OVRyAuwarafRr+UtXXTNXvOFpTnFwbELTQKyI=
+X-Received: by 2002:a05:6a20:3282:b0:3bf:7ab7:98a4 with SMTP id
+ adf61e73a8af0-3c44b05145bmr7519892637.27.1784906930958; 
+ Fri, 24 Jul 2026 08:28:50 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13d13003f12sm45882521c88.2.2026.07.24.08.20.29
+ a92af1059eb24-13d13003f12sm45979954c88.2.2026.07.24.08.28.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Jul 2026 08:20:30 -0700 (PDT)
-Date: Fri, 24 Jul 2026 08:20:26 -0700
+ Fri, 24 Jul 2026 08:28:50 -0700 (PDT)
+Date: Fri, 24 Jul 2026 08:28:48 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-Subject: Re: [PATCH v2 4/9] net/cnxk: remove queue stats mapping
-Message-ID: <20260724082026.48f63347@phoenix.local>
-In-Reply-To: <CAJFAV8x3t=CFs=q0uw=fhCncUMKQ82wmOpzsOz-LKEN4ez9r1w@mail.gmail.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2 0/9] Complete removal of queue stats mapping
+Message-ID: <20260724082848.2103bcf4@phoenix.local>
+In-Reply-To: <CAJFAV8zvhZ0vys=_2xHa-MT-rHKwmxXmOGe9spoUikPU8zxZkw@mail.gmail.com>
 References: <20260530161151.873199-1-stephen@networkplumber.org>
  <20260723202936.378793-1-stephen@networkplumber.org>
- <20260723202936.378793-5-stephen@networkplumber.org>
- <CAJFAV8x3t=CFs=q0uw=fhCncUMKQ82wmOpzsOz-LKEN4ez9r1w@mail.gmail.com>
+ <CAJFAV8zvhZ0vys=_2xHa-MT-rHKwmxXmOGe9spoUikPU8zxZkw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,25 +84,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 24 Jul 2026 09:26:10 +0200
+On Fri, 24 Jul 2026 09:42:09 +0200
 David Marchand <david.marchand@redhat.com> wrote:
 
-> > +       for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
-> > +               struct roc_nix_stats_queue qstats_data;
-> > +
-> > +               if (i >= RTE_ETHDEV_QUEUE_STAT_CNTRS)
-> > +                       break;
-> > +
-> > +               rc = roc_nix_stats_queue_get(nix, i, 1, &qstats_data);
-> > +               if (rc)
-> > +                       goto exit;
-> > +               qstats->q_ipackets[i] = qstats_data.rx_pkts;
-> > +               qstats->q_ibytes[i] = qstats_data.rx_octs;
-> > +               qstats->q_errors[i] += qstats_data.rx_drop_pkts;  
-> 
-> It was already there, but I find it suspicious that only Rx errors are
-> handled like those are reset on read.
+> Do you have plans to remove this RTE_ETHDEV_QUEUE_STAT_CNTRS limit in
+> the future?
 
-This was a somewhat automated conversion.
-It looks like the rx error counter across all queues is populated
-from hardware and rx_drop is counted in software per queue.
+
+No, that is much harder and has bigger impact.
