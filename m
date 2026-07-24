@@ -2,37 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0720C531C9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 15:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B0FC531C9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 15:20:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A9F7B4028B;
-	Fri, 24 Jul 2026 17:14:32 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id AD61540276
- for <dev@dpdk.org>; Fri, 24 Jul 2026 17:14:31 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A5946205EE;
- Fri, 24 Jul 2026 17:14:29 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Fri, 24 Jul 2026 17:14:29 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Jie Liu <liujie5@linkdatatechnology.com>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v2] mempool: remove cache flush threshold field
-Date: Fri, 24 Jul 2026 15:14:27 +0000
-Message-ID: <20260724151427.54108-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260724120747.33981-1-mb@smartsharesystems.com>
-References: <20260724120747.33981-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 194EE402EE;
+	Fri, 24 Jul 2026 17:20:33 +0200 (CEST)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
+ [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id BB7D14028B
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 17:20:31 +0200 (CEST)
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-38e071ed6aeso432041a91.0
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 08:20:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784906431;
+ x=1785511231; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=hTU3n8NEI8LoB8QbMBeNjoQ2/d37NjnCJJn6bu4XnME=;
+ b=bsbyk4pt3bPp9ROXUd7IWUTZVXGG3S6s4FWWYHZzhTjqe25CHFpMuChnv59rUG6PzM
+ 7r2QKgVNsLRDLjFKgA6Fi2r9ll7En9BqQj2T8yvDO3y1oX8HdUVW3sD2Xka/rwp1HFBd
+ 1ucaPoDHpSk3uMMiXsKAsaDv91CK3IWALrCBbE7xh0OyyVecuRtrFJShWq8Ci+0SB5Q0
+ 1APrsOCiTARqFpmpYHJcEyuA90nQVrSNvmpTIhiY11/4XBmHJYK1+CtI5k/GYB0rxaD1
+ G9zraiTd4ym6Z0BJseR1oUxHYz49yuHGsxq46OHTo2ge+bR71HD5PH4KWmx6D9zrjwsR
+ tMaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784906431; x=1785511231;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=hTU3n8NEI8LoB8QbMBeNjoQ2/d37NjnCJJn6bu4XnME=;
+ b=gh1nWmlqx20Pv0m4EhEUT4bj0WvvecKLSy55CbRv3+Tnpl1/IGkZIfq63EBImxvSz8
+ u1Xlw8hUvLAqfHE7tFJfD9q1LYPFOTR1GIxNV86pFrALMCLEKfdMApE6Zw9LxYRXPi9P
+ 36wrY4YCWtvtS+YstT/i3RTHin5qyB0kQbcagne6tGjR1zv/I1oF54MJGTZ8H0vMUn+k
+ 7vJ6nKP3DlrYYrksN+xsUOCcDpchwy6ISpnn1v+dtWm7n9wJTp8BD2M+Cjba5LjgSlyz
+ kb1HBD/4hSLoMuz75GgUS/XHkK+XIBnxTXB8BXIvNe7uC5QJnRbETngiJ17zieedcvK/
+ 6U8g==
+X-Gm-Message-State: AOJu0YyLK8rHEEOtkD3B/Md7LLeJ8kQLWt1DHipiprYiwWoYQ+yXlZaX
+ sa8zd1z10r5CcnG6eQ5jyPKN7RzlIgaOS4+kGpONyxKKDYwtKBmsaTpjK8Cfz89yrM0=
+X-Gm-Gg: AR+sD12OFUmWcc1FAs/PeLYy8qXwweTsk8YNO5sKBiMrMhYOEGKCJ3ojkyeHAsYQV2/
+ 9DuLFC8ILrVt8Kk55ZHsNRpiWgJir44pGKOOwlPO9FxIB0sVhv3o7nfGSAyKRzrNSHBcQ2Xg6tl
+ xFNWhFOds0Y3wVTOhNqpOkBmJxx/OAPVI1lG/QaIyELscHF44J54COiDwCyyFi2pdoLLwobWEca
+ 8g8+aYe3+vLo1jhYZ3cu3TbI+H5kpTpWwFtkSPu3ccbWeWdDeCKexwmE/1PrjeEJCigKp0YBYtZ
+ ahGsgVe1hSaAIxSleKwNdcQ0RIKEHn0620ffGFBriFfbo5kDB0LLWEGyazCjt4mFNXHDOvMHRvF
+ 4tcc+MTmfvsqH14U0ExQRymviLkfcNXr+IEnRolckKaxyQQC+Dq8f84TwwfgxMJprV7EP/It3lM
+ jgda26SkWxrwgKNp7XDOFu/E4dDnjxXlbtjgBBcYZmvtE=
+X-Received: by 2002:a17:90b:2881:b0:38e:2860:253f with SMTP id
+ 98e67ed59e1d1-38ec64bba97mr8051875a91.12.1784906430689; 
+ Fri, 24 Jul 2026 08:20:30 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-13d13003f12sm45882521c88.2.2026.07.24.08.20.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 24 Jul 2026 08:20:30 -0700 (PDT)
+Date: Fri, 24 Jul 2026 08:20:26 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+Subject: Re: [PATCH v2 4/9] net/cnxk: remove queue stats mapping
+Message-ID: <20260724082026.48f63347@phoenix.local>
+In-Reply-To: <CAJFAV8x3t=CFs=q0uw=fhCncUMKQ82wmOpzsOz-LKEN4ez9r1w@mail.gmail.com>
+References: <20260530161151.873199-1-stephen@networkplumber.org>
+ <20260723202936.378793-1-stephen@networkplumber.org>
+ <20260723202936.378793-5-stephen@networkplumber.org>
+ <CAJFAV8x3t=CFs=q0uw=fhCncUMKQ82wmOpzsOz-LKEN4ez9r1w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 24 Jul 2026 15:14:29.0461 (UTC)
- FILETIME=[1F855050:01DD1B7F]
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,166 +85,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Removed the mempool cache flush threshold field (``flushthresh``),
-which was obsolete and marked for removal.
+On Fri, 24 Jul 2026 09:26:10 +0200
+David Marchand <david.marchand@redhat.com> wrote:
 
-Reduced the size of the mempool cache objects array; it was double the
-required size.
+> > +       for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
+> > +               struct roc_nix_stats_queue qstats_data;
+> > +
+> > +               if (i >= RTE_ETHDEV_QUEUE_STAT_CNTRS)
+> > +                       break;
+> > +
+> > +               rc = roc_nix_stats_queue_get(nix, i, 1, &qstats_data);
+> > +               if (rc)
+> > +                       goto exit;
+> > +               qstats->q_ipackets[i] = qstats_data.rx_pkts;
+> > +               qstats->q_ibytes[i] = qstats_data.rx_octs;
+> > +               qstats->q_errors[i] += qstats_data.rx_drop_pkts;  
+> 
+> It was already there, but I find it suspicious that only Rx errors are
+> handled like those are reset on read.
 
-Also fixed a couple of commments.
-
-The sxe2 driver was updated to use the ``size`` field instead of the
-``flushthresh`` field; it contains the same value.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
-Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
----
-v2:
-* Fixed typo in commit message.
-* Release notes: No need to mention added cache guard. (AI)
-* Release notes: Added note about flushthresh removal
-  under removed items. (AI)
-* Added note about 16-byte alignment of stats. (AI)
----
- doc/guides/rel_notes/release_26_11.rst  |  6 ++++++
- drivers/net/sxe2/sxe2_txrx_vec_avx512.c |  2 +-
- lib/mempool/mempool_trace.h             |  1 -
- lib/mempool/rte_mempool.c               |  8 ++------
- lib/mempool/rte_mempool.h               | 16 +++++-----------
- 5 files changed, 14 insertions(+), 19 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 938617ca75..1083bc56b4 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -68,6 +68,8 @@ Removed Items
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* mempool: The obsolete ``flushthresh`` field was removed from the ``rte_mempool_cache`` structure.
-+
- 
- API Changes
- -----------
-@@ -100,6 +102,10 @@ ABI Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* mempool: The ``rte_mempool_cache`` structure was updated as follows:
-+  - The obsolete ``flushthresh`` field was removed.
-+  - The size of the ``objs`` array was reduced from ``RTE_MEMPOOL_CACHE_MAX_SIZE`` * 2 to ``RTE_MEMPOOL_CACHE_MAX_SIZE``.
-+
- 
- Known Issues
- ------------
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-index a830c7a33b..2e680f4027 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-@@ -67,7 +67,7 @@ static __rte_always_inline int32_t sxe2_tx_bufs_free_vec_avx512(struct sxe2_tx_q
- 		}
- 		cache->len += rs_thresh;
- 
--		if (cache->len >= cache->flushthresh) {
-+		if (cache->len >= cache->size) {
- 			(void)rte_mempool_ops_enqueue_bulk(mp,
- 					&cache->objs[cache->size], cache->len - cache->size);
- 			cache->len = cache->size;
-diff --git a/lib/mempool/mempool_trace.h b/lib/mempool/mempool_trace.h
-index 23cda1473c..60e47cf67b 100644
---- a/lib/mempool/mempool_trace.h
-+++ b/lib/mempool/mempool_trace.h
-@@ -119,7 +119,6 @@ RTE_TRACE_POINT(
- 	rte_trace_point_emit_i32(socket_id);
- 	rte_trace_point_emit_ptr(cache);
- 	rte_trace_point_emit_u32(cache->len);
--	rte_trace_point_emit_u32(cache->flushthresh);
- )
- 
- RTE_TRACE_POINT(
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 817e2b8dc1..09660e89ac 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -753,7 +753,6 @@ static void
- mempool_cache_init(struct rte_mempool_cache *cache, uint32_t size)
- {
- 	cache->size = size;
--	cache->flushthresh = size; /* Obsolete; for API/ABI compatibility purposes only */
- 	cache->len = 0;
- }
- 
-@@ -1197,6 +1196,7 @@ mempool_obj_audit(struct rte_mempool *mp, __rte_unused void *opaque,
- 	RTE_MEMPOOL_CHECK_COOKIES(mp, &obj, 1, 2);
- }
- 
-+/* check cookies before and after objects */
- static void
- mempool_audit_cookies(struct rte_mempool *mp)
- {
-@@ -1213,11 +1213,10 @@ mempool_audit_cookies(struct rte_mempool *mp)
- #define mempool_audit_cookies(mp) do {} while(0)
- #endif
- 
--/* check cookies before and after objects */
-+/* check cache size consistency */
- static void
- mempool_audit_cache(const struct rte_mempool *mp)
- {
--	/* check cache size consistency */
- 	unsigned lcore_id;
- 
- 	if (mp->cache_size == 0)
-@@ -1241,9 +1240,6 @@ rte_mempool_audit(struct rte_mempool *mp)
- {
- 	mempool_audit_cache(mp);
- 	mempool_audit_cookies(mp);
--
--	/* For case where mempool DEBUG is not set, and cache size is 0 */
--	RTE_SET_USED(mp);
- }
- 
- /* dump the status of the mempool on the console */
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 50d958c7c6..2fa70812d5 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -89,14 +89,14 @@ struct __rte_cache_aligned rte_mempool_debug_stats {
-  */
- struct __rte_cache_aligned rte_mempool_cache {
- 	uint32_t size;	      /**< Size of the cache */
--	uint32_t flushthresh; /**< Obsolete; for API/ABI compatibility purposes only */
- 	uint32_t len;	      /**< Current cache count */
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
--	uint32_t unused;
- 	/*
- 	 * Alternative location for the most frequently updated mempool statistics (per-lcore),
- 	 * providing faster update access when using a mempool cache.
-+	 * Note: 16-byte aligned for optimal SIMD access, when updating pairs of counters.
- 	 */
-+	alignas(16)
- 	struct {
- 		uint64_t put_bulk;          /**< Number of puts. */
- 		uint64_t put_objs;          /**< Number of objects successfully put. */
-@@ -104,15 +104,9 @@ struct __rte_cache_aligned rte_mempool_cache {
- 		uint64_t get_success_objs;  /**< Objects successfully allocated. */
- 	} stats;                        /**< Statistics */
- #endif
--	/**
--	 * Cache objects
--	 *
--	 * Note:
--	 * Cache is allocated at double size for API/ABI compatibility purposes only.
--	 * When reducing its size at an API/ABI breaking release,
--	 * remember to add a cache guard after it.
--	 */
--	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE * 2];
-+	/** Cache objects */
-+	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE];
-+	RTE_CACHE_GUARD;
- };
- 
- /**
--- 
-2.43.0
-
+This was a somewhat automated conversion.
+It looks like the rx error counter across all queues is populated
+from hardware and rx_drop is counted in software per queue.
