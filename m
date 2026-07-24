@@ -2,87 +2,181 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5A7C531CC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Jul 2026 21:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E68C531CC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 01:52:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AEA5640280;
-	Thu, 23 Jul 2026 23:07:05 +0200 (CEST)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
- [209.85.210.171])
- by mails.dpdk.org (Postfix) with ESMTP id A964240041
- for <dev@dpdk.org>; Thu, 23 Jul 2026 23:07:03 +0200 (CEST)
-Received: by mail-pf1-f171.google.com with SMTP id
- d2e1a72fcca58-84a2c90e383so651766b3a.0
- for <dev@dpdk.org>; Thu, 23 Jul 2026 14:07:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 91365402A7;
+	Fri, 24 Jul 2026 03:52:57 +0200 (CEST)
+Received: from rcdn-iport-3.cisco.com (rcdn-iport-3.cisco.com [173.37.86.74])
+ by mails.dpdk.org (Postfix) with ESMTP id A57D94029B
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 03:52:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784840822;
- x=1785445622; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=JZU8slPO8PjoFzdZJSXzTmBlmKkY2jHKlnCFMmh55Co=;
- b=tdqwzEVEl76e7eW8mVFYmOHS0aNYja9aR3WYbzrnhaRBrxyrVkAw52bzzKH1EWzLpS
- 2WXS0tyaKFjmePRkdkZoI9F3bHKXKaP3idLIU1/VrfQvQI2nPMBY7GjYRCJSc2cF8H0N
- Zzndbld/IhmZJ+PcIA7JC4ivqmnow2gi2Kx3UGkm8id+BSqmBh1kjYNIZRoiA8vBN1mQ
- ZC9bnaBHd9pQkBgueDYZmMxR+kJtY1oydqdig5lBiPwZ8+NYLKOtEWMeOC5JXKC4Ru9t
- kKaK9wfmMIwQWLeFWOvwkEhQWUV1R57PKxDDvlOk5N1Bnytpi+s/CrbAD1rJtU7sQa9m
- vIKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784840822; x=1785445622;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=JZU8slPO8PjoFzdZJSXzTmBlmKkY2jHKlnCFMmh55Co=;
- b=qUmYLHsG1p1slD70QXzDcQsgdktqQdlnl6nUNYQE3YOO7ftNlj32HIKij8FdFD+jEL
- 9DyEXdE3HIPmh3mT8/+PQ+lVAAaPzGUCnQ1WFZZd7LjF7ynCJpvtZHuGYm1prM3xjv1I
- sFsuT9alnUBcKklAcGHQn45w3GI4z4E7azdzKRKVY/mnOBH+rGwfWkU1neZslsSrBKVt
- vzVbhG+qaaVodJVULusCpn0j3OU+EO6FsvG3t+cfNM05ldtiQ6SZLlsto45W+7t4IRCa
- LeW3ic5Om9g97kan27Z1JA7tSgjVF7UfmPjU04v4nNWdASZDxuf1rxSNGpoX2YeQ+rVJ
- oubQ==
-X-Gm-Message-State: AOJu0YxSxDfZXSX/1+s6ycU602CpqxT5DmhX5kAra+Npw5PCs0sdXsyj
- k7tGINu+GHBDwoFajAAX1C8Xq3BomFDRGnGPZg7e/4DJ1ZqQknOYMdUtjP48Soh0KilNiCvDh+f
- Vs8uq
-X-Gm-Gg: AR+sD12gW6R82hfRwAce8319UqjvW0CbYrQmOmTjVLWCPhiDm1v1qhjRtWoFeDAd/vT
- DUSFTosSyKDm2I1Jg+MJuv7jpiSCD/pXoklNlWZylsfQ/wPvcvcwyaPv2F3//Md61Q2PDvzkayc
- wWZ1lKrvZUn1i8evABfLcIw8S+/CFpzdYRyqzhFL7qt3J1LoYN3KG2cz1ni3ALMJZLB7YPnQG+m
- xEJdwbSgek/gUmQDL4xp/FUK/AHmYSC8QlueXVCFYzYG1V5lJRr5bzpXc17wAOkREHB7brWATeZ
- ULRHV10VbILEbZoTZtkQSBecVudW4fsYthMWxCgUxl3wTHHom7PzEE8ghFboEssU/5qsMcXjLiX
- CYOlXyBEE29/umzX7mmx2umgQG5B/2GzDueD5qPr8ZjuBmD44Nj3l+AyXJCj5aZSPrAyqjm1DGh
- xmO488AZstWmpnoxlGJK8OUd11/iogpQzQy674s5rV3eG9ydfpRDs=
-X-Received: by 2002:a05:6a21:a382:b0:3c0:4179:b5d5 with SMTP id
- adf61e73a8af0-3c44cb5b30fmr4834714637.28.1784840822446; 
- Thu, 23 Jul 2026 14:07:02 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3147e1b6a45sm22922560eec.28.2026.07.23.14.07.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Jul 2026 14:07:01 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Reshma Pattan <reshma.pattan@intel.com>,
- Aman Singh <aman.deep.singh@intel.com>,
- Naga Harish K S V <s.v.naga.harish.k@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH v3] ethdev: add buffer size parameter to
- rte_eth_dev_get_name_by_port()
-Date: Thu, 23 Jul 2026 14:06:40 -0700
-Message-ID: <20260723210658.475716-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260409013658.965613-1-stephen@networkplumber.org>
-References: <20260409013658.965613-1-stephen@networkplumber.org>
+ d=cisco.com; i=@cisco.com; l=2662; q=dns/txt;
+ s=iport01; t=1784857975; x=1786067575;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=GbvzVvcJKS4eLuloMfsK6GSJ3X3Hr8f5PXsL1u7vBZY=;
+ b=A7e6BIyUda8W4jvDnUsnqTiFeHVclCj64wfd9/PCAmrJcn7w9UsYhUgE
+ 4ncz9xhGaNDyouDDbFtHQdcw99H0eG2Z6ykoXtSY5qfcj4fbCk1FU/vW4
+ ki37qv568etNkufaxFl8mk1uH5gckGJjXZFXP4gFC8PExxat8Dv0mKXCQ
+ Us9eNrb4ZXb9p6rV+4i8t+VHw2q+vO5W7Ss56IsYZoLzDDyWaVGz/fMTe
+ qzNrDrmT4ra81Ssx9LgDSujfaYGZmCODv5xy2k0HZ2n6/VplxP9zT06sW
+ CNbgBkuUjYlRENNCSo1oF4wGCVnfcYqrJ1ubP2M6YZVuKg8jgUcWH7i37 A==;
+X-CSE-ConnectionGUID: H+2sJ87tT9y0cKihcFFF8A==
+X-CSE-MsgGUID: c3EcGWiuSsKxKbesIo2SLQ==
+X-IPAS-Result: =?us-ascii?q?A0AKBACbxGJq/43/Ja1aHgEBCxIMZYEgC4FuU4IZEkmII?=
+ =?us-ascii?q?wOFK4h8nhuBfg8BAQENAlEEAQGFBQKNXwImNAkOAQIEAwIDAQEBAQEBAQEBA?=
+ =?us-ascii?q?QELAQEFAQEBAgEHBYEOE4ZchloBAQEBAxIoPwwEAgEIEQQBAR8QMR0IAgQBD?=
+ =?us-ascii?q?QUIGoVVAwECtmABgT0Ciip4gTSBAeA3FAGBOIU/gxwBAYQ8gSIZhHwnG4FJR?=
+ =?us-ascii?q?IEVQoJpPoRFhBOCMASCIoEMki5SeBwDWSwBVRMXCwcFgSMQMwMqLy0jSwUtH?=
+ =?us-ascii?q?XAMJxIPHRcWHlgbBwUSICpBRSMDQTY4C0MFgVYCgXg/Ix8DOX+BL3VKdy1pA?=
+ =?us-ascii?q?QIQF0o4JINJAoE3AwttPTcGDhkDBIE1BY1hI4I/AYEOgURlk26zRgqEHaIRF?=
+ =?us-ascii?q?6psmQgjqHUCBAIEBQIQAQEGgWg8gVlwFYMiUxkP3G15PwcCBw8Ck3EBAQ?=
+IronPort-PHdr: A9a23:d1JxVRNSBDCeSqwKAJ4l6nc2WUAX0o4cdiYP4ZYhzrVWfbvmptLpP
+ VfU4rNmi1qaFYnY6vcRk+PNqOigQm0P55+drWoPOIJBTR4LiMga3kQgDceJBFe9LavCZC0hF
+ 8MEX1hgl0w=
+IronPort-Data: A9a23:7ISEo6q5sDfCj9a6PFq1QDubWcBeBmJcZBIvgKrLsJaIsI4StFCzt
+ garIBnVOP6PNDT3etF3bdu/9kwEvZSBn4A1Tgs5rHpkRitHouPIVI+TRqvS04x+DSFioGZPt
+ Zh2hgzodZhsJpPkjk7zdOCn9j8kif3gqoPUUIbsIjp2SRJvVBAvgBdin/9RqoNziLBVOSvV0
+ T/Ji5OZYgLNNwJcaDpOtfrc8k834JwehRtB1rAATaET1LPhvyF94KI3fcmZM3b+S49IKe+2L
+ 86r5K255G7Q4yA2AdqjlLvhGmVSKlIFFVHT4pb+c/HKbilq/kTe4I5iXBYvQRs/ZwGyojxE4
+ I4lWapc5useFvakdOw1C3G0GszlVEFM0OevzXOX6aR/w6BaGpfh660GMa04AWEX0sY0W3psp
+ aMEFGEcNhughuK97pyVGsA506zPLOGzVG8ekmtrwTecCbMtRorOBv2Wo9RZxzw3wMtJGJ4yZ
+ eJANmEpN0uGOUASfA5LUfrSn8/w7pX7Wz1Jr1SWpK8f6GnIxws327/oWDbQUoHTGJ0PwhfJ9
+ goq+UzyWTwRG+Oe1AGe0WKPjOLUvCShY6YrQejQGvlCxQf7KnYoIBEbS3O3ufW6zEmkVLpix
+ 1c84CEiq+02sUesVNS4B0H+q3+ftRlaUN1VewEn1DywJmPvy1/xLkAPTyVKb5ots8peeNDg/
+ gbhcw/BbdC3jICodA==
+IronPort-HdrOrdr: A9a23:zjtyv6+7dNxOnrYKPUhuk+HXdr1zdoMgy1knxilNoENuA6+lfp
+ GV/MjziyWUtN9IYgBfpTnhAsW9qXO1z+8S3WBjB8bSYOCAghrmEGgC1/qv/9SOIVyFygcw79
+ YFT0E6MqyOMbEYt7e13ODbKadc/DDvysnB7omurQYJcegpUdAd0+4TMHfjLqQCfng8OXNPLu
+ vl2iMonUvGRV0nKu6AKj0uWe/Fq9fXlJTgTyInKnccgjWmvHeD0pK/NwKX8Cs/flp0rIsKwC
+ zoggb57qKsv7WBzAPA12jc1pJSmNHw4NpODs6Bh6EuW3TRYwCTC7hJavmnhnQYseuv4FElnJ
+ 3nuBE7Jfl+7HvXYyWcvQbt8xOI6kds11bSjXujxVfzq83wQzw3T+Bbg5hCTxff4008+Plhza
+ Nw2X6DvZY/N2KDoM293amMa/hZrDvynZMQq59Us5WZa/pGVFZll/1awKqSKuZZIMu10vF9LA
+ AkNrCt2B8fSyLoU5mehBgu/PWcGlIuAxyBXk8O/uaR0zRQgTRF6nFw/r1Eop/Fn6hNF6WtII
+ //Q/lVvaALQckMYa1nAuAdBcOxF2zWWBrJdHmfOFL9Ccg8SjnwQrPMkfwIDduRCdQ15Yp3nI
+ 6EXEJTtGY0dU6rAcqS3IdT+hSIRGmmRzzixsxX+pA849THNffWGDzGTEprn9qrov0ZDMGeU/
+ GvOIhOC/umKWf1A45G0wD3RpEXI3gDV88evMo9Rju104j2A5yvsvaefOfYJbLrHzphUmTjAm
+ EbVDy2P8lE5lDDYA6PvPEQYQKbRqXSx+MFLEGBxZlg9GEkDPw4jjQo
+X-Talos-CUID: =?us-ascii?q?9a23=3A5rfNh2vsNj4PpD4AEzoG/NoG6IsFMSfG7iePP3P?=
+ =?us-ascii?q?pGD5ia7yVQnG+1vNNxp8=3D?=
+X-Talos-MUID: 9a23:YF70GQqDGlCkb5nDWvkezzo5GcxH3KWzM1sugbYMttKlMnZLHw7I2Q==
+X-IronPort-Anti-Spam-Filtered: true
+Received: from rcdn-l-core-04.cisco.com ([173.37.255.141])
+ by rcdn-iport-3.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 24 Jul 2026 01:52:54 +0000
+Received: from rcdn-opgw-1.cisco.com (rcdn-opgw-1.cisco.com [72.163.7.162])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by rcdn-l-core-04.cisco.com (Postfix) with ESMTPS id 48449180005DD
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 01:52:54 +0000 (GMT)
+X-CSE-ConnectionGUID: FAUun+Q2SP+/QtW8m6Su+Q==
+X-CSE-MsgGUID: xEqxdE4kScq8Cj5GTGqfYQ==
+Authentication-Results: rcdn-opgw-1.cisco.com;
+ dkim=pass (signature verified) header.i=@cisco.com
+X-IronPort-AV: E=Sophos;i="6.25,181,1779148800"; d="scan'208";a="65701137"
+Received: from mail-westcentralusazon11013033.outbound.protection.outlook.com
+ (HELO CY3PR05CU001.outbound.protection.outlook.com) ([40.93.201.33])
+ by rcdn-opgw-1.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 24 Jul 2026 01:52:54 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MQlLMcvsikWGo0EDxADe7ZIUQyVc/BnM1tdGxck0HQZdE6Ea2Z7jPInvpwkmh7s1CXHwo8BkriQAh5JGnwYR/G+/GglqdeasnGXrJrkd2oCTSYI+vpuUjupts40KKVK287kt4RHebW3gLt2N/56Gxu7bnxTn381oRWGi0qyMCL+cl4pBbpmABdyGkOqJs35hWzx+fhVhENgtkCTjVuOyKkT5ORx36mp9AYBgQfWAbUn8fkP+ooObwA6+6Pjngx3A4zT7xRsSvJXdj0XqMbL2V5kM2o2UP97oBza7eJGz5DIeBJK5UJDHfVh/5JGSE0nDHPolRipPv2EK/oMZJ458YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GbvzVvcJKS4eLuloMfsK6GSJ3X3Hr8f5PXsL1u7vBZY=;
+ b=I/qdtvv6YFMzUTJejvDCVAP4rp/zZd93EmHK3mBPOscvGA5Rv5ODCnp6nZPzBWPMPtISBe2mTtSDTwTT5MSBrpOtoXy45UAYGNGzS7OqxcfYsUjPHMWUAii1yZ0/opASMLxQxNsiEVdF2icGLl/grsR/tfflAa6pAXaMabpLKZXStsZY3KgVPfENaVn8dxUxfSrvaj0gUrEkURFs0FTsrBPqkEsk1HrCNdfKczkKyfVpdMzSmCdGdKHJs4BRA5hKWdRK87m+06r+bapU1lmYlcFe3/GQoemEBep4EzYyWSFgWp/FK6RA02uP/yDnSRcFkHJzSyKp1J9hkJTLuOqbIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
+ dkim=pass header.d=cisco.com; arc=none
+Received: from IA3PR11MB8987.namprd11.prod.outlook.com (2603:10b6:208:574::18)
+ by SJ5PPF3A51834D3.namprd11.prod.outlook.com
+ (2603:10b6:a0f:fc02::821) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Fri, 24 Jul
+ 2026 01:52:51 +0000
+Received: from IA3PR11MB8987.namprd11.prod.outlook.com
+ ([fe80::f91f:4301:96d7:1925]) by IA3PR11MB8987.namprd11.prod.outlook.com
+ ([fe80::f91f:4301:96d7:1925%3]) with mapi id 15.21.0223.017; Fri, 24 Jul 2026
+ 01:52:51 +0000
+From: "Hyong Youb Kim (hyonkim)" <hyonkim@cisco.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "John Daley (johndale)" <johndale@cisco.com>
+Subject: RE: [PATCH v2 3/9] net/enic: remove unneeded ops initialization
+Thread-Topic: [PATCH v2 3/9] net/enic: remove unneeded ops initialization
+Thread-Index: AQHdGuIH1WgTTVOwfUezR3w3PeHRbLZ76ESw
+Date: Fri, 24 Jul 2026 01:52:51 +0000
+Message-ID: <IA3PR11MB89874A608588B5012CFE52A9BFCF2@IA3PR11MB8987.namprd11.prod.outlook.com>
+References: <20260530161151.873199-1-stephen@networkplumber.org>
+ <20260723202936.378793-1-stephen@networkplumber.org>
+ <20260723202936.378793-4-stephen@networkplumber.org>
+In-Reply-To: <20260723202936.378793-4-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR11MB8987:EE_|SJ5PPF3A51834D3:EE_
+x-ms-office365-filtering-correlation-id: 70866f4f-efe8-410f-057e-08dee926454e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|23010399003|10070799003|366016|376014|1800799024|6133799003|11063799006|10067099003|56012099006|4143699003|18002099003|22082099003|38070700021;
+x-microsoft-antispam-message-info: ZH5B7cOiC04aS1a58fzy6lDvNCbEP4XEH2MrCeD/TuwfeXWKIPKzJfjKHtbmryXuBGIcGofZVQpXqM+4aXVlqv3Ockxa3Ux+RSA35mkLUWtSPyjnLn4tdiEqmVT7lk9zQylaGwf5plvat+KNromdo+6uumuVqry0qY01IT8Afb2tKB70brQJTKAgrkk0iRrp1mUq3cU5MrkSv4Am1hFPJHXHodZoe9F3LpXHjoJ/ex26x/nYuZ86Znu1SZkqeiAcrUIRYBQvXrl7vQt1WqG0FVdJhjOOz8jCYDDjb5zv0/zfYZRMmGcaB6rkqm9bj7Pa+bBT8G6umwKdxgINQWSJWdkuxyJnbltG9BX3S4SVfdkRkZ+ZKKCdifB5wCzFjDCGK7z0XeQgJJX/+Z+Pi+5UOv/T0R1zBunIdVJR0jqx8sg3yzQWIM/Rx2exeqrH+cNB09fsPdFgGBMwrmQ9h3TxXN4Vv1ILWHyTuZsgvpuMcwYuRVgm4bvtAK3M7sEN6SaRgOdjQ9uPBaP8WeT+PNQgcDshu6BkjD4PqwfcLj7RrJdcQwjs+WdKy7rWlOJSdywnr9knAaB0p1O9rWKU8P2RVi8CSKGiDJRHi1DyXGxKzuUVgfbcTY2psDFeG+LKd6pZS++HZ4egcm5DLe1T0ksQbxAFObsoTTlGWaps3Tg3Lp5LqDf26imEkbVAArCyzduzukFAqo335BrfftxugdzW4w==
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB8987.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(10070799003)(366016)(376014)(1800799024)(6133799003)(11063799006)(10067099003)(56012099006)(4143699003)(18002099003)(22082099003)(38070700021);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?bXLf5PZmz6RjcG24/Mh/3GpuztZc6It/Z7yuRgG/WXbGYztXe3FhzNO/pJpO?=
+ =?us-ascii?Q?MeEus56XX0tndJAaB4WIOerNtv1LJWz/KTRdoRlUpjcf4xS1ihSwzCU4oEXY?=
+ =?us-ascii?Q?/qHdsCnU5+0o4KGyW/gN3rzuvdBsIxK81aDafLhRH933p0NnVx0nDfksgVRZ?=
+ =?us-ascii?Q?VjA9sX1eVtzl8IZjm7Jt04NBsHHrUqGBa7kxAj4Gpzk/uFeRkZjBnC7GFMts?=
+ =?us-ascii?Q?Li+yW4zly9NJwXoU+XnisB/q8q8hskFJN8drzUXHLSfsFQ1ddSUW0mdTyPHO?=
+ =?us-ascii?Q?2x05a4TkOhRxOlOTEfABA+2MLb12nWTBbmXTZj+5dzR6aEtgNad1AAqc7H5Z?=
+ =?us-ascii?Q?bnv14LcLkkgl8DgrfPZ1k54kDArW1cxu4j3VnBep8F9EeVrpfq39NT2NKk1Z?=
+ =?us-ascii?Q?0AdhRAG/plwoljlOBsPV/2FJXsw+oVYfeU9FF8G9pq3uhY0DCJkCG9/TMg3w?=
+ =?us-ascii?Q?hyGMe40jUX08hJ5NVTQL5omNG7sfk8w8F8aOxrQpFrgszbWqjL8HqzsnWX0T?=
+ =?us-ascii?Q?6ouGWKFwuYaUz2a8AC038kfmZz9ZDs7UhkQ/vlmDWIv0PP4yck8+GTHfYevo?=
+ =?us-ascii?Q?59n4o3PjE5aWEOM3pmHfvoQjK60fP9FwHJq0HqLKRMNsmNtaXAdZKTJnQ9gp?=
+ =?us-ascii?Q?Qp1XXn1tBfRP5/YuPE5OELwhZUQDIummvQo8InD2Jac5R3Xde1L6Tsngi5eU?=
+ =?us-ascii?Q?1C/QiV1xGylI3KYyIIqwzkbX+Q4Ww3z5j3pymHb96deZ6SAfN5vtCQDOmXWU?=
+ =?us-ascii?Q?LWY31VBiGiUG0inFsB0jKHVofcUgkx55jpfq56Lt/ObYUxo/1nxNaCpPOZzA?=
+ =?us-ascii?Q?TzpNsMlwWbl6far1kQDsiW5+z8nZb22UZI0e0rnrK4q0lcDEZxm37IJQ1Ffo?=
+ =?us-ascii?Q?DswBlH7E0+qPKpZ5epqau37z1VO8TP/bMhpGwfrZWWNnfdbR37+akEZqkxOt?=
+ =?us-ascii?Q?cOd8l53By8f8spaRzxIcDDOQUMuoP+RFXCujNQzjLMcrVx2Cniej4LqPDdIQ?=
+ =?us-ascii?Q?zoZBtrAV5+XJ2wAtbu7k+V3BgJENb1dIfuQms4PjekW8du8N5axhZSPbyk3t?=
+ =?us-ascii?Q?Np4A3rJI9NYqJljUHiLBhET1jc02ptHgC4hw39/nJD6PtMUHpmNwMMfl4UIn?=
+ =?us-ascii?Q?R0wJyhnxdEMgQT2HsxalSmbMzq/EofaWzRfYxOQtARWLK46jKLkj2aBzUo8h?=
+ =?us-ascii?Q?c03apTuD0+bebRUM5GJl6ZO31OQDuFvt9haaQumkzycPMfSJqOBmgu8VB9Q/?=
+ =?us-ascii?Q?5MrWcZFP4MsD0Ra1FkMbA4a6ua5FBetseVS3VjEEPYpMny7SCc2RXGnP6KS/?=
+ =?us-ascii?Q?CdYFpSeR9nxP45esYNW00f2Py5TtFqx6cZ+arYdIuTjFuAKlpfupxKBArgxb?=
+ =?us-ascii?Q?zHwKDK3pPdsgB40Fajl+FHSZJWLC+ty9rw+lfETLtM15x1GCYBZF8hbT2vqo?=
+ =?us-ascii?Q?ATVr923d0n6TDc8VeSDCGTjrrBMFU6007/dERk5toiZIMh1RRuJ0rM/QXghH?=
+ =?us-ascii?Q?Ak7ZxhIF1idu6RqBmgdSXlwYRwY234MOcBtTEQfdVRpf1tkLG44ucwv7eXvA?=
+ =?us-ascii?Q?gT0kb9wneBIA1cGOrbsVZZjrLtp8eqgKAjbQEJXDgNUsb79mMc7r6Mdja6/m?=
+ =?us-ascii?Q?k7QFCeP/Le3VgJ428mdINle33f/m1qPwaBzD51CYn4+GNlrD8xSlhJU5pOhj?=
+ =?us-ascii?Q?cGRfVNieUMXzrmbvtfcFwj7tfDJLt1z6KiynvYCm/iGcSJd8NIBy8qrRbgBP?=
+ =?us-ascii?Q?qwOW+dkIERVF1TjINtskjBR4h2046xEgSLR49hCiD6vacq5JhaAj?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Exchange-RoutingPolicyChecked: pHjAzGjbaaelKAKaMnnDVS2F4OKbiu0qkYQdQPOzK4WDVfO6EWyvbDUyy5vnaSvw9oQwLDkWpmFy3RSDO5ivxst8xknbvb+hMU/MDXdYg0zIVgsBCbwi9LLNEgLnfQk7Ns0jVnV+sfYVF6vM+rO2/zGWybDry1rOV3fvlJG+JpQE7ycTrBQKcQG4/wJF61TCKsZi3TGiF4q6fh5wkQyZHuBTwRQgW1sEIYRKjabUTjIpqqSbClkbd4qOkVP+9iOGJYtZPXvzLLktA+77G0wSEMgHpOMe/N69SNB0p8VOZax6vJCx4vbSTt92htdp6ZSbpaA91+Z3tRh2o3Rn+UToRw==
+X-OriginatorOrg: cisco.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8987.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70866f4f-efe8-410f-057e-08dee926454e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2026 01:52:51.3661 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3hggnmyEhFVooj++pvdhmNL3q0ZM5hme7UhVqFSE6qONFsC1uq1bOEkFUVHuaLgPXrP+3KK5hN7n7tjzrXt14w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF3A51834D3
+X-Outbound-Client-TLS: ANONYMOUS; rcdn-opgw-1.cisco.com [72.163.7.162]; TLSv1.3;
+ TLS_AES_256_GCM_SHA384; 256
+X-Outbound-SMTP-Client: 72.163.7.162, rcdn-opgw-1.cisco.com
+X-Outbound-Node: rcdn-l-core-04.cisco.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,423 +190,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_eth_dev_get_name_by_port() uses strcpy() into a caller-provided
-buffer with no bounds checking. A mistaken caller that supplies a
-buffer smaller than RTE_ETH_NAME_MAX_LEN can overflow the buffer.
 
-Add a size parameter and replace strcpy() with strlcpy(), returning
--ERANGE if the name is truncated. The copy is now performed under
-the ethdev shared data lock so that the name cannot be mutated by
-another process between reading and copying.
 
-Update all in-tree callers to pass sizeof(name) as the new parameter.
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Friday, July 24, 2026 5:28 AM
+> To: dev@dpdk.org
+> Cc: Stephen Hemminger <stephen@networkplumber.org>; John Daley
+> (johndale) <johndale@cisco.com>; Hyong Youb Kim (hyonkim)
+> <hyonkim@cisco.com>
+> Subject: [PATCH v2 3/9] net/enic: remove unneeded ops initialization
+>=20
+> Better to just let compiler initialize fields to NULL since then
+> if fields change that driver doesn't use, the driver source
+> will not need to be changed.
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  drivers/net/enic/enic_ethdev.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+>=20
+> diff --git a/drivers/net/enic/enic_ethdev.c b/drivers/net/enic/enic_ethde=
+v.c
+> index 2e5cd186f9..648aa67a85 100644
+> --- a/drivers/net/enic/enic_ethdev.c
+> +++ b/drivers/net/enic/enic_ethdev.c
+> @@ -1119,8 +1119,6 @@ static const struct eth_dev_ops
+> enicpmd_eth_dev_ops =3D {
+>  	.dev_configure        =3D enicpmd_dev_configure,
+>  	.dev_start            =3D enicpmd_dev_start,
+>  	.dev_stop             =3D enicpmd_dev_stop,
+> -	.dev_set_link_up      =3D NULL,
+> -	.dev_set_link_down    =3D NULL,
+>  	.dev_close            =3D enicpmd_dev_close,
+>  	.promiscuous_enable   =3D enicpmd_dev_promiscuous_enable,
+>  	.promiscuous_disable  =3D enicpmd_dev_promiscuous_disable,
+> @@ -1129,14 +1127,10 @@ static const struct eth_dev_ops
+> enicpmd_eth_dev_ops =3D {
+>  	.link_update          =3D enicpmd_dev_link_update,
+>  	.stats_get            =3D enicpmd_dev_stats_get,
+>  	.stats_reset          =3D enicpmd_dev_stats_reset,
+> -	.queue_stats_mapping_set =3D NULL,
+>  	.dev_infos_get        =3D enicpmd_dev_info_get,
+>  	.dev_supported_ptypes_get =3D enicpmd_dev_supported_ptypes_get,
+>  	.mtu_set              =3D enicpmd_mtu_set,
+> -	.vlan_filter_set      =3D NULL,
+> -	.vlan_tpid_set        =3D NULL,
+>  	.vlan_offload_set     =3D enicpmd_vlan_offload_set,
+> -	.vlan_strip_queue_set =3D NULL,
+>  	.rx_queue_start       =3D enicpmd_dev_rx_queue_start,
+>  	.rx_queue_stop        =3D enicpmd_dev_rx_queue_stop,
+>  	.tx_queue_start       =3D enicpmd_dev_tx_queue_start,
+> @@ -1151,11 +1145,6 @@ static const struct eth_dev_ops
+> enicpmd_eth_dev_ops =3D {
+>  	.txq_info_get         =3D enicpmd_dev_txq_info_get,
+>  	.rx_burst_mode_get    =3D enicpmd_dev_rx_burst_mode_get,
+>  	.tx_burst_mode_get    =3D enicpmd_dev_tx_burst_mode_get,
+> -	.dev_led_on           =3D NULL,
+> -	.dev_led_off          =3D NULL,
+> -	.flow_ctrl_get        =3D NULL,
+> -	.flow_ctrl_set        =3D NULL,
+> -	.priority_flow_ctrl_set =3D NULL,
+>  	.mac_addr_add         =3D enicpmd_add_mac_addr,
+>  	.mac_addr_remove      =3D enicpmd_remove_mac_addr,
+>  	.mac_addr_set         =3D enicpmd_set_mac_addr,
+> --
+> 2.53.0
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Reviewed-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
----
-v3 - rebase for 26.11 and drop function versioning
+Acked-by: Hyong Youb Kim <hyonkim@cisco.com>
 
- app/dumpcap/main.c                           |  8 +++----
- app/pdump/main.c                             |  8 +++----
- app/test-pmd/config.c                        |  6 ++---
- app/test/test_event_eth_tx_adapter.c         |  4 ++--
- app/test/test_pmd_ring_perf.c                |  4 ++--
- app/test/test_pmd_tap.c                      |  6 ++---
- doc/guides/rel_notes/release_26_11.rst       |  3 +++
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c        |  4 ++--
- drivers/net/cnxk/cnxk_flow.c                 | 10 ++++----
- examples/multi_process/hotplug_mp/commands.c |  2 +-
- examples/pipeline/cli.c                      |  2 +-
- lib/ethdev/meson.build                       |  2 ++
- lib/ethdev/rte_ethdev.c                      | 25 ++++++++++++++------
- lib/ethdev/rte_ethdev.h                      | 10 +++++---
- lib/pdump/rte_pdump.c                        |  8 +++----
- 15 files changed, 62 insertions(+), 40 deletions(-)
-
-diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
-index 46a6cb251e..47483535fc 100644
---- a/app/dumpcap/main.c
-+++ b/app/dumpcap/main.c
-@@ -244,7 +244,7 @@ static void find_interfaces(void)
- 
- 		/* maybe got passed port number string as name */
- 		intf->port = get_uint(intf->name, "port_number", UINT16_MAX);
--		if (rte_eth_dev_get_name_by_port(intf->port, intf->name) < 0)
-+		if (rte_eth_dev_get_name_by_port(intf->port, intf->name, sizeof(intf->name)) < 0)
- 			rte_exit(EXIT_FAILURE, "Invalid port number %u\n",
- 				 intf->port);
- 	}
-@@ -261,7 +261,7 @@ static void set_default_interface(void)
- 	uint16_t p;
- 
- 	RTE_ETH_FOREACH_DEV(p) {
--		if (rte_eth_dev_get_name_by_port(p, name) < 0)
-+		if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
- 			continue;
- 
- 		intf = add_interface(name);
-@@ -278,7 +278,7 @@ static void dump_interfaces(void)
- 	uint16_t p;
- 
- 	RTE_ETH_FOREACH_DEV(p) {
--		if (rte_eth_dev_get_name_by_port(p, name) < 0)
-+		if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
- 			continue;
- 		printf("%u. %s\n", p, name);
- 	}
-@@ -498,7 +498,7 @@ static void statistics_loop(void)
- 
- 	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
- 		RTE_ETH_FOREACH_DEV(p) {
--			if (rte_eth_dev_get_name_by_port(p, name) < 0)
-+			if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
- 				continue;
- 
- 			r = rte_eth_stats_get(p, &stats);
-diff --git a/app/pdump/main.c b/app/pdump/main.c
-index 1e62c8adc1..1f6135b20e 100644
---- a/app/pdump/main.c
-+++ b/app/pdump/main.c
-@@ -539,16 +539,16 @@ cleanup_pdump_resources(void)
- 
- 		/* Remove the vdev(s) created */
- 		if (pt->dir & RTE_PDUMP_FLAG_RX) {
--			rte_eth_dev_get_name_by_port(pt->rx_vdev_id, name);
--			rte_eal_hotplug_remove("vdev", name);
-+			if (rte_eth_dev_get_name_by_port(pt->rx_vdev_id, name, sizeof(name)) == 0)
-+				rte_eal_hotplug_remove("vdev", name);
- 		}
- 
- 		if (pt->single_pdump_dev)
- 			continue;
- 
- 		if (pt->dir & RTE_PDUMP_FLAG_TX) {
--			rte_eth_dev_get_name_by_port(pt->tx_vdev_id, name);
--			rte_eal_hotplug_remove("vdev", name);
-+			if (rte_eth_dev_get_name_by_port(pt->tx_vdev_id, name, sizeof(name)) == 0)
-+				rte_eal_hotplug_remove("vdev", name);
- 		}
- 
- 	}
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index aa03eb99cc..b470b95694 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -697,7 +697,7 @@ device_infos_display(const char *identifier)
- 							      &mac_addr) == 0)
- 					print_ethaddr("\n\tMAC address: ",
- 						      &mac_addr);
--				rte_eth_dev_get_name_by_port(port_id, name);
-+				rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
- 				printf("\n\tDevice name: %s", name);
- 				if (rte_eth_dev_info_get(port_id, &dev_info) == 0)
- 					device_infos_display_speeds(dev_info.speed_capa);
-@@ -830,7 +830,7 @@ port_infos_display(portid_t port_id)
- 	       info_border, port_id, info_border);
- 	if (eth_macaddr_get_print_err(port_id, &mac_addr) == 0)
- 		print_ethaddr("MAC address: ", &mac_addr);
--	rte_eth_dev_get_name_by_port(port_id, name);
-+	rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
- 	printf("\nDevice name: %s", name);
- 	printf("\nDriver name: %s", dev_info.driver_name);
- 
-@@ -1031,7 +1031,7 @@ port_summary_display(portid_t port_id)
- 	if (ret != 0)
- 		return;
- 
--	rte_eth_dev_get_name_by_port(port_id, name);
-+	rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
- 	ret = eth_macaddr_get_print_err(port_id, &mac_addr);
- 	if (ret != 0)
- 		return;
-diff --git a/app/test/test_event_eth_tx_adapter.c b/app/test/test_event_eth_tx_adapter.c
-index bec298a8b8..a7cbe39367 100644
---- a/app/test/test_event_eth_tx_adapter.c
-+++ b/app/test/test_event_eth_tx_adapter.c
-@@ -192,8 +192,8 @@ deinit_ports(void)
- 
- 	for (i = 0; i < RTE_DIM(default_params.port); i++) {
- 		rte_eth_dev_stop(default_params.port[i]);
--		rte_eth_dev_get_name_by_port(default_params.port[i], name);
--		rte_vdev_uninit(name);
-+		if (rte_eth_dev_get_name_by_port(default_params.port[i], name, sizeof(name)) == 0)
-+			rte_vdev_uninit(name);
- 		for (j = 0; j < RTE_DIM(default_params.r[i]); j++)
- 			rte_ring_free(default_params.r[i][j]);
- 	}
-diff --git a/app/test/test_pmd_ring_perf.c b/app/test/test_pmd_ring_perf.c
-index 3636df5c73..ac60f506ab 100644
---- a/app/test/test_pmd_ring_perf.c
-+++ b/app/test/test_pmd_ring_perf.c
-@@ -157,8 +157,8 @@ test_ring_pmd_perf(void)
- 	/* release port and ring resources */
- 	if (rte_eth_dev_stop(ring_ethdev_port) != 0)
- 		return -1;
--	rte_eth_dev_get_name_by_port(ring_ethdev_port, name);
--	rte_vdev_uninit(name);
-+	if (rte_eth_dev_get_name_by_port(ring_ethdev_port, name, sizeof(name)) == 0)
-+		rte_vdev_uninit(name);
- 	rte_ring_free(r);
- 	return 0;
- }
-diff --git a/app/test/test_pmd_tap.c b/app/test/test_pmd_tap.c
-index 6d0e8b4f54..ded26bc5e3 100644
---- a/app/test/test_pmd_tap.c
-+++ b/app/test/test_pmd_tap.c
-@@ -594,7 +594,7 @@ test_tap_multi_queue(void)
- 	uint16_t port;
- 	RTE_ETH_FOREACH_DEV(port) {
- 		char name[RTE_ETH_NAME_MAX_LEN];
--		if (rte_eth_dev_get_name_by_port(port, name) == 0 &&
-+		if (rte_eth_dev_get_name_by_port(port, name, sizeof(name)) == 0 &&
- 		    strstr(name, "net_tap_mq"))
- 			goto found;
- 	}
-@@ -739,7 +739,7 @@ test_tap_setup(void)
- 	/* Find the port IDs */
- 	RTE_ETH_FOREACH_DEV(port_id) {
- 		char name[RTE_ETH_NAME_MAX_LEN];
--		if (rte_eth_dev_get_name_by_port(port_id, name) != 0)
-+		if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) != 0)
- 			continue;
- 
- 		if (strstr(name, "net_tap0"))
-@@ -785,7 +785,7 @@ test_tap_rx_queue_setup(void)
- 	port = -1;
- 	RTE_ETH_FOREACH_DEV(port_id) {
- 		char name[RTE_ETH_NAME_MAX_LEN];
--		if (rte_eth_dev_get_name_by_port(port_id, name) == 0 &&
-+		if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) == 0 &&
- 		    strstr(name, "net_tap_neg")) {
- 			port = port_id;
- 			break;
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 938617ca75..3d8fa31730 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -100,6 +100,9 @@ ABI Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* ethdev: Added ``size`` parameter to ``rte_eth_dev_get_name_by_port()``
-+  to prevent buffer overflows.
-+
- 
- Known Issues
- ------------
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-index 6ca9d3309b..e1ffc64c5e 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-@@ -608,7 +608,7 @@ ulp_tf_ctx_shared_session_open(struct bnxt *bp,
- 
- 	memset(&parms, 0, sizeof(parms));
- 	rc = rte_eth_dev_get_name_by_port(ethdev->data->port_id,
--					  parms.ctrl_chan_name);
-+					  parms.ctrl_chan_name, sizeof(parms.ctrl_chan_name));
- 	if (rc) {
- 		BNXT_DRV_DBG(ERR, "Invalid port %d, rc = %d\n",
- 			     ethdev->data->port_id, rc);
-@@ -786,7 +786,7 @@ ulp_tf_ctx_session_open(struct bnxt *bp,
- 	memset(&params, 0, sizeof(params));
- 
- 	rc = rte_eth_dev_get_name_by_port(ethdev->data->port_id,
--					  params.ctrl_chan_name);
-+					  params.ctrl_chan_name, sizeof(params.ctrl_chan_name));
- 	if (rc) {
- 		BNXT_DRV_DBG(ERR, "Invalid port %d, rc = %d\n",
- 			     ethdev->data->port_id, rc);
-diff --git a/drivers/net/cnxk/cnxk_flow.c b/drivers/net/cnxk/cnxk_flow.c
-index c1c48eb7ab..eb51ce37e8 100644
---- a/drivers/net/cnxk/cnxk_flow.c
-+++ b/drivers/net/cnxk/cnxk_flow.c
-@@ -117,7 +117,7 @@ npc_parse_port_id_action(struct rte_eth_dev *eth_dev, const struct rte_flow_acti
- 
- 	port_act = (const struct rte_flow_action_port_id *)action->conf;
- 
--	rc = rte_eth_dev_get_name_by_port(port_act->id, if_name);
-+	rc = rte_eth_dev_get_name_by_port(port_act->id, if_name, sizeof(if_name));
- 	if (rc) {
- 		plt_err("Name not found for output port id");
- 		goto err_exit;
-@@ -517,7 +517,8 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 		case RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR:
- 			in_actions[i].conf = actions->conf;
- 			act_ethdev = (const struct rte_flow_action_ethdev *)actions->conf;
--			if (rte_eth_dev_get_name_by_port(act_ethdev->port_id, if_name)) {
-+			if (rte_eth_dev_get_name_by_port(act_ethdev->port_id, if_name,
-+							 sizeof(if_name))) {
- 				plt_err("Name not found for output port id");
- 				goto err_exit;
- 			}
-@@ -557,7 +558,7 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 				    actions->type != RTE_FLOW_ACTION_TYPE_PORT_ID ?
- 					    act_ethdev->port_id :
- 					    port_act->id,
--				    if_name)) {
-+				    if_name, sizeof(if_name))) {
- 				plt_err("Name not found for output port id");
- 				goto err_exit;
- 			}
-@@ -713,7 +714,8 @@ cnxk_map_pattern(struct rte_eth_dev *eth_dev, const struct rte_flow_item pattern
- 		if (pattern->type == RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT ||
- 		    pattern->type == RTE_FLOW_ITEM_TYPE_PORT_REPRESENTOR) {
- 			rep_eth_dev = (const struct rte_flow_item_ethdev *)pattern->spec;
--			if (rte_eth_dev_get_name_by_port(rep_eth_dev->port_id, if_name)) {
-+			if (rte_eth_dev_get_name_by_port(rep_eth_dev->port_id, if_name,
-+							 sizeof(if_name))) {
- 				plt_err("Name not found for output port id");
- 				goto fail;
- 			}
-diff --git a/examples/multi_process/hotplug_mp/commands.c b/examples/multi_process/hotplug_mp/commands.c
-index 900eb9f774..92a4f0378b 100644
---- a/examples/multi_process/hotplug_mp/commands.c
-+++ b/examples/multi_process/hotplug_mp/commands.c
-@@ -36,7 +36,7 @@ cmd_list_parsed(__rte_unused void *parsed_result,
- 	cmdline_printf(cl, "list all etherdev\n");
- 
- 	RTE_ETH_FOREACH_DEV(port_id) {
--		rte_eth_dev_get_name_by_port(port_id, dev_name);
-+		rte_eth_dev_get_name_by_port(port_id, dev_name, sizeof(dev_name));
- 		if (strlen(dev_name) > 0)
- 			cmdline_printf(cl, "%d\t%s\n", port_id, dev_name);
- 		else
-diff --git a/examples/pipeline/cli.c b/examples/pipeline/cli.c
-index 901706fab9..b65c6c8be6 100644
---- a/examples/pipeline/cli.c
-+++ b/examples/pipeline/cli.c
-@@ -396,7 +396,7 @@ ethdev_show(uint16_t port_id, char **out, size_t *out_size)
- 	if (rte_eth_link_get(port_id, &link) != 0)
- 		return;
- 
--	rte_eth_dev_get_name_by_port(port_id, name);
-+	rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
- 	rte_eth_stats_get(port_id, &stats);
- 	rte_eth_macaddr_get(port_id, &addr);
- 	rte_eth_dev_get_mtu(port_id, &mtu);
-diff --git a/lib/ethdev/meson.build b/lib/ethdev/meson.build
-index 8ba6c708a2..b2c4222fe6 100644
---- a/lib/ethdev/meson.build
-+++ b/lib/ethdev/meson.build
-@@ -62,3 +62,5 @@ endif
- if get_option('buildtype').contains('debug')
-     cflags += ['-DRTE_FLOW_DEBUG']
- endif
-+
-+use_function_versioning = true
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 9efeaf77cb..23219ae992 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -723,10 +723,8 @@ rte_eth_dev_count_total(void)
- 
- RTE_EXPORT_SYMBOL(rte_eth_dev_get_name_by_port)
- int
--rte_eth_dev_get_name_by_port(uint16_t port_id, char *name)
-+rte_eth_dev_get_name_by_port(uint16_t port_id, char *name, size_t size)
- {
--	char *tmp;
--
- 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
- 
- 	if (name == NULL) {
-@@ -735,13 +733,26 @@ rte_eth_dev_get_name_by_port(uint16_t port_id, char *name)
- 		return -EINVAL;
- 	}
- 
-+	if (size == 0) {
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+			"Cannot get ethdev port %u name with zero-size buffer", port_id);
-+		return -EINVAL;
-+	}
-+
- 	rte_spinlock_lock(rte_mcfg_ethdev_get_lock());
--	/* shouldn't check 'rte_eth_devices[i].data',
--	 * because it might be overwritten by VDEV PMD */
--	tmp = eth_dev_shared_data->data[port_id].name;
-+	/*
-+	 * Use the shared data name rather than rte_eth_devices[].data->name
-+	 * because VDEV PMDs may overwrite the per-process data pointer.
-+	 */
-+	size_t n = strlcpy(name, eth_dev_shared_data->data[port_id].name, size);
- 	rte_spinlock_unlock(rte_mcfg_ethdev_get_lock());
- 
--	strcpy(name, tmp);
-+	if (n >= size) {
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+				    "ethdev port %u name exceeds buffer size %zu",
-+				    port_id, size);
-+		return -ERANGE;
-+	}
- 
- 	rte_ethdev_trace_get_name_by_port(port_id, name);
- 
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index ee400b386f..f11b54f184 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -5704,14 +5704,18 @@ rte_eth_dev_get_port_by_name(const char *name, uint16_t *port_id);
-  * @param port_id
-  *   Port identifier of the device.
-  * @param name
-- *   Buffer of size RTE_ETH_NAME_MAX_LEN to store the name.
-+ *   Buffer to store the name.
-+ * @param size
-+ *   Size of the buffer pointed to by @p name. Should be at least
-+ *   RTE_ETH_NAME_MAX_LEN bytes.
-  * @return
-  *   - (0) if successful.
-  *   - (-ENODEV) if *port_id* is invalid.
-- *   - (-EINVAL) on failure.
-+ *   - (-EINVAL) if *name* is NULL or *size* is 0.
-+ *   - (-ERANGE) if the buffer is too small for the device name.
-  */
- int
--rte_eth_dev_get_name_by_port(uint16_t port_id, char *name);
-+rte_eth_dev_get_name_by_port(uint16_t port_id, char *name, size_t size);
- 
- /**
-  * Check that numbers of Rx and Tx descriptors satisfy descriptors limits from
-diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
-index ac94efe7ff..ba36949b01 100644
---- a/lib/pdump/rte_pdump.c
-+++ b/lib/pdump/rte_pdump.c
-@@ -726,7 +726,7 @@ pdump_validate_flags(uint32_t flags)
- }
- 
- static int
--pdump_validate_port(uint16_t port, char *name)
-+pdump_validate_port(uint16_t port, char *name, size_t name_size)
- {
- 	int ret = 0;
- 
-@@ -736,7 +736,7 @@ pdump_validate_port(uint16_t port, char *name)
- 		return -1;
- 	}
- 
--	ret = rte_eth_dev_get_name_by_port(port, name);
-+	ret = rte_eth_dev_get_name_by_port(port, name, name_size);
- 	if (ret < 0) {
- 		PDUMP_LOG_LINE(ERR, "port %u to name mapping failed",
- 			  port);
-@@ -818,7 +818,7 @@ pdump_enable(uint16_t port, uint16_t queue,
- 	int ret;
- 	char name[RTE_DEV_NAME_MAX_LEN];
- 
--	ret = pdump_validate_port(port, name);
-+	ret = pdump_validate_port(port, name, sizeof(name));
- 	if (ret < 0)
- 		return ret;
- 	ret = pdump_validate_ring_mp(ring, mp);
-@@ -912,7 +912,7 @@ rte_pdump_disable(uint16_t port, uint16_t queue, uint32_t flags)
- 	int ret = 0;
- 	char name[RTE_DEV_NAME_MAX_LEN];
- 
--	ret = pdump_validate_port(port, name);
-+	ret = pdump_validate_port(port, name, sizeof(name));
- 	if (ret < 0)
- 		return ret;
- 	ret = pdump_validate_flags(flags);
--- 
-2.53.0
+Thanks.
+-Hyong
 
