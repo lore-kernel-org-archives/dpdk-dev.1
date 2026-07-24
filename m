@@ -2,56 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD39C531F9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 08:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F52C531C9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 11:25:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 19682402A7;
-	Fri, 24 Jul 2026 10:49:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B58BA4029B;
+	Fri, 24 Jul 2026 13:25:42 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 1C2234029B
- for <dev@dpdk.org>; Fri, 24 Jul 2026 10:49:28 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CDC3240276
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 13:25:41 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1784882967;
+ s=mimecast20190719; t=1784892341;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=tpKQedSgBpqdlqhV3JzdC/QnMpyCDIg0jYerCeKp0qA=;
- b=aN+PTbGR58be88+3haMTCSi3uZQi9xCBPrknKyomyVDuPEXXup4qSlt99hIUN8JBhrsSKV
- kwZx4ykm1NTrxbiFMpUvhojbz8xqCXfulOpkd+UV++m6DGw4vp4COBOhy85thxHok+3jV9
- WW8MsK/0Qgrdo3OOCyXq5N1rPyWP7Yc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-544-cgNodqLyM1WFamZXhfDiFA-1; Fri,
- 24 Jul 2026 04:49:24 -0400
-X-MC-Unique: cgNodqLyM1WFamZXhfDiFA-1
-X-Mimecast-MFC-AGG-ID: cgNodqLyM1WFamZXhfDiFA_1784882963
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id C9C001955DA5; Fri, 24 Jul 2026 08:49:22 +0000 (UTC)
-Received: from ringo.home (unknown [10.44.33.252])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id DD448195605F; Fri, 24 Jul 2026 08:49:20 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH dpdk] lpm6, fib6, rib6,
- table: remove deprecated functions and macros
-Date: Fri, 24 Jul 2026 10:49:17 +0200
-Message-ID: <20260724084917.1045026-2-rjarry@redhat.com>
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=wETpocgr5YqtPNOGsGlFtbj9zI/t0rpEmKt0/49nKkE=;
+ b=Ixn7jprsswmsuEMjWawn/C+FORTegD2bF8cIHmoXfv85kelPYWvn5dd1XNGn8oZ4dvUA55
+ sfctYEdfNrEVPHBgvKDtKfahKxv+Ni2iOCwC+PgeAPLkCqWRclSu52pmS9oW1/E235gVHM
+ OI4YT9tH6n+fdC9YnK4PO/5u0cl7p2E=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-84-H1uf7xScNOmMgbvFxmO-3g-1; Fri, 24 Jul 2026 07:25:39 -0400
+X-MC-Unique: H1uf7xScNOmMgbvFxmO-3g-1
+X-Mimecast-MFC-AGG-ID: H1uf7xScNOmMgbvFxmO-3g_1784892338
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5b293eca8c4so220423e87.2
+ for <dev@dpdk.org>; Fri, 24 Jul 2026 04:25:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784892338; x=1785497138;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=wETpocgr5YqtPNOGsGlFtbj9zI/t0rpEmKt0/49nKkE=;
+ b=DWhuG5TQEVylUDNLJyIYY23x+3/om9/7zFikYMHckcmNNDWilmK3OpNpYYIJefeDIS
+ Ivo/l9KI5trCR0PxkY7RSpHRGqm8GqDEqj1R93Nr0AL8nsP5PBF21bMuDp8awn35AizP
+ niJ+qKbGFK2idq13PDRs2W1qYplTk1xcb+WffU8rX0Ot/0Ssv6z8cPfvcn525xRugcAd
+ cnNsQQUuxnilOuz6RlKPrthPgk+DQsuA7YyY5w2xy5+OgBtS3KZb4xhZ1jxsX5XruL4I
+ OfWuwWjPe4vY0ZBso+NT2Yv+2vvNsdo5e85VGIEugw6VjMhoHhVE9bW6mmkQrSqCFeW9
+ AftA==
+X-Gm-Message-State: AOJu0YzFqJHScEUPyvFi983Jkpq62vRzw9XBkMh+g6nSusBaXYNz1Mc4
+ q3yGdXOFJWsPhwVq0ChxxKL8IGfvzqyQ2XrVNc3FnJDI3BuhoaoqYNs0Nsoai3R5gFcKE9iCtJW
+ iMQ60zF/hnFHhgrZ3EFgXAHdRDb8adnKHVCH4wi9emYIRxgNwl4m2eiMtzgPzdCalmdgeUZZggo
+ TQDpRgYEhYuMvQ3sKxs9c=
+X-Gm-Gg: AR+sD108ePIOarCde7RJBUrCbqp6CAgvD2HVzrMMm/AhA9PKgkCrWAnj/3D4HDm5H0z
+ Tiqs49FlUfDSOESIljU04xHeosCssHDy15odHe7aP71d75zgB7WTKwjijiawxxc60b9zKc14L7r
+ qoiLHY2o1aL9jcWyQAKH8hUJsPPyKEroBaXMYPLbUkjrUEXWJ8TlboSr4nqSk0znhpm1miWgyML
+ m2itJn7NuC7DHd2oHXLO5XUTtnGluDBhI5vdqlVoIhT9oJB
+X-Received: by 2002:a05:6512:2243:b0:5ae:a0b4:5013 with SMTP id
+ 2adb3069b0e04-5b2b2e18d84mr1772580e87.0.1784892338230; 
+ Fri, 24 Jul 2026 04:25:38 -0700 (PDT)
+X-Received: by 2002:a05:6512:2243:b0:5ae:a0b4:5013 with SMTP id
+ 2adb3069b0e04-5b2b2e18d84mr1772568e87.0.1784892337706; Fri, 24 Jul 2026
+ 04:25:37 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20260724084917.1045026-2-rjarry@redhat.com>
+In-Reply-To: <20260724084917.1045026-2-rjarry@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 24 Jul 2026 13:25:26 +0200
+X-Gm-Features: AUfX_mx2nXZzxLUcGoZIuN1wR7fu3x6kyMcHqUDSJdewfrjBRC5WwJJ8Cux6CnY
+Message-ID: <CAJFAV8yMuRT4U2J+4QbyxMySjr2Y+MRp_yBQfz3A1fSr1QC1gw@mail.gmail.com>
+Subject: Re: [PATCH dpdk] lpm6, fib6, rib6, table: remove deprecated functions
+ and macros
+To: Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>, 
+ Bruce Richardson <bruce.richardson@intel.com>, 
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Thomas Monjalon <thomas@monjalon.net>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: XfNWoHPO2F4HQTEPaOz9Zyn6Y4O-oT-DLuCDXhDrRak_1784882963
+X-Mimecast-MFC-PROC-ID: 6eLxAZn24d2D1cJLx-P9eTaN9fjYzlRRylz6cvi_L8w_1784892338
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,173 +86,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-These function were marked as deprecated in DPDK 24.11. Remove them
-completely.
+On Fri, 24 Jul 2026 at 10:49, Robin Jarry <rjarry@redhat.com> wrote:
+>
+> These function were marked as deprecated in DPDK 24.11. Remove them
+> completely.
+>
+> Signed-off-by: Robin Jarry <rjarry@redhat.com>
+> ---
+>  doc/guides/rel_notes/release_26_11.rst | 11 ++++
+>  lib/fib/rte_fib6.h                     |  4 --
+>  lib/lpm/rte_lpm6.h                     |  3 --
+>  lib/rib/rte_rib6.h                     | 73 --------------------------
+>  lib/table/rte_table_lpm_ipv6.h         |  2 -
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
----
- doc/guides/rel_notes/release_26_11.rst | 11 ++++
- lib/fib/rte_fib6.h                     |  4 --
- lib/lpm/rte_lpm6.h                     |  3 --
- lib/rib/rte_rib6.h                     | 73 --------------------------
- lib/table/rte_table_lpm_ipv6.h         |  2 -
- 5 files changed, 11 insertions(+), 82 deletions(-)
+Thanks for the quick patch.
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 938617ca7542..fb9cde591695 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -68,6 +68,17 @@ Removed Items
+rte_fib6.h, rte_lpm6.h and rte_table_lpm_ipv6.h don't need to include
+rte_common.h anymore.
+It had been added when deprecating those macros/functions.
+
+I think you missed RTE_IP_ICMP_ECHO_REPLY and
+RTE_IP_ICMP_ECHO_REQUEST, from 87bde5ae6873 ("net: add more ICMP types
+and codes").
+
+
+>  5 files changed, 11 insertions(+), 82 deletions(-)
+>
+> diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+> index 938617ca7542..fb9cde591695 100644
+> --- a/doc/guides/rel_notes/release_26_11.rst
+> +++ b/doc/guides/rel_notes/release_26_11.rst
+> @@ -68,6 +68,17 @@ Removed Items
+>     Also, make sure to start the actual text at the margin.
+>     =======================================================
+>
+> +* Deprecated functions removed:
+> +
+> +  - ``RTE_FIB6_IPV6_ADDR_SIZE``
+> +  - ``RTE_FIB6_MAXDEPTH``
+> +  - ``RTE_LPM6_IPV6_ADDR_SIZE``
+> +  - ``RTE_LPM6_MAX_DEPTH``
+> +  - ``RTE_LPM_IPV6_ADDR_SIZE``
+> +  - ``RTE_RIB6_IPV6_ADDR_SIZE``
+> +  - ``get_msk_part``
+> +  - ``rte_rib6_copy_addr``
+> +  - ``rte_rib6_is_equal``
+
+Yes good thing to add a generic entry, we have other removals that
+will end up here.
+I would sort those by libraries, as I intend to reuse this entry for
+PCI cleanup.
+
+So something like:
+
+@@ -68,6 +68,14 @@ Removed Items
     Also, make sure to start the actual text at the margin.
     =======================================================
- 
-+* Deprecated functions removed:
+
++* Removed deprecated macros and functions:
 +
-+  - ``RTE_FIB6_IPV6_ADDR_SIZE``
-+  - ``RTE_FIB6_MAXDEPTH``
-+  - ``RTE_LPM6_IPV6_ADDR_SIZE``
-+  - ``RTE_LPM6_MAX_DEPTH``
-+  - ``RTE_LPM_IPV6_ADDR_SIZE``
-+  - ``RTE_RIB6_IPV6_ADDR_SIZE``
-+  - ``get_msk_part``
-+  - ``rte_rib6_copy_addr``
-+  - ``rte_rib6_is_equal``
- 
++  * fib: ``RTE_FIB6_IPV6_ADDR_SIZE``, ``RTE_FIB6_MAXDEPTH``,
++  * lpm: ``RTE_LPM6_IPV6_ADDR_SIZE``, ``RTE_LPM6_MAX_DEPTH``,
++  * rib: ``RTE_RIB6_IPV6_ADDR_SIZE``, ``get_msk_part``,
+``rte_rib6_copy_addr``,
++    ``rte_rib6_is_equal``
++  * table: ``RTE_LPM_IPV6_ADDR_SIZE``,
++
+
  API Changes
  -----------
-diff --git a/lib/fib/rte_fib6.h b/lib/fib/rte_fib6.h
-index 4527328bf00d..890a155a533a 100644
---- a/lib/fib/rte_fib6.h
-+++ b/lib/fib/rte_fib6.h
-@@ -25,10 +25,6 @@
- extern "C" {
- #endif
- 
--#define RTE_FIB6_IPV6_ADDR_SIZE (RTE_DEPRECATED(RTE_FIB6_IPV6_ADDR_SIZE) RTE_IPV6_ADDR_SIZE)
--/** Maximum depth value possible for IPv6 FIB. */
--#define RTE_FIB6_MAXDEPTH (RTE_DEPRECATED(RTE_FIB6_MAXDEPTH) RTE_IPV6_MAX_DEPTH)
--
- /* Maximum length of a FIB name. */
- #define RTE_FIB6_NAMESIZE	64
- 
-diff --git a/lib/lpm/rte_lpm6.h b/lib/lpm/rte_lpm6.h
-index 08b561861348..f7fd10e8a338 100644
---- a/lib/lpm/rte_lpm6.h
-+++ b/lib/lpm/rte_lpm6.h
-@@ -18,9 +18,6 @@
- extern "C" {
- #endif
- 
--
--#define RTE_LPM6_MAX_DEPTH (RTE_DEPRECATED(RTE_LPM6_MAX_DEPTH) RTE_IPV6_MAX_DEPTH)
--#define RTE_LPM6_IPV6_ADDR_SIZE (RTE_DEPRECATED(RTE_LPM6_IPV6_ADDR_SIZE) RTE_IPV6_ADDR_SIZE)
- /** Max number of characters in LPM name. */
- #define RTE_LPM6_NAMESIZE                 32
- 
-diff --git a/lib/rib/rte_rib6.h b/lib/rib/rte_rib6.h
-index d66d9e7c07c6..88d949e1db9a 100644
---- a/lib/rib/rte_rib6.h
-+++ b/lib/rib/rte_rib6.h
-@@ -22,8 +22,6 @@
- extern "C" {
- #endif
- 
--#define RTE_RIB6_IPV6_ADDR_SIZE (RTE_DEPRECATED(RTE_RIB6_IPV6_ADDR_SIZE) RTE_IPV6_ADDR_SIZE)
--
- /**
-  * rte_rib6_get_nxt() flags
-  */
-@@ -49,77 +47,6 @@ struct rte_rib6_conf {
- 	int	max_nodes;
- };
- 
--/**
-- * Copy IPv6 address from one location to another
-- *
-- * @param dst
-- *  pointer to the place to copy
-- * @param src
-- *  pointer from where to copy
-- */
--static inline void rte_rib6_copy_addr(uint8_t *dst, const uint8_t *src)
--	__rte_deprecated_msg("use direct struct assignment");
--
--static inline void
--rte_rib6_copy_addr(uint8_t *dst, const uint8_t *src)
--{
--	if ((dst == NULL) || (src == NULL))
--		return;
--	rte_memcpy(dst, src, RTE_IPV6_ADDR_SIZE);
--}
--
--/**
-- * Compare two IPv6 addresses
-- *
-- * @param ip1
-- *  pointer to the first ipv6 address
-- * @param ip2
-- *  pointer to the second ipv6 address
-- *
-- * @return
-- *  1 if equal
-- *  0 otherwise
-- */
--static inline int rte_rib6_is_equal(const uint8_t *ip1, const uint8_t *ip2)
--	__rte_deprecated_msg("use rte_ipv6_addr_eq");
--
--static inline int
--rte_rib6_is_equal(const uint8_t *ip1, const uint8_t *ip2) {
--	int i;
--
--	if ((ip1 == NULL) || (ip2 == NULL))
--		return 0;
--	for (i = 0; i < RTE_IPV6_ADDR_SIZE; i++) {
--		if (ip1[i] != ip2[i])
--			return 0;
--	}
--	return 1;
--}
--
--/**
-- * Get 8-bit part of 128-bit IPv6 mask
-- *
-- * @param depth
-- *  ipv6 prefix length
-- * @param byte
-- *  position of a 8-bit chunk in the 128-bit mask
-- *
-- * @return
-- *  8-bit chunk of the 128-bit IPv6 mask
-- */
--static inline uint8_t get_msk_part(uint8_t depth, int byte) __rte_deprecated;
--
--static inline uint8_t
--get_msk_part(uint8_t depth, int byte) {
--	uint8_t part;
--
--	byte &= 0xf;
--	depth = RTE_MIN(depth, 128);
--	part = RTE_MAX((int16_t)depth - (byte * 8), 0);
--	part = (part > 8) ? 8 : part;
--	return (uint16_t)(~UINT8_MAX) >> part;
--}
--
- /**
-  * Lookup an IP into the RIB structure
-  *
-diff --git a/lib/table/rte_table_lpm_ipv6.h b/lib/table/rte_table_lpm_ipv6.h
-index 3ea888360635..8687e2612480 100644
---- a/lib/table/rte_table_lpm_ipv6.h
-+++ b/lib/table/rte_table_lpm_ipv6.h
-@@ -48,8 +48,6 @@
- extern "C" {
- #endif
- 
--#define RTE_LPM_IPV6_ADDR_SIZE (RTE_DEPRECATED(RTE_LPM_IPV6_ADDR_SIZE) RTE_IPV6_ADDR_SIZE)
--
- /** LPM table parameters */
- struct rte_table_lpm_ipv6_params {
- 	/** Table name */
+
+
 -- 
-2.55.0
+David Marchand
 
