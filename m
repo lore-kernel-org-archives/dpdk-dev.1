@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3E4C531F9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 21:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC41C531C9
+	for <dpdk-dev@archiver.kernel.org>; Sat, 25 Jul 2026 07:55:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5FE8740A7F;
-	Fri, 24 Jul 2026 23:22:51 +0200 (CEST)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
- [209.85.215.172])
- by mails.dpdk.org (Postfix) with ESMTP id 7381A406FF
- for <dev@dpdk.org>; Fri, 24 Jul 2026 23:22:48 +0200 (CEST)
-Received: by mail-pg1-f172.google.com with SMTP id
- 41be03b00d2f7-cbb662575d3so607376a12.0
- for <dev@dpdk.org>; Fri, 24 Jul 2026 14:22:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784928167;
- x=1785532967; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=SbaOrVQPOqZq4q5p3Ye7C1EZSjtAEcssAqJRKgmsTYo=;
- b=hGloo8JkkqydM+3JBb/jCpHtNTyUm9J0kxtdtyoeWx0g2c1chlLYroBqghtaIfD6hg
- PQoFHgy9nVcv+sgsrYVbzsGSAUa0+F3iK2mzW+ymdoGs96KlhOnlBEIG2O4x9O5bw4hN
- dM3kfphm9lNkOVlZ/q5pEtW54UpQrX9g9b6d1bI4y+wW5uvy6UMZm8vYKPgaWZwK/3Sy
- qoSiVxPSe6fTwqpYveeOEiBZWOon16ALZvQ+7mAgsR+rHbrHCIV91k9VUgi6k5b5Knuz
- BP2178rjsGKwJ2DZvICJpocitmIVnboUjpz/7Nx5HA+Kw0+qsYJ1u3t/wemkn7E3sMxX
- X+Jw==
+	by mails.dpdk.org (Postfix) with ESMTP id 0E7AE40280;
+	Sat, 25 Jul 2026 09:55:07 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 4EB6440276
+ for <dev@dpdk.org>; Sat, 25 Jul 2026 09:55:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1784966104;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=VC5GS42lLHSWUMkwMkzwF+lQwhMbLCxe5XJtblEAD7I=;
+ b=CMOOLv/9HvhjGpsQS15WCc9sD229czN6p/7uQ0SjeLsOlt2AhlhKTDiPIy49uXbyPGLdDH
+ 2yt/oPegHtJrVCcIrlAnC50fqJ55QMPCIVYcYH+YtaRQMWAMPzBZh2FWMqdYb172DaVQMx
+ pw7BfsFaKD9qw5kzHTynKUy0Tgg0Lk0=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-664-PJBN1SqJNPKlsmOwRdP-3w-1; Sat, 25 Jul 2026 03:55:02 -0400
+X-MC-Unique: PJBN1SqJNPKlsmOwRdP-3w-1
+X-Mimecast-MFC-AGG-ID: PJBN1SqJNPKlsmOwRdP-3w_1784966101
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-5aeb49bb645so712229e87.0
+ for <dev@dpdk.org>; Sat, 25 Jul 2026 00:55:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784928167; x=1785532967;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=SbaOrVQPOqZq4q5p3Ye7C1EZSjtAEcssAqJRKgmsTYo=;
- b=BCkG5K5eaJHtFBDJNa/LJdKulqO/tEROfdvqfjp4egmXzP8AYG9QCAgZFPVzMMy7Ae
- JkalyOXcVvvATc5jMDT0BamuwD/5zbEo9LyQCZKkRHHC7wKWm7Ba888ve5BhC387HLZD
- vMnbd8+2rvaStlgGiGkN8PJe6ZaiEhu6WhycWs8dZWHzyvRR7TgCU03RDNtaqysU988N
- 32iLkxR5WnV/U/3u2ceB7KY7o9c7wPccNtgr5XXdJjurEc5uUqgU/Hkt/n6y3VSYR69R
- OpvSzYjGABU+jPjT93OlbMF3/Is1jy6SQnTHjTV+NrXgRp9/9wB1q+DQbXHgqsO9bt8A
- tIMg==
-X-Gm-Message-State: AOJu0Yw3qo0JBhZq0cIp/bRObcLjEJnxmoTUnp5fRv7RfNcEiJVGLspN
- cpeL+XV4QzlUh/L8kb1ZSuGgnVPRgY/WRN4dldDqeKX5yhQI8/ZR8prZS6EKSmOnF34juf8TCeS
- CEu55
-X-Gm-Gg: AR+sD10M0g0V4EuddeHRu4tA4QEoDMf2MrnY0vAuN0WtO8s67xafD4ykFEAEsvyB4Yn
- Of+/BTFqOSD7m5uxR4Vn+5t5/4mo9VpCfOwNagPI1ENy4QULYG6EdkR99Se2URwpKApbzECau6C
- 7M+PtFj/UB8S0RTrKn1x5Z1nhkpHDH5UZuV6ZoAt22UM4M2qLXBadDuewuYXirM6/Hh2OG3Ti3U
- AHsMKslWj8katNauftPTKsB7tvsrbtuBHGjfpZbq1kZHWYF+AQ8LSPl75fJX8RXBS4Qv7ZuEB/X
- 8drD/lvUsJc0oehXCWQ9/VOH1SAmVvThCNG5V1vTd4aZqVYGwaur/lskH0z0lNTFolA1wwLmO7c
- EnwTX3ZhTJ54IlggGAzsHaGUZ2EgvkfdxNGdO2Z9johP0ai0aXBHrNWtNj5z8tdXJnj1dpD0bPu
- o+wNHKbQ1qu1gD24AGqp/mBVd6/ETISwLzrAlCA2OaXYBeUJ0m4MA=
-X-Received: by 2002:a05:6a21:6e41:b0:3c3:7fff:ba72 with SMTP id
- adf61e73a8af0-3c67e0725d0mr26611637.70.1784928167354; 
- Fri, 24 Jul 2026 14:22:47 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-314bc548efesm2612725eec.14.2026.07.24.14.22.46
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Jul 2026 14:22:46 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 5/5] usertools/dpdk-dumpcap: add script for file capture
-Date: Fri, 24 Jul 2026 14:11:57 -0700
-Message-ID: <20260724212238.864798-6-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260724212238.864798-1-stephen@networkplumber.org>
-References: <20260724212238.864798-1-stephen@networkplumber.org>
+ d=1e100.net; s=20251104; t=1784966100; x=1785570900;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=VC5GS42lLHSWUMkwMkzwF+lQwhMbLCxe5XJtblEAD7I=;
+ b=b3ZFskskQkYcVmxgs80FlTa5k41lDKru+vLUHjF87uP1czBAWAXuzUZQNfPVrTGSg6
+ aH/nMWiv6kYUVkgSZnsudfnu6he76GvgTORzdTViHFF9/qZchtubok16VKLe6QVCBABg
+ iSSAeIfCN9nn3GWrEULqSFB0tgnh5RZNX7IUKabaB3x7hYyJ6mLyKeaFYg0OLU3DZ6NP
+ 9UrK2pO8GKquR33rwOohBjIy5hzx7rFWR3IiA6K6xkljzXnoz7JLDo9De1sGSPMBWIG+
+ RbuEIrpcgM55Zi09B49EUxJm0SqE9vWWXrkRchD0T99fkNwpAgRpqpbXHNft/yJa9reO
+ ntLg==
+X-Gm-Message-State: AOJu0YxGhMGluIXLLQ+Qpo0NwPF18J19er5dCWa7DMkrg1ztH5Ng6okS
+ vzT+Bn0dzwN7ccBuElFSq6O12+KeV8Fq1c3FnizMMHTpADFJ3QAMBurGHDHgU0/xoiSbyUA9TcG
+ opkaLvmKegUVKKG4Pvkih7scO7CjTmtPsYtT1NEP2hsYrjdSGqgcom716RQA3BRAynn4gHUdoNu
+ FwQZ1Tg9d+xcRsv3CNNxZXERWwZkQ=
+X-Gm-Gg: AR+sD12W5yEGY6wadT8TQQLES0iC4dhsIZPKYGst3gSASb5GLTjbuU5s4Ml3dyBrYzF
+ e9wyfPu8wdIEhoMM/lpNa0M+L3FzeW3n0RPzo8Ic6KFxahFneq5mdP6S+n+N03kmyk8WNH/vRJs
+ z0L6qfkS1aDlDnn3oUWuook47DE52RifQ34gn1/mIhyKdn2NkWLlkOASwjGv9G+zKll0fsx41o7
+ dslnyaRCcEVwaewHI7bMH7BoJaKnmK/bmQUIOZjwK2YokSA
+X-Received: by 2002:a05:6512:b9c:b0:5b0:12a4:2262 with SMTP id
+ 2adb3069b0e04-5b2c1b5c0bamr222394e87.59.1784966100547; 
+ Sat, 25 Jul 2026 00:55:00 -0700 (PDT)
+X-Received: by 2002:a05:6512:b9c:b0:5b0:12a4:2262 with SMTP id
+ 2adb3069b0e04-5b2c1b5c0bamr222390e87.59.1784966099906; Sat, 25 Jul 2026
+ 00:54:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260724164520.192203-1-stephen@networkplumber.org>
+In-Reply-To: <20260724164520.192203-1-stephen@networkplumber.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Sat, 25 Jul 2026 09:54:48 +0200
+X-Gm-Features: AUfX_mw49JkTN70-NYgomdUDI2ScY2WXhIsHANUgK3hW4BiD_OdtwbM4IMW3JEg
+Message-ID: <CAJFAV8yyME96KxO3soWoGgQzqzRHvcxyvkBFcbA6jGNfAxU0ag@mail.gmail.com>
+Subject: Re: [PATCH 0/6] remove legacy Packet Framework API
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 1zC1qI1FLrhc_-eDzHsvb_iZAY16trCb2McjXzbWvI0_1784966101
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,481 +82,306 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a python version using capture library that provides
-the same syntax and functionality as wireshark dumpcap and
-the existing secondary process version dpdk-dumpcap.
+On Fri, 24 Jul 2026 at 18:45, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> The legacy Packet Framework APIs were announced for removal in the
+> 24.11 release but the removal never happened:
+>
+> * pipeline: The pipeline library legacy API (functions rte_pipeline_*)
+> * table: The table library legacy API (functions rte_table_*)
+> * port: The port library legacy API (functions rte_port_*)
+>
+> Do the removal now, in the 26.11 ABI window. The SWX API in the same
+> libraries (rte_swx_*) is unaffected and remains the Packet Framework
+> API. The softnic driver and the pipeline example already use only the
+> SWX API.
+>
+> The applications built on the legacy API (test-pipeline, ip_pipeline)
+> and the unit tests are removed first, then the legacy half of each
+> library, pipeline before table before port to follow the dependency
+> chain. Library dependencies and the programmer's guide are trimmed
+> accordingly.
+>
+> Follow-up candidates, kept out of this series: the stale comments in
+> lib/ethdev/ethdev_trace.h still refer to examples/ip_pipeline, and
+> struct rte_pipeline_acl_rule in the removed rte_table_acl.c was only
+> a local name.
+>
+>
+> Stephen Hemminger (6):
+>   app/test: remove packet framework tests
+>   app/test-pipeline: remove application
+>   examples/ip_pipeline: remove example
+>   pipeline: remove legacy API
+>   table: remove legacy API
+>   port: remove legacy API
+>
+>  MAINTAINERS                                   |    5 -
+>  app/meson.build                               |    1 -
+>  app/test-pipeline/config.c                    |  230 -
+>  app/test-pipeline/init.c                      |  273 -
+>  app/test-pipeline/main.c                      |  188 -
+>  app/test-pipeline/main.h                      |  132 -
+>  app/test-pipeline/meson.build                 |   21 -
+>  app/test-pipeline/pipeline_acl.c              |  251 -
+>  app/test-pipeline/pipeline_hash.c             |  471 --
+>  app/test-pipeline/pipeline_lpm.c              |  175 -
+>  app/test-pipeline/pipeline_lpm_ipv6.c         |  168 -
+>  app/test-pipeline/pipeline_stub.c             |  137 -
+>  app/test-pipeline/runtime.c                   |  160 -
+>  app/test/meson.build                          |    6 -
+>  app/test/test_table.c                         |  209 -
+>  app/test/test_table.h                         |  184 -
+>  app/test/test_table_acl.c                     |  728 --
+>  app/test/test_table_acl.h                     |    6 -
+>  app/test/test_table_combined.c                |  846 --
+>  app/test/test_table_combined.h                |   27 -
+>  app/test/test_table_pipeline.c                |  575 --
+>  app/test/test_table_pipeline.h                |    6 -
+>  app/test/test_table_ports.c                   |  195 -
+>  app/test/test_table_ports.h                   |   13 -
+>  app/test/test_table_tables.c                  | 1058 ---
+>  app/test/test_table_tables.h                  |   22 -
+>  doc/api/doxy-api-index.md                     |   17 -
+>  doc/guides/nics/softnic.rst                   |    3 +-
+>  doc/guides/prog_guide/img/figure32.png        |  Bin 11603 -> 0 bytes
+>  doc/guides/prog_guide/img/figure33.png        |  Bin 65216 -> 0 bytes
+>  doc/guides/prog_guide/img/figure34.png        |  Bin 11581 -> 0 bytes
+>  doc/guides/prog_guide/img/figure35.png        |  Bin 75012 -> 0 bytes
+>  doc/guides/prog_guide/img/figure37.png        |  Bin 6934 -> 0 bytes
+>  doc/guides/prog_guide/img/figure38.png        |  Bin 7372 -> 0 bytes
+>  doc/guides/prog_guide/img/figure39.png        |  Bin 55986 -> 0 bytes
+>  doc/guides/prog_guide/packet_framework.rst    | 1146 +--
+>  doc/guides/rel_notes/deprecation.rst          |   15 -
+>  doc/guides/rel_notes/release_26_11.rst        |   17 +
+>  .../sample_app_ug/img/test_pipeline_app.png   |  Bin 67410 -> 0 bytes
+>  doc/guides/sample_app_ug/index.rst            |    2 -
+>  doc/guides/sample_app_ug/ip_pipeline.rst      |  531 --
+>  doc/guides/sample_app_ug/test_pipeline.rst    |  237 -
+>  examples/ip_pipeline/Makefile                 |   60 -
+>  examples/ip_pipeline/action.c                 |  391 -
+>  examples/ip_pipeline/action.h                 |   78 -
+>  examples/ip_pipeline/cli.c                    | 6791 -----------------
+>  examples/ip_pipeline/cli.h                    |   18 -
+>  examples/ip_pipeline/common.h                 |   12 -
+>  examples/ip_pipeline/conn.c                   |  330 -
+>  examples/ip_pipeline/conn.h                   |   47 -
+>  examples/ip_pipeline/cryptodev.c              |  160 -
+>  examples/ip_pipeline/cryptodev.h              |   46 -
+>  examples/ip_pipeline/examples/firewall.cli    |   59 -
+>  examples/ip_pipeline/examples/flow.cli        |   60 -
+>  examples/ip_pipeline/examples/flow_crypto.cli |   57 -
+>  examples/ip_pipeline/examples/l2fwd.cli       |   51 -
+>  examples/ip_pipeline/examples/route.cli       |   60 -
+>  examples/ip_pipeline/examples/route_ecmp.cli  |   57 -
+>  examples/ip_pipeline/examples/rss.cli         |  112 -
+>  examples/ip_pipeline/examples/tap.cli         |   66 -
+>  examples/ip_pipeline/link.c                   |  270 -
+>  examples/ip_pipeline/link.h                   |   66 -
+>  examples/ip_pipeline/main.c                   |  260 -
+>  examples/ip_pipeline/mempool.c                |   82 -
+>  examples/ip_pipeline/mempool.h                |   40 -
+>  examples/ip_pipeline/meson.build              |   30 -
+>  examples/ip_pipeline/parser.c                 |  506 --
+>  examples/ip_pipeline/parser.h                 |   56 -
+>  examples/ip_pipeline/pipeline.c               | 1078 ---
+>  examples/ip_pipeline/pipeline.h               |  425 --
+>  examples/ip_pipeline/swq.c                    |   76 -
+>  examples/ip_pipeline/swq.h                    |   37 -
+>  examples/ip_pipeline/tap.c                    |  102 -
+>  examples/ip_pipeline/tap.h                    |   29 -
+>  examples/ip_pipeline/thread.c                 | 3137 --------
+>  examples/ip_pipeline/thread.h                 |   24 -
+>  examples/ip_pipeline/tmgr.c                   |  248 -
+>  examples/ip_pipeline/tmgr.h                   |   74 -
+>  examples/meson.build                          |    1 -
+>  lib/pipeline/meson.build                      |    8 +-
+>  lib/pipeline/rte_pipeline.c                   | 1640 ----
+>  lib/pipeline/rte_pipeline.h                   |  840 --
+>  lib/pipeline/rte_port_in_action.c             |  539 --
+>  lib/pipeline/rte_port_in_action.h             |  311 -
+>  lib/pipeline/rte_table_action.c               | 3483 ---------
+>  lib/pipeline/rte_table_action.h               | 1137 ---
+>  lib/port/meson.build                          |   22 +-
+>  lib/port/port_log.c                           |    7 -
+>  lib/port/port_log.h                           |   11 -
+>  lib/port/rte_port.h                           |  223 -
+>  lib/port/rte_port_ethdev.c                    |  530 --
+>  lib/port/rte_port_ethdev.h                    |   75 -
+>  lib/port/rte_port_eventdev.c                  |  590 --
+>  lib/port/rte_port_eventdev.h                  |   94 -
+>  lib/port/rte_port_fd.c                        |  524 --
+>  lib/port/rte_port_fd.h                        |   74 -
+>  lib/port/rte_port_frag.c                      |  280 -
+>  lib/port/rte_port_frag.h                      |   70 -
+>  lib/port/rte_port_ras.c                       |  336 -
+>  lib/port/rte_port_ras.h                       |   58 -
+>  lib/port/rte_port_ring.c                      |  796 --
+>  lib/port/rte_port_ring.h                      |   91 -
+>  lib/port/rte_port_sched.c                     |  298 -
+>  lib/port/rte_port_sched.h                     |   52 -
+>  lib/port/rte_port_source_sink.c               |  616 --
+>  lib/port/rte_port_source_sink.h               |   57 -
+>  lib/port/rte_port_sym_crypto.c                |  558 --
+>  lib/port/rte_port_sym_crypto.h                |   92 -
+>  lib/table/meson.build                         |   30 +-
+>  lib/table/rte_lru.h                           |   85 -
+>  lib/table/rte_lru_arm64.h                     |   61 -
+>  lib/table/rte_lru_x86.h                       |   96 -
+>  lib/table/rte_table.h                         |  263 -
+>  lib/table/rte_table_acl.c                     |  795 --
+>  lib/table/rte_table_acl.h                     |   65 -
+>  lib/table/rte_table_array.c                   |  210 -
+>  lib/table/rte_table_array.h                   |   46 -
+>  lib/table/rte_table_hash.h                    |  106 -
+>  lib/table/rte_table_hash_cuckoo.c             |  327 -
+>  lib/table/rte_table_hash_cuckoo.h             |   57 -
+>  lib/table/rte_table_hash_ext.c                | 1011 ---
+>  lib/table/rte_table_hash_func.h               |  263 -
+>  lib/table/rte_table_hash_func_arm64.h         |   21 -
+>  lib/table/rte_table_hash_key16.c              | 1190 ---
+>  lib/table/rte_table_hash_key32.c              | 1223 ---
+>  lib/table/rte_table_hash_key8.c               | 1157 ---
+>  lib/table/rte_table_hash_lru.c                |  959 ---
+>  lib/table/rte_table_lpm.c                     |  369 -
+>  lib/table/rte_table_lpm.h                     |   94 -
+>  lib/table/rte_table_lpm_ipv6.c                |  370 -
+>  lib/table/rte_table_lpm_ipv6.h                |   95 -
+>  lib/table/rte_table_stub.c                    |   95 -
+>  lib/table/rte_table_stub.h                    |   30 -
+>  lib/table/table_log.c                         |    7 -
+>  lib/table/table_log.h                         |   11 -
+>  135 files changed, 27 insertions(+), 45472 deletions(-)
+>  delete mode 100644 app/test-pipeline/config.c
+>  delete mode 100644 app/test-pipeline/init.c
+>  delete mode 100644 app/test-pipeline/main.c
+>  delete mode 100644 app/test-pipeline/main.h
+>  delete mode 100644 app/test-pipeline/meson.build
+>  delete mode 100644 app/test-pipeline/pipeline_acl.c
+>  delete mode 100644 app/test-pipeline/pipeline_hash.c
+>  delete mode 100644 app/test-pipeline/pipeline_lpm.c
+>  delete mode 100644 app/test-pipeline/pipeline_lpm_ipv6.c
+>  delete mode 100644 app/test-pipeline/pipeline_stub.c
+>  delete mode 100644 app/test-pipeline/runtime.c
+>  delete mode 100644 app/test/test_table.c
+>  delete mode 100644 app/test/test_table.h
+>  delete mode 100644 app/test/test_table_acl.c
+>  delete mode 100644 app/test/test_table_acl.h
+>  delete mode 100644 app/test/test_table_combined.c
+>  delete mode 100644 app/test/test_table_combined.h
+>  delete mode 100644 app/test/test_table_pipeline.c
+>  delete mode 100644 app/test/test_table_pipeline.h
+>  delete mode 100644 app/test/test_table_ports.c
+>  delete mode 100644 app/test/test_table_ports.h
+>  delete mode 100644 app/test/test_table_tables.c
+>  delete mode 100644 app/test/test_table_tables.h
+>  delete mode 100644 doc/guides/prog_guide/img/figure32.png
+>  delete mode 100644 doc/guides/prog_guide/img/figure33.png
+>  delete mode 100644 doc/guides/prog_guide/img/figure34.png
+>  delete mode 100644 doc/guides/prog_guide/img/figure35.png
+>  delete mode 100644 doc/guides/prog_guide/img/figure37.png
+>  delete mode 100644 doc/guides/prog_guide/img/figure38.png
+>  delete mode 100644 doc/guides/prog_guide/img/figure39.png
+>  delete mode 100644 doc/guides/sample_app_ug/img/test_pipeline_app.png
+>  delete mode 100644 doc/guides/sample_app_ug/ip_pipeline.rst
+>  delete mode 100644 doc/guides/sample_app_ug/test_pipeline.rst
+>  delete mode 100644 examples/ip_pipeline/Makefile
+>  delete mode 100644 examples/ip_pipeline/action.c
+>  delete mode 100644 examples/ip_pipeline/action.h
+>  delete mode 100644 examples/ip_pipeline/cli.c
+>  delete mode 100644 examples/ip_pipeline/cli.h
+>  delete mode 100644 examples/ip_pipeline/common.h
+>  delete mode 100644 examples/ip_pipeline/conn.c
+>  delete mode 100644 examples/ip_pipeline/conn.h
+>  delete mode 100644 examples/ip_pipeline/cryptodev.c
+>  delete mode 100644 examples/ip_pipeline/cryptodev.h
+>  delete mode 100644 examples/ip_pipeline/examples/firewall.cli
+>  delete mode 100644 examples/ip_pipeline/examples/flow.cli
+>  delete mode 100644 examples/ip_pipeline/examples/flow_crypto.cli
+>  delete mode 100644 examples/ip_pipeline/examples/l2fwd.cli
+>  delete mode 100644 examples/ip_pipeline/examples/route.cli
+>  delete mode 100644 examples/ip_pipeline/examples/route_ecmp.cli
+>  delete mode 100644 examples/ip_pipeline/examples/rss.cli
+>  delete mode 100644 examples/ip_pipeline/examples/tap.cli
+>  delete mode 100644 examples/ip_pipeline/link.c
+>  delete mode 100644 examples/ip_pipeline/link.h
+>  delete mode 100644 examples/ip_pipeline/main.c
+>  delete mode 100644 examples/ip_pipeline/mempool.c
+>  delete mode 100644 examples/ip_pipeline/mempool.h
+>  delete mode 100644 examples/ip_pipeline/meson.build
+>  delete mode 100644 examples/ip_pipeline/parser.c
+>  delete mode 100644 examples/ip_pipeline/parser.h
+>  delete mode 100644 examples/ip_pipeline/pipeline.c
+>  delete mode 100644 examples/ip_pipeline/pipeline.h
+>  delete mode 100644 examples/ip_pipeline/swq.c
+>  delete mode 100644 examples/ip_pipeline/swq.h
+>  delete mode 100644 examples/ip_pipeline/tap.c
+>  delete mode 100644 examples/ip_pipeline/tap.h
+>  delete mode 100644 examples/ip_pipeline/thread.c
+>  delete mode 100644 examples/ip_pipeline/thread.h
+>  delete mode 100644 examples/ip_pipeline/tmgr.c
+>  delete mode 100644 examples/ip_pipeline/tmgr.h
+>  delete mode 100644 lib/pipeline/rte_pipeline.c
+>  delete mode 100644 lib/pipeline/rte_pipeline.h
+>  delete mode 100644 lib/pipeline/rte_port_in_action.c
+>  delete mode 100644 lib/pipeline/rte_port_in_action.h
+>  delete mode 100644 lib/pipeline/rte_table_action.c
+>  delete mode 100644 lib/pipeline/rte_table_action.h
+>  delete mode 100644 lib/port/port_log.c
+>  delete mode 100644 lib/port/port_log.h
+>  delete mode 100644 lib/port/rte_port.h
+>  delete mode 100644 lib/port/rte_port_ethdev.c
+>  delete mode 100644 lib/port/rte_port_ethdev.h
+>  delete mode 100644 lib/port/rte_port_eventdev.c
+>  delete mode 100644 lib/port/rte_port_eventdev.h
+>  delete mode 100644 lib/port/rte_port_fd.c
+>  delete mode 100644 lib/port/rte_port_fd.h
+>  delete mode 100644 lib/port/rte_port_frag.c
+>  delete mode 100644 lib/port/rte_port_frag.h
+>  delete mode 100644 lib/port/rte_port_ras.c
+>  delete mode 100644 lib/port/rte_port_ras.h
+>  delete mode 100644 lib/port/rte_port_ring.c
+>  delete mode 100644 lib/port/rte_port_ring.h
+>  delete mode 100644 lib/port/rte_port_sched.c
+>  delete mode 100644 lib/port/rte_port_sched.h
+>  delete mode 100644 lib/port/rte_port_source_sink.c
+>  delete mode 100644 lib/port/rte_port_source_sink.h
+>  delete mode 100644 lib/port/rte_port_sym_crypto.c
+>  delete mode 100644 lib/port/rte_port_sym_crypto.h
+>  delete mode 100644 lib/table/rte_lru.h
+>  delete mode 100644 lib/table/rte_lru_arm64.h
+>  delete mode 100644 lib/table/rte_lru_x86.h
+>  delete mode 100644 lib/table/rte_table.h
+>  delete mode 100644 lib/table/rte_table_acl.c
+>  delete mode 100644 lib/table/rte_table_acl.h
+>  delete mode 100644 lib/table/rte_table_array.c
+>  delete mode 100644 lib/table/rte_table_array.h
+>  delete mode 100644 lib/table/rte_table_hash.h
+>  delete mode 100644 lib/table/rte_table_hash_cuckoo.c
+>  delete mode 100644 lib/table/rte_table_hash_cuckoo.h
+>  delete mode 100644 lib/table/rte_table_hash_ext.c
+>  delete mode 100644 lib/table/rte_table_hash_func.h
+>  delete mode 100644 lib/table/rte_table_hash_func_arm64.h
+>  delete mode 100644 lib/table/rte_table_hash_key16.c
+>  delete mode 100644 lib/table/rte_table_hash_key32.c
+>  delete mode 100644 lib/table/rte_table_hash_key8.c
+>  delete mode 100644 lib/table/rte_table_hash_lru.c
+>  delete mode 100644 lib/table/rte_table_lpm.c
+>  delete mode 100644 lib/table/rte_table_lpm.h
+>  delete mode 100644 lib/table/rte_table_lpm_ipv6.c
+>  delete mode 100644 lib/table/rte_table_lpm_ipv6.h
+>  delete mode 100644 lib/table/rte_table_stub.c
+>  delete mode 100644 lib/table/rte_table_stub.h
+>  delete mode 100644 lib/table/table_log.c
+>  delete mode 100644 lib/table/table_log.h
 
-Since it is a python script and uses capture it does not
-need secondary process support and should be portable
-to other OS environments.
+Sorry, it seems this series (and only this series iiuc) fell through
+the cracks while patchwork and other dpdk.org services were under
+heavy load...
+Could you resend?
 
-It is designed to be a replacement for dpdk-dumpcap
-program which uses pdump.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- MAINTAINERS                            |   1 +
- doc/guides/rel_notes/release_26_11.rst |   1 +
- usertools/dpdk-dumpcap.py              | 426 +++++++++++++++++++++++++
- 3 files changed, 428 insertions(+)
- create mode 100755 usertools/dpdk-dumpcap.py
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5ce969d02f..e682823df9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1722,6 +1722,7 @@ M: Reshma Pattan <reshma.pattan@intel.com>
- M: Stephen Hemminger <stephen@networkplumber.org>
- F: lib/capture/
- F: usertools/dpdk-wireshark-extcap.py
-+F: usertools/dpdk-dumpcap.py
- F: doc/guides/tools/wireshark_extcap.rst
- F: lib/pdump/
- F: doc/guides/prog_guide/pdump_lib.rst
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 9835807fcc..6590899585 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -59,6 +59,7 @@ New Features
- 
-   * Added ``capture`` library for packet capture via telemetry API.
-   * Added python script for wireshark external capture integration.
-+  * Added python version of dpdk-dumpcap.
- 
- 
- Removed Items
-diff --git a/usertools/dpdk-dumpcap.py b/usertools/dpdk-dumpcap.py
-new file mode 100755
-index 0000000000..bdec55964a
---- /dev/null
-+++ b/usertools/dpdk-dumpcap.py
-@@ -0,0 +1,426 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 Stephen Hemminger
-+
-+"""
-+dpdk-dumpcap: capture packets from a running DPDK primary process.
-+
-+A tcpdump/dumpcap-style front end for the DPDK 'capture' library. Unlike the
-+legacy secondary-process dpdk-dumpcap (which used pdump and required the primary
-+to initialise the capture framework), this drives the primary directly over its
-+telemetry socket: the primary opens the output file itself and writes pcapng
-+into it. It works with any primary that links lib/capture; no application
-+changes are needed.
-+
-+Examples:
-+    dpdk-dumpcap --list-interfaces
-+    dpdk-dumpcap -i 0 -w /tmp/port0.pcapng
-+    dpdk-dumpcap -i 0 -c 100 -f 'tcp port 80'
-+"""
-+
-+import argparse
-+import json
-+import os
-+import signal
-+import socket
-+import sys
-+import tempfile
-+import time
-+
-+TELEMETRY_SOCKET = "dpdk_telemetry.v2"
-+CAPTURE_START_CMD = "/ethdev/capture/start"
-+CAPTURE_STOP_CMD = "/ethdev/capture/stop"
-+CAPTURE_STATS_CMD = "/ethdev/capture/stats"
-+ETHDEV_LIST = "/ethdev/list"
-+ETHDEV_INFO = "/ethdev/info"
-+DEFAULT_SNAPLEN = 262144
-+COUNT_POLL_INTERVAL = 0.1  # fast stats poll cadence when -c is set
-+POLL_TICK = 0.5  # loop wake granularity; bounds Ctrl-C latency when idle
-+DEFAULT_STATS_INTERVAL = 0.5  # seconds between liveness updates
-+
-+
-+# --- DPDK runtime directory / socket discovery ---------------------------
-+
-+
-+def dpdk_dir():
-+    override = os.environ.get("DPDK_EXTCAP_PATH")
-+    if override:
-+        return override
-+    base = (
-+        "/var/run" if os.geteuid() == 0 else os.environ.get("XDG_RUNTIME_DIR", "/tmp")
-+    )
-+    return os.path.join(base, "dpdk")
-+
-+
-+def socket_path(prefix):
-+    return os.path.join(dpdk_dir(), prefix, TELEMETRY_SOCKET)
-+
-+
-+def list_prefixes():
-+    """Yield (prefix, path) for each DPDK telemetry socket found."""
-+    root = dpdk_dir()
-+    try:
-+        entries = os.listdir(root)
-+    except FileNotFoundError:
-+        return
-+    except PermissionError:
-+        sys.stderr.write(
-+            f"cannot read {root}: permission denied. The DPDK runtime directory "
-+            "is mode 0700, so capture must run as the same user as the DPDK "
-+            "application, or set DPDK_EXTCAP_PATH.\n"
-+        )
-+        return
-+    for prefix in sorted(entries):
-+        path = os.path.join(root, prefix, TELEMETRY_SOCKET)
-+        if os.path.exists(path):
-+            yield prefix, path
-+
-+
-+def resolve_prefix(requested):
-+    """Pick the file-prefix to talk to. If one was requested, use it; else use
-+    the sole running prefix, or error if there are zero or several."""
-+    prefixes = [p for p, _ in list_prefixes()]
-+    if requested is not None:
-+        if requested not in prefixes:
-+            raise SystemExit(f"no DPDK process with file-prefix '{requested}'")
-+        return requested
-+    if not prefixes:
-+        raise SystemExit("no running DPDK process found")
-+    if len(prefixes) > 1:
-+        raise SystemExit(
-+            "multiple DPDK processes running; select one with --file-prefix: "
-+            + ", ".join(prefixes)
-+        )
-+    return prefixes[0]
-+
-+
-+# --- Telemetry transport -------------------------------------------------
-+
-+
-+class Telemetry:
-+    """Minimal client for the DPDK v2 telemetry socket (SOCK_SEQPACKET)."""
-+
-+    def __init__(self, path):
-+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
-+        self.sock.connect(path)
-+        info = json.loads(self.sock.recv(1024).decode())
-+        self.max_output_len = info.get("max_output_len", 16384)
-+
-+    def command(self, cmd):
-+        self.sock.send(cmd.encode())
-+        reply = self.sock.recv(self.max_output_len)
-+        if not reply:
-+            return None
-+        return json.loads(reply.decode())
-+
-+    def close(self):
-+        self.sock.close()
-+
-+
-+# --- operations ----------------------------------------------------------
-+
-+
-+def port_name(tel, port):
-+    """Device name for a port via /ethdev/info, or 'port<N>' if unreadable.
-+    For a physical port this is the PCI address; for a vdev, the vdev name."""
-+    try:
-+        reply = tel.command(f"{ETHDEV_INFO},{port}")
-+    except OSError:
-+        reply = None
-+    info = (reply or {}).get(ETHDEV_INFO) or {}
-+    return info.get("name") or f"port{port}"
-+
-+
-+def list_interfaces():
-+    """List ports as '<port>. <name>', matching Wireshark/C dpdk-dumpcap -D.
-+    Port ids are per-primary; if several primaries run, capture disambiguates
-+    with --file-prefix (see resolve_prefix)."""
-+    any_found = False
-+    for _prefix, path in list_prefixes():
-+        try:
-+            tel = Telemetry(path)
-+        except OSError as e:
-+            sys.stderr.write(f"cannot query {path}: {e}\n")
-+            continue
-+        try:
-+            ports = (tel.command(ETHDEV_LIST) or {}).get(ETHDEV_LIST) or []
-+            for port in ports:
-+                any_found = True
-+                print(f"{port}. {port_name(tel, port)}")
-+        except OSError as e:
-+            sys.stderr.write(f"cannot query {path}: {e}\n")
-+        finally:
-+            tel.close()
-+    if not any_found:
-+        sys.stderr.write("no DPDK interfaces available for capture\n")
-+
-+
-+def resolve_interface(tel, spec):
-+    """Port id to capture on the connected primary. spec None selects the first
-+    interface (like Wireshark and the C dpdk-dumpcap); otherwise it is a port id
-+    or a device name as shown by --list-interfaces."""
-+    ports = (tel.command(ETHDEV_LIST) or {}).get(ETHDEV_LIST) or []
-+    if not ports:
-+        raise SystemExit("no interfaces on this DPDK process")
-+    if spec is None:
-+        return ports[0]
-+    try:
-+        port = int(spec)
-+    except ValueError:
-+        port = None
-+    if port is not None:
-+        if port in ports:
-+            return port
-+        raise SystemExit(f"no port {port} on this DPDK process")
-+    for port in ports:
-+        if port_name(tel, port) == spec:
-+            return port
-+    raise SystemExit(f"no interface '{spec}' on this DPDK process")
-+
-+
-+def default_output(name):
-+    r"""Auto-named output in the temp dir, matching how current Wireshark
-+    dumpcap names its default file: '<tool>_<iface><unique>.pcapng', with a
-+    random unique suffix and no timestamp.
-+    basename() strips any path-like parts of the device name, as Wireshark does;
-+    mkstemp pre-creates the file empty, which is what the capture library wants."""
-+    basename = os.path.basename(name)
-+    fd, path = tempfile.mkstemp(prefix=f"dpdk-dumpcap_{basename}", suffix=".pcapng")
-+    os.close(fd)
-+    return path
-+
-+
-+def read_stats(tel, cap_id):
-+    """Return the stats dict, or None if the telemetry peer has closed (the
-+    primary exited). An empty reply from a SEQPACKET socket is EOF."""
-+    reply = tel.command(f"{CAPTURE_STATS_CMD},{cap_id}")
-+    if reply is None:
-+        return None
-+    return reply.get(CAPTURE_STATS_CMD) or {}
-+
-+
-+def print_progress(stats):
-+    """Live packet counter, overwritten in place (carriage return, no newline)
-+    like Wireshark: the running line reads 'Packets:', and print_summary
-+    finalises it as 'Packets captured:' with a trailing newline."""
-+    captured = stats.get("accepted", 0) - stats.get("ringfull", 0)
-+    sys.stderr.write(f"\rPackets: {captured} ")
-+    sys.stderr.flush()
-+
-+
-+def print_summary(stats, name):
-+    r"""dumpcap-style end-of-capture summary on stderr. The leading '\r'
-+    finalises the in-place live counter (same line, overwritten). Counters map
-+    onto the pcapng ISB the primary writes, so this agrees with the file trailer:
-+        received (ifrecv) = accepted + filtered + nombuf   -- true total seen
-+        dropped  (ifdrop) = nombuf + ringfull
-+        captured          = accepted - ringfull            -- written to file
-+    The percentage is 'fraction not dropped', off the true total (ifrecv already
-+    includes the drops). An empty capture prints 0.0%, as dumpcap does."""
-+    accepted = stats.get("accepted", 0)
-+    filtered = stats.get("filtered", 0)
-+    nombuf = stats.get("nombuf", 0)
-+    ringfull = stats.get("ringfull", 0)
-+
-+    captured = accepted - ringfull
-+    received = accepted + filtered + nombuf
-+    dropped = nombuf + ringfull
-+    pct = 100.0 * (received - dropped) / received if received else 0.0
-+
-+    print(f"\rPackets captured: {captured}", file=sys.stderr)
-+    print(
-+        f"Packets received/dropped on interface '{name}': "
-+        f"{received}/{dropped} ({pct:.1f}%)",
-+        file=sys.stderr,
-+    )
-+
-+
-+def capture(args):
-+    prefix = resolve_prefix(args.file_prefix)
-+    path = socket_path(prefix)
-+
-+    try:
-+        tel = Telemetry(path)
-+    except OSError as e:
-+        raise SystemExit(f"cannot connect to DPDK telemetry at {path}: {e}")
-+
-+    port = resolve_interface(tel, args.interface)
-+    name = port_name(tel, port)
-+
-+    output = args.write or default_output(name)
-+
-+    # The capture library opens the output O_WRONLY|O_NOFOLLOW without O_CREAT
-+    # and rejects a non-empty file, so create/truncate it to an empty regular
-+    # file here before handing over the path.
-+    try:
-+        open(output, "wb").close()
-+    except OSError as e:
-+        tel.close()
-+        raise SystemExit(f"cannot create output {output}: {e}")
-+
-+    params = [str(port), f"out={output}"]
-+    if args.snaplen is not None:
-+        params.append(f"snaplen={args.snaplen}")
-+    if args.queue is not None and args.queue >= 0:
-+        params.append(f"queue={args.queue}")
-+    if args.filter:
-+        params.append(f"filter={args.filter}")
-+    cmd = CAPTURE_START_CMD + "," + ",".join(params)
-+
-+    result = (tel.command(cmd) or {}).get(CAPTURE_START_CMD) or {}
-+    if "error" in result:
-+        tel.close()
-+        raise SystemExit(f"capture start failed: {result['error']}")
-+    cap_id = result.get("id")
-+    if cap_id is None:
-+        tel.close()
-+        raise SystemExit("capture start did not return an id")
-+
-+    qnote = "" if args.queue is None or args.queue < 0 else f" queue {args.queue}"
-+    print(f"File: {output}", file=sys.stderr)
-+    print(f"Capturing on '{name}'{qnote}", file=sys.stderr)
-+
-+    # Stop on Ctrl-C/SIGTERM; the handler flips a flag the loop checks.
-+    stop = {"now": False}
-+    for sig in (signal.SIGINT, signal.SIGTERM):
-+        signal.signal(sig, lambda *_: stop.update(now=True))
-+
-+    interval = args.stats_interval
-+    # Wake on a short tick so a signal stops us promptly; poll fast when -c must
-+    # bound overshoot, otherwise just often enough to notice the signal. Stats
-+    # are read only when -c is set or a heartbeat is due, so an idle capture
-+    # barely touches the telemetry socket.
-+    tick = COUNT_POLL_INTERVAL if args.count is not None else POLL_TICK
-+    next_beat = time.monotonic() + interval if interval > 0 else None
-+
-+    stats = {}
-+    try:
-+        while not stop["now"]:
-+            time.sleep(tick)
-+            now = time.monotonic()
-+            due = next_beat is not None and now >= next_beat
-+            if args.count is not None or due:
-+                # The stats round-trip is itself the liveness check: if the
-+                # primary has exited, the telemetry socket errors or returns
-+                # EOF, and the capture (and its half-written pcapng) is gone.
-+                try:
-+                    latest = read_stats(tel, cap_id)
-+                except OSError:
-+                    latest = None
-+                if latest is None:
-+                    print(
-+                        "\nDPDK telemetry connection lost; capture stopped",
-+                        file=sys.stderr,
-+                    )
-+                    break
-+                if "error" in latest:
-+                    break  # capture instance no longer present
-+                if latest:
-+                    stats = latest
-+                if args.count is not None and stats.get("accepted", 0) >= args.count:
-+                    break
-+            if due:
-+                print_progress(stats)
-+                next_beat = now + interval
-+        # snapshot final counters while the instance is still alive, then stop:
-+        # after stop the primary tears the instance down and stats disappear.
-+        try:
-+            latest = read_stats(tel, cap_id)
-+            if latest and "error" not in latest:
-+                stats = latest
-+        except OSError:
-+            pass
-+    finally:
-+        try:
-+            tel.command(f"{CAPTURE_STOP_CMD},{cap_id}")
-+        except OSError:
-+            pass
-+
-+    print_summary(stats, name)
-+    tel.close()
-+
-+
-+# --- entry point ---------------------------------------------------------
-+
-+
-+def main():
-+    p = argparse.ArgumentParser(
-+        prog="dpdk-dumpcap",
-+        description="Capture packets from a running DPDK primary process.",
-+    )
-+    p.add_argument(
-+        "-D",
-+        "--list-interfaces",
-+        action="store_true",
-+        help="list available DPDK interfaces and exit",
-+    )
-+    p.add_argument(
-+        "-i",
-+        "--interface",
-+        metavar="IFACE",
-+        help="port id or device name to capture from "
-+        "(default: first interface; see --list-interfaces)",
-+    )
-+    p.add_argument(
-+        "--file-prefix",
-+        help="EAL file-prefix of the target primary "
-+        "(required only if several are running)",
-+    )
-+    p.add_argument(
-+        "-w", "--write", metavar="FILE", help="output pcapng file (default: auto-named)"
-+    )
-+    p.add_argument(
-+        "-s",
-+        "--snapshot-length",
-+        dest="snaplen",
-+        type=int,
-+        metavar="LEN",
-+        help="bytes to capture per packet (0 = all)",
-+    )
-+    p.add_argument(
-+        "--queue",
-+        type=int,
-+        metavar="ID",
-+        help="capture a single hardware queue (default: all queues)",
-+    )
-+    p.add_argument(
-+        "-c",
-+        "--packet-count",
-+        dest="count",
-+        type=int,
-+        metavar="N",
-+        help="stop after roughly N packets",
-+    )
-+    p.add_argument(
-+        "--stats-interval",
-+        type=float,
-+        metavar="SECS",
-+        default=DEFAULT_STATS_INTERVAL,
-+        help="seconds between liveness updates "
-+        f"(0 to disable; default {DEFAULT_STATS_INTERVAL})",
-+    )
-+    p.add_argument(
-+        "-f",
-+        "--filter",
-+        dest="filter",
-+        metavar="EXPR",
-+        help="capture filter in libpcap syntax",
-+    )
-+    p.add_argument(
-+        "filter_args", nargs="*", help="capture filter (if not given with -f)"
-+    )
-+    args = p.parse_args()
-+
-+    if args.list_interfaces:
-+        list_interfaces()
-+        return
-+
-+    # tcpdump-style trailing filter expression, if -f was not used.
-+    if not args.filter and args.filter_args:
-+        args.filter = " ".join(args.filter_args)
-+
-+    capture(args)
-+
-+
-+if __name__ == "__main__":
-+    main()
 -- 
-2.53.0
+David Marchand
 
