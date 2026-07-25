@@ -2,54 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3880FC531C9
-	for <dpdk-dev@archiver.kernel.org>; Sat, 25 Jul 2026 08:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D4EC531C9
+	for <dpdk-dev@archiver.kernel.org>; Sat, 25 Jul 2026 13:36:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0375940280;
-	Sat, 25 Jul 2026 10:43:55 +0200 (CEST)
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.47])
- by mails.dpdk.org (Postfix) with UTF8SMTP id 86C0040276
- for <dev@dpdk.org>; Sat, 25 Jul 2026 10:43:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
- t=1784969029; bh=8mhcgkRd+e5Ea0Z8RGSv2TXixHl2VdcWvACfDxttPkA=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=lhJ9mUPEV/KalDhKZCrZFetZekRBwQYo4MkhP8dNwfEWn5JuEjt4Bl7jtiyPrJ+vS
- M8DojQ4BZXEEN5B5vXVdTGehj/hyFMOaVWXEGMrHiiDn8jRW8StaZsp1KsnQ/h0eZV
- apzlbxrwS2GQXu95LW+gWQ71ZTZorFcL/ma7Vpd8=
-Received: from fedora.tail0f0cf3.ts.net ([139.159.170.83])
- by newxmesmtplogicsvrszc56-0.qq.com (NewEsmtp) with SMTP
- id AEFB0A5A; Sat, 25 Jul 2026 16:43:47 +0800
-X-QQ-mid: xmsmtpt1784969027tp51fu0ll
-Message-ID: <tencent_CFE5ECAF36405DFD2FB29DB7319B04E72C08@qq.com>
-X-QQ-XMAILINFO: M2SvzgchpLqf4IQ8PsTBVTrZkMJq7Yn+o6mcSJ3IhVjETMRdIwUVa0IGWMdijI
- feM2D8w4scrmOoWHxEX5IrhEF5n8BSB7a4ee3H+CtVKWjviaZ5+11uKcvA4N5mdQQqNbvgSjshUs
- YshAiibq5GMG5NQjCg34hU1DYadiXQukQT69fiXvKaMf1/oUGf2ePU+rro4flwQ1ZzB7GjxSJoTP
- Ug6Fcu+fqd4H00S72iDk9HBLmFWuZmA8VD5dn5zszsmNnSS/3EZM9/zFgT2m0GFdkcr8USTgbPxV
- vmbuKr2dxm48m951zWu/915zlwJu4bA23Sxny9hLsL3hjYcu1my3v9kdTeyoQjYHb3jBgG/Ns5ki
- LlxhF19bUHZM8owhw2rTufbPFDWkpMzL7KY6u278YCd/icqIKsHFT69lClH1idajnUZVMSIStwQU
- WytI5f8yW1H1XbxhgRNz6MuHoHSfBBbFs073Pr7EmaMav7Xmk3mhmkJSBHyPEN6kpRlvMSqMqQtL
- GqW+RDxJEVSxPjgcNsaXhwr2qxNSQ9c1sUGP5M3Dhi76AaDmzRkBFDULv4FsvSKm+pD7AFH9jYoC
- Pl8PDO8Is7CJbixb15eYIi4FZBeubc0aLdZSZLTq8xzxSIh2tpcUBkcy8rIFxGfolPjsomoax5XZ
- jAT1Q+5Ies3RJIVALZEKGeO0aXr2q3/Iw758v8YiWsVx71sC+sRate/Ki9CkZN7JGaG+0TF6FjwJ
- mJmdOwCC3A8uX8lSwIUU9krCfRLm331izKERjrT07inHDc1L1iXdKSE96VOQKAoRKk29nGv5jnIS
- /4tlMzbeG0E48tVsAhdJMsKvqbHch8P8jGCsiHhHv7jknKTGhDz/LxrUGOhLQfjUU9e91UMwiyKp
- 26XSTfoq7YSSHS5f8qquU1yBAdj53i/VdnoqveDIZ2COz6oX0e0zU5/iKzHxVOxFbZVcvnFXnWGY
- KGY6u72Q35i9/0oKvLBu66pTk/YNRpGKdiClNGMryXXiD4vqmWOhYLtsfMdabW3e32HyNj84c1XP
- dG3wuAETnC7IIVgtioe/C2UqFMPXSRSRgSlgkeZQ4sxH+SKaTX0Stt9N4n/6L9o0Y45le0Gw==
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
-From: datshan@qq.com
-To: thomas@monjalon.net,
-	stephen@networkplumber.org
-Cc: aconole@redhat.com,
-	dev@dpdk.org
-Subject: [PATCH v3] devtools: support local opencode agent for patch review
-Date: Sat, 25 Jul 2026 16:43:45 +0800
-X-OQ-MSGID: <20260725084345.96177-1-datshan@qq.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260703091902.525837-1-datshan@qq.com>
-References: <20260703091902.525837-1-datshan@qq.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 093D54029B;
+	Sat, 25 Jul 2026 15:36:33 +0200 (CEST)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
+ [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 6399E4028C
+ for <dev@dpdk.org>; Sat, 25 Jul 2026 15:36:31 +0200 (CEST)
+Received: by mail-pj1-f42.google.com with SMTP id
+ 98e67ed59e1d1-3856d6fbcb3so984020a91.2
+ for <dev@dpdk.org>; Sat, 25 Jul 2026 06:36:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784986590;
+ x=1785591390; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=vDQE9b8BYiT+BGWU1jhdseKCc9vo6g0ZxkraqePwAfo=;
+ b=iNjXLvZEMfns+UYIXfSNiaDh/aiYq6I/4o0nf83Jd05vg2Tg0CphhOu4RuIQvR/x09
+ MjVHIWV8CU831ugP4uR6gqSybr/ygJbArut8GRNP4CkkHYasReL49JdntcJnv6ba0dY/
+ uu47r9ygt6tPZm9KxBu26mfSrYh7vi49iYD6qnS86VSdpcEFQkRPBX2daJsJdjG20Pvs
+ OWhECG3dH6iRtraJ+SU0Bf2DATtzDLQ04lvD3kTbKLPTK0Lr2G68HE7A9wft93ELFhn1
+ CB5I5+/gM6IhCGBX8ZjC/IBCE0noI2j3JdDMa2Q0thOP0l8Dcz1YQsl/x236E3ZBQuMO
+ pYQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784986590; x=1785591390;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=vDQE9b8BYiT+BGWU1jhdseKCc9vo6g0ZxkraqePwAfo=;
+ b=hmQDg6Kl+hAgsB9neqQrdZGo8sgLFaOYpxcXkL6LLvEv8qhc8mjyr78392iN3eEFAB
+ ftcR5ODPUw9q6B99DVMrHJ19AYRrpvE0e/QPaEKNWKCa5DUopvAdzkw5JwLkXwbCZ8kB
+ cf2c1Fe9cd3mbr4p86nJglN9ZxiR/QgYbp3VnfKx0A5dtgVtxS11GBXiRSKqwU55/+7M
+ wtO4lNBr/6Q/5v8vVqo/57P1aZIoz3zB/QpXuD3Fk5cxB4JxuXw/2szxFnQ2yBEj8E4K
+ ++81VLpRGK9tlcIb/4VVSEgbpiKndXhcd8K/I+/QaxdkXgHfhfsFWBsT+LsgmQs/z4SZ
+ IcVA==
+X-Gm-Message-State: AOJu0YygR5RsK+yy064LiIWwTH/yyf+hxSglsPZOaYKsb40Z3CBn931T
+ w61FpqQO9HD60vJtkzTdgQKdesg3TI0qFeovalqWbSMcu+xY/6x7YvJOwTm2FY8GgPyFZgI5w1l
+ PDrPW
+X-Gm-Gg: AR+sD12DHKtVMHQWVkbkBuevUCeu07uSRtNzuCv5wzizXOoOgiZ8SnHkNOZUgjFYBpF
+ hFiUoKHowfd33IYzuvCI1LXrfpUNGQiY6fMNOTlDauuVf0BZv2O3xTq9epf+qzUjHkxpGet93VW
+ FxsAyA3GA26irEgZZ9K7WrkEGRDL9voxlKOUYtzFGrv7C3tuNnyIr33P1XMxKp1g9wqYgvRdtsS
+ MxZakj86SDksBB9ARcZrlExwuk+mlbO+G8kqeGtnyIXuuO+n5sOq7eNgQSyMqZdDtOletdliT2j
+ IUitvByzMWCwlbTTEVjJLq2syHFEQJ6wJqztu8oBdAuqEV+4O1m7xVAIakCu/ZM9GoEV2yQGGF1
+ WcVw/WSFwSs8Vg6gjkKpw2VL5gENtbQL8qJVtLDiICcatUt60tbZzbcs6hK+L825Vy2OUGontZo
+ Dv8jfPqJdF6G3p9RF66VPSw2uAQdXXQYk2Vl0xQ5nSvL0APOaSMQGoxQ==
+X-Received: by 2002:a17:90b:1347:b0:38e:6dd:a9ad with SMTP id
+ 98e67ed59e1d1-38f292653camr2474364a91.0.1784986589744; 
+ Sat, 25 Jul 2026 06:36:29 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-13d130f55c6sm58789308c88.15.2026.07.25.06.36.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 25 Jul 2026 06:36:29 -0700 (PDT)
+Date: Sat, 25 Jul 2026 06:36:26 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 0/6] remove legacy Packet Framework API
+Message-ID: <20260725063626.25e124f1@phoenix.local>
+In-Reply-To: <CAJFAV8yyME96KxO3soWoGgQzqzRHvcxyvkBFcbA6jGNfAxU0ag@mail.gmail.com>
+References: <20260724164520.192203-1-stephen@networkplumber.org>
+ <CAJFAV8yyME96KxO3soWoGgQzqzRHvcxyvkBFcbA6jGNfAxU0ag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,367 +82,308 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Chengwen Feng <fengchengwen@huawei.com>
+On Sat, 25 Jul 2026 09:54:48 +0200
+David Marchand <david.marchand@redhat.com> wrote:
 
-Currently review-patch.py only supports cloud AI providers
-(Anthropic, OpenAI, xAI, Google) via REST API, requiring API keys.
+> On Fri, 24 Jul 2026 at 18:45, Stephen Hemminger
+> <stephen@networkplumber.org> wrote:
+> >
+> > The legacy Packet Framework APIs were announced for removal in the
+> > 24.11 release but the removal never happened:
+> >
+> > * pipeline: The pipeline library legacy API (functions rte_pipeline_*)
+> > * table: The table library legacy API (functions rte_table_*)
+> > * port: The port library legacy API (functions rte_port_*)
+> >
+> > Do the removal now, in the 26.11 ABI window. The SWX API in the same
+> > libraries (rte_swx_*) is unaffected and remains the Packet Framework
+> > API. The softnic driver and the pipeline example already use only the
+> > SWX API.
+> >
+> > The applications built on the legacy API (test-pipeline, ip_pipeline)
+> > and the unit tests are removed first, then the legacy half of each
+> > library, pipeline before table before port to follow the dependency
+> > chain. Library dependencies and the programmer's guide are trimmed
+> > accordingly.
+> >
+> > Follow-up candidates, kept out of this series: the stale comments in
+> > lib/ethdev/ethdev_trace.h still refer to examples/ip_pipeline, and
+> > struct rte_pipeline_acl_rule in the removed rte_table_acl.c was only
+> > a local name.
+> >
+> >
+> > Stephen Hemminger (6):
+> >   app/test: remove packet framework tests
+> >   app/test-pipeline: remove application
+> >   examples/ip_pipeline: remove example
+> >   pipeline: remove legacy API
+> >   table: remove legacy API
+> >   port: remove legacy API
+> >
+> >  MAINTAINERS                                   |    5 -
+> >  app/meson.build                               |    1 -
+> >  app/test-pipeline/config.c                    |  230 -
+> >  app/test-pipeline/init.c                      |  273 -
+> >  app/test-pipeline/main.c                      |  188 -
+> >  app/test-pipeline/main.h                      |  132 -
+> >  app/test-pipeline/meson.build                 |   21 -
+> >  app/test-pipeline/pipeline_acl.c              |  251 -
+> >  app/test-pipeline/pipeline_hash.c             |  471 --
+> >  app/test-pipeline/pipeline_lpm.c              |  175 -
+> >  app/test-pipeline/pipeline_lpm_ipv6.c         |  168 -
+> >  app/test-pipeline/pipeline_stub.c             |  137 -
+> >  app/test-pipeline/runtime.c                   |  160 -
+> >  app/test/meson.build                          |    6 -
+> >  app/test/test_table.c                         |  209 -
+> >  app/test/test_table.h                         |  184 -
+> >  app/test/test_table_acl.c                     |  728 --
+> >  app/test/test_table_acl.h                     |    6 -
+> >  app/test/test_table_combined.c                |  846 --
+> >  app/test/test_table_combined.h                |   27 -
+> >  app/test/test_table_pipeline.c                |  575 --
+> >  app/test/test_table_pipeline.h                |    6 -
+> >  app/test/test_table_ports.c                   |  195 -
+> >  app/test/test_table_ports.h                   |   13 -
+> >  app/test/test_table_tables.c                  | 1058 ---
+> >  app/test/test_table_tables.h                  |   22 -
+> >  doc/api/doxy-api-index.md                     |   17 -
+> >  doc/guides/nics/softnic.rst                   |    3 +-
+> >  doc/guides/prog_guide/img/figure32.png        |  Bin 11603 -> 0 bytes
+> >  doc/guides/prog_guide/img/figure33.png        |  Bin 65216 -> 0 bytes
+> >  doc/guides/prog_guide/img/figure34.png        |  Bin 11581 -> 0 bytes
+> >  doc/guides/prog_guide/img/figure35.png        |  Bin 75012 -> 0 bytes
+> >  doc/guides/prog_guide/img/figure37.png        |  Bin 6934 -> 0 bytes
+> >  doc/guides/prog_guide/img/figure38.png        |  Bin 7372 -> 0 bytes
+> >  doc/guides/prog_guide/img/figure39.png        |  Bin 55986 -> 0 bytes
+> >  doc/guides/prog_guide/packet_framework.rst    | 1146 +--
+> >  doc/guides/rel_notes/deprecation.rst          |   15 -
+> >  doc/guides/rel_notes/release_26_11.rst        |   17 +
+> >  .../sample_app_ug/img/test_pipeline_app.png   |  Bin 67410 -> 0 bytes
+> >  doc/guides/sample_app_ug/index.rst            |    2 -
+> >  doc/guides/sample_app_ug/ip_pipeline.rst      |  531 --
+> >  doc/guides/sample_app_ug/test_pipeline.rst    |  237 -
+> >  examples/ip_pipeline/Makefile                 |   60 -
+> >  examples/ip_pipeline/action.c                 |  391 -
+> >  examples/ip_pipeline/action.h                 |   78 -
+> >  examples/ip_pipeline/cli.c                    | 6791 -----------------
+> >  examples/ip_pipeline/cli.h                    |   18 -
+> >  examples/ip_pipeline/common.h                 |   12 -
+> >  examples/ip_pipeline/conn.c                   |  330 -
+> >  examples/ip_pipeline/conn.h                   |   47 -
+> >  examples/ip_pipeline/cryptodev.c              |  160 -
+> >  examples/ip_pipeline/cryptodev.h              |   46 -
+> >  examples/ip_pipeline/examples/firewall.cli    |   59 -
+> >  examples/ip_pipeline/examples/flow.cli        |   60 -
+> >  examples/ip_pipeline/examples/flow_crypto.cli |   57 -
+> >  examples/ip_pipeline/examples/l2fwd.cli       |   51 -
+> >  examples/ip_pipeline/examples/route.cli       |   60 -
+> >  examples/ip_pipeline/examples/route_ecmp.cli  |   57 -
+> >  examples/ip_pipeline/examples/rss.cli         |  112 -
+> >  examples/ip_pipeline/examples/tap.cli         |   66 -
+> >  examples/ip_pipeline/link.c                   |  270 -
+> >  examples/ip_pipeline/link.h                   |   66 -
+> >  examples/ip_pipeline/main.c                   |  260 -
+> >  examples/ip_pipeline/mempool.c                |   82 -
+> >  examples/ip_pipeline/mempool.h                |   40 -
+> >  examples/ip_pipeline/meson.build              |   30 -
+> >  examples/ip_pipeline/parser.c                 |  506 --
+> >  examples/ip_pipeline/parser.h                 |   56 -
+> >  examples/ip_pipeline/pipeline.c               | 1078 ---
+> >  examples/ip_pipeline/pipeline.h               |  425 --
+> >  examples/ip_pipeline/swq.c                    |   76 -
+> >  examples/ip_pipeline/swq.h                    |   37 -
+> >  examples/ip_pipeline/tap.c                    |  102 -
+> >  examples/ip_pipeline/tap.h                    |   29 -
+> >  examples/ip_pipeline/thread.c                 | 3137 --------
+> >  examples/ip_pipeline/thread.h                 |   24 -
+> >  examples/ip_pipeline/tmgr.c                   |  248 -
+> >  examples/ip_pipeline/tmgr.h                   |   74 -
+> >  examples/meson.build                          |    1 -
+> >  lib/pipeline/meson.build                      |    8 +-
+> >  lib/pipeline/rte_pipeline.c                   | 1640 ----
+> >  lib/pipeline/rte_pipeline.h                   |  840 --
+> >  lib/pipeline/rte_port_in_action.c             |  539 --
+> >  lib/pipeline/rte_port_in_action.h             |  311 -
+> >  lib/pipeline/rte_table_action.c               | 3483 ---------
+> >  lib/pipeline/rte_table_action.h               | 1137 ---
+> >  lib/port/meson.build                          |   22 +-
+> >  lib/port/port_log.c                           |    7 -
+> >  lib/port/port_log.h                           |   11 -
+> >  lib/port/rte_port.h                           |  223 -
+> >  lib/port/rte_port_ethdev.c                    |  530 --
+> >  lib/port/rte_port_ethdev.h                    |   75 -
+> >  lib/port/rte_port_eventdev.c                  |  590 --
+> >  lib/port/rte_port_eventdev.h                  |   94 -
+> >  lib/port/rte_port_fd.c                        |  524 --
+> >  lib/port/rte_port_fd.h                        |   74 -
+> >  lib/port/rte_port_frag.c                      |  280 -
+> >  lib/port/rte_port_frag.h                      |   70 -
+> >  lib/port/rte_port_ras.c                       |  336 -
+> >  lib/port/rte_port_ras.h                       |   58 -
+> >  lib/port/rte_port_ring.c                      |  796 --
+> >  lib/port/rte_port_ring.h                      |   91 -
+> >  lib/port/rte_port_sched.c                     |  298 -
+> >  lib/port/rte_port_sched.h                     |   52 -
+> >  lib/port/rte_port_source_sink.c               |  616 --
+> >  lib/port/rte_port_source_sink.h               |   57 -
+> >  lib/port/rte_port_sym_crypto.c                |  558 --
+> >  lib/port/rte_port_sym_crypto.h                |   92 -
+> >  lib/table/meson.build                         |   30 +-
+> >  lib/table/rte_lru.h                           |   85 -
+> >  lib/table/rte_lru_arm64.h                     |   61 -
+> >  lib/table/rte_lru_x86.h                       |   96 -
+> >  lib/table/rte_table.h                         |  263 -
+> >  lib/table/rte_table_acl.c                     |  795 --
+> >  lib/table/rte_table_acl.h                     |   65 -
+> >  lib/table/rte_table_array.c                   |  210 -
+> >  lib/table/rte_table_array.h                   |   46 -
+> >  lib/table/rte_table_hash.h                    |  106 -
+> >  lib/table/rte_table_hash_cuckoo.c             |  327 -
+> >  lib/table/rte_table_hash_cuckoo.h             |   57 -
+> >  lib/table/rte_table_hash_ext.c                | 1011 ---
+> >  lib/table/rte_table_hash_func.h               |  263 -
+> >  lib/table/rte_table_hash_func_arm64.h         |   21 -
+> >  lib/table/rte_table_hash_key16.c              | 1190 ---
+> >  lib/table/rte_table_hash_key32.c              | 1223 ---
+> >  lib/table/rte_table_hash_key8.c               | 1157 ---
+> >  lib/table/rte_table_hash_lru.c                |  959 ---
+> >  lib/table/rte_table_lpm.c                     |  369 -
+> >  lib/table/rte_table_lpm.h                     |   94 -
+> >  lib/table/rte_table_lpm_ipv6.c                |  370 -
+> >  lib/table/rte_table_lpm_ipv6.h                |   95 -
+> >  lib/table/rte_table_stub.c                    |   95 -
+> >  lib/table/rte_table_stub.h                    |   30 -
+> >  lib/table/table_log.c                         |    7 -
+> >  lib/table/table_log.h                         |   11 -
+> >  135 files changed, 27 insertions(+), 45472 deletions(-)
+> >  delete mode 100644 app/test-pipeline/config.c
+> >  delete mode 100644 app/test-pipeline/init.c
+> >  delete mode 100644 app/test-pipeline/main.c
+> >  delete mode 100644 app/test-pipeline/main.h
+> >  delete mode 100644 app/test-pipeline/meson.build
+> >  delete mode 100644 app/test-pipeline/pipeline_acl.c
+> >  delete mode 100644 app/test-pipeline/pipeline_hash.c
+> >  delete mode 100644 app/test-pipeline/pipeline_lpm.c
+> >  delete mode 100644 app/test-pipeline/pipeline_lpm_ipv6.c
+> >  delete mode 100644 app/test-pipeline/pipeline_stub.c
+> >  delete mode 100644 app/test-pipeline/runtime.c
+> >  delete mode 100644 app/test/test_table.c
+> >  delete mode 100644 app/test/test_table.h
+> >  delete mode 100644 app/test/test_table_acl.c
+> >  delete mode 100644 app/test/test_table_acl.h
+> >  delete mode 100644 app/test/test_table_combined.c
+> >  delete mode 100644 app/test/test_table_combined.h
+> >  delete mode 100644 app/test/test_table_pipeline.c
+> >  delete mode 100644 app/test/test_table_pipeline.h
+> >  delete mode 100644 app/test/test_table_ports.c
+> >  delete mode 100644 app/test/test_table_ports.h
+> >  delete mode 100644 app/test/test_table_tables.c
+> >  delete mode 100644 app/test/test_table_tables.h
+> >  delete mode 100644 doc/guides/prog_guide/img/figure32.png
+> >  delete mode 100644 doc/guides/prog_guide/img/figure33.png
+> >  delete mode 100644 doc/guides/prog_guide/img/figure34.png
+> >  delete mode 100644 doc/guides/prog_guide/img/figure35.png
+> >  delete mode 100644 doc/guides/prog_guide/img/figure37.png
+> >  delete mode 100644 doc/guides/prog_guide/img/figure38.png
+> >  delete mode 100644 doc/guides/prog_guide/img/figure39.png
+> >  delete mode 100644 doc/guides/sample_app_ug/img/test_pipeline_app.png
+> >  delete mode 100644 doc/guides/sample_app_ug/ip_pipeline.rst
+> >  delete mode 100644 doc/guides/sample_app_ug/test_pipeline.rst
+> >  delete mode 100644 examples/ip_pipeline/Makefile
+> >  delete mode 100644 examples/ip_pipeline/action.c
+> >  delete mode 100644 examples/ip_pipeline/action.h
+> >  delete mode 100644 examples/ip_pipeline/cli.c
+> >  delete mode 100644 examples/ip_pipeline/cli.h
+> >  delete mode 100644 examples/ip_pipeline/common.h
+> >  delete mode 100644 examples/ip_pipeline/conn.c
+> >  delete mode 100644 examples/ip_pipeline/conn.h
+> >  delete mode 100644 examples/ip_pipeline/cryptodev.c
+> >  delete mode 100644 examples/ip_pipeline/cryptodev.h
+> >  delete mode 100644 examples/ip_pipeline/examples/firewall.cli
+> >  delete mode 100644 examples/ip_pipeline/examples/flow.cli
+> >  delete mode 100644 examples/ip_pipeline/examples/flow_crypto.cli
+> >  delete mode 100644 examples/ip_pipeline/examples/l2fwd.cli
+> >  delete mode 100644 examples/ip_pipeline/examples/route.cli
+> >  delete mode 100644 examples/ip_pipeline/examples/route_ecmp.cli
+> >  delete mode 100644 examples/ip_pipeline/examples/rss.cli
+> >  delete mode 100644 examples/ip_pipeline/examples/tap.cli
+> >  delete mode 100644 examples/ip_pipeline/link.c
+> >  delete mode 100644 examples/ip_pipeline/link.h
+> >  delete mode 100644 examples/ip_pipeline/main.c
+> >  delete mode 100644 examples/ip_pipeline/mempool.c
+> >  delete mode 100644 examples/ip_pipeline/mempool.h
+> >  delete mode 100644 examples/ip_pipeline/meson.build
+> >  delete mode 100644 examples/ip_pipeline/parser.c
+> >  delete mode 100644 examples/ip_pipeline/parser.h
+> >  delete mode 100644 examples/ip_pipeline/pipeline.c
+> >  delete mode 100644 examples/ip_pipeline/pipeline.h
+> >  delete mode 100644 examples/ip_pipeline/swq.c
+> >  delete mode 100644 examples/ip_pipeline/swq.h
+> >  delete mode 100644 examples/ip_pipeline/tap.c
+> >  delete mode 100644 examples/ip_pipeline/tap.h
+> >  delete mode 100644 examples/ip_pipeline/thread.c
+> >  delete mode 100644 examples/ip_pipeline/thread.h
+> >  delete mode 100644 examples/ip_pipeline/tmgr.c
+> >  delete mode 100644 examples/ip_pipeline/tmgr.h
+> >  delete mode 100644 lib/pipeline/rte_pipeline.c
+> >  delete mode 100644 lib/pipeline/rte_pipeline.h
+> >  delete mode 100644 lib/pipeline/rte_port_in_action.c
+> >  delete mode 100644 lib/pipeline/rte_port_in_action.h
+> >  delete mode 100644 lib/pipeline/rte_table_action.c
+> >  delete mode 100644 lib/pipeline/rte_table_action.h
+> >  delete mode 100644 lib/port/port_log.c
+> >  delete mode 100644 lib/port/port_log.h
+> >  delete mode 100644 lib/port/rte_port.h
+> >  delete mode 100644 lib/port/rte_port_ethdev.c
+> >  delete mode 100644 lib/port/rte_port_ethdev.h
+> >  delete mode 100644 lib/port/rte_port_eventdev.c
+> >  delete mode 100644 lib/port/rte_port_eventdev.h
+> >  delete mode 100644 lib/port/rte_port_fd.c
+> >  delete mode 100644 lib/port/rte_port_fd.h
+> >  delete mode 100644 lib/port/rte_port_frag.c
+> >  delete mode 100644 lib/port/rte_port_frag.h
+> >  delete mode 100644 lib/port/rte_port_ras.c
+> >  delete mode 100644 lib/port/rte_port_ras.h
+> >  delete mode 100644 lib/port/rte_port_ring.c
+> >  delete mode 100644 lib/port/rte_port_ring.h
+> >  delete mode 100644 lib/port/rte_port_sched.c
+> >  delete mode 100644 lib/port/rte_port_sched.h
+> >  delete mode 100644 lib/port/rte_port_source_sink.c
+> >  delete mode 100644 lib/port/rte_port_source_sink.h
+> >  delete mode 100644 lib/port/rte_port_sym_crypto.c
+> >  delete mode 100644 lib/port/rte_port_sym_crypto.h
+> >  delete mode 100644 lib/table/rte_lru.h
+> >  delete mode 100644 lib/table/rte_lru_arm64.h
+> >  delete mode 100644 lib/table/rte_lru_x86.h
+> >  delete mode 100644 lib/table/rte_table.h
+> >  delete mode 100644 lib/table/rte_table_acl.c
+> >  delete mode 100644 lib/table/rte_table_acl.h
+> >  delete mode 100644 lib/table/rte_table_array.c
+> >  delete mode 100644 lib/table/rte_table_array.h
+> >  delete mode 100644 lib/table/rte_table_hash.h
+> >  delete mode 100644 lib/table/rte_table_hash_cuckoo.c
+> >  delete mode 100644 lib/table/rte_table_hash_cuckoo.h
+> >  delete mode 100644 lib/table/rte_table_hash_ext.c
+> >  delete mode 100644 lib/table/rte_table_hash_func.h
+> >  delete mode 100644 lib/table/rte_table_hash_func_arm64.h
+> >  delete mode 100644 lib/table/rte_table_hash_key16.c
+> >  delete mode 100644 lib/table/rte_table_hash_key32.c
+> >  delete mode 100644 lib/table/rte_table_hash_key8.c
+> >  delete mode 100644 lib/table/rte_table_hash_lru.c
+> >  delete mode 100644 lib/table/rte_table_lpm.c
+> >  delete mode 100644 lib/table/rte_table_lpm.h
+> >  delete mode 100644 lib/table/rte_table_lpm_ipv6.c
+> >  delete mode 100644 lib/table/rte_table_lpm_ipv6.h
+> >  delete mode 100644 lib/table/rte_table_stub.c
+> >  delete mode 100644 lib/table/rte_table_stub.h
+> >  delete mode 100644 lib/table/table_log.c
+> >  delete mode 100644 lib/table/table_log.h  
+> 
+> Sorry, it seems this series (and only this series iiuc) fell through
+> the cracks while patchwork and other dpdk.org services were under
+> heavy load...
+> Could you resend?
+> 
+> 
 
-Add a --via option that invokes the locally installed opencode CLI as
-the review runner instead of making HTTP calls. opencode reads
-AGENTS.md from the DPDK project directory automatically, needing no
-configuration beyond opencode on PATH.
-
-The --via and -p/--provider options are independent -- via routes to
-the local agent mode while -p continues to use the cloud API path.
-
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-
----
-v3: Rebase main to fix apply error
-v2: Address comments from Stephen, including: not arise
-FileNotFoundError and more clarify.
----
- devtools/ai/review-patch.py | 229 ++++++++++++++++++++++++++----------
- 1 file changed, 168 insertions(+), 61 deletions(-)
-
-diff --git a/devtools/ai/review-patch.py b/devtools/ai/review-patch.py
-index 5f8d9ed772..7ee34cfe6d 100755
---- a/devtools/ai/review-patch.py
-+++ b/devtools/ai/review-patch.py
-@@ -3,9 +3,10 @@
- # Copyright(c) 2026 Stephen Hemminger
- 
- """
--Review DPDK patches using AI providers.
-+Review DPDK patches using AI providers or a local agent tool.
- 
- Supported providers: Anthropic Claude, OpenAI ChatGPT, xAI Grok, Google Gemini
-+Supported agent: OpenCode (--via opencode)
- """
- 
- import argparse
-@@ -577,6 +578,109 @@ def build_google_request(
-     }
- 
- 
-+def _call_opencode(
-+    model: str,
-+    system_prompt: str,
-+    patch_content: str,
-+    patch_name: str,
-+    agents_path: str = "",
-+    output_format: str = "text",
-+    verbose: bool = False,
-+    timeout: int = 300,
-+) -> tuple[str, TokenUsage]:
-+    """Call local opencode CLI for review."""
-+    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
-+    user_prompt = (
-+        f"Review the attached DPDK patch file '{patch_name}'.\n\n"
-+        f"Focus on correctness bugs, C coding style, API requirements, "
-+        f"and other guideline violations. "
-+        f"Commit message format and SPDX/copyright are checked by "
-+        f"checkpatches.sh -- do NOT flag those.\n\n"
-+        f"{format_instruction}"
-+    )
-+
-+    with tempfile.NamedTemporaryFile(
-+        mode="w", suffix=".patch", delete=False, prefix="review_"
-+    ) as f:
-+        f.write(patch_content)
-+        patch_temp = f.name
-+
-+    try:
-+        full_message = system_prompt + "\n\n" + user_prompt
-+
-+        cmd = [
-+            "opencode", "run", "--format", "json",
-+            "--dir", str(Path(__file__).resolve().parent.parent.parent),
-+        ]
-+        if model:
-+            cmd.extend(["--model", model])
-+        if verbose:
-+            cmd.append("--print-logs")
-+        cmd.append(full_message)
-+        cmd.extend(["--file", patch_temp])
-+        if agents_path:
-+            cmd.extend(["--file", agents_path])
-+
-+        if verbose:
-+            print(f"Running: {' '.join(cmd)}", file=sys.stderr)
-+
-+        try:
-+            result = subprocess.run(
-+                cmd,
-+                capture_output=True,
-+                text=True,
-+                timeout=timeout,
-+            )
-+        except FileNotFoundError:
-+            error("opencode not found. Install from https://opencode.ai")
-+        except subprocess.TimeoutExpired:
-+            error(f"opencode timed out after {timeout} seconds")
-+
-+        if result.returncode != 0:
-+            error(
-+                f"opencode exited with code {result.returncode}: "
-+                f"{result.stderr[:500]}"
-+            )
-+
-+    finally:
-+        os.unlink(patch_temp)
-+
-+    text_parts = []
-+    usage = TokenUsage()
-+    steps = 0
-+    for line in result.stdout.splitlines():
-+        stripped = line.strip()
-+        if not stripped:
-+            continue
-+        try:
-+            event = json.loads(stripped)
-+        except json.JSONDecodeError:
-+            continue
-+
-+        event_type = event.get("type", "")
-+        if event_type == "text":
-+            part_text = event.get("part", {}).get("text", "")
-+            if part_text:
-+                text_parts.append(part_text)
-+        elif event_type == "step_finish":
-+            steps += 1
-+            tokens = event.get("part", {}).get("tokens", {})
-+            if tokens:
-+                usage.input_tokens += tokens.get("input", 0)
-+                usage.output_tokens += tokens.get("output", 0)
-+                cache = tokens.get("cache", {})
-+                usage.cache_creation_tokens += cache.get("write", 0)
-+                usage.cache_read_tokens += cache.get("read", 0)
-+
-+    usage.api_calls = 1 if steps > 0 else 0
-+    review_text = "\n".join(text_parts)
-+
-+    if not review_text:
-+        error("No review text received from opencode")
-+
-+    return review_text, usage
-+
-+
- def call_api(
-     provider: str,
-     auth: str,
-@@ -764,6 +868,7 @@ def main() -> None:
- Examples:
-     %(prog)s patch.patch                    # Review with default settings
-     %(prog)s -p openai my-patch.patch       # Use OpenAI ChatGPT
-+    %(prog)s --via opencode my-patch.patch  # Use local opencode agent
-     %(prog)s -f markdown patch.patch        # Output as Markdown
-     %(prog)s -f json -o review.json patch.patch  # Save JSON to file
-     %(prog)s -f html -o review.html patch.patch  # Save HTML to file
-@@ -810,7 +915,13 @@ def main() -> None:
-         "--provider",
-         choices=PROVIDERS.keys(),
-         default="anthropic",
--        help="AI provider (default: anthropic)",
-+        help="Cloud AI provider (default: anthropic)",
-+    )
-+    parser.add_argument(
-+        "--via",
-+        choices=["opencode"],
-+        default=None,
-+        help="Use a local agent tool instead of a cloud API (e.g. --via opencode)",
-     )
-     parser.add_argument(
-         "-a",
-@@ -956,12 +1067,17 @@ def main() -> None:
-     if not args.patch_file:
-         parser.error("patch_file is required")
- 
--    # Get provider config
--    config = PROVIDERS[args.provider]
--    model = args.model or config["default_model"]
--
--    # Get authentication string
--    auth = get_auth_string(args.auth, args.provider)
-+    # Get provider config or set up local agent runner
-+    via = args.via
-+    if via:
-+        model = args.model or ""
-+        auth = ""
-+        provider_name = "OpenCode"
-+    else:
-+        config = PROVIDERS[args.provider]
-+        model = args.model or config["default_model"]
-+        auth = get_auth_string(args.auth, args.provider)
-+        provider_name = config["name"]
- 
-     # Validate files
-     agents_path = Path(args.agents)
-@@ -999,17 +1115,42 @@ def main() -> None:
-     patch_content = patch_path.read_text(encoding="utf-8", errors="replace")
-     patch_name = patch_path.name
- 
--    # Determine max tokens for this provider
--    max_input_tokens = args.max_tokens or PROVIDER_INPUT_LIMITS.get(
--        args.provider, 100000
--    )
-+    # Dispatch to agent or provider
-+    def _run_review(patch_body: str, patch_label: str) -> tuple[str, TokenUsage]:
-+        if via:
-+            return _call_opencode(
-+                model, system_prompt,
-+                patch_body, patch_label,
-+                str(agents_path),
-+                args.output_format, args.verbose, args.timeout,
-+            )
-+        return call_api(
-+            args.provider, auth, model, args.tokens,
-+            system_prompt, agents_content,
-+            patch_body, patch_label,
-+            args.output_format, args.verbose, args.timeout,
-+        )
- 
--    # Estimate token count
--    estimated_tokens = estimate_tokens(patch_content + agents_content)
-+    # Determine max tokens (cloud API only)
-+    max_input_tokens = 0
-+    if via:
-+        estimated_tokens = 1
-+    else:
-+        max_input_tokens = args.max_tokens or PROVIDER_INPUT_LIMITS.get(
-+            args.provider, 100000
-+        )
-+        estimated_tokens = estimate_tokens(patch_content + agents_content)
- 
-     # Accumulate token usage across all API calls
-     total_usage = TokenUsage()
- 
-+    if via and args.large_file != "error":
-+        print(
-+            "Warning: --large-file is ignored in --via mode; "
-+            "opencode handles large files automatically",
-+            file=sys.stderr,
-+        )
-+
-     # Parse patch range if specified
-     patch_start, patch_end = None, None
-     if args.patch_range:
-@@ -1067,19 +1208,7 @@ def main() -> None:
-                 patch_label = f"Patch {i}/{total_patches}"
-                 print(f"\nReviewing {patch_label}...", file=sys.stderr)
- 
--                review_text, call_usage = call_api(
--                    args.provider,
--                    auth,
--                    model,
--                    args.tokens,
--                    system_prompt,
--                    agents_content,
--                    patch,
--                    f"{patch_name} ({patch_label})",
--                    args.output_format,
--                    args.verbose,
--                    args.timeout,
--                )
-+                review_text, call_usage = _run_review(patch, f"{patch_name} ({patch_label})")
-                 total_usage.add(call_usage)
-                 all_reviews.append((patch_label, review_text))
- 
-@@ -1091,10 +1220,10 @@ def main() -> None:
-             # Skip the normal API call
-             estimated_tokens = 0  # Bypass size check since we've already processed
- 
--    # Check if content is too large
-+    # Check if content is too large (cloud API only)
-     is_large = estimated_tokens > max_input_tokens
- 
--    if is_large:
-+    if is_large and not via:
-         print(
-             f"Warning: Estimated {estimated_tokens:,} tokens exceeds limit of "
-             f"{max_input_tokens:,}",
-@@ -1137,19 +1266,7 @@ def main() -> None:
-                 chunk_label = f"Chunk {chunk_num}/{total_chunks}"
-                 print(f"Reviewing {chunk_label}...", file=sys.stderr)
- 
--                review_text, call_usage = call_api(
--                    args.provider,
--                    auth,
--                    model,
--                    args.tokens,
--                    system_prompt,
--                    agents_content,
--                    chunk,
--                    f"{patch_name} ({chunk_label})",
--                    args.output_format,
--                    args.verbose,
--                    args.timeout,
--                )
-+                review_text, call_usage = _run_review(chunk, f"{patch_name} ({chunk_label})")
-                 total_usage.add(call_usage)
-                 all_reviews.append((chunk_label, review_text))
- 
-@@ -1163,8 +1280,11 @@ def main() -> None:
- 
-     if args.verbose:
-         print("=== Request ===", file=sys.stderr)
--        print(f"Provider: {args.provider}", file=sys.stderr)
--        print(f"Auth method: {'vertex' if auth == 'vertex' else 'direct'}", file=sys.stderr)
-+        if via:
-+            print(f"Runner: {args.via}", file=sys.stderr)
-+        else:
-+            print(f"Provider: {args.provider}", file=sys.stderr)
-+            print(f"Auth method: {'vertex' if auth == 'vertex' else 'direct'}", file=sys.stderr)
-         print(f"Model: {model}", file=sys.stderr)
-         print(f"Review date: {review_date}", file=sys.stderr)
-         if args.release:
-@@ -1191,26 +1311,13 @@ def main() -> None:
- 
-     # Call API (unless already processed via chunks/split)
-     if estimated_tokens > 0:  # Not already processed
--        review_text, call_usage = call_api(
--            args.provider,
--            auth,
--            model,
--            args.tokens,
--            system_prompt,
--            agents_content,
--            patch_content,
--            patch_name,
--            args.output_format,
--            args.verbose,
--            args.timeout,
--        )
-+        review_text, call_usage = _run_review(patch_content, patch_name)
-         total_usage.add(call_usage)
- 
-     if not review_text:
--        error(f"No response received from {args.provider}")
-+        error(f"No response received from {provider_name}")
- 
-     # Format output based on requested format
--    provider_name = config["name"]
- 
-     if args.output_format == "json":
-         # For JSON, try to parse and add metadata
-@@ -1234,7 +1341,7 @@ def main() -> None:
-         output_data = {
-             "metadata": {
-                 "patch_file": patch_name,
--                "provider": args.provider,
-+                "provider": args.via or args.provider,
-                 "provider_name": provider_name,
-                 "model": model,
-                 "review_date": review_date,
-@@ -1289,7 +1396,7 @@ def main() -> None:
- 
-     print_token_summary(
-         total_usage,
--        args.provider,
-+        args.via or args.provider,
-         model,
-         args.show_tokens or args.verbose,
-     )
--- 
-2.54.0
-
+I suspect there maybe feedbacks, will send again on Monday.
