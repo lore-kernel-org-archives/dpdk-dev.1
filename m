@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D4EC531C9
-	for <dpdk-dev@archiver.kernel.org>; Sat, 25 Jul 2026 13:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821F4C531C9
+	for <dpdk-dev@archiver.kernel.org>; Sun, 26 Jul 2026 16:37:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 093D54029B;
-	Sat, 25 Jul 2026 15:36:33 +0200 (CEST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 6399E4028C
- for <dev@dpdk.org>; Sat, 25 Jul 2026 15:36:31 +0200 (CEST)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-3856d6fbcb3so984020a91.2
- for <dev@dpdk.org>; Sat, 25 Jul 2026 06:36:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3E07740269;
+	Sun, 26 Jul 2026 18:37:07 +0200 (CEST)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
+ [209.85.215.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 68A8740150
+ for <dev@dpdk.org>; Sun, 26 Jul 2026 18:37:05 +0200 (CEST)
+Received: by mail-pg1-f175.google.com with SMTP id
+ 41be03b00d2f7-ca97d139d8dso1084524a12.2
+ for <dev@dpdk.org>; Sun, 26 Jul 2026 09:37:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784986590;
- x=1785591390; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785083824;
+ x=1785688624; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=vDQE9b8BYiT+BGWU1jhdseKCc9vo6g0ZxkraqePwAfo=;
- b=iNjXLvZEMfns+UYIXfSNiaDh/aiYq6I/4o0nf83Jd05vg2Tg0CphhOu4RuIQvR/x09
- MjVHIWV8CU831ugP4uR6gqSybr/ygJbArut8GRNP4CkkHYasReL49JdntcJnv6ba0dY/
- uu47r9ygt6tPZm9KxBu26mfSrYh7vi49iYD6qnS86VSdpcEFQkRPBX2daJsJdjG20Pvs
- OWhECG3dH6iRtraJ+SU0Bf2DATtzDLQ04lvD3kTbKLPTK0Lr2G68HE7A9wft93ELFhn1
- CB5I5+/gM6IhCGBX8ZjC/IBCE0noI2j3JdDMa2Q0thOP0l8Dcz1YQsl/x236E3ZBQuMO
- pYQQ==
+ bh=BZ1SKjVcW6xGniTwERYjEX8H6uV4eoMKnMEPjheDBB8=;
+ b=mUdccF8SuXxFdMNlgtv+HKleq0gYh5CsUtiZTho3UbFThSEzcIwTzR2IUnvGEJgirp
+ 9qBUBX0F+ITBAjNUUWI8RrS4jNpGFDNY1icKoDQcNj1I739a5qfXJAcxfkxluzbZE3CJ
+ u3mraWAR4C464SqH1jfeCmcn1ggdHd7XxItOtqsEW7WwwpBt+S7N107//IpGXH2Rgibg
+ BZQHoJgtNOyeUHh8fIlXf1RWnUgJwfcH9dnGR2/zRdLkN+wvfE0Ctcc3+HGixaz2a4/p
+ 7bJCp/qPrBQBhA+oc5q5zBTgta45s7vkk3V3h1g04GdDhey6PH/AYLWmatDUmYspdWNv
+ u49A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784986590; x=1785591390;
+ d=1e100.net; s=20251104; t=1785083824; x=1785688624;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=vDQE9b8BYiT+BGWU1jhdseKCc9vo6g0ZxkraqePwAfo=;
- b=hmQDg6Kl+hAgsB9neqQrdZGo8sgLFaOYpxcXkL6LLvEv8qhc8mjyr78392iN3eEFAB
- ftcR5ODPUw9q6B99DVMrHJ19AYRrpvE0e/QPaEKNWKCa5DUopvAdzkw5JwLkXwbCZ8kB
- cf2c1Fe9cd3mbr4p86nJglN9ZxiR/QgYbp3VnfKx0A5dtgVtxS11GBXiRSKqwU55/+7M
- wtO4lNBr/6Q/5v8vVqo/57P1aZIoz3zB/QpXuD3Fk5cxB4JxuXw/2szxFnQ2yBEj8E4K
- ++81VLpRGK9tlcIb/4VVSEgbpiKndXhcd8K/I+/QaxdkXgHfhfsFWBsT+LsgmQs/z4SZ
- IcVA==
-X-Gm-Message-State: AOJu0YygR5RsK+yy064LiIWwTH/yyf+hxSglsPZOaYKsb40Z3CBn931T
- w61FpqQO9HD60vJtkzTdgQKdesg3TI0qFeovalqWbSMcu+xY/6x7YvJOwTm2FY8GgPyFZgI5w1l
- PDrPW
-X-Gm-Gg: AR+sD12DHKtVMHQWVkbkBuevUCeu07uSRtNzuCv5wzizXOoOgiZ8SnHkNOZUgjFYBpF
- hFiUoKHowfd33IYzuvCI1LXrfpUNGQiY6fMNOTlDauuVf0BZv2O3xTq9epf+qzUjHkxpGet93VW
- FxsAyA3GA26irEgZZ9K7WrkEGRDL9voxlKOUYtzFGrv7C3tuNnyIr33P1XMxKp1g9wqYgvRdtsS
- MxZakj86SDksBB9ARcZrlExwuk+mlbO+G8kqeGtnyIXuuO+n5sOq7eNgQSyMqZdDtOletdliT2j
- IUitvByzMWCwlbTTEVjJLq2syHFEQJ6wJqztu8oBdAuqEV+4O1m7xVAIakCu/ZM9GoEV2yQGGF1
- WcVw/WSFwSs8Vg6gjkKpw2VL5gENtbQL8qJVtLDiICcatUt60tbZzbcs6hK+L825Vy2OUGontZo
- Dv8jfPqJdF6G3p9RF66VPSw2uAQdXXQYk2Vl0xQ5nSvL0APOaSMQGoxQ==
-X-Received: by 2002:a17:90b:1347:b0:38e:6dd:a9ad with SMTP id
- 98e67ed59e1d1-38f292653camr2474364a91.0.1784986589744; 
- Sat, 25 Jul 2026 06:36:29 -0700 (PDT)
+ bh=BZ1SKjVcW6xGniTwERYjEX8H6uV4eoMKnMEPjheDBB8=;
+ b=tDwIDXGgwEwvKI+QpDeafM6w4NlrQbTXwvc2mYFvBOZ9gw8/9WQU+4uZozlBEWHUke
+ tb0vnNgR1jW6ND3rcqYnsCrDy5tvyJQtC5E57JKQ3CMzyzzph3I4pIu+zsO+JqvnEjZv
+ xIlWrUyKzjpJuE44yOvvHHIIvAjLHVNMDEwl26cHlWvxXusKAUmV2qA8aMDwOLny3ttp
+ 2p7PkwceWav6bZKtxI2vNIrrS1sCcT+20diHywLOBraCWtBoycfh6nTs/1hd0gdV013K
+ DbbofR6KCUcaQa5f64AZS6gjovtVNLYIxPZQcPibGjSGy/Bi5EbW1+lj08ItDgZd5dLV
+ eIyg==
+X-Gm-Message-State: AOJu0YzLltcIU8X9IQk4/ivGkZAX0eWObOgG6MeWFsqQAmV9x5lFAPhe
+ ejWvfLiW/PX/Glj32vEZ0s6ixUYJyCXUmY10APGCyjZJ2wEuS8kXUywEVv+LNlG58nU=
+X-Gm-Gg: AR+sD10K6/hBm5C+LxtbSlJgr+matjovz7MXgc/5nYUAMzMNuaReqVtE6rEOjkLPcYp
+ bzifWXCK0yGAuiwGcOVU+A2Awhs0EHWkEr80cuV8+CgiNE9qR7fuzmUw78iMu7q/MzkTOqgKR7w
+ kV4GVLAb37m/Y6D8o80F2RLM2qPrRppk2DW4r5hHT1Z1xZHSmxAPZFDoWXsm7BPwGv77qOzr2OK
+ QlIAj3wsRLTv1WTZYWUs2YqKvKyaXfDKo3NTFGVFO/0LCVeylIpIbmvhxPbCDBIIX+Q03NPDhoM
+ iRrjb+qpOx5GbdPIO4LJiOlGfNNfw09K9bshum+CYPJnmSXzm0D2IAyBxcYebWmn+QmyMFXjWJ5
+ BdEuf9P57fWQenMp5mOJyln2c++1MsnN2FqsTrJ/Ux1gV3i+TEKGqMQMw1izqJuaJtSCqtxkUTR
+ 7OCbliU3yPfopI09ygdQcesw18wXrdHXtBAsddY1JE+9I=
+X-Received: by 2002:a05:6a21:a346:b0:3b4:6026:6c5d with SMTP id
+ adf61e73a8af0-3c67d9b40b6mr5590657637.5.1785083824211; 
+ Sun, 26 Jul 2026 09:37:04 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13d130f55c6sm58789308c88.15.2026.07.25.06.36.29
+ 5a478bee46e88-314bc3e127asm36650224eec.2.2026.07.26.09.37.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 25 Jul 2026 06:36:29 -0700 (PDT)
-Date: Sat, 25 Jul 2026 06:36:26 -0700
+ Sun, 26 Jul 2026 09:37:03 -0700 (PDT)
+Date: Sun, 26 Jul 2026 09:37:00 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 0/6] remove legacy Packet Framework API
-Message-ID: <20260725063626.25e124f1@phoenix.local>
-In-Reply-To: <CAJFAV8yyME96KxO3soWoGgQzqzRHvcxyvkBFcbA6jGNfAxU0ag@mail.gmail.com>
-References: <20260724164520.192203-1-stephen@networkplumber.org>
- <CAJFAV8yyME96KxO3soWoGgQzqzRHvcxyvkBFcbA6jGNfAxU0ag@mail.gmail.com>
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
+ <sachin.saxena@nxp.com>
+Subject: Re: [PATCH v2] net/dpaa2: hash inner IP for tunnelled traffic
+Message-ID: <20260726093700.39e9b9ab@phoenix.local>
+In-Reply-To: <20260723093540.1839619-1-maxime@leroys.fr>
+References: <20260720133436.869334-1-maxime@leroys.fr>
+ <20260723093540.1839619-1-maxime@leroys.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,308 +83,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 25 Jul 2026 09:54:48 +0200
-David Marchand <david.marchand@redhat.com> wrote:
+On Thu, 23 Jul 2026 11:35:40 +0200
+Maxime Leroy <maxime@leroys.fr> wrote:
 
-> On Fri, 24 Jul 2026 at 18:45, Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
-> >
-> > The legacy Packet Framework APIs were announced for removal in the
-> > 24.11 release but the removal never happened:
-> >
-> > * pipeline: The pipeline library legacy API (functions rte_pipeline_*)
-> > * table: The table library legacy API (functions rte_table_*)
-> > * port: The port library legacy API (functions rte_port_*)
-> >
-> > Do the removal now, in the 26.11 ABI window. The SWX API in the same
-> > libraries (rte_swx_*) is unaffected and remains the Packet Framework
-> > API. The softnic driver and the pipeline example already use only the
-> > SWX API.
-> >
-> > The applications built on the legacy API (test-pipeline, ip_pipeline)
-> > and the unit tests are removed first, then the legacy half of each
-> > library, pipeline before table before port to follow the dependency
-> > chain. Library dependencies and the programmer's guide are trimmed
-> > accordingly.
-> >
-> > Follow-up candidates, kept out of this series: the stale comments in
-> > lib/ethdev/ethdev_trace.h still refer to examples/ip_pipeline, and
-> > struct rte_pipeline_acl_rule in the removed rte_table_acl.c was only
-> > a local name.
-> >
-> >
-> > Stephen Hemminger (6):
-> >   app/test: remove packet framework tests
-> >   app/test-pipeline: remove application
-> >   examples/ip_pipeline: remove example
-> >   pipeline: remove legacy API
-> >   table: remove legacy API
-> >   port: remove legacy API
-> >
-> >  MAINTAINERS                                   |    5 -
-> >  app/meson.build                               |    1 -
-> >  app/test-pipeline/config.c                    |  230 -
-> >  app/test-pipeline/init.c                      |  273 -
-> >  app/test-pipeline/main.c                      |  188 -
-> >  app/test-pipeline/main.h                      |  132 -
-> >  app/test-pipeline/meson.build                 |   21 -
-> >  app/test-pipeline/pipeline_acl.c              |  251 -
-> >  app/test-pipeline/pipeline_hash.c             |  471 --
-> >  app/test-pipeline/pipeline_lpm.c              |  175 -
-> >  app/test-pipeline/pipeline_lpm_ipv6.c         |  168 -
-> >  app/test-pipeline/pipeline_stub.c             |  137 -
-> >  app/test-pipeline/runtime.c                   |  160 -
-> >  app/test/meson.build                          |    6 -
-> >  app/test/test_table.c                         |  209 -
-> >  app/test/test_table.h                         |  184 -
-> >  app/test/test_table_acl.c                     |  728 --
-> >  app/test/test_table_acl.h                     |    6 -
-> >  app/test/test_table_combined.c                |  846 --
-> >  app/test/test_table_combined.h                |   27 -
-> >  app/test/test_table_pipeline.c                |  575 --
-> >  app/test/test_table_pipeline.h                |    6 -
-> >  app/test/test_table_ports.c                   |  195 -
-> >  app/test/test_table_ports.h                   |   13 -
-> >  app/test/test_table_tables.c                  | 1058 ---
-> >  app/test/test_table_tables.h                  |   22 -
-> >  doc/api/doxy-api-index.md                     |   17 -
-> >  doc/guides/nics/softnic.rst                   |    3 +-
-> >  doc/guides/prog_guide/img/figure32.png        |  Bin 11603 -> 0 bytes
-> >  doc/guides/prog_guide/img/figure33.png        |  Bin 65216 -> 0 bytes
-> >  doc/guides/prog_guide/img/figure34.png        |  Bin 11581 -> 0 bytes
-> >  doc/guides/prog_guide/img/figure35.png        |  Bin 75012 -> 0 bytes
-> >  doc/guides/prog_guide/img/figure37.png        |  Bin 6934 -> 0 bytes
-> >  doc/guides/prog_guide/img/figure38.png        |  Bin 7372 -> 0 bytes
-> >  doc/guides/prog_guide/img/figure39.png        |  Bin 55986 -> 0 bytes
-> >  doc/guides/prog_guide/packet_framework.rst    | 1146 +--
-> >  doc/guides/rel_notes/deprecation.rst          |   15 -
-> >  doc/guides/rel_notes/release_26_11.rst        |   17 +
-> >  .../sample_app_ug/img/test_pipeline_app.png   |  Bin 67410 -> 0 bytes
-> >  doc/guides/sample_app_ug/index.rst            |    2 -
-> >  doc/guides/sample_app_ug/ip_pipeline.rst      |  531 --
-> >  doc/guides/sample_app_ug/test_pipeline.rst    |  237 -
-> >  examples/ip_pipeline/Makefile                 |   60 -
-> >  examples/ip_pipeline/action.c                 |  391 -
-> >  examples/ip_pipeline/action.h                 |   78 -
-> >  examples/ip_pipeline/cli.c                    | 6791 -----------------
-> >  examples/ip_pipeline/cli.h                    |   18 -
-> >  examples/ip_pipeline/common.h                 |   12 -
-> >  examples/ip_pipeline/conn.c                   |  330 -
-> >  examples/ip_pipeline/conn.h                   |   47 -
-> >  examples/ip_pipeline/cryptodev.c              |  160 -
-> >  examples/ip_pipeline/cryptodev.h              |   46 -
-> >  examples/ip_pipeline/examples/firewall.cli    |   59 -
-> >  examples/ip_pipeline/examples/flow.cli        |   60 -
-> >  examples/ip_pipeline/examples/flow_crypto.cli |   57 -
-> >  examples/ip_pipeline/examples/l2fwd.cli       |   51 -
-> >  examples/ip_pipeline/examples/route.cli       |   60 -
-> >  examples/ip_pipeline/examples/route_ecmp.cli  |   57 -
-> >  examples/ip_pipeline/examples/rss.cli         |  112 -
-> >  examples/ip_pipeline/examples/tap.cli         |   66 -
-> >  examples/ip_pipeline/link.c                   |  270 -
-> >  examples/ip_pipeline/link.h                   |   66 -
-> >  examples/ip_pipeline/main.c                   |  260 -
-> >  examples/ip_pipeline/mempool.c                |   82 -
-> >  examples/ip_pipeline/mempool.h                |   40 -
-> >  examples/ip_pipeline/meson.build              |   30 -
-> >  examples/ip_pipeline/parser.c                 |  506 --
-> >  examples/ip_pipeline/parser.h                 |   56 -
-> >  examples/ip_pipeline/pipeline.c               | 1078 ---
-> >  examples/ip_pipeline/pipeline.h               |  425 --
-> >  examples/ip_pipeline/swq.c                    |   76 -
-> >  examples/ip_pipeline/swq.h                    |   37 -
-> >  examples/ip_pipeline/tap.c                    |  102 -
-> >  examples/ip_pipeline/tap.h                    |   29 -
-> >  examples/ip_pipeline/thread.c                 | 3137 --------
-> >  examples/ip_pipeline/thread.h                 |   24 -
-> >  examples/ip_pipeline/tmgr.c                   |  248 -
-> >  examples/ip_pipeline/tmgr.h                   |   74 -
-> >  examples/meson.build                          |    1 -
-> >  lib/pipeline/meson.build                      |    8 +-
-> >  lib/pipeline/rte_pipeline.c                   | 1640 ----
-> >  lib/pipeline/rte_pipeline.h                   |  840 --
-> >  lib/pipeline/rte_port_in_action.c             |  539 --
-> >  lib/pipeline/rte_port_in_action.h             |  311 -
-> >  lib/pipeline/rte_table_action.c               | 3483 ---------
-> >  lib/pipeline/rte_table_action.h               | 1137 ---
-> >  lib/port/meson.build                          |   22 +-
-> >  lib/port/port_log.c                           |    7 -
-> >  lib/port/port_log.h                           |   11 -
-> >  lib/port/rte_port.h                           |  223 -
-> >  lib/port/rte_port_ethdev.c                    |  530 --
-> >  lib/port/rte_port_ethdev.h                    |   75 -
-> >  lib/port/rte_port_eventdev.c                  |  590 --
-> >  lib/port/rte_port_eventdev.h                  |   94 -
-> >  lib/port/rte_port_fd.c                        |  524 --
-> >  lib/port/rte_port_fd.h                        |   74 -
-> >  lib/port/rte_port_frag.c                      |  280 -
-> >  lib/port/rte_port_frag.h                      |   70 -
-> >  lib/port/rte_port_ras.c                       |  336 -
-> >  lib/port/rte_port_ras.h                       |   58 -
-> >  lib/port/rte_port_ring.c                      |  796 --
-> >  lib/port/rte_port_ring.h                      |   91 -
-> >  lib/port/rte_port_sched.c                     |  298 -
-> >  lib/port/rte_port_sched.h                     |   52 -
-> >  lib/port/rte_port_source_sink.c               |  616 --
-> >  lib/port/rte_port_source_sink.h               |   57 -
-> >  lib/port/rte_port_sym_crypto.c                |  558 --
-> >  lib/port/rte_port_sym_crypto.h                |   92 -
-> >  lib/table/meson.build                         |   30 +-
-> >  lib/table/rte_lru.h                           |   85 -
-> >  lib/table/rte_lru_arm64.h                     |   61 -
-> >  lib/table/rte_lru_x86.h                       |   96 -
-> >  lib/table/rte_table.h                         |  263 -
-> >  lib/table/rte_table_acl.c                     |  795 --
-> >  lib/table/rte_table_acl.h                     |   65 -
-> >  lib/table/rte_table_array.c                   |  210 -
-> >  lib/table/rte_table_array.h                   |   46 -
-> >  lib/table/rte_table_hash.h                    |  106 -
-> >  lib/table/rte_table_hash_cuckoo.c             |  327 -
-> >  lib/table/rte_table_hash_cuckoo.h             |   57 -
-> >  lib/table/rte_table_hash_ext.c                | 1011 ---
-> >  lib/table/rte_table_hash_func.h               |  263 -
-> >  lib/table/rte_table_hash_func_arm64.h         |   21 -
-> >  lib/table/rte_table_hash_key16.c              | 1190 ---
-> >  lib/table/rte_table_hash_key32.c              | 1223 ---
-> >  lib/table/rte_table_hash_key8.c               | 1157 ---
-> >  lib/table/rte_table_hash_lru.c                |  959 ---
-> >  lib/table/rte_table_lpm.c                     |  369 -
-> >  lib/table/rte_table_lpm.h                     |   94 -
-> >  lib/table/rte_table_lpm_ipv6.c                |  370 -
-> >  lib/table/rte_table_lpm_ipv6.h                |   95 -
-> >  lib/table/rte_table_stub.c                    |   95 -
-> >  lib/table/rte_table_stub.h                    |   30 -
-> >  lib/table/table_log.c                         |    7 -
-> >  lib/table/table_log.h                         |   11 -
-> >  135 files changed, 27 insertions(+), 45472 deletions(-)
-> >  delete mode 100644 app/test-pipeline/config.c
-> >  delete mode 100644 app/test-pipeline/init.c
-> >  delete mode 100644 app/test-pipeline/main.c
-> >  delete mode 100644 app/test-pipeline/main.h
-> >  delete mode 100644 app/test-pipeline/meson.build
-> >  delete mode 100644 app/test-pipeline/pipeline_acl.c
-> >  delete mode 100644 app/test-pipeline/pipeline_hash.c
-> >  delete mode 100644 app/test-pipeline/pipeline_lpm.c
-> >  delete mode 100644 app/test-pipeline/pipeline_lpm_ipv6.c
-> >  delete mode 100644 app/test-pipeline/pipeline_stub.c
-> >  delete mode 100644 app/test-pipeline/runtime.c
-> >  delete mode 100644 app/test/test_table.c
-> >  delete mode 100644 app/test/test_table.h
-> >  delete mode 100644 app/test/test_table_acl.c
-> >  delete mode 100644 app/test/test_table_acl.h
-> >  delete mode 100644 app/test/test_table_combined.c
-> >  delete mode 100644 app/test/test_table_combined.h
-> >  delete mode 100644 app/test/test_table_pipeline.c
-> >  delete mode 100644 app/test/test_table_pipeline.h
-> >  delete mode 100644 app/test/test_table_ports.c
-> >  delete mode 100644 app/test/test_table_ports.h
-> >  delete mode 100644 app/test/test_table_tables.c
-> >  delete mode 100644 app/test/test_table_tables.h
-> >  delete mode 100644 doc/guides/prog_guide/img/figure32.png
-> >  delete mode 100644 doc/guides/prog_guide/img/figure33.png
-> >  delete mode 100644 doc/guides/prog_guide/img/figure34.png
-> >  delete mode 100644 doc/guides/prog_guide/img/figure35.png
-> >  delete mode 100644 doc/guides/prog_guide/img/figure37.png
-> >  delete mode 100644 doc/guides/prog_guide/img/figure38.png
-> >  delete mode 100644 doc/guides/prog_guide/img/figure39.png
-> >  delete mode 100644 doc/guides/sample_app_ug/img/test_pipeline_app.png
-> >  delete mode 100644 doc/guides/sample_app_ug/ip_pipeline.rst
-> >  delete mode 100644 doc/guides/sample_app_ug/test_pipeline.rst
-> >  delete mode 100644 examples/ip_pipeline/Makefile
-> >  delete mode 100644 examples/ip_pipeline/action.c
-> >  delete mode 100644 examples/ip_pipeline/action.h
-> >  delete mode 100644 examples/ip_pipeline/cli.c
-> >  delete mode 100644 examples/ip_pipeline/cli.h
-> >  delete mode 100644 examples/ip_pipeline/common.h
-> >  delete mode 100644 examples/ip_pipeline/conn.c
-> >  delete mode 100644 examples/ip_pipeline/conn.h
-> >  delete mode 100644 examples/ip_pipeline/cryptodev.c
-> >  delete mode 100644 examples/ip_pipeline/cryptodev.h
-> >  delete mode 100644 examples/ip_pipeline/examples/firewall.cli
-> >  delete mode 100644 examples/ip_pipeline/examples/flow.cli
-> >  delete mode 100644 examples/ip_pipeline/examples/flow_crypto.cli
-> >  delete mode 100644 examples/ip_pipeline/examples/l2fwd.cli
-> >  delete mode 100644 examples/ip_pipeline/examples/route.cli
-> >  delete mode 100644 examples/ip_pipeline/examples/route_ecmp.cli
-> >  delete mode 100644 examples/ip_pipeline/examples/rss.cli
-> >  delete mode 100644 examples/ip_pipeline/examples/tap.cli
-> >  delete mode 100644 examples/ip_pipeline/link.c
-> >  delete mode 100644 examples/ip_pipeline/link.h
-> >  delete mode 100644 examples/ip_pipeline/main.c
-> >  delete mode 100644 examples/ip_pipeline/mempool.c
-> >  delete mode 100644 examples/ip_pipeline/mempool.h
-> >  delete mode 100644 examples/ip_pipeline/meson.build
-> >  delete mode 100644 examples/ip_pipeline/parser.c
-> >  delete mode 100644 examples/ip_pipeline/parser.h
-> >  delete mode 100644 examples/ip_pipeline/pipeline.c
-> >  delete mode 100644 examples/ip_pipeline/pipeline.h
-> >  delete mode 100644 examples/ip_pipeline/swq.c
-> >  delete mode 100644 examples/ip_pipeline/swq.h
-> >  delete mode 100644 examples/ip_pipeline/tap.c
-> >  delete mode 100644 examples/ip_pipeline/tap.h
-> >  delete mode 100644 examples/ip_pipeline/thread.c
-> >  delete mode 100644 examples/ip_pipeline/thread.h
-> >  delete mode 100644 examples/ip_pipeline/tmgr.c
-> >  delete mode 100644 examples/ip_pipeline/tmgr.h
-> >  delete mode 100644 lib/pipeline/rte_pipeline.c
-> >  delete mode 100644 lib/pipeline/rte_pipeline.h
-> >  delete mode 100644 lib/pipeline/rte_port_in_action.c
-> >  delete mode 100644 lib/pipeline/rte_port_in_action.h
-> >  delete mode 100644 lib/pipeline/rte_table_action.c
-> >  delete mode 100644 lib/pipeline/rte_table_action.h
-> >  delete mode 100644 lib/port/port_log.c
-> >  delete mode 100644 lib/port/port_log.h
-> >  delete mode 100644 lib/port/rte_port.h
-> >  delete mode 100644 lib/port/rte_port_ethdev.c
-> >  delete mode 100644 lib/port/rte_port_ethdev.h
-> >  delete mode 100644 lib/port/rte_port_eventdev.c
-> >  delete mode 100644 lib/port/rte_port_eventdev.h
-> >  delete mode 100644 lib/port/rte_port_fd.c
-> >  delete mode 100644 lib/port/rte_port_fd.h
-> >  delete mode 100644 lib/port/rte_port_frag.c
-> >  delete mode 100644 lib/port/rte_port_frag.h
-> >  delete mode 100644 lib/port/rte_port_ras.c
-> >  delete mode 100644 lib/port/rte_port_ras.h
-> >  delete mode 100644 lib/port/rte_port_ring.c
-> >  delete mode 100644 lib/port/rte_port_ring.h
-> >  delete mode 100644 lib/port/rte_port_sched.c
-> >  delete mode 100644 lib/port/rte_port_sched.h
-> >  delete mode 100644 lib/port/rte_port_source_sink.c
-> >  delete mode 100644 lib/port/rte_port_source_sink.h
-> >  delete mode 100644 lib/port/rte_port_sym_crypto.c
-> >  delete mode 100644 lib/port/rte_port_sym_crypto.h
-> >  delete mode 100644 lib/table/rte_lru.h
-> >  delete mode 100644 lib/table/rte_lru_arm64.h
-> >  delete mode 100644 lib/table/rte_lru_x86.h
-> >  delete mode 100644 lib/table/rte_table.h
-> >  delete mode 100644 lib/table/rte_table_acl.c
-> >  delete mode 100644 lib/table/rte_table_acl.h
-> >  delete mode 100644 lib/table/rte_table_array.c
-> >  delete mode 100644 lib/table/rte_table_array.h
-> >  delete mode 100644 lib/table/rte_table_hash.h
-> >  delete mode 100644 lib/table/rte_table_hash_cuckoo.c
-> >  delete mode 100644 lib/table/rte_table_hash_cuckoo.h
-> >  delete mode 100644 lib/table/rte_table_hash_ext.c
-> >  delete mode 100644 lib/table/rte_table_hash_func.h
-> >  delete mode 100644 lib/table/rte_table_hash_func_arm64.h
-> >  delete mode 100644 lib/table/rte_table_hash_key16.c
-> >  delete mode 100644 lib/table/rte_table_hash_key32.c
-> >  delete mode 100644 lib/table/rte_table_hash_key8.c
-> >  delete mode 100644 lib/table/rte_table_hash_lru.c
-> >  delete mode 100644 lib/table/rte_table_lpm.c
-> >  delete mode 100644 lib/table/rte_table_lpm.h
-> >  delete mode 100644 lib/table/rte_table_lpm_ipv6.c
-> >  delete mode 100644 lib/table/rte_table_lpm_ipv6.h
-> >  delete mode 100644 lib/table/rte_table_stub.c
-> >  delete mode 100644 lib/table/rte_table_stub.h
-> >  delete mode 100644 lib/table/table_log.c
-> >  delete mode 100644 lib/table/table_log.h  
+> The RSS key only extracted the outer IP header. Tunnelled traffic whose
+> outer headers are fixed then carries no entropy for the hash, so every
+> flow lands on a single Rx queue.
 > 
-> Sorry, it seems this series (and only this series iiuc) fell through
-> the cracks while patchwork and other dpdk.org services were under
-> heavy load...
-> Could you resend?
+> Extract both the outer IP (header index 0) and the innermost IP
+> instance (HDR_INDEX_LAST). Plain frames keep being hashed on their only
+> IP header; the inner extract resolves to nothing and adds no entropy.
+> Tunnelled frames are also hashed on their inner IP and spread across the
+> Rx queues.
 > 
+> This is the PMD default hash: dpaa2 does not expose the ethdev RSS level
+> selector, so it applies to every RSS request. The hardware cannot hash
+> the inner IP alone, as HDR_INDEX_LAST only resolves when several IP
+> headers are stacked and a plain frame would hash to a constant. Folding
+> the outer IP into the key is therefore unavoidable, and two tunnelled
+> flows that share an inner IP but differ in their outer IP may hash to
+> different queues. This is documented in the dpaa2 guide.
 > 
+> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+> ---
 
-I suspect there maybe feedbacks, will send again on Monday.
+More detailed AI review
+
+Warning: RSS key size likely exceeds the DPNI key limit
+
+drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+
+Doubling the IP extracts doubles the generated key, not just the
+extract count.  The driver's own accounting treats a NET_PROT_IP
+full-field address extract as 16 bytes (NH_FLD_IPV6_ADDR_SIZE, see
+dpaa2_flow_add_ipaddr_extract_rule() in dpaa2_flow.c), so:
+
+    before:  16 + 16 + 1                = 33 bytes  (+4 with L4 = 37)
+    after:   2 * (16 + 16 + 1)          = 66 bytes  (+4 with L4 = 70)
+
+DPNI_MAX_KEY_SIZE is 56, and dpni_attr.fs_key_size is documented as
+"Size, in bytes, of the flow steering look-up key.  Defining a key
+larger than this when composing the hash + FS key will result in an
+error."  The PMD never reads fs_key_size and there is no size check
+anywhere on this path, so the first sign of trouble would be
+dpni_set_rx_hash_dist() failing and rte_eth_dev_configure() returning
+an error for a plain RTE_ETH_RSS_IP request that works today.
+
+Has this been tested on hardware with RTE_ETH_RSS_IP (and IP|TCP|UDP)?
+If MC accepts it, please say so in the commit message, because the
+arithmetic says it should not.  If the limit is real, the extract set
+needs to shrink -- dropping NH_FLD_IP_PROTO, or extracting only the
+inner address pair, would be candidates.
+
+Warning: the "inner extract resolves to nothing" claim needs backing
+
+Both the commit message and the new comment assert that on a plain
+frame the HDR_INDEX_LAST extract resolves to nothing and contributes no
+entropy.  The MC header documents hdr_index as "used for protocols that
+may have more than a single header, 0 indicates an outer header" with
+NET_PROT_IP taking (0, HDR_INDEX_LAST).  The natural reading is that
+for a single-IP frame the last header *is* the outer one, so index 0
+and HDR_INDEX_LAST select the same header and the fields are extracted
+twice.  That is harmless for distribution but it is not what the patch
+says, and it changes the key size and hash values for every existing
+non-tunnelled user.
+
+Please confirm the actual behaviour with NXP and describe it
+accurately, one way or the other.  This also feeds directly into the
+key-size question above.
+
+Info: duplicate constant
+
++#define DPAA2_DIST_HDR_INDEX_LAST 0xff
+
+mc/fsl_net.h already carries LAST_HDR_INDEX (0xFFFFFFFF), truncated to
+0xff by the uint8_t hdr_index field.  Two differently-named constants
+for the same hardware encoding in one driver is confusing.  Either
+reuse the existing one with an explicit cast, or add a comment saying
+this is LAST_HDR_INDEX narrowed to the 8-bit command field.
+
+Info: placement
+
+The #define sits between two function definitions.  Move it up with the
+other file-scope definitions, or into dpaa2_ethdev.h next to the
+related driver constants.
