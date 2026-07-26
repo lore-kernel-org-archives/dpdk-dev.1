@@ -2,73 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767D8C531C9
-	for <dpdk-dev@archiver.kernel.org>; Sun, 26 Jul 2026 16:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3F3C531C9
+	for <dpdk-dev@archiver.kernel.org>; Sun, 26 Jul 2026 17:01:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6099340269;
-	Sun, 26 Jul 2026 18:39:50 +0200 (CEST)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
- [209.85.210.171])
- by mails.dpdk.org (Postfix) with ESMTP id F294140150
- for <dev@dpdk.org>; Sun, 26 Jul 2026 18:39:40 +0200 (CEST)
-Received: by mail-pf1-f171.google.com with SMTP id
- d2e1a72fcca58-845c92bc464so1458620b3a.2
- for <dev@dpdk.org>; Sun, 26 Jul 2026 09:39:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D2C9840269;
+	Sun, 26 Jul 2026 19:01:47 +0200 (CEST)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
+ [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id 3E09440150
+ for <dev@dpdk.org>; Sun, 26 Jul 2026 19:01:46 +0200 (CEST)
+Received: by mail-pj1-f47.google.com with SMTP id
+ 98e67ed59e1d1-381b831d535so2400104a91.0
+ for <dev@dpdk.org>; Sun, 26 Jul 2026 10:01:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785083980;
- x=1785688780; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785085305;
+ x=1785690105; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=bqZKdrmPVfoRRyBhoqjq4IXiVcnnpKSNWnf4ygz8npc=;
- b=TN47bNx4Z6hwnAFnSVpr1R1up7YMqVKoGXY+hlNnHZuQrGn2q6UV7qPAi6UkPmYVja
- aklGK9zYODLb6TO9kkQ9jSZSo+G6Vj6eL77kpenoOyxzwnT1PL+fzlCrPkfBpm9WmdLY
- Y72S2ukLuAeUIMfuDiDF323hY326E2vKKQ9QjGLaQ7rkwtsKxejNYZ+zaQa7YlBDcL99
- X4l6HPQjapCOCj17TDrU5aaYyvmf+HdYFMfuhMsKbiCCST4Bul0hlkNjQGN2HB1ski34
- 11WfHnqk3Ng8/1/aGmMhFO9gwapLhdEHIjh3C2FNS9aKnr4BY9VpWRdRQHoYyMR4oeKl
- 6hbw==
+ bh=3CtWPuciCTKQp4ybK+gcV7nzLC1zD0Ffnqbt35/9mNY=;
+ b=GgdfRa71NXedOzu6fyt+dOTZOZfVw0zR574CN1oAyynL/uqTi1LH6q7ZFNzRJdqva9
+ flvCCNCi5nbGNtxXDTBaMOaj6pYFQCWjmOGsHsSji9insaB7Qet0F/56VLT1hp4NSTYM
+ 31Y+qA2go4+MqW+RejhA3iwFwSObaXB8kmMNMRtWNW2o+lwH1FjB96H+PBRfFNQ91PiK
+ F5PrTVtYpb3Etqh9nmN3wDxwyJFEn3uocElOTszbu9qjnZ4+2bUiiPCSRMU9r3AUGj4x
+ dziGiYh1cXCvVBsat0cx5DrBXlhK0HxdYVuEFsDmtLYGLueArVz1+OhoHNHpJ195+LW/
+ 5Qhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785083980; x=1785688780;
+ d=1e100.net; s=20251104; t=1785085305; x=1785690105;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=bqZKdrmPVfoRRyBhoqjq4IXiVcnnpKSNWnf4ygz8npc=;
- b=XgrY2303Jax7jLdNFZXiU5KfFNntbB+NcyaGpP7iRzp7cTLUXpgC2OjZ//n/vqGDMv
- Yi/l6ZY8u05Sb00nHLJWXuV8kOzzv+U7nzEIjy0eILruIPvTSr9929NGUw0PdDPD3kAy
- 4MGhUkqh/1K34F0WIOaZjRjfVGDbiq0vw/Ye9/t7b9/c54W2hu2ElQoaRZjvvy4p6bX1
- jS3zifxh05/MGDr4yd7WZb9zFk4yX7LOeSN5A0br/C6lG+o+0spw9QO8TYT5zZZOneY5
- RUO6TnXTr7q/LwFAkEW4jcMV/yTb+pQRexRy7e4FCJu761Xv9EohDuR1pWFjTY8IjbOy
- tRdA==
-X-Gm-Message-State: AOJu0YyXUUWsCyimo+kN6utLzfLZggQyXObx5C3yip7NLpRLCh3givzM
- /D8moUqf0opRLsjGyS76Wc8CDFRCIVKVjZBoY99dHlrVNFuDm1x/xInJd7AR7G0jR1I=
-X-Gm-Gg: AR+sD139qM50zYpbxtFAFkupkkAnnIcQyXy2BCeQRoZUmW0sH3rnnk/ProLSSZ94ZRp
- AMgQXZCxjhWvdvMbh56a9cnfFm2X0l318ps7kcWFWcEWTj3LN9HnMpF+jMGe7+/MiLeLcoOlnCN
- +2ddeBJtRNagtBPbgtlEwThmHhjYXlUcyWRvzfYkbhNz3CGkXCJ1L2zi9aKXbOCy2Lb8JYCF1D4
- z8um8H1OqtRRKztmYff+AVpv9Esue7hvF5PoKldECj8YVg/qd4BReWWkCBmd+fF/e0aGiy9ny7A
- YSKfMBK/c3AIRkp44VT5AkfWH8k0+b509NOenF6RAwqo2aYNf3BHW5PYJ6EOdaUnGDnhwUH91tN
- D3s9QpJrkVUX9i8IMikwpCf4uFH5fpuMaev8XhzbXPmBefSQdf/w3AbTMSiO9u2kTEl81gHD51/
- yYmWa2R0GN5PQMNmCvpu4HrLMnagD/7Ps0cfM5amMt20s=
-X-Received: by 2002:a05:6a21:790:b0:3bf:6c08:2b27 with SMTP id
- adf61e73a8af0-3c67df10ceemr5173141637.47.1785083979774; 
- Sun, 26 Jul 2026 09:39:39 -0700 (PDT)
+ bh=3CtWPuciCTKQp4ybK+gcV7nzLC1zD0Ffnqbt35/9mNY=;
+ b=gQInOPVdtSOd2bFX9cm16HrJrRyKS6FuB+o1jxaPsbrCUGOJJBuJMnkng/0skF5Rq0
+ fSDzgBeOmbBZt/SbMJ5Ik7RJNHGJJFoX/Fr7LGflijdzqbYAI5lm+9I4UkGzt1BSD3S6
+ Z/lXcJDEkaJwT+uumASThjEMhBaYLTNm31peqd0svmB9DEId1+MHrFG64duS49sptCKf
+ 9YHM1drhhMAIYE6pHry1xEJUZNEcuurDuzi8sx76Hfi924dORx3Ica9sJBgmHQTRgRhx
+ 0DKjZXxtklSokPnle0dZYAGF/IIVuniyzctvDvmx0fEt0+pW3iySNmtR0qUSGO8q5i7m
+ pBRA==
+X-Gm-Message-State: AOJu0Yxj5mpPhIX2Mlm/1q9OxERIjsXn0uUf7asV1AYsMk+uEVvAMB1v
+ Jfa2Ljn+20XugSxLzbnt7fi6WknlmKlScFZ/rBMkT8L95VYkErARWA5lYywrMIvnjPw=
+X-Gm-Gg: AR+sD10/xko6bD6rC8UxYy8jsGZMt1OL0Tm28/CEjuYFyyJvl7gA5B5RGf3pWsQtfTd
+ 7fcwf5cC316NkYqFnwZIQMx9bH4tM9XGKPf4bbWaH3CEGgUknLba0K58QUS7ftjkjq+iE7ClqmY
+ 4S4jqJNmdpMGgU7G/kMngSSRYzdfThe/9534eEuWVv9YqnlSXdNUeT2xM5RJk+hvpLmw5t3C5ay
+ iWMKHZaTe7rHUV+Dr3gz8jWpOMusp2luHL2RMfHD1vdcEdJmqg82s/uhfqFUcpQKhQ0feWrt7wi
+ bVpugQ/kAU7xUnCHXnt+Fk8ralmHD5heRF4yKjv3b4Nhv0SNRlM7EvyyEEca722INOUXKQi5CjU
+ nlGcwUsBjjD9+tLDG2IZcZ4bQCIZIUWTSqJyg9Xgumk9nnOP1lcbC3z4lVEi6k5pqPiQwNeTmUv
+ UFdIeHcULFfJUi47B09I+Rf/C8Z/ejSTrMi9a8SbjEcjg=
+X-Received: by 2002:a17:90b:3c02:b0:384:5b5b:3465 with SMTP id
+ 98e67ed59e1d1-38f29780558mr5882003a91.29.1785085305028; 
+ Sun, 26 Jul 2026 10:01:45 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13d130a8421sm42091762c88.10.2026.07.26.09.39.39
+ 5a478bee46e88-314bc5a67f3sm23300649eec.29.2026.07.26.10.01.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 26 Jul 2026 09:39:39 -0700 (PDT)
-Date: Sun, 26 Jul 2026 09:39:37 -0700
+ Sun, 26 Jul 2026 10:01:44 -0700 (PDT)
+Date: Sun, 26 Jul 2026 10:01:41 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Junlong Wang <wang.junlong1@zte.com.cn>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v9 0/4] net/zxdh: optimize Rx/Tx path performance
-Message-ID: <20260726093937.58066d50@phoenix.local>
-In-Reply-To: <20260709104637.924861-1-wang.junlong1@zte.com.cn>
-References: <20260625120317.211780-1-wang.junlong1@zte.com.cn>
- <20260709104637.924861-1-wang.junlong1@zte.com.cn>
+To: Mark Blasko <blasko@google.com>
+Cc: dev@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan
+ <mtahhan@redhat.com>, joshwash@google.com, jtranoleary@google.com
+Subject: Re: [PATCH v3 1/2] net/af_xdp: add af_xdp rx metadata and dynamic
+ timestamping support
+Message-ID: <20260726100141.6dd2fa86@phoenix.local>
+In-Reply-To: <20260721121129.2911774-2-blasko@google.com>
+References: <20260623215325.814776-1-blasko@google.com>
+ <20260721121129.2911774-1-blasko@google.com>
+ <20260721121129.2911774-2-blasko@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,353 +84,219 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  9 Jul 2026 18:46:32 +0800
-Junlong Wang <wang.junlong1@zte.com.cn> wrote:
-
-> v9:
->   - Remove add simple Tx xmit functions (zxdh_xmit_pkts_simple) in the la=
-st patch.
->=20
-> v8:
->   - Add checked the size of ZXDH_DL_NET_HDR_SIZE and RTE_PKTMBUF_HEADROOM=
- in
->     zxdh_xmit_pkts_simple() before submitting. Add static_assert to rejec=
-t builds with insufficient
->     default headroom at compile time.
->=20
-> v7:
->   - Add a new xmit prepare func for xmit_pkts_simple, which will checked =
-the size of
->     ZXDH_DL_NET_HDR_SIZE and RTE_PKTMBUF_HEADROOM.
->=20
-> v6:
->   - Remove unnecessary error checking code in submit_to_backend_simple() =
-and
->     pkt_padding(). Since as the max dl_net_hdr_len is always less than
->     RTE_PKTMBUF_HEADROOM, rte_pktmbuf_prepend() cannot fail in the
->     simple path (single-segment mbufs).
-> v5:
->   - Reorganize patch series, placing interrupt fix as the first patch
->     and fix condition check to properly enable interrupts.
->   - Fix zxdh_recv_single_pkts() not compacting rcv_pkts[] on failure,
->     which could cause use-after-free and mbuf leak.
->   - Fix tx_bunch() and tx1() missing store barrier before setting AVAIL f=
-lag,
->     preventing data race on weakly-ordered architectures.
->   - Fix submit_to_backend_simple() writing descriptors for packets that
->     failed pkt_padding(), causing mbuf leak.
-> v4:
->   - fix some AI review issues.
->   - fix queue enable intr bug.
-> v3:
->   - remove unnecessary NULL check in zxdh_init_queue.
->   - Split Ring: Bit[31] is unused and reserved, zxdh_queue_notify(): remo=
-ving the
->     zxdh_pci_with_feature(hw, ZXDH_F_RING_PACKED) check;
->   - remove unnecessary double-free in in zxdh_recv_single_pkts();
->   - used rte_pktmbuf_mtod();
->   - remove rxq_get_vq(q) macro, use q->vq and apply it consistently;
->   - Refactoring scatter and mtu check logic in zxdh_dev_mtu_set();
->   - set txdp->id =3D avail_idx + i in tx_bunch/tx1.
->   - add comment documenting zxdh_xmit_enqueue_append() now sets dxp->cook=
-ie =3D NULL for
->     the head slot and stores cookies per descriptor via dep[idx].cookie.
->   - add one-line comment noting tx_bunch() is the simple path handles sin=
-gle-segment.
->   - remove unnecessary Extra initialization and the uint32_t cast.
-> v2:
->   - zxdh_rxtx.c, pkt_padding(): modifyed the return value of pkt_padding(=
-);
->   - zxdh_rxtx.c, zxdh_recv_single_pkts(): modifyed When zxdh_init_mbuf() =
-fails
->     the loop does "continue" and free mbufs;
->   - zxdh_rxtx.c, refill_desc_unwrap(): Add rte_io_wmb() before writing fl=
-ags
->     in the refill_que_descs();
->   - zxdh_queue.h, zxdh_queue_enable_intr(): Remove unnecessary function o=
-f zxdh_queue_enable_intr;
->   - zxdh_ethdev.c, zxdh_init_queue(): changed the hdr_mz NULL check logic;
->   - zxdh_rxtx.c, zxdh_xmit_pkts_simple()=E3=80=81zxdh_recv_single_pkts():=
- add stats.bytes count;
->   - zxdh_rxtx.c, zxdh_init_mbuf():remove  rte_pktmbuf_dump(stdout, rxm, 4=
-0);
->   - zxdh_ethdev.c, zxdh_dev_free_mbufs(): using rte_pktmbuf_free() to fre=
-e mbufs;
->   - Splitting into separate patches, structure reorganization and sw_ring=
- removal=E3=80=81
->     RX recv optimize=E3=80=81Tx xmit optimize=E3=80=81Tx;
-> v1:
->   This patch optimizes the ZXDH PMD's receive and transmit path for better
->   performance through several improvements:
-> - Add simple TX/RX burst functions (zxdh_xmit_pkts_simple and
->   zxdh_recv_single_pkts) for single-segment packet scenarios.
-> - Remove RX software ring (sw_ring) to reduce memory allocation and
->   copy.
-> - Optimize descriptor management with prefetching and simplified
->   cleanup.
-> - Reorganize structure fields for better cache locality.
->=20
->   These changes reduce CPU cycles and memory bandwidth consumption,
->   resulting in improved packet processing throughput.
->=20
-> Junlong Wang (4):
->   net/zxdh: fix queue enable intr issues
->   net/zxdh: optimize queue structure to improve performance
->   net/zxdh: optimize Rx recv pkts performance
->   net/zxdh: optimize Tx xmit pkts performance
->=20
->  drivers/net/zxdh/zxdh_ethdev.c     |  76 ++++---
->  drivers/net/zxdh/zxdh_ethdev_ops.c |  23 +-
->  drivers/net/zxdh/zxdh_ethdev_ops.h |   4 +
->  drivers/net/zxdh/zxdh_pci.c        |   2 +-
->  drivers/net/zxdh/zxdh_queue.c      |  11 +-
->  drivers/net/zxdh/zxdh_queue.h      | 122 ++++++-----
->  drivers/net/zxdh/zxdh_rxtx.c       | 324 ++++++++++++++++++-----------
->  drivers/net/zxdh/zxdh_rxtx.h       |  27 +--
->  8 files changed, 329 insertions(+), 260 deletions(-)
->=20
-
-There are some findings in AI review that need addressing.
-Thee overly wordy AI review is :
+On Tue, 21 Jul 2026 12:11:27 +0000
+Mark Blasko <blasko@google.com> wrote:
 
 
+> +xdp_meta_rx_ts_offset
+> +~~~~~~~~~~~~~~~~~~~~~
+> +
+> +The ``xdp_meta_rx_ts_offset`` argument specifies the byte offset of the 64-bit RX
+> +timestamp within the XDP metadata headroom area (prepended before packet data).
+> +
+> +.. code-block:: console
+> +
+> +    --vdev net_af_xdp,iface=ens786f1,xdp_meta_rx_ts_offset=8
+> +
+> +xdp_meta_valid_hint_offset
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +The ``xdp_meta_valid_hint_offset`` argument specifies the byte offset of the validity
+> +flag byte within the XDP metadata headroom area.
+> +
+> +.. code-block:: console
+> +
+> +    --vdev net_af_xdp,iface=ens786f1,xdp_meta_rx_ts_offset=8,xdp_meta_valid_hint_offset=4
+> +
+> +xdp_meta_rx_ts_valid_mask
+> +~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +The ``xdp_meta_rx_ts_valid_mask`` argument specifies the bitmask (in hex or decimal) used
+> +to verify timestamp validity at ``xdp_meta_valid_hint_offset``.
+> +
+> +.. code-block:: console
+> +
+> +    --vdev net_af_xdp,iface=ens786f1,xdp_meta_rx_ts_offset=8,xdp_meta_valid_hint_offset=4,xdp_meta_rx_ts_valid_mask=0x1
+> +
 
-Patch 2/4: net/zxdh: optimize queue structure to improve performance
-
-Error: zxdh_queue_notify() drops the ZXDH_F_NOTIFICATION_DATA gate, not
-just the packed check.  The commit message says "remove unnecessary
-feature check", but two checks were removed and they are not
-equivalent.  The old zxdh_notify_queue() had:
-
-	if (!zxdh_pci_with_feature(hw, ZXDH_F_NOTIFICATION_DATA)) {
-		rte_write16(vq->vq_queue_index, vq->notify_addr);
-		return;
-	}
-
-That is a different doorbell format, not an optimization.
-ZXDH_F_NOTIFICATION_DATA is negotiated, not mandatory:
-zxdh_get_pci_dev_config() calls zxdh_pci_get_features(hw) when
-hw->switchoffload is set, so host_features comes from the device.
-zxdh_alloc_queues() explicitly handles the
-"switchoffload && !(host_features & RING_PACKED)" case, so a
-non-packed, non-notification-data device is a configuration this
-driver still claims to support.  On such a device the new inline
-writes a 32-bit notify_data with bit 31 derived from cached_flags,
-which is meaningless for a split ring.
-
-Either keep the feature gate, or make both features mandatory and fail
-probe when they are not negotiated -- and then remove the unreachable
-split-ring queue init path.
-
-Error: dead code left behind by the same change.  After this patch
-nothing calls ->notify_queue.  zxdh_notify_queue() in zxdh_pci.c and
-the .notify_queue member of struct zxdh_pci_ops are unreachable, yet
-this patch edits zxdh_notify_queue() for the cached_flags rename.
-Remove the function and the ops member instead of maintaining them.
-
-Same pattern with zxdh_queue_kick_prepare_packed(): this patch changes
-zxdh_mb(1) to rte_mb() inside it, and patch 3 then removes its only
-caller.  Drop the function in 3/4 or leave it alone in 2/4.  Note that
-zxdh_mb(1) was rte_atomic_thread_fence(rte_memory_order_seq_cst);
-rte_mb() is a heavier full hardware fence on non-x86.
-
-Error: Tx indirect descriptor init removed but the region is not.
-Deleting the zxdh_vring_desc_init_indirect_packed() loop leaves that
-function with zero callers, and tx_indir[]/tx_packed_indir[] in
-struct zxdh_tx_region with zero users.  ZXDH_MAX_TX_INDIRECT is 8, so
-that is 128 bytes of hugepage memory per descriptor in the header
-memzone, allocated and never used.  In a performance series this
-should be removed, not just left uninitialized.
-
-Warning: dead struct members added.  struct zxdh_vring and the
-vq_split union arm have no user anywhere in drivers/net/zxdh.  Same
-for next_qidx and rsv_8B.  If this is groundwork for split-ring
-support, add it with the code that uses it.
-
-Info: __rte_packed_begin on the vq_packed union arm.  struct
-zxdh_vring_packed is three pointers with no padding, so packing
-changes nothing except telling the compiler the members may be
-unaligned.  It is a hot-path pointer load.  Drop the attribute.
-
-Info: rsv_8B is declared uint32_t.  The name says 8 bytes.
-
-Info: the patch removes the prefixed zxdh_desc_used() and keeps the
-unprefixed desc_is_used().  Everything else in the file is zxdh_*.
+Awkward to have so many new metadata devargs, but I guess if XDP has no metadata standard there
+is no better way. Maybe combine into one devarg if all are required?
 
 
-Patch 3/4: net/zxdh: optimize Rx recv pkts performance
+> +		if (rxq->rx_timestamp_enabled &&
+> +		    timestamp_dynfield_offset >= 0) {
 
-Error: ZXDH_ETH_OVERHEAD does not account for the uplink net header,
-so scatter is not enabled when it is needed.
+You could simplify this if rx_timestamp_enabled was not set unless timestamp_dynfield_offset was known.
 
-	#define ZXDH_ETH_OVERHEAD \
-		(RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN + ZXDH_VLAN_TAG_LEN * 2)
+> @@ -398,6 +415,29 @@ af_xdp_rx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+>  
+>  		rte_pktmbuf_pkt_len(bufs[i]) = len;
+>  		rte_pktmbuf_data_len(bufs[i]) = len;
+> +
+> +		if (rxq->rx_timestamp_enabled &&
+> +		    timestamp_dynfield_offset >= 0) {
+> +			/*
+> +			 * Copy timestamp if validity offset is not defined or
+> +			 * flag is valid.
+> +			 */
+> +			if (rxq->rx_timestamp_valid_offset < 0 ||
+> +			    (*(uint8_t *)((char *)rte_pktmbuf_mtod(bufs[i], void *) -
+> +					  rxq->rx_timestamp_valid_offset) &
 
-The Rx descriptor is programmed as len =3D buf_len - RTE_PKTMBUF_HEADROOM
-and the device writes its own header into that same buffer ahead of the
-payload -- zxdh_init_mbuf() recovers the payload with
-data_len =3D len - hdr_size.  struct zxdh_net_hdr_ul is 4 + up to 56
-bytes, so up to 60 bytes of the buffer are consumed before any packet
-data.  ZXDH_ETH_OVERHEAD accounts for none of it.
+Use rte_pktmbuf_mtod_offset() here and below.
 
-With the default 2176-byte data room (buf_size 2048) and MTU 2000,
-2000 + 26 <=3D 2048, so zxdh_scattered_rx() returns 0 and
-zxdh_recv_single_pkts is installed.  The real requirement is
-2000 + 14 + hdr_size, which exceeds 2048, so the device splits the
-frame and zxdh_init_mbuf() drops it on num_buffers !=3D 1.  Silent packet
-loss across a band of otherwise valid MTUs.
+More findings from detailed AI review
 
-Error: zxdh_dev_mtu_set() rejects valid MTUs when scatter is already
-enabled.
+Review of [PATCH v3 0/2] net/af_xdp: rx timestamping and read_clock
 
-	uint8_t need_scatter =3D
-		(uint32_t)ZXDH_MTU_TO_PKTLEN(new_mtu) > buf_size;
-	if (need_scatter !=3D dev->data->scattered_rx)
-		return -EINVAL;
+Verified against main at 38f72e5 (26.11.0-rc0).  Driver hunks apply
+cleanly; the release notes hunk does not (see 1/2 Warning 6).  Both
+patches build with -Dwerror=true, and 1/2 builds standalone, so bisect
+is fine.  I also compiled the copy-mode branch by undefining
+XDP_UMEM_UNALIGNED_CHUNK_FLAG -- that path is clean too.
 
-need_scatter is computed purely from size, but scattered_rx was set by
-zxdh_scattered_rx(), which also returns 1 for RX_OFFLOAD_SCATTER and
-RX_OFFLOAD_TCP_LRO regardless of size.  A port configured with
-RX_OFFLOAD_SCATTER and then set to MTU 1500 gets need_scatter =3D=3D 0 and
-scattered_rx =3D=3D 1, and the call fails on a perfectly valid MTU.  The
-comparison has to mirror the offload checks, not just the size check.
-
-Warning: three different Ethernet overhead definitions now coexist.
-dev_info->max_mtu uses RTE_ETHER_HDR_LEN + RTE_VLAN_HLEN +
-ZXDH_DL_NET_HDR_SIZE; ZXDH_ETH_OVERHEAD uses HDR_LEN + CRC_LEN +
-2 * VLAN; and the actual Rx buffer requirement is
-HDR_LEN + ZXDH_UL_NET_HDR_SIZE.  Derive one per-device overhead helper
-and use it in dev_infos_get, zxdh_scattered_rx() and
-zxdh_dev_mtu_set().
-
-Warning: zxdh_init_mbuf() drops the header-length validation the
-mergeable path still has.  zxdh_recv_pkts_packed() checks
-"hdr_size > lens[i] || hdr_size < ZXDH_TYPE_HDR_SIZE" before using it.
-zxdh_init_mbuf() checks only num_buffers !=3D 1, then computes
-data_len =3D len - hdr_size (uint16_t underflow on a bad pd_len) and sets
-data_off =3D RTE_PKTMBUF_HEADROOM + hdr_size from an unvalidated
-device-supplied value.  The later data_len !=3D pkt_len test usually
-catches it, but only after zxdh_rx_update_mbuf() has run and data_off
-is already set.  Add the same bounds check.
-
-Warning: no_free_tx_desc_err is added to zxdh_virtnet_stats and to the
-txq xstats table but never incremented anywhere, so the xstat always
-reads zero.  The Tx path in 4/4 that would justify it just breaks
-without counting.
-
-Warning: the refill path notifies unconditionally.
-
-	refill:
-		if (vq->vq_free_cnt > 0) {
-			refill_que_descs(vq, dev);
-			zxdh_queue_notify(vq);
-		}
-
-This replaces "if (unlikely(zxdh_queue_kick_prepare_packed(vq)))".  The
-doorbell write now happens on every burst call where the ring is not
-full, including the num =3D=3D 0 idle path and the case where
-rte_pktmbuf_alloc_bulk() failed and nothing was refilled.  That is an
-MMIO write per empty poll, in a series about throughput.
-
-Warning: new functions do not follow the DPDK function-definition
-style.  zxdh_scattered_rx, refill_desc_unwrap, refill_que_descs,
-zxdh_init_mbuf and zxdh_recv_single_pkts all put the return type on the
-same line as the name.  Every pre-existing function in these files
-splits them.
-
-Info: refill_desc_unwrap and refill_que_descs are unprefixed.
-
-Info: zxdh_scattered_rx() sets eth_dev->data->lro =3D 1 as a side effect
-of a predicate and never clears it on the other paths.  It also returns
-int for a pure true/false result assigned to a 1-bit bitfield; bool
-would be clearer.
-
-Info: the trailing rte_io_wmb() in refill_que_descs() is redundant,
-since zxdh_queue_store_flags_packed() already issues one before each
-flag store.
-
-Info: column alignment is broken for the "idle" entry in
-zxdh_txq_stat_strings[].
-
-Info: removing the full, norefill, multicast and broadcast xstats is a
-user-visible change to per-queue xstats output with no release note.
+The overall approach is sound: XDP metadata does sit immediately below
+the packet data in the umem chunk in both zero-copy and copy mode, so
+reading backwards from the data pointer is the right mechanism.  The
+problems below are about validating the offsets and about where the
+PTP fd lives.
 
 
-Patch 4/4: net/zxdh: optimize Tx xmit pkts performance
+Patch 1/2: net/af_xdp: add af_xdp rx metadata and dynamic timestamping
 
-Error: zxdh_recv_single_pkts() no longer compacts the output array;
-use-after-free plus mbuf leak.  This patch removes
-"rcv_pkts[nb_rx] =3D rxm;" from the loop, leaving:
+Error 1: metadata offsets are unvalidated, giving an out-of-bounds read
+in the Rx fast path.
 
-	for (i =3D 0; i < num; i++) {
-		struct rte_mbuf *rxm =3D rcv_pkts[i];
-		...
-		if (unlikely(zxdh_init_mbuf(rxm, len, hw, &vq->rxq) < 0))
-			continue;
-		zxdh_update_packet_stats(&rxvq->stats, rxm);
-		nb_rx++;
-	}
+  xdp_meta_rx_ts_offset and xdp_meta_valid_hint_offset are only checked
+  for >= 0 (parse_integer_arg rejects negatives; probe checks the mask
+  and the offset/mask consistency).  Nothing bounds them from above,
+  and both are used as raw backward pointer arithmetic:
 
-rcv_pkts is the application's rx_pkts array.  zxdh_init_mbuf() calls
-rte_pktmbuf_free(rxm) on its failure paths, but the freed pointer is
-left in rcv_pkts[i] and the good mbufs are never moved down.  If packet
-0 fails and 1..3 succeed, the function returns 3 and the application
-reads rcv_pkts[0..2]: index 0 is a dangling pointer that will be freed
-again, and the mbuf at index 3 is leaked -- neither returned to the
-caller nor left in the ring.  Patch 3/4 had this right; restore the
-assignment.
+      memcpy(&ts, (char *)pkt - rxq->rx_timestamp_offset, sizeof(ts));
 
-Warning: zxdh_xmit_fast_flush() walks the completion chain unbounded.
+  The window that actually exists is XDP_PACKET_HEADROOM (256) plus the
+  umem headroom.  In copy mode xdp_umem_configure() sets
+  frame_headroom = 0 and fills the ring with chunk-aligned addresses
+  (i * ETH_AF_XDP_FRAME_SIZE), so for chunk 0 any offset above 256
+  reads before umem->mz->addr -- outside the memzone.  In zero-copy
+  mode an oversized offset walks back through RTE_PKTMBUF_HEADROOM into
+  the rte_mbuf header and then past the chunk base.
 
-	id =3D desc[used_idx].id;
-	do {
-		...
-		used_idx +=3D 1;
-		free_cnt +=3D 1;
-		if (unlikely(used_idx =3D=3D size)) {
-			used_idx =3D 0;
-			vq->used_wrap_counter ^=3D 1;
-		}
-	} while (curr_id !=3D id);
+  The kernel caps metadata at 255 bytes in bpf_xdp_adjust_meta(), so a
+  hard upper bound is available.  Reject at probe:
 
-id comes from device-written memory.  The removed
-zxdh_xmit_cleanup_inorder_packed() bounded the walk with num, and the
-old zxdh_xmit_flush() advanced by the driver-owned dxp->ndescs.  Now a
-corrupt or unexpected id walks the whole ring, freeing cookies and
-inflating vq_free_cnt past vq_nentries.  Cap the inner loop at
-vq_nentries.
+      if (rx_timestamp_offset > XDP_PACKET_HEADROOM) ...
+      if (rx_timestamp_valid_offset > XDP_PACKET_HEADROOM) ...
 
-Warning: the descriptor id semantics changed.  The old path set
-start_dp[idx].id =3D id (the head index) on every descriptor in a chain
-and used dxp->ndescs to advance.  zxdh_xmit_enqueue_append() now sets
-start_dp[idx].id =3D idx per descriptor, and the flush loop terminates on
-curr_id =3D=3D id, which only works if the device reports the last
-descriptor's buffer id.  That is what the packed spec says, but the
-flush loop also does "desc[used_idx].id =3D used_idx;" on every
-descriptor -- a redundant write, since both enqueue paths already set
-.id on everything they touch.  Please state in the commit message which
-behaviour the device implements, and drop the reset if it is not
-load-bearing.
+Error 2: xdp_meta_rx_ts_offset of 0-7 silently reads packet data as a
+timestamp.
 
-Warning: dead macros added.  rxq_get_vq, txq_get_vq, N_PER_LOOP,
-N_PER_LOOP_MASK and NEXT_CACHELINE_OFF_8B have zero users.  Only
-NEXT_CACHELINE_OFF_16B is referenced.
+  The read is 8 bytes ending at (data - offset + 8), so the offset must
+  be at least sizeof(uint64_t) for the read to stay in the metadata
+  area.  offset=0 is accepted today (parse_integer_arg only rejects < 0,
+  and eth_dev_start() only rejects < 0), and the PMD then reports the
+  first 8 bytes of the Ethernet header as a hardware timestamp with the
+  dynflag set.  Require >= 8 for the timestamp offset and >= 1 for the
+  valid-hint offset.
 
-Warning: offloads fields added to struct zxdh_virtnet_rx and struct
-zxdh_virtnet_tx (in 3/4 and 4/4) are never written or read.  In
-structures being reordered for cache locality, 8 unused bytes in each
-is counterproductive.
+Warning 3: changing parse_integer_arg() from base 10 to base 0 silently
+changes six existing devargs.
 
-Info: the "IMPORTANT:" comment in zxdh_xmit_enqueue_append() documents
-a fragile invariant -- "any code path that attempts to read
-vq_descx[head_id].cookie will see NULL and must handle this case
-appropriately" -- without naming the paths.  zxdh_queue_detach_unused()
-and zxdh_queue_rxvq_flush() both skip NULL cookies, so it holds today,
-but this reads like an invariant that wants an assertion.
+  parse_integer_arg() is shared by start_queue, queue_count,
+  shared_umem, force_copy, use_cni and use_pinned_map.  Confirmed
+  empirically: strtol("08", &end, 10) is 8, strtol("08", &end, 0) is 0
+  with "8" left in end.  end is assigned but never checked, so this is a
+  silent misparse rather than an error.  Only the validity mask needs
+  hex; please add a separate parse function for it rather than changing
+  the shared one, or check *end == '\0' in the same patch.
 
-Info: zxdh_queue_store_flags_packed() gains a volatile qualifier on its
-parameter while the descriptor ring is non-volatile everywhere else it
-is touched.  Either qualify the ring consistently or leave it alone.
+Warning 4: rx_offload_capa advertises a capability the device may not
+have.
 
-Info: "struct zxdh_vq_desc_extra *dep =3D &vq->vq_descx[0];" followed by
-dep[idx] is just vq->vq_descx[idx] written indirectly.
+  dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_TIMESTAMP is
+  unconditional, but eth_dev_start() returns -EINVAL when
+  xdp_meta_rx_ts_offset was not supplied.  eth_dev_configure() accepts
+  the offload, so the application only discovers the mismatch at start.
+  Advertise it only when internals->rx_timestamp_offset >= 0.  Also use
+  |= rather than = so a later offload addition does not clobber this,
+  and set rx_queue_offload_capa as well -- features.rst lists both under
+  "Timestamp offload".
+
+Warning 5: doc/guides/nics/features/af_xdp.ini is not updated.  Add
+"Timestamp offload = Y".
+
+Warning 6: the release notes entry targets doc/guides/rel_notes/
+release_26_07.rst.  Main is now 26.11.0-rc0 and 26.07 is closed -- the
+hunk no longer applies.  Move the entry to release_26_11.rst.
+
+Warning 7: eth_af_xdp_enable_hw_timestamping() clobbers another
+application's Tx timestamping configuration.
+
+  The function reads the current config with SIOCGHWTSTAMP, then
+  unconditionally sets config.tx_type = HWTSTAMP_TX_OFF before
+  SIOCSHWTSTAMP.  If ptp4l (or anything else) had Tx timestamping on
+  while rx_filter was NONE, this turns it off underneath them.  Preserve
+  tx_type from the SIOCGHWTSTAMP result.
+
+  Related: the hwtstamp config is never restored on dev_stop or
+  dev_close, so the interface is left in HWTSTAMP_FILTER_ALL after the
+  DPDK application exits.  Worth either restoring the saved config or
+  documenting the side effect explicitly.
+
+Info 8: on socket() failure the function returns -1, and the caller logs
+strerror(-rc), which prints "Operation not permitted".  Return -errno.
+
+Info 9: the new ioctl helpers use (caddr_t) casts for ifr_data.  The
+existing xdp_get_channels_info() in this file uses (void *).  caddr_t is
+a BSD-ism; please match the surrounding code.
+
+Info 10: ops_afxdp_dp (the unprivileged AF_XDP device-plugin path)
+shares eth_dev_start, and SIOCSHWTSTAMP needs CAP_NET_ADMIN.  Requesting
+the timestamp offload in that mode will fail the start with -EPERM.
+Worth a line in af_xdp.rst.
+
+
+Patch 2/2: net/af_xdp: add read_clock support to AF_XDP PMD
+
+Error 1: ptp_fd is stored in pmd_internals, which is dev_private and
+therefore shared memory, but a file descriptor is process-local.
+
+  This driver already has struct pmd_process_private for exactly this
+  reason -- rxq_xsk_fds[] lives there, and afxdp_mp_request_fds() /
+  afxdp_mp_send_fds() pass those descriptors between primary and
+  secondary over SCM_RIGHTS.  af_xdp.ini declares "Multiprocess aware =
+  Y", so this is not hypothetical.  Two concrete consequences:
+
+    - A secondary calling rte_eth_read_clock() derives a clockid from a
+      descriptor number that is only meaningful in the primary.  It
+      either fails or, worse, reads whatever the secondary happens to
+      have open at that number.
+
+    - A secondary calling rte_eth_dev_stop() runs
+      close(internals->ptp_fd) on an unrelated descriptor in its own
+      table, then stores -1 into the shared field, so the primary leaks
+      its real PTP fd and read_clock stops working there.
+
+  Move ptp_fd into pmd_process_private, and if secondary read_clock is
+  meant to work, extend the existing IPC to pass it.
+
+Warning 2: read_clock is only functional when
+RTE_ETH_RX_OFFLOAD_TIMESTAMP is enabled, since the PHC is opened inside
+that branch of eth_dev_start().  That couples two independent features:
+an application that only wants the PHC time must also enable Rx
+timestamp offload, which (per 1/2) reprograms the NIC's hwtstamp filter.
+Opening the PHC unconditionally at start would decouple them.
+
+Warning 3: features matrix -- as with 1/2, af_xdp.ini needs "Timestamp
+offload = Y".  features.rst lists read_clock as "[related] eth_dev_ops"
+under that entry, so the one key covers both patches.
+
+Warning 4: in af_xdp.rst the read_clock subsection is placed under
+"Options", where every other ~~~ subsection is a devarg name.
+read_clock is a feature, not a devarg -- it belongs in its own section.
+
+Info 5: CLOCKFD and FD_TO_CLOCKID are defined unconditionally with no
+driver prefix and no #ifndef guard.  I checked the arithmetic against
+the kernel's posix-timers.h definition across a range of descriptor
+values and it agrees, so this is only a namespace point -- consider
+AF_XDP_FD_TO_CLOCKID or an #ifndef.
