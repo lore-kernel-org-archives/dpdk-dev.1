@@ -2,75 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D04C53209
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 18:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AB0C53209
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 22:44:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52226400EF;
-	Mon, 27 Jul 2026 20:14:42 +0200 (CEST)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id A0478400D6
- for <dev@dpdk.org>; Mon, 27 Jul 2026 20:14:40 +0200 (CEST)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-381c51fde6bso3359990a91.2
- for <dev@dpdk.org>; Mon, 27 Jul 2026 11:14:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BD44F400EF;
+	Tue, 28 Jul 2026 00:44:22 +0200 (CEST)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
+ [209.85.215.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 09B9B400D6
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 00:44:20 +0200 (CEST)
+Received: by mail-pg1-f173.google.com with SMTP id
+ 41be03b00d2f7-c9e607d81fcso1955346a12.2
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 15:44:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785176079;
- x=1785780879; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=LFIqTKyqYo3tu0dMg+G3D2i2MDM3Jp2r6jfd8zoRtOQ=;
- b=sx1cJw/A1IvaruRahD2QQQ/FAX1NyLCokZHOcPcyvBZPs71Y85rAuBVzKYfiY0wLRP
- QlOTHJixCpm/R/UvL4a3D8G3WBjqICw2WSoaEdZkR6uFaicmR1lOhgmRvJCamJjyLjyM
- O4rxo8H2BeaQqS3Q3Tb5XZ4c8IGWM5JaElnfeBvMUgQFcdx9uv89wAoy8KSIJ7au6jV+
- NxDQuG3J53Uk1AgDnYsEBSOFPyuhoo0YgxMmr2WeG/rCpZJYgMKraCJ3gO29B/6C9qvi
- n6A/LJX040jiiXq1ftHRCCjsTz9SVcuOUvWk7vA6qc5clJ0K0IfdhPIBGACf5WZ5BKzq
- BdPQ==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785192260;
+ x=1785797060; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=wXhbNwBK3cUIW7+2MCQlMV9Pis6HitRlg3Ru7027Q04=;
+ b=rjbP9V0SBkkRoDnEYb7GDkCdokoJjlRTKrcRa2xG4XF288IVWnmaUfUTR5ZHMDsVG9
+ 0/whfZzF52rKdULNQPj/GTTMEJlPQzjOdN9+ZFbsGJ6N9ddyQkoU0cDSV+EA/5+4R7xj
+ CRdINLSTGtUVpkIqxrZalhHz9BACKlV+aXoH1D5shdWpaF2s1lG0QyHbKgngJ/3zmuDl
+ oIhnMtzosKEqtAbC7JbaRC6imM3qNBafnRM1D9LxaxkSaaAo+KJE3aTT5wKMNt1RxqX1
+ G1dtAOe2TvmoGBZ3PSgXp7MzPCEKZ2TACpeFF+ZAsqcyB2iLk6Dx1rzEfb0dRNLmIVLd
+ 84Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785176079; x=1785780879;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=LFIqTKyqYo3tu0dMg+G3D2i2MDM3Jp2r6jfd8zoRtOQ=;
- b=gHEpRnCxOxQPA0G2ZJI4s1y0MjZgaO9fAW2jNzw5fdBv3t7gmpXhcD3xqCt5fAyomz
- kgiyLLBYhxzhfaqAF8aucJYRlHbA2KfWaYsnzKi1ooAueMFT0iplVhhDo2yxuyFgo/9r
- W1PD+ufIfLh/oePvNaKhPO+25St6vQbLMlenjjTxn65OqHkLTuIBMu3EyH9hjGvznd/b
- E2w7D5D/uOYZlwocsVoUUZqG2HVr8VlCtgsUC5S+0nZD+aJJXkGi/XkKtH7WDRv/P2nT
- bFDN3ZMYb7YBv3laWj1p0AUjSXQenEhF7+aNt92snyCs7dZ6/TFR3dRZkepkG0nz+t2y
- zZPQ==
-X-Gm-Message-State: AOJu0YwfllWNep0ah8kPgX710bPqQ8NXSXPaYtT8duhUg0d4zt61sEsY
- YqBPt9FS2qYpsQSzOoh6GXTJqtnZoYvIn37Wvq9tJbf0ZsGhlj7G7D4FZRVevXQMRyLTriDL2oa
- DZto7
-X-Gm-Gg: AR+sD10AxOBEJP+bVcUm/08ORHOD3BSpoagh8kITRebKtcdwQe6OAZkmE8hHiJi80mv
- yk0zwJ32HvO75B8udtexOjCikoluJIOzFFREfSkhf5eNfZdtUCXUoXdzolbIZsc3c0y5C3a0365
- biAk+S+vA4rMKHzeDRJ6Xl909qFuqhy0/QimFjvlsYvN7sYHx6vuUevbwn6XjnxMtgYqdGFQVtB
- GSquO2wPyq33H3DZuTYsg8D3CSm1NZh5XDwApas6fahEHz4adJ82sx8vWZBumJWOJXzwSd2y4B+
- DSjJB+/aVVve1opAVbogtwTIKAPdhRPVyQsYBno6ckS60OuRLYcoOdk0CZvqK5TWmUnHO/SxVqL
- R//rcJioq+do/t2MQyFz4XHXzW5vRKF/brjruS/7w4kG8aXuqXmdOZG2C8N+VjO7wCkFnrMax2K
- DojluK9dtlaY4Op/WKeshrsgnecH+CpK8FbzbkBez3YunSA9RdnFpv3XCQh/uMOrdDVnsjdN7Kk
- UuQfAuHwvQUHRgYYrlZbxPFaYCjMkQFGkZjnTwT
-X-Received: by 2002:a17:90b:49:b0:37f:c22a:c188 with SMTP id
- 98e67ed59e1d1-38f293d31abmr9175152a91.4.1785176079351; 
- Mon, 27 Jul 2026 11:14:39 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1785192260; x=1785797060;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=wXhbNwBK3cUIW7+2MCQlMV9Pis6HitRlg3Ru7027Q04=;
+ b=qYD49WeVioUefONMDu0ieCjkOqePV67jN2lv51jXqC+gBlYv2yCl6pxHeUznIn0J/5
+ xEXqMBOe4seJsp1WZvDOBI67R11EThUtlxzONcjTN/x6RlxeuqEHvKEGQJLZR7BCRGei
+ 386WyB2s5QjxayjjaLerJ9NcrVN3lZxHN0pI5aQCO5u9hdv68wuY6AyJtSonjQfZ85ot
+ LAx48rz3gOqKVa2T4U8Q7tyVb6vSPgVNljOFFoR0AHn4ePuH6DxB0dF7esBQbEf/DK5T
+ CTU08UE181sqwP4vR6gEQm9HrcS7aK+Wd01iLQunRePZ2YBZZP9061faeLE86Nk824W7
+ FouA==
+X-Gm-Message-State: AOJu0YxxyZGvYwCn4LMo1sipAVPUO4PElWTiQyafsOGOYTt7UxyBK4UQ
+ mv6R5hxg6/VAegr0a1gQMxEPbVMoJH1lmSR8uPmbgN1AaoMsXn2TWy3aZvgzG5CNhsDsnSiJSeg
+ wlOZ/
+X-Gm-Gg: AR+sD12OgjPEUTGT2M4SjJihsBv/BP2D7NBv3u89MDWBvGIRwERbCgedNbeMJMryFvz
+ 9ryyDYp/UmxivR6sDzd/tHrx5eyeotw59oN7fPlbkUwaBHkAYfwni3m3Y8BDz2eL+tQVpJjVlvP
+ Io7P8AAhUsAFC57hJiaFxY96QXz5tWJrOyqyi9eGMjDVG19IIhCU0AadGUvEnDWQNbE1SfGdUQO
+ a2pyBQo0gbxs7wJ2b+pH12ngxTRDKHuTA7KaUt7YSkvJcgDy/NNIkGG8OxXw6aF6CXQ3Xrbt+tp
+ SVkk8A6UHWkNxvVU4hA5FJb8OO3lKyxud2PyXX+/y964zwLFYUqe6DmUJy2RbeGE26ZqV6gpkfp
+ hHD8FKVtNY9z6G0qf1vQLPIKGUr+vettPxdJ/iTGktajPvypqtRrCi5vfFfWubDLEKwhYZUFOgk
+ GkSNhIOrclKnLTgzzE5gT8pj70QmjTE+E8R+yCzxYO
+X-Received: by 2002:a05:6a21:48a:b0:3c0:9c19:b271 with SMTP id
+ adf61e73a8af0-3c67dfe228emr10718362637.63.1785192259890; 
+ Mon, 27 Jul 2026 15:44:19 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-314bc593b57sm50449680eec.25.2026.07.27.11.14.38
+ a92af1059eb24-13e5c921686sm20238078c88.4.2026.07.27.15.44.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 27 Jul 2026 11:14:38 -0700 (PDT)
-Date: Mon, 27 Jul 2026 11:03:38 -0700
+ Mon, 27 Jul 2026 15:44:19 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 03/39] eal: define new functionally distinct config structs
-Message-ID: <20260727110338.777d5840@phoenix.local>
-In-Reply-To: <20260721094555.2188496-4-bruce.richardson@intel.com>
-References: <20260429165845.2136843-1-bruce.richardson@intel.com>
- <20260721094555.2188496-1-bruce.richardson@intel.com>
- <20260721094555.2188496-4-bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 0/4] Wireshark external capture interface
+Date: Mon, 27 Jul 2026 15:42:43 -0700
+Message-ID: <20260727224417.1419663-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260724212238.864798-1-stephen@networkplumber.org>
+References: <20260724212238.864798-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,16 +81,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 21 Jul 2026 10:45:11 +0100
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+This series adds live packet capture from a running DPDK primary over the
+telemetry socket. A new capture library installs Rx/Tx callbacks on an
+ethdev port and writes pcapng to a caller-supplied path or FIFO, with an
+optional libpcap filter and per-queue selection. No application changes are
+needed beyond linking the library.
 
-> +/**
-> + * Internal EAL runtime state
-> + * May be modified at runtime, so access must be protected by locks or atomic types
-> + * as appropriate.
-> + */
-> +struct eal_runtime_state {
-> +	uint8_t reserved;
-> +};
+The pcapng interface-statistics block gains a filter-accepted count,
+which changes the rte_pcapng_write_stats() signature.
 
-This reserved field is still left after all the patches??
+v2 - review feedback from checkpatch and AI
+   - defer dpdk-dumpcap.py until later
+   - add more documentation
+
+Stephen Hemminger (4):
+  pcapng: extend interface statistics
+  capture: infrastructure wireshark packet capture
+  test: add test for capture hooks
+  usertools: add script for wireshark capture
+
+ MAINTAINERS                            |    4 +
+ app/dumpcap/main.c                     |   16 +-
+ app/test/meson.build                   |    1 +
+ app/test/test_capture.c                |  660 +++++++++++++
+ app/test/test_pcapng.c                 |   10 +-
+ doc/guides/prog_guide/capture_lib.rst  |  168 ++++
+ doc/guides/prog_guide/index.rst        |    1 +
+ doc/guides/rel_notes/release_26_11.rst |   14 +
+ doc/guides/tools/index.rst             |    1 +
+ doc/guides/tools/wireshark_extcap.rst  |  144 +++
+ lib/capture/capture.c                  | 1199 ++++++++++++++++++++++++
+ lib/capture/capture_impl.h             |   56 ++
+ lib/capture/filter.c                   |  110 +++
+ lib/capture/meson.build                |   19 +
+ lib/meson.build                        |    1 +
+ lib/pcapng/rte_pcapng.c                |   50 +-
+ lib/pcapng/rte_pcapng.h                |   33 +-
+ usertools/dpdk-wireshark-extcap.py     |  416 ++++++++
+ usertools/meson.build                  |    1 +
+ 19 files changed, 2871 insertions(+), 33 deletions(-)
+ create mode 100644 app/test/test_capture.c
+ create mode 100644 doc/guides/prog_guide/capture_lib.rst
+ create mode 100644 doc/guides/tools/wireshark_extcap.rst
+ create mode 100644 lib/capture/capture.c
+ create mode 100644 lib/capture/capture_impl.h
+ create mode 100644 lib/capture/filter.c
+ create mode 100644 lib/capture/meson.build
+ create mode 100755 usertools/dpdk-wireshark-extcap.py
+
+-- 
+2.53.0
+
