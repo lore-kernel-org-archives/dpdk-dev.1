@@ -2,77 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF56EC53219
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 08:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6904C531D0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 09:43:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AF9B6402E4;
-	Mon, 27 Jul 2026 10:04:35 +0200 (CEST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com
- [209.85.128.179])
- by mails.dpdk.org (Postfix) with ESMTP id 95A23402E4
- for <dev@dpdk.org>; Mon, 27 Jul 2026 10:04:34 +0200 (CEST)
-Received: by mail-yw1-f179.google.com with SMTP id
- 00721157ae682-81e9f7491ffso29168007b3.0
- for <dev@dpdk.org>; Mon, 27 Jul 2026 01:04:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785139474; cv=none;
- d=google.com; s=arc-20260327;
- b=TNjWa9+vp3oo6xYb8WhliF4t/we1ZnNOXUG/3Oo+J9ERA3Biw4BciQBXEW88/T+RL8
- bcXlWQ6qhUgyHOteQD8FP9KApEp5fXnmDgFuKMKV8lKzU7UTzNB1EQlzXdZ35tOlzIXy
- zhW1P5ksDE3HnHQhj+vs78RdNeWfcoZHCGG+Mg94/Q4z+DSGq/h0DVTZ+g8hUqIv0/rm
- 84JnyFzE6HDQ7RP1veB4TE6nQneGOxL+AkXe10yAx3SUMS8jJHfGjIF0SzdB1Af+xjnq
- Ci5vLFxZsAkN4KDkG2kfeff/BYAF/mS4S22yTwj1VU5qlsxNOGA2OGpmmEC6KDoP5MNt
- gKdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version;
- bh=AFyW+4Hssdnfx2ZU6PRxvnDl6piGiH8RHb0DCR/TuD8=;
- fh=Eu2Lpgy2L18dTAZD7cWRW/ZEK2yU8zRT3rkC873nSXQ=;
- b=szfyKtdEK7lOa1Ok85KzlgtVmeXrABtxAGVStyfTNBvEbzJuSthfx3OKFFjRqzE0if
- phukv17PzoRnadFYwI3G+Exr5Qya6dx/KHXMFn8vtLzbUA7DZutGVcxUB8lR9OphR8Ub
- hiD7k3+uYVMIaHfxBq7HwZpL8v59bqMHlScXxvI9sr80QHx02cn032avxD6u8xZzp5Da
- T4EKIezcnRg5W/vBWhF8AgUp823yP1WanuqpsVKYRmBVhfaGXmZX3ImXAm2C9TrQ5nYn
- j2NaDNdTtEwbHMuhDN3aJdj7TaNtTVh3MRwuwBNlMqyrDC5N9ZKKWudHCm86GL497wZ8
- kMOA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id F185C402E4;
+	Mon, 27 Jul 2026 11:43:19 +0200 (CEST)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
+ [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id 86BED400D6
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 11:43:18 +0200 (CEST)
+Received: by mail-wr1-f47.google.com with SMTP id
+ ffacd0b85a97d-47f9ab7ee38so1126058f8f.2
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 02:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1785145398; x=1785750198; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:mime-version:message-id:date
+ :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=8KljI0Ie6Qji5bVp2vxg4o99Ut7LIImWALHRX+QbEU8=;
+ b=D5Y4/BSY3rk6DOd2nhBpcQap9eOMmlIuMxbnnTsGvr5YQCrDK/G1ZF4Tgbyqmxrjdc
+ 7JwIbICdnF7DKDYNviHNtkwwqSa+3+SGBwc95jDQhYOhPwvvppcTEf9FRp5lIKZ/R5h3
+ RTlAEBVZdUWTBnKx3ooHMfViS5eQ8QvGbg1xSCBQb/jCb7+wpQpgBQs8CBDARtEkYgCZ
+ 9ZKulstDrCw40URfsnvWR7BXB2i68VU7baSekB/fKA3QPsVFF4CT87OzNrgbYKdXCdhl
+ arZP6JPeWz9V15dz+9Dvqu8Oy5+mgE14r3fczdQ0+ezwB0eU7e/B/+/xH+FYwXjN65nE
+ xRDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785139474; x=1785744274;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=AFyW+4Hssdnfx2ZU6PRxvnDl6piGiH8RHb0DCR/TuD8=;
- b=eJEbREFXXRFPcBpozSxSketNtRe4YGXJpnQUPv9umHAZCgr8rpO45IsX4hIlgC8ziG
- 7YChX3jIYmIMwoBOMNCmDhf3ddxV3V//7dl2RGiZkvlynQ6ABEGi+ZxZX/dehTTg+fBq
- md1mO/xQzP5LVf5GCB9l7fomnIpAvd7C+MwWKQYsqMZy1fQjxAi/tJmR9ltVGaJ5cjc0
- D0RGQch4xebzw1u02LsKmu+Vbrh72gGTNzJ14x9n96CKCf37k4WxTWEkZ2iMKvOKUVee
- hMdftdrU6oRH81m439ABFsR9GtSjulUEBWUSt4IFwlKFYx/tvDDhZxm4TNPKXrBCWObE
- haNw==
-X-Gm-Message-State: AOJu0YwTq2rbXxi4H+szXZlMQeEM8XVnHAIW/lXmN74CBkfr513lkcNu
- 9u65oWfCf4aNZ+4+CaxJfKaxJu+O/sAMKCzuT/tscowZ7x+YopDrGROyHRyxkm54ibOTKWm1nea
- Euekn36fzVxQC2evHCyAz0Oxj5DrDoZ4=
-X-Gm-Gg: AR+sD10P8m9wOEIyjnXzogi8LdN04BAurL7V6QrPgjeirqLg4Az7myoAVift/+hMy1b
- WU/nPISwhfv2ymYhgS1JAppuJjXtZqXQNB1HMXWymudGyURNG96GgIrJq5Shaq5qGZ25NLHNNZ7
- LK2kl0G51vXsztgAG2FkkgNOAi7bZuGKj+W0dYmIDZR6ZProvIiFmjGngcKA66/x3zvf91C+8JJ
- WFbnklbtuVzfRFAvSLAYWDsMVO7VSL6BH0GkbzX9pI59etg8SiRPDfy+mFtM6OMvSJmlA==
-X-Received: by 2002:a05:690c:305:b0:81e:b825:24e5 with SMTP id
- 00721157ae682-81f69e2ecb8mr26996267b3.47.1785139473850; Mon, 27 Jul 2026
- 01:04:33 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1785145398; x=1785750198;
+ h=content-transfer-encoding:content-type:mime-version:message-id:date
+ :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=8KljI0Ie6Qji5bVp2vxg4o99Ut7LIImWALHRX+QbEU8=;
+ b=syF6TtR0Gc/ZQ+GDVfV/kq/Bx5E+eFHhBYs+s557sHbFv3zAwCH018gZoe/V2nbxNl
+ mS1p7Wsb8bbReKcnO1OzL/3smL9Zz3V11TFQDOqaTZSlC10kjQ0/AkA4zc61EWKsxDAK
+ hsjPJtDFIUSzFXe9PsGICABBieDLyzQ+7hbmJT9sncWAL44+l6qPTKG5oLWGzRGKbGeX
+ xlpNlDE54JkLtLjgGy1ZIyc9bPzdLcagIWJ/1NPmIJ2ZvSWOv7c6XZzoVrF0NJe3bES2
+ SKPYJbOvHr+2wBOISqNVSdAFs2ZVB4o8oKaJf+OSq0G3DBSPm2OWrQS468451WUugdOr
+ AbJQ==
+X-Gm-Message-State: AOJu0YwZlPlx5FauKUPI9tvGyFh3fPm1IRb3lg6SUQQ96sXMPYZ7Twgs
+ JvQLtrRHPV33WGRdSGFA4bTSwvIs+FapbE9WuhNQyuFbKVp89hS39Nte
+X-Gm-Gg: AR+sD10p6FLWhqnrk1H07cq7osQ6ps6N2D6/hUXxrVefr2XdhLkcbwpQvGvveLP+nTi
+ m0DE9fD0XFVh3AikMKpJeG0ZDUdOmnmkW0kb3F04JH4wXOxbV55JQ6BBfoFxx+e6gUSkO/XGo+O
+ aVzswqfMtmEwVgIBFx7GvKfCdBuMhv8lcQkt4dWzhkH3SXPH9xgJj8YDFw8bSVuwnDY2k0dGyZW
+ cPjdjDywR9/GLC2oR+Ceha3f7+/vX25ASOyynkS9NTfMy8BQH3Zidg/+hWc006+6Lixumq6cmIV
+ t4C0+BrQkpTVVDAVOj1IQD9IugL4g6RhNibY02dbHwRtYlWvXAwAUgA6fM8kMGd+dpO7GZMxy6x
+ EnNTImkHOh19SD9AUj8QiRev+5JEc+mYGc5Eed23g5dnZq15jAvvpHn96FmbDDUNjbegQ7qgJib
+ 8l9yRW+Q==
+X-Received: by 2002:a05:6000:2386:b0:47f:810c:8abe with SMTP id
+ ffacd0b85a97d-47f9feb544emr10042108f8f.36.1785145397746; 
+ Mon, 27 Jul 2026 02:43:17 -0700 (PDT)
+Received: from localhost ([2a01:4b00:d036:ae00:12c:ddcc:6e18:f764])
+ by smtp.gmail.com with UTF8SMTPSA id
+ ffacd0b85a97d-47f85bb5127sm44454239f8f.10.2026.07.27.02.43.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 27 Jul 2026 02:43:16 -0700 (PDT)
+From: luca.boccassi@gmail.com
+To: stable@dpdk.org
+Cc: dev@dpdk.org, Abhishek Marathe <Abhishek.Marathe@microsoft.com>,
+ Ali Alnubani <alialnu@nvidia.com>,
+ David Christensen <drc@linux.vnet.ibm.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
+ Ju-Hyoung Lee <juhlee@microsoft.com>, Kevin Traynor <ktraynor@redhat.com>,
+ Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>,
+ Raslan Darawsheh <rasland@nvidia.com>,
+ Thomas Monjalon <thomas@monjalon.net>, Yanghang Liu <yanghliu@redhat.com>
+Subject: 24.11.7 patches review and test
+Date: Mon, 27 Jul 2026 10:43:03 +0100
+Message-ID: <20260727094306.41797-1-luca.boccassi@gmail.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-References: <20260720133436.869334-1-maxime@leroys.fr>
- <20260723093540.1839619-1-maxime@leroys.fr>
- <20260726093700.39e9b9ab@phoenix.local>
-In-Reply-To: <20260726093700.39e9b9ab@phoenix.local>
-From: Maxime Leroy <maxime@leroys.fr>
-Date: Mon, 27 Jul 2026 10:04:22 +0200
-X-Gm-Features: AUfX_mzAkQjGPikq4PiScyfYPv7jmRiHBfYMNmpeYcnPXSIICX4AqIW2TE0K0Qw
-Message-ID: <CAHHRULXPPNUngvOoU396C0Z0-vch5LLv+M9yDux-JZDLQvirJQ@mail.gmail.com>
-Subject: Re: [PATCH v2] net/dpaa2: hash inner IP for tunnelled traffic
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, 
- Sachin Saxena <sachin.saxena@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,171 +84,430 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, Jul 26, 2026 at 6:37=E2=80=AFPM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Thu, 23 Jul 2026 11:35:40 +0200
-> Maxime Leroy <maxime@leroys.fr> wrote:
->
-> > The RSS key only extracted the outer IP header. Tunnelled traffic whose
-> > outer headers are fixed then carries no entropy for the hash, so every
-> > flow lands on a single Rx queue.
-> >
-> > Extract both the outer IP (header index 0) and the innermost IP
-> > instance (HDR_INDEX_LAST). Plain frames keep being hashed on their only
-> > IP header; the inner extract resolves to nothing and adds no entropy.
-> > Tunnelled frames are also hashed on their inner IP and spread across th=
-e
-> > Rx queues.
-> >
-> > This is the PMD default hash: dpaa2 does not expose the ethdev RSS leve=
-l
-> > selector, so it applies to every RSS request. The hardware cannot hash
-> > the inner IP alone, as HDR_INDEX_LAST only resolves when several IP
-> > headers are stacked and a plain frame would hash to a constant. Folding
-> > the outer IP into the key is therefore unavoidable, and two tunnelled
-> > flows that share an inner IP but differ in their outer IP may hash to
-> > different queues. This is documented in the dpaa2 guide.
-> >
-> > Signed-off-by: Maxime Leroy <maxime@leroys.fr>
-> > ---
->
-> More detailed AI review
->
-> Warning: RSS key size likely exceeds the DPNI key limit
->
-> drivers/net/dpaa2/base/dpaa2_hw_dpni.c
->
-> Doubling the IP extracts doubles the generated key, not just the
-> extract count.  The driver's own accounting treats a NET_PROT_IP
-> full-field address extract as 16 bytes (NH_FLD_IPV6_ADDR_SIZE, see
-> dpaa2_flow_add_ipaddr_extract_rule() in dpaa2_flow.c), so:
->
->     before:  16 + 16 + 1                =3D 33 bytes  (+4 with L4 =3D 37)
->     after:   2 * (16 + 16 + 1)          =3D 66 bytes  (+4 with L4 =3D 70)
->
-> DPNI_MAX_KEY_SIZE is 56, and dpni_attr.fs_key_size is documented as
-> "Size, in bytes, of the flow steering look-up key.  Defining a key
-> larger than this when composing the hash + FS key will result in an
-> error."  The PMD never reads fs_key_size and there is no size check
-> anywhere on this path, so the first sign of trouble would be
-> dpni_set_rx_hash_dist() failing and rte_eth_dev_configure() returning
-> an error for a plain RTE_ETH_RSS_IP request that works today.
->
-> Has this been tested on hardware with RTE_ETH_RSS_IP (and IP|TCP|UDP)?
+Hi all,
 
-It has, on LX2160A, and with exactly those two requests. testpmd --rss-ip
-sets rss_hf to RTE_ETH_RSS_IP and testpmd --rss-udp sets it to
-RTE_ETH_RSS_IP | RTE_ETH_RSS_UDP, which compose six and eight extracts,
-that is your 66 bytes and 70 bytes.
+Here is a list of patches targeted for stable release 24.11.7.
 
-Our forwarding application goes further, requesting
+The planned date for the final release is 2026/08/10.
 
- rss_hf =3D RTE_ETH_RSS_VLAN | RTE_ETH_RSS_IP | RTE_ETH_RSS_UDP |
-          RTE_ETH_RSS_TCP
+Please help with testing and validation of your use cases and report
+any issues/results with reply-all to this mail. For the final release
+the fixes and reported validations will be added to the release notes.
 
-which composes nine extracts: one VLAN TCI, six IP (source, destination
-and protocol, at index 0 and at HDR_INDEX_LAST) and two L4 ports, so 72
-bytes with the 16 bytes per address you count, against 39 bytes before the
-patch.
+A release candidate tarball can be found at:
 
-In all three cases dpni_set_rx_hash_dist() accepts the key and
-rte_eth_dev_configure() succeeds.
+    https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.7-rc1
 
-Distribution was then checked per traffic type: plain IPv4, plain IPv6,
-VLAN tagged frames and IPv6 tunnelled traffic all spread across the Rx
-queues, the last one on its inner IP, which is the point of the patch.
+These patches are located at branch 24.11 of dpdk-stable repo:
+    https://dpdk.org/browse/dpdk-stable/
 
-So 56 does not bound this path. DPNI_MAX_KEY_SIZE and fs_key_size bound
-the flow steering look-up key, that is the key which is stored in, and
-compared against, the FS and QoS table entries. Its size is explicit in
-the API (dpni_rule_cfg carries key_iova, mask_iova and key_size), and it
-is the size dpaa2_flow.c accounts and checks: that is the path your 16
-bytes figure comes from.
+Thanks.
 
-The hash distribution path installs no table entry and stores no key.
-dpni_rx_dist_cfg has no key_size field at all, only dist_size and
-key_cfg_iova, i.e. the key composition; the composed bytes are only fed
-to the hash function which yields the queue index. The two budgets are
-not the same.
+Luca Boccassi
 
-For the extract count, the flib bound is DPKG_MAX_NUM_OF_EXTRACTS =3D 20,
-and it is the only limit the driver checks, in dpkg_prepare_key_cfg().
-The worst case, requesting every type the PMD advertises (ETH, PPPOE,
-ESP, AH, VLAN, MPLS, IP and L4), is 16 extracts with this patch. It is 13
-without it, and it was 15 in the code that shipped until the June cleanup
-folded the SCTP ports into the L4 case (4b200f10de27).
+---
+Aarnav JP (7):
+      test/security: sync inline IPsec soft expiry check
+      net/cnxk: fix underflow in LSO calculation
+      common/cnxk: add cipher key length check in key set
+      common/cnxk: fix static analysis issues
+      common/cnxk: add auth key length check in inbound SA
+      event/cnxk: fix static analysis issues
+      crypto/cnxk: enforce DES/3DES cipher key length
 
-> If MC accepts it, please say so in the commit message, because the
-> arithmetic says it should not.  If the limit is real, the extract set
-> needs to shrink -- dropping NH_FLD_IP_PROTO, or extracting only the
-> inner address pair, would be candidates.
->
-> Warning: the "inner extract resolves to nothing" claim needs backing
->
-> Both the commit message and the new comment assert that on a plain
-> frame the HDR_INDEX_LAST extract resolves to nothing and contributes no
-> entropy.  The MC header documents hdr_index as "used for protocols that
-> may have more than a single header, 0 indicates an outer header" with
-> NET_PROT_IP taking (0, HDR_INDEX_LAST).  The natural reading is that
-> for a single-IP frame the last header *is* the outer one, so index 0
-> and HDR_INDEX_LAST select the same header and the fields are extracted
-> twice.
+Ajit Khaparde (4):
+      net/bnxt: modify check for short Tx BD
+      net/bnxt: fix QP resource count in backing store config
+      net/bnxt: fix Tx address for external mbuf
+      net/bnxt: avoid null Rx queue dereference
 
-That reading is excluded by measurement on LX2160A, with testpmd.
+Alexey Simakov (2):
+      net/enic: fix null dereference in flow mask check
+      net/nfp: fix shifts in BAR size calculation
 
-It is in fact the regression patch 1 of this series reverts. The reverted
-commit programmed the IP extracts *only* at HDR_INDEX_LAST. Had
-HDR_INDEX_LAST selected the outer header of a frame carrying a single IP
-header, plain traffic would have kept hashing on that header and there
-would have been nothing to fix. What we measured instead was every plain
-frame getting the same hash and landing on one Rx queue, while tunnelled
-traffic spread correctly on its inner IP. Patch 1 states this and carries
-Hemant's ack.
+Alok Mishra (1):
+      common/cnxk: fix xstats names query
 
-Reading the driver leads to the same conclusion, though I can only offer
-it as a reading. fsl_dpkg.h defines hdr_index for VLAN, MPLS and IP only,
-and for those three the Rx annotation exposes one flag set per header
-instance: L3_IPV4_1_PRESENT against L3_IPV4_N_PRESENT and so on in
-base/dpaa2_hw_dpni_annot.h, the matching offset accessor being named
-IP_N_OR_MIN_ENCAP_OFFSET(). Index 0 would then select the "1" instance
-and HDR_INDEX_LAST the "N" one, and a frame with a single IP header has no
-"N" instance for the extract to resolve to. Whatever the key generator
-places in the key for such an extract, it is the same for every plain
-frame, which is what the measurement shows: no entropy, and no second
-extraction of the outer header.
+Anatoly Burakov (13):
+      net/ixgbe: fix shared PF pointer in representor
+      net/ixgbe: fix non-shared data in IPsec session
+      net/ixgbe: fix SCTP protocol-only flow parsing
+      net/ixgbe: fix L4 protocol mask handling
+      net/ixgbe: reset flow state on clear paths
+      ipc: fix log message in async request
+      ipc: use request ID instead of pointers
+      ipc: avoid deadlock in async alarm callback
+      ipc: fix memory leaks on async request partial failure
+      ipc: fix memory leak in async secondary path
+      ipc: trigger async callback without peers
+      app/testpmd: mask VLAN TCI in flow rule
+      app/testpmd: mask VLAN inner type in flow rule
 
-> That is harmless for distribution but it is not what the patch
-> says, and it changes the key size and hash values for every existing
-> non-tunnelled user.
->
-> Please confirm the actual behaviour with NXP and describe it
-> accurately, one way or the other.  This also feeds directly into the
-> key-size question above.
->
-> Info: duplicate constant
->
-> +#define DPAA2_DIST_HDR_INDEX_LAST 0xff
->
-> mc/fsl_net.h already carries LAST_HDR_INDEX (0xFFFFFFFF), truncated to
-> 0xff by the uint8_t hdr_index field.  Two differently-named constants
-> for the same hardware encoding in one driver is confusing.  Either
-> reuse the existing one with an explicit cast, or add a comment saying
-> this is LAST_HDR_INDEX narrowed to the 8-bit command field.
->
-> Info: placement
->
-> The #define sits between two function definitions.  Move it up with the
-> other file-scope definitions, or into dpaa2_ethdev.h next to the
-> related driver constants.
+Anurag Mandal (3):
+      net/iavf: fix misleading admin queue failure logging
+      net/iavf: fix race condition on link status change
+      net/iavf: fix duplicate VF reset during PF reset recovery
 
-Agreed on both. v3 derives the constant from LAST_HDR_INDEX, cast to the
-8-bit field it feeds, and moves it up with the other file scope
-definitions:
+Borys Tsyrulnikov (1):
+      net/mlx5: fix double free in vectorized Rx recovery
 
- /* LAST_HDR_INDEX narrowed to the 8-bit dpkg hdr_index field */
- #define DPAA2_DIST_HDR_INDEX_LAST ((uint8_t)LAST_HDR_INDEX)
+Bruce Richardson (18):
+      test: fix failing tests on FreeBSD
+      cfgfile: prevent overflow on resize
+      cmdline: harden parser result buffer handling
+      cmdline: guard zero-size destination buffers
+      eal/freebsd: fix memseg addresses in VA mode
+      test/security: remove fast-free Tx flag
+      test/security: fix MTU calculation underflow
+      test/security: check for capabilities
+      net/intel: fix use of non-recommended string functions
+      test/eal: remove PCI probing for recursive calls
+      examples: use strlcpy and strlcat
+      net/iavf: fix local memory leaks in TM hierarchy commit
+      net/iavf: fix leak of queue to traffic class mapping data
+      net/iavf: fix memory leak on error when adding flow parser
+      net/ice: fix buffer leak in config of Tx queue TM node
+      net/iavf: fix leak of flex metadata extraction field
+      net/iavf: fix leak of IPsec crypto capabilities array
+      app: remove use of strncpy
 
--------------------------------
-Maxime Leroy
-maxime@leroys.fr
+Chenna Arnoori (2):
+      net/bnxt: fix Rx timestamping for non-PTP packets
+      net/bnxt: avoid link flap when setting flow control
+
+Chinh Cao (1):
+      net/i40e/base: fix integer overflow in NVM timing logic
+
+Ciara Loftus (16):
+      net/i40e: fix simple Tx prepare rejecting tunnel type flags
+      net/i40e: fix VLAN flow mask validation
+      net/iavf: fix disabling of promiscuous modes on close
+      net/iavf: fix reset handling error log
+      net/ice: fix shaper profile reference count tracking
+      net/ice: fix TM node ID validation against configured queues
+      net/i40e: fix blocking link wait on device start
+      net/iavf: wait for PF reset start before reinitializing
+      net/iavf: fix event handler refcount leak on HW reset
+      net/iavf: reject oversized frames in prep callback
+      net/iavf: fix scalar Rx path zero-length segment
+      net/ice: fix Rx packets statistics underflow
+      net/ice: fix DCF Rx packets statistics underflow
+      net/iavf: fix Rx packets statistics underflow
+      net/i40e: activate alarm if interrupt delivery unavailable
+      net/ice: fix adapter stopped on device start failure
+
+Dakota Sicher (1):
+      net/bnxt: skip timed Tx pacing setup when unsupported
+
+Damodharam Ammepalli (1):
+      net/bnxt: fix LRO capability reporting
+
+Daniil Iskhakov (7):
+      net/i40e: validate DDP segment header before use
+      net/ixgbe: fix queue received bytes CRC adjustment
+      net/ixgbe: fix good octets CRC adjustment
+      net/ixgbe: fix flow control frame byte adjustment
+      net/ixgbe: fix MAC/VLAN item validation for ntuple
+      cryptodev: reset pointer after failure in callback init
+      cmdline: prevent out-of-bounds read
+
+Daphne Priscilla (1):
+      crypto/cnxk: fix out-of-place AES-GCM
+
+Dariusz Sosnowski (3):
+      net/mlx5: fix skipping PF representors
+      net/mlx5: redirect LACP traffic for legacy E-Switch
+      net/mlx5: use port index as representor index
+
+David Marchand (8):
+      bus/fslmc: fix bus cleanup
+      pipeline: fix build with sanitizers or debug options
+      ci: update versions of actions in GHA
+      bus/ifpga: remove unused AFU lookup helper
+      vdpa/nfp: fix double PCI unmap on unplug
+      bus/pci: fix mapping leak in bus cleanup
+      bus/vmbus: fix interrupt leak in cleanup
+      test/eal: remove PCI probing for vdev tests
+
+Deepthi Kavalur (1):
+      net/i40e/base: fix loop counter width in DCB parsing
+
+Denis Lyulin (1):
+      ethdev: fix pointer check in GENEVE and raw flow copy
+
+Denis Sergeev (5):
+      net/nfp: fix null dereference in flower ctrl NFD3 Tx
+      net/ark: fix null dereference on allocation failure
+      net/ark: use standard IPv4 address parser
+      power: fix off-by-one in uncore env bounds check
+      net/bnxt/tf_core: check pool use allocation
+
+Dima Ruinskiy (2):
+      net/e1000/base: fix style
+      net/e1000/base: propagate PHY control register write error
+
+Gagandeep Singh (3):
+      net/enetc: fix Tx BD structure
+      net/dpaa: fix interrupt unregister
+      net/dpaa: fix device remove
+
+Gena Tertychnyi (1):
+      eal/windows: fix core count for more cores per NUMA
+
+Hemant Agrawal (10):
+      bus/dpaa: fix FQ creation failure handling
+      bus/dpaa: fix FQ query failure handling
+      net/dpaa: fix CGR modification
+      bus/dpaa: fix FD leak for CCSR mmap
+      net/dpaa: fix xstats name for Tx undersized counter
+      net/dpaa: fix BMI xstats names
+      net/dpaa: remove duplicate packet types
+      net/dpaa: fix BMI xstats by ID
+      net/dpaa: fix checksum offload with empty L3 length
+      net/dpaa: fix mbuf leak in SG FD creation
+
+Huisong Li (3):
+      power: remove duplicate uncore set frequency typedef
+      power: validate enabled lcores in PMD management API
+      examples/l3fwd-power: fix latency query failure handling
+
+James Raphael Tiovalen (2):
+      ethdev: fix out-of-bounds write in GENEVE option conversion
+      ethdev: fix out-of-bounds write in flex item conversion
+
+Jasper Tran O'Leary (1):
+      net/gve: fix comma operator misuses
+
+Joshua Washington (7):
+      net/gve: clear out shared memory region for statistics
+      net/gve: delay adding mbuf head to software ring
+      net/gve: copy data to QPL buffer when mbuf read does not
+      net/gve: set mbuf to null in software ring after use
+      net/gve: free context mbuf on later segment drop
+      net/gve: increase range of DMA memzone IDs to 64 bits
+      net/gve: restrict max ring size in GQ QPL to 2K
+
+Kalesh AP (3):
+      net/bnxt: support PTP on Wh+ using HWRM interface
+      net/bnxt: support Rx/Tx timestamp on Wh+ using HWRM
+      net/bnxt: support PTP for Thor2
+
+Kavya AV (1):
+      net/ice: use configured outer TPID for VLAN filter in DVM
+
+Keegan Freyhof (3):
+      net/bnxt: fix NQ/CQ processing for interrupt handling
+      net/bnxt: avoid queue use after free on close
+      net/bnxt: clear stale Tx descriptor count
+
+Kiran Vedere (1):
+      net/mlx5: fix uninitialized skip count
+
+Linhu Li (1):
+      net/mlx5: fix flow counter race on query completion
+
+Long Li (6):
+      net/mana: fix Rx mempool leak on port stop
+      net/netvsc: retry VF hotplug until device disappears
+      net/netvsc: retry on SIOCGIFHWADDR failure during VF hotplug
+      net/netvsc: retry full probe when IB device not ready
+      net/netvsc: retry when no matching MAC found
+      dev: report devargs truncation for multi-process hotplug
+
+Lukasz Czapnik (1):
+      net/e1000/base: fix possible variable overflow
+
+Marat Khalili (14):
+      bpf/validate: fix BPF_ADD of pointer to a scalar
+      bpf/validate: fix BPF_LDX | EBPF_DW signed range
+      bpf/validate: fix BPF_NEG of INT64_MIN and 0
+      bpf/validate: fix BPF_DIV and BPF_MOD signed part
+      bpf/validate: fix BPF_MUL ranges minimum
+      bpf/validate: fix BPF_MUL signed overflow UB
+      bpf/validate: fix BPF_JGT/EBPF_JSGT no-jump max
+      bpf/validate: fix BPF_JMP source range calculation
+      bpf/validate: fix BPF_AND min calculations
+      bpf/validate: fix BPF_LSH shift-out-of-bounds UB
+      bpf/validate: fix BPF_OR min calculations
+      bpf/validate: fix BPF_SUB signed max zero case
+      bpf/validate: fix BPF_XOR signed min calculation
+      bpf/validate: prevent overflow when building graph
+
+Marcel Telka (1):
+      mem: update comment on virtual area reservation
+
+Mattias Rönnblom (1):
+      test/dispatcher: preserve event opaque field
+
+Maxime Leroy (6):
+      interrupts: propagate epoll error
+      fib6: fix tbl8 reservation drift in trie
+      net/dpaa2: add L4 destination port to RSS hash key
+      net/dpaa2: use L4 port extraction for SCTP RSS
+      app/testpmd: include IP fields in UDP RSS option
+      net/dpaa2: fix Rx queue count for primary process
+
+Maxime Peim (1):
+      net/mlx5: prepend implicit items in sync flow creation
+
+Md Shofiqul Islam (1):
+      dma/dpaa2: propagate removal error
+
+Menachem Fogel (1):
+      net/e1000/base: fix NVM loop bounds and pointer access
+
+Michael Pfeiffer (1):
+      net/mlx5: remove nonsensical flow action class ID checks
+
+Mingjin Ye (1):
+      net/ixgbe: fix EEPROM read on copper media
+
+Mohammad Shuab Siddique (2):
+      net/bnxt: fix RSS hash mode configuration for VF
+      net/bnxt: fix PTP timestamp flags in scalar Rx
+
+Mukul Katiyar (1):
+      net/ice: fix TM hierarchy deletion
+
+Ouyang Hao (1):
+      net/af_xdp: fix resource leak in close
+
+Pavan Nikhilesh (1):
+      dma/cnxk: fix crash on secondary process cleanup
+
+Prashant Gupta (1):
+      net/dpaa: add null check in scheme delete
+
+Radu Nicolau (2):
+      crypto/scheduler: fix session restore of pending enqueues
+      crypto/virtio: remove explicit cookie allocation
+
+Raghavendra Ningoji (1):
+      dmadev: clarify reported completion index
+
+Rahul Bhansali (1):
+      common/cnxk: fix event type for soft expiry
+
+Rakesh Kudurumalla (1):
+      examples/ipsec-secgw: drop packets in poll mode
+
+Rupesh Chiluka (1):
+      app/dma-perf: fix hang with worker on main lcore
+
+Sandeep Penigalapati (2):
+      net/i40e: fix flexible payload filter
+      net/ice: reject unsupported flow item range
+
+Satha Rao (1):
+      common/cnxk: fix TM link config selection in debug dump
+
+Sergei Iashin (3):
+      net/iavf: remove dead code in TM node parameter check
+      net/octeontx: fix overflow in device name formatting
+      net/octeontx/base: fix out-of-bounds DQ range lookup
+
+Shaiq Wani (1):
+      net/ice: fix L2TPv2 outer MAC in training packet
+
+Shani Peretz (1):
+      app/testpmd: fix flow job list double-free on reattach
+
+Shijith Thotton (1):
+      dma/odm: fix zero-length DMA transfer
+
+Shuzo Ichiyoshi (2):
+      net/e1000: fix igc RSS redirection table
+      net/e1000: fix igc Tx descriptor ring wrap
+
+Sivaprasad Tummala (1):
+      examples: remove artificial Tx queue limit
+
+Soumyadeep Hore (1):
+      net/iavf: remove PHC polling from Rx datapath
+
+Srikanth Yalavarthi (3):
+      mldev: fix some typos in Doxygen
+      doc: fix some mldev model captions
+      ml/cnxk: fix overwriting layer name during load
+
+Stephen Hemminger (36):
+      net/axgbe: fix comma operator misuse
+      net/pcap: fix Windows build
+      net/pcap: advertise Tx multi segment
+      net/pcap: fix error accounting and backpressure on Tx
+      net/pcap: reject non-Ethernet interfaces
+      net/af_packet: fix indentation
+      app/testpmd: terminate process on second signal
+      eal: add helper to initialize process-shared mutex
+      ethdev: fix flow_ops_mutex for multi-process
+      net/failsafe: fix hotplug mutex for multi-process
+      net/atlantic: fix mbox mutex for multi-process
+      net/axgbe: fix mutexes for multi-process
+      net/bnxt: fix mutexes for multi-process
+      net/hinic: fix mutexes for multi-process
+      bitops: fix build with GCC 17
+      ip_frag: fix unsafe tailq usage
+      ip_frag: randomize hash seed
+      mem: fix data race in Linux hugepage prefault
+      telemetry: fix thread-unsafe command parsing
+      ethdev: make telemetry parameter parsing thread-safe
+      dmadev: validate telemetry parameters
+      security: harden telemetry parameter parsing
+      eventdev/eth_rx: fix thread-unsafe telemetry parsing
+      eventdev/eth_rx: reject out-of-range telemetry ID
+      eventdev/timer: reject out-of-range telemetry ID
+      net/e1000: check flex filter mask range
+      tailq: fix name truncation
+      net/cnxk: fix telemetry SA info parameter parsing
+      common/cnxk: fix thread-unsafe NIX telemetry parsing
+      net/af_packet: fix parsing of numeric device args
+      net/bonding: check mode before setting dedicated queues
+      net/bonding: prevent crash on Rx/Tx from secondary process
+      ip_frag: include protocol in IPv4 reassembly key
+      ip_frag: drop IPv6 fragments with per-fragment headers
+      ip_frag: reject oversized reassembled datagrams
+      maintainers: fix app/test attributions
+
+Thomas Monjalon (6):
+      examples/vm_power_manager: fix const discarding
+      devtools: fix regex matching literal plus in patches
+      spinlock: remove volatile qualifier
+      spinlock: fix API comments
+      net/mlx5: fix Rx split segment counter type
+      dts: fix topology capability comparison
+
+Vanshika Shukla (2):
+      net/dpaa: fix port handle leak
+      dma/dpaa: fix out-of-bounds access in SG descriptor enqueue
+
+Vincent Jardin (1):
+      doc: fix stale packet pacing in mlx5 guide
+
+Vladimir Medvedkin (1):
+      fib6: fix error code propagation on next hop update
+
+Wei Dai (1):
+      crypto/ipsec_mb: avoid clearing SNOW3G digest in-place
+
+Xingui Yang (1):
+      net/hns3: fix L4 checksum for tunnel packets
+
+Yunjian Wang (1):
+      net/mlx5: fix handling of FCQ allocation failure
+
+Zaiyu Wang (9):
+      net/txgbe: remove duplicate xstats counters
+      net/ngbe: remove duplicate xstats counters
+      net/ngbe: add CDR config for YT PHY
+      net/txgbe: fix traffic class priority configuration
+      net/txgbe: enable Tx descriptor check per queue
+      net/ngbe: support USO
+      net/txgbe: support USO
+      net/txgbe: fix link flow control config for Sapphire
+      net/txgbe: fix mass of unknown interrupts
+
+Zhiguang Jin (1):
+      ring: fix zero-copy burst API documentation
+
+Zoe Cheimets (1):
+      net/bnxt: roll back Tx descriptors for invalid packets
