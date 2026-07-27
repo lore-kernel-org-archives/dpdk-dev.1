@@ -2,64 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3940CC53219
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 11:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AB6C531D0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 12:49:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B97040616;
-	Mon, 27 Jul 2026 13:53:41 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 51F5E40616
- for <dev@dpdk.org>; Mon, 27 Jul 2026 13:53:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1785153219;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=smuL333Hky6c3DerCBtLQ+4kbHckdMge9SuObIV8yS4=;
- b=iB47Rb77kM6zlcOOwv0hhFYJoNZeBXC1e3AO74hjCI1+spnS42DE8+gnlKTbZiROKZehRD
- t8d1v/TWKpJ250wgQPIE42Rt9tWSSt9pYs8/nkHJMGuKAGkxqynnvvgJawBbHLhWbTA9/y
- WGIh/vbzusdr1O8ZyfNfzuitXSjiVEc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-637-mviGfIlsNHyHRRTUYPWozw-1; Mon,
- 27 Jul 2026 07:53:36 -0400
-X-MC-Unique: mviGfIlsNHyHRRTUYPWozw-1
-X-Mimecast-MFC-AGG-ID: mviGfIlsNHyHRRTUYPWozw_1785153214
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 341321955EAE; Mon, 27 Jul 2026 11:53:34 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.48.202])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id E25B91800480; Mon, 27 Jul 2026 11:53:30 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org,
-	hkalra@marvell.com
-Cc: Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>,
- Jakub Grajciar <jgrajcia@cisco.com>, Matan Azrad <matan@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC v2 3/3] interrupts: close interrupt FDs
-Date: Mon, 27 Jul 2026 13:53:09 +0200
-Message-ID: <20260727115309.1377267-4-david.marchand@redhat.com>
-In-Reply-To: <20260727115309.1377267-1-david.marchand@redhat.com>
-References: <20260723131908.3313223-1-david.marchand@redhat.com>
- <20260727115309.1377267-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 191C9400EF;
+	Mon, 27 Jul 2026 14:49:07 +0200 (CEST)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com
+ [209.85.128.175])
+ by mails.dpdk.org (Postfix) with ESMTP id E99DC400D6
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 14:49:05 +0200 (CEST)
+Received: by mail-yw1-f175.google.com with SMTP id
+ 00721157ae682-81ec29f1d07so29978777b3.1
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 05:49:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785156545; cv=none;
+ d=google.com; s=arc-20260327;
+ b=X3htbP5FMUsIyLzjPRGYNNt+lJJ6d2yu+loSXN692Z5clOKQeiEnpA9VwekjYsSkbP
+ +fmKXz+c5pKqvTTobrNzHlviDVvCHzfP1I0jZli9sb4ma6MJr7mm7TK1XPKj3yTDaPm4
+ lEb957VRmJa0sO33YRy3lePByk22jYsOF3iLHlV7sg230XeRsGvOhXfELIwGfcn7P/8v
+ sFyX1eP5BmWWMhoQ6822UgdSQIKg8Q0QIFRlGrQsuyXxn5uUe5XRJW1y+Z8vD5BsmDDh
+ 1qzNNO2obmQKyTvYbMcPeVrlWQC52wVATwuJUX+LsQWSDNDHTXL0VNTofSbUJ3TYezMg
+ NR6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version;
+ bh=uDf8XVnQYRCcal/M5Eg5Qg8AE77efRiJQ1a86MUsG2k=;
+ fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
+ b=HSX7K5Yg9m0fQ57t2noLGnIk77ys9sSRWh2kf+2Pz8T9fqrZS57FsIXORt7hQeHkcD
+ jlfg/ibAfNAvZoGaUntrRxDg17ehuGukStLChofY8bVdA3UyWFXfoydUUQQbJD9hPt+K
+ 3i4K3HNd9DY8kTeefEjY8Eqtnl/0UqQLUjD4o+J7DtVBI3m1gDYahzDBmYD2M+FPfCJC
+ JCs6/OpHrrGFEFWeawV83K5r9PbEDY+LuZGLrBOrTvgJjHiQLOikr509l5U2aQr3cv6s
+ JRLdx8X1/32fMuHKEFQTCTOBkKHHsJyXi79eMhlC86NFUdWugP/xW15AeOODjIo4vGpB
+ /K8Q==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1785156545; x=1785761345;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=uDf8XVnQYRCcal/M5Eg5Qg8AE77efRiJQ1a86MUsG2k=;
+ b=IrV2Ufp3+/RQ2vMmmckFzovLsU2v9oJ0pboHkBS3uLVcxE60KPvl1go+9U4yEvJYYh
+ 6US7l6QldWzJJ8/ujIbly36jCnZcS+sG9yC/hCkahobIt7Rr8Wq5AMnOUeqEpEtZb8Nm
+ bG+VS1j43+eObPwa/ZyBzEXzyyWEZVZsXDiaJ0HhaiLC6eNtMQMjLK4xXibwR6l4vEQa
+ 8Ue5Z2kKrGEBHjPzl+fUEoA5ASWhxL+mPLY8bni35Rlxqbt0PorsOzoWAzSEeH4juQ8U
+ N50znTyr3FTceLVkTn7B5RweYCCFN4WIF/70yapFoZUJvJ5d7OY7NOiHseTfcNJDvyCF
+ 5bkg==
+X-Gm-Message-State: AOJu0YwWTPO2aRRF7yxC2Dx7KQrJdS+xNoujzoMTNpIYizYwB7q7FdQx
+ 8QjMccon1r2QHp0pC3zS5M65kWyM/K4S/pAM/kVEscEGcZ8gXwsXneaeRQZ/CA4zbbv5hvhVjju
+ 2GPnn48VOxQ8QUtlLVwKZ8yNBmrgA+v8=
+X-Gm-Gg: AR+sD13dSoFtPrJuDcLHg3JGJxYnlSEXhuiW6TkkkPbGXDvUEMbrVz3twXUNOxMg+p3
+ Ez8RJ07KxgMR3vRNATi6Z05NTzp3JmoQjJg7HKdr5myQgT2uUoCLJ/8gCoi4W4x9WcMfB0X4wfc
+ +w270sQbqHJZuS2TFMmG/B/wGiT4uPLLFdmzO7sVoDo4bIMbYc1o1w36x4D7IcppQkuK6jh5aOu
+ izJtPh822Ht3rtNjRJp5ErL4eBWFB4VHzzE67Jj4EMemXveUteouPyO4lo=
+X-Received: by 2002:a05:690c:6c0d:b0:81e:2b86:d75f with SMTP id
+ 00721157ae682-81f90929c55mr1278697b3.68.1785156544829; Mon, 27 Jul 2026
+ 05:49:04 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: gl4ZqkogXxDOYhQuNZETrOzjjyrs3qkFY3wv8zL-jxw_1785153214
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+References: <20260717095842.419130-1-maxime@leroys.fr>
+ <20260720120700.801099-1-maxime@leroys.fr>
+ <20260726102742.5c9bcf34@phoenix.local>
+In-Reply-To: <20260726102742.5c9bcf34@phoenix.local>
+From: Maxime Leroy <maxime@leroys.fr>
+Date: Mon, 27 Jul 2026 14:48:53 +0200
+X-Gm-Features: AUfX_mzmllilVNQYcXQf7J3fi7uI6E6iI2l8-YxtP62RRrh2rqS6CRpSaCzyQ-Q
+Message-ID: <CAHHRULWNPMQFHMH=akH5ph+bY3GYisjK6sniOuXG2puO+Lx_mg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] net/tap: fix Rx queue interrupt support
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,422 +85,285 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add rte_intr_fd_close() and rte_intr_dev_fd_close() helpers to
-encapsulate the common pattern of closing an interrupt handle's
-file descriptor and resetting it to -1.
+On Sun, Jul 26, 2026 at 7:27=E2=80=AFPM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Mon, 20 Jul 2026 14:06:56 +0200
+> Maxime Leroy <maxime@leroys.fr> wrote:
+>
+> > The tap PMD registers each queue file descriptor for Rx interrupts but =
+the
+> > feature is not usable through the generic API. This series fixes two
+> > distinct issues against the original Rx interrupt support, plus a small
+> > type cleanup.
+> >
+> > Patch 1 adds the missing rx_queue_intr_enable/disable ops. Without them
+> > rte_eth_dev_rx_intr_enable() returns -ENOTSUP, so applications that arm
+> > queues before sleeping (l3fwd-power and similar) treat tap as having no
+> > interrupt support and fall back to polling.
+> >
+> > Patch 2 fixes a traffic stall specific to interrupt mode: the Rx burst
+> > skips reading the queue fd until the SIGIO trigger advances, but in
+> > interrupt mode the application wakes through epoll, a distinct signal, =
+so
+> > the burst can return 0 right after a wakeup and the fd stays readable w=
+ith
+> > no further edge. The fd is now drained unconditionally in interrupt mod=
+e
+> > and the SIGIO trigger is not armed on the data queue fds.
+> >
+> > Patch 3 converts the driver's int-as-boolean fields to bool.
+> >
+> > Patches 1 and 2 are candidates for stable.
+> >
+> > v2:
+> >  - use bool for the new interrupt-mode fields instead of int (Stephen);
+> >    both fit existing padding, so neither struct grows
+> >  - add patch 3 converting the existing int booleans to bool
+> >
+> > The coding_style.rst note that discouraged bool in structures no longer
+> > matches DPDK practice; it is dropped by a separate patch.
+> >
+> > Maxime Leroy (3):
+> >   net/tap: support Rx queue interrupt enable/disable
+> >   net/tap: drain queue FD in Rx interrupt mode
+> >   net/tap: use bool for boolean flags
+> >
+> >  drivers/net/tap/rte_eth_tap.c | 25 +++++++++++++++++++-
+> >  drivers/net/tap/rte_eth_tap.h | 11 ++++++---
+> >  drivers/net/tap/tap_flow.c    |  4 ++--
+> >  drivers/net/tap/tap_intr.c    | 44 +++++++++++++++++++++++++++++++++++
+> >  4 files changed, 78 insertions(+), 6 deletions(-)
+> >
+>
+> Like this but detailed AI review found some things.
+>
+> Review of [PATCH v2 0/3] net/tap: Rx interrupt fixes
+>
+> Applied clean to 38f72e5. All three commits build independently under
+> -Dwerror=3Dtrue, so the series is bisect-safe. No compiler diagnostics.
+>
+> Verified against a running tap port (/dev/net/tun, kernel-side traffic),
+> not just by reading the diffs.
+>
+>
+> Patch 1/3: net/tap: support Rx queue interrupt enable/disable
+> ------------------------------------------------------------
+>
+> Confirmed working. rte_eth_dev_rx_intr_enable()/disable() return 0 in
+> interrupt mode where they previously returned -ENOTSUP, and an
+> epoll-driven receive loop delivers 100% of offered packets.
+>
+> The -ENOTSUP branch is not dead code: rte_eth_dev_rx_intr_enable()
+> validates only the queue id and the op pointer, never intr_conf.rxq, so
+> the driver is the sole guard.
+>
+> tap.ini already advertises "Rx interrupt =3D Y", so no features-matrix
+> change is needed -- that overclaim is precisely what this patch fixes.
+>
+> Info: pmd->intr_mode duplicates dev->data->dev_conf.intr_conf.rxq, which
+> tap_rx_intr_vec_install() already reads directly. The rx_queue copy earns
+> its place on the fast path; the pmd_internals copy is redundant state
+> that can drift. Not blocking.
+>
+It is not a copy of the current value but the one locked by the first confi=
+gure.
+rte_eth_dev_configure() has already written the new dev_conf by the time
+tap_dev_configure() runs, so comparing against dev->data->dev_conf.intr_con=
+f.rxq
+would compare the new value with itself and the mode change could never be
+detected.
 
-This simplifies code in multiple drivers that previously had to:
-  if (rte_intr_fd_get(handle) >= 0) {
-      close(rte_intr_fd_get(handle));
-      rte_intr_fd_set(handle, -1);
-  }
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- doc/guides/rel_notes/release_26_11.rst |  2 ++
- drivers/bus/pci/bsd/pci.c              |  7 ++-----
- drivers/bus/pci/linux/pci_uio.c        | 15 +++-----------
- drivers/bus/pci/linux/pci_vfio.c       | 18 +++++------------
- drivers/bus/pci/pci_common_uio.c       | 12 ++----------
- drivers/bus/vmbus/linux/vmbus_uio.c    | 13 +++----------
- drivers/bus/vmbus/vmbus_common_uio.c   | 11 ++---------
- drivers/net/mana/mana.c                |  1 +
- drivers/net/memif/memif_socket.c       | 13 +++----------
- drivers/net/mlx4/mlx4_intr.c           |  1 +
- drivers/net/tap/rte_eth_tap.c          |  1 +
- drivers/vdpa/mlx5/mlx5_vdpa_event.c    |  1 +
- drivers/vdpa/mlx5/mlx5_vdpa_virtq.c    |  1 +
- lib/eal/common/eal_common_interrupts.c | 23 ++++++++++++++++++++++
- lib/eal/include/rte_interrupts.h       | 27 ++++++++++++++++++++++++++
- lib/eal/linux/eal_dev.c                |  5 +----
- 16 files changed, 78 insertions(+), 73 deletions(-)
+>
+> Error (pre-existing, but patch 2 makes it reachable)
+> ---------------------------------------------------
+>
+> tap_tx_queue_release() dereferences dev->data->rx_queues after ethdev has
+> already freed it:
+>
+>   /* lib/ethdev/rte_ethdev.c */
+>   reset_queues:
+>         eth_dev_rx_queue_config(dev, 0);   /* rte_free(rx_queues); =3D NU=
+LL */
+>         eth_dev_tx_queue_config(dev, 0);   /* -> tap_tx_queue_release()  =
+*/
+>
+>   /* drivers/net/tap/rte_eth_tap.c */
+>   if (dev->data->rx_queues[qid] =3D=3D NULL)   /* rx_queues is NULL here =
+*/
+>
+> Confirmed by three independent reproducers, all segfaulting in
+> tap_tx_queue_release():
+>
+>   1. reconfigure that trips patch 2's new intr_mode check
+>   2. reconfigure that trips the pre-existing nb_rx !=3D nb_tx check
+>      (intr_conf.rxq never set -- so this is NOT introduced by the series)
+>   3. rte_eth_dev_internal_reset() on a normally configured port, with no
+>      dev_configure failure at all
+>
+> Path 3 matters independently of this series: bonding's member_remove()
+> calls rte_eth_dev_internal_reset() unconditionally, so removing a tap
+> port from a bonding device crashes on current main.
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index daafb4c6ed..9ddfdb435c 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -97,6 +97,8 @@ API Changes
- 
-   * ``rte_intr_instance_alloc()`` now initializes file descriptors
-     to invalid values instead of zero.
-+  * Added ``rte_intr_fd_close()`` and ``rte_intr_dev_fd_close()``
-+    helpers to close file descriptors and reset them to -1.
- 
- 
- ABI Changes
-diff --git a/drivers/bus/pci/bsd/pci.c b/drivers/bus/pci/bsd/pci.c
-index bbe08605af..f1012bb91b 100644
---- a/drivers/bus/pci/bsd/pci.c
-+++ b/drivers/bus/pci/bsd/pci.c
-@@ -93,11 +93,8 @@ pci_uio_free_resource(struct rte_pci_device *dev,
- {
- 	rte_free(uio_res);
- 
--	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_fd_get(dev->intr_handle));
--		rte_intr_fd_set(dev->intr_handle, -1);
--		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
--	}
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- }
- 
- int
-diff --git a/drivers/bus/pci/linux/pci_uio.c b/drivers/bus/pci/linux/pci_uio.c
-index 40e96b1c67..0983474994 100644
---- a/drivers/bus/pci/linux/pci_uio.c
-+++ b/drivers/bus/pci/linux/pci_uio.c
-@@ -197,20 +197,11 @@ void
- pci_uio_free_resource(struct rte_pci_device *dev,
- 		struct mapped_pci_resource *uio_res)
- {
--	int uio_cfg_fd = rte_intr_dev_fd_get(dev->intr_handle);
--
- 	rte_free(uio_res);
- 
--	if (uio_cfg_fd >= 0) {
--		close(uio_cfg_fd);
--		rte_intr_dev_fd_set(dev->intr_handle, -1);
--	}
--
--	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_fd_get(dev->intr_handle));
--		rte_intr_fd_set(dev->intr_handle, -1);
--		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
--	}
-+	rte_intr_dev_fd_close(dev->intr_handle);
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- }
- 
- int
-diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
-index a92a0d86ec..b5f05e9f9f 100644
---- a/drivers/bus/pci/linux/pci_vfio.c
-+++ b/drivers/bus/pci/linux/pci_vfio.c
-@@ -354,10 +354,9 @@ pci_vfio_enable_notifier(struct rte_pci_device *dev, int vfio_dev_fd)
- 
- 	return 0;
- error:
--	close(fd);
--
--	rte_intr_fd_set(dev->vfio_req_intr_handle, -1);
-+	rte_intr_fd_close(dev->vfio_req_intr_handle);
- 	rte_intr_type_set(dev->vfio_req_intr_handle, RTE_INTR_HANDLE_UNKNOWN);
-+	/* vfio_dev_fd is managed by VFIO layer, only clear reference here. */
- 	rte_intr_dev_fd_set(dev->vfio_req_intr_handle, -1);
- 
- 	return -1;
-@@ -383,10 +382,9 @@ pci_vfio_disable_notifier(struct rte_pci_device *dev)
- 		return -1;
- 	}
- 
--	close(rte_intr_fd_get(dev->vfio_req_intr_handle));
--
--	rte_intr_fd_set(dev->vfio_req_intr_handle, -1);
-+	rte_intr_fd_close(dev->vfio_req_intr_handle);
- 	rte_intr_type_set(dev->vfio_req_intr_handle, RTE_INTR_HANDLE_UNKNOWN);
-+	/* vfio_dev_fd is managed by VFIO layer, only clear reference here. */
- 	rte_intr_dev_fd_set(dev->vfio_req_intr_handle, -1);
- 
- 	return 0;
-@@ -1073,13 +1071,7 @@ pci_vfio_unmap_resource_primary(struct rte_pci_device *dev)
- 		return -1;
- 	}
- 
--	if (rte_intr_fd_get(dev->intr_handle) < 0)
--		return -1;
--
--	if (close(rte_intr_fd_get(dev->intr_handle)) < 0) {
--		PCI_LOG(INFO, "Error when closing eventfd file descriptor for %s", pci_addr);
--		return -1;
--	}
-+	rte_intr_fd_close(dev->intr_handle);
- 
- 	vfio_dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
- 	if (vfio_dev_fd < 0)
-diff --git a/drivers/bus/pci/pci_common_uio.c b/drivers/bus/pci/pci_common_uio.c
-index 47d50721dc..52a10f806a 100644
---- a/drivers/bus/pci/pci_common_uio.c
-+++ b/drivers/bus/pci/pci_common_uio.c
-@@ -211,7 +211,6 @@ pci_uio_unmap_resource(struct rte_pci_device *dev)
- 	struct mapped_pci_resource *uio_res;
- 	struct mapped_pci_res_list *uio_res_list =
- 			RTE_TAILQ_CAST(rte_uio_tailq.head, mapped_pci_res_list);
--	int uio_cfg_fd;
- 
- 	if (dev == NULL)
- 		return;
-@@ -222,15 +221,8 @@ pci_uio_unmap_resource(struct rte_pci_device *dev)
- 		return;
- 
- 	/* close fd */
--	if (rte_intr_fd_get(dev->intr_handle) >= 0)
--		close(rte_intr_fd_get(dev->intr_handle));
--	uio_cfg_fd = rte_intr_dev_fd_get(dev->intr_handle);
--	if (uio_cfg_fd >= 0) {
--		close(uio_cfg_fd);
--		rte_intr_dev_fd_set(dev->intr_handle, -1);
--	}
--
--	rte_intr_fd_set(dev->intr_handle, -1);
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_dev_fd_close(dev->intr_handle);
- 	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- 
- 	/* secondary processes - just free maps */
-diff --git a/drivers/bus/vmbus/linux/vmbus_uio.c b/drivers/bus/vmbus/linux/vmbus_uio.c
-index fbafc5027d..c52d6738a5 100644
---- a/drivers/bus/vmbus/linux/vmbus_uio.c
-+++ b/drivers/bus/vmbus/linux/vmbus_uio.c
-@@ -67,16 +67,9 @@ vmbus_uio_free_resource(struct rte_vmbus_device *dev,
- {
- 	rte_free(uio_res);
- 
--	if (rte_intr_dev_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_dev_fd_get(dev->intr_handle));
--		rte_intr_dev_fd_set(dev->intr_handle, -1);
--	}
--
--	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_fd_get(dev->intr_handle));
--		rte_intr_fd_set(dev->intr_handle, -1);
--		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
--	}
-+	rte_intr_dev_fd_close(dev->intr_handle);
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- }
- 
- int
-diff --git a/drivers/bus/vmbus/vmbus_common_uio.c b/drivers/bus/vmbus/vmbus_common_uio.c
-index 7459f4ea7a..9765f5f609 100644
---- a/drivers/bus/vmbus/vmbus_common_uio.c
-+++ b/drivers/bus/vmbus/vmbus_common_uio.c
-@@ -254,14 +254,7 @@ vmbus_uio_unmap_resource(struct rte_vmbus_device *dev)
- 	rte_free(uio_res);
- 
- 	/* close fd */
--	if (rte_intr_fd_get(dev->intr_handle) >= 0)
--		close(rte_intr_fd_get(dev->intr_handle));
--
--	if (rte_intr_dev_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_dev_fd_get(dev->intr_handle));
--		rte_intr_dev_fd_set(dev->intr_handle, -1);
--	}
--
--	rte_intr_fd_set(dev->intr_handle, -1);
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_dev_fd_close(dev->intr_handle);
- 	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- }
-diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-index 1864ba2a2b..f51598ea68 100644
---- a/drivers/net/mana/mana.c
-+++ b/drivers/net/mana/mana.c
-@@ -1964,6 +1964,7 @@ mana_intr_install(struct rte_eth_dev *eth_dev, struct mana_priv *priv)
- 					 mana_intr_handler, priv);
- 	if (ret) {
- 		DRV_LOG(ERR, "Failed to register intr callback");
-+		/* fd is owned by ibverbs, only clear reference here. */
- 		rte_intr_fd_set(priv->intr_handle, -1);
- 		goto free_intr;
- 	}
-diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
-index 649f8d0e61..94cd70fb89 100644
---- a/drivers/net/memif/memif_socket.c
-+++ b/drivers/net/memif/memif_socket.c
-@@ -510,8 +510,7 @@ memif_intr_unregister_handler(struct rte_intr_handle *intr_handle, void *arg)
- 	struct memif_control_channel *cc = arg;
- 
- 	/* close control channel fd */
--	if (rte_intr_fd_get(intr_handle) >= 0)
--		close(rte_intr_fd_get(intr_handle));
-+	rte_intr_fd_close(intr_handle);
- 	/* clear message queue */
- 	while ((elt = TAILQ_FIRST(&cc->msg_queue)) != NULL) {
- 		TAILQ_REMOVE(&cc->msg_queue, elt, next);
-@@ -596,10 +595,7 @@ memif_disconnect(struct rte_eth_dev *dev)
- 				continue;
- 		}
- 
--		if (rte_intr_fd_get(mq->intr_handle) > 0) {
--			close(rte_intr_fd_get(mq->intr_handle));
--			rte_intr_fd_set(mq->intr_handle, -1);
--		}
-+		rte_intr_fd_close(mq->intr_handle);
- 	}
- 	for (i = 0; i < pmd->cfg.num_s2c_rings; i++) {
- 		if (pmd->role == MEMIF_ROLE_SERVER) {
-@@ -614,10 +610,7 @@ memif_disconnect(struct rte_eth_dev *dev)
- 				continue;
- 		}
- 
--		if (rte_intr_fd_get(mq->intr_handle) > 0) {
--			close(rte_intr_fd_get(mq->intr_handle));
--			rte_intr_fd_set(mq->intr_handle, -1);
--		}
-+		rte_intr_fd_close(mq->intr_handle);
- 	}
- 
- 	memif_free_regions(dev);
-diff --git a/drivers/net/mlx4/mlx4_intr.c b/drivers/net/mlx4/mlx4_intr.c
-index 01057482ec..c278dd5ecc 100644
---- a/drivers/net/mlx4/mlx4_intr.c
-+++ b/drivers/net/mlx4/mlx4_intr.c
-@@ -265,6 +265,7 @@ mlx4_intr_uninstall(struct mlx4_priv *priv)
- 					     (void (*)(void *))
- 					     mlx4_interrupt_handler,
- 					     priv);
-+		/* fd is owned by ibverbs, only clear reference here. */
- 		if (rte_intr_fd_set(priv->intr_handle, -1))
- 			return -rte_errno;
- 	}
-diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index 13114edba5..8a186c4ee6 100644
---- a/drivers/net/tap/rte_eth_tap.c
-+++ b/drivers/net/tap/rte_eth_tap.c
-@@ -1946,6 +1946,7 @@ tap_lsc_intr_handle_set(struct rte_eth_dev *dev, int set)
- 	} while (true);
- 
- 	if (rte_intr_fd_get(pmd->intr_handle) >= 0) {
-+		/* Netlink socket closed via tap_nl_final(). */
- 		tap_nl_final(rte_intr_fd_get(pmd->intr_handle));
- 		rte_intr_fd_set(pmd->intr_handle, -1);
- 	}
-diff --git a/drivers/vdpa/mlx5/mlx5_vdpa_event.c b/drivers/vdpa/mlx5/mlx5_vdpa_event.c
-index dee2ccc23d..d18cf7d7e5 100644
---- a/drivers/vdpa/mlx5/mlx5_vdpa_event.c
-+++ b/drivers/vdpa/mlx5/mlx5_vdpa_event.c
-@@ -487,6 +487,7 @@ mlx5_vdpa_err_event_unset(struct mlx5_vdpa_priv *priv)
- 			rte_pause();
- 		}
- 	}
-+	/* fd is owned by err_chnl, only clear reference here. */
- 	rte_intr_fd_set(priv->err_intr_handle, -1);
- 	if (priv->err_chnl) {
- #ifdef HAVE_IBV_DEVX_EVENT
-diff --git a/drivers/vdpa/mlx5/mlx5_vdpa_virtq.c b/drivers/vdpa/mlx5/mlx5_vdpa_virtq.c
-index 093cdd08d2..9cad7e1df4 100644
---- a/drivers/vdpa/mlx5/mlx5_vdpa_virtq.c
-+++ b/drivers/vdpa/mlx5/mlx5_vdpa_virtq.c
-@@ -96,6 +96,7 @@ mlx5_vdpa_virtq_unregister_intr_handle(struct mlx5_vdpa_virtq *virtq)
- 				pthread_mutex_lock(&virtq->virtq_lock);
- 			}
- 		}
-+		/* fd is owned by vhost, only clear reference here. */
- 		(void)rte_intr_fd_set(virtq->intr_handle, -1);
- 	}
- 	rte_intr_instance_free(virtq->intr_handle);
-diff --git a/lib/eal/common/eal_common_interrupts.c b/lib/eal/common/eal_common_interrupts.c
-index 4e31a71319..8176eb089a 100644
---- a/lib/eal/common/eal_common_interrupts.c
-+++ b/lib/eal/common/eal_common_interrupts.c
-@@ -4,6 +4,7 @@
- 
- #include <stdlib.h>
- #include <string.h>
-+#include <unistd.h>
- 
- #include <rte_errno.h>
- #include <rte_interrupts.h>
-@@ -219,6 +220,17 @@ int rte_intr_fd_get(const struct rte_intr_handle *intr_handle)
- 	return -1;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_intr_fd_close, 26.11)
-+void rte_intr_fd_close(struct rte_intr_handle *intr_handle)
-+{
-+	int fd = rte_intr_fd_get(intr_handle);
-+
-+	if (fd >= 0) {
-+		close(fd);
-+		rte_intr_fd_set(intr_handle, -1);
-+	}
-+}
-+
- RTE_EXPORT_SYMBOL(rte_intr_type_set)
- int rte_intr_type_set(struct rte_intr_handle *intr_handle,
- 	enum rte_intr_handle_type type)
-@@ -265,6 +277,17 @@ int rte_intr_dev_fd_get(const struct rte_intr_handle *intr_handle)
- 	return -1;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_dev_fd_close)
-+void rte_intr_dev_fd_close(struct rte_intr_handle *intr_handle)
-+{
-+	int fd = rte_intr_dev_fd_get(intr_handle);
-+
-+	if (fd >= 0) {
-+		close(fd);
-+		rte_intr_dev_fd_set(intr_handle, -1);
-+	}
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_max_intr_set)
- int rte_intr_max_intr_set(struct rte_intr_handle *intr_handle,
- 				 int max_intr)
-diff --git a/lib/eal/include/rte_interrupts.h b/lib/eal/include/rte_interrupts.h
-index 1cfb9d3f8e..d04c0c7b15 100644
---- a/lib/eal/include/rte_interrupts.h
-+++ b/lib/eal/include/rte_interrupts.h
-@@ -279,6 +279,19 @@ rte_intr_fd_set(struct rte_intr_handle *intr_handle, int fd);
- int
- rte_intr_fd_get(const struct rte_intr_handle *intr_handle);
- 
-+/**
-+ * Close the FD of the given interrupt handle instance,
-+ * and set FD to -1.
-+ *
-+ * If FD is not valid (< 0), nothing is done.
-+ *
-+ * @param intr_handle
-+ *  pointer to the interrupt handle.
-+ */
-+__rte_experimental
-+void
-+rte_intr_fd_close(struct rte_intr_handle *intr_handle);
-+
- /**
-  * Set the type field of interrupt handle with user provided
-  * interrupt type.
-@@ -467,6 +480,20 @@ __rte_internal
- int
- rte_intr_dev_fd_get(const struct rte_intr_handle *intr_handle);
- 
-+/**
-+ * @internal
-+ * Close the device FD of the given interrupt handle instance,
-+ * and set device FD to -1.
-+ *
-+ * If device FD is not valid (< 0), nothing is done.
-+ *
-+ * @param intr_handle
-+ *  pointer to the interrupt handle.
-+ */
-+__rte_internal
-+void
-+rte_intr_dev_fd_close(struct rte_intr_handle *intr_handle);
-+
- /**
-  * @internal
-  * Set the max intr field of interrupt handle with user
-diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
-index c78e565427..4f55dcc4e7 100644
---- a/lib/eal/linux/eal_dev.c
-+++ b/lib/eal/linux/eal_dev.c
-@@ -217,10 +217,7 @@ static void
- dev_delayed_unregister(void *param)
- {
- 	rte_intr_callback_unregister(intr_handle, dev_uev_handler, param);
--	if (rte_intr_fd_get(intr_handle) >= 0) {
--		close(rte_intr_fd_get(intr_handle));
--		rte_intr_fd_set(intr_handle, -1);
--	}
-+	rte_intr_fd_close(intr_handle);
- }
- 
- static void
--- 
-2.54.0
+Agreed. I will fix it in the next version.
 
+>
+> Both ethdev call sites free rx before tx, so tap_rx_queue_release()'s
+> symmetric read of dev->data->tx_queues[qid] is always safe. Only the tx
+> side needs the guard, though guarding both is cheap.
+>
+> This is not your bug. But patch 2 adds a second failure return to
+> tap_dev_configure() that fires on an ordinary reconfigure, and the commit
+> message points users straight at it -- an application trying to toggle
+> interrupt mode crashes instead of receiving -ENOTSUP. Suggest a
+> preceding patch in the series fixing the deref, with its own Fixes: and
+> Cc: stable@dpdk.org.
+>
+>
+> Patch 2/3: net/tap: drain queue FD in Rx interrupt mode
+> -------------------------------------------------------
+>
+> The mechanism works as designed. Verified at the kernel fd-flag level
+> (/proc/PID/fdinfo) that in interrupt mode the data queue fd is created
+> without O_ASYNC while the keep-alive fd retains it:
+>
+>   patch 1 only : ka fd O_ASYNC=3Dyes, data fd O_ASYNC=3Dyes
+>   full series  : ka fd O_ASYNC=3Dyes, data fd O_ASYNC=3Dno
+>
+> The early return in tun_alloc() sits after the O_NONBLOCK fcntl, so
+> nothing required is skipped and there is no fd leak. Reading dev_private
+> is safe: rte_eth_dev_release_port() frees it on close, so "close and
+> reopen the port to change it" is accurate.
+>
+> Warning: I could not reproduce the stall this patch fixes. With patch 1
+> applied alone -- SIGIO still armed on the data fd -- three traffic
+> patterns all delivered every packet with zero empty bursts after a
+> wakeup:
+>
+>   - low-rate broadcast ARP        : 117/117 rx, 0 empty after wake
+>   - flood ping, static neighbour  : 437/437 rx, 0 empty after wake
+>   - strict l3fwd-power-style loop
+>     (one burst per wakeup, no
+>      re-poll) with bursty traffic : 100/100 rx, 0 empty after wake
+>
+> The full series produced identical numbers in each case. Single queue,
+> single core, kernel-side tap traffic, so this does not disprove the race
+> -- it may need multiple queues, higher rates than the tap path gives, or
+> signal-queue pressure. But the justification is not demonstrated by any
+> reproducer I could build, and the patch has real cost: a permanent
+> restriction that interrupt mode cannot be toggled after configure, a new
+> error path that exposes the crash above, a fast-path branch, and a
+> readv() syscall on every idle burst (exactly what the SIGIO trigger
+> exists to avoid).
+>
+> Could you share a reproducer, or describe the configuration where the
+> stall appears? Note that the Rx interrupt epoll registration is
+> edge-triggered (EPOLLIN|EPOLLPRI|EPOLLET in rte_intr_rx_ctl), which is
+> what would turn a single missed read into a permanent stall rather than
+> a spin -- that detail seems worth stating explicitly in the commit
+> message, since it is the part that makes the failure non-self-healing.
+
+The drain patch, a reproducer
+
+   https://github.com/DPDK/grout/actions/runs/30259855532/job/89956997416
+
+ grout has an opt-in mode where an idle dataplane worker stops busy polling=
+ and
+ blocks on its Rx queue interrupts through rte_eth_dev_rx_intr_enable() and
+ rte_epoll_wait(). Its smoke suite runs on net_tap ports, so that mode exer=
+cises
+ this path in CI.
+
+ At sha b2f775810a6a the vendored DPDK carries the intr enable/disable patc=
+h but
+ not the drain one, which isolates it, and build-and-tests (x86_64, gcc-14,
+ DPDK 25.11, FRR 10.5, adaptive-irq) fails on smoke/bgp_frr_test.sh:
+
+   timeout: icmp_seq=3D1
+   [tx p0] ICMP echo request id=3D28908 seq=3D2
+   [rx p0] ICMP echo reply   id=3D28908 seq=3D1
+   [rx p0] ICMP echo reply   id=3D28908 seq=3D2
+   reply from 16.0.0.1: icmp_seq=3D2 ttl=3D64 time=3D0.083 ms
+   error: command failed: Connection timed out (ETIMEDOUT)
+
+ The reply to seq=3D1 sits readable in the queue fd. The burst that ran aft=
+er the
+ epoll wakeup returned 0, and being edge triggered there is no second wakeu=
+p for
+ data already queued, so it comes out only when the request for seq=3D2 cre=
+ates a
+ new edge: both replies at once, and the first ping times out. The previous
+ revision that morning, 08f1ccd941bb, carries both patches and the same job
+ passes.
+
+ What the trace establishes is that pmd_rx_burst() ran and returned 0
+with the fd
+ readable, so tap_trigger had not advanced at that point. It can lag becaus=
+e the
+ trigger is process wide and the fd owner is the process:
+
+       fcntl(fd, F_SETOWN, getpid());
+
+ The signal is therefore handled by some thread of the kernel's
+choosing, with no
+ relation to the lcore that epoll woke for that queue, while the wakeup goe=
+s
+ precisely to that lcore.
+
+ A busy polling loop does not care, which is why the trigger has been fine =
+since
+ 2018: it re-reads the counter on the next iteration, so a late signal
+costs only
+ latency. Interrupt mode bursts once per edge, so it is never caught up.
+
+ On the cost: the mode restriction is there because tap_setup_queue()
+reuses queue
+ fds across a reconfigure, so without it a port could mix fds with and with=
+out
+ O_ASYNC. And the crash that made the new error path dangerous is fixed by =
+the
+ queue release patch, independently of this one.
+
+>
+> For what it is worth, the EAL side is safe: tap sets
+> RTE_INTR_HANDLE_EXT, so eal_intr_proc_rxtx_intr() returns early and never
+> consumes packet bytes from the queue fd.
+>
+>
+> Patch 3/3: net/tap: use bool for boolean flags
+> ----------------------------------------------
+>
+> Warning: the conversion is incomplete on its own terms.
+>
+>   - tap_flow.c:1247 still reads "if (pmd->flow_init =3D=3D 0 && ...)";
+>     on a bool this should be "!pmd->flow_init"
+>   - the three converted fields keep "/* 1 if ... */" comments
+>   - the local "int persist" in rte_pmd_tap_probe() and the "int persist"
+>     parameter of pmd_init_internals() were not converted
+>
+> Info: rte_eth_tap.h uses bool without including <stdbool.h>, relying on a
+> transitive include via ethdev_driver.h. It compiles; a direct include
+> would make the header self-contained.
+>
+> I initially flagged the (set ^ pmd->flow_isolate) idiom in
+> tap_flow_isolate() as losing idempotency for non-0/1 values under the
+> bool conversion. There is a "if (set) set =3D 1;" normalization immediate=
+ly
+> above it, so the XOR is correct. Dropped.
+
+Agreed. I will fix it in the next version.
+
+>
+>
+> Summary
+> -------
+>
+> Patch 1 is good and independently verified. Patch 3 needs the leftovers
+> cleaned up. Patch 2 is mechanically sound but its justification is
+> unreproduced here, and it should not go in ahead of a fix for the
+> tap_tx_queue_release() NULL dereference it makes easy to hit.
+
+-------------------------------
+Maxime Leroy
+maxime@leroys.fr
