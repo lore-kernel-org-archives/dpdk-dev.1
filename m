@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7404C53209
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 22:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E07EC531D0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 22:44:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6270440653;
-	Tue, 28 Jul 2026 00:44:28 +0200 (CEST)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
- [209.85.215.182])
- by mails.dpdk.org (Postfix) with ESMTP id 3C65140615
- for <dev@dpdk.org>; Tue, 28 Jul 2026 00:44:24 +0200 (CEST)
-Received: by mail-pg1-f182.google.com with SMTP id
- 41be03b00d2f7-c9e0b89e228so2243404a12.1
- for <dev@dpdk.org>; Mon, 27 Jul 2026 15:44:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 887554067C;
+	Tue, 28 Jul 2026 00:44:29 +0200 (CEST)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
+ [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 8734B4066C
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 00:44:25 +0200 (CEST)
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-383b4a3755fso2998991a91.3
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 15:44:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785192263;
- x=1785797063; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785192264;
+ x=1785797064; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=aauXxBv+23yNW+8RZctBc1oQdiIiwp/X/dqj79YIj1I=;
- b=lLY86vh0J1A2LUC4URaUIHApFNtCDnIggASyOqcAwXkDec8eIvcuY9LUkxRI6EI9ER
- t8WslEAc5tr5/UknKFyFFP5xRat7kJTsv1D7s4iIq3cH0+KvoMr6nuhh1S3dm6rzYk1O
- /R3svERRpOBqJ/ygueWYweUhXJpFre72rD6QjzPzLdJfjVi3wbW921VknkqJ0HtlU1i3
- kTQ33nS+F86utTx48kTcobyC4WeHQIgT9isnYwD7LLujORfEOuFK02kmF+FKYRgGz8SC
- Oey39V1rOFMKuCHCE1Dmj3ZmT6kTbAPj18G+KBqN25ZO1JPmJwFRtmr2oQNmY6d6NKSl
- srOg==
+ bh=OwOXRDmZEkth/OXDW216Ys+7KMEOxx6drhWjo+7M7Hg=;
+ b=KOyYIgOmaV2TY9TI8a9nS1clm+9IbopXErx6QCVVPfGEBu5NGlpLrpCsaA6Y89pEuV
+ GENnxR0EKYm4myPr6Hl/mZqBqU43RydOg/eILCiihuD8epZroY0slazNe5f2FXC0q2S8
+ vLcLq8rMd3WUiina+IQv9zAl/y2X3E1aqeRGd8mNzzBSEayS79xM/gerNMVtxTdeP4at
+ JyCqAi9jjh+NgZpBRA4QnyAVNBYmPcqfBqqxeLaFvRgkUid0ocSjxHcLm86CISrLOmM2
+ OcKaNL1rAs5icRs9ZzfjCenUR8oYAO9FI7XDEMEFXwXQPFm/w2/PpUSvWY+9QrnKMbLt
+ Teow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785192263; x=1785797063;
+ d=1e100.net; s=20251104; t=1785192264; x=1785797064;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=aauXxBv+23yNW+8RZctBc1oQdiIiwp/X/dqj79YIj1I=;
- b=gFMtFgZqcinsUM8xh9E4YOk+XvVH8LchFkE+GIJk6HNPi0dzTG6axMfofAk9s6swCZ
- TjE5RhUxOPMGth9+1fHFgHZxlbReF9YMjsMpYVEVgt+DYxs2hqVBq1fIz3Q1GcZk4J2d
- qzuobdWwHlrAEokWFfcewDJEpmZBZjH8/t0kcYBAFCG/pNZb+jYe5lnV/57vLNpplemD
- o0jNOTAUDeAZ3ytyWK10sIsbEO7vtyoTXcwsg1Q2RDszO8iAjSx9Fcs+0vp1dh9WuyjF
- iMicV/sDVVPKkf5pqj24FLkWxa3vvvbS2MnMzNvje6pJVJ8Jngj9c3kT0lzGa6f1n/BV
- L2oA==
-X-Gm-Message-State: AOJu0Yz5ug3PKgwhp6+4AeMXp+sK2i6JhzSS1mqTGF3Q7DH6wvkYa3Ji
- XFypST8c+DsG8ErU23zS1XiNVKGyn3JnKZET4eltu1F5EkeWP5NBbNYpkZ7nS0ujrDgUCPY3vAb
- 1/Vza
-X-Gm-Gg: AR+sD11IeHYVos2xCFUG7INu/ogQUtbU0y9TiTaq0Ok8UEby486KD9shrSIvLaoUq11
- +66Q11FS1hIoNI7DrgQ78NNjK2fax9/qsNbzZINKxYoOQVdfgmft/sA/98TXZdlt6nI6XTOCJd2
- HmELvpKrey6qlQwbD0OgWcuq1PDyZqQ5g6lqL2s0cuOnqGZprzNt25N7bPKegsPFuRM5ELDoIee
- tQ7ym20cLo+ksSpyvWh7SWEF5vWdEaoFCgJraoKpI5sr95pZNXl7NmRIZD6hU04jsjw4ZH4FSB+
- dcCaex/bLuEwt6zybVzak/C5q0S7l/iNEMqJYgs1g4qXU8g4dmz8CNmsbHiOA76NADJXwCM45Pt
- KjMW1wZDzQaGdwki6yDbDQ9/aKT3dfTcWmOqP/PMLyT+/2vVPkZFFXD4eu+is60Ha6rEk5AVqZf
- 2k4Nl4Xa22AY7Y4c07T9La1s6J4k2CeM+/FtdFTKrI
-X-Received: by 2002:a05:6300:4047:b0:3c3:9fc4:3ff5 with SMTP id
- adf61e73a8af0-3c67daa2267mr9527551637.29.1785192263197; 
- Mon, 27 Jul 2026 15:44:23 -0700 (PDT)
+ bh=OwOXRDmZEkth/OXDW216Ys+7KMEOxx6drhWjo+7M7Hg=;
+ b=Z2dWki6cDXeiO+RgiRmEHjI6o07v3jN1zU+rB3wYjTSMxWCcnJMkNsTGVWpoonIfYP
+ WWzE61QKg8lHrMzFQBlpIF/+grLSsGQHIa3og00vo+SNvnmCXSyN6hNkpKme992PI+eG
+ ThBVHbFU7hVyBclB58/G8hrcqb2A4HCtviJ+OK+z3JG32n8b5C2upMqTnUXU1THgiqEr
+ E36ZDOEfpjY8OUXD/ofDaHkbvDo7HxwmyX819IjJ7iSPyJWCl9fNBD+/1zCmsFzqIkFr
+ +lhrtCzPR3Qe3Bs5zzF98Wk/9CC6gCqyJtq4FIURP1idB3/qYLaeHz83SEvwgUBOHxbB
+ BsZw==
+X-Gm-Message-State: AOJu0Yys2tTLo7Ol2kpwzPZ/TJCNuY4ql2z3BqquNx9LTy9Bp5c4te7x
+ xTIGozk03R8dQZiiQcc264lnIYN42W9nFeLy4XrKefc8bei6E/3v0ZKZxnskQ/b3XnrVbrwVJDj
+ Su+W+
+X-Gm-Gg: AR+sD12GKISazcqrY0uNwzsO+QfsBtsmWPpYPUpm0XYP5h2pPCO3YV3fpSbqKejEgOg
+ +KzCFy5ilZHEmOw0Of1cZB0Kv7el7OJU39FiXbbKJHAEwGq2hW3sUtgRMCxHuL6I+PZHe812g9B
+ qHLLcRqu8xFN/1HOkAFSsrmKX8RZTePGdiGs1+oBGjkGPXjVu8464jUiJUecpExzXVxWGSMkx+5
+ IIy3iq1aWgJbYucIrqFbfZeDrmqAiBMA8eKrsxpuWIh1r7un6eEB4tRz1iu1bHEPrFASU5itLp6
+ dGAxLGhKwVSQjzBeSoXdrpCGjgS53JMnqwfx6sK01MMcWC2CAcL9Z/z2dk9wOWLsWxiFFBZrDT6
+ j2DvIfs+8DTqnsQswmtZFPd1NOELe9wb7wxLW4/JwDpSYaNCE+RJlnBM417zsz2yKXFtK2O0xZZ
+ xztpwA24DYGgsK0U95WrtwFdB6u+xkyfVBWM22D21o
+X-Received: by 2002:a17:90b:1a91:b0:387:e0db:3faf with SMTP id
+ 98e67ed59e1d1-38f298bcfc8mr8752629a91.40.1785192264322; 
+ Mon, 27 Jul 2026 15:44:24 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13e5c921686sm20238078c88.4.2026.07.27.15.44.22
+ a92af1059eb24-13e5c921686sm20238078c88.4.2026.07.27.15.44.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 27 Jul 2026 15:44:22 -0700 (PDT)
+ Mon, 27 Jul 2026 15:44:23 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Thomas Monjalon <thomas@monjalon.net>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v2 3/4] test: add test for capture hooks
-Date: Mon, 27 Jul 2026 15:42:46 -0700
-Message-ID: <20260727224417.1419663-4-stephen@networkplumber.org>
+ Reshma Pattan <reshma.pattan@intel.com>, Robin Jarry <rjarry@redhat.com>
+Subject: [PATCH v2 4/4] usertools: add script for wireshark capture
+Date: Mon, 27 Jul 2026 15:42:47 -0700
+Message-ID: <20260727224417.1419663-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260727224417.1419663-1-stephen@networkplumber.org>
 References: <20260724212238.864798-1-stephen@networkplumber.org>
@@ -84,706 +83,645 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Provide tests to exercise telemetry based packet capture.
+Provide glue script that wireshark can use to access
+telemetry based packet capture. It is dual licensed because
+it maybe desirable to put this in wireshark repository.
+
+See https://www.wireshark.org/docs/man-pages/extcap.html
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- MAINTAINERS             |   1 +
- app/test/meson.build    |   1 +
- app/test/test_capture.c | 660 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 662 insertions(+)
- create mode 100644 app/test/test_capture.c
+ MAINTAINERS                            |   2 +
+ doc/guides/rel_notes/release_26_11.rst |   1 +
+ doc/guides/tools/index.rst             |   1 +
+ doc/guides/tools/wireshark_extcap.rst  | 144 +++++++++
+ usertools/dpdk-wireshark-extcap.py     | 416 +++++++++++++++++++++++++
+ usertools/meson.build                  |   1 +
+ 6 files changed, 565 insertions(+)
+ create mode 100644 doc/guides/tools/wireshark_extcap.rst
+ create mode 100755 usertools/dpdk-wireshark-extcap.py
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index fcd350ad94..608cb4b77d 100644
+index 608cb4b77d..7f220cc2c7 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -1721,6 +1721,7 @@ Packet capture
- M: Reshma Pattan <reshma.pattan@intel.com>
- M: Stephen Hemminger <stephen@networkplumber.org>
- F: lib/capture/
-+F: app/test/test_capture.c
- F: lib/pdump/
- F: doc/guides/prog_guide/pdump_lib.rst
- F: app/test/test_pdump.*
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 51abeeb732..b73ae8ca07 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -37,6 +37,7 @@ source_file_deps = {
-     'test_bpf.c': ['bpf', 'net'],
-     'test_bpf_validate.c': ['bpf'],
-     'test_byteorder.c': [],
-+    'test_capture.c': ['net_null', 'net', 'ethdev', 'bus_vdev', 'capture'],
-     'test_cfgfile.c': ['cfgfile'],
-     'test_cksum.c': ['net'],
-     'test_cksum_perf.c': ['net'],
-diff --git a/app/test/test_capture.c b/app/test/test_capture.c
+@@ -1732,6 +1732,8 @@ F: app/pdump/
+ F: doc/guides/tools/pdump.rst
+ F: app/dumpcap/
+ F: doc/guides/tools/dumpcap.rst
++F: usertools/dpdk-wireshark-extcap.py
++F: doc/guides/tools/wireshark_extcap.rst
+ 
+ 
+ Packet Framework
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 00acc02ac3..c79ffb38cf 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -58,6 +58,7 @@ New Features
+ * **Added wireshark capture support.**
+ 
+   * Added ``capture`` library for packet capture via telemetry API.
++  * Added python script for wireshark external capture integration.
+ 
+ 
+ Removed Items
+diff --git a/doc/guides/tools/index.rst b/doc/guides/tools/index.rst
+index 13f75a5bc6..01db27511a 100644
+--- a/doc/guides/tools/index.rst
++++ b/doc/guides/tools/index.rst
+@@ -14,6 +14,7 @@ DPDK Tools User Guides
+     pmdinfo
+     dumpcap
+     pdump
++    wireshark_extcap
+     telemetrywatcher
+     dmaperf
+     flow-perf
+diff --git a/doc/guides/tools/wireshark_extcap.rst b/doc/guides/tools/wireshark_extcap.rst
 new file mode 100644
-index 0000000000..c5fdb1b784
+index 0000000000..99fb94df72
 --- /dev/null
-+++ b/app/test/test_capture.c
-@@ -0,0 +1,660 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Stephen Hemminger
-+ */
-+
-+/*
-+ * Functional test for the capture library.
-+ *
-+ * The capture library has no public C API: it is driven entirely through the
-+ * telemetry socket. The output is a path ('out=') that the primary opens
-+ * itself and writes pcapng into; the caller never receives packet data over
-+ * the control socket. This test therefore behaves like an external capture
-+ * tool.
-+ *
-+ * The suite setup builds the fixture shared by every case:
-+ *
-+ *   - a virtual ethdev backed by net_null. Rx synthesizes packets and Tx is a
-+ *     sink that frees whatever it is handed, which is all this test needs and
-+ *     avoids the per-queue ring bookkeeping of net_ring. The port is given
-+ *     NB_QUEUES queues so per-queue selection can be exercised;
-+ *   - a FIFO for capture output;
-+ *   - a connection to this process's own telemetry socket.
-+ *
-+ * Each case then runs with the FIFO read end open (the primary's non-blocking
-+ * O_WRONLY open needs a reader present) and hands it back in the common
-+ * teardown, which is also what tears down a capture left running by a failed
-+ * assertion.
-+ *
-+ * The cases are:
-+ *
-+ *   lifecycle
-+ *     start an all-queue capture, check a pcapng stream appears, the capture
-+ *     is listed, stats account for traffic injected on every queue in both
-+ *     directions, and it tears down when the reader disconnects;
-+ *   bad_queue
-+ *     an out-of-range queue index is rejected, not started;
-+ *   queue_select
-+ *     a queue=CAPTURE_QUEUE capture installs callbacks on that queue only, so
-+ *     traffic on any other queue is not captured while traffic on that one is,
-+ *     in both directions. The selected queue is neither the first nor the last
-+ *     of NB_QUEUES, so an off-by-one in either install loop is caught. Both
-+ *     directions are steerable here: the test names the queue in
-+ *     rte_eth_rx_burst()/rte_eth_tx_burst() and net_null sources or sinks on
-+ *     whichever queue it is handed.
-+ *
-+ * The suite is skipped (not failed) if telemetry is not enabled or the
-+ * net_null driver is not available.
-+ */
-+
-+#include <ctype.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <inttypes.h>
-+#include <limits.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+#include <sys/select.h>
-+#include <sys/socket.h>
-+#include <sys/stat.h>
-+#include <sys/time.h>
-+#include <sys/types.h>
-+#include <sys/un.h>
-+
-+#include <rte_bus_vdev.h>
-+#include <rte_common.h>
-+#include <rte_cycles.h>
-+#include <rte_eal.h>
-+#include <rte_ethdev.h>
-+#include <rte_lcore.h>
-+#include <rte_log.h>
-+#include <rte_mbuf.h>
-+
-+#include "test.h"
-+
-+#define TELEMETRY_VERSION	"v2"
-+#define CAPTURE_START		"/ethdev/capture/start"
-+#define CAPTURE_LIST		"/ethdev/capture/list"
-+#define CAPTURE_STATS		"/ethdev/capture/stats"
-+#define CAPTURE_STOP		"/ethdev/capture/stop"
-+
-+#define NULL_VDEV_NAME		"net_null_capture"
-+#define NB_QUEUES		4
-+#define CAPTURE_QUEUE		2	/* not first or last of NB_QUEUES */
-+#define RING_SIZE		256
-+#define NB_MBUFS		1024
-+#define MBUF_CACHE		32
-+#define NB_PKTS			32
-+#define PKT_LEN			64
-+#define REPLY_LEN		16384
-+
-+/* pcapng Section Header Block type, byte-order independent on disk. */
-+static const uint8_t pcapng_shb_magic[4] = { 0x0a, 0x0d, 0x0d, 0x0a };
-+
-+static struct rte_mempool *test_mp;
-+static uint16_t test_port = RTE_MAX_ETHPORTS;
-+static char fifo_path[PATH_MAX];
-+static int tel_sock = -1;
-+static int fifo_rd = -1;
-+
-+/* --- telemetry client helpers ------------------------------------------ */
-+
-+/* Connect to this process's telemetry socket; -1 if unavailable. */
-+static int
-+tel_connect(void)
-+{
-+	struct sockaddr_un addr = { .sun_family = AF_UNIX };
-+	char buf[REPLY_LEN];
-+	int s;
-+
-+	snprintf(addr.sun_path, sizeof(addr.sun_path), "%s/dpdk_telemetry.%s",
-+		 rte_eal_get_runtime_dir(), TELEMETRY_VERSION);
-+
-+	s = socket(AF_UNIX, SOCK_SEQPACKET, 0);
-+	if (s < 0)
-+		return -1;
-+
-+	if (connect(s, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-+		close(s);
-+		return -1;
-+	}
-+
-+	/* Server greets with an info message; consume it. */
-+	if (recv(s, buf, sizeof(buf), 0) <= 0) {
-+		close(s);
-+		return -1;
-+	}
-+	return s;
-+}
-+
-+/* Send a command and read the reply. */
-+static int
-+tel_cmd(const char *cmd, char *reply, size_t reply_sz)
-+{
-+	ssize_t n;
-+
-+	if (send(tel_sock, cmd, strlen(cmd), 0) < 0)
-+		return -1;
-+	n = recv(tel_sock, reply, reply_sz - 1, 0);
-+	if (n < 0)
-+		return -1;
-+	reply[n] = '\0';
-+	return 0;
-+}
-+
-+/* Minimal JSON scanning: find "key" and read the unsigned number after it. */
-+static int
-+json_uint(const char *s, const char *key, uint64_t *out)
-+{
-+	const char *p = strstr(s, key);
-+
-+	if (p == NULL)
-+		return -1;
-+	for (p += strlen(key); *p != '\0' && !isdigit((unsigned char)*p); p++)
-+		;
-+	if (*p == '\0')
-+		return -1;
-+	*out = strtoull(p, NULL, 10);
-+	return 0;
-+}
-+
-+/* Read the first element of the array in a list reply; -1 if empty/absent. */
-+static int
-+json_first_array_uint(const char *s, uint64_t *out)
-+{
-+	const char *p = strchr(s, '[');
-+
-+	if (p == NULL)
-+		return -1;
-+	for (p++; *p == ' '; p++)
-+		;
-+	if (*p == ']' || !isdigit((unsigned char)*p))
-+		return -1;
-+	*out = strtoull(p, NULL, 10);
-+	return 0;
-+}
-+
-+/* Query the accepted counter for a capture id via telemetry. */
-+static int
-+capture_accepted(uint64_t id, uint64_t *accepted)
-+{
-+	char cmd[64], reply[REPLY_LEN];
-+
-+	snprintf(cmd, sizeof(cmd), "%s,%" PRIu64, CAPTURE_STATS, id);
-+	if (tel_cmd(cmd, reply, sizeof(reply)) < 0)
-+		return -1;
-+	return json_uint(reply, "\"accepted\"", accepted);
-+}
-+
-+/*
-+ * Poll the capture list until it is empty (the capture has torn down).
-+ * Returns 0 once empty, -1 on timeout (~2s) or telemetry failure.
-+ */
-+static int
-+wait_list_empty(void)
-+{
-+	char reply[REPLY_LEN];
-+	uint64_t id;
-+
-+	for (int i = 0; i < 200; i++) {
-+		if (tel_cmd(CAPTURE_LIST, reply, sizeof(reply)) < 0)
-+			return -1;
-+		if (json_first_array_uint(reply, &id) < 0)
-+			return 0;
-+		rte_delay_ms(10);
-+	}
-+	return -1;
-+}
-+
-+/* --- packet injection --------------------------------------------------- */
-+
-+/*
-+ * Pull count packets from a queue. net_null synthesizes them and pulling runs
-+ * the capture Rx callback on each; the mbufs are ours to free.
-+ */
-+static int
-+inject_rx(uint16_t queue, unsigned int count)
-+{
-+	struct rte_mbuf *bufs[NB_PKTS];
-+	uint16_t got;
-+
-+	if (count > NB_PKTS)
-+		count = NB_PKTS;
-+
-+	got = rte_eth_rx_burst(test_port, queue, bufs, count);
-+	rte_pktmbuf_free_bulk(bufs, got);
-+	return got == count ? 0 : -1;	/* net_null fills the whole request */
-+}
-+
-+/*
-+ * Transmit count packets on a queue. The capture Tx callback runs first (it
-+ * only copies) and net_null then frees the originals, so only mbufs it did not
-+ * take are reclaimed here.
-+ */
-+static int
-+inject_tx(uint16_t queue, unsigned int count)
-+{
-+	struct rte_mbuf *bufs[NB_PKTS];
-+	uint16_t sent;
-+
-+	if (count > NB_PKTS)
-+		count = NB_PKTS;
-+
-+	for (unsigned int i = 0; i < count; i++) {
-+		struct rte_mbuf *m = rte_pktmbuf_alloc(test_mp);
-+
-+		if (m == NULL) {
-+			rte_pktmbuf_free_bulk(bufs, i);
-+			return -1;
-+		}
-+		m->pkt_len = m->data_len = PKT_LEN;
-+		memset(rte_pktmbuf_mtod(m, void *), 0, PKT_LEN);
-+		bufs[i] = m;
-+	}
-+
-+	/* net_null accepts the whole burst; free the tail if it ever does not. */
-+	sent = rte_eth_tx_burst(test_port, queue, bufs, count);
-+	if (sent < count) {
-+		rte_pktmbuf_free_bulk(&bufs[sent], count - sent);
-+		return -1;
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Inject on every queue except skip; pass NB_QUEUES to cover them all.
-+ */
-+static int
-+inject_rx_except(uint16_t skip, unsigned int count)
-+{
-+	for (uint16_t q = 0; q < NB_QUEUES; q++) {
-+		if (q != skip && inject_rx(q, count) < 0)
-+			return -1;
-+	}
-+	return 0;
-+}
-+
-+static int
-+inject_tx_except(uint16_t skip, unsigned int count)
-+{
-+	for (uint16_t q = 0; q < NB_QUEUES; q++) {
-+		if (q != skip && inject_tx(q, count) < 0)
-+			return -1;
-+	}
-+	return 0;
-+}
-+
-+/* --- fixture ------------------------------------------------------------ */
-+
-+static int
-+build_port(void)
-+{
-+	struct rte_eth_conf conf = { 0 };
-+
-+	test_mp = rte_pktmbuf_pool_create("capture_test_mp", NB_MBUFS, MBUF_CACHE,
-+					  0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+	if (test_mp == NULL)
-+		return -1;
-+
-+	if (rte_vdev_init(NULL_VDEV_NAME, NULL) < 0)
-+		return -1;
-+	if (rte_eth_dev_get_port_by_name(NULL_VDEV_NAME, &test_port) != 0)
-+		return -1;
-+
-+	if (rte_eth_dev_configure(test_port, NB_QUEUES, NB_QUEUES, &conf) < 0)
-+		return -1;
-+	for (uint16_t q = 0; q < NB_QUEUES; q++) {
-+		if (rte_eth_rx_queue_setup(test_port, q, RING_SIZE, rte_socket_id(),
-+					   NULL, test_mp) < 0)
-+			return -1;
-+		if (rte_eth_tx_queue_setup(test_port, q, RING_SIZE, rte_socket_id(),
-+					   NULL) < 0)
-+			return -1;
-+	}
-+
-+	return rte_eth_dev_start(test_port);
-+}
-+
-+static void
-+teardown_port(void)
-+{
-+	if (test_port != RTE_MAX_ETHPORTS) {
-+		rte_eth_dev_stop(test_port);
-+		/*
-+		 * Uninit drives the driver's remove, which closes and releases
-+		 * the ethdev port and removes the vdev in one path. No separate
-+		 * rte_eth_dev_close() is needed and null's close is idempotent,
-+		 * so this is safe even if a tree's close already released it.
-+		 */
-+		rte_vdev_uninit(NULL_VDEV_NAME);
-+		test_port = RTE_MAX_ETHPORTS;
-+	}
-+	rte_mempool_free(test_mp);
-+	test_mp = NULL;
-+}
-+
-+/* Create the capture FIFO in the runtime dir; -1 on failure. */
-+static int
-+make_fifo(void)
-+{
-+	snprintf(fifo_path, sizeof(fifo_path), "%s/capture_test.%d",
-+		 rte_eal_get_runtime_dir(), (int)getpid());
-+	unlink(fifo_path);			/* clear any stale node */
-+	if (mkfifo(fifo_path, 0600) < 0)
-+		return -1;
-+	return 0;
-+}
-+
-+/*
-+ * Release everything the suite setup built. Idempotent, because the runner
-+ * does not call the suite teardown when the suite setup fails, so the setup
-+ * has to unwind itself by calling this directly.
-+ */
-+static void
-+testsuite_teardown(void)
-+{
-+	if (fifo_rd >= 0) {
-+		close(fifo_rd);
-+		fifo_rd = -1;
-+	}
-+	if (fifo_path[0] != '\0') {
-+		unlink(fifo_path);
-+		fifo_path[0] = '\0';
-+	}
-+	if (tel_sock >= 0) {
-+		close(tel_sock);
-+		tel_sock = -1;
-+	}
-+	teardown_port();
-+}
-+
-+static int
-+testsuite_setup(void)
-+{
-+	int ret = TEST_SKIPPED;
-+
-+	fifo_path[0] = '\0';
-+
-+	/*
-+	 * The library writes to the FIFO; a closed reader must give the writer
-+	 * EPIPE, not a fatal SIGPIPE. The library masks SIGPIPE on its drain
-+	 * thread, but ignore it here too so the test process is safe regardless.
-+	 */
-+	signal(SIGPIPE, SIG_IGN);
-+
-+	tel_sock = tel_connect();
-+	if (tel_sock < 0) {
-+		printf("telemetry socket not available, skipping\n");
-+		goto error;
-+	}
-+
-+	if (build_port() < 0) {
-+		printf("could not build net_null test port, skipping\n");
-+		goto error;
-+	}
-+
-+	if (make_fifo() < 0) {
-+		printf("could not create fifo %s: %s\n", fifo_path, strerror(errno));
-+		ret = TEST_FAILED;
-+		goto error;
-+	}
-+
-+	return TEST_SUCCESS;
-+
-+error:
-+	testsuite_teardown();
-+	return ret;
-+}
-+
-+/*
-+ * Open the read end before each case: the library opens the FIFO
-+ * O_WRONLY|O_NONBLOCK and would get ENXIO with no reader present.
-+ * O_RDONLY|O_NONBLOCK returns immediately even with no writer yet.
-+ */
-+static int
-+ut_setup(void)
-+{
-+	fifo_rd = open(fifo_path, O_RDONLY | O_NONBLOCK);
-+	if (fifo_rd < 0) {
-+		printf("open %s: %s\n", fifo_path, strerror(errno));
-+		return TEST_FAILED;
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Common cleanup. Closing the read end is the hangup that makes any capture
-+ * still running -- including one that a failed assertion returned out from
-+ * under -- tear itself down, so no case can leak a capture into the next.
-+ */
-+static void
-+ut_teardown(void)
-+{
-+	if (fifo_rd >= 0) {
-+		close(fifo_rd);
-+		fifo_rd = -1;
-+	}
-+	if (wait_list_empty() < 0)
-+		printf("warning: capture still active after test case\n");
-+}
-+
-+/* --- test cases --------------------------------------------------------- */
-+
-+static int
-+test_capture_lifecycle(void)
-+{
-+	char cmd[PATH_MAX + 64], reply[REPLY_LEN], pcapng[REPLY_LEN];
-+	uint64_t id, accepted;
-+	struct timeval tv;
-+	fd_set rfds;
-+	ssize_t n;
-+
-+	snprintf(cmd, sizeof(cmd), "%s,%u,out=%s", CAPTURE_START, test_port, fifo_path);
-+	TEST_ASSERT_SUCCESS(tel_cmd(cmd, reply, sizeof(reply)),
-+			    "capture start command failed");
-+	TEST_ASSERT(strstr(reply, "error") == NULL,
-+		    "capture start returned an error: %s", reply);
-+
-+	/*
-+	 * Inject traffic on every queue: with no queue= the callbacks must be
-+	 * installed on all of them. Rx callbacks run synchronously inside
-+	 * rx_burst, so the accepted counter is up to date as soon as this
-+	 * returns.
-+	 */
-+	TEST_ASSERT_SUCCESS(inject_rx_except(NB_QUEUES, NB_PKTS),
-+			    "rx injection failed");
-+
-+	/* A pcapng stream (at least the section header) must appear. */
-+	FD_ZERO(&rfds);
-+	FD_SET(fifo_rd, &rfds);
-+	tv = (struct timeval){ .tv_sec = 2 };
-+	TEST_ASSERT(select(fifo_rd + 1, &rfds, NULL, NULL, &tv) > 0,
-+		    "no pcapng output within timeout");
-+	n = read(fifo_rd, pcapng, sizeof(pcapng));
-+	TEST_ASSERT(n >= 4, "short pcapng read (%zd)", n);
-+	TEST_ASSERT(memcmp(pcapng, pcapng_shb_magic, sizeof(pcapng_shb_magic)) == 0,
-+		    "output does not start with a pcapng section header block");
-+
-+	/* The capture must show up in the list. */
-+	TEST_ASSERT_SUCCESS(tel_cmd(CAPTURE_LIST, reply, sizeof(reply)),
-+			    "capture list command failed");
-+	TEST_ASSERT_SUCCESS(json_first_array_uint(reply, &id),
-+			    "no capture id in list reply: %s", reply);
-+
-+	/* Stats must report exactly the packets we injected, on every queue. */
-+	TEST_ASSERT_SUCCESS(capture_accepted(id, &accepted),
-+			    "capture stats query failed");
-+	TEST_ASSERT_EQUAL(accepted, (uint64_t)(NB_QUEUES * NB_PKTS),
-+			  "accepted %" PRIu64 " != %d", accepted, NB_QUEUES * NB_PKTS);
-+
-+	/* Same for the Tx side of every queue. */
-+	TEST_ASSERT_SUCCESS(inject_tx_except(NB_QUEUES, NB_PKTS),
-+			    "tx injection failed");
-+	TEST_ASSERT_SUCCESS(capture_accepted(id, &accepted),
-+			    "capture stats query failed");
-+	TEST_ASSERT_EQUAL(accepted, (uint64_t)(2 * NB_QUEUES * NB_PKTS),
-+			  "accepted %" PRIu64 " != %d", accepted, 2 * NB_QUEUES * NB_PKTS);
-+
-+	/*
-+	 * Close the reader: the capture should detect the hangup and tear down.
-+	 * The drain thread's idle poll notices POLLERR on the write end on its
-+	 * own; the extra injection just shortens the wait if it was mid-drain.
-+	 * Done here rather than left to the teardown because the hangup is what
-+	 * this case is asserting.
-+	 */
-+	close(fifo_rd);
-+	fifo_rd = -1;
-+	inject_rx(0, NB_PKTS);	/* any queue; all are captured here */
-+	TEST_ASSERT_SUCCESS(wait_list_empty(),
-+			    "capture did not tear down after reader closed");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * An out-of-range queue index must be rejected. The range check runs before
-+ * the output is opened, so no capture should be left behind even though a
-+ * reader is attached.
-+ */
-+static int
-+test_capture_bad_queue(void)
-+{
-+	char cmd[PATH_MAX + 64], reply[REPLY_LEN];
-+
-+	snprintf(cmd, sizeof(cmd), "%s,%u,out=%s,queue=%u",
-+		 CAPTURE_START, test_port, fifo_path, NB_QUEUES);
-+	TEST_ASSERT_SUCCESS(tel_cmd(cmd, reply, sizeof(reply)),
-+			    "capture start command failed");
-+	TEST_ASSERT(strstr(reply, "error") != NULL,
-+		    "out-of-range queue=%u was not rejected: %s", NB_QUEUES, reply);
-+	TEST_ASSERT_SUCCESS(wait_list_empty(),
-+			    "rejected start left a capture behind");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * With queue=CAPTURE_QUEUE the callbacks are installed on that queue only:
-+ * traffic on any other queue must not be captured, traffic on that one must
-+ * be, in both directions. The counters are bumped synchronously inside
-+ * rx_burst/tx_burst, so every check here is race-free.
-+ */
-+static int
-+test_capture_queue_select(void)
-+{
-+	char cmd[PATH_MAX + 64], reply[REPLY_LEN];
-+	uint64_t id, accepted;
-+
-+	snprintf(cmd, sizeof(cmd), "%s,%u,out=%s,queue=%u",
-+		 CAPTURE_START, test_port, fifo_path, CAPTURE_QUEUE);
-+	TEST_ASSERT_SUCCESS(tel_cmd(cmd, reply, sizeof(reply)),
-+			    "queue=%u capture start failed", CAPTURE_QUEUE);
-+	TEST_ASSERT(strstr(reply, "error") == NULL,
-+		    "queue=%u capture start returned an error: %s",
-+		    CAPTURE_QUEUE, reply);
-+	TEST_ASSERT_SUCCESS(json_uint(reply, "\"id\"", &id),
-+			    "no id in start reply: %s", reply);
-+
-+	/* Unselected queues: callbacks never installed, nothing captured. */
-+	TEST_ASSERT_SUCCESS(inject_rx_except(CAPTURE_QUEUE, NB_PKTS),
-+			    "rx inject on unselected queues failed");
-+	TEST_ASSERT_SUCCESS(inject_tx_except(CAPTURE_QUEUE, NB_PKTS),
-+			    "tx inject on unselected queues failed");
-+	TEST_ASSERT_SUCCESS(capture_accepted(id, &accepted),
-+			    "capture stats query failed");
-+	TEST_ASSERT_EQUAL(accepted, (uint64_t)0,
-+			  "other queues captured under queue=%u (accepted %" PRIu64 ")",
-+			  CAPTURE_QUEUE, accepted);
-+
-+	/* Selected queue: captured, on Rx and on Tx. */
-+	TEST_ASSERT_SUCCESS(inject_rx(CAPTURE_QUEUE, NB_PKTS),
-+			    "rx inject on queue %u failed", CAPTURE_QUEUE);
-+	TEST_ASSERT_SUCCESS(capture_accepted(id, &accepted),
-+			    "capture stats query failed");
-+	TEST_ASSERT_EQUAL(accepted, (uint64_t)NB_PKTS,
-+			  "rx queue %u not captured (accepted %" PRIu64 ")",
-+			  CAPTURE_QUEUE, accepted);
-+
-+	TEST_ASSERT_SUCCESS(inject_tx(CAPTURE_QUEUE, NB_PKTS),
-+			    "tx inject on queue %u failed", CAPTURE_QUEUE);
-+	TEST_ASSERT_SUCCESS(capture_accepted(id, &accepted),
-+			    "capture stats query failed");
-+	TEST_ASSERT_EQUAL(accepted, (uint64_t)(2 * NB_PKTS),
-+			  "tx queue %u not captured (accepted %" PRIu64 ")",
-+			  CAPTURE_QUEUE, accepted);
-+
-+	/* The teardown closes the reader, which stops this capture. */
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Two captures may cover the same queue, each with its own filter and its own
-+ * callback. Both must start, both must be listed separately, and traffic on a
-+ * shared queue must be counted by both.
-+ */
-+static int
-+test_capture_dual(void)
-+{
-+	char cmd[PATH_MAX + 64], reply[REPLY_LEN], path2[PATH_MAX];
-+	uint64_t id1, id2, a1, a2;
-+	int fd2;
-+
-+	/* the second capture writes to an empty regular file, so it needs no reader */
-+	snprintf(path2, sizeof(path2), "%s/capture_test2.%d",
-+		 rte_eal_get_runtime_dir(), (int)getpid());
-+	unlink(path2);
-+	fd2 = open(path2, O_CREAT | O_WRONLY, 0600);
-+	TEST_ASSERT(fd2 >= 0, "could not create %s: %s", path2, strerror(errno));
-+	close(fd2);
-+
-+	snprintf(cmd, sizeof(cmd), "%s,%u,out=%s", CAPTURE_START, test_port, fifo_path);
-+	TEST_ASSERT_SUCCESS(tel_cmd(cmd, reply, sizeof(reply)), "first start failed");
-+	TEST_ASSERT_SUCCESS(json_uint(reply, "\"id\"", &id1), "no id in reply: %s", reply);
-+
-+	snprintf(cmd, sizeof(cmd), "%s,%u,out=%s", CAPTURE_START, test_port, path2);
-+	TEST_ASSERT_SUCCESS(tel_cmd(cmd, reply, sizeof(reply)), "second start failed");
-+	TEST_ASSERT(strstr(reply, "error") == NULL,
-+		    "second capture of the same queues was rejected: %s", reply);
-+	TEST_ASSERT_SUCCESS(json_uint(reply, "\"id\"", &id2), "no id in reply: %s", reply);
-+	TEST_ASSERT_NOT_EQUAL(id1, id2, "both captures got id %" PRIu64, id1);
-+
-+	/* one burst on a queue both cover must be counted twice */
-+	TEST_ASSERT_SUCCESS(inject_rx(0, NB_PKTS), "rx injection failed");
-+	TEST_ASSERT_SUCCESS(capture_accepted(id1, &a1), "stats query failed");
-+	TEST_ASSERT_SUCCESS(capture_accepted(id2, &a2), "stats query failed");
-+	TEST_ASSERT_EQUAL(a1, (uint64_t)NB_PKTS,
-+			  "first capture accepted %" PRIu64 " != %d", a1, NB_PKTS);
-+	TEST_ASSERT_EQUAL(a2, (uint64_t)NB_PKTS,
-+			  "second capture accepted %" PRIu64 " != %d", a2, NB_PKTS);
-+
-+	/* the fifo one is stopped by the teardown closing the reader */
-+	snprintf(cmd, sizeof(cmd), "%s,%" PRIu64, CAPTURE_STOP, id2);
-+	TEST_ASSERT_SUCCESS(tel_cmd(cmd, reply, sizeof(reply)), "stop command failed");
-+	unlink(path2);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static struct unit_test_suite capture_testsuite = {
-+	.suite_name = "capture autotest",
-+	.setup = testsuite_setup,
-+	.teardown = testsuite_teardown,
-+	.unit_test_cases = {
-+		TEST_CASE_ST(ut_setup, ut_teardown, test_capture_lifecycle),
-+		TEST_CASE_ST(ut_setup, ut_teardown, test_capture_bad_queue),
-+		TEST_CASE_ST(ut_setup, ut_teardown, test_capture_queue_select),
-+		TEST_CASE_ST(ut_setup, ut_teardown, test_capture_dual),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_capture(void)
-+{
-+	return unit_test_suite_runner(&capture_testsuite);
-+}
-+
-+REGISTER_FAST_TEST(capture_autotest, NOHUGE_OK, ASAN_OK, test_capture);
++++ b/doc/guides/tools/wireshark_extcap.rst
+@@ -0,0 +1,144 @@
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright(c) 2026 Stephen Hemminger
++
++Wireshark Extcap Plugin
++=======================
++
++The ``dpdk-wireshark-extcap.py`` script is an external capture (extcap)
++plugin that enables Wireshark capture of live traffic from
++the Ethernet ports of a DPDK application.
++Each DPDK port appears as a capture interface in the Wireshark interface list,
++alongside the host's own network interfaces.
++
++The plugin uses the DPDK telemetry API to query and start capture.
++It passes the path of the fifo file that Wireshark created to the DPDK application,
++which opens the file itself and writes pcapng packets straight into it;
++the plugin never touches packet data.
++Wireshark signals the plugin on exit and that results in closing
++the capture session.
++
++
++Requirements
++------------
++
++* A DPDK application built with the capture library and with telemetry enabled.
++  Telemetry is enabled by default.
++
++* Since the plugin is started by Wireshark, Wireshark and the DPDK application
++  must have the same permissions. See `Permissions`_.
++
++
++Installation
++------------
++
++For Wireshark to discover the plugin it must be present in an extcap
++directory. The configured locations are listed in Wireshark under
++*Help > About Wireshark > Folders*. Copy or symbolically link the script into
++the personal extcap directory, for example::
++
++    ln -s $RTE_SDK/usertools/dpdk-wireshark-extcap.py \
++        ~/.local/lib/wireshark/extcap/
++
++The DPDK ports then appear in the interface list the next time the capture
++options dialog is opened.
++
++
++Usage
++-----
++
++In normal use the plugin is not run by hand; Wireshark invokes it.
++The ports of a running DPDK application appear in the interface list as
++``DPDK <name>``, where ``<name>`` is the device name reported by
++DPDK ethdev, such as ``net_tap0``.
++
++The plugin can also be run directly, which is useful for confirming that a
++DPDK application is reachable::
++
++    $ usertools/dpdk-wireshark-extcap.py --extcap-interfaces
++    extcap {version=0.1}{display=DPDK telemetry capture}
++    interface {value=dpdk:0}{display=DPDK net_tap0}
++
++
++Capture options
++---------------
++
++The following options are offered in the Wireshark capture options dialog for
++a DPDK interface:
++
++Snapshot length
++    Number of bytes captured from each packet. ``0`` captures the whole
++    packet. The default is 262144.
++
++Queue
++    Capture a single hardware queue, or all queues (the default). The choices
++    are bounded to the port's configured queue count.
++
++Capture filter
++    A libpcap filter expression, applied by the DPDK application to the
++    captured traffic.
++
++
++Permissions
++-----------
++
++The DPDK runtime directory is created mode ``0700``, so only the user that
++started the DPDK application can reach its telemetry socket.
++Wireshark, and the plugin it launches, must run as that same user. If run as a
++different user, the interface list is simply empty; running the plugin directly
++with ``--extcap-interfaces`` prints a diagnostic to standard error explaining
++the permission failure.
++
++No privilege beyond access to the telemetry socket is required: if you can
++run ``dpdk-dumpcap`` against an application, you can capture from it with this
++plugin.
++
++
++Selecting a DPDK application
++----------------------------
++
++A host usually runs a single DPDK application, started with the default
++file-prefix (``rte``), and no configuration is needed: its ports appear
++automatically as ``DPDK <name>``.
++
++Running several DPDK applications on one host is also supported. In that case
++each application is started with a distinct ``--file-prefix`` so that its
++runtime state is kept separate. The plugin lists the ports of *all* running
++applications at once, so the application is chosen from the interface list
++rather than before Wireshark is launched. There is no environment variable to
++select one.
++
++Ports of the default prefix are shown plainly, as ``DPDK <name>`` with the
++interface value ``dpdk:<port>``. Ports of any other prefix are qualified with
++the prefix, shown as ``DPDK <name>@<prefix>`` with the interface value
++``dpdk:<prefix>:<port>``, so applications with colliding port numbers stay
++distinct in the list.
++
++
++Environment variables
++----------------------
++
++``DPDK_EXTCAP_PATH``
++    Overrides the base DPDK runtime directory that holds the per-prefix
++    subdirectories. Use it when the runtime directory is in a non-standard
++    location. It gives the base directory that holds the per-prefix
++    subdirectories, one of which is scanned for each running application.
++
++
++Troubleshooting
++---------------
++
++The DPDK ports do not appear in Wireshark
++    Confirm the application is running and was built with the capture library
++    and telemetry. Confirm Wireshark runs as the same user as the application;
++    see `Permissions`_. An application started with a non-default
++    ``--file-prefix`` is listed with its ports qualified as
++    ``DPDK <name>@<prefix>``; see `Selecting a DPDK application`_.
++
++    Running the plugin directly with ``--extcap-interfaces`` prints
++    diagnostics to standard error that the Wireshark GUI does not surface.
++
++A port is listed as ``portN`` instead of a device name
++    The port was reported by the application, but its details could not be
++    read, usually because the application stopped between listing and naming
++    its ports. A capture started against it will fail; restart the
++    application.
+diff --git a/usertools/dpdk-wireshark-extcap.py b/usertools/dpdk-wireshark-extcap.py
+new file mode 100755
+index 0000000000..ba7323b857
+--- /dev/null
++++ b/usertools/dpdk-wireshark-extcap.py
+@@ -0,0 +1,416 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-or-later
++# Copyright(c) 2026 Stephen Hemminger
++
++"""
++Wireshark extcap plugin for live capture from DPDK ethdev ports.
++
++Capture path: Wireshark creates a FIFO and hands this plugin its path. The
++plugin opens the FIFO -- which rendezvous with Wireshark's read end -- and then
++passes the FIFO *path* to the DPDK primary process over the telemetry socket as
++the 'out=' parameter. DPDK opens the FIFO itself and writes pcapng straight into
++it; this plugin never touches packet data.
++
++Stopping: Wireshark stops a capture by closing the FIFO read end and/or sending
++SIGTERM. On either, this plugin asks DPDK to stop (/ethdev/capture/stop,<id>) so
++it can flush the trailing packets and the closing interface statistics block
++while a reader is still attached. If the read end is already gone, DPDK detects
++the same hangup and stops on its own; the explicit stop is then a harmless
++no-op. Note that when stopped from the Wireshark GUI the read-end close usually
++precedes the signal, so the statistics block is delivered reliably only for
++standalone (Ctrl+C) runs and for file output.
++
++Interface values: 'dpdk:<port>' for the default file-prefix ('rte'), and
++'dpdk:<prefix>:<port>' for any other primary. The default prefix is left
++implicit so the common single-instance case stays unadorned.
++"""
++
++import argparse
++import json
++import os
++import select
++import signal
++import socket
++import sys
++
++EXTCAP_VERSION = "0.1"
++TELEMETRY_SOCKET = "dpdk_telemetry.v2"
++CAPTURE_START_CMD = "/ethdev/capture/start"
++CAPTURE_STOP_CMD = "/ethdev/capture/stop"
++ETHDEV_LIST = "/ethdev/list"
++ETHDEV_INFO = "/ethdev/info"
++DEFAULT_SNAPLEN = 262144
++DEFAULT_PREFIX = "rte"  # EAL HUGEFILE_PREFIX_DEFAULT
++DLT_EN10MB = 1
++
++
++# --- DPDK runtime directory / socket discovery ---------------------------
++
++
++def dpdk_dir():
++    """Directory holding the per-file-prefix runtime subdirectories."""
++    override = os.environ.get("DPDK_EXTCAP_PATH")
++    if override:
++        return override
++    if os.geteuid() == 0:
++        base = "/var/run"
++    else:
++        base = os.environ.get("XDG_RUNTIME_DIR", "/tmp")
++    return os.path.join(base, "dpdk")
++
++
++def socket_path(prefix):
++    return os.path.join(dpdk_dir(), prefix, TELEMETRY_SOCKET)
++
++
++def list_prefixes():
++    """Yield (prefix, path) for each DPDK telemetry socket found."""
++    root = dpdk_dir()
++    try:
++        entries = os.listdir(root)
++    except FileNotFoundError:
++        # No DPDK runtime dir is present.
++        sys.stderr.write(
++            f"no DPDK runtime directory {root}. Either no DPDK application "
++            "is running, or it runs as a different user\n"
++        )
++        return
++    except PermissionError:
++        # The runtime dir is mode 0700; a different user can see nothing.
++        sys.stderr.write(
++            f"cannot read {root}: permission denied. The DPDK runtime "
++            "directory is created mode 0700, so capture must run as the same "
++            "user as the DPDK application, or set DPDK_EXTCAP_PATH.\n"
++        )
++        return
++
++    found = False
++    for prefix in sorted(entries):
++        path = os.path.join(root, prefix, TELEMETRY_SOCKET)
++        if os.path.exists(path):
++            found = True
++            yield prefix, path
++
++    # Handle case where leftover unix domain socket
++    if not found:
++        sys.stderr.write(f"no DPDK telemetry socket under {root}\n")
++
++
++def iface_value(prefix, port):
++    """Interface value for a (prefix, port). The default prefix is left
++    implicit so a single default-prefix instance shows 'dpdk:<port>'; any
++    other primary is spelled out as 'dpdk:<prefix>:<port>'."""
++    if prefix == DEFAULT_PREFIX:
++        return f"dpdk:{port}"
++    return f"dpdk:{prefix}:{port}"
++
++
++# --- Telemetry transport -------------------------------------------------
++
++
++class Telemetry:
++    """Minimal client for the DPDK v2 telemetry socket (SOCK_SEQPACKET)."""
++
++    def __init__(self, path):
++        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
++        self.sock.connect(path)
++        info = json.loads(self.sock.recv(1024).decode())
++        self.max_output_len = info.get("max_output_len", 16384)
++        self.pid = info.get("pid")
++        self.version = info.get("version")
++
++    def command(self, cmd):
++        """Send a command, return the decoded JSON reply, or None if empty."""
++        self.sock.send(cmd.encode())
++        reply = self.sock.recv(self.max_output_len)
++        if not reply:
++            return None
++        return json.loads(reply.decode())
++
++    def close(self):
++        self.sock.close()
++
++
++def port_queue_count(tel, port):
++    """Max of the rx/tx queue counts for a port, 0 if unknown."""
++    try:
++        reply = tel.command(f"{ETHDEV_INFO},{port}")
++    except OSError:
++        reply = None
++    info = (reply or {}).get(ETHDEV_INFO) or {}
++    return max(info.get("nb_rx_queues", 0), info.get("nb_tx_queues", 0))
++
++
++# --- extcap query operations --------------------------------------------
++
++
++def port_name(tel, port):
++    """Device name for a port via /ethdev/info, or 'port<N>' if unreadable.
++    For a physical port this is the PCI address (0000:c1:00.0); for a vdev it
++    is the vdev name (net_tap0). Reuses the caller's open connection."""
++    try:
++        reply = tel.command(f"{ETHDEV_INFO},{port}")
++    except OSError:
++        reply = None
++    info = (reply or {}).get(ETHDEV_INFO) or {}
++    return info.get("name") or f"port{port}"
++
++
++def cmd_interfaces():
++    print(f"extcap {{version={EXTCAP_VERSION}}}{{display=DPDK telemetry capture}}")
++    for prefix, path in list_prefixes():
++        try:
++            tel = Telemetry(path)
++        except OSError as e:
++            sys.stderr.write(f"cannot query {path}: {e}\n")
++            continue
++        # One connection per prefix for the whole enumeration: list the ports,
++        # then name each over the same socket (each connection costs the
++        # primary a handler thread).
++        try:
++            ports = (tel.command(ETHDEV_LIST) or {}).get(ETHDEV_LIST) or []
++            for port in ports:
++                name = port_name(tel, port)
++                # Name the prefix in the label only when it is not the default.
++                if prefix == DEFAULT_PREFIX:
++                    display = f"DPDK {name}"
++                else:
++                    display = f"DPDK {name}@{prefix}"
++                print(
++                    f"interface {{value={iface_value(prefix, port)}}}"
++                    f"{{display={display}}}"
++                )
++        except OSError as e:
++            sys.stderr.write(f"cannot query {path}: {e}\n")
++        finally:
++            tel.close()
++
++
++def cmd_dlts(_iface):
++    print(f"dlt {{number={DLT_EN10MB}}}{{name=EN10MB}}{{display=Ethernet}}")
++
++
++def cmd_config(iface):
++    print(
++        f"arg {{number=0}}{{call=--snaplen}}{{display=Snapshot length}}"
++        f"{{tooltip=Bytes captured per packet (0 = whole packet)}}"
++        f"{{type=integer}}{{range=0,{DEFAULT_SNAPLEN}}}"
++        f"{{default={DEFAULT_SNAPLEN}}}{{group=Capture}}"
++    )
++
++    # Bound the queue dropdown to the port's actual queue count. If the primary
++    # is unreachable, just omit the selector -- capture still defaults to all.
++    nqueues = 0
++    if iface:
++        prefix, port = parse_iface(iface)
++        try:
++            tel = Telemetry(socket_path(prefix))
++        except OSError:
++            tel = None
++        if tel is not None:
++            try:
++                nqueues = port_queue_count(tel, port)
++            finally:
++                tel.close()
++
++    if nqueues > 0:
++        print(
++            "arg {number=1}{call=--queue}{display=Queue}"
++            "{tooltip=Capture a single hardware queue}"
++            "{type=selector}{group=Capture}"
++        )
++        print("value {arg=1}{value=-1}{display=All queues}{default=true}")
++        for q in range(nqueues):
++            print(f"value {{arg=1}}{{value={q}}}{{display=Queue {q}}}")
++
++
++# --- capture -------------------------------------------------------------
++
++
++def comma_error(what):
++    """Telemetry command parameters are a comma separated list and there is no
++    escaping, so a comma inside a value is parsed as the start of the next
++    parameter. Reject it here rather than let the primary mis-parse it."""
++    return f"{what} must not contain a comma"
++
++
++def parse_iface(iface):
++    """Inverse of iface_value: accept 'dpdk:<port>' (default prefix) or
++    'dpdk:<prefix>:<port>'."""
++    parts = iface.split(":")
++    if parts[0] != "dpdk":
++        raise SystemExit(f"unsupported interface scheme in '{iface}'")
++    if len(parts) == 2:
++        prefix, port = DEFAULT_PREFIX, parts[1]
++    elif len(parts) == 3:
++        prefix, port = parts[1], parts[2]
++    else:
++        raise SystemExit(f"malformed interface '{iface}'")
++    try:
++        port = int(port)
++    except ValueError as e:
++        raise SystemExit(f"malformed interface '{iface}'") from e
++    return prefix, port
++
++
++def wait_for_stop(fifo_fd):
++    """Block until Wireshark stops us: either it closes the FIFO read end
++    (POLLERR on our write fd) or it sends SIGINT/SIGTERM. Watching the fd as
++    well as the signal matters because the signal may be missed -- Wireshark's
++    reliable stop is closing the pipe.
++
++    The handlers and the wakeup fd are restored before returning: the caller
++    still has telemetry work to do, and a second signal arriving during it
++    should terminate us the usual way rather than be swallowed."""
++    sigs = (signal.SIGINT, signal.SIGTERM)
++    old_handlers = {}
++    old_wakeup = None
++    rd, wr = os.pipe()
++    try:
++        os.set_blocking(wr, False)
++        old_wakeup = signal.set_wakeup_fd(wr)
++        for sig in sigs:
++            old_handlers[sig] = signal.signal(sig, lambda *_: None)
++
++        poller = select.poll()
++        poller.register(fifo_fd, select.POLLERR)
++        poller.register(rd, select.POLLIN)
++        poller.poll()
++    finally:
++        for sig, handler in old_handlers.items():
++            signal.signal(sig, handler)
++        if old_wakeup is not None:
++            signal.set_wakeup_fd(old_wakeup)
++        os.close(rd)
++        os.close(wr)
++
++
++def cmd_capture(iface, fifo, snaplen, queue, cfilter):
++    prefix, port = parse_iface(iface)
++    path = socket_path(prefix)
++
++    # Both are passed to the primary as telemetry parameters; check before
++    # opening anything so a bad one costs nothing.
++    if "," in fifo:
++        raise SystemExit(f"{comma_error('fifo path')}: {fifo}")
++    if cfilter and "," in cfilter:
++        raise SystemExit(comma_error("capture filter"))
++
++    # Blocking open of the FIFO Wireshark created. This rendezvous guarantees a
++    # reader is attached before we ask DPDK to open the write end (DPDK opens
++    # O_WRONLY|O_NONBLOCK and would fail with ENXIO if no reader were present).
++    # We then hold this fd for the whole session: it keeps the pipe from
++    # EOF-ing in the window before the DPDK capture thread opens its own write
++    # end, and it is our reliable stop signal -- POLLERR here means Wireshark
++    # closed the read end.
++    fifo_fd = os.open(fifo, os.O_WRONLY)
++
++    try:
++        tel = Telemetry(path)
++    except OSError as e:
++        os.close(fifo_fd)
++        raise SystemExit(f"cannot connect to DPDK telemetry at {path}: {e}") from e
++
++    params = [str(port), f"out={fifo}"]
++    if snaplen is not None:
++        params.append(f"snaplen={snaplen}")
++    if queue is not None and queue >= 0:
++        params.append(f"queue={queue}")
++    if cfilter:
++        params.append(f"filter={cfilter}")
++    cmd = CAPTURE_START_CMD + "," + ",".join(params)
++
++    try:
++        reply = tel.command(cmd)
++    except OSError as e:
++        os.close(fifo_fd)
++        tel.close()
++        raise SystemExit(f"capture start failed: {e}") from e
++
++    result = (reply or {}).get(CAPTURE_START_CMD) or {}
++    if "error" in result:
++        os.close(fifo_fd)
++        tel.close()
++        raise SystemExit(f"capture start failed: {result['error']}")
++
++    cap_id = result.get("id")
++
++    # Run until Wireshark stops us (signal or read-end close). DPDK now holds
++    # its own write end, so closing ours below won't EOF the reader prematurely.
++    wait_for_stop(fifo_fd)
++
++    # Ask DPDK to stop while we still hold the write end, so if the reader is
++    # still attached it drains the tail and writes the statistics block before
++    # the final EOF. If the read end is already gone DPDK has already stopped
++    # on the same hangup and this is a no-op.
++    if cap_id is not None:
++        try:
++            tel.command(f"{CAPTURE_STOP_CMD},{cap_id}")
++        except OSError:
++            pass
++
++    os.close(fifo_fd)
++    tel.close()
++
++
++# --- entry point ---------------------------------------------------------
++
++
++def main():
++    p = argparse.ArgumentParser(
++        prog="dpdk-wireshark-extcap.py",
++        allow_abbrev=False,
++        description="Wireshark extcap plugin for live packet capture from the "
++        "Ethernet ports of a running DPDK application. Normally "
++        "invoked by Wireshark; see the DPDK Wireshark extcap guide.",
++    )
++    p.add_argument("--version", action="version", version=f"%(prog)s {EXTCAP_VERSION}")
++
++    p.add_argument("--extcap-interfaces", action="store_true")
++    p.add_argument("--extcap-dlts", action="store_true")
++    p.add_argument("--extcap-config", action="store_true")
++    p.add_argument("--capture", action="store_true")
++    p.add_argument("--extcap-interface")
++    p.add_argument("--fifo")
++    p.add_argument("--extcap-capture-filter")
++    p.add_argument("--extcap-version", nargs="?")
++    p.add_argument("--snaplen", type=int)
++    p.add_argument("--queue", type=int)
++    args, _ = p.parse_known_args()
++
++    if args.extcap_interfaces:
++        cmd_interfaces()
++    elif args.extcap_dlts:
++        cmd_dlts(args.extcap_interface)
++    elif args.extcap_config:
++        cmd_config(args.extcap_interface)
++    elif args.capture:
++        if not args.extcap_interface or not args.fifo:
++            raise SystemExit("--capture requires --extcap-interface and --fifo")
++        cmd_capture(
++            args.extcap_interface,
++            args.fifo,
++            args.snaplen,
++            args.queue,
++            args.extcap_capture_filter,
++        )
++    elif args.extcap_capture_filter:
++        # Wireshark validates a capture filter by invoking the extcap with the
++        # filter but without --capture (see doc/extcap_example.py upstream).
++        # Wireshark already syntax-checks it with libpcap against our DLT
++        # (EN10MB) and DPDK compiles it again at capture start, so the only
++        # thing left to reject here is what the telemetry encoding cannot
++        # carry.
++        #
++        # No output means "accepted"; any output marks the filter invalid and
++        # its first line is shown to the user. The exit status must stay 0
++        # either way: Wireshark discards the output of a child that exited
++        # non-zero and reports the filter as unknown rather than invalid.
++        if "," in args.extcap_capture_filter:
++            print(comma_error("capture filter"))
++    else:
++        raise SystemExit("no extcap operation specified")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/usertools/meson.build b/usertools/meson.build
+index 114d0a65b4..5debf73702 100644
+--- a/usertools/meson.build
++++ b/usertools/meson.build
+@@ -13,6 +13,7 @@ install_data([
+             'dpdk-rss-flows.py',
+             'dpdk-telemetry-exporter.py',
+             'dpdk-telemetry-watcher.py',
++            'dpdk-wireshark-extcap.py',
+         ],
+         install_dir: 'bin')
+ 
 -- 
 2.53.0
 
