@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90875C53209
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 13:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7395BC53209
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 13:54:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3984440685;
-	Mon, 27 Jul 2026 15:54:30 +0200 (CEST)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
- [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id B4F694068E
- for <dev@dpdk.org>; Mon, 27 Jul 2026 15:54:28 +0200 (CEST)
-Received: by mail-qv1-f45.google.com with SMTP id
- 6a1803df08f44-8f256eaedf8so28594736d6.2
- for <dev@dpdk.org>; Mon, 27 Jul 2026 06:54:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8D72E40671;
+	Mon, 27 Jul 2026 15:54:33 +0200 (CEST)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
+ [209.85.160.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 3B61E400D6
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 15:54:32 +0200 (CEST)
+Received: by mail-qt1-f180.google.com with SMTP id
+ d75a77b69052e-51c16ac21acso17295361cf.0
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 06:54:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1785160468; x=1785765268; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1785160471; x=1785765271; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=ngJUogwp9bU9UsEuenxdbR3UdVV7LRWg2iTziWt2fGg=;
- b=khLN1OVrNvZrmXmm9IhdA9qslrofkrsvxBBVKffRLgex7d44E/evedud3SsllRr/sK
- 6t3bKz/QgU+Q6ye5lKGrDhRAT53bmV9K/F8VjYaJlcNrVFkAkqfKrhjHc35lLag+rLDI
- yACjB8L5zyjg/YLec6Vi+OrP5KjkwdlETQz8ciyW8orGWrtkC0RBYmRDBuzcAq4rq5K0
- liADWWhwy21tgqubkz7DbjHyrF3Qu4Nm535ouP6/dDOljpSzVzghc4tj3q2O9MlQm5aE
- Pj/1biiSsyTzxqqQ/7NfDwjk3EhQ/fFKwH9iqHzZn+1d5odW4eMisMnv3PRK0ixd7Lz2
- Hcuw==
+ bh=/gfXQJbnPYZBrL6a0Wv+ljjrKDEBFG9hKuHAjDtyoNY=;
+ b=IRC3z3YQl15jXlP+aLO9S1m2Lj/labM1s9fjiUP+KMBPk34yXJrotijkBr3Hbuh0DR
+ wf7qVtC6herWkcw9+1SKbHG7swWLdUYHBu4PxFLxNEjecQBXv4qlzi4Jv5iRQbotEObb
+ g37F+bCjmAqexCIH1A+4lJ57AbbOF+Mj/y9QRJ1slhj7yBTPa7Ql3HO2Ktjsnfv38N97
+ aHUTFmOD0mXIidfIxGTbQFO/attSWUcbVJ/OIk5fWOHuulpyBgQyR0pTP63IYh1FAMiN
+ Cl+REjoexZx8yIHkcUdarLm7wkD5n5ho0RNkWtUf+yXZYVM51mn4qdt4WHGIhNLGh8e8
+ tukQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785160468; x=1785765268;
+ d=1e100.net; s=20251104; t=1785160471; x=1785765271;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=ngJUogwp9bU9UsEuenxdbR3UdVV7LRWg2iTziWt2fGg=;
- b=Z23Nyo72+56eQU65TIUgIkTQAqN2xtUakrSB8LM6w0Hd2Ks4fbX9fvB0vuyLFDlxwX
- gv1FVl91p84KuyJOtaPLL5AvVJS7iEipLY4Ia/Y4BWebzIoJ9Cnr7kPVksL1G6JCxWSx
- 9LdJ1aHBOUEYEd5TeOaifxc1aPR+xOYoEnxWrRmZzmRU/WxdeNTqlLKG2QADkI6Kyg69
- rcdcSUUkdLZBj48X9FTfMRW/PGDHwbSINbweT+dpUehMFN7nq4i1vEMy0Vr3tIh9aEfE
- 1HqU664weSRiBijrsfodqJYJ8LnsR/5ZAQOmzF6FbUKcLDiJE19ZVI+6t0fNvfnsvO5W
- fWbg==
-X-Gm-Message-State: AOJu0Yyrb0RX8CsXO4gaNyob00mP6G8rfhY0zHOurjqvNV45pOlLAqTX
- NgTS4RG6yHVI6eOpOPoU4z1eIG5YHKbX70GTbTWz2eLklinTU1iY9lMa
-X-Gm-Gg: AR+sD11pSryaxKPSrFpjazrNjkG7oqcJRQsDWO3SM9mYhTPihG0imPfStWMYOYEDceb
- g4xD4sz3HoXltpmhQ2ClvqT3NyUMwV7VpAhXmtzpD3DAteqCGaHkJe1w1+PXJE7c8G8L2amOr8u
- ikU0D5mlJcusB7uQRcriKC774duereuxY5U5MM95We2I3AL6o6VRuwLbEfNBqN+UCDGCgbH45WU
- RGBIOpZn9Rg2sxK/RQcWB+7a+YBMOVzZRpV6PEVTOrQGdaBh+CAC8NOKPkld9p7enkKx3HkHXV7
- q+u9/mM9hKnoviK+Y/DgAQ6MsX0Ll5cCX1Em/8HQ6U1hyoJUCQ55PFz3m1EMPVLAYjKNPRz+xKE
- JZ+P9Ho7BBSlGRxcpyah2o9ggY50RlysXEVtGedeEC5J1pIwSGW7u8Ov9z3CUv6f+ix39Qrjawv
- wwHf4IlQ2dBcMfMyw7v5gV30YOKnBJS8o=
-X-Received: by 2002:ad4:5def:0:b0:904:75a6:450f with SMTP id
- 6a1803df08f44-907ec814e3amr99619366d6.46.1785160467780; 
- Mon, 27 Jul 2026 06:54:27 -0700 (PDT)
+ bh=/gfXQJbnPYZBrL6a0Wv+ljjrKDEBFG9hKuHAjDtyoNY=;
+ b=JTC6q7Dff5b24tUp7N3tnSQyqJGW/pIJi9D0ze8Gly991umo2N8cSc5zMcSDT69OLD
+ EH+wuO0yEiBF+yw180/2ckWHObE9CR4AhASPEqs3jsQmFmUe1xRfLdTPkvvJO9uybF+R
+ 0DSY+QiIMpRviqIBymRToMofXNuUmJWWzi41tHaJkOapfQipS4Xp/x1kRXUoXu//6Y4Z
+ umNROkriQRn0eEuPJWSQVX6Pr9Nat+AueFmMO1M8D6wg5QNDgXBJKFNKEAXSi/SLgJVP
+ 8qOirbQiJqO3MzJKVHw0ZUkWu1qozmSvRVha+JuDp3Lph7eYF/6j0B8KovgwnJQCQnGE
+ /fmg==
+X-Gm-Message-State: AOJu0Yya39AJCdteDmsPlYxVzSNXlAxi+4u2F4Uy+tpfaNu1a6YeVlON
+ rq/N6tP0dp47sJJb8ZbtCk2pw7JWToWJ+uQXfoWipwpLkLNsftZs3pYU
+X-Gm-Gg: AR+sD139YPqt1hmQsCiZvnyMW+9QORIP1hN3DtI717Xf3ZU585fkTscuZeZ4nJvMex6
+ jG6qRNQprC6rgDLhUjINHu7U0beU8dbkEM1JhNtS0vzFC5k9+P29VwR+JSX5KRO4S0yV06yqbvu
+ naOd8HueOfI7oiw1g7I/2GCINPZskVOiTm0MOG0Mgxxwjc13Ic85SvGEnsKp78Xmldbg/ZSyrk8
+ nKuEm41v6LOvZvZoHAFqk94ywHQaAeaTu/hR45Yd6ozsBY/bfqKhm6WHRcdCUDdkXDDLrVEeK2R
+ b0P351RGqR5ir7ooXSyIaLne+60f+Jdu+wGqtY2fuJQH27HTdrmujmrGUQ4AHW2tgJXscZYKDdz
+ w2wYWeCAHZUiDbk8/55PNsN5kb4XuOUhYXKqvz5tBoPuBF3Fi9STikPzGkkOlrcpSxOIB3CB8+Y
+ DI8cRn18WLGrKk2sxFYXRTnsd3lJM3TWI=
+X-Received: by 2002:ac8:6f0d:0:b0:51c:7b12:1204 with SMTP id
+ d75a77b69052e-529a8897336mr88836311cf.82.1785160471409; 
+ Mon, 27 Jul 2026 06:54:31 -0700 (PDT)
 Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-907e851b717sm65313496d6.7.2026.07.27.06.54.26
+ d75a77b69052e-529a29884e7sm53802631cf.17.2026.07.27.06.54.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 27 Jul 2026 06:54:27 -0700 (PDT)
+ Mon, 27 Jul 2026 06:54:31 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: stephen@networkplumber.org
-Cc: dev@dpdk.org, ferruh.yigit@amd.com, Maxime Leroy <maxime@leroys.fr>,
- stable@dpdk.org
-Subject: [PATCH v3 3/4] net/tap: drain queue FD in Rx interrupt mode
-Date: Mon, 27 Jul 2026 15:54:09 +0200
-Message-ID: <20260727135411.2590931-4-maxime@leroys.fr>
+Cc: dev@dpdk.org,
+	ferruh.yigit@amd.com,
+	Maxime Leroy <maxime@leroys.fr>
+Subject: [PATCH v3 4/4] net/tap: use bool for boolean flags
+Date: Mon, 27 Jul 2026 15:54:10 +0200
+Message-ID: <20260727135411.2590931-5-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260727135411.2590931-1-maxime@leroys.fr>
 References: <20260727135411.2590931-1-maxime@leroys.fr>
@@ -81,118 +83,140 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The tap Rx path is driven by a SIGIO trigger: pmd_rx_burst() returns
-without reading the queue fd unless tap_trigger, bumped by the O_ASYNC
-signal handler, has advanced. That avoids a readv() on every empty poll.
+persist, flow_init and flow_isolate only ever hold true or false but were
+declared as int. Use bool, consistent with the interrupt-mode flags added
+in this series and with common DPDK practice, and convert the parameters
+and local variable that feed persist along with them.
 
-In Rx interrupt mode the application does not busy poll: it waits on the
-queue fd through the Rx interrupt API and bursts only after a wakeup. The
-trigger is process wide and the signal is sent to the process, since the
-fd owner is set with F_SETOWN and getpid(), so it is not necessarily
-handled by the thread that was woken for that queue. The burst can
-therefore run before the trigger has advanced and return 0 while the fd is
-readable. The registration done by rte_intr_rx_ctl() is edge triggered
-(EPOLLET), so no further wakeup comes for data that is already queued: the
-packet waits for the next arrival, and the last one waits forever.
-
-Seen with grout in interrupt mode: the echo reply to the first ping stays
-in the fd until the second request creates a new edge, so the first ping
-times out and the second burst returns both replies.
-
-When the port is configured for Rx interrupts, drain the fd
-unconditionally in the burst and do not arm the SIGIO trigger on the data
-queue fd. A data queue fd can be closed and recreated on a later setup,
-so the mode must stay constant to keep every fd on the same SIGIO policy:
-it is fixed at configure time and a later change is rejected. Close and
-reopen the port to switch modes.
-
-Fixes: 4870a8cdd968 ("net/tap: support Rx interrupt")
-Cc: stable@dpdk.org
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- drivers/net/tap/rte_eth_tap.c | 20 +++++++++++++++++++-
- drivers/net/tap/rte_eth_tap.h |  2 ++
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ drivers/net/tap/rte_eth_tap.c | 14 +++++++-------
+ drivers/net/tap/rte_eth_tap.h |  6 +++---
+ drivers/net/tap/tap_flow.c    |  6 +++---
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index 770d75f0c7..f846ce1fda 100644
+index f846ce1fda..b1c5237fb1 100644
 --- a/drivers/net/tap/rte_eth_tap.c
 +++ b/drivers/net/tap/rte_eth_tap.c
-@@ -254,6 +254,12 @@ tun_alloc(struct pmd_internals *pmd, int is_keepalive, int persistent)
- 		goto error;
+@@ -158,7 +158,7 @@ static int tap_intr_handle_set(struct rte_eth_dev *dev, int set);
+  *   -1 on failure, fd on success
+  */
+ static int
+-tun_alloc(struct pmd_internals *pmd, int is_keepalive, int persistent)
++tun_alloc(struct pmd_internals *pmd, bool is_keepalive, bool persistent)
+ {
+ 	struct ifreq ifr;
+ #ifdef IFF_MULTI_QUEUE
+@@ -1540,7 +1540,7 @@ tap_setup_queue(struct rte_eth_dev *dev,
+ 			pmd->name, fd, dir, qid);
+ 		gso_ctx = NULL;
+ 	} else {
+-		fd = tun_alloc(pmd, 0, 0);
++		fd = tun_alloc(pmd, false, false);
+ 		if (fd < 0) {
+ 			TAP_LOG(ERR, "%s: tun_alloc() failed.", pmd->name);
+ 			return -1;
+@@ -2147,7 +2147,7 @@ static const struct eth_dev_ops ops = {
+ static int
+ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
+ 		   const char *remote_iface, struct rte_ether_addr *mac_addr,
+-		   enum rte_tuntap_type type, int persist)
++		   enum rte_tuntap_type type, bool persist)
+ {
+ 	int numa_node = rte_socket_id();
+ 	struct rte_eth_dev *dev;
+@@ -2234,7 +2234,7 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
+ 	 * This keep-alive file descriptor will guarantee that the TUN device
+ 	 * exists even when all of its queues are closed
+ 	 */
+-	pmd->ka_fd = tun_alloc(pmd, 1, persist);
++	pmd->ka_fd = tun_alloc(pmd, true, persist);
+ 	if (pmd->ka_fd == -1) {
+ 		TAP_LOG(ERR, "Unable to create %s interface", tuntap_name);
+ 		goto error_exit;
+@@ -2507,7 +2507,7 @@ rte_pmd_tun_probe(struct rte_vdev_device *dev)
+ 	TAP_LOG(DEBUG, "Initializing pmd_tun for %s", name);
+ 
+ 	ret = eth_dev_tap_create(dev, tun_name, remote_iface, 0,
+-				 ETH_TUNTAP_TYPE_TUN, 0);
++				 ETH_TUNTAP_TYPE_TUN, false);
+ 
+ leave:
+ 	if (ret == -1) {
+@@ -2630,7 +2630,7 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
+ 	struct rte_ether_addr user_mac = { .addr_bytes = {0} };
+ 	struct rte_eth_dev *eth_dev;
+ 	int tap_devices_count_increased = 0;
+-	int persist = 0;
++	bool persist = false;
+ 
+ 	name = rte_vdev_device_name(dev);
+ 	params = rte_vdev_device_args(dev);
+@@ -2718,7 +2718,7 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
+ 			}
+ 
+ 			if (rte_kvargs_count(kvlist, ETH_TAP_PERSIST_ARG) == 1)
+-				persist = 1;
++				persist = true;
+ 		}
  	}
  
-+	/* data queue fds in interrupt mode wake through epoll, not the SIGIO
-+	 * trigger; the keep-alive fd always keeps SIGIO
-+	 */
-+	if (!is_keepalive && pmd->intr_mode)
-+		return fd;
-+
- 	/* Find a free realtime signal */
- 	for (signo = SIGRTMIN + 1; signo < SIGRTMAX; signo++) {
- 		struct sigaction sa;
-@@ -477,7 +483,7 @@ pmd_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	unsigned long num_rx_bytes = 0;
- 	uint32_t trigger = tap_trigger;
- 
--	if (trigger == rxq->trigger_seen)
-+	if (!rxq->intr_mode && trigger == rxq->trigger_seen)
- 		return 0;
- 
- 	process_private = rte_eth_devices[rxq->in_port].process_private;
-@@ -937,6 +943,16 @@ tap_dev_configure(struct rte_eth_dev *dev)
- 	struct pmd_internals *pmd = dev->data->dev_private;
- 	bool intr_mode = dev->data->dev_conf.intr_conf.rxq;
- 
-+	/* The queue fd is created once and its SIGIO trigger is armed for poll
-+	 * mode only; the interrupt mode cannot be toggled on an existing port.
-+	 */
-+	if (pmd->intr_mode_set && pmd->intr_mode != intr_mode) {
-+		TAP_LOG(ERR,
-+			"%s: Rx interrupt mode is fixed after configure, close and reopen the port to change it",
-+			dev->device->name);
-+		return -ENOTSUP;
-+	}
-+
- 	if (dev->data->nb_rx_queues != dev->data->nb_tx_queues) {
- 		TAP_LOG(ERR,
- 			"%s: number of rx queues %d must be equal to number of tx queues %d",
-@@ -947,6 +963,7 @@ tap_dev_configure(struct rte_eth_dev *dev)
- 	}
- 
- 	pmd->intr_mode = intr_mode;
-+	pmd->intr_mode_set = true;
- 
- 	TAP_LOG(INFO, "%s: %s: TX configured queues number: %u",
- 		dev->device->name, pmd->name, dev->data->nb_tx_queues);
-@@ -1620,6 +1637,7 @@ tap_rx_queue_setup(struct rte_eth_dev *dev,
- 	rxq->queue_id = rx_queue_id;
- 	rxq->max_rx_segs = max_rx_segs;
- 	rxq->rxmode = &dev->data->dev_conf.rxmode;
-+	rxq->intr_mode = internals->intr_mode;
- 
- 	dev->data->rx_queues[rx_queue_id] = rxq;
- 	int fd = tap_setup_queue(dev, rx_queue_id, 1);
 diff --git a/drivers/net/tap/rte_eth_tap.h b/drivers/net/tap/rte_eth_tap.h
-index df9a8f8a7a..24fd055df9 100644
+index 24fd055df9..ad497d5ce2 100644
 --- a/drivers/net/tap/rte_eth_tap.h
 +++ b/drivers/net/tap/rte_eth_tap.h
-@@ -51,6 +51,7 @@ struct rx_queue {
- 	uint16_t queue_id;		/* queue ID*/
- 	struct queue_stats stats;        /* Stats for this RX queue */
- 	uint16_t max_rx_segs;           /* max scatter segments per packet */
-+	bool intr_mode;                 /* Rx queue interrupt mode */
- 	struct rte_eth_rxmode *rxmode;  /* RX features */
- 	struct rte_mbuf *pool;          /* mbufs pool for this queue */
- 	struct tun_pi pi;               /* packet info for iovecs */
-@@ -95,6 +96,7 @@ struct pmd_internals {
+@@ -73,7 +73,7 @@ struct pmd_internals {
+ 	char remote_iface[IFNAMSIZ];	  /* Remote netdevice name */
+ 	char name[IFNAMSIZ];		  /* Internal Tap device name */
+ 	int type;                         /* Type field - TUN|TAP */
+-	int persist;			  /* 1 if keep link up, else 0 */
++	bool persist;			  /* keep link up */
+ 	struct rte_ether_addr eth_addr;   /* Mac address of the device port */
+ 	struct rte_ether_addr *mc_addrs;  /* multicast address list */
+ 	uint32_t nb_mc_addrs;             /* multicast address count */
+@@ -83,8 +83,8 @@ struct pmd_internals {
+ 	int nlsk_fd;                      /* Netlink socket fd */
  
- 	struct rte_intr_handle *intr_handle;         /* LSC interrupt handle. */
- 	bool intr_mode;                   /* Rx queue interrupt mode */
-+	bool intr_mode_set;               /* intr_mode locked after configure */
- 	int ka_fd;                        /* keep-alive file descriptor */
- 	struct rte_mempool *gso_ctx_mp;     /* Mempool for GSO packets */
- };
+ #ifdef HAVE_TCA_FLOWER
+-	int flow_init;                    /* 1 if qdiscs were created */
+-	int flow_isolate;                 /* 1 if flow isolation is enabled */
++	bool flow_init;                   /* qdiscs were created */
++	bool flow_isolate;                /* flow isolation is enabled */
+ 
+ 	struct tap_rss *rss;		  /* BPF program */
+ 
+diff --git a/drivers/net/tap/tap_flow.c b/drivers/net/tap/tap_flow.c
+index a9d8e09562..2187b9a019 100644
+--- a/drivers/net/tap/tap_flow.c
++++ b/drivers/net/tap/tap_flow.c
+@@ -1244,7 +1244,7 @@ tap_flow_create(struct rte_eth_dev *dev,
+ 	struct tap_nlmsg *msg = NULL;
+ 	int err;
+ 
+-	if (pmd->flow_init == 0 && tap_flow_init(pmd) < 0) {
++	if (!pmd->flow_init && tap_flow_init(pmd) < 0) {
+ 		rte_flow_error_set(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_HANDLE,
+ 				   NULL,
+ 				   "can't create rule, qdisc not initialized");
+@@ -1521,7 +1521,7 @@ tap_flow_isolate(struct rte_eth_dev *dev,
+ 	}
+ 	return 0;
+ error:
+-	pmd->flow_isolate = 0;
++	pmd->flow_isolate = false;
+ 	return rte_flow_error_set(
+ 		error, ENOTSUP, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
+ 		"TC rule creation failed");
+@@ -1914,7 +1914,7 @@ tap_flow_init(struct pmd_internals *pmd)
+ 		return -1;
+ 	}
+ 
+-	pmd->flow_init = 1;
++	pmd->flow_init = true;
+ 
+ 	return 0;
+ }
 -- 
 2.43.0
 
