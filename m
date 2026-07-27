@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05941C53219
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 23:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C279C53209
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 23:13:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D9FE040A6C;
-	Tue, 28 Jul 2026 01:12:48 +0200 (CEST)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
- [209.85.215.181])
- by mails.dpdk.org (Postfix) with ESMTP id DF8EF40697
- for <dev@dpdk.org>; Tue, 28 Jul 2026 01:12:44 +0200 (CEST)
-Received: by mail-pg1-f181.google.com with SMTP id
- 41be03b00d2f7-c9b373d5af0so2369545a12.2
- for <dev@dpdk.org>; Mon, 27 Jul 2026 16:12:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BA9E34068A;
+	Tue, 28 Jul 2026 01:12:41 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id A281D400D6
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 01:12:38 +0200 (CEST)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-2cc61541f8cso6279275ad.0
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 16:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785193964;
- x=1785798764; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785193958;
+ x=1785798758; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=c0hVjZCf/Vu5wBzHU2DwJp8GP1ay454rBBWKTnOSGpU=;
- b=SsXT+2NFx12au82CVF4TF22B5Qy2IjwP6sloTHSuVIcWp3+FCW3fScWX4aorudzk+0
- LDGvy7GA2XjuvNf2fVg5aYYxDkfzm/i8dqE+FF2qRPc4JOA3qGCn3rDzQTPtjevTt8BT
- F3aUnqmuw346iGHQqbLCuwMiHhkIEDy8KWblqsIXFcm8BjW6eJKOm3DG7KDskVmcTkj1
- QQv8QTS7Y9P1PRCQ4+V04kPzI/mDaP6z/8Rc5NF4zX00k+BsMgTXvbNQLmN6Musd6s1B
- GR+9eluG5DN0iGwDqzWmbc5IEjhRz7w+eRVfsU3AGTfkxd6VOJ6vQXOgqm5K6WkBTmWS
- k7Lg==
+ bh=IToB9K9AOHVcmFrrhgGHxxjjrsfzyj4msR9122+p8/E=;
+ b=DksfXXHoXlC3KxkiExqhwdinp48fg9pom/flfpMHAyROodW4Wv6NEDJxAgNQ8bsyOM
+ tBoQji8nn742NlnlL52Piw4BiOhTBQW1OUdD8M/7kejabq4Xu5A4Jt3iWwjLCibCbZDX
+ ipaqlDtl5JO8OoyR2f+UeiSWhfvDdOKAK8P/s9If/oHD6WmCougbRCLEq0noLjW8C+8a
+ HBNgu5byvmV5+Uugp4464uWMsT6k4klyC/GnddcIPW+73oS6rc6ZawEm9++8X28NokCI
+ 8oMhI5DF7Gg3bzsQcX996x+V+HuoPpxb0olhQSgtoaeQzZ8itX9ti0kUQ7Z9rdTtyY1v
+ t1XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785193964; x=1785798764;
+ d=1e100.net; s=20251104; t=1785193958; x=1785798758;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=c0hVjZCf/Vu5wBzHU2DwJp8GP1ay454rBBWKTnOSGpU=;
- b=eWW4sshsdJ21x9lkKOiI3Es+xPDnQQeWP56lnmErx9zajsFKxYaz/KdqR0rw/LV+4o
- r1htO8vQ8eN8uXlOdG43BMj+B5jlfnkJc0cT8jxjbk8a0VatBsoMQ3Uf31DwwSVGBBaT
- 6aT1yjXdNBME59b9Jfl9sKmRvyUjawmsPi1aj7rbO8BbMESEgdL1rK/sQpLYrIgChYZR
- qHnUwg2hESswsYN4lr6ruy6be6QhaKQuug6YoyZfRpIDTLuvihz6GSeW2lyXJqAW8Ab0
- 1d54+0mOzoTo+MBCWMnRReynIrNg/akg7Jk7njLqXlNlmQBVyT7+QQaQC+MOmY9iqRYw
- DtAw==
-X-Gm-Message-State: AOJu0YyBppRsaagpVFnO4x1FlhHrSKDa2RiCajmaQAV6fIQrOgsxVODD
- 10ysx3CjWCtAY6aYEliwpHevURXD0vyxM8Qgsh+2Ievt0rOJb1koR49pTeSVqxKtCMvqdnuOwfg
- baAMK
-X-Gm-Gg: AR+sD12xvzGMl3XmZ2OzOVTdV7KymgrLJVyJGaPULPV78NHC78CNr68sLbZ5C3SCVyi
- 0Nmrsf7Jtr6CFIUKqdeZWkQIDqJZr2O24X7ZvHnJC/Nz8lvPs5Ditm18TQX6+Rb21fL4DaGNOtu
- tGliF60GOdGGl12eNsYCsduKsJqnKCznK8L+5oZ9CH6dpJk7xBiEtepw9tdB6lsDe4pJTQ2LSN1
- lPtJSDkkuXbsZtBBXmBgQwqT56qu8W0OjHA5aMaOWfxw5YZIR6NCiXh8dkWlj+c4s1xU5t+oYtq
- hsCtnKJnvIo7ef8VQaM/gds4gcahFjfH19DyKr2/BxdVgnCenHePKIu3NJDTL1PmhlzI5ElFJx1
- mY0Gp/JuIcW6o7YzwsI8XS1OObUbkuFnPJslbn5yTvYR2uEcmt+qKySrRvlVHsC5jjQ2I3rx1sW
- nfE/21hRFtQ0Wu9jmEgEj8Yc39LWc16YxzlbESIgsH
-X-Received: by 2002:a05:6a20:d52b:b0:3c1:85d:fa2f with SMTP id
- adf61e73a8af0-3c67df08807mr10307113637.36.1785193962768; 
- Mon, 27 Jul 2026 16:12:42 -0700 (PDT)
+ bh=IToB9K9AOHVcmFrrhgGHxxjjrsfzyj4msR9122+p8/E=;
+ b=pkL8cLn0P1uLxw+9VUQ85jXYaMapVP0akLCoZYFaebqBP7cFqHO3hjn9qn4yG51Itu
+ eHY2e5ciQXsQ8/LMBMZ+CvIlxpWzoQgdpsl2FoO1en2yRjcEYQUGykDeKS40e3reCKnJ
+ zzwF1yxV4a0vxVdhsvdsBuUtzsCylcO6y0NLwmlL4o6KYz+P9fRIBB/6pWFcStTkMVkG
+ kFca+cYzm85ohthPsQLfyVPkycLX254xxh1P/rq3vLV6dKJ2c80ktxIqdmHZi0hd0Fi6
+ oZncrDaSdVKO9b9N+2A+s4vcnUtqNUqOkuSHaCRsSc9Gz+6H3NE/VpdDYEvP01MUMhmW
+ 3jNw==
+X-Gm-Message-State: AOJu0YzBkVqwm/8HaS0gtmQk2kvD7nOU8+pTpwBDRyj4YpU+8WEca3Ap
+ QJHnIrjqCpCbNzhAGq/eUGaVWnCk0MChwzLNJN0oKxyEK8R8INsINbj4X9UUIBXEYeSUhJhLaqT
+ km5O6
+X-Gm-Gg: AR+sD11dLx1Pepv9mcReQtLyERqzhL5hnpOwsRylfG/WR6/IeGl/TuFBi+Q8bwfJ1K2
+ p6bnUNF4aZenmebX5WMt7zQtIYXb+oNILfBiYJquesZAwmuPMflsBuoQK1TPDLtBVsjJDM4Ztkg
+ MBA5j1w0wbkYinuoyMbQaWKBKh2sEhswg/0A9+giLZ/fpxcu1krYksy4bGV1Tgqt7nABr6fz0jQ
+ ug8xD33hxEskPTWxd6eVMMf/59zgcRxzgRQx0alcSHllcX/NKfBaVCU8X6WSjKRvYDaIOIqq4J1
+ AKQa26WvYF4gqQmkfOxOOngiwXDJR7MMyMrw2qP4JiZJbQ5lMouJpAXwS30EJHP5xO8wX7V6vOc
+ RZSEEuRba7JtpgRtk/SOTB7laEw/zJWm06QDhy564gboz3GRf3FhvIrD3JlwfPqerLmcNrFeK+L
+ mNS/PC83jY/hisI55oWykmVjTuOjJwBXFWjNnbIne6qPoo7jiEkZY=
+X-Received: by 2002:a17:902:d2c7:b0:2cf:af20:4254 with SMTP id
+ d9443c01a7336-2d01208f466mr6644995ad.10.1785193956122; 
+ Mon, 27 Jul 2026 16:12:36 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-314bc3e261fsm40359802eec.6.2026.07.27.16.12.41
+ 5a478bee46e88-314bc3e261fsm40359802eec.6.2026.07.27.16.12.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 27 Jul 2026 16:12:42 -0700 (PDT)
+ Mon, 27 Jul 2026 16:12:35 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Thomas Monjalon <thomas@monjalon.net>,
  Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [RFC v2 6/6] port: remove legacy API
-Date: Mon, 27 Jul 2026 16:11:30 -0700
-Message-ID: <20260727231222.1492544-7-stephen@networkplumber.org>
+Subject: [RFC v2 3/6] examples/ip_pipeline: remove example
+Date: Mon, 27 Jul 2026 16:11:27 -0700
+Message-ID: <20260727231222.1492544-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260727231222.1492544-1-stephen@networkplumber.org>
 References: <20260724164520.192203-1-stephen@networkplumber.org>
@@ -83,6077 +84,15909 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove the legacy port library API (rte_port_*) as announced for
-removal in the 24.11 release. The SWX port API remains.
-
-The sched, ip_frag, cryptodev and eventdev dependencies were only
-used by the legacy port types, so drop them. The pcap dependency
-is kept for the SWX source/sink port.
+The ip_pipeline example is built on the legacy pipeline library
+API (rte_pipeline_*) and the associated port and table action
+APIs, which were announced for removal in the 24.11 release.
+The pipeline example covers the SWX pipeline API.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/api/doxy-api-index.md                  |   7 -
- doc/guides/prog_guide/img/figure32.png     | Bin 11603 -> 0 bytes
- doc/guides/prog_guide/packet_framework.rst | 132 +---
- doc/guides/rel_notes/deprecation.rst       |   5 -
- doc/guides/rel_notes/release_26_11.rst     |   3 +
- lib/port/meson.build                       |  22 +-
- lib/port/port_log.c                        |   7 -
- lib/port/port_log.h                        |  11 -
- lib/port/rte_port.h                        | 223 ------
- lib/port/rte_port_ethdev.c                 | 530 --------------
- lib/port/rte_port_ethdev.h                 |  75 --
- lib/port/rte_port_eventdev.c               | 590 ---------------
- lib/port/rte_port_eventdev.h               |  94 ---
- lib/port/rte_port_fd.c                     | 524 --------------
- lib/port/rte_port_fd.h                     |  74 --
- lib/port/rte_port_frag.c                   | 280 --------
- lib/port/rte_port_frag.h                   |  70 --
- lib/port/rte_port_ras.c                    | 336 ---------
- lib/port/rte_port_ras.h                    |  58 --
- lib/port/rte_port_ring.c                   | 796 ---------------------
- lib/port/rte_port_ring.h                   |  91 ---
- lib/port/rte_port_sched.c                  | 298 --------
- lib/port/rte_port_sched.h                  |  52 --
- lib/port/rte_port_source_sink.c            | 616 ----------------
- lib/port/rte_port_source_sink.h            |  57 --
- lib/port/rte_port_sym_crypto.c             | 558 ---------------
- lib/port/rte_port_sym_crypto.h             |  92 ---
- 27 files changed, 10 insertions(+), 5591 deletions(-)
- delete mode 100644 doc/guides/prog_guide/img/figure32.png
- delete mode 100644 lib/port/port_log.c
- delete mode 100644 lib/port/port_log.h
- delete mode 100644 lib/port/rte_port.h
- delete mode 100644 lib/port/rte_port_ethdev.c
- delete mode 100644 lib/port/rte_port_ethdev.h
- delete mode 100644 lib/port/rte_port_eventdev.c
- delete mode 100644 lib/port/rte_port_eventdev.h
- delete mode 100644 lib/port/rte_port_fd.c
- delete mode 100644 lib/port/rte_port_fd.h
- delete mode 100644 lib/port/rte_port_frag.c
- delete mode 100644 lib/port/rte_port_frag.h
- delete mode 100644 lib/port/rte_port_ras.c
- delete mode 100644 lib/port/rte_port_ras.h
- delete mode 100644 lib/port/rte_port_ring.c
- delete mode 100644 lib/port/rte_port_ring.h
- delete mode 100644 lib/port/rte_port_sched.c
- delete mode 100644 lib/port/rte_port_sched.h
- delete mode 100644 lib/port/rte_port_source_sink.c
- delete mode 100644 lib/port/rte_port_source_sink.h
- delete mode 100644 lib/port/rte_port_sym_crypto.c
- delete mode 100644 lib/port/rte_port_sym_crypto.h
+ MAINTAINERS                                   |    2 -
+ doc/guides/nics/softnic.rst                   |    3 +-
+ doc/guides/rel_notes/release_26_11.rst        |    4 +
+ doc/guides/sample_app_ug/index.rst            |    1 -
+ doc/guides/sample_app_ug/ip_pipeline.rst      |  531 --
+ examples/ip_pipeline/Makefile                 |   60 -
+ examples/ip_pipeline/action.c                 |  391 -
+ examples/ip_pipeline/action.h                 |   78 -
+ examples/ip_pipeline/cli.c                    | 6791 -----------------
+ examples/ip_pipeline/cli.h                    |   18 -
+ examples/ip_pipeline/common.h                 |   12 -
+ examples/ip_pipeline/conn.c                   |  330 -
+ examples/ip_pipeline/conn.h                   |   47 -
+ examples/ip_pipeline/cryptodev.c              |  160 -
+ examples/ip_pipeline/cryptodev.h              |   46 -
+ examples/ip_pipeline/examples/firewall.cli    |   59 -
+ examples/ip_pipeline/examples/flow.cli        |   60 -
+ examples/ip_pipeline/examples/flow_crypto.cli |   57 -
+ examples/ip_pipeline/examples/l2fwd.cli       |   51 -
+ examples/ip_pipeline/examples/route.cli       |   60 -
+ examples/ip_pipeline/examples/route_ecmp.cli  |   57 -
+ examples/ip_pipeline/examples/rss.cli         |  112 -
+ examples/ip_pipeline/examples/tap.cli         |   66 -
+ examples/ip_pipeline/link.c                   |  270 -
+ examples/ip_pipeline/link.h                   |   66 -
+ examples/ip_pipeline/main.c                   |  260 -
+ examples/ip_pipeline/mempool.c                |   82 -
+ examples/ip_pipeline/mempool.h                |   40 -
+ examples/ip_pipeline/meson.build              |   30 -
+ examples/ip_pipeline/parser.c                 |  506 --
+ examples/ip_pipeline/parser.h                 |   56 -
+ examples/ip_pipeline/pipeline.c               | 1078 ---
+ examples/ip_pipeline/pipeline.h               |  425 --
+ examples/ip_pipeline/swq.c                    |   76 -
+ examples/ip_pipeline/swq.h                    |   37 -
+ examples/ip_pipeline/tap.c                    |  102 -
+ examples/ip_pipeline/tap.h                    |   29 -
+ examples/ip_pipeline/thread.c                 | 3137 --------
+ examples/ip_pipeline/thread.h                 |   24 -
+ examples/ip_pipeline/tmgr.c                   |  248 -
+ examples/ip_pipeline/tmgr.h                   |   74 -
+ examples/meson.build                          |    1 -
+ 42 files changed, 5 insertions(+), 15532 deletions(-)
+ delete mode 100644 doc/guides/sample_app_ug/ip_pipeline.rst
+ delete mode 100644 examples/ip_pipeline/Makefile
+ delete mode 100644 examples/ip_pipeline/action.c
+ delete mode 100644 examples/ip_pipeline/action.h
+ delete mode 100644 examples/ip_pipeline/cli.c
+ delete mode 100644 examples/ip_pipeline/cli.h
+ delete mode 100644 examples/ip_pipeline/common.h
+ delete mode 100644 examples/ip_pipeline/conn.c
+ delete mode 100644 examples/ip_pipeline/conn.h
+ delete mode 100644 examples/ip_pipeline/cryptodev.c
+ delete mode 100644 examples/ip_pipeline/cryptodev.h
+ delete mode 100644 examples/ip_pipeline/examples/firewall.cli
+ delete mode 100644 examples/ip_pipeline/examples/flow.cli
+ delete mode 100644 examples/ip_pipeline/examples/flow_crypto.cli
+ delete mode 100644 examples/ip_pipeline/examples/l2fwd.cli
+ delete mode 100644 examples/ip_pipeline/examples/route.cli
+ delete mode 100644 examples/ip_pipeline/examples/route_ecmp.cli
+ delete mode 100644 examples/ip_pipeline/examples/rss.cli
+ delete mode 100644 examples/ip_pipeline/examples/tap.cli
+ delete mode 100644 examples/ip_pipeline/link.c
+ delete mode 100644 examples/ip_pipeline/link.h
+ delete mode 100644 examples/ip_pipeline/main.c
+ delete mode 100644 examples/ip_pipeline/mempool.c
+ delete mode 100644 examples/ip_pipeline/mempool.h
+ delete mode 100644 examples/ip_pipeline/meson.build
+ delete mode 100644 examples/ip_pipeline/parser.c
+ delete mode 100644 examples/ip_pipeline/parser.h
+ delete mode 100644 examples/ip_pipeline/pipeline.c
+ delete mode 100644 examples/ip_pipeline/pipeline.h
+ delete mode 100644 examples/ip_pipeline/swq.c
+ delete mode 100644 examples/ip_pipeline/swq.h
+ delete mode 100644 examples/ip_pipeline/tap.c
+ delete mode 100644 examples/ip_pipeline/tap.h
+ delete mode 100644 examples/ip_pipeline/thread.c
+ delete mode 100644 examples/ip_pipeline/thread.h
+ delete mode 100644 examples/ip_pipeline/tmgr.c
+ delete mode 100644 examples/ip_pipeline/tmgr.h
 
-diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
-index 760b770d6f..16827a602b 100644
---- a/doc/api/doxy-api-index.md
-+++ b/doc/api/doxy-api-index.md
-@@ -182,13 +182,6 @@ The public API headers are grouped by topics:
-   [bitmap](@ref rte_bitmap.h)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4c06f85706..ae84e7f289 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1739,9 +1739,7 @@ F: lib/pipeline/
+ F: lib/port/
+ F: lib/table/
+ F: doc/guides/prog_guide/packet_framework.rst
+-F: examples/ip_pipeline/
+ F: examples/pipeline/
+-F: doc/guides/sample_app_ug/ip_pipeline.rst
  
- - **packet framework**:
--  * [port](@ref rte_port.h):
--    [ethdev](@ref rte_port_ethdev.h),
--    [ring](@ref rte_port_ring.h),
--    [frag](@ref rte_port_frag.h),
--    [reass](@ref rte_port_ras.h),
--    [sched](@ref rte_port_sched.h),
--    [src/sink](@ref rte_port_source_sink.h)
-   * SWX pipeline:
-     [control](@ref rte_swx_ctl.h),
-     [extern](@ref rte_swx_extern.h),
-diff --git a/doc/guides/prog_guide/img/figure32.png b/doc/guides/prog_guide/img/figure32.png
-deleted file mode 100644
-index 5215113fd9d533ff56526e21e1832bc7a6cabd04..0000000000000000000000000000000000000000
-GIT binary patch
-literal 0
-HcmV?d00001
-
-literal 11603
-zcmb`NcQjn>+wX^H;XwrP=pv62BJya7P9hP}dz2v}+Ni<kgODykB8WD68G-~e!w5nO
-z(aVh9qs=Iz_j2yZ^S<Z&-nQ0R>zqHVF*BRJ_r0(Cy1w7fb-ge$&}L@jVT3>+%sRKV
-zOdt?yBm_c5!$1c<dE_W330|oDOth~<$~yUo;0=w7roJWw@+pq#(18}bKkakd$`1lz
-z`9}GnN|a>bg+MMX=xAx01=%f+AzqmgrcTzrmcMSKUXPE8MBf)Td?dm2=at5Fjs^{p
-zmUZoz(+mM?*;G`#MM7u|@ptDg6`lEVUE{oi8$0qob>5pNw>g*%t&O?<x+J2KSD?a>
-zBO-q|=XcGeMp?O5Synl8XMAW!vZiJyy~b~+Q>Hy^d(^Mf(_gj`Tp0wubW$S^UX2PF
-zz&$}2XdBtVOSVuDH3TBWL1PHsJdT<?4S_@&ol$x8UeSLc-VI;$Mlt-bx&-C%{Uv9B
-zAOw>0c=Gh)mS;bTlelG_t5w|twn*k!^Q+q{W9~|UE4JZYOk9`!;~<cD{wT3CIpcMq
-zyknJ((!Q&cjqB^v-(x(X2vZFKIoEiriU%)L%X@oGWJ9+-n#3Sk7T}^JtZIDoFG@(r
-zT+oiKazck)zWedZQ*d1sH&<zdU4Q*}J)2yE9{=R{EOZ9brFPK%N<bACCJ5yzk0tM<
-zbRN48l*!Z5(w6zRb!XpLwl2+vKpsR-p4NI5m2rKl9&xbb<ON*`KU`~;WESPQ>Xq*K
-z2(M;ZXn;=s(UqxA7AU=)+!7NL(^2C$zjWMiaztJ}COl~gCD#pjQbFQ*X$*z#<5~SX
-zQsoPvwE>tV=|D+2y2N+y1`$rZc{%}gPHpFES#SZ%smw)fNm7#PbAz88^&K3t6@4Zn
-zr3!t!RClVSAP`^51;t;EInZ6Uo&iS$EX%w1w|kD|2&KHFqtnS$L$t;fIxY5>&b1~=
-zZhtcCM5-=gAdnVju$+H0W+aFiDx@iRRwRE%&s_J}{A_O*LKN9?b#m!Ue`v!gLT?9w
-z^imdUE+cUKQ)%+COo;j0`86{p=Z(1zC=qiRiW`KBO1(ci*tx15%l9zfCV)KdsRSoI
-zu(?kKX`yRmfBrs}UpduKZSNZkhsjBMv1lSI3(NY!D<1jQvglL=PgsFrrWaR3L#*n<
-z>2DJBT*M%rp%uXa>mx0B@zan<4>pxY&r@VwV)ur+!kve)-rmygSdXDzOr$8*nbf<-
-zZm8mL;0}wA-}jYxP>|zj@cv5n=gj#?s#8n;I_BtNm`30FY+GAgIl7hS9SuYS!!u^4
-zEe%34B&S3<TqqAmZ@#7Nk9Qlcy?3=J6{knwj1Yi*S*=XbqLl(con<HPL%Q`R4wqY-
-z>(+z89V~p(b3G}>vCc-tLi-di${D69bkwty!oQ0Xm^CW0FPr?_P!!u}=wiEYYtYYV
-z^+R#31tR-9*cXot&b#fdP6dR{cV^6%rZe7c*!?cOv|UTCcOM|G%0}UDelT7zvlM|p
-zEH2|T)s(G{Te)7ChQM!r_7^w0Q@od|`a}<2x87h#YyM=4nO8xppoD{Rg+l%#7*E-Q
-z9dh{@rJKo5;a{0l=e(EGiqVGf`X{C%PEJk%Ht@#&pEJudzZU+E;OiQ2E4_&oKUZpA
-zo|()dxc%0<f2vE>oT-4cS*=d*S+de5-B1-ns`{(%7}uB4RCt1boqL;;BU~A>1+$5z
-zjuHbKJ;QoM&PT>P!eBya!8<)0afJ6llJJZ~EY^F%3wtCIIx%2!AU-4U7-iQSJo84|
-z!-#!LilEkbWqz^B!abkW%X;z8dUaUArYyl1r90W^cbcvnJmb`c!&&J9%W}H_!8(lk
-z$zGSjb9du05Vm9E*gd~H^^56rZ%M&#vUQh1W^pi~v8oTNku*<Y$PZv!PUf?EyJ)g}
-zp}6lYgEJ<bArG?@5g>ebxT4?A7g~%k(HYlPH-(Fch+sYp^fg38gtFwoSK%))Tj^Ty
-z0rJ?t$jR-Qx#}280y)3Fdm7}db!*|U#EHY}QXf(W?p|FiVmkKyOvmXKZzy~z_0cK%
-zVcj`gPxIm4Mw?AA8Y$!SvXs@Xen4MEt`w?Zf)>&~P059i4Fa#%`p&+TG%w(F+tnr3
-z^k?6o$0mk?e-%}@Z%Z<%NmmZ+EKBfKUTQmj=r)E!kF?qrhvyn!U!?(wwC}Zy+(&Uv
-z^l`?uhfSLcJzohk7Vt+{jNFww4t^kQSYfUEpOQyNM6|?=_V48T*dSXk+Ro&4cmE_0
-zw@T1QsMth}ek`BjG{%cKUROI(d?|QhYjI#?gk9H{DR0+!$!`5ifyXYD>CX$Jh?)Xo
-z5)5{<)iqHUiiL)Tl;ZrL531`asXaSY4T0m|&7r!&!<Vah?dHv!m`+x@w|?`TLrTl#
-zM^$ljL>k9ef-Sj@#A_k3MFug*-1+@Xq97N)Zj8Xd#?dG9?WksketHpgu@u3DU-sqF
-z^z>)V<)6ELeaakQUx%4_q;0nvq*Q+b6=l6vY^Wy`*HRm{S5fCr^&sbF%(?B(^N<{U
-zDdhL>-{)q2CSX(^w470%HCitfKxY=P;eyt3JR28>(IpunEj!s9TP0>p_9YgjOF{zt
-zHxh7S)F}wtQ!nwodz*cR$*c-zp~IGvC7qh;5r?~Lb3es0<zmiBNlZxZZn$(IGb)~#
-z%=3pCNGNGbDaCd=wZH$HGZyVLb$z5s*{%04OTU<c`ym@0SKI8rg5ooFfs;0_+@iM-
-z86shV?f5H5czv!j!+m>s#D(sUKPO?4sl+zzm|F?duGL|ydMv(0f;5I&$S4;d<~+yl
-zEKTRmbVVA&tVb7uZZSp2Kp-09y(*~$W|iyJlzJ-UjbatIRLcSR{hta-1%aGlr0hS)
-zbxlfqXo&xJWp}iO;Z1W!O#JK2<ITeD<7R#(e;@gtd_}qxmopkSG-AXeKX2BN5nY})
-zM~Hoe9iM|YY)?bhd8LrgRjgIsysjQCL6FDm6oQi8y{qPd)MTC53{e)?jZmB@=~SST
-zAUd~L-Vl)A4#KEQ&TDiqah<i1{f+jjmI4D(<15-@NTzl);^e4I6j5l9A#>Gh^a>Q`
-z|4^QIus!0vya95RyEVpx2<r=+YND0(7`#&HPc*Sih+qKcj}of@H^x&o9OkVD(rT4!
-zk8sI+Qet8XD7C2_X;)pghAP94LJm^0;Pp9i|79U=>m(n?38<3pptUK>^C_E31w2`q
-zWNG^V`6As^rkbp*FC6F2&HWX5R)q?p;o(}G&8oKhCHC$BM2OmT%w!d>f$|)|%>LW=
-zAO7H1!qXXaFla(bLr>BD;bT+KPxX%SFz)9AVc^vUmNTBz|8<DYXl_kwMs=fI*7;z2
-zc`jCY#YbMFqs+d+YdmC8YGcqbt|rx02^4K^wXka9P-S5Wl@a^V$?@t}RwzoiqY+gj
-z2dB@f?)X*n;OE(mR>^WRhJNELWkm!K7G>{-i;Q#Iaqz_@a+wl{o^f*cj<VnOl9g=u
-zVUXo1yhrQ1i*x7!yO=|o^_*1{6+5JNgIJiE3LaEVuP37_MUI?g;<@C!8co@oxwyE}
-zK%&K^x(-&l#HFZ5)PvO2jp7Z++n|>Nk8%EF!)4=q<WtGZftRV{6`^wk5xXw>&YA8%
-zn<u%yD{~RIbEQA8MoEq(=}c}e{GzPI_nnJo8fL3KM?IVz=C@W7lag?yHXPUD_!RGB
-zyv9-=UOi6<+2@>F2Vy=?Z;YM8H(f%XP8Xo0$8S%gjC6EPKa%~cHek8p6dJ~RP4)M|
-z%*;H(K2Kc+KRPJ>+o6z)7Z>Kw{-ZDNDT!zyGkb;8P*UAKe`lQS_8}fjZxZ{gI!-=^
-z?fLe7u&Vrk3<cq(TuS-90w-4&y5r?{e7M)5U-(WJEFw7j5KyVi$ptpOVd+EFKx5U(
-zngAJOtM9z>dBXr~@QG@ZIl17^`{r|!QDVYzlP^5Zs89)o{Jv+3oc+JsjQ>dk|H~gW
-z)(x`-<FpUx1;g$=W#K1*Tv2LU)BC}$E;STA{|E$F3ed8BwSnH2rbBxh^Bsf|OMM_6
-zpv;lt!XVGQeEG7y3|gxPR?e2$sFEUH50A(ZS1Dx^%1nx8eQoYGQIB|if@S4bda%Dq
-zbYu}wx$CrR`|19Z6qVqLpWiKc&Yvq%rX(b5m1uV%{%AU88Na#q?C+IGe)aIt_H@O*
-z#8*Q&cnNW$p@CAHq*%FSzUigP{q(XFX`dv<ncltYit!klhEdHhBEW*cZ<Rh}^a+3C
-z)RvT(?9Q0sVBEH}(39)AKw}gLGF9a5ZV@lE7Yxct`z>|*v`LJ+(m^IDfBs8@J!OR9
-z(^+1WRo%Md;5+^8h4Yt4D(A*1TFk`!D{k4*Tr4MuT)VoEL~<oa#yhv2>S_JHJ!f-U
-zE>9Zz9>dj_%va<H7F(mvL^5}Ox)^SfJR$$5+t0Tmn0%RqFON>mtxkOn5Zu~HR}Brw
-zM|>8`4C}?*ql-fw1uhLvZ9|L%DHj-$-~Z#2V{?){Y~Z=CV(9h<XefzyxXR76cA1|0
-z;w#a<hjPz}jr4+5%^S`5tO8k=&gwb{o*sm3mfc?4G>)&VZQ44oApWkoy&gL2<=n%q
-z=DwUan;>&x<ESXPA6#GRRd3|pOoE|DNuJ;`GFH0bu-7yH9G@zg3;lt*Nd5OQO2O-S
-z#GYL3Jtu#3WI;|Eb<nWO$??(Lcqkbzk2QyL+jXHxgODal6~IgC3zw^<@a$FwlI>)}
-zc71kk-vqv<lKpc@SHZS%X2+Wg+Bj`VYao>}68gyHj_z8Y8~(`DdxYPiH`gsbXHORo
-zVgRDyikGgms&p>%j}d({@zEjLsv*2?sQO_pB}XhL4Aq4O9#n4+Z1`WS|L~z*tzZ&(
-z8iRxCqFGbyz?Oge+qY-^W?I;4PbhL$!E@Mb*7FMI?P!E1dRHcLbSf$3xr$fH3lE<*
-zJ;-wb>;L!7BPGig+*hD4JA(DTx-%A-SwaQd?$H)Z0ZW~Ba?o(%C%;w&Dv{sbx|1b!
-zudG88O&?HRmein_zGyLBHGBT&m3xukk1zqt*0tXhgD6ENDvDYbPBNq9RIqWjH+)w{
-zYs%=Jvw-d26%n+4{-xd@JaR4VDYDIf@LlUBe2a@J?6h|mf`&N@xBh=h3q@C-vGB_P
-z!z-7o9fyg*{C1JAlV7llB{i@}@m}?k8z_VN#XX(hUHi3d8vsHV_K!RuJ&7^~PH$;@
-zX{d79m)I-P2TJCv8-2hodk&T`F*Ye-sG;!wGN}7b-{O0qR;}tn(4ZUz88pqm<dpOf
-zFMrYGm3$exRFkgg_k(bY{vY)!l@X_YTs>5es0}9OC+h)Suv`(ecE1v2*@L^HQkl)M
-z{IWJ!FL?eau<Gfm+aO0l^$DO@IomgbP1iATynVGY;v~G%b3|dsb$dK`p5JeEQq%H|
-zezxCe^~3EQE^`ojkTbaH>HB>sQ!!cJncJ3rBjE0qtsQjn`zYOJ&EgHIbQp8k7Qu2E
-zLy9U*2p=Jr|0;sx`y7i|pW50NqPH^?JX1>tthb1m9~k$6&a!gbn)?GeUsN4`ym~h;
-z3?tyzIE9b8dczs(t<4HW63^dwI_RT95p(RS|D634J<Fg)hZ)6;?(dMj)%F)I*z}7y
-zLX}udGQ6kE&TKTVCod@nu6VQ!7Zw$@&|M>Nad5oXjHVlch%>^5wM$cx<$cyrDkNgt
-z%BCD0`*+alJsSf{;E<QC=d*sn7rL{XYQ(RF!U*X=M%U?;BUWnW1vW+|j{A?*s*1dN
-za&CH&Uvl_w)yBwB>K{YKWlhOQ^L+SXKSl1AnW@rVj<^)@Q|&fFVBmw5<065l2!i#U
-zy|d%G#WCZ*XM5<h>Hjr@oPbKYZG5fY$tNRPohwny5a}VfV~~E$Az)?H>e!kiXX~JQ
-zy6quw^AN}ze6hJC)?688^#_lv^Q#)5@FZuG8u-e6s)52XH8Hs#{mI*5d7wNK8d|?3
-znB3IV)Pl8jj-kk(>xDjWu-Pq(^^$Q3ryTiq+t$1rjxfM`Y2K=S{m&8gu_SB?toXe8
-z<Q&+S=tckC@OQ+b%c}*wAFO1t=CTorYJ0xb1<&8kyjcVPzx+;_b;Kg?@2Fcr6(TDZ
-zgE!{P88Tra_()#nk84w<p*t%9rOk&*HTHSrXDKj7(PiGSGHUYU)9fBrN9wbn09LwZ
-z#0Y+0+1t2A$=ohCl1B)w2gB~=i4At8_ThU@He~HDmN!cqGQ-wiNPg$~C&D#Ls;clT
-zLMAae`#06rTP`RtP!Lh)Jdx;&zE!aJ_wv>I-xw+#zS8Y1NQLP2$uj?W<%@vWpo`3|
-zZ7C=0NX~$yi*j^3)>R!Zv6NOGGnV1M5glD+=)(~rD#rtz>H+7Lzqe3|9rq12(?@8^
-zFWfFKEpEKYBVYat#-{&w{<6O)l2tc1?X(x~^E^;EQ@HGc8WSToiN4ldNLA>?aJ)>e
-zMeO20c`c8SYQsLETtZ)+!wHtZ*~d+kftzneTu&}Q$5}IR+9vE+PMT$HOnorUy%jK1
-zJx514#^q%c!+SELqfkvnvA?i&lU;@)1V59tW*zwD5WV?K65o+~8BzW(reie{So@+I
-z+HnHt<TrR7wb;!^9okw)7bPVtrBtm?5mS`|y`I2t%tyPt6EpX|U5#hKpMPR7CZSKo
-z0f~GXJ9!$<_C!A-!j9GmqOt2QCKSPBfLD(aGt!Q7NU$)36bX{zQpyuPHM4=UoNDYh
-zhyx#L+yFA2q){BNQvwQT_Jts7#iU|%UoL?i(j5<|4<FOhw#>sBu>xQK1K6xpsUXbU
-zjqEMiAU(dvc#aIeXp=vgwLjUnRDQIVubaG7;WdU^4?S}V(%lVcBcI8FZH=!}Ywc_i
-z!E}etpq~B;Ah7>JDC4#9v)YIbcuC9t-G$~@5=DHpTp+E3s?ImkrLyES`Q_0ZKu0Tj
-zk*z!;<KkDx6e9WhG=$MA?|?H(4KiM&6=d5g1l2J7jXQImJE#_%{SG{UL^9WfO!SMP
-zan2)|$HQp%x&5uh0{t|FGEv#U@!-O}xioLvi+<oVa=`rh<sY)wOe%(Kx>f?W(^uo?
-zV#&@w-<5eaK~&#Y#L*fJbGjAF=azg0*tiy!dz5`j9Q>3UyiY8=uy;V+$d118+j(K_
-z4uG4h1cDM=vVNs=M@2{(PEjvIiO`-ZFF7mJm%21wH{$#nxVG9<mApxA5vBZSdRClC
-z(AmaGX8;u?^9wfC=L?;HgTbgE_WiNi%N(4XLyi{O^Qg=kumM6@_J<^rfx1^cBeK79
-zCk#?+a=1|UWZ#d3N2O6}up|{xheo{?PmdTU`jyuc<^tmxVy)CIPh3W-+!D6P_r`GW
-ztL%>k64%)gDjAN=u_>iCSe(gL$j*u<7usJmDu;q_DR4McE|fxEDF`wjj|`sUuDsVs
-zEgP_OH<TrYOIjgA30|>r6EJ2itC{G+%XN}?&(Z20FT?a}pRTv`VMqiqM+#dG{qc&M
-zb9)HDU4&gcsj7S-xV(P9c+4Ur$v=8Vb!XIZ0FWlMdrv+{m$A8-X(|rYBy?BP6Q;I^
-zr2d?ZZj69#!4V~W{+8!nJ)`lA4ZwTXY%XIbaHXTq!&c2CXP&cN@CZs%4aK+(Rpb+U
-z^JAD(bG{TJp0WyhwGC?rK0m#ZYoUb}r9*XMeIyoCk9U6s*mMoNb<5P*qGzKWRzvK+
-zXW>^G{Kdh+F{mcZh((64P>5!iAFy@XHN%$v0>j}XRH27r%QKsk%FlBhX|;g)uBSzv
-zxiJ5=(tY4E5aI7D-74-sL_r-q02A8oT?ZxHV+^Spx-=ZRJ>;_dMR2(iXd#=zgZqWK
-z05mIzzifDgWTCZzZm&!<L<AcVYKk2z)VWH{k-!%qMi+Z>pVjG=u?+6-9lMZJs!DOi
-zSK=8U-A3}j?JF#}LfELPR@@#R0SM-C!}>C{>!qkd)+fCbnQXAaG*oJH6$^J4Jn}8G
-zt(k`T>PqEVhqdK;>l0@Ei2u8sfErv~+P;@$3xV(m%dflsh(91VWJ0W)IX0VLaXVrO
-zS(YP^*2$bpptb<hBWr{4I9*3u0dh4U=iRHjsFxhqPG`Z%^#?0{Hdwr9<Sj1&!w%jc
-zN>@O)OX5Ix!0w|#>2s1PcUUaVj`7JID2b&WKcmEK2Qa-Y+V9+cra3_^HM9hAupQ9(
-zW0KFAlv&(H%~*_kj3mkHm~SD~>u>ea&$DcuD#Y_s^)#s<i<mnmP+jO``|u$GM83~9
-zK4ju>iZ#MVeyS%h!}>yH%2yfo%<z4;R&wh(DeJ*tIRdMh6nv=Nsrbb_Jlz9Xa#9IS
-zCZBfIyAyWVv}3}`*49JpP25?yclvJ|t^mV}k8sLlMC^P%jU>5H^mS;;*t6S$n_;V_
-zy4luZ@=CVRao-xkBKS_y&0vhkY3;&>t$v$rTYoFtQ<>ISFHalo{NhN|JnVYV*3pNT
-z>h<bL5mG-LxOy~JwLD#^J@k{ezno&N=E-t~<pnK$YHsKC{yYV1%KiHsj1T3GtL%Oz
-z7`||a^P-%@Au7#gG^)_KD0nu}QV(cOsJ`67Q+dIN!%rYjtk!sqDIL_7Bt^NrTX-k;
-zH?GiEIIpHxs!?gVq$2Zn-N%pJWeH;U2WFOz*S^u$WJE%p$Rt7u#!grGo5eNyu9FWW
-zSK&bZ3qhBy7k81QxAqCUe!a&^6K02N=-pq^p#G}9Eb95I=>@Bx<x9c32BV1g8UjN_
-z9W%s-*<BV0HQHpY$xr16z4^N6ef}$t!km=KXC|=rXCH0M0kboTl#j6$G(-pN_un>F
-z+{2gy0U3c*sxL;HAf)A&jn+Lc!MUxakRi6EkMGPW#TNGK5WI)0ezKfnw8QN9+cnPT
-zP1~3qb*&$19A$~?Y^7=?G#v~~YR`#nG)EjPW83T(b*1ZO1ZW{bCy3*{d9OtaCKqAx
-zRIP=|(s%Nh>hq2$uaOeIM27T$mo0iY3$4pR605W~tbMJ_l1aYRB$H+G#i~6G6yh)-
-zo>a_p$&6Bw)g=kR#r4I0ABgfn$Gh^&^bn1DV|5E^mmt6r=P?zm=>oaKznRr!{J!zo
-zYhSbb4PILoc}{NL7gRZ#CHvb5gKxv!s&Kau?BLtUl$bBX?`lELzI&iu2qE?@9NN+t
-z#Qg^6|K6s1K1#E$q2@pxjDNasL6os9M(ITs@4o1&Oo6D{yWY7jg-diUkaH#ec+JaM
-z5TKV#r$*cZcuZc(2IG$=*7{6EaVvPdx5D|ON`3<0n#IDVVhnm(pg|TKqZUz_ue?<S
-zBeW*U^yTTWZ)^?N*P6`vH;XW5wOam%gI|c}{s)w|E)iq^;GZ2&yT4oi2dmb7oUN~-
-z*g1eZ`DV;l0pO{y!g^&aCnWt`&lNms*>2R`x(koFg;YIU{d!Tb#H;5yR?@Ppx)StP
-zUH=3^<^QnLmv?EphTFe`rfQ_?^P8(-fb!^TYCammc&3#AGNUp2O*kl4P<@<FH3Sbh
-z;aLsv;eCm7ji!Mss|;CS8P_<{8gJsJ!p{KJ0}-;57%M>l>F&I<GFHaH|BO{o!5*=d
-z2!Pt@AyDxgkwMd^DbCX}4GEM<N}{Btg{zf*GXN3GVd><$9b}14+)C|X_YKw*0o9Od
-zo|%%9!+G_9mHvq1jm$DpJO9e)yf}u(MIh;Qa*l#U1kQ8`JPeG3GojcVIMdiWjT;+X
-z>Q}ig+xp}$1OZ9V!DSydb%&FZs8x1G{kA^?JINC>IRyG0l@EX2vWyPPPuin+<eiC#
-z3Bos~#>#MFWsdhm{kAGip6)4MkWalv;%T(>^C!8@!E>$(6lGk0wDFzGzAAZ|^BSkX
-zuQMw2%sdas_Z}Y>puT`=<U)SMsZG<hpWnrZxa{`tGDzdyx16{_YL_ei5<aB*B}OmZ
-z<jbY_6H0fuhdpMJNYBc44J_`o<he#aAUJ3Yz$1Adb92=e>&5>F93?b&pH0Q4%5@4f
-zDj{bqKmF$1&l?8y3g5Bl=i<wt%F4+uq7(!M?%!K1yX$emLtOX~F8F9`0IDA%H?aV?
-z-+KcT6+ne}y1t9&dG!h(i?@|bqH5(hxVUOf_KyK88)4fB9D^s9=yXM#9N2G+1x}<0
-z9!}B&at*5FY}r|62#{Brzvb2QiqDKl4g8sZkMRE-wErE5r+CYM>3{zV`}-g0y@nRr
-zwWkTF*6(sK{PQOw%TD8;g9~mvV_AXHXfXl5A`Bil$a-^N-9OpX@6GY@hIeMFXRfam
-zNdpTj2bx<K1!KO-fSB94Or7%tII)%*^Ad}ciVB&HLiMAc1PHhzNW9}j_<?8eq#2|R
-z?BOvw2(X+&g;5T&e_p4Gr2I{anI=WFQxI*uEb6*wDG~zEJVZ#WnCX302=$rYzlT)=
-z)KHiad%J37pj;3fa_RTSpuBn*WGFd-p40vLFC3*45hn=c%=u_mHP=((kxwc9vE{`)
-zGPJB!d9KQHq~8Em=EImZCH&ux4E)z6;~CTQ8F};Z{&z-MAes9>AON`x>XWQ@{a%42
-zci-n=KiLN@@ga(q8EwEL=wZFaDAWQfmE#OvoWXj|`tkhG&%O0p@0*(NnF|lYPyP++
-z6ov_h;rS7n{3=1+e98gsNwtAwfsu&=u;Dtu*0uflURw}>_g@(uN^E*~xchJ;F5>X3
-z*Ww(raT~)M_qB8&ofH8Bk$j?kV#HWSxF{uso}Wi-_GlM?s_zUyNm)U_=2KNL0wHOx
-zKR*oIqO8~GHNVL(RF+H-jn4}QAYz^8W|Kj$;)e=oB`AC#e$va^P(?~TapbqTdc7#N
-zKDn*6bqPc53OG$WfTA8X7<|03>3DY+&)@eSkM#!w1m1kfwz@m%!VM{;agOPo!`WYV
-zrYKF)qai|1un75AW->!tnP{j|Y^-GlKz6nE4h|012f5+I3CXqOTFLK*>j(TTTImz&
-z`w=B44MocP<M>btJ1(2UfDZ7%;BUUu(Yq(mm2`4kelhbe@Gr55g8<6}RRq}`Ww0LF
-ze_|lBr`nHh*;(6+aM*2lfR`w0P*G8xJ83d@&&F(VY5E8f7K1gz?R)Im$e%Z2DSABh
-zxOff!N~+Pq`pDxSEgp6$BJ9Yvp%lHKQUxX0%kQ^cS-YhGRNzA}Z}P2+(hdn(oBkfa
-zFBfqfRyz)Q8PI{b&{6LL^6(7V$v#uU#<ld&7$~eov_)NbfYPDU3NT!QX#6|2&G)fn
-zzqp8H3I>2uc+kvcMz!39m!4)?YC)u4OzI?}Zw<(m4oafNh_AW{%1cu;Nx#T(Nb$$G
-z%i1M-%D3T-ZF4_4Rx7fvzC_jnU}9sTfu9XJDqP+46Vp$9V4s{i%^vZhTHC93v8;B~
-z;${eYUm-i>Odw1P45RqwzmyBe0gV|2R~^s#W^|YR@j936y)O`(?TI$E)jdA8KV0fB
-z4;FElC39=WUF=$rsRP)$zbsnr$6x%%HOF_~Oj@g5xKYUAQD9-E-&UV;ZB6teyk2qW
-zsv~_G=}4{KP1$@S)EBCxzj^FJD>BZ<NjiICyd)AOl#xbKT`u?a?ZcAb0>oDTh{r$@
-zxVB6m9#5Hsj+GFVF9o?N5(51x9dj)>nCU2A%_t$?%j7)_480Qi*FgTTSmF#~Q@{i&
-zj34$@;?^uz+~t$rJ-BVD(1mjU^xi<{LNn;1z_3RQzUuoOynrl?;LwKC`WD%4%E@7}
-z*jp2TYSe~(t2lnE_;C91-d1^pXB)Cpe=B4(O$iR$a|f;tu08R!kvw{uUGzN|PQjUY
-z?X|7p&Xx?Zoqbdt_R$Q-eV*-{yDE=e@;unxFrc+(U^(Z#=hr+yi(;f$Iph~friN_#
-zhV(YrNIwqH0HdNuEpZUTo7p<dhVb)ax&-vvWHjrr?iR^f%)yxkinAPeygY(^rj}u<
-zzpfCpAATOL=`Ab;CWbz&asg<gR<X=Z4fI&g7cSadv#`a?xy=tu1lsXo6Q%;0CNOa$
-z*}lPVajTo$iLH_-)Y2cPF;t({lcUz_=nt10sM{HL9|-@J+TVEeoy^NeNV<4r-h(nN
-zywhw4Mw3d*iRCQvrSxJ*ASdnjblZRC61G%7XlldQwk$c^4^+z#(OuAr2Rgy-#dJHj
-zKYssvZ!p}*+tXUaJ&n!39$>9}AjrE>kF<CmEZbP;ih4&C-om1~^7qYMo6L@Sk9eJc
-zCE6A=zc98{Eo#5xZPeAU24IA<m<{tby5$>i01gw~$F@~=wE?BUK;4cBm@fjpuq<0V
-z@22zJP;g4H+-+Y3OljSo=z*=_MI25tP-J_Ac3WqL^0Kw>nrhknLXFbX>&t-Ide&Ks
-zaQYMO6g9&yqZa1f6;g-8=KDo2h=-9U8Yb#7#iIE;xdY1n3-{v4$&*EU`{!yVQ3Vbs
-zb8Lz5Hk1%Sq+u#a%EtM?_9fi`%{*=2?CRHNtZ6Qpi2kG<&`}THNShe^6%_IdC4CFX
-zw!O8u2-_(>6#{K$!pmc&zK4gr13Rafk3|wl@-I4v>;rCxBTx(1;Di%eNF=U6w{bsq
-zb7F!NTI1Fyy0KDAwpeJj7$HAImyxP-x(keWRgP2T-CG+X2#`FoBfoOctI4j2h3scb
-zN>=NBZ}St_%&t1Ma#-T@8%h8-8J_655T`N?lkDwcJvPV@_uYYYy|ac8notpc%we_g
-z3*~w%gxIGqL(vx)H`UDkj3MREKNa<+=K>{7$oe16e!HWU6#@~~<UVh{qkxYaq&M6m
-z8f^rBEC<RpQv3p5?mpktl!-DB5&vzw|M`&$QWNyH6#%q@=Wjwk2lcQR;C{s_+v@LA
-zs&M_$wvFYT%oT|&+P&AoDn0Rk$BB_*>XYHxUp)YO|2h{13M4MIUCyodTNuzyW$$VL
-zGe`ydsoLcDXUXK=s9)DmE%$?cXT^Y}_j|zVx~>3uXqkWnJ%PbPa>R*bL!BjVQ}Fuv
-zJwRXm<XeEQmwP~Ch))K<E`_2yfTy1z<dI{f>#s~8cAyr0a-@SJJjztz8EDS*5(>xw
-zwm5@E-}dN+xgD+HnDZUMv&a25L{figTAfZrf#4O~#3CrZ?O<eX9@cAWVd1Qf-<;D5
-zzYvsj9{kj|XDDNvl-O|twbp!<!DaOmKuo$Tc#o$OLS2sbx3)uXEQZ|_{8t?YBz|#u
-z^u88lLQ#b$FR|mxaxwTUDJf}~rHSON3895#P4z+qm<5DcAK#E&1zhGmVBhI9-M~D6
-zJe|DFT%gHAV+6RxWqrq8&<u>Hzn;Uk4^W;gm~Cj&fxN!Cx&%1K2u|Lzkh<trj<gNt
-zQi-A*#hx+qE4`ybopH;n2Xuo6c!{40rS4@V6y#e!MR6E%d_Z}^ZLqv~3|Vk70<(7o
-zb5`Qq8eTnB)FCdFvKs)xYE6_dHT40eqXXm~$G_uTfU@a0#i}w1i!a}#D%t@PD9TX%
-z&!fTf8JuO;ASvBhkAXV+kvM%blMI_|nOAQ4HUuzW$3JeLIH4!yzrSQs@Y4*@`JX2c
-zhy{uSZh6={;JBc#Ph2Eu4Uc-Ov^v0E?`SyQlC~_qZNDU4znjBc2=+uQxN*=arZf#p
-zG}Zd(pO5E0+}xYb9Fevc;tiS5US^VmhD<CT#kuZ-L7a{}odjE=!V@IOg~KITBqkp0
-zB<jU4%D5zGu>sxy<YjYvruqc9+XXx`mw#;+&&8l0n$!AOk+u#xVMSxMIDcZtH+y_Q
-zrq;E(l-nZ#%Iq&#f208wT=uTs;p@|}u-&O=(2JBY6x`77?jHn_GKhn_KT*kg70;k{
-zRT_$WAUJ?Y^7t#ty}ygF6H1wbY~{%LBli-!e5-Zizc2+m;tLQ*N3+~ZmDvqB><u)b
-zZ8}FzISnvi8^2~5FXtrbpsOyj7CkX>nn4zz|1beaz$f*aAcTnarK7~$sgg6m@kIJk
-zJ(A@kVJ7|VdQum1#Z00a4JhU(OK9`>fXsgFMg<^x%0?xaM}5Ez;l(dfgKm(~IU%2?
-z+6m3`!agCu3H>%ptFubc-~SQK#}XaCxWVXLB?z5u3+ohdFzwo<eiHVhqa{_@EMc(z
-zcz>}>RFx-R-M#<PhzlnKGLy6)fmA~bcTyoyvu(*~&K;>vTegS>cL8HWvx}b_0J39q
-zV6rVhtt%|ive7i5tjrqSn%G;2O05S&tZATr;8Hg!Ib`%<Gk@8;6c9;+haesMgF+E6
-ziF=a!<LQH6fP7<&QU7pn+%Fr?mBIX<zX;_r_Os@{hnM_&nkjzpf0!1gNPlX_WAzQC
-XpF?WbPu~YeLUe8#Xq8>R7xljYKq0l$
-
-diff --git a/doc/guides/prog_guide/packet_framework.rst b/doc/guides/prog_guide/packet_framework.rst
-index 98cf3be109..3b5ede7dc2 100644
---- a/doc/guides/prog_guide/packet_framework.rst
-+++ b/doc/guides/prog_guide/packet_framework.rst
-@@ -4,132 +4,12 @@
- Packet Framework Library
- ========================
  
--Design Objectives
-------------------
--
--The main design objectives for the DPDK Packet Framework are:
--
--*   Provide standard methodology to build complex packet processing pipelines.
--    Provide reusable and extensible templates for the commonly used pipeline functional blocks;
--
--*   Provide capability to switch between pure software and hardware-accelerated implementations for the same pipeline functional block;
--
--*   Provide the best trade-off between flexibility and performance.
--    Hardcoded pipelines usually provide the best performance, but are not flexible,
--    while developing flexible frameworks is never a problem, but performance is usually low;
--
--*   Provide a framework that is logically similar to Open Flow.
--
--Overview
----------
--
--Packet processing applications are frequently structured as pipelines of multiple stages,
--with the logic of each stage glued around a lookup table.
--For each incoming packet, the table defines the set of actions to be applied to the packet,
--as well as the next stage to send the packet to.
--
--The DPDK Packet Framework minimizes the development effort required to build packet processing pipelines
--by defining a standard methodology for pipeline development,
--as well as providing libraries of reusable templates for the commonly used pipeline blocks.
--
--The pipeline is constructed by connecting the set of input ports with the set of output ports
--through the set of tables in a tree-like topology.
--As a result of lookup operation for the current packet in the current table,
--one of the table entries (on lookup hit) or the default table entry (on lookup miss)
--provides the set of actions to be applied on the current packet,
--as well as the next hop for the packet, which can be either another table, an output port or packet drop.
--
--An example of packet processing pipeline is presented in :numref:`packet_framework_figure_32`:
--
--.. _packet_framework_figure_32:
--
--.. figure:: img/figure32.*
--
--   Example of Packet Processing Pipeline where Input Ports 0 and 1
--   are Connected with Output Ports 0, 1 and 2 through Tables 0 and 1
--
--
--Port Library Design
---------------------
--
--Port Types
--~~~~~~~~~~
--
--:numref:`packet_framework_table_qos_19` is a non-exhaustive list of ports
--that can be implemented with the Packet Framework.
--
--.. _packet_framework_table_qos_19:
--
--.. table:: Port Types
--
--   +---+------------------+---------------------------------------------------------------------------------------+
--   | # | Port type        | Description                                                                           |
--   |   |                  |                                                                                       |
--   +===+==================+=======================================================================================+
--   | 1 | SW ring          | SW circular buffer used for message passing between the application threads. Uses     |
--   |   |                  | the DPDK rte_ring primitive. Expected to be the most commonly used type of            |
--   |   |                  | port.                                                                                 |
--   |   |                  |                                                                                       |
--   +---+------------------+---------------------------------------------------------------------------------------+
--   | 2 | HW ring          | Queue of buffer descriptors used to interact with NIC, switch or accelerator ports.   |
--   |   |                  | For NIC ports, it uses the DPDK rte_eth_rx_queue or rte_eth_tx_queue                  |
--   |   |                  | primitives.                                                                           |
--   |   |                  |                                                                                       |
--   +---+------------------+---------------------------------------------------------------------------------------+
--   | 3 | IP reassembly    | Input packets are either IP fragments or complete IP datagrams. Output packets are    |
--   |   |                  | complete IP datagrams.                                                                |
--   |   |                  |                                                                                       |
--   +---+------------------+---------------------------------------------------------------------------------------+
--   | 4 | IP fragmentation | Input packets are jumbo (IP datagrams with length bigger than MTU) or non-jumbo       |
--   |   |                  | packets. Output packets are non-jumbo packets.                                        |
--   |   |                  |                                                                                       |
--   +---+------------------+---------------------------------------------------------------------------------------+
--   | 5 | Traffic manager  | Traffic manager attached to a specific NIC output port, performing congestion         |
--   |   |                  | management and hierarchical scheduling according to pre-defined SLAs.                 |
--   |   |                  |                                                                                       |
--   +---+------------------+---------------------------------------------------------------------------------------+
--   | 6 | Source           | Input port used as packet generator. Similar to Linux kernel /dev/zero character      |
--   |   |                  | device.                                                                               |
--   |   |                  |                                                                                       |
--   +---+------------------+---------------------------------------------------------------------------------------+
--   | 7 | Sink             | Output port used to drop all input packets. Similar to Linux kernel /dev/null         |
--   |   |                  | character device.                                                                     |
--   |   |                  |                                                                                       |
--   +---+------------------+---------------------------------------------------------------------------------------+
--   | 8 | Sym_crypto       | Output port used to extract DPDK Cryptodev operations from a fixed offset of the      |
--   |   |                  | packet and then enqueue to the Cryptodev PMD. Input port used to dequeue the          |
--   |   |                  | Cryptodev operations from the Cryptodev PMD and then retrieve the packets from them.  |
--   +---+------------------+---------------------------------------------------------------------------------------+
--
--Port Interface
--~~~~~~~~~~~~~~
--
--Each port is unidirectional, i.e. either input port or output port.
--Each input/output port is required to implement an abstract interface that
--defines the initialization and run-time operation of the port.
--The port abstract interface is described below.
--
--.. table:: 20 Port Abstract Interface
--
--   +---+----------------+-----------------------------------------------------------------------------------------+
--   | # | Port Operation | Description                                                                             |
--   |   |                |                                                                                         |
--   +===+================+=========================================================================================+
--   | 1 | Create         | Create the low-level port object (e.g. queue). Can internally allocate memory.          |
--   |   |                |                                                                                         |
--   +---+----------------+-----------------------------------------------------------------------------------------+
--   | 2 | Free           | Free the resources (e.g. memory) used by the low-level port object.                     |
--   |   |                |                                                                                         |
--   +---+----------------+-----------------------------------------------------------------------------------------+
--   | 3 | RX             | Read a burst of input packets. Non-blocking operation. Only defined for input ports.    |
--   |   |                |                                                                                         |
--   +---+----------------+-----------------------------------------------------------------------------------------+
--   | 4 | TX             | Write a burst of input packets. Non-blocking operation. Only defined for output ports.  |
--   |   |                |                                                                                         |
--   +---+----------------+-----------------------------------------------------------------------------------------+
--   | 5 | Flush          | Flush the output buffer. Only defined for output ports.                                 |
--   |   |                |                                                                                         |
--   +---+----------------+-----------------------------------------------------------------------------------------+
-+The Packet Framework is a set of libraries (port, table and pipeline)
-+for building flexible packet processing pipelines:
-+the pipeline is constructed by connecting a set of input ports
-+with a set of output ports through a set of match-action tables.
-+The current framework API is the Software Switch (SWX) pipeline
-+described below.
+ Algorithms
+diff --git a/doc/guides/nics/softnic.rst b/doc/guides/nics/softnic.rst
+index 603fdb49c4..87f3e5adc0 100644
+--- a/doc/guides/nics/softnic.rst
++++ b/doc/guides/nics/softnic.rst
+@@ -10,8 +10,7 @@ is DIY and reconfigurable through ``firmware`` (DPDK Packet Framework script).
+ The Soft NIC leverages the DPDK Packet Framework libraries (librte_port,
+ librte_table and librte_pipeline) to make it modular, flexible and extensible
+ with new functionality.
+-Please refer to :doc:`/prog_guide/packet_framework` and
+-:doc:`/sample_app_ug/ip_pipeline` for more details.
++Please refer to :doc:`/prog_guide/packet_framework` for more details.
  
- The Software Switch (SWX) Pipeline
- ----------------------------------
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 9dcf86098f..75b56b0e10 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -148,11 +148,6 @@ Deprecation Notices
-   The graph walk functions will process nodes in topological order
-   using bitmap scanning instead of the circular buffer.
- 
--* port: The port library legacy API (functions rte_port_*)
--  will be deprecated and subsequently removed in DPDK 24.11 release.
--  Before this, the new port library API (functions rte_swx_port_*)
--  will gradually transition from experimental to stable status.
--
- * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
-   ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
-   Those API functions are used internally by DPDK core and netvsc PMD.
+ The Soft NIC is configured through the standard DPDK ethdev API (ethdev, flow,
+ QoS, security). The internal framework is not externally visible.
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 50b0d3ac06..31b075b3cc 100644
+index 6ad0cf6eec..fc84ba367e 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -91,6 +91,9 @@ Removed Items
- * Removed the legacy table library API (``rte_table_*`` functions).
-   The SWX table API (``rte_swx_table_*``) remains.
+@@ -80,6 +80,10 @@ Removed Items
+ * Removed the ``dpdk-test-pipeline`` application, which was based on
+   the legacy pipeline library API.
  
-+* Removed the legacy port library API (``rte_port_*`` functions).
-+  The SWX port API (``rte_swx_port_*``) remains.
++* Removed the ``ip_pipeline`` example application, which was based on
++  the legacy pipeline library API.
++  The ``pipeline`` example application covers the SWX pipeline API.
 +
  
  API Changes
  -----------
-diff --git a/lib/port/meson.build b/lib/port/meson.build
-index b597772872..ef88b917a3 100644
---- a/lib/port/meson.build
-+++ b/lib/port/meson.build
-@@ -8,39 +8,19 @@ if is_windows
- endif
- 
- sources = files(
--        'port_log.c',
--        'rte_port_ethdev.c',
--        'rte_port_fd.c',
--        'rte_port_frag.c',
--        'rte_port_ras.c',
--        'rte_port_ring.c',
--        'rte_port_sched.c',
--        'rte_port_source_sink.c',
--        'rte_port_sym_crypto.c',
--        'rte_port_eventdev.c',
-         'rte_swx_port_ethdev.c',
-         'rte_swx_port_fd.c',
-         'rte_swx_port_ring.c',
-         'rte_swx_port_source_sink.c',
- )
- headers = files(
--        'rte_port_ethdev.h',
--        'rte_port_fd.h',
--        'rte_port_frag.h',
--        'rte_port_ras.h',
--        'rte_port.h',
--        'rte_port_ring.h',
--        'rte_port_sched.h',
--        'rte_port_source_sink.h',
--        'rte_port_sym_crypto.h',
--        'rte_port_eventdev.h',
-         'rte_swx_port.h',
-         'rte_swx_port_ethdev.h',
-         'rte_swx_port_fd.h',
-         'rte_swx_port_ring.h',
-         'rte_swx_port_source_sink.h',
- )
--deps += ['ethdev', 'sched', 'ip_frag', 'cryptodev', 'eventdev']
-+deps += ['ethdev']
- 
- if dpdk_conf.has('RTE_HAS_LIBPCAP')
-     dpdk_conf.set('RTE_PORT_PCAP', 1)
-diff --git a/lib/port/port_log.c b/lib/port/port_log.c
+diff --git a/doc/guides/sample_app_ug/index.rst b/doc/guides/sample_app_ug/index.rst
+index c8b50b801c..28c4c9a5b2 100644
+--- a/doc/guides/sample_app_ug/index.rst
++++ b/doc/guides/sample_app_ug/index.rst
+@@ -44,7 +44,6 @@ Sample Applications User Guides
+     vhost_blk
+     vhost_crypto
+     vdpa
+-    ip_pipeline
+     pipeline
+     eventdev_pipeline
+     dist_app
+diff --git a/doc/guides/sample_app_ug/ip_pipeline.rst b/doc/guides/sample_app_ug/ip_pipeline.rst
 deleted file mode 100644
-index e7a10d80ef..0000000000
---- a/lib/port/port_log.c
+index 9a5cb517a2..0000000000
+--- a/doc/guides/sample_app_ug/ip_pipeline.rst
 +++ /dev/null
-@@ -1,7 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright (c) 2024 Stephen Hemminger <stephen@networkplumber.org>
-- */
+@@ -1,531 +0,0 @@
+-..  SPDX-License-Identifier: BSD-3-Clause
+-    Copyright(c) 2015-2018 Intel Corporation.
 -
--#include <rte_log.h>
+-Internet Protocol (IP) Pipeline Application
+-===========================================
 -
--RTE_LOG_REGISTER_DEFAULT(port_logtype, INFO);
-diff --git a/lib/port/port_log.h b/lib/port/port_log.h
+-Application overview
+---------------------
+-
+-The *Internet Protocol (IP) Pipeline* application is intended to be a vehicle for rapid development of packet processing
+-applications on multi-core CPUs.
+-
+-Following OpenFlow and P4 design principles, the application can be used to create functional blocks called pipelines out
+-of input/output ports, tables and actions in a modular way. Multiple pipelines can be inter-connected through packet queues
+-to create complete applications (super-pipelines).
+-
+-The pipelines are mapped to application threads, with each pipeline executed by a single thread and each thread able to run
+-one or several pipelines. The possibilities of creating pipelines out of ports, tables and actions, connecting multiple
+-pipelines together and mapping the pipelines to execution threads are endless, therefore this application can be seen as
+-a true application generator.
+-
+-Pipelines are created and managed through Command Line Interface (CLI):
+-
+- * Any standard TCP client (e.g. telnet, netcat, custom script, etc) is typically able to connect to the application, send
+-   commands through the network and wait for the response before pushing the next command.
+-
+- * All the application objects are created and managed through CLI commands:
+-    * 'Primitive' objects used to create pipeline ports: memory pools, links (i.e. network interfaces), SW queues, traffic managers, etc.
+-    * Action profiles: used to define the actions to be executed by pipeline input/output ports and tables.
+-    * Pipeline components: input/output ports, tables, pipelines, mapping of pipelines to execution threads.
+-
+-Running the application
+------------------------
+-
+-The application startup command line is::
+-
+-   dpdk-ip_pipeline [EAL_ARGS] -- [-s SCRIPT_FILE] [-h HOST] [-p PORT]
+-
+-The application startup arguments are:
+-
+-``-s SCRIPT_FILE``
+-
+- * Optional: Yes
+-
+- * Default: Not present
+-
+- * Argument: Path to the CLI script file to be run at application startup.
+-   No CLI script file will run at startup if this argument is not present.
+-
+-``-h HOST``
+-
+- * Optional: Yes
+-
+- * Default: ``0.0.0.0``
+-
+- * Argument: IP Address of the host running ip pipeline application to be used by
+-   remote TCP based client (telnet, netcat, etc.) for connection.
+-
+-``-p PORT``
+-
+- * Optional: Yes
+-
+- * Default: ``8086``
+-
+- * Argument: TCP port number at which the ip pipeline is running.
+-   This port number should be used by remote TCP client (such as telnet, netcat, etc.) to connect to host application.
+-
+-Refer to *DPDK Getting Started Guide* for general information on running applications and the Environment Abstraction Layer (EAL) options.
+-
+-The following is an example command to run ip pipeline application configured for layer 2 forwarding:
+-
+-.. code-block:: console
+-
+-    $ ./<build_dir>/examples/dpdk-ip_pipeline -l 0,1 -- -s examples/route_ecmp.cli
+-
+-The application should start successfully and display as follows:
+-
+-.. code-block:: console
+-
+-    EAL: Detected 40 lcore(s)
+-    EAL: Detected 2 NUMA nodes
+-    EAL: Multi-process socket /var/run/.rte_unix
+-    EAL: Probing VFIO support...
+-    EAL: PCI device 0000:02:00.0 on NUMA socket 0
+-    EAL:   probe driver: 8086:10fb net_ixgbe
+-    ...
+-
+-To run remote client (e.g. telnet) to communicate with the ip pipeline application:
+-
+-.. code-block:: console
+-
+-    $ telnet 127.0.0.1 8086
+-
+-When running a telnet client as above, command prompt is displayed:
+-
+-.. code-block:: console
+-
+-    Trying 127.0.0.1...
+-    Connected to 127.0.0.1.
+-    Escape character is '^]'.
+-
+-    Welcome to IP Pipeline!
+-
+-    pipeline>
+-
+-Once application and telnet client start running, messages can be sent from client to application.
+-At any stage, telnet client can be terminated using the quit command.
+-
+-
+-Application stages
+-------------------
+-
+-Initialization
+-~~~~~~~~~~~~~~
+-
+-During this stage, EAL layer is initialised and application specific arguments are parsed. Furthermore, the data structures
+-(i.e. linked lists) for application objects are initialized. In case of any initialization error, an error message
+-is displayed and the application is terminated.
+-
+-Run-time
+-~~~~~~~~
+-
+-The main thread is creating and managing all the application objects based on CLI input.
+-
+-Each data plane thread runs one or several pipelines previously assigned to it in round-robin order. Each data plane thread
+-executes two tasks in time-sharing mode:
+-
+-#. *Packet processing task*: Process bursts of input packets read from the pipeline input ports.
+-
+-#. *Message handling task*: Periodically, the data plane thread pauses the packet processing task and polls for request
+-   messages send by the main thread. Examples: add/remove pipeline to/from current data plane thread, add/delete rules
+-   to/from given table of a specific pipeline owned by the current data plane thread, read statistics, etc.
+-
+-Examples
+---------
+-
+-.. tabularcolumns:: |p{3cm}|p{5cm}|p{4cm}|p{4cm}|
+-
+-.. table:: Pipeline examples provided with the application
+-
+-   +-----------------------+----------------------+----------------+------------------------------------+
+-   | Name                  | Table(s)             | Actions        | Messages                           |
+-   +=======================+======================+================+====================================+
+-   | L2fwd                 | Stub                 | Forward        | 1. Mempool create                  |
+-   |                       |                      |                | 2. Link create                     |
+-   | Note: Implemented     |                      |                | 3. Pipeline create                 |
+-   | using pipeline with   |                      |                | 4. Pipeline port in/out            |
+-   | a simple pass-through |                      |                | 5. Pipeline table                  |
+-   | connection between    |                      |                | 6. Pipeline port in table          |
+-   | input and output      |                      |                | 7. Pipeline enable                 |
+-   | ports.                |                      |                | 8. Pipeline table rule add         |
+-   +-----------------------+----------------------+----------------+------------------------------------+
+-   | Flow classification   | Exact match          | Forward        | 1. Mempool create                  |
+-   |                       |                      |                | 2. Link create                     |
+-   |                       | * Key = byte array   |                | 3. Pipeline create                 |
+-   |                       |    (16 bytes)        |                | 4. Pipeline port in/out            |
+-   |                       | * Offset = 278       |                | 5. Pipeline table                  |
+-   |                       | * Table size = 64K   |                | 6. Pipeline port in table          |
+-   |                       |                      |                | 7. Pipeline enable                 |
+-   |                       |                      |                | 8. Pipeline table rule add default |
+-   |                       |                      |                | 9. Pipeline table rule add         |
+-   +-----------------------+----------------------+----------------+------------------------------------+
+-   | Firewall              | ACL                  | Allow/Drop     | 1. Mempool create                  |
+-   |                       |                      |                | 2. Link create                     |
+-   |                       | * Key = n-tuple      |                | 3. Pipeline create                 |
+-   |                       | * Offset = 270       |                | 4. Pipeline port in/out            |
+-   |                       | * Table size = 4K    |                | 5. Pipeline table                  |
+-   |                       |                      |                | 6. Pipeline port in table          |
+-   |                       |                      |                | 7. Pipeline enable                 |
+-   |                       |                      |                | 8. Pipeline table rule add default |
+-   |                       |                      |                | 9. Pipeline table rule add         |
+-   +-----------------------+----------------------+----------------+------------------------------------+
+-   | IP routing            | LPM (IPv4)           | Forward        | 1. Mempool Create                  |
+-   |                       |                      |                | 2. Link create                     |
+-   |                       | * Key = IP dest addr |                | 3. Pipeline create                 |
+-   |                       | * Offset = 286       |                | 4. Pipeline port in/out            |
+-   |                       | * Table size = 4K    |                | 5. Pipeline table                  |
+-   |                       |                      |                | 6. Pipeline port in table          |
+-   |                       |                      |                | 7. Pipeline enable                 |
+-   |                       |                      |                | 8. Pipeline table rule add default |
+-   |                       |                      |                | 9. Pipeline table rule add         |
+-   +-----------------------+----------------------+----------------+------------------------------------+
+-   | Equal-cost multi-path | LPM (IPv4)           | Forward,       | 1. Mempool Create                  |
+-   | routing (ECMP)        |                      | load balance,  | 2. Link create                     |
+-   |                       | * Key = IP dest addr | encap ether    | 3. Pipeline create                 |
+-   |                       | * Offset = 286       |                | 4. Pipeline port in/out            |
+-   |                       | * Table size = 4K    |                | 5. Pipeline table (LPM)            |
+-   |                       |                      |                | 6. Pipeline table (Array)          |
+-   |                       |                      |                | 7. Pipeline port in table (LPM)    |
+-   |                       | Array                |                | 8. Pipeline enable                 |
+-   |                       |                      |                | 9. Pipeline table rule add default |
+-   |                       | * Key = Array index  |                | 10. Pipeline table rule add(LPM)   |
+-   |                       | * Offset = 256       |                | 11. Pipeline table rule add(Array) |
+-   |                       | * Size = 64K         |                |                                    |
+-   |                       |                      |                |                                    |
+-   +-----------------------+----------------------+----------------+------------------------------------+
+-
+-Command Line Interface (CLI)
+-----------------------------
+-
+-Link
+-~~~~
+-
+- Link configuration ::
+-
+-   link <link_name>
+-    dev <device_name>|port <port_id>
+-    rxq <n_queues> <queue_size> <mempool_name>
+-    txq <n_queues> <queue_size> promiscuous on | off
+-    [rss <qid_0> ... <qid_n>]
+-
+- Note: The PCI device name must be specified in the Domain:Bus:Device.Function format.
+-
+-
+-Mempool
+-~~~~~~~
+-
+- Mempool create ::
+-
+-   mempool <mempool_name> buffer <buffer_size>
+-   pool <pool_size> cache <cache_size> cpu <cpu_id>
+-
+-
+-Software queue
+-~~~~~~~~~~~~~~
+-
+-  Create software queue ::
+-
+-   swq <swq_name> size <size> cpu <cpu_id>
+-
+-
+-Traffic manager
+-~~~~~~~~~~~~~~~
+-
+- Add traffic manager subport profile ::
+-
+-  tmgr subport profile
+-   <tb_rate> <tb_size>
+-   <tc0_rate> <tc1_rate> <tc2_rate> <tc3_rate> <tc4_rate>
+-   <tc5_rate> <tc6_rate> <tc7_rate> <tc8_rate>
+-   <tc9_rate> <tc10_rate> <tc11_rate> <tc12_rate>
+-   <tc_period>
+-
+- Add traffic manager pipe profile ::
+-
+-  tmgr pipe profile
+-   <tb_rate> <tb_size>
+-   <tc0_rate> <tc1_rate> <tc2_rate> <tc3_rate> <tc4_rate>
+-   <tc5_rate> <tc6_rate> <tc7_rate> <tc8_rate>
+-   <tc9_rate> <tc10_rate> <tc11_rate> <tc12_rate>
+-   <tc_period>
+-   <tc_ov_weight>
+-   <wrr_weight0..3>
+-
+- Create traffic manager port ::
+-
+-  tmgr <tmgr_name>
+-   rate <rate>
+-   spp <n_subports_per_port>
+-   pps <n_pipes_per_subport>
+-   fo <frame_overhead>
+-   mtu <mtu>
+-   cpu <cpu_id>
+-
+- Configure traffic manager subport ::
+-
+-  tmgr <tmgr_name>
+-   subport <subport_id>
+-   profile <subport_profile_id>
+-
+- Configure traffic manager pipe ::
+-
+-  tmgr <tmgr_name>
+-   subport <subport_id>
+-   pipe from <pipe_id_first> to <pipe_id_last>
+-   profile <pipe_profile_id>
+-
+-
+-Tap
+-~~~
+-
+- Create tap port ::
+-
+-  tap <name>
+-
+-
+-Cryptodev
+-~~~~~~~~~
+-
+-  Create cryptodev port ::
+-
+-   cryptodev <cryptodev_name>
+-    dev <DPDK Cryptodev PMD name>
+-    queue <n_queues> <queue_size>
+-
+-Action profile
+-~~~~~~~~~~~~~~
+-
+- Create action profile for pipeline input port ::
+-
+-  port in action profile <profile_name>
+-   [filter match | mismatch offset <key_offset> mask <key_mask> key <key_value> port <port_id>]
+-   [balance offset <key_offset> mask <key_mask> port <port_id0> ... <port_id15>]
+-
+- Create action profile for the pipeline table ::
+-
+-  table action profile <profile_name>
+-   ipv4 | ipv6
+-   offset <ip_offset>
+-   fwd
+-   [balance offset <key_offset> mask <key_mask> outoffset <out_offset>]
+-   [meter srtcm | trtcm
+-       tc <n_tc>
+-       stats none | pkts | bytes | both]
+-   [tm spp <n_subports_per_port> pps <n_pipes_per_subport>]
+-   [encap ether | vlan | qinq | mpls | pppoe]
+-   [nat src | dst
+-       proto udp | tcp]
+-   [ttl drop | fwd
+-       stats none | pkts]
+-   [stats pkts | bytes | both]
+-   [sym_crypto cryptodev <cryptodev_name>
+-       mempool_create <mempool_name> mempool_init <mempool_name>]
+-   [time]
+-
+-
+-Pipeline
+-~~~~~~~~
+-
+-Create pipeline ::
+-
+-  pipeline <pipeline_name>
+-   period <timer_period_ms>
+-   offset_port_id <offset_port_id>
+-   cpu <cpu_id>
+-
+-Create pipeline input port ::
+-
+-  pipeline <pipeline_name> port in
+-   bsz <burst_size>
+-   link <link_name> rxq <queue_id>
+-   | swq <swq_name>
+-   | tmgr <tmgr_name>
+-   | tap <tap_name> mempool <mempool_name> mtu <mtu>
+-   | source mempool <mempool_name> file <file_name> bpp <n_bytes_per_pkt>
+-   [action <port_in_action_profile_name>]
+-   [disabled]
+-
+-Create pipeline output port ::
+-
+-  pipeline <pipeline_name> port out
+-   bsz <burst_size>
+-   link <link_name> txq <txq_id>
+-   | swq <swq_name>
+-   | tmgr <tmgr_name>
+-   | tap <tap_name>
+-   | sink [file <file_name> pkts <max_n_pkts>]
+-
+-Create pipeline table ::
+-
+-  pipeline <pipeline_name> table
+-       match
+-       acl
+-           ipv4 | ipv6
+-           offset <ip_header_offset>
+-           size <n_rules>
+-       | array
+-           offset <key_offset>
+-           size <n_keys>
+-       | hash
+-           ext | lru
+-           key <key_size>
+-           mask <key_mask>
+-           offset <key_offset>
+-           buckets <n_buckets>
+-           size <n_keys>
+-       | lpm
+-           ipv4 | ipv6
+-           offset <ip_header_offset>
+-           size <n_rules>
+-       | stub
+-   [action <table_action_profile_name>]
+-
+-Connect pipeline input port to table ::
+-
+-  pipeline <pipeline_name> port in <port_id> table <table_id>
+-
+-Display statistics for specific pipeline input port, output port
+-or table ::
+-
+-  pipeline <pipeline_name> port in <port_id> stats read [clear]
+-  pipeline <pipeline_name> port out <port_id> stats read [clear]
+-  pipeline <pipeline_name> table <table_id> stats read [clear]
+-
+-Enable given input port for specific pipeline instance ::
+-
+-  pipeline <pipeline_name> port out <port_id> disable
+-
+-Disable given input port for specific pipeline instance ::
+-
+-  pipeline <pipeline_name> port out <port_id> disable
+-
+-Add default rule to table for specific pipeline instance ::
+-
+-  pipeline <pipeline_name> table <table_id> rule add
+-     match
+-        default
+-     action
+-        fwd
+-           drop
+-           | port <port_id>
+-           | meta
+-           | table <table_id>
+-
+-Add rule to table for specific pipeline instance ::
+-
+-  pipeline <pipeline_name> table <table_id> rule add
+-
+-  match
+-     acl
+-        priority <priority>
+-        ipv4 | ipv6 <sa> <sa_depth> <da> <da_depth>
+-        <sp0> <sp1> <dp0> <dp1> <proto>
+-     | array <pos>
+-     | hash
+-        raw <key>
+-        | ipv4_5tuple <sa> <da> <sp> <dp> <proto>
+-        | ipv6_5tuple <sa> <da> <sp> <dp> <proto>
+-        | ipv4_addr <addr>
+-        | ipv6_addr <addr>
+-        | qinq <svlan> <cvlan>
+-     | lpm
+-        ipv4 | ipv6 <addr> <depth>
+-
+-  action
+-     fwd
+-        drop
+-        | port <port_id>
+-        | meta
+-        | table <table_id>
+-     [balance <out0> ... <out7>]
+-     [meter
+-        tc0 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
+-        [tc1 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
+-        tc2 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
+-        tc3 meter <meter_profile_id> policer g <pa> y <pa> r <pa>]]
+-     [tm subport <subport_id> pipe <pipe_id>]
+-     [encap
+-        ether <da> <sa>
+-        | vlan <da> <sa> <pcp> <dei> <vid>
+-        | qinq <da> <sa> <pcp> <dei> <vid> <pcp> <dei> <vid>
+-        | mpls unicast | multicast
+-           <da> <sa>
+-           label0 <label> <tc> <ttl>
+-           [label1 <label> <tc> <ttl>
+-           [label2 <label> <tc> <ttl>
+-           [label3 <label> <tc> <ttl>]]]
+-        | pppoe <da> <sa> <session_id>]
+-     [nat ipv4 | ipv6 <addr> <port>]
+-     [ttl dec | keep]
+-     [stats]
+-     [time]
+-     [sym_crypto
+-        encrypt | decrypt
+-        type
+-        | cipher
+-           cipher_algo <algo> cipher_key <key> cipher_iv <iv>
+-        | cipher_auth
+-           cipher_algo <algo> cipher_key <key> cipher_iv <iv>
+-           auth_algo <algo> auth_key <key> digest_size <size>
+-        | aead
+-           aead_algo <algo> aead_key <key> aead_iv <iv> aead_aad <aad>
+-           digest_size <size>
+-        data_offset <data_offset>]
+-
+-  where:
+-     <pa> ::= g | y | r | drop
+-
+-Add bulk rules to table for specific pipeline instance ::
+-
+-  pipeline <pipeline_name> table <table_id> rule add bulk <file_name> <n_rules>
+-
+-  Where:
+-  - file_name = path to file
+-  - File line format = match <match> action <action>
+-
+-Delete table rule for specific pipeline instance ::
+-
+-  pipeline <pipeline_name> table <table_id> rule delete
+-     match <match>
+-
+-Delete default table rule for specific pipeline instance ::
+-
+-  pipeline <pipeline_name> table <table_id> rule delete
+-     match
+-        default
+-
+-Add meter profile to the table for specific pipeline instance ::
+-
+-  pipeline <pipeline_name> table <table_id> meter profile <meter_profile_id>
+-   add srtcm cir <cir> cbs <cbs> ebs <ebs>
+-   | trtcm cir <cir> pir <pir> cbs <cbs> pbs <pbs>
+-
+-Delete meter profile from the table for specific pipeline instance ::
+-
+-  pipeline <pipeline_name> table <table_id>
+-   meter profile <meter_profile_id> delete
+-
+-
+-Update the dscp table for meter or traffic manager action for specific
+-pipeline instance ::
+-
+-   pipeline <pipeline_name> table <table_id> dscp <file_name>
+-
+-   Where:
+-      - file_name = path to file
+-      - exactly 64 lines
+-      - File line format = <tc_id> <tc_queue_id> <color>, with <color> as: g | y | r
+-
+-
+-Pipeline enable/disable
+-~~~~~~~~~~~~~~~~~~~~~~~
+-
+-   Enable given pipeline instance for specific data plane thread ::
+-
+-    thread <thread_id> pipeline <pipeline_name> enable
+-
+-
+-   Disable given pipeline instance for specific data plane thread ::
+-
+-    thread <thread_id> pipeline <pipeline_name> disable
+diff --git a/examples/ip_pipeline/Makefile b/examples/ip_pipeline/Makefile
 deleted file mode 100644
-index 28d75ee48b..0000000000
---- a/lib/port/port_log.h
+index 438aa6b37f..0000000000
+--- a/examples/ip_pipeline/Makefile
 +++ /dev/null
-@@ -1,11 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright (c) 2023 Red Hat, Inc.
-- */
+@@ -1,60 +0,0 @@
+-# SPDX-License-Identifier: BSD-3-Clause
+-# Copyright(c) 2010-2018 Intel Corporation
 -
--#include <rte_log.h>
+-# binary name
+-APP = ip_pipeline
 -
--extern int port_logtype;
--#define RTE_LOGTYPE_PORT port_logtype
+-# all source are stored in SRCS-y
+-SRCS-y := action.c
+-SRCS-y += cli.c
+-SRCS-y += conn.c
+-SRCS-y += link.c
+-SRCS-y += main.c
+-SRCS-y += mempool.c
+-SRCS-y += parser.c
+-SRCS-y += pipeline.c
+-SRCS-y += swq.c
+-SRCS-y += tap.c
+-SRCS-y += thread.c
+-SRCS-y += tmgr.c
+-SRCS-y += cryptodev.c
 -
--#define PORT_LOG(level, ...) \
--	RTE_LOG_LINE(level, PORT, "" __VA_ARGS__)
-diff --git a/lib/port/rte_port.h b/lib/port/rte_port.h
+-PKGCONF ?= pkg-config
+-
+-# Build using pkg-config variables if possible
+-ifneq ($(shell $(PKGCONF) --exists libdpdk && echo 0),0)
+-$(error "no installation of DPDK found")
+-endif
+-
+-all: shared
+-.PHONY: shared static
+-shared: build/$(APP)-shared
+-	ln -sf $(APP)-shared build/$(APP)
+-static: build/$(APP)-static
+-	ln -sf $(APP)-static build/$(APP)
+-
+-PC_FILE := $(shell $(PKGCONF) --path libdpdk 2>/dev/null)
+-CFLAGS += -O3 $(shell $(PKGCONF) --cflags libdpdk)
+-LDFLAGS_SHARED = $(shell $(PKGCONF) --libs libdpdk)
+-LDFLAGS_STATIC = $(shell $(PKGCONF) --static --libs libdpdk)
+-
+-CFLAGS += -I. -DALLOW_EXPERIMENTAL_API -D_GNU_SOURCE
+-
+-OBJS := $(patsubst %.c,build/%.o,$(SRCS-y))
+-
+-build/%.o: %.c Makefile $(PC_FILE) | build
+-	$(CC) $(CFLAGS) -c $< -o $@
+-
+-build/$(APP)-shared: $(OBJS)
+-	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(LDFLAGS_SHARED)
+-
+-build/$(APP)-static: $(OBJS)
+-	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(LDFLAGS_STATIC)
+-
+-build:
+-	@mkdir -p $@
+-
+-.PHONY: clean
+-clean:
+-	rm -f build/$(APP)* build/*.o
+-	test -d build && rmdir -p build || true
+diff --git a/examples/ip_pipeline/action.c b/examples/ip_pipeline/action.c
 deleted file mode 100644
-index 81f57c41a5..0000000000
---- a/lib/port/rte_port.h
+index d2104aad6e..0000000000
+--- a/examples/ip_pipeline/action.c
 +++ /dev/null
-@@ -1,223 +0,0 @@
+@@ -1,391 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PORT_H__
--#define __INCLUDE_RTE_PORT_H__
--
--/**
-- * @file
-- * RTE Port
-- *
-- * This tool is part of the DPDK Packet Framework tool suite and provides
-- * a standard interface to implement different types of packet ports.
+- * Copyright(c) 2010-2018 Intel Corporation
 - */
 -
 -#include <stdint.h>
--#include <rte_mbuf.h>
--
--/**@{
-- * Macros to allow accessing metadata stored in the mbuf headroom
-- * just beyond the end of the mbuf data structure returned by a port
-- */
--#define RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset)          \
--	(&((uint8_t *)(mbuf))[offset])
--#define RTE_MBUF_METADATA_UINT16_PTR(mbuf, offset)         \
--	((uint16_t *) RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset))
--#define RTE_MBUF_METADATA_UINT32_PTR(mbuf, offset)         \
--	((uint32_t *) RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset))
--#define RTE_MBUF_METADATA_UINT64_PTR(mbuf, offset)         \
--	((uint64_t *) RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset))
--
--#define RTE_MBUF_METADATA_UINT8(mbuf, offset)              \
--	(*RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset))
--#define RTE_MBUF_METADATA_UINT16(mbuf, offset)             \
--	(*RTE_MBUF_METADATA_UINT16_PTR(mbuf, offset))
--#define RTE_MBUF_METADATA_UINT32(mbuf, offset)             \
--	(*RTE_MBUF_METADATA_UINT32_PTR(mbuf, offset))
--#define RTE_MBUF_METADATA_UINT64(mbuf, offset)             \
--	(*RTE_MBUF_METADATA_UINT64_PTR(mbuf, offset))
--/**@}*/
--
--/*
-- * Port IN
-- */
--/** Maximum number of packets read from any input port in a single burst.
--Cannot be changed. */
--#define RTE_PORT_IN_BURST_SIZE_MAX                         64
--
--/** Input port statistics */
--struct rte_port_in_stats {
--	uint64_t n_pkts_in;
--	uint64_t n_pkts_drop;
--};
--
--/**
-- * Input port create
-- *
-- * @param params
-- *   Parameters for input port creation
-- * @param socket_id
-- *   CPU socket ID (e.g. for memory allocation purpose)
-- * @return
-- *   Handle to input port instance
-- */
--typedef void* (*rte_port_in_op_create)(void *params, int socket_id);
--
--/**
-- * Input port free
-- *
-- * @param port
-- *   Handle to input port instance
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_port_in_op_free)(void *port);
--
--/**
-- * Input port packet burst RX
-- *
-- * @param port
-- *   Handle to input port instance
-- * @param pkts
-- *   Burst of input packets
-- * @param n_pkts
-- *   Number of packets in the input burst
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_port_in_op_rx)(
--	void *port,
--	struct rte_mbuf **pkts,
--	uint32_t n_pkts);
--
--/**
-- * Input port stats get
-- *
-- * @param port
-- *   Handle to output port instance
-- * @param stats
-- *   Handle to port_in stats struct to copy data
-- * @param clear
-- *   Flag indicating that stats should be cleared after read
-- *
-- * @return
-- *   Error code or 0 on success.
-- */
--typedef int (*rte_port_in_op_stats_read)(
--		void *port,
--		struct rte_port_in_stats *stats,
--		int clear);
--
--/** Input port interface defining the input port operation */
--struct rte_port_in_ops {
--	rte_port_in_op_create f_create;      /**< Create */
--	rte_port_in_op_free f_free;          /**< Free */
--	rte_port_in_op_rx f_rx;              /**< Packet RX (packet burst) */
--	rte_port_in_op_stats_read f_stats;   /**< Stats */
--};
--
--/*
-- * Port OUT
-- */
--/** Output port statistics */
--struct rte_port_out_stats {
--	uint64_t n_pkts_in;
--	uint64_t n_pkts_drop;
--};
--
--/**
-- * Output port create
-- *
-- * @param params
-- *   Parameters for output port creation
-- * @param socket_id
-- *   CPU socket ID (e.g. for memory allocation purpose)
-- * @return
-- *   Handle to output port instance
-- */
--typedef void* (*rte_port_out_op_create)(void *params, int socket_id);
--
--/**
-- * Output port free
-- *
-- * @param port
-- *   Handle to output port instance
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_port_out_op_free)(void *port);
--
--/**
-- * Output port single packet TX
-- *
-- * @param port
-- *   Handle to output port instance
-- * @param pkt
-- *   Input packet
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_port_out_op_tx)(
--	void *port,
--	struct rte_mbuf *pkt);
--
--/**
-- * Output port packet burst TX
-- *
-- * @param port
-- *   Handle to output port instance
-- * @param pkts
-- *   Burst of input packets specified as array of up to 64 pointers to struct
-- *   rte_mbuf
-- * @param pkts_mask
-- *   64-bit bitmask specifying which packets in the input burst are valid. When
-- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
-- *   valid packet. Otherwise, element n of pkts array will not be accessed.
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_port_out_op_tx_bulk)(
--	void *port,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask);
--
--/**
-- * Output port flush
-- *
-- * @param port
-- *   Handle to output port instance
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_port_out_op_flush)(void *port);
--
--/**
-- * Output port stats read
-- *
-- * @param port
-- *   Handle to output port instance
-- * @param stats
-- *   Handle to port_out stats struct to copy data
-- * @param clear
-- *   Flag indicating that stats should be cleared after read
-- *
-- * @return
-- *   Error code or 0 on success.
-- */
--typedef int (*rte_port_out_op_stats_read)(
--		void *port,
--		struct rte_port_out_stats *stats,
--		int clear);
--
--/** Output port interface defining the output port operation */
--struct rte_port_out_ops {
--	rte_port_out_op_create f_create;      /**< Create */
--	rte_port_out_op_free f_free;          /**< Free */
--	rte_port_out_op_tx f_tx;              /**< Packet TX (single packet) */
--	rte_port_out_op_tx_bulk f_tx_bulk;    /**< Packet TX (packet burst) */
--	rte_port_out_op_flush f_flush;        /**< Flush */
--	rte_port_out_op_stats_read f_stats;   /**< Stats */
--};
--
--#endif
-diff --git a/lib/port/rte_port_ethdev.c b/lib/port/rte_port_ethdev.c
-deleted file mode 100644
-index bdab2fbf6c..0000000000
---- a/lib/port/rte_port_ethdev.c
-+++ /dev/null
-@@ -1,530 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
+-#include <stdlib.h>
 -#include <string.h>
--#include <stdint.h>
 -
--#include <eal_export.h>
--#include <rte_mbuf.h>
+-#include <rte_string_fns.h>
+-#include <rte_table_hash_func.h>
+-
+-#include "action.h"
+-
+-/**
+- * Input port
+- */
+-static struct port_in_action_profile_list port_in_action_profile_list;
+-
+-int
+-port_in_action_profile_init(void)
+-{
+-	TAILQ_INIT(&port_in_action_profile_list);
+-
+-	return 0;
+-}
+-
+-struct port_in_action_profile *
+-port_in_action_profile_find(const char *name)
+-{
+-	struct port_in_action_profile *profile;
+-
+-	if (name == NULL)
+-		return NULL;
+-
+-	TAILQ_FOREACH(profile, &port_in_action_profile_list, node)
+-		if (strcmp(profile->name, name) == 0)
+-			return profile;
+-
+-	return NULL;
+-}
+-
+-struct port_in_action_profile *
+-port_in_action_profile_create(const char *name,
+-	struct port_in_action_profile_params *params)
+-{
+-	struct port_in_action_profile *profile;
+-	struct rte_port_in_action_profile *ap;
+-	int status;
+-
+-	/* Check input params */
+-	if ((name == NULL) ||
+-		port_in_action_profile_find(name) ||
+-		(params == NULL))
+-		return NULL;
+-
+-	if ((params->action_mask & (1LLU << RTE_PORT_IN_ACTION_LB)) &&
+-		(params->lb.f_hash == NULL)) {
+-		switch (params->lb.key_size) {
+-		case  8:
+-			params->lb.f_hash = rte_table_hash_crc_key8;
+-			break;
+-
+-		case 16:
+-			params->lb.f_hash = rte_table_hash_crc_key16;
+-			break;
+-
+-		case 24:
+-			params->lb.f_hash = rte_table_hash_crc_key24;
+-			break;
+-
+-		case 32:
+-			params->lb.f_hash = rte_table_hash_crc_key32;
+-			break;
+-
+-		case 40:
+-			params->lb.f_hash = rte_table_hash_crc_key40;
+-			break;
+-
+-		case 48:
+-			params->lb.f_hash = rte_table_hash_crc_key48;
+-			break;
+-
+-		case 56:
+-			params->lb.f_hash = rte_table_hash_crc_key56;
+-			break;
+-
+-		case 64:
+-			params->lb.f_hash = rte_table_hash_crc_key64;
+-			break;
+-
+-		default:
+-			return NULL;
+-		}
+-
+-		params->lb.seed = 0;
+-	}
+-	/* Resource */
+-	ap = rte_port_in_action_profile_create(0);
+-	if (ap == NULL)
+-		return NULL;
+-
+-	if (params->action_mask & (1LLU << RTE_PORT_IN_ACTION_FLTR)) {
+-		status = rte_port_in_action_profile_action_register(ap,
+-			RTE_PORT_IN_ACTION_FLTR,
+-			&params->fltr);
+-
+-		if (status) {
+-			rte_port_in_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_PORT_IN_ACTION_LB)) {
+-		status = rte_port_in_action_profile_action_register(ap,
+-			RTE_PORT_IN_ACTION_LB,
+-			&params->lb);
+-
+-		if (status) {
+-			rte_port_in_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	status = rte_port_in_action_profile_freeze(ap);
+-	if (status) {
+-		rte_port_in_action_profile_free(ap);
+-		return NULL;
+-	}
+-
+-	/* Node allocation */
+-	profile = calloc(1, sizeof(struct port_in_action_profile));
+-	if (profile == NULL) {
+-		rte_port_in_action_profile_free(ap);
+-		return NULL;
+-	}
+-
+-	/* Node fill in */
+-	strlcpy(profile->name, name, sizeof(profile->name));
+-	memcpy(&profile->params, params, sizeof(*params));
+-	profile->ap = ap;
+-
+-	/* Node add to list */
+-	TAILQ_INSERT_TAIL(&port_in_action_profile_list, profile, node);
+-
+-	return profile;
+-}
+-
+-/**
+- * Table
+- */
+-static struct table_action_profile_list table_action_profile_list;
+-
+-int
+-table_action_profile_init(void)
+-{
+-	TAILQ_INIT(&table_action_profile_list);
+-
+-	return 0;
+-}
+-
+-struct table_action_profile *
+-table_action_profile_find(const char *name)
+-{
+-	struct table_action_profile *profile;
+-
+-	if (name == NULL)
+-		return NULL;
+-
+-	TAILQ_FOREACH(profile, &table_action_profile_list, node)
+-		if (strcmp(profile->name, name) == 0)
+-			return profile;
+-
+-	return NULL;
+-}
+-
+-struct table_action_profile *
+-table_action_profile_create(const char *name,
+-	struct table_action_profile_params *params)
+-{
+-	struct table_action_profile *profile;
+-	struct rte_table_action_profile *ap;
+-	int status;
+-
+-	/* Check input params */
+-	if ((name == NULL) ||
+-		table_action_profile_find(name) ||
+-		(params == NULL) ||
+-		((params->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) == 0))
+-		return NULL;
+-
+-	if ((params->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) &&
+-		(params->lb.f_hash == NULL)) {
+-		switch (params->lb.key_size) {
+-		case 8:
+-			params->lb.f_hash = rte_table_hash_crc_key8;
+-			break;
+-
+-		case 16:
+-			params->lb.f_hash = rte_table_hash_crc_key16;
+-			break;
+-
+-		case 24:
+-			params->lb.f_hash = rte_table_hash_crc_key24;
+-			break;
+-
+-		case 32:
+-			params->lb.f_hash = rte_table_hash_crc_key32;
+-			break;
+-
+-		case 40:
+-			params->lb.f_hash = rte_table_hash_crc_key40;
+-			break;
+-
+-		case 48:
+-			params->lb.f_hash = rte_table_hash_crc_key48;
+-			break;
+-
+-		case 56:
+-			params->lb.f_hash = rte_table_hash_crc_key56;
+-			break;
+-
+-		case 64:
+-			params->lb.f_hash = rte_table_hash_crc_key64;
+-			break;
+-
+-		default:
+-			return NULL;
+-		}
+-
+-		params->lb.seed = 0;
+-	}
+-
+-	/* Resource */
+-	ap = rte_table_action_profile_create(&params->common);
+-	if (ap == NULL)
+-		return NULL;
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_FWD,
+-			NULL);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_LB,
+-			&params->lb);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_MTR,
+-			&params->mtr);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_TM,
+-			&params->tm);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_ENCAP,
+-			&params->encap);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_NAT,
+-			&params->nat);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_TTL,
+-			&params->ttl);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_STATS,
+-			&params->stats);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_TIME,
+-			NULL);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_SYM_CRYPTO,
+-			&params->sym_crypto);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_TAG,
+-			NULL);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
+-		status = rte_table_action_profile_action_register(ap,
+-			RTE_TABLE_ACTION_DECAP,
+-			NULL);
+-
+-		if (status) {
+-			rte_table_action_profile_free(ap);
+-			return NULL;
+-		}
+-	}
+-
+-	status = rte_table_action_profile_freeze(ap);
+-	if (status) {
+-		rte_table_action_profile_free(ap);
+-		return NULL;
+-	}
+-
+-	/* Node allocation */
+-	profile = calloc(1, sizeof(struct table_action_profile));
+-	if (profile == NULL) {
+-		rte_table_action_profile_free(ap);
+-		return NULL;
+-	}
+-
+-	/* Node fill in */
+-	strlcpy(profile->name, name, sizeof(profile->name));
+-	memcpy(&profile->params, params, sizeof(*params));
+-	profile->ap = ap;
+-
+-	/* Node add to list */
+-	TAILQ_INSERT_TAIL(&table_action_profile_list, profile, node);
+-
+-	return profile;
+-}
+diff --git a/examples/ip_pipeline/action.h b/examples/ip_pipeline/action.h
+deleted file mode 100644
+index cde17e69a3..0000000000
+--- a/examples/ip_pipeline/action.h
++++ /dev/null
+@@ -1,78 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_ACTION_H_
+-#define _INCLUDE_ACTION_H_
+-
+-#include <sys/queue.h>
+-
+-#include <rte_port_in_action.h>
+-#include <rte_table_action.h>
+-
+-#include "common.h"
+-
+-/**
+- * Input port action
+- */
+-struct port_in_action_profile_params {
+-	uint64_t action_mask;
+-	struct rte_port_in_action_fltr_config fltr;
+-	struct rte_port_in_action_lb_config lb;
+-};
+-
+-struct port_in_action_profile {
+-	TAILQ_ENTRY(port_in_action_profile) node;
+-	char name[NAME_SIZE];
+-	struct port_in_action_profile_params params;
+-	struct rte_port_in_action_profile *ap;
+-};
+-
+-TAILQ_HEAD(port_in_action_profile_list, port_in_action_profile);
+-
+-int
+-port_in_action_profile_init(void);
+-
+-struct port_in_action_profile *
+-port_in_action_profile_find(const char *name);
+-
+-struct port_in_action_profile *
+-port_in_action_profile_create(const char *name,
+-	struct port_in_action_profile_params *params);
+-
+-/**
+- * Table action
+- */
+-struct table_action_profile_params {
+-	uint64_t action_mask;
+-	struct rte_table_action_common_config common;
+-	struct rte_table_action_lb_config lb;
+-	struct rte_table_action_mtr_config mtr;
+-	struct rte_table_action_tm_config tm;
+-	struct rte_table_action_encap_config encap;
+-	struct rte_table_action_nat_config nat;
+-	struct rte_table_action_ttl_config ttl;
+-	struct rte_table_action_stats_config stats;
+-	struct rte_table_action_sym_crypto_config sym_crypto;
+-};
+-
+-struct table_action_profile {
+-	TAILQ_ENTRY(table_action_profile) node;
+-	char name[NAME_SIZE];
+-	struct table_action_profile_params params;
+-	struct rte_table_action_profile *ap;
+-};
+-
+-TAILQ_HEAD(table_action_profile_list, table_action_profile);
+-
+-int
+-table_action_profile_init(void);
+-
+-struct table_action_profile *
+-table_action_profile_find(const char *name);
+-
+-struct table_action_profile *
+-table_action_profile_create(const char *name,
+-	struct table_action_profile_params *params);
+-
+-#endif /* _INCLUDE_ACTION_H_ */
+diff --git a/examples/ip_pipeline/cli.c b/examples/ip_pipeline/cli.c
+deleted file mode 100644
+index 935c9b39d5..0000000000
+--- a/examples/ip_pipeline/cli.c
++++ /dev/null
+@@ -1,6791 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <stdio.h>
+-#include <stdint.h>
+-#include <stdlib.h>
+-#include <string.h>
+-
+-#include <rte_common.h>
+-#include <rte_cycles.h>
 -#include <rte_ethdev.h>
--#include <rte_malloc.h>
 -
--#include "rte_port_ethdev.h"
+-#include "cli.h"
 -
--#include "port_log.h"
+-#include "cryptodev.h"
+-#include "link.h"
+-#include "mempool.h"
+-#include "parser.h"
+-#include "pipeline.h"
+-#include "swq.h"
+-#include "tap.h"
+-#include "thread.h"
+-#include "tmgr.h"
 -
--/*
-- * Port ETHDEV Reader
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_ETHDEV_READER_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_ETHDEV_READER_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_ETHDEV_READER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_ETHDEV_READER_STATS_PKTS_DROP_ADD(port, val)
--
+-#ifndef CMD_MAX_TOKENS
+-#define CMD_MAX_TOKENS     256
 -#endif
 -
--struct rte_port_ethdev_reader {
--	struct rte_port_in_stats stats;
--
--	uint16_t queue_id;
--	uint16_t port_id;
--};
--
--static void *
--rte_port_ethdev_reader_create(void *params, int socket_id)
--{
--	struct rte_port_ethdev_reader_params *conf =
--			params;
--	struct rte_port_ethdev_reader *port;
--
--	/* Check input parameters */
--	if (conf == NULL) {
--		PORT_LOG(ERR, "%s: params is NULL", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->port_id = conf->port_id;
--	port->queue_id = conf->queue_id;
--
--	return port;
--}
+-#define MSG_OUT_OF_MEMORY   "Not enough memory.\n"
+-#define MSG_CMD_UNKNOWN     "Unknown command \"%s\".\n"
+-#define MSG_CMD_UNIMPLEM    "Command \"%s\" not implemented.\n"
+-#define MSG_ARG_NOT_ENOUGH  "Not enough arguments for command \"%s\".\n"
+-#define MSG_ARG_TOO_MANY    "Too many arguments for command \"%s\".\n"
+-#define MSG_ARG_MISMATCH    "Wrong number of arguments for command \"%s\".\n"
+-#define MSG_ARG_NOT_FOUND   "Argument \"%s\" not found.\n"
+-#define MSG_ARG_INVALID     "Invalid value for argument \"%s\".\n"
+-#define MSG_FILE_ERR        "Error in file \"%s\" at line %u.\n"
+-#define MSG_FILE_NOT_ENOUGH "Not enough rules in file \"%s\".\n"
+-#define MSG_CMD_FAIL        "Command \"%s\" failed.\n"
 -
 -static int
--rte_port_ethdev_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
+-is_comment(char *in)
 -{
--	struct rte_port_ethdev_reader *p =
--		port;
--	uint16_t rx_pkt_cnt;
--
--	rx_pkt_cnt = rte_eth_rx_burst(p->port_id, p->queue_id, pkts, n_pkts);
--	RTE_PORT_ETHDEV_READER_STATS_PKTS_IN_ADD(p, rx_pkt_cnt);
--	return rx_pkt_cnt;
--}
--
--static int
--rte_port_ethdev_reader_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_free(port);
+-	if ((strlen(in) && index("!#%;", in[0])) ||
+-		(strncmp(in, "//", 2) == 0) ||
+-		(strncmp(in, "--", 2) == 0))
+-		return 1;
 -
 -	return 0;
 -}
 -
--static int rte_port_ethdev_reader_stats_read(void *port,
--		struct rte_port_in_stats *stats, int clear)
+-static const char cmd_mempool_help[] =
+-"mempool <mempool_name>\n"
+-"   buffer <buffer_size>\n"
+-"   pool <pool_size>\n"
+-"   cache <cache_size>\n"
+-"   cpu <cpu_id>\n";
+-
+-static void
+-cmd_mempool(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
 -{
--	struct rte_port_ethdev_reader *p =
--			port;
+-	struct mempool_params p;
+-	char *name;
+-	struct mempool *mempool;
 -
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port ETHDEV Writer
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_ETHDEV_WRITER_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_ETHDEV_WRITER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_ethdev_writer {
--	struct rte_port_out_stats stats;
--
--	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--	uint32_t tx_burst_sz;
--	uint16_t tx_buf_count;
--	uint64_t bsz_mask;
--	uint16_t queue_id;
--	uint16_t port_id;
--};
--
--static void *
--rte_port_ethdev_writer_create(void *params, int socket_id)
--{
--	struct rte_port_ethdev_writer_params *conf =
--			params;
--	struct rte_port_ethdev_writer *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->tx_burst_sz == 0) ||
--		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
--		(!rte_is_power_of_2(conf->tx_burst_sz))) {
--		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->port_id = conf->port_id;
--	port->queue_id = conf->queue_id;
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
--
--	return port;
--}
--
--static inline void
--send_burst(struct rte_port_ethdev_writer *p)
--{
--	uint32_t nb_tx;
--
--	nb_tx = rte_eth_tx_burst(p->port_id, p->queue_id,
--			 p->tx_buf, p->tx_buf_count);
--
--	RTE_PORT_ETHDEV_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
--	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
--		rte_pktmbuf_free(p->tx_buf[nb_tx]);
--
--	p->tx_buf_count = 0;
--}
--
--static int
--rte_port_ethdev_writer_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_ethdev_writer *p =
--		port;
--
--	p->tx_buf[p->tx_buf_count++] = pkt;
--	RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_ethdev_writer_tx_bulk(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask)
--{
--	struct rte_port_ethdev_writer *p =
--		port;
--	uint64_t bsz_mask = p->bsz_mask;
--	uint32_t tx_buf_count = p->tx_buf_count;
--	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
--			((pkts_mask & bsz_mask) ^ bsz_mask);
--
--	if (expr == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t n_pkts_ok;
--
--		if (tx_buf_count)
--			send_burst(p);
--
--		RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
--		n_pkts_ok = rte_eth_tx_burst(p->port_id, p->queue_id, pkts,
--			n_pkts);
--
--		RTE_PORT_ETHDEV_WRITER_STATS_PKTS_DROP_ADD(p, n_pkts - n_pkts_ok);
--		for ( ; n_pkts_ok < n_pkts; n_pkts_ok++) {
--			struct rte_mbuf *pkt = pkts[n_pkts_ok];
--
--			rte_pktmbuf_free(pkt);
--		}
--	} else {
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
--
--			p->tx_buf[tx_buf_count++] = pkt;
--			RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
--		}
--
--		p->tx_buf_count = tx_buf_count;
--		if (tx_buf_count >= p->tx_burst_sz)
--			send_burst(p);
--	}
--
--	return 0;
--}
--
--static int
--rte_port_ethdev_writer_flush(void *port)
--{
--	struct rte_port_ethdev_writer *p =
--		port;
--
--	if (p->tx_buf_count > 0)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_ethdev_writer_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_port_ethdev_writer_flush(port);
--	rte_free(port);
--
--	return 0;
--}
--
--static int rte_port_ethdev_writer_stats_read(void *port,
--		struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_ethdev_writer *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port ETHDEV Writer Nodrop
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_ethdev_writer_nodrop {
--	struct rte_port_out_stats stats;
--
--	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--	uint32_t tx_burst_sz;
--	uint16_t tx_buf_count;
--	uint64_t bsz_mask;
--	uint64_t n_retries;
--	uint16_t queue_id;
--	uint16_t port_id;
--};
--
--static void *
--rte_port_ethdev_writer_nodrop_create(void *params, int socket_id)
--{
--	struct rte_port_ethdev_writer_nodrop_params *conf =
--			params;
--	struct rte_port_ethdev_writer_nodrop *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->tx_burst_sz == 0) ||
--		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
--		(!rte_is_power_of_2(conf->tx_burst_sz))) {
--		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->port_id = conf->port_id;
--	port->queue_id = conf->queue_id;
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
--
--	/*
--	 * When n_retries is 0 it means that we should wait for every packet to
--	 * send no matter how many retries should it take. To limit number of
--	 * branches in fast path, we use UINT64_MAX instead of branching.
--	 */
--	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
--
--	return port;
--}
--
--static inline void
--send_burst_nodrop(struct rte_port_ethdev_writer_nodrop *p)
--{
--	uint32_t nb_tx = 0, i;
--
--	nb_tx = rte_eth_tx_burst(p->port_id, p->queue_id, p->tx_buf,
--			p->tx_buf_count);
--
--	/* We sent all the packets in a first try */
--	if (nb_tx >= p->tx_buf_count) {
--		p->tx_buf_count = 0;
+-	if (n_tokens != 10) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
 -		return;
 -	}
 -
--	for (i = 0; i < p->n_retries; i++) {
--		nb_tx += rte_eth_tx_burst(p->port_id, p->queue_id,
--							 p->tx_buf + nb_tx, p->tx_buf_count - nb_tx);
+-	name = tokens[1];
 -
--		/* We sent all the packets in more than one try */
--		if (nb_tx >= p->tx_buf_count) {
--			p->tx_buf_count = 0;
--			return;
--		}
--	}
--
--	/* We didn't send the packets in maximum allowed attempts */
--	RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
--	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
--		rte_pktmbuf_free(p->tx_buf[nb_tx]);
--
--	p->tx_buf_count = 0;
--}
--
--static int
--rte_port_ethdev_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_ethdev_writer_nodrop *p =
--		port;
--
--	p->tx_buf[p->tx_buf_count++] = pkt;
--	RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_ethdev_writer_nodrop_tx_bulk(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask)
--{
--	struct rte_port_ethdev_writer_nodrop *p =
--		port;
--
--	uint64_t bsz_mask = p->bsz_mask;
--	uint32_t tx_buf_count = p->tx_buf_count;
--	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
--			((pkts_mask & bsz_mask) ^ bsz_mask);
--
--	if (expr == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t n_pkts_ok;
--
--		if (tx_buf_count)
--			send_burst_nodrop(p);
--
--		RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
--		n_pkts_ok = rte_eth_tx_burst(p->port_id, p->queue_id, pkts,
--			n_pkts);
--
--		if (n_pkts_ok >= n_pkts)
--			return 0;
--
--		/*
--		 * If we did not manage to send all packets in single burst,
--		 * move remaining packets to the buffer and call send burst.
--		 */
--		for (; n_pkts_ok < n_pkts; n_pkts_ok++) {
--			struct rte_mbuf *pkt = pkts[n_pkts_ok];
--			p->tx_buf[p->tx_buf_count++] = pkt;
--		}
--		send_burst_nodrop(p);
--	} else {
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
--
--			p->tx_buf[tx_buf_count++] = pkt;
--			RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
--		}
--
--		p->tx_buf_count = tx_buf_count;
--		if (tx_buf_count >= p->tx_burst_sz)
--			send_burst_nodrop(p);
--	}
--
--	return 0;
--}
--
--static int
--rte_port_ethdev_writer_nodrop_flush(void *port)
--{
--	struct rte_port_ethdev_writer_nodrop *p =
--		port;
--
--	if (p->tx_buf_count > 0)
--		send_burst_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_ethdev_writer_nodrop_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_port_ethdev_writer_nodrop_flush(port);
--	rte_free(port);
--
--	return 0;
--}
--
--static int rte_port_ethdev_writer_nodrop_stats_read(void *port,
--		struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_ethdev_writer_nodrop *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Summary of port operations
-- */
--RTE_EXPORT_SYMBOL(rte_port_ethdev_reader_ops)
--struct rte_port_in_ops rte_port_ethdev_reader_ops = {
--	.f_create = rte_port_ethdev_reader_create,
--	.f_free = rte_port_ethdev_reader_free,
--	.f_rx = rte_port_ethdev_reader_rx,
--	.f_stats = rte_port_ethdev_reader_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_ethdev_writer_ops)
--struct rte_port_out_ops rte_port_ethdev_writer_ops = {
--	.f_create = rte_port_ethdev_writer_create,
--	.f_free = rte_port_ethdev_writer_free,
--	.f_tx = rte_port_ethdev_writer_tx,
--	.f_tx_bulk = rte_port_ethdev_writer_tx_bulk,
--	.f_flush = rte_port_ethdev_writer_flush,
--	.f_stats = rte_port_ethdev_writer_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_ethdev_writer_nodrop_ops)
--struct rte_port_out_ops rte_port_ethdev_writer_nodrop_ops = {
--	.f_create = rte_port_ethdev_writer_nodrop_create,
--	.f_free = rte_port_ethdev_writer_nodrop_free,
--	.f_tx = rte_port_ethdev_writer_nodrop_tx,
--	.f_tx_bulk = rte_port_ethdev_writer_nodrop_tx_bulk,
--	.f_flush = rte_port_ethdev_writer_nodrop_flush,
--	.f_stats = rte_port_ethdev_writer_nodrop_stats_read,
--};
-diff --git a/lib/port/rte_port_ethdev.h b/lib/port/rte_port_ethdev.h
-deleted file mode 100644
-index 7729ff0da3..0000000000
---- a/lib/port/rte_port_ethdev.h
-+++ /dev/null
-@@ -1,75 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PORT_ETHDEV_H__
--#define __INCLUDE_RTE_PORT_ETHDEV_H__
--
--/**
-- * @file
-- * RTE Port Ethernet Device
-- *
-- * ethdev_reader: input port built on top of pre-initialized NIC RX queue
-- * ethdev_writer: output port built on top of pre-initialized NIC TX queue
-- */
--
--#include <stdint.h>
--
--#include "rte_port.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--/** ethdev_reader port parameters */
--struct rte_port_ethdev_reader_params {
--	/** NIC RX port ID */
--	uint16_t port_id;
--
--	/** NIC RX queue ID */
--	uint16_t queue_id;
--};
--
--/** ethdev_reader port operations */
--extern struct rte_port_in_ops rte_port_ethdev_reader_ops;
--
--/** ethdev_writer port parameters */
--struct rte_port_ethdev_writer_params {
--	/** NIC RX port ID */
--	uint16_t port_id;
--
--	/** NIC RX queue ID */
--	uint16_t queue_id;
--
--	/** Recommended burst size to NIC TX queue. The actual burst size can be
--	bigger or smaller than this value. */
--	uint32_t tx_burst_sz;
--};
--
--/** ethdev_writer port operations */
--extern struct rte_port_out_ops rte_port_ethdev_writer_ops;
--
--/** ethdev_writer_nodrop port parameters */
--struct rte_port_ethdev_writer_nodrop_params {
--	/** NIC RX port ID */
--	uint16_t port_id;
--
--	/** NIC RX queue ID */
--	uint16_t queue_id;
--
--	/** Recommended burst size to NIC TX queue. The actual burst size can be
--	bigger or smaller than this value. */
--	uint32_t tx_burst_sz;
--
--	/** Maximum number of retries, 0 for no limit */
--	uint32_t n_retries;
--};
--
--/** ethdev_writer_nodrop port operations */
--extern struct rte_port_out_ops rte_port_ethdev_writer_nodrop_ops;
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
-diff --git a/lib/port/rte_port_eventdev.c b/lib/port/rte_port_eventdev.c
-deleted file mode 100644
-index c3a287b834..0000000000
---- a/lib/port/rte_port_eventdev.c
-+++ /dev/null
-@@ -1,590 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2019 Intel Corporation
-- */
--
--#include <string.h>
--#include <stdint.h>
--
--#include <eal_export.h>
--#include <rte_mbuf.h>
--#include <rte_malloc.h>
--
--#include "rte_port_eventdev.h"
--
--#include "port_log.h"
--
--/*
-- * Port EVENTDEV Reader
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_EVENTDEV_READER_STATS_PKTS_IN_ADD(port, val) \
--	do {port->stats.n_pkts_in += val;} while (0)
--#define RTE_PORT_EVENTDEV_READER_STATS_PKTS_DROP_ADD(port, val) \
--	do {port->stats.n_pkts_drop += val;} while (0)
--
--#else
--
--#define RTE_PORT_EVENTDEV_READER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_EVENTDEV_READER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_eventdev_reader {
--	struct rte_port_in_stats stats;
--
--	uint8_t  eventdev_id;
--	uint16_t port_id;
--
--	struct rte_event ev[RTE_PORT_IN_BURST_SIZE_MAX];
--};
--
--static void *
--rte_port_eventdev_reader_create(void *params, int socket_id)
--{
--	struct rte_port_eventdev_reader_params *conf =
--			params;
--	struct rte_port_eventdev_reader *port;
--
--	/* Check input parameters */
--	if (conf == NULL) {
--		PORT_LOG(ERR, "%s: params is NULL", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--		RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->eventdev_id = conf->eventdev_id;
--	port->port_id = conf->port_id;
--
--	return port;
--}
--
--static int
--rte_port_eventdev_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
--{
--	struct rte_port_eventdev_reader *p = port;
--	uint16_t rx_evts_cnt, i;
--
--	rx_evts_cnt = rte_event_dequeue_burst(p->eventdev_id, p->port_id,
--			p->ev, n_pkts, 0);
--
--	for (i = 0; i < rx_evts_cnt; i++)
--		pkts[i] = p->ev[i].mbuf;
--
--	RTE_PORT_EVENTDEV_READER_STATS_PKTS_IN_ADD(p, rx_evts_cnt);
--
--	return rx_evts_cnt;
--}
--
--static int
--rte_port_eventdev_reader_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_free(port);
--
--	return 0;
--}
--
--static int rte_port_eventdev_reader_stats_read(void *port,
--	struct rte_port_in_stats *stats, int clear)
--{
--	struct rte_port_eventdev_reader *p =
--			port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port EVENTDEV Writer
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(port, val) \
--	do {port->stats.n_pkts_in += val;} while (0)
--#define RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_DROP_ADD(port, val) \
--	do {port->stats.n_pkts_drop += val;} while (0)
--
--#else
--
--#define RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_eventdev_writer {
--	struct rte_port_out_stats stats;
--
--	struct rte_event ev[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--
--	uint32_t enq_burst_sz;
--	uint32_t enq_buf_count;
--	uint64_t bsz_mask;
--
--	uint8_t eventdev_id;
--	uint8_t port_id;
--	uint8_t queue_id;
--	uint8_t sched_type;
--	uint8_t evt_op;
--};
--
--static void *
--rte_port_eventdev_writer_create(void *params, int socket_id)
--{
--	struct rte_port_eventdev_writer_params *conf =
--			params;
--	struct rte_port_eventdev_writer *port;
--	unsigned int i;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->enq_burst_sz == 0) ||
--		(conf->enq_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
--		(!rte_is_power_of_2(conf->enq_burst_sz))) {
--		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--		RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->enq_burst_sz = conf->enq_burst_sz;
--	port->enq_buf_count = 0;
--	port->bsz_mask = 1LLU << (conf->enq_burst_sz - 1);
--
--	port->eventdev_id = conf->eventdev_id;
--	port->port_id = conf->port_id;
--	port->queue_id = conf->queue_id;
--	port->sched_type = conf->sched_type;
--	port->evt_op = conf->evt_op;
--	memset(&port->ev, 0, sizeof(port->ev));
--
--	for (i = 0; i < RTE_DIM(port->ev); i++) {
--		port->ev[i].queue_id = port->queue_id;
--		port->ev[i].sched_type = port->sched_type;
--		port->ev[i].op = port->evt_op;
--	}
--
--	return port;
--}
--
--static inline void
--send_burst(struct rte_port_eventdev_writer *p)
--{
--	uint32_t nb_enq;
--
--	nb_enq = rte_event_enqueue_burst(p->eventdev_id, p->port_id,
--			p->ev, p->enq_buf_count);
--
--	RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_DROP_ADD(p, p->enq_buf_count -
--			nb_enq);
--
--	for (; nb_enq < p->enq_buf_count; nb_enq++)
--		rte_pktmbuf_free(p->ev[nb_enq].mbuf);
--
--	p->enq_buf_count = 0;
--}
--
--static int
--rte_port_eventdev_writer_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_eventdev_writer *p = port;
--
--	p->ev[p->enq_buf_count++].mbuf  = pkt;
--	RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
--	if (p->enq_buf_count >= p->enq_burst_sz)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_eventdev_writer_tx_bulk(void *port,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask)
--{
--	struct rte_port_eventdev_writer *p =
--			port;
--	uint64_t bsz_mask = p->bsz_mask;
--	uint32_t enq_buf_count = p->enq_buf_count;
--	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
--					((pkts_mask & bsz_mask) ^ bsz_mask);
--
--	if (expr == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i, n_enq_ok;
--
--		if (enq_buf_count)
--			send_burst(p);
--
--		RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
--
--		struct rte_event events[2 * RTE_PORT_IN_BURST_SIZE_MAX] = {};
--		for (i = 0; i < n_pkts; i++) {
--			events[i].mbuf = pkts[i];
--			events[i].queue_id = p->queue_id;
--			events[i].sched_type = p->sched_type;
--			events[i].op = p->evt_op;
--		}
--
--		n_enq_ok = rte_event_enqueue_burst(p->eventdev_id, p->port_id,
--				events, n_pkts);
--
--		RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_DROP_ADD(p,
--				n_pkts - n_enq_ok);
--		for (; n_enq_ok < n_pkts; n_enq_ok++)
--			rte_pktmbuf_free(pkts[n_enq_ok]);
--
--	} else {
--		for (; pkts_mask;) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--
--			p->ev[enq_buf_count++].mbuf = pkts[pkt_index];
--
--			RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
--		}
--
--		p->enq_buf_count = enq_buf_count;
--		if (enq_buf_count >= p->enq_burst_sz)
--			send_burst(p);
--	}
--
--	return 0;
--}
--
--static int
--rte_port_eventdev_writer_flush(void *port)
--{
--	struct rte_port_eventdev_writer *p =
--			port;
--
--	if (p->enq_buf_count > 0)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_eventdev_writer_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_port_eventdev_writer_flush(port);
--	rte_free(port);
--
--	return 0;
--}
--
--static int rte_port_eventdev_writer_stats_read(void *port,
--	struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_eventdev_writer *p =
--			port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port EVENTDEV Writer Nodrop
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
--	do {port->stats.n_pkts_in += val;} while (0)
--#define RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
--	do {port->stats.n_pkts_drop += val;} while (0)
--
--#else
--
--#define RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_eventdev_writer_nodrop {
--	struct rte_port_out_stats stats;
--
--	struct rte_event ev[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--
--	uint32_t enq_burst_sz;
--	uint32_t enq_buf_count;
--	uint64_t bsz_mask;
--	uint64_t n_retries;
--	uint8_t eventdev_id;
--	uint8_t port_id;
--	uint8_t queue_id;
--	uint8_t sched_type;
--	uint8_t evt_op;
--};
--
--
--static void *
--rte_port_eventdev_writer_nodrop_create(void *params, int socket_id)
--{
--	struct rte_port_eventdev_writer_nodrop_params *conf =
--			params;
--	struct rte_port_eventdev_writer_nodrop *port;
--	unsigned int i;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->enq_burst_sz == 0) ||
--		(conf->enq_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
--		(!rte_is_power_of_2(conf->enq_burst_sz))) {
--		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--		RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->enq_burst_sz = conf->enq_burst_sz;
--	port->enq_buf_count = 0;
--	port->bsz_mask = 1LLU << (conf->enq_burst_sz - 1);
--
--	port->eventdev_id = conf->eventdev_id;
--	port->port_id = conf->port_id;
--	port->queue_id = conf->queue_id;
--	port->sched_type = conf->sched_type;
--	port->evt_op = conf->evt_op;
--	memset(&port->ev, 0, sizeof(port->ev));
--
--	for (i = 0; i < RTE_DIM(port->ev); i++) {
--		port->ev[i].queue_id = port->queue_id;
--		port->ev[i].sched_type = port->sched_type;
--		port->ev[i].op = port->evt_op;
--	}
--	/*
--	 * When n_retries is 0 it means that we should wait for every event to
--	 * send no matter how many retries should it take. To limit number of
--	 * branches in fast path, we use UINT64_MAX instead of branching.
--	 */
--	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
--
--	return port;
--}
--
--static inline void
--send_burst_nodrop(struct rte_port_eventdev_writer_nodrop *p)
--{
--	uint32_t nb_enq, i;
--
--	nb_enq = rte_event_enqueue_burst(p->eventdev_id, p->port_id,
--			p->ev, p->enq_buf_count);
--
--	/* We sent all the packets in a first try */
--	if (nb_enq >= p->enq_buf_count) {
--		p->enq_buf_count = 0;
+-	if (strcmp(tokens[2], "buffer") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "buffer");
 -		return;
 -	}
 -
--	for (i = 0; i < p->n_retries; i++) {
--		nb_enq += rte_event_enqueue_burst(p->eventdev_id, p->port_id,
--							p->ev + nb_enq,
--							p->enq_buf_count - nb_enq);
+-	if (parser_read_uint32(&p.buffer_size, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "buffer_size");
+-		return;
+-	}
 -
--		/* We sent all the events in more than one try */
--		if (nb_enq >= p->enq_buf_count) {
--			p->enq_buf_count = 0;
+-	if (strcmp(tokens[4], "pool") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pool");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.pool_size, tokens[5]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "pool_size");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "cache") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cache");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.cache_size, tokens[7]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "cache_size");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[8], "cpu") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cpu");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.cpu_id, tokens[9]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "cpu_id");
+-		return;
+-	}
+-
+-	mempool = mempool_create(name, &p);
+-	if (mempool == NULL) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_link_help[] =
+-"link <link_name>\n"
+-"   dev <device_name> | port <port_id>\n"
+-"   rxq <n_queues> <queue_size> <mempool_name>\n"
+-"   txq <n_queues> <queue_size>\n"
+-"   promiscuous on | off\n"
+-"   [rss <qid_0> ... <qid_n>]\n";
+-
+-static void
+-cmd_link(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct link_params p;
+-	struct link_params_rss rss;
+-	struct link *link;
+-	char *name;
+-
+-	memset(&p, 0, sizeof(p));
+-
+-	if ((n_tokens < 13) || (n_tokens > 14 + LINK_RXQ_RSS_MAX)) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-	name = tokens[1];
+-
+-	if (strcmp(tokens[2], "dev") == 0)
+-		p.dev_name = tokens[3];
+-	else if (strcmp(tokens[2], "port") == 0) {
+-		p.dev_name = NULL;
+-
+-		if (parser_read_uint16(&p.port_id, tokens[3]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
 -			return;
 -		}
--	}
--	/* We didn't send the events in maximum allowed attempts */
--	RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(p,
--			p->enq_buf_count - nb_enq);
--	for (; nb_enq < p->enq_buf_count; nb_enq++)
--		rte_pktmbuf_free(p->ev[nb_enq].mbuf);
--
--	p->enq_buf_count = 0;
--}
--
--static int
--rte_port_eventdev_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_eventdev_writer_nodrop *p = port;
--
--	p->ev[p->enq_buf_count++].mbuf = pkt;
--
--	RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
--	if (p->enq_buf_count >= p->enq_burst_sz)
--		send_burst_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_eventdev_writer_nodrop_tx_bulk(void *port,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask)
--{
--	struct rte_port_eventdev_writer_nodrop *p =
--			port;
--
--	uint64_t bsz_mask = p->bsz_mask;
--	uint32_t enq_buf_count = p->enq_buf_count;
--	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
--					((pkts_mask & bsz_mask) ^ bsz_mask);
--
--	if (expr == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i, n_enq_ok;
--
--		if (enq_buf_count)
--			send_burst_nodrop(p);
--
--		RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
--
--		struct rte_event events[RTE_PORT_IN_BURST_SIZE_MAX] = {};
--
--		for (i = 0; i < n_pkts; i++) {
--			events[i].mbuf = pkts[i];
--			events[i].queue_id = p->queue_id;
--			events[i].sched_type = p->sched_type;
--			events[i].op = p->evt_op;
--		}
--
--		n_enq_ok = rte_event_enqueue_burst(p->eventdev_id, p->port_id,
--				events, n_pkts);
--
--		if (n_enq_ok >= n_pkts)
--			return 0;
--
--		/*
--		 * If we did not manage to enqueue all events in single burst,
--		 * move remaining events to the buffer and call send burst.
--		 */
--		for (; n_enq_ok < n_pkts; n_enq_ok++) {
--			struct rte_mbuf *pkt = pkts[n_enq_ok];
--			p->ev[p->enq_buf_count++].mbuf = pkt;
--		}
--		send_burst_nodrop(p);
 -	} else {
--		for (; pkts_mask;) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "dev or port");
+-		return;
+-	}
 -
--			p->ev[enq_buf_count++].mbuf = pkts[pkt_index];
+-	if (strcmp(tokens[4], "rxq") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rxq");
+-		return;
+-	}
 -
--			RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
+-	if (parser_read_uint32(&p.rx.n_queues, tokens[5]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "n_queues");
+-		return;
+-	}
+-	if (parser_read_uint32(&p.rx.queue_size, tokens[6]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "queue_size");
+-		return;
+-	}
+-
+-	p.rx.mempool_name = tokens[7];
+-
+-	if (strcmp(tokens[8], "txq") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "txq");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.tx.n_queues, tokens[9]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "n_queues");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.tx.queue_size, tokens[10]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "queue_size");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[11], "promiscuous") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "promiscuous");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[12], "on") == 0)
+-		p.promiscuous = 1;
+-	else if (strcmp(tokens[12], "off") == 0)
+-		p.promiscuous = 0;
+-	else {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "on or off");
+-		return;
+-	}
+-
+-	/* RSS */
+-	p.rx.rss = NULL;
+-	if (n_tokens > 13) {
+-		uint32_t queue_id, i;
+-
+-		if (strcmp(tokens[13], "rss") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rss");
+-			return;
 -		}
 -
--		p->enq_buf_count = enq_buf_count;
--		if (enq_buf_count >= p->enq_burst_sz)
--			send_burst_nodrop(p);
+-		p.rx.rss = &rss;
+-
+-		rss.n_queues = 0;
+-		for (i = 14; i < n_tokens; i++) {
+-			if (parser_read_uint32(&queue_id, tokens[i]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"queue_id");
+-				return;
+-			}
+-
+-			rss.queue_id[rss.n_queues] = queue_id;
+-			rss.n_queues++;
+-		}
 -	}
 -
--	return 0;
+-	link = link_create(name, &p);
+-	if (link == NULL) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
 -}
 -
--static int
--rte_port_eventdev_writer_nodrop_flush(void *port)
+-/* Print the link stats and info */
+-static void
+-print_link_info(struct link *link, char *out, size_t out_size)
 -{
--	struct rte_port_eventdev_writer_nodrop *p =
--			port;
+-	struct rte_eth_stats stats;
+-	struct rte_ether_addr mac_addr;
+-	struct rte_eth_link eth_link;
+-	uint16_t mtu;
+-	int ret;
 -
--	if (p->enq_buf_count > 0)
--		send_burst_nodrop(p);
+-	memset(&stats, 0, sizeof(stats));
+-	rte_eth_stats_get(link->port_id, &stats);
 -
--	return 0;
--}
--
--static int
--rte_port_eventdev_writer_nodrop_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
+-	ret = rte_eth_macaddr_get(link->port_id, &mac_addr);
+-	if (ret != 0) {
+-		snprintf(out, out_size, "\n%s: MAC address get failed: %s",
+-			 link->name, rte_strerror(-ret));
+-		return;
 -	}
 -
--	rte_port_eventdev_writer_nodrop_flush(port);
--	rte_free(port);
+-	ret = rte_eth_link_get(link->port_id, &eth_link);
+-	if (ret < 0) {
+-		snprintf(out, out_size, "\n%s: link get failed: %s",
+-			 link->name, rte_strerror(-ret));
+-		return;
+-	}
 -
--	return 0;
--}
+-	rte_eth_dev_get_mtu(link->port_id, &mtu);
 -
--static int rte_port_eventdev_writer_nodrop_stats_read(void *port,
--	struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_eventdev_writer_nodrop *p =
--			port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
+-	snprintf(out, out_size,
+-		"\n"
+-		"%s: flags=<%s> mtu %u\n"
+-		"\tether " RTE_ETHER_ADDR_PRT_FMT " rxqueues %u txqueues %u\n"
+-		"\tport# %u  speed %s\n"
+-		"\tRX packets %" PRIu64"  bytes %" PRIu64"\n"
+-		"\tRX errors %" PRIu64"  missed %" PRIu64"  no-mbuf %" PRIu64"\n"
+-		"\tTX packets %" PRIu64"  bytes %" PRIu64"\n"
+-		"\tTX errors %" PRIu64"\n",
+-		link->name,
+-		eth_link.link_status == 0 ? "DOWN" : "UP",
+-		mtu,
+-		RTE_ETHER_ADDR_BYTES(&mac_addr),
+-		link->n_rxq,
+-		link->n_txq,
+-		link->port_id,
+-		rte_eth_link_speed_to_str(eth_link.link_speed),
+-		stats.ipackets,
+-		stats.ibytes,
+-		stats.ierrors,
+-		stats.imissed,
+-		stats.rx_nombuf,
+-		stats.opackets,
+-		stats.obytes,
+-		stats.oerrors);
 -}
 -
 -/*
-- * Summary of port operations
+- * link show [<link_name>]
 - */
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_eventdev_reader_ops, 19.11)
--struct rte_port_in_ops rte_port_eventdev_reader_ops = {
--	.f_create = rte_port_eventdev_reader_create,
--	.f_free = rte_port_eventdev_reader_free,
--	.f_rx = rte_port_eventdev_reader_rx,
--	.f_stats = rte_port_eventdev_reader_stats_read,
--};
+-static void
+-cmd_link_show(char **tokens, uint32_t n_tokens, char *out, size_t out_size)
+-{
+-	struct link *link;
+-	char *link_name;
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_eventdev_writer_ops, 19.11)
--struct rte_port_out_ops rte_port_eventdev_writer_ops = {
--	.f_create = rte_port_eventdev_writer_create,
--	.f_free = rte_port_eventdev_writer_free,
--	.f_tx = rte_port_eventdev_writer_tx,
--	.f_tx_bulk = rte_port_eventdev_writer_tx_bulk,
--	.f_flush = rte_port_eventdev_writer_flush,
--	.f_stats = rte_port_eventdev_writer_stats_read,
--};
+-	if (n_tokens != 2 && n_tokens != 3) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_eventdev_writer_nodrop_ops, 19.11)
--struct rte_port_out_ops rte_port_eventdev_writer_nodrop_ops = {
--	.f_create = rte_port_eventdev_writer_nodrop_create,
--	.f_free = rte_port_eventdev_writer_nodrop_free,
--	.f_tx = rte_port_eventdev_writer_nodrop_tx,
--	.f_tx_bulk = rte_port_eventdev_writer_nodrop_tx_bulk,
--	.f_flush = rte_port_eventdev_writer_nodrop_flush,
--	.f_stats = rte_port_eventdev_writer_nodrop_stats_read,
--};
-diff --git a/lib/port/rte_port_eventdev.h b/lib/port/rte_port_eventdev.h
-deleted file mode 100644
-index d9eccf07d4..0000000000
---- a/lib/port/rte_port_eventdev.h
-+++ /dev/null
-@@ -1,94 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2019 Intel Corporation
-- */
+-	if (n_tokens == 2) {
+-		link = link_next(NULL);
 -
--#ifndef __INCLUDE_RTE_PORT_EVENTDEV_H__
--#define __INCLUDE_RTE_PORT_EVENTDEV_H__
+-		while (link != NULL) {
+-			out_size = out_size - strlen(out);
+-			out = &out[strlen(out)];
+-
+-			print_link_info(link, out, out_size);
+-			link = link_next(link);
+-		}
+-	} else {
+-		out_size = out_size - strlen(out);
+-		out = &out[strlen(out)];
+-
+-		link_name = tokens[2];
+-		link = link_find(link_name);
+-
+-		if (link == NULL) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-					"Link does not exist");
+-			return;
+-		}
+-		print_link_info(link, out, out_size);
+-	}
+-}
+-
+-static const char cmd_swq_help[] =
+-"swq <swq_name>\n"
+-"   size <size>\n"
+-"   cpu <cpu_id>\n";
+-
+-static void
+-cmd_swq(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct swq_params p;
+-	char *name;
+-	struct swq *swq;
+-
+-	if (n_tokens != 6) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	name = tokens[1];
+-
+-	if (strcmp(tokens[2], "size") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.size, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "size");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "cpu") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cpu");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.cpu_id, tokens[5]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "cpu_id");
+-		return;
+-	}
+-
+-	swq = swq_create(name, &p);
+-	if (swq == NULL) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_tmgr_subport_profile_help[] =
+-"tmgr subport profile\n"
+-"   <tb_rate> <tb_size>\n"
+-"   <tc0_rate> <tc1_rate> <tc2_rate> <tc3_rate> <tc4_rate>"
+-"        <tc5_rate> <tc6_rate> <tc7_rate> <tc8_rate>"
+-"        <tc9_rate> <tc10_rate> <tc11_rate> <tc12_rate>\n"
+-"   <tc_period>\n";
+-
+-static void
+-cmd_tmgr_subport_profile(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct rte_sched_subport_profile_params subport_profile;
+-	int status, i;
+-
+-	if (n_tokens != 19) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	if (parser_read_uint64(&subport_profile.tb_rate, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "tb_rate");
+-		return;
+-	}
+-
+-	if (parser_read_uint64(&subport_profile.tb_size, tokens[4]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "tb_size");
+-		return;
+-	}
+-
+-	for (i = 0; i < RTE_SCHED_TRAFFIC_CLASSES_PER_PIPE; i++)
+-		if (parser_read_uint64(&subport_profile.tc_rate[i],
+-				tokens[5 + i]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "tc_rate");
+-			return;
+-		}
+-
+-	if (parser_read_uint64(&subport_profile.tc_period, tokens[18]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "tc_period");
+-		return;
+-	}
+-
+-	status = tmgr_subport_profile_add(&subport_profile);
+-	if (status != 0) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_tmgr_pipe_profile_help[] =
+-"tmgr pipe profile\n"
+-"   <tb_rate> <tb_size>\n"
+-"   <tc0_rate> <tc1_rate> <tc2_rate> <tc3_rate> <tc4_rate>"
+-"     <tc5_rate> <tc6_rate> <tc7_rate> <tc8_rate>"
+-"     <tc9_rate> <tc10_rate> <tc11_rate> <tc12_rate>\n"
+-"   <tc_period>\n"
+-"   <tc_ov_weight>\n"
+-"   <wrr_weight0..3>\n";
+-
+-static void
+-cmd_tmgr_pipe_profile(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct rte_sched_pipe_params p;
+-	int status, i;
+-
+-	if (n_tokens != 24) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	if (parser_read_uint64(&p.tb_rate, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "tb_rate");
+-		return;
+-	}
+-
+-	if (parser_read_uint64(&p.tb_size, tokens[4]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "tb_size");
+-		return;
+-	}
+-
+-	for (i = 0; i < RTE_SCHED_TRAFFIC_CLASSES_PER_PIPE; i++)
+-		if (parser_read_uint64(&p.tc_rate[i], tokens[5 + i]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "tc_rate");
+-			return;
+-		}
+-
+-	if (parser_read_uint64(&p.tc_period, tokens[18]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "tc_period");
+-		return;
+-	}
+-
+-	if (parser_read_uint8(&p.tc_ov_weight, tokens[19]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "tc_ov_weight");
+-		return;
+-	}
+-
+-	for (i = 0; i < RTE_SCHED_BE_QUEUES_PER_PIPE; i++)
+-		if (parser_read_uint8(&p.wrr_weights[i], tokens[20 + i]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "wrr_weights");
+-			return;
+-		}
+-
+-	status = tmgr_pipe_profile_add(&p);
+-	if (status != 0) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_tmgr_help[] =
+-"tmgr <tmgr_name>\n"
+-"   rate <rate>\n"
+-"   spp <n_subports_per_port>\n"
+-"   pps <n_pipes_per_subport>\n"
+-"   fo <frame_overhead>\n"
+-"   mtu <mtu>\n"
+-"   cpu <cpu_id>\n";
+-
+-static void
+-cmd_tmgr(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct tmgr_port_params p;
+-	char *name;
+-	struct tmgr_port *tmgr_port;
+-
+-	if (n_tokens != 14) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	name = tokens[1];
+-
+-	if (strcmp(tokens[2], "rate") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rate");
+-		return;
+-	}
+-
+-	if (parser_read_uint64(&p.rate, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "rate");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "spp") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "spp");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.n_subports_per_port, tokens[5]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "n_subports_per_port");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "pps") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "spp");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.n_pipes_per_subport, tokens[7]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "n_pipes_per_subport");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[8], "fo") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "fo");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.frame_overhead, tokens[9]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "frame_overhead");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[10], "mtu") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mtu");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.mtu, tokens[11]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "mtu");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[12], "cpu") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cpu");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.cpu_id, tokens[13]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "cpu_id");
+-		return;
+-	}
+-
+-	tmgr_port = tmgr_port_create(name, &p);
+-	if (tmgr_port == NULL) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_tmgr_subport_help[] =
+-"tmgr <tmgr_name> subport <subport_id>\n"
+-"   profile <subport_profile_id>\n";
+-
+-static void
+-cmd_tmgr_subport(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	uint32_t subport_id, subport_profile_id;
+-	int status;
+-	char *name;
+-
+-	if (n_tokens != 6) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	name = tokens[1];
+-
+-	if (parser_read_uint32(&subport_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "subport_id");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&subport_profile_id, tokens[5]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "subport_profile_id");
+-		return;
+-	}
+-
+-	status = tmgr_subport_config(name, subport_id, subport_profile_id);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_tmgr_subport_pipe_help[] =
+-"tmgr <tmgr_name> subport <subport_id> pipe\n"
+-"   from <pipe_id_first> to <pipe_id_last>\n"
+-"   profile <pipe_profile_id>\n";
+-
+-static void
+-cmd_tmgr_subport_pipe(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	uint32_t subport_id, pipe_id_first, pipe_id_last, pipe_profile_id;
+-	int status;
+-	char *name;
+-
+-	if (n_tokens != 11) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	name = tokens[1];
+-
+-	if (parser_read_uint32(&subport_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "subport_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "pipe") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pipe");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "from") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "from");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&pipe_id_first, tokens[6]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "pipe_id_first");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[7], "to") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "to");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&pipe_id_last, tokens[8]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "pipe_id_last");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[9], "profile") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&pipe_profile_id, tokens[10]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "pipe_profile_id");
+-		return;
+-	}
+-
+-	status = tmgr_pipe_config(name, subport_id, pipe_id_first,
+-			pipe_id_last, pipe_profile_id);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_tap_help[] =
+-"tap <tap_name>\n";
+-
+-static void
+-cmd_tap(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	char *name;
+-	struct tap *tap;
+-
+-	if (n_tokens != 2) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	name = tokens[1];
+-
+-	tap = tap_create(name);
+-	if (tap == NULL) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_cryptodev_help[] =
+-"cryptodev <cryptodev_name>\n"
+-"   dev <device_name> | dev_id <device_id>\n"
+-"   queue <n_queues> <queue_size>\n"
+-"   max_sessions <n_sessions>";
+-
+-static void
+-cmd_cryptodev(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct cryptodev_params params;
+-	char *name;
+-
+-	memset(&params, 0, sizeof(params));
+-	if (n_tokens != 9) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	name = tokens[1];
+-
+-	if (strcmp(tokens[2], "dev") == 0)
+-		params.dev_name = tokens[3];
+-	else if (strcmp(tokens[2], "dev_id") == 0) {
+-		if (parser_read_uint32(&params.dev_id, tokens[3]) < 0) {
+-			snprintf(out, out_size,	MSG_ARG_INVALID,
+-				"dev_id");
+-			return;
+-		}
+-	} else {
+-		snprintf(out, out_size,	MSG_ARG_INVALID,
+-			"cryptodev");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "queue")) {
+-		snprintf(out, out_size,	MSG_ARG_NOT_FOUND,
+-			"queue");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&params.n_queues, tokens[5]) < 0) {
+-		snprintf(out, out_size,	MSG_ARG_INVALID,
+-			"q");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&params.queue_size, tokens[6]) < 0) {
+-		snprintf(out, out_size,	MSG_ARG_INVALID,
+-			"queue_size");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[7], "max_sessions")) {
+-		snprintf(out, out_size,	MSG_ARG_NOT_FOUND,
+-			"max_sessions");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&params.session_pool_size, tokens[8]) < 0) {
+-		snprintf(out, out_size,	MSG_ARG_INVALID,
+-			"queue_size");
+-		return;
+-	}
+-
+-	if (cryptodev_create(name, &params) == NULL) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_port_in_action_profile_help[] =
+-"port in action profile <profile_name>\n"
+-"   [filter match | mismatch offset <key_offset> mask <key_mask> key <key_value> port <port_id>]\n"
+-"   [balance offset <key_offset> mask <key_mask> port <port_id0> ... <port_id15>]\n";
+-
+-static void
+-cmd_port_in_action_profile(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct port_in_action_profile_params p;
+-	struct port_in_action_profile *ap;
+-	char *name;
+-	uint32_t t0;
+-
+-	memset(&p, 0, sizeof(p));
+-
+-	if (n_tokens < 5) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[1], "in") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[2], "action") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "action");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[3], "profile") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
+-		return;
+-	}
+-
+-	name = tokens[4];
+-
+-	t0 = 5;
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "filter") == 0)) {
+-		uint32_t size;
+-
+-		if (n_tokens < t0 + 10) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, "port in action profile filter");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 1], "match") == 0)
+-			p.fltr.filter_on_match = 1;
+-		else if (strcmp(tokens[t0 + 1], "mismatch") == 0)
+-			p.fltr.filter_on_match = 0;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "match or mismatch");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 2], "offset") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.fltr.key_offset, tokens[t0 + 3]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 4], "mask") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mask");
+-			return;
+-		}
+-
+-		size = RTE_PORT_IN_ACTION_FLTR_KEY_SIZE;
+-		if ((parse_hex_string(tokens[t0 + 5], p.fltr.key_mask, &size) != 0) ||
+-			(size != RTE_PORT_IN_ACTION_FLTR_KEY_SIZE)) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_mask");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 6], "key") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "key");
+-			return;
+-		}
+-
+-		size = RTE_PORT_IN_ACTION_FLTR_KEY_SIZE;
+-		if ((parse_hex_string(tokens[t0 + 7], p.fltr.key, &size) != 0) ||
+-			(size != RTE_PORT_IN_ACTION_FLTR_KEY_SIZE)) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_value");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 8], "port") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.fltr.port_id, tokens[t0 + 9]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
+-			return;
+-		}
+-
+-		p.action_mask |= 1LLU << RTE_PORT_IN_ACTION_FLTR;
+-		t0 += 10;
+-	} /* filter */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "balance") == 0)) {
+-		uint32_t i;
+-
+-		if (n_tokens < t0 + 22) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"port in action profile balance");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 1], "offset") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.lb.key_offset, tokens[t0 + 2]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 3], "mask") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mask");
+-			return;
+-		}
+-
+-		p.lb.key_size = RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX;
+-		if (parse_hex_string(tokens[t0 + 4], p.lb.key_mask, &p.lb.key_size) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_mask");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 5], "port") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-			return;
+-		}
+-
+-		for (i = 0; i < 16; i++)
+-			if (parser_read_uint32(&p.lb.port_id[i], tokens[t0 + 6 + i]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
+-				return;
+-			}
+-
+-		p.action_mask |= 1LLU << RTE_PORT_IN_ACTION_LB;
+-		t0 += 22;
+-	} /* balance */
+-
+-	if (t0 < n_tokens) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	ap = port_in_action_profile_create(name, &p);
+-	if (ap == NULL) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_table_action_profile_help[] =
+-"table action profile <profile_name>\n"
+-"   ipv4 | ipv6\n"
+-"   offset <ip_offset>\n"
+-"   fwd\n"
+-"   [balance offset <key_offset> mask <key_mask> outoffset <out_offset>]\n"
+-"   [meter srtcm | trtcm\n"
+-"       tc <n_tc>\n"
+-"       stats none | pkts | bytes | both]\n"
+-"   [tm spp <n_subports_per_port> pps <n_pipes_per_subport>]\n"
+-"   [encap ether | vlan | qinq | mpls | pppoe | qinq_pppoe \n"
+-"       vxlan offset <ether_offset> ipv4 | ipv6 vlan on | off]\n"
+-"   [nat src | dst\n"
+-"       proto udp | tcp]\n"
+-"   [ttl drop | fwd\n"
+-"       stats none | pkts]\n"
+-"   [stats pkts | bytes | both]\n"
+-"   [time]\n"
+-"   [sym_crypto dev <CRYPTODEV_NAME> offset <op_offset>]\n"
+-"   [tag]\n"
+-"   [decap]\n";
+-
+-static void
+-cmd_table_action_profile(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct table_action_profile_params p;
+-	struct table_action_profile *ap;
+-	char *name;
+-	uint32_t t0;
+-
+-	memset(&p, 0, sizeof(p));
+-
+-	if (n_tokens < 8) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[1], "action") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "action");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[2], "profile") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
+-		return;
+-	}
+-
+-	name = tokens[3];
+-
+-	if (strcmp(tokens[4], "ipv4") == 0)
+-		p.common.ip_version = 1;
+-	else if (strcmp(tokens[4], "ipv6") == 0)
+-		p.common.ip_version = 0;
+-	else {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "ipv4 or ipv6");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "offset") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.common.ip_offset, tokens[6]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "ip_offset");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[7], "fwd") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "fwd");
+-		return;
+-	}
+-
+-	p.action_mask |= 1LLU << RTE_TABLE_ACTION_FWD;
+-
+-	t0 = 8;
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "balance") == 0)) {
+-		if (n_tokens < t0 + 7) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, "table action profile balance");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 1], "offset") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.lb.key_offset, tokens[t0 + 2]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 3], "mask") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mask");
+-			return;
+-		}
+-
+-		p.lb.key_size = RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX;
+-		if (parse_hex_string(tokens[t0 + 4], p.lb.key_mask, &p.lb.key_size) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_mask");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 5], "outoffset") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "outoffset");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.lb.out_offset, tokens[t0 + 6]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "out_offset");
+-			return;
+-		}
+-
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_LB;
+-		t0 += 7;
+-	} /* balance */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "meter") == 0)) {
+-		if (n_tokens < t0 + 6) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"table action profile meter");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 1], "srtcm") == 0)
+-			p.mtr.alg = RTE_TABLE_ACTION_METER_SRTCM;
+-		else if (strcmp(tokens[t0 + 1], "trtcm") == 0)
+-			p.mtr.alg = RTE_TABLE_ACTION_METER_TRTCM;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"srtcm or trtcm");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 2], "tc") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "tc");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.mtr.n_tc, tokens[t0 + 3]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "n_tc");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 4], "stats") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 5], "none") == 0) {
+-			p.mtr.n_packets_enabled = 0;
+-			p.mtr.n_bytes_enabled = 0;
+-		} else if (strcmp(tokens[t0 + 5], "pkts") == 0) {
+-			p.mtr.n_packets_enabled = 1;
+-			p.mtr.n_bytes_enabled = 0;
+-		} else if (strcmp(tokens[t0 + 5], "bytes") == 0) {
+-			p.mtr.n_packets_enabled = 0;
+-			p.mtr.n_bytes_enabled = 1;
+-		} else if (strcmp(tokens[t0 + 5], "both") == 0) {
+-			p.mtr.n_packets_enabled = 1;
+-			p.mtr.n_bytes_enabled = 1;
+-		} else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"none or pkts or bytes or both");
+-			return;
+-		}
+-
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_MTR;
+-		t0 += 6;
+-	} /* meter */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "tm") == 0)) {
+-		if (n_tokens < t0 + 5) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"table action profile tm");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 1], "spp") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "spp");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.tm.n_subports_per_port,
+-			tokens[t0 + 2]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"n_subports_per_port");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 3], "pps") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pps");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.tm.n_pipes_per_subport,
+-			tokens[t0 + 4]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"n_pipes_per_subport");
+-			return;
+-		}
+-
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_TM;
+-		t0 += 5;
+-	} /* tm */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "encap") == 0)) {
+-		uint32_t n_extra_tokens = 0;
+-
+-		if (n_tokens < t0 + 2) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"action profile encap");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 1], "ether") == 0)
+-			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_ETHER;
+-		else if (strcmp(tokens[t0 + 1], "vlan") == 0)
+-			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_VLAN;
+-		else if (strcmp(tokens[t0 + 1], "qinq") == 0)
+-			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ;
+-		else if (strcmp(tokens[t0 + 1], "mpls") == 0)
+-			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_MPLS;
+-		else if (strcmp(tokens[t0 + 1], "pppoe") == 0)
+-			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_PPPOE;
+-		else if (strcmp(tokens[t0 + 1], "vxlan") == 0) {
+-			if (n_tokens < t0 + 2 + 5) {
+-				snprintf(out, out_size, MSG_ARG_MISMATCH,
+-					"action profile encap vxlan");
+-				return;
+-			}
+-
+-			if (strcmp(tokens[t0 + 2], "offset") != 0) {
+-				snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-					"vxlan: offset");
+-				return;
+-			}
+-
+-			if (parser_read_uint32(&p.encap.vxlan.data_offset,
+-				tokens[t0 + 2 + 1]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"vxlan: ether_offset");
+-				return;
+-			}
+-
+-			if (strcmp(tokens[t0 + 2 + 2], "ipv4") == 0)
+-				p.encap.vxlan.ip_version = 1;
+-			else if (strcmp(tokens[t0 + 2 + 2], "ipv6") == 0)
+-				p.encap.vxlan.ip_version = 0;
+-			else {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"vxlan: ipv4 or ipv6");
+-				return;
+-			}
+-
+-			if (strcmp(tokens[t0 + 2 + 3], "vlan") != 0) {
+-				snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-					"vxlan: vlan");
+-				return;
+-			}
+-
+-			if (strcmp(tokens[t0 + 2 + 4], "on") == 0)
+-				p.encap.vxlan.vlan = 1;
+-			else if (strcmp(tokens[t0 + 2 + 4], "off") == 0)
+-				p.encap.vxlan.vlan = 0;
+-			else {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"vxlan: on or off");
+-				return;
+-			}
+-
+-			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_VXLAN;
+-			n_extra_tokens = 5;
+-		} else if (strcmp(tokens[t0 + 1], "qinq_pppoe") == 0)
+-			p.encap.encap_mask =
+-				1LLU << RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, "encap");
+-			return;
+-		}
+-
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_ENCAP;
+-		t0 += 2 + n_extra_tokens;
+-	} /* encap */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "nat") == 0)) {
+-		if (n_tokens < t0 + 4) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"table action profile nat");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 1], "src") == 0)
+-			p.nat.source_nat = 1;
+-		else if (strcmp(tokens[t0 + 1], "dst") == 0)
+-			p.nat.source_nat = 0;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"src or dst");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 2], "proto") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "proto");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 3], "tcp") == 0)
+-			p.nat.proto = 0x06;
+-		else if (strcmp(tokens[t0 + 3], "udp") == 0)
+-			p.nat.proto = 0x11;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"tcp or udp");
+-			return;
+-		}
+-
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_NAT;
+-		t0 += 4;
+-	} /* nat */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "ttl") == 0)) {
+-		if (n_tokens < t0 + 4) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"table action profile ttl");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 1], "drop") == 0)
+-			p.ttl.drop = 1;
+-		else if (strcmp(tokens[t0 + 1], "fwd") == 0)
+-			p.ttl.drop = 0;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"drop or fwd");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 2], "stats") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 3], "none") == 0)
+-			p.ttl.n_packets_enabled = 0;
+-		else if (strcmp(tokens[t0 + 3], "pkts") == 0)
+-			p.ttl.n_packets_enabled = 1;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"none or pkts");
+-			return;
+-		}
+-
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_TTL;
+-		t0 += 4;
+-	} /* ttl */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "stats") == 0)) {
+-		if (n_tokens < t0 + 2) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"table action profile stats");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 1], "pkts") == 0) {
+-			p.stats.n_packets_enabled = 1;
+-			p.stats.n_bytes_enabled = 0;
+-		} else if (strcmp(tokens[t0 + 1], "bytes") == 0) {
+-			p.stats.n_packets_enabled = 0;
+-			p.stats.n_bytes_enabled = 1;
+-		} else if (strcmp(tokens[t0 + 1], "both") == 0) {
+-			p.stats.n_packets_enabled = 1;
+-			p.stats.n_bytes_enabled = 1;
+-		} else {
+-			snprintf(out, out_size,	MSG_ARG_NOT_FOUND,
+-				"pkts or bytes or both");
+-			return;
+-		}
+-
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_STATS;
+-		t0 += 2;
+-	} /* stats */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "time") == 0)) {
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_TIME;
+-		t0 += 1;
+-	} /* time */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "sym_crypto") == 0)) {
+-		struct cryptodev *cryptodev;
+-
+-		if (n_tokens < t0 + 5 ||
+-				strcmp(tokens[t0 + 1], "dev") ||
+-				strcmp(tokens[t0 + 3], "offset")) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"table action profile sym_crypto");
+-			return;
+-		}
+-
+-		cryptodev = cryptodev_find(tokens[t0 + 2]);
+-		if (cryptodev == NULL) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"table action profile sym_crypto");
+-			return;
+-		}
+-
+-		p.sym_crypto.cryptodev_id = cryptodev->dev_id;
+-
+-		if (parser_read_uint32(&p.sym_crypto.op_offset,
+-				tokens[t0 + 4]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-					"table action profile sym_crypto");
+-			return;
+-		}
+-
+-		p.sym_crypto.mp_create = cryptodev->mp_create;
+-		p.sym_crypto.mp_init = cryptodev->mp_init;
+-
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_SYM_CRYPTO;
+-
+-		t0 += 5;
+-	} /* sym_crypto */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "tag") == 0)) {
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_TAG;
+-		t0 += 1;
+-	} /* tag */
+-
+-	if ((t0 < n_tokens) && (strcmp(tokens[t0], "decap") == 0)) {
+-		p.action_mask |= 1LLU << RTE_TABLE_ACTION_DECAP;
+-		t0 += 1;
+-	} /* decap */
+-
+-	if (t0 < n_tokens) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	ap = table_action_profile_create(name, &p);
+-	if (ap == NULL) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_pipeline_help[] =
+-"pipeline <pipeline_name>\n"
+-"   period <timer_period_ms>\n"
+-"   offset_port_id <offset_port_id>\n"
+-"   cpu <cpu_id>\n";
+-
+-static void
+-cmd_pipeline(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct pipeline_params p;
+-	char *name;
+-	struct pipeline *pipeline;
+-
+-	if (n_tokens != 8) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	name = tokens[1];
+-
+-	if (strcmp(tokens[2], "period") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "period");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.timer_period_ms, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "timer_period_ms");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "offset_port_id") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset_port_id");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.offset_port_id, tokens[5]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "offset_port_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "cpu") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cpu");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.cpu_id, tokens[7]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "cpu_id");
+-		return;
+-	}
+-
+-	pipeline = pipeline_create(name, &p);
+-	if (pipeline == NULL) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_pipeline_port_in_help[] =
+-"pipeline <pipeline_name> port in\n"
+-"   bsz <burst_size>\n"
+-"   link <link_name> rxq <queue_id>\n"
+-"   | swq <swq_name>\n"
+-"   | tmgr <tmgr_name>\n"
+-"   | tap <tap_name> mempool <mempool_name> mtu <mtu>\n"
+-"   | source mempool <mempool_name> file <file_name> bpp <n_bytes_per_pkt>\n"
+-"   | cryptodev <cryptodev_name> rxq <queue_id>\n"
+-"   [action <port_in_action_profile_name>]\n"
+-"   [disabled]\n";
+-
+-static void
+-cmd_pipeline_port_in(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct port_in_params p;
+-	char *pipeline_name;
+-	uint32_t t0;
+-	int enabled, status;
+-
+-	if (n_tokens < 7) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "port") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[3], "in") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "bsz") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "bsz");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.burst_size, tokens[5]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "burst_size");
+-		return;
+-	}
+-
+-	t0 = 6;
+-
+-	if (strcmp(tokens[t0], "link") == 0) {
+-		if (n_tokens < t0 + 4) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port in link");
+-			return;
+-		}
+-
+-		p.type = PORT_IN_RXQ;
+-
+-		p.dev_name = tokens[t0 + 1];
+-
+-		if (strcmp(tokens[t0 + 2], "rxq") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rxq");
+-			return;
+-		}
+-
+-		if (parser_read_uint16(&p.rxq.queue_id, tokens[t0 + 3]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"queue_id");
+-			return;
+-		}
+-		t0 += 4;
+-	} else if (strcmp(tokens[t0], "swq") == 0) {
+-		if (n_tokens < t0 + 2) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port in swq");
+-			return;
+-		}
+-
+-		p.type = PORT_IN_SWQ;
+-
+-		p.dev_name = tokens[t0 + 1];
+-
+-		t0 += 2;
+-	} else if (strcmp(tokens[t0], "tmgr") == 0) {
+-		if (n_tokens < t0 + 2) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port in tmgr");
+-			return;
+-		}
+-
+-		p.type = PORT_IN_TMGR;
+-
+-		p.dev_name = tokens[t0 + 1];
+-
+-		t0 += 2;
+-	} else if (strcmp(tokens[t0], "tap") == 0) {
+-		if (n_tokens < t0 + 6) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port in tap");
+-			return;
+-		}
+-
+-		p.type = PORT_IN_TAP;
+-
+-		p.dev_name = tokens[t0 + 1];
+-
+-		if (strcmp(tokens[t0 + 2], "mempool") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"mempool");
+-			return;
+-		}
+-
+-		p.tap.mempool_name = tokens[t0 + 3];
+-
+-		if (strcmp(tokens[t0 + 4], "mtu") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"mtu");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.tap.mtu, tokens[t0 + 5]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "mtu");
+-			return;
+-		}
+-
+-		t0 += 6;
+-	} else if (strcmp(tokens[t0], "source") == 0) {
+-		if (n_tokens < t0 + 6) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port in source");
+-			return;
+-		}
+-
+-		p.type = PORT_IN_SOURCE;
+-
+-		p.dev_name = NULL;
+-
+-		if (strcmp(tokens[t0 + 1], "mempool") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"mempool");
+-			return;
+-		}
+-
+-		p.source.mempool_name = tokens[t0 + 2];
+-
+-		if (strcmp(tokens[t0 + 3], "file") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"file");
+-			return;
+-		}
+-
+-		p.source.file_name = tokens[t0 + 4];
+-
+-		if (strcmp(tokens[t0 + 5], "bpp") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"bpp");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.source.n_bytes_per_pkt, tokens[t0 + 6]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"n_bytes_per_pkt");
+-			return;
+-		}
+-
+-		t0 += 7;
+-	} else if (strcmp(tokens[t0], "cryptodev") == 0) {
+-		if (n_tokens < t0 + 3) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port in cryptodev");
+-			return;
+-		}
+-
+-		p.type = PORT_IN_CRYPTODEV;
+-
+-		p.dev_name = tokens[t0 + 1];
+-		if (parser_read_uint16(&p.rxq.queue_id, tokens[t0 + 3]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"rxq");
+-			return;
+-		}
+-
+-		p.cryptodev.arg_callback = NULL;
+-		p.cryptodev.f_callback = NULL;
+-
+-		t0 += 4;
+-	} else {
+-		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
+-		return;
+-	}
+-
+-	p.action_profile_name = NULL;
+-	if ((n_tokens > t0) && (strcmp(tokens[t0], "action") == 0)) {
+-		if (n_tokens < t0 + 2) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, "action");
+-			return;
+-		}
+-
+-		p.action_profile_name = tokens[t0 + 1];
+-
+-		t0 += 2;
+-	}
+-
+-	enabled = 1;
+-	if ((n_tokens > t0) &&
+-		(strcmp(tokens[t0], "disabled") == 0)) {
+-		enabled = 0;
+-
+-		t0 += 1;
+-	}
+-
+-	if (n_tokens != t0) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	status = pipeline_port_in_create(pipeline_name,
+-		&p, enabled);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_pipeline_port_out_help[] =
+-"pipeline <pipeline_name> port out\n"
+-"   bsz <burst_size>\n"
+-"   link <link_name> txq <txq_id>\n"
+-"   | swq <swq_name>\n"
+-"   | tmgr <tmgr_name>\n"
+-"   | tap <tap_name>\n"
+-"   | sink [file <file_name> pkts <max_n_pkts>]\n"
+-"   | cryptodev <cryptodev_name> txq <txq_id> offset <crypto_op_offset>\n";
+-
+-static void
+-cmd_pipeline_port_out(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct port_out_params p;
+-	char *pipeline_name;
+-	int status;
+-
+-	memset(&p, 0, sizeof(p));
+-
+-	if (n_tokens < 7) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "port") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[3], "out") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "out");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "bsz") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "bsz");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&p.burst_size, tokens[5]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "burst_size");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "link") == 0) {
+-		if (n_tokens != 10) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port out link");
+-			return;
+-		}
+-
+-		p.type = PORT_OUT_TXQ;
+-
+-		p.dev_name = tokens[7];
+-
+-		if (strcmp(tokens[8], "txq") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "txq");
+-			return;
+-		}
+-
+-		if (parser_read_uint16(&p.txq.queue_id, tokens[9]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "queue_id");
+-			return;
+-		}
+-	} else if (strcmp(tokens[6], "swq") == 0) {
+-		if (n_tokens != 8) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port out swq");
+-			return;
+-		}
+-
+-		p.type = PORT_OUT_SWQ;
+-
+-		p.dev_name = tokens[7];
+-	} else if (strcmp(tokens[6], "tmgr") == 0) {
+-		if (n_tokens != 8) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port out tmgr");
+-			return;
+-		}
+-
+-		p.type = PORT_OUT_TMGR;
+-
+-		p.dev_name = tokens[7];
+-	} else if (strcmp(tokens[6], "tap") == 0) {
+-		if (n_tokens != 8) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port out tap");
+-			return;
+-		}
+-
+-		p.type = PORT_OUT_TAP;
+-
+-		p.dev_name = tokens[7];
+-	} else if (strcmp(tokens[6], "sink") == 0) {
+-		if ((n_tokens != 7) && (n_tokens != 11)) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port out sink");
+-			return;
+-		}
+-
+-		p.type = PORT_OUT_SINK;
+-
+-		p.dev_name = NULL;
+-
+-		if (n_tokens == 7) {
+-			p.sink.file_name = NULL;
+-			p.sink.max_n_pkts = 0;
+-		} else {
+-			if (strcmp(tokens[7], "file") != 0) {
+-				snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-					"file");
+-				return;
+-			}
+-
+-			p.sink.file_name = tokens[8];
+-
+-			if (strcmp(tokens[9], "pkts") != 0) {
+-				snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pkts");
+-				return;
+-			}
+-
+-			if (parser_read_uint32(&p.sink.max_n_pkts, tokens[10]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "max_n_pkts");
+-				return;
+-			}
+-		}
+-
+-	} else if (strcmp(tokens[6], "cryptodev") == 0) {
+-		if (n_tokens != 12) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port out cryptodev");
+-			return;
+-		}
+-
+-		p.type = PORT_OUT_CRYPTODEV;
+-
+-		p.dev_name = tokens[7];
+-
+-		if (strcmp(tokens[8], "txq")) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port out cryptodev");
+-			return;
+-		}
+-
+-		if (parser_read_uint16(&p.cryptodev.queue_id, tokens[9])
+-				!= 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "queue_id");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[10], "offset")) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline port out cryptodev");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.cryptodev.op_offset, tokens[11])
+-				!= 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "queue_id");
+-			return;
+-		}
+-	} else {
+-		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
+-		return;
+-	}
+-
+-	status = pipeline_port_out_create(pipeline_name, &p);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_pipeline_table_help[] =
+-"pipeline <pipeline_name> table\n"
+-"       match\n"
+-"       acl\n"
+-"           ipv4 | ipv6\n"
+-"           offset <ip_header_offset>\n"
+-"           size <n_rules>\n"
+-"       | array\n"
+-"           offset <key_offset>\n"
+-"           size <n_keys>\n"
+-"       | hash\n"
+-"           ext | lru\n"
+-"           key <key_size>\n"
+-"           mask <key_mask>\n"
+-"           offset <key_offset>\n"
+-"           buckets <n_buckets>\n"
+-"           size <n_keys>\n"
+-"       | lpm\n"
+-"           ipv4 | ipv6\n"
+-"           offset <ip_header_offset>\n"
+-"           size <n_rules>\n"
+-"       | stub\n"
+-"   [action <table_action_profile_name>]\n";
+-
+-static void
+-cmd_pipeline_table(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	uint8_t key_mask[TABLE_RULE_MATCH_SIZE_MAX];
+-	struct table_params p;
+-	char *pipeline_name;
+-	uint32_t t0;
+-	int status;
+-
+-	if (n_tokens < 5) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[3], "match") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
+-		return;
+-	}
+-
+-	t0 = 4;
+-	if (strcmp(tokens[t0], "acl") == 0) {
+-		if (n_tokens < t0 + 6) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline table acl");
+-			return;
+-		}
+-
+-		p.match_type = TABLE_ACL;
+-
+-		if (strcmp(tokens[t0 + 1], "ipv4") == 0)
+-			p.match.acl.ip_version = 1;
+-		else if (strcmp(tokens[t0 + 1], "ipv6") == 0)
+-			p.match.acl.ip_version = 0;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"ipv4 or ipv6");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 2], "offset") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.match.acl.ip_header_offset,
+-			tokens[t0 + 3]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"ip_header_offset");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 4], "size") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.match.acl.n_rules,
+-			tokens[t0 + 5]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "n_rules");
+-			return;
+-		}
+-
+-		t0 += 6;
+-	} else if (strcmp(tokens[t0], "array") == 0) {
+-		if (n_tokens < t0 + 5) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline table array");
+-			return;
+-		}
+-
+-		p.match_type = TABLE_ARRAY;
+-
+-		if (strcmp(tokens[t0 + 1], "offset") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.match.array.key_offset,
+-			tokens[t0 + 2]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 3], "size") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.match.array.n_keys,
+-			tokens[t0 + 4]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "n_keys");
+-			return;
+-		}
+-
+-		t0 += 5;
+-	} else if (strcmp(tokens[t0], "hash") == 0) {
+-		uint32_t key_mask_size = TABLE_RULE_MATCH_SIZE_MAX;
+-
+-		if (n_tokens < t0 + 12) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline table hash");
+-			return;
+-		}
+-
+-		p.match_type = TABLE_HASH;
+-
+-		if (strcmp(tokens[t0 + 1], "ext") == 0)
+-			p.match.hash.extendable_bucket = 1;
+-		else if (strcmp(tokens[t0 + 1], "lru") == 0)
+-			p.match.hash.extendable_bucket = 0;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"ext or lru");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 2], "key") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "key");
+-			return;
+-		}
+-
+-		if ((parser_read_uint32(&p.match.hash.key_size,
+-			tokens[t0 + 3]) != 0) ||
+-			(p.match.hash.key_size == 0) ||
+-			(p.match.hash.key_size > TABLE_RULE_MATCH_SIZE_MAX)) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_size");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 4], "mask") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mask");
+-			return;
+-		}
+-
+-		if ((parse_hex_string(tokens[t0 + 5],
+-			key_mask, &key_mask_size) != 0) ||
+-			(key_mask_size != p.match.hash.key_size)) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_mask");
+-			return;
+-		}
+-		p.match.hash.key_mask = key_mask;
+-
+-		if (strcmp(tokens[t0 + 6], "offset") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.match.hash.key_offset,
+-			tokens[t0 + 7]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 8], "buckets") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "buckets");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.match.hash.n_buckets,
+-			tokens[t0 + 9]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "n_buckets");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 10], "size") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.match.hash.n_keys,
+-			tokens[t0 + 11]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "n_keys");
+-			return;
+-		}
+-
+-		t0 += 12;
+-	} else if (strcmp(tokens[t0], "lpm") == 0) {
+-		if (n_tokens < t0 + 6) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"pipeline table lpm");
+-			return;
+-		}
+-
+-		p.match_type = TABLE_LPM;
+-
+-		if (strcmp(tokens[t0 + 1], "ipv4") == 0)
+-			p.match.lpm.key_size = 4;
+-		else if (strcmp(tokens[t0 + 1], "ipv6") == 0)
+-			p.match.lpm.key_size = 16;
+-		else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"ipv4 or ipv6");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 2], "offset") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.match.lpm.key_offset,
+-			tokens[t0 + 3]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[t0 + 4], "size") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&p.match.lpm.n_rules,
+-			tokens[t0 + 5]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "n_rules");
+-			return;
+-		}
+-
+-		t0 += 6;
+-	} else if (strcmp(tokens[t0], "stub") == 0) {
+-		p.match_type = TABLE_STUB;
+-
+-		t0 += 1;
+-	} else {
+-		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
+-		return;
+-	}
+-
+-	p.action_profile_name = NULL;
+-	if ((n_tokens > t0) && (strcmp(tokens[t0], "action") == 0)) {
+-		if (n_tokens < t0 + 2) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, "action");
+-			return;
+-		}
+-
+-		p.action_profile_name = tokens[t0 + 1];
+-
+-		t0 += 2;
+-	}
+-
+-	if (n_tokens > t0) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	status = pipeline_table_create(pipeline_name, &p);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_pipeline_port_in_table_help[] =
+-"pipeline <pipeline_name> port in <port_id> table <table_id>\n";
+-
+-static void
+-cmd_pipeline_port_in_table(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	char *pipeline_name;
+-	uint32_t port_id, table_id;
+-	int status;
+-
+-	if (n_tokens != 7) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "port") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[3], "in") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[6]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	status = pipeline_port_in_connect_to_table(pipeline_name,
+-		port_id,
+-		table_id);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_pipeline_port_in_stats_help[] =
+-"pipeline <pipeline_name> port in <port_id> stats read [clear]\n";
+-
+-#define MSG_PIPELINE_PORT_IN_STATS                         \
+-	"Pkts in: %" PRIu64 "\n"                           \
+-	"Pkts dropped by AH: %" PRIu64 "\n"                \
+-	"Pkts dropped by other: %" PRIu64 "\n"
+-
+-static void
+-cmd_pipeline_port_in_stats(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct rte_pipeline_port_in_stats stats;
+-	char *pipeline_name;
+-	uint32_t port_id;
+-	int clear, status;
+-
+-	if ((n_tokens != 7) && (n_tokens != 8)) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "port") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[3], "in") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "stats") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "read") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
+-		return;
+-	}
+-
+-	clear = 0;
+-	if (n_tokens == 8) {
+-		if (strcmp(tokens[7], "clear") != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "clear");
+-			return;
+-		}
+-
+-		clear = 1;
+-	}
+-
+-	status = pipeline_port_in_stats_read(pipeline_name,
+-		port_id,
+-		&stats,
+-		clear);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-
+-	snprintf(out, out_size, MSG_PIPELINE_PORT_IN_STATS,
+-		stats.stats.n_pkts_in,
+-		stats.n_pkts_dropped_by_ah,
+-		stats.stats.n_pkts_drop);
+-}
+-
+-
+-static const char cmd_pipeline_port_in_enable_help[] =
+-"pipeline <pipeline_name> port in <port_id> enable\n";
+-
+-static void
+-cmd_pipeline_port_in_enable(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	char *pipeline_name;
+-	uint32_t port_id;
+-	int status;
+-
+-	if (n_tokens != 6) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "port") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[3], "in") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "enable") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "enable");
+-		return;
+-	}
+-
+-	status = pipeline_port_in_enable(pipeline_name, port_id);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_pipeline_port_in_disable_help[] =
+-"pipeline <pipeline_name> port in <port_id> disable\n";
+-
+-static void
+-cmd_pipeline_port_in_disable(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	char *pipeline_name;
+-	uint32_t port_id;
+-	int status;
+-
+-	if (n_tokens != 6) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "port") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[3], "in") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "disable") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "disable");
+-		return;
+-	}
+-
+-	status = pipeline_port_in_disable(pipeline_name, port_id);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_pipeline_port_out_stats_help[] =
+-"pipeline <pipeline_name> port out <port_id> stats read [clear]\n";
+-
+-#define MSG_PIPELINE_PORT_OUT_STATS                        \
+-	"Pkts in: %" PRIu64 "\n"                           \
+-	"Pkts dropped by AH: %" PRIu64 "\n"                \
+-	"Pkts dropped by other: %" PRIu64 "\n"
+-
+-static void
+-cmd_pipeline_port_out_stats(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct rte_pipeline_port_out_stats stats;
+-	char *pipeline_name;
+-	uint32_t port_id;
+-	int clear, status;
+-
+-	if ((n_tokens != 7) && (n_tokens != 8)) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "port") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[3], "out") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "out");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "stats") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "read") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
+-		return;
+-	}
+-
+-	clear = 0;
+-	if (n_tokens == 8) {
+-		if (strcmp(tokens[7], "clear") != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "clear");
+-			return;
+-		}
+-
+-		clear = 1;
+-	}
+-
+-	status = pipeline_port_out_stats_read(pipeline_name,
+-		port_id,
+-		&stats,
+-		clear);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-
+-	snprintf(out, out_size, MSG_PIPELINE_PORT_OUT_STATS,
+-		stats.stats.n_pkts_in,
+-		stats.n_pkts_dropped_by_ah,
+-		stats.stats.n_pkts_drop);
+-}
+-
+-
+-static const char cmd_pipeline_table_stats_help[] =
+-"pipeline <pipeline_name> table <table_id> stats read [clear]\n";
+-
+-#define MSG_PIPELINE_TABLE_STATS                                     \
+-	"Pkts in: %" PRIu64 "\n"                                     \
+-	"Pkts in with lookup miss: %" PRIu64 "\n"                    \
+-	"Pkts in with lookup hit dropped by AH: %" PRIu64 "\n"       \
+-	"Pkts in with lookup hit dropped by others: %" PRIu64 "\n"   \
+-	"Pkts in with lookup miss dropped by AH: %" PRIu64 "\n"      \
+-	"Pkts in with lookup miss dropped by others: %" PRIu64 "\n"
+-
+-static void
+-cmd_pipeline_table_stats(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct rte_pipeline_table_stats stats;
+-	char *pipeline_name;
+-	uint32_t table_id;
+-	int clear, status;
+-
+-	if ((n_tokens != 6) && (n_tokens != 7)) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "stats") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "read") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
+-		return;
+-	}
+-
+-	clear = 0;
+-	if (n_tokens == 7) {
+-		if (strcmp(tokens[6], "clear") != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "clear");
+-			return;
+-		}
+-
+-		clear = 1;
+-	}
+-
+-	status = pipeline_table_stats_read(pipeline_name,
+-		table_id,
+-		&stats,
+-		clear);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-
+-	snprintf(out, out_size, MSG_PIPELINE_TABLE_STATS,
+-		stats.stats.n_pkts_in,
+-		stats.stats.n_pkts_lookup_miss,
+-		stats.n_pkts_dropped_by_lkp_hit_ah,
+-		stats.n_pkts_dropped_lkp_hit,
+-		stats.n_pkts_dropped_by_lkp_miss_ah,
+-		stats.n_pkts_dropped_lkp_miss);
+-}
 -
 -/**
-- * @file
-- * RTE Port Eventdev Interface
+- * <match> ::=
 - *
-- * eventdev_reader: input port built on top of pre-initialized eventdev
-- * interface
-- * eventdev_writer: output port built on top of pre-initialized eventdev
-- * interface
+- * match
+- *    acl
+- *       priority <priority>
+- *       ipv4 | ipv6 <sa> <sa_depth> <da> <da_depth>
+- *       <sp0> <sp1> <dp0> <dp1> <proto>
+- *    | array <pos>
+- *    | hash
+- *       raw <key>
+- *       | ipv4_5tuple <sa> <da> <sp> <dp> <proto>
+- *       | ipv6_5tuple <sa> <da> <sp> <dp> <proto>
+- *       | ipv4_addr <addr>
+- *       | ipv6_addr <addr>
+- *       | qinq <svlan> <cvlan>
+- *    | lpm
+- *       ipv4 | ipv6 <addr> <depth>
 - */
--
--#include <stdint.h>
--#include <rte_eventdev.h>
--
--#include "rte_port.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--/** Eventdev_reader port parameters */
--struct rte_port_eventdev_reader_params {
--	/** Eventdev Device ID */
--	uint8_t eventdev_id;
--
--	/** Eventdev Port ID */
--	uint8_t port_id;
+-struct pkt_key_qinq {
+-	uint16_t ethertype_svlan;
+-	uint16_t svlan;
+-	uint16_t ethertype_cvlan;
+-	uint16_t cvlan;
 -};
 -
--/** Eventdev_reader port operations. */
--extern struct rte_port_in_ops rte_port_eventdev_reader_ops;
--
--/** Eventdev_writer port parameters. */
--struct rte_port_eventdev_writer_params {
--	/** Eventdev Device ID. */
--	uint8_t eventdev_id;
--
--	/** Eventdev Port ID. */
--	uint8_t port_id;
--
--	/** Eventdev Queue ID. */
--	uint8_t queue_id;
--
--	/** Burst size to eventdev interface. */
--	uint32_t enq_burst_sz;
--
--	/** Scheduler synchronization type (RTE_SCHED_TYPE_*)*/
--	uint8_t sched_type;
--
--	/** The type of eventdev enqueue operation - new/forward/release */
--	uint8_t evt_op;
+-struct pkt_key_ipv4_5tuple {
+-	uint8_t time_to_live;
+-	uint8_t proto;
+-	uint16_t hdr_checksum;
+-	uint32_t sa;
+-	uint32_t da;
+-	uint16_t sp;
+-	uint16_t dp;
 -};
 -
--/** Eventdev_writer port operations. */
--extern struct rte_port_out_ops rte_port_eventdev_writer_ops;
--
--/** Event_writer_nodrop port parameters. */
--struct rte_port_eventdev_writer_nodrop_params {
--	/** Eventdev Device ID. */
--	uint8_t eventdev_id;
--
--	/** Eventdev Port ID. */
--	uint16_t port_id;
--
--	/** Eventdev Queue ID. */
--	uint16_t queue_id;
--
--	/** Burst size to eventdev interface. */
--	uint32_t enq_burst_sz;
--
--	/** Scheduler synchronization type (RTE_SCHED_TYPE_*)*/
--	uint8_t sched_type;
--
--	/** The type of eventdev enqueue operation - new/forward/release */
--	uint8_t evt_op;
--
--	/** Maximum number of retries, 0 for no limit. */
--	uint32_t n_retries;
+-struct pkt_key_ipv6_5tuple {
+-	uint16_t payload_length;
+-	uint8_t proto;
+-	uint8_t hop_limit;
+-	struct rte_ipv6_addr sa;
+-	struct rte_ipv6_addr da;
+-	uint16_t sp;
+-	uint16_t dp;
 -};
 -
--/** Eventdev_writer_nodrop port operations. */
--extern struct rte_port_out_ops rte_port_eventdev_writer_nodrop_ops;
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
-diff --git a/lib/port/rte_port_fd.c b/lib/port/rte_port_fd.c
-deleted file mode 100644
-index dbc9efef1b..0000000000
---- a/lib/port/rte_port_fd.c
-+++ /dev/null
-@@ -1,524 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2016 Intel Corporation
-- */
--#include <string.h>
--#include <stdint.h>
--#include <unistd.h>
--
--#include <eal_export.h>
--#include <rte_mbuf.h>
--#include <rte_malloc.h>
--
--#include "rte_port_fd.h"
--
--#include "port_log.h"
--
--/*
-- * Port FD Reader
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_FD_READER_STATS_PKTS_IN_ADD(port, val) \
--	do { port->stats.n_pkts_in += val; } while (0)
--#define RTE_PORT_FD_READER_STATS_PKTS_DROP_ADD(port, val) \
--	do { port->stats.n_pkts_drop += val; } while (0)
--
--#else
--
--#define RTE_PORT_FD_READER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_FD_READER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_fd_reader {
--	struct rte_port_in_stats stats;
--	int fd;
--	uint32_t mtu;
--	struct rte_mempool *mempool;
+-struct pkt_key_ipv4_addr {
+-	uint32_t addr;
 -};
 -
--static void *
--rte_port_fd_reader_create(void *params, int socket_id)
+-struct pkt_key_ipv6_addr {
+-	struct rte_ipv6_addr addr;
+-};
+-
+-static uint32_t
+-parse_match(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size,
+-	struct table_rule_match *m)
 -{
--	struct rte_port_fd_reader_params *conf =
--			params;
--	struct rte_port_fd_reader *port;
+-	memset(m, 0, sizeof(*m));
 -
--	/* Check input parameters */
--	if (conf == NULL) {
--		PORT_LOG(ERR, "%s: params is NULL", __func__);
--		return NULL;
--	}
--	if (conf->fd < 0) {
--		PORT_LOG(ERR, "%s: Invalid file descriptor", __func__);
--		return NULL;
--	}
--	if (conf->mtu == 0) {
--		PORT_LOG(ERR, "%s: Invalid MTU", __func__);
--		return NULL;
--	}
--	if (conf->mempool == NULL) {
--		PORT_LOG(ERR, "%s: Invalid mempool", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->fd = conf->fd;
--	port->mtu = conf->mtu;
--	port->mempool = conf->mempool;
--
--	return port;
--}
--
--static int
--rte_port_fd_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
--{
--	struct rte_port_fd_reader *p = port;
--	uint32_t i, j;
--
--	if (rte_pktmbuf_alloc_bulk(p->mempool, pkts, n_pkts) != 0)
+-	if (n_tokens < 2)
 -		return 0;
 -
--	for (i = 0; i < n_pkts; i++) {
--		struct rte_mbuf *pkt = pkts[i];
--		void *pkt_data = rte_pktmbuf_mtod(pkt, void *);
--		ssize_t n_bytes;
--
--		n_bytes = read(p->fd, pkt_data, (size_t) p->mtu);
--		if (n_bytes <= 0)
--			break;
--
--		pkt->data_len = n_bytes;
--		pkt->pkt_len = n_bytes;
+-	if (strcmp(tokens[0], "match") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
+-		return 0;
 -	}
 -
--	for (j = i; j < n_pkts; j++)
--		rte_pktmbuf_free(pkts[j]);
--
--	RTE_PORT_FD_READER_STATS_PKTS_IN_ADD(p, i);
--
--	return i;
--}
--
--static int
--rte_port_fd_reader_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_free(port);
--
--	return 0;
--}
--
--static int rte_port_fd_reader_stats_read(void *port,
--		struct rte_port_in_stats *stats, int clear)
--{
--	struct rte_port_fd_reader *p =
--			port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port FD Writer
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(port, val) \
--	do { port->stats.n_pkts_in += val; } while (0)
--#define RTE_PORT_FD_WRITER_STATS_PKTS_DROP_ADD(port, val) \
--	do { port->stats.n_pkts_drop += val; } while (0)
--
--#else
--
--#define RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_FD_WRITER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_fd_writer {
--	struct rte_port_out_stats stats;
--
--	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--	uint32_t tx_burst_sz;
--	uint16_t tx_buf_count;
--	uint32_t fd;
--};
--
--static void *
--rte_port_fd_writer_create(void *params, int socket_id)
--{
--	struct rte_port_fd_writer_params *conf =
--		params;
--	struct rte_port_fd_writer *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->tx_burst_sz == 0) ||
--		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
--		(!rte_is_power_of_2(conf->tx_burst_sz))) {
--		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--		RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->fd = conf->fd;
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--
--	return port;
--}
--
--static inline void
--send_burst(struct rte_port_fd_writer *p)
--{
--	uint32_t i;
--
--	for (i = 0; i < p->tx_buf_count; i++) {
--		struct rte_mbuf *pkt = p->tx_buf[i];
--		void *pkt_data = rte_pktmbuf_mtod(pkt, void*);
--		size_t n_bytes = rte_pktmbuf_data_len(pkt);
--		ssize_t ret;
--
--		ret = write(p->fd, pkt_data, n_bytes);
--		if (ret < 0)
--			break;
--	}
--
--	RTE_PORT_FD_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - i);
--
--	for (i = 0; i < p->tx_buf_count; i++)
--		rte_pktmbuf_free(p->tx_buf[i]);
--
--	p->tx_buf_count = 0;
--}
--
--static int
--rte_port_fd_writer_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_fd_writer *p =
--		port;
--
--	p->tx_buf[p->tx_buf_count++] = pkt;
--	RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_fd_writer_tx_bulk(void *port,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask)
--{
--	struct rte_port_fd_writer *p =
--		port;
--	uint32_t tx_buf_count = p->tx_buf_count;
--
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
--
--		for (i = 0; i < n_pkts; i++)
--			p->tx_buf[tx_buf_count++] = pkts[i];
--		RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
--	} else
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
--
--			p->tx_buf[tx_buf_count++] = pkt;
--			RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
+-	if (strcmp(tokens[1], "acl") == 0) {
+-		if (n_tokens < 14) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-			return 0;
 -		}
 -
--	p->tx_buf_count = tx_buf_count;
--	if (tx_buf_count >= p->tx_burst_sz)
--		send_burst(p);
+-		m->match_type = TABLE_ACL;
 -
--	return 0;
--}
--
--static int
--rte_port_fd_writer_flush(void *port)
--{
--	struct rte_port_fd_writer *p =
--		port;
--
--	if (p->tx_buf_count > 0)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_fd_writer_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_port_fd_writer_flush(port);
--	rte_free(port);
--
--	return 0;
--}
--
--static int rte_port_fd_writer_stats_read(void *port,
--		struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_fd_writer *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port FD Writer Nodrop
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
--	do { port->stats.n_pkts_in += val; } while (0)
--#define RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
--	do { port->stats.n_pkts_drop += val; } while (0)
--
--#else
--
--#define RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_fd_writer_nodrop {
--	struct rte_port_out_stats stats;
--
--	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--	uint32_t tx_burst_sz;
--	uint16_t tx_buf_count;
--	uint64_t n_retries;
--	uint32_t fd;
--};
--
--static void *
--rte_port_fd_writer_nodrop_create(void *params, int socket_id)
--{
--	struct rte_port_fd_writer_nodrop_params *conf =
--			params;
--	struct rte_port_fd_writer_nodrop *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->fd < 0) ||
--		(conf->tx_burst_sz == 0) ||
--		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
--		(!rte_is_power_of_2(conf->tx_burst_sz))) {
--		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--		RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->fd = conf->fd;
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--
--	/*
--	 * When n_retries is 0 it means that we should wait for every packet to
--	 * send no matter how many retries should it take. To limit number of
--	 * branches in fast path, we use UINT64_MAX instead of branching.
--	 */
--	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
--
--	return port;
--}
--
--static inline void
--send_burst_nodrop(struct rte_port_fd_writer_nodrop *p)
--{
--	uint64_t n_retries;
--	uint32_t i;
--
--	n_retries = 0;
--	for (i = 0; (i < p->tx_buf_count) && (n_retries < p->n_retries); i++) {
--		struct rte_mbuf *pkt = p->tx_buf[i];
--		void *pkt_data = rte_pktmbuf_mtod(pkt, void*);
--		size_t n_bytes = rte_pktmbuf_data_len(pkt);
--
--		for ( ; n_retries < p->n_retries; n_retries++) {
--			ssize_t ret;
--
--			ret = write(p->fd, pkt_data, n_bytes);
--			if (ret)
--				break;
--		}
--	}
--
--	RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - i);
--
--	for (i = 0; i < p->tx_buf_count; i++)
--		rte_pktmbuf_free(p->tx_buf[i]);
--
--	p->tx_buf_count = 0;
--}
--
--static int
--rte_port_fd_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_fd_writer_nodrop *p =
--		port;
--
--	p->tx_buf[p->tx_buf_count++] = pkt;
--	RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_fd_writer_nodrop_tx_bulk(void *port,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask)
--{
--	struct rte_port_fd_writer_nodrop *p =
--		port;
--	uint32_t tx_buf_count = p->tx_buf_count;
--
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
--
--		for (i = 0; i < n_pkts; i++)
--			p->tx_buf[tx_buf_count++] = pkts[i];
--		RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
--	} else
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
--
--			p->tx_buf[tx_buf_count++] = pkt;
--			RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
+-		if (strcmp(tokens[2], "priority") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "priority");
+-			return 0;
 -		}
 -
--	p->tx_buf_count = tx_buf_count;
--	if (tx_buf_count >= p->tx_burst_sz)
--		send_burst_nodrop(p);
+-		if (parser_read_uint32(&m->match.acl.priority,
+-			tokens[3]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "priority");
+-			return 0;
+-		}
 -
+-		if (strcmp(tokens[4], "ipv4") == 0) {
+-			struct in_addr saddr, daddr;
+-
+-			m->match.acl.ip_version = 1;
+-
+-			if (parse_ipv4_addr(tokens[5], &saddr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "sa");
+-				return 0;
+-			}
+-			m->match.acl.ipv4.sa = rte_be_to_cpu_32(saddr.s_addr);
+-
+-			if (parse_ipv4_addr(tokens[7], &daddr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "da");
+-				return 0;
+-			}
+-			m->match.acl.ipv4.da = rte_be_to_cpu_32(daddr.s_addr);
+-		} else if (strcmp(tokens[4], "ipv6") == 0) {
+-			struct rte_ipv6_addr saddr, daddr;
+-
+-			m->match.acl.ip_version = 0;
+-
+-			if (parse_ipv6_addr(tokens[5], &saddr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "sa");
+-				return 0;
+-			}
+-			m->match.acl.ipv6.sa = saddr;
+-
+-			if (parse_ipv6_addr(tokens[7], &daddr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "da");
+-				return 0;
+-			}
+-			m->match.acl.ipv6.da = daddr;
+-		} else {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
+-				"ipv4 or ipv6");
+-			return 0;
+-		}
+-
+-		if (parser_read_uint32(&m->match.acl.sa_depth,
+-			tokens[6]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "sa_depth");
+-			return 0;
+-		}
+-
+-		if (parser_read_uint32(&m->match.acl.da_depth,
+-			tokens[8]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "da_depth");
+-			return 0;
+-		}
+-
+-		if (parser_read_uint16(&m->match.acl.sp0, tokens[9]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "sp0");
+-			return 0;
+-		}
+-
+-		if (parser_read_uint16(&m->match.acl.sp1, tokens[10]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "sp1");
+-			return 0;
+-		}
+-
+-		if (parser_read_uint16(&m->match.acl.dp0, tokens[11]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "dp0");
+-			return 0;
+-		}
+-
+-		if (parser_read_uint16(&m->match.acl.dp1, tokens[12]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "dp1");
+-			return 0;
+-		}
+-
+-		if (parser_read_uint8(&m->match.acl.proto, tokens[13]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "proto");
+-			return 0;
+-		}
+-
+-		m->match.acl.proto_mask = 0xff;
+-
+-		return 14;
+-	} /* acl */
+-
+-	if (strcmp(tokens[1], "array") == 0) {
+-		if (n_tokens < 3) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-			return 0;
+-		}
+-
+-		m->match_type = TABLE_ARRAY;
+-
+-		if (parser_read_uint32(&m->match.array.pos, tokens[2]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "pos");
+-			return 0;
+-		}
+-
+-		return 3;
+-	} /* array */
+-
+-	if (strcmp(tokens[1], "hash") == 0) {
+-		if (n_tokens < 3) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-			return 0;
+-		}
+-
+-		m->match_type = TABLE_HASH;
+-
+-		if (strcmp(tokens[2], "raw") == 0) {
+-			uint32_t key_size = TABLE_RULE_MATCH_SIZE_MAX;
+-
+-			if (n_tokens < 4) {
+-				snprintf(out, out_size, MSG_ARG_MISMATCH,
+-					tokens[0]);
+-				return 0;
+-			}
+-
+-			if (parse_hex_string(tokens[3],
+-				m->match.hash.key, &key_size) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "key");
+-				return 0;
+-			}
+-
+-			return 4;
+-		} /* hash raw */
+-
+-		if (strcmp(tokens[2], "ipv4_5tuple") == 0) {
+-			struct pkt_key_ipv4_5tuple *ipv4 =
+-				(struct pkt_key_ipv4_5tuple *) m->match.hash.key;
+-			struct in_addr saddr, daddr;
+-			uint16_t sp, dp;
+-			uint8_t proto;
+-
+-			if (n_tokens < 8) {
+-				snprintf(out, out_size, MSG_ARG_MISMATCH,
+-					tokens[0]);
+-				return 0;
+-			}
+-
+-			if (parse_ipv4_addr(tokens[3], &saddr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "sa");
+-				return 0;
+-			}
+-
+-			if (parse_ipv4_addr(tokens[4], &daddr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "da");
+-				return 0;
+-			}
+-
+-			if (parser_read_uint16(&sp, tokens[5]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "sp");
+-				return 0;
+-			}
+-
+-			if (parser_read_uint16(&dp, tokens[6]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "dp");
+-				return 0;
+-			}
+-
+-			if (parser_read_uint8(&proto, tokens[7]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"proto");
+-				return 0;
+-			}
+-
+-			ipv4->sa = saddr.s_addr;
+-			ipv4->da = daddr.s_addr;
+-			ipv4->sp = rte_cpu_to_be_16(sp);
+-			ipv4->dp = rte_cpu_to_be_16(dp);
+-			ipv4->proto = proto;
+-
+-			return 8;
+-		} /* hash ipv4_5tuple */
+-
+-		if (strcmp(tokens[2], "ipv6_5tuple") == 0) {
+-			struct pkt_key_ipv6_5tuple *ipv6 =
+-				(struct pkt_key_ipv6_5tuple *) m->match.hash.key;
+-			struct rte_ipv6_addr saddr, daddr;
+-			uint16_t sp, dp;
+-			uint8_t proto;
+-
+-			if (n_tokens < 8) {
+-				snprintf(out, out_size, MSG_ARG_MISMATCH,
+-					tokens[0]);
+-				return 0;
+-			}
+-
+-			if (parse_ipv6_addr(tokens[3], &saddr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "sa");
+-				return 0;
+-			}
+-
+-			if (parse_ipv6_addr(tokens[4], &daddr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "da");
+-				return 0;
+-			}
+-
+-			if (parser_read_uint16(&sp, tokens[5]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "sp");
+-				return 0;
+-			}
+-
+-			if (parser_read_uint16(&dp, tokens[6]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID, "dp");
+-				return 0;
+-			}
+-
+-			if (parser_read_uint8(&proto, tokens[7]) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"proto");
+-				return 0;
+-			}
+-
+-			ipv6->sa = saddr;
+-			ipv6->da = daddr;
+-			ipv6->sp = rte_cpu_to_be_16(sp);
+-			ipv6->dp = rte_cpu_to_be_16(dp);
+-			ipv6->proto = proto;
+-
+-			return 8;
+-		} /* hash ipv6_5tuple */
+-
+-		if (strcmp(tokens[2], "ipv4_addr") == 0) {
+-			struct pkt_key_ipv4_addr *ipv4_addr =
+-				(struct pkt_key_ipv4_addr *) m->match.hash.key;
+-			struct in_addr addr;
+-
+-			if (n_tokens < 4) {
+-				snprintf(out, out_size, MSG_ARG_MISMATCH,
+-					tokens[0]);
+-				return 0;
+-			}
+-
+-			if (parse_ipv4_addr(tokens[3], &addr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"addr");
+-				return 0;
+-			}
+-
+-			ipv4_addr->addr = addr.s_addr;
+-
+-			return 4;
+-		} /* hash ipv4_addr */
+-
+-		if (strcmp(tokens[2], "ipv6_addr") == 0) {
+-			struct pkt_key_ipv6_addr *ipv6_addr =
+-				(struct pkt_key_ipv6_addr *) m->match.hash.key;
+-			struct rte_ipv6_addr addr;
+-
+-			if (n_tokens < 4) {
+-				snprintf(out, out_size, MSG_ARG_MISMATCH,
+-					tokens[0]);
+-				return 0;
+-			}
+-
+-			if (parse_ipv6_addr(tokens[3], &addr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"addr");
+-				return 0;
+-			}
+-
+-			ipv6_addr->addr = addr;
+-
+-			return 4;
+-		} /* hash ipv6_5tuple */
+-
+-		if (strcmp(tokens[2], "qinq") == 0) {
+-			struct pkt_key_qinq *qinq =
+-				(struct pkt_key_qinq *) m->match.hash.key;
+-			uint16_t svlan, cvlan;
+-
+-			if (n_tokens < 5) {
+-				snprintf(out, out_size, MSG_ARG_MISMATCH,
+-					tokens[0]);
+-				return 0;
+-			}
+-
+-			if ((parser_read_uint16(&svlan, tokens[3]) != 0) ||
+-				(svlan > 0xFFF)) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"svlan");
+-				return 0;
+-			}
+-
+-			if ((parser_read_uint16(&cvlan, tokens[4]) != 0) ||
+-				(cvlan > 0xFFF)) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"cvlan");
+-				return 0;
+-			}
+-
+-			qinq->svlan = rte_cpu_to_be_16(svlan);
+-			qinq->cvlan = rte_cpu_to_be_16(cvlan);
+-
+-			return 5;
+-		} /* hash qinq */
+-
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return 0;
+-	} /* hash */
+-
+-	if (strcmp(tokens[1], "lpm") == 0) {
+-		if (n_tokens < 5) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-			return 0;
+-		}
+-
+-		m->match_type = TABLE_LPM;
+-
+-		if (strcmp(tokens[2], "ipv4") == 0) {
+-			struct in_addr addr;
+-
+-			m->match.lpm.ip_version = 1;
+-
+-			if (parse_ipv4_addr(tokens[3], &addr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"addr");
+-				return 0;
+-			}
+-
+-			m->match.lpm.ipv4 = rte_be_to_cpu_32(addr.s_addr);
+-		} else if (strcmp(tokens[2], "ipv6") == 0) {
+-			struct rte_ipv6_addr addr;
+-
+-			m->match.lpm.ip_version = 0;
+-
+-			if (parse_ipv6_addr(tokens[3], &addr) != 0) {
+-				snprintf(out, out_size, MSG_ARG_INVALID,
+-					"addr");
+-				return 0;
+-			}
+-
+-			m->match.lpm.ipv6 = addr;
+-		} else {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				"ipv4 or ipv6");
+-			return 0;
+-		}
+-
+-		if (parser_read_uint8(&m->match.lpm.depth, tokens[4]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "depth");
+-			return 0;
+-		}
+-
+-		return 5;
+-	} /* lpm */
+-
+-	snprintf(out, out_size, MSG_ARG_MISMATCH,
+-		"acl or array or hash or lpm");
 -	return 0;
 -}
--
--static int
--rte_port_fd_writer_nodrop_flush(void *port)
--{
--	struct rte_port_fd_writer_nodrop *p =
--		port;
--
--	if (p->tx_buf_count > 0)
--		send_burst_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_fd_writer_nodrop_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_port_fd_writer_nodrop_flush(port);
--	rte_free(port);
--
--return 0;
--}
--
--static int rte_port_fd_writer_nodrop_stats_read(void *port,
--		struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_fd_writer_nodrop *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Summary of port operations
-- */
--RTE_EXPORT_SYMBOL(rte_port_fd_reader_ops)
--struct rte_port_in_ops rte_port_fd_reader_ops = {
--	.f_create = rte_port_fd_reader_create,
--	.f_free = rte_port_fd_reader_free,
--	.f_rx = rte_port_fd_reader_rx,
--	.f_stats = rte_port_fd_reader_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_fd_writer_ops)
--struct rte_port_out_ops rte_port_fd_writer_ops = {
--	.f_create = rte_port_fd_writer_create,
--	.f_free = rte_port_fd_writer_free,
--	.f_tx = rte_port_fd_writer_tx,
--	.f_tx_bulk = rte_port_fd_writer_tx_bulk,
--	.f_flush = rte_port_fd_writer_flush,
--	.f_stats = rte_port_fd_writer_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_fd_writer_nodrop_ops)
--struct rte_port_out_ops rte_port_fd_writer_nodrop_ops = {
--	.f_create = rte_port_fd_writer_nodrop_create,
--	.f_free = rte_port_fd_writer_nodrop_free,
--	.f_tx = rte_port_fd_writer_nodrop_tx,
--	.f_tx_bulk = rte_port_fd_writer_nodrop_tx_bulk,
--	.f_flush = rte_port_fd_writer_nodrop_flush,
--	.f_stats = rte_port_fd_writer_nodrop_stats_read,
--};
-diff --git a/lib/port/rte_port_fd.h b/lib/port/rte_port_fd.h
-deleted file mode 100644
-index 40a5e4a426..0000000000
---- a/lib/port/rte_port_fd.h
-+++ /dev/null
-@@ -1,74 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2016 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PORT_FD_H__
--#define __INCLUDE_RTE_PORT_FD_H__
 -
 -/**
-- * @file
-- * RTE Port FD Device
+- * table_action ::=
 - *
-- * fd_reader: input port built on top of valid non-blocking file descriptor
-- * fd_writer: output port built on top of valid non-blocking file descriptor
-- */
--
--#include <stdint.h>
--
--#include "rte_port.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--/** fd_reader port parameters */
--struct rte_port_fd_reader_params {
--	/** File descriptor */
--	int fd;
--
--	/** Maximum Transfer Unit (MTU) */
--	uint32_t mtu;
--
--	/** Pre-initialized buffer pool */
--	struct rte_mempool *mempool;
--};
--
--/** fd_reader port operations */
--extern struct rte_port_in_ops rte_port_fd_reader_ops;
--
--/** fd_writer port parameters */
--struct rte_port_fd_writer_params {
--	/** File descriptor */
--	int fd;
--
--	/**< Recommended write burst size. The actual burst size can be
--	 * bigger or smaller than this value.
--	 */
--	uint32_t tx_burst_sz;
--};
--
--/** fd_writer port operations */
--extern struct rte_port_out_ops rte_port_fd_writer_ops;
--
--/** fd_writer_nodrop port parameters */
--struct rte_port_fd_writer_nodrop_params {
--	/** File descriptor */
--	int fd;
--
--	/**< Recommended write burst size. The actual burst size can be
--	 * bigger or smaller than this value.
--	 */
--	uint32_t tx_burst_sz;
--
--	/** Maximum number of retries, 0 for no limit */
--	uint32_t n_retries;
--};
--
--/** fd_writer_nodrop port operations */
--extern struct rte_port_out_ops rte_port_fd_writer_nodrop_ops;
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
-diff --git a/lib/port/rte_port_frag.c b/lib/port/rte_port_frag.c
-deleted file mode 100644
-index 9444f5939c..0000000000
---- a/lib/port/rte_port_frag.c
-+++ /dev/null
-@@ -1,280 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--#include <string.h>
--
--#include <eal_export.h>
--#include <rte_ip_frag.h>
--
--#include "rte_port_frag.h"
--
--#include "port_log.h"
--
--/* Max number of fragments per packet allowed */
--#define	RTE_PORT_FRAG_MAX_FRAGS_PER_PACKET 0x80
--
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_RING_READER_FRAG_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_RING_READER_FRAG_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_RING_READER_FRAG_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_RING_READER_FRAG_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--typedef int32_t
--		(*frag_op)(struct rte_mbuf *pkt_in,
--			struct rte_mbuf **pkts_out,
--			uint16_t nb_pkts_out,
--			uint16_t mtu_size,
--			struct rte_mempool *pool_direct,
--			struct rte_mempool *pool_indirect);
--
--struct __rte_cache_aligned rte_port_ring_reader_frag {
--	struct rte_port_in_stats stats;
--
--	/* Input parameters */
--	struct rte_ring *ring;
--	uint32_t mtu;
--	uint32_t metadata_size;
--	struct rte_mempool *pool_direct;
--	struct rte_mempool *pool_indirect;
--
--	/* Internal buffers */
--	struct rte_mbuf *pkts[RTE_PORT_IN_BURST_SIZE_MAX];
--	struct rte_mbuf *frags[RTE_PORT_FRAG_MAX_FRAGS_PER_PACKET];
--	uint32_t n_pkts;
--	uint32_t pos_pkts;
--	uint32_t n_frags;
--	uint32_t pos_frags;
--
--	frag_op f_frag;
--};
--
--static void *
--rte_port_ring_reader_frag_create(void *params, int socket_id, int is_ipv4)
--{
--	struct rte_port_ring_reader_frag_params *conf =
--			params;
--	struct rte_port_ring_reader_frag *port;
--
--	/* Check input parameters */
--	if (conf == NULL) {
--		PORT_LOG(ERR, "%s: Parameter conf is NULL", __func__);
--		return NULL;
--	}
--	if (conf->ring == NULL) {
--		PORT_LOG(ERR, "%s: Parameter ring is NULL", __func__);
--		return NULL;
--	}
--	if (conf->mtu == 0) {
--		PORT_LOG(ERR, "%s: Parameter mtu is invalid", __func__);
--		return NULL;
--	}
--	if (conf->pool_direct == NULL) {
--		PORT_LOG(ERR, "%s: Parameter pool_direct is NULL",
--			__func__);
--		return NULL;
--	}
--	if (conf->pool_indirect == NULL) {
--		PORT_LOG(ERR, "%s: Parameter pool_indirect is NULL",
--			__func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port), RTE_CACHE_LINE_SIZE,
--		socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: port is NULL", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->ring = conf->ring;
--	port->mtu = conf->mtu;
--	port->metadata_size = conf->metadata_size;
--	port->pool_direct = conf->pool_direct;
--	port->pool_indirect = conf->pool_indirect;
--
--	port->n_pkts = 0;
--	port->pos_pkts = 0;
--	port->n_frags = 0;
--	port->pos_frags = 0;
--
--	port->f_frag = (is_ipv4) ?
--			rte_ipv4_fragment_packet : rte_ipv6_fragment_packet;
--
--	return port;
--}
--
--static void *
--rte_port_ring_reader_ipv4_frag_create(void *params, int socket_id)
--{
--	return rte_port_ring_reader_frag_create(params, socket_id, 1);
--}
--
--static void *
--rte_port_ring_reader_ipv6_frag_create(void *params, int socket_id)
--{
--	return rte_port_ring_reader_frag_create(params, socket_id, 0);
--}
--
--static int
--rte_port_ring_reader_frag_rx(void *port,
--		struct rte_mbuf **pkts,
--		uint32_t n_pkts)
--{
--	struct rte_port_ring_reader_frag *p =
--			port;
--	uint32_t n_pkts_out;
--
--	n_pkts_out = 0;
--
--	/* Get packets from the "frag" buffer */
--	if (p->n_frags >= n_pkts) {
--		memcpy(pkts, &p->frags[p->pos_frags], n_pkts * sizeof(void *));
--		p->pos_frags += n_pkts;
--		p->n_frags -= n_pkts;
--
--		return n_pkts;
--	}
--
--	memcpy(pkts, &p->frags[p->pos_frags], p->n_frags * sizeof(void *));
--	n_pkts_out = p->n_frags;
--	p->n_frags = 0;
--
--	/* Look to "pkts" buffer to get more packets */
--	for ( ; ; ) {
--		struct rte_mbuf *pkt;
--		uint32_t n_pkts_to_provide, i;
--		int status;
--
--		/* If "pkts" buffer is empty, read packet burst from ring */
--		if (p->n_pkts == 0) {
--			p->n_pkts = rte_ring_sc_dequeue_burst(p->ring,
--				(void **) p->pkts, RTE_PORT_IN_BURST_SIZE_MAX,
--				NULL);
--			RTE_PORT_RING_READER_FRAG_STATS_PKTS_IN_ADD(p, p->n_pkts);
--			if (p->n_pkts == 0)
--				return n_pkts_out;
--			p->pos_pkts = 0;
--		}
--
--		/* Read next packet from "pkts" buffer */
--		pkt = p->pkts[p->pos_pkts++];
--		p->n_pkts--;
--
--		/* If not jumbo, pass current packet to output */
--		if (pkt->pkt_len <= p->mtu) {
--			pkts[n_pkts_out++] = pkt;
--
--			n_pkts_to_provide = n_pkts - n_pkts_out;
--			if (n_pkts_to_provide == 0)
--				return n_pkts;
--
--			continue;
--		}
--
--		/* Fragment current packet into the "frags" buffer */
--		status = p->f_frag(
--			pkt,
--			p->frags,
--			RTE_PORT_FRAG_MAX_FRAGS_PER_PACKET,
--			p->mtu,
--			p->pool_direct,
--			p->pool_indirect
--		);
--
--		if (status < 0) {
--			rte_pktmbuf_free(pkt);
--			RTE_PORT_RING_READER_FRAG_STATS_PKTS_DROP_ADD(p, 1);
--			continue;
--		}
--
--		p->n_frags = (uint32_t) status;
--		p->pos_frags = 0;
--
--		/* Copy meta-data from input jumbo packet to its fragments */
--		for (i = 0; i < p->n_frags; i++) {
--			uint8_t *src =
--			  RTE_MBUF_METADATA_UINT8_PTR(pkt, sizeof(struct rte_mbuf));
--			uint8_t *dst =
--			  RTE_MBUF_METADATA_UINT8_PTR(p->frags[i], sizeof(struct rte_mbuf));
--
--			memcpy(dst, src, p->metadata_size);
--		}
--
--		/* Free input jumbo packet */
--		rte_pktmbuf_free(pkt);
--
--		/* Get packets from "frag" buffer */
--		n_pkts_to_provide = n_pkts - n_pkts_out;
--		if (p->n_frags >= n_pkts_to_provide) {
--			memcpy(&pkts[n_pkts_out], p->frags,
--				n_pkts_to_provide * sizeof(void *));
--			p->n_frags -= n_pkts_to_provide;
--			p->pos_frags += n_pkts_to_provide;
--
--			return n_pkts;
--		}
--
--		memcpy(&pkts[n_pkts_out], p->frags,
--			p->n_frags * sizeof(void *));
--		n_pkts_out += p->n_frags;
--		p->n_frags = 0;
--	}
--}
--
--static int
--rte_port_ring_reader_frag_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Parameter port is NULL", __func__);
--		return -1;
--	}
--
--	rte_free(port);
--
--	return 0;
--}
--
--static int
--rte_port_frag_reader_stats_read(void *port,
--		struct rte_port_in_stats *stats, int clear)
--{
--	struct rte_port_ring_reader_frag *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Summary of port operations
-- */
--RTE_EXPORT_SYMBOL(rte_port_ring_reader_ipv4_frag_ops)
--struct rte_port_in_ops rte_port_ring_reader_ipv4_frag_ops = {
--	.f_create = rte_port_ring_reader_ipv4_frag_create,
--	.f_free = rte_port_ring_reader_frag_free,
--	.f_rx = rte_port_ring_reader_frag_rx,
--	.f_stats = rte_port_frag_reader_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_ring_reader_ipv6_frag_ops)
--struct rte_port_in_ops rte_port_ring_reader_ipv6_frag_ops = {
--	.f_create = rte_port_ring_reader_ipv6_frag_create,
--	.f_free = rte_port_ring_reader_frag_free,
--	.f_rx = rte_port_ring_reader_frag_rx,
--	.f_stats = rte_port_frag_reader_stats_read,
--};
-diff --git a/lib/port/rte_port_frag.h b/lib/port/rte_port_frag.h
-deleted file mode 100644
-index 9a10f10523..0000000000
---- a/lib/port/rte_port_frag.h
-+++ /dev/null
-@@ -1,70 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PORT_IP_FRAG_H__
--#define __INCLUDE_RTE_PORT_IP_FRAG_H__
--
--/**
-- * @file
-- * RTE Port for IPv4 Fragmentation
+- * action
+- *    fwd
+- *       drop
+- *       | port <port_id>
+- *       | meta
+- *       | table <table_id>
+- *    [balance <out0> ... <out7>]
+- *    [meter
+- *       tc0 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
+- *       [tc1 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
+- *       tc2 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
+- *       tc3 meter <meter_profile_id> policer g <pa> y <pa> r <pa>]]
+- *    [tm subport <subport_id> pipe <pipe_id>]
+- *    [encap
+- *       ether <da> <sa>
+- *       | vlan <da> <sa> <pcp> <dei> <vid>
+- *       | qinq <da> <sa> <pcp> <dei> <vid> <pcp> <dei> <vid>
+- *       | qinq_pppoe <da> <sa> <pcp> <dei> <vid> <pcp> <dei> <vid> <session_id>
+- *       | mpls unicast | multicast
+- *          <da> <sa>
+- *          label0 <label> <tc> <ttl>
+- *          [label1 <label> <tc> <ttl>
+- *          [label2 <label> <tc> <ttl>
+- *          [label3 <label> <tc> <ttl>]]]
+- *       | pppoe <da> <sa> <session_id>
+- *       | vxlan ether <da> <sa>
+- *          [vlan <pcp> <dei> <vid>]
+- *          ipv4 <sa> <da> <dscp> <ttl>
+- *          | ipv6 <sa> <da> <flow_label> <dscp> <hop_limit>
+- *          udp <sp> <dp>
+- *          vxlan <vni>]
+- *    [nat ipv4 | ipv6 <addr> <port>]
+- *    [ttl dec | keep]
+- *    [stats]
+- *    [time]
+- *    [sym_crypto
+- *       encrypt | decrypt
+- *       type
+- *       | cipher
+- *          cipher_algo <algo> cipher_key <key> cipher_iv <iv>
+- *       | cipher_auth
+- *          cipher_algo <algo> cipher_key <key> cipher_iv <iv>
+- *          auth_algo <algo> auth_key <key> digest_size <size>
+- *       | aead
+- *          aead_algo <algo> aead_key <key> aead_iv <iv> aead_aad <aad>
+- *          digest_size <size>
+- *       data_offset <data_offset>]
+- *    [tag <tag>]
+- *    [decap <n>]
 - *
-- * This port is built on top of pre-initialized single consumer rte_ring. In
-- * order to minimize the amount of packets stored in the ring at any given
-- * time, the IP fragmentation functionality is executed on ring read operation,
-- * hence this port is implemented as an input port. A regular ring_writer port
-- * can be created to write to the same ring.
-- *
-- * The packets written to the ring are either complete IP datagrams or jumbo
-- * frames (i.e. IP packets with length bigger than provided MTU value). The
-- * packets read from the ring are all non-jumbo frames. The complete IP
-- * datagrams written to the ring are not changed. The jumbo frames are
-- * fragmented into several IP packets with length less or equal to MTU.
+- * where:
+- *    <pa> ::= g | y | r | drop
 - */
--
--#include <stdint.h>
--
--
--#include "rte_port.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--/** ring_reader_ipv4_frag port parameters */
--struct rte_port_ring_reader_frag_params {
--	/** Underlying single consumer ring that has to be pre-initialized. */
--	struct rte_ring *ring;
--
--	/** Maximum Transfer Unit (MTU). Maximum IP packet size (in bytes). */
--	uint32_t mtu;
--
--	/** Size of application dependent meta-data stored per each input packet
--	    that has to be copied to each of the fragments originating from the
--	    same input IP datagram. */
--	uint32_t metadata_size;
--
--	/** Pre-initialized buffer pool used for allocating direct buffers for
--	    the output fragments. */
--	struct rte_mempool *pool_direct;
--
--	/** Pre-initialized buffer pool used for allocating indirect buffers for
--	    the output fragments. */
--	struct rte_mempool *pool_indirect;
--};
--
--#define rte_port_ring_reader_ipv4_frag_params rte_port_ring_reader_frag_params
--
--#define rte_port_ring_reader_ipv6_frag_params rte_port_ring_reader_frag_params
--
--/** ring_reader_ipv4_frag port operations */
--extern struct rte_port_in_ops rte_port_ring_reader_ipv4_frag_ops;
--
--/** ring_reader_ipv6_frag port operations */
--extern struct rte_port_in_ops rte_port_ring_reader_ipv6_frag_ops;
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
-diff --git a/lib/port/rte_port_ras.c b/lib/port/rte_port_ras.c
-deleted file mode 100644
-index 58ab7a1c5b..0000000000
---- a/lib/port/rte_port_ras.c
-+++ /dev/null
-@@ -1,336 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--#include <string.h>
--
--#include <eal_export.h>
--#include <rte_ip_frag.h>
--#include <rte_cycles.h>
--#include <rte_log.h>
--
--#include "rte_port_ras.h"
--
--#include "port_log.h"
--
--#ifndef RTE_PORT_RAS_N_BUCKETS
--#define RTE_PORT_RAS_N_BUCKETS                                 4094
--#endif
--
--#ifndef RTE_PORT_RAS_N_ENTRIES_PER_BUCKET
--#define RTE_PORT_RAS_N_ENTRIES_PER_BUCKET                      8
--#endif
--
--#ifndef RTE_PORT_RAS_N_ENTRIES
--#define RTE_PORT_RAS_N_ENTRIES (RTE_PORT_RAS_N_BUCKETS * RTE_PORT_RAS_N_ENTRIES_PER_BUCKET)
--#endif
--
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_RING_WRITER_RAS_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_RING_WRITER_RAS_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_ring_writer_ras;
--
--typedef void (*ras_op)(
--		struct rte_port_ring_writer_ras *p,
--		struct rte_mbuf *pkt);
--
--static void
--process_ipv4(struct rte_port_ring_writer_ras *p, struct rte_mbuf *pkt);
--static void
--process_ipv6(struct rte_port_ring_writer_ras *p, struct rte_mbuf *pkt);
--
--struct rte_port_ring_writer_ras {
--	struct rte_port_out_stats stats;
--
--	struct rte_mbuf *tx_buf[RTE_PORT_IN_BURST_SIZE_MAX];
--	struct rte_ring *ring;
--	uint32_t tx_burst_sz;
--	uint32_t tx_buf_count;
--	struct rte_ip_frag_tbl *frag_tbl;
--	struct rte_ip_frag_death_row death_row;
--
--	ras_op f_ras;
--};
--
--static void *
--rte_port_ring_writer_ras_create(void *params, int socket_id, int is_ipv4)
+-static uint32_t
+-parse_table_action_fwd(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
 -{
--	struct rte_port_ring_writer_ras_params *conf =
--			params;
--	struct rte_port_ring_writer_ras *port;
--	uint64_t frag_cycles;
+-	if ((n_tokens == 0) || (strcmp(tokens[0], "fwd") != 0))
+-		return 0;
 -
--	/* Check input parameters */
--	if (conf == NULL) {
--		PORT_LOG(ERR, "%s: Parameter conf is NULL", __func__);
--		return NULL;
--	}
--	if (conf->ring == NULL) {
--		PORT_LOG(ERR, "%s: Parameter ring is NULL", __func__);
--		return NULL;
--	}
--	if ((conf->tx_burst_sz == 0) ||
--	    (conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX)) {
--		PORT_LOG(ERR, "%s: Parameter tx_burst_sz is invalid",
--			__func__);
--		return NULL;
+-	tokens++;
+-	n_tokens--;
+-
+-	if (n_tokens && (strcmp(tokens[0], "drop") == 0)) {
+-		a->fwd.action = RTE_PIPELINE_ACTION_DROP;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_FWD;
+-		return 1 + 1;
 -	}
 -
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate socket", __func__);
--		return NULL;
--	}
--
--	/* Create fragmentation table */
--	frag_cycles = (rte_get_tsc_hz() + MS_PER_S - 1) / MS_PER_S * MS_PER_S;
--	frag_cycles *= 100;
--
--	port->frag_tbl = rte_ip_frag_table_create(
--		RTE_PORT_RAS_N_BUCKETS,
--		RTE_PORT_RAS_N_ENTRIES_PER_BUCKET,
--		RTE_PORT_RAS_N_ENTRIES,
--		frag_cycles,
--		socket_id);
--
--	if (port->frag_tbl == NULL) {
--		PORT_LOG(ERR, "%s: rte_ip_frag_table_create failed",
--			__func__);
--		rte_free(port);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->ring = conf->ring;
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--
--	port->f_ras = (is_ipv4 == 1) ? process_ipv4 : process_ipv6;
--
--	return port;
--}
--
--static void *
--rte_port_ring_writer_ipv4_ras_create(void *params, int socket_id)
--{
--	return rte_port_ring_writer_ras_create(params, socket_id, 1);
--}
--
--static void *
--rte_port_ring_writer_ipv6_ras_create(void *params, int socket_id)
--{
--	return rte_port_ring_writer_ras_create(params, socket_id, 0);
--}
--
--static inline void
--send_burst(struct rte_port_ring_writer_ras *p)
--{
--	uint32_t nb_tx;
--
--	nb_tx = rte_ring_sp_enqueue_burst(p->ring, (void **)p->tx_buf,
--			p->tx_buf_count, NULL);
--
--	RTE_PORT_RING_WRITER_RAS_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
--	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
--		rte_pktmbuf_free(p->tx_buf[nb_tx]);
--
--	p->tx_buf_count = 0;
--}
--
--static void
--process_ipv4(struct rte_port_ring_writer_ras *p, struct rte_mbuf *pkt)
--{
--	/* Assume there is no ethernet header */
--	struct rte_ipv4_hdr *pkt_hdr =
--		rte_pktmbuf_mtod(pkt, struct rte_ipv4_hdr *);
--
--	/* Get "More fragments" flag and fragment offset */
--	uint16_t frag_field = rte_be_to_cpu_16(pkt_hdr->fragment_offset);
--	uint16_t frag_offset = (uint16_t)(frag_field & RTE_IPV4_HDR_OFFSET_MASK);
--	uint16_t frag_flag = (uint16_t)(frag_field & RTE_IPV4_HDR_MF_FLAG);
--
--	/* If it is a fragmented packet, then try to reassemble */
--	if ((frag_flag == 0) && (frag_offset == 0))
--		p->tx_buf[p->tx_buf_count++] = pkt;
--	else {
--		struct rte_mbuf *mo;
--		struct rte_ip_frag_tbl *tbl = p->frag_tbl;
--		struct rte_ip_frag_death_row *dr = &p->death_row;
--
--		pkt->l3_len = sizeof(*pkt_hdr);
--
--		/* Process this fragment */
--		mo = rte_ipv4_frag_reassemble_packet(tbl, dr, pkt, rte_rdtsc(),
--				pkt_hdr);
--		if (mo != NULL)
--			p->tx_buf[p->tx_buf_count++] = mo;
--
--		rte_ip_frag_free_death_row(&p->death_row, 3);
--	}
--}
--
--static void
--process_ipv6(struct rte_port_ring_writer_ras *p, struct rte_mbuf *pkt)
--{
--	/* Assume there is no ethernet header */
--	struct rte_ipv6_hdr *pkt_hdr =
--		rte_pktmbuf_mtod(pkt, struct rte_ipv6_hdr *);
--
--	struct rte_ipv6_fragment_ext *frag_hdr;
--	uint16_t frag_data = 0;
--	frag_hdr = rte_ipv6_frag_get_ipv6_fragment_header(pkt_hdr);
--	if (frag_hdr != NULL)
--		frag_data = rte_be_to_cpu_16(frag_hdr->frag_data);
--
--	/* If it is a fragmented packet, then try to reassemble */
--	if ((frag_data & RTE_IPV6_FRAG_USED_MASK) == 0)
--		p->tx_buf[p->tx_buf_count++] = pkt;
--	else {
--		struct rte_mbuf *mo;
--		struct rte_ip_frag_tbl *tbl = p->frag_tbl;
--		struct rte_ip_frag_death_row *dr = &p->death_row;
--
--		pkt->l3_len = sizeof(*pkt_hdr) + sizeof(*frag_hdr);
--
--		/* Process this fragment */
--		mo = rte_ipv6_frag_reassemble_packet(tbl, dr, pkt, rte_rdtsc(), pkt_hdr,
--				frag_hdr);
--		if (mo != NULL)
--			p->tx_buf[p->tx_buf_count++] = mo;
--
--		rte_ip_frag_free_death_row(&p->death_row, 3);
--	}
--}
--
--static int
--rte_port_ring_writer_ras_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_ring_writer_ras *p =
--			port;
--
--	RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(p, 1);
--	p->f_ras(p, pkt);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_ring_writer_ras_tx_bulk(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask)
--{
--	struct rte_port_ring_writer_ras *p =
--			port;
--
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
--
--		for (i = 0; i < n_pkts; i++) {
--			struct rte_mbuf *pkt = pkts[i];
--
--			RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(p, 1);
--			p->f_ras(p, pkt);
--			if (p->tx_buf_count >= p->tx_burst_sz)
--				send_burst(p);
--		}
--	} else {
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
--
--			RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(p, 1);
--			p->f_ras(p, pkt);
--			if (p->tx_buf_count >= p->tx_burst_sz)
--				send_burst(p);
--
--			pkts_mask &= ~pkt_mask;
--		}
--	}
--
--	return 0;
--}
--
--static int
--rte_port_ring_writer_ras_flush(void *port)
--{
--	struct rte_port_ring_writer_ras *p =
--			port;
--
--	if (p->tx_buf_count > 0)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_ring_writer_ras_free(void *port)
--{
--	struct rte_port_ring_writer_ras *p =
--			port;
--
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Parameter port is NULL", __func__);
--		return -1;
--	}
--
--	rte_port_ring_writer_ras_flush(port);
--	rte_ip_frag_table_destroy(p->frag_tbl);
--	rte_free(port);
--
--	return 0;
--}
--
--static int
--rte_port_ras_writer_stats_read(void *port,
--		struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_ring_writer_ras *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Summary of port operations
-- */
--RTE_EXPORT_SYMBOL(rte_port_ring_writer_ipv4_ras_ops)
--struct rte_port_out_ops rte_port_ring_writer_ipv4_ras_ops = {
--	.f_create = rte_port_ring_writer_ipv4_ras_create,
--	.f_free = rte_port_ring_writer_ras_free,
--	.f_tx = rte_port_ring_writer_ras_tx,
--	.f_tx_bulk = rte_port_ring_writer_ras_tx_bulk,
--	.f_flush = rte_port_ring_writer_ras_flush,
--	.f_stats = rte_port_ras_writer_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_ring_writer_ipv6_ras_ops)
--struct rte_port_out_ops rte_port_ring_writer_ipv6_ras_ops = {
--	.f_create = rte_port_ring_writer_ipv6_ras_create,
--	.f_free = rte_port_ring_writer_ras_free,
--	.f_tx = rte_port_ring_writer_ras_tx,
--	.f_tx_bulk = rte_port_ring_writer_ras_tx_bulk,
--	.f_flush = rte_port_ring_writer_ras_flush,
--	.f_stats = rte_port_ras_writer_stats_read,
--};
-diff --git a/lib/port/rte_port_ras.h b/lib/port/rte_port_ras.h
-deleted file mode 100644
-index 86e36f5362..0000000000
---- a/lib/port/rte_port_ras.h
-+++ /dev/null
-@@ -1,58 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PORT_RAS_H__
--#define __INCLUDE_RTE_PORT_RAS_H__
--
--/**
-- * @file
-- * RTE Port for IPv4 Reassembly
-- *
-- * This port is built on top of pre-initialized single producer rte_ring. In
-- * order to minimize the amount of packets stored in the ring at any given
-- * time, the IP reassembly functionality is executed on ring write operation,
-- * hence this port is implemented as an output port. A regular ring_reader port
-- * can be created to read from the same ring.
-- *
-- * The packets written to the ring are either complete IP datagrams or IP
-- * fragments. The packets read from the ring are all complete IP datagrams,
-- * either jumbo frames (i.e. IP packets with length bigger than MTU) or not.
-- * The complete IP datagrams written to the ring are not changed. The IP
-- * fragments written to the ring are first reassembled and into complete IP
-- * datagrams or dropped on error or IP reassembly time-out.
-- */
--
--#include <stdint.h>
--
--#include "rte_port.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--/** ring_writer_ipv4_ras port parameters */
--struct rte_port_ring_writer_ras_params {
--	/** Underlying single consumer ring that has to be pre-initialized. */
--	struct rte_ring *ring;
--
--	/** Recommended burst size to ring. The actual burst size can be bigger
--	or smaller than this value. */
--	uint32_t tx_burst_sz;
--};
--
--#define rte_port_ring_writer_ipv4_ras_params rte_port_ring_writer_ras_params
--
--#define rte_port_ring_writer_ipv6_ras_params rte_port_ring_writer_ras_params
--
--/** ring_writer_ipv4_ras port operations */
--extern struct rte_port_out_ops rte_port_ring_writer_ipv4_ras_ops;
--
--/** ring_writer_ipv6_ras port operations */
--extern struct rte_port_out_ops rte_port_ring_writer_ipv6_ras_ops;
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
-diff --git a/lib/port/rte_port_ring.c b/lib/port/rte_port_ring.c
-deleted file mode 100644
-index 307a576d65..0000000000
---- a/lib/port/rte_port_ring.c
-+++ /dev/null
-@@ -1,796 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--#include <string.h>
--#include <stdint.h>
--
--#include <eal_export.h>
--#include <rte_mbuf.h>
--#include <rte_ring.h>
--#include <rte_malloc.h>
--
--#include "rte_port_ring.h"
--
--#include "port_log.h"
--
--/*
-- * Port RING Reader
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_RING_READER_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_RING_READER_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_RING_READER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_RING_READER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_ring_reader {
--	struct rte_port_in_stats stats;
--
--	struct rte_ring *ring;
--};
--
--static void *
--rte_port_ring_reader_create_internal(void *params, int socket_id,
--	uint32_t is_multi)
--{
--	struct rte_port_ring_reader_params *conf =
--			params;
--	struct rte_port_ring_reader *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->ring == NULL) ||
--		(rte_ring_is_cons_single(conf->ring) && is_multi) ||
--		(!rte_ring_is_cons_single(conf->ring) && !is_multi)) {
--		PORT_LOG(ERR, "%s: Invalid Parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->ring = conf->ring;
--
--	return port;
--}
--
--static void *
--rte_port_ring_reader_create(void *params, int socket_id)
--{
--	return rte_port_ring_reader_create_internal(params, socket_id, 0);
--}
--
--static void *
--rte_port_ring_multi_reader_create(void *params, int socket_id)
--{
--	return rte_port_ring_reader_create_internal(params, socket_id, 1);
--}
--
--static int
--rte_port_ring_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
--{
--	struct rte_port_ring_reader *p = port;
--	uint32_t nb_rx;
--
--	nb_rx = rte_ring_sc_dequeue_burst(p->ring, (void **) pkts,
--			n_pkts, NULL);
--	RTE_PORT_RING_READER_STATS_PKTS_IN_ADD(p, nb_rx);
--
--	return nb_rx;
--}
--
--static int
--rte_port_ring_multi_reader_rx(void *port, struct rte_mbuf **pkts,
--	uint32_t n_pkts)
--{
--	struct rte_port_ring_reader *p = port;
--	uint32_t nb_rx;
--
--	nb_rx = rte_ring_mc_dequeue_burst(p->ring, (void **) pkts,
--			n_pkts, NULL);
--	RTE_PORT_RING_READER_STATS_PKTS_IN_ADD(p, nb_rx);
--
--	return nb_rx;
--}
--
--static int
--rte_port_ring_reader_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_free(port);
--
--	return 0;
--}
--
--static int
--rte_port_ring_reader_stats_read(void *port,
--		struct rte_port_in_stats *stats, int clear)
--{
--	struct rte_port_ring_reader *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port RING Writer
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_ring_writer {
--	struct rte_port_out_stats stats;
--
--	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--	struct rte_ring *ring;
--	uint32_t tx_burst_sz;
--	uint32_t tx_buf_count;
--	uint64_t bsz_mask;
--	uint32_t is_multi;
--};
--
--static void *
--rte_port_ring_writer_create_internal(void *params, int socket_id,
--	uint32_t is_multi)
--{
--	struct rte_port_ring_writer_params *conf =
--			params;
--	struct rte_port_ring_writer *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->ring == NULL) ||
--		(rte_ring_is_prod_single(conf->ring) && is_multi) ||
--		(!rte_ring_is_prod_single(conf->ring) && !is_multi) ||
--		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX)) {
--		PORT_LOG(ERR, "%s: Invalid Parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->ring = conf->ring;
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
--	port->is_multi = is_multi;
--
--	return port;
--}
--
--static void *
--rte_port_ring_writer_create(void *params, int socket_id)
--{
--	return rte_port_ring_writer_create_internal(params, socket_id, 0);
--}
--
--static void *
--rte_port_ring_multi_writer_create(void *params, int socket_id)
--{
--	return rte_port_ring_writer_create_internal(params, socket_id, 1);
--}
--
--static inline void
--send_burst(struct rte_port_ring_writer *p)
--{
--	uint32_t nb_tx;
--
--	nb_tx = rte_ring_sp_enqueue_burst(p->ring, (void **)p->tx_buf,
--			p->tx_buf_count, NULL);
--
--	RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
--	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
--		rte_pktmbuf_free(p->tx_buf[nb_tx]);
--
--	p->tx_buf_count = 0;
--}
--
--static inline void
--send_burst_mp(struct rte_port_ring_writer *p)
--{
--	uint32_t nb_tx;
--
--	nb_tx = rte_ring_mp_enqueue_burst(p->ring, (void **)p->tx_buf,
--			p->tx_buf_count, NULL);
--
--	RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
--	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
--		rte_pktmbuf_free(p->tx_buf[nb_tx]);
--
--	p->tx_buf_count = 0;
--}
--
--static int
--rte_port_ring_writer_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_ring_writer *p = port;
--
--	p->tx_buf[p->tx_buf_count++] = pkt;
--	RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_ring_multi_writer_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_ring_writer *p = port;
--
--	p->tx_buf[p->tx_buf_count++] = pkt;
--	RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst_mp(p);
--
--	return 0;
--}
--
--static __rte_always_inline int
--rte_port_ring_writer_tx_bulk_internal(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask,
--		uint32_t is_multi)
--{
--	struct rte_port_ring_writer *p =
--		port;
--
--	uint64_t bsz_mask = p->bsz_mask;
--	uint32_t tx_buf_count = p->tx_buf_count;
--	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
--			((pkts_mask & bsz_mask) ^ bsz_mask);
--
--	if (expr == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t n_pkts_ok;
--
--		if (tx_buf_count) {
--			if (is_multi)
--				send_burst_mp(p);
--			else
--				send_burst(p);
--		}
--
--		RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
--		if (is_multi)
--			n_pkts_ok = rte_ring_mp_enqueue_burst(p->ring,
--					(void **)pkts, n_pkts, NULL);
--		else
--			n_pkts_ok = rte_ring_sp_enqueue_burst(p->ring,
--					(void **)pkts, n_pkts, NULL);
--
--		RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(p, n_pkts - n_pkts_ok);
--		for ( ; n_pkts_ok < n_pkts; n_pkts_ok++) {
--			struct rte_mbuf *pkt = pkts[n_pkts_ok];
--
--			rte_pktmbuf_free(pkt);
--		}
--	} else {
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
--
--			p->tx_buf[tx_buf_count++] = pkt;
--			RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
--		}
--
--		p->tx_buf_count = tx_buf_count;
--		if (tx_buf_count >= p->tx_burst_sz) {
--			if (is_multi)
--				send_burst_mp(p);
--			else
--				send_burst(p);
--		}
--	}
--
--	return 0;
--}
--
--static int
--rte_port_ring_writer_tx_bulk(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask)
--{
--	return rte_port_ring_writer_tx_bulk_internal(port, pkts, pkts_mask, 0);
--}
--
--static int
--rte_port_ring_multi_writer_tx_bulk(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask)
--{
--	return rte_port_ring_writer_tx_bulk_internal(port, pkts, pkts_mask, 1);
--}
--
--static int
--rte_port_ring_writer_flush(void *port)
--{
--	struct rte_port_ring_writer *p = port;
--
--	if (p->tx_buf_count > 0)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_ring_multi_writer_flush(void *port)
--{
--	struct rte_port_ring_writer *p = port;
--
--	if (p->tx_buf_count > 0)
--		send_burst_mp(p);
--
--	return 0;
--}
--
--static int
--rte_port_ring_writer_free(void *port)
--{
--	struct rte_port_ring_writer *p = port;
--
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (p->is_multi)
--		rte_port_ring_multi_writer_flush(port);
--	else
--		rte_port_ring_writer_flush(port);
--
--	rte_free(port);
--
--	return 0;
--}
--
--static int
--rte_port_ring_writer_stats_read(void *port,
--		struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_ring_writer *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port RING Writer Nodrop
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_ring_writer_nodrop {
--	struct rte_port_out_stats stats;
--
--	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--	struct rte_ring *ring;
--	uint32_t tx_burst_sz;
--	uint32_t tx_buf_count;
--	uint64_t bsz_mask;
--	uint64_t n_retries;
--	uint32_t is_multi;
--};
--
--static void *
--rte_port_ring_writer_nodrop_create_internal(void *params, int socket_id,
--	uint32_t is_multi)
--{
--	struct rte_port_ring_writer_nodrop_params *conf =
--			params;
--	struct rte_port_ring_writer_nodrop *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->ring == NULL) ||
--		(rte_ring_is_prod_single(conf->ring) && is_multi) ||
--		(!rte_ring_is_prod_single(conf->ring) && !is_multi) ||
--		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX)) {
--		PORT_LOG(ERR, "%s: Invalid Parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->ring = conf->ring;
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
--	port->is_multi = is_multi;
--
--	/*
--	 * When n_retries is 0 it means that we should wait for every packet to
--	 * send no matter how many retries should it take. To limit number of
--	 * branches in fast path, we use UINT64_MAX instead of branching.
--	 */
--	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
--
--	return port;
--}
--
--static void *
--rte_port_ring_writer_nodrop_create(void *params, int socket_id)
--{
--	return rte_port_ring_writer_nodrop_create_internal(params, socket_id, 0);
--}
--
--static void *
--rte_port_ring_multi_writer_nodrop_create(void *params, int socket_id)
--{
--	return rte_port_ring_writer_nodrop_create_internal(params, socket_id, 1);
--}
--
--static inline void
--send_burst_nodrop(struct rte_port_ring_writer_nodrop *p)
--{
--	uint32_t nb_tx = 0, i;
--
--	nb_tx = rte_ring_sp_enqueue_burst(p->ring, (void **)p->tx_buf,
--				p->tx_buf_count, NULL);
--
--	/* We sent all the packets in a first try */
--	if (nb_tx >= p->tx_buf_count) {
--		p->tx_buf_count = 0;
--		return;
--	}
--
--	for (i = 0; i < p->n_retries; i++) {
--		nb_tx += rte_ring_sp_enqueue_burst(p->ring,
--				(void **) (p->tx_buf + nb_tx),
--				p->tx_buf_count - nb_tx, NULL);
--
--		/* We sent all the packets in more than one try */
--		if (nb_tx >= p->tx_buf_count) {
--			p->tx_buf_count = 0;
--			return;
--		}
--	}
--
--	/* We didn't send the packets in maximum allowed attempts */
--	RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
--	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
--		rte_pktmbuf_free(p->tx_buf[nb_tx]);
--
--	p->tx_buf_count = 0;
--}
--
--static inline void
--send_burst_mp_nodrop(struct rte_port_ring_writer_nodrop *p)
--{
--	uint32_t nb_tx = 0, i;
--
--	nb_tx = rte_ring_mp_enqueue_burst(p->ring, (void **)p->tx_buf,
--				p->tx_buf_count, NULL);
--
--	/* We sent all the packets in a first try */
--	if (nb_tx >= p->tx_buf_count) {
--		p->tx_buf_count = 0;
--		return;
--	}
--
--	for (i = 0; i < p->n_retries; i++) {
--		nb_tx += rte_ring_mp_enqueue_burst(p->ring,
--				(void **) (p->tx_buf + nb_tx),
--				p->tx_buf_count - nb_tx, NULL);
--
--		/* We sent all the packets in more than one try */
--		if (nb_tx >= p->tx_buf_count) {
--			p->tx_buf_count = 0;
--			return;
--		}
--	}
--
--	/* We didn't send the packets in maximum allowed attempts */
--	RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
--	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
--		rte_pktmbuf_free(p->tx_buf[nb_tx]);
--
--	p->tx_buf_count = 0;
--}
--
--static int
--rte_port_ring_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_ring_writer_nodrop *p =
--			port;
--
--	p->tx_buf[p->tx_buf_count++] = pkt;
--	RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_ring_multi_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_ring_writer_nodrop *p =
--			port;
--
--	p->tx_buf[p->tx_buf_count++] = pkt;
--	RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst_mp_nodrop(p);
--
--	return 0;
--}
--
--static __rte_always_inline int
--rte_port_ring_writer_nodrop_tx_bulk_internal(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask,
--		uint32_t is_multi)
--{
--	struct rte_port_ring_writer_nodrop *p =
--		port;
--
--	uint64_t bsz_mask = p->bsz_mask;
--	uint32_t tx_buf_count = p->tx_buf_count;
--	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
--			((pkts_mask & bsz_mask) ^ bsz_mask);
--
--	if (expr == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t n_pkts_ok;
--
--		if (tx_buf_count) {
--			if (is_multi)
--				send_burst_mp_nodrop(p);
--			else
--				send_burst_nodrop(p);
--		}
--
--		RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
--		if (is_multi)
--			n_pkts_ok =
--				rte_ring_mp_enqueue_burst(p->ring,
--						(void **)pkts, n_pkts, NULL);
--		else
--			n_pkts_ok =
--				rte_ring_sp_enqueue_burst(p->ring,
--						(void **)pkts, n_pkts, NULL);
--
--		if (n_pkts_ok >= n_pkts)
+-	if (n_tokens && (strcmp(tokens[0], "port") == 0)) {
+-		uint32_t id;
+-
+-		if ((n_tokens < 2) ||
+-			parser_read_uint32(&id, tokens[1]))
 -			return 0;
 -
--		/*
--		 * If we didn't manage to send all packets in single burst, move
--		 * remaining packets to the buffer and call send burst.
--		 */
--		for (; n_pkts_ok < n_pkts; n_pkts_ok++) {
--			struct rte_mbuf *pkt = pkts[n_pkts_ok];
+-		a->fwd.action = RTE_PIPELINE_ACTION_PORT;
+-		a->fwd.id = id;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_FWD;
+-		return 1 + 2;
+-	}
 -
--			p->tx_buf[p->tx_buf_count++] = pkt;
--		}
--		if (is_multi)
--			send_burst_mp_nodrop(p);
--		else
--			send_burst_nodrop(p);
--	} else {
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
+-	if (n_tokens && (strcmp(tokens[0], "meta") == 0)) {
+-		a->fwd.action = RTE_PIPELINE_ACTION_PORT_META;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_FWD;
+-		return 1 + 1;
+-	}
 -
--			p->tx_buf[tx_buf_count++] = pkt;
--			RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
--		}
+-	if (n_tokens && (strcmp(tokens[0], "table") == 0)) {
+-		uint32_t id;
 -
--		p->tx_buf_count = tx_buf_count;
--		if (tx_buf_count >= p->tx_burst_sz) {
--			if (is_multi)
--				send_burst_mp_nodrop(p);
--			else
--				send_burst_nodrop(p);
--		}
+-		if ((n_tokens < 2) ||
+-			parser_read_uint32(&id, tokens[1]))
+-			return 0;
+-
+-		a->fwd.action = RTE_PIPELINE_ACTION_TABLE;
+-		a->fwd.id = id;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_FWD;
+-		return 1 + 2;
 -	}
 -
 -	return 0;
 -}
 -
--static int
--rte_port_ring_writer_nodrop_tx_bulk(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask)
+-static uint32_t
+-parse_table_action_balance(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
 -{
--	return
--		rte_port_ring_writer_nodrop_tx_bulk_internal(port, pkts, pkts_mask, 0);
--}
--
--static int
--rte_port_ring_multi_writer_nodrop_tx_bulk(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask)
--{
--	return
--		rte_port_ring_writer_nodrop_tx_bulk_internal(port, pkts, pkts_mask, 1);
--}
--
--static int
--rte_port_ring_writer_nodrop_flush(void *port)
--{
--	struct rte_port_ring_writer_nodrop *p =
--			port;
--
--	if (p->tx_buf_count > 0)
--		send_burst_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_ring_multi_writer_nodrop_flush(void *port)
--{
--	struct rte_port_ring_writer_nodrop *p =
--			port;
--
--	if (p->tx_buf_count > 0)
--		send_burst_mp_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_ring_writer_nodrop_free(void *port)
--{
--	struct rte_port_ring_writer_nodrop *p =
--			port;
--
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (p->is_multi)
--		rte_port_ring_multi_writer_nodrop_flush(port);
--	else
--		rte_port_ring_writer_nodrop_flush(port);
--
--	rte_free(port);
--
--	return 0;
--}
--
--static int
--rte_port_ring_writer_nodrop_stats_read(void *port,
--		struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_ring_writer_nodrop *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Summary of port operations
-- */
--RTE_EXPORT_SYMBOL(rte_port_ring_reader_ops)
--struct rte_port_in_ops rte_port_ring_reader_ops = {
--	.f_create = rte_port_ring_reader_create,
--	.f_free = rte_port_ring_reader_free,
--	.f_rx = rte_port_ring_reader_rx,
--	.f_stats = rte_port_ring_reader_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_ring_writer_ops)
--struct rte_port_out_ops rte_port_ring_writer_ops = {
--	.f_create = rte_port_ring_writer_create,
--	.f_free = rte_port_ring_writer_free,
--	.f_tx = rte_port_ring_writer_tx,
--	.f_tx_bulk = rte_port_ring_writer_tx_bulk,
--	.f_flush = rte_port_ring_writer_flush,
--	.f_stats = rte_port_ring_writer_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_ring_writer_nodrop_ops)
--struct rte_port_out_ops rte_port_ring_writer_nodrop_ops = {
--	.f_create = rte_port_ring_writer_nodrop_create,
--	.f_free = rte_port_ring_writer_nodrop_free,
--	.f_tx = rte_port_ring_writer_nodrop_tx,
--	.f_tx_bulk = rte_port_ring_writer_nodrop_tx_bulk,
--	.f_flush = rte_port_ring_writer_nodrop_flush,
--	.f_stats = rte_port_ring_writer_nodrop_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_ring_multi_reader_ops)
--struct rte_port_in_ops rte_port_ring_multi_reader_ops = {
--	.f_create = rte_port_ring_multi_reader_create,
--	.f_free = rte_port_ring_reader_free,
--	.f_rx = rte_port_ring_multi_reader_rx,
--	.f_stats = rte_port_ring_reader_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_ring_multi_writer_ops)
--struct rte_port_out_ops rte_port_ring_multi_writer_ops = {
--	.f_create = rte_port_ring_multi_writer_create,
--	.f_free = rte_port_ring_writer_free,
--	.f_tx = rte_port_ring_multi_writer_tx,
--	.f_tx_bulk = rte_port_ring_multi_writer_tx_bulk,
--	.f_flush = rte_port_ring_multi_writer_flush,
--	.f_stats = rte_port_ring_writer_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_ring_multi_writer_nodrop_ops)
--struct rte_port_out_ops rte_port_ring_multi_writer_nodrop_ops = {
--	.f_create = rte_port_ring_multi_writer_nodrop_create,
--	.f_free = rte_port_ring_writer_nodrop_free,
--	.f_tx = rte_port_ring_multi_writer_nodrop_tx,
--	.f_tx_bulk = rte_port_ring_multi_writer_nodrop_tx_bulk,
--	.f_flush = rte_port_ring_multi_writer_nodrop_flush,
--	.f_stats = rte_port_ring_writer_nodrop_stats_read,
--};
-diff --git a/lib/port/rte_port_ring.h b/lib/port/rte_port_ring.h
-deleted file mode 100644
-index 2089d0889b..0000000000
---- a/lib/port/rte_port_ring.h
-+++ /dev/null
-@@ -1,91 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PORT_RING_H__
--#define __INCLUDE_RTE_PORT_RING_H__
--
--/**
-- * @file
-- * RTE Port Ring
-- *
-- * ring_reader:
-- *      input port built on top of pre-initialized single consumer ring
-- * ring_writer:
-- *      output port built on top of pre-initialized single producer ring
-- * ring_multi_reader:
-- *      input port built on top of pre-initialized multi consumers ring
-- * ring_multi_writer:
-- *      output port built on top of pre-initialized multi producers ring
-- */
--
--#include <stdint.h>
--
--#include "rte_port.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--/** ring_reader port parameters */
--struct rte_port_ring_reader_params {
--	/** Underlying consumer ring that has to be pre-initialized */
--	struct rte_ring *ring;
--};
--
--/** ring_reader port operations */
--extern struct rte_port_in_ops rte_port_ring_reader_ops;
--
--/** ring_writer port parameters */
--struct rte_port_ring_writer_params {
--	/** Underlying producer ring that has to be pre-initialized */
--	struct rte_ring *ring;
--
--	/** Recommended burst size to ring. The actual burst size can be
--		bigger or smaller than this value. */
--	uint32_t tx_burst_sz;
--};
--
--/** ring_writer port operations */
--extern struct rte_port_out_ops rte_port_ring_writer_ops;
--
--/** ring_writer_nodrop port parameters */
--struct rte_port_ring_writer_nodrop_params {
--	/** Underlying producer ring that has to be pre-initialized */
--	struct rte_ring *ring;
--
--	/** Recommended burst size to ring. The actual burst size can be
--		bigger or smaller than this value. */
--	uint32_t tx_burst_sz;
--
--	/** Maximum number of retries, 0 for no limit */
--	uint32_t n_retries;
--};
--
--/** ring_writer_nodrop port operations */
--extern struct rte_port_out_ops rte_port_ring_writer_nodrop_ops;
--
--/** ring_multi_reader port parameters */
--#define rte_port_ring_multi_reader_params rte_port_ring_reader_params
--
--/** ring_multi_reader port operations */
--extern struct rte_port_in_ops rte_port_ring_multi_reader_ops;
--
--/** ring_multi_writer port parameters */
--#define rte_port_ring_multi_writer_params rte_port_ring_writer_params
--
--/** ring_multi_writer port operations */
--extern struct rte_port_out_ops rte_port_ring_multi_writer_ops;
--
--/** ring_multi_writer_nodrop port parameters */
--#define rte_port_ring_multi_writer_nodrop_params \
--	rte_port_ring_writer_nodrop_params
--
--/** ring_multi_writer_nodrop port operations */
--extern struct rte_port_out_ops rte_port_ring_multi_writer_nodrop_ops;
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
-diff --git a/lib/port/rte_port_sched.c b/lib/port/rte_port_sched.c
-deleted file mode 100644
-index 3091078aa1..0000000000
---- a/lib/port/rte_port_sched.c
-+++ /dev/null
-@@ -1,298 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--#include <string.h>
--
--#include <eal_export.h>
--#include <rte_malloc.h>
--
--#include "rte_port_sched.h"
--
--#include "port_log.h"
--
--/*
-- * Reader
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_SCHED_READER_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_SCHED_READER_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_SCHED_READER_PKTS_IN_ADD(port, val)
--#define RTE_PORT_SCHED_READER_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_sched_reader {
--	struct rte_port_in_stats stats;
--
--	struct rte_sched_port *sched;
--};
--
--static void *
--rte_port_sched_reader_create(void *params, int socket_id)
--{
--	struct rte_port_sched_reader_params *conf =
--			params;
--	struct rte_port_sched_reader *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--	    (conf->sched == NULL)) {
--		PORT_LOG(ERR, "%s: Invalid params", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->sched = conf->sched;
--
--	return port;
--}
--
--static int
--rte_port_sched_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
--{
--	struct rte_port_sched_reader *p = port;
--	uint32_t nb_rx;
--
--	nb_rx = rte_sched_port_dequeue(p->sched, pkts, n_pkts);
--	RTE_PORT_SCHED_READER_PKTS_IN_ADD(p, nb_rx);
--
--	return nb_rx;
--}
--
--static int
--rte_port_sched_reader_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_free(port);
--
--	return 0;
--}
--
--static int
--rte_port_sched_reader_stats_read(void *port,
--		struct rte_port_in_stats *stats, int clear)
--{
--	struct rte_port_sched_reader *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Writer
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_SCHED_WRITER_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_SCHED_WRITER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_sched_writer {
--	struct rte_port_out_stats stats;
--
--	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--	struct rte_sched_port *sched;
--	uint32_t tx_burst_sz;
--	uint32_t tx_buf_count;
--	uint64_t bsz_mask;
--};
--
--static void *
--rte_port_sched_writer_create(void *params, int socket_id)
--{
--	struct rte_port_sched_writer_params *conf =
--			params;
--	struct rte_port_sched_writer *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--	    (conf->sched == NULL) ||
--	    (conf->tx_burst_sz == 0) ||
--	    (conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
--		(!rte_is_power_of_2(conf->tx_burst_sz))) {
--		PORT_LOG(ERR, "%s: Invalid params", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->sched = conf->sched;
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
--
--	return port;
--}
--
--static int
--rte_port_sched_writer_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_sched_writer *p = (struct rte_port_sched_writer *) port;
--
--	p->tx_buf[p->tx_buf_count++] = pkt;
--	RTE_PORT_SCHED_WRITER_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz) {
--		__rte_unused uint32_t nb_tx;
--
--		nb_tx = rte_sched_port_enqueue(p->sched, p->tx_buf, p->tx_buf_count);
--		RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
--		p->tx_buf_count = 0;
--	}
--
--	return 0;
--}
--
--static int
--rte_port_sched_writer_tx_bulk(void *port,
--		struct rte_mbuf **pkts,
--		uint64_t pkts_mask)
--{
--	struct rte_port_sched_writer *p = (struct rte_port_sched_writer *) port;
--	uint64_t bsz_mask = p->bsz_mask;
--	uint32_t tx_buf_count = p->tx_buf_count;
--	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
--			((pkts_mask & bsz_mask) ^ bsz_mask);
--
--	if (expr == 0) {
--		__rte_unused uint32_t nb_tx;
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--
--		if (tx_buf_count) {
--			nb_tx = rte_sched_port_enqueue(p->sched, p->tx_buf,
--				tx_buf_count);
--			RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, tx_buf_count - nb_tx);
--			p->tx_buf_count = 0;
--		}
--
--		nb_tx = rte_sched_port_enqueue(p->sched, pkts, n_pkts);
--		RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, n_pkts - nb_tx);
--	} else {
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
--
--			p->tx_buf[tx_buf_count++] = pkt;
--			RTE_PORT_SCHED_WRITER_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
--		}
--		p->tx_buf_count = tx_buf_count;
--
--		if (tx_buf_count >= p->tx_burst_sz) {
--			__rte_unused uint32_t nb_tx;
--
--			nb_tx = rte_sched_port_enqueue(p->sched, p->tx_buf,
--				tx_buf_count);
--			RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, tx_buf_count - nb_tx);
--			p->tx_buf_count = 0;
--		}
--	}
--
--	return 0;
--}
--
--static int
--rte_port_sched_writer_flush(void *port)
--{
--	struct rte_port_sched_writer *p = (struct rte_port_sched_writer *) port;
--
--	if (p->tx_buf_count) {
--		__rte_unused uint32_t nb_tx;
--
--		nb_tx = rte_sched_port_enqueue(p->sched, p->tx_buf, p->tx_buf_count);
--		RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
--		p->tx_buf_count = 0;
--	}
--
--	return 0;
--}
--
--static int
--rte_port_sched_writer_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_port_sched_writer_flush(port);
--	rte_free(port);
--
--	return 0;
--}
--
--static int
--rte_port_sched_writer_stats_read(void *port,
--		struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_sched_writer *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Summary of port operations
-- */
--RTE_EXPORT_SYMBOL(rte_port_sched_reader_ops)
--struct rte_port_in_ops rte_port_sched_reader_ops = {
--	.f_create = rte_port_sched_reader_create,
--	.f_free = rte_port_sched_reader_free,
--	.f_rx = rte_port_sched_reader_rx,
--	.f_stats = rte_port_sched_reader_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_sched_writer_ops)
--struct rte_port_out_ops rte_port_sched_writer_ops = {
--	.f_create = rte_port_sched_writer_create,
--	.f_free = rte_port_sched_writer_free,
--	.f_tx = rte_port_sched_writer_tx,
--	.f_tx_bulk = rte_port_sched_writer_tx_bulk,
--	.f_flush = rte_port_sched_writer_flush,
--	.f_stats = rte_port_sched_writer_stats_read,
--};
-diff --git a/lib/port/rte_port_sched.h b/lib/port/rte_port_sched.h
-deleted file mode 100644
-index 1bf08ae6a9..0000000000
---- a/lib/port/rte_port_sched.h
-+++ /dev/null
-@@ -1,52 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PORT_SCHED_H__
--#define __INCLUDE_RTE_PORT_SCHED_H__
--
--/**
-- * @file
-- * RTE Port Hierarchical Scheduler
-- *
-- * sched_reader: input port built on top of pre-initialized rte_sched_port
-- * sched_writer: output port built on top of pre-initialized rte_sched_port
-- */
--
--#include <stdint.h>
--
--#include <rte_sched.h>
--
--#include "rte_port.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--/** sched_reader port parameters */
--struct rte_port_sched_reader_params {
--	/** Underlying pre-initialized rte_sched_port */
--	struct rte_sched_port *sched;
--};
--
--/** sched_reader port operations */
--extern struct rte_port_in_ops rte_port_sched_reader_ops;
--
--/** sched_writer port parameters */
--struct rte_port_sched_writer_params {
--	/** Underlying pre-initialized rte_sched_port */
--	struct rte_sched_port *sched;
--
--	/** Recommended burst size. The actual burst size can be bigger or
--	smaller than this value. */
--	uint32_t tx_burst_sz;
--};
--
--/** sched_writer port operations */
--extern struct rte_port_out_ops rte_port_sched_writer_ops;
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
-diff --git a/lib/port/rte_port_source_sink.c b/lib/port/rte_port_source_sink.c
-deleted file mode 100644
-index 0557e12506..0000000000
---- a/lib/port/rte_port_source_sink.c
-+++ /dev/null
-@@ -1,616 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2016 Intel Corporation
-- */
--#include <stdint.h>
--#include <string.h>
--
--#include <eal_export.h>
--#include <rte_mbuf.h>
--#include <rte_malloc.h>
--#include <rte_memcpy.h>
--
--#ifdef RTE_PORT_PCAP
--#include <rte_ether.h>
--#include <pcap.h>
--#endif
--
--#include "rte_port_source_sink.h"
--
--#include "port_log.h"
--
--/*
-- * Port SOURCE
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_SOURCE_STATS_PKTS_IN_ADD(port, val) \
--	port->stats.n_pkts_in += val
--#define RTE_PORT_SOURCE_STATS_PKTS_DROP_ADD(port, val) \
--	port->stats.n_pkts_drop += val
--
--#else
--
--#define RTE_PORT_SOURCE_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_SOURCE_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_source {
--	struct rte_port_in_stats stats;
--
--	struct rte_mempool *mempool;
--
--	/* PCAP buffers and indices */
--	uint8_t **pkts;
--	uint8_t *pkt_buff;
--	uint32_t *pkt_len;
--	uint32_t n_pkts;
--	uint32_t pkt_index;
--};
--
--#ifdef RTE_PORT_PCAP
--
--static int
--pcap_source_load(struct rte_port_source *port,
--		const char *file_name,
--		uint32_t n_bytes_per_pkt,
--		int socket_id)
--{
--	uint32_t n_pkts = 0;
 -	uint32_t i;
--	uint32_t *pkt_len_aligns = NULL;
--	size_t total_buff_len = 0;
--	pcap_t *pcap_handle;
--	char pcap_errbuf[PCAP_ERRBUF_SIZE];
--	uint32_t max_len;
--	struct pcap_pkthdr pcap_hdr;
--	const uint8_t *pkt;
--	uint8_t *buff = NULL;
--	uint32_t pktmbuf_maxlen = (uint32_t)
--			(rte_pktmbuf_data_room_size(port->mempool) -
--			RTE_PKTMBUF_HEADROOM);
 -
--	if (n_bytes_per_pkt == 0)
--		max_len = pktmbuf_maxlen;
--	else
--		max_len = RTE_MIN(n_bytes_per_pkt, pktmbuf_maxlen);
+-	if ((n_tokens == 0) || (strcmp(tokens[0], "balance") != 0))
+-		return 0;
 -
--	/* first time open, get packet number */
--	pcap_handle = pcap_open_offline(file_name, pcap_errbuf);
--	if (pcap_handle == NULL) {
--		PORT_LOG(ERR, "Failed to open pcap file "
--			"'%s' for reading", file_name);
--		goto error_exit;
+-	tokens++;
+-	n_tokens--;
+-
+-	if (n_tokens < RTE_TABLE_ACTION_LB_TABLE_SIZE)
+-		return 0;
+-
+-	for (i = 0; i < RTE_TABLE_ACTION_LB_TABLE_SIZE; i++)
+-		if (parser_read_uint32(&a->lb.out[i], tokens[i]) != 0)
+-			return 0;
+-
+-	a->action_mask |= 1 << RTE_TABLE_ACTION_LB;
+-	return 1 + RTE_TABLE_ACTION_LB_TABLE_SIZE;
+-
+-}
+-
+-static int
+-parse_policer_action(char *token, enum rte_table_action_policer *a)
+-{
+-	if (strcmp(token, "g") == 0) {
+-		*a = RTE_TABLE_ACTION_POLICER_COLOR_GREEN;
+-		return 0;
 -	}
 -
--	while ((pkt = pcap_next(pcap_handle, &pcap_hdr)) != NULL)
--		n_pkts++;
--
--	pcap_close(pcap_handle);
--
--	port->pkt_len = rte_zmalloc_socket("PCAP",
--		(sizeof(*port->pkt_len) * n_pkts), 0, socket_id);
--	if (port->pkt_len == NULL) {
--		PORT_LOG(ERR, "No enough memory");
--		goto error_exit;
+-	if (strcmp(token, "y") == 0) {
+-		*a = RTE_TABLE_ACTION_POLICER_COLOR_YELLOW;
+-		return 0;
 -	}
 -
--	pkt_len_aligns = rte_malloc("PCAP",
--		(sizeof(*pkt_len_aligns) * n_pkts), 0);
--	if (pkt_len_aligns == NULL) {
--		PORT_LOG(ERR, "No enough memory");
--		goto error_exit;
+-	if (strcmp(token, "r") == 0) {
+-		*a = RTE_TABLE_ACTION_POLICER_COLOR_RED;
+-		return 0;
 -	}
 -
--	port->pkts = rte_zmalloc_socket("PCAP",
--		(sizeof(*port->pkts) * n_pkts), 0, socket_id);
--	if (port->pkts == NULL) {
--		PORT_LOG(ERR, "No enough memory");
--		goto error_exit;
+-	if (strcmp(token, "drop") == 0) {
+-		*a = RTE_TABLE_ACTION_POLICER_DROP;
+-		return 0;
 -	}
--
--	/* open 2nd time, get pkt_len */
--	pcap_handle = pcap_open_offline(file_name, pcap_errbuf);
--	if (pcap_handle == NULL) {
--		PORT_LOG(ERR, "Failed to open pcap file "
--			"'%s' for reading", file_name);
--		goto error_exit;
--	}
--
--	for (i = 0; i < n_pkts; i++) {
--		pcap_next(pcap_handle, &pcap_hdr);
--		port->pkt_len[i] = RTE_MIN(max_len, pcap_hdr.len);
--		pkt_len_aligns[i] = RTE_CACHE_LINE_ROUNDUP(
--			port->pkt_len[i]);
--		total_buff_len += pkt_len_aligns[i];
--	}
--
--	pcap_close(pcap_handle);
--
--	/* allocate a big trunk of data for pcap file load */
--	buff = rte_zmalloc_socket("PCAP",
--		total_buff_len, 0, socket_id);
--	if (buff == NULL) {
--		PORT_LOG(ERR, "No enough memory");
--		goto error_exit;
--	}
--
--	port->pkt_buff = buff;
--
--	/* open file one last time to copy the pkt content */
--	pcap_handle = pcap_open_offline(file_name, pcap_errbuf);
--	if (pcap_handle == NULL) {
--		PORT_LOG(ERR, "Failed to open pcap file "
--			"'%s' for reading", file_name);
--		goto error_exit;
--	}
--
--	for (i = 0; i < n_pkts; i++) {
--		pkt = pcap_next(pcap_handle, &pcap_hdr);
--		rte_memcpy(buff, pkt, port->pkt_len[i]);
--		port->pkts[i] = buff;
--		buff += pkt_len_aligns[i];
--	}
--
--	pcap_close(pcap_handle);
--
--	port->n_pkts = n_pkts;
--
--	rte_free(pkt_len_aligns);
--
--	PORT_LOG(INFO, "Successfully load pcap file "
--		"'%s' with %u pkts",
--		file_name, port->n_pkts);
--
--	return 0;
--
--error_exit:
--	rte_free(pkt_len_aligns);
--	rte_free(port->pkt_len);
--	rte_free(port->pkts);
--	rte_free(port->pkt_buff);
 -
 -	return -1;
 -}
 -
--#define PCAP_SOURCE_LOAD(port, file_name, n_bytes, socket_id)	\
--	pcap_source_load(port, file_name, n_bytes, socket_id)
--
--#else /* RTE_PORT_PCAP */
--
--#define PCAP_SOURCE_LOAD(port, file_name, n_bytes, socket_id)	\
--__extension__ ({						\
--	int _ret = 0;						\
--								\
--	if (file_name) {					\
--		PORT_LOG(ERR, "Source port field "		\
--			"\"file_name\" is not NULL.");	\
--		_ret = -1;					\
--	}							\
--								\
--	_ret;							\
--})
--
--#endif /* RTE_PORT_PCAP */
--
--static void *
--rte_port_source_create(void *params, int socket_id)
+-static uint32_t
+-parse_table_action_meter_tc(char **tokens,
+-	uint32_t n_tokens,
+-	struct rte_table_action_mtr_tc_params *mtr)
 -{
--	struct rte_port_source_params *p =
--			params;
--	struct rte_port_source *port;
--
--	/* Check input arguments*/
--	if ((p == NULL) || (p->mempool == NULL)) {
--		PORT_LOG(ERR, "%s: Invalid params", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->mempool = (struct rte_mempool *) p->mempool;
--
--	if (p->file_name) {
--		int status = PCAP_SOURCE_LOAD(port, p->file_name,
--			p->n_bytes_per_pkt, socket_id);
--
--		if (status < 0) {
--			rte_free(port);
--			port = NULL;
--		}
--	}
--
--	return port;
--}
--
--static int
--rte_port_source_free(void *port)
--{
--	struct rte_port_source *p =
--			port;
--
--	/* Check input parameters */
--	if (p == NULL)
+-	if ((n_tokens < 9) ||
+-		strcmp(tokens[0], "meter") ||
+-		parser_read_uint32(&mtr->meter_profile_id, tokens[1]) ||
+-		strcmp(tokens[2], "policer") ||
+-		strcmp(tokens[3], "g") ||
+-		parse_policer_action(tokens[4], &mtr->policer[RTE_COLOR_GREEN]) ||
+-		strcmp(tokens[5], "y") ||
+-		parse_policer_action(tokens[6], &mtr->policer[RTE_COLOR_YELLOW]) ||
+-		strcmp(tokens[7], "r") ||
+-		parse_policer_action(tokens[8], &mtr->policer[RTE_COLOR_RED]))
 -		return 0;
 -
--	rte_free(p->pkt_len);
--	rte_free(p->pkts);
--	rte_free(p->pkt_buff);
+-	return 9;
+-}
 -
--	rte_free(p);
+-static uint32_t
+-parse_table_action_meter(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
+-{
+-	if ((n_tokens == 0) || strcmp(tokens[0], "meter"))
+-		return 0;
+-
+-	tokens++;
+-	n_tokens--;
+-
+-	if ((n_tokens < 10) ||
+-		strcmp(tokens[0], "tc0") ||
+-		(parse_table_action_meter_tc(tokens + 1,
+-			n_tokens - 1,
+-			&a->mtr.mtr[0]) == 0))
+-		return 0;
+-
+-	tokens += 10;
+-	n_tokens -= 10;
+-
+-	if ((n_tokens == 0) || strcmp(tokens[0], "tc1")) {
+-		a->mtr.tc_mask = 1;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_MTR;
+-		return 1 + 10;
+-	}
+-
+-	if ((n_tokens < 30) ||
+-		(parse_table_action_meter_tc(tokens + 1,
+-			n_tokens - 1, &a->mtr.mtr[1]) == 0) ||
+-		strcmp(tokens[10], "tc2") ||
+-		(parse_table_action_meter_tc(tokens + 11,
+-			n_tokens - 11, &a->mtr.mtr[2]) == 0) ||
+-		strcmp(tokens[20], "tc3") ||
+-		(parse_table_action_meter_tc(tokens + 21,
+-			n_tokens - 21, &a->mtr.mtr[3]) == 0))
+-		return 0;
+-
+-	a->mtr.tc_mask = 0xF;
+-	a->action_mask |= 1 << RTE_TABLE_ACTION_MTR;
+-	return 1 + 10 + 3 * 10;
+-}
+-
+-static uint32_t
+-parse_table_action_tm(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
+-{
+-	uint32_t subport_id, pipe_id;
+-
+-	if ((n_tokens < 5) ||
+-		strcmp(tokens[0], "tm") ||
+-		strcmp(tokens[1], "subport") ||
+-		parser_read_uint32(&subport_id, tokens[2]) ||
+-		strcmp(tokens[3], "pipe") ||
+-		parser_read_uint32(&pipe_id, tokens[4]))
+-		return 0;
+-
+-	a->tm.subport_id = subport_id;
+-	a->tm.pipe_id = pipe_id;
+-	a->action_mask |= 1 << RTE_TABLE_ACTION_TM;
+-	return 5;
+-}
+-
+-static uint32_t
+-parse_table_action_encap(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
+-{
+-	if ((n_tokens == 0) || strcmp(tokens[0], "encap"))
+-		return 0;
+-
+-	tokens++;
+-	n_tokens--;
+-
+-	/* ether */
+-	if (n_tokens && (strcmp(tokens[0], "ether") == 0)) {
+-		if ((n_tokens < 3) ||
+-			parse_mac_addr(tokens[1], &a->encap.ether.ether.da) ||
+-			parse_mac_addr(tokens[2], &a->encap.ether.ether.sa))
+-			return 0;
+-
+-		a->encap.type = RTE_TABLE_ACTION_ENCAP_ETHER;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-		return 1 + 3;
+-	}
+-
+-	/* vlan */
+-	if (n_tokens && (strcmp(tokens[0], "vlan") == 0)) {
+-		uint32_t pcp, dei, vid;
+-
+-		if ((n_tokens < 6) ||
+-			parse_mac_addr(tokens[1], &a->encap.vlan.ether.da) ||
+-			parse_mac_addr(tokens[2], &a->encap.vlan.ether.sa) ||
+-			parser_read_uint32(&pcp, tokens[3]) ||
+-			(pcp > 0x7) ||
+-			parser_read_uint32(&dei, tokens[4]) ||
+-			(dei > 0x1) ||
+-			parser_read_uint32(&vid, tokens[5]) ||
+-			(vid > 0xFFF))
+-			return 0;
+-
+-		a->encap.vlan.vlan.pcp = pcp & 0x7;
+-		a->encap.vlan.vlan.dei = dei & 0x1;
+-		a->encap.vlan.vlan.vid = vid & 0xFFF;
+-		a->encap.type = RTE_TABLE_ACTION_ENCAP_VLAN;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-		return 1 + 6;
+-	}
+-
+-	/* qinq */
+-	if (n_tokens && (strcmp(tokens[0], "qinq") == 0)) {
+-		uint32_t svlan_pcp, svlan_dei, svlan_vid;
+-		uint32_t cvlan_pcp, cvlan_dei, cvlan_vid;
+-
+-		if ((n_tokens < 9) ||
+-			parse_mac_addr(tokens[1], &a->encap.qinq.ether.da) ||
+-			parse_mac_addr(tokens[2], &a->encap.qinq.ether.sa) ||
+-			parser_read_uint32(&svlan_pcp, tokens[3]) ||
+-			(svlan_pcp > 0x7) ||
+-			parser_read_uint32(&svlan_dei, tokens[4]) ||
+-			(svlan_dei > 0x1) ||
+-			parser_read_uint32(&svlan_vid, tokens[5]) ||
+-			(svlan_vid > 0xFFF) ||
+-			parser_read_uint32(&cvlan_pcp, tokens[6]) ||
+-			(cvlan_pcp > 0x7) ||
+-			parser_read_uint32(&cvlan_dei, tokens[7]) ||
+-			(cvlan_dei > 0x1) ||
+-			parser_read_uint32(&cvlan_vid, tokens[8]) ||
+-			(cvlan_vid > 0xFFF))
+-			return 0;
+-
+-		a->encap.qinq.svlan.pcp = svlan_pcp & 0x7;
+-		a->encap.qinq.svlan.dei = svlan_dei & 0x1;
+-		a->encap.qinq.svlan.vid = svlan_vid & 0xFFF;
+-		a->encap.qinq.cvlan.pcp = cvlan_pcp & 0x7;
+-		a->encap.qinq.cvlan.dei = cvlan_dei & 0x1;
+-		a->encap.qinq.cvlan.vid = cvlan_vid & 0xFFF;
+-		a->encap.type = RTE_TABLE_ACTION_ENCAP_QINQ;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-		return 1 + 9;
+-	}
+-
+-	/* qinq_pppoe */
+-	if (n_tokens && (strcmp(tokens[0], "qinq_pppoe") == 0)) {
+-		uint32_t svlan_pcp, svlan_dei, svlan_vid;
+-		uint32_t cvlan_pcp, cvlan_dei, cvlan_vid;
+-
+-		if ((n_tokens < 10) ||
+-			parse_mac_addr(tokens[1],
+-				&a->encap.qinq_pppoe.ether.da) ||
+-			parse_mac_addr(tokens[2],
+-				&a->encap.qinq_pppoe.ether.sa) ||
+-			parser_read_uint32(&svlan_pcp, tokens[3]) ||
+-			(svlan_pcp > 0x7) ||
+-			parser_read_uint32(&svlan_dei, tokens[4]) ||
+-			(svlan_dei > 0x1) ||
+-			parser_read_uint32(&svlan_vid, tokens[5]) ||
+-			(svlan_vid > 0xFFF) ||
+-			parser_read_uint32(&cvlan_pcp, tokens[6]) ||
+-			(cvlan_pcp > 0x7) ||
+-			parser_read_uint32(&cvlan_dei, tokens[7]) ||
+-			(cvlan_dei > 0x1) ||
+-			parser_read_uint32(&cvlan_vid, tokens[8]) ||
+-			(cvlan_vid > 0xFFF) ||
+-			parser_read_uint16(&a->encap.qinq_pppoe.pppoe.session_id,
+-				tokens[9]))
+-			return 0;
+-
+-		a->encap.qinq_pppoe.svlan.pcp = svlan_pcp & 0x7;
+-		a->encap.qinq_pppoe.svlan.dei = svlan_dei & 0x1;
+-		a->encap.qinq_pppoe.svlan.vid = svlan_vid & 0xFFF;
+-		a->encap.qinq_pppoe.cvlan.pcp = cvlan_pcp & 0x7;
+-		a->encap.qinq_pppoe.cvlan.dei = cvlan_dei & 0x1;
+-		a->encap.qinq_pppoe.cvlan.vid = cvlan_vid & 0xFFF;
+-		a->encap.type = RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-		return 1 + 10;
+-
+-	}
+-
+-	/* mpls */
+-	if (n_tokens && (strcmp(tokens[0], "mpls") == 0)) {
+-		uint32_t label, tc, ttl;
+-
+-		if (n_tokens < 8)
+-			return 0;
+-
+-		if (strcmp(tokens[1], "unicast") == 0)
+-			a->encap.mpls.unicast = 1;
+-		else if (strcmp(tokens[1], "multicast") == 0)
+-			a->encap.mpls.unicast = 0;
+-		else
+-			return 0;
+-
+-		if (parse_mac_addr(tokens[2], &a->encap.mpls.ether.da) ||
+-			parse_mac_addr(tokens[3], &a->encap.mpls.ether.sa) ||
+-			strcmp(tokens[4], "label0") ||
+-			parser_read_uint32(&label, tokens[5]) ||
+-			(label > 0xFFFFF) ||
+-			parser_read_uint32(&tc, tokens[6]) ||
+-			(tc > 0x7) ||
+-			parser_read_uint32(&ttl, tokens[7]) ||
+-			(ttl > 0x3F))
+-			return 0;
+-
+-		a->encap.mpls.mpls[0].label = label;
+-		a->encap.mpls.mpls[0].tc = tc;
+-		a->encap.mpls.mpls[0].ttl = ttl;
+-
+-		tokens += 8;
+-		n_tokens -= 8;
+-
+-		if ((n_tokens == 0) || strcmp(tokens[0], "label1")) {
+-			a->encap.mpls.mpls_count = 1;
+-			a->encap.type = RTE_TABLE_ACTION_ENCAP_MPLS;
+-			a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-			return 1 + 8;
+-		}
+-
+-		if ((n_tokens < 4) ||
+-			parser_read_uint32(&label, tokens[1]) ||
+-			(label > 0xFFFFF) ||
+-			parser_read_uint32(&tc, tokens[2]) ||
+-			(tc > 0x7) ||
+-			parser_read_uint32(&ttl, tokens[3]) ||
+-			(ttl > 0x3F))
+-			return 0;
+-
+-		a->encap.mpls.mpls[1].label = label;
+-		a->encap.mpls.mpls[1].tc = tc;
+-		a->encap.mpls.mpls[1].ttl = ttl;
+-
+-		tokens += 4;
+-		n_tokens -= 4;
+-
+-		if ((n_tokens == 0) || strcmp(tokens[0], "label2")) {
+-			a->encap.mpls.mpls_count = 2;
+-			a->encap.type = RTE_TABLE_ACTION_ENCAP_MPLS;
+-			a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-			return 1 + 8 + 4;
+-		}
+-
+-		if ((n_tokens < 4) ||
+-			parser_read_uint32(&label, tokens[1]) ||
+-			(label > 0xFFFFF) ||
+-			parser_read_uint32(&tc, tokens[2]) ||
+-			(tc > 0x7) ||
+-			parser_read_uint32(&ttl, tokens[3]) ||
+-			(ttl > 0x3F))
+-			return 0;
+-
+-		a->encap.mpls.mpls[2].label = label;
+-		a->encap.mpls.mpls[2].tc = tc;
+-		a->encap.mpls.mpls[2].ttl = ttl;
+-
+-		tokens += 4;
+-		n_tokens -= 4;
+-
+-		if ((n_tokens == 0) || strcmp(tokens[0], "label3")) {
+-			a->encap.mpls.mpls_count = 3;
+-			a->encap.type = RTE_TABLE_ACTION_ENCAP_MPLS;
+-			a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-			return 1 + 8 + 4 + 4;
+-		}
+-
+-		if ((n_tokens < 4) ||
+-			parser_read_uint32(&label, tokens[1]) ||
+-			(label > 0xFFFFF) ||
+-			parser_read_uint32(&tc, tokens[2]) ||
+-			(tc > 0x7) ||
+-			parser_read_uint32(&ttl, tokens[3]) ||
+-			(ttl > 0x3F))
+-			return 0;
+-
+-		a->encap.mpls.mpls[3].label = label;
+-		a->encap.mpls.mpls[3].tc = tc;
+-		a->encap.mpls.mpls[3].ttl = ttl;
+-
+-		a->encap.mpls.mpls_count = 4;
+-		a->encap.type = RTE_TABLE_ACTION_ENCAP_MPLS;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-		return 1 + 8 + 4 + 4 + 4;
+-	}
+-
+-	/* pppoe */
+-	if (n_tokens && (strcmp(tokens[0], "pppoe") == 0)) {
+-		if ((n_tokens < 4) ||
+-			parse_mac_addr(tokens[1], &a->encap.pppoe.ether.da) ||
+-			parse_mac_addr(tokens[2], &a->encap.pppoe.ether.sa) ||
+-			parser_read_uint16(&a->encap.pppoe.pppoe.session_id,
+-				tokens[3]))
+-			return 0;
+-
+-		a->encap.type = RTE_TABLE_ACTION_ENCAP_PPPOE;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-		return 1 + 4;
+-	}
+-
+-	/* vxlan */
+-	if (n_tokens && (strcmp(tokens[0], "vxlan") == 0)) {
+-		uint32_t n = 0;
+-
+-		n_tokens--;
+-		tokens++;
+-		n++;
+-
+-		/* ether <da> <sa> */
+-		if ((n_tokens < 3) ||
+-			strcmp(tokens[0], "ether") ||
+-			parse_mac_addr(tokens[1], &a->encap.vxlan.ether.da) ||
+-			parse_mac_addr(tokens[2], &a->encap.vxlan.ether.sa))
+-			return 0;
+-
+-		n_tokens -= 3;
+-		tokens += 3;
+-		n += 3;
+-
+-		/* [vlan <pcp> <dei> <vid>] */
+-		if (strcmp(tokens[0], "vlan") == 0) {
+-			uint32_t pcp, dei, vid;
+-
+-			if ((n_tokens < 4) ||
+-				parser_read_uint32(&pcp, tokens[1]) ||
+-				(pcp > 7) ||
+-				parser_read_uint32(&dei, tokens[2]) ||
+-				(dei > 1) ||
+-				parser_read_uint32(&vid, tokens[3]) ||
+-				(vid > 0xFFF))
+-				return 0;
+-
+-			a->encap.vxlan.vlan.pcp = pcp;
+-			a->encap.vxlan.vlan.dei = dei;
+-			a->encap.vxlan.vlan.vid = vid;
+-
+-			n_tokens -= 4;
+-			tokens += 4;
+-			n += 4;
+-		}
+-
+-		/* ipv4 <sa> <da> <dscp> <ttl>
+-		   | ipv6 <sa> <da> <flow_label> <dscp> <hop_limit> */
+-		if (strcmp(tokens[0], "ipv4") == 0) {
+-			struct in_addr sa, da;
+-			uint8_t dscp, ttl;
+-
+-			if ((n_tokens < 5) ||
+-				parse_ipv4_addr(tokens[1], &sa) ||
+-				parse_ipv4_addr(tokens[2], &da) ||
+-				parser_read_uint8(&dscp, tokens[3]) ||
+-				(dscp > 64) ||
+-				parser_read_uint8(&ttl, tokens[4]))
+-				return 0;
+-
+-			a->encap.vxlan.ipv4.sa = rte_be_to_cpu_32(sa.s_addr);
+-			a->encap.vxlan.ipv4.da = rte_be_to_cpu_32(da.s_addr);
+-			a->encap.vxlan.ipv4.dscp = dscp;
+-			a->encap.vxlan.ipv4.ttl = ttl;
+-
+-			n_tokens -= 5;
+-			tokens += 5;
+-			n += 5;
+-		} else if (strcmp(tokens[0], "ipv6") == 0) {
+-			struct rte_ipv6_addr sa, da;
+-			uint32_t flow_label;
+-			uint8_t dscp, hop_limit;
+-
+-			if ((n_tokens < 6) ||
+-				parse_ipv6_addr(tokens[1], &sa) ||
+-				parse_ipv6_addr(tokens[2], &da) ||
+-				parser_read_uint32(&flow_label, tokens[3]) ||
+-				parser_read_uint8(&dscp, tokens[4]) ||
+-				(dscp > 64) ||
+-				parser_read_uint8(&hop_limit, tokens[5]))
+-				return 0;
+-
+-			a->encap.vxlan.ipv6.sa = sa;
+-			a->encap.vxlan.ipv6.da = da;
+-			a->encap.vxlan.ipv6.flow_label = flow_label;
+-			a->encap.vxlan.ipv6.dscp = dscp;
+-			a->encap.vxlan.ipv6.hop_limit = hop_limit;
+-
+-			n_tokens -= 6;
+-			tokens += 6;
+-			n += 6;
+-		} else
+-			return 0;
+-
+-		/* udp <sp> <dp> */
+-		if ((n_tokens < 3) ||
+-			strcmp(tokens[0], "udp") ||
+-			parser_read_uint16(&a->encap.vxlan.udp.sp, tokens[1]) ||
+-			parser_read_uint16(&a->encap.vxlan.udp.dp, tokens[2]))
+-			return 0;
+-
+-		n_tokens -= 3;
+-		tokens += 3;
+-		n += 3;
+-
+-		/* vxlan <vni> */
+-		if ((n_tokens < 2) ||
+-			strcmp(tokens[0], "vxlan") ||
+-			parser_read_uint32(&a->encap.vxlan.vxlan.vni, tokens[1]) ||
+-			(a->encap.vxlan.vxlan.vni > 0xFFFFFF))
+-			return 0;
+-
+-		n_tokens -= 2;
+-		tokens += 2;
+-		n += 2;
+-
+-		a->encap.type = RTE_TABLE_ACTION_ENCAP_VXLAN;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
+-		return 1 + n;
+-	}
 -
 -	return 0;
 -}
 -
--static int
--rte_port_source_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
+-static uint32_t
+-parse_table_action_nat(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
 -{
--	struct rte_port_source *p = port;
+-	if ((n_tokens < 4) ||
+-		strcmp(tokens[0], "nat"))
+-		return 0;
+-
+-	if (strcmp(tokens[1], "ipv4") == 0) {
+-		struct in_addr addr;
+-		uint16_t port;
+-
+-		if (parse_ipv4_addr(tokens[2], &addr) ||
+-			parser_read_uint16(&port, tokens[3]))
+-			return 0;
+-
+-		a->nat.ip_version = 1;
+-		a->nat.addr.ipv4 = rte_be_to_cpu_32(addr.s_addr);
+-		a->nat.port = port;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_NAT;
+-		return 4;
+-	}
+-
+-	if (strcmp(tokens[1], "ipv6") == 0) {
+-		struct rte_ipv6_addr addr;
+-		uint16_t port;
+-
+-		if (parse_ipv6_addr(tokens[2], &addr) ||
+-			parser_read_uint16(&port, tokens[3]))
+-			return 0;
+-
+-		a->nat.ip_version = 0;
+-		a->nat.addr.ipv6 = addr;
+-		a->nat.port = port;
+-		a->action_mask |= 1 << RTE_TABLE_ACTION_NAT;
+-		return 4;
+-	}
+-
+-	return 0;
+-}
+-
+-static uint32_t
+-parse_table_action_ttl(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
+-{
+-	if ((n_tokens < 2) ||
+-		strcmp(tokens[0], "ttl"))
+-		return 0;
+-
+-	if (strcmp(tokens[1], "dec") == 0)
+-		a->ttl.decrement = 1;
+-	else if (strcmp(tokens[1], "keep") == 0)
+-		a->ttl.decrement = 0;
+-	else
+-		return 0;
+-
+-	a->action_mask |= 1 << RTE_TABLE_ACTION_TTL;
+-	return 2;
+-}
+-
+-static uint32_t
+-parse_table_action_stats(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
+-{
+-	if ((n_tokens < 1) ||
+-		strcmp(tokens[0], "stats"))
+-		return 0;
+-
+-	a->stats.n_packets = 0;
+-	a->stats.n_bytes = 0;
+-	a->action_mask |= 1 << RTE_TABLE_ACTION_STATS;
+-	return 1;
+-}
+-
+-static uint32_t
+-parse_table_action_time(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
+-{
+-	if ((n_tokens < 1) ||
+-		strcmp(tokens[0], "time"))
+-		return 0;
+-
+-	a->time.time = rte_rdtsc();
+-	a->action_mask |= 1 << RTE_TABLE_ACTION_TIME;
+-	return 1;
+-}
+-
+-static void
+-parse_free_sym_crypto_param_data(struct rte_table_action_sym_crypto_params *p)
+-{
+-	struct rte_crypto_sym_xform *xform[2] = {NULL};
 -	uint32_t i;
 -
--	if (rte_pktmbuf_alloc_bulk(p->mempool, pkts, n_pkts) != 0)
--		return 0;
+-	xform[0] = p->xform;
+-	if (xform[0])
+-		xform[1] = xform[0]->next;
 -
--	if (p->pkt_buff != NULL) {
--		for (i = 0; i < n_pkts; i++) {
--			uint8_t *pkt_data = rte_pktmbuf_mtod(pkts[i],
--				uint8_t *);
+-	for (i = 0; i < 2; i++) {
+-		if (xform[i] == NULL)
+-			continue;
 -
--			rte_memcpy(pkt_data, p->pkts[p->pkt_index],
--					p->pkt_len[p->pkt_index]);
--			pkts[i]->data_len = p->pkt_len[p->pkt_index];
--			pkts[i]->pkt_len = pkts[i]->data_len;
--
--			p->pkt_index++;
--			if (p->pkt_index >= p->n_pkts)
--				p->pkt_index = 0;
+-		switch (xform[i]->type) {
+-		case RTE_CRYPTO_SYM_XFORM_CIPHER:
+-			free(p->cipher_auth.cipher_iv.val);
+-			free(p->cipher_auth.cipher_iv_update.val);
+-			break;
+-		case RTE_CRYPTO_SYM_XFORM_AUTH:
+-			if (p->cipher_auth.auth_iv.val)
+-				free(p->cipher_auth.cipher_iv.val);
+-			if (p->cipher_auth.auth_iv_update.val)
+-				free(p->cipher_auth.cipher_iv_update.val);
+-			break;
+-		case RTE_CRYPTO_SYM_XFORM_AEAD:
+-			free(p->aead.iv.val);
+-			free(p->aead.aad.val);
+-			break;
+-		default:
+-			continue;
 -		}
 -	}
 -
--	RTE_PORT_SOURCE_STATS_PKTS_IN_ADD(p, n_pkts);
+-}
 -
--	return n_pkts;
+-static struct rte_crypto_sym_xform *
+-parse_table_action_cipher(struct rte_table_action_sym_crypto_params *p,
+-		uint8_t *key, uint32_t max_key_len, char **tokens,
+-		uint32_t n_tokens, uint32_t encrypt, uint32_t *used_n_tokens)
+-{
+-	struct rte_crypto_sym_xform *xform_cipher;
+-	int status;
+-	size_t len;
+-
+-	if (n_tokens < 7 || strcmp(tokens[1], "cipher_algo") ||
+-			strcmp(tokens[3], "cipher_key") ||
+-			strcmp(tokens[5], "cipher_iv"))
+-		return NULL;
+-
+-	xform_cipher = calloc(1, sizeof(*xform_cipher));
+-	if (xform_cipher == NULL)
+-		return NULL;
+-
+-	xform_cipher->type = RTE_CRYPTO_SYM_XFORM_CIPHER;
+-	xform_cipher->cipher.op = encrypt ? RTE_CRYPTO_CIPHER_OP_ENCRYPT :
+-			RTE_CRYPTO_CIPHER_OP_DECRYPT;
+-
+-	/* cipher_algo */
+-	status = rte_cryptodev_get_cipher_algo_enum(
+-			&xform_cipher->cipher.algo, tokens[2]);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	/* cipher_key */
+-	len = strlen(tokens[4]);
+-	if (len / 2 > max_key_len) {
+-		status = -ENOMEM;
+-		goto error_exit;
+-	}
+-
+-	status = parse_hex_string(tokens[4], key, (uint32_t *)&len);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	xform_cipher->cipher.key.data = key;
+-	xform_cipher->cipher.key.length = (uint16_t)len;
+-
+-	/* cipher_iv */
+-	len = strlen(tokens[6]);
+-
+-	p->cipher_auth.cipher_iv.val = calloc(1, len / 2 + 1);
+-	if (p->cipher_auth.cipher_iv.val == NULL)
+-		goto error_exit;
+-
+-	status = parse_hex_string(tokens[6],
+-			p->cipher_auth.cipher_iv.val,
+-			(uint32_t *)&len);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	xform_cipher->cipher.iv.length = (uint16_t)len;
+-	xform_cipher->cipher.iv.offset = RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET;
+-	p->cipher_auth.cipher_iv.length = (uint32_t)len;
+-	*used_n_tokens = 7;
+-
+-	return xform_cipher;
+-
+-error_exit:
+-	if (p->cipher_auth.cipher_iv.val) {
+-		free(p->cipher_auth.cipher_iv.val);
+-		p->cipher_auth.cipher_iv.val = NULL;
+-	}
+-
+-	free(xform_cipher);
+-
+-	return NULL;
+-}
+-
+-static struct rte_crypto_sym_xform *
+-parse_table_action_cipher_auth(struct rte_table_action_sym_crypto_params *p,
+-		uint8_t *key, uint32_t max_key_len, char **tokens,
+-		uint32_t n_tokens, uint32_t encrypt, uint32_t *used_n_tokens)
+-{
+-	struct rte_crypto_sym_xform *xform_cipher;
+-	struct rte_crypto_sym_xform *xform_auth;
+-	int status;
+-	size_t len;
+-
+-	if (n_tokens < 13 ||
+-			strcmp(tokens[7], "auth_algo") ||
+-			strcmp(tokens[9], "auth_key") ||
+-			strcmp(tokens[11], "digest_size"))
+-		return NULL;
+-
+-	xform_auth = calloc(1, sizeof(*xform_auth));
+-	if (xform_auth == NULL)
+-		return NULL;
+-
+-	xform_auth->type = RTE_CRYPTO_SYM_XFORM_AUTH;
+-	xform_auth->auth.op = encrypt ? RTE_CRYPTO_AUTH_OP_GENERATE :
+-			RTE_CRYPTO_AUTH_OP_VERIFY;
+-
+-	/* auth_algo */
+-	status = rte_cryptodev_get_auth_algo_enum(&xform_auth->auth.algo,
+-			tokens[8]);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	/* auth_key */
+-	len = strlen(tokens[10]);
+-	if (len / 2 > max_key_len) {
+-		status = -ENOMEM;
+-		goto error_exit;
+-	}
+-
+-	status = parse_hex_string(tokens[10], key, (uint32_t *)&len);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	xform_auth->auth.key.data = key;
+-	xform_auth->auth.key.length = (uint16_t)len;
+-
+-	key += xform_auth->auth.key.length;
+-	max_key_len -= xform_auth->auth.key.length;
+-
+-	if (strcmp(tokens[11], "digest_size"))
+-		goto error_exit;
+-
+-	status = parser_read_uint16(&xform_auth->auth.digest_length,
+-			tokens[12]);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	xform_cipher = parse_table_action_cipher(p, key, max_key_len, tokens,
+-			7, encrypt, used_n_tokens);
+-	if (xform_cipher == NULL)
+-		goto error_exit;
+-
+-	*used_n_tokens += 6;
+-
+-	if (encrypt) {
+-		xform_cipher->next = xform_auth;
+-		return xform_cipher;
+-	} else {
+-		xform_auth->next = xform_cipher;
+-		return xform_auth;
+-	}
+-
+-error_exit:
+-	if (p->cipher_auth.auth_iv.val) {
+-		free(p->cipher_auth.auth_iv.val);
+-		p->cipher_auth.auth_iv.val = 0;
+-	}
+-
+-	free(xform_auth);
+-
+-	return NULL;
+-}
+-
+-static struct rte_crypto_sym_xform *
+-parse_table_action_aead(struct rte_table_action_sym_crypto_params *p,
+-		uint8_t *key, uint32_t max_key_len, char **tokens,
+-		uint32_t n_tokens, uint32_t encrypt, uint32_t *used_n_tokens)
+-{
+-	struct rte_crypto_sym_xform *xform_aead;
+-	int status;
+-	size_t len;
+-
+-	if (n_tokens < 11 || strcmp(tokens[1], "aead_algo") ||
+-			strcmp(tokens[3], "aead_key") ||
+-			strcmp(tokens[5], "aead_iv") ||
+-			strcmp(tokens[7], "aead_aad") ||
+-			strcmp(tokens[9], "digest_size"))
+-		return NULL;
+-
+-	xform_aead = calloc(1, sizeof(*xform_aead));
+-	if (xform_aead == NULL)
+-		return NULL;
+-
+-	xform_aead->type = RTE_CRYPTO_SYM_XFORM_AEAD;
+-	xform_aead->aead.op = encrypt ? RTE_CRYPTO_AEAD_OP_ENCRYPT :
+-			RTE_CRYPTO_AEAD_OP_DECRYPT;
+-
+-	/* aead_algo */
+-	status = rte_cryptodev_get_aead_algo_enum(&xform_aead->aead.algo,
+-			tokens[2]);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	/* aead_key */
+-	len = strlen(tokens[4]);
+-	if (len / 2 > max_key_len) {
+-		status = -ENOMEM;
+-		goto error_exit;
+-	}
+-
+-	status = parse_hex_string(tokens[4], key, (uint32_t *)&len);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	xform_aead->aead.key.data = key;
+-	xform_aead->aead.key.length = (uint16_t)len;
+-
+-	/* aead_iv */
+-	len = strlen(tokens[6]);
+-	p->aead.iv.val = calloc(1, len / 2 + 1);
+-	if (p->aead.iv.val == NULL)
+-		goto error_exit;
+-
+-	status = parse_hex_string(tokens[6], p->aead.iv.val,
+-			(uint32_t *)&len);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	xform_aead->aead.iv.length = (uint16_t)len;
+-	xform_aead->aead.iv.offset = RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET;
+-	p->aead.iv.length = (uint32_t)len;
+-
+-	/* aead_aad */
+-	len = strlen(tokens[8]);
+-	p->aead.aad.val = calloc(1, len / 2 + 1);
+-	if (p->aead.aad.val == NULL)
+-		goto error_exit;
+-
+-	status = parse_hex_string(tokens[8], p->aead.aad.val, (uint32_t *)&len);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	xform_aead->aead.aad_length = (uint16_t)len;
+-	p->aead.aad.length = (uint32_t)len;
+-
+-	/* digest_size */
+-	status = parser_read_uint16(&xform_aead->aead.digest_length,
+-			tokens[10]);
+-	if (status < 0)
+-		goto error_exit;
+-
+-	*used_n_tokens = 11;
+-
+-	return xform_aead;
+-
+-error_exit:
+-	if (p->aead.iv.val) {
+-		free(p->aead.iv.val);
+-		p->aead.iv.val = NULL;
+-	}
+-	if (p->aead.aad.val) {
+-		free(p->aead.aad.val);
+-		p->aead.aad.val = NULL;
+-	}
+-
+-	free(xform_aead);
+-
+-	return NULL;
+-}
+-
+-
+-static uint32_t
+-parse_table_action_sym_crypto(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
+-{
+-	struct rte_table_action_sym_crypto_params *p = &a->sym_crypto;
+-	struct rte_crypto_sym_xform *xform = NULL;
+-	uint8_t *key = a->sym_crypto_key;
+-	uint32_t max_key_len = SYM_CRYPTO_MAX_KEY_SIZE;
+-	uint32_t used_n_tokens;
+-	uint32_t encrypt;
+-	int status;
+-
+-	if ((n_tokens < 12) ||
+-		strcmp(tokens[0], "sym_crypto") ||
+-		strcmp(tokens[2], "type"))
+-		return 0;
+-
+-	memset(p, 0, sizeof(*p));
+-
+-	if (strcmp(tokens[1], "encrypt") == 0)
+-		encrypt = 1;
+-	else
+-		encrypt = 0;
+-
+-	status = parser_read_uint32(&p->data_offset, tokens[n_tokens - 1]);
+-	if (status < 0)
+-		return 0;
+-
+-	if (strcmp(tokens[3], "cipher") == 0) {
+-		tokens += 3;
+-		n_tokens -= 3;
+-
+-		xform = parse_table_action_cipher(p, key, max_key_len, tokens,
+-				n_tokens, encrypt, &used_n_tokens);
+-	} else if (strcmp(tokens[3], "cipher_auth") == 0) {
+-		tokens += 3;
+-		n_tokens -= 3;
+-
+-		xform = parse_table_action_cipher_auth(p, key, max_key_len,
+-				tokens, n_tokens, encrypt, &used_n_tokens);
+-	} else if (strcmp(tokens[3], "aead") == 0) {
+-		tokens += 3;
+-		n_tokens -= 3;
+-
+-		xform = parse_table_action_aead(p, key, max_key_len, tokens,
+-				n_tokens, encrypt, &used_n_tokens);
+-	}
+-
+-	if (xform == NULL)
+-		return 0;
+-
+-	p->xform = xform;
+-
+-	if (strcmp(tokens[used_n_tokens], "data_offset")) {
+-		parse_free_sym_crypto_param_data(p);
+-		return 0;
+-	}
+-
+-	a->action_mask |= 1 << RTE_TABLE_ACTION_SYM_CRYPTO;
+-
+-	return used_n_tokens + 5;
+-}
+-
+-static uint32_t
+-parse_table_action_tag(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
+-{
+-	if ((n_tokens < 2) ||
+-		strcmp(tokens[0], "tag"))
+-		return 0;
+-
+-	if (parser_read_uint32(&a->tag.tag, tokens[1]))
+-		return 0;
+-
+-	a->action_mask |= 1 << RTE_TABLE_ACTION_TAG;
+-	return 2;
+-}
+-
+-static uint32_t
+-parse_table_action_decap(char **tokens,
+-	uint32_t n_tokens,
+-	struct table_rule_action *a)
+-{
+-	if ((n_tokens < 2) ||
+-		strcmp(tokens[0], "decap"))
+-		return 0;
+-
+-	if (parser_read_uint16(&a->decap.n, tokens[1]))
+-		return 0;
+-
+-	a->action_mask |= 1 << RTE_TABLE_ACTION_DECAP;
+-	return 2;
+-}
+-
+-static uint32_t
+-parse_table_action(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size,
+-	struct table_rule_action *a)
+-{
+-	uint32_t n_tokens0 = n_tokens;
+-
+-	memset(a, 0, sizeof(*a));
+-
+-	if ((n_tokens < 2) ||
+-		strcmp(tokens[0], "action"))
+-		return 0;
+-
+-	tokens++;
+-	n_tokens--;
+-
+-	if (n_tokens && (strcmp(tokens[0], "fwd") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_fwd(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action fwd");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "balance") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_balance(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action balance");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "meter") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_meter(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action meter");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "tm") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_tm(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action tm");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "encap") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_encap(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action encap");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "nat") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_nat(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action nat");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "ttl") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_ttl(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action ttl");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "stats") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_stats(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action stats");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "time") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_time(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action time");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "sym_crypto") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_sym_crypto(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action sym_crypto");
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "tag") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_tag(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action tag");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens && (strcmp(tokens[0], "decap") == 0)) {
+-		uint32_t n;
+-
+-		n = parse_table_action_decap(tokens, n_tokens, a);
+-		if (n == 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID,
+-				"action decap");
+-			return 0;
+-		}
+-
+-		tokens += n;
+-		n_tokens -= n;
+-	}
+-
+-	if (n_tokens0 - n_tokens == 1) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "action");
+-		return 0;
+-	}
+-
+-	return n_tokens0 - n_tokens;
+-}
+-
+-
+-static const char cmd_pipeline_table_rule_add_help[] =
+-"pipeline <pipeline_name> table <table_id> rule add\n"
+-"     match <match>\n"
+-"     action <table_action>\n";
+-
+-static void
+-cmd_pipeline_table_rule_add(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct table_rule_match m;
+-	struct table_rule_action a;
+-	char *pipeline_name;
+-	uint32_t table_id, t0, n_tokens_parsed;
+-	int status;
+-
+-	if (n_tokens < 8) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "add") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "add");
+-		return;
+-	}
+-
+-	t0 = 6;
+-
+-	/* match */
+-	n_tokens_parsed = parse_match(tokens + t0,
+-		n_tokens - t0,
+-		out,
+-		out_size,
+-		&m);
+-	if (n_tokens_parsed == 0)
+-		return;
+-	t0 += n_tokens_parsed;
+-
+-	/* action */
+-	n_tokens_parsed = parse_table_action(tokens + t0,
+-		n_tokens - t0,
+-		out,
+-		out_size,
+-		&a);
+-	if (n_tokens_parsed == 0)
+-		return;
+-	t0 += n_tokens_parsed;
+-
+-	if (t0 != n_tokens) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
+-		return;
+-	}
+-
+-	status = pipeline_table_rule_add(pipeline_name, table_id, &m, &a);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-
+-	if (a.action_mask & 1 << RTE_TABLE_ACTION_SYM_CRYPTO)
+-		parse_free_sym_crypto_param_data(&a.sym_crypto);
+-}
+-
+-
+-static const char cmd_pipeline_table_rule_add_default_help[] =
+-"pipeline <pipeline_name> table <table_id> rule add\n"
+-"     match\n"
+-"        default\n"
+-"     action\n"
+-"        fwd\n"
+-"           drop\n"
+-"           | port <port_id>\n"
+-"           | meta\n"
+-"           | table <table_id>\n";
+-
+-static void
+-cmd_pipeline_table_rule_add_default(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct table_rule_action action;
+-	char *pipeline_name;
+-	uint32_t table_id;
+-	int status;
+-
+-	if ((n_tokens != 11) && (n_tokens != 12)) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "add") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "add");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "match") != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "match");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[7], "default") != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "default");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[8], "action") != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "action");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[9], "fwd") != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "fwd");
+-		return;
+-	}
+-
+-	action.action_mask = 1 << RTE_TABLE_ACTION_FWD;
+-
+-	if (strcmp(tokens[10], "drop") == 0) {
+-		if (n_tokens != 11) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-			return;
+-		}
+-
+-		action.fwd.action = RTE_PIPELINE_ACTION_DROP;
+-	} else if (strcmp(tokens[10], "port") == 0) {
+-		uint32_t id;
+-
+-		if (n_tokens != 12) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&id, tokens[11]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
+-			return;
+-		}
+-
+-		action.fwd.action = RTE_PIPELINE_ACTION_PORT;
+-		action.fwd.id = id;
+-	} else if (strcmp(tokens[10], "meta") == 0) {
+-		if (n_tokens != 11) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-			return;
+-		}
+-
+-		action.fwd.action = RTE_PIPELINE_ACTION_PORT_META;
+-	} else if (strcmp(tokens[10], "table") == 0) {
+-		uint32_t id;
+-
+-		if (n_tokens != 12) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-			return;
+-		}
+-
+-		if (parser_read_uint32(&id, tokens[11]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-			return;
+-		}
+-
+-		action.fwd.action = RTE_PIPELINE_ACTION_TABLE;
+-		action.fwd.id = id;
+-	} else {
+-		snprintf(out, out_size, MSG_ARG_INVALID,
+-			"drop or port or meta or table");
+-		return;
+-	}
+-
+-	status = pipeline_table_rule_add_default(pipeline_name,
+-		table_id,
+-		&action);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_pipeline_table_rule_add_bulk_help[] =
+-"pipeline <pipeline_name> table <table_id> rule add bulk <file_name>\n"
+-"\n"
+-"  File <file_name>:\n"
+-"  - line format: match <match> action <action>\n";
+-
+-static int
+-cli_rule_file_process(const char *file_name,
+-	size_t line_len_max,
+-	struct table_rule_list **rule_list,
+-	uint32_t *n_rules,
+-	uint32_t *line_number,
+-	char *out,
+-	size_t out_size);
+-
+-static void
+-cmd_pipeline_table_rule_add_bulk(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct table_rule_list *list = NULL;
+-	char *pipeline_name, *file_name;
+-	uint32_t table_id, n_rules, n_rules_added, n_rules_not_added, line_number;
+-	int status;
+-
+-	if (n_tokens != 8) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "add") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "add");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "bulk") != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "bulk");
+-		return;
+-	}
+-
+-	file_name = tokens[7];
+-
+-	/* Load rules from file. */
+-	status = cli_rule_file_process(file_name,
+-		1024,
+-		&list,
+-		&n_rules,
+-		&line_number,
+-		out,
+-		out_size);
+-	if (status) {
+-		snprintf(out, out_size, MSG_FILE_ERR, file_name, line_number);
+-		return;
+-	}
+-
+-	/* Rule bulk add */
+-	status = pipeline_table_rule_add_bulk(pipeline_name,
+-		table_id,
+-		list,
+-		&n_rules_added,
+-		&n_rules_not_added);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-
+-	snprintf(out, out_size, "Added %u rules out of %u.\n",
+-		n_rules_added,
+-		n_rules);
+-}
+-
+-
+-static const char cmd_pipeline_table_rule_delete_help[] =
+-"pipeline <pipeline_name> table <table_id> rule delete\n"
+-"     match <match>\n";
+-
+-static void
+-cmd_pipeline_table_rule_delete(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct table_rule_match m;
+-	char *pipeline_name;
+-	uint32_t table_id, n_tokens_parsed, t0;
+-	int status;
+-
+-	if (n_tokens < 8) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "delete") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "delete");
+-		return;
+-	}
+-
+-	t0 = 6;
+-
+-	/* match */
+-	n_tokens_parsed = parse_match(tokens + t0,
+-		n_tokens - t0,
+-		out,
+-		out_size,
+-		&m);
+-	if (n_tokens_parsed == 0)
+-		return;
+-	t0 += n_tokens_parsed;
+-
+-	if (n_tokens != t0) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	status = pipeline_table_rule_delete(pipeline_name,
+-		table_id,
+-		&m);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_pipeline_table_rule_delete_default_help[] =
+-"pipeline <pipeline_name> table <table_id> rule delete\n"
+-"     match\n"
+-"        default\n";
+-
+-static void
+-cmd_pipeline_table_rule_delete_default(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	char *pipeline_name;
+-	uint32_t table_id;
+-	int status;
+-
+-	if (n_tokens != 8) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "delete") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "delete");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "match") != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "match");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[7], "default") != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "default");
+-		return;
+-	}
+-
+-	status = pipeline_table_rule_delete_default(pipeline_name,
+-		table_id);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static void
+-ether_addr_show(FILE *f, struct rte_ether_addr *addr)
+-{
+-	fprintf(f, RTE_ETHER_ADDR_PRT_FMT, RTE_ETHER_ADDR_BYTES(addr));
+-}
+-
+-static void
+-ipv4_addr_show(FILE *f, uint32_t addr)
+-{
+-	fprintf(f, "%u.%u.%u.%u",
+-		addr >> 24,
+-		(addr >> 16) & 0xFF,
+-		(addr >> 8) & 0xFF,
+-		addr & 0xFF);
+-}
+-
+-static void
+-ipv6_addr_show(FILE *f, const struct rte_ipv6_addr *ip)
+-{
+-	fprintf(f, RTE_IPV6_ADDR_FMT ":", RTE_IPV6_ADDR_SPLIT(ip));
+-}
+-
+-static const char *
+-policer_action_string(enum rte_table_action_policer action) {
+-	switch (action) {
+-		case RTE_TABLE_ACTION_POLICER_COLOR_GREEN: return "G";
+-		case RTE_TABLE_ACTION_POLICER_COLOR_YELLOW: return "Y";
+-		case RTE_TABLE_ACTION_POLICER_COLOR_RED: return "R";
+-		case RTE_TABLE_ACTION_POLICER_DROP: return "D";
+-		default: return "?";
+-	}
 -}
 -
 -static int
--rte_port_source_stats_read(void *port,
--		struct rte_port_in_stats *stats, int clear)
+-table_rule_show(const char *pipeline_name,
+-	uint32_t table_id,
+-	const char *file_name)
 -{
--	struct rte_port_source *p =
--		port;
+-	struct pipeline *pipeline;
+-	struct table *table;
+-	struct table_rule *rule;
+-	FILE *f = NULL;
+-	uint32_t i;
 -
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
+-	/* Check input params. */
+-	if ((pipeline_name == NULL) ||
+-		(file_name == NULL))
+-		return -1;
 -
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
+-	pipeline = pipeline_find(pipeline_name);
+-	if (pipeline == NULL || table_id >= pipeline->n_tables)
+-		return -1;
+-
+-	table = &pipeline->table[table_id];
+-
+-	/* Open file. */
+-	f = fopen(file_name, "w");
+-	if (f == NULL)
+-		return -1;
+-
+-	/* Write table rules to file. */
+-	TAILQ_FOREACH(rule, &table->rules, node) {
+-		struct table_rule_match *m = &rule->match;
+-		struct table_rule_action *a = &rule->action;
+-
+-		fprintf(f, "match ");
+-		switch (m->match_type) {
+-		case TABLE_ACL:
+-			fprintf(f, "acl priority %u ",
+-				m->match.acl.priority);
+-
+-			fprintf(f, m->match.acl.ip_version ? "ipv4 " : "ipv6 ");
+-
+-			if (m->match.acl.ip_version)
+-				ipv4_addr_show(f, m->match.acl.ipv4.sa);
+-			else
+-				ipv6_addr_show(f, &m->match.acl.ipv6.sa);
+-
+-			fprintf(f, "%u",	m->match.acl.sa_depth);
+-
+-			if (m->match.acl.ip_version)
+-				ipv4_addr_show(f, m->match.acl.ipv4.da);
+-			else
+-				ipv6_addr_show(f, &m->match.acl.ipv6.da);
+-
+-			fprintf(f, "%u",	m->match.acl.da_depth);
+-
+-			fprintf(f, "%u %u %u %u %u ",
+-				(uint32_t)m->match.acl.sp0,
+-				(uint32_t)m->match.acl.sp1,
+-				(uint32_t)m->match.acl.dp0,
+-				(uint32_t)m->match.acl.dp1,
+-				(uint32_t)m->match.acl.proto);
+-			break;
+-
+-		case TABLE_ARRAY:
+-			fprintf(f, "array %u ",
+-				m->match.array.pos);
+-			break;
+-
+-		case TABLE_HASH:
+-			fprintf(f, "hash raw ");
+-			for (i = 0; i < table->params.match.hash.key_size; i++)
+-				fprintf(f, "%02x", m->match.hash.key[i]);
+-			fprintf(f, " ");
+-			break;
+-
+-		case TABLE_LPM:
+-			fprintf(f, "lpm ");
+-
+-			fprintf(f, m->match.lpm.ip_version ? "ipv4 " : "ipv6 ");
+-
+-			if (m->match.acl.ip_version)
+-				ipv4_addr_show(f, m->match.lpm.ipv4);
+-			else
+-				ipv6_addr_show(f, &m->match.lpm.ipv6);
+-
+-			fprintf(f, "%u ",
+-				(uint32_t)m->match.lpm.depth);
+-			break;
+-
+-		default:
+-			fprintf(f, "unknown ");
+-		}
+-
+-		fprintf(f, "action ");
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
+-			fprintf(f, "fwd ");
+-			switch (a->fwd.action) {
+-			case RTE_PIPELINE_ACTION_DROP:
+-				fprintf(f, "drop ");
+-				break;
+-
+-			case RTE_PIPELINE_ACTION_PORT:
+-				fprintf(f, "port %u ", a->fwd.id);
+-				break;
+-
+-			case RTE_PIPELINE_ACTION_PORT_META:
+-				fprintf(f, "meta ");
+-				break;
+-
+-			case RTE_PIPELINE_ACTION_TABLE:
+-			default:
+-				fprintf(f, "table %u ", a->fwd.id);
+-			}
+-		}
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
+-			fprintf(f, "balance ");
+-			for (i = 0; i < RTE_DIM(a->lb.out); i++)
+-				fprintf(f, "%u ", a->lb.out[i]);
+-		}
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
+-			fprintf(f, "mtr ");
+-			for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++)
+-				if (a->mtr.tc_mask & (1 << i)) {
+-					struct rte_table_action_mtr_tc_params *p =
+-						&a->mtr.mtr[i];
+-					enum rte_table_action_policer ga =
+-						p->policer[RTE_COLOR_GREEN];
+-					enum rte_table_action_policer ya =
+-						p->policer[RTE_COLOR_YELLOW];
+-					enum rte_table_action_policer ra =
+-						p->policer[RTE_COLOR_RED];
+-
+-					fprintf(f, "tc%u meter %u policer g %s y %s r %s ",
+-						i,
+-						a->mtr.mtr[i].meter_profile_id,
+-						policer_action_string(ga),
+-						policer_action_string(ya),
+-						policer_action_string(ra));
+-				}
+-		}
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_TM))
+-			fprintf(f, "tm subport %u pipe %u ",
+-				a->tm.subport_id,
+-				a->tm.pipe_id);
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
+-			fprintf(f, "encap ");
+-			switch (a->encap.type) {
+-			case RTE_TABLE_ACTION_ENCAP_ETHER:
+-				fprintf(f, "ether ");
+-				ether_addr_show(f, &a->encap.ether.ether.da);
+-				fprintf(f, " ");
+-				ether_addr_show(f, &a->encap.ether.ether.sa);
+-				fprintf(f, " ");
+-				break;
+-
+-			case RTE_TABLE_ACTION_ENCAP_VLAN:
+-				fprintf(f, "vlan ");
+-				ether_addr_show(f, &a->encap.vlan.ether.da);
+-				fprintf(f, " ");
+-				ether_addr_show(f, &a->encap.vlan.ether.sa);
+-				fprintf(f, " pcp %u dei %u vid %u ",
+-					a->encap.vlan.vlan.pcp,
+-					a->encap.vlan.vlan.dei,
+-					a->encap.vlan.vlan.vid);
+-				break;
+-
+-			case RTE_TABLE_ACTION_ENCAP_QINQ:
+-				fprintf(f, "qinq ");
+-				ether_addr_show(f, &a->encap.qinq.ether.da);
+-				fprintf(f, " ");
+-				ether_addr_show(f, &a->encap.qinq.ether.sa);
+-				fprintf(f, " pcp %u dei %u vid %u pcp %u dei %u vid %u ",
+-					a->encap.qinq.svlan.pcp,
+-					a->encap.qinq.svlan.dei,
+-					a->encap.qinq.svlan.vid,
+-					a->encap.qinq.cvlan.pcp,
+-					a->encap.qinq.cvlan.dei,
+-					a->encap.qinq.cvlan.vid);
+-				break;
+-
+-			case RTE_TABLE_ACTION_ENCAP_MPLS:
+-				fprintf(f, "mpls %s ", (a->encap.mpls.unicast) ?
+-					"unicast " : "multicast ");
+-				ether_addr_show(f, &a->encap.mpls.ether.da);
+-				fprintf(f, " ");
+-				ether_addr_show(f, &a->encap.mpls.ether.sa);
+-				fprintf(f, " ");
+-				for (i = 0; i < a->encap.mpls.mpls_count; i++) {
+-					struct rte_table_action_mpls_hdr *l =
+-						&a->encap.mpls.mpls[i];
+-
+-					fprintf(f, "label%u %u %u %u ",
+-						i,
+-						l->label,
+-						l->tc,
+-						l->ttl);
+-				}
+-				break;
+-
+-			case RTE_TABLE_ACTION_ENCAP_PPPOE:
+-				fprintf(f, "pppoe ");
+-				ether_addr_show(f, &a->encap.pppoe.ether.da);
+-				fprintf(f, " ");
+-				ether_addr_show(f, &a->encap.pppoe.ether.sa);
+-				fprintf(f, " %u ", a->encap.pppoe.pppoe.session_id);
+-				break;
+-
+-			case RTE_TABLE_ACTION_ENCAP_VXLAN:
+-				fprintf(f, "vxlan ether ");
+-				ether_addr_show(f, &a->encap.vxlan.ether.da);
+-				fprintf(f, " ");
+-				ether_addr_show(f, &a->encap.vxlan.ether.sa);
+-				if (table->ap->params.encap.vxlan.vlan)
+-					fprintf(f, " vlan pcp %u dei %u vid %u ",
+-						a->encap.vxlan.vlan.pcp,
+-						a->encap.vxlan.vlan.dei,
+-						a->encap.vxlan.vlan.vid);
+-				if (table->ap->params.encap.vxlan.ip_version) {
+-					fprintf(f, " ipv4 ");
+-					ipv4_addr_show(f, a->encap.vxlan.ipv4.sa);
+-					fprintf(f, " ");
+-					ipv4_addr_show(f, a->encap.vxlan.ipv4.da);
+-					fprintf(f, " %u %u ",
+-						(uint32_t)a->encap.vxlan.ipv4.dscp,
+-						(uint32_t)a->encap.vxlan.ipv4.ttl);
+-				} else {
+-					fprintf(f, " ipv6 ");
+-					ipv6_addr_show(f, &a->encap.vxlan.ipv6.sa);
+-					fprintf(f, " ");
+-					ipv6_addr_show(f, &a->encap.vxlan.ipv6.da);
+-					fprintf(f, " %u %u %u ",
+-						a->encap.vxlan.ipv6.flow_label,
+-						(uint32_t)a->encap.vxlan.ipv6.dscp,
+-						(uint32_t)a->encap.vxlan.ipv6.hop_limit);
+-					fprintf(f, " udp %u %u vxlan %u ",
+-						a->encap.vxlan.udp.sp,
+-						a->encap.vxlan.udp.dp,
+-						a->encap.vxlan.vxlan.vni);
+-				}
+-				break;
+-
+-			default:
+-				fprintf(f, "unknown ");
+-			}
+-		}
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
+-			fprintf(f, "nat %s ", (a->nat.ip_version) ? "ipv4 " : "ipv6 ");
+-			if (a->nat.ip_version)
+-				ipv4_addr_show(f, a->nat.addr.ipv4);
+-			else
+-				ipv6_addr_show(f, &a->nat.addr.ipv6);
+-			fprintf(f, " %u ", (uint32_t)(a->nat.port));
+-		}
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_TTL))
+-			fprintf(f, "ttl %s ", (a->ttl.decrement) ? "dec" : "keep");
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_STATS))
+-			fprintf(f, "stats ");
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_TIME))
+-			fprintf(f, "time ");
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO))
+-			fprintf(f, "sym_crypto ");
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_TAG))
+-			fprintf(f, "tag %u ", a->tag.tag);
+-
+-		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP))
+-			fprintf(f, "decap %u ", a->decap.n);
+-
+-		/* end */
+-		fprintf(f, "\n");
+-	}
+-
+-	/* Write table default rule to file. */
+-	if (table->rule_default) {
+-		struct table_rule_action *a = &table->rule_default->action;
+-
+-		fprintf(f, "# match default action fwd ");
+-
+-		switch (a->fwd.action) {
+-		case RTE_PIPELINE_ACTION_DROP:
+-			fprintf(f, "drop ");
+-			break;
+-
+-		case RTE_PIPELINE_ACTION_PORT:
+-			fprintf(f, "port %u ", a->fwd.id);
+-			break;
+-
+-		case RTE_PIPELINE_ACTION_PORT_META:
+-			fprintf(f, "meta ");
+-			break;
+-
+-		case RTE_PIPELINE_ACTION_TABLE:
+-		default:
+-			fprintf(f, "table %u ", a->fwd.id);
+-		}
+-	} else
+-		fprintf(f, "# match default action fwd drop ");
+-
+-	fprintf(f, "\n");
+-
+-	/* Close file. */
+-	fclose(f);
 -
 -	return 0;
 -}
 -
--/*
-- * Port SINK
-- */
--#ifdef RTE_PORT_STATS_COLLECT
+-static const char cmd_pipeline_table_rule_show_help[] =
+-"pipeline <pipeline_name> table <table_id> rule show\n"
+-"     file <file_name>\n";
 -
--#define RTE_PORT_SINK_STATS_PKTS_IN_ADD(port, val) \
--	(port->stats.n_pkts_in += val)
--#define RTE_PORT_SINK_STATS_PKTS_DROP_ADD(port, val) \
--	(port->stats.n_pkts_drop += val)
+-static void
+-cmd_pipeline_table_rule_show(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	char *file_name = NULL, *pipeline_name;
+-	uint32_t table_id;
+-	int status;
 -
--#else
+-	if (n_tokens != 8) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
 -
--#define RTE_PORT_SINK_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_SINK_STATS_PKTS_DROP_ADD(port, val)
+-	pipeline_name = tokens[1];
 -
--#endif
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
 -
--struct rte_port_sink {
--	struct rte_port_out_stats stats;
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
 -
--	/* PCAP dumper handle and pkts number */
--	void *dumper;
--	uint32_t max_pkts;
--	uint32_t pkt_index;
--	uint32_t dump_finish;
--};
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
 -
--#ifdef RTE_PORT_PCAP
+-	if (strcmp(tokens[5], "show") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "show");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "file") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "file");
+-		return;
+-	}
+-
+-	file_name = tokens[7];
+-
+-	status = table_rule_show(pipeline_name, table_id, file_name);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-static const char cmd_pipeline_table_rule_stats_read_help[] =
+-"pipeline <pipeline_name> table <table_id> rule read stats [clear]\n"
+-"     match <match>\n";
+-
+-static void
+-cmd_pipeline_table_rule_stats_read(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct table_rule_match m;
+-	struct rte_table_action_stats_counters stats;
+-	char *pipeline_name;
+-	uint32_t table_id, n_tokens_parsed;
+-	int clear = 0, status;
+-
+-	if (n_tokens < 7) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "read") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "stats") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
+-		return;
+-	}
+-
+-	n_tokens -= 7;
+-	tokens += 7;
+-
+-	/* clear */
+-	if (n_tokens && (strcmp(tokens[0], "clear") == 0)) {
+-		clear = 1;
+-
+-		n_tokens--;
+-		tokens++;
+-	}
+-
+-	/* match */
+-	if ((n_tokens == 0) || strcmp(tokens[0], "match")) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
+-		return;
+-	}
+-
+-	n_tokens_parsed = parse_match(tokens,
+-		n_tokens,
+-		out,
+-		out_size,
+-		&m);
+-	if (n_tokens_parsed == 0)
+-		return;
+-	n_tokens -= n_tokens_parsed;
+-	tokens += n_tokens_parsed;
+-
+-	/* end */
+-	if (n_tokens) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
+-		return;
+-	}
+-
+-	/* Read table rule stats. */
+-	status = pipeline_table_rule_stats_read(pipeline_name,
+-		table_id,
+-		&m,
+-		&stats,
+-		clear);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-
+-	/* Print stats. */
+-	if (stats.n_packets_valid && stats.n_bytes_valid)
+-		snprintf(out, out_size, "Packets: %" PRIu64 "; Bytes: %" PRIu64 "\n",
+-			stats.n_packets,
+-			stats.n_bytes);
+-
+-	if (stats.n_packets_valid && !stats.n_bytes_valid)
+-		snprintf(out, out_size, "Packets: %" PRIu64 "; Bytes: N/A\n",
+-			stats.n_packets);
+-
+-	if (!stats.n_packets_valid && stats.n_bytes_valid)
+-		snprintf(out, out_size, "Packets: N/A; Bytes: %" PRIu64 "\n",
+-			stats.n_bytes);
+-
+-	if (!stats.n_packets_valid && !stats.n_bytes_valid)
+-		snprintf(out, out_size, "Packets: N/A ; Bytes: N/A\n");
+-}
+-
+-static const char cmd_pipeline_table_meter_profile_add_help[] =
+-"pipeline <pipeline_name> table <table_id> meter profile <meter_profile_id>\n"
+-"   add srtcm cir <cir> cbs <cbs> ebs <ebs>\n"
+-"   | trtcm cir <cir> pir <pir> cbs <cbs> pbs <pbs>\n";
+-
+-static void
+-cmd_pipeline_table_meter_profile_add(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct rte_table_action_meter_profile p;
+-	char *pipeline_name;
+-	uint32_t table_id, meter_profile_id;
+-	int status;
+-
+-	if (n_tokens < 9) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "meter") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "meter");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "profile") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&meter_profile_id, tokens[6]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "meter_profile_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[7], "add") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "add");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[8], "srtcm") == 0) {
+-		if (n_tokens != 15) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH,
+-				tokens[0]);
+-			return;
+-		}
+-
+-		p.alg = RTE_TABLE_ACTION_METER_SRTCM;
+-
+-		if (strcmp(tokens[9], "cir") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cir");
+-			return;
+-		}
+-
+-		if (parser_read_uint64(&p.srtcm.cir, tokens[10]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "cir");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[11], "cbs") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cbs");
+-			return;
+-		}
+-
+-		if (parser_read_uint64(&p.srtcm.cbs, tokens[12]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "cbs");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[13], "ebs") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "ebs");
+-			return;
+-		}
+-
+-		if (parser_read_uint64(&p.srtcm.ebs, tokens[14]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "ebs");
+-			return;
+-		}
+-	} else if (strcmp(tokens[8], "trtcm") == 0) {
+-		if (n_tokens != 17) {
+-			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-			return;
+-		}
+-
+-		p.alg = RTE_TABLE_ACTION_METER_TRTCM;
+-
+-		if (strcmp(tokens[9], "cir") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cir");
+-			return;
+-		}
+-
+-		if (parser_read_uint64(&p.trtcm.cir, tokens[10]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "cir");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[11], "pir") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pir");
+-			return;
+-		}
+-
+-		if (parser_read_uint64(&p.trtcm.pir, tokens[12]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "pir");
+-			return;
+-		}
+-		if (strcmp(tokens[13], "cbs") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cbs");
+-			return;
+-		}
+-
+-		if (parser_read_uint64(&p.trtcm.cbs, tokens[14]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "cbs");
+-			return;
+-		}
+-
+-		if (strcmp(tokens[15], "pbs") != 0) {
+-			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pbs");
+-			return;
+-		}
+-
+-		if (parser_read_uint64(&p.trtcm.pbs, tokens[16]) != 0) {
+-			snprintf(out, out_size, MSG_ARG_INVALID, "pbs");
+-			return;
+-		}
+-	} else {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	status = pipeline_table_mtr_profile_add(pipeline_name,
+-		table_id,
+-		meter_profile_id,
+-		&p);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_pipeline_table_meter_profile_delete_help[] =
+-"pipeline <pipeline_name> table <table_id>\n"
+-"   meter profile <meter_profile_id> delete\n";
+-
+-static void
+-cmd_pipeline_table_meter_profile_delete(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	char *pipeline_name;
+-	uint32_t table_id, meter_profile_id;
+-	int status;
+-
+-	if (n_tokens != 8) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "meter") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "meter");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "profile") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&meter_profile_id, tokens[6]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "meter_profile_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[7], "delete") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "delete");
+-		return;
+-	}
+-
+-	status = pipeline_table_mtr_profile_delete(pipeline_name,
+-		table_id,
+-		meter_profile_id);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_pipeline_table_rule_meter_read_help[] =
+-"pipeline <pipeline_name> table <table_id> rule read meter [clear]\n"
+-"     match <match>\n";
+-
+-static void
+-cmd_pipeline_table_rule_meter_read(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct table_rule_match m;
+-	struct rte_table_action_mtr_counters stats;
+-	char *pipeline_name;
+-	uint32_t table_id, n_tokens_parsed;
+-	int clear = 0, status;
+-
+-	if (n_tokens < 7) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "read") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "meter") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "meter");
+-		return;
+-	}
+-
+-	n_tokens -= 7;
+-	tokens += 7;
+-
+-	/* clear */
+-	if (n_tokens && (strcmp(tokens[0], "clear") == 0)) {
+-		clear = 1;
+-
+-		n_tokens--;
+-		tokens++;
+-	}
+-
+-	/* match */
+-	if ((n_tokens == 0) || strcmp(tokens[0], "match")) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
+-		return;
+-	}
+-
+-	n_tokens_parsed = parse_match(tokens,
+-		n_tokens,
+-		out,
+-		out_size,
+-		&m);
+-	if (n_tokens_parsed == 0)
+-		return;
+-	n_tokens -= n_tokens_parsed;
+-	tokens += n_tokens_parsed;
+-
+-	/* end */
+-	if (n_tokens) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
+-		return;
+-	}
+-
+-	/* Read table rule meter stats. */
+-	status = pipeline_table_rule_mtr_read(pipeline_name,
+-		table_id,
+-		&m,
+-		&stats,
+-		clear);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-
+-	/* Print stats. */
+-}
+-
+-
+-static const char cmd_pipeline_table_dscp_help[] =
+-"pipeline <pipeline_name> table <table_id> dscp <file_name>\n"
+-"\n"
+-" File <file_name>:\n"
+-"   - exactly 64 lines\n"
+-"   - line format: <tc_id> <tc_queue_id> <color>, with <color> as: g | y | r\n";
 -
 -static int
--pcap_sink_open(struct rte_port_sink *port,
+-load_dscp_table(struct rte_table_action_dscp_table *dscp_table,
 -	const char *file_name,
--	uint32_t max_n_pkts)
+-	uint32_t *line_number)
 -{
--	pcap_t *tx_pcap;
--	pcap_dumper_t *pcap_dumper;
+-	FILE *f = NULL;
+-	uint32_t dscp, l;
 -
--	/** Open a dead pcap handler for opening dumper file */
--	tx_pcap = pcap_open_dead(DLT_EN10MB, 65535);
--	if (tx_pcap == NULL) {
--		PORT_LOG(ERR, "Cannot open pcap dead handler");
--		return -1;
+-	/* Check input arguments */
+-	if ((dscp_table == NULL) ||
+-		(file_name == NULL) ||
+-		(line_number == NULL)) {
+-		if (line_number)
+-			*line_number = 0;
+-		return -EINVAL;
 -	}
 -
--	/* The dumper is created using the previous pcap_t reference */
--	pcap_dumper = pcap_dump_open(tx_pcap, file_name);
--	if (pcap_dumper == NULL) {
--		PORT_LOG(ERR, "Failed to open pcap file "
--			"\"%s\" for writing", file_name);
--		return -1;
+-	/* Open input file */
+-	f = fopen(file_name, "r");
+-	if (f == NULL) {
+-		*line_number = 0;
+-		return -EINVAL;
 -	}
 -
--	port->dumper = pcap_dumper;
--	port->max_pkts = max_n_pkts;
--	port->pkt_index = 0;
--	port->dump_finish = 0;
+-	/* Read file */
+-	for (dscp = 0, l = 1; ; l++) {
+-		char line[64];
+-		char *tokens[3];
+-		enum rte_color color;
+-		uint32_t tc_id, tc_queue_id, n_tokens = RTE_DIM(tokens);
 -
--	PORT_LOG(INFO, "Ready to dump packets to file \"%s\"",
--		file_name);
+-		if (fgets(line, sizeof(line), f) == NULL)
+-			break;
 -
+-		if (is_comment(line))
+-			continue;
+-
+-		if (parse_tokenize_string(line, tokens, &n_tokens)) {
+-			*line_number = l;
+-			fclose(f);
+-			return -EINVAL;
+-		}
+-
+-		if (n_tokens == 0)
+-			continue;
+-
+-		if ((dscp >= RTE_DIM(dscp_table->entry)) ||
+-			(n_tokens != RTE_DIM(tokens)) ||
+-			parser_read_uint32(&tc_id, tokens[0]) ||
+-			(tc_id >= RTE_TABLE_ACTION_TC_MAX) ||
+-			parser_read_uint32(&tc_queue_id, tokens[1]) ||
+-			(tc_queue_id >= RTE_TABLE_ACTION_TC_QUEUE_MAX) ||
+-			(strlen(tokens[2]) != 1)) {
+-			*line_number = l;
+-			fclose(f);
+-			return -EINVAL;
+-		}
+-
+-		switch (tokens[2][0]) {
+-		case 'g':
+-		case 'G':
+-			color = RTE_COLOR_GREEN;
+-			break;
+-
+-		case 'y':
+-		case 'Y':
+-			color = RTE_COLOR_YELLOW;
+-			break;
+-
+-		case 'r':
+-		case 'R':
+-			color = RTE_COLOR_RED;
+-			break;
+-
+-		default:
+-			*line_number = l;
+-			fclose(f);
+-			return -EINVAL;
+-		}
+-
+-		dscp_table->entry[dscp].tc_id = tc_id;
+-		dscp_table->entry[dscp].tc_queue_id = tc_queue_id;
+-		dscp_table->entry[dscp].color = color;
+-		dscp++;
+-	}
+-
+-	/* Close file */
+-	fclose(f);
 -	return 0;
 -}
 -
 -static void
--pcap_sink_write_pkt(struct rte_port_sink *port, struct rte_mbuf *mbuf)
+-cmd_pipeline_table_dscp(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
 -{
--	uint8_t *pcap_dumper = (port->dumper);
--	struct pcap_pkthdr pcap_hdr;
--	uint8_t jumbo_pkt_buf[RTE_ETHER_MAX_JUMBO_FRAME_LEN];
--	uint8_t *pkt;
+-	struct rte_table_action_dscp_table dscp_table;
+-	char *pipeline_name, *file_name;
+-	uint32_t table_id, line_number;
+-	int status;
 -
--	/* Maximum num packets already reached */
--	if (port->dump_finish)
+-	if (n_tokens != 6) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
 -		return;
--
--	pkt = rte_pktmbuf_mtod(mbuf, uint8_t *);
--
--	pcap_hdr.len = mbuf->pkt_len;
--	pcap_hdr.caplen = pcap_hdr.len;
--	gettimeofday(&(pcap_hdr.ts), NULL);
--
--	if (mbuf->nb_segs > 1) {
--		struct rte_mbuf *jumbo_mbuf;
--		uint32_t pkt_index = 0;
--
--		/* if packet size longer than RTE_ETHER_MAX_JUMBO_FRAME_LEN,
--		 * ignore it.
--		 */
--		if (mbuf->pkt_len > RTE_ETHER_MAX_JUMBO_FRAME_LEN)
--			return;
--
--		for (jumbo_mbuf = mbuf; jumbo_mbuf != NULL;
--				jumbo_mbuf = jumbo_mbuf->next) {
--			rte_memcpy(&jumbo_pkt_buf[pkt_index],
--				rte_pktmbuf_mtod(jumbo_mbuf, uint8_t *),
--				jumbo_mbuf->data_len);
--			pkt_index += jumbo_mbuf->data_len;
--		}
--
--		jumbo_pkt_buf[pkt_index] = '\0';
--
--		pkt = jumbo_pkt_buf;
 -	}
 -
--	pcap_dump(pcap_dumper, &pcap_hdr, pkt);
+-	pipeline_name = tokens[1];
 -
--	port->pkt_index++;
--
--	if ((port->max_pkts != 0) && (port->pkt_index >= port->max_pkts)) {
--		port->dump_finish = 1;
--		PORT_LOG(INFO, "Dumped %u packets to file",
--				port->pkt_index);
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
+-		return;
 -	}
 -
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "dscp") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "dscp");
+-		return;
+-	}
+-
+-	file_name = tokens[5];
+-
+-	status = load_dscp_table(&dscp_table, file_name, &line_number);
+-	if (status) {
+-		snprintf(out, out_size, MSG_FILE_ERR, file_name, line_number);
+-		return;
+-	}
+-
+-	status = pipeline_table_dscp_table_update(pipeline_name,
+-		table_id,
+-		UINT64_MAX,
+-		&dscp_table);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
 -}
 -
--#define PCAP_SINK_OPEN(port, file_name, max_n_pkts)		\
--	pcap_sink_open(port, file_name, max_n_pkts)
 -
--#define PCAP_SINK_WRITE_PKT(port, mbuf)				\
--	pcap_sink_write_pkt(port, mbuf)
+-static const char cmd_pipeline_table_rule_ttl_read_help[] =
+-"pipeline <pipeline_name> table <table_id> rule read ttl [clear]\n"
+-"     match <match>\n";
 -
--#define PCAP_SINK_FLUSH_PKT(dumper)				\
--do {								\
--	if (dumper)						\
--		pcap_dump_flush((pcap_dumper_t *)dumper);	\
--} while (0)
--
--#define PCAP_SINK_CLOSE(dumper)					\
--do {								\
--	if (dumper)						\
--		pcap_dump_close((pcap_dumper_t *)dumper);	\
--} while (0)
--
--#else
--
--#define PCAP_SINK_OPEN(port, file_name, max_n_pkts)		\
--__extension__ ({						\
--	int _ret = 0;						\
--								\
--	if (file_name) {					\
--		PORT_LOG(ERR, "Sink port field "		\
--			"\"file_name\" is not NULL.");	\
--		_ret = -1;					\
--	}							\
--								\
--	_ret;							\
--})
--
--#define PCAP_SINK_WRITE_PKT(port, mbuf) {}
--
--#define PCAP_SINK_FLUSH_PKT(dumper)
--
--#define PCAP_SINK_CLOSE(dumper)
--
--#endif
--
--static void *
--rte_port_sink_create(void *params, int socket_id)
+-static void
+-cmd_pipeline_table_rule_ttl_read(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
 -{
--	struct rte_port_sink *port;
--	struct rte_port_sink_params *p = params;
+-	struct table_rule_match m;
+-	struct rte_table_action_ttl_counters stats;
+-	char *pipeline_name;
+-	uint32_t table_id, n_tokens_parsed;
+-	int clear = 0, status;
+-
+-	if (n_tokens < 7) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "read") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "ttl") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "ttl");
+-		return;
+-	}
+-
+-	n_tokens -= 7;
+-	tokens += 7;
+-
+-	/* clear */
+-	if (n_tokens && (strcmp(tokens[0], "clear") == 0)) {
+-		clear = 1;
+-
+-		n_tokens--;
+-		tokens++;
+-	}
+-
+-	/* match */
+-	if ((n_tokens == 0) || strcmp(tokens[0], "match")) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
+-		return;
+-	}
+-
+-	n_tokens_parsed = parse_match(tokens,
+-		n_tokens,
+-		out,
+-		out_size,
+-		&m);
+-	if (n_tokens_parsed == 0)
+-		return;
+-	n_tokens -= n_tokens_parsed;
+-	tokens += n_tokens_parsed;
+-
+-	/* end */
+-	if (n_tokens) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
+-		return;
+-	}
+-
+-	/* Read table rule TTL stats. */
+-	status = pipeline_table_rule_ttl_read(pipeline_name,
+-		table_id,
+-		&m,
+-		&stats,
+-		clear);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-
+-	/* Print stats. */
+-	snprintf(out, out_size, "Packets: %" PRIu64 "\n",
+-		stats.n_packets);
+-}
+-
+-static const char cmd_pipeline_table_rule_time_read_help[] =
+-"pipeline <pipeline_name> table <table_id> rule read time\n"
+-"     match <match>\n";
+-
+-static void
+-cmd_pipeline_table_rule_time_read(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct table_rule_match m;
+-	char *pipeline_name;
+-	uint64_t timestamp;
+-	uint32_t table_id, n_tokens_parsed;
+-	int status;
+-
+-	if (n_tokens < 7) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	pipeline_name = tokens[1];
+-
+-	if (strcmp(tokens[2], "table") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[4], "rule") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[5], "read") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[6], "time") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "time");
+-		return;
+-	}
+-
+-	n_tokens -= 7;
+-	tokens += 7;
+-
+-	/* match */
+-	if ((n_tokens == 0) || strcmp(tokens[0], "match")) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
+-		return;
+-	}
+-
+-	n_tokens_parsed = parse_match(tokens,
+-		n_tokens,
+-		out,
+-		out_size,
+-		&m);
+-	if (n_tokens_parsed == 0)
+-		return;
+-	n_tokens -= n_tokens_parsed;
+-	tokens += n_tokens_parsed;
+-
+-	/* end */
+-	if (n_tokens) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
+-		return;
+-	}
+-
+-	/* Read table rule timestamp. */
+-	status = pipeline_table_rule_time_read(pipeline_name,
+-		table_id,
+-		&m,
+-		&timestamp);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
+-		return;
+-	}
+-
+-	/* Print stats. */
+-	snprintf(out, out_size, "Packets: %" PRIu64 "\n", timestamp);
+-}
+-
+-static const char cmd_thread_pipeline_enable_help[] =
+-"thread <thread_id> pipeline <pipeline_name> enable\n";
+-
+-static void
+-cmd_thread_pipeline_enable(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	char *pipeline_name;
+-	uint32_t thread_id;
+-	int status;
+-
+-	if (n_tokens != 5) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&thread_id, tokens[1]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "thread_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[2], "pipeline") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pipeline");
+-		return;
+-	}
+-
+-	pipeline_name = tokens[3];
+-
+-	if (strcmp(tokens[4], "enable") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "enable");
+-		return;
+-	}
+-
+-	status = thread_pipeline_enable(thread_id, pipeline_name);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL, "thread pipeline enable");
+-		return;
+-	}
+-}
+-
+-
+-static const char cmd_thread_pipeline_disable_help[] =
+-"thread <thread_id> pipeline <pipeline_name> disable\n";
+-
+-static void
+-cmd_thread_pipeline_disable(char **tokens,
+-	uint32_t n_tokens,
+-	char *out,
+-	size_t out_size)
+-{
+-	char *pipeline_name;
+-	uint32_t thread_id;
+-	int status;
+-
+-	if (n_tokens != 5) {
+-		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
+-		return;
+-	}
+-
+-	if (parser_read_uint32(&thread_id, tokens[1]) != 0) {
+-		snprintf(out, out_size, MSG_ARG_INVALID, "thread_id");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[2], "pipeline") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pipeline");
+-		return;
+-	}
+-
+-	pipeline_name = tokens[3];
+-
+-	if (strcmp(tokens[4], "disable") != 0) {
+-		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "disable");
+-		return;
+-	}
+-
+-	status = thread_pipeline_disable(thread_id, pipeline_name);
+-	if (status) {
+-		snprintf(out, out_size, MSG_CMD_FAIL,
+-			"thread pipeline disable");
+-		return;
+-	}
+-}
+-
+-static void
+-cmd_help(char **tokens, uint32_t n_tokens, char *out, size_t out_size)
+-{
+-	tokens++;
+-	n_tokens--;
+-
+-	if (n_tokens == 0) {
+-		snprintf(out, out_size,
+-			"Type 'help <command>' for details on each command.\n\n"
+-			"List of commands:\n"
+-			"\tmempool\n"
+-			"\tlink\n"
+-			"\tswq\n"
+-			"\ttmgr subport profile\n"
+-			"\ttmgr pipe profile\n"
+-			"\ttmgr\n"
+-			"\ttmgr subport\n"
+-			"\ttmgr subport pipe\n"
+-			"\ttap\n"
+-			"\tport in action profile\n"
+-			"\ttable action profile\n"
+-			"\tpipeline\n"
+-			"\tpipeline port in\n"
+-			"\tpipeline port out\n"
+-			"\tpipeline table\n"
+-			"\tpipeline port in table\n"
+-			"\tpipeline port in stats\n"
+-			"\tpipeline port in enable\n"
+-			"\tpipeline port in disable\n"
+-			"\tpipeline port out stats\n"
+-			"\tpipeline table stats\n"
+-			"\tpipeline table rule add\n"
+-			"\tpipeline table rule add default\n"
+-			"\tpipeline table rule add bulk\n"
+-			"\tpipeline table rule delete\n"
+-			"\tpipeline table rule delete default\n"
+-			"\tpipeline table rule show\n"
+-			"\tpipeline table rule stats read\n"
+-			"\tpipeline table meter profile add\n"
+-			"\tpipeline table meter profile delete\n"
+-			"\tpipeline table rule meter read\n"
+-			"\tpipeline table dscp\n"
+-			"\tpipeline table rule ttl read\n"
+-			"\tpipeline table rule time read\n"
+-			"\tthread pipeline enable\n"
+-			"\tthread pipeline disable\n\n");
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "mempool") == 0) {
+-		snprintf(out, out_size, "\n%s\n", cmd_mempool_help);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "link") == 0) {
+-		snprintf(out, out_size, "\n%s\n", cmd_link_help);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "swq") == 0) {
+-		snprintf(out, out_size, "\n%s\n", cmd_swq_help);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "tmgr") == 0) {
+-		if (n_tokens == 1) {
+-			snprintf(out, out_size, "\n%s\n", cmd_tmgr_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 2) &&
+-			(strcmp(tokens[1], "subport")) == 0) {
+-			snprintf(out, out_size, "\n%s\n", cmd_tmgr_subport_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 3) &&
+-			(strcmp(tokens[1], "subport") == 0) &&
+-			(strcmp(tokens[2], "profile") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_tmgr_subport_profile_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 3) &&
+-			(strcmp(tokens[1], "subport") == 0) &&
+-			(strcmp(tokens[2], "pipe") == 0)) {
+-			snprintf(out, out_size, "\n%s\n", cmd_tmgr_subport_pipe_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 3) &&
+-			(strcmp(tokens[1], "pipe") == 0) &&
+-			(strcmp(tokens[2], "profile") == 0)) {
+-			snprintf(out, out_size, "\n%s\n", cmd_tmgr_pipe_profile_help);
+-			return;
+-		}
+-	}
+-
+-	if (strcmp(tokens[0], "tap") == 0) {
+-		snprintf(out, out_size, "\n%s\n", cmd_tap_help);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "cryptodev") == 0) {
+-		snprintf(out, out_size, "\n%s\n", cmd_cryptodev_help);
+-		return;
+-	}
+-
+-	if ((n_tokens == 4) &&
+-		(strcmp(tokens[0], "port") == 0) &&
+-		(strcmp(tokens[1], "in") == 0) &&
+-		(strcmp(tokens[2], "action") == 0) &&
+-		(strcmp(tokens[3], "profile") == 0)) {
+-		snprintf(out, out_size, "\n%s\n", cmd_port_in_action_profile_help);
+-		return;
+-	}
+-
+-	if ((n_tokens == 3) &&
+-		(strcmp(tokens[0], "table") == 0) &&
+-		(strcmp(tokens[1], "action") == 0) &&
+-		(strcmp(tokens[2], "profile") == 0)) {
+-		snprintf(out, out_size, "\n%s\n", cmd_table_action_profile_help);
+-		return;
+-	}
+-
+-	if ((strcmp(tokens[0], "pipeline") == 0) && (n_tokens == 1)) {
+-		snprintf(out, out_size, "\n%s\n", cmd_pipeline_help);
+-		return;
+-	}
+-
+-	if ((strcmp(tokens[0], "pipeline") == 0) &&
+-		(strcmp(tokens[1], "port") == 0)) {
+-		if ((n_tokens == 3) && (strcmp(tokens[2], "in")) == 0) {
+-			snprintf(out, out_size, "\n%s\n", cmd_pipeline_port_in_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 3) && (strcmp(tokens[2], "out")) == 0) {
+-			snprintf(out, out_size, "\n%s\n", cmd_pipeline_port_out_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 4) &&
+-			(strcmp(tokens[2], "in") == 0) &&
+-			(strcmp(tokens[3], "table") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_port_in_table_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 4) &&
+-			(strcmp(tokens[2], "in") == 0) &&
+-			(strcmp(tokens[3], "stats") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_port_in_stats_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 4) &&
+-			(strcmp(tokens[2], "in") == 0) &&
+-			(strcmp(tokens[3], "enable") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_port_in_enable_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 4) &&
+-			(strcmp(tokens[2], "in") == 0) &&
+-			(strcmp(tokens[3], "disable") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_port_in_disable_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 4) &&
+-			(strcmp(tokens[2], "out") == 0) &&
+-			(strcmp(tokens[3], "stats") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_port_out_stats_help);
+-			return;
+-		}
+-	}
+-
+-	if ((strcmp(tokens[0], "pipeline") == 0) &&
+-		(strcmp(tokens[1], "table") == 0)) {
+-		if (n_tokens == 2) {
+-			snprintf(out, out_size, "\n%s\n", cmd_pipeline_table_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 3) && strcmp(tokens[2], "stats") == 0) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_stats_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 3) && strcmp(tokens[2], "dscp") == 0) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_dscp_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 4) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "add") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_add_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 5) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "add") == 0) &&
+-			(strcmp(tokens[4], "default") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_add_default_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 5) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "add") == 0) &&
+-			(strcmp(tokens[4], "bulk") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_add_bulk_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 4) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "delete") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_delete_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 5) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "delete") == 0) &&
+-			(strcmp(tokens[4], "default") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_delete_default_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 4) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "show") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_show_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 5) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "stats") == 0) &&
+-			(strcmp(tokens[4], "read") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_stats_read_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 5) &&
+-			(strcmp(tokens[2], "meter") == 0) &&
+-			(strcmp(tokens[3], "profile") == 0) &&
+-			(strcmp(tokens[4], "add") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_meter_profile_add_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 5) &&
+-			(strcmp(tokens[2], "meter") == 0) &&
+-			(strcmp(tokens[3], "profile") == 0) &&
+-			(strcmp(tokens[4], "delete") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_meter_profile_delete_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 5) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "meter") == 0) &&
+-			(strcmp(tokens[4], "read") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_meter_read_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 5) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "ttl") == 0) &&
+-			(strcmp(tokens[4], "read") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_ttl_read_help);
+-			return;
+-		}
+-
+-		if ((n_tokens == 5) &&
+-			(strcmp(tokens[2], "rule") == 0) &&
+-			(strcmp(tokens[3], "time") == 0) &&
+-			(strcmp(tokens[4], "read") == 0)) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_pipeline_table_rule_time_read_help);
+-			return;
+-		}
+-	}
+-
+-	if ((n_tokens == 3) &&
+-		(strcmp(tokens[0], "thread") == 0) &&
+-		(strcmp(tokens[1], "pipeline") == 0)) {
+-		if (strcmp(tokens[2], "enable") == 0) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_thread_pipeline_enable_help);
+-			return;
+-		}
+-
+-		if (strcmp(tokens[2], "disable") == 0) {
+-			snprintf(out, out_size, "\n%s\n",
+-				cmd_thread_pipeline_disable_help);
+-			return;
+-		}
+-	}
+-
+-	snprintf(out, out_size, "Invalid command\n");
+-}
+-
+-void
+-cli_process(char *in, char *out, size_t out_size)
+-{
+-	char *tokens[CMD_MAX_TOKENS];
+-	uint32_t n_tokens = RTE_DIM(tokens);
+-	int status;
+-
+-	if (is_comment(in))
+-		return;
+-
+-	status = parse_tokenize_string(in, tokens, &n_tokens);
+-	if (status) {
+-		snprintf(out, out_size, MSG_ARG_TOO_MANY, "");
+-		return;
+-	}
+-
+-	if (n_tokens == 0)
+-		return;
+-
+-	if (strcmp(tokens[0], "help") == 0) {
+-		cmd_help(tokens, n_tokens, out, out_size);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "mempool") == 0) {
+-		cmd_mempool(tokens, n_tokens, out, out_size);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "link") == 0) {
+-		if (strcmp(tokens[1], "show") == 0) {
+-			cmd_link_show(tokens, n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		cmd_link(tokens, n_tokens, out, out_size);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "swq") == 0) {
+-		cmd_swq(tokens, n_tokens, out, out_size);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "tmgr") == 0) {
+-		if ((n_tokens >= 3) &&
+-			(strcmp(tokens[1], "subport") == 0) &&
+-			(strcmp(tokens[2], "profile") == 0)) {
+-			cmd_tmgr_subport_profile(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 3) &&
+-			(strcmp(tokens[1], "pipe") == 0) &&
+-			(strcmp(tokens[2], "profile") == 0)) {
+-			cmd_tmgr_pipe_profile(tokens, n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 5) &&
+-			(strcmp(tokens[2], "subport") == 0) &&
+-			(strcmp(tokens[4], "profile") == 0)) {
+-			cmd_tmgr_subport(tokens, n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 5) &&
+-			(strcmp(tokens[2], "subport") == 0) &&
+-			(strcmp(tokens[4], "pipe") == 0)) {
+-			cmd_tmgr_subport_pipe(tokens, n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		cmd_tmgr(tokens, n_tokens, out, out_size);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "tap") == 0) {
+-		cmd_tap(tokens, n_tokens, out, out_size);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "cryptodev") == 0) {
+-		cmd_cryptodev(tokens, n_tokens, out, out_size);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "port") == 0) {
+-		cmd_port_in_action_profile(tokens, n_tokens, out, out_size);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "table") == 0) {
+-		cmd_table_action_profile(tokens, n_tokens, out, out_size);
+-		return;
+-	}
+-
+-	if (strcmp(tokens[0], "pipeline") == 0) {
+-		if ((n_tokens >= 3) &&
+-			(strcmp(tokens[2], "period") == 0)) {
+-			cmd_pipeline(tokens, n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 5) &&
+-			(strcmp(tokens[2], "port") == 0) &&
+-			(strcmp(tokens[3], "in") == 0) &&
+-			(strcmp(tokens[4], "bsz") == 0)) {
+-			cmd_pipeline_port_in(tokens, n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 5) &&
+-			(strcmp(tokens[2], "port") == 0) &&
+-			(strcmp(tokens[3], "out") == 0) &&
+-			(strcmp(tokens[4], "bsz") == 0)) {
+-			cmd_pipeline_port_out(tokens, n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 4) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[3], "match") == 0)) {
+-			cmd_pipeline_table(tokens, n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 6) &&
+-			(strcmp(tokens[2], "port") == 0) &&
+-			(strcmp(tokens[3], "in") == 0) &&
+-			(strcmp(tokens[5], "table") == 0)) {
+-			cmd_pipeline_port_in_table(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 6) &&
+-			(strcmp(tokens[2], "port") == 0) &&
+-			(strcmp(tokens[3], "in") == 0) &&
+-			(strcmp(tokens[5], "stats") == 0)) {
+-			cmd_pipeline_port_in_stats(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 6) &&
+-			(strcmp(tokens[2], "port") == 0) &&
+-			(strcmp(tokens[3], "in") == 0) &&
+-			(strcmp(tokens[5], "enable") == 0)) {
+-			cmd_pipeline_port_in_enable(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 6) &&
+-			(strcmp(tokens[2], "port") == 0) &&
+-			(strcmp(tokens[3], "in") == 0) &&
+-			(strcmp(tokens[5], "disable") == 0)) {
+-			cmd_pipeline_port_in_disable(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 6) &&
+-			(strcmp(tokens[2], "port") == 0) &&
+-			(strcmp(tokens[3], "out") == 0) &&
+-			(strcmp(tokens[5], "stats") == 0)) {
+-			cmd_pipeline_port_out_stats(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 5) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "stats") == 0)) {
+-			cmd_pipeline_table_stats(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 7) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "rule") == 0) &&
+-			(strcmp(tokens[5], "add") == 0) &&
+-			(strcmp(tokens[6], "match") == 0)) {
+-			if ((n_tokens >= 8) &&
+-				(strcmp(tokens[7], "default") == 0)) {
+-				cmd_pipeline_table_rule_add_default(tokens,
+-					n_tokens, out, out_size);
+-				return;
+-			}
+-
+-			cmd_pipeline_table_rule_add(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 7) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "rule") == 0) &&
+-			(strcmp(tokens[5], "add") == 0) &&
+-			(strcmp(tokens[6], "bulk") == 0)) {
+-			cmd_pipeline_table_rule_add_bulk(tokens,
+-				n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 7) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "rule") == 0) &&
+-			(strcmp(tokens[5], "delete") == 0) &&
+-			(strcmp(tokens[6], "match") == 0)) {
+-			if ((n_tokens >= 8) &&
+-				(strcmp(tokens[7], "default") == 0)) {
+-				cmd_pipeline_table_rule_delete_default(tokens,
+-					n_tokens, out, out_size);
+-				return;
+-				}
+-
+-			cmd_pipeline_table_rule_delete(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 6) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "rule") == 0) &&
+-			(strcmp(tokens[5], "show") == 0)) {
+-			cmd_pipeline_table_rule_show(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 7) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "rule") == 0) &&
+-			(strcmp(tokens[5], "read") == 0) &&
+-			(strcmp(tokens[6], "stats") == 0)) {
+-			cmd_pipeline_table_rule_stats_read(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 8) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "meter") == 0) &&
+-			(strcmp(tokens[5], "profile") == 0) &&
+-			(strcmp(tokens[7], "add") == 0)) {
+-			cmd_pipeline_table_meter_profile_add(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 8) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "meter") == 0) &&
+-			(strcmp(tokens[5], "profile") == 0) &&
+-			(strcmp(tokens[7], "delete") == 0)) {
+-			cmd_pipeline_table_meter_profile_delete(tokens,
+-				n_tokens, out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 7) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "rule") == 0) &&
+-			(strcmp(tokens[5], "read") == 0) &&
+-			(strcmp(tokens[6], "meter") == 0)) {
+-			cmd_pipeline_table_rule_meter_read(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 5) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "dscp") == 0)) {
+-			cmd_pipeline_table_dscp(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 7) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "rule") == 0) &&
+-			(strcmp(tokens[5], "read") == 0) &&
+-			(strcmp(tokens[6], "ttl") == 0)) {
+-			cmd_pipeline_table_rule_ttl_read(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 7) &&
+-			(strcmp(tokens[2], "table") == 0) &&
+-			(strcmp(tokens[4], "rule") == 0) &&
+-			(strcmp(tokens[5], "read") == 0) &&
+-			(strcmp(tokens[6], "time") == 0)) {
+-			cmd_pipeline_table_rule_time_read(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-	}
+-
+-	if (strcmp(tokens[0], "thread") == 0) {
+-		if ((n_tokens >= 5) &&
+-			(strcmp(tokens[4], "enable") == 0)) {
+-			cmd_thread_pipeline_enable(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-
+-		if ((n_tokens >= 5) &&
+-			(strcmp(tokens[4], "disable") == 0)) {
+-			cmd_thread_pipeline_disable(tokens, n_tokens,
+-				out, out_size);
+-			return;
+-		}
+-	}
+-
+-	snprintf(out, out_size, MSG_CMD_UNKNOWN, tokens[0]);
+-}
+-
+-int
+-cli_script_process(const char *file_name,
+-	size_t msg_in_len_max,
+-	size_t msg_out_len_max)
+-{
+-	char *msg_in = NULL, *msg_out = NULL;
+-	FILE *f = NULL;
+-
+-	/* Check input arguments */
+-	if ((file_name == NULL) ||
+-		(strlen(file_name) == 0) ||
+-		(msg_in_len_max == 0) ||
+-		(msg_out_len_max == 0))
+-		return -EINVAL;
+-
+-	msg_in = malloc(msg_in_len_max + 1);
+-	msg_out = malloc(msg_out_len_max + 1);
+-	if ((msg_in == NULL) ||
+-		(msg_out == NULL)) {
+-		free(msg_out);
+-		free(msg_in);
+-		return -ENOMEM;
+-	}
+-
+-	/* Open input file */
+-	f = fopen(file_name, "r");
+-	if (f == NULL) {
+-		free(msg_out);
+-		free(msg_in);
+-		return -EIO;
+-	}
+-
+-	/* Read file */
+-	for ( ; ; ) {
+-		if (fgets(msg_in, msg_in_len_max + 1, f) == NULL)
+-			break;
+-
+-		printf("%s", msg_in);
+-		msg_out[0] = 0;
+-
+-		cli_process(msg_in,
+-			msg_out,
+-			msg_out_len_max);
+-
+-		if (strlen(msg_out))
+-			printf("%s", msg_out);
+-	}
+-
+-	/* Close file */
+-	fclose(f);
+-	free(msg_out);
+-	free(msg_in);
+-	return 0;
+-}
+-
+-static int
+-cli_rule_file_process(const char *file_name,
+-	size_t line_len_max,
+-	struct table_rule_list **rule_list,
+-	uint32_t *n_rules,
+-	uint32_t *line_number,
+-	char *out,
+-	size_t out_size)
+-{
+-	struct table_rule_list *list = NULL;
+-	char *line = NULL;
+-	FILE *f = NULL;
+-	uint32_t rule_id = 0, line_id = 0;
+-	int status = 0;
+-
+-	/* Check input arguments */
+-	if ((file_name == NULL) ||
+-		(strlen(file_name) == 0) ||
+-		(line_len_max == 0) ||
+-		(rule_list == NULL) ||
+-		(n_rules == NULL) ||
+-		(line_number == NULL) ||
+-		(out == NULL)) {
+-		status = -EINVAL;
+-		goto cli_rule_file_process_free;
+-	}
 -
 -	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--			RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-	list = malloc(sizeof(struct table_rule_list));
+-	if (list == NULL) {
+-		status = -ENOMEM;
+-		goto cli_rule_file_process_free;
+-	}
+-
+-	TAILQ_INIT(list);
+-
+-	line = malloc(line_len_max + 1);
+-	if (line == NULL) {
+-		status = -ENOMEM;
+-		goto cli_rule_file_process_free;
+-	}
+-
+-	/* Open file */
+-	f = fopen(file_name, "r");
+-	if (f == NULL) {
+-		status = -EIO;
+-		goto cli_rule_file_process_free;
+-	}
+-
+-	/* Read file */
+-	for (line_id = 1, rule_id = 0; ; line_id++) {
+-		char *tokens[CMD_MAX_TOKENS];
+-		struct table_rule *rule = NULL;
+-		uint32_t n_tokens, n_tokens_parsed, t0;
+-
+-		/* Read next line from file. */
+-		if (fgets(line, line_len_max + 1, f) == NULL)
+-			break;
+-
+-		/* Comment. */
+-		if (is_comment(line))
+-			continue;
+-
+-		/* Parse line. */
+-		n_tokens = RTE_DIM(tokens);
+-		status = parse_tokenize_string(line, tokens, &n_tokens);
+-		if (status) {
+-			status = -EINVAL;
+-			goto cli_rule_file_process_free;
+-		}
+-
+-		/* Empty line. */
+-		if (n_tokens == 0)
+-			continue;
+-		t0 = 0;
+-
+-		/* Rule alloc and insert. */
+-		rule = calloc(1, sizeof(struct table_rule));
+-		if (rule == NULL) {
+-			status = -ENOMEM;
+-			goto cli_rule_file_process_free;
+-		}
+-
+-		TAILQ_INSERT_TAIL(list, rule, node);
+-
+-		/* Rule match. */
+-		n_tokens_parsed = parse_match(tokens + t0,
+-			n_tokens - t0,
+-			out,
+-			out_size,
+-			&rule->match);
+-		if (n_tokens_parsed == 0) {
+-			status = -EINVAL;
+-			goto cli_rule_file_process_free;
+-		}
+-		t0 += n_tokens_parsed;
+-
+-		/* Rule action. */
+-		n_tokens_parsed = parse_table_action(tokens + t0,
+-			n_tokens - t0,
+-			out,
+-			out_size,
+-			&rule->action);
+-		if (n_tokens_parsed == 0) {
+-			status = -EINVAL;
+-			goto cli_rule_file_process_free;
+-		}
+-		t0 += n_tokens_parsed;
+-
+-		/* Line completed. */
+-		if (t0 < n_tokens) {
+-			status = -EINVAL;
+-			goto cli_rule_file_process_free;
+-		}
+-
+-		/* Increment rule count */
+-		rule_id++;
+-	}
+-
+-	/* Close file */
+-	fclose(f);
+-
+-	/* Memory free */
+-	free(line);
+-
+-	*rule_list = list;
+-	*n_rules = rule_id;
+-	*line_number = line_id;
+-	return 0;
+-
+-cli_rule_file_process_free:
+-	if (rule_list != NULL)
+-		*rule_list = NULL;
+-
+-	if (n_rules != NULL)
+-		*n_rules = rule_id;
+-
+-	if (line_number != NULL)
+-		*line_number = line_id;
+-
+-	if (list != NULL)
+-		for ( ; ; ) {
+-			struct table_rule *rule;
+-
+-			rule = TAILQ_FIRST(list);
+-			if (rule == NULL)
+-				break;
+-
+-			TAILQ_REMOVE(list, rule, node);
+-			free(rule);
+-		}
+-
+-	if (f)
+-		fclose(f);
+-	free(line);
+-	free(list);
+-
+-	return status;
+-}
+diff --git a/examples/ip_pipeline/cli.h b/examples/ip_pipeline/cli.h
+deleted file mode 100644
+index 992e4c3a4a..0000000000
+--- a/examples/ip_pipeline/cli.h
++++ /dev/null
+@@ -1,18 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_CLI_H__
+-#define __INCLUDE_CLI_H__
+-
+-#include <stddef.h>
+-
+-void
+-cli_process(char *in, char *out, size_t out_size);
+-
+-int
+-cli_script_process(const char *file_name,
+-	size_t msg_in_len_max,
+-	size_t msg_out_len_max);
+-
+-#endif
+diff --git a/examples/ip_pipeline/common.h b/examples/ip_pipeline/common.h
+deleted file mode 100644
+index 0886dfbe95..0000000000
+--- a/examples/ip_pipeline/common.h
++++ /dev/null
+@@ -1,12 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_COMMON_H_
+-#define _INCLUDE_COMMON_H_
+-
+-#ifndef NAME_SIZE
+-#define NAME_SIZE                                            64
+-#endif
+-
+-#endif /* _INCLUDE_COMMON_H_ */
+diff --git a/examples/ip_pipeline/conn.c b/examples/ip_pipeline/conn.c
+deleted file mode 100644
+index b2406b7af1..0000000000
+--- a/examples/ip_pipeline/conn.c
++++ /dev/null
+@@ -1,330 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <string.h>
+-#include <stdlib.h>
+-#include <stdio.h>
+-#include <unistd.h>
+-#include <sys/types.h>
+-
+-#include <sys/socket.h>
+-
+-#include <sys/epoll.h>
+-#include <netinet/in.h>
+-#include <arpa/inet.h>
+-#include <errno.h>
+-
+-#include <rte_string_fns.h>
+-
+-#include "conn.h"
+-
+-#define MSG_CMD_TOO_LONG "Command too long."
+-
+-struct conn {
+-	char *welcome;
+-	char *prompt;
+-	char *buf;
+-	char *msg_in;
+-	char *msg_out;
+-	size_t buf_size;
+-	size_t msg_in_len_max;
+-	size_t msg_out_len_max;
+-	size_t msg_in_len;
+-	int fd_server;
+-	int fd_client_group;
+-	conn_msg_handle_t msg_handle;
+-};
+-
+-struct conn *
+-conn_init(struct conn_params *p)
+-{
+-	struct sockaddr_in server_address;
+-	struct conn *conn;
+-	int fd_server, fd_client_group, status;
+-
+-	memset(&server_address, 0, sizeof(server_address));
+-
+-	/* Check input arguments */
+-	if ((p == NULL) ||
+-		(p->welcome == NULL) ||
+-		(p->prompt == NULL) ||
+-		(p->addr == NULL) ||
+-		(p->buf_size == 0) ||
+-		(p->msg_in_len_max == 0) ||
+-		(p->msg_out_len_max == 0) ||
+-		(p->msg_handle == NULL))
+-		return NULL;
+-
+-	status = inet_aton(p->addr, &server_address.sin_addr);
+-	if (status == 0)
+-		return NULL;
+-
+-	/* Memory allocation */
+-	conn = calloc(1, sizeof(struct conn));
+-	if (conn == NULL)
+-		return NULL;
+-
+-	conn->welcome = calloc(1, CONN_WELCOME_LEN_MAX + 1);
+-	conn->prompt = calloc(1, CONN_PROMPT_LEN_MAX + 1);
+-	conn->buf = calloc(1, p->buf_size);
+-	conn->msg_in = calloc(1, p->msg_in_len_max + 1);
+-	conn->msg_out = calloc(1, p->msg_out_len_max + 1);
+-
+-	if ((conn->welcome == NULL) ||
+-		(conn->prompt == NULL) ||
+-		(conn->buf == NULL) ||
+-		(conn->msg_in == NULL) ||
+-		(conn->msg_out == NULL)) {
+-		conn_free(conn);
 -		return NULL;
 -	}
 -
--	if (!p)
--		return port;
+-	/* Server socket */
+-	server_address.sin_family = AF_INET;
+-	server_address.sin_port = htons(p->port);
 -
--	if (p->file_name) {
--		int status = PCAP_SINK_OPEN(port, p->file_name,
--			p->max_n_pkts);
--
--		if (status < 0) {
--			rte_free(port);
--			port = NULL;
--		}
+-	fd_server = socket(AF_INET,
+-		SOCK_STREAM | SOCK_NONBLOCK,
+-		0);
+-	if (fd_server == -1) {
+-		conn_free(conn);
+-		return NULL;
 -	}
 -
--	return port;
+-	status = bind(fd_server,
+-		(struct sockaddr *) &server_address,
+-		sizeof(server_address));
+-	if (status == -1) {
+-		conn_free(conn);
+-		close(fd_server);
+-		return NULL;
+-	}
+-
+-	status = listen(fd_server, 16);
+-	if (status == -1) {
+-		conn_free(conn);
+-		close(fd_server);
+-		return NULL;
+-	}
+-
+-	/* Client group */
+-	fd_client_group = epoll_create(1);
+-	if (fd_client_group == -1) {
+-		conn_free(conn);
+-		close(fd_server);
+-		return NULL;
+-	}
+-
+-	/* Fill in */
+-	strlcpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX + 1);
+-	strlcpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX + 1);
+-	conn->buf_size = p->buf_size;
+-	conn->msg_in_len_max = p->msg_in_len_max;
+-	conn->msg_out_len_max = p->msg_out_len_max;
+-	conn->msg_in_len = 0;
+-	conn->fd_server = fd_server;
+-	conn->fd_client_group = fd_client_group;
+-	conn->msg_handle = p->msg_handle;
+-
+-	return conn;
 -}
 -
--static int
--rte_port_sink_tx(void *port, struct rte_mbuf *pkt)
+-void
+-conn_free(struct conn *conn)
 -{
--	struct rte_port_sink *p = port;
+-	if (conn == NULL)
+-		return;
 -
--	RTE_PORT_SINK_STATS_PKTS_IN_ADD(p, 1);
--	if (p->dumper != NULL)
--		PCAP_SINK_WRITE_PKT(p, pkt);
--	rte_pktmbuf_free(pkt);
--	RTE_PORT_SINK_STATS_PKTS_DROP_ADD(p, 1);
+-	if (conn->fd_client_group)
+-		close(conn->fd_client_group);
+-
+-	if (conn->fd_server)
+-		close(conn->fd_server);
+-
+-	free(conn->msg_out);
+-	free(conn->msg_in);
+-	free(conn->prompt);
+-	free(conn->welcome);
+-	free(conn);
+-}
+-
+-int
+-conn_poll_for_conn(struct conn *conn)
+-{
+-	struct sockaddr_in client_address;
+-	struct epoll_event event;
+-	socklen_t client_address_length;
+-	int fd_client, status;
+-
+-	/* Check input arguments */
+-	if (conn == NULL)
+-		return -1;
+-
+-	/* Server socket */
+-	client_address_length = sizeof(client_address);
+-	fd_client = accept4(conn->fd_server,
+-		(struct sockaddr *) &client_address,
+-		&client_address_length,
+-		SOCK_NONBLOCK);
+-	if (fd_client == -1) {
+-		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+-			return 0;
+-
+-		return -1;
+-	}
+-
+-	/* Client group */
+-	event.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP;
+-	event.data.fd = fd_client;
+-
+-	status = epoll_ctl(conn->fd_client_group,
+-		EPOLL_CTL_ADD,
+-		fd_client,
+-		&event);
+-	if (status == -1) {
+-		close(fd_client);
+-		return -1;
+-	}
+-
+-	/* Client */
+-	status = write(fd_client,
+-		conn->welcome,
+-		strlen(conn->welcome));
+-	if (status == -1) {
+-		close(fd_client);
+-		return -1;
+-	}
+-
+-	status = write(fd_client,
+-		conn->prompt,
+-		strlen(conn->prompt));
+-	if (status == -1) {
+-		close(fd_client);
+-		return -1;
+-	}
 -
 -	return 0;
 -}
 -
 -static int
--rte_port_sink_tx_bulk(void *port, struct rte_mbuf **pkts,
--	uint64_t pkts_mask)
+-data_event_handle(struct conn *conn,
+-	int fd_client)
 -{
--	struct rte_port_sink *p = port;
+-	ssize_t len, i, status;
 -
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
+-	/* Read input message */
 -
--		RTE_PORT_SINK_STATS_PKTS_IN_ADD(p, n_pkts);
--		RTE_PORT_SINK_STATS_PKTS_DROP_ADD(p, n_pkts);
+-	len = read(fd_client,
+-		conn->buf,
+-		conn->buf_size);
+-	if (len == -1) {
+-		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+-			return 0;
 -
--		if (p->dumper) {
--			for (i = 0; i < n_pkts; i++)
--				PCAP_SINK_WRITE_PKT(p, pkts[i]);
--		}
+-		return -1;
+-	}
+-	if (len == 0)
+-		return 0;
 -
--		for (i = 0; i < n_pkts; i++) {
--			struct rte_mbuf *pkt = pkts[i];
+-	/* Handle input messages */
+-	for (i = 0; i < len; i++) {
+-		if (conn->buf[i] == '\n') {
+-			size_t n;
 -
--			rte_pktmbuf_free(pkt);
--		}
+-			conn->msg_in[conn->msg_in_len] = 0;
+-			conn->msg_out[0] = 0;
 -
--	} else {
--		if (p->dumper) {
--			uint64_t dump_pkts_mask = pkts_mask;
--			uint32_t pkt_index;
+-			conn->msg_handle(conn->msg_in,
+-				conn->msg_out,
+-				conn->msg_out_len_max);
 -
--			for ( ; dump_pkts_mask; ) {
--				pkt_index = rte_ctz64(
--					dump_pkts_mask);
--				PCAP_SINK_WRITE_PKT(p, pkts[pkt_index]);
--				dump_pkts_mask &= ~(1LLU << pkt_index);
+-			n = strlen(conn->msg_out);
+-			if (n) {
+-				status = write(fd_client,
+-					conn->msg_out,
+-					n);
+-				if (status == -1)
+-					return status;
 -			}
--		}
 -
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
+-			conn->msg_in_len = 0;
+-		} else if (conn->msg_in_len < conn->msg_in_len_max) {
+-			conn->msg_in[conn->msg_in_len] = conn->buf[i];
+-			conn->msg_in_len++;
+-		} else {
+-			status = write(fd_client,
+-				MSG_CMD_TOO_LONG,
+-				strlen(MSG_CMD_TOO_LONG));
+-			if (status == -1)
+-				return status;
 -
--			RTE_PORT_SINK_STATS_PKTS_IN_ADD(p, 1);
--			RTE_PORT_SINK_STATS_PKTS_DROP_ADD(p, 1);
--			rte_pktmbuf_free(pkt);
--			pkts_mask &= ~pkt_mask;
+-			conn->msg_in_len = 0;
 -		}
 -	}
 -
+-	/* Write prompt */
+-	status = write(fd_client,
+-		conn->prompt,
+-		strlen(conn->prompt));
+-	if (status == -1)
+-		return status;
+-
 -	return 0;
 -}
 -
 -static int
--rte_port_sink_flush(void *port)
+-control_event_handle(struct conn *conn,
+-	int fd_client)
 -{
--	struct rte_port_sink *p =
--			port;
+-	int status;
 -
--	if (p == NULL)
+-	status = epoll_ctl(conn->fd_client_group,
+-		EPOLL_CTL_DEL,
+-		fd_client,
+-		NULL);
+-	if (status == -1)
+-		return -1;
+-
+-	status = close(fd_client);
+-	if (status == -1)
+-		return -1;
+-
+-	return 0;
+-}
+-
+-int
+-conn_poll_for_msg(struct conn *conn)
+-{
+-	struct epoll_event event;
+-	int fd_client, status, status_data = 0, status_control = 0;
+-
+-	/* Check input arguments */
+-	if (conn == NULL)
+-		return -1;
+-
+-	/* Client group */
+-	status = epoll_wait(conn->fd_client_group,
+-		&event,
+-		1,
+-		0);
+-	if (status == -1)
+-		return -1;
+-	if (status == 0)
 -		return 0;
 -
--	PCAP_SINK_FLUSH_PKT(p->dumper);
+-	fd_client = event.data.fd;
+-
+-	/* Data available */
+-	if (event.events & EPOLLIN)
+-		status_data = data_event_handle(conn, fd_client);
+-
+-	/* Control events */
+-	if (event.events & (EPOLLRDHUP | EPOLLERR | EPOLLHUP))
+-		status_control = control_event_handle(conn, fd_client);
+-
+-	if (status_data || status_control)
+-		return -1;
 -
 -	return 0;
 -}
--
--static int
--rte_port_sink_free(void *port)
--{
--	struct rte_port_sink *p =
--			port;
--
--	if (p == NULL)
--		return 0;
--
--	PCAP_SINK_CLOSE(p->dumper);
--
--	rte_free(p);
--
--	return 0;
--}
--
--static int
--rte_port_sink_stats_read(void *port, struct rte_port_out_stats *stats,
--		int clear)
--{
--	struct rte_port_sink *p =
--		port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Summary of port operations
-- */
--RTE_EXPORT_SYMBOL(rte_port_source_ops)
--struct rte_port_in_ops rte_port_source_ops = {
--	.f_create = rte_port_source_create,
--	.f_free = rte_port_source_free,
--	.f_rx = rte_port_source_rx,
--	.f_stats = rte_port_source_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_sink_ops)
--struct rte_port_out_ops rte_port_sink_ops = {
--	.f_create = rte_port_sink_create,
--	.f_free = rte_port_sink_free,
--	.f_tx = rte_port_sink_tx,
--	.f_tx_bulk = rte_port_sink_tx_bulk,
--	.f_flush = rte_port_sink_flush,
--	.f_stats = rte_port_sink_stats_read,
--};
-diff --git a/lib/port/rte_port_source_sink.h b/lib/port/rte_port_source_sink.h
+diff --git a/examples/ip_pipeline/conn.h b/examples/ip_pipeline/conn.h
 deleted file mode 100644
-index 3122dd5038..0000000000
---- a/lib/port/rte_port_source_sink.h
+index 46f9f95e9c..0000000000
+--- a/examples/ip_pipeline/conn.h
++++ /dev/null
+@@ -1,47 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_CONN_H__
+-#define __INCLUDE_CONN_H__
+-
+-#include <stdint.h>
+-
+-struct conn;
+-
+-#ifndef CONN_WELCOME_LEN_MAX
+-#define CONN_WELCOME_LEN_MAX                               1024
+-#endif
+-
+-#ifndef CONN_PROMPT_LEN_MAX
+-#define CONN_PROMPT_LEN_MAX                                16
+-#endif
+-
+-typedef void (*conn_msg_handle_t)(char *msg_in,
+-	char *msg_out,
+-	size_t msg_out_len_max);
+-
+-struct conn_params {
+-	const char *welcome;
+-	const char *prompt;
+-	const char *addr;
+-	uint16_t port;
+-	size_t buf_size;
+-	size_t msg_in_len_max;
+-	size_t msg_out_len_max;
+-	conn_msg_handle_t msg_handle;
+-};
+-
+-struct conn *
+-conn_init(struct conn_params *p);
+-
+-void
+-conn_free(struct conn *conn);
+-
+-int
+-conn_poll_for_conn(struct conn *conn);
+-
+-int
+-conn_poll_for_msg(struct conn *conn);
+-
+-#endif
+diff --git a/examples/ip_pipeline/cryptodev.c b/examples/ip_pipeline/cryptodev.c
+deleted file mode 100644
+index cd0f9c3d4e..0000000000
+--- a/examples/ip_pipeline/cryptodev.c
++++ /dev/null
+@@ -1,160 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2018 Intel Corporation
+- */
+-
+-#include <stdlib.h>
+-#include <stdio.h>
+-
+-#include <rte_cryptodev.h>
+-#include <rte_string_fns.h>
+-
+-#include "cryptodev.h"
+-
+-#define PIPELINE_CRYPTO_SESSION_CACHE_SIZE	128
+-
+-static struct cryptodev_list cryptodev_list;
+-
+-int
+-cryptodev_init(void)
+-{
+-	TAILQ_INIT(&cryptodev_list);
+-
+-	return 0;
+-}
+-
+-struct cryptodev *
+-cryptodev_find(const char *name)
+-{
+-	struct cryptodev *cryptodev;
+-
+-	if (name == NULL)
+-		return NULL;
+-
+-	TAILQ_FOREACH(cryptodev, &cryptodev_list, node)
+-		if (strcmp(cryptodev->name, name) == 0)
+-			return cryptodev;
+-
+-	return NULL;
+-}
+-
+-struct cryptodev *
+-cryptodev_next(struct cryptodev *cryptodev)
+-{
+-	return (cryptodev == NULL) ?
+-			TAILQ_FIRST(&cryptodev_list) :
+-			TAILQ_NEXT(cryptodev, node);
+-}
+-
+-struct cryptodev *
+-cryptodev_create(const char *name, struct cryptodev_params *params)
+-{
+-	struct rte_cryptodev_info dev_info;
+-	struct rte_cryptodev_config dev_conf;
+-	struct rte_cryptodev_qp_conf queue_conf;
+-	struct cryptodev *cryptodev;
+-	uint32_t dev_id, i;
+-	uint32_t socket_id;
+-	uint32_t cache_size;
+-	char mp_name[NAME_SIZE];
+-	int status;
+-
+-	/* Check input params */
+-	if ((name == NULL) ||
+-		cryptodev_find(name) ||
+-		(params->n_queues == 0) ||
+-		(params->queue_size == 0) ||
+-		(params->session_pool_size == 0))
+-		return NULL;
+-
+-	if (params->dev_name) {
+-		status = rte_cryptodev_get_dev_id(params->dev_name);
+-		if (status == -1)
+-			return NULL;
+-
+-		dev_id = (uint32_t)status;
+-	} else {
+-		if (rte_cryptodev_is_valid_dev(params->dev_id) == 0)
+-			return NULL;
+-
+-		dev_id = params->dev_id;
+-	}
+-
+-	cache_size = (params->session_pool_size / 2 <
+-			PIPELINE_CRYPTO_SESSION_CACHE_SIZE) ?
+-					(params->session_pool_size / 2) :
+-					PIPELINE_CRYPTO_SESSION_CACHE_SIZE;
+-
+-	socket_id = rte_cryptodev_socket_id(dev_id);
+-	rte_cryptodev_info_get(dev_id, &dev_info);
+-
+-	if (dev_info.max_nb_queue_pairs < params->n_queues)
+-		return NULL;
+-
+-	dev_conf.socket_id = socket_id;
+-	dev_conf.nb_queue_pairs = params->n_queues;
+-	dev_conf.ff_disable = 0;
+-
+-	status = rte_cryptodev_configure(dev_id, &dev_conf);
+-	if (status < 0)
+-		return NULL;
+-
+-	queue_conf.nb_descriptors = params->queue_size;
+-	for (i = 0; i < params->n_queues; i++) {
+-		status = rte_cryptodev_queue_pair_setup(dev_id, i,
+-				&queue_conf, socket_id);
+-		if (status < 0)
+-			return NULL;
+-	}
+-
+-	if (rte_cryptodev_start(dev_id) < 0)
+-		return NULL;
+-
+-	cryptodev = calloc(1, sizeof(struct cryptodev));
+-	if (cryptodev == NULL) {
+-		rte_cryptodev_stop(dev_id);
+-		return NULL;
+-	}
+-
+-	strlcpy(cryptodev->name, name, sizeof(cryptodev->name));
+-	cryptodev->dev_id = dev_id;
+-	cryptodev->n_queues = params->n_queues;
+-
+-	snprintf(mp_name, NAME_SIZE, "%s_mp%u", name, dev_id);
+-	cryptodev->mp_create = rte_cryptodev_sym_session_pool_create(
+-			mp_name,
+-			params->session_pool_size,
+-			0,
+-			cache_size,
+-			0,
+-			socket_id);
+-	if (!cryptodev->mp_create)
+-		goto error_exit;
+-
+-	snprintf(mp_name, NAME_SIZE, "%s_mp_priv%u", name, dev_id);
+-	cryptodev->mp_init = rte_mempool_create(
+-			NULL,
+-			params->session_pool_size,
+-			rte_cryptodev_sym_get_private_session_size(dev_id),
+-			cache_size,
+-			0,
+-			NULL,
+-			NULL,
+-			NULL,
+-			NULL,
+-			socket_id,
+-			0);
+-	if (!cryptodev->mp_init)
+-		goto error_exit;
+-
+-	TAILQ_INSERT_TAIL(&cryptodev_list, cryptodev, node);
+-
+-	return cryptodev;
+-
+-error_exit:
+-	rte_mempool_free(cryptodev->mp_create);
+-	rte_mempool_free(cryptodev->mp_init);
+-
+-	free(cryptodev);
+-
+-	return NULL;
+-}
+diff --git a/examples/ip_pipeline/cryptodev.h b/examples/ip_pipeline/cryptodev.h
+deleted file mode 100644
+index d00434379e..0000000000
+--- a/examples/ip_pipeline/cryptodev.h
++++ /dev/null
+@@ -1,46 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_SYM_C_H_
+-#define _INCLUDE_SYM_C_H_
+-
+-#include <stdint.h>
+-#include <sys/queue.h>
+-
+-#include <rte_cryptodev.h>
+-
+-#include "common.h"
+-
+-struct cryptodev {
+-	TAILQ_ENTRY(cryptodev) node;
+-	char name[NAME_SIZE];
+-	uint16_t dev_id;
+-	uint32_t n_queues;
+-	struct rte_mempool *mp_create;
+-	struct rte_mempool *mp_init;
+-};
+-
+-TAILQ_HEAD(cryptodev_list, cryptodev);
+-
+-int
+-cryptodev_init(void);
+-
+-struct cryptodev *
+-cryptodev_find(const char *name);
+-
+-struct cryptodev *
+-cryptodev_next(struct cryptodev *cryptodev);
+-
+-struct cryptodev_params {
+-	const char *dev_name;
+-	uint32_t dev_id; /**< Valid only when *dev_name* is NULL. */
+-	uint32_t n_queues;
+-	uint32_t queue_size;
+-	uint32_t session_pool_size;
+-};
+-
+-struct cryptodev *
+-cryptodev_create(const char *name, struct cryptodev_params *params);
+-
+-#endif
+diff --git a/examples/ip_pipeline/examples/firewall.cli b/examples/ip_pipeline/examples/firewall.cli
+deleted file mode 100644
+index 269256c161..0000000000
+--- a/examples/ip_pipeline/examples/firewall.cli
++++ /dev/null
+@@ -1,59 +0,0 @@
+-; SPDX-License-Identifier: BSD-3-Clause
+-; Copyright(c) 2010-2018 Intel Corporation
+-
+-;                 _______________
+-; LINK0 RXQ0 --->|               |---> LINK0 TXQ0
+-;                |               |
+-; LINK1 RXQ0 --->|               |---> LINK1 TXQ0
+-;                |   Firewall    |
+-; LINK2 RXQ0 --->|               |---> LINK2 TXQ0
+-;                |               |
+-; LINK3 RXQ0 --->|               |---> LINK3 TXQ0
+-;                |_______________|
+-;                        |
+-;                       -+-
+-;
+-; Input packet: Ethernet/IPv4
+-;
+-; Packet buffer layout:
+-; #   Field Name            Offset (Bytes)      Size (Bytes)
+-; 0   Mbuf                  0                   128
+-; 1   Headroom              128                 128
+-; 2   Ethernet header       256                 14
+-; 3   IPv4 header           270                 20
+-
+-mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
+-
+-link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-
+-table action profile AP0 ipv4 offset 270 fwd
+-
+-pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
+-
+-pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
+-
+-pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
+-
+-pipeline PIPELINE0 table match acl ipv4 offset 270 size 4K action AP0
+-
+-pipeline PIPELINE0 port in 0 table 0
+-pipeline PIPELINE0 port in 1 table 0
+-pipeline PIPELINE0 port in 2 table 0
+-pipeline PIPELINE0 port in 3 table 0
+-
+-thread 1 pipeline PIPELINE0 enable
+-
+-pipeline PIPELINE0 table 0 rule add match default action fwd drop
+-pipeline PIPELINE0 table 0 rule add match acl priority 0 ipv4 0.0.0.0 0 100.0.0.0 10 0 65535 0 65535 6 action fwd port 0
+-pipeline PIPELINE0 table 0 rule add match acl priority 0 ipv4 0.0.0.0 0 100.64.0.0 10 0 65535 0 65535 6 action fwd port 1
+-pipeline PIPELINE0 table 0 rule add match acl priority 0 ipv4 0.0.0.0 0 100.128.0.0 10 0 65535 0 65535 6 action fwd port 2
+-pipeline PIPELINE0 table 0 rule add match acl priority 0 ipv4 0.0.0.0 0 100.192.0.0 10 0 65535 0 65535 6 action fwd port 3
+diff --git a/examples/ip_pipeline/examples/flow.cli b/examples/ip_pipeline/examples/flow.cli
+deleted file mode 100644
+index 426ff90255..0000000000
+--- a/examples/ip_pipeline/examples/flow.cli
++++ /dev/null
+@@ -1,60 +0,0 @@
+-; SPDX-License-Identifier: BSD-3-Clause
+-; Copyright(c) 2010-2018 Intel Corporation
+-
+-;                 ________________
+-; LINK0 RXQ0 --->|                |---> LINK0 TXQ0
+-;                |                |
+-; LINK1 RXQ0 --->|                |---> LINK1 TXQ0
+-;                |      Flow      |
+-; LINK2 RXQ0 --->| Classification |---> LINK2 TXQ0
+-;                |                |
+-; LINK3 RXQ0 --->|                |---> LINK3 TXQ0
+-;                |________________|
+-;                        |
+-;                        +-----------> SINK0 (flow lookup miss)
+-;
+-; Input packet: Ethernet/IPv4
+-;
+-; Packet buffer layout:
+-; #   Field Name       Offset (Bytes)   Size (Bytes)
+-; 0   Mbuf             0                128
+-; 1   Headroom         128              128
+-; 2   Ethernet header  256              14
+-; 3   IPv4 header      270              20
+-
+-mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
+-
+-link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-
+-table action profile AP0 ipv4 offset 270 fwd
+-
+-pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
+-
+-pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
+-
+-pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
+-pipeline PIPELINE0 port out bsz 32 sink
+-
+-pipeline PIPELINE0 table match hash ext key 16 mask 00FF0000FFFFFFFFFFFFFFFFFFFFFFFF offset 278 buckets 16K size 65K action AP0
+-
+-pipeline PIPELINE0 port in 0 table 0
+-pipeline PIPELINE0 port in 1 table 0
+-pipeline PIPELINE0 port in 2 table 0
+-pipeline PIPELINE0 port in 3 table 0
+-
+-thread 1 pipeline PIPELINE0 enable
+-
+-pipeline PIPELINE0 table 0 rule add match default action fwd port 4
+-pipeline PIPELINE0 table 0 rule add match hash ipv4_5tuple 100.0.0.10 200.0.0.10 100 200 6 action fwd port 0
+-pipeline PIPELINE0 table 0 rule add match hash ipv4_5tuple 100.0.0.11 200.0.0.11 101 201 6 action fwd port 1
+-pipeline PIPELINE0 table 0 rule add match hash ipv4_5tuple 100.0.0.12 200.0.0.12 102 202 6 action fwd port 2
+-pipeline PIPELINE0 table 0 rule add match hash ipv4_5tuple 100.0.0.13 200.0.0.13 103 203 6 action fwd port 3
+diff --git a/examples/ip_pipeline/examples/flow_crypto.cli b/examples/ip_pipeline/examples/flow_crypto.cli
+deleted file mode 100644
+index 849f9d5fec..0000000000
+--- a/examples/ip_pipeline/examples/flow_crypto.cli
 +++ /dev/null
 @@ -1,57 +0,0 @@
+-; SPDX-License-Identifier: BSD-3-Clause
+-; Copyright(c) 2018 Intel Corporation
+-
+-;                 ________________
+-; LINK0 RXQ0 --->|                |---> CRYPTO0 TXQ0
+-;                |      Flow      |
+-; CRYPTO0 RXQ0-->| Classification |---> LINK0 TXQ0
+-;                |________________|
+-;                        |
+-;                        +-----------> SINK0 (flow lookup miss)
+-;
+-; Input packet: Ethernet/IPv4
+-;
+-; Packet buffer layout:
+-; #   Field Name       Offset (Bytes)   Size (Bytes)
+-; 0   Mbuf             0                128
+-; 1   Headroom         128              128
+-; 2   Ethernet header  256              14
+-; 3   IPv4 header      280              20
+-; 4   Packet           256              1536
+-; 5   Crypto Operation 1792             160
+-
+-mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 1
+-
+-link LINK0 dev 81:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-
+-#Cryptodev
+-cryptodev CRYPTO0 dev crypto_aesni_gcm0 queue 1 1024 max_sessions 512
+-
+-table action profile AP0 ipv4 offset 270 fwd sym_crypto dev CRYPTO0 offset 1792
+-table action profile AP1 ipv4 offset 270 fwd
+-
+-pipeline PIPELINE0 period 10 offset_port_id 0 cpu 1
+-
+-pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
+-pipeline PIPELINE0 port in bsz 32 cryptodev CRYPTO0 rxq 0
+-
+-pipeline PIPELINE0 port out bsz 32 cryptodev CRYPTO0 txq 0 offset 1792
+-pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
+-pipeline PIPELINE0 port out bsz 32 sink
+-
+-pipeline PIPELINE0 table match hash ext key 8 mask FFFFFFFF00000000 offset 282 buckets 1K size 4K action AP0
+-pipeline PIPELINE0 table match stub action AP1
+-
+-pipeline PIPELINE0 port in 0 table 0
+-pipeline PIPELINE0 port in 1 table 1
+-
+-thread 2 pipeline PIPELINE0 enable
+-
+-pipeline PIPELINE0 table 0 rule add match default action fwd port 2
+-
+-#AES-GCM encrypt
+-pipeline PIPELINE0 table 0 rule add match hash ipv4_addr 100.0.0.10 action fwd port 0 sym_crypto encrypt type aead aead_algo aes-gcm aead_key 000102030405060708090a0b0c0d0e0f aead_iv 000102030405060708090a0b aead_aad 000102030405060708090a0b0c0d0e0f digest_size 8 data_offset 290
+-#AES-GCM decrypt
+-#pipeline PIPELINE0 table 0 rule add match hash ipv4_addr 100.0.0.10 action fwd port 0 sym_crypto decrypt type aead aead_algo aes-gcm aead_key 000102030405060708090a0b0c0d0e0f aead_iv 000102030405060708090a0b aead_aad 000102030405060708090a0b0c0d0e0f digest_size 8 data_offset 290
+-
+-pipeline PIPELINE0 table 1 rule add match default action fwd port 1
+diff --git a/examples/ip_pipeline/examples/l2fwd.cli b/examples/ip_pipeline/examples/l2fwd.cli
+deleted file mode 100644
+index 35e77cc968..0000000000
+--- a/examples/ip_pipeline/examples/l2fwd.cli
++++ /dev/null
+@@ -1,51 +0,0 @@
+-; SPDX-License-Identifier: BSD-3-Clause
+-; Copyright(c) 2010-2018 Intel Corporation
+-
+-; The pipeline below implements a simple pass-through connection between the
+-; input ports to the output ports, as in this diagram:
+-;                 ________________
+-; LINK0 RXQ0 --->|................|---> LINK1 TXQ0
+-;                |                |
+-; LINK1 RXQ0 --->|................|---> LINK0 TXQ0
+-;                |    PIPELINE0   |
+-; LINK2 RXQ0 --->|................|---> LINK3 TXQ0
+-;                |                |
+-; LINK3 RXQ0 --->|................|---> LINK2 TXQ0
+-;                |________________|
+-;
+-
+-mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
+-
+-link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-
+-pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
+-
+-pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
+-
+-pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
+-
+-pipeline PIPELINE0 table match stub
+-pipeline PIPELINE0 table match stub
+-pipeline PIPELINE0 table match stub
+-pipeline PIPELINE0 table match stub
+-
+-pipeline PIPELINE0 port in 0 table 0
+-pipeline PIPELINE0 port in 1 table 1
+-pipeline PIPELINE0 port in 2 table 2
+-pipeline PIPELINE0 port in 3 table 3
+-
+-thread 1 pipeline PIPELINE0 enable
+-
+-pipeline PIPELINE0 table 0 rule add match default action fwd port 1
+-pipeline PIPELINE0 table 1 rule add match default action fwd port 0
+-pipeline PIPELINE0 table 2 rule add match default action fwd port 3
+-pipeline PIPELINE0 table 3 rule add match default action fwd port 2
+diff --git a/examples/ip_pipeline/examples/route.cli b/examples/ip_pipeline/examples/route.cli
+deleted file mode 100644
+index 579b36a659..0000000000
+--- a/examples/ip_pipeline/examples/route.cli
++++ /dev/null
+@@ -1,60 +0,0 @@
+-; SPDX-License-Identifier: BSD-3-Clause
+-; Copyright(c) 2010-2018 Intel Corporation
+-
+-;                 _______________
+-; LINK0 RXQ0 --->|               |---> LINK0 TXQ0
+-;                |               |
+-; LINK1 RXQ0 --->|               |---> LINK1 TXQ0
+-;                |    Routing    |
+-; LINK2 RXQ0 --->|               |---> LINK2 TXQ0
+-;                |               |
+-; LINK3 RXQ0 --->|               |---> LINK3 TXQ0
+-;                |_______________|
+-;                        |
+-;                        +-----------> SINK0 (route miss)
+-;
+-; Input packet: Ethernet/IPv4
+-;
+-; Packet buffer layout:
+-; #   Field Name       Offset (Bytes)   Size (Bytes)
+-; 0   Mbuf             0                128
+-; 1   Headroom         128              128
+-; 2   Ethernet header  256              14
+-; 3   IPv4 header      270              20
+-
+-mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
+-
+-link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-
+-table action profile AP0 ipv4 offset 270 fwd encap ether
+-
+-pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
+-
+-pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
+-
+-pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
+-pipeline PIPELINE0 port out bsz 32 sink
+-
+-pipeline PIPELINE0 table match lpm ipv4 offset 286 size 4K action AP0
+-
+-pipeline PIPELINE0 port in 0 table 0
+-pipeline PIPELINE0 port in 1 table 0
+-pipeline PIPELINE0 port in 2 table 0
+-pipeline PIPELINE0 port in 3 table 0
+-
+-thread 1 pipeline PIPELINE0 enable
+-
+-pipeline PIPELINE0 table 0 rule add match default action fwd port 4
+-pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.0.0.0 10 action fwd port 0 encap ether a0:a1:a2:a3:a4:a5 00:01:02:03:04:05
+-pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.64.0.0 10 action fwd port 1 encap ether b0:b1:b2:b3:b4:b5 10:11:12:13:14:15
+-pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.128.0.0 10 action fwd port 2 encap ether c0:c1:c2:c3:c4:c5 20:21:22:23:24:25
+-pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.192.0.0 10 action fwd port 3 encap ether d0:d1:d2:d3:d4:d5 30:31:32:33:34:35
+diff --git a/examples/ip_pipeline/examples/route_ecmp.cli b/examples/ip_pipeline/examples/route_ecmp.cli
+deleted file mode 100644
+index 06434a2560..0000000000
+--- a/examples/ip_pipeline/examples/route_ecmp.cli
++++ /dev/null
+@@ -1,57 +0,0 @@
+-; SPDX-License-Identifier: BSD-3-Clause
+-; Copyright(c) 2010-2018 Intel Corporation
+-
+-; Equal Cost Multi-Path (ECMP) Routing
+-;
+-; Input packet: Ethernet/IPv4
+-;
+-; Packet buffer layout:
+-; #   Field Name       Offset (Bytes)   Size (Bytes)
+-; 0   Mbuf             0                128
+-; 1   Headroom         128              128
+-; 2   Ethernet header  256              14
+-; 3   IPv4 header      270              20
+-
+-mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
+-
+-link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-
+-table action profile APRT ipv4 offset 270 fwd balance offset 278 mask 00FF0000FFFFFFFFFFFFFFFFFFFFFFFF outoffset 256
+-table action profile APNH ipv4 offset 270 fwd encap ether
+-
+-pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
+-
+-pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
+-
+-pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
+-pipeline PIPELINE0 port out bsz 32 sink
+-
+-pipeline PIPELINE0 table match lpm ipv4 offset 286 size 4K action APRT
+-pipeline PIPELINE0 table match array offset 256 size 64K action APNH
+-
+-pipeline PIPELINE0 port in 0 table 0
+-pipeline PIPELINE0 port in 1 table 0
+-pipeline PIPELINE0 port in 2 table 0
+-pipeline PIPELINE0 port in 3 table 0
+-
+-thread 1 pipeline PIPELINE0 enable
+-
+-pipeline PIPELINE0 table 0 rule add match default action fwd port 4
+-pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.0.0.0 10 action fwd table 1 balance 0 0 0 0 1 1 2 2
+-pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.64.0.0 10 action fwd table 1 balance 1 1 1 1 2 2 3 3
+-pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.128.0.0 10 action fwd table 1 balance 2 2 2 2 3 3 0 0
+-pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.192.0.0 10 action fwd table 1 balance 3 3 3 3 0 0 1 1
+-
+-pipeline PIPELINE0 table 1 rule add match array 0 action fwd port 0 encap ether a0:a1:a2:a3:a4:a5 00:01:02:03:04:05
+-pipeline PIPELINE0 table 1 rule add match array 1 action fwd port 1 encap ether b0:b1:b2:b3:b4:b5 10:11:12:13:14:15
+-pipeline PIPELINE0 table 1 rule add match array 2 action fwd port 2 encap ether c0:c1:c2:c3:c4:c5 20:21:22:23:24:25
+-pipeline PIPELINE0 table 1 rule add match array 3 action fwd port 3 encap ether d0:d1:d2:d3:d4:d5 30:31:32:33:34:35
+diff --git a/examples/ip_pipeline/examples/rss.cli b/examples/ip_pipeline/examples/rss.cli
+deleted file mode 100644
+index 29c0a91392..0000000000
+--- a/examples/ip_pipeline/examples/rss.cli
++++ /dev/null
+@@ -1,112 +0,0 @@
+-; SPDX-License-Identifier: BSD-3-Clause
+-; Copyright(c) 2010-2018 Intel Corporation
+-
+-; This setup demonstrates the usage of NIC Receive Side Scaling (RSS) feature.
+-; Each NIC splits the input traffic into 4 RX queues, with each of its RX queues
+-; being handled by a different pipeline:
+-;
+-;                                                    +-----------+    +----------+
+-;                       +--------------------------->|           |    |          |
+-;                       |       +------------------->| PIPELINE0 +--->|  LINK 0  |--->
+-;                       |       |     +------------->| (CORE A)  |    |    TX    |
+-;                       |       |     |     +------->|           |    |          |
+-;                       |       |     |     |        +-----------+    +----------+
+-;    +----------+       |       |     |     |
+-;    |          |-------+       |     |     |
+-;--->|  LINK 0  |-----------+   |     |     |
+-;    |    RX    |---------+ |   |     |     |
+-;    |          |-------+ | |   |     |     |
+-;    +----------+       | | |   |     |     |        +-----------+    +----------+
+-;                       | | +---|-----|-----|------->|           |    |          |
+-;    +----------+       | |     | +---|-----|------->| PIPELINE1 +--->|  LINK 1  |--->
+-;    |          |-------|-|-----+ |   | +---|------->| (CORE B)  |    |    TX    |
+-;--->|  LINK 1  |-------|-|-------+   | |   | +----->|           |    |          |
+-;    |    RX    |-------|-|-------+   | |   | |      +-----------+    +----------+
+-;    |          |-------|-|-----+ |   | |   | |
+-;    +----------+       | |     | |   | |   | |
+-;                       | |     | |   | |   | |
+-;    +----------+       | |     | |   | |   | |
+-;    |          |-------|-|-----|-|---+ |   | |
+-;--->|  LINK 2  |-------|-|-----|-|-----+   | |      +-----------+    +----------+
+-;    |    RX    |-----+ | +-----|-|---------|-|----->|           |    |          |
+-;    |          |---+ | |       | +---------|-|----->| PIPELINE2 +--->|  LINK 2  |--->
+-;    +----------+   | +-|-------|-----------|-|----->| (CORE C)  |    |    TX    |
+-;                   |   |       |           | | +--->|           |    |          |
+-;    +----------+   |   |       |           | | |    +-----------+    +----------+
+-;    |          |---|---|-------|-----------+ | |
+-;--->|  LINK 3  |---|---|-------|-------------+ |
+-;    |    RX    |---|---|-------|---------------+
+-;    |          |---|---|-------|-----------+
+-;    +----------+   |   |       |           |
+-;                   |   |       |           |        +-----------+    +----------+
+-;                   |   +-------|-----------|------->|           |    |          |
+-;                   |           +-----------|------->| PIPELINE3 +--->|  LINK 3  |--->
+-;                   +-----------------------|------->| (CORE D)  |    |    TX    |
+-;                                           +------->|           |    |          |
+-;                                                    +-----------+    +----------+
+-;
+-;
+-
+-mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
+-
+-link LINK0 dev 0000:02:00.0 rxq 4 128 MEMPOOL0 txq 1 512 promiscuous on rss 0 1 2 3
+-link LINK1 dev 0000:02:00.1 rxq 4 128 MEMPOOL0 txq 1 512 promiscuous on rss 0 1 2 3
+-link LINK2 dev 0000:06:00.0 rxq 4 128 MEMPOOL0 txq 1 512 promiscuous on rss 0 1 2 3
+-link LINK3 dev 0000:06:00.1 rxq 4 128 MEMPOOL0 txq 1 512 promiscuous on rss 0 1 2 3
+-
+-pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
+-pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
+-pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
+-pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
+-pipeline PIPELINE0 table match stub
+-pipeline PIPELINE0 port in 0 table 0
+-pipeline PIPELINE0 port in 1 table 0
+-pipeline PIPELINE0 port in 2 table 0
+-pipeline PIPELINE0 port in 3 table 0
+-pipeline PIPELINE0 table 0 rule add match default action fwd port 0
+-
+-pipeline PIPELINE1 period 10 offset_port_id 0 cpu 0
+-pipeline PIPELINE1 port in bsz 32 link LINK0 rxq 1
+-pipeline PIPELINE1 port in bsz 32 link LINK1 rxq 1
+-pipeline PIPELINE1 port in bsz 32 link LINK2 rxq 1
+-pipeline PIPELINE1 port in bsz 32 link LINK3 rxq 1
+-pipeline PIPELINE1 port out bsz 32 link LINK1 txq 0
+-pipeline PIPELINE1 table match stub
+-pipeline PIPELINE1 port in 0 table 0
+-pipeline PIPELINE1 port in 1 table 0
+-pipeline PIPELINE1 port in 2 table 0
+-pipeline PIPELINE1 port in 3 table 0
+-pipeline PIPELINE1 table 0 rule add match default action fwd port 0
+-
+-pipeline PIPELINE2 period 10 offset_port_id 0 cpu 0
+-pipeline PIPELINE2 port in bsz 32 link LINK0 rxq 2
+-pipeline PIPELINE2 port in bsz 32 link LINK1 rxq 2
+-pipeline PIPELINE2 port in bsz 32 link LINK2 rxq 2
+-pipeline PIPELINE2 port in bsz 32 link LINK3 rxq 2
+-pipeline PIPELINE2 port out bsz 32 link LINK2 txq 0
+-pipeline PIPELINE2 table match stub
+-pipeline PIPELINE2 port in 0 table 0
+-pipeline PIPELINE2 port in 1 table 0
+-pipeline PIPELINE2 port in 2 table 0
+-pipeline PIPELINE2 port in 3 table 0
+-pipeline PIPELINE2 table 0 rule add match default action fwd port 0
+-
+-pipeline PIPELINE3 period 10 offset_port_id 0 cpu 0
+-pipeline PIPELINE3 port in bsz 32 link LINK0 rxq 3
+-pipeline PIPELINE3 port in bsz 32 link LINK1 rxq 3
+-pipeline PIPELINE3 port in bsz 32 link LINK2 rxq 3
+-pipeline PIPELINE3 port in bsz 32 link LINK3 rxq 3
+-pipeline PIPELINE3 port out bsz 32 link LINK3 txq 0
+-pipeline PIPELINE3 table match stub
+-pipeline PIPELINE3 port in 0 table 0
+-pipeline PIPELINE3 port in 1 table 0
+-pipeline PIPELINE3 port in 2 table 0
+-pipeline PIPELINE3 port in 3 table 0
+-pipeline PIPELINE3 table 0 rule add match default action fwd port 0
+-
+-thread 1 pipeline PIPELINE0 enable
+-thread 2 pipeline PIPELINE1 enable
+-thread 3 pipeline PIPELINE2 enable
+-thread 4 pipeline PIPELINE3 enable
+diff --git a/examples/ip_pipeline/examples/tap.cli b/examples/ip_pipeline/examples/tap.cli
+deleted file mode 100644
+index 600cea2643..0000000000
+--- a/examples/ip_pipeline/examples/tap.cli
++++ /dev/null
+@@ -1,66 +0,0 @@
+-; SPDX-License-Identifier: BSD-3-Clause
+-; Copyright(c) 2010-2018 Intel Corporation
+-
+-;                 _______________          ______________________
+-;                |               |  TAP0  |                      |
+-; LINK0 RXQ0 --->|...............|------->|--+                   |
+-;                |               |  TAP1  |  | br0               |
+-; LINK1 TXQ0 <---|...............|<-------|<-+                   |
+-;                |               |        |     Linux Kernel     |
+-;                |   PIPELINE0   |        |     Network Stack    |
+-;                |               |  TAP1  |                      |
+-; LINK1 RXQ0 --->|...............|------->|--+                   |
+-;                |               |  TAP0  |  | br0               |
+-; LINK0 TXQ0 <---|...............|<-------|<-+                   |
+-;                |_______________|        |______________________|
+-;
+-; Configure Linux kernel bridge between TAP0 and TAP1 interfaces:
+-;    [Linux]$ brctl addbr br0
+-;    [Linux]$ brctl addif br0 TAP0
+-;    [Linux]$ brctl addif br0 TAP1
+-;    [Linux]$ ifconfig TAP0 up
+-;    [Linux]$ ifconfig TAP1 up
+-;    [Linux]$ ifconfig br0 up
+-;
+-; Monitor packet forwarding performed by Linux kernel between TAP0 and TAP1:
+-;    [Linux]$ tcpdump -i TAP0
+-;    [Linux]$ tcpdump -i TAP1
+-
+-mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
+-
+-link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
+-
+-tap TAP0
+-tap TAP1
+-
+-table action profile AP0 ipv4 offset 270 fwd
+-
+-pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
+-
+-pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
+-pipeline PIPELINE0 port in bsz 32 tap TAP1 mempool MEMPOOL0 mtu 1500
+-pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
+-pipeline PIPELINE0 port in bsz 32 tap TAP0 mempool MEMPOOL0 mtu 1500
+-
+-pipeline PIPELINE0 port out bsz 32 tap TAP0
+-pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
+-pipeline PIPELINE0 port out bsz 32 tap TAP1
+-pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
+-
+-pipeline PIPELINE0 table match stub action AP0
+-pipeline PIPELINE0 table match stub action AP0
+-pipeline PIPELINE0 table match stub action AP0
+-pipeline PIPELINE0 table match stub action AP0
+-
+-pipeline PIPELINE0 port in 0 table 0
+-pipeline PIPELINE0 port in 1 table 1
+-pipeline PIPELINE0 port in 2 table 2
+-pipeline PIPELINE0 port in 3 table 3
+-
+-thread 1 pipeline PIPELINE0 enable
+-
+-pipeline PIPELINE0 table 0 rule add match default action fwd port 0
+-pipeline PIPELINE0 table 1 rule add match default action fwd port 1
+-pipeline PIPELINE0 table 2 rule add match default action fwd port 2
+-pipeline PIPELINE0 table 3 rule add match default action fwd port 3
+diff --git a/examples/ip_pipeline/link.c b/examples/ip_pipeline/link.c
+deleted file mode 100644
+index 4d69ebebfb..0000000000
+--- a/examples/ip_pipeline/link.c
++++ /dev/null
+@@ -1,270 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <stdlib.h>
+-#include <string.h>
+-
+-#include <rte_ethdev.h>
+-#include <rte_string_fns.h>
+-
+-#include "link.h"
+-#include "mempool.h"
+-
+-static struct link_list link_list;
+-
+-int
+-link_init(void)
+-{
+-	TAILQ_INIT(&link_list);
+-
+-	return 0;
+-}
+-
+-struct link *
+-link_find(const char *name)
+-{
+-	struct link *link;
+-
+-	if (name == NULL)
+-		return NULL;
+-
+-	TAILQ_FOREACH(link, &link_list, node)
+-		if (strcmp(link->name, name) == 0)
+-			return link;
+-
+-	return NULL;
+-}
+-
+-struct link *
+-link_next(struct link *link)
+-{
+-	return (link == NULL) ? TAILQ_FIRST(&link_list) : TAILQ_NEXT(link, node);
+-}
+-
+-static struct rte_eth_conf port_conf_default = {
+-	.link_speeds = 0,
+-	.rxmode = {
+-		.mq_mode = RTE_ETH_MQ_RX_NONE,
+-		.mtu = 9000 - (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN), /* Jumbo frame MTU */
+-	},
+-	.rx_adv_conf = {
+-		.rss_conf = {
+-			.rss_key = NULL,
+-			.rss_key_len = 40,
+-			.rss_hf = 0,
+-		},
+-	},
+-	.txmode = {
+-		.mq_mode = RTE_ETH_MQ_TX_NONE,
+-	},
+-	.lpbk_mode = 0,
+-};
+-
+-#define RETA_CONF_SIZE     (RTE_ETH_RSS_RETA_SIZE_512 / RTE_ETH_RETA_GROUP_SIZE)
+-
+-static int
+-rss_setup(uint16_t port_id,
+-	uint16_t reta_size,
+-	struct link_params_rss *rss)
+-{
+-	struct rte_eth_rss_reta_entry64 reta_conf[RETA_CONF_SIZE];
+-	uint32_t i;
+-	int status;
+-
+-	/* RETA setting */
+-	memset(reta_conf, 0, sizeof(reta_conf));
+-
+-	for (i = 0; i < reta_size; i++)
+-		reta_conf[i / RTE_ETH_RETA_GROUP_SIZE].mask = UINT64_MAX;
+-
+-	for (i = 0; i < reta_size; i++) {
+-		uint32_t reta_id = i / RTE_ETH_RETA_GROUP_SIZE;
+-		uint32_t reta_pos = i % RTE_ETH_RETA_GROUP_SIZE;
+-		uint32_t rss_qs_pos = i % rss->n_queues;
+-
+-		reta_conf[reta_id].reta[reta_pos] =
+-			(uint16_t) rss->queue_id[rss_qs_pos];
+-	}
+-
+-	/* RETA update */
+-	status = rte_eth_dev_rss_reta_update(port_id,
+-		reta_conf,
+-		reta_size);
+-
+-	return status;
+-}
+-
+-struct link *
+-link_create(const char *name, struct link_params *params)
+-{
+-	struct rte_eth_dev_info port_info;
+-	struct rte_eth_conf port_conf;
+-	struct link *link;
+-	struct link_params_rss *rss;
+-	struct mempool *mempool;
+-	uint32_t cpu_id, i;
+-	int status;
+-	uint16_t port_id;
+-
+-	/* Check input params */
+-	if ((name == NULL) ||
+-		link_find(name) ||
+-		(params == NULL) ||
+-		(params->rx.n_queues == 0) ||
+-		(params->rx.queue_size == 0) ||
+-		(params->tx.n_queues == 0) ||
+-		(params->tx.queue_size == 0))
+-		return NULL;
+-
+-	port_id = params->port_id;
+-	if (params->dev_name) {
+-		status = rte_eth_dev_get_port_by_name(params->dev_name,
+-			&port_id);
+-
+-		if (status)
+-			return NULL;
+-	} else
+-		if (!rte_eth_dev_is_valid_port(port_id))
+-			return NULL;
+-
+-	if (rte_eth_dev_info_get(port_id, &port_info) != 0)
+-		return NULL;
+-
+-	mempool = mempool_find(params->rx.mempool_name);
+-	if (mempool == NULL)
+-		return NULL;
+-
+-	rss = params->rx.rss;
+-	if (rss) {
+-		if ((port_info.reta_size == 0) ||
+-			(port_info.reta_size > RTE_ETH_RSS_RETA_SIZE_512))
+-			return NULL;
+-
+-		if ((rss->n_queues == 0) ||
+-			(rss->n_queues >= LINK_RXQ_RSS_MAX))
+-			return NULL;
+-
+-		for (i = 0; i < rss->n_queues; i++)
+-			if (rss->queue_id[i] >= port_info.max_rx_queues)
+-				return NULL;
+-	}
+-
+-	/**
+-	 * Resource create
+-	 */
+-	/* Port */
+-	memcpy(&port_conf, &port_conf_default, sizeof(port_conf));
+-	if (rss) {
+-		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
+-		port_conf.rx_adv_conf.rss_conf.rss_hf =
+-			(RTE_ETH_RSS_IP | RTE_ETH_RSS_TCP | RTE_ETH_RSS_UDP) &
+-			port_info.flow_type_rss_offloads;
+-	}
+-
+-	cpu_id = (uint32_t) rte_eth_dev_socket_id(port_id);
+-	if (cpu_id == (uint32_t) SOCKET_ID_ANY)
+-		cpu_id = 0;
+-
+-	status = rte_eth_dev_configure(
+-		port_id,
+-		params->rx.n_queues,
+-		params->tx.n_queues,
+-		&port_conf);
+-
+-	if (status < 0)
+-		return NULL;
+-
+-	if (params->promiscuous) {
+-		status = rte_eth_promiscuous_enable(port_id);
+-		if (status != 0)
+-			return NULL;
+-	}
+-
+-	/* Port RX */
+-	for (i = 0; i < params->rx.n_queues; i++) {
+-		status = rte_eth_rx_queue_setup(
+-			port_id,
+-			i,
+-			params->rx.queue_size,
+-			cpu_id,
+-			NULL,
+-			mempool->m);
+-
+-		if (status < 0)
+-			return NULL;
+-	}
+-
+-	/* Port TX */
+-	for (i = 0; i < params->tx.n_queues; i++) {
+-		status = rte_eth_tx_queue_setup(
+-			port_id,
+-			i,
+-			params->tx.queue_size,
+-			cpu_id,
+-			NULL);
+-
+-		if (status < 0)
+-			return NULL;
+-	}
+-
+-	/* Port start */
+-	status = rte_eth_dev_start(port_id);
+-	if (status < 0)
+-		return NULL;
+-
+-	if (rss) {
+-		status = rss_setup(port_id, port_info.reta_size, rss);
+-
+-		if (status) {
+-			rte_eth_dev_stop(port_id);
+-			return NULL;
+-		}
+-	}
+-
+-	/* Port link up */
+-	status = rte_eth_dev_set_link_up(port_id);
+-	if ((status < 0) && (status != -ENOTSUP)) {
+-		rte_eth_dev_stop(port_id);
+-		return NULL;
+-	}
+-
+-	/* Node allocation */
+-	link = calloc(1, sizeof(struct link));
+-	if (link == NULL) {
+-		rte_eth_dev_stop(port_id);
+-		return NULL;
+-	}
+-
+-	/* Node fill in */
+-	strlcpy(link->name, name, sizeof(link->name));
+-	link->port_id = port_id;
+-	link->n_rxq = params->rx.n_queues;
+-	link->n_txq = params->tx.n_queues;
+-
+-	/* Node add to list */
+-	TAILQ_INSERT_TAIL(&link_list, link, node);
+-
+-	return link;
+-}
+-
+-int
+-link_is_up(const char *name)
+-{
+-	struct rte_eth_link link_params;
+-	struct link *link;
+-
+-	/* Check input params */
+-	if (name == NULL)
+-		return 0;
+-
+-	link = link_find(name);
+-	if (link == NULL)
+-		return 0;
+-
+-	/* Resource */
+-	if (rte_eth_link_get(link->port_id, &link_params) < 0)
+-		return 0;
+-
+-	return (link_params.link_status == RTE_ETH_LINK_DOWN) ? 0 : 1;
+-}
+diff --git a/examples/ip_pipeline/link.h b/examples/ip_pipeline/link.h
+deleted file mode 100644
+index 34ff1149e0..0000000000
+--- a/examples/ip_pipeline/link.h
++++ /dev/null
+@@ -1,66 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_LINK_H_
+-#define _INCLUDE_LINK_H_
+-
+-#include <stdint.h>
+-#include <sys/queue.h>
+-
+-#include "common.h"
+-
+-#ifndef LINK_RXQ_RSS_MAX
+-#define LINK_RXQ_RSS_MAX                                   16
+-#endif
+-
+-struct link {
+-	TAILQ_ENTRY(link) node;
+-	char name[NAME_SIZE];
+-	uint16_t port_id;
+-	uint32_t n_rxq;
+-	uint32_t n_txq;
+-};
+-
+-TAILQ_HEAD(link_list, link);
+-
+-int
+-link_init(void);
+-
+-struct link *
+-link_find(const char *name);
+-
+-struct link *
+-link_next(struct link *link);
+-
+-struct link_params_rss {
+-	uint32_t queue_id[LINK_RXQ_RSS_MAX];
+-	uint32_t n_queues;
+-};
+-
+-struct link_params {
+-	const char *dev_name;
+-	uint16_t port_id; /**< Valid only when *dev_name* is NULL. */
+-
+-	struct {
+-		uint32_t n_queues;
+-		uint32_t queue_size;
+-		const char *mempool_name;
+-		struct link_params_rss *rss;
+-	} rx;
+-
+-	struct {
+-		uint32_t n_queues;
+-		uint32_t queue_size;
+-	} tx;
+-
+-	int promiscuous;
+-};
+-
+-struct link *
+-link_create(const char *name, struct link_params *params);
+-
+-int
+-link_is_up(const char *name);
+-
+-#endif /* _INCLUDE_LINK_H_ */
+diff --git a/examples/ip_pipeline/main.c b/examples/ip_pipeline/main.c
+deleted file mode 100644
+index 663f538f02..0000000000
+--- a/examples/ip_pipeline/main.c
++++ /dev/null
+@@ -1,260 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <string.h>
+-#include <fcntl.h>
+-#include <unistd.h>
+-#include <getopt.h>
+-
+-#include <rte_launch.h>
+-#include <rte_eal.h>
+-
+-#include "cli.h"
+-#include "conn.h"
+-#include "cryptodev.h"
+-#include "link.h"
+-#include "mempool.h"
+-#include "pipeline.h"
+-#include "swq.h"
+-#include "tap.h"
+-#include "thread.h"
+-#include "tmgr.h"
+-
+-static const char usage[] =
+-	"%s EAL_ARGS -- [-h HOST] [-p PORT] [-s SCRIPT]\n";
+-
+-static const char welcome[] =
+-	"\n"
+-	"Welcome to IP Pipeline!\n"
+-	"\n";
+-
+-static const char prompt[] = "pipeline> ";
+-
+-static struct app_params {
+-	struct conn_params conn;
+-	char *script_name;
+-} app = {
+-	.conn = {
+-		.welcome = welcome,
+-		.prompt = prompt,
+-		.addr = "0.0.0.0",
+-		.port = 8086,
+-		.buf_size = 1024 * 1024,
+-		.msg_in_len_max = 1024,
+-		.msg_out_len_max = 1024 * 1024,
+-		.msg_handle = cli_process,
+-	},
+-	.script_name = NULL,
+-};
+-
+-static int
+-parse_args(int argc, char **argv)
+-{
+-	char *app_name = argv[0];
+-	struct option lgopts[] = {
+-		{ NULL,  0, 0, 0 }
+-	};
+-	int opt, option_index;
+-	int h_present, p_present, s_present, n_args, i;
+-
+-	/* Skip EAL input args */
+-	n_args = argc;
+-	for (i = 0; i < n_args; i++)
+-		if (strcmp(argv[i], "--") == 0) {
+-			argc -= i;
+-			argv += i;
+-			break;
+-		}
+-
+-	if (i == n_args)
+-		return 0;
+-
+-	/* Parse args */
+-	h_present = 0;
+-	p_present = 0;
+-	s_present = 0;
+-
+-	while ((opt = getopt_long(argc, argv, "h:p:s:", lgopts, &option_index))
+-			!= EOF)
+-		switch (opt) {
+-		case 'h':
+-			if (h_present) {
+-				printf("Error: Multiple -h arguments\n");
+-				return -1;
+-			}
+-			h_present = 1;
+-
+-			if (!strlen(optarg)) {
+-				printf("Error: Argument for -h not provided\n");
+-				return -1;
+-			}
+-
+-			app.conn.addr = strdup(optarg);
+-			if (app.conn.addr == NULL) {
+-				printf("Error: Not enough memory\n");
+-				return -1;
+-			}
+-			break;
+-
+-		case 'p':
+-			if (p_present) {
+-				printf("Error: Multiple -p arguments\n");
+-				return -1;
+-			}
+-			p_present = 1;
+-
+-			if (!strlen(optarg)) {
+-				printf("Error: Argument for -p not provided\n");
+-				return -1;
+-			}
+-
+-			app.conn.port = (uint16_t) atoi(optarg);
+-			break;
+-
+-		case 's':
+-			if (s_present) {
+-				printf("Error: Multiple -s arguments\n");
+-				return -1;
+-			}
+-			s_present = 1;
+-
+-			if (!strlen(optarg)) {
+-				printf("Error: Argument for -s not provided\n");
+-				return -1;
+-			}
+-
+-			app.script_name = strdup(optarg);
+-			if (app.script_name == NULL) {
+-				printf("Error: Not enough memory\n");
+-				return -1;
+-			}
+-			break;
+-
+-		default:
+-			printf(usage, app_name);
+-			return -1;
+-		}
+-
+-	optind = 1; /* reset getopt lib */
+-
+-	return 0;
+-}
+-
+-int
+-main(int argc, char **argv)
+-{
+-	struct conn *conn;
+-	int status;
+-
+-	/* Parse application arguments */
+-	status = parse_args(argc, argv);
+-	if (status < 0)
+-		return status;
+-
+-	/* EAL */
+-	status = rte_eal_init(argc, argv);
+-	if (status < 0) {
+-		printf("Error: EAL initialization failed (%d)\n", status);
+-		return status;
+-	};
+-
+-	/* Connectivity */
+-	conn = conn_init(&app.conn);
+-	if (conn == NULL) {
+-		printf("Error: Connectivity initialization failed (%d)\n",
+-			status);
+-		return status;
+-	};
+-
+-	/* Mempool */
+-	status = mempool_init();
+-	if (status) {
+-		printf("Error: Mempool initialization failed (%d)\n", status);
+-		return status;
+-	}
+-
+-	/* Link */
+-	status = link_init();
+-	if (status) {
+-		printf("Error: Link initialization failed (%d)\n", status);
+-		return status;
+-	}
+-
+-	/* SWQ */
+-	status = swq_init();
+-	if (status) {
+-		printf("Error: SWQ initialization failed (%d)\n", status);
+-		return status;
+-	}
+-
+-	/* Traffic Manager */
+-	status = tmgr_init();
+-	if (status) {
+-		printf("Error: TMGR initialization failed (%d)\n", status);
+-		return status;
+-	}
+-
+-	/* TAP */
+-	status = tap_init();
+-	if (status) {
+-		printf("Error: TAP initialization failed (%d)\n", status);
+-		return status;
+-	}
+-
+-	/* Sym Crypto */
+-	status = cryptodev_init();
+-	if (status) {
+-		printf("Error: Cryptodev initialization failed (%d)\n",
+-				status);
+-		return status;
+-	}
+-
+-	/* Action */
+-	status = port_in_action_profile_init();
+-	if (status) {
+-		printf("Error: Input port action profile initialization failed (%d)\n", status);
+-		return status;
+-	}
+-
+-	status = table_action_profile_init();
+-	if (status) {
+-		printf("Error: Action profile initialization failed (%d)\n",
+-			status);
+-		return status;
+-	}
+-
+-	/* Pipeline */
+-	status = pipeline_init();
+-	if (status) {
+-		printf("Error: Pipeline initialization failed (%d)\n", status);
+-		return status;
+-	}
+-
+-	/* Thread */
+-	status = thread_init();
+-	if (status) {
+-		printf("Error: Thread initialization failed (%d)\n", status);
+-		return status;
+-	}
+-
+-	rte_eal_mp_remote_launch(
+-		thread_main,
+-		NULL,
+-		SKIP_MAIN);
+-
+-	/* Script */
+-	if (app.script_name)
+-		cli_script_process(app.script_name,
+-			app.conn.msg_in_len_max,
+-			app.conn.msg_out_len_max);
+-
+-	/* Dispatch loop */
+-	for ( ; ; ) {
+-		conn_poll_for_conn(conn);
+-
+-		conn_poll_for_msg(conn);
+-	}
+-}
+diff --git a/examples/ip_pipeline/mempool.c b/examples/ip_pipeline/mempool.c
+deleted file mode 100644
+index f5d2a7d108..0000000000
+--- a/examples/ip_pipeline/mempool.c
++++ /dev/null
+@@ -1,82 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <stdlib.h>
+-#include <string.h>
+-
+-#include <rte_mbuf.h>
+-#include <rte_string_fns.h>
+-
+-#include "mempool.h"
+-
+-#define BUFFER_SIZE_MIN        (sizeof(struct rte_mbuf) + RTE_PKTMBUF_HEADROOM)
+-
+-static struct mempool_list mempool_list;
+-
+-int
+-mempool_init(void)
+-{
+-	TAILQ_INIT(&mempool_list);
+-
+-	return 0;
+-}
+-
+-struct mempool *
+-mempool_find(const char *name)
+-{
+-	struct mempool *mempool;
+-
+-	if (name == NULL)
+-		return NULL;
+-
+-	TAILQ_FOREACH(mempool, &mempool_list, node)
+-		if (strcmp(mempool->name, name) == 0)
+-			return mempool;
+-
+-	return NULL;
+-}
+-
+-struct mempool *
+-mempool_create(const char *name, struct mempool_params *params)
+-{
+-	struct mempool *mempool;
+-	struct rte_mempool *m;
+-
+-	/* Check input params */
+-	if ((name == NULL) ||
+-		mempool_find(name) ||
+-		(params == NULL) ||
+-		(params->buffer_size < BUFFER_SIZE_MIN) ||
+-		(params->pool_size == 0))
+-		return NULL;
+-
+-	/* Resource create */
+-	m = rte_pktmbuf_pool_create(
+-		name,
+-		params->pool_size,
+-		params->cache_size,
+-		0,
+-		params->buffer_size - sizeof(struct rte_mbuf),
+-		params->cpu_id);
+-
+-	if (m == NULL)
+-		return NULL;
+-
+-	/* Node allocation */
+-	mempool = calloc(1, sizeof(struct mempool));
+-	if (mempool == NULL) {
+-		rte_mempool_free(m);
+-		return NULL;
+-	}
+-
+-	/* Node fill in */
+-	strlcpy(mempool->name, name, sizeof(mempool->name));
+-	mempool->m = m;
+-	mempool->buffer_size = params->buffer_size;
+-
+-	/* Node add to list */
+-	TAILQ_INSERT_TAIL(&mempool_list, mempool, node);
+-
+-	return mempool;
+-}
+diff --git a/examples/ip_pipeline/mempool.h b/examples/ip_pipeline/mempool.h
+deleted file mode 100644
+index bd46a11ca0..0000000000
+--- a/examples/ip_pipeline/mempool.h
++++ /dev/null
+@@ -1,40 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_MEMPOOL_H_
+-#define _INCLUDE_MEMPOOL_H_
+-
+-#include <stdint.h>
+-#include <sys/queue.h>
+-
+-#include <rte_mempool.h>
+-
+-#include "common.h"
+-
+-struct mempool {
+-	TAILQ_ENTRY(mempool) node;
+-	char name[NAME_SIZE];
+-	struct rte_mempool *m;
+-	uint32_t buffer_size;
+-};
+-
+-TAILQ_HEAD(mempool_list, mempool);
+-
+-int
+-mempool_init(void);
+-
+-struct mempool *
+-mempool_find(const char *name);
+-
+-struct mempool_params {
+-	uint32_t buffer_size;
+-	uint32_t pool_size;
+-	uint32_t cache_size;
+-	uint32_t cpu_id;
+-};
+-
+-struct mempool *
+-mempool_create(const char *name, struct mempool_params *params);
+-
+-#endif /* _INCLUDE_MEMPOOL_H_ */
+diff --git a/examples/ip_pipeline/meson.build b/examples/ip_pipeline/meson.build
+deleted file mode 100644
+index 68049157e4..0000000000
+--- a/examples/ip_pipeline/meson.build
++++ /dev/null
+@@ -1,30 +0,0 @@
+-# SPDX-License-Identifier: BSD-3-Clause
+-# Copyright(c) 2017-2018 Intel Corporation
+-
+-# meson file, for building this example as part of a main DPDK build.
+-#
+-# To build this example as a standalone application with an already-installed
+-# DPDK instance, use 'make'
+-
+-build = cc.has_header('sys/epoll.h')
+-if not build
+-    subdir_done()
+-endif
+-
+-deps += ['pipeline', 'bus_pci']
+-allow_experimental_apis = true
+-sources = files(
+-        'action.c',
+-        'cli.c',
+-        'conn.c',
+-        'cryptodev.c',
+-        'link.c',
+-        'main.c',
+-        'mempool.c',
+-        'parser.c',
+-        'pipeline.c',
+-        'swq.c',
+-        'tap.c',
+-        'thread.c',
+-        'tmgr.c',
+-)
+diff --git a/examples/ip_pipeline/parser.c b/examples/ip_pipeline/parser.c
+deleted file mode 100644
+index 8baa70e1f4..0000000000
+--- a/examples/ip_pipeline/parser.c
++++ /dev/null
+@@ -1,506 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2016 Intel Corporation.
+- * Copyright (c) 2009, Olivier MATZ <zer0@droids-corp.org>
+- * All rights reserved.
+- */
+-
+-#include <stdint.h>
+-#include <stdlib.h>
+-#include <stdio.h>
+-#include <ctype.h>
+-#include <getopt.h>
+-#include <errno.h>
+-#include <stdarg.h>
+-#include <string.h>
+-#include <libgen.h>
+-#include <unistd.h>
+-#include <sys/wait.h>
+-#include <arpa/inet.h>
+-#include <sys/socket.h>
+-
+-#include <rte_errno.h>
+-#include <rte_string_fns.h>
+-
+-#include "parser.h"
+-
+-static uint32_t
+-get_hex_val(char c)
+-{
+-	switch (c) {
+-	case '0': case '1': case '2': case '3': case '4': case '5':
+-	case '6': case '7': case '8': case '9':
+-		return c - '0';
+-	case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
+-		return c - 'A' + 10;
+-	case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+-		return c - 'a' + 10;
+-	default:
+-		return 0;
+-	}
+-}
+-
+-int
+-parser_read_arg_bool(const char *p)
+-{
+-	p = rte_str_skip_leading_spaces(p);
+-	int result = -EINVAL;
+-
+-	if (((p[0] == 'y') && (p[1] == 'e') && (p[2] == 's')) ||
+-		((p[0] == 'Y') && (p[1] == 'E') && (p[2] == 'S'))) {
+-		p += 3;
+-		result = 1;
+-	}
+-
+-	if (((p[0] == 'o') && (p[1] == 'n')) ||
+-		((p[0] == 'O') && (p[1] == 'N'))) {
+-		p += 2;
+-		result = 1;
+-	}
+-
+-	if (((p[0] == 'n') && (p[1] == 'o')) ||
+-		((p[0] == 'N') && (p[1] == 'O'))) {
+-		p += 2;
+-		result = 0;
+-	}
+-
+-	if (((p[0] == 'o') && (p[1] == 'f') && (p[2] == 'f')) ||
+-		((p[0] == 'O') && (p[1] == 'F') && (p[2] == 'F'))) {
+-		p += 3;
+-		result = 0;
+-	}
+-
+-	p = rte_str_skip_leading_spaces(p);
+-
+-	if (p[0] != '\0')
+-		return -EINVAL;
+-
+-	return result;
+-}
+-
+-int
+-parser_read_uint64(uint64_t *value, const char *p)
+-{
+-	char *next;
+-	uint64_t val;
+-
+-	p = rte_str_skip_leading_spaces(p);
+-	if (!isdigit(*p))
+-		return -EINVAL;
+-
+-	val = strtoul(p, &next, 10);
+-	if (p == next)
+-		return -EINVAL;
+-
+-	p = next;
+-	switch (*p) {
+-	case 'T':
+-		val *= 1024ULL;
+-		/* fall through */
+-	case 'G':
+-		val *= 1024ULL;
+-		/* fall through */
+-	case 'M':
+-		val *= 1024ULL;
+-		/* fall through */
+-	case 'k':
+-	case 'K':
+-		val *= 1024ULL;
+-		p++;
+-		break;
+-	}
+-
+-	p = rte_str_skip_leading_spaces(p);
+-	if (*p != '\0')
+-		return -EINVAL;
+-
+-	*value = val;
+-	return 0;
+-}
+-
+-int
+-parser_read_uint64_hex(uint64_t *value, const char *p)
+-{
+-	char *next;
+-	uint64_t val;
+-
+-	p = rte_str_skip_leading_spaces(p);
+-
+-	val = strtoul(p, &next, 16);
+-	if (p == next)
+-		return -EINVAL;
+-
+-	p = rte_str_skip_leading_spaces(next);
+-	if (*p != '\0')
+-		return -EINVAL;
+-
+-	*value = val;
+-	return 0;
+-}
+-
+-int
+-parser_read_uint32(uint32_t *value, const char *p)
+-{
+-	uint64_t val = 0;
+-	int ret = parser_read_uint64(&val, p);
+-
+-	if (ret < 0)
+-		return ret;
+-
+-	if (val > UINT32_MAX)
+-		return -ERANGE;
+-
+-	*value = val;
+-	return 0;
+-}
+-
+-int
+-parser_read_uint32_hex(uint32_t *value, const char *p)
+-{
+-	uint64_t val = 0;
+-	int ret = parser_read_uint64_hex(&val, p);
+-
+-	if (ret < 0)
+-		return ret;
+-
+-	if (val > UINT32_MAX)
+-		return -ERANGE;
+-
+-	*value = val;
+-	return 0;
+-}
+-
+-int
+-parser_read_uint16(uint16_t *value, const char *p)
+-{
+-	uint64_t val = 0;
+-	int ret = parser_read_uint64(&val, p);
+-
+-	if (ret < 0)
+-		return ret;
+-
+-	if (val > UINT16_MAX)
+-		return -ERANGE;
+-
+-	*value = val;
+-	return 0;
+-}
+-
+-int
+-parser_read_uint16_hex(uint16_t *value, const char *p)
+-{
+-	uint64_t val = 0;
+-	int ret = parser_read_uint64_hex(&val, p);
+-
+-	if (ret < 0)
+-		return ret;
+-
+-	if (val > UINT16_MAX)
+-		return -ERANGE;
+-
+-	*value = val;
+-	return 0;
+-}
+-
+-int
+-parser_read_uint8(uint8_t *value, const char *p)
+-{
+-	uint64_t val = 0;
+-	int ret = parser_read_uint64(&val, p);
+-
+-	if (ret < 0)
+-		return ret;
+-
+-	if (val > UINT8_MAX)
+-		return -ERANGE;
+-
+-	*value = val;
+-	return 0;
+-}
+-
+-int
+-parser_read_uint8_hex(uint8_t *value, const char *p)
+-{
+-	uint64_t val = 0;
+-	int ret = parser_read_uint64_hex(&val, p);
+-
+-	if (ret < 0)
+-		return ret;
+-
+-	if (val > UINT8_MAX)
+-		return -ERANGE;
+-
+-	*value = val;
+-	return 0;
+-}
+-
+-int
+-parse_tokenize_string(char *string, char *tokens[], uint32_t *n_tokens)
+-{
+-	uint32_t i;
+-
+-	if ((string == NULL) ||
+-		(tokens == NULL) ||
+-		(*n_tokens < 1))
+-		return -EINVAL;
+-
+-	for (i = 0; i < *n_tokens; i++) {
+-		tokens[i] = strtok_r(string, PARSE_DELIMITER, &string);
+-		if (tokens[i] == NULL)
+-			break;
+-	}
+-
+-	if ((i == *n_tokens) &&
+-		(NULL != strtok_r(string, PARSE_DELIMITER, &string)))
+-		return -E2BIG;
+-
+-	*n_tokens = i;
+-	return 0;
+-}
+-
+-int
+-parse_hex_string(char *src, uint8_t *dst, uint32_t *size)
+-{
+-	char *c;
+-	uint32_t len, i;
+-
+-	/* Check input parameters */
+-	if ((src == NULL) ||
+-		(dst == NULL) ||
+-		(size == NULL) ||
+-		(*size == 0))
+-		return -1;
+-
+-	len = strlen(src);
+-	if (((len & 3) != 0) ||
+-		(len > (*size) * 2))
+-		return -1;
+-	*size = len / 2;
+-
+-	for (c = src; *c != 0; c++) {
+-		if ((((*c) >= '0') && ((*c) <= '9')) ||
+-			(((*c) >= 'A') && ((*c) <= 'F')) ||
+-			(((*c) >= 'a') && ((*c) <= 'f')))
+-			continue;
+-
+-		return -1;
+-	}
+-
+-	/* Convert chars to bytes */
+-	for (i = 0; i < *size; i++)
+-		dst[i] = get_hex_val(src[2 * i]) * 16 +
+-			get_hex_val(src[2 * i + 1]);
+-
+-	return 0;
+-}
+-
+-int
+-parse_mpls_labels(char *string, uint32_t *labels, uint32_t *n_labels)
+-{
+-	uint32_t n_max_labels = *n_labels, count = 0;
+-
+-	/* Check for void list of labels */
+-	if (strcmp(string, "<void>") == 0) {
+-		*n_labels = 0;
+-		return 0;
+-	}
+-
+-	/* At least one label should be present */
+-	for ( ; (*string != '\0'); ) {
+-		char *next;
+-		int value;
+-
+-		if (count >= n_max_labels)
+-			return -1;
+-
+-		if (count > 0) {
+-			if (string[0] != ':')
+-				return -1;
+-
+-			string++;
+-		}
+-
+-		value = strtol(string, &next, 10);
+-		if (next == string)
+-			return -1;
+-		string = next;
+-
+-		labels[count++] = (uint32_t) value;
+-	}
+-
+-	*n_labels = count;
+-	return 0;
+-}
+-
+-static struct rte_ether_addr *
+-my_ether_aton(const char *a)
+-{
+-	int i;
+-	char *end;
+-	unsigned long o[RTE_ETHER_ADDR_LEN];
+-	static struct rte_ether_addr ether_addr;
+-
+-	i = 0;
+-	do {
+-		errno = 0;
+-		o[i] = strtoul(a, &end, 16);
+-		if (errno != 0 || end == a || (end[0] != ':' && end[0] != 0))
+-			return NULL;
+-		a = end + 1;
+-	} while (++i != RTE_DIM(o) && end[0] != 0);
+-
+-	/* Junk at the end of line */
+-	if (end[0] != 0)
+-		return NULL;
+-
+-	/* Support the format XX:XX:XX:XX:XX:XX */
+-	if (i == RTE_ETHER_ADDR_LEN) {
+-		while (i-- != 0) {
+-			if (o[i] > UINT8_MAX)
+-				return NULL;
+-			ether_addr.addr_bytes[i] = (uint8_t)o[i];
+-		}
+-	/* Support the format XXXX:XXXX:XXXX */
+-	} else if (i == RTE_ETHER_ADDR_LEN / 2) {
+-		while (i-- != 0) {
+-			if (o[i] > UINT16_MAX)
+-				return NULL;
+-			ether_addr.addr_bytes[i * 2] = (uint8_t)(o[i] >> 8);
+-			ether_addr.addr_bytes[i * 2 + 1] = (uint8_t)(o[i] & 0xff);
+-		}
+-	/* unknown format */
+-	} else
+-		return NULL;
+-
+-	return (struct rte_ether_addr *)&ether_addr;
+-}
+-
+-int
+-parse_ipv4_addr(const char *token, struct in_addr *ipv4)
+-{
+-	if (strlen(token) >= INET_ADDRSTRLEN)
+-		return -EINVAL;
+-
+-	if (inet_pton(AF_INET, token, ipv4) != 1)
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-int
+-parse_ipv6_addr(const char *token, struct rte_ipv6_addr *ipv6)
+-{
+-	if (strlen(token) >= INET6_ADDRSTRLEN)
+-		return -EINVAL;
+-
+-	if (inet_pton(AF_INET6, token, ipv6) != 1)
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-int
+-parse_mac_addr(const char *token, struct rte_ether_addr *addr)
+-{
+-	struct rte_ether_addr *tmp;
+-
+-	tmp = my_ether_aton(token);
+-	if (tmp == NULL)
+-		return -1;
+-
+-	*addr = *tmp;
+-	return 0;
+-}
+-
+-int
+-parse_cpu_core(const char *entry,
+-	struct cpu_core_params *p)
+-{
+-	size_t num_len;
+-	char num[8];
+-
+-	uint32_t s = 0, c = 0, h = 0, val;
+-	uint8_t s_parsed = 0, c_parsed = 0, h_parsed = 0;
+-	const char *next = rte_str_skip_leading_spaces(entry);
+-	char type;
+-
+-	if (p == NULL)
+-		return -EINVAL;
+-
+-	/* Expect <CORE> or [sX][cY][h]. At least one parameter is required. */
+-	while (*next != '\0') {
+-		/* If everything parsed nothing should left */
+-		if (s_parsed && c_parsed && h_parsed)
+-			return -EINVAL;
+-
+-		type = *next;
+-		switch (type) {
+-		case 's':
+-		case 'S':
+-			if (s_parsed || c_parsed || h_parsed)
+-				return -EINVAL;
+-			s_parsed = 1;
+-			next++;
+-			break;
+-		case 'c':
+-		case 'C':
+-			if (c_parsed || h_parsed)
+-				return -EINVAL;
+-			c_parsed = 1;
+-			next++;
+-			break;
+-		case 'h':
+-		case 'H':
+-			if (h_parsed)
+-				return -EINVAL;
+-			h_parsed = 1;
+-			next++;
+-			break;
+-		default:
+-			/* If it start from digit it must be only core id. */
+-			if (!isdigit(*next) || s_parsed || c_parsed || h_parsed)
+-				return -EINVAL;
+-
+-			type = 'C';
+-		}
+-
+-		for (num_len = 0; *next != '\0'; next++, num_len++) {
+-			if (num_len == RTE_DIM(num))
+-				return -EINVAL;
+-
+-			if (!isdigit(*next))
+-				break;
+-
+-			num[num_len] = *next;
+-		}
+-
+-		if (num_len == 0 && type != 'h' && type != 'H')
+-			return -EINVAL;
+-
+-		if (num_len != 0 && (type == 'h' || type == 'H'))
+-			return -EINVAL;
+-
+-		num[num_len] = '\0';
+-		val = strtol(num, NULL, 10);
+-
+-		h = 0;
+-		switch (type) {
+-		case 's':
+-		case 'S':
+-			s = val;
+-			break;
+-		case 'c':
+-		case 'C':
+-			c = val;
+-			break;
+-		case 'h':
+-		case 'H':
+-			h = 1;
+-			break;
+-		}
+-	}
+-
+-	p->socket_id = s;
+-	p->core_id = c;
+-	p->thread_id = h;
+-	return 0;
+-}
+diff --git a/examples/ip_pipeline/parser.h b/examples/ip_pipeline/parser.h
+deleted file mode 100644
+index c8f0187d71..0000000000
+--- a/examples/ip_pipeline/parser.h
++++ /dev/null
+@@ -1,56 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
 - * Copyright(c) 2010-2016 Intel Corporation
 - */
 -
--#ifndef __INCLUDE_RTE_PORT_SOURCE_SINK_H__
--#define __INCLUDE_RTE_PORT_SOURCE_SINK_H__
+-#ifndef __INCLUDE_PARSER_H__
+-#define __INCLUDE_PARSER_H__
 -
--/**
-- * @file
-- * RTE Port Source/Sink
-- *
-- * source: input port that can be used to generate packets
-- * sink: output port that drops all packets written to it
-- */
--
--#include "rte_port.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--/** source port parameters */
--struct rte_port_source_params {
--	/** Pre-initialized buffer pool */
--	struct rte_mempool *mempool;
--
--	/** The full path of the pcap file to read packets from */
--	const char *file_name;
--	/** The number of bytes to be read from each packet in the
--	 *  pcap file. If this value is 0, the whole packet is read;
--	 *  if it is bigger than packet size, the generated packets
--	 *  will contain the whole packet */
--	uint32_t n_bytes_per_pkt;
--};
--
--/** source port operations */
--extern struct rte_port_in_ops rte_port_source_ops;
--
--/** sink port parameters */
--struct rte_port_sink_params {
--	/** The full path of the pcap file to write the packets to */
--	const char *file_name;
--	/** The maximum number of packets write to the pcap file.
--	 *  If this value is 0, the "infinite" write will be carried
--	 *  out.
--	 */
--	uint32_t max_n_pkts;
--};
--
--/** sink port operations */
--extern struct rte_port_out_ops rte_port_sink_ops;
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
-diff --git a/lib/port/rte_port_sym_crypto.c b/lib/port/rte_port_sym_crypto.c
-deleted file mode 100644
-index 30c9d1283e..0000000000
---- a/lib/port/rte_port_sym_crypto.c
-+++ /dev/null
-@@ -1,558 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2018 Intel Corporation
-- */
--#include <string.h>
--
--#include <eal_export.h>
--#include <rte_common.h>
--#include <rte_malloc.h>
--
--#include "rte_port_sym_crypto.h"
--
--#include "port_log.h"
--
--/*
-- * Port Crypto Reader
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_IN_ADD(port, val) \
--	(port)->stats.n_pkts_in += (val)
--#define RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_DROP_ADD(port, val) \
--	(port)->stats.n_pkts_drop += (val)
--
--#else
--
--#define RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_sym_crypto_reader {
--	struct rte_port_in_stats stats;
--
--	uint8_t cryptodev_id;
--	uint16_t queue_id;
--	struct rte_crypto_op *ops[RTE_PORT_IN_BURST_SIZE_MAX];
--	rte_port_sym_crypto_reader_callback_fn f_callback;
--	void *arg_callback;
--};
--
--static void *
--rte_port_sym_crypto_reader_create(void *params, int socket_id)
--{
--	struct rte_port_sym_crypto_reader_params *conf =
--			params;
--	struct rte_port_sym_crypto_reader *port;
--
--	/* Check input parameters */
--	if (conf == NULL) {
--		PORT_LOG(ERR, "%s: params is NULL", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--		RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->cryptodev_id = conf->cryptodev_id;
--	port->queue_id = conf->queue_id;
--	port->f_callback = conf->f_callback;
--	port->arg_callback = conf->arg_callback;
--
--	return port;
--}
--
--static int
--rte_port_sym_crypto_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
--{
--	struct rte_port_sym_crypto_reader *p =
--			port;
--	uint16_t rx_ops_cnt, i, n = 0;
--
--	rx_ops_cnt = rte_cryptodev_dequeue_burst(p->cryptodev_id, p->queue_id,
--			p->ops, n_pkts);
--
--	for (i = 0; i < rx_ops_cnt; i++) {
--		struct rte_crypto_op *op = p->ops[i];
--
--		/** Drop failed pkts */
--		if (unlikely(op->status != RTE_CRYPTO_OP_STATUS_SUCCESS)) {
--			rte_pktmbuf_free(op->sym->m_src);
--			continue;
--		}
--
--		pkts[n++] = op->sym->m_src;
--	}
--
--	if (p->f_callback)
--		(*p->f_callback)(pkts, n, p->arg_callback);
--
--	RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_IN_ADD(p, n);
--	RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_DROP_ADD(p, rx_ops_cnt - n);
--
--	return n;
--}
--
--static int
--rte_port_sym_crypto_reader_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_free(port);
--
--	return 0;
--}
--
--static int rte_port_sym_crypto_reader_stats_read(void *port,
--	struct rte_port_in_stats *stats, int clear)
--{
--	struct rte_port_sym_crypto_reader *p =
--			port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port crypto Writer
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(port, val) \
--	(port)->stats.n_pkts_in += (val)
--#define RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_DROP_ADD(port, val) \
--	(port)->stats.n_pkts_drop += (val)
--
--#else
--
--#define RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_sym_crypto_writer {
--	struct rte_port_out_stats stats;
--
--	struct rte_crypto_op *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--
--	uint32_t tx_burst_sz;
--	uint32_t tx_buf_count;
--	uint64_t bsz_mask;
--
--	uint8_t cryptodev_id;
--	uint16_t queue_id;
--	uint16_t crypto_op_offset;
--};
--
--static void *
--rte_port_sym_crypto_writer_create(void *params, int socket_id)
--{
--	struct rte_port_sym_crypto_writer_params *conf =
--			params;
--	struct rte_port_sym_crypto_writer *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->tx_burst_sz == 0) ||
--		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
--		(!rte_is_power_of_2(conf->tx_burst_sz))) {
--		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--		RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
--
--	port->cryptodev_id = conf->cryptodev_id;
--	port->queue_id = conf->queue_id;
--	port->crypto_op_offset = conf->crypto_op_offset;
--
--	return port;
--}
--
--static inline void
--send_burst(struct rte_port_sym_crypto_writer *p)
--{
--	uint32_t nb_tx;
--
--	nb_tx = rte_cryptodev_enqueue_burst(p->cryptodev_id, p->queue_id,
--			p->tx_buf, p->tx_buf_count);
--
--	RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count -
--			nb_tx);
--	for (; nb_tx < p->tx_buf_count; nb_tx++)
--		rte_pktmbuf_free(p->tx_buf[nb_tx]->sym->m_src);
--
--	p->tx_buf_count = 0;
--}
--
--static int
--rte_port_sym_crypto_writer_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_sym_crypto_writer *p =
--			port;
--
--	p->tx_buf[p->tx_buf_count++] = (struct rte_crypto_op *)
--			RTE_MBUF_METADATA_UINT8_PTR(pkt, p->crypto_op_offset);
--	RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_sym_crypto_writer_tx_bulk(void *port,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask)
--{
--	struct rte_port_sym_crypto_writer *p =
--			port;
--	uint64_t bsz_mask = p->bsz_mask;
--	uint32_t tx_buf_count = p->tx_buf_count;
--	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
--					((pkts_mask & bsz_mask) ^ bsz_mask);
--
--	if (expr == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
--
--		RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
--
--		for (i = 0; i < n_pkts; i++)
--			p->tx_buf[p->tx_buf_count++] = (struct rte_crypto_op *)
--					RTE_MBUF_METADATA_UINT8_PTR(pkts[i],
--							p->crypto_op_offset);
--
--		if (p->tx_buf_count >= p->tx_burst_sz)
--			send_burst(p);
--	} else {
--		for (; pkts_mask;) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
--
--			p->tx_buf[tx_buf_count++] = (struct rte_crypto_op *)
--					RTE_MBUF_METADATA_UINT8_PTR(pkt,
--							p->crypto_op_offset);
--
--			RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(p, 1);
--			pkts_mask &= ~pkt_mask;
--		}
--
--		p->tx_buf_count = tx_buf_count;
--		if (tx_buf_count >= p->tx_burst_sz)
--			send_burst(p);
--	}
--
--	return 0;
--}
--
--static int
--rte_port_sym_crypto_writer_flush(void *port)
--{
--	struct rte_port_sym_crypto_writer *p =
--			port;
--
--	if (p->tx_buf_count > 0)
--		send_burst(p);
--
--	return 0;
--}
--
--static int
--rte_port_sym_crypto_writer_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_port_sym_crypto_writer_flush(port);
--	rte_free(port);
--
--	return 0;
--}
--
--static int rte_port_sym_crypto_writer_stats_read(void *port,
--	struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_sym_crypto_writer *p =
--			port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--/*
-- * Port crypto Writer Nodrop
-- */
--#ifdef RTE_PORT_STATS_COLLECT
--
--#define RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
--	(port)->stats.n_pkts_in += (val)
--#define RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
--	(port)->stats.n_pkts_drop += (val)
--
--#else
--
--#define RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
--#define RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
--
--#endif
--
--struct rte_port_sym_crypto_writer_nodrop {
--	struct rte_port_out_stats stats;
--
--	struct rte_crypto_op *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
--	uint32_t tx_burst_sz;
--	uint32_t tx_buf_count;
--	uint64_t bsz_mask;
--	uint64_t n_retries;
--
--	uint8_t cryptodev_id;
--	uint16_t queue_id;
--	uint16_t crypto_op_offset;
--};
--
--static void *
--rte_port_sym_crypto_writer_nodrop_create(void *params, int socket_id)
--{
--	struct rte_port_sym_crypto_writer_nodrop_params *conf =
--		params;
--	struct rte_port_sym_crypto_writer_nodrop *port;
--
--	/* Check input parameters */
--	if ((conf == NULL) ||
--		(conf->tx_burst_sz == 0) ||
--		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
--		(!rte_is_power_of_2(conf->tx_burst_sz))) {
--		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
--		return NULL;
--	}
--
--	/* Memory allocation */
--	port = rte_zmalloc_socket("PORT", sizeof(*port),
--		RTE_CACHE_LINE_SIZE, socket_id);
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
--		return NULL;
--	}
--
--	/* Initialization */
--	port->cryptodev_id = conf->cryptodev_id;
--	port->queue_id = conf->queue_id;
--	port->crypto_op_offset = conf->crypto_op_offset;
--	port->tx_burst_sz = conf->tx_burst_sz;
--	port->tx_buf_count = 0;
--	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
--
--	/*
--	 * When n_retries is 0 it means that we should wait for every packet to
--	 * send no matter how many retries should it take. To limit number of
--	 * branches in fast path, we use UINT64_MAX instead of branching.
--	 */
--	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
--
--	return port;
--}
--
--static inline void
--send_burst_nodrop(struct rte_port_sym_crypto_writer_nodrop *p)
--{
--	uint32_t nb_tx = 0, i;
--
--	nb_tx = rte_cryptodev_enqueue_burst(p->cryptodev_id, p->queue_id,
--			p->tx_buf, p->tx_buf_count);
--
--	/* We sent all the packets in a first try */
--	if (nb_tx >= p->tx_buf_count) {
--		p->tx_buf_count = 0;
--		return;
--	}
--
--	for (i = 0; i < p->n_retries; i++) {
--		nb_tx += rte_cryptodev_enqueue_burst(p->cryptodev_id,
--				p->queue_id, p->tx_buf + nb_tx,
--				p->tx_buf_count - nb_tx);
--
--		/* We sent all the packets in more than one try */
--		if (nb_tx >= p->tx_buf_count) {
--			p->tx_buf_count = 0;
--			return;
--		}
--	}
--
--	/* We didn't send the packets in maximum allowed attempts */
--	RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_DROP_ADD(p,
--			p->tx_buf_count - nb_tx);
--	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
--		rte_pktmbuf_free(p->tx_buf[nb_tx]->sym->m_src);
--
--	p->tx_buf_count = 0;
--}
--
--static int
--rte_port_sym_crypto_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
--{
--	struct rte_port_sym_crypto_writer_nodrop *p =
--			port;
--
--	p->tx_buf[p->tx_buf_count++] = (struct rte_crypto_op *)
--			RTE_MBUF_METADATA_UINT8_PTR(pkt, p->crypto_op_offset);
--	RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(p, 1);
--	if (p->tx_buf_count >= p->tx_burst_sz)
--		send_burst_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_sym_crypto_writer_nodrop_tx_bulk(void *port,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask)
--{
--	struct rte_port_sym_crypto_writer_nodrop *p =
--			port;
--
--	uint64_t bsz_mask = p->bsz_mask;
--	uint32_t tx_buf_count = p->tx_buf_count;
--	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
--					((pkts_mask & bsz_mask) ^ bsz_mask);
--
--	if (expr == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
--
--		RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
--
--		for (i = 0; i < n_pkts; i++)
--			p->tx_buf[p->tx_buf_count++] = (struct rte_crypto_op *)
--					RTE_MBUF_METADATA_UINT8_PTR(pkts[i],
--							p->crypto_op_offset);
--
--		if (p->tx_buf_count >= p->tx_burst_sz)
--			send_burst_nodrop(p);
--	} else {
--		for ( ; pkts_mask; ) {
--			uint32_t pkt_index = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pkt_index;
--			struct rte_mbuf *pkt = pkts[pkt_index];
--
--			p->tx_buf[tx_buf_count++] = (struct rte_crypto_op *)
--					RTE_MBUF_METADATA_UINT8_PTR(pkt,
--							p->crypto_op_offset);
--			RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_IN_ADD(p,
--					1);
--			pkts_mask &= ~pkt_mask;
--		}
--
--		p->tx_buf_count = tx_buf_count;
--		if (tx_buf_count >= p->tx_burst_sz)
--			send_burst_nodrop(p);
--	}
--
--	return 0;
--}
--
--static int
--rte_port_sym_crypto_writer_nodrop_flush(void *port)
--{
--	struct rte_port_sym_crypto_writer_nodrop *p =
--		port;
--
--	if (p->tx_buf_count > 0)
--		send_burst_nodrop(p);
--
--	return 0;
--}
--
--static int
--rte_port_sym_crypto_writer_nodrop_free(void *port)
--{
--	if (port == NULL) {
--		PORT_LOG(ERR, "%s: Port is NULL", __func__);
--		return -EINVAL;
--	}
--
--	rte_port_sym_crypto_writer_nodrop_flush(port);
--	rte_free(port);
--
--	return 0;
--}
--
--static int rte_port_sym_crypto_writer_nodrop_stats_read(void *port,
--	struct rte_port_out_stats *stats, int clear)
--{
--	struct rte_port_sym_crypto_writer_nodrop *p =
--			port;
--
--	if (stats != NULL)
--		memcpy(stats, &p->stats, sizeof(p->stats));
--
--	if (clear)
--		memset(&p->stats, 0, sizeof(p->stats));
--
--	return 0;
--}
--
--
--/*
-- * Summary of port operations
-- */
--RTE_EXPORT_SYMBOL(rte_port_sym_crypto_reader_ops)
--struct rte_port_in_ops rte_port_sym_crypto_reader_ops = {
--	.f_create = rte_port_sym_crypto_reader_create,
--	.f_free = rte_port_sym_crypto_reader_free,
--	.f_rx = rte_port_sym_crypto_reader_rx,
--	.f_stats = rte_port_sym_crypto_reader_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_sym_crypto_writer_ops)
--struct rte_port_out_ops rte_port_sym_crypto_writer_ops = {
--	.f_create = rte_port_sym_crypto_writer_create,
--	.f_free = rte_port_sym_crypto_writer_free,
--	.f_tx = rte_port_sym_crypto_writer_tx,
--	.f_tx_bulk = rte_port_sym_crypto_writer_tx_bulk,
--	.f_flush = rte_port_sym_crypto_writer_flush,
--	.f_stats = rte_port_sym_crypto_writer_stats_read,
--};
--
--RTE_EXPORT_SYMBOL(rte_port_sym_crypto_writer_nodrop_ops)
--struct rte_port_out_ops rte_port_sym_crypto_writer_nodrop_ops = {
--	.f_create = rte_port_sym_crypto_writer_nodrop_create,
--	.f_free = rte_port_sym_crypto_writer_nodrop_free,
--	.f_tx = rte_port_sym_crypto_writer_nodrop_tx,
--	.f_tx_bulk = rte_port_sym_crypto_writer_nodrop_tx_bulk,
--	.f_flush = rte_port_sym_crypto_writer_nodrop_flush,
--	.f_stats = rte_port_sym_crypto_writer_nodrop_stats_read,
--};
-diff --git a/lib/port/rte_port_sym_crypto.h b/lib/port/rte_port_sym_crypto.h
-deleted file mode 100644
-index d03cdc1e8b..0000000000
---- a/lib/port/rte_port_sym_crypto.h
-+++ /dev/null
-@@ -1,92 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2018 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PORT_SYM_CRYPTO_H__
--#define __INCLUDE_RTE_PORT_SYM_CRYPTO_H__
--
--/**
-- * @file
-- * RTE Port sym crypto Interface
-- *
-- * crypto_reader: input port built on top of pre-initialized crypto interface
-- * crypto_writer: output port built on top of pre-initialized crypto interface
-- */
--
+-#include <ctype.h>
 -#include <stdint.h>
 -
--#include <rte_cryptodev.h>
+-#include <rte_ip.h>
+-#include <rte_ether.h>
 -
--#include "rte_port.h"
+-#define PARSE_DELIMITER				" \f\n\r\t\v"
 -
--#ifdef __cplusplus
--extern "C" {
+-static inline size_t
+-skip_digits(const char *src)
+-{
+-	size_t i;
+-
+-	for (i = 0; isdigit(src[i]); i++)
+-		;
+-
+-	return i;
+-}
+-
+-int parser_read_arg_bool(const char *p);
+-
+-int parser_read_uint64(uint64_t *value, const char *p);
+-int parser_read_uint32(uint32_t *value, const char *p);
+-int parser_read_uint16(uint16_t *value, const char *p);
+-int parser_read_uint8(uint8_t *value, const char *p);
+-
+-int parser_read_uint64_hex(uint64_t *value, const char *p);
+-int parser_read_uint32_hex(uint32_t *value, const char *p);
+-int parser_read_uint16_hex(uint16_t *value, const char *p);
+-int parser_read_uint8_hex(uint8_t *value, const char *p);
+-
+-int parse_hex_string(char *src, uint8_t *dst, uint32_t *size);
+-
+-int parse_ipv4_addr(const char *token, struct in_addr *ipv4);
+-int parse_ipv6_addr(const char *token, struct rte_ipv6_addr *ipv6);
+-int parse_mac_addr(const char *token, struct rte_ether_addr *addr);
+-int parse_mpls_labels(char *string, uint32_t *labels, uint32_t *n_labels);
+-
+-struct cpu_core_params {
+-	uint32_t socket_id;
+-	uint32_t core_id;
+-	uint32_t thread_id;
+-};
+-
+-int parse_cpu_core(const char *entry, struct cpu_core_params *p);
+-
+-int parse_tokenize_string(char *string, char *tokens[], uint32_t *n_tokens);
+-
+-#endif
+diff --git a/examples/ip_pipeline/pipeline.c b/examples/ip_pipeline/pipeline.c
+deleted file mode 100644
+index 792aab0059..0000000000
+--- a/examples/ip_pipeline/pipeline.c
++++ /dev/null
+@@ -1,1078 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <stdlib.h>
+-#include <string.h>
+-
+-#include <rte_common.h>
+-#include <rte_ip.h>
+-#include <rte_tcp.h>
+-
+-#include <rte_string_fns.h>
+-#include <rte_port_ethdev.h>
+-#include <rte_port_ring.h>
+-#include <rte_port_source_sink.h>
+-#include <rte_port_fd.h>
+-#include <rte_port_sched.h>
+-#include <rte_port_sym_crypto.h>
+-
+-#include <rte_table_acl.h>
+-#include <rte_table_array.h>
+-#include <rte_table_hash.h>
+-#include <rte_table_hash_func.h>
+-#include <rte_table_lpm.h>
+-#include <rte_table_lpm_ipv6.h>
+-#include <rte_table_stub.h>
+-
+-#include "link.h"
+-#include "mempool.h"
+-#include "pipeline.h"
+-#include "tap.h"
+-#include "tmgr.h"
+-#include "swq.h"
+-#include "cryptodev.h"
+-
+-#ifndef PIPELINE_MSGQ_SIZE
+-#define PIPELINE_MSGQ_SIZE                                 64
 -#endif
 -
--/** Function prototype for reader post action. */
--typedef void (*rte_port_sym_crypto_reader_callback_fn)(struct rte_mbuf **pkts,
--		uint16_t n_pkts, void *arg);
+-#ifndef TABLE_LPM_NUMBER_TBL8
+-#define TABLE_LPM_NUMBER_TBL8                              256
+-#endif
 -
--/** Crypto_reader port parameters */
--struct rte_port_sym_crypto_reader_params {
--	/** Target cryptodev ID. */
--	uint8_t cryptodev_id;
+-static struct pipeline_list pipeline_list;
 -
--	/** Target cryptodev Queue Pair ID. */
--	uint16_t queue_id;
+-int
+-pipeline_init(void)
+-{
+-	TAILQ_INIT(&pipeline_list);
 -
--	/** Crypto reader post callback function. */
--	rte_port_sym_crypto_reader_callback_fn f_callback;
+-	return 0;
+-}
 -
--	/** Crypto reader post callback function arguments. */
--	void *arg_callback;
+-struct pipeline *
+-pipeline_find(const char *name)
+-{
+-	struct pipeline *pipeline;
+-
+-	if (name == NULL)
+-		return NULL;
+-
+-	TAILQ_FOREACH(pipeline, &pipeline_list, node)
+-		if (strcmp(name, pipeline->name) == 0)
+-			return pipeline;
+-
+-	return NULL;
+-}
+-
+-struct pipeline *
+-pipeline_create(const char *name, struct pipeline_params *params)
+-{
+-	char msgq_name[NAME_MAX];
+-	struct rte_pipeline_params pp;
+-	struct pipeline *pipeline;
+-	struct rte_pipeline *p;
+-	struct rte_ring *msgq_req;
+-	struct rte_ring *msgq_rsp;
+-
+-	/* Check input params */
+-	if ((name == NULL) ||
+-		pipeline_find(name) ||
+-		(params == NULL) ||
+-		(params->timer_period_ms == 0))
+-		return NULL;
+-
+-	/* Resource create */
+-	snprintf(msgq_name, sizeof(msgq_name), "%s-MSGQ-REQ", name);
+-
+-	msgq_req = rte_ring_create(msgq_name,
+-		PIPELINE_MSGQ_SIZE,
+-		params->cpu_id,
+-		RING_F_SP_ENQ | RING_F_SC_DEQ);
+-	if (msgq_req == NULL)
+-		return NULL;
+-
+-	snprintf(msgq_name, sizeof(msgq_name), "%s-MSGQ-RSP", name);
+-
+-	msgq_rsp = rte_ring_create(msgq_name,
+-		PIPELINE_MSGQ_SIZE,
+-		params->cpu_id,
+-		RING_F_SP_ENQ | RING_F_SC_DEQ);
+-	if (msgq_rsp == NULL) {
+-		rte_ring_free(msgq_req);
+-		return NULL;
+-	}
+-
+-	pp.name = name;
+-	pp.socket_id = (int) params->cpu_id;
+-	pp.offset_port_id = params->offset_port_id;
+-
+-	p = rte_pipeline_create(&pp);
+-	if (p == NULL) {
+-		rte_ring_free(msgq_rsp);
+-		rte_ring_free(msgq_req);
+-		return NULL;
+-	}
+-
+-	/* Node allocation */
+-	pipeline = calloc(1, sizeof(struct pipeline));
+-	if (pipeline == NULL) {
+-		rte_pipeline_free(p);
+-		rte_ring_free(msgq_rsp);
+-		rte_ring_free(msgq_req);
+-		return NULL;
+-	}
+-
+-	/* Node fill in */
+-	strlcpy(pipeline->name, name, sizeof(pipeline->name));
+-	pipeline->p = p;
+-	pipeline->n_ports_in = 0;
+-	pipeline->n_ports_out = 0;
+-	pipeline->n_tables = 0;
+-	pipeline->msgq_req = msgq_req;
+-	pipeline->msgq_rsp = msgq_rsp;
+-	pipeline->timer_period_ms = params->timer_period_ms;
+-	pipeline->enabled = 0;
+-	pipeline->cpu_id = params->cpu_id;
+-
+-	/* Node add to list */
+-	TAILQ_INSERT_TAIL(&pipeline_list, pipeline, node);
+-
+-	return pipeline;
+-}
+-
+-int
+-pipeline_port_in_create(const char *pipeline_name,
+-	struct port_in_params *params,
+-	int enabled)
+-{
+-	struct rte_pipeline_port_in_params p;
+-
+-	union {
+-		struct rte_port_ethdev_reader_params ethdev;
+-		struct rte_port_ring_reader_params ring;
+-		struct rte_port_sched_reader_params sched;
+-		struct rte_port_fd_reader_params fd;
+-		struct rte_port_source_params source;
+-		struct rte_port_sym_crypto_reader_params sym_crypto;
+-	} pp;
+-
+-	struct pipeline *pipeline;
+-	struct port_in *port_in;
+-	struct port_in_action_profile *ap;
+-	struct rte_port_in_action *action;
+-	uint32_t port_id;
+-	int status;
+-
+-	memset(&p, 0, sizeof(p));
+-	memset(&pp, 0, sizeof(pp));
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(params == NULL) ||
+-		(params->burst_size == 0) ||
+-		(params->burst_size > RTE_PORT_IN_BURST_SIZE_MAX))
+-		return -1;
+-
+-	pipeline = pipeline_find(pipeline_name);
+-	if (pipeline == NULL)
+-		return -1;
+-
+-	ap = NULL;
+-	if (params->action_profile_name) {
+-		ap = port_in_action_profile_find(params->action_profile_name);
+-		if (ap == NULL)
+-			return -1;
+-	}
+-
+-	switch (params->type) {
+-	case PORT_IN_RXQ:
+-	{
+-		struct link *link;
+-
+-		link = link_find(params->dev_name);
+-		if (link == NULL)
+-			return -1;
+-
+-		if (params->rxq.queue_id >= link->n_rxq)
+-			return -1;
+-
+-		pp.ethdev.port_id = link->port_id;
+-		pp.ethdev.queue_id = params->rxq.queue_id;
+-
+-		p.ops = &rte_port_ethdev_reader_ops;
+-		p.arg_create = &pp.ethdev;
+-		break;
+-	}
+-
+-	case PORT_IN_SWQ:
+-	{
+-		struct swq *swq;
+-
+-		swq = swq_find(params->dev_name);
+-		if (swq == NULL)
+-			return -1;
+-
+-		pp.ring.ring = swq->r;
+-
+-		p.ops = &rte_port_ring_reader_ops;
+-		p.arg_create = &pp.ring;
+-		break;
+-	}
+-
+-	case PORT_IN_TMGR:
+-	{
+-		struct tmgr_port *tmgr_port;
+-
+-		tmgr_port = tmgr_port_find(params->dev_name);
+-		if (tmgr_port == NULL)
+-			return -1;
+-
+-		pp.sched.sched = tmgr_port->s;
+-
+-		p.ops = &rte_port_sched_reader_ops;
+-		p.arg_create = &pp.sched;
+-		break;
+-	}
+-
+-	case PORT_IN_TAP:
+-	{
+-		struct tap *tap;
+-		struct mempool *mempool;
+-
+-		tap = tap_find(params->dev_name);
+-		mempool = mempool_find(params->tap.mempool_name);
+-		if ((tap == NULL) || (mempool == NULL))
+-			return -1;
+-
+-		pp.fd.fd = tap->fd;
+-		pp.fd.mempool = mempool->m;
+-		pp.fd.mtu = params->tap.mtu;
+-
+-		p.ops = &rte_port_fd_reader_ops;
+-		p.arg_create = &pp.fd;
+-		break;
+-	}
+-
+-
+-	case PORT_IN_SOURCE:
+-	{
+-		struct mempool *mempool;
+-
+-		mempool = mempool_find(params->source.mempool_name);
+-		if (mempool == NULL)
+-			return -1;
+-
+-		pp.source.mempool = mempool->m;
+-		pp.source.file_name = params->source.file_name;
+-		pp.source.n_bytes_per_pkt = params->source.n_bytes_per_pkt;
+-
+-		p.ops = &rte_port_source_ops;
+-		p.arg_create = &pp.source;
+-		break;
+-	}
+-
+-	case PORT_IN_CRYPTODEV:
+-	{
+-		struct cryptodev *cryptodev;
+-
+-		cryptodev = cryptodev_find(params->dev_name);
+-		if (cryptodev == NULL)
+-			return -1;
+-
+-		if (params->rxq.queue_id > cryptodev->n_queues - 1)
+-			return -1;
+-
+-		pp.sym_crypto.cryptodev_id = cryptodev->dev_id;
+-		pp.sym_crypto.queue_id = params->cryptodev.queue_id;
+-		pp.sym_crypto.f_callback = params->cryptodev.f_callback;
+-		pp.sym_crypto.arg_callback = params->cryptodev.arg_callback;
+-		p.ops = &rte_port_sym_crypto_reader_ops;
+-		p.arg_create = &pp.sym_crypto;
+-
+-		break;
+-	}
+-
+-	default:
+-		return -1;
+-	}
+-
+-	p.burst_size = params->burst_size;
+-
+-	/* Resource create */
+-	action = NULL;
+-	p.f_action = NULL;
+-	p.arg_ah = NULL;
+-
+-	if (ap) {
+-		action = rte_port_in_action_create(ap->ap,
+-			pipeline->cpu_id);
+-		if (action == NULL)
+-			return -1;
+-
+-		status = rte_port_in_action_params_get(
+-			action,
+-			&p);
+-		if (status) {
+-			rte_port_in_action_free(action);
+-			return -1;
+-		}
+-	}
+-
+-	status = rte_pipeline_port_in_create(pipeline->p,
+-		&p,
+-		&port_id);
+-	if (status) {
+-		rte_port_in_action_free(action);
+-		return -1;
+-	}
+-
+-	if (enabled)
+-		rte_pipeline_port_in_enable(pipeline->p, port_id);
+-
+-	/* Pipeline */
+-	port_in = &pipeline->port_in[pipeline->n_ports_in];
+-	memcpy(&port_in->params, params, sizeof(*params));
+-	port_in->ap = ap;
+-	port_in->a = action;
+-	pipeline->n_ports_in++;
+-
+-	return 0;
+-}
+-
+-int
+-pipeline_port_in_connect_to_table(const char *pipeline_name,
+-	uint32_t port_id,
+-	uint32_t table_id)
+-{
+-	struct pipeline *pipeline;
+-	int status;
+-
+-	/* Check input params */
+-	if (pipeline_name == NULL)
+-		return -1;
+-
+-	pipeline = pipeline_find(pipeline_name);
+-	if ((pipeline == NULL) ||
+-		(port_id >= pipeline->n_ports_in) ||
+-		(table_id >= pipeline->n_tables))
+-		return -1;
+-
+-	/* Resource */
+-	status = rte_pipeline_port_in_connect_to_table(pipeline->p,
+-		port_id,
+-		table_id);
+-
+-	return status;
+-
+-}
+-
+-int
+-pipeline_port_out_create(const char *pipeline_name,
+-	struct port_out_params *params)
+-{
+-	struct rte_pipeline_port_out_params p;
+-
+-	union {
+-		struct rte_port_ethdev_writer_params ethdev;
+-		struct rte_port_ring_writer_params ring;
+-		struct rte_port_sched_writer_params sched;
+-		struct rte_port_fd_writer_params fd;
+-		struct rte_port_sink_params sink;
+-		struct rte_port_sym_crypto_writer_params sym_crypto;
+-	} pp;
+-
+-	union {
+-		struct rte_port_ethdev_writer_nodrop_params ethdev;
+-		struct rte_port_ring_writer_nodrop_params ring;
+-		struct rte_port_fd_writer_nodrop_params fd;
+-		struct rte_port_sym_crypto_writer_nodrop_params sym_crypto;
+-	} pp_nodrop;
+-
+-	struct pipeline *pipeline;
+-	uint32_t port_id;
+-	int status;
+-
+-	memset(&p, 0, sizeof(p));
+-	memset(&pp, 0, sizeof(pp));
+-	memset(&pp_nodrop, 0, sizeof(pp_nodrop));
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(params == NULL) ||
+-		(params->burst_size == 0) ||
+-		(params->burst_size > RTE_PORT_IN_BURST_SIZE_MAX))
+-		return -1;
+-
+-	pipeline = pipeline_find(pipeline_name);
+-	if (pipeline == NULL)
+-		return -1;
+-
+-	switch (params->type) {
+-	case PORT_OUT_TXQ:
+-	{
+-		struct link *link;
+-
+-		link = link_find(params->dev_name);
+-		if (link == NULL)
+-			return -1;
+-
+-		if (params->txq.queue_id >= link->n_txq)
+-			return -1;
+-
+-		pp.ethdev.port_id = link->port_id;
+-		pp.ethdev.queue_id = params->txq.queue_id;
+-		pp.ethdev.tx_burst_sz = params->burst_size;
+-
+-		pp_nodrop.ethdev.port_id = link->port_id;
+-		pp_nodrop.ethdev.queue_id = params->txq.queue_id;
+-		pp_nodrop.ethdev.tx_burst_sz = params->burst_size;
+-		pp_nodrop.ethdev.n_retries = params->n_retries;
+-
+-		if (params->retry == 0) {
+-			p.ops = &rte_port_ethdev_writer_ops;
+-			p.arg_create = &pp.ethdev;
+-		} else {
+-			p.ops = &rte_port_ethdev_writer_nodrop_ops;
+-			p.arg_create = &pp_nodrop.ethdev;
+-		}
+-		break;
+-	}
+-
+-	case PORT_OUT_SWQ:
+-	{
+-		struct swq *swq;
+-
+-		swq = swq_find(params->dev_name);
+-		if (swq == NULL)
+-			return -1;
+-
+-		pp.ring.ring = swq->r;
+-		pp.ring.tx_burst_sz = params->burst_size;
+-
+-		pp_nodrop.ring.ring = swq->r;
+-		pp_nodrop.ring.tx_burst_sz = params->burst_size;
+-		pp_nodrop.ring.n_retries = params->n_retries;
+-
+-		if (params->retry == 0) {
+-			p.ops = &rte_port_ring_writer_ops;
+-			p.arg_create = &pp.ring;
+-		} else {
+-			p.ops = &rte_port_ring_writer_nodrop_ops;
+-			p.arg_create = &pp_nodrop.ring;
+-		}
+-		break;
+-	}
+-
+-	case PORT_OUT_TMGR:
+-	{
+-		struct tmgr_port *tmgr_port;
+-
+-		tmgr_port = tmgr_port_find(params->dev_name);
+-		if (tmgr_port == NULL)
+-			return -1;
+-
+-		pp.sched.sched = tmgr_port->s;
+-		pp.sched.tx_burst_sz = params->burst_size;
+-
+-		p.ops = &rte_port_sched_writer_ops;
+-		p.arg_create = &pp.sched;
+-		break;
+-	}
+-
+-	case PORT_OUT_TAP:
+-	{
+-		struct tap *tap;
+-
+-		tap = tap_find(params->dev_name);
+-		if (tap == NULL)
+-			return -1;
+-
+-		pp.fd.fd = tap->fd;
+-		pp.fd.tx_burst_sz = params->burst_size;
+-
+-		pp_nodrop.fd.fd = tap->fd;
+-		pp_nodrop.fd.tx_burst_sz = params->burst_size;
+-		pp_nodrop.fd.n_retries = params->n_retries;
+-
+-		if (params->retry == 0) {
+-			p.ops = &rte_port_fd_writer_ops;
+-			p.arg_create = &pp.fd;
+-		} else {
+-			p.ops = &rte_port_fd_writer_nodrop_ops;
+-			p.arg_create = &pp_nodrop.fd;
+-		}
+-		break;
+-	}
+-
+-
+-	case PORT_OUT_SINK:
+-	{
+-		pp.sink.file_name = params->sink.file_name;
+-		pp.sink.max_n_pkts = params->sink.max_n_pkts;
+-
+-		p.ops = &rte_port_sink_ops;
+-		p.arg_create = &pp.sink;
+-		break;
+-	}
+-
+-	case PORT_OUT_CRYPTODEV:
+-	{
+-		struct cryptodev *cryptodev;
+-
+-		cryptodev = cryptodev_find(params->dev_name);
+-		if (cryptodev == NULL)
+-			return -1;
+-
+-		if (params->cryptodev.queue_id >= cryptodev->n_queues)
+-			return -1;
+-
+-		pp.sym_crypto.cryptodev_id = cryptodev->dev_id;
+-		pp.sym_crypto.queue_id = params->cryptodev.queue_id;
+-		pp.sym_crypto.tx_burst_sz = params->burst_size;
+-		pp.sym_crypto.crypto_op_offset = params->cryptodev.op_offset;
+-
+-		pp_nodrop.sym_crypto.cryptodev_id = cryptodev->dev_id;
+-		pp_nodrop.sym_crypto.queue_id = params->cryptodev.queue_id;
+-		pp_nodrop.sym_crypto.tx_burst_sz = params->burst_size;
+-		pp_nodrop.sym_crypto.n_retries = params->retry;
+-		pp_nodrop.sym_crypto.crypto_op_offset =
+-				params->cryptodev.op_offset;
+-
+-		if (params->retry == 0) {
+-			p.ops = &rte_port_sym_crypto_writer_ops;
+-			p.arg_create = &pp.sym_crypto;
+-		} else {
+-			p.ops = &rte_port_sym_crypto_writer_nodrop_ops;
+-			p.arg_create = &pp_nodrop.sym_crypto;
+-		}
+-
+-		break;
+-	}
+-
+-	default:
+-		return -1;
+-	}
+-
+-	p.f_action = NULL;
+-	p.arg_ah = NULL;
+-
+-	/* Resource create */
+-	status = rte_pipeline_port_out_create(pipeline->p,
+-		&p,
+-		&port_id);
+-
+-	if (status)
+-		return -1;
+-
+-	/* Pipeline */
+-	pipeline->n_ports_out++;
+-
+-	return 0;
+-}
+-
+-static const struct rte_acl_field_def table_acl_field_format_ipv4[] = {
+-	/* Protocol */
+-	[0] = {
+-		.type = RTE_ACL_FIELD_TYPE_BITMASK,
+-		.size = sizeof(uint8_t),
+-		.field_index = 0,
+-		.input_index = 0,
+-		.offset = offsetof(struct rte_ipv4_hdr, next_proto_id),
+-	},
+-
+-	/* Source IP address (IPv4) */
+-	[1] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 1,
+-		.input_index = 1,
+-		.offset = offsetof(struct rte_ipv4_hdr, src_addr),
+-	},
+-
+-	/* Destination IP address (IPv4) */
+-	[2] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 2,
+-		.input_index = 2,
+-		.offset = offsetof(struct rte_ipv4_hdr, dst_addr),
+-	},
+-
+-	/* Source Port */
+-	[3] = {
+-		.type = RTE_ACL_FIELD_TYPE_RANGE,
+-		.size = sizeof(uint16_t),
+-		.field_index = 3,
+-		.input_index = 3,
+-		.offset = sizeof(struct rte_ipv4_hdr) +
+-			offsetof(struct rte_tcp_hdr, src_port),
+-	},
+-
+-	/* Destination Port */
+-	[4] = {
+-		.type = RTE_ACL_FIELD_TYPE_RANGE,
+-		.size = sizeof(uint16_t),
+-		.field_index = 4,
+-		.input_index = 3,
+-		.offset = sizeof(struct rte_ipv4_hdr) +
+-			offsetof(struct rte_tcp_hdr, dst_port),
+-	},
 -};
 -
--/** Crypto_reader port operations. */
--extern struct rte_port_in_ops rte_port_sym_crypto_reader_ops;
+-static const struct rte_acl_field_def table_acl_field_format_ipv6[] = {
+-	/* Protocol */
+-	[0] = {
+-		.type = RTE_ACL_FIELD_TYPE_BITMASK,
+-		.size = sizeof(uint8_t),
+-		.field_index = 0,
+-		.input_index = 0,
+-		.offset = offsetof(struct rte_ipv6_hdr, proto),
+-	},
 -
+-	/* Source IP address (IPv6) */
+-	[1] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 1,
+-		.input_index = 1,
+-		.offset = offsetof(struct rte_ipv6_hdr, src_addr.a[0]),
+-	},
 -
--/** Crypto_writer port parameters. */
--struct rte_port_sym_crypto_writer_params {
--	/** Target cryptodev ID. */
--	uint8_t cryptodev_id;
+-	[2] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 2,
+-		.input_index = 2,
+-		.offset = offsetof(struct rte_ipv6_hdr, src_addr.a[4]),
+-	},
 -
--	/** Target cryptodev Queue Pair ID. */
--	uint16_t queue_id;
+-	[3] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 3,
+-		.input_index = 3,
+-		.offset = offsetof(struct rte_ipv6_hdr, src_addr.a[8]),
+-	},
 -
--	/** offset to rte_crypto_op in the mbufs. */
--	uint16_t crypto_op_offset;
+-	[4] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 4,
+-		.input_index = 4,
+-		.offset = offsetof(struct rte_ipv6_hdr, src_addr.a[12]),
+-	},
 -
--	/** Burst size to crypto interface. */
--	uint32_t tx_burst_sz;
+-	/* Destination IP address (IPv6) */
+-	[5] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 5,
+-		.input_index = 5,
+-		.offset = offsetof(struct rte_ipv6_hdr, dst_addr.a[0]),
+-	},
+-
+-	[6] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 6,
+-		.input_index = 6,
+-		.offset = offsetof(struct rte_ipv6_hdr, dst_addr.a[4]),
+-	},
+-
+-	[7] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 7,
+-		.input_index = 7,
+-		.offset = offsetof(struct rte_ipv6_hdr, dst_addr.a[8]),
+-	},
+-
+-	[8] = {
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = 8,
+-		.input_index = 8,
+-		.offset = offsetof(struct rte_ipv6_hdr, dst_addr.a[12]),
+-	},
+-
+-	/* Source Port */
+-	[9] = {
+-		.type = RTE_ACL_FIELD_TYPE_RANGE,
+-		.size = sizeof(uint16_t),
+-		.field_index = 9,
+-		.input_index = 9,
+-		.offset = sizeof(struct rte_ipv6_hdr) +
+-			offsetof(struct rte_tcp_hdr, src_port),
+-	},
+-
+-	/* Destination Port */
+-	[10] = {
+-		.type = RTE_ACL_FIELD_TYPE_RANGE,
+-		.size = sizeof(uint16_t),
+-		.field_index = 10,
+-		.input_index = 9,
+-		.offset = sizeof(struct rte_ipv6_hdr) +
+-			offsetof(struct rte_tcp_hdr, dst_port),
+-	},
 -};
 -
--/** Crypto_writer port operations. */
--extern struct rte_port_out_ops rte_port_sym_crypto_writer_ops;
+-int
+-pipeline_table_create(const char *pipeline_name,
+-	struct table_params *params)
+-{
+-	char name[NAME_MAX];
+-	struct rte_pipeline_table_params p;
 -
--/** Crypto_writer_nodrop port parameters. */
--struct rte_port_sym_crypto_writer_nodrop_params {
--	/** Target cryptodev ID. */
--	uint8_t cryptodev_id;
+-	union {
+-		struct rte_table_acl_params acl;
+-		struct rte_table_array_params array;
+-		struct rte_table_hash_params hash;
+-		struct rte_table_lpm_params lpm;
+-		struct rte_table_lpm_ipv6_params lpm_ipv6;
+-	} pp;
 -
--	/** Target cryptodev queue pair id. */
--	uint16_t queue_id;
+-	struct pipeline *pipeline;
+-	struct table *table;
+-	struct table_action_profile *ap;
+-	struct rte_table_action *action;
+-	uint32_t table_id;
+-	int status;
 -
--	/** Offset to rte_crypto_op in the mbufs. */
--	uint16_t crypto_op_offset;
+-	memset(&p, 0, sizeof(p));
+-	memset(&pp, 0, sizeof(pp));
 -
--	/** Burst size to crypto interface. */
--	uint32_t tx_burst_sz;
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(params == NULL))
+-		return -1;
 -
--	/** Maximum number of retries, 0 for no limit. */
+-	pipeline = pipeline_find(pipeline_name);
+-	if ((pipeline == NULL) ||
+-		(pipeline->n_tables >= RTE_PIPELINE_TABLE_MAX))
+-		return -1;
+-
+-	ap = NULL;
+-	if (params->action_profile_name) {
+-		ap = table_action_profile_find(params->action_profile_name);
+-		if (ap == NULL)
+-			return -1;
+-	}
+-
+-	snprintf(name, NAME_MAX, "%s_table%u",
+-		pipeline_name, pipeline->n_tables);
+-
+-	switch (params->match_type) {
+-	case TABLE_ACL:
+-	{
+-		uint32_t ip_header_offset = params->match.acl.ip_header_offset -
+-			(sizeof(struct rte_mbuf) + RTE_PKTMBUF_HEADROOM);
+-		uint32_t i;
+-
+-		if (params->match.acl.n_rules == 0)
+-			return -1;
+-
+-		pp.acl.name = name;
+-		pp.acl.n_rules = params->match.acl.n_rules;
+-		if (params->match.acl.ip_version) {
+-			memcpy(&pp.acl.field_format,
+-				&table_acl_field_format_ipv4,
+-				sizeof(table_acl_field_format_ipv4));
+-			pp.acl.n_rule_fields =
+-				RTE_DIM(table_acl_field_format_ipv4);
+-		} else {
+-			memcpy(&pp.acl.field_format,
+-				&table_acl_field_format_ipv6,
+-				sizeof(table_acl_field_format_ipv6));
+-			pp.acl.n_rule_fields =
+-				RTE_DIM(table_acl_field_format_ipv6);
+-		}
+-
+-		for (i = 0; i < pp.acl.n_rule_fields; i++)
+-			pp.acl.field_format[i].offset += ip_header_offset;
+-
+-		p.ops = &rte_table_acl_ops;
+-		p.arg_create = &pp.acl;
+-		break;
+-	}
+-
+-	case TABLE_ARRAY:
+-	{
+-		if (params->match.array.n_keys == 0)
+-			return -1;
+-
+-		pp.array.n_entries = params->match.array.n_keys;
+-		pp.array.offset = params->match.array.key_offset;
+-
+-		p.ops = &rte_table_array_ops;
+-		p.arg_create = &pp.array;
+-		break;
+-	}
+-
+-	case TABLE_HASH:
+-	{
+-		struct rte_table_ops *ops;
+-		rte_table_hash_op_hash f_hash;
+-
+-		if (params->match.hash.n_keys == 0)
+-			return -1;
+-
+-		switch (params->match.hash.key_size) {
+-		case  8:
+-			f_hash = rte_table_hash_crc_key8;
+-			break;
+-		case 16:
+-			f_hash = rte_table_hash_crc_key16;
+-			break;
+-		case 24:
+-			f_hash = rte_table_hash_crc_key24;
+-			break;
+-		case 32:
+-			f_hash = rte_table_hash_crc_key32;
+-			break;
+-		case 40:
+-			f_hash = rte_table_hash_crc_key40;
+-			break;
+-		case 48:
+-			f_hash = rte_table_hash_crc_key48;
+-			break;
+-		case 56:
+-			f_hash = rte_table_hash_crc_key56;
+-			break;
+-		case 64:
+-			f_hash = rte_table_hash_crc_key64;
+-			break;
+-		default:
+-			return -1;
+-		}
+-
+-		pp.hash.name = name;
+-		pp.hash.key_size = params->match.hash.key_size;
+-		pp.hash.key_offset = params->match.hash.key_offset;
+-		pp.hash.key_mask = params->match.hash.key_mask;
+-		pp.hash.n_keys = params->match.hash.n_keys;
+-		pp.hash.n_buckets = params->match.hash.n_buckets;
+-		pp.hash.f_hash = f_hash;
+-		pp.hash.seed = 0;
+-
+-		if (params->match.hash.extendable_bucket)
+-			switch (params->match.hash.key_size) {
+-			case  8:
+-				ops = &rte_table_hash_key8_ext_ops;
+-				break;
+-			case 16:
+-				ops = &rte_table_hash_key16_ext_ops;
+-				break;
+-			default:
+-				ops = &rte_table_hash_ext_ops;
+-			}
+-		else
+-			switch (params->match.hash.key_size) {
+-			case  8:
+-				ops = &rte_table_hash_key8_lru_ops;
+-				break;
+-			case 16:
+-				ops = &rte_table_hash_key16_lru_ops;
+-				break;
+-			default:
+-				ops = &rte_table_hash_lru_ops;
+-			}
+-
+-		p.ops = ops;
+-		p.arg_create = &pp.hash;
+-		break;
+-	}
+-
+-	case TABLE_LPM:
+-	{
+-		if (params->match.lpm.n_rules == 0)
+-			return -1;
+-
+-		switch (params->match.lpm.key_size) {
+-		case 4:
+-		{
+-			pp.lpm.name = name;
+-			pp.lpm.n_rules = params->match.lpm.n_rules;
+-			pp.lpm.number_tbl8s = TABLE_LPM_NUMBER_TBL8;
+-			pp.lpm.flags = 0;
+-			pp.lpm.entry_unique_size = p.action_data_size +
+-				sizeof(struct rte_pipeline_table_entry);
+-			pp.lpm.offset = params->match.lpm.key_offset;
+-
+-			p.ops = &rte_table_lpm_ops;
+-			p.arg_create = &pp.lpm;
+-			break;
+-		}
+-
+-		case 16:
+-		{
+-			pp.lpm_ipv6.name = name;
+-			pp.lpm_ipv6.n_rules = params->match.lpm.n_rules;
+-			pp.lpm_ipv6.number_tbl8s = TABLE_LPM_NUMBER_TBL8;
+-			pp.lpm_ipv6.entry_unique_size = p.action_data_size +
+-				sizeof(struct rte_pipeline_table_entry);
+-			pp.lpm_ipv6.offset = params->match.lpm.key_offset;
+-
+-			p.ops = &rte_table_lpm_ipv6_ops;
+-			p.arg_create = &pp.lpm_ipv6;
+-			break;
+-		}
+-
+-		default:
+-			return -1;
+-		}
+-
+-		break;
+-	}
+-
+-	case TABLE_STUB:
+-	{
+-		p.ops = &rte_table_stub_ops;
+-		p.arg_create = NULL;
+-		break;
+-	}
+-
+-	default:
+-		return -1;
+-	}
+-
+-	/* Resource create */
+-	action = NULL;
+-	p.f_action_hit = NULL;
+-	p.f_action_miss = NULL;
+-	p.arg_ah = NULL;
+-
+-	if (ap) {
+-		action = rte_table_action_create(ap->ap,
+-			pipeline->cpu_id);
+-		if (action == NULL)
+-			return -1;
+-
+-		status = rte_table_action_table_params_get(
+-			action,
+-			&p);
+-		if (status ||
+-			((p.action_data_size +
+-			sizeof(struct rte_pipeline_table_entry)) >
+-			TABLE_RULE_ACTION_SIZE_MAX)) {
+-			rte_table_action_free(action);
+-			return -1;
+-		}
+-	}
+-
+-	if (params->match_type == TABLE_LPM) {
+-		if (params->match.lpm.key_size == 4)
+-			pp.lpm.entry_unique_size = p.action_data_size +
+-				sizeof(struct rte_pipeline_table_entry);
+-
+-		if (params->match.lpm.key_size == 16)
+-			pp.lpm_ipv6.entry_unique_size = p.action_data_size +
+-				sizeof(struct rte_pipeline_table_entry);
+-	}
+-
+-	status = rte_pipeline_table_create(pipeline->p,
+-		&p,
+-		&table_id);
+-	if (status) {
+-		rte_table_action_free(action);
+-		return -1;
+-	}
+-
+-	/* Pipeline */
+-	table = &pipeline->table[pipeline->n_tables];
+-	memcpy(&table->params, params, sizeof(*params));
+-	table->ap = ap;
+-	table->a = action;
+-	TAILQ_INIT(&table->rules);
+-	table->rule_default = NULL;
+-
+-	pipeline->n_tables++;
+-
+-	return 0;
+-}
+-
+-struct table_rule *
+-table_rule_find(struct table *table,
+-    struct table_rule_match *match)
+-{
+-	struct table_rule *rule;
+-
+-	TAILQ_FOREACH(rule, &table->rules, node)
+-		if (memcmp(&rule->match, match, sizeof(*match)) == 0)
+-			return rule;
+-
+-	return NULL;
+-}
+-
+-void
+-table_rule_add(struct table *table,
+-    struct table_rule *new_rule)
+-{
+-	struct table_rule *existing_rule;
+-
+-	existing_rule = table_rule_find(table, &new_rule->match);
+-	if (existing_rule == NULL)
+-		TAILQ_INSERT_TAIL(&table->rules, new_rule, node);
+-	else {
+-		TAILQ_INSERT_AFTER(&table->rules, existing_rule, new_rule, node);
+-		TAILQ_REMOVE(&table->rules, existing_rule, node);
+-		free(existing_rule);
+-	}
+-}
+-
+-void
+-table_rule_add_bulk(struct table *table,
+-    struct table_rule_list *list,
+-    uint32_t n_rules)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < n_rules; i++) {
+-		struct table_rule *existing_rule, *new_rule;
+-
+-		new_rule = TAILQ_FIRST(list);
+-		if (new_rule == NULL)
+-			break;
+-
+-		TAILQ_REMOVE(list, new_rule, node);
+-
+-		existing_rule = table_rule_find(table, &new_rule->match);
+-		if (existing_rule == NULL)
+-			TAILQ_INSERT_TAIL(&table->rules, new_rule, node);
+-		else {
+-			TAILQ_INSERT_AFTER(&table->rules, existing_rule, new_rule, node);
+-			TAILQ_REMOVE(&table->rules, existing_rule, node);
+-			free(existing_rule);
+-		}
+-	}
+-}
+-
+-void
+-table_rule_delete(struct table *table,
+-    struct table_rule_match *match)
+-{
+-	struct table_rule *rule;
+-
+-	rule = table_rule_find(table, match);
+-	if (rule == NULL)
+-		return;
+-
+-	TAILQ_REMOVE(&table->rules, rule, node);
+-	free(rule);
+-}
+-
+-void
+-table_rule_default_add(struct table *table,
+-	struct table_rule *rule)
+-{
+-	free(table->rule_default);
+-	table->rule_default = rule;
+-}
+-
+-void
+-table_rule_default_delete(struct table *table)
+-{
+-	free(table->rule_default);
+-	table->rule_default = NULL;
+-}
+diff --git a/examples/ip_pipeline/pipeline.h b/examples/ip_pipeline/pipeline.h
+deleted file mode 100644
+index 89696480fc..0000000000
+--- a/examples/ip_pipeline/pipeline.h
++++ /dev/null
+@@ -1,425 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_PIPELINE_H_
+-#define _INCLUDE_PIPELINE_H_
+-
+-#include <stdint.h>
+-#include <sys/queue.h>
+-
+-#include <rte_pipeline.h>
+-#include <rte_table_action.h>
+-
+-#include "common.h"
+-#include "action.h"
+-
+-struct pipeline_params {
+-	uint32_t timer_period_ms;
+-	uint32_t offset_port_id;
+-	uint32_t cpu_id;
+-};
+-
+-enum port_in_type {
+-	PORT_IN_RXQ,
+-	PORT_IN_SWQ,
+-	PORT_IN_TMGR,
+-	PORT_IN_TAP,
+-	PORT_IN_SOURCE,
+-	PORT_IN_CRYPTODEV,
+-};
+-
+-struct port_in_params {
+-	/* Read */
+-	enum port_in_type type;
+-	const char *dev_name;
+-	union {
+-		struct {
+-			uint16_t queue_id;
+-		} rxq;
+-
+-		struct {
+-			const char *mempool_name;
+-			uint32_t mtu;
+-		} tap;
+-
+-		struct {
+-			const char *mempool_name;
+-			const char *file_name;
+-			uint32_t n_bytes_per_pkt;
+-		} source;
+-
+-		struct {
+-			uint16_t queue_id;
+-			void *f_callback;
+-			void *arg_callback;
+-		} cryptodev;
+-	};
+-	uint32_t burst_size;
+-
+-	/* Action */
+-	const char *action_profile_name;
+-};
+-
+-enum port_out_type {
+-	PORT_OUT_TXQ,
+-	PORT_OUT_SWQ,
+-	PORT_OUT_TMGR,
+-	PORT_OUT_TAP,
+-	PORT_OUT_SINK,
+-	PORT_OUT_CRYPTODEV,
+-};
+-
+-struct port_out_params {
+-	enum port_out_type type;
+-	const char *dev_name;
+-	union {
+-		struct {
+-			uint16_t queue_id;
+-		} txq;
+-
+-		struct {
+-			const char *file_name;
+-			uint32_t max_n_pkts;
+-		} sink;
+-
+-		struct {
+-			uint16_t queue_id;
+-			uint32_t op_offset;
+-		} cryptodev;
+-	};
+-	uint32_t burst_size;
+-	int retry;
 -	uint32_t n_retries;
 -};
 -
--/** Crypto_writer_nodrop port operations. */
--extern struct rte_port_out_ops rte_port_sym_crypto_writer_nodrop_ops;
+-enum table_type {
+-	TABLE_ACL,
+-	TABLE_ARRAY,
+-	TABLE_HASH,
+-	TABLE_LPM,
+-	TABLE_STUB,
+-};
 -
--#ifdef __cplusplus
+-struct table_acl_params {
+-	uint32_t n_rules;
+-	uint32_t ip_header_offset;
+-	int ip_version;
+-};
+-
+-struct table_array_params {
+-	uint32_t n_keys;
+-	uint32_t key_offset;
+-};
+-
+-struct table_hash_params {
+-	uint32_t n_keys;
+-	uint32_t key_offset;
+-	uint32_t key_size;
+-	uint8_t *key_mask;
+-	uint32_t n_buckets;
+-	int extendable_bucket;
+-};
+-
+-struct table_lpm_params {
+-	uint32_t n_rules;
+-	uint32_t key_offset;
+-	uint32_t key_size;
+-};
+-
+-struct table_params {
+-	/* Match */
+-	enum table_type match_type;
+-	union {
+-		struct table_acl_params acl;
+-		struct table_array_params array;
+-		struct table_hash_params hash;
+-		struct table_lpm_params lpm;
+-	} match;
+-
+-	/* Action */
+-	const char *action_profile_name;
+-};
+-
+-struct table_rule;
+-
+-TAILQ_HEAD(table_rule_list, table_rule);
+-
+-struct port_in {
+-	struct port_in_params params;
+-	struct port_in_action_profile *ap;
+-	struct rte_port_in_action *a;
+-};
+-
+-struct table {
+-	struct table_params params;
+-	struct table_action_profile *ap;
+-	struct rte_table_action *a;
+-	struct table_rule_list rules;
+-	struct table_rule *rule_default;
+-};
+-
+-struct pipeline {
+-	TAILQ_ENTRY(pipeline) node;
+-	char name[NAME_SIZE];
+-
+-	struct rte_pipeline *p;
+-	struct port_in port_in[RTE_PIPELINE_PORT_IN_MAX];
+-	struct table table[RTE_PIPELINE_TABLE_MAX];
+-	uint32_t n_ports_in;
+-	uint32_t n_ports_out;
+-	uint32_t n_tables;
+-
+-	struct rte_ring *msgq_req;
+-	struct rte_ring *msgq_rsp;
+-	uint32_t timer_period_ms;
+-
+-	int enabled;
+-	uint32_t thread_id;
+-	uint32_t cpu_id;
+-};
+-
+-TAILQ_HEAD(pipeline_list, pipeline);
+-
+-int
+-pipeline_init(void);
+-
+-struct pipeline *
+-pipeline_find(const char *name);
+-
+-struct pipeline *
+-pipeline_create(const char *name, struct pipeline_params *params);
+-
+-int
+-pipeline_port_in_create(const char *pipeline_name,
+-	struct port_in_params *params,
+-	int enabled);
+-
+-int
+-pipeline_port_in_connect_to_table(const char *pipeline_name,
+-	uint32_t port_id,
+-	uint32_t table_id);
+-
+-int
+-pipeline_port_out_create(const char *pipeline_name,
+-	struct port_out_params *params);
+-
+-int
+-pipeline_table_create(const char *pipeline_name,
+-	struct table_params *params);
+-
+-struct table_rule_match_acl {
+-	int ip_version;
+-
+-	union {
+-		struct {
+-			uint32_t sa;
+-			uint32_t da;
+-		} ipv4;
+-
+-		struct {
+-			struct rte_ipv6_addr sa;
+-			struct rte_ipv6_addr da;
+-		} ipv6;
+-	};
+-
+-	uint32_t sa_depth;
+-	uint32_t da_depth;
+-	uint16_t sp0;
+-	uint16_t sp1;
+-	uint16_t dp0;
+-	uint16_t dp1;
+-	uint8_t proto;
+-	uint8_t proto_mask;
+-	uint32_t priority;
+-};
+-
+-struct table_rule_match_array {
+-	uint32_t pos;
+-};
+-
+-#ifndef TABLE_RULE_MATCH_SIZE_MAX
+-#define TABLE_RULE_MATCH_SIZE_MAX                          256
+-#endif
+-
+-#ifndef TABLE_RULE_ACTION_SIZE_MAX
+-#define TABLE_RULE_ACTION_SIZE_MAX                         2048
+-#endif
+-
+-struct table_rule_match_hash {
+-	uint8_t key[TABLE_RULE_MATCH_SIZE_MAX];
+-};
+-
+-struct table_rule_match_lpm {
+-	int ip_version;
+-
+-	union {
+-		uint32_t ipv4;
+-		struct rte_ipv6_addr ipv6;
+-	};
+-
+-	uint8_t depth;
+-};
+-
+-struct table_rule_match {
+-	enum table_type match_type;
+-
+-	union {
+-		struct table_rule_match_acl acl;
+-		struct table_rule_match_array array;
+-		struct table_rule_match_hash hash;
+-		struct table_rule_match_lpm lpm;
+-	} match;
+-};
+-
+-#ifndef SYM_CRYPTO_MAX_KEY_SIZE
+-#define SYM_CRYPTO_MAX_KEY_SIZE                (256)
+-#endif
+-
+-struct table_rule_action {
+-	uint64_t action_mask;
+-	struct rte_table_action_fwd_params fwd;
+-	struct rte_table_action_lb_params lb;
+-	struct rte_table_action_mtr_params mtr;
+-	struct rte_table_action_tm_params tm;
+-	struct rte_table_action_encap_params encap;
+-	struct rte_table_action_nat_params nat;
+-	struct rte_table_action_ttl_params ttl;
+-	struct rte_table_action_stats_params stats;
+-	struct rte_table_action_time_params time;
+-	struct rte_table_action_sym_crypto_params sym_crypto;
+-	uint8_t sym_crypto_key[SYM_CRYPTO_MAX_KEY_SIZE];
+-	struct rte_table_action_tag_params tag;
+-	struct rte_table_action_decap_params decap;
+-
+-};
+-
+-struct table_rule {
+-	TAILQ_ENTRY(table_rule) node;
+-	struct table_rule_match match;
+-	struct table_rule_action action;
+-	void *data;
+-};
+-
+-int
+-pipeline_port_in_stats_read(const char *pipeline_name,
+-	uint32_t port_id,
+-	struct rte_pipeline_port_in_stats *stats,
+-	int clear);
+-
+-int
+-pipeline_port_in_enable(const char *pipeline_name,
+-	uint32_t port_id);
+-
+-int
+-pipeline_port_in_disable(const char *pipeline_name,
+-	uint32_t port_id);
+-
+-int
+-pipeline_port_out_stats_read(const char *pipeline_name,
+-	uint32_t port_id,
+-	struct rte_pipeline_port_out_stats *stats,
+-	int clear);
+-
+-int
+-pipeline_table_stats_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct rte_pipeline_table_stats *stats,
+-	int clear);
+-
+-int
+-pipeline_table_rule_add(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	struct table_rule_action *action);
+-
+-int
+-pipeline_table_rule_add_bulk(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_list *list,
+-	uint32_t *n_rules_added,
+-	uint32_t *n_rules_not_added);
+-
+-int
+-pipeline_table_rule_add_default(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_action *action);
+-
+-int
+-pipeline_table_rule_delete(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match);
+-
+-int
+-pipeline_table_rule_delete_default(const char *pipeline_name,
+-	uint32_t table_id);
+-
+-int
+-pipeline_table_rule_stats_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	struct rte_table_action_stats_counters *stats,
+-	int clear);
+-
+-int
+-pipeline_table_mtr_profile_add(const char *pipeline_name,
+-	uint32_t table_id,
+-	uint32_t meter_profile_id,
+-	struct rte_table_action_meter_profile *profile);
+-
+-int
+-pipeline_table_mtr_profile_delete(const char *pipeline_name,
+-	uint32_t table_id,
+-	uint32_t meter_profile_id);
+-
+-int
+-pipeline_table_rule_mtr_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	struct rte_table_action_mtr_counters *stats,
+-	int clear);
+-
+-int
+-pipeline_table_dscp_table_update(const char *pipeline_name,
+-	uint32_t table_id,
+-	uint64_t dscp_mask,
+-	struct rte_table_action_dscp_table *dscp_table);
+-
+-int
+-pipeline_table_rule_ttl_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	struct rte_table_action_ttl_counters *stats,
+-	int clear);
+-
+-int
+-pipeline_table_rule_time_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	uint64_t *timestamp);
+-
+-struct table_rule *
+-table_rule_find(struct table *table,
+-	struct table_rule_match *match);
+-
+-void
+-table_rule_add(struct table *table,
+-	struct table_rule *rule);
+-
+-void
+-table_rule_add_bulk(struct table *table,
+-	struct table_rule_list *list,
+-	uint32_t n_rules);
+-
+-void
+-table_rule_delete(struct table *table,
+-	struct table_rule_match *match);
+-
+-void
+-table_rule_default_add(struct table *table,
+-	struct table_rule *rule);
+-
+-void
+-table_rule_default_delete(struct table *table);
+-
+-#endif /* _INCLUDE_PIPELINE_H_ */
+diff --git a/examples/ip_pipeline/swq.c b/examples/ip_pipeline/swq.c
+deleted file mode 100644
+index 7e54a1dbfe..0000000000
+--- a/examples/ip_pipeline/swq.c
++++ /dev/null
+@@ -1,76 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <stdlib.h>
+-#include <string.h>
+-
+-#include <rte_string_fns.h>
+-
+-#include "swq.h"
+-
+-static struct swq_list swq_list;
+-
+-int
+-swq_init(void)
+-{
+-	TAILQ_INIT(&swq_list);
+-
+-	return 0;
 -}
+-
+-struct swq *
+-swq_find(const char *name)
+-{
+-	struct swq *swq;
+-
+-	if (name == NULL)
+-		return NULL;
+-
+-	TAILQ_FOREACH(swq, &swq_list, node)
+-		if (strcmp(swq->name, name) == 0)
+-			return swq;
+-
+-	return NULL;
+-}
+-
+-struct swq *
+-swq_create(const char *name, struct swq_params *params)
+-{
+-	struct swq *swq;
+-	struct rte_ring *r;
+-	unsigned int flags = RING_F_SP_ENQ | RING_F_SC_DEQ;
+-
+-	/* Check input params */
+-	if ((name == NULL) ||
+-		swq_find(name) ||
+-		(params == NULL) ||
+-		(params->size == 0))
+-		return NULL;
+-
+-	/* Resource create */
+-	r = rte_ring_create(
+-		name,
+-		params->size,
+-		params->cpu_id,
+-		flags);
+-
+-	if (r == NULL)
+-		return NULL;
+-
+-	/* Node allocation */
+-	swq = calloc(1, sizeof(struct swq));
+-	if (swq == NULL) {
+-		rte_ring_free(r);
+-		return NULL;
+-	}
+-
+-	/* Node fill in */
+-	strlcpy(swq->name, name, sizeof(swq->name));
+-	swq->r = r;
+-
+-	/* Node add to list */
+-	TAILQ_INSERT_TAIL(&swq_list, swq, node);
+-
+-	return swq;
+-}
+diff --git a/examples/ip_pipeline/swq.h b/examples/ip_pipeline/swq.h
+deleted file mode 100644
+index c8440ee3cd..0000000000
+--- a/examples/ip_pipeline/swq.h
++++ /dev/null
+@@ -1,37 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_SWQ_H_
+-#define _INCLUDE_SWQ_H_
+-
+-#include <stdint.h>
+-#include <sys/queue.h>
+-
+-#include <rte_ring.h>
+-
+-#include "common.h"
+-
+-struct swq {
+-	TAILQ_ENTRY(swq) node;
+-	char name[NAME_SIZE];
+-	struct rte_ring *r;
+-};
+-
+-TAILQ_HEAD(swq_list, swq);
+-
+-int
+-swq_init(void);
+-
+-struct swq *
+-swq_find(const char *name);
+-
+-struct swq_params {
+-	uint32_t size;
+-	uint32_t cpu_id;
+-};
+-
+-struct swq *
+-swq_create(const char *name, struct swq_params *params);
+-
+-#endif /* _INCLUDE_SWQ_H_ */
+diff --git a/examples/ip_pipeline/tap.c b/examples/ip_pipeline/tap.c
+deleted file mode 100644
+index adae640c1e..0000000000
+--- a/examples/ip_pipeline/tap.c
++++ /dev/null
+@@ -1,102 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <netinet/in.h>
+-#ifdef RTE_EXEC_ENV_LINUX
+-#include <linux/if.h>
+-#include <linux/if_tun.h>
 -#endif
+-#include <sys/ioctl.h>
+-
+-#include <fcntl.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <string.h>
+-#include <unistd.h>
+-
+-#include <rte_string_fns.h>
+-
+-#include "tap.h"
+-
+-#define TAP_DEV                                            "/dev/net/tun"
+-
+-static struct tap_list tap_list;
+-
+-int
+-tap_init(void)
+-{
+-	TAILQ_INIT(&tap_list);
+-
+-	return 0;
+-}
+-
+-struct tap *
+-tap_find(const char *name)
+-{
+-	struct tap *tap;
+-
+-	if (name == NULL)
+-		return NULL;
+-
+-	TAILQ_FOREACH(tap, &tap_list, node)
+-		if (strcmp(tap->name, name) == 0)
+-			return tap;
+-
+-	return NULL;
+-}
+-
+-#ifndef RTE_EXEC_ENV_LINUX
+-
+-struct tap *
+-tap_create(const char *name __rte_unused)
+-{
+-	return NULL;
+-}
+-
+-#else
+-
+-struct tap *
+-tap_create(const char *name)
+-{
+-	struct tap *tap;
+-	struct ifreq ifr;
+-	int fd, status;
+-
+-	/* Check input params */
+-	if ((name == NULL) ||
+-		tap_find(name))
+-		return NULL;
+-
+-	/* Resource create */
+-	fd = open(TAP_DEV, O_RDWR | O_NONBLOCK);
+-	if (fd < 0)
+-		return NULL;
+-
+-	memset(&ifr, 0, sizeof(ifr));
+-	ifr.ifr_flags = IFF_TAP | IFF_NO_PI; /* No packet information */
+-	strlcpy(ifr.ifr_name, name, IFNAMSIZ);
+-
+-	status = ioctl(fd, TUNSETIFF, (void *) &ifr);
+-	if (status < 0) {
+-		close(fd);
+-		return NULL;
+-	}
+-
+-	/* Node allocation */
+-	tap = calloc(1, sizeof(struct tap));
+-	if (tap == NULL) {
+-		close(fd);
+-		return NULL;
+-	}
+-	/* Node fill in */
+-	strlcpy(tap->name, name, sizeof(tap->name));
+-	tap->fd = fd;
+-
+-	/* Node add to list */
+-	TAILQ_INSERT_TAIL(&tap_list, tap, node);
+-
+-	return tap;
+-}
 -
 -#endif
+diff --git a/examples/ip_pipeline/tap.h b/examples/ip_pipeline/tap.h
+deleted file mode 100644
+index 0dce72fe3c..0000000000
+--- a/examples/ip_pipeline/tap.h
++++ /dev/null
+@@ -1,29 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_TAP_H_
+-#define _INCLUDE_TAP_H_
+-
+-#include <sys/queue.h>
+-
+-#include "common.h"
+-
+-struct tap {
+-	TAILQ_ENTRY(tap) node;
+-	char name[NAME_SIZE];
+-	int fd;
+-};
+-
+-TAILQ_HEAD(tap_list, tap);
+-
+-int
+-tap_init(void);
+-
+-struct tap *
+-tap_find(const char *name);
+-
+-struct tap *
+-tap_create(const char *name);
+-
+-#endif /* _INCLUDE_TAP_H_ */
+diff --git a/examples/ip_pipeline/thread.c b/examples/ip_pipeline/thread.c
+deleted file mode 100644
+index 0a44bddd90..0000000000
+--- a/examples/ip_pipeline/thread.c
++++ /dev/null
+@@ -1,3137 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <stdlib.h>
+-
+-#include <rte_common.h>
+-#include <rte_cycles.h>
+-#include <rte_lcore.h>
+-#include <rte_ring.h>
+-
+-#include <rte_table_acl.h>
+-#include <rte_table_array.h>
+-#include <rte_table_hash.h>
+-#include <rte_table_lpm.h>
+-#include <rte_table_lpm_ipv6.h>
+-
+-#include "common.h"
+-#include "thread.h"
+-#include "pipeline.h"
+-
+-#ifndef THREAD_PIPELINES_MAX
+-#define THREAD_PIPELINES_MAX                               256
+-#endif
+-
+-#ifndef THREAD_MSGQ_SIZE
+-#define THREAD_MSGQ_SIZE                                   64
+-#endif
+-
+-#ifndef THREAD_TIMER_PERIOD_MS
+-#define THREAD_TIMER_PERIOD_MS                             100
+-#endif
+-
+-/**
+- * Main thread: data plane thread context
+- */
+-struct thread {
+-	struct rte_ring *msgq_req;
+-	struct rte_ring *msgq_rsp;
+-
+-	uint32_t enabled;
+-};
+-
+-static struct thread thread[RTE_MAX_LCORE];
+-
+-/**
+- * Data plane threads: context
+- */
+-struct table_data {
+-	struct rte_table_action *a;
+-};
+-
+-struct pipeline_data {
+-	struct rte_pipeline *p;
+-	struct table_data table_data[RTE_PIPELINE_TABLE_MAX];
+-	uint32_t n_tables;
+-
+-	struct rte_ring *msgq_req;
+-	struct rte_ring *msgq_rsp;
+-	uint64_t timer_period; /* Measured in CPU cycles. */
+-	uint64_t time_next;
+-
+-	uint8_t buffer[TABLE_RULE_ACTION_SIZE_MAX];
+-};
+-
+-struct __rte_cache_aligned thread_data {
+-	struct rte_pipeline *p[THREAD_PIPELINES_MAX];
+-	uint32_t n_pipelines;
+-
+-	struct pipeline_data pipeline_data[THREAD_PIPELINES_MAX];
+-	struct rte_ring *msgq_req;
+-	struct rte_ring *msgq_rsp;
+-	uint64_t timer_period; /* Measured in CPU cycles. */
+-	uint64_t time_next;
+-	uint64_t time_next_min;
+-};
+-
+-static struct thread_data thread_data[RTE_MAX_LCORE];
+-
+-/**
+- * Main thread: data plane thread init
+- */
+-static void
+-thread_free(void)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < RTE_MAX_LCORE; i++) {
+-		struct thread *t = &thread[i];
+-
+-		if (!rte_lcore_is_enabled(i))
+-			continue;
+-
+-		/* MSGQs */
+-		rte_ring_free(t->msgq_req);
+-
+-		rte_ring_free(t->msgq_rsp);
+-	}
+-}
+-
+-int
+-thread_init(void)
+-{
+-	uint32_t i;
+-
+-	RTE_LCORE_FOREACH_WORKER(i) {
+-		char name[NAME_MAX];
+-		struct rte_ring *msgq_req, *msgq_rsp;
+-		struct thread *t = &thread[i];
+-		struct thread_data *t_data = &thread_data[i];
+-		uint32_t cpu_id = rte_lcore_to_socket_id(i);
+-
+-		/* MSGQs */
+-		snprintf(name, sizeof(name), "THREAD-%04x-MSGQ-REQ", i);
+-
+-		msgq_req = rte_ring_create(name,
+-			THREAD_MSGQ_SIZE,
+-			cpu_id,
+-			RING_F_SP_ENQ | RING_F_SC_DEQ);
+-
+-		if (msgq_req == NULL) {
+-			thread_free();
+-			return -1;
+-		}
+-
+-		snprintf(name, sizeof(name), "THREAD-%04x-MSGQ-RSP", i);
+-
+-		msgq_rsp = rte_ring_create(name,
+-			THREAD_MSGQ_SIZE,
+-			cpu_id,
+-			RING_F_SP_ENQ | RING_F_SC_DEQ);
+-
+-		if (msgq_rsp == NULL) {
+-			thread_free();
+-			return -1;
+-		}
+-
+-		/* Main thread records */
+-		t->msgq_req = msgq_req;
+-		t->msgq_rsp = msgq_rsp;
+-		t->enabled = 1;
+-
+-		/* Data plane thread records */
+-		t_data->n_pipelines = 0;
+-		t_data->msgq_req = msgq_req;
+-		t_data->msgq_rsp = msgq_rsp;
+-		t_data->timer_period =
+-			(rte_get_tsc_hz() * THREAD_TIMER_PERIOD_MS) / 1000;
+-		t_data->time_next = rte_get_tsc_cycles() + t_data->timer_period;
+-		t_data->time_next_min = t_data->time_next;
+-	}
+-
+-	return 0;
+-}
+-
+-static inline int
+-thread_is_running(uint32_t thread_id)
+-{
+-	enum rte_lcore_state_t thread_state;
+-
+-	thread_state = rte_eal_get_lcore_state(thread_id);
+-	return (thread_state == RUNNING) ? 1 : 0;
+-}
+-
+-/**
+- * Pipeline is running when:
+- *    (A) Pipeline is mapped to a data plane thread AND
+- *    (B) Its data plane thread is in RUNNING state.
+- */
+-static inline int
+-pipeline_is_running(struct pipeline *p)
+-{
+-	if (p->enabled == 0)
+-		return 0;
+-
+-	return thread_is_running(p->thread_id);
+-}
+-
+-/**
+- * Main thread & data plane threads: message passing
+- */
+-enum thread_req_type {
+-	THREAD_REQ_PIPELINE_ENABLE = 0,
+-	THREAD_REQ_PIPELINE_DISABLE,
+-	THREAD_REQ_MAX
+-};
+-
+-struct thread_msg_req {
+-	enum thread_req_type type;
+-
+-	union {
+-		struct {
+-			struct rte_pipeline *p;
+-			struct {
+-				struct rte_table_action *a;
+-			} table[RTE_PIPELINE_TABLE_MAX];
+-			struct rte_ring *msgq_req;
+-			struct rte_ring *msgq_rsp;
+-			uint32_t timer_period_ms;
+-			uint32_t n_tables;
+-		} pipeline_enable;
+-
+-		struct {
+-			struct rte_pipeline *p;
+-		} pipeline_disable;
+-	};
+-};
+-
+-struct thread_msg_rsp {
+-	int status;
+-};
+-
+-/**
+- * Main thread
+- */
+-static struct thread_msg_req *
+-thread_msg_alloc(void)
+-{
+-	size_t size = RTE_MAX(sizeof(struct thread_msg_req),
+-		sizeof(struct thread_msg_rsp));
+-
+-	return calloc(1, size);
+-}
+-
+-static void
+-thread_msg_free(struct thread_msg_rsp *rsp)
+-{
+-	free(rsp);
+-}
+-
+-static struct thread_msg_rsp *
+-thread_msg_send_recv(uint32_t thread_id,
+-	struct thread_msg_req *req)
+-{
+-	struct thread *t = &thread[thread_id];
+-	struct rte_ring *msgq_req = t->msgq_req;
+-	struct rte_ring *msgq_rsp = t->msgq_rsp;
+-	struct thread_msg_rsp *rsp;
+-	int status;
+-
+-	/* send */
+-	do {
+-		status = rte_ring_sp_enqueue(msgq_req, req);
+-	} while (status == -ENOBUFS);
+-
+-	/* recv */
+-	do {
+-		status = rte_ring_sc_dequeue(msgq_rsp, (void **) &rsp);
+-	} while (status != 0);
+-
+-	return rsp;
+-}
+-
+-int
+-thread_pipeline_enable(uint32_t thread_id,
+-	const char *pipeline_name)
+-{
+-	struct pipeline *p = pipeline_find(pipeline_name);
+-	struct thread *t;
+-	struct thread_msg_req *req;
+-	struct thread_msg_rsp *rsp;
+-	uint32_t i;
+-	int status;
+-
+-	/* Check input params */
+-	if ((thread_id >= RTE_MAX_LCORE) ||
+-		(p == NULL) ||
+-		(p->n_ports_in == 0) ||
+-		(p->n_ports_out == 0) ||
+-		(p->n_tables == 0))
+-		return -1;
+-
+-	t = &thread[thread_id];
+-	if ((t->enabled == 0) ||
+-		p->enabled)
+-		return -1;
+-
+-	if (!thread_is_running(thread_id)) {
+-		struct thread_data *td = &thread_data[thread_id];
+-		struct pipeline_data *tdp = &td->pipeline_data[td->n_pipelines];
+-
+-		if (td->n_pipelines >= THREAD_PIPELINES_MAX)
+-			return -1;
+-
+-		/* Data plane thread */
+-		td->p[td->n_pipelines] = p->p;
+-
+-		tdp->p = p->p;
+-		for (i = 0; i < p->n_tables; i++)
+-			tdp->table_data[i].a = p->table[i].a;
+-
+-		tdp->n_tables = p->n_tables;
+-
+-		tdp->msgq_req = p->msgq_req;
+-		tdp->msgq_rsp = p->msgq_rsp;
+-		tdp->timer_period = (rte_get_tsc_hz() * p->timer_period_ms) / 1000;
+-		tdp->time_next = rte_get_tsc_cycles() + tdp->timer_period;
+-
+-		td->n_pipelines++;
+-
+-		/* Pipeline */
+-		p->thread_id = thread_id;
+-		p->enabled = 1;
+-
+-		return 0;
+-	}
+-
+-	/* Allocate request */
+-	req = thread_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = THREAD_REQ_PIPELINE_ENABLE;
+-	req->pipeline_enable.p = p->p;
+-	for (i = 0; i < p->n_tables; i++)
+-		req->pipeline_enable.table[i].a =
+-			p->table[i].a;
+-	req->pipeline_enable.msgq_req = p->msgq_req;
+-	req->pipeline_enable.msgq_rsp = p->msgq_rsp;
+-	req->pipeline_enable.timer_period_ms = p->timer_period_ms;
+-	req->pipeline_enable.n_tables = p->n_tables;
+-
+-	/* Send request and wait for response */
+-	rsp = thread_msg_send_recv(thread_id, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-
+-	/* Free response */
+-	thread_msg_free(rsp);
+-
+-	/* Request completion */
+-	if (status)
+-		return status;
+-
+-	p->thread_id = thread_id;
+-	p->enabled = 1;
+-
+-	return 0;
+-}
+-
+-int
+-thread_pipeline_disable(uint32_t thread_id,
+-	const char *pipeline_name)
+-{
+-	struct pipeline *p = pipeline_find(pipeline_name);
+-	struct thread *t;
+-	struct thread_msg_req *req;
+-	struct thread_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if ((thread_id >= RTE_MAX_LCORE) ||
+-		(p == NULL))
+-		return -1;
+-
+-	t = &thread[thread_id];
+-	if (t->enabled == 0)
+-		return -1;
+-
+-	if (p->enabled == 0)
+-		return 0;
+-
+-	if (p->thread_id != thread_id)
+-		return -1;
+-
+-	if (!thread_is_running(thread_id)) {
+-		struct thread_data *td = &thread_data[thread_id];
+-		uint32_t i;
+-
+-		for (i = 0; i < td->n_pipelines; i++) {
+-			struct pipeline_data *tdp = &td->pipeline_data[i];
+-
+-			if (tdp->p != p->p)
+-				continue;
+-
+-			/* Data plane thread */
+-			if (i < td->n_pipelines - 1) {
+-				struct rte_pipeline *pipeline_last =
+-					td->p[td->n_pipelines - 1];
+-				struct pipeline_data *tdp_last =
+-					&td->pipeline_data[td->n_pipelines - 1];
+-
+-				td->p[i] = pipeline_last;
+-				memcpy(tdp, tdp_last, sizeof(*tdp));
+-			}
+-
+-			td->n_pipelines--;
+-
+-			/* Pipeline */
+-			p->enabled = 0;
+-
+-			break;
+-		}
+-
+-		return 0;
+-	}
+-
+-	/* Allocate request */
+-	req = thread_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = THREAD_REQ_PIPELINE_DISABLE;
+-	req->pipeline_disable.p = p->p;
+-
+-	/* Send request and wait for response */
+-	rsp = thread_msg_send_recv(thread_id, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-
+-	/* Free response */
+-	thread_msg_free(rsp);
+-
+-	/* Request completion */
+-	if (status)
+-		return status;
+-
+-	p->enabled = 0;
+-
+-	return 0;
+-}
+-
+-/**
+- * Data plane threads: message handling
+- */
+-static inline struct thread_msg_req *
+-thread_msg_recv(struct rte_ring *msgq_req)
+-{
+-	struct thread_msg_req *req = NULL;
+-
+-	int status = rte_ring_sc_dequeue(msgq_req, (void **) &req);
+-
+-	if (status != 0)
+-		return NULL;
+-
+-	return req;
+-}
+-
+-static inline void
+-thread_msg_send(struct rte_ring *msgq_rsp,
+-	struct thread_msg_rsp *rsp)
+-{
+-	int status;
+-
+-	do {
+-		status = rte_ring_sp_enqueue(msgq_rsp, rsp);
+-	} while (status == -ENOBUFS);
+-}
+-
+-static struct thread_msg_rsp *
+-thread_msg_handle_pipeline_enable(struct thread_data *t,
+-	struct thread_msg_req *req)
+-{
+-	struct thread_msg_rsp *rsp = (struct thread_msg_rsp *) req;
+-	struct pipeline_data *p = &t->pipeline_data[t->n_pipelines];
+-	uint32_t i;
+-
+-	/* Request */
+-	if (t->n_pipelines >= THREAD_PIPELINES_MAX) {
+-		rsp->status = -1;
+-		return rsp;
+-	}
+-
+-	t->p[t->n_pipelines] = req->pipeline_enable.p;
+-
+-	p->p = req->pipeline_enable.p;
+-	for (i = 0; i < req->pipeline_enable.n_tables; i++)
+-		p->table_data[i].a =
+-			req->pipeline_enable.table[i].a;
+-
+-	p->n_tables = req->pipeline_enable.n_tables;
+-
+-	p->msgq_req = req->pipeline_enable.msgq_req;
+-	p->msgq_rsp = req->pipeline_enable.msgq_rsp;
+-	p->timer_period =
+-		(rte_get_tsc_hz() * req->pipeline_enable.timer_period_ms) / 1000;
+-	p->time_next = rte_get_tsc_cycles() + p->timer_period;
+-
+-	t->n_pipelines++;
+-
+-	/* Response */
+-	rsp->status = 0;
+-	return rsp;
+-}
+-
+-static struct thread_msg_rsp *
+-thread_msg_handle_pipeline_disable(struct thread_data *t,
+-	struct thread_msg_req *req)
+-{
+-	struct thread_msg_rsp *rsp = (struct thread_msg_rsp *) req;
+-	uint32_t n_pipelines = t->n_pipelines;
+-	struct rte_pipeline *pipeline = req->pipeline_disable.p;
+-	uint32_t i;
+-
+-	/* find pipeline */
+-	for (i = 0; i < n_pipelines; i++) {
+-		struct pipeline_data *p = &t->pipeline_data[i];
+-
+-		if (p->p != pipeline)
+-			continue;
+-
+-		if (i < n_pipelines - 1) {
+-			struct rte_pipeline *pipeline_last =
+-				t->p[n_pipelines - 1];
+-			struct pipeline_data *p_last =
+-				&t->pipeline_data[n_pipelines - 1];
+-
+-			t->p[i] = pipeline_last;
+-			memcpy(p, p_last, sizeof(*p));
+-		}
+-
+-		t->n_pipelines--;
+-
+-		rsp->status = 0;
+-		return rsp;
+-	}
+-
+-	/* should not get here */
+-	rsp->status = 0;
+-	return rsp;
+-}
+-
+-static void
+-thread_msg_handle(struct thread_data *t)
+-{
+-	for ( ; ; ) {
+-		struct thread_msg_req *req;
+-		struct thread_msg_rsp *rsp;
+-
+-		req = thread_msg_recv(t->msgq_req);
+-		if (req == NULL)
+-			break;
+-
+-		switch (req->type) {
+-		case THREAD_REQ_PIPELINE_ENABLE:
+-			rsp = thread_msg_handle_pipeline_enable(t, req);
+-			break;
+-
+-		case THREAD_REQ_PIPELINE_DISABLE:
+-			rsp = thread_msg_handle_pipeline_disable(t, req);
+-			break;
+-
+-		default:
+-			rsp = (struct thread_msg_rsp *) req;
+-			rsp->status = -1;
+-		}
+-
+-		thread_msg_send(t->msgq_rsp, rsp);
+-	}
+-}
+-
+-/**
+- * Main thread & data plane threads: message passing
+- */
+-enum pipeline_req_type {
+-	/* Port IN */
+-	PIPELINE_REQ_PORT_IN_STATS_READ,
+-	PIPELINE_REQ_PORT_IN_ENABLE,
+-	PIPELINE_REQ_PORT_IN_DISABLE,
+-
+-	/* Port OUT */
+-	PIPELINE_REQ_PORT_OUT_STATS_READ,
+-
+-	/* Table */
+-	PIPELINE_REQ_TABLE_STATS_READ,
+-	PIPELINE_REQ_TABLE_RULE_ADD,
+-	PIPELINE_REQ_TABLE_RULE_ADD_DEFAULT,
+-	PIPELINE_REQ_TABLE_RULE_ADD_BULK,
+-	PIPELINE_REQ_TABLE_RULE_DELETE,
+-	PIPELINE_REQ_TABLE_RULE_DELETE_DEFAULT,
+-	PIPELINE_REQ_TABLE_RULE_STATS_READ,
+-	PIPELINE_REQ_TABLE_MTR_PROFILE_ADD,
+-	PIPELINE_REQ_TABLE_MTR_PROFILE_DELETE,
+-	PIPELINE_REQ_TABLE_RULE_MTR_READ,
+-	PIPELINE_REQ_TABLE_DSCP_TABLE_UPDATE,
+-	PIPELINE_REQ_TABLE_RULE_TTL_READ,
+-	PIPELINE_REQ_TABLE_RULE_TIME_READ,
+-	PIPELINE_REQ_MAX
+-};
+-
+-struct pipeline_msg_req_port_in_stats_read {
+-	int clear;
+-};
+-
+-struct pipeline_msg_req_port_out_stats_read {
+-	int clear;
+-};
+-
+-struct pipeline_msg_req_table_stats_read {
+-	int clear;
+-};
+-
+-struct pipeline_msg_req_table_rule_add {
+-	struct table_rule_match match;
+-	struct table_rule_action action;
+-};
+-
+-struct pipeline_msg_req_table_rule_add_default {
+-	struct table_rule_action action;
+-};
+-
+-struct pipeline_msg_req_table_rule_add_bulk {
+-	struct table_rule_list *list;
+-	int bulk;
+-};
+-
+-struct pipeline_msg_req_table_rule_delete {
+-	struct table_rule_match match;
+-};
+-
+-struct pipeline_msg_req_table_rule_stats_read {
+-	void *data;
+-	int clear;
+-};
+-
+-struct pipeline_msg_req_table_mtr_profile_add {
+-	uint32_t meter_profile_id;
+-	struct rte_table_action_meter_profile profile;
+-};
+-
+-struct pipeline_msg_req_table_mtr_profile_delete {
+-	uint32_t meter_profile_id;
+-};
+-
+-struct pipeline_msg_req_table_rule_mtr_read {
+-	void *data;
+-	uint32_t tc_mask;
+-	int clear;
+-};
+-
+-struct pipeline_msg_req_table_dscp_table_update {
+-	uint64_t dscp_mask;
+-	struct rte_table_action_dscp_table dscp_table;
+-};
+-
+-struct pipeline_msg_req_table_rule_ttl_read {
+-	void *data;
+-	int clear;
+-};
+-
+-struct pipeline_msg_req_table_rule_time_read {
+-	void *data;
+-};
+-
+-struct pipeline_msg_req {
+-	enum pipeline_req_type type;
+-	uint32_t id; /* Port IN, port OUT or table ID */
+-
+-	union {
+-		struct pipeline_msg_req_port_in_stats_read port_in_stats_read;
+-		struct pipeline_msg_req_port_out_stats_read port_out_stats_read;
+-		struct pipeline_msg_req_table_stats_read table_stats_read;
+-		struct pipeline_msg_req_table_rule_add table_rule_add;
+-		struct pipeline_msg_req_table_rule_add_default table_rule_add_default;
+-		struct pipeline_msg_req_table_rule_add_bulk table_rule_add_bulk;
+-		struct pipeline_msg_req_table_rule_delete table_rule_delete;
+-		struct pipeline_msg_req_table_rule_stats_read table_rule_stats_read;
+-		struct pipeline_msg_req_table_mtr_profile_add table_mtr_profile_add;
+-		struct pipeline_msg_req_table_mtr_profile_delete table_mtr_profile_delete;
+-		struct pipeline_msg_req_table_rule_mtr_read table_rule_mtr_read;
+-		struct pipeline_msg_req_table_dscp_table_update table_dscp_table_update;
+-		struct pipeline_msg_req_table_rule_ttl_read table_rule_ttl_read;
+-		struct pipeline_msg_req_table_rule_time_read table_rule_time_read;
+-	};
+-};
+-
+-struct pipeline_msg_rsp_port_in_stats_read {
+-	struct rte_pipeline_port_in_stats stats;
+-};
+-
+-struct pipeline_msg_rsp_port_out_stats_read {
+-	struct rte_pipeline_port_out_stats stats;
+-};
+-
+-struct pipeline_msg_rsp_table_stats_read {
+-	struct rte_pipeline_table_stats stats;
+-};
+-
+-struct pipeline_msg_rsp_table_rule_add {
+-	void *data;
+-};
+-
+-struct pipeline_msg_rsp_table_rule_add_default {
+-	void *data;
+-};
+-
+-struct pipeline_msg_rsp_table_rule_add_bulk {
+-	uint32_t n_rules;
+-};
+-
+-struct pipeline_msg_rsp_table_rule_stats_read {
+-	struct rte_table_action_stats_counters stats;
+-};
+-
+-struct pipeline_msg_rsp_table_rule_mtr_read {
+-	struct rte_table_action_mtr_counters stats;
+-};
+-
+-struct pipeline_msg_rsp_table_rule_ttl_read {
+-	struct rte_table_action_ttl_counters stats;
+-};
+-
+-struct pipeline_msg_rsp_table_rule_time_read {
+-	uint64_t timestamp;
+-};
+-
+-struct pipeline_msg_rsp {
+-	int status;
+-
+-	union {
+-		struct pipeline_msg_rsp_port_in_stats_read port_in_stats_read;
+-		struct pipeline_msg_rsp_port_out_stats_read port_out_stats_read;
+-		struct pipeline_msg_rsp_table_stats_read table_stats_read;
+-		struct pipeline_msg_rsp_table_rule_add table_rule_add;
+-		struct pipeline_msg_rsp_table_rule_add_default table_rule_add_default;
+-		struct pipeline_msg_rsp_table_rule_add_bulk table_rule_add_bulk;
+-		struct pipeline_msg_rsp_table_rule_stats_read table_rule_stats_read;
+-		struct pipeline_msg_rsp_table_rule_mtr_read table_rule_mtr_read;
+-		struct pipeline_msg_rsp_table_rule_ttl_read table_rule_ttl_read;
+-		struct pipeline_msg_rsp_table_rule_time_read table_rule_time_read;
+-	};
+-};
+-
+-/**
+- * Main thread
+- */
+-static struct pipeline_msg_req *
+-pipeline_msg_alloc(void)
+-{
+-	size_t size = RTE_MAX(sizeof(struct pipeline_msg_req),
+-		sizeof(struct pipeline_msg_rsp));
+-
+-	return calloc(1, size);
+-}
+-
+-static void
+-pipeline_msg_free(struct pipeline_msg_rsp *rsp)
+-{
+-	free(rsp);
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_send_recv(struct pipeline *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct rte_ring *msgq_req = p->msgq_req;
+-	struct rte_ring *msgq_rsp = p->msgq_rsp;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* send */
+-	do {
+-		status = rte_ring_sp_enqueue(msgq_req, req);
+-	} while (status == -ENOBUFS);
+-
+-	/* recv */
+-	do {
+-		status = rte_ring_sc_dequeue(msgq_rsp, (void **) &rsp);
+-	} while (status != 0);
+-
+-	return rsp;
+-}
+-
+-int
+-pipeline_port_in_stats_read(const char *pipeline_name,
+-	uint32_t port_id,
+-	struct rte_pipeline_port_in_stats *stats,
+-	int clear)
+-{
+-	struct pipeline *p;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(stats == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(port_id >= p->n_ports_in))
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_pipeline_port_in_stats_read(p->p,
+-			port_id,
+-			stats,
+-			clear);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_PORT_IN_STATS_READ;
+-	req->id = port_id;
+-	req->port_in_stats_read.clear = clear;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0)
+-		memcpy(stats, &rsp->port_in_stats_read.stats, sizeof(*stats));
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_port_in_enable(const char *pipeline_name,
+-	uint32_t port_id)
+-{
+-	struct pipeline *p;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if (pipeline_name == NULL)
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(port_id >= p->n_ports_in))
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_pipeline_port_in_enable(p->p, port_id);
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_PORT_IN_ENABLE;
+-	req->id = port_id;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_port_in_disable(const char *pipeline_name,
+-	uint32_t port_id)
+-{
+-	struct pipeline *p;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if (pipeline_name == NULL)
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(port_id >= p->n_ports_in))
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_pipeline_port_in_disable(p->p, port_id);
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_PORT_IN_DISABLE;
+-	req->id = port_id;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_port_out_stats_read(const char *pipeline_name,
+-	uint32_t port_id,
+-	struct rte_pipeline_port_out_stats *stats,
+-	int clear)
+-{
+-	struct pipeline *p;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(stats == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(port_id >= p->n_ports_out))
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_pipeline_port_out_stats_read(p->p,
+-			port_id,
+-			stats,
+-			clear);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_PORT_OUT_STATS_READ;
+-	req->id = port_id;
+-	req->port_out_stats_read.clear = clear;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0)
+-		memcpy(stats, &rsp->port_out_stats_read.stats, sizeof(*stats));
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_stats_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct rte_pipeline_table_stats *stats,
+-	int clear)
+-{
+-	struct pipeline *p;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(stats == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables))
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_pipeline_table_stats_read(p->p,
+-			table_id,
+-			stats,
+-			clear);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_STATS_READ;
+-	req->id = table_id;
+-	req->table_stats_read.clear = clear;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0)
+-		memcpy(stats, &rsp->table_stats_read.stats, sizeof(*stats));
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-static int
+-match_check(struct table_rule_match *match,
+-	struct pipeline *p,
+-	uint32_t table_id)
+-{
+-	struct table *table;
+-
+-	if ((match == NULL) ||
+-		(p == NULL) ||
+-		(table_id >= p->n_tables))
+-		return -1;
+-
+-	table = &p->table[table_id];
+-	if (match->match_type != table->params.match_type)
+-		return -1;
+-
+-	switch (match->match_type) {
+-	case TABLE_ACL:
+-	{
+-		struct table_acl_params *t = &table->params.match.acl;
+-		struct table_rule_match_acl *r = &match->match.acl;
+-
+-		if ((r->ip_version && (t->ip_version == 0)) ||
+-			((r->ip_version == 0) && t->ip_version))
+-			return -1;
+-
+-		if (r->ip_version) {
+-			if ((r->sa_depth > 32) ||
+-				(r->da_depth > 32))
+-				return -1;
+-		} else {
+-			if ((r->sa_depth > 128) ||
+-				(r->da_depth > 128))
+-				return -1;
+-		}
+-		return 0;
+-	}
+-
+-	case TABLE_ARRAY:
+-		return 0;
+-
+-	case TABLE_HASH:
+-		return 0;
+-
+-	case TABLE_LPM:
+-	{
+-		struct table_lpm_params *t = &table->params.match.lpm;
+-		struct table_rule_match_lpm *r = &match->match.lpm;
+-
+-		if ((r->ip_version && (t->key_size != 4)) ||
+-			((r->ip_version == 0) && (t->key_size != 16)))
+-			return -1;
+-
+-		if (r->ip_version) {
+-			if (r->depth > 32)
+-				return -1;
+-		} else {
+-			if (r->depth > 128)
+-				return -1;
+-		}
+-		return 0;
+-	}
+-
+-	case TABLE_STUB:
+-		return -1;
+-
+-	default:
+-		return -1;
+-	}
+-}
+-
+-static int
+-action_check(struct table_rule_action *action,
+-	struct pipeline *p,
+-	uint32_t table_id)
+-{
+-	struct table_action_profile *ap;
+-
+-	if ((action == NULL) ||
+-		(p == NULL) ||
+-		(table_id >= p->n_tables))
+-		return -1;
+-
+-	ap = p->table[table_id].ap;
+-	if (action->action_mask != ap->params.action_mask)
+-		return -1;
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
+-		if ((action->fwd.action == RTE_PIPELINE_ACTION_PORT) &&
+-			(action->fwd.id >= p->n_ports_out))
+-			return -1;
+-
+-		if ((action->fwd.action == RTE_PIPELINE_ACTION_TABLE) &&
+-			(action->fwd.id >= p->n_tables))
+-			return -1;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
+-		uint32_t tc_mask0 = (1 << ap->params.mtr.n_tc) - 1;
+-		uint32_t tc_mask1 = action->mtr.tc_mask;
+-
+-		if (tc_mask1 != tc_mask0)
+-			return -1;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
+-		uint32_t n_subports_per_port =
+-			ap->params.tm.n_subports_per_port;
+-		uint32_t n_pipes_per_subport =
+-			ap->params.tm.n_pipes_per_subport;
+-		uint32_t subport_id = action->tm.subport_id;
+-		uint32_t pipe_id = action->tm.pipe_id;
+-
+-		if ((subport_id >= n_subports_per_port) ||
+-			(pipe_id >= n_pipes_per_subport))
+-			return -1;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
+-		uint64_t encap_mask = ap->params.encap.encap_mask;
+-		enum rte_table_action_encap_type type = action->encap.type;
+-
+-		if ((encap_mask & (1LLU << type)) == 0)
+-			return -1;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
+-		int ip_version0 = ap->params.common.ip_version;
+-		int ip_version1 = action->nat.ip_version;
+-
+-		if ((ip_version1 && (ip_version0 == 0)) ||
+-			((ip_version1 == 0) && ip_version0))
+-			return -1;
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-action_default_check(struct table_rule_action *action,
+-	struct pipeline *p,
+-	uint32_t table_id)
+-{
+-	if ((action == NULL) ||
+-		(action->action_mask != (1LLU << RTE_TABLE_ACTION_FWD)) ||
+-		(p == NULL) ||
+-		(table_id >= p->n_tables))
+-		return -1;
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
+-		if ((action->fwd.action == RTE_PIPELINE_ACTION_PORT) &&
+-			(action->fwd.id >= p->n_ports_out))
+-			return -1;
+-
+-		if ((action->fwd.action == RTE_PIPELINE_ACTION_TABLE) &&
+-			(action->fwd.id >= p->n_tables))
+-			return -1;
+-	}
+-
+-	return 0;
+-}
+-
+-union table_rule_match_low_level {
+-	struct rte_table_acl_rule_add_params acl_add;
+-	struct rte_table_acl_rule_delete_params acl_delete;
+-	struct rte_table_array_key array;
+-	uint8_t hash[TABLE_RULE_MATCH_SIZE_MAX];
+-	struct rte_table_lpm_key lpm_ipv4;
+-	struct rte_table_lpm_ipv6_key lpm_ipv6;
+-};
+-
+-static int
+-match_convert(struct table_rule_match *mh,
+-	union table_rule_match_low_level *ml,
+-	int add);
+-
+-static int
+-action_convert(struct rte_table_action *a,
+-	struct table_rule_action *action,
+-	struct rte_pipeline_table_entry *data);
+-
+-struct table_ll {
+-	struct rte_pipeline *p;
+-	int table_id;
+-	struct rte_table_action *a;
+-	int bulk_supported;
+-};
+-
+-static int
+-table_rule_add_bulk_ll(struct table_ll *table,
+-	struct table_rule_list *list,
+-	uint32_t *n_rules)
+-{
+-	union table_rule_match_low_level *match_ll = NULL;
+-	uint8_t *action_ll = NULL;
+-	void **match_ll_ptr = NULL;
+-	struct rte_pipeline_table_entry **action_ll_ptr = NULL;
+-	struct rte_pipeline_table_entry **entries_ptr = NULL;
+-	int *found = NULL;
+-	struct table_rule *rule;
+-	uint32_t n, i;
+-	int status = 0;
+-
+-	n = 0;
+-	TAILQ_FOREACH(rule, list, node)
+-		n++;
+-
+-	/* Memory allocation */
+-	match_ll = calloc(n, sizeof(union table_rule_match_low_level));
+-	action_ll = calloc(n, TABLE_RULE_ACTION_SIZE_MAX);
+-
+-	match_ll_ptr = calloc(n, sizeof(void *));
+-	action_ll_ptr = calloc(n, sizeof(struct rte_pipeline_table_entry *));
+-
+-	entries_ptr = calloc(n, sizeof(struct rte_pipeline_table_entry *));
+-	found = calloc(n, sizeof(int));
+-
+-	if (match_ll == NULL ||
+-		action_ll == NULL ||
+-		match_ll_ptr == NULL ||
+-		action_ll_ptr == NULL ||
+-		entries_ptr == NULL ||
+-		found == NULL) {
+-			status = -ENOMEM;
+-			goto table_rule_add_bulk_ll_free;
+-	}
+-
+-	/* Init */
+-	for (i = 0; i < n; i++) {
+-		match_ll_ptr[i] = (void *)&match_ll[i];
+-		action_ll_ptr[i] = (struct rte_pipeline_table_entry *)
+-			&action_ll[i * TABLE_RULE_ACTION_SIZE_MAX];
+-	}
+-
+-	/* Rule (match, action) conversion */
+-	i = 0;
+-	TAILQ_FOREACH(rule, list, node) {
+-		status = match_convert(&rule->match, match_ll_ptr[i], 1);
+-		if (status)
+-			goto table_rule_add_bulk_ll_free;
+-
+-		status = action_convert(table->a, &rule->action, action_ll_ptr[i]);
+-		if (status)
+-			goto table_rule_add_bulk_ll_free;
+-
+-		i++;
+-	}
+-
+-	/* Add rule (match, action) to table */
+-	if (table->bulk_supported) {
+-		status = rte_pipeline_table_entry_add_bulk(table->p,
+-			table->table_id,
+-			match_ll_ptr,
+-			action_ll_ptr,
+-			n,
+-			found,
+-			entries_ptr);
+-		if (status)
+-			goto table_rule_add_bulk_ll_free;
+-	} else
+-		for (i = 0; i < n; i++) {
+-			status = rte_pipeline_table_entry_add(table->p,
+-				table->table_id,
+-				match_ll_ptr[i],
+-				action_ll_ptr[i],
+-				&found[i],
+-				&entries_ptr[i]);
+-			if (status) {
+-				if (i == 0)
+-					goto table_rule_add_bulk_ll_free;
+-
+-				/* No roll-back. */
+-				status = 0;
+-				n = i;
+-				break;
+-			}
+-		}
+-
+-	/* Write back to the rule list. */
+-	i = 0;
+-	TAILQ_FOREACH(rule, list, node) {
+-		if (i >= n)
+-			break;
+-
+-		rule->data = entries_ptr[i];
+-
+-		i++;
+-	}
+-
+-	*n_rules = n;
+-
+-	/* Free */
+-table_rule_add_bulk_ll_free:
+-	free(found);
+-	free(entries_ptr);
+-	free(action_ll_ptr);
+-	free(match_ll_ptr);
+-	free(action_ll);
+-	free(match_ll);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_rule_add(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	struct table_rule_action *action)
+-{
+-	struct pipeline *p;
+-	struct table *table;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	struct table_rule *rule;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(match == NULL) ||
+-		(action == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables) ||
+-		match_check(match, p, table_id) ||
+-		action_check(action, p, table_id))
+-		return -1;
+-
+-	table = &p->table[table_id];
+-
+-	rule = calloc(1, sizeof(struct table_rule));
+-	if (rule == NULL)
+-		return -1;
+-
+-	memcpy(&rule->match, match, sizeof(*match));
+-	memcpy(&rule->action, action, sizeof(*action));
+-
+-	if (!pipeline_is_running(p)) {
+-		union table_rule_match_low_level match_ll;
+-		struct rte_pipeline_table_entry *data_in, *data_out;
+-		int key_found;
+-		uint8_t *buffer;
+-
+-		buffer = calloc(TABLE_RULE_ACTION_SIZE_MAX, sizeof(uint8_t));
+-		if (buffer == NULL) {
+-			free(rule);
+-			return -1;
+-		}
+-
+-		/* Table match-action rule conversion */
+-		data_in = (struct rte_pipeline_table_entry *)buffer;
+-
+-		status = match_convert(match, &match_ll, 1);
+-		if (status) {
+-			free(buffer);
+-			free(rule);
+-			return -1;
+-		}
+-
+-		status = action_convert(table->a, action, data_in);
+-		if (status) {
+-			free(buffer);
+-			free(rule);
+-			return -1;
+-		}
+-
+-		/* Add rule (match, action) to table */
+-		status = rte_pipeline_table_entry_add(p->p,
+-				table_id,
+-				&match_ll,
+-				data_in,
+-				&key_found,
+-				&data_out);
+-		if (status) {
+-			free(buffer);
+-			free(rule);
+-			return -1;
+-		}
+-
+-		/* Write Response */
+-		rule->data = data_out;
+-		table_rule_add(table, rule);
+-
+-		free(buffer);
+-		return 0;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL) {
+-		free(rule);
+-		return -1;
+-	}
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_RULE_ADD;
+-	req->id = table_id;
+-	memcpy(&req->table_rule_add.match, match, sizeof(*match));
+-	memcpy(&req->table_rule_add.action, action, sizeof(*action));
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0) {
+-		rule->data = rsp->table_rule_add.data;
+-		table_rule_add(table, rule);
+-	} else
+-		free(rule);
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_rule_add_default(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_action *action)
+-{
+-	struct pipeline *p;
+-	struct table *table;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	struct table_rule *rule;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(action == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables) ||
+-		action_default_check(action, p, table_id))
+-		return -1;
+-
+-	table = &p->table[table_id];
+-
+-	rule = calloc(1, sizeof(struct table_rule));
+-	if (rule == NULL)
+-		return -1;
+-
+-	memcpy(&rule->action, action, sizeof(*action));
+-
+-	if (!pipeline_is_running(p)) {
+-		struct rte_pipeline_table_entry *data_in, *data_out;
+-		uint8_t *buffer;
+-
+-		buffer = calloc(TABLE_RULE_ACTION_SIZE_MAX, sizeof(uint8_t));
+-		if (buffer == NULL) {
+-			free(rule);
+-			return -1;
+-		}
+-
+-		/* Apply actions */
+-		data_in = (struct rte_pipeline_table_entry *)buffer;
+-
+-		data_in->action = action->fwd.action;
+-		if (action->fwd.action == RTE_PIPELINE_ACTION_PORT)
+-			data_in->port_id = action->fwd.id;
+-		if (action->fwd.action == RTE_PIPELINE_ACTION_TABLE)
+-			data_in->table_id = action->fwd.id;
+-
+-		/* Add default rule to table */
+-		status = rte_pipeline_table_default_entry_add(p->p,
+-				table_id,
+-				data_in,
+-				&data_out);
+-		if (status) {
+-			free(buffer);
+-			free(rule);
+-			return -1;
+-		}
+-
+-		/* Write Response */
+-		rule->data = data_out;
+-		table_rule_default_add(table, rule);
+-
+-		free(buffer);
+-		return 0;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL) {
+-		free(rule);
+-		return -1;
+-	}
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_RULE_ADD_DEFAULT;
+-	req->id = table_id;
+-	memcpy(&req->table_rule_add_default.action, action, sizeof(*action));
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0) {
+-		rule->data = rsp->table_rule_add_default.data;
+-		table_rule_default_add(table, rule);
+-	} else
+-		free(rule);
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-static uint32_t
+-table_rule_list_free(struct table_rule_list *list)
+-{
+-	uint32_t n = 0;
+-
+-	if (!list)
+-		return 0;
+-
+-	for ( ; ; ) {
+-		struct table_rule *rule;
+-
+-		rule = TAILQ_FIRST(list);
+-		if (rule == NULL)
+-			break;
+-
+-		TAILQ_REMOVE(list, rule, node);
+-		free(rule);
+-		n++;
+-	}
+-
+-	free(list);
+-	return n;
+-}
+-
+-int
+-pipeline_table_rule_add_bulk(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_list *list,
+-	uint32_t *n_rules_added,
+-	uint32_t *n_rules_not_added)
+-{
+-	struct pipeline *p;
+-	struct table *table;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	struct table_rule *rule;
+-	int status = 0;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(list == NULL) ||
+-		TAILQ_EMPTY(list) ||
+-		(n_rules_added == NULL) ||
+-		(n_rules_not_added == NULL)) {
+-		table_rule_list_free(list);
+-		return -EINVAL;
+-	}
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables)) {
+-		table_rule_list_free(list);
+-		return -EINVAL;
+-	}
+-
+-	table = &p->table[table_id];
+-
+-	TAILQ_FOREACH(rule, list, node)
+-		if (match_check(&rule->match, p, table_id) ||
+-			action_check(&rule->action, p, table_id)) {
+-			table_rule_list_free(list);
+-			return -EINVAL;
+-		}
+-
+-	if (!pipeline_is_running(p)) {
+-		struct table_ll table_ll = {
+-			.p = p->p,
+-			.table_id = table_id,
+-			.a = table->a,
+-			.bulk_supported = table->params.match_type == TABLE_ACL,
+-		};
+-
+-		status = table_rule_add_bulk_ll(&table_ll, list, n_rules_added);
+-		if (status) {
+-			table_rule_list_free(list);
+-			return status;
+-		}
+-
+-		table_rule_add_bulk(table, list, *n_rules_added);
+-		*n_rules_not_added = table_rule_list_free(list);
+-		return 0;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL) {
+-		table_rule_list_free(list);
+-		return -ENOMEM;
+-	}
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_RULE_ADD_BULK;
+-	req->id = table_id;
+-	req->table_rule_add_bulk.list = list;
+-	req->table_rule_add_bulk.bulk = table->params.match_type == TABLE_ACL;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0) {
+-		*n_rules_added = rsp->table_rule_add_bulk.n_rules;
+-
+-		table_rule_add_bulk(table, list, *n_rules_added);
+-		*n_rules_not_added = table_rule_list_free(list);
+-	} else
+-		table_rule_list_free(list);
+-
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_rule_delete(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match)
+-{
+-	struct pipeline *p;
+-	struct table *table;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(match == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables) ||
+-		match_check(match, p, table_id))
+-		return -1;
+-
+-	table = &p->table[table_id];
+-
+-	if (!pipeline_is_running(p)) {
+-		union table_rule_match_low_level match_ll;
+-		int key_found;
+-
+-		status = match_convert(match, &match_ll, 0);
+-		if (status)
+-			return -1;
+-
+-		status = rte_pipeline_table_entry_delete(p->p,
+-				table_id,
+-				&match_ll,
+-				&key_found,
+-				NULL);
+-
+-		if (status == 0)
+-			table_rule_delete(table, match);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_RULE_DELETE;
+-	req->id = table_id;
+-	memcpy(&req->table_rule_delete.match, match, sizeof(*match));
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0)
+-		table_rule_delete(table, match);
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_rule_delete_default(const char *pipeline_name,
+-	uint32_t table_id)
+-{
+-	struct pipeline *p;
+-	struct table *table;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if (pipeline_name == NULL)
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables))
+-		return -1;
+-
+-	table = &p->table[table_id];
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_pipeline_table_default_entry_delete(p->p,
+-			table_id,
+-			NULL);
+-
+-		if (status == 0)
+-			table_rule_default_delete(table);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_RULE_DELETE_DEFAULT;
+-	req->id = table_id;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0)
+-		table_rule_default_delete(table);
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_rule_stats_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	struct rte_table_action_stats_counters *stats,
+-	int clear)
+-{
+-	struct pipeline *p;
+-	struct table *table;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	struct table_rule *rule;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(match == NULL) ||
+-		(stats == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables) ||
+-		match_check(match, p, table_id))
+-		return -1;
+-
+-	table = &p->table[table_id];
+-	rule = table_rule_find(table, match);
+-	if (rule == NULL)
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_table_action_stats_read(table->a,
+-			rule->data,
+-			stats,
+-			clear);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_RULE_STATS_READ;
+-	req->id = table_id;
+-	req->table_rule_stats_read.data = rule->data;
+-	req->table_rule_stats_read.clear = clear;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0)
+-		memcpy(stats, &rsp->table_rule_stats_read.stats, sizeof(*stats));
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_mtr_profile_add(const char *pipeline_name,
+-	uint32_t table_id,
+-	uint32_t meter_profile_id,
+-	struct rte_table_action_meter_profile *profile)
+-{
+-	struct pipeline *p;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(profile == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables))
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		struct rte_table_action *a = p->table[table_id].a;
+-
+-		status = rte_table_action_meter_profile_add(a,
+-			meter_profile_id,
+-			profile);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_MTR_PROFILE_ADD;
+-	req->id = table_id;
+-	req->table_mtr_profile_add.meter_profile_id = meter_profile_id;
+-	memcpy(&req->table_mtr_profile_add.profile, profile, sizeof(*profile));
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_mtr_profile_delete(const char *pipeline_name,
+-	uint32_t table_id,
+-	uint32_t meter_profile_id)
+-{
+-	struct pipeline *p;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if (pipeline_name == NULL)
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables))
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		struct rte_table_action *a = p->table[table_id].a;
+-
+-		status = rte_table_action_meter_profile_delete(a,
+-				meter_profile_id);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_MTR_PROFILE_DELETE;
+-	req->id = table_id;
+-	req->table_mtr_profile_delete.meter_profile_id = meter_profile_id;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_rule_mtr_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	struct rte_table_action_mtr_counters *stats,
+-	int clear)
+-{
+-	struct pipeline *p;
+-	struct table *table;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	struct table_rule *rule;
+-	uint32_t tc_mask;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(match == NULL) ||
+-		(stats == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables) ||
+-		match_check(match, p, table_id))
+-		return -1;
+-
+-	table = &p->table[table_id];
+-	tc_mask = (1 << table->ap->params.mtr.n_tc) - 1;
+-
+-	rule = table_rule_find(table, match);
+-	if (rule == NULL)
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_table_action_meter_read(table->a,
+-				rule->data,
+-				tc_mask,
+-				stats,
+-				clear);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_RULE_MTR_READ;
+-	req->id = table_id;
+-	req->table_rule_mtr_read.data = rule->data;
+-	req->table_rule_mtr_read.tc_mask = tc_mask;
+-	req->table_rule_mtr_read.clear = clear;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0)
+-		memcpy(stats, &rsp->table_rule_mtr_read.stats, sizeof(*stats));
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_dscp_table_update(const char *pipeline_name,
+-	uint32_t table_id,
+-	uint64_t dscp_mask,
+-	struct rte_table_action_dscp_table *dscp_table)
+-{
+-	struct pipeline *p;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(dscp_table == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables))
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		struct rte_table_action *a = p->table[table_id].a;
+-
+-		status = rte_table_action_dscp_table_update(a,
+-				dscp_mask,
+-				dscp_table);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_DSCP_TABLE_UPDATE;
+-	req->id = table_id;
+-	req->table_dscp_table_update.dscp_mask = dscp_mask;
+-	memcpy(&req->table_dscp_table_update.dscp_table,
+-		dscp_table, sizeof(*dscp_table));
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_rule_ttl_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	struct rte_table_action_ttl_counters *stats,
+-	int clear)
+-{
+-	struct pipeline *p;
+-	struct table *table;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	struct table_rule *rule;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(match == NULL) ||
+-		(stats == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables) ||
+-		match_check(match, p, table_id))
+-		return -1;
+-
+-	table = &p->table[table_id];
+-	if (!table->ap->params.ttl.n_packets_enabled)
+-		return -1;
+-
+-	rule = table_rule_find(table, match);
+-	if (rule == NULL)
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_table_action_ttl_read(table->a,
+-				rule->data,
+-				stats,
+-				clear);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_RULE_TTL_READ;
+-	req->id = table_id;
+-	req->table_rule_ttl_read.data = rule->data;
+-	req->table_rule_ttl_read.clear = clear;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0)
+-		memcpy(stats, &rsp->table_rule_ttl_read.stats, sizeof(*stats));
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-int
+-pipeline_table_rule_time_read(const char *pipeline_name,
+-	uint32_t table_id,
+-	struct table_rule_match *match,
+-	uint64_t *timestamp)
+-{
+-	struct pipeline *p;
+-	struct table *table;
+-	struct pipeline_msg_req *req;
+-	struct pipeline_msg_rsp *rsp;
+-	struct table_rule *rule;
+-	int status;
+-
+-	/* Check input params */
+-	if ((pipeline_name == NULL) ||
+-		(match == NULL) ||
+-		(timestamp == NULL))
+-		return -1;
+-
+-	p = pipeline_find(pipeline_name);
+-	if ((p == NULL) ||
+-		(table_id >= p->n_tables) ||
+-		match_check(match, p, table_id))
+-		return -1;
+-
+-	table = &p->table[table_id];
+-
+-	rule = table_rule_find(table, match);
+-	if (rule == NULL)
+-		return -1;
+-
+-	if (!pipeline_is_running(p)) {
+-		status = rte_table_action_time_read(table->a,
+-				rule->data,
+-				timestamp);
+-
+-		return status;
+-	}
+-
+-	/* Allocate request */
+-	req = pipeline_msg_alloc();
+-	if (req == NULL)
+-		return -1;
+-
+-	/* Write request */
+-	req->type = PIPELINE_REQ_TABLE_RULE_TIME_READ;
+-	req->id = table_id;
+-	req->table_rule_time_read.data = rule->data;
+-
+-	/* Send request and wait for response */
+-	rsp = pipeline_msg_send_recv(p, req);
+-
+-	/* Read response */
+-	status = rsp->status;
+-	if (status == 0)
+-		*timestamp = rsp->table_rule_time_read.timestamp;
+-
+-	/* Free response */
+-	pipeline_msg_free(rsp);
+-
+-	return status;
+-}
+-
+-/**
+- * Data plane threads: message handling
+- */
+-static inline struct pipeline_msg_req *
+-pipeline_msg_recv(struct rte_ring *msgq_req)
+-{
+-	struct pipeline_msg_req *req;
+-
+-	int status = rte_ring_sc_dequeue(msgq_req, (void **) &req);
+-
+-	if (status != 0)
+-		return NULL;
+-
+-	return req;
+-}
+-
+-static inline void
+-pipeline_msg_send(struct rte_ring *msgq_rsp,
+-	struct pipeline_msg_rsp *rsp)
+-{
+-	int status;
+-
+-	do {
+-		status = rte_ring_sp_enqueue(msgq_rsp, rsp);
+-	} while (status == -ENOBUFS);
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_port_in_stats_read(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t port_id = req->id;
+-	int clear = req->port_in_stats_read.clear;
+-
+-	rsp->status = rte_pipeline_port_in_stats_read(p->p,
+-		port_id,
+-		&rsp->port_in_stats_read.stats,
+-		clear);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_port_in_enable(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t port_id = req->id;
+-
+-	rsp->status = rte_pipeline_port_in_enable(p->p,
+-		port_id);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_port_in_disable(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t port_id = req->id;
+-
+-	rsp->status = rte_pipeline_port_in_disable(p->p,
+-		port_id);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_port_out_stats_read(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t port_id = req->id;
+-	int clear = req->port_out_stats_read.clear;
+-
+-	rsp->status = rte_pipeline_port_out_stats_read(p->p,
+-		port_id,
+-		&rsp->port_out_stats_read.stats,
+-		clear);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_stats_read(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t port_id = req->id;
+-	int clear = req->table_stats_read.clear;
+-
+-	rsp->status = rte_pipeline_table_stats_read(p->p,
+-		port_id,
+-		&rsp->table_stats_read.stats,
+-		clear);
+-
+-	return rsp;
+-}
+-
+-static int
+-match_convert_ipv6_depth(uint32_t depth, uint32_t *depth32)
+-{
+-	if (depth > 128)
+-		return -1;
+-
+-	switch (depth / 32) {
+-	case 0:
+-		depth32[0] = depth;
+-		depth32[1] = 0;
+-		depth32[2] = 0;
+-		depth32[3] = 0;
+-		return 0;
+-
+-	case 1:
+-		depth32[0] = 32;
+-		depth32[1] = depth - 32;
+-		depth32[2] = 0;
+-		depth32[3] = 0;
+-		return 0;
+-
+-	case 2:
+-		depth32[0] = 32;
+-		depth32[1] = 32;
+-		depth32[2] = depth - 64;
+-		depth32[3] = 0;
+-		return 0;
+-
+-	case 3:
+-		depth32[0] = 32;
+-		depth32[1] = 32;
+-		depth32[2] = 32;
+-		depth32[3] = depth - 96;
+-		return 0;
+-
+-	case 4:
+-		depth32[0] = 32;
+-		depth32[1] = 32;
+-		depth32[2] = 32;
+-		depth32[3] = 32;
+-		return 0;
+-
+-	default:
+-		return -1;
+-	}
+-}
+-
+-static int
+-match_convert(struct table_rule_match *mh,
+-	union table_rule_match_low_level *ml,
+-	int add)
+-{
+-	memset(ml, 0, sizeof(*ml));
+-
+-	switch (mh->match_type) {
+-	case TABLE_ACL:
+-		if (mh->match.acl.ip_version)
+-			if (add) {
+-				ml->acl_add.field_value[0].value.u8 =
+-					mh->match.acl.proto;
+-				ml->acl_add.field_value[0].mask_range.u8 =
+-					mh->match.acl.proto_mask;
+-
+-				ml->acl_add.field_value[1].value.u32 =
+-					mh->match.acl.ipv4.sa;
+-				ml->acl_add.field_value[1].mask_range.u32 =
+-					mh->match.acl.sa_depth;
+-
+-				ml->acl_add.field_value[2].value.u32 =
+-					mh->match.acl.ipv4.da;
+-				ml->acl_add.field_value[2].mask_range.u32 =
+-					mh->match.acl.da_depth;
+-
+-				ml->acl_add.field_value[3].value.u16 =
+-					mh->match.acl.sp0;
+-				ml->acl_add.field_value[3].mask_range.u16 =
+-					mh->match.acl.sp1;
+-
+-				ml->acl_add.field_value[4].value.u16 =
+-					mh->match.acl.dp0;
+-				ml->acl_add.field_value[4].mask_range.u16 =
+-					mh->match.acl.dp1;
+-
+-				ml->acl_add.priority =
+-					(int32_t) mh->match.acl.priority;
+-			} else {
+-				ml->acl_delete.field_value[0].value.u8 =
+-					mh->match.acl.proto;
+-				ml->acl_delete.field_value[0].mask_range.u8 =
+-					mh->match.acl.proto_mask;
+-
+-				ml->acl_delete.field_value[1].value.u32 =
+-					mh->match.acl.ipv4.sa;
+-				ml->acl_delete.field_value[1].mask_range.u32 =
+-					mh->match.acl.sa_depth;
+-
+-				ml->acl_delete.field_value[2].value.u32 =
+-					mh->match.acl.ipv4.da;
+-				ml->acl_delete.field_value[2].mask_range.u32 =
+-					mh->match.acl.da_depth;
+-
+-				ml->acl_delete.field_value[3].value.u16 =
+-					mh->match.acl.sp0;
+-				ml->acl_delete.field_value[3].mask_range.u16 =
+-					mh->match.acl.sp1;
+-
+-				ml->acl_delete.field_value[4].value.u16 =
+-					mh->match.acl.dp0;
+-				ml->acl_delete.field_value[4].mask_range.u16 =
+-					mh->match.acl.dp1;
+-			}
+-		else
+-			if (add) {
+-				uint32_t *sa32 = (uint32_t *)&mh->match.acl.ipv6.sa;
+-				uint32_t *da32 = (uint32_t *)&mh->match.acl.ipv6.da;
+-				uint32_t sa32_depth[4], da32_depth[4];
+-				int status;
+-
+-				status = match_convert_ipv6_depth(
+-					mh->match.acl.sa_depth,
+-					sa32_depth);
+-				if (status)
+-					return status;
+-
+-				status = match_convert_ipv6_depth(
+-					mh->match.acl.da_depth,
+-					da32_depth);
+-				if (status)
+-					return status;
+-
+-				ml->acl_add.field_value[0].value.u8 =
+-					mh->match.acl.proto;
+-				ml->acl_add.field_value[0].mask_range.u8 =
+-					mh->match.acl.proto_mask;
+-
+-				ml->acl_add.field_value[1].value.u32 =
+-					rte_be_to_cpu_32(sa32[0]);
+-				ml->acl_add.field_value[1].mask_range.u32 =
+-					sa32_depth[0];
+-				ml->acl_add.field_value[2].value.u32 =
+-					rte_be_to_cpu_32(sa32[1]);
+-				ml->acl_add.field_value[2].mask_range.u32 =
+-					sa32_depth[1];
+-				ml->acl_add.field_value[3].value.u32 =
+-					rte_be_to_cpu_32(sa32[2]);
+-				ml->acl_add.field_value[3].mask_range.u32 =
+-					sa32_depth[2];
+-				ml->acl_add.field_value[4].value.u32 =
+-					rte_be_to_cpu_32(sa32[3]);
+-				ml->acl_add.field_value[4].mask_range.u32 =
+-					sa32_depth[3];
+-
+-				ml->acl_add.field_value[5].value.u32 =
+-					rte_be_to_cpu_32(da32[0]);
+-				ml->acl_add.field_value[5].mask_range.u32 =
+-					da32_depth[0];
+-				ml->acl_add.field_value[6].value.u32 =
+-					rte_be_to_cpu_32(da32[1]);
+-				ml->acl_add.field_value[6].mask_range.u32 =
+-					da32_depth[1];
+-				ml->acl_add.field_value[7].value.u32 =
+-					rte_be_to_cpu_32(da32[2]);
+-				ml->acl_add.field_value[7].mask_range.u32 =
+-					da32_depth[2];
+-				ml->acl_add.field_value[8].value.u32 =
+-					rte_be_to_cpu_32(da32[3]);
+-				ml->acl_add.field_value[8].mask_range.u32 =
+-					da32_depth[3];
+-
+-				ml->acl_add.field_value[9].value.u16 =
+-					mh->match.acl.sp0;
+-				ml->acl_add.field_value[9].mask_range.u16 =
+-					mh->match.acl.sp1;
+-
+-				ml->acl_add.field_value[10].value.u16 =
+-					mh->match.acl.dp0;
+-				ml->acl_add.field_value[10].mask_range.u16 =
+-					mh->match.acl.dp1;
+-
+-				ml->acl_add.priority =
+-					(int32_t) mh->match.acl.priority;
+-			} else {
+-				uint32_t *sa32 = (uint32_t *)&mh->match.acl.ipv6.sa;
+-				uint32_t *da32 = (uint32_t *)&mh->match.acl.ipv6.da;
+-				uint32_t sa32_depth[4], da32_depth[4];
+-				int status;
+-
+-				status = match_convert_ipv6_depth(
+-					mh->match.acl.sa_depth,
+-					sa32_depth);
+-				if (status)
+-					return status;
+-
+-				status = match_convert_ipv6_depth(
+-					mh->match.acl.da_depth,
+-					da32_depth);
+-				if (status)
+-					return status;
+-
+-				ml->acl_delete.field_value[0].value.u8 =
+-					mh->match.acl.proto;
+-				ml->acl_delete.field_value[0].mask_range.u8 =
+-					mh->match.acl.proto_mask;
+-
+-				ml->acl_delete.field_value[1].value.u32 =
+-					rte_be_to_cpu_32(sa32[0]);
+-				ml->acl_delete.field_value[1].mask_range.u32 =
+-					sa32_depth[0];
+-				ml->acl_delete.field_value[2].value.u32 =
+-					rte_be_to_cpu_32(sa32[1]);
+-				ml->acl_delete.field_value[2].mask_range.u32 =
+-					sa32_depth[1];
+-				ml->acl_delete.field_value[3].value.u32 =
+-					rte_be_to_cpu_32(sa32[2]);
+-				ml->acl_delete.field_value[3].mask_range.u32 =
+-					sa32_depth[2];
+-				ml->acl_delete.field_value[4].value.u32 =
+-					rte_be_to_cpu_32(sa32[3]);
+-				ml->acl_delete.field_value[4].mask_range.u32 =
+-					sa32_depth[3];
+-
+-				ml->acl_delete.field_value[5].value.u32 =
+-					rte_be_to_cpu_32(da32[0]);
+-				ml->acl_delete.field_value[5].mask_range.u32 =
+-					da32_depth[0];
+-				ml->acl_delete.field_value[6].value.u32 =
+-					rte_be_to_cpu_32(da32[1]);
+-				ml->acl_delete.field_value[6].mask_range.u32 =
+-					da32_depth[1];
+-				ml->acl_delete.field_value[7].value.u32 =
+-					rte_be_to_cpu_32(da32[2]);
+-				ml->acl_delete.field_value[7].mask_range.u32 =
+-					da32_depth[2];
+-				ml->acl_delete.field_value[8].value.u32 =
+-					rte_be_to_cpu_32(da32[3]);
+-				ml->acl_delete.field_value[8].mask_range.u32 =
+-					da32_depth[3];
+-
+-				ml->acl_delete.field_value[9].value.u16 =
+-					mh->match.acl.sp0;
+-				ml->acl_delete.field_value[9].mask_range.u16 =
+-					mh->match.acl.sp1;
+-
+-				ml->acl_delete.field_value[10].value.u16 =
+-					mh->match.acl.dp0;
+-				ml->acl_delete.field_value[10].mask_range.u16 =
+-					mh->match.acl.dp1;
+-			}
+-		return 0;
+-
+-	case TABLE_ARRAY:
+-		ml->array.pos = mh->match.array.pos;
+-		return 0;
+-
+-	case TABLE_HASH:
+-		memcpy(ml->hash, mh->match.hash.key, sizeof(ml->hash));
+-		return 0;
+-
+-	case TABLE_LPM:
+-		if (mh->match.lpm.ip_version) {
+-			ml->lpm_ipv4.ip = mh->match.lpm.ipv4;
+-			ml->lpm_ipv4.depth = mh->match.lpm.depth;
+-		} else {
+-			ml->lpm_ipv6.ip = mh->match.lpm.ipv6;
+-			ml->lpm_ipv6.depth = mh->match.lpm.depth;
+-		}
+-
+-		return 0;
+-
+-	default:
+-		return -1;
+-	}
+-}
+-
+-static int
+-action_convert(struct rte_table_action *a,
+-	struct table_rule_action *action,
+-	struct rte_pipeline_table_entry *data)
+-{
+-	int status;
+-
+-	/* Apply actions */
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_FWD,
+-			&action->fwd);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_LB,
+-			&action->lb);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_MTR,
+-			&action->mtr);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_TM,
+-			&action->tm);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_ENCAP,
+-			&action->encap);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_NAT,
+-			&action->nat);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_TTL,
+-			&action->ttl);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_STATS,
+-			&action->stats);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_TIME,
+-			&action->time);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_SYM_CRYPTO,
+-			&action->sym_crypto);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_TAG,
+-			&action->tag);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
+-		status = rte_table_action_apply(a,
+-			data,
+-			RTE_TABLE_ACTION_DECAP,
+-			&action->decap);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	return 0;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_rule_add(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	union table_rule_match_low_level match_ll;
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	struct table_rule_match *match = &req->table_rule_add.match;
+-	struct table_rule_action *action = &req->table_rule_add.action;
+-	struct rte_pipeline_table_entry *data_in, *data_out;
+-	uint32_t table_id = req->id;
+-	int key_found, status;
+-	struct rte_table_action *a = p->table_data[table_id].a;
+-
+-	/* Apply actions */
+-	memset(p->buffer, 0, sizeof(p->buffer));
+-	data_in = (struct rte_pipeline_table_entry *) p->buffer;
+-
+-	status = match_convert(match, &match_ll, 1);
+-	if (status) {
+-		rsp->status = -1;
+-		return rsp;
+-	}
+-
+-	status = action_convert(a, action, data_in);
+-	if (status) {
+-		rsp->status = -1;
+-		return rsp;
+-	}
+-
+-	status = rte_pipeline_table_entry_add(p->p,
+-		table_id,
+-		&match_ll,
+-		data_in,
+-		&key_found,
+-		&data_out);
+-	if (status) {
+-		rsp->status = -1;
+-		return rsp;
+-	}
+-
+-	/* Write response */
+-	rsp->status = 0;
+-	rsp->table_rule_add.data = data_out;
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_rule_add_default(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	struct table_rule_action *action = &req->table_rule_add_default.action;
+-	struct rte_pipeline_table_entry *data_in, *data_out;
+-	uint32_t table_id = req->id;
+-	int status;
+-
+-	/* Apply actions */
+-	memset(p->buffer, 0, sizeof(p->buffer));
+-	data_in = (struct rte_pipeline_table_entry *) p->buffer;
+-
+-	data_in->action = action->fwd.action;
+-	if (action->fwd.action == RTE_PIPELINE_ACTION_PORT)
+-		data_in->port_id = action->fwd.id;
+-	if (action->fwd.action == RTE_PIPELINE_ACTION_TABLE)
+-		data_in->table_id = action->fwd.id;
+-
+-	/* Add default rule to table */
+-	status = rte_pipeline_table_default_entry_add(p->p,
+-		table_id,
+-		data_in,
+-		&data_out);
+-	if (status) {
+-		rsp->status = -1;
+-		return rsp;
+-	}
+-
+-	/* Write response */
+-	rsp->status = 0;
+-	rsp->table_rule_add_default.data = data_out;
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_rule_add_bulk(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-
+-	uint32_t table_id = req->id;
+-	struct table_rule_list *list = req->table_rule_add_bulk.list;
+-	uint32_t bulk = req->table_rule_add_bulk.bulk;
+-
+-	uint32_t n_rules_added;
+-	int status;
+-
+-	struct table_ll table_ll = {
+-		.p = p->p,
+-		.table_id = table_id,
+-		.a = p->table_data[table_id].a,
+-		.bulk_supported = bulk,
+-	};
+-
+-	status = table_rule_add_bulk_ll(&table_ll, list, &n_rules_added);
+-	if (status) {
+-		rsp->status = -1;
+-		rsp->table_rule_add_bulk.n_rules = 0;
+-		return rsp;
+-	}
+-
+-	/* Write response */
+-	rsp->status = 0;
+-	rsp->table_rule_add_bulk.n_rules = n_rules_added;
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_rule_delete(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	union table_rule_match_low_level match_ll;
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	struct table_rule_match *match = &req->table_rule_delete.match;
+-	uint32_t table_id = req->id;
+-	int key_found, status;
+-
+-	status = match_convert(match, &match_ll, 0);
+-	if (status) {
+-		rsp->status = -1;
+-		return rsp;
+-	}
+-
+-	rsp->status = rte_pipeline_table_entry_delete(p->p,
+-		table_id,
+-		&match_ll,
+-		&key_found,
+-		NULL);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_rule_delete_default(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t table_id = req->id;
+-
+-	rsp->status = rte_pipeline_table_default_entry_delete(p->p,
+-		table_id,
+-		NULL);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_rule_stats_read(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t table_id = req->id;
+-	void *data = req->table_rule_stats_read.data;
+-	int clear = req->table_rule_stats_read.clear;
+-	struct rte_table_action *a = p->table_data[table_id].a;
+-
+-	rsp->status = rte_table_action_stats_read(a,
+-		data,
+-		&rsp->table_rule_stats_read.stats,
+-		clear);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_mtr_profile_add(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t table_id = req->id;
+-	uint32_t meter_profile_id = req->table_mtr_profile_add.meter_profile_id;
+-	struct rte_table_action_meter_profile *profile =
+-		&req->table_mtr_profile_add.profile;
+-	struct rte_table_action *a = p->table_data[table_id].a;
+-
+-	rsp->status = rte_table_action_meter_profile_add(a,
+-		meter_profile_id,
+-		profile);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_mtr_profile_delete(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t table_id = req->id;
+-	uint32_t meter_profile_id =
+-		req->table_mtr_profile_delete.meter_profile_id;
+-	struct rte_table_action *a = p->table_data[table_id].a;
+-
+-	rsp->status = rte_table_action_meter_profile_delete(a,
+-		meter_profile_id);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_rule_mtr_read(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t table_id = req->id;
+-	void *data = req->table_rule_mtr_read.data;
+-	uint32_t tc_mask = req->table_rule_mtr_read.tc_mask;
+-	int clear = req->table_rule_mtr_read.clear;
+-	struct rte_table_action *a = p->table_data[table_id].a;
+-
+-	rsp->status = rte_table_action_meter_read(a,
+-		data,
+-		tc_mask,
+-		&rsp->table_rule_mtr_read.stats,
+-		clear);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_dscp_table_update(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t table_id = req->id;
+-	uint64_t dscp_mask = req->table_dscp_table_update.dscp_mask;
+-	struct rte_table_action_dscp_table *dscp_table =
+-		&req->table_dscp_table_update.dscp_table;
+-	struct rte_table_action *a = p->table_data[table_id].a;
+-
+-	rsp->status = rte_table_action_dscp_table_update(a,
+-		dscp_mask,
+-		dscp_table);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_rule_ttl_read(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t table_id = req->id;
+-	void *data = req->table_rule_ttl_read.data;
+-	int clear = req->table_rule_ttl_read.clear;
+-	struct rte_table_action *a = p->table_data[table_id].a;
+-
+-	rsp->status = rte_table_action_ttl_read(a,
+-		data,
+-		&rsp->table_rule_ttl_read.stats,
+-		clear);
+-
+-	return rsp;
+-}
+-
+-static struct pipeline_msg_rsp *
+-pipeline_msg_handle_table_rule_time_read(struct pipeline_data *p,
+-	struct pipeline_msg_req *req)
+-{
+-	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint32_t table_id = req->id;
+-	void *data = req->table_rule_time_read.data;
+-	struct rte_table_action *a = p->table_data[table_id].a;
+-
+-	rsp->status = rte_table_action_time_read(a,
+-		data,
+-		&rsp->table_rule_time_read.timestamp);
+-
+-	return rsp;
+-}
+-
+-static void
+-pipeline_msg_handle(struct pipeline_data *p)
+-{
+-	for ( ; ; ) {
+-		struct pipeline_msg_req *req;
+-		struct pipeline_msg_rsp *rsp;
+-
+-		req = pipeline_msg_recv(p->msgq_req);
+-		if (req == NULL)
+-			break;
+-
+-		switch (req->type) {
+-		case PIPELINE_REQ_PORT_IN_STATS_READ:
+-			rsp = pipeline_msg_handle_port_in_stats_read(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_PORT_IN_ENABLE:
+-			rsp = pipeline_msg_handle_port_in_enable(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_PORT_IN_DISABLE:
+-			rsp = pipeline_msg_handle_port_in_disable(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_PORT_OUT_STATS_READ:
+-			rsp = pipeline_msg_handle_port_out_stats_read(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_STATS_READ:
+-			rsp = pipeline_msg_handle_table_stats_read(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_RULE_ADD:
+-			rsp = pipeline_msg_handle_table_rule_add(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_RULE_ADD_DEFAULT:
+-			rsp = pipeline_msg_handle_table_rule_add_default(p,	req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_RULE_ADD_BULK:
+-			rsp = pipeline_msg_handle_table_rule_add_bulk(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_RULE_DELETE:
+-			rsp = pipeline_msg_handle_table_rule_delete(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_RULE_DELETE_DEFAULT:
+-			rsp = pipeline_msg_handle_table_rule_delete_default(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_RULE_STATS_READ:
+-			rsp = pipeline_msg_handle_table_rule_stats_read(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_MTR_PROFILE_ADD:
+-			rsp = pipeline_msg_handle_table_mtr_profile_add(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_MTR_PROFILE_DELETE:
+-			rsp = pipeline_msg_handle_table_mtr_profile_delete(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_RULE_MTR_READ:
+-			rsp = pipeline_msg_handle_table_rule_mtr_read(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_DSCP_TABLE_UPDATE:
+-			rsp = pipeline_msg_handle_table_dscp_table_update(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_RULE_TTL_READ:
+-			rsp = pipeline_msg_handle_table_rule_ttl_read(p, req);
+-			break;
+-
+-		case PIPELINE_REQ_TABLE_RULE_TIME_READ:
+-			rsp = pipeline_msg_handle_table_rule_time_read(p, req);
+-			break;
+-
+-		default:
+-			rsp = (struct pipeline_msg_rsp *) req;
+-			rsp->status = -1;
+-		}
+-
+-		pipeline_msg_send(p->msgq_rsp, rsp);
+-	}
+-}
+-
+-/**
+- * Data plane threads: main
+- */
+-int
+-thread_main(void *arg __rte_unused)
+-{
+-	struct thread_data *t;
+-	uint32_t thread_id, i;
+-
+-	thread_id = rte_lcore_id();
+-	t = &thread_data[thread_id];
+-
+-	/* Dispatch loop */
+-	for (i = 0; ; i++) {
+-		uint32_t j;
+-
+-		/* Data Plane */
+-		for (j = 0; j < t->n_pipelines; j++)
+-			rte_pipeline_run(t->p[j]);
+-
+-		/* Control Plane */
+-		if ((i & 0xF) == 0) {
+-			uint64_t time = rte_get_tsc_cycles();
+-			uint64_t time_next_min = UINT64_MAX;
+-
+-			if (time < t->time_next_min)
+-				continue;
+-
+-			/* Pipeline message queues */
+-			for (j = 0; j < t->n_pipelines; j++) {
+-				struct pipeline_data *p =
+-					&t->pipeline_data[j];
+-				uint64_t time_next = p->time_next;
+-
+-				if (time_next <= time) {
+-					pipeline_msg_handle(p);
+-					rte_pipeline_flush(p->p);
+-					time_next = time + p->timer_period;
+-					p->time_next = time_next;
+-				}
+-
+-				if (time_next < time_next_min)
+-					time_next_min = time_next;
+-			}
+-
+-			/* Thread message queues */
+-			{
+-				uint64_t time_next = t->time_next;
+-
+-				if (time_next <= time) {
+-					thread_msg_handle(t);
+-					time_next = time + t->timer_period;
+-					t->time_next = time_next;
+-				}
+-
+-				if (time_next < time_next_min)
+-					time_next_min = time_next;
+-			}
+-
+-			t->time_next_min = time_next_min;
+-		}
+-	}
+-
+-	return 0;
+-}
+diff --git a/examples/ip_pipeline/thread.h b/examples/ip_pipeline/thread.h
+deleted file mode 100644
+index facdf004eb..0000000000
+--- a/examples/ip_pipeline/thread.h
++++ /dev/null
+@@ -1,24 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_THREAD_H_
+-#define _INCLUDE_THREAD_H_
+-
+-#include <stdint.h>
+-
+-int
+-thread_pipeline_enable(uint32_t thread_id,
+-	const char *pipeline_name);
+-
+-int
+-thread_pipeline_disable(uint32_t thread_id,
+-	const char *pipeline_name);
+-
+-int
+-thread_init(void);
+-
+-int
+-thread_main(void *arg);
+-
+-#endif /* _INCLUDE_THREAD_H_ */
+diff --git a/examples/ip_pipeline/tmgr.c b/examples/ip_pipeline/tmgr.c
+deleted file mode 100644
+index 2432b56aee..0000000000
+--- a/examples/ip_pipeline/tmgr.c
++++ /dev/null
+@@ -1,248 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#include <stdlib.h>
+-
+-#include <rte_common.h>
+-#include <rte_string_fns.h>
+-
+-#include "tmgr.h"
+-
+-static struct rte_sched_subport_profile_params
+-	subport_profile[TMGR_SUBPORT_PROFILE_MAX];
+-
+-static uint32_t n_subport_profiles;
+-
+-static struct rte_sched_pipe_params
+-	pipe_profile[TMGR_PIPE_PROFILE_MAX];
+-
+-static uint32_t n_pipe_profiles;
+-
+-static const struct rte_sched_subport_params subport_params_default = {
+-	.n_pipes_per_subport_enabled = 0, /* filled at runtime */
+-	.qsize = {64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64},
+-	.pipe_profiles = pipe_profile,
+-	.n_pipe_profiles = 0, /* filled at run time */
+-	.n_max_pipe_profiles = RTE_DIM(pipe_profile),
+-	.cman_params = NULL,
+-};
+-
+-static struct tmgr_port_list tmgr_port_list;
+-
+-int
+-tmgr_init(void)
+-{
+-	TAILQ_INIT(&tmgr_port_list);
+-
+-	return 0;
+-}
+-
+-struct tmgr_port *
+-tmgr_port_find(const char *name)
+-{
+-	struct tmgr_port *tmgr_port;
+-
+-	if (name == NULL)
+-		return NULL;
+-
+-	TAILQ_FOREACH(tmgr_port, &tmgr_port_list, node)
+-		if (strcmp(tmgr_port->name, name) == 0)
+-			return tmgr_port;
+-
+-	return NULL;
+-}
+-
+-int
+-tmgr_subport_profile_add(struct rte_sched_subport_profile_params *params)
+-{
+-	/* Check input params */
+-	if (params == NULL)
+-		return -1;
+-
+-	/* Save profile */
+-	memcpy(&subport_profile[n_subport_profiles],
+-		params,
+-		sizeof(*params));
+-
+-	n_subport_profiles++;
+-
+-	return 0;
+-}
+-
+-int
+-tmgr_pipe_profile_add(struct rte_sched_pipe_params *p)
+-{
+-	/* Check input params */
+-	if (p == NULL)
+-		return -1;
+-
+-	/* Save profile */
+-	memcpy(&pipe_profile[n_pipe_profiles],
+-		p,
+-		sizeof(*p));
+-
+-	n_pipe_profiles++;
+-
+-	return 0;
+-}
+-
+-struct tmgr_port *
+-tmgr_port_create(const char *name, struct tmgr_port_params *params)
+-{
+-	struct rte_sched_subport_params subport_params;
+-	struct rte_sched_port_params p;
+-	struct tmgr_port *tmgr_port;
+-	struct rte_sched_port *s;
+-	uint32_t i, j;
+-
+-	/* Check input params */
+-	if ((name == NULL) ||
+-		tmgr_port_find(name) ||
+-		(params == NULL) ||
+-		(params->n_subports_per_port == 0) ||
+-		(params->n_pipes_per_subport == 0) ||
+-		(params->cpu_id >= RTE_MAX_NUMA_NODES) ||
+-		(n_subport_profiles == 0) ||
+-		(n_pipe_profiles == 0))
+-		return NULL;
+-
+-	/* Resource create */
+-	p.name = name;
+-	p.socket = (int) params->cpu_id;
+-	p.rate = params->rate;
+-	p.mtu = params->mtu;
+-	p.frame_overhead = params->frame_overhead;
+-	p.n_subports_per_port = params->n_subports_per_port;
+-	p.n_subport_profiles = n_subport_profiles;
+-	p.subport_profiles = subport_profile;
+-	p.n_max_subport_profiles = TMGR_SUBPORT_PROFILE_MAX;
+-	p.n_pipes_per_subport = params->n_pipes_per_subport;
+-
+-
+-	s = rte_sched_port_config(&p);
+-	if (s == NULL)
+-		return NULL;
+-
+-	memcpy(&subport_params, &subport_params_default,
+-		sizeof(subport_params_default));
+-
+-	subport_params.n_pipe_profiles = n_pipe_profiles;
+-	subport_params.n_pipes_per_subport_enabled =
+-						params->n_pipes_per_subport;
+-
+-	for (i = 0; i < params->n_subports_per_port; i++) {
+-		int status;
+-
+-		status = rte_sched_subport_config(
+-			s,
+-			i,
+-			&subport_params,
+-			0);
+-
+-		if (status) {
+-			rte_sched_port_free(s);
+-			return NULL;
+-		}
+-
+-		for (j = 0; j < params->n_pipes_per_subport; j++) {
+-
+-			status = rte_sched_pipe_config(
+-				s,
+-				i,
+-				j,
+-				0);
+-
+-			if (status) {
+-				rte_sched_port_free(s);
+-				return NULL;
+-			}
+-		}
+-	}
+-
+-	/* Node allocation */
+-	tmgr_port = calloc(1, sizeof(struct tmgr_port));
+-	if (tmgr_port == NULL) {
+-		rte_sched_port_free(s);
+-		return NULL;
+-	}
+-
+-	/* Node fill in */
+-	strlcpy(tmgr_port->name, name, sizeof(tmgr_port->name));
+-	tmgr_port->s = s;
+-	tmgr_port->n_subports_per_port = params->n_subports_per_port;
+-	tmgr_port->n_pipes_per_subport = params->n_pipes_per_subport;
+-
+-	/* Node add to list */
+-	TAILQ_INSERT_TAIL(&tmgr_port_list, tmgr_port, node);
+-
+-	return tmgr_port;
+-}
+-
+-int
+-tmgr_subport_config(const char *port_name,
+-	uint32_t subport_id,
+-	uint32_t subport_profile_id)
+-{
+-	struct tmgr_port *port;
+-	int status;
+-
+-	/* Check input params */
+-	if (port_name == NULL)
+-		return -1;
+-
+-	port = tmgr_port_find(port_name);
+-	if ((port == NULL) ||
+-		(subport_id >= port->n_subports_per_port) ||
+-		(subport_profile_id >= n_subport_profiles))
+-		return -1;
+-
+-	/* Resource config */
+-	status = rte_sched_subport_config(
+-		port->s,
+-		subport_id,
+-		NULL,
+-		subport_profile_id);
+-
+-	return status;
+-}
+-
+-int
+-tmgr_pipe_config(const char *port_name,
+-	uint32_t subport_id,
+-	uint32_t pipe_id_first,
+-	uint32_t pipe_id_last,
+-	uint32_t pipe_profile_id)
+-{
+-	struct tmgr_port *port;
+-	uint32_t i;
+-
+-	/* Check input params */
+-	if (port_name == NULL)
+-		return -1;
+-
+-	port = tmgr_port_find(port_name);
+-	if ((port == NULL) ||
+-		(subport_id >= port->n_subports_per_port) ||
+-		(pipe_id_first >= port->n_pipes_per_subport) ||
+-		(pipe_id_last >= port->n_pipes_per_subport) ||
+-		(pipe_id_first > pipe_id_last) ||
+-		(pipe_profile_id >= n_pipe_profiles))
+-		return -1;
+-
+-	/* Resource config */
+-	for (i = pipe_id_first; i <= pipe_id_last; i++) {
+-		int status;
+-
+-		status = rte_sched_pipe_config(
+-			port->s,
+-			subport_id,
+-			i,
+-			(int) pipe_profile_id);
+-
+-		if (status)
+-			return status;
+-	}
+-
+-	return 0;
+-}
+diff --git a/examples/ip_pipeline/tmgr.h b/examples/ip_pipeline/tmgr.h
+deleted file mode 100644
+index 1994c55bcc..0000000000
+--- a/examples/ip_pipeline/tmgr.h
++++ /dev/null
+@@ -1,74 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef _INCLUDE_TMGR_H_
+-#define _INCLUDE_TMGR_H_
+-
+-#include <stdint.h>
+-#include <sys/queue.h>
+-
+-#include <rte_sched.h>
+-#include <rte_red.h>
+-
+-#include "common.h"
+-
+-#ifndef TMGR_PIPE_SUBPORT_MAX
+-#define TMGR_PIPE_SUBPORT_MAX                              4096
+-#endif
+-
+-#ifndef TMGR_SUBPORT_PROFILE_MAX
+-#define TMGR_SUBPORT_PROFILE_MAX                           256
+-#endif
+-
+-#ifndef TMGR_PIPE_PROFILE_MAX
+-#define TMGR_PIPE_PROFILE_MAX                              256
+-#endif
+-
+-struct tmgr_port {
+-	TAILQ_ENTRY(tmgr_port) node;
+-	char name[NAME_SIZE];
+-	struct rte_sched_port *s;
+-	uint32_t n_subports_per_port;
+-	uint32_t n_pipes_per_subport;
+-};
+-
+-TAILQ_HEAD(tmgr_port_list, tmgr_port);
+-
+-int
+-tmgr_init(void);
+-
+-struct tmgr_port *
+-tmgr_port_find(const char *name);
+-
+-struct tmgr_port_params {
+-	uint64_t rate;
+-	uint32_t n_subports_per_port;
+-	uint32_t n_pipes_per_subport;
+-	uint32_t frame_overhead;
+-	uint32_t mtu;
+-	uint32_t cpu_id;
+-};
+-
+-int
+-tmgr_subport_profile_add(struct rte_sched_subport_profile_params *sp);
+-
+-int
+-tmgr_pipe_profile_add(struct rte_sched_pipe_params *p);
+-
+-struct tmgr_port *
+-tmgr_port_create(const char *name, struct tmgr_port_params *params);
+-
+-int
+-tmgr_subport_config(const char *port_name,
+-	uint32_t subport_id,
+-	uint32_t subport_profile_id);
+-
+-int
+-tmgr_pipe_config(const char *port_name,
+-	uint32_t subport_id,
+-	uint32_t pipe_id_first,
+-	uint32_t pipe_id_last,
+-	uint32_t pipe_profile_id);
+-
+-#endif /* _INCLUDE_TMGR_H_ */
+diff --git a/examples/meson.build b/examples/meson.build
+index 25d9c88457..544ec5eadd 100644
+--- a/examples/meson.build
++++ b/examples/meson.build
+@@ -19,7 +19,6 @@ all_examples = [
+         'flow_filtering',
+         'helloworld',
+         'ip_fragmentation',
+-        'ip_pipeline',
+         'ip_reassembly',
+         'ipsec-secgw',
+         'ipv4_multicast',
 -- 
 2.53.0
 
