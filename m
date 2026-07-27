@@ -1,72 +1,73 @@
 Return-Path: <dev-bounces@dpdk.org>
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC36C531FA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Jul 2026 16:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA68BC53219
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 23:13:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 65DDA406BB;
-	Fri, 24 Jul 2026 18:45:40 +0200 (CEST)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
- [209.85.215.174])
- by mails.dpdk.org (Postfix) with ESMTP id 5173840A89
- for <dev@dpdk.org>; Fri, 24 Jul 2026 18:45:38 +0200 (CEST)
-Received: by mail-pg1-f174.google.com with SMTP id
- 41be03b00d2f7-ca766c1c9ccso442294a12.0
- for <dev@dpdk.org>; Fri, 24 Jul 2026 09:45:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C546A406BB;
+	Tue, 28 Jul 2026 01:12:47 +0200 (CEST)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
+ [209.85.214.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 14D8140679
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 01:12:44 +0200 (CEST)
+Received: by mail-pl1-f180.google.com with SMTP id
+ d9443c01a7336-2cc7e86e7aeso36320965ad.2
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 16:12:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1784911537;
- x=1785516337; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785193963;
+ x=1785798763; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=IXDWYxVM/CjYxVK+ohxBg6YCt4PH9q0RyMErNf7DQqs=;
- b=Q90DyNxL1eoumG75PIQweMqhDxq/kerA2GzaDGpye10HYgogFydV/N0/Wp59TOGvjD
- CfdE0UkNCmYivHJYz4z4PapRDsH2T/g8kPUlEBE/2LHGQCtEytRM3cjgDfSzrSzj5fUz
- /wYxF+XysSRrjDwlFHWAzRKui6VepD8TBREs90ZY3kGkLyq7F19aqxBI5THNPU7b/jFr
- P7Ai8MNSXznaNjr21v5i7/OWUTu97Vn7wmRM7WXx3dekR8HjJPXXkyYRo3WFp5kcrKyx
- pV/KxR6VUPe2zu22yW31nEwY1mQ2XMN+CLbkGHgm4Bd+yVZ+v06y8Z+ERGYfRD8hXq92
- IMnw==
+ bh=uDjgwNSZFklGfTbn9rdyKvXqUSqfYlestcnO8tFOlaU=;
+ b=wPuSbAJCqS6wi7P5OfEuJ3pUvFAie8Rp+0c4LKjjExpB7pfEfMSjcIXYKz8qp1mkL6
+ PDjkM+OechbuqhzQ6keHv5aI4KeVAf66NNhWOrwSnoz0/xjYKtr66AvvtzT1dd9+e/vW
+ SuhbcGbqt43xb9gxM4cGviL7A4Fyrd2qUmAD5SD2ms7Z5DzCfgo0DanRsoCiTxrSxt7w
+ TGrLsXGaxr525FW9VPEqi6cKfzOG8wNW58bASbyB1//ofcLiXEW1v4Rs1A20JbDXgSWl
+ 7nz0bxCZSTk7OSjai9fHGfzFOBwrVNNebw279QsDXtRnnJMljph4R8IrX+cSCTAGT3pU
+ a77A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784911537; x=1785516337;
+ d=1e100.net; s=20251104; t=1785193963; x=1785798763;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=IXDWYxVM/CjYxVK+ohxBg6YCt4PH9q0RyMErNf7DQqs=;
- b=oMFAA7OeZYEA+gn49Ehg/0iQ5YtOpSw756dbWZ7j86NCyeQTf9lQ80BjF8RBcSlAPK
- o2KpRjZi5aI//34E/5/9xMvQF5Rsx+NNrBSYnxvZiqoaVfHg7nCCKYRTPIEVvz+khDES
- dYky88YB3t7j/clqepXCWzZsVRSuwLN48tN/h6SdbeN1DQdoByEbBqoYp9oUVC4uwrgF
- 4zkMoRz1ca4ukDSJT1TXu43vow+LoFb4OBav4k4gKUBo4iqrHhpcErY6g1G4T2yp7Yfp
- j0rwiE53Ww60e0fA52Iblh7qkGjOykO66ZyVjj6p6gmEdvTvVuDQs64VazD1I8ETT57P
- sxTg==
-X-Gm-Message-State: AOJu0YzPluToul7ZaknWjox6dRvjbi2Ui9xMCbGTWjCkbq97mizDYTat
- 7SWCb96pZXi8x5n7Zn7Sey16hmk/8EDNakDFdXpiDtPBCOc5mjz0/B5yqn0Copg6UP+VwIYgejo
- +Tpr4
-X-Gm-Gg: AR+sD1389zCfzsLHGa66pBS2eo/Z2AZtdTre/9Q8R91EQGBpR1OOwInQtevAxss5KbL
- JpG50X+qgfKtmv1n0PGt+V1W80rQEID6UFKVIDs7oIFipLJg2rPflzJ1fBMk2jiXOlA8gNA1PKJ
- l5VKBEE2VRQA6zWc6LI5WdzcxvZkPMstU/BAzRSJYEpHnxNlWQLHW5h79nMEpaQDvjwDgVqEyf/
- vKf0v1ik3TZCBoCRx0NHD8l0wGMTxVKGIDjGQGGar/oJBHF7XE545ACm5pKMm12JS+q4ROHqPXS
- QFg2YJ1A0bp2Kbig1FhZEi/v/PmVGRVoNyxhOFesFtusrjtCQ0CGexyYI10ium8eU7TbDAeAExR
- tcfCVsdIWbyvtDUDhDp8o2dRv78FJI9VP+AL5qKUkaAvgFmRNek4iHJS14mkuGkdzzqBMC9PcgX
- W52iE5Ur9V2cUghmHs+ONObBm4sHbqZtn6JYYLIMVS
-X-Received: by 2002:a05:6a21:6e03:b0:3c3:a804:8ee5 with SMTP id
- adf61e73a8af0-3c44b25cd50mr8995395637.65.1784911534918; 
- Fri, 24 Jul 2026 09:45:34 -0700 (PDT)
+ bh=uDjgwNSZFklGfTbn9rdyKvXqUSqfYlestcnO8tFOlaU=;
+ b=Zg5n2rIZ20bDC8Tb31ROlyaG8rpXELf+ZXpAMMLchciDQTBUkuy6H4iJ/Fg14sZMk5
+ 9Ri3Kalq1y90X53Nne3fjkeyeW6jfaknisOmfss7OCjs6LwnCB9G/5s2QcfM4iDhHEWQ
+ RVVmktfZNBIsgjKjvy6KGNECOvahu329UpasdN2vWj+LYTGe6vsPafUJMEJRWTp4ffmI
+ zcHEvrRZi1HHCA7dtIDsbtMpaqub2PW6U5AyxZsmXvgUPcLWr7ejzHIARgKmhJCgtgIu
+ dSLvYCyOy4B2/cely32JuIi12yZgEwJcWzjsr/4Mnk48YMuYysU9n2GQyVmtwRL8DsS5
+ SY1Q==
+X-Gm-Message-State: AOJu0YwcwyCBr2JlhIj3GmwquXQYWRS/LCZlp5ddDigxoGbKEMpgBqI9
+ X12aBYO8mo6feEQ3QGL8oNebzQUv8EOYJGFil52NuNMswwSRaBSSCBdZa8wwXfOlVgvi2uYfdaP
+ Z8VLZ
+X-Gm-Gg: AR+sD11zyCc5HBbr8T9B5itmdHqw9aoz4J/ga5yWKS9sA8F9TepQuvYKHqltC383cxR
+ 7tV9PRHbKx2sbQbMgZsluFiiRNMAuZSxPKz1PrAlztsZzNKdvUi0pKIUAfQiLPCyCrTGZND33vB
+ 9su20sQIb9xfl9ZGLvg9vNQpelw/J0tiod3OwvBFG6XTWwfLm6wAC3iCeJDxb4IkVrTY68kbSol
+ CoadSLzh6/JSdHXC/gfS/doEjoBtdEqqD+35rs+74JhQONV4ECQRDBlptZ44yknuwyzklv5gsFZ
+ jvhMGt7l1m+DnDANoWZE6JkjAHvTE0HmT1AD8nyh3Di+w/T/x29uXDYxQBEpRCfrCdHQCQPIt8d
+ pdGDv13B94+NKi9CsjJ0D48dz6kSQujH4ZsqKCti2gM6pv6mwQdzXDp3uEGdQGMfOgUA2D3A8h2
+ 0xG5Tya+D1ZRfChng62AdbBpdoQRm+pfrHA08/FNMVhFUG8oUX9mI=
+X-Received: by 2002:a05:6a21:6b02:b0:3c3:954d:279a with SMTP id
+ adf61e73a8af0-3c67daecd2bmr10041058637.33.1785193960993; 
+ Mon, 27 Jul 2026 16:12:40 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-314bc549cacsm972872eec.16.2026.07.24.09.45.31
+ 5a478bee46e88-314bc3e261fsm40359802eec.6.2026.07.27.16.12.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Jul 2026 09:45:33 -0700 (PDT)
+ Mon, 27 Jul 2026 16:12:39 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
  Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: [RFC 5/6] table: remove legacy API
-Date: Fri, 24 Jul 2026 09:44:01 -0700
-Message-ID: <20260724164520.192203-6-stephen@networkplumber.org>
+Subject: [RFC v2 5/6] table: remove legacy API
+Date: Mon, 27 Jul 2026 16:11:29 -0700
+Message-ID: <20260727231222.1492544-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260724164520.192203-1-stephen@networkplumber.org>
+In-Reply-To: <20260727231222.1492544-1-stephen@networkplumber.org>
 References: <20260724164520.192203-1-stephen@networkplumber.org>
+ <20260727231222.1492544-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -124,12 +125,11 @@ Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
  lib/table/rte_table_lpm.c                  |  369 ------
  lib/table/rte_table_lpm.h                  |   94 --
  lib/table/rte_table_lpm_ipv6.c             |  370 ------
- lib/table/rte_table_lpm_ipv6.h             |   95 --
  lib/table/rte_table_stub.c                 |   95 --
  lib/table/rte_table_stub.h                 |   30 -
  lib/table/table_log.c                      |    7 -
  lib/table/table_log.h                      |   11 -
- 37 files changed, 4 insertions(+), 9858 deletions(-)
+ 36 files changed, 4 insertions(+), 9763 deletions(-)
  delete mode 100644 doc/guides/prog_guide/img/figure33.png
  delete mode 100644 doc/guides/prog_guide/img/figure34.png
  delete mode 100644 doc/guides/prog_guide/img/figure35.png
@@ -157,7 +157,6 @@ Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
  delete mode 100644 lib/table/rte_table_lpm.c
  delete mode 100644 lib/table/rte_table_lpm.h
  delete mode 100644 lib/table/rte_table_lpm_ipv6.c
- delete mode 100644 lib/table/rte_table_lpm_ipv6.h
  delete mode 100644 lib/table/rte_table_stub.c
  delete mode 100644 lib/table/rte_table_stub.h
  delete mode 100644 lib/table/table_log.c
@@ -4823,10 +4822,10 @@ index 758652a492..9dcf86098f 100644
    will be deprecated and subsequently removed in DPDK 24.11 release.
    Before this, the new port library API (functions rte_swx_port_*)
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index a1056ae5d2..306482c1d9 100644
+index f7d34aa1ee..50b0d3ac06 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -79,6 +79,9 @@ Removed Items
+@@ -88,6 +88,9 @@ Removed Items
    ``rte_port_in_action_*`` and ``rte_table_action_*`` functions.
    The SWX pipeline API (``rte_swx_pipeline_*``) remains.
  
@@ -13778,107 +13777,6 @@ index 9159784dfa..0000000000
 -	.f_lookup = rte_table_lpm_ipv6_lookup,
 -	.f_stats = rte_table_lpm_ipv6_stats_read,
 -};
-diff --git a/lib/table/rte_table_lpm_ipv6.h b/lib/table/rte_table_lpm_ipv6.h
-deleted file mode 100644
-index 3ea8883606..0000000000
---- a/lib/table/rte_table_lpm_ipv6.h
-+++ /dev/null
-@@ -1,95 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2014 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_TABLE_LPM_IPV6_H__
--#define __INCLUDE_RTE_TABLE_LPM_IPV6_H__
--
--/**
-- * @file
-- * RTE Table LPM for IPv6
-- *
-- * This table uses the Longest Prefix Match (LPM) algorithm to uniquely
-- * associate data to lookup keys.
-- *
-- * Use-case: IP routing table. Routes that are added to the table associate a
-- * next hop to an IP prefix. The IP prefix is specified as IP address and depth
-- * and cover for a multitude of lookup keys (i.e. destination IP addresses)
-- * that all share the same data (i.e. next hop). The next hop information
-- * typically contains the output interface ID, the IP address of the next hop
-- * station (which is part of the same IP network the output interface is
-- * connected to) and other flags and counters.
-- *
-- * The LPM primitive only allows associating an 8-bit number (next hop ID) to
-- * an IP prefix, while a routing table can potentially contain thousands of
-- * routes or even more. This means that the same next hop ID (and next hop
-- * information) has to be shared by multiple routes, which makes sense, as
-- * multiple remote networks could be reached through the same next hop.
-- * Therefore, when a route is added or updated, the LPM table has to check
-- * whether the same next hop is already in use before using a new next hop ID
-- * for this route.
-- *
-- * The comparison between different next hops is done for the first
-- * “entry_unique_size” bytes of the next hop information (configurable
-- * parameter), which have to uniquely identify the next hop, therefore the user
-- * has to carefully manage the format of the LPM table entry (i.e.  the next
-- * hop information) so that any next hop data that changes value during
-- * run-time (e.g. counters) is placed outside of this area.
-- */
--
--#include <stdint.h>
--
--#include <rte_common.h>
--#include <rte_ip6.h>
--
--#include "rte_table.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--#define RTE_LPM_IPV6_ADDR_SIZE (RTE_DEPRECATED(RTE_LPM_IPV6_ADDR_SIZE) RTE_IPV6_ADDR_SIZE)
--
--/** LPM table parameters */
--struct rte_table_lpm_ipv6_params {
--	/** Table name */
--	const char *name;
--
--	/** Maximum number of LPM rules (i.e. IP routes) */
--	uint32_t n_rules;
--
--	uint32_t number_tbl8s;
--
--	/** Number of bytes at the start of the table entry that uniquely
--	identify the entry. Cannot be bigger than table entry size. */
--	uint32_t entry_unique_size;
--
--	/** Byte offset within input packet meta-data where lookup key (i.e.
--	the destination IP address) is located. */
--	uint32_t offset;
--};
--
--/** LPM table rule (i.e. route), specified as IP prefix. While the key used by
--the lookup operation is the destination IP address (read from the input packet
--meta-data), the entry add and entry delete operations work with LPM rules, with
--each rule covering for a multitude of lookup keys (destination IP addresses)
--that share the same data (next hop). */
--struct rte_table_lpm_ipv6_key {
--	/** IP address */
--	struct rte_ipv6_addr ip;
--
--	/** IP address depth. The most significant "depth" bits of the IP
--	address specify the network part of the IP address, while the rest of
--	the bits specify the host part of the address and are ignored for the
--	purpose of route specification. */
--	uint8_t depth;
--};
--
--/** LPM table operations */
--extern struct rte_table_ops rte_table_lpm_ipv6_ops;
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
 diff --git a/lib/table/rte_table_stub.c b/lib/table/rte_table_stub.c
 deleted file mode 100644
 index 3d2ac55c49..0000000000
