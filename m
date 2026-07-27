@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F61C531D0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 23:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB7EC53219
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 23:12:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0636E400EF;
-	Tue, 28 Jul 2026 01:12:33 +0200 (CEST)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
- [209.85.210.181])
- by mails.dpdk.org (Postfix) with ESMTP id BA3C2400D6
- for <dev@dpdk.org>; Tue, 28 Jul 2026 01:12:31 +0200 (CEST)
-Received: by mail-pf1-f181.google.com with SMTP id
- d2e1a72fcca58-8453427d3f4so3327354b3a.3
- for <dev@dpdk.org>; Mon, 27 Jul 2026 16:12:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0DFF64060A;
+	Tue, 28 Jul 2026 01:12:35 +0200 (CEST)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
+ [209.85.215.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 74F9340288
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 01:12:33 +0200 (CEST)
+Received: by mail-pg1-f181.google.com with SMTP id
+ 41be03b00d2f7-c9c26a5fb98so280764a12.0
+ for <dev@dpdk.org>; Mon, 27 Jul 2026 16:12:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785193951;
- x=1785798751; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785193952;
+ x=1785798752; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=qvbU0dBCnqdER3fXggAbQutbZmkpnWfqhcHfyfhky6I=;
- b=Pr2xlxPHYUoVYsW0G4nQrK4rKoyHxjvVnbkA2064qrUcseac3xynh8b2EkjbaGUWGa
- 8WuUXEI7JkEq2HRGXFRj/BE+O+E2EeQzY9BSaP3ezO80CyuntSbnYC0jcRZd0XqoshBj
- L+P8YZtJqgLz+1+goiDoGQKWzBNZMulMQlHxCns6fOcgWT1tp/U6c0WtDA8MzyPAmiiu
- fWt1hgQHisz4AuHRb77L7I6jQQM33k6g89iimqdl6aq1PcLh4mVAT9QrhHotP5MKXWZq
- c06J3zAmefmf5hN+Tq8qyaZK5QVBohdRK9XyTjsQ5PVRfLPwR60vjX+Va42jiRVcbkpm
- iMVQ==
+ bh=4dUyOrkUlmdgbnmemuZMXVSJZZLi1IPRTiqVgMx/gw8=;
+ b=OYdyaVIGu1DQ575UBYCktZ/AXrdVH453+aUXH9MIQMrMoMXxeBp3rI9OANwLd4A8Tq
+ XufrQTZVfXKw4j/kRn/k3+6wxPr6oUfiuhXJHKGa67FWNT7FWZftwOP3yM6ZWl3sJWC9
+ GZbxmoU8g84z7VGwM5KuEGH7bTh2FDKisV+5p7cHBSf2UCzrYGm/g/4R1mS6s2DC6DMD
+ pbCj7hr+AMue7OljLpW7Y8run7T7a0prOHjSbepgCoxzQLJwsKrWe+M7+tDhmKH9apKm
+ LpfhpPgVS36JXQxRJDpLH2m4Omb2TAB2M0wK3zCV0Pi343reAulF7mmc6sx9gwuBuMFp
+ PTYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785193951; x=1785798751;
+ d=1e100.net; s=20251104; t=1785193952; x=1785798752;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=qvbU0dBCnqdER3fXggAbQutbZmkpnWfqhcHfyfhky6I=;
- b=IKqvj1PRPhLveN1safPGcHZ0sSdfjiTjIMBhQhWQMCmsYmq6Xz+kfUVu17xwxtIkqx
- fIw5+kN2eVpRN0EIxsA3otH6dMl8Rq5Ro8AA2fJvcmHjqnYqNd1gEF9XV5jJDU/749I0
- TkewWsoC2s6NzgEdT5GM0nKKS9TqDgOmGJwRwQZDMF3BSze/bToDuix3RPdo+14wwHbm
- MTshKzUgx1VEi7qEepvXYyzilXlA0mJuBpH7QjqLUjIuXODEWqifW3LjdkO0H8D1s36f
- HAOihnLclKEWhLIRAei0u2i0LD8o7ch0dYd9Ur21jETw7FriseKk1pcy2K0AmUK72x33
- Z78w==
-X-Gm-Message-State: AOJu0YxuD+rPRIiFzJv/PeZhLDBZ5dWxelIRI/kX/+NmVMV5baCRYusg
- CeoOzufnO2blf8a9BOHC9Ie3T44j/f6xOguYGsdBrGWjT3oGxPuBRu0bGUnLZnPGSNeucWDq8EQ
- 7xo5r
-X-Gm-Gg: AR+sD10hKyknYRYxTbk0379vyceSAHQZv/dCUlnPwZlIHMZYIQjxirXF47TQeSD1s0X
- JTR8+1GMqkMs1eMQWE4KOYuV0oQnoG4S7gFI6KByuhTedwktt3EwJfx2ZRwiofnj8J9Wfmjo2w8
- JpR/QsSthX8o9T9rtGr1zzKO7rrXMOP7qYDaft2RoIidWm0HmaUdqNS4PTB9SH1yBPY30N+UE3/
- VPR5avbJcuh0a0lQor3tVb2q4A9y0UxUZTAv/ERp+odni4Bb56MogjGTDJl16mUWCNBgZWHmrq9
- UH8Uv9tMN2NjfBgx9thBOLHrtRXvcN7wp/dAAU/bS7Uzz9+7pxuc8brkc6bjTr+9Ea193/5FbKt
- 7S9Sfp3Xj+wIZ8Jq+qIE5guC6+xMHFjRM428BZ6etnWUA6mNLjpNBSSbLEp8UjF4eu7g7CELbH8
- AZ9K5LKUj2tNKW2ObKroFpYvwOhRm4nXssKzvyIQPr
-X-Received: by 2002:a05:6a20:43a9:b0:398:837a:7af0 with SMTP id
- adf61e73a8af0-3c67ddb43a4mr9419471637.30.1785193950576; 
- Mon, 27 Jul 2026 16:12:30 -0700 (PDT)
+ bh=4dUyOrkUlmdgbnmemuZMXVSJZZLi1IPRTiqVgMx/gw8=;
+ b=OS1+81lqgTrNnEdjHjoq2CvvmaUTG+07XxM4d23YFfhD1PrQjlM8IVNeOZFoHgdTbb
+ JIb129hjN9eTgIHJJ5qvr03eCDhAp/FW9a2lI+bjfGsNlQ9Ko7VE7SqmaVDEUrssNc+y
+ XMLsxc/ddqjmyVX+Ey3ocAIRRVP1Time3KU5v51SgD22qMJksgpjFLGcwpnjuoC8f9gf
+ biDG4Al50glHNNw5DWuYaQlU3uDkSjGs/X1O2928UFZaamUqow+4970rUlLHpzFgrSii
+ Z1WogJfEYqEr0cg5rzVFjAT+4uFifKdtfQx2GKL/W0zPQtIIDjQFnry7qZovu3UmxnJt
+ pkVA==
+X-Gm-Message-State: AOJu0Yyn0MXoPo52RIkUD+kJ1Yt75C6vc67ANwH18QU684D7uyBUwrQO
+ e/RQ7+DlLPaT5pL0WGYYlO2biGOrlnutaMCfHF1znaBzDsz5aMgvEib99eyGru4XRvRbuHkB+8o
+ UmoZw
+X-Gm-Gg: AR+sD129MrgjFxdkqEKFUMU3+KZoJb7tcnrWXa5bW/5geY37Fc3mfMWiFpLJEhZ8JHm
+ lwp41oBi2I5u2zMY9nIp546lExM3zQLM2QRWnowuzdxJBTC5sabEm5mnswqMahFhS3TWAhCBRWM
+ MPf1U5Ok78H1PjvF5FhgKPgJeUb2FYaENcQoRrhPl5E/kyZyV9HBJJr9FTW5DgPlJW0JROU3C/g
+ CEwz00RO2VDSZvF2B6HJZ6OiTZ1fMzhaqesdJyN0xiACICaHxAyKCThDTzx6oMGu4nIFmI6qqSz
+ sJQ5rZ9lRxcYANhfRfboHho2A6SsxNojwB7mqHhEdJoxVkzRxrh9MEuyjHWUbKfIwCw9EvE8v+J
+ WdnOb+U9/s9OINbxNvDjLTrlw4a/LGhzmS5RN63QT0n5NFzT3pZMbAwOdpEmZTCUbKXSh/fet1d
+ UNfZSbapWtzazHOFH3tU9mAAkpGGowRfH2xuX0YmYSnFU/nRVOiq8=
+X-Received: by 2002:a05:6a20:2d24:b0:3a8:800:bdf4 with SMTP id
+ adf61e73a8af0-3c79268afd2mr763923637.33.1785193951931; 
+ Mon, 27 Jul 2026 16:12:31 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-314bc3e261fsm40359802eec.6.2026.07.27.16.12.29
+ 5a478bee46e88-314bc3e261fsm40359802eec.6.2026.07.27.16.12.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 27 Jul 2026 16:12:29 -0700 (PDT)
+ Mon, 27 Jul 2026 16:12:31 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC v2 0/6] remove legacy packet framework
-Date: Mon, 27 Jul 2026 16:11:24 -0700
-Message-ID: <20260727231222.1492544-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [RFC v2 1/6] app/test: remove packet framework tests
+Date: Mon, 27 Jul 2026 16:11:25 -0700
+Message-ID: <20260727231222.1492544-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260724164520.192203-1-stephen@networkplumber.org>
+In-Reply-To: <20260727231222.1492544-1-stephen@networkplumber.org>
 References: <20260724164520.192203-1-stephen@networkplumber.org>
+ <20260727231222.1492544-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,178 +83,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The legacy Packet Framework APIs were announced for removal in the
-24.11 release but the removal never happened:
+The legacy packet framework libraries (port, table, pipeline) are
+being removed, so remove the unit tests exercising them.
 
-* pipeline: The pipeline library legacy API (functions rte_pipeline_*)
-* table: The table library legacy API (functions rte_table_*)
-* port: The port library legacy API (functions rte_port_*)
-
-Do the removal now, in the 26.11 ABI window. The SWX API in the same
-libraries (rte_swx_*) is unaffected and remains the Packet Framework
-API. The softnic driver and the pipeline example already use only the
-SWX API.
-
-The applications built on the legacy API (test-pipeline, ip_pipeline)
-and the unit tests are removed first, then the legacy half of each
-library, pipeline before table before port to follow the dependency
-chain. Library dependencies and the programmer's guide are trimmed
-accordingly.
-
-Stephen Hemminger (6):
-  app/test: remove packet framework tests
-  app/test-pipeline: remove application
-  examples/ip_pipeline: remove example
-  pipeline: remove legacy API
-  table: remove legacy API
-  port: remove legacy API
-
- MAINTAINERS                                   |    5 -
- app/meson.build                               |    1 -
- app/test-pipeline/config.c                    |  230 -
- app/test-pipeline/init.c                      |  273 -
- app/test-pipeline/main.c                      |  188 -
- app/test-pipeline/main.h                      |  132 -
- app/test-pipeline/meson.build                 |   21 -
- app/test-pipeline/pipeline_acl.c              |  251 -
- app/test-pipeline/pipeline_hash.c             |  471 --
- app/test-pipeline/pipeline_lpm.c              |  175 -
- app/test-pipeline/pipeline_lpm_ipv6.c         |  168 -
- app/test-pipeline/pipeline_stub.c             |  137 -
- app/test-pipeline/runtime.c                   |  160 -
- app/test/meson.build                          |    6 -
- app/test/test_table.c                         |  209 -
- app/test/test_table.h                         |  184 -
- app/test/test_table_acl.c                     |  728 --
- app/test/test_table_acl.h                     |    6 -
- app/test/test_table_combined.c                |  846 --
- app/test/test_table_combined.h                |   27 -
- app/test/test_table_pipeline.c                |  575 --
- app/test/test_table_pipeline.h                |    6 -
- app/test/test_table_ports.c                   |  195 -
- app/test/test_table_ports.h                   |   13 -
- app/test/test_table_tables.c                  | 1058 ---
- app/test/test_table_tables.h                  |   22 -
- doc/api/doxy-api-index.md                     |   17 -
- doc/guides/nics/softnic.rst                   |    3 +-
- doc/guides/prog_guide/img/figure32.png        |  Bin 11603 -> 0 bytes
- doc/guides/prog_guide/img/figure33.png        |  Bin 65216 -> 0 bytes
- doc/guides/prog_guide/img/figure34.png        |  Bin 11581 -> 0 bytes
- doc/guides/prog_guide/img/figure35.png        |  Bin 75012 -> 0 bytes
- doc/guides/prog_guide/img/figure37.png        |  Bin 6934 -> 0 bytes
- doc/guides/prog_guide/img/figure38.png        |  Bin 7372 -> 0 bytes
- doc/guides/prog_guide/img/figure39.png        |  Bin 55986 -> 0 bytes
- doc/guides/prog_guide/packet_framework.rst    | 1146 +--
- doc/guides/rel_notes/deprecation.rst          |   15 -
- doc/guides/rel_notes/release_26_11.rst        |   17 +
- .../sample_app_ug/img/test_pipeline_app.png   |  Bin 67410 -> 0 bytes
- doc/guides/sample_app_ug/index.rst            |    2 -
- doc/guides/sample_app_ug/ip_pipeline.rst      |  531 --
- doc/guides/sample_app_ug/test_pipeline.rst    |  237 -
- examples/ip_pipeline/Makefile                 |   60 -
- examples/ip_pipeline/action.c                 |  391 -
- examples/ip_pipeline/action.h                 |   78 -
- examples/ip_pipeline/cli.c                    | 6791 -----------------
- examples/ip_pipeline/cli.h                    |   18 -
- examples/ip_pipeline/common.h                 |   12 -
- examples/ip_pipeline/conn.c                   |  330 -
- examples/ip_pipeline/conn.h                   |   47 -
- examples/ip_pipeline/cryptodev.c              |  160 -
- examples/ip_pipeline/cryptodev.h              |   46 -
- examples/ip_pipeline/examples/firewall.cli    |   59 -
- examples/ip_pipeline/examples/flow.cli        |   60 -
- examples/ip_pipeline/examples/flow_crypto.cli |   57 -
- examples/ip_pipeline/examples/l2fwd.cli       |   51 -
- examples/ip_pipeline/examples/route.cli       |   60 -
- examples/ip_pipeline/examples/route_ecmp.cli  |   57 -
- examples/ip_pipeline/examples/rss.cli         |  112 -
- examples/ip_pipeline/examples/tap.cli         |   66 -
- examples/ip_pipeline/link.c                   |  270 -
- examples/ip_pipeline/link.h                   |   66 -
- examples/ip_pipeline/main.c                   |  260 -
- examples/ip_pipeline/mempool.c                |   82 -
- examples/ip_pipeline/mempool.h                |   40 -
- examples/ip_pipeline/meson.build              |   30 -
- examples/ip_pipeline/parser.c                 |  506 --
- examples/ip_pipeline/parser.h                 |   56 -
- examples/ip_pipeline/pipeline.c               | 1078 ---
- examples/ip_pipeline/pipeline.h               |  425 --
- examples/ip_pipeline/swq.c                    |   76 -
- examples/ip_pipeline/swq.h                    |   37 -
- examples/ip_pipeline/tap.c                    |  102 -
- examples/ip_pipeline/tap.h                    |   29 -
- examples/ip_pipeline/thread.c                 | 3137 --------
- examples/ip_pipeline/thread.h                 |   24 -
- examples/ip_pipeline/tmgr.c                   |  248 -
- examples/ip_pipeline/tmgr.h                   |   74 -
- examples/meson.build                          |    1 -
- lib/pipeline/meson.build                      |    8 +-
- lib/pipeline/rte_pipeline.c                   | 1640 ----
- lib/pipeline/rte_pipeline.h                   |  840 --
- lib/pipeline/rte_port_in_action.c             |  539 --
- lib/pipeline/rte_port_in_action.h             |  311 -
- lib/pipeline/rte_table_action.c               | 3483 ---------
- lib/pipeline/rte_table_action.h               | 1137 ---
- lib/port/meson.build                          |   22 +-
- lib/port/port_log.c                           |    7 -
- lib/port/port_log.h                           |   11 -
- lib/port/rte_port.h                           |  223 -
- lib/port/rte_port_ethdev.c                    |  530 --
- lib/port/rte_port_ethdev.h                    |   75 -
- lib/port/rte_port_eventdev.c                  |  590 --
- lib/port/rte_port_eventdev.h                  |   94 -
- lib/port/rte_port_fd.c                        |  524 --
- lib/port/rte_port_fd.h                        |   74 -
- lib/port/rte_port_frag.c                      |  280 -
- lib/port/rte_port_frag.h                      |   70 -
- lib/port/rte_port_ras.c                       |  336 -
- lib/port/rte_port_ras.h                       |   58 -
- lib/port/rte_port_ring.c                      |  796 --
- lib/port/rte_port_ring.h                      |   91 -
- lib/port/rte_port_sched.c                     |  298 -
- lib/port/rte_port_sched.h                     |   52 -
- lib/port/rte_port_source_sink.c               |  616 --
- lib/port/rte_port_source_sink.h               |   57 -
- lib/port/rte_port_sym_crypto.c                |  558 --
- lib/port/rte_port_sym_crypto.h                |   92 -
- lib/table/meson.build                         |   30 +-
- lib/table/rte_lru.h                           |   85 -
- lib/table/rte_lru_arm64.h                     |   61 -
- lib/table/rte_lru_x86.h                       |   96 -
- lib/table/rte_table.h                         |  263 -
- lib/table/rte_table_acl.c                     |  795 --
- lib/table/rte_table_acl.h                     |   65 -
- lib/table/rte_table_array.c                   |  210 -
- lib/table/rte_table_array.h                   |   46 -
- lib/table/rte_table_hash.h                    |  106 -
- lib/table/rte_table_hash_cuckoo.c             |  327 -
- lib/table/rte_table_hash_cuckoo.h             |   57 -
- lib/table/rte_table_hash_ext.c                | 1011 ---
- lib/table/rte_table_hash_func.h               |  263 -
- lib/table/rte_table_hash_func_arm64.h         |   21 -
- lib/table/rte_table_hash_key16.c              | 1190 ---
- lib/table/rte_table_hash_key32.c              | 1223 ---
- lib/table/rte_table_hash_key8.c               | 1157 ---
- lib/table/rte_table_hash_lru.c                |  959 ---
- lib/table/rte_table_lpm.c                     |  369 -
- lib/table/rte_table_lpm.h                     |   94 -
- lib/table/rte_table_lpm_ipv6.c                |  370 -
- lib/table/rte_table_stub.c                    |   95 -
- lib/table/rte_table_stub.h                    |   30 -
- lib/table/table_log.c                         |    7 -
- lib/table/table_log.h                         |   11 -
- 134 files changed, 27 insertions(+), 45377 deletions(-)
- delete mode 100644 app/test-pipeline/config.c
- delete mode 100644 app/test-pipeline/init.c
- delete mode 100644 app/test-pipeline/main.c
- delete mode 100644 app/test-pipeline/main.h
- delete mode 100644 app/test-pipeline/meson.build
- delete mode 100644 app/test-pipeline/pipeline_acl.c
- delete mode 100644 app/test-pipeline/pipeline_hash.c
- delete mode 100644 app/test-pipeline/pipeline_lpm.c
- delete mode 100644 app/test-pipeline/pipeline_lpm_ipv6.c
- delete mode 100644 app/test-pipeline/pipeline_stub.c
- delete mode 100644 app/test-pipeline/runtime.c
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ MAINTAINERS                    |    1 -
+ app/test/meson.build           |    6 -
+ app/test/test_table.c          |  209 -------
+ app/test/test_table.h          |  184 ------
+ app/test/test_table_acl.c      |  728 ----------------------
+ app/test/test_table_acl.h      |    6 -
+ app/test/test_table_combined.c |  846 -------------------------
+ app/test/test_table_combined.h |   27 -
+ app/test/test_table_pipeline.c |  575 -----------------
+ app/test/test_table_pipeline.h |    6 -
+ app/test/test_table_ports.c    |  195 ------
+ app/test/test_table_ports.h    |   13 -
+ app/test/test_table_tables.c   | 1058 --------------------------------
+ app/test/test_table_tables.h   |   22 -
+ 14 files changed, 3876 deletions(-)
  delete mode 100644 app/test/test_table.c
  delete mode 100644 app/test/test_table.h
  delete mode 100644 app/test/test_table_acl.c
@@ -265,105 +115,3977 @@ Stephen Hemminger (6):
  delete mode 100644 app/test/test_table_ports.h
  delete mode 100644 app/test/test_table_tables.c
  delete mode 100644 app/test/test_table_tables.h
- delete mode 100644 doc/guides/prog_guide/img/figure32.png
- delete mode 100644 doc/guides/prog_guide/img/figure33.png
- delete mode 100644 doc/guides/prog_guide/img/figure34.png
- delete mode 100644 doc/guides/prog_guide/img/figure35.png
- delete mode 100644 doc/guides/prog_guide/img/figure37.png
- delete mode 100644 doc/guides/prog_guide/img/figure38.png
- delete mode 100644 doc/guides/prog_guide/img/figure39.png
- delete mode 100644 doc/guides/sample_app_ug/img/test_pipeline_app.png
- delete mode 100644 doc/guides/sample_app_ug/ip_pipeline.rst
- delete mode 100644 doc/guides/sample_app_ug/test_pipeline.rst
- delete mode 100644 examples/ip_pipeline/Makefile
- delete mode 100644 examples/ip_pipeline/action.c
- delete mode 100644 examples/ip_pipeline/action.h
- delete mode 100644 examples/ip_pipeline/cli.c
- delete mode 100644 examples/ip_pipeline/cli.h
- delete mode 100644 examples/ip_pipeline/common.h
- delete mode 100644 examples/ip_pipeline/conn.c
- delete mode 100644 examples/ip_pipeline/conn.h
- delete mode 100644 examples/ip_pipeline/cryptodev.c
- delete mode 100644 examples/ip_pipeline/cryptodev.h
- delete mode 100644 examples/ip_pipeline/examples/firewall.cli
- delete mode 100644 examples/ip_pipeline/examples/flow.cli
- delete mode 100644 examples/ip_pipeline/examples/flow_crypto.cli
- delete mode 100644 examples/ip_pipeline/examples/l2fwd.cli
- delete mode 100644 examples/ip_pipeline/examples/route.cli
- delete mode 100644 examples/ip_pipeline/examples/route_ecmp.cli
- delete mode 100644 examples/ip_pipeline/examples/rss.cli
- delete mode 100644 examples/ip_pipeline/examples/tap.cli
- delete mode 100644 examples/ip_pipeline/link.c
- delete mode 100644 examples/ip_pipeline/link.h
- delete mode 100644 examples/ip_pipeline/main.c
- delete mode 100644 examples/ip_pipeline/mempool.c
- delete mode 100644 examples/ip_pipeline/mempool.h
- delete mode 100644 examples/ip_pipeline/meson.build
- delete mode 100644 examples/ip_pipeline/parser.c
- delete mode 100644 examples/ip_pipeline/parser.h
- delete mode 100644 examples/ip_pipeline/pipeline.c
- delete mode 100644 examples/ip_pipeline/pipeline.h
- delete mode 100644 examples/ip_pipeline/swq.c
- delete mode 100644 examples/ip_pipeline/swq.h
- delete mode 100644 examples/ip_pipeline/tap.c
- delete mode 100644 examples/ip_pipeline/tap.h
- delete mode 100644 examples/ip_pipeline/thread.c
- delete mode 100644 examples/ip_pipeline/thread.h
- delete mode 100644 examples/ip_pipeline/tmgr.c
- delete mode 100644 examples/ip_pipeline/tmgr.h
- delete mode 100644 lib/pipeline/rte_pipeline.c
- delete mode 100644 lib/pipeline/rte_pipeline.h
- delete mode 100644 lib/pipeline/rte_port_in_action.c
- delete mode 100644 lib/pipeline/rte_port_in_action.h
- delete mode 100644 lib/pipeline/rte_table_action.c
- delete mode 100644 lib/pipeline/rte_table_action.h
- delete mode 100644 lib/port/port_log.c
- delete mode 100644 lib/port/port_log.h
- delete mode 100644 lib/port/rte_port.h
- delete mode 100644 lib/port/rte_port_ethdev.c
- delete mode 100644 lib/port/rte_port_ethdev.h
- delete mode 100644 lib/port/rte_port_eventdev.c
- delete mode 100644 lib/port/rte_port_eventdev.h
- delete mode 100644 lib/port/rte_port_fd.c
- delete mode 100644 lib/port/rte_port_fd.h
- delete mode 100644 lib/port/rte_port_frag.c
- delete mode 100644 lib/port/rte_port_frag.h
- delete mode 100644 lib/port/rte_port_ras.c
- delete mode 100644 lib/port/rte_port_ras.h
- delete mode 100644 lib/port/rte_port_ring.c
- delete mode 100644 lib/port/rte_port_ring.h
- delete mode 100644 lib/port/rte_port_sched.c
- delete mode 100644 lib/port/rte_port_sched.h
- delete mode 100644 lib/port/rte_port_source_sink.c
- delete mode 100644 lib/port/rte_port_source_sink.h
- delete mode 100644 lib/port/rte_port_sym_crypto.c
- delete mode 100644 lib/port/rte_port_sym_crypto.h
- delete mode 100644 lib/table/rte_lru.h
- delete mode 100644 lib/table/rte_lru_arm64.h
- delete mode 100644 lib/table/rte_lru_x86.h
- delete mode 100644 lib/table/rte_table.h
- delete mode 100644 lib/table/rte_table_acl.c
- delete mode 100644 lib/table/rte_table_acl.h
- delete mode 100644 lib/table/rte_table_array.c
- delete mode 100644 lib/table/rte_table_array.h
- delete mode 100644 lib/table/rte_table_hash.h
- delete mode 100644 lib/table/rte_table_hash_cuckoo.c
- delete mode 100644 lib/table/rte_table_hash_cuckoo.h
- delete mode 100644 lib/table/rte_table_hash_ext.c
- delete mode 100644 lib/table/rte_table_hash_func.h
- delete mode 100644 lib/table/rte_table_hash_func_arm64.h
- delete mode 100644 lib/table/rte_table_hash_key16.c
- delete mode 100644 lib/table/rte_table_hash_key32.c
- delete mode 100644 lib/table/rte_table_hash_key8.c
- delete mode 100644 lib/table/rte_table_hash_lru.c
- delete mode 100644 lib/table/rte_table_lpm.c
- delete mode 100644 lib/table/rte_table_lpm.h
- delete mode 100644 lib/table/rte_table_lpm_ipv6.c
- delete mode 100644 lib/table/rte_table_stub.c
- delete mode 100644 lib/table/rte_table_stub.h
- delete mode 100644 lib/table/table_log.c
- delete mode 100644 lib/table/table_log.h
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e99a65d197..77a41b3fcf 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1739,7 +1739,6 @@ F: lib/pipeline/
+ F: lib/port/
+ F: lib/table/
+ F: doc/guides/prog_guide/packet_framework.rst
+-F: app/test/test_table*
+ F: app/test-pipeline/
+ F: doc/guides/sample_app_ug/test_pipeline.rst
+ F: examples/ip_pipeline/
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 51abeeb732..4fcd755940 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -195,12 +195,6 @@ source_file_deps = {
+     'test_stack.c': ['stack'],
+     'test_stack_perf.c': ['stack'],
+     'test_string_fns.c': [],
+-    'test_table.c': ['table', 'pipeline', 'port'],
+-    'test_table_acl.c': ['net', 'table', 'pipeline', 'port'],
+-    'test_table_combined.c': ['table', 'pipeline', 'port'],
+-    'test_table_pipeline.c': ['pipeline', 'table', 'port'],
+-    'test_table_ports.c': ['table', 'pipeline', 'port'],
+-    'test_table_tables.c': ['table', 'pipeline', 'port'],
+     'test_tailq.c': [],
+     'test_telemetry_data.c': ['telemetry'],
+     'test_telemetry_json.c': ['telemetry'],
+diff --git a/app/test/test_table.c b/app/test/test_table.c
+deleted file mode 100644
+index 20623b8735..0000000000
+--- a/app/test/test_table.c
++++ /dev/null
+@@ -1,209 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <rte_byteorder.h>
+-#include <rte_hexdump.h>
+-#include <rte_string_fns.h>
+-#include <string.h>
+-#include "test.h"
+-
+-#ifdef RTE_EXEC_ENV_WINDOWS
+-static int
+-test_table(void)
+-{
+-	printf("table not supported on Windows, skipping test\n");
+-	return TEST_SKIPPED;
+-}
+-#else
+-
+-#include "test_table.h"
+-#include "test_table_pipeline.h"
+-#include "test_table_ports.h"
+-#include "test_table_tables.h"
+-#include "test_table_combined.h"
+-#include "test_table_acl.h"
+-
+-/* Global variables */
+-struct rte_pipeline *p;
+-struct rte_ring *rings_rx[N_PORTS];
+-struct rte_ring *rings_tx[N_PORTS];
+-struct rte_mempool *pool = NULL;
+-
+-uint32_t port_in_id[N_PORTS];
+-uint32_t port_out_id[N_PORTS];
+-uint32_t port_out_id_type[3];
+-uint32_t table_id[N_PORTS*2];
+-uint64_t override_hit_mask = 0xFFFFFFFF;
+-uint64_t override_miss_mask = 0xFFFFFFFF;
+-uint64_t non_reserved_actions_hit = 0;
+-uint64_t non_reserved_actions_miss = 0;
+-uint8_t connect_miss_action_to_port_out = 0;
+-uint8_t connect_miss_action_to_table = 0;
+-uint32_t table_entry_default_action = RTE_PIPELINE_ACTION_DROP;
+-uint32_t table_entry_hit_action = RTE_PIPELINE_ACTION_PORT;
+-uint32_t table_entry_miss_action = RTE_PIPELINE_ACTION_DROP;
+-rte_pipeline_port_in_action_handler port_in_action = NULL;
+-rte_pipeline_port_out_action_handler port_out_action = NULL;
+-rte_pipeline_table_action_handler_hit action_handler_hit = NULL;
+-rte_pipeline_table_action_handler_miss action_handler_miss = NULL;
+-
+-/* Function prototypes */
+-static void app_init_rings(void);
+-static void app_init_mbuf_pools(void);
+-
+-uint64_t pipeline_test_hash(void *key,
+-		__rte_unused void *key_mask,
+-		__rte_unused uint32_t key_size,
+-		__rte_unused uint64_t seed)
+-{
+-	uint32_t *k32 = key;
+-	uint32_t ip_dst = rte_be_to_cpu_32(k32[0]);
+-	uint64_t signature = ip_dst;
+-
+-	return signature;
+-}
+-
+-uint32_t pipeline_test_hash_cuckoo(const void *key,
+-		__rte_unused uint32_t key_size,
+-		__rte_unused uint32_t seed)
+-{
+-	const uint32_t *k32 = key;
+-	uint32_t ip_dst = rte_be_to_cpu_32(k32[0]);
+-	uint32_t signature = ip_dst;
+-
+-	return signature;
+-}
+-
+-static void
+-app_free_resources(void) {
+-	int i;
+-	for (i = 0; i < N_PORTS; i++)
+-		rte_ring_free(rings_rx[i]);
+-	rte_mempool_free(pool);
+-}
+-
+-static void
+-app_init_mbuf_pools(void)
+-{
+-	/* Init the buffer pool */
+-	printf("Getting/Creating the mempool ...\n");
+-	pool = rte_mempool_lookup("mempool");
+-	if (!pool) {
+-		pool = rte_pktmbuf_pool_create(
+-			"mempool",
+-			POOL_SIZE,
+-			POOL_CACHE_SIZE, 0, POOL_BUFFER_SIZE,
+-			0);
+-		if (pool == NULL)
+-			rte_panic("Cannot create mbuf pool\n");
+-	}
+-}
+-
+-static void
+-app_init_rings(void)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < N_PORTS; i++) {
+-		char name[32];
+-
+-		snprintf(name, sizeof(name), "app_ring_rx_%u", i);
+-		rings_rx[i] = rte_ring_lookup(name);
+-		if (rings_rx[i] == NULL) {
+-			rings_rx[i] = rte_ring_create(
+-				name,
+-				RING_RX_SIZE,
+-				0,
+-				RING_F_SP_ENQ | RING_F_SC_DEQ);
+-		}
+-		if (rings_rx[i] == NULL)
+-			rte_panic("Cannot create RX ring %u\n", i);
+-	}
+-
+-	for (i = 0; i < N_PORTS; i++) {
+-		char name[32];
+-
+-		snprintf(name, sizeof(name), "app_ring_tx_%u", i);
+-		rings_tx[i] = rte_ring_lookup(name);
+-		if (rings_tx[i] == NULL) {
+-			rings_tx[i] = rte_ring_create(
+-				name,
+-				RING_TX_SIZE,
+-				0,
+-				RING_F_SP_ENQ | RING_F_SC_DEQ);
+-		}
+-		if (rings_tx[i] == NULL)
+-			rte_panic("Cannot create TX ring %u\n", i);
+-	}
+-
+-}
+-
+-static int
+-test_table(void)
+-{
+-	int status, ret;
+-	unsigned i;
+-
+-	ret = TEST_SUCCESS;
+-
+-	app_init_rings();
+-	app_init_mbuf_pools();
+-
+-	printf("\n\n\n\n************Pipeline tests************\n");
+-
+-	if (test_table_pipeline() < 0) {
+-		ret = TEST_FAILED;
+-		goto end;
+-	}
+-
+-	printf("\n\n\n\n************Port tests************\n");
+-	for (i = 0; i < n_port_tests; i++) {
+-		status = port_tests[i]();
+-		if (status < 0) {
+-			printf("\nPort test number %d failed (%d).\n", i,
+-				status);
+-			ret = TEST_FAILED;
+-			goto end;
+-		}
+-	}
+-
+-	printf("\n\n\n\n************Table tests************\n");
+-	for (i = 0; i < n_table_tests; i++) {
+-		status = table_tests[i]();
+-		if (status < 0) {
+-			printf("\nTable test number %d failed (%d).\n", i,
+-				status);
+-			ret = TEST_FAILED;
+-			goto end;
+-		}
+-	}
+-
+-	printf("\n\n\n\n************Table tests************\n");
+-	for (i = 0; i < n_table_tests_combined; i++) {
+-		status = table_tests_combined[i]();
+-		if (status < 0) {
+-			printf("\nCombined table test number %d failed with "
+-				"reason number %d.\n", i, status);
+-			ret = TEST_FAILED;
+-			goto end;
+-		}
+-	}
+-
+-#ifdef RTE_LIB_ACL
+-	printf("\n\n\n\n************ACL tests************\n");
+-	if (test_table_acl() < 0) {
+-		ret = TEST_FAILED;
+-		goto end;
+-	}
+-#endif
+-
+-end:
+-	app_free_resources();
+-
+-	return ret;
+-}
+-
+-#endif /* !RTE_EXEC_ENV_WINDOWS */
+-
+-REGISTER_FAST_TEST(table_autotest, NOHUGE_OK, ASAN_OK, test_table);
+diff --git a/app/test/test_table.h b/app/test/test_table.h
+deleted file mode 100644
+index 209bdbff2c..0000000000
+--- a/app/test/test_table.h
++++ /dev/null
+@@ -1,184 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <rte_table_stub.h>
+-#include <rte_table_lpm.h>
+-#include <rte_table_lpm_ipv6.h>
+-#include <rte_table_hash.h>
+-#include <rte_table_hash_cuckoo.h>
+-#include <rte_table_array.h>
+-#include <rte_pipeline.h>
+-
+-#ifdef RTE_LIB_ACL
+-#include <rte_table_acl.h>
+-#endif
+-
+-#include <rte_port_ring.h>
+-#include <rte_port_ethdev.h>
+-#include <rte_port_source_sink.h>
+-
+-#ifndef TEST_TABLE_H_
+-#define TEST_TABLE_H_
+-
+-#define RING_SIZE 4096
+-#define MAX_BULK 32
+-#define N 65536
+-#define TIME_S 5
+-#define TEST_RING_FULL_EMTPY_ITER   8
+-#define N_PORTS             2
+-#define N_PKTS              2
+-#define N_PKTS_EXT          6
+-#define RING_RX rings_rx[0]
+-#define RING_RX_2 rings_rx[1]
+-#define RING_TX rings_tx[0]
+-#define RING_TX_2 rings_tx[1]
+-#define PORT_RX_RING_SIZE   128
+-#define PORT_TX_RING_SIZE   512
+-#define RING_RX_SIZE        128
+-#define RING_TX_SIZE        128
+-#define POOL_BUFFER_SIZE    RTE_MBUF_DEFAULT_BUF_SIZE
+-#define POOL_SIZE           (32 * 1024)
+-#define POOL_CACHE_SIZE     256
+-#define BURST_SIZE          8
+-#define WORKER_TYPE         1
+-#define MAX_DUMMY_PORTS     2
+-#define MP_NAME             "dummy_port_mempool"
+-#define MBUF_COUNT          (8000 * MAX_DUMMY_PORTS)
+-#define MP_CACHE_SZ         256
+-#define MP_SOCKET           0
+-#define MP_FLAGS            0
+-
+-/* Macros */
+-#define APP_METADATA_OFFSET(offset) (sizeof(struct rte_mbuf) + (offset))
+-
+-#define RING_ENQUEUE(ring, value) do {					\
+-	struct rte_mbuf *m;						\
+-	uint32_t *k32, *signature;					\
+-	uint8_t *key;							\
+-									\
+-	m = rte_pktmbuf_alloc(pool);					\
+-	if (m == NULL)							\
+-		return -1;						\
+-	signature = RTE_MBUF_METADATA_UINT32_PTR(m,			\
+-			APP_METADATA_OFFSET(0));		\
+-	key = RTE_MBUF_METADATA_UINT8_PTR(m,			\
+-			APP_METADATA_OFFSET(32));		\
+-	k32 = (uint32_t *) key;						\
+-	k32[0] = (value);						\
+-	*signature = pipeline_test_hash(key, NULL, 0, 0);		\
+-	rte_ring_enqueue((ring), m);					\
+-} while (0)
+-
+-#define RUN_PIPELINE(pipeline) do {					\
+-	rte_pipeline_run((pipeline));					\
+-	rte_pipeline_flush((pipeline));					\
+-} while (0)
+-
+-#define VERIFY(var, value) do {						\
+-	if ((var) != -(value))						\
+-		return var;						\
+-} while (0)
+-
+-#define VERIFY_TRAFFIC(ring, sent, expected) do {			\
+-	unsigned i, n = 0;						\
+-	void *mbuf = NULL;						\
+-									\
+-	for (i = 0; i < (sent); i++) {					\
+-		if (!rte_ring_dequeue((ring), &mbuf)) {			\
+-			if (mbuf == NULL)				\
+-				continue;				\
+-			n++;						\
+-			rte_pktmbuf_free((struct rte_mbuf *)mbuf);	\
+-		}							\
+-		else							\
+-			break;						\
+-	}								\
+-	printf("Expected %d, got %d\n", expected, n);			\
+-	if (n != (expected)) {						\
+-		return -21;						\
+-	}								\
+-} while (0)
+-
+-/* Function definitions */
+-uint64_t pipeline_test_hash(
+-	void *key,
+-	__rte_unused void *key_mask,
+-	__rte_unused uint32_t key_size,
+-	__rte_unused uint64_t seed);
+-
+-uint32_t pipeline_test_hash_cuckoo(
+-	const void *key,
+-	__rte_unused uint32_t key_size,
+-	__rte_unused uint32_t seed);
+-
+-/* Extern variables */
+-extern struct rte_pipeline *p;
+-extern struct rte_ring *rings_rx[N_PORTS];
+-extern struct rte_ring *rings_tx[N_PORTS];
+-extern struct rte_mempool *pool;
+-extern uint32_t port_in_id[N_PORTS];
+-extern uint32_t port_out_id[N_PORTS];
+-extern uint32_t port_out_id_type[3];
+-extern uint32_t table_id[N_PORTS*2];
+-extern uint64_t override_hit_mask;
+-extern uint64_t override_miss_mask;
+-extern uint64_t non_reserved_actions_hit;
+-extern uint64_t non_reserved_actions_miss;
+-extern uint8_t connect_miss_action_to_port_out;
+-extern uint8_t connect_miss_action_to_table;
+-extern uint32_t table_entry_default_action;
+-extern uint32_t table_entry_hit_action;
+-extern uint32_t table_entry_miss_action;
+-extern rte_pipeline_port_in_action_handler port_in_action;
+-extern rte_pipeline_port_out_action_handler port_out_action;
+-extern rte_pipeline_table_action_handler_hit action_handler_hit;
+-extern rte_pipeline_table_action_handler_miss action_handler_miss;
+-
+-/* Global data types */
+-struct manage_ops {
+-	uint32_t op_id;
+-	void *op_data;
+-	int expected_result;
+-};
+-
+-/* Internal pipeline structures */
+-struct rte_port_in {
+-	struct rte_port_in_ops ops;
+-	uint32_t burst_size;
+-	uint32_t table_id;
+-	void *h_port;
+-};
+-
+-struct rte_port_out {
+-	struct rte_port_out_ops ops;
+-	void *h_port;
+-};
+-
+-struct rte_table {
+-	struct rte_table_ops ops;
+-	rte_pipeline_table_action_handler_hit f_action;
+-	uint32_t table_next_id;
+-	uint32_t table_next_id_valid;
+-	uint8_t actions_lookup_miss[RTE_CACHE_LINE_SIZE];
+-	uint32_t action_data_size;
+-	void *h_table;
+-};
+-
+-#define RTE_PIPELINE_MAX_NAME_SZ                           124
+-
+-struct rte_pipeline {
+-	char name[RTE_PIPELINE_MAX_NAME_SZ];
+-	uint32_t socket_id;
+-	struct rte_port_in ports_in[16];
+-	struct rte_port_out ports_out[16];
+-	struct rte_table tables[64];
+-	uint32_t num_ports_in;
+-	uint32_t num_ports_out;
+-	uint32_t num_tables;
+-	struct rte_mbuf *pkts[RTE_PORT_IN_BURST_SIZE_MAX];
+-	struct rte_table_entry *actions[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t mask_action[64];
+-	uint32_t mask_actions;
+-};
+-#endif
+diff --git a/app/test/test_table_acl.c b/app/test/test_table_acl.c
+deleted file mode 100644
+index 4fdf731596..0000000000
+--- a/app/test/test_table_acl.c
++++ /dev/null
+@@ -1,728 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef RTE_EXEC_ENV_WINDOWS
+-
+-#include <rte_ip.h>
+-#include <rte_string_fns.h>
+-#include <rte_hexdump.h>
+-#include "test_table.h"
+-#include "test_table_acl.h"
+-
+-/*
+- * Rule and trace formats definitions.
+- **/
+-
+-struct ipv4_5tuple {
+-	uint8_t  proto;
+-	uint32_t ip_src;
+-	uint32_t ip_dst;
+-	uint16_t port_src;
+-	uint16_t port_dst;
+-};
+-
+-enum {
+-	PROTO_FIELD_IPV4,
+-	SRC_FIELD_IPV4,
+-	DST_FIELD_IPV4,
+-	SRCP_FIELD_IPV4,
+-	DSTP_FIELD_IPV4,
+-	NUM_FIELDS_IPV4
+-};
+-
+-struct rte_acl_field_def ipv4_defs[NUM_FIELDS_IPV4] = {
+-	{
+-		.type = RTE_ACL_FIELD_TYPE_BITMASK,
+-		.size = sizeof(uint8_t),
+-		.field_index = PROTO_FIELD_IPV4,
+-		.input_index = PROTO_FIELD_IPV4,
+-		.offset = offsetof(struct ipv4_5tuple, proto),
+-	},
+-	{
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = SRC_FIELD_IPV4,
+-		.input_index = SRC_FIELD_IPV4,
+-		.offset = offsetof(struct ipv4_5tuple, ip_src),
+-	},
+-	{
+-		.type = RTE_ACL_FIELD_TYPE_MASK,
+-		.size = sizeof(uint32_t),
+-		.field_index = DST_FIELD_IPV4,
+-		.input_index = DST_FIELD_IPV4,
+-		.offset = offsetof(struct ipv4_5tuple, ip_dst),
+-	},
+-	{
+-		.type = RTE_ACL_FIELD_TYPE_RANGE,
+-		.size = sizeof(uint16_t),
+-		.field_index = SRCP_FIELD_IPV4,
+-		.input_index = SRCP_FIELD_IPV4,
+-		.offset = offsetof(struct ipv4_5tuple, port_src),
+-	},
+-	{
+-		.type = RTE_ACL_FIELD_TYPE_RANGE,
+-		.size = sizeof(uint16_t),
+-		.field_index = DSTP_FIELD_IPV4,
+-		.input_index = SRCP_FIELD_IPV4,
+-		.offset = offsetof(struct ipv4_5tuple, port_dst),
+-	},
+-};
+-
+-struct rte_table_acl_rule_add_params table_acl_IPv4_rule;
+-
+-typedef int (*parse_5tuple)(char *text,
+-	struct rte_table_acl_rule_add_params *rule);
+-
+-/*
+-* The order of the fields in the rule string after the initial '@'
+-*/
+-enum {
+-	CB_FLD_SRC_ADDR,
+-	CB_FLD_DST_ADDR,
+-	CB_FLD_SRC_PORT_RANGE,
+-	CB_FLD_DST_PORT_RANGE,
+-	CB_FLD_PROTO,
+-	CB_FLD_NUM,
+-};
+-
+-
+-#define GET_CB_FIELD(in, fd, base, lim, dlm)				\
+-do {									\
+-	unsigned long val;						\
+-	char *end;							\
+-									\
+-	errno = 0;							\
+-	val = strtoul((in), &end, (base));				\
+-	if (errno != 0 || end[0] != (dlm) || val > (lim))		\
+-		return -EINVAL;						\
+-	(fd) = (typeof(fd)) val;					\
+-	(in) = end + 1;							\
+-} while (0)
+-
+-
+-
+-
+-static int
+-parse_ipv4_net(const char *in, uint32_t *addr, uint32_t *mask_len)
+-{
+-	uint8_t a, b, c, d, m;
+-
+-	GET_CB_FIELD(in, a, 0, UINT8_MAX, '.');
+-	GET_CB_FIELD(in, b, 0, UINT8_MAX, '.');
+-	GET_CB_FIELD(in, c, 0, UINT8_MAX, '.');
+-	GET_CB_FIELD(in, d, 0, UINT8_MAX, '/');
+-	GET_CB_FIELD(in, m, 0, sizeof(uint32_t) * CHAR_BIT, 0);
+-
+-	addr[0] = RTE_IPV4(a, b, c, d);
+-	mask_len[0] = m;
+-
+-	return 0;
+-}
+-
+-static int
+-parse_port_range(const char *in, uint16_t *port_low, uint16_t *port_high)
+-{
+-	uint16_t a, b;
+-
+-	GET_CB_FIELD(in, a, 0, UINT16_MAX, ':');
+-	GET_CB_FIELD(in, b, 0, UINT16_MAX, 0);
+-
+-	port_low[0] = a;
+-	port_high[0] = b;
+-
+-	return 0;
+-}
+-
+-static int
+-parse_cb_ipv4_rule(char *str, struct rte_table_acl_rule_add_params *v)
+-{
+-	int i, rc;
+-	char *s, *sp, *in[CB_FLD_NUM];
+-	static const char *dlm = " \t\n";
+-
+-	/*
+-	** Skip leading '@'
+-	*/
+-	if (strchr(str, '@') != str)
+-		return -EINVAL;
+-
+-	s = str + 1;
+-
+-	/*
+-	* Populate the 'in' array with the location of each
+-	* field in the string we're parsing
+-	*/
+-	for (i = 0; i != DIM(in); i++) {
+-		in[i] = strtok_r(s, dlm, &sp);
+-		if (in[i] == NULL)
+-			return -EINVAL;
+-		s = NULL;
+-	}
+-
+-	/* Parse x.x.x.x/x */
+-	rc = parse_ipv4_net(in[CB_FLD_SRC_ADDR],
+-		&v->field_value[SRC_FIELD_IPV4].value.u32,
+-		&v->field_value[SRC_FIELD_IPV4].mask_range.u32);
+-	if (rc != 0) {
+-		fprintf(stderr, "failed to read src address/mask: %s\n",
+-			in[CB_FLD_SRC_ADDR]);
+-		return rc;
+-	}
+-
+-	printf("V=%u, mask=%u\n", v->field_value[SRC_FIELD_IPV4].value.u32,
+-		v->field_value[SRC_FIELD_IPV4].mask_range.u32);
+-
+-	/* Parse x.x.x.x/x */
+-	rc = parse_ipv4_net(in[CB_FLD_DST_ADDR],
+-		&v->field_value[DST_FIELD_IPV4].value.u32,
+-		&v->field_value[DST_FIELD_IPV4].mask_range.u32);
+-	if (rc != 0) {
+-		fprintf(stderr, "failed to read dest address/mask: %s\n",
+-			in[CB_FLD_DST_ADDR]);
+-		return rc;
+-	}
+-
+-	printf("V=%u, mask=%u\n", v->field_value[DST_FIELD_IPV4].value.u32,
+-	v->field_value[DST_FIELD_IPV4].mask_range.u32);
+-	/* Parse n:n */
+-	rc = parse_port_range(in[CB_FLD_SRC_PORT_RANGE],
+-		&v->field_value[SRCP_FIELD_IPV4].value.u16,
+-		&v->field_value[SRCP_FIELD_IPV4].mask_range.u16);
+-	if (rc != 0) {
+-		fprintf(stderr, "failed to read source port range: %s\n",
+-			in[CB_FLD_SRC_PORT_RANGE]);
+-		return rc;
+-	}
+-
+-	printf("V=%u, mask=%u\n", v->field_value[SRCP_FIELD_IPV4].value.u16,
+-		v->field_value[SRCP_FIELD_IPV4].mask_range.u16);
+-	/* Parse n:n */
+-	rc = parse_port_range(in[CB_FLD_DST_PORT_RANGE],
+-		&v->field_value[DSTP_FIELD_IPV4].value.u16,
+-		&v->field_value[DSTP_FIELD_IPV4].mask_range.u16);
+-	if (rc != 0) {
+-		fprintf(stderr, "failed to read dest port range: %s\n",
+-			in[CB_FLD_DST_PORT_RANGE]);
+-		return rc;
+-	}
+-
+-	printf("V=%u, mask=%u\n", v->field_value[DSTP_FIELD_IPV4].value.u16,
+-		v->field_value[DSTP_FIELD_IPV4].mask_range.u16);
+-	/* parse 0/0xnn */
+-	GET_CB_FIELD(in[CB_FLD_PROTO],
+-		v->field_value[PROTO_FIELD_IPV4].value.u8,
+-		0, UINT8_MAX, '/');
+-	GET_CB_FIELD(in[CB_FLD_PROTO],
+-		v->field_value[PROTO_FIELD_IPV4].mask_range.u8,
+-		0, UINT8_MAX, 0);
+-
+-	printf("V=%u, mask=%u\n",
+-		(unsigned int)v->field_value[PROTO_FIELD_IPV4].value.u8,
+-		v->field_value[PROTO_FIELD_IPV4].mask_range.u8);
+-	return 0;
+-}
+-
+-static int
+-parse_cb_ipv4_rule_del(char *str, struct rte_table_acl_rule_delete_params *v)
+-{
+-	int i, rc;
+-	char *s, *sp, *in[CB_FLD_NUM];
+-	static const char *dlm = " \t\n";
+-
+-	/*
+-	** Skip leading '@'
+-	*/
+-	if (strchr(str, '@') != str)
+-		return -EINVAL;
+-
+-	s = str + 1;
+-
+-	/*
+-	* Populate the 'in' array with the location of each
+-	* field in the string we're parsing
+-	*/
+-	for (i = 0; i != DIM(in); i++) {
+-		in[i] = strtok_r(s, dlm, &sp);
+-		if (in[i] == NULL)
+-			return -EINVAL;
+-		s = NULL;
+-	}
+-
+-	/* Parse x.x.x.x/x */
+-	rc = parse_ipv4_net(in[CB_FLD_SRC_ADDR],
+-		&v->field_value[SRC_FIELD_IPV4].value.u32,
+-		&v->field_value[SRC_FIELD_IPV4].mask_range.u32);
+-	if (rc != 0) {
+-		fprintf(stderr, "failed to read src address/mask: %s\n",
+-			in[CB_FLD_SRC_ADDR]);
+-		return rc;
+-	}
+-
+-	printf("V=%u, mask=%u\n", v->field_value[SRC_FIELD_IPV4].value.u32,
+-		v->field_value[SRC_FIELD_IPV4].mask_range.u32);
+-
+-	/* Parse x.x.x.x/x */
+-	rc = parse_ipv4_net(in[CB_FLD_DST_ADDR],
+-		&v->field_value[DST_FIELD_IPV4].value.u32,
+-		&v->field_value[DST_FIELD_IPV4].mask_range.u32);
+-	if (rc != 0) {
+-		fprintf(stderr, "failed to read dest address/mask: %s\n",
+-			in[CB_FLD_DST_ADDR]);
+-		return rc;
+-	}
+-
+-	printf("V=%u, mask=%u\n", v->field_value[DST_FIELD_IPV4].value.u32,
+-	v->field_value[DST_FIELD_IPV4].mask_range.u32);
+-	/* Parse n:n */
+-	rc = parse_port_range(in[CB_FLD_SRC_PORT_RANGE],
+-		&v->field_value[SRCP_FIELD_IPV4].value.u16,
+-		&v->field_value[SRCP_FIELD_IPV4].mask_range.u16);
+-	if (rc != 0) {
+-		fprintf(stderr, "failed to read source port range: %s\n",
+-			in[CB_FLD_SRC_PORT_RANGE]);
+-		return rc;
+-	}
+-
+-	printf("V=%u, mask=%u\n", v->field_value[SRCP_FIELD_IPV4].value.u16,
+-		v->field_value[SRCP_FIELD_IPV4].mask_range.u16);
+-	/* Parse n:n */
+-	rc = parse_port_range(in[CB_FLD_DST_PORT_RANGE],
+-		&v->field_value[DSTP_FIELD_IPV4].value.u16,
+-		&v->field_value[DSTP_FIELD_IPV4].mask_range.u16);
+-	if (rc != 0) {
+-		fprintf(stderr, "failed to read dest port range: %s\n",
+-			in[CB_FLD_DST_PORT_RANGE]);
+-		return rc;
+-	}
+-
+-	printf("V=%u, mask=%u\n", v->field_value[DSTP_FIELD_IPV4].value.u16,
+-		v->field_value[DSTP_FIELD_IPV4].mask_range.u16);
+-	/* parse 0/0xnn */
+-	GET_CB_FIELD(in[CB_FLD_PROTO],
+-		v->field_value[PROTO_FIELD_IPV4].value.u8,
+-		0, UINT8_MAX, '/');
+-	GET_CB_FIELD(in[CB_FLD_PROTO],
+-		v->field_value[PROTO_FIELD_IPV4].mask_range.u8,
+-		0, UINT8_MAX, 0);
+-
+-	printf("V=%u, mask=%u\n",
+-		(unsigned int)v->field_value[PROTO_FIELD_IPV4].value.u8,
+-		v->field_value[PROTO_FIELD_IPV4].mask_range.u8);
+-	return 0;
+-}
+-
+-static int
+-setup_acl_pipeline(void)
+-{
+-	int ret;
+-	int i;
+-	struct rte_pipeline_params pipeline_params = {
+-		.name = "PIPELINE",
+-		.socket_id = 0,
+-	};
+-	uint32_t n;
+-	struct rte_table_acl_rule_add_params rule_params;
+-	struct rte_pipeline_table_acl_rule_delete_params *delete_params;
+-	parse_5tuple parser;
+-	char acl_name[64];
+-
+-	/*
+-	 * The format for these rules DO NOT need the port ranges to be
+-	 * separated by ' : ', just ':'. It's a lot more readable and
+-	 * cleaner, IMO.
+-	 */
+-	static const char * const lines[] = {
+-		"@0.0.0.0/0 0.0.0.0/0 0:65535 0:65535 2/0xff", /* Protocol check */
+-		"@192.168.3.1/32 0.0.0.0/0 0:65535 0:65535 0/0", /* Src IP check */
+-		"@0.0.0.0/0 10.4.4.1/32 0:65535 0:65535 0/0", /* dst IP check */
+-		"@0.0.0.0/0 0.0.0.0/0 105:105 0:65535 0/0", /* src port check */
+-		"@0.0.0.0/0 0.0.0.0/0 0:65535 206:206 0/0", /* dst port check */
+-	};
+-	char line[LINE_MAX];
+-
+-	/* Pipeline configuration */
+-	p = rte_pipeline_create(&pipeline_params);
+-	if (p == NULL) {
+-		fprintf(stderr, "%s: Failed to configure pipeline\n",
+-			__func__);
+-		goto fail;
+-	}
+-
+-	/* Input port configuration */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_port_ring_reader_params port_ring_params = {
+-			.ring = rings_rx[i],
+-		};
+-
+-		struct rte_pipeline_port_in_params port_params = {
+-			.ops = &rte_port_ring_reader_ops,
+-			.arg_create = (void *) &port_ring_params,
+-			.f_action = NULL,
+-			.burst_size = BURST_SIZE,
+-		};
+-
+-		/* Put in action for some ports */
+-		if (i)
+-			port_params.f_action = port_in_action;
+-
+-		ret = rte_pipeline_port_in_create(p, &port_params,
+-			&port_in_id[i]);
+-		if (ret) {
+-			rte_panic("Unable to configure input port %d, ret:%d\n",
+-				i, ret);
+-			goto fail;
+-		}
+-	}
+-
+-	/* output Port configuration */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_port_ring_writer_params port_ring_params = {
+-			.ring = rings_tx[i],
+-			.tx_burst_sz = BURST_SIZE,
+-		};
+-
+-		struct rte_pipeline_port_out_params port_params = {
+-			.ops = &rte_port_ring_writer_ops,
+-			.arg_create = (void *) &port_ring_params,
+-			.f_action = NULL,
+-			.arg_ah = NULL,
+-		};
+-
+-
+-		if (rte_pipeline_port_out_create(p, &port_params,
+-			&port_out_id[i])) {
+-			rte_panic("Unable to configure output port %d\n", i);
+-			goto fail;
+-		}
+-	}
+-
+-	/* Table configuration  */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_pipeline_table_params table_params;
+-
+-		/* Set up defaults for stub */
+-		table_params.ops = &rte_table_stub_ops;
+-		table_params.arg_create = NULL;
+-		table_params.f_action_hit = action_handler_hit;
+-		table_params.f_action_miss = NULL;
+-		table_params.action_data_size = 0;
+-
+-		printf("miss_action=%x\n",
+-			table_entry_miss_action);
+-
+-		printf("RTE_ACL_RULE_SZ(%zu) = %zu\n", DIM(ipv4_defs),
+-			RTE_ACL_RULE_SZ(DIM(ipv4_defs)));
+-
+-		struct rte_table_acl_params acl_params;
+-
+-		acl_params.n_rules = 1 << 5;
+-		acl_params.n_rule_fields = DIM(ipv4_defs);
+-		snprintf(acl_name, sizeof(acl_name), "ACL%d", i);
+-		acl_params.name = acl_name;
+-		memcpy(acl_params.field_format, ipv4_defs, sizeof(ipv4_defs));
+-
+-		table_params.ops = &rte_table_acl_ops;
+-		table_params.arg_create = &acl_params;
+-
+-		if (rte_pipeline_table_create(p, &table_params, &table_id[i])) {
+-			rte_panic("Unable to configure table %u\n", i);
+-			goto fail;
+-		}
+-
+-		if (connect_miss_action_to_table) {
+-			if (rte_pipeline_table_create(p, &table_params,
+-				&table_id[i+2])) {
+-				rte_panic("Unable to configure table %u\n", i);
+-				goto fail;
+-			}
+-		}
+-	}
+-
+-	for (i = 0; i < N_PORTS; i++) {
+-		if (rte_pipeline_port_in_connect_to_table(p, port_in_id[i],
+-			table_id[i])) {
+-			rte_panic("Unable to connect input port %u to "
+-				"table %u\n",
+-				port_in_id[i],  table_id[i]);
+-			goto fail;
+-		}
+-	}
+-
+-	/* Add bulk entries to tables */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_table_acl_rule_add_params keys[5];
+-		struct rte_pipeline_table_entry entries[5];
+-		struct rte_table_acl_rule_add_params *key_array[5];
+-		struct rte_pipeline_table_entry *table_entries[5];
+-		int key_found[5];
+-		struct rte_pipeline_table_entry *table_entries_ptr[5];
+-		struct rte_pipeline_table_entry entries_ptr[5];
+-
+-		parser = parse_cb_ipv4_rule;
+-		for (n = 0; n < 5; n++) {
+-			memset(&keys[n], 0, sizeof(struct rte_table_acl_rule_add_params));
+-			key_array[n] = &keys[n];
+-
+-			strlcpy(line, lines[n], sizeof(line));
+-			printf("PARSING [%s]\n", line);
+-
+-			ret = parser(line, &keys[n]);
+-			if (ret != 0) {
+-				fprintf(stderr,
+-					"line %u: parse_cb_ipv4vlan_rule failed, error code: %d (%s)\n",
+-					n, ret, strerror(-ret));
+-				return ret;
+-			}
+-
+-			keys[n].priority = RTE_ACL_MAX_PRIORITY - n - 1;
+-
+-			entries[n].action = RTE_PIPELINE_ACTION_PORT;
+-			entries[n].port_id = port_out_id[i^1];
+-			table_entries[n] = &entries[n];
+-			table_entries_ptr[n] = &entries_ptr[n];
+-		}
+-
+-		ret = rte_pipeline_table_entry_add_bulk(p, table_id[i],
+-				(void **)key_array, table_entries, 5, key_found, table_entries_ptr);
+-		if (ret < 0) {
+-			rte_panic("Add entry bulk to table %u failed (%d)\n",
+-				table_id[i], ret);
+-			goto fail;
+-		}
+-	}
+-
+-	/* Delete bulk entries from tables */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_table_acl_rule_delete_params keys[5];
+-		struct rte_table_acl_rule_delete_params *key_array[5];
+-		struct rte_pipeline_table_entry *table_entries[5];
+-		int key_found[5];
+-
+-		memset(table_entries, 0, sizeof(table_entries));
+-
+-		for (n = 0; n < 5; n++) {
+-			memset(&keys[n], 0, sizeof(struct rte_table_acl_rule_delete_params));
+-			key_array[n] = &keys[n];
+-
+-			strlcpy(line, lines[n], sizeof(line));
+-			printf("PARSING [%s]\n", line);
+-
+-			ret = parse_cb_ipv4_rule_del(line, &keys[n]);
+-			if (ret != 0) {
+-				fprintf(stderr,
+-					"line %u: parse_cb_ipv4vlan_rule failed, error code: %d (%s)\n",
+-					n, ret, strerror(-ret));
+-				return ret;
+-			}
+-		}
+-
+-		ret = rte_pipeline_table_entry_delete_bulk(p, table_id[i],
+-			(void **)key_array, 5, key_found, table_entries);
+-		if (ret < 0) {
+-			rte_panic("Delete bulk entries from table %u failed (%d)\n",
+-				table_id[i], ret);
+-			goto fail;
+-		} else
+-			printf("Bulk deleted rules.\n");
+-	}
+-
+-	/* Add entries to tables */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_pipeline_table_entry table_entry = {
+-			.action = RTE_PIPELINE_ACTION_PORT,
+-			{.port_id = port_out_id[i^1]},
+-		};
+-		int key_found;
+-		struct rte_pipeline_table_entry *entry_ptr;
+-
+-		memset(&rule_params, 0, sizeof(rule_params));
+-		parser = parse_cb_ipv4_rule;
+-
+-		for (n = 1; n <= 5; n++) {
+-			strlcpy(line, lines[n - 1], sizeof(line));
+-			printf("PARSING [%s]\n", line);
+-
+-			ret = parser(line, &rule_params);
+-			if (ret != 0) {
+-				fprintf(stderr,
+-					"line %u: parse_cb_ipv4vlan_rule failed, error code: %d (%s)\n",
+-					n, ret, strerror(-ret));
+-				return ret;
+-			}
+-
+-			rule_params.priority = RTE_ACL_MAX_PRIORITY - n;
+-
+-			ret = rte_pipeline_table_entry_add(p, table_id[i],
+-				&rule_params,
+-				&table_entry, &key_found, &entry_ptr);
+-			if (ret < 0) {
+-				rte_panic("Add entry to table %u failed (%d)\n",
+-					table_id[i], ret);
+-				goto fail;
+-			}
+-		}
+-
+-		/* delete a few rules */
+-		for (n = 2; n <= 3; n++) {
+-			strlcpy(line, lines[n - 1], sizeof(line));
+-			printf("PARSING [%s]\n", line);
+-
+-			ret = parser(line, &rule_params);
+-			if (ret != 0) {
+-				fprintf(stderr,
+-					"line %u: parse rule failed, error code: %d (%s)\n",
+-					n, ret, strerror(-ret));
+-				return ret;
+-			}
+-
+-			delete_params = (struct
+-				rte_pipeline_table_acl_rule_delete_params *)
+-				&(rule_params.field_value[0]);
+-			ret = rte_pipeline_table_entry_delete(p, table_id[i],
+-				delete_params, &key_found, NULL);
+-			if (ret < 0) {
+-				rte_panic("Add entry to table %u failed (%d)\n",
+-					table_id[i], ret);
+-				goto fail;
+-			} else
+-				printf("Deleted Rule.\n");
+-		}
+-
+-
+-		/* Try to add duplicates */
+-		for (n = 1; n <= 5; n++) {
+-			strlcpy(line, lines[n - 1], sizeof(line));
+-			printf("PARSING [%s]\n", line);
+-
+-			ret = parser(line, &rule_params);
+-			if (ret != 0) {
+-				fprintf(stderr,
+-					"line %u: parse rule failed, error code: %d (%s)\n",
+-					n, ret, strerror(-ret));
+-				return ret;
+-			}
+-
+-			rule_params.priority = RTE_ACL_MAX_PRIORITY - n;
+-
+-			ret = rte_pipeline_table_entry_add(p, table_id[i],
+-				&rule_params,
+-				&table_entry, &key_found, &entry_ptr);
+-			if (ret < 0) {
+-				rte_panic("Add entry to table %u failed (%d)\n",
+-					table_id[i], ret);
+-				goto fail;
+-			}
+-		}
+-	}
+-
+-	/* Enable input ports */
+-	for (i = 0; i < N_PORTS ; i++)
+-		if (rte_pipeline_port_in_enable(p, port_in_id[i]))
+-			rte_panic("Unable to enable input port %u\n",
+-				port_in_id[i]);
+-
+-	/* Check pipeline consistency */
+-	if (rte_pipeline_check(p) < 0) {
+-		rte_panic("Pipeline consistency check failed\n");
+-		goto fail;
+-	}
+-
+-	return  0;
+-fail:
+-
+-	return -1;
+-}
+-
+-static int
+-test_pipeline_single_filter(int expected_count)
+-{
+-	int i, j, ret, tx_count;
+-	struct ipv4_5tuple five_tuple;
+-
+-	/* Allocate a few mbufs and manually insert into the rings. */
+-	for (i = 0; i < N_PORTS; i++) {
+-		for (j = 0; j < 8; j++) {
+-			struct rte_mbuf *mbuf;
+-
+-			mbuf = rte_pktmbuf_alloc(pool);
+-			if (mbuf == NULL)
+-				/* this will cause test failure after cleanup
+-				 * of already enqueued mbufs, as the mbuf
+-				 * counts won't match */
+-				break;
+-			memset(rte_pktmbuf_mtod(mbuf, char *), 0x00,
+-				sizeof(struct ipv4_5tuple));
+-
+-			five_tuple.proto = j;
+-			five_tuple.ip_src = rte_bswap32(RTE_IPV4(192, 168, j, 1));
+-			five_tuple.ip_dst = rte_bswap32(RTE_IPV4(10, 4, j, 1));
+-			five_tuple.port_src = rte_bswap16(100 + j);
+-			five_tuple.port_dst = rte_bswap16(200 + j);
+-
+-			memcpy(rte_pktmbuf_mtod(mbuf, char *), &five_tuple,
+-				sizeof(struct ipv4_5tuple));
+-			printf("%s: Enqueue onto ring %d\n",
+-				__func__, i);
+-			rte_ring_enqueue(rings_rx[i], mbuf);
+-		}
+-	}
+-
+-	/* Run pipeline once */
+-	for (i = 0; i< N_PORTS; i++)
+-		rte_pipeline_run(p);
+-
+-	rte_pipeline_flush(p);
+-
+-	tx_count = 0;
+-
+-	for (i = 0; i < N_PORTS; i++) {
+-		void *objs[RING_TX_SIZE];
+-		struct rte_mbuf *mbuf;
+-
+-		ret = rte_ring_sc_dequeue_burst(rings_tx[i], objs, 10, NULL);
+-		if (ret <= 0) {
+-			printf("Got no objects from ring %d - error code %d\n",
+-				i, ret);
+-		} else {
+-			printf("Got %d object(s) from ring %d!\n", ret, i);
+-			for (j = 0; j < ret; j++) {
+-				mbuf = objs[j];
+-				rte_hexdump(stdout, "mbuf",
+-					rte_pktmbuf_mtod(mbuf, char *), 64);
+-				rte_pktmbuf_free(mbuf);
+-			}
+-			tx_count += ret;
+-		}
+-	}
+-
+-	if (tx_count != expected_count) {
+-		fprintf(stderr,
+-			"%s: Unexpected packets for ACL test, expected %d, got %d\n",
+-			__func__, expected_count, tx_count);
+-		goto fail;
+-	}
+-
+-	rte_pipeline_free(p);
+-
+-	return  0;
+-fail:
+-	return -1;
+-
+-}
+-
+-int
+-test_table_acl(void)
+-{
+-
+-
+-	override_hit_mask = 0xFF; /* All packets are a hit */
+-
+-	setup_acl_pipeline();
+-	if (test_pipeline_single_filter(10) < 0)
+-		return -1;
+-
+-	return 0;
+-}
+-
+-#endif /* !RTE_EXEC_ENV_WINDOWS */
+diff --git a/app/test/test_table_acl.h b/app/test/test_table_acl.h
+deleted file mode 100644
+index a6ae7d2838..0000000000
+--- a/app/test/test_table_acl.h
++++ /dev/null
+@@ -1,6 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-/* Test prototypes */
+-int test_table_acl(void);
+diff --git a/app/test/test_table_combined.c b/app/test/test_table_combined.c
+deleted file mode 100644
+index 04503baa51..0000000000
+--- a/app/test/test_table_combined.c
++++ /dev/null
+@@ -1,846 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2016 Intel Corporation
+- */
+-
+-#ifndef RTE_EXEC_ENV_WINDOWS
+-
+-#include <string.h>
+-#include "test_table_combined.h"
+-#include "test_table.h"
+-#include <rte_table_lpm_ipv6.h>
+-
+-#define MAX_TEST_KEYS 128
+-#define N_PACKETS 50
+-
+-enum check_table_result {
+-	CHECK_TABLE_OK,
+-	CHECK_TABLE_PORT_CONFIG,
+-	CHECK_TABLE_PORT_ENABLE,
+-	CHECK_TABLE_TABLE_CONFIG,
+-	CHECK_TABLE_ENTRY_ADD,
+-	CHECK_TABLE_DEFAULT_ENTRY_ADD,
+-	CHECK_TABLE_CONNECT,
+-	CHECK_TABLE_MANAGE_ERROR,
+-	CHECK_TABLE_CONSISTENCY,
+-	CHECK_TABLE_NO_TRAFFIC,
+-	CHECK_TABLE_INVALID_PARAMETER,
+-};
+-
+-struct table_packets {
+-	uint32_t hit_packet[MAX_TEST_KEYS];
+-	uint32_t miss_packet[MAX_TEST_KEYS];
+-	uint32_t n_hit_packets;
+-	uint32_t n_miss_packets;
+-};
+-
+-combined_table_test table_tests_combined[] = {
+-	test_table_lpm_combined,
+-	test_table_lpm_ipv6_combined,
+-	test_table_hash8lru,
+-	test_table_hash8ext,
+-	test_table_hash16lru,
+-	test_table_hash16ext,
+-	test_table_hash32lru,
+-	test_table_hash32ext,
+-	test_table_hash_cuckoo_combined,
+-};
+-
+-unsigned n_table_tests_combined = RTE_DIM(table_tests_combined);
+-
+-/* Generic port tester function */
+-static int
+-test_table_type(struct rte_table_ops *table_ops, void *table_args,
+-	void *key, struct table_packets *table_packets,
+-	struct manage_ops *manage_ops, unsigned n_ops)
+-{
+-	uint32_t ring_in_id, table_id, ring_out_id, ring_out_2_id;
+-	unsigned i;
+-
+-	RTE_SET_USED(manage_ops);
+-	RTE_SET_USED(n_ops);
+-	/* Create pipeline */
+-	struct rte_pipeline_params pipeline_params = {
+-		.name = "pipeline",
+-		.socket_id = 0,
+-	};
+-
+-	struct rte_pipeline *pipeline = rte_pipeline_create(&pipeline_params);
+-
+-	/* Create input ring */
+-	struct rte_port_ring_reader_params ring_params_rx = {
+-		.ring = RING_RX,
+-	};
+-
+-	struct rte_port_ring_writer_params ring_params_tx = {
+-		.ring = RING_RX,
+-		.tx_burst_sz = RTE_PORT_IN_BURST_SIZE_MAX,
+-	};
+-
+-	struct rte_pipeline_port_in_params ring_in_params = {
+-		.ops = &rte_port_ring_reader_ops,
+-		.arg_create = (void *)&ring_params_rx,
+-		.f_action = NULL,
+-		.burst_size = RTE_PORT_IN_BURST_SIZE_MAX,
+-	};
+-
+-	if (rte_pipeline_port_in_create(pipeline, &ring_in_params,
+-		&ring_in_id) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_PORT_CONFIG;
+-	}
+-
+-	/* Create table */
+-	struct rte_pipeline_table_params table_params = {
+-		.ops = table_ops,
+-		.arg_create = table_args,
+-		.f_action_hit = NULL,
+-		.f_action_miss = NULL,
+-		.arg_ah = NULL,
+-		.action_data_size = 0,
+-	};
+-
+-	if (rte_pipeline_table_create(pipeline, &table_params,
+-		&table_id) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_TABLE_CONFIG;
+-	}
+-
+-	/* Create output ports */
+-	ring_params_tx.ring = RING_TX;
+-
+-	struct rte_pipeline_port_out_params ring_out_params = {
+-		.ops = &rte_port_ring_writer_ops,
+-		.arg_create = (void *)&ring_params_tx,
+-		.f_action = NULL,
+-	};
+-
+-	if (rte_pipeline_port_out_create(pipeline, &ring_out_params,
+-		&ring_out_id) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_PORT_CONFIG;
+-	}
+-
+-	ring_params_tx.ring = RING_TX_2;
+-
+-	if (rte_pipeline_port_out_create(pipeline, &ring_out_params,
+-		&ring_out_2_id) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_PORT_CONFIG;
+-	}
+-
+-	/* Add entry to the table */
+-	struct rte_pipeline_table_entry default_entry = {
+-		.action = RTE_PIPELINE_ACTION_DROP,
+-		{.table_id = ring_out_id},
+-	};
+-
+-	struct rte_pipeline_table_entry table_entry = {
+-		.action = RTE_PIPELINE_ACTION_PORT,
+-		{.table_id = ring_out_id},
+-	};
+-
+-	struct rte_pipeline_table_entry *default_entry_ptr, *entry_ptr;
+-
+-	int key_found;
+-
+-	if (rte_pipeline_table_default_entry_add(pipeline, table_id,
+-		&default_entry, &default_entry_ptr) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_DEFAULT_ENTRY_ADD;
+-	}
+-
+-	if (rte_pipeline_table_entry_add(pipeline, table_id,
+-		key ? key : &table_entry, &table_entry, &key_found,
+-			&entry_ptr) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_ENTRY_ADD;
+-	}
+-
+-	/* Create connections and check consistency */
+-	if (rte_pipeline_port_in_connect_to_table(pipeline, ring_in_id,
+-		table_id) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_CONNECT;
+-	}
+-
+-	if (rte_pipeline_port_in_enable(pipeline, ring_in_id) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_PORT_ENABLE;
+-	}
+-
+-	if (rte_pipeline_check(pipeline) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_CONSISTENCY;
+-	}
+-
+-
+-
+-	/* Flow test - All hits */
+-	if (table_packets->n_hit_packets) {
+-		for (i = 0; i < table_packets->n_hit_packets; i++)
+-			RING_ENQUEUE(RING_RX, table_packets->hit_packet[i]);
+-
+-		RUN_PIPELINE(pipeline);
+-
+-		VERIFY_TRAFFIC(RING_TX, table_packets->n_hit_packets,
+-				table_packets->n_hit_packets);
+-	}
+-
+-	/* Flow test - All misses */
+-	if (table_packets->n_miss_packets) {
+-		for (i = 0; i < table_packets->n_miss_packets; i++)
+-			RING_ENQUEUE(RING_RX, table_packets->miss_packet[i]);
+-
+-		RUN_PIPELINE(pipeline);
+-
+-		VERIFY_TRAFFIC(RING_TX, table_packets->n_miss_packets, 0);
+-	}
+-
+-	/* Flow test - Half hits, half misses */
+-	if (table_packets->n_hit_packets && table_packets->n_miss_packets) {
+-		for (i = 0; i < (table_packets->n_hit_packets) / 2; i++)
+-			RING_ENQUEUE(RING_RX, table_packets->hit_packet[i]);
+-
+-		for (i = 0; i < (table_packets->n_miss_packets) / 2; i++)
+-			RING_ENQUEUE(RING_RX, table_packets->miss_packet[i]);
+-
+-		RUN_PIPELINE(pipeline);
+-		VERIFY_TRAFFIC(RING_TX, table_packets->n_hit_packets,
+-			table_packets->n_hit_packets / 2);
+-	}
+-
+-	/* Flow test - Single packet */
+-	if (table_packets->n_hit_packets) {
+-		RING_ENQUEUE(RING_RX, table_packets->hit_packet[0]);
+-		RUN_PIPELINE(pipeline);
+-		VERIFY_TRAFFIC(RING_TX, table_packets->n_hit_packets, 1);
+-	}
+-	if (table_packets->n_miss_packets) {
+-		RING_ENQUEUE(RING_RX, table_packets->miss_packet[0]);
+-		RUN_PIPELINE(pipeline);
+-		VERIFY_TRAFFIC(RING_TX, table_packets->n_miss_packets, 0);
+-	}
+-
+-
+-	/* Change table entry action */
+-	printf("Change entry action\n");
+-	table_entry.table_id = ring_out_2_id;
+-
+-	if (rte_pipeline_table_default_entry_add(pipeline, table_id,
+-		&default_entry, &default_entry_ptr) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_ENTRY_ADD;
+-	}
+-
+-	if (rte_pipeline_table_entry_add(pipeline, table_id,
+-		key ? key : &table_entry, &table_entry, &key_found,
+-			&entry_ptr) != 0) {
+-		rte_pipeline_free(pipeline);
+-		return -CHECK_TABLE_ENTRY_ADD;
+-	}
+-
+-	/* Check that traffic destination has changed */
+-	if (table_packets->n_hit_packets) {
+-		for (i = 0; i < table_packets->n_hit_packets; i++)
+-			RING_ENQUEUE(RING_RX, table_packets->hit_packet[i]);
+-
+-		RUN_PIPELINE(pipeline);
+-		VERIFY_TRAFFIC(RING_TX, table_packets->n_hit_packets, 0);
+-		VERIFY_TRAFFIC(RING_TX_2, table_packets->n_hit_packets,
+-			table_packets->n_hit_packets);
+-	}
+-
+-	printf("delete entry\n");
+-	/* Delete table entry */
+-	rte_pipeline_table_entry_delete(pipeline, table_id,
+-		key ? key : &table_entry, &key_found, NULL);
+-
+-	rte_pipeline_free(pipeline);
+-
+-	return 0;
+-}
+-
+-/* Table tests */
+-int
+-test_table_stub_combined(void)
+-{
+-	int status, i;
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-	for (i = 0; i < N_PACKETS; i++)
+-		table_packets.hit_packet[i] = i;
+-
+-	table_packets.n_hit_packets = N_PACKETS;
+-	table_packets.n_miss_packets = 0;
+-
+-	status = test_table_type(&rte_table_stub_ops, NULL, NULL,
+-		&table_packets, NULL, 1);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_lpm_combined(void)
+-{
+-	int status, i;
+-
+-	/* Traffic flow */
+-	struct rte_table_lpm_params lpm_params = {
+-		.name = "LPM",
+-		.n_rules = 1 << 16,
+-		.number_tbl8s = 1 << 8,
+-		.flags = 0,
+-		.entry_unique_size = 8,
+-		.offset = APP_METADATA_OFFSET(0),
+-	};
+-
+-	struct rte_table_lpm_key lpm_key = {
+-		.ip = 0xadadadad,
+-		.depth = 16,
+-	};
+-
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-
+-	for (i = 0; i < N_PACKETS; i++)
+-		table_packets.hit_packet[i] = 0xadadadad;
+-
+-	for (i = 0; i < N_PACKETS; i++)
+-		table_packets.miss_packet[i] = 0xfefefefe;
+-
+-	table_packets.n_hit_packets = N_PACKETS;
+-	table_packets.n_miss_packets = N_PACKETS;
+-
+-	status = test_table_type(&rte_table_lpm_ops, (void *)&lpm_params,
+-		(void *)&lpm_key, &table_packets, NULL, 0);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	/* Invalid parameters */
+-	lpm_params.n_rules = 0;
+-
+-	status = test_table_type(&rte_table_lpm_ops, (void *)&lpm_params,
+-		(void *)&lpm_key, &table_packets, NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	lpm_params.n_rules = 1 << 24;
+-	lpm_key.depth = 0;
+-
+-	status = test_table_type(&rte_table_lpm_ops, (void *)&lpm_params,
+-		(void *)&lpm_key, &table_packets, NULL, 0);
+-	VERIFY(status, CHECK_TABLE_ENTRY_ADD);
+-
+-	lpm_key.depth = 33;
+-
+-	status = test_table_type(&rte_table_lpm_ops, (void *)&lpm_params,
+-		(void *)&lpm_key, &table_packets, NULL, 0);
+-	VERIFY(status, CHECK_TABLE_ENTRY_ADD);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_lpm_ipv6_combined(void)
+-{
+-	int status, i;
+-
+-	/* Traffic flow */
+-	struct rte_table_lpm_ipv6_params lpm_ipv6_params = {
+-		.name = "LPM",
+-		.n_rules = 1 << 16,
+-		.number_tbl8s = 1 << 13,
+-		.entry_unique_size = 8,
+-		.offset = APP_METADATA_OFFSET(32),
+-	};
+-
+-	struct rte_table_lpm_ipv6_key lpm_ipv6_key = {
+-		.depth = 16,
+-	};
+-	memset(&lpm_ipv6_key.ip, 0xad, 16);
+-
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-	for (i = 0; i < N_PACKETS; i++)
+-		table_packets.hit_packet[i] = 0xadadadad;
+-
+-	for (i = 0; i < N_PACKETS; i++)
+-		table_packets.miss_packet[i] = 0xadadadab;
+-
+-	table_packets.n_hit_packets = N_PACKETS;
+-	table_packets.n_miss_packets = N_PACKETS;
+-
+-	status = test_table_type(&rte_table_lpm_ipv6_ops,
+-		(void *)&lpm_ipv6_params,
+-		(void *)&lpm_ipv6_key, &table_packets, NULL, 0);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	/* Invalid parameters */
+-	lpm_ipv6_params.n_rules = 0;
+-
+-	status = test_table_type(&rte_table_lpm_ipv6_ops,
+-		(void *)&lpm_ipv6_params,
+-		(void *)&lpm_ipv6_key, &table_packets, NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	lpm_ipv6_params.n_rules = 1 << 24;
+-	lpm_ipv6_key.depth = 0;
+-
+-	status = test_table_type(&rte_table_lpm_ipv6_ops,
+-		(void *)&lpm_ipv6_params,
+-		(void *)&lpm_ipv6_key, &table_packets, NULL, 0);
+-	VERIFY(status, CHECK_TABLE_ENTRY_ADD);
+-
+-	lpm_ipv6_key.depth = 129;
+-	status = test_table_type(&rte_table_lpm_ipv6_ops,
+-		(void *)&lpm_ipv6_params,
+-		(void *)&lpm_ipv6_key, &table_packets, NULL, 0);
+-	VERIFY(status, CHECK_TABLE_ENTRY_ADD);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_hash8lru(void)
+-{
+-	int status, i;
+-
+-	/* Traffic flow */
+-	struct rte_table_hash_params key8lru_params = {
+-		.name = "TABLE",
+-		.key_size = 8,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 16,
+-		.n_buckets = 1 << 16,
+-		.f_hash = pipeline_test_hash,
+-		.seed = 0,
+-	};
+-
+-	uint8_t key8lru[8];
+-	uint32_t *k8lru = (uint32_t *) key8lru;
+-
+-	memset(key8lru, 0, sizeof(key8lru));
+-	k8lru[0] = 0xadadadad;
+-
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-	for (i = 0; i < 50; i++)
+-		table_packets.hit_packet[i] = 0xadadadad;
+-
+-	for (i = 0; i < 50; i++)
+-		table_packets.miss_packet[i] = 0xfefefefe;
+-
+-	table_packets.n_hit_packets = 50;
+-	table_packets.n_miss_packets = 50;
+-
+-	status = test_table_type(&rte_table_hash_key8_lru_ops,
+-		(void *)&key8lru_params, (void *)key8lru, &table_packets,
+-			NULL, 0);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	/* Invalid parameters */
+-	key8lru_params.n_keys = 0;
+-
+-	status = test_table_type(&rte_table_hash_key8_lru_ops,
+-		(void *)&key8lru_params, (void *)key8lru, &table_packets,
+-			NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	key8lru_params.n_keys = 1<<16;
+-	key8lru_params.f_hash = NULL;
+-
+-	status = test_table_type(&rte_table_hash_key8_lru_ops,
+-		(void *)&key8lru_params, (void *)key8lru, &table_packets,
+-			NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_hash16lru(void)
+-{
+-	int status, i;
+-
+-	/* Traffic flow */
+-	struct rte_table_hash_params key16lru_params = {
+-		.name = "TABLE",
+-		.key_size = 16,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 16,
+-		.n_buckets = 1 << 16,
+-		.f_hash = pipeline_test_hash,
+-		.seed = 0,
+-	};
+-
+-	uint8_t key16lru[16];
+-	uint32_t *k16lru = (uint32_t *) key16lru;
+-
+-	memset(key16lru, 0, sizeof(key16lru));
+-	k16lru[0] = 0xadadadad;
+-
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-	for (i = 0; i < 50; i++)
+-		table_packets.hit_packet[i] = 0xadadadad;
+-
+-	for (i = 0; i < 50; i++)
+-		table_packets.miss_packet[i] = 0xfefefefe;
+-
+-	table_packets.n_hit_packets = 50;
+-	table_packets.n_miss_packets = 50;
+-
+-	status = test_table_type(&rte_table_hash_key16_lru_ops,
+-		(void *)&key16lru_params, (void *)key16lru, &table_packets,
+-			NULL, 0);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	/* Invalid parameters */
+-	key16lru_params.n_keys = 0;
+-
+-	status = test_table_type(&rte_table_hash_key16_lru_ops,
+-		(void *)&key16lru_params, (void *)key16lru, &table_packets,
+-			NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	key16lru_params.n_keys = 1<<16;
+-	key16lru_params.f_hash = NULL;
+-
+-	status = test_table_type(&rte_table_hash_key16_lru_ops,
+-		(void *)&key16lru_params, (void *)key16lru, &table_packets,
+-			NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_hash32lru(void)
+-{
+-	int status, i;
+-
+-	/* Traffic flow */
+-	struct rte_table_hash_params key32lru_params = {
+-		.name = "TABLE",
+-		.key_size = 32,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 16,
+-		.n_buckets = 1 << 16,
+-		.f_hash = pipeline_test_hash,
+-		.seed = 0,
+-	};
+-
+-	uint8_t key32lru[32];
+-	uint32_t *k32lru = (uint32_t *) key32lru;
+-
+-	memset(key32lru, 0, sizeof(key32lru));
+-	k32lru[0] = 0xadadadad;
+-
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-	for (i = 0; i < 50; i++)
+-		table_packets.hit_packet[i] = 0xadadadad;
+-
+-	for (i = 0; i < 50; i++)
+-		table_packets.miss_packet[i] = 0xbdadadad;
+-
+-	table_packets.n_hit_packets = 50;
+-	table_packets.n_miss_packets = 50;
+-
+-	status = test_table_type(&rte_table_hash_key32_lru_ops,
+-		(void *)&key32lru_params, (void *)key32lru, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	/* Invalid parameters */
+-	key32lru_params.n_keys = 0;
+-
+-	status = test_table_type(&rte_table_hash_key32_lru_ops,
+-		(void *)&key32lru_params, (void *)key32lru, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	key32lru_params.n_keys = 1<<16;
+-	key32lru_params.f_hash = NULL;
+-
+-	status = test_table_type(&rte_table_hash_key32_lru_ops,
+-		(void *)&key32lru_params, (void *)key32lru, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_hash8ext(void)
+-{
+-	int status, i;
+-
+-	/* Traffic flow */
+-	struct rte_table_hash_params key8ext_params = {
+-		.name = "TABLE",
+-		.key_size = 8,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 16,
+-		.n_buckets = 1 << 16,
+-		.f_hash = pipeline_test_hash,
+-		.seed = 0,
+-	};
+-
+-	uint8_t key8ext[8];
+-	uint32_t *k8ext = (uint32_t *) key8ext;
+-
+-	memset(key8ext, 0, sizeof(key8ext));
+-	k8ext[0] = 0xadadadad;
+-
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-	for (i = 0; i < 50; i++)
+-		table_packets.hit_packet[i] = 0xadadadad;
+-
+-	for (i = 0; i < 50; i++)
+-		table_packets.miss_packet[i] = 0xbdadadad;
+-
+-	table_packets.n_hit_packets = 50;
+-	table_packets.n_miss_packets = 50;
+-
+-	status = test_table_type(&rte_table_hash_key8_ext_ops,
+-		(void *)&key8ext_params, (void *)key8ext, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	/* Invalid parameters */
+-	key8ext_params.n_keys = 0;
+-
+-	status = test_table_type(&rte_table_hash_key8_ext_ops,
+-		(void *)&key8ext_params, (void *)key8ext, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	key8ext_params.n_keys = 1<<16;
+-	key8ext_params.f_hash = NULL;
+-
+-	status = test_table_type(&rte_table_hash_key8_ext_ops,
+-		(void *)&key8ext_params, (void *)key8ext, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_hash16ext(void)
+-{
+-	int status, i;
+-
+-	/* Traffic flow */
+-	struct rte_table_hash_params key16ext_params = {
+-		.name = "TABLE",
+-		.key_size = 16,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 16,
+-		.n_buckets = 1 << 16,
+-		.f_hash = pipeline_test_hash,
+-		.seed = 0,
+-	};
+-
+-	uint8_t key16ext[16];
+-	uint32_t *k16ext = (uint32_t *) key16ext;
+-
+-	memset(key16ext, 0, sizeof(key16ext));
+-	k16ext[0] = 0xadadadad;
+-
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-	for (i = 0; i < 50; i++)
+-		table_packets.hit_packet[i] = 0xadadadad;
+-
+-	for (i = 0; i < 50; i++)
+-		table_packets.miss_packet[i] = 0xbdadadad;
+-
+-	table_packets.n_hit_packets = 50;
+-	table_packets.n_miss_packets = 50;
+-
+-	status = test_table_type(&rte_table_hash_key16_ext_ops,
+-		(void *)&key16ext_params, (void *)key16ext, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	/* Invalid parameters */
+-	key16ext_params.n_keys = 0;
+-
+-	status = test_table_type(&rte_table_hash_key16_ext_ops,
+-		(void *)&key16ext_params, (void *)key16ext, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	key16ext_params.n_keys = 1<<16;
+-	key16ext_params.f_hash = NULL;
+-
+-	status = test_table_type(&rte_table_hash_key16_ext_ops,
+-		(void *)&key16ext_params, (void *)key16ext, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_hash32ext(void)
+-{
+-	int status, i;
+-
+-	/* Traffic flow */
+-	struct rte_table_hash_params key32ext_params = {
+-		.name = "TABLE",
+-		.key_size = 32,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 16,
+-		.n_buckets = 1 << 16,
+-		.f_hash = pipeline_test_hash,
+-		.seed = 0,
+-	};
+-
+-	uint8_t key32ext[32];
+-	uint32_t *k32ext = (uint32_t *) key32ext;
+-
+-	memset(key32ext, 0, sizeof(key32ext));
+-	k32ext[0] = 0xadadadad;
+-
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-	for (i = 0; i < 50; i++)
+-		table_packets.hit_packet[i] = 0xadadadad;
+-
+-	for (i = 0; i < 50; i++)
+-		table_packets.miss_packet[i] = 0xbdadadad;
+-
+-	table_packets.n_hit_packets = 50;
+-	table_packets.n_miss_packets = 50;
+-
+-	status = test_table_type(&rte_table_hash_key32_ext_ops,
+-		(void *)&key32ext_params, (void *)key32ext, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	/* Invalid parameters */
+-	key32ext_params.n_keys = 0;
+-
+-	status = test_table_type(&rte_table_hash_key32_ext_ops,
+-		(void *)&key32ext_params, (void *)key32ext, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	key32ext_params.n_keys = 1<<16;
+-	key32ext_params.f_hash = NULL;
+-
+-	status = test_table_type(&rte_table_hash_key32_ext_ops,
+-		(void *)&key32ext_params, (void *)key32ext, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_hash_cuckoo_combined(void)
+-{
+-	int status, i;
+-
+-	/* Traffic flow */
+-	struct rte_table_hash_cuckoo_params cuckoo_params = {
+-		.name = "TABLE",
+-		.key_size = 32,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 16,
+-		.n_buckets = 1 << 16,
+-		.f_hash = pipeline_test_hash_cuckoo,
+-		.seed = 0,
+-	};
+-
+-	uint8_t key_cuckoo[32];
+-	uint32_t *kcuckoo = (uint32_t *) key_cuckoo;
+-
+-	memset(key_cuckoo, 0, sizeof(key_cuckoo));
+-	kcuckoo[0] = 0xadadadad;
+-
+-	struct table_packets table_packets;
+-
+-	printf("--------------\n");
+-	printf("RUNNING TEST - %s\n", __func__);
+-	printf("--------------\n");
+-	for (i = 0; i < 50; i++)
+-		table_packets.hit_packet[i] = 0xadadadad;
+-
+-	for (i = 0; i < 50; i++)
+-		table_packets.miss_packet[i] = 0xbdadadad;
+-
+-	table_packets.n_hit_packets = 50;
+-	table_packets.n_miss_packets = 50;
+-
+-	status = test_table_type(&rte_table_hash_cuckoo_ops,
+-		(void *)&cuckoo_params, (void *)key_cuckoo, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_OK);
+-
+-	/* Invalid parameters */
+-	cuckoo_params.key_size = 0;
+-
+-	status = test_table_type(&rte_table_hash_cuckoo_ops,
+-		(void *)&cuckoo_params, (void *)key_cuckoo, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	cuckoo_params.key_size = 32;
+-	cuckoo_params.n_keys = 0;
+-
+-	status = test_table_type(&rte_table_hash_cuckoo_ops,
+-		(void *)&cuckoo_params, (void *)key_cuckoo, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	cuckoo_params.n_keys = 1<<16;
+-	cuckoo_params.f_hash = NULL;
+-
+-	status = test_table_type(&rte_table_hash_cuckoo_ops,
+-		(void *)&cuckoo_params, (void *)key_cuckoo, &table_packets,
+-		NULL, 0);
+-	VERIFY(status, CHECK_TABLE_TABLE_CONFIG);
+-
+-	return 0;
+-}
+-
+-#endif /* !RTE_EXEC_ENV_WINDOWS */
+diff --git a/app/test/test_table_combined.h b/app/test/test_table_combined.h
+deleted file mode 100644
+index fb94dbb94d..0000000000
+--- a/app/test/test_table_combined.h
++++ /dev/null
+@@ -1,27 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2016 Intel Corporation
+- */
+-
+-/* Test prototypes */
+-int test_table_stub_combined(void);
+-int test_table_lpm_combined(void);
+-int test_table_lpm_ipv6_combined(void);
+-#ifdef RTE_LIB_ACL
+-int test_table_acl(void);
+-#endif
+-int test_table_hash8unoptimized(void);
+-int test_table_hash8lru(void);
+-int test_table_hash8ext(void);
+-int test_table_hash16unoptimized(void);
+-int test_table_hash16lru(void);
+-int test_table_hash16ext(void);
+-int test_table_hash32unoptimized(void);
+-int test_table_hash32lru(void);
+-int test_table_hash32ext(void);
+-int test_table_hash_cuckoo_combined(void);
+-
+-/* Extern variables */
+-typedef int (*combined_table_test)(void);
+-
+-extern combined_table_test table_tests_combined[];
+-extern unsigned n_table_tests_combined;
+diff --git a/app/test/test_table_pipeline.c b/app/test/test_table_pipeline.c
+deleted file mode 100644
+index 960f730cf2..0000000000
+--- a/app/test/test_table_pipeline.c
++++ /dev/null
+@@ -1,575 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef RTE_EXEC_ENV_WINDOWS
+-
+-#include <string.h>
+-#include <rte_pipeline.h>
+-#include <inttypes.h>
+-#include <rte_hexdump.h>
+-#include "test_table.h"
+-#include "test_table_pipeline.h"
+-
+-#if 0
+-
+-static rte_pipeline_port_out_action_handler port_action_0x00
+-	(struct rte_mbuf **pkts, uint32_t n, uint64_t *pkts_mask, void *arg);
+-static rte_pipeline_port_out_action_handler port_action_0xFF
+-	(struct rte_mbuf **pkts, uint32_t n, uint64_t *pkts_mask, void *arg);
+-static rte_pipeline_port_out_action_handler port_action_stub
+-	(struct rte_mbuf **pkts, uint32_t n, uint64_t *pkts_mask, void *arg);
+-
+-
+-rte_pipeline_port_out_action_handler port_action_0x00(struct rte_mbuf **pkts,
+-	uint32_t n,
+-	uint64_t *pkts_mask,
+-	void *arg)
+-{
+-	RTE_SET_USED(pkts);
+-	RTE_SET_USED(n);
+-	RTE_SET_USED(arg);
+-	printf("Port Action 0x00\n");
+-	*pkts_mask = 0x00;
+-	return 0;
+-}
+-
+-rte_pipeline_port_out_action_handler port_action_0xFF(struct rte_mbuf **pkts,
+-	uint32_t n,
+-	uint64_t *pkts_mask,
+-	void *arg)
+-{
+-	RTE_SET_USED(pkts);
+-	RTE_SET_USED(n);
+-	RTE_SET_USED(arg);
+-	printf("Port Action 0xFF\n");
+-	*pkts_mask = 0xFF;
+-	return 0;
+-}
+-
+-rte_pipeline_port_out_action_handler port_action_stub(struct rte_mbuf **pkts,
+-	uint32_t n,
+-	uint64_t *pkts_mask,
+-	void *arg)
+-{
+-	RTE_SET_USED(pkts);
+-	RTE_SET_USED(n);
+-	RTE_SET_USED(pkts_mask);
+-	RTE_SET_USED(arg);
+-	printf("Port Action stub\n");
+-	return 0;
+-}
+-
+-#endif
+-
+-rte_pipeline_table_action_handler_hit
+-table_action_0x00(struct rte_pipeline *p, struct rte_mbuf **pkts,
+-	uint64_t pkts_mask, struct rte_pipeline_table_entry **entry, void *arg);
+-
+-rte_pipeline_table_action_handler_hit
+-table_action_stub_hit(struct rte_pipeline *p, struct rte_mbuf **pkts,
+-	uint64_t pkts_mask, struct rte_pipeline_table_entry **entry, void *arg);
+-
+-static int
+-table_action_stub_miss(struct rte_pipeline *p, struct rte_mbuf **pkts,
+-	uint64_t pkts_mask, struct rte_pipeline_table_entry *entry, void *arg);
+-
+-rte_pipeline_table_action_handler_hit
+-table_action_0x00(__rte_unused struct rte_pipeline *p,
+-	__rte_unused struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	__rte_unused struct rte_pipeline_table_entry **entry,
+-	__rte_unused void *arg)
+-{
+-	printf("Table Action, setting pkts_mask to 0x00\n");
+-	pkts_mask = ~0x00;
+-	rte_pipeline_ah_packet_drop(p, pkts_mask);
+-	return 0;
+-}
+-
+-rte_pipeline_table_action_handler_hit
+-table_action_stub_hit(__rte_unused struct rte_pipeline *p,
+-	__rte_unused struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	__rte_unused struct rte_pipeline_table_entry **entry,
+-	__rte_unused void *arg)
+-{
+-	printf("STUB Table Action Hit - doing nothing\n");
+-	printf("STUB Table Action Hit - setting mask to 0x%"PRIx64"\n",
+-		override_hit_mask);
+-	pkts_mask = (~override_hit_mask) & 0x3;
+-	rte_pipeline_ah_packet_drop(p, pkts_mask);
+-	return 0;
+-}
+-
+-static int
+-table_action_stub_miss(struct rte_pipeline *p,
+-	__rte_unused struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	__rte_unused struct rte_pipeline_table_entry *entry,
+-	__rte_unused void *arg)
+-{
+-	printf("STUB Table Action Miss - setting mask to 0x%"PRIx64"\n",
+-		override_miss_mask);
+-	pkts_mask = (~override_miss_mask) & 0x3;
+-	rte_pipeline_ah_packet_drop(p, pkts_mask);
+-	return 0;
+-}
+-
+-enum e_test_type {
+-	e_TEST_STUB = 0,
+-	e_TEST_LPM,
+-	e_TEST_LPM6,
+-	e_TEST_HASH_LRU_8,
+-	e_TEST_HASH_LRU_16,
+-	e_TEST_HASH_LRU_32,
+-	e_TEST_HASH_EXT_8,
+-	e_TEST_HASH_EXT_16,
+-	e_TEST_HASH_EXT_32
+-};
+-
+-char pipeline_test_names[][64] = {
+-	"Stub",
+-	"LPM",
+-	"LPMv6",
+-	"8-bit LRU Hash",
+-	"16-bit LRU Hash",
+-	"32-bit LRU Hash",
+-	"16-bit Ext Hash",
+-	"8-bit Ext Hash",
+-	"32-bit Ext Hash",
+-	""
+-};
+-
+-
+-static int
+-cleanup_pipeline(void)
+-{
+-
+-	rte_pipeline_free(p);
+-
+-	return 0;
+-}
+-
+-
+-static int check_pipeline_invalid_params(void);
+-
+-static int
+-check_pipeline_invalid_params(void)
+-{
+-	struct rte_pipeline_params pipeline_params_1 = {
+-		.name = NULL,
+-		.socket_id = 0,
+-	};
+-	struct rte_pipeline_params pipeline_params_2 = {
+-		.name = "PIPELINE",
+-		.socket_id = -1,
+-	};
+-	struct rte_pipeline_params pipeline_params_3 = {
+-		.name = "PIPELINE",
+-		.socket_id = 127,
+-	};
+-
+-	p = rte_pipeline_create(NULL);
+-	if (p != NULL) {
+-		fprintf(stderr,
+-			"%s: configured pipeline with null params\n",
+-			__func__);
+-		goto fail;
+-	}
+-	p = rte_pipeline_create(&pipeline_params_1);
+-	if (p != NULL) {
+-		fprintf(stderr,
+-			"%s: Configure pipeline with NULL name\n", __func__);
+-		goto fail;
+-	}
+-
+-	p = rte_pipeline_create(&pipeline_params_2);
+-	if (p != NULL) {
+-		fprintf(stderr,
+-			"%s: Configure pipeline with invalid socket\n", __func__);
+-		goto fail;
+-	}
+-
+-	if (rte_eal_has_hugepages()) {
+-		p = rte_pipeline_create(&pipeline_params_3);
+-		if (p != NULL) {
+-			fprintf(stderr,
+-				"%s: Configure pipeline with invalid socket\n",
+-				__func__);
+-			goto fail;
+-		}
+-	}
+-
+-	/* Check pipeline consistency */
+-	if (!rte_pipeline_check(p)) {
+-		rte_panic("Pipeline consistency reported as OK\n");
+-		goto fail;
+-	}
+-
+-
+-	return 0;
+-fail:
+-	return -1;
+-}
+-
+-
+-static int
+-setup_pipeline(int test_type)
+-{
+-	int ret;
+-	int i;
+-	struct rte_pipeline_params pipeline_params = {
+-		.name = "PIPELINE",
+-		.socket_id = 0,
+-	};
+-
+-	fprintf(stderr, "%s: **** Setting up %s test\n",
+-		__func__, pipeline_test_names[test_type]);
+-
+-	/* Pipeline configuration */
+-	p = rte_pipeline_create(&pipeline_params);
+-	if (p == NULL) {
+-		fprintf(stderr, "%s: Failed to configure pipeline\n",
+-			__func__);
+-		goto fail;
+-	}
+-
+-	ret = rte_pipeline_free(p);
+-	if (ret != 0) {
+-		fprintf(stderr, "%s: Failed to free pipeline\n",
+-			__func__);
+-		goto fail;
+-	}
+-
+-	/* Pipeline configuration */
+-	p = rte_pipeline_create(&pipeline_params);
+-	if (p == NULL) {
+-		fprintf(stderr, "%s: Failed to configure pipeline\n",
+-			__func__);
+-		goto fail;
+-	}
+-
+-
+-	/* Input port configuration */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_port_ring_reader_params port_ring_params = {
+-			.ring = rings_rx[i],
+-		};
+-
+-		struct rte_pipeline_port_in_params port_params = {
+-			.ops = &rte_port_ring_reader_ops,
+-			.arg_create = (void *) &port_ring_params,
+-			.f_action = NULL,
+-			.burst_size = BURST_SIZE,
+-		};
+-
+-		/* Put in action for some ports */
+-		if (i)
+-			port_params.f_action = NULL;
+-
+-		ret = rte_pipeline_port_in_create(p, &port_params,
+-			&port_in_id[i]);
+-		if (ret) {
+-			rte_panic("Unable to configure input port %d, ret:%d\n",
+-				i, ret);
+-			goto fail;
+-		}
+-	}
+-
+-	/* output Port configuration */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_port_ring_writer_params port_ring_params = {
+-			.ring = rings_tx[i],
+-			.tx_burst_sz = BURST_SIZE,
+-		};
+-
+-		struct rte_pipeline_port_out_params port_params = {
+-			.ops = &rte_port_ring_writer_ops,
+-			.arg_create = (void *) &port_ring_params,
+-			.f_action = NULL,
+-			.arg_ah = NULL,
+-		};
+-
+-		if (i)
+-			port_params.f_action = port_out_action;
+-
+-		if (rte_pipeline_port_out_create(p, &port_params,
+-			&port_out_id[i])) {
+-			rte_panic("Unable to configure output port %d\n", i);
+-			goto fail;
+-		}
+-	}
+-
+-	/* Table configuration  */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_pipeline_table_params table_params = {
+-				.ops = &rte_table_stub_ops,
+-				.arg_create = NULL,
+-				.f_action_hit = action_handler_hit,
+-				.f_action_miss = action_handler_miss,
+-				.action_data_size = 0,
+-		};
+-
+-		if (rte_pipeline_table_create(p, &table_params, &table_id[i])) {
+-			rte_panic("Unable to configure table %u\n", i);
+-			goto fail;
+-		}
+-
+-		if (connect_miss_action_to_table)
+-			if (rte_pipeline_table_create(p, &table_params,
+-				&table_id[i+2])) {
+-				rte_panic("Unable to configure table %u\n", i);
+-				goto fail;
+-			}
+-	}
+-
+-	for (i = 0; i < N_PORTS; i++)
+-		if (rte_pipeline_port_in_connect_to_table(p, port_in_id[i],
+-			table_id[i])) {
+-			rte_panic("Unable to connect input port %u to "
+-				"table %u\n", port_in_id[i],  table_id[i]);
+-			goto fail;
+-		}
+-
+-	/* Add entries to tables */
+-	for (i = 0; i < N_PORTS; i++) {
+-		struct rte_pipeline_table_entry default_entry = {
+-			.action = (enum rte_pipeline_action)
+-				table_entry_default_action,
+-			{.port_id = port_out_id[i^1]},
+-		};
+-		struct rte_pipeline_table_entry *default_entry_ptr;
+-
+-		if (connect_miss_action_to_table) {
+-			printf("Setting first table to output to next table\n");
+-			default_entry.action = RTE_PIPELINE_ACTION_TABLE;
+-			default_entry.table_id = table_id[i+2];
+-		}
+-
+-		/* Add the default action for the table. */
+-		ret = rte_pipeline_table_default_entry_add(p, table_id[i],
+-			&default_entry, &default_entry_ptr);
+-		if (ret < 0) {
+-			rte_panic("Unable to add default entry to table %u "
+-				"code %d\n", table_id[i], ret);
+-			goto fail;
+-		} else
+-			printf("Added default entry to table id %d with "
+-				"action %x\n",
+-				table_id[i], default_entry.action);
+-
+-		if (connect_miss_action_to_table) {
+-			/* We create a second table so the first can pass
+-			traffic into it */
+-			struct rte_pipeline_table_entry default_entry = {
+-				.action = RTE_PIPELINE_ACTION_PORT,
+-				{.port_id = port_out_id[i^1]},
+-			};
+-			printf("Setting second table to output to port\n");
+-
+-			/* Add the default action for the table. */
+-			ret = rte_pipeline_table_default_entry_add(p,
+-				table_id[i+2],
+-				&default_entry, &default_entry_ptr);
+-			if (ret < 0) {
+-				rte_panic("Unable to add default entry to "
+-					"table %u code %d\n",
+-					table_id[i], ret);
+-				goto fail;
+-			} else
+-				printf("Added default entry to table id %d "
+-					"with action %x\n",
+-					table_id[i], default_entry.action);
+-		}
+-	}
+-
+-	/* Enable input ports */
+-	for (i = 0; i < N_PORTS ; i++)
+-		if (rte_pipeline_port_in_enable(p, port_in_id[i]))
+-			rte_panic("Unable to enable input port %u\n",
+-				port_in_id[i]);
+-
+-	/* Check pipeline consistency */
+-	if (rte_pipeline_check(p) < 0) {
+-		rte_panic("Pipeline consistency check failed\n");
+-		goto fail;
+-	} else
+-		printf("Pipeline Consistency OK!\n");
+-
+-	return 0;
+-fail:
+-
+-	return -1;
+-}
+-
+-static int
+-test_pipeline_single_filter(int test_type, int expected_count)
+-{
+-	int i;
+-	int j;
+-	int ret;
+-	int tx_count;
+-
+-	fprintf(stderr, "%s: **** Running %s test\n",
+-		__func__, pipeline_test_names[test_type]);
+-	/* Run pipeline once */
+-	for (i = 0; i < N_PORTS; i++)
+-		rte_pipeline_run(p);
+-
+-
+-	ret = rte_pipeline_flush(NULL);
+-	if (ret != -EINVAL) {
+-		fprintf(stderr,
+-			"%s: No pipeline flush error NULL pipeline (%d)\n",
+-			__func__, ret);
+-		goto fail;
+-	}
+-
+-	/*
+-	 * Allocate a few mbufs and manually insert into the rings. */
+-	for (i = 0; i < N_PORTS; i++)
+-		for (j = 0; j < N_PORTS; j++) {
+-			struct rte_mbuf *m;
+-			uint8_t *key;
+-			uint32_t *k32;
+-
+-			m = rte_pktmbuf_alloc(pool);
+-			if (m == NULL) {
+-				rte_panic("Failed to alloc mbuf from pool\n");
+-				return -1;
+-			}
+-			key = RTE_MBUF_METADATA_UINT8_PTR(m,
+-					APP_METADATA_OFFSET(32));
+-
+-			k32 = (uint32_t *) key;
+-			k32[0] = 0xadadadad >> (j % 2);
+-
+-			fprintf(stderr, "%s: Enqueue onto ring %d\n",
+-				__func__, i);
+-			rte_ring_enqueue(rings_rx[i], m);
+-		}
+-
+-	/* Run pipeline once */
+-	for (i = 0; i < N_PORTS; i++)
+-		rte_pipeline_run(p);
+-
+-   /*
+-	* need to flush the pipeline, as there may be less hits than the burst
+-	size and they will not have been flushed to the tx rings. */
+-	rte_pipeline_flush(p);
+-
+-   /*
+-	* Now we'll see what we got back on the tx rings. We should see whatever
+-	* packets we had hits on that were destined for the output ports.
+-	*/
+-	tx_count = 0;
+-
+-	for (i = 0; i < N_PORTS; i++) {
+-		void *objs[RING_TX_SIZE];
+-		struct rte_mbuf *mbuf;
+-
+-		ret = rte_ring_sc_dequeue_burst(rings_tx[i], objs, 10, NULL);
+-		if (ret <= 0)
+-			printf("Got no objects from ring %d - error code %d\n",
+-				i, ret);
+-		else {
+-			printf("Got %d object(s) from ring %d!\n", ret, i);
+-			for (j = 0; j < ret; j++) {
+-				mbuf = objs[j];
+-				rte_hexdump(stdout, "Object:",
+-					rte_pktmbuf_mtod(mbuf, char *),
+-					mbuf->data_len);
+-				rte_pktmbuf_free(mbuf);
+-			}
+-			tx_count += ret;
+-		}
+-	}
+-
+-	if (tx_count != expected_count) {
+-		fprintf(stderr,
+-			"%s: Unexpected packets out for %s test, expected %d, got %d\n",
+-			__func__, pipeline_test_names[test_type],
+-			expected_count, tx_count);
+-		goto fail;
+-	}
+-
+-	cleanup_pipeline();
+-
+-	return 0;
+-fail:
+-	return -1;
+-
+-}
+-
+-int
+-test_table_pipeline(void)
+-{
+-	/* TEST - All packets dropped */
+-	action_handler_hit = NULL;
+-	action_handler_miss = NULL;
+-	table_entry_default_action = RTE_PIPELINE_ACTION_DROP;
+-	setup_pipeline(e_TEST_STUB);
+-	if (test_pipeline_single_filter(e_TEST_STUB, 0) < 0)
+-		return -1;
+-
+-	/* TEST - All packets passed through */
+-	table_entry_default_action = RTE_PIPELINE_ACTION_PORT;
+-	setup_pipeline(e_TEST_STUB);
+-	if (test_pipeline_single_filter(e_TEST_STUB, 4) < 0)
+-		return -1;
+-
+-	/* TEST - one packet per port */
+-	action_handler_hit = NULL;
+-	action_handler_miss = table_action_stub_miss;
+-	table_entry_default_action = RTE_PIPELINE_ACTION_PORT;
+-	override_miss_mask = 0x01; /* one packet per port */
+-	setup_pipeline(e_TEST_STUB);
+-	if (test_pipeline_single_filter(e_TEST_STUB, 2) < 0)
+-		return -1;
+-
+-	/* TEST - one packet per port */
+-	override_miss_mask = 0x02; /*all per port */
+-	setup_pipeline(e_TEST_STUB);
+-	if (test_pipeline_single_filter(e_TEST_STUB, 2) < 0)
+-		return -1;
+-
+-	/* TEST - all packets per port */
+-	override_miss_mask = 0x03; /*all per port */
+-	setup_pipeline(e_TEST_STUB);
+-	if (test_pipeline_single_filter(e_TEST_STUB, 4) < 0)
+-		return -1;
+-
+-   /*
+-	* This test will set up two tables in the pipeline. the first table
+-	* will forward to another table on miss, and the second table will
+-	* forward to port.
+-	*/
+-	connect_miss_action_to_table = 1;
+-	table_entry_default_action = RTE_PIPELINE_ACTION_TABLE;
+-	action_handler_hit = NULL;  /* not for stub, hitmask always zero */
+-	action_handler_miss = NULL;
+-	setup_pipeline(e_TEST_STUB);
+-	if (test_pipeline_single_filter(e_TEST_STUB, 4) < 0)
+-		return -1;
+-	connect_miss_action_to_table = 0;
+-
+-	printf("TEST - two tables, hitmask override to 0x01\n");
+-	connect_miss_action_to_table = 1;
+-	action_handler_miss = table_action_stub_miss;
+-	override_miss_mask = 0x01;
+-	setup_pipeline(e_TEST_STUB);
+-	if (test_pipeline_single_filter(e_TEST_STUB, 2) < 0)
+-		return -1;
+-	connect_miss_action_to_table = 0;
+-
+-	if (check_pipeline_invalid_params()) {
+-		fprintf(stderr, "%s: Check pipeline invalid params failed.\n",
+-			__func__);
+-		return -1;
+-	}
+-
+-	return 0;
+-}
+-
+-#endif /* !RTE_EXEC_ENV_WINDOWS */
+diff --git a/app/test/test_table_pipeline.h b/app/test/test_table_pipeline.h
+deleted file mode 100644
+index d66d09d6f1..0000000000
+--- a/app/test/test_table_pipeline.h
++++ /dev/null
+@@ -1,6 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-/* Test prototypes */
+-int test_table_pipeline(void);
+diff --git a/app/test/test_table_ports.c b/app/test/test_table_ports.c
+deleted file mode 100644
+index 282ec2a3d2..0000000000
+--- a/app/test/test_table_ports.c
++++ /dev/null
+@@ -1,195 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef RTE_EXEC_ENV_WINDOWS
+-
+-#include "test_table_ports.h"
+-#include "test_table.h"
+-
+-port_test port_tests[] = {
+-	test_port_ring_reader,
+-	test_port_ring_writer,
+-};
+-
+-unsigned n_port_tests = RTE_DIM(port_tests);
+-
+-/* Port tests */
+-int
+-test_port_ring_reader(void)
+-{
+-	int status, i;
+-	struct rte_port_ring_reader_params port_ring_reader_params;
+-	void *port;
+-
+-	/* Invalid params */
+-	port = rte_port_ring_reader_ops.f_create(NULL, 0);
+-	if (port != NULL)
+-		return -1;
+-
+-	status = rte_port_ring_reader_ops.f_free(port);
+-	if (status >= 0)
+-		return -2;
+-
+-	/* Create and free */
+-	port_ring_reader_params.ring = RING_RX;
+-	port = rte_port_ring_reader_ops.f_create(&port_ring_reader_params, 0);
+-	if (port == NULL)
+-		return -3;
+-
+-	status = rte_port_ring_reader_ops.f_free(port);
+-	if (status != 0)
+-		return -4;
+-
+-	/* -- Traffic RX -- */
+-	int expected_pkts, received_pkts;
+-	struct rte_mbuf *res_mbuf[RTE_PORT_IN_BURST_SIZE_MAX];
+-	void *mbuf[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	port_ring_reader_params.ring = RING_RX;
+-	port = rte_port_ring_reader_ops.f_create(&port_ring_reader_params, 0);
+-
+-	/* Single packet */
+-	mbuf[0] = (void *)rte_pktmbuf_alloc(pool);
+-
+-	expected_pkts = rte_ring_sp_enqueue_burst(port_ring_reader_params.ring,
+-		mbuf, 1, NULL);
+-	received_pkts = rte_port_ring_reader_ops.f_rx(port, res_mbuf, 1);
+-
+-	if (received_pkts < expected_pkts)
+-		return -5;
+-
+-	rte_pktmbuf_free(res_mbuf[0]);
+-
+-	/* Multiple packets */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		mbuf[i] = rte_pktmbuf_alloc(pool);
+-
+-	expected_pkts = rte_ring_sp_enqueue_burst(port_ring_reader_params.ring,
+-		(void * const *) mbuf, RTE_PORT_IN_BURST_SIZE_MAX, NULL);
+-	received_pkts = rte_port_ring_reader_ops.f_rx(port, res_mbuf,
+-		RTE_PORT_IN_BURST_SIZE_MAX);
+-
+-	if (received_pkts < expected_pkts)
+-		return -6;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(res_mbuf[i]);
+-
+-	return 0;
+-}
+-
+-int
+-test_port_ring_writer(void)
+-{
+-	int status, i;
+-	struct rte_port_ring_writer_params port_ring_writer_params;
+-	void *port;
+-
+-	/* Invalid params */
+-	port = rte_port_ring_writer_ops.f_create(NULL, 0);
+-	if (port != NULL)
+-		return -1;
+-
+-	status = rte_port_ring_writer_ops.f_free(port);
+-	if (status >= 0)
+-		return -2;
+-
+-	port_ring_writer_params.ring = NULL;
+-
+-	port = rte_port_ring_writer_ops.f_create(&port_ring_writer_params, 0);
+-	if (port != NULL)
+-		return -3;
+-
+-	port_ring_writer_params.ring = RING_TX;
+-	port_ring_writer_params.tx_burst_sz = RTE_PORT_IN_BURST_SIZE_MAX + 1;
+-
+-	port = rte_port_ring_writer_ops.f_create(&port_ring_writer_params, 0);
+-	if (port != NULL)
+-		return -4;
+-
+-	/* Create and free */
+-	port_ring_writer_params.ring = RING_TX;
+-	port_ring_writer_params.tx_burst_sz = RTE_PORT_IN_BURST_SIZE_MAX;
+-
+-	port = rte_port_ring_writer_ops.f_create(&port_ring_writer_params, 0);
+-	if (port == NULL)
+-		return -5;
+-
+-	status = rte_port_ring_writer_ops.f_free(port);
+-	if (status != 0)
+-		return -6;
+-
+-	/* -- Traffic TX -- */
+-	int expected_pkts, received_pkts;
+-	struct rte_mbuf *mbuf[RTE_PORT_IN_BURST_SIZE_MAX];
+-	struct rte_mbuf *res_mbuf[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	port_ring_writer_params.ring = RING_TX;
+-	port_ring_writer_params.tx_burst_sz = RTE_PORT_IN_BURST_SIZE_MAX;
+-	port = rte_port_ring_writer_ops.f_create(&port_ring_writer_params, 0);
+-
+-	/* Single packet */
+-	mbuf[0] = rte_pktmbuf_alloc(pool);
+-
+-	rte_port_ring_writer_ops.f_tx(port, mbuf[0]);
+-	rte_port_ring_writer_ops.f_flush(port);
+-	expected_pkts = 1;
+-	received_pkts = rte_ring_sc_dequeue_burst(port_ring_writer_params.ring,
+-		(void **)res_mbuf, port_ring_writer_params.tx_burst_sz, NULL);
+-
+-	if (received_pkts < expected_pkts)
+-		return -7;
+-
+-	rte_pktmbuf_free(res_mbuf[0]);
+-
+-	/* Multiple packets */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
+-		mbuf[i] = rte_pktmbuf_alloc(pool);
+-		rte_port_ring_writer_ops.f_tx(port, mbuf[i]);
+-	}
+-
+-	expected_pkts = RTE_PORT_IN_BURST_SIZE_MAX;
+-	received_pkts = rte_ring_sc_dequeue_burst(port_ring_writer_params.ring,
+-		(void **)res_mbuf, port_ring_writer_params.tx_burst_sz, NULL);
+-
+-	if (received_pkts < expected_pkts)
+-		return -8;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(res_mbuf[i]);
+-
+-	/* TX Bulk */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		mbuf[i] = rte_pktmbuf_alloc(pool);
+-	rte_port_ring_writer_ops.f_tx_bulk(port, mbuf, (uint64_t)-1);
+-
+-	expected_pkts = RTE_PORT_IN_BURST_SIZE_MAX;
+-	received_pkts = rte_ring_sc_dequeue_burst(port_ring_writer_params.ring,
+-		(void **)res_mbuf, port_ring_writer_params.tx_burst_sz, NULL);
+-
+-	if (received_pkts < expected_pkts)
+-		return -8;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(res_mbuf[i]);
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		mbuf[i] = rte_pktmbuf_alloc(pool);
+-	rte_port_ring_writer_ops.f_tx_bulk(port, mbuf, (uint64_t)-3);
+-	rte_port_ring_writer_ops.f_tx_bulk(port, mbuf, (uint64_t)2);
+-
+-	expected_pkts = RTE_PORT_IN_BURST_SIZE_MAX;
+-	received_pkts = rte_ring_sc_dequeue_burst(port_ring_writer_params.ring,
+-		(void **)res_mbuf, port_ring_writer_params.tx_burst_sz, NULL);
+-
+-	if (received_pkts < expected_pkts)
+-		return -9;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(res_mbuf[i]);
+-
+-	return 0;
+-}
+-
+-#endif /* !RTE_EXEC_ENV_WINDOWS */
+diff --git a/app/test/test_table_ports.h b/app/test/test_table_ports.h
+deleted file mode 100644
+index dfa6119319..0000000000
+--- a/app/test/test_table_ports.h
++++ /dev/null
+@@ -1,13 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-/* Test prototypes */
+-int test_port_ring_reader(void);
+-int test_port_ring_writer(void);
+-
+-/* Extern variables */
+-typedef int (*port_test)(void);
+-
+-extern port_test port_tests[];
+-extern unsigned n_port_tests;
+diff --git a/app/test/test_table_tables.c b/app/test/test_table_tables.c
+deleted file mode 100644
+index 920aa555cb..0000000000
+--- a/app/test/test_table_tables.c
++++ /dev/null
+@@ -1,1058 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2016 Intel Corporation
+- */
+-
+-#ifndef RTE_EXEC_ENV_WINDOWS
+-
+-#include <string.h>
+-#include <rte_byteorder.h>
+-#include <rte_table_lpm_ipv6.h>
+-#include <rte_lru.h>
+-#include <rte_cycles.h>
+-#include "test_table_tables.h"
+-#include "test_table.h"
+-
+-table_test table_tests[] = {
+-	test_table_stub,
+-	test_table_array,
+-	test_table_lpm,
+-	test_table_lpm_ipv6,
+-	test_table_hash_lru,
+-	test_table_hash_ext,
+-	test_table_hash_cuckoo,
+-};
+-
+-#define PREPARE_PACKET(mbuf, value) do {				\
+-	uint32_t *k32, *signature;					\
+-	uint8_t *key;							\
+-	mbuf = rte_pktmbuf_alloc(pool);					\
+-	signature = RTE_MBUF_METADATA_UINT32_PTR(mbuf,			\
+-			APP_METADATA_OFFSET(0));			\
+-	key = RTE_MBUF_METADATA_UINT8_PTR(mbuf,			\
+-			APP_METADATA_OFFSET(32));			\
+-	if (mbuf->priv_size + mbuf->buf_len >= 64)			\
+-		memset(key, 0, 32);					\
+-	k32 = (uint32_t *) key;						\
+-	k32[0] = (value);						\
+-	*signature = pipeline_test_hash(key, NULL, 0, 0);			\
+-} while (0)
+-
+-unsigned n_table_tests = RTE_DIM(table_tests);
+-
+-/* Function prototypes */
+-static int
+-test_table_hash_lru_generic(struct rte_table_ops *ops, uint32_t key_size);
+-static int
+-test_table_hash_ext_generic(struct rte_table_ops *ops, uint32_t key_size);
+-
+-struct rte_bucket_4_8 {
+-	/* Cache line 0 */
+-	uint64_t signature;
+-	uint64_t lru_list;
+-	struct rte_bucket_4_8 *next;
+-	uint64_t next_valid;
+-	uint64_t key[4];
+-	/* Cache line 1 */
+-	uint8_t data[];
+-};
+-
+-#if RTE_TABLE_HASH_LRU_STRATEGY == 3
+-uint64_t shuffles = 0xfffffffdfffbfff9ULL;
+-#else
+-uint64_t shuffles = 0x0003000200010000ULL;
+-#endif
+-
+-static int test_lru_update(void)
+-{
+-	struct rte_bucket_4_8 b;
+-	struct rte_bucket_4_8 *bucket;
+-	uint32_t i;
+-	uint64_t pos;
+-	uint64_t iterations;
+-	uint64_t j;
+-	int poss;
+-
+-	printf("---------------------------\n");
+-	printf("Testing lru_update macro...\n");
+-	printf("---------------------------\n");
+-	bucket = &b;
+-	iterations = 10;
+-#if RTE_TABLE_HASH_LRU_STRATEGY == 3
+-	bucket->lru_list = 0xFFFFFFFFFFFFFFFFULL;
+-#else
+-	bucket->lru_list = 0x0000000100020003ULL;
+-#endif
+-	poss = 0;
+-	for (j = 0; j < iterations; j++)
+-		for (i = 0; i < 9; i++) {
+-			uint32_t idx = i >> 1;
+-			lru_update(bucket, idx);
+-			pos = lru_pos(bucket);
+-			poss += pos;
+-			printf("%s: %d lru_list=%016"PRIx64", upd=%d, "
+-				"pos=%"PRIx64"\n",
+-				__func__, i, bucket->lru_list, i>>1, pos);
+-		}
+-
+-	if (bucket->lru_list != shuffles) {
+-		printf("%s: ERROR: %d lru_list=%016"PRIx64", expected %016"
+-			PRIx64"\n",
+-			__func__, i, bucket->lru_list, shuffles);
+-		return -1;
+-	}
+-	printf("%s: output checksum of results =%d\n",
+-		__func__, poss);
+-#if 0
+-	if (poss != 126) {
+-		printf("%s: ERROR output checksum of results =%d expected %d\n",
+-			__func__, poss, 126);
+-		return -1;
+-	}
+-#endif
+-
+-	fflush(stdout);
+-
+-	uint64_t sc_start = rte_rdtsc();
+-	iterations = 100000000;
+-	poss = 0;
+-	for (j = 0; j < iterations; j++) {
+-		for (i = 0; i < 4; i++) {
+-			lru_update(bucket, i);
+-			pos |= bucket->lru_list;
+-		}
+-	}
+-	uint64_t sc_end = rte_rdtsc();
+-
+-	printf("%s: output checksum of results =%llu\n",
+-		__func__, (long long unsigned int)pos);
+-	printf("%s: start=%016"PRIx64", end=%016"PRIx64"\n",
+-		__func__, sc_start, sc_end);
+-	printf("\nlru_update: %lu cycles per loop iteration.\n\n",
+-		(long unsigned int)((sc_end-sc_start)/(iterations*4)));
+-
+-	return 0;
+-}
+-
+-/* Table tests */
+-int
+-test_table_stub(void)
+-{
+-	int i;
+-	uint64_t expected_mask = 0, result_mask;
+-	struct rte_mbuf *mbufs[RTE_PORT_IN_BURST_SIZE_MAX];
+-	void *table;
+-	char *entries[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	/* Create */
+-	table = rte_table_stub_ops.f_create(NULL, 0, 1);
+-	if (table == NULL)
+-		return -1;
+-
+-	/* Traffic flow */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		if (i % 2 == 0)
+-			PREPARE_PACKET(mbufs[i], 0xadadadad);
+-		else
+-			PREPARE_PACKET(mbufs[i], 0xadadadab);
+-
+-	expected_mask = 0;
+-	rte_table_stub_ops.f_lookup(table, mbufs, -1,
+-		&result_mask, (void **)entries);
+-	if (result_mask != expected_mask)
+-		return -2;
+-
+-	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_array(void)
+-{
+-	int status, i;
+-	uint64_t result_mask;
+-	struct rte_mbuf *mbufs[RTE_PORT_IN_BURST_SIZE_MAX];
+-	void *table;
+-	char *entries[RTE_PORT_IN_BURST_SIZE_MAX];
+-	char entry1, entry2;
+-	void *entry_ptr;
+-	int key_found;
+-
+-	/* Initialize params and create tables */
+-	struct rte_table_array_params array_params = {
+-		.n_entries = 7,
+-		.offset = APP_METADATA_OFFSET(1)
+-	};
+-
+-	table = rte_table_array_ops.f_create(NULL, 0, 1);
+-	if (table != NULL)
+-		return -1;
+-
+-	array_params.n_entries = 0;
+-
+-	table = rte_table_array_ops.f_create(&array_params, 0, 1);
+-	if (table != NULL)
+-		return -2;
+-
+-	array_params.n_entries = 7;
+-
+-	table = rte_table_array_ops.f_create(&array_params, 0, 1);
+-	if (table != NULL)
+-		return -3;
+-
+-	array_params.n_entries = 1 << 24;
+-	array_params.offset = APP_METADATA_OFFSET(1);
+-
+-	table = rte_table_array_ops.f_create(&array_params, 0, 1);
+-	if (table == NULL)
+-		return -4;
+-
+-	array_params.offset = APP_METADATA_OFFSET(32);
+-
+-	table = rte_table_array_ops.f_create(&array_params, 0, 1);
+-	if (table == NULL)
+-		return -5;
+-
+-	/* Free */
+-	status = rte_table_array_ops.f_free(table);
+-	if (status < 0)
+-		return -6;
+-
+-	status = rte_table_array_ops.f_free(NULL);
+-	if (status == 0)
+-		return -7;
+-
+-	/* Add */
+-	struct rte_table_array_key array_key_1 = {
+-		.pos = 10,
+-	};
+-	struct rte_table_array_key array_key_2 = {
+-		.pos = 20,
+-	};
+-	entry1 = 'A';
+-	entry2 = 'B';
+-
+-	table = rte_table_array_ops.f_create(&array_params, 0, 1);
+-	if (table == NULL)
+-		return -8;
+-
+-	status = rte_table_array_ops.f_add(NULL, (void *) &array_key_1, &entry1,
+-		&key_found, &entry_ptr);
+-	if (status == 0)
+-		return -9;
+-
+-	status = rte_table_array_ops.f_add(table, (void *) &array_key_1, NULL,
+-		&key_found, &entry_ptr);
+-	if (status == 0)
+-		return -10;
+-
+-	status = rte_table_array_ops.f_add(table, (void *) &array_key_1,
+-		&entry1, &key_found, &entry_ptr);
+-	if (status != 0)
+-		return -11;
+-
+-	/* Traffic flow */
+-	status = rte_table_array_ops.f_add(table, (void *) &array_key_2,
+-		&entry2, &key_found, &entry_ptr);
+-	if (status != 0)
+-		return -12;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		if (i % 2 == 0)
+-			PREPARE_PACKET(mbufs[i], 10);
+-		else
+-			PREPARE_PACKET(mbufs[i], 20);
+-
+-	rte_table_array_ops.f_lookup(table, mbufs, -1,
+-		&result_mask, (void **)entries);
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		if (i % 2 == 0 && *entries[i] != 'A')
+-			return -13;
+-		else
+-			if (i % 2 == 1 && *entries[i] != 'B')
+-				return -13;
+-
+-	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
+-
+-	status = rte_table_array_ops.f_free(table);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_lpm(void)
+-{
+-	int status, i;
+-	uint64_t expected_mask = 0, result_mask;
+-	struct rte_mbuf *mbufs[RTE_PORT_IN_BURST_SIZE_MAX];
+-	void *table;
+-	char *entries[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t entry;
+-	void *entry_ptr;
+-	int key_found;
+-	uint32_t entry_size = sizeof(entry);
+-
+-	/* Initialize params and create tables */
+-	struct rte_table_lpm_params lpm_params = {
+-		.name = "LPM",
+-		.n_rules = 1 << 24,
+-		.number_tbl8s = 1 << 8,
+-		.flags = 0,
+-		.entry_unique_size = entry_size,
+-		.offset = APP_METADATA_OFFSET(1)
+-	};
+-
+-	table = rte_table_lpm_ops.f_create(NULL, 0, entry_size);
+-	if (table != NULL)
+-		return -1;
+-
+-	lpm_params.name = NULL;
+-
+-	table = rte_table_lpm_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table != NULL)
+-		return -2;
+-
+-	lpm_params.name = "LPM";
+-	lpm_params.n_rules = 0;
+-
+-	table = rte_table_lpm_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table != NULL)
+-		return -3;
+-
+-	lpm_params.n_rules = 1 << 24;
+-	lpm_params.offset = APP_METADATA_OFFSET(32);
+-	lpm_params.entry_unique_size = 0;
+-
+-	table = rte_table_lpm_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table != NULL)
+-		return -4;
+-
+-	lpm_params.entry_unique_size = entry_size + 1;
+-
+-	table = rte_table_lpm_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table != NULL)
+-		return -5;
+-
+-	lpm_params.entry_unique_size = entry_size;
+-
+-	table = rte_table_lpm_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table == NULL)
+-		return -6;
+-
+-	/* Free */
+-	status = rte_table_lpm_ops.f_free(table);
+-	if (status < 0)
+-		return -7;
+-
+-	status = rte_table_lpm_ops.f_free(NULL);
+-	if (status == 0)
+-		return -8;
+-
+-	/* Add */
+-	struct rte_table_lpm_key lpm_key;
+-	lpm_key.ip = 0xadadadad;
+-
+-	table = rte_table_lpm_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table == NULL)
+-		return -9;
+-
+-	status = rte_table_lpm_ops.f_add(NULL, &lpm_key, &entry, &key_found,
+-		&entry_ptr);
+-	if (status == 0)
+-		return -10;
+-
+-	status = rte_table_lpm_ops.f_add(table, NULL, &entry, &key_found,
+-		&entry_ptr);
+-	if (status == 0)
+-		return -11;
+-
+-	status = rte_table_lpm_ops.f_add(table, &lpm_key, NULL, &key_found,
+-		&entry_ptr);
+-	if (status == 0)
+-		return -12;
+-
+-	lpm_key.depth = 0;
+-	status = rte_table_lpm_ops.f_add(table, &lpm_key, &entry, &key_found,
+-		&entry_ptr);
+-	if (status == 0)
+-		return -13;
+-
+-	lpm_key.depth = 33;
+-	status = rte_table_lpm_ops.f_add(table, &lpm_key, &entry, &key_found,
+-		&entry_ptr);
+-	if (status == 0)
+-		return -14;
+-
+-	lpm_key.depth = 16;
+-	status = rte_table_lpm_ops.f_add(table, &lpm_key, &entry, &key_found,
+-		&entry_ptr);
+-	if (status != 0)
+-		return -15;
+-
+-	/* Delete */
+-	status = rte_table_lpm_ops.f_delete(NULL, &lpm_key, &key_found, NULL);
+-	if (status == 0)
+-		return -16;
+-
+-	status = rte_table_lpm_ops.f_delete(table, NULL, &key_found, NULL);
+-	if (status == 0)
+-		return -17;
+-
+-	lpm_key.depth = 0;
+-	status = rte_table_lpm_ops.f_delete(table, &lpm_key, &key_found, NULL);
+-	if (status == 0)
+-		return -18;
+-
+-	lpm_key.depth = 33;
+-	status = rte_table_lpm_ops.f_delete(table, &lpm_key, &key_found, NULL);
+-	if (status == 0)
+-		return -19;
+-
+-	lpm_key.depth = 16;
+-	status = rte_table_lpm_ops.f_delete(table, &lpm_key, &key_found, NULL);
+-	if (status != 0)
+-		return -20;
+-
+-	status = rte_table_lpm_ops.f_delete(table, &lpm_key, &key_found, NULL);
+-	if (status != 0)
+-		return -21;
+-
+-	/* Traffic flow */
+-	entry = 'A';
+-	status = rte_table_lpm_ops.f_add(table, &lpm_key, &entry, &key_found,
+-		&entry_ptr);
+-	if (status < 0)
+-		return -22;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		if (i % 2 == 0) {
+-			expected_mask |= (uint64_t)1 << i;
+-			PREPARE_PACKET(mbufs[i], 0xadadadad);
+-		} else
+-			PREPARE_PACKET(mbufs[i], 0xadadadab);
+-
+-	rte_table_lpm_ops.f_lookup(table, mbufs, -1,
+-		&result_mask, (void **)entries);
+-	if (result_mask != expected_mask)
+-		return -23;
+-
+-	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
+-
+-	status = rte_table_lpm_ops.f_free(table);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_lpm_ipv6(void)
+-{
+-	int status, i;
+-	uint64_t expected_mask = 0, result_mask;
+-	struct rte_mbuf *mbufs[RTE_PORT_IN_BURST_SIZE_MAX];
+-	void *table;
+-	char *entries[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t entry;
+-	void *entry_ptr;
+-	int key_found;
+-	uint32_t entry_size = sizeof(entry);
+-
+-	/* Initialize params and create tables */
+-	struct rte_table_lpm_ipv6_params lpm_params = {
+-		.name = "LPM",
+-		.n_rules = 1 << 24,
+-		.number_tbl8s = 1 << 18,
+-		.entry_unique_size = entry_size,
+-		.offset = APP_METADATA_OFFSET(32)
+-	};
+-
+-	table = rte_table_lpm_ipv6_ops.f_create(NULL, 0, entry_size);
+-	if (table != NULL)
+-		return -1;
+-
+-	lpm_params.name = NULL;
+-
+-	table = rte_table_lpm_ipv6_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table != NULL)
+-		return -2;
+-
+-	lpm_params.name = "LPM";
+-	lpm_params.n_rules = 0;
+-
+-	table = rte_table_lpm_ipv6_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table != NULL)
+-		return -3;
+-
+-	lpm_params.n_rules = 1 << 24;
+-	lpm_params.number_tbl8s = 0;
+-	table = rte_table_lpm_ipv6_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table != NULL)
+-		return -4;
+-
+-	lpm_params.number_tbl8s = 1 << 18;
+-	lpm_params.entry_unique_size = 0;
+-	table = rte_table_lpm_ipv6_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table != NULL)
+-		return -5;
+-
+-	lpm_params.entry_unique_size = entry_size + 1;
+-	table = rte_table_lpm_ipv6_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table != NULL)
+-		return -6;
+-
+-	lpm_params.entry_unique_size = entry_size;
+-	lpm_params.offset = APP_METADATA_OFFSET(32);
+-
+-	table = rte_table_lpm_ipv6_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table == NULL)
+-		return -7;
+-
+-	/* Free */
+-	status = rte_table_lpm_ipv6_ops.f_free(table);
+-	if (status < 0)
+-		return -8;
+-
+-	status = rte_table_lpm_ipv6_ops.f_free(NULL);
+-	if (status == 0)
+-		return -9;
+-
+-	/* Add */
+-	struct rte_table_lpm_ipv6_key lpm_key;
+-
+-	lpm_key.ip.a[0] = 0xad;
+-	lpm_key.ip.a[1] = 0xad;
+-	lpm_key.ip.a[2] = 0xad;
+-	lpm_key.ip.a[3] = 0xad;
+-
+-	table = rte_table_lpm_ipv6_ops.f_create(&lpm_params, 0, entry_size);
+-	if (table == NULL)
+-		return -10;
+-
+-	status = rte_table_lpm_ipv6_ops.f_add(NULL, &lpm_key, &entry,
+-		&key_found, &entry_ptr);
+-	if (status == 0)
+-		return -11;
+-
+-	status = rte_table_lpm_ipv6_ops.f_add(table, NULL, &entry, &key_found,
+-		&entry_ptr);
+-	if (status == 0)
+-		return -12;
+-
+-	status = rte_table_lpm_ipv6_ops.f_add(table, &lpm_key, NULL, &key_found,
+-		&entry_ptr);
+-	if (status == 0)
+-		return -13;
+-
+-	lpm_key.depth = 0;
+-	status = rte_table_lpm_ipv6_ops.f_add(table, &lpm_key, &entry,
+-		&key_found, &entry_ptr);
+-	if (status == 0)
+-		return -14;
+-
+-	lpm_key.depth = 129;
+-	status = rte_table_lpm_ipv6_ops.f_add(table, &lpm_key, &entry,
+-		&key_found, &entry_ptr);
+-	if (status == 0)
+-		return -15;
+-
+-	lpm_key.depth = 16;
+-	status = rte_table_lpm_ipv6_ops.f_add(table, &lpm_key, &entry,
+-		&key_found, &entry_ptr);
+-	if (status != 0)
+-		return -16;
+-
+-	/* Delete */
+-	status = rte_table_lpm_ipv6_ops.f_delete(NULL, &lpm_key, &key_found,
+-		NULL);
+-	if (status == 0)
+-		return -17;
+-
+-	status = rte_table_lpm_ipv6_ops.f_delete(table, NULL, &key_found, NULL);
+-	if (status == 0)
+-		return -18;
+-
+-	lpm_key.depth = 0;
+-	status = rte_table_lpm_ipv6_ops.f_delete(table, &lpm_key, &key_found,
+-		NULL);
+-	if (status == 0)
+-		return -19;
+-
+-	lpm_key.depth = 129;
+-	status = rte_table_lpm_ipv6_ops.f_delete(table, &lpm_key, &key_found,
+-		NULL);
+-	if (status == 0)
+-		return -20;
+-
+-	lpm_key.depth = 16;
+-	status = rte_table_lpm_ipv6_ops.f_delete(table, &lpm_key, &key_found,
+-		NULL);
+-	if (status != 0)
+-		return -21;
+-
+-	status = rte_table_lpm_ipv6_ops.f_delete(table, &lpm_key, &key_found,
+-		NULL);
+-	if (status != 0)
+-		return -22;
+-
+-	/* Traffic flow */
+-	entry = 'A';
+-	status = rte_table_lpm_ipv6_ops.f_add(table, &lpm_key, &entry,
+-		&key_found, &entry_ptr);
+-	if (status < 0)
+-		return -23;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		if (i % 2 == 0) {
+-			expected_mask |= (uint64_t)1 << i;
+-			PREPARE_PACKET(mbufs[i], 0xadadadad);
+-		} else
+-			PREPARE_PACKET(mbufs[i], 0xadadadab);
+-
+-	rte_table_lpm_ipv6_ops.f_lookup(table, mbufs, -1,
+-		&result_mask, (void **)entries);
+-	if (result_mask != expected_mask)
+-		return -24;
+-
+-	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
+-
+-	status = rte_table_lpm_ipv6_ops.f_free(table);
+-
+-	return 0;
+-}
+-
+-static int
+-test_table_hash_lru_generic(struct rte_table_ops *ops, uint32_t key_size)
+-{
+-	int status, i;
+-	uint64_t expected_mask = 0, result_mask;
+-	struct rte_mbuf *mbufs[RTE_PORT_IN_BURST_SIZE_MAX];
+-	void *table;
+-	char *entries[RTE_PORT_IN_BURST_SIZE_MAX];
+-	char entry;
+-	void *entry_ptr;
+-	int key_found;
+-
+-	/* Initialize params and create tables */
+-	struct rte_table_hash_params hash_params = {
+-		.name = "TABLE",
+-		.key_size = key_size,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 10,
+-		.n_buckets = 1 << 10,
+-		.f_hash = pipeline_test_hash,
+-		.seed = 0,
+-	};
+-
+-	hash_params.n_keys = 0;
+-
+-	table = ops->f_create(&hash_params, 0, 1);
+-	if (table != NULL)
+-		return -1;
+-
+-	hash_params.n_keys = 1 << 10;
+-	hash_params.f_hash = NULL;
+-
+-	table = ops->f_create(&hash_params, 0, 1);
+-	if (table != NULL)
+-		return -4;
+-
+-	hash_params.f_hash = pipeline_test_hash;
+-
+-	table = ops->f_create(&hash_params, 0, 1);
+-	if (table == NULL)
+-		return -5;
+-
+-	/* Free */
+-	status = ops->f_free(table);
+-	if (status < 0)
+-		return -6;
+-
+-	status = ops->f_free(NULL);
+-	if (status == 0)
+-		return -7;
+-
+-	/* Add */
+-	uint8_t key[32];
+-	uint32_t *k32 = (uint32_t *) &key;
+-
+-	memset(key, 0, 32);
+-	k32[0] = rte_be_to_cpu_32(0xadadadad);
+-
+-	table = ops->f_create(&hash_params, 0, 1);
+-	if (table == NULL)
+-		return -8;
+-
+-	entry = 'A';
+-	status = ops->f_add(table, &key, &entry, &key_found, &entry_ptr);
+-	if (status != 0)
+-		return -9;
+-
+-	/* Delete */
+-	status = ops->f_delete(table, &key, &key_found, NULL);
+-	if (status != 0)
+-		return -10;
+-
+-	status = ops->f_delete(table, &key, &key_found, NULL);
+-	if (status != 0)
+-		return -11;
+-
+-	/* Traffic flow */
+-	entry = 'A';
+-	status = ops->f_add(table, &key, &entry, &key_found, &entry_ptr);
+-	if (status < 0)
+-		return -12;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		if (i % 2 == 0) {
+-			expected_mask |= (uint64_t)1 << i;
+-			PREPARE_PACKET(mbufs[i], 0xadadadad);
+-		} else
+-			PREPARE_PACKET(mbufs[i], 0xadadadab);
+-
+-	ops->f_lookup(table, mbufs, -1, &result_mask, (void **)entries);
+-	if (result_mask != expected_mask)
+-		return -13;
+-
+-	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
+-
+-	status = ops->f_free(table);
+-
+-	return 0;
+-}
+-
+-static int
+-test_table_hash_ext_generic(struct rte_table_ops *ops, uint32_t key_size)
+-{
+-	int status, i;
+-	uint64_t expected_mask = 0, result_mask;
+-	struct rte_mbuf *mbufs[RTE_PORT_IN_BURST_SIZE_MAX];
+-	void *table;
+-	char *entries[RTE_PORT_IN_BURST_SIZE_MAX];
+-	char entry;
+-	int key_found;
+-	void *entry_ptr;
+-
+-	/* Initialize params and create tables */
+-	struct rte_table_hash_params hash_params = {
+-		.name = "TABLE",
+-		.key_size = key_size,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 10,
+-		.n_buckets = 1 << 10,
+-		.f_hash = pipeline_test_hash,
+-		.seed = 0,
+-	};
+-
+-	hash_params.n_keys = 0;
+-
+-	table = ops->f_create(&hash_params, 0, 1);
+-	if (table != NULL)
+-		return -1;
+-
+-	hash_params.n_keys = 1 << 10;
+-	hash_params.key_offset = APP_METADATA_OFFSET(1);
+-
+-	table = ops->f_create(&hash_params, 0, 1);
+-	if (table == NULL)
+-		return -3;
+-
+-	hash_params.key_offset = APP_METADATA_OFFSET(32);
+-	hash_params.f_hash = NULL;
+-
+-	table = ops->f_create(&hash_params, 0, 1);
+-	if (table != NULL)
+-		return -4;
+-
+-	hash_params.f_hash = pipeline_test_hash;
+-
+-	table = ops->f_create(&hash_params, 0, 1);
+-	if (table == NULL)
+-		return -5;
+-
+-	/* Free */
+-	status = ops->f_free(table);
+-	if (status < 0)
+-		return -6;
+-
+-	status = ops->f_free(NULL);
+-	if (status == 0)
+-		return -7;
+-
+-	/* Add */
+-	uint8_t key[32];
+-	uint32_t *k32 = (uint32_t *) &key;
+-
+-	memset(key, 0, 32);
+-	k32[0] = rte_be_to_cpu_32(0xadadadad);
+-
+-	table = ops->f_create(&hash_params, 0, 1);
+-	if (table == NULL)
+-		return -8;
+-
+-	entry = 'A';
+-	status = ops->f_add(table, &key, &entry, &key_found, &entry_ptr);
+-	if (status != 0)
+-		return -9;
+-
+-	/* Delete */
+-	status = ops->f_delete(table, &key, &key_found, NULL);
+-	if (status != 0)
+-		return -10;
+-
+-	status = ops->f_delete(table, &key, &key_found, NULL);
+-	if (status != 0)
+-		return -11;
+-
+-	/* Traffic flow */
+-	entry = 'A';
+-	status = ops->f_add(table, &key, &entry, &key_found, &entry_ptr);
+-	if (status < 0)
+-		return -12;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		if (i % 2 == 0) {
+-			expected_mask |= (uint64_t)1 << i;
+-			PREPARE_PACKET(mbufs[i], 0xadadadad);
+-		} else
+-			PREPARE_PACKET(mbufs[i], 0xadadadab);
+-
+-	ops->f_lookup(table, mbufs, -1, &result_mask, (void **)entries);
+-	if (result_mask != expected_mask)
+-		return -13;
+-
+-	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
+-
+-	status = ops->f_free(table);
+-
+-	return 0;
+-}
+-
+-int
+-test_table_hash_lru(void)
+-{
+-	int status;
+-
+-	status = test_table_hash_lru_generic(
+-		&rte_table_hash_key8_lru_ops,
+-		8);
+-	if (status < 0)
+-		return status;
+-
+-	status = test_table_hash_lru_generic(
+-		&rte_table_hash_key16_lru_ops,
+-		16);
+-	if (status < 0)
+-		return status;
+-
+-	status = test_table_hash_lru_generic(
+-		&rte_table_hash_key32_lru_ops,
+-		32);
+-	if (status < 0)
+-		return status;
+-
+-	status = test_lru_update();
+-	if (status < 0)
+-		return status;
+-
+-	return 0;
+-}
+-
+-int
+-test_table_hash_ext(void)
+-{
+-	int status;
+-
+-	status = test_table_hash_ext_generic(&rte_table_hash_key8_ext_ops, 8);
+-	if (status < 0)
+-		return status;
+-
+-	status = test_table_hash_ext_generic(&rte_table_hash_key16_ext_ops, 16);
+-	if (status < 0)
+-		return status;
+-
+-	status = test_table_hash_ext_generic(&rte_table_hash_key32_ext_ops, 32);
+-	if (status < 0)
+-		return status;
+-
+-	return 0;
+-}
+-
+-
+-int
+-test_table_hash_cuckoo(void)
+-{
+-	int status, i;
+-	uint64_t expected_mask = 0, result_mask;
+-	struct rte_mbuf *mbufs[RTE_PORT_IN_BURST_SIZE_MAX];
+-	void *table;
+-	char *entries[RTE_PORT_IN_BURST_SIZE_MAX];
+-	char entry;
+-	void *entry_ptr;
+-	int key_found;
+-	uint32_t entry_size = 1;
+-
+-	/* Initialize params and create tables */
+-	struct rte_table_hash_cuckoo_params cuckoo_params = {
+-		.name = "TABLE",
+-		.key_size = 32,
+-		.key_offset = APP_METADATA_OFFSET(32),
+-		.key_mask = NULL,
+-		.n_keys = 1 << 16,
+-		.n_buckets = 1 << 16,
+-		.f_hash = pipeline_test_hash_cuckoo,
+-		.seed = 0,
+-	};
+-
+-	table = rte_table_hash_cuckoo_ops.f_create(NULL, 0, entry_size);
+-	if (table != NULL)
+-		return -1;
+-
+-	cuckoo_params.key_size = 0;
+-
+-	table = rte_table_hash_cuckoo_ops.f_create(&cuckoo_params,
+-		0, entry_size);
+-	if (table != NULL)
+-		return -2;
+-
+-	cuckoo_params.key_size = 32;
+-	cuckoo_params.n_keys = 0;
+-
+-	table = rte_table_hash_cuckoo_ops.f_create(&cuckoo_params,
+-		0, entry_size);
+-	if (table != NULL)
+-		return -3;
+-
+-	cuckoo_params.n_keys = 1 << 24;
+-	cuckoo_params.f_hash = NULL;
+-
+-	table = rte_table_hash_cuckoo_ops.f_create(&cuckoo_params,
+-		0, entry_size);
+-	if (table != NULL)
+-		return -4;
+-
+-	cuckoo_params.f_hash = pipeline_test_hash_cuckoo;
+-	cuckoo_params.name = NULL;
+-
+-	table = rte_table_hash_cuckoo_ops.f_create(&cuckoo_params,
+-		0, entry_size);
+-	if (table != NULL)
+-		return -5;
+-
+-	cuckoo_params.name = "CUCKOO";
+-
+-	table = rte_table_hash_cuckoo_ops.f_create(&cuckoo_params,
+-		0, entry_size);
+-	if (table == NULL)
+-		return -6;
+-
+-	/* Free */
+-	status = rte_table_hash_cuckoo_ops.f_free(table);
+-	if (status < 0)
+-		return -7;
+-
+-	status = rte_table_hash_cuckoo_ops.f_free(NULL);
+-	if (status == 0)
+-		return -8;
+-
+-	/* Add */
+-	uint8_t key_cuckoo[32];
+-	uint32_t *kcuckoo = (uint32_t *) &key_cuckoo;
+-
+-	memset(key_cuckoo, 0, 32);
+-	kcuckoo[0] = rte_be_to_cpu_32(0xadadadad);
+-
+-	table = rte_table_hash_cuckoo_ops.f_create(&cuckoo_params, 0, 1);
+-	if (table == NULL)
+-		return -9;
+-
+-	entry = 'A';
+-	status = rte_table_hash_cuckoo_ops.f_add(NULL, &key_cuckoo,
+-		&entry, &key_found, &entry_ptr);
+-	if (status == 0)
+-		return -10;
+-
+-	status = rte_table_hash_cuckoo_ops.f_add(table, NULL, &entry,
+-		&key_found, &entry_ptr);
+-	if (status == 0)
+-		return -11;
+-
+-	status = rte_table_hash_cuckoo_ops.f_add(table, &key_cuckoo,
+-		NULL, &key_found, &entry_ptr);
+-	if (status == 0)
+-		return -12;
+-
+-	status = rte_table_hash_cuckoo_ops.f_add(table, &key_cuckoo,
+-		&entry, &key_found, &entry_ptr);
+-	if (status != 0)
+-		return -13;
+-
+-	status = rte_table_hash_cuckoo_ops.f_add(table, &key_cuckoo,
+-		&entry, &key_found, &entry_ptr);
+-	if (status != 0)
+-		return -14;
+-
+-	/* Delete */
+-	status = rte_table_hash_cuckoo_ops.f_delete(NULL, &key_cuckoo,
+-		&key_found, NULL);
+-	if (status == 0)
+-		return -15;
+-
+-	status = rte_table_hash_cuckoo_ops.f_delete(table, NULL,
+-		&key_found, NULL);
+-	if (status == 0)
+-		return -16;
+-
+-	status = rte_table_hash_cuckoo_ops.f_delete(table, &key_cuckoo,
+-		&key_found, NULL);
+-	if (status != 0)
+-		return -17;
+-
+-	status = rte_table_hash_cuckoo_ops.f_delete(table, &key_cuckoo,
+-		&key_found, NULL);
+-	if (status != -ENOENT)
+-		return -18;
+-
+-	/* Traffic flow */
+-	entry = 'A';
+-	status = rte_table_hash_cuckoo_ops.f_add(table, &key_cuckoo,
+-		&entry, &key_found,
+-		&entry_ptr);
+-	if (status < 0)
+-		return -19;
+-
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		if (i % 2 == 0) {
+-			expected_mask |= (uint64_t)1 << i;
+-			PREPARE_PACKET(mbufs[i], 0xadadadad);
+-		} else
+-			PREPARE_PACKET(mbufs[i], 0xadadadab);
+-
+-	rte_table_hash_cuckoo_ops.f_lookup(table, mbufs, -1,
+-		&result_mask, (void **)entries);
+-	if (result_mask != expected_mask)
+-		return -20;
+-
+-	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
+-
+-	status = rte_table_hash_cuckoo_ops.f_free(table);
+-
+-	return 0;
+-}
+-
+-#endif /* !RTE_EXEC_ENV_WINDOWS */
+diff --git a/app/test/test_table_tables.h b/app/test/test_table_tables.h
+deleted file mode 100644
+index 530633a013..0000000000
+--- a/app/test/test_table_tables.h
++++ /dev/null
+@@ -1,22 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2016 Intel Corporation
+- */
+-
+-/* Test prototypes */
+-int test_table_hash_cuckoo(void);
+-int test_table_lpm(void);
+-int test_table_lpm_ipv6(void);
+-int test_table_array(void);
+-#ifdef RTE_LIB_ACL
+-int test_table_acl(void);
+-#endif
+-int test_table_hash_unoptimized(void);
+-int test_table_hash_lru(void);
+-int test_table_hash_ext(void);
+-int test_table_stub(void);
+-
+-/* Extern variables */
+-typedef int (*table_test)(void);
+-
+-extern table_test table_tests[];
+-extern unsigned n_table_tests;
 -- 
 2.53.0
 
